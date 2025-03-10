@@ -1063,7 +1063,7 @@
                 <hr id="top_bar_export_website">
                 <p><strong>Export Website:</strong></p>
                 <p>Exports the entire tunebook as an HTML/CSS/Javascript website.</p>
-                <p>Simple hyperlinked tune list, tune image gallery, and fully featured player websites with tablature and instrument selection are available as exported website options.</p>
+                <p>Simple hyperlinked tune list, tune image gallery, tune image lightbox, and fully featured player websites with tablature and instrument selection are available as exported website options.</p>
                 <p>The saved .html file (and .svg tune images for the tune image gallery websites) will be saved in your browser's <strong>Downloads</strong> directory.</p>
                 <p>On iOS the downloaded files will be found in the <strong>Downloads</strong> directory in the iOS <strong>Files</strong> app.</p>
                 <p>Full details below in the <a href="#generate_website">Export Website</a> section below.</p>
@@ -3500,13 +3500,13 @@
                 <hr class="hidden-print" id="generate_website">
                 <h1 class="page_break_always">Export Website<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <p>This will generate a complete standalone website for you from the ABC tunes in the editor without any coding required.</p>
-                <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/UnVm7ac6qgI" title="Export Website Walkthrough" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
-                 <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/rN85Vf_6Wws" title="Export Image Gallery Website Walkthrough" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
-               <hr>
-                <p>There are three different style options for exported websites:</p>
+                <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/976COaNUt6g" title="Export Website Walkthrough" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
+                <hr>
+                <p>There are four different style options for exported websites:</p>
                 <p><strong>Basic Tune List</strong> - Centered list of hyperlinked tune names.</p>
-                <p><strong>Tune Image Gallery</strong> - Centered list of hyperlined tune images.</p>
-                <p><strong>Full-Featured</strong> - Includes tune and instrument selector dropdowns.</p> 
+                <p><strong>Tune Image Gallery</strong> - Centered list of hyperlined tune images. Print the website to generate a PDF tunebook of all the tunes.</p>
+                <p><strong>Tune Image Lightbox</strong> - Shows one tune at a time with tunebook navigation controls and tune selector dropdown.  Print the website to generate a PDF tunebook of all the tunes</p>
+                <p><strong>Full-Featured</strong> - Includes tune and tablature/instrument selector dropdowns.  Uses an embedded version of the ABC Transcription Tools.</p> 
                 <p>All three styles are described in detail below.</p>
                 <hr>
                 <p style="text-align: center;"><strong>Common Export Website Settings</strong></p>
@@ -3535,7 +3535,10 @@
                 <div class="image_holder_p">
                     <img class="image" loading="lazy" src="img/generate_website_simple_7.jpg"/>
                 </div>
-                <p>Creates a simple tune website with a centered list of tune names.</p>
+                <p>Creates a simple tune website with a centered list of tune names:</p>
+                <div class="image_holder_p">
+                    <img class="image" loading="lazy" src="img/website_simple_1.jpg"/>
+                </div>
                 <p>Clicking on any of the tune names in the list opens the tune in a new tab.</p>
                 <p>Playback instruments may be optionally specified.</p>
                 <hr>
@@ -3545,7 +3548,10 @@
                 <div class="image_holder_p">
                     <img class="image" loading="lazy" src="img/generate_website_gallery_4.jpg"/>
                 </div>
-                <p>Creates a tune image gallery website with a centered list of tune images.</p>
+                <p>Creates a tune image gallery website with a centered list of tune images:</p>
+                <div class="image_holder_p">
+                    <img class="image" loading="lazy" src="img/website_gallery_1.jpg"/>
+                </div>
                 <p>Either enter a integer value (for example: 800) for the <strong> Tune image width</strong> for a fixed image size website or a window width percentage (for example: 50%) to create a responsive tune image width website.</p>
                 <p>Clicking on any of the tune images opens the tune in a new tab.</p>
                 <p>Playback instruments may be optionally specified.</p>
@@ -3553,15 +3559,34 @@
                 <p>If there are more than 25 tunes on the website, the images are "lazy" loaded for viewing only when scrolled into view, speeding the load time for the website.</p>
                 <p>If you print or export a PDF of a gallery website using the browser's native Print command, the title and subtitle will be printed on a cover page, and the website footers will be hidden, providing a nice option for creating a tunebook from a website.</p>
                 <p>To force the tunes to each be on their own page when using the browser's native Print feature, click the checkbox labeled <strong>Tunes print one tune per page</strong>.</p>
-                <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/KFvQNLwn3is" title="Tune Image Gallery Website Tunebook Printing" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
+                <p>Additionally, the play links will be retained on the tune images in the PDF.</p>
+                 <hr>
+                <p style="text-align: center;"><strong>Export Tune Image Lightbox Website</strong></p>
+                <p>Only available for desktop browsers.</p>
+                <p>Whistle and recorder tablature gallery websites not supported.</p>
+                <div class="image_holder_p">
+                    <img class="image" loading="lazy" src="img/generate_website_lightbox_1.jpg"/>
+                </div>
+                <p>Creates a responsive tune image lightbox website with the tunes displayed one at a time:</p>
+                <div class="image_holder_p">
+                    <img class="image" loading="lazy" src="img/website_lightbox_1.jpg"/>
+                </div>
+                <p>The website includes navigation controls to walk through the tunes or select a specific tune from a dropdown menu.</p>
+                <p>Clicking on any of the tune images opens the tune in a new tab.</p>
+                <p>Playback instruments may be optionally specified.</p>
+                <p>When deploying the generated website, be sure to copy all the .svg tune images files into the same directory as the exported .html file.</p>
+                <p>If you print or export a PDF of a gallery website using the browser's native Print command, the title and subtitle will be printed on a cover page, and the website footers will be hidden, providing a nice option for creating a tunebook from a website.</p>
+                <p>To force the tunes to each be on their own page when using the browser's native Print feature, click the checkbox labeled <strong>Tunes print one tune per page</strong>.</p>
                 <p>Additionally, the play links will be retained on the tune images in the PDF:</p>
-                <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/PVMDn_QN6ag" title="Tune Image Gallery Website Tunebook Printing" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
                 <hr>
                 <p style="text-align: center;"><strong>Export Full-Featured Tunebook Website</strong></p>
                 <div class="image_holder_p">
                     <img class="image" loading="lazy" src="img/generate_website_19.jpg"/>
                 </div>
-                <p>Creates a responsive website with a dropdown list of tune names and optional tablature styles.</p>
+                <p>Creates a responsive website with a dropdown list of tune names and optional tablature styles:</p>
+                <div class="image_holder_p">
+                    <img class="image" loading="lazy" src="img/website_full_1.jpg"/>
+                </div>
                 <p>Playback instruments may be optionally specified.</p>
                 <p>If <strong>Add a "Full Screen" button at top-right corner that opens the current tune in a new tab</strong> is checked, a button will be added at the top-right corner of the website when clicked will open the currently selected tune (with current tablature and playback instruments) in a new browser tab.</p>
                 <p>For the Full-Featured Website option, if <strong>Add tablature/instrument selector dropdown</strong> is checked, a dropdown will be added to the website to the right of the tune selector that allows you to change which tablature style is displayed along with using a matching instrument sound for playback.</p>
@@ -3578,6 +3603,7 @@
                 <p style="text-align: center;"><a href="https://michaeleskin.com/tunebook_websites/abctools_basic_website_example.html" target="_blank">Basic Tune List Website Example</a></p>
                 <p style="text-align: center;"><a href="https://michaeleskin.com/tunebook_websites/gallery_example/abctools_gallery_website_example.html" target="_blank">Tune Image Gallery Website Example (Fixed width)</a></p>
                 <p style="text-align: center;"><a href="https://michaeleskin.com/tunebook_websites/gallery_example_responsive/abctools_gallery_website_example_responsive.html" target="_blank">Tune Image Gallery Website Example (Responsive)</a></p>
+                <p style="text-align: center;"><a href="https://michaeleskin.com/tunebook_websites/lightbox_example/abctools_lightbox_website_example.html" target="_blank">Tune Image Lightbox Website Example</a></p>
                 <p style="text-align: center;"><a href="https://michaeleskin.com/documents/ocarolan_responsive_17Jan2025.html" target="_blank">O'Carolan Tunebook Website (Full -Featured)</a></p>
                 <p style="text-align: center;"><a href="https://michaeleskin.com/documents/cce_san_diego_tunes_31jan2025.html" target="_blank">San Diego Comhaltas Tune Learning Tunebook Website (Full-Featured)</a></p>
                 <p style="text-align: center;"><a href="https://michaeleskin.com/documents/ultimate_demos_17jan2025.html" target="_blank">Ultimate ABC Demos (Full-Featured)</a></p>

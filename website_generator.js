@@ -295,7 +295,6 @@ function LoadWebsiteSettings(){
 
             // One tune per page on print
             bOne_tune_per_page: gWebsiteOneTunePerPage
-
         }
     }
 }
@@ -2132,6 +2131,7 @@ function generateAndSaveWebsiteImageGallery() {
     theOutput +="\n";
 
     theOutput +="    @media print {\n";
+    theOutput +="\n";
     theOutput +="        .hidden-print {\n";
     theOutput +="            display: none !important;\n";
     theOutput +="        }\n";
@@ -2369,11 +2369,12 @@ function generateAndSaveWebsiteImageGallery() {
     theOutput +="          const div = document.createElement('div');\n";
     theOutput +="          div.classList.add('image-container');\n";
     theOutput +="\n";
+    theOutput +="          // Create an link\n";
     theOutput +="          const link = document.createElement('a');\n";
     theOutput +="          link.href = item.URL;\n";
     theOutput +="          link.target = '_blank';\n";
     theOutput +="          link.title = 'Click to play \"'+item.Name+'\"';\n";
-
+    theOutput +="\n";
     theOutput +="          // Create an img element\n";
     theOutput +="          const img = document.createElement('img');\n";
     theOutput +="          img.src = item.Filename;\n";
@@ -2386,8 +2387,10 @@ function generateAndSaveWebsiteImageGallery() {
 
     theOutput +="          img.setAttribute('width', '"+gWebsiteImageWidth+"');\n";
     theOutput +="\n";
+    theOutput +="          // Apppend the image to the link\n";
     theOutput +="          link.appendChild(img);\n";
     theOutput +="\n";
+    theOutput +="          // Append the link to the tune image div\n";
     theOutput +="          div.appendChild(link);\n";    
     theOutput +="\n";
     theOutput +="          // Append the div to the gallery\n";
@@ -2501,6 +2504,674 @@ function generateAndSaveWebsiteImageGallery() {
 
 }
 
+//
+// Generate an image light website
+//
+function generateAndSaveWebsiteLightbox() {
+
+    var theOutput = "";
+
+    var theABC = gTheABC.value;
+
+    // For local storage naming
+    var postFix = generatePostfix();
+
+    //console.log("postFix: "+postFix);
+
+    var number_of_tunes = CountTunes();
+
+    // Any tunes to reformat?
+    if (number_of_tunes == 0){
+
+        clearGetTuneByIndexCache();
+
+        var thePrompt = "No ABC tunes to export.";
+
+        thePrompt = makeCenteredPromptString(thePrompt);
+
+        DayPilot.Modal.alert(thePrompt, {
+            theme: "modal_flat",
+            top: 200
+        });
+
+        return;
+    }
+
+    var theJSON = BatchJSONExportForWebGalleryGenerator(theABC);
+
+    if (!theJSON){
+
+        clearGetTuneByIndexCache();
+
+        var thePrompt = "Problem generating tune share links!";
+
+        thePrompt = makeCenteredPromptString(thePrompt);
+
+          DayPilot.Modal.alert(thePrompt, {
+            theme: "modal_flat",
+            top: 200
+        });
+
+        return;
+    }
+
+    // Keep track of actions
+    sendGoogleAnalytics("action","SaveWebsiteLightbox");
+
+    // Create the website code
+
+    // Header
+    theOutput += "<!DOCTYPE html>\n";
+    theOutput +="\n";
+    theOutput +='<html lang="en">\n';
+    theOutput +="\n";
+    theOutput +="<head>\n";
+    theOutput +="\n";
+    theOutput +='<meta charset="UTF-8">\n';
+
+    theOutput +='<meta name="viewport"  content="width=device-width, initial-scale=1.0" />\n'; 
+    theOutput +='<meta property="og:image" content="https://michaeleskin.com/abctools/img/abc-icon.png" />\n';
+    theOutput +="\n";
+    theOutput +="<title>"+gWebsiteTitle+"</title>\n";
+    theOutput +="\n";
+
+    // CSS
+    theOutput +="<style>\n";
+    theOutput +="\n";
+    theOutput +="    body {\n";
+    theOutput +="        font-family: Arial, sans-serif;\n";
+    theOutput +="        display: flex;\n";
+    theOutput +="        flex-direction: column;\n";
+    theOutput +="        align-items: center;\n";
+    theOutput +="        justify-content: center;\n";
+    theOutput +="        height: 95vh;\n";
+    theOutput +="        margin: 0;\n";
+
+    if ((gWebsiteColor.indexOf("gradient") == -1) && (gWebsiteColor.indexOf("url(") == -1)){
+        theOutput +="        background-color: "+gWebsiteColor+";\n";
+    }
+    else{
+        // Center the image and fill the page
+        if (gWebsiteColor.indexOf("url(") != -1){
+            theOutput +="        background: center "+gWebsiteColor+";\n";   
+            theOutput +="        background-size: cover;\n";   
+        }
+        else{
+            // Just inject the gradient
+            theOutput +="        background-image: "+gWebsiteColor+";\n";   
+        }
+    }
+
+    theOutput +="    }\n";
+
+    theOutput +="\n";
+    
+    theOutput +="    #viewer {\n";
+    theOutput +="        width: 80%;\n";
+    theOutput +="        height: 80%;\n";
+    theOutput +="        text-align: center;\n";
+    theOutput +="        display: flex;\n";
+    theOutput +="        flex-direction: column;\n";
+    theOutput +="        align-items: center;\n";
+    theOutput +="        justify-content: center;\n";
+    theOutput +="        margin-top: 80px;\n";
+    theOutput +="    }\n";
+
+    theOutput +="\n";
+    
+    theOutput +="    #viewer img {\n";
+    theOutput +="        max-width: 100%;\n";
+    theOutput +="        max-height: 100%;\n";
+    theOutput +="        cursor: pointer;\n";
+    theOutput +="        background:white;\n";
+    theOutput +="        padding: 0px 0px 24px 0px\n";
+    theOutput +="    }\n";
+
+    theOutput +="\n";
+
+    theOutput +="    #controls {\n";
+    theOutput +="        margin-top: 32px;\n";
+    theOutput +="    }\n";
+
+    theOutput +="\n";
+
+    theOutput +="    button {\n";
+    theOutput +="        margin: 7px;\n";
+    theOutput +="        padding: 10px 20px;\n";
+    theOutput +="        font-size: 14px;\n";
+    theOutput +="    }\n";
+
+    theOutput +="\n";
+
+    theOutput +="    select{\n";
+    theOutput +="        display:inline;\n";
+    theOutput +="        -webkit-appearance: none;\n";
+    theOutput +="        -moz-appearance: none;\n";
+    theOutput +="        appearance: none;\n";
+    theOutput +='        background: url("data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'100\' height=\'100\' fill=\'%238C98F2\'><polygon points=\'0,0 100,0 50,50\'/></svg>") no-repeat;\n';
+    theOutput +="        background-size: 12px;\n";
+    theOutput +="        background-position: calc(100% - 10px) center;\n";
+    theOutput +="        background-repeat: no-repeat;\n";
+    theOutput +="        background-color: #efefef;\n";
+    theOutput +="        color:black;\n";
+    theOutput +="        font-size:12pt;\n";
+    theOutput +='        font-family:"Arial";\n';
+    theOutput +="        height:40px;\n";
+    theOutput +="        width:300px;\n";
+    theOutput +="        padding-left:10px;\n";
+    theOutput +="        margin:7px;\n";
+    theOutput +="    }\n";
+
+    theOutput +="\n";
+
+    theOutput +="    #title {\n";
+    theOutput +="        font-size: 2.5em;\n";
+    theOutput +="        font-weight: bold;\n";
+    theOutput +="        color: "+gWebsiteTextColor+";\n";
+    theOutput +="    }\n";
+
+    theOutput +="\n";
+
+    theOutput +="    #subtitle {\n";
+    theOutput +="        font-size: 1.5em;\n";
+    theOutput +="        color: "+gWebsiteTextColor+";\n";
+    theOutput +="        margin-top: 24px;\n";
+    theOutput +="    }\n";
+
+    theOutput +="\n";
+
+    theOutput +="    #image_gallery{\n";
+    theOutput +="        display:none;\n";
+    theOutput +="    }\n";
+
+    theOutput +="\n";
+
+    theOutput +="    #print_title{\n";
+    theOutput +="        display:none;\n";
+    theOutput +="    }\n";
+
+    theOutput +="\n";
+
+    theOutput +="    #print_subtitle{\n";
+    theOutput +="        display:none;\n";
+    theOutput +="    }\n";
+
+    theOutput +="\n";
+
+    theOutput +="    @media print {\n";
+    theOutput +="\n";
+    theOutput +="        .hidden-print {\n";
+    theOutput +="            display: none !important;\n";
+    theOutput +="        }\n";
+
+    theOutput +="\n";
+
+    theOutput +="        body {\n";
+    theOutput +="            background-color: white !important;\n";
+    theOutput +="            background-image: none !important;\n";
+    theOutput +="            justify-content: unset !important;\n";
+    theOutput +="            height: auto !important;\n";
+    theOutput +="            margin: 0;\n";
+    theOutput +="        }\n";
+    
+    theOutput +="\n";
+    
+    theOutput +="        body, html {\n";
+    theOutput +="            margin: 0 !important;;\n";
+    theOutput +="            padding: 0 !important;;\n";
+    theOutput +="            width: 100% !important;;\n";
+    theOutput +="        }\n";
+
+    theOutput +="\n";
+
+    // If there is both a title and a subtitle
+    if ((gWebsiteTitle && (gWebsiteTitle != "")) && (gWebsiteSubtitle && (gWebsiteSubtitle != ""))){
+        theOutput +="        #print_title {\n";
+        theOutput +="          display:block;\n";
+        theOutput +="          font-family: Arial, sans-serif;\n";
+        theOutput +="          font-size: 24px;\n";
+        theOutput +="          color: black;\n";
+        theOutput +="          text-align: center;\n";
+        theOutput +="          margin-top: 32vh;\n";
+        theOutput +="          font-size: 1.9em;\n";
+        theOutput +="        }\n";
+        theOutput +="\n";
+        theOutput +="        #print_subtitle {\n";
+        theOutput +="          display:block;\n";
+        theOutput +="          font-family: Arial, sans-serif;\n";
+        theOutput +="          font-size: 18px;\n";
+        theOutput +="          margin-top: 24px;\n";
+        theOutput +="          color: black;\n";
+        theOutput +="          text-align: center;\n";
+        theOutput +="          font-size: 1.25em;\n";
+        theOutput +="          page-break-after: always;\n";
+        theOutput +="        }\n";
+    }
+    else
+    // Just a title?
+    if (gWebsiteTitle && (gWebsiteTitle != "")){
+        theOutput +="        #print_title {\n";
+        theOutput +="          display:block;\n";
+        theOutput +="          font-family: Arial, sans-serif;\n";
+        theOutput +="          font-size: 24px;\n";
+        theOutput +="          color: black;\n";
+        theOutput +="          text-align: center;\n";
+        theOutput +="          margin-top: 32vh;\n";
+        theOutput +="          font-size: 1.9em;\n";
+        theOutput +="          page-break-after: always;\n";
+        theOutput +="        }\n";
+    }
+    else
+    // Just a subtitle?
+    if (gWebsiteSubtitle && (gWebsiteSubtitle != "")){
+        theOutput +="        #print_subtitle {\n";
+        theOutput +="          display:block;\n";
+        theOutput +="          font-family: Arial, sans-serif;\n";
+        theOutput +="          font-size: 24px;\n";
+        theOutput +="          color: black;\n";
+        theOutput +="          text-align: center;\n";
+        theOutput +="          margin-top: 32vh;\n";
+        theOutput +="          font-size: 1.9em;\n";
+        theOutput +="          page-break-after: always;\n";
+        theOutput +="        }\n";
+    }
+
+    theOutput +="\n";
+
+    theOutput +="        #image_gallery{\n";
+    theOutput +="          display:block;\n";
+    theOutput +="        }\n";
+
+    if (gWebsiteOneTunePerPage){
+        theOutput +="\n";
+        theOutput +="        .image-container {\n"
+        theOutput +="          width: 100%;\n"
+        theOutput +="          border: 0px !important;\n"
+        theOutput +="          margin: 0px !important;\n"
+        theOutput +="          padding: 0px !important;\n"
+        theOutput +="          text-align: center;\n"
+        theOutput +="          page-break-after: always;\n"
+        theOutput +="        }\n"
+    }
+    else{
+        theOutput +="\n";
+        theOutput +="        .image-container {\n"
+        theOutput +="          width: 100%;\n"
+        theOutput +="          border: 0px !important;\n"
+        theOutput +="          margin: 0px !important;\n"
+        theOutput +="          padding: 0px !important;\n"
+        theOutput +="          text-align: center;\n"
+        theOutput +="        }\n"
+    }
+    
+    theOutput +="\n";
+
+    theOutput +="        .image-container img {\n"
+    theOutput +="          max-width: 100%;\n"
+    theOutput +="          width: 100% !important;\n"
+    theOutput +="          height: auto;\n"
+    theOutput +="          cursor: pointer;\n"
+    theOutput +="          border: 0px !important;\n"
+    theOutput +="          margin: 0px !important;\n"
+    theOutput +="          padding: 0px !important;\n"
+    theOutput +="          background: white;\n"
+    theOutput +="        }\n"
+    theOutput +="    }\n";
+    theOutput +="\n";
+
+    if (gWebsiteAddHelp){
+        theOutput +="    #website_help{\n";
+        theOutput +="        font-size: 28pt;\n";
+        theOutput +="        position: absolute;\n";
+        theOutput +="        left: 16px;\n";
+        theOutput +="        top: 12px;\n";
+        theOutput +="        color: "+gWebsiteHyperlinkColor+";\n";
+        theOutput +="    }\n";
+        theOutput +="\n";
+    }
+
+    theOutput +="    a {\n";
+    theOutput +="        color: "+gWebsiteHyperlinkColor+";\n";
+    theOutput +="        font-size: 18px;\n";
+    theOutput +="        text-decoration: none;\n";
+    theOutput +="    }\n";
+    theOutput +="    a:link {\n";
+    theOutput +="        color: "+gWebsiteHyperlinkColor+";\n";
+    theOutput +="    }\n";
+    theOutput +="    a:visited {\n";
+    theOutput +="        color: "+gWebsiteHyperlinkColor+";\n";
+    theOutput +="    }\n";    
+    theOutput +="    a:hover {\n";
+    theOutput +="        color: "+gWebsiteHyperlinkColor+";\n";
+    theOutput +="    }\n";    
+    theOutput +="    a:active {\n";
+    theOutput +="        color: "+gWebsiteHyperlinkColor+";\n";
+    theOutput +="    }\n";
+    theOutput +="\n";
+
+    theOutput +="</style>\n";
+    theOutput +="\n";
+    theOutput +="</head>\n";
+    theOutput +="\n";
+
+    // HTML
+    theOutput +="<body>\n";
+    theOutput +="\n";
+    if (gWebsiteAddHelp){
+        theOutput +='    <a class="hidden-print" id="website_help" href="'+gWebsiteHelpURL+'" target="_blank" style="text-decoration:none;" title="Information about using this tunebook" class="cornerbutton">?</a>\n';
+        theOutput +="\n";
+    }
+
+    theOutput +='    <div class="hidden-print" id="viewer">\n';
+
+    var gotTitle = false;
+    if (gWebsiteTitle && (gWebsiteTitle != "")){
+        theOutput +="        <div id=\"title\" style=\"display:none;\">"+gWebsiteTitle+"</div>\n";
+        gotTitle = true;
+    }
+
+    var gotSubTitle = false;
+    if (gWebsiteSubtitle && (gWebsiteSubtitle != "")){
+        theOutput +="        <div id=\"subtitle\" style=\"display:none;\">"+gWebsiteSubtitle+"</div>\n";
+        gotSubTitle = true;
+    }
+
+    theOutput +='        <img id="image" src="" title="" alt="SVG Viewer" />\n';
+    theOutput +='    </div>\n';
+
+    theOutput +="\n";
+
+    theOutput +='    <div class="hidden-print" id="controls">\n';
+    theOutput +='        <button id="first">First</button>\n';
+    theOutput +='        <button id="prev">Previous</button>\n';
+    theOutput +='        <select id="tuneselector" title="Select a tune from the list"></select>\n';
+    theOutput +='        <button id="next">Next</button>\n';
+    theOutput +='        <button id="last">Last</button>\n';
+    theOutput +='    </div>\n';
+
+    theOutput +="\n";
+
+    if (gotTitle){
+        theOutput +="    <div id=\"print_title\">"+gWebsiteTitle+"</div>\n";
+    }
+
+    if (gotSubTitle){
+        theOutput +="    <div id=\"print_subtitle\">"+gWebsiteSubtitle+"</div>\n";
+    }
+    theOutput +='    <div id="image_gallery"></div>\n';  
+    theOutput +="\n";
+
+    // JavaScript
+    theOutput +="    <script>\n";
+    theOutput +="\n";
+    theOutput +="    "+theJSON;
+    theOutput +="\n";
+    theOutput +="\n";
+    theOutput +="    // Populate the image lightbox from JSON\n";
+    theOutput +="    document.addEventListener('DOMContentLoaded', () => {\n";
+    theOutput +="\n"; 
+    theOutput +='        let currentIndex = 0;\n';
+    theOutput +="\n";
+    theOutput +='        // DOM elements\n';
+    theOutput +='        const imageElement = document.getElementById("image");\n';
+    theOutput +='        const firstButton = document.getElementById("first");\n';
+    theOutput +='        const prevButton = document.getElementById("prev");\n';
+    theOutput +='        const nextButton = document.getElementById("next");\n';
+    theOutput +='        const lastButton = document.getElementById("last");\n';
+    theOutput +='        const tuneSelector = document.getElementById("tuneselector");\n';
+    if (gotTitle){
+        theOutput +='        const titleElement = document.getElementById("title");\n';
+    }
+    if (gotSubTitle){
+        theOutput +='        const subtitleElement = document.getElementById("subtitle");\n';
+    }
+
+    if (gotTitle || gotSubTitle){
+
+        theOutput +="\n";    
+
+        // Add an element to the front of the tunes array
+        theOutput +='        tunes.unshift({"Name":"Title Page","Filename":null,"URL":null});\n';
+    }
+
+    theOutput +="\n";    
+    theOutput +='        // Function to update the viewer with the selected image\n';
+    theOutput +='        function selectTune() {\n';
+    theOutput +='            currentIndex = parseInt(tuneSelector.value);\n';
+    theOutput +='            if (isNaN(currentIndex)){\n';
+    theOutput +='                currentIndex = 0;\n';
+    theOutput +='            }\n';
+    theOutput +='            updateViewer();\n';
+    theOutput +='        }\n';
+    theOutput +="\n";
+    theOutput +='        // Function to update the viewer with the current image\n';
+    theOutput +='        function updateViewer() {\n';
+    if (gotTitle || gotSubTitle){
+        theOutput +='            if (currentIndex == 0) {\n';
+        if (gotTitle){        
+            theOutput +='                titleElement.style.display = "block";\n';
+        }
+        if (gotSubTitle){
+            theOutput +='                subtitleElement.style.display = "block";\n';
+        }
+        theOutput +='                imageElement.style.display = "none";\n';
+        theOutput +='                tuneSelector.value = currentIndex;\n';
+        theOutput +='            } else {\n';
+        // Show the image
+        if (gotTitle){        
+            theOutput +='                titleElement.style.display = "none";\n';
+        }
+        if (gotSubTitle){
+            theOutput +='                subtitleElement.style.display = "none";\n';
+        }
+        theOutput +='                imageElement.style.display = "block";\n';
+        theOutput +='                imageElement.src = tunes[currentIndex].Filename;\n';
+        theOutput +='                imageElement.alt = tunes[currentIndex].Name;\n';
+        theOutput +="                imageElement.title = 'Click to play \"'+tunes[currentIndex].Name+'\"';\n";
+        theOutput +='                tuneSelector.value = currentIndex;\n';
+        theOutput +='            }\n';
+    }
+    else{
+        theOutput +='            imageElement.src = tunes[currentIndex].Filename;\n';
+        theOutput +='            imageElement.alt = tunes[currentIndex].Name;\n';
+        theOutput +="            imageElement.title = 'Click to play \"'+tunes[currentIndex].Name+'\"';\n";
+        theOutput +='            tuneSelector.value = currentIndex;\n';
+    }
+    theOutput +='        }\n';
+    theOutput +="\n";
+    theOutput +='        // Event listener for the image click to open the hyperlink in a new tab\n';
+    theOutput +='        imageElement.addEventListener("click", () => {\n';
+    theOutput +='            if (tunes[currentIndex].URL){\n';
+    theOutput +='               window.open(tunes[currentIndex].URL, "_blank");\n';
+    theOutput +='            }\n';
+    theOutput +='        });\n';
+    theOutput +="\n";
+    theOutput +='        // Event listeners for buttons\n';
+    theOutput +='        firstButton.addEventListener("click", () => {\n';
+    theOutput +='            currentIndex = 0;\n';
+    theOutput +='            updateViewer();\n';
+    theOutput +='        });\n';
+    theOutput +="\n";
+    theOutput +='        prevButton.addEventListener("click", () => {\n';
+    theOutput +='            if (currentIndex > 0) {\n';
+    theOutput +='                currentIndex--;\n';
+    theOutput +='                updateViewer();\n';
+    theOutput +='            }\n';
+    theOutput +='        });\n';
+    theOutput +="\n";
+    theOutput +='        nextButton.addEventListener("click", () => {\n';
+    theOutput +='            if (currentIndex < tunes.length - 1) {\n';
+    theOutput +='                currentIndex++;\n';
+    theOutput +='                updateViewer();\n';
+    theOutput +='            }\n';
+    theOutput +='        });\n';
+    theOutput +="\n";
+    theOutput +='        lastButton.addEventListener("click", () => {\n';
+    theOutput +='            currentIndex = tunes.length - 1;\n';
+    theOutput +='            updateViewer();\n';
+    theOutput +='        });\n';
+    theOutput +="\n";
+    theOutput +="        const selectElement = document.getElementById('tuneselector');\n";
+    theOutput +="        selectElement.onchange=selectTune;\n";
+    theOutput +="\n";
+    theOutput +='        tunes.forEach((tune, index) => {\n';
+    theOutput +="            const option = document.createElement('option');\n";
+    theOutput +='            option.value = index;\n';
+    theOutput +='            option.textContent = tune.Name;\n';
+    theOutput +='            selectElement.appendChild(option);\n';
+    theOutput +='        });\n';
+    theOutput +="\n";
+    theOutput +="        // Select the div where the images will be inserted\n";
+    theOutput +="        gallery = document.getElementById('image_gallery');\n";
+    theOutput +="\n";
+    theOutput +="        // Loop through the array and create img elements for printing\n";
+    theOutput +="        tunes.forEach(item => {\n";
+    theOutput +="\n";
+    theOutput +="          if (!item.URL){\n";
+    theOutput +="              return;\n";
+    theOutput +="          }\n";
+    theOutput +="\n";
+    theOutput +="          // Create a div to hold each image\n";
+    theOutput +="          const div = document.createElement('div');\n";
+    theOutput +="          div.classList.add('image-container');\n";
+    theOutput +="\n";
+    theOutput +="          // Create an link\n";
+    theOutput +="          const link = document.createElement('a');\n";
+    theOutput +="          link.href = item.URL;\n";
+    theOutput +="          link.target = '_blank';\n";
+    theOutput +="          link.title = 'Click to play \"'+item.Name+'\"';\n";
+    theOutput +="\n";
+    theOutput +="          // Create an img element\n";
+    theOutput +="          const img = document.createElement('img');\n";
+    theOutput +="          img.src = item.Filename;\n";
+    theOutput +="          img.alt = item.Name;\n";
+    
+    // On large tunebooks, make the image load lazy
+    if (number_of_tunes > 25){
+        theOutput +="          img.setAttribute('loading', 'lazy');\n";
+    }
+
+    theOutput +="          img.setAttribute('width', '"+gWebsiteImageWidth+"');\n";
+    theOutput +="\n";
+    theOutput +="          // Apppend the image to the link\n";
+    theOutput +="          link.appendChild(img);\n";
+    theOutput +="\n";
+    theOutput +="          // Append the link to the tune image div\n";
+    theOutput +="          div.appendChild(link);\n";    
+    theOutput +="\n";
+    theOutput +="          // Append the div to the gallery\n";
+    theOutput +="          gallery.appendChild(div);\n";
+    theOutput +="\n";
+    theOutput +="        });\n"
+    theOutput +="\n";
+    theOutput +='        // Initialize the viewer with the first image\n';
+    theOutput +='        updateViewer();\n';   
+    theOutput +="\n";
+    theOutput +="    });\n";    
+    theOutput +="\n";
+    theOutput +="    </script>\n";
+    theOutput +="\n";
+    theOutput +="</body>\n";
+    theOutput +="\n";
+    theOutput +="</html>\n";
+
+    var theData = theOutput
+
+    if (theData.length == 0) {
+
+        clearGetTuneByIndexCache();
+
+        DayPilot.Modal.alert("Nothing to save!", {
+            theme: "modal_flat",
+            top: 200
+        });
+
+        return;
+    }
+
+    var thePlaceholder = gWebsiteFilename;
+    if (thePlaceholder == ""){
+        thePlaceholder = "abctools_website.html";
+    }
+
+    var thePrompt = "Please enter a filename for your output website HTML file:";
+
+    DayPilot.Modal.prompt(thePrompt, thePlaceholder, {
+        theme: "modal_flat",
+        top: 200,
+        autoFocus: false
+    }).then(function(args) {
+
+        clearGetTuneByIndexCache();
+
+        var fname = args.result;
+
+        // If the user pressed Cancel, exit
+        if (fname == null) {
+            return null;
+        }
+
+        DoBatchImageExport("SVG",function(cancelRequested){
+
+            if (!cancelRequested){
+
+                var fname = args.result;
+
+                // If the user pressed Cancel, exit
+                if (fname == null) {
+                    return null;
+                }
+
+                // Strip out any naughty HTML tag characters
+                fname = fname.replace(/[^a-zA-Z0-9_\-. ]+/ig, '');
+
+                if (fname.length == 0) {
+                    return null;
+                }
+
+                // Give it a good extension
+         
+                if (!fname.endsWith(".html")) {
+
+                    // Give it a good extension
+                    fname = fname.replace(/\..+$/, '');
+                    fname = fname + ".html";
+
+                }
+
+                gWebsiteFilename = fname;
+
+                if (gLocalStorageAvailable){
+                    localStorage.WebsiteFilename = gWebsiteFilename;
+                }
+
+                var a = document.createElement("a");
+
+                document.body.appendChild(a);
+
+                a.style = "display: none";
+
+                var blob = new Blob([theData], {
+                            type: "text/html"
+                        }),
+         
+                url = window.URL.createObjectURL(blob);
+                a.href = url;
+                a.download = fname;
+                a.click();
+
+                document.body.removeChild(a);
+
+                setTimeout(function() {
+                    window.URL.revokeObjectURL(url);
+                }, 1000);
+            }
+
+        });
+
+    });
+
+}
 var gWebsiteSoundFont = "fluid";
 var gWebsiteInjectInstruments = true;
 var gWebsiteBassInstrument = 1;
@@ -3013,7 +3684,7 @@ function generateWebsiteSimple(){
 }
 
 //
-// Generate a simple website with images and links
+// Generate a image gallery website with images and links
 //
 function generateWebsiteImageGallery(){
 
@@ -3048,7 +3719,7 @@ function generateWebsiteImageGallery(){
 
     var form = [
       {html: '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:15px;margin-bottom:18px">Export Tune Image Gallery Website&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#generate_website" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'},  
-      {html: '<p style="margin-top:10px;margin-bottom:18px;font-size:12pt;line-height:14pt;font-family:helvetica">Clicking "Export" will export a tune image vertical gallery website with the settings you enter below:</p>'},  
+      {html: '<p style="margin-top:10px;margin-bottom:18px;font-size:12pt;line-height:14pt;font-family:helvetica">Clicking "Export" will export a tune image gallery website with the settings you enter below:</p>'},  
       {name: "Website title:", id: "website_title", type:"text", cssClass:"configure_website_form_text_wide_gallery"},
       {name: "Website subtitle:", id: "website_subtitle", type:"text", cssClass:"configure_website_form_text_wide2_gallery"},
       {name: "Website footer #1:", id: "website_footer1", type:"text", cssClass:"configure_website_form_text_wide2_gallery"},
@@ -3231,7 +3902,214 @@ function generateWebsiteImageGallery(){
     });
 }
 
+//
+// Generate a image lightbox website with images and links
+//
+function generateWebsiteLightbox(){
 
+    // If disabled, return
+    if (!gAllowWebExport){
+        return;
+    }
+
+    // Restore saved settings
+    LoadWebsiteSettings();
+
+    if (!website_export_midi_program_list){
+
+        //console.log("Generating website export MIDI program list");
+
+        website_export_midi_program_list=[];
+        
+        for (var i=0;i<=MIDI_PATCH_COUNT;++i){
+            website_export_midi_program_list.push({name: "  "+ generalMIDISoundNames[i], id: i });
+        }
+    }
+
+    const sound_font_options = [
+        { name: "  Fluid", id: "fluid" },
+        { name: "  Musyng Kite", id: "musyng" },
+        { name: "  FatBoy", id: "fatboy" },
+        { name: "  Canvas", id: "canvas" },
+        { name: "  MScore", id: "mscore" },
+        { name: "  Arachno", id: "arachno" },
+        { name: "  FluidHQ", id: "fluidhq"}
+    ];
+
+    var form = [
+      {html: '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:15px;margin-bottom:18px">Export Tune Image Lightbox Website&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#generate_website" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'},  
+      {html: '<p style="margin-top:10px;margin-bottom:18px;font-size:12pt;line-height:14pt;font-family:helvetica">Clicking "Export" will export a tune image lightbox website with the settings you enter below:</p>'},  
+      {name: "Website title:", id: "website_title", type:"text", cssClass:"configure_website_form_text_wide_lightbox"},
+      {name: "Website subtitle:", id: "website_subtitle", type:"text", cssClass:"configure_website_form_text_wide2_lightbox"},
+      {html: '<p style="margin-top:20px;margin-bottom:18px;font-size:12pt;line-height:14pt;font-family:helvetica">Background can be an HTML color, HTML gradient, or url(\'path_to_image\') image:</p>'},  
+      {name: "Website background:", id: "website_color", type:"text",cssClass:"configure_website_form_text_wide5_lightbox"},      
+      {name: "Text color (HTML color):", id: "website_textcolor", type:"text",cssClass:"configure_website_form_text2_lightbox"},      
+      {name: "Hyperlink color (HTML color, also used for help icon):", id: "website_hyperlinkcolor", type:"text",cssClass:"configure_website_form_text2_lightbox"},
+      {name: "          Tunes print one tune per page ", id: "bOne_tune_per_page", type:"checkbox", cssClass:"configure_website_form_text2_lightbox"},
+      {name: "          Add a ? help icon at top-left corner ", id: "bAddHelp", type:"checkbox", cssClass:"configure_website_form_text2_lightbox"},
+      {name: "Tunebook help URL:", id: "website_helpurl", type:"text",cssClass:"configure_website_form_text_wide5_lightbox"},      
+      {name: "          Disable access to editor ", id: "bDisableEdit", type:"checkbox", cssClass:"configure_website_form_text2_lightbox"},
+      {name: "          Tunes open in the Player ", id: "bOpenInPlayer", type:"checkbox", cssClass:"configure_website_form_text2_lightbox"},
+      {name: "          Add instruments and volume overrides to each tune ", id: "bInjectInstruments", type:"checkbox", cssClass:"configure_website_form_text7_lightbox"},
+      {name: "Soundfont:", id: "sound_font", type:"select", options:sound_font_options, cssClass:"configure_setuppdftunebook_midi_program_select"},
+      {name: "Melody instrument:", id: "melody_instrument", type:"select", options:website_export_midi_program_list, cssClass:"configure_setuppdftunebook_midi_program_select"},
+      {name: "Bass instrument:", id: "bass_instrument", type:"select", options:website_export_midi_program_list, cssClass:"configure_setuppdftunebook_midi_program_select"},
+      {name: "Bass volume (0-127):", id: "bass_volume", type:"number", cssClass:"configure_website_form_text"},
+      {name: "Chord instrument:", id: "chord_instrument", type:"select", options:website_export_midi_program_list, cssClass:"configure_setuppdftunebook_midi_program_select"},
+      {name: "Chord volume (0-127):", id: "chord_volume", type:"number", cssClass:"configure_website_form_text"},
+    ];
+
+    const modal = DayPilot.Modal.form(form, gWebsiteConfig, { theme: "modal_flat", top: 10, width: 760, scrollWithPage: (AllowDialogsToScroll()), okText: "Export", autoFocus: false } ).then(function(args){
+    
+        if (!args.canceled){
+
+            clearGetTuneByIndexCache();
+
+            var oldImageWidth = gWebsiteImageWidth;
+
+            // Fixed width for lightbox images
+            gWebsiteImageWidth = 2400;
+
+            // Title
+            gWebsiteTitle = args.result.website_title;
+            gWebsiteConfig.website_title = gWebsiteTitle;
+
+            // Subtitle
+            gWebsiteSubtitle = args.result.website_subtitle;
+            gWebsiteConfig.website_subtitle = gWebsiteSubtitle;
+
+            // Background color
+            gWebsiteColor = args.result.website_color;
+            gWebsiteConfig.website_color = gWebsiteColor;
+
+            // Text color
+            gWebsiteTextColor = args.result.website_textcolor;
+            gWebsiteConfig.website_textcolor = gWebsiteTextColor;
+
+            // Hyperlink color
+            gWebsiteHyperlinkColor = args.result.website_hyperlinkcolor;
+            gWebsiteConfig.website_hyperlinkcolor = gWebsiteHyperlinkColor;
+
+            // One tune per printed page
+            gWebsiteOneTunePerPage = args.result.bOne_tune_per_page;
+            gWebsiteConfig.bOne_tune_per_page = gWebsiteOneTunePerPage;
+
+            // One tune per printed page
+            gWebsiteOneTunePerPage = args.result.bOne_tune_per_page;
+            gWebsiteConfig.bOne_tune_per_page = gWebsiteOneTunePerPage;
+
+            // Add help?
+            gWebsiteAddHelp = args.result.bAddHelp;
+            gWebsiteConfig.bAddHelp = gWebsiteAddHelp;
+
+            // Help URL
+            gWebsiteHelpURL = args.result.website_helpurl;
+            gWebsiteConfig.website_helpurl = gWebsiteHelpURL;
+
+            // Open in player
+            gWebsiteOpenInPlayer = args.result.bOpenInPlayer;
+            gWebsiteConfig.bOpenInPlayer = gWebsiteOpenInPlayer;
+
+            // Disable edit
+            gWebsiteDisableEdit = args.result.bDisableEdit
+            gWebsiteConfig.bDisableEdit = gWebsiteDisableEdit;
+
+            // Add instruments?
+            gWebsiteInjectInstruments = args.result.bInjectInstruments;
+            gWebsiteConfig.bInjectInstruments = gWebsiteInjectInstruments;
+
+            // Soundfont
+            gWebsiteSoundFont = args.result.sound_font;
+            gWebsiteConfig.sound_font = gWebsiteSoundFont;
+
+            // Melody Instrument
+            gWebsiteMelodyInstrument = args.result.melody_instrument;
+            gWebsiteConfig.melody_instrument = gWebsiteMelodyInstrument;
+
+            // Bass Instrument
+            gWebsiteBassInstrument = args.result.bass_instrument;
+            gWebsiteConfig.bass_instrument = gWebsiteBassInstrument;
+
+            // Bass volume
+            gWebsiteBassVolume = args.result.bass_volume;
+            gWebsiteConfig.bass_volume = gWebsiteBassVolume;
+
+            // Chord Instrument
+            gWebsiteChordInstrument = args.result.chord_instrument;
+            gWebsiteConfig.chord_instrument = gWebsiteChordInstrument;
+
+            // Chord volume
+            gWebsiteChordVolume = args.result.chord_volume;
+            gWebsiteConfig.chord_volume = gWebsiteChordVolume;
+
+            if (gWebsiteInjectInstruments){
+                
+                // Special case for muting voices
+                if (gWebsiteMelodyInstrument == 0){
+
+                    gWebsiteMelodyInstrumentInject = "mute";
+
+                }
+                else{
+
+                    gWebsiteMelodyInstrumentInject = gWebsiteMelodyInstrument - 1;
+
+                    if ((gWebsiteMelodyInstrumentInject < 0) || (gWebsiteMelodyInstrumentInject > MIDI_PATCH_COUNT)){
+
+                        gWebsiteMelodyInstrumentInject = 0;
+
+                    }
+                }
+
+                // Special case for muting voices
+                if (gWebsiteBassInstrument == 0){
+
+                    gWebsiteBassInstrumentInject = "mute";
+
+                }
+                else{
+
+                    gWebsiteBassInstrumentInject = gWebsiteBassInstrument - 1;
+
+                    if ((gWebsiteBassInstrumentInject < 0) || (gWebsiteBassInstrumentInject > MIDI_PATCH_COUNT)){
+
+                        gWebsiteBassInstrumentInject = 0;
+
+                    }
+
+                }
+
+                // Special case for muting voices
+                if (gWebsiteChordInstrument == 0){
+
+                    gWebsiteChordInstrumentInject = "mute";
+
+                }
+                else{
+
+                    gWebsiteChordInstrumentInject = gWebsiteChordInstrument - 1;
+
+                    if ((gWebsiteChordInstrumentInject < 0) || (gWebsiteChordInstrumentInject > MIDI_PATCH_COUNT)){
+
+                        gWebsiteChordInstrumentInject = 0;
+
+                    }
+
+                }
+
+            }
+ 
+            generateAndSaveWebsiteLightbox();
+
+            // Restore saved settings
+            gWebsiteImageWidth = oldImageWidth;
+
+            SaveWebsiteSettings();
+
+        }
+
+    });
+}
 //
 // Generate website
 //
@@ -3245,28 +4123,31 @@ function generateWebsite(){
 
     var modal_msg  = '<p style="text-align:center;margin-bottom:36px;font-size:18pt;font-family:helvetica;margin-left:15px;">Export Website&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#generate_website" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>';
     
+    modal_msg  += '<p style="font-size:18px;line-height:28px;">For all websites, clicking a tune will open the tune in a new browser tab.</p>';
     modal_msg  += '<p style="font-size:18px;line-height:28px;">Click <strong>Export Basic Tune List Website</strong> to export a technically simple website with a list of all tunes in the ABC vertically down the center of the page. Playback instruments may be optionally specified.</p>';
-    modal_msg  += '<p style="font-size:18px;line-height:28px;">Clicking a tune name in the list will open the tune in a new browser tab.</p>';
 
     if (((format != "whistle") && (format != "recorder")) && (isPureDesktopBrowser())){
-        modal_msg  += '<p style="font-size:18px;line-height:28px;">Click <strong>Export Tune Image Gallery Website</strong> to export a website with tune notation images of all the tunes in the ABC vertically down the center of the page. Playback instruments may be optionally specified.</p>';
-        modal_msg  += '<p style="font-size:18px;line-height:28px;">Clicking a tune image will open the tune in a new browser tab.</p>';
+        modal_msg  += '<p style="font-size:18px;line-height:28px;">Click <strong>Export Tune Image Gallery Website</strong> to export a website with tune notation images of all the tunes in the ABC vertically down the center of the page. Playback instruments may be optionally specified. Print the website to get a PDF tunebook.</p>';
+
+        modal_msg  += '<p style="font-size:18px;line-height:28px;">Click <strong>Export Tune Image Lightbox Website</strong> to export a website with tune notation images of all the tunes in the ABC in a lightbox with navigation controls. Playback instruments may be optionally specified. Print the website to get a PDF tunebook.</p>';
     }
 
-    modal_msg  += '<p style="font-size:18px;line-height:28px;">Click <strong>Export Full-Featured Tunebook Website</strong> to export a website with a dropdown list of tune names and optional tablature styles. Playback instruments may be optionally specified. The website remembers the user\'s last selected tune and tablature setting.</p>';
-    modal_msg  += '<p style="font-size:18px;line-height:28px;margin-bottom:36px;">Clicking a tune name in the tune list dropdown opens it in a frame on the same browser tab.</p>';
+    modal_msg  += '<p style="font-size:18px;line-height:28px;margin-bottom:36px;">Click <strong>Export Full-Featured Tunebook Website</strong> to export a website with a dropdown list of tune names and optional tablature styles. Playback instruments may be optionally specified. The website remembers the user\'s last selected tune and tablature setting.</p>';
 
-    modal_msg  += '<p style="text-align:center;"><input id="websitesimple" class="advancedcontrols btn btn-websiteexport" onclick="generateWebsiteSimple()" type="button" value="Export Basic Tune List Website" title="Generates a website that has a list of tunes that open in a new browser tab when clicked.">';
+    modal_msg  += '<p style="text-align:center;"><input id="websitesimple" class="advancedcontrols btn btn-websiteexport" onclick="generateWebsiteSimple()" type="button" value="Export Basic Tune List Website" title="Generates a website that has a list of tunes that open in a new browser tab when clicked."></p>';
     
     if (((format != "whistle") && (format != "recorder")) && (isPureDesktopBrowser())){
-        modal_msg  += '<input id="websiteimages" class="advancedcontrols btn btn-websiteexport" onclick="generateWebsiteImageGallery()" type="button" value="Export Tune Image Gallery Website" title="Generates a website that has the images of the tunes that open for playback in a new browser tab when clicked."></p><p style="text-align:center;margin-top:32px;">';
+
+        modal_msg  += '<p style="text-align:center; margin-top:24px;"><input id="websiteimages" class="advancedcontrols btn btn-websiteexport" onclick="generateWebsiteImageGallery()" type="button" value="Export Tune Image Gallery Website" title="Generates a website that has the images of the tunes that open for playback in a new browser tab when clicked">';
+
+       modal_msg  += '<input id="websitelightbox" class="advancedcontrols btn btn-websiteexport" onclick="generateWebsiteLightbox()" type="button" value="Export Tune Image Lightbox Website" title="Generates a image lightbox website that has the images of the tunes that open for playback in a new browser tab when clicked"></p>';
     }
 
-    modal_msg  += '<input id="websitefull" class="advancedcontrols btn btn-websiteexport" onclick="generateWebsiteFull()" type="button" value="Export Full-Featured Tunebook Website" title="Generates a website that has dropdowns for the tunes and optional display tablature selection.&nbsp;&nbsp;When a tune is selected from the dropdown, the tune opens in an iframe on the page."></p>';
+    modal_msg  += '<p style="text-align:center;margin-top:24px;"><input id="websitefull" class="advancedcontrols btn btn-websiteexport" onclick="generateWebsiteFull()" type="button" value="Export Full-Featured Tunebook Website" title="Generates a website that has dropdowns for the tunes and optional display tablature selection.&nbsp;&nbsp;When a tune is selected from the dropdown, the tune opens in an iframe on the page."></p>';
     
     modal_msg  += '<p style="font-size:4px;">&nbsp;</p>';
 
-    DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 50, width: 650, scrollWithPage: (AllowDialogsToScroll()) });
+    DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 10, width: 760, scrollWithPage: (AllowDialogsToScroll()) });
 
 }
 
