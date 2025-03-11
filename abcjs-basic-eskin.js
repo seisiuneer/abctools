@@ -1,3 +1,6 @@
+// AKZ 10 Mar 2025
+var gIgnoreParenthesizedChords = false;
+
 // MAE 25 Mar 2024
 var gSamplesOnline = true;
 
@@ -14323,8 +14326,8 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
 
     var root = name.substring(0, 1);
     if (root === '(') {
-      name = name.substring(1, name.length - 2);
-      if (name.length === 0) return undefined;
+      name = name.substring(1, name.length - 1);
+      if (name.length === 0 || gIgnoreParenthesizedChords) return undefined;
       root = name.substring(0, 1);
     }
     var bass = basses[root];
@@ -16472,8 +16475,8 @@ ChordTrack.prototype.interpretChord = function (name) {
 
   var root = name.substring(0, 1);
   if (root === '(') {
-    name = name.substring(1, name.length - 2);
-    if (name.length === 0) return undefined;
+    name = name.substring(1, name.length - 1);
+    if (name.length === 0 || gIgnoreParenthesizedChords) return undefined;
     root = name.substring(0, 1);
   }
   var bass = this.basses[root];
