@@ -2913,6 +2913,10 @@ function generateAndSaveWebsiteLightbox() {
     theOutput +="\n";
     theOutput +="\n";
 
+    theOutput +="    // Set this to false to disable state persistence\n";
+    theOutput +="    var gAllowStatePersistence = true;\n";
+    theOutput +="\n";
+
     theOutput +='    function isIOS() {\n';
     theOutput +='        if (/iPad|iPhone|iPod/.test(navigator.platform)) {\n';
     theOutput +='            return true;\n';
@@ -2959,11 +2963,17 @@ function generateAndSaveWebsiteLightbox() {
     theOutput +='        const lastButton = document.getElementById("last");\n';
     theOutput +='        const tuneSelector = document.getElementById("tuneselector");\n';
     theOutput +='        const viewerElem = document.getElementById("viewer");\n';
+    
     if (gotTitle){
         theOutput +='        const titleElement = document.getElementById("title");\n';
     }
+    
     if (gotSubTitle){
         theOutput +='        const subtitleElement = document.getElementById("subtitle");\n';
+    }
+
+    if (gWebsiteAddHelp){
+        theOutput +='        const helpElement = document.getElementById("website_help");\n';
     }
 
     if (gotTitle || gotSubTitle){
@@ -3007,6 +3017,10 @@ function generateAndSaveWebsiteLightbox() {
     theOutput +='            nextButton.style.width = "40px";\n';
     theOutput +='            nextButton.style.padding = "10px 10px 10px 10px";\n';
     theOutput +='            nextButton.textContent = "→";\n';
+    if (gWebsiteAddHelp){
+        theOutput +='            helpElement.style.left = "16px";\n';
+        theOutput +='            helpElement.style.top = "20px";\n';
+    }
     theOutput +='        }\n';
 
     theOutput +="\n"; 
@@ -3059,6 +3073,12 @@ function generateAndSaveWebsiteLightbox() {
         theOutput +="            imageElement.title = 'Click to play \"'+tunes[currentIndex].Name+'\"';\n";
         theOutput +='            tuneSelector.value = currentIndex;\n';
     }
+    theOutput +="            // Save last tune\n";
+    theOutput +="            if (gAllowStatePersistence){\n";
+    theOutput +="                if (window.localStorage){\n";
+    theOutput +="                    localStorage.lastTuneIndex_"+postFix+" = currentIndex;\n";
+    theOutput +='                }\n';
+    theOutput +='            }\n';
     theOutput +='        }\n';
     theOutput +="\n";
     theOutput +='        // Event listener for the image click to open the hyperlink in a new tab\n';
@@ -3146,8 +3166,35 @@ function generateAndSaveWebsiteLightbox() {
     theOutput +="\n";
     theOutput +="        });\n"
     theOutput +="\n";
-    theOutput +='        // Initialize the viewer with the first image\n';
-    theOutput +='        updateViewer();\n';   
+    theOutput +="         // Restore state\n";
+    theOutput +="        if (gAllowStatePersistence){\n";
+    theOutput +="\n";
+    theOutput +="            if (window.localStorage){\n";
+    theOutput +="\n";
+    theOutput +="                currentIndex = localStorage.lastTuneIndex_"+postFix+";\n";
+    theOutput +="\n";
+    theOutput +='                if (currentIndex){\n';
+    theOutput +='                    currentIndex = parseInt(currentIndex);\n';
+    theOutput +='                    if (isNaN(currentIndex)){\n';
+    theOutput +='                        curentIndex = 0;\n';
+    theOutput +='                    }\n';
+    theOutput +='                }\n';
+    theOutput +='                else{\n';
+    theOutput +='                    currentIndex = 0;\n';
+    theOutput +='                }\n';
+    theOutput +="\n";
+    theOutput +='                // Initialize the viewer\n';
+    theOutput +='                updateViewer();\n';  
+    theOutput +="\n";
+    theOutput +="            }\n";    
+    theOutput +="\n";
+    theOutput +="        }\n";  
+    theOutput +="        else {\n";  
+    theOutput +="\n";
+    theOutput +='            // Initialize the viewer\n';
+    theOutput +='            updateViewer();\n';  
+    theOutput +="\n";
+    theOutput +="        }\n";  
     theOutput +="\n";
     theOutput +="    });\n";    
     theOutput +="\n";
