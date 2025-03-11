@@ -1,5 +1,5 @@
 // AKZ 10 Mar 2025
-var gIgnoreParenthesizedChords = false;
+var gIgnoreParenthesizedChords = true;
 
 // MAE 25 Mar 2024
 var gSamplesOnline = true;
