@@ -36,7 +36,7 @@
         <link rel="icon" type="image/png" sizes="32x32" href="https://michaeleskin.com/abctools/img/abc-favicon-32x32.png">
         <link rel="icon" type="image/png" sizes="96x96" href="https://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
         <link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
-        
+       
         <style>
         
         p {
@@ -487,7 +487,8 @@
             <a style="text-decoration:none;" href="#whistletabkey">Changing the Tin Whistle Tablature Key and Octave</a>
             <a style="text-decoration:none;" href="#recordertabkey">Changing the Recorder Tablature Key and Octave</a>
             <a style="text-decoration:none;" href="#detect_hyperlinks">Making Hyperlinks in ABC Tag Text Clickable</a>
-            
+            <a style="text-decoration:none;" href="#play_alternate_chords">Playing Alternate Chords</a>
+
             <h3>ABC Tricks, Tips, and Limitations</h3>
             <a style="text-decoration:none;" href="#tabtranspose">Transposing Notation Independent of Tablature</a>
             <a style="text-decoration:none;" href="#learningtunes">Learning New Tunes Part-by-Part Using ABC</a>
@@ -867,6 +868,7 @@
                         <p class="toc"><a style="text-decoration:none;" href="#whistletabkey">Changing the Tin Whistle Tablature Key and Octave</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#recordertabkey">Changing the Recorder Tablature Key and Octave</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#detect_hyperlinks">Making Hyperlinks in ABC Tag Text Clickable</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#play_alternate_chords">Playing Alternate Chords</a></p>
                     </div>
                     
                     <button class="accordion" title="Click to expand/collapse this section">ABC Tricks, Tips, and Limitations</button>
@@ -3482,6 +3484,7 @@
                     %recorder_tab_octave<br/>
                     %enable_hyperlinks<br/>
                     %disable_hyperlinks<br/>
+                    %play_alternate_chords<br/>
                 %abcjs_render_params {custom rendering parameters JSON}</p>
                 <hr class="hidden-print" id="editing_pdf_tunebooks">
                 <h1 class="page_break_always">Editing PDF Tunebooks With Other Tools<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
@@ -3572,7 +3575,7 @@
                     <img class="image" loading="lazy" src="img/website_lightbox_1.jpg"/>
                 </div>
                 <p>The website includes navigation controls to walk through the tunes or select a specific tune from a dropdown menu.</p>
-                <p>On iPhone or Android devices only the tune selector dropdown is available (optimization for narrow screens).</p>
+                <p>On iPhone or Android devices only the previous tune/next tune buttons and the tune selector dropdown are available (optimization for narrow screens).</p>
                 <p>Clicking on any of the tune images opens the tune in a new tab.</p>
                 <p>Playback instruments may be optionally specified.</p>
                 <p>When deploying the generated website, be sure to copy all the .svg tune images files into the same directory as the exported .html file.</p>
@@ -5130,6 +5133,11 @@
                 <p>To disable http:// or https:// hyperlink detection for a specific tune when using %enable_hyperlinks in the ABC file header to apply to all tunes, you can include the following annotation anywhere in the ABC for a tune:</p>
                 <p class="code">% Disable hyperlink detection for this tune<br>%disable_hyperlinks</p>
                 <p>If both %enable_hyperlinks and %disable_hyperlinks are present in the same tune, %disable_hyperlinks takes precedence.</p>
+                <hr class="hidden-print" id="play_alternate_chords">
+                <h1 class="page_break_always h1wide">Playing Alternate Chords<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+                <p>By default, the tool will not play "alternate" chords that are enclosed in parenthesis, for example "(G)". To make them playable you can include the following annotation anywhere in the ABC for a tune:</p>
+                <p class="code">% Play alternate chords<br>%play_alternate_chords</p>
+                 <p>If this annotation is placed in the ABC file header, it will apply to all of the tunes.</p>
                 <hr class="hidden-print" id="tabtranspose">
                 <h1 class="page_break_always h1wide">Transposing Notation Independent of Tablature<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <p>For some tablatures like CGDAE where instruments maybe in either standard pitch or one octave lower, if you transpose the notes down an octave to get the tab on the lower strings, but want the notation displayed an octave up, you can add the following voice annotation to the ABC:</p>

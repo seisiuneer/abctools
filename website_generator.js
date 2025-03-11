@@ -2998,10 +2998,15 @@ function generateAndSaveWebsiteLightbox() {
 
     theOutput +='        if ((gIsAndroid || gIsIOS) && (!gIsIPad)){\n';
     theOutput +='            firstButton.style.display = "none";\n';
-    theOutput +='            prevButton.style.display = "none";\n';
-    theOutput +='            nextButton.style.display = "none";\n';
     theOutput +='            lastButton.style.display = "none";\n';
     theOutput +='            viewerElem.style.marginTop = "0px";\n';
+    theOutput +='            tuneSelector.style.width = "240px";\n';
+    theOutput +='            prevButton.style.width = "40px";\n';
+    theOutput +='            prevButton.style.padding = "10px 10px 10px 10px";\n';
+    theOutput +='            prevButton.textContent = "←";\n';
+    theOutput +='            nextButton.style.width = "40px";\n';
+    theOutput +='            nextButton.style.padding = "10px 10px 10px 10px";\n';
+    theOutput +='            nextButton.textContent = "→";\n';
     theOutput +='        }\n';
 
     theOutput +="\n"; 

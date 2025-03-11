@@ -1,5 +1,4 @@
-// AKZ 10 Mar 2025
-var gIgnoreParenthesizedChords = true;
+// Globals
 
 // MAE 25 Mar 2024
 var gSamplesOnline = true;
@@ -240,6 +239,9 @@ var gRecorderTabShiftSemitone = 0;
 // Add hyperlinks to tunes
 var gAddSVGHyperLinks = false
 var gDisableSVGHyperLinks = false
+
+// Ignore parenthesized alternate chords during playback?
+var gPlayAlternateChords = false;
 
 //
 // Find any hyperlinks in the tune and replace them with SVG links
@@ -719,6 +721,28 @@ function ScanTuneForSVGDisableHyperlinks(theTune){
   //console.log("No %disable_hyperlinks")
 
   return false;
+}
+
+// Scan tune for play alternate chords
+function ScanTuneForPlayAlternateChords(theTune){
+
+  //console.log("ScanTuneForPlayAlternateChords");
+
+  theTune = theTune.replace("%%abctt:play_alternate_chords","%play_alternate_chords");
+
+  var searchRegExp = /^%play_alternate_chords.*$/gm
+
+  var playAlternateChords = searchRegExp.test(theTune);
+
+  if (playAlternateChords){
+    //console.log("Found %play_alternate_chords")
+    return true;
+  }
+
+  //console.log("No %play_alternate_chords")
+
+  return false;
+
 }
 
 
@@ -1485,7 +1509,6 @@ var tunebook = {};
 
           var workingParams = params;
 
-
           // Merge any params overrides
           gABCJSRenderingParams = null;
           gABCJSRenderingParams = ScanTuneForABCJSRenderingParams(book.tunes[currentTune].abc);
@@ -1539,6 +1562,10 @@ var tunebook = {};
           if (gAddSVGHyperLinks){
             gDisableSVGHyperLinks = ScanTuneForSVGDisableHyperlinks(book.tunes[currentTune].abc);
           }
+
+          // Ignore parenthesized alternate chords during playback?
+          gPlayAlternateChords = false;
+          gPlayAlternateChords = ScanTuneForPlayAlternateChords(book.tunes[currentTune].abc);
 
           abcParser.parse(book.tunes[currentTune].abc, workingParams, book.tunes[currentTune].startPos - book.header.length);
           var tune = abcParser.getTune();
@@ -4414,6 +4441,12 @@ var bookParser = function bookParser(book) {
         //console.log("Adding disable_hyperlinks line: "+line)
         directives += line + '\n';
       }    
+
+      theRegex = /^%play_alternate_chords.*$/
+      if (theRegex.test(line)){
+        //console.log("Adding play_alternate_chords line: "+line)
+        directives += line + '\n';
+      }   
 
       theRegex = /^[ABCDFGHILMmNORrSUZ]:/
       if (theRegex.test(line)){
@@ -14327,7 +14360,7 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
     var root = name.substring(0, 1);
     if (root === '(') {
       name = name.substring(1, name.length - 1);
-      if (name.length === 0 || gIgnoreParenthesizedChords) return undefined;
+      if (name.length === 0 || (!gPlayAlternateChords)) return undefined;
       root = name.substring(0, 1);
     }
     var bass = basses[root];
@@ -16476,7 +16509,7 @@ ChordTrack.prototype.interpretChord = function (name) {
   var root = name.substring(0, 1);
   if (root === '(') {
     name = name.substring(1, name.length - 1);
-    if (name.length === 0 || gIgnoreParenthesizedChords) return undefined;
+    if (name.length === 0 || (!gPlayAlternateChords)) return undefined;
     root = name.substring(0, 1);
   }
   var bass = this.basses[root];
