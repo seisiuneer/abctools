@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2374_031225_1300";
+var gVersionNumber="2375_031225_1630";
 
 var gMIDIInitStillWaiting = false;
 
@@ -33226,7 +33226,7 @@ function SwingExplorerDialog(theOriginalABC, theProcessedABC, swing_explorer_sta
 			modal_msg += '<p class="configure_swingexplorer_text_mobile" style="text-align:center;margin:0px;margin-top:22px">';
 
 			modal_msg += 'Swing factor: <input style="width:80px;" id="swing_explorer_factor" type="number" min="-0.9" step="0.05" max=".9" title="Swing factor, range is -0.9 to 0.9" autocomplete="off"/>';
-			modal_msg += '&nbsp;&nbsp;Swing offset: <input style="width:90px;" id="swing_explorer_offset" type="number" min="0" step="1" max="8" title="Swing offset in eighth notes, range is 0 to 8" autocomplete="off"/>';
+			modal_msg += '&nbsp;&nbsp;Swing offset: <input style="width:90px;" id="swing_explorer_offset" type="number" min="0" step="1" max="16" title="Swing offset in eighth notes, range is 0 to 16" autocomplete="off"/>';
 			modal_msg += '</p>';
 
 			modal_msg += '<p class="configure_swingexplorer_text_mobile" style="text-align:center;margin:0px;margin-top:22px">';
@@ -33240,7 +33240,7 @@ function SwingExplorerDialog(theOriginalABC, theProcessedABC, swing_explorer_sta
 			modal_msg += '<p class="configure_swingexplorer_text" style="text-align:center;margin:0px;margin-top:22px">';
 
 			modal_msg += 'Swing factor (range is -0.9 to 0.9): <input style="width:90px;" id="swing_explorer_factor" type="number" min="-0.9" step="0.05" max=".9" title="Swing factor, range is -0.9 to 0.9" autocomplete="off"/>';
-			modal_msg += '&nbsp;&nbsp;Swing offset in eighth notes (range is 0 to 8): <input style="width:90px;" id="swing_explorer_offset" type="number" min="0" step="1" max="8" title="Swing offset in eighth notes, range is 0 to 8" autocomplete="off"/>';
+			modal_msg += '&nbsp;&nbsp;Swing offset in eighth notes (range is 0 to 16): <input style="width:90px;" id="swing_explorer_offset" type="number" min="0" step="1" max="16" title="Swing offset in eighth notes, range is 0 to 16" autocomplete="off"/>';
 			modal_msg += '</p>';
 			modal_msg += '<p class="configure_swingexplorer_text" style="text-align:center;margin:0px;margin-top:22px">';
 			modal_msg += '<input id="swingexplorertest" class="swingexplorertest button btn btn-swingexplorertest" onclick="SwingExplorerRegenerate();" type="button" value="Reload Tune with Changed Swing Settings" title="Reloads the tune into the player with the entered swing factor and offset">';
