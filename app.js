@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2373_031225_0730";
+var gVersionNumber="2374_031225_1300";
 
 var gMIDIInitStillWaiting = false;
 
@@ -32110,7 +32110,7 @@ function ScanTuneForCustomTimingInjection(theTune){
 
 			if (!isNaN(offsetValue)){
 
-				if ((offsetValue >= 0) && (offsetValue <= 8)){
+				if ((offsetValue >= 0) && (offsetValue <= 16)){
 					gSwingOffset = offsetValue;
 				}
 
@@ -32794,7 +32794,7 @@ function SwingExplorerRegenerate(){
 
 	theSwingOffset = parseInt(theSwingOffset);
 
-	if (!isNaN(theSwingOffset) && ((theSwingOffset >= 0) && (theSwingOffset <= 8))){
+	if (!isNaN(theSwingOffset) && ((theSwingOffset >= 0) && (theSwingOffset <= 16))){
 
 		gSwingOffset = theSwingOffset;
 
@@ -32897,7 +32897,7 @@ function ScanTuneForSwingExplorer(theTune){
 
 			if (!isNaN(offsetValue)){
 
-				if ((offsetValue >= 0) && (offsetValue <= 8)){
+				if ((offsetValue >= 0) && (offsetValue <= 16)){
 					gSwingOffset = offsetValue;
 				}
 
@@ -32930,7 +32930,7 @@ function SwingExplorerInject(){
 
 	theSwingOffset = parseInt(theSwingOffset);
 
-	if (!isNaN(theSwingOffset) && ((theSwingOffset >= 0) && (theSwingOffset <= 8))){
+	if (!isNaN(theSwingOffset) && ((theSwingOffset >= 0) && (theSwingOffset <= 16))){
 
 		bDoInjectSwingOffset = true;
 	}
