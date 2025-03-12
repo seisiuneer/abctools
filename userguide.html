@@ -2202,11 +2202,11 @@
                 <p class="code">R:Hornpipe</p>
                 <p>detected in the ABC will automatically have swing added during playback.</p>
                 <p>The auto-swing factor may be set in the <strong>Settings</strong> dialog.</p>
-                <p><strong>Note:</strong> Since this video was made, you no longer have to specify a swing offset, the tool now automatically offsets the swing for you if required.</p>
+                <p><strong>Note:</strong> Since this video was made, the swing algorithm automatically compensates for pickup notes before the first full bar of a tune. You can now use %swing_offset if you want to manually specify a swing timing offset in eighth notes.</p>
                 <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/xQp3tuFyBPM" title="Hornpipe Swing" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
                 <hr>
                 <p style="text-align: center;"><strong>Manually Adding Swing to Tunes</strong></p>
-                <p><strong>Note:</strong> Since this video was made, you no longer have to specify a swing offset, the tool now automatically offsets the swing for you if required.</p>
+                <p><strong>Note:</strong> Since this video was made, the swing algorithm automatically compensates for pickup notes before the first full bar of a tune. You can now use %swing_offset if you want to manually specify a swing timing offset in eighth notes.</p>
                 <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/NpgJzVDRHwA" title="Adding Swing Manually" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
                 <p>If the tune is not marked as a Hornpipe, you can manually add swing to any tune in 2/4, 3/4, 4/4, 6/8, 9/8, and 12/8 meter by including the following comment-based annotation anywhere in the tune ABC:</p>
                 <p class="code">%swing swing_factor (optional: Range is -0.9 to 0.9)</p>
@@ -2227,31 +2227,16 @@
                 %noswing</p>
                 <p>%noswing takes precedence over any default Hornpipe swing or manually added %swing</p>
                 <hr>
-                <p style="text-align: center;"><strong>MIDI command to add swing</strong></p>
-                <p>You may also use a MIDI command to add swing, swing_percentages is an integer percentage instead of a fractional value as used for the %swing directive</p>
-                <p class="code">%%MIDI abctt:swing swing_percentage (Range is -100 to 100)</p>
-                <p><strong>Example 1:</strong> To swing a reel with a 15% swing factor:</p>
-                <p class="code">%%MIDI abctt:swing 15</p>
-                <p><strong>Example 2:</strong> To swing a jig with a 25% swing factor:</p>
-                <p class="code">%%MIDI abctt:swing 25</p>
-                <p><strong>Example 3:</strong></p>
-                <p>To get a typical Scottish snap feel in a Hornpipe with a -50% swing factor resulting in a shortened first beat, lengthened second beat:</p>
-                <p class="code">%%%MIDI abctt:swing -50</p>
-                <p>You can also disable the swing with a MIDI command:</p>
-                <p class="code">%%MIDI abctt:swing 0</p>
-                <hr>
-                <p style="text-align: center;"><strong>The native abcjs %%MIDI swing command is also supported</strong></p>
-                <p>The tool also now supports the native abcjs:</p>
-                <p class="code">%%MIDI swing swing_value</p>
-                <p>swing_value is interpreted as follows:</p>
-                <p>50 (or less) is no swing</p>
-                <p>66 is triplet swing 2:1</p>
-                <p>60 is swing with a ratio of 3:2</p>
-                <p>75 is the maximum swing where the first eighth is played as a dotted eighth and the second as a sixteenth</p>
-                <p>Note: The abcjs native %%MIDI swing solution only works with */4 meters, no swing is added if specifying %%MIDI swing for */8 meters.</p>
+                <p style="text-align: center;"><strong>Offsetting the Swing Injection Timing</strong></p>
+                <p>To offset the swing solution by a specified number of eighth notes, you may include the following private annotation anywhere in the tune ABC:</p>
+                <p class="code">%swing_offset (offset)</p>
+                <p>Where offset is a positive integer.</p>
+                <p>This can be used in some cases to help fix pickup note issues with swing as described below or to achieve other special swing effects.</p>
+                <p>For example, to achieve a "back heavy" swing on jigs with emphasis on the 3 and 6, you can use something like this:</p>
+                <p class="code">%swing -0.5<br/>%swing_offset 1</p>
                 <hr>
                 <p style="text-align: center;"><strong>Special considerations for using swing with pickup notes</strong></p>
-                <p>When working with swing, other than pickup notes in the very first measure before a repeat bar (or other complete bar if there are no repeats) at the start of the tune, you must have complete measures in the rest of the tune.</p>
+                <p>When working with swing, other than pickup notes in the very first measure before a repeat bar (or other complete bar if there are no repeats) at the start of the tune, without a swing offset you must have complete measures in the rest of the tune.</p>
                 <p>A tune with a pickup note constructed like this will cause the tune to not play with proper swing:</p>
                 <p class="code">X: 66<br/>
                     T: Garster's Dream<br/>
@@ -2268,7 +2253,23 @@
                     |: "G"gag gdB | "D7"ABA AGE | "G"gag gdB | "G"ded "D"def |</br>
                 "G"gag gdB | "C"AcB "Am"AGE | "C"G2E "D7"DEF | "G"G3  G2 d:|</p>
                 <p>The single eighth note D pickup partial measure inside the repeat is what confuses the swing algorithm.</p>
-                <p>If you're going to have partial measure pickup notes and repeated sections, then you need to use this form for the tune, moving the D pickup note outside the first repeat and then using a first and second ending on the A part to provide complete measures for the pickup into the B part:</p>
+                <p>Adding a swing offset of one eighth note fixes the swing issue:</p>
+                <p class="code">X: 66<br/>
+                    T: Garster's Dream<br/>
+                    C: Trad<br/>
+                    R: Jig<br/>
+                    O: Shetland<br/>
+                    Q: 3/8=110<br/>
+                    M: 6/8<br/>
+                    L: 1/8<br/>
+                    K: G<br/>
+                    %swing 0.75<br/>
+                    %swing_offset 1<br/>
+                    |: D | G2B BGB | cdc BAG | FGA ABA | AdB AFD |<br/>
+                    G2B BGB | cdc BAG | F2E DEF | G3  G2 :|<br/>
+                    |: "G"gag gdB | "D7"ABA AGE | "G"gag gdB | "G"ded "D"def |</br>
+                "G"gag gdB | "C"AcB "Am"AGE | "C"G2E "D7"DEF | "G"G3  G2 d:|</p>
+                <p>If you're going to have partial measure pickup notes and repeated sections, another possibility is to use this form for the tune, moving the D pickup note outside the first repeat and then using a first and second ending on the A part to provide complete measures for the pickup into the B part:</p>
                 <p class="code">X: 66<br/>
                     T: Garster's Dream<br/>
                     C: Trad<br/>
@@ -2283,9 +2284,9 @@
                     "G"G2B BGB | "C"cdc "G"BAG | "D7"F2E DEF |1 "G"G3  G2D :|2"G"G3  G2d ||<br/>
                     |: "G"gag gdB | "D7"ABA AGE | "G"gag gdB | "G"ded "D"def |<br/>
                 "G"gag gdB | "C"AcB "Am"AGE | "C"G2E "D7"DEF | "G"G3  G2 d:|</p>
-                <p>You generally can have notes before the first repeat (or other complete) bar and they will be properly accounted for in the swing generation solution.</p>
+                <p>You generally can have notes before the first repeat (or other complete) bar and they will be properly accounted for in the swing generation solution if no swing offset is provided.</p>
                 <hr>
-                <p style="text-align: center;"><strong>Special considerations for using swing with pickup notes and two-bar click track injection</strong></p>
+                <p style="text-align: center;"><strong>Using swing with pickup notes and two-bar click track injection</strong></p>
                 <p>If you're adding a two-bar click track (or silence) from the batch .mp3 export (or manually from <strong>Inject Repeats + Intros</strong> feature) and you are also using swing, then you have to make sure that you pad out any pickup notes so that they are a multiple of three eighth notes for */8 meters, or multiple of two notes for */4 meters.</p>
                 <p>This is because the click track injector actually adds additional measures of ABC before the tune to create the two-bar click track and if not padded, the pickup, like the above example, ends up being a partial measure in the middle of the tune, breaking the swing algorithm.</p>
                 <p>For this example, for two-bar click injection, the one note D pickup has been padded out with a preceeding z2 rest to a full three eighth notes:</p>
@@ -2303,13 +2304,24 @@
                     "G"G2B BGB | "C"cdc "G"BAG | "D7"F2E DEF |1 "G"G3  G2D :|2"G"G3  G2d ||<br/>
                     |: "G"gag gdB | "D7"ABA AGE | "G"gag gdB | "G"ded "D"def |<br/>
                 "G"gag gdB | "C"AcB "Am"AGE | "C"G2E "D7"DEF | "G"G3  G2 d:|</p>
+                <p>If still are having issues with swing after click track injection, experiment with using the %swing_offset value.</p>
+                <hr>
+                <p style="text-align: center;"><strong>The native abcjs %%MIDI swing command is also supported</strong></p>
+                <p>The tool also now supports the native abcjs:</p>
+                <p class="code">%%MIDI swing swing_value</p>
+                <p>swing_value is interpreted as follows:</p>
+                <p>50 (or less) is no swing</p>
+                <p>66 is triplet swing 2:1</p>
+                <p>60 is swing with a ratio of 3:2</p>
+                <p>75 is the maximum swing where the first eighth is played as a dotted eighth and the second as a sixteenth</p>
+                <p>Note: The abcjs native %%MIDI swing solution only works with */4 meters, no swing is added if specifying %%MIDI swing for */8 meters.</p>
                 <hr>
                 <p style="text-align: center;"><strong>Only one swing value is supported for a tune</strong></p>
                 <p>Since swing is applied after all the tune notes are generated, there can only be one swing value for a tune.</p>
-                <p>The swing value used is set by the last %swing, %%MIDI abctt:swing, or %%MIDI swing command found in the ABC.</p>
+                <p>The swing value used is set by the last %swing or %%MIDI swing command found in the ABC.</p>
                 <hr>
-                <p style="text-align: center;"><strong>%%MIDI swing takes precedence over %swing or %%MIDI abctt:swing</strong></p>
-                <p>If both the native abcjs %%MIDI swing and the tool-specific %swing or %%MIDI abctt:swing commands are found in the same tune, the abcjs native %%MIDI swing command will take precedence.</p>
+                <p style="text-align: center;"><strong>%%MIDI swing takes precedence over %swing</strong></p>
+                <p>If both the native abcjs %%MIDI swing and the tool-specific %swing commands are found in the same tune, the abcjs native %%MIDI swing command will take precedence.</p>
                 <hr class="hidden-print" id="grace_timing">
                 <h1 class="page_break_always h1wide">Setting Grace Note Duration for Ornamentation<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/sdFeN33sQdo" title="Grace Note Duration Control" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
@@ -3450,6 +3462,7 @@
                     %add_link_to_thesession<br/>
                     %add_playback_link 0 0 0 fluid<br/>
                     %swing 0.25<br/>
+                    %swing_offset 1<br/>
                     %noswing<br/>
                     %bodhran_tuning A<br/>
                     %bodhran_pitch A<br/>
@@ -4099,16 +4112,15 @@
                 <h1 class="page_break_always">Swing Explorer<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <p>Brings up a player where you can experiment with playing the currently selected tune using different swing factors and then optionally inject them into the tune:</p>
                 <div class="image_holder_p">
-                    <img class="image" loading="lazy" src="img/swing_explorer_6.jpg"/>
+                    <img class="image" loading="lazy" src="img/swing_explorer_7.jpg"/>
                 </div>
                 <p>This makes it quick and easy to find the right swing settings for any tune:</p>
-                <p><strong>Note:</strong> Since this video was made, you no longer have to specify a swing offset, the tool now automatically offsets the swing for you if required.</p>
                 <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/MyeSi46LsY8" title="Swing Explorer" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
                 <p>The player controls works the same way as the standard player.</p>
-                <p>To test playing the tune with a new swing factor, enter a swing factor (Range is -0.9 to 0.9) and then click <strong>Reload Tune with Changed Swing Setting</strong>.</p>
-                <p>The tune will be reloaded into the player with the new swing setting applied.</p>
-                <p>Click the play button to play the tune to check the new swing setting.</p>
-                <p>If you are happy with your new swing setting and want to apply them to the tune, click <strong>Inject Swing into the ABC</strong> to inject your new swing value into the tune's ABC, replacing any previous swing factor value.</p>
+                <p>To test playing the tune with a new swing factor, enter a swing factor (Range is -0.9 to 0.9) and/or swing offset in eighth notes (Range is 0 to 8) and then click <strong>Reload Tune with Changed Swing Settings</strong>.</p>
+                <p>The tune will be reloaded into the player with the new swing settings applied.</p>
+                <p>Click the play button to play the tune to check the new swing settings.</p>
+                <p>If you are happy with your new swing settings and want to apply them to the tune, click <strong>Inject Swing into the ABC</strong> to inject your new swing value and swing offset into the tune's ABC, replacing any previous swing factor and swing offset values.</p>
                 <p>To exit the Swing Explorer, click <strong>Close</strong>.</p>
                 <p>For more details on swing factor, see this section:</p>
                 <p style="text-align: center;"><a style="text-decoration:none;" href="#adding_swing">Adding Playback Swing to Tunes</a></p>

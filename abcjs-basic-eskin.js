@@ -17,6 +17,7 @@ var gRhythmPatternOverrides = {};
 // MAE 23 Oct 2023 - For adding swing
 var gAddSwing = false;
 var gSwingFactor = 0.25;
+var gSwingOffset = 0;
 
 // MAE 20 Jun 2024 - For ABCJS swing
 var gAddABCJSSwing = false;
@@ -18444,6 +18445,9 @@ function CreateSynth(theABC) {
         // No need to manually inject it
         var theSwingOffset = self.pickupLength/0.125;
         theSwingOffset = Math.floor(theSwingOffset);
+
+        // MAE 12 Mar 2025 - Reinstated swing offset
+        theSwingOffset += gSwingOffset;
 
         //console.log("theSwingOffset = "+theSwingOffset);
 
