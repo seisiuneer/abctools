@@ -2853,6 +2853,11 @@ function generateAndSaveWebsiteLightbox() {
     theOutput +="        color: "+gWebsiteHyperlinkColor+";\n";
     theOutput +="    }\n";
     theOutput +="\n";
+    
+    theOutput +="    * {\n";
+    theOutput +="      touch-action: manipulation;\n";
+    theOutput +="    }\n";
+    theOutput +="\n";
 
     theOutput +="</style>\n";
     theOutput +="\n";
