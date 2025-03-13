@@ -900,6 +900,11 @@ function generateAndSaveWebsiteFull() {
     theOutput +="        background-color: palegreen;\n";
     theOutput +="    }\n";
     theOutput +="\n";
+    
+    theOutput +="    * {\n";
+    theOutput +="      touch-action: manipulation;\n";
+    theOutput +="    }\n";
+    theOutput +="\n";
 
     theOutput +="</style>\n";
     theOutput +="\n";
