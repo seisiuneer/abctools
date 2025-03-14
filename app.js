@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2376_031225_1830";
+var gVersionNumber="2377_031425_1000";
 
 var gMIDIInitStillWaiting = false;
 
@@ -1145,13 +1145,108 @@ function ToggleRawMode(){
 
 	}
 
-
-
 }
 
 //
-// Tranpose the ABC up one semitone
+// Transpose the ABC 
 //
+
+//
+// Transpose a single tune handling alternate chords properly
+//
+function transposeSingleTune(theTune, transposeAmount, params){
+
+	var lines = theTune.split('\n'); // Split input into lines
+
+    var quotedSubstrings = lines.map(line => {
+        // Extract substrings wrapped in double quotes
+        const matches = line.match(/"([^"]*)"/g) || [];
+        return matches.map(str => str.slice(1, -1)); // Remove the double quotes from each match
+    });
+
+    const hasParentheses = quotedSubstrings.map(substrings => {
+        return substrings.map(substring => {
+            return substring.startsWith('(') && substring.endsWith(')'); // Flag if the substring had parentheses
+        });
+    });
+
+    var hasAlternateChords = hasParentheses.some(subArray => subArray.includes(true));
+
+    if (hasAlternateChords){
+		
+		//console.log("Alternate chords detected");
+
+		//console.log(theTune);
+		
+	    const modifiedQuotedSubstrings = quotedSubstrings.map(substrings => {
+	        return substrings.map(substring => {
+	            if (substring.startsWith('(') && substring.endsWith(')')) {
+	                return substring.replace(/\(|\)/g, ''); // Remove parentheses
+	            }
+	            return substring;
+	        });
+	    });
+
+	    const modifiedStringBeforeFurtherChanges = lines.map((line, lineIndex) => {
+	        let resultLine = line;
+	        modifiedQuotedSubstrings[lineIndex].forEach((modifiedSubstring, index) => {
+	            // Replace each occurrence in the order they appear, preserving quotes
+	            resultLine = resultLine.replace(quotedSubstrings[lineIndex][index], modifiedSubstring);
+	        });
+	        return resultLine;
+	    }).join('\n');
+
+		//console.log("Transposing tune before "+i); // MAE FOOFOO 20 Feb 2025
+
+		var visualObj = ABCJS.renderAbc("*", modifiedStringBeforeFurtherChanges, params);
+
+		//console.log("Transposing tune after "+i); // MAE FOOFOO 20 Feb 2025
+
+	    var furtherModifiedString = ABCJS.strTranspose(modifiedStringBeforeFurtherChanges, visualObj, transposeAmount);
+	    
+	    lines = furtherModifiedString.split('\n'); // Split input into lines
+
+	    quotedSubstrings = lines.map(line => {
+	        // Extract substrings wrapped in double quotes
+	        const matches = line.match(/"([^"]*)"/g) || [];
+	        return matches.map(str => str.slice(1, -1)); // Remove the double quotes from each match
+	    });
+
+	    const finalLines = furtherModifiedString.split('\n').map((line, lineIndex) => {
+	        const parts = line.split(/("[^"]*")/); // Split line by quoted substrings, keeping quotes
+	        let quotedIndex = 0;
+	        return parts.map(part => {
+	            if (part.startsWith('"') && part.endsWith('"')) {
+	                const modifiedSubstring = quotedSubstrings[lineIndex][quotedIndex];
+	                // If the original substring had parentheses, add them back
+	                if (hasParentheses[lineIndex][quotedIndex]) {
+	                    quotedIndex++;
+	                    return `"(${modifiedSubstring})"`; // Add parentheses around modified substring
+	                }
+	                quotedIndex++;
+	                return `"${modifiedSubstring}"`; // Keep the modified substring as is
+	            }
+	            return part; // Non-quoted part of the line, return unchanged
+	        }).join('');
+	    });
+
+		return finalLines.join('\n'); // Return the final modified text
+
+	}
+	else{
+
+		//console.log("No alternate chords detected");
+
+		//console.log("Transposing tune before "+i); // MAE FOOFOO 20 Feb 2025
+
+		var visualObj = ABCJS.renderAbc("*", theTune, params);
+
+		//console.log("Transposing tune after "+i); // MAE FOOFOO 20 Feb 2025
+
+	    return ABCJS.strTranspose(theTune, visualObj, transposeAmount);
+
+	}
+}
 
 //
 // Find the tune range for the current select
@@ -1311,14 +1406,10 @@ function Transpose(transposeAmount) {
 				// Wrap this in a try-catch since sometimes the transposer fails catastrophically
 				try {
 
-					//console.log("Transposing tune before "+i); // MAE FOOFOO 20 Feb 2025
+					var res = transposeSingleTune(theTunes[i],transposeAmount,params);
 
-					visualObj = ABCJS.renderAbc("*", theTunes[i], params);
+				    output += res;
 
-					//console.log("Transposing tune after "+i); // MAE FOOFOO 20 Feb 2025
-
-					output += ABCJS.strTranspose(theTunes[i], visualObj, transposeAmount);
-					
 				}
 				catch (error){
 					
@@ -1338,6 +1429,7 @@ function Transpose(transposeAmount) {
 			else{
 
 				output += theTunes[i];
+
 			}
 
 		}
@@ -1740,11 +1832,12 @@ function DoTransposeToKey(targetKey,transposeAll) {
 
 							theTitle = getTuneTitle(theTune);
 
-							visualObj = ABCJS.renderAbc("*", theTune, params);
+							var res = transposeSingleTune(theTune,transposeAmount,params);
 
-							output += ABCJS.strTranspose(theTune, visualObj, transposeAmount);
+			    			output += res;
+
 							output += "\n\n";
-
+			    				
 						}
 						else{
 
@@ -1768,9 +1861,10 @@ function DoTransposeToKey(targetKey,transposeAll) {
 						
 						theTitle = getTuneTitle(theTune);
 
-						visualObj = ABCJS.renderAbc("*", theTune, params);
+						var res = transposeSingleTune(theTune,transposeAmount,params);
 
-						output += ABCJS.strTranspose(theTune, visualObj, transposeAmount);
+		    			output += res;
+		    			
 						output += "\n\n";
 
 					}
@@ -1781,10 +1875,7 @@ function DoTransposeToKey(targetKey,transposeAll) {
 						output += "\n\n";
 
 					}
-
-
 				}
-
 			}
 			catch (error){
 

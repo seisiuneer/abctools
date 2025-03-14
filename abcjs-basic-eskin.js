@@ -27501,11 +27501,18 @@ function translateChord(chordString, jazzchords, germanAlphabet) {
   var lines = chordString.split("\n");
   for (var i = 0; i < lines.length; i++) {
     var chord = lines[i];
+
     // If the chord isn't in a recognizable format then just skip it.
     var reg = chord.match(/^([ABCDEFG][♯♭]?)?([^\/]+)?(\/([ABCDEFG][#b♯♭]?))?/);
     if (!reg) {
       continue;
     }
+
+    // MAE 14 Mar 2025 - For display of alternate chords
+    if (chord.indexOf("(") != -1){
+      return lines[i];
+    }
+
     var baseChord = reg[1] || "";
     var modifier = reg[2] || "";
     var bassNote = reg[4] || "";
@@ -27519,6 +27526,7 @@ function translateChord(chordString, jazzchords, germanAlphabet) {
     var bass = bassNote ? "/" + bassNote : "";
     lines[i] = [baseChord, modifier, bass].join(marker);
   }
+
   return lines.join("\n");
 }
 module.exports = translateChord;
