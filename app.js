@@ -25635,16 +25635,12 @@ function DoInjectTablature_Anglo(){
 
 						var theTitle = getTuneTitle(theTunes[i]);
 
-						var visualObj = null;
-
 						// Wrap this in a try-catch since sometimes the transposer fails catastrophically
 						try {
 
 							//console.log("Transposing tune index: "+i+" title: "+theTitle+" amount: "+concertina_transpose+" semitones");
 
-							visualObj = ABCJS.renderAbc("*", thisTune, params);
-
-							thisTune = ABCJS.strTranspose(thisTune, visualObj, concertina_transpose);
+							thisTune = transposeSingleTune(thisTune,concertina_transpose,params);
 
 							thisTune = InjectStringBelowTuneHeader(thisTune,'%\n% '+tuning_string+' Anglo Concertina transpose\n%\n%abcjs_render_params {"visualTranspose":' + visual_transpose+'}\n%%MIDI transpose 0\n%');
 
