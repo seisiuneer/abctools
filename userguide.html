@@ -1475,20 +1475,20 @@
                 <hr>
                 <p>To transpose tune(s) to a specific root key rather than in steps, see the section on <a href="#advanced_transposetokey">Transpose to Key</a> below.</p>
                 <hr>
-                <p style="text-align: center;"><strong>Limits on Transposition of "Alternate" Chords</strong>                  
-                <p>There are some broken cases in the tool for the transposition of "alternate" chords, those enclosed in parenthesis.</p>                
-                <p>Specifically it can transpose the following forms of alternate chords:
+                <p style="text-align: center;"><strong>Limits on Transposition of "Alternate" Chords</strong></p>
+                <p>There are some broken cases in the tool for the transposition of "alternate" chords, those enclosed in parenthesis.</p>
+                <p>Specifically it can transpose the following forms of alternate chords:</p>
                 <p>"(A)"</p>
                 <p>"(G7)"</p>
                 <p>"(D/G)"</p>
-                <p>but it cannot properly transpose the "alternate" portion within the parenthesis of the following "mixed" form of alternate chords that have both the normal chord and the alternate chord in a single pair of double-quotes:</p>              
+                <p>but it cannot properly transpose the "alternate" portion within the parenthesis of the following "mixed" form of alternate chords that have both the normal chord and the alternate chord in a single pair of double-quotes:</p>
                 <p>"G(D)"</p>
                 <p>"G(Dm7)"</p>
                 <p>"G(Dm7/C)"</p>
                 <p>These will require some simple manual intervention as shown in this video:</p>
-                <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/8h17TUR2l8U" title="Transposing Alternate Chords" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>                  
+                <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/8h17TUR2l8U" title="Transposing Alternate Chords" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
                 <p>Here's the procedure described in the video:</p>
-                <p>For a chord that has both a standard chord and an alternative chord inside of one pair of double quotes in the form:
+                <p>For a chord that has both a standard chord and an alternative chord inside of one pair of double quotes in the form:</p>
                 <p class="code"> "G(Dm7)"</p>
                 <p>Split it into two chords separated by an invisible rest using an x:</p>
                 <p class="code">"G"x"(Dm7)"</p>
@@ -2274,7 +2274,7 @@
                     |: D|"G"G2B BGB|"C"cdc "G"BAG|"D7"FGA ABA|"D7"AdB AFD|<br/>
                     "G"G2B BGB|"C"cdc "G"BAG|"D7"F2E DEF|"G"G3 G2 :|<br/>
                     |: d|"G"gag gdB|"D7"ABA AGE|"G"gag gdB|"G"ded "D"def|<br/>
-                    "G"gag gdB|"C"AcB "Am"AGE|"C"G2E "D7"DEF|"G"G3 G2 :|</p>
+                "G"gag gdB|"C"AcB "Am"AGE|"C"G2E "D7"DEF|"G"G3 G2 :|</p>
                 <p>The single eighth note D pickup partial measure inside the repeat is what confuses the swing algorithm.</p>
                 <p>Adding a swing offset of one eighth note fixes the swing issue:</p>
                 <p class="code">X: 1<br/>
@@ -2291,7 +2291,7 @@
                     |: D|"G"G2B BGB|"C"cdc "G"BAG|"D7"FGA ABA|"D7"AdB AFD|<br/>
                     "G"G2B BGB|"C"cdc "G"BAG|"D7"F2E DEF|"G"G3 G2 :|<br/>
                     |: d|"G"gag gdB|"D7"ABA AGE|"G"gag gdB|"G"ded "D"def|<br/>
-                    "G"gag gdB|"C"AcB "Am"AGE|"C"G2E "D7"DEF|"G"G3 G2 :|</p>
+                "G"gag gdB|"C"AcB "Am"AGE|"C"G2E "D7"DEF|"G"G3 G2 :|</p>
                 <p>If you're going to have partial measure pickup notes and repeated sections, another possibility is to use this form for the tune, moving the D pickup note outside the first repeat and then using a first and second ending on the A part to provide complete measures for the pickup into the B part:</p>
                 <p class="code">X: 1<br/>
                     T: Garster's Dream<br/>
@@ -2306,7 +2306,7 @@
                     D|: "G"G2B BGB|"C"cdc "G"BAG|"D7"FGA ABA|"D7"AdB AFD |<br/>
                     "G"G2B BGB|"C"cdc "G"BAG|"D7"F2E DEF |1 "G"G3  G2D :|2"G"G3  G2d ||<br/>
                     |: "G"gag gdB|"D7"ABA AGE|"G"gag gdB|"G"ded "D"def |<br/>
-                    "G"gag gdB|"C"AcB "Am"AGE|"C"G2E "D7"DEF | "G"G3  G2 d :|</p>
+                "G"gag gdB|"C"AcB "Am"AGE|"C"G2E "D7"DEF | "G"G3  G2 d :|</p>
                 <p>You generally can have notes before the first repeat (or other complete) bar and they will be properly accounted for in the swing generation solution if no swing offset is provided.</p>
                 <hr>
                 <p style="text-align: center;"><strong>Using swing with pickup notes and two-bar click track injection</strong></p>
@@ -2326,7 +2326,7 @@
                     z2D|: "G"G2B BGB|"C"cdc "G"BAG|"D7"FGA ABA|"D7"AdB AFD |<br/>
                     "G"G2B BGB|"C"cdc "G"BAG|"D7"F2E DEF |1 "G"G3 G2D :|2"G"G3  G2d ||<br/>
                     |: "G"gag gdB|"D7"ABA AGE|"G"gag gdB|"G"ded "D"def |<br/>
-                    "G"gag gdB|"C"AcB "Am"AGE|"C"G2E "D7"DEF|"G"G3 G2 d :|</p>
+                "G"gag gdB|"C"AcB "Am"AGE|"C"G2E "D7"DEF|"G"G3 G2 d :|</p>
                 <p>If still are having issues with swing after click track injection, experiment with using the %swing_offset value.</p>
                 <hr>
                 <p style="text-align: center;"><strong>The native abcjs %%MIDI swing command is also supported</strong></p>
@@ -4365,18 +4365,18 @@
                 <p>For bagpipe sound injection with chanter range folding, having the tunes in a lower octave will often favor lower notes in the folding results.</p>
                 <p>If the <strong>Transpose to Key</strong> results seem too high or two low, before doing the bagpipe sound injection (it has to be done before, not after) you can transpose individual tunes down or up an octave by first clicking in the ABC for the tune and then holding down the Alt key while clicking the <strong>Transpose Down</strong> or <strong>Transpose Up</strong> buttons on the toolbar below the editor.</p>
                 <hr>
-                <p style="text-align: center;"><strong>Limits on Transposition of "Alternate" Chords</strong>
-                <p>There are some broken cases in the tool for the transposition of "alternate" chords, those enclosed in parenthesis.</p>                
-                <p>Specifically it can transpose the following forms of alternate chords:
+                <p style="text-align: center;"><strong>Limits on Transposition of "Alternate" Chords</strong></p>
+                <p>There are some broken cases in the tool for the transposition of "alternate" chords, those enclosed in parenthesis.</p>
+                <p>Specifically it can transpose the following forms of alternate chords:</p>
                 <p>"(A)"</p>
                 <p>"(G7)"</p>
                 <p>"(D/G)"</p>
-                <p>but it cannot properly transpose the "alternate" portion within the parenthesis of the following "mixed" form of alternate chords that have both the normal chord and the alternate chord in a single pair of double-quotes:</p>              
+                <p>but it cannot properly transpose the "alternate" portion within the parenthesis of the following "mixed" form of alternate chords that have both the normal chord and the alternate chord in a single pair of double-quotes:</p>
                 <p>"G(D)"</p>
                 <p>"G(Dm7)"</p>
                 <p>"G(Dm7/C)"</p>
                 <p>These will require some simple manual intervention as shown in this video:</p>
-                <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/8h17TUR2l8U" title="Transposing Alternate Chords" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>    
+                <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/8h17TUR2l8U" title="Transposing Alternate Chords" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
                 <p>Here's the procedure described in the video:</p>
                 <p>For a chord that has both a standard chord and an alternative chord inside of one pair of double quotes in the form:</p>
                 <p class="code"> "G(Dm7)"</p>
