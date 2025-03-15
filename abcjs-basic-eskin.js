@@ -14358,8 +14358,8 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
 
     // MAE FOOFOO 15 Mar 2025
     //console.log("chord name: "+name+" inversion: "+inversion);
-
-   if (gPlayAlternateChords){
+ 
+    if (gPlayAlternateChords){
 
       if (name.indexOf("(") != -1){
 
@@ -14420,6 +14420,15 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
     //if (name.length === 1) chick = chordNotes(bass, '', 0).notes;
 
     var remaining = name.substring(1);
+
+    //console.log("before:" + remaining);
+
+    // Strip away any alternate chord suffix
+    remaining = remaining.replace(/\(.*$/, '');
+    remaining = remaining.trim();
+
+    //console.log("after:" + remaining);
+
     var acc = remaining.substring(0, 1);
     if (acc === 'b' || acc === '♭') {
       unshiftedBass--;
@@ -16586,6 +16595,11 @@ ChordTrack.prototype.interpretChord = function (name) {
   //   chick = this.chordNotes(unshiftedBass, '', inversion).notes;
   // }
   var remaining = name.substring(1);
+
+  // Strip away any alternate chord suffix
+  remaining = remaining.replace(/\(.*$/, '');
+  remaining = remaining.trim();
+
   var acc = remaining.substring(0, 1);
   if (acc === 'b' || acc === '♭') {
     unshiftedBass--;
