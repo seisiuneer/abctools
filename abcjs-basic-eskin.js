@@ -14356,7 +14356,26 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
     name = chordInfo.name;
     var inversion = chordInfo.inversion;
 
+    // MAE FOOFOO 15 Mar 2025
     //console.log("chord name: "+name+" inversion: "+inversion);
+
+   if (gPlayAlternateChords){
+
+      if (name.indexOf("(") != -1){
+
+        //console.log("chord name before: "+name+" inversion: "+inversion);
+
+        const match = name.match(/\(([^)]+)\)/);
+
+        if (match){
+          name = match[1];
+        }
+
+        //console.log("chord name after: "+name+" inversion: "+inversion);
+
+      }
+
+    }
 
     var root = name.substring(0, 1);
     if (root === '(') {
@@ -16505,7 +16524,26 @@ ChordTrack.prototype.interpretChord = function (name) {
   name = chordInfo.name;
   var inversion = chordInfo.inversion;
 
+  // MAE FOOFOO 15 Mar 2025
   //console.log("chord name: "+name+" inversion: "+inversion);
+
+  if (gPlayAlternateChords){
+
+    if (name.indexOf("(") != -1){
+
+      //console.log("chord name before: "+name+" inversion: "+inversion);
+
+      const match = name.match(/\(([^)]+)\)/);
+
+      if (match){
+        name = match[1];
+      }
+
+      //console.log("chord name after: "+name+" inversion: "+inversion);
+
+    }
+
+  }
 
   var root = name.substring(0, 1);
   if (root === '(') {
