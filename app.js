@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2378_031425_1900";
+var gVersionNumber="2379_031525_0500";
 
 var gMIDIInitStillWaiting = false;
 
@@ -1156,6 +1156,9 @@ function ToggleRawMode(){
 //
 function transposeSingleTune(theTune, transposeAmount, params){
 
+	// Find and replace any mixed alternate chords with "x" separators
+	theTune = theTune.replace(/"([^"]*)\(\s*([^"]*)\)"/g, '"$1"x"($2)"');
+
 	var lines = theTune.split('\n'); // Split input into lines
 
     var quotedSubstrings = lines.map(line => {
@@ -1230,7 +1233,12 @@ function transposeSingleTune(theTune, transposeAmount, params){
 	        }).join('');
 	    });
 
-		return finalLines.join('\n'); // Return the final modified text
+		var ret = finalLines.join('\n'); // Return the final modified text
+
+		// Strip any injected mixed alternate chord strings
+		ret = ret.replaceAll('"x"',"");
+
+		return ret;
 
 	}
 	else{
