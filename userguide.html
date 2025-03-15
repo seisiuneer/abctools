@@ -345,6 +345,7 @@
             <a style="text-decoration:none;" href="#voice_hiding">Voice Combining and Hiding</a>
             <a style="text-decoration:none;" href="#highlighting_control">Controlling Note Highlighting in the Player</a>
             <a style="text-decoration:none;" href="#flattening_parts">Flattening Parts for Playback</a>
+            <a style="text-decoration:none;" href="#play_alternate_chords">Playing Alternate Chords</a>
             
             <h3>PDF Tunebook Generation</h3>
             <a style="text-decoration:none;" href="#export_pdf_tunebook">Exporting a PDF Tunebook</a>
@@ -487,7 +488,6 @@
             <a style="text-decoration:none;" href="#whistletabkey">Changing the Tin Whistle Tablature Key and Octave</a>
             <a style="text-decoration:none;" href="#recordertabkey">Changing the Recorder Tablature Key and Octave</a>
             <a style="text-decoration:none;" href="#detect_hyperlinks">Making Hyperlinks in ABC Tag Text Clickable</a>
-            <a style="text-decoration:none;" href="#play_alternate_chords">Playing Alternate Chords</a>
             
             <h3>ABC Tricks, Tips, and Limitations</h3>
             <a style="text-decoration:none;" href="#tabtranspose">Transposing Notation Independent of Tablature</a>
@@ -684,7 +684,7 @@
                         <p class="toc"><a style="text-decoration:none;" href="#voice_hiding">Voice Combining and Hiding</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#highlighting_control">Controlling Note Highlighting in the Player</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#flattening_parts">Flattening Parts for Playback</a></p>
-                        
+                        <p class="toc"><a style="text-decoration:none;" href="#play_alternate_chords">Playing Alternate Chords</a></p>                        
                     </div>
                     
                     <button class="accordion" title="Click to expand/collapse this section">PDF Tunebook Generation</button>
@@ -868,7 +868,6 @@
                         <p class="toc"><a style="text-decoration:none;" href="#whistletabkey">Changing the Tin Whistle Tablature Key and Octave</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#recordertabkey">Changing the Recorder Tablature Key and Octave</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#detect_hyperlinks">Making Hyperlinks in ABC Tag Text Clickable</a></p>
-                        <p class="toc"><a style="text-decoration:none;" href="#play_alternate_chords">Playing Alternate Chords</a></p>
                     </div>
                     
                     <button class="accordion" title="Click to expand/collapse this section">ABC Tricks, Tips, and Limitations</button>
@@ -2721,6 +2720,14 @@
                 <p>Without the <strong>%play_flatten_parts</strong> annotation, a tune will just play straight through from start to finish as if no part or part order were specified.</p>
                 <p>Here is a nice example: "Ca La Breaza", a four part tune that plays with a ABACDBACDBA part order:</p>
                 <p style="text-align: center"><a href="https://tinyurl.com/dfc46f8x">Ca La Breaza - ABACDBACDBA Part Order</a></p>
+                <hr class="hidden-print" id="play_alternate_chords">
+                <h1 class="page_break_always h1wide">Playing Alternate Chords<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+                <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/rqL8xsLRbsk" title="Playing Alternate Chords" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>       
+                <p>By default, the tool will not play "alternate" chords that are enclosed in parenthesis, for example:</p>
+                <p class="code">"(G)"<br/>"G(Dm7)"</p>
+                <p>To make them playable you can include the following annotation anywhere in the ABC for a tune:</p>
+                <p class="code">%play_alternate_chords</p>
+                <p>If this annotation is placed in the ABC file header, it will apply to all of the tunes.</p>
                 <hr class="hidden-print" id="export_pdf_tunebook">
                 <h1 class="page_break_always">Exporting a PDF Tunebook<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/PqgjtQXpRYA" title="Export PDF Tunebook Dialog Walkthrough" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
@@ -5154,14 +5161,6 @@
                 <p>To disable http:// or https:// hyperlink detection for a specific tune when using %enable_hyperlinks in the ABC file header to apply to all tunes, you can include the following annotation anywhere in the ABC for a tune:</p>
                 <p class="code">% Disable hyperlink detection for this tune<br>%disable_hyperlinks</p>
                 <p>If both %enable_hyperlinks and %disable_hyperlinks are present in the same tune, %disable_hyperlinks takes precedence.</p>
-                <hr class="hidden-print" id="play_alternate_chords">
-                <h1 class="page_break_always h1wide">Playing Alternate Chords<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-                <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/rqL8xsLRbsk" title="Playing Alternate Chords" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>       
-                <p>By default, the tool will not play "alternate" chords that are enclosed in parenthesis, for example:</p>
-                <p class="code">"(G)"<br/>"G(Dm7)"</p>
-                <p>To make them playable you can include the following annotation anywhere in the ABC for a tune:</p>
-                <p class="code">%play_alternate_chords</p>
-                <p>If this annotation is placed in the ABC file header, it will apply to all of the tunes.</p>
                 <hr class="hidden-print" id="tabtranspose">
                 <h1 class="page_break_always h1wide">Transposing Notation Independent of Tablature<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <p>For some tablatures like CGDAE where instruments maybe in either standard pitch or one octave lower, if you transpose the notes down an octave to get the tab on the lower strings, but want the notation displayed an octave up, you can add the following voice annotation to the ABC:</p>
