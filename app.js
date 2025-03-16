@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2381_031525_1100";
+var gVersionNumber="2382_031625_1200";
 
 var gMIDIInitStillWaiting = false;
 
@@ -38069,6 +38069,14 @@ function GetInitialConfigurationSettings(){
 		gOverridePlayMIDIParams = false;
 	}
 
+	val = localStorage.PlayAlternateChordsOverride;
+	if (val){
+		gPlayAlternateChordsOverride = (val == "true");
+	}
+	else{
+		gPlayAlternateChordsOverride = false;
+	}
+
 	// Box and concertina tab global state
 
 	val = localStorage.InjectTab_FontFamily;
@@ -39092,9 +39100,11 @@ function SaveConfigurationSettings(){
 		localStorage.TheBassVolume = gTheBassVolume;
 		localStorage.TheChordVolume = gTheChordVolume;
 		localStorage.OverridePlayMIDIParams = gOverridePlayMIDIParams;
-		localStorage.InjectTab_StripChords = gInjectTab_StripChords;
+		localStorage.PlayAlternateChordsOverride = gPlayAlternateChordsOverride;
 
-		// Box and Concertina tab injection parameters
+		// Tab injection parameters
+		
+		localStorage.InjectTab_StripChords = gInjectTab_StripChords;
 		localStorage.InjectTab_FontFamily = gInjectTab_FontFamily;
 		localStorage.InjectTab_TabFontSize = gInjectTab_TabFontSize;
 		localStorage.InjectTab_StaffSep = gInjectTab_StaffSep;
@@ -41830,7 +41840,8 @@ function ConfigurePlayerSettings(player_callback) {
 		configure_bass_volume: theBassVolume,
 		configure_chord_volume: theChordVolume,
 		configure_override_play_midi_params: bOverridePlayMIDIParams,
-		configure_player_scaling: gPlayerScaling
+		configure_player_scaling: gPlayerScaling,
+		configure_always_play_alternate_chords:gPlayAlternateChordsOverride
 	};
 
  	const sound_font_options = [
@@ -41854,6 +41865,7 @@ function ConfigurePlayerSettings(player_callback) {
 		{name: "Default Chords MIDI volume (0-127):", id: "configure_chord_volume", type:"number", cssClass:"configure_settings_form_text_fs"},
 		{html: '<p class="configure_settings_form_text_fs">Check the following box if you want the above values to override any instruments or volumes already specified in a tune when playing.</p>'},
 		{name: "            Override all MIDI programs and volumes in the ABC with the defaults when playing tunes", id: "configure_override_play_midi_params", type:"checkbox", cssClass:"configure_settings_form_text_checkbox_fs"},
+		{name: "            Always play alternate chords wrapped in parenthesis (examples:  \"(Gm7)\"  \"G(Dm7)\")", id: "configure_always_play_alternate_chords", type:"checkbox", cssClass:"configure_settings_form_text_checkbox_fs"}
 	];
 	
 	if (player_callback){
@@ -42011,6 +42023,8 @@ function ConfigurePlayerSettings(player_callback) {
 			}
 
 			gOverridePlayMIDIParams = args.result.configure_override_play_midi_params;
+
+			gPlayAlternateChordsOverride = args.result.configure_always_play_alternate_chords;
 
 			// Update local storage
 			SaveConfigurationSettings();

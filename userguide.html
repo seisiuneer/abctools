@@ -1536,13 +1536,19 @@
                 <p>Click <strong>Settings</strong> to bring up a dialog where you can select your default abcjs soundfont, instruments, and instrument volumes.</p>
                 <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/_f2_RAcrVhk" title="Player Instrument Settings" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
                 <div class="image_holder_p">
-                    <img class="image" loading="lazy" src="img/abc_transcription_tool_settings_fs_2.jpg"/>
+                    <img class="image" loading="lazy" src="img/player_instrument_settings_1.jpg"/>
                 </div>
                 <p>The default abcjs soundfont, MIDI instruments, and MIDI volumes are used when a tune doesn't already have those values present in the ABC.</p>
-                <p>If you want to force the player to override any abcjs soundfont, MIDI instruments, or MIDI volumes present in the ABC for tunes and always play tunes with the values entered in the <strong>Player Settings</strong> dialog, check the box labeled:</p>
+                <hr>
                 <p><strong>Override all MIDI programs and volumes in the ABC with the defaults when playing tunes</strong></p>
+                <p>If you want to force the player to override any abcjs soundfont, MIDI instruments, or MIDI volumes present in the ABC for tunes and always play tunes with the values entered in the <strong>Player Settings</strong> dialog, check this box.</p>
                 <p>If you do this, the tune will be reloaded and will play with the new settings.</p>
                 <p>If you want to no longer override the abcjs soundfont, MIDI instrument, and MIDI volume values already in the ABC for tunes, open this dialog and uncheck the box.</p>
+                <hr>
+                <p><strong>Always play alternate chords wrapped in parenthesis (examples: "(Gm7)" "G(Dm7)")</strong></p>
+                <p>Check this box if you want the player to play any alternate chords wrapped in parenthesis found in the ABC.</p>
+                <p>If both a normal and alternate chord are wrapped in one set of double quotes, the alternate chord will be played if this box is checked.</p>
+                <hr>
                 <p>The <strong>Player Settings</strong> dialog is also available from the main <strong>Settings</strong> dialog.</p>
                 <p>See <a href="#default_player_settings">Select Default Player Instruments and Volumes</a> below for full details on the values in this dialog.</p>
                 <hr>
@@ -2728,6 +2734,7 @@
                 <p>To make them playable you can include the following annotation anywhere in the ABC for a tune:</p>
                 <p class="code">%play_alternate_chords</p>
                 <p>If this annotation is placed in the ABC file header, it will apply to all of the tunes.</p>
+                <p>If you always want to play the alternate chords, check the <strong>Always play alternate chords wrapped in parenthesis (examples: "(Gm7)" "G(Dm7)")</strong> checkbox in the <a href="#default_player_settings">Select Default Player Instruments and Volumes</a> dialog.</p>
                 <hr class="hidden-print" id="export_pdf_tunebook">
                 <h1 class="page_break_always">Exporting a PDF Tunebook<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/PqgjtQXpRYA" title="Export PDF Tunebook Dialog Walkthrough" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
@@ -4664,8 +4671,8 @@
                 <hr id="default_player_settings">
                 <p><strong>Select Default Player Instruments and Volumes</strong></p>
                 <p>Brings up a dialog where you can select default MIDI soundfont, programs, and volumes to use for the Melody, Bass, and Chords:</p>
-                <div class="image_holder_p">
-                    <img class="image" loading="lazy" src="img/abc_transcription_tool_settings_fs_1.jpg"/>
+                 <div class="image_holder_p">
+                    <img class="image" loading="lazy" src="img/player_instrument_settings_1.jpg"/>
                 </div>
                 <hr>
                 <p><strong>Default abcjs soundfont</strong></p>
@@ -4705,6 +4712,10 @@
                 <p>For example, if you want to always use a Whistle sound for the Melody and a Piano sound for the Bass and Chords, set your default Melody instrument to Whistle and your default Bass and Chords instruments to Acoustic Grand Piano. Then enable <strong>Override all MIDI programs and volumes in the ABC when playing tunes</strong>.</p>
                 <p>To mute the melody, select the Mute program.</p>
                 <p>To mute the bass and chords, select the Mute program.</p>
+                <hr>
+                <p><strong>Always play alternate chords wrapped in parenthesis (examples: "(Gm7)" "G(Dm7)")</strong></p>
+                <p>Check this box if you want the player to play any alternate chords wrapped in parenthesis found in the ABC.</p>
+                <p>If both a normal and alternate chord are wrapped in one set of double quotes, the alternate chord will be played if this box is checked.</p>
                 <hr id="manage_databases">
                 <p><strong>Manage Notes, Reverb, and Tune Search Databases</strong></p>
                 <p>Click this button on the <strong>Settings</strong> dialog to bring up a dialog with several options for managing the instrument notes, reverb,  and tune search engine databases in the tool for offline use.</p>

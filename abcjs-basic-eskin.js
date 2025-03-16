@@ -243,6 +243,7 @@ var gDisableSVGHyperLinks = false
 
 // Ignore parenthesized alternate chords during playback?
 var gPlayAlternateChords = false;
+var gPlayAlternateChordsOverride = false;
 
 //
 // Find any hyperlinks in the tune and replace them with SVG links
@@ -14359,7 +14360,7 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
     // MAE FOOFOO 15 Mar 2025
     //console.log("chord name: "+name+" inversion: "+inversion);
  
-    if (gPlayAlternateChords){
+    if (gPlayAlternateChords || gPlayAlternateChordsOverride){
 
       if (name.indexOf("(") != -1){
 
@@ -14380,7 +14381,7 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
     var root = name.substring(0, 1);
     if (root === '(') {
       name = name.substring(1, name.length - 1);
-      if (name.length === 0 || (!gPlayAlternateChords)) return undefined;
+      if (name.length === 0 || (!(gPlayAlternateChords || gPlayAlternateChordsOverride))) return undefined;
       root = name.substring(0, 1);
     }
     var bass = basses[root];
@@ -16536,7 +16537,7 @@ ChordTrack.prototype.interpretChord = function (name) {
   // MAE FOOFOO 15 Mar 2025
   //console.log("chord name: "+name+" inversion: "+inversion);
 
-  if (gPlayAlternateChords){
+  if (gPlayAlternateChords || gPlayAlternateChordsOverride){
 
     if (name.indexOf("(") != -1){
 
@@ -16557,7 +16558,7 @@ ChordTrack.prototype.interpretChord = function (name) {
   var root = name.substring(0, 1);
   if (root === '(') {
     name = name.substring(1, name.length - 1);
-    if (name.length === 0 || (!gPlayAlternateChords)) return undefined;
+    if (name.length === 0 || (!(gPlayAlternateChords || gPlayAlternateChordsOverride))) return undefined;
     root = name.substring(0, 1);
   }
   var bass = this.basses[root];
