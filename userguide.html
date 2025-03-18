@@ -453,10 +453,7 @@
             <a style="text-decoration:none;" href="#incipits_builder">Incipits Builder</a>
             <a style="text-decoration:none;" href="#advanced_transposetokey">Transpose to Key</a>
             <a style="text-decoration:none;" href="#advanced_injectbagpipesounds">Inject Bagpipe Sounds</a>
-            
-            <h3>ABC Compliance Transform</h3>
-            <a style="text-decoration:none;" href="#advanced_compliance">ABC Compliance Transform</a>
-            
+                        
             <h3>Sharing Tunes via Share URLs and QR Codes</h3>
             <a style="text-decoration:none;" href="#sharing_controls">Sharing Tunes with Share URLs and QR Codes</a>
             <a style="text-decoration:none;" href="#shortening_abc_share_urls">Shortening Share URLs</a>
@@ -822,12 +819,7 @@
                         <p class="toc"><a style="text-decoration:none;" href="#advanced_transposetokey">Transpose to Key</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#advanced_injectbagpipesounds">Inject Bagpipe Sounds</a></p>
                     </div>
-                    
-                    <button class="accordion" title="Click to expand/collapse this section">ABC Compliance Transform</button>
-                    <div class="tocpanel">
-                        <p class="toc"><a style="text-decoration:none;" href="#advanced_compliance">ABC Compliance Transform</a></p>
-                    </div>
-                    
+                                        
                     <button class="accordion" title="Click to expand/collapse this section">Sharing Tunes via Share URLs and QR Codes</button>
                     <div class="tocpanel">
                         <p class="toc"><a style="text-decoration:none;" href="#sharing_controls">Sharing Tunes with Share URLs and QR Codes</a></p>
@@ -3693,11 +3685,11 @@
                 <h1 class="page_break_always">More ABC Tools<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <p>Clicking the <strong>More Tools</strong> button brings up the More ABC Tools dialog:</p>
                 <div class="image_holder_p">
-                    <img class="image" loading="lazy" src="img/more_abc_tools_22.jpg"/>
+                    <img class="image" loading="lazy" src="img/more_abc_tools_23.jpg"/>
                 </div>
                 <p>If you would like to only show the buttons for the features you commonly use and hide the others, click the controls icon at the top-right of the dialog to choose features of the dialog you would like to show/hide:</p>
                 <div class="image_holder_p">
-                    <img class="image" loading="lazy" src="img/more_abc_tools_feature_options_6.jpg"/>
+                    <img class="image" loading="lazy" src="img/more_abc_tools_feature_options_7.jpg"/>
                 </div>
                 <p>The most commonly used buttons are always shown.</p>
                 <p>Your preferences are saved and restored the next time you use the tool.</p>
@@ -4442,32 +4434,6 @@
                 <p class="code">% Transpose the drones as required to overlay the melody<br/>V:2 stems=down octave=4 transpose=-48<br/>%%MIDI transpose -48</p>
                 <p>Additionally, when playing, this command will limit the note highlighting to only the melody voice:</p>
                 <p class="code">% Only highlight the melody voice when playing<br/>%play_highlight_v1_only</p>
-                <hr class="hidden-print" id="advanced_compliance">
-                <h1 class="page_break_always">ABC Compliance Transform<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-                <div class="image_holder_p">
-                    <img class="image" loading="lazy" src="img/compliance_2.jpg"/>
-                </div>
-                <p>Brings up a dialog where you can transform all the private tool-specific directives in the ABC to an ABC 2.1 standard-compliant format for cleaner interchange with other ABC tools.</p>
-                <p>I wrote this tool before I was aware that there was a preferred ABC standard for adding additional tool-specific directives.</p>
-                <p>All the private tool-specific directives use the ABC comment syntax and should be transparent to other ABC applications.</p>
-                <p>However, some users may prefer that the private tool-specific directives use the ABC standard tool-specific syntax instead.</p>
-                <p>Examples:</p>
-                <p class="code">% Private tool-specific comment-based directive:<br/>
-                    %irish_rolls_on<br/>
-                    <br/>
-                    % ABC Standard tool-specific directive syntax:<br/>
-                    %%abctt:irish_rolls_on<br/>
-                    <br/>
-                    % Private tool-specific comment-based directive:<br/>
-                    %%abcjs_soundfont fatboy<br/>
-                    <br/>
-                    % ABC Standard tool-specific directive syntax:<br/>
-                %%abctt:abcjs_soundfont fatboy</p>
-                <p>Transforms are provided for both private tool-specific to ABC standard syntax and ABC standard syntax to private tool-specific.</p>
-                <p>The tool can play back tunes with either the private tool-specific or ABC standard syntax directives.</p>
-                <p>The MIDI Instrument Explorer, Swing Explorer, Grace Exporer, and Roll Explorer work best with the private tool-specific directives.</p>
-                <p>You will need to manually transform the ABC from the ABC standard syntax to the private tool-specific directives if you wish to use these features.</p>
-                <p>Additionally, all ABC standard tool-specific directives in the ABC are transformed to private tool-specific format when exporting PDF files.</p>
                 <hr>
                 <p style="text-align: center"><strong>Custom Instrument MIDI Program Number Interoperability</strong></p>
                 <p>My custom instruments use %%MIDI program numbers greater than 127 that only work in my tool.</p>

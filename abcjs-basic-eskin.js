@@ -311,9 +311,6 @@ function ScanTuneForABCJSRenderingParams(theTune){
 
   //console.log("ScanTuneForABCJSRenderingParams");
 
-  // Allow compliant version
-  theTune = theTune.replace("%%abctt:abcjs_render_params","%abcjs_render_params");
-
   var searchRegExp = /^%abcjs_render_params.*$/gm
 
   var isRenderParams = theTune.match(searchRegExp);
@@ -355,8 +352,6 @@ function ScanTuneForLeftAlignTitles(theTune){
 
   //console.log("ScanTuneForLeftAlignTitles");
 
-  theTune = theTune.replace("%%abctt:left_justify_titles","%left_justify_titles");
-
   var searchRegExp = /^%left_justify_titles.*$/gm
 
   var isLeftAlignTitles = searchRegExp.test(theTune);
@@ -366,7 +361,7 @@ function ScanTuneForLeftAlignTitles(theTune){
     return true;
   }
 
-  //console.log("No %%abctt:left_justify_titles")
+  //console.log("No %left_justify_titles")
 
   return false;
 }
@@ -375,8 +370,6 @@ function ScanTuneForLeftAlignTitles(theTune){
 function ScanTuneForHideInformationLabels(theTune){
 
   //console.log("ScanTuneForHideInformationLabels");
-
-  theTune = theTune.replace("%%abctt:hide_information_labels","%hide_information_labels");
 
   var searchRegExp = /^%hide_information_labels.*$/gm
 
@@ -397,8 +390,6 @@ function ScanTuneForHideRhythmTag(theTune){
 
   //console.log("ScanTuneForHideRhythmTag");
 
-  theTune = theTune.replace("%%abctt:hide_rhythm_tag","%hide_rhythm_tag");
-
   var searchRegExp = /^%hide_rhythm_tag.*$/gm
 
   var isHideRhythm = searchRegExp.test(theTune);
@@ -417,8 +408,6 @@ function ScanTuneForHideRhythmTag(theTune){
 function ScanTuneForWhistleTabShiftOctave(theTune){
 
   //console.log("ScanTuneForWhistleTabShiftOctave");
-
-  theTune = theTune.replace("%%abctt:whistle_tab_octave","%whistle_tab_octave");
 
   // Next search for an whistle_tab_octave override
   searchRegExp = /^%whistle_tab_octave.*$/gm
@@ -456,8 +445,6 @@ function ScanTuneForWhistleTabShiftOctave(theTune){
 function ScanTuneForWhistleTabShiftSemitone(theTune){
 
   //console.log("ScanTuneForTabShiftSemitone");
-
-  theTune = theTune.replace("%%abctt:whistle_tab_key","%whistle_tab_key");
 
   // Next search for an whistle_tab_key override
   searchRegExp = /^%whistle_tab_key.*$/gm
@@ -553,8 +540,6 @@ function ScanTuneForRecorderTabShiftOctave(theTune){
 
   //console.log("ScanTuneForRecorderTabShiftOctave");
 
-  theTune = theTune.replace("%%abctt:recorder_tab_octave","%recorder_tab_octave");
-
   // Next search for an recorder_tab_octave override
   searchRegExp = /^%recorder_tab_octave.*$/gm
 
@@ -591,8 +576,6 @@ function ScanTuneForRecorderTabShiftOctave(theTune){
 function ScanTuneForRecorderTabShiftSemitone(theTune){
 
   //console.log("ScanTuneForRecorderTabShiftSemitone");
-
-  theTune = theTune.replace("%%abctt:recorder_tab_key","%recorder_tab_key");
 
   // Next search for an recorder_tab_key override
   searchRegExp = /^%recorder_tab_key.*$/gm
@@ -688,8 +671,6 @@ function ScanTuneForSVGHyperlinks(theTune){
 
   //console.log("ScanTuneForSVGHyperlinks");
 
-  theTune = theTune.replace("%%abctt:enable_hyperlinks","%enable_hyperlinks");
-
   var searchRegExp = /^%enable_hyperlinks.*$/gm
 
   var isHyperlinkParsing = searchRegExp.test(theTune);
@@ -708,8 +689,6 @@ function ScanTuneForSVGHyperlinks(theTune){
 function ScanTuneForSVGDisableHyperlinks(theTune){
 
   //console.log("ScanTuneForSVGDisableHyperlinks");
-
-  theTune = theTune.replace("%%abctt:disable_hyperlinks","%disable_hyperlinks");
 
   var searchRegExp = /^%disable_hyperlinks.*$/gm
 
@@ -730,8 +709,6 @@ function ScanTuneForPlayAlternateChords(theTune){
 
   //console.log("ScanTuneForPlayAlternateChords");
 
-  theTune = theTune.replace("%%abctt:play_alternate_chords","%play_alternate_chords");
-
   var searchRegExp = /^%play_alternate_chords.*$/gm
 
   var playAlternateChords = searchRegExp.test(theTune);
@@ -746,8 +723,6 @@ function ScanTuneForPlayAlternateChords(theTune){
   return false;
 
 }
-
-
 
 (function webpackUniversalModuleDefinition(root, factory) {
   if(typeof exports === 'object' && typeof module === 'object')

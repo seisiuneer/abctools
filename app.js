@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2382_031625_1200";
+var gVersionNumber="2383_031825_1000";
 
 var gMIDIInitStillWaiting = false;
 
@@ -352,7 +352,6 @@ var	gFeaturesShowTemplates = true;
 var	gFeaturesShowTablatures = true;
 var gFeaturesShowExplorers = true;
 var gFeaturesShowTabButtons = true;
-var gFeaturesShowCompliance = false;
 var gFeaturesShowBagpipeDrones = true;
 
 // Force an update of local storage for the tab
@@ -22350,145 +22349,6 @@ function DoCeoltasTransform(doInverse){
 }
 
 //
-// ABC Compliance directives transform dialog
-//
-function complianceABCTransformer(theABC,doInverse){
-
-	var allDirectives = [
-	    "%pdfquality",
-	    "%pdf_between_tune_space",
-	    "%pdfname",
-	    "%pdffont",      
-	    "%addtitle",
-	    "%addsubtitle",
-	    "%urladdtitle",
-	    "%urladdsubtitle",
-	    "%addtoc",
-	    "%addsortedtoc",
-	    "%addlinkbacktotoc",    
-	    "%tocheader",      
-	    "%toctopoffset",
-	    "%toctitleoffset",
-	    "%toctitlefontsize",
-	    "%tocfontsize",
-	    "%toclinespacing",
-	    "%addindex",
-	    "%addsortedindex",
-	    "%addlinkbacktoindex",      
-	    "%indexheader",        
-	    "%indextopoffset",
-	    "%indextitleoffset",
-	    "%indextitlefontsize",
-	    "%indexfontsize",
-	    "%indexlinespacing",
-	    "%no_toc_or_index_links",
-	    "%toc_no_page_numbers",
-	    "%index_no_page_numbers",
-	    "%pageheader",
-	    "%pagefooter",
-	    "%urlpageheader",
-	    "%urlpagefooter",
-	    "%add_all_links_to_thesession",
-	    "%add_all_playback_links",
-	    "%add_all_playback_volumes",
-	    "%playback_links_are_complete_tunebook",
-	    "%add_all_fonts",
-	    "%swing_all_hornpipes",    
-	    "%noswing_all_hornpipes",  
-	    "%no_edit_allowed",
-	    "%qrcode",
-	    "%qrcode",
-	    "%caption_for_qrcode",
-	    "%abcjs_soundfont",
-	    "%hyperlink",
-	    "%add_link_to_thesession",
-	    "%add_playback_link",
-	    "%swing",
-	    "%swing_offset",
-	    "%noswing",
-	    "%bodhran_tuning",
-	    "%bodhran_pitch",
-	    "%banjo_style",
-	    "%grace_duration_ms",
-	    "%roll_2_params",
-	    "%roll_3_params",
-	    "%use_original_abcjs_roll_solution",
-	    "%abcjs_release_decay_time",
-	    "%use_custom_gm_sounds",
-	    "%disable_play_highlight",
-	    "%play_highlight_v1_only",
-	    "%irish_rolls_on",
-	    "%irish_rolls_off",
-	    "%voice_tuning_cents",
-	    "%tab_first_voice_only",
-	    "%tab_first_voice_exclude",
-	    "%reverb",
-	    "%links_open_in_editor",
-	    "%abcjs_render_params",
-	    "%play_flatten_parts",
-	    "%allow_lowercase_chords",
-	    "%left_justify_titles",
-	    "%hide_information_labels",
-	    "%hide_rhythm_tag",
-	    "%whistle_tab_octave",
-	    "%whistle_tab_key",
-	    "%recorder_tab_octave",
-	    "%recorder_tab_key",
-	    "%enable_hyperlinks",
-	    "%disable_hyperlinks",
-	    "%play_alternate_chords"
-	];
-
-	if (doInverse){
-
-		theABC = theABC.replaceAll("%%abctt:","%");
-		return theABC;
-
-	}
-	else{
-		var i;
-		var nDirectives = allDirectives.length;
-		var compliantDirective
-
-		for (i=0;i<nDirectives;++i){
-
-			compliantDirective = "%%abctt:"+(allDirectives[i].substring(1));
-
-			theABC = theABC.replaceAll(allDirectives[i],compliantDirective);
-
-		}
-	}
-
-	return theABC;
-
-}
-
-function DoComplianceTransform(doInverse){
-
-	// Keep track of compliance transform use
-	if (doInverse){
-		sendGoogleAnalytics("action","DoComplianceTransform_Inverse");
-	}
-	else{
-		sendGoogleAnalytics("action","DoComplianceTransform");
-	}
-
-	setABCEditorText(complianceABCTransformer(gTheABC.value,doInverse));
-
-	// Set dirty
-	gIsDirty = true;
-
-	RenderAsync(true,null);
-
-	// Idle the dialog
-	IdleAdvancedControls(true);
-
-	// Idle the show tab names control
-	IdleAllowShowTabNames();
-
-}
-
-//
 // Inject a second voice of drones for bagpipe scores
 //
 function InjectOneBagpipeDrones(theTune,droneStyle,hideDroneVoice,foldNotes,injectDrones,droneMatchesTuneKey){
@@ -23656,19 +23516,6 @@ function InjectBagpipeSounds(){
 			}
 		}
 	});
-}
-
-
-function DoComplianceTransformDialog(){
-
-	var modal_msg  = '<p style="text-align:center;margin-bottom:36px;font-size:16pt;font-family:helvetica;margin-left:15px;">ABC Directive Compliance Transform&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#advanced_compliance" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>';
-
-	modal_msg  += '<p style="text-align:center;"><input id="compliancedialog" class="advancedcontrols btn btn-injectcontrols" onclick="DoComplianceTransform(false)" type="button" value="Private Directives to ABC Compliant" title="Transforms private tool directives to %%abctt: ABC standard application-specific private directives">';
-
-	modal_msg  += '<input id="compliancedialoginverse" class="advancedcontrols btn btn-injectcontrols" onclick="DoComplianceTransform(true)" type="button" value="ABC Compliant to Private Directives" title="Transforms ABC standard application-specific private %%abctt: directives to private tool directives"></p>';
-
-	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 200, width: 650,  scrollWithPage: (AllowDialogsToScroll()) });
-
 }
 
 //
@@ -30910,16 +30757,6 @@ function PlayABC(e){
 	}
 }
 
-//
-// Transform att: directives to the tool specific versions for playback
-//
-function TransformABCCompliantDirectives(theABC){
-
-	theABC = theABC.replaceAll("%%abctt:","%");
-
-	return theABC;
-}
-
 // 
 // Tune Play Dialog
 //
@@ -31155,9 +30992,6 @@ function PlayABCDialog(theABC,callback,val,metronome_state){
 		gPlayerABCMetronome = null;
 
 	}
-
-	// Transform any att: directives
-	theABC = TransformABCCompliantDirectives(theABC);
 
 	// Do common setup of soundfont and custom timing injection
 	if (!PlayerSetupCommon(theABC)){
@@ -33162,9 +32996,6 @@ function SwingExplorerDialog(theOriginalABC, theProcessedABC, swing_explorer_sta
 
 	}
 
-	// Transform any att: directives
-	theProcessedABC = TransformABCCompliantDirectives(theProcessedABC);
-
 	// Do common setup of soundfont and custom timing injection
 	if (!PlayerSetupCommon(theProcessedABC)){
 		return;
@@ -33909,9 +33740,6 @@ function ReverbExplorerDialog(theOriginalABC, theProcessedABC, reverb_explorer_s
 		gPlayerReverbExplorerProcessed = theProcessedABC;
 
 	}
-
-	// Transform any att: directives
-	theProcessedABC = TransformABCCompliantDirectives(theProcessedABC);
 
 	// Do common setup of soundfont and custom timing injection
 	if (!PlayerSetupCommon(theProcessedABC)){
@@ -34934,9 +34762,6 @@ function InstrumentExplorerDialog(theOriginalABC, theProcessedABC, instrument_ex
 
 	gPlayerABCInstrumentExplorerInjected = theProcessedABC;
 
-	// Transform any att: directives
-	theProcessedABC = TransformABCCompliantDirectives(theProcessedABC);
-
 	// Inject default reverb?
 	if (gReverbString && (gReverbString != "")){
 
@@ -35556,9 +35381,6 @@ function GraceExplorerDialog(theOriginalABC, theProcessedABC, grace_explorer_sta
 		gPlayerABCGraceExplorerProcessed = theProcessedABC;
 
 	}
-
-	// Transform any att: directives
-	theProcessedABC = TransformABCCompliantDirectives(theProcessedABC);
 
 	// Do common setup of soundfont and custom timing injection
 	if (!PlayerSetupCommon(theProcessedABC)){
@@ -36326,9 +36148,6 @@ function RollExplorerDialog(theOriginalABC, theProcessedABC, roll_explorer_state
 
 	}
 
-	// Transform any att: directives
-	theProcessedABC = TransformABCCompliantDirectives(theProcessedABC);
-
 	// Do common setup of soundfont and custom timing injection
 	if (!PlayerSetupCommon(theProcessedABC)){
 		return;
@@ -36920,9 +36739,6 @@ function TuneTrainerDialog(theOriginalABC, theProcessedABC, looperState){
 		localStorage.LooperSpeedIncrement = gLooperSpeedIncrement;
 		localStorage.LooperCount = gLooperCount;
 	}
-
-	// Transform any att: directives
-	theProcessedABC = TransformABCCompliantDirectives(theProcessedABC);
 
 	// Do common setup of soundfont and custom timing injection
 	if (!PlayerSetupCommon(theProcessedABC)){
@@ -38925,12 +38741,6 @@ function GetInitialConfigurationSettings(){
 		gFeaturesShowExport = (val == "true");
 	}
 
-	gFeaturesShowCompliance = false;
-	val = localStorage.FeaturesShowCompliance;
-	if (val){
-		gFeaturesShowCompliance = (val == "true");
-	}
-
 	gFeaturesShowBagpipeDrones = true;
 	val = localStorage.FeaturesShowBagpipeDrones;
 	if (val){
@@ -39274,7 +39084,6 @@ function SaveConfigurationSettings(){
 		localStorage.FeaturesShowTablatures = gFeaturesShowTablatures;
 		localStorage.FeaturesShowExplorers = gFeaturesShowExplorers;
 		localStorage.FeaturesShowExport = gFeaturesShowExport;
-		localStorage.FeaturesShowCompliance = gFeaturesShowCompliance;
 		localStorage.FeaturesShowTabButtons = gFeaturesShowTabButtons;
 		localStorage.FeaturesShowBagpipeDrones = gFeaturesShowBagpipeDrones;
 
@@ -40702,8 +40511,7 @@ function PDFExportDialog(){
 
 			SavePDFSettings();
 
-			// Transform any ABC standard private headers to private
-			setABCEditorText(TransformABCCompliantDirectives(gTheABC.value));
+			clearGetTuneByIndexCache();
 
 			ExportPDF();				
 		}
@@ -41082,7 +40890,6 @@ function Configure_AdvancedControlsDialog_UI(){
 	var old_gFeaturesShowTablatures = gFeaturesShowTablatures;
 	var old_gFeaturesShowExplorers = gFeaturesShowExplorers;
 	var old_gFeaturesShowExport = gFeaturesShowExport;
-	var old_gFeaturesShowCompliance = gFeaturesShowCompliance;
 	var old_gFeaturesShowBagpipeDrones = gFeaturesShowBagpipeDrones;
 
 	// Setup initial values
@@ -41090,7 +40897,6 @@ function Configure_AdvancedControlsDialog_UI(){
 	  showtablatures: gFeaturesShowTablatures,
 	  showexplorers: gFeaturesShowExplorers,
 	  showexport: gFeaturesShowExport,
-	  showcompliance: gFeaturesShowCompliance,
 	  showbagpipedrones: gFeaturesShowBagpipeDrones
 	};
 
@@ -41107,7 +40913,6 @@ function Configure_AdvancedControlsDialog_UI(){
 		form.push({name: "          Show Sort and Incipits features", id: "showexport", type:"checkbox", cssClass:"configure_ui_options_form_text"});		
 	}
 
-	form.push({name: "          Show ABC Private Directive Compliance Tools", id: "showcompliance", type:"checkbox", cssClass:"configure_ui_options_form_text"});
 	form.push({name: "          Show Transpose to Key and Inject Bagpipe Sounds", id: "showbagpipedrones", type:"checkbox", cssClass:"configure_ui_options_form_text"});
 
 	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 100, width: 500, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
@@ -41120,15 +40925,12 @@ function Configure_AdvancedControlsDialog_UI(){
 
 			gFeaturesShowExport = args.result.showexport;
 
-			gFeaturesShowCompliance = args.result.showcompliance;
-
 			gFeaturesShowBagpipeDrones = args.result.showbagpipedrones;
 
 			// No change, just return;
 			if ((gFeaturesShowTablatures == old_gFeaturesShowTablatures) && 
 				(gFeaturesShowExplorers == old_gFeaturesShowExplorers) && 
 				(gFeaturesShowExport == old_gFeaturesShowExport) &&
-				(gFeaturesShowCompliance == old_gFeaturesShowCompliance) &&
 				(gFeaturesShowBagpipeDrones == old_gFeaturesShowBagpipeDrones)
 				){
 				
@@ -41256,21 +41058,10 @@ function AdvancedControlsDialog(){
 
 	}
 
-	// Showing compliance tools and bagpipes drones/transpose tools
-	if (gFeaturesShowCompliance && gFeaturesShowBagpipeDrones){
-		modal_msg  += '<p style="text-align:center;margin-top:22px;"><input id="compliancetransform" class="advancedcontrols btn btn-injectcontrols" style="margin-right:24px;" onclick="DoComplianceTransformDialog()" type="button" value="ABC Compliance Transform" title="Brings up a dialog where you can transforms any private tool-specific directives to/from ABC 2.1 compliant tool-specific directive interchange format"><input class="transposetokey btn btn-transposetokey" id="transposetokey" onclick="TransposeToKeyDialog()" type="button" value="Transpose to Key" title="Transposes one or all the tunes to a specific key"><input id="injectbagpipedrones" class="advancedcontrols btn btn-injectcontrols" onclick="InjectBagpipeSounds()" type="button" value="Inject Bagpipe Sounds" title="Changes the melody sound to one of several bagpipe instruments and inject drones as a second voice of the tune(s)"></p>';
-	}
-
 	// Showing only bagpipes drones/tranpose tools?
-	if ((!gFeaturesShowCompliance) && gFeaturesShowBagpipeDrones){
+	if (gFeaturesShowBagpipeDrones){
 		modal_msg  += '<p style="text-align:center;margin-top:22px;"><input class="transposetokey btn btn-transposetokey" id="transposetokey" onclick="TransposeToKeyDialog()" type="button" value="Transpose to Key" title="Transposes one or all the tunes to a specific key"><input id="injectbagpipedrones" class="advancedcontrols btn btn-injectcontrols" onclick="InjectBagpipeSounds()" type="button" value="Inject Bagpipe Sounds" title="Changes the melody sound to one of several bagpipe instruments and inject drones as a second voice of the tune(s)"></p>';
 	}
-
-	// Showing bagpipes drones tools?
-	if (gFeaturesShowCompliance && (!gFeaturesShowBagpipeDrones)){
-		modal_msg  += '<p style="text-align:center;margin-top:22px;"><p style="text-align:center;margin-top:22px;"><input id="compliancetransform" class="advancedcontrols btn btn-injectcontrols" onclick="DoComplianceTransformDialog()" type="button" value="ABC Compliance Transform" title="Brings up a dialog where you can transforms any private tool-specific directives to/from ABC 2.1 compliant tool-specific directive interchange format"></p>';
-	}
-
 
 	modal_msg += '</div>';
 
@@ -45380,9 +45171,6 @@ function inlinePlayback(){
 			theABC = theABC.replace(searchRegExp, "X:1\n%%staffsep " + gStaffSpacing);
 
 		}
-
-		// Transform any att: directives
-		theABC = TransformABCCompliantDirectives(theABC);
 
 		// Do common setup of soundfont and custom timing injection
 		if (!PlayerSetupCommon(theABC)){
