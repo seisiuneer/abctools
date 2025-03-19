@@ -1703,9 +1703,9 @@ function generateAndSaveWebsiteSimple() {
     theOutput +="    }\n";
     theOutput +="\n";
     theOutput +="    a {\n";
-    theOutput +="        color: "+gWebsiteHyperlinkColor+";\n";
     theOutput +="        font-size: 18px;\n";
     theOutput +="        text-decoration: none;\n";
+    theOutput +="        color: "+gWebsiteHyperlinkColor+";\n";
     theOutput +="    }\n";
     theOutput +="    a:link {\n";
     theOutput +="        color: "+gWebsiteHyperlinkColor+";\n";
@@ -2096,9 +2096,9 @@ function generateAndSaveWebsiteImageGallery() {
     theOutput +="    }\n";
     theOutput +="\n";
     theOutput +="    a {\n";
-    theOutput +="        color: "+gWebsiteHyperlinkColor+";\n";
     theOutput +="        font-size: 18px;\n";
     theOutput +="        text-decoration: none;\n";
+    theOutput +="        color: "+gWebsiteHyperlinkColor+";\n";
     theOutput +="    }\n";
     theOutput +="    a:link {\n";
     theOutput +="        color: "+gWebsiteHyperlinkColor+";\n";
@@ -2841,9 +2841,9 @@ function generateAndSaveWebsiteLightbox() {
     }
 
     theOutput +="    a {\n";
-    theOutput +="        color: "+gWebsiteHyperlinkColor+";\n";
     theOutput +="        font-size: 18px;\n";
     theOutput +="        text-decoration: none;\n";
+    theOutput +="        color: "+gWebsiteHyperlinkColor+";\n";
     theOutput +="    }\n";
     theOutput +="    a:link {\n";
     theOutput +="        color: "+gWebsiteHyperlinkColor+";\n";
