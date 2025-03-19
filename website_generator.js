@@ -846,21 +846,21 @@ function generateAndSaveWebsiteFull() {
         // There is a title or subtitle present
         if ((gWebsiteTitle && (gWebsiteTitle != "")) || (gWebsiteSubtitle && (gWebsiteSubtitle != ""))){
             theOutput +="    #website_help{\n";
+            theOutput +="        color: "+gWebsiteHyperlinkColor+";\n";
             theOutput +="        font-size: 28pt;\n";
             theOutput +="        position: absolute;\n";
             theOutput +="        left: 16px;\n";
             theOutput +="        top: 12px;\n";
-            theOutput +="        color: "+gWebsiteHyperlinkColor+";\n";
             theOutput +="    }\n";
             theOutput +="\n";
         }
         else{
             theOutput +="    #website_help{\n";
+            theOutput +="        color: "+gWebsiteHyperlinkColor+";\n";
             theOutput +="        font-size: 28pt;\n";
             theOutput +="        position: absolute;\n";
             theOutput +="        left: 16px;\n";
             theOutput +="        top: 10px;\n";
-            theOutput +="        color: "+gWebsiteHyperlinkColor+";\n";
             theOutput +="    }\n";
             theOutput +="\n";
         }
@@ -1740,21 +1740,21 @@ function generateAndSaveWebsiteSimple() {
         // There is a title or subtitle present
         if ((gWebsiteTitle && (gWebsiteTitle != "")) || (gWebsiteSubtitle && (gWebsiteSubtitle != ""))){
             theOutput +="    #website_help{\n";
+            theOutput +="        color: "+gWebsiteHyperlinkColor+";\n";
             theOutput +="        font-size: 28pt;\n";
             theOutput +="        position: absolute;\n";
             theOutput +="        left: 16px;\n";
             theOutput +="        top: 12px;\n";
-            theOutput +="        color: "+gWebsiteHyperlinkColor+";\n";
             theOutput +="    }\n";
             theOutput +="\n";
         }
         else{
             theOutput +="    #website_help{\n";
+            theOutput +="        color: "+gWebsiteHyperlinkColor+";\n";
             theOutput +="        font-size: 28pt;\n";
             theOutput +="        position: absolute;\n";
             theOutput +="        left: 16px;\n";
             theOutput +="        top: 10px;\n";
-            theOutput +="        color: "+gWebsiteHyperlinkColor+";\n";
             theOutput +="    }\n";
             theOutput +="\n";
         }
@@ -2275,21 +2275,21 @@ function generateAndSaveWebsiteImageGallery() {
         // There is a title or subtitle present
         if ((gWebsiteTitle && (gWebsiteTitle != "")) || (gWebsiteSubtitle && (gWebsiteSubtitle != ""))){
             theOutput +="    #website_help{\n";
+            theOutput +="        color: "+gWebsiteHyperlinkColor+";\n";
             theOutput +="        font-size: 28pt;\n";
             theOutput +="        position: absolute;\n";
             theOutput +="        left: 16px;\n";
             theOutput +="        top: 12px;\n";
-            theOutput +="        color: "+gWebsiteHyperlinkColor+";\n";
             theOutput +="    }\n";
             theOutput +="\n";
         }
         else{
             theOutput +="    #website_help{\n";
+            theOutput +="        color: "+gWebsiteHyperlinkColor+";\n";
             theOutput +="        font-size: 28pt;\n";
             theOutput +="        position: absolute;\n";
             theOutput +="        left: 16px;\n";
             theOutput +="        top: 10px;\n";
-            theOutput +="        color: "+gWebsiteHyperlinkColor+";\n";
             theOutput +="    }\n";
             theOutput +="\n";
         }
@@ -2831,11 +2831,11 @@ function generateAndSaveWebsiteLightbox() {
 
     if (gWebsiteAddHelp){
         theOutput +="    #website_help{\n";
+        theOutput +="        color: "+gWebsiteHyperlinkColor+";\n";
         theOutput +="        font-size: 28pt;\n";
         theOutput +="        position: absolute;\n";
         theOutput +="        left: 16px;\n";
         theOutput +="        top: 12px;\n";
-        theOutput +="        color: "+gWebsiteHyperlinkColor+";\n";
         theOutput +="    }\n";
         theOutput +="\n";
     }
