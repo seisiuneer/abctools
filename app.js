@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2384_031925_1100";
+var gVersionNumber="2385_032725_1300";
 
 var gMIDIInitStillWaiting = false;
 
@@ -14102,6 +14102,13 @@ function searchForTunes() {
 
     var tuneNameToSearch = document.getElementById("tuneNameToSearch").value;
 
+    // Save off the last search value
+    gLastTuneSearchValue = tuneNameToSearch;
+
+    if (gLocalStorageAvailable){
+    	localStorage.LastTuneSearchValue = gLastTuneSearchValue;
+    }
+
     if (tuneNameToSearch == ""){
 
         var prompt = makeCenteredPromptString("No Text Entered in the Search Field")
@@ -14827,7 +14834,6 @@ function SwitchTuneDatabase(){
 
 			idleSearchResults();
 
-
 	   		break;
 
    		case "1":
@@ -14923,6 +14929,7 @@ var gTheMaxDatabaseResults = 25;
 var gDefaultSearchCollection = 0;
 var gTheTuneSearchStyle = "";
 var gTheTuneSearchKey ="";
+var gLastTuneSearchValue = "";
 
 // Retry parameters
 var gTuneDatabaseRetryTimeMS = 3000;
@@ -15010,6 +15017,7 @@ function AddFromSearch(e,callback){
 	document.getElementById("add-search-results").disabled = true;
 
 	document.getElementById("tuneNameToSearch").addEventListener("keydown", function(event) {
+
     	// Check if the pressed key is Enter 
 	    if (event.key === "Enter") {
 	        event.stopPropagation();
@@ -15098,6 +15106,9 @@ function AddFromSearch(e,callback){
 		document.getElementById("databaseselect").value = "1"
 
 	}
+
+   	// Set the last tune search value
+	document.getElementById("tuneNameToSearch").value = gLastTuneSearchValue;
 
 	SwitchTuneDatabase();
 
@@ -38697,6 +38708,13 @@ function GetInitialConfigurationSettings(){
 		gTuneDatabaseRetryCount = parseInt(val);
 	}
 
+	gLastTuneSearchValue = "";
+	val = localStorage.LastTuneSearchValue;
+
+	if (val){
+		gLastTuneSearchValue = val;
+	}
+
 	// Shape note style
 	gShapeNoteStyle = 0;
 	val = localStorage.ShapeNoteStyle;
@@ -39070,6 +39088,9 @@ function SaveConfigurationSettings(){
 		// Tune database retry parameters
 		localStorage.TuneDatabaseRetryTimeMS = gTuneDatabaseRetryTimeMS; 
 		localStorage.TuneDatabaseRetryCount = gTuneDatabaseRetryCount; 
+
+		// Tune search last value
+	    localStorage.LastTuneSearchValue = gLastTuneSearchValue;
 
 		// Preferred shape note style
 		localStorage.ShapeNoteStyle = gShapeNoteStyle;
