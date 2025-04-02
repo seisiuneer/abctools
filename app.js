@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2385_032725_1300";
+var gVersionNumber="2386_040225_1100";
 
 var gMIDIInitStillWaiting = false;
 
@@ -18072,11 +18072,34 @@ function OverrideOneTuneMIDIParams(theTune, soundFont, melodyProg, bassProg, cho
 
 	var theOldSoundFont = gTheActiveSoundFont;
 
-	searchRegExp = /%abcjs_soundfont .+\s*/gm
+	var gotSoundFont = false;
+	var commandToReplace = "%abcjs_soundfont ";
+
+	var searchRegExp = /%abcjs_soundfont .+\s*/gm
 
 	var soundfontRequested = theTune.match(searchRegExp);
 
 	if ((soundfontRequested) && (soundfontRequested.length > 0)){
+
+		gotSoundFont = true;
+
+	}
+	else{
+
+		searchRegExp = /%soundfont .+\s*/gm
+
+		soundfontRequested = theTune.match(searchRegExp);
+
+		if ((soundfontRequested) && (soundfontRequested.length > 0)){
+
+			gotSoundFont = true;
+
+			commandToReplace = "%soundfont ";
+
+		}
+	}
+
+	if (gotSoundFont){
 
 		// Map sound font to ABC name
 		var theSoundFont = "fluid";
@@ -18105,7 +18128,7 @@ function OverrideOneTuneMIDIParams(theTune, soundFont, melodyProg, bassProg, cho
 
 		for (var i=0;i<soundfontRequested.length;++i){
 
-			theOutput = theOutput.replace(soundfontRequested[i].trim(),"%abcjs_soundfont "+theSoundFont);
+			theOutput = theOutput.replace(soundfontRequested[i].trim(),commandToReplace+theSoundFont);
 
 			if (theOldSoundFont != soundFont){
 
@@ -32261,7 +32284,6 @@ function ScanTuneForCustomTimingInjection(theTune){
 
 	}
 
-
 }
 
 //
@@ -32271,6 +32293,10 @@ function ScanTuneForSoundFont(theTune){
 
 	var soundFontFound = null;
 
+	var commandToReplace = "%abcjs_soundfont";
+
+	var gotSoundFont = false;
+
 	// Search for a soundfont request
 	var searchRegExp = /^%abcjs_soundfont.*$/gm
 
@@ -32279,7 +32305,27 @@ function ScanTuneForSoundFont(theTune){
 
 	if ((soundfont) && (soundfont.length > 0)){
 
-		soundFontFound = soundfont[soundfont.length-1].replace("%abcjs_soundfont","");
+		gotSoundFont = true;
+
+	}
+	else{
+		// Search for a soundfont request
+		searchRegExp = /^%soundfont.*$/gm
+
+		// Detect soundfont annotation
+		soundfont = theTune.match(searchRegExp);
+
+		if ((soundfont) && (soundfont.length > 0)){
+
+			gotSoundFont = true;
+			commandToReplace = "%soundfont";
+		}
+
+	}
+
+	if (gotSoundFont){
+
+		soundFontFound = soundfont[soundfont.length-1].replace(commandToReplace,"");
 		
 		soundFontFound = soundFontFound.trim();
 
@@ -34188,6 +34234,10 @@ function PreProcessTuneInstrumentExplorer(theTune){
 
 	theTune = theTune.replaceAll(searchRegExp,"");
 
+	searchRegExp = /^%soundfont.*[\r\n]*/gm
+
+	theTune = theTune.replaceAll(searchRegExp,"");
+
 	searchRegExp = /^%%MIDI program.*[\r\n]*/gm
 
 	theTune = theTune.replaceAll(searchRegExp,"");
@@ -34325,13 +34375,35 @@ function ScanTuneForInstrumentExplorer(theTune){
 
 	var theMatch;
 
+	var commandToReplace = "%abcjs_soundfont";
+	var gotSoundFont = false;
+
 	searchRegExp = /^%abcjs_soundfont.*$/gm
 
 	theMatch = theTune.match(searchRegExp);
 
 	if ((theMatch) && (theMatch.length > 0)){
 
-		var theParamString = theMatch[theMatch.length-1].replace("%abcjs_soundfont","");
+		gotSoundFont = true;
+
+	}
+	else{
+
+		searchRegExp = /^%soundfont.*$/gm
+
+		theMatch = theTune.match(searchRegExp);
+
+		if ((theMatch) && (theMatch.length > 0)){
+
+			gotSoundFont = true;
+
+			commandToReplace = "%soundfont";
+		}
+
+	}
+
+	if (gotSoundFont){
+		var theParamString = theMatch[theMatch.length-1].replace(commandToReplace,"");
 
 		theParamString = theParamString.trim();
 
