@@ -4413,6 +4413,21 @@ font-size:16px;
 	background-color: #FFE5E5;
 }
 
+.jumpto_tune {
+cursor: grab;
+user-select: none;
+margin: 5px;
+padding: 10px;
+border: 1px solid #ddd;
+background-color: #f9f9f9;
+font-family:helvetica;
+font-size:16px;
+}
+
+.jumpto_selected {
+	background-color: #B0FFB0;
+}
+
 .smartdraw_export_all_text{
 	font-size:12pt;
 	line-height:16px;

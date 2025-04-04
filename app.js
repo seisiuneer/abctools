@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2386_040225_1100";
+var gVersionNumber="2387_040325_1000";
 
 var gMIDIInitStillWaiting = false;
 
@@ -46035,6 +46035,110 @@ function MaximizeEditor(){
 	},100);
 }
 
+//
+// Jump to tune
+//
+
+function JumpToToggleSelection(item,index) {
+
+	//console.log("index "+index);
+
+	gJumpTune = index;
+
+	const childDivs = document.querySelectorAll('#jumpto-tune-list .jumpto_tune');
+
+	Array.from(childDivs).map(div => 
+	{
+
+		div.classList.remove('jumpto_selected');
+
+	});
+
+  	item.classList.add('jumpto_selected');
+
+}
+
+var gJumpTune = -1;
+
+function JumpToTune(){
+
+	//console.log("JumpToTune");
+
+	var i;
+
+	gJumpTune = -1;
+
+	totalTunes = CountTunes();
+
+	var theTitles = GetTunebookIndexTitles();
+	var nTitles = theTitles.length;
+
+	if (nTitles == 0){
+
+		var thePrompt = "No tunes in the editor.";
+		
+		// Center the string in the prompt
+		thePrompt = makeCenteredPromptString(thePrompt);
+		
+		DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) });
+
+		return;
+	}
+
+	var theData = {};
+
+	// MAE 14 Jul 2024 - Make the div fill the screen
+	var theHeight = window.innerHeight - 300;
+
+	var theJumpDiv = '<div id="jumpto-tune-list" style="overflow:auto;height:'+theHeight+'px;margin-top:18px">';
+
+	for (i=0;i<nTitles;++i){
+
+		theJumpDiv += '<div class="jumpto_tune" onclick="JumpToToggleSelection(this,'+i+')">'+theTitles[i]+'</div>';
+	}
+	
+	theJumpDiv += '</div>';
+
+	var form = [
+
+		{html: '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:15px;">Jump to Tune&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#hamburger_jump_to_tune" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'},
+		{html: theJumpDiv},
+	];
+
+	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 25, width: 650, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false, okText:"Jump" } ).then(function(args){
+
+    	if (!args.canceled){
+
+    		if (gJumpTune != -1){
+
+    			gCurrentTune = gJumpTune;
+
+    			var tuneOffset = findTuneOffsetByIndex(gCurrentTune)
+
+    			gTheABC.selectionStart = tuneOffset;
+    			gTheABC.selectionEnd = tuneOffset;
+
+    			MakeTuneVisible(true);
+
+				ScrollABCTextIntoView(gTheABC,tuneOffset,tuneOffset,10);
+
+				// If quick editor, force redraw 
+				if (gIsQuickEditor){
+
+					if (!gDisableNotationRendering){
+						Render(false,gCurrentTune);
+					}
+
+				}
+
+    		}
+    	
+    	}
+
+    });
+
+}
+
 // 
 // Search and replace text
 //
@@ -47300,6 +47404,19 @@ function SetupContextMenu(showUpdateItem){
 				    elem.title = "An update to the tool is available!"
 				}
 
+				var theGoToItem = { name: 'Jump to Tune (Ctrl+J)', fn: function(target) { JumpToTune(); }};
+				
+				if (isMac()){
+
+					theGoToItem = { name: 'Jump to Tune (⌘+J)', fn: function(target) { JumpToTune(); }};
+				}
+				
+				items.unshift(theGoToItem);
+				
+				var theSpacer = {};
+
+				items.unshift(theSpacer);
+
 				// Adapt the search and replace key string based on the platform
 				var theFindItem = { name: 'Find and Replace (Ctrl+F)', fn: function(target) { FindAndReplace(); }};
 
@@ -47309,7 +47426,7 @@ function SetupContextMenu(showUpdateItem){
 				}
 
 				items.unshift(theFindItem);
-
+				
 			}
 			else{
 				items = [
@@ -47395,6 +47512,9 @@ function SetupContextMenu(showUpdateItem){
 					{ name: 'Launch Quick Editor', fn: function(target) { LaunchQuickEditor(); }},
 				]);
 
+				// For forcing display for User Guide screen shots
+				//showUpdateItem = true;// FOOFOO
+
 				if (showUpdateItem){
 					items = items.concat(
 						[{},
@@ -47409,6 +47529,19 @@ function SetupContextMenu(showUpdateItem){
 				    elem.title = "An update to the tool is available!"
 				}
 
+				var theGoToItem = { name: 'Jump to Tune (Ctrl+J)', fn: function(target) { JumpToTune(); }};
+				
+				if (isMac()){
+
+					theGoToItem = { name: 'Jump to Tune (⌘+J)', fn: function(target) { JumpToTune(); }};
+				}
+				
+				items.unshift(theGoToItem);
+				
+				var theSpacer = {};
+
+				items.unshift(theSpacer);
+
 				// Adapt the search and replace key string based on the platform
 				var theFindItem = { name: 'Find and Replace (Ctrl+F)', fn: function(target) { FindAndReplace(); }};
 
@@ -47418,7 +47551,7 @@ function SetupContextMenu(showUpdateItem){
 				}
 
 				items.unshift(theFindItem);
-
+				
 			}
 			else{
 
@@ -48402,6 +48535,23 @@ function DoStartup() {
 
 			    }
 			    else
+			    if (event.metaKey && event.key === 'j') {
+
+			    	//console.log("Got Command J");
+
+			       	event.preventDefault();  // Prevent the default browser find action
+
+			    	var modalDivs = document.querySelector('.modal_flat_main');
+
+			        if ((!modalDivs) && (!gRenderingPDF)){
+
+			        	// Launch jump to tune
+			        	JumpToTune();
+
+			        }
+
+			    }
+			    else
 			    // Check if the Command key (on Mac) is pressed with the "/" key
 			    if (event.metaKey && event.key === '/') {
 
@@ -48439,6 +48589,24 @@ function DoStartup() {
 
 			        	// Launch find and replace
 			        	FindAndReplace();
+
+			        }
+
+			    }
+			    else
+			    // Check if the Control key (on Windows/Linux) is pressed with the "J" key
+			    if (event.ctrlKey && event.key === 'j') {
+
+			    	//console.log("Got Control J");
+
+			       	event.preventDefault();  // Prevent the default browser find action
+
+			    	var modalDivs = document.querySelector('.modal_flat_main');
+
+			        if ((!modalDivs) && (!gRenderingPDF)){
+
+			        	// Launch jump to tune
+			        	JumpToTune();
 
 			        }
 
