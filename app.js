@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2388_040425_1830";
+var gVersionNumber="2389_040525_0830";
 
 var gMIDIInitStillWaiting = false;
 
@@ -47503,6 +47503,15 @@ function SetupContextMenu(showUpdateItem){
 				    elem.style.backgroundColor = "#FFE0E0";
 				    elem.title = "An update to the tool is available!"
 				}
+
+				var theSpacer = {};
+
+				items.unshift(theSpacer);
+
+				var theGoToItem = { name: 'Jump to Tune', fn: function(target) { JumpToTune(); }};
+
+				items.unshift(theGoToItem);
+
 			}
 		}
 		else{
@@ -47671,6 +47680,15 @@ function SetupContextMenu(showUpdateItem){
 			    elem.style.backgroundColor = "#FFE0E0";
 			    elem.title = "An update to the tool is available!"
 			}
+
+			var theSpacer = {};
+
+			items.unshift(theSpacer);
+
+			var theGoToItem = { name: 'Jump to Tune', fn: function(target) { JumpToTune(); }};
+
+			items.unshift(theGoToItem);
+
 		}
 		else{
 
