@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2387_040325_1000";
+var gVersionNumber="2388_040425_1830";
 
 var gMIDIInitStillWaiting = false;
 
@@ -46039,6 +46039,33 @@ function MaximizeEditor(){
 // Jump to tune
 //
 
+function JumpToSearch(){
+
+	//console.log("JumpToSearch");
+
+	var searchVal = document.getElementById("jumpToSearchValue").value.toLowerCase();
+
+	var searchAll = searchVal == "";
+
+	var theJumpDiv = document.getElementById("jumpto-tune-list");
+
+	var theJumpDivContents = "";
+
+	for (i=0;i<gJumpTitleCount;++i){
+
+		if (searchAll || (gJumpTitles[i].toLowerCase().indexOf(searchVal) != -1)){
+
+			theJumpDivContents += '<div class="jumpto_tune" onclick="JumpToToggleSelection(this,'+i+')">'+gJumpTitles[i]+'</div>';
+		}
+	}
+	
+	theJumpDiv.innerHTML = theJumpDivContents;
+
+	// Reset selected tune
+	gJumpTune = -1;
+
+}
+
 function JumpToToggleSelection(item,index) {
 
 	//console.log("index "+index);
@@ -46059,6 +46086,8 @@ function JumpToToggleSelection(item,index) {
 }
 
 var gJumpTune = -1;
+var gJumpTitles = [];
+var gJumpTitleCount = 0;
 
 function JumpToTune(){
 
@@ -46067,6 +46096,8 @@ function JumpToTune(){
 	var i;
 
 	gJumpTune = -1;
+    gJumpTitles = [];
+    gJumpTitleCount = 0;
 
 	totalTunes = CountTunes();
 
@@ -46085,10 +46116,13 @@ function JumpToTune(){
 		return;
 	}
 
+	gJumpTitles = theTitles;
+	gJumpTitleCount = nTitles;
+
 	var theData = {};
 
 	// MAE 14 Jul 2024 - Make the div fill the screen
-	var theHeight = window.innerHeight - 300;
+	var theHeight = window.innerHeight - 330;
 
 	var theJumpDiv = '<div id="jumpto-tune-list" style="overflow:auto;height:'+theHeight+'px;margin-top:18px">';
 
@@ -46102,6 +46136,7 @@ function JumpToTune(){
 	var form = [
 
 		{html: '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:15px;">Jump to Tune&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#hamburger_jump_to_tune" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'},
+		{html: '<input style="width:100%;font-size:12pt;line-height:18px;padding:6px;margin-left:5px;" id="jumpToSearchValue" title="Enter your search text here" autocomplete="off" autocorrect="off" placeholder="Enter your search text here" oninput="JumpToSearch();"/>'},
 		{html: theJumpDiv},
 	];
 
