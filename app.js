@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2389_040525_0830";
+var gVersionNumber="2390_040625_1330";
 
 var gMIDIInitStillWaiting = false;
 
@@ -12173,9 +12173,8 @@ function RenderAsync(renderAll,tuneNumber,callback){
 
 function Render(renderAll,tuneNumber) {
 
-	//console.log("Render renderAll="+renderAll+" tuneNumber="+tuneNumber); 
-
 	//debugger;
+	//console.log("Render renderAll="+renderAll+" tuneNumber="+tuneNumber); 
 
 	// If currently rendering PDF, exit immediately
 	if (gRenderingPDF) {
@@ -22130,7 +22129,6 @@ function MakeTuneVisible(forceUpdate){
 		gCurrentTune = tuneIndex;
 
 		// Only do the rest on desktop, except in the force case after a global change
-
 		if (!forceUpdate){
 			if (isMobileBrowser()){
 				return;
@@ -22237,7 +22235,6 @@ function MakeTuneVisible(forceUpdate){
 				}
 			}
 		}
-
 	}
 }
 
@@ -46153,9 +46150,20 @@ function JumpToTune(){
     			gTheABC.selectionStart = tuneOffset;
     			gTheABC.selectionEnd = tuneOffset;
 
-    			MakeTuneVisible(true);
+    			if (isDesktopBrowser()){
+    				MakeTuneVisible(true);
+    			}
+    			else{
+    				window.setTimeout(function(){
+    					MakeTuneVisible(true);
+    				},250);
+    			}
 
 				ScrollABCTextIntoView(gTheABC,tuneOffset,tuneOffset,10);
+
+				if (!isPureDesktopBrowser()){
+					gTheABC.blur();
+				}
 
 				// If quick editor, force redraw 
 				if (gIsQuickEditor){
@@ -47465,6 +47473,8 @@ function SetupContextMenu(showUpdateItem){
 			}
 			else{
 				items = [
+					{ name: 'Jump to Tune', fn: function(target) { JumpToTune(); }},
+					{},
 				    { name: 'Toggle Top/Bottom Toolbars', fn: function(target) { ToggleTopBar(); }},
 				    { name: 'Maximize Editor', fn: function(target) { MaximizeEditor(); }},
 				    {},
@@ -47503,15 +47513,6 @@ function SetupContextMenu(showUpdateItem){
 				    elem.style.backgroundColor = "#FFE0E0";
 				    elem.title = "An update to the tool is available!"
 				}
-
-				var theSpacer = {};
-
-				items.unshift(theSpacer);
-
-				var theGoToItem = { name: 'Jump to Tune', fn: function(target) { JumpToTune(); }};
-
-				items.unshift(theGoToItem);
-
 			}
 		}
 		else{
@@ -47600,6 +47601,8 @@ function SetupContextMenu(showUpdateItem){
 			else{
 
 				items = [
+					{ name: 'Jump to Tune', fn: function(target) { JumpToTune(); }},
+					{},
 				    { name: 'Toggle Top/Bottom Toolbars', fn: function(target) { ToggleTopBar(); }},
 				    { name: 'Maximize Editor', fn: function(target) { MaximizeEditor(); }},
 				    {},
@@ -47643,6 +47646,8 @@ function SetupContextMenu(showUpdateItem){
 		if (gIsQuickEditor){
 
 			items = [
+				{ name: 'Jump to Tune', fn: function(target) { JumpToTune(); }},
+				{},
 			    { name: 'Toggle Top/Bottom Toolbars', fn: function(target) { ToggleTopBar(); }},
 			    {},
 			    { name: 'Reorder Tunes', fn: function(target) { ChangeTuneOrderMobile(); }},
@@ -47680,19 +47685,12 @@ function SetupContextMenu(showUpdateItem){
 			    elem.style.backgroundColor = "#FFE0E0";
 			    elem.title = "An update to the tool is available!"
 			}
-
-			var theSpacer = {};
-
-			items.unshift(theSpacer);
-
-			var theGoToItem = { name: 'Jump to Tune', fn: function(target) { JumpToTune(); }};
-
-			items.unshift(theGoToItem);
-
 		}
 		else{
 
 			items = [
+				{ name: 'Jump to Tune', fn: function(target) { JumpToTune(); }},
+				{},
 			    { name: 'Toggle Top/Bottom Toolbars', fn: function(target) { ToggleTopBar(); }},
 			    {},
 			    { name: 'Reorder Tunes', fn: function(target) { ChangeTuneOrderMobile(); }},
