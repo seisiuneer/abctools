@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2390_040625_1330";
+var gVersionNumber="2391_040725_0800";
 
 var gMIDIInitStillWaiting = false;
 
@@ -17057,6 +17057,7 @@ function ProcessAddTune(theValue){
 		    ScrollABCTextIntoView(gTheABC,tuneOffset,tuneOffset,10);
 
 		    if (isMobileBrowser()){
+	    		gTheABC.blur();
 		    	return;
 		    }
 		    
@@ -17159,6 +17160,7 @@ function RenderDivClickHandler(e){
 				}
 
 			    if (isMobileBrowser()){
+		    		gTheABC.blur();
 			    	return;
 			    }
 
@@ -17208,13 +17210,8 @@ function GenerateRenderingDivs(nTunes) {
 		// Force page break between tunes when printing from the browser
 		el.classList.add("pagebreak");
 
-		// Only do this on desktop and iPad in two-column mode
-		// MAE 21 Aug 2024
-		if (isDesktopBrowser()){	
-
-			// Set up the click handler
-			el.onclick = RenderDivClickHandler;
-		}
+		// Set up the click handler
+		el.onclick = RenderDivClickHandler;
 
 		notationHolder.appendChild(el);
 
