@@ -1457,8 +1457,12 @@ var angloFingeringsGenerator = function (theABC, callback){
             }
 
             result += thisTune;
+            
+            result += "\n\n";
 
         }
+        
+        result = normalizeBlankLines(result);
 
         if (gotError){
 
@@ -2351,7 +2355,11 @@ var boxTabGenerator = function (theABC){
 
             result += thisTune;
 
+            result += "\n\n";
+
         }
+
+        result = normalizeBlankLines(result);
 
         return result;
 
@@ -3183,8 +3191,12 @@ var bambooFluteTabGenerator = function (theABC){
             thisTune = InjectStringAboveTuneHeaderConditional(thisTune, "%%annotationfont " + fontFamily + " " + tabFontSize);
 
             result += thisTune;
+            
+            result += "\n\n";
 
         }
+
+        result = normalizeBlankLines(result);
 
         return result
 
@@ -4145,10 +4157,9 @@ var ceoltasABCTransformer = function (theABC,doInverse,isForPDF){
 
                 result += "\n\n";
 
-
             }
 
-            result = result.replaceAll("\n\n\n","\n\n");
+            result = normalizeBlankLines(result);
 
             return result;
         }
@@ -4964,7 +4975,11 @@ var fiddleFingeringsGenerator = function (theABC,stringNameStyle){
 
             result += thisTune;
 
+            result += "\n\n";
+
         }
+        
+        result = normalizeBlankLines(result);
 
        return result;
 
@@ -5893,7 +5908,10 @@ var MDTablatureGenerator = function (theABC){
 
             result += thisTune;
 
+            result += "\n\n";
         }
+        
+        result = normalizeBlankLines(result);
 
         return result;
 
@@ -6994,10 +7012,10 @@ var shapeNoteGenerator = function (theABC){
 
             result += thisTune;
 
-            result += "\n";
+            result += "\n\n";
         }
 
-        result = result.replaceAll("\n\n","\n");
+        result = normalizeBlankLines(result);
 
         return result;
 
@@ -7801,10 +7819,10 @@ var injectABCNoteNames = function (theABC){
 
             result += thisTune;
 
-            result += "\n";
+            result += "\n\n";
         }
 
-        result = result.replaceAll("\n\n","\n");
+        result = normalizeBlankLines(result);
 
         return result;
 
@@ -9190,10 +9208,10 @@ var HarmonicaTabGenerator = function (theABC){
 
             result += thisTune;
 
-            result += "\n";
+            result += "\n\n";
         }
 
-        result = result.replaceAll("\n\n","\n");
+        result = normalizeBlankLines(result);
 
         return result;
 
@@ -10005,10 +10023,10 @@ var CustomTabGenerator = function (theABC){
 
             result += thisTune;
 
-            result += "\n";
+            result += "\n\n";
         }
 
-        result = result.replaceAll("\n\n","\n");
+        result = normalizeBlankLines(result);
 
         return result;
 

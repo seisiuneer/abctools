@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2393_040825_1000";
+var gVersionNumber="2394_040825_1100";
 
 var gMIDIInitStillWaiting = false;
 
@@ -446,6 +446,13 @@ function getFirstPage(){
 //
 // Tune utility functions
 // 
+
+// Normalize blank linkes for tab generators
+function normalizeBlankLines(text) {
+  return text
+    .replace(/\n{3,}/g, '\n\n')    // Replace 3 or more consecutive newlines with just 2
+    .trim();                       // Remove leading/trailing whitespace
+}
 
 //
 // Set the editor text
