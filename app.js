@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2392_040825_0830";
+var gVersionNumber="2393_040825_1000";
 
 var gMIDIInitStillWaiting = false;
 
@@ -11831,18 +11831,20 @@ function AreChordsInABC(theABC){
 	const output = theABC
 	.split('\n')
 	.map(line => {
-	    // If line starts with one of the forbidden prefixes, skip replacement
-	    if (/^[XTMKLQWZRCAOPNGHBDFSIV]:/.test(line) || /^%/.test(line)) {
-	    	// Do nothing
-	    } else {
-	    	
-	    	var theMatch = line.match(searchRegExp);
+		if (!res){
+		    // If line starts with one of the forbidden prefixes, skip replacement
+		    if (/^[XTMKLQWZRCAOPNGHBDFSIV]:/.test(line) || /^%/.test(line)) {
+		    	// Do nothing
+		    } else {
+		    	
+		    	var theMatch = line.match(searchRegExp);
 
-			var isMatch = AreChordsInMatch(theMatch);
+				var isMatch = AreChordsInMatch(theMatch);
 
-	    	if (isMatch){
-	    		res = true;
-	    	}
+		    	if (isMatch){
+		    		res = true;
+		    	}
+			}
 		}
 	})
 
@@ -11888,18 +11890,20 @@ function IsTabInABC(theABC){
 	const output = theABC
 	.split('\n')
 	.map(line => {
-	    // If line starts with one of the forbidden prefixes, skip replacement
-	    if (/^[XTMKLQWZRCAOPNGHBDFSIV]:/.test(line) || /^%/.test(line)) {
-	    	// Do nothing
-	    } else {
-	    	
-	    	var theMatch = line.match(searchRegExp);
+		if (!res){
+		    // If line starts with one of the forbidden prefixes, skip replacement
+		    if (/^[XTMKLQWZRCAOPNGHBDFSIV]:/.test(line) || /^%/.test(line)) {
+		    	// Do nothing
+		    } else {
+		    	
+		    	var theMatch = line.match(searchRegExp);
 
-			var isMatch = IsTabInMatch(theMatch);
+				var isMatch = IsTabInMatch(theMatch);
 
-	    	if (isMatch){
-	    		res = true;
-	    	}
+		    	if (isMatch){
+		    		res = true;
+		    	}
+			}
 		}
 	})
 
