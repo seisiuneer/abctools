@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2391_040725_0800";
+var gVersionNumber="2392_040825_0830";
 
 var gMIDIInitStillWaiting = false;
 
@@ -11762,10 +11762,20 @@ function StripChordsOne(theNotes){
 	// Strip out chord markings and not text annotations
 	var searchRegExp = /"[^"]*"/gm
 
-	theNotes = theNotes.replace(searchRegExp,match_callback);
+	const output = theNotes
+	.split('\n')
+	.map(line => {
+	    // If line starts with one of the forbidden prefixes, skip replacement
+	    if (/^[XTMKLQWZRCAOPNGHBDFSIV]:/.test(line) || /^%/.test(line)) {
+	    	return line;
+	    } else {		
+	    	return line.replace(searchRegExp,match_callback);
+		}
+	})
+	.join('\n');
 
 	// Replace the ABC
-	return theNotes;
+	return output;
 
 }
 
@@ -11773,7 +11783,7 @@ function StripChordsOne(theNotes){
 // 
 // Are there chords in a match regex?
 //
-function AreChordsInMatch(theABC,theMatch){
+function AreChordsInMatch(theMatch){
 
 	if (!theMatch){
 		return false;
@@ -11807,10 +11817,43 @@ function AreChordsInMatch(theABC,theMatch){
 
 }
 
+
+// 
+// Are there chords in the ABC?
+//
+function AreChordsInABC(theABC){
+
+	var res = false;
+
+	// Detect chord markings and not text annotations
+	var searchRegExp = /"[^"]*"/gm
+
+	const output = theABC
+	.split('\n')
+	.map(line => {
+	    // If line starts with one of the forbidden prefixes, skip replacement
+	    if (/^[XTMKLQWZRCAOPNGHBDFSIV]:/.test(line) || /^%/.test(line)) {
+	    	// Do nothing
+	    } else {
+	    	
+	    	var theMatch = line.match(searchRegExp);
+
+			var isMatch = AreChordsInMatch(theMatch);
+
+	    	if (isMatch){
+	    		res = true;
+	    	}
+		}
+	})
+
+	return res;
+
+}
+
 // 
 // Are there tabs in a match regex?
 //
-function IsTabInMatch(theABC,theMatch){
+function IsTabInMatch(theMatch){
 
 	if (!theMatch){
 		return false;
@@ -11829,6 +11872,38 @@ function IsTabInMatch(theABC,theMatch){
 	}
 
 	return false;
+
+}
+
+// 
+// Are there tabs in the ABC?
+//
+function IsTabInABC(theABC){
+
+	var res = false;
+
+	// Detect chord markings and not text annotations
+	var searchRegExp = /"[^"]*"/gm
+
+	const output = theABC
+	.split('\n')
+	.map(line => {
+	    // If line starts with one of the forbidden prefixes, skip replacement
+	    if (/^[XTMKLQWZRCAOPNGHBDFSIV]:/.test(line) || /^%/.test(line)) {
+	    	// Do nothing
+	    } else {
+	    	
+	    	var theMatch = line.match(searchRegExp);
+
+			var isMatch = IsTabInMatch(theMatch);
+
+	    	if (isMatch){
+	    		res = true;
+	    	}
+		}
+	})
+
+	return res;
 
 }
 
@@ -11869,10 +11944,20 @@ function StripTabOne(theNotes){
 	// Strip out text annotation and not chords
 	var searchRegExp = /"[^"]*"/gm
 
-	theNotes = theNotes.replace(searchRegExp,match_callback);
+	const output = theNotes
+	.split('\n')
+	.map(line => {
+	    // If line starts with one of the forbidden prefixes, skip replacement
+	    if (/^[XTMKLQWZRCAOPNGHBDFSIV]:/.test(line) || /^%/.test(line)){
+	    	return line;
+	    } else {		
+	    	return line.replace(searchRegExp,match_callback);
+		}
+	})
+	.join('\n');
 
 	// Replace the ABC
-	return theNotes;
+	return output;
 
 }
 
@@ -12727,19 +12812,12 @@ function IdleAdvancedControls(bUpdateUI){
 	// Detect chord markings
 	searchRegExp = /"[^"]*"/gm
 
-	var theMatch = theNotes.match(searchRegExp);
-
-	gotMatch = AreChordsInMatch(theNotes,theMatch);
+	gotMatch = AreChordsInABC(theNotes);
 
 	EnableChords = gotMatch;
 
 	// Detect tab markings
-	searchRegExp = /"[^"]*"/gm
-
-	theMatch = theNotes.match(searchRegExp);
-
-	// Detect tab markings
-	gotMatch = IsTabInMatch(theNotes,theMatch);
+	gotMatch = IsTabInABC(theNotes);
 
 	EnableTab = gotMatch;
 
