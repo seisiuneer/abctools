@@ -1415,7 +1415,9 @@ var angloFingeringsGenerator = function (theABC, callback){
 
             // Don't inject section header tune fragments or multi-voice tunes
             if (isSectionHeader(thisTune) || isMultiVoiceTune(thisTune)){
+                result += "\n";
                 result += thisTune;
+                result += "\n\n";
                 continue;
             }
 
@@ -2332,7 +2334,9 @@ var boxTabGenerator = function (theABC){
 
             // Don't inject section header tune fragments or multi-voice tunes
             if (isSectionHeader(thisTune) || isMultiVoiceTune(thisTune)){
+                result += "\n";
                 result += thisTune;
+                result += "\n\n";
                 continue;
             }
 
@@ -3149,7 +3153,9 @@ var bambooFluteTabGenerator = function (theABC){
 
             // Don't inject section header tune fragments or multi-voice tunes
             if (isSectionHeader(thisTune) || isMultiVoiceTune(thisTune)){
+                result += "\n";
                 result += thisTune;
+                result += "\n\n";
                 continue;
             }
 
@@ -4150,7 +4156,9 @@ var ceoltasABCTransformer = function (theABC,doInverse,isForPDF){
 
                 // Don't inject section header tune fragments or multi-voice tunes
                 if (isSectionHeader(thisTune) || isMultiVoiceTune(thisTune)){
+                    result += "\n";
                     result += thisTune;
+                    result += "\n\n";
                     continue;
                 }
 
@@ -4954,7 +4962,9 @@ var fiddleFingeringsGenerator = function (theABC,stringNameStyle){
 
             // Don't inject section header tune fragments or multi-voice tunes
             if (isSectionHeader(thisTune) || isMultiVoiceTune(thisTune)){
+                result += "\n";
                 result += thisTune;
+                result += "\n\n";
                 continue;
             }
 
@@ -5861,7 +5871,9 @@ var MDTablatureGenerator = function (theABC){
 
             // Don't inject section header tune fragments or multi-voice tunes
             if (isSectionHeader(thisTune) || isMultiVoiceTune(thisTune)){
+                result += "\n";
                 result += thisTune;
+                result += "\n\n";
                 continue;
             }
 
@@ -6993,7 +7005,7 @@ var shapeNoteGenerator = function (theABC){
             if (isSectionHeader(thisTune)){
                 result += "\n";
                 result += thisTune;
-                result += "\n";
+                result += "\n\n";
                 continue;
             }
 
@@ -7814,7 +7826,7 @@ var injectABCNoteNames = function (theABC){
             if (isSectionHeader(thisTune)){
                 result += "\n";
                 result += thisTune;
-                result += "\n";
+                result += "\n\n";
                 continue;
             }
 
@@ -7824,7 +7836,7 @@ var injectABCNoteNames = function (theABC){
  
             // If injecting note names, add the annotation font directive
             thisTune = InjectStringAboveTuneHeaderConditional(thisTune, "%%annotationfont " + fontFamily + " " + tabFontSize);
-            
+
             thisTune = thisTune.replaceAll("\n\n","\n");
 
             result += thisTune;
@@ -9128,7 +9140,7 @@ var HarmonicaTabGenerator = function (theABC){
             if (isSectionHeader(thisTune) || isMultiVoiceTune(thisTune)){
                 result += "\n";
                 result += thisTune;
-                result += "\n";
+                result += "\n\n";
                 continue;
             }
 
@@ -9970,7 +9982,7 @@ var CustomTabGenerator = function (theABC){
             if (isSectionHeader(thisTune) || isMultiVoiceTune(thisTune)){
                 result += "\n";
                 result += thisTune;
-                result += "\n";
+                result += "\n\n";
                 continue;
             }
 
