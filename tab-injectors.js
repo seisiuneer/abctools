@@ -1456,6 +1456,8 @@ var angloFingeringsGenerator = function (theABC, callback){
                 thisTune = InjectStringAboveTuneHeaderConditional(thisTune, "%%musicspace " + musicSpace);
             }
 
+            thisTune = thisTune.replaceAll("\n\n","\n");
+
             result += thisTune;
             
             result += "\n\n";
@@ -3189,6 +3191,8 @@ var bambooFluteTabGenerator = function (theABC){
             }
 
             thisTune = InjectStringAboveTuneHeaderConditional(thisTune, "%%annotationfont " + fontFamily + " " + tabFontSize);
+
+            thisTune = thisTune.replaceAll("\n\n","\n");
 
             result += thisTune;
             
@@ -4973,6 +4977,8 @@ var fiddleFingeringsGenerator = function (theABC,stringNameStyle){
                 thisTune = InjectStringAboveTuneHeaderConditional(thisTune, "%%musicspace " + musicSpace);
             }
 
+            thisTune = thisTune.replaceAll("\n\n","\n");
+
             result += thisTune;
 
             result += "\n\n";
@@ -5905,6 +5911,8 @@ var MDTablatureGenerator = function (theABC){
                     thisTune = "";
                 }
             }
+
+            thisTune = thisTune.replaceAll("\n\n","\n");
 
             result += thisTune;
 
@@ -7816,6 +7824,8 @@ var injectABCNoteNames = function (theABC){
  
             // If injecting note names, add the annotation font directive
             thisTune = InjectStringAboveTuneHeaderConditional(thisTune, "%%annotationfont " + fontFamily + " " + tabFontSize);
+            
+            thisTune = thisTune.replaceAll("\n\n","\n");
 
             result += thisTune;
 
@@ -9206,6 +9216,8 @@ var HarmonicaTabGenerator = function (theABC){
 
             thisTune = InjectStringBelowTuneHeaderConditional(thisTune, "%%vskip 15");
 
+            thisTune = thisTune.replaceAll("\n\n","\n");
+
             result += thisTune;
 
             result += "\n\n";
@@ -10020,6 +10032,8 @@ var CustomTabGenerator = function (theABC){
             thisTune = InjectStringBelowTuneHeaderConditional(thisTune, tabInfo);
 
             thisTune = InjectStringBelowTuneHeaderConditional(thisTune, "%%vskip 15");
+
+            thisTune = thisTune.replaceAll("\n\n","\n");
 
             result += thisTune;
 
