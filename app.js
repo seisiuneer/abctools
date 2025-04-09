@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2397_040925_0930";
+var gVersionNumber="2398_040925_1600";
 
 var gMIDIInitStillWaiting = false;
 
@@ -16545,6 +16545,7 @@ function AppendTuneTempate(){
 	theValue += 'K: C\n';
 	theValue += '%\n';
 	theValue += '% Soundfont\n';
+	theValue += '% Available soundfonts are:\n';
 	theValue += '% fluid, fluidhq, musyng, fatboy, canvas, mscore, arachno:\n';
 	theValue += '%soundfont fluid\n';
 	theValue += '%\n';
@@ -16948,7 +16949,7 @@ function AppendJSBach(){
 	theValue += 'M:4/4\n';
 	theValue += 'K:C\n';
 	theValue += '%\n';
-	theValue += '% Try changing the abcjs_soundfont value to\n';
+	theValue += '% Try changing the soundfont value to\n';
 	theValue += '% fluid, fluidhq, musyng, fatboy, canvas, mscore, or arachno:\n';
 	theValue += '%\n';	
 	theValue += '%soundfont fluid\n';	
@@ -17024,7 +17025,7 @@ function AppendJSBach2(){
 	theValue += 'M:4/4\n';
 	theValue += 'K:C\n';
 	theValue += '%\n';
-	theValue += '% Try changing the abcjs_soundfont value to\n';
+	theValue += '% Try changing the soundfont value to\n';
 	theValue += '% fluid, fluidhq, musyng, fatboy, canvas, mscore, or arachno:\n';
 	theValue += '%\n';	
 	theValue += '%soundfont fluid\n';	
@@ -18634,12 +18635,11 @@ function InjectOneTuneLargePrint(theTune, staffwidth){
 //
 function InjectOneTuneSoundfont(theTune, theSoundfont){
 
-	var theOutput = InjectStringBelowTuneHeader(theTune, "% Soundfont: "+theSoundfont+"\n"+"%abcjs_soundfont "+theSoundfont);
+	var theOutput = InjectStringBelowTuneHeader(theTune, "% Soundfont: "+theSoundfont+"\n"+"%soundfont "+theSoundfont);
 	
 	return theOutput;
 	
 }
-
 
 //
 // Inject a section header placeholder tune
@@ -20294,9 +20294,9 @@ function InjectAllMIDIParams(){
 
 	var form = [
 	  {html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-left:15px;">Inject MIDI Soundfont, Melody, Bass, and Chords&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#selecting_the_instruments_for_playback" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'},
-	  {html: '<p style="margin-top:24px;margin-bottom:24px;font-size:12pt;line-height:18pt;font-family:helvetica">This will inject a %abcjs_soundfont directive into the ABC:</p>'},  
-	  {name: "            Inject abcjs Soundfont", id: "configure_inject_soundfont", type:"checkbox", cssClass:"configure_midi_program_form_text"},
-	  {name: "%abcjs_soundfont value to inject:", id: "configure_soundfont", type:"select", options:sound_fonts_list, cssClass:"configure_soundfont_select"},
+	  {html: '<p style="margin-top:24px;margin-bottom:24px;font-size:12pt;line-height:18pt;font-family:helvetica">This will inject a %soundfont directive into the ABC:</p>'},  
+	  {name: "            Inject MIDI Soundfont", id: "configure_inject_soundfont", type:"checkbox", cssClass:"configure_midi_program_form_text"},
+	  {name: "%soundfont value to inject:", id: "configure_soundfont", type:"select", options:sound_fonts_list, cssClass:"configure_soundfont_select"},
 	  {html: '<p style="margin-top:24px;margin-bottom:24px;font-size:12pt;line-height:18pt;font-family:helvetica">This will inject a %%MIDI program directive into the ABC:</p>'},  
 	  {name: "            Inject MIDI Melody program", id: "configure_inject_melody_program", type:"checkbox", cssClass:"configure_midi_program_form_text"},
 	  {name: "MIDI Melody program to inject:", id: "configure_program", type:"select", options:midi_program_list, cssClass:"configure_midi_program_select"},
@@ -20668,7 +20668,7 @@ function InjectAllMIDIParams(){
 					
 					var rightSide = gTheABC.value.substring(theSelectionStart);
 
-					setABCEditorText(leftSide + "% Soundfont: "+soundFontToInject+"\n"+"%abcjs_soundfont " + soundFontToInject + "\n" + rightSide);
+					setABCEditorText(leftSide + "% Soundfont: "+soundFontToInject+"\n"+"%soundfont " + soundFontToInject + "\n" + rightSide);
 
 					// Set dirty
 					gIsDirty = true;
@@ -31293,7 +31293,7 @@ function PlayABCDialog(theABC,callback,val,metronome_state){
 			modal_msg += '<input id="abcplayer_exportbutton" class="abcplayer_exportbutton btn btn-exportaudiomidi" onclick="ExportAudioOrImage();" type="button" value="Export Audio or Image" title="Brings up a dialog where you can export the tune in various audio and image formats">';			
 		}
 
-		modal_msg += '<input id="abcplayer_settingsbutton" class="abcplayer_settingsbutton btn btn-configuresettingsfromhelp" onclick="ShowPlayerSettings();" type="button" value="Settings" title="Brings up the Player Instrument Settings dialog where you can select the default abcjs soundfont, MIDI instruments, and MIDI volumes to use when playing tunes.&nbsp;&nbsp;From the dialog you can also set the Player screen width percentage.">';
+		modal_msg += '<input id="abcplayer_settingsbutton" class="abcplayer_settingsbutton btn btn-configuresettingsfromhelp" onclick="ShowPlayerSettings();" type="button" value="Settings" title="Brings up the Player Instrument Settings dialog where you can select the default MIDI soundfont, MIDI instruments, and MIDI volumes to use when playing tunes.&nbsp;&nbsp;From the dialog you can also set the Player screen width percentage.">';
 		
 		if (isDesktopBrowser()){
 			modal_msg += '<input id="abcplayer_zoom_in" class="btn btn-player_zoom abcplayer_zoom_in" onclick="ZoomPlayer(true)" type="button" value="←&nbsp;→" title="Increases the player width 10% of the window screen size">';
@@ -34833,28 +34833,28 @@ function InstrumentExplorerDialogInjectThisTune(theTune){
 	// Inject soundfont
 	switch (gInstrumentExplorerSoundfont){
 		case "0":
-			theTune = InjectStringBelowTuneHeader(theTune, "%abcjs_soundfont fluid");
+			theTune = InjectStringBelowTuneHeader(theTune, "%soundfont fluid");
 			break;
 		case "1":
-			theTune = InjectStringBelowTuneHeader(theTune, "%abcjs_soundfont musyng");
+			theTune = InjectStringBelowTuneHeader(theTune, "%soundfont musyng");
 			break;
 		case "2":
-			theTune = InjectStringBelowTuneHeader(theTune, "%abcjs_soundfont fatboy");
+			theTune = InjectStringBelowTuneHeader(theTune, "%soundfont fatboy");
 			break;
 		case "3":
-			theTune = InjectStringBelowTuneHeader(theTune, "%abcjs_soundfont canvas");
+			theTune = InjectStringBelowTuneHeader(theTune, "%soundfont canvas");
 			break;
 		case "4":
-			theTune = InjectStringBelowTuneHeader(theTune, "%abcjs_soundfont mscore");
+			theTune = InjectStringBelowTuneHeader(theTune, "%soundfont mscore");
 			break;
 		case "5":
-			theTune = InjectStringBelowTuneHeader(theTune, "%abcjs_soundfont arachno");
+			theTune = InjectStringBelowTuneHeader(theTune, "%soundfont arachno");
 			break;
 		case "6":
-			theTune = InjectStringBelowTuneHeader(theTune, "%abcjs_soundfont fluidhq");
+			theTune = InjectStringBelowTuneHeader(theTune, "%soundfont fluidhq");
 			break;
 		default:
-			theTune = InjectStringBelowTuneHeader(theTune, "%abcjs_soundfont fluid");
+			theTune = InjectStringBelowTuneHeader(theTune, "%soundfont fluid");
 			break;
 	}
 
@@ -35097,7 +35097,7 @@ function InstrumentExplorerDialog(theOriginalABC, theProcessedABC, instrument_ex
 	   	// Add the MIDI Instrument Explorer controls
 		modal_msg += '<div class="configure_instrumentexplorer_text" style="text-align:center;margin:0px;margin-top:36px">';
 		modal_msg += '<p class="configure_instrumentexplorer_text">';
-		modal_msg += "Sound font:"+gInstrumentExplorerSoundfonts+"&nbsp;&nbsp;&nbsp;Melody:"+gInstrumentExplorerMelodyInstruments;
+		modal_msg += "Soundfont:"+gInstrumentExplorerSoundfonts+"&nbsp;&nbsp;&nbsp;Melody:"+gInstrumentExplorerMelodyInstruments;
 		modal_msg += '</p>';
 		modal_msg += '<p class="configure_instrumentexplorer_text">';
 		modal_msg += "Bass:"+ gInstrumentExplorerBassInstruments+"&nbsp;&nbsp;&nbsp;Chords:"+gInstrumentExplorerChordInstruments;
@@ -41830,7 +41830,7 @@ function ConfigurePlayerSettings(player_callback) {
   	var form = [
 		{html: '<p style="text-align:center;font-size:16pt;font-family:helvetica;margin-left:15px;">Player Instrument Settings&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#default_player_settings" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'},
 		{html: '<p class="configure_settings_form_text_fs">The following values are used as the instrument and volume defaults if not already specified in a tune:</p>'},
-		{name: "Default abcjs soundfont:", id: "configure_soundfont", type:"select", options:sound_font_options, cssClass:"configure_settings_select_fs"}, 
+		{name: "Default MIDI Soundfont:", id: "configure_soundfont", type:"select", options:sound_font_options, cssClass:"configure_settings_select_fs"}, 
 		{name: "Default Melody MIDI program:", id: "configure_melody_program", type:"select", options:midi_program_list, cssClass:"configure_midi_program_form_select"},
 		{name: "Default Bass MIDI program:", id: "configure_bass_program", type:"select", options:midi_program_list, cssClass:"configure_midi_program_form_select"},
 		{name: "Default Chords MIDI program:", id: "configure_chord_program", type:"select", options:midi_program_list, cssClass:"configure_midi_program_form_select"},
@@ -42115,7 +42115,7 @@ function ConfigureToolSettings() {
 		{name: "Stringed instrument capo fret position:", id: "configure_capo", type:"number", cssClass:"configure_settings_form_text"},
 		{name: "    Show stringed instrument names on tablature (single-voice tunes only, not shown in the Player)", id: "configure_show_tab_names", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"},
 		{name: "          Show Recorder tab button instead of the Whistle tab button", id: "configure_show_recorder", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"},
-		{html: '<p style="text-align:center;"><input id="abcplayer_settingsbutton" style="margin-left:0px" class="abcplayer_settingsbutton btn btn-configuresettingsfromhelp" onclick="ConfigurePlayerSettings(null);" type="button" value="Select Default Player Instruments and Volumes" title="Brings up the Player Instrument Settings dialog where you can select the default abcjs soundfont, MIDI instruments, and MIDI volumes to use when playing tunes"><input id="managedatabases" class="btn btn-managedatabases managedatabases" onclick="ManageDatabasesDialog()" type="button" value="Manage Notes, Reverb, and Tune Search Databases" title="Opens a dialog where you can manage the instrument notes, reverb settings, and tune search engine collection databases"></p>'},
+		{html: '<p style="text-align:center;"><input id="abcplayer_settingsbutton" style="margin-left:0px" class="abcplayer_settingsbutton btn btn-configuresettingsfromhelp" onclick="ConfigurePlayerSettings(null);" type="button" value="Select Default Player Instruments and Volumes" title="Brings up the Player Instrument Settings dialog where you can select the default MIDI soundfont, MIDI instruments, and MIDI volumes to use when playing tunes"><input id="managedatabases" class="btn btn-managedatabases managedatabases" onclick="ManageDatabasesDialog()" type="button" value="Manage Notes, Reverb, and Tune Search Databases" title="Opens a dialog where you can manage the instrument notes, reverb settings, and tune search engine collection databases"></p>'},
 		{name: "    Allow instrument notes and reverb settings database to be used offline", id: "configure_allow_offline_instruments", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"},
 		{name: "    Use custom sounds for Dulcimer, Accordion, Flute, Whistle, Banjo, Bagpipe, Fiddle, and Bodhran", id: "configure_use_custom_gm_sounds", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"},
 		{name: "            Automatically swing Hornpipes when playing (enabled if R:Hornpipe is found in the tune)", id: "configure_auto_swing_hornpipes", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"},
