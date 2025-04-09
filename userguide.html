@@ -976,7 +976,7 @@
                 <p>Imports and exports tunes in ABC, MusicXML, and MIDI formats.</p>
                 <p>Imports bagpipes tunes in BWW format.</p>
                 <p>Search for ABC tunes by name from a built-in database of over 60,000 ABC tune settings and quickly add them to your tunebooks.</p>
-                <p>Play your tunes with seven different soundfonts providing over 800 high-quality, sampled instruments.</p>
+                <p>Play your tunes with seven different General MIDI soundfonts providing over 800 high-quality, sampled instruments.</p>
                 <p>Use the Tune Trainer to practice your tunes starting slowly and then with increasing tempos.</p>
                 <p>Create PDF tunebooks with title pages, table of contents, tune index, custom headers, footers, hyperlinks, tune incipits (notation or raw ABC), and sharing QR codes using the tool's built-in Export PDF feature.</p>
                 <p>Automagically generate complete websites from your ABC tunebooks.</p>
@@ -1361,12 +1361,12 @@
                 <p><strong>Add Offline Notes Database Loader Templates:</strong></p>
                 <p>Adds two ABC templates to assist with loading notes into the offline instrument notes and reverb settings database:</p>
                 <p><strong>Single Soundfont Instrument Notes + Reverb Setting Database Loader</strong></p>
-                <p>ABC template with all notes for a specific soundfont and MIDI instrument as well as reverb setting to make it easy to load all the notes for a single instrument plus a single reverb setting into the instrument notes and reverb settings database for offline use.</p>
+                <p>ABC template with all notes for a specific MIDI soundfont and MIDI instrument as well as reverb setting to make it easy to load all the notes for a single instrument plus a single reverb setting into the instrument notes and reverb settings database for offline use.</p>
                 <p>After setting your desired MIDI instrument and reverb setting in the template, click <strong>Play</strong> to load the notes and reverb setting into the database.</p>
                 <p>You do not need to actually play the ABC, simply opening the template in the player will fetch the instrument notes and reverb setting and save them in the database.</p>
                 <p><strong>All Soundfont Instruments Notes Database Primer Loader</strong></p>
-                <p>ABC template soundfont MIDI instrument notes database primer loader that includes a single note assigned to each of the 128 MIDI instruments in a soundfont (plus my custom instruments 129-148).</p>
-                <p>After setting your desired soundfont in the template, click <strong>Play</strong> to load the single notes of each instrument into the database.</p>
+                <p>ABC template MIDI soundfont MIDI instrument notes database primer loader that includes a single note assigned to each of the 128 MIDI instruments in a soundfont (plus my custom instruments 129-148).</p>
+                <p>After setting your desired MIDI soundfont in the template, click <strong>Play</strong> to load the single notes of each instrument into the database.</p>
                 <p>You do not need to actually play the ABC, simply opening the template in the player will fetch the instrument notes save them in the database.</p>
                 <p>Once the single notes for each MIDI soundfont instrument are in the database, use the <strong>Load All Notes for All Instruments</strong> feature on the <strong>Manage Notes, Reverb, and Tune Search Databases</strong> / <strong>Instrument Notes Database</strong> dialog to load all the rest of the notes for all the instruments in the MIDI soundfont into the database for use offline.</p>
                 <hr>
@@ -1625,7 +1625,7 @@
                 <p>Each MIDI soundfont is a full General MIDI implementation, but has somewhat different sounds for each instrument.</p>
                 <p>If no %soundfont is specified in a tune, the default MIDI soundfont chosen in the tool's <strong>Settings</strong> dialog is used.</p>
                 <p>It is not possible to change MIDI soundfonts within a tune.</p>
-                <p>If multiple instancs of %soundfont are found in a tune, only the first one is used.</p>
+                <p>If multiple instances of %soundfont are found in a tune, only the first one is used.</p>
                 <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/fUz5I0Vk78Q" title="All about soundfonts" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
                 <p>For more details on the MIDI soundfonts, visit: <a href="https://paulrosen.github.io/midi-js-soundfonts/" target="_blank">midi-js-soundfonts on GitHub</a></p>
                 <p>If <strong>Use custom sounds for Dulcimer, Accordion, Flute, Whistle, Banjo, Bagpipe, Fiddle, and Bodhran</strong> is enabled in the Settings (on by default), for all MIDI soundfonts, my custom sampled instruments for Dulcimer, Accordion, Flute, Whistle, Banjo, Bagpipe, Fiddle, and Bodhran (overrides Melodic Tom) will override the MIDI soundfont sounds.</p>
@@ -1758,7 +1758,7 @@
                 <hr class="hidden-print" id="banjo_style">
                 <h1 class="page_break_always h1wide">Using the Tenor Banjo (%%MIDI program 105) Instrument<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <p>If %%MIDI program 105 (Banjo) is used in a tune, you may choose between one of five different custom Tenor Banjo sounds using one of the following comment-based annotations anywhere in the tune's ABC:</p>
-                <p class=code>% Use the default banjo sound from the current soundfont<br/>
+                <p class=code>% Use the default banjo sound from the current MIDI soundfont<br/>
                     %banjo_style 0<br/><br/>
                     % Dark tone<br/>
                     %banjo_style 1<br/><br/>
@@ -1770,7 +1770,7 @@
                 %banjo_style 4</p>
                 <p>Only the first instance of a %banjo_style annotation found in a tune will be used for that tune.</p>
                 <p>If no banjo style is specified in a tune, the default is style 2.</p>
-                <p>If banjo style 0 is selected, the default banjo sound from the current soundfont selected for the tune (or the tool default if not specified in the tune) will be used.</p>
+                <p>If banjo style 0 is selected, the default banjo sound from the current MIDI soundfont selected for the tune (or the tool default if not specified in the tune) will be used.</p>
                 <p>If you wish to override all custom sound setting for a specific tune, add one of the following comment-based annotations anywhere in the tune:</p>
                 <p class="code">% Force use of custom sounds for this tune:<br/>
                 %use_custom_gm_sounds true</p>
@@ -3210,10 +3210,10 @@
                 <p class="code">%add_playback_link MELODY_PROGRAM BASS_PROGRAM CHORD_PROGRAM SOUND_FONT</p>
                 <p></p>
                 <p>The MELODY_PROGRAM, BASS_PROGRAM CHORD_PROGRAM, and SOUND_FONT are optional.</p>
-                <p>If only the MELODY_PROGRAM is specified, the BASS_PROGRAM, CHORD_PROGRAM, and SOUND_FONT values will be set to the current default soundfont and instrument program number settings for bass and chord playback in the <strong>Settings</strong> dialog.</p>
+                <p>If only the MELODY_PROGRAM is specified, the BASS_PROGRAM, CHORD_PROGRAM, and SOUND_FONT values will be set to the current default MIDI soundfont and instrument program number settings for bass and chord playback in the <strong>Settings</strong> dialog.</p>
                 <p>If MELODY_PROGRAM, BASS_PROGRAM, CHORD_PROGRAM, and SOUND_FONT are not specified, the play link will be added, but no additional MIDI program, bassprog, or chordprog information will be injected into the tune at playback time.</p>
                 <p></p>
-                <p>Example: To have a specific tune played using the FatBoy soundfont with an Harpsichord sound on the melody and a Piano sound on the bass and chords</p>
+                <p>Example: To have a specific tune played using the FatBoy MIDI soundfont with an Harpsichord sound on the melody and a Piano sound on the bass and chords</p>
                 <p></p>
                 <p class="code">X:1<br/>
                     T:The Tarbolton<br/>
@@ -3233,10 +3233,10 @@
                 <p class="code">%add_all_playback_links MELODY_PROGRAM BASS_PROGRAM CHORD_PROGRAM SOUND_FONT</p>
                 <p></p>
                 <p>The MELODY_PROGRAM, BASS_PROGRAM, CHORD_PROGRAM, and SOUND_FONT are optional.</p>
-                <p>If only the MELODY_PROGRAM is specified, the BASS_PROGRAM, CHORD_PROGRAM, and SOUND_FONT values will be set to the current default soundfont and instrument program number settings for bass and chord playback in the <strong>Settings</strong> dialog.</p>
+                <p>If only the MELODY_PROGRAM is specified, the BASS_PROGRAM, CHORD_PROGRAM, and SOUND_FONT values will be set to the current default MIDI soundfont and instrument program number settings for bass and chord playback in the <strong>Settings</strong> dialog.</p>
                 <p>If MELODY_PROGRAM, BASS_PROGRAM, CHORD_PROGRAM, and SOUND_FONT are not specified, the play link will be added, but no additional MIDI program or chordprog information will be injected into the tune at playback time.</p>
                 <p>This is useful for tunebooks for which you have manually specified all the MIDI soundfont, program, bassprog, and chordprog information already in the tunes and do not want them overridden when played from the play link.</p>
-                <p>Example: To have all tunes played using the FatBoy soundfont and a Harpsichord sound on the melody and a Piano sound on the bass and chords:</p>
+                <p>Example: To have all tunes played using the FatBoy MIDI soundfont and a Harpsichord sound on the melody and a Piano sound on the bass and chords:</p>
                 <p class="code">%add_all_playback_links 6 0 0 fatboy</p>
                 <p>Additionally, if %add_all_playback_links is specified in the PDF features, each tune in the PDF will have a %add_all_playback_links added to the header so that if the user exports a PDF of a tune played from the PDF tunebook, that exported PDF tune will also play if the title is clicked.</p>
                 <p>To specify the volumes for the bass and chords to the playback links also add:</p>
@@ -3328,7 +3328,7 @@
                 <p>>> Link back on each page to the index</p>
                 <p>Page headers</p>
                 <p>Page footers</p>
-                <p>Playback links on every tune title selecting the Fluid soundfont, Piano sound for the melody, and a Piano sound for the bass and chords</p>
+                <p>Playback links on every tune title selecting the Fluid MIDI soundfont, Piano sound for the melody, and a Piano sound for the bass and chords</p>
                 <p>Injects all required fonts for each tune to match the current state of the tool.</p>
                 <p>QR code with hyperlink and caption at the end of the tunebook</p>
                 <p></p>
@@ -3650,7 +3650,7 @@
                 <p>The dropdown will include:</p>
                 <p><strong>Standard Notation<br/>Note Names<br/>Mandolin<br/>Tenor Banjo<br/>GDAD Bouzouki<br/>Standard Guitar<br/>DADGAD<br/>Tin Whistle<br/>Irish Flute<br/>Accordion<br/>Concertina<br/>Hammered Dulcimer</strong></p>
                 <p>Information on modifying the behavior of the tablature dropdown by editing the exported .html file can be found in the <a href="#export_website_devnotes">Export Website Developer Customization</a> section below.</p>
-                <p>You may optionally select a soundfont, melody, bass, and chord instruments and volumes to inject into each tune for use when the tune is played.</p>
+                <p>You may optionally select a MIDI soundfont, melody, bass, and chord instruments and volumes to inject into each tune for use when the tune is played.</p>
                 <p>The website exported includes a tune selector at the top, selecting a tune opens the tune in the ABC Transcription Tools in the frame below the selector.</p>
                 <p>If there is only a single tune, it will be immediately loaded in the ABC Transcription Tools in the frame.</p>
                 <p>The tune will be initially displayed using the current notation or stringed instrument tablature setting selected at the time the website is generated.</p>
@@ -4121,7 +4121,7 @@
                 <p>This makes it quick and easy to find the right MIDI soundfont, instruments, and volumes for any tune:</p>
                 <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/QurVTqcO9U4" title="MIDI Instrument Explorer" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
                 <p>The player controls works the same way as the standard player.</p>
-                <p>To test playing the tune with a new soundfont, melody instrument, bass instrument, bass volume, chord instrument, and chord volumes, make your changes and then click <strong>Reload Tune with Changed Instruments and Volumes</strong>.</p>
+                <p>To test playing the tune with a new MIDI soundfont, melody instrument, bass instrument, bass volume, chord instrument, and chord volumes, make your changes and then click <strong>Reload Tune with Changed Instruments and Volumes</strong>.</p>
                 <p>The tune will be reloaded into the player with the new MIDI instrument and volume settings applied.</p>
                 <p>Click the play button to play the tune to check the new settings.</p>
                 <p>If you are happy with your new MIDI settings and want to apply them to the tune, click <strong>Inject Instruments and Volumes into the ABC</strong> to inject your new MIDI values into the tune's ABC, replacing any previous MIDI instrument and volume settings.</p>
@@ -4655,7 +4655,7 @@
                     <img class="image" loading="lazy" src="img/player_instrument_settings_2.jpg"/>
                 </div>
                 <hr>
-                <p><strong>Default Soundfont</strong></p>
+                <p><strong>Default MIDI Soundfont</strong></p>
                 <p>Choose between the General MIDI soundfonts available to use by default when playing tunes:</p>
                 <p>Fluid (fastest to load, but samples are limited to 3 seconds in length)<br/>
                     Musyng Kite<br/>
@@ -4725,15 +4725,15 @@
                 </div>
                 <p>Using this list, you can easily determine which instruments are best to use while offline.</p>
                 <hr>
-                <p><strong>Manually forcing all specific soundfont instrument notes and reverb settings to be stored in the database:</strong></p>
-                <p>If an instrument in a specific soundfont you want to use for playing tunes offline isn't in the list, do the following while online:</p>
+                <p><strong>Manually forcing all specific MIDI soundfont instrument notes and reverb settings to be stored in the database:</strong></p>
+                <p>If an instrument in a specific MIDI soundfont you want to use for playing tunes offline isn't in the list, do the following while online:</p>
                 <p><strong>Option 1:</strong></p>
-                <p>On the <strong>Add</strong> dialog, click <strong>Add Offline Notes Database Loader Template</strong> to inject an ABC template that, when played, will load all the notes for a specific soundfont and instrument as well as reverb settings into the database.</p>
+                <p>On the <strong>Add</strong> dialog, click <strong>Add Offline Notes Database Loader Template</strong> to inject an ABC template that, when played, will load all the notes for a specific MIDI soundfont and instrument as well as reverb settings into the database.</p>
                 <p><strong>Option 2:</strong></p>
-                <p>1) Add the instrument and soundfont once in a tune using:</p>
-                <p class="code">% Available soundfonts are:<br/>% fluid, musyng, fatboy, canvas<br/>% mscore, arachno, and fluidhq<br/>%<br/>%soundfont soundfont_name<br/>
+                <p>1) Add the instrument and MIDI soundfont once in a tune using:</p>
+                <p class="code">% Available MIDI soundfonts are:<br/>% fluid, musyng, fatboy, canvas<br/>% mscore, arachno, and fluidhq<br/>%<br/>%soundfont soundfont_name<br/>
                 %%MIDI program midi_instrument_number</p>
-                <p>For example, to specify the FatBoy soundfont and harpsichord instrument:</p>
+                <p>For example, to specify the FatBoy MIDI soundfont and harpsichord instrument:</p>
                 <p class="code">%soundfont fatboy<br/>%%MIDI program 6</p>
                 <p>2) Play the tune once to initially populate the database with the new instrument.</p>
                 <p>3) A new entry for the instrument will be added to the instrument list the next time you open this dialog.</p>
@@ -4755,7 +4755,7 @@
                 <p><strong>Allow instrument notes and reverb settings database to be used offline</strong></p>
                 <p>When you open a tune in the Player, the notes and reverb settings used in the tune are automatically added to the instrument notes and reverb settings database.</p>
                 <p>You don't have to actually play the tune, when the Player control bar shifts from grey to black, the notes and reverb settings have already been saved in the database.</p>
-                <p>When this option is checked and the tool is offline, it will still allow playback of the specific soundfont instrument notes and use of reverb settings previously stored in the database while online.</p>
+                <p>When this option is checked and the tool is offline, it will still allow playback of the specific MIDI soundfont instrument notes and use of reverb settings previously stored in the database while online.</p>
                 <p>Any MIDI soundfont instruments and notes not played previously, and not in the notes database will result in silence for those notes.</p>
                 <p>Similarly, if the reverb setting (room, hall, chamber, church, etc.) is changed offline to one not previously used, then no reverb will be applied.</p>
                 <p>You can manage the note and reverb databases to perform actions like loading all notes for the instruments previously played or to load your desired reverb setting for use offline using the <strong><a href="#manage_databases">Manage Databases</a></strong> dialog described above.</p>
