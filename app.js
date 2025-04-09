@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2396_040825_1500";
+var gVersionNumber="2397_040925_0930";
 
 var gMIDIInitStillWaiting = false;
 
@@ -15981,7 +15981,7 @@ function AddBodhranReelTemplate(){
 	theValue += "% Change this to match the key of the tune:\n";
 	theValue += "K:C\n";
 	theValue += "%%staffsep 50\n";
-	theValue += "%abcjs_soundfont fatboy\n";
+	theValue += "%soundfont fatboy\n";
 	theValue += "%swing 0.15\n";
 	theValue += "%\n";
 	theValue += "% This template uses two voices:\n";
@@ -16055,7 +16055,7 @@ function AddBodhranJigTemplate(){
 	theValue += "% Change this to match the key of the tune:\n";
 	theValue += "K:C\n";
 	theValue += "%%staffsep 50\n";
-	theValue += "%abcjs_soundfont fatboy\n";
+	theValue += "%soundfont fatboy\n";
 	theValue += "%swing 0.25\n";
 	theValue += "%\n";
 	theValue += "% This template uses two voices:\n";
@@ -16125,7 +16125,7 @@ function AddBodhranSlipJigTemplate(){
 	theValue += "% Change this to match the key of the tune:\n";
 	theValue += "K:C\n";
 	theValue += "%%staffsep 50\n";
-	theValue += "%abcjs_soundfont fatboy\n";
+	theValue += "%soundfont fatboy\n";
 	theValue += "%swing 0.25\n";
 	theValue += "%\n";
 	theValue += "% This template uses two voices:\n";
@@ -16191,7 +16191,7 @@ function AddBodhranSlideTemplate(){
 	theValue += "% Change this to match the key of the tune:\n";
 	theValue += "K:C\n";
 	theValue += "%%staffsep 50\n";
-	theValue += "%abcjs_soundfont fatboy\n";
+	theValue += "%soundfont fatboy\n";
 	theValue += "%swing 0.25\n";
 	theValue += "%\n";
 	theValue += "% This template uses two voices:\n";
@@ -16257,7 +16257,7 @@ function AddBodhranPolkaTemplate(){
 	theValue += "% Change this to match the key of the tune:\n";
 	theValue += "K:C\n";
 	theValue += "%%staffsep 50\n";
-	theValue += "%abcjs_soundfont fatboy\n";
+	theValue += "%soundfont fatboy\n";
 	theValue += "%\n";
 	theValue += "% This template uses two voices:\n";
 	theValue += "% Voice 1 - Melody\n";
@@ -16322,7 +16322,7 @@ function AddBodhranHornpipeTemplate(){
 	theValue += "% Change this to match the key of the tune:\n";
 	theValue += "K:C\n";
 	theValue += "%%staffsep 50\n";
-	theValue += "%abcjs_soundfont fatboy\n";
+	theValue += "%soundfont fatboy\n";
 	theValue += "%swing 0.25\n";
 	theValue += "%\n";
 	theValue += "% This template uses two voices:\n";
@@ -16388,7 +16388,9 @@ function AppendSampleReel(){
 	theValue += "L: 1/8\n";
 	theValue += "Q: 1/2=90\n";
 	theValue += "K: Edor\n";
-	theValue += '%abcjs_soundfont fluid\n';	
+	theValue += "%\n";
+	theValue += "% Use the fluid soundfont:\n";
+	theValue += '%soundfont fluid\n';	
 	theValue += "%\n";
 	theValue += "% Use an Acoustic Grand Piano sound for the melody:\n";
 	theValue += "%%MIDI program 0\n";
@@ -16434,7 +16436,9 @@ function AppendSampleJig(){
 	theValue += "L: 1/8\n";
 	theValue += "Q: 3/8=120\n";
 	theValue += "K: Gmaj\n";
-	theValue += '%abcjs_soundfont fluid\n';	
+	theValue += "%\n";
+	theValue += "% Use the fluid soundfont:\n";
+	theValue += '%soundfont fluid\n';	
 	theValue += "%\n";
 	theValue += "% Use an Acoustic Grand Piano sound for the melody:\n";
 	theValue += "%%MIDI program 0\n";
@@ -16480,7 +16484,9 @@ function AppendSampleHornpipe(){
 	theValue += 'L: 1/8\n';
 	theValue += 'Q: 1/2=80\n';
 	theValue += 'K: Dmaj\n';
-	theValue += '%abcjs_soundfont fluid\n';
+	theValue += "%\n";
+	theValue += "% Use the fluid soundfont:\n";
+	theValue += '%soundfont fluid\n';
 	theValue += "%\n";
 	theValue += "% Use an Acoustic Grand Piano sound for the melody:\n";
 	theValue += "%%MIDI program 0\n";
@@ -16540,7 +16546,7 @@ function AppendTuneTempate(){
 	theValue += '%\n';
 	theValue += '% Soundfont\n';
 	theValue += '% fluid, fluidhq, musyng, fatboy, canvas, mscore, arachno:\n';
-	theValue += '%abcjs_soundfont fluid\n';
+	theValue += '%soundfont fluid\n';
 	theValue += '%\n';
 	theValue += '% Use an Acoustic Grand Piano sound for the melody:\n';
 	theValue += '%%MIDI program 0\n';
@@ -16813,7 +16819,7 @@ function AppendDatabaseTemplate(){
 	theValue += '% Available soundfonts are:\n';
 	theValue += '% fluid, musyng, fatboy, canvas, mscore, arachno, and fluidhq\n';
 	theValue += '%\n';
-	theValue += '%abcjs_soundfont fluid\n';
+	theValue += '%soundfont fluid\n';
 	theValue += '%\n';
 	theValue += '% 2) Select the MIDI instrument program you want to use\n';
 	theValue += '% in the soundfont and have all the notes stored in the database:\n';
@@ -16865,7 +16871,7 @@ function AppendDatabaseTemplate(){
 	theValue += "% Available soundfonts are:\n"; 
 	theValue += "% fluid, musyng, fatboy, canvas, mscore, arachno, and fluidhq\n";
 	theValue += "%\n";
-	theValue += "%abcjs_soundfont fluid\n";
+	theValue += "%soundfont fluid\n";
 	theValue += "%\n";
 	theValue += '% 2) While online, click "Play" to load the ABC into the player.\n';
 	theValue += "%\n";
@@ -16945,7 +16951,7 @@ function AppendJSBach(){
 	theValue += '% Try changing the abcjs_soundfont value to\n';
 	theValue += '% fluid, fluidhq, musyng, fatboy, canvas, mscore, or arachno:\n';
 	theValue += '%\n';	
-	theValue += '%abcjs_soundfont fluid\n';	
+	theValue += '%soundfont fluid\n';	
 	theValue += '%\n';	
 	theValue += '%%staffsep 40\n';
 	theValue += '%%stretchlast true\n';
@@ -17021,7 +17027,7 @@ function AppendJSBach2(){
 	theValue += '% Try changing the abcjs_soundfont value to\n';
 	theValue += '% fluid, fluidhq, musyng, fatboy, canvas, mscore, or arachno:\n';
 	theValue += '%\n';	
-	theValue += '%abcjs_soundfont fluid\n';	
+	theValue += '%soundfont fluid\n';	
 	theValue += '%\n';		
 	theValue += '%%stretchlast true\n';
 	theValue += '%%staffsep 40\n';
