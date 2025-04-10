@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2398_040925_1600";
+var gVersionNumber="2399_041025_1500";
 
 var gMIDIInitStillWaiting = false;
 
@@ -20444,264 +20444,110 @@ function InjectAllMIDIParams(){
 			}
 			
 			// Injecting all tunes
-			if (args.result.configure_inject_all){
+			var bDoAll = args.result.configure_inject_all;
 
-				if (bDoSoundFont){
+			var theSelectionStart = gTheABC.selectionStart;
+			var theCurrentTune = findTuneByOffset(theSelectionStart);
 
-					var nTunes = CountTunes();
+			if (!bDoAll){
 
-					var theNotes = gTheABC.value;
-
-					// Find the tunes
-					var theTunes = theNotes.split(/^X:/gm);
-
-					var output = FindPreTuneHeader(theNotes);
-
-					for (var i=1;i<=nTunes;++i){
-
-						theTunes[i] = "X:"+theTunes[i];
-
-						output += InjectOneTuneSoundfont(theTunes[i],soundFontToInject);
-
-					}
-
-					// Stuff in the output
-					setABCEditorText(output);
-
-					// Set dirty
-					gIsDirty = true;
-
-
+				if (theCurrentTune == -1){
+					return;
 				}
+			}
 
-				if (bDoMelodyProgram){
+			var nTunes = CountTunes();
 
-					var nTunes = CountTunes();
+			var theNotes = gTheABC.value;
 
-					var theNotes = gTheABC.value;
+			// Find the tunes
+			var theTunes = theNotes.split(/^X:/gm);
 
-					// Find the tunes
-					var theTunes = theNotes.split(/^X:/gm);
+			var output = FindPreTuneHeader(theNotes);
 
-					var output = FindPreTuneHeader(theNotes);
+			for (var i=1;i<=nTunes;++i){
 
-					for (var i=1;i<=nTunes;++i){
+				thisTune = "X:"+theTunes[i];
 
-						theTunes[i] = "X:"+theTunes[i];
-
-						output += InjectOneTuneMIDIProgram(theTunes[i],progNum);
-
+				if (bDoAll){
+					if (bDoSoundFont){
+						thisTune = InjectOneTuneSoundfont(thisTune,soundFontToInject);
 					}
-
-					// Stuff in the output
-					setABCEditorText(output);
-
-					// Set dirty
-					gIsDirty = true;
-
-				}
-				
-				if (bDoBassProgram){
-
-					var nTunes = CountTunes();
-
-					var theNotes = gTheABC.value;
-
-					// Find the tunes
-					var theTunes = theNotes.split(/^X:/gm);
-
-					var output = FindPreTuneHeader(theNotes);
-
-					for (var i=1;i<=nTunes;++i){
-
-						theTunes[i] = "X:"+theTunes[i];
-
-						output += InjectOneTuneMIDIBassProgramAndVolumes(theTunes[i], progNumBass, gLastInjectedBassVolume);
+					if (bDoMelodyProgram){
+						thisTune = InjectOneTuneMIDIProgram(thisTune,progNum);
 					}
-
-					// Stuff in the output
-					setABCEditorText(output);
-
-					// Set dirty
-					gIsDirty = true;
-
-				}
-
-				if (bDoChordProgram){
-
-					var nTunes = CountTunes();
-
-					var theNotes = gTheABC.value;
-
-					// Find the tunes
-					var theTunes = theNotes.split(/^X:/gm);
-
-					var output = FindPreTuneHeader(theNotes);
-
-					for (var i=1;i<=nTunes;++i){
-
-						theTunes[i] = "X:"+theTunes[i];
-
-						output += InjectOneTuneMIDIChordProgramAndVolumes(theTunes[i], progNumChord, gLastInjectedChordVolume);
+					if (bDoBassProgram){
+						thisTune = InjectOneTuneMIDIBassProgramAndVolumes(thisTune, progNumBass, gLastInjectedBassVolume);
 					}
-
-					// Stuff in the output
-					setABCEditorText(output);
-
-					// Set dirty
-					gIsDirty = true;
-
+					if (bDoChordProgram){
+						thisTune = InjectOneTuneMIDIChordProgramAndVolumes(thisTune, progNumChord, gLastInjectedChordVolume);
+					}
+					output += thisTune;
 				}
-				// Have to redraw if in raw mode
-			    if (gRawMode){
+				else{
+					if ((i-1) == theCurrentTune){
+						if (bDoSoundFont){
+							thisTune = InjectOneTuneSoundfont(thisTune,soundFontToInject);
+						}
+						if (bDoMelodyProgram){
+							thisTune = InjectOneTuneMIDIProgram(thisTune,progNum);
+						}
+						if (bDoBassProgram){
+							thisTune = InjectOneTuneMIDIBassProgramAndVolumes(thisTune, progNumBass, gLastInjectedBassVolume);
+						}
+						if (bDoChordProgram){
+							thisTune = InjectOneTuneMIDIChordProgramAndVolumes(thisTune, progNumChord, gLastInjectedChordVolume);
+						}
+						output += thisTune;
+					}
+					else{
+						output += thisTune;
+					}
+				}
+			}
 
-					RenderAsync(true,null,function(){
-						
-						// Set the select point
-						gTheABC.selectionStart = 0;
-					    gTheABC.selectionEnd = 0;
+			// Stuff in the output
+			setABCEditorText(output);
 
-					    // Focus after operation
-					    FocusAfterOperation();
+			// Set dirty
+			gIsDirty = true;
 
-					});
+			// Have to redraw if in raw mode
+		    if (gRawMode){
 
-			    }
-			    else{
+				RenderAsync(true,null,function(){
+					
+					var theOffset = findTuneOffsetByIndex(theCurrentTune);
+					
+				   	// Scroll the tune ABC into view
+		    		ScrollABCTextIntoView(gTheABC,theOffset,theOffset,10);
 
-			    	// Set the select point
-					gTheABC.selectionStart = 0;
-				    gTheABC.selectionEnd = 0;
+		    		// Set the select point
+					gTheABC.selectionStart = theOffset;
+				    gTheABC.selectionEnd = theOffset;
 
 				    // Focus after operation
 				    FocusAfterOperation();
 
-			    }
+				});
+
+		    }
+		    else{
+
+				var theOffset = findTuneOffsetByIndex(theCurrentTune);
+
+			   	// Scroll the tune ABC into view
+	    		ScrollABCTextIntoView(gTheABC,theOffset,theOffset,10);
+
+				// Set the select point
+				gTheABC.selectionStart = theOffset;
+			    gTheABC.selectionEnd = theOffset;
+
+			    // Focus after operation
+			    FocusAfterOperation();
+
+		    }
 	
-			}
-			else{
-
-				var theSelectionStart = gTheABC.selectionStart;
-
-				if (bDoBassProgram){
-
-					var thePatchName;
-
-					if (progNumBass == "mute"){
-						thePatchName = "Mute";
-					} 
-					else{
-						thePatchName = generalMIDISoundNames[progNumBass+1];
-					}
-
-					var leftSide = gTheABC.value.substring(0,theSelectionStart);
-					
-					var rightSide = gTheABC.value.substring(theSelectionStart);
-
-					var toInject = "% Bass instrument: "+thePatchName+"\n"+"%%MIDI bassprog " + progNumBass;
-
-					toInject += "\n%%MIDI bassvol " + gLastInjectedBassVolume;
-
-					toInject += "\n";
-
-					setABCEditorText(leftSide + toInject + rightSide);
-
-					// Set dirty
-					gIsDirty = true;
-
-				}
-
-				if (bDoChordProgram){
-
-					var thePatchName;
-
-					if (progNumChord == "mute"){
-						thePatchName = "Mute";
-					} 
-					else{
-						thePatchName = generalMIDISoundNames[progNumChord+1];
-					}
-
-					var leftSide = gTheABC.value.substring(0,theSelectionStart);
-					
-					var rightSide = gTheABC.value.substring(theSelectionStart);
-
-					var toInject = "% Chord instrument: "+thePatchName+"\n"+"%%MIDI chordprog " + progNumChord;
-
-					toInject += "\n%%MIDI chordvol " + gLastInjectedChordVolume;
-
-					toInject += "\n";
-
-					setABCEditorText(leftSide + toInject + rightSide);
-
-					// Set dirty
-					gIsDirty = true;
-
-				}
-
-				if (bDoMelodyProgram){
-
-					// Provide a label
-					var thePatchName;
-
-					if (progNum == "mute"){
-						thePatchName = "Mute";
-					} 
-					else{
-						thePatchName = generalMIDISoundNames[progNum+1];
-					}
-
-					var leftSide = gTheABC.value.substring(0,theSelectionStart);
-					
-					var rightSide = gTheABC.value.substring(theSelectionStart);
-					
-					setABCEditorText(leftSide + "% Melody instrument: "+thePatchName+"\n"+ "%%MIDI program " + progNum + "\n" + rightSide);
-
-					// Set dirty
-					gIsDirty = true;
-
-				}
-
-				if (bDoSoundFont){
-
-					var leftSide = gTheABC.value.substring(0,theSelectionStart);
-					
-					var rightSide = gTheABC.value.substring(theSelectionStart);
-
-					setABCEditorText(leftSide + "% Soundfont: "+soundFontToInject+"\n"+"%soundfont " + soundFontToInject + "\n" + rightSide);
-
-					// Set dirty
-					gIsDirty = true;
-
-				}
-
-				// Have to redraw if in raw mode
-			    if (gRawMode){
-
-					RenderAsync(true,null,function(){
-						
-						// Set the select point
-						gTheABC.selectionStart = theSelectionStart;
-					    gTheABC.selectionEnd = theSelectionStart;
-
-					    // Focus after operation
-					    FocusAfterOperation();
-
-					});
-
-			    }
-			    else{
-
-			    	// Set the select point
-					gTheABC.selectionStart = theSelectionStart;
-				    gTheABC.selectionEnd = theSelectionStart;
-
-				    // Focus after operation
-				    FocusAfterOperation();
-
-			    }
-				
-			}
 		}
 	});
 }
