@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2399_041025_1500";
+var gVersionNumber="2400_041425_0800";
 
 var gMIDIInitStillWaiting = false;
 
@@ -17172,6 +17172,49 @@ function ProcessAddTune(theValue){
 // To scroll text into view
 // Fraction sets how far down to put the scrolled text as a fraction of the text area height
 //
+
+function getTextAreaContentHeight(textarea,offset) {
+
+  // Create a hidden div to measure the position of the offset
+  const div = document.createElement('div');
+  const style = getComputedStyle(textarea);
+
+  // Copy textarea styles
+  Object.assign(div.style, {
+    position: 'absolute',
+    whiteSpace: 'pre-wrap',
+    visibility: 'hidden',
+    overflowWrap: 'break-word',
+    top: '0',
+    left: '0',
+    width: textarea.offsetWidth + 'px',
+    font: style.font,
+    padding: style.padding,
+    border: style.border,
+    lineHeight: style.lineHeight,
+  });
+
+  // Text before and after offset
+  const textBefore = textarea.value.slice(0, offset);
+  const textAtOffset = textarea.value[offset] || ' ';
+  const textAfter = textarea.value.slice(offset + 1);
+
+  // Wrap offset character in a span to get its position
+  div.innerHTML = textBefore + `<span id="caret-marker">${textAtOffset}</span>` + textAfter;
+
+  document.body.appendChild(div);
+
+  const marker = div.querySelector('#caret-marker');
+
+  var res = marker.offsetTop;
+
+  // Clean up
+  document.body.removeChild(div);
+
+  return res;
+}
+
+
 function ScrollABCTextIntoView(textarea, selectionStart, selectionEnd, fraction) {
 
     // First scroll selection region to view
@@ -17183,23 +17226,29 @@ function ScrollABCTextIntoView(textarea, selectionStart, selectionEnd, fraction)
     // before setting the textarea value. Otherwise it won't work for long strings
     
     const scrollHeight = textarea.scrollHeight;
+    //console.log("scrollHeight: "+scrollHeight);
     
     textarea.value = fullText;
     
     let scrollTop = scrollHeight;
     
     const textareaHeight = textarea.clientHeight;
+    //console.log("textareaHeight: "+textareaHeight);
 
-    if (scrollTop > textareaHeight){
-
-        // scroll selection to specific fraction of textarea
-        scrollTop -= textareaHeight / fraction;
-
-    } else{
-
-        scrollTop = 0;
-
+    // Special handling when the text doesn't fill the text area, gives bad scrollTop results
+    if (scrollTop == textareaHeight){
+    	scrollTop = getTextAreaContentHeight(textarea,selectionEnd);
+    	//console.log("matching heights, calculated scrollTop: "+scrollTop)
     }
+
+    // scroll selection to specific fraction of textarea
+    scrollTop -= textareaHeight / fraction;
+
+    if (scrollTop<0){
+    	scrollTop = 0;
+    }
+
+    //console.log("scrollTop: "+scrollTop);
 
     textarea.scrollTop = scrollTop;
 
