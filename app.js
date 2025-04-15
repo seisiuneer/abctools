@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2401_041525_1430";
+var gVersionNumber="2402_041525_1430";
 
 var gMIDIInitStillWaiting = false;
 
@@ -48572,7 +48572,8 @@ function DoStartup() {
 						button.click();
 					}
 				}
-				else			    // Check if the Command key (on Mac) is pressed with the "F" key
+				else			    
+				// Check if the Command key (on Mac) is pressed with the "F" key
 			    if (event.metaKey && event.key === 'f') {
 
 			    	//console.log("Got Command F");
@@ -48631,6 +48632,24 @@ function DoStartup() {
 			
 			document.addEventListener('keydown', function(event) {
 
+				// F3 resets the player
+				if (event.key === 'F3') {
+					event.preventDefault(); 
+					const button = document.querySelector('button.abcjs-midi-reset');
+					if (button){
+						button.click();
+					}
+				}
+				else
+				// F4 toggles the player state
+				if (event.key === 'F4') {
+					event.preventDefault(); 
+					const button = document.querySelector('button.abcjs-midi-start');
+					if (button){
+						button.click();
+					}
+				}
+				else			    
 			    // Check if the Control key (on Windows/Linux) is pressed with the "F" key
 			    if (event.ctrlKey && event.key === 'f') {
 
