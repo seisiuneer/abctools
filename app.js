@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2402_041525_1430";
+var gVersionNumber="2403_041525_1430";
 
 var gMIDIInitStillWaiting = false;
 
@@ -48557,19 +48557,23 @@ function DoStartup() {
 
 				// F3 resets the player
 				if (event.key === 'F3') {
-					event.preventDefault(); 
-					const button = document.querySelector('button.abcjs-midi-reset');
-					if (button){
-						button.click();
+					if (gIsQuickEditor){
+						event.preventDefault(); 
+						const button = document.querySelector('button.abcjs-midi-reset');
+						if (button){
+							button.click();
+						}
 					}
 				}
 				else
 				// F4 toggles the player state
 				if (event.key === 'F4') {
-					event.preventDefault(); 
-					const button = document.querySelector('button.abcjs-midi-start');
-					if (button){
-						button.click();
+					if (gIsQuickEditor){
+						event.preventDefault(); 
+						const button = document.querySelector('button.abcjs-midi-start');
+						if (button){
+							button.click();
+						}
 					}
 				}
 				else			    
@@ -48634,19 +48638,23 @@ function DoStartup() {
 
 				// F3 resets the player
 				if (event.key === 'F3') {
-					event.preventDefault(); 
-					const button = document.querySelector('button.abcjs-midi-reset');
-					if (button){
-						button.click();
+					if (gIsQuickEditor){
+						event.preventDefault(); 
+						const button = document.querySelector('button.abcjs-midi-reset');
+						if (button){
+							button.click();
+						}
 					}
 				}
 				else
 				// F4 toggles the player state
 				if (event.key === 'F4') {
-					event.preventDefault(); 
-					const button = document.querySelector('button.abcjs-midi-start');
-					if (button){
-						button.click();
+					if (gIsQuickEditor){
+						event.preventDefault(); 
+						const button = document.querySelector('button.abcjs-midi-start');
+						if (button){
+							button.click();
+						}
 					}
 				}
 				else			    

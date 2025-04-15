@@ -17703,22 +17703,34 @@ function buildDom(parent, options) {
   var hasClock = options.hasClock !== false;
   var html = '<div class="abcjs-inline-audio">\n';
   if (hasLoop) {
-    var repeatTitle = options.repeatTitle ? options.repeatTitle : "Click to toggle play once/repeat.";
+    var repeatTitle = options.repeatTitle ? options.repeatTitle : "Click to toggle play once/repeat";
     var repeatAria = options.repeatAria ? options.repeatAria : repeatTitle;
     html += '<button type="button" class="abcjs-midi-loop abcjs-btn" title="' + repeatTitle + '" aria-label="' + repeatAria + '">' + loopImage + '</button>\n';
   }
   if (hasRestart) {
-    var restartTitle = options.restartTitle ? options.restartTitle : "Click or press F3 to go to beginning.";
+    var restartTitle;
+    if (gIsQuickEditor){
+      restartTitle = options.restartTitle ? options.restartTitle : "Click or press F3 to go to beginning";
+    }
+    else{
+      restartTitle = options.restartTitle ? options.restartTitle : "Click to go to beginning";
+    }
     var restartAria = options.restartAria ? options.restartAria : restartTitle;
     html += '<button type="button" class="abcjs-midi-reset abcjs-btn" title="' + restartTitle + '" aria-label="' + restartAria + '">' + resetImage + '</button>\n';
   }
   if (hasPlay) {
-    var playTitle = options.playTitle ? options.playTitle : "Click or press F4 to play/pause.";
+    var playTitle;
+    if (gIsQuickEditor){
+      playTitle = options.playTitle ? options.playTitle : "Click or press F4 to play/pause";
+    }
+    else{
+      playTitle = options.playTitle ? options.playTitle : "Click to play/pause";      
+    }
     var playAria = options.playAria ? options.playAria : playTitle;
     html += '<button type="button" class="abcjs-midi-start abcjs-btn" title="' + playTitle + '" aria-label="' + playAria + '">' + playImage + pauseImage + loadingImage + '</button>\n';
   }
   if (hasProgress) {
-    var randomTitle = options.randomTitle ? options.randomTitle : "Click to change the playback position.";
+    var randomTitle = options.randomTitle ? options.randomTitle : "Click to change the playback position";
     var randomAria = options.randomAria ? options.randomAria : randomTitle;
     html += '<button type="button" class="abcjs-midi-progress-background" title="' + randomTitle + '" aria-label="' + randomAria + '"><span class="abcjs-midi-progress-indicator"></span></button>\n';
   }
@@ -17726,7 +17738,7 @@ function buildDom(parent, options) {
     html += '<span class="abcjs-midi-clock"></span>\n';
   }
   if (hasWarp) {
-    var warpTitle = options.warpTitle ? options.warpTitle : "Change the playback speed.";
+    var warpTitle = options.warpTitle ? options.warpTitle : "Change the playback speed";
     var warpAria = options.warpAria ? options.warpAria : warpTitle;
     var bpm = options.bpm ? options.bpm : "BPM";
 
