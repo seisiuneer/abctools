@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2404_041625_0930";
+var gVersionNumber="2405_041625_1400";
 
 var gMIDIInitStillWaiting = false;
 
@@ -31066,6 +31066,12 @@ function PlayABCDialog(theABC,callback,val,metronome_state){
 						callback(val,gTheOKButton);
 					}
 					
+					// Hook up tempo dialog
+					var elem = document.getElementsByClassName("abcjs-midi-tempo");
+					if (elem && (elem.length > 0)){
+						elem[0].onclick = SetPlayerTempo;
+					}
+
 					// Are we using the trainer touch controls
 					if (gTrainerTouchControls){
 
@@ -33095,6 +33101,12 @@ function SwingExplorerDialog(theOriginalABC, theProcessedABC, swing_explorer_sta
 					
 					gSynthControl = synthControl;
 
+					// Hook up tempo dialog
+					var elem = document.getElementsByClassName("abcjs-midi-tempo");
+					if (elem && (elem.length > 0)){
+						elem[0].onclick = SetPlayerTempo;
+					}
+
 					// Are we using the trainer touch controls
 					if (gTrainerTouchControls){
 
@@ -33847,6 +33859,12 @@ function ReverbExplorerDialog(theOriginalABC, theProcessedABC, reverb_explorer_s
 					
 					console.log("Audio successfully loaded.");
 					gSynthControl = synthControl;
+
+					// Hook up tempo dialog
+					var elem = document.getElementsByClassName("abcjs-midi-tempo");
+					if (elem && (elem.length > 0)){
+						elem[0].onclick = SetPlayerTempo;
+					}
 
 					// Are we using the trainer touch controls
 					if (gTrainerTouchControls){
@@ -34897,6 +34915,12 @@ function InstrumentExplorerDialog(theOriginalABC, theProcessedABC, instrument_ex
 					console.log("Audio successfully loaded.");
 					gSynthControl = synthControl;
 
+					// Hook up tempo dialog
+					var elem = document.getElementsByClassName("abcjs-midi-tempo");
+					if (elem && (elem.length > 0)){
+						elem[0].onclick = SetPlayerTempo;
+					}
+
 					// Are we using the trainer touch controls
 					if (gTrainerTouchControls){
 
@@ -35502,6 +35526,12 @@ function GraceExplorerDialog(theOriginalABC, theProcessedABC, grace_explorer_sta
 					
 					console.log("Audio successfully loaded.");
 					gSynthControl = synthControl;
+
+					// Hook up tempo dialog
+					var elem = document.getElementsByClassName("abcjs-midi-tempo");
+					if (elem && (elem.length > 0)){
+						elem[0].onclick = SetPlayerTempo;
+					}
 
 					// Are we using the trainer touch controls
 					if (gTrainerTouchControls){
@@ -36269,6 +36299,12 @@ function RollExplorerDialog(theOriginalABC, theProcessedABC, roll_explorer_state
 					console.log("Audio successfully loaded.");
 					gSynthControl = synthControl;
 
+					// Hook up tempo dialog
+					var elem = document.getElementsByClassName("abcjs-midi-tempo");
+					if (elem && (elem.length > 0)){
+						elem[0].onclick = SetPlayerTempo;
+					}
+
 					// Are we using the trainer touch controls
 					if (gTrainerTouchControls){
 
@@ -36866,6 +36902,12 @@ function TuneTrainerDialog(theOriginalABC, theProcessedABC, looperState){
 					gPreStartPlayCallback = PreStartPlayCallback;
 
 					gSynthControl = synthControl;
+
+					// Hook up tempo dialog
+					var elem = document.getElementsByClassName("abcjs-midi-tempo");
+					if (elem && (elem.length > 0)){
+						elem[0].onclick = SetPlayerTempo;
+					}
 
 					// Are we using the trainer touch controls
 					if (gTrainerTouchControls){
@@ -37594,6 +37636,70 @@ function IncrementTempo(){
 			gSynthControl.forceWarp(theTempo);
 		}
 	}
+}
+
+//
+// Set the tempo
+//
+function SetPlayerTempo(e){
+
+	//console.log("SetPlayerTempo");
+
+	var theTempo;
+	var elem;
+
+	var elems = document.getElementsByClassName("abcjs-midi-tempo");
+
+	if (elems && (elems.length>0)){
+
+		elem = elems[0];
+		
+		theTempo = elem.value;
+
+		theTempo = parseInt(theTempo);
+
+		if (isNaN(theTempo)){
+			theTempo = 100;
+		}
+
+	}
+	else{
+		return;
+	}
+
+	const theData = {
+	  configure_tempo:theTempo
+	};
+
+	var form = [
+	  {html: '<p style="text-align:center;margin-bottom:32px;font-size:16pt;font-family:helvetica;margin-left:15px;">Set Tempo Percentage&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#playing_your_tunes" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'},
+	  {name: "Tempo percentage:", id: "configure_tempo", type:"number", cssClass:"configure_staffwidth_form_text"}, 
+	];
+
+	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 200, width: 400, scrollWithPage: (AllowDialogsToScroll()), autoFocus: true } ).then(function(args){
+		
+		if (!args.canceled){
+
+			var newTempo = args.result.configure_tempo;
+
+			elem.value = newTempo;
+
+			newTempo = parseInt(newTempo);
+
+			if (isNaN(theTempo)){
+				return;
+			}
+
+			if (newTempo < 0){
+				return;
+			}
+			
+			gSynthControl.pause();
+
+			gSynthControl.forceWarp(newTempo);
+
+		}
+	});
 }
 
 //
@@ -45343,6 +45449,12 @@ function inlinePlayback(){
 		}
 
 		gSynthControl.load("#playback-audio-inline", cursorControl, {displayLoop: true, displayRestart: true, displayPlay: true, displayProgress: true, displayWarp: true});
+		
+		// Hook up tempo dialog
+		var elem = document.getElementsByClassName("abcjs-midi-tempo");
+		if (elem && (elem.length > 0)){
+			elem[0].onclick = SetPlayerTempo;
+		}
 
 		//debugger;
 		// Try to deal with tab deactivation muting

@@ -17726,12 +17726,12 @@ function buildDom(parent, options) {
     html += '<span class="abcjs-midi-clock"></span>\n';
   }
   if (hasWarp) {
-    var warpTitle = options.warpTitle ? options.warpTitle : "Change the playback speed";
+    var warpTitle = options.warpTitle ? options.warpTitle : "Click to change the playback tempo percentage";
     var warpAria = options.warpAria ? options.warpAria : warpTitle;
     var bpm = options.bpm ? options.bpm : "BPM";
 
     // MAE 10 Nov 2023 - For touch control of tempo
-    html += '<span class="abcjs-tempo-wrapper"><label><input class="abcjs-midi-tempo" type="number" min="1" max="300" value="100" title="' + warpTitle + '" aria-label="' + warpAria + '">%</label><span class="abcjs-midi-current-tempo-wrapper">&nbsp;(<span class="abcjs-midi-current-tempo"></span> ' + bpm + ')</span></span>\n';
+    html += '<span class="abcjs-tempo-wrapper"><label><input class="abcjs-midi-tempo" value="100" title="' + warpTitle + '" aria-label="' + warpAria + '">%</label><span class="abcjs-midi-current-tempo-wrapper">&nbsp;(<span class="abcjs-midi-current-tempo"></span> ' + bpm + ')</span></span>\n';
     // MAE END CHANGE
   }
   html += '<div class="abcjs-css-warning" style="font-size: 12px;color:red;border: 1px solid red;text-align: center;width: 300px;margin-top: 4px;font-weight: bold;border-radius: 4px;">CSS required: load abcjs-audio.css</div>';
