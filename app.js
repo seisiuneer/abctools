@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2403_041525_1430";
+var gVersionNumber="2404_041625_0930";
 
 var gMIDIInitStillWaiting = false;
 
@@ -48557,23 +48557,54 @@ function DoStartup() {
 
 				// F3 resets the player
 				if (event.key === 'F3') {
-					if (gIsQuickEditor){
-						event.preventDefault(); 
-						const button = document.querySelector('button.abcjs-midi-reset');
-						if (button){
-							button.click();
-						}
+					event.preventDefault(); 
+					const button = document.querySelector('button.abcjs-midi-reset');
+					if (button){
+						
+						button.click();
+
 					}
 				}
 				else
 				// F4 toggles the player state
 				if (event.key === 'F4') {
-					if (gIsQuickEditor){
-						event.preventDefault(); 
-						const button = document.querySelector('button.abcjs-midi-start');
+					event.preventDefault(); 
+					const button = document.querySelector('button.abcjs-midi-start');
+					if (button){
+
+						button.click();
+
+						setTimeout(function(){
+
+							var audioContext = ABCJS.synth.activeAudioContext();
+
+							if (audioContext && (audioContext.state == 'suspended')){
+								
+								button.classList.remove("abcjs-loading");
+
+								var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica;">Click OK to Play</p>';
+								modal_msg += '<p style="font-size:14pt;line-height:18pt;margin-top:36px;text-align:center;">Your browser requires a click before you can use F4 to play the tune.</p>';
+								modal_msg += '<p style="font-size:14pt;line-height:18pt;margin-top:18px;text-align:center;">Please click OK to play the tune.</p>';
+
+								DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 200, width: 700,  scrollWithPage: (AllowDialogsToScroll()) }).then(function(){
+
+									audioContext.resume();
+
+								});
+
+							}
+
+						},100);
+	
+					}
+					else{
+
+						const button = document.getElementById('playbutton');
+
 						if (button){
 							button.click();
 						}
+
 					}
 				}
 				else			    
@@ -48638,23 +48669,51 @@ function DoStartup() {
 
 				// F3 resets the player
 				if (event.key === 'F3') {
-					if (gIsQuickEditor){
-						event.preventDefault(); 
-						const button = document.querySelector('button.abcjs-midi-reset');
-						if (button){
-							button.click();
-						}
+					event.preventDefault(); 
+					const button = document.querySelector('button.abcjs-midi-reset');
+					if (button){
+						button.click();
 					}
 				}
 				else
 				// F4 toggles the player state
 				if (event.key === 'F4') {
-					if (gIsQuickEditor){
-						event.preventDefault(); 
-						const button = document.querySelector('button.abcjs-midi-start');
+					event.preventDefault(); 
+					const button = document.querySelector('button.abcjs-midi-start');
+					if (button){
+						
+						button.click();
+
+						setTimeout(function(){
+
+							var audioContext = ABCJS.synth.activeAudioContext();
+
+							if (audioContext && (audioContext.state == 'suspended')){
+								
+								button.classList.remove("abcjs-loading");
+
+								var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica;">Click OK to Play</p>';
+								modal_msg += '<p style="font-size:14pt;line-height:18pt;margin-top:36px;text-align:center;">Your browser requires a click before you can use F4 to play the tune.</p>';
+								modal_msg += '<p style="font-size:14pt;line-height:18pt;margin-top:18px;text-align:center;">Please click OK to play the tune.</p>';
+
+								DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 200, width: 700,  scrollWithPage: (AllowDialogsToScroll()) }).then(function(){
+
+									audioContext.resume();
+
+								});
+
+							}
+
+						},100);
+					}
+					else{
+						
+						const button = document.getElementById('playbutton');
+
 						if (button){
 							button.click();
 						}
+
 					}
 				}
 				else			    

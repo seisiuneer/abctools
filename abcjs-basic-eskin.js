@@ -17708,24 +17708,12 @@ function buildDom(parent, options) {
     html += '<button type="button" class="abcjs-midi-loop abcjs-btn" title="' + repeatTitle + '" aria-label="' + repeatAria + '">' + loopImage + '</button>\n';
   }
   if (hasRestart) {
-    var restartTitle;
-    if (gIsQuickEditor){
-      restartTitle = options.restartTitle ? options.restartTitle : "Click or press F3 to go to beginning";
-    }
-    else{
-      restartTitle = options.restartTitle ? options.restartTitle : "Click to go to beginning";
-    }
+    var restartTitle = options.restartTitle ? options.restartTitle : "Click or press F3 to go to beginning";
     var restartAria = options.restartAria ? options.restartAria : restartTitle;
     html += '<button type="button" class="abcjs-midi-reset abcjs-btn" title="' + restartTitle + '" aria-label="' + restartAria + '">' + resetImage + '</button>\n';
   }
   if (hasPlay) {
-    var playTitle;
-    if (gIsQuickEditor){
-      playTitle = options.playTitle ? options.playTitle : "Click or press F4 to play/pause";
-    }
-    else{
-      playTitle = options.playTitle ? options.playTitle : "Click to play/pause";      
-    }
+    var playTitle = options.playTitle ? options.playTitle : "Click or press F4 to play/pause";
     var playAria = options.playAria ? options.playAria : playTitle;
     html += '<button type="button" class="abcjs-midi-start abcjs-btn" title="' + playTitle + '" aria-label="' + playAria + '">' + playImage + pauseImage + loadingImage + '</button>\n';
   }
