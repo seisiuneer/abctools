@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2405_041625_1400";
+var gVersionNumber="2406_041625_1400";
 
 var gMIDIInitStillWaiting = false;
 
@@ -37682,17 +37682,17 @@ function SetPlayerTempo(e){
 
 			var newTempo = args.result.configure_tempo;
 
-			elem.value = newTempo;
-
 			newTempo = parseInt(newTempo);
 
-			if (isNaN(theTempo)){
+			if (isNaN(newTempo)){
 				return;
 			}
 
 			if (newTempo < 0){
 				return;
 			}
+
+			elem.value = newTempo;
 			
 			gSynthControl.pause();
 
