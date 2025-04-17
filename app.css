@@ -2091,7 +2091,7 @@ left:-5000px;
 
 /* Emulate @media print styles */
 
-body.print-preview {
+body.noui {
 	
 	.hidden-print {
 		display: none !important;

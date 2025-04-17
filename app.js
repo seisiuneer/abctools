@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2406_041625_1400";
+var gVersionNumber="2407_041725_0800";
 
 var gMIDIInitStillWaiting = false;
 
@@ -21827,15 +21827,15 @@ function processShareLink() {
 		}
 	}
 
-	// Open in print preview mode with GUI disabled
+	// Open with GUI disabled
 
-	if (urlParams.has("ppw")) {
+	if (urlParams.has("noui")) {
 
 		const body = document.querySelector('body');
 
-		if (body.classList.contains("print preview")) return;
+		if (body.classList.contains("noui")) return;
 
-		body.classList.add("print-preview");
+		body.classList.add("noui");
 	}
 
 	// If multiple tunes in the link, which one to open in the player?
