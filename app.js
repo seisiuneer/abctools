@@ -21827,6 +21827,16 @@ function processShareLink() {
 		}
 	}
 
+	// Open in print preview mode with GUI disabled
+
+	if (urlParams.has("ppw")) {
+
+		const body = document.querySelector('body');
+
+		if (body.classList.contains("print preview")) return;
+
+		body.classList.add("print-preview");
+	}
 
 	// If multiple tunes in the link, which one to open in the player?
 	var gotIndex = false;
