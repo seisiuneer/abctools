@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2407_041725_0800";
+var gVersionNumber="2408_041725_0900";
 
 var gMIDIInitStillWaiting = false;
 
@@ -40227,6 +40227,33 @@ function AddOpenInEditor(){
 
 }
 
+// Add the noui param to the URL
+function AddNoUI(){
+
+	var theURL = urltextbox.value;
+
+	// Check if the noui directive already present
+	if (theURL.indexOf("&noui") == -1){
+		theURL += "&noui";
+	}
+
+	urltextbox.value = theURL;
+
+	// Give some feedback
+	document.getElementById("addnoui").value = "Hide UI Added!";
+
+	setTimeout(function(){
+
+		var elem = document.getElementById("addnoui");
+
+		if (elem){
+			elem.value = "Add Hide UI";
+		}
+
+	},500);
+
+}
+
 function SharingControlsDialog(){
 
 	// Keep track of dialogs
@@ -40246,7 +40273,7 @@ function SharingControlsDialog(){
 	modal_msg += '</textarea>';
 	modal_msg += '</p>';
 	modal_msg += '<p id="shareurlcaption">Share URL</p>';
-	modal_msg += '<p style="text-align:center;margin-top:36px;"><input id="addautoplay" class="urlcontrols btn btn-urlcontrols" onclick="AddAutoPlay()" type="button" value="Add Auto-Play" title="Adds &play=1 to the ShareURL.&nbsp;&nbsp;Tune will open in the player."><input id="addopenineditor" class="urlcontrols btn btn-urlcontrols" onclick="AddOpenInEditor()" type="button" value="Add Open in Editor" title="Adds &editor=1 to the ShareURL.&nbsp;&nbsp;Share links will load in the editor.&nbsp;&nbsp;This setting overrides Add Auto-Play."><input id="adddisableediting" class="urlcontrolslast btn btn-urlcontrols" onclick="AddDisableEditing()" type="button" value="Add Disable Editing" title="Adds &dx=1 to the ShareURL.&nbsp;&nbsp;Entering the editor from the full screen tune view will be disabled.&nbsp;&nbsp;Also overrides Add Open in Editor."></p>';
+	modal_msg += '<p style="text-align:center;margin-top:36px;"><input id="addautoplay" class="urlcontrols btn btn-urlcontrols" onclick="AddAutoPlay()" type="button" value="Add Auto-Play" title="Adds &play=1 to the ShareURL.&nbsp;&nbsp;Tune will open in the player."><input id="addopenineditor" class="urlcontrols btn btn-urlcontrols" onclick="AddOpenInEditor()" type="button" value="Add Open in Editor" title="Adds &editor=1 to the ShareURL.&nbsp;&nbsp;Share links will load in the editor.&nbsp;&nbsp;This setting overrides Add Auto-Play."><input id="adddisableediting" class="urlcontrols btn btn-urlcontrols" onclick="AddDisableEditing()" type="button" value="Add Disable Editing" title="Adds &dx=1 to the ShareURL.&nbsp;&nbsp;Entering the editor from the full screen tune view will be disabled.&nbsp;&nbsp;Also overrides Add Open in Editor."><input id="addnoui" class="urlcontrolslast btn btn-urlcontrols" onclick="AddNoUI()" type="button" value="Add Hide UI" title="Adds &noui to the ShareURL for responsive iframe embedding.&nbsp;&nbsp;When the link is opened, hides the UI.&nbsp;&nbsp;Overrides Add Open in Editor and Add Auto-Play."></p>';
 
 	modal_msg += '</div>';
 
