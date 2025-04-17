@@ -37686,7 +37686,7 @@ function SetPlayerTempo(e){
 	  {name: "Tempo percentage:", id: "configure_tempo", type:"number", cssClass:"configure_staffwidth_form_text"}, 
 	];
 
-	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 200, width: 400, scrollWithPage: (AllowDialogsToScroll()), autoFocus: true } ).then(function(args){
+	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 250, width: 400, scrollWithPage: (AllowDialogsToScroll()), autoFocus: true } ).then(function(args){
 		
 		if (!args.canceled){
 
