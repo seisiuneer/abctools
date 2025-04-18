@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2410_041725_1700";
+var gVersionNumber="2411_041725_1800";
 
 var gMIDIInitStillWaiting = false;
 
@@ -17292,7 +17292,9 @@ function RenderDivClickHandler(e){
 				const button = document.querySelector('button.abcjs-midi-start');
 
 				if (button){
+
 					button.click();
+
 				}
 
 			},250);
@@ -17300,26 +17302,51 @@ function RenderDivClickHandler(e){
 		}
 		else{
 
-			// Shift click rewinds
-			if (e.shiftKey){
+			if (isPureDesktopBrowser()){
 
-				const button = document.querySelector('button.abcjs-midi-reset');
+				// Shift click rewinds
+				if (e.shiftKey){
+
+					const button = document.querySelector('button.abcjs-midi-reset');
+
+					if (button){
+						
+						button.click();
+
+					}
+
+				}
+				else{
+
+					// Otherwise just play/pause
+					const button = document.querySelector('button.abcjs-midi-start');
+
+					if (button){
+
+						button.click();
+
+					}
+				}
+			}
+			else{
+
+				// On mobile just stop play and rewind
+				var button = document.querySelector('button.abcjs-midi-start');
+
+				if (button){
+
+					button.click();
+
+				}
+
+				button = document.querySelector('button.abcjs-midi-reset');
 
 				if (button){
 					
 					button.click();
 
 				}
-
-			}
-			else{
-
-				// Otherwise just play/pause
-				const button = document.querySelector('button.abcjs-midi-start');
-
-				if (button){
-					button.click();
-				}
+				
 			}
 		}
 
@@ -17409,8 +17436,10 @@ function GenerateRenderingDivs(nTunes) {
 		el.onclick = RenderDivClickHandler;
 
 		// Tool tip for hidden UI case
-		if (gUIHidden){
-			el.title = "Click to play/pause. Shift-click to rewind playback.";
+		if (isPureDesktopBrowser()){
+			if (gUIHidden){
+				el.title = "Click to play/pause. Shift-click to rewind playback.";
+			}
 		}
 
 		notationHolder.appendChild(el);
