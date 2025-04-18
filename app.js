@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2411_041725_1800";
+var gVersionNumber="2412_041725_1830";
 
 var gMIDIInitStillWaiting = false;
 
@@ -58,6 +58,7 @@ var gIsAndroid = false;
 
 var gUIHidden = false;
 var gUIHiddenPlayerEnabled = false;
+var gUIHiddenAllowPlay = true;
 
 var gPlayerScaling = 50;
 
@@ -17277,7 +17278,7 @@ function RenderDivClickHandler(e){
 		return;
 	}
 
-	if (gUIHidden){
+	if (gUIHidden && gUIHiddenAllowPlay){
 
 		//console.log("gUIHidden");
 
@@ -17437,7 +17438,7 @@ function GenerateRenderingDivs(nTunes) {
 
 		// Tool tip for hidden UI case
 		if (isPureDesktopBrowser()){
-			if (gUIHidden){
+			if (gUIHidden && gUIHiddenAllowPlay){
 				el.title = "Click to play/pause. Shift-click to rewind playback.";
 			}
 		}
@@ -21914,6 +21915,8 @@ function processShareLink() {
 	// Open with GUI disabled
 	gUIHidden = false;
 	gUIHiddenPlayerEnabled = false;
+	gUIHiddenAllowPlay = true;
+
 	if (urlParams.has("noui")) {
 
 		const body = document.querySelector('body');
@@ -21923,6 +21926,13 @@ function processShareLink() {
 		body.classList.add("noui");
 
 		gUIHidden = true;
+
+	}
+
+	// Allow opting out of noui play on click
+	if (urlParams.has("noui-noclick")) {
+	
+		gUIHiddenAllowPlay = false;
 
 	}
 
