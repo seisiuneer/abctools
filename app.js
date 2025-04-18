@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2408_041725_0900";
+var gVersionNumber="2409_041725_1700";
 
 var gMIDIInitStillWaiting = false;
 
@@ -55,6 +55,9 @@ var gIsIPhone = false;
 var gIsSafari = false;
 var gIsChrome = false;
 var gIsAndroid = false;
+
+var gUIHidden = false;
+var gUIHiddenPlayerEnabled = false;
 
 var gPlayerScaling = 50;
 
@@ -17267,14 +17270,61 @@ function ScrollABCTextIntoView(textarea, selectionStart, selectionEnd, fraction)
 function RenderDivClickHandler(e){
 
 	if (gRenderingPDF){
-
 		return;
-
 	}
 
 	if (gDisableNotationRendering){
+		return;
+	}
+
+	if (gUIHidden){
+
+		//console.log("gUIHidden");
+
+		if (!gUIHiddenPlayerEnabled){
+			
+			gUIHiddenPlayerEnabled = true;
+
+			PlayABC();
+
+			setTimeout(function(){
+
+				const button = document.querySelector('button.abcjs-midi-start');
+
+				if (button){
+					button.click();
+				}
+
+			},250);
+
+		}
+		else{
+
+			// Shift click rewinds
+			if (e.shiftKey){
+
+				const button = document.querySelector('button.abcjs-midi-reset');
+
+				if (button){
+					
+					button.click();
+
+				}
+
+			}
+			else{
+
+				// Otherwise just play/pause
+				const button = document.querySelector('button.abcjs-midi-start');
+
+				if (button){
+					button.click();
+				}
+			}
+		}
 
 		return;
+		
 	}
 
 	var thisID = this.id;
@@ -21828,7 +21878,8 @@ function processShareLink() {
 	}
 
 	// Open with GUI disabled
-
+	gUIHidden = false;
+	gUIHiddenPlayerEnabled = false;
 	if (urlParams.has("noui")) {
 
 		const body = document.querySelector('body');
@@ -21836,6 +21887,9 @@ function processShareLink() {
 		if (body.classList.contains("noui")) return;
 
 		body.classList.add("noui");
+
+		gUIHidden = true;
+
 	}
 
 	// If multiple tunes in the link, which one to open in the player?
