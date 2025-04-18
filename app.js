@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2409_041725_1700";
+var gVersionNumber="2410_041725_1700";
 
 var gMIDIInitStillWaiting = false;
 
@@ -17282,7 +17282,7 @@ function RenderDivClickHandler(e){
 		//console.log("gUIHidden");
 
 		if (!gUIHiddenPlayerEnabled){
-			
+
 			gUIHiddenPlayerEnabled = true;
 
 			PlayABC();
@@ -17407,6 +17407,11 @@ function GenerateRenderingDivs(nTunes) {
 
 		// Set up the click handler
 		el.onclick = RenderDivClickHandler;
+
+		// Tool tip for hidden UI case
+		if (gUIHidden){
+			el.title = "Click to play/pause. Shift-click to rewind playback.";
+		}
 
 		notationHolder.appendChild(el);
 
