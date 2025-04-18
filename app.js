@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2418_041825_1330";
+var gVersionNumber="2419_041825_1400";
 
 var gMIDIInitStillWaiting = false;
 
@@ -478,37 +478,14 @@ function SetupPlayerEventHandlers(){
 
 				gPlayerClickTimeout = null;
 
-				if (isPureDesktopBrowser()) {
+				// Click the play/pause button
+				const button = document.querySelector('button.abcjs-midi-start');
 
-					// Otherwise just play/pause
-					const button = document.querySelector('button.abcjs-midi-start');
+				if (button) {
 
-					if (button) {
+					button.click();
 
-						button.click();
-
-					}
-
-				} else {
-
-					// On mobile just stop play and rewind
-					var button = document.querySelector('button.abcjs-midi-start');
-
-					if (button) {
-
-						button.click();
-
-					}
-
-					button = document.querySelector('button.abcjs-midi-reset');
-
-					if (button) {
-
-						button.click();
-
-					}
-
-				}				
+				}
 
 			}
 			else{
