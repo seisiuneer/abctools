@@ -2147,6 +2147,13 @@ body.noui .modal_flat_wide_main{
 		display:none !important;
 	}
 
+body.noui svg {
+  user-select: none;      
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  -moz-user-select: none;
+}
+
 @media print {
   	.hidden-print {
     display: none !important;
