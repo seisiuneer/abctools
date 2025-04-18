@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2416_041825_0600";
+var gVersionNumber="2417_041825_1030";
 
 var gMIDIInitStillWaiting = false;
 
@@ -60,6 +60,7 @@ var gUIHidden = false;
 var gUIHiddenPlayerEnabled = false;
 var gUIHiddenAllowPlay = true;
 var gUIHiddenClickTimeout = null;
+var gUIHiddenTuneIndex = 0;
 const UIHiddenTimerDelay = 300;
 
 var gPlayerScaling = 50;
@@ -17343,6 +17344,93 @@ function RenderDivClickHandler(e){
 			}
 		} else {
 
+			var thisID = this.id;
+
+			if (thisID && (thisID != "") && (thisID.indexOf("notation")==0)){
+
+				var clickedTune = this.id.replace("notation","");
+
+				if (clickedTune != ""){
+
+					var clickedTuneIndex = parseInt(clickedTune);
+					
+					//console.log("clickedTuneIndex = "+clickedTuneIndex+" gLastClickedTune = "+gLastClickedTune);
+
+					if (clickedTuneIndex != gUIHiddenTuneIndex){
+
+						//console.log("clickedTuneIndex = "+clickedTuneIndex+" gUIHiddenTuneIndex = "+gUIHiddenTuneIndex);
+
+						gUIHiddenTuneIndex = clickedTuneIndex;
+
+						gPlayABCTuneIndex = gUIHiddenTuneIndex;
+
+						// Setup values to allow player to launch the correct tune
+
+						var offset = findTuneOffsetByIndex(gUIHiddenTuneIndex);
+
+						//console.log("offset = "+offset);
+
+						gTheABC.selectionStart = offset;
+
+						// If the player is up, close it
+						if (gUIHiddenPlayerEnabled){
+
+							var theOKButtons = document.getElementsByClassName("modal_flat_ok");
+
+							// Find the button that says "Close" and hook its click handler to make sure music stops on close
+							// Need to search through the modals since there may be a first time share dialog also present
+							// the first time someone plays a linked PDF tune
+
+							var theOKButton = null;
+
+							for (var i=0;i<theOKButtons.length;++i){
+
+								theOKButton = theOKButtons[i];
+
+								if (theOKButton.innerText == "Close"){
+
+									var originalOnClick = theOKButton.onclick;
+
+									theOKButton.onclick = function(){
+
+										originalOnClick(); 
+									
+										if (gSynthControl){
+												
+											gSynthControl.destroy();
+
+											gSynthControl = null;
+
+										}
+
+										// If on iOS and the muting controller installed, dispose it now
+										if (gIsIOS){
+
+											if (gTheMuteHandle){
+											 	gTheMuteHandle.dispose();
+					  							gTheMuteHandle = null;
+					  						}
+										}
+
+									};
+
+									break;
+
+								}
+							}
+
+							theOKButton.click();
+
+							gUIHiddenPlayerEnabled = false;	
+
+						}
+
+					}
+
+				}
+				
+			}
+
 			gUIHiddenClickTimeout = setTimeout(() => {
 
 				if (isPureDesktopBrowser()){
@@ -17363,7 +17451,7 @@ function RenderDivClickHandler(e){
 
 				gUIHiddenClickTimeout = null;
 
-			}, UIHiddenTimerDelay);
+			},UIHiddenTimerDelay);
 		}
 
 		return;
