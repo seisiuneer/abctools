@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2417_041825_1030";
+var gVersionNumber="2418_041825_1330";
 
 var gMIDIInitStillWaiting = false;
 
@@ -62,6 +62,9 @@ var gUIHiddenAllowPlay = true;
 var gUIHiddenClickTimeout = null;
 var gUIHiddenTuneIndex = 0;
 const UIHiddenTimerDelay = 300;
+
+var gPlayerClickTimeout = null;
+const PlayerTimerDelay = 300;
 
 var gPlayerScaling = 50;
 
@@ -453,6 +456,89 @@ function getFirstPage(){
 //
 // Tune utility functions
 // 
+
+// Set up the click and double click handlers for the players
+function SetupPlayerEventHandlers(){
+
+	var elem = document.getElementById("abcplayer");
+
+	if (elem){
+
+		if (isPureDesktopBrowser()){
+			elem.title = "Double-click to play/pause. Shift-click to rewind playback.";
+		}
+
+		gPlayerClickTimeout = null;
+
+		elem.onclick = function(e){
+
+			if (gPlayerClickTimeout) {
+
+				clearTimeout(gPlayerClickTimeout);
+
+				gPlayerClickTimeout = null;
+
+				if (isPureDesktopBrowser()) {
+
+					// Otherwise just play/pause
+					const button = document.querySelector('button.abcjs-midi-start');
+
+					if (button) {
+
+						button.click();
+
+					}
+
+				} else {
+
+					// On mobile just stop play and rewind
+					var button = document.querySelector('button.abcjs-midi-start');
+
+					if (button) {
+
+						button.click();
+
+					}
+
+					button = document.querySelector('button.abcjs-midi-reset');
+
+					if (button) {
+
+						button.click();
+
+					}
+
+				}				
+
+			}
+			else{
+
+				gPlayerClickTimeout = setTimeout(() => {
+
+					if (isPureDesktopBrowser()){
+
+						// Shift click rewinds
+						if (e.shiftKey) {
+
+							const button = document.querySelector('button.abcjs-midi-reset');
+
+							if (button) {
+
+								button.click();
+
+							}
+
+						}
+					}
+
+					gPlayerClickTimeout = null;
+
+				},PlayerTimerDelay);
+
+	        }
+	    }
+	}
+}
 
 // Normalize blank linkes for tab generators
 function normalizeBlankLines(text) {
@@ -31258,6 +31344,8 @@ function PlayABCDialog(theABC,callback,val,metronome_state){
 		gMIDIbuffer = midiBuffer;
         gMIDIInitStillWaiting = false;
 
+        SetupPlayerEventHandlers();
+
 		midiBuffer.init({
 			visualObj: visualObj
 		}).then(function (response) {
@@ -33297,6 +33385,8 @@ function SwingExplorerDialog(theOriginalABC, theProcessedABC, swing_explorer_sta
 		gMIDIbuffer = midiBuffer;
         gMIDIInitStillWaiting = false;
 
+        SetupPlayerEventHandlers();
+
 		midiBuffer.init({
 			visualObj: visualObj
 		}).then(function (response) {
@@ -34056,6 +34146,8 @@ function ReverbExplorerDialog(theOriginalABC, theProcessedABC, reverb_explorer_s
 
 		gMIDIbuffer = midiBuffer;
         gMIDIInitStillWaiting = false;
+
+		SetupPlayerEventHandlers();
 
 		midiBuffer.init({
 			visualObj: visualObj
@@ -35112,6 +35204,8 @@ function InstrumentExplorerDialog(theOriginalABC, theProcessedABC, instrument_ex
 		gMIDIbuffer = midiBuffer;
         gMIDIInitStillWaiting = false;
 
+		SetupPlayerEventHandlers();
+		
 		midiBuffer.init({
 			visualObj: visualObj
 		}).then(function (response) {
@@ -35724,6 +35818,8 @@ function GraceExplorerDialog(theOriginalABC, theProcessedABC, grace_explorer_sta
 		gMIDIbuffer = midiBuffer;
         gMIDIInitStillWaiting = false;
 
+		SetupPlayerEventHandlers();
+		
 		midiBuffer.init({
 			visualObj: visualObj
 		}).then(function (response) {
@@ -36496,6 +36592,8 @@ function RollExplorerDialog(theOriginalABC, theProcessedABC, roll_explorer_state
 		gMIDIbuffer = midiBuffer;
         gMIDIInitStillWaiting = false;
 
+		SetupPlayerEventHandlers();
+		
 		midiBuffer.init({
 			visualObj: visualObj
 		}).then(function (response) {
@@ -37087,6 +37185,8 @@ function TuneTrainerDialog(theOriginalABC, theProcessedABC, looperState){
 		gMIDIbuffer = midiBuffer;
         gMIDIInitStillWaiting = false;
 
+		SetupPlayerEventHandlers();
+		
 		midiBuffer.init({
 			visualObj: visualObj
 		}).then(function (response) {
@@ -45627,9 +45727,7 @@ function inlinePlayback(){
 
 			gMIDIbuffer = midiBuffer;
 		    gMIDIInitStillWaiting = false;
-
-		    //debugger;
-
+		
 			midiBuffer.init({
 				visualObj: visualObj 
 			}).then(function (response) {

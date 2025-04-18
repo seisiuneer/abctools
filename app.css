@@ -882,6 +882,13 @@ margin-right:30px;
 	}
 }
 
+#abcplayer svg {
+  user-select: none;      
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  -moz-user-select: none;
+}
+
 #exportall_mp3button{
 height:42px;
 padding:12px;
