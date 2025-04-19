@@ -489,22 +489,23 @@ function SetupEmbeddedMobileEventHanders(el){
 		}, gUIEmbeddedPressTimerDelay); 
 	});
 
-	el.addEventListener('touchend', (e) => {
+	const touchEventsToCancel = ['touchend', 'touchmove', 'touchcancel'];
 
-		clearTimeout(gUIEmbeddedPressTimer);
+	touchEventsToCancel.forEach(touchEvent => {
 
-		gUIEmbeddedPressTimer = null;
+		el.addEventListener(touchEvent => {
 
+			clearTimeout(gUIEmbeddedPressTimer);
+	
+			gUIEmbeddedPressTimer = null;
+	
+		});
 	});
 
-	el.addEventListener('touchcancel', (e) => {
+	el.addEventListener('contextmenu', (e) => {
 
-		clearTimeout(gUIEmbeddedPressTimer);
-
-		gUIEmbeddedPressTimer = null;
-
+		e.preventDefault();
 	});
-
 }
 
 
