@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2420_041925_0830";
+var gVersionNumber="2421_041925_1500";
 
 var gMIDIInitStillWaiting = false;
 
@@ -69,6 +69,10 @@ var gPlayerClickTimeout = null;
 const PlayerTimerDelay = 300;
 var gPlayerPressTimer = null;
 const gPlayerPressTimerDelay = 500;
+var gPlayerTouchStartX = 0;
+var gPlayerTouchStartY = 0;
+var gPlayerTouchStartTime = 0;
+const gPlayerSwipeThreshold = 50; // px
 
 var gPlayerScaling = 50;
 
@@ -520,6 +524,12 @@ function SetupPlayerEventHandlers(){
 
 			elem.addEventListener('touchstart', (e) => {
 
+				// Capture information for swipe detect
+				const touch = e.touches[0];
+				gPlayerTouchStartX = touch.clientX;
+				gPlayerTouchStartY = touch.clientY;
+				gPlayerTouchStartTime = Date.now();
+
 				gPlayerPressTimer = setTimeout(() => {
 					
 					// Long press detected, rewind play
@@ -539,9 +549,38 @@ function SetupPlayerEventHandlers(){
 
 			elem.addEventListener('touchend', (e) => {
 
+				// Check for horizontal swipe
+				const touch = e.changedTouches[0];
+				const deltaX = touch.clientX - gPlayerTouchStartX;
+				const deltaY = touch.clientY - gPlayerTouchStartY;
+				const timeElapsed = Date.now() - gPlayerTouchStartTime;
+
 				clearTimeout(gPlayerPressTimer);
 
 				gPlayerPressTimer = null;
+
+				// Check for horizontal swipe
+				if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > gPlayerSwipeThreshold && timeElapsed < 1000) {
+					if (deltaX > 0) {
+						// Swipe right detected, go to next tune
+						const button = document.getElementById('abcplayer_previousbutton');
+
+						if (button) {
+
+							button.click();
+
+						}
+					} else {
+						// Swipe right detected, go to next tune
+						const button = document.getElementById('abcplayer_nextbutton');
+
+						if (button) {
+
+							button.click();
+
+						}
+					}
+				}
 
 			});
 
