@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2419_041825_1400";
+var gVersionNumber="2420_041925_0830";
 
 var gMIDIInitStillWaiting = false;
 
@@ -62,9 +62,13 @@ var gUIHiddenAllowPlay = true;
 var gUIHiddenClickTimeout = null;
 var gUIHiddenTuneIndex = 0;
 const UIHiddenTimerDelay = 300;
+var gUIEmbeddedPressTimer = null;
+const gUIEmbeddedPressTimerDelay = 500;
 
 var gPlayerClickTimeout = null;
 const PlayerTimerDelay = 300;
+var gPlayerPressTimer = null;
+const gPlayerPressTimerDelay = 500;
 
 var gPlayerScaling = 50;
 
@@ -457,6 +461,49 @@ function getFirstPage(){
 // Tune utility functions
 // 
 
+// Setup event handler for mobile embedded use
+function SetupEmbeddedMobileEventHanders(el){
+	
+	el.addEventListener('touchstart', (e) => {
+		
+		gUIEmbeddedPressTimer = setTimeout(() => {
+
+			if (gUIHiddenPlayerEnabled){
+				
+				// Long press detected, rewind play
+				const button = document.querySelector('button.abcjs-midi-reset');
+
+				if (button) {
+
+					button.click();
+
+				}
+			}
+
+			gUIEmbeddedPressTimer = null;
+
+		}, gUIEmbeddedPressTimerDelay); 
+	});
+
+	el.addEventListener('touchend', (e) => {
+
+		clearTimeout(gUIEmbeddedPressTimer);
+
+		gUIEmbeddedPressTimer = null;
+
+	});
+
+	el.addEventListener('touchcancel', (e) => {
+
+		clearTimeout(gUIEmbeddedPressTimer);
+
+		gUIEmbeddedPressTimer = null;
+
+	});
+
+}
+
+
 // Set up the click and double click handlers for the players
 function SetupPlayerEventHandlers(){
 
@@ -465,7 +512,46 @@ function SetupPlayerEventHandlers(){
 	if (elem){
 
 		if (isPureDesktopBrowser()){
+
 			elem.title = "Double-click to play/pause. Shift-click to rewind playback.";
+
+		}
+		else{
+
+			elem.addEventListener('touchstart', (e) => {
+
+				gPlayerPressTimer = setTimeout(() => {
+					
+					// Long press detected, rewind play
+					const button = document.querySelector('button.abcjs-midi-reset');
+
+					if (button) {
+
+						button.click();
+
+					}
+
+					gPlayerPressTimer = null;
+
+				}, gPlayerPressTimerDelay);
+
+			});
+
+			elem.addEventListener('touchend', (e) => {
+
+				clearTimeout(gPlayerPressTimer);
+
+				gPlayerPressTimer = null;
+
+			});
+
+			elem.addEventListener('touchcancel', (e) => {
+
+				clearTimeout(gPlayerPressTimer);
+
+				gPlayerPressTimer = null;
+
+			});
 		}
 
 		gPlayerClickTimeout = null;
@@ -17373,37 +17459,15 @@ function RenderDivClickHandler(e){
 
 			} else {
 
-				if (isPureDesktopBrowser()) {
+				// Otherwise just play/pause
+				const button = document.querySelector('button.abcjs-midi-start');
 
-					// Otherwise just play/pause
-					const button = document.querySelector('button.abcjs-midi-start');
+				if (button) {
 
-					if (button) {
-
-						button.click();
-
-					}
-
-				} else {
-
-					// On mobile just stop play and rewind
-					var button = document.querySelector('button.abcjs-midi-start');
-
-					if (button) {
-
-						button.click();
-
-					}
-
-					button = document.querySelector('button.abcjs-midi-reset');
-
-					if (button) {
-
-						button.click();
-
-					}
+					button.click();
 
 				}
+				
 			}
 		} else {
 
@@ -17601,10 +17665,14 @@ function GenerateRenderingDivs(nTunes) {
 		// Set up the click handler
 		el.onclick = RenderDivClickHandler;
 
+
 		// Tool tip for hidden UI case
-		if (isPureDesktopBrowser()){
-			if (gUIHidden && gUIHiddenAllowPlay){
+		if (gUIHidden && gUIHiddenAllowPlay){
+			if (isPureDesktopBrowser()){
 				el.title = "Double-click to play/pause. Shift-click to rewind playback.";
+			}
+			else{
+				SetupEmbeddedMobileEventHanders(el);
 			}
 		}
 
