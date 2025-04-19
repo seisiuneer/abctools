@@ -493,7 +493,7 @@ function SetupEmbeddedMobileEventHanders(el){
 
 	touchEventsToCancel.forEach(touchEvent => {
 
-		el.addEventListener(touchEvent => {
+		el.addEventListener(touchEvent, (e) => {
 
 			clearTimeout(gUIEmbeddedPressTimer);
 	
