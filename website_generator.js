@@ -2925,6 +2925,13 @@ function generateAndSaveWebsiteLightbox() {
 
     theOutput +="    // Set this to false to disable state persistence\n";
     theOutput +="    var gAllowStatePersistence = true;\n";
+    theOutput +="\n";    
+    theOutput +="    // Mobile gesture state variables\n";
+    theOutput +="    var gPlayerTouchStartX = 0;\n";
+    theOutput +="    var gPlayerTouchStartY = 0;\n";
+    theOutput +="    var gPlayerTouchStartTime = 0;\n";
+    theOutput +="    const gPlayerSwipeThreshold = 50;\n";
+
     theOutput +="\n";
 
     theOutput +='    function isIOS() {\n';
@@ -3205,6 +3212,76 @@ function generateAndSaveWebsiteLightbox() {
     theOutput +='            updateViewer();\n';  
     theOutput +="\n";
     theOutput +="        }\n";  
+    theOutput +="\n";
+    theOutput +="        if (gIsAndroid || gIsIOS){\n";
+    theOutput +="\n";
+
+    // Setup gesture handlers for mobile
+    if (gotTitle && gotSubTitle){ 
+        theOutput +="            var elems = [imageElement,subtitleElement,titleElement];\n";
+    }
+    else
+    if (gotTitle){
+        theOutput +="            var elems = [imageElement,titleElement];\n";
+    }   
+    else
+    if (gotSubTitle){
+        theOutput +="            var elems = [imageElement,subtitleElement];\n";
+    }
+    else{
+        theOutput +="            var elems = [imageElement];\n";
+    } 
+
+    theOutput +="\n";
+    theOutput +="            elems.forEach(elem => {\n";
+    theOutput +="\n";
+    theOutput +="                if (elem){\n";
+    theOutput +="\n";
+    theOutput +="                    elem.addEventListener('touchstart', (e) => {\n";
+    theOutput +="\n";
+    theOutput +="                        // Capture information for swipe detect\n";
+    theOutput +="                        const touch = e.touches[0];\n";
+    theOutput +="                        gPlayerTouchStartX = touch.clientX;\n";
+    theOutput +="                        gPlayerTouchStartY = touch.clientY;\n";
+    theOutput +="                        gPlayerTouchStartTime = Date.now();\n";
+    theOutput +="\n";
+    theOutput +="                    });\n";
+    theOutput +="\n";
+    theOutput +="                    elem.addEventListener('touchend', (e) => {\n";
+    theOutput +="\n";
+    theOutput +="                        // Check for horizontal swipe\n";
+    theOutput +="                        const touch = e.changedTouches[0];\n";
+    theOutput +="                        const deltaX = touch.clientX - gPlayerTouchStartX;\n";
+    theOutput +="                        const deltaY = touch.clientY - gPlayerTouchStartY;\n";
+    theOutput +="                        const timeElapsed = Date.now() - gPlayerTouchStartTime;\n";
+    theOutput +="\n";
+    theOutput +="                        // Check for horizontal swipe\n";
+    theOutput +="                        if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > gPlayerSwipeThreshold && timeElapsed < 1000) {\n";
+    theOutput +="\n";
+    theOutput +="                            if (deltaX > 0) {\n";
+    theOutput +="\n";
+    theOutput +="                                // Swipe left detected, go to previous tune\n";
+    theOutput +="                                if (prevButton) {\n";
+    theOutput +="\n";
+    theOutput +="                                    prevButton.click();\n";
+    theOutput +="\n";
+    theOutput +="                                }\n";
+    theOutput +="\n";
+    theOutput +="                            } else {\n";
+    theOutput +="\n";
+    theOutput +="                                // Swipe right detected, go to next tune\n";
+    theOutput +="                                if (nextButton) {\n";
+    theOutput +="\n";
+    theOutput +="                                    nextButton.click();\n";
+    theOutput +="\n";
+    theOutput +="                                }\n";
+    theOutput +="\n";
+    theOutput +="                            }\n";
+    theOutput +="                        }\n";
+    theOutput +="                    });\n";
+    theOutput +="                }\n";
+    theOutput +="            });\n";
+    theOutput +="        }\n";
     theOutput +="\n";
     theOutput +="    });\n";    
     theOutput +="\n";
