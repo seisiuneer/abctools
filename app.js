@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2423_041925_2200";
+var gVersionNumber="2425_042025_1000";
 
 var gMIDIInitStillWaiting = false;
 
@@ -513,7 +513,7 @@ function SetupEmbeddedMobileEventHanders(el){
 // Set up the click and double click handlers for the players
 function SetupPlayerEventHandlers(){
 
-	var elem = document.getElementById("abcplayer");
+	var elem = document.getElementById("playerholder");
 
 	if (elem){
 
