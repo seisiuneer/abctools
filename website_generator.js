@@ -3217,21 +3217,7 @@ function generateAndSaveWebsiteLightbox() {
     theOutput +="\n";
 
     // Setup gesture handlers for mobile
-    if (gotTitle && gotSubTitle){ 
-        theOutput +="            var elems = [imageElement,subtitleElement,titleElement];\n";
-    }
-    else
-    if (gotTitle){
-        theOutput +="            var elems = [imageElement,titleElement];\n";
-    }   
-    else
-    if (gotSubTitle){
-        theOutput +="            var elems = [imageElement,subtitleElement];\n";
-    }
-    else{
-        theOutput +="            var elems = [imageElement];\n";
-    } 
-
+    theOutput +="            var elems = [viewerElem];\n";
     theOutput +="\n";
     theOutput +="            elems.forEach(elem => {\n";
     theOutput +="\n";
