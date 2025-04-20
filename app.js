@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2422_041925_2200";
+var gVersionNumber="2423_041925_2200";
 
 var gMIDIInitStillWaiting = false;
 
@@ -505,6 +505,7 @@ function SetupEmbeddedMobileEventHanders(el){
 	el.addEventListener('contextmenu', (e) => {
 
 		e.preventDefault();
+
 	});
 }
 
@@ -546,6 +547,14 @@ function SetupPlayerEventHandlers(){
 
 				}, gPlayerPressTimerDelay);
 
+			});
+
+			elem.addEventListener('touchmove', (e) => {
+
+				clearTimeout(gPlayerPressTimer);
+		
+				gPlayerPressTimer = null;
+		
 			});
 
 			elem.addEventListener('touchend', (e) => {
@@ -592,6 +601,13 @@ function SetupPlayerEventHandlers(){
 				gPlayerPressTimer = null;
 
 			});
+
+			elem.addEventListener('contextmenu', (e) => {
+
+				e.preventDefault();
+				
+			});
+
 		}
 
 		gPlayerClickTimeout = null;
