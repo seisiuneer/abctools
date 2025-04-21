@@ -2646,7 +2646,7 @@ function generateAndSaveWebsiteLightbox() {
 
     theOutput +="   #next::after {\n"
     theOutput +="       content: 'Next';\n"
-    theOutput +="}\n"
+    theOutput +="   }\n"
 
     theOutput +="\n";
 
@@ -2914,8 +2914,9 @@ function generateAndSaveWebsiteLightbox() {
     theOutput +="            left: 16px;\n";
     theOutput +="            top: 20px;\n";
     theOutput +="        }\n";
+    theOutput +="\n";
     theOutput +="    }\n"
-
+    theOutput +="\n";
     theOutput +="</style>\n";
     theOutput +="\n";
     theOutput +="</head>\n";
