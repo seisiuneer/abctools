@@ -2638,6 +2638,16 @@ function generateAndSaveWebsiteLightbox() {
     theOutput +="        margin-top: 32px;\n";
     theOutput +="    }\n";
 
+    theOutput +="    #prev::after {\n";
+    theOutput +="        content: 'Previous';\n";
+    theOutput +="    }\n";
+
+    theOutput +="\n";
+
+    theOutput +="   #next::after {\n"
+    theOutput +="       content: 'Next';\n"
+    theOutput +="}\n"
+
     theOutput +="\n";
 
     theOutput +="    button {\n";
@@ -2864,6 +2874,48 @@ function generateAndSaveWebsiteLightbox() {
     theOutput +="    }\n";
     theOutput +="\n";
 
+    theOutput +="    @media screen and (max-width: 45rem) {\n";
+    theOutput +="\n";
+    theOutput +="        #viewer {\n";
+    theOutput +="            margin-top: 0px;\n";
+    theOutput +="        }\n";
+    theOutput +="\n";
+    theOutput +="        #first, #last {\n";
+    theOutput +="            display: none;\n";
+    theOutput +="        }\n";
+    theOutput +="\n";
+    theOutput +="        #prev, #next {\n";
+    theOutput +="            width: 40px;\n";
+    theOutput +="            padding: 10px;\n";
+    theOutput +="        }\n";
+    theOutput +="\n";
+    theOutput +="        #prev::after {\n";
+    theOutput +="            content: '←';\n";
+    theOutput +="        }\n";
+    theOutput +="\n";
+    theOutput +="        #next::after {\n";
+    theOutput +="            content: '→';\n";
+    theOutput +="        }\n";
+    theOutput +="\n";
+    theOutput +="        #controls {\n";
+    theOutput +="            width: 90svw;\n";
+    theOutput +="            display: flex;\n";
+    theOutput +="            justify-content: center;\n";
+    theOutput +="            align-items: center;\n";
+    theOutput +="        }\n";
+    theOutput +="\n";
+    theOutput +="        #tuneselector {\n";
+    theOutput +="            display: flex;\n";
+    theOutput +="            width: 70%;\n";
+    theOutput +="            padding-right: 32px;\n";
+    theOutput +="        }\n";
+    theOutput +="\n";
+    theOutput +="        #website_help {\n";
+    theOutput +="            left: 16px;\n";
+    theOutput +="            top: 20px;\n";
+    theOutput +="        }\n";
+    theOutput +="    }\n"
+
     theOutput +="</style>\n";
     theOutput +="\n";
     theOutput +="</head>\n";
@@ -2898,9 +2950,9 @@ function generateAndSaveWebsiteLightbox() {
 
     theOutput +='    <div class="hidden-print" id="controls">\n';
     theOutput +='        <button id="first">First</button>\n';
-    theOutput +='        <button id="prev">Previous</button>\n';
+    theOutput +='        <button id="prev"></button>\n';
     theOutput +='        <select id="tuneselector" title="Select a tune from the list"></select>\n';
-    theOutput +='        <button id="next">Next</button>\n';
+    theOutput +='        <button id="next"></button>\n';
     theOutput +='        <button id="last">Last</button>\n';
     theOutput +='    </div>\n';
 
@@ -3000,44 +3052,11 @@ function generateAndSaveWebsiteLightbox() {
         // Add an element to the front of the tunes array
         theOutput +='        tunes.unshift({"Name":"Title Page","Filename":null,"URL":null});\n';
         theOutput +="\n"; 
-    }
-
-    theOutput +='        var gIsIOS = false;\n';
-    theOutput +='        if (isIOS()) {\n';
-    theOutput +='           gIsIOS = true;\n';
-    theOutput +='        }\n';
-
-    theOutput +="\n";     
+    }   
     
     theOutput +='        var gIsIPad = false;\n';
     theOutput +='        if (isIPad()) {\n';
     theOutput +='           gIsIPad = true;\n';
-    theOutput +='        }\n';
-
-    theOutput +="\n"; 
-
-    theOutput +='        var gIsAndroid = false;\n';
-    theOutput +='        if (isAndroid()){\n';
-    theOutput +='            gIsAndroid = true;\n';
-    theOutput +='        }\n';
-
-    theOutput +="\n"; 
-
-    theOutput +='        if ((gIsAndroid || gIsIOS) && (!gIsIPad)){\n';
-    theOutput +='            firstButton.style.display = "none";\n';
-    theOutput +='            lastButton.style.display = "none";\n';
-    theOutput +='            viewerElem.style.marginTop = "0px";\n';
-    theOutput +='            tuneSelector.style.width = "240px";\n';
-    theOutput +='            prevButton.style.width = "40px";\n';
-    theOutput +='            prevButton.style.padding = "10px 10px 10px 10px";\n';
-    theOutput +='            prevButton.textContent = "←";\n';
-    theOutput +='            nextButton.style.width = "40px";\n';
-    theOutput +='            nextButton.style.padding = "10px 10px 10px 10px";\n';
-    theOutput +='            nextButton.textContent = "→";\n';
-    if (gWebsiteAddHelp){
-        theOutput +='            helpElement.style.left = "16px";\n';
-        theOutput +='            helpElement.style.top = "20px";\n';
-    }
     theOutput +='        }\n';
 
     theOutput +="\n"; 
