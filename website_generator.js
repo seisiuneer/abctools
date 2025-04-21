@@ -3053,6 +3053,14 @@ function generateAndSaveWebsiteLightbox() {
         theOutput +='        tunes.unshift({"Name":"Title Page","Filename":null,"URL":null});\n';
         theOutput +="\n"; 
     }   
+    theOutput +="\n";     
+
+    theOutput +='        var gIsIOS = false;\n';
+    theOutput +='        if (isIOS()) {\n';
+    theOutput +='           gIsIOS = true;\n';
+    theOutput +='        }\n';
+
+    theOutput +="\n";     
     
     theOutput +='        var gIsIPad = false;\n';
     theOutput +='        if (isIPad()) {\n';
@@ -3061,6 +3069,13 @@ function generateAndSaveWebsiteLightbox() {
 
     theOutput +="\n"; 
 
+    theOutput +='        var gIsAndroid = false;\n';
+    theOutput +='        if (isAndroid()){\n';
+    theOutput +='            gIsAndroid = true;\n';
+    theOutput +='        }\n';
+
+    theOutput +="\n"; 
+   
     theOutput +='        if (gIsIPad){\n';
     theOutput +='            viewerElem.style.marginTop = "0px";\n';
     theOutput +='        }\n';
