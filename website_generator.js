@@ -2612,7 +2612,7 @@ function generateAndSaveWebsiteLightbox() {
     theOutput +="\n";
     
     theOutput +="    #viewer {\n";
-    theOutput +="        width: 80%;\n";
+    theOutput +="        width: 95%;\n";
     theOutput +="        height: 80%;\n";
     theOutput +="        text-align: center;\n";
     theOutput +="        display: flex;\n";
