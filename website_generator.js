@@ -2638,15 +2638,17 @@ function generateAndSaveWebsiteLightbox() {
     theOutput +="        margin-top: 32px;\n";
     theOutput +="    }\n";
 
+    theOutput +="\n";
+
     theOutput +="    #prev::after {\n";
     theOutput +="        content: 'Previous';\n";
     theOutput +="    }\n";
 
     theOutput +="\n";
 
-    theOutput +="   #next::after {\n"
+    theOutput +="    #next::after {\n"
     theOutput +="       content: 'Next';\n"
-    theOutput +="   }\n"
+    theOutput +="    }\n"
 
     theOutput +="\n";
 
