@@ -2836,6 +2836,7 @@ function generateAndSaveWebsiteLightbox() {
     theOutput +="          padding: 0px !important;\n"
     theOutput +="          background: white;\n"
     theOutput +="        }\n"
+    theOutput +="\n";
     theOutput +="    }\n";
     theOutput +="\n";
 
