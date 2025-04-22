@@ -157,12 +157,6 @@
         line-height: 28px;
         }
         
-        @media print {
-        .hidden-print {
-        display: none !important;
-        }
-        }
-        
         .page_break_always{
         page-break-before: always;
         }
@@ -249,6 +243,38 @@
         background-color: #ddd;
         }
         
+        @media print {
+            
+            .hidden-print {
+                display: none !important;
+            }
+
+            #maindiv{
+                position: relative;
+                text-align: left;
+                width: 100%;
+                background-color: white;
+                margin-left:0px;
+            }
+            
+            img{
+                width:90%;
+            }
+
+            .image_holder{
+                text-align: center;
+                width:90%;
+            }
+            
+            .image_holder_p{
+                text-align: center;
+                margin-top:24px;
+                width:90%;
+            }
+
+        }
+        
+
         </style>
         
     </head>
@@ -563,15 +589,13 @@
             
             <div id="maindiv">
                 
+                <hr class="hidden-print">
+                
                 <div style="text-align: center;">
                     <font id="pagetitle" face="Comic Sans MS" size="5">ABC Transcription Tools User Guide</font><br/>
                 </div>
                 
                 <div id="mobile_table_of_contents" class="hidden-print">
-                    
-                    <hr class="hidden-print">
-                    
-                    <p style="margin-bottom:20px;line-height:12px;padding-left:0px;text-align: center;">To search for any subject press Ctrl+F (Windows) or ⌘+F (Mac)</p>
                     <hr>
                     <p style="margin-bottom:20px;line-height:12px;padding-left:0px;text-align: center;">Click any topic to show/hide the subtopics</p>
                     <h1 style="margin-bottom:16px;padding-left:0px;"><button class="expandall" onclick="ExpandAll();">Expand All</button>&nbsp;&nbsp;&nbsp;<button class="expandall" onclick="CollapseAll();">Collapse All</button></h1>
