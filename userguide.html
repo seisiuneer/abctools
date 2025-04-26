@@ -228,10 +228,10 @@
         margin-top:10px;
         padding-left:6px;
         padding-right:6px;
-                user-select: none;
-                -webkit-user-select: none;
-                -ms-user-select: none;
-                -moz-user-select: none;
+        user-select: none;
+        -webkit-user-select: none;
+        -ms-user-select: none;
+        -moz-user-select: none;
         }
         
         .sidebar a {
@@ -245,10 +245,10 @@
         color: #000000;
         margin-bottom: 0px;
         margin-left: 24px;
-                user-select: none;
-                -webkit-user-select: none;
-                -ms-user-select: none;
-                -moz-user-select: none;
+        user-select: none;
+        -webkit-user-select: none;
+        -ms-user-select: none;
+        -moz-user-select: none;
         }
         
         .sidebar a:hover {
@@ -447,7 +447,8 @@
             <details>
             <summary><h3>PDF Tunebook Generation</h3></summary>
             <a style="text-decoration:none;" href="#export_pdf_tunebook">Exporting a PDF Tunebook</a>
-            <a style="text-decoration:none;" href="#inject_pdf_tunebook_features">Inject PDF Tunebook Features</a>
+            <a style="text-decoration:none;" href="#inject_pdf_tunebook_features_play">Inject Only PDF Tunebook Play Features</a>
+            <a style="text-decoration:none;" href="#inject_pdf_tunebook_features">Inject All PDF Tunebook Features</a>
             <a style="text-decoration:none;" href="#browser_print_to_pdf">Browser Print-to-PDF with Play Links</a>
             <a style="text-decoration:none;" href="#pdf_font_override_settings">PDF Font Override Settings</a>
             <a style="text-decoration:none;" href="#pdf_quality_setting">PDF Quality Setting</a>
@@ -863,7 +864,8 @@
                     <button class="accordion" title="Click to expand/collapse this section">PDF Tunebook Generation</button>
                     <div class="tocpanel">
                         <p class="toc"><a style="text-decoration:none;" href="#export_pdf_tunebook">Exporting a PDF Tunebook</a></p>
-                        <p class="toc"><a style="text-decoration:none;" href="#inject_pdf_tunebook_features">Inject PDF Tunebook Features</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#inject_pdf_tunebook_features_play">Inject Only PDF Tunebook Play Features</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#inject_pdf_tunebook_features">Inject All PDF Tunebook Features</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#browser_print_to_pdf">Browser Print-to-PDF with Play Links</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#pdf_font_override_settings">PDF Font Override Settings</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#pdf_quality_setting">PDF Quality Setting</a></p>
@@ -1413,7 +1415,7 @@
                 <p><strong>Add:</strong></p>
                 <p>Brings up a dialog where you can add your own ABC, MusicXML, BWW, or MIDI tunes, restore from previously saved Snapshots, re-order the tunes, delete tunes, add example ABC tunes, add useful ABC templates, or inject the commands for PDF tunebook features:</p>
                 <div class="image_holder_p">
-                    <img class="image" loading="lazy" src="img/add_example_template_24.jpg"/>
+                    <img class="image" loading="lazy" src="img/add_example_template_25.jpg"/>
                 </div>
                 <p>If you would like to only show the buttons for the features you commonly use and hid the others, click the controls icon at the top-right of the dialog to choose features of the dialog you would like to show/hide:</p>
                 <div class="image_holder_p">
@@ -1548,9 +1550,13 @@
                 <hr>
                 <p>For more details, see the <strong><a href="#manage_databases">Managing Notes, Reverb, and Tune Search Databases for Offline Use</a></strong> section below.</p>
                 <hr>
-                <p><strong>Inject PDF Tunebook Features:</strong></p>
-                <p>Brings up a dialog that you can use to inject commands at the top of the ABC that will add an optional Title Page, Table of Contents, Index, Page Header, Page Footer, playback links, and/or QR code to an exported PDF tunebook.</p>
-                <p>Full details on PDF tunebook features can be found in the <a href="#inject_pdf_tunebook_features"><strong>Inject PDF Tunebook Features</strong></a> section of <a href="#export_pdf_tunebook"><strong>Exporting a PDF Tunebook</strong></a>.</p>
+                <p><strong>Inject Only PDF Play Features:</strong></p>
+                <p>Brings up a dialog that you can use to inject a minimal set of commands at the top of the ABC that will enable playing the tunes in the PDF by clicking the title.</p>
+                <p>Full details on playback-related PDF tunebook features can be found in the <a href="#inject_pdf_tunebook_features_play"><strong>Inject Only PDF Play Features</strong></a> section of <a href="#export_pdf_tunebook"><strong>Exporting a PDF Tunebook</strong></a>.</p>
+                <hr>
+                <p><strong>Inject All PDF Tunebook Features:</strong></p>
+                <p>Brings up a dialog that you can use to inject commands at the top of the ABC that will add an optional Title Page, Table of Contents, Index, Page Header, Page Footer, instrument and volumes for playback links, and/or QR code to an exported PDF tunebook.</p>
+                <p>Full details on PDF tunebook features can be found in the <a href="#inject_pdf_tunebook_features"><strong>Inject All PDF Tunebook Features</strong></a> section of <a href="#export_pdf_tunebook"><strong>Exporting a PDF Tunebook</strong></a>.</p>
                 <hr class="hidden-print" id="highlighting">
                 <h1 class="page_break_always">Notation and ABC Highlighting<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <p>Notation and ABC Highlighting can be toggled On/Off by clicking the <strong>Highlighting</strong> button in the top toolbar.</p>
@@ -2959,14 +2965,32 @@
                 <p>It can format PDF tunebooks with one or multiple tunes per page, something the native browser's Print command cannot accomplish.</p>
                 <p>When you click <strong>Export PDF</strong>, the following dialog will appear where you select your PDF formatting preferences:</p>
                 <div class="image_holder_p">
-                    <img class="image" loading="lazy" src="img/export_pdf_tunebook_9.jpg"/>
+                    <img class="image" loading="lazy" src="img/export_pdf_tunebook_10.jpg"/>
                 </div>
-                <p>When exporting a PDF from the button on the bottom-left of the full-screen view, the <strong>Inject PDF Tunebook Features</strong> and <strong>Browser Print-to-PDF with Play Links</strong> buttons are not shown on the dialog.</p>
+                <p>When exporting a PDF from the button on the bottom-left of the full-screen view, the <strong>Inject Only PDF Tunebook Play Features</strong>, <strong>Inject All PDF Tunebook Features</strong>, and <strong>Browser Print-to-PDF with Play Links</strong> buttons are not shown on the dialog.</p>
                 <hr>
-                <p id="inject_pdf_tunebook_features"><strong>Inject PDF Tunebook Features</strong></p>
-                <p>Brings up a dialog that you can use to inject commands at the top of the ABC that will add an optional Title Page, Table of Contents, Index, Page Header, Page Footer, playback links, required fonts for ABC in playback links, and/or QR code to an exported PDF tunebook:</p>
+                <p id="inject_pdf_tunebook_features_play"><strong>Inject Only PDF Tunebook Play Features</strong></p>
+                <p>Brings up a dialog that you can use to inject a minimal set of commands at the top of the ABC that will add instrument and volume information for playback links to an exported PDF tunebook:</p>
                 <div class="image_holder_p">
-                    <img class="image" loading="lazy" src="img/inject_pdf_tunebook_features_3.jpg"/>
+                    <img class="image" loading="lazy" src="img/inject_pdf_tunebook_features_play_1.jpg"/>
+                </div>
+                <p>The PDF playback features are added using the tool's ABC comment-based annotations to the top of the ABC.</p>
+                <p>With these injected commands in place, in an exported PDF file, clicking the title of the tunes will open them in the Player in a new browser tab.</p>
+                <p>Once added, you can modify the features values directly in the ABC if you wish.</p>
+                <p>Since the PDF features are part of the ABC, they will be saved along with the tunes if you save or share the ABC.</p>
+                <p>The PDF features are separated by two marker lines:</p>
+                <p class="code">% Start of PDF Tunebook Features<br/>% End of PDF Tunebook Features</p>
+                <p>These two lines are used by the tool to locate the tunebook feature settings in the ABC.</p>
+                <p>If you click <strong>Inject Only PDF Tunebook Play Features</strong> again, everything in that block of ABC will be replaced with the newly injected PDF tunebook playback feature commands.</p>
+                <p><strong>Note:</strong> If you add playback features to your tunebook using the dialog and then manually delete:</p>
+                <p class="code">% End of PDF Tunebook Features</p>
+                <p>from the ABC and click <strong>Inject Only PDF Tunebook Play Features</strong>, the tool will not be able to find the original set of feature commands in the ABC to overwrite.</p>
+                <p>If this occurs, the new set of requested PDF tunebook playback features will just be added to the top of the ABC.</p>
+                <hr>
+                <p id="inject_pdf_tunebook_features"><strong>Inject All PDF Tunebook Features</strong></p>
+                <p>Brings up a dialog that you can use to inject commands at the top of the ABC that will add an optional Title Page, Table of Contents, Index, Page Header, Page Footer, instrument and volume information for playback links, required fonts for ABC in playback links, and/or QR code to an exported PDF tunebook:</p>
+                <div class="image_holder_p">
+                    <img class="image" loading="lazy" src="img/inject_pdf_tunebook_features_4.jpg"/>
                 </div>
                 <p>Leave any text fields blank for features you don't want in your PDF tunebook.</p>
                 <p>The PDF features are added using the tool's ABC comment-based annotations to the top of the ABC.</p>
@@ -2976,10 +3000,10 @@
                 <p>The PDF features are separated by two marker lines:</p>
                 <p class="code">% Start of PDF Tunebook Features<br/>% End of PDF Tunebook Features</p>
                 <p>These two lines are used by the tool to locate the tunebook feature settings in the ABC.</p>
-                <p>If you click <strong>Inject PDF Tunebook Features</strong> again, everything in that block of ABC will be replaced with the newly injected PDF tunebook feature commands.</p>
+                <p>If you click <strong>Inject All PDF Tunebook Features</strong> again, everything in that block of ABC will be replaced with the newly injected PDF tunebook feature commands.</p>
                 <p><strong>Note:</strong> If you add features to your tunebook using the dialog and then manually delete:</p>
                 <p class="code">% End of PDF Tunebook Features</p>
-                <p>from the ABC and click <strong>Inject PDF Tunebook Features</strong>, the tool will not be able to find the original set of feature commands in the ABC to overwrite.</p>
+                <p>from the ABC and click <strong>Inject All PDF Tunebook Features</strong>, the tool will not be able to find the original set of feature commands in the ABC to overwrite.</p>
                 <p>If this occurs, the new set of requested PDF tunebook features will just be added to the top of the ABC.</p>
                 <hr>
                 <p style="text-align: center;"><strong>Note on use of "Playback links contain entire tunebook"</strong></p>
@@ -5799,27 +5823,27 @@
 
 <script>
 
-    //
-    // Expand the table of contents
-    //
-    function ExpandAll() {
+//
+// Expand the table of contents
+//
+function ExpandAll() {
 
-        var i;
+var i;
 
-        var acc = document.getElementsByClassName("accordion");
+var acc = document.getElementsByClassName("accordion");
 
-        for (i = 0; i < acc.length; i++) {
-            var thisAcc = acc[i];
-            thisAcc.classList.add("active");
-        }
+for (i = 0; i < acc.length; i++) {
+var thisAcc = acc[i];
+thisAcc.classList.add("active");
+}
 
-        var thePanels = document.getElementsByClassName("tocpanel");
+var thePanels = document.getElementsByClassName("tocpanel");
 
-        for (i = 0; i < thePanels.length; i++) {
-            var thisPanel = thePanels[i];
-            thisPanel.style.display = "block";
-        }
-    }
+for (i = 0; i < thePanels.length; i++) {
+var thisPanel = thePanels[i];
+thisPanel.style.display = "block";
+}
+}
 
 //
 // Collapse the table of contents
@@ -5843,131 +5867,131 @@ thisPanel.style.display = "none";
 }
 }
 
-    //
-    // Expand the sidebar table of contents
-    //
-    function SidebarExpandAll() {
+//
+// Expand the sidebar table of contents
+//
+function SidebarExpandAll() {
 
-        document.querySelectorAll('details').forEach(detail => {
-            detail.open = true;
-        });
+document.querySelectorAll('details').forEach(detail => {
+detail.open = true;
+});
 
-    }
+}
 
-    //
-    // Collapse the sidebar table of contents
-    //
-    function SidebarCollapseAll() {
+//
+// Collapse the sidebar table of contents
+//
+function SidebarCollapseAll() {
 
-        document.querySelectorAll('details').forEach(detail => {
-            detail.open = false;
-        });
+document.querySelectorAll('details').forEach(detail => {
+detail.open = false;
+});
 
-    }
+}
 
-    //
-    // Are we on Android?
-    //
-    function isAndroid() {
-    if (/Android/i.test(navigator.userAgent)) {
-    return true;
-    } else {
-    return false;
-    }
-    }
+//
+// Are we on Android?
+//
+function isAndroid() {
+if (/Android/i.test(navigator.userAgent)) {
+return true;
+} else {
+return false;
+}
+}
 
-    //
-    // Are we on iOS?
-    //
-    function isIOS() {
+//
+// Are we on iOS?
+//
+function isIOS() {
 
-        if (/iPad|iPhone|iPod/.test(navigator.platform)) {
-            return true;
-        } else {
-            return navigator.maxTouchPoints &&
-                navigator.maxTouchPoints > 2 &&
-                /MacIntel/.test(navigator.platform);
-        }
-    }
+if (/iPad|iPhone|iPod/.test(navigator.platform)) {
+return true;
+} else {
+return navigator.maxTouchPoints &&
+navigator.maxTouchPoints > 2 &&
+/MacIntel/.test(navigator.platform);
+}
+}
 
-    function DoStartup() {
+function DoStartup() {
 
-        //
-        // iOS Styling adaptation
-        //
+//
+// iOS Styling adaptation
+//
 
-        var gIsIOS = isIOS();
-        var gIsAndroid = isAndroid();
+var gIsIOS = isIOS();
+var gIsAndroid = isAndroid();
 
-        if (gIsIOS) {
-            // Fix the title font
-            var elem = document.getElementById("pagetitle");
-            elem.size = 5;
-            elem.style.fontFamily = "Helvetica";
-        }
+if (gIsIOS) {
+// Fix the title font
+var elem = document.getElementById("pagetitle");
+elem.size = 5;
+elem.style.fontFamily = "Helvetica";
+}
 
-        if (gIsIOS || gIsAndroid) {
-            // Hide the sidebar navigation on mobile
-            elem = document.getElementById("sidebar");
-            elem.style.display = "none";
-            elem = document.getElementById("maindiv");
-            elem.style.marginLeft = "0px";
+if (gIsIOS || gIsAndroid) {
+// Hide the sidebar navigation on mobile
+elem = document.getElementById("sidebar");
+elem.style.display = "none";
+elem = document.getElementById("maindiv");
+elem.style.marginLeft = "0px";
 
-        } else {
-            // Hide the accordion navigation on desktop
-            elem = document.getElementById("mobile_table_of_contents");
-            elem.style.display = "none";
-        }
+} else {
+// Hide the accordion navigation on desktop
+elem = document.getElementById("mobile_table_of_contents");
+elem.style.display = "none";
+}
 
-        var acc = document.getElementsByClassName("accordion");
-        var i;
+var acc = document.getElementsByClassName("accordion");
+var i;
 
-        for (i = 0; i < acc.length; i++) {
-            acc[i].addEventListener("click", function() {
-                this.classList.toggle("active");
-                var panel = this.nextElementSibling;
-                if (panel.style.display === "block") {
-                    panel.style.display = "none";
-                } else {
-                    panel.style.display = "block";
-                }
-            });
+for (i = 0; i < acc.length; i++) {
+acc[i].addEventListener("click", function() {
+this.classList.toggle("active");
+var panel = this.nextElementSibling;
+if (panel.style.display === "block") {
+panel.style.display = "none";
+} else {
+panel.style.display = "block";
+}
+});
 
-        }
+}
 
-        // Start with all topics collapsed
-        if (gIsIOS || gIsAndroid) {
-            CollapseAll();
-        } else {
-            SidebarCollapseAll();
-        }
-    }
+// Start with all topics collapsed
+if (gIsIOS || gIsAndroid) {
+CollapseAll();
+} else {
+SidebarCollapseAll();
+}
+}
 
-    DoStartup();
+DoStartup();
 
-    // If offline, hide all the YouTube videos and images
-    function removeOfflineContent() {
+// If offline, hide all the YouTube videos and images
+function removeOfflineContent() {
 
-        if (!navigator.onLine) {
+if (!navigator.onLine) {
 
-            const iframes = document.querySelectorAll('iframe');
+const iframes = document.querySelectorAll('iframe');
 
-            iframes.forEach(iframe => iframe.remove());
+iframes.forEach(iframe => iframe.remove());
 
-            // Remove all the images
-            var divs = document.querySelectorAll('div.image_holder');
+// Remove all the images
+var divs = document.querySelectorAll('div.image_holder');
 
-            divs.forEach(div => div.remove());
+divs.forEach(div => div.remove());
 
-            divs = document.querySelectorAll('div.image_holder_p');
+divs = document.querySelectorAll('div.image_holder_p');
 
-            divs.forEach(div => div.remove());
+divs.forEach(div => div.remove());
 
-        }
-    }
+}
+}
 
-    // Run the function on page load
-    document.addEventListener('DOMContentLoaded', removeOfflineContent);
+// Run the function on page load
+document.addEventListener('DOMContentLoaded', removeOfflineContent);
 
 </script>
 

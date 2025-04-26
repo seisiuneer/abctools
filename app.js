@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2437_042625_0800";
+var gVersionNumber="2438_042625_1300";
 
 var gMIDIInitStillWaiting = false;
 
@@ -13849,7 +13849,7 @@ function PDFTunebookBuilder(){
   	}
 
 	var form = [
-	  {html: '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:15px;margin-bottom:18px">Inject PDF Tunebook Features&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#inject_pdf_tunebook_features" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'},  
+	  {html: '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:15px;margin-bottom:18px">Inject All PDF Tunebook Features&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#inject_pdf_tunebook_features" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'},  
 	  {html: '<p style="margin-top:12px;margin-bottom:12px;font-size:12pt;line-height:14pt;font-family:helvetica">Clicking "Inject" will inject PDF tunebook feature commands at the top of your ABC.</p>'},  
 	  {html: '<p style="margin-top:12px;margin-bottom:12px;font-size:12pt;line-height:14pt;font-family:helvetica">Leave any text fields blank for features you don\'t want in your PDF tunebook.</p>'},  
 	  {name: "PDF quality:", id: "pdfquality", type:"select", options:pdf_quality_list, cssClass:"configure_pdfquality_select"},
@@ -14120,6 +14120,220 @@ function PDFTunebookBuilder(){
 
 				}
 			}
+
+			header_to_add += "%\n";
+
+			header_to_add += "% End of PDF Tunebook Features\n";
+
+			header_to_add += "\n";
+
+			SaveConfigurationSettings();
+
+			// Add the feature annotations to the top of the ABC
+			var theNotes = gTheABC.value;
+
+			//debugger;
+
+			// Strip off any existing settings
+
+			var markerString = "% End of PDF Tunebook Features\n\n";
+
+			var startIndex = theNotes.indexOf(markerString);
+
+			if (startIndex != -1){
+
+				startIndex += markerString.length;
+
+				theNotes = theNotes.substring(startIndex); 
+
+			}
+
+			markerString = "% End of PDF Tunebook Features\n";
+
+			startIndex = theNotes.indexOf(markerString);
+
+			if (startIndex != -1){
+
+				startIndex += markerString.length;
+
+				theNotes = theNotes.substring(startIndex); 
+
+			}
+
+			header_to_add += theNotes;
+
+			// Replace the ABC
+			setABCEditorText(header_to_add);
+
+			// Set dirty
+			gIsDirty = true;
+
+			// Have to redraw if in raw mode
+		    if (gRawMode){
+
+				RenderAsync(true,null);
+
+			}
+
+		}
+
+	});
+}
+
+function PDFTunebookBuilderPlayOnly(){
+
+	// If currently rendering PDF, exit immediately
+	if (gRenderingPDF) {
+		return;
+	}
+
+	// Keep track of dialogs
+	sendGoogleAnalytics("dialog","PDFTunebookBuilderPlayOnly");
+
+	// sound_font was added later, make sure the field is present
+	if ((!gPDFTunebookConfig.sound_font) || (gPDFTunebookConfig.sound_font == "")){
+		gPDFTunebookConfig.sound_font = "fluid";
+	}
+
+	// bass_instrument was added later, make sure the field is present
+	if ((!gPDFTunebookConfig.bass_instrument) || (gPDFTunebookConfig.bass_instrument == "")){
+		gPDFTunebookConfig.bass_instrument = 1;
+	}
+
+	// bass and chord volume was added later, make sure the field is present
+	if ((!gPDFTunebookConfig.bass_volume) || (gPDFTunebookConfig.bass_volume == "")){
+		gPDFTunebookConfig.bass_volume = "64";
+	}
+
+	if ((!gPDFTunebookConfig.chord_volume) || (gPDFTunebookConfig.chord_volume == "")){
+		gPDFTunebookConfig.chord_volume = "64";
+	}
+
+	var midi_program_list = [];
+
+  	for (var i=0;i<=MIDI_PATCH_COUNT;++i){
+  		midi_program_list.push({name: "  "+ generalMIDISoundNames[i], id: i });
+  	}
+
+ 	const sound_font_options = [
+	    { name: "  Fluid", id: "fluid" },
+	    { name: "  Musyng Kite", id: "musyng" },
+	    { name: "  FatBoy", id: "fatboy" },
+ 	    { name: "  Canvas", id: "canvas" },
+ 	    { name: "  MScore", id: "mscore" },
+ 	    { name: "  Arachno", id: "arachno" },
+ 	    { name: "  FluidHQ", id: "fluidhq"}
+ 	];
+
+  	for (var i=0;i<=MIDI_PATCH_COUNT;++i){
+  		midi_program_list.push({name: "  "+ generalMIDISoundNames[i], id: i });
+  	}
+
+	var form = [
+	  {html: '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:15px;margin-bottom:18px">Inject Only PDF Tunebook Play Features&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#inject_pdf_tunebook_features_play" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'},  
+	  {html: '<p style="margin-top:12px;margin-bottom:12px;font-size:12pt;line-height:20pt;font-family:helvetica">Clicking "Inject" will inject PDF playback enabling commands at the top of your ABC.</p>'},  
+	  {html: '<p style="margin-top:12px;margin-bottom:24px;font-size:12pt;line-height:20pt;font-family:helvetica">With these injected commands in place, in an exported PDF file, clicking the title of the tunes will open them in the Player in a new browser tab.</p>'},  
+	  {name: "Soundfont for playback links:", id: "sound_font", type:"select", options:sound_font_options, cssClass:"configure_setuppdftunebook_midi_program_select_play"},
+	  {name: "Melody instrument for playback links:", id: "melody_instrument", type:"select", options:midi_program_list, cssClass:"configure_setuppdftunebook_midi_program_select_play"},
+	  {name: "Bass instrument for playback links:", id: "bass_instrument", type:"select", options:midi_program_list, cssClass:"configure_setuppdftunebook_midi_program_select_play"},
+	  {name: "Bass volume (0-127):", id: "bass_volume", type:"number", cssClass:"configure_setuppdftunebook_form_text_play"},
+	  {name: "Chord instrument for playback links:", id: "chord_instrument", type:"select", options:midi_program_list, cssClass:"configure_setuppdftunebook_midi_program_select_play"},
+	  {name: "Chord volume (0-127):", id: "chord_volume", type:"number", cssClass:"configure_setuppdftunebook_form_text_play"},
+	];
+
+	const modal = DayPilot.Modal.form(form, gPDFTunebookConfig, { theme: "modal_flat", top: 100, width: 690, scrollWithPage: (AllowDialogsToScroll()), okText: "Inject", autoFocus: false } ).then(function(args){
+	
+		if (!args.canceled){
+
+			var header_to_add = "% Start of PDF Tunebook Features\n";
+			header_to_add += "%\n";
+
+			// Soundfont
+			gPDFTunebookConfig.sound_font = args.result.sound_font;
+
+			// Melody Instrument
+			gPDFTunebookConfig.melody_instrument = args.result.melody_instrument;
+
+			// Bass Instrument
+			gPDFTunebookConfig.bass_instrument = args.result.bass_instrument;
+
+			// Bass volume
+			gPDFTunebookConfig.bass_volume = args.result.bass_volume;
+
+			// Chord Instrument
+			gPDFTunebookConfig.chord_instrument = args.result.chord_instrument;
+
+			// Chord volume
+			gPDFTunebookConfig.chord_volume = args.result.chord_volume;
+				
+			var soundFont = gPDFTunebookConfig.sound_font;
+
+			var progNumMelody = gPDFTunebookConfig.melody_instrument;
+
+			var progNumBass = gPDFTunebookConfig.bass_instrument;
+
+			var progNumChord = gPDFTunebookConfig.chord_instrument;
+
+			// Special case for muting voices
+			if (progNumMelody == 0){
+
+				progNumMelody = "mute";
+
+			}
+			else{
+
+				progNumMelody = progNumMelody - 1;
+
+				if ((progNumMelody < 0) || (progNumMelody > MIDI_PATCH_COUNT)){
+
+					progNumMelody = 0;
+
+				}
+
+			}
+
+			// Special case for muting voices
+			if (progNumBass == 0){
+
+				progNumBass = "mute";
+
+			}
+			else{
+
+				progNumBass = progNumBass - 1;
+
+				if ((progNumBass < 0) || (progNumBass > MIDI_PATCH_COUNT)){
+
+					progNumBass = 0;
+
+				}
+
+			}
+
+			// Special case for muting voices
+			if (progNumChord == 0){
+
+				progNumChord = "mute";
+
+			}
+			else{
+
+				progNumChord = progNumChord - 1;
+
+				if ((progNumChord < 0) || (progNumChord > MIDI_PATCH_COUNT)){
+
+					progNumChord = 0;
+
+				}
+
+			}
+
+			var volBass = gPDFTunebookConfig.bass_volume;
+
+			var volChord = gPDFTunebookConfig.chord_volume;
+
+			header_to_add += "%add_all_playback_links "+progNumMelody+" "+progNumBass+" "+progNumChord+" "+soundFont+"\n";
+			header_to_add += "%add_all_playback_volumes "+volBass+" "+volChord+"\n";
 
 			header_to_add += "%\n";
 
@@ -16128,7 +16342,8 @@ function AddABC(){
 	}
 
 	modal_msg += '<p style="text-align:center;margin-top:24px;font-size:18px;">Inject PDF Tunebook Features</p>';
-	modal_msg += '<p style="text-align:center;margin-top:16px;"><input id="tunebookbuilder_add" class="advancedcontrols btn btn-injectcontrols-tunebookbuilder" onclick="PDFTunebookBuilder();" type="button" value="Inject PDF Tunebook Features" title="Inject commands at the top of your PDF tunebook for adding a Title Page, Table of Contents, Index, Page Headers, Page Footers, Playback Links, and Custom QR Code"></p>';
+	modal_msg += '<p style="text-align:center;margin-top:24px;"><input id="tunebookbuilder-add-play" class="advancedcontrols btn btn-injectcontrols-tunebookbuilder-play" onclick="PDFTunebookBuilderPlayOnly();" type="button" value="Inject Only PDF Tunebook Play Features" title="Inject only minimal playback-related instrument and volume commands at the top of your tunebook ABC"><input id="tunebookbuilder_add" class="advancedcontrols btn btn-injectcontrols-tunebookbuilder" onclick="PDFTunebookBuilder();" type="button" value="Inject All PDF Tunebook Features" title="Inject commands at the top of your tunebook ABC for adding a Title Page, Table of Contents, Index, Page Headers, Page Footers, instruments and volumes for Playback Links, and Custom QR Code"></p>';
+
 	modal_msg += '<p style="text-align:center;margin-top:24px;">';
 	modal_msg += '</p>';
 	modal_msg += '</div>';
@@ -40816,7 +41031,8 @@ function PDFExportDialog(){
 		if (isPureDesktopBrowser()){
 			form = [
 			  {html: '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:15px;">Export PDF Tunebook&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#export_pdf_tunebook" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'}, 
-			  {html: '<p style="text-align:center;margin-top:24px;"><input id="tunebookbuilder" class="advancedcontrols btn btn-injectcontrols-tunebookbuilder" onclick="PDFTunebookBuilder();" type="button" value="Inject PDF Tunebook Features" title="Inject commands at the top of your PDF tunebook for adding a Title Page, Table of Contents, Index, Page Headers, Page Footers, Playback Links, and Custom QR Code"><input id="pdfusebrowserprint" class="advancedcontrols btn btn-injectcontrols-headers-pdf" onclick="Do_Browser_PDF_Export();return;" type="button" value="Browser Print-to-PDF with Play Links" title="Quickly export a PDF tunebook using the browser\'s native Print-to-PDF feature with one tune per page and play links when you click the title.&nbsp;&nbsp;Does not include a Title Page, Table of Contents, Index, or QR Code."></p>'},
+			  {html: '<p style="text-align:center;margin-top:24px;"><input id="tunebookbuilder-play" class="advancedcontrols btn btn-injectcontrols-tunebookbuilder-play" onclick="PDFTunebookBuilderPlayOnly();" type="button" value="Inject Only PDF Tunebook Play Features" title="Inject only minimal playback-related instrument and volume commands at the top of your tunebook ABC"><input id="tunebookbuilder" class="advancedcontrols btn btn-injectcontrols-tunebookbuilder" onclick="PDFTunebookBuilder();" type="button" value="Inject All PDF Tunebook Features" title="Inject commands at the top of your tunebook ABC for adding a Title Page, Table of Contents, Index, Page Headers, Page Footers, instruments and volumes for Playback Links, and Custom QR Code"></p>'},
+			  {html: '<p style="text-align:center;margin-top:24px;"><input id="pdfusebrowserprint" class="advancedcontrols btn btn-injectcontrols-headers-pdf" onclick="Do_Browser_PDF_Export();return;" type="button" value="Browser Print-to-PDF with Play Links" title="Quickly export a PDF tunebook using the browser\'s native Print-to-PDF feature with one tune per page and play links when you click the title.&nbsp;&nbsp;Does not include a Title Page, Table of Contents, Index, or QR Code."></p>'},
 			  {name: "Paper Size:", id: "configure_papersize", type:"select", options:papersize_list, cssClass:"configure_pdf_papersize_select"},
 			  {name: "Orientation:", id: "configure_orientation", type:"select", options:orientation_list, cssClass:"configure_pdf_orientation_select"},
 			  {name: "Tune Layout:", id: "configure_tunelayout", type:"select", options:tunelayout_list, cssClass:"configure_pdf_tunelayout_select"},
@@ -40833,7 +41049,7 @@ function PDFExportDialog(){
 		else{
 			form = [
 			  {html: '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:15px;">Export PDF Tunebook&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#export_pdf_tunebook" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'}, 
-			  {html: '<p style="text-align:center;margin-top:24px;"><input id="tunebookbuilder" class="advancedcontrols btn btn-injectcontrols-tunebookbuilder" style="margin-right:0px" onclick="PDFTunebookBuilder();" type="button" value="Inject PDF Tunebook Features" title="Inject commands at the top of your PDF tunebook for adding a Title Page, Table of Contents, Index, Page Headers, Page Footers, Playback Links, and Custom QR Code"></p>'},
+			  {html: '<p style="text-align:center;margin-top:24px;"><input id="tunebookbuilder-play" class="advancedcontrols btn btn-injectcontrols-tunebookbuilder-play" onclick="PDFTunebookBuilderPlayOnly();" type="button" value="Inject Only PDF Tunebook Play Features" title="Inject only minimal playback-related instrument and volume commands at the top of your tunebook ABC"><input id="tunebookbuilder" class="advancedcontrols btn btn-injectcontrols-tunebookbuilder" onclick="PDFTunebookBuilder();" type="button" value="Inject All PDF Tunebook Features" title="Inject commands at the top of your tunebook ABC for adding a Title Page, Table of Contents, Index, Page Headers, Page Footers, instruments and volumes for Playback Links, and Custom QR Code"></p>'},
 			  {name: "Paper Size:", id: "configure_papersize", type:"select", options:papersize_list, cssClass:"configure_pdf_papersize_select"},
 			  {name: "Orientation:", id: "configure_orientation", type:"select", options:orientation_list, cssClass:"configure_pdf_orientation_select"},
 			  {name: "Tune Layout:", id: "configure_tunelayout", type:"select", options:tunelayout_list, cssClass:"configure_pdf_tunelayout_select"},
@@ -40872,7 +41088,7 @@ function PDFExportDialog(){
 
 	}, 150);
 
-	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 80, width: 760, scrollWithPage: (AllowDialogsToScroll()), okText: "Export", autoFocus: false } ).then(function(args){
+	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 50, width: 760, scrollWithPage: (AllowDialogsToScroll()), okText: "Export", autoFocus: false } ).then(function(args){
 	
 		if (!args.canceled){
 
