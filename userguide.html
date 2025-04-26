@@ -1904,6 +1904,8 @@
                 <p class="code">%%MIDI beat 16 16 16 1</p>
                 <p>This allows control of dynamics without adding dynamic marks and works with abcjs.</p>
                 <p>The volume specifiers !ppp! to !fff! are equivalent to the following:</p>
+                <p>!ppppp! = %%MIDI beat 0 0 0 1 (mutes the voice)</p>
+                <p>!pppp! = %%MIDI beat 15 10 5 1</p>
                 <p>!ppp! = %%MIDI beat 30 20 10 1</p>
                 <p>!pp! = %%MIDI beat 45 35 20 1</p>
                 <p>!p! = %%MIDI beat 60 50 35 1</p>
@@ -1912,6 +1914,7 @@
                 <p>!f! = %%MIDI beat 105 95 80 1</p>
                 <p>!ff! = %%MIDI beat 120 110 95 1</p>
                 <p>!fff! = %%MIDI beat 127 125 110 1</p>
+                <p>!ffff! = %%MIDI beat 127 125 110 1</p>
                 <p>First number is the volume of the first note in the bar. Second number, second note, third number all following notes. Last number is which note in the set gets the first emphasis (n=1 would be first note of the measure).</p>
                 <p>Both discrete and inline MIDI versions work in my tool.</p>
                 <p>Discrete MIDI version (on it's own ABC line):
