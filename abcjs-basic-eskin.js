@@ -227,6 +227,9 @@ var gHideInformationLabels = false;
 // Flag to hide the R: tag display
 var gHideRhythmTag = false;
 
+// Flag to hide the dynamics annotations
+var gHideDynamics = false;
+
 // Whistle tab octave and semitone shifts
 var gAllowWhistleTabTranspose = false;
 var gWhistleTabShiftOctave = 0;
@@ -403,6 +406,26 @@ function ScanTuneForHideRhythmTag(theTune){
 
   return false;
 }
+
+// Scan tune for dynamics draw suppression
+function ScanTuneForHideDynamics(theTune){
+
+  //console.log("ScanTuneForHideDynamics");
+
+  var searchRegExp = /^%hide_dynamics.*$/gm
+
+  var isHideDynamics = searchRegExp.test(theTune);
+
+  if (isHideDynamics){
+    //console.log("Found %hide_dynamics")
+    return true;
+  }
+
+  //console.log("No %hide_dynamics")
+
+  return false;
+}
+
 
 // Scan tune for whistle tab shift octave
 function ScanTuneForWhistleTabShiftOctave(theTune){
@@ -1508,6 +1531,9 @@ var tunebook = {};
 
           gHideRhythmTag = false;
           gHideRhythmTag = ScanTuneForHideRhythmTag(book.tunes[currentTune].abc);
+
+          gHideDynamics = false;
+          gHideDynamics = ScanTuneForHideDynamics(book.tunes[currentTune].abc);
           
           // If showing whistle tab, allow checking for transpose params
           if (gAllowWhistleTabTranspose){
@@ -4382,6 +4408,12 @@ var bookParser = function bookParser(book) {
         //console.log("Adding hide_rhythm_tag line: "+line)
         directives += line + '\n';
       }    
+
+      theRegex = /^%hide_dynamics.*$/
+      if (theRegex.test(line)){
+        //console.log("Adding hide_dynamics line: "+line)
+        directives += line + '\n';
+      }      
 
       theRegex = /^%whistle_tab_key.*$/
       if (theRegex.test(line)){
@@ -25029,8 +25061,10 @@ var volumeDecoration = function volumeDecoration(voice, decoration, abselem, pos
       case "mf":
       // MAE 15 April 2024 - Added ppppp
       case "ppppp":
-        var elem = new DynamicDecoration(abselem, decoration[i], positioning);
-        voice.addOther(elem);
+        if (!gHideDynamics){
+          var elem = new DynamicDecoration(abselem, decoration[i], positioning);
+          voice.addOther(elem);
+        }
     }
   }
 };

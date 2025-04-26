@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2434_042525_1730";
+var gVersionNumber="2435_042625_0130";
 
 var gMIDIInitStillWaiting = false;
 
@@ -19251,6 +19251,12 @@ function GetABCFileHeader(){
       theRegex = /^%hide_rhythm_tag.*$/
       if (theRegex.test(line)){
         //console.log("Adding hide_rhythm_tag line: "+line)
+        directives += line + '\n';
+      }      
+
+      theRegex = /^%hide_dynamics.*$/
+      if (theRegex.test(line)){
+        //console.log("Adding hide_dynamics line: "+line)
         directives += line + '\n';
       }      
 

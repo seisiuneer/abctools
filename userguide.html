@@ -617,6 +617,7 @@
             <a style="text-decoration:none;" href="#left_justify_titles">Forcing Left-Justified Titles and Subtitles</a>
             <a style="text-decoration:none;" href="#hide_information_labels">Hiding Information Labels</a>
             <a style="text-decoration:none;" href="#hide_rhythm_tag">Hiding Rhythm Display</a>
+            <a style="text-decoration:none;" href="#hide_dynamics">Hiding Dynamics Marks</a>
             <a style="text-decoration:none;" href="#whistletabkey">Changing the Tin Whistle Tablature Key and Octave</a>
             <a style="text-decoration:none;" href="#recordertabkey">Changing the Recorder Tablature Key and Octave</a>
             <a style="text-decoration:none;" href="#detect_hyperlinks">Making Hyperlinks in ABC Tag Text Clickable</a>
@@ -1033,6 +1034,7 @@
                         <p class="toc"><a style="text-decoration:none;" href="#left_justify_titles">Forcing Left-Justified Titles and Subtitles</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#hide_information_labels">Hiding Information Labels</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#hide_rhythm_tag">Hiding Rhythm Display</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#hide_dynamics">Hiding Dynamics Marks</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#whistletabkey">Changing the Tin Whistle Tablature Key and Octave</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#recordertabkey">Changing the Recorder Tablature Key and Octave</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#detect_hyperlinks">Making Hyperlinks in ABC Tag Text Clickable</a></p>
@@ -1904,7 +1906,7 @@
                 <p>For example:</p>
                 <p class="code">%%MIDI beat 16 16 16 1</p>
                 <p>This allows control of dynamics without adding dynamic marks and works with abcjs.</p>
-                <p>The volume specifiers !ppp! to !fff! are equivalent to the following:</p>
+                <p>The volume specifiers !ppppp! to !ffff! are equivalent to the following:</p>
                 <p>!ppppp! = %%MIDI beat 0 0 0 1 (mutes the voice)</p>
                 <p>!pppp! = %%MIDI beat 15 10 5 1</p>
                 <p>!ppp! = %%MIDI beat 30 20 10 1</p>
@@ -3721,6 +3723,7 @@
                     %left_justify_titles,<br/>
                     %hide_information_labels<br/>
                     %hide_rhythm_tag<br/>
+                    %hide_dynamics<br/>
                     %whistle_tab_key<br/>
                     %whistle_tab_octave<br/>
                     %recorder_tab_key<br/>
@@ -5346,6 +5349,12 @@
                 <p>This only hides the R: tag value in the generated notation, it doesn't have any effect on the automatic swinging of hornpipes when</p>
                 <p class="code">R:Hornpipe</p>
                 <p>or a lower-case equivalent with or without spaces after an R: tag is found in a tune.</p>
+                <hr class="hidden-print" id="hide_dynamics">
+                <h1 class="page_break_always h1wide">Hiding Dynamics Marks<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+                <p>You may hide any !ppp! style dynamics marks by adding the following annotation anywhere in the tune:</p>
+                <p class="code">% Hide dynamics marks<br/>%hide_dynamics</p>
+                <p>The presence of this annotation in a tune will force both the displayed notation in the editor, exported PDF notation, and tunes played from play links to have any dynamics marks hidden.</p>
+                <p>If placed in the ABC file header, it will apply to all of the tunes.</p>
                 <hr class="hidden-print" id="whistletabkey">
                 <h1 class="page_break_always h1wide">Changing the Tin Whistle Tablature Key and Octave<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/DLeYGl6jidU" title="Changing the tin whistle tablature key" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
