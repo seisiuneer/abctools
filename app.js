@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2440_042625_1300";
+var gVersionNumber="2441_042625_1400";
 
 var gMIDIInitStillWaiting = false;
 
@@ -41033,7 +41033,7 @@ function PDFExportDialog(){
 			form = [
 			  {html: '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:15px;">Export PDF Tunebook&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#export_pdf_tunebook" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'}, 
 			  {html: '<p style="text-align:center;margin-top:24px;"><input id="tunebookbuilder-play" class="advancedcontrols btn btn-injectcontrols-tunebookbuilder-play" onclick="PDFTunebookBuilderPlayOnly();" type="button" value="Inject Only PDF Tunebook Play Features" title="Inject only minimal playback-related instrument and volume commands at the top of your tunebook ABC"><input id="tunebookbuilder" class="advancedcontrols btn btn-injectcontrols-tunebookbuilder" onclick="PDFTunebookBuilder();" type="button" value="Inject All PDF Tunebook Features" title="Inject commands at the top of your tunebook ABC for adding a Title Page, Table of Contents, Index, Page Headers, Page Footers, instruments and volumes for Playback Links, and Custom QR Code"></p>'},
-			  {html: '<p style="text-align:center;margin-top:24px;"><input id="pdfusebrowserprint" class="advancedcontrols btn btn-injectcontrols-headers-pdf" onclick="Do_Browser_PDF_Export();return;" type="button" value="Browser Print-to-PDF with Play Links" title="Quickly export a PDF tunebook using the browser\'s native Print-to-PDF feature with one tune per page and play links when you click the title.&nbsp;&nbsp;Does not include a Title Page, Table of Contents, Index, or QR Code."></p>'},
+			  {html: '<p style="text-align:center;margin-top:24px;"><input id="pdfusebrowserprint" class="advancedcontrols btn btn-browser-pdf-export" onclick="Do_Browser_PDF_Export();return;" type="button" value="Browser Print-to-PDF with Play Links" title="Quickly export a PDF tunebook using the browser\'s native Print-to-PDF feature with one tune per page and play links when you click the title.&nbsp;&nbsp;Does not include a Title Page, Table of Contents, Index, or QR Code."></p>'},
 			  {name: "Paper Size:", id: "configure_papersize", type:"select", options:papersize_list, cssClass:"configure_pdf_papersize_select"},
 			  {name: "Orientation:", id: "configure_orientation", type:"select", options:orientation_list, cssClass:"configure_pdf_orientation_select"},
 			  {name: "Tune Layout:", id: "configure_tunelayout", type:"select", options:tunelayout_list, cssClass:"configure_pdf_tunelayout_select"},

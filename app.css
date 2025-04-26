@@ -6149,6 +6149,10 @@ margin-left:12px;
   --background-color: #C8ECFE;
 }
 
+.btn-browser-pdf-export{
+  --color: black;
+  --background-color: #F0F0F0;;
+}
 
 @media (hover: hover) {
 	
