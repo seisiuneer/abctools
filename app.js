@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2436_042625_0200";
+var gVersionNumber="2437_042625_0800";
 
 var gMIDIInitStillWaiting = false;
 
@@ -19161,152 +19161,41 @@ function GetABCFileHeader(){
 
     var arrDir = theHeader.split('\n');
 
+    const patterns = [
+      /^%%\S+font.*$/,
+      /^%%\S+margin.*$/,
+      /^%%staffwidth.*$/,
+      /^%%stretchlast.*$/,
+      /^%%barnumbers.*$/,
+      /^%%barsperstaff.*$/,
+      /^%%\S+space.*$/,
+      /^%%\S+sep.*$/,
+      /^%%measure\S+.*$/,
+      /^%%printtempo.*$/,
+      /^%%titleleft.*$/,
+      /^%left_justify_titles.*$/,
+      /^%abcjs_render_params.*$/,
+      /^%hide_information_labels.*$/,
+      /^%hide_rhythm_tag.*$/,
+      /^%hide_dynamics.*$/,
+      /^%whistle_tab_key.*$/,
+      /^%whistle_tab_octave.*$/,
+      /^%recorder_tab_key.*$/,
+      /^%recorder_tab_octave.*$/,
+      /^%enable_hyperlinks.*$/,
+      /^%disable_hyperlinks.*$/,
+      /^%play_alternate_chords.*$/,
+      /^[ABCDFGHILMmNORrSUZ]:/,
+    ];
+
     arrDir.forEach(function (line) {
-
-      var theRegex = /^%%\S+font.*$/
-
-      if (theRegex.test(line)){
-        //console.log("Adding font line: "+line);
-        directives += line + '\n'
+      for (const pattern of patterns) {
+        if (pattern.test(line)) {
+          //console.log("Adding directive line: " + line);
+          directives += line + '\n';
+          break; // No need to check further patterns once matched
+        }
       }
-
-      theRegex = /^%%\S+margin.*$/
-      if (theRegex.test(line)){
-        //console.log("Adding margin line: "+line)
-        directives += line + '\n';
-      }
-
-      theRegex = /^%%staffwidth.*$/
-      if (theRegex.test(line)){
-        //console.log("Adding staffwidth line: "+line)
-        directives += line + '\n';
-      }   
-
-      theRegex = /^%%stretchlast.*$/
-      if (theRegex.test(line)){
-        //console.log("Adding stretchlast line: "+line)
-        directives += line + '\n';
-      }  
-
-      theRegex = /^%%barnumbers.*$/
-      if (theRegex.test(line)){
-        //console.log("Adding barnumbers: "+line)
-        directives += line + '\n';
-      } 
-
-      theRegex = /^%%barsperstaff.*$/
-      if (theRegex.test(line)){
-        //console.log("Adding barsperstaff: "+line)
-        directives += line + '\n';
-      } 
-
-      theRegex = /^%%\S+space.*$/
-      if (theRegex.test(line)){
-        //console.log("Adding space line: "+line)
-        directives += line + '\n';
-      }
-
-      theRegex = /^%%\S+sep.*$/
-      if (theRegex.test(line)){
-        //console.log("Adding sep line: "+line)
-        directives += line + '\n';
-      }
-      
-      theRegex = /^%%measure\S+.*$/
-      if (theRegex.test(line)){
-        //console.log("Adding measure line: "+line)
-        directives += line + '\n';
-      }  
-
-      theRegex = /^%%printtempo.*$/
-      if (theRegex.test(line)){
-        //console.log("Adding printtempo: "+line)
-        directives += line + '\n';
-      } 
-
-      theRegex = /^%%titleleft.*$/
-      if (theRegex.test(line)){
-        //console.log("Adding titleleft: "+line)
-        directives += line + '\n';
-      } 
-      
-      theRegex = /^%left_justify_titles.*$/
-      if (theRegex.test(line)){
-        //console.log("Adding left_justify_titles line: "+line)
-        directives += line + '\n';
-      }    
-
-      theRegex = /^%abcjs_render_params.*$/
-      if (theRegex.test(line)){
-        //console.log("Adding abcjs_render_params line: "+line)
-        directives += line + '\n';
-      } 
-
-      theRegex = /^%hide_information_labels.*$/
-      if (theRegex.test(line)){
-        //console.log("Adding hide_information_labels line: "+line)
-        directives += line + '\n';
-      }      
-
-      theRegex = /^%hide_rhythm_tag.*$/
-      if (theRegex.test(line)){
-        //console.log("Adding hide_rhythm_tag line: "+line)
-        directives += line + '\n';
-      }      
-
-      theRegex = /^%hide_dynamics.*$/
-      if (theRegex.test(line)){
-        //console.log("Adding hide_dynamics line: "+line)
-        directives += line + '\n';
-      }      
-
-      theRegex = /^%whistle_tab_octave.*$/
-      if (theRegex.test(line)){
-        //console.log("Adding whistle_tab_octave line: "+line)
-        directives += line + '\n';
-      }    
-
-      theRegex = /^%whistle_tab_key.*$/
-      if (theRegex.test(line)){
-        //console.log("Adding whistle_tab_key line: "+line)
-        directives += line + '\n';
-      }   
-
-      theRegex = /^%recorder_tab_octave.*$/
-      if (theRegex.test(line)){
-        //console.log("Adding recorder_tab_octave line: "+line)
-        directives += line + '\n';
-      }    
-
-      theRegex = /^%recorder_tab_key.*$/
-      if (theRegex.test(line)){
-        //console.log("Adding recorder_tab_key line: "+line)
-        directives += line + '\n';
-      }  
-
-      theRegex = /^%enable_hyperlinks.*$/
-      if (theRegex.test(line)){
-        //console.log("Adding enable_hyperlinks line: "+line)
-        directives += line + '\n';
-      }   
-
-      theRegex = /^%disable_hyperlinks.*$/
-      if (theRegex.test(line)){
-        //console.log("Adding disable_hyperlinks line: "+line)
-        directives += line + '\n';
-      }   
-
-      theRegex = /^%play_alternate_chords.*$/
-      if (theRegex.test(line)){
-        //console.log("Adding play_alternate_chords line: "+line)
-        directives += line + '\n';
-      }   
-
-      theRegex = /^[ABCDFGHILMmNORrSUZ]:/
-      if (theRegex.test(line)){
-        //console.log("Adding ABC *: line: "+line)
-        directives += line + '\n';
-      }      
     });
 
     // Put some space between the injected directives and the tune ABC
