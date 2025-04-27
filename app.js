@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2443_042725_0800";
+var gVersionNumber="2444_042725_1430";
 
 var gMIDIInitStillWaiting = false;
 
@@ -14332,9 +14332,13 @@ function PDFTunebookBuilderPlayOnly(){
 
 			var volChord = gPDFTunebookConfig.chord_volume;
 
+			header_to_add += "%pdfquality 0.6\n";
+			header_to_add += "%pdf_between_tune_space 20\n";
+			header_to_add += "%\n";
+			header_to_add += "%pageheader Click the tune title to play\n";
+			header_to_add += "%\n";
 			header_to_add += "%add_all_playback_links "+progNumMelody+" "+progNumBass+" "+progNumChord+" "+soundFont+"\n";
 			header_to_add += "%add_all_playback_volumes "+volBass+" "+volChord+"\n";
-			header_to_add += "%pageheader Click the tune title to play\n";
 
 			header_to_add += "%\n";
 
