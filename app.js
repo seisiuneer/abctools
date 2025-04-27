@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2442_042725_0800";
+var gVersionNumber="2443_042725_0800";
 
 var gMIDIInitStillWaiting = false;
 
@@ -41043,7 +41043,7 @@ function PDFExportDialog(){
 			  {html: '<p style="margin-top:36px;font-size:12pt;line-height:18px;font-family:helvetica;">Font for Title Page, Table of Contents, Index, Page Headers/Footers, Page Numbers, Text Incipits:</strong></p>'},  
 			  {name: "Font:", id: "configure_fontname", type:"select", options:fontname_list, cssClass:"configure_pdf_fontname_select"},
 			  {name: "Font Style:", id: "configure_fontstyle", type:"select", options:fontstyle_list, cssClass:"configure_pdf_fontstyle_select"},
-			  {html: '<p style="text-align:center;margin-top:36px;"><input id="pdfusebrowserprint" class="advancedcontrols btn btn-browser-pdf-export" onclick="Do_Browser_PDF_Export();return;" type="button" value="Browser Print-to-PDF with Play Links" title="Quickly export a PDF tunebook using the browser\'s native Print-to-PDF feature with one tune per page and play links when you click the title.&nbsp;&nbsp;Does not include a Title Page, Table of Contents, Index, or QR Code."></p>'},
+			  {html: '<p style="text-align:center;margin-top:36px;"><input id="pdfusebrowserprint" class="advancedcontrols btn btn-browser-pdf-export" onclick="Do_Browser_PDF_Export();return;" type="button" value="Browser Native Print-to-PDF with Play Links" title="Quickly export a PDF tunebook using the browser\'s native Print-to-PDF feature with one tune per page and play links when you click the title.&nbsp;&nbsp;Does not include a Title Page, Table of Contents, Index, or QR Code."></p>'},
 			];
 		}
 		else{
@@ -41452,7 +41452,7 @@ function Do_Browser_PDF_Export(){
   	}
 
 	var form = [
-	  {html: '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:15px;margin-bottom:36px">Browser Print-to-PDF with Play Links&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#browser_print_to_pdf" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'},  
+	  {html: '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:15px;margin-bottom:36px">Browser Native Print-to-PDF with Play Links&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#browser_print_to_pdf" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'},  
       {html: '<p style="margin-top:10px;margin-bottom:30px;font-size:12pt;line-height:18pt;font-family:helvetica">Clicking "Export" will use the browser\'s native PDF exporter to export a PDF with play links on each tune using the playback instruments and volumes selected below:</p>'},  
 	  {name: "Soundfont for playback links:", id: "sound_font", type:"select", options:sound_font_options, cssClass:"configure_nativepdftunebook_midi_program_select"},
 	  {name: "Melody instrument for playback links:", id: "melody_instrument", type:"select", options:midi_program_list, cssClass:"configure_nativepdftunebook_midi_program_select"},
