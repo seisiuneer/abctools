@@ -16385,11 +16385,7 @@ function BuildTuneSet(){
 	};
 
 	// MAE 14 Jul 2024 - Make the div fill the screen
-	var theHeight = window.innerHeight - 470;
-
-	if (isMobileBrowser()){
-		theHeight = window.innerHeight - 505;
-	}
+	var theHeight = window.innerHeight - 550;
 
 	var theTuneSetDiv = '<div id="tuneset-tune-list" style="overflow:auto;height:'+theHeight+'px;margin-top:12px">';
 
