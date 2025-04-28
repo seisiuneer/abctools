@@ -5915,10 +5915,11 @@ detail.open = false;
 //
 // Are we on Android?
 //
-function isAndroid() {
-if (/Android/i.test(navigator.userAgent)) {
+function isAndroid(){
+if (/Android|SamsungBrowser/i.test(navigator.userAgent)){
 return true;
-} else {
+}
+else{
 return false;
 }
 }
