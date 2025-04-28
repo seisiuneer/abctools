@@ -5559,6 +5559,30 @@ margin-top:-9px;
 margin-left:12px;
 }
 
+.create_tune_set_text{
+font-size:12pt;
+line-height:11px;
+font-family:helvetica;
+margin-top:18px;
+display:flex;
+}
+
+.create_tune_set_text_checkbox{
+font-size:12pt;
+line-height:11px;
+font-family:helvetica;
+margin-top:16px;
+display:flex;
+}
+
+.create_tune_set_text>input{
+font-size:12pt;
+font-family:helvetica;
+width: 50px;
+margin-top:-9px;
+margin-left:12px;
+}
+
 /******************************************************************************/
 /* STYLES RELATED TO BUTTONS                                                  */
 /******************************************************************************/

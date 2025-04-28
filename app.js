@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2447_042725_2100";
+var gVersionNumber="2448_042725_2330";
 
 var gMIDIInitStillWaiting = false;
 
@@ -16233,7 +16233,35 @@ function removeExtraTags(abcText,theTag) {
     return lines.join('\n');
 }
 
-function processTuneSet(tuneSet,tuneNames) {
+function removeAllTags(abcText,theTag) {
+
+     // Split the ABC into lines
+    let lines = abcText.split('\n');
+
+    theTag = theTag+":";
+
+    // Filter lines 
+    lines = lines.filter(line => {
+        if (line.startsWith(theTag)) {
+            return false; // Skip all tag lines
+        }
+        return line.trim() !== ''; // Keep non-blank lines
+    });
+
+    // Join the lines back into a single string
+    return lines.join('\n');
+}
+
+
+function generateIndexedRepeatedString(str, itemCount, repeatCount) {
+    let result = [];
+    for (let i = 0; i < itemCount && i < str.length; i++) {
+        result.push(`${str[i].repeat(repeatCount)}`);
+    }
+    return result.join('');
+}
+
+function processTuneSet(tuneSet,tuneNames,bRepeat,nRepeat) {
 
 	var setName = tuneNames.join(' / ');
 
@@ -16242,14 +16270,35 @@ function processTuneSet(tuneSet,tuneNames) {
 	var nonBlankLines = lines.filter(line => line.trim() !== '');
 
 	var firstXFound = false;
-	
+
+	var partLetters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+	var partIndex = 1;
+
+	if (bRepeat){
+		var partsControlString = generateIndexedRepeatedString(partLetters,tuneNames.length,nRepeat);
+	}
+
 	var output = nonBlankLines.map(line => {
 		if (line.startsWith('X:')) {
+
 			if (!firstXFound) {
+			
 				firstXFound = true;
+			
+				if (bRepeat){
+					line = line + "\n%\n%play_flatten_parts\n%\nP:"+partsControlString+"\n%\nP:A\n%";
+				}
+
 				return line+"\nT:"+setName+"\n%\n%%titlefont "+gRenderingFonts.titlefont+"\n"+"%%subtitlefont "+gRenderingFonts.subtitlefont+"\n%\n%hide_rhythm_tag\n%\n% To fit the set on a PDF page, increase the staffwidth value.\n% 800 often works for a set of three four-stave tunes.\n%\n%%staffwidth 556\n%\n%%stretchlast true\n%";
+
 			} else {
-				return '%%text';
+				if (bRepeat){
+					return '%%text\n%\nP:'+partLetters[partIndex++]+"\n%";
+				}
+				else{
+					return '%%text';
+				}
+
 			}
 		} else {
 			return line;
@@ -16258,9 +16307,14 @@ function processTuneSet(tuneSet,tuneNames) {
 
 	tuneSet = output.join('\n');
 
-	tuneSet = removeExtraTags(tuneSet,"C");
+	if (!bRepeat){
+		tuneSet = removeExtraTags(tuneSet,"C");
+	}
+	else{
+		tuneSet = removeAllTags(tuneSet,"C");		
+	}
 
-	tuneSet += "\n\n";
+	tuneSet += "\n%%text\n\n\n";
 
 	return tuneSet;
 }
@@ -16301,6 +16355,8 @@ function BuildTuneSetClearSelection(){
 }
 
 var BuildTuneSetKeepList = [];
+var BuildTuneSetRepeat = false;
+var BuildTuneSetRepeatCount = 1
 
 function BuildTuneSet(){
 
@@ -16326,13 +16382,16 @@ function BuildTuneSet(){
 		return;
 	}
 
-	var theData = {};
+	var theData = {
+		repeat_enable:BuildTuneSetRepeat,
+		repeat_count:BuildTuneSetRepeatCount
+	};
 
 	// MAE 14 Jul 2024 - Make the div fill the screen
-	var theHeight = window.innerHeight - 390;
+	var theHeight = window.innerHeight - 470;
 
 	if (isMobileBrowser()){
-		theHeight = window.innerHeight - 425;
+		theHeight = window.innerHeight - 505;
 	}
 
 	var theTuneSetDiv = '<div id="tuneset-tune-list" style="overflow:auto;height:'+theHeight+'px;margin-top:12px">';
@@ -16348,6 +16407,8 @@ function BuildTuneSet(){
 
 		{html: '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:15px;">Create Tune Set&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#hamburger_create_tune_set" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'},
 		{html: '<p style="margin-top:8px;margin-bottom:12px;font-size:12pt;line-height:18pt;font-family:helvetica">Select the tunes you want combined into a tune set and click Create.<br/>The tune set will be appended to the end of the ABC.</p>'},  
+	  	{name: "          Tunes in set repeat when played", id: "repeat_enable", type:"checkbox", cssClass:"create_tune_set_text_checkbox"},
+	    {name: "Repeat count:", id: "repeat_count", type:"number", cssClass:"create_tune_set_text"},
 		{html: theTuneSetDiv},
 		{html: '<p style="text-align:center;margin-top:36px;"><input id="tuneset_select_all" class="advancedcontrols btn btn-injectcontrols-headers" onclick="BuildTuneSetSelectAll();" type="button" value="Select All" title="Selects all the tunes for set creation"><input id="tuneset_clear_selection" class="advancedcontrols btn btn-injectcontrols-headers" onclick="BuildTuneSetClearSelection();" type="button" value="Clear Selection" title="Unselects all the tunes for set creation"></p>'}
 	];
@@ -16355,6 +16416,25 @@ function BuildTuneSet(){
 	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 25, width: 650, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false, okText:"Create" } ).then(function(args){
 
     	if (!args.canceled){
+
+    		var bRepeat = args.result.repeat_enable;
+    		BuildTuneSetRepeat = bRepeat;
+
+    		var nRepeat = args.result.repeat_count;
+
+    		nRepeat = parseInt(nRepeat);
+
+    		if (isNaN(nRepeat)){
+    			nRepeat = 1;
+    		}
+
+    		if (nRepeat < 1){
+    			nRepeat = 1;
+    		}
+
+    		BuildTuneSetRepeatCount = nRepeat;
+
+    		//console.log("bRepeat "+bRepeat+" nRepeat "+nRepeat);
 
     		// Any tunes to delete?
     		var nKeep = BuildTuneSetKeepList.length;
@@ -16419,7 +16499,7 @@ function BuildTuneSet(){
 			    		}
 
 			    		// Post-process the tuneset
-			    		tuneSet = processTuneSet(tuneSet,setNames);
+			    		tuneSet = processTuneSet(tuneSet,setNames,bRepeat,nRepeat);
 
 			    		result += tuneSet;
 
