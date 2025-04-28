@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2449_042825_0600";
+var gVersionNumber="2450_042825_0730";
 
 var gMIDIInitStillWaiting = false;
 
@@ -16308,6 +16308,8 @@ function processTuneSet(tuneSet,tuneNames,bRepeat,nRepeat) {
 	tuneSet = output.join('\n');
 
 	tuneSet = removeAllTags(tuneSet,"C");		
+	tuneSet = removeAllTags(tuneSet,"A");		
+	tuneSet = removeAllTags(tuneSet,"O");		
 
 	tuneSet += "\n%%text\n\n\n";
 
@@ -16383,11 +16385,7 @@ function BuildTuneSet(){
 	};
 
 	// MAE 14 Jul 2024 - Make the div fill the screen
-	var theHeight = window.innerHeight - 470;
-
-	if (isMobileBrowser()){
-		theHeight = window.innerHeight - 505;
-	}
+	var theHeight = window.innerHeight - 550;
 
 	var theTuneSetDiv = '<div id="tuneset-tune-list" style="overflow:auto;height:'+theHeight+'px;margin-top:12px">';
 
