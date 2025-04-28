@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2445_042725_1830";
+var gVersionNumber="2446_042725_2100";
 
 var gMIDIInitStillWaiting = false;
 
@@ -16247,7 +16247,7 @@ function processTuneSet(tuneSet,tuneNames) {
 		if (line.startsWith('X:')) {
 			if (!firstXFound) {
 				firstXFound = true;
-				return line+"\nT:"+setName+"\n%\n%%titlefont "+gRenderingFonts.titlefont+"\n"+"%%subtitlefont "+gRenderingFonts.subtitlefont+"\n%\n%hide_rhythm_tag\n%\n% To fit the set on a PDF page, increase the staffwidth value.\n% 800 often works for a set of three four-stave tunes.\n%\n%%staffwidth 556\n%\n%%stretchlast true\n%";
+				return line+"\nT:"+setName+"\n%\n%%titlefont "+gRenderingFonts.titlefont+"\n"+"%%subtitlefont "+gRenderingFonts.subtitlefont+"\n%\n% To fit the set on a PDF page, increase the staffwidth value.\n% 800 often works for a set of three four-stave tunes.\n%\n%%staffwidth 556\n%\n%%stretchlast true\n%";
 			} else {
 				return '%%text';
 			}
@@ -16258,6 +16258,7 @@ function processTuneSet(tuneSet,tuneNames) {
 
 	tuneSet = output.join('\n');
 
+	tuneSet = removeExtraTags(tuneSet,"R");
 	tuneSet = removeExtraTags(tuneSet,"C");
 
 	tuneSet += "\n\n";
