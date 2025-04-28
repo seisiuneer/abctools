@@ -685,13 +685,13 @@ padding:12px;
 	margin-top:16px;
 }
 
-#addnewreel,#addnewjig,#changetuneorder,#cull_select_all,#mobile_tune_order_up,#smartdraw_add_set_name,#smartdraw_delete_set_name,#addnewtunetemplate,#addsongtemplate,#addbodhrantemplate,#search-previous,#search-next,#search-replace,#search-replace-all,#search-load,#websiteimages{
+#addnewreel,#addnewjig,#changetuneorder,#cull_select_all,#mobile_tune_order_up,#smartdraw_add_set_name,#smartdraw_delete_set_name,#addnewtunetemplate,#addsongtemplate,#addbodhrantemplate,#search-previous,#search-next,#search-replace,#search-replace-all,#search-load,#websiteimages,#tuneset_select_all{
 height:42px;
 padding:12px;
 margin-right:24px;
 }
 
-#addnewhornpipe,#searchandaddtunes,#culltunes,#cull_clear_selection,#mobile_tune_order_down,#smartdraw_export,#addnewsong,#addboxfingeringtemplate,#search-save,#adddatabasetemplate{
+#addnewhornpipe,#searchandaddtunes,#culltunes,#cull_clear_selection,#mobile_tune_order_down,#smartdraw_export,#addnewsong,#addboxfingeringtemplate,#search-save,#adddatabasetemplate,#tunesettunes,#tuneset_clear_selection{
 height:42px;
 padding:12px;
 }
@@ -4551,6 +4551,21 @@ font-size:16px;
 
 .cull_selected {
 	background-color: #FFE5E5;
+}
+
+.tuneset_tune {
+cursor: grab;
+user-select: none;
+margin: 5px;
+padding: 10px;
+border: 1px solid #ddd;
+background-color: #f9f9f9;
+font-family:helvetica;
+font-size:16px;
+}
+
+.tuneset_selected {
+	background-color: #E5FFE5;
 }
 
 .jumpto_tune {

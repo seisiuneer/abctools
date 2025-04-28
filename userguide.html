@@ -37,7 +37,7 @@
         <link rel="icon" type="image/png" sizes="32x32" href="https://michaeleskin.com/abctools/img/abc-favicon-32x32.png">
         <link rel="icon" type="image/png" sizes="96x96" href="https://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
         <link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
-        
+       
         <style>
         
         p {
@@ -358,6 +358,7 @@
             <a style="text-decoration:none;" href="#hamburger_jump_to_tune">Jump to Tune</a>
             <a style="text-decoration:none;" href="#hamburger_toggle_top_bottom">Toggle Top/Bottom Toolbars</a>
             <a style="text-decoration:none;" href="#hamburger_maximize">Maximize Editor</a>
+            <a style="text-decoration:none;" href="#hamburger_create_tune_set">Create Tune Set</a>
             <a style="text-decoration:none;" href="#hamburger_reorder">Reorder Tunes</a>
             <a style="text-decoration:none;" href="#hamburger_delete">Delete Tunes</a>
             <a style="text-decoration:none;" href="#hamburger_align_one">Align Bars (One Tune)</a>
@@ -774,6 +775,7 @@
                         <p class="toc"><a style="text-decoration:none;" href="#hamburger_jump_to_tune">Jump to Tune</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#hamburger_toggle_top_bottom">Toggle Top/Bottom Toolbars</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#hamburger_maximize">Maximize Editor</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#hamburger_create_tune_set">Create Tune Set</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#hamburger_reorder">Reorder Tunes</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#hamburger_delete">Delete Tunes</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#hamburger_align_one">Align Bars (One Tune)</a></p>
@@ -1257,7 +1259,7 @@
                 <p><strong>☰</strong></p>
                 <p>"Hamburger" dropdown menu that brings up additional useful commands:</p>
                 <div class="image_holder_p">
-                    <img class="image" loading="lazy" src="img/moretools_20.jpg"/>
+                    <img class="image" loading="lazy" src="img/moretools_21.jpg"/>
                 </div>
                 <hr id="hamburger_find">
                 <p><strong>Find and Replace</strong> (Desktop browsers only)</p>
@@ -1282,12 +1284,21 @@
                 <hr id="hamburger_maximize">
                 <p><strong>Maximize Editor</strong></p>
                 <p>Maximizes the width of the ABC text editing area.</p>
+                <hr id="hamburger_create_tune_set">
+                <p><strong>Create Tune Set</strong></p>
+                <p>Brings up a dialog where you can create tune sets that play and print as a single tune.</p>
+                <p>Tunes sets are created by concatenating the tunes under one X: tag with additional annotations to hide any extra R: and C: tags and to put some space between the tunes.</p>
+                <p>The created tune set is appended to the end of the ABC.</p>
+                <p>You may want to adjust the text size for the title of the set and the title of the individual tunes in the set by adjusting the %%titlefont and %%subtitlefont annotations added at the top of the set.</p>
+                <p>To fit the set on a PDF page, try increasing the default 556 staffwidth tag value added to the set.</p>
+                <p>800 often works for a set of three four-stave tunes.</p>
+                <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/gmiPhfLuim4" title="Create Tune Set" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
                 <hr id="hamburger_reorder">
                 <p><strong>Reorder Tunes</strong></p>
-                <p>Brigns up a dialog where you can change the order of the tunes.</p>
+                <p>Brings up a dialog where you can change the order of the tunes.</p>
                 <hr id="hamburger_delete">
                 <p><strong>Delete Tunes</strong></p>
-                <p>Brigns up a dialog where you can selectively delete tunes.</p>
+                <p>Brings up a dialog where you can selectively delete tunes.</p>
                 <hr id="hamburger_align_one">
                 <p><strong>Align Bars (One Tune)</strong></p>
                 <p>Aligns the measures in the ABC text for the current tune you are working on.</p>

@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2444_042725_1430";
+var gVersionNumber="2445_042725_1830";
 
 var gMIDIInitStillWaiting = false;
 
@@ -16190,6 +16190,264 @@ function CullTunes(){
 							gTheABC.focus();	
 
 							// Scroll to the top
+							MakeTuneVisible(true);
+
+			    		});
+
+			    		// Set dirty
+						gIsDirty = true;
+					}
+				})
+			}
+		}
+    });
+}
+
+
+//
+// Create a set of tunes
+//
+function removeExtraTags(abcText,theTag) {
+
+     // Split the ABC into lines
+    let lines = abcText.split('\n');
+
+    // Flag to track if the first tag has been found
+    let firstTag = false;
+
+    theTag = theTag+":";
+
+    // Filter lines to keep the first tag and remove subsequent ones
+    lines = lines.filter(line => {
+        if (line.startsWith(theTag)) {
+            if (!firstTag) {
+                firstTag = true;
+                return true; // Keep the first tag
+            }
+            return false; // Skip subsequent tag lines
+        }
+        return line.trim() !== ''; // Keep non-blank lines
+    });
+
+    // Join the lines back into a single string
+    return lines.join('\n');
+}
+
+function processTuneSet(tuneSet,tuneNames) {
+
+	var setName = tuneNames.join(' / ');
+
+	var lines = tuneSet.split(/\r?\n/);
+
+	var nonBlankLines = lines.filter(line => line.trim() !== '');
+
+	var firstXFound = false;
+	
+	var output = nonBlankLines.map(line => {
+		if (line.startsWith('X:')) {
+			if (!firstXFound) {
+				firstXFound = true;
+				return line+"\nT:"+setName+"\n%\n%%titlefont "+gRenderingFonts.titlefont+"\n"+"%%subtitlefont "+gRenderingFonts.subtitlefont+"\n%\n%hide_rhythm_tag\n%\n% To fit the set on a PDF page, increase the staffwidth value.\n% 800 often works for a set of three four-stave tunes.\n%\n%%staffwidth 556\n%\n%%stretchlast true\n%";
+			} else {
+				return '%%text';
+			}
+		} else {
+			return line;
+		}
+	});
+
+	tuneSet = output.join('\n');
+
+	tuneSet = removeExtraTags(tuneSet,"C");
+
+	tuneSet += "\n\n";
+
+	return tuneSet;
+}
+
+function BuildTuneSetUpdateKeepList(){
+
+	// Reset the keep list
+	BuildTuneSetKeepList = [];
+
+	const childDivs = document.querySelectorAll('#tuneset-tune-list .tuneset_tune');
+
+	Array.from(childDivs).map(div => 
+	{
+		if (div.classList.contains('tuneset_selected')){
+			BuildTuneSetKeepList.push(0);
+		}
+		else{
+			BuildTuneSetKeepList.push(1);
+		}
+	});
+}
+
+function BuildTuneSetToggleSelection(item) {
+  	item.classList.toggle('tuneset_selected');
+  	BuildTuneSetUpdateKeepList();
+}
+
+function BuildTuneSetSelectAll(){
+	const childDivs = document.querySelectorAll('#tuneset-tune-list .tuneset_tune');
+	Array.from(childDivs).map(div => div.classList.add('tuneset_selected'));
+  	BuildTuneSetUpdateKeepList();
+}
+
+function BuildTuneSetClearSelection(){
+	const childDivs = document.querySelectorAll('#tuneset-tune-list .tuneset_tune');
+	Array.from(childDivs).map(div => div.classList.remove('tuneset_selected'));
+  	BuildTuneSetUpdateKeepList();
+}
+
+var BuildTuneSetKeepList = [];
+
+function BuildTuneSet(){
+
+	var i,j,k;
+
+	// Clear the delete list
+	BuildTuneSetKeepList = [];
+
+	totalTunes = CountTunes();
+
+	var theTitles = GetTunebookIndexTitles();
+	var nTitles = theTitles.length;
+
+	if (nTitles == 0){
+
+		var thePrompt = "No tunes to create a set from.";
+		
+		// Center the string in the prompt
+		thePrompt = makeCenteredPromptString(thePrompt);
+		
+		DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) });
+
+		return;
+	}
+
+	var theData = {};
+
+	// MAE 14 Jul 2024 - Make the div fill the screen
+	var theHeight = window.innerHeight - 390;
+
+	if (isMobileBrowser()){
+		theHeight = window.innerHeight - 425;
+	}
+
+	var theTuneSetDiv = '<div id="tuneset-tune-list" style="overflow:auto;height:'+theHeight+'px;margin-top:12px">';
+
+	for (i=0;i<nTitles;++i){
+
+		theTuneSetDiv += '<div class="tuneset_tune" onclick="BuildTuneSetToggleSelection(this)">'+theTitles[i]+'</div>';
+	}
+	
+	theTuneSetDiv += '</div>';
+
+	var form = [
+
+		{html: '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:15px;">Create Tune Set&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#hamburger_create_tune_set" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'},
+		{html: '<p style="margin-top:8px;margin-bottom:12px;font-size:12pt;line-height:18pt;font-family:helvetica">Select the tunes you want combined into a tune set and click Create.<br/>The tune set will be appended to the end of the ABC.</p>'},  
+		{html: theTuneSetDiv},
+		{html: '<p style="text-align:center;margin-top:36px;"><input id="tuneset_select_all" class="advancedcontrols btn btn-injectcontrols-headers" onclick="BuildTuneSetSelectAll();" type="button" value="Select All" title="Selects all the tunes for set creation"><input id="tuneset_clear_selection" class="advancedcontrols btn btn-injectcontrols-headers" onclick="BuildTuneSetClearSelection();" type="button" value="Clear Selection" title="Unselects all the tunes for set creation"></p>'}
+	];
+
+	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 25, width: 650, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false, okText:"Create" } ).then(function(args){
+
+    	if (!args.canceled){
+
+    		// Any tunes to delete?
+    		var nKeep = BuildTuneSetKeepList.length;
+    		var nToDelete = 0;
+    		for (i=0;i<nKeep;++i){
+    			if (BuildTuneSetKeepList[i] == 0){
+    				bGotChange = true;
+    				nToDelete ++;
+    			}
+    		}
+
+    		if (nToDelete){
+
+				var thePrompt = "Are you sure you want to create a set from the "+nToDelete;
+
+				if (nToDelete == 1){
+					thePrompt += " tune in your tunebook?";
+				}
+				else{
+					thePrompt += " tunes in your tunebook?";
+
+				}
+
+				thePrompt += " The set will be added to the end of the ABC.";
+
+				// Center the string in the prompt
+				thePrompt = makeCenteredPromptString(thePrompt);
+
+				DayPilot.Modal.confirm(thePrompt,{ top:200, theme: "modal_flat", scrollWithPage: (AllowDialogsToScroll()) }).then(function(args){
+					if (!args.canceled){
+
+						// Reorder the tunes
+			    		var theABC = gTheABC.value;
+
+			    		var result = FindPreTuneHeader(theABC);
+
+			    		var tuneSet = "";
+
+			    		var setNames = [];
+
+			    		for (i=0;i<totalTunes;++i){
+
+			    			var thisTune = getTuneByIndex(i);
+
+			    			thisTune = thisTune.trim();
+
+			    			// Make sure every tune has a carriage return after it
+			    			thisTune+="\n\n";
+
+			    			if (BuildTuneSetKeepList[i] == 1){
+
+				    			result += thisTune;
+				    		}
+				    		else{
+				    			
+				    			result += thisTune;
+
+				    			tuneSet += thisTune;
+				    			setNames.push(theTitles[i]);
+
+				    		}
+			    		}
+
+			    		// Post-process the tuneset
+			    		tuneSet = processTuneSet(tuneSet,setNames);
+
+			    		result += tuneSet;
+
+			    		// Stuff in the new result
+			    		setABCEditorText(result);
+
+			    		RenderAsync(true,null, function(){
+
+							var theTune = getTuneByIndex(totalTunes);
+
+							var tuneOffset = result.length-theTune.length;
+
+							if (!gIsMaximized){
+
+								// Scroll the tune ABC into view
+							    ScrollABCTextIntoView(gTheABC,tuneOffset,tuneOffset,10);
+
+							    if (isMobileBrowser()){
+						    		gTheABC.blur();
+							    	return;
+							    }
+							    
+						    	gTheABC.blur();
+						    	gTheABC.focus();
+
+						    }
+
+							// Scroll the tune into view
 							MakeTuneVisible(true);
 
 			    		});
@@ -48048,6 +48306,8 @@ function SetupContextMenu(showUpdateItem){
 				    { name: 'Toggle Top/Bottom Toolbars', fn: function(target) { ToggleTopBar(); }},
 				    { name: 'Maximize Editor', fn: function(target) { MaximizeEditor(); }},
 				    {},
+				    { name: 'Create Tune Set', fn: function(target) { BuildTuneSet(); }},
+				    {},
 				    { name: 'Reorder Tunes', fn: function(target) { ChangeTuneOrder(); }},
 				    { name: 'Delete Tunes', fn: function(target) { CullTunes(); }},
 				    {},
@@ -48128,6 +48388,8 @@ function SetupContextMenu(showUpdateItem){
 				    { name: 'Toggle Top/Bottom Toolbars', fn: function(target) { ToggleTopBar(); }},
 				    { name: 'Maximize Editor', fn: function(target) { MaximizeEditor(); }},
 				    {},
+				    { name: 'Create Tune Set', fn: function(target) { BuildTuneSet(); }},
+				    {},
 				    { name: 'Reorder Tunes', fn: function(target) { ChangeTuneOrderMobile(); }},
 				    { name: 'Delete Tunes', fn: function(target) { CullTunes(); }},
 				    {},
@@ -48173,6 +48435,8 @@ function SetupContextMenu(showUpdateItem){
 				    {},
 				    { name: 'Toggle Top/Bottom Toolbars', fn: function(target) { ToggleTopBar(); }},
 				    { name: 'Maximize Editor', fn: function(target) { MaximizeEditor(); }},
+				    {},
+				    { name: 'Create Tune Set', fn: function(target) { BuildTuneSet(); }},
 				    {},
 				    { name: 'Reorder Tunes', fn: function(target) { ChangeTuneOrder(); }},
 				    { name: 'Delete Tunes', fn: function(target) { CullTunes(); }},
@@ -48256,6 +48520,8 @@ function SetupContextMenu(showUpdateItem){
 				    { name: 'Toggle Top/Bottom Toolbars', fn: function(target) { ToggleTopBar(); }},
 				    { name: 'Maximize Editor', fn: function(target) { MaximizeEditor(); }},
 				    {},
+				    { name: 'Create Tune Set', fn: function(target) { BuildTuneSet(); }},
+				    {},
 				    { name: 'Reorder Tunes', fn: function(target) { ChangeTuneOrderMobile(); }},
 				    { name: 'Delete Tunes', fn: function(target) { CullTunes(); }},
 				    {},
@@ -48300,6 +48566,8 @@ function SetupContextMenu(showUpdateItem){
 				{},
 			    { name: 'Toggle Top/Bottom Toolbars', fn: function(target) { ToggleTopBar(); }},
 			    {},
+				{ name: 'Create Tune Set', fn: function(target) { BuildTuneSet(); }},
+				{},
 			    { name: 'Reorder Tunes', fn: function(target) { ChangeTuneOrderMobile(); }},
 			    { name: 'Delete Tunes', fn: function(target) { CullTunes(); }},
 			    {},
@@ -48343,6 +48611,8 @@ function SetupContextMenu(showUpdateItem){
 				{},
 			    { name: 'Toggle Top/Bottom Toolbars', fn: function(target) { ToggleTopBar(); }},
 			    {},
+				{ name: 'Create Tune Set', fn: function(target) { BuildTuneSet(); }},
+				{},
 			    { name: 'Reorder Tunes', fn: function(target) { ChangeTuneOrderMobile(); }},
 			    { name: 'Delete Tunes', fn: function(target) { CullTunes(); }},
 			    {},
