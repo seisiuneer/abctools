@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2448_042725_2330";
+var gVersionNumber="2449_042825_0600";
 
 var gMIDIInitStillWaiting = false;
 
@@ -16307,12 +16307,7 @@ function processTuneSet(tuneSet,tuneNames,bRepeat,nRepeat) {
 
 	tuneSet = output.join('\n');
 
-	if (!bRepeat){
-		tuneSet = removeExtraTags(tuneSet,"C");
-	}
-	else{
-		tuneSet = removeAllTags(tuneSet,"C");		
-	}
+	tuneSet = removeAllTags(tuneSet,"C");		
 
 	tuneSet += "\n%%text\n\n\n";
 
