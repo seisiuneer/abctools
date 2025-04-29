@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2453_042925_0300";
+var gVersionNumber="2454_042925_0900";
 
 var gMIDIInitStillWaiting = false;
 
@@ -15754,7 +15754,7 @@ function ChangeTuneOrderMobile(){
 	var theData = {};
 
 	// MAE 14 Jul 2024 - Make the div fill the screen
-	var theHeight = window.innerHeight - 350;
+	var theHeight = window.innerHeight - 430;
 
 	var theSortableDiv = '<div id="sortable-tune-list-mobile" style="overflow:auto;height:'+theHeight+'px;margin-top:18px">';
 
@@ -15879,7 +15879,7 @@ function ChangeTuneOrder(){
 	var theData = {};
 
 	// MAE 14 Jul 2024 - Make the div fill the screen
-	var theHeight = window.innerHeight - 300;
+	var theHeight = window.innerHeight - 380;
 
 	var theSortableDiv = '<div id="sortable-tune-list" style="overflow:auto;height:'+theHeight+'px;margin-top:18px">';
 
@@ -16104,11 +16104,7 @@ function CullTunes(){
 	var theData = {};
 
 	// MAE 14 Jul 2024 - Make the div fill the screen
-	var theHeight = window.innerHeight - 340;
-
-	if (isMobileBrowser()){
-		theHeight = window.innerHeight - 375;
-	}
+	var theHeight = window.innerHeight - 410;
 
 	var theCullableDiv = '<div id="cullable-tune-list" style="overflow:auto;height:'+theHeight+'px;margin-top:18px">';
 
