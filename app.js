@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2454_042925_0900";
+var gVersionNumber="2455_042925_1300";
 
 var gMIDIInitStillWaiting = false;
 
@@ -16509,7 +16509,7 @@ function BuildTuneSet(){
 
 						tuneSet = processTuneSet(tuneSet, setNames, bRepeat, nRepeat);
 
-						theABC += tuneSet;
+						theABC = theABC.trim()+"\n\n"+tuneSet;
 
 			    		// Stuff in the new result
 			    		setABCEditorText(theABC);
