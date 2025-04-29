@@ -37,7 +37,7 @@
         <link rel="icon" type="image/png" sizes="32x32" href="https://michaeleskin.com/abctools/img/abc-favicon-32x32.png">
         <link rel="icon" type="image/png" sizes="96x96" href="https://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
         <link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
-       
+        
         <style>
         
         p {
@@ -624,7 +624,7 @@
             <a style="text-decoration:none;" href="#whistletabkey">Changing the Tin Whistle Tablature Key and Octave</a>
             <a style="text-decoration:none;" href="#recordertabkey">Changing the Recorder Tablature Key and Octave</a>
             <a style="text-decoration:none;" href="#detect_hyperlinks">Making Hyperlinks in ABC Tag Text Clickable</a>
-            <a style="text-decoration:none;" href="#right_text">Adding Right Justified Text</a>
+            <a style="text-decoration:none;" href="#right_text">Adding Right-Justified Text</a>
             </details>
             
             <details>
@@ -1045,7 +1045,7 @@
                         <p class="toc"><a style="text-decoration:none;" href="#whistletabkey">Changing the Tin Whistle Tablature Key and Octave</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#recordertabkey">Changing the Recorder Tablature Key and Octave</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#detect_hyperlinks">Making Hyperlinks in ABC Tag Text Clickable</a></p>
-                        <p class="toc"><a style="text-decoration:none;" href="#right_text">Adding Right Justified Text</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#right_text">Adding Right-Justified Text</a></p>
                     </div>
                     
                     <button class="accordion" title="Click to expand/collapse this section">ABC Tricks, Tips, and Limitations</button>
@@ -1311,6 +1311,11 @@
                 <p>You may want to adjust the text size for the title of the set and the title of the individual tunes in the set by adjusting the %%titlefont and %%subtitlefont annotations added at the top of the set.</p>
                 <p>To fit the set on a PDF page, try increasing the default 556 staffwidth tag value added to the set.</p>
                 <p>800 often works for a set of three four-stave tunes.</p>
+                <p>If you want to retain the C: tag composer text as right-justified text at the top of the tune after the tune set creation, you can use the Find and Replace feature to find all instances of:</p>
+                <p class="code">C:</p>
+                <p>and replace them with:</p>
+                <p class="code">%%right</p>
+                <p>The %%right command for the replace should be followed by a space so that there is a space between the command and the composer text.</p>
                 <hr id="hamburger_reorder">
                 <p><strong>Reorder Tunes</strong></p>
                 <p>Brings up a dialog where you can change the order of the tunes.</p>
@@ -5469,9 +5474,9 @@
                 <p class="code">% Disable hyperlink detection for this tune<br>%disable_hyperlinks</p>
                 <p>If both %enable_hyperlinks and %disable_hyperlinks are present in the same tune, %disable_hyperlinks takes precedence.</p>
                 <hr class="hidden-print" id="right_text">
-                <h1 class="page_break_always h1wide">Adding Right Justified Text<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-                <p>To add right justified text to the notation, you can use the following tool-specific ABC command:</p>
-                <p class="code">%%right This text will be right justified</p>
+                <h1 class="page_break_always h1wide">Adding Right-Justified Text<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+                <p>To add right-justified text to the notation, you can use the following tool-specific ABC command:</p>
+                <p class="code">%%right This text will be right-justified</p>
                 <hr class="hidden-print" id="tabtranspose">
                 <h1 class="page_break_always h1wide">Transposing Notation Independent of Tablature<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <p>For some tablatures like CGDAE where instruments maybe in either standard pitch or one octave lower, if you transpose the notes down an octave to get the tab on the lower strings, but want the notation displayed an octave up, you can add the following voice annotation to the ABC:</p>
