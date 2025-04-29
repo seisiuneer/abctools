@@ -5583,6 +5583,27 @@ margin-top:-9px;
 margin-left:12px;
 }
 
+.tuneset-selection-number {
+position: absolute;
+top: 50%;
+right: 8px;
+transform: translateY(-50%);
+background-color: blue;
+color: white;
+border-radius: 50%;
+width: 24px;
+height: 24px;
+font-size: 14px;
+text-align: center;
+line-height: 24px;
+font-family: sans-serif;
+}
+
+.tuneset_tune {
+position: relative;
+padding-right: 30px; /* space for badge */
+}
+
 /******************************************************************************/
 /* STYLES RELATED TO BUTTONS                                                  */
 /******************************************************************************/

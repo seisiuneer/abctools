@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2452_042825_1900";
+var gVersionNumber="2453_042925_0300";
 
 var gMIDIInitStillWaiting = false;
 
@@ -16311,47 +16311,75 @@ function processTuneSet(tuneSet,tuneNames,bRepeat,nRepeat) {
 	tuneSet = removeAllTags(tuneSet,"A");		
 	tuneSet = removeAllTags(tuneSet,"O");		
 
-	tuneSet += "\n%%text\n\n\n";
+	tuneSet += "\n%%text\n\n";
 
 	return tuneSet;
 }
 
-function BuildTuneSetUpdateKeepList(){
+function BuildTuneSetToggleSelection(item) {
 
-	// Reset the keep list
-	BuildTuneSetKeepList = [];
+    item.classList.toggle('tuneset_selected');
 
-	const childDivs = document.querySelectorAll('#tuneset-tune-list .tuneset_tune');
+    const index = BuildTuneSetSelectionOrder.indexOf(item);
+    
+    if (item.classList.contains('tuneset_selected')) {
+        if (index === -1) {
+            BuildTuneSetSelectionOrder.push(item);
+        }
+    } else {
+        if (index !== -1) {
+            BuildTuneSetSelectionOrder.splice(index, 1);
+        }
+    }
 
-	Array.from(childDivs).map(div => 
-	{
-		if (div.classList.contains('tuneset_selected')){
-			BuildTuneSetKeepList.push(0);
-		}
-		else{
-			BuildTuneSetKeepList.push(1);
-		}
-	});
+    updateTuneSelectionNumbers();
 }
 
-function BuildTuneSetToggleSelection(item) {
-  	item.classList.toggle('tuneset_selected');
-  	BuildTuneSetUpdateKeepList();
+function updateTuneSelectionNumbers() {
+
+    const allItems = document.querySelectorAll('#tuneset-tune-list .tuneset_tune');
+
+    allItems.forEach(item => {
+        const numberTag = item.querySelector('.tuneset-selection-number');
+        if (numberTag) {
+            item.removeChild(numberTag);
+        }
+    });
+
+    BuildTuneSetSelectionOrder.forEach((item, index) => {
+        let tag = document.createElement('span');
+        tag.className = 'tuneset-selection-number';
+        tag.textContent = ` ${index + 1}`;
+		item.appendChild(tag);
+    });
+
 }
 
 function BuildTuneSetSelectAll(){
+
 	const childDivs = document.querySelectorAll('#tuneset-tune-list .tuneset_tune');
-	Array.from(childDivs).map(div => div.classList.add('tuneset_selected'));
-  	BuildTuneSetUpdateKeepList();
+
+	BuildTuneSetSelectionOrder = []; // reset
+
+	Array.from(childDivs).forEach(div => {
+		div.classList.add('tuneset_selected');
+		BuildTuneSetSelectionOrder.push(div);
+	});
+
+	updateTuneSelectionNumbers();
+
 }
 
 function BuildTuneSetClearSelection(){
-	const childDivs = document.querySelectorAll('#tuneset-tune-list .tuneset_tune');
-	Array.from(childDivs).map(div => div.classList.remove('tuneset_selected'));
-  	BuildTuneSetUpdateKeepList();
+
+    const childDivs = document.querySelectorAll('#tuneset-tune-list .tuneset_tune');
+    Array.from(childDivs).map(div => div.classList.remove('tuneset_selected'));
+
+    BuildTuneSetSelectionOrder = [];
+    updateTuneSelectionNumbers();
 }
 
-var BuildTuneSetKeepList = [];
+var BuildTuneSetSelectionOrder = [];
 var BuildTuneSetRepeat = false;
 var BuildTuneSetRepeatCount = 1
 
@@ -16359,8 +16387,8 @@ function BuildTuneSet(){
 
 	var i,j,k;
 
-	// Clear the delete list
-	BuildTuneSetKeepList = [];
+	// Clear the tune set list
+	BuildTuneSetSelectionOrder = [];
 
 	totalTunes = CountTunes();
 
@@ -16429,21 +16457,23 @@ function BuildTuneSet(){
 
     		//console.log("bRepeat "+bRepeat+" nRepeat "+nRepeat);
 
-    		// Any tunes to delete?
-    		var nKeep = BuildTuneSetKeepList.length;
-    		var nToDelete = 0;
-    		for (i=0;i<nKeep;++i){
-    			if (BuildTuneSetKeepList[i] == 0){
-    				bGotChange = true;
-    				nToDelete ++;
-    			}
-    		}
+    		// Any tunes in set?
+			var nTunesInSet = BuildTuneSetSelectionOrder.length;
 
-    		if (nToDelete){
+			if (nTunesInSet === 0) {
 
-				var thePrompt = "Are you sure you want to create a set from the "+nToDelete;
+				var thePrompt = "No tunes selected for the set.";
+				thePrompt = makeCenteredPromptString(thePrompt);
+				DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) });
+				return;
 
-				if (nToDelete == 1){
+			}
+
+    		if (nTunesInSet){
+
+				var thePrompt = "Are you sure you want to create a set from the "+nTunesInSet;
+
+				if (nTunesInSet == 1){
 					thePrompt += " tune in your tunebook?";
 				}
 				else{
@@ -16460,50 +16490,39 @@ function BuildTuneSet(){
 					if (!args.canceled){
 
 						// Reorder the tunes
-			    		var theABC = gTheABC.value;
+						var theABC = gTheABC.value;
+						var tuneSet = "";
+						var setNames = [];
 
-			    		var result = FindPreTuneHeader(theABC);
+						// Add selected tunes in order
+						for (i = 0; i < BuildTuneSetSelectionOrder.length; ++i) {
 
-			    		var tuneSet = "";
+							const tuneElement = BuildTuneSetSelectionOrder[i];
+							
+							const tuneName = tuneElement.textContent.trim().replace(/\s+\d+$/, ''); // Remove number tag
+							
+							const index = GetTunebookIndexTitles().indexOf(tuneName);
+							
+							if (index !== -1) {
+								const tuneABC = getTuneByIndex(index).trim() + "\n\n";
+								tuneSet += tuneABC;
+								setNames.push(tuneName);
+							}
 
-			    		var setNames = [];
+						}
 
-			    		for (i=0;i<totalTunes;++i){
+						tuneSet = processTuneSet(tuneSet, setNames, bRepeat, nRepeat);
 
-			    			var thisTune = getTuneByIndex(i);
-
-			    			thisTune = thisTune.trim();
-
-			    			// Make sure every tune has a carriage return after it
-			    			thisTune+="\n\n";
-
-			    			if (BuildTuneSetKeepList[i] == 1){
-
-				    			result += thisTune;
-				    		}
-				    		else{
-				    			
-				    			result += thisTune;
-
-				    			tuneSet += thisTune;
-				    			setNames.push(theTitles[i]);
-
-				    		}
-			    		}
-
-			    		// Post-process the tuneset
-			    		tuneSet = processTuneSet(tuneSet,setNames,bRepeat,nRepeat);
-
-			    		result += tuneSet;
+						theABC += tuneSet;
 
 			    		// Stuff in the new result
-			    		setABCEditorText(result);
+			    		setABCEditorText(theABC);
 
 			    		RenderAsync(true,null, function(){
 
 							var theTune = getTuneByIndex(totalTunes);
 
-							var tuneOffset = result.length-theTune.length;
+							var tuneOffset = theABC.length-tuneSet.length;
 
 							if (!gIsMaximized){
 
