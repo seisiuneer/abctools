@@ -37,7 +37,7 @@
         <link rel="icon" type="image/png" sizes="32x32" href="https://michaeleskin.com/abctools/img/abc-favicon-32x32.png">
         <link rel="icon" type="image/png" sizes="96x96" href="https://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
         <link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
-        
+       
         <style>
         
         p {
@@ -624,6 +624,7 @@
             <a style="text-decoration:none;" href="#whistletabkey">Changing the Tin Whistle Tablature Key and Octave</a>
             <a style="text-decoration:none;" href="#recordertabkey">Changing the Recorder Tablature Key and Octave</a>
             <a style="text-decoration:none;" href="#detect_hyperlinks">Making Hyperlinks in ABC Tag Text Clickable</a>
+            <a style="text-decoration:none;" href="#right_text">Adding Right Justified Text</a>
             </details>
             
             <details>
@@ -1044,6 +1045,7 @@
                         <p class="toc"><a style="text-decoration:none;" href="#whistletabkey">Changing the Tin Whistle Tablature Key and Octave</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#recordertabkey">Changing the Recorder Tablature Key and Octave</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#detect_hyperlinks">Making Hyperlinks in ABC Tag Text Clickable</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#right_text">Adding Right Justified Text</a></p>
                     </div>
                     
                     <button class="accordion" title="Click to expand/collapse this section">ABC Tricks, Tips, and Limitations</button>
@@ -5466,6 +5468,10 @@
                 <p>To disable http:// or https:// hyperlink detection for a specific tune when using %enable_hyperlinks in the ABC file header to apply to all tunes, you can include the following annotation anywhere in the ABC for a tune:</p>
                 <p class="code">% Disable hyperlink detection for this tune<br>%disable_hyperlinks</p>
                 <p>If both %enable_hyperlinks and %disable_hyperlinks are present in the same tune, %disable_hyperlinks takes precedence.</p>
+                <hr class="hidden-print" id="right_text">
+                <h1 class="page_break_always h1wide">Adding Right Justified Text<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+                <p>To add right justified text to the notation, you can use the following tool-specific ABC command:</p>
+                <p class="code">%%right This text will be right justified</p>
                 <hr class="hidden-print" id="tabtranspose">
                 <h1 class="page_break_always h1wide">Transposing Notation Independent of Tablature<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <p>For some tablatures like CGDAE where instruments maybe in either standard pitch or one octave lower, if you transpose the notes down an octave to get the tab on the lower strings, but want the notation displayed an octave up, you can add the following voice annotation to the ABC:</p>

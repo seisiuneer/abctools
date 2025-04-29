@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2455_042925_1300";
+var gVersionNumber="2456_042925_1400";
 
 var gMIDIInitStillWaiting = false;
 
@@ -11928,6 +11928,13 @@ function StripTextAnnotationsOne(theNotes){
 	// Strip out %%center annotation
 	theNotes = theNotes.replace(searchRegExp, "");
 
+	// Strip out %%right annotation
+	searchRegExp = /%%right.*[\r\n]*/gm
+
+	// Strip out %%right annotation
+	theNotes = theNotes.replace(searchRegExp, "");
+
+
 	return theNotes;
 
 }
@@ -12332,6 +12339,13 @@ function processAllStripping(theNotes){
 
 		// Strip out %%center annotation
 		theNotes = theNotes.replace(searchRegExp, "% comment");
+
+		// Strip out %%right annotation
+		searchRegExp = /%%right.*$/gm
+
+		// Strip out %%right annotation
+		theNotes = theNotes.replace(searchRegExp, "% comment");
+
 
 	}
 
@@ -13024,6 +13038,16 @@ function IdleAdvancedControls(bUpdateUI){
 		searchRegExp = /%%center.*$/gm
 
 		// Detect %%center annotation
+		gotMatch = theNotes.search(searchRegExp) != -1;
+
+	}
+
+	if (!gotMatch){
+
+		// Detect %%right annotation
+		searchRegExp = /%%right.*$/gm
+
+		// Detect %%right annotation
 		gotMatch = theNotes.search(searchRegExp) != -1;
 
 	}
@@ -47943,6 +47967,9 @@ function SplitOneTuneTagsText(targetString, controlString, maxLength, splitTags,
 	theResult = splitLinesWithPrefix(theResult, "%%text ", maxLength);
 
 	theResult = splitLinesWithPrefix(theResult, "%%center ", maxLength);
+
+	theResult = splitLinesWithPrefix(theResult, "%%right ", maxLength);
+
 
 	//debugger;
 

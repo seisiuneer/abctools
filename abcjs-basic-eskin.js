@@ -5651,6 +5651,14 @@ var parseDirective = {};
         var centerstr = tokenizer.translateString(restOfString);
         tuneBuilder.addCentered(parseDirective.parseFontChangeLine(centerstr));
         break;
+      // MAE Added 29 April 2025 for right justified text
+      case "right":
+        var rightstr = tokenizer.translateString(restOfString);
+        tuneBuilder.addRight(parseDirective.parseFontChangeLine(rightstr),{
+          startChar: multilineVars.iChar,
+          endChar: multilineVars.iChar + restOfString.length + 7
+        });
+        break;
       case "font":
         // don't need to do anything for this; it is a useless directive
         break;
@@ -11316,6 +11324,17 @@ var TuneBuilder = function TuneBuilder(tune) {
         text: str,
         startChar: info.startChar,
         endChar: info.endChar
+      }
+    });
+  };
+  // MAE Added 29 April 2025 for right justified text
+  this.addRight = function (str, info) {
+    this.pushLine({
+      text: {
+        text: str,
+        startChar: info.startChar,
+        endChar: info.endChar,
+        right: true
       }
     });
   };
@@ -25923,17 +25942,33 @@ function FreeText(info, vskip, getFontAndAttr, paddingLeft, width, getTextSize) 
     this.rows.push({
       move: hash.attr['font-size'] / 2
     }); // TODO-PER: move down some - the y location should be the top of the text, but we output text specifying the center line.
-    this.rows.push({
-      left: paddingLeft,
-      text: text,
-      font: 'textfont',
-      klass: 'defined-text',
-      anchor: "start",
-      startChar: info.startChar,
-      endChar: info.endChar,
-      absElemType: "freeText",
-      name: "free-text"
-    });
+    // MAE Added 29 April 2025 for right justified text
+    if (info.right){
+      this.rows.push({
+        left: width + paddingLeft,
+        text: text,
+        font: 'textfont',
+        klass: 'defined-text',
+        anchor: 'end',
+        startChar: info.startChar,
+        endChar: info.endChar,
+        absElemType: "freeText",
+        name: "free-text"
+      });
+    }
+    else{
+     this.rows.push({
+        left: paddingLeft,
+        text: text,
+        font: 'textfont',
+        klass: 'defined-text',
+        anchor: "start",
+        startChar: info.startChar,
+        endChar: info.endChar,
+        absElemType: "freeText",
+        name: "free-text"
+      });      
+    }
     size = getTextSize.calc(text, 'textfont', 'defined-text');
     this.rows.push({
       move: size.height
@@ -26644,6 +26679,7 @@ function TopText(metaText, metaTextInfo, formatting, lines, width, isPrint, padd
         name: "rhythm"
       }, getTextSize);
     }
+
     var composerLine = "";
     if (metaText.composer) composerLine += metaText.composer;
     if (metaText.origin) composerLine += ' (' + metaText.origin + ')';
@@ -29844,9 +29880,9 @@ EngraverController.prototype.engraveTune = function (abcTune, tuneNumber, lineOf
       for (var i=0;i<nlines;++i){
 
         var entry = abcTune.lines[i];
-
+        
         if (entry.nonMusic){
-
+        
           if ((entry.nonMusic.rows) && (entry.nonMusic.rows.length > 0)){
 
             var nRows = entry.nonMusic.rows.length;
@@ -29854,6 +29890,8 @@ EngraverController.prototype.engraveTune = function (abcTune, tuneNumber, lineOf
             for (var j=0;j<nRows;++j){
 
               var thisRow = entry.nonMusic.rows[j];
+
+              //debugger;
 
               // Recenter the element if it's a subtitle or centered text 
               if (thisRow.left){
@@ -29880,6 +29918,17 @@ EngraverController.prototype.engraveTune = function (abcTune, tuneNumber, lineOf
                     //console.log("Got centered text element: "+entry.text[0].text);
 
                     thisRow.left = (maxWidth/2) + this.renderer.padding.left;
+
+                  }
+                }
+                else
+                if (entry.text){
+
+                  if (entry.text.right){
+
+                    //console.log("Got right justified text element: "+entry.text.text);
+
+                    thisRow.left = maxWidth + this.renderer.padding.left;
 
                   }
                 }
