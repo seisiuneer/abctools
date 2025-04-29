@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2451_042825_0900";
+var gVersionNumber="2452_042825_1900";
 
 var gMIDIInitStillWaiting = false;
 
@@ -16289,7 +16289,7 @@ function processTuneSet(tuneSet,tuneNames,bRepeat,nRepeat) {
 					line = line + "\n%\n%play_flatten_parts\n%\nP:"+partsControlString+"\n%\nP:A\n%";
 				}
 
-				return line+"\nT:"+setName+"\n%\n%%titlefont "+gRenderingFonts.titlefont+"\n"+"%%subtitlefont "+gRenderingFonts.subtitlefont+"\n%\n%hide_rhythm_tag\n%\n% To fit the set on a PDF page, increase the staffwidth value.\n% 800 often works for a set of three four-stave tunes.\n%\n%%staffwidth 556\n%\n%%stretchlast true\n%";
+				return line+"\nT:"+setName+"\n%\n%%titlefont "+gRenderingFonts.titlefont+"\n"+"%%subtitlefont "+gRenderingFonts.subtitlefont+"\n%\n%hide_rhythm_tag\n%hide_cautionary_ks\n%\n% To fit the set on a PDF page, increase the staffwidth value.\n% 800 often works for a set of three four-stave tunes.\n%\n%%staffwidth 556\n%\n%%stretchlast true\n%";
 
 			} else {
 				if (bRepeat){
@@ -19736,6 +19736,7 @@ function GetABCFileHeader(){
       /^%enable_hyperlinks.*$/,
       /^%disable_hyperlinks.*$/,
       /^%play_alternate_chords.*$/,
+      /^%hide_cautionary_ks.*$/,
       /^[ABCDFGHILMmNORrSUZ]:/,
     ];
 

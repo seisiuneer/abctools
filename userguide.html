@@ -620,6 +620,7 @@
             <a style="text-decoration:none;" href="#hide_information_labels">Hiding Information Labels</a>
             <a style="text-decoration:none;" href="#hide_rhythm_tag">Hiding Rhythm Display</a>
             <a style="text-decoration:none;" href="#hide_dynamics">Hiding Dynamics Marks</a>
+            <a style="text-decoration:none;" href="#hide_cautionary">Hiding Cautionary Key Signatures</a>
             <a style="text-decoration:none;" href="#whistletabkey">Changing the Tin Whistle Tablature Key and Octave</a>
             <a style="text-decoration:none;" href="#recordertabkey">Changing the Recorder Tablature Key and Octave</a>
             <a style="text-decoration:none;" href="#detect_hyperlinks">Making Hyperlinks in ABC Tag Text Clickable</a>
@@ -1039,6 +1040,7 @@
                         <p class="toc"><a style="text-decoration:none;" href="#hide_information_labels">Hiding Information Labels</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#hide_rhythm_tag">Hiding Rhythm Display</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#hide_dynamics">Hiding Dynamics Marks</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#hide_cautionary">Hiding Cautionary Key Signatures</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#whistletabkey">Changing the Tin Whistle Tablature Key and Octave</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#recordertabkey">Changing the Recorder Tablature Key and Octave</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#detect_hyperlinks">Making Hyperlinks in ABC Tag Text Clickable</a></p>
@@ -1288,7 +1290,12 @@
                 <p><strong>Create Tune Set</strong></p>
                 <p>Brings up a dialog where you can create tune sets that play and print as a single tune:</p>
                 <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/gmiPhfLuim4" title="Create Tune Set" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
-                 <p>Tunes sets are created by concatenating the tunes under one X: tag with an %hide_rhythm_tag annotation to hide any R: tags, all C:, A:, and O: tags are removed, and some space is added between the tunes using a %%text annotation.</p>
+                <p>Tunes sets are created by:</p>
+                <p>1) Concatenating the selected tunes under one X: tag.</p>
+                <p>2) Adding a %hide_rhythm_tag annotation to hide any R: tags.</p>
+                <p>3) Adding a %hide_cautionary_ks annotation to suppress cautionary key sigatures on the last line of the tunes.</p>
+                <p>4) All C:, A:, and O: tags are removed.</p>
+                <p>5) Space is added between the tunes using a %%text annotation.</p>
                 <p>The created tune set is appended to the end of the ABC.</p>
                 <p>You have the option to have the tunes in the set repeat when played and to set the number of repeats:</p>
                 <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/q5N3kYUaeu0" title="Create Tune Set Repeats" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
@@ -3771,6 +3778,7 @@
                     %hide_information_labels<br/>
                     %hide_rhythm_tag<br/>
                     %hide_dynamics<br/>
+                    %hide_cautionary_ks<br/>
                     %whistle_tab_key<br/>
                     %whistle_tab_octave<br/>
                     %recorder_tab_key<br/>
@@ -5402,6 +5410,13 @@
                 <p class="code">% Hide dynamics marks<br/>%hide_dynamics</p>
                 <p>While the dynamic marks will be hidden in the displayed notation, they will still affect the playback volume.</p>
                 <p>The presence of this annotation in a tune will force both the displayed notation in the editor, exported PDF notation, and tunes played from play links to have any dynamics marks hidden.</p>
+                <p>If placed in the ABC file header, it will apply to all of the tunes.</p>
+                <hr class="hidden-print" id="hide_cautionary">
+                <h1 class="page_break_always h1wide">Hiding Cautionary Key Signatures<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+                <p>You may hide any "cautionary" key signatures placed at the end of the staff before a key signature change by adding the following annotation anywhere in the tune:</p>
+                <p class="code">% Hide cautionary key signatures<br/>%hide_cautionary_ks</p>
+                <p>The presence of this annotation in a tune will force both the displayed notation in the editor, exported PDF notation, and tunes played from play links to have any cautionary key signatures hidden.</p>
+                <p>This annotation is used by the "Create Tune Set" features to avoid cautionary key signatures on the tunes.</p>
                 <p>If placed in the ABC file header, it will apply to all of the tunes.</p>
                 <hr class="hidden-print" id="whistletabkey">
                 <h1 class="page_break_always h1wide">Changing the Tin Whistle Tablature Key and Octave<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>

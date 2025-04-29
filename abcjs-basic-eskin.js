@@ -248,6 +248,9 @@ var gDisableSVGHyperLinks = false
 var gPlayAlternateChords = false;
 var gPlayAlternateChordsOverride = false;
 
+// Hide cautionary key signatures
+var gHideCautionaryKS = false;
+
 //
 // Find any hyperlinks in the tune and replace them with SVG links
 //
@@ -742,6 +745,26 @@ function ScanTuneForPlayAlternateChords(theTune){
   }
 
   //console.log("No %play_alternate_chords")
+
+  return false;
+
+}
+
+// Scan tune for hide cautionary key signatures
+function ScanTuneForHideCautionaryKS(theTune){
+
+  //console.log("ScanTuneForHideCautionaryKS");
+
+  var searchRegExp = /^%hide_cautionary_ks.*$/gm
+
+  var suppressKS = searchRegExp.test(theTune);
+
+  if (suppressKS){
+    //console.log("Found %hide_cautionary_ks")
+    return true;
+  }
+
+  //console.log("No %hide_cautionary_ks")
 
   return false;
 
@@ -1569,6 +1592,10 @@ var tunebook = {};
           // Ignore parenthesized alternate chords during playback?
           gPlayAlternateChords = false;
           gPlayAlternateChords = ScanTuneForPlayAlternateChords(book.tunes[currentTune].abc);
+
+          // Suppress cautionary key signatures?
+          gHideCautionaryKS = false;
+          gHideCautionaryKS = ScanTuneForHideCautionaryKS(book.tunes[currentTune].abc);
 
           abcParser.parse(book.tunes[currentTune].abc, workingParams, book.tunes[currentTune].startPos - book.header.length);
           var tune = abcParser.getTune();
@@ -4340,6 +4367,7 @@ var bookParser = function bookParser(book) {
       /^%enable_hyperlinks.*$/,
       /^%disable_hyperlinks.*$/,
       /^%play_alternate_chords.*$/,
+      /^%hide_cautionary_ks.*$/,
       /^[ABCDFGHILMmNORrSUZ]:/,
     ];
 
@@ -6466,8 +6494,11 @@ var ParseHeader = function ParseHeader(tokenizer, warn, multilineVars, tune, tun
           this.resolveTempo();
           var result = parseKeyVoice.parseKey(line.substring(2), false);
           if (!multilineVars.is_in_header && tuneBuilder.hasBeginMusic()) {
-            if (result.foundClef) tuneBuilder.appendStartingElement('clef', startChar, endChar, multilineVars.clef);
-            if (result.foundKey) tuneBuilder.appendStartingElement('key', startChar, endChar, parseKeyVoice.fixKey(multilineVars.clef, multilineVars.key));
+            // MAE 28 April 2024 - For tune set creation - hide cautionary key signatures at the end of lines
+            if (!gHideCautionaryKS){
+              if (result.foundClef) tuneBuilder.appendStartingElement('clef', startChar, endChar, multilineVars.clef);
+              if (result.foundKey) tuneBuilder.appendStartingElement('key', startChar, endChar, parseKeyVoice.fixKey(multilineVars.clef, multilineVars.key));
+            }
           }
           multilineVars.is_in_header = false; // The first key signifies the end of the header.
           break;
