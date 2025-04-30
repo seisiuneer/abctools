@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2457_042925_2200";
+var gVersionNumber="2458_043025_1030";
 
 var gMIDIInitStillWaiting = false;
 
@@ -16402,6 +16402,7 @@ function BuildTuneSetClearSelection(){
 var BuildTuneSetSelectionOrder = [];
 var BuildTuneSetRepeat = false;
 var BuildTuneSetRepeatCount = 1
+var BuildTuneSetOpenInNewTab = false;
 
 function BuildTuneSet(){
 
@@ -16429,11 +16430,12 @@ function BuildTuneSet(){
 
 	var theData = {
 		repeat_enable:BuildTuneSetRepeat,
-		repeat_count:BuildTuneSetRepeatCount
+		repeat_count:BuildTuneSetRepeatCount,
+		open_in_new_tab:BuildTuneSetOpenInNewTab
 	};
 
 	// MAE 14 Jul 2024 - Make the div fill the screen
-	var theHeight = window.innerHeight - 550;
+	var theHeight = window.innerHeight - 610;
 
 	var theTuneSetDiv = '<div id="tuneset-tune-list" style="overflow:auto;height:'+theHeight+'px;margin-top:12px">';
 
@@ -16447,7 +16449,9 @@ function BuildTuneSet(){
 	var form = [
 
 		{html: '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:15px;">Create Tune Set&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#hamburger_create_tune_set" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'},
-		{html: '<p style="margin-top:8px;margin-bottom:12px;font-size:12pt;line-height:18pt;font-family:helvetica">Select the tunes you want combined into a tune set and click Create.<br/>The tune set will be appended to the end of the ABC.</p>'},  
+		{html: '<p style="margin-top:8px;margin-bottom:12px;font-size:12pt;line-height:18pt;font-family:helvetica">Select the tunes you want combined into a tune set and click Create.</p>'},  
+		{html: '<p style="margin-top:8px;margin-bottom:12px;font-size:12pt;line-height:18pt;font-family:helvetica">The tune set will be appended to the end of the ABC or can instead be opened in a new browser tab by checking the box below:</p>'},  
+	  	{name: "          Open tune set in a new browser tab", id: "open_in_new_tab", type:"checkbox", cssClass:"create_tune_set_text_checkbox"},
 	  	{name: "          Tunes in set repeat when played", id: "repeat_enable", type:"checkbox", cssClass:"create_tune_set_text_checkbox"},
 	    {name: "Repeat count:", id: "repeat_count", type:"number", cssClass:"create_tune_set_text"},
 		{html: theTuneSetDiv},
@@ -16457,6 +16461,9 @@ function BuildTuneSet(){
 	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 25, width: 650, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false, okText:"Create" } ).then(function(args){
 
     	if (!args.canceled){
+
+    		var bOpenInNewTab = args.result.open_in_new_tab;
+    		BuildTuneSetOpenInNewTab = bOpenInNewTab;
 
     		var bRepeat = args.result.repeat_enable;
     		BuildTuneSetRepeat = bRepeat;
@@ -16494,14 +16501,19 @@ function BuildTuneSet(){
 				var thePrompt = "Are you sure you want to create a set from the "+nTunesInSet;
 
 				if (nTunesInSet == 1){
-					thePrompt += " tune in your tunebook?";
+					thePrompt += " tune in your tunebook?<br/><br/>";
 				}
 				else{
-					thePrompt += " tunes in your tunebook?";
+					thePrompt += " tunes in your tunebook?<br/><br/>";
 
 				}
 
-				thePrompt += " The set will be added to the end of the ABC.";
+				if (bOpenInNewTab){
+					thePrompt += "The set will be opened in a new browser tab.";
+				}
+				else{
+					thePrompt += "The set will be added to the end of the ABC.";
+				}
 
 				// Center the string in the prompt
 				thePrompt = makeCenteredPromptString(thePrompt);
@@ -16533,39 +16545,71 @@ function BuildTuneSet(){
 
 						tuneSet = processTuneSet(tuneSet, setNames, bRepeat, nRepeat);
 
-						theABC = theABC.trim()+"\n\n"+tuneSet;
+						if (bOpenInNewTab){
 
-			    		// Stuff in the new result
-			    		setABCEditorText(theABC);
+							var result = FindPreTuneHeader(theABC);
 
-			    		RenderAsync(true,null, function(){
+							result = result.trim();
+							
+							if (result.length > 0){
+								result += "\n\n";
+							}
 
-							var theTune = getTuneByIndex(totalTunes);
+							result += tuneSet;
 
-							var tuneOffset = theABC.length-tuneSet.length;
+							var theURL = FillUrlBoxWithAbcInLZW(result,false);
 
-							if (!gIsMaximized){
+							theURL += "&editor=1";
 
-								// Scroll the tune ABC into view
-							    ScrollABCTextIntoView(gTheABC,tuneOffset,tuneOffset,10);
+							if (theURL.length >= 8100 ){
 
-							    if (isMobileBrowser()){
-						    		gTheABC.blur();
-							    	return;
+								DayPilot.Modal.alert('<p style="text-align:center;font-family:helvetica;font-size:12pt;">The Share URL for the tune set is too long to open in a new tab.</p>',{ theme: "modal_flat", top: 230, scrollWithPage: (AllowDialogsToScroll()) });
+
+								return;
+
+							}
+
+							var w = window.open(theURL);
+
+							return;
+
+						}
+						else{
+
+							theABC = theABC.trim()+"\n\n"+tuneSet;
+
+				    		// Stuff in the new result
+				    		setABCEditorText(theABC);
+
+				    		RenderAsync(true,null, function(){
+
+								var theTune = getTuneByIndex(totalTunes);
+
+								var tuneOffset = theABC.length-tuneSet.length;
+
+								if (!gIsMaximized){
+
+									// Scroll the tune ABC into view
+								    ScrollABCTextIntoView(gTheABC,tuneOffset,tuneOffset,10);
+
+								    if (isMobileBrowser()){
+							    		gTheABC.blur();
+								    	return;
+								    }
+								    
+							    	gTheABC.blur();
+							    	gTheABC.focus();
+
 							    }
-							    
-						    	gTheABC.blur();
-						    	gTheABC.focus();
 
-						    }
+								// Scroll the tune into view
+								MakeTuneVisible(true);
 
-							// Scroll the tune into view
-							MakeTuneVisible(true);
+				    		});
 
-			    		});
-
-			    		// Set dirty
-						gIsDirty = true;
+				    		// Set dirty
+							gIsDirty = true;
+						}
 					}
 				})
 			}
