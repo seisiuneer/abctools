@@ -37,7 +37,7 @@
         <link rel="icon" type="image/png" sizes="32x32" href="https://michaeleskin.com/abctools/img/abc-favicon-32x32.png">
         <link rel="icon" type="image/png" sizes="96x96" href="https://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
         <link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
-        
+       
         <style>
         
         p {
@@ -1299,7 +1299,7 @@
                 <p>Tunes sets are created by:</p>
                 <p>1) Concatenating the selected tunes under one X: tag.</p>
                 <p>2) Adding a %hide_rhythm_tag annotation to hide any R: tags.</p>
-                <p>3) Adding a %hide_cautionary_ks annotation to suppress cautionary key sigatures on the last line of the tunes.</p>
+                <p>3) Adding a %hide_cautionary_ks annotation to suppress cautionary key sigatures on the last line of the tunes as well as any "implied" naturals in the following tune's key signature.</p>
                 <p>4) All C:, A:, and O: tags are removed.</p>
                 <p>5) Space is added between the tunes using a %%text annotation.</p>
                 <p>The created tune set is appended to the end of the ABC.</p>
@@ -5424,7 +5424,7 @@
                 <p>If placed in the ABC file header, it will apply to all of the tunes.</p>
                 <hr class="hidden-print" id="hide_cautionary">
                 <h1 class="page_break_always h1wide">Hiding Cautionary Key Signatures<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-                <p>You may hide any "cautionary" key signatures placed at the end of the staff before a key signature change by adding the following annotation anywhere in the tune:</p>
+                <p>You may hide any "cautionary" key signatures placed at the end of the staff before a key signature change as any "implied" naturals in the new key signature by adding the following annotation anywhere in the tune:</p>
                 <p class="code">% Hide cautionary key signatures<br/>%hide_cautionary_ks</p>
                 <p>The presence of this annotation in a tune will force both the displayed notation in the editor, exported PDF notation, and tunes played from play links to have any cautionary key signatures hidden.</p>
                 <p>This annotation is used by the "Create Tune Set" features to avoid cautionary key signatures on the tunes.</p>

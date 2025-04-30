@@ -248,7 +248,7 @@ var gDisableSVGHyperLinks = false
 var gPlayAlternateChords = false;
 var gPlayAlternateChordsOverride = false;
 
-// Hide cautionary key signatures
+// Show cautionary key signatures
 var gHideCautionaryKS = false;
 
 //
@@ -769,6 +769,7 @@ function ScanTuneForHideCautionaryKS(theTune){
   return false;
 
 }
+
 
 (function webpackUniversalModuleDefinition(root, factory) {
   if(typeof exports === 'object' && typeof module === 'object')
@@ -7036,21 +7037,25 @@ var parseKeyVoice = {};
           multilineVars.key = parseKeyVoice.deepCopyKey(parseKeyVoice.standardKey(key, retPitch.token, acc, keyCompensate));
           if (isInline) multilineVars.globalTransposeOrigKeySig = savedOrigKey;
           multilineVars.key.mode = mode;
-          if (oldKey) {
-            // Add natural in all places that the old key had an accidental.
-            var kk;
-            for (var k = 0; k < multilineVars.key.accidentals.length; k++) {
-              for (kk = 0; kk < oldKey.accidentals.length; kk++) {
-                if (oldKey.accidentals[kk].note && multilineVars.key.accidentals[k].note.toLowerCase() === oldKey.accidentals[kk].note.toLowerCase()) oldKey.accidentals[kk].note = null;
+
+          // MAE 29 April 2025 - To hide implied naturals
+          if (!gHideCautionaryKS){
+            if (oldKey) { 
+              // Add natural in all places that the old key had an accidental.
+              var kk;
+              for (var k = 0; k < multilineVars.key.accidentals.length; k++) {
+                for (kk = 0; kk < oldKey.accidentals.length; kk++) {
+                  if (oldKey.accidentals[kk].note && multilineVars.key.accidentals[k].note.toLowerCase() === oldKey.accidentals[kk].note.toLowerCase()) oldKey.accidentals[kk].note = null;
+                }
               }
-            }
-            for (kk = 0; kk < oldKey.accidentals.length; kk++) {
-              if (oldKey.accidentals[kk].note) {
-                if (!multilineVars.key.impliedNaturals) multilineVars.key.impliedNaturals = [];
-                multilineVars.key.impliedNaturals.push({
-                  acc: 'natural',
-                  note: oldKey.accidentals[kk].note
-                });
+              for (kk = 0; kk < oldKey.accidentals.length; kk++) {
+                if (oldKey.accidentals[kk].note) {
+                  if (!multilineVars.key.impliedNaturals) multilineVars.key.impliedNaturals = [];
+                  multilineVars.key.impliedNaturals.push({
+                    acc: 'natural',
+                    note: oldKey.accidentals[kk].note
+                  });
+                }
               }
             }
           }
