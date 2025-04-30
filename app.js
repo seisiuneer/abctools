@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2458_043025_1030";
+var gVersionNumber="2459_043025_1130";
 
 var gMIDIInitStillWaiting = false;
 
@@ -16554,6 +16554,9 @@ function BuildTuneSet(){
 							if (result.length > 0){
 								result += "\n\n";
 							}
+
+							tuneSet = tuneSet.trim();
+							tuneSet += "\n";
 
 							result += tuneSet;
 
