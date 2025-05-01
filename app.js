@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2460_050125_0800";
+var gVersionNumber="2461_050125_1500";
 
 var gMIDIInitStillWaiting = false;
 
@@ -16402,7 +16402,8 @@ function BuildTuneSetClearSelection(){
 var BuildTuneSetSelectionOrder = [];
 var BuildTuneSetRepeat = false;
 var BuildTuneSetRepeatCount = 1
-var BuildTuneSetOpenInNewTab = false;
+var BuildTuneSetOpenInNewTab = true;
+var BuildTuneSetNewTabEditor = false;
 
 function BuildTuneSet(){
 
@@ -16431,11 +16432,12 @@ function BuildTuneSet(){
 	var theData = {
 		repeat_enable:BuildTuneSetRepeat,
 		repeat_count:BuildTuneSetRepeatCount,
-		open_in_new_tab:BuildTuneSetOpenInNewTab
+		open_in_new_tab:BuildTuneSetOpenInNewTab,
+		new_tab_open_in_editor:BuildTuneSetNewTabEditor
 	};
 
 	// MAE 14 Jul 2024 - Make the div fill the screen
-	var theHeight = window.innerHeight - 610;
+	var theHeight = window.innerHeight - 650;
 
 	var theTuneSetDiv = '<div id="tuneset-tune-list" style="overflow:auto;height:'+theHeight+'px;margin-top:12px">';
 
@@ -16452,6 +16454,7 @@ function BuildTuneSet(){
 		{html: '<p style="margin-top:8px;margin-bottom:12px;font-size:12pt;line-height:18pt;font-family:helvetica">Select the tunes you want combined into a tune set and click Create.</p>'},  
 		{html: '<p style="margin-top:8px;margin-bottom:12px;font-size:12pt;line-height:18pt;font-family:helvetica">The tune set will be appended to the end of the ABC or can instead be opened in a new browser tab by checking the box below:</p>'},  
 	  	{name: "          Open tune set in a new browser tab", id: "open_in_new_tab", type:"checkbox", cssClass:"create_tune_set_text_checkbox"},
+	  	{name: "          New browser tab tune set opens in the editor (default is open in Player)", id: "new_tab_open_in_editor", type:"checkbox", cssClass:"create_tune_set_text_checkbox"},
 	  	{name: "          Tunes in set repeat when played", id: "repeat_enable", type:"checkbox", cssClass:"create_tune_set_text_checkbox"},
 	    {name: "Repeat count:", id: "repeat_count", type:"number", cssClass:"create_tune_set_text"},
 		{html: theTuneSetDiv},
@@ -16464,6 +16467,9 @@ function BuildTuneSet(){
 
     		var bOpenInNewTab = args.result.open_in_new_tab;
     		BuildTuneSetOpenInNewTab = bOpenInNewTab;
+
+    		var bOpenInNewTabInEditor = args.result.new_tab_open_in_editor;
+    		BuildTuneSetNewTabEditor = bOpenInNewTabInEditor;
 
     		var bRepeat = args.result.repeat_enable;
     		BuildTuneSetRepeat = bRepeat;
@@ -16483,6 +16489,9 @@ function BuildTuneSet(){
     		BuildTuneSetRepeatCount = nRepeat;
 
     		//console.log("bRepeat "+bRepeat+" nRepeat "+nRepeat);
+
+    		// Save the settings for next time
+   			SaveConfigurationSettings();
 
     		// Any tunes in set?
 			var nTunesInSet = BuildTuneSetSelectionOrder.length;
@@ -16521,65 +16530,72 @@ function BuildTuneSet(){
 			tuneSet = processTuneSet(tuneSet, setNames, bRepeat, nRepeat);
 
 			var tuneSetName = setNames.join(' / ');
-
+    		
     		if (nTunesInSet){
 
-				var thePrompt = "Are you sure you want to create a set:<br/><br/>"+tuneSetName+"<br/><br/>"; 
-
-				if (nTunesInSet == 1){
-					thePrompt += " from the 1 tune in your tunebook<br/><br/>";
-				}
-				else{
-					thePrompt += " from the "+nTunesInSet+" tunes in your tunebook?<br/><br/>";
-
-				}
-
 				if (bOpenInNewTab){
-					thePrompt += "The set will be opened in a new browser tab.";
+
+					var result = FindPreTuneHeader(theABC);
+
+					result = result.trim();
+					
+					if (result.length > 0){
+						result += "\n\n";
+					}
+
+					tuneSet = tuneSet.trim();
+					tuneSet += "\n";
+
+					result += tuneSet;
+
+					var theURL = FillUrlBoxWithAbcInLZW(result,false);
+
+					if (bOpenInNewTabInEditor){
+
+						theURL += "&editor=1";
+
+					}
+					else{
+
+						theURL += "&play=1";
+
+					}
+
+					if (theURL.length >= 8100 ){
+
+						DayPilot.Modal.alert('<p style="text-align:center;font-family:helvetica;font-size:12pt;">The Share URL for the tune set is too long to open in a new tab.</p>',{ theme: "modal_flat", top: 230, scrollWithPage: (AllowDialogsToScroll()) });
+
+						return;
+
+					}
+
+					var w = window.open(theURL);
+
+					return;
+
 				}
 				else{
+
+					var thePrompt = "Are you sure you want to create a set:<br/><br/>"+tuneSetName+"<br/><br/>"; 
+
+					if (nTunesInSet == 1){
+
+						thePrompt += " from the 1 tune in your tunebook<br/><br/>";
+
+					}
+					else{
+
+						thePrompt += " from the "+nTunesInSet+" tunes in your tunebook?<br/><br/>";
+
+					}
+					
 					thePrompt += "The set will be added to the end of the ABC.";
-				}
 
-				// Center the string in the prompt
-				thePrompt = makeCenteredPromptString(thePrompt);
+					// Center the string in the prompt
+					thePrompt = makeCenteredPromptString(thePrompt);
 
-				DayPilot.Modal.confirm(thePrompt,{ top:200, theme: "modal_flat", scrollWithPage: (AllowDialogsToScroll()) }).then(function(args){
-					if (!args.canceled){
-
-						if (bOpenInNewTab){
-
-							var result = FindPreTuneHeader(theABC);
-
-							result = result.trim();
-							
-							if (result.length > 0){
-								result += "\n\n";
-							}
-
-							tuneSet = tuneSet.trim();
-							tuneSet += "\n";
-
-							result += tuneSet;
-
-							var theURL = FillUrlBoxWithAbcInLZW(result,false);
-
-							theURL += "&editor=1";
-
-							if (theURL.length >= 8100 ){
-
-								DayPilot.Modal.alert('<p style="text-align:center;font-family:helvetica;font-size:12pt;">The Share URL for the tune set is too long to open in a new tab.</p>',{ theme: "modal_flat", top: 230, scrollWithPage: (AllowDialogsToScroll()) });
-
-								return;
-
-							}
-
-							var w = window.open(theURL);
-
-							return;
-
-						}
-						else{
+					DayPilot.Modal.confirm(thePrompt,{ top:200, theme: "modal_flat", scrollWithPage: (AllowDialogsToScroll()) }).then(function(args){
+						if (!args.canceled){
 
 							theABC = theABC.trim()+"\n\n"+tuneSet;
 
@@ -16614,9 +16630,10 @@ function BuildTuneSet(){
 
 				    		// Set dirty
 							gIsDirty = true;
+							
 						}
-					}
-				})
+					})
+				}
 			}
 		}
     });
@@ -40008,6 +40025,37 @@ function GetInitialConfigurationSettings(){
 		}
 	}
 
+	// Tune set building global parameters
+	BuildTuneSetRepeat = false;
+	val = localStorage.BuildTuneSetRepeat;
+	if (val){
+		BuildTuneSetRepeat = (val == "true");
+	}
+
+	BuildTuneSetRepeatCount = 1;
+	val = localStorage.BuildTuneSetRepeatCount;
+	if (val){
+		BuildTuneSetRepeatCount = parseInt(val);
+		if (isNaN(BuildTuneSetRepeatCount)){
+			BuildTuneSetRepeatCount = 1;
+		}
+		if (BuildTuneSetRepeatCount < 1){
+			BuildTuneSetRepeatCount = 1;
+		}
+	}
+
+	BuildTuneSetOpenInNewTab = true;
+	val = localStorage.BuildTuneSetOpenInNewTab;
+	if (val){
+		BuildTuneSetOpenInNewTab = (val == "true");
+	}
+
+	BuildTuneSetNewTabEditor = false;
+	val = localStorage.BuildTuneSetNewTabEditor;
+	if (val){
+		BuildTuneSetNewTabEditor = (val == "true");
+	}
+
 	// Save the settings, in case they were initialized
 	SaveConfigurationSettings();
 
@@ -40254,6 +40302,12 @@ function SaveConfigurationSettings(){
 
 		// Player scaling
 		localStorage.PlayerScaling = gPlayerScaling;
+
+		// Tune set creation
+		localStorage.BuildTuneSetRepeat = BuildTuneSetRepeat;
+		localStorage.BuildTuneSetRepeatCount = BuildTuneSetRepeatCount;
+		localStorage.BuildTuneSetOpenInNewTab = BuildTuneSetOpenInNewTab;
+		localStorage.BuildTuneSetNewTabEditor = BuildTuneSetNewTabEditor;
 
 	}
 }
