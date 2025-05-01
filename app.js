@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2459_043025_1130";
+var gVersionNumber="2460_050125_0800";
 
 var gMIDIInitStillWaiting = false;
 
@@ -16496,15 +16496,41 @@ function BuildTuneSet(){
 
 			}
 
+			// Process the tune set
+			var theABC = gTheABC.value;
+			var tuneSet = "";
+			var setNames = [];
+
+			// Add selected tunes in order
+			for (i = 0; i < BuildTuneSetSelectionOrder.length; ++i) {
+
+				const tuneElement = BuildTuneSetSelectionOrder[i];
+				
+				const tuneName = tuneElement.textContent.trim().replace(/\s+\d+$/, ''); // Remove number tag
+				
+				const index = GetTunebookIndexTitles().indexOf(tuneName);
+				
+				if (index !== -1) {
+					const tuneABC = getTuneByIndex(index).trim() + "\n\n";
+					tuneSet += tuneABC;
+					setNames.push(tuneName);
+				}
+
+			}
+
+			tuneSet = processTuneSet(tuneSet, setNames, bRepeat, nRepeat);
+
+			var tuneSetName = setNames.join(' / ');
+
     		if (nTunesInSet){
 
-				var thePrompt = "Are you sure you want to create a set from the "+nTunesInSet;
+				var thePrompt = "Are you sure you want to create a set:<br/><br/>"+tuneSetName+"<br/><br/>"; 
 
 				if (nTunesInSet == 1){
-					thePrompt += " tune in your tunebook?<br/><br/>";
+					thePrompt += " from the 1 tune in your tunebook<br/><br/>";
 				}
 				else{
-					thePrompt += " tunes in your tunebook?<br/><br/>";
+					thePrompt += " from the "+nTunesInSet+" tunes in your tunebook?<br/><br/>";
 
 				}
 
@@ -16520,30 +16546,6 @@ function BuildTuneSet(){
 
 				DayPilot.Modal.confirm(thePrompt,{ top:200, theme: "modal_flat", scrollWithPage: (AllowDialogsToScroll()) }).then(function(args){
 					if (!args.canceled){
-
-						// Reorder the tunes
-						var theABC = gTheABC.value;
-						var tuneSet = "";
-						var setNames = [];
-
-						// Add selected tunes in order
-						for (i = 0; i < BuildTuneSetSelectionOrder.length; ++i) {
-
-							const tuneElement = BuildTuneSetSelectionOrder[i];
-							
-							const tuneName = tuneElement.textContent.trim().replace(/\s+\d+$/, ''); // Remove number tag
-							
-							const index = GetTunebookIndexTitles().indexOf(tuneName);
-							
-							if (index !== -1) {
-								const tuneABC = getTuneByIndex(index).trim() + "\n\n";
-								tuneSet += tuneABC;
-								setNames.push(tuneName);
-							}
-
-						}
-
-						tuneSet = processTuneSet(tuneSet, setNames, bRepeat, nRepeat);
 
 						if (bOpenInNewTab){
 
