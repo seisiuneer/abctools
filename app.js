@@ -16493,6 +16493,10 @@ function BuildTuneSet(){
     		// Save the settings for next time
    			SaveConfigurationSettings();
 
+   			if (nRepeat == 1){
+    			bRepeat = false;
+    		}
+
     		// Any tunes in set?
 			var nTunesInSet = BuildTuneSetSelectionOrder.length;
 
