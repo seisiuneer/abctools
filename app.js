@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2462_050225_1300";
+var gVersionNumber="2463_050225_1430";
 
 var gMIDIInitStillWaiting = false;
 
@@ -16539,6 +16539,9 @@ function BuildTuneSet(){
 
 				if (bOpenInNewTab){
 
+					// Keep track of actions
+					sendGoogleAnalytics("action","TuneSetNewTab");
+
 					var result = FindPreTuneHeader(theABC);
 
 					result = result.trim();
@@ -16600,6 +16603,9 @@ function BuildTuneSet(){
 
 					DayPilot.Modal.confirm(thePrompt,{ top:200, theme: "modal_flat", scrollWithPage: (AllowDialogsToScroll()) }).then(function(args){
 						if (!args.canceled){
+
+							// Keep track of actions
+							sendGoogleAnalytics("action","TuneSetAppend");
 
 							theABC = theABC.trim()+"\n\n"+tuneSet;
 
