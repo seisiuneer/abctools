@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2461_050125_1500";
+var gVersionNumber="2462_050225_1300";
 
 var gMIDIInitStillWaiting = false;
 
@@ -16451,11 +16451,11 @@ function BuildTuneSet(){
 	var form = [
 
 		{html: '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:15px;">Create Tune Set&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#hamburger_create_tune_set" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'},
-		{html: '<p style="margin-top:8px;margin-bottom:12px;font-size:12pt;line-height:18pt;font-family:helvetica">Select the tunes you want combined into a tune set and click Create.</p>'},  
-		{html: '<p style="margin-top:8px;margin-bottom:12px;font-size:12pt;line-height:18pt;font-family:helvetica">The tune set will be appended to the end of the ABC or can instead be opened in a new browser tab by checking the box below:</p>'},  
-	  	{name: "          Open tune set in a new browser tab", id: "open_in_new_tab", type:"checkbox", cssClass:"create_tune_set_text_checkbox"},
-	  	{name: "          New browser tab tune set opens in the editor (default is open in Player)", id: "new_tab_open_in_editor", type:"checkbox", cssClass:"create_tune_set_text_checkbox"},
-	  	{name: "          Tunes in set repeat when played", id: "repeat_enable", type:"checkbox", cssClass:"create_tune_set_text_checkbox"},
+		{html: '<p style="margin-top:8px;margin-bottom:12px;font-size:12pt;line-height:18pt;font-family:helvetica">Select the tunes you want combined into a tune set, then click Create.</p>'},  
+		{html: '<p style="margin-top:8px;margin-bottom:12px;font-size:12pt;line-height:18pt;font-family:helvetica">By default, the tune set will be added to the end of the ABC here.</p>'},  
+	  	{name: "          Instead, open tune set in the Player in a new browser tab", id: "open_in_new_tab", type:"checkbox", cssClass:"create_tune_set_text_checkbox"},
+	  	{name: "          Open tune set in the Editor instead of the Player", id: "new_tab_open_in_editor", type:"checkbox", cssClass:"create_tune_set_text_checkbox_2"},
+	  	{name: "          Repeat each tune in the set when played", id: "repeat_enable", type:"checkbox", cssClass:"create_tune_set_text_checkbox"},
 	    {name: "Repeat count:", id: "repeat_count", type:"number", cssClass:"create_tune_set_text"},
 		{html: theTuneSetDiv},
 		{html: '<p style="text-align:center;margin-top:36px;"><input id="tuneset_select_all" class="advancedcontrols btn btn-injectcontrols-headers" onclick="BuildTuneSetSelectAll();" type="button" value="Select All" title="Selects all the tunes for set creation"><input id="tuneset_clear_selection" class="advancedcontrols btn btn-injectcontrols-headers" onclick="BuildTuneSetClearSelection();" type="button" value="Clear Selection" title="Unselects all the tunes for set creation"></p>'}
