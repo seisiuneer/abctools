@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2466_050325_1200";
+var gVersionNumber="2467_050325_1400";
 
 var gMIDIInitStillWaiting = false;
 
@@ -48529,13 +48529,22 @@ function SetupContextMenu(showUpdateItem){
 				    {},
 				    { name: 'Toggle Top/Bottom Toolbars', fn: function(target) { ToggleTopBar(); }},
 				    { name: 'Maximize Editor', fn: function(target) { MaximizeEditor(); }},
-				    {},
-				    { name: 'Create Tune Set', fn: function(target) { BuildTuneSet(); }},
+				    {}
+				];
+
+				if (isMac()){
+					items.push({ name: 'Create Tune Set (⌘+\\)', fn: function(target) { BuildTuneSet(); }},);
+				}
+				else{
+					items.push({ name: 'Create Tune Set (Ctrl+\\)', fn: function(target) { BuildTuneSet(); }});				
+				}
+
+				items = items.concat([
 				    {},
 				    { name: 'Reorder Tunes', fn: function(target) { ChangeTuneOrder(); }},
 				    { name: 'Delete Tunes', fn: function(target) { CullTunes(); }},
-				    {},
-				];
+				    {}
+				]);
 
 				if (isMac()){
 					items.push({ name: 'Align Bars (One Tune) (⌘+/)', fn: function(target) { AlignMeasures(false); }});
@@ -48663,13 +48672,22 @@ function SetupContextMenu(showUpdateItem){
 				    {},
 				    { name: 'Toggle Top/Bottom Toolbars', fn: function(target) { ToggleTopBar(); }},
 				    { name: 'Maximize Editor', fn: function(target) { MaximizeEditor(); }},
-				    {},
-				    { name: 'Create Tune Set', fn: function(target) { BuildTuneSet(); }},
+				    {}
+				];
+
+				if (isMac()){
+					items.push({ name: 'Create Tune Set (⌘+\\)', fn: function(target) { BuildTuneSet(); }},);
+				}
+				else{
+					items.push({ name: 'Create Tune Set (Ctrl+\\)', fn: function(target) { BuildTuneSet(); }});				
+				}
+
+				items = items.concat([
 				    {},
 				    { name: 'Reorder Tunes', fn: function(target) { ChangeTuneOrder(); }},
 				    { name: 'Delete Tunes', fn: function(target) { CullTunes(); }},
 				    {},
-				];
+				]);
 
 				if (isMac()){
 					items.push({ name: 'Align Bars (One Tune) (⌘+/)', fn: function(target) { AlignMeasures(false); }});
@@ -49724,6 +49742,8 @@ function DoStartup() {
 
 			document.addEventListener('keydown', function(event) {
 
+				//console.log("event.key = "+event.key);
+
 				// F3 resets the player
 				if (event.key === 'F3') {
 					event.preventDefault(); 
@@ -49827,6 +49847,24 @@ function DoStartup() {
 
 			        	// Do measure align
 			        	AlignMeasures(false);
+
+			        }
+
+			    }
+			    else
+			    /// Check if the Command key (on Mac) is pressed with the "\" key
+			    if (event.metaKey && event.key === '\\') {
+
+			    	//console.log("Got Command \\");
+
+			       	event.preventDefault();  // Prevent the default browser action
+
+			    	var modalDivs = document.querySelector('.modal_flat_main');
+
+			        if ((!modalDivs) && (!gRenderingPDF)){
+
+			        	// Do build tune set
+			        	BuildTuneSet();
 
 			        }
 
@@ -49937,6 +49975,24 @@ function DoStartup() {
 
 			        	// Do measure align
 			        	AlignMeasures(false);
+
+			        }
+
+			    }
+			    else
+			    // Check if the Control key (on Windows/Linux) is pressed with the "\" key
+			    if (event.ctrlKey && event.key === '\\') {
+
+			    	//console.log("Got Control \\");
+
+			       	event.preventDefault();  // Prevent the default browser action
+
+			    	var modalDivs = document.querySelector('.modal_flat_main');
+
+			        if ((!modalDivs) && (!gRenderingPDF)){
+
+			        	// Do build tune set
+			        	BuildTuneSet();
 
 			        }
 
