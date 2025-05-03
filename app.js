@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2467_050325_1400";
+var gVersionNumber="2468_050325_1600";
 
 var gMIDIInitStillWaiting = false;
 
@@ -48533,10 +48533,10 @@ function SetupContextMenu(showUpdateItem){
 				];
 
 				if (isMac()){
-					items.push({ name: 'Create Tune Set (⌘+\\)', fn: function(target) { BuildTuneSet(); }},);
+					items.push({ name: 'Create Tune Set (⌘+/)', fn: function(target) { BuildTuneSet(); }},);
 				}
 				else{
-					items.push({ name: 'Create Tune Set (Ctrl+\\)', fn: function(target) { BuildTuneSet(); }});				
+					items.push({ name: 'Create Tune Set (Ctrl+/)', fn: function(target) { BuildTuneSet(); }});				
 				}
 
 				items = items.concat([
@@ -48547,10 +48547,10 @@ function SetupContextMenu(showUpdateItem){
 				]);
 
 				if (isMac()){
-					items.push({ name: 'Align Bars (One Tune) (⌘+/)', fn: function(target) { AlignMeasures(false); }});
+					items.push({ name: 'Align Bars (One Tune) (⌘+\\)', fn: function(target) { AlignMeasures(false); }});
 				}
 				else{
-					items.push({ name: 'Align Bars (One Tune) (Ctrl+/)', fn: function(target) { AlignMeasures(false); }});				
+					items.push({ name: 'Align Bars (One Tune) (Ctrl+\\)', fn: function(target) { AlignMeasures(false); }});				
 				}
 
 				items = items.concat(
@@ -48676,10 +48676,10 @@ function SetupContextMenu(showUpdateItem){
 				];
 
 				if (isMac()){
-					items.push({ name: 'Create Tune Set (⌘+\\)', fn: function(target) { BuildTuneSet(); }},);
+					items.push({ name: 'Create Tune Set (⌘+/)', fn: function(target) { BuildTuneSet(); }},);
 				}
 				else{
-					items.push({ name: 'Create Tune Set (Ctrl+\\)', fn: function(target) { BuildTuneSet(); }});				
+					items.push({ name: 'Create Tune Set (Ctrl+/)', fn: function(target) { BuildTuneSet(); }});				
 				}
 
 				items = items.concat([
@@ -48690,10 +48690,10 @@ function SetupContextMenu(showUpdateItem){
 				]);
 
 				if (isMac()){
-					items.push({ name: 'Align Bars (One Tune) (⌘+/)', fn: function(target) { AlignMeasures(false); }});
+					items.push({ name: 'Align Bars (One Tune) (⌘+\\)', fn: function(target) { AlignMeasures(false); }});
 				}
 				else{
-					items.push({ name: 'Align Bars (One Tune) (Ctrl+/)', fn: function(target) { AlignMeasures(false); }});				
+					items.push({ name: 'Align Bars (One Tune) (Ctrl+\\)', fn: function(target) { AlignMeasures(false); }});				
 				}
 
 				items = items.concat(
@@ -49834,10 +49834,10 @@ function DoStartup() {
 
 			    }
 			    else
-			    // Check if the Command key (on Mac) is pressed with the "/" key
-			    if (event.metaKey && event.key === '/') {
+			    // Check if the Command key (on Mac) is pressed with the "\" key
+			    if (event.metaKey && event.key === '\\') {
 
-			    	//console.log("Got Command /");
+			    	//console.log("Got Command \");
 
 			       	event.preventDefault();  // Prevent the default browser action
 
@@ -49852,10 +49852,10 @@ function DoStartup() {
 
 			    }
 			    else
-			    /// Check if the Command key (on Mac) is pressed with the "\" key
-			    if (event.metaKey && event.key === '\\') {
+			    /// Check if the Command key (on Mac) is pressed with the "/" key
+			    if (event.metaKey && event.key === '/') {
 
-			    	//console.log("Got Command \\");
+			    	//console.log("Got Command /");
 
 			       	event.preventDefault();  // Prevent the default browser action
 
@@ -49962,10 +49962,10 @@ function DoStartup() {
 
 			    }
 			    else
-			   	// Check if the Control key (on Windows/Linux) is pressed with the "/" key
-			    if (event.ctrlKey && event.key === '/') {
+			   	// Check if the Control key (on Windows/Linux) is pressed with the "\" key
+			    if (event.ctrlKey && event.key === '\\') {
 
-			    	//console.log("Got Control \\");
+			    	//console.log("Got Control \");
 
 			       	event.preventDefault();  // Prevent the default browser action
 
@@ -49980,10 +49980,10 @@ function DoStartup() {
 
 			    }
 			    else
-			    // Check if the Control key (on Windows/Linux) is pressed with the "\" key
-			    if (event.ctrlKey && event.key === '\\') {
+			    // Check if the Control key (on Windows/Linux) is pressed with the "/" key
+			    if (event.ctrlKey && event.key === '/') {
 
-			    	//console.log("Got Control \\");
+			    	//console.log("Got Control /");
 
 			       	event.preventDefault();  // Prevent the default browser action
 
