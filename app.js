@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2463_050225_1430";
+var gVersionNumber="2464_050325_0800";
 
 var gMIDIInitStillWaiting = false;
 
@@ -464,6 +464,57 @@ function getFirstPage(){
 //
 // Tune utility functions
 // 
+
+// Sort routine for tags that may contain diacriticals
+function customSortTagWithDiacriticals(a, b) {
+
+  // Step 1: Compare ignoring accents and case
+  const baseCompare = a.tag.localeCompare(b.tag, 'en', { sensitivity: 'base' });
+  if (baseCompare !== 0) return baseCompare;
+
+  // Step 2: Break tie using full sensitivity (accents and case)
+  const accentCompare = a.tag.localeCompare(b.tag, 'en', {
+    sensitivity: 'variant',
+    caseFirst: 'lower' 
+  });
+
+  return accentCompare;
+
+}
+
+// Sort routine for names that may contain diacriticals
+function customSortNameWithDiacriticals(a, b) {
+
+  // Step 1: Compare ignoring accents and case
+  const baseCompare = a.name.localeCompare(b.name, 'en', { sensitivity: 'base' });
+  if (baseCompare !== 0) return baseCompare;
+
+  // Step 2: Break tie using full sensitivity (accents and case)
+  const accentCompare = a.name.localeCompare(b.name, 'en', {
+    sensitivity: 'variant',
+    caseFirst: 'lower' 
+  });
+
+  return accentCompare;
+
+}
+
+// Sort routine for titles that may contain diacriticals
+function customSortTitleWithDiacriticals(a, b) {
+
+  // Step 1: Compare ignoring accents and case
+  const baseCompare = a.title.localeCompare(b.title, 'en', { sensitivity: 'base' });
+  if (baseCompare !== 0) return baseCompare;
+
+  // Step 2: Break tie using full sensitivity (accents and case)
+  const accentCompare = a.title.localeCompare(b.title, 'en', {
+    sensitivity: 'variant',
+    caseFirst: 'lower' 
+  });
+
+  return accentCompare;
+
+}
 
 // Setup event handler for mobile embedded use
 function SetupEmbeddedMobileEventHanders(el){
@@ -2340,27 +2391,11 @@ function SortTunesByTag(theTag,doCase){
 
 	}
 
-	if (theTag != "X"){
+	if ((theTag != "X") && (theTag != "M")){
 
 		// Sort tunes by name
-		tunesToProcess.sort((a, b) => {
+		tunesToProcess.sort(customSortTagWithDiacriticals);
 
-		  const tagA = a.tag;
-		  
-		  const tagB = b.tag; // ignore upper and lowercase
-		  
-		  if (tagA < tagB) {
-		    return -1;
-		  }
-		  
-		  if (tagA > tagB) {
-		    return 1;
-		  }
-
-		  // names must be equal
-		  return 0;
-
-		});
 	}
 	else{
 
@@ -2620,24 +2655,7 @@ function SortTunes(){
 
 
 	// Sort tunes by name
-	tunesToProcess.sort((a, b) => {
-
-	  const nameA = a.title.toUpperCase(); // ignore upper and lowercase
-	  
-	  const nameB = b.title.toUpperCase(); // ignore upper and lowercase
-	  
-	  if (nameA < nameB) {
-	    return -1;
-	  }
-	  
-	  if (nameA > nameB) {
-	    return 1;
-	  }
-
-	  // names must be equal
-	  return 0;
-
-	});
+	tunesToProcess.sort(customSortTitleWithDiacriticals);
 
 	theNotes = "";
 	theNotes += thePrefixABC;
@@ -3017,7 +3035,7 @@ function SortDialog(){
 	sendGoogleAnalytics("dialog","SortDialog");
 
  	const sorting_options = [
-	    { name: "  Sort by Name (T:)", id: "0" },
+	    { name: "  Sort by Title (T:)", id: "0" },
 	    { name: "  Sort by Key (K:)", id: "1" },
 	    { name: "  Sort by Meter (M:)", id: "2" },
 	    { name: "  Sort by Rhythm (R:)", id: "3" },
@@ -4183,24 +4201,7 @@ function GenerateTextIncipits(thePDF,addPageNumbers,pageNumberLocation,hideFirst
 		//debugger;
 
 		// sort tunes by name
-		tuneInfo.sort((a, b) => {
-
-		  var nameA = a.title.toUpperCase(); // ignore upper and lowercase
-		  
-		  var nameB = b.title.toUpperCase(); // ignore upper and lowercase
-		  		  
-		  if (nameA < nameB) {
-		    return -1;
-		  }
-		  
-		  if (nameA > nameB) {
-		    return 1;
-		  }
-
-		  // names must be equal
-		  return 0;
-
-		});
+		tuneInfo.sort(customSortTitleWithDiacriticals);
 
 		// Copy the results into the normally consumed arrays
 		for (i=0;i<totalTunes;++i){
@@ -5086,24 +5087,7 @@ function AppendTunebookIndex(thePDF,pageNumberLocation,hideFirstPageNumber,paper
 		}
 
 		// sort tunes by name
-		tuneInfo.sort((a, b) => {
-
-		  var nameA = a.name.toUpperCase(); // ignore upper and lowercase
-		  
-		  var nameB = b.name.toUpperCase(); // ignore upper and lowercase
-		  
-		  if (nameA < nameB) {
-		    return -1;
-		  }
-		  
-		  if (nameA > nameB) {
-		    return 1;
-		  }
-
-		  // names must be equal
-		  return 0;
-
-		});
+		tuneInfo.sort(customSortNameWithDiacriticals);
 
 		// Copy the results into the normally consumed arrays
 		for (i=0;i<totalTunes;++i){
@@ -5999,24 +5983,7 @@ function AppendTuneTOC(thePDF,pageNumberLocation,hideFirstPageNumber,paperStyle,
 		}
 
 		// sort tunes by name
-		tuneInfo.sort((a, b) => {
-
-		  var nameA = a.name.toUpperCase(); // ignore upper and lowercase
-		  
-		  var nameB = b.name.toUpperCase(); // ignore upper and lowercase
-		  
-		  if (nameA < nameB) {
-		    return -1;
-		  }
-		  
-		  if (nameA > nameB) {
-		    return 1;
-		  }
-
-		  // names must be equal
-		  return 0;
-
-		});
+		tuneInfo.sort(customSortNameWithDiacriticals);
 
 		// Copy the results into the normally consumed arrays
 		for (i=0;i<totalTunes;++i){
@@ -6227,24 +6194,7 @@ function DryRunAddTuneTOC(thePDF,pageNumberLocation,hideFirstPageNumber,paperSty
 		}
 
 		// sort tunes by name
-		tuneInfo.sort((a, b) => {
-
-		  var nameA = a.name.toUpperCase(); // ignore upper and lowercase
-		  
-		  var nameB = b.name.toUpperCase(); // ignore upper and lowercase
-		  		  
-		  if (nameA < nameB) {
-		    return -1;
-		  }
-		  
-		  if (nameA > nameB) {
-		    return 1;
-		  }
-
-		  // names must be equal
-		  return 0;
-
-		});
+		tuneInfo.sort(customSortNameWithDiacriticals);
 
 		// Copy the results into the normally consumed arrays
 		for (i=0;i<totalTunes;++i){
@@ -14548,24 +14498,7 @@ function SortTuneSearchResults(theNotes){
 	}
 
 	// Sort tunes by name
-	tunesToProcess.sort((a, b) => {
-
-	  const nameA = a.title.toUpperCase(); // ignore upper and lowercase
-	  
-	  const nameB = b.title.toUpperCase(); // ignore upper and lowercase
-	  
-	  if (nameA < nameB) {
-	    return -1;
-	  }
-	  
-	  if (nameA > nameB) {
-	    return 1;
-	  }
-
-	  // names must be equal
-	  return 0;
-
-	});
+	tunesToProcess.sort(customSortTitleWithDiacriticals);
 
 	theNotes = "";
 	theNotes += thePrefixABC;
