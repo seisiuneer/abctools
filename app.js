@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2464_050325_0800";
+var gVersionNumber="2465_050325_1000";
 
 var gMIDIInitStillWaiting = false;
 
@@ -464,6 +464,24 @@ function getFirstPage(){
 //
 // Tune utility functions
 // 
+
+function replaceEscapedDiacriticals(str) {
+  const diacriticMap = {
+    "\\'A": "Á", "\\'E": "É", "\\'I": "Í", "\\'O": "Ó", "\\'U": "Ú",
+    "\\'a": "á", "\\'e": "é", "\\'i": "í", "\\'o": "ó", "\\'u": "ú",
+    "\\`A": "À", "\\`E": "È", "\\`I": "Ì", "\\`O": "Ò", "\\`U": "Ù",
+    "\\`a": "à", "\\`e": "è", "\\`i": "ì", "\\`o": "ò", "\\`u": "ù",
+    '\\"A': "Ä", '\\"E': "Ë", '\\"I': "Ï", '\\"O': "Ö", '\\"U': "Ü",
+    '\\"a': "ä", '\\"e': "ë", '\\"i': "ï", '\\"o': "ö", '\\"u': "ü",
+    "\\~N": "Ñ", "\\~n": "ñ",
+    "\\^A": "Â", "\\^E": "Ê", "\\^I": "Î", "\\^O": "Ô", "\\^U": "Û",
+    "\\^a": "â", "\\^e": "ê", "\\^i": "î", "\\^o": "ô", "\\^u": "û",
+    "\\cC": "Ç", "\\cc": "ç"
+  };
+
+  return str.replace(/\\['"`~^c]["A-Za-z]/g, match => diacriticMap[match] || match);
+}
+
 
 // Sort routine for tags that may contain diacriticals
 function customSortTagWithDiacriticals(a, b) {
@@ -48184,6 +48202,50 @@ function SplitLongTextAndTags(){
 	});
 }
 
+// Normalize diacriticals
+
+function NormalizeDiacriticals(){
+
+	//console.log("NormalizeDiacriticals");
+
+	sendGoogleAnalytics("action","NormalizeDiacriticals");
+
+	if (!gAllowCopy){
+
+        var prompt = makeCenteredPromptString("No Text in the ABC Editor to Normalize")
+ 
+        DayPilot.Modal.alert(prompt, {
+            theme: "modal_flat",
+            top: 200
+        });
+
+        return;	
+   	}
+
+	var output = gTheABC.value;
+
+	output = replaceEscapedDiacriticals(output);
+
+	// Stuff in the output
+	setABCEditorText(output);
+
+	// Set dirty
+	gIsDirty = true;
+
+	// Force a redraw
+	RenderAsync(true,null,function(){
+
+		// Set the select point
+		gTheABC.selectionStart = 0;
+	    gTheABC.selectionEnd = 0;
+
+	    // Focus after operation
+	    FocusAfterOperation();
+
+	});
+
+}
+
 //
 // Split a multi-voice tune into individual voices
 //
@@ -48487,6 +48549,8 @@ function SetupContextMenu(showUpdateItem){
 				    {},
 				    { name: 'Split Long Tags and Text', fn: function(target) { SplitLongTextAndTags(); }},
 				    {},
+				    { name: 'Normalize Diacriticals', fn: function(target) { NormalizeDiacriticals(); }},
+				    {},
 				    { name: 'Reformat Using MusicXML', fn: function(target) { BatchMusicXMLRoundTrip(); }},
 				    {},
 				    { name: 'Split Voices', fn: function(target) { SplitVoices(); }},
@@ -48560,6 +48624,8 @@ function SetupContextMenu(showUpdateItem){
 				    {},
 				    { name: 'Split Long Tags and Text', fn: function(target) { SplitLongTextAndTags(); }},
 				    {},
+				    { name: 'Normalize Diacriticals', fn: function(target) { NormalizeDiacriticals(); }},
+				    {},
 				    { name: 'Reformat Using MusicXML', fn: function(target) { BatchMusicXMLRoundTrip(); }},
 				    {},
 				    { name: 'Split Voices', fn: function(target) { SplitVoices(); }},
@@ -48616,6 +48682,8 @@ function SetupContextMenu(showUpdateItem){
 					[{ name: 'Align Bars (All Tunes)', fn: function(target) { AlignMeasures(true); }},
 				    {},
 				    { name: 'Split Long Tags and Text', fn: function(target) { SplitLongTextAndTags(); }},
+				    {},
+				    { name: 'Normalize Diacriticals', fn: function(target) { NormalizeDiacriticals(); }},
 				    {},
 				    { name: 'Reformat Using MusicXML', fn: function(target) { BatchMusicXMLRoundTrip(); }},
 				    {},
@@ -48692,6 +48760,8 @@ function SetupContextMenu(showUpdateItem){
 				    {},
 				    { name: 'Split Long Tags and Text', fn: function(target) { SplitLongTextAndTags(); }},
 				    {},
+				    { name: 'Normalize Diacriticals', fn: function(target) { NormalizeDiacriticals(); }},
+				    {},
 				    { name: 'Reformat Using MusicXML', fn: function(target) { BatchMusicXMLRoundTrip(); }},
 				    {},
 				    { name: 'Split Voices', fn: function(target) { SplitVoices(); }},
@@ -48738,6 +48808,8 @@ function SetupContextMenu(showUpdateItem){
 			    {},
 			    { name: 'Split Long Tags and Text', fn: function(target) { SplitLongTextAndTags(); }},
 			    {},
+				{ name: 'Normalize Diacriticals', fn: function(target) { NormalizeDiacriticals(); }},
+				{},
 			    { name: 'Reformat Using MusicXML', fn: function(target) { BatchMusicXMLRoundTrip(); }},
 			    {},
 			    { name: 'Split Voices', fn: function(target) { SplitVoices(); }},
@@ -48783,6 +48855,8 @@ function SetupContextMenu(showUpdateItem){
 			    {},
 			    { name: 'Split Long Tags and Text', fn: function(target) { SplitLongTextAndTags(); }},
 			    {},
+				{ name: 'Normalize Diacriticals', fn: function(target) { NormalizeDiacriticals(); }},
+				{},
 			    { name: 'Reformat Using MusicXML', fn: function(target) { BatchMusicXMLRoundTrip(); }},
 			    {},
 			    { name: 'Split Voices', fn: function(target) { SplitVoices(); }},

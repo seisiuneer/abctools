@@ -364,6 +364,7 @@
             <a style="text-decoration:none;" href="#hamburger_align_one">Align Bars (One Tune)</a>
             <a style="text-decoration:none;" href="#hamburger_align_all">Align Bars (All Tunes)</a>
             <a style="text-decoration:none;" href="#hamburger_split">Split Long Tags and Text</a>
+            <a style="text-decoration:none;" href="#hamburger_normalize_diacriticals">Normalize Diacriticals</a>
             <a style="text-decoration:none;" href="#hamburger_reformat_xml">Reformat Using MusicXML</a>
             <a style="text-decoration:none;" href="#hamburger_split_voices">Split Voices</a>
             <a style="text-decoration:none;" href="#hamburger_midigchord">Inject MIDI gchord Templates</a>
@@ -783,6 +784,7 @@
                         <p class="toc"><a style="text-decoration:none;" href="#hamburger_align_one">Align Bars (One Tune)</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#hamburger_align_all">Align Bars (All Tunes)</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#hamburger_split">Split Long Tags and Text</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#hamburger_normalize_diacriticals">Normalize Diacriticals</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#hamburger_reformat_xml">Reformat Using MusicXML</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#hamburger_split_voices">Split Voices</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#hamburger_midigchord">Inject MIDI gchord Templates</a></p>
@@ -1263,7 +1265,7 @@
                 <p><strong>☰</strong></p>
                 <p>"Hamburger" dropdown menu that brings up additional useful commands:</p>
                 <div class="image_holder_p">
-                    <img class="image" loading="lazy" src="img/moretools_21.jpg"/>
+                    <img class="image" loading="lazy" src="img/moretools_22.jpg"/>
                 </div>
                 <hr id="hamburger_find">
                 <p><strong>Find and Replace</strong> (Desktop browsers only)</p>
@@ -1360,6 +1362,27 @@
                 <p>You may select which tags you want to split.</p>
                 <p>You may choose to split either the current tune being worked on or all tunes in the ABC editor.</p>
                 <p>The splitter attempts to split the text at a word boundary.</p>
+                <hr id="hamburger_normalize_diacriticals">
+                <p><strong>Normalize Diacriticals</strong></p>
+                <p>Normalizes all escaped diacriticals in the ABC, replacing them with the actual character including the diacritical.</p>
+                <p>For example, all instances of:</p>
+                <p class="code">\'A</p>
+                <p>would be replaced with:</p>
+                <p class="code">Á</p>    
+                <p>Here is the complete Javascript map of the escaped diacritical mapping:</p>
+                <p class="code">  const diacriticMap = {<br/>
+                &nbsp;&nbsp;"\\'A": "Á", "\\'E": "É", "\\'I": "Í", "\\'O": "Ó",<br/> 
+                &nbsp;&nbsp;"\\'U": "Ú", "\\'a": "á", "\\'e": "é", "\\'i": "í",<br/> 
+                &nbsp;&nbsp;"\\'o": "ó", "\\'u": "ú", "\\`A": "À", "\\`E": "È",<br/> 
+                &nbsp;&nbsp;"\\`I": "Ì", "\\`O": "Ò", "\\`U": "Ù", "\\`a": "à",<br/> 
+                &nbsp;&nbsp;"\\`e": "è", "\\`i": "ì", "\\`o": "ò", "\\`u": "ù",<br/>
+                &nbsp;&nbsp;'\\"A': "Ä", '\\"E': "Ë", '\\"I': "Ï", '\\"O': "Ö",<br/> 
+                &nbsp;&nbsp;'\\"U': "Ü", '\\"a': "ä", '\\"e': "ë", '\\"i': "ï",<br/> 
+                &nbsp;&nbsp;'\\"o': "ö", '\\"u': "ü", "\\~N": "Ñ", "\\~n": "ñ",<br/>
+                &nbsp;&nbsp;"\\^A": "Â", "\\^E": "Ê", "\\^I": "Î", "\\^O": "Ô",<br/> 
+                &nbsp;&nbsp;"\\^U": "Û", "\\^a": "â", "\\^e": "ê", "\\^i": "î",<br/> 
+                &nbsp;&nbsp;"\\^o": "ô", "\\^u": "û", "\\cC": "Ç", "\\cc": "ç"<br/>
+                }</p>
                 <hr id="hamburger_reformat_xml">
                 <p id="reformatusingxml"><strong>Reformat Using MusicXML</strong></p>
                 <p>Round-trips either the current tune or all the tunes in the ABC through MusicXML export and import back to ABC.</p>
