@@ -48229,7 +48229,7 @@ function NormalizeDiacriticals(){
 	const form = [
 	  {html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-left:15px;">Normalize Diacriticals&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#hamburger_normalize_diacriticals" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'},
 	  {html: '<p style="margin-top:36px;margin-bottom:12px;font-size:12pt;line-height:18pt;font-family:helvetica">When sorting the tunes by title or generating a sorted Table of Contents or Index in an exported PDF, for optimal sorting and title display, it is best to normalize the diacriticals if escaped versions were used in the ABC.</p>'},	  
-	  {html: '<p style="margin-top:24px;margin-bottom:12px;font-size:12pt;line-height:18pt;font-family:helvetica">Click Normalize to replace all escaped /\'A or /\'E style diacriticals with their actual characters including the diacritical marks, for example, Á and É.</p>'},
+	  {html: '<p style="margin-top:24px;margin-bottom:12px;font-size:12pt;line-height:18pt;font-family:helvetica">Click Normalize to replace all escaped /\'A or /\'E style diacriticals with single characters that include the diacritical marks, for example, Á and É.</p>'},
 	  {html: '<p>&nbsp;</p>'},
 	];
 
