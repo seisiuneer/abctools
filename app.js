@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2470_050425_1000";
+var gVersionNumber="2471_050425_1330";
 
 var gMIDIInitStillWaiting = false;
 
@@ -16341,6 +16341,281 @@ function BuildTuneSetSelectAll(){
 
 }
 
+function BuildTuneSetOpen(bOpenInNewTabInEditor){
+
+	//debugger;
+
+	var bRepeat = false;
+	var nRepeat = 1;
+
+	var elem = document.querySelector("input[name=repeat_enable]");
+
+	if (elem){
+		bRepeat = elem.checked;
+	}
+
+	BuildTuneSetRepeat = bRepeat;
+
+	elem = document.querySelector("input[name=repeat_count]");
+
+	if (elem){
+		nRepeat = elem.value;
+	}
+
+	nRepeat = parseInt(nRepeat);
+
+	if (isNaN(nRepeat)){
+		nRepeat = 1;
+	}
+
+	if (nRepeat < 1){
+		nRepeat = 1;
+	}
+
+	BuildTuneSetRepeatCount = nRepeat;
+
+	//console.log("bRepeat "+bRepeat+" nRepeat "+nRepeat);
+
+	// Save the settings for next time
+	SaveConfigurationSettings();
+
+	if (nRepeat == 1){
+		bRepeat = false;
+	}
+
+	// Any tunes in set?
+	var nTunesInSet = BuildTuneSetSelectionOrder.length;
+
+	if (nTunesInSet === 0) {
+
+		var thePrompt = "No tunes selected for the set.";
+		thePrompt = makeCenteredPromptString(thePrompt);
+		DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) });
+		return;
+
+	}
+
+	// Process the tune set
+	var theABC = gTheABC.value;
+	var tuneSet = "";
+	var setNames = [];
+
+	// Add selected tunes in order
+	for (i = 0; i < BuildTuneSetSelectionOrder.length; ++i) {
+
+		const tuneElement = BuildTuneSetSelectionOrder[i];
+		
+		const tuneName = tuneElement.textContent.trim().replace(/\s+\d+$/, ''); // Remove number tag
+		
+		const index = GetTunebookIndexTitles().indexOf(tuneName);
+		
+		if (index !== -1) {
+			const tuneABC = getTuneByIndex(index).trim() + "\n\n";
+			tuneSet += tuneABC;
+			setNames.push(tuneName);
+		}
+
+	}
+
+	tuneSet = processTuneSet(tuneSet, setNames, bRepeat, nRepeat);
+
+	var tuneSetName = setNames.join(' / ');
+	
+	if (nTunesInSet){
+
+		// Keep track of actions
+		sendGoogleAnalytics("action","TuneSetNewTab");
+
+		var result = FindPreTuneHeader(theABC);
+
+		result = result.trim();
+		
+		if (result.length > 0){
+			result += "\n\n";
+		}
+
+		tuneSet = tuneSet.trim();
+		tuneSet += "\n";
+
+		result += tuneSet;
+
+		var theURL = FillUrlBoxWithAbcInLZW(result,false);
+
+		if (bOpenInNewTabInEditor){
+
+			theURL += "&editor=1";
+
+		}
+		else{
+
+			theURL += "&play=1";
+
+		}
+
+		if (theURL.length >= 8100 ){
+
+			DayPilot.Modal.alert('<p style="text-align:center;font-family:helvetica;font-size:12pt;">The Share URL for the tune set is too long to open in a new tab.</p>',{ theme: "modal_flat", top: 230, scrollWithPage: (AllowDialogsToScroll()) });
+
+			return;
+
+		}
+
+		var w = window.open(theURL);
+
+		return;
+
+	}
+
+}
+
+function BuildTuneSetAppend(){
+
+	//debugger;
+
+	var bRepeat = false;
+	var nRepeat = 1;
+
+	var elem = document.querySelector("input[name=repeat_enable]");
+
+	if (elem){
+		bRepeat = elem.checked;
+	}
+
+	BuildTuneSetRepeat = bRepeat;
+
+	elem = document.querySelector("input[name=repeat_count]");
+
+	if (elem){
+		nRepeat = elem.value;
+	}
+
+	nRepeat = parseInt(nRepeat);
+
+	if (isNaN(nRepeat)){
+		nRepeat = 1;
+	}
+
+	if (nRepeat < 1){
+		nRepeat = 1;
+	}
+
+	BuildTuneSetRepeatCount = nRepeat;
+
+	//console.log("bRepeat "+bRepeat+" nRepeat "+nRepeat);
+
+	// Save the settings for next time
+	SaveConfigurationSettings();
+
+	if (nRepeat == 1){
+		bRepeat = false;
+	}
+
+	// Any tunes in set?
+	var nTunesInSet = BuildTuneSetSelectionOrder.length;
+
+	if (nTunesInSet === 0) {
+
+		var thePrompt = "No tunes selected for the set.";
+		thePrompt = makeCenteredPromptString(thePrompt);
+		DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) });
+		return;
+
+	}
+
+	// Process the tune set
+	var theABC = gTheABC.value;
+	var tuneSet = "";
+	var setNames = [];
+
+	// Add selected tunes in order
+	for (i = 0; i < BuildTuneSetSelectionOrder.length; ++i) {
+
+		const tuneElement = BuildTuneSetSelectionOrder[i];
+		
+		const tuneName = tuneElement.textContent.trim().replace(/\s+\d+$/, ''); // Remove number tag
+		
+		const index = GetTunebookIndexTitles().indexOf(tuneName);
+		
+		if (index !== -1) {
+			const tuneABC = getTuneByIndex(index).trim() + "\n\n";
+			tuneSet += tuneABC;
+			setNames.push(tuneName);
+		}
+
+	}
+
+	tuneSet = processTuneSet(tuneSet, setNames, bRepeat, nRepeat);
+
+	var tuneSetName = setNames.join(' / ');
+	
+	if (nTunesInSet){
+
+		var thePrompt = "Are you sure you want to create a set:<br/><br/>"+tuneSetName+"<br/><br/>"; 
+
+		if (nTunesInSet == 1){
+
+			thePrompt += " from the 1 tune in your tunebook<br/><br/>";
+
+		}
+		else{
+
+			thePrompt += " from the "+nTunesInSet+" tunes in your tunebook?<br/><br/>";
+
+		}
+		
+		thePrompt += "The set will be added to the end of the ABC.";
+
+		// Center the string in the prompt
+		thePrompt = makeCenteredPromptString(thePrompt);
+
+		DayPilot.Modal.confirm(thePrompt,{ top:200, theme: "modal_flat", scrollWithPage: (AllowDialogsToScroll()) }).then(function(args){
+
+			if (!args.canceled){
+
+				// Keep track of actions
+				sendGoogleAnalytics("action","TuneSetAppend");
+
+				theABC = theABC.trim()+"\n\n"+tuneSet;
+
+	    		// Stuff in the new result
+	    		setABCEditorText(theABC);
+
+	    		RenderAsync(true,null, function(){
+
+					var theTune = getTuneByIndex(totalTunes);
+
+					var tuneOffset = theABC.length-tuneSet.length;
+
+					if (!gIsMaximized){
+
+						// Scroll the tune ABC into view
+					    ScrollABCTextIntoView(gTheABC,tuneOffset,tuneOffset,10);
+
+					    if (isMobileBrowser()){
+				    		gTheABC.blur();
+					    	return;
+					    }
+					    
+				    	gTheABC.blur();
+				    	gTheABC.focus();
+
+				    }
+
+					// Scroll the tune into view
+					MakeTuneVisible(true);
+
+	    		});
+
+	    		// Set dirty
+				gIsDirty = true;
+				
+			}
+		})
+
+	}
+
+}
+
 function BuildTuneSetClearSelection(){
 
     const childDivs = document.querySelectorAll('#tuneset-tune-list .tuneset_tune');
@@ -16353,8 +16628,6 @@ function BuildTuneSetClearSelection(){
 var BuildTuneSetSelectionOrder = [];
 var BuildTuneSetRepeat = false;
 var BuildTuneSetRepeatCount = 1
-var BuildTuneSetOpenInNewTab = true;
-var BuildTuneSetNewTabEditor = false;
 
 function BuildTuneSet(){
 
@@ -16382,15 +16655,13 @@ function BuildTuneSet(){
 
 	var theData = {
 		repeat_enable:BuildTuneSetRepeat,
-		repeat_count:BuildTuneSetRepeatCount,
-		open_in_new_tab:BuildTuneSetOpenInNewTab,
-		new_tab_open_in_editor:BuildTuneSetNewTabEditor
+		repeat_count:BuildTuneSetRepeatCount
 	};
 
 	// MAE 14 Jul 2024 - Make the div fill the screen
-	var theHeight = window.innerHeight - 650;
+	var theHeight = window.innerHeight - 600;
 
-	var theTuneSetDiv = '<div id="tuneset-tune-list" style="overflow:auto;height:'+theHeight+'px;margin-top:12px">';
+	var theTuneSetDiv = '<div id="tuneset-tune-list" style="overflow:auto;height:'+theHeight+'px;margin-top:12px;margin-bottom:18px;">';
 
 	for (i=0;i<nTitles;++i){
 
@@ -16402,25 +16673,17 @@ function BuildTuneSet(){
 	var form = [
 
 		{html: '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:15px;">Create Tune Set&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#hamburger_create_tune_set" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'},
-		{html: '<p style="margin-top:8px;margin-bottom:12px;font-size:12pt;line-height:18pt;font-family:helvetica">Select the tunes you want combined into a tune set, then click Create.</p>'},  
-		{html: '<p style="margin-top:8px;margin-bottom:12px;font-size:12pt;line-height:18pt;font-family:helvetica">By default, the tune set will be added to the end of the ABC here.</p>'},  
-	  	{name: "          Instead, open tune set in the Player in a new browser tab", id: "open_in_new_tab", type:"checkbox", cssClass:"create_tune_set_text_checkbox"},
-	  	{name: "          Open tune set in the Editor instead of the Player", id: "new_tab_open_in_editor", type:"checkbox", cssClass:"create_tune_set_text_checkbox_2"},
+		{html: '<p style="margin-top:8px;margin-bottom:12px;font-size:12pt;line-height:18pt;font-family:helvetica">Select the tunes you want in a tune set, then choose one of the three actions below:</p>'},  
+		{html: '<p style="text-align:center;margin-top:14px;"><input id="tuneset_select_all" class="advancedcontrols btn btn-injectcontrols-headers" onclick="BuildTuneSetSelectAll();" type="button" value="Select All" title="Selects all the tunes for set creation"><input id="tuneset_clear_selection" class="advancedcontrols btn btn-injectcontrols-headers" onclick="BuildTuneSetClearSelection();" type="button" value="Clear Selection" title="Unselects all the tunes for set creation"></p>'},
+		{html: theTuneSetDiv},
 	  	{name: "          Repeat each tune in the set when played", id: "repeat_enable", type:"checkbox", cssClass:"create_tune_set_text_checkbox"},
 	    {name: "Repeat count:", id: "repeat_count", type:"number", cssClass:"create_tune_set_text"},
-		{html: theTuneSetDiv},
-		{html: '<p style="text-align:center;margin-top:36px;"><input id="tuneset_select_all" class="advancedcontrols btn btn-injectcontrols-headers" onclick="BuildTuneSetSelectAll();" type="button" value="Select All" title="Selects all the tunes for set creation"><input id="tuneset_clear_selection" class="advancedcontrols btn btn-injectcontrols-headers" onclick="BuildTuneSetClearSelection();" type="button" value="Clear Selection" title="Unselects all the tunes for set creation"></p>'}
+		{html: '<p style="text-align:center;margin-top:18px;margin-bottom:20px"><input id="tuneset_open_in_player" style="margin-right:18px;" class="advancedcontrols btn btn-tuneset-inject" onclick="BuildTuneSetOpen(false);" type="button" value="Open in New Tab in Player" title="Opens the tune set in a new tab in the Player"><input id="tuneset_open_in_editor" style="margin-right:18px;" class="advancedcontrols btn btn-tuneset-inject" onclick="BuildTuneSetOpen(true);" type="button" value="Open in New Tab in Editor" title="Opens the tune set in a new tab in the Editor"><input id="tuneset_append_to_abc" class="advancedcontrols btn btn-tuneset-inject" onclick="BuildTuneSetAppend();" type="button" value="Append to ABC" title="Appends the tune set to the current ABC"></p>'}
 	];
 
-	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 25, width: 650, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false, okText:"Create" } ).then(function(args){
+	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 25, width: 700, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
 
     	if (!args.canceled){
-
-    		var bOpenInNewTab = args.result.open_in_new_tab;
-    		BuildTuneSetOpenInNewTab = bOpenInNewTab;
-
-    		var bOpenInNewTabInEditor = args.result.new_tab_open_in_editor;
-    		BuildTuneSetNewTabEditor = bOpenInNewTabInEditor;
 
     		var bRepeat = args.result.repeat_enable;
     		BuildTuneSetRepeat = bRepeat;
@@ -16444,159 +16707,11 @@ function BuildTuneSet(){
     		// Save the settings for next time
    			SaveConfigurationSettings();
 
-   			if (nRepeat == 1){
-    			bRepeat = false;
-    		}
+   			return;
 
-    		// Any tunes in set?
-			var nTunesInSet = BuildTuneSetSelectionOrder.length;
+   		}
 
-			if (nTunesInSet === 0) {
-
-				var thePrompt = "No tunes selected for the set.";
-				thePrompt = makeCenteredPromptString(thePrompt);
-				DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) });
-				return;
-
-			}
-
-			// Process the tune set
-			var theABC = gTheABC.value;
-			var tuneSet = "";
-			var setNames = [];
-
-			// Add selected tunes in order
-			for (i = 0; i < BuildTuneSetSelectionOrder.length; ++i) {
-
-				const tuneElement = BuildTuneSetSelectionOrder[i];
-				
-				const tuneName = tuneElement.textContent.trim().replace(/\s+\d+$/, ''); // Remove number tag
-				
-				const index = GetTunebookIndexTitles().indexOf(tuneName);
-				
-				if (index !== -1) {
-					const tuneABC = getTuneByIndex(index).trim() + "\n\n";
-					tuneSet += tuneABC;
-					setNames.push(tuneName);
-				}
-
-			}
-
-			tuneSet = processTuneSet(tuneSet, setNames, bRepeat, nRepeat);
-
-			var tuneSetName = setNames.join(' / ');
-    		
-    		if (nTunesInSet){
-
-				if (bOpenInNewTab){
-
-					// Keep track of actions
-					sendGoogleAnalytics("action","TuneSetNewTab");
-
-					var result = FindPreTuneHeader(theABC);
-
-					result = result.trim();
-					
-					if (result.length > 0){
-						result += "\n\n";
-					}
-
-					tuneSet = tuneSet.trim();
-					tuneSet += "\n";
-
-					result += tuneSet;
-
-					var theURL = FillUrlBoxWithAbcInLZW(result,false);
-
-					if (bOpenInNewTabInEditor){
-
-						theURL += "&editor=1";
-
-					}
-					else{
-
-						theURL += "&play=1";
-
-					}
-
-					if (theURL.length >= 8100 ){
-
-						DayPilot.Modal.alert('<p style="text-align:center;font-family:helvetica;font-size:12pt;">The Share URL for the tune set is too long to open in a new tab.</p>',{ theme: "modal_flat", top: 230, scrollWithPage: (AllowDialogsToScroll()) });
-
-						return;
-
-					}
-
-					var w = window.open(theURL);
-
-					return;
-
-				}
-				else{
-
-					var thePrompt = "Are you sure you want to create a set:<br/><br/>"+tuneSetName+"<br/><br/>"; 
-
-					if (nTunesInSet == 1){
-
-						thePrompt += " from the 1 tune in your tunebook<br/><br/>";
-
-					}
-					else{
-
-						thePrompt += " from the "+nTunesInSet+" tunes in your tunebook?<br/><br/>";
-
-					}
-					
-					thePrompt += "The set will be added to the end of the ABC.";
-
-					// Center the string in the prompt
-					thePrompt = makeCenteredPromptString(thePrompt);
-
-					DayPilot.Modal.confirm(thePrompt,{ top:200, theme: "modal_flat", scrollWithPage: (AllowDialogsToScroll()) }).then(function(args){
-						if (!args.canceled){
-
-							// Keep track of actions
-							sendGoogleAnalytics("action","TuneSetAppend");
-
-							theABC = theABC.trim()+"\n\n"+tuneSet;
-
-				    		// Stuff in the new result
-				    		setABCEditorText(theABC);
-
-				    		RenderAsync(true,null, function(){
-
-								var theTune = getTuneByIndex(totalTunes);
-
-								var tuneOffset = theABC.length-tuneSet.length;
-
-								if (!gIsMaximized){
-
-									// Scroll the tune ABC into view
-								    ScrollABCTextIntoView(gTheABC,tuneOffset,tuneOffset,10);
-
-								    if (isMobileBrowser()){
-							    		gTheABC.blur();
-								    	return;
-								    }
-								    
-							    	gTheABC.blur();
-							    	gTheABC.focus();
-
-							    }
-
-								// Scroll the tune into view
-								MakeTuneVisible(true);
-
-				    		});
-
-				    		// Set dirty
-							gIsDirty = true;
-							
-						}
-					})
-				}
-			}
-		}
+ 
     });
 }
 
@@ -40006,18 +40121,6 @@ function GetInitialConfigurationSettings(){
 		}
 	}
 
-	BuildTuneSetOpenInNewTab = true;
-	val = localStorage.BuildTuneSetOpenInNewTab;
-	if (val){
-		BuildTuneSetOpenInNewTab = (val == "true");
-	}
-
-	BuildTuneSetNewTabEditor = false;
-	val = localStorage.BuildTuneSetNewTabEditor;
-	if (val){
-		BuildTuneSetNewTabEditor = (val == "true");
-	}
-
 	// Save the settings, in case they were initialized
 	SaveConfigurationSettings();
 
@@ -40268,8 +40371,6 @@ function SaveConfigurationSettings(){
 		// Tune set creation
 		localStorage.BuildTuneSetRepeat = BuildTuneSetRepeat;
 		localStorage.BuildTuneSetRepeatCount = BuildTuneSetRepeatCount;
-		localStorage.BuildTuneSetOpenInNewTab = BuildTuneSetOpenInNewTab;
-		localStorage.BuildTuneSetNewTabEditor = BuildTuneSetNewTabEditor;
 
 	}
 }
