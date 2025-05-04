@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2469_050425_0800";
+var gVersionNumber="2470_050425_1000";
 
 var gMIDIInitStillWaiting = false;
 
@@ -19790,6 +19790,7 @@ function GetABCFileHeader(){
       /^%%measure\S+.*$/,
       /^%%printtempo.*$/,
       /^%%titleleft.*$/,
+      /^%%keywarn.*$/,
       /^%left_justify_titles.*$/,
       /^%abcjs_render_params.*$/,
       /^%hide_information_labels.*$/,
@@ -48547,24 +48548,10 @@ function SetupContextMenu(showUpdateItem){
 
 				items = [
 				    {},
-				    { name: 'Toggle Top/Bottom Toolbars', fn: function(target) { ToggleTopBar(); }},
-				    { name: 'Maximize Editor', fn: function(target) { MaximizeEditor(); }},
-				    {}
-				];
-
-				if (isMac()){
-					items.push({ name: 'Create Tune Set (⌘+/)', fn: function(target) { BuildTuneSet(); }},);
-				}
-				else{
-					items.push({ name: 'Create Tune Set (Ctrl+/)', fn: function(target) { BuildTuneSet(); }});				
-				}
-
-				items = items.concat([
-				    {},
-				    { name: 'Reorder Tunes', fn: function(target) { ChangeTuneOrder(); }},
+					{ name: 'Reorder Tunes', fn: function(target) { ChangeTuneOrder(); }},
 				    { name: 'Delete Tunes', fn: function(target) { CullTunes(); }},
 				    {}
-				]);
+				];
 
 				if (isMac()){
 					items.push({ name: 'Align Bars (One Tune) (⌘+\\)', fn: function(target) { AlignMeasures(false); }});
@@ -48588,10 +48575,13 @@ function SetupContextMenu(showUpdateItem){
 				    {},
 				    { name: 'Import PDF, Website, or CSV', fn: function(target) { ImportPDF_CSV_Website(); }},
 				    {},
-				    { name: 'Launch ABC Tags to CSV', fn: function(target) { LaunchCSVTagExtractor(); }},
+				    { name: 'Toggle Top/Bottom Toolbars', fn: function(target) { ToggleTopBar(); }},
+				    { name: 'Maximize Editor', fn: function(target) { MaximizeEditor(); }},
 				    {},
 				    { name: 'Settings', fn: function(target) { ConfigureToolSettings(); }},
 				    { name: 'Advanced Settings', fn: function(target) { AdvancedSettings(); }},
+				    {},
+				    { name: 'Launch ABC Tags to CSV', fn: function(target) { LaunchCSVTagExtractor(); }},
 				    {},
 				    { name: 'Launch Standard Editor', fn: function(target) { LaunchStandardEditor(); }},
 				    {},
@@ -48612,6 +48602,16 @@ function SetupContextMenu(showUpdateItem){
 				    elem.title = "An update to the tool is available!"
 				}
 
+				var theTuneSetItem = { name: 'Create Tune Set (Ctrl+/)', fn: function(target) { BuildTuneSet(); }};
+
+				if (isMac()){
+					theTuneSetItem = { name: 'Create Tune Set (⌘+/)', fn: function(target) { BuildTuneSet(); }}
+				}
+
+				items.unshift(theTuneSetItem);
+
+				items.unshift({});
+
 				var theGoToItem = { name: 'Jump to Tune (Ctrl+J)', fn: function(target) { JumpToTune(); }};
 				
 				if (isMac()){
@@ -48621,9 +48621,7 @@ function SetupContextMenu(showUpdateItem){
 				
 				items.unshift(theGoToItem);
 				
-				var theSpacer = {};
-
-				items.unshift(theSpacer);
+				items.unshift({});
 
 				// Adapt the search and replace key string based on the platform
 				var theFindItem = { name: 'Find and Replace (Ctrl+F)', fn: function(target) { FindAndReplace(); }};
@@ -48640,9 +48638,6 @@ function SetupContextMenu(showUpdateItem){
 				items = [
 					{ name: 'Jump to Tune', fn: function(target) { JumpToTune(); }},
 					{},
-				    { name: 'Toggle Top/Bottom Toolbars', fn: function(target) { ToggleTopBar(); }},
-				    { name: 'Maximize Editor', fn: function(target) { MaximizeEditor(); }},
-				    {},
 				    { name: 'Create Tune Set', fn: function(target) { BuildTuneSet(); }},
 				    {},
 				    { name: 'Reorder Tunes', fn: function(target) { ChangeTuneOrderMobile(); }},
@@ -48659,10 +48654,13 @@ function SetupContextMenu(showUpdateItem){
 				    {},
 				    { name: 'Split Voices', fn: function(target) { SplitVoices(); }},
 				    {},
-				    { name: 'Launch ABC Tags to CSV', fn: function(target) { LaunchCSVTagExtractor(); }},
+				    { name: 'Toggle Top/Bottom Toolbars', fn: function(target) { ToggleTopBar(); }},
+				    { name: 'Maximize Editor', fn: function(target) { MaximizeEditor(); }},
 				    {},
 				    { name: 'Settings', fn: function(target) { ConfigureToolSettings(); }},
 				    { name: 'Advanced Settings', fn: function(target) { AdvancedSettings(); }},
+				    {},
+				    { name: 'Launch ABC Tags to CSV', fn: function(target) { LaunchCSVTagExtractor(); }},
 				    {},
 					{ name: 'Launch Standard Editor', fn: function(target) { LaunchStandardEditor(); }},
 				    {},
@@ -48689,25 +48687,11 @@ function SetupContextMenu(showUpdateItem){
 			if (isPureDesktopBrowser()){
 
 				items = [
-				    {},
-				    { name: 'Toggle Top/Bottom Toolbars', fn: function(target) { ToggleTopBar(); }},
-				    { name: 'Maximize Editor', fn: function(target) { MaximizeEditor(); }},
-				    {}
-				];
-
-				if (isMac()){
-					items.push({ name: 'Create Tune Set (⌘+/)', fn: function(target) { BuildTuneSet(); }},);
-				}
-				else{
-					items.push({ name: 'Create Tune Set (Ctrl+/)', fn: function(target) { BuildTuneSet(); }});				
-				}
-
-				items = items.concat([
-				    {},
+					{},
 				    { name: 'Reorder Tunes', fn: function(target) { ChangeTuneOrder(); }},
 				    { name: 'Delete Tunes', fn: function(target) { CullTunes(); }},
 				    {},
-				]);
+				];
 
 				if (isMac()){
 					items.push({ name: 'Align Bars (One Tune) (⌘+\\)', fn: function(target) { AlignMeasures(false); }});
@@ -48731,16 +48715,19 @@ function SetupContextMenu(showUpdateItem){
 				    {},
 				    { name: 'Import PDF, Website, or CSV', fn: function(target) { ImportPDF_CSV_Website(); }},
 				    {},
-				    { name: 'Launch ABC Tags to CSV', fn: function(target) { LaunchCSVTagExtractor(); }},
+				    { name: 'Toggle Top/Bottom Toolbars', fn: function(target) { ToggleTopBar(); }},
+				    { name: 'Maximize Editor', fn: function(target) { MaximizeEditor(); }},
 				    {},
 				    { name: 'Settings', fn: function(target) { ConfigureToolSettings(); }},
 				    { name: 'Advanced Settings', fn: function(target) { AdvancedSettings(); }},
+				    {},
+				    { name: 'Launch ABC Tags to CSV', fn: function(target) { LaunchCSVTagExtractor(); }},
 				    {},
 					{ name: 'Launch Quick Editor', fn: function(target) { LaunchQuickEditor(); }},
 				]);
 
 				// For forcing display for User Guide screen shots
-				//showUpdateItem = true;// FOOFOO
+				// showUpdateItem = true;// FOOFOO
 
 				if (showUpdateItem){
 					items = items.concat(
@@ -48756,6 +48743,16 @@ function SetupContextMenu(showUpdateItem){
 				    elem.title = "An update to the tool is available!"
 				}
 
+				var theTuneSetItem = { name: 'Create Tune Set (Ctrl+/)', fn: function(target) { BuildTuneSet(); }};
+
+				if (isMac()){
+					theTuneSetItem = { name: 'Create Tune Set (⌘+/)', fn: function(target) { BuildTuneSet(); }}
+				}
+
+				items.unshift(theTuneSetItem);
+
+				items.unshift({});
+
 				var theGoToItem = { name: 'Jump to Tune (Ctrl+J)', fn: function(target) { JumpToTune(); }};
 				
 				if (isMac()){
@@ -48765,9 +48762,7 @@ function SetupContextMenu(showUpdateItem){
 				
 				items.unshift(theGoToItem);
 				
-				var theSpacer = {};
-
-				items.unshift(theSpacer);
+				items.unshift({});
 
 				// Adapt the search and replace key string based on the platform
 				var theFindItem = { name: 'Find and Replace (Ctrl+F)', fn: function(target) { FindAndReplace(); }};
@@ -48784,12 +48779,9 @@ function SetupContextMenu(showUpdateItem){
 
 				items = [
 					{ name: 'Jump to Tune', fn: function(target) { JumpToTune(); }},
-					{},
-				    { name: 'Toggle Top/Bottom Toolbars', fn: function(target) { ToggleTopBar(); }},
-				    { name: 'Maximize Editor', fn: function(target) { MaximizeEditor(); }},
 				    {},
 				    { name: 'Create Tune Set', fn: function(target) { BuildTuneSet(); }},
-				    {},
+					{},
 				    { name: 'Reorder Tunes', fn: function(target) { ChangeTuneOrderMobile(); }},
 				    { name: 'Delete Tunes', fn: function(target) { CullTunes(); }},
 				    {},
@@ -48804,10 +48796,13 @@ function SetupContextMenu(showUpdateItem){
 				    {},
 				    { name: 'Split Voices', fn: function(target) { SplitVoices(); }},
 				    {},
-				    { name: 'Launch ABC Tags to CSV', fn: function(target) { LaunchCSVTagExtractor(); }},
+				    { name: 'Toggle Top/Bottom Toolbars', fn: function(target) { ToggleTopBar(); }},
+				    { name: 'Maximize Editor', fn: function(target) { MaximizeEditor(); }},
 				    {},
 				    { name: 'Settings', fn: function(target) { ConfigureToolSettings(); }},
 				    { name: 'Advanced Settings', fn: function(target) { AdvancedSettings(); }},
+				    {},
+				    { name: 'Launch ABC Tags to CSV', fn: function(target) { LaunchCSVTagExtractor(); }},
 				    {},
 				    { name: 'Launch Quick Editor', fn: function(target) { LaunchQuickEditor(); }},
 				];
@@ -48833,8 +48828,6 @@ function SetupContextMenu(showUpdateItem){
 
 			items = [
 				{ name: 'Jump to Tune', fn: function(target) { JumpToTune(); }},
-				{},
-			    { name: 'Toggle Top/Bottom Toolbars', fn: function(target) { ToggleTopBar(); }},
 			    {},
 				{ name: 'Create Tune Set', fn: function(target) { BuildTuneSet(); }},
 				{},
@@ -48852,10 +48845,12 @@ function SetupContextMenu(showUpdateItem){
 			    {},
 			    { name: 'Split Voices', fn: function(target) { SplitVoices(); }},
 			    {},
-			    { name: 'Launch ABC Tags to CSV', fn: function(target) { LaunchCSVTagExtractor(); }},
-			    {},
+			    { name: 'Toggle Top/Bottom Toolbars', fn: function(target) { ToggleTopBar(); }},
+				{},
 			    { name: 'Settings', fn: function(target) { ConfigureToolSettings(); }},
 			    { name: 'Advanced Settings', fn: function(target) { AdvancedSettings(); }},
+			    {},
+			    { name: 'Launch ABC Tags to CSV', fn: function(target) { LaunchCSVTagExtractor(); }},
 			    {},
 			    { name: 'Launch Standard Editor', fn: function(target) { LaunchStandardEditor(); }},
 			    {},
@@ -48880,8 +48875,6 @@ function SetupContextMenu(showUpdateItem){
 
 			items = [
 				{ name: 'Jump to Tune', fn: function(target) { JumpToTune(); }},
-				{},
-			    { name: 'Toggle Top/Bottom Toolbars', fn: function(target) { ToggleTopBar(); }},
 			    {},
 				{ name: 'Create Tune Set', fn: function(target) { BuildTuneSet(); }},
 				{},
@@ -48899,10 +48892,12 @@ function SetupContextMenu(showUpdateItem){
 			    {},
 			    { name: 'Split Voices', fn: function(target) { SplitVoices(); }},
 			    {},
-			    { name: 'Launch ABC Tags to CSV', fn: function(target) { LaunchCSVTagExtractor(); }},
-			    {},
+			    { name: 'Toggle Top/Bottom Toolbars', fn: function(target) { ToggleTopBar(); }},
+				{},
 			    { name: 'Settings', fn: function(target) { ConfigureToolSettings(); }},
 			    { name: 'Advanced Settings', fn: function(target) { AdvancedSettings(); }},
+			    {},
+			    { name: 'Launch ABC Tags to CSV', fn: function(target) { LaunchCSVTagExtractor(); }},
 			    {},
 			    { name: 'Launch Quick Editor', fn: function(target) { LaunchQuickEditor(); }},
 			];
@@ -49071,8 +49066,9 @@ function DoStartup() {
 	// Uncomment these lines for mobile simulation testing
 	//
 	//gIsIOS = true; 
-	//gIsIPad = true;  
 	//gIsIPhone = true;  
+	//gIsIPad = true;
+	//giPadTwoColumn = true;  
 
 	//
 	// iOS and Android styling adaptation

@@ -4356,6 +4356,7 @@ var bookParser = function bookParser(book) {
       /^%%measure\S+.*$/,
       /^%%printtempo.*$/,
       /^%%titleleft.*$/,
+      /^%%keywarn.*$/,
       /^%left_justify_titles.*$/,
       /^%abcjs_render_params.*$/,
       /^%hide_information_labels.*$/,
@@ -5615,6 +5616,12 @@ var parseDirective = {};
         }
         multilineVars.currBarNumber = tuneBuilder.setBarNumberImmediate(tokens[0].intt);
         break;
+      case "keywarn":
+        if (tokens.length !== 1 || tokens[0].type !== 'number' || (tokens[0].intt !== 1 && tokens[0].intt !== 0)) {
+          return 'Directive keywarn requires 0 or 1 as a parameter.';
+        }
+        multilineVars[cmd] = tokens[0].intt === 1
+        break;
       case "begintext":
         var textBlock = '';
         line = tokenizer.nextLine();
@@ -6504,7 +6511,7 @@ var ParseHeader = function ParseHeader(tokenizer, warn, multilineVars, tune, tun
           var result = parseKeyVoice.parseKey(line.substring(2), false);
           if (!multilineVars.is_in_header && tuneBuilder.hasBeginMusic()) {
             // MAE 28 April 2024 - For tune set creation - hide cautionary key signatures at the end of lines
-            if (!gHideCautionaryKS){
+            if (!gHideCautionaryKS && (multilineVars.keywarn !== false)){
               if (result.foundClef) tuneBuilder.appendStartingElement('clef', startChar, endChar, multilineVars.clef);
               if (result.foundKey) tuneBuilder.appendStartingElement('key', startChar, endChar, parseKeyVoice.fixKey(multilineVars.clef, multilineVars.key));
             }
@@ -7039,7 +7046,7 @@ var parseKeyVoice = {};
           multilineVars.key.mode = mode;
 
           // MAE 29 April 2025 - To hide implied naturals
-          if (!gHideCautionaryKS){
+          if (!gHideCautionaryKS && (multilineVars.keywarn !== false)){
             if (oldKey) { 
               // Add natural in all places that the old key had an accidental.
               var kk;

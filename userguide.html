@@ -356,8 +356,6 @@
             <a style="text-decoration:none;" href="#moretoolsdropdown">☰</a>
             <a style="text-decoration:none;" href="#hamburger_find">Find and Replace</a>
             <a style="text-decoration:none;" href="#hamburger_jump_to_tune">Jump to Tune</a>
-            <a style="text-decoration:none;" href="#hamburger_toggle_top_bottom">Toggle Top/Bottom Toolbars</a>
-            <a style="text-decoration:none;" href="#hamburger_maximize">Maximize Editor</a>
             <a style="text-decoration:none;" href="#hamburger_create_tune_set">Create Tune Set</a>
             <a style="text-decoration:none;" href="#hamburger_reorder">Reorder Tunes</a>
             <a style="text-decoration:none;" href="#hamburger_delete">Delete Tunes</a>
@@ -369,9 +367,11 @@
             <a style="text-decoration:none;" href="#hamburger_split_voices">Split Voices</a>
             <a style="text-decoration:none;" href="#hamburger_midigchord">Inject MIDI gchord Templates</a>
             <a style="text-decoration:none;" href="#hamburger_extracting_pdf_website">Import PDF, Website, or CSV</a>
-            <a style="text-decoration:none;" href="#hamburger_abc_to_csv">Launch ABC Tags to CSV</a>
+            <a style="text-decoration:none;" href="#hamburger_toggle_top_bottom">Toggle Top/Bottom Toolbars</a>
+            <a style="text-decoration:none;" href="#hamburger_maximize">Maximize Editor</a>
             <a style="text-decoration:none;" href="#hamburger_settings">Settings</a>
             <a style="text-decoration:none;" href="#hamburger_advanced_settings">Advanced Settings</a>
+            <a style="text-decoration:none;" href="#hamburger_abc_to_csv">Launch ABC Tags to CSV</a>
             <a style="text-decoration:none;" href="#hamburger_quick_editor">Launch Quick Editor</a>
             <a style="text-decoration:none;" href="#new_version_check">New Version Available Notification</a>
             </details>
@@ -776,8 +776,6 @@
                         <p class="toc"><a style="text-decoration:none;" href="#moretoolsdropdown">☰</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#hamburger_find">Find and Replace</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#hamburger_jump_to_tune">Jump to Tune</a></p>
-                        <p class="toc"><a style="text-decoration:none;" href="#hamburger_toggle_top_bottom">Toggle Top/Bottom Toolbars</a></p>
-                        <p class="toc"><a style="text-decoration:none;" href="#hamburger_maximize">Maximize Editor</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#hamburger_create_tune_set">Create Tune Set</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#hamburger_reorder">Reorder Tunes</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#hamburger_delete">Delete Tunes</a></p>
@@ -789,9 +787,11 @@
                         <p class="toc"><a style="text-decoration:none;" href="#hamburger_split_voices">Split Voices</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#hamburger_midigchord">Inject MIDI gchord Templates</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#hamburger_extracting_pdf_website">Import PDF, Website, or CSV</a></p>
-                        <p class="toc"><a style="text-decoration:none;" href="#hamburger_abc_to_csv">Launch ABC Tags to CSV</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#hamburger_toggle_top_bottom">Toggle Top/Bottom Toolbars</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#hamburger_maximize">Maximize Editor</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#hamburger_settings">Settings</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#hamburger_advanced_settings">Advanced Settings</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#hamburger_abc_to_csv">Launch ABC Tags to CSV</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#hamburger_quick_editor">Launch Quick Editor</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#new_version_check">New Version Available Notification</a></p>
                     </div>
@@ -1265,7 +1265,7 @@
                 <p><strong>☰</strong></p>
                 <p>"Hamburger" dropdown menu that brings up additional useful commands:</p>
                 <div class="image_holder_p">
-                    <img class="image" loading="lazy" src="img/moretools_24.jpg"/>
+                    <img class="image" loading="lazy" src="img/moretools_25.jpg"/>
                 </div>
                 <hr id="hamburger_find">
                 <p><strong>Find and Replace</strong> (Desktop browsers only)</p>
@@ -1284,12 +1284,6 @@
                 <p>Allows you to jump to a specific tune in the editor.</p>
                 <p>Also available by pressing ⌘+J on Mac or Ctrl+J on Windows/Linux when working in the ABC editor.</p>
                 <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/6rYE8gxBKQk" title="Jump to Tune" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
-                <hr id="hamburger_toggle_top_bottom">
-                <p><strong>Toggle Top/Bottom Toolbars</strong></p>
-                <p>Hides/shows the header at the top and any visible controls below the ABC text area so you can have more room to work on your music.</p>
-                <hr id="hamburger_maximize">
-                <p><strong>Maximize Editor</strong></p>
-                <p>Maximizes the width of the ABC text editing area.</p>
                 <hr id="hamburger_create_tune_set">
                 <p><strong>Create Tune Set</strong></p>
                 <p>Brings up a dialog where you can create tune sets.</p>
@@ -1342,7 +1336,7 @@
                 <p>and replace them with:</p>
                 <p class="code">%%right</p>
                 <p>The %%right command for the replace should be followed by a space so that there is a space between the command and the composer text.</p>
-                <hr id="hamburger_reorder">
+                 <hr id="hamburger_reorder">
                 <p><strong>Reorder Tunes</strong></p>
                 <p>Brings up a dialog where you can change the order of the tunes.</p>
                 <hr id="hamburger_delete">
@@ -1439,12 +1433,12 @@
                 <p class="code">ShareURL</p>
                 <p>with the rest of the cells in the column containing valid ABC Transcription Tool ShareURL links.</p>
                 <p>If using a spreadsheet to sort or otherwise process a CSV file exported from the tool or the <strong>ABC Tags to CSV Extractor</strong> tool, be sure when exporting back to CSV that the header line is preserved if you intend to import the CSV file back into the ABC Transcription Tools.</p>
-                <hr id="hamburger_abc_to_csv">
-                <p><strong>Launch ABC Tags to CSV</strong></p>
-                <p>If you want to extract all the ABC tags for the all the tunes in one or multiple ABC files into a CSV file, click this button to launch a standalone web-based utility that will do the job:</p>
-                <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/6ZRZ9_pT9Ac" title="ABC Tags to CSV Extractor Roundtripping Demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
-                <p>The utility can also extract the ABC tunes back from a previously exported and optionally edited CSV file.</p>
-                <p>After launching the utility, you may want to save a bookmark to it in your browser so you can use it anytime without launching the ABC Transcription Tools.</p>
+                <hr id="hamburger_toggle_top_bottom">
+                <p><strong>Toggle Top/Bottom Toolbars</strong></p>
+                <p>Hides/shows the header at the top and any visible controls below the ABC text area so you can have more room to work on your music.</p>
+                <hr id="hamburger_maximize">
+                <p><strong>Maximize Editor</strong></p>
+                <p>Maximizes the width of the ABC text editing area.</p>
                 <hr id="hamburger_settings">
                 <p><strong>Settings</strong></p>
                 <p>Brings up the default playback instruments and other tool-wide settings dialog.</p>
@@ -1453,6 +1447,12 @@
                 <p><strong>Advanced Settings</strong></p>
                 <p>Brings up a dialog where you can configure low level tool features and settings.</p>
                 <p>Full details below in the <a href="#advanced_settings">ABC Transcription Tools Advanced Settings</a> section.</p>
+                <hr id="hamburger_abc_to_csv">
+                <p><strong>Launch ABC Tags to CSV</strong></p>
+                <p>If you want to extract all the ABC tags for the all the tunes in one or multiple ABC files into a CSV file, click this button to launch a standalone web-based utility that will do the job:</p>
+                <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/6ZRZ9_pT9Ac" title="ABC Tags to CSV Extractor Roundtripping Demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
+                <p>The utility can also extract the ABC tunes back from a previously exported and optionally edited CSV file.</p>
+                <p>After launching the utility, you may want to save a bookmark to it in your browser so you can use it anytime without launching the ABC Transcription Tools.</p>
                 <hr id="hamburger_quick_editor">
                 <p><strong>Launch Quick Editor</strong></p>
                 <p>Launches the "Quick Editor" version of the tool in a new tab.</p>
@@ -5438,13 +5438,13 @@
                 <hr class="hidden-print" id="left_justify_titles">
                 <h1 class="page_break_always h1wide">Forcing Left-Justified Titles and Subtitles<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <p>You may force left-justification of the titles and subtitles in a single tune by adding the following annotation anywhere in the tune:</p>
-                <p class="code">% Left justify titles<br/>%left_justify_titles</p>
+                <p class="code">% Left justify titles<br/><br/>%left_justify_titles</p>
                 <p>The presence of this annotation in a tune will force both the displayed notation in the editor, exported PDF notation, and tunes played from play links to have left justified titles and subtitles.</p>
                 <p>If placed in the ABC file header, it will apply to all of the tunes.</p>
                 <hr class="hidden-print" id="hide_information_labels">
                 <h1 class="page_break_always h1wide">Hiding Information Labels<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <p>You may hide the labels before the Book, Source, Discography, Notes, Transcription, History, Copyright, Creator, and Edited by metadata information tags in a single tune by adding the following annotation anywhere in the tune:</p>
-                <p class="code">% Hide information labels<br/>%hide_information_labels</p>
+                <p class="code">% Hide information labels<br/><br/>%hide_information_labels</p>
                 <p>For example by default the following ABC:</p>
                 <p class="code">Z:Transcribed by Michael Eskin<br/>N:This is the first version</p>
                 <p>By default, abcjs puts information labels before the information tags in the text below the notation:</p>
@@ -5456,7 +5456,7 @@
                 <hr class="hidden-print" id="hide_rhythm_tag">
                 <h1 class="page_break_always h1wide">Hiding Rhythm Display<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <p>You may hide the rhythm value in the R: tag (if present) in the generated notation by adding the following annotation anywhere in the tune:</p>
-                <p class="code">% Hide rhythm display<br/>%hide_rhythm_tag</p>
+                <p class="code">% Hide rhythm display<br/><br/>%hide_rhythm_tag</p>
                 <p>The presence of this annotation in a tune will force both the displayed notation in the editor, exported PDF notation, and tunes played from play links to have the rhythm value in the R: tag hidden.</p>
                 <p>If placed in the ABC file header, it will apply to all of the tunes.</p>
                 <p>Note: This is just a stopgap measure to hide the R: tag value until abcjs adds the ABC %%writefields command.</p>
@@ -5466,30 +5466,30 @@
                 <hr class="hidden-print" id="hide_dynamics">
                 <h1 class="page_break_always h1wide">Hiding Dynamics Marks<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <p>You may hide any !ppp! style dynamics marks as well as crescendo and diminuendo hairpins by adding the following annotation anywhere in the tune:</p>
-                <p class="code">% Hide dynamics marks<br/>%hide_dynamics</p>
+                <p class="code">% Hide dynamics marks<br/><br/>%hide_dynamics</p>
                 <p>While the dynamic marks will be hidden in the displayed notation, they will still affect the playback volume.</p>
                 <p>The presence of this annotation in a tune will force both the displayed notation in the editor, exported PDF notation, and tunes played from play links to have any dynamics marks hidden.</p>
                 <p>If placed in the ABC file header, it will apply to all of the tunes.</p>
                 <hr class="hidden-print" id="hide_cautionary">
                 <h1 class="page_break_always h1wide">Hiding Cautionary Key Signatures and Implied Naturals<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-                <p>You may hide any "cautionary" key signatures placed at the end of the staff before a key signature change as well as any "implied" naturals in the new key signature by adding the following annotation anywhere in the tune:</p>
-                <p class="code">% Hide cautionary key signatures and implied naturals<br/>%hide_cautionary_ks</p>
-                <p>The presence of this annotation in a tune will force both the displayed notation in the editor, exported PDF notation, and tunes played from play links to have any cautionary key signatures and implied naturals hidden.</p>
-                <p>This annotation is used by the "Create Tune Set" features to avoid cautionary key signatures and implied naturals on the tunes.</p>
-                <p>If placed in the ABC file header, it will apply to all of the tunes.</p>
+                <p>You may hide any "cautionary" key signatures placed at the end of the staff before a key signature change as well as any "implied" naturals in the new key signature by adding either of the following annotations anywhere in the tune:</p>
+                <p class="code">% Hide cautionary key signatures and implied naturals<br/><br/>%hide_cautionary_ks<br/><br/>% or<br/><br/>%%keywarn 0</p>
+                <p>The presence of either of these annotations in a tune will force both the displayed notation in the editor, exported PDF notation, and tunes played from play links to have any cautionary key signatures and implied naturals hidden.</p>
+                <p>The %hide_cautionary_ks annotation is used by the "Create Tune Set" features to avoid cautionary key signatures and implied naturals on the tunes.</p>
+                <p>If either is placed in the ABC file header, they will apply to all of the tunes.</p>
                 <hr class="hidden-print" id="whistletabkey">
                 <h1 class="page_break_always h1wide">Changing the Tin Whistle Tablature Key and Octave<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/DLeYGl6jidU" title="Changing the tin whistle tablature key" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
                 <p>The tin whistle tablature displayed when clicking the <strong>Whistle</strong> tab selector button is for a tin whistle in the key of D by default.</p>
                 <p>To optionally change the key of the displayed whistle tab, you can include the following annotation anywhere in the ABC for a tune:</p>
-                <p class="code">% Change the whistle tab key<br>%whistle_tab_key (key)</p>
+                <p class="code">% Change the whistle tab key<br><br/>%whistle_tab_key (key)</p>
                 <p>Where key is the letter name pitch of the whistle.</p>
                 <p>For example, to change the tin whistle tablature to be displayed for a tin whistle in the key of F:</p>
                 <p class="code">%whistle_tab_key F</p>
                 <p>Another example, to change the tin whistle tablature to be displayed for a tin whistle in the key of Bb:</p>
                 <p class="code">%whistle_tab_key Bb</p>
                 <p>If you wish to shift the tablature up or down an octave, you can include the following annotation anywhere in the ABC for a tune:</p>
-                <p class="code">% Change the whistle tab octave<br>%whistle_tab_octave (integer)</p>
+                <p class="code">% Change the whistle tab octave<br><br/>%whistle_tab_octave (integer)</p>
                 <p>For example, to change the tin whistle tablature to be displayed for a tin whistle in the key of G, with the pitch to fingering mapping shifted up an octave:</p>
                 <p class="code">%whistle_tab_key G<br/>%whistle_tab_octave 1</p>
                 <p>If either annotation is placed in the ABC file header, they will apply to all of the tunes.</p>
@@ -5498,28 +5498,28 @@
                 <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/Iil2XiyRVyg" title="Changing the Baroque recorder tablature key and octave" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
                 <p>The recorder tablature displayed when clicking the <strong>Recorder</strong> tab selector button is by default for a Baroque Soprano recorder in the key of C.</p>
                 <p>To optionally change the key of the displayed recorder tab, you can include the following annotation anywhere in the ABC for a tune:</p>
-                <p class="code">% Change the recorder tab key<br>%recorder_tab_key (key)</p>
+                <p class="code">% Change the recorder tab key<br><br/>%recorder_tab_key (key)</p>
                 <p>Where key is the letter name pitch of the recorder.</p>
                 <p>For example, to change the recorder tablature to be displayed for an Alto recorder in the key of F:</p>
                 <p class="code">%recorder_tab_key F</p>
                 <p>If you wish to shift the tablature up or down one or more octaves, you can include the following annotation anywhere in the ABC for a tune:</p>
-                <p class="code">% Change the recorder tab octave<br>%recorder_tab_octave (integer)</p>
+                <p class="code">% Change the recorder tab octave<br><br/>%recorder_tab_octave (integer)</p>
                 <p>For example, to change the recorder tablature to be displayed for a Bass recorder in the key of F, with the pitch to fingering mapping shifted up two octaves:</p>
                 <p class="code">%recorder_tab_key F<br/>%recorder_tab_octave 2</p>
                 <p>Note: If after shifting the octaves, particularly when using bass clef, you see a display issue where the tablature partially overlays the notation, you can shift the tablature display down by adding the following command in the ABC for the tune:</p>
-                <p class="code">% Shift the tab display down<br/>%abcjs_render_params {"tabPadding":8}</p>
+                <p class="code">% Shift the tab display down<br/><br/>%abcjs_render_params {"tabPadding":8}</p>
                 <p>Experiment with the tabPadding value until you get the result you want.</p>
                 <p>If either annotation is placed in the ABC file header, they will apply to all of the tunes.</p>
                 <hr class="hidden-print" id="detect_hyperlinks">
                 <h1 class="page_break_always h1wide">Making Hyperlinks in ABC Tag Text Clickable<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/EO6lLYfnrns" title="Clickable hyperlinks demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
                 <p>To optionally detect any http:// or https:// hyperlinks in any ABC tags in a tune and make them clickable links in the notation, you can include the following annotation anywhere in the ABC for a tune:</p>
-                <p class="code">% Detect any hyperlinks in the ABC tags and make them clickable<br>%enable_hyperlinks</p>
+                <p class="code">% Detect any hyperlinks in the ABC tags and make them clickable<br><br/>%enable_hyperlinks</p>
                 <p>This will make the hyperlinks clickable for all on-screen display of a tune, for tunes in the Player/Tune Trainer, and in native browser exported PDF files.</p>
                 <p>It will not make the hyperlinks clickable if using the tool's own PDF exporter since that has to rasterize the notation into JPG images and the SVG links are lost.</p>
                 <p>If this annotation is placed in the ABC file header, it will apply to all of the tunes.</p>
                 <p>To disable http:// or https:// hyperlink detection for a specific tune when using %enable_hyperlinks in the ABC file header to apply to all tunes, you can include the following annotation anywhere in the ABC for a tune:</p>
-                <p class="code">% Disable hyperlink detection for this tune<br>%disable_hyperlinks</p>
+                <p class="code">% Disable hyperlink detection for this tune<br><br/>%disable_hyperlinks</p>
                 <p>If both %enable_hyperlinks and %disable_hyperlinks are present in the same tune, %disable_hyperlinks takes precedence.</p>
                 <hr class="hidden-print" id="right_text">
                 <h1 class="page_break_always h1wide">Adding Right-Justified Text<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
@@ -5528,13 +5528,13 @@
                 <hr class="hidden-print" id="tabtranspose">
                 <h1 class="page_break_always h1wide">Transposing Notation Independent of Tablature<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <p>For some tablatures like CGDAE where instruments maybe in either standard pitch or one octave lower, if you transpose the notes down an octave to get the tab on the lower strings, but want the notation displayed an octave up, you can add the following voice annotation to the ABC:</p>
-                <p class="code">% This shifts the displayed notation up one octave but not the playback pitch:<br/>
+                <p class="code">% This shifts the displayed notation up one octave but not the playback pitch:<br/><br/>
                 V:1 octave=1</p>
                 <p>You can also transpose the pitch of the played music independently from the displayed notation:</p>
-                <p class="code">% This will cause the playback to be shifted down an octave:<br/>
+                <p class="code">% This will cause the playback to be shifted down an octave:<br/><br/>
                 V:1 transpose=-12</p>
                 <p>These can be combined:</p>
-                <p class="code">% This will cause the notation to be displayed one octave higher, but playback to be shifted down an octave:<br/>
+                <p class="code">% This will cause the notation to be displayed one octave higher, but playback to be shifted down an octave:<br/><br/>
                 V:1 octave=1 transpose=-12</p>
                 <hr class="hidden-print" id="learningtunes">
                 <h1 class="page_break_always">Learning New Tunes Part-by-Part Using ABC<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
@@ -6024,6 +6024,8 @@ function DoStartup() {
 
 var gIsIOS = isIOS();
 var gIsAndroid = isAndroid();
+
+// gIsIOS = true; // FOOFOO Set true for mobile adaptation testing
 
 if (gIsIOS) {
 // Fix the title font
