@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2468_050325_1600";
+var gVersionNumber="2469_050425_0800";
 
 var gMIDIInitStillWaiting = false;
 
@@ -48222,25 +48222,45 @@ function NormalizeDiacriticals(){
         return;	
    	}
 
-	var output = gTheABC.value;
+	// Setup initial values
+	const theData = {
+	};
 
-	output = replaceEscapedDiacriticals(output);
+	const form = [
+	  {html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-left:15px;">Normalize Diacriticals&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#hamburger_normalize_diacriticals" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'},
+	  {html: '<p style="margin-top:36px;margin-bottom:12px;font-size:12pt;line-height:18pt;font-family:helvetica">When sorting the tunes by title or generating a sorted Table of Contents or Index in an exported PDF, for optimal sorting and title display, it is best to normalize the diacriticals if escaped versions were used in the ABC.</p>'},	  
+	  {html: '<p style="margin-top:24px;margin-bottom:12px;font-size:12pt;line-height:18pt;font-family:helvetica">Click Normalize to replace all escaped /\'A or /\'E style diacriticals with their actual characters including the diacritical marks, for example, Á and É.</p>'},
+	  {html: '<p>&nbsp;</p>'},
+	];
 
-	// Stuff in the output
-	setABCEditorText(output);
+	const modal = DayPilot.Modal.form(form, {}, { theme: "modal_flat_wide", top: 100, width: 600, scrollWithPage: (AllowDialogsToScroll()), okText: "Normalize",autoFocus: false } ).then(function(args){
 
-	// Set dirty
-	gIsDirty = true;
+		// Get the results and store them in the global configuration
+		if (!args.canceled){
 
-	// Force a redraw
-	RenderAsync(true,null,function(){
+			var output = gTheABC.value;
 
-		// Set the select point
-		gTheABC.selectionStart = 0;
-	    gTheABC.selectionEnd = 0;
+			output = replaceEscapedDiacriticals(output);
 
-	    // Focus after operation
-	    FocusAfterOperation();
+			// Stuff in the output
+			setABCEditorText(output);
+
+			// Set dirty
+			gIsDirty = true;
+
+			// Force a redraw
+			RenderAsync(true,null,function(){
+
+				// Set the select point
+				gTheABC.selectionStart = 0;
+			    gTheABC.selectionEnd = 0;
+
+			    // Focus after operation
+			    FocusAfterOperation();
+
+			});
+
+		}
 
 	});
 

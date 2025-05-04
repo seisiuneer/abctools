@@ -5614,6 +5614,12 @@ position: relative;
 padding-right: 30px; /* space for badge */
 }
 
+.modal_flat_main
+{
+  outline: none !important;
+/*  box-shadow: none !important;*/
+}
+
 /******************************************************************************/
 /* STYLES RELATED TO BUTTONS                                                  */
 /******************************************************************************/
