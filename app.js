@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2472_050525_1330";
+var gVersionNumber="2473_050525_1400";
 
 var gMIDIInitStillWaiting = false;
 
@@ -19906,6 +19906,7 @@ function GetABCFileHeader(){
       /^%%printtempo.*$/,
       /^%%titleleft.*$/,
       /^%%keywarn.*$/,
+      /^%%titlecaps.*$/,
       /^%left_justify_titles.*$/,
       /^%abcjs_render_params.*$/,
       /^%hide_information_labels.*$/,

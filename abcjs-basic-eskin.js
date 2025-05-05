@@ -4357,6 +4357,7 @@ var bookParser = function bookParser(book) {
       /^%%printtempo.*$/,
       /^%%titleleft.*$/,
       /^%%keywarn.*$/,
+      /^%%titlecaps.*$/,
       /^%left_justify_titles.*$/,
       /^%abcjs_render_params.*$/,
       /^%hide_information_labels.*$/,
@@ -6001,22 +6002,32 @@ var ParseHeader = function ParseHeader(tokenizer, warn, multilineVars, tune, tun
     parseKeyVoice.initialize(tokenizer, warn, multilineVars, tune, tuneBuilder);
     parseDirective.initialize(tokenizer, warn, multilineVars, tune, tuneBuilder);
   };
+
   this.reset(tokenizer, warn, multilineVars, tune);
+
+  // MAE 5 May 2025 - Reverser and uppercase now run on subtitle strings
   this.setTitle = function (title) {
-    if (multilineVars.hasMainTitle) tuneBuilder.addSubtitle(tokenizer.translateString(tokenizer.theReverser(tokenizer.stripComment(title))), {
-      startChar: multilineVars.iChar,
-      endChar: multilineVars.iChar + title.length + 2
-    }); // display secondary title
+
+    var titleStr = tokenizer.translateString(tokenizer.theReverser(tokenizer.stripComment(title)));
+    
+    if (multilineVars.titlecaps) titleStr = titleStr.toUpperCase();   
+    
+    if (multilineVars.hasMainTitle){
+      tuneBuilder.addSubtitle(titleStr, {
+        startChar: multilineVars.iChar,
+        endChar: multilineVars.iChar + title.length + 2
+      }); // display secondary title
+    }
     else {
-      var titleStr = tokenizer.translateString(tokenizer.theReverser(tokenizer.stripComment(title)));
-      if (multilineVars.titlecaps) titleStr = titleStr.toUpperCase();
       tuneBuilder.addMetaText("title", titleStr, {
         startChar: multilineVars.iChar,
         endChar: multilineVars.iChar + title.length + 2
       });
       multilineVars.hasMainTitle = true;
     }
+    
   };
+
   this.setMeter = function (line) {
     line = tokenizer.stripComment(line);
     if (line === 'C') {
