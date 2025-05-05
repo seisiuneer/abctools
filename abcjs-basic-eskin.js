@@ -6003,7 +6003,7 @@ var ParseHeader = function ParseHeader(tokenizer, warn, multilineVars, tune, tun
   };
   this.reset(tokenizer, warn, multilineVars, tune);
   this.setTitle = function (title) {
-    if (multilineVars.hasMainTitle) tuneBuilder.addSubtitle(tokenizer.translateString(tokenizer.stripComment(title)), {
+    if (multilineVars.hasMainTitle) tuneBuilder.addSubtitle(tokenizer.translateString(tokenizer.theReverser(tokenizer.stripComment(title))), {
       startChar: multilineVars.iChar,
       endChar: multilineVars.iChar + title.length + 2
     }); // display secondary title
