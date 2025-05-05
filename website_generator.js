@@ -424,8 +424,6 @@ function GetWebsiteTuneName(tuneABC){
 
             var fname = currentLine.slice(2);
 
-            fname = titleReverser(fname);
-
             fname = fname.trim();
 
             return fname;

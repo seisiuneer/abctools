@@ -251,6 +251,9 @@ var gPlayAlternateChordsOverride = false;
 // Show cautionary key signatures
 var gHideCautionaryKS = false;
 
+// Do title reverse
+var gDoTitleReverser = true;
+
 //
 // Find any hyperlinks in the tune and replace them with SVG links
 //
@@ -770,6 +773,25 @@ function ScanTuneForHideCautionaryKS(theTune){
 
 }
 
+// Scan tune for disabling title reverser
+function ScanTuneForNoTitleReverser(theTune){
+
+  //console.log("ScanTuneForNoTitleReverser");
+
+  var searchRegExp = /^%no_title_reverser.*$/gm
+
+  var suppressReverser = searchRegExp.test(theTune);
+
+  if (suppressReverser){
+    //console.log("Found %no_title_reverser")
+    return false;
+  }
+
+  //console.log("No %no_title_reverser")
+
+  return true;
+
+}
 
 (function webpackUniversalModuleDefinition(root, factory) {
   if(typeof exports === 'object' && typeof module === 'object')
@@ -1597,6 +1619,10 @@ var tunebook = {};
           // Suppress cautionary key signatures?
           gHideCautionaryKS = false;
           gHideCautionaryKS = ScanTuneForHideCautionaryKS(book.tunes[currentTune].abc);
+
+          // Do title reverser
+          gDoTitleReverser = true;
+          gDoTitleReverser = ScanTuneForNoTitleReverser(book.tunes[currentTune].abc);
 
           abcParser.parse(book.tunes[currentTune].abc, workingParams, book.tunes[currentTune].startPos - book.header.length);
           var tune = abcParser.getTune();
@@ -4357,7 +4383,7 @@ var bookParser = function bookParser(book) {
       /^%%printtempo.*$/,
       /^%%titleleft.*$/,
       /^%%keywarn.*$/,
-      /^%%titlecaps.*$/,
+      /^%%titlecaps.*$/,      
       /^%left_justify_titles.*$/,
       /^%abcjs_render_params.*$/,
       /^%hide_information_labels.*$/,
@@ -4371,6 +4397,7 @@ var bookParser = function bookParser(book) {
       /^%disable_hyperlinks.*$/,
       /^%play_alternate_chords.*$/,
       /^%hide_cautionary_ks.*$/,
+      /^%no_title_reverser.*$/,
       /^[ABCDFGHILMmNORrSUZ]:/,
     ];
 
@@ -10066,9 +10093,13 @@ var Tokenizer = function Tokenizer(lines, multilineVars) {
   };
 
   //
-  // MAE FOOFOOFOO 8 January 2024 - Had to modify this for tune title numbers
+  // Reverse title articles
   //
   this.theReverser = function (str) {
+
+    if (!gDoTitleReverser){
+      return str;
+    }
 
     // Find an optional title number at the start of a tune title
     function getTitleNumber(theTitle){
