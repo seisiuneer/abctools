@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2473_050525_1400";
+var gVersionNumber="2474_050525_1500";
 
 var gMIDIInitStillWaiting = false;
 
@@ -464,6 +464,191 @@ function getFirstPage(){
 //
 // Tune utility functions
 // 
+
+//
+// Title article reverser
+//
+
+var abctt_ParseCommon = {};
+
+abctt_ParseCommon.strip = function (str) {
+  return str.replace(/^\s+/, '').replace(/\s+$/, '');
+};
+abctt_ParseCommon.startsWith = function (str, pattern) {
+  return str.indexOf(pattern) === 0;
+};
+abctt_ParseCommon.endsWith = function (str, pattern) {
+  var d = str.length - pattern.length;
+  return d >= 0 && str.lastIndexOf(pattern) === d;
+};
+abctt_ParseCommon.last = function (arr) {
+  if (arr.length === 0) return null;
+  return arr[arr.length - 1];
+};
+
+function titleReverser(str) {
+
+	// Find an optional title number at the start of a tune title
+	function getTitleNumber(theTitle){
+
+	  const regex = /^(\d+)\./;
+
+	  // Use the exec method to search for the pattern in the string
+	  const match = regex.exec(str);
+
+	  // Check if a match is found
+	  if (match) {
+
+	    // The matched number is captured in the first group (index 1)
+	    const foundNumber = match[1];
+	    return foundNumber;
+
+	  } else {
+
+	    // Return null if no match is found
+	    return null;
+	    
+	  }
+
+	}
+
+	if (abctt_ParseCommon.endsWith(str, ", The")){
+	  
+	  //debugger;
+
+	  //console.log("theReverser The in:"+str); 
+
+	  var theTitleNumber = getTitleNumber(str);
+
+	  if (theTitleNumber){
+
+	    //console.log("theReverser The titlenumber:"+theTitleNumber); 
+
+	    str = str.replace(theTitleNumber+".","");
+	    str = str.trim();
+	  }
+
+	  var result = "The " + str.substring(0, str.length - 5);
+
+	  if (theTitleNumber){
+	    result = theTitleNumber+". "+result;
+	  }
+	  
+	  //console.log("theReverser The out:"+result); 
+
+	  return result;
+	  
+	}
+
+	if (abctt_ParseCommon.endsWith(str, ", the")){
+	  
+	  //debugger;
+
+	  //console.log("theReverser The in:"+str); 
+
+	  var theTitleNumber = getTitleNumber(str);
+
+	  if (theTitleNumber){
+
+	    //console.log("theReverser the titlenumber:"+theTitleNumber); 
+
+	    str = str.replace(theTitleNumber+".","");
+	    str = str.trim();
+	  }
+
+	  var result = "The " + str.substring(0, str.length - 5);
+
+	  if (theTitleNumber){
+	    result = theTitleNumber+". "+result;
+	  }
+	  
+	  //console.log("theReverser the out:"+result); 
+
+	  return result;
+
+	}
+
+	if (abctt_ParseCommon.endsWith(str, ", A")){
+
+	  //console.log("theReverser A in:"+str);  
+
+	  var theTitleNumber = getTitleNumber(str);
+
+	  if (theTitleNumber){
+
+	    //console.log("theReverser A titlenumber:"+theTitleNumber); 
+
+	    str = str.replace(theTitleNumber+".","");
+	    str = str.trim();
+	  }
+
+	  var result = "A " + str.substring(0, str.length - 3);
+
+	  if (theTitleNumber){
+	    result = theTitleNumber+". "+result;
+	  }
+
+	  //console.log("theReverser A out:"+result);  
+	  return result;
+
+	} 
+
+	if (abctt_ParseCommon.endsWith(str, ", a")){
+
+	  //console.log("theReverser a in:"+str);  
+
+	  var theTitleNumber = getTitleNumber(str);
+
+	  if (theTitleNumber){
+
+	    //console.log("theReverser a titlenumber:"+theTitleNumber); 
+
+	    str = str.replace(theTitleNumber+".","");
+	    str = str.trim();
+	  }
+
+	  var result = "A " + str.substring(0, str.length - 3);
+
+	  if (theTitleNumber){
+	    result = theTitleNumber+". "+result;
+	  }
+
+	  //console.log("theReverser a out:"+result);  
+	  return result;
+
+	} 
+
+	if (abctt_ParseCommon.endsWith(str, ", Da")){
+	  
+	  //debugger;
+
+	  //console.log("theReverser Da in:"+str); 
+
+	  var theTitleNumber = getTitleNumber(str);
+
+	  if (theTitleNumber){
+
+	    //console.log("theReverser Da titlenumber:"+theTitleNumber); 
+
+	    str = str.replace(theTitleNumber+".","");
+	    str = str.trim();
+	  }
+
+	  var result = "Da " + str.substring(0, str.length - 4);
+
+	  if (theTitleNumber){
+	    result = theTitleNumber+". "+result;
+	  }
+	  
+	  //console.log("theReverser Da out:"+result); 
+
+	  return result;
+	  
+	}
+
+	return str;
+
+};
 
 function replaceEscapedDiacriticals(str) {
   const diacriticMap = {
