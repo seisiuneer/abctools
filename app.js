@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2478_050525_2000";
+var gVersionNumber="2479_050625_0900";
 
 var gMIDIInitStillWaiting = false;
 
@@ -2577,67 +2577,33 @@ function DoSortTunesByKey() {
 //
 // Process a title for sorting
 //
-function processTitleForSorting(thisTitle){
+function processTitleForSorting(thisTitle) {
 
-	//debugger;
+  const prefixMap = {
+    "The ": ", The",
+    "Da ": ", Da",
+    "An ": ", An",
+    "A ": ", A",
+    "Le ": ", Le",
+    "La ": ", La",
+    "Ye ": ", Ye",
+    "Les ": ", Les",
+    "an ": ", an"
+  };
 
-	if (thisTitle.indexOf("The ")==0){
+  for (const [prefix, suffix] of Object.entries(prefixMap)) {
 
-		thisTitle = thisTitle.substring(4,thisTitle.length)+", The";
+    if (thisTitle.startsWith(prefix)) {
 
-	}
+      return thisTitle.slice(prefix.length) + suffix;
 
-	if (thisTitle.indexOf("Da ")==0){
+    }
 
-		thisTitle = thisTitle.substring(3,thisTitle.length)+", Da";
+  }
 
-	}
-
-	if (thisTitle.indexOf("An ")==0){
-
-		thisTitle = thisTitle.substring(3,thisTitle.length)+", An";
-
-	}
-
-	if (thisTitle.indexOf("A ")==0){
-
-		thisTitle = thisTitle.substring(2,thisTitle.length)+", A";
-
-	}
-
-	if (thisTitle.indexOf("Le ")==0){
-
-		thisTitle = thisTitle.substring(3,thisTitle.length)+", Le";
-
-	}
-
-	if (thisTitle.indexOf("La ")==0){
-
-		thisTitle = thisTitle.substring(3,thisTitle.length)+", La";
-
-	}
-
-	if (thisTitle.indexOf("Ye ")==0){
-
-		thisTitle = thisTitle.substring(3,thisTitle.length)+", Ye";
-
-	}
-
-	if (thisTitle.indexOf("Les ")==0){
-
-		thisTitle = thisTitle.substring(4,thisTitle.length)+", Les";
-
-	}
-
-	if (thisTitle.indexOf("an ")==0){
-
-		thisTitle = thisTitle.substring(3,thisTitle.length)+", an";
-
-	}
-
-
-	return thisTitle;
+  return thisTitle;
 }
+
 
 //
 // Sort the tunes in the ABC text area
@@ -48412,348 +48378,129 @@ abctt_ParseCommon.last = function (arr) {
 
 function titleReverser(str) {
 
-	// Find an optional title number at the start of a tune title
-	function getTitleNumber(theTitle){
+    const getTitleNumber = str => {
+      const match = /^(\d+)\./.exec(str);
+      return match ? match[1] : null;
+    };
 
-	  const regex = /^(\d+)\./;
+    const suffixMap = {
+      ", The": "The",
+      ", the": "The",
+      ", A": "A",
+      ", a": "A",
+      ", Da": "Da",
+      ", La": "La",
+      ", Le": "Le",
+      ", Les": "Les",
+      ", Ye": "Ye",
+      ", An": "An",
+      ", an": "an"
+    };
 
-	  // Use the exec method to search for the pattern in the string
-	  const match = regex.exec(str);
+    for (const [suffix, prefix] of Object.entries(suffixMap)) {
 
-	  // Check if a match is found
-	  if (match) {
+      if (abctt_ParseCommon.endsWith(str, suffix)) {
 
-	    // The matched number is captured in the first group (index 1)
-	    const foundNumber = match[1];
-	    return foundNumber;
+        const titleNumber = getTitleNumber(str);
 
-	  } else {
+        if (titleNumber) {
+          str = str.replace(titleNumber + ".", "").trim();
+        }
 
-	    // Return null if no match is found
-	    return null;
-	    
-	  }
+        const base = str.slice(0, -suffix.length);
 
-	}
+        let result = `${prefix} ${base}`;
 
-	if (abctt_ParseCommon.endsWith(str, ", The")){
-	  
-	  //debugger;
+        if (titleNumber) result = `${titleNumber}. ${result}`;
 
-	  //console.log("theReverser The in:"+str); 
+        return result;
 
-	  var theTitleNumber = getTitleNumber(str);
+      }
+    }
 
-	  if (theTitleNumber){
-
-	    //console.log("theReverser The titlenumber:"+theTitleNumber); 
-
-	    str = str.replace(theTitleNumber+".","");
-	    str = str.trim();
-	  }
-
-	  var result = "The " + str.substring(0, str.length - 5);
-
-	  if (theTitleNumber){
-	    result = theTitleNumber+". "+result;
-	  }
-	  
-	  //console.log("theReverser The out:"+result); 
-
-	  return result;
-	  
-	}
-
-	if (abctt_ParseCommon.endsWith(str, ", the")){
-	  
-	  //debugger;
-
-	  //console.log("theReverser The in:"+str); 
-
-	  var theTitleNumber = getTitleNumber(str);
-
-	  if (theTitleNumber){
-
-	    //console.log("theReverser the titlenumber:"+theTitleNumber); 
-
-	    str = str.replace(theTitleNumber+".","");
-	    str = str.trim();
-	  }
-
-	  var result = "The " + str.substring(0, str.length - 5);
-
-	  if (theTitleNumber){
-	    result = theTitleNumber+". "+result;
-	  }
-	  
-	  //console.log("theReverser the out:"+result); 
-
-	  return result;
-
-	}
-
-	if (abctt_ParseCommon.endsWith(str, ", A")){
-
-	  //console.log("theReverser A in:"+str);  
-
-	  var theTitleNumber = getTitleNumber(str);
-
-	  if (theTitleNumber){
-
-	    //console.log("theReverser A titlenumber:"+theTitleNumber); 
-
-	    str = str.replace(theTitleNumber+".","");
-	    str = str.trim();
-	  }
-
-	  var result = "A " + str.substring(0, str.length - 3);
-
-	  if (theTitleNumber){
-	    result = theTitleNumber+". "+result;
-	  }
-
-	  //console.log("theReverser A out:"+result);  
-	  return result;
-
-	} 
-
-	if (abctt_ParseCommon.endsWith(str, ", a")){
-
-	  //console.log("theReverser a in:"+str);  
-
-	  var theTitleNumber = getTitleNumber(str);
-
-	  if (theTitleNumber){
-
-	    //console.log("theReverser a titlenumber:"+theTitleNumber); 
-
-	    str = str.replace(theTitleNumber+".","");
-	    str = str.trim();
-	  }
-
-	  var result = "A " + str.substring(0, str.length - 3);
-
-	  if (theTitleNumber){
-	    result = theTitleNumber+". "+result;
-	  }
-
-	  //console.log("theReverser a out:"+result);  
-	  return result;
-
-	} 
-
-	if (abctt_ParseCommon.endsWith(str, ", Da")){
-	  
-	  //debugger;
-
-	  //console.log("theReverser Da in:"+str); 
-
-	  var theTitleNumber = getTitleNumber(str);
-
-	  if (theTitleNumber){
-
-	    //console.log("theReverser Da titlenumber:"+theTitleNumber); 
-
-	    str = str.replace(theTitleNumber+".","");
-	    str = str.trim();
-	  }
-
-	  var result = "Da " + str.substring(0, str.length - 4);
-
-	  if (theTitleNumber){
-	    result = theTitleNumber+". "+result;
-	  }
-	  
-	  //console.log("theReverser Da out:"+result); 
-
-	  return result;
-	  
-	}
-
-	if (abctt_ParseCommon.endsWith(str, ", La")){
-	  
-	  //debugger;
-
-	  //console.log("theReverser La in:"+str); 
-
-	  var theTitleNumber = getTitleNumber(str);
-
-	  if (theTitleNumber){
-
-	    //console.log("theReverser La titlenumber:"+theTitleNumber); 
-
-	    str = str.replace(theTitleNumber+".","");
-	    str = str.trim();
-	  }
-
-	  var result = "La " + str.substring(0, str.length - 4);
-
-	  if (theTitleNumber){
-	    result = theTitleNumber+". "+result;
-	  }
-	  
-	  //console.log("theReverser La out:"+result); 
-
-	  return result;
-	  
-	}
-
-	if (abctt_ParseCommon.endsWith(str, ", Le")){
-	  
-	  //debugger;
-
-	  //console.log("theReverser Le in:"+str); 
-
-	  var theTitleNumber = getTitleNumber(str);
-
-	  if (theTitleNumber){
-
-	    //console.log("theReverser Le titlenumber:"+theTitleNumber); 
-
-	    str = str.replace(theTitleNumber+".","");
-	    str = str.trim();
-	  }
-
-	  var result = "Le " + str.substring(0, str.length - 4);
-
-	  if (theTitleNumber){
-	    result = theTitleNumber+". "+result;
-	  }
-	  
-	  //console.log("theReverser Le out:"+result); 
-
-	  return result;
-	  
-	}
-
-	if (abctt_ParseCommon.endsWith(str, ", Les")){
-	  
-	  //debugger;
-
-	  //console.log("theReverser Les in:"+str); 
-
-	  var theTitleNumber = getTitleNumber(str);
-
-	  if (theTitleNumber){
-
-	    //console.log("theReverser Les titlenumber:"+theTitleNumber); 
-
-	    str = str.replace(theTitleNumber+".","");
-	    str = str.trim();
-	  }
-
-	  var result = "Les " + str.substring(0, str.length - 5);
-
-	  if (theTitleNumber){
-	    result = theTitleNumber+". "+result;
-	  }
-	  
-	  //console.log("theReverser Les out:"+result); 
-
-	  return result;
-	  
-	}	
-
-	if (abctt_ParseCommon.endsWith(str, ", Ye")){
-	  
-	  //debugger;
-
-	  //console.log("theReverser Ye in:"+str); 
-
-	  var theTitleNumber = getTitleNumber(str);
-
-	  if (theTitleNumber){
-
-	    //console.log("theReverser Ye titlenumber:"+theTitleNumber); 
-
-	    str = str.replace(theTitleNumber+".","");
-	    str = str.trim();
-	  }
-
-	  var result = "Ye " + str.substring(0, str.length - 4);
-
-	  if (theTitleNumber){
-	    result = theTitleNumber+". "+result;
-	  }
-	  
-	  //console.log("theReverser Ye out:"+result); 
-
-	  return result;
-	  
-	}
-
-	if (abctt_ParseCommon.endsWith(str, ", An")){
-	  
-	  //debugger;
-
-	  //console.log("theReverser An in:"+str); 
-
-	  var theTitleNumber = getTitleNumber(str);
-
-	  if (theTitleNumber){
-
-	    //console.log("theReverser An titlenumber:"+theTitleNumber); 
-
-	    str = str.replace(theTitleNumber+".","");
-	    str = str.trim();
-	  }
-
-	  var result = "An " + str.substring(0, str.length - 4);
-
-	  if (theTitleNumber){
-	    result = theTitleNumber+". "+result;
-	  }
-	  
-	  //console.log("theReverser An out:"+result); 
-
-	  return result;
-	  
-	}
-
-	if (abctt_ParseCommon.endsWith(str, ", an")){
-	  
-	  //debugger;
-
-	  //console.log("theReverser an in:"+str); 
-
-	  var theTitleNumber = getTitleNumber(str);
-
-	  if (theTitleNumber){
-
-	    //console.log("theReverser an titlenumber:"+theTitleNumber); 
-
-	    str = str.replace(theTitleNumber+".","");
-	    str = str.trim();
-	  }
-
-	  var result = "an " + str.substring(0, str.length - 4);
-
-	  if (theTitleNumber){
-	    result = theTitleNumber+". "+result;
-	  }
-	  
-	  //console.log("theReverser an out:"+result); 
-
-	  return result;
-	  
-	}
-
-	return str;
+    return str;
 
 };
 
-function normalizeTitleArticles(theText){
-  return theText
-    .split('\n')
-    .map(line => {
-      if (line.startsWith('T:')) {
-        const originalTitle = line.slice(2).trim();
-        const transformedTitle = titleReverser(originalTitle);
-        return 'T:' + transformedTitle;
-      }
-      return line;
-    })
-    .join('\n');
+
+function normalizeTitleArticles(inverse) {
+
+	var output;
+
+	var theABC = gTheABC.value;
+
+	if (!inverse) {
+
+		// T: Kesh, The -> T: The Kesh
+
+		output = theABC
+		.split('\n')
+		.map(line => {
+			if (line.startsWith('T:')) {
+				const originalTitle = line.slice(2).trim();
+				const transformedTitle = titleReverser(originalTitle);
+				return 'T:' + transformedTitle;
+			}
+			return line;
+		})
+		.join('\n');
+
+	}
+	else {
+
+		// T: The Kesh -> T: Kesh, The
+
+		const prefixMap = {
+			"The ": ", The",
+			"Da ": ", Da",
+			"An ": ", An",
+			"A ": ", A",
+			"Le ": ", Le",
+			"La ": ", La",
+			"Ye ": ", Ye",
+			"Les ": ", Les",
+			"an ": ", an"
+		};
+
+		const lines = theABC.split("\n");
+
+		const processedLines = lines.map(line => {
+
+			if (line.startsWith("T:")) {
+				let title = line.slice(2).trim();
+				for (const [prefix, suffix] of Object.entries(prefixMap)) {
+					if (title.startsWith(prefix)) {
+						title = title.slice(prefix.length) + suffix;
+						break;
+					}
+				}
+				return "T:" + title;
+			} else {
+				return line;
+			}
+		});
+
+		output = processedLines.join("\n");
+	}
+
+	// Stuff in the output
+	setABCEditorText(output);
+
+	// Set dirty
+	gIsDirty = true;
+
+	// Force a redraw
+	RenderAsync(true,null,function(){
+
+		// Set the select point
+		gTheABC.selectionStart = 0;
+	    gTheABC.selectionEnd = 0;
+
+	    // Focus after operation
+	    FocusAfterOperation();
+
+	});
+
 }
 
 function NormalizeTitles(){
@@ -48780,42 +48527,14 @@ function NormalizeTitles(){
 
 	const form = [
 	  {html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-left:15px;">Normalize Title Postfixes&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#hamburger_normalize_title_postfixes" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'},
-	  {html: '<p style="margin-top:24px;margin-bottom:12px;font-size:12pt;line-height:18pt;font-family:helvetica">Click Normalize to move all title or subtitle T: tag postfix articles,<br/>for example:<br/><br/>"Kesh, The" and "Slockit Light, Da"<br/><br/>to the front of the titles and subtitles resulting in:<br/><br/>"The Kesh" and "Da Slockit Light"</p>'},
+	  {html: '<p style="margin-top:24px;margin-bottom:12px;font-size:12pt;line-height:18pt;font-family:helvetica">Click one of the two actions below to process all title or subtitle T: tag postfix or prefix articles, for example:<br/><br/>"Kesh, The" and "Slockit Light, Da"<br/><br/>to the front of the titles and subtitles resulting in:<br/><br/>"The Kesh" and "Da Slockit Light" or the other way around.</p>'},
 	  {html: '<p style="margin-top:24px;margin-bottom:12px;font-size:12pt;line-height:18pt;font-family:helvetica">The title or subtitle postfix articles that can be normalized are:</p>'},
 	  {html: '<p style="margin-top:18px;margin-bottom:12px;font-size:12pt;line-height:18pt;font-family:helvetica">, The<br/>, the<br/>, A<br/>, a<br/>, An<br/>, an<br/>, Da<br/>, La<br/>, Le<br/>, Les<br/>, Ye</p>'},
+	  {html: '<p style="text-align:center;margin-top:18px;margin-bottom:20px"><input id="title_normalize_forward" style="margin-right:18px;" class="advancedcontrols btn btn-injectcontrols-headers" onclick="normalizeTitleArticles(false);" type="button" value="Kesh, The -> The Kesh" title="Move title postfixes to the start of titles"><input id="title_normalize_inverse" style="margin-right:18px;" class="advancedcontrols btn btn-injectcontrols-headers" onclick="normalizeTitleArticles(true);" type="button" value="The Kesh -> Kesh, The" title="Moves title prefixes to end of titles"></p>'},
 	  {html: '<p>&nbsp;</p>'},
 	];
 
-	const modal = DayPilot.Modal.form(form, {}, { theme: "modal_flat_wide", top: 50, width: 600, scrollWithPage: (AllowDialogsToScroll()), okText: "Normalize",autoFocus: false } ).then(function(args){
-
-		// Get the results and store them 
-		if (!args.canceled){
-
-			var output = gTheABC.value;
-
-			output = normalizeTitleArticles(output);
-
-			// Stuff in the output
-			setABCEditorText(output);
-
-			// Set dirty
-			gIsDirty = true;
-
-			// Force a redraw
-			RenderAsync(true,null,function(){
-
-				// Set the select point
-				gTheABC.selectionStart = 0;
-			    gTheABC.selectionEnd = 0;
-
-			    // Focus after operation
-			    FocusAfterOperation();
-
-			});
-
-		}
-
-	});
+	const modal = DayPilot.Modal.form(form, {}, { theme: "modal_flat_wide", top: 50, width: 600, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } );
 
 }
 

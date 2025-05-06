@@ -2392,6 +2392,13 @@ function generateAndSaveWebsiteImageGallery() {
 
     theOutput +="          img.setAttribute('width', '"+gWebsiteImageWidth+"');\n";
     theOutput +="\n";
+    theOutput +="          // Create a caption with the tune name\n";
+    theOutput +="          const caption = document.createElement('p');\n";
+    theOutput +="          caption.textContent = item.Name;\n";
+    theOutput +="          caption.classList.add('hidden-print')\n";
+    theOutput +="\n";
+    theOutput +="          div.appendChild(caption);\n";
+    theOutput +="\n";    
     theOutput +="          // Apppend the image to the link\n";
     theOutput +="          link.appendChild(img);\n";
     theOutput +="\n";
