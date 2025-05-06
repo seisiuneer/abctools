@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2476_050525_1800";
+var gVersionNumber="2477_050525_1900";
 
 var gMIDIInitStillWaiting = false;
 
@@ -48719,13 +48719,13 @@ function NormalizeTitles(){
 
 	const form = [
 	  {html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-left:15px;">Normalize Title Postfixes&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#hamburger_normalize_title_postfixes" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'},
-	  {html: '<p style="margin-top:24px;margin-bottom:12px;font-size:12pt;line-height:18pt;font-family:helvetica">Click Normalize to move all title or subtitle postfix articles, for example:<br/><br/>"Kesh, The" and "Slockit Light, Da"<br/><br/>to the front of the titles and subtitles resulting in:<br/><br/>"The Kesh" and "Da Slockit Light"</p>'},
+	  {html: '<p style="margin-top:24px;margin-bottom:12px;font-size:12pt;line-height:18pt;font-family:helvetica">Click Normalize to move all title or subtitle T: tag postfix articles,<br/>for example:<br/><br/>"Kesh, The" and "Slockit Light, Da"<br/><br/>to the front of the titles and subtitles resulting in:<br/><br/>"The Kesh" and "Da Slockit Light"</p>'},
 	  {html: '<p style="margin-top:24px;margin-bottom:12px;font-size:12pt;line-height:18pt;font-family:helvetica">The title or subtitle postfix articles that can be normalized are:</p>'},
 	  {html: '<p style="margin-top:18px;margin-bottom:12px;font-size:12pt;line-height:18pt;font-family:helvetica">, The<br/>, the<br/>, A<br/>, a<br/>, Da<br/>, La<br/>, Le<br/>, Les<br/>, Ye</p>'},
 	  {html: '<p>&nbsp;</p>'},
 	];
 
-	const modal = DayPilot.Modal.form(form, {}, { theme: "modal_flat_wide", top: 100, width: 600, scrollWithPage: (AllowDialogsToScroll()), okText: "Normalize",autoFocus: false } ).then(function(args){
+	const modal = DayPilot.Modal.form(form, {}, { theme: "modal_flat_wide", top: 50, width: 600, scrollWithPage: (AllowDialogsToScroll()), okText: "Normalize",autoFocus: false } ).then(function(args){
 
 		// Get the results and store them 
 		if (!args.canceled){
