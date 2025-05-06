@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2481_050625_1530";
+var gVersionNumber="2482_050625_1600";
 
 var gMIDIInitStillWaiting = false;
 
@@ -46405,7 +46405,7 @@ function isIPad() {
 // Are we on Android?
 //
 function isAndroid(){
-	if (/Android|SamsungBrowser/i.test(navigator.userAgent)){
+	if (/Android/i.test(navigator.userAgent)) {
 		return true;
 	}
 	else{
