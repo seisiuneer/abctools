@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2480_050625_1130";
+var gVersionNumber="2481_050625_1530";
 
 var gMIDIInitStillWaiting = false;
 
@@ -425,6 +425,9 @@ var gUpdateVersion = gVersionNumber;
 
 // Spinner timeout
 var gSpinnerDelay = 25;
+
+// Force android
+var gForceAndroid = false;
 
 // Global reference to the ABC editor
 var gTheABC = document.getElementById("abc");
@@ -40069,6 +40072,7 @@ function GetInitialConfigurationSettings(){
 	else{
 		giPadTwoColumn = false;
 	}
+
 	// Force large controls for iPad two-column
 	if (giPadTwoColumn){
 		gLargePlayerControls = true;
@@ -40105,6 +40109,13 @@ function GetInitialConfigurationSettings(){
 		if (BuildTuneSetRepeatCount < 1){
 			BuildTuneSetRepeatCount = 1;
 		}
+	}
+
+	// Force Android?
+	gForceAndroid = false;
+	val = localStorage.forceAndroid;
+	if (val){
+		gForceAndroid = (val == "true");
 	}
 
 	// Save the settings, in case they were initialized
@@ -40357,6 +40368,9 @@ function SaveConfigurationSettings(){
 		// Tune set creation
 		localStorage.BuildTuneSetRepeat = BuildTuneSetRepeat;
 		localStorage.BuildTuneSetRepeatCount = BuildTuneSetRepeatCount;
+
+		// Force Android?
+		localStorage.forceAndroid = gForceAndroid;
 
 	}
 }
@@ -43135,6 +43149,8 @@ function ConfigureToolSettings() {
 
 	var oldTabSelected = GetRadioValue("notenodertab");
 
+	var oldForceAndroid = gForceAndroid;
+
 	// Setup initial values
 	const theData = {
 		configure_save_exit_snapshot: gSaveLastAutoSnapShot,
@@ -43157,6 +43173,8 @@ function ConfigureToolSettings() {
 		configure_allow_offline_instruments: gAllowOfflineInstruments,
 		configure_ipad_two_column: giPadTwoColumn,
 		configure_player_scaling: gPlayerScaling,
+		configure_force_android: gForceAndroid
+
 	};
 
 	var form = [
@@ -43166,7 +43184,7 @@ function ConfigureToolSettings() {
 	// Only show batch export delays on desktop
 	if (gIsIPad){
 		form = form.concat([
-			{name: "    iPad Side-by-Side view (similar to desktop)", id: "configure_ipad_two_column", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"},
+			{name: "    iPad Side-by-Side view (similar to desktop)", id: "configure_ipad_two_column", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"}
  		]);
 	}
 
@@ -43205,6 +43223,12 @@ function ConfigureToolSettings() {
 		form.push({name: "    Allow MIDI input for ABC text entry", id: "configure_allow_midi_input", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"});
 		form.push({name: "    MIDI input is key and mode aware (if unchecked, enters note names with no accidentals)", id: "configure_midi_chromatic", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"});
 	};
+
+	if (!gIsIOS){
+		form = form.concat([
+			{name: "    Force Android UI (If mobile browser doesn't identify as Android)", id: "configure_force_android", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"}
+ 		]);
+	}
 
 	// For testing
 	// gUpdateAvailable = true;
@@ -43261,6 +43285,13 @@ function ConfigureToolSettings() {
 			
 				gSaveLastAutoSnapShot = false;
 			
+			}
+
+			if (!gIsIOS){
+
+				// Force Android
+				gForceAndroid = args.result.configure_force_android;
+
 			}
 
 			if (gIsIPad){
@@ -43545,6 +43576,25 @@ function ConfigureToolSettings() {
 					});
 
 					return;
+				}
+			}
+
+			if (!gIsIOS){
+
+				if (oldForceAndroid != gForceAndroid){
+
+					var thePrompt = "The tool will restart since forcing Android setting changed.";
+
+					// Center the string in the prompt
+					thePrompt = makeCenteredPromptString(thePrompt);
+					
+					DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) }).then(function(args){
+
+						window.location.reload();
+
+					});
+
+					return;					
 				}
 			}
 
@@ -49243,6 +49293,7 @@ function DoStartup() {
 	gFullScreenScaling = 50;
 	gIsDirty = false;
 	gForceComhaltasABC = false;
+	gForceAndroid = false;
 
 	// Check if online (always returns true for normal case)
 	doOnlineCheck();
@@ -49322,11 +49373,13 @@ function DoStartup() {
 		document.getElementById("selectabcfile").removeAttribute("accept");
 	}	
 	
-	// Need this early to configure iPad UI!
+	// Need this early to configure iPad or Android UI!
 
 	if (localStorage){
+
 		// Two column display for iPad
 		var val = localStorage.iPadTwoColumn;
+
 		if (val){
 			giPadTwoColumn = (val == "true");
 		}
@@ -49337,7 +49390,22 @@ function DoStartup() {
 		if (giPadTwoColumn){
 			gLargePlayerControls = true;
 		}
-		
+
+		// Force Android?
+		val = localStorage.forceAndroid;
+
+		if (val){
+			if (val == "true"){
+				gForceAndroid = true;
+				gIsAndroid = true;
+				gIsIOS = false;
+				gIsIPad = false;
+				giPadTwoColumn = false
+			}
+			else{
+				gForceAndroid = false;
+			}
+		}
 	}
 
 	//
