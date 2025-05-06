@@ -10370,7 +10370,62 @@ var Tokenizer = function Tokenizer(lines, multilineVars) {
       return result;
 
     }
+    
+    if (parseCommon.endsWith(str, ", An")){
+      
+      //debugger;
 
+      //console.log("theReverser An in:"+str); 
+
+      var theTitleNumber = getTitleNumber(str);
+
+      if (theTitleNumber){
+
+        //console.log("theReverser An titlenumber:"+theTitleNumber); 
+
+        str = str.replace(theTitleNumber+".","");
+        str = str.trim();
+      }
+
+      var result = "An " + str.substring(0, str.length - 4);
+
+      if (theTitleNumber){
+        result = theTitleNumber+". "+result;
+      }
+      
+      //console.log("theReverser An out:"+result); 
+
+      return result;
+      
+    }
+
+    if (parseCommon.endsWith(str, ", an")){
+      
+      //debugger;
+
+      //console.log("theReverser an in:"+str); 
+
+      var theTitleNumber = getTitleNumber(str);
+
+      if (theTitleNumber){
+
+        //console.log("theReverser an titlenumber:"+theTitleNumber); 
+
+        str = str.replace(theTitleNumber+".","");
+        str = str.trim();
+      }
+
+      var result = "an " + str.substring(0, str.length - 4);
+
+      if (theTitleNumber){
+        result = theTitleNumber+". "+result;
+      }
+      
+      //console.log("theReverser an out:"+result); 
+
+      return result;
+      
+    }
     return str;
 
   };

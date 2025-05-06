@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2477_050525_1900";
+var gVersionNumber="2478_050525_2000";
 
 var gMIDIInitStillWaiting = false;
 
@@ -2626,6 +2626,12 @@ function processTitleForSorting(thisTitle){
 	if (thisTitle.indexOf("Les ")==0){
 
 		thisTitle = thisTitle.substring(4,thisTitle.length)+", Les";
+
+	}
+
+	if (thisTitle.indexOf("an ")==0){
+
+		thisTitle = thisTitle.substring(3,thisTitle.length)+", an";
 
 	}
 
@@ -48676,6 +48682,61 @@ function titleReverser(str) {
 	  
 	}
 
+	if (abctt_ParseCommon.endsWith(str, ", An")){
+	  
+	  //debugger;
+
+	  //console.log("theReverser An in:"+str); 
+
+	  var theTitleNumber = getTitleNumber(str);
+
+	  if (theTitleNumber){
+
+	    //console.log("theReverser An titlenumber:"+theTitleNumber); 
+
+	    str = str.replace(theTitleNumber+".","");
+	    str = str.trim();
+	  }
+
+	  var result = "An " + str.substring(0, str.length - 4);
+
+	  if (theTitleNumber){
+	    result = theTitleNumber+". "+result;
+	  }
+	  
+	  //console.log("theReverser An out:"+result); 
+
+	  return result;
+	  
+	}
+
+	if (abctt_ParseCommon.endsWith(str, ", an")){
+	  
+	  //debugger;
+
+	  //console.log("theReverser an in:"+str); 
+
+	  var theTitleNumber = getTitleNumber(str);
+
+	  if (theTitleNumber){
+
+	    //console.log("theReverser an titlenumber:"+theTitleNumber); 
+
+	    str = str.replace(theTitleNumber+".","");
+	    str = str.trim();
+	  }
+
+	  var result = "an " + str.substring(0, str.length - 4);
+
+	  if (theTitleNumber){
+	    result = theTitleNumber+". "+result;
+	  }
+	  
+	  //console.log("theReverser an out:"+result); 
+
+	  return result;
+	  
+	}
 
 	return str;
 
@@ -48721,7 +48782,7 @@ function NormalizeTitles(){
 	  {html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-left:15px;">Normalize Title Postfixes&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#hamburger_normalize_title_postfixes" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'},
 	  {html: '<p style="margin-top:24px;margin-bottom:12px;font-size:12pt;line-height:18pt;font-family:helvetica">Click Normalize to move all title or subtitle T: tag postfix articles,<br/>for example:<br/><br/>"Kesh, The" and "Slockit Light, Da"<br/><br/>to the front of the titles and subtitles resulting in:<br/><br/>"The Kesh" and "Da Slockit Light"</p>'},
 	  {html: '<p style="margin-top:24px;margin-bottom:12px;font-size:12pt;line-height:18pt;font-family:helvetica">The title or subtitle postfix articles that can be normalized are:</p>'},
-	  {html: '<p style="margin-top:18px;margin-bottom:12px;font-size:12pt;line-height:18pt;font-family:helvetica">, The<br/>, the<br/>, A<br/>, a<br/>, Da<br/>, La<br/>, Le<br/>, Les<br/>, Ye</p>'},
+	  {html: '<p style="margin-top:18px;margin-bottom:12px;font-size:12pt;line-height:18pt;font-family:helvetica">, The<br/>, the<br/>, A<br/>, a<br/>, An<br/>, an<br/>, Da<br/>, La<br/>, Le<br/>, Les<br/>, Ye</p>'},
 	  {html: '<p>&nbsp;</p>'},
 	];
 
