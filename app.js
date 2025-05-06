@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2475_050525_1530";
+var gVersionNumber="2476_050525_1800";
 
 var gMIDIInitStillWaiting = false;
 
@@ -2614,6 +2614,18 @@ function processTitleForSorting(thisTitle){
 	if (thisTitle.indexOf("La ")==0){
 
 		thisTitle = thisTitle.substring(3,thisTitle.length)+", La";
+
+	}
+
+	if (thisTitle.indexOf("Ye ")==0){
+
+		thisTitle = thisTitle.substring(3,thisTitle.length)+", Ye";
+
+	}
+
+	if (thisTitle.indexOf("Les ")==0){
+
+		thisTitle = thisTitle.substring(4,thisTitle.length)+", Les";
 
 	}
 
@@ -48339,7 +48351,7 @@ function NormalizeDiacriticals(){
 
 	const modal = DayPilot.Modal.form(form, {}, { theme: "modal_flat_wide", top: 100, width: 600, scrollWithPage: (AllowDialogsToScroll()), okText: "Normalize",autoFocus: false } ).then(function(args){
 
-		// Get the results and store them in the global configuration
+		// Get the results and store them
 		if (!args.canceled){
 
 			var output = gTheABC.value;
@@ -48369,6 +48381,383 @@ function NormalizeDiacriticals(){
 	});
 
 }
+
+// Normalize title articles
+//
+// Title article reverser
+//
+
+var abctt_ParseCommon = {};
+
+abctt_ParseCommon.strip = function (str) {
+  return str.replace(/^\s+/, '').replace(/\s+$/, '');
+};
+abctt_ParseCommon.startsWith = function (str, pattern) {
+  return str.indexOf(pattern) === 0;
+};
+abctt_ParseCommon.endsWith = function (str, pattern) {
+  var d = str.length - pattern.length;
+  return d >= 0 && str.lastIndexOf(pattern) === d;
+};
+abctt_ParseCommon.last = function (arr) {
+  if (arr.length === 0) return null;
+  return arr[arr.length - 1];
+};
+
+function titleReverser(str) {
+
+	// Find an optional title number at the start of a tune title
+	function getTitleNumber(theTitle){
+
+	  const regex = /^(\d+)\./;
+
+	  // Use the exec method to search for the pattern in the string
+	  const match = regex.exec(str);
+
+	  // Check if a match is found
+	  if (match) {
+
+	    // The matched number is captured in the first group (index 1)
+	    const foundNumber = match[1];
+	    return foundNumber;
+
+	  } else {
+
+	    // Return null if no match is found
+	    return null;
+	    
+	  }
+
+	}
+
+	if (abctt_ParseCommon.endsWith(str, ", The")){
+	  
+	  //debugger;
+
+	  //console.log("theReverser The in:"+str); 
+
+	  var theTitleNumber = getTitleNumber(str);
+
+	  if (theTitleNumber){
+
+	    //console.log("theReverser The titlenumber:"+theTitleNumber); 
+
+	    str = str.replace(theTitleNumber+".","");
+	    str = str.trim();
+	  }
+
+	  var result = "The " + str.substring(0, str.length - 5);
+
+	  if (theTitleNumber){
+	    result = theTitleNumber+". "+result;
+	  }
+	  
+	  //console.log("theReverser The out:"+result); 
+
+	  return result;
+	  
+	}
+
+	if (abctt_ParseCommon.endsWith(str, ", the")){
+	  
+	  //debugger;
+
+	  //console.log("theReverser The in:"+str); 
+
+	  var theTitleNumber = getTitleNumber(str);
+
+	  if (theTitleNumber){
+
+	    //console.log("theReverser the titlenumber:"+theTitleNumber); 
+
+	    str = str.replace(theTitleNumber+".","");
+	    str = str.trim();
+	  }
+
+	  var result = "The " + str.substring(0, str.length - 5);
+
+	  if (theTitleNumber){
+	    result = theTitleNumber+". "+result;
+	  }
+	  
+	  //console.log("theReverser the out:"+result); 
+
+	  return result;
+
+	}
+
+	if (abctt_ParseCommon.endsWith(str, ", A")){
+
+	  //console.log("theReverser A in:"+str);  
+
+	  var theTitleNumber = getTitleNumber(str);
+
+	  if (theTitleNumber){
+
+	    //console.log("theReverser A titlenumber:"+theTitleNumber); 
+
+	    str = str.replace(theTitleNumber+".","");
+	    str = str.trim();
+	  }
+
+	  var result = "A " + str.substring(0, str.length - 3);
+
+	  if (theTitleNumber){
+	    result = theTitleNumber+". "+result;
+	  }
+
+	  //console.log("theReverser A out:"+result);  
+	  return result;
+
+	} 
+
+	if (abctt_ParseCommon.endsWith(str, ", a")){
+
+	  //console.log("theReverser a in:"+str);  
+
+	  var theTitleNumber = getTitleNumber(str);
+
+	  if (theTitleNumber){
+
+	    //console.log("theReverser a titlenumber:"+theTitleNumber); 
+
+	    str = str.replace(theTitleNumber+".","");
+	    str = str.trim();
+	  }
+
+	  var result = "A " + str.substring(0, str.length - 3);
+
+	  if (theTitleNumber){
+	    result = theTitleNumber+". "+result;
+	  }
+
+	  //console.log("theReverser a out:"+result);  
+	  return result;
+
+	} 
+
+	if (abctt_ParseCommon.endsWith(str, ", Da")){
+	  
+	  //debugger;
+
+	  //console.log("theReverser Da in:"+str); 
+
+	  var theTitleNumber = getTitleNumber(str);
+
+	  if (theTitleNumber){
+
+	    //console.log("theReverser Da titlenumber:"+theTitleNumber); 
+
+	    str = str.replace(theTitleNumber+".","");
+	    str = str.trim();
+	  }
+
+	  var result = "Da " + str.substring(0, str.length - 4);
+
+	  if (theTitleNumber){
+	    result = theTitleNumber+". "+result;
+	  }
+	  
+	  //console.log("theReverser Da out:"+result); 
+
+	  return result;
+	  
+	}
+
+	if (abctt_ParseCommon.endsWith(str, ", La")){
+	  
+	  //debugger;
+
+	  //console.log("theReverser La in:"+str); 
+
+	  var theTitleNumber = getTitleNumber(str);
+
+	  if (theTitleNumber){
+
+	    //console.log("theReverser La titlenumber:"+theTitleNumber); 
+
+	    str = str.replace(theTitleNumber+".","");
+	    str = str.trim();
+	  }
+
+	  var result = "La " + str.substring(0, str.length - 4);
+
+	  if (theTitleNumber){
+	    result = theTitleNumber+". "+result;
+	  }
+	  
+	  //console.log("theReverser La out:"+result); 
+
+	  return result;
+	  
+	}
+
+	if (abctt_ParseCommon.endsWith(str, ", Le")){
+	  
+	  //debugger;
+
+	  //console.log("theReverser Le in:"+str); 
+
+	  var theTitleNumber = getTitleNumber(str);
+
+	  if (theTitleNumber){
+
+	    //console.log("theReverser Le titlenumber:"+theTitleNumber); 
+
+	    str = str.replace(theTitleNumber+".","");
+	    str = str.trim();
+	  }
+
+	  var result = "Le " + str.substring(0, str.length - 4);
+
+	  if (theTitleNumber){
+	    result = theTitleNumber+". "+result;
+	  }
+	  
+	  //console.log("theReverser Le out:"+result); 
+
+	  return result;
+	  
+	}
+
+	if (abctt_ParseCommon.endsWith(str, ", Les")){
+	  
+	  //debugger;
+
+	  //console.log("theReverser Les in:"+str); 
+
+	  var theTitleNumber = getTitleNumber(str);
+
+	  if (theTitleNumber){
+
+	    //console.log("theReverser Les titlenumber:"+theTitleNumber); 
+
+	    str = str.replace(theTitleNumber+".","");
+	    str = str.trim();
+	  }
+
+	  var result = "Les " + str.substring(0, str.length - 5);
+
+	  if (theTitleNumber){
+	    result = theTitleNumber+". "+result;
+	  }
+	  
+	  //console.log("theReverser Les out:"+result); 
+
+	  return result;
+	  
+	}	
+
+	if (abctt_ParseCommon.endsWith(str, ", Ye")){
+	  
+	  //debugger;
+
+	  //console.log("theReverser Ye in:"+str); 
+
+	  var theTitleNumber = getTitleNumber(str);
+
+	  if (theTitleNumber){
+
+	    //console.log("theReverser Ye titlenumber:"+theTitleNumber); 
+
+	    str = str.replace(theTitleNumber+".","");
+	    str = str.trim();
+	  }
+
+	  var result = "Ye " + str.substring(0, str.length - 4);
+
+	  if (theTitleNumber){
+	    result = theTitleNumber+". "+result;
+	  }
+	  
+	  //console.log("theReverser Ye out:"+result); 
+
+	  return result;
+	  
+	}
+
+
+	return str;
+
+};
+
+function normalizeTitleArticles(theText){
+  return theText
+    .split('\n')
+    .map(line => {
+      if (line.startsWith('T:')) {
+        const originalTitle = line.slice(2).trim();
+        const transformedTitle = titleReverser(originalTitle);
+        return 'T:' + transformedTitle;
+      }
+      return line;
+    })
+    .join('\n');
+}
+
+function NormalizeTitles(){
+
+	//console.log("NormalizeTitles");
+
+	sendGoogleAnalytics("action","NormalizeTitles");
+
+	if (!gAllowCopy){
+
+        var prompt = makeCenteredPromptString("No Text in the ABC Editor to Normalize")
+ 
+        DayPilot.Modal.alert(prompt, {
+            theme: "modal_flat",
+            top: 200
+        });
+
+        return;	
+   	}
+
+	// Setup initial values
+	const theData = {
+	};
+
+	const form = [
+	  {html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-left:15px;">Normalize Title Postfixes&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#hamburger_normalize_title_postfixes" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'},
+	  {html: '<p style="margin-top:24px;margin-bottom:12px;font-size:12pt;line-height:18pt;font-family:helvetica">Click Normalize to move all title or subtitle postfix articles, for example:<br/><br/>"Kesh, The" and "Slockit Light, Da"<br/><br/>to the front of the titles and subtitles resulting in:<br/><br/>"The Kesh" and "Da Slockit Light"</p>'},
+	  {html: '<p style="margin-top:24px;margin-bottom:12px;font-size:12pt;line-height:18pt;font-family:helvetica">The title or subtitle postfix articles that can be normalized are:</p>'},
+	  {html: '<p style="margin-top:18px;margin-bottom:12px;font-size:12pt;line-height:18pt;font-family:helvetica">, The<br/>, the<br/>, A<br/>, a<br/>, Da<br/>, La<br/>, Le<br/>, Les<br/>, Ye</p>'},
+	  {html: '<p>&nbsp;</p>'},
+	];
+
+	const modal = DayPilot.Modal.form(form, {}, { theme: "modal_flat_wide", top: 100, width: 600, scrollWithPage: (AllowDialogsToScroll()), okText: "Normalize",autoFocus: false } ).then(function(args){
+
+		// Get the results and store them 
+		if (!args.canceled){
+
+			var output = gTheABC.value;
+
+			output = normalizeTitleArticles(output);
+
+			// Stuff in the output
+			setABCEditorText(output);
+
+			// Set dirty
+			gIsDirty = true;
+
+			// Force a redraw
+			RenderAsync(true,null,function(){
+
+				// Set the select point
+				gTheABC.selectionStart = 0;
+			    gTheABC.selectionEnd = 0;
+
+			    // Focus after operation
+			    FocusAfterOperation();
+
+			});
+
+		}
+
+	});
+
+}
+
 
 //
 // Split a multi-voice tune into individual voices
@@ -48669,6 +49058,7 @@ function SetupContextMenu(showUpdateItem){
 				    { name: 'Split Long Tags and Text', fn: function(target) { SplitLongTextAndTags(); }},
 				    {},
 				    { name: 'Normalize Diacriticals', fn: function(target) { NormalizeDiacriticals(); }},
+				    { name: 'Normalize Title Postfixes', fn: function(target) { NormalizeTitles(); }},
 				    {},
 				    { name: 'Reformat Using MusicXML', fn: function(target) { BatchMusicXMLRoundTrip(); }},
 				    {},
@@ -48752,6 +49142,7 @@ function SetupContextMenu(showUpdateItem){
 				    { name: 'Split Long Tags and Text', fn: function(target) { SplitLongTextAndTags(); }},
 				    {},
 				    { name: 'Normalize Diacriticals', fn: function(target) { NormalizeDiacriticals(); }},
+				    { name: 'Normalize Title Postfixes', fn: function(target) { NormalizeTitles(); }},
 				    {},
 				    { name: 'Reformat Using MusicXML', fn: function(target) { BatchMusicXMLRoundTrip(); }},
 				    {},
@@ -48809,6 +49200,7 @@ function SetupContextMenu(showUpdateItem){
 				    { name: 'Split Long Tags and Text', fn: function(target) { SplitLongTextAndTags(); }},
 				    {},
 				    { name: 'Normalize Diacriticals', fn: function(target) { NormalizeDiacriticals(); }},
+				    { name: 'Normalize Title Postfixes', fn: function(target) { NormalizeTitles(); }},
 				    {},
 				    { name: 'Reformat Using MusicXML', fn: function(target) { BatchMusicXMLRoundTrip(); }},
 				    {},
@@ -48830,7 +49222,7 @@ function SetupContextMenu(showUpdateItem){
 				]);
 
 				// For forcing display for User Guide screen shots
-				// showUpdateItem = true;// FOOFOO
+				//showUpdateItem = true;// FOOFOO
 
 				if (showUpdateItem){
 					items = items.concat(
@@ -48894,6 +49286,7 @@ function SetupContextMenu(showUpdateItem){
 				    { name: 'Split Long Tags and Text', fn: function(target) { SplitLongTextAndTags(); }},
 				    {},
 				    { name: 'Normalize Diacriticals', fn: function(target) { NormalizeDiacriticals(); }},
+				    { name: 'Normalize Title Postfixes', fn: function(target) { NormalizeTitles(); }},
 				    {},
 				    { name: 'Reformat Using MusicXML', fn: function(target) { BatchMusicXMLRoundTrip(); }},
 				    {},
@@ -48943,7 +49336,8 @@ function SetupContextMenu(showUpdateItem){
 			    { name: 'Split Long Tags and Text', fn: function(target) { SplitLongTextAndTags(); }},
 			    {},
 				{ name: 'Normalize Diacriticals', fn: function(target) { NormalizeDiacriticals(); }},
-				{},
+			    { name: 'Normalize Title Postfixes', fn: function(target) { NormalizeTitles(); }},
+			    {},
 			    { name: 'Reformat Using MusicXML', fn: function(target) { BatchMusicXMLRoundTrip(); }},
 			    {},
 			    { name: 'Split Voices', fn: function(target) { SplitVoices(); }},
@@ -48990,7 +49384,8 @@ function SetupContextMenu(showUpdateItem){
 			    { name: 'Split Long Tags and Text', fn: function(target) { SplitLongTextAndTags(); }},
 			    {},
 				{ name: 'Normalize Diacriticals', fn: function(target) { NormalizeDiacriticals(); }},
-				{},
+			    { name: 'Normalize Title Postfixes', fn: function(target) { NormalizeTitles(); }},
+			    {},
 			    { name: 'Reformat Using MusicXML', fn: function(target) { BatchMusicXMLRoundTrip(); }},
 			    {},
 			    { name: 'Split Voices', fn: function(target) { SplitVoices(); }},

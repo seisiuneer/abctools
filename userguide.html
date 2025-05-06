@@ -363,6 +363,7 @@
             <a style="text-decoration:none;" href="#hamburger_align_all">Align Bars (All Tunes)</a>
             <a style="text-decoration:none;" href="#hamburger_split">Split Long Tags and Text</a>
             <a style="text-decoration:none;" href="#hamburger_normalize_diacriticals">Normalize Diacriticals</a>
+            <a style="text-decoration:none;" href="#hamburger_normalize_title_postfixes">Normalize Title Postfixes</a>
             <a style="text-decoration:none;" href="#hamburger_reformat_xml">Reformat Using MusicXML</a>
             <a style="text-decoration:none;" href="#hamburger_split_voices">Split Voices</a>
             <a style="text-decoration:none;" href="#hamburger_midigchord">Inject MIDI gchord Templates</a>
@@ -784,6 +785,7 @@
                         <p class="toc"><a style="text-decoration:none;" href="#hamburger_align_all">Align Bars (All Tunes)</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#hamburger_split">Split Long Tags and Text</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#hamburger_normalize_diacriticals">Normalize Diacriticals</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#hamburger_normalize_title_postfixes">Normalize Title Postfixes</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#hamburger_reformat_xml">Reformat Using MusicXML</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#hamburger_split_voices">Split Voices</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#hamburger_midigchord">Inject MIDI gchord Templates</a></p>
@@ -1267,7 +1269,7 @@
                 <p><strong>☰</strong></p>
                 <p>"Hamburger" dropdown menu that brings up additional useful commands:</p>
                 <div class="image_holder_p">
-                    <img class="image" loading="lazy" src="img/moretools_25.jpg"/>
+                    <img class="image" loading="lazy" src="img/moretools_26.jpg"/>
                 </div>
                 <hr id="hamburger_find">
                 <p><strong>Find and Replace</strong> (Desktop browsers only)</p>
@@ -1378,7 +1380,12 @@
                 \"o : ö, \"u : ü, \~N : Ñ, \~n : ñ,<br/>
                 \^A : Â, \^E : Ê, \^I : Î, \^O : Ô,<br/> 
                 \^U : Û, \^a : â, \^e : ê, \^i : î,<br/> 
-                \^o : ô, \^u : û, \cC : Ç, \cc : ç</p>               
+                \^o : ô, \^u : û, \cC : Ç, \cc : ç</p> 
+                <hr id="hamburger_normalize_title_postfixes">
+                <p><strong>Normalize Title Postfixes</strong></p>
+                <p>Moves all title or subtitle postfix articles, for example "Kesh, The" or "Slockit Light, Da" to the front of the titles and subtitles resulting in "The Kesh" and "Da Slockit Light".</p>
+                <p>The full set of articles that can be normalized is:</p>
+                <p class="code">, The<br/>, the<br/>, A<br/>, a<br/>, Da<br/>, La<br/>, Le<br/>, Les<br/>, Ye</p>
                 <hr id="hamburger_reformat_xml">
                 <p id="reformatusingxml"><strong>Reformat Using MusicXML</strong></p>
                 <p>Round-trips either the current tune or all the tunes in the ABC through MusicXML export and import back to ABC.</p>

@@ -10095,14 +10095,14 @@ var Tokenizer = function Tokenizer(lines, multilineVars) {
   //
   // Reverse title articles
   //
-  this.theReverser = function (str) {
+  this.theReverser = function(str) {
 
-    if (!gDoTitleReverser){
+    if (!gDoTitleReverser) {
       return str;
     }
 
     // Find an optional title number at the start of a tune title
-    function getTitleNumber(theTitle){
+    function getTitleNumber(theTitle) {
 
       const regex = /^(\d+)\./;
 
@@ -10120,149 +10120,260 @@ var Tokenizer = function Tokenizer(lines, multilineVars) {
 
         // Return null if no match is found
         return null;
-        
+
       }
 
     }
-    
-    if (parseCommon.endsWith(str, ", The")){
-      
+
+    if (parseCommon.endsWith(str, ", The")) {
+
       //debugger;
 
       //console.log("theReverser The in:"+str); 
 
       var theTitleNumber = getTitleNumber(str);
 
-      if (theTitleNumber){
+      if (theTitleNumber) {
 
         //console.log("theReverser The titlenumber:"+theTitleNumber); 
 
-        str = str.replace(theTitleNumber+".","");
+        str = str.replace(theTitleNumber + ".", "");
         str = str.trim();
       }
 
       var result = "The " + str.substring(0, str.length - 5);
 
-      if (theTitleNumber){
-        result = theTitleNumber+". "+result;
+      if (theTitleNumber) {
+        result = theTitleNumber + ". " + result;
       }
-      
+
       //console.log("theReverser The out:"+result); 
 
       return result;
-      
+
     }
 
-    if (parseCommon.endsWith(str, ", the")){
-      
+    if (parseCommon.endsWith(str, ", the")) {
+
       //debugger;
 
       //console.log("theReverser The in:"+str); 
 
       var theTitleNumber = getTitleNumber(str);
 
-      if (theTitleNumber){
+      if (theTitleNumber) {
 
         //console.log("theReverser the titlenumber:"+theTitleNumber); 
 
-        str = str.replace(theTitleNumber+".","");
+        str = str.replace(theTitleNumber + ".", "");
         str = str.trim();
       }
 
       var result = "The " + str.substring(0, str.length - 5);
 
-      if (theTitleNumber){
-        result = theTitleNumber+". "+result;
+      if (theTitleNumber) {
+        result = theTitleNumber + ". " + result;
       }
-      
+
       //console.log("theReverser the out:"+result); 
 
       return result;
 
     }
 
-    if (parseCommon.endsWith(str, ", A")){
+    if (parseCommon.endsWith(str, ", A")) {
 
       //console.log("theReverser A in:"+str);  
 
       var theTitleNumber = getTitleNumber(str);
 
-      if (theTitleNumber){
+      if (theTitleNumber) {
 
         //console.log("theReverser A titlenumber:"+theTitleNumber); 
 
-        str = str.replace(theTitleNumber+".","");
+        str = str.replace(theTitleNumber + ".", "");
         str = str.trim();
       }
 
       var result = "A " + str.substring(0, str.length - 3);
 
-      if (theTitleNumber){
-        result = theTitleNumber+". "+result;
+      if (theTitleNumber) {
+        result = theTitleNumber + ". " + result;
       }
-    
+
       //console.log("theReverser A out:"+result);  
       return result;
 
-    } 
+    }
 
-    if (parseCommon.endsWith(str, ", a")){
+    if (parseCommon.endsWith(str, ", a")) {
 
       //console.log("theReverser a in:"+str);  
 
       var theTitleNumber = getTitleNumber(str);
 
-      if (theTitleNumber){
+      if (theTitleNumber) {
 
         //console.log("theReverser a titlenumber:"+theTitleNumber); 
 
-        str = str.replace(theTitleNumber+".","");
+        str = str.replace(theTitleNumber + ".", "");
         str = str.trim();
       }
 
       var result = "A " + str.substring(0, str.length - 3);
 
-      if (theTitleNumber){
-        result = theTitleNumber+". "+result;
+      if (theTitleNumber) {
+        result = theTitleNumber + ". " + result;
       }
-    
+
       //console.log("theReverser a out:"+result);  
       return result;
 
-    } 
+    }
 
-    if (parseCommon.endsWith(str, ", Da")){
-      
+    if (parseCommon.endsWith(str, ", Da")) {
+
       //debugger;
 
       //console.log("theReverser Da in:"+str); 
 
       var theTitleNumber = getTitleNumber(str);
 
-      if (theTitleNumber){
+      if (theTitleNumber) {
 
         //console.log("theReverser Da titlenumber:"+theTitleNumber); 
 
-        str = str.replace(theTitleNumber+".","");
+        str = str.replace(theTitleNumber + ".", "");
         str = str.trim();
       }
 
       var result = "Da " + str.substring(0, str.length - 4);
 
-      if (theTitleNumber){
-        result = theTitleNumber+". "+result;
+      if (theTitleNumber) {
+        result = theTitleNumber + ". " + result;
       }
-      
+
       //console.log("theReverser Da out:"+result); 
 
       return result;
-      
+
     }
-    
+
+    if (parseCommon.endsWith(str, ", La")) {
+
+      //debugger;
+
+      //console.log("theReverser La in:"+str); 
+
+      var theTitleNumber = getTitleNumber(str);
+
+      if (theTitleNumber) {
+
+        //console.log("theReverser La titlenumber:"+theTitleNumber); 
+
+        str = str.replace(theTitleNumber + ".", "");
+        str = str.trim();
+      }
+
+      var result = "La " + str.substring(0, str.length - 4);
+
+      if (theTitleNumber) {
+        result = theTitleNumber + ". " + result;
+      }
+
+      //console.log("theReverser La out:"+result); 
+
+      return result;
+
+    }
+
+    if (parseCommon.endsWith(str, ", Le")) {
+
+      //debugger;
+
+      //console.log("theReverser Le in:"+str); 
+
+      var theTitleNumber = getTitleNumber(str);
+
+      if (theTitleNumber) {
+
+        //console.log("theReverser Le titlenumber:"+theTitleNumber); 
+
+        str = str.replace(theTitleNumber + ".", "");
+        str = str.trim();
+      }
+
+      var result = "Le " + str.substring(0, str.length - 4);
+
+      if (theTitleNumber) {
+        result = theTitleNumber + ". " + result;
+      }
+
+      //console.log("theReverser Le out:"+result); 
+
+      return result;
+
+    }
+
+    if (parseCommon.endsWith(str, ", Les")) {
+
+      //debugger;
+
+      //console.log("theReverser Les in:"+str); 
+
+      var theTitleNumber = getTitleNumber(str);
+
+      if (theTitleNumber) {
+
+        //console.log("theReverser Les titlenumber:"+theTitleNumber); 
+
+        str = str.replace(theTitleNumber + ".", "");
+        str = str.trim();
+      }
+
+      var result = "Les " + str.substring(0, str.length - 5);
+
+      if (theTitleNumber) {
+        result = theTitleNumber + ". " + result;
+      }
+
+      //console.log("theReverser Les out:"+result); 
+
+      return result;
+
+    }
+
+    if (parseCommon.endsWith(str, ", Ye")) {
+
+      //debugger;
+
+      //console.log("theReverser Ye in:"+str); 
+
+      var theTitleNumber = getTitleNumber(str);
+
+      if (theTitleNumber) {
+
+        //console.log("theReverser Ye titlenumber:"+theTitleNumber); 
+
+        str = str.replace(theTitleNumber + ".", "");
+        str = str.trim();
+      }
+
+      var result = "Ye " + str.substring(0, str.length - 4);
+
+      if (theTitleNumber) {
+        result = theTitleNumber + ". " + result;
+      }
+
+      //console.log("theReverser Ye out:"+result); 
+
+      return result;
+
+    }
+
     return str;
 
   };
-
 
 
   this.stripComment = function (str) {
