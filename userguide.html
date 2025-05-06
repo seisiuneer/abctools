@@ -1387,6 +1387,12 @@
                 <p>Moves all T: tag title or subtitle postfix articles, for example:<br/><br/>"Kesh, The" and "Slockit Light, Da"<br/><br/>to the front of the titles and subtitles resulting in:<br/><br/>"The Kesh" and "Da Slockit Light"<br/><br/>or the inverse moving prefixes articles:<br/><br/>"The Kesh" and "Da Slockit Light"<br/><br/>to the end of the titles and subtitles resulting in:<br/><br/>"Kesh, The" and "Slockit Light, Da"</p>
                 <p>The full set of articles that can be normalized is:</p>
                 <p class="code">, The<br/>, the<br/>, A<br/>, a<br/>, An<br/>, an<br/>, Da<br/>, La<br/>, Le<br/>, Les<br/>, Ye</p>
+                <hr>
+                <p>By default the notation renderer will reverse ", The" and ", An" style articles to the front of tune titles or subtitles.</p>
+                <p>To disable this behavior, you can add the following private annotation to any tune:</p>
+                <p class="code">% Disable title article reverser<br/><br/>%no_title_reverser</p>
+                <p>The presence of this annotation in a tune will force both the displayed notation in the editor, exported PDF notation, and tunes played from play links to have the title article reverser disabled.</p>
+                <p>If placed in the ABC file header, it will apply to all of the tunes.</p>
                 <hr id="hamburger_reformat_xml">
                 <p id="reformatusingxml"><strong>Reformat Using MusicXML</strong></p>
                 <p>Round-trips either the current tune or all the tunes in the ABC through MusicXML export and import back to ABC.</p>
