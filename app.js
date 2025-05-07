@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2485_050725_1200";
+var gVersionNumber="2486_050725_1400";
 
 var gMIDIInitStillWaiting = false;
 
@@ -314,6 +314,7 @@ var gForceComhaltasABC = false;
 
 // Zoom banner has been hidden
 var gZoomBannerHidden = false;
+var gZoomBannerAlwaysHidden = false;
 
 // Initial text box width
 var gInitialTextBoxWidth;
@@ -39510,6 +39511,15 @@ function GetInitialConfigurationSettings(){
 		gForceAndroid = (val == "true");
 	}
 
+	// Always hide banner?
+	gZoomBannerAlwaysHidden = false;
+
+	val = localStorage.ZoomBannerAlwaysHidden;
+
+	if (val){
+		gZoomBannerAlwaysHidden = (val == "true");
+	}
+
 	// Save the settings, in case they were initialized
 	SaveConfigurationSettings();
 
@@ -44341,6 +44351,42 @@ function HideZoomBanner(){
 
 }
 
+function HideZoomBannerForever(e){
+
+	e.stopPropagation();
+
+	var thePrompt = "Are you sure you want to hide the Zoom out banner forever?<br/></br/>If you click OK, there is no way to turn it back on.";
+
+	// Center the string in the prompt
+	thePrompt = makeCenteredPromptString(thePrompt);
+
+	DayPilot.Modal.confirm(thePrompt ,{ top:180, theme: "modal_flat", scrollWithPage: (AllowDialogsToScroll()) }).then(function(args){
+
+		if (!args.canceled){
+
+			// Hide the banner
+			document.getElementById("zoombanner").style.display = "none";
+
+			// Won't show the banner again this session
+			gZoomBannerHidden = true;
+
+			gZoomBannerAlwaysHidden = true;
+
+			if (gLocalStorageAvailable){
+
+				localStorage.ZoomBannerAlwaysHidden = true;
+
+			}
+
+			// Update the top position of the notation since the banner shifts the UI up
+			UpdateNotationTopPosition();
+
+		}
+	});
+
+}
+
+
 //
 // Set the margins on window resize
 //
@@ -44372,7 +44418,12 @@ function HandleWindowResize(){
 
 				// If they haven't dismissed the zoom suggestion banner before, show it now
 				if (!gZoomBannerHidden){
-					document.getElementById("zoombanner").style.display = "block";
+
+					if (!gZoomBannerAlwaysHidden){
+
+						document.getElementById("zoombanner").style.display = "block";
+
+					}
 				}
 
 				elem = document.getElementById("notation-placeholder-text");
