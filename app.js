@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2482_050625_1600";
+var gVersionNumber="2483_050725_0800";
 
 var gMIDIInitStillWaiting = false;
 
@@ -44747,6 +44747,10 @@ function isFirstRun(){
 //
 function restoreStateFromLocalStorage(){
 
+	if (!gLocalStorageAvailable){
+		return;
+	}
+
 	// Display mode
 	var theTab = localStorage.abcTab;
 
@@ -44876,6 +44880,10 @@ function restoreStateFromLocalStorage(){
 // Restore the application state from local storage on share link open
 //
 function restorePDFStateFromLocalStorage(){
+
+	if (!gLocalStorageAvailable){
+		return;
+	}
 
 	// PDF Tunes/page
 	var theTunesPerPage = localStorage.abcTunesPerPage;
@@ -45643,7 +45651,7 @@ function onMIDIReject(err) {
 	DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) });
 
 	// Reset the saved state so the message doesn't come up again on launch
-	if (localStorage){
+	if (gLocalStorageAvailable){
 
 		gAllowMIDIInput = false;
 		localStorage.AllowMIDIInput = false;
@@ -45688,7 +45696,7 @@ function initMIDI(){
 				DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) });
 
 				// Reset the saved state so the message doesn't come up again on launch
-				if (localStorage){
+				if (gLocalStorageAvailable){
 
 					gAllowMIDIInput = false;
 					localStorage.AllowMIDIInput = false;
@@ -46332,6 +46340,11 @@ function sendGoogleAnalytics(theCategory,theAction,theLabel){
 
 	// Don't send analytics on iOS Safari
 	if (gIsIOS){
+		return;
+	}
+
+	// Don't send analytics if local storage not available
+	if (!gLocalStorageAvailable){
 		return;
 	}
 
@@ -49295,6 +49308,14 @@ function DoStartup() {
 	gForceComhaltasABC = false;
 	gForceAndroid = false;
 
+	// Is browser storage available?
+	if (window.localStorage) {
+
+		gLocalStorageAvailable = true;
+
+	}
+
+
 	// Check if online (always returns true for normal case)
 	doOnlineCheck();
 
@@ -49375,7 +49396,7 @@ function DoStartup() {
 	
 	// Need this early to configure iPad or Android UI!
 
-	if (localStorage){
+	if (gLocalStorageAvailable){
 
 		// Two column display for iPad
 		var val = localStorage.iPadTwoColumn;
@@ -49771,13 +49792,6 @@ function DoStartup() {
 
 		// Read the file
 		DoFileRead(file, false);
-
-	}
-
-	// Is browser storage available?
-	if (window.localStorage) {
-
-		gLocalStorageAvailable = true;
 
 	}
 
