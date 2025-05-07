@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2484_050725_0830";
+var gVersionNumber="2485_050725_1200";
 
 var gMIDIInitStillWaiting = false;
 
@@ -30019,729 +30019,121 @@ function postProcessTab(visualObj, renderDivID, instrument, bIsPlayback){
 		return;
 	}
 
-	if (instrument == "whistle") {
+	if (instrument === "whistle") {
+	    hideTabLines();
 
-		// Hide the leger lines on the tab staves
-		hideTabLines();
+	    let Tspans;
+	    const baseSelector = `div[id="${renderDivID}"] > `;
+	    const svgPath = (gIsQuickEditor || bIsPlayback) ? "svg" : "div > svg";
+	    Tspans = document.querySelectorAll(`${baseSelector}${svgPath} > g > g[data-name="tabNumber"] > text > tspan`);
 
-		var Tspans;
+	    const map = [
+	        "g", "m", "a", "i", "b", "c", "j", "d", "k", "e", "f", "l",
+	        "g", "m", "a", "i", "b", "c", "j", "D", "K", "E", "F", "L",
+	        "G", "M", "A", "I", "B", "C", "J", "D", "K", "E", "F", "L",
+	        "G", "M", "A"
+	    ];
 
-		if (gIsQuickEditor){
-			Tspans = document.querySelectorAll('div[id="' + renderDivID + '"] > svg > g > g[data-name="tabNumber"] > text > tspan');
-		}
-		else
-		if (bIsPlayback){
-			Tspans = document.querySelectorAll('div[id="' + renderDivID + '"] > svg > g > g[data-name="tabNumber"] > text > tspan');
-		}
-		else{
-			Tspans = document.querySelectorAll('div[id="' + renderDivID + '"] > div > svg > g > g[data-name="tabNumber"] > text > tspan');
-		}
+	    Tspans.forEach(tspan => {
+	        tspan.setAttribute("class", "whistle");
+	        tspan.setAttribute("dy", "-7");
 
-		for (var x = 0; x < Tspans.length; x++) {
-
-		    Tspans[x].setAttribute("class", "whistle");
-
-		    // This fixes the + cutoff issue below the second octave notes
-		    Tspans[x].setAttribute("dy", "-7");
-
-		    switch (Tspans[x].innerHTML) {
-		        case "0":
-		            Tspans[x].innerHTML = "g";
-		            break;
-		        case "1":
-		            Tspans[x].innerHTML = "m";
-		            break;
-		        case "2":
-		            Tspans[x].innerHTML = "a";
-		            break;
-		        case "3":
-		            Tspans[x].innerHTML = "i";
-		            break;
-		        case "4":
-		            Tspans[x].innerHTML = "b";
-		            break;
-		        case "5":
-		            Tspans[x].innerHTML = "c";
-		            break;
-		        case "6":
-		            Tspans[x].innerHTML = "j";
-		            break;
-		        case "7":
-		            Tspans[x].innerHTML = "d";
-		            break;
-		        case "8":
-		            Tspans[x].innerHTML = "k";
-		            break;
-		        case "9":
-		            Tspans[x].innerHTML = "e";
-		            break;
-		        case "10":
-		            Tspans[x].innerHTML = "f";
-		            break;
-		        case "11":
-		            Tspans[x].innerHTML = "l";
-		            break;
-		        case "12":
-		            Tspans[x].innerHTML = "g";
-		            break;
-		        case "13":
-		            Tspans[x].innerHTML = "m";
-		            break;
-		        case "14":
-		            Tspans[x].innerHTML = "a";
-		            break;
-		        case "15":
-		            Tspans[x].innerHTML = "i";
-		            break;
-		        case "16":
-		            Tspans[x].innerHTML = "b";
-		            break;
-		        case "17":
-		            Tspans[x].innerHTML = "c";
-		            break;
-		        case "18":
-		            Tspans[x].innerHTML = "j";
-		            break;
-		        case "19":
-		            Tspans[x].innerHTML = "D";
-		            break;
-		        case "20":
-		            Tspans[x].innerHTML = "K";
-		            break;
-		        case "21":
-		            Tspans[x].innerHTML = "E";
-		            break;
-		        case "22":
-		            Tspans[x].innerHTML = "F";
-		            break;
-		        case "23":
-		            Tspans[x].innerHTML = "L";
-		            break;
-		        case "24":
-		            Tspans[x].innerHTML = "G";
-		            break;
-		        case "25":
-		            Tspans[x].innerHTML = "M";
-		            break;
-		        case "26":
-		            Tspans[x].innerHTML = "A";
-		            break;
-		        case "27":
-		            Tspans[x].innerHTML = "I";
-		            break;
-		        case "28":
-		            Tspans[x].innerHTML = "B";
-		            break;
-		        case "29":
-		            Tspans[x].innerHTML = "C";
-		            break;
-		        case "30":
-		            Tspans[x].innerHTML = "J";
-		            break;
-		        case "31":
-		            Tspans[x].innerHTML = "D";
-		            break;
-		        case "32":
-		            Tspans[x].innerHTML = "K";
-		            break;
-		        case "33":
-		            Tspans[x].innerHTML = "E";
-		            break;
-		        case "34":
-		            Tspans[x].innerHTML = "F";
-		            break;
-		        case "35":
-		            Tspans[x].innerHTML = "L";
-		            break;
-		        case "36":
-		            Tspans[x].innerHTML = "G";
-		            break;
-		        case "37":
-		            Tspans[x].innerHTML = "M";
-		            break;
-		        case "38":
-		            Tspans[x].innerHTML = "A";
-		            break;
-		        default:
-		            // No mapped note, put an x
-		            Tspans[x].setAttribute("class", "whistle_small");
-		            Tspans[x].setAttribute("dy", "-23");
-		            Tspans[x].innerHTML = "x";
-		    }
-		}
-	}
-
-	if (instrument == "recorder") {
-
-		// Hide the leger lines on the tab staves
-		hideTabLines();
-
-		var Tspans;
-
-		if (gIsQuickEditor){
-			Tspans = document.querySelectorAll('div[id="' + renderDivID + '"] > svg > g > g[data-name="tabNumber"] > text > tspan');
-		}
-		else
-		if (bIsPlayback){
-			Tspans = document.querySelectorAll('div[id="' + renderDivID + '"] > svg > g > g[data-name="tabNumber"] > text > tspan');
-		}
-		else{
-			Tspans = document.querySelectorAll('div[id="' + renderDivID + '"] > div > svg > g > g[data-name="tabNumber"] > text > tspan');
-		}
-
-		for (var x = 0; x < Tspans.length; x++) {
-
-		    Tspans[x].setAttribute("class", "recorder");
-
-		    // This fixes the + cutoff issue below the second octave notes
-		    Tspans[x].setAttribute("dy","-8"); 
-
-	        // Recorder fingerings
-	        switch (Tspans[x].innerHTML) {
-	            case "0":  Tspans[x].innerHTML = "1"; break;
-	            case "1":  Tspans[x].innerHTML = "2"; break;
-	            case "2":  Tspans[x].innerHTML = "3"; break;
-	            case "3":  Tspans[x].innerHTML = "4"; break;
-	            case "4":  Tspans[x].innerHTML = "5"; break;
-	            case "5":  Tspans[x].innerHTML = "6"; break;
-	            case "6":  Tspans[x].innerHTML = "7"; break;
-	            case "7":  Tspans[x].innerHTML = "8"; break;
-	            case "8":  Tspans[x].innerHTML = "9"; break;
-	            case "9":  Tspans[x].innerHTML = "0"; break;
-	            case "10": Tspans[x].innerHTML = "-"; break;
-	            case "11": Tspans[x].innerHTML = "="; break;
-	            case "12": Tspans[x].innerHTML = "q"; break;
-	            case "13": Tspans[x].innerHTML = "w"; break;
-	            case "14": Tspans[x].innerHTML = "e"; break;
-	            case "15": Tspans[x].innerHTML = "r"; break;
-	            case "16": Tspans[x].innerHTML = "t"; break;
-	            case "17": Tspans[x].innerHTML = "y"; break;
-	            case "18": Tspans[x].innerHTML = "u"; break;
-	            case "19": Tspans[x].innerHTML = "i"; break;
-	            case "20": Tspans[x].innerHTML = "o"; break;
-	            case "21": Tspans[x].innerHTML = "p"; break;
-	            case "22": Tspans[x].innerHTML = "["; break;
-	            case "23": Tspans[x].innerHTML = "]"; break;
-	            case "24": Tspans[x].innerHTML = "a"; break;
-	            case "25": Tspans[x].innerHTML = "s"; break;
-	            case "26": Tspans[x].innerHTML = "d"; break;
-	            case "27": Tspans[x].innerHTML = "f"; break;
-	            case "28": Tspans[x].innerHTML = "g"; break;
-	            case "29": Tspans[x].innerHTML = "h"; break;
-	            case "30": Tspans[x].innerHTML = "j"; break;
-	            case "31": Tspans[x].innerHTML = "k"; break;
-	            default:
-	                Tspans[x].setAttribute("class", "whistle_small");
-	                Tspans[x].setAttribute("dy", "-23");
-	                Tspans[x].innerHTML = "x";
-	                break;
+	        const idx = parseInt(tspan.innerHTML);
+	        if (!isNaN(idx) && idx >= 0 && idx < map.length) {
+	            tspan.innerHTML = map[idx];
+	        } else {
+	            tspan.setAttribute("class", "whistle_small");
+	            tspan.setAttribute("dy", "-23");
+	            tspan.innerHTML = "x";
 	        }
-		}
+	    });
 	}
+	else
+	if (instrument === "recorder") {
+	    hideTabLines();
 
-	if (instrument == "notenames") {
+	    const selector = gIsQuickEditor || bIsPlayback
+	        ? `div[id="${renderDivID}"] > svg > g > g[data-name="tabNumber"] > text > tspan`
+	        : `div[id="${renderDivID}"] > div > svg > g > g[data-name="tabNumber"] > text > tspan`;
 
-		var useSharps = true;
+	    const Tspans = document.querySelectorAll(selector);
 
-		// Hide the leger lines on the tab staves
-		hideTabLines();
+	    const fingeringMap = [
+	        "1", "2", "3", "4", "5", "6", "7", "8", "9", "0",
+	        "-", "=", "q", "w", "e", "r", "t", "y", "u", "i",
+	        "o", "p", "[", "]", "a", "s", "d", "f", "g", "h",
+	        "j", "k"
+	    ];
 
-		// Walk the SVGs
+	    Tspans.forEach(tspan => {
+	        let val = parseInt(tspan.innerHTML, 10);
+	        tspan.setAttribute("class", "recorder");
+	        tspan.setAttribute("dy", "-8");
 
-		var SVGs;
+	        if (!isNaN(val) && val >= 0 && val < fingeringMap.length) {
+	            tspan.innerHTML = fingeringMap[val];
+	        } else {
+	            tspan.setAttribute("class", "whistle_small");
+	            tspan.setAttribute("dy", "-23");
+	            tspan.innerHTML = "x";
+	        }
+	    });
+	}
+	else
+	if (instrument === "notenames") {
+	    hideTabLines();
+	    let useSharps = true;
+	    let Svgs = document.querySelectorAll(
+	        bIsPlayback || gIsQuickEditor
+	            ? `div[id="${renderDivID}"] > svg`
+	            : `div[id="${renderDivID}"] > div > svg`
+	    );
 
-		if (gIsQuickEditor){
-			Svgs = document.querySelectorAll('div[id="' + renderDivID + '"] > svg');
-		}
-		else
-		if (bIsPlayback){
-			Svgs = document.querySelectorAll('div[id="' + renderDivID + '"] > svg');
-		}
-		else{
-			Svgs = document.querySelectorAll('div[id="' + renderDivID + '"] > div > svg');			
-		}
+	    const nSVGsRequired = bIsPlayback || gIsQuickEditor ? 0 : 1;
+	    if (!Svgs || Svgs.length <= nSVGsRequired) return;
 
-		var nSVGsRequired = 1;
+	    const mappings = {
+	        sharps: [
+	            "G,", "G♯,", "A,", "A♯,", "B,", "C", "C♯", "D", "D♯", "E", "F", "F♯", "G", "G♯", "A", "A♯", "B",
+	            "c", "c♯", "d", "d♯", "e", "f", "f♯", "g", "g♯", "a", "a♯", "b", "c'", "c♯'", "d'", "d♯'", "e'",
+	            "f'", "f♯'", "g'", "g♯'", "a'", "a♯'", "b'"
+	        ],
+	        flats: [
+	            "G,", "A♭,", "A,", "B♭,", "B,", "C", "D♭", "D", "E♭", "E", "F", "G♭", "G", "A♭", "A", "B♭", "B",
+	            "c", "d♭", "d", "e♭", "e", "f", "g♭", "g", "a♭", "a", "b♭", "b", "c'", "d♭'", "d'", "e♭'", "e'",
+	            "f'", "g♭'", "g'", "a♭'", "a'", "b♭'", "b'"
+	        ],
+	        comhaltas: {
+	            sharps: [
+	                "G,", "G♯,", "A,", "A♯,", "B,", "C,", "C♯,", "D", "D♯", "E", "F", "F♯", "G", "G♯", "A", "A♯", "B",
+	                "C", "C♯", "D'", "D♯'", "E'", "F'", "F♯'", "G'", "G♯'", "A'", "A♯'", "B'", "C'", "C♯'", "D''",
+	                "D♯''", "E''", "F''", "F♯''", "G''", "G♯''", "A''", "A♯''", "B''"
+	            ],
+	            flats: [
+	                "G,", "A♭,", "A,", "B♭,", "B,", "C,", "D♭", "D", "E♭", "E", "F", "G♭", "G", "A♭", "A", "B♭", "B",
+	                "C", "D♭", "D'", "E♭'", "E'", "F'", "G♭'", "G'", "A♭'", "A'", "B♭'", "B'", "C'", "D♭'", "D''",
+	                "E♭''", "E''", "F''", "G♭''", "G''", "A♭''", "A''", "B♭''", "B''"
+	            ]
+	        }
+	    };
 
-		if (bIsPlayback || gIsQuickEditor){
-			nSVGsRequired = 0;
-		}
+	    for (let i = nSVGsRequired; i < Svgs.length; i++) {
+	        const svg = Svgs[i];
+	        const keySig = svg.querySelector('g[data-name="staff-extra key-signature"]');
+	        if (keySig?.innerHTML.includes("accidentals.flat")) {
+	            useSharps = false;
+	        }
 
-		if ((Svgs) && (Svgs.length > nSVGsRequired)) {
+	        const Tspans = svg.querySelectorAll('g[data-name="tabNumber"] > text > tspan');
+	        const useMap = gUseComhaltasABC || gForceComhaltasABC
+	            ? mappings.comhaltas[useSharps ? "sharps" : "flats"]
+	            : mappings[useSharps ? "sharps" : "flats"];
 
-			for (var i = nSVGsRequired; i < Svgs.length; ++i) {
-
-				useSharps = true;
-
-				var theSVG = Svgs[i];
-
-				// Find the key signature group
-				var keySignatures = theSVG.querySelectorAll('g[data-name="staff-extra key-signature"]');
-
-				// Look for the flat glyph in the key signature group
-				if (keySignatures && (keySignatures.length >= 1)) {
-
-					var inner = keySignatures[0].innerHTML;
-
-					if (inner.indexOf("accidentals.flat") != -1) {
-
-						useSharps = false;
-
-					}
-				}
-
-				var Tspans = theSVG.querySelectorAll('g[data-name="tabNumber"] > text > tspan');
-
-				if (!(gUseComhaltasABC || gForceComhaltasABC)){
-
-					if (useSharps) {
-						for (var x = 0; x < Tspans.length; x++) {
-						    switch (Tspans[x].innerHTML) {
-						        case "0": Tspans[x].innerHTML = "G,"; break;
-						        case "1": Tspans[x].innerHTML = "G♯,"; break;
-						        case "2": Tspans[x].innerHTML = "A,"; break;
-						        case "3": Tspans[x].innerHTML = "A♯,"; break;
-						        case "4": Tspans[x].innerHTML = "B,"; break;
-						        case "5": Tspans[x].innerHTML = "C"; break;
-						        case "6": Tspans[x].innerHTML = "C♯"; break;
-						        case "7": Tspans[x].innerHTML = "D"; break;
-						        case "8": Tspans[x].innerHTML = "D♯"; break;
-						        case "9": Tspans[x].innerHTML = "E"; break;
-						        case "10": Tspans[x].innerHTML = "F"; break;
-						        case "11": Tspans[x].innerHTML = "F♯"; break;
-						        case "12": Tspans[x].innerHTML = "G"; break;
-						        case "13": Tspans[x].innerHTML = "G♯"; break;
-						        case "14": Tspans[x].innerHTML = "A"; break;
-						        case "15": Tspans[x].innerHTML = "A♯"; break;
-						        case "16": Tspans[x].innerHTML = "B"; break;
-						        case "17": Tspans[x].innerHTML = "c"; break;
-						        case "18": Tspans[x].innerHTML = "c♯"; break;
-						        case "19": Tspans[x].innerHTML = "d"; break;
-						        case "20": Tspans[x].innerHTML = "d♯"; break;
-						        case "21": Tspans[x].innerHTML = "e"; break;
-						        case "22": Tspans[x].innerHTML = "f"; break;
-						        case "23": Tspans[x].innerHTML = "f♯"; break;
-						        case "24": Tspans[x].innerHTML = "g"; break;
-						        case "25": Tspans[x].innerHTML = "g♯"; break;
-						        case "26": Tspans[x].innerHTML = "a"; break;
-						        case "27": Tspans[x].innerHTML = "a♯"; break;
-						        case "28": Tspans[x].innerHTML = "b"; break;
-						        case "29": Tspans[x].innerHTML = "c'"; break;
-						        case "30": Tspans[x].innerHTML = "c♯'"; break;
-						        case "31": Tspans[x].innerHTML = "d'"; break;
-						        case "32": Tspans[x].innerHTML = "d♯'"; break;
-						        case "33": Tspans[x].innerHTML = "e'"; break;
-						        case "34": Tspans[x].innerHTML = "f'"; break;
-						        case "35": Tspans[x].innerHTML = "f♯'"; break;
-						        case "36": Tspans[x].innerHTML = "g'"; break;
-						        case "37": Tspans[x].innerHTML = "g♯'"; break;
-						        case "38": Tspans[x].innerHTML = "a'"; break;
-						        case "39": Tspans[x].innerHTML = "a♯'"; break;
-						        case "40": Tspans[x].innerHTML = "b'"; break;
-						        default: Tspans[x].innerHTML = "?"; break;
-						    }
-						}
-					} else {
-						for (var x = 0; x < Tspans.length; x++) {
-						    switch (Tspans[x].innerHTML) {
-						        case "0":
-						            Tspans[x].innerHTML = "G,";
-						            break;
-						        case "1":
-						            Tspans[x].innerHTML = "A♭,";
-						            break;
-						        case "2":
-						            Tspans[x].innerHTML = "A,";
-						            break;
-						        case "3":
-						            Tspans[x].innerHTML = "B♭,";
-						            break;
-						        case "4":
-						            Tspans[x].innerHTML = "B,";
-						            break;
-						        case "5":
-						            Tspans[x].innerHTML = "C";
-						            break;
-						        case "6":
-						            Tspans[x].innerHTML = "D♭";
-						            break;
-						        case "7":
-						            Tspans[x].innerHTML = "D";
-						            break;
-						        case "8":
-						            Tspans[x].innerHTML = "E♭";
-						            break;
-						        case "9":
-						            Tspans[x].innerHTML = "E";
-						            break;
-						        case "10":
-						            Tspans[x].innerHTML = "F";
-						            break;
-						        case "11":
-						            Tspans[x].innerHTML = "G♭";
-						            break;
-						        case "12":
-						            Tspans[x].innerHTML = "G";
-						            break;
-						        case "13":
-						            Tspans[x].innerHTML = "A♭";
-						            break;
-						        case "14":
-						            Tspans[x].innerHTML = "A";
-						            break;
-						        case "15":
-						            Tspans[x].innerHTML = "B♭";
-						            break;
-						        case "16":
-						            Tspans[x].innerHTML = "B";
-						            break;
-						        case "17":
-						            Tspans[x].innerHTML = "c";
-						            break;
-						        case "18":
-						            Tspans[x].innerHTML = "d♭";
-						            break;
-						        case "19":
-						            Tspans[x].innerHTML = "d";
-						            break;
-						        case "20":
-						            Tspans[x].innerHTML = "e♭";
-						            break;
-						        case "21":
-						            Tspans[x].innerHTML = "e";
-						            break;
-						        case "22":
-						            Tspans[x].innerHTML = "f";
-						            break;
-						        case "23":
-						            Tspans[x].innerHTML = "g♭";
-						            break;
-						        case "24":
-						            Tspans[x].innerHTML = "g";
-						            break;
-						        case "25":
-						            Tspans[x].innerHTML = "a♭";
-						            break;
-						        case "26":
-						            Tspans[x].innerHTML = "a";
-						            break;
-						        case "27":
-						            Tspans[x].innerHTML = "b♭";
-						            break;
-						        case "28":
-						            Tspans[x].innerHTML = "b";
-						            break;
-						        case "29":
-						            Tspans[x].innerHTML = "c'";
-						            break;
-						        case "30":
-						            Tspans[x].innerHTML = "d♭'";
-						            break;
-						        case "31":
-						            Tspans[x].innerHTML = "d'";
-						            break;
-						        case "32":
-						            Tspans[x].innerHTML = "e♭'";
-						            break;
-						        case "33":
-						            Tspans[x].innerHTML = "e'";
-						            break;
-						        case "34":
-						            Tspans[x].innerHTML = "f'";
-						            break;
-						        case "35":
-						            Tspans[x].innerHTML = "g♭'";
-						            break;
-						        case "36":
-						            Tspans[x].innerHTML = "g'";
-						            break;
-						        case "37":
-						            Tspans[x].innerHTML = "a♭'";
-						            break;
-						        case "38":
-						            Tspans[x].innerHTML = "a'";
-						            break;
-						        case "39":
-						            Tspans[x].innerHTML = "b♭'";
-						            break;
-						        case "40":
-						            Tspans[x].innerHTML = "b'";
-						            break;
-						        default:
-						            Tspans[x].innerHTML = "?";
-						    }
-						}
-
-					}	
-				}
-				else{
-					if (useSharps) {
-						for (var x = 0; x < Tspans.length; x++) {
-						    switch (Tspans[x].innerHTML) {
-						        case "0":
-						            Tspans[x].innerHTML = "G,";
-						            break;
-						        case "1":
-						            Tspans[x].innerHTML = "G♯,";
-						            break;
-						        case "2":
-						            Tspans[x].innerHTML = "A,";
-						            break;
-						        case "3":
-						            Tspans[x].innerHTML = "A♯,";
-						            break;
-						        case "4":
-						            Tspans[x].innerHTML = "B,";
-						            break;
-						        case "5":
-						            Tspans[x].innerHTML = "C,";
-						            break;
-						        case "6":
-						            Tspans[x].innerHTML = "C♯,";
-						            break;
-						        case "7":
-						            Tspans[x].innerHTML = "D";
-						            break;
-						        case "8":
-						            Tspans[x].innerHTML = "D♯";
-						            break;
-						        case "9":
-						            Tspans[x].innerHTML = "E";
-						            break;
-						        case "10":
-						            Tspans[x].innerHTML = "F";
-						            break;
-						        case "11":
-						            Tspans[x].innerHTML = "F♯";
-						            break;
-						        case "12":
-						            Tspans[x].innerHTML = "G";
-						            break;
-						        case "13":
-						            Tspans[x].innerHTML = "G♯";
-						            break;
-						        case "14":
-						            Tspans[x].innerHTML = "A";
-						            break;
-						        case "15":
-						            Tspans[x].innerHTML = "A♯";
-						            break;
-						        case "16":
-						            Tspans[x].innerHTML = "B";
-						            break;
-						        case "17":
-						            Tspans[x].innerHTML = "C";
-						            break;
-						        case "18":
-						            Tspans[x].innerHTML = "C♯";
-						            break;
-						        case "19":
-						            Tspans[x].innerHTML = "D'";
-						            break;
-						        case "20":
-						            Tspans[x].innerHTML = "D♯'";
-						            break;
-						        case "21":
-						            Tspans[x].innerHTML = "E'";
-						            break;
-						        case "22":
-						            Tspans[x].innerHTML = "F'";
-						            break;
-						        case "23":
-						            Tspans[x].innerHTML = "F♯'";
-						            break;
-						        case "24":
-						            Tspans[x].innerHTML = "G'";
-						            break;
-						        case "25":
-						            Tspans[x].innerHTML = "G♯'";
-						            break;
-						        case "26":
-						            Tspans[x].innerHTML = "A'";
-						            break;
-						        case "27":
-						            Tspans[x].innerHTML = "A♯'";
-						            break;
-						        case "28":
-						            Tspans[x].innerHTML = "B'";
-						            break;
-						        case "29":
-						            Tspans[x].innerHTML = "C'";
-						            break;
-						        case "30":
-						            Tspans[x].innerHTML = "C♯'";
-						            break;
-						        case "31":
-						            Tspans[x].innerHTML = "D''";
-						            break;
-						        case "32":
-						            Tspans[x].innerHTML = "D♯''";
-						            break;
-						        case "33":
-						            Tspans[x].innerHTML = "E''";
-						            break;
-						        case "34":
-						            Tspans[x].innerHTML = "F''";
-						            break;
-						        case "35":
-						            Tspans[x].innerHTML = "F♯''";
-						            break;
-						        case "36":
-						            Tspans[x].innerHTML = "G''";
-						            break;
-						        case "37":
-						            Tspans[x].innerHTML = "G♯''";
-						            break;
-						        case "38":
-						            Tspans[x].innerHTML = "A''";
-						            break;
-						        case "39":
-						            Tspans[x].innerHTML = "A♯''";
-						            break;
-						        case "40":
-						            Tspans[x].innerHTML = "B''";
-						            break;
-						        default:
-						            Tspans[x].innerHTML = "?";
-						            break;
-						    }
-						}
-
-					} else {
-						for (var x = 0; x < Tspans.length; x++) {
-						    switch (Tspans[x].innerHTML) {
-						        case "0":
-						            Tspans[x].innerHTML = "G,";
-						            break;
-						        case "1":
-						            Tspans[x].innerHTML = "A♭,";
-						            break;
-						        case "2":
-						            Tspans[x].innerHTML = "A,";
-						            break;
-						        case "3":
-						            Tspans[x].innerHTML = "B♭,";
-						            break;
-						        case "4":
-						            Tspans[x].innerHTML = "B,";
-						            break;
-						        case "5":
-						            Tspans[x].innerHTML = "C,";
-						            break;
-						        case "6":
-						            Tspans[x].innerHTML = "D♭";
-						            break;
-						        case "7":
-						            Tspans[x].innerHTML = "D";
-						            break;
-						        case "8":
-						            Tspans[x].innerHTML = "E♭";
-						            break;
-						        case "9":
-						            Tspans[x].innerHTML = "E";
-						            break;
-						        case "10":
-						            Tspans[x].innerHTML = "F";
-						            break;
-						        case "11":
-						            Tspans[x].innerHTML = "G♭";
-						            break;
-						        case "12":
-						            Tspans[x].innerHTML = "G";
-						            break;
-						        case "13":
-						            Tspans[x].innerHTML = "A♭";
-						            break;
-						        case "14":
-						            Tspans[x].innerHTML = "A";
-						            break;
-						        case "15":
-						            Tspans[x].innerHTML = "B♭";
-						            break;
-						        case "16":
-						            Tspans[x].innerHTML = "B";
-						            break;
-						        case "17":
-						            Tspans[x].innerHTML = "C";
-						            break;
-						        case "18":
-						            Tspans[x].innerHTML = "D♭'";
-						            break;
-						        case "19":
-						            Tspans[x].innerHTML = "D'";
-						            break;
-						        case "20":
-						            Tspans[x].innerHTML = "E♭'";
-						            break;
-						        case "21":
-						            Tspans[x].innerHTML = "E'";
-						            break;
-						        case "22":
-						            Tspans[x].innerHTML = "F'";
-						            break;
-						        case "23":
-						            Tspans[x].innerHTML = "G♭'";
-						            break;
-						        case "24":
-						            Tspans[x].innerHTML = "G'";
-						            break;
-						        case "25":
-						            Tspans[x].innerHTML = "A♭'";
-						            break;
-						        case "26":
-						            Tspans[x].innerHTML = "A'";
-						            break;
-						        case "27":
-						            Tspans[x].innerHTML = "B♭'";
-						            break;
-						        case "28":
-						            Tspans[x].innerHTML = "B'";
-						            break;
-						        case "29":
-						            Tspans[x].innerHTML = "C'";
-						            break;
-						        case "30":
-						            Tspans[x].innerHTML = "D♭''";
-						            break;
-						        case "31":
-						            Tspans[x].innerHTML = "D''";
-						            break;
-						        case "32":
-						            Tspans[x].innerHTML = "E♭''";
-						            break;
-						        case "33":
-						            Tspans[x].innerHTML = "E''";
-						            break;
-						        case "34":
-						            Tspans[x].innerHTML = "F''";
-						            break;
-						        case "35":
-						            Tspans[x].innerHTML = "G♭''";
-						            break;
-						        case "36":
-						            Tspans[x].innerHTML = "G''";
-						            break;
-						        case "37":
-						            Tspans[x].innerHTML = "A♭''";
-						            break;
-						        case "38":
-						            Tspans[x].innerHTML = "A''";
-						            break;
-						        case "39":
-						            Tspans[x].innerHTML = "B♭''";
-						            break;
-						        case "40":
-						            Tspans[x].innerHTML = "B''";
-						            break;
-						        default:
-						            Tspans[x].innerHTML = "?";
-						            break;
-						    }
-						}
-					}						
-				}
-			}
-		}
+	        Tspans.forEach(tspan => {
+	            const idx = parseInt(tspan.innerHTML, 10);
+	            tspan.innerHTML = useMap[idx] || "?";
+	        });
+	    }
 	}
 }
 
