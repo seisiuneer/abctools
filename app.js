@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2483_050725_0800";
+var gVersionNumber="2484_050725_0830";
 
 var gMIDIInitStillWaiting = false;
 
@@ -43224,9 +43224,9 @@ function ConfigureToolSettings() {
 		form.push({name: "    MIDI input is key and mode aware (if unchecked, enters note names with no accidentals)", id: "configure_midi_chromatic", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"});
 	};
 
-	if (!gIsIOS){
+	if ((!gIsIOS) && (!gIsIPad)){
 		form = form.concat([
-			{name: "    Force Android UI (If mobile browser doesn't identify as Android)", id: "configure_force_android", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"}
+			{name: "    Force Android phone UI (If mobile browser doesn't identify as Android)", id: "configure_force_android", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"}
  		]);
 	}
 
