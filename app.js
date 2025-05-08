@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2486_050725_1400";
+var gVersionNumber="2487_050825_0900";
 
 var gMIDIInitStillWaiting = false;
 
@@ -3697,6 +3697,9 @@ var TunebookTOCWithNoPageNumbers = false;
 // Did they request an Index with no page numbers?
 var TunebookIndexWithNoPageNumbers = false;
 
+// First page number number
+var TunebookFirstPageNumber = 0;
+
 // Tune page map
 var theTunePageMap = [];
 
@@ -5144,10 +5147,10 @@ function AppendTunebookIndex(thePDF,pageNumberLocation,hideFirstPageNumber,paper
 				}
 
 				if (doPageLinks){
-					thePDF.textWithLink(""+thePageNumber, thePaperWidth-INDEXRIGHTMARGIN + gINDEXRIGHTOFFSET, curTop, {align:"left",pageNumber:theFinalPageNumber});
+					thePDF.textWithLink(""+(thePageNumber+TunebookFirstPageNumber-1), thePaperWidth-INDEXRIGHTMARGIN + gINDEXRIGHTOFFSET, curTop, {align:"left",pageNumber:theFinalPageNumber});
 				}
 				else{
-					thePDF.text(""+thePageNumber, thePaperWidth-INDEXRIGHTMARGIN + gINDEXRIGHTOFFSET, curTop, {align:"left"});
+					thePDF.text(""+(thePageNumber+TunebookFirstPageNumber-1), thePaperWidth-INDEXRIGHTMARGIN + gINDEXRIGHTOFFSET, curTop, {align:"left"});
 				}
 
 			}
@@ -6036,12 +6039,12 @@ function AppendTuneTOC(thePDF,pageNumberLocation,hideFirstPageNumber,paperStyle,
 
 				if (doPageLinks){
 
-					thePDF.textWithLink(""+thePageNumber, thePaperWidth-TOCRIGHTMARGIN + gTOCRIGHTOFFSET, curTop, {align:"left",pageNumber:(thePageNumber+pageDelta)});
+					thePDF.textWithLink(""+(thePageNumber+TunebookFirstPageNumber-1), thePaperWidth-TOCRIGHTMARGIN + gTOCRIGHTOFFSET, curTop, {align:"left",pageNumber:(thePageNumber+pageDelta)});
 
 				}
 				else{
 
-					thePDF.text(""+thePageNumber, thePaperWidth-TOCRIGHTMARGIN + gTOCRIGHTOFFSET, curTop, {align:"left"});
+					thePDF.text(""+(thePageNumber+TunebookFirstPageNumber-1), thePaperWidth-TOCRIGHTMARGIN + gTOCRIGHTOFFSET, curTop, {align:"left"});
 
 				}
 
@@ -7828,6 +7831,29 @@ function ParseCommentCommands(theNotes){
 		}
 	}
 
+	// Search for a tunebook first page offset
+	TunebookFirstPageNumber = 1;
+
+	searchRegExp = /^%firstpagenumber.*$/m
+
+	// Detect tunebook index font size annotation
+	var overrideFirstPageNumber = theNotes.match(searchRegExp);
+
+	if ((overrideFirstPageNumber) && (overrideFirstPageNumber.length > 0)){
+
+		var theFirstPage = overrideFirstPageNumber[0].replace("%firstpagenumber","");
+
+		theFirstPage = theFirstPage.trim();
+		
+		var theFirstPageInt = parseInt(theFirstPage);
+		
+		if ((!isNaN(theFirstPageInt)) && (theFirstPageInt > 0)){
+
+			TunebookFirstPageNumber = theFirstPageInt;
+
+		}
+	}
+
 	// Check my work
 	// console.log("thePageHeader = "+thePageHeader);
 	// console.log("thePageFooter = "+thePageFooter);
@@ -8401,7 +8427,7 @@ function ProcessHeaderFooter(str,pageNumber,pageCount){
 
 	var workstr = str.replace("$PDFNAME",theFileName+".pdf");
 
-	workstr = workstr.replace("$PAGENUMBER",pageNumber);
+	workstr = workstr.replace("$PAGENUMBER",(pageNumber+TunebookFirstPageNumber-1));
 
 	workstr = workstr.replace("$TUNECOUNT",totalTunes);
 
@@ -8509,7 +8535,7 @@ function AddPageHeaderFooter(thePDF,doAddPageNumber,pageNumber,pageNumberLocatio
 	thePDF.setFontSize(HEADERFOOTERFONTSIZE);
 
 	// Add page number
-	var str = "" + pageNumber;
+	var str = "" + (pageNumber+TunebookFirstPageNumber-1);
 
 	// Division accounts for the PDF internal scaling
 
@@ -22508,12 +22534,14 @@ function ToggleMaximize(){
 		// 2 Jul 2024 - Moved this here to avoid binding error on Firefox at start
 		document.getElementById("zoombutton").src = "img/zoomin.png"
 
+
 		if (isDesktopBrowser()){
 
 			if (giPadTwoColumn){
 				document.getElementById("notation-holder").style.width = "80%";
 			}
 			else{
+
 				// Scale the full screen up a bit if it makes sense
 				var windowWidth = window.innerWidth;
 
@@ -22536,6 +22564,7 @@ function ToggleMaximize(){
 			}
 
 		}
+		
 	}
 
 }
@@ -22841,6 +22870,20 @@ function processShareLink() {
 	if (urlParams.has("noui-noclick")) {
 	
 		gUIHiddenAllowPlay = false;
+
+	}
+
+	// Forcing flex?
+	if (urlParams.has("flex")) {
+
+		const body = document.querySelector('body');
+
+		if (body){
+
+			body.style.display = "flex";
+			body.style.justifyContent = "center";
+
+		}
 
 	}
 
