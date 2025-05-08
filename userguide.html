@@ -3064,7 +3064,7 @@
                 <p>It can format PDF tunebooks with one or multiple tunes per page, something the native browser's Print command cannot accomplish.</p>
                 <p>When you click <strong>Export PDF</strong>, the following dialog will appear where you select your PDF formatting preferences:</p>
                 <div class="image_holder_p">
-                    <img class="image" loading="lazy" src="img/export_pdf_tunebook_13.jpg"/>
+                    <img class="image" loading="lazy" src="img/export_pdf_tunebook_14.jpg"/>
                 </div>
                 <p>When exporting a PDF from the button on the bottom-left of the full-screen view, the <strong>Inject Only PDF Tunebook Play Features</strong>, <strong>Inject All PDF Tunebook Features</strong>, and <strong>Browser Native Print-to-PDF with Play Links</strong> buttons are not shown on the dialog.</p>
                 <hr>
@@ -3247,6 +3247,14 @@
                 <p>When checked, adds hidden title text information to each tune to facilitate searchability in Adobe Acrobat and other PDF readers.</p>
                 <p>It is recommended to leave this on unless you have a specific requirement to not have the extra text added, for example you are using another tool to index the text in your exported PDFs.</p>
                 <p>Default is:&nbsp;&nbsp;On</p>
+                <hr>
+                <p><strong>Automatically offset page numbers for Title Page and/or Table of Contents:</strong></p>
+                <div class="image_holder_p">
+                    <img class="image" loading="lazy" src="img/auto_pagenumber_1.jpg"/>
+                </div>
+                <p>When checked, automatically offsets the page number for the first page of tunes by the number of pages required for the Title Page and/or Table of Contents.</p>
+                <p>The offset page numbers will appear in the Table of Contents and/or Index as well.</p>
+                <p>Default is:&nbsp;&nbsp;Off</p>
                 <hr>
                 <p><strong>PDF Tunebook Additions Font Settings</strong></p>
                 <p>The following two settings control the font and font style for the PDF tunebook Title Page, Table of Contents, Index, Page Headers/Footers, Page Numbers, Text Incipits, and QR Code label.</p>
@@ -3465,9 +3473,14 @@
                 <p>As with all previously described PDF annotations, only the first instance of these annotations are processed, any additional instances are ignored.</p>
                 <hr class="hidden-print" id="first_page_number">
                 <h1 class="page_break_always h1wide">Setting the First Page Number for Tune Pages<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-                <p>You can set the starting page number for both the tune pages and as displayed in the Table of Contents and Index using the following comment-based annotation anywhere in your ABC:</p>
-                <p class="code">%firstpagenumber page_number - Integer value that will show up as the page number for the first tune after the Title Page and/or Table of Contents.</p>
-                <p>This can be useful for situations where some players have a physical copy of a PDF tunebook and others have it in a PDF reader on a device to help keep the page numbers in sync when specifying which page to go to for a specific tune.</p>
+                <p>By default, for both page numbers on the tune pages and in the Table of Contents and Index, the first page with tunes is considered to be page 1.</p>
+                <p>If instead, you want the tool to determine the first page number would be offset by the length of the Title Page and/or Table of Contents, add the following comment-based annotation anywhere in your ABC:</p>
+                <p class="code">%firstpagenumber auto</p>
+                <p>You can also manually set the starting page number for both the tune pages and as displayed in the Table of Contents and Index using the following comment-based annotation anywhere in your ABC:</p>
+                <p class="code">%firstpagenumber 3</p>
+                <p>changing the 3 to whatever you require as the first page number.</p>
+                <p>This can be useful if you know you will be manually adding additional pages in the PDF before the tunes using a program like Adobe Acrobat and want to offset the page numbers by a specific value.</p>
+                <p>Both of these can be useful for situations where some players have a physical copy of a PDF tunebook and others have it in a PDF reader on a device to help keep the page numbers in sync when specifying which page to go to for a specific tune.</p>
                 <hr class="hidden-print" id="pdf_page_headers_and_footers">
                 <h1 class="page_break_always">PDF Page Headers and Footers<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <p>You may add custom page headers and footers to your exported PDF files by including the following ABC comment-based annotations anywhere in your ABC:</p>
