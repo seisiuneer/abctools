@@ -543,8 +543,7 @@ function convert_bww_to_abc_single(theBWW) {
 				accum = accum +('Q:1/2=' + theTuneTempo + "\n");
 			}
 
-
-			i++
+			//i++
 			break;
 		}
 		break;
@@ -553,11 +552,13 @@ function convert_bww_to_abc_single(theBWW) {
 	accum = accum +('L:1/8\nK:Hp exp ' + key +" transpose=1")+ "\n"; 
 	accum = accum + "%voice_tuning_cents 48 148\n";
 
+	//debugger;
+
 	// Parse the music
 	for ( ; i < p.length; i++) {
 		l = p[i]
-		if (!l || l[0] == '&')
-			continue
+		// if (!l || l[0] == '&')
+		// 	continue
 		l = l.trim().split(/\s+/)
 		for (j = 0; j < l.length; j++) {
 			t = l[j];
@@ -670,25 +671,39 @@ function convert_bww_to_abc_single(theBWW) {
 			case '6':
 			case '7':
 			case '9':
-				if (/\d+_\d+/.test(t)) {
-					o += '[M:' + t.replace('_', '/') + ']'
-					continue
-				}
+				// MAE 9 May 2025
+				// if (/\d+_\d+/.test(t)) {
+				// 	o += '[M:' + t.replace('_', '/') + ']'
+				// 	continue
+				// }
 				break
 			case 'C':
-				switch (t) {
-				case 'C':
-					o += '[M:C]'
-					continue
-				case 'C_':
-					o += '[M:C|]'
-					continue
-				}
+				// MAE 9 May 2025
+				// switch (t) {
+				// case 'C':
+				// 	o += '[M:C]'
+				// 	continue
+				// case 'C_':
+				// 	o += '[M:C|]'
+				// 	continue
+				// }
 				break
 			case 'T':
 				u = t.split(',')
 				if (u[0] == 'TuneTempo') {
-					o += '[Q:1/4=' + u[1] + ']'
+
+					if (theMeterDenom == 4){
+						o += '[Q:1/4=' + u[1] + ']'
+					}
+					else
+					if (theMeterDenom == 8){
+						o += '[Q:3/8=' + u[1] + ']'
+					}
+					else
+					if (theMeterDenom == 2){
+						o += '[Q:1/2=' + u[1] + ']'
+					}
+
 					continue
 				}
 				break
