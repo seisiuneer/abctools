@@ -387,6 +387,20 @@ var deco = {
 	codasection: "O"
 }
 
+function findFirstABMatch(strings) {
+
+  const pattern = /([0-9]+)_([0-9]+)/;
+
+  for (const str of strings) {
+    const match = str.match(pattern);
+    if (match) {
+      return { A: match[1], B: match[2] };
+    }
+  }
+
+  return null; // No match found
+}
+
 //
 // Convert a single BWW tune to ABC
 //
@@ -397,6 +411,10 @@ function convert_bww_to_abc_single(theBWW) {
 	var p = theBWW.split('\n');
 
 	accum = "X:1\n% Converted to ABC using bww2abc 1.0\n%%MIDI program 109\n%%staffsep 70\n";
+
+	var theMeterDemon = 4;
+
+	var theTuneTempo = 100;
 
 	// header
 	for (i = 0; i < p.length; i++) {
@@ -433,11 +451,11 @@ function convert_bww_to_abc_single(theBWW) {
 			continue
 		case 'T':
 			t = l.split(',')
-			if (t[0] == 'TuneTempo')
-				accum = accum +('Q:1/4=' + t[1]+ "\n")
+			theTuneTempo = t[1];
 			continue
 		case '&':			// clef = start of music
-		//debugger;
+
+		    //debugger;
 
 			//get the accidentals
 			t = l.split(/\s+/);
@@ -478,24 +496,55 @@ function convert_bww_to_abc_single(theBWW) {
 				}
 			}
 
-			// get the measure
-			t = t[t.length - 1]	// the measure is the last word
-			if (!/(C|C_|\d+_\d+)/.test(t)) { // or in the next line
-				l = p[++i].trim();
-				t = l.split(/\s+/)[0]
-				if (!/(C|C_|\d+_\d+)/.test(t)) {
-					accum = accum +('M:2/4')+ "\n"
-					break
-				}
+			//debugger;
+			
+			var theKS = findFirstABMatch(t);
+
+			if (theKS){
+				//console.log("num: "+theKS.A+" demon: "+theKS.B);
+				accum = accum +('M:'+theKS.A+"/"+theKS.B)+ "\n"
+				theMeterDenom = theKS.B;
 			}
-			if (t == 'C_')
-				accum = accum +('M:C|')+ "\n"
+			else{
+				// Original code
+				// get the measure
+				//console.log("Original code");
+
+				t = t[t.length - 1]	// the measure is the last word
+				if (!/(C|C_|\d+_\d+)/.test(t)) { // or in the next line
+					l = p[++i].trim();
+					t = l.split(/\s+/)[0]
+					if (!/(C|C_|\d+_\d+)/.test(t)) {
+						accum = accum +('M:2/4')+ "\n"
+						break
+					}
+				}
+				if (t == 'C_')
+					accum = accum +('M:C|')+ "\n"
+				else
+					accum = accum +('M:' + t.replace('_', '/'))+ "\n";
+			}
+
+			// Now stuff the tempo
+
+			if (theMeterDenom == 4){
+				accum = accum +('Q:1/4=' + theTuneTempo + "\n");
+			}
 			else
-				accum = accum +('M:' + t.replace('_', '/'))+ "\n";
+			if (theMeterDenom == 8){
+				accum = accum +('Q:3/8=' + theTuneTempo + "\n");
+
+			}
+			else
+			if (theMeterDenom == 2){
+				accum = accum +('Q:1/2=' + theTuneTempo + "\n");
+			}
+
+
 			i++
-			break
+			break;
 		}
-		break
+		break;
 	}
 
 	accum = accum +('L:1/8\nK:Hp exp ' + key +" transpose=1")+ "\n"; 
