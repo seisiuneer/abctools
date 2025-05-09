@@ -451,7 +451,10 @@ function convert_bww_to_abc_single(theBWW) {
 			continue
 		case 'T':
 			t = l.split(',')
-			theTuneTempo = t[1];
+			if (t[0] == "TuneTempo"){
+				theTuneTempo = t[1];
+				//console.log("theTuneTempo: "+theTuneTempo);
+			}
 			continue
 		case '&':			// clef = start of music
 
