@@ -5654,9 +5654,22 @@ var parseDirective = {};
         var textBlock = '';
         line = tokenizer.nextLine();
         while (line && line.indexOf('%%endtext') !== 0) {
-          if (parseCommon.startsWith(line, "%%")) textBlock += line.substring(2) + "\n";else textBlock += line + "\n";
+
+          // MAE 9 May 2025 - for text blocks with just white space
+          if (parseCommon.startsWith(line, "%%")){
+
+            var theLine = line.substring(2);
+            theLine = theLine.trim() + "\n";
+            textBlock += theLine;
+
+          }
+          else{
+            textBlock += line.trim() + "\n";
+          }
+
           line = tokenizer.nextLine();
         }
+
         tuneBuilder.addText(textBlock, {
           startChar: multilineVars.iChar,
           endChar: multilineVars.iChar + textBlock.length + 7
@@ -25857,6 +25870,7 @@ module.exports = EndingElem;
 /***/ (function(module) {
 
 function FreeText(info, vskip, getFontAndAttr, paddingLeft, width, getTextSize) {
+  //debugger;
   var text = info.text;
   this.rows = [];
   var size;
@@ -25864,7 +25878,7 @@ function FreeText(info, vskip, getFontAndAttr, paddingLeft, width, getTextSize) 
     move: vskip
   });
   var hash = getFontAndAttr.calc('textfont', 'defined-text');
-  if (text === "") {
+  if (text === ""){
     // we do want to print out blank lines if they have been specified.
     this.rows.push({
       move: hash.attr['font-size'] * 2
@@ -25900,10 +25914,28 @@ function FreeText(info, vskip, getFontAndAttr, paddingLeft, width, getTextSize) 
         name: "free-text"
       });      
     }
-    size = getTextSize.calc(text, 'textfont', 'defined-text');
+
+    // MAE 9 May 2025 - Force blank text lines in a text block to have height
+    function replaceStandaloneNewlinesForTextBlocks(input) {
+
+      return input.replace(/^[ \t]*\n/gm, 'X\n');;
+
+    }
+
+    //debugger;
+
+    var textForSize = replaceStandaloneNewlinesForTextBlocks(text);
+
+
+    size = getTextSize.calc(textForSize, 'textfont', 'defined-text'); // was text
+
+    // console.log(textForSize);
+    // console.log("size:"+size.height);
+
     this.rows.push({
       move: size.height
     });
+
   } else if (text) {
     var maxHeight = 0;
     var leftSide = paddingLeft;
@@ -29200,8 +29232,23 @@ function renderText(renderer, params, alreadyInGroup) {
   if (params.cursor) {
     hash.attr.cursor = params.cursor;
   }
-  var text = params.text.replace(/\n\n/g, "\n \n");
+
+  // MAE 9 May 2025 for free text blocks
+  var text;
+
+  if (params.name == "free-text"){
+    
+    text = params.text.replace(/^[ \t]*\n/gm, ' \n');
+
+  }
+  else{
+
+    text = params.text.replace(/\n\n/g, "\n \n");
+
+  }
+
   text = text.replace(/^\n/, "\xA0\n");
+
   if (hash.font.box) {
     if (!alreadyInGroup) renderer.paper.openGroup({
       klass: hash.attr['class'],
@@ -32154,18 +32201,33 @@ Svg.prototype.rectBeneath = function (attr) {
   this.svg.insertBefore(el, this.svg.firstChild);
 };
 Svg.prototype.text = function (text, attr, target) {
+
   var el = document.createElementNS(svgNS, 'text');
+
   el.setAttribute("stroke", "none");
   for (var key in attr) {
     if (attr.hasOwnProperty(key)) {
       el.setAttribute(key, attr[key]);
     }
   }
+
+  var isFreeText = (attr["data-name"] == "free-text");
+
   var lines = ("" + text).split("\n");
+
   for (var i = 0; i < lines.length; i++) {
+
+    if (isFreeText && (lines[i] == "")){
+      // Don't draw empty lines
+      continue;
+    }
+
     var line = document.createElementNS(svgNS, 'tspan');
+
     line.setAttribute("x", attr.x ? attr.x : 0);
+    
     if (i !== 0) line.setAttribute("dy", "1.2em");
+    
     if (lines[i].indexOf("\x03") !== -1) {
       var parts = lines[i].split('\x03');
       line.textContent = parts[0];
@@ -32184,10 +32246,35 @@ Svg.prototype.text = function (text, attr, target) {
         ts3.textContent = parts[2];
         line.appendChild(ts3);
       }
-    } else line.textContent = lines[i];
+    } 
+    else 
+    {
+      // MAE 9 May 2025 - For improved block text
+      if (isFreeText){
+
+        // Fixes issue where blank lines in text blocks didn't take up any vertical
+        if (lines[i].trim() == ""){
+          line.innerHTML = "&nbsp;";
+        }
+        else{
+          line.textContent = lines[i];
+        }
+
+      }
+      else{
+
+        line.textContent = lines[i];
+
+      }
+    }
+
+
     el.appendChild(line);
+
   }
+
   if (target) target.appendChild(el);else this.append(el);
+
   return el;
 };
 Svg.prototype.guessWidth = function (text, attr) {
