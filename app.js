@@ -47746,9 +47746,6 @@ function SplitOneTuneTagsText(targetString, controlString, maxLength, splitTags,
 	// And finally handle any %%begintext/%%endtext pairs
 	theResult = processAndReplaceTextGroups(theResult, maxLength);
 
-	// And split those if required
-	theResult = splitLinesWithPrefix(theResult, "%%text ", maxLength);
-
 	return theResult;
 
 }
