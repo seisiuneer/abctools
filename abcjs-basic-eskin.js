@@ -5654,9 +5654,17 @@ var parseDirective = {};
         var textBlock = '';
         line = tokenizer.nextLine();
         while (line && line.indexOf('%%endtext') !== 0) {
-          if (parseCommon.startsWith(line, "%%")) textBlock += line.substring(2) + "\n";else textBlock += line + "\n";
+
+          if (parseCommon.startsWith(line, "%%")){
+            textBlock += line.substring(2) + "\n";
+          }
+          else{
+            textBlock += line + "\n";
+          }
+
           line = tokenizer.nextLine();
         }
+
         tuneBuilder.addText(textBlock, {
           startChar: multilineVars.iChar,
           endChar: multilineVars.iChar + textBlock.length + 7
@@ -25864,7 +25872,7 @@ function FreeText(info, vskip, getFontAndAttr, paddingLeft, width, getTextSize) 
     move: vskip
   });
   var hash = getFontAndAttr.calc('textfont', 'defined-text');
-  if (text === "") {
+  if (text === ""){
     // we do want to print out blank lines if they have been specified.
     this.rows.push({
       move: hash.attr['font-size'] * 2
@@ -25900,10 +25908,24 @@ function FreeText(info, vskip, getFontAndAttr, paddingLeft, width, getTextSize) 
         name: "free-text"
       });      
     }
-    size = getTextSize.calc(text, 'textfont', 'defined-text');
+
+    // MAE 8 May 2025 - Force blank text lines in a text block to have height
+    function replaceStandaloneNewlinesForTextBlocks(input) {
+
+      return input.replace(/(^|\n)\n(?=\n|$)/g, '$1X\n');
+
+    }
+
+    //debugger;
+
+    var textForSize = replaceStandaloneNewlinesForTextBlocks(text);
+
+    size = getTextSize.calc(textForSize, 'textfont', 'defined-text'); // was text
+
     this.rows.push({
       move: size.height
     });
+
   } else if (text) {
     var maxHeight = 0;
     var leftSide = paddingLeft;
