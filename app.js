@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2492_050925_0930";
+var gVersionNumber="2493_050925_1000";
 
 var gMIDIInitStillWaiting = false;
 
@@ -47630,6 +47630,47 @@ function processAndReplaceTextGroups(targetString,maxLength) {
     return result.join('\n');
 }
 
+function splitLJTextLines(targetString, maxLength) {
+
+	const prefix = "%%text ";
+    const lines = targetString.split('\n');
+    const result = [];
+
+    for (let line of lines) {
+        if (line.startsWith(prefix)) {
+            const content = line.slice(prefix.length).trim();
+            const wrappedLines = [];
+            let remaining = content;
+
+            // Need to split?
+            if (remaining.length <= maxLength){
+            	result.push("%%text "+content)
+            }
+            else{
+
+	            while (remaining.length > maxLength) {
+	                let splitPos = remaining.lastIndexOf(' ', maxLength);
+	                if (splitPos === -1) splitPos = maxLength;
+	                wrappedLines.push(remaining.slice(0, splitPos));
+	                remaining = remaining.slice(splitPos).trim();
+	            }
+
+	            if (remaining.length > 0) {
+	                wrappedLines.push(remaining);
+	            }
+
+	            result.push('%%begintext');
+	            result.push(...wrappedLines);
+	            result.push('%%endtext');
+	        }
+        } else {
+            result.push(line);
+        }
+    }
+
+    return result.join('\n');
+}
+
 function splitLinesWithPrefix(targetString, prefix, maxLength) {
 
     // Split the target string into an array of lines
@@ -47734,7 +47775,7 @@ function SplitOneTuneTagsText(targetString, controlString, maxLength, splitTags,
 
 
 	// Now split any text 
-	theResult = splitLinesWithPrefix(theResult, "%%text ", maxLength);
+	theResult = splitLJTextLines(theResult, maxLength);
 
 	theResult = splitLinesWithPrefix(theResult, "%%center ", maxLength);
 
