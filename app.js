@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2491_050925_0730";
+var gVersionNumber="2492_050925_0930";
 
 var gMIDIInitStillWaiting = false;
 
@@ -15942,44 +15942,55 @@ function ChangeTuneOrder(){
     			return;
     		}
 
-    		// Reorder the tunes
-    		var theABC = gTheABC.value;
+			var thePrompt = "Are you sure you want to change the order of the tunes in your tunebook?";
 
-    		var result = FindPreTuneHeader(theABC);
+			// Center the string in the prompt
+			thePrompt = makeCenteredPromptString(thePrompt);
 
-    		for (i=0;i<totalTunes;++i){
-    			
-    			var thisTune = getTuneByIndex(parseInt(newOrder[i]));
+			DayPilot.Modal.confirm(thePrompt,{ top:200, theme: "modal_flat", scrollWithPage: (AllowDialogsToScroll()) }).then(function(args){
 
-    			thisTune = thisTune.trim();
+				if (!args.canceled){
 
-    			// Make sure every tune has a carriage return after it
-    			thisTune+="\n\n";
+		    		// Reorder the tunes
+		    		var theABC = gTheABC.value;
 
-    			result += thisTune;
-    		}
+		    		var result = FindPreTuneHeader(theABC);
 
-    		// Stuff in the new result
-    		setABCEditorText(result);
+		    		for (i=0;i<totalTunes;++i){
+		    			
+		    			var thisTune = getTuneByIndex(parseInt(newOrder[i]));
 
-    		RenderAsync(true,null, function(){
+		    			thisTune = thisTune.trim();
 
-				gTheABC.selectionStart = 0;
-				gTheABC.selectionEnd = 0;
+		    			// Make sure every tune has a carriage return after it
+		    			thisTune+="\n\n";
 
-				// And reset the focus
-				gTheABC.focus();	
+		    			result += thisTune;
+		    		}
 
-				// Scroll to the top
-				MakeTuneVisible(true);
+		    		// Stuff in the new result
+		    		setABCEditorText(result);
 
-    		});
+		    		RenderAsync(true,null, function(){
 
-    		// Set dirty
-			gIsDirty = true;
+						gTheABC.selectionStart = 0;
+						gTheABC.selectionEnd = 0;
+
+						// And reset the focus
+						gTheABC.focus();	
+
+						// Scroll to the top
+						MakeTuneVisible(true);
+
+		    		});
+
+		    		// Set dirty
+					gIsDirty = true;
 
 
-    	}
+		    	}
+		    });
+		}
 
     });
 
@@ -47555,7 +47566,7 @@ var gLastSplitTags = true;
 var gLastSplitText = true;
 var gLastTagsToSplit = "ABCDFGHNOSTWZ";
 
-function processAndReplaceTextGroups(targetString) {
+function processAndReplaceTextGroups(targetString,maxLength) {
 
     // Split the target string into an array of lines
     let lines = targetString.split('\n');
@@ -47564,29 +47575,52 @@ function processAndReplaceTextGroups(targetString) {
 
     // Loop through each line in the target string
     for (let line of lines) {
+
         // Check if the line starts with %%begintext
         if ((line == '%%begintext') || (line.startsWith('%%begintext '))) {
+            
             insideGroup = true;
+			
+			result.push("%%begintext");
 
-            // Check for any text after the %%begintext
-            var restOfLine = line.replace("%%begintext","");
-            restOfLine = restOfLine.trim();
-            if (restOfLine != ""){
-            	result.push('%%text ' + restOfLine);
-            }
             continue; // Skip adding %%begintext to the result
         }
 
         // Check if the line starts with %%endtext
         if ((line == '%%endtext') || (line.startsWith('%%endtext '))){
+
             insideGroup = false;
+            
+            result.push("%%endtext");
+
             continue; // Skip adding %%endtext to the result
         }
 
         // If inside a group of lines, replace each line with one that starts with %%text
         if (insideGroup) {
-            result.push('%%text ' + line.trim());
+
+        	// If the line exceeds the specified max length, split it
+			while (line.length > maxLength) {
+
+			    // Find the position to split the line, trying to split on a space or the max length
+			    let splitPos = line.lastIndexOf(' ', maxLength);
+
+			    if (splitPos === -1) {
+			        splitPos = maxLength;
+			    }
+			    
+			    // Push the split part into the result
+			    result.push(line.slice(0, splitPos));
+			    
+			    // Update the line to be the remaining part after the split
+			    line = line.slice(splitPos).trim();
+			}
+
+			// Push the remaining part of the line
+			result.push(line);
+
         } else {
+
             // If not inside a group, just add the line as is
             result.push(line);
         }
