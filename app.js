@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2493_050925_1000";
+var gVersionNumber="2494_050925_1200";
 
 var gMIDIInitStillWaiting = false;
 
@@ -15817,44 +15817,56 @@ function ChangeTuneOrderMobile(){
     			return;
     		}
 
-    		// Reorder the tunes
-    		var theABC = gTheABC.value;
+			var thePrompt = "Are you sure you want to change the order of the tunes in your tunebook?";
 
-    		var result = FindPreTuneHeader(theABC);
+			// Center the string in the prompt
+			thePrompt = makeCenteredPromptString(thePrompt);
 
-    		for (i=0;i<totalTunes;++i){
-    			
-    			var thisTune = getTuneByIndex(parseInt(ChangeTuneOrderNewOrder[i]));
+			DayPilot.Modal.confirm(thePrompt,{ top:200, theme: "modal_flat", scrollWithPage: (AllowDialogsToScroll()) }).then(function(args){
 
-    			thisTune = thisTune.trim();
+				if (!args.canceled){
 
-    			// Make sure every tune has a carriage return after it
-    			thisTune+="\n\n";
+		    		// Reorder the tunes
+		    		var theABC = gTheABC.value;
 
-    			result += thisTune;
-    		}
+		    		var result = FindPreTuneHeader(theABC);
 
-    		// Stuff in the new result
-    		setABCEditorText(result);
+		    		for (i=0;i<totalTunes;++i){
+		    			
+		    			var thisTune = getTuneByIndex(parseInt(ChangeTuneOrderNewOrder[i]));
 
-    		RenderAsync(true,null, function(){
+		    			thisTune = thisTune.trim();
 
-				gTheABC.selectionStart = 0;
-				gTheABC.selectionEnd = 0;
+		    			// Make sure every tune has a carriage return after it
+		    			thisTune+="\n\n";
 
-				// And reset the focus
-				gTheABC.focus();	
+		    			result += thisTune;
+		    		}
 
-				// Scroll to the top
-				MakeTuneVisible(true);
+		    		// Stuff in the new result
+		    		setABCEditorText(result);
 
-    		});
+		    		RenderAsync(true,null, function(){
 
-    		// Set dirty
-			gIsDirty = true;
+						gTheABC.selectionStart = 0;
+						gTheABC.selectionEnd = 0;
 
+						// And reset the focus
+						gTheABC.focus();	
 
-    	}
+						// Scroll to the top
+						MakeTuneVisible(true);
+
+		    		});
+
+		    		// Set dirty
+					gIsDirty = true;
+
+		    	}
+
+		   });
+
+		}
 
     });
 
