@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2500_051225_1500";
+var gVersionNumber="2501_051225_1530";
 
 var gMIDIInitStillWaiting = false;
 
@@ -42751,7 +42751,7 @@ function ConfigureToolSettings() {
 
 	if ((!gIsIOS) && (!gIsIPad)){
 		form = form.concat([
-			{name: "    Disable Android mobile adaptation (If mobile browser does identify as Android)", id: "configure_disable_android", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"}
+			{name: "    Disable Android phone UI (If mobile browser does identify as Android)", id: "configure_disable_android", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"}
  		]);
 	}
 
