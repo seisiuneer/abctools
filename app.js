@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2499_051225_1030";
+var gVersionNumber="2500_051225_1500";
 
 var gMIDIInitStillWaiting = false;
 
@@ -430,8 +430,11 @@ var gUpdateVersion = gVersionNumber;
 // Spinner timeout
 var gSpinnerDelay = 25;
 
-// Force android
+// Force Android
 var gForceAndroid = false;
+
+// Disable Android
+var gDisableAndroid = false;
 
 // Global reference to the ABC editor
 var gTheABC = document.getElementById("abc");
@@ -39606,6 +39609,13 @@ function GetInitialConfigurationSettings(){
 		gForceAndroid = (val == "true");
 	}
 
+	// Disable Android?
+	gDisableAndroid = false;
+	val = localStorage.disableAndroid;
+	if (val){
+		gDisableAndroid = (val == "true");
+	}
+
 	// Always hide banner?
 	gZoomBannerAlwaysHidden = false;
 
@@ -39868,6 +39878,9 @@ function SaveConfigurationSettings(){
 
 		// Force Android?
 		localStorage.forceAndroid = gForceAndroid;
+
+		// Disable Android?
+		localStorage.disableAndroid = gDisableAndroid;
 
 	}
 }
@@ -42654,6 +42667,8 @@ function ConfigureToolSettings() {
 
 	var oldForceAndroid = gForceAndroid;
 
+	var oldDisableAndroid = gDisableAndroid;
+
 	// Setup initial values
 	const theData = {
 		configure_save_exit_snapshot: gSaveLastAutoSnapShot,
@@ -42676,8 +42691,9 @@ function ConfigureToolSettings() {
 		configure_allow_offline_instruments: gAllowOfflineInstruments,
 		configure_ipad_two_column: giPadTwoColumn,
 		configure_player_scaling: gPlayerScaling,
-		configure_force_android: gForceAndroid
-
+		configure_force_android: gForceAndroid,
+		configure_disable_android: gDisableAndroid,
+		
 	};
 
 	var form = [
@@ -42730,6 +42746,12 @@ function ConfigureToolSettings() {
 	if ((!gIsIOS) && (!gIsIPad)){
 		form = form.concat([
 			{name: "    Force Android phone UI (If mobile browser doesn't identify as Android)", id: "configure_force_android", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"}
+ 		]);
+	}
+
+	if ((!gIsIOS) && (!gIsIPad)){
+		form = form.concat([
+			{name: "    Disable Android mobile adaptation (If mobile browser does identify as Android)", id: "configure_disable_android", type:"checkbox", cssClass:"configure_settings_form_text_checkbox"}
  		]);
 	}
 
@@ -42795,6 +42817,8 @@ function ConfigureToolSettings() {
 				// Force Android
 				gForceAndroid = args.result.configure_force_android;
 
+				// Disable Android
+				gDisableAndroid = args.result.configure_disable_android;
 			}
 
 			if (gIsIPad){
@@ -43086,7 +43110,23 @@ function ConfigureToolSettings() {
 
 				if (oldForceAndroid != gForceAndroid){
 
-					var thePrompt = "The tool will restart since forcing Android setting changed.";
+					var thePrompt = "The tool will restart since the forcing Android setting changed.";
+
+					// Center the string in the prompt
+					thePrompt = makeCenteredPromptString(thePrompt);
+					
+					DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) }).then(function(args){
+
+						window.location.reload();
+
+					});
+
+					return;					
+				}
+
+				if (oldDisableAndroid != gDisableAndroid){
+
+					var thePrompt = "The tool will restart since the disabling Android setting changed.";
 
 					// Center the string in the prompt
 					thePrompt = makeCenteredPromptString(thePrompt);
@@ -48912,6 +48952,7 @@ function DoStartup() {
 	gIsDirty = false;
 	gForceComhaltasABC = false;
 	gForceAndroid = false;
+	gDisableAndroid = false;
 
 	// Is browser storage available?
 	if (window.localStorage) {
@@ -48919,7 +48960,6 @@ function DoStartup() {
 		gLocalStorageAvailable = true;
 
 	}
-
 
 	// Check if online (always returns true for normal case)
 	doOnlineCheck();
@@ -48995,6 +49035,15 @@ function DoStartup() {
     	return;
     }
 
+    //
+	// Uncomment these lines as desired for mobile simulation testing
+	//
+	//gIsAndroid = true;
+	//gIsIOS = true; 
+	//gIsIPhone = true;  
+	//gIsIPad = true;
+	//giPadTwoColumn = true;  
+
 	if (gIsIOS){
 		document.getElementById("selectabcfile").removeAttribute("accept");
 	}	
@@ -49032,15 +49081,24 @@ function DoStartup() {
 				gForceAndroid = false;
 			}
 		}
-	}
 
-	//
-	// Uncomment these lines for mobile simulation testing
-	//
-	//gIsIOS = true; 
-	//gIsIPhone = true;  
-	//gIsIPad = true;
-	//giPadTwoColumn = true;  
+		// Disable Android?
+		val = localStorage.disableAndroid;
+
+		if (val){
+			if (val == "true"){
+				gDisableAndroid = true;
+				gIsAndroid = false;
+				gIsIOS = false;
+				gIsIPad = false;
+				giPadTwoColumn = false
+			}
+			else{
+				gDisableAndroid = false;
+			}
+		}
+
+	}
 
 	//
 	// iOS and Android styling adaptation
