@@ -600,19 +600,25 @@ function convert_bww_to_abc_single(theBWW) {
 
 					switch (t) {
 						case '!t':
-							accum = accum + (o + ' |') + "\n";
-							o = '';
+							if (o != ""){
+								accum = accum + (o + ' |') + "\n";
+								o = '';
+							}
 							continue;
 						case '!!t':
-							accum = accum + (o + ' ||') + "\n";
-							o = '';
+							if (o != ""){
+								accum = accum + (o + ' ||') + "\n";
+								o = '';
+							}
 							continue;
 						case '!I':
 							accum = accum + (o + ' |]') + "\n";
 							o = '';
 							continue;
 					}
-					o += '| ';
+					if (o != ""){
+						o += '| ';
+					}
 					continue;
 				case 'I':
 					lastWasLBeam = false;
@@ -622,7 +628,9 @@ function convert_bww_to_abc_single(theBWW) {
 							o += '|: ';
 							continue;
 						case "I!":
-							o += '|| ';
+							if (o != ""){
+								o += '|| ';
+							}
 							continue;
 					}
 					continue;
