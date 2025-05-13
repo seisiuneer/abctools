@@ -3678,10 +3678,29 @@ margin-top:-7px;
 	}
 }
 
-#import_website{
+#import_website_local{
 	height:42px;
 	margin-top: 9px;
 	padding:12px;
+	margin-right:18px;
+}
+
+@media (hover: hover) {
+	.import_website_local:hover{
+	background: palegreen;
+	}
+}
+
+#import_website_remote{
+	height:42px;
+	margin-top: 9px;
+	padding:12px;
+}
+
+@media (hover: hover) {
+	.import_website_remote:hover{
+	background: palegreen;
+	}
 }
 
 @media (hover: hover) {
@@ -3694,7 +3713,6 @@ margin-top:-7px;
 	height:42px;
 	margin-top: 9px;
 	padding:12px;
-	margin-right:24px;
 }
 
 @media (hover: hover) {

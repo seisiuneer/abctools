@@ -171,6 +171,125 @@ function extractPDFTunes(file){
 //
 // Extract tunes from an previously exported website
 // 
+
+function doExtractWebsiteTunes(rawText,filename){
+
+    var lines = rawText.split("\n");
+
+    var nLines = lines.length;
+
+    var tunesLine;
+    var bFoundTunes = false;
+    var tunes = [];
+
+    for (var i=0;i<nLines;++i){
+        tunesLine = lines[i].trim();
+        if (tunesLine.indexOf("const tunes=")!=-1){
+            bFoundTunes = true;
+            break;
+        }
+    }
+
+    var links = [];
+
+    if (bFoundTunes){
+
+        // Isolate the JSON string
+        tunesLine = tunesLine.replace("const tunes=","");
+
+        tunesLine = tunesLine.replace("];","]");
+
+        try {
+            tunes = JSON.parse(tunesLine);
+        }
+        catch(error){
+            DayPilot.Modal.alert("Unable to extract website tunes!", {
+                theme: "modal_flat",
+                top: 150
+            });
+
+            hideTheSpinner();
+        }
+
+    }
+
+    // Display the extracted links
+    const output = document.getElementById('output');
+
+    var nFound = 0;
+
+    var outVal = "";
+
+    if (tunes.length > 0) {
+
+        tunes.forEach(tune => {
+
+            var link = tune.URL;
+
+            // Look for lzw params but exclude any with dx=1
+            if ((link.indexOf("lzw=") != -1) && (link.indexOf("dx=1") == -1)){
+
+                var originalAbcInLZW = extractLZWParameter(link);
+
+                originalAbcInLZW = originalAbcInLZW.replace("lzw=","");
+            
+                var abcInLZW = LZString.decompressFromEncodedURIComponent(originalAbcInLZW);
+
+                // Sometimes the LZW decompress fails if the link is too long for the PDF or some other issue
+                if (abcInLZW){
+
+                    nFound++;
+
+                    outVal += `${abcInLZW}\n\n`;
+
+                }
+
+            }
+
+        });
+    }
+
+    if (nFound == 0){
+
+        outVal = '%\n% No tunes found in the website.\n%\n';
+
+    }
+    else{
+
+        if (nFound == 1){
+            outVal = "%\n% "+nFound+" tune found in "+filename+"\n%\n\n"+outVal;
+        }
+        else{
+            outVal = "%\n% "+nFound+" tunes found in "+filename+"\n%\n\n"+outVal; 
+        }
+ 
+    }
+
+    // Strip extra linefeeds
+    outVal = outVal.replaceAll("\n\n\n","\n\n");
+
+    // Clear the work area and reset to defaults
+    ClearNoRender();
+
+    // Add them to the work area
+    gTheABC.value = outVal;
+
+    setTimeout(function(){
+
+        // And render 
+        RenderAsync(true,null);
+
+        // Mark work area dirty
+        gIsDirty = true;
+
+        // Reset file selectors
+        let fileElement = document.getElementById('import_website_fs');
+
+        fileElement.value = "";
+
+    },gSpinnerDelay)
+}
+
 function extractWebsiteTunes(file){
 
     sendGoogleAnalytics("dialog","extractWebsiteTunes");
@@ -184,120 +303,7 @@ function extractWebsiteTunes(file){
 
         const rawText = reader.result;
 
-        var lines = rawText.split("\n");
-
-        var nLines = lines.length;
-
-        var tunesLine;
-        var bFoundTunes = false;
-        var tunes = [];
-
-        for (var i=0;i<nLines;++i){
-            tunesLine = lines[i].trim();
-            if (tunesLine.indexOf("const tunes=")!=-1){
-                bFoundTunes = true;
-                break;
-            }
-        }
-
-        var links = [];
-
-        if (bFoundTunes){
-
-            // Isolate the JSON string
-            tunesLine = tunesLine.replace("const tunes=","");
-
-            tunesLine = tunesLine.replace("];","]");
-
-            try {
-                tunes = JSON.parse(tunesLine);
-            }
-            catch(error){
-                DayPilot.Modal.alert("Unable to extract website tunes!", {
-                    theme: "modal_flat",
-                    top: 150
-                });
-
-                hideTheSpinner();
-            }
-
-        }
-
-        // Display the extracted links
-        const output = document.getElementById('output');
-
-        var nFound = 0;
-
-        var outVal = "";
-
-        if (tunes.length > 0) {
-
-            tunes.forEach(tune => {
-
-                var link = tune.URL;
-
-                // Look for lzw params but exclude any with dx=1
-                if ((link.indexOf("lzw=") != -1) && (link.indexOf("dx=1") == -1)){
-
-                    var originalAbcInLZW = extractLZWParameter(link);
-
-                    originalAbcInLZW = originalAbcInLZW.replace("lzw=","");
-                
-                    var abcInLZW = LZString.decompressFromEncodedURIComponent(originalAbcInLZW);
-
-                    // Sometimes the LZW decompress fails if the link is too long for the PDF or some other issue
-                    if (abcInLZW){
-
-                        nFound++;
-
-                        outVal += `${abcInLZW}\n\n`;
-
-                    }
-
-                }
-
-            });
-        }
-
-        if (nFound == 0){
-
-            outVal = '%\n% No tunes found in the website.\n%\n';
-
-        }
-        else{
-
-            if (nFound == 1){
-                outVal = "%\n% "+nFound+" tune found in "+file.name+"\n%\n\n"+outVal;
-            }
-            else{
-                outVal = "%\n% "+nFound+" tunes found in "+file.name+"\n%\n\n"+outVal; 
-            }
-
-        }
-
-        // Strip extra linefeeds
-        outVal = outVal.replaceAll("\n\n\n","\n\n");
-
-        // Clear the work area and reset to defaults
-        ClearNoRender();
-
-        // Add them to the work area
-        gTheABC.value = outVal;
-
-        setTimeout(function(){
-
-            // And render 
-            RenderAsync(true,null);
-
-            // Mark work area dirty
-            gIsDirty = true;
-
-            // Reset file selectors
-            let fileElement = document.getElementById('import_website_fs');
-
-            fileElement.value = "";
-
-        },gSpinnerDelay)
+        doExtractWebsiteTunes(rawText,file.name);
 
     };
 
@@ -660,7 +666,7 @@ function importPDFClickHandler(){
 }
 
 //
-// Import tunes from a website
+// Import tunes from a local website
 //
 function importWebsiteClickHandler(){
 
@@ -692,6 +698,117 @@ function importWebsiteClickHandler(){
 		elem.click();
 
 	}
+
+}
+
+//
+// Import tunes from a remote website
+//
+
+function getLastRemoteWebsiteHtmlPart(url) {
+  const match = url.match(/\/([^\/?#]+\.html)(?:[?#].*)?$/);
+  return match ? match[1] : null;
+}
+
+function doRemoteWebsiteImport() {
+
+    DayPilot.Modal.prompt("Enter the remote tunebook website URL:", "", {
+        theme: "modal_flat",
+        top: 200,
+        autoFocus: false,
+        scrollWithPage: AllowDialogsToScroll()
+    }).then(function(args) {
+
+        var theURL = args.result;
+
+        if (!theURL) {
+            return;
+        }
+
+        showTheSpinner();
+
+        try {
+            // Wrapping fetch() call to catch sync errors like malformed URLs
+            let fetchPromise = fetch(theURL, { method: 'GET' });
+
+            fetchPromise
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error ${response.status}`);
+                    }
+                    return response.text();
+                })
+                .then(rawText => {
+
+                    hideTheSpinner();
+
+                    setTimeout(function () {
+                        
+                        var filename = getLastRemoteWebsiteHtmlPart(theURL);
+
+                        if (!filename) {
+                            filename = "the remote tunebook website";
+                        }
+
+                        doExtractWebsiteTunes(rawText, filename);
+
+                    }, 100);
+                })
+                .catch(err => {
+
+                    hideTheSpinner();
+
+                    var thePrompt = "There was an issue reading the remote tunebook website.";
+
+                    thePrompt = makeCenteredPromptString(thePrompt);
+
+                    DayPilot.Modal.alert(thePrompt, {
+                        theme: "modal_flat",
+                        top: 200,
+                        scrollWithPage: AllowDialogsToScroll()
+                    });
+                });
+
+        } catch (err) {
+
+            // Catches sync exceptions like malformed URLs
+            hideTheSpinner();
+
+            var thePrompt = "There was an issue reading the remote tunebook website.";
+
+            thePrompt = makeCenteredPromptString(thePrompt);
+
+            DayPilot.Modal.alert(thePrompt, {
+                theme: "modal_flat",
+                top: 200,
+                scrollWithPage: AllowDialogsToScroll()
+            });
+        }
+    });
+}
+
+function importRemoteWebsiteClickHandler(){
+
+    if (gIsDirty){
+
+        var thePrompt = '<p style="font-size:18pt;line-height:20pt;text-align:center;">You Have Unsaved Changes</p><p style="font-size:13pt;line-height:16pt;text-align:center;margin-top:30px;">Click "OK" to abandon your work and open a new file.<br/><br/>Click "Cancel" to go back.</p>';
+
+        // Center the string in the prompt
+        thePrompt = makeCenteredPromptString(thePrompt);
+
+        DayPilot.Modal.confirm(thePrompt,{ top:150, theme: "modal_flat", scrollWithPage: (AllowDialogsToScroll()) }).then(function(args){
+
+            if (!args.canceled){
+
+                doRemoteWebsiteImport();
+
+             }
+        });
+    }
+    else{
+
+       doRemoteWebsiteImport();
+    }
 
 }
 
@@ -741,13 +858,16 @@ function ImportPDF_CSV_Website(){
 
 	var modal_msg  = '<p style="text-align:center;font-size:16pt;font-family:helvetica;margin-left:15px;margin-bottom:32px">Import Tunes from an Exported PDF, Website, or CSV&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#hamburger_extracting_pdf_website" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>';
 
-	modal_msg += '<p style="margin-top:36px;margin-bottom:24px;font-size:12pt;line-height:18pt;font-family:helvetica">Click the buttons below to import all the tunes from a tunebook .PDF file with play links, a tunebook .html website, or a CSV file with play links previously exported using this tool or the ABC Tags to CSV Extractor tool.</p>';	
+	modal_msg += '<p style="margin-top:36px;margin-bottom:24px;font-size:12pt;line-height:18pt;font-family:helvetica">Click the buttons below to import all the tunes from a tunebook .PDF file with play links, a local or remote tunebook .html website, or a CSV file with play links previously exported using this tool or the ABC Tags to CSV Extractor tool.</p>';	
     
     modal_msg += '<p style="margin-top:24px;margin-bottom:24px;font-size:12pt;line-height:18pt;font-family:helvetica">Tunes will not be extracted from PDF tunebooks created with the <strong>%no_edit_allowed</strong> annotation in the PDF features header.</p>';
 
     modal_msg += '<p style="margin-top:24px;margin-bottom:48px;font-size:12pt;line-height:18pt;font-family:helvetica">Tunes will not be extracted from tunebook websites created with the <strong>Disable access to editor</strong> option selected.</p>';  
 
-	modal_msg += '<p style="text-align:center;margin-top:22px;"><input type="file" id="import_pdf_fs" accept=".pdf,.PDF" hidden/><input type="file" id="import_website_fs" accept=".html,.HTML" hidden/><input id="import_pdf" class="btn btn-subdialog import_pdf" onclick="importPDFClickHandler()" type="button" value="Import Tunes from a PDF File" title="Import tunes from a previously exported ABC Transcription Tools PDF file with Play links"><input id="import_website" class="btn btn-subdialog import_website" onclick="importWebsiteClickHandler()" type="button" value="Import Tunes from a Website" title="Import tunes from a previously exported ABC Transcription Tools website"></p>\n';
+	modal_msg += '<p style="text-align:center;margin-top:22px;"><input type="file" id="import_pdf_fs" accept=".pdf,.PDF" hidden/><input type="file" id="import_website_fs" accept=".html,.HTML" hidden/><input id="import_pdf" class="btn btn-subdialog import_pdf" onclick="importPDFClickHandler()" type="button" value="Import Tunes from a PDF File" title="Import tunes from a previously exported ABC Transcription Tools PDF file with Play links"></p>';
+
+    modal_msg += '<p style="text-align:center;margin-top:22px;"><input id="import_website_local" class="btn btn-subdialog import_website" onclick="importWebsiteClickHandler()" type="button" value="Import Tunes from a Website (local)" title="Import tunes from a previously exported ABC Transcription Tools website HTML file stored locally"><input id="import_website_remote" class="btn btn-subdialog import_website" onclick="importRemoteWebsiteClickHandler()" type="button" value="Import Tunes from a Website (remote)" title="Import tunes from a previously exported ABC Transcription Tools website HTML file stored at a remote URL"></p>\n';
+
     modal_msg += '<p style="text-align:center;margin-top:22px;"><input type="file" id="import_csv_fs" accept=".csv,.CSV" hidden/><input id="import_csv" class="btn btn-subdialog import_csv" onclick="importCSVClickHandler()" type="button" value="Import Tunes from a CSV File" title="Import tunes from a previously exported ABC Transcription Tools CSV file with Play links"></p>\n';
 
 	modal_msg += '<p style="font-size:12pt;line-height:12pt;font-family:helvetica">&nbsp;</p>';	
@@ -758,6 +878,6 @@ function ImportPDF_CSV_Website(){
 
 	}, 150);
 
-	const modal = DayPilot.Modal.alert(modal_msg, { theme: "modal_flat", top: 100, width: 600, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } );
+	const modal = DayPilot.Modal.alert(modal_msg, { theme: "modal_flat", top: 50, width: 650, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } );
 
 }
