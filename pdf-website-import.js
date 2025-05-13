@@ -725,6 +725,22 @@ function doRemoteWebsiteImport() {
             return;
         }
 
+        if (!(theURL.startsWith('http://') || theURL.startsWith('https://'))){
+
+            var thePrompt = "Please enter a valid URL starting with http:// or https://";
+
+            thePrompt = makeCenteredPromptString(thePrompt);
+
+            DayPilot.Modal.alert(thePrompt, {
+                theme: "modal_flat",
+                top: 200,
+                scrollWithPage: AllowDialogsToScroll()
+            });
+
+            return;
+
+        }
+
         showTheSpinner();
 
         try {
