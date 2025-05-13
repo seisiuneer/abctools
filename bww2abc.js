@@ -416,7 +416,7 @@ function convert_bww_to_abc_single(theBWW) {
 
 	accum = "X:1\n% Converted to ABC using bww2abc 1.0\n%%MIDI program 109\n%%staffsep 70\n";
 
-	var theMeterDemon = 4;
+	var theMeterDenom = 4;
 
 	var theTuneTempo = 100;
 
@@ -509,7 +509,7 @@ function convert_bww_to_abc_single(theBWW) {
 				var theKS = findFirstABMatch(t);
 
 				if (theKS) {
-					//// console.log("num: "+theKS.A+" demon: "+theKS.B);
+					//// console.log("num: "+theKS.A+" denom: "+theKS.B);
 					accum = accum + ('M:' + theKS.A + "/" + theKS.B) + "\n"
 					theMeterDenom = theKS.B;
 				} else {
@@ -692,10 +692,13 @@ function convert_bww_to_abc_single(theBWW) {
 				case '6':
 				case '7':
 				case '9':
+					lastWasLBeam = false;
 					break;
 				case 'C':
+					lastWasLBeam = false;
 					break;
 				case 'T':
+					lastWasLBeam = false;
 					u = t.split(',');
 					if (u[0] == 'TuneTempo') {
 						if (theMeterDenom == 4) {
