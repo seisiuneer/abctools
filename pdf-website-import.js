@@ -513,6 +513,13 @@ function extractCSVTunes(file){
 //
 function idleImportPDFOrWebsite(){
 
+    // Special case for iOS
+    if (gIsIOS){
+        document.getElementById("import_pdf_fs").removeAttribute("accept");
+        document.getElementById("import_website_fs").removeAttribute("accept");
+        document.getElementById("import_csv_fs").removeAttribute("accept");
+    }   
+
 	//
 	// Setup the PDF import control
 	//

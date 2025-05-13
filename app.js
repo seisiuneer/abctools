@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2503_051325_1000";
+var gVersionNumber="2504_051325_1600";
 
 var gMIDIInitStillWaiting = false;
 
@@ -48636,6 +48636,8 @@ function SetupContextMenu(showUpdateItem){
 				    {},
 				    { name: 'Split Voices', fn: function(target) { SplitVoices(); }},
 				    {},
+				    { name: 'Import PDF, Website, or CSV', fn: function(target) { ImportPDF_CSV_Website(); }},
+				    {},
 				    { name: 'Toggle Top/Bottom Toolbars', fn: function(target) { ToggleTopBar(); }},
 				    { name: 'Maximize Editor', fn: function(target) { MaximizeEditor(); }},
 				    {},
@@ -48780,6 +48782,8 @@ function SetupContextMenu(showUpdateItem){
 				    {},
 				    { name: 'Split Voices', fn: function(target) { SplitVoices(); }},
 				    {},
+				    { name: 'Import PDF, Website, or CSV', fn: function(target) { ImportPDF_CSV_Website(); }},
+				    {},
 				    { name: 'Toggle Top/Bottom Toolbars', fn: function(target) { ToggleTopBar(); }},
 				    { name: 'Maximize Editor', fn: function(target) { MaximizeEditor(); }},
 				    {},
@@ -48830,6 +48834,8 @@ function SetupContextMenu(showUpdateItem){
 			    {},
 			    { name: 'Split Voices', fn: function(target) { SplitVoices(); }},
 			    {},
+			    { name: 'Import PDF, Website, or CSV', fn: function(target) { ImportPDF_CSV_Website(); }},
+			    {},
 			    { name: 'Toggle Top/Bottom Toolbars', fn: function(target) { ToggleTopBar(); }},
 				{},
 			    { name: 'Settings', fn: function(target) { ConfigureToolSettings(); }},
@@ -48877,6 +48883,8 @@ function SetupContextMenu(showUpdateItem){
 			    { name: 'Reformat Using MusicXML', fn: function(target) { BatchMusicXMLRoundTrip(); }},
 			    {},
 			    { name: 'Split Voices', fn: function(target) { SplitVoices(); }},
+			    {},
+			    { name: 'Import PDF, Website, or CSV', fn: function(target) { ImportPDF_CSV_Website(); }},
 			    {},
 			    { name: 'Toggle Top/Bottom Toolbars', fn: function(target) { ToggleTopBar(); }},
 				{},
