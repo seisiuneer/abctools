@@ -10,7 +10,6 @@ function extractLZWParameter(url) {
     return match ? match[0] : null;
 }
 
-
 //
 // Extract tunes from an previously exported PDF
 // 
@@ -545,6 +544,20 @@ function idleImportPDFOrWebsite(){
 
 		if (file){
 
+            var filename = file.name.toLowerCase();
+
+            if (!(filename.endsWith(".pdf"))) {
+                
+                var thePrompt = "Sorry, only .pdf files are supported.";
+                
+                // Center the string in the prompt
+                thePrompt = makeCenteredPromptString(thePrompt);
+
+                DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) });
+
+                return;
+            }
+
             showTheSpinner();
 
             setTimeout(function(){
@@ -581,7 +594,22 @@ function idleImportPDFOrWebsite(){
 
 		let file = fileElement.files[0];
 
+
 		if (file){
+
+            var filename = file.name.toLowerCase();
+
+            if (!(filename.endsWith(".html"))) {
+                
+                var thePrompt = "Sorry, only .html files are supported.";
+                
+                // Center the string in the prompt
+                thePrompt = makeCenteredPromptString(thePrompt);
+
+                DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) });
+
+                return;
+            }
 
             showTheSpinner();
 
@@ -621,7 +649,21 @@ function idleImportPDFOrWebsite(){
         let file = fileElement.files[0];
 
         if (file){
-            
+
+            var filename = file.name.toLowerCase();
+
+            if (!((filename.endsWith(".txt")) || (filename.endsWith(".csv")))) {
+                
+                var thePrompt = "Sorry, only .txt or .csv files are supported.";
+                
+                // Center the string in the prompt
+                thePrompt = makeCenteredPromptString(thePrompt);
+
+                DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) });
+
+                return;
+            }
+
             showTheSpinner();
 
             setTimeout(function(){
@@ -746,6 +788,18 @@ function doRemoteWebsiteImport() {
 
             return;
 
+        }
+
+        if (!theURL.endsWith(".html")){
+
+            var thePrompt = "Sorry, only .html files are supported.";
+            
+            // Center the string in the prompt
+            thePrompt = makeCenteredPromptString(thePrompt);
+
+            DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) });
+
+            return;
         }
 
         showTheSpinner();
