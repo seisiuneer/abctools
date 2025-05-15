@@ -450,7 +450,7 @@ function convert_bww_to_abc_single(theBWW) {
 						accum = accum + ('R:' + t + "\n")
 						continue
 					case 'F':
-						accum = accum + ('%%footer \t' + t + "\n")
+						accum = accum + ('N: ' + t + "\n")
 						continue
 				}
 				continue
