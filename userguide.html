@@ -522,7 +522,7 @@
             <a style="text-decoration:none;" href="#advanced_injectmetronome">Inject Metronome</a>
             <a style="text-decoration:none;" href="#injectrepeatsandtwobarclickintros">Inject Repeats + Intros</a>
             <a style="text-decoration:none;" href="#advanced_injectabcheader">Inject ABC Header Text</a>
-            <a style="text-decoration:none;" href="#advanced_injectstaffwidth">Inject %%staffwidth</a>
+            <a style="text-decoration:none;" href="#custom_string_tab">Custom Stringed Instrument Tab</a>
             </details>
             
             <details>
@@ -946,7 +946,7 @@
                             <p class="toc"><a style="text-decoration:none;" href="#advanced_injectmetronome">Inject Metronome</a></p>
                             <p class="toc"><a style="text-decoration:none;" href="#injectrepeatsandtwobarclickintros">Inject Repeats + Intros</a></p>
                             <p class="toc"><a style="text-decoration:none;" href="#advanced_injectabcheader">Inject ABC Header Text</a></p>
-                            <p class="toc"><a style="text-decoration:none;" href="#advanced_injectstaffwidth">Inject %%staffwidth</a></p>
+                            <p class="toc"><a style="text-decoration:none;" href="#custom_string_tab">Custom Stringed Instrument Tab</a></p>
                         </div>
                     </div>
                     
@@ -4083,7 +4083,7 @@
                 <h1 class="page_break_always">More ABC Tools<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <p>Clicking the <strong>More Tools</strong> button brings up the More ABC Tools dialog:</p>
                 <div class="image_holder_p">
-                    <img class="image" loading="lazy" src="img/more_abc_tools_23.jpg"/>
+                    <img class="image" loading="lazy" src="img/more_abc_tools_24.jpg"/>
                 </div>
                 <p>If you would like to only show the buttons for the features you commonly use and hide the others, click the controls icon at the top-right of the dialog to choose features of the dialog you would like to show/hide:</p>
                 <div class="image_holder_p">
@@ -4186,10 +4186,16 @@
                 <p>No attempt is made to avoid duplication of values.</p>
                 <p>If you change a value in the ABC file header and want to have it reflected in the tunes after you've already injected the header values using this command, then use the <strong>Find and Replace</strong> feature to modify existing values in the tunes.</p>
                 <hr>
-                <p id="advanced_injectstaffwidth"><strong>Inject %%staffwidth</strong> - Prompts for a %%staffwidth value to inject at the text insertion point or into all tunes.</p>
-                <p>This can be used to change the scale of every tune both for display and PDF generation.</p>
-                <p>Generally values above 556 will make the tunes less tall.</p>
-                <p>If "Inject all tunes" is not checked, the annotation is added at the current text insertion point.</p>
+                <p id="custom_string_tab"><strong>Custom Stringed Instrument Tab</strong> - Injects an %abcjs_rendering_params annotation into the ABC tune(s) to generate custom stringed instrument tablature for 4, 5, or 6-string stringed instruments.</p>
+                <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/4zyPlusj3W4" title="Custon Stringed Instrument Tab Demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
+                <div class="image_holder_p">
+                    <img class="image" loading="lazy" src="img/custom_string_tab_1.jpg"/>
+                </div>
+                <p>Strings are numbered from low to high and use ABC pitch names.</p>
+                <p>Each string must have a different pitch and be higher than the previous one.</p>
+                <p>This means that "re-entrant" tunings like for Ukulele and 5-string Banjo are not possible.</p>
+                <p>This feature should work well for essentially any custom Mandolin, 5-string Cittern, or 6-string Guitar tuning.</p>
+                <p>Values are saved and restored the next time the tool is run.</p>
                 <hr class="hidden-print" id="injecting_tablature">
                 <h1 class="page_break_always h1wide">Tablature, Comhaltas Transform, Note Name, Shape Note, and Solfège Injectors<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <p>The tablature/solfège injection features add additional text into your ABC to create tablature for the selected instrument or notation style.</p>

@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2507_051525_1030";
+var gVersionNumber="2508_051525_1500";
 
 var gMIDIInitStillWaiting = false;
 
@@ -20210,12 +20210,75 @@ function InjectHeaderString(){
 
 
 //
-// Inject a %%staffwidth directive into one or all tunes
+// Inject a custom stringed instrument tab annotation
 //
 
-var gLastInjectedStaffWidth = 556;
+function abcPitchToRank(note) {
+  const baseNotes = { 'C': 0, 'D': 2, 'E': 4, 'F': 5, 'G': 7, 'A': 9, 'B': 11 };
 
-function InjectStaffWidth(){
+  // Match optional accidentals, the note letter, and any octave markers
+  const match = note.match(/^([_=^]*|_+)([a-gA-G])([,']*)$/);
+  if (!match) return -1; // Invalid format
+
+  let [, accidental, letter, octave] = match;
+  let base = baseNotes[letter.toUpperCase()];
+  if (base === undefined) return -1;
+
+  // Accidental adjustment
+  let accidentalOffset = 0;
+  if (accidental) {
+    const sharps = (accidental.match(/\^/g) || []).length;
+    const flats = (accidental.match(/_/g) || []).length;
+    // '=' neutralizes accidentals, no offset
+    accidentalOffset = sharps - flats;
+  }
+
+  // Octave adjustment
+  let octaveOffset = 0;
+  if (octave.includes(",")) {
+    octaveOffset = -12 * octave.split(",").length;
+  } else if (octave.includes("'")) {
+    octaveOffset = 12 * octave.split("'").length;
+  }
+
+  // Lowercase letter means one octave higher
+  if (letter >= 'a' && letter <= 'g') {
+    octaveOffset += 12;
+  }
+
+  return 60 + base + accidentalOffset + octaveOffset;
+}
+
+function isStrictlyIncreasingABCNotes(notes) {
+  const ranks = notes.map(abcPitchToRank);
+
+  // Check for invalid notes
+  if (ranks.includes(-1)) return false;
+
+  // Check for duplicates using a Set
+  const uniqueRanks = new Set(ranks);
+  if (uniqueRanks.size !== ranks.length) return false;
+
+  // Check strictly increasing
+  for (let i = 1; i < ranks.length; i++) {
+    if (ranks[i] <= ranks[i - 1]) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+var gCustomStringedCount = 6;
+var gCustomStringedString1 = "D,";
+var gCustomStringedString2 = "A,";
+var gCustomStringedString3 = "D";
+var gCustomStringedString4 = "G";
+var gCustomStringedString5 = "B";
+var gCustomStringedString6 = "e";
+var gCustomStringedLabel = "Guitar - Drop D"
+
+function InjectCustomStringedInstrumentTab(){
 
 	// If currently rendering PDF, exit immediately
 	if (gRenderingPDF) {
@@ -20223,41 +20286,143 @@ function InjectStaffWidth(){
 	}
 
 	// Keep track of dialogs
-	sendGoogleAnalytics("dialog","InjectStaffWidth");
+	sendGoogleAnalytics("dialog","InjectCustomStringedInstrumentTab");
 
 	// Setup initial values
 	const theData = {
-	  configure_staffwidth:gLastInjectedStaffWidth,
+	  custom_string_count:gCustomStringedCount,
+	  custom_string1:gCustomStringedString1,
+	  custom_string2:gCustomStringedString2,
+	  custom_string3:gCustomStringedString3,
+	  custom_string4:gCustomStringedString4,
+	  custom_string5:gCustomStringedString5,
+	  custom_string6:gCustomStringedString6,
+	  custom_string_label:gCustomStringedLabel,
 	  configure_inject_all:true
 	};
 
 	var form = [
-	  {html: '<p style="text-align:center;margin-bottom:32px;font-size:16pt;font-family:helvetica;margin-left:15px;">Inject Staff Width Directive&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#pdf_tunebook_spacing_overrides" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'},
-	  {html: '<p style="margin-top:24px;margin-bottom:24px;font-size:12pt;line-height:18pt;font-family:helvetica">This will inject a %%staffwidth directive into the ABC. </p>'},  
-	  {html: '<p style="margin-top:24px;margin-bottom:24px;font-size:12pt;line-height:18pt;font-family:helvetica">556 is the default value. </p>'},  
-	  {html: '<p style="margin-top:24px;margin-bottom:24px;font-size:12pt;line-height:18pt;font-family:helvetica">Larger numbers make the notation less tall. </p>'},  
-	  {name: "%%staffwidth value to inject?", id: "configure_staffwidth", type:"number", cssClass:"configure_staffwidth_form_text"}, 
-	  {name: "            Inject all tunes", id: "configure_inject_all", type:"checkbox", cssClass:"configure_staffwidth_form_text"},
+	  {html: '<p style="text-align:center;margin-bottom:32px;font-size:16pt;font-family:helvetica;margin-left:15px;">Inject Custom Stringed Instrument Tab Annotation&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#custom_string_tab" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'},
+	  {html: '<p style="margin-top:20px;margin-bottom:20px;font-size:12pt;line-height:18pt;font-family:helvetica">This will inject an %abcjs_rendering_params annotation into the ABC tune(s) to generate custom stringed instrument tablature. </p>'}, 
+	  {html: '<p style="margin-top:20px;margin-bottom:20px;font-size:12pt;line-height:18pt;font-family:helvetica">Strings are numbered from low to high and use ABC pitch names.</p>'}, 
+	  {html: '<p style="margin-top:20px;margin-bottom:24px;font-size:12pt;line-height:18pt;font-family:helvetica">Each string must have a different pitch and be higher than the previous one.</p>'}, 
+	  {name: "Label:", id: "custom_string_label", type:"text", cssClass:"configure_customstring_form_text_wide"}, 
+	  {name: "# of strings: (4, 5, or 6)", id: "custom_string_count", type:"number", cssClass:"configure_customstring_form_text"}, 
+	  {name: "String 1 pitch:", id: "custom_string1", type:"text", cssClass:"configure_customstring_form_text"}, 
+	  {name: "String 2 pitch:", id: "custom_string2", type:"text", cssClass:"configure_customstring_form_text"}, 
+	  {name: "String 3 pitch:", id: "custom_string3", type:"text", cssClass:"configure_customstring_form_text"}, 
+	  {name: "String 4 pitch:", id: "custom_string4", type:"text", cssClass:"configure_customstring_form_text"}, 
+	  {name: "String 5 pitch:", id: "custom_string5", type:"text", cssClass:"configure_customstring_form_text"}, 
+	  {name: "String 6 pitch:", id: "custom_string6", type:"text", cssClass:"configure_customstring_form_text"}, 
+	  {name: "            Inject all tunes", id: "configure_inject_all", type:"checkbox", cssClass:"configure_customstring_form_text_checkbox"},
 	];
 
-	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 100, width: 600, scrollWithPage: (AllowDialogsToScroll()), okText: "Inject",autoFocus: false } ).then(function(args){
+	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 50, width: 650, scrollWithPage: (AllowDialogsToScroll()), okText: "Inject",autoFocus: false } ).then(function(args){
 		
 		if (!args.canceled){
 
-			var staffwidthstr = args.result.configure_staffwidth;
+			var theCustomStringedCount = args.result.custom_string_count;
 
-			if (staffwidthstr == null){
+			theCustomStringedCount = parseInt(theCustomStringedCount);
+
+			if (isNaN(theCustomStringedCount)){
+
+				var thePrompt = "String count must be a number.";
+		
+				// Center the string in the prompt
+				thePrompt = makeCenteredPromptString(thePrompt);
+				
+				DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) });
+
+				return;
+
+			}
+
+			var tabStyle = "violin";
+
+			if (theCustomStringedCount == 4){
+				tabStyle = "violin";
+			}
+			else
+			if (theCustomStringedCount == 5){
+				tabStyle = "fivestring";
+			}
+			else
+			if (theCustomStringedCount == 6){
+				tabStyle = "guitar";
+			}
+			else{
+				var thePrompt = "Only 4, 5, or 6 string custom instrument tablature supported.";
+		
+				// Center the string in the prompt
+				thePrompt = makeCenteredPromptString(thePrompt);
+				
+				DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) });
+
 				return;
 			}
 
-			var staffwidth = parseInt(staffwidthstr);
+			var testArray = [];
 
-			if ((isNaN(staffwidth)) || (staffwidth == undefined)){
-				return;
+			switch (theCustomStringedCount){
+				case 4:
+					testArray = [args.result.custom_string1, args.result.custom_string2, args.result.custom_string3, args.result.custom_string4];
+					break;
+
+				case 5:
+					testArray = [args.result.custom_string1, args.result.custom_string2, args.result.custom_string3, args.result.custom_string4, args.result.custom_string5];
+					break;
+
+				case 6:
+					testArray = [args.result.custom_string1, args.result.custom_string2, args.result.custom_string3, args.result.custom_string4, args.result.custom_string5, args.result.custom_string6];
+					break;
 			}
 
-			// Time saver for next use
-			gLastInjectedStaffWidth = staffwidth;
+			if (!isStrictlyIncreasingABCNotes(testArray)){
+
+				var thePrompt = "Strings must be in increasing pitch with no duplicates.";
+		
+				// Center the string in the prompt
+				thePrompt = makeCenteredPromptString(thePrompt);
+				
+				DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) });
+
+				return;
+
+			}
+
+			gCustomStringedLabel = args.result.custom_string_label;
+
+			gCustomStringedCount = theCustomStringedCount;
+
+			gCustomStringedString1 = args.result.custom_string1;
+			gCustomStringedString2 = args.result.custom_string2;
+			gCustomStringedString3 = args.result.custom_string3;
+			gCustomStringedString4 = args.result.custom_string4;
+			gCustomStringedString5 = args.result.custom_string5;
+			gCustomStringedString6 = args.result.custom_string6;
+
+			// Save all the custom tab values
+			SaveConfigurationSettings();
+
+			var theCommandString = "%\n% Custom stringed instrument tablature definition:\n%\n";
+			var theLabel = gCustomStringedLabel;
+
+			switch (gCustomStringedCount){
+
+				case 4:
+					theCommandString += '%abcjs_render_params {"tablature":[{"instrument":"violin","label":"'+theLabel+'","tuning":["'+gCustomStringedString1+'","'+gCustomStringedString2+'","'+gCustomStringedString3+'","'+gCustomStringedString4+'"],"highestNote":"f\'","capo":0}]}\n%'
+					break;
+
+				case 5:
+					theCommandString += '%abcjs_render_params {"tablature":[{"instrument":"fivestring","label":"'+theLabel+'","tuning":["'+gCustomStringedString1+'","'+gCustomStringedString2+'","'+gCustomStringedString3+'","'+gCustomStringedString4+'","'+gCustomStringedString5+'"],"highestNote":"f\'","capo":0}]}\n%'
+					break;
+
+				case 6:
+					theCommandString += '%abcjs_render_params {"tablature":[{"instrument":"guitar","label":"'+theLabel+'","tuning":["'+gCustomStringedString1+'","'+gCustomStringedString2+'","'+gCustomStringedString3+'","'+gCustomStringedString4+'","'+gCustomStringedString5+'","'+gCustomStringedString6+'"],"highestNote":"f\'","capo":0}]}\n%'
+					break;
+
+			}
 
 			// Injecting all tunes
 			if (args.result.configure_inject_all){
@@ -20275,7 +20440,7 @@ function InjectStaffWidth(){
 
 					theTunes[i] = "X:"+theTunes[i];
 
-					output += InjectOneTuneStaffWidth(theTunes[i],staffwidth);
+					output += InjectStringBelowTuneHeader(theTunes[i],theCommandString);
 
 				}
 
@@ -20298,20 +20463,37 @@ function InjectStaffWidth(){
 				});
 			}
 			else{
+				// Try to find the current tune
+				var theSelectedABC = findSelectedTune();
 
+				var theSelectedTuneIndex = findSelectedTuneIndex();
+
+				if (theSelectedABC == ""){
+					// This should never happen
+					return;
+				}
+
+				var theInjectedTune = theSelectedABC;
+
+				theInjectedTune = InjectStringBelowTuneHeader(theInjectedTune,theCommandString);
+
+				// Seeing extra line breaks after the inject
+				theInjectedTune = theInjectedTune.replace("\n\n","");
+
+				// Try and keep the same tune after the redraw for immediate play
 				var theSelectionStart = gTheABC.selectionStart;
 
-				var leftSide = gTheABC.value.substring(0,theSelectionStart);
-				
-				var rightSide = gTheABC.value.substring(theSelectionStart);
+				// Stuff in the injected ABC
+				var theABC = gTheABC.value;
+				theABC = theABC.replace(theSelectedABC,theInjectedTune);
 
-				setABCEditorText(leftSide + "%%staffwidth " + staffwidth + "\n" + rightSide);
+				setABCEditorText(theABC);
 
 				// Set dirty
 				gIsDirty = true;
 
-				// Force a redraw
-				RenderAsync(true,null,function(){
+				// Force a redraw of the tune
+				RenderAsync(false,theSelectedTuneIndex,function(){
 
 					// Set the select point
 					gTheABC.selectionStart = theSelectionStart;
@@ -20323,7 +20505,6 @@ function InjectStaffWidth(){
 				});
 
 			}
-
 		}
 	});
 }
@@ -39625,6 +39806,74 @@ function GetInitialConfigurationSettings(){
 		gZoomBannerAlwaysHidden = (val == "true");
 	}
 
+	// Custom stringed instrument tablature settings
+    val = localStorage.CustomStringedCount;
+	if (val){
+		gCustomStringedCount = parseInt(val);
+		if (isNaN(gCustomStringedCount)){
+			gCustomStringedCount = 6;
+		}
+	}
+	else{
+		gCustomStringedCount = 6;
+	}
+
+    val = localStorage.CustomStringedString1;
+    if ((val) || (val == "")){
+    	gCustomStringedString1 = val;
+    }
+    else{
+    	gCustomStringedString1 = "D,";
+    }
+
+    val = localStorage.CustomStringedString2;
+    if ((val) || (val == "")){
+    	gCustomStringedString2 = val;
+    }
+    else{
+    	gCustomStringedString2 = "A,";
+    }
+
+    val = localStorage.CustomStringedString3;
+    if ((val) || (val == "")){
+    	gCustomStringedString3 = val;
+    }
+    else{
+    	gCustomStringedString3 = "D";
+    }
+
+    val = localStorage.CustomStringedString4;
+    if ((val) || (val == "")){
+    	gCustomStringedString4 = val;
+    }
+    else{
+    	gCustomStringedString4 = "G";
+    }
+
+    val = localStorage.CustomStringedString5;
+    if ((val) || (val == "")){
+    	gCustomStringedString5 = val;
+    }
+    else{
+    	gCustomStringedString5 = "B";
+    }
+
+    val = localStorage.CustomStringedString6;
+    if ((val) || (val == "")){
+    	gCustomStringedString6 = val;
+    }
+    else{
+    	gCustomStringedString6 = "e";
+    }
+
+    val = localStorage.CustomStringedLabel;
+    if ((val) || (val == "")){
+    	gCustomStringedLabel = val;
+    }
+    else{
+    	gCustomStringedLabel = "Guitar - Drop D";
+    }
+
 	// Save the settings, in case they were initialized
 	SaveConfigurationSettings();
 
@@ -39881,6 +40130,16 @@ function SaveConfigurationSettings(){
 
 		// Disable Android?
 		localStorage.disableAndroid = gDisableAndroid;
+
+		// Custom string instrument tab settings
+		localStorage.CustomStringedCount = gCustomStringedCount;
+		localStorage.CustomStringedLabel = gCustomStringedLabel;
+		localStorage.CustomStringedString1 = gCustomStringedString1;
+		localStorage.CustomStringedString2 = gCustomStringedString2;
+		localStorage.CustomStringedString3 = gCustomStringedString3;
+		localStorage.CustomStringedString4 = gCustomStringedString4;
+		localStorage.CustomStringedString5 = gCustomStringedString5;
+		localStorage.CustomStringedString6 = gCustomStringedString6;
 
 	}
 }
@@ -41809,7 +42068,7 @@ function AdvancedControlsDialog(){
 	modal_msg  += '</p>';
 	modal_msg  += '<p style="text-align:center;margin-top:22px;">';
 	modal_msg  += '<input id="injectheaderstring" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectHeaderString()" type="button" value="Inject ABC Header Text" title="Injects text at the top or bottom of the ABC header for one or all tunes">';	
-	modal_msg  += '<input id="injectstaffwidth" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectStaffWidth()" type="button" value="Inject %%staffwidth" title="Injects a %%staffwidth annotation into one or all tunes">';
+	modal_msg  += '<input id="injectstaffwidth" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectCustomStringedInstrumentTab()" type="button" value="Custom Stringed Instrument Tab" title="Injects a custom tablature description for stringed instruments">';
 	modal_msg  += '<input id="injectlargeprint" class="advancedcontrols btn btn-injectcontrols-headers" onclick="NotationSpacingExplorer()" type="button" value="Notation Spacing Explorer" title="Find the right spacing and scale values for your notation">';
 	modal_msg  += '</p>';
 
