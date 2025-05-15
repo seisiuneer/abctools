@@ -404,13 +404,29 @@ function findFirstABMatch(strings) {
 	return null; // No match found
 }
 
+function parseBWWTextLine(line) {
+
+  // Match the quoted string
+  const quoteMatch = line.match(/"([^"]+)"/);
+  // Match the parenthesis content
+  const parenMatch = line.match(/\(([^)]+)\)/);
+
+  if (!quoteMatch || !parenMatch) return [];
+
+  // Split the parenthesis content by commas and trim whitespace
+  const parenEntries = parenMatch[1].split(',').map(entry => entry.trim());
+
+  // Combine quoted string and parenthesis entries
+  return [quoteMatch[1], ...parenEntries];
+}
+
 //
 // Convert a single BWW tune to ABC
 //
 function convert_bww_to_abc_single(theBWW) {
 
 	var i, j, l, low, t, n, key, tie, acc, beam, fermata, o = '',
-		lastWasGrace = false;
+		lastWasGrace = false, gotFooter = false, theFooter = '', footerSpacer = 12;
 
 	var p = theBWW.split('\n');
 
@@ -439,18 +455,31 @@ function convert_bww_to_abc_single(theBWW) {
 					accum = accum + ('% ' + t + "\n")
 					continue
 				}
+				var theBWWStrings = parseBWWTextLine(l);
 				switch (l[j + 3]) {
 					case 'T':
+						accum = accum + "%%titlefont "+theBWWStrings[5]+" "+theBWWStrings[6]+"\n";
 						accum = accum + ('T:' + t + "\n")
 						continue
 					case 'M':
+						accum = accum + "%%composerfont "+theBWWStrings[5]+" "+theBWWStrings[6]+"\n";
 						accum = accum + ('C:' + t + "\n")
 						continue
 					case 'Y':
+						accum = accum + "%%infofont "+theBWWStrings[5]+" "+theBWWStrings[6]+"\n";
 						accum = accum + ('R:' + t + "\n")
 						continue
 					case 'F':
-						accum = accum + ('N:' + t + "\n")
+						accum = accum + "%%textfont "+theBWWStrings[5]+" "+theBWWStrings[6]+"\n";
+
+						footerSpacer = parseInt(theBWWStrings[6]);
+
+						if (isNaN(footerSpacer)){
+							footerSpacer = 12;
+						}
+
+						gotFooter = true;
+						theFooter = t;
 						continue
 				}
 				continue
@@ -858,6 +887,12 @@ function convert_bww_to_abc_single(theBWW) {
 				fermata = false;
 			}
 		}
+	}
+
+	// Adding a centered footer below the tune?
+	if (gotFooter){
+		accum += "%%vskip "+footerSpacer+"\n";
+		accum += "%%center "+theFooter+"\n";
 	}
 
 	return accum;
