@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2509_051525_1800";
+var gVersionNumber="2510_051625_0700";
 
 var gMIDIInitStillWaiting = false;
 
@@ -20440,6 +20440,18 @@ function InjectCustomStringedInstrumentTab(){
 
 					theTunes[i] = "X:"+theTunes[i];
 
+					// Strip any old custom stringed instrument annotation
+					theTunes[i] = theTunes[i].replace(
+					  /^%\s*\n^%\s*Custom stringed instrument tablature definition:[\s\S]*?^%abcjs_render_params[^\n]*\n?(^%\s*\n)?/gm,
+					  ''
+					);
+
+					// In case the user has modified the injected text, at least strip the annotation
+					theTunes[i] = theTunes[i].replace(
+					  /^%abcjs_render_params[^\n]*\n?/gm,
+					  ''
+					);
+
 					output += InjectStringBelowTuneHeader(theTunes[i],theCommandString);
 
 				}
@@ -20474,6 +20486,18 @@ function InjectCustomStringedInstrumentTab(){
 				}
 
 				var theInjectedTune = theSelectedABC;
+
+				// Strip any old custom stringed instrument annotation
+				theInjectedTune = theInjectedTune.replace(
+				  /^%\s*\n^%\s*Custom stringed instrument tablature definition:[\s\S]*?^%abcjs_render_params[^\n]*\n?(^%\s*\n)?/gm,
+				  ''
+				);
+
+				// In case the user has modified the injected text, at least strip the annotation
+				theInjectedTune = theInjectedTune.replace(
+				  /^%abcjs_render_params[^\n]*\n?/gm,
+				  ''
+				);
 
 				theInjectedTune = InjectStringBelowTuneHeader(theInjectedTune,theCommandString);
 
