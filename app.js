@@ -20347,7 +20347,7 @@ function InjectCustomStringedInstrumentTab(){
 
 			if (isNaN(theCustomStringedCapo)){
 
-				var thePrompt = "Capo must be a number.";
+				var thePrompt = "Capo position must be a number.";
 		
 				// Center the string in the prompt
 				thePrompt = makeCenteredPromptString(thePrompt);
@@ -20360,7 +20360,7 @@ function InjectCustomStringedInstrumentTab(){
 
 			if (theCustomStringedCapo < 0){
 
-				var thePrompt = "Capo must be a positive integer.";
+				var thePrompt = "Capo position must be a positive integer.";
 		
 				// Center the string in the prompt
 				thePrompt = makeCenteredPromptString(thePrompt);
