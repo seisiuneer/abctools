@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2510_051625_0700";
+var gVersionNumber="2511_051625_0800";
 
 var gMIDIInitStillWaiting = false;
 
@@ -20270,6 +20270,7 @@ function isStrictlyIncreasingABCNotes(notes) {
 }
 
 var gCustomStringedCount = 6;
+var gCustomStringedCapo = 0;
 var gCustomStringedString1 = "D,";
 var gCustomStringedString2 = "A,";
 var gCustomStringedString3 = "D";
@@ -20291,6 +20292,7 @@ function InjectCustomStringedInstrumentTab(){
 	// Setup initial values
 	const theData = {
 	  custom_string_count:gCustomStringedCount,
+	  custom_string_capo:gCustomStringedCapo,
 	  custom_string1:gCustomStringedString1,
 	  custom_string2:gCustomStringedString2,
 	  custom_string3:gCustomStringedString3,
@@ -20314,6 +20316,7 @@ function InjectCustomStringedInstrumentTab(){
 	  {name: "String 4 pitch:", id: "custom_string4", type:"text", cssClass:"configure_customstring_form_text"}, 
 	  {name: "String 5 pitch:", id: "custom_string5", type:"text", cssClass:"configure_customstring_form_text"}, 
 	  {name: "String 6 pitch:", id: "custom_string6", type:"text", cssClass:"configure_customstring_form_text"}, 
+	  {name: "Capo position", id: "custom_string_capo", type:"number", cssClass:"configure_customstring_form_text"}, 
 	  {name: "            Inject all tunes", id: "configure_inject_all", type:"checkbox", cssClass:"configure_customstring_form_text_checkbox"},
 	];
 
@@ -20328,6 +20331,36 @@ function InjectCustomStringedInstrumentTab(){
 			if (isNaN(theCustomStringedCount)){
 
 				var thePrompt = "String count must be a number.";
+		
+				// Center the string in the prompt
+				thePrompt = makeCenteredPromptString(thePrompt);
+				
+				DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) });
+
+				return;
+
+			}
+
+			var theCustomStringedCapo = args.result.custom_string_capo;
+
+			theCustomStringedCapo = parseInt(theCustomStringedCapo);
+
+			if (isNaN(theCustomStringedCapo)){
+
+				var thePrompt = "Capo must be a number.";
+		
+				// Center the string in the prompt
+				thePrompt = makeCenteredPromptString(thePrompt);
+				
+				DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) });
+
+				return;
+
+			}
+
+			if (theCustomStringedCapo < 0){
+
+				var thePrompt = "Capo must be a positive integer.";
 		
 				// Center the string in the prompt
 				thePrompt = makeCenteredPromptString(thePrompt);
@@ -20395,6 +20428,8 @@ function InjectCustomStringedInstrumentTab(){
 
 			gCustomStringedCount = theCustomStringedCount;
 
+			gCustomStringedCapo = theCustomStringedCapo;
+
 			gCustomStringedString1 = args.result.custom_string1;
 			gCustomStringedString2 = args.result.custom_string2;
 			gCustomStringedString3 = args.result.custom_string3;
@@ -20411,15 +20446,15 @@ function InjectCustomStringedInstrumentTab(){
 			switch (gCustomStringedCount){
 
 				case 4:
-					theCommandString += '%abcjs_render_params {"tablature":[{"instrument":"violin","label":"'+theLabel+'","tuning":["'+gCustomStringedString1+'","'+gCustomStringedString2+'","'+gCustomStringedString3+'","'+gCustomStringedString4+'"],"highestNote":"f\'","capo":0}]}\n%'
+					theCommandString += '%abcjs_render_params {"tablature":[{"instrument":"violin","label":"'+theLabel+'","tuning":["'+gCustomStringedString1+'","'+gCustomStringedString2+'","'+gCustomStringedString3+'","'+gCustomStringedString4+'"],"highestNote":"f\'","capo":'+gCustomStringedCapo+'}]}\n%'
 					break;
 
 				case 5:
-					theCommandString += '%abcjs_render_params {"tablature":[{"instrument":"fivestring","label":"'+theLabel+'","tuning":["'+gCustomStringedString1+'","'+gCustomStringedString2+'","'+gCustomStringedString3+'","'+gCustomStringedString4+'","'+gCustomStringedString5+'"],"highestNote":"f\'","capo":0}]}\n%'
+					theCommandString += '%abcjs_render_params {"tablature":[{"instrument":"fivestring","label":"'+theLabel+'","tuning":["'+gCustomStringedString1+'","'+gCustomStringedString2+'","'+gCustomStringedString3+'","'+gCustomStringedString4+'","'+gCustomStringedString5+'"],"highestNote":"f\'","capo":'+gCustomStringedCapo+'}]}\n%'
 					break;
 
 				case 6:
-					theCommandString += '%abcjs_render_params {"tablature":[{"instrument":"guitar","label":"'+theLabel+'","tuning":["'+gCustomStringedString1+'","'+gCustomStringedString2+'","'+gCustomStringedString3+'","'+gCustomStringedString4+'","'+gCustomStringedString5+'","'+gCustomStringedString6+'"],"highestNote":"f\'","capo":0}]}\n%'
+					theCommandString += '%abcjs_render_params {"tablature":[{"instrument":"guitar","label":"'+theLabel+'","tuning":["'+gCustomStringedString1+'","'+gCustomStringedString2+'","'+gCustomStringedString3+'","'+gCustomStringedString4+'","'+gCustomStringedString5+'","'+gCustomStringedString6+'"],"highestNote":"f\'","capo":'+gCustomStringedCapo+'}]}\n%'
 					break;
 
 			}
@@ -39842,6 +39877,17 @@ function GetInitialConfigurationSettings(){
 		gCustomStringedCount = 6;
 	}
 
+	val = localStorage.CustomStringedCapo;
+	if (val){
+		gCustomStringedCapo = parseInt(val);
+		if (isNaN(gCustomStringedCapo)){
+			gCustomStringedCapo = 0;
+		}
+	}
+	else{
+		gCustomStringedCapo = 0;
+	}
+
     val = localStorage.CustomStringedString1;
     if ((val) || (val == "")){
     	gCustomStringedString1 = val;
@@ -40157,6 +40203,7 @@ function SaveConfigurationSettings(){
 
 		// Custom string instrument tab settings
 		localStorage.CustomStringedCount = gCustomStringedCount;
+		localStorage.CustomStringedCapo = gCustomStringedCapo;
 		localStorage.CustomStringedLabel = gCustomStringedLabel;
 		localStorage.CustomStringedString1 = gCustomStringedString1;
 		localStorage.CustomStringedString2 = gCustomStringedString2;
