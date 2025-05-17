@@ -24216,6 +24216,7 @@ AbstractEngraver.prototype.createBarLine = function (voice, elem, isFirstStaff) 
     // MAE 17 May 2025 - Fixes drawing issue
     //console.log("voicenumber:"+voice.voicenumber);
     if (voice.voicenumber == 0){
+      //debugger;
       // only put the first & second ending marks on the first staff
       var textWidth = this.getTextSize.calc(elem.startEnding, "repeatfont", '').width;
       abselem.minspacing += textWidth + 10; // Give plenty of room for the ending number.
@@ -27960,6 +27961,8 @@ function drawEnding(renderer, params, linestartx, lineendx, selectables) {
   pathString += sprintf("M %f %f L %f %f ", linestartx, y, lineendx, y);
   renderer.paper.openGroup({
     klass: renderer.controller.classes.generate("ending"),
+    // MAE 17 May 2025 - Ending numbers not being drawn in correct color
+    fill: renderer.foregroundColor, 
     "data-name": "ending"
   });
   printPath(renderer, {
