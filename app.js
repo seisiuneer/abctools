@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2514_051825_1900";
+var gVersionNumber="2515_051925_1600";
 
 var gMIDIInitStillWaiting = false;
 
@@ -50259,6 +50259,23 @@ function DoStartup() {
 			        }
 
 			    }
+			    else
+			    /// Check if the Command key (on Mac) is pressed with the "S" key
+			    if (event.metaKey && event.key === 's') {
+
+			    	//console.log("Got Command S");
+
+			       	event.preventDefault();  // Prevent the default browser action
+
+			    	var modalDivs = document.querySelector('.modal_flat_main');
+
+			        if ((!modalDivs) && (!gRenderingPDF)){
+
+			        	SaveABC();
+
+			        }
+
+			    }
 
 			},true);
 		}
@@ -50384,6 +50401,23 @@ function DoStartup() {
 			        	// Do build tune set
 			        	BuildTuneSet();
 
+			        }
+
+			    }
+			    else
+			    /// Check if the Control key (on Windows/Linux) is pressed with the "S" key
+			    if (event.ctrlKey && event.key === 's') {
+
+			    	//console.log("Got Control S");
+
+			       	event.preventDefault();  // Prevent the default browser action
+
+			    	var modalDivs = document.querySelector('.modal_flat_main');
+
+			        if ((!modalDivs) && (!gRenderingPDF)){
+
+			        	SaveABC();
+			        	
 			        }
 
 			    }
