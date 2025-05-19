@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2513_051725_1400";
+var gVersionNumber="2514_051825_1900";
 
 var gMIDIInitStillWaiting = false;
 
@@ -1487,7 +1487,7 @@ function transposeSingleTune(theTune, transposeAmount, params){
 	        });
 	    });
 
-	    const modifiedStringBeforeFurtherChanges = lines.map((line, lineIndex) => {
+	    var modifiedStringBeforeFurtherChanges = lines.map((line, lineIndex) => {
 	        let resultLine = line;
 	        modifiedQuotedSubstrings[lineIndex].forEach((modifiedSubstring, index) => {
 	            // Replace each occurrence in the order they appear, preserving quotes
@@ -1497,6 +1497,9 @@ function transposeSingleTune(theTune, transposeAmount, params){
 	    }).join('\n');
 
 		//console.log("Transposing tune before "+i); // MAE FOOFOO 20 Feb 2025
+
+		// MAE 18 May 2025 - Disable custom abcjs rendering params 
+		modifiedStringBeforeFurtherChanges = modifiedStringBeforeFurtherChanges.replace(/^%abcjs_render_params/gm, '%foo_abcjs_render_params');
 
 		var visualObj = ABCJS.renderAbc("*", modifiedStringBeforeFurtherChanges, params);
 
@@ -1535,6 +1538,9 @@ function transposeSingleTune(theTune, transposeAmount, params){
 		// Strip any injected mixed alternate chord strings
 		ret = ret.replaceAll('"x"',"");
 
+		// MAE 18 May 2025 - Reinstate custom abcjs rendering params 
+		ret = ret.replace(/^%foo_abcjs_render_params/gm, '%abcjs_render_params')
+
 		return ret;
 
 	}
@@ -1543,12 +1549,19 @@ function transposeSingleTune(theTune, transposeAmount, params){
 		//console.log("No alternate chords detected");
 
 		//console.log("Transposing tune before "+i); // MAE FOOFOO 20 Feb 2025
+		// MAE 18 May 2025 - Disable custom abcjs rendering params 
+		theTune = theTune.replace(/^%abcjs_render_params/gm, '%foo_abcjs_render_params');
 
 		var visualObj = ABCJS.renderAbc("*", theTune, params);
 
 		//console.log("Transposing tune after "+i); // MAE FOOFOO 20 Feb 2025
 
-	    return ABCJS.strTranspose(theTune, visualObj, transposeAmount);
+	    theTune = ABCJS.strTranspose(theTune, visualObj, transposeAmount);
+
+		// MAE 18 May 2025 - Reinstate custom abcjs rendering params 
+	    theTune = theTune.replace(/^%foo_abcjs_render_params/gm, '%abcjs_render_params');
+
+	    return theTune;
 
 	}
 }
