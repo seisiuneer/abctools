@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2515_051925_1600";
+var gVersionNumber="2516_051925_2100";
 
 var gMIDIInitStillWaiting = false;
 
@@ -50130,6 +50130,9 @@ function DoStartup() {
 
 		if (isMac()){
 
+			var elem = document.getElementById("saveabcfile");
+			elem.title = "Saves the current ABC text to a file (⌘+S)"
+
 			document.addEventListener('keydown', function(event) {
 
 				//console.log("event.key = "+event.key);
@@ -50281,6 +50284,9 @@ function DoStartup() {
 		}
 		else{
 			
+			var elem = document.getElementById("saveabcfile");
+			elem.title = "Saves the current ABC text to a file (Ctrl+S)"
+
 			document.addEventListener('keydown', function(event) {
 
 				// F3 resets the player
