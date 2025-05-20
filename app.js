@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2516_051925_2100";
+var gVersionNumber="2517_052025_0900";
 
 var gMIDIInitStillWaiting = false;
 
@@ -19083,6 +19083,77 @@ function SaveABCAsMusicXML(theTune, fname){
 //
 // Save the ABC file
 //
+function doSaveABCFile(fname,theData){
+
+	// Keep this around
+	if ((fname.endsWith(".xml")) || (fname.endsWith(".XML"))){
+
+		// Keep track of exports
+		sendGoogleAnalytics("export","SaveXML");
+
+		var thisTune = getTuneByIndex(0);
+
+		SaveABCAsMusicXML(thisTune, fname);
+
+		return;
+
+	}
+
+	// Keep track of exports
+	sendGoogleAnalytics("export","SaveABC");
+
+	// Give it a good extension
+	if (isPureDesktopBrowser()){
+
+		if ((!fname.endsWith(".abc")) && (!fname.endsWith(".txt")) && (!fname.endsWith(".ABC")) && (!fname.endsWith(".TXT"))){
+
+			// Give it a good extension
+			fname = fname.replace(/\..+$/, '');
+			fname = fname + ".abc";
+
+		}
+	}
+	else{
+		// iOS and Android have odd rules about text file saving
+		// Give it a good extension
+		fname = fname.replace(/\..+$/, '');
+		fname = fname + ".txt";
+
+	}
+
+	var a = document.createElement("a");
+
+	document.body.appendChild(a);
+
+	a.style = "display: none";
+
+	var blob = new Blob([theData], {type: "text/plain"}),
+
+	url = window.URL.createObjectURL(blob);
+	a.href = url;
+	a.download = fname;
+	a.click();
+
+	document.body.removeChild(a);
+
+	setTimeout(function() {
+	  window.URL.revokeObjectURL(url);
+	}, 1000);		
+
+	// Update the displayed name
+	gDisplayedName = fname;
+
+	// Mark ABC as from a file
+	gABCFromFile = true;
+
+	// Update the displayed filename
+	var fileSelected = document.getElementById('abc-selected');
+	fileSelected.innerText = fname;
+
+	// Clear the dirty count
+	gIsDirty = false;
+}
+
 function saveABCFile(thePrompt, thePlaceholder, theData){
 
 	DayPilot.Modal.prompt(thePrompt, thePlaceholder,{ theme: "modal_flat", top: 200, autoFocus: false, scrollWithPage: (AllowDialogsToScroll()) }).then(function(args) {
@@ -19099,76 +19170,10 @@ function saveABCFile(thePrompt, thePlaceholder, theData){
 
 		if (fname.length == 0){
 		  return null;
-		}   
+		}  
 
-
-		// Keep this around
-		if ((fname.endsWith(".xml")) || (fname.endsWith(".XML"))){
-
-			// Keep track of exports
-			sendGoogleAnalytics("export","SaveXML");
-
-			var thisTune = getTuneByIndex(0);
-
-			SaveABCAsMusicXML(thisTune, fname);
-
-			return;
-
-		}
-
-		// Keep track of exports
-		sendGoogleAnalytics("export","SaveABC");
-
-		// Give it a good extension
-		if (isPureDesktopBrowser()){
-
-			if ((!fname.endsWith(".abc")) && (!fname.endsWith(".txt")) && (!fname.endsWith(".ABC")) && (!fname.endsWith(".TXT"))){
-
-				// Give it a good extension
-				fname = fname.replace(/\..+$/, '');
-				fname = fname + ".abc";
-
-			}
-		}
-		else{
-			// iOS and Android have odd rules about text file saving
-			// Give it a good extension
-			fname = fname.replace(/\..+$/, '');
-			fname = fname + ".txt";
-
-		}
-
-		var a = document.createElement("a");
-
-		document.body.appendChild(a);
-
-		a.style = "display: none";
-
-		var blob = new Blob([theData], {type: "text/plain"}),
-
-		url = window.URL.createObjectURL(blob);
-		a.href = url;
-		a.download = fname;
-		a.click();
-
-		document.body.removeChild(a);
-
-		setTimeout(function() {
-		  window.URL.revokeObjectURL(url);
-		}, 1000);		
-
-		// Update the displayed name
-		gDisplayedName = fname;
-
-		// Mark ABC as from a file
-		gABCFromFile = true;
-
-		// Update the displayed filename
-		var fileSelected = document.getElementById('abc-selected');
-		fileSelected.innerText = fname;
-
-		// Clear the dirty count
-		gIsDirty = false;
+		// Do the save
+		doSaveABCFile(fname,theData); 
 
 	});
 }
@@ -22465,6 +22470,51 @@ function SaveABC(){
 
 				saveABCFile(thePrompt,theName,theData);
 			}
+
+		}
+	}
+}
+
+//
+// Keyboard equivalent, only prompts if there isn't already a filename
+//
+function SaveABC_KB(){
+
+	if (gAllowSave){
+
+		// If already saved, just resave
+		if (gABCFromFile){
+			
+			var theData = gTheABC.value;
+
+			if (theData.length != 0){
+
+				var theTuneCount = CountTunes();
+
+				var theName = getDescriptiveFileName(theTuneCount,true);
+
+				doSaveABCFile(theName,theData);
+
+				var elem = document.getElementById("saveabcfile");
+				if (elem){
+					elem.value = "Saved!";
+				}
+			
+				setTimeout(function(){
+
+					var elem = document.getElementById("saveabcfile");
+					if (elem){
+						elem.value = "Save";
+					}
+
+				},1000);
+
+			}
+		}
+		else{
+
+			// Otherwise, prompt for filename
+			SaveABC();
 
 		}
 	}
@@ -50274,7 +50324,7 @@ function DoStartup() {
 
 			        if ((!modalDivs) && (!gRenderingPDF)){
 
-			        	SaveABC();
+			        	SaveABC_KB();
 
 			        }
 
@@ -50422,7 +50472,7 @@ function DoStartup() {
 
 			        if ((!modalDivs) && (!gRenderingPDF)){
 
-			        	SaveABC();
+			        	SaveABC_KB();
 			        	
 			        }
 
