@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2518_052225_1600";
+var gVersionNumber="2519_052225_1700";
 
 var gMIDIInitStillWaiting = false;
 
@@ -9585,7 +9585,7 @@ function ExportTextIncipitsPDF(title, bDoFullTunes, bDoCCETransform, bDoQRCodes)
 
 				document.getElementById("statuspdfname").innerHTML = "Loading Chinese Sans-Serif Font";
 
-				loadScript("./notosans-normal.js",
+				loadScript("./notosans-regular.js",
 
 					function(){
 
@@ -9614,7 +9614,7 @@ function ExportTextIncipitsPDF(title, bDoFullTunes, bDoCCETransform, bDoQRCodes)
 				
 				document.getElementById("statuspdfname").innerHTML = "Loading Chinese Serif Font";
 
-				loadScript("./notoserif-normal.js",
+				loadScript("./notoserif-regular.js",
 
 					function(){
 
@@ -10252,7 +10252,7 @@ function ExportNotationPDF(title) {
 
 					document.getElementById("statuspdfname").innerHTML = "Loading Chinese Sans-Serif Font";
 
-					loadScript("./notosans-normal.js",
+					loadScript("./notosans-regular.js",
 
 						function(){
 
@@ -10281,7 +10281,7 @@ function ExportNotationPDF(title) {
 
 					document.getElementById("statuspdfname").innerHTML = "Loading Chinese Serif Font";
 
-					loadScript("./notoserif-normal.js",
+					loadScript("./notoserif-regular.js",
 
 						function(){
 
