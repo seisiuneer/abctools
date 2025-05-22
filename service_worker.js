@@ -4,19 +4,13 @@
 //
 //
 //
-//
-//
-//
-// Updated 20 May 2025 at 0900
-//
-//
-//
+// Updated 22 May 2025 at 1600
 //
 //
 //
 //
 
-const cacheName = 'abctoolscache-2517';
+const cacheName = 'abctoolscache-2518';
 
 const contentToCache = [
     'abctools.html',
@@ -58,6 +52,8 @@ const contentToCache = [
     'pdf-website-import.js',
     'context-menu.js',
 	'api-keys.js',
+    'notoserif-normal.js',
+    'notosans-normal.js',
     'img/zoomin.png',
     'img/zoomout.png',
     'img/helpbutton.png',

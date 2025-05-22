@@ -3267,9 +3267,9 @@
                 <p>These settings do not change the fonts in the ABC notation itself, those are configured in the <strong>Settings</strong> dialog <strong>Configure ABC Fonts</strong> sub-dialog.</p>
                 <p><strong>Font:</strong></p>
                 <div class="image_holder_p">
-                    <img class="image" loading="lazy" src="img/pdf_font_1.jpg"/>
+                    <img class="image" loading="lazy" src="img/pdf_font_2.jpg"/>
                 </div>
-                <p>Choose between: Times, Helvetica, or Courier.</p>
+                <p>Choose between: Times, Helvetica, Courier, Chinese (Serif), or Chinese (Sans-Serif).</p>
                 <p>Default is:&nbsp;&nbsp;Times</p>
                 <p><strong>Font Style:</strong></p>
                 <div class="image_holder_p">
@@ -3277,15 +3277,18 @@
                 </div>
                 <p>Choose between: Normal, Bold, Oblique, or Bold Oblique.</p>
                 <p>Default is:&nbsp;&nbsp;Normal</p>
+                <p>Chinese (Serif) and Chinese (Sans-Serif) will always use the Normal style.</p>
                 <hr class="hidden-print" id="pdf_font_override_settings">
                 <h1 class="page_break_always">PDF Font Override Settings<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/iGuuhN8HZDI" title="Setting Tunebook Fonts" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
                 <p>You may override the font and font style set in the PDF Tunebook Export dialog to be used for the PDF title page, page headers/footers, table of contents, index pages, page numbers, text incipits, and QR code label by adding the following ABC comment-based annotation anywhere in the ABC:</p>
                 <p></p>
                 <p class="code">%pdffont fontname fontstyle</p>
-                <p>Valid fontname values are: Times, Helvetica, and Courier.</p>
+                <p>Valid fontname values are: Times, Helvetica, Courier, Noto-Serif, and Noto-Sans.</p>
+                <p>Noto-Serif and Noto-Sans have Chinese character support.</p>
                 <p>Valid fontstyle values are: Normal, Bold, Oblique, and BoldOblique.</p>
                 <p>You can leave the style value blank for the Normal style.</p>
+                <p>Noto-Serif and Noto-Sans for Chinese characters will always use the Normal style.</p>
                 <p>This allows you to make sure a tunebook PDF always gets generated with a specific font and style.</p>
                 <p></p>
                 <hr class="hidden-print" id="pdf_quality_setting">
@@ -3541,9 +3544,11 @@
                 <p>Page numbers can be added along with page headers and footers.</p>
                 <p>If you add a page header and you have selected top-centered page numbers, the page number will be hidden.</p>
                 <p>If you add a page footer and you have selected bottom-centered page numbers, the page number will be hidden.</p>
-                <p></p>
-                <p>Since these annotations are ABC comment-based, they will just appear to be normal comments in other ABC software.</p>
-                <p></p>
+                 <hr>
+                <p><strong>Setting the Header and Footer Font Size</strong></p>
+                <p>You can set the font size for the header and footer using the following annotation:</p>
+                 <p class="code">%headerfooterfontsize font_size - Font size for both the PDF page headers and footers. Default is: 12.</p>
+                <hr>
                 <p><strong>Forcing a Specific Filename for PDF Export</strong></p>
                 <p>If you want to force a specific filename to be used by default every time you export the PDF file, add the following comment-based directive anywhere in the ABC:</p>
                 <p></p>
@@ -3827,6 +3832,7 @@
                     %index_no_page_numbers<br/>
                     %pageheader Page Header<br/>
                     %pagefooter Page Footer<br/>
+                    %headerfooterfontsize 12<br/>
                     %urlpageheader https://michaeleskin.com Page Header as Hyperlink<br/>
                     %urlpagefooter https://michaeleskin.com Page Footer as Hyperlink<br/>
                     %firstpagenumber 3<br/>

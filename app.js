@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2517_052025_0900";
+var gVersionNumber="2518_052225_1600";
 
 var gMIDIInitStillWaiting = false;
 
@@ -436,6 +436,10 @@ var gForceAndroid = false;
 // Disable Android
 var gDisableAndroid = false;
 
+// Are the Chinese Noto fonts loaded?
+var gNotoSansLoaded = false;
+var gNotoSerifLoaded = false;
+
 // Global reference to the ABC editor
 var gTheABC = document.getElementById("abc");
 
@@ -474,6 +478,21 @@ function getFirstPage(){
 //
 // Tune utility functions
 // 
+
+function loadScript(url, callback) {
+  const script = document.createElement('script');
+  script.src = url;
+  script.type = 'text/javascript';
+  script.onload = () => {
+    console.log(`${url} loaded successfully`);
+    if (callback) callback();
+  };
+  script.onerror = () => {
+    console.error(`Failed to load script: ${url}`);
+    if (callback) callback();
+  };
+  document.head.appendChild(script);
+}
 
 function replaceEscapedDiacriticals(str) {
   const diacriticMap = {
@@ -3806,6 +3825,7 @@ function AppendTuneTitlePage(thePDF,paperStyle,theTitle,theSubtitle){
 
 		// Set the font size
 		thePDF.setFont(gPDFFont,gPDFFontStyle,"normal");
+
 		thePDF.setFontSize(TPTITLESIZE);
 
 		if (theTunebookTPURL && (theTunebookTPURL != "")){
@@ -7731,6 +7751,31 @@ function ParseCommentCommands(theNotes){
 		}
 	}
 
+	// Set the default tunebook header and footer font size
+	// MAE 22 May 2025
+	HEADERFOOTERFONTSIZE = 12;
+
+	// Search for a tunebook header/footer font size override request
+	searchRegExp = /^%headerfooterfontsize.*$/m
+
+	// Detect tunebook TOC font size annotation
+	var overrideHFFontSize = theNotes.match(searchRegExp);
+
+	if ((overrideHFFontSize) && (overrideHFFontSize.length > 0)){
+
+		var theFontSize = overrideHFFontSize[0].replace("%headerfooterfontsize","");
+
+		theFontSize = theFontSize.trim();
+		
+		var theFontSizeInt = parseInt(theFontSize);
+		
+		if ((!isNaN(theFontSizeInt)) && (theFontSizeInt > 0)){
+
+			HEADERFOOTERFONTSIZE = theFontSizeInt;
+
+		}
+	}
+
 	// Set the default tunebook PDF quality for 2X oversampling
 	gPDFQuality = 0.75;
 
@@ -8352,6 +8397,8 @@ function ParseCommentCommands(theNotes){
 
 			case "helvetica":
 			case "courier":
+			case "noto-sans":
+			case "noto-serif":
 				break;
 
 			default:
@@ -9521,369 +9568,445 @@ function ExportTextIncipitsPDF(title, bDoFullTunes, bDoCCETransform, bDoQRCodes)
 
 	// Setup function scope shared vars
 
-	document.getElementById("statuspdfname").innerHTML = "Generating <font color=\"blue\">" + title + "</font>";
-
-	document.getElementById("statustunecount").innerHTML = "";
-
-	document.getElementById("pagestatustext").innerHTML = "&nbsp;";
-
 	// Set the global PDF rendering flag
 	gRenderingPDF = true;
 
-	pdf = new jsPDF(gPDFOrientation, 'pt', paperStyle);	
+	// Dynamic loading of fonts with Chinese characters
+	// They are huge files, so don't want to burden the normal use of the tool with them
+	if ((gPDFFont == "Noto-Sans") || (gPDFFont == "Noto-Serif")){
 
-	// Set the initial PDF display mode
-	pdf.setDisplayMode("fullpage","single","UseNone");
+		document.getElementById("statustunecount").innerHTML = "";
 
-	// Creates a sharper image
-	pdf.internal.scaleFactor = PDFSCALEFACTOR;
+		document.getElementById("pagestatustext").innerHTML = "&nbsp;";
 
-	// Get the position for future page numbers and footers
-	calcPageNumberVerticalOffset(pdf);
+		if (gPDFFont == "Noto-Sans") {
 
-	// Track tune hyperlinks
-	gTuneHyperlinks = [];
+			if (!gNotoSansLoaded){
 
-	setTimeout(function(){
+				document.getElementById("statuspdfname").innerHTML = "Loading Chinese Sans-Serif Font";
 
-		var theTunePageMap = [];
+				loadScript("./notosans-normal.js",
 
-		if (bDoQRCodes){
+					function(){
 
-			// Keep track of use of PDF exporter
-			sendGoogleAnalytics("export","PDFQRCodes");
+						//console.log("Noto Sans font loaded");
 
-			theTunePageMap = GenerateFullTuneQRCodes(pdf,addPageNumbers,pageNumberLocation,hideFirstPageNumber,paperStyle,theTunePageMap,qr_done_callback);
-
-			function qr_done_callback(pageMap){
-				
-				theTunePageMap = pageMap;
-
-				document.getElementById("statustunecount").innerHTML = "All QR Codes Added!";
-				
-				ExportTextIncipitsPDF_callback();
-
-			}			
-		}
-		else
-		if (bDoFullTunes){
-
-			// Keep track of use of PDF exporter
-			sendGoogleAnalytics("export","PDFFullText");
-
-			theTunePageMap = GenerateFullTextIncipits(pdf,addPageNumbers,pageNumberLocation,hideFirstPageNumber,paperStyle,theTunePageMap,false,bDoCCETransform);
-			document.getElementById("statustunecount").innerHTML = "Full ABC Text Added!";
-
-			ExportTextIncipitsPDF_callback();
-		}
-		else{
-			// Keep track of use of PDF exporter
-			sendGoogleAnalytics("export","PDFTextIncipits");
-
-			theTunePageMap = GenerateTextIncipits(pdf,addPageNumbers,pageNumberLocation,hideFirstPageNumber,paperStyle,theTunePageMap,TunebookABCSortedIncipitsRequested);
-			document.getElementById("statustunecount").innerHTML = "ABC Incipits Added!";
-
-			ExportTextIncipitsPDF_callback();
-		}
-
-		function ExportTextIncipitsPDF_callback(){
-
-			// Was a cancel requested?
-			if (gPDFCancelRequested){
-
-				gRenderingPDF = false;
-
-				clearGetTuneByIndexCache();
-
-				// Hide the PDF status modal
-				var pdfstatus = document.getElementById("pdf-controls");
-				pdfstatus.style.display = "none";
-
-				// Exit early
-				return;
-			}
-		
-			var totalPages = theCurrentPageNumber;
-
-			if (TunebookTPRequested){
-
-				// Add a new page
-				pdf.addPage(paperStyle,gPDFOrientation);
-				theCurrentPageNumber++;
-
-				pdf.movePage(theCurrentPageNumber,1);
-
-			} 
-
-			var theDelta = theCurrentPageNumber;
-			var theTOCStart = 1;
-			var theTOCSortedStart = 1;
-
-			if (TunebookTOCRequested){
-
-				DryRunAddTuneTOC(pdf,pageNumberLocation,hideFirstPageNumber,paperStyle,theTunePageMap,theTunebookSortedTOCTitle, false, TunebookABCSortedIncipitsRequested);
-
-			}
-
-			theTOCSortedStart = theCurrentPageNumber-theDelta;
-			theTOCSortedStart++;
-
-			if (TunebookSortedTOCRequested){
-
-				DryRunAddTuneTOC(pdf,pageNumberLocation,hideFirstPageNumber,paperStyle,theTunePageMap,theTunebookSortedTOCTitle,true,TunebookABCSortedIncipitsRequested);
-
-			}
-
-			// Get the number of pages added by the TOC operations
-			theTOCDelta = theCurrentPageNumber - theDelta;
-
-			// Restore the working page number
-			theCurrentPageNumber = theDelta;
-
-			// If a title page is present, increment the start pages and tune page offset
-			if (TunebookTPRequested){
-				theTOCStart++;
-				theTOCSortedStart++;
-				theTOCDelta++;
-			}	
-
-			// Automatically offset tune numbers by Title Page and TOC length?
-			if (TunebookFirstPageAuto || gPDFAutoPageNumbers){
-				TunebookFirstPageNumber = theTOCDelta+1;
-			}
-
-			// Did they request a tune TOC?
-			if (TunebookTOCRequested){
-				
-				document.getElementById("statustunecount").innerHTML = "Adding Table of Contents";
-				
-				AppendTuneTOC(pdf,pageNumberLocation,hideFirstPageNumber,paperStyle,theTunePageMap,theTunebookTOCTitle, TunebookABCSortedIncipitsRequested,TunebookABCSortedIncipitsRequested,gIncludePageLinks,theTOCDelta,theTOCStart);
-
-				document.getElementById("statustunecount").innerHTML = "Table of Contents Added!";
-				
-				document.getElementById("pagestatustext").innerHTML = "Rendered <font color=\"red\">" + theCurrentPageNumber + "</font> pages";
-				
-			}
-
-			// Did they request a sorted tune TOC?
-			if (TunebookSortedTOCRequested){
-				
-				document.getElementById("statustunecount").innerHTML = "Adding Sorted Table of Contents";
-				
-				AppendTuneTOC(pdf,pageNumberLocation,hideFirstPageNumber,paperStyle,theTunePageMap,theTunebookSortedTOCTitle, true, TunebookABCSortedIncipitsRequested,gIncludePageLinks,theTOCDelta,theTOCSortedStart);
-
-				document.getElementById("statustunecount").innerHTML = "Sorted Table of Contents Added!";
-				
-				document.getElementById("pagestatustext").innerHTML = "Rendered <font color=\"red\">" + theCurrentPageNumber + "</font> pages";
-				
-			}
-
-			// Did they request a tunebook title page?
-			if (TunebookTPRequested){
-				
-				document.getElementById("statustunecount").innerHTML = "Adding Title Page";
-				
-				AppendTuneTitlePage(pdf,paperStyle,theTunebookTP,theTunebookTPST);
-
-				document.getElementById("statustunecount").innerHTML = "Title Page Added!";
-				
-				document.getElementById("pagestatustext").innerHTML = "Rendered <font color=\"red\">" + theCurrentPageNumber + "</font> pages";
-				
-			}
-
-			// How many pages were added before the tunes?
-			theDelta = theCurrentPageNumber - theDelta;
-
-			if (TunebookTPRequested){
-				theDelta++;
-			}
-
-			if (TunebookTOCRequested || TunebookSortedTOCRequested){
-				theDelta = theTOCDelta;
-			}
-
-			// Add all the headers and footers at once
-			PostProcessHeadersAndFooters(pdf,addPageNumbers,theDelta+1,totalPages,pageNumberLocation,hideFirstPageNumber,paperStyle);
-
-			// Did they request a tunebook index?
-			if (TunebookIndexRequested){
-				
-				document.getElementById("statustunecount").innerHTML = "Adding Tunebook Index";
-
-				AppendTunebookIndex(pdf,pageNumberLocation,hideFirstPageNumber,paperStyle,theTunePageMap,theTunebookIndexTitle,TunebookABCSortedIncipitsRequested,TunebookABCSortedIncipitsRequested,gIncludePageLinks, theDelta);
-
-				document.getElementById("statustunecount").innerHTML = "Tunebook Index Added!";
-				
-				document.getElementById("pagestatustext").innerHTML = "Rendered <font color=\"red\">" + theCurrentPageNumber + "</font> pages";
-				
-			}
-
-			// Did they request a sorted tunebook index?
-			if (TunebookSortedIndexRequested){
-				
-				document.getElementById("statustunecount").innerHTML = "Adding Tunebook Sorted Index";
-
-				AppendTunebookIndex(pdf,pageNumberLocation,hideFirstPageNumber,paperStyle,theTunePageMap,theTunebookSortedIndexTitle,true,TunebookABCSortedIncipitsRequested,gIncludePageLinks,theDelta);
-
-				document.getElementById("statustunecount").innerHTML = "Tunebook Sorted Index Added!";
-				
-				document.getElementById("pagestatustext").innerHTML = "Rendered <font color=\"red\">" + theCurrentPageNumber + "</font> pages";
-				
-			}
-
-			// Add any link back requested to the index or TOC
-			var addTOCLinks = false;
-			var theTOCLinkPage = 1;
-			var addIndexLinks = false;
-			var theIndexLinkPage = 1;
-			var startPage = theTOCDelta+1;
-			var endPage = theTOCDelta + totalPages;
-
-			if (gAddTOCLinkback&& (TunebookTOCRequested || TunebookSortedTOCRequested)){
-				addTOCLinks = true;
-				if (TunebookTPRequested){
-					theTOCLinkPage = 2;
-				}
-			}
-
-			if (gAddIndexLinkback&& (TunebookIndexRequested || TunebookSortedIndexRequested)){
-				addIndexLinks = true;
-				theIndexLinkPage = totalPages + theTOCDelta + 1;
-			}
-
-			if (addTOCLinks || addIndexLinks){
-				PostProcessTOCAndIndexLinks(pdf,startPage,endPage,addTOCLinks,theTOCLinkPage,addIndexLinks,theIndexLinkPage);
-			}
-
-			if (gTuneHyperlinks.length > 0){
-				PostProcessTuneHyperlinks(pdf,gTuneHyperlinks,paperStyle,startPage);						
-			}
-			
-			// Did they request a QR code?
-			if (gQRCodeRequested){
-
-				document.getElementById("statustunecount").innerHTML = "Adding Tunebook QR Code";
-
-				// This needs the callback because the rasterizer is async
-				AppendQRCode(pdf,paperStyle,qrcode_callback);
-
-				function qrcode_callback(status){
-
-					if (!status){
-
-						document.getElementById("statustunecount").innerHTML = "Share URL too long for QR Code, try sharing fewer tunes";
-
-					}
-					else{
-
-						theCurrentPageNumber++;
-
-						document.getElementById("statustunecount").innerHTML = "Tunebook QR Code Added!";
+						gNotoSansLoaded = true;
 						
-						document.getElementById("pagestatustext").innerHTML = "Rendered <font color=\"red\">" + theCurrentPageNumber + "</font> pages";
+						gPDFFontStyle = "Normal";
 
-					}
+						doPDFStepTwo();
 
-					// If the QR code generation failed, leave more time for a status update
-					var statusDelay = 1000;
-
-					if (!status){
-
-						statusDelay = 4000;
-					}
-
-					// Delay for final QR code UI status update
-					setTimeout(function(){
-					
-						// Handle the status display for the new page
-						document.getElementById("statustunecount").innerHTML = "&nbsp;";
-
-						// And complete the PDF
-						finalize_pdf_export();
-
-					},statusDelay);
-
-					return;
-
-				}
-			}	
+					});
+			}
 			else{
 
-				// No QR code requested, just run the callback directly
-				finalize_pdf_export();
-				
-				return;
+				gPDFFontStyle = "Normal";
+
+				doPDFStepTwo();
 
 			}
+		}
+		else
+		if (gPDFFont == "Noto-Serif") {
 
-			//
-			// Finalize the PDF document
-			//
-			function finalize_pdf_export(){				
+			if (!gNotoSerifLoaded){
+				
+				document.getElementById("statuspdfname").innerHTML = "Loading Chinese Serif Font";
 
-				document.getElementById("statuspdfname").innerHTML = "<font color=\"darkgreen\">Rendering Complete!</font>";
+				loadScript("./notoserif-normal.js",
 
-					setTimeout(function(){
+					function(){
 
-					document.getElementById("statuspdfname").innerHTML = "Saving <font color=\"blue\">" + title + "</font>";
+						//console.log("Noto Serif font loaded");
 
-					// Save the status up for a bit before saving
-					setTimeout(function(){
+						gNotoSerifLoaded = true;
+						
+						gPDFFontStyle = "Normal";
 
-						// Start the PDF save
-						// On mobile, have to use a different save strategy otherwise the PDF loads in the same tab
-						if (isMobileBrowser()){
+						doPDFStepTwo();
 
-							var theBlob = pdf.output('blob', { filename: (title) });
-						 	
-						 	var newBlob = new Blob([theBlob], { type: 'application/octet-stream' });
+					});
+			}
+			else{
 
-							var a = document.createElement("a");
+				gPDFFontStyle = "Normal";
 
-					        document.body.appendChild(a);
-					        
-					        a.style = "display: none";
+				doPDFStepTwo();
 
-					        url = window.URL.createObjectURL(newBlob);
-					        a.href = url;
-					        a.download = (title);
-					        a.click();
+			}
+		}
+	}
+	else{
 
-					        document.body.removeChild(a);
+		doPDFStepTwo();
 
-					        setTimeout(function() {
-					          window.URL.revokeObjectURL(url);
-					        }, 1000);
+	}
+
+	function doPDFStepTwo(){
+
+		document.getElementById("statuspdfname").innerHTML = "Generating <font color=\"blue\">" + title + "</font>";
+
+		document.getElementById("statustunecount").innerHTML = "";
+
+		document.getElementById("pagestatustext").innerHTML = "&nbsp;";
+
+
+		pdf = new jsPDF(gPDFOrientation, 'pt', paperStyle);	
+
+		// Set the initial PDF display mode
+		pdf.setDisplayMode("fullpage","single","UseNone");
+
+		// Creates a sharper image
+		pdf.internal.scaleFactor = PDFSCALEFACTOR;
+
+		// Get the position for future page numbers and footers
+		calcPageNumberVerticalOffset(pdf);
+
+		// Track tune hyperlinks
+		gTuneHyperlinks = [];
+
+		setTimeout(function(){
+
+			var theTunePageMap = [];
+
+			if (bDoQRCodes){
+
+				// Keep track of use of PDF exporter
+				sendGoogleAnalytics("export","PDFQRCodes");
+
+				theTunePageMap = GenerateFullTuneQRCodes(pdf,addPageNumbers,pageNumberLocation,hideFirstPageNumber,paperStyle,theTunePageMap,qr_done_callback);
+
+				function qr_done_callback(pageMap){
+					
+					theTunePageMap = pageMap;
+
+					document.getElementById("statustunecount").innerHTML = "All QR Codes Added!";
+					
+					ExportTextIncipitsPDF_callback();
+
+				}			
+			}
+			else
+			if (bDoFullTunes){
+
+				// Keep track of use of PDF exporter
+				sendGoogleAnalytics("export","PDFFullText");
+
+				theTunePageMap = GenerateFullTextIncipits(pdf,addPageNumbers,pageNumberLocation,hideFirstPageNumber,paperStyle,theTunePageMap,false,bDoCCETransform);
+				document.getElementById("statustunecount").innerHTML = "Full ABC Text Added!";
+
+				ExportTextIncipitsPDF_callback();
+			}
+			else{
+				// Keep track of use of PDF exporter
+				sendGoogleAnalytics("export","PDFTextIncipits");
+
+				theTunePageMap = GenerateTextIncipits(pdf,addPageNumbers,pageNumberLocation,hideFirstPageNumber,paperStyle,theTunePageMap,TunebookABCSortedIncipitsRequested);
+				document.getElementById("statustunecount").innerHTML = "ABC Incipits Added!";
+
+				ExportTextIncipitsPDF_callback();
+			}
+
+			function ExportTextIncipitsPDF_callback(){
+
+				// Was a cancel requested?
+				if (gPDFCancelRequested){
+
+					gRenderingPDF = false;
+
+					clearGetTuneByIndexCache();
+
+					// Hide the PDF status modal
+					var pdfstatus = document.getElementById("pdf-controls");
+					pdfstatus.style.display = "none";
+
+					// Exit early
+					return;
+				}
+			
+				var totalPages = theCurrentPageNumber;
+
+				if (TunebookTPRequested){
+
+					// Add a new page
+					pdf.addPage(paperStyle,gPDFOrientation);
+					theCurrentPageNumber++;
+
+					pdf.movePage(theCurrentPageNumber,1);
+
+				} 
+
+				var theDelta = theCurrentPageNumber;
+				var theTOCStart = 1;
+				var theTOCSortedStart = 1;
+
+				if (TunebookTOCRequested){
+
+					DryRunAddTuneTOC(pdf,pageNumberLocation,hideFirstPageNumber,paperStyle,theTunePageMap,theTunebookSortedTOCTitle, false, TunebookABCSortedIncipitsRequested);
+
+				}
+
+				theTOCSortedStart = theCurrentPageNumber-theDelta;
+				theTOCSortedStart++;
+
+				if (TunebookSortedTOCRequested){
+
+					DryRunAddTuneTOC(pdf,pageNumberLocation,hideFirstPageNumber,paperStyle,theTunePageMap,theTunebookSortedTOCTitle,true,TunebookABCSortedIncipitsRequested);
+
+				}
+
+				// Get the number of pages added by the TOC operations
+				theTOCDelta = theCurrentPageNumber - theDelta;
+
+				// Restore the working page number
+				theCurrentPageNumber = theDelta;
+
+				// If a title page is present, increment the start pages and tune page offset
+				if (TunebookTPRequested){
+					theTOCStart++;
+					theTOCSortedStart++;
+					theTOCDelta++;
+				}	
+
+				// Automatically offset tune numbers by Title Page and TOC length?
+				if (TunebookFirstPageAuto || gPDFAutoPageNumbers){
+					TunebookFirstPageNumber = theTOCDelta+1;
+				}
+
+				// Did they request a tune TOC?
+				if (TunebookTOCRequested){
+					
+					document.getElementById("statustunecount").innerHTML = "Adding Table of Contents";
+					
+					AppendTuneTOC(pdf,pageNumberLocation,hideFirstPageNumber,paperStyle,theTunePageMap,theTunebookTOCTitle, TunebookABCSortedIncipitsRequested,TunebookABCSortedIncipitsRequested,gIncludePageLinks,theTOCDelta,theTOCStart);
+
+					document.getElementById("statustunecount").innerHTML = "Table of Contents Added!";
+					
+					document.getElementById("pagestatustext").innerHTML = "Rendered <font color=\"red\">" + theCurrentPageNumber + "</font> pages";
+					
+				}
+
+				// Did they request a sorted tune TOC?
+				if (TunebookSortedTOCRequested){
+					
+					document.getElementById("statustunecount").innerHTML = "Adding Sorted Table of Contents";
+					
+					AppendTuneTOC(pdf,pageNumberLocation,hideFirstPageNumber,paperStyle,theTunePageMap,theTunebookSortedTOCTitle, true, TunebookABCSortedIncipitsRequested,gIncludePageLinks,theTOCDelta,theTOCSortedStart);
+
+					document.getElementById("statustunecount").innerHTML = "Sorted Table of Contents Added!";
+					
+					document.getElementById("pagestatustext").innerHTML = "Rendered <font color=\"red\">" + theCurrentPageNumber + "</font> pages";
+					
+				}
+
+				// Did they request a tunebook title page?
+				if (TunebookTPRequested){
+					
+					document.getElementById("statustunecount").innerHTML = "Adding Title Page";
+					
+					AppendTuneTitlePage(pdf,paperStyle,theTunebookTP,theTunebookTPST);
+
+					document.getElementById("statustunecount").innerHTML = "Title Page Added!";
+					
+					document.getElementById("pagestatustext").innerHTML = "Rendered <font color=\"red\">" + theCurrentPageNumber + "</font> pages";
+					
+				}
+
+				// How many pages were added before the tunes?
+				theDelta = theCurrentPageNumber - theDelta;
+
+				if (TunebookTPRequested){
+					theDelta++;
+				}
+
+				if (TunebookTOCRequested || TunebookSortedTOCRequested){
+					theDelta = theTOCDelta;
+				}
+
+				// Add all the headers and footers at once
+				PostProcessHeadersAndFooters(pdf,addPageNumbers,theDelta+1,totalPages,pageNumberLocation,hideFirstPageNumber,paperStyle);
+
+				// Did they request a tunebook index?
+				if (TunebookIndexRequested){
+					
+					document.getElementById("statustunecount").innerHTML = "Adding Tunebook Index";
+
+					AppendTunebookIndex(pdf,pageNumberLocation,hideFirstPageNumber,paperStyle,theTunePageMap,theTunebookIndexTitle,TunebookABCSortedIncipitsRequested,TunebookABCSortedIncipitsRequested,gIncludePageLinks, theDelta);
+
+					document.getElementById("statustunecount").innerHTML = "Tunebook Index Added!";
+					
+					document.getElementById("pagestatustext").innerHTML = "Rendered <font color=\"red\">" + theCurrentPageNumber + "</font> pages";
+					
+				}
+
+				// Did they request a sorted tunebook index?
+				if (TunebookSortedIndexRequested){
+					
+					document.getElementById("statustunecount").innerHTML = "Adding Tunebook Sorted Index";
+
+					AppendTunebookIndex(pdf,pageNumberLocation,hideFirstPageNumber,paperStyle,theTunePageMap,theTunebookSortedIndexTitle,true,TunebookABCSortedIncipitsRequested,gIncludePageLinks,theDelta);
+
+					document.getElementById("statustunecount").innerHTML = "Tunebook Sorted Index Added!";
+					
+					document.getElementById("pagestatustext").innerHTML = "Rendered <font color=\"red\">" + theCurrentPageNumber + "</font> pages";
+					
+				}
+
+				// Add any link back requested to the index or TOC
+				var addTOCLinks = false;
+				var theTOCLinkPage = 1;
+				var addIndexLinks = false;
+				var theIndexLinkPage = 1;
+				var startPage = theTOCDelta+1;
+				var endPage = theTOCDelta + totalPages;
+
+				if (gAddTOCLinkback&& (TunebookTOCRequested || TunebookSortedTOCRequested)){
+					addTOCLinks = true;
+					if (TunebookTPRequested){
+						theTOCLinkPage = 2;
+					}
+				}
+
+				if (gAddIndexLinkback&& (TunebookIndexRequested || TunebookSortedIndexRequested)){
+					addIndexLinks = true;
+					theIndexLinkPage = totalPages + theTOCDelta + 1;
+				}
+
+				if (addTOCLinks || addIndexLinks){
+					PostProcessTOCAndIndexLinks(pdf,startPage,endPage,addTOCLinks,theTOCLinkPage,addIndexLinks,theIndexLinkPage);
+				}
+
+				if (gTuneHyperlinks.length > 0){
+					PostProcessTuneHyperlinks(pdf,gTuneHyperlinks,paperStyle,startPage);						
+				}
+				
+				// Did they request a QR code?
+				if (gQRCodeRequested){
+
+					document.getElementById("statustunecount").innerHTML = "Adding Tunebook QR Code";
+
+					// This needs the callback because the rasterizer is async
+					AppendQRCode(pdf,paperStyle,qrcode_callback);
+
+					function qrcode_callback(status){
+
+						if (!status){
+
+							document.getElementById("statustunecount").innerHTML = "Share URL too long for QR Code, try sharing fewer tunes";
 
 						}
 						else{
 
-							// This works fine on all desktop browsers
-						 	pdf.save(title);
-					 	}
+							theCurrentPageNumber++;
 
-						document.getElementById("statuspdfname").innerHTML = "&nbsp;";
+							document.getElementById("statustunecount").innerHTML = "Tunebook QR Code Added!";
+							
+							document.getElementById("pagestatustext").innerHTML = "Rendered <font color=\"red\">" + theCurrentPageNumber + "</font> pages";
 
-						document.getElementById("statustunecount").innerHTML = "&nbsp;";
+						}
 
-						document.getElementById("pagestatustext").innerHTML = "&nbsp;";
+						// If the QR code generation failed, leave more time for a status update
+						var statusDelay = 1000;
 
-						// Hide the PDF status modal
-						var pdfstatus = document.getElementById("pdf-controls");
-						pdfstatus.style.display = "none";
+						if (!status){
 
-						// Clear the PDF rendering global
-						gRenderingPDF = false;
+							statusDelay = 4000;
+						}
 
-						clearGetTuneByIndexCache();
+						// Delay for final QR code UI status update
+						setTimeout(function(){
+						
+							// Handle the status display for the new page
+							document.getElementById("statustunecount").innerHTML = "&nbsp;";
+
+							// And complete the PDF
+							finalize_pdf_export();
+
+						},statusDelay);
+
+						return;
+
+					}
+				}	
+				else{
+
+					// No QR code requested, just run the callback directly
+					finalize_pdf_export();
+					
+					return;
+
+				}
+
+				//
+				// Finalize the PDF document
+				//
+				function finalize_pdf_export(){				
+
+					document.getElementById("statuspdfname").innerHTML = "<font color=\"darkgreen\">Rendering Complete!</font>";
+
+						setTimeout(function(){
+
+						document.getElementById("statuspdfname").innerHTML = "Saving <font color=\"blue\">" + title + "</font>";
+
+						// Save the status up for a bit before saving
+						setTimeout(function(){
+
+							// Start the PDF save
+							// On mobile, have to use a different save strategy otherwise the PDF loads in the same tab
+							if (isMobileBrowser()){
+
+								var theBlob = pdf.output('blob', { filename: (title) });
+							 	
+							 	var newBlob = new Blob([theBlob], { type: 'application/octet-stream' });
+
+								var a = document.createElement("a");
+
+						        document.body.appendChild(a);
+						        
+						        a.style = "display: none";
+
+						        url = window.URL.createObjectURL(newBlob);
+						        a.href = url;
+						        a.download = (title);
+						        a.click();
+
+						        document.body.removeChild(a);
+
+						        setTimeout(function() {
+						          window.URL.revokeObjectURL(url);
+						        }, 1000);
+
+							}
+							else{
+
+								// This works fine on all desktop browsers
+							 	pdf.save(title);
+						 	}
+
+							document.getElementById("statuspdfname").innerHTML = "&nbsp;";
+
+							document.getElementById("statustunecount").innerHTML = "&nbsp;";
+
+							document.getElementById("pagestatustext").innerHTML = "&nbsp;";
+
+							// Hide the PDF status modal
+							var pdfstatus = document.getElementById("pdf-controls");
+							pdfstatus.style.display = "none";
+
+							// Clear the PDF rendering global
+							gRenderingPDF = false;
+
+							clearGetTuneByIndexCache();
+
+						},500);
 
 					},500);
+				};
+			}
 
-				},500);
-			};
-		}
-
-	},250);
+		},250);
+	}
 }
 
 //
@@ -10117,6 +10240,79 @@ function ExportNotationPDF(title) {
 
 	function doPDFStepTwo(){
 
+		if ((gPDFFont == "Noto-Sans") || (gPDFFont == "Noto-Serif")){
+
+			document.getElementById("statustunecount").innerHTML = "";
+
+			document.getElementById("pagestatustext").innerHTML = "&nbsp;";
+
+			if (gPDFFont == "Noto-Sans") {
+
+				if (!gNotoSansLoaded){
+
+					document.getElementById("statuspdfname").innerHTML = "Loading Chinese Sans-Serif Font";
+
+					loadScript("./notosans-normal.js",
+
+						function(){
+
+							//console.log("Noto Sans font loaded");
+
+							gNotoSansLoaded = true;
+							
+							gPDFFontStyle = "Normal";
+
+							doPDFStepThree();
+
+						});
+				}
+				else{
+
+					gPDFFontStyle = "Normal";
+
+					doPDFStepThree();
+
+				}
+			}
+			else
+			if (gPDFFont == "Noto-Serif") {
+
+				if (!gNotoSerifLoaded){
+
+					document.getElementById("statuspdfname").innerHTML = "Loading Chinese Serif Font";
+
+					loadScript("./notoserif-normal.js",
+
+						function(){
+
+							//console.log("Noto Serif font loaded");
+
+							gNotoSerifLoaded = true;
+							
+							gPDFFontStyle = "Normal";
+
+							doPDFStepThree();
+
+						});
+				}
+				else{
+
+					gPDFFontStyle = "Normal";
+
+					doPDFStepThree();
+
+				}
+			}
+		}
+		else{
+
+			doPDFStepThree();
+
+		}
+	}
+
+	function doPDFStepThree(){
+
 		// Keep track of use of PDF exporter
 		sendGoogleAnalytics("export","PDFFull");
 
@@ -10183,6 +10379,7 @@ function ExportNotationPDF(title) {
 			Rasterize();
 
 		}
+
 	}
 
 	function Rasterize(){
@@ -41391,6 +41588,8 @@ function PDFExportDialog(){
 	    { name: "  Times", id: "Times" },
 	    { name: "  Helvetica", id: "Helvetica" },
 	    { name: "  Courier", id: "Courier" },
+	    { name: "  Chinese (Serif)", id: "Noto-Serif" },
+	    { name: "  Chinese (Sans-Serif)", id: "Noto-Sans" },
 	];
 
   	const fontstyle_list = [
@@ -41419,8 +41618,12 @@ function PDFExportDialog(){
 	var dialog_PDFFont = gPDFFont;
 	var pdffontlc = dialog_PDFFont.toLowerCase();
 
-	if ((pdffontlc != "times") && (pdffontlc != "helvetica") && (pdffontlc != "courier")){
+	if ((pdffontlc != "times") && (pdffontlc != "helvetica") && (pdffontlc != "courier") && (pdffontlc != "noto-serif") && (pdffontlc != "noto-sans")){
 		dialog_PDFFont = "Times";
+	}
+
+	if ((pdffontlc == "noto-serif") || (pdffontlc == "noto-sans")){
+		dialog_PDFFontStyle = "Normal";
 	}
 
 	var dialog_PDFFontStyle = gPDFFontStyle;
@@ -41659,6 +41862,13 @@ function PDFExportDialog(){
 
 			var theFontStyle = args.result.configure_fontstyle;
 
+			// Force Noto-Sans and Noto-Serif style to Normal
+			if ((theFontName == "Noto-Sans") || (theFontName == "Noto-Serif")){
+
+				theFontStyle = "Normal";
+
+			}
+			else
 			// Remap Normal style to empty for Helvetica and Courier
 			if (theFontStyle == "Normal"){
 
@@ -41684,7 +41894,7 @@ function PDFExportDialog(){
 					case "Helvetica":
 					case "Courier":
 						break;
-						
+
 				}
 			
 			}
