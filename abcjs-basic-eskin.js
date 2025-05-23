@@ -8122,7 +8122,15 @@ MusicParser.prototype.parseMusic = function (line) {
               if (core.startTie !== undefined) el.pitches[0].startTie = core.startTie;
               if (el.startTie !== undefined) el.pitches[0].startTie = el.startTie;
             } else {
+
               el.rest = core.rest;
+
+              // MAE 22 May 2025 - For multi-bar rests
+              // The minus one is because the measure with the rest is already counted once normally.
+              if ((core.rest.type === 'multimeasure') && (multilineVars.currentVoice === undefined || (multilineVars.currentVoice.staffNum ===  0 && multilineVars.currentVoice.index ===  0))){
+                multilineVars.currBarNumber += core.rest.text - 1;
+              }
+
               if (core.endSlur !== undefined) el.endSlur = core.endSlur;
               if (core.endTie !== undefined) el.rest.endTie = core.endTie;
               if (core.startSlur !== undefined) el.startSlur = core.startSlur;
@@ -8905,6 +8913,7 @@ var getBrokenRhythm = function getBrokenRhythm(line, index) {
   }
   return null;
 };
+
 module.exports = MusicParser;
 
 /***/ }),
