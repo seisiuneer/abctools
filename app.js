@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2520_052225_1830";
+var gVersionNumber="2521_052325_1400";
 
 var gMIDIInitStillWaiting = false;
 
@@ -41588,8 +41588,8 @@ function PDFExportDialog(){
 	    { name: "  Times", id: "Times" },
 	    { name: "  Helvetica", id: "Helvetica" },
 	    { name: "  Courier", id: "Courier" },
-	    { name: "  Chinese (Serif)", id: "Noto-Serif" },
-	    { name: "  Chinese (Sans-Serif)", id: "Noto-Sans" },
+	    { name: "  Noto-Serif", id: "Noto-Serif" },
+	    { name: "  Noto-Sans", id: "Noto-Sans" },
 	];
 
   	const fontstyle_list = [
