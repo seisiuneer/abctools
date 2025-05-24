@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2523_052425_0830";
+var gVersionNumber="2524_052425_0900";
 
 var gMIDIInitStillWaiting = false;
 
@@ -14222,10 +14222,12 @@ function PDFTunebookBuilder(){
 			if (gPDFTunebookConfig.addtitle != ""){
 
 				header_to_add += "%addtitle "+gPDFTunebookConfig.addtitle+"\n";
+				header_to_add += "%titlefontsize 24\n";
 
 				if (gPDFTunebookConfig.addsubtitle != ""){
 
 					header_to_add += "%addsubtitle "+gPDFTunebookConfig.addsubtitle+"\n";
+					header_to_add += "%subtitlefontsize 16\n";
 
 				}
 
