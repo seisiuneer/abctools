@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2526_052425_1300";
+var gVersionNumber="2527_052425_1400";
 
 var gMIDIInitStillWaiting = false;
 
@@ -1520,6 +1520,9 @@ function transposeSingleTune(theTune, transposeAmount, params){
 		// MAE 18 May 2025 - Disable custom abcjs rendering params 
 		modifiedStringBeforeFurtherChanges = modifiedStringBeforeFurtherChanges.replace(/^%abcjs_render_params/gm, '%foo_abcjs_render_params');
 
+		// MAE 24 May 2025 - Disable visualtranspose
+		modifiedStringBeforeFurtherChanges = modifiedStringBeforeFurtherChanges.replace(/^%%visualtranspose/gm, '%%foo_visualtranspose');
+
 		var visualObj = ABCJS.renderAbc("*", modifiedStringBeforeFurtherChanges, params);
 
 		//console.log("Transposing tune after "+i); // MAE FOOFOO 20 Feb 2025
@@ -1557,6 +1560,9 @@ function transposeSingleTune(theTune, transposeAmount, params){
 		// Strip any injected mixed alternate chord strings
 		ret = ret.replaceAll('"x"',"");
 
+		// MAE 24 May 2025 - Reinstate visualtranspose
+		ret = ret.replace(/^%%foo_visualtranspose/gm, '%%visualtranspose')
+
 		// MAE 18 May 2025 - Reinstate custom abcjs rendering params 
 		ret = ret.replace(/^%foo_abcjs_render_params/gm, '%abcjs_render_params')
 
@@ -1571,11 +1577,18 @@ function transposeSingleTune(theTune, transposeAmount, params){
 		// MAE 18 May 2025 - Disable custom abcjs rendering params 
 		theTune = theTune.replace(/^%abcjs_render_params/gm, '%foo_abcjs_render_params');
 
+		// MAE 24 May 2025 - Disable visualtranspose
+		theTune = theTune.replace(/^%%visualtranspose/gm, '%%foo_visualtranspose');
+
+
 		var visualObj = ABCJS.renderAbc("*", theTune, params);
 
 		//console.log("Transposing tune after "+i); // MAE FOOFOO 20 Feb 2025
 
 	    theTune = ABCJS.strTranspose(theTune, visualObj, transposeAmount);
+
+		// MAE 24 May 2025 - Reinstate visualtranspose
+		theTune = theTune.replace(/^%%foo_visualtranspose/gm, '%%visualtranspose')
 
 		// MAE 18 May 2025 - Reinstate custom abcjs rendering params 
 	    theTune = theTune.replace(/^%foo_abcjs_render_params/gm, '%abcjs_render_params');
