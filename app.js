@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2522_052325_2230";
+var gVersionNumber="2523_052425_0830";
 
 var gMIDIInitStillWaiting = false;
 
@@ -7775,6 +7775,57 @@ function ParseCommentCommands(theNotes){
 
 		}
 	}
+
+	// Set the default title page title font size
+	// MAE 24 May 2025
+	TPTITLESIZE = 24;
+
+	// Search for a tunebook title page title font size override request
+	searchRegExp = /^%titlefontsize.*$/m
+
+	// Detect tunebook TOC font size annotation
+	var overrideTitleFontSize = theNotes.match(searchRegExp);
+
+	if ((overrideTitleFontSize) && (overrideTitleFontSize.length > 0)){
+
+		var theFontSize = overrideTitleFontSize[0].replace("%titlefontsize","");
+
+		theFontSize = theFontSize.trim();
+		
+		var theFontSizeInt = parseInt(theFontSize);
+		
+		if ((!isNaN(theFontSizeInt)) && (theFontSizeInt > 0)){
+
+			TPTITLESIZE = theFontSizeInt;
+
+		}
+	}
+
+	// Set the default title page subtitle font size
+	// MAE 24 May 2025
+	TPSTTITLESIZE = 16;
+
+	// Search for a tunebook title page subtitle font size override request
+	searchRegExp = /^%subtitlefontsize.*$/m
+
+	// Detect tunebook TOC font size annotation
+	var overrideSubTitleFontSize = theNotes.match(searchRegExp);
+
+	if ((overrideSubTitleFontSize) && (overrideSubTitleFontSize.length > 0)){
+
+		var theFontSize = overrideSubTitleFontSize[0].replace("%subtitlefontsize","");
+
+		theFontSize = theFontSize.trim();
+		
+		var theFontSizeInt = parseInt(theFontSize);
+		
+		if ((!isNaN(theFontSizeInt)) && (theFontSizeInt > 0)){
+
+			TPSTTITLESIZE = theFontSizeInt;
+
+		}
+	}
+
 
 	// Set the default tunebook PDF quality for 2X oversampling
 	gPDFQuality = 0.75;
