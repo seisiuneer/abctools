@@ -12066,32 +12066,25 @@ var strTranspose;
     }
     return changes;
   }
+  // MAE 24 May 2025
   function changeAllKeySigs(abc, steps) {
     var changes = [];
-    var arr = abc.split("K:");
+    var arr = abc.split("K:")
     // now each line except the first one will start with whatever is right after "K:"
-    var count = arr[0].length;
+    var count = arr[0].length
     for (var i = 1; i < arr.length; i++) {
-      var segment = arr[i];
-      var match = segment.match(/^( *)([A-G])([#b]?)(\w*)/);
+      var segment = arr[i]
+      var match = segment.match(/^( *)([A-G])([#b]?)( ?)(\w*)/)
       if (match) {
-        var start = count + 2 + match[1].length; // move past the 'K:' and optional white space
-        var key = match[2] + match[3] + match[4]; // key name, accidental, and mode
-        var destinationKey = newKey({
-          root: match[2],
-          acc: match[3],
-          mode: match[4]
-        }, steps);
-        var dest = destinationKey.root + destinationKey.acc + destinationKey.mode;
-        changes.push({
-          start: start,
-          end: start + key.length,
-          note: dest
-        });
+        var start = count + 2 + match[1].length // move past the 'K:' and optional white space
+        var key = match[2] + match[3] + match[4] + match[5] // key name, accidental, optional space, and mode
+        var destinationKey = newKey({ root: match[2], acc: match[3], mode: match[5] }, steps)
+        var dest = destinationKey.root + destinationKey.acc + match[4] + destinationKey.mode
+        changes.push({ start: start, end: start + key.length, note: dest })
       }
-      count += segment.length + 2;
+      count += segment.length + 2
     }
-    return changes;
+    return changes
   }
   function transposeVoices(abc, voices, key, steps) {
     var changes = [];
