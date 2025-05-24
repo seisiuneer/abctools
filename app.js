@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2521_052325_1400";
+var gVersionNumber="2522_052325_2230";
 
 var gMIDIInitStillWaiting = false;
 
@@ -9583,7 +9583,7 @@ function ExportTextIncipitsPDF(title, bDoFullTunes, bDoCCETransform, bDoQRCodes)
 
 			if (!gNotoSansLoaded){
 
-				document.getElementById("statuspdfname").innerHTML = "Loading Chinese Sans-Serif Font";
+				document.getElementById("statuspdfname").innerHTML = "Loading Noto-Sans Font";
 
 				loadScript("./notosans-regular.js",
 
@@ -9612,7 +9612,7 @@ function ExportTextIncipitsPDF(title, bDoFullTunes, bDoCCETransform, bDoQRCodes)
 
 			if (!gNotoSerifLoaded){
 				
-				document.getElementById("statuspdfname").innerHTML = "Loading Chinese Serif Font";
+				document.getElementById("statuspdfname").innerHTML = "Loading Noto-Serif Font";
 
 				loadScript("./notoserif-regular.js",
 
@@ -10250,7 +10250,7 @@ function ExportNotationPDF(title) {
 
 				if (!gNotoSansLoaded){
 
-					document.getElementById("statuspdfname").innerHTML = "Loading Chinese Sans-Serif Font";
+					document.getElementById("statuspdfname").innerHTML = "Loading Noto-Sans Font";
 
 					loadScript("./notosans-regular.js",
 
@@ -10279,7 +10279,7 @@ function ExportNotationPDF(title) {
 
 				if (!gNotoSerifLoaded){
 
-					document.getElementById("statuspdfname").innerHTML = "Loading Chinese Serif Font";
+					document.getElementById("statuspdfname").innerHTML = "Loading Noto-Serif Font";
 
 					loadScript("./notoserif-regular.js",
 
