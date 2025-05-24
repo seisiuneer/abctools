@@ -1758,7 +1758,7 @@
                 <hr>
                 <p>To transposed the displayed notation relative to the ABC without having to modify the ABC itself, you can use the following tool-specific ABC command:</p>
                 <p class="code">%%visualtranspose #_of_semitones</p>
-                <p>For example, this will transpose the displayed notation up one full step from the ABC:</p>
+                <p>For example, transpose the rendered notation up one full step for Bb Clarinet, but leave the ABC alone:</p>
                 <p class="code">%%visualtranspose 2</p>
                 <hr>
                 <p>To transpose tune(s) to a specific root key rather than in steps, see the section on <a href="#advanced_transposetokey">Transpose to Key</a> below.</p>
@@ -3896,7 +3896,8 @@
                     %allow_lowercase_chords<br/>
                     %<br/>
                     % These directives can be added to each tune or added to the ABC file header:<br/>
-                    %left_justify_titles,<br/>
+                    %%visualtranspose 2<br/>
+                    %left_justify_titles<br/>
                     %hide_information_labels<br/>
                     %hide_rhythm_tag<br/>
                     %hide_dynamics<br/>
@@ -5516,15 +5517,13 @@
                 <p class="code">%abcjs_render_params {"jazzchords":true}</p>
                 <p>Example #3: Reduce the space between the notation and the tablature (default is 3, unit is half the vertical space between the staff lines):</p>
                 <p class="code">%abcjs_render_params {"tabPadding":0}</p>
-                <p>Example #4: Transpose the written notation up one full step for Bb Clarinet, but plays one note lower:</p>
-                <p class="code">%abcjs_render_params {"visualTranspose":2}</p>
-                <p>Example #5: Forcing 8 bars per staff (requires staffwidth parameter):</p>
+                <p>Example #4: Forcing 8 bars per staff (requires staffwidth parameter):</p>
                 <p class="code">%abcjs_render_params {"staffwidth":1000,"wrap":{"minSpacing":1.8, "maxSpacing":2.7, "preferredMeasuresPerLine":8}}</p>
-                <p>Example #6: Generating custom Open-G (G-D-G-B) 4-string Mandolin tablature:</p>
+                <p>Example #5: Generating custom Open-G (G-D-G-B) 4-string Mandolin tablature:</p>
                 <p class="code">%abcjs_render_params {"tablature": [{"instrument": "violin","label": "Open G - GDGB","tuning": ["G,", "D", "G", "B"],"highestNote": "f'","capo": 0}]}</p>
-                <p>Example #7: Generating custom Open-G (D-G-D-G-B) 5-string Cittern tablature:</p>
+                <p>Example #6: Generating custom Open-G (D-G-D-G-B) 5-string Cittern tablature:</p>
                 <p class="code">%abcjs_render_params {“tablature”: [{“instrument”: “fivestring”,“label”: “Open G - DGDGB”,“tuning”: [“D,”, “G,”, “D”, “G”, “B”],“highestNote”: “f’”,“capo”: 0}]}</p>
-                <p>Example #8: Generating custom Open-G (D-G-D-G-B-D) 6-string Guitar tablature:</p>
+                <p>Example #7: Generating custom Open-G (D-G-D-G-B-D) 6-string Guitar tablature:</p>
                 <p class="code">%abcjs_render_params {"tablature": [{"instrument": "guitar","label": "Open G - DGDGBD","tuning": ["D,", "G,", "D", "G", "B", "d"],"highestNote": "f'","capo": 0}]}</p>
                 <p><strong>Note:</strong> This feature allows very low level control of the abcjs renderer. Improper parameters may cause unpredictable results or crash the tool.</p>
                 <p>Additional, use of some low-level abcjs rendering parameters such as "staffwidth" and "wrap" may cause issues with "Highlighting" mode in the tool.</p>
@@ -5632,7 +5631,7 @@
                 <h1 class="page_break_always h1wide">Transposing the Notation Display Relative to the ABC<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <p>To transposed the displayed notation relative to the ABC without having to modify the ABC itself, you can use the following tool-specific ABC command:</p>
                 <p class="code">%%visualtranspose #_of_semitones</p>
-                <p>For example, this will transpose the displayed notation up one full step from the ABC:</p>
+                <p>For example, transpose the rendered notation up one full step for Bb Clarinet, but leave the ABC alone:</p>
                 <p class="code">%%visualtranspose 2</p>
                 <hr class="hidden-print" id="tabtranspose">
                 <h1 class="page_break_always h1wide">Transposing Notation Independent of Tablature<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
