@@ -4384,6 +4384,7 @@ var bookParser = function bookParser(book) {
       /^%%titleleft.*$/,
       /^%%keywarn.*$/,
       /^%%titlecaps.*$/,      
+      /^%%visualtranspose.*$/,      
       /^%left_justify_titles.*$/,
       /^%abcjs_render_params.*$/,
       /^%hide_information_labels.*$/,
@@ -5926,6 +5927,14 @@ var parseDirective = {};
           if (!tune.formatting.percmap) tune.formatting.percmap = {};
           tune.formatting.percmap[percmap.key] = percmap.value;
         }
+        break;
+      // MAE 24 May 2025
+      case "visualtranspose":
+        var halfSteps = tokenizer.getInt(restOfString)
+        if (halfSteps.digits === 0)
+          warn("Expected number of half steps in visualTranspose")
+        else
+          multilineVars.globalTranspose = halfSteps.value
         break;
       case "map":
       case "playtempo":
@@ -10598,8 +10607,10 @@ var parseKeyVoice = __webpack_require__(/*! ../parse/abc_parse_key_voice */ "./s
 var parseCommon = __webpack_require__(/*! ../parse/abc_common */ "./src/parse/abc_common.js");
 var TuneBuilder = function TuneBuilder(tune) {
   var self = this;
+  // MAE 24 May 2025
   this.setVisualTranspose = function (visualTranspose) {
-    if (visualTranspose) tune.visualTranspose = visualTranspose;
+    if (visualTranspose!==undefined)
+      tune.visualTranspose = visualTranspose;
   };
   this.resolveOverlays = function () {
     var madeChanges = false;

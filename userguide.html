@@ -629,6 +629,7 @@
             <a style="text-decoration:none;" href="#recordertabkey">Changing the Recorder Tablature Key and Octave</a>
             <a style="text-decoration:none;" href="#detect_hyperlinks">Making Hyperlinks in ABC Tag Text Clickable</a>
             <a style="text-decoration:none;" href="#right_text">Adding Right-Justified Text</a>
+            <a style="text-decoration:none;" href="#visual_transpose">Transposing the Notation Display Relative to the ABC</a>
             </details>
             
             <details>
@@ -1054,6 +1055,8 @@
                         <p class="toc"><a style="text-decoration:none;" href="#recordertabkey">Changing the Recorder Tablature Key and Octave</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#detect_hyperlinks">Making Hyperlinks in ABC Tag Text Clickable</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#right_text">Adding Right-Justified Text</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#visual_transpose">Transposing the Notation Display Relative to the ABC</a></p>
+
                     </div>
                     
                     <button class="accordion" title="Click to expand/collapse this section">ABC Tricks, Tips, and Limitations</button>
@@ -1752,6 +1755,11 @@
                 <hr>
                 <p>To transpose multiple tunes, just click anywhere in the first tune you want to transpose, and drag to select any part of additional tunes you want transposed.</p>
                 <p>To transpose all the tunes at once, select them all before clicking the Transpose buttons.</p>
+                <hr>
+                <p>To transposed the displayed notation relative to the ABC without having to modify the ABC itself, you can use the following tool-specific ABC command:</p>
+                <p class="code">%%visualtranspose #_of_semitones</p>
+                <p>For example, this will transpose the displayed notation up one full step from the ABC:</p>
+                <p class="code">%%visualtranspose 2</p>
                 <hr>
                 <p>To transpose tune(s) to a specific root key rather than in steps, see the section on <a href="#advanced_transposetokey">Transpose to Key</a> below.</p>
                 <hr>
@@ -5620,6 +5628,12 @@
                 <h1 class="page_break_always h1wide">Adding Right-Justified Text<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <p>To add right-justified text to the notation, you can use the following tool-specific ABC command:</p>
                 <p class="code">%%right This text will be right-justified</p>
+                <hr class="hidden-print" id="visual_transpose">
+                <h1 class="page_break_always h1wide">Transposing the Notation Display Relative to the ABC<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+                <p>To transposed the displayed notation relative to the ABC without having to modify the ABC itself, you can use the following tool-specific ABC command:</p>
+                <p class="code">%%visualtranspose #_of_semitones</p>
+                <p>For example, this will transpose the displayed notation up one full step from the ABC:</p>
+                <p class="code">%%visualtranspose 2</p>
                 <hr class="hidden-print" id="tabtranspose">
                 <h1 class="page_break_always h1wide">Transposing Notation Independent of Tablature<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <p>For some tablatures like CGDAE where instruments maybe in either standard pitch or one octave lower, if you transpose the notes down an octave to get the tab on the lower strings, but want the notation displayed an octave up, you can add the following voice annotation to the ABC:</p>
