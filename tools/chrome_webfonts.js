@@ -216,7 +216,8 @@ async function doFontQuery(){
       var nFonts = 0;
       
       for (const fontData of availableFonts) {
-        result += fontData.postscriptName +"\n";
+        result += "Full name: "+fontData.fullName +"\n";
+        result += " ABC name: "+fontData.postscriptName +"\n\n";
         nFonts++;
       }
       
