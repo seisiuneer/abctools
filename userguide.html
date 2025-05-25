@@ -467,7 +467,7 @@
             
             <details>
             <summary><h3>PDF Tunebook Advanced Formatting</h3></summary>
-            <a style="text-decoration:none;" href="#custom_font_overrides">Custom Font Overrides</a>
+            <a style="text-decoration:none;" href="#custom_font_overrides">ABC Font Annotations</a>
             <a style="text-decoration:none;" href="#inject_fonts_into_share_links">Automatically Inject Fonts into Share Links</a>
             </details>
             
@@ -892,7 +892,7 @@
                     
                     <button class="accordion" title="Click to expand/collapse this section">PDF Tunebook Advanced Formatting</button>
                     <div class="tocpanel">
-                        <p class="toc"><a style="text-decoration:none;" href="#custom_font_overrides">Custom Font Overrides</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#custom_font_overrides">ABC Font Annotations</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#inject_fonts_into_share_links">Automatically Inject Fonts into Share Links</a></p>
                     </div>
                     
@@ -3730,8 +3730,8 @@
                 %caption_for_qrcode Click or Scan to Visit my Home Page</p>
                 <p>You can instantly inject this useful starter set of PDF annotations at the top of your ABC by clicking the <strong>Add PDF Tunebook Annotations</strong> button in the <strong>Add</strong> dialog.</p>
                 <hr class="hidden-print" id="custom_font_overrides">
-                <h1 class="page_break_always">Custom Font Overrides<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-                <p>As per the ABC 2.1 specification, custom font overrides are possible, giving you maximum control over the appearance of your notation.</p>
+                <h1 class="page_break_always">ABC Font Annotations<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+                <p>As per the ABC 2.1 specification, custom font settings are possible, giving you maximum control over the appearance of your notation.</p>
                 <p style="text-align: center;"><strong>Available ABC Inline Font Annotations</strong></p>
                 <p class="code">%%titlefont        font-style size (used for the first title of the tune)<br/>
                     %%subtitlefont     font-style size (used any additional titles for the tune)<br/>
@@ -3752,7 +3752,7 @@
                 <p>Generally, these will use the PostScript font-style naming convention, for example:</p>
                 <p>Times, Helvetica, Courier, Verdana, Times-Bold, Helvetica-Italic, etc.</p>
                 <p>The size parameter should be an integer, but is optional.</p>
-                <p>Place your font override annotations just below the X: and above the T: ABC tune headers.</p>
+                <p>Place your ABC font annotations just below the X: and above the T: ABC tune headers.</p>
                 <p>Inline font annotations will override the default font settings configured in the tool's <strong>Settings</strong> dialog.</p>
                 <p><strong>For example:</strong></p>
                 <p class="code">X: 1<br/>
@@ -3804,6 +3804,7 @@
                 <p style="text-align: center;"><a href="https://michaeleskin.com/tools/chrome_webfonts.html" target="_blank">List All Available Chrome Webfonts</a></p>
                 <p>In Chrome, you can try cross-referencing the full font names with the displayed fonts found on your system using the wordmark.it site listed above.</p>
                 <p>The font names on the wordmark.it site are the full names for the fonts, you'll want to use the ABC font names listed by the utility in your ABC font annotations.</p>
+                <p>While the results returned are for Chrome you may have some success using either the full font name or ABC font name on other browsers on the same system.</p>
                 <hr class="hidden-print" id="inject_fonts_into_share_links">
                 <h1 class="page_break_always">Automatically Inject Fonts into Share Links<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <p>When creating share links, you can force injection of the required fonts for each tune from the tool's default fonts (set in the <strong>Settings/Font Settings</strong> dialog) by adding the following comment-based annotation anywhere in the ABC:</p>
