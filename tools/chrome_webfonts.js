@@ -52,7 +52,7 @@ function saveOutput() {
 
     var thePlaceholder = gSaveFilename;
 
-    var thePrompt = "Please enter a filename for your output font list file:";
+    var thePrompt = "Please enter a filename for the font name list file:";
 
     DayPilot.Modal.prompt(thePrompt, thePlaceholder, {
         theme: "modal_flat",
@@ -141,7 +141,7 @@ function copyOutputToClipboard() {
     copyToClipboard(textToCopy);
 
     // Give some feedback
-    document.getElementById("copybutton").innerHTML = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Font name list copied!&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+    document.getElementById("copybutton").innerHTML = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Font name list copied!&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
 
     setTimeout(function() {
 
@@ -212,17 +212,25 @@ async function doFontQuery(){
       const availableFonts = await window.queryLocalFonts();
 
       var result = "";
+
+      var nFonts = 0;
       
       for (const fontData of availableFonts) {
         result += fontData.postscriptName +"\n";
+        nFonts++;
       }
       
       var elem = document.getElementById("output");
       
       output.value = result;
 
+      elem = document.getElementById("fontnamelist");
+      elem.innerHTML="List of Font Names: ("+nFonts+" found)";
+
     } catch (err) {
-        var thePrompt = makeCenteredPromptString("Error reading the list of web fonts: "+error);
+
+        var thePrompt = makeCenteredPromptString("Error reading the list of web fonts: "+err);
+
         DayPilot.Modal.alert(thePrompt, {
             theme: "modal_flat",
             top: 50
