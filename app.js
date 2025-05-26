@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2532_052625_1130";
+var gVersionNumber="2533_052625_1230";
 
 var gMIDIInitStillWaiting = false;
 
@@ -14457,18 +14457,6 @@ function PDFTunebookBuilder(){
 
 			}
 
-			markerString = "% End of PDF Tunebook Features\n";
-
-			startIndex = theNotes.indexOf(markerString);
-
-			if (startIndex != -1){
-
-				startIndex += markerString.length;
-
-				theNotes = theNotes.substring(startIndex); 
-
-			}
-
 			header_to_add += theNotes;
 
 			// Replace the ABC
@@ -16621,6 +16609,11 @@ function processTuneSet(tuneSet,tuneNames,bRepeat,nRepeat) {
 	tuneSet = removeAllTags(tuneSet,"C");		
 	tuneSet = removeAllTags(tuneSet,"A");		
 	tuneSet = removeAllTags(tuneSet,"O");		
+	tuneSet = removeAllTags(tuneSet,"Z");		
+	tuneSet = removeAllTags(tuneSet,"N");		
+	tuneSet = removeAllTags(tuneSet,"B");		
+	tuneSet = removeAllTags(tuneSet,"S");		
+	tuneSet = removeAllTags(tuneSet,"I");		
 
 	tuneSet += "\n%%text\n\n";
 
@@ -25323,15 +25316,30 @@ function IncipitsBuilderDialog(){
 				var theTune = "X:"+theTunes[i];
 
 				// Inject an easily identified block of annotations
-				var stringToInject; 
+				var stringToInject = stringToInject = "%incipits_inject_start\n%%maxstaves 1\n%%noexpandtowidest\n%%barsperstaff "+(nBars+1)+"\n%%staffwidth "+theWidth+"\n%%printtempo 0\n%hide_rhythm_tag\n";
+
 				if (gIncipitsBuilderLeftJustify){
-					stringToInject = "%incipits_inject_start\n%%maxstaves 1\n%%noexpandtowidest\n%%barsperstaff "+(nBars+1)+"\n%%staffwidth "+theWidth+"\n%left_justify_titles\n%%printtempo 0\n%hide_rhythm_tag\n%hide_composer_tag\n%incipits_inject_end";
+					stringToInject += "%left_justify_titles\n%incipits_inject_end";
 				}
 				else{
-					stringToInject = "%incipits_inject_start\n%%maxstaves 1\n%%noexpandtowidest\n%%barsperstaff "+(nBars+1)+"\n%%staffwidth "+theWidth+"\n%%printtempo 0\n%hide_rhythm_tag\n%hide_composer_tag\n%incipits_inject_end";					
+					stringToInject += "%incipits_inject_end";					
 				}
 
-				output += InjectStringAboveTuneHeader(theTune,stringToInject); // was below
+				// Remove any existing incipits annotation
+  				theTune = theTune.replace(/^%incipits_inject_start[\s\S]*?^%incipits_inject_end.*(\r?\n)?/gm, '');
+
+				theTune = InjectStringAboveTuneHeader(theTune,stringToInject);
+
+				theTune = removeAllTags(theTune,"A");		
+				theTune = removeAllTags(theTune,"O");		
+				theTune = removeAllTags(theTune,"C");		
+				theTune = removeAllTags(theTune,"Z");		
+				theTune = removeAllTags(theTune,"N");		
+				theTune = removeAllTags(theTune,"B");		
+				theTune = removeAllTags(theTune,"S");		
+				theTune = removeAllTags(theTune,"I");		
+
+				output += theTune + "\n\n";
 
 			}
 
