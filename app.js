@@ -16615,6 +16615,8 @@ function processTuneSet(tuneSet,tuneNames,bRepeat,nRepeat) {
 	tuneSet = removeAllTags(tuneSet,"S");		
 	tuneSet = removeAllTags(tuneSet,"I");		
 	tuneSet = removeAllTags(tuneSet,"D");		
+	tuneSet = removeAllTags(tuneSet,"W");		
+	tuneSet = removeAllTags(tuneSet,"w");		
 
 	tuneSet += "\n%%text\n\n";
 
@@ -25340,6 +25342,8 @@ function IncipitsBuilderDialog(){
 				theTune = removeAllTags(theTune,"S");		
 				theTune = removeAllTags(theTune,"I");		
 				theTune = removeAllTags(theTune,"D");		
+				theTune = removeAllTags(theTune,"W");		
+				theTune = removeAllTags(theTune,"w");		
 
 				output += theTune + "\n\n";
 
