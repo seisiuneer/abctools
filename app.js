@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2533_052625_1230";
+var gVersionNumber="2534_052625_1300";
 
 var gMIDIInitStillWaiting = false;
 
@@ -16614,6 +16614,7 @@ function processTuneSet(tuneSet,tuneNames,bRepeat,nRepeat) {
 	tuneSet = removeAllTags(tuneSet,"B");		
 	tuneSet = removeAllTags(tuneSet,"S");		
 	tuneSet = removeAllTags(tuneSet,"I");		
+	tuneSet = removeAllTags(tuneSet,"D");		
 
 	tuneSet += "\n%%text\n\n";
 
@@ -25338,6 +25339,7 @@ function IncipitsBuilderDialog(){
 				theTune = removeAllTags(theTune,"B");		
 				theTune = removeAllTags(theTune,"S");		
 				theTune = removeAllTags(theTune,"I");		
+				theTune = removeAllTags(theTune,"D");		
 
 				output += theTune + "\n\n";
 
