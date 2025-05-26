@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2529_0524525_1900";
+var gVersionNumber="2530_052625_1000";
 
 var gMIDIInitStillWaiting = false;
 
@@ -20253,10 +20253,12 @@ function GetABCFileHeader(){
       /^%%keywarn.*$/,
       /^%%titlecaps.*$/,
       /^%%visualtranspose.*$/,      
+      /^%%maxstaves.*$/,      
       /^%left_justify_titles.*$/,
       /^%abcjs_render_params.*$/,
       /^%hide_information_labels.*$/,
       /^%hide_rhythm_tag.*$/,
+      /^%hide_composer_tag.*$/,
       /^%hide_dynamics.*$/,
       /^%whistle_tab_key.*$/,
       /^%whistle_tab_octave.*$/,
@@ -25323,13 +25325,13 @@ function IncipitsBuilderDialog(){
 				// Inject an easily identified block of annotations
 				var stringToInject; 
 				if (gIncipitsBuilderLeftJustify){
-					stringToInject = "%incipits_inject_start\n%%noexpandtowidest\n%%barsperstaff "+nBars+"\n%%staffwidth "+theWidth+"\n%left_justify_titles\n%incipits_inject_end";
+					stringToInject = "%incipits_inject_start\n%%maxstaves 1\n%%noexpandtowidest\n%%barsperstaff "+(nBars+1)+"\n%%staffwidth "+theWidth+"\n%left_justify_titles\n%%printtempo 0\n%hide_rhythm_tag\n%hide_composer_tag\n%incipits_inject_end";
 				}
 				else{
-					stringToInject = "%incipits_inject_start\n%%noexpandtowidest\n%%barsperstaff "+nBars+"\n%%staffwidth "+theWidth+"\n%incipits_inject_end";					
+					stringToInject = "%incipits_inject_start\n%%maxstaves 1\n%%noexpandtowidest\n%%barsperstaff "+(nBars+1)+"\n%%staffwidth "+theWidth+"\n%%printtempo 0\n%hide_rhythm_tag\n%hide_composer_tag\n%incipits_inject_end";					
 				}
 
-				output += InjectStringBelowTuneHeader(theTune,stringToInject);
+				output += InjectStringAboveTuneHeader(theTune,stringToInject); // was below
 
 			}
 

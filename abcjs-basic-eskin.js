@@ -227,6 +227,9 @@ var gHideInformationLabels = false;
 // Flag to hide the R: tag display
 var gHideRhythmTag = false;
 
+// Flag to hide the C: tag display
+var gHideComposerTag = false;
+
 // Flag to hide the dynamics annotations
 var gHideDynamics = false;
 
@@ -412,6 +415,27 @@ function ScanTuneForHideRhythmTag(theTune){
 
   return false;
 }
+
+// Scan tune for composer tag draw suppression
+function ScanTuneForHideComposerTag(theTune){
+
+  //console.log("ScanTuneForHideComposerTag");
+
+  var searchRegExp = /^%hide_composer_tag.*$/gm
+
+  var isHideComposer = searchRegExp.test(theTune);
+
+  if (isHideComposer){
+    //console.log("Found %hide_composer_tag")
+    return true;
+  }
+
+  //console.log("No %hide_composer_tag")
+
+  return false;
+}
+
+
 
 // Scan tune for dynamics draw suppression
 function ScanTuneForHideDynamics(theTune){
@@ -1577,6 +1601,9 @@ var tunebook = {};
 
           gHideRhythmTag = false;
           gHideRhythmTag = ScanTuneForHideRhythmTag(book.tunes[currentTune].abc);
+
+          gHideComposerTag = false;
+          gHideComposerTag = ScanTuneForHideComposerTag(book.tunes[currentTune].abc);
 
           gHideDynamics = false;
           gHideDynamics = ScanTuneForHideDynamics(book.tunes[currentTune].abc);
@@ -4385,10 +4412,12 @@ var bookParser = function bookParser(book) {
       /^%%keywarn.*$/,
       /^%%titlecaps.*$/,      
       /^%%visualtranspose.*$/,      
+      /^%%maxstaves.*$/,      
       /^%left_justify_titles.*$/,
       /^%abcjs_render_params.*$/,
       /^%hide_information_labels.*$/,
       /^%hide_rhythm_tag.*$/,
+      /^%hide_composer_tag.*$/,
       /^%hide_dynamics.*$/,
       /^%whistle_tab_key.*$/,
       /^%whistle_tab_octave.*$/,
@@ -5936,6 +5965,22 @@ var parseDirective = {};
         else
           multilineVars.globalTranspose = halfSteps.value
         break;
+
+      // MAE 24 May 2025
+      case "maxstaves":
+        var nStaves = tokenizer.getInt(restOfString)
+        if (nStaves.digits === 0)
+          warn("Expected number of staves in maxstaves");
+        else{
+          if (nStaves.value > 0){
+            tune.formatting.maxStaves = nStaves.value;
+          }
+          else{
+            warn("Expected value greater than 0 in maxstaves");
+          }
+        }
+        break;
+
       case "map":
       case "playtempo":
       case "auquality":
@@ -6531,6 +6576,16 @@ var ParseHeader = function ParseHeader(tokenizer, warn, multilineVars, tune, tun
     if (field !== undefined) {
       if (field == 'rhythm'){
         if (!gHideRhythmTag){
+          tuneBuilder.addMetaText(field, tokenizer.translateString(tokenizer.stripComment(line.substring(2))), {
+            startChar: multilineVars.iChar,
+            endChar: multilineVars.iChar + line.length
+          });
+        }
+      }
+      else
+      // MAE 26 May 2026
+      if (field == 'composer'){
+        if (!gHideComposerTag){
           tuneBuilder.addMetaText(field, tokenizer.translateString(tokenizer.stripComment(line.substring(2))), {
             startChar: multilineVars.iChar,
             endChar: multilineVars.iChar + line.length
@@ -27867,10 +27922,20 @@ function draw(renderer, classes, abcTune, width, maxWidth, responsive, scale, se
   renderer.paper.closeGroup();
   renderer.moveY(renderer.spacing.music);
   var staffgroups = [];
+  var nStaves = 0;
   for (var line = 0; line < abcTune.lines.length; line++) {
     classes.incrLine();
     var abcLine = abcTune.lines[line];
     if (abcLine.staff) {
+
+      // MAE 26 May 2025 - for incipits staff count limiting
+      nStaves++;
+      if (abcTune.formatting.maxStaves){
+        if (nStaves > abcTune.formatting.maxStaves){
+          break;
+        }
+      }
+
       renderer.paper.openGroup();
       if (abcLine.vskip) {
         renderer.moveY(abcLine.vskip);

@@ -453,6 +453,7 @@
             <a style="text-decoration:none;" href="#inject_pdf_tunebook_features_play">Inject Only PDF Tunebook Play Features</a>
             <a style="text-decoration:none;" href="#inject_pdf_tunebook_features">Inject All PDF Tunebook Features</a>
             <a style="text-decoration:none;" href="#browser_print_to_pdf">Browser Native Print-to-PDF with Play Links</a>
+            <a style="text-decoration:none;" href="#pdf_layout_options">PDF Paper Size, Orientation, Layout, and Page Number Options</a>            
             <a style="text-decoration:none;" href="#pdf_font_override_settings">PDF Font Override Settings</a>
             <a style="text-decoration:none;" href="#pdf_quality_setting">PDF Quality Setting</a>
             <a style="text-decoration:none;" href="#pdf_tunebook_spacing_overrides">PDF Tunebook Tune Size and Layout Spacing Overrides</a>
@@ -621,7 +622,8 @@
             <a style="text-decoration:none;" href="#customabcjsparams">Adding Custom abcjs Rendering Parameters</a>
             <a style="text-decoration:none;" href="#left_justify_titles">Forcing Left-Justified Titles and Subtitles</a>
             <a style="text-decoration:none;" href="#hide_information_labels">Hiding Information Labels</a>
-            <a style="text-decoration:none;" href="#hide_rhythm_tag">Hiding Rhythm Display</a>
+            <a style="text-decoration:none;" href="#hide_rhythm_tag">Hiding Rhythm Tag Display</a>
+            <a style="text-decoration:none;" href="#hide_composer_tag">Hiding Composer Tag Display</a>
             <a style="text-decoration:none;" href="#hide_dynamics">Hiding Dynamics Marks</a>
             <a style="text-decoration:none;" href="#hide_cautionary">Hiding Cautionary Key Signatures and Implied Naturals</a>
             <a style="text-decoration:none;" href="#disable_reverser">Disabling the Tune Title Article Reverser</a>
@@ -630,6 +632,7 @@
             <a style="text-decoration:none;" href="#detect_hyperlinks">Making Hyperlinks in ABC Tag Text Clickable</a>
             <a style="text-decoration:none;" href="#right_text">Adding Right-Justified Text</a>
             <a style="text-decoration:none;" href="#visual_transpose">Transposing the Notation Display Relative to the ABC</a>
+            <a style="text-decoration:none;" href="#maxstaves">Setting the Maximum Number of Staves to Display</a>
             </details>
             
             <details>
@@ -878,6 +881,7 @@
                         <p class="toc"><a style="text-decoration:none;" href="#inject_pdf_tunebook_features_play">Inject Only PDF Tunebook Play Features</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#inject_pdf_tunebook_features">Inject All PDF Tunebook Features</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#browser_print_to_pdf">Browser Native Print-to-PDF with Play Links</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#pdf_layout_options">PDF Paper Size, Orientation, Layout, and Page Number Options</a></p>            
                         <p class="toc"><a style="text-decoration:none;" href="#pdf_font_override_settings">PDF Font Override Settings</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#pdf_quality_setting">PDF Quality Setting</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#pdf_tunebook_spacing_overrides">PDF Tunebook Tune Size and Layout Spacing Overrides</a></p>
@@ -1047,7 +1051,8 @@
                         <p class="toc"><a style="text-decoration:none;" href="#customabcjsparams">Adding Custom abcjs Rendering Parameters</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#left_justify_titles">Forcing Left-Justified Titles and Subtitles</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#hide_information_labels">Hiding Information Labels</a></p>
-                        <p class="toc"><a style="text-decoration:none;" href="#hide_rhythm_tag">Hiding Rhythm Display</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#hide_rhythm_tag">Hiding Rhythm Tag Display</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#hide_composer_tag">Hiding Composer Tag Display</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#hide_dynamics">Hiding Dynamics Marks</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#hide_cautionary">Hiding Cautionary Key Signatures and Implied Naturals</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#disable_reverser">Disabling the Tune Title Article Reverser</a></p>
@@ -1056,6 +1061,7 @@
                         <p class="toc"><a style="text-decoration:none;" href="#detect_hyperlinks">Making Hyperlinks in ABC Tag Text Clickable</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#right_text">Adding Right-Justified Text</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#visual_transpose">Transposing the Notation Display Relative to the ABC</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#maxstaves">Setting the Maximum Number of Staves to Display</a></p>
 
                     </div>
                     
@@ -3122,8 +3128,8 @@
                 <p>If the entire tunebook playback Share URL is too large to be a valid URL link for opening in the tool (about 8100 characters), you will be presented with a warning when the PDF export is complete, and no playback links will be added to the tunes.</p>
                 <p>Additionally, if the complete tunebook playback Share URL is larger than the maximum allowed by Adobe Acrobat (2076 characters), after the PDF export is complete you will be presented with a warning that the links may not work in Adobe Acrobat but will work with browser-native and many other PDF readers.</p>
                 <p>This will probably happen quite frequently for tunebooks with 5 or more tunes.</p>
-                <hr>
-                <p id="browser_print_to_pdf"><strong>Browser Native Print-to-PDF with Play Links</strong> (Desktop browsers only)</p>
+                <hr id="browser_print_to_pdf">
+                <p><strong>Browser Native Print-to-PDF with Play Links</strong> (Desktop browsers only)</p>
                 <p>This is the fastest way to create the smallest possible vector-based PDF file that includes the ability to play the tunes by clicking the title.</p>
                 <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/sYLSlUd3SmU" title="Browser Native Print-to-PDF with Play Links" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
                 <div class="image_holder_p">
@@ -3135,6 +3141,8 @@
                 <p>You can choose page scaling, margins, page orientation, and other page layout options in your browser's native Print-to-PDF dialog.</p>
                 <p>This option unfortunately does not have the ability to add Title pages, Table of Contents, Index, or QR Codes in the PDF.</p>
                 <p>None of the other options listed below for the tool's custom PDF export feature apply if you select the browser-native PDF export option.</p>
+                <hr id="pdf_layout_options">
+                <p style="text-align: center;"><strong>PDF Paper Size, Orientation, Layout, and Page Number Options</strong></p>
                 <hr>
                 <p><strong>Paper Size:</strong></p>
                 <p>Choose between Letter or A4 paper size:</p>
@@ -3173,7 +3181,7 @@
                 <p><strong>Notes Incipits</strong></p>
                 <p>The notation for the first line of each tune is added one after another down each page in the PDF.</p>
                 <p>Exporting a PDF tunebook with notes incipits allow you create a "cheat sheet" for the tunebook that includes just the notation for first line of each tune.</p>
-                <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/ik9ObQXlBLU" title="PDF Tunebook Notes Incipits" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
+                <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/OFx1XvmNqKM" title="PDF Tunebook Notes Incipits" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
                 <p></p>
                 <p>The tune notes incipits can be in standard notation or any of the available tablatures.</p>
                 <p></p>
@@ -3183,8 +3191,6 @@
                 <hr>
                 <p><strong>ABC Text Incipits</strong></p>
                 <p>The first few bars of the ABC text for each tune's notes are added one after another down each page in the PDF.</p>
-                <p>Exporting a PDF tunebook with ABC incipits allow you create a "cheat sheet" for the tunebook that includes just the first few measures of the ABC for each tune.</p>
-                <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/OC5uFL2X6yQ" title="PDF Tunebook ABC Incipits" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
                 <hr>
                 <p><strong>ABC Text Incipits Sorted</strong></p>
                 <p>The first few bars of the ABC text for each tune's notes are added one after another down each page in the PDF in tune name sorted order.</p>
@@ -3898,9 +3904,11 @@
                     %<br/>
                     % These directives can be added to each tune or added to the ABC file header:<br/>
                     %%visualtranspose 2<br/>
+                    %%maxstaves 3<br/>
                     %left_justify_titles<br/>
                     %hide_information_labels<br/>
                     %hide_rhythm_tag<br/>
+                    %hide_composer_tag<br/>
                     %hide_dynamics<br/>
                     %hide_cautionary_ks<br/>
                     %no_title_reverser<br/>
@@ -4759,7 +4767,7 @@
                 <div class="image_holder_p">
                     <img class="image" loading="lazy" src="img/incipits_builder_5.jpg"/>
                 </div>
-                <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/1Je325kS2UQ" title="Incipits Builder" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
+                <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/OFx1XvmNqKM" title="Incipits Builder" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
                 <p>Since this modifies the ABC, you may want to grab a <strong>Snapshot</strong> or save the ABC before running this command.</p>
                 <p><strong>Bars per staff</strong> - Sets the number of measures shown in the incipit. Default is 3.</p>
                 <p><strong>Staff width</strong> - Compresses the horizontal size of the incipit notation compared to the standard of 556. Default is 400.</p>
@@ -5550,15 +5558,20 @@
                 <p>The presence of this annotation in a tune will force both the displayed notation in the editor, exported PDF notation, and tunes played from play links to have hidden information labels.</p>
                 <p>If placed in the ABC file header, it will apply to all of the tunes.</p>
                 <hr class="hidden-print" id="hide_rhythm_tag">
-                <h1 class="page_break_always h1wide">Hiding Rhythm Display<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+                <h1 class="page_break_always h1wide">Hiding Rhythm Tag Display<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <p>You may hide the rhythm value in the R: tag (if present) in the generated notation by adding the following annotation anywhere in the tune:</p>
-                <p class="code">% Hide rhythm display<br/><br/>%hide_rhythm_tag</p>
+                <p class="code">% Hide rhythm tag display<br/><br/>%hide_rhythm_tag</p>
                 <p>The presence of this annotation in a tune will force both the displayed notation in the editor, exported PDF notation, and tunes played from play links to have the rhythm value in the R: tag hidden.</p>
                 <p>If placed in the ABC file header, it will apply to all of the tunes.</p>
-                <p>Note: This is just a stopgap measure to hide the R: tag value until abcjs adds the ABC %%writefields command.</p>
                 <p>This only hides the R: tag value in the generated notation, it doesn't have any effect on the automatic swinging of hornpipes when</p>
                 <p class="code">R:Hornpipe</p>
                 <p>or a lower-case equivalent with or without spaces after an R: tag is found in a tune.</p>
+                <hr class="hidden-print" id="hide_composer_tag">
+                <h1 class="page_break_always h1wide">Hiding Composer Tag Display<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+                <p>You may hide the composer text in the C: tag (if present) in the generated notation by adding the following annotation anywhere in the tune:</p>
+                <p class="code">% Hide composer tag display<br/><br/>%hide_composer_tag</p>
+                <p>The presence of this annotation in a tune will force both the displayed notation in the editor, exported PDF notation, and tunes played from play links to have the composer string in the C: tag hidden.</p>
+                <p>If placed in the ABC file header, it will apply to all of the tunes.</p>
                 <hr class="hidden-print" id="hide_dynamics">
                 <h1 class="page_break_always h1wide">Hiding Dynamics Marks<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <p>You may hide any !ppp! style dynamics marks as well as crescendo and diminuendo hairpins by adding the following annotation anywhere in the tune:</p>
@@ -5634,6 +5647,12 @@
                 <p class="code">%%visualtranspose #_of_semitones</p>
                 <p>For example, transpose the rendered notation up one full step for Bb Clarinet, but leave the ABC alone:</p>
                 <p class="code">%%visualtranspose 2</p>
+                <hr class="hidden-print" id="maxstaves">
+                <h1 class="page_break_always h1wide">Setting the Maximum Number of Staves to Display<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+                <p>To set the maximum number of staves you want displayed for each tune, you use the following tool-specific ABC command:</p>
+                <p class="code">%%maxstaves #_of_staves</p>
+                <p>For example, only show the first stave for incipits:</p>
+                <p class="code">%%maxstaves 1</p>
                 <hr class="hidden-print" id="tabtranspose">
                 <h1 class="page_break_always h1wide">Transposing Notation Independent of Tablature<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <p>For some tablatures like CGDAE where instruments maybe in either standard pitch or one octave lower, if you transpose the notes down an octave to get the tab on the lower strings, but want the notation displayed an octave up, you can add the following voice annotation to the ABC:</p>
