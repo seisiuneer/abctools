@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2530_052625_1000";
+var gVersionNumber="2531_052625_1130";
 
 var gMIDIInitStillWaiting = false;
 
@@ -25325,10 +25325,10 @@ function IncipitsBuilderDialog(){
 				// Inject an easily identified block of annotations
 				var stringToInject; 
 				if (gIncipitsBuilderLeftJustify){
-					stringToInject = "%incipits_inject_start\n%%maxstaves 1\n%%noexpandtowidest\n%%barsperstaff "+(nBars+1)+"\n%%staffwidth "+theWidth+"\n%left_justify_titles\n%%printtempo 0\n%hide_rhythm_tag\n%hide_composer_tag\n%incipits_inject_end";
+					stringToInject = "%incipits_inject_start\n%%maxstaves 1\n%%noexpandtowidest\n%%barsperstaff "+nBars+"\n%%staffwidth "+theWidth+"\n%left_justify_titles\n%%printtempo 0\n%hide_rhythm_tag\n%hide_composer_tag\n%incipits_inject_end";
 				}
 				else{
-					stringToInject = "%incipits_inject_start\n%%maxstaves 1\n%%noexpandtowidest\n%%barsperstaff "+(nBars+1)+"\n%%staffwidth "+theWidth+"\n%%printtempo 0\n%hide_rhythm_tag\n%hide_composer_tag\n%incipits_inject_end";					
+					stringToInject = "%incipits_inject_start\n%%maxstaves 1\n%%noexpandtowidest\n%%barsperstaff "+nBars+"\n%%staffwidth "+theWidth+"\n%%printtempo 0\n%hide_rhythm_tag\n%hide_composer_tag\n%incipits_inject_end";					
 				}
 
 				output += InjectStringAboveTuneHeader(theTune,stringToInject); // was below
