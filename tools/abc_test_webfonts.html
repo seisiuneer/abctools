@@ -1,0 +1,131 @@
+<html>
+  
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <link rel="profile" href="http://gmpg.org/xfn/11">
+    <title>Test Webfonts for ABC Compatibility</title>
+    <link rel='dns-prefetch' href='//fonts.googleapis.com' />
+    <link rel='dns-prefetch' href='//s.w.org' />
+    <link rel='preconnect' href='https://secureservercdn.net' crossorigin />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Test Webfonts for ABC Compatibility" />
+    <meta property="og:description" content="Utility for testing all webfonts for ABC compatibility." />
+    <meta property="og:url" content="https://michaeleskin.com/tools/abc_test_webfonts.html" />
+    <meta property="og:site_name" content="Test Webfonts for ABC Compatibility" />
+    <meta property="og:image" content="https://michaeleskin.com/abctools/img/abc-icon.png" />
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="msapplication-TileImage" content="https://michaeleskin.com/abctools/img/abc-ms-icon-144x144.png">
+    <meta name="viewport" content="width=860">
+    <link rel="apple-touch-icon" sizes="57x57" href="https://michaeleskin.com/abctools/img/abc-apple-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="https://michaeleskin.com/abctools/img/abc-apple-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="https://michaeleskin.com/abctools/img/abc-apple-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="https://michaeleskin.com/abctools/img/abc-apple-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="https://michaeleskin.com/abctools/img/abc-apple-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="https://michaeleskin.com/abctools/img/abc-apple-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="https://michaeleskin.com/abctools/img/abc-apple-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="https://michaeleskin.com/abctools/img/abc-apple-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="https://michaeleskin.com/abctools/img/abc-apple-icon-180x180.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="https://michaeleskin.com/abctools/img/abc-android-icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="https://michaeleskin.com/abctools/img/abc-favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="https://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
+    <link rel="manifest" href="https://michaeleskin.com/abctools/img/abc-manifest.json">
+    <link rel="stylesheet" href="abc_test_webfonts.css?v=1"/>    
+  </head>
+
+  <body>
+    
+    <div id="maindiv">
+      
+      <div>
+        
+        <div style="text-align: center;margin-bottom:28px;">
+          <h1>Test Webfonts for ABC Compatibility</h1>
+        </div>
+
+        <button class="accordion" title="Click to expand/collapse this section">Click to show/hide the instructions</button>
+
+        <div class="tocpanel" style="text-align:left;background-color:#f5ffff;">
+        
+          <p>On Chrome, to read out all the available font family names, click <strong>Get all font family names from Chrome</strong></p>
+          <p>You may be prompted by Chrome to give permission for the operation.</p>
+          <p>Alternatively, for all browsers click <strong>Open an existing abc_test_webfonts full font family names file</strong> to load a previously saved full font family list saved using Chrome from this utility.</p>
+          <p>The <strong>All Full and Postscript Font Family Name Pairs</strong> area will be filled with the names of all fonts either obtained from Chrome or loaded from a file.</p>
+          <p>Both the full and Postscript font family name for each font are displayed.</p>
+          <p>The <strong>ABC-Compatible Font Family Names</strong> will be filled with a list of the font family names that can be used in ABC font directives.</p>
+          <p>Click <strong>Copy Full and Postscript font family names to the clipboard</strong> to copy the full list of font family names to the system clipboard for pasting into other applications.</p>
+          <p>Click <strong>Save Full and Postscript font family names to a file</strong> to save the full list of font family names to a file.</p>
+          <p>Click <strong>Copy ABC-compatible font family names to the clipboard</strong> to copy the list of ABC-compatible font family names to the system clipboard for pasting into other applications.</p>
+          <p>Click <strong>Save ABC-compatible font family names to a file</strong> to save the list of ABC-compatible font family names to a file.</p>
+          <p>The ABC-compatible font family names can be used in %%titlefont and other ABC font directives in the ABC Transcription Tools.</p>
+          <p>You can preview the fonts in referenced by their full name at <a href="https://wordmark.it" target="_blank">Wordmark</a>.</p>
+
+        </div>
+        
+      </div>
+      
+      <div style="text-align:left;margin-bottom:30px;">
+
+        <hr style="margin-bottom:30px;">
+
+        <p style="margin-top:20px;text-align:center;margin-bottom:30px;">
+
+          <button style="margin-right:24px;" id="queryfonts" class="btn btn-generate" onClick="queryFonts();">Get all font family names from Chrome</button>
+          
+          <input type="file" id="selectfontfile" accept=".txt,.TXT"  hidden/>
+          <label class="fontupload btn btn-generate" for="selectfontfile" title="Opens an existing abc_test_webfonts full results file exported from Chrome">Open an existing abc_test_webfonts full font family names file</label>
+
+        </p>
+                     
+        <div style="margin-bottom: 18px;">
+          
+          <h4 id="fontnamelist">All Full and Postscript Font Family Name Pairs:</h4>
+          
+        </div>
+        
+        <textarea id="output" placeholder="The list of all font family Full and Postscript name pairs will appear here" spellcheck="false" autocorrect="off" autocapitalize="none"></textarea>
+
+        <div style="margin-bottom: 18px;">
+          
+          <h4 id="fontnamelist2">ABC-Compatible Font Family Names:</h4>
+          
+        </div>
+        
+        <textarea id="output2" placeholder="The list of ABC-compatible font family names will appear here" spellcheck="false" autocorrect="off" autocapitalize="none"></textarea>
+
+        <p style="margin-top:20px;text-align:center;">
+          
+          <button id="copybutton" class="btn btn-controls" onClick="copyOutputToClipboard('output','copybutton');">Copy Full and Postscript font family names to the clipboard</button>
+          <button style="margin-left:18px;" class="btn btn-controls" onClick="saveOutput('output');">Save Full and Postscript font family names to a file</button>                    
+        </p>
+
+        <p style="margin-top:20px;text-align:center;">
+
+          <button id="copybutton2" class="btn btn-controls" onClick="copyOutputToClipboard('output2','copybutton2');">Copy ABC-compatible font family names to the clipboard</button>
+          <button style="margin-left:18px;" class="btn btn-controls" onClick="saveOutput('output2');">Save ABC-compatible font family names to a file</button>
+                    
+        </p>
+        
+      </div>
+                  
+      <hr>
+      
+      <div style="text-align: center;">
+        
+        <p style="text-align: center">Complete source code for this utility may be found on GitHub</p>
+        
+        <p style="text-align: center"> <a href="https://github.com/seisiuneer/abctools/tree/main/tools" target="_blank">Test Webfonts for ABC Compatibility on Github</a></p>
+        
+        <hr style="margin-bottom:50px">
+        
+      </div>
+      
+    </div>
+    
+  </body>
+  
+  <script src="abc_test_webfonts.js?v=1" type="text/javascript"></script>
+  <script type="text/javascript" src="daypilot-modal.min-3.10.1.js?v=9"></script>
+ 
+</html>
