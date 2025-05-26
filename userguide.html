@@ -4777,6 +4777,8 @@
                 <div class="image_holder_p">
                     <img class="image" loading="lazy" src="img/incipits_builder_example_2.jpg"/>
                 </div>
+                <p><strong>Note:</strong> You may run into occasional cases where the number of measures in the incipits doesn't exactly match the requested number.</p>
+                <p>You can try changing the %%barsperstaff value on any tune that has an issue.</p>
                 <hr class="hidden-print" id="advanced_transposetokey">
                 <h1 class="page_break_always h1wide">Transpose to Key<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/DkNUePXKtaA" title="Transpose to Key" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
@@ -5653,6 +5655,7 @@
                 <p class="code">%%maxstaves #_of_staves</p>
                 <p>For example, only show the first stave for incipits:</p>
                 <p class="code">%%maxstaves 1</p>
+                <p>If placed in the ABC file header, it will apply to all of the tunes.</p>
                 <hr class="hidden-print" id="tabtranspose">
                 <h1 class="page_break_always h1wide">Transposing Notation Independent of Tablature<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <p>For some tablatures like CGDAE where instruments maybe in either standard pitch or one octave lower, if you transpose the notes down an octave to get the tab on the lower strings, but want the notation displayed an octave up, you can add the following voice annotation to the ABC:</p>
