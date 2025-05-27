@@ -15479,6 +15479,7 @@ var parseCommon = __webpack_require__(/*! ../parse/abc_common */ "./src/parse/ab
 
     // visit each voice completely in turn
     var voices = [];
+    var clefTransposeActive = []
     var inCrescendo = [];
     var inDiminuendo = [];
     var durationCounter = [0];
@@ -15597,15 +15598,24 @@ var parseCommon = __webpack_require__(/*! ../parse/abc_common */ "./src/parse/ab
                 el_type: 'transpose',
                 transpose: staff.clef.transpose
               });
+              clefTransposeActive[voiceNumber] = false
             }
             if (staff.clef && staff.clef.type) {
-              if (staff.clef.type.indexOf("-8") >= 0) voices[voiceNumber].push({
-                el_type: 'transpose',
-                transpose: -12
-              });else if (staff.clef.type.indexOf("+8") >= 0) voices[voiceNumber].push({
-                el_type: 'transpose',
-                transpose: 12
-              });
+              if (staff.clef.type.indexOf("-8") >= 0) {
+                voices[voiceNumber].push({el_type: 'transpose', transpose: -12});
+                clefTransposeActive[voiceNumber] = true
+              }
+              else if (staff.clef.type.indexOf("+8") >= 0) {
+                voices[voiceNumber].push({el_type: 'transpose', transpose: 12});
+                clefTransposeActive[voiceNumber] = true
+              }
+              else {
+                // if we had a previous treble+8 and now have a regular clef, then cancel the transposition
+                if (clefTransposeActive[voiceNumber]) {
+                  voices[voiceNumber].push({ el_type: 'transpose', transpose: 0 });
+                  clefTransposeActive[voiceNumber] = false
+                }
+              }
             }
             if (abctune.formatting.midi && abctune.formatting.midi.drumoff) {
               // If there is a drum off command right at the beginning it is put in the metaText instead of the stream,
