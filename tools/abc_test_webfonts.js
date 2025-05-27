@@ -468,10 +468,6 @@ async function DoStartup() {
         gIsAndroid = true;
     }
 
-    if (gIsIOS) {
-        document.getElementById("selectabcfile").removeAttribute("accept");
-    }
-
     // Are we on Safari?
     gIsSafari = false;
     if (isSafari()) {
@@ -494,7 +490,7 @@ async function DoStartup() {
     }
 
     if (gIsIOS) {
-        document.getElementById("selectfontfile").removeAttribute("accept");
+        fileElement.removeAttribute("accept");
     }
 
     var acc = document.getElementsByClassName("accordion");
@@ -515,7 +511,7 @@ async function DoStartup() {
     //
     // Setup the file import control
     //
-    document.getElementById("selectfontfile").onchange = () => {
+    fileElement.onchange = () => {
 
         let fileElement = document.getElementById("selectfontfile");
 
