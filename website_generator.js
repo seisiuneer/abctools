@@ -409,6 +409,20 @@ function WebsiteInjectInstruments(theTune){
 }
 
 //
+// Inject the Add All Playback Links annotaiton into this tune
+//
+function WebsiteInjectAddAllPlaybackLinks(theTune){
+
+    // Inject play link request for tune PDF export
+    theTune = InjectStringBelowTuneHeader(theTune, "%add_all_playback_links");
+    
+    // Seeing extra linefeeds after the inject
+    theTune = theTune.replace("\n\n","");
+
+    return(theTune);
+
+}
+//
 // Return the .WAV or .MP3 filename
 //
 function GetWebsiteTuneName(tuneABC){
@@ -462,6 +476,12 @@ function BatchJSONExportForWebGenerator(theABC){
         if (gWebsiteInjectInstruments){
 
             thisTune = WebsiteInjectInstruments(thisTune);
+
+        }
+        else{
+
+            thisTune = WebsiteInjectAddAllPlaybackLinks(thisTune);
+
         }
 
         var title = GetWebsiteTuneName(thisTune);
@@ -525,6 +545,12 @@ function BatchJSONExportForWebGalleryGenerator(theABC){
         if (gWebsiteInjectInstruments){
 
             thisTune = WebsiteInjectInstruments(thisTune);
+            
+        }
+        else{
+
+            thisTune = WebsiteInjectAddAllPlaybackLinks(thisTune);
+            
         }
 
         var title = GetWebsiteTuneName(thisTune);
