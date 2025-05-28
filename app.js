@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2539_052825_1200";
+var gVersionNumber="2540_052825_1300";
 
 var gMIDIInitStillWaiting = false;
 
@@ -893,56 +893,58 @@ function stripAllABCTuneHeaders(abcTune) {
 function removeABCTuneHeaders(abcTune) {
 
 	// All possible headers
-  	var theHeaders = "XTMKLQWZRCAOPNGHBDFSI";
+	var theHeaders = "XTMKLQWZRCAOPNGHBDFSI";
 
-  	var nHeaders = theHeaders.length;
-
-  	var tuneAccum = "";
-
+	var nHeaders = theHeaders.length;
+	var tuneAccum = "";
 	var theLines = abcTune.split("\n");
 
-	var i, j, theChars, doSkip;
-
+	var insideTextBlock = false;
 	var keepTesting = true;
 
-	for (j = 0; j < theLines.length; ++j) {
+	for (var j = 0; j < theLines.length; ++j) {
+		var line = theLines[j].trim();
+		var theChars = line.split("");
+		var doSkip = false;
 
-		if (keepTesting){
-
-			theChars = theLines[j].split("");
-
-			doSkip = false;
-
-		  	for (i=0;i<nHeaders;++i){
-
-		  		if (theChars[0] == "%") {
-		  			doSkip = true;
-		  			break;
-		  		}
-
-		  		if (theChars[0] == theHeaders[i] && theChars[1] == ":") {
-		  			doSkip = true;
-		  			break;
-		  		}
-		  	}
+		// Handle %%begintext ... %%endtext
+		if (line.startsWith("%%begintext")) {
+			insideTextBlock = true;
+			continue; // Skip this line
+		}
+		if (line.startsWith("%%endtext")) {
+			insideTextBlock = false;
+			continue; // Skip this line
+		}
+		if (insideTextBlock) {
+			continue; // Skip all lines within text block
 		}
 
-	  	if (!doSkip){
-	  		
-	  		keepTesting = false;
+		if (keepTesting) {
+			// Skip comment lines
+			if (theChars[0] === "%") {
+				doSkip = true;
+			}
 
-	  		tuneAccum += theLines[j];
-	  		
-	  		if (j!=(theLines.length - 1)){
-	  			tuneAccum += "\n";
-	  		}
-	  		
-	  	}
+			// Skip standard header lines (like M:, K:, etc.)
+			for (var i = 0; i < nHeaders; ++i) {
+				if (theChars[0] === theHeaders[i] && theChars[1] === ":") {
+					doSkip = true;
+					break;
+				}
+			}
+		}
 
+		if (!doSkip) {
+			keepTesting = false;
+			tuneAccum += theLines[j];
+			if (j !== theLines.length - 1) {
+				tuneAccum += "\n";
+			}
+		}
 	}
 
 	return tuneAccum;
-
 }
 
 //
@@ -20076,55 +20078,63 @@ function InjectStringBelowTuneHeaderConditional(theTune, theDirective){
 //
 // Inject anything just below the header
 //
-function InjectStringBelowTuneHeader(theTune,theString){
+function InjectStringBelowTuneHeader(theTune, theString) {
 
 	// Don't inject section header tune fragments
-	if (isSectionHeader(theTune)){
+	if (isSectionHeader(theTune)) {
 		return theTune;
 	}
 
 	var theOriginalTune = theTune;
-
 	theTune = theTune.trim();
 
-	// Find the notes below the header
+	// Remove the ABC headers
 	var theNotes = removeABCTuneHeaders(theTune);
-
 	theNotes = theNotes.trim();
 
 	var theLines = theNotes.split("\n");
-
-	// Find the first line that doesn't start with a comment
 	var nLines = theLines.length;
 
 	var firstLine;
 	var bGotNotes = false;
+	var insideTextBlock = false;
 
-	for (var i=0;i<nLines;++i){
+	for (var i = 0; i < nLines; ++i) {
 
-		firstLine = theLines[i];
+		firstLine = theLines[i].trim();
 
-		if (firstLine.indexOf("%") != 0){
-			bGotNotes = true;
-			var theFirstLineIndex = theNotes.indexOf(firstLine);
-			theNotes = theNotes.substring(theFirstLineIndex);
-			break;
-		} 
+		if (firstLine.startsWith("%%begintext")) {
+			insideTextBlock = true;
+			continue;
+		}
+
+		if (firstLine.startsWith("%%endtext")) {
+			insideTextBlock = false;
+			continue;
+		}
+
+		if (insideTextBlock || firstLine.startsWith("%") || firstLine === "") {
+			continue;
+		}
+
+		// Found the first valid line of notes
+		bGotNotes = true;
+		var theFirstLineIndex = theNotes.indexOf(theLines[i]);
+		theNotes = theNotes.substring(theFirstLineIndex);
+		break;
+
 	}
 
 	// Didn't find anything below the header, exit early
-	if (!bGotNotes){
-
-		return(theOriginalTune);
-
+	if (!bGotNotes) {
+		return theOriginalTune;
 	}
 
-	// Find the offset into the tune of the first line of notes in the trimmed version
+	// Find the offset into the original tune
 	var theNotesIndex = theTune.indexOf(firstLine);
-
-	theTune = theTune.substring(0,theNotesIndex);
+	theTune = theTune.substring(0, theNotesIndex);
 	theTune += theString;
-	theTune += "\n"+theNotes+"\n\n";
+	theTune += "\n" + theNotes + "\n\n";
 
 	return theTune;
 }
