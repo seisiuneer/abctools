@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2540_052825_1300";
+var gVersionNumber="2541_052825_1330";
 
 var gMIDIInitStillWaiting = false;
 
@@ -907,20 +907,23 @@ function removeABCTuneHeaders(abcTune) {
 		var theChars = line.split("");
 		var doSkip = false;
 
-		// Handle %%begintext ... %%endtext
-		if (line.startsWith("%%begintext")) {
-			insideTextBlock = true;
-			continue; // Skip this line
-		}
-		if (line.startsWith("%%endtext")) {
-			insideTextBlock = false;
-			continue; // Skip this line
-		}
-		if (insideTextBlock) {
-			continue; // Skip all lines within text block
-		}
-
 		if (keepTesting) {
+
+			// Handle %%begintext ... %%endtext
+			if (line.startsWith("%%begintext")) {
+				insideTextBlock = true;
+				continue; // Skip this line
+			}
+
+			if (line.startsWith("%%endtext")) {
+				insideTextBlock = false;
+				continue; // Skip this line
+			}
+			
+			if (insideTextBlock) {
+				continue; // Skip all lines within text block
+			}
+
 			// Skip comment lines
 			if (theChars[0] === "%") {
 				doSkip = true;
