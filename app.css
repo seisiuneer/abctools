@@ -5009,6 +5009,22 @@ margin-top:-9px;
 margin-left:12px;
 }
 
+.incipits_striptags_text{
+font-size:12pt;
+line-height:12px;
+font-family:helvetica;
+margin-top:24px;
+display:flex;
+}
+
+.incipits_striptags_text>input{
+font-size:12pt;
+font-family:helvetica;
+width: 200px;
+margin-top:-9px;
+margin-left:12px;
+}
+
 .configure_website_form_text{
 font-size:12pt;
 line-height:12px;

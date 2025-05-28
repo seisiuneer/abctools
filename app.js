@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2536_052725_1500";
+var gVersionNumber="2537_052825_0900";
 
 var gMIDIInitStillWaiting = false;
 
@@ -25246,6 +25246,7 @@ var gIncipitsBuilderBars = 3;
 var gIncipitsBuilderWidth = 400;
 var gIncipitsBuilderLeftJustify = true;
 var gIncipitsBuilderInjectNumbers = true;
+var gIncipitsTagsToStrip = "AOCZNBSIDWw";
 
 function IncipitsBuilderDialog(){
 
@@ -25254,7 +25255,8 @@ function IncipitsBuilderDialog(){
   		IncipitsBuilderBars: gIncipitsBuilderBars,
  		IncipitsBuilderWidth: gIncipitsBuilderWidth,
  		IncipitsBuilderLeftJustify: gIncipitsBuilderLeftJustify,
- 		IncipitsBuilderInjectNumbers: gIncipitsBuilderInjectNumbers
+ 		IncipitsBuilderInjectNumbers: gIncipitsBuilderInjectNumbers,
+ 		IncipitsBuilderStripTags: gIncipitsTagsToStrip
 	};
 
 	var form = [
@@ -25265,9 +25267,10 @@ function IncipitsBuilderDialog(){
   		{name: "Staff width: (Default is 400, full width is 556)", id: "IncipitsBuilderWidth", type:"number", cssClass:"incipits_builder_form_text"},
 		{name: "    Left justify incipits titles.", id: "IncipitsBuilderLeftJustify", type:"checkbox", cssClass:"incipits_builder_form_text_checkbox"},
 		{name: "    Add numbers before titles", id: "IncipitsBuilderInjectNumbers", type:"checkbox", cssClass:"incipits_builder_form_text_checkbox"},
+	  	{name: "          Tags to strip (Default is AOCZNBSIDWw):", id: "IncipitsBuilderStripTags", type:"text", cssClass:"incipits_striptags_text"},
 	];
 
-	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 200, width: 600, scrollWithPage: (AllowDialogsToScroll()), okText: "Build",autoFocus: false } ).then(function(args){
+	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 100, width: 600, scrollWithPage: (AllowDialogsToScroll()), okText: "Build",autoFocus: false } ).then(function(args){
 
 		if (!args.canceled){
 
@@ -25291,6 +25294,8 @@ function IncipitsBuilderDialog(){
 			
 			gIncipitsBuilderLeftJustify = args.result.IncipitsBuilderLeftJustify; 
 			gIncipitsBuilderInjectNumbers = args.result.IncipitsBuilderInjectNumbers; 
+
+			gIncipitsTagsToStrip = args.result.IncipitsBuilderStripTags;
 
     		var nTunes = CountTunes();
 
@@ -25333,17 +25338,11 @@ function IncipitsBuilderDialog(){
 
 				theTune = InjectStringAboveTuneHeader(theTune,stringToInject);
 
-				theTune = removeAllTags(theTune,"A");		
-				theTune = removeAllTags(theTune,"O");		
-				theTune = removeAllTags(theTune,"C");		
-				theTune = removeAllTags(theTune,"Z");		
-				theTune = removeAllTags(theTune,"N");		
-				theTune = removeAllTags(theTune,"B");		
-				theTune = removeAllTags(theTune,"S");		
-				theTune = removeAllTags(theTune,"I");		
-				theTune = removeAllTags(theTune,"D");		
-				theTune = removeAllTags(theTune,"W");		
-				theTune = removeAllTags(theTune,"w");		
+				// Loop through each character in the control string
+		    	for (let char of gIncipitsTagsToStrip) {
+
+		    		theTune = removeAllTags(theTune,char)
+		    	}
 
 				output += theTune + "\n\n";
 
@@ -25365,6 +25364,8 @@ function IncipitsBuilderDialog(){
 			    setABCEditorText(result);
 
 			}
+
+			SaveConfigurationSettings();
 
 			RenderAsync(true,null);
 
@@ -40287,6 +40288,49 @@ function GetInitialConfigurationSettings(){
     	gCustomStringedLabel = "Guitar - Drop D";
     }
 
+	// Incipits builder
+	val = localStorage.IncipitsBuilderBars;
+	if (val){
+		gIncipitsBuilderBars = parseInt(val);
+		if (isNaN(gIncipitsBuilderBars)){
+			gIncipitsBuilderBars = 3;
+		}
+	}
+	else{
+		gIncipitsBuilderBars = 3;
+	}
+
+	val = localStorage.IncipitsBuilderWidth;
+	if (val){
+		gIncipitsBuilderWidth = parseInt(val);
+		if (isNaN(gIncipitsBuilderWidth)){
+			gIncipitsBuilderWidth = 400;
+		}
+	}
+	else{
+		gIncipitsBuilderWidth = 400;
+	}
+
+	gIncipitsBuilderLeftJustify = true;
+	val = localStorage.IncipitsBuilderLeftJustify;
+	if (val){
+		gIncipitsBuilderLeftJustify = (val == "true");
+	}
+
+	gIncipitsBuilderInjectNumbers = false;
+	val = localStorage.IncipitsBuilderInjectNumbers;
+	if (val){
+		gIncipitsBuilderInjectNumbers = (val == "true");
+	}
+
+	val = localStorage.IncipitsTagsToStrip;
+    if (val || (val == "")){
+    	gIncipitsTagsToStrip = val;
+    }
+    else{
+    	gIncipitsTagsToStrip = "AOCZNBSIDWw";
+    }
+
 	// Save the settings, in case they were initialized
 	SaveConfigurationSettings();
 
@@ -40554,6 +40598,13 @@ function SaveConfigurationSettings(){
 		localStorage.CustomStringedString4 = gCustomStringedString4;
 		localStorage.CustomStringedString5 = gCustomStringedString5;
 		localStorage.CustomStringedString6 = gCustomStringedString6;
+
+		// Incipits builder
+		localStorage.IncipitsBuilderBars = gIncipitsBuilderBars;
+		localStorage.IncipitsBuilderWidth = gIncipitsBuilderWidth;
+		localStorage.IncipitsBuilderLeftJustify = gIncipitsBuilderLeftJustify;
+		localStorage.IncipitsBuilderInjectNumbers = gIncipitsBuilderInjectNumbers;
+		localStorage.IncipitsTagsToStrip = gIncipitsTagsToStrip;
 
 	}
 }
