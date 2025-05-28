@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2537_052825_0900";
+var gVersionNumber="2538_052825_0900";
 
 var gMIDIInitStillWaiting = false;
 
@@ -25246,7 +25246,7 @@ var gIncipitsBuilderBars = 3;
 var gIncipitsBuilderWidth = 400;
 var gIncipitsBuilderLeftJustify = true;
 var gIncipitsBuilderInjectNumbers = true;
-var gIncipitsTagsToStrip = "AOCZNBSIDWw";
+var gIncipitsTagsToStrip = "ABCDINOSWwZ";
 
 function IncipitsBuilderDialog(){
 
@@ -25267,7 +25267,7 @@ function IncipitsBuilderDialog(){
   		{name: "Staff width: (Default is 400, full width is 556)", id: "IncipitsBuilderWidth", type:"number", cssClass:"incipits_builder_form_text"},
 		{name: "    Left justify incipits titles.", id: "IncipitsBuilderLeftJustify", type:"checkbox", cssClass:"incipits_builder_form_text_checkbox"},
 		{name: "    Add numbers before titles", id: "IncipitsBuilderInjectNumbers", type:"checkbox", cssClass:"incipits_builder_form_text_checkbox"},
-	  	{name: "          Tags to strip (Default is AOCZNBSIDWw):", id: "IncipitsBuilderStripTags", type:"text", cssClass:"incipits_striptags_text"},
+	  	{name: "          Tags to strip (Default is ABCDINOSWwZ):", id: "IncipitsBuilderStripTags", type:"text", cssClass:"incipits_striptags_text"},
 	];
 
 	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 100, width: 600, scrollWithPage: (AllowDialogsToScroll()), okText: "Build",autoFocus: false } ).then(function(args){
@@ -40328,7 +40328,7 @@ function GetInitialConfigurationSettings(){
     	gIncipitsTagsToStrip = val;
     }
     else{
-    	gIncipitsTagsToStrip = "AOCZNBSIDWw";
+    	gIncipitsTagsToStrip = "ABCDINOSWwZ";
     }
 
 	// Save the settings, in case they were initialized
