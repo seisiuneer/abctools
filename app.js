@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2538_052825_0900";
+var gVersionNumber="2539_052825_1200";
 
 var gMIDIInitStillWaiting = false;
 
@@ -12217,9 +12217,22 @@ function StripTextAnnotationsOne(theNotes){
 	// Strip out %%right annotation
 	theNotes = theNotes.replace(searchRegExp, "");
 
+	// Strip out %%begintext / %%endtext blocks	
+  	theNotes =  theNotes.replace(/^%%begintext[\s\S]*?^%%endtext.*(\r?\n)?/gm, '');
 
 	return theNotes;
 
+}
+
+//
+// Comment out %%begintext / %%endtext blocks
+function commentBeginEndTextBlocks(input) {
+  return input.replace(/^%%begintext[\s\S]*?^%%endtext.*$/gm, match => {
+    return match
+      .split(/\r?\n/)
+      .map(line => `% comment`)
+      .join('\n');
+  });
 }
 
 // 
@@ -12629,6 +12642,8 @@ function processAllStripping(theNotes){
 		// Strip out %%right annotation
 		theNotes = theNotes.replace(searchRegExp, "% comment");
 
+		// Strip out text blocks
+		theNotes = commentBeginEndTextBlocks(theNotes);
 
 	}
 
@@ -13331,6 +13346,16 @@ function IdleAdvancedControls(bUpdateUI){
 		searchRegExp = /%%right.*$/gm
 
 		// Detect %%right annotation
+		gotMatch = theNotes.search(searchRegExp) != -1;
+
+	}
+
+	if (!gotMatch){
+
+		// Detect %%begintext annotation
+		searchRegExp = /%%begintext.*$/gm
+
+		// Detect %%begintext annotation
 		gotMatch = theNotes.search(searchRegExp) != -1;
 
 	}
@@ -25242,10 +25267,12 @@ function TuneTitlesNumbersDialog(){
 //
 // Incipits builder dialog
 //
+
 var gIncipitsBuilderBars = 3;
 var gIncipitsBuilderWidth = 400;
 var gIncipitsBuilderLeftJustify = true;
 var gIncipitsBuilderInjectNumbers = true;
+var gIncipitsBuilderStripText = true;
 var gIncipitsTagsToStrip = "ABCDINOSWwZ";
 
 function IncipitsBuilderDialog(){
@@ -25256,7 +25283,8 @@ function IncipitsBuilderDialog(){
  		IncipitsBuilderWidth: gIncipitsBuilderWidth,
  		IncipitsBuilderLeftJustify: gIncipitsBuilderLeftJustify,
  		IncipitsBuilderInjectNumbers: gIncipitsBuilderInjectNumbers,
- 		IncipitsBuilderStripTags: gIncipitsTagsToStrip
+ 		IncipitsBuilderStripText: gIncipitsBuilderStripText,
+ 		IncipitsBuilderStripTags: gIncipitsTagsToStrip,
 	};
 
 	var form = [
@@ -25267,6 +25295,7 @@ function IncipitsBuilderDialog(){
   		{name: "Staff width: (Default is 400, full width is 556)", id: "IncipitsBuilderWidth", type:"number", cssClass:"incipits_builder_form_text"},
 		{name: "    Left justify incipits titles.", id: "IncipitsBuilderLeftJustify", type:"checkbox", cssClass:"incipits_builder_form_text_checkbox"},
 		{name: "    Add numbers before titles", id: "IncipitsBuilderInjectNumbers", type:"checkbox", cssClass:"incipits_builder_form_text_checkbox"},
+		{name: "    Strip all %%text, %%center, %%right, and %%begintext blocks", id: "IncipitsBuilderStripText", type:"checkbox", cssClass:"incipits_builder_form_text_checkbox"},
 	  	{name: "          Tags to strip (Default is ABCDINOSWwZ):", id: "IncipitsBuilderStripTags", type:"text", cssClass:"incipits_striptags_text"},
 	];
 
@@ -25293,7 +25322,10 @@ function IncipitsBuilderDialog(){
 			}
 			
 			gIncipitsBuilderLeftJustify = args.result.IncipitsBuilderLeftJustify; 
+
 			gIncipitsBuilderInjectNumbers = args.result.IncipitsBuilderInjectNumbers; 
+			
+			gIncipitsBuilderStripText = args.result.IncipitsBuilderStripText;
 
 			gIncipitsTagsToStrip = args.result.IncipitsBuilderStripTags;
 
@@ -25342,6 +25374,12 @@ function IncipitsBuilderDialog(){
 		    	for (let char of gIncipitsTagsToStrip) {
 
 		    		theTune = removeAllTags(theTune,char)
+		    	}
+
+		    	if (gIncipitsBuilderStripText){
+
+		    		theTune = StripTextAnnotationsOne(theTune);
+
 		    	}
 
 				output += theTune + "\n\n";
@@ -40323,6 +40361,12 @@ function GetInitialConfigurationSettings(){
 		gIncipitsBuilderInjectNumbers = (val == "true");
 	}
 
+	gIncipitsBuilderStripText = true;
+	val = localStorage.IncipitsBuilderStripText;
+	if (val){
+		gIncipitsBuilderStripText = (val == "true");
+	}
+
 	val = localStorage.IncipitsTagsToStrip;
     if (val || (val == "")){
     	gIncipitsTagsToStrip = val;
@@ -40604,6 +40648,7 @@ function SaveConfigurationSettings(){
 		localStorage.IncipitsBuilderWidth = gIncipitsBuilderWidth;
 		localStorage.IncipitsBuilderLeftJustify = gIncipitsBuilderLeftJustify;
 		localStorage.IncipitsBuilderInjectNumbers = gIncipitsBuilderInjectNumbers;
+		localStorage.IncipitsBuilderStripText = gIncipitsBuilderStripText;
 		localStorage.IncipitsTagsToStrip = gIncipitsTagsToStrip;
 
 	}
