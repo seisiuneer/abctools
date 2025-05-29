@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2542_052825_2000";
+var gVersionNumber="2543_052925_0800";
 
 var gMIDIInitStillWaiting = false;
 
@@ -439,6 +439,9 @@ var gDisableAndroid = false;
 // Are the Chinese Noto fonts loaded?
 var gNotoSansLoaded = false;
 var gNotoSerifLoaded = false;
+
+// Are we in Presentation mode?
+var gInPresentationMode = false;
 
 // Global reference to the ABC editor
 var gTheABC = document.getElementById("abc");
@@ -1996,7 +1999,7 @@ function TransposeToKeyDialog(){
 	  {html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-left:15px;">Transpose to Key&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#advanced_transposetokey" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'},
 	  {html: '<p style="margin-top:36px;margin-bottom:12px;font-size:12pt;line-height:18pt;font-family:helvetica">This will transpose the current tune or all the tunes to the specified root key.</p>'},
 	  {html: '<p style="margin-bottom:12px;font-size:12pt;line-height:18pt;font-family:helvetica">Any modes specified in the tune keys will be preserved.</p>'},	  	  
-	  {html: '<p style="margin-top:12px;margin-bottom:42px;font-size:12pt;line-height:18pt;font-family:helvetica"><strong>If the Transpose to Key results are too high or too low:</strong><br/>Click in a single tune or select across one or more tunes in the ABC editor then <strong>Alt-Click</strong> the lower toolbar <strong>Transpose Up</strong> or <strong>Transpose Down</strong> buttons to transpose the tune(s) down or up an octave.</p>'},
+	  {html: '<p style="margin-top:12px;margin-bottom:42px;font-size:12pt;line-height:18pt;font-family:helvetica"><strong>If the Transpose to Key results are too high or too low:</strong><br/>Click in a single tune or select across one or more tunes in the ABC editor then <strong>Alt-click</strong> the lower toolbar <strong>Transpose Up</strong> or <strong>Transpose Down</strong> buttons to transpose the tune(s) down or up an octave.</p>'},
 	  {name: "Root key:", id: "transposekey", type:"select", options:tranpose_options, cssClass:"configure_transpose_settings_select"}, 	
 	  {name: "          Transpose all tunes", id: "transposeall", type:"checkbox", cssClass:"configure_transposetokey_text"},
 	  {html: '<p style="font-size:12pt;font-family:helvetica">&nbsp;</p>'},	  
@@ -22952,7 +22955,18 @@ function HideAllControls(){
 
 function ShowMaximizeButton(){
 
-	document.getElementById("zoombutton").style.display = "block";
+  document.getElementById("zoombutton").style.display = "block";
+
+  if (!gInPresentationMode){
+
+     document.getElementById("zoombutton").style.opacity = 1.0;
+
+  }
+  else{
+
+     document.getElementById("zoombutton").style.opacity = 0.01;
+
+  }
 
 }
 
@@ -22975,7 +22989,11 @@ function HideHelpButton(){
 
 function ShowHelpButton(){
 
-	document.getElementById("helpbutton").style.display = "block";
+  if (!gInPresentationMode){
+
+	   document.getElementById("helpbutton").style.display = "block";
+
+  }
 
 }
 
@@ -22989,7 +23007,11 @@ function QE_PlayButton_Handler(){
 
 function ShowPlayButton(){
 
-	document.getElementById("playbuttonicon").style.display = "block";
+  if (!gInPresentationMode){
+
+	   document.getElementById("playbuttonicon").style.display = "block";
+
+  }
 
 }
 
@@ -23006,7 +23028,13 @@ function HidePlayButton(){
 function ShowPDFButton(){
 
 	if (!gIsQuickEditor){
-		document.getElementById("pdfbuttonicon").style.display = "block";
+
+    if (!gInPresentationMode){
+
+		  document.getElementById("pdfbuttonicon").style.display = "block";
+
+    }
+
 	}
 
 }
@@ -23016,6 +23044,38 @@ function HidePDFButton(){
 	if (!gIsQuickEditor){
 		document.getElementById("pdfbuttonicon").style.display = "none";
 	}
+
+}
+
+//
+// Hide/show the corner buttons on an Alt-Shift click of the Zoom button
+//
+function togglePresentationMode(){
+
+  if (!gInPresentationMode){
+    
+    gInPresentationMode = true;
+
+    document.getElementById("zoombutton").style.opacity = 0.01;
+    document.getElementById("helpbutton").style.display = "none";
+    document.getElementById("playbuttonicon").style.display = "none";
+    document.getElementById("pdfbuttonicon").style.display = "none";
+  }
+  else{
+
+    gInPresentationMode = false;
+
+    document.getElementById("zoombutton").style.opacity = 1.0;
+    document.getElementById("helpbutton").style.display = "block";
+    document.getElementById("playbuttonicon").style.display = "block";
+
+    if (!gIsQuickEditor){
+
+      document.getElementById("pdfbuttonicon").style.display = "block";
+
+    }
+
+  }
 
 }
 
@@ -23073,7 +23133,6 @@ function DoMinimize(){
 	if (giPadTwoColumn){
 		var elem = document.getElementById("notation-holder").style.width = "850px";
 	}
-
 
 	if (!gIsQuickEditor){
 		
@@ -50313,8 +50372,15 @@ function DoStartup() {
 
 	// Hook up the zoom button
 	document.getElementById("zoombutton").onclick = 
-		function() {
-			ToggleMaximize();
+		function(e) {
+
+      // Alt-click to Enter presentation mode
+      if (e.altKey){
+        togglePresentationMode();
+      }
+      else{
+			  ToggleMaximize();
+      }
 		};
 	
 	// Hook up the help button
