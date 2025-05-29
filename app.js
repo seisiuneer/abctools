@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2543_052925_0800";
+var gVersionNumber="2544_052925_0930";
 
 var gMIDIInitStillWaiting = false;
 
@@ -22964,7 +22964,7 @@ function ShowMaximizeButton(){
   }
   else{
 
-     document.getElementById("zoombutton").style.opacity = 0.01;
+     document.getElementById("zoombutton").style.opacity = 0.005;
 
   }
 
@@ -23006,10 +23006,17 @@ function QE_PlayButton_Handler(){
 }
 
 function ShowPlayButton(){
+  
+  document.getElementById("playbuttonicon").style.display = "block";
 
   if (!gInPresentationMode){
 
-	   document.getElementById("playbuttonicon").style.display = "block";
+     document.getElementById("playbuttonicon").style.opacity = 1.0;
+
+  }
+  else{
+
+     document.getElementById("playbuttonicon").style.opacity = 0.005;
 
   }
 
@@ -23056,9 +23063,9 @@ function togglePresentationMode(){
     
     gInPresentationMode = true;
 
-    document.getElementById("zoombutton").style.opacity = 0.01;
+    document.getElementById("zoombutton").style.opacity = 0.005;
     document.getElementById("helpbutton").style.display = "none";
-    document.getElementById("playbuttonicon").style.display = "none";
+    document.getElementById("playbuttonicon").style.opacity = 0.005;
     document.getElementById("pdfbuttonicon").style.display = "none";
   }
   else{
@@ -23067,7 +23074,7 @@ function togglePresentationMode(){
 
     document.getElementById("zoombutton").style.opacity = 1.0;
     document.getElementById("helpbutton").style.display = "block";
-    document.getElementById("playbuttonicon").style.display = "block";
+    document.getElementById("playbuttonicon").style.opacity = 1.0;
 
     if (!gIsQuickEditor){
 
