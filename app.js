@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2541_052825_1330";
+var gVersionNumber="2542_052825_2000";
 
 var gMIDIInitStillWaiting = false;
 
@@ -532,6 +532,23 @@ function customSortTagWithDiacriticals(a, b) {
 // Sort routine for names that may contain diacriticals
 function customSortNameWithDiacriticals(a, b) {
 
+  const extractLeadingNumber = (str) => {
+    const match = str.match(/^(\d+)\.\s*/);
+    return match ? parseInt(match[1], 10) : null;
+  };
+
+  const numA = extractLeadingNumber(a.name);
+  const numB = extractLeadingNumber(b.name);
+
+  // Step 1: If both have leading numbers, compare numerically
+  if (numA !== null && numB !== null) {
+    if (numA !== numB) return numA - numB;
+  } else if (numA !== null) {
+    return -1; // a comes before b
+  } else if (numB !== null) {
+    return 1; // b comes before a
+  }
+
   // Step 1: Compare ignoring accents and case
   const baseCompare = a.name.localeCompare(b.name, 'en', { sensitivity: 'base' });
   if (baseCompare !== 0) return baseCompare;
@@ -548,6 +565,23 @@ function customSortNameWithDiacriticals(a, b) {
 
 // Sort routine for titles that may contain diacriticals
 function customSortTitleWithDiacriticals(a, b) {
+
+  const extractLeadingNumber = (str) => {
+    const match = str.match(/^(\d+)\.\s*/);
+    return match ? parseInt(match[1], 10) : null;
+  };
+
+  const numA = extractLeadingNumber(a.title);
+  const numB = extractLeadingNumber(b.title);
+
+  // Step 1: If both have leading numbers, compare numerically
+  if (numA !== null && numB !== null) {
+    if (numA !== numB) return numA - numB;
+  } else if (numA !== null) {
+    return -1; // a comes before b
+  } else if (numB !== null) {
+    return 1; // b comes before a
+  }
 
   // Step 1: Compare ignoring accents and case
   const baseCompare = a.title.localeCompare(b.title, 'en', { sensitivity: 'base' });
