@@ -6359,7 +6359,7 @@ padding-right: 30px; /* space for badge */
 
 	.playbuttonicon:hover {
 	    transform: matrix(1.05, 0, 0, 1.05, 0, 0); 
-	  	transition: opacity 0s ease 1.5s; 
+	  	transition: opacity 0s ease 1.25s; 
 	}
 
 	.zoombutton
