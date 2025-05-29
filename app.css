@@ -2112,12 +2112,14 @@ left:-5000px;
 @media (hover: hover) {
 	.helpbutton:hover{
 	background: palegreen;
+	opacity: 1.0 !important;
 	}
 }
 
 @media (hover: hover) {
 	.pdfbuttonicon:hover{
 	background: palegreen;
+	opacity: 1.0 !important;
 	}
 }
 

@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2545_052925_1530";
+var gVersionNumber="2546_052925_1530";
 
 var gMIDIInitStillWaiting = false;
 
@@ -22989,11 +22989,19 @@ function HideHelpButton(){
 
 function ShowHelpButton(){
 
+  document.getElementById("helpbutton").style.display = "block";
+  
   if (!gInPresentationMode){
 
-	   document.getElementById("helpbutton").style.display = "block";
+     document.getElementById("helpbutton").style.opacity = 1.0;
 
   }
+  else{
+
+     document.getElementById("helpbutton").style.opacity = 0.005;
+
+  }
+
 
 }
 
@@ -23036,13 +23044,19 @@ function ShowPDFButton(){
 
 	if (!gIsQuickEditor){
 
+    document.getElementById("pdfbuttonicon").style.display = "block";
+
     if (!gInPresentationMode){
 
-		  document.getElementById("pdfbuttonicon").style.display = "block";
+       document.getElementById("pdfbuttonicon").style.opacity = 1.0;
 
     }
+    else{
 
-	}
+       document.getElementById("pdfbuttonicon").style.opacity = 0.005;
+
+  	}
+  }
 
 }
 
@@ -23064,21 +23078,21 @@ function togglePresentationMode(){
     gInPresentationMode = true;
 
     document.getElementById("zoombutton").style.opacity = 0.005;
-    document.getElementById("helpbutton").style.display = "none";
+    document.getElementById("helpbutton").style.opacity = 0.005;
     document.getElementById("playbuttonicon").style.opacity = 0.005;
-    document.getElementById("pdfbuttonicon").style.display = "none";
+    document.getElementById("pdfbuttonicon").style.opacity = 0.005;
   }
   else{
 
     gInPresentationMode = false;
 
     document.getElementById("zoombutton").style.opacity = 1.0;
-    document.getElementById("helpbutton").style.display = "block";
+    document.getElementById("helpbutton").style.opacity = 1.0;
     document.getElementById("playbuttonicon").style.opacity = 1.0;
 
     if (!gIsQuickEditor){
 
-      document.getElementById("pdfbuttonicon").style.display = "block";
+      document.getElementById("pdfbuttonicon").style.opacity = 1.0;
 
     }
 
