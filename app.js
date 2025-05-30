@@ -17031,7 +17031,13 @@ function BuildTuneSetAppend(){
 	    		// Stuff in the new result
 	    		setABCEditorText(theABC);
 
+          const scrollY = window.scrollY || document.documentElement.scrollTop;
+
 	    		RenderAsync(true,null, function(){
+
+          if (AllowDialogsToScroll()){
+            window.scrollTo(0, scrollY);
+          }
 
 					var theTune = getTuneByIndex(totalTunes);
 
@@ -17052,8 +17058,10 @@ function BuildTuneSetAppend(){
 
 				    }
 
-					// Scroll the tune into view
-					MakeTuneVisible(true);
+            if (!AllowDialogsToScroll()){
+    					// Scroll the tune into view
+    					MakeTuneVisible(true);
+            }
 
 	    		});
 
