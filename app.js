@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2549_053025_0730";
+var gVersionNumber="2550_053025_0830";
 
 var gMIDIInitStillWaiting = false;
 
@@ -25588,7 +25588,11 @@ function IncipitsBuilderDialog(){
 
 			SaveConfigurationSettings();
 
-			RenderAsync(true,null);
+      const scrollY = window.scrollY || document.documentElement.scrollTop;
+
+			 RenderAsync(true,null,function(){
+          window.scrollTo(0, scrollY);
+       });
 
 		}
 
