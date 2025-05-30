@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2548_052925_1700";
+var gVersionNumber="2549_053025_0730";
 
 var gMIDIInitStillWaiting = false;
 
@@ -2311,10 +2311,10 @@ function DoTransposeToKey(targetKey,transposeAll) {
 			// Force a full render if transposing all
 			RenderAsync(redrawAll, redrawIndex, function(){
 
-			   	var modal_msg  = '<p style="text-align:center;font-size:14pt;font-family:helvetica;">Transpose to Key Complete!</p>';
+			 var modal_msg  = '<p style="text-align:center;font-size:14pt;font-family:helvetica;">Transpose to Key Complete!</p>';
 
-			   	// Force a raw mode visual refresh
-			   	gRawLastIndex = -1;
+			  // Force a raw mode visual refresh
+			  gRawLastIndex = -1;
 
 				DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 300, width: 500,  scrollWithPage: (AllowDialogsToScroll()) }).then(function(){
 					
@@ -2568,10 +2568,10 @@ function SortTunesByTag(theTag,doCase){
 
 	// Reset the selection
 	gTheABC.selectionStart = 0;
-    gTheABC.selectionEnd = 0;
+  gTheABC.selectionEnd = 0;
 
-    // Focus after operation
-    FocusAfterOperation();
+  // Focus after operation
+  FocusAfterOperation();
 
 }
 
@@ -2599,8 +2599,14 @@ function DoSortTunesByMeter() {
 		// Sort the tunes
 		SortTunesByTag("M",false);
 
-		// Redraw
-		RenderAsync(true,null,function(){
+    const scrollY = window.scrollY || document.documentElement.scrollTop;
+
+    // Redraw
+    RenderAsync(true,null,function(){
+
+      if (AllowDialogsToScroll()){
+        window.scrollTo(0, scrollY);
+      }
 
 			var elem = document.getElementById("sortbutton");
 			if (elem){
@@ -2648,8 +2654,14 @@ function DoSortTunesByKey() {
 		// Sort the tunes by key
 		SortTunesByTag("K",false);
 
-		// Redraw
-		RenderAsync(true,null,function(){
+    const scrollY = window.scrollY || document.documentElement.scrollTop;
+
+    // Redraw
+    RenderAsync(true,null,function(){
+
+      if (AllowDialogsToScroll()){
+        window.scrollTo(0, scrollY);
+      }
 
 			var elem = document.getElementById("sortbutton");
 			if (elem){
@@ -2780,10 +2792,10 @@ function SortTunes(){
 
 	// Reset the selection
 	gTheABC.selectionStart = 0;
-    gTheABC.selectionEnd = 0;
+  gTheABC.selectionEnd = 0;
 
-    // Focus after operation
-    FocusAfterOperation();
+  // Focus after operation
+  FocusAfterOperation();
 
 }
 
@@ -2809,8 +2821,14 @@ function DoSortTunesByName() {
 		// Sort the tunes
 		SortTunes();
 
-		// Redraw
-		RenderAsync(true,null,function(){
+    const scrollY = window.scrollY || document.documentElement.scrollTop;
+
+    // Redraw
+    RenderAsync(true,null,function(){
+
+      if (AllowDialogsToScroll()){
+        window.scrollTo(0, scrollY);
+      }
 
 			var elem = document.getElementById("sortbutton");
 			if (elem){
@@ -2857,8 +2875,14 @@ function DoSortTunesByRhythm() {
 		// Sort the tunes by rhythm
 		SortTunesByTag("R",true);
 
-		// Redraw
-		RenderAsync(true,null,function(){
+    const scrollY = window.scrollY || document.documentElement.scrollTop;
+
+    // Redraw
+    RenderAsync(true,null,function(){
+
+      if (AllowDialogsToScroll()){
+        window.scrollTo(0, scrollY);
+      }
 
 			var elem = document.getElementById("sortbutton");
 			if (elem){
@@ -2905,8 +2929,14 @@ function DoSortTunesByCTag() {
 		// Sort the tunes by C tag
 		SortTunesByTag("C",true);
 
-		// Redraw
-		RenderAsync(true,null,function(){
+    const scrollY = window.scrollY || document.documentElement.scrollTop;
+
+    // Redraw
+    RenderAsync(true,null,function(){
+
+      if (AllowDialogsToScroll()){
+        window.scrollTo(0, scrollY);
+      }
 
 			var elem = document.getElementById("sortbutton");
 			if (elem){
@@ -2953,8 +2983,14 @@ function DoSortTunesByNTag() {
 		// Sort the tunes by N tag
 		SortTunesByTag("N",true);
 
-		// Redraw
-		RenderAsync(true,null,function(){
+    const scrollY = window.scrollY || document.documentElement.scrollTop;
+
+    // Redraw
+    RenderAsync(true,null,function(){
+
+      if (AllowDialogsToScroll()){
+        window.scrollTo(0, scrollY);
+      }
 
 			var elem = document.getElementById("sortbutton");
 			if (elem){
@@ -3001,8 +3037,14 @@ function DoSortTunesByOTag() {
 		// Sort the tunes by O tag
 		SortTunesByTag("O",true);
 
-		// Redraw
-		RenderAsync(true,null,function(){
+    const scrollY = window.scrollY || document.documentElement.scrollTop;
+
+    // Redraw
+    RenderAsync(true,null,function(){
+
+      if (AllowDialogsToScroll()){
+        window.scrollTo(0, scrollY);
+      }
 
 			var elem = document.getElementById("sortbutton");
 			if (elem){
@@ -3049,8 +3091,14 @@ function DoSortTunesByID() {
 		// Sort the tunes by key
 		SortTunesByTag("X",false);
 
+    const scrollY = window.scrollY || document.documentElement.scrollTop;
+
 		// Redraw
 		RenderAsync(true,null,function(){
+
+      if (AllowDialogsToScroll()){
+        window.scrollTo(0, scrollY);
+      }
 
 			var elem = document.getElementById("sortbutton");
 			if (elem){
@@ -3114,10 +3162,10 @@ function RenumberXTags() {
 
 	// Reset the selection
 	gTheABC.selectionStart = 0;
-    gTheABC.selectionEnd = 0;
+  gTheABC.selectionEnd = 0;
 
-    // Focus after operation
-    FocusAfterOperation();
+  // Focus after operation
+  FocusAfterOperation();
 
 }
 
