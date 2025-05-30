@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2550_053025_0830";
+var gVersionNumber="2551_053025_1230";
 
 var gMIDIInitStillWaiting = false;
 
@@ -42665,10 +42665,10 @@ function Configure_AdvancedControlsDialog_UI(){
 	];
 
 	if (isDesktopBrowser()){
-		form.push({name: "          Show Export, Sort, and Incipits features", id: "showexport", type:"checkbox", cssClass:"configure_ui_options_form_text"});
+		form.push({name: "          Show Export All Tunes, Sort by Tag, and Incipits Builder", id: "showexport", type:"checkbox", cssClass:"configure_ui_options_form_text"});
 	}
 	else{
-		form.push({name: "          Show Sort and Incipits features", id: "showexport", type:"checkbox", cssClass:"configure_ui_options_form_text"});		
+		form.push({name: "          Show Sort by Tag and Incipits Builder", id: "showexport", type:"checkbox", cssClass:"configure_ui_options_form_text"});		
 	}
 
 	form.push({name: "          Show Transpose to Key and Inject Bagpipe Sounds", id: "showbagpipedrones", type:"checkbox", cssClass:"configure_ui_options_form_text"});
