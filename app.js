@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2551_053025_1230";
+var gVersionNumber="2552_053025_2130";
 
 var gMIDIInitStillWaiting = false;
 
@@ -25471,7 +25471,7 @@ function IncipitsBuilderDialog(){
 	};
 
 	var form = [
-		{html: '<p style="text-align:center;font-size:16pt;font-family:helvetica;margin-bottom:24px;margin-left:15px;">Incipits Builder&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#incipits_builder" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'},
+		{html: '<p style="text-align:center;font-size:16pt;font-family:helvetica;margin-bottom:24px;margin-left:15px;">Notes Incipits Builder&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#incipits_builder_pdf" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'},
 		{html: '<p style="font-size:12pt;line-height:18pt;font-family:helvetica;">Clicking "Build" will extensively reformat the ABC, so you may want to grab a Snapshot or save the ABC before using this feature.</p>'},
 		{html: '<p style="font-size:12pt;line-height:18pt;font-family:helvetica;margin-bottom:24px;">The reformatted ABC can be exported as first-line Notes Incipits from the Export PDF dialog.</p>'},
   		{name: "Number of bars: (Default is 3)", id: "IncipitsBuilderBars", type:"number", cssClass:"incipits_builder_form_text"},
@@ -42058,7 +42058,7 @@ function PDFExportDialog(){
 			  {html: '<p style="margin-top:36px;font-size:12pt;line-height:18px;font-family:helvetica;">Font for Title Page, Table of Contents, Index, Page Headers/Footers, Page Numbers, Text Incipits:</strong></p>'},  
 			  {name: "Font:", id: "configure_fontname", type:"select", options:fontname_list, cssClass:"configure_pdf_fontname_select"},
 			  {name: "Font Style:", id: "configure_fontstyle", type:"select", options:fontstyle_list, cssClass:"configure_pdf_fontstyle_select"},
-			  {html: '<p style="text-align:center;margin-top:36px;"><input id="pdfusebrowserprint" class="advancedcontrols btn btn-browser-pdf-export" onclick="Do_Browser_PDF_Export();return;" type="button" value="Browser Native Print-to-PDF with Play Links" title="Quickly export a PDF tunebook using the browser\'s native Print-to-PDF feature with one tune per page and play links when you click the title.&nbsp;&nbsp;Does not include a Title Page, Table of Contents, Index, or QR Code."></p>'},
+			  {html: '<p style="text-align:center;margin-top:36px;"><input id="pdfusebrowserprint" class="advancedcontrols btn btn-browser-pdf-export" onclick="Do_Browser_PDF_Export();return;" type="button" value="Browser Native Print-to-PDF with Play Links" title="Quickly export a PDF tunebook using the browser\'s native Print-to-PDF feature with one tune per page and play links when you click the title.&nbsp;&nbsp;Does not include a Title Page, Table of Contents, Index, or QR Code."><input class="incipitsbuilder btn btn-incipitsbuilder" id="incipitsbuilder" onclick="IncipitsBuilderDialog()" type="button" value="Notes Incipits Builder" title="Formats the ABC for notation incipits PDF export"></p>'},
 			];
 		}
 		else{
@@ -42076,7 +42076,8 @@ function PDFExportDialog(){
 			  {html: '<p style="margin-top:36px;font-size:12pt;line-height:18px;font-family:helvetica;">Font for Title Page, Table of Contents, Index, Page Headers/Footers, Page Numbers, Text Incipits:</strong></p>'},  
 			  {name: "Font:", id: "configure_fontname", type:"select", options:fontname_list, cssClass:"configure_pdf_fontname_select"},
 			  {name: "Font Style:", id: "configure_fontstyle", type:"select", options:fontstyle_list, cssClass:"configure_pdf_fontstyle_select"},
-			  {html: '<p style="font-size:3pt;">&nbsp;</p>'}	
+        {html: '<p style="text-align:center;margin-top:36px;"><input class="incipitsbuilder btn btn-incipitsbuilder" id="incipitsbuilder" onclick="IncipitsBuilderDialog()" type="button" value="Notes Incipits Builder" title="Formats the ABC for notation incipits PDF export"></p>'},			  
+        {html: '<p style="font-size:3pt;">&nbsp;</p>'}	
 			];
 		}
 	}
@@ -42665,10 +42666,10 @@ function Configure_AdvancedControlsDialog_UI(){
 	];
 
 	if (isDesktopBrowser()){
-		form.push({name: "          Show Export All Tunes, Sort by Tag, and Incipits Builder", id: "showexport", type:"checkbox", cssClass:"configure_ui_options_form_text"});
+		form.push({name: "          Show Export All Tunes and Sort by Tag", id: "showexport", type:"checkbox", cssClass:"configure_ui_options_form_text"});
 	}
 	else{
-		form.push({name: "          Show Sort by Tag and Incipits Builder", id: "showexport", type:"checkbox", cssClass:"configure_ui_options_form_text"});		
+		form.push({name: "          Show Sort by Tag", id: "showexport", type:"checkbox", cssClass:"configure_ui_options_form_text"});		
 	}
 
 	form.push({name: "          Show Transpose to Key and Inject Bagpipe Sounds", id: "showbagpipedrones", type:"checkbox", cssClass:"configure_ui_options_form_text"});
@@ -42804,7 +42805,7 @@ function AdvancedControlsDialog(){
 
 	// Showing export and explorers?
 	if (gFeaturesShowExport && gFeaturesShowExplorers){
-		modal_msg  += '<p style="text-align:center;margin-top:22px;"><input id="configure_reverb_explorer" class="btn btn-reverbexplorer configure_reverb_explorer " onclick="ReverbExplorer()" type="button" value="Reverb Explorer" title="Brings up a tune player where you can experiment with different reverb parameters"><input id="configure_batch_mp3_export" class="btn btn-batchmp3export configure_batch_mp3_export " onclick="ExportAll()" type="button" value="Export All Tunes" title="Exports all the tunes in the ABC text area as audio, image, MusicXML, and other formats"><input class="sortbutton btn btn-sortbutton" id="sortbutton" onclick="SortDialog()" type="button" value="Sort by Tag" title="Brings up the Sort by Specific Tag dialog"><input class="incipitsbuilder btn btn-incipitsbuilder" id="incipitsbuilder" onclick="IncipitsBuilderDialog()" type="button" value="Incipits Builder" title="Formats the ABC for notation incipits PDF export"></p>';
+		modal_msg  += '<p style="text-align:center;margin-top:22px;"><input id="configure_reverb_explorer" class="btn btn-reverbexplorer configure_reverb_explorer " onclick="ReverbExplorer()" type="button" value="Reverb Explorer" title="Brings up a tune player where you can experiment with different reverb parameters"><input id="configure_batch_mp3_export" class="btn btn-batchmp3export configure_batch_mp3_export " onclick="ExportAll()" type="button" value="Export All Tunes" title="Exports all the tunes in the ABC text area as audio, image, MusicXML, and other formats"><input class="sortbutton btn btn-sortbutton" id="sortbutton" onclick="SortDialog()" type="button" value="Sort by Tag" title="Brings up the Sort by Specific Tag dialog"></p>';
 	}
 	else
 	if ((!gFeaturesShowExport) && gFeaturesShowExplorers){
@@ -42812,7 +42813,7 @@ function AdvancedControlsDialog(){
 	}
 	else
 	if (gFeaturesShowExport && (!gFeaturesShowExplorers)){
-		modal_msg  += '<p style="text-align:center;margin-top:22px;"><input id="configure_batch_mp3_export" class="btn btn-batchmp3export configure_batch_mp3_export " onclick="ExportAll()" type="button" value="Export All Tunes" title="Exports all the tunes in the ABC text area as audio, image, MusicXML, and other formats"><input class="sortbutton btn btn-sortbutton" id="sortbutton" onclick="SortDialog()" type="button" value="Sort by Tag" title="Brings up the Sort by Specific Tag dialog"><input class="incipitsbuilder btn btn-incipitsbuilder" id="incipitsbuilder" onclick="IncipitsBuilderDialog()" type="button" value="Incipits Builder" title="Formats the ABC for notation incipits PDF export"></p>';
+		modal_msg  += '<p style="text-align:center;margin-top:22px;"><input id="configure_batch_mp3_export" class="btn btn-batchmp3export configure_batch_mp3_export " onclick="ExportAll()" type="button" value="Export All Tunes" title="Exports all the tunes in the ABC text area as audio, image, MusicXML, and other formats"><input class="sortbutton btn btn-sortbutton" id="sortbutton" onclick="SortDialog()" type="button" value="Sort by Tag" title="Brings up the Sort by Specific Tag dialog"></p>';
 
 	}
 

@@ -454,6 +454,7 @@
             <a style="text-decoration:none;" href="#inject_pdf_tunebook_features_play">Inject Only PDF Tunebook Play Features</a>
             <a style="text-decoration:none;" href="#inject_pdf_tunebook_features">Inject All PDF Tunebook Features</a>
             <a style="text-decoration:none;" href="#browser_print_to_pdf">Browser Native Print-to-PDF with Play Links</a>
+            <a style="text-decoration:none;" href="#incipits_builder_pdf">Notes Incipits Builder</a>
             <a style="text-decoration:none;" href="#pdf_layout_options">PDF Paper Size, Orientation, Layout, and Page Number Options</a>            
             <a style="text-decoration:none;" href="#pdf_font_override_settings">PDF Font Override Settings</a>
             <a style="text-decoration:none;" href="#pdf_quality_setting">PDF Quality Setting</a>
@@ -579,9 +580,8 @@
             </details>
             
             <details>
-            <summary><h3>Sort by Tag, Incipits Builder, Transpose to Key, Inject Bagpipe Sounds</h3></summary>
+            <summary><h3>Sort by Tag, Transpose to Key, and Inject Bagpipe Sounds</h3></summary>
             <a style="text-decoration:none;" href="#sort_dialog">Sort by Tag</a>
-            <a style="text-decoration:none;" href="#incipits_builder">Incipits Builder</a>
             <a style="text-decoration:none;" href="#advanced_transposetokey">Transpose to Key</a>
             <a style="text-decoration:none;" href="#advanced_injectbagpipesounds">Inject Bagpipe Sounds</a>
             </details>
@@ -884,6 +884,7 @@
                         <p class="toc"><a style="text-decoration:none;" href="#inject_pdf_tunebook_features_play">Inject Only PDF Tunebook Play Features</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#inject_pdf_tunebook_features">Inject All PDF Tunebook Features</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#browser_print_to_pdf">Browser Native Print-to-PDF with Play Links</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#incipits_builder_pdf">Notes Incipits Builder</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#pdf_layout_options">PDF Paper Size, Orientation, Layout, and Page Number Options</a></p>            
                         <p class="toc"><a style="text-decoration:none;" href="#pdf_font_override_settings">PDF Font Override Settings</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#pdf_quality_setting">PDF Quality Setting</a></p>
@@ -1009,10 +1010,9 @@
                         <p class="toc"><a style="text-decoration:none;" href="#smartdraw_export">SmartDraw Set List Builder</a></p>
                     </div>
                     
-                    <button class="accordion" title="Click to expand/collapse this section">Sort by Tag, Incipits Builder, Transpose to Key, Inject Bagpipe Sounds</button>
+                    <button class="accordion" title="Click to expand/collapse this section">Sort by Tag, Transpose to Key, and Inject Bagpipe Sounds</button>
                     <div class="tocpanel">
                         <p class="toc"><a style="text-decoration:none;" href="#sort_dialog">Sort by Tag</a></p>
-                        <p class="toc"><a style="text-decoration:none;" href="#incipits_builder">Incipits Builder</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#advanced_transposetokey">Transpose to Key</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#advanced_injectbagpipesounds">Inject Bagpipe Sounds</a></p>
                     </div>
@@ -3089,9 +3089,9 @@
                 <p>It can format PDF tunebooks with one or multiple tunes per page, something the native browser's Print command cannot accomplish.</p>
                 <p>When you click <strong>Export PDF</strong>, the following dialog will appear where you select your PDF formatting preferences:</p>
                 <div class="image_holder_p">
-                    <img class="image" loading="lazy" src="img/export_pdf_tunebook_14.jpg"/>
+                    <img class="image" loading="lazy" src="img/export_pdf_tunebook_15.jpg"/>
                 </div>
-                <p>When exporting a PDF from the button on the bottom-left of the full-screen view, the <strong>Inject Only PDF Tunebook Play Features</strong>, <strong>Inject All PDF Tunebook Features</strong>, and <strong>Browser Native Print-to-PDF with Play Links</strong> buttons are not shown on the dialog.</p>
+                <p>When exporting a PDF from the button on the bottom-left of the full-screen view, the <strong>Inject Only PDF Tunebook Play Features</strong>, <strong>Inject All PDF Tunebook Features</strong>, <strong>Browser Native Print-to-PDF with Play Links</strong>, and <strong>Notes Incipits Builder</strong> buttons are not shown on the dialog.</p>
                 <hr>
                 <p id="inject_pdf_tunebook_features_play"><strong>Inject Only PDF Tunebook Play Features</strong></p>
                 <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/s7KMO5Z7t4I" title="Export Only PDF Tunebook Play Features" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
@@ -3156,6 +3156,29 @@
                 <p>You can choose page scaling, margins, page orientation, and other page layout options in your browser's native Print-to-PDF dialog.</p>
                 <p>This option unfortunately does not have the ability to add Title pages, Table of Contents, Index, or QR Codes in the PDF.</p>
                 <p>None of the other options listed below for the tool's custom PDF export feature apply if you select the browser-native PDF export option.</p>
+                <hr id="incipits_builder_pdf">
+                <p><strong>Notes Incipits Builder</strong></p>
+                <p>Brings up a dialog where you can easily format the ABC specifically for notation incipits PDF export with only a few bars per tune:</p>
+                <div class="image_holder_p">
+                    <img class="image" loading="lazy" src="img/incipits_builder_9.jpg"/>
+                </div>
+                <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/OFx1XvmNqKM" title="Incipits Builder" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
+                <p>Since this modifies the ABC, you may want to grab a <strong>Snapshot</strong> or save the ABC before running this command.</p>
+                <p>Once you build the incipits, you can use the one or two-column "Note Incipits" PDF tune layout option described below to generate a tunebook of incipits.</p>
+                <p><strong>Bars per staff</strong> - Sets the number of measures shown in the incipit. Default is 3.</p>
+                <p><strong>Staff width</strong> - Compresses the horizontal size of the incipit notation compared to the standard of 556. Default is 400.</p>
+                <p><strong>Add tune title numbers</strong> - When checked, prepends the tune titles with incrementing numbers. Default is false.</p>
+                <p><strong>Left justify titles</strong> - When checked, will add a %left_justify_titles annotation to each tune. Default is true.</p>
+                <p><strong>Strip all %%text, %%center, %%right, and %%begintext blocks</strong> - When checked, will strip all text blocks associated with the first stave. Default is true.</p>
+                <p><strong>Tags to strip</strong> - Tags to strip from the ABC before generating the incipits. Default is ABCDINOSWwZ.</p>
+                <p>If you want to hide them, you'll need to remove or comment them out using the global <a href="#hamburger_find">Find and Replace</a> feature in the tool.</p>
+                <p>Here is an example of a two-column notation incipits PDF exported using the default settings:</p>
+                <div class="image_holder_p">
+                    <img class="image" loading="lazy" src="img/incipits_builder_example_2.jpg"/>
+                </div>
+                <p><strong>Note:</strong> You may run into occasional cases where the number of measures in the incipits doesn't exactly match the requested number.</p>
+                <p>You can try changing the %%barsperstaff value on any tune that has an issue.</p>
+
                 <hr id="pdf_layout_options">
                 <p style="text-align: center;"><strong>PDF Paper Size, Orientation, Layout, and Page Number Options</strong></p>
                 <hr>
@@ -3172,7 +3195,7 @@
                 </div>
                 <hr>
                 <p><strong>Tune Layout:</strong></p>
-                <p>Choose whether you want One Tune per Page, Multiple Tunes per Page, Tune Note Incipits, ABC Incipits (unsorted or alphabetically sorted by tune name), or full versions of the ABC notes (with optional Comhaltas ABC transformation):</p>
+                <p>Choose whether you want One Tune per Page, Multiple Tunes per Page, Note Incipits, ABC Incipits (unsorted or alphabetically sorted by tune name), or full versions of the ABC notes (with optional Comhaltas ABC transformation):</p>
                 <div class="image_holder_p">
                     <img class="image" loading="lazy" src="img/tune_layout_5.jpg"/>
                 </div>
@@ -4776,27 +4799,6 @@
                 <p style="margin-left:30px;"><strong>Sort by Origin (O:)</strong> - This sorts all the tunes by the first origin O: tag found in the tune.</p>
                 <p style="margin-left:30px;"><strong>Sort by ID (X:)</strong> - This sorts all the tunes by the value found in X: tag in the tune.</p>
                 <p style="margin-left:30px;"><strong>Renumber all X: Tags</strong> - This renumbers all the X: tags in the tunebook starting at 1.</p>
-                <hr class="hidden-print" id="incipits_builder">
-                <h1 class="page_break_always">Incipits Builder<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-                <p>Brings up a dialog where you can easily format the ABC specifically for notation incipits PDF export with only a couple of bars per tune:</p>
-                <div class="image_holder_p">
-                    <img class="image" loading="lazy" src="img/incipits_builder_8.jpg"/>
-                </div>
-                <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/OFx1XvmNqKM" title="Incipits Builder" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
-                <p>Since this modifies the ABC, you may want to grab a <strong>Snapshot</strong> or save the ABC before running this command.</p>
-                <p><strong>Bars per staff</strong> - Sets the number of measures shown in the incipit. Default is 3.</p>
-                <p><strong>Staff width</strong> - Compresses the horizontal size of the incipit notation compared to the standard of 556. Default is 400.</p>
-                <p><strong>Add tune title numbers</strong> - When checked, prepends the tune titles with incrementing numbers. Default is false.</p>
-                <p><strong>Left justify titles</strong> - When checked, will add a %left_justify_titles annotation to each tune. Default is true.</p>
-                <p><strong>Strip all %%text, %%center, %%right, and %%begintext blocks</strong> - When checked, will strip all text blocks associated with the first stave. Default is true.</p>
-                <p><strong>Tags to strip</strong> - Tags to strip from the ABC before generating the incipits. Default is ABCDINOSWwZ.</p>
-                <p>If you want to hide them, you'll need to remove or comment them out using the global <a href="#hamburger_find">Find and Replace</a> feature in the tool.</p>
-                <p>Here is an example of a two-column notation incipits PDF exported using the default settings:</p>
-                <div class="image_holder_p">
-                    <img class="image" loading="lazy" src="img/incipits_builder_example_2.jpg"/>
-                </div>
-                <p><strong>Note:</strong> You may run into occasional cases where the number of measures in the incipits doesn't exactly match the requested number.</p>
-                <p>You can try changing the %%barsperstaff value on any tune that has an issue.</p>
                 <hr class="hidden-print" id="advanced_transposetokey">
                 <h1 class="page_break_always h1wide">Transpose to Key<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/DkNUePXKtaA" title="Transpose to Key" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
