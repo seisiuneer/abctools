@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2553_060125_0930";
+var gVersionNumber="2554_060125_1100";
 
 var gMIDIInitStillWaiting = false;
 
@@ -3981,7 +3981,7 @@ var TEXTINCIPITBOTTOMOFFSET = 12;
 var gTEXTINCIPITLEFTMARGIN = 65;
 var gTEXTINCIPITRIGHTMARGIN = 190; 
 var TEXTINCIPITFONTSIZE = 12;
-var TEXTINCIPITLINESPACING = 10;
+var TEXTINCIPITLINESPACING = 12;
 var TEXTINCIPITGUTTER = 5;
 //
 // Generate a set of ABC text incipits
@@ -7878,6 +7878,55 @@ function ParseCommentCommands(theNotes){
 
 		}
 	}
+
+  // Set the default text incipits font size and line height
+  // MAE 1 June 2025
+  TEXTINCIPITFONTSIZE = 12;
+
+  // Search for a tunebook text incipits font size override request
+  searchRegExp = /^%textincipitsfontsize.*$/m
+
+  // Detect tunebook text incipits size annotation
+  var overrideTIFontSize = theNotes.match(searchRegExp);
+
+  if ((overrideTIFontSize) && (overrideTIFontSize.length > 0)){
+
+    var theFontSize = overrideTIFontSize[0].replace("%textincipitsfontsize","");
+
+    theFontSize = theFontSize.trim();
+    
+    var theFontSizeInt = parseInt(theFontSize);
+    
+    if ((!isNaN(theFontSizeInt)) && (theFontSizeInt > 0)){
+
+      TEXTINCIPITFONTSIZE = theFontSizeInt;
+
+    }
+  }
+
+  TEXTINCIPITLINESPACING = 12;
+
+  // Search for a tunebook text incipits line spacing override request
+  searchRegExp = /^%textincipitslinespacing.*$/m
+
+  // Detect tunebook text incipits size annotation
+  var overrideTILineSpacing = theNotes.match(searchRegExp);
+
+  if ((overrideTILineSpacing) && (overrideTILineSpacing.length > 0)){
+
+    var theFontSize = overrideTILineSpacing[0].replace("%textincipitslinespacing","");
+
+    theFontSize = theFontSize.trim();
+    
+    var theFontSizeInt = parseInt(theFontSize);
+    
+    if ((!isNaN(theFontSizeInt)) && (theFontSizeInt > 0)){
+
+      TEXTINCIPITLINESPACING = theFontSizeInt;
+
+    }
+  }
+
 
 	// Set the default title page title font size
 	// MAE 24 May 2025

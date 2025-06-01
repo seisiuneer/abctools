@@ -3230,9 +3230,17 @@
                 <hr>
                 <p><strong>ABC Text Incipits</strong></p>
                 <p>The first few bars of the ABC text for each tune's notes are added one after another down each page in the PDF.</p>
+                <p>You can set the font size for the text incipits using the following annotation anywhere in the ABC:</p>
+                <p class="code">%textincipitsfontsize font_size - Font size for the text incipits. Default is: 12.</p>
+                <p>You can set the line spacing for the text incipits using the following annotation anywhere in the ABC:</p>
+                <p class="code">%textincipitslinespacing line_spacing - Line spacing between the text incipits. Default is: 12.</p>
                 <hr>
                 <p><strong>ABC Text Incipits Sorted</strong></p>
                 <p>The first few bars of the ABC text for each tune's notes are added one after another down each page in the PDF in tune name sorted order.</p>
+                <p>You can set the font size for the text incipits using the following annotation anywhere in the ABC:</p>
+                <p class="code">%textincipitsfontsize font_size - Font size for the text incipits. Default is: 12.</p>
+                <p>You can set the line spacing for the text incipits using the following annotation anywhere in the ABC:</p>
+                <p class="code">%textincipitslinespacing line_spacing - Line spacing between the text incipits. Default is: 12.</p>
                 <hr>
                 <p><strong>ABC Text Complete Tunes</strong></p>
                 <p>The full ABC text for each tune's notes are added one after another down each page in the PDF.</p>
@@ -3906,12 +3914,14 @@
                     %no_toc_or_index_links<br/>
                     %toc_no_page_numbers<br/>
                     %index_no_page_numbers<br/>
+                    %firstpagenumber 3<br/>
                     %pageheader Page Header<br/>
                     %pagefooter Page Footer<br/>
                     %headerfooterfontsize 12<br/>
                     %urlpageheader https://michaeleskin.com Page Header as Hyperlink<br/>
                     %urlpagefooter https://michaeleskin.com Page Footer as Hyperlink<br/>
-                    %firstpagenumber 3<br/>
+                    %textincipitsfontsize 12<br/>
+                    %textincipitslinespacing 12<br>
                     %add_all_links_to_thesession<br/>
                     %add_all_playback_links 0 0 0 fluid<br/>
                     %add_all_playback_volumes 64 64<br/>
