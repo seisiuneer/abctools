@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2555_060125_1130";
+var gVersionNumber="2556_060125_1430";
 
 var gMIDIInitStillWaiting = false;
 
@@ -43967,18 +43967,20 @@ function ConfigureToolSettings() {
 				// If they've allowed MIDI input, and not currently using it
 				if (theOldAllowMIDIInput != gAllowMIDIInput){
 
-          // Clean up the MIDI mute if set
-          var elem = document.getElementById("toolpagetitle");
-          elem.innerHTML = "ABC Transcription Tools";
-          gMIDIMute = false;
-
 					if (gAllowMIDIInput){
 
 						sendGoogleAnalytics("action","enable_MIDI");
 
 						initMIDI();
-            
+
+            enableMIDIMute();
+
 					}
+          else{
+
+            disableMIDIMute();
+
+          }
 
 				}
 			}
@@ -46174,6 +46176,44 @@ function MIDI_NoteOn(data){
 
 }
 
+// MIDI input muting handlers
+
+function toggleMIDIMute(){
+
+   //console.log("Toggling MIDI mute");
+    gMIDIMute = !gMIDIMute;
+
+    // Give some feedback
+    var elem = document.getElementById("toolpagetitle");
+    if (gMIDIMute){
+      elem.innerHTML = "<span style='color:red'>MIDI Input Muted</span>";
+    }else{
+      elem.innerHTML = "ABC Transcription Tools";
+    }
+
+}
+
+function enableMIDIMute(){
+
+      var elem = document.getElementById("toolpagetitle");
+      elem.innerHTML = "ABC Transcription Tools";
+      elem.onclick = toggleMIDIMute;
+      
+      gMIDIMute = false;
+
+}
+
+function disableMIDIMute(){
+
+      var elem = document.getElementById("toolpagetitle");
+      elem.innerHTML = "ABC Transcription Tools";
+      elem.onclick = null;
+
+      gMIDIMute = false;
+
+}
+
+
 function MIDI_Receive(event) {
 	
 	//console.log("MIDI_Receive");
@@ -46234,6 +46274,8 @@ function onMIDIInit(midi) {
 	//debugger;
 
 	console.log("onMIDIInit");
+
+  enableMIDIMute();
 
 	// Save off the MIDI access object
 	gMIDIAccess = midi;
@@ -50976,28 +51018,6 @@ function DoStartup() {
 			        }
 
 			    }
-          else
-          /// Check if the Command key (on Mac) and Shift is pressed with the "m" key
-          if (event.metaKey && event.shiftKey && event.key === 'm') {
-
-            event.preventDefault();  // Prevent the default browser action
-
-            if (gAllowMIDIInput){
-
-              //console.log("Toggling MIDI mute");
-              gMIDIMute = !gMIDIMute;
-
-              // Give some feedback
-              var elem = document.getElementById("toolpagetitle");
-              if (gMIDIMute){
-                elem.innerHTML = "<span style='color:red'>MIDI Input Muted</span>";
-              }else{
-                elem.innerHTML = "ABC Transcription Tools";
-              }
-
-            }
-
-          }
 
 			},true);
 		}
@@ -51137,7 +51157,7 @@ function DoStartup() {
 
 			       	event.preventDefault();  // Prevent the default browser action
 
-			    	var modalDivs = document.querySelector('.modal_flat_main');
+			    	  var modalDivs = document.querySelector('.modal_flat_main');
 
 			        if ((!modalDivs) && (!gRenderingPDF)){
 
@@ -51146,28 +51166,6 @@ function DoStartup() {
 			        }
 
 			    }
-          else
-          /// Check if the Control key (on Windows/Linux) and shift Key is pressed with the "M" key
-          if (event.ctrlKey && event.shiftKey && event.key === 'm') {
-
-            event.preventDefault();  // Prevent the default browser action
-
-            if (gAllowMIDIInput){
-
-              //console.log("Toggling MIDI mute");
-              gMIDIMute = !gMIDIMute;
-
-              // Give some feedback
-              var elem = document.getElementById("toolpagetitle");
-              if (gMIDIMute){
-                elem.innerHTML = "<span style='color:red'>MIDI Input Muted</span>";
-              }else{
-                elem.innerHTML = "ABC Transcription Tools";
-              }
-
-            }
-
-          }
 
 			},true);
 		}
@@ -51217,6 +51215,7 @@ function DoStartup() {
 	if (gAllowMIDIInput){
 
 		initMIDI();
+
 	}
 
 	// Show the help button
