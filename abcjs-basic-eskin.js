@@ -452,7 +452,17 @@ function ScanTuneForHidePartsTag(theTune){
     return true;
   }
 
-  //console.log("No %hide_parts_tag")
+  //console.log("No %hide_part_tag")
+
+  searchRegExp = /^%hide_part_tags.*$/gm
+
+  isHideParts = searchRegExp.test(theTune);
+
+  if (isHideParts){
+    //console.log("Found %hide_part_tags")
+    return true;
+  }
+
 
   return false;
 }
@@ -4442,6 +4452,7 @@ var bookParser = function bookParser(book) {
       /^%hide_rhythm_tag.*$/,
       /^%hide_composer_tag.*$/,
       /^%hide_parts_tag.*$/,
+      /^%hide_part_tags.*$/,
       /^%hide_dynamics.*$/,
       /^%whistle_tab_key.*$/,
       /^%whistle_tab_octave.*$/,
