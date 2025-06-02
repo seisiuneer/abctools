@@ -626,6 +626,7 @@
             <a style="text-decoration:none;" href="#hide_information_labels">Hiding Information Labels</a>
             <a style="text-decoration:none;" href="#hide_rhythm_tag">Hiding Rhythm Tag Display</a>
             <a style="text-decoration:none;" href="#hide_composer_tag">Hiding Composer Tag Display</a>
+            <a style="text-decoration:none;" href="#hide_parts_tag">Hiding Parts Tag Display</a>
             <a style="text-decoration:none;" href="#hide_dynamics">Hiding Dynamics Marks</a>
             <a style="text-decoration:none;" href="#hide_cautionary">Hiding Cautionary Key Signatures and Implied Naturals</a>
             <a style="text-decoration:none;" href="#disable_reverser">Disabling the Tune Title Article Reverser</a>
@@ -1057,6 +1058,7 @@
                         <p class="toc"><a style="text-decoration:none;" href="#hide_information_labels">Hiding Information Labels</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#hide_rhythm_tag">Hiding Rhythm Tag Display</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#hide_composer_tag">Hiding Composer Tag Display</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#hide_parts_tag">Hiding Parts Tag Display</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#hide_dynamics">Hiding Dynamics Marks</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#hide_cautionary">Hiding Cautionary Key Signatures and Implied Naturals</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#disable_reverser">Disabling the Tune Title Article Reverser</a></p>
@@ -1344,6 +1346,7 @@
                 <p>4) All C:, A:, and O: tags are removed.</p>
                 <p>5) Space is added between the tunes using a %%text annotation.</p>
                 <p>Repeated tune playback is accomplished using P: part tags on each tune and a P: tag play control string added to the set along with adding a tool-private %play_flatten_parts annotation to tell the player to expand the parts when playing.</p>
+                <p>Additionally, a disabled %hide_parts_tag annotation (an 'x' is placed before the annotation to disable it) is added to allow you to easily hide the P: tag text if desired by enabling the annotation by removing the 'x'.</p>
                 <p>For more information on parts, parts play control strings, and parts playback flattening please see this section below:</p>
                 <p style="text-align: center"><a href="#flattening_parts">Flattening Parts for Playback</a></p>
                 <hr>
@@ -3066,6 +3069,10 @@
                 <hr>
                 <p>Here's an example of a set of three jigs concatenated into a set, each with a part marker, each plays three times:</p>
                 <p style="text-align: center"><a href="https://tinyurl.com/9sd9hter">The Kesh / The Killavil / The Connaughtman's Rambles</a></p>
+                <hr>
+                <p>You may hide the text in one or more P: tags in the generated notation by adding the following annotation anywhere in the tune:</p>
+                <p class="code">% Hide parts tag display<br/><br/>%hide_parts_tag</p>
+                <p>This just hides any P: tag text in the notation, if present in the ABC, %play_flatten_parts still applies.</p>
                 <hr class="hidden-print" id="play_alternate_chords">
                 <h1 class="page_break_always h1wide">Playing Alternate Chords<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/-JXVK23SVf4" title="Playing Alternate Chords" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
@@ -3973,6 +3980,7 @@
                     %hide_information_labels<br/>
                     %hide_rhythm_tag<br/>
                     %hide_composer_tag<br/>
+                    %hide_parts_tag<br/>
                     %hide_dynamics<br/>
                     %hide_cautionary_ks<br/>
                     %no_title_reverser<br/>
@@ -5607,7 +5615,7 @@
                 <p>If placed in the ABC file header, it will apply to all of the tunes.</p>
                 <hr class="hidden-print" id="hide_rhythm_tag">
                 <h1 class="page_break_always h1wide">Hiding Rhythm Tag Display<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-                <p>You may hide the rhythm value in the R: tag (if present) in the generated notation by adding the following annotation anywhere in the tune:</p>
+                <p>You may hide the rhythm value in the R: tag in the generated notation by adding the following annotation anywhere in the tune:</p>
                 <p class="code">% Hide rhythm tag display<br/><br/>%hide_rhythm_tag</p>
                 <p>The presence of this annotation in a tune will force both the displayed notation in the editor, exported PDF notation, and tunes played from play links to have the rhythm value in the R: tag hidden.</p>
                 <p>If placed in the ABC file header, it will apply to all of the tunes.</p>
@@ -5616,9 +5624,19 @@
                 <p>or a lower-case equivalent with or without spaces after an R: tag is found in a tune.</p>
                 <hr class="hidden-print" id="hide_composer_tag">
                 <h1 class="page_break_always h1wide">Hiding Composer Tag Display<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-                <p>You may hide the composer text in the C: tag (if present) in the generated notation by adding the following annotation anywhere in the tune:</p>
+                <p>You may hide the composer text in the C: tag in the generated notation by adding the following annotation anywhere in the tune:</p>
                 <p class="code">% Hide composer tag display<br/><br/>%hide_composer_tag</p>
-                <p>The presence of this annotation in a tune will force both the displayed notation in the editor, exported PDF notation, and tunes played from play links to have the composer string in the C: tag hidden.</p>
+                <p>The presence of this annotation in a tune will force both the displayed notation in the editor, exported PDF notation, and tunes played from play links to have the composer text in the C: tag hidden.</p>
+                <p>If placed in the ABC file header, it will apply to all of the tunes.</p>
+                <hr class="hidden-print" id="hide_parts_tag">
+                <h1 class="page_break_always h1wide">Hiding Parts Tag Display<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+                <p>You may hide the text in one or more P: tags in the generated notation by adding the following annotation anywhere in the tune:</p>
+                <p class="code">% Hide parts tag display<br/><br/>%hide_parts_tag</p>
+                <p>The presence of this annotation in a tune will force both the displayed notation in the editor, exported PDF notation, and tunes played from play links to have the text in any P: tags hidden.</p>
+                <p>When playing the tunes, if:</p>
+                <p class="code">%play_flatten_parts</p>
+                <p>is present in the ABC, any P: tag part play order specified will still apply during playback even if the P: tags are hidden.</p>
+                <p>More details here: <a href="#flattening_parts">Flattening Parts for Playback</a></p>
                 <p>If placed in the ABC file header, it will apply to all of the tunes.</p>
                 <hr class="hidden-print" id="hide_dynamics">
                 <h1 class="page_break_always h1wide">Hiding Dynamics Marks<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>

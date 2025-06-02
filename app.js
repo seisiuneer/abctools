@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2556_060125_1430";
+var gVersionNumber="2557_060225_1200";
 
 var gMIDIInitStillWaiting = false;
 
@@ -16752,7 +16752,7 @@ function processTuneSet(tuneSet,tuneNames,bRepeat,nRepeat) {
 				firstXFound = true;
 			
 				if (bRepeat){
-					line = line + "\n%\n%play_flatten_parts\n%\nP:"+partsControlString+"\n%\nP:A\n%";
+					line = line + "\n%\n%play_flatten_parts\n%\n% Remove the x from the start of the next line to hide all\n% P: tag text but still play the tunes multiple times:\n%xhide_parts_tag\n%\nP:"+partsControlString+"\n%\nP:A\n%";
 				}
 
 				return line+"\nT:"+setName+"\n%\n%%titlefont "+gRenderingFonts.titlefont+"\n"+"%%subtitlefont "+gRenderingFonts.subtitlefont+"\n%\n%hide_rhythm_tag\n%hide_cautionary_ks\n%\n% To fit the set on a PDF page, increase the staffwidth value.\n% 800 often works for a set of three four-stave tunes.\n%\n%%staffwidth 556\n%\n%%stretchlast true\n%";
@@ -20438,6 +20438,7 @@ function GetABCFileHeader(){
       /^%hide_information_labels.*$/,
       /^%hide_rhythm_tag.*$/,
       /^%hide_composer_tag.*$/,
+      /^%hide_parts_tag.*$/,
       /^%hide_dynamics.*$/,
       /^%whistle_tab_key.*$/,
       /^%whistle_tab_octave.*$/,

@@ -230,6 +230,9 @@ var gHideRhythmTag = false;
 // Flag to hide the C: tag display
 var gHideComposerTag = false;
 
+// Flag to hide the P: tag display
+var gHidePartsTag = false;
+
 // Flag to hide the dynamics annotations
 var gHideDynamics = false;
 
@@ -435,6 +438,24 @@ function ScanTuneForHideComposerTag(theTune){
   return false;
 }
 
+// Scan tune for parts tag draw suppression
+function ScanTuneForHidePartsTag(theTune){
+
+  //console.log("ScanTuneForHidePartsTag");
+
+  var searchRegExp = /^%hide_parts_tag.*$/gm
+
+  var isHideParts = searchRegExp.test(theTune);
+
+  if (isHideParts){
+    //console.log("Found %hide_parts_tag")
+    return true;
+  }
+
+  //console.log("No %hide_parts_tag")
+
+  return false;
+}
 
 
 // Scan tune for dynamics draw suppression
@@ -455,7 +476,6 @@ function ScanTuneForHideDynamics(theTune){
 
   return false;
 }
-
 
 // Scan tune for whistle tab shift octave
 function ScanTuneForWhistleTabShiftOctave(theTune){
@@ -1604,6 +1624,9 @@ var tunebook = {};
 
           gHideComposerTag = false;
           gHideComposerTag = ScanTuneForHideComposerTag(book.tunes[currentTune].abc);
+
+          gHidePartsTag = false;
+          gHidePartsTag = ScanTuneForHidePartsTag(book.tunes[currentTune].abc);
 
           gHideDynamics = false;
           gHideDynamics = ScanTuneForHideDynamics(book.tunes[currentTune].abc);
@@ -4418,6 +4441,7 @@ var bookParser = function bookParser(book) {
       /^%hide_information_labels.*$/,
       /^%hide_rhythm_tag.*$/,
       /^%hide_composer_tag.*$/,
+      /^%hide_parts_tag.*$/,
       /^%hide_dynamics.*$/,
       /^%whistle_tab_key.*$/,
       /^%whistle_tab_octave.*$/,
@@ -6477,6 +6501,10 @@ var ParseHeader = function ParseHeader(tokenizer, warn, multilineVars, tune, tun
           if (result.foundKey && tuneBuilder.hasBeginMusic()) tuneBuilder.appendStartingElement('key', startChar, endChar, parseKeyVoice.fixKey(multilineVars.clef, multilineVars.key));
           return [e - i + 1 + ws];
         case "[P:":
+          // MAE 2 Jun 2025 - For hiding P tags
+          if (gHidePartsTag){
+            return [e - i + 1 + ws];
+          }
           if (startLine || tune.lines.length <= tune.lineNum) multilineVars.partForNextLine = {
             title: line.substring(i + 3, e),
             startChar: startChar,
@@ -6532,6 +6560,10 @@ var ParseHeader = function ParseHeader(tokenizer, warn, multilineVars, tune, tun
           if (result.foundKey && tuneBuilder.hasBeginMusic()) tuneBuilder.appendStartingElement('key', multilineVars.iChar + i, multilineVars.iChar + line.length, parseKeyVoice.fixKey(multilineVars.clef, multilineVars.key));
           return [line.length];
         case "P:":
+          // MAE 2 Jun 2025 - For hiding P tags
+          if (gHidePartsTag){
+            return [line.length];
+          }
           if (tuneBuilder.hasBeginMusic()) tuneBuilder.appendElement('part', multilineVars.iChar + i, multilineVars.iChar + line.length, {
             title: line.substring(i + 2)
           });
@@ -6640,15 +6672,18 @@ var ParseHeader = function ParseHeader(tokenizer, warn, multilineVars, tune, tun
           multilineVars.origMeter = multilineVars.meter = this.setMeter(line.substring(2));
           break;
         case 'P':
-          // TODO-PER: There is more to do with parts, but the writer doesn't care.
-          if (multilineVars.is_in_header) tuneBuilder.addMetaText("partOrder", tokenizer.translateString(tokenizer.stripComment(line.substring(2))), {
-            startChar: multilineVars.iChar,
-            endChar: multilineVars.iChar + line.length
-          });else multilineVars.partForNextLine = {
-            title: tokenizer.translateString(tokenizer.stripComment(line.substring(2))),
-            startChar: startChar,
-            endChar: endChar
-          };
+          // MAE 2 Jun 2025 - For hiding P: tags
+          if (!gHidePartsTag){
+            // TODO-PER: There is more to do with parts, but the writer doesn't care.
+            if (multilineVars.is_in_header) tuneBuilder.addMetaText("partOrder", tokenizer.translateString(tokenizer.stripComment(line.substring(2))), {
+              startChar: multilineVars.iChar,
+              endChar: multilineVars.iChar + line.length
+            });else multilineVars.partForNextLine = {
+              title: tokenizer.translateString(tokenizer.stripComment(line.substring(2))),
+              startChar: startChar,
+              endChar: endChar
+            };
+          }
           break;
         case 'Q':
           var tempo = this.setTempo(line, 2, line.length, multilineVars.iChar);
