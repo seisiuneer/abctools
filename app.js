@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2559_060325_0730";
+var gVersionNumber="2560_060325_1500";
 
 var gMIDIInitStillWaiting = false;
 
@@ -16750,19 +16750,21 @@ function processTuneSet(tuneSet,tuneNames,bRepeat,nRepeat) {
 			if (!firstXFound) {
 			
 				firstXFound = true;
+
+        line = line + "\n%\n% Title and subtitle fonts\n%%titlefont "+gRenderingFonts.titlefont+"\n"+"%%subtitlefont "+gRenderingFonts.titlefont+"\n%\n% Tune set title\nT:"+setName+"\n%\n% If you delete the tune set title T: tag, delete the next line\n%hide_first_title_on_play\n%\n% Hide the rhythm tag\n%hide_rhythm_tag\n%\n% Hide cautionary key signatures\n%hide_cautionary_ks\n%\n% Hide any vskip space in the Player\n%hide_vskip_on_play\n%\n% To fit the set on a PDF page, increase the staffwidth value.\n% 850 often works for a set of three four-stave tunes.\n%\n%%staffwidth 556\n%\n% Last measure fills the staff width:\n%%stretchlast true\n%\n";
 			
 				if (bRepeat){
-					line = line + "\n%\n%play_flatten_parts\n%\n% Remove the x from the start of the next line to hide all\n% P: tag text but still play the tunes multiple times:\n%xhide_part_tags\n%\nP:"+partsControlString+"\n%\nP:A\n%";
+					line = line + "% Expand the parts in the Player\n%play_flatten_parts\n%\n% Remove the x from the start of the next line to hide all\n% P: tag text but still play the tunes multiple times:\n%xhide_part_tags\n%\nP:"+partsControlString+"\n%\nP:A\n%";
 				}
 
-				return line+"\nT:"+setName+"\n%\n%%titlefont "+gRenderingFonts.titlefont+"\n"+"%%subtitlefont "+gRenderingFonts.subtitlefont+"\n%\n%hide_rhythm_tag\n%hide_cautionary_ks\n%hide_vskip_on_play\n%\n% To fit the set on a PDF page, increase the staffwidth value.\n% 800 often works for a set of three four-stave tunes.\n%\n%%staffwidth 556\n%\n%%stretchlast true\n%";
+				return line;
 
 			} else {
 				if (bRepeat){
-					return '%%text\n%\nP:'+partLetters[partIndex++]+"\n%";
+					return '%\n% Put some space before the next tune\n%%text\n%\nP:'+partLetters[partIndex++]+"\n%";
 				}
 				else{
-					return '%%text';
+					return '%\n% Put some space before the next tune\n%%text\n%';
 				}
 
 			}
@@ -16785,7 +16787,7 @@ function processTuneSet(tuneSet,tuneNames,bRepeat,nRepeat) {
 	tuneSet = removeAllTags(tuneSet,"W");		
 	tuneSet = removeAllTags(tuneSet,"w");		
 
-	tuneSet += "\n%%text\n\n";
+	tuneSet += '\n%\n% Put some space before the next tune\n%%text\n\n';
 
 	return tuneSet;
 }
@@ -20433,6 +20435,7 @@ function GetABCFileHeader(){
       /^%%titlecaps.*$/,
       /^%%visualtranspose.*$/,      
       /^%%maxstaves.*$/,  
+      /^%hide_first_title_on_play.*$/,  
       /^%hide_vskip_on_play.*$/,  
       /^%left_justify_titles.*$/,
       /^%abcjs_render_params.*$/,
@@ -32809,6 +32812,20 @@ function removeVskipLines(text) {
     .join('\n');
 }
 
+function removeFirstTitleLine(input) {
+  const lines = input.split('\n');
+  const titleLines = lines.filter(line => line.startsWith('T:'));
+
+  if (titleLines.length >= 2) {
+    const index = lines.findIndex(line => line.startsWith('T:'));
+    if (index !== -1) {
+      lines.splice(index, 1); // Remove only the first T: line
+    }
+  }
+
+  return lines.join('\n');
+}
+
 function flattenABCParts(abcString) {
 
 	//debugger;
@@ -32818,11 +32835,11 @@ function flattenABCParts(abcString) {
 	// Strip any commented P: tags
 	abcString = abcString.replace(/^ *% *P:.*$/gm, '');
 
-    //console.log(abcString)
+  //console.log(abcString)
 
 	abcString = abcString.replace(/^\s*[\r\n]+/gm, '');
 
-    //console.log(abcString)
+  //console.log(abcString)
 	
 	// Turn inline P: tags into discrete P: tags
 	abcString = abcString.replace(/\[P:\s+([A-Z])\]/g, 'P:$1\n');
@@ -32831,101 +32848,101 @@ function flattenABCParts(abcString) {
 	// Strip all the extra spaces after P: tags
 	abcString = removeSpacesAndDotsFromPLine(abcString);
 
-    // Extract header text (everything before the first 'P:')
-    const headerMatch = abcString.match(/^[\s\S]*?(?=P:)/);
-    const header = headerMatch ? headerMatch[0] : '';
-    
-    // Extract part order from the first P: tag, which is followed by part labels
-    const partOrderMatch = abcString.match(/P:([^\n]+)/);
-    if (!partOrderMatch) {
-        return abcString;  // No part order found, return the original ABC
-    }
+  // Extract header text (everything before the first 'P:')
+  const headerMatch = abcString.match(/^[\s\S]*?(?=P:)/);
+  const header = headerMatch ? headerMatch[0] : '';
+  
+  // Extract part order from the first P: tag, which is followed by part labels
+  const partOrderMatch = abcString.match(/P:([^\n]+)/);
+  if (!partOrderMatch) {
+      return abcString;  // No part order found, return the original ABC
+  }
 
-    //debugger;
+  //debugger;
 
-    // Capture only the part order, ensure it only captures the sequence after "P:"
-    var partSequence = partOrderMatch[1].replace(/\s+/g, ' ').trim();  // Normalize spaces and trim
+  // Capture only the part order, ensure it only captures the sequence after "P:"
+  var partSequence = partOrderMatch[1].replace(/\s+/g, ' ').trim();  // Normalize spaces and trim
 
-    // Extract each part's content (using P:[A-Z] format for parts)
-    const partPattern = /(P:[A-Z0-9()]*)([\s\S]*?)(?=P:[A-Z]|$)/g;
-    let parts = {};
-    let match;
+  // Extract each part's content (using P:[A-Z] format for parts)
+  const partPattern = /(P:[A-Z0-9()]*)([\s\S]*?)(?=P:[A-Z]|$)/g;
+  let parts = {};
+  let match;
 
-    // Handle sequence tag in header case
-    var gotSequenceTag = false;
-    var sequenceTag = "";
+  // Handle sequence tag in header case
+  var gotSequenceTag = false;
+  var sequenceTag = "";
 
-    while ((match = partPattern.exec(abcString)) !== null) {
-        const partLabel = match[1];
-        const partContent = match[2].trim();
-        if (!gotSequenceTag){
-        	//debugger;
-         	if (partLabel.length > 3){
-        		gotSequenceTag = true;
-        		sequenceTag = partLabel;
-        	}
-        }
-        parts[partLabel] = `${partLabel}\n${partContent}`; // was P:
-    }
+  while ((match = partPattern.exec(abcString)) !== null) {
+      const partLabel = match[1];
+      const partContent = match[2].trim();
+      if (!gotSequenceTag){
+      	//debugger;
+       	if (partLabel.length > 3){
+      		gotSequenceTag = true;
+      		sequenceTag = partLabel;
+      	}
+      }
+      parts[partLabel] = `${partLabel}\n${partContent}`; // was P:
+  }
 
-    //debugger;
+  //debugger;
 
-    // If no sequence found, return orginal ABC
-    if (!gotSequenceTag){
-    	return abcString;
-    }
+  // If no sequence found, return orginal ABC
+  if (!gotSequenceTag){
+  	return abcString;
+  }
 
-    // Helper function to parse part sequences (handles groups and repeats)
-    function parsePartSequence(seq) {
-        let flattenedSequence = [];
-        const groupPattern = /\(([^\)]+)\)(\d*)|([A-Z])(\d*)/g;
-        let groupMatch;
-        
-        while ((groupMatch = groupPattern.exec(seq)) !== null) {
-            if (groupMatch[3]) {
-                // Simple part like A2 or B
-                const part = groupMatch[3];
-                const repeat = parseInt(groupMatch[4], 10) || 1;
-                for (let i = 0; i < repeat; i++) {
-                    flattenedSequence.push(part);
-                }
-            } else if (groupMatch[1]) {
-                // Group like (A2B)3
-                const group = groupMatch[1];
-                const groupRepeat = parseInt(groupMatch[2], 10) || 1;
-                const parsedGroup = parsePartSequence(group);
-                for (let i = 0; i < groupRepeat; i++) {
-                    flattenedSequence = flattenedSequence.concat(parsedGroup);
-                }
-            }
-        }
-        
-        return flattenedSequence;
-    }
+  // Helper function to parse part sequences (handles groups and repeats)
+  function parsePartSequence(seq) {
+      let flattenedSequence = [];
+      const groupPattern = /\(([^\)]+)\)(\d*)|([A-Z])(\d*)/g;
+      let groupMatch;
+      
+      while ((groupMatch = groupPattern.exec(seq)) !== null) {
+          if (groupMatch[3]) {
+              // Simple part like A2 or B
+              const part = groupMatch[3];
+              const repeat = parseInt(groupMatch[4], 10) || 1;
+              for (let i = 0; i < repeat; i++) {
+                  flattenedSequence.push(part);
+              }
+          } else if (groupMatch[1]) {
+              // Group like (A2B)3
+              const group = groupMatch[1];
+              const groupRepeat = parseInt(groupMatch[2], 10) || 1;
+              const parsedGroup = parsePartSequence(group);
+              for (let i = 0; i < groupRepeat; i++) {
+                  flattenedSequence = flattenedSequence.concat(parsedGroup);
+              }
+          }
+      }
+      
+      return flattenedSequence;
+  }
 
-    //debugger;
+  //debugger;
 
-    // Flatten the ABC according to the parsed part sequence
-    const parsedSequence = parsePartSequence(partSequence);
-    let flattenedABC = [];
+  // Flatten the ABC according to the parsed part sequence
+  const parsedSequence = parsePartSequence(partSequence);
+  let flattenedABC = [];
 
-    // Handle header case
-    if (gotSequenceTag){
-         if (parts[sequenceTag]) {
-         	var headerTagContents = stripNewlineIfSingleLine(parts[sequenceTag]);
-            flattenedABC.push(headerTagContents);
-        }
-    }
-    
-    parsedSequence.forEach(part => {
-    	var fullPart = "P:"+part;
-        if (parts[fullPart]) {
-            flattenedABC.push(parts[fullPart]);
-        }
-    });
+  // Handle header case
+  if (gotSequenceTag){
+       if (parts[sequenceTag]) {
+       	var headerTagContents = stripNewlineIfSingleLine(parts[sequenceTag]);
+          flattenedABC.push(headerTagContents);
+      }
+  }
+  
+  parsedSequence.forEach(part => {
+  	var fullPart = "P:"+part;
+      if (parts[fullPart]) {
+          flattenedABC.push(parts[fullPart]);
+      }
+  });
 
-    // Combine header and flattened parts
-    return header + flattenedABC.join('\n');
+  // Combine header and flattened parts
+  return header + flattenedABC.join('\n');
 
 }
 
@@ -32935,18 +32952,28 @@ function flattenABCParts(abcString) {
 function PreProcessPlayABC(theTune){
 
 	//console.log("PreProcessPlayABC");
-	// Initially disable gchord use
-	var flattenParts = false;
 
-	var searchRegExp = /^%play_flatten_parts.*$/gm
+  var theABCFileHeader = GetABCFileHeader();
+
+  // Was first title hiding requested?
+  var searchRegExp = /^%hide_first_title_on_play.*$/gm
+
+  // First look in the tune
+  var hidefirstTitleRequested = searchRegExp.test(theTune);
+
+  if (!hidefirstTitleRequested){
+    hidefirstTitleRequested = searchRegExp.test(theABCFileHeader);
+  }
+  
+  if (hidefirstTitleRequested){
+    theTune = removeFirstTitleLine(theTune);
+  }
+
+	searchRegExp = /^%play_flatten_parts.*$/gm
 
 	var flattenPartsRequested = searchRegExp.test(theTune);
 
 	if (flattenPartsRequested){
-		flattenParts = true;
-	}
-
-	if (flattenParts){
 		// console.log("Before:");
 		// console.log(theTune);
 		theTune = flattenABCParts(theTune);
@@ -33134,7 +33161,7 @@ function PreProcessPlayABC(theTune){
 	// Strip titlespace
 	theTune = theTune.replace(/%%titlespace\s.*\r?\n/g, '');
 
-	theTune = GetABCFileHeader() + theTune;
+	theTune = theABCFileHeader + theTune;
 
   // Filter out any %%vskip spacing
   searchRegExp = /^%hide_vskip_on_play.*$/gm

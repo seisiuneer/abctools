@@ -4446,6 +4446,7 @@ var bookParser = function bookParser(book) {
       /^%%titlecaps.*$/,      
       /^%%visualtranspose.*$/,      
       /^%%maxstaves.*$/, 
+      /^%hide_first_title_on_play.*$/,  
       /^%hide_vskip_on_play.*$/,  
       /^%left_justify_titles.*$/,
       /^%abcjs_render_params.*$/,

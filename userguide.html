@@ -637,6 +637,7 @@
             <a style="text-decoration:none;" href="#visual_transpose">Transposing the Notation Display Relative to the ABC</a>
             <a style="text-decoration:none;" href="#maxstaves">Setting the Maximum Number of Staves to Display</a>
             <a style="text-decoration:none;" href="#hidevskip">Hiding %%vskip When Playing Tunes</a>
+            <a style="text-decoration:none;" href="#hidefirsttitle">Hiding the First Title When Playing Tunes</a>
             </details>
             
             <details>
@@ -1070,7 +1071,7 @@
                         <p class="toc"><a style="text-decoration:none;" href="#visual_transpose">Transposing the Notation Display Relative to the ABC</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#maxstaves">Setting the Maximum Number of Staves to Display</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#hidevskip">Hiding %%vskip When Playing Tunes</a></p>
-
+                        <p class="toc"><a style="text-decoration:none;" href="#hidefirsttitle">Hiding the First Title When Playing Tunes</a></p>
                     </div>
                     
                     <button class="accordion" title="Click to expand/collapse this section">ABC Tricks, Tips, and Limitations</button>
@@ -1343,11 +1344,12 @@
                 <hr>
                 <p>Tunes sets are created by:</p>
                 <p>1) Concatenating the selected tunes under one X: tag.</p>
-                <p>2) Adding a %hide_rhythm_tag annotation to hide any R: tags.</p>
-                <p>3) Adding a %hide_cautionary_ks annotation to suppress cautionary key sigatures on the last line of the tunes as well as any "implied" naturals in the following tune's key signature.</p>
-                <p>4) Adding a %hide_vskip_on_play to hide any %%vskip gaps used for PDF page formatting when the set is played.</p>
-                <p>5) All C:, A:, and O: tags are removed.</p>
-                <p>6) Space is added between the tunes using a %%text annotation.</p>
+                <p>2) Adding a %hide_first_title_on_play to hide the set name when the set is played.</p>
+                <p>3) Adding a %hide_rhythm_tag annotation to hide any R: tags.</p>
+                <p>4) Adding a %hide_cautionary_ks annotation to suppress cautionary key sigatures on the last line of the tunes as well as any "implied" naturals in the following tune's key signature.</p>
+                <p>5) Adding a %hide_vskip_on_play to hide any %%vskip gaps used for PDF page formatting when the set is played.</p>
+                <p>6) All C:, A:, and O: tags are removed.</p>
+                <p>7) Space is added between the tunes using a %%text annotation.</p>
                 <p>Repeated tune playback is accomplished using P: part tags on each tune and a P: tag play control string added to the set along with adding a tool-private %play_flatten_parts annotation to tell the player to expand the parts when playing.</p>
                 <p>Additionally, a disabled %hide_part_tags annotation (an 'x' is placed before the annotation to disable it) is added to allow you to easily hide the P: tag text if desired by enabling the annotation by removing the 'x'.</p>
                 <p>For more information on parts, parts play control strings, and parts playback flattening please see this section below:</p>
@@ -3979,14 +3981,15 @@
                     % These directives can be added to each tune or added to the ABC file header:<br/>
                     %%visualtranspose 2<br/>
                     %%maxstaves 1<br/>
+                    %hide_first_title_on_play<br/>
                     %hide_vskip_on_play<br/>
-                    %left_justify_titles<br/>
                     %hide_information_labels<br/>
                     %hide_rhythm_tag<br/>
                     %hide_composer_tag<br/>
                     %hide_part_tags<br/>
                     %hide_dynamics<br/>
                     %hide_cautionary_ks<br/>
+                    %left_justify_titles<br/>
                     %no_title_reverser<br/>
                     %whistle_tab_key<br/>
                     %whistle_tab_octave<br/>
@@ -5729,6 +5732,13 @@
                 <p>To hide any gaps from %%vskip annotations in the Player, you can add the following tool-specific ABC command:</p>
                 <p class="code">%hide_vskip_on_play</p>
                 <p>This can be useful for tune sets where you are using %%vskip to push a tune to a new page in a PDF, but don't want the gap to show up when playing the set.</p>
+                <p>If placed in the ABC file header, it will apply to all of the tunes.</p>
+                <hr class="hidden-print" id="hidefirsttitle">
+                <h1 class="page_break_always h1wide">Hiding the First Title When Playing Tunes<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+                <p>To hide the first title in a set of tunes with multiple T: tags in the Player, you can add the following tool-specific ABC command:</p>
+                <p class="code">%hide_first_title_on_play</p>
+                <p>This can be useful for tune sets where you have an initial T: tag for the set title, followed later by a T: tag for the first tune title and don't want to see the set title along with the first tune title when playing the tune.</p>
+                <p>This annotation is added by default when creating a tune set using the <strong>Create Tune Set</strong> feature.</p>
                 <p>If placed in the ABC file header, it will apply to all of the tunes.</p>
                 <hr class="hidden-print" id="tabtranspose">
                 <h1 class="page_break_always h1wide">Transposing Notation Independent of Tablature<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
