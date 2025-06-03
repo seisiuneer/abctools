@@ -1345,8 +1345,9 @@
                 <p>1) Concatenating the selected tunes under one X: tag.</p>
                 <p>2) Adding a %hide_rhythm_tag annotation to hide any R: tags.</p>
                 <p>3) Adding a %hide_cautionary_ks annotation to suppress cautionary key sigatures on the last line of the tunes as well as any "implied" naturals in the following tune's key signature.</p>
-                <p>4) All C:, A:, and O: tags are removed.</p>
-                <p>5) Space is added between the tunes using a %%text annotation.</p>
+                <p>4) Adding a %hide_vskip_on_play to hide any %%vskip gaps used for PDF page formatting when the set is played.</p>
+                <p>5) All C:, A:, and O: tags are removed.</p>
+                <p>6) Space is added between the tunes using a %%text annotation.</p>
                 <p>Repeated tune playback is accomplished using P: part tags on each tune and a P: tag play control string added to the set along with adding a tool-private %play_flatten_parts annotation to tell the player to expand the parts when playing.</p>
                 <p>Additionally, a disabled %hide_part_tags annotation (an 'x' is placed before the annotation to disable it) is added to allow you to easily hide the P: tag text if desired by enabling the annotation by removing the 'x'.</p>
                 <p>For more information on parts, parts play control strings, and parts playback flattening please see this section below:</p>
