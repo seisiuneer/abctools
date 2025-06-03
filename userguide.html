@@ -636,6 +636,7 @@
             <a style="text-decoration:none;" href="#right_text">Adding Right-Justified Text</a>
             <a style="text-decoration:none;" href="#visual_transpose">Transposing the Notation Display Relative to the ABC</a>
             <a style="text-decoration:none;" href="#maxstaves">Setting the Maximum Number of Staves to Display</a>
+            <a style="text-decoration:none;" href="#hidevskip">Hiding %%vskip When Playing Tunes</a>
             </details>
             
             <details>
@@ -1068,6 +1069,7 @@
                         <p class="toc"><a style="text-decoration:none;" href="#right_text">Adding Right-Justified Text</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#visual_transpose">Transposing the Notation Display Relative to the ABC</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#maxstaves">Setting the Maximum Number of Staves to Display</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#hidevskip">Hiding %%vskip When Playing Tunes</a></p>
 
                     </div>
                     
@@ -1365,7 +1367,7 @@
                 <p>and replace them with:</p>
                 <p class="code">%%right</p>
                 <p>The %%right command for the replace should be followed by a space so that there is a space between the command and the composer text.</p>
-                 <hr id="hamburger_reorder">
+                <hr id="hamburger_reorder">
                 <p><strong>Reorder Tunes</strong></p>
                 <p>Brings up a dialog where you can change the order of the tunes.</p>
                 <hr id="hamburger_delete">
@@ -3976,6 +3978,7 @@
                     % These directives can be added to each tune or added to the ABC file header:<br/>
                     %%visualtranspose 2<br/>
                     %%maxstaves 1<br/>
+                    %hide_vskip_on_play<br/>
                     %left_justify_titles<br/>
                     %hide_information_labels<br/>
                     %hide_rhythm_tag<br/>
@@ -5715,10 +5718,16 @@
                 <p class="code">%%visualtranspose 2</p>
                 <hr class="hidden-print" id="maxstaves">
                 <h1 class="page_break_always h1wide">Setting the Maximum Number of Staves to Display<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-                <p>To set the maximum number of staves you want displayed for each tune, you use the following tool-specific ABC command:</p>
+                <p>To set the maximum number of staves you want displayed for each tune, you can add the following tool-specific ABC command:</p>
                 <p class="code">%%maxstaves #_of_staves</p>
                 <p>For example, only show the first stave for incipits:</p>
                 <p class="code">%%maxstaves 1</p>
+                <p>If placed in the ABC file header, it will apply to all of the tunes.</p>
+                <hr class="hidden-print" id="hidevskip">
+                <h1 class="page_break_always h1wide">Hiding %%vskip When Playing Tunes<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+                <p>To hide any gaps from %%vskip annotations in the Player, you can add the following tool-specific ABC command:</p>
+                <p class="code">%hide_vskip_on_play</p>
+                <p>This can be useful for tune sets where you are using %%vskip to push a tune to a new page in a PDF, but don't want the gap to show up when playing the set.</p>
                 <p>If placed in the ABC file header, it will apply to all of the tunes.</p>
                 <hr class="hidden-print" id="tabtranspose">
                 <h1 class="page_break_always h1wide">Transposing Notation Independent of Tablature<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>

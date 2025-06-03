@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2558_060225_1330";
+var gVersionNumber="2559_060325_0730";
 
 var gMIDIInitStillWaiting = false;
 
@@ -16755,7 +16755,7 @@ function processTuneSet(tuneSet,tuneNames,bRepeat,nRepeat) {
 					line = line + "\n%\n%play_flatten_parts\n%\n% Remove the x from the start of the next line to hide all\n% P: tag text but still play the tunes multiple times:\n%xhide_part_tags\n%\nP:"+partsControlString+"\n%\nP:A\n%";
 				}
 
-				return line+"\nT:"+setName+"\n%\n%%titlefont "+gRenderingFonts.titlefont+"\n"+"%%subtitlefont "+gRenderingFonts.subtitlefont+"\n%\n%hide_rhythm_tag\n%hide_cautionary_ks\n%\n% To fit the set on a PDF page, increase the staffwidth value.\n% 800 often works for a set of three four-stave tunes.\n%\n%%staffwidth 556\n%\n%%stretchlast true\n%";
+				return line+"\nT:"+setName+"\n%\n%%titlefont "+gRenderingFonts.titlefont+"\n"+"%%subtitlefont "+gRenderingFonts.subtitlefont+"\n%\n%hide_rhythm_tag\n%hide_cautionary_ks\n%hide_vskip_on_play\n%\n% To fit the set on a PDF page, increase the staffwidth value.\n% 800 often works for a set of three four-stave tunes.\n%\n%%staffwidth 556\n%\n%%stretchlast true\n%";
 
 			} else {
 				if (bRepeat){
@@ -20432,7 +20432,8 @@ function GetABCFileHeader(){
       /^%%keywarn.*$/,
       /^%%titlecaps.*$/,
       /^%%visualtranspose.*$/,      
-      /^%%maxstaves.*$/,      
+      /^%%maxstaves.*$/,  
+      /^%hide_vskip_on_play.*$/,  
       /^%left_justify_titles.*$/,
       /^%abcjs_render_params.*$/,
       /^%hide_information_labels.*$/,
@@ -32801,6 +32802,13 @@ const removeSpacesAndDotsFromPLine = (input) => {
     .join('\n'); // Join the lines back into a single string
 };
 
+function removeVskipLines(text) {
+  return text
+    .split('\n')
+    .filter(line => !line.trim().startsWith('%%vskip'))
+    .join('\n');
+}
+
 function flattenABCParts(abcString) {
 
 	//debugger;
@@ -32918,6 +32926,7 @@ function flattenABCParts(abcString) {
 
     // Combine header and flattened parts
     return header + flattenedABC.join('\n');
+
 }
 
 
@@ -33126,6 +33135,15 @@ function PreProcessPlayABC(theTune){
 	theTune = theTune.replace(/%%titlespace\s.*\r?\n/g, '');
 
 	theTune = GetABCFileHeader() + theTune;
+
+  // Filter out any %%vskip spacing
+  searchRegExp = /^%hide_vskip_on_play.*$/gm
+
+  var hidevskipRequested = searchRegExp.test(theTune);
+
+  if (hidevskipRequested){
+    theTune = removeVskipLines(theTune);
+  }
 
 	return(theTune);
 
