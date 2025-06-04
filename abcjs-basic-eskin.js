@@ -4455,6 +4455,7 @@ var bookParser = function bookParser(book) {
       /^%hide_composer_tag.*$/,
       /^%hide_parts_tag.*$/,
       /^%hide_part_tags.*$/,
+      /^%hide_player_part_tags.*$/,
       /^%hide_dynamics.*$/,
       /^%whistle_tab_key.*$/,
       /^%whistle_tab_octave.*$/,

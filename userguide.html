@@ -1352,6 +1352,8 @@
                 <p>7) Space is added between the tunes using a %%text annotation.</p>
                 <p>Repeated tune playback is accomplished using P: part tags on each tune and a P: tag play control string added to the set along with adding a tool-private %play_flatten_parts annotation to tell the player to expand the parts when playing.</p>
                 <p>Additionally, a disabled %hide_part_tags annotation (an 'x' is placed before the annotation to disable it) is added to allow you to easily hide the P: tag text if desired by enabling the annotation by removing the 'x'.</p>
+                <p>Finally, a %hide_player_part_tags annotation is added to hide the P: tags in the Player.</p>
+                <p>Comment out the %hide_player_part_tags annotation if you want to see the P: tag values in the Player.</p>
                 <p>For more information on parts, parts play control strings, and parts playback flattening please see this section below:</p>
                 <p style="text-align: center"><a href="#flattening_parts">Flattening Parts for Playback</a></p>
                 <hr>
@@ -3078,6 +3080,8 @@
                 <p>You may hide the text in one or more P: tags in the generated notation by adding the following annotation anywhere in the tune:</p>
                 <p class="code">% Hide parts tag display<br/><br/>%hide_part_tags</p>
                 <p>This just hides any P: tag text in the notation, if present in the ABC, %play_flatten_parts still applies.</p>
+                <p>If you want to just hide any P: tag text in the Player, add the following annotation anywhere in the tune:
+                <p class="code">% Hide parts tag display in the Player<br/><br/>%hide_player_part_tags</p>
                 <hr class="hidden-print" id="play_alternate_chords">
                 <h1 class="page_break_always h1wide">Playing Alternate Chords<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/-JXVK23SVf4" title="Playing Alternate Chords" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
@@ -3987,6 +3991,7 @@
                     %hide_rhythm_tag<br/>
                     %hide_composer_tag<br/>
                     %hide_part_tags<br/>
+                    %hide_player_part_tags<br/>
                     %hide_dynamics<br/>
                     %hide_cautionary_ks<br/>
                     %left_justify_titles<br/>
@@ -5644,7 +5649,9 @@
                 <p class="code">%play_flatten_parts</p>
                 <p>is present in the ABC, any P: tag part play order specified will still apply during playback even if the P: tags are hidden.</p>
                 <p>More details here: <a href="#flattening_parts">Flattening Parts for Playback</a></p>
-                <p>If placed in the ABC file header, it will apply to all of the tunes.</p>
+                <p>If you want to just hide any P: tag text in the Player, add the following annotation anywhere in the tune:
+                <p class="code">% Hide parts tag display in the Player<br/><br/>%hide_player_part_tags</p>
+                <p>If either is placed in the ABC file header, they will apply to all of the tunes.</p>
                 <hr class="hidden-print" id="hide_dynamics">
                 <h1 class="page_break_always h1wide">Hiding Dynamics Marks<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <p>You may hide any !ppp! style dynamics marks as well as crescendo and diminuendo hairpins by adding the following annotation anywhere in the tune:</p>
