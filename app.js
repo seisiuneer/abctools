@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2563_060425_0800";
+var gVersionNumber="2564_060425_1300";
 
 var gMIDIInitStillWaiting = false;
 
@@ -16727,7 +16727,7 @@ function generateIndexedRepeatedString(str, itemCount, repeatCount) {
     return result.join('');
 }
 
-function processTuneSet(tuneSet,tuneNames,bRepeat,nRepeat) {
+function processTuneSet(tuneSet,tuneNames,bRepeat,nRepeat,bIsVerbose) {
 
 	var setName = tuneNames.join(' / ');
 
@@ -16751,25 +16751,56 @@ function processTuneSet(tuneSet,tuneNames,bRepeat,nRepeat) {
 			
 				firstXFound = true;
 
-        line = line + "\n%\n% Title and subtitle fonts\n%%titlefont "+gRenderingFonts.titlefont+"\n"+"%%subtitlefont "+gRenderingFonts.titlefont+"\n%\n% Tune set title\nT:"+setName+"\n%\n% If you delete the tune set title T tag, delete the next line\n%hide_first_title_on_play\n%\n% Hide the rhythm tag\n%hide_rhythm_tag\n%\n% Hide cautionary key signatures\n%hide_cautionary_ks\n%\n% Hide any vskip space in the Player\n%hide_vskip_on_play\n%\n% To fit the set on a PDF page, increase the staffwidth value.\n% 850 often works for a set of three four-stave tunes.\n%\n%%staffwidth 556\n%\n% Last measure fills the staff width\n%%stretchlast true\n%\n";
-			
-				if (bRepeat){
-					line = line + "% Expand the parts in the Player\n%play_flatten_parts\n%\n% Remove the x from the start of the next line to always hide all\n% P tag text in the notation and the Player.\n% Even if the P tags are hidden, the tunes will play multiple times.\n%xhide_part_tags\n%\n% Delete the next line to show the P tag text in the Player.\n% If %hide_parts_tags is present above, it takes precedence.\n%hide_player_part_tags\n%\n% Parts play order\nP:"+partsControlString+"\n%\nP:A\n%";
-				}
+        if (bIsVerbose){
+
+          line = line + "\n%\n% Title and subtitle fonts\n%%titlefont "+gRenderingFonts.titlefont+"\n"+"%%subtitlefont "+gRenderingFonts.titlefont+"\n%\n% Tune set title\nT:"+setName+"\n%\n% If you delete the tune set title T tag, delete the next line\n%hide_first_title_on_play\n%\n% Hide the rhythm tag\n%hide_rhythm_tag\n%\n% Hide cautionary key signatures\n%hide_cautionary_ks\n%\n% Hide any vskip space in the Player\n%hide_vskip_on_play\n%\n% To fit the set on a PDF page, increase the staffwidth value.\n% 850 often works for a set of three four-stave tunes.\n%\n%%staffwidth 556\n%\n% Last measure fills the staff width\n%%stretchlast true\n%\n";
+  			
+  				if (bRepeat){
+  					line = line + "% Expand the parts in the Player\n%play_flatten_parts\n%\n% Remove the x from the start of the next line to always hide all\n% P tag text in the notation and the Player.\n% Even if the P tags are hidden, the tunes will play multiple times.\n%xhide_part_tags\n%\n% Delete the next line to show the P tag text in the Player.\n% If %hide_parts_tags is present above, it takes precedence.\n%hide_player_part_tags\n%\n% Parts play order\nP:"+partsControlString+"\n%\nP:A\n%";
+  				}
+
+        }
+        else{
+
+          line = line + "\n%\n%%titlefont "+gRenderingFonts.titlefont+"\n"+"%%subtitlefont "+gRenderingFonts.titlefont+"\n%\nT:"+setName+"\n%\n%hide_first_title_on_play\n%hide_rhythm_tag\n%hide_cautionary_ks\n%hide_vskip_on_play\n%%staffwidth 556\n%%stretchlast true\n%\n";
+        
+          if (bRepeat){
+            line = line + "%play_flatten_parts\n%xhide_part_tags\n%hide_player_part_tags\n%\nP:"+partsControlString+"\n%\nP:A\n%";
+          }
+
+        }
 
 				return line;
 
 			} else {
+
 				if (bRepeat){
-					return '%\n% Put some space before the next tune\n%%text\n%\nP:'+partLetters[partIndex++]+"\n%";
+
+          if (bIsVerbose){
+					 return '%\n% Put some space before the next tune\n%%text\n%\nP:'+partLetters[partIndex++]+"\n%";
+          }
+          else{
+           return '%\n%%text\n%\nP:'+partLetters[partIndex++]+"\n%";            
+          }
+
 				}
 				else{
-					return '%\n% Put some space before the next tune\n%%text\n%';
+
+          if (bIsVerbose){
+           return '%\n% Put some space before the next tune\n%%text\n%';
+          }
+          else{
+           return '%\n%%text\n%';            
+          }
+
 				}
 
 			}
+
 		} else {
+
 			return line;
+
 		}
 	});
 
@@ -16787,7 +16818,16 @@ function processTuneSet(tuneSet,tuneNames,bRepeat,nRepeat) {
 	tuneSet = removeAllTags(tuneSet,"W");		
 	tuneSet = removeAllTags(tuneSet,"w");		
 
-	tuneSet += '\n%\n% Put some space before the next tune\n%%text\n\n';
+  if (bIsVerbose){
+
+	 tuneSet += '\n%\n% Put some space before the next tune\n%%text\n\n';
+
+  }
+  else{
+
+   tuneSet += '\n%\n%%text\n\n'; 
+
+  }
 
 	return tuneSet;
 }
@@ -16852,6 +16892,7 @@ function BuildTuneSetOpen(bOpenInNewTabInEditor){
 
 	var bRepeat = false;
 	var nRepeat = 1;
+  var bIsVerbose = true;
 
 	var elem = document.querySelector("input[name=repeat_enable]");
 
@@ -16879,7 +16920,15 @@ function BuildTuneSetOpen(bOpenInNewTabInEditor){
 
 	BuildTuneSetRepeatCount = nRepeat;
 
-	//console.log("bRepeat "+bRepeat+" nRepeat "+nRepeat);
+  elem = document.querySelector("input[name=is_verbose]");
+
+  if (elem){
+    bIsVerbose = elem.checked;
+  }
+
+  BuildTuneSetVerbose = bIsVerbose;
+
+  //console.log("bRepeat "+bRepeat+" nRepeat "+nRepeat+ " bIsVerbose "+bIsVerbose);
 
 	// Save the settings for next time
 	SaveConfigurationSettings();
@@ -16922,7 +16971,7 @@ function BuildTuneSetOpen(bOpenInNewTabInEditor){
 
 	}
 
-	tuneSet = processTuneSet(tuneSet, setNames, bRepeat, nRepeat);
+	tuneSet = processTuneSet(tuneSet, setNames, bRepeat, nRepeat, bIsVerbose);
 
 	var tuneSetName = setNames.join(' / ');
 	
@@ -16979,6 +17028,7 @@ function BuildTuneSetAppend(){
 
 	var bRepeat = false;
 	var nRepeat = 1;
+  var bIsVerbose = true;
 
 	var elem = document.querySelector("input[name=repeat_enable]");
 
@@ -17006,7 +17056,15 @@ function BuildTuneSetAppend(){
 
 	BuildTuneSetRepeatCount = nRepeat;
 
-	//console.log("bRepeat "+bRepeat+" nRepeat "+nRepeat);
+  elem = document.querySelector("input[name=is_verbose]");
+
+  if (elem){
+    bIsVerbose = elem.checked;
+  }
+  
+  BuildTuneSetVerbose = bIsVerbose;
+
+	//console.log("bRepeat "+bRepeat+" nRepeat "+nRepeat+ " bIsVerbose "+bIsVerbose);
 
 	// Save the settings for next time
 	SaveConfigurationSettings();
@@ -17049,7 +17107,7 @@ function BuildTuneSetAppend(){
 
 	}
 
-	tuneSet = processTuneSet(tuneSet, setNames, bRepeat, nRepeat);
+	tuneSet = processTuneSet(tuneSet, setNames, bRepeat, nRepeat, bIsVerbose);
 
 	var tuneSetName = setNames.join(' / ');
 	
@@ -17141,6 +17199,7 @@ function BuildTuneSetClearSelection(){
 var BuildTuneSetSelectionOrder = [];
 var BuildTuneSetRepeat = false;
 var BuildTuneSetRepeatCount = 1
+var BuildTuneSetVerbose = true;
 
 function BuildTuneSet(){
 
@@ -17168,11 +17227,12 @@ function BuildTuneSet(){
 
 	var theData = {
 		repeat_enable:BuildTuneSetRepeat,
-		repeat_count:BuildTuneSetRepeatCount
+		repeat_count:BuildTuneSetRepeatCount,
+    is_verbose:BuildTuneSetVerbose
 	};
 
 	// MAE 14 Jul 2024 - Make the div fill the screen
-	var theHeight = window.innerHeight - 600;
+	var theHeight = window.innerHeight - 630;
 
 	var theTuneSetDiv = '<div id="tuneset-tune-list" style="overflow:auto;height:'+theHeight+'px;margin-top:12px;margin-bottom:18px;">';
 
@@ -17189,6 +17249,7 @@ function BuildTuneSet(){
 		{html: '<p style="margin-top:8px;margin-bottom:12px;font-size:12pt;line-height:18pt;font-family:helvetica">Select the tunes you want in a tune set, then choose one of the three actions below:</p>'},  
 		{html: '<p style="text-align:center;margin-top:14px;"><input id="tuneset_select_all" class="advancedcontrols btn btn-injectcontrols-headers" onclick="BuildTuneSetSelectAll();" type="button" value="Select All" title="Selects all the tunes for set creation"><input id="tuneset_clear_selection" class="advancedcontrols btn btn-injectcontrols-headers" onclick="BuildTuneSetClearSelection();" type="button" value="Clear Selection" title="Unselects all the tunes for set creation"></p>'},
 		{html: theTuneSetDiv},
+      {name: "          Include verbose annotation descriptions", id: "is_verbose", type:"checkbox", cssClass:"create_tune_set_text_checkbox"},
 	  	{name: "          Repeat each tune in the set when played", id: "repeat_enable", type:"checkbox", cssClass:"create_tune_set_text_checkbox"},
 	    {name: "Repeat count:", id: "repeat_count", type:"number", cssClass:"create_tune_set_text"},
 		{html: '<p style="text-align:center;margin-top:18px;margin-bottom:20px"><input id="tuneset_open_in_player" style="margin-right:18px;" class="advancedcontrols btn btn-tuneset-inject" onclick="BuildTuneSetOpen(false);" type="button" value="Open in New Tab in Player" title="Opens the tune set in a new tab in the Player"><input id="tuneset_open_in_editor" style="margin-right:18px;" class="advancedcontrols btn btn-tuneset-inject" onclick="BuildTuneSetOpen(true);" type="button" value="Open in New Tab in Editor" title="Opens the tune set in a new tab in the Editor"><input id="tuneset_append_to_abc" class="advancedcontrols btn btn-tuneset-inject" onclick="BuildTuneSetAppend();" type="button" value="Append to ABC" title="Appends the tune set to the current ABC"></p>'}
@@ -17200,6 +17261,9 @@ function BuildTuneSet(){
 
     		var bRepeat = args.result.repeat_enable;
     		BuildTuneSetRepeat = bRepeat;
+
+        var bIsVerbose = args.result.is_verbose;
+        BuildTuneSetVerbose = bIsVerbose;
 
     		var nRepeat = args.result.repeat_count;
 
@@ -40524,6 +40588,12 @@ function GetInitialConfigurationSettings(){
 		BuildTuneSetRepeat = (val == "true");
 	}
 
+  BuildTuneSetVerbose = true;
+  val = localStorage.BuildTuneSetVerbose;
+  if (val){
+    BuildTuneSetVerbose = (val == "true");
+  }  
+
 	BuildTuneSetRepeatCount = 1;
 	val = localStorage.BuildTuneSetRepeatCount;
 	if (val){
@@ -40937,6 +41007,7 @@ function SaveConfigurationSettings(){
 		// Tune set creation
 		localStorage.BuildTuneSetRepeat = BuildTuneSetRepeat;
 		localStorage.BuildTuneSetRepeatCount = BuildTuneSetRepeatCount;
+    localStorage.BuildTuneSetVerbose = BuildTuneSetVerbose;
 
 		// Force Android?
 		localStorage.forceAndroid = gForceAndroid;
