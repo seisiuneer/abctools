@@ -16751,10 +16751,10 @@ function processTuneSet(tuneSet,tuneNames,bRepeat,nRepeat) {
 			
 				firstXFound = true;
 
-        line = line + "\n%\n% Title and subtitle fonts\n%%titlefont "+gRenderingFonts.titlefont+"\n"+"%%subtitlefont "+gRenderingFonts.titlefont+"\n%\n% Tune set title\nT:"+setName+"\n%\n% If you delete the tune set title T: tag, delete the next line\n%hide_first_title_on_play\n%\n% Hide the rhythm tag\n%hide_rhythm_tag\n%\n% Hide cautionary key signatures\n%hide_cautionary_ks\n%\n% Hide any vskip space in the Player\n%hide_vskip_on_play\n%\n% To fit the set on a PDF page, increase the staffwidth value.\n% 850 often works for a set of three four-stave tunes.\n%\n%%staffwidth 556\n%\n% Last measure fills the staff width\n%%stretchlast true\n%\n";
+        line = line + "\n%\n% Title and subtitle fonts\n%%titlefont "+gRenderingFonts.titlefont+"\n"+"%%subtitlefont "+gRenderingFonts.titlefont+"\n%\n% Tune set title\nT:"+setName+"\n%\n% If you delete the tune set title T tag, delete the next line\n%hide_first_title_on_play\n%\n% Hide the rhythm tag\n%hide_rhythm_tag\n%\n% Hide cautionary key signatures\n%hide_cautionary_ks\n%\n% Hide any vskip space in the Player\n%hide_vskip_on_play\n%\n% To fit the set on a PDF page, increase the staffwidth value.\n% 850 often works for a set of three four-stave tunes.\n%\n%%staffwidth 556\n%\n% Last measure fills the staff width\n%%stretchlast true\n%\n";
 			
 				if (bRepeat){
-					line = line + "% Expand the parts in the Player\n%play_flatten_parts\n%\n% Remove the x from the start of the next line to always hide all\n% P: tag text in the notation and the Player.\n% Even if the P: tags are hidden, the tunes will play multiple times.\n%xhide_part_tags\n%\n% Delete the next line to show the P: tag text in the Player.\n% If %hide_parts_tags is present above, it takes precedence.\n%hide_player_part_tags\n%\n% Parts play order\nP:"+partsControlString+"\n%\nP:A\n%";
+					line = line + "% Expand the parts in the Player\n%play_flatten_parts\n%\n% Remove the x from the start of the next line to always hide all\n% P tag text in the notation and the Player.\n% Even if the P tags are hidden, the tunes will play multiple times.\n%xhide_part_tags\n%\n% Delete the next line to show the P tag text in the Player.\n% If %hide_parts_tags is present above, it takes precedence.\n%hide_player_part_tags\n%\n% Parts play order\nP:"+partsControlString+"\n%\nP:A\n%";
 				}
 
 				return line;
