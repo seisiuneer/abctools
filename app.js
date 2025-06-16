@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2564_060425_1300";
+var gVersionNumber="2566_061625_0800";
 
 var gMIDIInitStillWaiting = false;
 
@@ -50134,6 +50134,49 @@ function SetupContextMenu(showUpdateItem){
 	var cm1 = new ContextMenu('.context-menu', items);
 }
 
+// 
+// Optimize the margins of the top buttons
+//
+function SetTopButtonMargins(){
+  
+  if (gIsQuickEditor){
+    return
+  }
+
+  var elems = ["openabcfile","newabcfile","saveabcfile","saveaspdf","saveaswebsite","copybutton","playbutton","rawmodebutton"];
+
+  var theMargin = 7;
+
+  if (isMobileBrowser()){
+
+    theMargin = 18;
+
+  }
+
+  if (gIsIPad){
+
+    theMargin = 14;
+
+  }
+
+  if (giPadTwoColumn){
+
+    theMargin = 22;
+  
+  }
+
+  elems.forEach(function(id) {
+
+    var el = document.getElementById(id);
+    
+    if (el) {
+      el.style.marginRight = theMargin+"px";
+    }
+
+  });
+
+}
+
 function DoStartup() {
 
 	// Init global state
@@ -50835,6 +50878,9 @@ function DoStartup() {
 	// Set the initial instrument tab button display state
 	// Also does a recalc of notation top position
 	ShowHideTabButtons();
+
+  // Optimize layout of top buttons
+  SetTopButtonMargins();
 
 	// Force recalculation of the notation top position on ABC text area resize
 

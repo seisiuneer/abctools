@@ -120,7 +120,7 @@
 					<div id="fileoperations">
 						<input type="file" id="selectabcfile" accept=".abc,.txt,.ABC,.TXT,.xml,.XML,.musicxml,.mxl,.MXL,.mid,.MID,.midi,.MIDI,.bww,.BWW" hidden /> 
 						<!--our custom abc file upload button-->
-						<input style="margin-right:8px" class="abcupload btn btn-top" title="Opens an existing ABC, MusicXML, BWW, or MIDI file.&nbsp;&nbsp;You may also drag-and-drop a single ABC, MusicXML, BWW, or MIDI file on the editor area to add it." onclick="fileOpenIntercept(event);" type="button" value="Open"/>
+						<input style="margin-right:8px" class="abcupload btn btn-top" id="openabcfile" title="Opens an existing ABC, MusicXML, BWW, or MIDI file.&nbsp;&nbsp;You may also drag-and-drop a single ABC, MusicXML, BWW, or MIDI file on the editor area to add it." onclick="fileOpenIntercept(event);" type="button" value="Open"/>
 						<input style="margin-right:8px" class="newabcfile btn btn-top" id="newabcfile" onclick="AddABC();" type="button" value="Add" title="Add your own tunes, restore from a saved snapshot, seach for tunes, re-order tunes, delete tunes, or add examples tunes and song templates to the ABC"/>
 						<input style="margin-right:8px" class="saveabcfiledisabled btn btn-top" id="saveabcfile" onclick="SaveABC();" type="button" value="Save" title="Saves the current ABC text to a file"/>
 						<input style="margin-right:8px" class="saveaspdfdisabled btn btn-top" id="saveaspdf" onclick="PDFExportDialog();" type="button" value="Export PDF" title="Exports a PDF tunebook"/>
