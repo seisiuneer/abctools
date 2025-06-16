@@ -50172,7 +50172,7 @@ function SetTopButtonMargins(){
 
     var elems = ["openabcfile","newabcfile","saveabcfile","saveaspdf","saveaswebsite","copybutton","playbutton","rawmodebutton"];
 
-    var theMargin = 7;
+    var theMargin = 8;
 
     if (isMobileBrowser()){
 
