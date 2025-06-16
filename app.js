@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2566_061625_0800";
+var gVersionNumber="2567_061625_0830";
 
 var gMIDIInitStillWaiting = false;
 
@@ -50140,40 +50140,69 @@ function SetupContextMenu(showUpdateItem){
 function SetTopButtonMargins(){
   
   if (gIsQuickEditor){
-    return
-  }
 
-  var elems = ["openabcfile","newabcfile","saveabcfile","saveaspdf","saveaswebsite","copybutton","playbutton","rawmodebutton"];
+    var elems = ["openabcfile","newabcfile","saveabcfile","copybutton","playbutton","rawmodebutton"];
 
-  var theMargin = 7;
+    var theMargin = 28;
 
-  if (isMobileBrowser()){
+    if (isMobileBrowser()){
 
-    theMargin = 18;
+      theMargin = 40;
 
-  }
-
-  if (gIsIPad){
-
-    theMargin = 14;
-
-  }
-
-  if (giPadTwoColumn){
-
-    theMargin = 22;
-  
-  }
-
-  elems.forEach(function(id) {
-
-    var el = document.getElementById(id);
-    
-    if (el) {
-      el.style.marginRight = theMargin+"px";
     }
 
-  });
+    if (giPadTwoColumn){
+
+      theMargin = 40;
+
+    }
+
+    elems.forEach(function(id) {
+
+      var el = document.getElementById(id);
+      
+      if (el) {
+        el.style.marginRight = theMargin+"px";
+      }
+
+    });
+    
+  }
+  else{
+
+    var elems = ["openabcfile","newabcfile","saveabcfile","saveaspdf","saveaswebsite","copybutton","playbutton","rawmodebutton"];
+
+    var theMargin = 7;
+
+    if (isMobileBrowser()){
+
+      theMargin = 20;
+
+    }
+
+    if (gIsIPad){
+
+      theMargin = 14;
+
+    }
+
+    if (giPadTwoColumn){
+
+      theMargin = 22;
+    
+    }
+
+    elems.forEach(function(id) {
+
+      var el = document.getElementById(id);
+      
+      if (el) {
+        el.style.marginRight = theMargin+"px";
+      }
+
+    });
+
+  }
 
 }
 
