@@ -319,7 +319,28 @@
         padding-left:0px;
         text-align: center;
         }
-        
+
+        .sidebar summary {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          position: relative;
+          padding-right: 28px; /* Space for caret */
+        }
+
+        .sidebar summary::after {
+          content: "▶";
+          font-size: 10pt;
+          transition: transform 0.2s ease;
+          margin-left: auto;
+          margin-right: 4px; /* space to the right of caret */
+          display: inline-block; /* This enables transition to work in Safari */
+        }
+
+        /* Rotate caret when <details> is open */
+        .sidebar details[open] summary::after {
+          transform: rotate(90deg);
+        }
         </style>
         
     </head>
