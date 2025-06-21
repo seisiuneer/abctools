@@ -100,20 +100,38 @@
         margin-bottom:12px;
         }
         
-        .accordion {
-        font-size:14pt  !important;
-        font-family:"Helvetica" !important;
-        background-color: #eee;
-        color: #000 !important;
-        cursor: pointer !important;
-        padding: 14px !important;
-        width: 100% !important;
-        text-align: left !important;
-        border: .5px solid #000 !important;
-        outline: none !important;
-        margin-bottom:8px;
-        }
-        
+		.accordion {
+		  position: relative;
+		  display: flex !important;
+		  justify-content: space-between;
+		  align-items: center;
+		  font-size: 14pt !important;
+		  font-family: "Helvetica" !important;
+		  background-color: #eee !important;
+		  color: #000 !important;
+		  cursor: pointer !important;
+		  padding: 14px !important;
+		  padding-left:20px !important;
+		  width: 100% !important;
+		  text-align: left !important; /* important: align text to left */
+		  border: 0.5px solid #000 !important;
+          outline: none !important;
+          margin-bottom:8px;
+		}
+
+		/* Add the right-hand caret */
+		.accordion::after {
+		  content: "▶";
+		  transition: transform 0.2s ease;
+		  margin-left: 12px;
+		  font-size: 10pt;
+		}
+
+		/* Rotate the caret when active */
+		.accordion.active::after {
+		  transform: rotate(90deg);
+		}
+
         .active {
         background-color: #eee;
         }
@@ -176,16 +194,7 @@
         iframe:hover {
         transform: matrix(1.05, 0, 0, 1.05, 0, 0);
         }
-        
-        .accordion
-        {
-        transition: transform .2s ease-in-out 0s;
-        }
-        
-        .accordion:hover {
-        transform: matrix(1.025, 0, 0, 1.025, 0, 0);
-        }
-        
+            
         .expandall
         {
         transition: transform .2s ease-in-out 0s;
@@ -6262,6 +6271,8 @@ return false;
 // Are we on iOS?
 //
 function isIOS() {
+
+	return true;
 
 if (/iPad|iPhone|iPod/.test(navigator.platform)) {
 return true;
