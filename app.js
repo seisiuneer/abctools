@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2569_062525_1000";
+var gVersionNumber="2570_062525_1200";
 
 var gMIDIInitStillWaiting = false;
 
@@ -20519,6 +20519,7 @@ function GetABCFileHeader(){
       /^%play_alternate_chords.*$/,
       /^%hide_cautionary_ks.*$/,
       /^%no_title_reverser.*$/,
+      /^%force_power_chords.*$/,
       /^[ABCDFGHILMmNORrSUZ]:/,
     ];
 

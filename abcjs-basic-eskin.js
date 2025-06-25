@@ -260,6 +260,9 @@ var gHideCautionaryKS = false;
 // Do title reverse
 var gDoTitleReverser = true;
 
+// Force all power chords
+var gForcePowerChords = false;
+
 //
 // Find any hyperlinks in the tune and replace them with SVG links
 //
@@ -844,6 +847,26 @@ function ScanTuneForNoTitleReverser(theTune){
   //console.log("No %no_title_reverser")
 
   return true;
+
+}
+
+// Scan tune for forcing power chords
+function ScanTuneForForcePowerChords(theTune){
+
+  //console.log("ScanTuneForForcePowerChords");
+
+  var searchRegExp = /^%force_power_chords.*$/gm
+
+  var forcePowerChords = searchRegExp.test(theTune);
+
+  if (forcePowerChords){
+    //console.log("Found %force_power_chords")
+    return true;
+  }
+
+  //console.log("No %force_power_chords")
+
+  return false;
 
 }
 
@@ -1683,6 +1706,10 @@ var tunebook = {};
           // Do title reverser
           gDoTitleReverser = true;
           gDoTitleReverser = ScanTuneForNoTitleReverser(book.tunes[currentTune].abc);
+
+          // Force power chords
+          gForcePowerChords = false;
+          gForcePowerChords = ScanTuneForForcePowerChords(book.tunes[currentTune].abc);
 
           abcParser.parse(book.tunes[currentTune].abc, workingParams, book.tunes[currentTune].startPos - book.header.length);
           var tune = abcParser.getTune();
@@ -4466,6 +4493,7 @@ var bookParser = function bookParser(book) {
       /^%play_alternate_chords.*$/,
       /^%hide_cautionary_ks.*$/,
       /^%no_title_reverser.*$/,
+      /^%force_power_chords.*$/,
       /^[ABCDFGHILMmNORrSUZ]:/,
     ];
 
@@ -14540,6 +14568,11 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
 
     var originalInversion = inversion;
 
+    // MAE 25 Jun 2025 - Forcing power chords
+    if (gForcePowerChords){
+      modifier = "5"
+    }
+
     // MAE 16 Aug 2023 - The chord intervals array was getting trashed by the minifier, moved it outside    
     var intervals = gChordIntervals[modifier]; 
 
@@ -16783,6 +16816,11 @@ ChordTrack.prototype.processInversion = function(chordName){
 ChordTrack.prototype.chordNotes = function (bass, modifier,inversion) {
 
   var originalInversion = inversion;
+
+  // MAE 25 Jun 2025 - Forcing power chords
+  if (gForcePowerChords){
+    modifier = "5"
+  }
 
   var intervals = gChordIntervals[modifier];
   if (!intervals) {
