@@ -28396,7 +28396,7 @@ function printLine(renderer, x1, x2, y, klass, name, dy) {
   var y1 = roundNumber(y - dy);
   var y2 = roundNumber(y + dy);
   // TODO-PER: This fixes a firefox bug where it isn't displayed
-  if (renderer.firefox112) {
+  if (renderer.isFirefox) {
     y += dy / 2; // Because the y coordinate is the edge of where the line goes but the width widens from the middle.
     var attr = {
       x1: x1,
@@ -28460,7 +28460,7 @@ function printStem(renderer, x, dx, y1, y2, klass, name) {
   x = roundNumber(x);
   var x2 = roundNumber(x + dx);
   // TODO-PER: This fixes a firefox bug where it isn't displayed
-  if (renderer.firefox112) {
+  if (renderer.isFirefox) {
     x += dx / 2; // Because the x coordinate is the edge of where the line goes but the width widens from the middle.
     var attr = {
       x1: x,
@@ -30166,7 +30166,7 @@ function splitSvgIntoLines(renderer, output, title, responsive) {
     if (responsive !== 'resize') svg.setAttribute("height", height);
     if (responsive === 'resize') svg.style.position = '';
     // TODO-PER: Hack! Not sure why this is needed.
-    var viewBoxHeight = renderer.firefox112 ? height + 1 : height;
+    var viewBoxHeight = renderer.isFirefox ? height + 1 : height;
     svg.setAttribute("viewBox", "0 " + nextTop + " " + width + " " + viewBoxHeight);
     //
     // MAE 20 Feb 2025 - Made this conditional
@@ -32065,17 +32065,31 @@ var Svg = __webpack_require__(/*! ./svg */ "./src/write/svg.js");
  * Implements the API for rendering ABCJS Abstract Rendering Structure to a canvas/paper (e.g. SVG, Raphael, etc)
  * @param {Object} paper
  */
+
+function isFirefoxVersionGTE(inputString, minVersion = 140.0) {
+  const match = inputString.match(/Firefox\/(\d+(?:\.\d+)?)/);
+  if (!match) return false;
+
+  const version = parseFloat(match[1]);
+
+  if (isNaN(version)){
+    return false;
+  }
+  
+  return version >= minVersion;
+}
+
 var Renderer = function Renderer(paper) {
   this.paper = new Svg(paper);
   this.controller = null;
   this.space = 3 * spacing.SPACE;
   this.padding = {}; // renderer's padding is managed by the controller
   this.reset();
-  // MAE START OF CHANGE
-  this.firefox112 = false;
-  //this.firefox112 = navigator.userAgent.indexOf('Firefox/112.0') >= 0;
+  // MAE 25 Jun 2025 - START OF CHANGE
+  this.isFirefox = isFirefoxVersionGTE(navigator.userAgent,140.0);
   // MAE END OF CHANGE
 };
+
 Renderer.prototype.reset = function () {
   this.paper.clear();
   this.y = 0;
