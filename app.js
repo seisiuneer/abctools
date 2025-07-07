@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2570_062525_1200";
+var gVersionNumber="2571_070725_0900";
 
 var gMIDIInitStillWaiting = false;
 
@@ -445,6 +445,9 @@ var gInPresentationMode = false;
 
 // Is MIDI input muted?
 var gMIDIMute = false;
+
+// Last warp value
+var gLastWarp = 100;
 
 // Global reference to the ABC editor
 var gTheABC = document.getElementById("abc");
@@ -32487,8 +32490,11 @@ function PlayABCDialog(theABC,callback,val,metronome_state){
 		midiBuffer.init({
 			visualObj: visualObj
 		}).then(function (response) {
-			console.log(response);
+
+			//console.log(response);
+
 			if (synthControl) {
+
 
 				var fadeLength = computeFade(theABC);
 
@@ -32497,6 +32503,9 @@ function PlayABCDialog(theABC,callback,val,metronome_state){
 					console.log("Audio successfully loaded.");
 
 					gSynthControl = synthControl;
+
+          // MAE 7 July 2025
+          gSynthControl.forceWarp(gLastWarp);
 
 					if (callback){
 						callback(val,gTheOKButton);
@@ -32529,9 +32538,9 @@ function PlayABCDialog(theABC,callback,val,metronome_state){
 					
 				}).catch(function (error) {
 					
-			        // MAE 10 Jul 2024 - Hide the spinner
+			    // MAE 10 Jul 2024 - Hide the spinner
 					hideTheSpinner();
-        			gMIDIInitStillWaiting = false;
+        	gMIDIInitStillWaiting = false;
  
 					console.log("Problem loading audio for this tune");
 
@@ -32539,9 +32548,9 @@ function PlayABCDialog(theABC,callback,val,metronome_state){
 			}
 		}).catch(function (error) {
 
-	        // MAE 10 Jul 2024 - Hide the spinner
+	    // MAE 10 Jul 2024 - Hide the spinner
 			hideTheSpinner();
-        	gMIDIInitStillWaiting = false;
+      gMIDIInitStillWaiting = false;
 			console.log("Problem loading audio for this tune");
 
 		});
@@ -34594,8 +34603,10 @@ function SwingExplorerDialog(theOriginalABC, theProcessedABC, swing_explorer_sta
 		midiBuffer.init({
 			visualObj: visualObj
 		}).then(function (response) {
-			console.log(response);
-			if (synthControl) {
+
+			//console.log(response);
+			
+      if (synthControl) {
 
 				var fadeLength = computeFade(theProcessedABC);
 
@@ -34604,6 +34615,9 @@ function SwingExplorerDialog(theOriginalABC, theProcessedABC, swing_explorer_sta
 					console.log("Audio successfully loaded.");
 					
 					gSynthControl = synthControl;
+
+          // MAE 7 July 2025
+          gSynthControl.forceWarp(gLastWarp);
 
 					// Hook up tempo dialog
 					var elem = document.getElementsByClassName("abcjs-midi-tempo");
@@ -34633,18 +34647,18 @@ function SwingExplorerDialog(theOriginalABC, theProcessedABC, swing_explorer_sta
 
 				}).catch(function (error) {
 					
-			        // MAE 10 Jul 2024 - Hide the spinner
+			    // MAE 10 Jul 2024 - Hide the spinner
 					hideTheSpinner();
-        			gMIDIInitStillWaiting = false;
+        	gMIDIInitStillWaiting = false;
 					console.log("Problem loading audio for this tune");
 
 				});
 			}
 		}).catch(function (error) {
 
-	        // MAE 10 Jul 2024 - Hide the spinner
+	    // MAE 10 Jul 2024 - Hide the spinner
 			hideTheSpinner();
-        	gMIDIInitStillWaiting = false;
+      gMIDIInitStillWaiting = false;
 			console.log("Problem loading audio for this tune");
 
 		});
@@ -35356,8 +35370,10 @@ function ReverbExplorerDialog(theOriginalABC, theProcessedABC, reverb_explorer_s
 		midiBuffer.init({
 			visualObj: visualObj
 		}).then(function (response) {
-			console.log(response);
-			if (synthControl) {
+
+			//console.log(response);
+			
+      if (synthControl) {
 
 				var fadeLength = computeFade(theProcessedABC);
 
@@ -35365,6 +35381,9 @@ function ReverbExplorerDialog(theOriginalABC, theProcessedABC, reverb_explorer_s
 					
 					console.log("Audio successfully loaded.");
 					gSynthControl = synthControl;
+
+          // MAE 7 July 2025
+          gSynthControl.forceWarp(gLastWarp);
 
 					// Hook up tempo dialog
 					var elem = document.getElementsByClassName("abcjs-midi-tempo");
@@ -35394,18 +35413,18 @@ function ReverbExplorerDialog(theOriginalABC, theProcessedABC, reverb_explorer_s
 
 				}).catch(function (error) {
 					
-			        // MAE 10 Jul 2024 - Hide the spinner
+			    // MAE 10 Jul 2024 - Hide the spinner
 					hideTheSpinner();
-        			gMIDIInitStillWaiting = false;
+        	gMIDIInitStillWaiting = false;
 					console.log("Problem loading audio for this tune");
 
 				});
 			}
 		}).catch(function (error) {
 
-	        // MAE 10 Jul 2024 - Hide the spinner
+	    // MAE 10 Jul 2024 - Hide the spinner
 			hideTheSpinner();
-        	gMIDIInitStillWaiting = false;
+      gMIDIInitStillWaiting = false;
 			console.log("Problem loading audio for this tune");
 
 		});
@@ -36413,8 +36432,10 @@ function InstrumentExplorerDialog(theOriginalABC, theProcessedABC, instrument_ex
 		midiBuffer.init({
 			visualObj: visualObj
 		}).then(function (response) {
-			console.log(response);
-			if (synthControl) {
+
+			//console.log(response);
+			
+      if (synthControl) {
 
 				var fadeLength = computeFade(theProcessedABC);
 
@@ -36422,6 +36443,9 @@ function InstrumentExplorerDialog(theOriginalABC, theProcessedABC, instrument_ex
 					
 					console.log("Audio successfully loaded.");
 					gSynthControl = synthControl;
+
+          // MAE 7 July 2025
+          gSynthControl.forceWarp(gLastWarp);
 
 					// Hook up tempo dialog
 					var elem = document.getElementsByClassName("abcjs-midi-tempo");
@@ -36451,18 +36475,18 @@ function InstrumentExplorerDialog(theOriginalABC, theProcessedABC, instrument_ex
 
 				}).catch(function (error) {
 					
-			        // MAE 10 Jul 2024 - Hide the spinner
+			    // MAE 10 Jul 2024 - Hide the spinner
 					hideTheSpinner();
-        			gMIDIInitStillWaiting = false;
+        	gMIDIInitStillWaiting = false;
 					console.log("Problem loading audio for this tune");
 
 				});
 			}
 		}).catch(function (error) {
 
-	        // MAE 10 Jul 2024 - Hide the spinner
+	    // MAE 10 Jul 2024 - Hide the spinner
 			hideTheSpinner();
-        	gMIDIInitStillWaiting = false;
+      gMIDIInitStillWaiting = false;
 			console.log("Problem loading audio for this tune");
 
 		});
@@ -37027,8 +37051,10 @@ function GraceExplorerDialog(theOriginalABC, theProcessedABC, grace_explorer_sta
 		midiBuffer.init({
 			visualObj: visualObj
 		}).then(function (response) {
-			console.log(response);
-			if (synthControl) {
+
+			//console.log(response);
+			
+      if (synthControl) {
 
 				var fadeLength = computeFade(theProcessedABC);
 
@@ -37036,6 +37062,9 @@ function GraceExplorerDialog(theOriginalABC, theProcessedABC, grace_explorer_sta
 					
 					console.log("Audio successfully loaded.");
 					gSynthControl = synthControl;
+
+          // MAE 7 July 2025
+          gSynthControl.forceWarp(gLastWarp);
 
 					// Hook up tempo dialog
 					var elem = document.getElementsByClassName("abcjs-midi-tempo");
@@ -37065,18 +37094,18 @@ function GraceExplorerDialog(theOriginalABC, theProcessedABC, grace_explorer_sta
 
 				}).catch(function (error) {
 					
-			        // MAE 10 Jul 2024 - Hide the spinner
+			    // MAE 10 Jul 2024 - Hide the spinner
 					hideTheSpinner();
-        			gMIDIInitStillWaiting = false;
+        	gMIDIInitStillWaiting = false;
 					console.log("Problem loading audio for this tune");
 
 				});
 			}
 		}).catch(function (error) {
 
-	        // MAE 10 Jul 2024 - Hide the spinner
+	    // MAE 10 Jul 2024 - Hide the spinner
 			hideTheSpinner();
-        	gMIDIInitStillWaiting = false;
+      gMIDIInitStillWaiting = false;
 			console.log("Problem loading audio for this tune");
 
 		});
@@ -37801,8 +37830,10 @@ function RollExplorerDialog(theOriginalABC, theProcessedABC, roll_explorer_state
 		midiBuffer.init({
 			visualObj: visualObj
 		}).then(function (response) {
-			console.log(response);
-			if (synthControl) {
+
+			//console.log(response);
+			
+      if (synthControl) {
 
 				var fadeLength = computeFade(theProcessedABC);
 
@@ -37810,6 +37841,9 @@ function RollExplorerDialog(theOriginalABC, theProcessedABC, roll_explorer_state
 					
 					console.log("Audio successfully loaded.");
 					gSynthControl = synthControl;
+
+          // MAE 7 July 2025
+          gSynthControl.forceWarp(gLastWarp);
 
 					// Hook up tempo dialog
 					var elem = document.getElementsByClassName("abcjs-midi-tempo");
@@ -37839,18 +37873,18 @@ function RollExplorerDialog(theOriginalABC, theProcessedABC, roll_explorer_state
 
 				}).catch(function (error) {
 					
-			        // MAE 10 Jul 2024 - Hide the spinner
+			    // MAE 10 Jul 2024 - Hide the spinner
 					hideTheSpinner();
-        			gMIDIInitStillWaiting = false;
+        	gMIDIInitStillWaiting = false;
 					console.log("Problem loading audio for this tune");
 
 				});
 			}
 		}).catch(function (error) {
 
-	        // MAE 10 Jul 2024 - Hide the spinner
+	    // MAE 10 Jul 2024 - Hide the spinner
 			hideTheSpinner();
-        	gMIDIInitStillWaiting = false;
+      gMIDIInitStillWaiting = false;
 			console.log("Problem loading audio for this tune");
 
 		});
@@ -38394,8 +38428,10 @@ function TuneTrainerDialog(theOriginalABC, theProcessedABC, looperState){
 		midiBuffer.init({
 			visualObj: visualObj
 		}).then(function (response) {
-			console.log(response);
-			if (synthControl) {
+
+			//console.log(response);
+			
+      if (synthControl) {
 
 				var fadeLength = computeFade(theProcessedABC);
 
@@ -38445,18 +38481,18 @@ function TuneTrainerDialog(theOriginalABC, theProcessedABC, looperState){
 
 				}).catch(function (error) {
 					
-			        // MAE 10 Jul 2024 - Hide the spinner
+			    // MAE 10 Jul 2024 - Hide the spinner
 					hideTheSpinner();
-        			gMIDIInitStillWaiting = false;
+        	gMIDIInitStillWaiting = false;
 					console.log("Problem loading audio for this tune");
 
 				});
 			}
 		}).catch(function (error) {
 
-	        // MAE 10 Jul 2024 - Hide the spinner
+	    // MAE 10 Jul 2024 - Hide the spinner
 			hideTheSpinner();
-        	gMIDIInitStillWaiting = false;
+      gMIDIInitStillWaiting = false;
 			console.log("Problem loading audio for this tune");
 
 		});
@@ -39118,6 +39154,8 @@ function DecrementTempo(){
 				gSynthControl.pause();
 				gSynthControl.forceWarp(theTempo);
 
+        gLastWarp = theTempo;
+
 			}
 		}
 	}
@@ -39148,6 +39186,9 @@ function IncrementTempo(){
 			
 			gSynthControl.pause();
 			gSynthControl.forceWarp(theTempo);
+
+      gLastWarp = theTempo;
+
 		}
 	}
 }
@@ -39211,6 +39252,8 @@ function SetPlayerTempo(e){
 			gSynthControl.pause();
 
 			gSynthControl.forceWarp(newTempo);
+
+      gLastWarp = newTempo;
 
 		}
 	});
@@ -47340,7 +47383,7 @@ function inlinePlayback(){
 
 				//debugger;
 
-				console.log(response);
+				//console.log(response);
 				
 				if (gSynthControl) {
 
@@ -47350,11 +47393,13 @@ function inlinePlayback(){
 						
 						console.log("Audio successfully loaded.");
 
+            // MAE 7 July 2025
+            gSynthControl.forceWarp(gLastWarp);
 						
 					}).catch(function (error) {
 						
-				        // MAE 10 Jul 2024 - Hide the spinner
-		      			gMIDIInitStillWaiting = false;
+		        // MAE 10 Jul 2024 - Hide the spinner
+      			gMIDIInitStillWaiting = false;
 						hideTheSpinner();
 
 						console.log("Problem loading audio for this tune");
@@ -47365,7 +47410,7 @@ function inlinePlayback(){
 
 				//debugger;
 
-		        // MAE 10 Jul 2024 - Hide the spinner
+		    // MAE 10 Jul 2024 - Hide the spinner
 				gMIDIInitStillWaiting = false;
 
 				hideTheSpinner();
