@@ -17850,7 +17850,7 @@ function buildDom(parent, options) {
     var bpm = options.bpm ? options.bpm : "BPM";
 
     // MAE 10 Nov 2023 - For touch control of tempo
-    html += '<span class="abcjs-tempo-wrapper"><label><input class="abcjs-midi-tempo" value="100" title="' + warpTitle + '" aria-label="' + warpAria + '">%</label><span class="abcjs-midi-current-tempo-wrapper">&nbsp;(<span class="abcjs-midi-current-tempo"></span> ' + bpm + ')</span></span>\n';
+    html += '<span class="abcjs-tempo-wrapper"><label><input class="abcjs-midi-tempo" value="'+gLastWarp+'" title="' + warpTitle + '" aria-label="' + warpAria + '">%</label><span class="abcjs-midi-current-tempo-wrapper">&nbsp;(<span class="abcjs-midi-current-tempo"></span> ' + bpm + ')</span></span>\n';
     // MAE END CHANGE
   }
   html += '<div class="abcjs-css-warning" style="font-size: 12px;color:red;border: 1px solid red;text-align: center;width: 300px;margin-top: 4px;font-weight: bold;border-radius: 4px;">CSS required: load abcjs-audio.css</div>';
@@ -21119,7 +21119,10 @@ function SynthController(theABC) {
     self.theABC = theABC;
   }
 
-  self.warp = 100;
+  // MAE 7 Jul 2025
+  //self.warp = 100;
+  self.warp = gLastWarp;
+
   self.cursorControl = null;
   self.visualObj = null;
   self.timer = null;

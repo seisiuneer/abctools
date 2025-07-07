@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2572_070725_0930";
+var gVersionNumber="2573_070725_1000";
 
 var gMIDIInitStillWaiting = false;
 
@@ -32504,9 +32504,6 @@ function PlayABCDialog(theABC,callback,val,metronome_state){
 
 					gSynthControl = synthControl;
 
-          // MAE 7 July 2025
-          gSynthControl.forceWarp(gLastWarp);
-
 					if (callback){
 						callback(val,gTheOKButton);
 					}
@@ -34616,9 +34613,6 @@ function SwingExplorerDialog(theOriginalABC, theProcessedABC, swing_explorer_sta
 					
 					gSynthControl = synthControl;
 
-          // MAE 7 July 2025
-          gSynthControl.forceWarp(gLastWarp);
-
 					// Hook up tempo dialog
 					var elem = document.getElementsByClassName("abcjs-midi-tempo");
 					if (elem && (elem.length > 0)){
@@ -35381,9 +35375,6 @@ function ReverbExplorerDialog(theOriginalABC, theProcessedABC, reverb_explorer_s
 					
 					console.log("Audio successfully loaded.");
 					gSynthControl = synthControl;
-
-          // MAE 7 July 2025
-          gSynthControl.forceWarp(gLastWarp);
 
 					// Hook up tempo dialog
 					var elem = document.getElementsByClassName("abcjs-midi-tempo");
@@ -36444,9 +36435,6 @@ function InstrumentExplorerDialog(theOriginalABC, theProcessedABC, instrument_ex
 					console.log("Audio successfully loaded.");
 					gSynthControl = synthControl;
 
-          // MAE 7 July 2025
-          gSynthControl.forceWarp(gLastWarp);
-
 					// Hook up tempo dialog
 					var elem = document.getElementsByClassName("abcjs-midi-tempo");
 					if (elem && (elem.length > 0)){
@@ -37062,9 +37050,6 @@ function GraceExplorerDialog(theOriginalABC, theProcessedABC, grace_explorer_sta
 					
 					console.log("Audio successfully loaded.");
 					gSynthControl = synthControl;
-
-          // MAE 7 July 2025
-          gSynthControl.forceWarp(gLastWarp);
 
 					// Hook up tempo dialog
 					var elem = document.getElementsByClassName("abcjs-midi-tempo");
@@ -37841,9 +37826,6 @@ function RollExplorerDialog(theOriginalABC, theProcessedABC, roll_explorer_state
 					
 					console.log("Audio successfully loaded.");
 					gSynthControl = synthControl;
-
-          // MAE 7 July 2025
-          gSynthControl.forceWarp(gLastWarp);
 
 					// Hook up tempo dialog
 					var elem = document.getElementsByClassName("abcjs-midi-tempo");
@@ -47418,9 +47400,6 @@ function inlinePlayback(){
 					gSynthControl.setTune(visualObj, false, {fadeLength:fadeLength}).then(function (response) {
 						
 						console.log("Audio successfully loaded.");
-
-            // MAE 7 July 2025
-            gSynthControl.forceWarp(gLastWarp);
 						
 					}).catch(function (error) {
 						
