@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2571_070725_0900";
+var gVersionNumber="2572_070725_0930";
 
 var gMIDIInitStillWaiting = false;
 
@@ -39156,6 +39156,10 @@ function DecrementTempo(){
 
         gLastWarp = theTempo;
 
+        if (gLocalStorageAvailable){
+          localStorage.LastWarp = gLastWarp;
+        }
+
 			}
 		}
 	}
@@ -39188,6 +39192,10 @@ function IncrementTempo(){
 			gSynthControl.forceWarp(theTempo);
 
       gLastWarp = theTempo;
+
+      if (gLocalStorageAvailable){
+        localStorage.LastWarp = gLastWarp;
+      }
 
 		}
 	}
@@ -39254,6 +39262,10 @@ function SetPlayerTempo(e){
 			gSynthControl.forceWarp(newTempo);
 
       gLastWarp = newTempo;
+
+      if (gLocalStorageAvailable){
+        localStorage.LastWarp = gLastWarp;
+      }
 
 		}
 	});
@@ -40801,6 +40813,17 @@ function GetInitialConfigurationSettings(){
     	gIncipitsTagsToStrip = "ABCDINOSWwZ";
     }
 
+  val = localStorage.LastWarp;
+  if (val){
+    gLastWarp = parseInt(val);
+    if (isNaN(gLastWarp)){
+      gLastWarp = 100;
+    }
+  }
+  else{
+    gLastWarp = 100;
+  }
+
 	// Save the settings, in case they were initialized
 	SaveConfigurationSettings();
 
@@ -41077,6 +41100,9 @@ function SaveConfigurationSettings(){
 		localStorage.IncipitsBuilderInjectNumbers = gIncipitsBuilderInjectNumbers;
 		localStorage.IncipitsBuilderStripText = gIncipitsBuilderStripText;
 		localStorage.IncipitsTagsToStrip = gIncipitsTagsToStrip;
+
+    // Warp
+    localStorage.LastWarp = gLastWarp;
 
 	}
 }
