@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2574_070725_1000";
+var gVersionNumber="2575_070825_1000";
 
 var gMIDIInitStillWaiting = false;
 
@@ -448,6 +448,7 @@ var gMIDIMute = false;
 
 // Last warp value
 var gLastWarp = 100;
+var gLastPlayerRepeat = false;
 
 // Global reference to the ABC editor
 var gTheABC = document.getElementById("abc");
@@ -33269,6 +33270,9 @@ function PreProcessPlayABC(theTune){
      theTune = removeAllPLines(theTune);   
   }
 
+  // Allow loop state caching
+  gAllowLoopStateCaching = true;
+
 	return(theTune);
 
 }
@@ -38112,6 +38116,7 @@ function TuneTrainer(bIsFromPlayer){
 
 	if (gAllowCopy){
 
+
 		if (!bIsFromPlayer){
 			// Deactivate Quick Player 
 			deactivateQuickPlayer();
@@ -38147,6 +38152,9 @@ function TuneTrainer(bIsFromPlayer){
 
 		// Pre-process the ABC to inject any requested programs or volumes
 		var theProcessedABC = PreProcessPlayABC(theSelectedABC);
+
+    // Don't allow loop state caching or handling
+    gAllowLoopStateCaching = false;
 
 		// Play back locally in-tool	
 		TuneTrainerDialog(theSelectedABC,theProcessedABC,false);
@@ -40806,6 +40814,12 @@ function GetInitialConfigurationSettings(){
     gLastWarp = 100;
   }
 
+  gLastPlayerRepeat = false;
+  val = localStorage.LastPlayerRepeat
+  if (val){
+    gLastPlayerRepeat = (val == "true");
+  }
+
 	// Save the settings, in case they were initialized
 	SaveConfigurationSettings();
 
@@ -41086,6 +41100,9 @@ function SaveConfigurationSettings(){
     // Warp
     localStorage.LastWarp = gLastWarp;
 
+    // Repeat
+    localStorage.LastPlayerRepeat = gLastPlayerRepeat;
+    
 	}
 }
 

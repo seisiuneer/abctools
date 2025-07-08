@@ -263,6 +263,9 @@ var gDoTitleReverser = true;
 // Force all power chords
 var gForcePowerChords = false;
 
+// Allow loop state caching
+var gAllowLoopStateCaching = true;
+
 //
 // Find any hyperlinks in the tune and replace them with SVG links
 //
@@ -17757,6 +17760,7 @@ function CreateSynthControl(parent, options) {
   if (self.options.ac) registerAudioContext(self.options.ac);
   buildDom(self.parent, self.options);
   attachListeners(self);
+
   self.disable = function (isDisabled) {
     var el = self.parent.querySelector(".abcjs-inline-audio");
     if (isDisabled) el.classList.add("abcjs-disabled");else el.classList.remove("abcjs-disabled");
@@ -17812,6 +17816,7 @@ function CreateSynthControl(parent, options) {
     }
     if (isResumed) self.options.afterResume();
   }
+
 }
 function buildDom(parent, options) {
   var hasLoop = !!options.loopHandler;
@@ -21130,7 +21135,7 @@ function SynthController(theABC) {
   self.options = null;
   self.currentTempo = null;
   self.control = null;
-  self.isLooping = false;
+  self.isLooping = false; 
   self.isStarted = false;
   self.isLoaded = false;
   self.isLoading = false;
@@ -21160,8 +21165,24 @@ function SynthController(theABC) {
       self.control.resetAll();
       self.restart();
       self.isStarted = false;
+
+      // MAE 8 Jul 2025 - Handle restoration of loop state
+      if (gAllowLoopStateCaching){
+        if (gLastPlayerRepeat){
+          self.control.pushLoop(true); 
+        }
+      }
+
     }
-    self.isLooping = false;
+
+    // MAE 8 Jul 2025 - Handle restoration of loop state
+    if (gAllowLoopStateCaching){
+      self.isLooping = gLastPlayerRepeat;
+    }
+    else{
+      self.isLooping = false;
+    }
+
     if (userAction) return self.go();else {
       return Promise.resolve({
         status: "no-audio-context"
@@ -21295,7 +21316,17 @@ function SynthController(theABC) {
     }
   };
   self.toggleLoop = function () {
+
     self.isLooping = !self.isLooping;
+
+    // MAE 8 Jul 2025 Persist looping state
+    if (gAllowLoopStateCaching){
+      gLastPlayerRepeat = self.isLooping;
+      if (gLocalStorageAvailable){
+        localStorage.LastPlayerRepeat = gLastPlayerRepeat;
+      }
+    }
+
     if (self.control) self.control.pushLoop(self.isLooping);
   };
   self.restart = function () {
