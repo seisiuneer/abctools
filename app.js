@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2575_070825_1000";
+var gVersionNumber="2576_071025_1000";
 
 var gMIDIInitStillWaiting = false;
 
@@ -23924,7 +23924,7 @@ function processShareLink() {
 					var theProcessedABC = PreProcessPlayABC(theABCToPlay);
 
 					// Play back locally in-tool	
-					PlayABCDialog(theProcessedABC, null, null, false);
+					PlayABCDialog(theProcessedABC, null, null, gPlayMetronome);
 
 				}else{
 
@@ -29851,7 +29851,6 @@ function ExportAllTuneTitles(){
 
 var gMIDIbuffer = null;
 var gPlayerABC = null;
-var gPlayerABCMetronome = null;
 var gTheOKButton = null;
 var gTheMuteHandle = null;
 var gPlayMetronome = false;
@@ -31175,44 +31174,53 @@ function ToggleMetronome(){
 
 	gPlayMetronome = !gPlayMetronome;
 
+  // Persist metronome
+  if (gLocalStorageAvailable){
+    
+    localStorage.PlayMetronome = gPlayMetronome;
+
+  }
+
 	gTheOKButton.click();
 
 	setTimeout(function() {
 
 		if (gPlayMetronome){
 
-			if (!gPlayerABCMetronome){
+			var testVal = inject_one_metronome(gPlayerABC, false);
 
-				gPlayerABCMetronome = inject_one_metronome(gPlayerABC, false);
+			// Injection failed due to unsupported meter
+			if (!testVal){
 
-				// Injection failed due to unsupported meter
-				if (!gPlayerABCMetronome){
+				gPlayMetronome = false; 
 
-					gPlayMetronome = false; 
+			  var modal_msg  = '<p style="text-align:center;font-size:20pt;font-family:helvetica">Metronome Not Available for this Meter</p>';
+			 	modal_msg += '<p style="font-size:14pt;line-height:20pt;font-family:helvetica;">No metronome pattern is available for the meter of this tune.</p>';
+			 	modal_msg += '<p style="font-size:14pt;line-height:20pt;font-family:helvetica;">Only the original version can be played.</p>';
 
-				    var modal_msg  = '<p style="text-align:center;font-size:20pt;font-family:helvetica">Metronome Not Available for this Meter</p>';
-				 	   modal_msg += '<p style="font-size:14pt;line-height:20pt;font-family:helvetica;">No metronome pattern is available for the meter of this tune.</p>';
-				 	   modal_msg += '<p style="font-size:14pt;line-height:20pt;font-family:helvetica;">Only the original version can be played.</p>';
+				DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) }).then(
+					function(){
+						PlayABCDialog(gPlayerABC,null,null,false);
+					});
 
-					DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) }).then(
-						function(){
-							PlayABCDialog(gPlayerABC,null,null,false);
-						});
+        // Persist metronome
+        if (gLocalStorageAvailable){
+          
+          localStorage.PlayMetronome = false;
 
-					return;
-
-				}
+        }
+				return;
 
 			}
 
 			// Launch the player with the metronome injected tune
-			PlayABCDialog(gPlayerABCMetronome,null,null,true);
+			PlayABCDialog(gPlayerABC,null,null,gPlayMetronome);
 
 		}
 		else{
 
 			// Launch the original tune
-			PlayABCDialog(gPlayerABC,null,null,false);
+			PlayABCDialog(gPlayerABC,null,null,gPlayMetronome);
 
 		}
 
@@ -31273,7 +31281,7 @@ function ZoomPlayer(doZoomIn){
 	setTimeout(function() {
 
 		// Launch the modified tune
-		PlayABCDialog(theSelectedABC,null,null,false);
+		PlayABCDialog(theSelectedABC,null,null,gPlayMetronome);
 
 	},250);		
 
@@ -31304,7 +31312,7 @@ function ShowPlayerSettings(){
 			setTimeout(function() {
 
 				// Launch the modified tune
-				PlayABCDialog(theSelectedABC,null,null,false);
+				PlayABCDialog(theSelectedABC,null,null,gPlayMetronome);
 
 			},250);		
 		}
@@ -31830,7 +31838,7 @@ function PlayPrevious(e){
 		theSelectedABC = PreProcessPlayABC(theSelectedABC);
 
 		// Play back locally in-tool	
-		PlayABCDialog(theSelectedABC,null,null,false);
+		PlayABCDialog(theSelectedABC,null,null,gPlayMetronome);
 	}
 }
 // 
@@ -31864,7 +31872,7 @@ function PlayNext(e){
 		theSelectedABC = PreProcessPlayABC(theSelectedABC);
 
 		// Play back locally in-tool	
-		PlayABCDialog(theSelectedABC,null,null,false);
+		PlayABCDialog(theSelectedABC,null,null,gPlayMetronome);
 	}
 }
 
@@ -31899,7 +31907,7 @@ function PlaySelectedTune(){
 	theSelectedABC = PreProcessPlayABC(theSelectedABC);
 
 	// Play back locally in-tool	
-	PlayABCDialog(theSelectedABC,null,null,false);
+	PlayABCDialog(theSelectedABC,null,null,gPlayMetronome);
 
 }
 
@@ -32208,7 +32216,7 @@ function PlayABC(e){
 		theSelectedABC = PreProcessPlayABC(theSelectedABC);
 
 		// Play back locally in-tool	
-		PlayABCDialog(theSelectedABC,null,null,false);
+		PlayABCDialog(theSelectedABC,null,null,gPlayMetronome);
 
 	}
 }
@@ -32418,7 +32426,6 @@ function VoiceTuningCallback(notes,context){
 	}
 }
 
-
 // Keep track where you are in the tune collection
 var gPlayABCTuneIndex = 0;
 var gPlayABCTuneCount = 0;
@@ -32431,23 +32438,11 @@ function PlayABCDialog(theABC,callback,val,metronome_state){
 
 	gMIDIbuffer = null;
 	gTheOKButton = null;
-	gPlayMetronome = false;
+  gPlayerABC = theABC;
 
-	// We came in because of a metronome state change, don't init the tune cache
-	if (metronome_state){
-
-		gPlayMetronome = metronome_state;
-
-	}
-	else{
-
-		gPlayerABC = theABC;
-
-		gPlayMetronome = false;
-
-		gPlayerABCMetronome = null;
-
-	}
+  if (metronome_state){
+    theABC = inject_one_metronome(theABC, false);
+  }
 
 	// Do common setup of soundfont and custom timing injection
 	if (!PlayerSetupCommon(theABC)){
@@ -32628,7 +32623,13 @@ function PlayABCDialog(theABC,callback,val,metronome_state){
 		}
 
 		modal_msg += '<input id="abcplayer_trainer" class="btn btn-looper abcplayer_trainer" onclick="TuneTrainerLaunchFromPlayer()" type="button" value="Start Tune Trainer" title="Opens the Tune Trainer for practicing tunes with increasing tempos">';
-		modal_msg += '<input id="abcplayer_metronomebutton" class="abcplayer_metronome button btn btn-metronome" onclick="ToggleMetronome();" type="button" value="Enable Metronome" title="Enables/disables the metronome">';
+
+    if (gPlayMetronome){
+  		modal_msg += '<input id="abcplayer_metronomebutton" class="abcplayer_metronome button btn btn-metronome" onclick="ToggleMetronome();" type="button" value="Disable Metronome" title="Disables the metronome">';
+    }
+    else{
+      modal_msg += '<input id="abcplayer_metronomebutton" class="abcplayer_metronome button btn btn-metronome" onclick="ToggleMetronome();" type="button" value="Enable Metronome" title="Enables the metronome">';
+    }
 
 		if (!gIsQuickEditor){
 			modal_msg += '<input id="abcplayer_exportbutton" class="abcplayer_exportbutton btn btn-exportaudiomidi" onclick="ExportAudioOrImage();" type="button" value="Export Audio, Image, or PDF" title="Brings up a dialog where you can export the tune in various audio, image, and PDF formats">';
@@ -38138,9 +38139,6 @@ function TuneTrainer(bIsFromPlayer){
 			return;
 		}
 
-		// Clear the metronome version
-		gPlayerABCMetronome = null;
-
 		// Fix issue with initial swing not happening
 		ScanTuneForCustomTimingInjection(theSelectedABC);
 
@@ -38209,11 +38207,6 @@ function TuneTrainerReset(){
 		// Clear the player in pause flag
 		gPlayerInPause = false;
 
-		// Clear the metronome flags
-		gPlayMetronome = false;
-		gLooperMetronomeState = false;
-		gPlayerABCMetronome = null;
-
 		gTheOKButton.click();
 
 		setTimeout(function() {
@@ -38241,47 +38234,50 @@ function ToggleTuneTrainerMetronome(){
 
 	gPlayMetronome = !gPlayMetronome;
 
+  // Persist metronome
+  if (gLocalStorageAvailable){
+    
+    localStorage.PlayMetronome = gPlayMetronome;
+
+  }
+
 	gTheOKButton.click();
 
 	setTimeout(function() {
 
 		if (gPlayMetronome){
 
-			if (!gPlayerABCMetronome){
+			var testVal = inject_one_metronome(gPlayerLooperProcessed, false);
 
-				gPlayerABCMetronome = inject_one_metronome(gPlayerLooperProcessed, false);
+			// Injection failed due to unsupported meter
+			if (!testVal){
 
-				// Injection failed due to unsupported meter
-				if (!gPlayerABCMetronome){
+        gPlayMetronome = false;
 
-	                    gLooperMetronomeState = false;
-	                    gPlayMetronome = false;
+		    var modal_msg  = '<p style="text-align:center;font-size:20pt;font-family:helvetica">Metronome Not Available for this Meter</p>';
+		 	   modal_msg += '<p style="font-size:14pt;line-height:20pt;font-family:helvetica;">No metronome pattern is available for the meter of this tune.</p>';
+		 	   modal_msg += '<p style="font-size:14pt;line-height:20pt;font-family:helvetica;">Only the original version can be played.</p>';
 
-				    var modal_msg  = '<p style="text-align:center;font-size:20pt;font-family:helvetica">Metronome Not Available for this Meter</p>';
-				 	   modal_msg += '<p style="font-size:14pt;line-height:20pt;font-family:helvetica;">No metronome pattern is available for the meter of this tune.</p>';
-				 	   modal_msg += '<p style="font-size:14pt;line-height:20pt;font-family:helvetica;">Only the original version can be played.</p>';
+			  DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) }).then(
+				function(){
+					TuneTrainerDialog(gPlayerLooperOriginal,gPlayerLooperProcessed,true);
+				});
 
-					DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) }).then(
-						function(){
-							TuneTrainerDialog(gPlayerLooperOriginal,gPlayerLooperProcessed,true);
-						});
+        // Persist metronome
+        if (gLocalStorageAvailable){
+          
+          localStorage.PlayMetronome = false;
 
-					return;
+        }
 
-				}
+				return;
 
 			}
-            
-            gLooperMetronomeState = true;
 
-			TuneTrainerDialog(gPlayerLooperOriginal,gPlayerABCMetronome,true);
+			TuneTrainerDialog(gPlayerLooperOriginal,gPlayerLooperProcessed,true);
 
 		}
 		else{
-
-            gLooperMetronomeState = false;
-
-            gPlayerABCMetronome = null;
 
 			// Launch the original tune
 			TuneTrainerDialog(gPlayerLooperOriginal,gPlayerLooperProcessed,true);
@@ -38339,7 +38335,6 @@ var gLooperCurrent = gLooperSpeedStart;
 var gLooperLoopCount = gLooperCount;
 var gPlayerLooperOriginal = null;
 var gPlayerLooperProcessed = null;
-var gLooperMetronomeState = false;
 var gTouchIncrementFive = false;
 var gLooperDoCountdown = true;
 var gLooperCountdown = 5;
@@ -38361,12 +38356,11 @@ function TuneTrainerDialog(theOriginalABC, theProcessedABC, looperState){
 		gPlayerLooperOriginal = theOriginalABC;
 		gPlayerLooperProcessed = theProcessedABC;
 
-		// Clear metronome state
-		gPlayMetronome = false;
-		gLooperMetronomeState = false;
-		gPlayerABCMetronome = null;
-
 	}
+
+  if (gPlayMetronome){
+    theProcessedABC = inject_one_metronome(gPlayerLooperProcessed, false);
+  }
 
 	gLooperCurrent = gLooperSpeedStart;
 	gLooperLoopCount = gLooperCount;
@@ -38933,7 +38927,7 @@ function TuneTrainerDialog(theOriginalABC, theProcessedABC, looperState){
 	   		modal_msg += '<div id="playback-audio"></div>';
 		}
 
-	   	// Add the tune trainer controls
+	  // Add the tune trainer controls
 
 		modal_msg += '<p class="configure_looper_text" style="text-align:center;margin:0px;margin-top:20px">';
 		modal_msg += '<span id="looper_text_1">Starting tempo:</span> <input style="width:75px;margin-right:4px;" id="looper_start_percent" type="number" min="1" step="1" max="400" title="Tune tempo start percentage" autocomplete="off"/><span id="looper_percent_span_1">%&nbsp;&nbsp;&nbsp;&nbsp;</span>';
@@ -38945,8 +38939,15 @@ function TuneTrainerDialog(theOriginalABC, theProcessedABC, looperState){
 		modal_msg += '</p>';
 		modal_msg += '<p class="configure_looper_text" style="text-align:center;margin:0px;margin-top:20px">';
 		modal_msg += '<input id="looperreset" class="looperreset button btn btn-looperreset" onclick="TuneTrainerReset();" type="button" value="Apply Tune Trainer Settings and Reload the Player" title="Applies the entered tune trainer settings and reloads the player">';
-		modal_msg += '<input id="looper_metronomebutton" class="looper_metronome button btn btn-metronome" onclick="ToggleTuneTrainerMetronome();" type="button" value="Enable Metronome" title="Enables/disables the metronome">'
-		modal_msg += '</p>';
+
+    if (gPlayMetronome){
+  		modal_msg += '<input id="looper_metronomebutton" class="looper_metronome button btn btn-metronome" onclick="ToggleTuneTrainerMetronome();" type="button" value="Disable Metronome" title="Disables the metronome">';
+    }
+    else{
+      modal_msg += '<input id="looper_metronomebutton" class="looper_metronome button btn btn-metronome" onclick="ToggleTuneTrainerMetronome();" type="button" value="Enable Metronome" title="Enables the metronome">';
+    }
+		
+    modal_msg += '</p>';
 		modal_msg += '<a id="looperhelp" href="https://michaeleskin.com/abctools/userguide.html#tune_trainer" target="_blank" style="text-decoration:none;" title="Learn more about the Tune Trainer" class="dialogcornerbutton">?</a>';
 		modal_msg += '<p id="looperstatus"></p>';
 		modal_msg += '<div id="looperstatusbar"></div>';
@@ -39013,7 +39014,7 @@ function TuneTrainerDialog(theOriginalABC, theProcessedABC, looperState){
 		totalLoops = CalcTotalLoops();
 
 		// Idle the metronome button
-		if (gLooperMetronomeState){
+		if (gPlayMetronome){
 
 			var elem = document.getElementById("looper_metronomebutton");
 
@@ -40820,6 +40821,12 @@ function GetInitialConfigurationSettings(){
     gLastPlayerRepeat = (val == "true");
   }
 
+  gPlayMetronome = false;
+  val = localStorage.PlayMetronome
+  if (val){
+    gPlayMetronome = (val == "true");
+  }
+
 	// Save the settings, in case they were initialized
 	SaveConfigurationSettings();
 
@@ -41102,6 +41109,9 @@ function SaveConfigurationSettings(){
 
     // Repeat
     localStorage.LastPlayerRepeat = gLastPlayerRepeat;
+
+    // Metronomes
+    localStorage.PlayMetronome = gPlayMetronome;
     
 	}
 }
