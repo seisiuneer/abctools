@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2577_071025_1200";
+var gVersionNumber="2578_071025_1700";
 
 var gMIDIInitStillWaiting = false;
 
@@ -43315,7 +43315,6 @@ function AdvancedSettings(){
 		configure_autoscrollsmooth: gAutoscrollSmooth,
 		configure_autoscrolltarget: gAutoscrollTarget,
 		configure_trainer_touch_controls: gTrainerTouchControls,
-		configure_metronome_volume: gMetronomeVolume,
 		configure_mp3_bitrate: gMP3Bitrate,
 		configure_export_delayms: gBatchExportDelayMS,
 		configure_mp3export_delayms: gBatchMP3ExportDelayMS,
@@ -43361,7 +43360,6 @@ function AdvancedSettings(){
 	
 	form = form.concat([
 		{name: "Default %reverb annotation (blank = no reverb):", id: "configure_reverb", type:"text", cssClass:"advanced_settings2_reverb_text"},
-		{name: "Metronome volume (default is 48):", id: "configure_metronome_volume", type:"text", cssClass:"advanced_settings2_reverb_text"},
 		{name: "MP3 audio export bitrate (kbit/sec) (default is 224):", id: "configure_mp3_bitrate", type:"number", cssClass:"advanced_settings2_form_text"},
 	]);
 
@@ -43475,16 +43473,6 @@ function AdvancedSettings(){
 			gDisableSelectedPlay = args.result.configure_disable_selected_play;
 
 			gReverbString = args.result.configure_reverb;
-
-			val = args.result.configure_metronome_volume;
-
-			val = parseInt(val);
-
-			if (!isNaN(val)){
-				if ((val >= 0) && (val < 128)){
-					gMetronomeVolume = val;
-				}
-			}
 
 			var testMP3Bitrate = parseInt(args.result.configure_mp3_bitrate);
 		
@@ -43666,7 +43654,8 @@ function ConfigurePlayerSettings(player_callback) {
 		configure_chord_volume: theChordVolume,
 		configure_override_play_midi_params: bOverridePlayMIDIParams,
 		configure_player_scaling: gPlayerScaling,
-		configure_always_play_alternate_chords:gPlayAlternateChordsOverride
+		configure_always_play_alternate_chords:gPlayAlternateChordsOverride,
+    configure_metronome_volume:gMetronomeVolume
 	};
 
  	const sound_font_options = [
@@ -43676,7 +43665,7 @@ function ConfigurePlayerSettings(player_callback) {
  	    { name: "  Canvas", id: "https://michaeleskin.com/abctools/soundfonts/canvas/" },
  	    { name: "  MScore", id: "https://michaeleskin.com/abctools/soundfonts/mscore_2/" },
  	    { name: "  Arachno", id: "https://michaeleskin.com/abctools/soundfonts/arachno_3/" },
-  	    { name: "  FluidHQ", id: "https://michaeleskin.com/abctools/soundfonts/fluidhq_1/" },
+  	  { name: "  FluidHQ", id: "https://michaeleskin.com/abctools/soundfonts/fluidhq_1/" },
 	];
 
   	var form = [
@@ -43690,7 +43679,8 @@ function ConfigurePlayerSettings(player_callback) {
 		{name: "Default Chords MIDI volume (0-127):", id: "configure_chord_volume", type:"number", cssClass:"configure_settings_form_text_fs"},
 		{html: '<p class="configure_settings_form_text_fs">Check the following box if you want the above values to override any instruments or volumes already specified in a tune when playing.</p>'},
 		{name: "            Override all MIDI programs and volumes in the ABC with the defaults when playing tunes", id: "configure_override_play_midi_params", type:"checkbox", cssClass:"configure_settings_form_text_checkbox_fs"},
-		{name: "            Always play alternate chords wrapped in parenthesis (examples:  \"(Gm7)\"  \"G(Dm7)\")", id: "configure_always_play_alternate_chords", type:"checkbox", cssClass:"configure_settings_form_text_checkbox_fs"}
+		{name: "            Always play alternate chords wrapped in parenthesis (examples:  \"(Gm7)\"  \"G(Dm7)\")", id: "configure_always_play_alternate_chords", type:"checkbox", cssClass:"configure_settings_form_text_checkbox_fs"},
+    {name: "Metronome volume (0-127, default is 48):", id: "configure_metronome_volume", type:"text", cssClass:"configure_settings_form_text_fs"},
 	];
 	
 	if (player_callback){
@@ -43850,6 +43840,16 @@ function ConfigurePlayerSettings(player_callback) {
 			gOverridePlayMIDIParams = args.result.configure_override_play_midi_params;
 
 			gPlayAlternateChordsOverride = args.result.configure_always_play_alternate_chords;
+
+      var val = args.result.configure_metronome_volume;
+
+      val = parseInt(val);
+
+      if (!isNaN(val)){
+        if ((val >= 0) && (val < 128)){
+          gMetronomeVolume = val;
+        }
+      }
 
 			// Update local storage
 			SaveConfigurationSettings();
