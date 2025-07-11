@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2579_071125_1000";
+var gVersionNumber="2580_071125_1100";
 
 var gMIDIInitStillWaiting = false;
 
@@ -22454,25 +22454,25 @@ function InjectAllMIDIParams(){
 // Inject metronome MIDI drum annotation into the current tune
 //
 const metronome_list = [
-    { name:"C|",  pattern:"dd 76 77 32 32"}, 
-    { name:"C",   pattern:"dddd 76 77 77 77 32 32 32 32"}, 
-   	{ name:"2/2", pattern:"dd 76 77 32 32"},
-   	{ name:"3/2", pattern:"ddd 76 77 77 32 32 32"},
-    { name:"2/4", pattern:"dd 76 77 32 32"}, 
-    { name:"3/4", pattern:"ddd 76 77 77 32 32 32"}, 
-    { name:"4/4", pattern:"dddd 76 77 77 77 32 32 32 32"}, 
-    { name:"5/4", pattern:"ddddd 76 77 77 77 77 32 32 32 32 32"}, 
-    { name:"6/4", pattern:"dddddd 76 77 77 77 77 77 32 32 32 32 32"}, 
-    { name:"7/4", pattern:"ddddddd 76 77 77 77 77 77 77 32 32 32 32 32 32"}, 
-    { name:"2/8", pattern:"dz 76 32"}, 
-    { name:"3/8", pattern:"dzz 76 32"}, 
-    { name:"5/8", pattern:"dzzdz 76 77 32 32"},
-    { name:"6/8", pattern:"dzzdzz 76 77 32 32"}, 
-    { name:"7/8", pattern:"dzdzdzz 76 77 77 32 32 32"}, 
-    { name:"9/8", pattern:"dzzdzzdzz 76 77 77 32 32 32"},
-    { name:"10/8", pattern:"dzzdzzdzdz 76 77 77 77 32 32 32 32"},
-    { name:"11/8", pattern:"dzzdzzdzdzz 76 77 77 77 32 32 32 32"},
-    { name:"12/8", pattern:"dzzdzzdzzdzz 76 77 77 77 32 32 32 32"}
+    { name:"C|",  pattern:"dd A B C D"}, 
+    { name:"C",   pattern:"dddd A B B B C D D D"}, 
+   	{ name:"2/2", pattern:"dd A B C D"},
+   	{ name:"3/2", pattern:"ddd A B B C D D"},
+    { name:"2/4", pattern:"dd A B C D"}, 
+    { name:"3/4", pattern:"ddd A B B C D D"}, 
+    { name:"4/4", pattern:"dddd A B B B C D D D"}, 
+    { name:"5/4", pattern:"ddddd A B B B B C D D D D"}, 
+    { name:"6/4", pattern:"dddddd A B B B B B C D D D D"}, 
+    { name:"7/4", pattern:"ddddddd A B B B B B B C D D D D D"}, 
+    { name:"2/8", pattern:"dz A C"}, 
+    { name:"3/8", pattern:"dzz A C"}, 
+    { name:"5/8", pattern:"dzzdz A B C D"},
+    { name:"6/8", pattern:"dzzdzz A B C D"}, 
+    { name:"7/8", pattern:"dzdzdzz A B B C D D"}, 
+    { name:"9/8", pattern:"dzzdzzdzz A B B C D D"},
+    { name:"10/8", pattern:"dzzdzzdzdz A B B B C D D D"},
+    { name:"11/8", pattern:"dzzdzzdzdzz A B B B C D D D"},
+    { name:"12/8", pattern:"dzzdzzdzzdzz A B B B C D D D"}
 ];
 
 //
@@ -22480,7 +22480,10 @@ const metronome_list = [
 //
 
 // Metronome volume
-var gMetronomeVolume = 48;
+var gMetronomeHighSound = 76;
+var gMetronomeLowSound = 77;
+var gMetronomeHighVolume = 48;
+var gMetronomeLowVolume = 48;
 
 function inject_one_metronome(tuneABC, showWarnings){
 
@@ -22537,7 +22540,10 @@ function inject_one_metronome(tuneABC, showWarnings){
 
 		if (theMeter == metronome_list[i].name){
 
-			var theFinalMetronome = metronome_list[i].pattern.replaceAll("32",gMetronomeVolume);
+      var theFinalMetronome = metronome_list[i].pattern.replaceAll("A",gMetronomeHighSound);
+      theFinalMetronome = theFinalMetronome.replaceAll("B",gMetronomeLowSound);
+      theFinalMetronome = theFinalMetronome.replaceAll("C",gMetronomeHighVolume);
+      theFinalMetronome = theFinalMetronome.replaceAll("D",gMetronomeLowVolume);
 			
 			theMetronomePattern = "%\n% Metronome sounds and volumes\n%\n%%MIDI drum "+theFinalMetronome+'\n%%MIDI drumon\n%';
 			
@@ -40332,16 +40338,50 @@ function GetInitialConfigurationSettings(){
 		gExportWidthAll = 2400;
 	}
 
-	val = localStorage.MetronomeVolume;
+	val = localStorage.MetronomeHighVolume;
 	if (val){
-		gMetronomeVolume = parseInt(val);
-		if (isNaN(gMetronomeVolume) || (gMetronomeVolume<0) || (gMetronomeVolume>127)){
-			gMetronomeVolume = 48;
+		gMetronomeHighVolume = parseInt(val);
+		if (isNaN(gMetronomeHighVolume) || (gMetronomeHighVolume<0) || (gMetronomeHighVolume>127)){
+			gMetronomeHighVolume = 48;
 		}
 	}
 	else{
-		gMetronomeVolume = 48;
+		gMetronomeHighVolume = 48;
 	}
+
+  val = localStorage.MetronomeLowVolume;
+  if (val){
+    gMetronomeLowVolume = parseInt(val);
+    if (isNaN(gMetronomeLowVolume) || (gMetronomeLowVolume<0) || (gMetronomeLowVolume>127)){
+      gMetronomeLowVolume = 48;
+    }
+  }
+  else{
+    gMetronomeLowVolume = 48;
+  }
+
+  val = localStorage.MetronomeHighSound;
+  if (val){
+    gMetronomeHighSound = parseInt(val);
+    if (isNaN(gMetronomeHighSound) || (gMetronomeHighSound<35) || (gMetronomeHighSound>81)){
+      gMetronomeHighSound = 76;
+    }
+  }
+  else{
+    gMetronomeHighSound = 76;
+  }
+
+  val = localStorage.MetronomeLowSound;
+  if (val){
+    gMetronomeLowSound = parseInt(val);
+    if (isNaN(gMetronomeLowSound) || (gMetronomeLowSound<35) || (gMetronomeLowSound>81)){
+      gMetronomeLowSound = 77;
+    }
+  }
+  else{
+    gMetronomeLowSound = 77;
+  }
+
 
 	gRawFirstTime = true;
 	val = localStorage.RawFirstTime;
@@ -40990,8 +41030,11 @@ function SaveConfigurationSettings(){
 		localStorage.ExportWidth = gExportWidth;	
 		localStorage.ExportWidthAll = gExportWidthAll;
 
-		// Save the metronome volume
-		localStorage.MetronomeVolume = gMetronomeVolume;
+		// Save the metronome settings
+    localStorage.MetronomeHighVolume = gMetronomeHighVolume;
+		localStorage.MetronomeLowVolume = gMetronomeLowVolume;
+    localStorage.MetronomeHighSound = gMetronomeHighSound;
+    localStorage.MetronomeLowSound = gMetronomeLowSound;
 
 		// Save first time Raw use
 		localStorage.RawFirstTime = gRawFirstTime;
@@ -43655,7 +43698,10 @@ function ConfigurePlayerSettings(player_callback) {
 		configure_override_play_midi_params: bOverridePlayMIDIParams,
 		configure_player_scaling: gPlayerScaling,
 		configure_always_play_alternate_chords:gPlayAlternateChordsOverride,
-    configure_metronome_volume:gMetronomeVolume
+    configure_metronome_high_sound:gMetronomeHighSound,
+    configure_metronome_low_sound:gMetronomeLowSound,
+    configure_metronome_high_volume:gMetronomeHighVolume,
+    configure_metronome_low_volume:gMetronomeLowVolume
 	};
 
  	const sound_font_options = [
@@ -43668,6 +43714,56 @@ function ConfigurePlayerSettings(player_callback) {
   	  { name: "  FluidHQ", id: "https://michaeleskin.com/abctools/soundfonts/fluidhq_1/" },
 	];
 
+  const metronome_sound_options = [
+      { name: " Acoustic Bass Drum", id: "35"},
+      { name: " Bass Drum", id: "36"}, 
+      { name: " Side Stick", id: "37"}, 
+      { name: " Acoustic Snare", id: "38"}, 
+      { name: " Hand Clap", id: "39"}, 
+      { name: " Electric Snare", id: "40"}, 
+      { name: " Low Floor Tom", id: "41"}, 
+      { name: " Closed Hi-Hat", id: "42"}, 
+      { name: " High Floor Tom", id: "43"}, 
+      { name: " Pedal Hi-Hat", id: "44"}, 
+      { name: " Low Tom", id: "45"},
+      { name: " Open Hi-Hat", id: "46"}, 
+      { name: " Low-Mid Tom", id: "47"}, 
+      { name: " High Mid Tom", id: "48"}, 
+      { name: " Crash Cymbal 1", id: "49"}, 
+      { name: " High Tom", id: "50"},
+      { name: " Ride Cymbal 1", id: "51"}, 
+      { name: " Chinese Cymbal", id: "52"}, 
+      { name: " Ride Bell", id: "53"}, 
+      { name: " Tambourine", id: "54"}, 
+      { name: " Splash Cymbal", id: "55"}, 
+      { name: " Cowbell", id: "56"}, 
+      { name: " Crash Cymbal 2", id: "57"}, 
+      { name: " Vibraslap", id: "58"},
+      { name: " Ride Cymbal 2", id: "59"},
+      { name: " High Bongo", id: "60"},
+      { name: " Low Bongo", id: "61"},
+      { name: " Mute High Conga", id: "62"},
+      { name: " Open High Conga", id: "63"},
+      { name: " Low Conga", id: "64"},
+      { name: " High Timbale", id: "65"},
+      { name: " Low Timbale", id: "66"},
+      { name: " High Agogo", id: "67"},
+      { name: " Low Agogo", id: "68"},
+      { name: " Cabasa", id: "69"},
+      { name: " Maracas", id: "70"},
+      { name: " Short Whistle", id: "71"},
+      { name: " Long Whistle", id: "72"},
+      { name: " Short Guiro", id: "73"},
+      { name: " Long Guiro", id: "74"},
+      { name: " Claves", id: "75"},
+      { name: " High Wood Block", id: "76"},
+      { name: " Low Wood Block", id: "77"},
+      { name: " Mute Cuica", id: "78"},
+      { name: " Open Cuica", id: "79"},
+      { name: " Mute Triangle", id: "80"},
+      { name: " Open Triangle", id: "81"}
+    ]
+
   	var form = [
 		{html: '<p style="text-align:center;font-size:16pt;font-family:helvetica;margin-left:15px;">Player Instrument Settings&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#default_player_settings" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'},
 		{html: '<p class="configure_settings_form_text_fs">The following values are used as the instrument and volume defaults if not already specified in a tune:</p>'},
@@ -43679,8 +43775,11 @@ function ConfigurePlayerSettings(player_callback) {
 		{name: "Default Chords MIDI volume (0-127):", id: "configure_chord_volume", type:"number", cssClass:"configure_settings_form_text_fs"},
 		{html: '<p class="configure_settings_form_text_fs">Check the following box if you want the above values to override any instruments or volumes already specified in a tune when playing.</p>'},
 		{name: "            Override all MIDI programs and volumes in the ABC with the defaults when playing tunes", id: "configure_override_play_midi_params", type:"checkbox", cssClass:"configure_settings_form_text_checkbox_fs"},
-		{name: "            Always play alternate chords wrapped in parenthesis (examples:  \"(Gm7)\"  \"G(Dm7)\")", id: "configure_always_play_alternate_chords", type:"checkbox", cssClass:"configure_settings_form_text_checkbox_fs"},
-    {name: "Metronome volume (0-127, default is 48):", id: "configure_metronome_volume", type:"text", cssClass:"configure_settings_form_text_fs"},
+		{name: "            Always play alternate chords wrapped in parenthesis (examples:  \"(Gm7)\"  \"G(Dm7)\")", id: "configure_always_play_alternate_chords", type:"checkbox", cssClass:"configure_settings_form_text_checkbox_fs2"},
+    {name: "Metronome first beat sound (default is High Wood Block):  ", id: "configure_metronome_high_sound", type:"select", options:metronome_sound_options, cssClass:"configure_midi_program_form_select"}, 
+    {name: "Metronome first beat volume (0-127, default is 48):", id: "configure_metronome_high_volume", type:"text", cssClass:"configure_settings_form_text_fs"},
+    {name: "Metromone other beats sound (default is Low Wood Block):", id: "configure_metronome_low_sound", type:"select", options:metronome_sound_options, cssClass:"configure_midi_program_form_select"}, 
+    {name: "Metronome other beats volume (0-127, default is 48):", id: "configure_metronome_low_volume", type:"text", cssClass:"configure_settings_form_text_fs"},
 	];
 	
 	if (player_callback){
@@ -43689,7 +43788,7 @@ function ConfigurePlayerSettings(player_callback) {
 		  	]);
 	}
 
-	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 100, width: 790, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
+	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 50, width: 790, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
 
 		// Get the results and store them in the global configuration
 		if (!args.canceled){
@@ -43841,13 +43940,27 @@ function ConfigurePlayerSettings(player_callback) {
 
 			gPlayAlternateChordsOverride = args.result.configure_always_play_alternate_chords;
 
-      var val = args.result.configure_metronome_volume;
+      // Metronome settings
+      gMetronomeHighSound = args.result.configure_metronome_high_sound;
+      gMetronomeLowSound = args.result.configure_metronome_low_sound;
+
+      var val = args.result.configure_metronome_high_volume;
 
       val = parseInt(val);
 
       if (!isNaN(val)){
         if ((val >= 0) && (val < 128)){
-          gMetronomeVolume = val;
+          gMetronomeHighVolume = val;
+        }
+      }
+
+      val = args.result.configure_metronome_low_volume;
+
+      val = parseInt(val);
+
+      if (!isNaN(val)){
+        if ((val >= 0) && (val < 128)){
+          gMetronomeLowVolume = val;
         }
       }
 

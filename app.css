@@ -2525,9 +2525,18 @@ body.noui svg {
 	display:flex;
 }
 
+.configure_settings_form_text_checkbox_fs2{
+	font-size:12pt;
+	line-height:11px;
+	font-family:helvetica;
+	margin-top:14px;
+	margin-bottom:24px;
+	display:flex;
+}
+
 .configure_settings_form_text_fs{
 	font-size:12pt;
-	line-height:24px;
+	line-height:20px;
 	font-family:helvetica;
 	margin-top:20px;
 	display:flex;
