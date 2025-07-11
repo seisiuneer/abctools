@@ -22466,13 +22466,13 @@ const metronome_list = [
     { name:"7/4", pattern:"ddddddd 76 77 77 77 77 77 77 32 32 32 32 32 32"}, 
     { name:"2/8", pattern:"dz 76 32"}, 
     { name:"3/8", pattern:"dzz 76 32"}, 
-    { name:"5/8", pattern:"dzzdz 76 76 32 32"},
-    { name:"6/8", pattern:"dzzdzz 76 76 32 32"}, 
-    { name:"7/8", pattern:"dzdzdzz 76 76 76 32 32 32"}, 
-    { name:"9/8", pattern:"dzzdzzdzz 76 76 76 32 32 32"},
-    { name:"10/8", pattern:"dzzdzzdzdz 76 76 76 76 32 32 32 32"},
-    { name:"11/8", pattern:"dzzdzzdzdzz 76 76 76 76 32 32 32 32"},
-    { name:"12/8", pattern:"dzzdzzdzzdzz 76 76 76 76 32 32 32 32"}
+    { name:"5/8", pattern:"dzzdz 76 77 32 32"},
+    { name:"6/8", pattern:"dzzdzz 76 77 32 32"}, 
+    { name:"7/8", pattern:"dzdzdzz 76 77 77 32 32 32"}, 
+    { name:"9/8", pattern:"dzzdzzdzz 76 77 77 32 32 32"},
+    { name:"10/8", pattern:"dzzdzzdzdz 76 77 77 77 32 32 32 32"},
+    { name:"11/8", pattern:"dzzdzzdzdzz 76 77 77 77 32 32 32 32"},
+    { name:"12/8", pattern:"dzzdzzdzzdzz 76 77 77 77 32 32 32 32"}
 ];
 
 //
