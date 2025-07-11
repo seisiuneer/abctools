@@ -43727,7 +43727,7 @@ function ConfigurePlayerSettings(player_callback) {
       { name: " Pedal Hi-Hat", id: "44"}, 
       { name: " Low Tom", id: "45"},
       { name: " Open Hi-Hat", id: "46"}, 
-      { name: " Low-Mid Tom", id: "47"}, 
+      { name: " Low Mid Tom", id: "47"}, 
       { name: " High Mid Tom", id: "48"}, 
       { name: " Crash Cymbal 1", id: "49"}, 
       { name: " High Tom", id: "50"},
