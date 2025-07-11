@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2580_071125_1100";
+var gVersionNumber="2581_071125_1200";
 
 var gMIDIInitStillWaiting = false;
 
@@ -22482,7 +22482,7 @@ const metronome_list = [
 // Metronome volume
 var gMetronomeHighSound = 76;
 var gMetronomeLowSound = 77;
-var gMetronomeHighVolume = 48;
+var gMetronomeHighVolume = 64;
 var gMetronomeLowVolume = 48;
 
 function inject_one_metronome(tuneABC, showWarnings){
@@ -40342,11 +40342,11 @@ function GetInitialConfigurationSettings(){
 	if (val){
 		gMetronomeHighVolume = parseInt(val);
 		if (isNaN(gMetronomeHighVolume) || (gMetronomeHighVolume<0) || (gMetronomeHighVolume>127)){
-			gMetronomeHighVolume = 48;
+			gMetronomeHighVolume = 64;
 		}
 	}
 	else{
-		gMetronomeHighVolume = 48;
+		gMetronomeHighVolume = 64;
 	}
 
   val = localStorage.MetronomeLowVolume;
@@ -43777,7 +43777,7 @@ function ConfigurePlayerSettings(player_callback) {
 		{name: "            Override all MIDI programs and volumes in the ABC with the defaults when playing tunes", id: "configure_override_play_midi_params", type:"checkbox", cssClass:"configure_settings_form_text_checkbox_fs"},
 		{name: "            Always play alternate chords wrapped in parenthesis (examples:  \"(Gm7)\"  \"G(Dm7)\")", id: "configure_always_play_alternate_chords", type:"checkbox", cssClass:"configure_settings_form_text_checkbox_fs2"},
     {name: "Metronome first beat sound (default is High Wood Block):  ", id: "configure_metronome_high_sound", type:"select", options:metronome_sound_options, cssClass:"configure_midi_program_form_select"}, 
-    {name: "Metronome first beat volume (0-127, default is 48):", id: "configure_metronome_high_volume", type:"text", cssClass:"configure_settings_form_text_fs"},
+    {name: "Metronome first beat volume (0-127, default is 64):", id: "configure_metronome_high_volume", type:"text", cssClass:"configure_settings_form_text_fs"},
     {name: "Metromone other beats sound (default is Low Wood Block):", id: "configure_metronome_low_sound", type:"select", options:metronome_sound_options, cssClass:"configure_midi_program_form_select"}, 
     {name: "Metronome other beats volume (0-127, default is 48):", id: "configure_metronome_low_volume", type:"text", cssClass:"configure_settings_form_text_fs"},
 	];
