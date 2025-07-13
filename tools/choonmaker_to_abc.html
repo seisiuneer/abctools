@@ -1,0 +1,154 @@
+<html>
+  
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <link rel="profile" href="http://gmpg.org/xfn/11">
+    <title>Reel/Jig Choon Maker JSON to ABC Transcription Tools Transcoder</title>
+    <link rel='dns-prefetch' href='//fonts.googleapis.com' />
+    <link rel='dns-prefetch' href='//s.w.org' />
+    <link rel='preconnect' href='https://secureservercdn.net' crossorigin />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Reel/Jig Choon Maker JSON to ABC Transcription Tools Transcoder" />
+    <meta property="og:description" content="Batch processor for generating ABC notation with tablature from Reel/Jig Choon Maker JSON." />
+    <meta property="og:url" content="https://michaeleskin.com/tools/choonmaker_to_abc.html" />
+    <meta property="og:site_name" content="Reel/Jig Choon Maker JSON to ABC Transcription Tools Transcoder" />
+    <meta property="og:image" content="https://michaeleskin.com/abctools/img/abc-icon-user-guide-basic.png" />
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="msapplication-TileImage" content="https://michaeleskin.com/abctools/img/abc-ms-icon-144x144.png">
+    <meta name="viewport" content="width=860">
+    <link rel="apple-touch-icon" sizes="57x57" href="https://michaeleskin.com/abctools/img/abc-apple-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="https://michaeleskin.com/abctools/img/abc-apple-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="https://michaeleskin.com/abctools/img/abc-apple-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="https://michaeleskin.com/abctools/img/abc-apple-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="https://michaeleskin.com/abctools/img/abc-apple-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="https://michaeleskin.com/abctools/img/abc-apple-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="https://michaeleskin.com/abctools/img/abc-apple-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="https://michaeleskin.com/abctools/img/abc-apple-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="https://michaeleskin.com/abctools/img/abc-apple-icon-180x180.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="https://michaeleskin.com/abctools/img/abc-android-icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="https://michaeleskin.com/abctools/img/abc-favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="https://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
+    <link rel="stylesheet" href="choonmaker_to_abc.css?v=1"/>
+    
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-VM0N9HL3MK"></script>
+    
+    <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-VM0N9HL3MK');
+    </script>
+    
+  </head>
+  
+  <body>
+    
+    <div id="maindiv">
+      
+      <div>
+        
+        <div style="text-align: center;">
+          <h1>Reel/Jig Choon Maker JSON to ABC Transcription Tools Transcoder</h1>
+        </div>
+        
+        <h4 style="margin-top:32px;">Instructions:&nbsp;&nbsp;<a href="#jsoninput">Jump to Tool</a></h4>
+        
+        <p>1)&nbsp;Click "Open an existing Reel/Jig Choon Maker JSON file" to open a Reel/Jig Choon Maker JSON file or paste tune JSON into the box below.</p>
+        <p>2)&nbsp;Select the ABC tune key from the "ABC Key Signature" dropdown.</p>
+        <p>3)&nbsp;Enter a title for the ABC title in the "ABC Tune Title" input.</p>
+        <p>4)&nbsp;Click "Transcode Reel/Jig Choon Maker JSON to ABC".</p>
+        <p>The generated ABC will appear in the "Processed ABC Output" box.</p>
+        <p>5)&nbsp;Save, Copy or Test the results:</p>
+        <p>Click "Save Output to a file" to save the results to a file.</p>
+        <p>Click "Copy Output to the clipboard" to copy the results to the system clipboard for pasting into other applications.</p>
+        <p>Click "Test Output in the ABC Transcription Tools" to open and test the results in my <a href="https://michaeleskin.com/abctools/abctools.html" target="_blank">ABC Transcription Tools</a></p>
+      </div>
+      
+      <hr id="jsoninput">
+      
+      <div style="text-align:left">
+        
+        <h4>Reel/Jig Choon Maker JSON:</h4>
+        
+        <div style="margin-top:28px;margin-bottom:36px;">
+          <p>
+            <input type="file" id="selectjsonfile" accept=".json,.txt,.JSON,.TXT"  hidden/>
+            <label class="jsonupload btn btn-controls" for="selectjsonfile" title="Opens an existing Reel/Jig Choon Maker JSON file">Open an existing Reel/Jig Choon Maker JSON file</label>
+          </p>
+        </div>
+        
+        <p>
+          <textarea id="input" placeholder="Enter Reel/Jig Choon Maker JSON here" spellcheck="false" autocorrect="off" autocapitalize="none">
+          </textarea>
+        </p>
+
+        <hr>
+        
+        <p>
+          
+          <span style="">ABC Key Signature:&nbsp;&nbsp;</span>
+        
+          <select id="abc-key-signature">
+            <option value="C">&nbsp;&nbsp;C Major / A Minor</option>
+            <option value="G">&nbsp;&nbsp;G Major / E Minor (F#)</option><option value="D">&nbsp;&nbsp;D Major / B Minor (F#, C#)</option>
+            <option value="A">&nbsp;&nbsp;A Major / F# Minor (F#, C#, G#)</option>
+            <option value="E">&nbsp;&nbsp;E Major / C# Minor (F#, C#, G#, D#)</option>
+            <option value="B">&nbsp;&nbsp;B Major / G# Minor (F#, C#, G#, D#, A#)</option>
+            <option value="F#">&nbsp;&nbsp;F# Major / D# Minor (F#, C#, G#, D#, A#, E#)</option>
+            <option value="C#">&nbsp;&nbsp;C# Major / A# Minor (All 7 Sharps)</option>
+            <option value="F">&nbsp;&nbsp;F Major / D Minor (Bb)</option>
+            <option value="Bb">&nbsp;&nbsp;Bb Major / G Minor (Bb, Eb)</option>
+            <option value="Eb">&nbsp;&nbsp;Eb Major / C Minor (Bb, Eb, Ab)</option>
+            <option value="Ab">&nbsp;&nbsp;Ab Major / F Minor (Bb, Eb, Ab, Db)</option><option value="Db">&nbsp;&nbsp;Db Major / Bb Minor (Bb, Eb, Ab, Db, Gb)</option>
+            <option value="Gb">&nbsp;&nbsp;Gb Major / Eb Minor (Bb, Eb, Ab, Db, Gb, Cb)</option>
+            <option value="Cb">&nbsp;&nbsp;Cb Major / Ab Minor (All 7 Flats)</option>
+          </select>
+        </p>
+
+        <p>ABC Tune Title:&nbsp;&nbsp;<input style="width:500px;font-size:12pt;font-family:Helvetica;padding:4px;" id="tune_title" type="text"></p>
+
+        <p style="margin-top:24px"><button id="transcodeJSON" class="btn btn-generate" onClick="transcodeJSON();">Transcode Reel/Jig Choon Maker JSON to ABC</button></p>
+        
+        <div style="margin-bottom: 18px;">
+          
+          <h4>Processed ABC Output:</h4>
+          
+        </div>
+        
+        <textarea id="output" placeholder="Transcoded ABC will appear here" spellcheck="false" autocorrect="off" autocapitalize="none"></textarea>
+        
+        <p style="margin-top:20px;">
+          
+          <button id="copybutton" class="btn btn-controls" onClick="copyOutputToClipboard();">Copy Output to the clipboard</button>
+          
+          <button style="margin-left:24px;" class="btn btn-controls" onClick="saveOutput();">Save Output to a file</button>
+          
+          <button style="margin-left:24px;" class="btn btn-controls" onClick="testOutput();">Test Output in the ABC Transcription Tools</button>
+          
+        </p>
+        
+      </div>
+      
+      <hr>
+      
+      <div style="text-align: center;">
+        
+        <p style="text-align: center">Complete source code for this utility may be found on GitHub</p>
+        
+        <p style="text-align: center"> <a href="https://github.com/seisiuneer/abctools/tree/main/tools" target="_blank">Reel/Jig Choon Maker JSON to ABC Transcription Tools Transcoder</a></p>
+        
+        <hr style="margin-bottom:50px">
+        
+      </div>
+      
+    </div>
+    
+  </body>
+  
+  <script src="choonmaker_to_abc.js?v=1" type="text/javascript"></script>
+  <script type="text/javascript" src="lz-string.min.js?v=1"></script>
+  <script type="text/javascript" src="daypilot-modal.min-3.10.1.js?v=1"></script>
+  
+</html>
