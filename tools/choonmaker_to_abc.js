@@ -92,7 +92,6 @@ function generateABCWithChordsFromJSON(data) {
   const barsPerLine = 4;
   const qtag = isJig ? "3/8=120" : "1/2=120";
   const swing = data.swing / 100;
-
   const key = document.getElementById("abc-key-signature").value;
 
   const header = [
@@ -106,27 +105,38 @@ function generateABCWithChordsFromJSON(data) {
     `%swing ${swing}`
   ];
 
+  // Handle click pattern if present
+  if (Array.isArray(data.clickPattern) && data.clickPattern.some((v) => v !== 0)) {
+    const zCount = isJig ? 6 : 8;
+    const pattern = data.clickPattern.slice(0, zCount);
+    const drumLine = pattern.map(v => (v !== 0 ? "d" : "z")).join("");
+    const midiNotes = pattern.map(v => v === 1 ? 47 : v === 2 ? 47 : 0).join(" ");
+    const accents = pattern.map(v => v === 1 ? 32 : v === 2 ? 127 : 0).join(" ");
+
+    // Strip zeros
+    var drumLineFinal = `%%MIDI drum ${drumLine} ${midiNotes} ${accents}`
+    drumLineFinal = drumLineFinal.replace(/\b0\b ?/g, '');
+
+    header.push(drumLineFinal);
+    header.push("%%MIDI drumon");
+  }
+
   const labelToChord = (label) => {
     if (!label) return null;
     return label.replace(/[0-9]/g, "");
   };
 
   const labelToABCPitch = (label) => {
-    if (!label) return "z"; // Rest
+    if (!label) return "z";
     const match = label.match(/^([A-Ga-g])(#|b)?(\d)$/);
-    if (!match) return "z"; // Rest
-
+    if (!match) return "z";
     let [, note, accidental, octave] = match;
     octave = parseInt(octave, 10);
 
     let abcNote = note.toLowerCase();
-    if (octave > 4) {
-      abcNote += "'".repeat(octave - 5);
-    } else if (octave < 4) {
-      abcNote = note.toUpperCase() + ",".repeat(3 - octave);
-    } else {
-      abcNote = note;
-    }
+    if (octave > 4) abcNote += "'".repeat(octave - 5);
+    else if (octave < 4) abcNote = note.toUpperCase() + ",".repeat(3 - octave);
+    else abcNote = note;
 
     if (accidental === "#") abcNote = "^" + abcNote;
     else if (accidental === "b") abcNote = "_" + abcNote;
@@ -134,158 +144,54 @@ function generateABCWithChordsFromJSON(data) {
     return abcNote;
   };
 
-  // Updated combineRests based on jig/reel rules for grouping rests
-  const combineRests = (notes) => {
-    const combined = [];
-    let restCount = 0;
+  const compressRests = (restStrs) => {
+    const result = [];
+    let count = 0;
 
-    const flushRests = () => {
-      if (restCount === 0) return;
-
-      if (isJig) {
-        // Jig: group rests in 3s max
-        while (restCount > 0) {
-          if (restCount >= 3) {
-            combined.push("z3");
-            restCount -= 3;
-          } else if (restCount === 2) {
-            combined.push("z2");
-            restCount -= 2;
-          } else if (restCount === 1) {
-            combined.push("z");
-            restCount -= 1;
+    for (let i = 0; i <= restStrs.length; i++) {
+      if (restStrs[i] === "z") {
+        count++;
+      } else {
+        while (count > 0) {
+          if (isJig) {
+            if (count >= 3) {
+              result.push("z3");
+              count -= 3;
+            } else if (count === 2) {
+              result.push("z2");
+              count -= 2;
+            } else {
+              result.push("z");
+              count -= 1;
+            }
+          } else {
+            if (count >= 4) {
+              result.push("z4");
+              count -= 4;
+            } else if (count === 3) {
+              result.push("z3");
+              count -= 3;
+            } else if (count === 2) {
+              result.push("z2");
+              count -= 2;
+            } else {
+              result.push("z");
+              count -= 1;
+            }
           }
         }
-      } else if (isReel) {
-        // Reel: group rests in 4s max
-        while (restCount > 0) {
-          if (restCount >= 4) {
-            combined.push("z4");
-            restCount -= 4;
-          } else if (restCount === 3) {
-            combined.push("z3");
-            restCount -= 3;
-          } else if (restCount === 2) {
-            combined.push("z2");
-            restCount -= 2;
-          } else if (restCount === 1) {
-            combined.push("z");
-            restCount -= 1;
-          }
-        }
-      } else {
-        // Default fallback: no grouping
-        for (let i = 0; i < restCount; i++) {
-          combined.push("z");
-        }
-        restCount = 0;
-      }
-    };
-
-    for (const n of notes) {
-      if (/^z(\d*)$/.test(n)) {
-        const durMatch = n.match(/^z(\d*)$/);
-        const dur = durMatch && durMatch[1] ? parseInt(durMatch[1]) : 1;
-        restCount += dur;
-      } else {
-        flushRests();
-        combined.push(n);
+        if (restStrs[i]) result.push(restStrs[i]);
       }
     }
-    flushRests();
 
-    return combined;
+    return result;
   };
 
-  const processBars = (melodyNotes, bassNotes, startIndex = 0, endIndex = melodyNotes.length) => {
-    const bars = [];
-    let barNotes = [];
-    let noteCount = 0;
-    let i = startIndex;
-
-    while (i < endIndex) {
-      let melNote = melodyNotes[i];
-      let bassNote = bassNotes[i];
-
-      let noteDuration = 1;
-      let j = i + 1;
-
-      while (
-        j < endIndex &&
-        melNote?.tie &&
-        melodyNotes[j]?.label === melNote.label
-      ) {
-        noteDuration++;
-        melNote = melodyNotes[j];
-        j++;
-      }
-
-      let crossesBarline = false;
-      if (
-        Math.floor((noteCount + noteDuration - 1) / notesPerBar) >
-        Math.floor(noteCount / notesPerBar)
-      ) {
-        crossesBarline = true;
-      }
-
-      const abcNoteBase =
-        melodyNotes[i] && melodyNotes[i].label
-          ? labelToABCPitch(melodyNotes[i].label)
-          : "z";
-      const chord =
-        bassNotes[i] && bassNotes[i].label && abcNoteBase !== "z"
-          ? `"${labelToChord(bassNotes[i].label)}"`
-          : "";
-
-      if (crossesBarline) {
-        let remaining = noteDuration;
-        while (remaining > 0) {
-          const roomInBar = notesPerBar - noteCount;
-          const durationThisBar = Math.min(roomInBar, remaining);
-          const noteFragment = abcNoteBase + (durationThisBar > 1 ? durationThisBar : "");
-          const full = chord + noteFragment + (remaining > durationThisBar ? "-" : "");
-          barNotes.push(full);
-
-          noteCount += durationThisBar;
-          remaining -= durationThisBar;
-
-          if (noteCount === notesPerBar) {
-            // Combine rests first
-            const combinedBarNotes = combineRests(barNotes);
-            bars.push(groupAndFlush(combinedBarNotes));
-            barNotes = [];
-            noteCount = 0;
-          }
-        }
-      } else {
-        const fullNote = chord + abcNoteBase + (noteDuration > 1 ? noteDuration : "");
-        barNotes.push(fullNote);
-        noteCount += noteDuration;
-
-        if (noteCount === notesPerBar) {
-          // Combine rests first
-          const combinedBarNotes = combineRests(barNotes);
-          bars.push(groupAndFlush(combinedBarNotes));
-          barNotes = [];
-          noteCount = 0;
-        }
-      }
-
-      i += noteDuration;
-    }
-
-    if (barNotes.length > 0) {
-      const combinedBarNotes = combineRests(barNotes);
-      bars.push(groupAndFlush(combinedBarNotes));
-    }
-
-    return bars;
-  };
-
-  const groupAndFlush = (barNotes) => {
+  const formatBar = (barNotes) => {
+    const compressed = compressRests(barNotes);
     let groupStr = "";
     let groupDur = 0;
-    for (const n of barNotes) {
+    for (const n of compressed) {
       const match = n.match(/(\d+)/);
       const dur = match ? parseInt(match[1]) : 1;
       groupStr += n;
@@ -301,68 +207,101 @@ function generateABCWithChordsFromJSON(data) {
   const allBars = [];
 
   for (const section of data.sequenceData) {
-    const useDiffs = section.diffOnRepEnabled;
-    const diffBars = section.diffOnRepBars || 0;
+    const melodyNotes = section.melody.main;
+    const bassNotes = section.bass.main;
 
-    const melodyMain = section.melody.main;
-    const bassMain = section.bass.main;
-    const melodyDiff = section.melody.diff || [];
-    const bassDiff = section.bass.diff || [];
+    let mainBars = [];
+    let altBars = [];
 
-    const mainBars = processBars(melodyMain, bassMain);
-    const splitPoint = mainBars.length - diffBars;
+    const buildBars = (melody, bass) => {
+      const bars = [];
+      let barNotes = [];
+      let noteCount = 0;
+      let i = 0;
 
-    if (data.repeatParts && useDiffs && diffBars > 0 && melodyDiff.length > 0) {
-      const common = mainBars.slice(0, splitPoint);
-      const firstEnding = mainBars.slice(splitPoint);
-      const secondEnding = processBars(melodyDiff, bassDiff);
+      while (i < melody.length) {
+        let melNote = melody[i];
+        let bassNote = bass[i];
 
-      if (common.length > 0) common[0] = "|:" + common[0];
+        let noteDuration = 1;
+        let j = i + 1;
 
-      if (firstEnding.length > 0) firstEnding[0] = "[1 " + firstEnding[0];
-      if (firstEnding.length > 0) {
-        firstEnding[firstEnding.length - 1] =
-          firstEnding[firstEnding.length - 1].replace(/\|$/, ":|");
+        while (j < melody.length && melNote?.tie && melody[j]?.label === melNote.label) {
+          noteDuration++;
+          melNote = melody[j];
+          j++;
+        }
+
+        const abcNoteBase = melody[i]?.label ? labelToABCPitch(melody[i].label) : "z";
+        const chord = bass[i]?.label ? `"${labelToChord(bass[i].label)}"` : "";
+
+        let remaining = noteDuration;
+        while (remaining > 0) {
+          const roomInBar = notesPerBar - noteCount;
+          const durationThisBar = Math.min(roomInBar, remaining);
+          const noteFragment = abcNoteBase + (durationThisBar > 1 ? durationThisBar : "");
+          const full = chord + noteFragment + (remaining > durationThisBar ? "-" : "");
+          barNotes.push(full);
+          noteCount += durationThisBar;
+          remaining -= durationThisBar;
+
+          if (noteCount === notesPerBar) {
+            bars.push(formatBar(barNotes));
+            barNotes = [];
+            noteCount = 0;
+          }
+        }
+
+        i += noteDuration;
       }
 
-      if (secondEnding.length > 0) {
-        secondEnding[0] = "[2 " + secondEnding[0];
-        const lastIdx = secondEnding.length - 1;
-        if (section === data.sequenceData[data.sequenceData.length - 1]) {
-          secondEnding[lastIdx] = secondEnding[lastIdx].replace(/\|$/, "|]");
-        } else {
-          secondEnding[lastIdx] = secondEnding[lastIdx].replace(/\|$/, "||");
+      if (barNotes.length > 0) {
+        bars.push(formatBar(barNotes));
+      }
+
+      return bars;
+    };
+
+    mainBars = buildBars(melodyNotes, bassNotes);
+
+    if (section.diffOnRepEnabled && section.diffOnRepBars > 0 && Array.isArray(section.diff)) {
+      const diffMelody = section.diff.map(n => n.melody);
+      const diffBass = section.diff.map(n => n.bass);
+
+      const firstEndingBars = mainBars.slice(0, -section.diffOnRepBars);
+      const firstEnding = mainBars.slice(-section.diffOnRepBars);
+      const secondEnding = buildBars(diffMelody, diffBass);
+
+      if (data.repeatParts) {
+        if (firstEndingBars.length > 0) {
+          firstEndingBars[0] = "|:" + firstEndingBars[0];
+        }
+        if (secondEnding.length > 0) {
+          secondEnding[secondEnding.length - 1] = secondEnding[secondEnding.length - 1].replace(/\|$/, "|]");
         }
       }
 
-      const combinedLastLine = [firstEnding.pop(), secondEnding.shift()].join(" ");
-      allBars.push(...common, ...firstEnding, combinedLastLine, ...secondEnding);
+      // Line with 1st and 2nd endings inline
+      const endingLine = ["[1", ...firstEnding, ":|", "[2", ...secondEnding].join(" ");
+      allBars.push(...firstEndingBars, endingLine, "");
     } else {
       if (data.repeatParts && mainBars.length > 0) {
         mainBars[0] = "|:" + mainBars[0];
         mainBars[mainBars.length - 1] = mainBars[mainBars.length - 1].replace(/\|$/, ":|");
       }
-
-      if (
-        section === data.sequenceData[data.sequenceData.length - 1] &&
-        !useDiffs &&
-        mainBars.length > 0
-      ) {
-        const lastIdx = mainBars.length - 1;
-        mainBars[lastIdx] = mainBars[lastIdx].replace(/\|$/, "|]");
-      }
-
       allBars.push(...mainBars);
     }
   }
 
   const lines = [];
   for (let i = 0; i < allBars.length; i += barsPerLine) {
-    lines.push(allBars.slice(i, i + barsPerLine).join(" "));
+    const chunk = allBars.slice(i, i + barsPerLine).filter(Boolean).join(" ");
+    if (chunk) lines.push(chunk);
   }
 
   return [...header, ...lines].join("\n");
 }
+
 
 //
 // Main processor
