@@ -111,7 +111,7 @@ function generateABCWithChordsFromJSON(data) {
     const pattern = data.clickPattern.slice(0, zCount);
     const drumLine = pattern.map(v => (v !== 0 ? "d" : "z")).join("");
     const midiNotes = pattern.map(v => v === 1 ? 47 : v === 2 ? 47 : 0).join(" ");
-    const accents = pattern.map(v => v === 1 ? 32 : v === 2 ? 127 : 0).join(" ");
+    const accents = pattern.map(v => v === 1 ? 24 : v === 2 ? 64 : 0).join(" ");
 
     // Strip zeros
     var drumLineFinal = `%%MIDI drum ${drumLine} ${midiNotes} ${accents}`
