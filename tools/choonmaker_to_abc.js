@@ -104,10 +104,10 @@ function generateABCWithChordsFromJSON(data) {
 
   const meter = isJig ? "6/8" : "4/4";
   const notesPerBar = isJig ? 6 : 8;
-  const grouping = isJig ? [3, 3] : [4, 4];
+  const groupDuration = isJig ? 3 : 4;
   const barsPerLine = 4;
   const qtag = isJig ? "3/8=120" : "1/2=120";
-  const swing = data.swing/100;
+  const swing = data.swing / 100;
 
   const key = document.getElementById("abc-key-signature").value;
 
@@ -159,40 +159,118 @@ function generateABCWithChordsFromJSON(data) {
     const bars = [];
     let barNotes = [];
     let noteCount = 0;
+    let i = 0;
 
-    for (let i = 0; i < melodyNotes.length; i++) {
-      const melNote = melodyNotes[i];
-      const bassNote = bassNotes[i];
+    while (i < melodyNotes.length) {
+      let melNote = melodyNotes[i];
+      let bassNote = bassNotes[i];
 
-      const abcNote = melNote && melNote.label ? labelToABCPitch(melNote.label) : "z";
-      const chord = bassNote && bassNote.label ? `"${labelToChord(bassNote.label)}"` : "";
-      const noteWithChord = chord + abcNote;
+      let noteDuration = 1;
+      let j = i + 1;
 
-      barNotes.push(noteWithChord);
-      noteCount++;
-
-      if (noteCount === notesPerBar) {
-        const grouped = [];
-        let idx = 0;
-        for (let g of grouping) {
-          grouped.push(barNotes.slice(idx, idx + g).join(""));
-          idx += g;
-        }
-        bars.push(grouped.join(" ") + " |");
-        barNotes = [];
-        noteCount = 0;
+      // Count how many tied notes follow
+      while (
+        j < melodyNotes.length &&
+        melNote?.tie &&
+        melodyNotes[j]?.label === melNote.label
+      ) {
+        noteDuration++;
+        melNote = melodyNotes[j];
+        j++;
       }
+
+      // Determine if the tie crosses a barline
+      let crossesBarline = false;
+      if (
+        Math.floor((noteCount + noteDuration - 1) / notesPerBar) >
+        Math.floor(noteCount / notesPerBar)
+      ) {
+        crossesBarline = true;
+      }
+
+      const abcNoteBase =
+        melodyNotes[i] && melodyNotes[i].label
+          ? labelToABCPitch(melodyNotes[i].label)
+          : "z";
+      const chord =
+        bassNotes[i] && bassNotes[i].label
+          ? `"${labelToChord(bassNotes[i].label)}"`
+          : "";
+
+      if (crossesBarline) {
+        let remaining = noteDuration;
+        while (remaining > 0) {
+          const roomInBar = notesPerBar - noteCount;
+          const durationThisBar = Math.min(roomInBar, remaining);
+          const noteFragment = abcNoteBase + (durationThisBar > 1 ? durationThisBar : "");
+          const full = chord + noteFragment + (remaining > durationThisBar ? "-" : "");
+          barNotes.push(full);
+
+          noteCount += durationThisBar;
+          remaining -= durationThisBar;
+
+          if (noteCount === notesPerBar) {
+            // Group notes in bar by total duration
+            let groupStr = "";
+            let groupDur = 0;
+            for (const n of barNotes) {
+              const match = n.match(/(\d+)/);
+              const dur = match ? parseInt(match[1]) : 1;
+              groupStr += n;
+              groupDur += dur;
+              if (groupDur >= groupDuration) {
+                groupStr += " ";
+                groupDur = 0;
+              }
+            }
+            bars.push(groupStr.trim() + " |");
+            barNotes = [];
+            noteCount = 0;
+          }
+        }
+      } else {
+        const fullNote = chord + abcNoteBase + (noteDuration > 1 ? noteDuration : "");
+        barNotes.push(fullNote);
+        noteCount += noteDuration;
+
+        if (noteCount === notesPerBar) {
+          // Group notes in bar by total duration
+          let groupStr = "";
+          let groupDur = 0;
+          for (const n of barNotes) {
+            const match = n.match(/(\d+)/);
+            const dur = match ? parseInt(match[1]) : 1;
+            groupStr += n;
+            groupDur += dur;
+            if (groupDur >= groupDuration) {
+              groupStr += " ";
+              groupDur = 0;
+            }
+          }
+          bars.push(groupStr.trim() + " |");
+          barNotes = [];
+          noteCount = 0;
+        }
+      }
+
+      i += noteDuration;
     }
 
-    // Flush any remaining partial bar
+    // Flush any remaining notes
     if (barNotes.length > 0) {
-      const grouped = [];
-      let idx = 0;
-      for (let g of grouping) {
-        grouped.push(barNotes.slice(idx, idx + g).join(""));
-        idx += g;
+      let groupStr = "";
+      let groupDur = 0;
+      for (const n of barNotes) {
+        const match = n.match(/(\d+)/);
+        const dur = match ? parseInt(match[1]) : 1;
+        groupStr += n;
+        groupDur += dur;
+        if (groupDur >= groupDuration) {
+          groupStr += " ";
+          groupDur = 0;
+        }
       }
-      bars.push(grouped.join(" ") + " |");
+      bars.push(groupStr.trim() + " |");
     }
 
     // Wrap this section in repeat markers if repeatParts is true
@@ -212,6 +290,7 @@ function generateABCWithChordsFromJSON(data) {
 
   return [...header, ...lines].join("\n");
 }
+
 
 //
 // Main processor
@@ -254,7 +333,7 @@ function saveOutput() {
         return;
     }
 
-    if (gSaveFilename == ""){
+    if (gSaveFilename == "") {
         gSaveFilename = "harmonica_tab";
     }
 
@@ -437,7 +516,7 @@ function testOutput() {
 
     var abcInLZW = LZString.compressToEncodedURIComponent(abcText);
 
-    var url = "https://michaeleskin.com/abctools/abctools.html?lzw=" + abcInLZW + "&format=noten&ssp=45&pdf=one&pn=br&fp=yes&btfs=10&name=" + shareName +"&editor=1";
+    var url = "https://michaeleskin.com/abctools/abctools.html?lzw=" + abcInLZW + "&format=noten&ssp=45&pdf=one&pn=br&fp=yes&btfs=10&name=" + shareName + "&editor=1";
 
     if (url.length > 8100) {
 
@@ -501,12 +580,11 @@ function isAndroid() {
 //
 // Are we on Safari?
 //
-function isSafari(){
+function isSafari() {
 
     if (/Safari/i.test(navigator.userAgent) && /Apple Computer/.test(navigator.vendor)) {
         return true;
-    }
-    else{
+    } else {
         return false;
     }
 }
@@ -514,12 +592,11 @@ function isSafari(){
 //
 // Are we on Chrome?
 //
-function isChrome(){
+function isChrome() {
 
     if (/chrome|chromium|crios/i.test(navigator.userAgent)) {
         return true;
-    }
-    else{
+    } else {
         return false;
     }
 }
@@ -567,15 +644,15 @@ function DoStartup() {
 
     // Are we on Safari?
     gIsSafari = false;
-    if (isSafari()){
+    if (isSafari()) {
         gIsSafari = true;
     }
 
     // Are we on Chrome?
     gIsChrome = false;
 
-    if (!gIsSafari){
-        if (isChrome()){
+    if (!gIsSafari) {
+        if (isChrome()) {
             gIsChrome = true;
         }
     }
@@ -602,7 +679,7 @@ function DoStartup() {
 
         // Strip the extension
         gSaveFilename = gSaveFilename.replace(/\..+$/, '');
-       
+
         // Clean up the notation while the new file is loading
         document.getElementById('input').value = "";
 
