@@ -1,0 +1,2357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>REEL/JIG CHOON MAKER</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+    <style>
+        /* Use Inter font */
+       body {
+            font-family: 'Inter', sans-serif;
+            overscroll-behavior: none;
+            color: #d1d5db; /* Default light text color (gray-300) */
+        }
+        
+        /* Panel Styling - Dark Theme */
+        .panel {
+            margin-bottom: 1rem;
+            padding: 1rem;
+            border-width: 2px;
+            border-color: #284522; 
+            border-radius: 0.5rem;
+            background-color: #181818; 
+            box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+        }
+        
+        /* Headings inside panels */
+        .panel h2 {
+            color: #e5e7eb; /* gray-200 */
+        }
+
+        /* Note Box Styles */
+        .note-box {
+            transition: background-color 0.1s ease-in-out, transform 0.05s ease-in-out;
+            touch-action: manipulation; /* Optimize for touch interaction */
+            width: 2.75rem; /* w-11 */
+            height: 2.75rem; /* h-11 */
+        }
+        
+        @media (min-width: 768px) { /* md breakpoint */
+             .note-box { width: 4rem; height: 4rem; } /* md:w-16 md:h-16 */
+        }
+        .note-box.row1-active { background-color: #2563eb; transform: scale(0.96); }
+        .note-box.row2-active { background-color: #7e22ce; transform: scale(0.96); }
+        .note-box.row1-red-active { background-color: #b91c1c; transform: scale(0.96); }
+        .note-box.row2-red-active { background-color: #b91c1c; transform: scale(0.96); }
+        .note-box.delete-button { background-color: #6b7280; }
+        .note-box.delete-button:hover { background-color: #4b5563; }
+        .note-box.delete-button.delete-active { background-color: #dc2626; transform: scale(0.96); }
+        .note-box.bass-active { background-color: #0f766e; transform: scale(0.96); }
+        .note-box.bass-red-active { background-color: #c2410c; transform: scale(0.96); }
+
+    
+        /* Toggle Switch Styles */
+        .toggle-checkbox:checked + .toggle-label .toggle-dot { transform: translateX(100%); }
+        .toggle-checkbox + .toggle-label { background-color: #4b5563; } /* gray-600 */
+        .toggle-checkbox:checked + .toggle-label { background-color: #3b82f6; } /* blue-500 */
+        .toggle-label .toggle-dot { background-color: #f9fafb; } /* gray-50 */
+
+        /* Container for the switches */
+        #switch-controls-container, #scale-switch-container {
+            display: flex; flex-wrap: wrap; justify-content: center;
+            gap: 1rem 2rem;
+            margin-top: 0.25rem;
+            padding: 0.25rem;
+        }
+        #scale-switch-container {
+             margin-top: 0;
+             margin-bottom: 0.25rem;
+        }
+        
+        .switch-control-item { display: flex; align-items: center; }
+        .switch-control-item .toggle-label { margin-right: 0.75rem; }
+        .switch-control-item span { font-size: 0.875rem; font-weight: 500; color: #d1d5db; }
+
+        /* Sequencer Grid Styles */
+        #sequencer-grid-container {
+            overflow-y: scroll;
+            overflow-x: auto;
+            max-height: 30vh;
+            padding: 2px;
+            scrollbar-width: thin; scrollbar-color: #6b7280 #374151;
+            display: flex; flex-direction: column; align-items: flex-start;
+            margin-bottom: 1rem;
+            padding-bottom: 20vh;
+            box-sizing: border-box; 
+        }
+        #sequencer-grid-container::-webkit-scrollbar { height: 8px; width: 8px; }
+        #sequencer-grid-container::-webkit-scrollbar-track { background: #374151; border-radius: 4px; }
+        #sequencer-grid-container::-webkit-scrollbar-thumb { background-color: #6b7280; border-radius: 4px; border: 2px solid #374151; }
+
+        .seq-part-container {
+            margin-bottom: 1.5rem; padding-bottom: 0.5rem; border-bottom: 1px dashed #4b5563;
+            width: fit-content; margin-left: auto; margin-right: auto;
+        }
+        .seq-part-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; padding-left: 0.5rem; flex-wrap: wrap; gap: 0.5rem; }
+        .seq-part-label { font-size: 1rem; font-weight: 600; color: #a5b4fc; margin-right: auto; }
+        .diff-rep-controls { display: flex; align-items: center; gap: 0.5rem; margin-left: 1rem; }
+        .diff-rep-controls label { font-size: 0.8rem; color: #9ca3af;}
+        .diff-rep-controls select { padding: 0.1rem 0.3rem; font-size: 0.8rem; border: 1px solid #4b5563; border-radius: 0.25rem; background-color: #374151; color: #e5e7eb; height: 1.75rem; }
+        .diff-rep-controls select:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        .seq-grid-row {
+            display: grid;
+            gap: 4px;
+            padding: 1px 0;
+            margin-bottom: 4px;
+            width: max-content;
+        }
+            
+       .seq-grid-row .seq-step {
+            background-color: #374151;
+            border: 1px solid #4b5563;
+            width: 30px;
+            height: 70px;
+            font-size: 0.6rem;
+            line-height: 1;
+            color: #1f2937;
+            display: flex; align-items: center;
+            justify-content: center; cursor: pointer; position: relative; overflow: hidden;
+            white-space: nowrap; user-select: none; touch-action: manipulation; border-radius: 2px;
+            text-overflow: ellipsis; flex-shrink: 0;
+            margin-right: 0;
+            box-sizing: border-box;
+        }
+       
+        .seq-step.diff-step { background-color: #4b5563; }
+        .diff-ending-label { font-size: 0.7rem; font-style: italic; color: #9ca3af; margin-top: 8px; margin-bottom: 2px; padding-right: 0.5rem; text-align: right; }
+
+        /* Step State Styles */
+        .seq-step.has-note { background-color: #6366f1; color: #f9fafb; }
+        .seq-step.diff-step.has-note { background-color: #4f46e5; color: #f9fafb; }
+        .seq-step.selected { background-color: #f59e0b; color: #1f2937; outline: 2px solid #d97706; z-index: 10; }
+        .seq-step.playing { outline: 2px solid #fca5a5; z-index: 5; box-shadow: inset 0 0 0 2px #fca5a5; }
+        
+        .seq-step.loop-active { 
+            background-color: #166534 !important;
+            border-color: #15803d !important; 
+            color: #f0fdf4 !important; 
+        }
+        
+        .seq-step.loop-active.has-note { background-color: #22c55e !important; color: #1f2937 !important; }
+        .seq-step.loop-active.diff-step { background-color: #15803d !important; border-color: #14532d !important; color: #f0fdf4 !important; }
+        .seq-step.loop-active.diff-step.has-note { background-color: #16a34a !important; color: #f0fdf4 !important; }
+        .seq-step.loop-active.selected { background-color: #f59e0b !important; color: #1f2937 !important; outline: 2px solid #16a34a !important; }
+
+        /* --- NEW: Highlight start of every bar dynamically --- */
+        .seq-step.bar-start {
+            border-left: 2px solid #a5b4fc !important;
+        }
+
+        /* Tie & Triplet Checkbox Styles */
+        .tie-checkbox, .triplet-checkbox { 
+            position: absolute; 
+            width: 14px; 
+            height: 14px; 
+            cursor: pointer; 
+            z-index: 2; 
+            accent-color: #a5b4fc;
+        }
+        
+        .tie-checkbox { bottom: 1px; right: 1px; }
+        .triplet-checkbox { top: 1px; right: 1px; }
+
+        /* Control Styles - Dark Theme */
+        input[type=range] { background: transparent; -webkit-appearance: none; appearance: none; width: 100%; height: 8px; border-radius: 4px; background-color: #4b5563; outline: none; pointer-events: none;}
+        input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 28px; height: 28px; background: #60a5fa; border-radius: 50%; cursor: pointer;pointer-events: auto;}
+        input[type=range]::-moz-range-thumb { width: 28px; height: 28px; background: #60a5fa; border-radius: 50%; cursor: pointer; border: none;pointer-events: auto; }
+       
+        label { margin-right: 0.5rem; color: #9ca3af; }
+        select, input[type=number] { padding: 0.25rem 0.5rem; border: 1px solid #4b5563; border-radius: 0.375rem; background-color: #374151; color: #e5e7eb; }
+        
+        /* Buttons */
+        button { padding: 0.4rem 0.8rem; border-radius: 0.375rem; background-color: #3b82f6; color: white; font-weight: 500; transition: background-color 0.2s; border: 1px solid #1e40af; box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05); }
+        button:hover { background-color: #2563eb; }
+        button:disabled { background-color: #4b5563; color: #9ca3af; cursor: not-allowed; border-color: #374151;}
+        
+        #play-btn { background-color: #3b82f6; border-color: #1e40af; }
+        #play-btn:hover { background-color: #2563eb; }
+        #play-from-marker-btn { background-color: #f59e0b; border-color: #b45309; color: #1f2937; } 
+        #play-from-marker-btn:hover { background-color: #d97706; }
+        #stop-btn { background-color: #dc2626; border-color: #991b1b; }
+        #stop-btn:hover { background-color: #b91c1c; }
+        
+        #play-loop-btn, #set-loop-start-btn, #set-loop-end-btn, #clear-loop-btn {background-color: #16a34a; border-color: #14532d; }
+        #play-loop-btn:hover, #set-loop-start-btn:hover, #set-loop-end-btn:hover, #clear-loop-btn:hover {background-color: #15803d; }
+        #loop-nudge-minus-btn, #loop-nudge-plus-btn {background-color: #059669; border-color: #065f46; }
+        #loop-nudge-minus-btn:hover, #loop-nudge-plus-btn:hover { background-color: #047857; }
+                   
+        #clear-part-notes-btn, #clear-loop-notes-btn { background-color: #dc2626; border-color: #991b1b; }
+        #clear-part-notes-btn:hover, #clear-loop-notes-btn:hover { background-color: #b91c1c; }
+        
+        #save-sequence-btn { background-color: #16a34a; border-color: #14532d; }
+        #save-sequence-btn:hover { background-color: #15803d; } /* Green */
+        #load-sequence-btn { background-color: #f59e0b; border-color: #b45309; color: #1f2937; }
+        #load-sequence-btn:hover { background-color: #d97706; } /* Amber */
+
+        /* MAE 14 July 2025 */
+        .load-sequence-file-btn { background-color: blue; border-color: #b45309; color: white; border-radius: 5px;height:40px;}
+        #load-sequence-file-btn { background-color: blue border-color: #b45309; color: white !important; }
+        #load-sequence-file-btn:hover { background-color: #d97706; } /* Amber */
+        #save-sequence-file-btn { background-color: #008000; border-color: #14532d; color: white !important; }
+        #save-sequence-file-btn:hover { background-color: #15803d; } /* Green */
+
+        /* Make Master Volume Slider Thumb Orange */
+        #master-vol-slider::-webkit-slider-thumb { background: #f97316; }
+        #master-vol-slider::-moz-range-thumb { background: #f97316; }
+
+        .control-group { margin-bottom: 0.75rem; display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; }
+        .radio-group label { margin-right: 0.25rem; margin-left: 0.1rem; color: #9ca3af; }
+        .control-label { width: 9rem; text-align: right; font-size: 0.875rem; color: #9ca3af; padding-right: 0.5rem; flex-shrink: 0;}
+        #bpm-value, #swing-value, #melody-vol-value, #bass-vol-value, #click-vol-value, #master-vol-value, #reverb-wet-value, #reverb-decay-value,
+        #melody-attack-value, #melody-decay-value, #melody-sustain-value, #melody-release-value
+         { color: #e5e7eb; min-width: 48px; }
+
+        /* Modal Styles */
+        .modal-overlay { position: fixed; inset: 0; background-color: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center; z-index: 50; }
+        .modal-content { background-color: #1f2937; padding: 1.5rem; border-radius: 0.5rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1); max-width: 90%; width: 400px; text-align: center; color: #e5e7eb; border: 1px solid #4b5563; }
+        #confirm-clear-part-no, #confirm-copy-cancel, #confirm-clear-loop-no { background-color: #4b5563; color: #e5e7eb; border-color: #374151; }
+        #confirm-clear-part-no:hover, #confirm-copy-cancel:hover, #confirm-clear-loop-no:hover { background-color: #6b7280; }
+        #confirm-clear-loop-yes { background-color: #d97706; border-color: #9a3412; } #confirm-clear-loop-yes:hover { background-color: #b45309; }
+        #confirm-clear-part-yes { background-color: #dc2626; border-color: #991b1b; } #confirm-clear-part-yes:hover { background-color: #b91c1c; }
+
+        /* Click Pattern Grid Styles */
+        #click-pattern-grid-container {
+            background-color: #111827; /* bg-gray-900 */
+            padding: 0.3rem;
+            border-radius: 0.25rem;
+            border: 1px solid #4b5563; /* border-gray-600 */
+        }
+        #click-pattern-grid {
+             display: grid;
+             gap: 1px;
+        }
+        .click-step {
+            width: 2.5rem; /* w-8 */
+            height: 2.5rem; /* h-8 */
+            background-color: #374151; /* bg-gray-700 */
+            border: 1px solid #4b5563; /* border-gray-600 */
+            cursor: pointer;
+            transition: background-color 0.1s ease-in-out;
+            border-radius: 2px;
+        }
+        .click-step:hover { background-color: #4b5563; }
+        .click-step.active-high { background-color: #f87171; border-color: #ef4444; }
+        .click-step.active-low { background-color: #60a5fa; border-color: #3b82f6; }
+
+        /* Save/Load Text Area Style */
+        #sequence-data-textarea { resize: vertical; }
+    </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+<script defer data-domain="reelchoonmaker.tiiny.site" src="https://analytics.tiiny.site/js/plausible.js"></script><script defer data-domain="reelchoonmaker.tiiny.site" src="https://analytics.tiiny.site/js/plausible.js"></script><meta property="og:url" content="https://reelchoonmaker.tiiny.site/" data-id="th-modified" ><meta property="og:type" content="website" data-id="th-modified" ></head>
+<body class="bg-black flex flex-col items-center min-h-screen p-4">
+
+    <div class="panel w-full max-w-7xl">
+        <div id="scale-switch-container" class="flex flex-wrap justify-center gap-x-4 gap-y-2 mb-4">
+             
+             <div class="switch-control-item">
+                 <label for="note-switch" class="flex items-center cursor-pointer"><input type="checkbox" id="note-switch" class="sr-only toggle-checkbox peer"><div class="toggle-label relative w-11 h-6 bg-gray-600 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-500"></div></label><span class="ml-3">C/C#</span>
+             </div>
+             <div class="switch-control-item">
+                 <label for="fsharp-switch" class="flex items-center cursor-pointer"><input type="checkbox" id="fsharp-switch" checked class="sr-only toggle-checkbox peer"><div class="toggle-label relative w-11 h-6 bg-gray-600 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-500"></div></label><span class="ml-3">F/F#</span>
+             </div>
+             <div class="switch-control-item">
+                 <label for="gsharp-switch" class="flex items-center cursor-pointer"><input type="checkbox" id="gsharp-switch" class="sr-only toggle-checkbox peer"><div class="toggle-label relative w-11 h-6 bg-gray-600 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-500"></div></label><span class="ml-3">G/G#</span>
+             </div>
+             <div class="switch-control-item">
+                 <label for="dsharp-switch" class="flex items-center cursor-pointer"><input type="checkbox" id="dsharp-switch" class="sr-only toggle-checkbox peer"><div class="toggle-label relative w-11 h-6 bg-gray-600 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-500"></div></label><span class="ml-3">D/D#</span>
+             </div>
+        </div>
+
+        <div id="row1-container" class="flex flex-wrap justify-center gap-2 mb-2"></div>
+        <div id="row2-container" class="flex flex-wrap justify-center gap-2 mb-4"></div>
+
+        <div id="switch-controls-container">
+             <div class="switch-control-item">
+                 <label for="track-switch" class="flex items-center cursor-pointer"><input type="checkbox" id="track-switch" class="sr-only toggle-checkbox peer"><div class="toggle-label relative w-11 h-6 bg-gray-600 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-teal-600"></div></label><span class="ml-3">Edit: Melody / Bass</span>
+             </div>
+             <div class="switch-control-item">
+                 <label for="step-mode-switch" class="flex items-center cursor-pointer"><input type="checkbox" id="step-mode-switch" checked class="sr-only toggle-checkbox peer"><div class="toggle-label relative w-11 h-6 bg-gray-600 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-500"></div></label><span class="ml-3">Step: Manual / Auto Fwd</span>
+             </div>
+        </div>
+
+        <div class="flex flex-col items-center space-y-3 mt-1">
+             <div class="flex flex-row flex-wrap items-center justify-center gap-2">
+                  <button id="play-from-marker-btn" class="px-4 py-2 text-sm sm:px-6 sm:py-2 sm:text-base">Play from Marker</button>
+                  <button id="play-loop-btn" class="px-4 py-2 text-sm sm:px-6 sm:py-2 sm:text-base">Play Loop</button>
+                  <button id="play-btn" class="px-4 py-2 text-sm sm:px-6 sm:py-2 sm:text-base">Play All</button>
+                  <button id="stop-btn" class="px-4 py-2 text-sm sm:px-6 sm:py-2 sm:text-base">Stop</button>
+                  <button id="step-back-btn" title="Step Backward" class="px-4 py-2 text-sm sm:px-6 sm:py-2 sm:text-base bg-gray-600 hover:bg-gray-500 border-gray-500 text-gray-100 rounded-md">Step Back</button>
+                  <button id="step-fwd-btn" title="Step Forward" class="px-4 py-2 text-sm sm:px-6 sm:py-2 sm:text-base bg-gray-600 hover:bg-gray-500 border-gray-500 text-gray-100 rounded-md">Step Fwd</button>
+             </div>
+            <div class="flex justify-center items-center flex-wrap gap-x-4 gap-y-2">
+                 <div class="flex items-center"><input type="checkbox" id="loop-current-part-cb" class="mr-1 h-4 w-4 self-center accent-indigo-400"><label for="loop-current-part-cb" class="text-gray-400 text-sm">Loop Part</label></div>
+                  <button id="set-loop-start-btn" class="text-xs px-2 py-1">Set Loop Start</button>
+                  <button id="set-loop-end-btn" class="text-xs px-2 py-1">Set Loop End</button>
+                  <button id="loop-nudge-minus-btn" class="text-xs px-2 py-1 ">Loop Nudge -</button>
+                  <button id="loop-nudge-plus-btn" class="text-xs px-2 py-1 ">Loop Nudge +</button>
+                  <button id="clear-loop-btn" class="text-xs px-2 py-1">Clear Loop</button>
+                  <button id="clear-loop-notes-btn" class="text-xs px-2 py-1">Clear Notes in Loop</button>
+                  <button id="clear-part-notes-btn" class="bg-red-600 hover:bg-red-700 text-xs px-2 py-1 ml-2">Clear Notes in PART</button>
+             </div>
+        </div>
+    </div>
+
+    <div id="sequencer-playback-panel" class="panel w-full max-w-7xl">
+        <div id="sequencer-grid-container"></div>
+    </div>
+
+    <div id="timing-panel" class="panel w-full max-w-7xl">
+         <div class="flex flex-col space-y-3">
+             <div class="control-group">
+                   <label for="bpm-slider" class="control-label">BPM:</label>
+                   <input type="range" id="bpm-slider" min="1" max="300" value="190" class="flex-grow">
+                   <span id="bpm-value" class="font-medium w-12 text-right text-gray-200">190</span>
+              </div>
+              <div class="control-group">
+                   <label for="swing-slider" class="control-label">Swing:</label>
+                   <input type="range" id="swing-slider" min="0" max="70" value="20" class="flex-grow">
+                   <span id="swing-value" class="font-medium w-12 text-right text-gray-200">20%</span>
+              </div>
+         </div>
+    </div>
+
+    <div id="mixer-panel" class="panel w-full max-w-7xl"> <h2 class="text-xl font-semibold text-gray-200 mb-3">Mixer</h2>
+        <div class="flex flex-col space-y-3">
+            <div class="control-group">
+                <label for="master-vol-slider" class="control-label">Master Vol:</label>
+                <input type="range" id="master-vol-slider" min="-40" max="6" value="0" step="1" class="flex-grow"><span id="master-vol-value" class="font-medium w-12 text-right text-gray-200">0dB</span>
+            </div>
+             <div class="control-group">
+                <label for="melody-vol-slider" class="control-label">Melody Vol:</label>
+                <input type="range" id="melody-vol-slider" min="-40" max="0" value="-15" class="flex-grow"><span id="melody-vol-value" class="font-medium w-12 text-right text-gray-200">-15dB</span>
+            </div>
+             <div class="control-group">
+                <label for="bass-vol-slider" class="control-label">Bass Vol:</label>
+                <input type="range" id="bass-vol-slider" min="-40" max="0" value="-5" class="flex-grow"><span id="bass-vol-value" class="font-medium w-12 text-right text-gray-200">-5dB</span>
+            </div>
+             <div class="control-group">
+                  <label for="click-vol-slider" class="control-label">Click Vol:</label>
+                  <input type="range" id="click-vol-slider" min="-40" max="0" value="-5" class="flex-grow"><span id="click-vol-value" class="font-medium w-12 text-right text-gray-200">-5dB</span>
+             </div>
+        </div>
+    </div>
+
+    <div id="click-config-panel" class="panel w-full max-w-7xl">
+        <div id="click-controls-container" class="flex flex-col space-y-3">
+             <div class="control-group">
+                  <span class="control-label">Click Track:</span>
+                  <input type="checkbox" id="click-track-enable" checked><label for="click-track-enable">On</label>
+             </div>
+             <div class="control-group items-start">
+                  <span class="control-label pt-1">Pattern:</span>
+                  <div id="click-pattern-grid-container">
+                      <div id="click-pattern-grid"></div>
+                  </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="reverb-panel" class="panel w-full max-w-7xl"> <h2 class="text-xl font-semibold text-gray-200 mb-3">Reverb</h2>
+        <div class="flex flex-col space-y-3">
+            <div class="control-group">
+                <label for="reverb-wet-slider" class="control-label">Reverb Wet:</label>
+                <input type="range" id="reverb-wet-slider" min="0" max="1" value="0.4" step="0.01" class="flex-grow"><span id="reverb-wet-value" class="font-medium w-12 text-right text-gray-200">40%</span>
+            </div>
+            <div class="control-group">
+                <label for="reverb-decay-slider" class="control-label">Reverb Decay:</label>
+                <input type="range" id="reverb-decay-slider" min="0.1" max="10" value="5.0" step="0.1" class="flex-grow"><span id="reverb-decay-value" class="font-medium w-12 text-right text-gray-200">5.0s</span>
+            </div>
+        </div>
+    </div>
+
+    <div id="sequencer-config-panel" class="panel w-full max-w-7xl">
+        <h2 class="text-xl font-semibold text-gray-200">Tune Setup</h2>
+        <div id="config-controls-grid" class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
+             <div>
+                
+                <div class="control-group radio-group">
+                    <span class="control-label">Tune Format:</span>
+                    <input type="radio" id="formatReel" name="tuneFormat" value="reel" checked><label for="formatReel">Reel (4/4)</label>
+                    <input type="radio" id="formatJig" name="tuneFormat" value="jig"><label for="formatJig">Jig (6/8)</label>
+                </div>
+                
+                <div id="reel-part-length-group" class="control-group radio-group">
+                    <span class="control-label">Part Length:</span>
+                    <input type="radio" id="len32" name="partLength" value="32" checked><label for="len32">32 Steps (4 bars)</label>
+                    <input type="radio" id="len64" name="partLength" value="64"><label for="len64">64 Steps (8 bars)</label>
+                </div>
+                <div class="control-group radio-group"> <span class="control-label">No. Parts:</span> <input type="radio" id="parts1" name="numParts" value="1"><label for="parts1">1</label> <input type="radio" id="parts2" name="numParts" value="2" checked><label for="parts2">2</label> <input type="radio" id="parts3" name="numParts" value="3"><label for="parts3">3</label> <input type="radio" id="parts4" name="numParts" value="4"><label for="parts4">4</label> </div>
+                <div class="control-group"> <label for="repeat-parts" class="control-label">Playback:</label> <input type="checkbox" id="repeat-parts" checked><label for="repeat-parts">Repeat Parts</label> </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="save-load-panel" class="panel w-full max-w-7xl">
+        <h2 class="text-xl font-semibold text-gray-200 mb-3">Save / Load Sequence</h2>
+        <div class="flex flex-col space-y-3">
+            <div>
+                <label for="sequence-data-textarea" class="block mb-1 text-sm font-medium text-gray-400">Sequence Data (JSON):</label>
+                <textarea id="sequence-data-textarea" rows="8" class="w-full p-2 border border-gray-600 rounded-md bg-gray-900 text-gray-200 focus:ring-blue-500 focus:border-blue-500 text-xs font-mono" placeholder="Click 'Save Sequence' to save the sequence to a JSON file, or click 'Load Sequence' to load a sequence from a JSON file."></textarea>
+            </div>
+            <div class="flex justify-center gap-4">
+                <!-- MAE 14 July 2025 -->            
+                <!-- <button id="save-sequence-btn" class="px-4 py-2">Save Sequence to Text Area</button> -->
+                <!-- <button id="load-sequence-btn" class="px-4 py-2">Load Sequence from Text Area</button> -->
+                <input type="file" id="load-sequence-file-btn" accept=".json,.txt,.JSON,.TXT"  hidden/>
+                <label class="px-4 py-2 load-sequence-file-btn" for="load-sequence-file-btn" title="Loads an existing Reel/Jig Choon Maker JSON sequence file">Load Sequence from JSON File</label>
+                <button id="save-sequence-file-btn" class="px-4 py-2">Save Sequence to JSON File</button>
+          </div>
+        </div>
+    </div>
+    
+    <div id="abc-notation-panel" class="panel w-full max-w-7xl">
+        <h2 class="text-xl font-semibold text-gray-200 mb-3">ABC Notation Output (Melody Only)</h2>
+        <div class="flex flex-col space-y-3">
+            <div>
+                <label for="abc-output-textarea" class="block mb-1 text-sm font-medium text-gray-400">Generated ABC Notation:</label>
+                <textarea id="abc-output-textarea" rows="15" class="w-full p-2 border border-gray-600 rounded-md bg-gray-900 text-gray-200 focus:ring-blue-500 focus:border-blue-500 text-xs font-mono whitespace-pre" readonly placeholder="Click 'Generate ABC for Melody' to see output..."></textarea>
+            </div>
+            <div class="flex flex-wrap justify-center items-center gap-x-6 gap-y-3">
+                <div> <label for="abc-choon-title" class="mr-2 text-sm font-medium text-gray-400">CHOON NAME:</label><input type="text" id="abc-choon-title" class="p-1.5 border border-gray-600 rounded-md bg-gray-700 text-gray-200 text-sm focus:ring-blue-500 focus:border-blue-500" placeholder="Enter Tune Title"></div>
+                <div> <label for="abc-key-signature" class="mr-2 text-sm font-medium text-gray-400">Key Signature:</label><select id="abc-key-signature" class="p-2 border border-gray-600 rounded-md bg-gray-700 text-gray-200 text-sm focus:ring-blue-500 focus:border-blue-500"><option value="C">C Major / A Minor</option><option value="G">G Major / E Minor (F#)</option><option value="D">D Major / B Minor (F#, C#)</option><option value="A">A Major / F# Minor (F#, C#, G#)</option><option value="E">E Major / C# Minor (F#, C#, G#, D#)</option><option value="B">B Major / G# Minor (F#, C#, G#, D#, A#)</option><option value="F#">F# Major / D# Minor (F#, C#, G#, D#, A#, E#)</option><option value="C#">C# Major / A# Minor (All 7 Sharps)</option><option value="F">F Major / D Minor (Bb)</option><option value="Bb">Bb Major / G Minor (Bb, Eb)</option><option value="Eb">Eb Major / C Minor (Bb, Eb, Ab)</option><option value="Ab">Ab Major / F Minor (Bb, Eb, Ab, Db)</option><option value="Db">Db Major / Bb Minor (Bb, Eb, Ab, Db, Gb)</option><option value="Gb">Gb Major / Eb Minor (Bb, Eb, Ab, Db, Gb, Cb)</option><option value="Cb">Cb Major / Ab Minor (All 7 Flats)</option></select></div>
+                <button id="generate-abc-btn" class="px-4 py-2 bg-teal-600 hover:bg-teal-700 border-teal-800 self-end">Generate ABC for Melody</button> 
+            </div>
+        </div>
+    </div>
+
+    <div id="melody-config-panel" class="panel w-full max-w-7xl">
+        <h2 class="text-xl font-semibold text-gray-200 mb-3">Melody Config</h2>
+        <div id="melody-controls-container" class="flex flex-col space-y-3">
+            <div class="control-group"><label for="melody-osc-type" class="control-label">Osc Type:</label><select id="melody-osc-type" class="flex-grow"><option value="sine">Sine</option><option value="triangle" selected>Triangle</option><option value="sawtooth">Sawtooth</option><option value="square">Square</option></select></div>
+            <div class="control-group"><label for="melody-attack-slider" class="control-label">Attack:</label><input type="range" id="melody-attack-slider" min="0.001" max="1" value="0.009" step="0.001" class="flex-grow"><span id="melody-attack-value" class="font-medium w-12 text-right text-gray-200">0.009s</span></div>
+            <div class="control-group"><label for="melody-decay-slider" class="control-label">Decay:</label><input type="range" id="melody-decay-slider" min="0.01" max="2" value="0.097" step="0.01" class="flex-grow"><span id="melody-decay-value" class="font-medium w-12 text-right text-gray-200">0.097s</span></div>
+            <div class="control-group"><label for="melody-sustain-slider" class="control-label">Sustain:</label><input type="range" id="melody-sustain-slider" min="0" max="1" value="0.5" step="0.01" class="flex-grow"><span id="melody-sustain-value" class="font-medium w-12 text-right text-gray-200">0.50</span></div>
+            <div class="control-group"><label for="melody-release-slider" class="control-label">Release:</label><input type="range" id="melody-release-slider" min="0.01" max="5" value="0.05" step="0.01" class="flex-grow"><span id="melody-release-value" class="font-medium w-12 text-right text-gray-200">0.05s</span></div>
+            <div class="control-group"><label for="melody-filter-freq-slider" class="control-label">LP Filter Freq:</label><input type="range" id="melody-filter-freq-slider" min="200" max="15000" value="10000" step="50" class="flex-grow"><span id="melody-filter-freq-value" class="font-medium w-16 text-right text-gray-200">10.0kHz</span></div>
+        </div>
+    </div>
+
+    <div id="confirm-clear-part-modal" class="modal-overlay hidden"> <div class="modal-content"> <p class="mb-4 text-lg">Are you sure you want to clear all notes in <span id="part-to-clear-label" class="font-bold text-yellow-400">Part X</span>? This cannot be undone.</p> <div class="flex justify-center gap-4"> <button id="confirm-clear-part-yes" class="px-6 py-2">Yes, Clear Part</button> <button id="confirm-clear-part-no" class="px-6 py-2">No, Cancel</button> </div> </div> </div>
+    <div id="confirm-clear-loop-notes-modal" class="modal-overlay hidden"> <div class="modal-content"> <p class="mb-4 text-lg">Clear all notes within the current loop range? OK?</p> <div class="flex justify-center gap-4"> <button id="confirm-clear-loop-yes" class="px-6 py-2">OK</button> <button id="confirm-clear-loop-no" class="px-6 py-2">Cancel</button> </div> </div> </div>
+
+    <p id="audio-status" class="mt-4 text-sm text-gray-400">Click/hold note box or set up sequence.</p>
+
+    <script>
+         // --- Constants, State, DOM References ---
+         const NOTE_PLAYER_TARGET_INDEX_ROW1 = 9; const NOTE_PLAYER_TARGET_INDEX_ROW1_C4 = 2; const NOTE_PLAYER_TARGET_INDEX_ROW2_C6 = 6; const NOTE_PLAYER_TARGET_INDEX_ROW1_FSHARP4 = 5; const NOTE_PLAYER_TARGET_INDEX_ROW2_FSHARP5 = 2; const NOTE_PLAYER_TARGET_INDEX_ROW2_FSHARP6 = 9; const NOTE_PLAYER_TARGET_INDEX_ROW1_G4 = 6; const NOTE_PLAYER_TARGET_INDEX_ROW1_D4 = 3; const NOTE_PLAYER_TARGET_INDEX_ROW2_D5 = 0; const NOTE_PLAYER_TARGET_INDEX_ROW2_G5 = 3; const NOTE_PLAYER_TARGET_INDEX_ROW2_D6 = 7; const NOTE_PLAYER_TARGET_INDEX_ROW2_G6 = 10;
+         const ROW1_RED_INDICES = [0, 1, 2]; const ROW2_RED_START_INDEX = 8;
+         const NOTE_CLICK_DEBOUNCE_MS = 200; const NOTE_CLICK_ALLOW_REPEAT_MS = 333;
+         const cSharp4Freq = 277.18; const cSharp4Label = 'C#4'; const cSharp5Freq = 554.37; const cSharp5Label = 'C#5'; const cSharp6Freq = 1108.73; const cSharp6Label = 'C#6'; const fNatural4Freq = 349.23; const fNatural4Label = 'F4'; const fNatural5Freq = 698.46; const fNatural5Label = 'F5'; const fNatural6Freq = 1396.91; const fNatural6Label = 'F6'; const gSharp4Freq = 415.30; const gSharp4Label = 'G#4'; const gSharp5Freq = 830.61; const gSharp5Label = 'G#5'; const gSharp6Freq = 1661.22; const gSharp6Label = 'G#6'; const dSharp4Freq = 311.13; const dSharp4Label = 'D#4'; const dSharp5Freq = 622.25; const dSharp5Label = 'D#5'; const dSharp6Freq = 1244.51; const dSharp6Label = 'D#6';
+
+         // --- NEW: Tune Type Config ---
+         let tuneType = 'reel'; // 'reel' or 'jig'
+         let stepsPerBar = 8;
+         const reelStepsPerBar = 8;
+         const jigStepsPerBar = 6;
+
+         // Audio Synths & State
+         let synthPlayback, synthLive, bassSynthPlayback, bassSynthLive, reverb;
+         let kickSynth, highKickSynth;
+         let toneJsStarted = false;
+         let activeBoxElement = null;
+         let isFirstAudioStart = true;
+         let lastNoteButtonClickTime = 0;
+         let lastNoteButtonId = null;
+         let melodyFilter;
+         let melodyFilterFreq = 10000
+         let clickDrumCompressor;
+         let bassCelloLayerSynth;
+
+         // Scale & Note Selection State
+         let useSharpC = false; let useSharpF = true; let useSharpG = false; let useSharpD = false;
+         let availableNotes = {};
+         let scaleNoteMap = null;
+         let orderedScaleNotes = [];
+
+         // Sequencer Data & State
+         let sequence = [];
+         let selectedStepInfo = { part: 0, step: 0, isDiff: false };
+         let selectedPartIndex = 0;
+         let selectedTrackType = 'melody'; // 'melody' or 'bass'
+         let stepRecordMode = 'movefwd'; // 'movefwd' or 'static'
+
+         // Playback & Timing State
+         let bpm = 190;
+         let partLength = 32;
+         let numParts = 2;
+         let repeatParts = true;
+         let swingAmount = 20; // Percentage (0-70)
+         let isPlaying = false;
+         let currentPartPlayIndex = 0;
+         let currentStepWithinPart = 0;
+         let isSecondPlaythrough = false;
+         let nextNoteTime = 0.0;
+         let startTime = 0;
+         let timerID = null;
+         let scheduleAheadTime = 0.1; 
+         let lookahead = 25.0; 
+
+         // Loop State
+         let loopStartPoint = null; 
+         let loopEndPoint = null;
+         let isPlayingLoop = false;
+         let loopCurrentPartOnly = false;
+
+         // Click Track State
+         let clickTrackEnabled = true;
+         let clickPattern = [1, 1, 2, 1, 1, 1, 2, 1];
+
+         // Volume & Effects State
+         let melodyVolume = -15;
+         let bassVolume = -5;
+         let clickVolume = -5;
+         let masterVolume = 0;
+         let reverbWet = 0.4;
+         let reverbDecay = 5.0;
+         let bassRelease = 4.0;
+
+         // Melody Synth State
+         let melodyOscType = 'triangle';
+         let melodyAttack = 0.009;
+         let melodyDecay = 0.097;
+         let melodySustain = 0.5;
+         let melodyRelease = 0.05;
+
+         // Base Frequencies & Labels
+         const baseRow1Freq = [ 220.00, 246.94, 261.63, 293.66, 329.63, 369.99, 392.00, 440.00, 493.88, 523.25 ];
+         const baseRow1Labels = ['A3', 'B3', 'C4', 'D4', 'E4', 'F#4', 'G4', 'A4', 'B4', 'C5'];
+         const baseRow2Freq = [ 587.33, 659.25, 739.99, 783.99, 880.00, 987.77, 1046.50, 1174.66, 1318.51, 1479.98, 1567.98 ];
+         const baseRow2Labels = ['D5', 'E5', 'F#5', 'G5', 'A5', 'B5', 'C6', 'D6', 'E6', 'F#6', 'G6'];
+
+         // --- DOM References ---
+         const row1Container = document.getElementById('row1-container');
+         const row2Container = document.getElementById('row2-container');
+         const audioStatus = document.getElementById('audio-status');
+         const noteSwitch = document.getElementById('note-switch');
+         const fsharpSwitch = document.getElementById('fsharp-switch');
+         const gsharpSwitch = document.getElementById('gsharp-switch');
+         const dsharpSwitch = document.getElementById('dsharp-switch');
+         const trackSwitch = document.getElementById('track-switch');
+         const stepModeSwitch = document.getElementById('step-mode-switch');
+         const sequencerConfigPanel = document.getElementById('sequencer-config-panel');
+         const sequencerPlaybackPanel = document.getElementById('sequencer-playback-panel');
+         const melodyConfigPanel = document.getElementById('melody-config-panel');
+         const clickConfigPanel = document.getElementById('click-config-panel');
+         const bpmSlider = document.getElementById('bpm-slider');
+         const bpmValue = document.getElementById('bpm-value');
+         const reelPartLengthGroup = document.getElementById('reel-part-length-group');
+         const partsRadios = document.querySelectorAll('input[name="numParts"]');
+         const repeatCheckbox = document.getElementById('repeat-parts');
+         const clickTrackEnableCheckbox = document.getElementById('click-track-enable');
+         const clickPatternGridContainer = document.getElementById('click-pattern-grid-container');
+         const clickPatternGrid = document.getElementById('click-pattern-grid');
+         const playBtn = document.getElementById('play-btn');
+         const playLoopBtn = document.getElementById('play-loop-btn');
+         const playFromMarkerBtn = document.getElementById('play-from-marker-btn');
+         const stopBtn = document.getElementById('stop-btn');
+         const setLoopStartBtn = document.getElementById('set-loop-start-btn');
+         const setLoopEndBtn = document.getElementById('set-loop-end-btn');
+         const clearLoopBtn = document.getElementById('clear-loop-btn');
+         const clearLoopNotesBtn = document.getElementById('clear-loop-notes-btn');
+         const sequencerGridContainer = document.getElementById('sequencer-grid-container');
+         const clearPartNotesBtn = document.getElementById('clear-part-notes-btn');
+         const confirmClearPartModal = document.getElementById('confirm-clear-part-modal');
+         const confirmClearPartYesBtn = document.getElementById('confirm-clear-part-yes');
+         const confirmClearPartNoBtn = document.getElementById('confirm-clear-part-no');
+         const partToClearLabel = document.getElementById('part-to-clear-label');
+         const stepBackBtn = document.getElementById('step-back-btn');
+         const stepFwdBtn = document.getElementById('step-fwd-btn');
+         const swingSlider = document.getElementById('swing-slider');
+         const swingValue = document.getElementById('swing-value');
+         const melodyVolSlider = document.getElementById('melody-vol-slider');
+         const melodyVolValue = document.getElementById('melody-vol-value');
+         const bassVolSlider = document.getElementById('bass-vol-slider');
+         const bassVolValue = document.getElementById('bass-vol-value');
+         const clickVolSlider = document.getElementById('click-vol-slider');
+         const clickVolValue = document.getElementById('click-vol-value');
+         const masterVolSlider = document.getElementById('master-vol-slider');
+         const masterVolValue = document.getElementById('master-vol-value');
+         const reverbWetSlider = document.getElementById('reverb-wet-slider');
+         const reverbWetValue = document.getElementById('reverb-wet-value');
+         const reverbDecaySlider = document.getElementById('reverb-decay-slider');
+         const reverbDecayValue = document.getElementById('reverb-decay-value');
+         const confirmClearLoopNotesModal = document.getElementById('confirm-clear-loop-notes-modal');
+         const confirmClearLoopYesBtn = document.getElementById('confirm-clear-loop-yes');
+         const confirmClearLoopNoBtn = document.getElementById('confirm-clear-loop-no');
+         const loopCurrentPartCheckbox = document.getElementById('loop-current-part-cb');
+         const loopNudgeMinusBtn = document.getElementById('loop-nudge-minus-btn');
+         const loopNudgePlusBtn = document.getElementById('loop-nudge-plus-btn');
+         const melodyOscTypeSelect = document.getElementById('melody-osc-type');
+         const melodyAttackSlider = document.getElementById('melody-attack-slider');
+         const melodyAttackValue = document.getElementById('melody-attack-value');
+         const melodyDecaySlider = document.getElementById('melody-decay-slider');
+         const melodyDecayValue = document.getElementById('melody-decay-value');
+         const melodySustainSlider = document.getElementById('melody-sustain-slider');
+         const melodySustainValue = document.getElementById('melody-sustain-value');
+         const melodyReleaseSlider = document.getElementById('melody-release-slider');
+         const melodyReleaseValue = document.getElementById('melody-release-value');
+         const abcOutputTextarea = document.getElementById('abc-output-textarea');
+         const generateAbcBtn = document.getElementById('generate-abc-btn');
+         const abcKeySignatureSelect = document.getElementById('abc-key-signature');
+         const abcChoonTitleInput = document.getElementById('abc-choon-title');
+         const melodyFilterFreqSlider = document.getElementById('melody-filter-freq-slider');
+         const melodyFilterFreqValue = document.getElementById('melody-filter-freq-value');
+
+         // MAE 14 Jul 2025 
+         const saveTextAreaBtn = document.getElementById('save-sequence-file-btn');
+         const loadTextAreaBtn = document.getElementById('load-sequence-file-btn');
+
+         // --- Helper Functions ---
+         function showStatusMessage(message, duration = 1500) { const defaultText = isPlaying ? (isPlayingLoop ? "Playing Loop..." : (loopCurrentPartOnly ? `Looping Part ${currentPartPlayIndex + 1}...` : "Sequencer Playing...")) : (toneJsStarted ? "Sequencer Stopped." : "Click a note box or Play button to start audio."); audioStatus.textContent = message; setTimeout(() => { if (audioStatus.textContent === message) { audioStatus.textContent = defaultText; } }, duration); }
+         function saveScrollPositions() { const container = sequencerGridContainer; if (!container) return { top: 0, left: 0 }; return { top: container.scrollTop, left: container.scrollLeft }; }
+         function restoreScrollPositions(positions) { const container = sequencerGridContainer; if (!container || !positions) return; requestAnimationFrame(() => { container.scrollTop = positions.top || 0; container.scrollLeft = positions.left || 0; }); }
+
+        // --- ABC Notation Functions ---
+        const KEY_SIGNATURES = {"C":{"sharps":[],"flats":[]},"Am":{"sharps":[],"flats":[]},"G":{"sharps":["F"],"flats":[]},"Em":{"sharps":["F"],"flats":[]},"D":{"sharps":["F","C"],"flats":[]},"Bm":{"sharps":["F","C"],"flats":[]},"A":{"sharps":["F","C","G"],"flats":[]},"F#m":{"sharps":["F","C","G"],"flats":[]},"E":{"sharps":["F","C","G","D"],"flats":[]},"C#m":{"sharps":["F","C","G","D"],"flats":[]},"B":{"sharps":["F","C","G","D","A"],"flats":[]},"G#m":{"sharps":["F","C","G","D","A"],"flats":[]},"F#":{"sharps":["F","C","G","D","A","E"],"flats":[]},"D#m":{"sharps":["F","C","G","D","A","E"],"flats":[]},"C#":{"sharps":["F","C","G","D","A","E","B"],"flats":[]},"A#m":{"sharps":["F","C","G","D","A","E","B"],"flats":[]},"F":{"sharps":[],"flats":["B"]},"Dm":{"sharps":[],"flats":["B"]},"Bb":{"sharps":[],"flats":["B","E"]},"Gm":{"sharps":[],"flats":["B","E"]},"Eb":{"sharps":[],"flats":["B","E","A"]},"Cm":{"sharps":[],"flats":["B","E","A"]},"Ab":{"sharps":[],"flats":["B","E","A","D"]},"Fm":{"sharps":[],"flats":["B","E","A","D"]},"Db":{"sharps":[],"flats":["B","E","A","D","G"]},"Bbm":{"sharps":[],"flats":["B","E","A","D","G"]},"Gb":{"sharps":[],"flats":["B","E","A","D","G","C"]},"Ebm":{"sharps":[],"flats":["B","E","A","D","G","C"]},"Cb":{"sharps":[],"flats":["B","E","A","D","G","C","F"]},"Abm":{"sharps":[],"flats":["B","E","A","D","G","C","F"]}};
+        function convertNoteToAbcWithKey(noteLabel, selectedKeyAbcValue) { if (!noteLabel) return 'z'; const noteParts = noteLabel.match(/([A-G])([#b]?)([0-9])/); if (!noteParts) return 'z'; let baseNote = noteParts[1]; const explicitAccidental = noteParts[2]; const octave = parseInt(noteParts[3]); let keyForAccidentalLogic = selectedKeyAbcValue.replace("m","").replace("maj",""); const keyInfo = KEY_SIGNATURES[keyForAccidentalLogic] || KEY_SIGNATURES["C"]; let abcPitch = ''; let naturalRequired = false; let sharpRequired = false; let flatRequired = false; const isSharpInKey = keyInfo.sharps.includes(baseNote); const isFlatInKey = keyInfo.flats.includes(baseNote); if (explicitAccidental === '#') { if (!isSharpInKey) sharpRequired = true; } else if (explicitAccidental === 'b') { if (!isFlatInKey) flatRequired = true; } else { if (isSharpInKey) naturalRequired = true; if (isFlatInKey) naturalRequired = true; } if (naturalRequired) abcPitch += '='; if (sharpRequired) abcPitch += '^'; if (flatRequired) abcPitch += '_'; if (octave < 3) { abcPitch += baseNote.toUpperCase(); for (let i = octave; i < 3; i++) abcPitch = ',' + abcPitch; } else if (octave === 3) { abcPitch += baseNote.toUpperCase(); abcPitch = ',' + abcPitch; } else if (octave === 4) { abcPitch += baseNote.toUpperCase(); } else if (octave === 5) { abcPitch += baseNote.toLowerCase(); } else { abcPitch += baseNote.toLowerCase(); for (let i = 5; i < octave; i++) abcPitch += "'"; } return abcPitch; }
+        function generateMelodyAbc() {
+            if (!sequence || sequence.length === 0) {
+                abcOutputTextarea.value = "No sequence data to convert.";
+                showStatusMessage("No sequence data available.", 2000);
+                return;
+            }
+            const selectedKey = abcKeySignatureSelect ? abcKeySignatureSelect.value : "C";
+            const choonTitle = abcChoonTitleInput ? abcChoonTitleInput.value.trim() : "Generated Melody";
+            let abcOutputLines = [];
+            abcOutputLines.push("X: 1");
+            abcOutputLines.push(`T: ${choonTitle || "Generated Melody"}`); 
+            abcOutputLines.push(`K: ${selectedKey}`);
+            
+            // DYNAMIC METER
+            if (tuneType === 'jig') {
+                abcOutputLines.push("M: 6/8");
+            } else {
+                abcOutputLines.push("M: 4/4");
+            }
+            abcOutputLines.push("L: 1/8");
+            abcOutputLines.push(`Q: 1/4=${bpm}`);
+
+            const BARS_PER_ABC_LINE = 4;
+            const QUAVERS_PER_GROUP = (tuneType === 'jig') ? 3 : 4; // DYNAMIC GROUPING
+
+            const notesToAbcLines = (notesArray, partComment) => {
+                if (partComment) abcOutputLines.push(`\n${partComment}`);
+                let currentAbcMusicLine = ""; 
+                let barCountOnCurrentMusicLine = 0;
+                let barStepCounter = 0;   
+                let groupStepCounter = 0; 
+                let firstNoteInBar = true;
+                let firstNoteInLine = true;
+                let i = 0;
+                while (i < notesArray.length) {
+                    if (barStepCounter === 0) {
+                        if (firstNoteInLine) {
+                            currentAbcMusicLine += "|"; 
+                            firstNoteInLine = false;
+                        } else {
+                            currentAbcMusicLine += " |";
+                        }
+                        firstNoteInBar = true;
+                    }
+                    const noteObject = notesArray[i];
+                    let abcNoteRepresentation = "";
+                    let noteStepDuration = 1; 
+                    if (noteObject) {
+                        let abcPitch = convertNoteToAbcWithKey(noteObject.label, selectedKey);
+                        if (noteObject.tie && i < notesArray.length - 1) {
+                            let tiedSteps = 1;
+                            while (i + tiedSteps < notesArray.length && notesArray[i + tiedSteps - 1]?.tie && notesArray[i + tiedSteps] && notesArray[i + tiedSteps].label === noteObject.label) {
+                                tiedSteps++;
+                            }
+                            if (tiedSteps > 1) { noteStepDuration = tiedSteps; }
+                        }
+                        abcNoteRepresentation = abcPitch + (noteStepDuration > 1 ? noteStepDuration.toString() : "");
+                    } else { 
+                        let restSteps = 1;
+                        while (i + restSteps < notesArray.length && !notesArray[i + restSteps]) {
+                            restSteps++;
+                        }
+                        noteStepDuration = restSteps;
+                        abcNoteRepresentation = "z" + (noteStepDuration > 1 ? noteStepDuration.toString() : "");
+                    }
+                    if (!firstNoteInBar && groupStepCounter === 0) {
+                         currentAbcMusicLine += " ";
+                    }
+                    currentAbcMusicLine += abcNoteRepresentation;
+                    firstNoteInBar = false;
+                    barStepCounter += noteStepDuration;
+                    groupStepCounter += noteStepDuration;
+                    i += noteStepDuration;
+                    if (groupStepCounter >= QUAVERS_PER_GROUP && barStepCounter < stepsPerBar) {
+                        if (i < notesArray.length) { currentAbcMusicLine += " "; }
+                        groupStepCounter = 0; 
+                    }
+                    if (barStepCounter >= stepsPerBar) { // DYNAMIC STEPS PER BAR
+                        barCountOnCurrentMusicLine++;
+                        barStepCounter = 0;
+                        groupStepCounter = 0;
+                        firstNoteInBar = true;
+                        if (i < notesArray.length) { 
+                            if (barCountOnCurrentMusicLine >= BARS_PER_ABC_LINE) {
+                                abcOutputLines.push(currentAbcMusicLine.trim() + " |");
+                                currentAbcMusicLine = ""; 
+                                firstNoteInLine = true;
+                                barCountOnCurrentMusicLine = 0;
+                            }
+                        } else {
+                            currentAbcMusicLine += " |";
+                        }
+                    }
+                }
+                if (currentAbcMusicLine.trim() && currentAbcMusicLine.trim() !== "|") {
+                    if (!currentAbcMusicLine.trim().endsWith("|")) {
+                        currentAbcMusicLine = currentAbcMusicLine.trim() + " |";
+                    }
+                    abcOutputLines.push(currentAbcMusicLine.trim());
+                } else if (currentAbcMusicLine.trim() === "|" && abcOutputLines.length > 0 && notesArray.length > 0) {
+                    if (!abcOutputLines[abcOutputLines.length-1].trim().endsWith("|")) {
+                        abcOutputLines.push(currentAbcMusicLine.trim());
+                    }
+                }
+            };
+            for (let p = 0; p < numParts; p++) {
+                const partData = sequence[p];
+                const partNumForComment = p + 1;
+                if (!partData || !partData.melody || !partData.melody.main || partData.melody.main.length === 0) {
+                    abcOutputLines.push(`\n%% Part ${partNumForComment}`);
+                    abcOutputLines.push("| " + "Z" + partLength + " |"); 
+                    continue;
+                }
+                const mainMelodyNotes = partData.melody.main;
+                notesToAbcLines(mainMelodyNotes, `\n%% Part ${partNumForComment} (Playthrough 1)`);
+                if (partData.diffOnRepEnabled && partData.melody.diff && partData.melody.diff.length > 0) {
+                    const diffComment = `\n%% Part ${partNumForComment} (With Different Ending)`;
+                    const diffBarsCount = partData.diffOnRepBars;
+                    const diffStepsCount = diffBarsCount * stepsPerBar; // DYNAMIC
+                    const mainStepsBeforeDiff = mainMelodyNotes.length - diffStepsCount;
+                    let combinedNotesForDiffPlaythrough = [];
+                    if (mainStepsBeforeDiff > 0) {
+                        combinedNotesForDiffPlaythrough = mainMelodyNotes.slice(0, mainStepsBeforeDiff);
+                    }
+                    combinedNotesForDiffPlaythrough = combinedNotesForDiffPlaythrough.concat(partData.melody.diff);
+                    notesToAbcLines(combinedNotesForDiffPlaythrough, diffComment);
+                }
+            }
+            abcOutputTextarea.value = abcOutputLines.join("\n").replace(/^\s*\n/gm, "").trim();
+            showStatusMessage("ABC Notation for Melody generated!", 2000);
+        }
+
+        // --- Scale & Note Data Functions ---
+        function buildActiveScaleData() { const notes = []; let scaleIndex = 0; const addNote = (label, freq) => { if (freq !== null && freq !== undefined) { notes.push({ label, freq, index: scaleIndex++ }); } }; baseRow1Labels.forEach((label, i) => { let freq = baseRow1Freq[i]; let actualLabel = label; if (((i === NOTE_PLAYER_TARGET_INDEX_ROW1_C4 && label === 'C4') || (i === NOTE_PLAYER_TARGET_INDEX_ROW1 && label === 'C5')) && useSharpC) { freq = (label === 'C4') ? cSharp4Freq : cSharp5Freq; actualLabel = (label === 'C4') ? cSharp4Label : cSharp5Label; } else if (i === NOTE_PLAYER_TARGET_INDEX_ROW1_FSHARP4 && label === 'F#4' && !useSharpF) { freq = fNatural4Freq; actualLabel = fNatural4Label; } else if (i === NOTE_PLAYER_TARGET_INDEX_ROW1_G4 && label === 'G4' && useSharpG) { freq = gSharp4Freq; actualLabel = gSharp4Label; } else if (i === NOTE_PLAYER_TARGET_INDEX_ROW1_D4 && label === 'D4' && useSharpD) { freq = dSharp4Freq; actualLabel = dSharp4Label; } addNote(actualLabel, freq); }); baseRow2Labels.forEach((label, i) => { let freq = baseRow2Freq[i]; let actualLabel = label; if (i === NOTE_PLAYER_TARGET_INDEX_ROW2_C6 && label === 'C6' && useSharpC) { freq = cSharp6Freq; actualLabel = cSharp6Label; } else if (i === NOTE_PLAYER_TARGET_INDEX_ROW2_FSHARP5 && label === 'F#5' && !useSharpF) { freq = fNatural5Freq; actualLabel = fNatural5Label; } else if (i === NOTE_PLAYER_TARGET_INDEX_ROW2_FSHARP6 && label === 'F#6' && !useSharpF) { freq = fNatural6Freq; actualLabel = fNatural6Label; } else if (i === NOTE_PLAYER_TARGET_INDEX_ROW2_G5 && label === 'G5' && useSharpG) { freq = gSharp5Freq; actualLabel = gSharp5Label; } else if (i === NOTE_PLAYER_TARGET_INDEX_ROW2_G6 && label === 'G6' && useSharpG) { freq = gSharp6Freq; actualLabel = gSharp6Label; } else if (i === NOTE_PLAYER_TARGET_INDEX_ROW2_D5 && label === 'D5' && useSharpD) { freq = dSharp5Freq; actualLabel = dSharp5Label; } else if (i === NOTE_PLAYER_TARGET_INDEX_ROW2_D6 && label === 'D6' && useSharpD) { freq = dSharp6Freq; actualLabel = dSharp6Label; } addNote(actualLabel, freq); }); notes.sort((a, b) => a.freq - b.freq); notes.forEach((note, i) => note.index = i); orderedScaleNotes = notes; scaleNoteMap = new Map(notes.map(n => [n.freq.toFixed(2), n])); }
+        function findNoteInScale(freq) { if (!scaleNoteMap) buildActiveScaleData(); const freqKey = freq?.toFixed(2); return scaleNoteMap.get(freqKey) || null; }
+        function getNoteByIndex(index) { if (!orderedScaleNotes.length) buildActiveScaleData(); return (index >= 0 && index < orderedScaleNotes.length) ? orderedScaleNotes[index] : null; }
+        function getScaleStepInterval(freq1, freq2) { const note1 = findNoteInScale(freq1); const note2 = findNoteInScale(freq2); if (note1 && note2) { return note2.index - note1.index; } return null; }
+
+        // --- Audio Synthesis & Control Functions ---
+        function updateSynthEnvelopes() { if (!toneJsStarted) return; const secondsPerQuaver = (60.0 / bpm) / 2.0; const melodyReleaseTime = Math.max(0.01, Math.min(0.025, secondsPerQuaver * 0.1)); if (synthPlayback && synthPlayback.envelope) { synthPlayback.envelope.release = melodyReleaseTime; } if (synthLive && synthLive.envelope) { synthLive.envelope.release = melodyReleaseTime; } }
+        
+		// --- initAudioSynths() start
+		
+async function initAudioSynths() {
+            if (!toneJsStarted || typeof Tone === 'undefined' || Tone.context.state !== 'running') {
+                return false;
+            }
+            try {
+                if (!reverb) {
+                    reverb = new Tone.Reverb({
+                        decay: reverbDecay,
+                        preDelay: 0.01,
+                        wet: reverbWet
+                    }).toDestination();
+                } else {
+                    reverb.decay = reverbDecay;
+                    reverb.wet.value = reverbWet;
+                }
+                if (!melodyFilter) {
+                    melodyFilter = new Tone.Filter(melodyFilterFreq, "lowpass").connect(reverb);
+                } else {
+                    melodyFilter.frequency.value = melodyFilterFreq;
+                }
+                if (!clickDrumCompressor) {
+                    const drumLimiterSettings = {
+                        threshold: -1,
+                        ratio: 20,
+                        attack: 0.001,
+                        release: 0.05,
+                        knee: 0
+                    };
+                    clickDrumCompressor = new Tone.Compressor(drumLimiterSettings).connect(reverb);
+                }
+                const melodyConfig = {
+                    oscillator: {
+                        type: melodyOscType
+                    },
+                    envelope: {
+                        attack: melodyAttack,
+                        decay: melodyDecay,
+                        sustain: melodySustain,
+                        release: melodyRelease
+                    }
+                };
+                if (!synthPlayback) {
+                    synthPlayback = new Tone.Synth(melodyConfig).connect(melodyFilter);
+                    synthPlayback.volume.value = melodyVolume;
+                } else {
+                    synthPlayback.set({
+                        oscillator: {
+                            type: melodyOscType
+                        },
+                        envelope: {
+                            attack: melodyAttack,
+                            decay: melodyDecay,
+                            sustain: melodySustain
+                        }
+                    });
+                    if (synthPlayback.output !== melodyFilter) {
+                        synthPlayback.disconnect();
+                        synthPlayback.connect(melodyFilter);
+                    }
+                }
+                if (!synthLive) {
+                    synthLive = new Tone.Synth(melodyConfig).connect(melodyFilter);
+                    synthLive.volume.value = melodyVolume;
+                } else {
+                    synthLive.set({
+                        oscillator: {
+                            type: melodyOscType
+                        },
+                        envelope: {
+                            attack: melodyAttack,
+                            decay: melodyDecay,
+                            sustain: melodySustain
+                        }
+                    });
+                    if (synthLive.output !== melodyFilter) {
+                        synthLive.disconnect();
+                        synthLive.connect(melodyFilter);
+                    }
+                }
+                const bassAmpEnvConfig = {
+                    attack: 0.008,
+                    decay: 0.1,
+                    sustain: 0.9,
+                    release: bassRelease
+                };
+                const bassOwnFilterConfig = {
+                    Q: 1,
+                    type: "lowpass",
+                    rolloff: -12
+                };
+                const bassOwnFilterEnvConfig = {
+                    attack: 0.006,
+                    decay: 0.1,
+                    sustain: 0.5,
+                    release: 0.8,
+                    baseFrequency: 130,
+                    octaves: 4
+                };
+                // **FIX**: The bass synth for live playing is now a MonoSynth, matching the playback synth.
+                if (!bassSynthLive) {
+                    bassSynthLive = new Tone.MonoSynth({
+                        portamento: 0.01, // Added portamento to match
+                        oscillator: {
+                            type: "fatsawtooth",
+                            count: 3,
+                            spread: 20
+                        },
+                        envelope: { ...bassAmpEnvConfig
+                        },
+                        filter: { ...bassOwnFilterConfig
+                        },
+                        filterEnvelope: { ...bassOwnFilterEnvConfig
+                        }
+                    }).connect(reverb);
+                    bassSynthLive.volume.value = bassVolume;
+                } else {
+                     if (bassSynthLive.name !== "MonoSynth") { // If the old synth exists, dispose and recreate
+                        bassSynthLive.dispose();
+                        bassSynthLive = new Tone.MonoSynth({
+                             portamento: 0.01,
+                             oscillator: { type: "fatsawtooth", count: 3, spread: 20 },
+                             envelope: { ...bassAmpEnvConfig },
+                             filter: { ...bassOwnFilterConfig },
+                             filterEnvelope: { ...bassOwnFilterEnvConfig }
+                        }).connect(reverb);
+                         bassSynthLive.volume.value = bassVolume;
+                    } else if (bassSynthLive.output !== reverb) {
+                        bassSynthLive.disconnect();
+                        bassSynthLive.connect(reverb);
+                    }
+                }
+                if (!bassSynthPlayback) {
+                    bassSynthPlayback = new Tone.MonoSynth({
+                        portamento: 0.01,
+                        oscillator: {
+                            type: "fatsawtooth",
+                            count: 3,
+                            spread: 20
+                        },
+                        envelope: { ...bassAmpEnvConfig
+                        },
+                        filter: { ...bassOwnFilterConfig
+                        },
+                        filterEnvelope: { ...bassOwnFilterEnvConfig
+                        }
+                    }).connect(reverb);
+                    bassSynthPlayback.volume.value = bassVolume;
+                } else {
+                    if (bassSynthPlayback.output !== reverb) {
+                        bassSynthPlayback.disconnect();
+                        bassSynthPlayback.connect(reverb);
+                    }
+                }
+                if (!bassCelloLayerSynth) {
+                    const celloConfig = {
+                        oscillator: {
+                            type: 'fatsawtooth',
+                            count: 3,
+                            spread: 20
+                        },
+                        envelope: {
+                            attack: 0.25,
+                            decay: 0.1,
+                            sustain: 0.9,
+                            release: 1.5
+                        },
+                        filter: {
+                            type: 'lowpass',
+                            frequency: 1000,
+                            Q: 1.2,
+                            rolloff: -12
+                        },
+                        filterEnvelope: {
+                            attack: 0.3,
+                            decay: 0.2,
+                            sustain: 0.6,
+                            release: 1.0,
+                            baseFrequency: 300,
+                            octaves: 1
+                        },
+                        portamento: 0.02
+                    };
+                    bassCelloLayerSynth = new Tone.MonoSynth(celloConfig).connect(reverb);
+                    bassCelloLayerSynth.volume.value = bassVolume - 2;
+                } else {
+                    if (bassCelloLayerSynth.output !== reverb) {
+                        bassCelloLayerSynth.disconnect();
+                        bassCelloLayerSynth.connect(reverb);
+                    }
+                }
+                if (!kickSynth) {
+                    kickSynth = new Tone.MembraneSynth({
+                        pitchDecay: 0.03,
+                        octaves: 6,
+                        oscillator: {
+                            type: 'sine'
+                        },
+                        envelope: {
+                            attack: 0.001,
+                            decay: 0.3,
+                            sustain: 0.01,
+                            release: 0.2
+                        }
+                    }).connect(clickDrumCompressor);
+                    kickSynth.volume.value = clickVolume;
+                } else {
+                    if (kickSynth.output !== clickDrumCompressor) {
+                        kickSynth.disconnect();
+                        kickSynth.connect(clickDrumCompressor);
+                    }
+                }
+                if (!highKickSynth) {
+                    highKickSynth = new Tone.MembraneSynth({
+                        pitchDecay: 0.01,
+                        octaves: 8,
+                        oscillator: {
+                            type: 'sine'
+                        },
+                        envelope: {
+                            attack: 0.001,
+                            decay: 0.2,
+                            sustain: 0.01,
+                            release: 0.1
+                        }
+                    }).connect(clickDrumCompressor);
+                    highKickSynth.volume.value = clickVolume;
+                } else {
+                    if (highKickSynth.output !== clickDrumCompressor) {
+                        highKickSynth.disconnect();
+                        highKickSynth.connect(clickDrumCompressor);
+                    }
+                }
+                updateSynthEnvelopes();
+                Tone.Destination.volume.value = masterVolume;
+                if (isFirstAudioStart) {
+                    isFirstAudioStart = false;
+                }
+                return true;
+            } catch (e) {
+                console.error("Error initializing/updating synths:", e);
+                return false;
+            }
+        }
+		
+		
+        // --- initAudioSynths() end		
+		
+		
+        async function ensureAudioStarted() { if (toneJsStarted && Tone.context.state === 'running') { return true; } if (typeof Tone === 'undefined') { return false; } try { if (Tone.context.state !== 'running') { await Tone.start(); if (Tone.context.state !== 'running') throw new Error("Tone.context failed start."); } toneJsStarted = true; const synthsReady = await initAudioSynths(); if (!synthsReady) throw new Error("Synth init failed."); Tone.Destination.volume.value = masterVolume; if (isFirstAudioStart) { try { const dummyOsc = new Tone.Oscillator(200, "sine").connect(Tone.Destination); dummyOsc.volume.value = -Infinity; dummyOsc.start(Tone.now() + 0.01).stop(Tone.now() + 0.05); setTimeout(() => dummyOsc.dispose(), 60); } catch (primeError) { console.warn("Audio priming failed:", primeError); } isFirstAudioStart = false; } return true; } catch (e) { console.error("Error ensuring audio started:", e); toneJsStarted = false; return false; } }
+        
+		
+		
+		async function startManualNote(frequency) {
+            if (!toneJsStarted) {
+                return;
+            }
+            // Check which track is being edited
+            if (selectedTrackType === 'bass') {
+                if (bassSynthLive) {
+                    try {
+                        bassSynthLive.triggerAttack(frequency, Tone.now());
+                    } catch (error) {}
+                }
+                // **FIX**: Also trigger the cello layer for a fuller sound
+                if (bassCelloLayerSynth) {
+                    try {
+                        bassCelloLayerSynth.triggerAttack(frequency, Tone.now());
+                    } catch (error) {}
+                }
+            } else { // It's the melody track
+                if (synthLive) {
+                    try {
+                        synthLive.triggerAttack(frequency, Tone.now());
+                    } catch (error) {}
+                }
+            }
+        }
+		
+		
+		
+		function stopManualNote() {
+            if (activeBoxElement) {
+                const trackType = activeBoxElement.dataset.trackType;
+                
+                // Check which track was active when the note was pressed
+                if (trackType === 'bass') {
+                    if (bassSynthLive) {
+                        try {
+                            bassSynthLive.triggerRelease(Tone.now());
+                        } catch (error) {}
+                    }
+                    // **FIX**: Also stop the cello layer
+                    if (bassCelloLayerSynth) {
+                        try {
+                            bassCelloLayerSynth.triggerRelease(Tone.now());
+                        } catch (error) {}
+                    }
+                } else { // It was the melody track
+                    if (synthLive) {
+                        try {
+                            synthLive.triggerRelease(Tone.now());
+                        } catch (error) {}
+                    }
+                }
+                
+                const activeClassString = activeBoxElement.dataset.activeclass;
+                if (activeClassString) {
+                    activeBoxElement.classList.remove(...activeClassString.split(' '));
+                }
+                activeBoxElement = null;
+            }
+        }
+		
+		
+		
+		
+        
+     
+        
+        function playSequencerNote(freq, time, noteDuration, trackType = 'melody') { if (!toneJsStarted || !freq) return; const targetSynth = trackType === 'bass' ? bassSynthPlayback : synthPlayback; if (!targetSynth) return; try { targetSynth.triggerAttackRelease(freq, noteDuration, time); } catch (e) { console.error(`Error playing ${trackType} note: `, e)} }
+        async function playStepFeedbackNote(freq) { if (!toneJsStarted || !freq) { return; } const targetSynth = selectedTrackType === 'bass' ? bassSynthLive : synthLive; if (!targetSynth) return; const duration = 0.15; try { targetSynth.triggerAttackRelease(freq, duration, Tone.now()); } catch(e) {} }
+        async function playClickSound(soundType, time) { if (!toneJsStarted) { return; } try { if (soundType === 'low' && kickSynth) { kickSynth.triggerAttackRelease("C1", "16n", time); } else if (soundType === 'high' && highKickSynth) { highKickSynth.triggerAttackRelease("C3", "32n", time); } } catch (e) {} }
+
+        // --- UI Building Functions ---
+        function createNotePlayerRow(containerElement, baseFrequencies, baseLabels, defaultActiveClass, isRow2 = false) {
+             containerElement.innerHTML = '';
+             if (!isRow2) {
+                 const delBox = document.createElement('div');
+                 delBox.classList.add('note-box','delete-button','w-11','h-11','md:w-16','md:h-16','bg-gray-500','hover:bg-gray-600','rounded-lg','shadow-md','flex','items-center','justify-center','text-white','font-bold','text-xs','cursor-pointer','select-none','break-words','text-center','p-1');
+                 delBox.textContent='Del / Rest';
+                 delBox.dataset.action='delete';
+                 delBox.dataset.activeclass='delete-active';
+                 delBox.addEventListener('mousedown',handleNotePlayerMouseDown);
+                 delBox.addEventListener('touchstart',handleNotePlayerMouseDown,{passive:false});
+                 delBox.addEventListener('dragstart',(e)=>e.preventDefault());
+                 containerElement.appendChild(delBox);
+             }
+             baseFrequencies.forEach((baseFreq, index) => {
+                 const box = document.createElement('div');
+                 let currentFreq = baseFreq;
+                 let currentLabel = baseLabels[index];
+                 const noteId = `${isRow2 ? 'r2' : 'r1'}-${index}`;
+                 let isRedStyle = false;
+                 if (!isRow2 && ROW1_RED_INDICES.includes(index)) isRedStyle = true;
+                 else if (isRow2 && index >= ROW2_RED_START_INDEX) isRedStyle = true;
+                 let activeClass = isRedStyle ? (isRow2 ? 'row2-red-active' : 'row1-red-active') : defaultActiveClass;
+                 let baseColor = isRedStyle ? 'bg-red-500' : (isRow2 ? 'bg-purple-500' : 'bg-blue-500');
+                 let hoverColor = isRedStyle ? 'hover:bg-red-600' : (isRow2 ? 'hover:bg-purple-600' : 'hover:bg-blue-600');
+                 if (!isRow2 && ((index === NOTE_PLAYER_TARGET_INDEX_ROW1) || (index === NOTE_PLAYER_TARGET_INDEX_ROW1_C4))) { if (useSharpC) { if (index === NOTE_PLAYER_TARGET_INDEX_ROW1) { currentFreq = cSharp5Freq; currentLabel = cSharp5Label; } else if (index === NOTE_PLAYER_TARGET_INDEX_ROW1_C4) { currentFreq = cSharp4Freq; currentLabel = cSharp4Label; } } } else if (isRow2 && index === NOTE_PLAYER_TARGET_INDEX_ROW2_C6) { if (useSharpC) { currentFreq = cSharp6Freq; currentLabel = cSharp6Label; } }
+                 if (!isRow2 && index === NOTE_PLAYER_TARGET_INDEX_ROW1_FSHARP4) { if (!useSharpF) { currentFreq = fNatural4Freq; currentLabel = fNatural4Label; } } else if (isRow2 && index === NOTE_PLAYER_TARGET_INDEX_ROW2_FSHARP5) { if (!useSharpF) { currentFreq = fNatural5Freq; currentLabel = fNatural5Label; } } else if (isRow2 && index === NOTE_PLAYER_TARGET_INDEX_ROW2_FSHARP6) { if (!useSharpF) { currentFreq = fNatural6Freq; currentLabel = fNatural6Label; } }
+                 if (!isRow2 && index === NOTE_PLAYER_TARGET_INDEX_ROW1_G4) { if (useSharpG) { currentFreq = gSharp4Freq; currentLabel = gSharp4Label; } } else if (isRow2 && index === NOTE_PLAYER_TARGET_INDEX_ROW2_G5) { if (useSharpG) { currentFreq = gSharp5Freq; currentLabel = gSharp5Label; } } else if (isRow2 && index === NOTE_PLAYER_TARGET_INDEX_ROW2_G6) { if (useSharpG) { currentFreq = gSharp6Freq; currentLabel = gSharp6Label; } }
+                 if (!isRow2 && index === NOTE_PLAYER_TARGET_INDEX_ROW1_D4) { if (useSharpD) { currentFreq = dSharp4Freq; currentLabel = dSharp4Label; } } else if (isRow2 && index === NOTE_PLAYER_TARGET_INDEX_ROW2_D5) { if (useSharpD) { currentFreq = dSharp5Freq; currentLabel = dSharp5Label; } } else if (isRow2 && index === NOTE_PLAYER_TARGET_INDEX_ROW2_D6) { if (useSharpD) { currentFreq = dSharp6Freq; currentLabel = dSharp6Label; } }
+                 let noteTrackType = 'melody';
+                 if (selectedTrackType === 'bass') {
+                     noteTrackType = 'bass';
+                     currentFreq = currentFreq / 8;
+                     const match = currentLabel.match(/([A-G]#?)(\d+)/);
+                     if (match) { const n = match[1], o = parseInt(match[2], 10); if (!isNaN(o) && o >= 3) currentLabel = `${n}${o - 3}`; else if (!isNaN(o)) currentLabel = `${n}0`; else currentLabel = `${n}Bass`; } else { currentLabel = `Bass`; }
+                     baseColor = isRedStyle ? 'bg-orange-700' : 'bg-teal-600';
+                     hoverColor = isRedStyle ? 'hover:bg-orange-800' : 'hover:bg-teal-700';
+                     activeClass = isRedStyle ? 'bass-red-active' : 'bass-active';
+                 }
+                 box.classList.add('note-box', 'w-11', 'h-11', 'md:w-16', 'md:h-16', baseColor, hoverColor, 'rounded-lg', 'shadow-md', 'flex', 'items-center', 'justify-center', 'text-white', 'font-bold', 'text-xs', 'cursor-pointer', 'select-none', 'break-words', 'text-center', 'p-1');
+                 box.textContent = currentLabel;
+                 box.dataset.frequency = currentFreq;
+                 box.dataset.activeclass = activeClass;
+                 box.dataset.noteId = noteId;
+                 box.dataset.trackType = noteTrackType;
+                 box.addEventListener('mousedown', handleNotePlayerMouseDown);
+                 box.addEventListener('touchstart', handleNotePlayerMouseDown, { passive: false });
+                 box.addEventListener('dragstart', (e) => e.preventDefault());
+                 containerElement.appendChild(box);
+             });
+        }
+        function updateToggleableNotes() { buildActiveScaleData(); createNotePlayerRow(row1Container, baseRow1Freq, baseRow1Labels, 'row1-active', false); createNotePlayerRow(row2Container, baseRow2Freq, baseRow2Labels, 'row2-active', true); }
+        
+		
+		
+// --- 	buildSequencerGrid START	
+		
+     function buildSequencerGrid() {
+            if (!sequencerGridContainer) return;
+            const scrollPos = saveScrollPositions();
+            sequencerGridContainer.innerHTML = '';
+            
+            for (let p = 0; p < numParts; p++) {
+                let partData = sequence[p];
+                if (!partData) {
+                    initializeSequenceData();
+                    partData = sequence[p];
+                }
+                const partContainer = document.createElement('div');
+                partContainer.classList.add('seq-part-container');
+                partContainer.dataset.part = p;
+                const partHeader = document.createElement('div');
+                partHeader.classList.add('seq-part-header');
+                const partLabel = document.createElement('span');
+                partLabel.classList.add('seq-part-label');
+                partLabel.textContent = `Part ${p + 1}`;
+                partHeader.appendChild(partLabel);
+                const diffRepContainer = document.createElement('div');
+                diffRepContainer.classList.add('diff-rep-controls');
+                if (!repeatParts) diffRepContainer.classList.add('hidden');
+                const diffRepCheckbox = document.createElement('input');
+                diffRepCheckbox.type = 'checkbox';
+                diffRepCheckbox.id = `diff-rep-${p}`;
+                diffRepCheckbox.dataset.part = p;
+                diffRepCheckbox.checked = partData.diffOnRepEnabled;
+                diffRepCheckbox.classList.add('h-4', 'w-4');
+                diffRepCheckbox.addEventListener('change', handleDiffRepEnableChange);
+                const diffRepLabel = document.createElement('label');
+                diffRepLabel.htmlFor = `diff-rep-${p}`;
+                diffRepLabel.textContent = 'Diff on Rep:';
+                
+                const diffRepSelect = document.createElement('select');
+                diffRepSelect.id = `diff-bars-${p}`;
+                diffRepSelect.dataset.part = p;
+                diffRepSelect.disabled = !partData.diffOnRepEnabled;
+                
+                const maxDiffBars = (tuneType === 'jig') ? 4 : (partLength === 64 ? 8 : 4);
+                for (let bars = 1; bars <= maxDiffBars; bars++) {
+                    const option = document.createElement('option');
+                    option.value = bars;
+                    option.textContent = `${bars} bar${bars > 1 ? 's' : ''}`;
+                    if (bars === partData.diffOnRepBars) {
+                        option.selected = true;
+                    }
+                    diffRepSelect.appendChild(option);
+                }
+                diffRepSelect.addEventListener('change', handleDiffRepBarsChange);
+                diffRepContainer.appendChild(diffRepCheckbox);
+                diffRepContainer.appendChild(diffRepLabel);
+                diffRepContainer.appendChild(diffRepSelect);
+                partHeader.appendChild(diffRepContainer);
+                partContainer.appendChild(partHeader);
+
+                const trackData = partData[selectedTrackType];
+
+                const stepsPerVisualRow = (tuneType === 'jig') ? 24 : 32;
+                const numRows = Math.ceil(partLength / stepsPerVisualRow);
+
+                for (let r = 0; r < numRows; r++) {
+                    const mainGridRow = document.createElement('div');
+                    mainGridRow.classList.add('seq-grid-row');
+                    const stepsInThisRow = Math.min(stepsPerVisualRow, partLength - r * stepsPerVisualRow);
+                    mainGridRow.style.gridTemplateColumns = `repeat(${stepsInThisRow}, 30px)`;
+
+                    for (let sRel = 0; sRel < stepsInThisRow; sRel++) {
+                        const absoluteStepIndex = r * stepsPerVisualRow + sRel;
+                        const stepContainer = document.createElement('div');
+                        
+                        if (absoluteStepIndex % stepsPerBar === 0) {
+                            stepContainer.classList.add('bar-start');
+                        }
+                        stepContainer.classList.add('seq-step');
+                        stepContainer.dataset.part = p;
+                        stepContainer.dataset.step = absoluteStepIndex;
+                        stepContainer.dataset.isDiff = "false";
+
+                        const noteData = trackData?.main?.[absoluteStepIndex];
+                        if (noteData) {
+                            stepContainer.textContent = noteData.label;
+                            stepContainer.classList.add('has-note');
+                        }
+                        
+                        if ((loopStartPoint && loopStartPoint.part === p && !loopStartPoint.isDiff && loopStartPoint.step === absoluteStepIndex) || (loopEndPoint && loopEndPoint.part === p && !loopEndPoint.isDiff && loopEndPoint.step === absoluteStepIndex) || (loopStartPoint && loopEndPoint && loopStartPoint.part === p && loopEndPoint.part === p && !loopStartPoint.isDiff && !loopEndPoint.isDiff && absoluteStepIndex >= loopStartPoint.step && absoluteStepIndex <= loopEndPoint.step)) { stepContainer.classList.add('loop-active'); }
+                        if (p === selectedStepInfo.part && absoluteStepIndex === selectedStepInfo.step && !selectedStepInfo.isDiff) { stepContainer.classList.add('selected'); }
+
+                        stepContainer.addEventListener('click', handleStepCellClick);
+                        mainGridRow.appendChild(stepContainer);
+                        
+                        const nextNoteData = (absoluteStepIndex < partLength - 1) ? trackData?.main?.[absoluteStepIndex + 1] : null;
+                        const prevNoteData = absoluteStepIndex > 0 ? trackData?.main?.[absoluteStepIndex - 1] : null;
+                        if (noteData && nextNoteData && !(prevNoteData?.triplet) && selectedTrackType !== 'bass') { createTripletCheckbox(stepContainer, p, absoluteStepIndex, false); }
+                        // **FIX**: The condition here now prevents creating a tie checkbox for the bass track.
+                        if (noteData && nextNoteData && selectedTrackType !== 'bass' && noteData.freq === nextNoteData.freq) {
+                            createTieCheckbox(stepContainer, p, absoluteStepIndex, false);
+                        }
+                    }
+                    partContainer.appendChild(mainGridRow);
+                }
+
+                if (partData.diffOnRepEnabled) {
+                     const diffBarsTotal = partData.diffOnRepBars;
+                    const totalDiffSteps = diffBarsTotal * stepsPerBar;
+                    const diffStepDataArray = trackData?.diff;
+
+                    if (diffStepDataArray && diffStepDataArray.length > 0) {
+                        const diffLabelContainer = document.createElement('div');
+                        diffLabelContainer.classList.add('diff-ending-label');
+                        diffLabelContainer.textContent = `Different Ending (Last ${diffBarsTotal} Bar${diffBarsTotal > 1 ? 's' : ''} on Repeat):`;
+                        partContainer.appendChild(diffLabelContainer);
+
+                        let stepsDrawn = 0;
+                        while(stepsDrawn < totalDiffSteps) {
+                            const diffGridRow = document.createElement('div');
+                            diffGridRow.classList.add('seq-grid-row');
+                            
+                            const stepsRemaining = totalDiffSteps - stepsDrawn;
+                            const stepsThisRow = Math.min(stepsPerVisualRow, stepsRemaining);
+
+                            const fillerCount = (stepsPerVisualRow - (totalDiffSteps % stepsPerVisualRow)) % stepsPerVisualRow;
+                            
+                            diffGridRow.style.gridTemplateColumns = `repeat(${stepsPerVisualRow}, 30px)`;
+                            
+                            for (let f = 0; f < fillerCount; f++) {
+                                const filler = document.createElement('div');
+                                filler.classList.add('seq-step');
+                                filler.style.visibility = 'hidden';
+                                diffGridRow.appendChild(filler);
+                            }
+
+                            for (let i = 0; i < stepsThisRow; i++) {
+                                const diffStepIndex = stepsDrawn + i;
+                                const stepContainer = document.createElement('div');
+                                stepContainer.classList.add('seq-step', 'diff-step');
+
+                                if ((diffStepIndex % stepsPerBar) === 0) {
+                                    stepContainer.classList.add('bar-start');
+                                }
+                                stepContainer.dataset.part = p;
+                                stepContainer.dataset.step = diffStepIndex;
+                                stepContainer.dataset.isDiff = "true";
+
+                                const noteData = diffStepDataArray[diffStepIndex];
+                                if (noteData) {
+                                    stepContainer.textContent = noteData.label;
+                                    stepContainer.classList.add('has-note');
+                                }
+
+                                if ((loopStartPoint?.part === p && loopStartPoint?.isDiff && loopStartPoint?.step === diffStepIndex) || (loopEndPoint?.part === p && loopEndPoint?.isDiff && loopEndPoint?.step === diffStepIndex) || (loopStartPoint?.part === p && loopEndPoint?.part === p && loopStartPoint?.isDiff && loopEndPoint?.isDiff && diffStepIndex >= loopStartPoint?.step && diffStepIndex <= loopEndPoint?.step)) { stepContainer.classList.add('loop-active'); }
+                                if (selectedStepInfo.part === p && selectedStepInfo.isDiff && selectedStepInfo.step === diffStepIndex) { stepContainer.classList.add('selected'); }
+                                
+                                stepContainer.addEventListener('click', handleStepCellClick);
+                                
+                                const nextNoteData = (diffStepIndex < totalDiffSteps - 1) ? diffStepDataArray[diffStepIndex + 1] : null;
+                                const prevNoteData = diffStepIndex > 0 ? diffStepDataArray[diffStepIndex - 1] : null;
+                                if (noteData && nextNoteData && !(prevNoteData?.triplet) && selectedTrackType !== 'bass') { createTripletCheckbox(stepContainer, p, diffStepIndex, true); }
+                                 // **FIX**: The condition here is also updated for the "diff" section.
+                                if (noteData && nextNoteData && selectedTrackType !== 'bass' && noteData.freq === nextNoteData.freq) {
+                                    createTieCheckbox(stepContainer, p, diffStepIndex, true);
+                                }
+                                
+                                diffGridRow.appendChild(stepContainer);
+                            }
+                            partContainer.appendChild(diffGridRow);
+                            stepsDrawn += stepsThisRow;
+                        }
+                    }
+                }
+                sequencerGridContainer.appendChild(partContainer);
+            }
+            highlightSelectedStep();
+            restoreScrollPositions(scrollPos);
+        }
+	 
+	 
+		
+// --- 	buildSequencerGrid END		
+
+        function createTieCheckbox(stepContainer, partIndex, stepIndex, isDiff) { const trackData = sequence[partIndex]?.[selectedTrackType]; const targetArrayName = isDiff ? 'diff' : 'main'; const noteData = trackData?.[targetArrayName]?.[stepIndex]; if (!noteData) return; const nextNoteData = trackData?.[targetArrayName]?.[stepIndex+1]; const checkbox = document.createElement('input'); checkbox.type = 'checkbox'; checkbox.title = 'Tie'; checkbox.classList.add('tie-checkbox'); if (selectedTrackType === 'bass') { checkbox.checked = (nextNoteData && noteData.freq === nextNoteData.freq && !noteData.breakTie); checkbox.disabled = !(nextNoteData && noteData.freq === nextNoteData.freq); checkbox.addEventListener('change', handleBassTieOverride); } else { checkbox.checked = noteData.tie || false; checkbox.disabled = !nextNoteData || noteData.freq !== nextNoteData.freq; checkbox.addEventListener('change', handleTieChange); } checkbox.dataset.part = partIndex; checkbox.dataset.step = stepIndex; checkbox.dataset.isDiff = String(isDiff); checkbox.addEventListener('click', (e) => e.stopPropagation()); stepContainer.appendChild(checkbox); }
+        function createTripletCheckbox(stepContainer, partIndex, stepIndex, isDiff) { if (selectedTrackType === 'bass') return; const trackData = sequence[partIndex]?.[selectedTrackType]; const targetArrayName = isDiff ? 'diff' : 'main'; const noteData = trackData?.[targetArrayName]?.[stepIndex]; if (!noteData) return; const checkbox = document.createElement('input'); checkbox.type = 'checkbox'; checkbox.title = 'Triplet'; checkbox.classList.add('triplet-checkbox'); checkbox.checked = noteData.triplet || false; checkbox.dataset.part = partIndex; checkbox.dataset.step = stepIndex; checkbox.dataset.isDiff = String(isDiff); checkbox.addEventListener('change', handleTripletChange); checkbox.addEventListener('click', (e) => e.stopPropagation()); stepContainer.appendChild(checkbox); }
+        function highlightTargetCell(partIdx, stepIdx, isDiffStep) { if(!sequencerGridContainer) return; sequencerGridContainer.querySelectorAll('.playing').forEach(e=>e.classList.remove('playing')); let selector = `.seq-step[data-part="${partIdx}"][data-step="${stepIdx}"][data-is-diff="${isDiffStep}"]`; if(selector){ const targetElement = sequencerGridContainer.querySelector(selector); if(targetElement) { targetElement.classList.add('playing'); } } }
+        function highlightSelectedStep() { if(!sequencerGridContainer || !selectedStepInfo) return; sequencerGridContainer.querySelectorAll('.selected').forEach(e=>e.classList.remove('selected')); let selector = `.seq-step[data-part="${selectedStepInfo.part}"][data-step="${selectedStepInfo.step}"][data-is-diff="${selectedStepInfo.isDiff}"]`; if (selector) { const targetElement = sequencerGridContainer.querySelector(selector); if (targetElement) { targetElement.classList.add('selected'); } } }
+
+        // --- Click Track UI ---
+        // MAE 14 July 2025 - Fixed issue where it always reinitialized the pattern on load
+        function buildClickTrackGrid(theClickPattern) {
+            if (!clickPatternGrid) return;
+            clickPatternGrid.innerHTML = '';
+            const steps = (tuneType === 'jig') ? jigStepsPerBar : reelStepsPerBar;
+            
+            if (!theClickPattern){
+
+                // Set default pattern based on tune type
+                clickPattern = new Array(steps).fill(0);
+                if (tuneType === 'jig') {
+                    if (steps > 0) clickPattern[0] = 2; // High accent on first beat
+                    if (steps > 3) clickPattern[3] = 2; // High accent on fourth beat
+                } else { // Reel
+                    if (steps > 0) clickPattern[0] = 2; // High accent on first beat
+                    if (steps > 4) clickPattern[4] = 2; // High accent on fifth beat
+                }
+
+            }
+
+            clickPatternGrid.style.gridTemplateColumns = `repeat(${steps}, 1fr)`;
+            
+            ['high', 'low'].forEach(type => {
+                for (let i = 0; i < steps; i++) {
+                    const cell = document.createElement('div');
+                    cell.classList.add('click-step');
+                    cell.dataset.step = i;
+                    cell.dataset.type = type;
+                    cell.title = `Step ${i + 1} ${type}`;
+                    clickPatternGrid.appendChild(cell);
+                }
+            });
+            renderClickGrid();
+        }
+
+        function renderClickGrid() {
+            if (!clickPatternGrid) return;
+            const steps = clickPatternGrid.querySelectorAll('.click-step');
+            steps.forEach(cell => {
+                const step = parseInt(cell.dataset.step);
+                const type = cell.dataset.type;
+                const patternValue = clickPattern[step];
+                cell.classList.remove('active-high', 'active-low');
+                if (type === 'high' && patternValue === 2) {
+                    cell.classList.add('active-high');
+                } else if (type === 'low' && patternValue === 1) {
+                    cell.classList.add('active-low');
+                }
+            });
+        }
+
+        function handleClickGridCell(event) {
+            const cell = event.target.closest('.click-step');
+            if (!cell) return;
+            const step = parseInt(cell.dataset.step);
+            const type = cell.dataset.type;
+            const currentValue = clickPattern[step];
+            let newValue = 0;
+            if (type === 'high') {
+                newValue = (currentValue === 2) ? 0 : 2;
+            } else if (type === 'low') {
+                newValue = (currentValue === 1) ? 0 : 1;
+            }
+            clickPattern[step] = newValue;
+            renderClickGrid();
+        }
+
+        // --- Sequencer Data Modification Functions ---
+        function nudgeLoopNotes(direction) { if (!loopStartPoint || !loopEndPoint || loopStartPoint.part !== loopEndPoint.part || loopStartPoint.isDiff !== loopEndPoint.isDiff) return; const partIdx = loopStartPoint.part; const startStep = loopStartPoint.step; const endStep = loopEndPoint.step; const isDiffLoop = loopStartPoint.isDiff; const targetArrayName = isDiffLoop ? 'diff' : 'main'; if (!sequence[partIdx] || !sequence[partIdx][selectedTrackType] || !sequence[partIdx][selectedTrackType][targetArrayName]) return; const trackData = sequence[partIdx][selectedTrackType][targetArrayName]; const loopLength = endStep - startStep + 1; if (loopLength <= 0) return; const notesInLoop = []; for (let i = 0; i < loopLength; i++) { notesInLoop.push(trackData[startStep + i] ? { ...trackData[startStep + i] } : null); } const nudgedNotes = new Array(loopLength).fill(null); for (let i = 0; i < loopLength; i++) { if (notesInLoop[i] !== null) { let newIndex = (i + direction); if (newIndex < 0) { newIndex = loopLength - 1; } else if (newIndex >= loopLength) { newIndex = 0; } nudgedNotes[newIndex] = notesInLoop[i]; } } for (let i = 0; i < loopLength; i++) { trackData[startStep + i] = nudgedNotes[i]; } buildSequencerGrid(); showStatusMessage(`Loop notes nudged.`); }
+        function handleLoopNudgePlus() { nudgeLoopNotes(1); }
+        function handleLoopNudgeMinus() { nudgeLoopNotes(-1); }
+
+        function updateSequenceDimensions(oldSeq, newNP) {
+            let reelLengthChoice = parseInt(document.querySelector('input[name="partLength"]:checked')?.value || '32');
+            partLength = (tuneType === 'jig') ? (jigStepsPerBar * 8) : reelLengthChoice;
+            const newS = [];
+            const maxDiffBarsForMode = (tuneType === 'jig') ? 4 : (partLength === 64 ? 8 : 4);
+            for (let p = 0; p < newNP; p++) {
+                const oldPD = oldSeq?.[p];
+                let currentDiffOnRepBars = oldPD?.diffOnRepBars ?? 1;
+                if (currentDiffOnRepBars > maxDiffBarsForMode) { currentDiffOnRepBars = maxDiffBarsForMode; }
+                const diffEnabled = oldPD?.diffOnRepEnabled ?? false;
+                const diffSteps = diffEnabled ? currentDiffOnRepBars * stepsPerBar : 0;
+                const nP = { melody: { main: new Array(partLength).fill(null), diff: diffEnabled ? new Array(diffSteps).fill(null) : [] }, bass:   { main: new Array(partLength).fill(null), diff: diffEnabled ? new Array(diffSteps).fill(null) : [] }, diffOnRepEnabled: diffEnabled, diffOnRepBars: currentDiffOnRepBars };
+                if (oldPD) {
+                    const mainLenToCopy = Math.min(oldPD.melody?.main?.length ?? 0, partLength);
+                    for (let s = 0; s < mainLenToCopy; s++) { nP.melody.main[s] = oldPD.melody.main[s] ? { ...oldPD.melody.main[s] } : null; nP.bass.main[s] = oldPD.bass.main[s] ? { ...oldPD.bass.main[s] } : null; }
+                    if (diffEnabled) {
+                        const diffLenToCopyMelody = Math.min(oldPD.melody?.diff?.length ?? 0, diffSteps);
+                        for(let s = 0; s < diffLenToCopyMelody; s++) nP.melody.diff[s] = oldPD.melody.diff[s] ? { ...oldPD.melody.diff[s] } : null;
+                        const diffLenToCopyBass = Math.min(oldPD.bass?.diff?.length ?? 0, diffSteps);
+                        for(let s = 0; s < diffLenToCopyBass; s++) nP.bass.diff[s] = oldPD.bass.diff[s] ? { ...oldPD.bass.diff[s] } : null;
+                    }
+                }
+                newS[p] = nP;
+            }
+            sequence = newS;
+        }
+
+        function initializeSequenceData() {
+            sequence = [];
+            let reelLengthChoice = parseInt(document.querySelector('input[name="partLength"]:checked')?.value || '32');
+            partLength = (tuneType === 'jig') ? (jigStepsPerBar * 8) : reelLengthChoice;
+            for (let p = 0; p < numParts; p++) {
+                sequence[p] = { melody: { main: new Array(partLength).fill(null), diff: [] }, bass:   { main: new Array(partLength).fill(null), diff: [] }, diffOnRepEnabled: false, diffOnRepBars: 1 };
+            }
+        }
+        function recordNoteToSequencer(freq, label) { if (!selectedStepInfo) return; const { part: targetPart, step: targetStepIndex, isDiff: targetIsDiff } = selectedStepInfo; const targetArrayName = targetIsDiff ? 'diff' : 'main'; const partData = sequence[targetPart]; const trackData = partData?.[selectedTrackType]; if (!partData || !trackData) return; if (targetIsDiff && (!trackData.diff || trackData.diff.length === 0)) { const diffSteps = (partData.diffOnRepBars || 1) * stepsPerBar; trackData.diff = new Array(diffSteps).fill(null); } const targetArray = trackData[targetArrayName]; const targetArrayLength = targetArray.length; if (targetArray && targetStepIndex >= 0 && targetStepIndex < targetArrayLength) { let noteToStore = (selectedTrackType === 'bass') ? { freq, label, breakTie: false } : { freq, label, tie: false, triplet: false }; targetArray[targetStepIndex] = noteToStore; buildSequencerGrid(); if (stepRecordMode === 'movefwd') { const nextStepIndex = (targetStepIndex + 1); if (nextStepIndex < targetArrayLength) { selectedStepInfo.step = nextStepIndex; } } highlightSelectedStep(); } }
+        function clearSelectedStep() { if (!selectedStepInfo) return false; const { part: targetPart, step: targetStepIndex, isDiff: targetIsDiff } = selectedStepInfo; const targetArrayName = targetIsDiff ? 'diff' : 'main'; const partData = sequence[targetPart]; const trackData = partData?.[selectedTrackType]; if (!partData || !trackData) return false; const targetArray = trackData[targetArrayName]; if (!targetArray || targetStepIndex < 0 || targetStepIndex >= targetArray.length) return false; const stepData = targetArray[targetStepIndex]; if (stepData) { if (targetStepIndex > 0 && selectedTrackType === 'melody') { const prevNote = targetArray[targetStepIndex - 1]; if (prevNote) { if (prevNote.tie && findNoteInScale(prevNote.freq)?.index === findNoteInScale(stepData.freq)?.index) prevNote.tie = false; if (prevNote.triplet) prevNote.triplet = false; } } targetArray[targetStepIndex] = null; buildSequencerGrid(); highlightSelectedStep(); return true; } return false; }
+        function showClearPartModal() { if(confirmClearPartModal) confirmClearPartModal.classList.remove('hidden');}
+        function hideClearPartModal() { if(confirmClearPartModal) confirmClearPartModal.classList.add('hidden');}
+        function requestClearPartNotes() { const partIdx = selectedStepInfo.part; if (partToClearLabel) { partToClearLabel.textContent = `Part ${partIdx + 1}`; } showClearPartModal(); }
+        function executeClearPartNotes() { handleStop(); const partIdx = selectedStepInfo.part; const partData = sequence[partIdx]; if (partData) { if (partData.melody) { if (partData.melody.main) partData.melody.main.fill(null); if (partData.melody.diff) partData.melody.diff.fill(null); } if (partData.bass) { if (partData.bass.main) partData.bass.main.fill(null); if (partData.bass.diff) partData.bass.diff.fill(null); } buildSequencerGrid(); showStatusMessage(`Part ${partIdx + 1} notes cleared.`); } hideClearPartModal(); }
+        function showClearLoopNotesConfirmModal() { if(confirmClearLoopNotesModal) confirmClearLoopNotesModal.classList.remove('hidden'); }
+        function hideClearLoopNotesConfirmModal() { if(confirmClearLoopNotesModal) confirmClearLoopNotesModal.classList.add('hidden'); }
+        function executeClearLoopNotes() { if (!loopStartPoint || !loopEndPoint) { hideClearLoopNotesConfirmModal(); return; } const partIdx = loopStartPoint.part; const start = loopStartPoint.step; const end = loopEndPoint.step; const isDiffLoop = loopStartPoint.isDiff; const targetArrayName = isDiffLoop ? 'diff' : 'main'; const targetArray = sequence[partIdx]?.[selectedTrackType]?.[targetArrayName]; if (!targetArray) { hideClearLoopNotesConfirmModal(); return; } let notesCleared = false; for (let i = start; i <= end; i++) { if (targetArray[i]) { targetArray[i] = null; notesCleared = true; } } if (notesCleared) { buildSequencerGrid(); showStatusMessage(`Notes in loop cleared.`); } hideClearLoopNotesConfirmModal(); }
+
+        // --- Save/Load Functions ---
+        function applyLoadedSettings(data) {
+            // Apply simple state variables
+            bpm = data.bpm || 190;
+            swingAmount = data.swing || 20;
+            melodyVolume = data.volumes?.melody ?? -15;
+            bassVolume = data.volumes?.bass ?? -5;
+            clickVolume = data.volumes?.click ?? -5;
+            masterVolume = data.volumes?.master ?? 0;
+            reverbWet = data.reverb?.wet ?? 0.4;
+            reverbDecay = data.reverb?.decay ?? 5.0;
+            melodyOscType = data.melodySynth?.osc ?? 'triangle';
+            melodyAttack = data.melodySynth?.attack ?? 0.009;
+            melodyDecay = data.melodySynth?.decay ?? 0.097;
+            melodySustain = data.melodySynth?.sustain ?? 0.5;
+            melodyRelease = data.melodySynth?.release ?? 0.05;
+            melodyFilterFreq = data.melodySynth?.filterFreq ?? 10000;
+            useSharpC = data.scale?.c ?? false;
+            useSharpF = data.scale?.f ?? true;
+            useSharpG = data.scale?.g ?? false;
+            useSharpD = data.scale?.d ?? false;
+            clickPattern = data.clickPattern || ((data.tuneType === 'jig') ? [2,0,0,2,0,0] : [2,0,0,0,2,0,0,0]);
+
+            // Update UI sliders
+            bpmSlider.value = bpm;
+            swingSlider.value = swingAmount;
+            melodyVolSlider.value = melodyVolume;
+            bassVolSlider.value = bassVolume;
+            clickVolSlider.value = clickVolume;
+            masterVolSlider.value = masterVolume;
+            reverbWetSlider.value = reverbWet;
+            reverbDecaySlider.value = reverbDecay;
+            melodyOscTypeSelect.value = melodyOscType;
+            melodyAttackSlider.value = melodyAttack;
+            melodyDecaySlider.value = melodyDecay;
+            melodySustainSlider.value = melodySustain;
+            melodyReleaseSlider.value = melodyRelease;
+            melodyFilterFreqSlider.value = melodyFilterFreq;
+            noteSwitch.checked = useSharpC;
+            fsharpSwitch.checked = useSharpF;
+            gsharpSwitch.checked = useSharpG;
+            dsharpSwitch.checked = useSharpD;
+
+            // Update UI text displays
+            bpmValue.textContent = bpm;
+            swingValue.textContent = `${swingAmount}%`;
+            melodyVolValue.textContent = `${melodyVolume}dB`;
+            bassVolValue.textContent = `${bassVolume}dB`;
+            clickVolValue.textContent = `${clickVolume}dB`;
+            masterVolValue.textContent = `${masterVolume}dB`;
+            reverbWetValue.textContent = `${Math.round(reverbWet * 100)}%`;
+            reverbDecayValue.textContent = `${reverbDecay.toFixed(1)}s`;
+            melodyAttackValue.textContent = `${melodyAttack.toFixed(3)}s`;
+            melodyDecayValue.textContent = `${melodyDecay.toFixed(3)}s`;
+            melodySustainValue.textContent = melodySustain.toFixed(2);
+            melodyReleaseValue.textContent = `${melodyRelease.toFixed(3)}s`;
+            melodyFilterFreqValue.textContent = `${(melodyFilterFreq / 1000).toFixed(1)}kHz`;
+
+            // Apply to Tone.js objects (this requires audio context to be started)
+            handleInstrumentVolumeChange();
+            handleMasterVolumeChange();
+            handleReverbChange();
+            handleMelodySynthChange();
+            
+            // Re-render note players with correct scale
+            updateToggleableNotes();
+        }
+
+        function handleSaveSequence() {
+            const dataToSave = {
+                tuneType: tuneType,
+                partLength: partLength,
+                numParts: numParts,
+                repeatParts: repeatParts,
+                sequenceData: typeof structuredClone === 'function' ? structuredClone(sequence) : JSON.parse(JSON.stringify(sequence)),
+                bpm: bpm,
+                swing: swingAmount,
+                volumes: { melody: melodyVolume, bass: bassVolume, click: clickVolume, master: masterVolume },
+                reverb: { wet: reverbWet, decay: reverbDecay },
+                melodySynth: { osc: melodyOscType, attack: melodyAttack, decay: melodyDecay, sustain: melodySustain, release: melodyRelease, filterFreq: melodyFilterFreq },
+                scale: { c: useSharpC, f: useSharpF, g: useSharpG, d: useSharpD },
+                clickPattern: clickPattern,
+            };
+            const jsonString = JSON.stringify(dataToSave, null, 2);
+            document.getElementById('sequence-data-textarea').value = jsonString;
+            showStatusMessage("Sequence data copied to text area.", 2000);
+        }
+        
+        async function handleLoadSequence() {
+            if (!confirm("Overwrite current sequence? This cannot be undone.")) {
+                showStatusMessage("Load cancelled.", 2000);
+                return;
+            }
+            const jsonString = document.getElementById('sequence-data-textarea').value.trim();
+            if (!jsonString) {
+                showStatusMessage("Text area is empty.", 3000);
+                return;
+            }
+            try {
+
+                const loadedData = JSON.parse(jsonString);
+                if (typeof loadedData !== 'object' || !loadedData.sequenceData) {
+                     throw new Error("Invalid data structure.");
+                }
+
+                await ensureAudioStarted();
+                handleStop();
+                
+                // 1. APPLY ALL LOADED DATA TO STATE VARIABLES
+                // This will update state variables AND UI controls like sliders
+                applyLoadedSettings(loadedData);
+
+                // 2. APPLY STRUCTURAL DATA
+                tuneType = loadedData.tuneType || 'reel'; 
+                partLength = loadedData.partLength;
+                numParts = loadedData.numParts;
+                repeatParts = loadedData.repeatParts;
+                sequence = loadedData.sequenceData;
+                stepsPerBar = (tuneType === 'jig') ? jigStepsPerBar : reelStepsPerBar;
+
+                // 3. UPDATE STRUCTURAL UI CONTROLS (these are not in applyLoadedSettings)
+                document.getElementById(tuneType === 'jig' ? 'formatJig' : 'formatReel').checked = true;
+                if (tuneType === 'reel') {
+                    const lenRadio = document.getElementById(`len${partLength}`);
+                    if(lenRadio) lenRadio.checked = true;
+                }
+                const partsRadio = document.getElementById(`parts${numParts}`);
+                if (partsRadio) partsRadio.checked = true;
+                repeatCheckbox.checked = repeatParts;
+
+                // Make sure the part length selector is visible/hidden correctly
+                reelPartLengthGroup.style.display = (tuneType === 'reel') ? 'flex' : 'none';
+
+                // 4. RESET PLAYBACK/SELECTION STATE
+                selectedStepInfo = { part: 0, step: 0, isDiff: false };
+                selectedPartIndex = 0;
+                loopStartPoint = null;
+                loopEndPoint = null;
+                
+                // 5. DIRECTLY REBUILD THE UI FROM THE NEW STATE
+                buildSequencerGrid();
+
+                // MAE 14 July 2025
+                buildClickTrackGrid(loadedData.clickPattern);
+                
+                highlightSelectedStep();
+
+                showStatusMessage("Sequence loaded... playing automatically.", 2500);
+                
+                // 6. AUTO-PLAY
+                handlePlay();
+
+            } catch (error) {
+                showStatusMessage(`Load failed: ${error.message}`, 4000);
+                console.error("Error loading sequence:", error);
+            }
+        }
+
+        // --- Event Handlers ---
+        
+		
+		
+		function handleTieChange(e){ 
+            const cb = e.target; 
+            const p = parseInt(cb.dataset.part); 
+            const s = parseInt(cb.dataset.step); 
+            const isDiff = cb.dataset.isDiff === 'true'; 
+            const arrayName = isDiff ? 'diff' : 'main'; 
+            if (isNaN(p) || isNaN(s) || selectedTrackType === 'bass' || !sequence[p]?.[selectedTrackType]?.[arrayName]?.[s]) { 
+                cb.checked = !cb.checked; 
+                return; 
+            } 
+            const nd = sequence[p][selectedTrackType][arrayName][s]; 
+            nd.tie = cb.checked; 
+            if (cb.checked && nd.triplet) { 
+                nd.triplet = false; 
+                const tripletCb = cb.closest('.seq-step')?.querySelector('.triplet-checkbox'); 
+                if (tripletCb) tripletCb.checked = false; 
+            }
+            // This tells the UI to update to reflect the change.
+            buildSequencerGrid();
+        }
+		
+		
+		
+		
+		
+        function handleTripletChange(e){ const cb = e.target; const p = parseInt(cb.dataset.part); const s = parseInt(cb.dataset.step); const isDiff = cb.dataset.isDiff === 'true'; const arrayName = isDiff ? 'diff' : 'main'; if (isNaN(p) || isNaN(s) || selectedTrackType === 'bass') { cb.checked = !cb.checked; return; } const targetArray = sequence[p]?.[selectedTrackType]?.[arrayName]; const nd = targetArray?.[s]; if (!nd) { cb.checked = !cb.checked; return; } nd.triplet = cb.checked; if (cb.checked && nd.tie) { nd.tie = false; const tieCb = cb.closest('.seq-step')?.querySelector('.tie-checkbox'); if (tieCb) tieCb.checked = false; } if (cb.checked && s < targetArray.length - 1) { const nextNd = targetArray[s + 1]; if (nextNd?.triplet) { nextNd.triplet = false; } } buildSequencerGrid(); }
+        function handleBassTieOverride(e) { const cb = e.target; const p = parseInt(cb.dataset.part); const s = parseInt(cb.dataset.step); const isDiff = cb.dataset.isDiff === 'true'; const arrayName = isDiff ? 'diff' : 'main'; if (isNaN(p) || isNaN(s) || selectedTrackType !== 'bass' || !sequence[p]?.bass?.[arrayName]?.[s]) { return; } const nd = sequence[p].bass[arrayName][s]; nd.breakTie = !cb.checked; }
+        async function handleNotePlayerMouseDown(event) { if (event.type === 'touchstart') { event.preventDefault(); } const targetBox = event.target.closest('.note-box'); if (!targetBox) return; const action = targetBox.dataset.action; const noteId = targetBox.dataset.noteId; const currentTime = performance.now(); if (noteId === lastNoteButtonId && (currentTime - lastNoteButtonClickTime) < NOTE_CLICK_DEBOUNCE_MS) return; lastNoteButtonClickTime = currentTime; lastNoteButtonId = noteId; const activeClassString = targetBox.dataset.activeclass; if (activeClassString) { targetBox.classList.add(...activeClassString.split(' ')); activeBoxElement = targetBox; activeBoxElement.dataset.trackType = selectedTrackType; } const audioReady = await ensureAudioStarted(); if (action === 'delete') { if(clearSelectedStep()) highlightSelectedStep(); return; } if (!audioReady) { if (activeBoxElement) { activeBoxElement.classList.remove(...activeClassString.split(' ')); activeBoxElement = null; } return; } const freq = parseFloat(targetBox.dataset.frequency); const label = targetBox.textContent; if (!isNaN(freq)) { startManualNote(freq); if (selectedStepInfo) { recordNoteToSequencer(freq, label); } } }
+        function handleNotePlayerMouseUp(event) { stopManualNote(); }
+        async function handleStepCellClick(event) { const cell = event.target.closest('.seq-step'); if (!cell || event.target.classList.contains('tie-checkbox') || event.target.classList.contains('triplet-checkbox')) return; const audioReady = await ensureAudioStarted(); const part = parseInt(cell.dataset.part); const isDiff = cell.dataset.isDiff === "true"; const step = parseInt(cell.dataset.step); selectedStepInfo = { part, step, isDiff }; selectedPartIndex = part; const targetArrayName = isDiff ? 'diff' : 'main'; const stepData = sequence[part]?.[selectedTrackType]?.[targetArrayName]?.[step]; if (audioReady && stepData?.freq) { playStepFeedbackNote(stepData.freq); } highlightSelectedStep(); }
+
+        function handleControlChange() {
+            const scrollPos = saveScrollPositions();
+            const oldTuneType = tuneType;
+            const oldPartLength = partLength;
+            const oldNumParts = numParts;
+            
+            // Read new values from UI
+            tuneType = document.querySelector('input[name="tuneFormat"]:checked').value;
+            const newNumParts = parseInt(document.querySelector('input[name="numParts"]:checked').value);
+            
+            // Determine if a major structural change happened
+            const reelLengthChoice = parseInt(document.querySelector('input[name="partLength"]:checked')?.value || '32');
+            const newPartLength = (tuneType === 'jig') ? (jigStepsPerBar * 8) : reelLengthChoice;
+            const structuralChange = (oldTuneType !== tuneType) || (oldNumParts !== newNumParts) || (oldPartLength !== newPartLength);
+            
+            const oldSequenceCopy = structuralChange ? (typeof structuredClone === 'function' ? structuredClone(sequence) : JSON.parse(JSON.stringify(sequence))) : null;
+            if (structuralChange && isPlaying) {
+                handleStop();
+            }
+
+            // Update state variables
+            bpm = parseInt(bpmSlider.value);
+            swingAmount = parseInt(swingSlider.value);
+            repeatParts = repeatCheckbox.checked;
+            clickTrackEnabled = clickTrackEnableCheckbox.checked;
+            stepsPerBar = (tuneType === 'jig') ? jigStepsPerBar : reelStepsPerBar;
+            
+            // Update UI text values
+            bpmValue.textContent = bpm;
+            swingValue.textContent = `${swingAmount}%`;
+
+            // Handle visibility of Reel-specific controls
+            reelPartLengthGroup.style.display = (tuneType === 'reel') ? 'flex' : 'none';
+            
+            if (structuralChange) {
+                numParts = newNumParts;
+                updateSequenceDimensions(oldSequenceCopy, numParts);
+                selectedStepInfo = { part: 0, step: 0, isDiff: false };
+                selectedPartIndex = 0;
+                loopStartPoint = null;
+                loopEndPoint = null;
+                
+                // Rebuild UI components that depend on tune type
+                buildSequencerGrid();
+                buildClickTrackGrid();
+            }
+
+            updateSynthEnvelopes();
+            restoreScrollPositions(scrollPos);
+            highlightSelectedStep();
+        }
+
+        function handleDiffRepEnableChange(event) { const checkbox = event.target; const partIndex = parseInt(checkbox.dataset.part); const isEnabled = checkbox.checked; if (isNaN(partIndex) || !sequence[partIndex]) return; sequence[partIndex].diffOnRepEnabled = isEnabled; if (isEnabled) { const diffBars = sequence[partIndex].diffOnRepBars || 1; const diffSteps = diffBars * stepsPerBar; if (!sequence[partIndex].melody.diff || sequence[partIndex].melody.diff.length !== diffSteps) { sequence[partIndex].melody.diff = new Array(diffSteps).fill(null); } if (!sequence[partIndex].bass.diff || sequence[partIndex].bass.diff.length !== diffSteps) { sequence[partIndex].bass.diff = new Array(diffSteps).fill(null); } } if (isPlaying && !isPlayingLoop) { handleStop(); } buildSequencerGrid(); }
+        function handleDiffRepBarsChange(event) { const select = event.target; const partIndex = parseInt(select.dataset.part); const newBars = parseInt(select.value); if (isNaN(partIndex) || isNaN(newBars) || !sequence[partIndex]) return; sequence[partIndex].diffOnRepBars = newBars; const newDiffSteps = newBars * stepsPerBar; const resizeDiffArray = (arr) => { const oldArr = arr || []; const newArr = new Array(newDiffSteps).fill(null); const lenToCopy = Math.min(oldArr.length, newDiffSteps); for(let i=0; i<lenToCopy; i++) { newArr[i] = oldArr[i]; } return newArr; }; sequence[partIndex].melody.diff = resizeDiffArray(sequence[partIndex].melody.diff); sequence[partIndex].bass.diff = resizeDiffArray(sequence[partIndex].bass.diff); if (isPlaying && !isPlayingLoop) { handleStop(); } if (selectedStepInfo.part === partIndex && selectedStepInfo.isDiff && selectedStepInfo.step >= newDiffSteps) { selectedStepInfo.step = 0; } buildSequencerGrid(); }
+        async function navigateStepBackward() { if (!selectedStepInfo) return; let { part, step, isDiff } = selectedStepInfo; if (step > 0) { selectedStepInfo.step--; highlightSelectedStep(); const arrayName = selectedStepInfo.isDiff ? 'diff' : 'main'; const noteData = sequence[selectedStepInfo.part]?.[selectedTrackType]?.[arrayName]?.[selectedStepInfo.step]; if (noteData?.freq && await ensureAudioStarted()) playStepFeedbackNote(noteData.freq); } }
+        async function navigateStepForward() { if (!selectedStepInfo) return; let { part, step, isDiff } = selectedStepInfo; const arrayName = isDiff ? 'diff' : 'main'; const currentArray = sequence[part]?.[selectedTrackType]?.[arrayName]; const maxIndex = currentArray ? currentArray.length - 1 : 0; if (step < maxIndex) { selectedStepInfo.step++; highlightSelectedStep(); const noteData = sequence[selectedStepInfo.part]?.[selectedTrackType]?.[arrayName]?.[selectedStepInfo.step]; if (noteData?.freq && await ensureAudioStarted()) playStepFeedbackNote(noteData.freq); } }
+        function handleKeyDown(event) { const tag = event.target.tagName.toLowerCase(); if (event.metaKey || event.ctrlKey || event.altKey || event.shiftKey || tag === 'input' || tag === 'button' || tag === 'select' || tag === 'textarea') return; if (event.key === 'ArrowLeft') { event.preventDefault(); navigateStepBackward(); } else if (event.key === 'ArrowRight') { event.preventDefault(); navigateStepForward(); } }
+        function handleSetLoopStart() { if (!selectedStepInfo) return; const { part, step, isDiff } = selectedStepInfo; const newLoopStart = { part, step, isDiff }; if (loopEndPoint && (loopEndPoint.part !== newLoopStart.part || loopEndPoint.isDiff !== newLoopStart.isDiff || loopEndPoint.step < newLoopStart.step)) { loopEndPoint = null; } loopStartPoint = newLoopStart; if(isPlayingLoop) { currentStepWithinPart = loopStartPoint.step; } buildSequencerGrid(); }
+        function handleSetLoopEnd() { if (!selectedStepInfo) return; const { part, step, isDiff } = selectedStepInfo; const newLoopEnd = { part, step, isDiff }; if (loopStartPoint && (loopStartPoint.part !== newLoopEnd.part || loopStartPoint.isDiff !== newLoopEnd.isDiff || loopStartPoint.step > newLoopEnd.step)) { loopStartPoint = null; } loopEndPoint = newLoopEnd; if(isPlayingLoop && loopStartPoint) { currentStepWithinPart = loopStartPoint.step; } buildSequencerGrid(); }
+        function handleClearLoop() { if (loopStartPoint || loopEndPoint) { loopStartPoint = null; loopEndPoint = null; if(isPlayingLoop) handleStop(); buildSequencerGrid(); } }
+        function handleClearLoopNotes() { if (!loopStartPoint || !loopEndPoint || loopStartPoint.part !== loopEndPoint.part || loopStartPoint.isDiff !== loopEndPoint.isDiff) return; showClearLoopNotesConfirmModal(); }
+        function handleTrackSelectChange() { selectedTrackType = trackSwitch.checked ? 'bass' : 'melody'; updateToggleableNotes(); buildSequencerGrid(); }
+        function handleStepModeChange() { stepRecordMode = stepModeSwitch.checked ? 'movefwd' : 'static'; }
+        
+        function handleInstrumentVolumeChange() {
+            const newMelodyVol = parseFloat(melodyVolSlider.value);
+            const newBassVol = parseFloat(bassVolSlider.value);
+            const newClickVol = parseFloat(clickVolSlider.value);
+            melodyVolume = newMelodyVol;
+            bassVolume = newBassVol;
+            clickVolume = newClickVol;
+            melodyVolValue.textContent = `${newMelodyVol}dB`;
+            bassVolValue.textContent = `${newBassVol}dB`;
+            clickVolValue.textContent = `${newClickVol}dB`;
+            if (synthPlayback) synthPlayback.volume.value = melodyVolume;
+            if (synthLive) synthLive.volume.value = melodyVolume;
+            if (bassSynthLive) bassSynthLive.volume.value = bassVolume;
+            if (bassSynthPlayback) bassSynthPlayback.volume.value = bassVolume;
+            if (kickSynth) kickSynth.volume.value = clickVolume;
+            if (highKickSynth) highKickSynth.volume.value = clickVolume;
+            if (bassCelloLayerSynth) {
+                bassCelloLayerSynth.volume.value = bassVolume - 2;
+            }
+        }
+        function handleMasterVolumeChange() { masterVolume = parseFloat(masterVolSlider.value); masterVolValue.textContent = `${masterVolume}dB`; if (toneJsStarted) { Tone.Destination.volume.value = masterVolume; } }
+        function handleReverbChange() { reverbWet = parseFloat(reverbWetSlider.value); reverbDecay = parseFloat(reverbDecaySlider.value); reverbWetValue.textContent = `${Math.round(reverbWet * 100)}%`; reverbDecayValue.textContent = `${reverbDecay.toFixed(1)}s`; if (reverb) { reverb.wet.value = reverbWet; reverb.decay = reverbDecay; } }
+        function handleLoopCurrentPartChange() { loopCurrentPartOnly = loopCurrentPartCheckbox.checked; if (isPlaying && !isPlayingLoop) { handleStop(); } }
+        function handleMelodySynthChange() { melodyOscType = melodyOscTypeSelect.value; melodyAttack = parseFloat(melodyAttackSlider.value); melodyDecay = parseFloat(melodyDecaySlider.value); melodySustain = parseFloat(melodySustainSlider.value); melodyRelease = parseFloat(melodyReleaseSlider.value); melodyFilterFreq = parseFloat(melodyFilterFreqSlider.value); melodyAttackValue.textContent = `${melodyAttack.toFixed(3)}s`; melodyDecayValue.textContent = `${melodyDecay.toFixed(3)}s`; melodySustainValue.textContent = melodySustain.toFixed(2); melodyReleaseValue.textContent = `${melodyRelease.toFixed(3)}s`; melodyFilterFreqValue.textContent = `${(melodyFilterFreq / 1000).toFixed(1)}kHz`; if (synthPlayback) { synthPlayback.set({ oscillator: {type: melodyOscType}, envelope: {attack: melodyAttack, decay: melodyDecay, sustain: melodySustain}}); } if (synthLive) { synthLive.set({ oscillator: {type: melodyOscType}, envelope: {attack: melodyAttack, decay: melodyDecay, sustain: melodySustain}}); } if (melodyFilter) { melodyFilter.frequency.value = melodyFilterFreq; } updateSynthEnvelopes(); }
+
+        // --- Playback Logic (REWRITTEN) ---
+        function advancePlaybackState(steps = 1) { currentStepWithinPart += steps; while (currentStepWithinPart >= partLength) { currentStepWithinPart -= partLength; if (loopCurrentPartOnly) { isSecondPlaythrough = !isSecondPlaythrough; } else if (repeatParts && !isSecondPlaythrough) { isSecondPlaythrough = true; } else { isSecondPlaythrough = false; currentPartPlayIndex = (currentPartPlayIndex + 1) % numParts; } } }
+        
+		
+
+// --- Begin scheduler
+
+function scheduler() {
+            if (!isPlaying) {
+                return;
+            }
+            const now = Tone.context.currentTime;
+            while (nextNoteTime < now + scheduleAheadTime) {
+                if (!isPlaying) break;
+
+                const currentPartData = sequence[currentPartPlayIndex];
+                if (!currentPartData) {
+                    handleStop();
+                    return;
+                }
+
+                let useDiff = false;
+                if (isSecondPlaythrough && currentPartData.diffOnRepEnabled) {
+                    const diffSteps = currentPartData.diffOnRepBars * stepsPerBar;
+                    const diffStartStep = partLength - diffSteps;
+                    if (currentStepWithinPart >= diffStartStep) {
+                        useDiff = true;
+                    }
+                }
+                const targetArrayMelody = useDiff ? currentPartData.melody?.diff : currentPartData.melody?.main;
+                const targetArrayBass = useDiff ? currentPartData.bass?.diff : currentPartData.bass?.main;
+                const stepIndexInArray = useDiff ? currentStepWithinPart - (partLength - (currentPartData.diffOnRepBars * stepsPerBar)) : currentStepWithinPart;
+
+                const noteDataMelody = targetArrayMelody?.[stepIndexInArray];
+                const noteDataBass = targetArrayBass?.[stepIndexInArray];
+                const baseStepDuration = (60.0 / bpm) / 2.0;
+
+                const capturedPartIndex = currentPartPlayIndex;
+                const capturedStepIndex = stepIndexInArray;
+                const capturedIsDiff = useDiff;
+                setTimeout(() => {
+                    if (isPlaying) highlightTargetCell(capturedPartIndex, capturedStepIndex, capturedIsDiff);
+                }, Math.max(0, (nextNoteTime - now) * 1000 - 15));
+                
+                let timeToAdvance = baseStepDuration;
+                if (swingAmount > 0) {
+                    if (tuneType === 'reel') {
+                        const stepInPair = currentStepWithinPart % 2;
+                        const swingFactor = (swingAmount / 70) * 0.33;
+                        timeToAdvance *= (stepInPair === 0) ? (1 + swingFactor) : (1 - swingFactor);
+                    } else if (tuneType === 'jig') {
+                        const stepInGroup = currentStepWithinPart % 3;
+                        const swingFactor = (swingAmount / 70) * 0.5;
+                        if (stepInGroup === 0) timeToAdvance *= (1 + swingFactor);
+                        else if (stepInGroup === 1) timeToAdvance *= (1 - swingFactor);
+                    }
+                }
+
+                // --- Triplet Logic ---
+                if (noteDataMelody?.triplet && targetArrayMelody && stepIndexInArray + 1 < targetArrayMelody.length) {
+                    if (clickTrackEnabled) {
+                        const clickPatternIndex = currentStepWithinPart % clickPattern.length;
+                        const clickState = clickPattern[clickPatternIndex];
+                        if (clickState === 1) playClickSound('low', nextNoteTime);
+                        else if (clickState === 2) playClickSound('high', nextNoteTime);
+                    }
+                    if (noteDataBass?.freq) {
+                        playSequencerNote(noteDataBass.freq, nextNoteTime, timeToAdvance, 'bass');
+                        if (bassCelloLayerSynth) {
+                            bassCelloLayerSynth.triggerAttack(noteDataBass.freq, nextNoteTime);
+                        }
+                    }
+
+                    const nextStepTime = nextNoteTime + timeToAdvance;
+                    const noteDataBassNext = targetArrayBass?.[stepIndexInArray + 1];
+
+                    if (clickTrackEnabled) {
+                        const clickPatternIndexNext = (currentStepWithinPart + 1) % clickPattern.length;
+                        const clickStateNext = clickPattern[clickPatternIndexNext];
+                        if (clickStateNext === 1) playClickSound('low', nextStepTime);
+                        else if (clickStateNext === 2) playClickSound('high', nextStepTime);
+                    }
+
+                    if (noteDataBassNext?.freq) {
+                        let timeToAdvanceNext = (60.0 / bpm) / 2.0; 
+                        if (swingAmount > 0 && tuneType === 'jig') {
+                            const stepInGroup = (currentStepWithinPart + 1) % 3;
+                            const swingFactor = (swingAmount / 70) * 0.5;
+                            if (stepInGroup > 0) timeToAdvanceNext *= (1 - swingFactor);
+                        } else if (swingAmount > 0 && tuneType === 'reel') {
+                             const stepInPair = (currentStepWithinPart + 1) % 2;
+                             const swingFactor = (swingAmount / 70) * 0.33;
+                             timeToAdvanceNext *= (stepInPair === 0) ? (1 + swingFactor) : (1 - swingFactor);
+                        }
+                        playSequencerNote(noteDataBassNext.freq, nextStepTime, timeToAdvanceNext, 'bass');
+                        if (bassCelloLayerSynth) {
+                            bassCelloLayerSynth.triggerAttack(noteDataBassNext.freq, nextStepTime);
+                        }
+                    }
+
+                    const noteA = noteDataMelody;
+                    const noteB = targetArrayMelody[stepIndexInArray + 1];
+
+                    if (noteA && noteB) {
+                        const tripletSpeedFactor = 0.90; 
+                        const totalTripletTime = (baseStepDuration * 2.0) * tripletSpeedFactor;
+                        const tripletNoteDuration = totalTripletTime / 3.0;
+                        let freq1 = noteA.freq, freq2 = noteA.freq, freq3 = noteA.freq;
+                        const scaleInterval = getScaleStepInterval(noteA.freq, noteB.freq);
+
+                        if (scaleInterval === 0) {
+                            freq1 = noteA.freq; freq2 = noteA.freq; freq3 = noteA.freq;
+                        } else if (Math.abs(scaleInterval) === 1) {
+                            freq1 = noteA.freq; freq2 = noteA.freq; freq3 = noteB.freq;
+                        } else {
+                            const noteAInfo = findNoteInScale(noteA.freq); 
+                            const noteBInfo = findNoteInScale(noteB.freq);
+                            
+                            if (!noteAInfo || !noteBInfo) {
+                                freq1 = noteA.freq; freq2 = noteA.freq; freq3 = noteA.freq; 
+                            } else {
+                                const middleNoteIndex = Math.round((noteAInfo.index + noteBInfo.index) / 2);
+                                const middleNote = getNoteByIndex(middleNoteIndex);
+                                freq1 = noteA.freq;
+                                freq2 = middleNote ? middleNote.freq : noteA.freq;
+                                freq3 = noteB.freq;
+                            }
+                        }
+
+                        let stepsToAdvance = 2;
+                        let timeToAdvanceForScheduler = timeToAdvance; 
+                        let secondStepDuration = (60.0 / bpm) / 2.0; 
+                        if (swingAmount > 0 && tuneType === 'jig') { 
+                            const stepInGroup = (currentStepWithinPart + 1) % 3;
+                            const swingFactor = (swingAmount / 70) * 0.5;
+                            if (stepInGroup > 0) secondStepDuration *= (1 - swingFactor);
+                        } else if (swingAmount > 0 && tuneType === 'reel') { 
+                             const stepInPair = (currentStepWithinPart + 1) % 2;
+                             const swingFactor = (swingAmount / 70) * 0.33;
+                             secondStepDuration *= (stepInPair === 0) ? (1 + swingFactor) : (1 - swingFactor);
+                        }
+                        timeToAdvanceForScheduler += secondStepDuration; 
+                        
+                        let thirdNoteDuration = timeToAdvanceForScheduler - (tripletNoteDuration * 2);
+
+                        const noteC = targetArrayMelody?.[stepIndexInArray + 2];
+                        if (noteB.tie && noteC && noteC.freq === freq3) {
+                            let durationOfC = (60.0 / bpm) / 2.0; 
+                            if (swingAmount > 0) {
+                               const swingStep = currentStepWithinPart + 2;
+                               if (tuneType === 'reel') { const stepInPair = swingStep % 2; const swingFactor = (swingAmount / 70) * 0.33; durationOfC *= (stepInPair === 0) ? (1 + swingFactor) : (1 - swingFactor); } 
+                               else if (tuneType === 'jig') { const stepInGroup = swingStep % 3; const swingFactor = (swingAmount / 70) * 0.5; if (stepInGroup === 0) durationOfC *= (1 + swingFactor); else if (stepInGroup === 1) durationOfC *= (1 - swingFactor); }
+                            }
+                            thirdNoteDuration += durationOfC; 
+                            stepsToAdvance = 3;
+                            timeToAdvanceForScheduler += durationOfC; 
+                        }
+
+                        if (freq1) playSequencerNote(freq1, nextNoteTime, tripletNoteDuration, 'melody');
+                        if (freq2) playSequencerNote(freq2, nextNoteTime + tripletNoteDuration, tripletNoteDuration, 'melody');
+                        if (freq3) playSequencerNote(freq3, nextNoteTime + (tripletNoteDuration * 2), thirdNoteDuration, 'melody');
+                        
+                        advancePlaybackState(stepsToAdvance);
+                        nextNoteTime += timeToAdvanceForScheduler; 
+                    } else { 
+                        advancePlaybackState(1);
+                        nextNoteTime += timeToAdvance;
+                    }
+                    continue; 
+                }
+
+                if (clickTrackEnabled) {
+                    const clickPatternIndex = currentStepWithinPart % clickPattern.length;
+                    const clickState = clickPattern[clickPatternIndex];
+                    if (clickState === 1) playClickSound('low', nextNoteTime);
+                    else if (clickState === 2) playClickSound('high', nextNoteTime);
+                }
+                const isStartOfNote = (stepIndexInArray === 0 || !targetArrayMelody?.[stepIndexInArray - 1]?.tie || targetArrayMelody?.[stepIndexInArray - 1]?.freq !== noteDataMelody?.freq);
+
+                if (isStartOfNote && noteDataMelody?.freq) {
+                    let noteDuration = 0;
+                    for (let i = 0; ; i++) {
+                        const lookaheadGlobalStep = currentStepWithinPart + i;
+                        const lookaheadStepIndex = stepIndexInArray + i;
+                        const noteToTest = targetArrayMelody?.[lookaheadStepIndex];
+
+                        if (!noteToTest || noteToTest.freq !== noteDataMelody.freq) break;
+                        let stepSwungDuration = baseStepDuration;
+                        if (swingAmount > 0) {
+                             if (tuneType === 'reel') { const stepInPair = lookaheadGlobalStep % 2; const swingFactor = (swingAmount / 70) * 0.33; stepSwungDuration *= (stepInPair === 0) ? (1 + swingFactor) : (1 - swingFactor); } 
+                             else if (tuneType === 'jig') { const stepInGroup = lookaheadGlobalStep % 3; const swingFactor = (swingAmount / 70) * 0.5; if (stepInGroup === 0) stepSwungDuration *= (1 + swingFactor); else if (stepInGroup === 1) stepSwungDuration *= (1 - swingFactor); }
+                        }
+                        noteDuration += stepSwungDuration;
+                        if (!noteToTest.tie) break;
+                    }
+                    playSequencerNote(noteDataMelody.freq, nextNoteTime, noteDuration, 'melody');
+                }
+                
+                if (noteDataBass?.freq) {
+                    playSequencerNote(noteDataBass.freq, nextNoteTime, timeToAdvance, 'bass');
+                    if (bassCelloLayerSynth) {
+                        bassCelloLayerSynth.triggerAttack(noteDataBass.freq, nextNoteTime);
+                    }
+                }
+                
+                advancePlaybackState(1);
+                nextNoteTime += timeToAdvance;
+            }
+
+            if (isPlaying) {
+                timerID = setTimeout(scheduler, lookahead);
+            }
+        }
+
+// --- End scheduler	
+
+
+// --- Begin schedulerLoop
+		
+
+function schedulerLoop() {
+            if (!isPlaying || !isPlayingLoop || !loopStartPoint || !loopEndPoint) {
+                handleStop();
+                return;
+            }
+            const now = Tone.context.currentTime;
+            const partIdx = loopStartPoint.part;
+            const isLoopingDiff = loopStartPoint.isDiff;
+            const loopStartStep = loopStartPoint.step;
+            const loopEndStep = loopEndPoint.step;
+            const arrayName = isLoopingDiff ? 'diff' : 'main';
+
+            while (nextNoteTime < now + scheduleAheadTime) {
+                if (!isPlaying || !isPlayingLoop) break;
+                
+                const currentPartData = sequence[partIdx];
+                if (!currentPartData) {
+                    handleStop();
+                    return;
+                }
+                const stepToPlay = currentStepWithinPart;
+
+                const targetArrayMelody = currentPartData.melody?.[arrayName];
+                const targetArrayBass = currentPartData.bass?.[arrayName];
+                const noteDataMelody = targetArrayMelody?.[stepToPlay];
+                const noteDataBass = targetArrayBass?.[stepToPlay];
+                const baseStepDuration = (60.0 / bpm) / 2.0;
+
+                setTimeout(() => {
+                    if (isPlaying && isPlayingLoop) highlightTargetCell(partIdx, stepToPlay, isLoopingDiff);
+                }, Math.max(0, (nextNoteTime - now) * 1000 - 15));
+                
+                let timeToAdvance = baseStepDuration;
+                if (swingAmount > 0) {
+                    if (tuneType === 'reel') {
+                        const stepInPair = stepToPlay % 2; const swingFactor = (swingAmount / 70) * 0.33;
+                        timeToAdvance *= (stepInPair === 0) ? (1 + swingFactor) : (1 - swingFactor);
+                    } else if (tuneType === 'jig') {
+                        const stepInGroup = stepToPlay % 3; const swingFactor = (swingAmount / 70) * 0.5;
+                        if (stepInGroup === 0) timeToAdvance *= (1 + swingFactor);
+                        else if (stepInGroup === 1) timeToAdvance *= (1 - swingFactor);
+                    }
+                }
+                
+                if (noteDataMelody?.triplet && targetArrayMelody && stepToPlay + 1 <= loopEndStep) {
+                    if (clickTrackEnabled) {
+                        const clickPatternIndex = stepToPlay % clickPattern.length; const clickState = clickPattern[clickPatternIndex];
+                        if (clickState === 1) playClickSound('low', nextNoteTime); else if (clickState === 2) playClickSound('high', nextNoteTime);
+                    }
+                    if (noteDataBass?.freq) {
+                        playSequencerNote(noteDataBass.freq, nextNoteTime, timeToAdvance, 'bass');
+                        if (bassCelloLayerSynth) { 
+                            bassCelloLayerSynth.triggerAttack(noteDataBass.freq, nextNoteTime);
+                        }
+                    }
+
+                    const nextStepTime = nextNoteTime + timeToAdvance;
+                    const noteDataBassNext = targetArrayBass?.[stepToPlay + 1];
+
+                    if (clickTrackEnabled) {
+                        const clickPatternIndexNext = (stepToPlay + 1) % clickPattern.length;
+                        const clickStateNext = clickPattern[clickPatternIndexNext];
+                        if (clickStateNext === 1) playClickSound('low', nextStepTime);
+                        else if (clickStateNext === 2) playClickSound('high', nextStepTime);
+                    }
+
+                    if (noteDataBassNext?.freq) {
+                        let timeToAdvanceNext = (60.0 / bpm) / 2.0;
+                        if (swingAmount > 0 && tuneType === 'jig') {
+                            const stepInGroup = (stepToPlay + 1) % 3;
+                            const swingFactor = (swingAmount / 70) * 0.5;
+                            if (stepInGroup > 0) timeToAdvanceNext *= (1 - swingFactor);
+                        } else if (swingAmount > 0 && tuneType === 'reel') {
+                             const stepInPair = (stepToPlay + 1) % 2;
+                             const swingFactor = (swingAmount / 70) * 0.33;
+                             timeToAdvanceNext *= (stepInPair === 0) ? (1 + swingFactor) : (1 - swingFactor);
+                        }
+                        playSequencerNote(noteDataBassNext.freq, nextStepTime, timeToAdvanceNext, 'bass');
+                        if (bassCelloLayerSynth) {
+                            bassCelloLayerSynth.triggerAttack(noteDataBassNext.freq, nextStepTime);
+                        }
+                    }
+
+                    const noteA = noteDataMelody; const noteB = targetArrayMelody[stepToPlay + 1];
+                    if (noteA && noteB) {
+                        const tripletSpeedFactor = 0.90;
+                        const totalTripletTime = (baseStepDuration * 2.0) * tripletSpeedFactor;
+                        const tripletNoteDuration = totalTripletTime / 3.0;
+                        let freq1 = noteA.freq, freq2 = noteA.freq, freq3 = noteA.freq;
+                        const scaleInterval = getScaleStepInterval(noteA.freq, noteB.freq);
+
+                        if (scaleInterval === 0) {
+                            freq1 = noteA.freq; freq2 = noteA.freq; freq3 = noteA.freq;
+                        } else if (Math.abs(scaleInterval) === 1) {
+                            freq1 = noteA.freq; freq2 = noteA.freq; freq3 = noteB.freq;
+                        } else {
+                            const noteAInfo = findNoteInScale(noteA.freq);
+                            const noteBInfo = findNoteInScale(noteB.freq);
+
+                            if (!noteAInfo || !noteBInfo) {
+                                freq1 = noteA.freq; freq2 = noteA.freq; freq3 = noteA.freq;
+                            } else {
+                                const middleNoteIndex = Math.round((noteAInfo.index + noteBInfo.index) / 2);
+                                const middleNote = getNoteByIndex(middleNoteIndex);
+                                freq1 = noteA.freq; freq2 = middleNote ? middleNote.freq : noteA.freq; freq3 = noteB.freq;
+                            }
+                        }
+
+                        let stepsToAdvance = 2;
+                        let timeToAdvanceForScheduler = timeToAdvance;
+                        let secondStepDuration = (60.0 / bpm) / 2.0;
+                        if (swingAmount > 0 && tuneType === 'jig') {
+                            const stepInGroup = (stepToPlay + 1) % 3;
+                            const swingFactor = (swingAmount / 70) * 0.5;
+                            if (stepInGroup > 0) secondStepDuration *= (1 - swingFactor);
+                        } else if (swingAmount > 0 && tuneType === 'reel') {
+                             const stepInPair = (stepToPlay + 1) % 2;
+                             const swingFactor = (swingAmount / 70) * 0.33;
+                             secondStepDuration *= (stepInPair === 0) ? (1 + swingFactor) : (1 - swingFactor);
+                        }
+                        timeToAdvanceForScheduler += secondStepDuration;
+                        
+                        let thirdNoteDuration = timeToAdvanceForScheduler - (tripletNoteDuration * 2);
+
+                        const noteC = (stepToPlay + 2 <= loopEndStep) ? targetArrayMelody?.[stepToPlay + 2] : null;
+                        if (noteB.tie && noteC && noteC.freq === freq3) {
+                             let durationOfC = baseStepDuration;
+                             if (swingAmount > 0) {
+                                const swingStep = stepToPlay + 2;
+                                if (tuneType === 'reel') { const stepInPair = swingStep % 2; const swingFactor = (swingAmount / 70) * 0.33; durationOfC *= (stepInPair === 0) ? (1 + swingFactor) : (1 - swingFactor); } 
+                                else if (tuneType === 'jig') { const stepInGroup = swingStep % 3; const swingFactor = (swingAmount / 70) * 0.5; if (stepInGroup === 0) durationOfC *= (1 + swingFactor); else if (stepInGroup === 1) durationOfC *= (1 - swingFactor); }
+                             }
+                             thirdNoteDuration += durationOfC;
+                             stepsToAdvance = 3;
+                             timeToAdvanceForScheduler += durationOfC;
+                        }
+
+                        if (freq1) playSequencerNote(freq1, nextNoteTime, tripletNoteDuration, 'melody');
+                        if (freq2) playSequencerNote(freq2, nextNoteTime + tripletNoteDuration, tripletNoteDuration, 'melody');
+                        if (freq3) playSequencerNote(freq3, nextNoteTime + (tripletNoteDuration * 2), thirdNoteDuration, 'melody');
+                        
+                        currentStepWithinPart += stepsToAdvance;
+                        nextNoteTime += timeToAdvanceForScheduler;
+                    } else { 
+                        currentStepWithinPart++;
+                        nextNoteTime += timeToAdvance;
+                    }
+
+                    if (currentStepWithinPart > loopEndStep) { currentStepWithinPart = loopStartStep + (currentStepWithinPart - (loopEndStep + 1)); }
+                    continue;
+                }
+                
+                if (clickTrackEnabled) {
+                    const clickPatternIndex = stepToPlay % clickPattern.length; const clickState = clickPattern[clickPatternIndex];
+                    if (clickState === 1) playClickSound('low', nextNoteTime); else if (clickState === 2) playClickSound('high', nextNoteTime);
+                }
+                const isStartOfNote = (stepToPlay === loopStartStep || !targetArrayMelody?.[stepToPlay - 1]?.tie || targetArrayMelody?.[stepToPlay - 1]?.freq !== noteDataMelody?.freq);
+
+                if (isStartOfNote && noteDataMelody?.freq) {
+                    let noteDuration = 0;
+                    for (let i = 0; ; i++) {
+                        const lookaheadStep = stepToPlay + i;
+                        if(lookaheadStep > loopEndStep) break;
+                        const noteToTest = targetArrayMelody?.[lookaheadStep];
+                        if (!noteToTest || noteToTest.freq !== noteDataMelody.freq) break;
+                        let stepSwungDuration = baseStepDuration;
+                        if (swingAmount > 0) {
+                            if (tuneType === 'reel') {
+                                const stepInPair = lookaheadStep % 2; const swingFactor = (swingAmount / 70) * 0.33;
+                                stepSwungDuration *= (stepInPair === 0) ? (1 + swingFactor) : (1 - swingFactor);
+                            } else if (tuneType === 'jig') {
+                                const stepInGroup = lookaheadStep % 3; const swingFactor = (swingAmount / 70) * 0.5;
+                                if (stepInGroup === 0) stepSwungDuration *= (1 + swingFactor);
+                                else if (stepInGroup === 1) stepSwungDuration *= (1 - swingFactor);
+                            }
+                        }
+                        noteDuration += stepSwungDuration;
+                        if (!noteToTest.tie) break;
+                    }
+                    playSequencerNote(noteDataMelody.freq, nextNoteTime, noteDuration, 'melody');
+                }
+                
+                if (noteDataBass?.freq) {
+                    playSequencerNote(noteDataBass.freq, nextNoteTime, timeToAdvance, 'bass');
+                    if (bassCelloLayerSynth) {
+                        bassCelloLayerSynth.triggerAttack(noteDataBass.freq, nextNoteTime);
+                    }
+                }
+                
+                currentStepWithinPart++;
+                if (currentStepWithinPart > loopEndStep) {
+                    currentStepWithinPart = loopStartStep;
+                }
+                nextNoteTime += timeToAdvance;
+            }
+            if (isPlaying && isPlayingLoop) {
+                timerID = setTimeout(schedulerLoop, lookahead);
+            }
+        }
+
+		
+// --- end schedulerLoop
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+        async function startPlayback(startPart = 0, startStep = 0, startIsSecond = false) { if (isPlaying) { handleStop(); await new Promise(r=>setTimeout(r, 10)); } const audioReady = await ensureAudioStarted(); if (!audioReady) return; isPlaying = true; isPlayingLoop = false; loopCurrentPartOnly = loopCurrentPartCheckbox.checked; currentPartPlayIndex = startPart; currentStepWithinPart = startStep; isSecondPlaythrough = startIsSecond; nextNoteTime = Tone.context.currentTime + 0.1; buildActiveScaleData(); clearTimeout(timerID); scheduler(); }
+        function handlePlay() { const startPart = loopCurrentPartCheckbox.checked ? selectedStepInfo.part : 0; startPlayback(startPart, 0, false); }
+        function handlePlayFromMarker() { if (!selectedStepInfo) return; const { part, step, isDiff } = selectedStepInfo; const startIsSecond = isDiff; let startStepForPlayback = 0; if (isDiff) { const partData = sequence[part]; const diffSteps = (partData?.diffOnRepBars || 1) * stepsPerBar; startStepForPlayback = partLength - diffSteps + step; } else { startStepForPlayback = step; } startPlayback(part, startStepForPlayback, startIsSecond); }
+        async function handlePlayLoop() { if (!loopStartPoint || !loopEndPoint || loopStartPoint.part !== loopEndPoint.part || loopStartPoint.isDiff !== loopEndPoint.isDiff || loopStartPoint.step > loopEndPoint.step) return; if (isPlaying) { handleStop(); await new Promise(r=>setTimeout(r, 10)); } if (!await ensureAudioStarted()) return; isPlaying = true; isPlayingLoop = true; loopCurrentPartOnly = false; currentPartPlayIndex = loopStartPoint.part; currentStepWithinPart = loopStartPoint.step; nextNoteTime = Tone.context.currentTime + 0.1; clearTimeout(timerID); schedulerLoop(); }
+        function handleStop() { isPlaying = false; isPlayingLoop = false; clearTimeout(timerID); if (toneJsStarted) { [synthPlayback, synthLive, bassSynthPlayback, bassSynthLive, kickSynth, highKickSynth, bassCelloLayerSynth].forEach(s => { if (s) try { s.triggerRelease(Tone.now()); } catch(e){} }); if (Tone.Transport?.state === "started") Tone.Transport.stop(); Tone.Transport.cancel(0); } sequencerGridContainer.querySelectorAll('.playing').forEach(el => el.classList.remove('playing')); }
+        
+        //
+        // MAE 14 July 2025
+        //
+        // Save the JSON to a .json file
+        //
+        var gSaveFileName = "choon.json";
+        function saveJSON() {
+            
+            // Load the text area from the sequence
+            handleSaveSequence();
+
+            var theData = document.getElementById("sequence-data-textarea").value;
+
+            if (theData.length == 0) {
+
+                alert("Text area JSON is empty.");
+
+                return;
+            }
+
+
+            var thePrompt = "Please enter a filename for your output ABC file:";
+
+            var fname = prompt(thePrompt,gSaveFileName);
+
+            if (fname) {
+
+                // Strip out any naughty HTML tag characters
+                fname = fname.replace(/[^a-zA-Z0-9_\-. ]+/ig, '');
+
+                if (fname.length == 0) {
+                    return null;
+                }
+
+                // Give it a good extension
+                if ((!fname.endsWith(".json")) && (!fname.endsWith(".txt")) && (!fname.endsWith(".JSON")) && (!fname.endsWith(".TXT"))) {
+
+                    // Give it a good extension
+                    fname = fname.replace(/\..+$/, '');
+                    fname = fname + ".json";
+
+                }
+
+                gSaveFileName = fname;
+
+                var a = document.createElement("a");
+
+                document.body.appendChild(a);
+
+                a.style = "display: none";
+
+                var blob = new Blob([theData], {
+                        type: "text/plain"
+                    }),
+
+                url = window.URL.createObjectURL(blob);
+                a.href = url;
+                a.download = fname;
+                a.click();
+
+                document.body.removeChild(a);
+
+                setTimeout(function() {
+                    window.URL.revokeObjectURL(url);
+                }, 1000);
+            }
+
+        }
+
+        function initializeApp() {
+              // --- Initial State Setup ---
+              tuneType = document.querySelector('input[name="tuneFormat"]:checked')?.value || 'reel';
+              partLength = parseInt(document.querySelector('input[name="partLength"]:checked')?.value || '32');
+              numParts = parseInt(document.querySelector('input[name="numParts"]:checked')?.value || '2');
+              repeatParts = repeatCheckbox.checked;
+              stepsPerBar = (tuneType === 'jig') ? jigStepsPerBar : reelStepsPerBar;
+              
+              // --- Initialize Data Structures ---
+              initializeSequenceData();
+              buildActiveScaleData();
+
+              // --- Create UI Elements ---
+              createNotePlayerRow(row1Container, baseRow1Freq, baseRow1Labels, 'row1-active', false);
+              createNotePlayerRow(row2Container, baseRow2Freq, baseRow2Labels, 'row2-active', true);
+              buildSequencerGrid();
+              buildClickTrackGrid();
+
+              // --- Attach Event Listeners ---
+              document.querySelectorAll('input[name="tuneFormat"]').forEach(radio => radio.addEventListener('change', handleControlChange));
+              document.querySelectorAll('input[name="partLength"]').forEach(radio => radio.addEventListener('change', handleControlChange));
+              partsRadios.forEach(radio => radio.addEventListener('change', handleControlChange));
+              noteSwitch.addEventListener('change', (event) => { useSharpC = event.target.checked; updateToggleableNotes(); });
+              fsharpSwitch.addEventListener('change', (event) => { useSharpF = event.target.checked; updateToggleableNotes(); });
+              gsharpSwitch.addEventListener('change', (event) => { useSharpG = event.target.checked; updateToggleableNotes(); });
+              dsharpSwitch.addEventListener('change', (event) => { useSharpD = event.target.checked; updateToggleableNotes(); });
+              trackSwitch.addEventListener('change', handleTrackSelectChange);
+              stepModeSwitch.addEventListener('change', handleStepModeChange);
+              loopCurrentPartCheckbox.addEventListener('change', handleLoopCurrentPartChange);
+              document.addEventListener('mouseup', handleNotePlayerMouseUp);
+              document.addEventListener('mouseleave', handleNotePlayerMouseUp);
+              document.addEventListener('touchend', handleNotePlayerMouseUp);
+              document.addEventListener('touchcancel', handleNotePlayerMouseUp);
+              document.addEventListener('keydown', handleKeyDown);
+              bpmSlider.addEventListener('input', handleControlChange);
+              swingSlider.addEventListener('input', handleControlChange);
+              repeatCheckbox.addEventListener('change', handleControlChange);
+              masterVolSlider.addEventListener('input', handleMasterVolumeChange);
+              reverbWetSlider.addEventListener('input', handleReverbChange);
+              reverbDecaySlider.addEventListener('input', handleReverbChange);
+              melodyVolSlider.addEventListener('input', handleInstrumentVolumeChange);
+              bassVolSlider.addEventListener('input', handleInstrumentVolumeChange);
+              clickTrackEnableCheckbox.addEventListener('change', handleControlChange);
+              clickVolSlider.addEventListener('input', handleInstrumentVolumeChange);
+              clickPatternGrid.addEventListener('click', handleClickGridCell);
+              melodyOscTypeSelect.addEventListener('change', handleMelodySynthChange);
+              melodyAttackSlider.addEventListener('input', handleMelodySynthChange);
+              melodyDecaySlider.addEventListener('input', handleMelodySynthChange);
+              melodySustainSlider.addEventListener('input', handleMelodySynthChange);
+              melodyReleaseSlider.addEventListener('input', handleMelodySynthChange);
+              melodyFilterFreqSlider.addEventListener('input', handleMelodySynthChange);
+              playBtn.addEventListener('click', handlePlay);
+              playLoopBtn.addEventListener('click', handlePlayLoop);
+              playFromMarkerBtn.addEventListener('click', handlePlayFromMarker);
+              stopBtn.addEventListener('click', handleStop);
+              setLoopStartBtn.addEventListener('click', handleSetLoopStart);
+              setLoopEndBtn.addEventListener('click', handleSetLoopEnd);
+              clearLoopBtn.addEventListener('click', handleClearLoop);
+              clearLoopNotesBtn.addEventListener('click', handleClearLoopNotes);
+              loopNudgeMinusBtn.addEventListener('click', handleLoopNudgeMinus);
+              loopNudgePlusBtn.addEventListener('click', handleLoopNudgePlus);
+              clearPartNotesBtn.addEventListener('click', requestClearPartNotes);
+              stepBackBtn.addEventListener('click', navigateStepBackward);
+              stepFwdBtn.addEventListener('click', navigateStepForward);
+              confirmClearPartYesBtn.addEventListener('click', executeClearPartNotes);
+              confirmClearPartNoBtn.addEventListener('click', hideClearPartModal);
+              confirmClearLoopYesBtn.addEventListener('click', executeClearLoopNotes);
+              confirmClearLoopNoBtn.addEventListener('click', hideClearLoopNotesConfirmModal);
+              
+              // MAE 14 July 2025
+              //document.getElementById('save-sequence-btn').addEventListener('click', handleSaveSequence);
+              // document.getElementById('load-sequence-btn').addEventListener('click', handleLoadSequence);
+              generateAbcBtn.addEventListener('click', generateMelodyAbc);
+
+              // MAE 14 July 2025
+              saveTextAreaBtn.addEventListener('click', saveJSON);
+              
+              // --- Set Initial UI State ---
+              handleControlChange();
+              audioStatus.textContent = "Click a note box or Play button to start audio.";
+              console.log("Application Initialized");
+
+            //
+            // MAE 14 July 2025
+            // Setup the file import control
+            //
+            document.getElementById("load-sequence-file-btn").onchange = () => {
+
+                let fileElement = loadTextAreaBtn;
+
+                let file = fileElement.files[0];
+
+                // Clean up while new file is loading
+                document.getElementById('sequence-data-textarea').value = "";
+
+                const reader = new FileReader();
+
+                reader.addEventListener('load', (event) => {
+
+                    document.getElementById('sequence-data-textarea').value = event.target.result;
+
+                    // Reset file selectors
+                    loadTextAreaBtn.value = "";
+
+                    // Apply it to the sequence
+                    handleLoadSequence();
+
+                });
+
+                reader.readAsText(file);
+
+            }
+         }
+
+
+         // --- Initialize ---
+         window.addEventListener('load', initializeApp);
+         window.addEventListener('unload', () => { document.removeEventListener('keydown', handleKeyDown); });
+    </script>
+    </body>
+</html>
