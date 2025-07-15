@@ -414,11 +414,15 @@
     </div>
 
     <div id="save-load-panel" class="panel w-full max-w-7xl">
-        <h2 class="text-xl font-semibold text-gray-200 mb-3">Load / Save Sequence</h2>
+        <h2 class="text-xl font-semibold text-gray-200 mb-3">Sequence File and ABC Operations</h2>
         <div class="flex flex-col space-y-3">
             <div>
                 <label for="sequence-data-textarea" class="block mb-1 text-sm font-medium text-gray-400">Sequence Data (JSON):</label>
                 <textarea id="sequence-data-textarea" rows="8" class="w-full p-2 border border-gray-600 rounded-md bg-gray-900 text-gray-200 focus:ring-blue-500 focus:border-blue-500 text-xs font-mono" placeholder="Click 'Load Sequence' to load a sequence from a JSON file or click 'Save Sequence' to save the current sequence to a JSON file."></textarea>
+            </div>
+            <div>
+                <label for="abc-output-textarea" class="block mb-1 text-sm font-medium text-gray-400">Generated ABC Notation:</label>
+                <textarea id="abc-output-textarea" rows="15" class="w-full p-2 border border-gray-600 rounded-md bg-gray-900 text-gray-200 focus:ring-blue-500 focus:border-blue-500 text-xs font-mono whitespace-pre" readonly placeholder="Click 'Generate ABC' to see output..."></textarea>
             </div>
             <div class="flex justify-center gap-4">
                 <!-- MAE 14 July 2025 -->            
@@ -427,6 +431,7 @@
                 <input type="file" id="load-sequence-file-btn" accept=".json,.txt,.JSON,.TXT"  hidden/>
                 <label class="px-4 py-2 load-sequence-file-btn" for="load-sequence-file-btn" title="Loads an existing Reel/Jig Choon Maker JSON sequence file">Load Sequence from JSON File</label>
                 <button id="save-sequence-file-btn" class="px-4 py-2">Save Sequence to JSON File</button>
+                <button id="generate-abc-btn" class="px-4 py-2 bg-teal-600 hover:bg-teal-700 border-teal-800 self-end">Generate ABC</button> 
                 <button id="sequence-abc-tools-btn" class="px-4 py-2">Open Sequence in ABC Transcription Tools</button>
             </div>
             <div class="flex flex-wrap justify-center items-center gap-x-6 gap-y-3" style="margin-top:18px;">
@@ -434,21 +439,6 @@
                 <div> <label for="abctt-key-signature" class="mr-2 text-sm font-medium text-gray-400">ABC Tune Key Signature:</label><select id="abctt-key-signature" class="p-2 border border-gray-600 rounded-md bg-gray-700 text-gray-200 text-sm focus:ring-blue-500 focus:border-blue-500"><option value="C">C Major / A Minor</option><option value="G">G Major / E Minor (F#)</option><option value="D">D Major / B Minor (F#, C#)</option><option value="A">A Major / F# Minor (F#, C#, G#)</option><option value="E">E Major / C# Minor (F#, C#, G#, D#)</option><option value="B">B Major / G# Minor (F#, C#, G#, D#, A#)</option><option value="F#">F# Major / D# Minor (F#, C#, G#, D#, A#, E#)</option><option value="C#">C# Major / A# Minor (All 7 Sharps)</option><option value="F">F Major / D Minor (Bb)</option><option value="Bb">Bb Major / G Minor (Bb, Eb)</option><option value="Eb">Eb Major / C Minor (Bb, Eb, Ab)</option><option value="Ab">Ab Major / F Minor (Bb, Eb, Ab, Db)</option><option value="Db">Db Major / Bb Minor (Bb, Eb, Ab, Db, Gb)</option><option value="Gb">Gb Major / Eb Minor (Bb, Eb, Ab, Db, Gb, Cb)</option><option value="Cb">Cb Major / Ab Minor (All 7 Flats)</option></select></div>
             </div>
           </div>
-        </div>
-    </div>
-    
-    <div id="abc-notation-panel" class="panel w-full max-w-7xl">
-        <h2 class="text-xl font-semibold text-gray-200 mb-3">ABC Notation Output (Melody Only)</h2>
-        <div class="flex flex-col space-y-3">
-            <div>
-                <label for="abc-output-textarea" class="block mb-1 text-sm font-medium text-gray-400">Generated ABC Notation:</label>
-                <textarea id="abc-output-textarea" rows="15" class="w-full p-2 border border-gray-600 rounded-md bg-gray-900 text-gray-200 focus:ring-blue-500 focus:border-blue-500 text-xs font-mono whitespace-pre" readonly placeholder="Click 'Generate ABC for Melody' to see output..."></textarea>
-            </div>
-            <div class="flex flex-wrap justify-center items-center gap-x-6 gap-y-3">
-                <div> <label for="abc-choon-title" class="mr-2 text-sm font-medium text-gray-400">CHOON NAME:</label><input type="text" id="abc-choon-title" class="p-1.5 border border-gray-600 rounded-md bg-gray-700 text-gray-200 text-sm focus:ring-blue-500 focus:border-blue-500" placeholder="Enter Tune Title"></div>
-                <div> <label for="abc-key-signature" class="mr-2 text-sm font-medium text-gray-400">Key Signature:</label><select id="abc-key-signature" class="p-2 border border-gray-600 rounded-md bg-gray-700 text-gray-200 text-sm focus:ring-blue-500 focus:border-blue-500"><option value="C">C Major / A Minor</option><option value="G">G Major / E Minor (F#)</option><option value="D">D Major / B Minor (F#, C#)</option><option value="A">A Major / F# Minor (F#, C#, G#)</option><option value="E">E Major / C# Minor (F#, C#, G#, D#)</option><option value="B">B Major / G# Minor (F#, C#, G#, D#, A#)</option><option value="F#">F# Major / D# Minor (F#, C#, G#, D#, A#, E#)</option><option value="C#">C# Major / A# Minor (All 7 Sharps)</option><option value="F">F Major / D Minor (Bb)</option><option value="Bb">Bb Major / G Minor (Bb, Eb)</option><option value="Eb">Eb Major / C Minor (Bb, Eb, Ab)</option><option value="Ab">Ab Major / F Minor (Bb, Eb, Ab, Db)</option><option value="Db">Db Major / Bb Minor (Bb, Eb, Ab, Db, Gb)</option><option value="Gb">Gb Major / Eb Minor (Bb, Eb, Ab, Db, Gb, Cb)</option><option value="Cb">Cb Major / Ab Minor (All 7 Flats)</option></select></div>
-                <button id="generate-abc-btn" class="px-4 py-2 bg-teal-600 hover:bg-teal-700 border-teal-800 self-end">Generate ABC for Melody</button> 
-            </div>
         </div>
     </div>
 
@@ -625,8 +615,6 @@
          const melodyReleaseValue = document.getElementById('melody-release-value');
          const abcOutputTextarea = document.getElementById('abc-output-textarea');
          const generateAbcBtn = document.getElementById('generate-abc-btn');
-         const abcKeySignatureSelect = document.getElementById('abc-key-signature');
-         const abcChoonTitleInput = document.getElementById('abc-choon-title');
          const melodyFilterFreqSlider = document.getElementById('melody-filter-freq-slider');
          const melodyFilterFreqValue = document.getElementById('melody-filter-freq-value');
 
@@ -2496,6 +2484,31 @@ function schedulerLoop() {
           return [...header, ...lines].join("\n");
         }
 
+        function generateAllAbc(){
+
+            // Load the text area from the sequence
+            handleSaveSequence();
+
+            var theJSON = document.getElementById("sequence-data-textarea").value;
+
+            if (theJSON.length == 0) {
+
+                alert("Text area JSON is empty.");
+
+                return;
+            }
+
+            theJSON = JSON.parse(theJSON);
+
+            var result = generateABCWithChordsFromJSON(theJSON);
+
+            if (!result){
+                return;
+            }   
+
+            abcOutputTextarea.value = result;
+
+        }
 
         function openInABCTools(){
 
@@ -2518,6 +2531,8 @@ function schedulerLoop() {
             if (!result){
                 return;
             }
+
+            abcOutputTextarea.value = result;
 
             var shareName = "Choon Maker Test";
 
@@ -2608,7 +2623,7 @@ function schedulerLoop() {
               // MAE 14 July 2025
               //document.getElementById('save-sequence-btn').addEventListener('click', handleSaveSequence);
               // document.getElementById('load-sequence-btn').addEventListener('click', handleLoadSequence);
-              generateAbcBtn.addEventListener('click', generateMelodyAbc);
+              generateAbcBtn.addEventListener('click', generateAllAbc);
 
               // MAE 14 July 2025
               saveTextAreaBtn.addEventListener('click', saveJSON);
@@ -2639,8 +2654,9 @@ function schedulerLoop() {
 
                     document.getElementById('sequence-data-textarea').value = event.target.result;
 
-                    // Reset file selectors
+                    // Clear JSON and ABC area
                     loadTextAreaBtn.value = "";
+                    abcOutputTextarea.value = "";
 
                     // Apply it to the sequence
                     handleLoadSequence();
@@ -2651,7 +2667,6 @@ function schedulerLoop() {
 
             }
          }
-
 
          // --- Initialize ---
          window.addEventListener('load', initializeApp);
