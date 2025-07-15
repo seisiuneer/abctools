@@ -2238,7 +2238,7 @@ function schedulerLoop() {
 
           const tuneTitle = prompt("Tune title:",lastTuneTitle);
           if (!tuneTitle){
-            return;
+            return null;
           }
 
           lastTuneTitle = tuneTitle;
@@ -2256,7 +2256,7 @@ function schedulerLoop() {
 
           const key = prompt("Enter key value for K: tag",lastKey);
           if (!key){
-            return;
+            return null;
           }
 
           lastKey = key;
@@ -2487,6 +2487,10 @@ function schedulerLoop() {
             theJSON = JSON.parse(theJSON);
 
             var result = generateABCWithChordsFromJSON(theJSON);
+
+            if (!result){
+                return;
+            }
 
             var shareName = "Choon Maker Test";
 
