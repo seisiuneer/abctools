@@ -197,7 +197,7 @@
         #load-sequence-btn:hover { background-color: #d97706; } /* Amber */
 
         /* MAE 14 July 2025 */
-        .load-sequence-file-btn { background-color: blue; border-color: #b45309; color: white; border-radius: 5px;height:40px;}
+        .load-sequence-file-btn { background-color: blue; border-color: #b45309; color: white; border-radius: 5px;}
         #load-sequence-file-btn { background-color: blue border-color: #b45309; color: white !important; }
         #load-sequence-file-btn:hover { background-color: #d97706; } /* Amber */
         #save-sequence-file-btn { background-color: #008000; border-color: #14532d; color: white !important; }
@@ -251,10 +251,25 @@
         /* Save/Load Text Area Style */
         #sequence-data-textarea { resize: vertical; }
     </style>
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
-<script defer data-domain="reelchoonmaker.tiiny.site" src="https://analytics.tiiny.site/js/plausible.js"></script><script defer data-domain="reelchoonmaker.tiiny.site" src="https://analytics.tiiny.site/js/plausible.js"></script><meta property="og:url" content="https://reelchoonmaker.tiiny.site/" data-id="th-modified" ><meta property="og:type" content="website" data-id="th-modified" ></head>
+    
+    <script defer data-domain="reelchoonmaker.tiiny.site" src="https://analytics.tiiny.site/js/plausible.js"></script><script defer data-domain="reelchoonmaker.tiiny.site" src="https://analytics.tiiny.site/js/plausible.js"></script><meta property="og:url" content="https://reelchoonmaker.tiiny.site/" data-id="th-modified" ><meta property="og:type" content="website" data-id="th-modified" >
+
+    <!-- MAE 15 July 2025 - To see if anyone is using this -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-VM0N9HL3MK"></script>
+    
+    <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-VM0N9HL3MK');
+    </script>
+
+</head>
+
 <body class="bg-black flex flex-col items-center min-h-screen p-4">
 
     <div class="panel w-full max-w-7xl">
@@ -2241,10 +2256,9 @@ function schedulerLoop() {
 
         function generateABCWithChordsFromJSON(data) {
 
-          const tuneTitle = document.getElementById("abctt-choon-title").value;
-          if (!tuneTitle){
-            alert("Please enter an ABC tune title.")
-            return null;
+          var tuneTitle = document.getElementById("abctt-choon-title").value;
+          if ((!tuneTitle) || (tuneTitle == "")){
+            tuneTitle = "My Choon Title";
           }
 
           lastTuneTitle = tuneTitle;
@@ -2593,6 +2607,7 @@ function schedulerLoop() {
               // MAE 14 July 2025
               saveTextAreaBtn.addEventListener('click', saveJSON);
               abcToolsBtn.addEventListener('click', openInABCTools);
+              
               
               // --- Set Initial UI State ---
               handleControlChange();
