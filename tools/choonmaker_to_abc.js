@@ -293,6 +293,10 @@ function generateABCWithChordsFromJSON(data) {
     }
   }
 
+  if ((!data.repeatParts) && allBars.length) {
+    allBars[allBars.length - 1] = allBars[allBars.length - 1].replace(/\|$/, "|]");
+  }
+
   const lines = [];
   for (let i = 0; i < allBars.length; i += barsPerLine) {
     const chunk = allBars.slice(i, i + barsPerLine).filter(Boolean).join(" ");
