@@ -429,7 +429,7 @@
                 <!-- <button id="save-sequence-btn" class="px-4 py-2">Save Sequence to Text Area</button> -->
                 <!-- <button id="load-sequence-btn" class="px-4 py-2">Load Sequence from Text Area</button> -->
                 <input type="file" id="load-sequence-file-btn" accept=".json,.txt,.JSON,.TXT"  hidden/>
-                <label class="px-4 py-2 load-sequence-file-btn" style="text-align:center;" for="load-sequence-file-btn" title="Loads an existing Reel/Jig Choon Maker JSON sequence file">Load Sequence from JSON File</label>
+                <label class="px-4 py-2 load-sequence-file-btn" for="load-sequence-file-btn" style="text-align:center" title="Loads an existing Reel/Jig Choon Maker JSON sequence file">Load Sequence from JSON File</label>
                 <button id="save-sequence-file-btn" class="px-4 py-2">Save Sequence to JSON File</button>
                 <button id="generate-abc-btn" class="px-4 py-2 bg-teal-600 hover:bg-teal-700 border-teal-800 self-end">Generate ABC</button> 
                 <button id="sequence-abc-tools-btn" class="px-4 py-2">Open Sequence in ABC Transcription Tools</button>
@@ -460,6 +460,16 @@
     <p id="audio-status" class="mt-4 text-sm text-gray-400">Click/hold note box or set up sequence.</p>
 
     <script>
+
+        //
+        // MAE 14 Jul 2025
+        // Platform Globals
+        //
+        var gIsIOS = false;
+        var gIsAndroid = false;
+        var gIsSafari = false;
+        var gIsChrome = false;
+
          // --- Constants, State, DOM References ---
          const NOTE_PLAYER_TARGET_INDEX_ROW1 = 9; const NOTE_PLAYER_TARGET_INDEX_ROW1_C4 = 2; const NOTE_PLAYER_TARGET_INDEX_ROW2_C6 = 6; const NOTE_PLAYER_TARGET_INDEX_ROW1_FSHARP4 = 5; const NOTE_PLAYER_TARGET_INDEX_ROW2_FSHARP5 = 2; const NOTE_PLAYER_TARGET_INDEX_ROW2_FSHARP6 = 9; const NOTE_PLAYER_TARGET_INDEX_ROW1_G4 = 6; const NOTE_PLAYER_TARGET_INDEX_ROW1_D4 = 3; const NOTE_PLAYER_TARGET_INDEX_ROW2_D5 = 0; const NOTE_PLAYER_TARGET_INDEX_ROW2_G5 = 3; const NOTE_PLAYER_TARGET_INDEX_ROW2_D6 = 7; const NOTE_PLAYER_TARGET_INDEX_ROW2_G6 = 10;
          const ROW1_RED_INDICES = [0, 1, 2]; const ROW2_RED_START_INDEX = 8;
@@ -623,6 +633,74 @@
          const loadTextAreaBtn = document.getElementById('load-sequence-file-btn');
          const abcToolsBtn = document.getElementById('sequence-abc-tools-btn');
 
+        //
+        // Are we on iOS?
+        //
+        function isIOS() {
+            if (/iPad|iPhone|iPod/.test(navigator.platform)) {
+                return true;
+            } else {
+                return navigator.maxTouchPoints &&
+                    navigator.maxTouchPoints > 2 &&
+                    /MacIntel/.test(navigator.platform);
+            }
+        }
+
+        //
+        // Are we on an iPhone?
+        //
+        function isIPhone() {
+            if (/iPad|iPhone|iPod/.test(navigator.platform)) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        //
+        // Are we on an iPad?
+        //
+        function isIPad() {
+            return navigator.maxTouchPoints &&
+                navigator.maxTouchPoints > 2 &&
+                /MacIntel/.test(navigator.platform);
+        }
+
+        //
+        // Are we on Android?
+        //
+        function isAndroid() {
+            if (/Android/i.test(navigator.userAgent)) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        //
+        // Are we on Safari?
+        //
+        function isSafari() {
+
+            if (/Safari/i.test(navigator.userAgent) && /Apple Computer/.test(navigator.vendor)) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        //
+        // Are we on Chrome?
+        //
+        function isChrome() {
+
+            if (/chrome|chromium|crios/i.test(navigator.userAgent)) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+
          // --- Helper Functions ---
          function showStatusMessage(message, duration = 1500) { const defaultText = isPlaying ? (isPlayingLoop ? "Playing Loop..." : (loopCurrentPartOnly ? `Looping Part ${currentPartPlayIndex + 1}...` : "Sequencer Playing...")) : (toneJsStarted ? "Sequencer Stopped." : "Click a note box or Play button to start audio."); audioStatus.textContent = message; setTimeout(() => { if (audioStatus.textContent === message) { audioStatus.textContent = defaultText; } }, duration); }
          function saveScrollPositions() { const container = sequencerGridContainer; if (!container) return { top: 0, left: 0 }; return { top: container.scrollTop, left: container.scrollLeft }; }
@@ -772,8 +850,8 @@
         // --- Audio Synthesis & Control Functions ---
         function updateSynthEnvelopes() { if (!toneJsStarted) return; const secondsPerQuaver = (60.0 / bpm) / 2.0; const melodyReleaseTime = Math.max(0.01, Math.min(0.025, secondsPerQuaver * 0.1)); if (synthPlayback && synthPlayback.envelope) { synthPlayback.envelope.release = melodyReleaseTime; } if (synthLive && synthLive.envelope) { synthLive.envelope.release = melodyReleaseTime; } }
         
-		// --- initAudioSynths() start
-		
+        // --- initAudioSynths() start
+        
 async function initAudioSynths() {
             if (!toneJsStarted || typeof Tone === 'undefined' || Tone.context.state !== 'running') {
                 return false;
@@ -1017,16 +1095,16 @@ async function initAudioSynths() {
                 return false;
             }
         }
-		
-		
-        // --- initAudioSynths() end		
-		
-		
+        
+        
+        // --- initAudioSynths() end        
+        
+        
         async function ensureAudioStarted() { if (toneJsStarted && Tone.context.state === 'running') { return true; } if (typeof Tone === 'undefined') { return false; } try { if (Tone.context.state !== 'running') { await Tone.start(); if (Tone.context.state !== 'running') throw new Error("Tone.context failed start."); } toneJsStarted = true; const synthsReady = await initAudioSynths(); if (!synthsReady) throw new Error("Synth init failed."); Tone.Destination.volume.value = masterVolume; if (isFirstAudioStart) { try { const dummyOsc = new Tone.Oscillator(200, "sine").connect(Tone.Destination); dummyOsc.volume.value = -Infinity; dummyOsc.start(Tone.now() + 0.01).stop(Tone.now() + 0.05); setTimeout(() => dummyOsc.dispose(), 60); } catch (primeError) { console.warn("Audio priming failed:", primeError); } isFirstAudioStart = false; } return true; } catch (e) { console.error("Error ensuring audio started:", e); toneJsStarted = false; return false; } }
         
-		
-		
-		async function startManualNote(frequency) {
+        
+        
+        async function startManualNote(frequency) {
             if (!toneJsStarted) {
                 return;
             }
@@ -1051,10 +1129,10 @@ async function initAudioSynths() {
                 }
             }
         }
-		
-		
-		
-		function stopManualNote() {
+        
+        
+        
+        function stopManualNote() {
             if (activeBoxElement) {
                 const trackType = activeBoxElement.dataset.trackType;
                 
@@ -1086,10 +1164,10 @@ async function initAudioSynths() {
                 activeBoxElement = null;
             }
         }
-		
-		
-		
-		
+        
+        
+        
+        
         
      
         
@@ -1150,10 +1228,10 @@ async function initAudioSynths() {
         }
         function updateToggleableNotes() { buildActiveScaleData(); createNotePlayerRow(row1Container, baseRow1Freq, baseRow1Labels, 'row1-active', false); createNotePlayerRow(row2Container, baseRow2Freq, baseRow2Labels, 'row2-active', true); }
         
-		
-		
-// --- 	buildSequencerGrid START	
-		
+        
+        
+// ---  buildSequencerGrid START    
+        
      function buildSequencerGrid() {
             if (!sequencerGridContainer) return;
             const scrollPos = saveScrollPositions();
@@ -1329,10 +1407,10 @@ async function initAudioSynths() {
             highlightSelectedStep();
             restoreScrollPositions(scrollPos);
         }
-	 
-	 
-		
-// --- 	buildSequencerGrid END		
+     
+     
+        
+// ---  buildSequencerGrid END      
 
         function createTieCheckbox(stepContainer, partIndex, stepIndex, isDiff) { const trackData = sequence[partIndex]?.[selectedTrackType]; const targetArrayName = isDiff ? 'diff' : 'main'; const noteData = trackData?.[targetArrayName]?.[stepIndex]; if (!noteData) return; const nextNoteData = trackData?.[targetArrayName]?.[stepIndex+1]; const checkbox = document.createElement('input'); checkbox.type = 'checkbox'; checkbox.title = 'Tie'; checkbox.classList.add('tie-checkbox'); if (selectedTrackType === 'bass') { checkbox.checked = (nextNoteData && noteData.freq === nextNoteData.freq && !noteData.breakTie); checkbox.disabled = !(nextNoteData && noteData.freq === nextNoteData.freq); checkbox.addEventListener('change', handleBassTieOverride); } else { checkbox.checked = noteData.tie || false; checkbox.disabled = !nextNoteData || noteData.freq !== nextNoteData.freq; checkbox.addEventListener('change', handleTieChange); } checkbox.dataset.part = partIndex; checkbox.dataset.step = stepIndex; checkbox.dataset.isDiff = String(isDiff); checkbox.addEventListener('click', (e) => e.stopPropagation()); stepContainer.appendChild(checkbox); }
         function createTripletCheckbox(stepContainer, partIndex, stepIndex, isDiff) { if (selectedTrackType === 'bass') return; const trackData = sequence[partIndex]?.[selectedTrackType]; const targetArrayName = isDiff ? 'diff' : 'main'; const noteData = trackData?.[targetArrayName]?.[stepIndex]; if (!noteData) return; const checkbox = document.createElement('input'); checkbox.type = 'checkbox'; checkbox.title = 'Triplet'; checkbox.classList.add('triplet-checkbox'); checkbox.checked = noteData.triplet || false; checkbox.dataset.part = partIndex; checkbox.dataset.step = stepIndex; checkbox.dataset.isDiff = String(isDiff); checkbox.addEventListener('change', handleTripletChange); checkbox.addEventListener('click', (e) => e.stopPropagation()); stepContainer.appendChild(checkbox); }
@@ -1617,9 +1695,9 @@ async function initAudioSynths() {
 
         // --- Event Handlers ---
         
-		
-		
-		function handleTieChange(e){ 
+        
+        
+        function handleTieChange(e){ 
             const cb = e.target; 
             const p = parseInt(cb.dataset.part); 
             const s = parseInt(cb.dataset.step); 
@@ -1639,11 +1717,11 @@ async function initAudioSynths() {
             // This tells the UI to update to reflect the change.
             buildSequencerGrid();
         }
-		
-		
-		
-		
-		
+        
+        
+        
+        
+        
         function handleTripletChange(e){ const cb = e.target; const p = parseInt(cb.dataset.part); const s = parseInt(cb.dataset.step); const isDiff = cb.dataset.isDiff === 'true'; const arrayName = isDiff ? 'diff' : 'main'; if (isNaN(p) || isNaN(s) || selectedTrackType === 'bass') { cb.checked = !cb.checked; return; } const targetArray = sequence[p]?.[selectedTrackType]?.[arrayName]; const nd = targetArray?.[s]; if (!nd) { cb.checked = !cb.checked; return; } nd.triplet = cb.checked; if (cb.checked && nd.tie) { nd.tie = false; const tieCb = cb.closest('.seq-step')?.querySelector('.tie-checkbox'); if (tieCb) tieCb.checked = false; } if (cb.checked && s < targetArray.length - 1) { const nextNd = targetArray[s + 1]; if (nextNd?.triplet) { nextNd.triplet = false; } } buildSequencerGrid(); }
         function handleBassTieOverride(e) { const cb = e.target; const p = parseInt(cb.dataset.part); const s = parseInt(cb.dataset.step); const isDiff = cb.dataset.isDiff === 'true'; const arrayName = isDiff ? 'diff' : 'main'; if (isNaN(p) || isNaN(s) || selectedTrackType !== 'bass' || !sequence[p]?.bass?.[arrayName]?.[s]) { return; } const nd = sequence[p].bass[arrayName][s]; nd.breakTie = !cb.checked; }
         async function handleNotePlayerMouseDown(event) { if (event.type === 'touchstart') { event.preventDefault(); } const targetBox = event.target.closest('.note-box'); if (!targetBox) return; const action = targetBox.dataset.action; const noteId = targetBox.dataset.noteId; const currentTime = performance.now(); if (noteId === lastNoteButtonId && (currentTime - lastNoteButtonClickTime) < NOTE_CLICK_DEBOUNCE_MS) return; lastNoteButtonClickTime = currentTime; lastNoteButtonId = noteId; const activeClassString = targetBox.dataset.activeclass; if (activeClassString) { targetBox.classList.add(...activeClassString.split(' ')); activeBoxElement = targetBox; activeBoxElement.dataset.trackType = selectedTrackType; } const audioReady = await ensureAudioStarted(); if (action === 'delete') { if(clearSelectedStep()) highlightSelectedStep(); return; } if (!audioReady) { if (activeBoxElement) { activeBoxElement.classList.remove(...activeClassString.split(' ')); activeBoxElement = null; } return; } const freq = parseFloat(targetBox.dataset.frequency); const label = targetBox.textContent; if (!isNaN(freq)) { startManualNote(freq); if (selectedStepInfo) { recordNoteToSequencer(freq, label); } } }
@@ -1742,7 +1820,7 @@ async function initAudioSynths() {
         // --- Playback Logic (REWRITTEN) ---
         function advancePlaybackState(steps = 1) { currentStepWithinPart += steps; while (currentStepWithinPart >= partLength) { currentStepWithinPart -= partLength; if (loopCurrentPartOnly) { isSecondPlaythrough = !isSecondPlaythrough; } else if (repeatParts && !isSecondPlaythrough) { isSecondPlaythrough = true; } else { isSecondPlaythrough = false; currentPartPlayIndex = (currentPartPlayIndex + 1) % numParts; } } }
         
-		
+        
 
 // --- Begin scheduler
 
@@ -1953,11 +2031,11 @@ function scheduler() {
             }
         }
 
-// --- End scheduler	
+// --- End scheduler    
 
 
 // --- Begin schedulerLoop
-		
+        
 
 function schedulerLoop() {
             if (!isPlaying || !isPlayingLoop || !loopStartPoint || !loopEndPoint) {
@@ -2159,9 +2237,9 @@ function schedulerLoop() {
             }
         }
 
-		
-// --- end schedulerLoop		
-		
+        
+// --- end schedulerLoop        
+        
         async function startPlayback(startPart = 0, startStep = 0, startIsSecond = false) { if (isPlaying) { handleStop(); await new Promise(r=>setTimeout(r, 10)); } const audioReady = await ensureAudioStarted(); if (!audioReady) return; isPlaying = true; isPlayingLoop = false; loopCurrentPartOnly = loopCurrentPartCheckbox.checked; currentPartPlayIndex = startPart; currentStepWithinPart = startStep; isSecondPlaythrough = startIsSecond; nextNoteTime = Tone.context.currentTime + 0.1; buildActiveScaleData(); clearTimeout(timerID); scheduler(); }
         function handlePlay() { const startPart = loopCurrentPartCheckbox.checked ? selectedStepInfo.part : 0; startPlayback(startPart, 0, false); }
         function handlePlayFromMarker() { if (!selectedStepInfo) return; const { part, step, isDiff } = selectedStepInfo; const startIsSecond = isDiff; let startStepForPlayback = 0; if (isDiff) { const partData = sequence[part]; const diffSteps = (partData?.diffOnRepBars || 1) * stepsPerBar; startStepForPlayback = partLength - diffSteps + step; } else { startStepForPlayback = step; } startPlayback(part, startStepForPlayback, startIsSecond); }
@@ -2202,14 +2280,25 @@ function schedulerLoop() {
                 }
 
                 // Give it a good extension
-                if ((!fname.endsWith(".json")) && (!fname.endsWith(".txt")) && (!fname.endsWith(".JSON")) && (!fname.endsWith(".TXT"))) {
+                if ((!gIsAndroid) && (!gIsIOS)) {
 
+                    if ((!fname.endsWith(".json")) && (!fname.endsWith(".txt")) && (!fname.endsWith(".JSON")) && (!fname.endsWith(".TXT"))) {
+
+                        // Give it a good extension
+                        fname = fname.replace(/\..+$/, '');
+                        fname = fname + ".json";
+
+                    }
+
+                } else {
+                    // iOS and Android have odd rules about text file saving
                     // Give it a good extension
                     fname = fname.replace(/\..+$/, '');
-                    fname = fname + ".json";
+                    fname = fname + ".txt";
 
                 }
 
+                // Give it a good extension
                 gSaveFileName = fname;
 
                 var a = document.createElement("a");
@@ -2635,6 +2724,41 @@ function schedulerLoop() {
               audioStatus.textContent = "Click a note box or Play button to start audio.";
               console.log("Application Initialized");
 
+            //
+            // MAE 15 Jul 2025 - For platform adaptation
+            //
+
+            // Are we on iOS?
+            gIsIOS = false;
+            if (isIOS()) {
+                gIsIOS = true;
+            }
+
+            // Are we on Android?
+            gIsAndroid = false;
+
+            if (isAndroid()) {
+                gIsAndroid = true;
+            }
+
+            if (gIsIOS) {
+                document.getElementById("load-sequence-file-btn").removeAttribute("accept");
+            }
+
+            // Are we on Safari?
+            gIsSafari = false;
+            if (isSafari()) {
+                gIsSafari = true;
+            }
+
+            // Are we on Chrome?
+            gIsChrome = false;
+
+            if (!gIsSafari) {
+                if (isChrome()) {
+                    gIsChrome = true;
+                }
+            }
             //
             // MAE 14 July 2025
             // Setup the file import control
