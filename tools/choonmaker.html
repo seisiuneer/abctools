@@ -14,6 +14,10 @@
             color: #d1d5db; /* Default light text color (gray-300) */
         }
         
+        #title-container h1 {
+			font-size: 1.5rem; font-weight: 500; color: white;
+        }
+
         /* Panel Styling - Dark Theme */
         .panel {
             margin-bottom: 1rem;
@@ -271,10 +275,11 @@
 </head>
 
 <body class="bg-black flex flex-col items-center min-h-screen p-4">
-
+   <div id="title-container" class="flex flex-wrap justify-center gap-x-4 gap-y-2 mb-4">
+		<h1 >Reel / Jig Choon Maker</h1>
+	</div>
     <div class="panel w-full max-w-7xl">
-        <div id="scale-switch-container" class="flex flex-wrap justify-center gap-x-4 gap-y-2 mb-4">
-             
+         <div id="scale-switch-container" class="flex flex-wrap justify-center gap-x-4 gap-y-2 mb-4"> 
              <div class="switch-control-item">
                  <label for="note-switch" class="flex items-center cursor-pointer"><input type="checkbox" id="note-switch" class="sr-only toggle-checkbox peer"><div class="toggle-label relative w-11 h-6 bg-gray-600 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-500"></div></label><span class="ml-3">C/C#</span>
              </div>
