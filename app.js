@@ -46513,7 +46513,6 @@ function MIDI_NoteOn(data){
 }
 
 // MIDI input muting handlers
-
 function toggleMIDIMute(){
 
    //console.log("Toggling MIDI mute");
@@ -46521,10 +46520,12 @@ function toggleMIDIMute(){
 
     // Give some feedback
     var elem = document.getElementById("toolpagetitle");
+
     if (gMIDIMute){
       elem.innerHTML = "<span style='color:red'>MIDI Input Muted</span>";
     }else{
-      elem.innerHTML = "ABC Transcription Tools";
+      // Reset title
+      setOnlineTitle();
     }
 
 }
@@ -46532,20 +46533,25 @@ function toggleMIDIMute(){
 function enableMIDIMute(){
 
       var elem = document.getElementById("toolpagetitle");
-      elem.innerHTML = "ABC Transcription Tools";
       elem.onclick = toggleMIDIMute;
       
       gMIDIMute = false;
+      
+      // Reset title
+      setOnlineTitle();
 
 }
 
 function disableMIDIMute(){
 
       var elem = document.getElementById("toolpagetitle");
-      elem.innerHTML = "ABC Transcription Tools";
       elem.onclick = null;
 
       gMIDIMute = false;
+
+      // Reset title
+      setOnlineTitle();
+
 
 }
 
