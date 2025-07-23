@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2583_071725_1030";
+var gVersionNumber="2584_072325_1530";
 
 var gMIDIInitStillWaiting = false;
 
@@ -49662,111 +49662,76 @@ function NormalizeTitles(){
 
 }
 
-
-//
-// Split a multi-voice tune into individual voices
-//
-
 function splitVoices(abcTune) {
-
-    // Split the ABC notation into lines
     const lines = abcTune.split('\n');
-    
-    // Store the header (X:, T:, K:, etc.) until the first voice declaration
+
     let header = [];
-    
-    // Store the voices
     let voices = {};
-    
-    // Store the current voice ID and optional additional text after the number
     let currentVoice = null;
-    
-    // Store the key signature (to be added to all voice tunes)
-    let keySignature = '';
-    
-    // Boolean to track if we are processing a voice section
     let isInVoice = false;
+    let wLines = [];
 
-    // Regex patterns to match both voice declaration formats
-    const voicePattern1 = /^V:\s*(\d+)(.*)$/; // Matches "V: number"
+    const voicePattern1 = /^V:\s*(\d+)(.*)$/;        // Matches "V: number"
     const voicePattern2 = /^\[V:\s*(\d+)\s*\](.*)$/; // Matches "[V: number]"
-    
-    // Process each line
-    lines.forEach(line => {
+    const wPattern = /^W:/;                          // Matches "W:" lines
 
-        // Skip any lines starting with %%score
+    lines.forEach(line => {
+        // Skip %%score lines
         if (line.startsWith('%%score')) {
             return;
         }
 
-        let matchVoice1 = line.match(voicePattern1);
-        let matchVoice2 = line.match(voicePattern2); 
+        // Capture and skip W: lines
+        if (wPattern.test(line)) {
+            wLines.push(line);
+            return;
+        }
+
+        const matchVoice1 = line.match(voicePattern1);
+        const matchVoice2 = line.match(voicePattern2);
 
         if (matchVoice1) {
-
-        	//debugger;
-            
-            // Found a voice declaration "V: number"
             const voiceId = matchVoice1[1];
             const extraText = matchVoice1[2].trim();
             currentVoice = voiceId;
 
-            // Initialize this voice if not done yet
             if (!voices[currentVoice]) {
-
-                voices[currentVoice] = [...header]; // Copy the header lines
-
-                if (extraText != ""){
-                	voices[currentVoice].push(`V:1 ${extraText}`); // Set voice to V:1 and include extra text
+                voices[currentVoice] = [...header];
+                if (extraText !== "") {
+                    voices[currentVoice].push(`V:1 ${extraText}`);
                 }
             }
 
             isInVoice = true;
-
         } else if (matchVoice2) {
-        	
-        	//debugger;
-
-            // Found a voice declaration "[V: number]"
             const voiceId = matchVoice2[1];
             const extraText = matchVoice2[2].trim();
             currentVoice = voiceId;
 
-            // Initialize this voice if not done yet
             if (!voices[currentVoice]) {
-
-                voices[currentVoice] = [...header]; // Copy the header lines
-
-                if (extraText != ""){
-                	voices[currentVoice].push(`V:1 ${extraText}`); // Set voice to V:1 and include extra text
+                voices[currentVoice] = [...header];
+                if (extraText !== "") {
+                    voices[currentVoice].push(`V:1 ${extraText}`);
                 }
-            }
-            else{
-                if (extraText != ""){
-               		voices[currentVoice].push(extraText);   
-               	}       	           	
+            } else {
+                if (extraText !== "") {
+                    voices[currentVoice].push(extraText);
+                }
             }
 
             isInVoice = true;
-
         } else if (!isInVoice) {
-
-            // If no voice has been declared yet, add the line to the header
             header.push(line);
-
         } else if (currentVoice) {
-
-        	//console.log("pushing "+line+" for voice "+currentVoice);
-
-            // If we are in a voice section, add the line to the current voice
             voices[currentVoice].push(line);
-
         }
     });
-        
-    // Return the split voices as individual ABC tunes
-    const splitTunes = Object.keys(voices).map(voice => voices[voice].join('\n'));
-    
+
+    // Append W: lines to the end of each voice
+    const splitTunes = Object.keys(voices).map(voice => {
+        return voices[voice].concat(wLines).join('\n');
+    });
+
     return splitTunes;
 }
 
