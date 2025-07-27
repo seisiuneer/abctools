@@ -483,6 +483,13 @@
             <a style="text-decoration:none;" href="#force_power_chords">Forcing Power Chords</a>
             <a style="text-decoration:none;" href="#presentation_mode">Using "Presentation Mode" for Tune Demo Videos</a>
             </details>
+
+            <details>
+            <summary><h3>Configuring ABC Fonts</h3></summary>
+            <a style="text-decoration:none;" href="#custom_font_overrides">ABC Font Annotations</a>
+            <a style="text-decoration:none;" href="#test_webfonts">Test Webfonts for ABC Compatibility Utility</a>
+            <a style="text-decoration:none;" href="#inject_fonts_into_share_links">Automatically Inject Fonts into Share Links</a>
+            </details>
             
             <details>
             <summary><h3>PDF Tunebook Generation</h3></summary>
@@ -638,16 +645,9 @@
             <a style="text-decoration:none;" href="#manage_databases">Managing Notes, Reverb, and Tune Search Databases for Offline Use</a>
             <a style="text-decoration:none;" href="#advanced_settings">Advanced Settings</a>
             <a style="text-decoration:none;" href="#advanced_resetsettings">Reset All Tool Settings</a>
-            </details>
-            
-            <details>
-            <summary><h3>Configuring ABC Fonts</h3></summary>
             <a style="text-decoration:none;" href="#configure_fonts">Configuring ABC Rendering Fonts</a>
-            <a style="text-decoration:none;" href="#custom_font_overrides">ABC Font Annotations</a>
-            <a style="text-decoration:none;" href="#test_webfonts">Test Webfonts for ABC Compatibility Utility</a>
-            <a style="text-decoration:none;" href="#inject_fonts_into_share_links">Automatically Inject Fonts into Share Links</a>
             </details>
-           
+                       
             <details>
             <summary><h3>MusicXML/MIDI Import</h3></summary>
             <a style="text-decoration:none;" href="#musicxml">MusicXML/MIDI Import Settings</a>
@@ -923,6 +923,13 @@
                         <p class="toc"><a style="text-decoration:none;" href="#presentation_mode">Using "Presentation Mode" for Tune Demo Videos</a></p>
 
                     </div>
+
+                    <button class="accordion" title="Click to expand/collapse this section">Configuring ABC Fonts</button>
+                    <div class="tocpanel">
+                        <p class="toc"><a style="text-decoration:none;" href="#custom_font_overrides">ABC Font Annotations</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#test_webfonts">Test Webfonts for ABC Compatibility Utility</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#inject_fonts_into_share_links">Automatically Inject Fonts into Share Links</a></p>
+                    </div>
                     
                     <button class="accordion" title="Click to expand/collapse this section">PDF Tunebook Generation</button>
                     <div class="tocpanel">
@@ -1078,14 +1085,7 @@
                         <p class="toc"><a style="text-decoration:none;" href="#manage_databases">Managing Notes, Reverb, and Tune Search Databases for Offline Use</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#advanced_settings">Advanced Settings</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#advanced_resetsettings">Reset All Tool Settings</a></p>
-                    </div>
-
-                    <button class="accordion" title="Click to expand/collapse this section">Configuring ABC Fonts</button>
-                    <div class="tocpanel">
                         <p class="toc"><a style="text-decoration:none;" href="#configure_fonts">Configuring ABC Rendering Fonts</a></p>
-                        <p class="toc"><a style="text-decoration:none;" href="#custom_font_overrides">ABC Font Annotations</a></p>
-                        <p class="toc"><a style="text-decoration:none;" href="#test_webfonts">Test Webfonts for ABC Compatibility Utility</a></p>
-                        <p class="toc"><a style="text-decoration:none;" href="#inject_fonts_into_share_links">Automatically Inject Fonts into Share Links</a></p>
                     </div>
                     
                     <button class="accordion" title="Click to expand/collapse this section">MusicXML/MIDI Import</button>
@@ -3168,6 +3168,103 @@
                 <p>In Presentation mode, the corner button icons will show when you hover the cursor in the corners where they appear.</p>
                 <p>The Play button at the lower-right corner can be clicked at any time, but the show on hover is delayed 1.25 seconds to allow you to click it before it appears.</p>
                 <p>This allows for clean visuals when starting and stopping playback of tunes using the Quick Editor for making tune demo videos.</p>
+                <hr class="hidden-print" id="custom_font_overrides">
+                <h1 class="page_break_always">ABC Font Annotations<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+                <p>As per the ABC 2.1 specification, you can set the font style and size for essentially all ABC notation elements, giving you maximum control over the appearance of your notation:</p>
+                <p class="code">% First title of the tune:<br/>
+                    %%titlefont        font-style size<br/><br/>
+                    % Additional titles for the tune:<br/>
+                    %%subtitlefont     font-style size<br/><br/>
+                    % Rhythm string at left side of the staff for R: tags:<br/>
+                    %%infofont         font-style size<br/><br/>
+                    % Composer string at right side of the staff for C: tags:<br/>
+                    %%composerfont     font-style size<br/><br/>
+                    % Tempo indication:<br/>
+                    %%tempofont        font-style size<br/><br/>
+                    % "G", "Em", etc., style chords symbols:<br/>
+                    %%gchordfont       font-style size<br/><br/>
+                    % Stringed instrument tablature label:<br/>
+                    %%tablabelfont     font-style size<br/><br/>
+                    % Stringed instrument tablature numbers:<br/>
+                    %%tabnumberfont    font-style size<br/><br/>
+                    % Stringed instrument tablature grace note numbers:<br/>
+                    %%tabgracefont     font-style size<br/><br/>
+                    % Z:, H:, and other descriptive metadata tags:<br/>
+                    %%historyfont      font-style size<br/><br/>
+                    %%text, %%center, %%right, and %%begintext / %%endtext blocks:<br/>
+                    %%textfont         font-style size<br/><br/>
+                    % "^*" and "_*" chord-like tablature annotations:<br/>
+                    %%annotationfont   font-style size<br/><br/>
+                    % Multiple voice staff labels:<br/>
+                    %%voicefont        font-style size<br/><br/>
+                    % Used for P: tags:<br/>
+                    %%partsfont        font-style size<br/><br/>
+                    % Used for w: tag lyrics:<br/>
+                    %%vocalfont        font-style size<br/><br/>
+                    % Used for W: tag lyrics:<br/>
+                %%wordsfont        font-style size</p>
+                <p>Generally, these will use the PostScript font-style naming convention, for example:</p>
+                <p>Times, Helvetica, Courier, Verdana, Times-Bold, Helvetica-Italic, etc.</p>
+                <p>The size parameter should be an integer, but is optional.</p>
+                <p>Place your ABC font annotations just below the X: and above the T: ABC tune headers.</p>
+                <p>Inline font annotations will override the default font settings configured in the tool's <strong>Settings</strong> dialog.</p>
+                <p><strong>For example:</strong></p>
+                <p class="code">X: 1<br/>
+                    %%titlefont Palatino 30<br/>
+                    %%infofont Palatino 18<br/>
+                    %%gchordfont Palatino Bold 14<br/>
+                    T: The Road to Lisdoonvarna<br/>
+                    R: slide<br/>
+                    M: 12/8<br/>
+                    L: 1/8<br/>
+                    K:Edor<br/>
+                    D|:"Em"E2B B2A B2c d3|"D"F2A ABA D2E FED|<br/>
+                    "Em"E2B B2A B2c d3|"D"cdc B2A "Em"B2E E3:|<br/>
+                    |:"Em"e2f gfe "Bm"d2B Bcd|"A"c2A ABc "Bm"d2B B3|<br/>
+                "Em"e2f gfe "Bm"d2B Bcd|"A"cdc B2A "Em"B2E E3:|</p>
+                <p><strong>Result:</strong></p>
+                <div class="image_holder_p">
+                    <img class="image" loading="lazy" src="img/ug14.jpg"/>
+                </div>
+                <p></p>
+                <p><strong>Note:</strong> If a font change doesn't appear to happen immediately, force a full refresh by opening the controls, changing the display format, for example from notation to one of the tab options and then back to notation.</p>
+                <p>That will force a full page refresh and the new fonts will be used.</p>
+                <hr>
+                <p style="text-align: center;"><strong>Web Safe Fonts</strong></p>
+                <p>The following "web safe" fonts at a minimum should be supported by all browsers:</p>
+                <p style="font-family: Helvetica;font-size: 16pt;">Helvetica (sans-serif)</p>
+                <p style="font-family: Trebuchet MS;font-size: 16pt;">Trebuchet MS (sans-serif)</p>
+                <p style="font-family: Gill Sans;font-size: 16pt;">Gill Sans (sans-serif)</p>
+                <p style="font-family: Verdana;font-size: 16pt;">Verdana (sans-serif)</p>
+                <p style="font-family: Times New Roman;font-size: 16pt;">Times New Roman (serif)</p>
+                <p style="font-family: Georgia;font-size: 16pt;">Georgia (serif)</p>
+                <p style="font-family: Palatino;font-size: 16pt;">Palatino (serif)</p>
+                <p style="font-family: Baskerville;font-size: 16pt;">Baskerville (serif)</p>
+                <p style="font-family: Courier;font-size: 16pt;">Courier (monospace)</p>
+                <p style="font-family: Monaco;font-size: 16pt;">Monaco (monospace)</p>
+                <p style="font-family: Bradley Hand;font-size: 16pt;">Bradley Hand (cursive)</p>
+                <p>Font availability varies with browser and platform. Many other fonts may be available on your system.</p>
+                <p style="text-align: center;"><strong>More information on Web Safe Fonts</strong></p>
+                <p style="text-align: center;"><a href="https://blog.hubspot.com/website/web-safe-html-css-fonts" target="_blank">Web Safe CSS Fonts</a></p>
+                <p style="text-align: center;"><a href="http://iosfonts.com/" target="_blank">iOS Fonts</a></p>
+                <hr class="hidden-print" id="test_webfonts">
+                <h1 class="page_break_always">Test Webfonts for ABC Compatibility Utility<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+                <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/hkqop8nUgrQ" title="Test Webfonts for ABC Compatibility Utility" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>             
+                <p>I've put together a simple utility that gets all the font family names available in Chrome, tests them for ABC compatibility, and allows you to either copy the full or ABC-compatible list of font family names to the clipboard or save the list to a text file.</p>
+                <p>Chrome, Edge, and other Chrome-derivative browsers have the ability to enumerate all of their fonts, while others like Firefox and Safari do not.</p>
+                <p>To check ABC font family compatibility on non-Chrome browsers once you save a list of the full font families from Chrome, you can run the same utility on other browsers on the same system, load the full font family list saved from Chrome, and test them for ABC compatibility.</p>
+                <p>The utility is located here:</p>
+                <p style="text-align: center;"><a href="https://michaeleskin.com/tools/abc_test_webfonts.html" target="_blank">Test Webfonts for ABC Compatibility</a></p>
+                <p>You can try cross-referencing the full font names with the displayed fonts found on your system using the wordmark.it site:</p>
+                <p style="text-align: center;"><a href="https://wordmark.it" target="_blank">https://wordmark.it</a></p>
+                <hr class="hidden-print" id="inject_fonts_into_share_links">
+                <h1 class="page_break_always">Automatically Inject Fonts into Share Links<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+                <p>When creating share links, you can force injection of the required fonts for each tune from the tool's default fonts (set in the <strong>Settings/Font Settings</strong> dialog) by adding the following comment-based annotation anywhere in the ABC:</p>
+                <p class="code">
+                    %add_all_fonts
+                </p>
+                <p>This forces the tune opened by a share link to use the same fonts as when it was exported originally to the PDF file by injecting any required ABC font annotations at the top of the ABC for the tune.</p>
+                <p>Any fonts specified in the ABC will override the user's default fonts when they open the share link.</p>
                 <hr class="hidden-print" id="export_pdf_tunebook">
                 <h1 class="page_break_always">Exporting a PDF Tunebook<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/PqgjtQXpRYA" title="Export PDF Tunebook Dialog Walkthrough" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
@@ -5489,103 +5586,6 @@
                 <hr>
                 <p>Click <strong>Reset to Default</strong> to reset the ABC rendering font settings to their original defaults.</p>
                 <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/UpVXfi4bF3g" title="Configure ABC Rendering Fonts" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
-                <hr class="hidden-print" id="custom_font_overrides">
-                <h1 class="page_break_always">ABC Font Annotations<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-                <p>As per the ABC 2.1 specification, you can set the font style and size for essentially all ABC notation elements, giving you maximum control over the appearance of your notation:</p>
-                <p class="code">% First title of the tune:<br/>
-                    %%titlefont        font-style size<br/><br/>
-                    % Additional titles for the tune:<br/>
-                    %%subtitlefont     font-style size<br/><br/>
-                    % Rhythm string at left side of the staff for R: tags:<br/>
-                    %%infofont         font-style size<br/><br/>
-                    % Composer string at right side of the staff for C: tags:<br/>
-                    %%composerfont     font-style size<br/><br/>
-                    % Tempo indication:<br/>
-                    %%tempofont        font-style size<br/><br/>
-                    % "G", "Em", etc., style chords symbols:<br/>
-                    %%gchordfont       font-style size<br/><br/>
-                    % Stringed instrument tablature label:<br/>
-                    %%tablabelfont     font-style size<br/><br/>
-                    % Stringed instrument tablature numbers:<br/>
-                    %%tabnumberfont    font-style size<br/><br/>
-                    % Stringed instrument tablature grace note numbers:<br/>
-                    %%tabgracefont     font-style size<br/><br/>
-                    % Z:, H:, and other descriptive metadata tags:<br/>
-                    %%historyfont      font-style size<br/><br/>
-                    %%text, %%center, %%right, and %%begintext / %%endtext blocks:<br/>
-                    %%textfont         font-style size<br/><br/>
-                    % "^*" and "_*" chord-like tablature annotations:<br/>
-                    %%annotationfont   font-style size<br/><br/>
-                    % Multiple voice staff labels:<br/>
-                    %%voicefont        font-style size<br/><br/>
-                    % Used for P: tags:<br/>
-                    %%partsfont        font-style size<br/><br/>
-                    % Used for w: tag lyrics:<br/>
-                    %%vocalfont        font-style size<br/><br/>
-                    % Used for W: tag lyrics:<br/>
-                %%wordsfont        font-style size</p>
-                <p>Generally, these will use the PostScript font-style naming convention, for example:</p>
-                <p>Times, Helvetica, Courier, Verdana, Times-Bold, Helvetica-Italic, etc.</p>
-                <p>The size parameter should be an integer, but is optional.</p>
-                <p>Place your ABC font annotations just below the X: and above the T: ABC tune headers.</p>
-                <p>Inline font annotations will override the default font settings configured in the tool's <strong>Settings</strong> dialog.</p>
-                <p><strong>For example:</strong></p>
-                <p class="code">X: 1<br/>
-                    %%titlefont Palatino 30<br/>
-                    %%infofont Palatino 18<br/>
-                    %%gchordfont Palatino Bold 14<br/>
-                    T: The Road to Lisdoonvarna<br/>
-                    R: slide<br/>
-                    M: 12/8<br/>
-                    L: 1/8<br/>
-                    K:Edor<br/>
-                    D|:"Em"E2B B2A B2c d3|"D"F2A ABA D2E FED|<br/>
-                    "Em"E2B B2A B2c d3|"D"cdc B2A "Em"B2E E3:|<br/>
-                    |:"Em"e2f gfe "Bm"d2B Bcd|"A"c2A ABc "Bm"d2B B3|<br/>
-                "Em"e2f gfe "Bm"d2B Bcd|"A"cdc B2A "Em"B2E E3:|</p>
-                <p><strong>Result:</strong></p>
-                <div class="image_holder_p">
-                    <img class="image" loading="lazy" src="img/ug14.jpg"/>
-                </div>
-                <p></p>
-                <p><strong>Note:</strong> If a font change doesn't appear to happen immediately, force a full refresh by opening the controls, changing the display format, for example from notation to one of the tab options and then back to notation.</p>
-                <p>That will force a full page refresh and the new fonts will be used.</p>
-                <hr>
-                <p style="text-align: center;"><strong>Web Safe Fonts</strong></p>
-                <p>The following "web safe" fonts at a minimum should be supported by all browsers:</p>
-                <p style="font-family: Helvetica;font-size: 16pt;">Helvetica (sans-serif)</p>
-                <p style="font-family: Trebuchet MS;font-size: 16pt;">Trebuchet MS (sans-serif)</p>
-                <p style="font-family: Gill Sans;font-size: 16pt;">Gill Sans (sans-serif)</p>
-                <p style="font-family: Verdana;font-size: 16pt;">Verdana (sans-serif)</p>
-                <p style="font-family: Times New Roman;font-size: 16pt;">Times New Roman (serif)</p>
-                <p style="font-family: Georgia;font-size: 16pt;">Georgia (serif)</p>
-                <p style="font-family: Palatino;font-size: 16pt;">Palatino (serif)</p>
-                <p style="font-family: Baskerville;font-size: 16pt;">Baskerville (serif)</p>
-                <p style="font-family: Courier;font-size: 16pt;">Courier (monospace)</p>
-                <p style="font-family: Monaco;font-size: 16pt;">Monaco (monospace)</p>
-                <p style="font-family: Bradley Hand;font-size: 16pt;">Bradley Hand (cursive)</p>
-                <p>Font availability varies with browser and platform. Many other fonts may be available on your system.</p>
-                <p style="text-align: center;"><strong>More information on Web Safe Fonts</strong></p>
-                <p style="text-align: center;"><a href="https://blog.hubspot.com/website/web-safe-html-css-fonts" target="_blank">Web Safe CSS Fonts</a></p>
-                <p style="text-align: center;"><a href="http://iosfonts.com/" target="_blank">iOS Fonts</a></p>
-                <hr class="hidden-print" id="test_webfonts">
-                <h1 class="page_break_always">Test Webfonts for ABC Compatibility Utility<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-                <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/hkqop8nUgrQ" title="Test Webfonts for ABC Compatibility Utility" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>             
-                <p>I've put together a simple utility that gets all the font family names available in Chrome, tests them for ABC compatibility, and allows you to either copy the full or ABC-compatible list of font family names to the clipboard or save the list to a text file.</p>
-                <p>Chrome, Edge, and other Chrome-derivative browsers have the ability to enumerate all of their fonts, while others like Firefox and Safari do not.</p>
-                <p>To check ABC font family compatibility on non-Chrome browsers once you save a list of the full font families from Chrome, you can run the same utility on other browsers on the same system, load the full font family list saved from Chrome, and test them for ABC compatibility.</p>
-                <p>The utility is located here:</p>
-                <p style="text-align: center;"><a href="https://michaeleskin.com/tools/abc_test_webfonts.html" target="_blank">Test Webfonts for ABC Compatibility</a></p>
-                <p>You can try cross-referencing the full font names with the displayed fonts found on your system using the wordmark.it site:</p>
-                <p style="text-align: center;"><a href="https://wordmark.it" target="_blank">https://wordmark.it</a></p>
-                <hr class="hidden-print" id="inject_fonts_into_share_links">
-                <h1 class="page_break_always">Automatically Inject Fonts into Share Links<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-                <p>When creating share links, you can force injection of the required fonts for each tune from the tool's default fonts (set in the <strong>Settings/Font Settings</strong> dialog) by adding the following comment-based annotation anywhere in the ABC:</p>
-                <p class="code">
-                    %add_all_fonts
-                </p>
-                <p>This forces the tune opened by a share link to use the same fonts as when it was exported originally to the PDF file by injecting any required ABC font annotations at the top of the ABC for the tune.</p>
-                <p>Any fonts specified in the ABC will override the user's default fonts when they open the share link.</p>
                 <hr class="hidden-print" id="musicxml">
                 <h1 class="page_break_always">MusicXML/MIDI Import Settings<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <div class="image_holder_p">
