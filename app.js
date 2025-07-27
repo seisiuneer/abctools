@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2585_072625_2000";
+var gVersionNumber="2586_07725_0830";
 
 var gMIDIInitStillWaiting = false;
 
@@ -33792,6 +33792,42 @@ function ScanTuneForCustomTimingInjection(theTune){
 		}
 
 	}
+
+  // Next search for an tremolo divider
+
+  gTremoloDivider = 0;
+
+  searchRegExp = /^%tremolo_divider.*$/gm
+
+  // Detect tremolo_divider annotation
+  var doTremoloDivider = theTune.match(searchRegExp);
+
+  if ((doTremoloDivider) && (doTremoloDivider.length > 0)){
+
+    var theParamString = doTremoloDivider[0].replace("%tremolo_divider","");
+
+    theParamString = theParamString.trim();
+
+    var theParams = theParamString.split(" ");
+
+    if (theParams.length >= 1){
+
+      var theTremoloDividerFound = theParams[0];
+
+      var tremoloDivider = parseFloat(theTremoloDividerFound);
+
+      if (!isNaN(tremoloDivider)){
+
+        if ((tremoloDivider >= 2) && (tremoloDivider <= 256)){
+
+          gTremoloDivider = tremoloDivider;
+
+        }
+
+      }
+    }
+
+  }
 
 }
 

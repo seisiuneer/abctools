@@ -66,6 +66,9 @@ var gRoll3Volume3 = 1.0;
 var gOrnamentDivider = 32;
 var gOrnamentOffset = 2;
 
+// Tremolo timing divider
+var gTremoloDivider = 0;
+
 // Flag to left justify titles on one tune
 var gLeftJustifyTitlesOneTune = false;
 
@@ -13583,7 +13586,7 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
     var ret = {};
     if (elem.decoration) {
       for (var d = 0; d < elem.decoration.length; d++) {
-        if (elem.decoration[d] === 'staccato') ret.thisBreakBetweenNotes = 'staccato';else if (elem.decoration[d] === 'tenuto') ret.thisBreakBetweenNotes = 'tenuto';else if (elem.decoration[d] === 'accent') ret.velocity = Math.min(127, velocity * 1.5);else if (elem.decoration[d] === 'trill') ret.noteModification = "trill";else if (elem.decoration[d] === 'trillh') ret.noteModification = "trillh";else if (elem.decoration[d] === 'lowermordent') ret.noteModification = "lowermordent";else if (elem.decoration[d] === 'uppermordent') ret.noteModification = "pralltriller";else if (elem.decoration[d] === 'mordent') ret.noteModification = "mordent";else if (elem.decoration[d] === 'turn') ret.noteModification = "turn";else if (elem.decoration[d] === 'roll') ret.noteModification = "roll";else if (elem.decoration[d] === 'pralltriller') ret.noteModification = "pralltriller";
+        if (elem.decoration[d] === 'staccato') ret.thisBreakBetweenNotes = 'staccato';else if (elem.decoration[d] === 'tenuto') ret.thisBreakBetweenNotes = 'tenuto';else if (elem.decoration[d] === 'accent') ret.velocity = Math.min(127, velocity * 1.5);else if (elem.decoration[d] === 'trill') ret.noteModification = "trill";else if (elem.decoration[d] === 'trillh') ret.noteModification = "trillh";else if (elem.decoration[d] === 'lowermordent') ret.noteModification = "lowermordent";else if (elem.decoration[d] === 'uppermordent') ret.noteModification = "pralltriller";else if (elem.decoration[d] === 'mordent') ret.noteModification = "mordent";else if (elem.decoration[d] === 'turn') ret.noteModification = "turn";else if (elem.decoration[d] === 'roll') ret.noteModification = "roll";else if (elem.decoration[d] === 'pralltriller') ret.noteModification = "pralltriller";else if (elem.decoration[d] === '/') ret.noteModification = "trem1";else if (elem.decoration[d] === '//') ret.noteModification = "trem2";else if (elem.decoration[d] === '///') ret.noteModification = "trem3";
       }
     }
     return ret;
@@ -13596,6 +13599,30 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
     var runningDuration = p.duration;
     var shortestNote = durationRounded(1.0 / gOrnamentDivider);
     switch (noteModification) {
+      case "trem1":
+      case "trem2":
+      case "trem3":
+        var divider = 32;
+        if (gTremoloDivider){
+          divider = gTremoloDivider;
+        }
+        shortestNote = durationRounded(1.0 / divider);
+        while (runningDuration > 0) {
+          currentTrack.push({
+            cmd: 'note',
+            pitch: p.pitch,
+            volume: p.volume,
+            start: start,
+            duration: shortestNote,
+            gap: 0,
+            instrument: currentInstrument,
+            style: 'decoration'
+          });
+          runningDuration -= shortestNote;
+          start += shortestNote;
+        }
+        break;
+      break;
       case "trill":
         var note = gOrnamentOffset;
         while (runningDuration > 0) {
