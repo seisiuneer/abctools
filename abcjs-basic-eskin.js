@@ -13586,7 +13586,7 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
     var ret = {};
     if (elem.decoration) {
       for (var d = 0; d < elem.decoration.length; d++) {
-        if (elem.decoration[d] === 'staccato') ret.thisBreakBetweenNotes = 'staccato';else if (elem.decoration[d] === 'tenuto') ret.thisBreakBetweenNotes = 'tenuto';else if (elem.decoration[d] === 'accent') ret.velocity = Math.min(127, velocity * 1.5);else if (elem.decoration[d] === 'trill') ret.noteModification = "trill";else if (elem.decoration[d] === 'trillh') ret.noteModification = "trillh";else if (elem.decoration[d] === 'lowermordent') ret.noteModification = "lowermordent";else if (elem.decoration[d] === 'uppermordent') ret.noteModification = "pralltriller";else if (elem.decoration[d] === 'mordent') ret.noteModification = "mordent";else if (elem.decoration[d] === 'turn') ret.noteModification = "turn";else if (elem.decoration[d] === 'roll') ret.noteModification = "roll";else if (elem.decoration[d] === 'pralltriller') ret.noteModification = "pralltriller";else if (elem.decoration[d] === '/') ret.noteModification = "trem1";else if (elem.decoration[d] === '//') ret.noteModification = "trem2";else if (elem.decoration[d] === '///') ret.noteModification = "trem3";
+        if (elem.decoration[d] === 'staccato') ret.thisBreakBetweenNotes = 'staccato';else if (elem.decoration[d] === 'tenuto') ret.thisBreakBetweenNotes = 'tenuto';else if (elem.decoration[d] === 'accent') ret.velocity = Math.min(127, velocity * 1.5);else if (elem.decoration[d] === 'trill') ret.noteModification = "trill";else if (elem.decoration[d] === 'trillh') ret.noteModification = "trillh";else if (elem.decoration[d] === 'lowermordent') ret.noteModification = "lowermordent";else if (elem.decoration[d] === 'uppermordent') ret.noteModification = "pralltriller";else if (elem.decoration[d] === 'mordent') ret.noteModification = "mordent";else if (elem.decoration[d] === 'turn') ret.noteModification = "turn";else if (elem.decoration[d] === 'roll') ret.noteModification = "roll";else if (elem.decoration[d] === 'pralltriller') ret.noteModification = "pralltriller";else if (elem.decoration[d] === '/') ret.noteModification = "trem1";else if (elem.decoration[d] === '//') ret.noteModification = "trem2";else if (elem.decoration[d] === '///') ret.noteModification = "trem3";else if (elem.decoration[d] === '////') ret.noteModification = "trem4";else if (elem.decoration[d] === 'trem1') ret.noteModification = "trem1";else if (elem.decoration[d] === 'trem2') ret.noteModification = "trem2";else if (elem.decoration[d] === 'trem3') ret.noteModification = "trem3";else if (elem.decoration[d] === 'trem4') ret.noteModification = "trem4";
       }
     }
     return ret;
@@ -13602,8 +13602,9 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
       case "trem1":
       case "trem2":
       case "trem3":
+      case "trem4":
         var divider = 32;
-        if (gTremoloDivider){
+        if (gTremoloDivider != 0){
           divider = gTremoloDivider;
         }
         shortestNote = durationRounded(1.0 / divider);
@@ -25251,15 +25252,19 @@ var compoundDecoration = function compoundDecoration(decoration, pitch, width, a
   for (var i = 0; i < decoration.length; i++) {
     switch (decoration[i]) {
       case "/":
+      case "trem1":
         compoundDecoration("flags.ugrace", 1);
         break;
       case "//":
+      case "trem2":
         compoundDecoration("flags.ugrace", 2);
         break;
       case "///":
+      case "trem3":
         compoundDecoration("flags.ugrace", 3);
         break;
       case "////":
+      case "trem4":
         compoundDecoration("flags.ugrace", 4);
         break;
     }
