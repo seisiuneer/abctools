@@ -5860,8 +5860,10 @@
                 <p class="code">%%begincss<br/>abcjs-title {color:red}<br/>abcjs-clef {color:green;opacity:0.75}<br/>abcjs-chord {color:blue}<br/>abcjs-bar {color:purple}<br/>abcjs-tempo {color:transparent}<br/>%%endcss</p>
                 <p>Alternatively, you can provide full CSS descriptions, for example:</p>
                 <p class="code">%%begincss<br/>svg .abcjs-title {color:red}<br/>svg .abcjs-clef {color:green;opacity:0.75}<br/>svg .abcjs-chord {color:blue}<br/>svg .abcjs-bar {color:purple}<br/>svg .abcjs-tempo {color:transparent}<br/>%%endcss</p>
-                <p>There can only be one begincss/endcss block per tune. If there are multiple, the last one found in the tune is used.</p>
+                 <p>There can only be one begincss/endcss block per tune. If there are multiple, the last one found in the tune is used.</p>
                 <p>Best practice is to put the begincss/endcss block immediately after the X: tag.</p>
+                <p>This feature is really primarily for use with single tunes.</p>
+                <p>If working with multiple tunes in a tunebook, at this time, it is best to add the same custom CSS block to each tune as the CSS is shared between all the tunes that have begincss/endcss blocks, with the last one found in any tune taking precedence.</p>
                 <p>Custom CSS does appear on tunes in exported PDF files and tune images.</p>
                 <p>Here is the full list of available custom abcjs classes:</p>
                 <br/>
