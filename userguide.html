@@ -5701,6 +5701,10 @@
                 <p>Even if no abcjs custom class is available for an element in the notation, you can target some additional notation elements by data-name, for example, this CSS makes the slash lines used for tremolo thicker:</p>
                 <p class="code">% Custom CSS for making the tremolo slashes bolder<br/>%%begincss<br/>path[data-name="flags.ugrace"] {<br/>  stroke: black;<br/>}<br/>%%endcss</p>
                 <p>Using the Chrome developer tools, you can right click on any item in the notation and select "Inspect" to examine any CSS classes or data-name present that can then be used as a target CSS rule.</p>
+                <hr>
+                <p>You can even use custom CSS in the ABC file header to change the look of the tool!</p>
+                <p>For example this custom CSS changes the ABC editor text color to blue and its background color to a light green:</p>
+                <p class="code">% Change the editor text and background color<br/>%%begincss<br/>#abc {color:#0000FF;background-color:#DDFFDD !important;}<br/>%%endcss</p>
                 <hr class="hidden-print" id="customabcjsparams">
                 <h1 class="page_break_always h1wide">Adding Custom abcjs Rendering Parameters<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/9TZPTf3UW4M" title="%abcjs_render_params Overview" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
