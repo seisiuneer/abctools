@@ -103,39 +103,39 @@
         margin-bottom:12px;
         }
         
-		.accordion {
-		  position: relative;
-		  display: flex !important;
-		  justify-content: space-between;
-		  align-items: center;
-		  font-size: 14pt !important;
-		  font-family: "Helvetica" !important;
-		  background-color: #eee !important;
-		  color: #000 !important;
-		  cursor: pointer !important;
-		  padding: 14px !important;
-		  padding-left:20px !important;
-		  width: 100% !important;
-		  text-align: left !important; /* important: align text to left */
-		  border: 0.5px solid #000 !important;
-          outline: none !important;
-          margin-bottom:8px;
-		}
-
-		/* Add the right-hand caret */
-		.accordion::after {
-		  content: ">";
-		  transition: transform 0.2s ease;
-		  margin-left: 12px;
-		  font-size: 13pt;
-          font-weight:bold;
-		}
-
-		/* Rotate the caret when active */
-		.accordion.active::after {
-		  transform: rotate(90deg);
-		}
-
+                .accordion {
+                position: relative;
+                display: flex !important;
+                justify-content: space-between;
+                align-items: center;
+                font-size: 14pt !important;
+                font-family: "Helvetica" !important;
+                background-color: #eee !important;
+                color: #000 !important;
+                cursor: pointer !important;
+                padding: 14px !important;
+                padding-left:20px !important;
+                width: 100% !important;
+                text-align: left !important; /* important: align text to left */
+                border: 0.5px solid #000 !important;
+        outline: none !important;
+        margin-bottom:8px;
+                }
+        
+                /* Add the right-hand caret */
+                .accordion::after {
+                content: ">";
+                transition: transform 0.2s ease;
+                margin-left: 12px;
+                font-size: 13pt;
+        font-weight:bold;
+                }
+        
+                /* Rotate the caret when active */
+                .accordion.active::after {
+                transform: rotate(90deg);
+                }
+        
         .active {
         background-color: #eee;
         }
@@ -198,7 +198,7 @@
         iframe:hover {
         transform: matrix(1.05, 0, 0, 1.05, 0, 0);
         }
-            
+        
         .expandall
         {
         transition: transform .2s ease-in-out 0s;
@@ -332,34 +332,34 @@
         padding-left:0px;
         text-align: center;
         }
-
+        
         .sidebar summary {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          position: relative;
-          padding-right: 28px; /* Space for caret */
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        position: relative;
+        padding-right: 28px; /* Space for caret */
         }
-
+        
         .sidebar summary::after {
-          content: "▶";
-          font-size: 10pt;
-          transition: transform 0.2s ease;
-          margin-left: auto;
-          margin-right: 4px; /* space to the right of caret */
-          display: inline-block; /* This enables transition to work in Safari */
+        content: "▶";
+        font-size: 10pt;
+        transition: transform 0.2s ease;
+        margin-left: auto;
+        margin-right: 4px; /* space to the right of caret */
+        display: inline-block; /* This enables transition to work in Safari */
         }
-
+        
         /* Rotate caret when <details> is open */
         .sidebar details[open] summary::after {
-          transform: rotate(90deg);
+        transform: rotate(90deg);
         }
         
         table {
         border-collapse: collapse;
         width: 100%;
         }
-
+        
         th, td {
         font-size:14pt;
         font-family:"Helvetica";
@@ -368,19 +368,19 @@
         padding: 8px;
         text-align: left;
         }
-
+        
         thead {
         background-color: #f0f0f0; /* Light grey for header */
         }
-
+        
         tbody tr:nth-child(even) {
         background-color: #ffffff; /* White rows */
         }
-
+        
         tbody tr:nth-child(odd) {
         background-color: #f9f9f9; /* Light grey rows */
         }
-
+        
         </style>
         
     </head>
@@ -464,7 +464,7 @@
             <details>
             <summary><h3>Playing Your Tunes</h3></summary>
             <a style="text-decoration:none;" href="#playing_your_tunes">Playing Your Tunes</a>
-            <a style="text-decoration:none;" href="#player_settings">Player Instrument Settings</a>            
+            <a style="text-decoration:none;" href="#player_settings">Player Instrument Settings</a>
             <a style="text-decoration:none;" href="#changing_player_width">Changing the Player Width</a>
             <a style="text-decoration:none;" href="#tune_trainer">"Step-Up" Tempo Tune Trainer</a>
             </details>
@@ -510,7 +510,7 @@
             <a style="text-decoration:none;" href="#force_power_chords">Forcing Power Chords</a>
             <a style="text-decoration:none;" href="#presentation_mode">Using "Presentation Mode" for Tune Demo Videos</a>
             </details>
-
+            
             <details>
             <summary><h3>Configuring ABC Fonts</h3></summary>
             <a style="text-decoration:none;" href="#custom_font_overrides">ABC Font Annotations</a>
@@ -525,7 +525,7 @@
             <a style="text-decoration:none;" href="#inject_pdf_tunebook_features">Inject All PDF Tunebook Features</a>
             <a style="text-decoration:none;" href="#browser_print_to_pdf">Browser Native Print-to-PDF with Play Links</a>
             <a style="text-decoration:none;" href="#incipits_builder_pdf">Notes Incipits Builder</a>
-            <a style="text-decoration:none;" href="#pdf_layout_options">PDF Paper Size, Orientation, Layout, and Page Number Options</a>            
+            <a style="text-decoration:none;" href="#pdf_layout_options">PDF Paper Size, Orientation, Layout, and Page Number Options</a>
             <a style="text-decoration:none;" href="#pdf_font_override_settings">PDF Font Settings</a>
             <a style="text-decoration:none;" href="#pdf_quality_setting">PDF Quality Setting</a>
             <a style="text-decoration:none;" href="#adding_a_pdf_title_page">Adding a PDF Tunebook Title Page</a>
@@ -674,7 +674,7 @@
             <a style="text-decoration:none;" href="#advanced_resetsettings">Reset All Tool Settings</a>
             <a style="text-decoration:none;" href="#configure_fonts">Configuring ABC Rendering Fonts</a>
             </details>
-                       
+            
             <details>
             <summary><h3>MusicXML/MIDI Import</h3></summary>
             <a style="text-decoration:none;" href="#musicxml">MusicXML/MIDI Import Settings</a>
@@ -903,7 +903,7 @@
                     <button class="accordion" title="Click to expand/collapse this section">Playing Your Tunes</button>
                     <div class="tocpanel">
                         <p class="toc"><a style="text-decoration:none;" href="#playing_your_tunes">Playing Your Tunes</a></p>
-                        <p class="toc"><a style="text-decoration:none;" href="#player_settings">Player Instrument Settings</a></p>            
+                        <p class="toc"><a style="text-decoration:none;" href="#player_settings">Player Instrument Settings</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#changing_player_width">Changing the Player Width</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#tune_trainer">"Step-Up" Tempo Tune Trainer</a></p>
                     </div>
@@ -949,9 +949,9 @@
                         <p class="toc"><a style="text-decoration:none;" href="#play_alternate_chords">Playing Alternate Chords</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#force_power_chords">Forcing Power Chords</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#presentation_mode">Using "Presentation Mode" for Tune Demo Videos</a></p>
-
+                        
                     </div>
-
+                    
                     <button class="accordion" title="Click to expand/collapse this section">Configuring ABC Fonts</button>
                     <div class="tocpanel">
                         <p class="toc"><a style="text-decoration:none;" href="#custom_font_overrides">ABC Font Annotations</a></p>
@@ -966,13 +966,13 @@
                         <p class="toc"><a style="text-decoration:none;" href="#inject_pdf_tunebook_features">Inject All PDF Tunebook Features</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#browser_print_to_pdf">Browser Native Print-to-PDF with Play Links</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#incipits_builder_pdf">Notes Incipits Builder</a></p>
-                        <p class="toc"><a style="text-decoration:none;" href="#pdf_layout_options">PDF Paper Size, Orientation, Layout, and Page Number Options</a></p>            
+                        <p class="toc"><a style="text-decoration:none;" href="#pdf_layout_options">PDF Paper Size, Orientation, Layout, and Page Number Options</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#pdf_font_override_settings">PDF Font Settings</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#pdf_quality_setting">PDF Quality Setting</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#adding_a_pdf_title_page">Adding a PDF Tunebook Title Page</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#adding_a_pdf_tunebook_table_of_contents_and_index">Adding a PDF Tunebook Table of Contents and Index</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#pdf_section_headers">Adding Table of Contents and Index Section Headers</a></p>
-                         <p class="toc"><a style="text-decoration:none;" href="#pdf_page_headers_and_footers">PDF Page Headers and Footers</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#pdf_page_headers_and_footers">PDF Page Headers and Footers</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#tunebook_hyperlinks">PDF Tunebook Hyperlinks and Automatic Play Links</a></p>
                     </div>
                     
@@ -981,7 +981,7 @@
                         <p class="toc"><a style="text-decoration:none;" href="#table_of_contents_and_index_font_size_and_spacing_overrides">Table of Contents and Index Font Size and Spacing Overrides</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#first_page_number">Setting the First Page Number for Tune Pages</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#pdf_tunebook_spacing_overrides">PDF Tunebook Tune Size and Layout Spacing Overrides</a></p>
-                     </div>
+                    </div>
                     
                     <button class="accordion" title="Click to expand/collapse this section">All Available Tunebook Annotations</button>
                     <div class="tocpanel">
@@ -1483,19 +1483,19 @@
                 <p>For example, all instances of:</p>
                 <p class="code">\'A</p>
                 <p>would be replaced with:</p>
-                <p class="code">Á</p>    
+                <p class="code">Á</p>
                 <p>Here is the complete map of the escaped diacritical mappings:</p>
-                <p class="code">\'A : Á, \'E : É, \'I : Í, \'O : Ó,<br/> 
-                \'U : Ú, \'a : á, \'e : é, \'i : í,<br/> 
-                \'o : ó, \'u : ú, \`A : À, \`E : È,<br/> 
-                \`I : Ì, \`O : Ò, \`U : Ù, \`a : à,<br/> 
-                \`e : è, \`i : ì, \`o : ò, \`u : ù,<br/>
-                \"A : Ä, \"E : Ë, \"I : Ï, \"O : Ö,<br/> 
-                \"U : Ü, \"a : ä, \"e : ë, \"i : ï,<br/> 
-                \"o : ö, \"u : ü, \~N : Ñ, \~n : ñ,<br/>
-                \^A : Â, \^E : Ê, \^I : Î, \^O : Ô,<br/> 
-                \^U : Û, \^a : â, \^e : ê, \^i : î,<br/> 
-                \^o : ô, \^u : û, \cC : Ç, \cc : ç</p> 
+                <p class="code">\'A : Á, \'E : É, \'I : Í, \'O : Ó,<br/>
+                    \'U : Ú, \'a : á, \'e : é, \'i : í,<br/>
+                    \'o : ó, \'u : ú, \`A : À, \`E : È,<br/>
+                    \`I : Ì, \`O : Ò, \`U : Ù, \`a : à,<br/>
+                    \`e : è, \`i : ì, \`o : ò, \`u : ù,<br/>
+                    \"A : Ä, \"E : Ë, \"I : Ï, \"O : Ö,<br/>
+                    \"U : Ü, \"a : ä, \"e : ë, \"i : ï,<br/>
+                    \"o : ö, \"u : ü, \~N : Ñ, \~n : ñ,<br/>
+                    \^A : Â, \^E : Ê, \^I : Î, \^O : Ô,<br/>
+                    \^U : Û, \^a : â, \^e : ê, \^i : î,<br/>
+                \^o : ô, \^u : û, \cC : Ç, \cc : ç</p>
                 <hr id="hamburger_normalize_title_postfixes">
                 <p><strong>Normalize Title Postfixes</strong></p>
                 <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/qPDcmwGXr8s" title="Normalize Title Postfixes" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
@@ -3177,7 +3177,7 @@
                 <p>This just hides any P: tag text in the notation, if present in the ABC, %play_flatten_parts still applies.</p>
                 <p>If you want to just hide any P: tag text in the Player, add the following annotation anywhere in the tune:</p>
                 <p class="code">% Hide parts tag display in the Player<br/><br/>%hide_player_part_tags</p>
-                <p>If %hide_part_tags is present, then P: tag text is always hidden in the Player.</p> 
+                <p>If %hide_part_tags is present, then P: tag text is always hidden in the Player.</p>
                 <hr class="hidden-print" id="play_alternate_chords">
                 <h1 class="page_break_always h1wide">Playing Alternate Chords<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/-JXVK23SVf4" title="Playing Alternate Chords" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
@@ -3193,7 +3193,7 @@
                 <p class="code">%force_power_chords</p>
                 <p>This can be particularly useful for simulating diatonic button accordion basses for traditional Irish music where the thirds are taped off.</p>
                 <p>If this annotation is placed in the ABC file header, it will apply to all of the tunes.</p>
-                 <hr class="hidden-print" id="presentation_mode">
+                <hr class="hidden-print" id="presentation_mode">
                 <h1 class="page_break_always h1wide">Using "Presentation Mode" for Tune Demo Videos<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <p>This video shows how you can use the "Presentation Mode" (Alt-click the Zoom arrows) with the "Quick Editor" version of the tool to optimize the playback display for creating tune demo videos:</p>
                 <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/43cQkLDR24I" title="Creating tune demo video using Presentation Mode" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
@@ -3282,7 +3282,7 @@
                 <p style="text-align: center;"><a href="http://iosfonts.com/" target="_blank">iOS Fonts</a></p>
                 <hr class="hidden-print" id="test_webfonts">
                 <h1 class="page_break_always">Test Webfonts for ABC Compatibility Utility<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-                <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/hkqop8nUgrQ" title="Test Webfonts for ABC Compatibility Utility" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>             
+                <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/hkqop8nUgrQ" title="Test Webfonts for ABC Compatibility Utility" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
                 <p>I've put together a simple utility that gets all the font family names available in Chrome, tests them for ABC compatibility, and allows you to either copy the full or ABC-compatible list of font family names to the clipboard or save the list to a text file.</p>
                 <p>Chrome, Edge, and other Chrome-derivative browsers have the ability to enumerate all of their fonts, while others like Firefox and Safari do not.</p>
                 <p>To check ABC font family compatibility on non-Chrome browsers once you save a list of the full font families from Chrome, you can run the same utility on other browsers on the same system, load the full font family list saved from Chrome, and test them for ABC compatibility.</p>
@@ -3394,7 +3394,7 @@
                 </div>
                 <p><strong>Note:</strong> You may run into occasional cases where the number of measures in the incipits doesn't exactly match the requested number.</p>
                 <p>You can try changing the %%barsperstaff value on any tune that has an issue.</p>
-
+                
                 <hr id="pdf_layout_options">
                 <p style="text-align: center;"><strong>PDF Paper Size, Orientation, Layout, and Page Number Options</strong></p>
                 <hr>
@@ -4006,7 +4006,7 @@
                     %pdfname your_pdf_filename<br/>
                     %pdffont fontname style<br/>
                     %addtitle Title Page Title<br/>
-                    %addsubtitle Title Page Subtitle<br/>                    
+                    %addsubtitle Title Page Subtitle<br/>
                     %urladdtitle https://michaeleskin.com Title Page Title as Hyperlink<br/>
                     %urladdsubtitle https://michaeleskin.com Title Page Subtitle as Hyperlink<br/>
                     %titlefontsize 24<br/>
@@ -5858,7 +5858,7 @@
                 <p>For the supported abcjs custom classes listed below, you don't have to include the typical . before the class name.</p>
                 <p>For example, this custom abcjs CSS sets the title color to red, the clef color to blue with 75% opacity, chord color to blue, bar line color to purple, and hides the tempo by making the color transparent:</p>
                 <p class="code">%%begincss<br/>abcjs-title {color:red}<br/>abcjs-clef {color:green;opacity:0.75}<br/>abcjs-chord {color:blue}<br/>abcjs-bar {color:purple}<br/>abcjs-tempo {color:transparent}<br/>%%endcss</p>
-                 <p>Alternatively, you can provide full CSS descriptions, for example:</p>
+                <p>Alternatively, you can provide full CSS descriptions, for example:</p>
                 <p class="code">%%begincss<br/>svg .abcjs-title {color:red}<br/>svg .abcjs-clef {color:green;opacity:0.75}<br/>svg .abcjs-chord {color:blue}<br/>svg .abcjs-bar {color:purple}<br/>svg .abcjs-tempo {color:transparent}<br/>%%endcss</p>
                 <p>There can only be one begincss/endcss block per tune. If there are multiple, the last one found in the tune is used.</p>
                 <p>Best practice is to put the begincss/endcss block immediately after the X: tag.</p>
