@@ -270,6 +270,44 @@ var gForcePowerChords = false;
 var gAllowLoopStateCaching = true;
 
 //
+// Aggregate CSS to the document
+//
+function aggregateCSSRules(cssText) {
+
+  //console.log("aggregateCSSRules");
+
+  // Remove all previously added <style> blocks created by this function
+  document.querySelectorAll('style[data-aggregate-css="true"]').forEach(el => el.remove());
+
+  // Extract individual rules using regex: selector { declarations }
+  const ruleRegex = /([^{]+)\{([^}]+)\}/g;
+  const rulesToAdd = [];
+  let match;
+
+  while ((match = ruleRegex.exec(cssText)) !== null) {
+    
+    const selector = match[1].trim();
+    const declaration = match[2].trim();
+
+    // Automatically expand abcjs classes under SVG
+    if (selector.indexOf("abcjs-")==0){
+      rulesToAdd.push(`svg .${selector} { ${declaration} }`);
+    }
+    else{
+      // Add them verbatic
+      rulesToAdd.push(`${selector} { ${declaration} }`);
+    }
+  }
+
+  if (rulesToAdd.length > 0) {
+    const style = document.createElement("style");
+    style.setAttribute("data-aggregate-css", "true");
+    style.textContent = rulesToAdd.join("\n");
+    document.head.appendChild(style);
+  }
+}
+
+//
 // Find any hyperlinks in the tune and replace them with SVG links
 //
 
@@ -5777,6 +5815,27 @@ var parseDirective = {};
           endChar: multilineVars.iChar + textBlock.length + 7
         });
         break;
+
+      // MAE 27 July 2025 - For CSS aggregation
+      case "begincss":
+        //console.log("begincss");
+        var cssBlock = '';
+        line = tokenizer.nextLine();
+        while (line && line.indexOf('%%endcss') !== 0) {
+          
+          cssBlock += line.trim() + "\n";
+
+          line = tokenizer.nextLine();
+        }
+        //console.log("abcjsendcss");
+
+        tuneBuilder.addCSS(cssBlock, {
+          startChar: multilineVars.iChar,
+          endChar: multilineVars.iChar + cssBlock.length + 6
+        });
+
+        break;
+
       case "continueall":
         multilineVars.continueall = true;
         break;
@@ -11468,6 +11527,18 @@ var TuneBuilder = function TuneBuilder(tune) {
       }
     });
   };
+
+  // MAE 27 July 2025 - For CSS aggregation
+  this.addCSS = function (str, info) {
+    this.pushLine({
+      css: {
+        text: str,
+        startChar: info.startChar,
+        endChar: info.endChar
+      }
+    });
+  };
+
   // MAE Added 29 April 2025 for right justified text
   this.addRight = function (str, info) {
     this.pushLine({
@@ -30202,6 +30273,33 @@ EngraverController.prototype.engraveTune = function (abcTune, tuneNumber, lineOf
           }
         }
       }
+    }
+  }
+
+  // MAE 27 July 2025 - For CSS aggregation
+  var nlines = abcTune.lines.length;
+
+  for (var i=0;i<nlines;++i){
+
+    var entry = abcTune.lines[i];
+
+    if (entry.css){
+
+      // console.log("Got entry.css")
+      
+      if (!this.classes){
+        // console.log("shouldAddClasses case 1")
+        this.classes = new Classes({
+        shouldAddClasses: true
+        });
+      }
+      else{
+        // console.log("shouldAddClasses case 2")
+        this.classes.shouldAddClasses = true;
+      }
+    
+      aggregateCSSRules(entry.css.text);
+
     }
   }
 
