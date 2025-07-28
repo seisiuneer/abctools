@@ -5690,8 +5690,10 @@
                 <p>For example, this custom abcjs CSS sets the title color to red, the clef color to blue with 75% opacity, chord color to blue, bar line color to purple, and hides the tempo by making the color transparent:</p>
                 <p class="code">%%begincss<br/>.abcjs-title {color:red}<br/>.abcjs-clef {color:green;opacity:0.75}<br/>.abcjs-chord {color:blue}<br/>.abcjs-bar {color:purple}<br/>.abcjs-tempo {color:transparent}<br/>%%endcss</p>
                 <p>The recommended practice is to add the %%begincss / %%endcss block in the ABC file header before all tunes where it will apply to all the ABC tunes in the tunebook.</p>
-                <p>If a %%begincss / %%endcss block is found in a tune, it will take precedence for all tunes over any custom CSS found in the file header and ideally should only be used for single tune tunebooks, with multiple tunes, unexpected results may occur.</p>
-                <p>There can only be one begincss/endcss block per tunebook. If there are multiple, the last one found is used.</p>                
+                <p>If you edit custom css in a %begincss / %%endcss block in the ABC file header, you will need to force a full redraw of the tunes to see the results.</p>
+                <p>This is easily accomplished by clicking <strong>Snapshot</strong> and then <strong>Restore</strong>.</p>
+                <p>If a %%begincss / %%endcss block is found in a tune, it will take precedence for all tunes over any custom CSS found in the file header and ideally should only be used for single tune tunebooks. With multiple tunes and multiple %begincss / %%endcss blocks, unexpected results may occur.</p>
+                <p>There can only be one custom begincss/endcss block per tunebook. If there are multiple, the last one found is used.</p>                
                 <p>Custom CSS does appear on tunes in exported PDF files and full-featured websites but not exported JPEG, PNG, SVG tune images, Image Gallery websites, or Image Lightbox websites which use exported JPEG images.</p>
                 <p>Here is the full list of available custom abcjs classes:</p>
                 <br/>
