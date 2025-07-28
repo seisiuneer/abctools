@@ -289,14 +289,8 @@ function aggregateCSSRules(cssText) {
     const selector = match[1].trim();
     const declaration = match[2].trim();
 
-    // Automatically expand abcjs classes under SVG
-    if (selector.indexOf("abcjs-")==0){
-      rulesToAdd.push(`svg .${selector} { ${declaration} }`);
-    }
-    else{
-      // Add them verbatic
-      rulesToAdd.push(`${selector} { ${declaration} }`);
-    }
+    rulesToAdd.push(`${selector} { ${declaration} }`);
+
   }
 
   if (rulesToAdd.length > 0) {
@@ -4541,15 +4535,31 @@ var bookParser = function bookParser(book) {
       /^[ABCDFGHILMmNORrSUZ]:/,
     ];
 
+    let inCSSBlock = false;
+
     arrDir.forEach(function (line) {
-      for (const pattern of patterns) {
-        if (pattern.test(line)) {
-          //console.log("Adding directive line: " + line);
-          directives += line + '\n';
-          break; // No need to check further patterns once matched
+
+        if (line.trim() === "%%begincss") {
+            inCSSBlock = true;
         }
-      }
+
+        if (inCSSBlock) {
+            directives += line + '\n';
+            if (line.trim() === "%%endcss") {
+                inCSSBlock = false;
+            }
+            return; // Skip further processing while in CSS block
+        }
+
+        for (const pattern of patterns) {
+            if (pattern.test(line)) {
+                //console.log("Adding directive line: " + line);
+                directives += line + '\n';
+                break; // No need to check further patterns once matched
+            }
+        }
     });
+    
   }
   
   var header = directives;

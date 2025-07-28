@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2588_072825_0000";
+var gVersionNumber="2589_072825_0800";
 
 var gMIDIInitStillWaiting = false;
 
@@ -20471,78 +20471,90 @@ function keydownHeaderInject(e){
 	e.stopPropagation();
 }
 
-//
-// Find all ABC file header annotations compatible with abcjs
-//
-function GetABCFileHeader(){
+function GetABCFileHeader() {
 
-	var theHeader = FindPreTuneHeader(gTheABC.value);
+    var theHeader = FindPreTuneHeader(gTheABC.value);
 
-	if (theHeader.length == 0){
-		//console.log("No header present");
-		return "";
-	}
+    if (theHeader.length == 0) {
+        //console.log("No header present");
+        return "";
+    }
 
-	var directives = "";
+    var directives = "";
 
     var arrDir = theHeader.split('\n');
 
     const patterns = [
-      /^%%\S+font.*$/,
-      /^%%\S+margin.*$/,
-      /^%%staffwidth.*$/,
-      /^%%stretchlast.*$/,
-      /^%%barnumbers.*$/,
-      /^%%barsperstaff.*$/,
-      /^%%\S+space.*$/,
-      /^%%\S+sep.*$/,
-      /^%%measure\S+.*$/,
-      /^%%printtempo.*$/,
-      /^%%titleleft.*$/,
-      /^%%keywarn.*$/,
-      /^%%titlecaps.*$/,
-      /^%%visualtranspose.*$/,      
-      /^%%maxstaves.*$/,  
-      /^%hide_first_title_on_play.*$/,  
-      /^%hide_vskip_on_play.*$/,  
-      /^%left_justify_titles.*$/,
-      /^%abcjs_render_params.*$/,
-      /^%hide_information_labels.*$/,
-      /^%hide_rhythm_tag.*$/,
-      /^%hide_composer_tag.*$/,
-      /^%hide_parts_tag.*$/,
-      /^%hide_part_tags.*$/,
-      /^%hide_player_part_tags.*$/,
-      /^%hide_dynamics.*$/,
-      /^%whistle_tab_key.*$/,
-      /^%whistle_tab_octave.*$/,
-      /^%recorder_tab_key.*$/,
-      /^%recorder_tab_octave.*$/,
-      /^%enable_hyperlinks.*$/,
-      /^%disable_hyperlinks.*$/,
-      /^%play_alternate_chords.*$/,
-      /^%hide_cautionary_ks.*$/,
-      /^%no_title_reverser.*$/,
-      /^%force_power_chords.*$/,
-      /^[ABCDFGHILMmNORrSUZ]:/,
+        /^%%\S+font.*$/,
+        /^%%\S+margin.*$/,
+        /^%%staffwidth.*$/,
+        /^%%stretchlast.*$/,
+        /^%%barnumbers.*$/,
+        /^%%barsperstaff.*$/,
+        /^%%\S+space.*$/,
+        /^%%\S+sep.*$/,
+        /^%%measure\S+.*$/,
+        /^%%printtempo.*$/,
+        /^%%titleleft.*$/,
+        /^%%keywarn.*$/,
+        /^%%titlecaps.*$/,
+        /^%%visualtranspose.*$/,
+        /^%%maxstaves.*$/,
+        /^%hide_first_title_on_play.*$/,
+        /^%hide_vskip_on_play.*$/,
+        /^%left_justify_titles.*$/,
+        /^%abcjs_render_params.*$/,
+        /^%hide_information_labels.*$/,
+        /^%hide_rhythm_tag.*$/,
+        /^%hide_composer_tag.*$/,
+        /^%hide_parts_tag.*$/,
+        /^%hide_part_tags.*$/,
+        /^%hide_player_part_tags.*$/,
+        /^%hide_dynamics.*$/,
+        /^%whistle_tab_key.*$/,
+        /^%whistle_tab_octave.*$/,
+        /^%recorder_tab_key.*$/,
+        /^%recorder_tab_octave.*$/,
+        /^%enable_hyperlinks.*$/,
+        /^%disable_hyperlinks.*$/,
+        /^%play_alternate_chords.*$/,
+        /^%hide_cautionary_ks.*$/,
+        /^%no_title_reverser.*$/,
+        /^%force_power_chords.*$/,
+        /^[ABCDFGHILMmNORrSUZ]:/,
     ];
 
+    let inCSSBlock = false;
+
     arrDir.forEach(function (line) {
-      for (const pattern of patterns) {
-        if (pattern.test(line)) {
-          //console.log("Adding directive line: " + line);
-          directives += line + '\n';
-          break; // No need to check further patterns once matched
+
+        if (line.trim() === "%%begincss") {
+            inCSSBlock = true;
         }
-      }
+
+        if (inCSSBlock) {
+            directives += line + '\n';
+            if (line.trim() === "%%endcss") {
+                inCSSBlock = false;
+            }
+            return; // Skip further processing while in CSS block
+        }
+
+        for (const pattern of patterns) {
+            if (pattern.test(line)) {
+                //console.log("Adding directive line: " + line);
+                directives += line + '\n';
+                break; // No need to check further patterns once matched
+            }
+        }
     });
 
     // Put some space between the injected directives and the tune ABC
-    if (directives != ""){
-    	directives += "\n";
+    if (directives != "") {
+        directives += "\n";
     }
 
-    return directives; 
+    return directives;
 }
 
 function IdleFileHeaderInject(){
