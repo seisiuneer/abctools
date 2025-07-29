@@ -13301,6 +13301,9 @@ function Render(renderAll,tuneNumber) {
 
 		}
 
+    // Remove all previously added custom CSS <style> blocks 
+    document.querySelectorAll('style[data-aggregate-css="true"]').forEach(el => el.remove());
+
 	}
 
 }
