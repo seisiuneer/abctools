@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2589_072825_0800";
+var gVersionNumber="2590_072925_1000";
 
 var gMIDIInitStillWaiting = false;
 
@@ -12010,8 +12010,13 @@ function RenderTheNotes(tune, instrument, renderAll, tuneNumber) {
 	//console.log("RenderTheNotes renderAll: "+renderAll+" tuneNumber: "+tuneNumber);
 
 	if (gIsQuickEditor){
+
 		// MAE 15 July 2024
 		// For the Quick Editor
+
+    // Remove all previously added custom CSS <style> blocks 
+    document.querySelectorAll('style[data-aggregate-css="true"]').forEach(el => el.remove());
+
 		renderAll = false;
 		tuneNumber = 0;
 	}
@@ -12044,6 +12049,9 @@ function RenderTheNotes(tune, instrument, renderAll, tuneNumber) {
 
 	// If rendering all, push all the divs
 	if (renderAll){
+
+    // Remove all previously added custom CSS <style> blocks 
+    document.querySelectorAll('style[data-aggregate-css="true"]').forEach(el => el.remove());
 
 		nTunes = CountTunes();
 		endTune = nTunes;
