@@ -40939,7 +40939,7 @@ function GetInitialConfigurationSettings(){
   if (gUseWidePlayCursor){
     const style = document.createElement("style");
     style.setAttribute("custom_cursor_definition", "true");
-    style.textContent = ".abcjs-cursor{stroke:#00FF00;stroke-width:12px;stroke-opacity:0.25;transform:translate(7px,0px);}"
+    style.textContent = ".abcjs-cursor{stroke:#00F000;stroke-width:12px;stroke-opacity:0.25;transform:translate(7px,0px);}"
     document.head.appendChild(style);
   }
 
@@ -44054,7 +44054,7 @@ function ConfigurePlayerSettings(player_callback) {
       if (gUseWidePlayCursor){
         const style = document.createElement("style");
         style.setAttribute("custom_cursor_definition", "true");
-        style.textContent = ".abcjs-cursor{stroke:#00FF00;stroke-width:12px;stroke-opacity:0.25;transform:translate(7px,0px);}"
+        style.textContent = ".abcjs-cursor{stroke:#00F000;stroke-width:12px;stroke-opacity:0.25;transform:translate(7px,0px);}"
         document.head.appendChild(style);
       }
 
