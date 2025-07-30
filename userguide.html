@@ -103,38 +103,36 @@
         margin-bottom:12px;
         }
         
-                .accordion {
-                position: relative;
-                display: flex !important;
-                justify-content: space-between;
-                align-items: center;
-                font-size: 14pt !important;
-                font-family: "Helvetica" !important;
-                background-color: #eee !important;
-                color: #000 !important;
-                cursor: pointer !important;
-                padding: 14px !important;
-                padding-left:20px !important;
-                width: 100% !important;
-                text-align: left !important; /* important: align text to left */
-                border: 0.5px solid #000 !important;
+        .accordion {
+        position: relative;
+        display: flex !important;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 14pt !important;
+        font-family: "Helvetica" !important;
+        background-color: #eee !important;
+        color: #000 !important;
+        cursor: pointer !important;
+        padding: 14px !important;
+        padding-left:20px !important;
+        width: 100% !important;
+        text-align: left !important; 
+        border: 0.5px solid #000 !important;
         outline: none !important;
         margin-bottom:8px;
-                }
+        }
         
-                /* Add the right-hand caret */
-                .accordion::after {
-                content: ">";
-                transition: transform 0.2s ease;
-                margin-left: 12px;
-                font-size: 13pt;
+        .accordion::after {
+        content: ">";
+        transition: transform 0.2s ease;
+        margin-left: 12px;
+        font-size: 13pt;
         font-weight:bold;
-                }
+        }
         
-                /* Rotate the caret when active */
-                .accordion.active::after {
-                transform: rotate(90deg);
-                }
+        .accordion.active::after {
+        transform: rotate(90deg);
+        }
         
         .active {
         background-color: #eee;
@@ -1940,7 +1938,7 @@
                 <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/_f2_RAcrVhk" title="Player Instrument Settings" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
                 <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/ToA4bD2M4O0" title="Custom Metronome Settings" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
                 <div class="image_holder_p">
-                    <img class="image" loading="lazy" src="img/player_instrument_settings_5.jpg"/>
+                    <img class="image" loading="lazy" src="img/player_instrument_settings_6.jpg"/>
                 </div>
                 <p>The default MIDI soundfont, MIDI instruments, and MIDI volumes are used when a tune doesn't already have those values present in the ABC.</p>
                 <hr>
@@ -1953,6 +1951,10 @@
                 <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/-JXVK23SVf4" title="Playing Alternate Chords" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
                 <p>Check this box if you want the player to play any alternate chords wrapped in parenthesis found in the ABC.</p>
                 <p>If both a normal and alternate chord are wrapped in one set of double quotes, the alternate chord will be played if this box is checked.</p>
+                <hr>
+                <p><strong>Player uses wide note highlight cursor</strong></p>
+                <p>If you want to use a wide transparent green playback highlight cursor, check this box.</p>
+                <p>If you want to use the older version blue line playback highlight cursor, uncheck this box.</p>
                 <hr>
                 <p>The <strong>Player Instrument Settings</strong> dialog is also available from the main <strong>Settings</strong> dialog.</p>
                 <p>See <a href="#default_player_settings">Select Default Player Instruments and Volumes</a> below for full details on the values in this dialog.</p>
@@ -5276,7 +5278,7 @@
                 <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/_f2_RAcrVhk" title="Player Instrument Settings" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
                 <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/ToA4bD2M4O0" title="Custom Metronome Settings" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
                 <div class="image_holder_p">
-                    <img class="image" loading="lazy" src="img/player_instrument_settings_5.jpg"/>
+                    <img class="image" loading="lazy" src="img/player_instrument_settings_6.jpg"/>
                 </div>
                 <hr>
                 <p><strong>Default MIDI Soundfont</strong></p>
@@ -5321,6 +5323,9 @@
                 <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/-JXVK23SVf4" title="Playing Alternate Chords" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
                 <p>Check this box if you want the player to play any alternate chords wrapped in parenthesis found in the ABC.</p>
                 <p>If both a normal and alternate chord are wrapped in one set of double quotes, the alternate chord will be played if this box is checked.</p>
+                <p><strong>Player uses wide note highlight cursor</strong>
+                <p>If you want to use a wide transparent green playback highlight cursor, check this box.</p>
+                <p>If you want to use the older version blue line playback highlight cursor, uncheck this box.</p>
                 <hr id="manage_databases">
                 <p><strong>Manage Notes, Reverb, and Tune Search Databases</strong></p>
                 <p>Click this button on the <strong>Settings</strong> dialog to bring up a dialog with several options for managing the instrument notes, reverb,  and tune search engine databases in the tool for offline use.</p>

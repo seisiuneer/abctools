@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2590_072925_1000";
+var gVersionNumber="2591_073025_1000";
 
 var gMIDIInitStillWaiting = false;
 
@@ -449,6 +449,9 @@ var gMIDIMute = false;
 // Last warp value
 var gLastWarp = 100;
 var gLastPlayerRepeat = false;
+
+// Use wide playback cursor?
+var gUseWidePlayCursor = true;
 
 // Global reference to the ABC editor
 var gTheABC = document.getElementById("abc");
@@ -40926,6 +40929,20 @@ function GetInitialConfigurationSettings(){
     gPlayMetronome = (val == "true");
   }
 
+  // Remove all previously added cursor width style blocks created by this function
+  document.querySelectorAll('style[custom_cursor_definition="true"]').forEach(el => el.remove());
+  gUseWidePlayCursor = true;
+  val = localStorage.UseWidePlayCursor;
+  if (val){
+    gUseWidePlayCursor = (val == "true");
+  }
+  if (gUseWidePlayCursor){
+    const style = document.createElement("style");
+    style.setAttribute("custom_cursor_definition", "true");
+    style.textContent = ".abcjs-cursor{stroke:green;stroke-width:12px;stroke-opacity:0.125;transform:translate(7px,0px);}"
+    document.head.appendChild(style);
+  }
+
 	// Save the settings, in case they were initialized
 	SaveConfigurationSettings();
 
@@ -41214,6 +41231,9 @@ function SaveConfigurationSettings(){
 
     // Metronomes
     localStorage.PlayMetronome = gPlayMetronome;
+
+    // Wide cursor
+    localStorage.UseWidePlayCursor = gUseWidePlayCursor;
     
 	}
 }
@@ -43760,7 +43780,8 @@ function ConfigurePlayerSettings(player_callback) {
     configure_metronome_high_sound:gMetronomeHighSound,
     configure_metronome_low_sound:gMetronomeLowSound,
     configure_metronome_high_volume:gMetronomeHighVolume,
-    configure_metronome_low_volume:gMetronomeLowVolume
+    configure_metronome_low_volume:gMetronomeLowVolume,
+    configure_wide_playback_cursor:gUseWidePlayCursor
 	};
 
  	const sound_font_options = [
@@ -43846,6 +43867,10 @@ function ConfigurePlayerSettings(player_callback) {
 		  		{name: "Player screen width (percentage) (min is 50, max is 100):", id: "configure_player_scaling", type:"number", cssClass:"configure_settings_form_text_fs"},
 		  	]);
 	}
+
+  form = form.concat([
+      {name: "            Player uses wide note highlight cursor", id: "configure_wide_playback_cursor", type:"checkbox", cssClass:"configure_settings_form_text_checkbox_fs"},
+      ]);
 
 	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 50, width: 790, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
 
@@ -44021,6 +44046,16 @@ function ConfigurePlayerSettings(player_callback) {
         if ((val >= 0) && (val < 128)){
           gMetronomeLowVolume = val;
         }
+      }
+
+      // Wide cursor setting
+      gUseWidePlayCursor = args.result.configure_wide_playback_cursor;
+      document.querySelectorAll('style[custom_cursor_definition="true"]').forEach(el => el.remove());
+      if (gUseWidePlayCursor){
+        const style = document.createElement("style");
+        style.setAttribute("custom_cursor_definition", "true");
+        style.textContent = ".abcjs-cursor{stroke:green;stroke-width:12px;stroke-opacity:0.125;transform:translate(7px,0px);}"
+        document.head.appendChild(style);
       }
 
 			// Update local storage
