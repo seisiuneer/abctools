@@ -26621,7 +26621,7 @@ module.exports = StaffGroupElement;
 /***/ (function(module) {
 
 function Subtitle(spaceAbove, formatting, info, center, paddingLeft, getTextSize) {
-
+  
   this.rows = [];
   if (spaceAbove) this.rows.push({
     move: spaceAbove
@@ -30213,6 +30213,11 @@ EngraverController.prototype.constructTuneElements = function (abcTune) {
       hasSeenNonSubtitle = true;
       abcLine.nonMusic = new Separator(abcLine.separator.spaceAbove, abcLine.separator.lineLength, abcLine.separator.spaceBelow);
     }
+    // MAE 1 Aug 2025 Start for subtitle issue
+    else if (abcLine.css !== undefined){
+      hasSeenNonSubtitle = true;
+    }
+    // MAE 1 Aug 2025 End
   }
   abcTune.bottomText = new BottomText(abcTune.metaText, this.width, this.renderer.isPrint, this.renderer.padding.left, this.renderer.spacing, this.getTextSize);
 };
