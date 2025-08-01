@@ -5826,7 +5826,7 @@ var parseDirective = {};
         });
         break;
 
-      // MAE 27 July 2025 - For CSS aggregation
+      // MAE 1 Aug 2025 - For CSS aggregation
       case "begincss":
         //console.log("begincss");
         var cssBlock = '';
@@ -5837,9 +5837,8 @@ var parseDirective = {};
 
           line = tokenizer.nextLine();
         }
-        //console.log("abcjsendcss");
 
-        tuneBuilder.addCSS(cssBlock, {
+        tuneBuilder.addMetaText("css",cssBlock, {
           startChar: multilineVars.iChar,
           endChar: multilineVars.iChar + cssBlock.length + 6
         });
@@ -11531,17 +11530,6 @@ var TuneBuilder = function TuneBuilder(tune) {
   this.addText = function (str, info) {
     this.pushLine({
       text: {
-        text: str,
-        startChar: info.startChar,
-        endChar: info.endChar
-      }
-    });
-  };
-
-  // MAE 27 July 2025 - For CSS aggregation
-  this.addCSS = function (str, info) {
-    this.pushLine({
-      css: {
         text: str,
         startChar: info.startChar,
         endChar: info.endChar
@@ -30213,11 +30201,6 @@ EngraverController.prototype.constructTuneElements = function (abcTune) {
       hasSeenNonSubtitle = true;
       abcLine.nonMusic = new Separator(abcLine.separator.spaceAbove, abcLine.separator.lineLength, abcLine.separator.spaceBelow);
     }
-    // MAE 1 Aug 2025 Start for subtitle issue
-    else if (abcLine.css !== undefined){
-      hasSeenNonSubtitle = true;
-    }
-    // MAE 1 Aug 2025 End
   }
   abcTune.bottomText = new BottomText(abcTune.metaText, this.width, this.renderer.isPrint, this.renderer.padding.left, this.renderer.spacing, this.getTextSize);
 };
@@ -30324,33 +30307,23 @@ EngraverController.prototype.engraveTune = function (abcTune, tuneNumber, lineOf
     }
   }
 
-  // MAE 27 July 2025 - For CSS aggregation
-  var nlines = abcTune.lines.length;
+  // MAE 1 Aug 2025 - For CSS aggregation
+  if (abcTune.metaText.css){
 
-  for (var i=0;i<nlines;++i){
-
-    var entry = abcTune.lines[i];
-
-    if (entry.css){
-
-      // console.log("Got entry.css")
-      
       if (!this.classes){
-        // console.log("shouldAddClasses case 1")
+        //console.log("shouldAddClasses case 1")
         this.classes = new Classes({
         shouldAddClasses: true
         });
       }
       else{
-        // console.log("shouldAddClasses case 2")
+        //console.log("shouldAddClasses case 2")
         this.classes.shouldAddClasses = true;
       }
     
-      aggregateCSSRules(entry.css.text);
+      aggregateCSSRules(abcTune.metaText.css);
 
-    }
-  }
-
+  } 
   // MAE End of Change
 
   // Deal with tablature for staff
