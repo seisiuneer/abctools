@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2598_080225_1100";
+var gVersionNumber="2599_080225_1330";
 
 var gMIDIInitStillWaiting = false;
 
@@ -25709,7 +25709,7 @@ function IncipitsBuilderDialog(){
 				}
 
 				// Remove any existing incipits annotation
-  				theTune = theTune.replace(/^%incipits_inject_start[\s\S]*?^%incipits_inject_end.*(\r?\n)?/gm, '');
+  			theTune = theTune.replace(/^%incipits_inject_start[\s\S]*?^%incipits_inject_end.*(\r?\n)?/gm, '');
 
 				theTune = InjectStringAboveTuneHeader(theTune,stringToInject);
 
@@ -27366,6 +27366,7 @@ function DoInjectCustomTab(){
 	});
 
 }
+
 //
 // Inject Box Tablature
 //
@@ -27397,7 +27398,13 @@ function DoInjectTablature_BC(){
 
 	gInjectTab_BoxStyle = "0";
 
-	setABCEditorText(boxTabGenerator(gTheABC.value));
+  var val = boxTabGenerator(gTheABC.value);
+
+  if (gInjectTab_Colors){
+    val = InjectTabColors(val,1);
+  }
+
+  setABCEditorText(val);
 
 	// Set dirty
 	gIsDirty = true;
@@ -27430,7 +27437,13 @@ function DoInjectTablature_CsD(){
 
 	gInjectTab_BoxStyle = "1";
 
-	setABCEditorText(boxTabGenerator(gTheABC.value));
+  var val = boxTabGenerator(gTheABC.value);
+
+  if (gInjectTab_Colors){
+    val = InjectTabColors(val,1);
+  }
+
+	setABCEditorText(val);
 
 	// Set dirty
 	gIsDirty = true;
@@ -27617,6 +27630,10 @@ function DoInjectTablature_Anglo(){
 				function callback(injectedABC, wasError, errorReport){
 					
 					if (!wasError){
+
+            if (gInjectTab_Colors){
+              injectedABC = InjectTabColors(injectedABC,0);
+            }
 						
 						setABCEditorText(injectedABC);
 
@@ -27639,7 +27656,11 @@ function DoInjectTablature_Anglo(){
 					}
 					else{
 
-			            DayPilot.Modal.alert(errorReport,{ theme: "modal_flat", top: 100, scrollWithPage: true }).then(function(){
+			       DayPilot.Modal.alert(errorReport,{ theme: "modal_flat", top: 100, scrollWithPage: true }).then(function(){
+
+              if (gInjectTab_Colors){
+                injectedABC = InjectTabColors(injectedABC,0);
+              }
 
 							setABCEditorText(injectedABC);
 
@@ -39427,6 +39448,7 @@ var gInjectTab_ConcertinaTuning = 0;
 var gInjectTab_ConcertinaFingering = 0;
 var gInjectTab_GaryCoover = false;
 var gInjectTab_BoxTabStyle = 0;
+var gInjectTab_Colors = false;
 
 // Box and Concertina Push and draw tablature glyphs
 var gInjectTab_PushGlyph = "↓";
@@ -39767,6 +39789,14 @@ function GetInitialConfigurationSettings(){
 	else{
 		gInjectTab_GaryCoover = false;
 	}
+
+  val = localStorage.InjectTab_Colors;
+  if (val){
+    gInjectTab_Colors = (val == "true");
+  }
+  else{
+    gInjectTab_Colors = false;
+  }
 
 	val = localStorage.InjectTab_BoxTabStyle;
 	if (val){
@@ -40985,6 +41015,7 @@ function SaveConfigurationSettings(){
 		localStorage.InjectTab_ConcertinaStyle = gInjectTab_ConcertinaStyle;
 		localStorage.InjectTab_ConcertinaFingering = gInjectTab_ConcertinaFingering;
 		localStorage.InjectTab_GaryCoover = gInjectTab_GaryCoover;
+    localStorage.InjectTab_Colors = gInjectTab_Colors;
 		localStorage.InjectTab_BoxTabStyle = gInjectTab_BoxTabStyle;
 
 		// Accordion and concertina tab bellows direction glyphs
@@ -41684,7 +41715,8 @@ function ConfigureTablatureSettings(){
 	  configure_pushglyph:gInjectTab_PushGlyph,
 	  configure_drawglyph:gInjectTab_DrawGlyph,
 	  configure_use_bar_for_draw:gInjectTab_UseBarForDraw,
-	  configure_box_tab_style:gInjectTab_BoxTabStyle
+	  configure_box_tab_style:gInjectTab_BoxTabStyle,
+    configure_tab_colors:gInjectTab_Colors,
 	};
 
 	const form = [
@@ -41701,9 +41733,10 @@ function ConfigureTablatureSettings(){
 	  {name: "Character(s) for Push indication (Clearing this field will reset to ↓ ):", id: "configure_pushglyph", type:"text", cssClass:"configure_tab_settings_form_text"},
 	  {name: "Character(s) for Draw indication (Clearing this field will reset to ↑ ):", id: "configure_drawglyph", type:"text", cssClass:"configure_tab_settings_form_text"},
 	  {name: "    Use a bar over button name to indicate Draw (overrides Push and Draw characters)", id: "configure_use_bar_for_draw", type:"checkbox", cssClass:"configure_tab_settings_form_text"},
+    {name: "    Inject Push and Draw tab colors and CSS", id: "configure_tab_colors", type:"checkbox", cssClass:"configure_tab_settings_form_text"},
 	];
 
-	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 100, width: 720, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
+	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 50, width: 720, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
 
 		// Get the results and store them in the global configuration
 		if (!args.canceled){
@@ -41715,6 +41748,7 @@ function ConfigureTablatureSettings(){
 			gInjectTab_TabLocation = args.result.configure_tab_location;
 			gInjectTab_BoxTabStyle = args.result.configure_box_tab_style;
 			gInjectTab_StripChords = args.result.configure_strip_chords;
+      gInjectTab_Colors = args.result.configure_tab_colors;
 
 			// Do some sanity checking on the push and draw glyphs
 			gInjectTab_PushGlyph = args.result.configure_pushglyph;
@@ -41740,6 +41774,60 @@ function ConfigureTablatureSettings(){
 
 }
 
+//
+// Inject the tab colors
+//
+function InjectTabColors(val,style){
+
+  // Some tab styles can't have tab colors automatically injected
+  if (((style == 1) && (gInjectTab_BoxTabStyle == "1")) || (gInjectTab_UseBarForDraw))  {
+
+    var thePrompt = "Unable to automatically inject Push/Draw colors into this style of tab.";
+
+    // Center the string in the prompt
+    thePrompt = makeCenteredPromptString(thePrompt);
+
+    DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) });
+
+    return val;
+
+  }
+
+  switch (style){
+    case 0: // Anglo concertina
+
+      if (!gInjectTab_GaryCoover){
+
+        val = val.replaceAll(gInjectTab_PushGlyph+'"', gInjectTab_PushGlyph+'"!mark1!')
+        val = val.replaceAll(gInjectTab_DrawGlyph+'"', gInjectTab_DrawGlyph+'"!mark2!')
+
+      }
+      else{
+
+        // Use regular expressions for Gary Coover
+        val = val.replace(/("_ ;\d+"|"\^\d+"|"_ ;\d+a"|"\^\d+a")/g, "$1!mark1!")
+        val = val.replace(/("__;\d+"|"___;\d+"|"__;\d+a"|"___;\d+a"|"\^_;\d+"|"\^__;\d+"|"\^_;\d+a"|"\^__;\d+a")/g, "$1!mark2!")
+
+      }
+      break;
+
+    case 1: // Box
+      val = val.replaceAll(gInjectTab_PushGlyph+'"', gInjectTab_PushGlyph+'"!mark1!')
+      val = val.replaceAll(gInjectTab_DrawGlyph+'"', gInjectTab_DrawGlyph+'"!mark2!')
+
+    break;
+  }
+
+  // Strip any existing tab color css
+  val = val.replace(/^% Begin tab color custom CSS[\s\S]*?^% End tab color custom CSS.*(\r?\n)+/gm, '');
+
+  var theCSS = "% Begin tab color custom CSS\n%%begincss\n.mark1 {fill:#C00000}\n.mark2 {fill:#0000C0}\n%%endcss\n% End tab color custom CSS\n\n";
+
+  val = theCSS + val;
+
+  return val;
+
+}
 
 //
 // Font settings dialog

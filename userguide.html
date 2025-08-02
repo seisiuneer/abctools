@@ -714,7 +714,6 @@
             <a style="text-decoration:none;" href="#abcadditions">Additional Tool-Specific ABC Directives</a>
             <a style="text-decoration:none;" href="#sequential_play">Creating Sets of Tunes that Will Play Sequentially in the Player</a>
             <a style="text-decoration:none;" href="#boxplayerstemplate">Useful Symbols for Annotating Box Transcriptions</a>
-            <a style="text-decoration:none;" href="#angloboxtabcolors">Adding Push and Draw Colors to Box and Anglo Concertina Tab</a>
             </details>
             
             <details>
@@ -1156,7 +1155,6 @@
                         <p class="toc"><a style="text-decoration:none;" href="#abcadditions">Additional Tool-Specific ABC Directives</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#sequential_play">Creating Sets of Tunes that Will Play Sequentially in the Player</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#boxplayerstemplate">Useful Symbols for Annotating Box Transcriptions</a></p>
-                        <p class="toc"><a style="text-decoration:none;" href="#angloboxtabcolors">Adding Push and Draw Colors to Box and Anglo Concertina Tab</a></p>
                     </div>
                     
                     <button class="accordion" title="Click to expand/collapse this section">Adding Shape Note Shapes</button>
@@ -4481,7 +4479,7 @@
                 </div>
                 <p><strong>Tablature Injection Settings</strong> - Brings up the <strong>Tablature Injection Settings</strong> dialog where you can setup the fonts and push/draw indications used for the injected tablature.</p>
                 <p>See the <a href="#tablature_settings">Configuring Tablature Fonts and Settings</a> section below for full details on the B/C and C#/D box tablature style, font, and spacing options.</p>
-                <p>If you wish to add colors to indicate Push and Draw, see the <a href="#angloboxtabcolors">Adding Push and Draw Colors to Box and Anglo Concertina Tab</a> section below.</p>
+                <p>If you wish to add colors to indicate Push and Draw, check the "Inject Push and Draw tab colors and CSS" checkbox on the <strong>Tablature Injection Settings</strong> dialog.</p>
                 <hr class="hidden-print" id="reading_the_box_tablature">
                 <p style="text-align: center;"><strong>Reading the Box Tablature</strong></p>
                 <p><strong>B/C Box</strong> - Shows standard notation and tablature for a standard 21-button B/C tuned box.</p>
@@ -4550,7 +4548,7 @@
                 <p>Values are saved in browser storage and restored the next time the tool is run.</p>
                 <p><strong>Tablature Injection Settings</strong> - Brings up the <strong>Tablature Injection Settings</strong> dialog where you can setup the fonts and push/draw indications used for the injected tablature.</p>
                 <p>See the <a href="#tablature_settings">Configuring Tablature Fonts and Settings</a> section below for full details on the Anglo Concertina tablature font, and spacing options.</p>
-                <p>If you wish to add colors to indicate Push and Draw, see the <a href="#angloboxtabcolors">Adding Push and Draw Colors to Box and Anglo Concertina Tab</a> section below.</p>
+                <p>If you wish to add colors to indicate Push and Draw, check the "Inject Push and Draw tab colors and CSS" checkbox on the <strong>Tablature Injection Settings</strong> dialog.</p>
                 <hr class="hidden-print" id="reading_the_concertina_tablature">
                 <p style="text-align: center;"><strong>Reading the Anglo Concertina Tablature (Diagrams for C/G tuning)</strong></p>
                 <p style="text-align: center;margin-top:36px;"><strong>Wheatstone Layout</strong></p>
@@ -4677,7 +4675,7 @@
                 <h1 class="page_break_always h1wide">Configuring Tablature Fonts and Settings<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <p>To configure the tablature/solfège fonts and other settings, first click the tool's Settings button, then click <strong>Tablature Injection Settings</strong> at the bottom of the dialog to bring up the tablature/solfège injection settings dialog:</p>
                 <div class="image_holder_p">
-                    <img class="image" loading="lazy" src="img/tab_injection_settings_11.jpg"/>
+                    <img class="image" loading="lazy" src="img/tab_injection_settings_12.jpg"/>
                 </div>
                 <p>There is also a button to open this dialog on all the instrument or feature-specific tablature injection dialogs.</p>
                 <p><strong>General Tablature Formatting Settings:</strong></p>
@@ -4698,6 +4696,8 @@
                 <p><strong>Note:</strong> Setting either value blank restores the original default "↓" for Push and "↑" for Draw character values.</p>
                 <p><strong>Use a bar over button name to indicate Draw (overrides Push and Draw characters)</strong> - If checked, draws a bar over the button name for a bellows Draw and no bar for bellows Push.</p>
                 <p>If checked, overrides the use of the Push or Draw characters entered above.</p>
+                <p><strong>Inject Push and Draw tab colors and CSS</strong> - If checked, if possible, automatically injects custom tab Push and Draw color CSS and note markers.</p>
+                <p>Some tab configurations do not support automatic injection of Push and Draw colors. The tool will alert you in this case.</p>
                 <hr class="hidden-print" id="clearing_tablature">
                 <h1 class="page_break_always h1wide">Clearing the Injected Tablature<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <p>Since the tablature is injected using the ABC chord system, you can easily clear all tab and get back to the original ABC by clicking the <strong>Strip Chords + Injected Tab</strong> button on the <strong>More ABC Tools</strong> dialog.</p>
@@ -6012,39 +6012,6 @@
                         % "1" "2" "3" "4" "5" "6" "7" "8" "9" "10" "11" "↑" "↓"<br/>
                         % "①" "②" "③" "④" "⑤" "⑥" "⑦" "⑧" "⑨" "⑩" "⑪"<br/>
                     %</p>
-                    <hr class="hidden-print" id="angloboxtabcolors">
-                    <h1 class="page_break_always">Adding Push and Draw Colors to Box and Anglo Concertina Tab<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-                    <p>The B/C and C#/D as well as the Anglo Concertina tab injectors in the tool only add in the button numbers and directions to the ABC.</p>
-                    <p>If you want to add Push/Draw colors you can do this after injecting the tab by injecting additional text into the ABC using the Find and Replace feature in the tool replacing all instances of:</p>
-                    <p class="code">↓"</p>
-                    <p>with</p>
-                    <p class="code">↓"!mark1!</p>
-                    <p>and all instances of:</p>
-                    <p class="code">↑"</p>
-                    <p>with</p>
-                    <p class="code">↑"!mark2!</p>
-                    <p>To define the colors used for Push and Draw, add this custom CSS at the top of the ABC before any tunes:</p>
-                    <p class="code">% Define custom CSS colors for the mark1 (Push) and mark2 (Draw) classes<br/>
-                        %%begincss<br/>
-                        .mark1 {fill:#C00000}<br/>
-                        .mark2 {fill:#0000C0}<br/>
-                    %%endcss</p>
-                    <hr>
-                    <p>For the Gary Coover style Anglo Concertina tab, the color injection requires a bit more work, but still is quick.</p>
-                    <p>For this, after injecting the tab, use the Find and Replace feature in the tool with a regular expression (set the "Match using regular expression?" checkbox) replacing all instances of:</p>
-                    <p class="code">("_ ;\d+"|"\^\d+")</p>
-                    <p>with</p>
-                    <p class="code">$1!mark1!</p>
-                    <p>and all instances of:</p>
-                    <p class="code">("__;\d+"|"___;\d+"|"\^_;\d+"|"\^__;\d+")</p>
-                    <p>with</p>
-                    <p class="code">$1!mark2!</p>
-                    <p>To define the colors used for Push and Draw, add this custom CSS at the top of the ABC before any tunes:</p>
-                    <p class="code">% Define custom CSS colors for the mark1 (Push) and mark2 (Draw) classes<br/>
-                        %%begincss<br/>
-                        .mark1 {fill:#C00000}<br/>
-                        .mark2 {fill:#0000C0}<br/>
-                    %%endcss</p>
                     <hr class="hidden-print" id="shapenote">
                     <h1 class="page_break_always">Adding Shape Note Shapes<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                     <p>The tool supports the standard shape note shapes for both 4-shape and 7-shape systems.</p>

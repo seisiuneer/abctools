@@ -3113,7 +3113,7 @@ margin-top:-7px;
 
 .configure_tab_settings_form_text{
 	font-size:12pt;
-	line-height:42px;
+	line-height:32px;
 	font-family:helvetica;
 	margin-top:6px;
 	display:flex;
@@ -3129,7 +3129,7 @@ margin-top:-7px;
 
 .configure_tab_settings_form_text_wide{
 	font-size:12pt;
-	line-height:42px;
+	line-height:32px;
 	font-family:helvetica;
 	margin-top:10px;
 	display:flex;
@@ -3643,7 +3643,6 @@ margin-top:-7px;
 	}
 }
 
-
 #default_anglo_fingerings{
 	height:42px;
 	margin-top: 9px;
@@ -3652,6 +3651,18 @@ margin-top:-7px;
 
 @media (hover: hover) {
 	.default_anglo_fingerings:hover{
+	background: palegreen;
+	}
+}
+
+#inject_tablature_colors{
+	height:42px;
+	margin-top: 12px;
+	padding:12px;
+}
+
+@media (hover: hover) {
+	.inject_tablature_colors:hover{
 	background: palegreen;
 	}
 }
