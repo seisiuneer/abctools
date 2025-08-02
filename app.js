@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2596_080125_0530";
+var gVersionNumber="2597_080225_0730";
 
 var gMIDIInitStillWaiting = false;
 
@@ -39818,7 +39818,7 @@ function GetInitialConfigurationSettings(){
 		gFullScreenScaling = 50;
 	}
 
-    var theButtonNames = localStorage.angloButtonNames;
+    var theButtonNames = localStorage.angloButtonNames2;
 
     if (theButtonNames){
         gAngloButtonNames = JSON.parse(theButtonNames);
@@ -40996,7 +40996,7 @@ function SaveConfigurationSettings(){
 		localStorage.FullScreenScaling = gFullScreenScaling;
 
 		// Anglo button naming matrix
-		localStorage.angloButtonNames = JSON.stringify(gAngloButtonNames);
+		localStorage.angloButtonNames2 = JSON.stringify(gAngloButtonNames);
 
 		// MusicXML import options
 		localStorage.musicXMLImportOptionsV6 = JSON.stringify(gMusicXMLImportOptions);
@@ -41419,46 +41419,46 @@ function resetAngloButtonNames(){
     gAngloButtonNames = [
 
         // Top row, LH
-        "L1a",
-        "L2a",
-        "L3a",
-        "L4a",
-        "L5a",
+        "1*",
+        "2*",
+        "3*",
+        "4*",
+        "5*",
 
         // Top row, RH
-        "R1a",
-        "R2a",
-        "R3a",
-        "R4a",
-        "R5a",
+        "①*",
+        "②*",
+        "③*",
+        "④*",
+        "⑤*",
 
         // Middle row, LH
-        "L1",
-        "L2",
-        "L3",
-        "L4",
-        "L5",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
 
         // Middle row, RH
-        "R1",
-        "R2",
-        "R3",
-        "R4",
-        "R5",
+        "①",
+        "②",
+        "③",
+        "④",
+        "⑤",
 
         // Bottom row, LH
-        "L6",
-        "L7",
-        "L8",
-        "L9",
-        "L10",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
 
         // Bottom row, RH
-        "R6",
-        "R7",
-        "R8",
-        "R9",
-        "R10"
+        "⑥",
+        "⑦",
+        "⑧",
+        "⑨",
+        "⑩"
     ];
 
 }
@@ -41639,7 +41639,7 @@ function ConfigureAngloFingerings(){
 		    // Save the custom button naming map
 		    if (gLocalStorageAvailable){
 
-		        localStorage.angloButtonNames = JSON.stringify(gAngloButtonNames);
+		        localStorage.angloButtonNames2 = JSON.stringify(gAngloButtonNames);
 
 		    }
 
