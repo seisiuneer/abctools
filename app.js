@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2600_080325_0800";
+var gVersionNumber="2601_080325_1600";
 
 var gMIDIInitStillWaiting = false;
 
@@ -26695,7 +26695,9 @@ function DoInjectHarmonicaTab(){
 	  configure_harmonica_key:gHarmonicaKey,
 	  configure_harmonica_octave:gHarmonicaOctave,
 	  configure_harmonica_plussign:gHarmonicaPlusSign,
-	  configure_harmonica_stacking:gHarmonicaStacking
+	  configure_harmonica_stacking:gHarmonicaStacking,
+    configure_harmonica_tab_colors:gHarmonicaTabColors
+
 	};
 
 	const form = [
@@ -26706,12 +26708,14 @@ function DoInjectHarmonicaTab(){
 	  {name: "Octave shift:", id: "configure_harmonica_octave", type:"select", options:harmonica_octaves, cssClass:"configure_harmonica_select"}, 
 	  {name: "    Include + for blow notes in the tablature", id: "configure_harmonica_plussign", type:"checkbox", cssClass:"configure_harmonica_settings_form_text"},
 	  {name: "    Blow/Draw indications under the hole number (unchecked is before hole number)", id: "configure_harmonica_stacking", type:"checkbox", cssClass:"configure_harmonica_settings_form_text2"},
-      {html: '<p style="text-align: center; font-size:4pt;font-family:helvetica;">&nbsp;</p>'},
+    {html: '<p style="margin-top:12px;margin-bottom:12px;font-size:12pt;line-height:12pt;font-family:helvetica">The following option overrides the options above.<br/><br/>If checked, includes + for blow notes and Blow/Draw indications under the hole number:</p>'},   
+    {name: "    Color-code Blow and Draw", id: "configure_harmonica_tab_colors", type:"checkbox", cssClass:"configure_harmonica_settings_form_text2"},
+    {html: '<p style="text-align: center; font-size:4pt;font-family:helvetica;">&nbsp;</p>'},
 	  {html: '<p style="text-align:center;margin-top:18px;"><input id="configure_harmonica_custom" class="btn btn-subdialog configure_harmonica_custom" onclick="EditCustomHarmonica()" type="button" value="Edit Custom Harmonica Tuning Tab" title="Edit the custom harmonica tuning tab symbols for each scale note"></p>'},
 	  {html: '<p style="text-align:center;margin-top:18px;"><input id="configure_anglo_fonts" class="btn btn-subdialog configure_anglo_fonts" onclick="ConfigureTablatureSettings()" type="button" value="Tablature Injection Settings" title="Configure the tablature injection settings"></p>'},
 	];
 
-	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 100, width: 700, scrollWithPage: (AllowDialogsToScroll()), okText: "Inject",autoFocus: false } ).then(function(args){
+	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 50, width: 700, scrollWithPage: (AllowDialogsToScroll()), okText: "Inject",autoFocus: false } ).then(function(args){
 
 		// Get the results and store them in the global configuration
 		if (!args.canceled){
@@ -26721,6 +26725,7 @@ function DoInjectHarmonicaTab(){
 			gHarmonicaOctave = args.result.configure_harmonica_octave; 
 			gHarmonicaPlusSign = args.result.configure_harmonica_plussign;
 			gHarmonicaStacking = args.result.configure_harmonica_stacking;
+      gHarmonicaTabColors = args.result.configure_harmonica_tab_colors;
 
 			SaveConfigurationSettings();
 
@@ -26728,7 +26733,25 @@ function DoInjectHarmonicaTab(){
 
 			gCurrentTab = "noten";
 
-			setABCEditorText(HarmonicaTabGenerator(gTheABC.value));
+      var val = gTheABC.value;
+
+      // Strip any existing tab color css
+      val = val.replace(/^% Begin tab color CSS[\s\S]*?^% End tab color CSS.*(\r?\n)+/gm, '');
+
+      // Remove old push and draw decorations
+      val = val.replaceAll("!push!","");
+      val = val.replaceAll("!draw!","");
+
+      setABCEditorText(val);
+
+      val = HarmonicaTabGenerator(val);
+      
+      // Injecting tab colors?
+      if (gHarmonicaTabColors){
+        val = InjectHarmonicaTabColors(val);
+      }
+
+			setABCEditorText(val);
 
 			// Set dirty
 			gIsDirty = true;
@@ -27398,7 +27421,18 @@ function DoInjectTablature_BC(){
 
 	gInjectTab_BoxStyle = "0";
 
-  var val = boxTabGenerator(gTheABC.value);
+  var val = gTheABC.value;
+
+  // Strip any existing tab color css
+  val = val.replace(/^% Begin tab color CSS[\s\S]*?^% End tab color CSS.*(\r?\n)+/gm, '');
+
+  // Remove old push and draw decorations
+  val = val.replaceAll("!push!","");
+  val = val.replaceAll("!draw!","");
+
+  setABCEditorText(val);
+
+  val = boxTabGenerator(val);
 
   if (gInjectTab_Colors){
     val = InjectTabColors(val,1);
@@ -27437,7 +27471,18 @@ function DoInjectTablature_CsD(){
 
 	gInjectTab_BoxStyle = "1";
 
-  var val = boxTabGenerator(gTheABC.value);
+  var val = gTheABC.value;
+
+  // Strip any existing tab color css
+  val = val.replace(/^% Begin tab color CSS[\s\S]*?^% End tab color CSS.*(\r?\n)+/gm, '');
+
+  // Remove old push and draw decorations
+  val = val.replaceAll("!push!","");
+  val = val.replaceAll("!draw!","");
+
+  setABCEditorText(val);
+
+  val = boxTabGenerator(val);
 
   if (gInjectTab_Colors){
     val = InjectTabColors(val,1);
@@ -27625,7 +27670,18 @@ function DoInjectTablature_Anglo(){
 
 				}
 
-				angloFingeringsGenerator(gTheABC.value,callback);
+        var val = gTheABC.value;
+
+        // Strip any existing tab color css
+        val = val.replace(/^% Begin tab color CSS[\s\S]*?^% End tab color CSS.*(\r?\n)+/gm, '');
+
+        // Remove old push and draw decorations
+        val = val.replaceAll("!push!","");
+        val = val.replaceAll("!draw!","");
+
+        setABCEditorText(val);
+
+				angloFingeringsGenerator(val,callback);
 
 				function callback(injectedABC, wasError, errorReport){
 					
@@ -27680,7 +27736,7 @@ function DoInjectTablature_Anglo(){
 							// Idle the show tab names control
 							IdleAllowShowTabNames();
 			         	
-			            });
+			       });
 					}
 				}
 
@@ -39475,6 +39531,7 @@ var gHarmonicaKey = "C";
 var gHarmonicaOctave = "0";
 var gHarmonicaPlusSign = false;
 var gHarmonicaStacking = true;
+var gHarmonicaTabColors = false;
 
 //
 // For custom harmonica tuning option
@@ -39942,6 +39999,14 @@ function GetInitialConfigurationSettings(){
 	else{
 		gHarmonicaStacking = true;
 	}
+
+  val = localStorage.HarmonicaTabColors;
+  if (val){
+    gHarmonicaTabColors = (val == "true");
+  }
+  else{
+    gHarmonicaTabColors = false;
+  }
 
 	var theCustomHarmonica = localStorage.HarmonicaCustom;
 
@@ -41044,6 +41109,7 @@ function SaveConfigurationSettings(){
 		localStorage.HarmonicaOctave = gHarmonicaOctave;
 		localStorage.HarmonicaPlusSign = gHarmonicaPlusSign;
 		localStorage.HarmonicaStacking = gHarmonicaStacking;
+    localStorage.HarmonicaTabColors = gHarmonicaTabColors;
 
 		// Custom harmonica settings
 		localStorage.HarmonicaCustom = JSON.stringify(gHarmonicaCustom);
@@ -41818,9 +41884,6 @@ function InjectTabColors(val,style){
     break;
   }
 
-  // Strip any existing tab color css
-  val = val.replace(/^% Begin tab color CSS[\s\S]*?^% End tab color CSS.*(\r?\n)+/gm, '');
-
   var theCSS = "% Begin tab color CSS\n%%begincss\n.push {fill:#C00000}\n.draw {fill:#0000C0}\n%%endcss\n% End tab color CSS\n\n";
 
   val = theCSS + val;
@@ -41829,6 +41892,22 @@ function InjectTabColors(val,style){
 
 }
 
+//
+// Inject the harmonica tab colors
+//
+function InjectHarmonicaTabColors(val){
+
+  // Inject push and draw decorations
+  val = val.replaceAll(';+"', ';+"!push!');
+  val = val.replaceAll(';-"', ';-"!draw!');
+
+  var theCSS = "% Begin tab color CSS\n%%begincss\n.push {fill:#C00000}\n.draw {fill:#0000C0}\n%%endcss\n% End tab color CSS\n\n";
+
+  val = theCSS + val;
+
+  return val;
+
+}
 //
 // Font settings dialog
 //

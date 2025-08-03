@@ -8870,8 +8870,8 @@ var HarmonicaTabGenerator = function (theABC){
                 return "x";
             }
             else{
-                // Stacked hole directions?
-                if (gHarmonicaStacking){
+                // Stacked hole directions or adding tab colors
+                if (gHarmonicaStacking || gHarmonicaTabColors){
                     if (retVal.indexOf("-") != -1){
                         retVal = retVal.replace("-","");
                         retVal += ";-";
@@ -9125,6 +9125,11 @@ var HarmonicaTabGenerator = function (theABC){
         var staffSep = gInjectTab_StaffSep;
         var tabLocation = parseInt(gInjectTab_TabLocation);
         var stripChords = gInjectTab_StripChords;
+        var doPlusSign = gHarmonicaPlusSign;
+
+        if (gHarmonicaTabColors){
+            doPlusSign = true;
+        }
  
         var nTunes = countTunes(theABC);
 
@@ -9162,7 +9167,7 @@ var HarmonicaTabGenerator = function (theABC){
             // console.log("After");
             // console.log(thisTune);
 
-            thisTune = generate_harmonica_tab(thisTune,gHarmonicaKey,gHarmonicaOctave,gHarmonicaPlusSign)
+            thisTune = generate_harmonica_tab(thisTune,gHarmonicaKey,gHarmonicaOctave,doPlusSign)
             
             thisTune = InjectStringBelowTuneHeaderConditional(thisTune, "%%staffsep " + staffSep);
  
