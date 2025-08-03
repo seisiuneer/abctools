@@ -9180,7 +9180,7 @@ module.exports = MusicParser;
 
 // MAE 23 Dec 2023 - Added Shaped Note Singing glyphs
 // MAE 7 December 2024 - Added half-step trill
-module.exports.legalAccents = ['trill', 'trillh', 'lowermordent', 'uppermordent', 'mordent', 'pralltriller', 'accent', 'fermata', 'invertedfermata', 'tenuto', '0', '1', '2', '3', '4', '5', '+', 'wedge', 'open', 'thumb', 'snap', 'turn', 'roll', 'breath', 'shortphrase', 'mediumphrase', 'longphrase', 'segno', 'coda', 'D.S.', 'D.C.', 'fine', 'beambr1', 'beambr2', 'slide', 'slideup', 'slidedown', 'marcato', 'upbow', 'downbow', '/', '//', '///', '////', 'trem1', 'trem2', 'trem3', 'trem4', 'turnx', 'invertedturn', 'invertedturnx', 'trill(', 'trill)', 'arpeggio', 'xstem', 'mark', 'mark1', 'mark2', 'mark3', 'mark4', 'mark5', 'mark6', 'mark7', 'mark8', 'mark9', 'mark10', 'umarcato', 'style=normal', 'style=harmonic', 'style=rhythm', 'style=x', 'style=triangle', 'style=sn_do','style=sn_re','style=sn_mi','style=sn_fa','style=sn_fa_l','style=sn_fa_r','style=sn_so','style=sn_la','style=sn_ti','D.C.alcoda', 'D.C.alfine', 'D.S.alcoda', 'D.S.alfine', 'editorial', 'courtesy'];
+module.exports.legalAccents = ['trill', 'trillh', 'lowermordent', 'uppermordent', 'mordent', 'pralltriller', 'accent', 'fermata', 'invertedfermata', 'tenuto', '0', '1', '2', '3', '4', '5', '+', 'wedge', 'open', 'thumb', 'snap', 'turn', 'roll', 'breath', 'shortphrase', 'mediumphrase', 'longphrase', 'segno', 'coda', 'D.S.', 'D.C.', 'fine', 'beambr1', 'beambr2', 'slide', 'slideup', 'slidedown', 'marcato', 'upbow', 'downbow', '/', '//', '///', '////', 'trem1', 'trem2', 'trem3', 'trem4', 'turnx', 'invertedturn', 'invertedturnx', 'trill(', 'trill)', 'arpeggio', 'xstem', 'mark', 'mark1', 'mark2', 'mark3', 'mark4', 'mark5', 'mark6', 'mark7', 'mark8', 'mark9', 'mark10', 'push', 'draw', 'umarcato', 'style=normal', 'style=harmonic', 'style=rhythm', 'style=x', 'style=triangle', 'style=sn_do','style=sn_re','style=sn_mi','style=sn_fa','style=sn_fa_l','style=sn_fa_r','style=sn_so','style=sn_la','style=sn_ti','D.C.alcoda', 'D.C.alfine', 'D.S.alcoda', 'D.S.alfine', 'editorial', 'courtesy'];
 // MAE 15 April 2024 - Added ppppp
 module.exports.volumeDecorations = ['p', 'pp', 'f', 'ff', 'mf', 'mp', 'ppp', 'pppp', 'fff', 'ffff', 'sfz', 'ppppp'];
 module.exports.dynamicDecorations = ['crescendo(', 'crescendo)', 'diminuendo(', 'diminuendo)', 'glissando(', 'glissando)', '~(', '~)'];
@@ -25532,6 +25532,12 @@ var stackedDecoration = function stackedDecoration(decoration, width, abselem, y
         break;
       case "mark10":
         abselem.klass = "mark10";
+        break;
+      case "push":
+        abselem.klass = "push";
+        break;
+      case "draw":
+        abselem.klass = "draw";
         break;
     }
   }

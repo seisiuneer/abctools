@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2599_080225_1330";
+var gVersionNumber="2600_080325_0800";
 
 var gMIDIInitStillWaiting = false;
 
@@ -41798,30 +41798,30 @@ function InjectTabColors(val,style){
 
       if (!gInjectTab_GaryCoover){
 
-        val = val.replaceAll(gInjectTab_PushGlyph+'"', gInjectTab_PushGlyph+'"!mark1!')
-        val = val.replaceAll(gInjectTab_DrawGlyph+'"', gInjectTab_DrawGlyph+'"!mark2!')
+        val = val.replaceAll(gInjectTab_PushGlyph+'"', gInjectTab_PushGlyph+'"!push!')
+        val = val.replaceAll(gInjectTab_DrawGlyph+'"', gInjectTab_DrawGlyph+'"!draw!')
 
       }
       else{
 
         // Use regular expressions for Gary Coover
-        val = val.replace(/("_ ;\d+"|"\^\d+"|"_ ;\d+a"|"\^\d+a")/g, "$1!mark1!")
-        val = val.replace(/("__;\d+"|"___;\d+"|"__;\d+a"|"___;\d+a"|"\^_;\d+"|"\^__;\d+"|"\^_;\d+a"|"\^__;\d+a")/g, "$1!mark2!")
+        val = val.replace(/("_ ;\d+"|"\^\d+"|"_ ;\d+a"|"\^\d+a")/g, "$1!push!")
+        val = val.replace(/("__;\d+"|"___;\d+"|"__;\d+a"|"___;\d+a"|"\^_;\d+"|"\^__;\d+"|"\^_;\d+a"|"\^__;\d+a")/g, "$1!draw!")
 
       }
       break;
 
     case 1: // Box
-      val = val.replaceAll(gInjectTab_PushGlyph+'"', gInjectTab_PushGlyph+'"!mark1!')
-      val = val.replaceAll(gInjectTab_DrawGlyph+'"', gInjectTab_DrawGlyph+'"!mark2!')
+      val = val.replaceAll(gInjectTab_PushGlyph+'"', gInjectTab_PushGlyph+'"!push!')
+      val = val.replaceAll(gInjectTab_DrawGlyph+'"', gInjectTab_DrawGlyph+'"!draw!')
 
     break;
   }
 
   // Strip any existing tab color css
-  val = val.replace(/^% Begin tab color custom CSS[\s\S]*?^% End tab color custom CSS.*(\r?\n)+/gm, '');
+  val = val.replace(/^% Begin tab color CSS[\s\S]*?^% End tab color CSS.*(\r?\n)+/gm, '');
 
-  var theCSS = "% Begin tab color custom CSS\n%%begincss\n.mark1 {fill:#C00000}\n.mark2 {fill:#0000C0}\n%%endcss\n% End tab color custom CSS\n\n";
+  var theCSS = "% Begin tab color CSS\n%%begincss\n.push {fill:#C00000}\n.draw {fill:#0000C0}\n%%endcss\n% End tab color CSS\n\n";
 
   val = theCSS + val;
 
