@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2606_080425_0930";
+var gVersionNumber="2607_080425_1030";
 
 var gMIDIInitStillWaiting = false;
 
@@ -12633,7 +12633,10 @@ function StripTabOne(theNotes){
 	    // If line starts with one of the forbidden prefixes, skip replacement
 	    if (/^[XTMKLQWZRCAOPNGHBDFSIV]:/.test(line) || /^%/.test(line)){
 	    	return line;
-	    } else {		
+	    } else {	
+        // Strip push and draw annotations as well
+        line = line.replaceAll("!push!","");
+        line = line.replaceAll("!draw!","");	
 	    	return line.replace(searchRegExp,match_callback);
 		}
 	})
