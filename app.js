@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2604_080325_2000";
+var gVersionNumber="2605_080325_2030";
 
 var gMIDIInitStillWaiting = false;
 
@@ -41907,10 +41907,14 @@ function InjectHarmonicaTabColors(val){
   if (!gHarmonicaStacking){
     val = val.replace(/(\d+);+\+/g, '+$1');
     val = val.replace(/(\d+);+\-/g, '-$1');
+    val = val.replace(/(\d+)''';+\+/g, '+$1\'\'\'');
+    val = val.replace(/(\d+)''';+\-/g, '-$1\'\'\'');
     val = val.replace(/(\d+)'';+\+/g, '+$1\'\'');
     val = val.replace(/(\d+)'';+\-/g, '-$1\'\'');
     val = val.replace(/(\d+)';+\+/g, '+$1\'');
     val = val.replace(/(\d+)';+\-/g, '-$1\'');
+    val = val.replace(/(\d+)o';+\+/g, '+$1o\'');
+    val = val.replace(/(\d+)o';+\-/g, '-$1o\'');
     val = val.replace(/(\d+)o;+\+/g, '+$1o');
     val = val.replace(/(\d+)o;+\-/g, '-$1o');
 
