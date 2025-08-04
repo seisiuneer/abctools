@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2605_080325_2030";
+var gVersionNumber="2606_080425_0930";
 
 var gMIDIInitStillWaiting = false;
 
@@ -41905,18 +41905,38 @@ function InjectHarmonicaTabColors(val){
   }
 
   if (!gHarmonicaStacking){
-    val = val.replace(/(\d+);+\+/g, '+$1');
-    val = val.replace(/(\d+);+\-/g, '-$1');
-    val = val.replace(/(\d+)''';+\+/g, '+$1\'\'\'');
-    val = val.replace(/(\d+)''';+\-/g, '-$1\'\'\'');
-    val = val.replace(/(\d+)'';+\+/g, '+$1\'\'');
-    val = val.replace(/(\d+)'';+\-/g, '-$1\'\'');
-    val = val.replace(/(\d+)';+\+/g, '+$1\'');
-    val = val.replace(/(\d+)';+\-/g, '-$1\'');
-    val = val.replace(/(\d+)o';+\+/g, '+$1o\'');
-    val = val.replace(/(\d+)o';+\-/g, '-$1o\'');
-    val = val.replace(/(\d+)o;+\+/g, '+$1o');
-    val = val.replace(/(\d+)o;+\-/g, '-$1o');
+
+    const suffixes = [
+      "",       // e.g. "6;+"
+      "'''",    // e.g. "6''';+"
+      "''",     // e.g. "6'';+"
+      "'",      // e.g. "6';+"
+      "o'",     // e.g. "6o';+"
+      "o"       // e.g. "6o;+"
+    ];
+
+    ["+","-"].forEach(sign => {
+      suffixes.forEach(suffix => {
+        const escapedSuffix = suffix.replace(/([\\^$*+?.()|[\]{}])/g, '\\$1'); // Escape special chars
+        const regex = new RegExp(`(\\d+)${escapedSuffix};+\\${sign}`, 'g');
+        const replacement = `${sign}$1${suffix}`;
+        val = val.replace(regex, replacement);
+      });
+    });
+
+    // Original replacement list
+    // val = val.replace(/(\d+);+\+/g, '+$1');
+    // val = val.replace(/(\d+);+\-/g, '-$1');
+    // val = val.replace(/(\d+)''';+\+/g, '+$1\'\'\'');
+    // val = val.replace(/(\d+)''';+\-/g, '-$1\'\'\'');
+    // val = val.replace(/(\d+)'';+\+/g, '+$1\'\'');
+    // val = val.replace(/(\d+)'';+\-/g, '-$1\'\'');
+    // val = val.replace(/(\d+)';+\+/g, '+$1\'');
+    // val = val.replace(/(\d+)';+\-/g, '-$1\'');
+    // val = val.replace(/(\d+)o';+\+/g, '+$1o\'');
+    // val = val.replace(/(\d+)o';+\-/g, '-$1o\'');
+    // val = val.replace(/(\d+)o;+\+/g, '+$1o');
+    // val = val.replace(/(\d+)o;+\-/g, '-$1o');
 
   }
 
