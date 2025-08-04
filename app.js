@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2603_080325_1900";
+var gVersionNumber="2604_080325_2000";
 
 var gMIDIInitStillWaiting = false;
 
@@ -41905,7 +41905,15 @@ function InjectHarmonicaTabColors(val){
   }
 
   if (!gHarmonicaStacking){
-    val = val.replaceAll(';', '');
+    val = val.replace(/(\d+);+\+/g, '+$1');
+    val = val.replace(/(\d+);+\-/g, '-$1');
+    val = val.replace(/(\d+)'';+\+/g, '+$1\'\'');
+    val = val.replace(/(\d+)'';+\-/g, '-$1\'\'');
+    val = val.replace(/(\d+)';+\+/g, '+$1\'');
+    val = val.replace(/(\d+)';+\-/g, '-$1\'');
+    val = val.replace(/(\d+)o;+\+/g, '+$1o');
+    val = val.replace(/(\d+)o;+\-/g, '-$1o');
+
   }
 
   var theCSS = "% Begin tab color CSS\n%%begincss\n.push {fill:#C00000}\n.draw {fill:#0000C0}\n%%endcss\n% End tab color CSS\n\n";
