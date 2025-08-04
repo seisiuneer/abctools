@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2602_080325_1600";
+var gVersionNumber="2603_080325_1900";
 
 var gMIDIInitStillWaiting = false;
 
@@ -26708,7 +26708,6 @@ function DoInjectHarmonicaTab(){
 	  {name: "Octave shift:", id: "configure_harmonica_octave", type:"select", options:harmonica_octaves, cssClass:"configure_harmonica_select"}, 
 	  {name: "    Include + for blow notes in the tablature", id: "configure_harmonica_plussign", type:"checkbox", cssClass:"configure_harmonica_settings_form_text"},
 	  {name: "    Blow/Draw indications under the hole number (unchecked is before hole number)", id: "configure_harmonica_stacking", type:"checkbox", cssClass:"configure_harmonica_settings_form_text2"},
-    {html: '<p style="margin-top:12px;margin-bottom:12px;font-size:12pt;line-height:12pt;font-family:helvetica">The following option overrides the two checkboxes above.<br/><br/>If checked, includes + for blow notes and Blow/Draw indications under the hole number:</p>'},   
     {name: "    Color-code Blow and Draw", id: "configure_harmonica_tab_colors", type:"checkbox", cssClass:"configure_harmonica_settings_form_text2"},
     {html: '<p style="text-align: center; font-size:4pt;font-family:helvetica;">&nbsp;</p>'},
 	  {html: '<p style="text-align:center;margin-top:18px;"><input id="configure_harmonica_custom" class="btn btn-subdialog configure_harmonica_custom" onclick="EditCustomHarmonica()" type="button" value="Edit Custom Harmonica Tuning Tab" title="Edit the custom harmonica tuning tab symbols for each scale note"></p>'},
@@ -41900,6 +41899,14 @@ function InjectHarmonicaTabColors(val){
   // Inject push and draw decorations
   val = val.replaceAll(';+"', ';+"!push!');
   val = val.replaceAll(';-"', ';-"!draw!');
+
+  if (!gHarmonicaPlusSign){
+    val = val.replaceAll(';+"', ';"');
+  }
+
+  if (!gHarmonicaStacking){
+    val = val.replaceAll(';', '');
+  }
 
   var theCSS = "% Begin tab color CSS\n%%begincss\n.push {fill:#C00000}\n.draw {fill:#0000C0}\n%%endcss\n% End tab color CSS\n\n";
 
