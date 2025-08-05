@@ -4399,7 +4399,7 @@ function generateWebsite(){
     modal_msg  += '<p style="font-size:18px;line-height:28px;">For all websites, clicking a tune will open the tune in a new browser tab.</p>';
     modal_msg  += '<p style="font-size:18px;line-height:28px;">Click <strong>Export Basic Tune List Website</strong> to export a technically simple website with a list of all tunes in the ABC vertically down the center of the page. Playback instruments may be optionally specified.</p>';
 
-    if (((format != "whistle") && (format != "recorder")) && (isPureDesktopBrowser())){
+    if (isPureDesktopBrowser()){
         modal_msg  += '<p style="font-size:18px;line-height:28px;">Click <strong>Export Tune Image Gallery Website</strong> to export a website with tune notation images of all the tunes in the ABC vertically down the center of the page. Playback instruments may be optionally specified. Print the website to get a PDF tunebook.</p>';
 
         modal_msg  += '<p style="font-size:18px;line-height:28px;">Click <strong>Export Tune Image Lightbox Website</strong> to export a website with tune notation images of all the tunes in the ABC in a lightbox with navigation controls. Playback instruments may be optionally specified. Print the website to get a PDF tunebook.</p>';
@@ -4409,7 +4409,7 @@ function generateWebsite(){
 
     modal_msg  += '<p style="text-align:center;"><input id="websitesimple" class="advancedcontrols btn btn-websiteexport" onclick="generateWebsiteSimple()" type="button" value="Export Basic Tune List Website" title="Generates a website that has a list of tunes that open in a new browser tab when clicked."></p>';
     
-    if (((format != "whistle") && (format != "recorder")) && (isPureDesktopBrowser())){
+    if (isPureDesktopBrowser()){
 
         modal_msg  += '<p style="text-align:center; margin-top:24px;"><input id="websiteimages" class="advancedcontrols btn btn-websiteexport" onclick="generateWebsiteImageGallery()" type="button" value="Export Tune Image Gallery Website" title="Generates a website that has the images of the tunes that open for playback in a new browser tab when clicked">';
 
