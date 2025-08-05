@@ -5732,6 +5732,53 @@
                 <p class="code">% Custom CSS for making the tremolo slashes bolder<br/>%%begincss<br/>path[data-name="flags.ugrace"] {<br/>  stroke: black;<br/>}<br/>%%endcss</p>
                 <p>Using the Chrome developer tools, you can right click on any item in the notation and select "Inspect" to examine any CSS classes or data-name present that can then be used as a target CSS rule.</p>
                 <hr>
+                <p style="text-align:center"><strong>Custom CSS for Each Tune in a Tunebook</strong></p>
+                <p>Even though there is one shared custom CSS block for all the tunes, through creative use of CSS selectors it is possible to target classes in individual tunes.</p>
+                <p>abcjs includes a unique aria-label attribute in the SVG group for each line of the tune that includes the tune name, for example:</p>
+                <p class="code">aria-label="Sheet Music for &quot;The Kesh&quot; section 1"</p>
+                <p>It is possible to target any SVG element that contains a specific string in the aria-label attribute.</p>
+                <p>For example, this custom CSS targets each line of two different tunes, Cooley's and Alexanders so that the lines have different colors:</p>
+                <p class="code">%<br/>
+                    % Custom abcjs CSS in the ABC file header before the tunes:<br/>
+                    %<br/>
+                    % This CSS demonstrates targetting individual tunes<br/>
+                    % with their own custom CSS by tune name in<br/>
+                    % the aria-label attribute<br/>
+                    % <br/>
+                    %%begincss<br/>
+                    /*<br/>
+                    Make each line of Cooley's notation its own color<br/>
+                    */<br/>
+                    svg[aria-label*="Cooley's"] .abcjs-l0 {<br/>
+                    color: red;<br/>
+                    }<br/>
+                    svg[aria-label*="Cooley's"] .abcjs-l1 {<br/>
+                    color: green;<br/>
+                    }<br/>
+                    svg[aria-label*="Cooley's"] .abcjs-l2 {<br/>
+                    color: blue;<br/>
+                    }<br/>
+                    svg[aria-label*="Cooley's"] .abcjs-l3 {<br/>
+                    color: purple;<br/>
+                    }<br/>
+                    /*<br/>
+                    Make each line of Alexander's notation its own color<br/>
+                    */<br/>
+                    svg[aria-label*="Alexander's"] .abcjs-l0 {<br/>
+                    color: blue;<br/>
+                    }<br/>
+                    svg[aria-label*="Alexander's"] .abcjs-l1 {<br/>
+                    color: red;<br/>
+                    }<br/>
+                    svg[aria-label*="Alexander's"] .abcjs-l2 {<br/>
+                    color: purple;<br/>
+                    }<br/>
+                    svg[aria-label*="Alexander's"] .abcjs-l3 {<br/>
+                    color: green;<br/>
+                    }<br/>
+                %%endcss</p>
+                <hr>
+                <p style="text-align:center"><strong>Modifying the Look of the Tool Using Custom CSS</strong></p>
                 <p>You can even use custom CSS in the ABC file header to change the look of the tool!</p>
                 <p>For example this custom CSS changes the ABC editor text color to blue and its background color to a light green:</p>
                 <p class="code">% Change the editor text and background color<br/>%%begincss<br/>#abc {color:#0000FF;background-color:#DDFFDD !important;}<br/>%%endcss</p>
