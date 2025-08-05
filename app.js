@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2609_080525_1230";
+var gVersionNumber="2610_080525_1600";
 
 var gMIDIInitStillWaiting = false;
 
@@ -24389,28 +24389,60 @@ function PrepareRecorderFont(){
 
 }
 
+// 
+// Inject custom CSS for image export
 //
-// Inject required CSS into SVG for tin whistle SVG export
+
 //
-function injectWhistleSVGCSS(src,isJPEG){
+// Inject required CSS into SVG for standard tab styles
+//
+function injectSVGCSS(src,isJPEG){
+
+  var customCSS =  Array.from(document.querySelectorAll('style[data-aggregate-css="true"]'))
+  .map(style => style.textContent)
+  .join('\n');
+
   if (isJPEG){
-    src = src.replace("<style/>","<style/><style>"+gWhistleFont+".whistle {font-family: 'TinWhistleFingering';font-size: 50px;}.hiddentabline {display:none;}</style>");
+    src = src.replace("<style/>","<style/><style>"+customCSS+"</style>");
   }
   else{
-    src = src.replace("<style></style>","<style>"+gWhistleFont+".whistle {font-family: 'TinWhistleFingering';font-size: 50px;}.hiddentabline {display:none;}</style>");
+    src = src.replace("<style></style>","<style>"+customCSS+"</style>");
   }
   return src;
 }
 
 //
-// Inject required CSS into SVG for recorder SVG export
+// Inject required CSS into SVG for tin whistle image export
 //
-function injectRecorderSVGCSS(src,isJPEG){
+function injectWhistleSVGCSS(src,isJPEG){
+
+  var customCSS =  Array.from(document.querySelectorAll('style[data-aggregate-css="true"]'))
+  .map(style => style.textContent)
+  .join('\n');
+
   if (isJPEG){
-    src = src.replace("<style/>","<style/><style>"+gRecorderFont+".recorder {font-family: 'RecorderFingering';font-size: 50px;}.hiddentabline {display:none;}</style>");
+    src = src.replace("<style/>","<style/><style>"+gWhistleFont+".whistle {font-family: 'TinWhistleFingering';font-size: 50px;}.hiddentabline {display:none;}"+customCSS+"</style>");
   }
   else{
-    src = src.replace("<style></style>","<style>"+gRecorderFont+".recorder {font-family: 'RecorderFingering';font-size: 50px;}.hiddentabline {display:none;}</style>");
+    src = src.replace("<style></style>","<style>"+gWhistleFont+".whistle {font-family: 'TinWhistleFingering';font-size: 50px;}.hiddentabline {display:none;}"+customCSS+"</style>");
+  }
+  return src;
+}
+
+//
+// Inject required CSS into SVG for recorder image export
+//
+function injectRecorderSVGCSS(src,isJPEG){
+
+  var customCSS =  Array.from(document.querySelectorAll('style[data-aggregate-css="true"]'))
+  .map(style => style.textContent)
+  .join('\n');
+
+  if (isJPEG){
+    src = src.replace("<style/>","<style/><style>"+gRecorderFont+".recorder {font-family: 'RecorderFingering';font-size: 50px;}.hiddentabline {display:none;}"+customCSS+"</style>");
+  }
+  else{
+    src = src.replace("<style></style>","<style>"+gRecorderFont+".recorder {font-family: 'RecorderFingering';font-size: 50px;}.hiddentabline {display:none;}"+customCSS+"</style>");
   }
   return src;
 }
@@ -24419,11 +24451,16 @@ function injectRecorderSVGCSS(src,isJPEG){
 // Inject required CSS into SVG for note name SVG export
 //
 function injectNoteNamesSVGCSS(src,isJPEG){
+  
+  var customCSS =  Array.from(document.querySelectorAll('style[data-aggregate-css="true"]'))
+  .map(style => style.textContent)
+  .join('\n');
+
   if (isJPEG){
-    src = src.replace("<style/>","<style/><style>.hiddentabline {display:none;}</style>");
+    src = src.replace("<style/>","<style/><style>.hiddentabline {display:none;}"+customCSS+"</style>");
   }
   else{
-    src = src.replace("<style></style>","<style>.hiddentabline {display:none;}</style>");
+    src = src.replace("<style></style>","<style>.hiddentabline {display:none;}"+customCSS+"</style>");
   }
   return src;
 }
@@ -28365,6 +28402,9 @@ function DownloadSVG(callback,val){
   if (gCurrentTab == 'notenames'){
     svgData = injectNoteNamesSVGCSS(svgData,false);
   }
+  else{
+    svgData = injectSVGCSS(svgData,false);
+  }
 
   var preface = '<?xml version="1.0" standalone="no"?>\r\n';
   var svgBlob = new Blob([preface, svgData], {type:"image/svg+xml;charset=utf-8"});
@@ -28533,6 +28573,9 @@ function DownloadJPEG(callback, val){
   if (gCurrentTab == 'notenames'){
     svgData = injectNoteNamesSVGCSS(svgData,true);
   }
+  else{
+    svgData = injectSVGCSS(svgData,true);
+  }
 
 	img.setAttribute( "src", "data:image/svg+xml;base64," + btoa(unescape(encodeURIComponent(svgData))) );
 
@@ -28698,6 +28741,9 @@ function DownloadPNG(callback, val){
   else
   if (gCurrentTab == 'notenames'){
     svgData = injectNoteNamesSVGCSS(svgData,true);
+  }
+  else{
+    svgData = injectSVGCSS(svgData,true);
   }
 
 	img.setAttribute( "src", "data:image/svg+xml;base64," + btoa(unescape(encodeURIComponent(svgData))) );
