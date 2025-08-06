@@ -5370,15 +5370,16 @@ var MDTablatureGenerator = function (theABC){
 
                 var thisGlyph = glyph_map_cross_string_dad[note];
 
-                if (gMDulcimerUseDashForOpenString){
-                    thisGlyph = thisGlyph.replaceAll(" ","-");
-                }
-
                 if (!thisGlyph){
                     return "x;x;x";
                 }
-             
+
+                if (gMDulcimerUseDashForOpenString){
+                    thisGlyph = thisGlyph.replaceAll(" ","-");
+                }
+            
                 return thisGlyph;
+                
                 break;
 
             case 2:
@@ -5492,6 +5493,7 @@ var MDTablatureGenerator = function (theABC){
                 }
              
                 return thisGlyph;
+
                 break; 
 
             case 4:
