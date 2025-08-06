@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2611_080625_0900";
+var gVersionNumber="2612_080625_1030";
 
 var gMIDIInitStillWaiting = false;
 
@@ -950,6 +950,7 @@ function removeABCTuneHeaders(abcTune) {
 	var theLines = abcTune.split("\n");
 
 	var insideTextBlock = false;
+  var insideCSSBlock = false;
 	var keepTesting = true;
 
 	for (var j = 0; j < theLines.length; ++j) {
@@ -958,6 +959,11 @@ function removeABCTuneHeaders(abcTune) {
 		var doSkip = false;
 
 		if (keepTesting) {
+
+      // Skip blank lines
+      if (line == ""){
+        continue;
+      }
 
 			// Handle %%begintext ... %%endtext
 			if (line.startsWith("%%begintext")) {
@@ -973,6 +979,21 @@ function removeABCTuneHeaders(abcTune) {
 			if (insideTextBlock) {
 				continue; // Skip all lines within text block
 			}
+
+      // Handle %%begincss ... %%endcss
+      if (line.startsWith("%%begincss")) {
+        insideCSSBlock = true;
+        continue; // Skip this line
+      }
+
+      if (line.startsWith("%%endcss")) {
+        insideCSSBlock = false;
+        continue; // Skip this line
+      }
+
+      if (insideCSSBlock) {
+        continue; // Skip all lines within css block
+      }
 
 			// Skip comment lines
 			if (theChars[0] === "%") {
@@ -12378,7 +12399,7 @@ function StripTextAnnotationsOne(theNotes){
 	theNotes = theNotes.replace(searchRegExp, "");
 
 	// Strip out %%begintext / %%endtext blocks	
-  	theNotes =  theNotes.replace(/^%%begintext[\s\S]*?^%%endtext.*(\r?\n)?/gm, '');
+  theNotes =  theNotes.replace(/^%%begintext[\s\S]*?^%%endtext.*(\r?\n)?/gm, '');
 
 	return theNotes;
 
@@ -20336,11 +20357,13 @@ function InjectStringBelowTuneHeader(theTune, theString) {
 	var firstLine;
 	var bGotNotes = false;
 	var insideTextBlock = false;
+  var insideCSSBlock = false;
 
 	for (var i = 0; i < nLines; ++i) {
 
 		firstLine = theLines[i].trim();
 
+    // Handle %%begintext ... %%endtext
 		if (firstLine.startsWith("%%begintext")) {
 			insideTextBlock = true;
 			continue;
@@ -20351,9 +20374,20 @@ function InjectStringBelowTuneHeader(theTune, theString) {
 			continue;
 		}
 
-		if (insideTextBlock || firstLine.startsWith("%") || firstLine === "") {
-			continue;
-		}
+     // Handle %%begincss ... %%endcss
+    if (firstLine.startsWith("%%begincss")) {
+      insideCSSBlock = true;
+      continue;
+    }
+
+    if (firstLine.startsWith("%%endtext")) {
+      insideCSSBlock = false;
+      continue;
+    }
+
+    if (insideTextBlock || insideCSSBlock || firstLine.startsWith("%") || firstLine === "" || firstLine.startsWith("X:")) {
+      continue;
+    }
 
 		// Found the first valid line of notes
 		bGotNotes = true;
