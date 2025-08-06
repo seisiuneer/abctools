@@ -348,7 +348,7 @@
         display: inline-block; /* This enables transition to work in Safari */
         }
         
-        /* Rotate caret when <details> is open */
+        /* Rotate caret when details is open */
         .sidebar details[open] summary::after {
         transform: rotate(90deg);
         }
@@ -5704,8 +5704,21 @@
                 <p class="code">%%begincss<br/>.abcjs-l0 {color:red}<br/> .abcjs-l1 {color:green}<br/> .abcjs-l2 {color:blue}<br/> .abcjs-l3 {color:purple} <br/>%%endcss</p>
                 <p><strong>Example #4</strong> - Mark individual notes with colors using !mark!, !mark1!, !mark2!, etc. added before the notes in the ABC:</p>
                 <p class="code">%%begincss<br/> .mark {fill:red}<br/> .mark1 {fill:blue}<br/> .mark2 {fill:green}<br/> .mark3 {fill:brown}<br/> .mark4 {fill:olive}<br/> .mark5 {fill:aqua}<br/> .mark6 {fill:royalblue}<br/> .mark7 {fill:purple}<br/> .mark8 {fill:darkgrey}<br/> .mark9 {fill:tomato}<br/> .mark10 {fill:salmon}<br/> %%endcss</p>
-                <p><strong>Example #5</strong> - Put a moosehead image behind the notation container:</p>
-                <p class="code">%%begincss<br/>.abcjs-container::before {<br/> content: "";<br/> position: absolute;<br/> inset: 0;<br/> background-image: url("https://michaeleskin.com/img/moose-head-session.jpg");<br/> background-size:  100%;<br/> background-repeat: no-repeat;<br/> opacity: 0.1; <br/> z-index: 0;<br/> }<br/> %%endcss</p>
+                <p><strong>Example #5</strong> - Make the tin whistle tab larger and blue, also move the playback cursor down a bit to cover it entirely during playback:</p>
+                <p class="code">%%begincss<br/>
+                .tab-number {transform:translateY(20px);color:blue;}<br/>
+                .whistle {font-size:75px;}<br/>
+                .abcjs-cursor {transform: translate(7px, 7px);}<br/>
+                %%endcss</p>
+                <p><strong>Example #6</strong> - Dim the notation and make the string instrument tab numbers larger:</p>
+                <p class="code">%%begincss<br/>
+                .abcjs-beam-elem {fill:lightgray;}<br/>
+                .abcjs-note {fill:lightgray;}<br/>
+                .abcjs-chord {fill:black;}<br/>
+                .tab-number {fill:black;font-size:18px;}<br/>
+                %%endcss</p>
+                <p><strong>Example #7</strong> - Put a moosehead image behind the notation container:</p>
+                <p class="code">%%begincss<br/>.abcjs-container::before {<br/> content: "";<br/> position: absolute;<br/> inset: 0;<br/> background-image: url("https://michaeleskin.com/img/moose-head-session.jpg");<br/> background-size:  100%;<br/> background-repeat: no-repeat;<br/> opacity: 0.1; <br/> z-index: 0;<br/> }<br/>%%endcss</p>
                 <p>The recommended practice is to add the %%begincss / %%endcss block in the ABC file header before all tunes where it will apply to all the ABC tunes in the tunebook.</p>
                 <p>If you edit custom css in a %begincss / %%endcss block in the ABC file header, you may need to force a full redraw of the tunes to see the results.</p>
                 <p>This is easily accomplished by clicking <strong>Snapshot</strong> and then <strong>Restore</strong>.</p>
