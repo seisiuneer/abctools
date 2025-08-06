@@ -1815,7 +1815,7 @@
                 <p><strong>Mandolin</strong> - Shows standard notation and tablature for Mandolin.</p>
                 <hr>
                 <p><strong>GDAD</strong> - Shows standard notation and tablature for GDAD-tuned Irish Bouzouki.</p>
-                <p>This can be changed to <strong>CGDA</strong> for CGDA-tuned Mandola or Mandocello in the tool's Settings dialog.</strong></p>
+                <p>This can be changed to <strong>CGDA</strong> for CGDA-tuned Mandola or Mandocello in the tool's Settings dialog.</p>
                 <hr>
                 <p><strong>CGDAE</strong> - Shows standard notation and tablature for 5-string CGDAE-tuned Fiddle.</p>
                 <p>This can be changed to <strong>DGDAE</strong> for 5-string DGDAE-tuned Bouzouki in the tool's Settings dialog.</p>
@@ -1831,10 +1831,10 @@
                 <p>Note: For notes that go below D on of the whistle (lowest note supported is the G below middle-C), the suggested "folded" octave-up fingerings are shown.</p>
                 <p>It is possible to show whistle tablature for whistles in keys other than D.</p>
                 <p>See the <a style="text-decoration:none;" href="#whistletabkey">Changing the Tin Whistle Tablature Key and Octave</a> section below for more details.</p>
-                <p>This can be changed to <strong>Recorder</strong> for Recorder fingering tablature in the tool's Settings dialog.</strong></p>
+                <p>This can be changed to <strong>Recorder</strong> for Recorder fingering tablature in the tool's Settings dialog.</p>
                 <hr>
                 <p><strong>Recorder</strong> - Shows standard notation and fingering tablature for Soprano Recorder in C.</p>
-                <p>This can be changed to <strong>Whistle</strong> for Tin Whistle in the key of D in the tool's Settings dialog.</strong></p>
+                <p>This can be changed to <strong>Whistle</strong> for Tin Whistle in the key of D in the tool's Settings dialog.</p>
                 <p>It is possible to show Recorder tablature for recorders in keys other than C.</p>
                 <p>By default, the tool uses Baroque recorder fingerings.</p>
                 <p>In the <strong>Settings</strong>, it is possible to change the tab to use German recorder fingerings instead of Baroque recorder.</p>
@@ -5706,16 +5706,16 @@
                 <p class="code">%%begincss<br/> .mark {fill:red}<br/> .mark1 {fill:blue}<br/> .mark2 {fill:green}<br/> .mark3 {fill:brown}<br/> .mark4 {fill:olive}<br/> .mark5 {fill:aqua}<br/> .mark6 {fill:royalblue}<br/> .mark7 {fill:purple}<br/> .mark8 {fill:darkgrey}<br/> .mark9 {fill:tomato}<br/> .mark10 {fill:salmon}<br/> %%endcss</p>
                 <p><strong>Example #5</strong> - Make the tin whistle tab larger and blue, also move the playback cursor down a bit to cover it entirely during playback:</p>
                 <p class="code">%%begincss<br/>
-                .tab-number {transform:translateY(20px);color:blue;}<br/>
-                .whistle {font-size:75px;}<br/>
-                .abcjs-cursor {transform: translate(7px, 7px);}<br/>
+                    .tab-number {transform:translateY(20px);color:blue;}<br/>
+                    .whistle {font-size:75px;}<br/>
+                    .abcjs-cursor {transform: translate(7px, 7px);}<br/>
                 %%endcss</p>
                 <p><strong>Example #6</strong> - Dim the notation and make the string instrument tab numbers larger:</p>
                 <p class="code">%%begincss<br/>
-                .abcjs-beam-elem {fill:lightgray;}<br/>
-                .abcjs-note {fill:lightgray;}<br/>
-                .abcjs-chord {fill:black;}<br/>
-                .tab-number {fill:black;font-size:18px;}<br/>
+                    .abcjs-beam-elem {fill:lightgray;}<br/>
+                    .abcjs-note {fill:lightgray;}<br/>
+                    .abcjs-chord {fill:black;}<br/>
+                    .tab-number {fill:black;font-size:18px;}<br/>
                 %%endcss</p>
                 <p><strong>Example #7</strong> - Put a moosehead image behind the notation container:</p>
                 <p class="code">%%begincss<br/>.abcjs-container::before {<br/> content: "";<br/> position: absolute;<br/> inset: 0;<br/> background-image: url("https://michaeleskin.com/img/moose-head-session.jpg");<br/> background-size:  100%;<br/> background-repeat: no-repeat;<br/> opacity: 0.1; <br/> z-index: 0;<br/> }<br/>%%endcss</p>
@@ -6206,7 +6206,7 @@
                 <hr>
                 <p><strong>Playing tunes offline with your preferred instruments (requires you to opt-in and be aware of the notes database):</strong></p>
                 <p>When you open a tune in the Player, the notes and reverb settings used in the tune are automatically added to the instrument notes and reverb settings database.</p>
-                <p>It is possible to play tunes offline using the notes and reverb settings stored in the instrument notes and reverb settings database but this is feature you have to opt-in to by checking <strong><a href="#cached_instruments">Allow instrument notes and reverb settings database to be used offline</strong></a> on the <strong>Settings</strong> dialog.</p>
+                <p>It is possible to play tunes offline using the notes and reverb settings stored in the instrument notes and reverb settings database but this is feature you have to opt-in to by checking <strong><a href="#cached_instruments">Allow instrument notes and reverb settings database to be used offline</a></strong> on the <strong>Settings</strong> dialog.</p>
                 <p>Full details on offline playback using stored notes and managing the offline notes database are in these sections of the User Guide:</p>
                 <p><strong><a href="#cached_instruments">Allow instrument notes and reverb settings database to be used offline</a></strong></p>
                 <p><strong><a href="#manage_databases">Managing Notes, Reverb, and Tune Search Databases for Offline Use</a></strong></p>
@@ -6350,185 +6350,184 @@
             
         </div>
         
-    </div>
+        
+    </body>
     
-</body>
-
-<script>
-
-//
-// Expand the table of contents
-//
-function ExpandAll() {
-
-var i;
-
-var acc = document.getElementsByClassName("accordion");
-
-for (i = 0; i < acc.length; i++) {
-var thisAcc = acc[i];
-thisAcc.classList.add("active");
-}
-
-var thePanels = document.getElementsByClassName("tocpanel");
-
-for (i = 0; i < thePanels.length; i++) {
-var thisPanel = thePanels[i];
-thisPanel.style.display = "block";
-}
-}
-
-//
-// Collapse the table of contents
-//
-function CollapseAll() {
-
-var i;
-
-var acc = document.getElementsByClassName("accordion");
-
-for (i = 0; i < acc.length; i++) {
-var thisAcc = acc[i];
-thisAcc.classList.remove("active");
-}
-
-var thePanels = document.getElementsByClassName("tocpanel");
-
-for (i = 0; i < thePanels.length; i++) {
-var thisPanel = thePanels[i];
-thisPanel.style.display = "none";
-}
-}
-
-//
-// Expand the sidebar table of contents
-//
-function SidebarExpandAll() {
-
-document.querySelectorAll('details').forEach(detail => {
-detail.open = true;
-});
-
-}
-
-//
-// Collapse the sidebar table of contents
-//
-function SidebarCollapseAll() {
-
-document.querySelectorAll('details').forEach(detail => {
-detail.open = false;
-});
-
-}
-
-//
-// Are we on Android?
-//
-function isAndroid(){
-if (/Android|SamsungBrowser/i.test(navigator.userAgent)){
-return true;
-}
-else{
-return false;
-}
-}
-
-//
-// Are we on iOS?
-//
-function isIOS() {
-
-if (/iPad|iPhone|iPod/.test(navigator.platform)) {
-return true;
-} else {
-return navigator.maxTouchPoints &&
-navigator.maxTouchPoints > 2 &&
-/MacIntel/.test(navigator.platform);
-}
-}
-
-function DoStartup() {
-
-//
-// iOS Styling adaptation
-//
-
-var gIsIOS = isIOS();
-var gIsAndroid = isAndroid();
-
-//gIsIOS = true; // FOOFOO Set true for mobile adaptation testing
-
-if (gIsIOS) {
-// Fix the title font
-var elem = document.getElementById("pagetitle");
-elem.size = 5;
-elem.style.fontFamily = "Helvetica";
-}
-
-if (gIsIOS || gIsAndroid) {
-// Hide the sidebar navigation on mobile
-elem = document.getElementById("sidebar");
-elem.style.display = "none";
-elem = document.getElementById("maindiv");
-elem.style.marginLeft = "0px";
-
-} else {
-// Hide the accordion navigation on desktop
-elem = document.getElementById("mobile_table_of_contents");
-elem.style.display = "none";
-}
-
-var acc = document.getElementsByClassName("accordion");
-var i;
-
-for (i = 0; i < acc.length; i++) {
-acc[i].addEventListener("click", function() {
-this.classList.toggle("active");
-var panel = this.nextElementSibling;
-if (panel.style.display === "block") {
-panel.style.display = "none";
-} else {
-panel.style.display = "block";
-}
-});
-
-}
-
-// Start with all topics collapsed
-if (gIsIOS || gIsAndroid) {
-CollapseAll();
-} else {
-SidebarCollapseAll();
-}
-}
-
-DoStartup();
-
-// If offline, hide all the YouTube videos and images
-function removeOfflineContent() {
-
-if (!navigator.onLine) {
-
-const iframes = document.querySelectorAll('iframe');
-
-iframes.forEach(iframe => iframe.remove());
-
-// Remove all the images
-var divs = document.querySelectorAll('div.image_holder');
-
-divs.forEach(div => div.remove());
-
-divs = document.querySelectorAll('div.image_holder_p');
-
-divs.forEach(div => div.remove());
-
-}
-}
-
-// Run the function on page load
-document.addEventListener('DOMContentLoaded', removeOfflineContent);
-
-</script>
-
+    <script>
+    
+    //
+    // Expand the table of contents
+    //
+    function ExpandAll() {
+    
+    var i;
+    
+    var acc = document.getElementsByClassName("accordion");
+    
+    for (i = 0; i < acc.length; i++) {
+    var thisAcc = acc[i];
+    thisAcc.classList.add("active");
+    }
+    
+    var thePanels = document.getElementsByClassName("tocpanel");
+    
+    for (i = 0; i < thePanels.length; i++) {
+    var thisPanel = thePanels[i];
+    thisPanel.style.display = "block";
+    }
+    }
+    
+    //
+    // Collapse the table of contents
+    //
+    function CollapseAll() {
+    
+    var i;
+    
+    var acc = document.getElementsByClassName("accordion");
+    
+    for (i = 0; i < acc.length; i++) {
+    var thisAcc = acc[i];
+    thisAcc.classList.remove("active");
+    }
+    
+    var thePanels = document.getElementsByClassName("tocpanel");
+    
+    for (i = 0; i < thePanels.length; i++) {
+    var thisPanel = thePanels[i];
+    thisPanel.style.display = "none";
+    }
+    }
+    
+    //
+    // Expand the sidebar table of contents
+    //
+    function SidebarExpandAll() {
+    
+    document.querySelectorAll('details').forEach(detail => {
+    detail.open = true;
+    });
+    
+    }
+    
+    //
+    // Collapse the sidebar table of contents
+    //
+    function SidebarCollapseAll() {
+    
+    document.querySelectorAll('details').forEach(detail => {
+    detail.open = false;
+    });
+    
+    }
+    
+    //
+    // Are we on Android?
+    //
+    function isAndroid(){
+    if (/Android|SamsungBrowser/i.test(navigator.userAgent)){
+    return true;
+    }
+    else{
+    return false;
+    }
+    }
+    
+    //
+    // Are we on iOS?
+    //
+    function isIOS() {
+    
+    if (/iPad|iPhone|iPod/.test(navigator.platform)) {
+    return true;
+    } else {
+    return navigator.maxTouchPoints &&
+    navigator.maxTouchPoints > 2 &&
+    /MacIntel/.test(navigator.platform);
+    }
+    }
+    
+    function DoStartup() {
+    
+    //
+    // iOS Styling adaptation
+    //
+    
+    var gIsIOS = isIOS();
+    var gIsAndroid = isAndroid();
+    
+    //gIsIOS = true; // FOOFOO Set true for mobile adaptation testing
+    
+    if (gIsIOS) {
+    // Fix the title font
+    var elem = document.getElementById("pagetitle");
+    elem.size = 5;
+    elem.style.fontFamily = "Helvetica";
+    }
+    
+    if (gIsIOS || gIsAndroid) {
+    // Hide the sidebar navigation on mobile
+    elem = document.getElementById("sidebar");
+    elem.style.display = "none";
+    elem = document.getElementById("maindiv");
+    elem.style.marginLeft = "0px";
+    
+    } else {
+    // Hide the accordion navigation on desktop
+    elem = document.getElementById("mobile_table_of_contents");
+    elem.style.display = "none";
+    }
+    
+    var acc = document.getElementsByClassName("accordion");
+    var i;
+    
+    for (i = 0; i < acc.length; i++) {
+    acc[i].addEventListener("click", function() {
+    this.classList.toggle("active");
+    var panel = this.nextElementSibling;
+    if (panel.style.display === "block") {
+    panel.style.display = "none";
+    } else {
+    panel.style.display = "block";
+    }
+    });
+    
+    }
+    
+    // Start with all topics collapsed
+    if (gIsIOS || gIsAndroid) {
+    CollapseAll();
+    } else {
+    SidebarCollapseAll();
+    }
+    }
+    
+    DoStartup();
+    
+    // If offline, hide all the YouTube videos and images
+    function removeOfflineContent() {
+    
+    if (!navigator.onLine) {
+    
+    const iframes = document.querySelectorAll('iframe');
+    
+    iframes.forEach(iframe => iframe.remove());
+    
+    // Remove all the images
+    var divs = document.querySelectorAll('div.image_holder');
+    
+    divs.forEach(div => div.remove());
+    
+    divs = document.querySelectorAll('div.image_holder_p');
+    
+    divs.forEach(div => div.remove());
+    
+    }
+    }
+    
+    // Run the function on page load
+    document.addEventListener('DOMContentLoaded', removeOfflineContent);
+    
+    </script>
+    
 </html>
