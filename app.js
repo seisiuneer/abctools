@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2614_080625_1400";
+var gVersionNumber="2615_080625_2300";
 
 var gMIDIInitStillWaiting = false;
 
@@ -26876,7 +26876,11 @@ function DoInjectHarmonicaTab(){
       if (gHarmonicaTabColors){
         val = InjectHarmonicaTabColors(val);
       }
-
+      else{
+        // Otherwise, clean up formatting
+        val = CleanHarmonicaTab(val);
+      }
+      
 			setABCEditorText(val);
 
 			// Set dirty
@@ -42087,25 +42091,27 @@ function InjectHarmonicaTabColors(val){
       });
     });
 
-    // Original replacement list
-    // val = val.replace(/(\d+);+\+/g, '+$1');
-    // val = val.replace(/(\d+);+\-/g, '-$1');
-    // val = val.replace(/(\d+)''';+\+/g, '+$1\'\'\'');
-    // val = val.replace(/(\d+)''';+\-/g, '-$1\'\'\'');
-    // val = val.replace(/(\d+)'';+\+/g, '+$1\'\'');
-    // val = val.replace(/(\d+)'';+\-/g, '-$1\'\'');
-    // val = val.replace(/(\d+)';+\+/g, '+$1\'');
-    // val = val.replace(/(\d+)';+\-/g, '-$1\'');
-    // val = val.replace(/(\d+)o';+\+/g, '+$1o\'');
-    // val = val.replace(/(\d+)o';+\-/g, '-$1o\'');
-    // val = val.replace(/(\d+)o;+\+/g, '+$1o');
-    // val = val.replace(/(\d+)o;+\-/g, '-$1o');
+    // Remove trailing semicolons
+    val = val.replaceAll(';"','"');
 
   }
 
   var theCSS = "% Begin tab color CSS\n%%begincss\n.push {fill:#C00000}\n.draw {fill:#0000C0}\n%%endcss\n% End tab color CSS\n\n";
 
   val = theCSS + val;
+
+  return val;
+
+}
+
+//
+// Clean the harmonica tab
+//
+function CleanHarmonicaTab(val){
+
+  if (gHarmonicaStacking){
+    val = val.replace(/"(\^[^"+-]*[^"+-])"/g, '"$1;"');
+  }
 
   return val;
 
