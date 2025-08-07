@@ -5785,7 +5785,15 @@
                 .whistle {fill:black;font-size:75px;}<br/>
                 %%endcss</p>        
                 <hr>
-                <p><strong>Example #8</strong> - Dim the notation and make the string instrument tab numbers larger:</p>
+                <p><strong>Example #8</strong> - For tab with color push and draw indications, vertically shift the push tab up relative to to the draw:</p>
+                <p class="code">%%begincss<br/>
+                .push {fill:#C00000}<br/>
+                .draw {fill:#0000C0}<br/>
+                .abcjs-annotation {transform:translateY(10px)}<br/>
+                .push .abcjs-annotation {transform:translateY(-5px)}<br/>
+                %%endcss</p>
+                <hr>
+                <p><strong>Example #9</strong> - Dim the notation and make the string instrument tab numbers larger:</p>
                 <p class="code">%%begincss<br/>
                     .abcjs-beam-elem {fill:lightgray;}<br/>
                     .abcjs-note {fill:lightgray;}<br/>
@@ -5793,15 +5801,15 @@
                     .tab-number {fill:black;font-size:18px;}<br/>
                 %%endcss</p>
                 <hr>
-                <p><strong>Example #9</strong> - Put a moosehead image behind the notation container:</p>
+                <p><strong>Example #10</strong> - Put a moosehead image behind the notation container:</p>
                 <p class="code">%%begincss<br/>.abcjs-container::before {<br/> content: "";<br/> position: absolute;<br/> inset: 0;<br/> background-image: url("https://michaeleskin.com/img/moose-head-session.jpg");<br/> background-size:  100%;<br/> background-repeat: no-repeat;<br/> opacity: 0.1; <br/> z-index: 0;<br/> }<br/>%%endcss</p>
                 <hr>
-                <p><strong>Example #10</strong> - Having background images appear on browser-native exported PDF files</p>
+                <p><strong>Example #11</strong> - Having background images appear on browser-native exported PDF files</p>
                 <p>Background images added via CSS can be exported via the native PDF exporter in most browsers if you enable "Print backgrounds" in the browser's native print dialog.</p>
                 <p>In this case, you need slightly more complicated CSS and a lighter image to have it work for multiple tunes:</p>
                 <p class="code">%%begincss .abcjs-container {<br/> position: relative;<br/> z-index: 0;<br/>background-image: url("https://michaeleskin.com/img/moose-head-session-light.jpg");<br/>background-size: 75%;<br/>background-repeat: no-repeat;<br/>background-position: center;<br/> }<br/> .abcjs-container svg {<br/> position: relative;<br/> z-index: 1;<br/> opacity: 1;<br/> }<br/> %%endcss</p>
                 <hr>
-                <p><strong>Example #11</strong> - Targetting notation elements that don't have an abcjs custom class</p>
+                <p><strong>Example #12</strong> - Targetting notation elements that don't have an abcjs custom class</p>
                 <p>Even if no abcjs custom class is available for an element in the notation, you can target some additional notation elements by data-name, for example, this CSS makes the slash lines used for tremolo thicker:</p>
                 <p class="code">% Custom CSS for making the tremolo slashes bolder<br/>%%begincss<br/>path[data-name="flags.ugrace"] {<br/>  stroke: black;<br/>}<br/>%%endcss</p>
                 <p>Using the Chrome developer tools, you can right click on any item in the notation and select "Inspect" to examine any CSS classes or data-name present that can then be used as a target CSS rule.</p>
