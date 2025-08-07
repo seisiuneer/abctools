@@ -294,6 +294,10 @@
         margin-top:24px;
         width:90%;
         }
+
+        .copy-btn {
+            display: none !important;
+        }
         
         }
         
@@ -377,6 +381,28 @@
         
         tbody tr:nth-child(odd) {
         background-color: #f9f9f9; /* Light grey rows */
+        }
+
+        p.code {
+          position: relative;
+          padding-right: 3em; /* space for the button */
+        }
+
+        .copy-btn {
+          position: absolute;
+          top: 0.2em;
+          right: 0.2em;
+          padding: 0.2em 0.5em;
+          font-size: 0.8em;
+          cursor: pointer;
+          background-color: black;
+          color: white;
+          border: 1px solid white;
+          border-radius: 4px;        
+        }
+
+        .copy-btn:hover {
+          background-color: #464;
         }
         
         </style>
@@ -6544,6 +6570,47 @@
     } else {
     SidebarCollapseAll();
     }
+
+    // Add a copy button to all the code blocks
+    document.querySelectorAll("p.code").forEach((p) => {
+
+        const btn = document.createElement("button");
+        btn.textContent = "Copy";
+        btn.className = "copy-btn";
+        
+        btn.addEventListener("click", () => {
+          let lines = [];
+          let currentLine = "";
+
+          p.childNodes.forEach(node => {
+            if (node.nodeType === Node.TEXT_NODE) {
+              currentLine += node.textContent;
+            } else if (node.nodeName === "BR") {
+              lines.push(currentLine.trim());
+              currentLine = "";
+            } else {
+              currentLine += node.textContent;
+            }
+          });
+
+          if (currentLine.trim() !== "") {
+            lines.push(currentLine.trim());
+          }
+
+          const cleanedText = lines.join("\n") + "\n";
+
+          navigator.clipboard.writeText(cleanedText).then(() => {
+            btn.textContent = "Copied!";
+            setTimeout(() => (btn.textContent = "Copy"), 1000);
+          }).catch(err => {
+            console.error("Copy failed", err);
+          });
+        });
+
+        p.style.position = "relative";
+        p.appendChild(btn);
+
+    });
     }
     
     DoStartup();
