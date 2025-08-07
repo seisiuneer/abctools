@@ -683,10 +683,15 @@
             <summary><h3>Printing Your Tunes Using the Browser's Built-in Print Feature</h3></summary>
             <a style="text-decoration:none;" href="#printing_your_tunes">Printing Your Tunes Using the Browser's Built-in Print Feature</a>
             </details>
+
+            <details>
+            <summary><h3>Adding Custom abcjs CSS Styling</h3></summary>
+            <a style="text-decoration:none;" href="#customabcjscss">Adding Custom abcjs CSS Styling</a>
+            <a style="text-decoration:none;" href="#customcssexamples">Custom abcjs CSS Examples</a>
+            </details>
             
             <details>
             <summary><h3>Advanced abcjs Rendering Options</h3></summary>
-            <a style="text-decoration:none;" href="#customabcjscss">Adding Custom abcjs CSS Styling</a>
             <a style="text-decoration:none;" href="#customabcjsparams">Adding Custom abcjs Rendering Parameters</a>
             <a style="text-decoration:none;" href="#left_justify_titles">Forcing Left-Justified Titles and Subtitles</a>
             <a style="text-decoration:none;" href="#hide_information_labels">Hiding Information Labels</a>
@@ -1124,10 +1129,15 @@
                     <div class="tocpanel">
                         <p class="toc"><a style="text-decoration:none;" href="#printing_your_tunes">Printing Your Tunes Using the Browser's Built-in Print Feature</a></p>
                     </div>
-                    
-                    <button class="accordion" title="Click to expand/collapse this section">Advanced abcjs Rendering Options</button>
+
+                    <button class="accordion" title="Click to expand/collapse this section">Adding Custom abcjs CSS Styling</button>
                     <div class="tocpanel">
                         <p class="toc"><a style="text-decoration:none;" href="#customabcjscss">Adding Custom abcjs CSS Styling</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#customcssexamples">Custom abcjs CSS Examples</a></p>
+                    </div>
+
+                    <button class="accordion" title="Click to expand/collapse this section">Advanced abcjs Rendering Options</button>
+                    <div class="tocpanel">
                         <p class="toc"><a style="text-decoration:none;" href="#customabcjsparams">Adding Custom abcjs Rendering Parameters</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#left_justify_titles">Forcing Left-Justified Titles and Subtitles</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#hide_information_labels">Hiding Information Labels</a></p>
@@ -5692,45 +5702,79 @@
                 <p><strong>Note:</strong>If you want to print a tunebook automatically formated with multiple tunes per page, you must use the tool's Export PDF feature.</p>
                 <hr class="hidden-print" id="customabcjscss">
                 <h1 class="page_break_always h1wide">Adding Custom abcjs CSS Styling<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-                <p>abcjs supports adding CSS styling to nearly every ABC element using custom classes:</p>
+                <p>abcjs supports adding CSS styling to nearly every ABC element using custom classes that can be used with CSS to customize the look of your ABC notation:</p>
                 <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/gx-xXZK5bu4" title="Custom ABC Notation Styling" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
                 <p>You can customize the CSS for any element by adding the following tool-private ABC annotation to the ABC file header before any ABC tunes:</p>
                 <p class="code">%%begincss<br/>Your custom abcjs class CSS here<br/>%%endcss</p>
-                <p><strong>Example #1</strong> - Set all the note heads to red:</p>
-                <p class="code">%%begincss<br/>.abcjs-note {color:red}<br/>%%endcss</p>
-                <p><strong>Example #2</strong> - Set the title color to red, the clef color to green with 75% opacity, chord color to blue, bar line color to purple, and hides the tempo by making the color transparent:</p>
-                <p class="code">%%begincss<br/>.abcjs-title {color:red}<br/>.abcjs-clef {color:green;opacity:0.75}<br/>.abcjs-chord {color:blue}<br/>.abcjs-bar {color:purple}<br/>.abcjs-tempo {color:transparent}<br/>%%endcss</p>
-                <p><strong>Example #3</strong> - Sets each of the four staff lines in a four-stave tune a different color:</p>
-                <p class="code">%%begincss<br/>.abcjs-l0 {color:red}<br/> .abcjs-l1 {color:green}<br/> .abcjs-l2 {color:blue}<br/> .abcjs-l3 {color:purple} <br/>%%endcss</p>
-                <p><strong>Example #4</strong> - Mark individual notes with colors using !mark!, !mark1!, !mark2!, etc. added before the notes in the ABC:</p>
-                <p class="code">%%begincss<br/> .mark {fill:red}<br/> .mark1 {fill:blue}<br/> .mark2 {fill:green}<br/> .mark3 {fill:brown}<br/> .mark4 {fill:olive}<br/> .mark5 {fill:aqua}<br/> .mark6 {fill:royalblue}<br/> .mark7 {fill:purple}<br/> .mark8 {fill:darkgrey}<br/> .mark9 {fill:tomato}<br/> .mark10 {fill:salmon}<br/> %%endcss</p>
-                <p><strong>Example #5</strong> - Make the tin whistle tab larger and blue, also move the playback cursor down a bit to cover it entirely during playback:</p>
-                <p class="code">%%begincss<br/>
-                    .tab-number {transform:translateY(20px);color:blue;}<br/>
-                    .whistle {font-size:75px;}<br/>
-                    .abcjs-cursor {transform: translate(7px, 7px);}<br/>
-                %%endcss</p>
-                <p><strong>Example #6</strong> - Dim the notation and make the string instrument tab numbers larger:</p>
-                <p class="code">%%begincss<br/>
-                    .abcjs-beam-elem {fill:lightgray;}<br/>
-                    .abcjs-note {fill:lightgray;}<br/>
-                    .abcjs-chord {fill:black;}<br/>
-                    .tab-number {fill:black;font-size:18px;}<br/>
-                %%endcss</p>
-                <p><strong>Example #7</strong> - Put a moosehead image behind the notation container:</p>
-                <p class="code">%%begincss<br/>.abcjs-container::before {<br/> content: "";<br/> position: absolute;<br/> inset: 0;<br/> background-image: url("https://michaeleskin.com/img/moose-head-session.jpg");<br/> background-size:  100%;<br/> background-repeat: no-repeat;<br/> opacity: 0.1; <br/> z-index: 0;<br/> }<br/>%%endcss</p>
+                <p>For example, setting all the note colors red:</p>
+                <p class="code">%%begincss<br/>.abcjs-note {color:red}<br/>%%endcss</p>                
                 <p>The recommended practice is to add the %%begincss / %%endcss block in the ABC file header before all tunes where it will apply to all the ABC tunes in the tunebook.</p>
                 <p>If you edit custom css in a %begincss / %%endcss block in the ABC file header, you may need to force a full redraw of the tunes to see the results.</p>
                 <p>This is easily accomplished by clicking <strong>Snapshot</strong> and then <strong>Restore</strong>.</p>
                 <p>If a %%begincss / %%endcss block is found in a tune, it will take precedence for all tunes over any custom CSS found in the file header and ideally should only be used for single tune tunebooks. With multiple tunes and multiple %begincss / %%endcss blocks, unexpected results may occur.</p>
                 <p>There can only be one custom begincss/endcss block per tunebook. If there are multiple, the last one found is used.</p>
                 <p>Custom CSS at the abcjs tune display element or SVG top level will appear on tunes in exported PDF files and full-featured websites as well as exported JPEG, PNG, SVG tune images, Image Gallery websites, and Image Lightbox websites.</p>
-                <p>Background images added via CSS can be exported via the native PDF exporter in most browsers if you enable "Print backgrounds" in the browser's native print dialog.</p>
-                <p>In this case, you need slightly more complicated CSS and a lighter image to have it work for multiple tunes:</p>
-                <p class="code">%%begincss .abcjs-container {<br/> position: relative;<br/> z-index: 0;<br/> background-image: url("https://michaeleskin.com/img/moose-head-session-light.jpg");<br/> background-size: 75%;<br/> background-repeat: no-repeat;<br/> background-position: center;<br/> }<br/> .abcjs-container svg {<br/> position: relative;<br/> z-index: 1;<br/> opacity: 1;<br/> }<br/> %%endcss</p>
                 <p><strong>Here is the full list of available custom abcjs classes:</strong></p>
                 <br/>
                 <table><thead><tr><th>Class</th><th>Description</th></tr></thead><tbody><tr><td>.abcjs-annotation</td><td>Text added with the <code>&quot;^...&quot;</code> format.</td></tr><tr><td>.abcjs-author</td><td>The author text</td></tr><tr><td>.abcjs-bar</td><td>The bar lines.</td></tr><tr><td>.abcjs-bar-number</td><td>The bar numbers.</td></tr><tr><td>.abcjs-beam-elem</td><td>The beams connecting eighth notes together.</td></tr><tr><td>.abcjs-brace</td><td>The brace on the left side of the staff (like for piano music.)</td></tr><tr><td>.abcjs-bracket</td><td>The bracket on the left side of the staff.</td></tr><tr><td>.abcjs-chord</td><td>The chord symbols, specified in quotes.</td></tr><tr><td>.abcjs-clef</td><td>All clefs</td></tr><tr><td>.abcjs-composer</td><td>The composer text</td></tr><tr><td>.abcjs-container</td><td>The notation display div</td></tr><tr><td>.abcjs-cursor</td><td>The vertical playback cursor</td></tr><tr><td>.abcjs-d0-25, etc.</td><td>The duration of the note. (Replace the dash with a decimal point. That is, the example is a duration of 0.25, or a quarter note.)</td></tr><tr><td>.abcjs-decoration</td><td>Everything to do with the extra symbols, like crescendo.</td></tr><tr><td>.abcjs-defined-text</td><td>Text that appears between the lines of music, created with <code>%%text</code>.</td></tr><tr><td>.abcjs-dynamics</td><td>The dynamics markings: <code>p</code> for instance. Also the crescendo mark.</td></tr><tr><td>.abcjs-end-m0-n0</td><td>Added to slurs to indicate the ending note.</td></tr><tr><td>.abcjs-ending</td><td>The line and decoration for the 1st and 2nd ending.</td></tr><tr><td>.abcjs-key-signature</td><td>All key signatures</td></tr><tr><td>.abcjs-l0, .abcjs-l1, etc.</td><td>(lower case L, followed by a number) The staff line number, starting at zero.</td></tr><tr><td>.abcjs-ledger</td><td>ledger line.</td></tr><tr><td>.abcjs-lyric</td><td>The lyric line.</td></tr><tr><td>.abcjs-m0, .abcjs-m1, etc.</td><td>The measure count from the START OF THE LINE.</td></tr><tr><td>.abcjs-mm0, .abcjs-mm1, etc.</td><td>The measure count from the START OF THE TUNE.</td></tr><tr><td>.abcjs-meta-bottom</td><td>Everything that is printed after all the music.</td></tr><tr><td>.abcjs-meta-top</td><td>Everything that is printed before the first staff line.</td></tr><tr><td>.abcjs-n0, .abcjs-n1, etc.</td><td>The note count from the START OF THE MEASURE.</td></tr><tr><td>.abcjs-note</td><td>Everything to do with a note.</td></tr><tr><td>.abcjs-note_selected</td><td>This is the element that the user has clicked on.</td></tr><tr><td>.abcjs-p-1, .abcjs-p1, etc.</td><td>The y-position of the note (where middle-C is zero).</td></tr><tr><td>.abcjs-part</td><td>Each part marking in the music itself.</td></tr><tr><td>.abcjs-part-order</td><td>The part order indicator at the top.</td></tr><tr><td>.abcjs-rest</td><td>Everything to do with a rest.</td></tr><tr><td>.abcjs-rhythm</td><td>The rhythm text.</td></tr><tr><td>.abcjs-slur</td><td>Slurs and ties. (backwards compatible)</td></tr><tr><td>.abcjs-start-m0-n0</td><td>Added to slurs to indicate the beginning note.</td></tr><tr><td>.abcjs-tie</td><td>Tie.</td></tr><tr><td>.abcjs-legato</td><td>Slur. Because &quot;.abcjs-slur&quot; was historically used to indicate either a slur or a tie this indicates only a slur.</td></tr><tr><td>.abcjs-staff</td><td>The horizontal lines that make up the staff.</td></tr><tr><td>.abcjs-staff-extra</td><td>Clefs, key signatures, time signatures.</td></tr><tr><td>.abcjs-stem</td><td>Note stems</td></tr><tr><td>.abcjs-subtitle</td><td>The subtitle, both on the top and inserted in the middle</td></tr><tr><td>.abcjs-symbol</td><td>Any special symbol, like a trill.</td></tr><tr><td>.abcjs-tempo</td><td>The tempo marking.</td></tr><tr><td>.abcjs-text</td><td>Extra text that is not part of the music.</td></tr><tr><td>.abcjs-time-signature</td><td>All time signatures</td></tr><tr><td>.abcjs-title</td><td>The line specified by T:</td></tr><tr><td>.abcjs-top-line</td><td>This marks the top line of each staff. This is useful if you are trying to find where on the page the music has been drawn.</td></tr><tr><td>.abcjs-top-of-system</td><td>This marks the top of each set of staves. This is useful if you are trying to find where on the page the music has been drawn.</td></tr><tr><td>.abcjs-triplet</td><td>The extra markings that indicate a triplet. (But not the notes themselves.)</td></tr><tr><td>.abcjs-unaligned-words</td><td>Lyrics at the bottom that aren&#39;t lined up with notes.</td></tr><tr><td>.abcjs-v0, .abcjs-v1, etc.</td><td>the voice number, starting at zero.</td></tr><tr><td>.highlight</td><td>Highlighted notes during playback.</td></tr><tr><td>.mark, .mark1, .mark2, .mark3, ..., .mark10</td><td>All notes with !mark! and !mark1!, !mark2!, !mark3!, ..., !mark10! decorations.</td></tr><tr><td>.push, .draw</td><td>All notes with !push! and !draw! decorations.</td></tr><tr><td>[class^="abcjs-"]</td><td>Wildcard selector for all abcjs- prefixed classes.</td></tr><tr><td>#abc</td><td>The ABC editor textarea.</td></tr></tbody></table>
+                <hr class="hidden-print" id="customcssexamples">
+                <h1 class="page_break_always h1wide">Custom abcjs CSS Examples<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+                <hr>
+                <p>Try copying and pasting these examples at the top of your ABC:</p>
+                <hr>
+                <p><strong>Example #1</strong> - Set all the note colors to blue:</p>
+                <p class="code">%%begincss<br/>.abcjs-note {color:blue}<br/>%%endcss</p>
+                <hr>
+                <p><strong>Example #2</strong> - Set the title color to red, the clef color to green with 75% opacity, chord color to blue, bar line color to purple, and hides the tempo by making the color transparent:</p>
+                <p class="code">%%begincss<br/>.abcjs-title {color:red}<br/>.abcjs-clef {color:green;opacity:0.75}<br/>.abcjs-chord {color:blue}<br/>.abcjs-bar {color:purple}<br/>.abcjs-tempo {color:transparent}<br/>%%endcss</p>
+                <hr>
+                <p><strong>Example #3</strong> - Sets each of the four staff lines in a four-stave tune a different color:</p>
+                <p class="code">%%begincss<br/>.abcjs-l0 {color:red}<br/> .abcjs-l1 {color:green}<br/> .abcjs-l2 {color:blue}<br/> .abcjs-l3 {color:purple} <br/>%%endcss</p>
+                <hr>
+                <p><strong>Example #4</strong> - Mark individual notes with colors using !mark!, !mark1!, !mark2!, etc. added before the notes in the ABC:</p>
+                <p class="code">%%begincss<br/> .mark {fill:red}<br/> .mark1 {fill:blue}<br/> .mark2 {fill:green}<br/> .mark3 {fill:brown}<br/> .mark4 {fill:olive}<br/> .mark5 {fill:aqua}<br/> .mark6 {fill:royalblue}<br/> .mark7 {fill:purple}<br/> .mark8 {fill:darkgrey}<br/> .mark9 {fill:tomato}<br/> .mark10 {fill:salmon}<br/> %%endcss</p>
+                <hr>
+                <p><strong>Example #5</strong> - Make the tin whistle tab larger and blue, also move the playback cursor down a bit to cover it entirely during playback:</p>
+                <p class="code">%%begincss<br/>
+                    .tab-number {transform:translateY(20px);color:blue;}<br/>
+                    .whistle {font-size:75px;}<br/>
+                    .abcjs-cursor {transform: translate(7px, 7px);}<br/>
+                %%endcss</p>
+                <hr>
+                <p><strong>Example #6</strong> - Make the recorder tab larger and red, also move the playback cursor down a bit to cover it entirely during playback:</p>
+                <p class="code">%%begincss<br/>
+                .tab-number {transform:translateY(20px);color:red;}<br/>
+                .recorder {font-size:70px;}<br/>
+                .abcjs-cursor {transform: translate(7px, 10px);}<br/>
+                %%endcss</p>
+                <hr>
+                <p><strong>Example #7</strong> - Completely hide the notation, only show the whistle tab:</p>
+                <p class="code">%%begincss<br/>
+                /* Hide the notation elements */<br/>
+                .abcjs-beam-elem,.abcjs-note,.abcjs-chord,.abcjs-staff  {color:transparent;fill:transparent;stroke:transparent}<br/>
+                /* Move the tab up */<br/>
+                .tab-number {transform:translateY(-20px);}<br/>
+                /* Make the whistle tab larger */<br/>
+                .whistle {fill:black;font-size:75px;}<br/>
+                %%endcss</p>        
+                <hr>
+                <p><strong>Example #8</strong> - Dim the notation and make the string instrument tab numbers larger:</p>
+                <p class="code">%%begincss<br/>
+                    .abcjs-beam-elem {fill:lightgray;}<br/>
+                    .abcjs-note {fill:lightgray;}<br/>
+                    .abcjs-chord {fill:black;}<br/>
+                    .tab-number {fill:black;font-size:18px;}<br/>
+                %%endcss</p>
+                <hr>
+                <p><strong>Example #9</strong> - Put a moosehead image behind the notation container:</p>
+                <p class="code">%%begincss<br/>.abcjs-container::before {<br/> content: "";<br/> position: absolute;<br/> inset: 0;<br/> background-image: url("https://michaeleskin.com/img/moose-head-session.jpg");<br/> background-size:  100%;<br/> background-repeat: no-repeat;<br/> opacity: 0.1; <br/> z-index: 0;<br/> }<br/>%%endcss</p>
+                <hr>
+                <p><strong>Example #10</strong> - Having background images appear on browser-native exported PDF files</p>
+                <p>Background images added via CSS can be exported via the native PDF exporter in most browsers if you enable "Print backgrounds" in the browser's native print dialog.</p>
+                <p>In this case, you need slightly more complicated CSS and a lighter image to have it work for multiple tunes:</p>
+                <p class="code">%%begincss .abcjs-container {<br/> position: relative;<br/> z-index: 0;<br/>background-image: url("https://michaeleskin.com/img/moose-head-session-light.jpg");<br/>background-size: 75%;<br/>background-repeat: no-repeat;<br/>background-position: center;<br/> }<br/> .abcjs-container svg {<br/> position: relative;<br/> z-index: 1;<br/> opacity: 1;<br/> }<br/> %%endcss</p>
+                <hr>
+                <p><strong>Example #11</strong> - Targetting notation elements that don't have an abcjs custom class</p>
                 <p>Even if no abcjs custom class is available for an element in the notation, you can target some additional notation elements by data-name, for example, this CSS makes the slash lines used for tremolo thicker:</p>
                 <p class="code">% Custom CSS for making the tremolo slashes bolder<br/>%%begincss<br/>path[data-name="flags.ugrace"] {<br/>  stroke: black;<br/>}<br/>%%endcss</p>
                 <p>Using the Chrome developer tools, you can right click on any item in the notation and select "Inspect" to examine any CSS classes or data-name present that can then be used as a target CSS rule.</p>
