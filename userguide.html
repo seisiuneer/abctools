@@ -5747,6 +5747,9 @@
                 <h1 class="page_break_always h1wide">Custom abcjs CSS Examples<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <hr>
                 <p>Try copying and pasting these custom abcjs CSS examples at the top of your ABC.</p>
+                <p>After pasting the custom CSS into your ABC, if there is more than one tune in the tunebook, for the custom CSS to take effect you will need to force the entire tunebook to be redrawn.</p>
+                <p>The easiest way to do this is to click <strong>Snapshot</strong> and then <strong>Restore</strong>.</p>
+                <p>Same requirement applies if you make changes to the custom CSS block.</p>
                 <p><strong>Note:</strong> Only one %%begincss / %%endcss block is allowed per ABC tunebook.</p>
                 <p>Click any example image to try a live version of the custom CSS in the tool.</p>
                 <hr> 
@@ -5804,16 +5807,16 @@
                     .abcjs-cursor {transform: translate(7px, 7px);}<br/>
                 %%endcss</p>
                 <hr>
-                <p><strong>Example #6</strong> - Make the recorder tab larger and red, also move the playback cursor down a bit to cover it entirely during playback:</p>
+                <p><strong>Example #6</strong> - Make the recorder tab larger and dark green, also move the playback cursor down a bit to cover it entirely during playback:</p>
                 <p>Click the image to try this example live in the tool:</p>
                 <div class="image_holder">
-                    <a href="https://michaeleskin.com/abctools/abctools.html?lzw=KTBGFMHMEsDsGMDOiBQA6ALgQ1AWlgK4C2EATgAQDeGpWsiAZgPalEBcNdiANlhuAE0AFACYADAAcAHgEoA3PCbcWbUuAAmcgL7o1i0uvAVKzWBlyJoAL3BsA7JKnb0OeACtEueAVKIWVTnpmVjZyQJ4+cCE7aQAacgBGR3kdEHBYdSRUFAANUISUABVQwoALcHIAaXBEUpQAYRLadWgMaCZYLG4UACVQgCloSBQAWVCANgB6AA4UABl8mZQARVCAZhmAXgTxFErQgHEiLDcUEERsBgZEcAlxsTO-AgzTDHIGPlAmAE8z4BGAJIAEQB5AkpCYkFoRHIDxAgJB5HgpRY6nBkNhfwRoNAWGQ6Mg5DWs2AiAA7nBCWI0CIAKwoAA+bAARAdWQBBA7kA7sgBCDOZQOZfPZ5D56gFbI06nIkHUEuZ9WZGl55EFzPUvPZDJQrI5XJ5-PVIrFvIVUvlss1AqFnIAYmq2Qc1mwdUy9VrVZqFUqoBV1ZrtR6+eRNQcbcKtWKeTrg16zQLfZB-WzvYnmZAGIT1VhIFhJczQJnZS6dUA&format=recorder&ssp=10&name=CSS_Example_6&editor=1" target="_blank"> 
-                        <img class="image" loading="lazy" src="img/css_example_6.jpg">
+                    <a href="https://michaeleskin.com/abctools/abctools.html?lzw=KTBGFMHMEsDsGMDOiBQA6ALgQ1AWlgK4C2EATgAQDeGpWsiAZgPalEBcNdiANlhuAE0AFACYADAAcAHgEoA3PCbcWbACZZSAa0ilw4WHIC+6XYtKrwFSs1gZciaAC9wbAOySpR9DngArRLjwBKSILFSc9MysbOQRPHzgQq7SADTkAIwe8sYg+qpIqCgAGjHpKAAqMeUAFuDkANLgiNUoAMJVtKrQGNBMsFjcKABKMQBS0JAoALIxAGwA9AAcKAAypUsoAIoxAMxLALzp4ij1MQDiRFi+KCCI2AwMiOASs2I3oQSwqjYY5Ax8oCYAE8bsApgBJAAi4PIElITB0WCI5DeIAh0PI8GqLFUcIRKNB6JhoCwyDxkHIO2WwEQAHc4BSxGgRABWFAAHzYACIzjyAIJnchnPkAIXZXMhXNFfPIotU4t54FUqnIkGV4taXKVIvIEq5qhFfPZKB5-MFwrFeulspF8tNSpVastkoFADFdbyzjs2MbOabDTqDXbNVA6nqDUb-aLyAazuKXYbZcLjVHA7aNVrIGHeUGM5AGBS9VhIFgFVzQPnVd7jUA&format=recorder&ssp=10&name=CSS_Example_6&editor=1" target="_blank"> 
+                        <img class="image" loading="lazy" src="img/css_example_6b.jpg">
                     </a>
                 </div>
                 <p>Custom CSS:</p>
                 <p class="code">%%begincss<br/>
-                .tab-number {transform:translateY(20px);color:red;}<br/>
+                .tab-number {transform:translateY(20px);color:darkgreen;}<br/>
                 .recorder {font-size:70px;}<br/>
                 .abcjs-cursor {transform: translate(7px, 10px);}<br/>
                 %%endcss</p>
