@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2618_080725_1030";
+var gVersionNumber="2619_080725_1330";
 
 var gMIDIInitStillWaiting = false;
 
@@ -18478,7 +18478,7 @@ function AppendDatabaseTemplate(){
 	theValue += '[I:MIDI= program 120] "_120" G4 |[I:MIDI= program 121] "_121" G4 |[I:MIDI= program 122] "_122" G4 |[I:MIDI= program 123] "_123" G4 |[I:MIDI= program 124] "_124" G4 |[I:MIDI= program 125] "_125" G4 |[I:MIDI= program 126] "_126" G4 |[I:MIDI= program 127] "_127" G4 |\n';
 	theValue += '[I:MIDI= program 128] "_128" G4 |[I:MIDI= program 129] "_129" G4 |[I:MIDI= program 130] "_130" G4 |[I:MIDI= program 131] "_131" G4 |[I:MIDI= program 132] "_132" G4 |[I:MIDI= program 133] "_133" G4 |[I:MIDI= program 134] "_134" G4 |[I:MIDI= program 135] "_135" G4 |\n';
 	theValue += '[I:MIDI= program 136] "_136" G4 |[I:MIDI= program 137] "_137" G4 |[I:MIDI= program 138] "_138" G4 |[I:MIDI= program 139] "_139" G4 |[I:MIDI= program 140] "_140" G4 |[I:MIDI= program 141] "_141" G4 |[I:MIDI= program 142] "_142" G4 |[I:MIDI= program 143] "_143" G4 |[I:MIDI= program 144] "_144" G4 |\n';
-	theValue += '[I:MIDI= program 145] "_145" G4 |[I:MIDI= program 146] "_146" G4 |[I:MIDI= program 147] "_147" G4 |[I:MIDI= program 148] "_148" G4 |]\n';
+	theValue += '[I:MIDI= program 145] "_145" G4 |[I:MIDI= program 146] "_146" G4 |[I:MIDI= program 147] "_147" G4 |[I:MIDI= program 148] "_148" G4 |[I:MIDI= program 149] "_149" G4 | [I:MIDI= program 150] "_150" G4 |]\n';
 
 	// Do common tune addition processing
 	ProcessAddTune(theValue);
@@ -22177,10 +22177,12 @@ const generalMIDISoundNames = [
   "Alto Recorder",		// 145
   "Tenor Recorder",		// 146
   "Bass Recorder",		// 147
-  "Silence"				// 148
+  "Mountain Dulcimer (Solo)", // 148
+  "Mountain Dulcimer (DAD)", // 149
+  "Silence"				// 150
 ];
 
-var MIDI_PATCH_COUNT = 148;
+var MIDI_PATCH_COUNT = 150;
 
 var gLastInjectedSoundfont = null;
 var gLastInjectedProgram = 1;
@@ -36165,7 +36167,7 @@ function ScanTuneForInstrumentExplorer(theTune){
 			break;		
 	}
 
-	if (gTheMelodyProgram == "148"){
+	if (gTheMelodyProgram == "150"){
 		gInstrumentExplorerMelodyInstrument = 0;
 	}
 	else{
@@ -36174,7 +36176,7 @@ function ScanTuneForInstrumentExplorer(theTune){
 
 	gInstrumentExplorerMelodyInstrument = ""+gInstrumentExplorerMelodyInstrument;
 
-	if (gTheChordProgram == "148"){
+	if (gTheChordProgram == "150"){
 		gInstrumentExplorerChordInstrument = 0;
 	}
 	else{
@@ -36183,7 +36185,7 @@ function ScanTuneForInstrumentExplorer(theTune){
 
 	gInstrumentExplorerChordInstrument = ""+gInstrumentExplorerChordInstrument;
 
-	if (gTheBassProgram == "148"){
+	if (gTheBassProgram == "150"){
 		gInstrumentExplorerBassInstrument = 0;
 	}
 	else{
