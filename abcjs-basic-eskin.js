@@ -18249,8 +18249,8 @@ function CreateSynth(theABC) {
         "alto_recorder": 100, // 145
         "tenor_recorder": 100, // 146
         "bass_recorder": 120, // 147
-        "mountain_dulcimer_s": 5000, // 148        
-        "mountain_dulcimer": 5000, // 149        
+        "mountain_dulcimer_s": 200, // 148        
+        "mountain_dulcimer": 200, // 149        
         "silence":100 // 150         
      }
     }
@@ -18301,8 +18301,8 @@ function CreateSynth(theABC) {
         "alto_recorder": 100, // 145
         "tenor_recorder": 100, // 146
         "bass_recorder": 120, // 147
-        "mountain_dulcimer_s": 5000, // 148        
-        "mountain_dulcimer": 5000, // 149        
+        "mountain_dulcimer_s": 200, // 148        
+        "mountain_dulcimer": 200, // 149        
         "silence":100, // 150    
      }
     } 
