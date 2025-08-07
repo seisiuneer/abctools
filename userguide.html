@@ -6573,16 +6573,18 @@
 
     // Add a copy button to all the code blocks
     document.querySelectorAll("p.code").forEach((p) => {
-
         const btn = document.createElement("button");
         btn.textContent = "Copy";
         btn.className = "copy-btn";
-        
+
         btn.addEventListener("click", () => {
           let lines = [];
           let currentLine = "";
 
           p.childNodes.forEach(node => {
+            // Skip the button itself
+            if (node === btn) return;
+
             if (node.nodeType === Node.TEXT_NODE) {
               currentLine += node.textContent;
             } else if (node.nodeName === "BR") {
@@ -6609,8 +6611,7 @@
 
         p.style.position = "relative";
         p.appendChild(btn);
-
-    });
+      });
     }
     
     DoStartup();
