@@ -18216,7 +18216,7 @@ function CreateSynth(theABC) {
         "alto_recorder": 3.5, // 145
         "tenor_recorder": 5.8, // 146
         "bass_recorder": 3.1, // 147
-        "mountain_dulcimer_s": 1.75, // 148        
+        "mountain_dulcimer_s": 1.5, // 148        
         "mountain_dulcimer": 2.6, // 149        
      }
 
@@ -18276,8 +18276,8 @@ function CreateSynth(theABC) {
         "alto_recorder": 3.5, // 145
         "tenor_recorder": 5.8, // 146
         "bass_recorder": 3.1, // 147        
-        "mountain_dulcimer_s": 1.75, // 149        
-        "mountain_dulcimer": 2.6, // 150        
+        "mountain_dulcimer_s": 1.5, // 148        
+        "mountain_dulcimer": 2.6, // 149       
       }
 
       // Custom fade values for only our custom instruments
