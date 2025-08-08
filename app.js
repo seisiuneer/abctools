@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2622_080725_2130";
+var gVersionNumber="2623_080825_0700";
 
 var gMIDIInitStillWaiting = false;
 
@@ -22273,7 +22273,7 @@ function InjectAllMIDIParams(){
 	  {name: "            Inject MIDI Chord program and volumes", id: "configure_inject_chord_program", type:"checkbox", cssClass:"configure_midi_program_form_text"},
   	  {name: "MIDI Chord program to inject:", id: "configure_chordprogram", type:"select", options:midi_program_list, cssClass:"configure_midi_program_select"},
 	  {name: "MIDI Chord volume (0-127):", id: "configure_chordvolume", type:"text", cssClass:"configure_midi_program_form_number_input"},
-	  {html: '<p style="font-size:14pt;line-height:19pt;font-family:helvetica;margin-bottom:30px;text-align:center;"><a href="https://michaeleskin.com/documents/general_midi_extended_v6.pdf" target="_blank">General MIDI Instrument Program Numbers</a></p>'},
+	  {html: '<p style="font-size:14pt;line-height:19pt;font-family:helvetica;margin-bottom:30px;text-align:center;"><a href="https://michaeleskin.com/documents/general_midi_extended_v9.pdf" target="_blank">General MIDI Instrument Program Numbers</a></p>'},
 	  {name: "            Inject all tunes", id: "configure_inject_all", type:"checkbox", cssClass:"configure_midi_program_form_text"},
 	];
 
