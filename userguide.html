@@ -523,9 +523,9 @@
             <a style="text-decoration:none;" href="#custom_ornament_timing">Custom Timing and Offsets for Trills, Mordents, Turns, and Tremolo</a>
             <a style="text-decoration:none;" href="#custom_backup_rhythms">Custom Backup Rhythms</a>
             <a style="text-decoration:none;" href="#custom_backup_beat_timing">Custom Backup Beat Timing</a>
-            <a style="text-decoration:none;" href="#strummed_chords">Enabling Strummed Chords</a>
             <a style="text-decoration:none;" href="#midigchord">Using %%MIDI gchord for Custom Backup Patterns</a>
             <a style="text-decoration:none;" href="#inversions">Specifying Chord Inversions in the ABC</a>
+            <a style="text-decoration:none;" href="#strummed_chords">Enabling Strummed Chords</a>
             <a style="text-decoration:none;" href="#sung_solfege">Select the Solfège Instrument to Sing Note Names</a>
             <a style="text-decoration:none;" href="#voice_hiding">Voice Combining and Hiding</a>
             <a style="text-decoration:none;" href="#highlighting_control">Controlling Note Highlighting in the Player</a>
@@ -968,9 +968,9 @@
                         <p class="toc"><a style="text-decoration:none;" href="#custom_ornament_timing">Custom Timing and Offsets for Trills, Mordents, Turns, and Tremolo</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#custom_backup_rhythms">Custom Backup Rhythms</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#custom_backup_beat_timing">Custom Backup Beat Timing</a></p>
-                        <p class="toc"><a style="text-decoration:none;" href="#strummed_chords">Enabling Strummed Chords</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#midigchord">Using %%MIDI gchord for Custom Backup Patterns</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#inversions">Specifying Chord Inversions in the ABC</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#strummed_chords">Enabling Strummed Chords</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#sung_solfege">Select the Solfège Instrument to Sing Note Names</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#voice_hiding">Voice Combining and Hiding</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#highlighting_control">Controlling Note Highlighting in the Player</a></p>
@@ -2880,6 +2880,12 @@
                 <hr class="hidden-print" id="custom_backup_rhythms">
                 <h1 class="page_break_always">Custom Backup Rhythms<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/eXD1rNbfe7I" title="Custom Backup Rhythms" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
+                <hr>
+                <div style="background-color: #FFEEEE;padding-left:24px;padding-right:4px;padding-top:4px;padding-bottom:20px;">
+                    <p><strong>Note:</strong> The %%MIDI abctt:boomchick feature for custom backup patterns, while still supported in the tool, is considered deprecated in favor of using %%MIDI gchord for custom backup rhythms as described below.</p>
+                    <p style="text-align: center;"><a style="text-decoration:none;" href="#midigchord">Using %%MIDI gchord for Custom Backup Patterns</a></p>
+                </div>
+                <hr>
                 <p>In this tool, you may customize the boom-chick backup rhythm used for any meter in a tune with chords by adding the following %%MIDI directive anywhere in the tune's ABC:</p>
                 <p class="code">%%MIDI abctt:boomchick meter rhythm_pattern_string partial_measure_threshold</p>
                 <p>This is particularly useful for meters that may have multiple commomly played subdivision groupings like 7/8 and 10/8.</p>
@@ -2935,36 +2941,14 @@
                 <p>Instead, if using %%MIDI gchord for backup, use the</p>
                 <p class="code">%%MIDI gchordduration</p>
                 <p>command described in the <a href="#midigchord">Using %%MIDI gchord for Custom Backup Patterns</a> section below.</p>
-                <hr class="hidden-print" id="strummed_chords">
-                <h1 class="page_break_always">Enabling Strummed Chords<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-                <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/fe4qWSf1O-0" title="Strummed Chords" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
-                <p>By default, chords are played as a block chord.</p>
-                <p>If you want to have the backup chords played in a strummed style, you can include the following annotation anywhere in the tune's ABC:</p>
-                <p class="code">%%MIDI abctt:strum_chords on<br/>or<br/>%%MIDI abctt:strum_chords true</p>
-                <p>This can be very effective when using a plucked string instrument as the chord MIDI program.</p>
-                <p>To turn strummed chords off, you can include the following annotation anywhere in the tune's ABC:</p>
-                <p class="code">%%MIDI abctt:strum_chords off<br/>or<br/>%%MIDI abctt:strum_chords false</p>
-                <p>To set the timing between the notes in the strum as a division of a eighth note, you can include the following annotation anywhere in the tune's ABC:</p>
-                <p class="code">%%MIDI abctt:strum_chords_divider divider_value</p>
-                <p>For example, to have the timing between the notes in the strum set to 1/10 of an eighth note, add the following to the tune:</p>
-                <p class="code">%%MIDI abctt:strum_chords_divider 10</p>
-                <p>The default divider_value is 8.</p>
-                <p>Strumming enable and divider can also be changed mid-staff using inline MIDI directives:</p>
-                <p class="code">[I:MIDI=abctt:strum_chords on]<br/>[I:MIDI=abctt:strum_chords_divider 10]</p>
-                <p>To have the bass and strummed chords ring longer when not using gchord-based backup, you can experiment with different values for the backup boom and chick timing fractions, for example</p>
-                <p class="code">%%MIDI abctt:boom_fraction 100<br/>%%MIDI abctt:chick_fraction 100</p>
-                <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/tLyuoT2_XnI" title="Sustained Strummed Chords" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
-                <p>Full details on the boom and chick beat timing fractions can be found in the <a href="#custom_backup_beat_timing">Custom Backup Beat Timing Section</a> above.</p>
-                <p>These directives are private to this tool and will not work with other ABC players.</p>
-                <p><strong>Note:</strong> The strummed chord features are not available if using:</p>
-                <p class="code">%%MIDI gchord optional_gchord_string</p>
-                <p>as a custom backup pattern specification for a tune.</p>
                 <hr class="hidden-print" id="midigchord">
                 <h1 class="page_break_always h1wide">Using %%MIDI gchord for Custom Backup Patterns<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/76gnJe0l0nE" title="%%MIDI gchord" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
                 <p>When playing, if any of the following discrete or inline %%MIDI gchord annotations:</p>
                 <p class="code">%%MIDI gchord optional_gchord_backup_pattern<br/>[I:MIDI gchord optional_gchord_backup_pattern]<br/>[I:MIDI=gchord optional_gchord_backup_pattern]</p>
-                <p>are detected in the ABC for a tune, the native abcjs gchord-based backup system will be used instead of the tool-specific<br/>%%MIDI abctt:boomchick based custom backup pattern directives.</p>
+                <p>are detected in the ABC for a tune, the native abcjs gchord-based backup system will be used instead of the tool-specific %%MIDI abctt:boomchick based custom backup pattern directives.</p>
+                <p>Full details on MIDI gchord backup pattern control strings can be found here:</p>
+                <p style="text-align: center;"><a href="https://abcmidi.sourceforge.io/#gchord" target="_blank">abcmidi Documentation on %%MIDI gchord</a></p>
                 <p>You can also force the gchord system to switch on by including:</p>
                 <p class="code">%%MIDI gchord</p>
                 <p>with no pattern string on its own line anywhere in the ABC.</p>
@@ -3122,6 +3106,30 @@
                 <p style="text-align: center;"><a href="https://en.wikipedia.org/wiki/Inversion_(music)" target="_blank">Inversion (music) on Wikipedia</a></p>
                 <p>Chord inversions work both with standard and %%MIDI gchord based backup.</p>
                 <p>This extended chord syntax for the inversions may not be compatible with other ABC tools.</p>
+                <hr class="hidden-print" id="strummed_chords">
+                <h1 class="page_break_always">Enabling Strummed Chords<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+                <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/fe4qWSf1O-0" title="Strummed Chords" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
+                <p>By default, chords are played as a block chord.</p>
+                <p>If you want to have the backup chords played in a strummed style, you can include the following annotation anywhere in the tune's ABC:</p>
+                <p class="code">%%MIDI abctt:strum_chords on<br/>or<br/>%%MIDI abctt:strum_chords true</p>
+                <p>This can be very effective when using a plucked string instrument as the chord MIDI program.</p>
+                <p>To turn strummed chords off, you can include the following annotation anywhere in the tune's ABC:</p>
+                <p class="code">%%MIDI abctt:strum_chords off<br/>or<br/>%%MIDI abctt:strum_chords false</p>
+                <p>To set the timing between the notes in the strum as a division of a eighth note, you can include the following annotation anywhere in the tune's ABC:</p>
+                <p class="code">%%MIDI abctt:strum_chords_divider divider_value</p>
+                <p>For example, to have the timing between the notes in the strum set to 1/10 of an eighth note, add the following to the tune:</p>
+                <p class="code">%%MIDI abctt:strum_chords_divider 10</p>
+                <p>The default divider_value is 8.</p>
+                <p>Strumming enable and divider can also be changed mid-staff using inline MIDI directives:</p>
+                <p class="code">[I:MIDI=abctt:strum_chords on]<br/>[I:MIDI=abctt:strum_chords_divider 10]</p>
+                <p>To have the bass and strummed chords ring longer when not using gchord-based backup, you can experiment with different values for the backup boom and chick timing fractions, for example</p>
+                <p class="code">%%MIDI abctt:boom_fraction 100<br/>%%MIDI abctt:chick_fraction 100</p>
+                <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/tLyuoT2_XnI" title="Sustained Strummed Chords" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
+                <p>Full details on the boom and chick beat timing fractions can be found in the <a href="#custom_backup_beat_timing">Custom Backup Beat Timing Section</a> above.</p>
+                <p>These directives are private to this tool and will not work with other ABC players.</p>
+                <p><strong>Note:</strong> The strummed chord features are not available if using:</p>
+                <p class="code">%%MIDI gchord optional_gchord_string</p>
+                <p>as a custom backup pattern specification for a tune.</p>
                 <hr class="hidden-print" id="sung_solfege">
                 <h1 class="page_break_always h1wide">Select the Solfège Instrument to Sing Note Names<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <p>To sing the note names, you can select the Solfège instrument (136) for a voice:</p>
