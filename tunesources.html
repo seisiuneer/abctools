@@ -97,5 +97,60 @@
     </div>
     
   </body>
+
+  <script>
+
+    //
+    // Are we on iOS?
+    //
+    function isIOS() {
+
+        if (/iPad|iPhone|iPod/.test(navigator.platform)) {
+            return true;
+        } else {
+            return navigator.maxTouchPoints &&
+                navigator.maxTouchPoints > 2 &&
+                /MacIntel/.test(navigator.platform);
+        }
+    }
+
+    function DoStartup() {
+
+        // 
+        // iOS Styling adaptation
+        //
+
+        var gIsIOS = isIOS();
+
+        if (gIsIOS) {
+            // Fix the title font
+            var elem = document.getElementById("pagetitle");
+            elem.size = 5;
+            elem.style.fontFamily = "Helvetica";
+        }
+
+    }
+
+    //
+    // Wait for the document to be ready, then fire a function
+    //
+
+    function WaitForReady(fn) {
+      if (document.readyState !== 'loading') {
+        fn();
+        return;
+      }
+
+      document.addEventListener('DOMContentLoaded', fn);
+
+    }
+
+    //
+    // Wait for the document to be ready, then startup
+    //
+
+    WaitForReady(DoStartup);  
+
+</script>
     
 </html>
