@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2626_080825_2100";
+var gVersionNumber="2627_080825_2300";
 
 var gMIDIInitStillWaiting = false;
 
@@ -45589,7 +45589,7 @@ function DoFileRead(file, callback) {
                   if (isXML(theText)) {
 
                     // Keep track of actions
-                    sendGoogleAnalytics("action", "DoFileRead_MXL");
+                    //sendGoogleAnalytics("action", "DoFileRead_MXL");
 
                     theText = importMusicXML(theText, gDisplayedName);
 
@@ -45771,7 +45771,7 @@ function DoFileRead(file, callback) {
           }
 
           // Keep track of actions
-          sendGoogleAnalytics("action", "DoFileRead_MIDI");
+          //sendGoogleAnalytics("action", "DoFileRead_MIDI");
 
           // Send MIDI data to web service
           sendMIDIToWebService(midiData);
@@ -45906,23 +45906,24 @@ function DoFileRead(file, callback) {
       if (isXML(theText)) {
 
         // Keep track of actions
-        sendGoogleAnalytics("action", "DoFileRead_XML");
+        //sendGoogleAnalytics("action", "DoFileRead_XML");
 
         theText = importMusicXML(theText, gDisplayedName);
+
       } else
         // Importing BWW?
         if (isBWWFile(theText)) {
 
           // Keep track of actions
-          sendGoogleAnalytics("action", "DoFileRead_BWW");
+          //sendGoogleAnalytics("action", "DoFileRead_BWW");
 
           theText = convert_bww_to_abc(theText);
 
         }
-      else {
-        // Keep track of actions
-        sendGoogleAnalytics("action", "DoFileRead_ABC");
-      }
+      // else {
+      //   // Keep track of actions
+      //   sendGoogleAnalytics("action", "DoFileRead_ABC");
+      // }
 
       DoReadCommon(theText, callback);
 
