@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2629_080925_1200";
+var gVersionNumber="2630_080925_1630";
 
 var gMIDIInitStillWaiting = false;
 
@@ -13352,12 +13352,6 @@ function ensureABCFile(filename) {
 	if ((fileExtension.toLowerCase() == "abc") || (fileExtension.toLowerCase() == "txt") || (fileExtension.toLowerCase() == "xml") || (fileExtension.toLowerCase() == "musicxml") || (fileExtension.toLowerCase() == "mxl") || (fileExtension.toLowerCase() == "mid") || (fileExtension.toLowerCase() == "midi") || (fileExtension.toLowerCase() == "bww") || (fileExtension.toLowerCase() == "BWW")){
 		return true;
 	} else {
-		var thePrompt = "Sorry, only .abc, .txt, .xml, .musicxml, .mxl, .bww, .mid, or .midi files are supported.";
-		
-		// Center the string in the prompt
-		thePrompt = makeCenteredPromptString(thePrompt);
-
-		DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) });
 		return false;
 	}
 }
@@ -45931,7 +45925,12 @@ function DoFileRead(file, callback) {
 
     reader.readAsText(file);
   }
-
+  else{
+    // Unsupported file extension, just callback immediately
+    if (typeof callback === "function") {
+        callback();
+    }   
+  }
 }
 
 //
