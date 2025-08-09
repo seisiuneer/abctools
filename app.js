@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2624_080825_0900";
+var gVersionNumber="2625_080825_1700";
 
 var gMIDIInitStillWaiting = false;
 
@@ -14088,7 +14088,7 @@ function idleAddABC(){
 		let file = fileElement.files[0];
 
 		// Read the file and append it to the editor
-		DoFileRead(file, true);
+		DoFileRead(file, true, null);
 
 		// Reset file selectors
 		fileElement.value = "";
@@ -45488,9 +45488,9 @@ function importMusicXML(theXML,fileName){
 //
 // Shared functionality for all file reads
 //
-function DoReadCommon(theText,doAppend){
+function DoReadCommon(theText,doAppend,callback){
 
-    // Handle appending for drag and drop
+  // Handle appending for drag and drop
 	if (doAppend){
 
 		var nTunes = CountTunes();
@@ -45557,6 +45557,12 @@ function DoReadCommon(theText,doAppend){
 
 		}
 
+    // If loading multiple files, there will be a callback
+    if (typeof callback === "function") {
+        callback();
+        return;
+    }       
+
 		// Render the notation
 		RenderAsync(true,null,function(){
 			
@@ -45587,15 +45593,16 @@ function DoReadCommon(theText,doAppend){
 			    }
 
 				// Scroll the tune into view
-				MakeTuneVisible(true);						
-			}
+				MakeTuneVisible(true);		
+
+      }
 
 		});
 
 	}, 100);
 }
 
-function DoFileRead(file,doAppend){
+function DoFileRead(file,doAppend,callback){
 
 	var midiOKButton = null;
 
@@ -45666,7 +45673,7 @@ function DoFileRead(file,doAppend){
 
 						}
 
-						DoReadCommon(theText,doAppend);
+						DoReadCommon(theText,doAppend,callback);
 
 	                });                
 
@@ -45897,7 +45904,7 @@ function DoFileRead(file,doAppend){
 							// Handle response from server
 							var theText = importMusicXML(data,gDisplayedName);
 
-							DoReadCommon(theText,doAppend);
+							DoReadCommon(theText,doAppend,callback);
 
 					})
 					.catch(error => {
@@ -45956,7 +45963,7 @@ function DoFileRead(file,doAppend){
 				sendGoogleAnalytics("action","DoFileRead_ABC");
 			}
 
-			DoReadCommon(theText,doAppend);
+			DoReadCommon(theText,doAppend,callback);
 
 		});
 
@@ -46296,20 +46303,67 @@ function restorePDFStateFromLocalStorage(){
 //
 // Drag/drop handler
 //
-function DoDrop(e){
+function DoDrop(e) {
 
-    e.stopPropagation ();
-    e.preventDefault ();
+    e.stopPropagation();
+    e.preventDefault();
 
     // Mark as dirty
     gIsDirty = true;
 
-    var drop_files = e.dataTransfer.files;
+    const drop_files = Array.from(e.dataTransfer.files);
 
-	let file = drop_files[0];
+    let index = 0;
 
-	DoFileRead(file,true);
+    function processNextFile() {
+
+        if (index >= drop_files.length){
+
+          // Render the notation
+          RenderAsync(true,null,function(){
+            
+            // Recalculate the notation top position
+            UpdateNotationTopPosition();
+            
+            // Scroll the last appended tune into view
+            var nTunes = CountTunes();
+
+            var theTune = getTuneByIndex(nTunes-1);
+
+            var tuneOffset = gTheABC.value.length-theTune.length;
+
+            if (!gIsMaximized){
+
+              // Scroll the tune ABC into view
+                ScrollABCTextIntoView(gTheABC,tuneOffset,tuneOffset,10);
+
+                if (isMobileBrowser()){
+                  return;
+                }
+
+                gTheABC.blur();
+                gTheABC.focus();
+
+              }
+
+            // Scroll the tune into view
+            MakeTuneVisible(true);    
+
+          });
+
+         return; // all done
+
+        }
+        
+        const file = drop_files[index++];
+
+        // Pass the callback so it loads the next after current finishes
+        DoFileRead(file, true, processNextFile);
+    }
+
+    processNextFile();
 }
+
 
 //
 // Hide the Zoom out suggestion banner, save that it was hidden manually
@@ -47200,7 +47254,7 @@ function showWelcomeScreen(){
 	   modal_msg += '<p style="font-size:13pt;line-height:17pt;font-family:helvetica">Click "Open" to open an ABC, MusicXML, BWW, or MIDI file from your system.</p>';
 	   modal_msg += '<p style="font-size:13pt;line-height:17pt;font-family:helvetica">Click "Add" to add a new ABC tune or tune template.</p>';
 	   if (isPureDesktopBrowser()){
-	   		modal_msg += '<p style="font-size:13pt;line-height:17pt;font-family:helvetica">You may also drag-and-drop a single ABC or MusicXML file on the editor area to add it.</p>';
+	   		modal_msg += '<p style="font-size:13pt;line-height:17pt;font-family:helvetica">You may drag-and-drop ABC or MusicXML files on the editor area to add them.</p>';
 	   }
 	   modal_msg += '<p style="font-size:13pt;line-height:17pt;font-family:helvetica">Click "Search for Tunes" to find tunes by name.</p>';
 	   modal_msg += '<p style="font-size:13pt;line-height:17pt;font-family:helvetica"><strong>Once ABC has been entered and notation is displayed:</strong></p>';
@@ -51384,7 +51438,7 @@ function DoStartup() {
 		let file = fileElement.files[0];
 
 		// Read the file
-		DoFileRead(file, false);
+		DoFileRead(file, false, null);
 
 	}
 
