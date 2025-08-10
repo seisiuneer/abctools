@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2632_080925_1730";
+var gVersionNumber="2633_081025_1100";
 
 var gMIDIInitStillWaiting = false;
 
@@ -46280,6 +46280,11 @@ function DoMultiReadCommon(the_files, fileElement){
 
     }
 
+    // Give some visaul feedback 
+    if (the_files.length > 1){
+      showTheSpinner();
+    }
+
     gImportRunning = true;
 
     let index = 0;
@@ -46318,6 +46323,9 @@ function DoMultiReadCommon(the_files, fileElement){
             // Scroll the tune into view
             MakeTuneVisible(true);    
 
+            // Make sure the spinner is hidden
+            hideTheSpinner();
+
           });
 
           if (fileElement){
@@ -46326,7 +46334,7 @@ function DoMultiReadCommon(the_files, fileElement){
 
           gImportRunning = false;
 
-         return; // all done
+          return; // all done
 
         }
         
