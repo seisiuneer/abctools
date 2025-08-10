@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2631_080925_1700";
+var gVersionNumber="2632_080925_1730";
 
 var gMIDIInitStillWaiting = false;
 
@@ -46270,7 +46270,14 @@ function DoMultiReadCommon(the_files, fileElement){
 
     // Don't allow an import to start while one is running
     if (gImportRunning){
+
+      // Reset input control
+      if (fileElement){
+        fileElement.value = "";
+      }
+
       return;
+
     }
 
     gImportRunning = true;
@@ -51419,6 +51426,17 @@ function DoStartup() {
 			return;
 
 		}
+
+    // Prevent reentry
+    if (gImportRunning){
+
+      if (fileElement){
+        fileElement.value = "";
+      }
+
+      return;
+      
+    }
 
     setABCEditorText("");
 
