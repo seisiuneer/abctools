@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2630_080925_1630";
+var gVersionNumber="2631_080925_1700";
 
 var gMIDIInitStillWaiting = false;
 
@@ -455,6 +455,9 @@ var gLastPlayerRepeat = false;
 
 // Use wide playback cursor?
 var gUseWidePlayCursor = true;
+
+// Prevent import operation while one is in progress
+var gImportRunning = false;
 
 // Global reference to the ABC editor
 var gTheABC = document.getElementById("abc");
@@ -46265,6 +46268,13 @@ function restorePDFStateFromLocalStorage(){
 //
 function DoMultiReadCommon(the_files, fileElement){
 
+    // Don't allow an import to start while one is running
+    if (gImportRunning){
+      return;
+    }
+
+    gImportRunning = true;
+
     let index = 0;
 
     function processNextFile() {
@@ -46307,6 +46317,8 @@ function DoMultiReadCommon(the_files, fileElement){
             fileElement.value = "";
           }
 
+          gImportRunning = false;
+
          return; // all done
 
         }
@@ -46335,7 +46347,6 @@ function DoDrop(e) {
     DoMultiReadCommon(drop_files,null);
 
 }
-
 
 //
 // Hide the Zoom out suggestion banner, save that it was hidden manually
