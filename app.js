@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2640_081125_1500";
+var gVersionNumber="2641_081125_1530";
 
 var gMIDIInitStillWaiting = false;
 
@@ -46276,9 +46276,7 @@ function DoMultiReadCommon(the_files, fileElement){
     }
 
     // Give some visaul feedback 
-    if (the_files.length > 1){
-      showTheSpinner();
-    }
+    showTheSpinner();
 
     gImportRunning = true;
     gImportAccumulator = gTheABC.value;
