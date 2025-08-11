@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2641_081125_1530";
+var gVersionNumber="2642_081125_1600";
 
 var gMIDIInitStillWaiting = false;
 
@@ -46295,7 +46295,7 @@ function DoMultiReadCommon(the_files, fileElement){
 
               if ((gImportAccumulator != "") && (nTunes > 0)) {
 
-                fileSelected.innerText = nTunes + " tunes loaded. Rendering notation for last tune...";
+                fileSelected.innerText = nTunes + " tunes loaded. Processing ABC and rendering notation for last tune...";
 
               }
 
@@ -46306,12 +46306,12 @@ function DoMultiReadCommon(the_files, fileElement){
 
                 if (nTunes == 1){
 
-                  fileSelected.innerText = "Rendering notation for 1 tune...";
+                  fileSelected.innerText = "Processing ABC and rendering notation for 1 tune...";
 
                 }
                 else{
 
-                  fileSelected.innerText = "Rendering notation for " + nTunes + " tunes...";
+                  fileSelected.innerText = "Processing ABC and rendering notation for " + nTunes + " tunes...";
 
                 }
 
