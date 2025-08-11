@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2637_081125_0930";
+var gVersionNumber="2638_081125_1130";
 
 var gMIDIInitStillWaiting = false;
 
@@ -458,6 +458,7 @@ var gUseWidePlayCursor = true;
 
 // Prevent import operation while one is in progress
 var gImportRunning = false;
+var gImportAccumulator = "";
 
 // Global reference to the ABC editor
 var gTheABC = document.getElementById("abc");
@@ -1309,6 +1310,19 @@ function CountTunes() {
 	gTotalTunes = nTunes;
 
 	return nTunes;
+
+}
+
+function CountTunesInBuffer(theNotes) {
+
+  var theTunes = theNotes.split(/^X:.*$/gm);
+
+  var nTunes = theTunes.length - 1;
+
+  // Save the global tune count anytime this is called
+  gTotalTunes = nTunes;
+
+  return nTunes;
 
 }
 
@@ -45484,50 +45498,31 @@ function importMusicXML(theXML,fileName){
 //
 function DoReadCommon(theText,callback){
 
-  var nTunes = CountTunes();
+  var nTunes = CountTunesInBuffer(gImportAccumulator);
   
   if (nTunes > 0){
     
     // Do we need to add a new line before the next tune?
-    var theLength = gTheABC.value.length;
+    var theLength = gImportAccumulator.length;
 
-    if (gTheABC.value.substring(theLength-1) != "\n"){
+    if (gImportAccumulator.substring(theLength-1) != "\n"){
 
-      gTheABC.value += "\n";
+      gImportAccumulator += "\n";
     }
 
-    gTheABC.value += "\n";
+    gImportAccumulator += "\n";
+    
   }
   
-  gTheABC.value += theText;
-
-  CleanSmartQuotes();
-
-	clearGetTuneByIndexCache();
-
-	// Refocus back on the ABC
-	FocusABC();
+  gImportAccumulator += theText;
 
 	setTimeout(function() {
-
-		// Reset the defaults
-		RestoreDefaults();
-
-		// Reset the window scroll
-		window.scrollTo(
-			{
-			  top: 0,
-			}
-		)
 
 		// Mark that this ABC was from a file
 		gABCFromFile = true;
 
 		// Not from share
 		gIsFromShare = false;
-
-		// If staff spacing had changed due to a share, restore it
-		RestoreSavedStaffSpacing();
 
     // If loading multiple files, there will be a callback
     if (typeof callback === "function") {
@@ -46286,6 +46281,7 @@ function DoMultiReadCommon(the_files, fileElement){
     }
 
     gImportRunning = true;
+    gImportAccumulator = gTheABC.value;
 
     let index = 0;
 
@@ -46293,6 +46289,9 @@ function DoMultiReadCommon(the_files, fileElement){
 
         if (index >= the_files.length){
 
+          // Set the final text
+          setABCEditorText(gImportAccumulator);
+ 
           var nTunes = CountTunes();
 
           var fileSelected = document.getElementById('abc-selected');
@@ -46324,6 +46323,22 @@ function DoMultiReadCommon(the_files, fileElement){
               }
 
             }
+
+            // Clear the file accumulator
+            gImportAccumulator = "";
+
+            CleanSmartQuotes();
+
+            clearGetTuneByIndexCache();
+
+            // Refocus back on the ABC
+            FocusABC();
+            
+            // Reset the defaults
+            RestoreDefaults();
+
+            // If staff spacing had changed due to a share, restore it
+            RestoreSavedStaffSpacing();
 
             setTimeout(function(){
 
