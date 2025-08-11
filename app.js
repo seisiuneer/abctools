@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2639_081125_1430";
+var gVersionNumber="2640_081125_1500";
 
 var gMIDIInitStillWaiting = false;
 
@@ -46289,25 +46289,22 @@ function DoMultiReadCommon(the_files, fileElement){
 
         if (index >= the_files.length){
 
-          // Set the final text
-          setABCEditorText(gImportAccumulator);
- 
-          var nTunes = CountTunes();
+          var nTunes = CountTunesInBuffer(gImportAccumulator);
 
           var fileSelected = document.getElementById('abc-selected');
 
           if (gIsQuickEditor){
 
-              if ((gTheABC.value != "") && (nTunes > 0)) {
+              if ((gImportAccumulator != "") && (nTunes > 0)) {
 
-                fileSelected.innerText = "Rendering notation for 1 tune...";
+                fileSelected.innerText = nTunes + " tunes loaded. Rendering notation for last tune...";
 
               }
 
             }
             else{
 
-              if ((gTheABC.value != "") && (nTunes > 0)) {
+              if ((gImportAccumulator != "") && (nTunes > 0)) {
 
                 if (nTunes == 1){
 
@@ -46324,20 +46321,23 @@ function DoMultiReadCommon(the_files, fileElement){
 
             }
 
-            // Clear the file accumulator
-            gImportAccumulator = "";
-
-            CleanSmartQuotes();
-
-            clearGetTuneByIndexCache();
-            
-            // Reset the defaults
-            RestoreDefaults();
-
-            // If staff spacing had changed due to a share, restore it
-            RestoreSavedStaffSpacing();
-
             setTimeout(function(){
+
+              // Set the final text
+              setABCEditorText(gImportAccumulator);
+
+              // Clear the file accumulator
+              gImportAccumulator = "";
+
+              CleanSmartQuotes();
+
+              clearGetTuneByIndexCache();
+              
+              // Reset the defaults
+              RestoreDefaults();
+
+              // If staff spacing had changed due to a share, restore it
+              RestoreSavedStaffSpacing();
 
               // Render the notation
               RenderAsync(true,null,function(){
