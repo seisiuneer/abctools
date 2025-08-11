@@ -46295,7 +46295,7 @@ function DoMultiReadCommon(the_files, fileElement){
 
               if ((gImportAccumulator != "") && (nTunes > 0)) {
 
-                fileSelected.innerText = nTunes + " tunes loaded. Processing ABC and rendering notation for last tune...";
+                fileSelected.innerText = nTunes + " tunes loaded. Processing ABC and rendering notation for the last tune...";
 
               }
 
