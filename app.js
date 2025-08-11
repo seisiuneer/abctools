@@ -45536,7 +45536,7 @@ function DoReadCommon(theText,callback){
 
     return;    
 
-	}, 100);
+	}, 25);
 }
 
 function DoFileRead(file, callback) {
