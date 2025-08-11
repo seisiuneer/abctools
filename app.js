@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2638_081125_1130";
+var gVersionNumber="2639_081125_1430";
 
 var gMIDIInitStillWaiting = false;
 
@@ -46330,9 +46330,6 @@ function DoMultiReadCommon(the_files, fileElement){
             CleanSmartQuotes();
 
             clearGetTuneByIndexCache();
-
-            // Refocus back on the ABC
-            FocusABC();
             
             // Reset the defaults
             RestoreDefaults();
@@ -46358,16 +46355,20 @@ function DoMultiReadCommon(the_files, fileElement){
                 if (!gIsMaximized){
 
                   // Scroll the tune ABC into view
-                    ScrollABCTextIntoView(gTheABC,tuneOffset,tuneOffset,10);
+                  ScrollABCTextIntoView(gTheABC,tuneOffset,tuneOffset,10);
 
-                    if (isMobileBrowser()){
-                      return;
-                    }
+                  if (isMobileBrowser()){
+                    
+                    // Make sure the spinner is hidden
+                    hideTheSpinner();
 
-                    gTheABC.blur();
-                    gTheABC.focus();
-
+                    return;
                   }
+
+                  gTheABC.blur();
+                  gTheABC.focus();
+
+                }
 
                 // Scroll the tune into view
                 MakeTuneVisible(true);    
