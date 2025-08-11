@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2633_081025_1100";
+var gVersionNumber="2634_081025_0900";
 
 var gMIDIInitStillWaiting = false;
 
@@ -46293,40 +46293,48 @@ function DoMultiReadCommon(the_files, fileElement){
 
         if (index >= the_files.length){
 
-          // Render the notation
-          RenderAsync(true,null,function(){
-            
-            // Recalculate the notation top position
-            UpdateNotationTopPosition();
-            
-            // Scroll the last appended tune into view
-            var nTunes = CountTunes();
+          // Give some feedback
+          var fileSelected = document.getElementById('abc-selected');
+          fileSelected.innerText = "Rendering Notation...";
 
-            var theTune = getTuneByIndex(nTunes-1);
+          setTimeout(function(){
 
-            var tuneOffset = gTheABC.value.length-theTune.length;
+            // Render the notation
+            RenderAsync(true,null,function(){
+              
+              // Recalculate the notation top position
+              UpdateNotationTopPosition();
+              
+              // Scroll the last appended tune into view
+              var nTunes = CountTunes();
 
-            if (!gIsMaximized){
+              var theTune = getTuneByIndex(nTunes-1);
 
-              // Scroll the tune ABC into view
-                ScrollABCTextIntoView(gTheABC,tuneOffset,tuneOffset,10);
+              var tuneOffset = gTheABC.value.length-theTune.length;
 
-                if (isMobileBrowser()){
-                  return;
+              if (!gIsMaximized){
+
+                // Scroll the tune ABC into view
+                  ScrollABCTextIntoView(gTheABC,tuneOffset,tuneOffset,10);
+
+                  if (isMobileBrowser()){
+                    return;
+                  }
+
+                  gTheABC.blur();
+                  gTheABC.focus();
+
                 }
 
-                gTheABC.blur();
-                gTheABC.focus();
+              // Scroll the tune into view
+              MakeTuneVisible(true);    
 
-              }
+              // Make sure the spinner is hidden
+              hideTheSpinner();
 
-            // Scroll the tune into view
-            MakeTuneVisible(true);    
+            });
 
-            // Make sure the spinner is hidden
-            hideTheSpinner();
-
-          });
+          },10);
 
           if (fileElement){
             fileElement.value = "";
