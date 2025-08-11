@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2634_081025_0900";
+var gVersionNumber="2635_081025_0900";
 
 var gMIDIInitStillWaiting = false;
 
@@ -46293,48 +46293,76 @@ function DoMultiReadCommon(the_files, fileElement){
 
         if (index >= the_files.length){
 
-          // Give some feedback
+          var nTunes = CountTunes();
+
           var fileSelected = document.getElementById('abc-selected');
-          fileSelected.innerText = "Rendering Notation...";
 
-          setTimeout(function(){
+          if (gIsQuickEditor){
 
-            // Render the notation
-            RenderAsync(true,null,function(){
-              
-              // Recalculate the notation top position
-              UpdateNotationTopPosition();
-              
-              // Scroll the last appended tune into view
-              var nTunes = CountTunes();
+              if ((gTheABC.value != "") && (nTunes > 0)) {
 
-              var theTune = getTuneByIndex(nTunes-1);
+                fileSelected.innerText = "Rendering notation for 1 tune...";
 
-              var tuneOffset = gTheABC.value.length-theTune.length;
+              }
 
-              if (!gIsMaximized){
+            }
+            else{
 
-                // Scroll the tune ABC into view
-                  ScrollABCTextIntoView(gTheABC,tuneOffset,tuneOffset,10);
+              if ((gTheABC.value != "") && (nTunes > 0)) {
 
-                  if (isMobileBrowser()){
-                    return;
-                  }
+                if (nTunes == 1){
 
-                  gTheABC.blur();
-                  gTheABC.focus();
+                  fileSelected.innerText = "Rendering notation for 1 tune...";
+
+                }
+                else{
+
+                  fileSelected.innerText = "Rendering notation for " + nTunes + " tunes...";
 
                 }
 
-              // Scroll the tune into view
-              MakeTuneVisible(true);    
+              }
 
-              // Make sure the spinner is hidden
-              hideTheSpinner();
+            }
 
-            });
+            setTimeout(function(){
 
-          },10);
+              // Render the notation
+              RenderAsync(true,null,function(){
+                
+                // Recalculate the notation top position
+                UpdateNotationTopPosition();
+                
+                // Scroll the last appended tune into view
+                var nTunes = CountTunes();
+
+                var theTune = getTuneByIndex(nTunes-1);
+
+                var tuneOffset = gTheABC.value.length-theTune.length;
+
+                if (!gIsMaximized){
+
+                  // Scroll the tune ABC into view
+                    ScrollABCTextIntoView(gTheABC,tuneOffset,tuneOffset,10);
+
+                    if (isMobileBrowser()){
+                      return;
+                    }
+
+                    gTheABC.blur();
+                    gTheABC.focus();
+
+                  }
+
+                // Scroll the tune into view
+                MakeTuneVisible(true);    
+
+                // Make sure the spinner is hidden
+                hideTheSpinner();
+
+              });
+
+            },10);
 
           if (fileElement){
             fileElement.value = "";
