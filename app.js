@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2642_081125_1600";
+var gVersionNumber="2643_081225_0730";
 
 var gMIDIInitStillWaiting = false;
 
@@ -17501,7 +17501,7 @@ function AddABC(){
 
 	}, 25);
 
-	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 25, width: 730,  scrollWithPage: (AllowDialogsToScroll()) }).then(function(){
+	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 25, width: 730,  scrollWithPage: false }).then(function(){
 
 			
 	});
@@ -46355,16 +46355,18 @@ function DoMultiReadCommon(the_files, fileElement){
                   // Scroll the tune ABC into view
                   ScrollABCTextIntoView(gTheABC,tuneOffset,tuneOffset,10);
 
-                  if (isMobileBrowser()){
+                  // if (isMobileBrowser()){
                     
-                    // Make sure the spinner is hidden
-                    hideTheSpinner();
+                  //   // Make sure the spinner is hidden
+                  //   hideTheSpinner();
 
-                    return;
+                  //   return;
+                  // }
+
+                  if (!isMobileBrowser){
+                    gTheABC.blur();
+                    gTheABC.focus();
                   }
-
-                  gTheABC.blur();
-                  gTheABC.focus();
 
                 }
 
@@ -51069,7 +51071,7 @@ function DoStartup() {
     	return;
     }
 
-    //
+  //
 	// Uncomment these lines as desired for mobile simulation testing
 	//
 	//gIsAndroid = true;
