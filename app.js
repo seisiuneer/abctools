@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2645_081225_0830";
+var gVersionNumber="2646_081225_1300";
 
 var gMIDIInitStillWaiting = false;
 
@@ -17439,9 +17439,9 @@ function AddABC(){
 	// Showing search?
 	if (gFeaturesShowSearch){
 
-		modal_msg += '<p style="text-align:center;font-size:18px;margin-top:24px;">Search and Add Tunes</p>';
+		modal_msg += '<p style="text-align:center;font-size:18px;margin-top:24px;">Search and Add Tunes (Over 65,000 Tunes Available)</p>';
 		modal_msg += '<p style="text-align:center;margin-top:16px;">';
-		modal_msg  += '<input id="searchandaddtunes" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AddFromSearch(null,AddABCCallback);" type="button" value="Tune Search Engine" title="Search for tunes to add to your tunebook">';
+		modal_msg  += '<input id="searchandaddtunes" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AddFromSearch(null,AddABCCallback);" type="button" value="Tune Search Engine" title="Search for tunes to add to your tunebook.&nbsp;&nbsp;Over 65,000 tunes available.">';
 
 	}
 
