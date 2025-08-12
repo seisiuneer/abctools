@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2643_081225_0730";
+var gVersionNumber="2644_081225_0800";
 
 var gMIDIInitStillWaiting = false;
 
@@ -15978,7 +15978,7 @@ function AddFromSearch(e,callback){
 		theHeight = window.innerHeight - 705;
 	}
 
-	var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:15px;">Search and Add Tunes&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#search_and_add_tunes" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>';
+	var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:15px;">Tune Finder&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#tune_finder" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>';
 	
 	modal_msg+='<p style="font-size:12pt;line-height:24pt;margin-top:20px;margin-bottom:12px;" class="switchtunedatabase">Tune Collection to Search: <select id="databaseselect" onchange="SwitchTuneDatabase();" title="Select your tune search database"><option value="0">Gavin Heneghan\'s Collection (20,000+ Tune Settings)</option><option value="1">FolkFriend.app Collection (45,000+ Tune Settings)</option></select></p>';
 
@@ -17441,7 +17441,7 @@ function AddABC(){
 
 		modal_msg += '<p style="text-align:center;font-size:18px;margin-top:24px;">Search and Add Tunes</p>';
 		modal_msg += '<p style="text-align:center;margin-top:16px;">';
-		modal_msg  += '<input id="searchandaddtunes" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AddFromSearch(null,AddABCCallback);" type="button" value="Search and Add Tunes" title="Search for tunes to add to your tunebook">';
+		modal_msg  += '<input id="searchandaddtunes" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AddFromSearch(null,AddABCCallback);" type="button" value="Tune Finder" title="Search for tunes to add to your tunebook">';
 
 	}
 
@@ -17468,10 +17468,6 @@ function AddABC(){
 		modal_msg  += '<input id="addnewjig" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AppendSampleJig();" type="button" value="The Kesh (jig)" title="Adds an example jig (The Kesh) to the end of the ABC">';
 		modal_msg  += '<input id="addnewhornpipe" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AppendSampleHornpipe();" type="button" value="Alexander\'s (hornpipe)" title="Adds an example Hornpipe (Alexander\'s) to the end of the ABC">';
 		modal_msg += '</p>';	
-		modal_msg += '<p style="text-align:center;margin-top:16px;">';
-		modal_msg  += '<input id="addjsbach" class="advancedcontrols btn btn-injectcontrols-headers" style="margin-right:24px;" onclick="AppendJSBach();" type="button" value="J.S. Bach Two-Part Invention #1" title="Adds the J.S. Bach 2-Part Invention #1 to the end of the ABC">';
-		modal_msg  += '<input id="addjsbach" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AppendJSBach2();" type="button" value="J.S. Bach BWV570 Fantasia" title="Adds the J.S. Bach BWV570 Fantasia for Pipe Organ to the end of the ABC">';
-		modal_msg += '</p>';
 	}
 
 	// Showing templates?
@@ -18487,187 +18483,6 @@ function AppendDatabaseTemplate(){
 	theValue += '[I:MIDI= program 128] "_128" G4 |[I:MIDI= program 129] "_129" G4 |[I:MIDI= program 130] "_130" G4 |[I:MIDI= program 131] "_131" G4 |[I:MIDI= program 132] "_132" G4 |[I:MIDI= program 133] "_133" G4 |[I:MIDI= program 134] "_134" G4 |[I:MIDI= program 135] "_135" G4 |\n';
 	theValue += '[I:MIDI= program 136] "_136" G4 |[I:MIDI= program 137] "_137" G4 |[I:MIDI= program 138] "_138" G4 |[I:MIDI= program 139] "_139" G4 |[I:MIDI= program 140] "_140" G4 |[I:MIDI= program 141] "_141" G4 |[I:MIDI= program 142] "_142" G4 |[I:MIDI= program 143] "_143" G4 |[I:MIDI= program 144] "_144" G4 |\n';
 	theValue += '[I:MIDI= program 145] "_145" G4 |[I:MIDI= program 146] "_146" G4 |[I:MIDI= program 147] "_147" G4 |[I:MIDI= program 148] "_148" G4 |[I:MIDI= program 149] "_149" G4 | [I:MIDI= program 150] "_150" G4 |]\n';
-
-	// Do common tune addition processing
-	ProcessAddTune(theValue);
-
-}
-
-//
-// Add the J.S. Bach 2-Part Invention #1
-//
-function AppendJSBach(){
-
-	// Keep track of actions
-	sendGoogleAnalytics("action","AppendJSBach");
-
-	// Stuff in some default ABC with additional options explained
-	var theValue = ""
-
-	var nTunes = CountTunes();
-
-	if (nTunes > 0){
-		theValue += "\n";
-	}
-
-	theValue += 'X:1\n';
-	theValue += "%\n";
-	theValue += "% Example J.S. Bach transcription originally imported from MusicXML\n";
-	theValue += "%\n";	
-	theValue += '% Click "Play" to play\n';
-	theValue += "%\n";
-	theValue += 'T:Two-Part Invention #1\n';
-	theValue += 'C:J.S. Bach\n';
-	theValue += 'L:1/16\n';
-	theValue += 'Q:1/4=84\n';
-	theValue += 'M:4/4\n';
-	theValue += 'K:C\n';
-	theValue += '%\n';
-	theValue += '% Try changing the soundfont value to\n';
-	theValue += '% fluid, fluidhq, musyng, fatboy, canvas, mscore, or arachno:\n';
-	theValue += '%\n';	
-	theValue += '%soundfont fluid\n';	
-	theValue += '%\n';	
-	theValue += '%%staffsep 40\n';
-	theValue += '%%stretchlast true\n';
-	theValue += '%\n';
-	theValue += '% Try changing these to %%MIDI program mute\n';
-	theValue += '% to isolate individual voices:\n';
-	theValue += '%\n';
-	theValue += 'V:1 treble\n';
-	theValue += '%%MIDI program 6\n';
-	theValue += 'V:2 bass\n';
-	theValue += '%%MIDI program 6\n';
-	theValue += 'V:1\n';
-	theValue += 'z CDE FDEC G2c2 B/A/Bc2 | dGAB cABG d2g2 f/e/fg2 |\n'; 
-	theValue += 'eagf egfa gfed cedf | edcB AcBd cBAG ^FAGB |\n'; 
-	theValue += 'A2D2 c/B/c2d BAG^F EGFA | GBAc Bdce dB/c/dg B/c/BAG |\n';
-	theValue += '.G4 z4 z GAB cABG | .^F4 z4 z ABc dBcA |\n';
-	theValue += '.B4 z4 z dcB AcBd | .c4 z4 z edc Bd^ce |\n';
-	theValue += 'd2^c2d2e2 f2A2B2c2 | d2^F2^G2A2 B2c2 d4 |\n';
-	theValue += 'z E^F^G AFGE edce dcBd | ca^gb aefd ^Gfed c/d/cBA |\n';
-	theValue += 'Aagf egfa g8- | gefg afge f8 |\n';
-	theValue += 'z gfe dfeg f8- | fdef gefd e8- |\n';
-	theValue += "ecde fdec defg afge | fgab c'abg c'2g2 e/f/edc|\n";
-	theValue += '[][Q:1/4=56][M:2/4]c_BAG FAGB|[Q:1/4=42]A=BcE DcFB |[M:4/4][EGc]16|]\n'; 
-	theValue += 'V:2\n';
-	theValue += 'z8 z C,D,E, F,D,E,C, | G,2G,,2 z4 z G,A,B, CA,B,G, |\n'; 
-	theValue += 'C2B,2C2D2 E2G,2A,2B,2 | C2E,2^F,2G,2 A,2B,2 C4- |\n';
-	theValue += 'CD,E,^F, G,E,F,D, G,2B,,2C,2D,2 | E,2^F,2G,2E,2 B,,2>C,2 D,2D,,2 |\n';
-	theValue += 'z G,,A,,B,, C,A,,B,,G,, D,2G,2^F,2G,2 | A,D,E,^F, G,E,F,D, A,2D2C2D2 |\n';
-	theValue += 'G,GFE DFEG F2E2F2D2 | EAGF EGFA G2F2G2E2 |\n';
-	theValue += 'F_BAG FAGB AGFE DFEG | FEDC B,DCE DCB,A, ^G,B,A,C |\n';
-	theValue += 'B,2E,2D/C/.D3 CB,A,G, ^F,A,^G,B, | A,CB,D CEDF E2A,2E2E,2 |\n';
-	theValue += 'A,2A,,2 z4 z EDC B,D^CE | D8- DA,B,C DB,CA, |\n';
-	theValue += 'B,8- B,DCB, A,CB,D | C8- CG,A,_B, CA,B,G, |\n';
-	theValue += 'A,2_B,2A,2G,2 F,2D2C2B,2 | A,2F2E2D2 ED,E,F, G,E,F,D, |\n';
-	theValue += '[][Q:1/4=56][M:2/4]E,2C,2D,2E,2|[Q:1/4=42]F,D,E,F, G,2G,,2 |[M:4/4][C,,C,]16 |]\n';
-
-	// Do common tune addition processing
-	ProcessAddTune(theValue);
-
-}
-
-//
-// Add the J.S. Bach Fantasia BWV570
-//
-function AppendJSBach2(){
-
-	// Keep track of actions
-	sendGoogleAnalytics("action","AppendJSBach2");
-
-	// Stuff in some default ABC with additional options explained
-	var theValue = ""
-
-	var nTunes = CountTunes();
-
-	if (nTunes > 0){
-		theValue += "\n";
-	}
-
-	theValue += 'X:1\n';
-	theValue += "%\n";
-	theValue += "% Example J.S. Bach transcription originally imported from MusicXML\n";
-	theValue += "%\n";	
-	theValue += '% Click "Play" to play\n';
-	theValue += "%\n";
-	theValue += 'T:Fantasia\n';
-	theValue += 'T:BWV570\n';
-	theValue += 'T:Johann Sebastian Bach (1685-1750)\n';
-	theValue += '%%score { 1 | 2 | 3 | 4 }\n';
-	theValue += 'L:1/16\n';
-	theValue += 'M:4/4\n';
-	theValue += 'K:C\n';
-	theValue += '%\n';
-	theValue += '% Try changing the soundfont value to\n';
-	theValue += '% fluid, fluidhq, musyng, fatboy, canvas, mscore, or arachno:\n';
-	theValue += '%\n';	
-	theValue += '%soundfont fluid\n';	
-	theValue += '%\n';		
-	theValue += '%%stretchlast true\n';
-	theValue += '%%staffsep 40\n';
-	theValue += 'Q:1/4=100\n';
-	theValue += '%\n';
-	theValue += '% Try changing these to %%MIDI program mute\n';
-	theValue += '% to isolate individual voices:\n';
-	theValue += '%\n';
-	theValue += 'V:1 treble\n';
-	theValue += '%%MIDI program 19\n';
-	theValue += 'V:2 treble\n';
-	theValue += '%%MIDI program 19\n';
-	theValue += 'V:3 bass\n';
-	theValue += '%%MIDI program 19\n';
-	theValue += 'V:4 bass\n';
-	theValue += '%%MIDI program 19\n';
-	theValue += 'V:1\n';
-	theValue += 'G4 c6 d2 B4 | e6 f2 d6 e2 | c8- c2e2d2c2 | B2A2 B4 z2 e2g2e2 |\n';
-	theValue += 'c2e2G2c2 A2c2d2e2 | f2e2d2c2 B2G2 c4- | c2dcB2cB A8- | A2Bc d6 efB2cd |\n';
-	theValue += '^G6 AB A2Bcd2cd | B6 cB A6 B^G | c8- c2dc_B2cA | _B8- B2>G2A2GA |\n';
-	theValue += 'F6 EF G2A_B A4- | A2Bc d6 Bcd2ef | e8- e2dc d4- | d2ef e6 fg f4- |\n';
-	theValue += 'f2ga g6 ag f4- | f2gf e6 fe d4 | d8d8- | d2cB c6 dc B4 |\n';
-	theValue += 'c4 z12 | z4 d8 c4- | c8 B4 _B4 | A4 B4 G8 |\n';
-	theValue += 'A4 c4 B8 | c8c8 | f8 e8- | e6e6 d4- |\n';
-	theValue += 'd4 d2ef g2agf2gf | e4 g6 ag f4- | f2gfe2fe d8 | g2agf2gf e6 fe |\n';
-	theValue += 'd6 ed c6 dc | B4 c4 d4 e4- | e2fe d6 ef e4- | e2fe d6 efg2ab |\n';
-	theValue += 'c2Bcd2ef B4 c4- | cdBd cdBd cedf egfa | gGAB c4- cede fdef | B2cd2<c2B c8- |\n';
-	theValue += 'c8c8 | c16 |]\n';
-	theValue += 'V:2\n';
-	theValue += 'G8G8- | G2G2 c6 c2 B4- | B2B2 A6A6- | A4 G4 z8 |\n';
-	theValue += 'z16 | z16 | z4 G4 E8 | F8F8- |\n';
-	theValue += 'F2ED C4 E8- | E8E8- | E8 D8- | D2E^F G6 E2- E4- |\n';
-	theValue += 'E2D^C D4 E6 ^FG | ^F6 EF G8- | G2AB c4 A6 Bc | B6 cd c6 de |\n';
-	theValue += 'd6 ef e6 dc | d6 cB c6 BA | B8B8 | G6 FE F6 ED |\n';
-	theValue += 'E6 FG A6 Bc | B8- B6 A^G | A8 G8 | F8 E6 FE |\n';
-	theValue += 'D6 ED D4 G4 | G4 A6A6 | d8- d2cB c4- | c2dc c6 dc c4- |\n';
-	theValue += 'c2BA B6 c4 B2 | c4 d4 c6 dc | B4 c6 BA B4 | c4 B6 cB A4- |\n';
-	theValue += 'A2BA G6 AG ^F4 | G8 B4 c4- | c6 BA B6 cd | c6 BA B8 |\n';
-	theValue += 'A8 G8- | G8G8- | G8G8- | G6G6 F4 |\n';
-	theValue += 'G4 F6 GF EFDF | E16 |]\n';
-	theValue += 'V:3\n';
-	theValue += 'E8 D8- | D4 C4 D4 G4 | E8 D8- | D8 C8- |\n';
-	theValue += 'C8 C8 | D6D6 E2FE | D8 ^C8 | D4 A,2B,C B,8- |\n';
-	theValue += 'B,4 A,8 ^G,4- | G,2A,B, C6 B,A, B,4- | B,2A,^G,A,2E,=G, ^F,8 | G,6 A,_B,- B,4 A,4- |\n';
-	theValue += 'A,8 _B,4 E,4 | A,8 G,8- | G,6 E,C, ^F,6 D,2 | G,8G,8- |\n';
-	theValue += 'G,8G,8- | G,8G,8- | G,2G,A,B,2CD G,2A,B,D,2E,F, | E,4 A,4 D,4 G,4- |\n';
-	theValue += 'G,2A,B, C6 DE F4- | F8 E8- | E4 D8 C4- | C4 D6 CB, C4- |\n';
-	theValue += 'C2B,C A,4 B,4 E4- | E8 F8- | F4 G6G6 | A8A8 |\n';
-	theValue += 'G4 G2F2 E4 D4 | C2DCB,2CB, A,4 D4- | D4 E2C2 G6 FG | E2FED2ED C6 DC |\n';
-	theValue += 'B,6 CB, A,2B,2 C4 | D4 E4 G8 | A4 D4 G8- | G8G8 |\n';
-	theValue += 'E4 D8 E4- | E2D2E2D2 E2B,2C2D2 | E4- EEDC D8- | D4 F4 E4 C4|\n';
-	theValue += 'z2 C_B,A,2G,F, G,6 F,2 | G,16 |]\n';
-	theValue += 'V:4\n';
-	theValue += 'C,2D,2E,2C,2 G,8- | G,8G,8 | A,6 G,2 ^F,8 | G,6 F,2 E,8- |\n';
-	theValue += 'E,8 F,8- | F,4 ^F,4 G,8- | G,8- G,2A,_B,A,2G,A, | F,8 D,8 |\n';
-	theValue += 'E,8E,8- | E,8E,8 | A,,8 D,8- | D,8 ^C,8 |\n';
-	theValue += 'D,6D,6 ^C,4 | C,8 B,,8 | C,8 ^F,,8 | G,,8G,,8- |\n';
-	theValue += 'G,,8G,,8- | G,,8G,,8- | G,,4 z12 | z16 |\n';
-	theValue += 'C,6 D,E, F,6 G,A, | D,2E,F,B,,2C,D, ^G,,2E,,2 A,,4- | A,,2A,G,^F,2E,D, G,2D,=F,E,2D,C, | F,2C,E,D,2C,B,, E,8 |\n';
-	theValue += 'F,4 ^F,4 G,2G,=F,E,2E,D, | C,2C,B,,A,,2A,,G,, F,,2A,,G,,F,,2F,,E,, | D,,2D,C,B,,2A,,G,, C,6 D,E, | A,,6 B,,C, F,,4 ^F,,2E,,F,, |\n';
-	theValue += 'G,,4 z8 x4 | z16 | G,8G,8- | G,8G,8- |\n';
-	theValue += 'G,8G,8- | G,2G,F,E,2D,C, B,,2A,,G,,F,,2E,,D,, | F,,4 F,4 G,8- | G,8G,8- |\n';
-	theValue += 'G,4 F,6 G,F,E,2D,C, | G,8G,8- | G,8G,8- | G,8 C,2C_B,A,2G,F, |\n';
-	theValue += 'E,4 F,4 C,8 | C,16 |]\n';
-
 
 	// Do common tune addition processing
 	ProcessAddTune(theValue);
