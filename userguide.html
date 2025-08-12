@@ -1344,10 +1344,10 @@
                 <p>On desktop browsers, you may also drag-and-drop ABC, MusicXML, BWW, or MIDI files on the ABC Editor to add them.</p>
                 <p>Changes are reflected immediately in the displayed notation below the ABC Editor.</p>
                 <p>You may also paste some ABC text into the ABC Editor or just start typing.</p>
-                <p>Click on any tune in the ABC to have the notation scroll into view. </p>
+                <p>On desktop browsers, you can click on any tune in the ABC to have the notation scroll into view. </p>
                 <p>Click in the notation for any tune and the ABC area will be autoscrolled so that the ABC for the tune is displayed (or within a few lines, browser dependent).</p>
+                <p>You can change the font size of the text in the ABC editor from the <a href="#settings_dialog">Settings</a> dialog.</p>
                 <p>Alt-click on any tune to select it in its entirety. (Desktop browsers only)</p>
-                <p><strong>Note:</strong> The tune autoscroll features are <strong>not</strong> available on iOS or Android devices.</p>
                 <hr class="hidden-print" id="abc_editor_resize">
                 <h1 class="page_break_always">Resizing the ABC Editor<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <p>On desktop browsers, the ABC text area can be resized by dragging the lower right corner.</p>
@@ -5961,8 +5961,10 @@
                 <hr>
                 <p style="text-align:center"><strong>Modifying the Look of the Tool Using Custom CSS</strong></p>
                 <p>You can even use custom CSS in the ABC file header to change the look of the tool!</p>
-                <p>For example this custom CSS changes the ABC editor text color to blue and its background color to a light green:</p>
+                <p><strong>Example #1</strong> - Change the ABC editor text color to blue and its background color to a light green:</p>
                 <p class="code">% Change the editor text and background color<br/>%%begincss<br/>#abc {color:#0000FF;background-color:#DDFFDD !important;}<br/>%%endcss</p>
+                <p><strong>Example #2</strong> - Change the ABC editor text font to Monaco:</p>
+                <p class="code">% Change the editor text font<br/>%%begincss<br/>#abc {font-family:Monaco;}<br/>%%endcss</p>
                 <hr class="hidden-print" id="customabcjsparams">
                 <h1 class="page_break_always h1wide">Adding Custom abcjs Rendering Parameters<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/9TZPTf3UW4M" title="%abcjs_render_params Overview" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
