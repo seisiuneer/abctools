@@ -714,6 +714,7 @@
             <summary><h3>Adding Custom abcjs CSS Styling</h3></summary>
             <a style="text-decoration:none;" href="#customabcjscss">Adding Custom abcjs CSS Styling</a>
             <a style="text-decoration:none;" href="#customcssexamples">Custom abcjs CSS Examples</a>
+            <a style="text-decoration:none;" href="#customtoolcss">Modifying the Look of the Tool Using Custom CSS</a>
             </details>
             
             <details>
@@ -1160,6 +1161,7 @@
                     <div class="tocpanel">
                         <p class="toc"><a style="text-decoration:none;" href="#customabcjscss">Adding Custom abcjs CSS Styling</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#customcssexamples">Custom abcjs CSS Examples</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#customtoolcss">Modifying the Look of the Tool Using Custom CSS</a></p>
                     </div>
 
                     <button class="accordion" title="Click to expand/collapse this section">Advanced abcjs Rendering Options</button>
@@ -5918,7 +5920,16 @@
                 <p>abcjs includes a unique aria-label attribute in the SVG group for each line of the tune that includes the tune name, for example:</p>
                 <p class="code">aria-label="Sheet Music for &quot;The Kesh&quot; section 1"</p>
                 <p>It is possible to target any SVG element that contains a specific string in the aria-label attribute.</p>
-                <p>For example, this custom CSS targets each line of two different tunes, Cooley's and Alexanders so that the lines have different colors:</p>
+                <hr>
+                <p><strong>Example</strong> - This custom CSS targets each line of two different tunes, Cooley's and Alexanders so that the lines have different colors:</p>
+                <p>Click the image to try this example live in the tool:</p>
+                <br/>
+                <div class="image_holder">
+                    <a href="https://michaeleskin.com/abctools/abctools.html?lzw=KQKGAIGEFcGcBcD2BbcBDARgYwFaygMoHgCWAduPABYCm4AggEKTgBmJANnbWgCY0AncBhqtEAutUnQyNWAC4wYcABUqJfJCLh+yRGQQC08OZTQCA5jXjxyF0mV4kAbiV7Q0HSjLnKA7iTUlLQkQoh+FFhwSKhaxBgAnt6y4GRoyHTkylLoAiRoALQcmDRexvB5GNAmSsDAIhbkWLCwIAD0AFQgALJoANZ0NGhYVOAc5HSIrFCIiFwJAOT4ZIjwxiT6pPD44ZFz4iAdbSCwzhYA2ub5RSUcHQC8AESQs-NLjwC64AB0mLiwRQADOAAN4gLD7ATycASXgAbhAAF8TmdLnlCsURHcni85jRFrBPj8-ngigBGUHgyHQiwSGhkBHI04XK4Y24PZ6vfHvL6-bCkjgAJkpEI44mhGA40BojJRLPRNyxHNxb0JvJJAI4AGYRdTwAAHaACfVcWWdHr9QbDUbjFJTBhcAAeaEcgiWqVW602gR2EXAooORzlaOumNKHPoTpd-AEPOJ-M1wLBAahwilMqRwdZivDT0jNGdrtjavj-3JurFqdhsuZIbZSrzUaLcb5ZaFFfFBqNJozTNR2bD2Me+cLMZbGqKOuTetpNHpsrq9N4zVaIAAGtCySAVNCVdzWpBoSojE5bPpPCAAErQy9zjg9aEAFjaj5AABlN20ABwgACKn8Fe4AE5ARAABpaEAFFeAOAAfeRHkg5BEMYRh6HARhhUgxhYMwhhGB0NCAHFYMeAARR4ADE2kgtoyIYejGDI+gyNg6jaPoliMPoIjKNgkBEOQ7C0IwrCcLwpgdFECxSIotBWCsQj6D4ikyMgyj6MExCtTI+RYOFNSNPALTIMFCxWFg-j4K0mgCIACi1VCCNs8zYNsvCrF4HDyOHNp6D88BKPQ5igtg-zwsC9D+AU-ibPsxzUPAFyLPcgjopknz5MUrzlNg1T1M0pDELM1g9IMgrjKKyDH1gj4QHXTdt2hEdozdA8jxPQINjSe9r3AAAJcQyH1Eh9RoB9wGfV8P3AMlvz-AD7i-UCIPAMjkDQHAQHghzzJoWTHl4ZTgqC3hYNYZdeAYaLSKIx4LGFRSfIurAzuHR4HNEOgHOXAj6GFXbWH2gSKKOoK1tO87Luu0Rbvux66Gey7SPoD6tS+nQsB83hBT07b5B4g7TvQ4m4aIxgvPAcmvJR4csBoLAGHprADt4Vh5OM1HAe+rUjpIkGqPoI7IqOsmKYI6nvNR+h6emKxXtgz6gcx7Hcf4oA&format=noten&ssp=10&name=Targetted_CSS&editor=1" target="_blank"> 
+                        <img class="image" loading="lazy" src="img/css_example_16.jpg">
+                    </a>
+                </div>
+                <p>Custom CSS:</p>
                 <p class="code">%<br/>
                     % Custom abcjs CSS in the ABC file header before the tunes:<br/>
                     %<br/>
@@ -5958,12 +5969,31 @@
                     color: green;<br/>
                     }<br/>
                 %%endcss</p>
+                <hr class="hidden-print" id="customtoolcss">
+                <h1 class="page_break_always h1wide">Modifying the Look of the Tool Using Custom CSS<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+                <p>You can use custom CSS in the ABC file header to change the look of the tool.</p>
+                <p><strong>Note:</strong> It is possible to break the usability of the tool with custom CSS, but simple changes to colors and fonts are generally safe.</p>
                 <hr>
-                <p style="text-align:center"><strong>Modifying the Look of the Tool Using Custom CSS</strong></p>
-                <p>You can even use custom CSS in the ABC file header to change the look of the tool!</p>
                 <p><strong>Example #1</strong> - Change the ABC editor text color to blue and its background color to a light green:</p>
-                <p class="code">% Change the editor text and background color<br/>%%begincss<br/>#abc {color:#0000FF;background-color:#DDFFDD !important;}<br/>%%endcss</p>
+                <p>Click the image to try this example live in the tool:</p>
+                <br>
+                <div class="image_holder">
+                    <a href="https://michaeleskin.com/abctools/abctools.html?lzw=KQAgwgFghgdg5gUxAFwkhATAlsg9gJxQQA9kRYMQAjKAYwGs59cBXGS23AGwIChhgVBHCwxaAZ3G8AxFCq0QAb0498ALmkAGbZoBiugNw0GTVuwC0KghoAiN-XZABCLAFsADgWSxkBgL78wAjsElK8ABpqIACMvAAqUXFoIADSCOIQvGCJ+FDYyFi4MFBcvABKUQBSWHC8ALJRAGwA9AAcvAAyUdFtvACKUQDMbQC80QBMmrwpUQDirlAAVvz8IACq4kioSABmXCxYlOJmGDtFyGr8x2yn5yB7BxgroBtIsCAAgpws4gUKs7l2CAAApYWC4EDXIFnQjbECuBA8DAAT0uAjqAEkbBiQO5mEwoK4QFNgKtXuQYJ9vr8sP9AZRQeD7gQUMlaBACBhxGjgJjsSB2Zy8bg4MTnutNhSQABlZEwVAgABCUEkkJOzNhyRokh5fJx2vEwtFg3apNA0oQZCgkPcCFoWB2tPIrjMZFwO0hAHdRHA0eJvfBiQA6cYAVhWAB81AAiWaxj6zECzD6KiPRmzRlMfT6KjBpuOYShwDB56NgaOYRUgdPRjCKj4R3ix+OJ5OpmtZnOlgslkDF9sZhO6atx2aDNSNqPN+tVuul8vCJA1usN6cpkB12Zpwf1z7Jxtr2e5tMLxAj2vHsvRuA7UU1qBwKD56NUG998eNoA&format=noten&ssp=10&name=Tool_CSS_Example_1&editor=1" target="_blank"> 
+                        <img class="image" loading="lazy" src="img/css_example_13.jpg">
+                    </a>
+                </div>
+                <p>Custom CSS:</p>
+                <p class="code">% Change the editor text and background color<br/>%%begincss<br/>#abc {color:#0000FF;background-color:#DDFFDD !important;}<br/>%%endcss</p>            
+                <hr>
                 <p><strong>Example #2</strong> - Change the ABC editor text font to Monaco:</p>
+                <p>Click the image to try this example live in the tool:</p>
+                <br>
+                <div class="image_holder">
+                    <a href="https://michaeleskin.com/abctools/abctools.html?lzw=KQAgwgFghgdg5gUxAFwkhATAlsg9gJxQQA9kQAzXGZAKGGACME4sYBjAZw5oGIoG2IAN6VqAWnJQAtlgA2ATwBcAWSpQ2uANwBfOsAQwMnbjQAaikAEYaAFQs20IANIIOEGmHv4o2ZFjWyNABKFgBSWHA0yhYAbAD0ABw0ADIWlok0AIoWAMyJALyWAEwADDROFgDiUlAAVnR0IACqHEioSOSyAK5YGCAcuF2GosiKdANDGCMU3b0NoC1IsCAAghpdHH6Cld6GIAAKWLC4-YN7lITtIFIIsrgYSnrKAJIAIs8gAA74uHDeUiAysBGosQMs1oNNlhtrs+odjhQCChHGwIAQMBwxvQXu8QKj0d9foD5s1WmCYCAAMryagQEAAISgXFOk0Rl0cDCZmKebw+nK4hLgIBySWBoEpCDIUH6nwQbCw5GhYKkZzIuHI-QA7qw4FiONr4ICAHRFACsDQAPooAESVW0rSogSorekW62va0ularekYN12zB9OAYP3WsDWzD0kDu60YekrC00W32x3O10xr0+0MBkMgYPpj0OgBi0btlRyikTVuT8ajcdD4eYSBjcYTNZdIDjlTdhfjq2difbdd9bsbiFLsZHYetcHIQpjUDgUH91oYs7zFcTQA&format=noten&ssp=10&name=Tool_CSS_Example_2&editor=1" target="_blank"> 
+                        <img class="image" loading="lazy" src="img/css_example_14.jpg">
+                    </a>
+                </div>
+                <p>Custom CSS:</p>
                 <p class="code">% Change the editor text font<br/>%%begincss<br/>#abc {font-family:Monaco;}<br/>%%endcss</p>
                 <hr class="hidden-print" id="customabcjsparams">
                 <h1 class="page_break_always h1wide">Adding Custom abcjs Rendering Parameters<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
