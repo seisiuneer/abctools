@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2649_081325_0700";
+var gVersionNumber="2650_081325_0800";
 
 var gMIDIInitStillWaiting = false;
 
@@ -46082,6 +46082,8 @@ function DoMultiReadCommon(the_files, fileElement) {
 		if (fileElement) fileElement.value = "";
 		return;
 	}
+  
+  UpdateNotationTopPosition();
 
 	showTheSpinner();
 
@@ -46099,12 +46101,13 @@ function DoMultiReadCommon(the_files, fileElement) {
 	var progressBarContainer;
 	var progressBar;
 
-	// Only show the progress bar for multiple files
-	if (totalFiles > 1) {
+	// Only show the progress bar for multiple files and if the top banner is hidden
+	if (gZoomBannerHidden && (totalFiles > 1)) {
+
 		overlay = document.createElement('div');
 		overlay.style.position = "absolute";
-		overlay.style.top = fileSelected.offsetTop + 9 + "px";
-		overlay.style.left = fileSelected.offsetLeft + "px";
+    overlay.style.top = fileSelected.offsetTop + 9 + "px";
+    overlay.style.left = fileSelected.offsetLeft + "px";
 		overlay.style.width = fileSelected.offsetWidth + "px";
 		overlay.style.height = fileSelected.offsetHeight + "px";
 		overlay.style.background = "#ffffff00";
@@ -46135,6 +46138,7 @@ function DoMultiReadCommon(the_files, fileElement) {
 
 		fileSelected.parentElement.style.position = "relative";
 		fileSelected.parentElement.appendChild(overlay);
+
 	}
 
 	function updateProgress() {
@@ -46146,7 +46150,7 @@ function DoMultiReadCommon(the_files, fileElement) {
 
 		if (index >= totalFiles) {
 
-			if (totalFiles > 1) {
+			if (gZoomBannerHidden && (totalFiles > 1)) {
 				overlay.remove();
 			}
 
@@ -46218,7 +46222,7 @@ function DoMultiReadCommon(the_files, fileElement) {
 
 		const file = the_files[index++];
 
-		if (totalFiles > 1) {
+		if (gZoomBannerHidden && (totalFiles > 1)) {
 			updateProgress();
 		}
 
