@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2653_081325_0830";
+var gVersionNumber="2654_081325_1000";
 
 var gMIDIInitStillWaiting = false;
 
@@ -50367,8 +50367,6 @@ function SetupContextMenu(showUpdateItem){
 				    { name: 'Settings', fn: function(target) { ConfigureToolSettings(); }},
 				    { name: 'Advanced Settings', fn: function(target) { AdvancedSettings(); }},
 				    {},
-				    { name: 'Launch ABC Tags to CSV', fn: function(target) { LaunchCSVTagExtractor(); }},
-				    {},
 				    { name: 'Launch Standard Editor', fn: function(target) { LaunchStandardEditor(); }},
 				    {},
 				    { name: 'About the Quick Editor', fn: function(target) { LaunchQuickEditorHelp(); }},
@@ -50449,9 +50447,7 @@ function SetupContextMenu(showUpdateItem){
 				    { name: 'Settings', fn: function(target) { ConfigureToolSettings(); }},
 				    { name: 'Advanced Settings', fn: function(target) { AdvancedSettings(); }},
 				    {},
-				    { name: 'Launch ABC Tags to CSV', fn: function(target) { LaunchCSVTagExtractor(); }},
-				    {},
-					{ name: 'Launch Standard Editor', fn: function(target) { LaunchStandardEditor(); }},
+  					{ name: 'Launch Standard Editor', fn: function(target) { LaunchStandardEditor(); }},
 				    {},
 				    { name: 'About the Quick Editor', fn: function(target) { LaunchQuickEditorHelp(); }},
 				];
@@ -50511,9 +50507,7 @@ function SetupContextMenu(showUpdateItem){
 				    { name: 'Settings', fn: function(target) { ConfigureToolSettings(); }},
 				    { name: 'Advanced Settings', fn: function(target) { AdvancedSettings(); }},
 				    {},
-				    { name: 'Launch ABC Tags to CSV', fn: function(target) { LaunchCSVTagExtractor(); }},
-				    {},
-					{ name: 'Launch Quick Editor', fn: function(target) { LaunchQuickEditor(); }},
+  					{ name: 'Launch Quick Editor', fn: function(target) { LaunchQuickEditor(); }},
 				]);
 
 				// For forcing display for User Guide screen shots
@@ -50595,8 +50589,6 @@ function SetupContextMenu(showUpdateItem){
 				    { name: 'Settings', fn: function(target) { ConfigureToolSettings(); }},
 				    { name: 'Advanced Settings', fn: function(target) { AdvancedSettings(); }},
 				    {},
-				    { name: 'Launch ABC Tags to CSV', fn: function(target) { LaunchCSVTagExtractor(); }},
-				    {},
 				    { name: 'Launch Quick Editor', fn: function(target) { LaunchQuickEditor(); }},
 				];
 
@@ -50646,8 +50638,6 @@ function SetupContextMenu(showUpdateItem){
 			    { name: 'Settings', fn: function(target) { ConfigureToolSettings(); }},
 			    { name: 'Advanced Settings', fn: function(target) { AdvancedSettings(); }},
 			    {},
-			    { name: 'Launch ABC Tags to CSV', fn: function(target) { LaunchCSVTagExtractor(); }},
-			    {},
 			    { name: 'Launch Standard Editor', fn: function(target) { LaunchStandardEditor(); }},
 			    {},
 			    { name: 'About the Quick Editor', fn: function(target) { LaunchQuickEditorHelp(); }},				
@@ -50695,8 +50685,6 @@ function SetupContextMenu(showUpdateItem){
 				{},
 			    { name: 'Settings', fn: function(target) { ConfigureToolSettings(); }},
 			    { name: 'Advanced Settings', fn: function(target) { AdvancedSettings(); }},
-			    {},
-			    { name: 'Launch ABC Tags to CSV', fn: function(target) { LaunchCSVTagExtractor(); }},
 			    {},
 			    { name: 'Launch Quick Editor', fn: function(target) { LaunchQuickEditor(); }},
 			];
