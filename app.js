@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2651_081325_0800";
+var gVersionNumber="2653_081325_0830";
 
 var gMIDIInitStillWaiting = false;
 
@@ -46086,11 +46086,16 @@ function DoMultiReadCommon(the_files, fileElement) {
   var isBannerHidden = true;
   let zoomBanner = document.getElementById('zoombanner');
 
-  if (zoomBanner && zoomBanner.style.display !== 'none') {
+  if (zoomBanner && (getComputedStyle(zoomBanner).display !== 'none')) {
     //console.log('Zoom banner is showing');
     isBannerHidden = false;
   } else {
     //console.log('Zoom banner is hidden');
+    isBannerHidden = true;
+  }
+
+  // Odd case for iOS
+  if (isMobileBrowser()){
     isBannerHidden = true;
   }
   
