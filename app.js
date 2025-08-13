@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2647_081225_1400";
+var gVersionNumber="2648_081225_1700";
 
 var gMIDIInitStillWaiting = false;
 
@@ -46074,146 +46074,135 @@ function restorePDFStateFromLocalStorage(){
 }
 
 //
-// Common multi-file reader
+// Common multi-file reader with progress bar overlay
 //
-function DoMultiReadCommon(the_files, fileElement){
+function DoMultiReadCommon(the_files, fileElement) {
 
-    // Don't allow an import to start while one is running
-    if (gImportRunning){
+  if (gImportRunning) {
+    if (fileElement) fileElement.value = "";
+    return;
+  }
 
-      // Reset input control
-      if (fileElement){
-        fileElement.value = "";
+  showTheSpinner();
+
+  gImportRunning = true;
+  gImportAccumulator = gTheABC.value;
+
+  const totalFiles = the_files.length;
+  let index = 0;
+
+  // Create progress overlay
+  const fileSelected = document.getElementById('abc-selected');
+  const overlay = document.createElement('div');
+  overlay.style.position = "absolute";
+  overlay.style.top = fileSelected.offsetTop + 9 + "px";
+  overlay.style.left = fileSelected.offsetLeft + "px";
+  overlay.style.width = fileSelected.offsetWidth + "px";
+  overlay.style.height = fileSelected.offsetHeight + "px";
+  overlay.style.background = "#ffffff00";
+  overlay.style.display = "flex";
+  overlay.style.flexDirection = "column";
+  overlay.style.alignItems = "center";
+  overlay.style.justifyContent = "center";
+  overlay.style.zIndex = 9999;
+  overlay.style.color = "#fff";
+  overlay.style.fontWeight = "bold";
+
+  const progressBarContainer = document.createElement('div');
+  progressBarContainer.style.width = "80%";
+  progressBarContainer.style.height = "12px";
+  progressBarContainer.style.background = "#EEE";
+  progressBarContainer.style.borderRadius = "6px";
+  progressBarContainer.style.overflow = "hidden";
+  progressBarContainer.style.marginTop = "8px";
+
+  const progressBar = document.createElement('div');
+  progressBar.style.width = "0%";
+  progressBar.style.height = "100%";
+  progressBar.style.background = "#00cc66";
+  progressBar.style.transition = "width 0.2s ease";
+
+  progressBarContainer.appendChild(progressBar);
+  overlay.appendChild(progressBarContainer);
+
+  fileSelected.parentElement.style.position = "relative";
+  fileSelected.parentElement.appendChild(overlay);
+
+  function updateProgress() {
+    const percent = Math.round((index / totalFiles) * 100);
+    progressBar.style.width = percent + "%";
+  }
+
+  function processNextFile() {
+    if (index >= totalFiles) {
+
+      overlay.remove();
+
+      var nTunes = CountTunesInBuffer(gImportAccumulator);
+
+      if (gIsQuickEditor) {
+        if (gImportAccumulator !== "" && nTunes > 0) {
+          fileSelected.innerText = nTunes + " tunes loaded. Processing ABC and rendering notation for the last tune...";
+        }
+      } else {
+        if (gImportAccumulator !== "" && nTunes > 0) {
+          fileSelected.innerText = nTunes === 1 ?
+            "Processing ABC and rendering notation for 1 tune..." :
+            "Processing ABC and rendering notation for " + nTunes + " tunes...";
+        }
       }
 
-      return;
+      setTimeout(function() {
 
-    }
+        setABCEditorText(gImportAccumulator);
+        
+        gImportAccumulator = "";
+        
+        CleanSmartQuotes();
+        
+        clearGetTuneByIndexCache();
+        
+        RestoreDefaults();
+        
+        RestoreSavedStaffSpacing();
+        
+        RenderAsync(true, null, function() {
+        
+          UpdateNotationTopPosition();
+        
+          var nTunes = CountTunes();
+          var theTune = getTuneByIndex(nTunes - 1);
+          var tuneOffset = gTheABC.value.length - theTune.length;
 
-    // Give some visaul feedback 
-    showTheSpinner();
-
-    gImportRunning = true;
-    gImportAccumulator = gTheABC.value;
-
-    let index = 0;
-
-    function processNextFile() {
-
-        if (index >= the_files.length){
-
-          var nTunes = CountTunesInBuffer(gImportAccumulator);
-
-          var fileSelected = document.getElementById('abc-selected');
-
-          if (gIsQuickEditor){
-
-              if ((gImportAccumulator != "") && (nTunes > 0)) {
-
-                fileSelected.innerText = nTunes + " tunes loaded. Processing ABC and rendering notation for the last tune...";
-
-              }
-
+          if (!gIsMaximized) {
+            ScrollABCTextIntoView(gTheABC, tuneOffset, tuneOffset, 10);
+            if (!isMobileBrowser) {
+              gTheABC.blur();
+              gTheABC.focus();
             }
-            else{
-
-              if ((gImportAccumulator != "") && (nTunes > 0)) {
-
-                if (nTunes == 1){
-
-                  fileSelected.innerText = "Processing ABC and rendering notation for 1 tune...";
-
-                }
-                else{
-
-                  fileSelected.innerText = "Processing ABC and rendering notation for " + nTunes + " tunes...";
-
-                }
-
-              }
-
-            }
-
-            setTimeout(function(){
-
-              // Set the final text
-              setABCEditorText(gImportAccumulator);
-
-              // Clear the file accumulator
-              gImportAccumulator = "";
-
-              CleanSmartQuotes();
-
-              clearGetTuneByIndexCache();
-              
-              // Reset the defaults
-              RestoreDefaults();
-
-              // If staff spacing had changed due to a share, restore it
-              RestoreSavedStaffSpacing();
-
-              // Render the notation
-              RenderAsync(true,null,function(){
-                
-                // Recalculate the notation top position
-                UpdateNotationTopPosition();
-                
-                // Scroll the last appended tune into view
-                var nTunes = CountTunes();
-
-                var theTune = getTuneByIndex(nTunes-1);
-
-                var tuneOffset = gTheABC.value.length-theTune.length;
-
-                if (!gIsMaximized){
-
-                  // Scroll the tune ABC into view
-                  ScrollABCTextIntoView(gTheABC,tuneOffset,tuneOffset,10);
-
-                  // if (isMobileBrowser()){
-                    
-                  //   // Make sure the spinner is hidden
-                  //   hideTheSpinner();
-
-                  //   return;
-                  // }
-
-                  if (!isMobileBrowser){
-                    gTheABC.blur();
-                    gTheABC.focus();
-                  }
-
-                }
-
-                // Scroll the tune into view
-                MakeTuneVisible(true);    
-
-                // Make sure the spinner is hidden
-                hideTheSpinner();
-
-              });
-
-            },10);
-
-          if (fileElement){
-            fileElement.value = "";
           }
 
-          gImportRunning = false;
+          MakeTuneVisible(true);
+          
+          hideTheSpinner();
 
-          return; // all done
+        });
+      }, 10);
 
-        }
-        
-        const file = the_files[index++];
-
-        // Pass the callback so it loads the next after current finishes
-        DoFileRead(file, processNextFile);
-        
+      if (fileElement) fileElement.value = "";
+      gImportRunning = false;
+      return;
     }
 
-    processNextFile();
+    const file = the_files[index++];
 
+    updateProgress();
+    
+    DoFileRead(file, processNextFile);
+    
+  }
+
+  processNextFile();
 }
 
 //
