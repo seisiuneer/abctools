@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2648_081225_1700";
+var gVersionNumber="2649_081325_0700";
 
 var gMIDIInitStillWaiting = false;
 
@@ -46078,131 +46078,156 @@ function restorePDFStateFromLocalStorage(){
 //
 function DoMultiReadCommon(the_files, fileElement) {
 
-  if (gImportRunning) {
-    if (fileElement) fileElement.value = "";
-    return;
-  }
+	if (gImportRunning) {
+		if (fileElement) fileElement.value = "";
+		return;
+	}
 
-  showTheSpinner();
+	showTheSpinner();
 
-  gImportRunning = true;
-  gImportAccumulator = gTheABC.value;
+	gImportRunning = true;
+	gImportAccumulator = gTheABC.value;
 
-  const totalFiles = the_files.length;
-  let index = 0;
+	const totalFiles = the_files.length;
 
-  // Create progress overlay
-  const fileSelected = document.getElementById('abc-selected');
-  const overlay = document.createElement('div');
-  overlay.style.position = "absolute";
-  overlay.style.top = fileSelected.offsetTop + 9 + "px";
-  overlay.style.left = fileSelected.offsetLeft + "px";
-  overlay.style.width = fileSelected.offsetWidth + "px";
-  overlay.style.height = fileSelected.offsetHeight + "px";
-  overlay.style.background = "#ffffff00";
-  overlay.style.display = "flex";
-  overlay.style.flexDirection = "column";
-  overlay.style.alignItems = "center";
-  overlay.style.justifyContent = "center";
-  overlay.style.zIndex = 9999;
-  overlay.style.color = "#fff";
-  overlay.style.fontWeight = "bold";
+	let index = 0;
 
-  const progressBarContainer = document.createElement('div');
-  progressBarContainer.style.width = "80%";
-  progressBarContainer.style.height = "12px";
-  progressBarContainer.style.background = "#EEE";
-  progressBarContainer.style.borderRadius = "6px";
-  progressBarContainer.style.overflow = "hidden";
-  progressBarContainer.style.marginTop = "8px";
+	// Create progress overlay
+	const fileSelected = document.getElementById('abc-selected');
 
-  const progressBar = document.createElement('div');
-  progressBar.style.width = "0%";
-  progressBar.style.height = "100%";
-  progressBar.style.background = "#00cc66";
-  progressBar.style.transition = "width 0.2s ease";
+	var overlay;
+	var progressBarContainer;
+	var progressBar;
 
-  progressBarContainer.appendChild(progressBar);
-  overlay.appendChild(progressBarContainer);
+	// Only show the progress bar for multiple files
+	if (totalFiles > 1) {
+		overlay = document.createElement('div');
+		overlay.style.position = "absolute";
+		overlay.style.top = fileSelected.offsetTop + 9 + "px";
+		overlay.style.left = fileSelected.offsetLeft + "px";
+		overlay.style.width = fileSelected.offsetWidth + "px";
+		overlay.style.height = fileSelected.offsetHeight + "px";
+		overlay.style.background = "#ffffff00";
+		overlay.style.display = "flex";
+		overlay.style.flexDirection = "column";
+		overlay.style.alignItems = "center";
+		overlay.style.justifyContent = "center";
+		overlay.style.zIndex = 9999;
+		overlay.style.color = "#fff";
+		overlay.style.fontWeight = "bold";
 
-  fileSelected.parentElement.style.position = "relative";
-  fileSelected.parentElement.appendChild(overlay);
+		progressBarContainer = document.createElement('div');
+		progressBarContainer.style.width = "80%";
+		progressBarContainer.style.height = "7px";
+		progressBarContainer.style.background = "#EEE";
+		progressBarContainer.style.borderRadius = "6px";
+		progressBarContainer.style.overflow = "hidden";
+		progressBarContainer.style.marginTop = "8px";
 
-  function updateProgress() {
-    const percent = Math.round((index / totalFiles) * 100);
-    progressBar.style.width = percent + "%";
-  }
+		progressBar = document.createElement('div');
+		progressBar.style.width = "0%";
+		progressBar.style.height = "100%";
+		progressBar.style.background = "#00cc66";
+		progressBar.style.transition = "width 0.2s ease";
 
-  function processNextFile() {
-    if (index >= totalFiles) {
+		progressBarContainer.appendChild(progressBar);
+		overlay.appendChild(progressBarContainer);
 
-      overlay.remove();
+		fileSelected.parentElement.style.position = "relative";
+		fileSelected.parentElement.appendChild(overlay);
+	}
 
-      var nTunes = CountTunesInBuffer(gImportAccumulator);
+	function updateProgress() {
+		const percent = Math.round((index / totalFiles) * 100);
+		progressBar.style.width = percent + "%";
+	}
 
-      if (gIsQuickEditor) {
-        if (gImportAccumulator !== "" && nTunes > 0) {
-          fileSelected.innerText = nTunes + " tunes loaded. Processing ABC and rendering notation for the last tune...";
-        }
-      } else {
-        if (gImportAccumulator !== "" && nTunes > 0) {
-          fileSelected.innerText = nTunes === 1 ?
-            "Processing ABC and rendering notation for 1 tune..." :
-            "Processing ABC and rendering notation for " + nTunes + " tunes...";
-        }
-      }
+	function processNextFile() {
 
-      setTimeout(function() {
+		if (index >= totalFiles) {
 
-        setABCEditorText(gImportAccumulator);
-        
-        gImportAccumulator = "";
-        
-        CleanSmartQuotes();
-        
-        clearGetTuneByIndexCache();
-        
-        RestoreDefaults();
-        
-        RestoreSavedStaffSpacing();
-        
-        RenderAsync(true, null, function() {
-        
-          UpdateNotationTopPosition();
-        
-          var nTunes = CountTunes();
-          var theTune = getTuneByIndex(nTunes - 1);
-          var tuneOffset = gTheABC.value.length - theTune.length;
+			if (totalFiles > 1) {
+				overlay.remove();
+			}
 
-          if (!gIsMaximized) {
-            ScrollABCTextIntoView(gTheABC, tuneOffset, tuneOffset, 10);
-            if (!isMobileBrowser) {
-              gTheABC.blur();
-              gTheABC.focus();
-            }
-          }
+			var nTunes = CountTunesInBuffer(gImportAccumulator);
 
-          MakeTuneVisible(true);
-          
-          hideTheSpinner();
+			if (gIsQuickEditor) {
+				if (gImportAccumulator !== "" && nTunes > 0) {
+					fileSelected.innerText = nTunes + " tunes loaded. Processing ABC and rendering notation for the last tune...";
+				}
+			} else {
+				if (gImportAccumulator !== "" && nTunes > 0) {
+					fileSelected.innerText = nTunes === 1 ?
+						"Processing ABC and rendering notation for 1 tune..." :
+						"Processing ABC and rendering notation for " + nTunes + " tunes...";
+				}
+			}
 
-        });
-      }, 10);
+			setTimeout(function() {
 
-      if (fileElement) fileElement.value = "";
-      gImportRunning = false;
-      return;
-    }
+				// Set the final editor text
+				setABCEditorText(gImportAccumulator);
 
-    const file = the_files[index++];
+				// Clear the accumulator
+				gImportAccumulator = "";
 
-    updateProgress();
-    
-    DoFileRead(file, processNextFile);
-    
-  }
+				// Clean any smart quotes
+				CleanSmartQuotes();
 
-  processNextFile();
+				// Reset the tune cache
+				clearGetTuneByIndexCache();
+
+				// Restore settings
+				RestoreDefaults();
+
+				// If was from a share, fix the spacing
+				RestoreSavedStaffSpacing();
+
+				// Render the tunes
+				RenderAsync(true, null, function() {
+
+					UpdateNotationTopPosition();
+
+					var nTunes = CountTunes();
+					var theTune = getTuneByIndex(nTunes - 1);
+					var tuneOffset = gTheABC.value.length - theTune.length;
+
+					if (!gIsMaximized) {
+
+						ScrollABCTextIntoView(gTheABC, tuneOffset, tuneOffset, 10);
+
+						if (!isMobileBrowser) {
+							gTheABC.blur();
+							gTheABC.focus();
+						}
+
+					}
+
+					MakeTuneVisible(true);
+
+					hideTheSpinner();
+
+				});
+			}, 10);
+
+			if (fileElement) fileElement.value = "";
+			gImportRunning = false;
+			return;
+		}
+
+		const file = the_files[index++];
+
+		if (totalFiles > 1) {
+			updateProgress();
+		}
+
+		DoFileRead(file, processNextFile);
+
+	}
+
+	processNextFile();
+
 }
 
 //
