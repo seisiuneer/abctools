@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2650_081325_0800";
+var gVersionNumber="2651_081325_0800";
 
 var gMIDIInitStillWaiting = false;
 
@@ -46082,6 +46082,17 @@ function DoMultiReadCommon(the_files, fileElement) {
 		if (fileElement) fileElement.value = "";
 		return;
 	}
+
+  var isBannerHidden = true;
+  let zoomBanner = document.getElementById('zoombanner');
+
+  if (zoomBanner && zoomBanner.style.display !== 'none') {
+    //console.log('Zoom banner is showing');
+    isBannerHidden = false;
+  } else {
+    //console.log('Zoom banner is hidden');
+    isBannerHidden = true;
+  }
   
   UpdateNotationTopPosition();
 
@@ -46102,7 +46113,7 @@ function DoMultiReadCommon(the_files, fileElement) {
 	var progressBar;
 
 	// Only show the progress bar for multiple files and if the top banner is hidden
-	if (gZoomBannerHidden && (totalFiles > 1)) {
+	if (isBannerHidden && (totalFiles > 1)) {
 
 		overlay = document.createElement('div');
 		overlay.style.position = "absolute";
@@ -46150,7 +46161,7 @@ function DoMultiReadCommon(the_files, fileElement) {
 
 		if (index >= totalFiles) {
 
-			if (gZoomBannerHidden && (totalFiles > 1)) {
+			if (isBannerHidden && (totalFiles > 1)) {
 				overlay.remove();
 			}
 
@@ -46222,7 +46233,7 @@ function DoMultiReadCommon(the_files, fileElement) {
 
 		const file = the_files[index++];
 
-		if (gZoomBannerHidden && (totalFiles > 1)) {
+		if (isBannerHidden && (totalFiles > 1)) {
 			updateProgress();
 		}
 
