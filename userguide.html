@@ -769,6 +769,7 @@
             <details>
             <summary><h3>Mac Safari-Specific Topics</h3></summary>
             <a style="text-decoration:none;" href="#safari_gracenotes_issue">Issues With Grace Note Rendering on Safari</a>
+            <a style="text-decoration:none;" href="#safari_fontsize_issue">Incorrect Font Sizes in Exported PDFs on Safari if Zoomed</a>
             </details>
             
             <details>
@@ -1216,6 +1217,7 @@
                     <button class="accordion" title="Click to expand/collapse this section">Mac Safari-Specific Topics</button>
                     <div class="tocpanel">
                         <p class="toc"><a style="text-decoration:none;" href="#safari_gracenotes_issue">Issues With Grace Note Rendering on Safari</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#safari_fontsize_issue">Incorrect Font Sizes in Exported PDFs on Safari if Zoomed</a></p>
                     </div>
                     
                     <button class="accordion" title="Click to expand/collapse this section">Google Drive PDF Reader Issues</button>
@@ -3351,6 +3353,12 @@
                 <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/PqgjtQXpRYA" title="Export PDF Tunebook Dialog Walkthrough" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
                 <p>The tool has a powerful built-in PDF tunebook generator that provides more flexibility than the browser's print feature, particularly in the area of adding custom page headers and footers, title page, table of contents, tune index, or adding a custom QR code.</p>
                 <p>It can format PDF tunebooks with one or multiple tunes per page, something the native browser's Print command cannot accomplish.</p>
+                <hr>
+                <div style="background-color: #FFEEEE;padding-left:24px;padding-right:24px;padding-top:4px;padding-bottom:20px;">
+                    <p><strong>Note:</strong> Safari on Mac will not render the correct font sizes in the PDF if the browser window is zoomed in or out.</p>
+                    <p>For PDF export on Macs, I strongly recommend instead using Chrome or Firefox, or at a minimum, setting the Safari browser zoom to 100%.</p>
+                </div>
+                <hr>
                 <p>When you click <strong>Export PDF</strong>, the following dialog will appear where you select your PDF formatting preferences:</p>
                 <div class="image_holder_p">
                     <img class="image" loading="lazy" src="img/export_pdf_tunebook_15.jpg"/>
@@ -6378,6 +6386,10 @@
                 <h1 class="page_break_always h1wide">Issues With Grace Note Rendering on Safari<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <p>Often times, Safari on Mac will not correctly render grace notes before notes if the browser page zoom level is not set to 100%.</p>
                 <p>At this time, the only fix is to use Chrome or Firefox instead.</p>
+                <hr class="hidden-print" id="safari_fontsize_issue">
+                <h1 class="page_break_always h1wide">Incorrect Font Sizes in Exported PDFs on Safari if Zoomed<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+                <p>Safari on Mac will not render the correct font sizes in the PDF if the browser window is zoomed in or out.</p>
+                <p>For PDF export on Macs, I strongly recommend instead using Chrome or Firefox, or at a minimum, setting the Safari browser zoom to 100%.</p>
                 <hr class="hidden-print" id="google_drive_pdf_issues">
                 <h1 class="page_break_always h1wide">Issues With the Google Drive PDF Reader<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <p>If you open a share link from Google Drive to a PDF tunebook, the PDF reader used is one delivered by Google and does not properly support internal PDF hyperlink navigation.</p>
