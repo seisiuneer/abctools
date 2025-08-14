@@ -45356,8 +45356,6 @@ function DoReadCommon(theText,callback){
 
 function DoFileRead(file, callback) {
 
-  var midiOKButton = null;
-
   // Check the filename extension
   if (ensureABCFile(file.name)) {
 
@@ -45365,9 +45363,21 @@ function DoFileRead(file, callback) {
 
     var isMXL = (file.name.toLowerCase().indexOf(".mxl") != -1);
 
+    var isMusicXML = (file.name.toLowerCase().indexOf(".xml") != -1);
+
     // Show the loading status
     var fileSelected = document.getElementById('abc-selected');
-    fileSelected.innerText = "Loading: " + file.name;
+
+    if (isMIDI){
+      fileSelected.innerText = "Converting MIDI to ABC: " + file.name;
+    }
+    else
+    if (isMXL || isMusicXML){
+      fileSelected.innerText = "Converting MusicXML to ABC: " + file.name;
+    }
+    else {
+      fileSelected.innerText = "Loading: " + file.name;
+    }
 
     // Save the filename
     gDisplayedName = file.name;
@@ -45413,7 +45423,7 @@ function DoFileRead(file, callback) {
 
                     DayPilot.Modal.alert(thePrompt, {
                       theme: "modal_flat",
-                      top: 200,
+                      top: 100,
                       scrollWithPage: (AllowDialogsToScroll())
                     }).then(function(){
 
@@ -45442,7 +45452,7 @@ function DoFileRead(file, callback) {
 
               DayPilot.Modal.alert(thePrompt, {
                 theme: "modal_flat",
-                top: 200,
+                top: 100,
                 scrollWithPage: (AllowDialogsToScroll())
               }).then(function(){
 
@@ -45467,7 +45477,7 @@ function DoFileRead(file, callback) {
 
           DayPilot.Modal.alert(thePrompt, {
             theme: "modal_flat",
-            top: 200,
+            top: 100,
             scrollWithPage: (AllowDialogsToScroll())
           }).then(function(){
 
@@ -45548,37 +45558,6 @@ function DoFileRead(file, callback) {
 
       function MIDIImportCommon() {
 
-        // Find the OK button
-        var thePrompt = "Importing " + file.name;
-
-        thePrompt = makeCenteredPromptString(thePrompt);
-
-        DayPilot.Modal.alert(thePrompt, {
-          theme: "modal_flat",
-          top: 100,
-          scrollWithPage: (AllowDialogsToScroll())
-        });
-
-        var theOKButtons = document.getElementsByClassName("modal_flat_ok");
-
-        // Find the button that says "OK" to use to close the dialog when changing UI settings
-
-        var theOKButton = null;
-
-        for (var i = 0; i < theOKButtons.length; ++i) {
-
-          theOKButton = theOKButtons[i];
-
-          if (theOKButton.innerText == "OK") {
-
-            //console.log("Found OK button");
-            midiOKButton = theOKButton;
-
-            break;
-
-          }
-        }
-
         const reader = new FileReader();
 
         reader.onload = function(event) {
@@ -45587,21 +45566,13 @@ function DoFileRead(file, callback) {
 
           if (midiData.byteLength > 40960) {
 
-            try {
-
-              midiOKButton.click();
-
-            } catch (error) {
-                           
-            }
-
-            var thePrompt = "MIDI file import is limited to a maximum file size of 40 KBytes.";
+            var thePrompt = file.name +" file size is "+midiData.byteLength+" bytes.<br/><br/>MIDI file import is limited to a maximum file size of 40960 bytes.";
 
             thePrompt = makeCenteredPromptString(thePrompt);
 
             DayPilot.Modal.alert(thePrompt, {
               theme: "modal_flat",
-              top: 200,
+              top: 100,
               scrollWithPage: (AllowDialogsToScroll())
             }).then(function(){
 
@@ -45626,21 +45597,13 @@ function DoFileRead(file, callback) {
 
         reader.onerror = function() {
 
-          try {
-
-            midiOKButton.click();
-
-          } catch (error) {
-
-          }
-
-          var thePrompt = "There was an issue converting the MIDI file.";
+          var thePrompt = "There was an issue converting the MIDI file:<br/><br/>"+file.name;
 
           thePrompt = makeCenteredPromptString(thePrompt);
 
           DayPilot.Modal.alert(thePrompt, {
             theme: "modal_flat",
-            top: 200,
+            top: 100,
             scrollWithPage: (AllowDialogsToScroll())
           }).then(function(){
 
@@ -45689,15 +45652,6 @@ function DoFileRead(file, callback) {
             })
             .then(data => {
 
-
-              try {
-
-                midiOKButton.click();
-
-              } catch (error) {
-
-              }
-
               // Strip the extension
               var fileName = file.name.replace(".midi", "");
               fileName = fileName.replace(".MIDI", "");
@@ -45723,21 +45677,13 @@ function DoFileRead(file, callback) {
             })
             .catch(error => {
 
-              try {
-                
-                midiOKButton.click();   
-
-              } catch (error) {
-
-              }
-
-              var thePrompt = "There was an issue converting the MIDI file.";
+              var thePrompt = "There was an issue converting the MIDI file:<br/><br/>"+file.name;
 
               thePrompt = makeCenteredPromptString(thePrompt);
 
               DayPilot.Modal.alert(thePrompt, {
                 theme: "modal_flat",
-                top: 200,
+                top: 100,
                 scrollWithPage: (AllowDialogsToScroll())
               }).then(function(){
 
