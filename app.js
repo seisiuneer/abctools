@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2662_081425_1100";
+var gVersionNumber="2663_081425_1130";
 
 var gMIDIInitStillWaiting = false;
 
@@ -46146,24 +46146,47 @@ function DoMultiReadCommon(the_files, fileElement) {
     cancelBtn.setAttribute('aria-label', 'Cancel file import');
     cancelBtn.setAttribute('title', 'Cancel file import'); 
 
-    cancelBtn.style.cssText = `
-          position: absolute;
-          top: 100%;
-          right: 49px; /* Push to the right of overlay */
-          transform: translateY(-100%);
-          width: 30px;
-          height: 30px;
-          border-radius: 50%;
-          background: #e02424;
-          color: #fff;
-          font-size: 14px;
-          border: none;
-          cursor: pointer;
-          box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-          display: flex;
-          align-items: center;
-          justify-content: center;
-        `;
+    if (gIsSafari || gIsIOS){
+      cancelBtn.style.cssText = `
+            position: absolute;
+            top: 100%;
+            right: 49px; /* Push to the right of overlay */
+            transform: translateY(-100%);
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: #e02424;
+            color: #fff;
+            font-size: 22px;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          `;
+    }
+    else{
+      cancelBtn.style.cssText = `
+            position: absolute;
+            top: 100%;
+            right: 49px; /* Push to the right of overlay */
+            transform: translateY(-100%);
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: #e02424;
+            color: #fff;
+            font-size: 14px;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          `;
+
+    }
 
     cancelBtn.textContent = '✕';
 
