@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2660_081425_0930";
+var gVersionNumber="2661_081425_1100";
 
 var gMIDIInitStillWaiting = false;
 
@@ -459,6 +459,7 @@ var gUseWidePlayCursor = true;
 // Prevent import operation while one is in progress
 var gImportRunning = false;
 var gImportAccumulator = [];
+var gImportCancelRequested = false;
 
 // Global reference to the ABC editor
 var gTheABC = document.getElementById("abc");
@@ -45513,7 +45514,7 @@ function DoFileRead(file, callback) {
         modal_msg += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">It may sometimes produce complete garbage, odd results, fail, or even crash or lock up the tool.</p>';
         modal_msg += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">If the tool crashes during notation rendering after MIDI import is complete, reload the page to restart.</p>';
         modal_msg += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">Imported notes are quantized to sixteenth note durations.</p>';
-        modal_msg += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">MIDI Import is limited to a maximum file length of 30 KBytes.</p>';
+        modal_msg += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">MIDI Import is limited to a maximum file length of 40960 bytes.</p>';
 
         gMIDIImportWarned = true;
 
@@ -45525,7 +45526,7 @@ function DoFileRead(file, callback) {
 
         DayPilot.Modal.alert(modal_msg, {
           theme: "modal_flat",
-          top: 100,
+          top: 25,
           scrollWithPage: (AllowDialogsToScroll())
         }).then(function(args) {
 
@@ -46091,6 +46092,9 @@ function DoMultiReadCommon(the_files, fileElement) {
 	gImportRunning = true;
 	gImportAccumulator = [gTheABC.value];
 
+  // Clear cancel request
+  gImportCancelRequested = false;
+
 	const totalFiles = the_files.length;
 
 	let index = 0;
@@ -46137,6 +46141,38 @@ function DoMultiReadCommon(the_files, fileElement) {
 		progressBarContainer.appendChild(progressBar);
 		overlay.appendChild(progressBarContainer);
 
+    // Cancel button (fixed to right side of overlay)
+    const cancelBtn = document.createElement('button');
+    cancelBtn.setAttribute('aria-label', 'Cancel file import');
+    cancelBtn.setAttribute('title', 'Cancel file import'); 
+    cancelBtn.style.cssText = `
+      position: absolute;
+      top: 100%;
+      right: 52px; /* Push to the right of overlay */
+      transform: translateY(-100%);
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: #e02424;
+      color: #fff;
+      font-size: 14px;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    `;
+    cancelBtn.textContent = '✕';
+
+    // Cancel button click handler
+    cancelBtn.addEventListener('click', () => {
+      gImportCancelRequested = true;
+    });
+
+    overlay.appendChild(cancelBtn);
+
+    // Attach overlay to DOM
 		fileSelected.parentElement.style.position = "relative";
 		fileSelected.parentElement.appendChild(overlay);
 
@@ -46149,7 +46185,9 @@ function DoMultiReadCommon(the_files, fileElement) {
 
 	function processNextFile() {
 
-		if (index >= totalFiles) {
+		if ((index >= totalFiles) || gImportCancelRequested){
+
+      gImportCancelRequested = false;
 
 			if (isBannerHidden && (totalFiles > 1)) {
 				overlay.remove();
@@ -46244,6 +46282,7 @@ function DoMultiReadCommon(the_files, fileElement) {
 	processNextFile();
 
 }
+
 
 //
 // Drag/drop handler
