@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2658_081425_0900";
+var gVersionNumber="2659_081425_0900";
 
 var gMIDIInitStillWaiting = false;
 
@@ -46160,6 +46160,8 @@ function DoMultiReadCommon(the_files, fileElement) {
         .map(s => s.trim())        // trim whitespace
         .filter(s => s.length)     // remove blank/empty entries
         .join("\n\n");          // ensure exactly one blank line between
+
+      importedTunes += "\n";
 
       // Clear the accumulator
       gImportAccumulator = [];
