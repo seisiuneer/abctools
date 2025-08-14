@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2663_081425_1130";
+var gVersionNumber="2664_081425_1230";
 
 var gMIDIInitStillWaiting = false;
 
@@ -45348,7 +45348,7 @@ function DoFileRead(file, callback) {
 
     var isMXL = (file.name.toLowerCase().indexOf(".mxl") != -1);
 
-    var isMusicXML = (file.name.toLowerCase().indexOf(".xml") != -1);
+    var isMusicXML = (file.name.toLowerCase().indexOf(".xml") != -1) || (file.name.toLowerCase().indexOf(".musicxml") != -1)
 
     // Show the loading status
     var fileSelected = document.getElementById('abc-selected');
