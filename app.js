@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2665_081425_1300";
+var gVersionNumber="2666_081425_1600";
 
 var gMIDIInitStillWaiting = false;
 
@@ -47273,7 +47273,7 @@ function TipJarReminderDialog(){
 	   modal_msg += '<p style="font-size:14pt;line-height:18pt;font-family:helvetica;text-align:center;margin-top:36px;">If so, please consider dropping something in one of my </p>';
 	   modal_msg += '<p style="font-size:14pt;line-height:18pt;font-family:helvetica;text-align:center;"><strong><a href="tipjars.html" target="_blank" title="My Virtual Tip Jars">Virtual Tip Jars</a></strong></p>';
 	   modal_msg += '<p style="font-size:14pt;line-height:18pt;font-family:helvetica;text-align:center;margin-top:36px;">Cheers and thanks!</p>';
-	   modal_msg += '<div style="text-align:center"><img style="width:150px;" src="img/michael.jpg"/></div>';
+	   modal_msg += '<div style="text-align:center"><img style="width:150px;" src="img/michael2.jpg"/></div>';
 	   modal_msg += '<p style="font-size:14pt;line-height:18pt;font-family:helvetica;text-align:center;">Michael Eskin</p>';
 
 	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 75, scrollWithPage: (AllowDialogsToScroll()) });
@@ -47299,7 +47299,7 @@ function TinyURLReminderDialog(){
 	   modal_msg += '<p style="font-size:12pt;line-height:14pt;font-family:helvetica;text-align:center;">More details here:</p>';
 	   modal_msg += '<p style="font-size:12pt;line-height:14pt;font-family:helvetica;text-align:center;"><strong><a href="https://michaeleskin.com/abctools/userguide.html#private_tinyurl_token" target="_blank" title="Private TinyURL Token">Using a Private TinyURL API Token</a></strong></p>';
 	   modal_msg += '<p style="font-size:12pt;line-height:14pt;font-family:helvetica;text-align:center;margin-top:36px;">Cheers and thanks!</p>';
-	   modal_msg += '<div style="text-align:center"><img style="width:150px;" src="img/michael.jpg"/></div>';
+	   modal_msg += '<div style="text-align:center"><img style="width:150px;" src="img/michael2.jpg"/></div>';
 	   modal_msg += '<p style="font-size:12pt;line-height:14pt;font-family:helvetica;text-align:center;">Michael Eskin</p>';
 
 	DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 25, scrollWithPage: (AllowDialogsToScroll()) });

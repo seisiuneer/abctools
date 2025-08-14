@@ -4,14 +4,20 @@
 //
 //
 //
-// Updated 14 Aug 2025 at 1300
+//
+//
+//
+// Updated 14 Aug 2025 at 1600
+//
+//
+//
 //
 //
 //
 //
 
 
-const cacheName = 'abctoolscache-2665';
+const cacheName = 'abctoolscache-2666';
 
 const contentToCache = [
     'abctools.html',
@@ -61,6 +67,7 @@ const contentToCache = [
     'img/playbutton.png',
     'img/pdfbutton.png',
     'img/michael.jpg',
+    'img/michael2.jpg',
     'img/settings.png',
     'img/abc-android-icon-144x144.png',
     'img/abc-android-icon-192x192.png',
