@@ -42699,7 +42699,7 @@ function PDFExportDialog(){
 
   // Put up zoom info for desktop Safari
   if (gIsSafari && (!isMobileBrowser())){
-    form = form.concat([{html: '<p style="margin-top:24px;font-size:12pt;line-height:24px;font-family:helvetica;text-align:center;">On Safari, before clicking <strong>Export</strong>, please set the Zoom level to 100% by pressing ⌘+0</p>'}]);
+    form = form.concat([{html: '<p style="margin-top:24px;font-size:12pt;line-height:24px;font-family:helvetica;text-align:center;">On Safari, before clicking <strong>Export</strong>, please set the Zoom level to 100% by pressing ⌘+0 (zero)</p>'}]);
   }
   
 	setTimeout(function(){
