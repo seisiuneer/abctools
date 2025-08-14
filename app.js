@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2657_081425_0800";
+var gVersionNumber="2658_081425_0900";
 
 var gMIDIInitStillWaiting = false;
 
@@ -458,7 +458,7 @@ var gUseWidePlayCursor = true;
 
 // Prevent import operation while one is in progress
 var gImportRunning = false;
-var gImportAccumulator = "";
+var gImportAccumulator = [];
 
 // Global reference to the ABC editor
 var gTheABC = document.getElementById("abc");
@@ -45317,24 +45317,8 @@ function importMusicXML(theXML,fileName){
 // Shared functionality for all file reads
 //
 function DoReadCommon(theText,callback){
-
-  var nTunes = CountTunesInBuffer(gImportAccumulator);
   
-  if (nTunes > 0){
-    
-    // Do we need to add a new line before the next tune?
-    var theLength = gImportAccumulator.length;
-
-    if (gImportAccumulator.substring(theLength-1) != "\n"){
-
-      gImportAccumulator += "\n";
-    }
-
-    gImportAccumulator += "\n";
-    
-  }
-  
-  gImportAccumulator += theText;
+  gImportAccumulator.push(theText);
 
 	setTimeout(function() {
 
@@ -45351,7 +45335,7 @@ function DoReadCommon(theText,callback){
 
     return;    
 
-	}, 25);
+	}, 10);
 }
 
 function DoFileRead(file, callback) {
@@ -46105,7 +46089,7 @@ function DoMultiReadCommon(the_files, fileElement) {
 	showTheSpinner();
 
 	gImportRunning = true;
-	gImportAccumulator = gTheABC.value;
+	gImportAccumulator = [gTheABC.value];
 
 	const totalFiles = the_files.length;
 
@@ -46171,14 +46155,23 @@ function DoMultiReadCommon(the_files, fileElement) {
 				overlay.remove();
 			}
 
-			var nTunes = CountTunesInBuffer(gImportAccumulator);
+      // Join the tune buffers
+      var importedTunes = gImportAccumulator
+        .map(s => s.trim())        // trim whitespace
+        .filter(s => s.length)     // remove blank/empty entries
+        .join("\n\n");          // ensure exactly one blank line between
+
+      // Clear the accumulator
+      gImportAccumulator = [];
+
+			var nTunes = CountTunesInBuffer(importedTunes);
 
 			if (gIsQuickEditor) {
-				if (gImportAccumulator !== "" && nTunes > 0) {
+				if (importedTunes !== "" && nTunes > 0) {
 					fileSelected.innerText = nTunes + " tunes loaded. Processing ABC and rendering notation for the last tune...";
 				}
 			} else {
-				if (gImportAccumulator !== "" && nTunes > 0) {
+				if (importedTunes !== "" && nTunes > 0) {
 					fileSelected.innerText = nTunes === 1 ?
 						"Processing ABC and rendering notation for 1 tune..." :
 						"Processing ABC and rendering notation for " + nTunes + " tunes...";
@@ -46188,10 +46181,7 @@ function DoMultiReadCommon(the_files, fileElement) {
 			setTimeout(function() {
 
 				// Set the final editor text
-				setABCEditorText(gImportAccumulator);
-
-				// Clear the accumulator
-				gImportAccumulator = "";
+				setABCEditorText(importedTunes);
 
 				// Clean any smart quotes
 				CleanSmartQuotes();
@@ -46233,7 +46223,9 @@ function DoMultiReadCommon(the_files, fileElement) {
 			}, 10);
 
 			if (fileElement) fileElement.value = "";
-			gImportRunning = false;
+			
+      gImportRunning = false;
+
 			return;
 		}
 
