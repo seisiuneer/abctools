@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2659_081425_0900";
+var gVersionNumber="2660_081425_0930";
 
 var gMIDIInitStillWaiting = false;
 
@@ -45402,7 +45402,7 @@ function DoFileRead(file, callback) {
                   } else {
 
                     // Center the string in the prompt
-                    var thePrompt = "This is not a valid MXL file.";
+                    var thePrompt = file.name + " is not a valid MusicXML file.";
                     thePrompt = makeCenteredPromptString(thePrompt);
 
                     DayPilot.Modal.alert(thePrompt, {
@@ -45430,7 +45430,7 @@ function DoFileRead(file, callback) {
 
             }, function() {
 
-              var thePrompt = "This is not a valid MXL file.";
+              var thePrompt = file.name + " is not a valid MusicXML file.";
 
               thePrompt = makeCenteredPromptString(thePrompt);
 
@@ -45455,7 +45455,7 @@ function DoFileRead(file, callback) {
 
         }, function() {
 
-          var thePrompt = "This is not a valid MXL file.";
+          var thePrompt = file.name + " is not a valid MusicXML file.";
 
           thePrompt = makeCenteredPromptString(thePrompt);
 
