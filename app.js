@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2655_081325_1300";
+var gVersionNumber="2656_081325_2000";
 
 var gMIDIInitStillWaiting = false;
 
@@ -42652,7 +42652,7 @@ function PDFExportDialog(){
 			  {name: "            Page Number on First Page", id: "configure_pagenumberonfirstpage", type:"checkbox", cssClass:"configure_pdf_settings_form_text"},
 			  {name: "            Inject tune title text for PDF searchability", id: "configure_hidden_titles", type:"checkbox", cssClass:"configure_pdf_settings_form_text"},
 			  {name: "            Automatically offset page numbers for Title Page and/or Table of Contents", id: "configure_auto_page_numbers", type:"checkbox", cssClass:"configure_pdf_settings_form_text"},
-			  {html: '<p style="margin-top:36px;font-size:12pt;line-height:18px;font-family:helvetica;">Font for Title Page, Table of Contents, Index, Page Headers/Footers, Page Numbers, Text Incipits:</strong></p>'},  
+			  {html: '<p style="margin-top:20px;font-size:12pt;line-height:18px;font-family:helvetica;">Font for Title Page, Table of Contents, Index, Page Headers/Footers, Page Numbers, Text Incipits:</p>'},  
 			  {name: "Font:", id: "configure_fontname", type:"select", options:fontname_list, cssClass:"configure_pdf_fontname_select"},
 			  {name: "Font Style:", id: "configure_fontstyle", type:"select", options:fontstyle_list, cssClass:"configure_pdf_fontstyle_select"},
 			  {html: '<p style="text-align:center;margin-top:36px;"><input id="pdfusebrowserprint" class="advancedcontrols btn btn-browser-pdf-export" onclick="Do_Browser_PDF_Export();return;" type="button" value="Browser Native Print-to-PDF with Play Links" title="Quickly export a PDF tunebook using the browser\'s native Print-to-PDF feature with one tune per page and play links when you click the title.&nbsp;&nbsp;Does not include a Title Page, Table of Contents, Index, or QR Code."><input class="incipitsbuilder btn btn-incipitsbuilder" id="incipitsbuilder" onclick="IncipitsBuilderDialog()" type="button" value="Notes Incipits Builder" title="Formats the ABC for notation incipits PDF export"></p>'},
@@ -42670,7 +42670,7 @@ function PDFExportDialog(){
 			  {name: "            Page Number on First Page", id: "configure_pagenumberonfirstpage", type:"checkbox", cssClass:"configure_pdf_settings_form_text"},
 			  {name: "            Inject tune title text for PDF searchability", id: "configure_hidden_titles", type:"checkbox", cssClass:"configure_pdf_settings_form_text"},
 			  {name: "            Automatically offset page numbers for Title Page and/or Table of Contents", id: "configure_auto_page_numbers", type:"checkbox", cssClass:"configure_pdf_settings_form_text"},
-			  {html: '<p style="margin-top:36px;font-size:12pt;line-height:18px;font-family:helvetica;">Font for Title Page, Table of Contents, Index, Page Headers/Footers, Page Numbers, Text Incipits:</strong></p>'},  
+			  {html: '<p style="margin-top:20px;font-size:12pt;line-height:18px;font-family:helvetica;">Font for Title Page, Table of Contents, Index, Page Headers/Footers, Page Numbers, Text Incipits:</p>'},  
 			  {name: "Font:", id: "configure_fontname", type:"select", options:fontname_list, cssClass:"configure_pdf_fontname_select"},
 			  {name: "Font Style:", id: "configure_fontstyle", type:"select", options:fontstyle_list, cssClass:"configure_pdf_fontstyle_select"},
         {html: '<p style="text-align:center;margin-top:36px;"><input class="incipitsbuilder btn btn-incipitsbuilder" id="incipitsbuilder" onclick="IncipitsBuilderDialog()" type="button" value="Notes Incipits Builder" title="Formats the ABC for notation incipits PDF export"></p>'},			  
@@ -42689,21 +42689,26 @@ function PDFExportDialog(){
 		  {name: "            Page Number on First Page", id: "configure_pagenumberonfirstpage", type:"checkbox", cssClass:"configure_pdf_settings_form_text"},
 		  {name: "            Inject tune title text for PDF searchability", id: "configure_hidden_titles", type:"checkbox", cssClass:"configure_pdf_settings_form_text"},
 	      {name: "            Automatically offset page numbers for Title Page and/or Table of Contents", id: "configure_auto_page_numbers", type:"checkbox", cssClass:"configure_pdf_settings_form_text"},
-		  {html: '<p style="margin-top:36px;font-size:12pt;line-height:18px;font-family:helvetica;">Font for Title Page, Table of Contents, Index, Page Headers/Footers, Page Numbers, Text Incipits:</strong></p>'},  
+		  {html: '<p style="margin-top:20px;font-size:12pt;line-height:18px;font-family:helvetica;">Font for Title Page, Table of Contents, Index, Page Headers/Footers, Page Numbers, Text Incipits:</p>'},  
 		  {name: "Font:", id: "configure_fontname", type:"select", options:fontname_list, cssClass:"configure_pdf_fontname_select"},
 		  {name: "Font Style:", id: "configure_fontstyle", type:"select", options:fontstyle_list, cssClass:"configure_pdf_fontstyle_select"},
-		  {html: '<p style="font-size:3pt;">&nbsp;</p>'}	
+      {html: '<p style="font-size:3pt;">&nbsp;</p>'}
 		];
 
 	}
 
+  // Put up zoom info for desktop Safari
+  if (gIsSafari && (!isMobileBrowser())){
+    form = form.concat([{html: '<p style="margin-top:24px;font-size:12pt;line-height:24px;font-family:helvetica;text-align:center;">On Safari, before clicking <strong>Export</strong>, please set the Zoom level to 100% by pressing ⌘+0</p>'}]);
+  }
+  
 	setTimeout(function(){
 
 		idlePDFExportDialog();
 
 	}, 150);
 
-	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 50, width: 760, scrollWithPage: (AllowDialogsToScroll()), okText: "Export", autoFocus: false } ).then(function(args){
+	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 25, width: 760, scrollWithPage: (AllowDialogsToScroll()), okText: "Export", autoFocus: false } ).then(function(args){
 	
 		if (!args.canceled){
 
