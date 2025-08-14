@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2664_081425_1230";
+var gVersionNumber="2665_081425_1300";
 
 var gMIDIInitStillWaiting = false;
 
@@ -46143,8 +46143,8 @@ function DoMultiReadCommon(the_files, fileElement) {
 
     // Cancel button (fixed to right side of overlay)
     const cancelBtn = document.createElement('button');
-    cancelBtn.setAttribute('aria-label', 'Cancel file import');
-    cancelBtn.setAttribute('title', 'Cancel file import'); 
+    cancelBtn.setAttribute('aria-label', 'Stop import after current file');
+    cancelBtn.setAttribute('title', 'Stop import after current file'); 
 
     if (gIsSafari || gIsIOS){
       cancelBtn.style.cssText = `
