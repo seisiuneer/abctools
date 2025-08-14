@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2656_081325_2000";
+var gVersionNumber="2657_081425_0800";
 
 var gMIDIInitStillWaiting = false;
 
@@ -45406,6 +45406,7 @@ function DoFileRead(file, callback) {
                     theText = importMusicXML(theText, gDisplayedName);
 
                   } else {
+
                     // Center the string in the prompt
                     var thePrompt = "This is not a valid MXL file.";
                     thePrompt = makeCenteredPromptString(thePrompt);
@@ -45414,6 +45415,13 @@ function DoFileRead(file, callback) {
                       theme: "modal_flat",
                       top: 200,
                       scrollWithPage: (AllowDialogsToScroll())
+                    }).then(function(){
+
+                      // Issue with file, just callback
+                      if (typeof callback === "function") {
+                          callback();
+                      }   
+
                     });
 
                     return;
@@ -45436,6 +45444,13 @@ function DoFileRead(file, callback) {
                 theme: "modal_flat",
                 top: 200,
                 scrollWithPage: (AllowDialogsToScroll())
+              }).then(function(){
+
+                // Issue with file, just callback
+                if (typeof callback === "function") {
+                    callback();
+                }   
+                
               });
 
               return;
@@ -45454,6 +45469,13 @@ function DoFileRead(file, callback) {
             theme: "modal_flat",
             top: 200,
             scrollWithPage: (AllowDialogsToScroll())
+          }).then(function(){
+
+            // Issue with file, just callback
+            if (typeof callback === "function") {
+                callback();
+            }   
+            
           });
 
           return;
@@ -45477,6 +45499,13 @@ function DoFileRead(file, callback) {
           theme: "modal_flat",
           top: 200,
           scrollWithPage: (AllowDialogsToScroll())
+        }).then(function(){
+
+          // Issue with file, just callback
+          if (typeof callback === "function") {
+              callback();
+          }   
+          
         });
 
         return;
@@ -45550,8 +45579,6 @@ function DoFileRead(file, callback) {
           }
         }
 
-        showTheSpinner();
-
         const reader = new FileReader();
 
         reader.onload = function(event) {
@@ -45560,12 +45587,12 @@ function DoFileRead(file, callback) {
 
           if (midiData.byteLength > 40960) {
 
-            hideTheSpinner();
-
             try {
-              midiOKButton.click();
-            } catch (error) {
 
+              midiOKButton.click();
+
+            } catch (error) {
+                           
             }
 
             var thePrompt = "MIDI file import is limited to a maximum file size of 40 KBytes.";
@@ -45576,6 +45603,13 @@ function DoFileRead(file, callback) {
               theme: "modal_flat",
               top: 200,
               scrollWithPage: (AllowDialogsToScroll())
+            }).then(function(){
+
+              // Issue with file, just callback
+              if (typeof callback === "function") {
+                  callback();
+              }   
+              
             });
 
             return;
@@ -45592,10 +45626,10 @@ function DoFileRead(file, callback) {
 
         reader.onerror = function() {
 
-          hideTheSpinner();
-
           try {
+
             midiOKButton.click();
+
           } catch (error) {
 
           }
@@ -45608,7 +45642,16 @@ function DoFileRead(file, callback) {
             theme: "modal_flat",
             top: 200,
             scrollWithPage: (AllowDialogsToScroll())
+          }).then(function(){
+
+            // Issue with file, just callback
+            if (typeof callback === "function") {
+                callback();
+            }   
+            
           });
+
+          return;
 
         };
 
@@ -45646,11 +45689,11 @@ function DoFileRead(file, callback) {
             })
             .then(data => {
 
-              //debugger;
-              hideTheSpinner();
 
               try {
+
                 midiOKButton.click();
+
               } catch (error) {
 
               }
@@ -45680,10 +45723,10 @@ function DoFileRead(file, callback) {
             })
             .catch(error => {
 
-              hideTheSpinner();
-
               try {
-                midiOKButton.click();
+                
+                midiOKButton.click();   
+
               } catch (error) {
 
               }
@@ -45696,6 +45739,13 @@ function DoFileRead(file, callback) {
                 theme: "modal_flat",
                 top: 200,
                 scrollWithPage: (AllowDialogsToScroll())
+              }).then(function(){
+
+                // Issue with file, just callback
+                if (typeof callback === "function") {
+                    callback();
+                }   
+                
               });
 
             });
