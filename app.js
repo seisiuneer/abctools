@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2666_081425_1600";
+var gVersionNumber="2667_081425_2200";
 
 var gMIDIInitStillWaiting = false;
 
@@ -46160,10 +46160,12 @@ function DoMultiReadCommon(the_files, fileElement) {
             font-size: 22px;
             border: none;
             cursor: pointer;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            box-shadow: 0 3px 6px rgba(0,0,0,0.2);
             display: flex;
             align-items: center;
             justify-content: center;
+            padding-block-start: 0px;
+            padding-block-end: 3px;
           `;
     }
     else{
@@ -46180,7 +46182,7 @@ function DoMultiReadCommon(the_files, fileElement) {
             font-size: 14px;
             border: none;
             cursor: pointer;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            box-shadow: 0 3px 6px rgba(0,0,0,0.2);
             display: flex;
             align-items: center;
             justify-content: center;
