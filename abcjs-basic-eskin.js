@@ -10396,7 +10396,12 @@ var Tokenizer = function Tokenizer(lines, multilineVars) {
       ", Les": "Les",
       ", Ye": "Ye",
       ", An": "An",
-      ", an": "an"
+      ", an": "an",
+      ", Der": "Der",
+      ", Die": "Die",
+      ", Das": "Das",
+      ", Ein": "Ein",
+      ", Eine": "Eine"
     };
 
     for (const [suffix, prefix] of Object.entries(suffixMap)) {

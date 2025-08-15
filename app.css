@@ -669,13 +669,13 @@ opacity: 0.4;
 padding:12px;
 }
 
-#ceoltasdialog,#injectheaderstring,#injectallmidiparams,#injectharmonicatab,#injectboxtab,#injectfiddlefingerings,#injectmd,#injectmelody,#injectstaffwidth,#injectmetronome,#injectshapenotes,#injectsectionheader,#injecttunenumbers,#addtunetitlenumbers,#compliancedialog,#ceoltastransform,#injectbcbox{
+#ceoltasdialog,#injectheaderstring,#injectallmidiparams,#injectharmonicatab,#injectboxtab,#injectfiddlefingerings,#injectmd,#injectmelody,#injectstaffwidth,#injectmetronome,#injectshapenotes,#injectsectionheader,#injecttunenumbers,#addtunetitlenumbers,#compliancedialog,#ceoltastransform,#injectbcbox,#normalizediacriticals{
 height:42px;
 padding:12px;
 margin-right:24px;
 }
 
-#injectbambooflute,#injectclicktrackall,#injectchords,#injectheadertemplate,#injectanglotab,#looper_metronomebutton,#injectlargeprint,#pdfinjectlargeprint,#tunebookbuilder_add,#injectfontsettings,#removetunetitlenumbers,#ceoltasdialoginverse,#compliancetransform,#compliancedialoginverse,#fiddlefingeringsdialog,#fiddlefingeringsdialog2,#fiddlefingeringsdialog3,#fiddlefingeringsdialog4,#injectbagpipedrones,#websitefull,#injectheaderstringfh,#injectcsdbox,#websitelightbox,#websitesimple{
+#injectbambooflute,#injectclicktrackall,#injectchords,#injectheadertemplate,#injectanglotab,#looper_metronomebutton,#injectlargeprint,#pdfinjectlargeprint,#tunebookbuilder_add,#injectfontsettings,#removetunetitlenumbers,#ceoltasdialoginverse,#compliancetransform,#compliancedialoginverse,#fiddlefingeringsdialog,#fiddlefingeringsdialog2,#fiddlefingeringsdialog3,#fiddlefingeringsdialog4,#injectbagpipedrones,#websitefull,#injectheaderstringfh,#injectcsdbox,#websitelightbox,#websitesimple,#escapediacriticals{
 height:42px;
 padding:12px;
 }

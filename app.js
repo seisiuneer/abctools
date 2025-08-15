@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2669_081525_0600";
+var gVersionNumber="2670_081525_0700";
 
 var gMIDIInitStillWaiting = false;
 
@@ -532,6 +532,22 @@ function replaceEscapedDiacriticals(str) {
   return str.replace(/\\['"`~^c]["A-Za-z]/g, match => diacriticMap[match] || match);
 }
 
+function escapeDiacriticals(str) {
+  const diacriticMap = {
+    "Á": "\\'A", "É": "\\'E", "Í": "\\'I", "Ó": "\\'O", "Ú": "\\'U",
+    "á": "\\'a", "é": "\\'e", "í": "\\'i", "ó": "\\'o", "ú": "\\'u",
+    "À": "\\`A", "È": "\\`E", "Ì": "\\`I", "Ò": "\\`O", "Ù": "\\`U",
+    "à": "\\`a", "è": "\\`e", "ì": "\\`i", "ò": "\\`o", "ù": "\\`u",
+    "Ä": '\\"A', "Ë": '\\"E', "Ï": '\\"I', "Ö": '\\"O', "Ü": '\\"U',
+    "ä": '\\"a', "ë": '\\"e', "ï": '\\"i', "ö": '\\"o', "ü": '\\"u',
+    "Ñ": "\\~N", "ñ": "\\~n",
+    "Â": "\\^A", "Ê": "\\^E", "Î": "\\^I", "Ô": "\\^O", "Û": "\\^U",
+    "â": "\\^a", "ê": "\\^e", "î": "\\^i", "ô": "\\^o", "û": "\\^u",
+    "Ç": "\\cC", "ç": "\\cc"
+  };
+
+  return str.replace(/[\u00C0-\u00FF]/g, match => diacriticMap[match] || match);
+}
 
 // Sort routine for tags that may contain diacriticals
 function customSortTagWithDiacriticals(a, b) {
@@ -2749,7 +2765,12 @@ function processTitleForSorting(thisTitle) {
     "La ": ", La",
     "Ye ": ", Ye",
     "Les ": ", Les",
-    "an ": ", an"
+    "an ": ", an",
+    "Der ": ", Der",
+    "Die ": ", Die",
+    "Das ": ", Das",
+    "Ein ": ", Ein",
+    "Eine ": ", Eine"
   };
 
   for (const [prefix, suffix] of Object.entries(prefixMap)) {
@@ -49899,6 +49920,41 @@ function SplitLongTextAndTags(){
 	});
 }
 
+function DoNormalizeDiacriticals(inverse){
+
+  var output = gTheABC.value;
+
+  if (!inverse){
+
+      output = replaceEscapedDiacriticals(output);
+
+  }
+  else{
+
+      output = escapeDiacriticals(output);
+
+  }
+
+  // Stuff in the output
+  setABCEditorText(output);
+
+  // Set dirty
+  gIsDirty = true;
+
+  // Force a redraw
+  RenderAsync(true,null,function(){
+
+    // Set the select point
+    gTheABC.selectionStart = 0;
+      gTheABC.selectionEnd = 0;
+
+      // Focus after operation
+      FocusAfterOperation();
+
+  });
+
+}
+
 // Normalize diacriticals
 
 function NormalizeDiacriticals(){
@@ -49919,47 +49975,21 @@ function NormalizeDiacriticals(){
         return;	
    	}
 
-	// Setup initial values
-	const theData = {
-	};
+	var modal_msg ='<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-left:15px;">Normalize Diacriticals&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#hamburger_normalize_diacriticals" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>';
 
-	const form = [
-	  {html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-left:15px;">Normalize Diacriticals&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#hamburger_normalize_diacriticals" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'},
-	  {html: '<p style="margin-top:36px;margin-bottom:12px;font-size:12pt;line-height:18pt;font-family:helvetica">When sorting the tunes by title or generating a sorted Table of Contents or Index in an exported PDF, for optimal sorting and title display, it is best to normalize the diacriticals if escaped versions were used in the ABC.</p>'},	  
-	  {html: '<p style="margin-top:24px;margin-bottom:12px;font-size:12pt;line-height:18pt;font-family:helvetica">Click Normalize to replace all escaped /\'A or /\'E style diacriticals with single characters that include the diacritical marks, for example, Á and É.</p>'},
-	  {html: '<p>&nbsp;</p>'},
-	];
+	modal_msg += '<p style="margin-top:24px;margin-bottom:12px;font-size:12pt;line-height:18pt;font-family:helvetica">When sorting the tunes by title or generating a sorted Table of Contents or Index in an exported PDF, for optimal sorting and title display, it is best to normalize the diacriticals if escaped versions were used in the ABC.</p>';
 
-	const modal = DayPilot.Modal.form(form, {}, { theme: "modal_flat_wide", top: 100, width: 600, scrollWithPage: (AllowDialogsToScroll()), okText: "Normalize",autoFocus: false } ).then(function(args){
+	modal_msg += '<p style="margin-top:24px;margin-bottom:12px;font-size:12pt;line-height:18pt;font-family:helvetica">Click <strong>Normalize Diacriticals</strong> to replace all escaped /\'A or /\'E style diacriticals with single characters that include the diacritical marks, for example, Á and É.</p>';
 
-		// Get the results and store them
-		if (!args.canceled){
+  modal_msg += '<p style="margin-top:24px;margin-bottom:36px;font-size:12pt;line-height:18pt;font-family:helvetica">Click <strong>Escape Diacriticals</strong> to replace all single characters that include the diacritical marks, for example, Á and É with escaped /\'A or /\'E style diacriticals.</p>';
+  
+  modal_msg  += '<p style="text-align:center;"><input id="normalizediacriticals" class="advancedcontrols btn btn-injectcontrols-headers" onclick="DoNormalizeDiacriticals(false)" type="button" value="Normalize Diacriticals" title="Normalizes escaped diacriticals">';
 
-			var output = gTheABC.value;
+  modal_msg  += '<input id="escapediacriticals" class="advancedcontrols btn btn-injectcontrols-headers" onclick="DoNormalizeDiacriticals(true)" type="button" value="Escape Diacriticals" title="Escapes normalized diacriticals">';
 
-			output = replaceEscapedDiacriticals(output);
+  modal_msg  += '<p>&nbsp;</p>';
 
-			// Stuff in the output
-			setABCEditorText(output);
-
-			// Set dirty
-			gIsDirty = true;
-
-			// Force a redraw
-			RenderAsync(true,null,function(){
-
-				// Set the select point
-				gTheABC.selectionStart = 0;
-			    gTheABC.selectionEnd = 0;
-
-			    // Focus after operation
-			    FocusAfterOperation();
-
-			});
-
-		}
-
-	});
+  DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 100, width: 600,  scrollWithPage: (AllowDialogsToScroll()) });
 
 }
 
@@ -50003,7 +50033,12 @@ function titleReverser(str) {
       ", Les": "Les",
       ", Ye": "Ye",
       ", An": "An",
-      ", an": "an"
+      ", an": "an",
+      ", Der": "Der",
+      ", Die": "Die",
+      ", Das": "Das",
+      ", Ein": "Ein",
+      ", Eine": "Eine"
     };
 
     for (const [suffix, prefix] of Object.entries(suffixMap)) {
@@ -50068,7 +50103,12 @@ function normalizeTitleArticles(inverse) {
 			"La ": ", La",
 			"Ye ": ", Ye",
 			"Les ": ", Les",
-			"an ": ", an"
+			"an ": ", an",
+      "Der ": ", Der",
+      "Die ": ", Die",
+      "Das ": ", Das",
+      "Ein ": ", Ein",
+      "Eine ": ", Eine"
 		};
 
 		const lines = theABC.split("\n");
@@ -50138,9 +50178,9 @@ function NormalizeTitles(){
 	  {html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-left:15px;">Normalize Title Postfixes&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#hamburger_normalize_title_postfixes" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'},
 	  {html: '<p style="margin-top:24px;margin-bottom:12px;font-size:12pt;line-height:18pt;font-family:helvetica">Click one of the two actions below to process all title or subtitle T: tag postfix or prefix articles, for example:<br/><br/>"Kesh, The" and "Slockit Light, Da"<br/><br/>to the front of the titles and subtitles resulting in:<br/><br/>"The Kesh" and "Da Slockit Light" or the other way around.</p>'},
 	  {html: '<p style="margin-top:24px;margin-bottom:12px;font-size:12pt;line-height:18pt;font-family:helvetica">The title or subtitle postfix articles that can be normalized are:</p>'},
-	  {html: '<p style="margin-top:18px;margin-bottom:12px;font-size:12pt;line-height:18pt;font-family:helvetica">, The<br/>, the<br/>, A<br/>, a<br/>, An<br/>, an<br/>, Da<br/>, La<br/>, Le<br/>, Les<br/>, Ye</p>'},
-	  {html: '<p style="text-align:center;margin-top:18px;margin-bottom:20px"><input id="title_normalize_forward" style="margin-right:18px;" class="advancedcontrols btn btn-injectcontrols-headers" onclick="normalizeTitleArticles(false);" type="button" value="Kesh, The → The Kesh" title="Move the title postfixes to the start of the titles"><input id="title_normalize_inverse" style="margin-right:18px;" class="advancedcontrols btn btn-injectcontrols-headers" onclick="normalizeTitleArticles(true);" type="button" value="The Kesh → Kesh, The" title="Moves the title prefixes to the end of the titles"></p>'},
-	  {html: '<p>&nbsp;</p>'},
+	  {html: '<p style="margin-top:18px;margin-bottom:48px;font-size:12pt;line-height:18pt;font-family:helvetica">The, the, A, a, An, an, Da, La, Le, Les, Ye, Der, Die, Das, Ein, Eine</p>'},
+	  {html: '<p style="text-align:center;margin-top:18px;margin-bottom:12px"><input id="title_normalize_forward" style="margin-right:18px;" class="advancedcontrols btn btn-injectcontrols-headers" onclick="normalizeTitleArticles(false);" type="button" value="Kesh, The → The Kesh" title="Move the title postfixes to the start of the titles"><input id="title_normalize_inverse" style="margin-right:18px;" class="advancedcontrols btn btn-injectcontrols-headers" onclick="normalizeTitleArticles(true);" type="button" value="The Kesh → Kesh, The" title="Moves the title prefixes to the end of the titles"></p>'},
+    {html: '<p>&nbsp;</p>'}
 	];
 
 	const modal = DayPilot.Modal.form(form, {}, { theme: "modal_flat_wide", top: 50, width: 600, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } );
