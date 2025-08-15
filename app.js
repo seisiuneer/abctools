@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2671_081525_1100";
+var gVersionNumber="2672_081525_1300";
 
 var gMIDIInitStillWaiting = false;
 
@@ -18625,50 +18625,41 @@ function getTextAreaContentHeight(textarea,offset) {
   return res;
 }
 
-
 function ScrollABCTextIntoView(textarea, selectionStart, selectionEnd, fraction) {
 
-    // First scroll selection region to view
     const fullText = textarea.value;
-    
-    textarea.value = fullText.substring(0, selectionEnd);
 
-    // For some unknown reason, you must store the scollHeight to a variable
-    // before setting the textarea value. Otherwise it won't work for long strings
+    // Create an off-DOM clone to measure scrollHeight without affecting visible textarea
+    const clone = textarea.cloneNode();
+    clone.style.position = "absolute";
+    clone.style.visibility = "hidden";
+    clone.style.height = "auto";
+    clone.style.overflow = "hidden";
+    clone.value = fullText.slice(0, selectionEnd);
+
+    document.body.appendChild(clone);
+
+    let scrollHeight = clone.scrollHeight;
     
-    const scrollHeight = textarea.scrollHeight;
-    //console.log("scrollHeight: "+scrollHeight);
-    
-    textarea.value = fullText;
-    
-    let scrollTop = scrollHeight;
-    
+    document.body.removeChild(clone);
+
+    // Early release
+    clone = null;
+
     const textareaHeight = textarea.clientHeight;
-    //console.log("textareaHeight: "+textareaHeight);
 
-    // Special handling when the text doesn't fill the text area, gives bad scrollTop results
-    if (scrollTop == textareaHeight){
-    	scrollTop = getTextAreaContentHeight(textarea,selectionEnd);
-    	//console.log("matching heights, calculated scrollTop: "+scrollTop)
+    // Handle case where content exactly fits
+    if (scrollHeight === textareaHeight) {
+        scrollHeight = getTextAreaContentHeight(textarea, selectionEnd);
     }
 
-    // scroll selection to specific fraction of textarea
-    scrollTop -= textareaHeight / fraction;
+    // Scroll so selection is at desired fraction
+    textarea.scrollTop = Math.max(0, scrollHeight - textareaHeight / fraction);
 
-    if (scrollTop<0){
-    	scrollTop = 0;
+    // Avoid lifting on-screen keyboard on iPad
+    if (!giPadTwoColumn) {
+        textarea.setSelectionRange(selectionStart, selectionEnd);
     }
-
-    //console.log("scrollTop: "+scrollTop);
-
-    textarea.scrollTop = scrollTop;
-
-    // Continue to set selection range
-    // MAE 21 Aug 2024 - Avoiding onscreen keyboard lift on iPad
-    if (!giPadTwoColumn){ 
-    	textarea.setSelectionRange(selectionStart, selectionEnd);
-    }
-
 }
 
 //
