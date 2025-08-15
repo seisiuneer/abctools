@@ -7,13 +7,7 @@
 //
 //
 //
-//
-//
-//
-// Updated 14 Aug 2025 at 2200
-//
-//
-//
+// Updated 14 Aug 2025 at 2300
 //
 //
 //
@@ -22,7 +16,7 @@
 //
 //
 
-const cacheName = 'abctoolscache-2667';
+const cacheName = 'abctoolscache-2668';
 
 const contentToCache = [
     'abctools.html',
@@ -32,7 +26,7 @@ const contentToCache = [
     'tunesources.css',
     'credits.html',
     'tipjars.html',
-    'general_midi_extended_v7.pdf',
+    'general_midi_extended_v9.pdf',
     'abc_standard_v2.1.pdf',
     'ABCquickRefv0_6.pdf',
     'app.css',
@@ -73,6 +67,7 @@ const contentToCache = [
     'img/pdfbutton.png',
     'img/michael.jpg',
     'img/michael2.jpg',
+    'img/michael240.jpg',
     'img/settings.png',
     'img/abc-android-icon-144x144.png',
     'img/abc-android-icon-192x192.png',
