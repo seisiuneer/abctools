@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2672_081525_1300";
+var gVersionNumber="2673_081525_1500";
 
 var gMIDIInitStillWaiting = false;
 
@@ -18630,7 +18630,7 @@ function ScrollABCTextIntoView(textarea, selectionStart, selectionEnd, fraction)
     const fullText = textarea.value;
 
     // Create an off-DOM clone to measure scrollHeight without affecting visible textarea
-    const clone = textarea.cloneNode();
+    var clone = textarea.cloneNode();
     clone.style.position = "absolute";
     clone.style.visibility = "hidden";
     clone.style.height = "auto";
