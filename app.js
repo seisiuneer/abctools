@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2673_081525_1500";
+var gVersionNumber="2674_081525_1530";
 
 var gMIDIInitStillWaiting = false;
 
@@ -48879,6 +48879,11 @@ function JumpToTune(){
     			gCurrentTune = gJumpTune;
 
     			var tuneOffset = findTuneOffsetByIndex(gCurrentTune)
+
+          // Fixes Chrome issue with play after Jump to Tune
+          if (!isMobileBrowser()){
+            gTheABC.focus();
+          }
 
     			gTheABC.selectionStart = tuneOffset;
     			gTheABC.selectionEnd = tuneOffset;
