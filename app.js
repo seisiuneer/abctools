@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2675_081525_1830";
+var gVersionNumber="2676_081625_0600";
 
 var gMIDIInitStillWaiting = false;
 
@@ -18657,9 +18657,9 @@ function ScrollABCTextIntoView(textarea, selectionStart, selectionEnd, fraction)
     textarea.scrollTop = Math.max(0, scrollHeight - textareaHeight / fraction);
 
     // Avoid lifting on-screen keyboard on iPad
-    if (!giPadTwoColumn) {
+    //if (!giPadTwoColumn) {
         textarea.setSelectionRange(selectionStart, selectionEnd);
-    }
+    //}
 }
 
 //
