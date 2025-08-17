@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2677_081625_1100";
+var gVersionNumber="2678_081725_1330";
 
 var gMIDIInitStillWaiting = false;
 
@@ -849,11 +849,16 @@ function setABCEditorText(theText){
 //
 // Show the spinner
 // 
-function showTheSpinner(){
+function showTheSpinner(val){
 
 	//console.log("showTheSpinner");
+  var elem = document.getElementById("spinnerLabel");
+
+  if (val){
+    elem.innerText = val;
+  }
 	
-	var elem = document.getElementById("loading-bar-spinner");
+	var elem = document.getElementById("spinnerOverlay");
 
 	var currentState = elem.style.display;
 
@@ -861,22 +866,42 @@ function showTheSpinner(){
 		elem.style.display = "block";
 	}
 
+  elem = document.getElementById("loading-bar-spinner");
+
+  currentState = elem.style.display;
+
+  if (currentState != "inline-block"){
+    elem.style.display = "inline-block";
+  }
+
 }
 
 //
 // Hide the spinner
 // 
 function hideTheSpinner(){
-	
+
 	//console.log("hideTheSpinner");
 
-	var elem = document.getElementById("loading-bar-spinner");
+  var elem = document.getElementById("spinnerLabel");
+
+  elem.innerText = "Rendering ABC";
+
+	elem = document.getElementById("spinnerOverlay");
 
 	var currentState = elem.style.display;
 
 	if (currentState != "none"){
 		elem.style.display = "none";
 	}
+
+  elem = document.getElementById("loading-bar-spinner");
+
+  currentState = elem.style.display;
+
+  if (currentState != "none"){
+    elem.style.display = "none";
+  }
 
 }
 
@@ -1834,7 +1859,7 @@ function Transpose(transposeAmount) {
 
 	// Only show the spinner for a large number of tunes
 	if (nToTranspose > 5){
-		showTheSpinner();
+		showTheSpinner("Transposing ABC");
 	}
 
 	// Need a timeout to allow the spinner to show before processing the ABC,
@@ -2151,7 +2176,7 @@ function DoTransposeToKey(targetKey,transposeAll) {
 	// Keep track of dialogs
 	sendGoogleAnalytics("dialog","TransposeToKey");
 
-	showTheSpinner();
+	showTheSpinner("Transposing ABC");
 
 	// Need a timeout to allow the spinner to show before processing the ABC,
 	setTimeout(function(){
@@ -12916,6 +12941,11 @@ function RenderRangeAsync(start,end,callback){
 		return;
 	}
 
+  // Limit range of redraw in Quick editor
+  if (gIsQuickEditor){
+    end = start;
+  }
+
 	// Start with spinner hidden
 	hideTheSpinner();
 
@@ -12982,7 +13012,14 @@ function RenderAsync(renderAll,tuneNumber,callback){
 	// Show the spinner
 	if (renderAll){
 
-		showTheSpinner();
+    var nTunes = CountTunes();
+
+    // Don't show the spinner for quick redraws
+    if (nTunes > 50){
+
+		  showTheSpinner();
+
+    }
 
 		// Render after a short delay
 		setTimeout(function(){
@@ -13016,8 +13053,8 @@ function RenderAsync(renderAll,tuneNumber,callback){
 
 function Render(renderAll,tuneNumber) {
 
-	//debugger;
-	//console.log("Render renderAll="+renderAll+" tuneNumber="+tuneNumber); 
+	// debugger;
+	// console.log("Render renderAll="+renderAll+" tuneNumber="+tuneNumber); 
 
 	// If currently rendering PDF, exit immediately
 	if (gRenderingPDF) {
@@ -46099,8 +46136,6 @@ function DoMultiReadCommon(the_files, fileElement) {
   
   UpdateNotationTopPosition();
 
-	showTheSpinner();
-
 	gImportRunning = true;
 	gImportAccumulator = [gTheABC.value];
 
@@ -46247,6 +46282,9 @@ function DoMultiReadCommon(the_files, fileElement) {
 
 			if (gIsQuickEditor) {
 				if (importedTunes !== "" && nTunes > 0) {
+          if (nTunes > 1000){
+            showTheSpinner("Processing Tunes");
+          }
 					fileSelected.innerText = nTunes + " tunes loaded. Processing ABC and rendering notation for the last tune...";
 				}
 			} else {
@@ -46295,8 +46333,6 @@ function DoMultiReadCommon(the_files, fileElement) {
 					}
 
 					MakeTuneVisible(true);
-
-					hideTheSpinner();
 
 				});
 			}, 10);
@@ -51202,10 +51238,6 @@ function DoStartup() {
 			elem = document.getElementById("diagnostics");
 			elem.style.width = "836px";
 			elem.style.display = "block";
-
-			// Move the spinner
-			elem = document.getElementById("loading-bar-spinner");
-			elem.style.top = "25%"
 
 			// Hide the Highlighting button
 			elem = document.getElementById("rawmodebutton");

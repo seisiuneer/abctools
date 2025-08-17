@@ -60,10 +60,13 @@
 				<img id="pdfbuttonicon" class="pdfbuttonicon" src="img/pdfbutton.png"  title="Export the tunes as a PDF tunebook.&nbsp;Shift-click to export as a website."/>
 				<img id="zoombutton" class="zoombutton" src="img/zoomout.png"  title="Toggles between showing the ABC editor and displaying the notation full screen.&nbsp;&nbsp;Alt-click to hide/show all corner buttons."/>
 
-				<div id="loading-bar-spinner" class="spinner">
-
-					<div id="spinner-icon" class="spinner-icon"></div>
-
+				<div id="spinnerOverlay">
+				  <div id="spinnerContainer">
+				    <div id="spinnerLabel">Rendering ABC</div>
+				    <div id="loading-bar-spinner">
+				      <div id="spinner-icon"></div>
+				    </div>
+				  </div>
 				</div>
 
 				<div id="pdf-controls" class="modal">

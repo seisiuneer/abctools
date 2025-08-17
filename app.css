@@ -2007,31 +2007,59 @@ margin-right:0px;
 opacity:1.0;
 }
 
-
 /* Spinner */
-#loading-bar-spinner.spinner {
-left: 50%;
-margin-left: -23px;
-top: 35%;
-margin-top: -23px;
-position: fixed;
-z-index: 100100 !important;
-animation: loading-bar-spinner 400ms linear infinite; 
-display:none;
+/* Overlay (dims the background) */
+#spinnerOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5); /* semi-transparent black */
+  z-index: 100099; /* just under spinner elements */
+  display: none;
+  text-align: center;
 }
 
-#loading-bar-spinner.spinner .spinner-icon {
-width: 46px;
-height: 46px;
-border:  solid 4px transparent;
-border-top-color:  #00C8B1 !important;
-border-left-color: #00C8B1 !important;
-border-radius: 50%;
+/* Container for spinner + label */
+#spinnerContainer {
+  position: absolute;
+  top: 35%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  z-index: 100100; /* ensure container sits above overlay */
+}
+
+/* Label above spinner */
+#spinnerLabel {
+  margin-bottom: 20px;
+  font-size: 26px;
+  font-weight: bold;
+  color: #00F5BC; 
+  font-family: sans-serif;
+  text-shadow: 0 0 4px rgba(0,0,0,0.75); /* optional glow for readability */
+}
+
+#loading-bar-spinner {
+  margin: 0 auto;
+  animation: loading-bar-spinner 400ms linear infinite; 
+  transform-origin: 50% 50%; /* ensure spin around its own center */
+  display: inline-block;     /* keeps dimensions respected for centering */
+}
+
+#spinner-icon {
+  width: 48px;   /* reduced size */
+  height: 48px;
+  border: solid 6px transparent; /* thinner border for smaller size */
+  border-top-color:  #00E62A !important;
+  border-left-color: #00CCB4 !important;
+  border-radius: 50%;
 }
 
 @keyframes loading-bar-spinner {
-0%   { transform: rotate(0deg);   transform: rotate(0deg); }
-100% { transform: rotate(360deg); transform: rotate(360deg); }
+  0%   { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
 /* For better tune visual layout on the displayed version.
