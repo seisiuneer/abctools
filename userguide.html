@@ -1416,13 +1416,13 @@
                 <p>Exports the entire tunebook as a high quality PDF file.</p>
                 <p>The saved PDF file will be in your browser's <strong>Downloads</strong> directory.</p>
                 <p>Full details below in the <a href="#export_pdf_tunebook">Export PDF Tunebook</a> section below.</p>
-                <p>On iOS the downloaded files will be found in the <strong>Downloads</strong> directory in the iOS <strong>Files</strong> app.</p>
+                <p>On iOS the downloaded files will be found in the "Downloads" dropdown on the iOS Safari app toolbar.</p>
                 <hr id="top_bar_export_website">
                 <p><strong>Export Website:</strong></p>
                 <p>Exports the entire tunebook as an HTML/CSS/Javascript website.</p>
                 <p>Simple hyperlinked tune list, tune image gallery, tune image lightbox, and fully featured player websites with tablature and instrument selection are available as exported website options.</p>
                 <p>The saved .html file (and .svg tune images for the tune image gallery websites) will be saved in your browser's <strong>Downloads</strong> directory.</p>
-                <p>On iOS the downloaded files will be found in the <strong>Downloads</strong> directory in the iOS <strong>Files</strong> app.</p>
+                <p>On iOS the downloaded files will be found in the "Downloads" dropdown on the iOS Safari app toolbar.</p>
                 <p>Full details below in the <a href="#generate_website">Export Website</a> section below.</p>
                 <hr id="top_bar_copy_all">
                 <p><strong>Copy All:</strong></p>
@@ -1659,7 +1659,7 @@
                 <hr id="hamburger_quick_editor">
                 <p><strong>Launch Quick Editor</strong></p>
                 <p>Launches the "Quick Editor" version of the tool in a new tab.</p>
-                <p>Full details in the <a href="#quickeditor">Quick Editor</a> section below.</p>
+                <p>Full details in the <a href="#quickeditor">"Quick Editor" Version</a> section below.</p>
                 <hr id="new_version_check">
                 <p><strong>New Version Available Notification</strong></p>
                 <p>In general, the tool will normally update itself if required when launched.</p>
@@ -4251,7 +4251,10 @@
                 <p><a href="https://michaeleskin.com/documents/ocarolan_responsive_17Jan2025.html" target="_blank">O'Carolan Tunebook Full-Featured Website Example</a></p>
                 <p><a href="https://michaeleskin.com/documents/cce_san_diego_tunes_31jan2025.html" target="_blank">San Diego Comhaltas Tune Learning Tunebook Full-Featured Website Example</a></p>
                 <hr>
-                <p>All four styles are described in detail below.</p>
+                <p style="text-align: center;"><strong>Website Export Limitations on Mobile Browsers</strong></p>
+                <p>On mobile devices, only the <strong>Basic Tune List</strong> and <strong>Full-Featured</strong> website styles are supported since batch export of the required SVG tune images for the <strong>Tune Image Gallery</strong> and <strong>Tune Image Lightbox</strong> website styles is not supported on mobile browsers.</p>
+                <hr>
+                <p>All four exported website styles are described in detail below:</p>
                 <hr>
                 <p style="text-align: center;"><strong>Common Export Website Settings</strong></p>
                 <p>For all website export options, you may customize the title, subtitle, footers, background color/image, text color, and hyperlink color, of the player frame.</p>
@@ -4342,12 +4345,15 @@
                 <p>If there is only a single tune, it will be immediately loaded in the ABC Transcription Tools in the frame.</p>
                 <p>The tune will be initially displayed using the current notation or stringed instrument tablature setting selected at the time the website is generated.</p>
                 <p>The website remembers the user's last selected tune and tablature setting and restores them the next time the user visits the website.</p>
+                <hr>
+                <p style="text-align: center;"><strong>Speeding up the Export Website Workflow for Large Tunebooks</strong></p>
+                <p>If you want to speed up the workflow for export of websites for very large tunebooks (over 100-200 tunes) without having to wait for all the tunes to draw when first opening the ABC file, there are two options:</p>
+                <p>1) Use the Quick Editor version instead, which only draws the tune you are actively editing.</p>
+                <p>Full details in the <a href="#quickeditor">"Quick Editor" Version</a> section below.</p>
+                <p>2) Setting the "Disable abcjs notation rendering" option on the <strong>Advanced Settings</strong> dialog:</p>
+                <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/e2_wBY8nFw8" title="Disable abcjs rendering website generation demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
                 <hr class="hidden-print" id="export_website_devnotes">
                 <h1 class="page_break_always">Export Website Developer Customization<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-                <hr>
-                <p style="text-align: center;"><strong>Speeding up the Export Website workflow by disabling rendering</strong></p>
-                <p>If you want to speed up the workflow for export of Basic Tune List and Full-Featured websites for very large tunebooks (over 100-200 tunes), since drawing the tunes isn't required for these two style website exports (only generates share links), you might find the "Disable abcjs notation rendering" option on the <strong>Advanced Settings</strong> dialog useful:</p>
-                <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/e2_wBY8nFw8" title="Disable abcjs rendering website generation demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
                 <hr>
                 <p style="text-align: center;"><strong>Changing the instruments shown in the tablature dropdown</strong></p>
                 <p>When enabling the tablature/instrument selector dropdown, the following markup is added to the .html file:</p>
@@ -5177,7 +5183,7 @@
                 <p><strong>Copy Share URL</strong> - Copies the Share URL to the system clipboard so you can easily paste it into social media posts, emails, or other tools.</p>
                 <p><strong>Save Share URL</strong> - Saves the Share URL to a text file.</p>
                 <p>The saved file will be in your browser's Downloads directory.</p>
-                <p>On iOS the downloaded files will be found in the "Downloads" directory in the iOS "Files" app.</p>
+                <p>On iOS the downloaded files will be found in the "Downloads" dropdown on the iOS Safari app toolbar.</p>
                 <p><strong>Shorten URL</strong> - Shortens the Share URL using TinyURL automatically if possible, or if not, assists with the URL shortening process.</p>
                 <p>If you hold down the Shift and Alt keys while clicking this button, a %hyperlink annotation will be added to each of the tunes with the shortened URL.</p>
                 <p>When exporting a PDF, the %hyperlink annotation on any tune, when the tune title is clicked, overrides all other injected hyperlinks requested at the PDF tunebook level, for example, play links.</p>
