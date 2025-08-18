@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2682_081725_2200";
+var gVersionNumber="2683_081825_0730";
 
 var gMIDIInitStillWaiting = false;
 
@@ -880,7 +880,7 @@ function showTheSpinner(val){
 // Hide the spinner
 // 
 function hideTheSpinner(){
-
+  
 	//console.log("hideTheSpinner");
 
   var elem = document.getElementById("spinnerLabel");

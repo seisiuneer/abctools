@@ -2015,7 +2015,7 @@ opacity:1.0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0,0,0,0.5); /* semi-transparent black */
+  background: rgba(0,0,0,0.6); /* semi-transparent black */
   z-index: 100099; /* just under spinner elements */
   display: none;
   text-align: center;
@@ -2034,11 +2034,11 @@ opacity:1.0;
 /* Label above spinner */
 #spinnerLabel {
   margin-bottom: 20px;
-  font-size: 26px;
+  font-size: 28px;
   font-weight: bold;
-  color: #00F5BC; 
+  color: #00FFC4; 
   font-family: sans-serif;
-  text-shadow: 0 0 4px rgba(0,0,0,0.75); /* optional glow for readability */
+  text-shadow: 0 0 8px rgba(0,0,0,0.8); /* optional glow for readability */
 }
 
 #loading-bar-spinner {
