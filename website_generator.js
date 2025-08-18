@@ -469,6 +469,8 @@ function BatchJSONExportForWebGenerator(theABC){
 
     clearGetTuneByIndexCache();
 
+    var format = GetRadioValue("notenodertab");
+
     for (var i=0;i<nTunes;++i){
 
         var thisTune = getTuneByIndex(i);
@@ -493,7 +495,7 @@ function BatchJSONExportForWebGenerator(theABC){
 
         thisTune = GetABCFileHeader() + thisTune;
 
-        var theURL = FillUrlBoxWithAbcInLZW(thisTune,false);
+        var theURL = FillUrlBoxWithAbcInLZW(thisTune,false,format);
 
         var titleURL = title.replaceAll("&","");
         titleURL = titleURL.replaceAll(" ","_");
@@ -538,6 +540,8 @@ function BatchJSONExportForWebGalleryGenerator(theABC){
 
     clearGetTuneByIndexCache();
 
+    var format = GetRadioValue("notenodertab");
+
     for (var i=0;i<nTunes;++i){
 
         var thisTune = getTuneByIndex(i);
@@ -564,7 +568,7 @@ function BatchJSONExportForWebGalleryGenerator(theABC){
 
         thisTune = GetABCFileHeader() + thisTune;
 
-        var theURL = FillUrlBoxWithAbcInLZW(thisTune,false);
+        var theURL = FillUrlBoxWithAbcInLZW(thisTune,false,format);
 
         var titleURL = title.replaceAll("&","");
         titleURL = titleURL.replaceAll(" ","_");

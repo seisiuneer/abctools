@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2685_081825_0930";
+var gVersionNumber="2686_081825_1030";
 
 var gMIDIInitStillWaiting = false;
 
@@ -19030,7 +19030,9 @@ function getUrlWithoutParams() {
 //
 // Generate a share link for either all the tunes or just what's passed in
 //
-function FillUrlBoxWithAbcInLZW(ABCtoEncode,bUpdateUI) {
+function FillUrlBoxWithAbcInLZW(ABCtoEncode,bUpdateUI,theFormat) {
+
+  //console.log("theFormat: "+theFormat);
 
 	// Encode all the tunes or just what's passed in?
 	var abcText = "";
@@ -19044,7 +19046,12 @@ function FillUrlBoxWithAbcInLZW(ABCtoEncode,bUpdateUI) {
 
 	var abcInLZW = LZString.compressToEncodedURIComponent(abcText);
 
-	var format = GetRadioValue("notenodertab");
+  // Optimization for website generation
+  var format = theFormat;
+
+  if (!format){
+	 format = GetRadioValue("notenodertab");
+  }
 
 	var capo = gCapo;
 
