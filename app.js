@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2683_081825_0730";
+var gVersionNumber="2684_081825_0830";
 
 var gMIDIInitStillWaiting = false;
 
@@ -13179,13 +13179,12 @@ function Render(renderAll,tuneNumber) {
 			document.getElementById("saveaspdf").classList.remove("saveaspdfdisabled");
 			document.getElementById("saveaspdf").classList.add("saveaspdf");
 			gAllowPDF = true;
-
-			// Enable the website generation button
-			document.getElementById("saveaswebsite").classList.remove("saveaswebsitedisabled");
-			document.getElementById("saveaswebsite").classList.add("saveaswebsite");
-			gAllowWebExport = true;
-
 		}
+
+    // Enable the website generation button
+    document.getElementById("saveaswebsite").classList.remove("saveaswebsitedisabled");
+    document.getElementById("saveaswebsite").classList.add("saveaswebsite");
+    gAllowWebExport = true;
 
 		// Enable the copy button
 		document.getElementById("copybutton").classList.remove("copybuttondisabled");
@@ -13335,12 +13334,12 @@ function Render(renderAll,tuneNumber) {
 			document.getElementById("saveaspdf").classList.remove("saveaspdf");
 			document.getElementById("saveaspdf").classList.add("saveaspdfdisabled");
 			gAllowPDF = false;
-
-			// Disable the generate website button
-			document.getElementById("saveaswebsite").classList.remove("saveaswebsite");
-			document.getElementById("saveaswebsite").classList.add("saveaswebsitedisabled");
-			gAllowWebExport = false;
 		}
+
+    // Disable the generate website button
+    document.getElementById("saveaswebsite").classList.remove("saveaswebsite");
+    document.getElementById("saveaswebsite").classList.add("saveaswebsitedisabled");
+    gAllowWebExport = false;
 
 		// Disable the control display toggle
 		gAllowControlToggle = false;
@@ -51366,19 +51365,19 @@ function SetTopButtonMargins(){
   
   if (gIsQuickEditor){
 
-    var elems = ["openabcfile","newabcfile","saveabcfile","copybutton","playbutton","rawmodebutton"];
+    var elems = ["openabcfile","newabcfile","saveabcfile","saveaswebsite","copybutton","playbutton","rawmodebutton"];
 
-    var theMargin = 28;
+    var theMargin = 20;
 
     if (isMobileBrowser()){
 
-      theMargin = 40;
+      theMargin = 32;
 
     }
 
     if (giPadTwoColumn){
 
-      theMargin = 40;
+      theMargin = 32;
 
     }
 
