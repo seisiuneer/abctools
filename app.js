@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2687_081825_1130";
+var gVersionNumber="2688_081825_1330";
 
 var gMIDIInitStillWaiting = false;
 
@@ -50637,8 +50637,7 @@ function SetupContextMenu(showUpdateItem) {
 
           // Turn the button red
           var elem = document.getElementById("morecommands");
-          elem.style.color = "red";
-          elem.style.backgroundColor = "#FFE0E0";
+          elem.classList.add("attention");
           elem.title = "An update to the tool is available!"
         }
 
@@ -50817,8 +50816,7 @@ function SetupContextMenu(showUpdateItem) {
 
           // Turn the button red
           var elem = document.getElementById("morecommands");
-          elem.style.color = "red";
-          elem.style.backgroundColor = "#FFE0E0";
+          elem.classList.add("attention");
           elem.title = "An update to the tool is available!"
         }
       }
@@ -50946,8 +50944,7 @@ function SetupContextMenu(showUpdateItem) {
 
           // Turn the button red
           var elem = document.getElementById("morecommands");
-          elem.style.color = "red";
-          elem.style.backgroundColor = "#FFE0E0";
+          elem.classList.add("attention");
           elem.title = "An update to the tool is available!"
         }
 
@@ -51122,8 +51119,7 @@ function SetupContextMenu(showUpdateItem) {
 
           // Turn the button red
           var elem = document.getElementById("morecommands");
-          elem.style.color = "red";
-          elem.style.backgroundColor = "#FFE0E0";
+          elem.classList.add("attention");
           elem.title = "An update to the tool is available!"
         }
       }
@@ -51239,8 +51235,7 @@ function SetupContextMenu(showUpdateItem) {
 
         // Turn the button red
         var elem = document.getElementById("morecommands");
-        elem.style.color = "red";
-        elem.style.backgroundColor = "#FFE0E0";
+        elem.classList.add("attention");
         elem.title = "An update to the tool is available!"
       }
     } else {
@@ -51348,8 +51343,7 @@ function SetupContextMenu(showUpdateItem) {
 
         // Turn the button red
         var elem = document.getElementById("morecommands");
-        elem.style.color = "red";
-        elem.style.backgroundColor = "#FFE0E0";
+        elem.classList.add("attention");
         elem.title = "An update to the tool is available!"
       }
     }

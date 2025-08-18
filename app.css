@@ -5745,6 +5745,20 @@ padding-right: 30px; /* space for badge */
 /*  box-shadow: none !important;*/
 }
 
+/* Attention style */
+.attention {
+  color: red !important;
+  background-color:#FFC0C0 !important;
+  animation: pulse 1.25s infinite;
+}
+
+/* Pulsing animation */
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05);  }
+  100% { transform: scale(1); }
+}
+
 /******************************************************************************/
 /* STYLES RELATED TO BUTTONS                                                  */
 /******************************************************************************/
