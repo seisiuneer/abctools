@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2680_081725_1800";
+var gVersionNumber="2681_081725_2000";
 
 var gMIDIInitStillWaiting = false;
 
@@ -3275,6 +3275,24 @@ function RenumberXTags() {
 var gLastSortOrder = "0";
 
 function SortDialog(){
+
+  totalTunes = CountTunes();
+
+  var theTitles = GetTunebookIndexTitles();
+  var nTitles = theTitles.length;
+
+  if (nTitles == 0){
+
+    var thePrompt = "No tunes to sort.";
+    
+    // Center the string in the prompt
+    thePrompt = makeCenteredPromptString(thePrompt);
+    
+    DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) });
+
+    return;
+
+  }
 
 	// Keep track of dialogs
 	sendGoogleAnalytics("dialog","SortDialog");
@@ -50488,391 +50506,857 @@ function DoVersionCheck(){
 // Setup context menu
 //
 
-function SetupContextMenu(showUpdateItem){
+function SetupContextMenu(showUpdateItem) {
 
-	var items;
+  var items;
 
-	if (isDesktopBrowser()){
+  if (isDesktopBrowser()) {
 
-		if (gIsQuickEditor){
+    if (gIsQuickEditor) {
 
-			if (isPureDesktopBrowser()){
+      if (isPureDesktopBrowser()) {
 
-				items = [
-				    {},
-					{ name: 'Reorder Tunes', fn: function(target) { ChangeTuneOrder(); }},
-				    { name: 'Delete Tunes', fn: function(target) { CullTunes(); }},
-				    {}
-				];
+        items = [{}, {
+          name: 'Reorder Tunes',
+          fn: function(target) {
+            ChangeTuneOrder();
+          }
+        }, {
+          name: 'Delete Tunes',
+          fn: function(target) {
+            CullTunes();
+          }
+        }, {}, {
+          name: 'Sort Tunes by Tag',
+          fn: function(target) {
+            SortDialog();
+          }
+        }, {}];
 
-				if (isMac()){
-					items.push({ name: 'Align Bars (One Tune) (⌘+\\)', fn: function(target) { AlignMeasures(false); }});
-				}
-				else{
-					items.push({ name: 'Align Bars (One Tune) (Ctrl+\\)', fn: function(target) { AlignMeasures(false); }});				
-				}
+        if (isMac()) {
+          items.push({
+            name: 'Align Bars (One Tune) (⌘+\\)',
+            fn: function(target) {
+              AlignMeasures(false);
+            }
+          });
+        } else {
+          items.push({
+            name: 'Align Bars (One Tune) (Ctrl+\\)',
+            fn: function(target) {
+              AlignMeasures(false);
+            }
+          });
+        }
 
-				items = items.concat(
-				    [{ name: 'Align Bars (All Tunes)', fn: function(target) { AlignMeasures(true); }},
-				    {},
-				    { name: 'Split Long Tags and Text', fn: function(target) { SplitLongTextAndTags(); }},
-				    {},
-				    { name: 'Normalize Diacriticals', fn: function(target) { NormalizeDiacriticals(); }},
-				    { name: 'Normalize Title Postfixes', fn: function(target) { NormalizeTitles(); }},
-				    {},
-				    { name: 'Reformat Using MusicXML', fn: function(target) { BatchMusicXMLRoundTrip(); }},
-				    {},
-				    { name: 'Split Voices', fn: function(target) { SplitVoices(); }},
-				    {},
-				    { name: 'Inject MIDI gchord Templates', fn: function(target) { InjectMIDIGChordTemplates(); }},
-				    {},
-				    { name: 'Import PDF, Website, or CSV', fn: function(target) { ImportPDF_CSV_Website(); }},
-				    {},
-				    { name: 'Toggle Top/Bottom Toolbars', fn: function(target) { ToggleTopBar(); }},
-				    { name: 'Maximize Editor', fn: function(target) { MaximizeEditor(); }},
-				    {},
-				    { name: 'Settings', fn: function(target) { ConfigureToolSettings(); }},
-				    { name: 'Advanced Settings', fn: function(target) { AdvancedSettings(); }},
-				    {},
-				    { name: 'Launch Standard Editor', fn: function(target) { LaunchStandardEditor(); }},
-				    {},
-				    { name: 'About the Quick Editor', fn: function(target) { LaunchQuickEditorHelp(); }},
-				]);
+        items = items.concat(
+          [{
+            name: 'Align Bars (All Tunes)',
+            fn: function(target) {
+              AlignMeasures(true);
+            }
+          }, {}, {
+            name: 'Split Long Tags and Text',
+            fn: function(target) {
+              SplitLongTextAndTags();
+            }
+          }, {}, {
+            name: 'Normalize Diacriticals',
+            fn: function(target) {
+              NormalizeDiacriticals();
+            }
+          }, {
+            name: 'Normalize Title Postfixes',
+            fn: function(target) {
+              NormalizeTitles();
+            }
+          }, {}, {
+            name: 'Reformat Using MusicXML',
+            fn: function(target) {
+              BatchMusicXMLRoundTrip();
+            }
+          }, {}, {
+            name: 'Split Voices',
+            fn: function(target) {
+              SplitVoices();
+            }
+          }, {}, {
+            name: 'Inject MIDI gchord Templates',
+            fn: function(target) {
+              InjectMIDIGChordTemplates();
+            }
+          }, {}, {
+            name: 'Import PDF, Website, or CSV',
+            fn: function(target) {
+              ImportPDF_CSV_Website();
+            }
+          }, {}, {
+            name: 'Toggle Top/Bottom Toolbars',
+            fn: function(target) {
+              ToggleTopBar();
+            }
+          }, {
+            name: 'Maximize Editor',
+            fn: function(target) {
+              MaximizeEditor();
+            }
+          }, {}, {
+            name: 'Settings',
+            fn: function(target) {
+              ConfigureToolSettings();
+            }
+          }, {
+            name: 'Advanced Settings',
+            fn: function(target) {
+              AdvancedSettings();
+            }
+          }, {}, {
+            name: 'Launch Standard Editor',
+            fn: function(target) {
+              LaunchStandardEditor();
+            }
+          }, {}, {
+            name: 'About the Quick Editor',
+            fn: function(target) {
+              LaunchQuickEditorHelp();
+            }
+          }, ]);
 
-				if (showUpdateItem){
-					items = items.concat(
-						[{},
-						{ name: '*A new version is available!', fn: function(target) { UpdateToLatestVersion(); }},
-						{ name: '*Click here to update the tool', fn: function(target) { UpdateToLatestVersion(); }},
-				    ]);
+        if (showUpdateItem) {
+          items = items.concat(
+            [{}, {
+              name: '*A new version is available!',
+              fn: function(target) {
+                UpdateToLatestVersion();
+              }
+            }, {
+              name: '*Click here to update the tool',
+              fn: function(target) {
+                UpdateToLatestVersion();
+              }
+            }, ]);
 
-					// Turn the button red
-				    var elem = document.getElementById("morecommands");
-				    elem.style.color = "red";
-				    elem.style.backgroundColor = "#FFE0E0";
-				    elem.title = "An update to the tool is available!"
-				}
+          // Turn the button red
+          var elem = document.getElementById("morecommands");
+          elem.style.color = "red";
+          elem.style.backgroundColor = "#FFE0E0";
+          elem.title = "An update to the tool is available!"
+        }
 
-				var theTuneSetItem = { name: 'Create Tune Set (Ctrl+/)', fn: function(target) { BuildTuneSet(); }};
+        var theTuneSetItem = {
+          name: 'Create Tune Set (Ctrl+/)',
+          fn: function(target) {
+            BuildTuneSet();
+          }
+        };
 
-				if (isMac()){
-					theTuneSetItem = { name: 'Create Tune Set (⌘+/)', fn: function(target) { BuildTuneSet(); }}
-				}
+        if (isMac()) {
+          theTuneSetItem = {
+            name: 'Create Tune Set (⌘+/)',
+            fn: function(target) {
+              BuildTuneSet();
+            }
+          }
+        }
 
-				items.unshift(theTuneSetItem);
+        items.unshift(theTuneSetItem);
 
-				items.unshift({});
+        items.unshift({});
 
-				var theGoToItem = { name: 'Jump to Tune (Ctrl+J)', fn: function(target) { JumpToTune(); }};
-				
-				if (isMac()){
+        var theGoToItem = {
+          name: 'Jump to Tune (Ctrl+J)',
+          fn: function(target) {
+            JumpToTune();
+          }
+        };
 
-					theGoToItem = { name: 'Jump to Tune (⌘+J)', fn: function(target) { JumpToTune(); }};
-				}
-				
-				items.unshift(theGoToItem);
-				
-				items.unshift({});
+        if (isMac()) {
 
-				// Adapt the search and replace key string based on the platform
-				var theFindItem = { name: 'Find and Replace (Ctrl+F)', fn: function(target) { FindAndReplace(); }};
+          theGoToItem = {
+            name: 'Jump to Tune (⌘+J)',
+            fn: function(target) {
+              JumpToTune();
+            }
+          };
+        }
 
-				if (isMac()){
+        items.unshift(theGoToItem);
 
-					theFindItem = { name: 'Find and Replace (⌘+F)', fn: function(target) { FindAndReplace(); }};
-				}
+        items.unshift({});
 
-				items.unshift(theFindItem);
-				
-			}
-			else{
-				items = [
-					{ name: 'Jump to Tune', fn: function(target) { JumpToTune(); }},
-					{},
-				    { name: 'Create Tune Set', fn: function(target) { BuildTuneSet(); }},
-				    {},
-				    { name: 'Reorder Tunes', fn: function(target) { ChangeTuneOrderMobile(); }},
-				    { name: 'Delete Tunes', fn: function(target) { CullTunes(); }},
-				    {},
-					{ name: 'Align Bars (One Tune)', fn: function(target) { AlignMeasures(false); }},
-					{ name: 'Align Bars (All Tunes)', fn: function(target) { AlignMeasures(true); }},
-				    {},
-				    { name: 'Split Long Tags and Text', fn: function(target) { SplitLongTextAndTags(); }},
-				    {},
-				    { name: 'Normalize Diacriticals', fn: function(target) { NormalizeDiacriticals(); }},
-				    { name: 'Normalize Title Postfixes', fn: function(target) { NormalizeTitles(); }},
-				    {},
-				    { name: 'Reformat Using MusicXML', fn: function(target) { BatchMusicXMLRoundTrip(); }},
-				    {},
-				    { name: 'Split Voices', fn: function(target) { SplitVoices(); }},
-				    {},
-				    { name: 'Import PDF, Website, or CSV', fn: function(target) { ImportPDF_CSV_Website(); }},
-				    {},
-				    { name: 'Toggle Top/Bottom Toolbars', fn: function(target) { ToggleTopBar(); }},
-				    { name: 'Maximize Editor', fn: function(target) { MaximizeEditor(); }},
-				    {},
-				    { name: 'Settings', fn: function(target) { ConfigureToolSettings(); }},
-				    { name: 'Advanced Settings', fn: function(target) { AdvancedSettings(); }},
-				    {},
-  					{ name: 'Launch Standard Editor', fn: function(target) { LaunchStandardEditor(); }},
-				    {},
-				    { name: 'About the Quick Editor', fn: function(target) { LaunchQuickEditorHelp(); }},
-				];
+        // Adapt the search and replace key string based on the platform
+        var theFindItem = {
+          name: 'Find and Replace (Ctrl+F)',
+          fn: function(target) {
+            FindAndReplace();
+          }
+        };
 
-				if (showUpdateItem){
-					items = items.concat(
-						[{},
-						{ name: '*A new version is available!', fn: function(target) { UpdateToLatestVersion(); }},
-						{ name: '*Click here to update the tool', fn: function(target) { UpdateToLatestVersion(); }},
-				    ]);
+        if (isMac()) {
 
-					// Turn the button red
-				    var elem = document.getElementById("morecommands");
-				    elem.style.color = "red";
-				    elem.style.backgroundColor = "#FFE0E0";
-				    elem.title = "An update to the tool is available!"
-				}
-			}
-		}
-		else{
+          theFindItem = {
+            name: 'Find and Replace (⌘+F)',
+            fn: function(target) {
+              FindAndReplace();
+            }
+          };
+        }
 
-			if (isPureDesktopBrowser()){
+        items.unshift(theFindItem);
 
-				items = [
-					{},
-				    { name: 'Reorder Tunes', fn: function(target) { ChangeTuneOrder(); }},
-				    { name: 'Delete Tunes', fn: function(target) { CullTunes(); }},
-				    {},
-				];
+      } else {
+        items = [{
+          name: 'Jump to Tune',
+          fn: function(target) {
+            JumpToTune();
+          }
+        }, {}, {
+          name: 'Create Tune Set',
+          fn: function(target) {
+            BuildTuneSet();
+          }
+        }, {}, {
+          name: 'Reorder Tunes',
+          fn: function(target) {
+            ChangeTuneOrderMobile();
+          }
+        }, {
+          name: 'Delete Tunes',
+          fn: function(target) {
+            CullTunes();
+          }
+        }, {}, {
+          name: 'Sort Tunes by Tag',
+          fn: function(target) {
+            SortDialog();
+          }
+        }, {}, {
+          name: 'Align Bars (One Tune)',
+          fn: function(target) {
+            AlignMeasures(false);
+          }
+        }, {
+          name: 'Align Bars (All Tunes)',
+          fn: function(target) {
+            AlignMeasures(true);
+          }
+        }, {}, {
+          name: 'Split Long Tags and Text',
+          fn: function(target) {
+            SplitLongTextAndTags();
+          }
+        }, {}, {
+          name: 'Normalize Diacriticals',
+          fn: function(target) {
+            NormalizeDiacriticals();
+          }
+        }, {
+          name: 'Normalize Title Postfixes',
+          fn: function(target) {
+            NormalizeTitles();
+          }
+        }, {}, {
+          name: 'Reformat Using MusicXML',
+          fn: function(target) {
+            BatchMusicXMLRoundTrip();
+          }
+        }, {}, {
+          name: 'Split Voices',
+          fn: function(target) {
+            SplitVoices();
+          }
+        }, {}, {
+          name: 'Import PDF, Website, or CSV',
+          fn: function(target) {
+            ImportPDF_CSV_Website();
+          }
+        }, {}, {
+          name: 'Toggle Top/Bottom Toolbars',
+          fn: function(target) {
+            ToggleTopBar();
+          }
+        }, {
+          name: 'Maximize Editor',
+          fn: function(target) {
+            MaximizeEditor();
+          }
+        }, {}, {
+          name: 'Settings',
+          fn: function(target) {
+            ConfigureToolSettings();
+          }
+        }, {
+          name: 'Advanced Settings',
+          fn: function(target) {
+            AdvancedSettings();
+          }
+        }, {}, {
+          name: 'Launch Standard Editor',
+          fn: function(target) {
+            LaunchStandardEditor();
+          }
+        }, {}, {
+          name: 'About the Quick Editor',
+          fn: function(target) {
+            LaunchQuickEditorHelp();
+          }
+        }, ];
 
-				if (isMac()){
-					items.push({ name: 'Align Bars (One Tune) (⌘+\\)', fn: function(target) { AlignMeasures(false); }});
-				}
-				else{
-					items.push({ name: 'Align Bars (One Tune) (Ctrl+\\)', fn: function(target) { AlignMeasures(false); }});				
-				}
+        if (showUpdateItem) {
+          items = items.concat(
+            [{}, {
+              name: '*A new version is available!',
+              fn: function(target) {
+                UpdateToLatestVersion();
+              }
+            }, {
+              name: '*Click here to update the tool',
+              fn: function(target) {
+                UpdateToLatestVersion();
+              }
+            }, ]);
 
-				items = items.concat(
-					[{ name: 'Align Bars (All Tunes)', fn: function(target) { AlignMeasures(true); }},
-				    {},
-				    { name: 'Split Long Tags and Text', fn: function(target) { SplitLongTextAndTags(); }},
-				    {},
-				    { name: 'Normalize Diacriticals', fn: function(target) { NormalizeDiacriticals(); }},
-				    { name: 'Normalize Title Postfixes', fn: function(target) { NormalizeTitles(); }},
-				    {},
-				    { name: 'Reformat Using MusicXML', fn: function(target) { BatchMusicXMLRoundTrip(); }},
-				    {},
-				    { name: 'Split Voices', fn: function(target) { SplitVoices(); }},
-				    {},
-				    { name: 'Inject MIDI gchord Templates', fn: function(target) { InjectMIDIGChordTemplates(); }},
-				    {},
-				    { name: 'Import PDF, Website, or CSV', fn: function(target) { ImportPDF_CSV_Website(); }},
-				    {},
-				    { name: 'Toggle Top/Bottom Toolbars', fn: function(target) { ToggleTopBar(); }},
-				    { name: 'Maximize Editor', fn: function(target) { MaximizeEditor(); }},
-				    {},
-				    { name: 'Settings', fn: function(target) { ConfigureToolSettings(); }},
-				    { name: 'Advanced Settings', fn: function(target) { AdvancedSettings(); }},
-				    {},
-  					{ name: 'Launch Quick Editor', fn: function(target) { LaunchQuickEditor(); }},
-				]);
+          // Turn the button red
+          var elem = document.getElementById("morecommands");
+          elem.style.color = "red";
+          elem.style.backgroundColor = "#FFE0E0";
+          elem.title = "An update to the tool is available!"
+        }
+      }
+    } else {
 
-				// For forcing display for User Guide screen shots
-				//showUpdateItem = true;// FOOFOO
+      if (isPureDesktopBrowser()) {
 
-				if (showUpdateItem){
-					items = items.concat(
-						[{},
-						{ name: '*A new version is available!', fn: function(target) { UpdateToLatestVersion(); }},
-						{ name: '*Click here to update the tool', fn: function(target) { UpdateToLatestVersion(); }},
-				    ]);
+        items = [{}, {
+          name: 'Reorder Tunes',
+          fn: function(target) {
+            ChangeTuneOrder();
+          }
+        }, {
+          name: 'Delete Tunes',
+          fn: function(target) {
+            CullTunes();
+          }
+        }, {}, {
+          name: 'Sort Tunes by Tag',
+          fn: function(target) {
+            SortDialog();
+          }
+        }, {}, ];
 
-					// Turn the button red
-				    var elem = document.getElementById("morecommands");
-				    elem.style.color = "red";
-				    elem.style.backgroundColor = "#FFE0E0";
-				    elem.title = "An update to the tool is available!"
-				}
+        if (isMac()) {
+          items.push({
+            name: 'Align Bars (One Tune) (⌘+\\)',
+            fn: function(target) {
+              AlignMeasures(false);
+            }
+          });
+        } else {
+          items.push({
+            name: 'Align Bars (One Tune) (Ctrl+\\)',
+            fn: function(target) {
+              AlignMeasures(false);
+            }
+          });
+        }
 
-				var theTuneSetItem = { name: 'Create Tune Set (Ctrl+/)', fn: function(target) { BuildTuneSet(); }};
+        items = items.concat(
+          [{
+            name: 'Align Bars (All Tunes)',
+            fn: function(target) {
+              AlignMeasures(true);
+            }
+          }, {}, {
+            name: 'Split Long Tags and Text',
+            fn: function(target) {
+              SplitLongTextAndTags();
+            }
+          }, {}, {
+            name: 'Normalize Diacriticals',
+            fn: function(target) {
+              NormalizeDiacriticals();
+            }
+          }, {
+            name: 'Normalize Title Postfixes',
+            fn: function(target) {
+              NormalizeTitles();
+            }
+          }, {}, {
+            name: 'Reformat Using MusicXML',
+            fn: function(target) {
+              BatchMusicXMLRoundTrip();
+            }
+          }, {}, {
+            name: 'Split Voices',
+            fn: function(target) {
+              SplitVoices();
+            }
+          }, {}, {
+            name: 'Inject MIDI gchord Templates',
+            fn: function(target) {
+              InjectMIDIGChordTemplates();
+            }
+          }, {}, {
+            name: 'Import PDF, Website, or CSV',
+            fn: function(target) {
+              ImportPDF_CSV_Website();
+            }
+          }, {}, {
+            name: 'Toggle Top/Bottom Toolbars',
+            fn: function(target) {
+              ToggleTopBar();
+            }
+          }, {
+            name: 'Maximize Editor',
+            fn: function(target) {
+              MaximizeEditor();
+            }
+          }, {}, {
+            name: 'Settings',
+            fn: function(target) {
+              ConfigureToolSettings();
+            }
+          }, {
+            name: 'Advanced Settings',
+            fn: function(target) {
+              AdvancedSettings();
+            }
+          }, {}, {
+            name: 'Launch Quick Editor',
+            fn: function(target) {
+              LaunchQuickEditor();
+            }
+          }, ]);
 
-				if (isMac()){
-					theTuneSetItem = { name: 'Create Tune Set (⌘+/)', fn: function(target) { BuildTuneSet(); }}
-				}
+        // For forcing display for User Guide screen shots
+        //showUpdateItem = true;// FOOFOO
 
-				items.unshift(theTuneSetItem);
+        if (showUpdateItem) {
+          items = items.concat(
+            [{}, {
+              name: '*A new version is available!',
+              fn: function(target) {
+                UpdateToLatestVersion();
+              }
+            }, {
+              name: '*Click here to update the tool',
+              fn: function(target) {
+                UpdateToLatestVersion();
+              }
+            }, ]);
 
-				items.unshift({});
+          // Turn the button red
+          var elem = document.getElementById("morecommands");
+          elem.style.color = "red";
+          elem.style.backgroundColor = "#FFE0E0";
+          elem.title = "An update to the tool is available!"
+        }
 
-				var theGoToItem = { name: 'Jump to Tune (Ctrl+J)', fn: function(target) { JumpToTune(); }};
-				
-				if (isMac()){
+        var theTuneSetItem = {
+          name: 'Create Tune Set (Ctrl+/)',
+          fn: function(target) {
+            BuildTuneSet();
+          }
+        };
 
-					theGoToItem = { name: 'Jump to Tune (⌘+J)', fn: function(target) { JumpToTune(); }};
-				}
-				
-				items.unshift(theGoToItem);
-				
-				items.unshift({});
+        if (isMac()) {
+          theTuneSetItem = {
+            name: 'Create Tune Set (⌘+/)',
+            fn: function(target) {
+              BuildTuneSet();
+            }
+          }
+        }
 
-				// Adapt the search and replace key string based on the platform
-				var theFindItem = { name: 'Find and Replace (Ctrl+F)', fn: function(target) { FindAndReplace(); }};
+        items.unshift(theTuneSetItem);
 
-				if (isMac()){
+        items.unshift({});
 
-					theFindItem = { name: 'Find and Replace (⌘+F)', fn: function(target) { FindAndReplace(); }};
-				}
+        var theGoToItem = {
+          name: 'Jump to Tune (Ctrl+J)',
+          fn: function(target) {
+            JumpToTune();
+          }
+        };
 
-				items.unshift(theFindItem);
-				
-			}
-			else{
+        if (isMac()) {
 
-				items = [
-					{ name: 'Jump to Tune', fn: function(target) { JumpToTune(); }},
-				    {},
-				    { name: 'Create Tune Set', fn: function(target) { BuildTuneSet(); }},
-					{},
-				    { name: 'Reorder Tunes', fn: function(target) { ChangeTuneOrderMobile(); }},
-				    { name: 'Delete Tunes', fn: function(target) { CullTunes(); }},
-				    {},
-					{ name: 'Align Bars (One Tune)', fn: function(target) { AlignMeasures(false); }},
-					{ name: 'Align Bars (All Tunes)', fn: function(target) { AlignMeasures(true); }},
-				    {},
-				    { name: 'Split Long Tags and Text', fn: function(target) { SplitLongTextAndTags(); }},
-				    {},
-				    { name: 'Normalize Diacriticals', fn: function(target) { NormalizeDiacriticals(); }},
-				    { name: 'Normalize Title Postfixes', fn: function(target) { NormalizeTitles(); }},
-				    {},
-				    { name: 'Reformat Using MusicXML', fn: function(target) { BatchMusicXMLRoundTrip(); }},
-				    {},
-				    { name: 'Split Voices', fn: function(target) { SplitVoices(); }},
-				    {},
-				    { name: 'Import PDF, Website, or CSV', fn: function(target) { ImportPDF_CSV_Website(); }},
-				    {},
-				    { name: 'Toggle Top/Bottom Toolbars', fn: function(target) { ToggleTopBar(); }},
-				    { name: 'Maximize Editor', fn: function(target) { MaximizeEditor(); }},
-				    {},
-				    { name: 'Settings', fn: function(target) { ConfigureToolSettings(); }},
-				    { name: 'Advanced Settings', fn: function(target) { AdvancedSettings(); }},
-				    {},
-				    { name: 'Launch Quick Editor', fn: function(target) { LaunchQuickEditor(); }},
-				];
+          theGoToItem = {
+            name: 'Jump to Tune (⌘+J)',
+            fn: function(target) {
+              JumpToTune();
+            }
+          };
+        }
 
-				if (showUpdateItem){
-					items = items.concat(
-						[{},
-						{ name: '*A new version is available!', fn: function(target) { UpdateToLatestVersion(); }},
-						{ name: '*Click here to update the tool', fn: function(target) { UpdateToLatestVersion(); }},
-				    ]);
+        items.unshift(theGoToItem);
 
-					// Turn the button red
-				    var elem = document.getElementById("morecommands");
-				    elem.style.color = "red";
-				    elem.style.backgroundColor = "#FFE0E0";
-				    elem.title = "An update to the tool is available!"
-				}
-			}
-		}
-	}
-	else{
-		if (gIsQuickEditor){
+        items.unshift({});
 
-			items = [
-				{ name: 'Jump to Tune', fn: function(target) { JumpToTune(); }},
-			    {},
-				{ name: 'Create Tune Set', fn: function(target) { BuildTuneSet(); }},
-				{},
-			    { name: 'Reorder Tunes', fn: function(target) { ChangeTuneOrderMobile(); }},
-			    { name: 'Delete Tunes', fn: function(target) { CullTunes(); }},
-			    {},
-				{ name: 'Align Bars (One Tune)', fn: function(target) { AlignMeasures(false); }},
-				{ name: 'Align Bars (All Tunes)', fn: function(target) { AlignMeasures(true); }},
-			    {},
-			    { name: 'Split Long Tags and Text', fn: function(target) { SplitLongTextAndTags(); }},
-			    {},
-				{ name: 'Normalize Diacriticals', fn: function(target) { NormalizeDiacriticals(); }},
-			    { name: 'Normalize Title Postfixes', fn: function(target) { NormalizeTitles(); }},
-			    {},
-			    { name: 'Reformat Using MusicXML', fn: function(target) { BatchMusicXMLRoundTrip(); }},
-			    {},
-			    { name: 'Split Voices', fn: function(target) { SplitVoices(); }},
-			    {},
-			    { name: 'Import PDF, Website, or CSV', fn: function(target) { ImportPDF_CSV_Website(); }},
-			    {},
-			    { name: 'Toggle Top/Bottom Toolbars', fn: function(target) { ToggleTopBar(); }},
-				{},
-			    { name: 'Settings', fn: function(target) { ConfigureToolSettings(); }},
-			    { name: 'Advanced Settings', fn: function(target) { AdvancedSettings(); }},
-			    {},
-			    { name: 'Launch Standard Editor', fn: function(target) { LaunchStandardEditor(); }},
-			    {},
-			    { name: 'About the Quick Editor', fn: function(target) { LaunchQuickEditorHelp(); }},				
-			];
+        // Adapt the search and replace key string based on the platform
+        var theFindItem = {
+          name: 'Find and Replace (Ctrl+F)',
+          fn: function(target) {
+            FindAndReplace();
+          }
+        };
 
-			if (showUpdateItem){
-				items = items.concat(
-					[{},
-					{ name: '*A new version is available!', fn: function(target) { UpdateToLatestVersion(); }},
-					{ name: '*Click here to update the tool', fn: function(target) { UpdateToLatestVersion(); }},
-			    ]);
+        if (isMac()) {
 
-				// Turn the button red
-			    var elem = document.getElementById("morecommands");
-			    elem.style.color = "red";
-			    elem.style.backgroundColor = "#FFE0E0";
-			    elem.title = "An update to the tool is available!"
-			}
-		}
-		else{
+          theFindItem = {
+            name: 'Find and Replace (⌘+F)',
+            fn: function(target) {
+              FindAndReplace();
+            }
+          };
+        }
 
-			items = [
-				{ name: 'Jump to Tune', fn: function(target) { JumpToTune(); }},
-			    {},
-				{ name: 'Create Tune Set', fn: function(target) { BuildTuneSet(); }},
-				{},
-			    { name: 'Reorder Tunes', fn: function(target) { ChangeTuneOrderMobile(); }},
-			    { name: 'Delete Tunes', fn: function(target) { CullTunes(); }},
-			    {},
-			    { name: 'Align Bars (One Tune)', fn: function(target) { AlignMeasures(false); }},
-				{ name: 'Align Bars (All Tunes)', fn: function(target) { AlignMeasures(true); }},
-			    {},
-			    { name: 'Split Long Tags and Text', fn: function(target) { SplitLongTextAndTags(); }},
-			    {},
-				{ name: 'Normalize Diacriticals', fn: function(target) { NormalizeDiacriticals(); }},
-			    { name: 'Normalize Title Postfixes', fn: function(target) { NormalizeTitles(); }},
-			    {},
-			    { name: 'Reformat Using MusicXML', fn: function(target) { BatchMusicXMLRoundTrip(); }},
-			    {},
-			    { name: 'Split Voices', fn: function(target) { SplitVoices(); }},
-			    {},
-			    { name: 'Import PDF, Website, or CSV', fn: function(target) { ImportPDF_CSV_Website(); }},
-			    {},
-			    { name: 'Toggle Top/Bottom Toolbars', fn: function(target) { ToggleTopBar(); }},
-				{},
-			    { name: 'Settings', fn: function(target) { ConfigureToolSettings(); }},
-			    { name: 'Advanced Settings', fn: function(target) { AdvancedSettings(); }},
-			    {},
-			    { name: 'Launch Quick Editor', fn: function(target) { LaunchQuickEditor(); }},
-			];
+        items.unshift(theFindItem);
 
-			if (showUpdateItem){
-				items = items.concat(
-					[{},
-					{ name: '*A new version is available!', fn: function(target) { UpdateToLatestVersion(); }},
-					{ name: '*Click here to update the tool', fn: function(target) { UpdateToLatestVersion(); }},
-			    ]);
+      } else {
 
-				// Turn the button red
-			    var elem = document.getElementById("morecommands");
-			    elem.style.color = "red";
-			    elem.style.backgroundColor = "#FFE0E0";
-			    elem.title = "An update to the tool is available!"
-			}
-		}
-	}
+        items = [{
+          name: 'Jump to Tune',
+          fn: function(target) {
+            JumpToTune();
+          }
+        }, {}, {
+          name: 'Create Tune Set',
+          fn: function(target) {
+            BuildTuneSet();
+          }
+        }, {}, {
+          name: 'Reorder Tunes',
+          fn: function(target) {
+            ChangeTuneOrderMobile();
+          }
+        }, {
+          name: 'Delete Tunes',
+          fn: function(target) {
+            CullTunes();
+          }
+        }, {}, {
+          name: 'Sort Tunes by Tag',
+          fn: function(target) {
+            SortDialog();
+          }
+        }, {}, {
+          name: 'Align Bars (One Tune)',
+          fn: function(target) {
+            AlignMeasures(false);
+          }
+        }, {
+          name: 'Align Bars (All Tunes)',
+          fn: function(target) {
+            AlignMeasures(true);
+          }
+        }, {}, {
+          name: 'Split Long Tags and Text',
+          fn: function(target) {
+            SplitLongTextAndTags();
+          }
+        }, {}, {
+          name: 'Normalize Diacriticals',
+          fn: function(target) {
+            NormalizeDiacriticals();
+          }
+        }, {
+          name: 'Normalize Title Postfixes',
+          fn: function(target) {
+            NormalizeTitles();
+          }
+        }, {}, {
+          name: 'Reformat Using MusicXML',
+          fn: function(target) {
+            BatchMusicXMLRoundTrip();
+          }
+        }, {}, {
+          name: 'Split Voices',
+          fn: function(target) {
+            SplitVoices();
+          }
+        }, {}, {
+          name: 'Import PDF, Website, or CSV',
+          fn: function(target) {
+            ImportPDF_CSV_Website();
+          }
+        }, {}, {
+          name: 'Toggle Top/Bottom Toolbars',
+          fn: function(target) {
+            ToggleTopBar();
+          }
+        }, {
+          name: 'Maximize Editor',
+          fn: function(target) {
+            MaximizeEditor();
+          }
+        }, {}, {
+          name: 'Settings',
+          fn: function(target) {
+            ConfigureToolSettings();
+          }
+        }, {
+          name: 'Advanced Settings',
+          fn: function(target) {
+            AdvancedSettings();
+          }
+        }, {}, {
+          name: 'Launch Quick Editor',
+          fn: function(target) {
+            LaunchQuickEditor();
+          }
+        }, ];
 
-	var cm1 = new ContextMenu('.context-menu', items);
+        if (showUpdateItem) {
+          items = items.concat(
+            [{}, {
+              name: '*A new version is available!',
+              fn: function(target) {
+                UpdateToLatestVersion();
+              }
+            }, {
+              name: '*Click here to update the tool',
+              fn: function(target) {
+                UpdateToLatestVersion();
+              }
+            }, ]);
+
+          // Turn the button red
+          var elem = document.getElementById("morecommands");
+          elem.style.color = "red";
+          elem.style.backgroundColor = "#FFE0E0";
+          elem.title = "An update to the tool is available!"
+        }
+      }
+    }
+  } else {
+    if (gIsQuickEditor) {
+
+      items = [{
+        name: 'Jump to Tune',
+        fn: function(target) {
+          JumpToTune();
+        }
+      }, {}, {
+        name: 'Create Tune Set',
+        fn: function(target) {
+          BuildTuneSet();
+        }
+      }, {}, {
+        name: 'Reorder Tunes',
+        fn: function(target) {
+          ChangeTuneOrderMobile();
+        }
+      }, {
+        name: 'Delete Tunes',
+        fn: function(target) {
+          CullTunes();
+        }
+      }, {}, {
+        name: 'Sort Tunes by Tag',
+        fn: function(target) {
+          SortDialog();
+        }
+      }, {}, {
+        name: 'Align Bars (One Tune)',
+        fn: function(target) {
+          AlignMeasures(false);
+        }
+      }, {
+        name: 'Align Bars (All Tunes)',
+        fn: function(target) {
+          AlignMeasures(true);
+        }
+      }, {}, {
+        name: 'Split Long Tags and Text',
+        fn: function(target) {
+          SplitLongTextAndTags();
+        }
+      }, {}, {
+        name: 'Normalize Diacriticals',
+        fn: function(target) {
+          NormalizeDiacriticals();
+        }
+      }, {
+        name: 'Normalize Title Postfixes',
+        fn: function(target) {
+          NormalizeTitles();
+        }
+      }, {}, {
+        name: 'Reformat Using MusicXML',
+        fn: function(target) {
+          BatchMusicXMLRoundTrip();
+        }
+      }, {}, {
+        name: 'Split Voices',
+        fn: function(target) {
+          SplitVoices();
+        }
+      }, {}, {
+        name: 'Import PDF, Website, or CSV',
+        fn: function(target) {
+          ImportPDF_CSV_Website();
+        }
+      }, {}, {
+        name: 'Toggle Top/Bottom Toolbars',
+        fn: function(target) {
+          ToggleTopBar();
+        }
+      }, {}, {
+        name: 'Settings',
+        fn: function(target) {
+          ConfigureToolSettings();
+        }
+      }, {
+        name: 'Advanced Settings',
+        fn: function(target) {
+          AdvancedSettings();
+        }
+      }, {}, {
+        name: 'Launch Standard Editor',
+        fn: function(target) {
+          LaunchStandardEditor();
+        }
+      }, {}, {
+        name: 'About the Quick Editor',
+        fn: function(target) {
+          LaunchQuickEditorHelp();
+        }
+      }, ];
+
+      if (showUpdateItem) {
+        items = items.concat(
+          [{}, {
+            name: '*A new version is available!',
+            fn: function(target) {
+              UpdateToLatestVersion();
+            }
+          }, {
+            name: '*Click here to update the tool',
+            fn: function(target) {
+              UpdateToLatestVersion();
+            }
+          }, ]);
+
+        // Turn the button red
+        var elem = document.getElementById("morecommands");
+        elem.style.color = "red";
+        elem.style.backgroundColor = "#FFE0E0";
+        elem.title = "An update to the tool is available!"
+      }
+    } else {
+
+      items = [{
+        name: 'Jump to Tune',
+        fn: function(target) {
+          JumpToTune();
+        }
+      }, {}, {
+        name: 'Create Tune Set',
+        fn: function(target) {
+          BuildTuneSet();
+        }
+      }, {}, {
+        name: 'Reorder Tunes',
+        fn: function(target) {
+          ChangeTuneOrderMobile();
+        }
+      }, {
+        name: 'Delete Tunes',
+        fn: function(target) {
+          CullTunes();
+        }
+      }, {}, {
+        name: 'Sort Tunes by Tag',
+        fn: function(target) {
+          SortDialog();
+        }
+      }, {}, {
+        name: 'Align Bars (One Tune)',
+        fn: function(target) {
+          AlignMeasures(false);
+        }
+      }, {
+        name: 'Align Bars (All Tunes)',
+        fn: function(target) {
+          AlignMeasures(true);
+        }
+      }, {}, {
+        name: 'Split Long Tags and Text',
+        fn: function(target) {
+          SplitLongTextAndTags();
+        }
+      }, {}, {
+        name: 'Normalize Diacriticals',
+        fn: function(target) {
+          NormalizeDiacriticals();
+        }
+      }, {
+        name: 'Normalize Title Postfixes',
+        fn: function(target) {
+          NormalizeTitles();
+        }
+      }, {}, {
+        name: 'Reformat Using MusicXML',
+        fn: function(target) {
+          BatchMusicXMLRoundTrip();
+        }
+      }, {}, {
+        name: 'Split Voices',
+        fn: function(target) {
+          SplitVoices();
+        }
+      }, {}, {
+        name: 'Import PDF, Website, or CSV',
+        fn: function(target) {
+          ImportPDF_CSV_Website();
+        }
+      }, {}, {
+        name: 'Toggle Top/Bottom Toolbars',
+        fn: function(target) {
+          ToggleTopBar();
+        }
+      }, {}, {
+        name: 'Settings',
+        fn: function(target) {
+          ConfigureToolSettings();
+        }
+      }, {
+        name: 'Advanced Settings',
+        fn: function(target) {
+          AdvancedSettings();
+        }
+      }, {}, {
+        name: 'Launch Quick Editor',
+        fn: function(target) {
+          LaunchQuickEditor();
+        }
+      }, ];
+
+      if (showUpdateItem) {
+        items = items.concat(
+          [{}, {
+            name: '*A new version is available!',
+            fn: function(target) {
+              UpdateToLatestVersion();
+            }
+          }, {
+            name: '*Click here to update the tool',
+            fn: function(target) {
+              UpdateToLatestVersion();
+            }
+          }, ]);
+
+        // Turn the button red
+        var elem = document.getElementById("morecommands");
+        elem.style.color = "red";
+        elem.style.backgroundColor = "#FFE0E0";
+        elem.title = "An update to the tool is available!"
+      }
+    }
+  }
+
+  var cm1 = new ContextMenu('.context-menu', items);
 }
 
 // 
