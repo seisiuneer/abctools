@@ -576,10 +576,11 @@
             <summary><h3>Editing PDF Tunebooks With Other Tools</h3></summary>
             <a style="text-decoration:none;" href="#editing_pdf_tunebooks">Editing PDF Tunebooks With Other Tools</a>
             </details>
-            
+ 
             <details>
             <summary><h3>Export Website</h3></summary>
             <a style="text-decoration:none;" href="#generate_website">Export Website</a>
+            <a style="text-decoration:none;" href="#generate_website_speedup">Speeding up the Export Website Workflow for Large Tunebooks</a>
             <a style="text-decoration:none;" href="#export_website_devnotes">Export Website Developer Customization</a>
             </details>
             
@@ -1042,6 +1043,7 @@
                     <button class="accordion" title="Click to expand/collapse this section">Export Website</button>
                     <div class="tocpanel">
                         <p class="toc"><a style="text-decoration:none;" href="#generate_website">Export Website</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#generate_website_speedup">Speeding up the Export Website Workflow for Large Tunebooks</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#export_website_devnotes">Export Website Developer Customization</a></p>
                     </div>
                     
@@ -4345,10 +4347,11 @@
                 <p>If there is only a single tune, it will be immediately loaded in the ABC Transcription Tools in the frame.</p>
                 <p>The tune will be initially displayed using the current notation or stringed instrument tablature setting selected at the time the website is generated.</p>
                 <p>The website remembers the user's last selected tune and tablature setting and restores them the next time the user visits the website.</p>
-                <hr>
-                <p style="text-align: center;"><strong>Speeding up the Export Website Workflow for Large Tunebooks</strong></p>
-                <p>If you want to speed up the workflow for export of websites for very large tunebooks (over 100-200 tunes) without having to wait for all the tunes to draw when first opening the ABC file, there are two options:</p>
+                <hr class="hidden-print" id="generate_website_speedup">
+                <h1 class="page_break_always h1wide">Speeding up the Export Website Workflow for Large Tunebooks<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+                <p>If you want to speed up the workflow for export of websites for very large tunebooks (over 400-500 tunes) without having to wait for all the tunes to draw when first opening the ABC file, there are two options:</p>
                 <p>1) Use the Quick Editor version instead, which only draws the tune you are actively editing.</p>
+                <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/rmL4o5kaBOM" title="Quick Editor website generation demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>               
                 <p>Full details in the <a href="#quickeditor">"Quick Editor" Version</a> section below.</p>
                 <p>2) Setting the "Disable abcjs notation rendering" option on the <strong>Advanced Settings</strong> dialog:</p>
                 <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/e2_wBY8nFw8" title="Disable abcjs rendering website generation demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
@@ -6459,6 +6462,7 @@
                 <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/PZ6fdzZwnUU" title="Quick Editor Batch Export Demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
                 <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/WHZ0UcR6TQI" title="Quick Editor Batch Open and Sort Demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
                 <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/td9cjaHyiRU" title="Quick Editor Batch Transform Demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
+                <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/rmL4o5kaBOM" title="Quick Editor website generation demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>  
                 <p style="text-align: center;"><strong>ABC Transcription Tools Quick Editor</strong></p>
                 <p style="text-align: center;"><a href="https://michaeleskin.com/abctools/abctools-quick-editor.html" target="_blank">https://michaeleskin.com/abctools/abctools-quick-editor.html</a></p>
                 <p>This version is optimized for large tunebook editing, only shows the notation for the currently selected tune, and has the play controls for the tune being edited immediately below the ABC text editor area.</p>
