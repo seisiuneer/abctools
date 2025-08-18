@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2688_081825_1330";
+var gVersionNumber="2689_081825_1530";
 
 var gMIDIInitStillWaiting = false;
 
@@ -25803,10 +25803,17 @@ function IncipitsBuilderDialog(){
 
 			SaveConfigurationSettings();
 
-      const scrollY = window.scrollY || document.documentElement.scrollTop;
-
 			 RenderAsync(true,null,function(){
-          window.scrollTo(0, scrollY);
+
+            gTheABC.selectionStart = 0;
+            gTheABC.selectionEnd = 0;
+
+            // And reset the focus
+            gTheABC.focus();  
+
+            // Scroll to the top
+            MakeTuneVisible(true);
+            
        });
 
 		}
