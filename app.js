@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2678_081725_1330";
+var gVersionNumber="2679_081725_1730";
 
 var gMIDIInitStillWaiting = false;
 
@@ -17308,6 +17308,22 @@ function BuildTuneSetClearSelection(){
     updateTuneSelectionNumbers();
 }
 
+function filterTuneSetList() {
+    const query = document.getElementById("tuneset-search").value.toLowerCase();
+    const items = document.querySelectorAll("#tuneset-tune-list .tuneset_tune");
+    const clearBtn = document.getElementById("tuneset-search-clear");
+
+    items.forEach(item => {
+        const text = item.textContent.toLowerCase();
+        item.style.display = text.includes(query) ? "" : "none";
+    });
+
+    // Show/hide clear button
+    if (clearBtn) {
+        clearBtn.style.display = query ? "block" : "none";
+    }
+}
+
 var BuildTuneSetSelectionOrder = [];
 var BuildTuneSetRepeat = false;
 var BuildTuneSetRepeatCount = 1
@@ -17344,16 +17360,18 @@ function BuildTuneSet(){
 	};
 
 	// MAE 14 Jul 2024 - Make the div fill the screen
-	var theHeight = window.innerHeight - 630;
+	var theHeight = window.innerHeight - 670;
 
-	var theTuneSetDiv = '<div id="tuneset-tune-list" style="overflow:auto;height:'+theHeight+'px;margin-top:12px;margin-bottom:18px;">';
+  var theSearchBar = '<div style="margin-bottom:10px;text-align:center;position:relative;width:90%;margin-left:auto;margin-right:auto;"> <input id="tuneset-search" type="text" placeholder="Filter by text..." style="width:100%;padding:6px 28px 6px 6px;font-size:12pt;"> <span id="tuneset-search-clear" style="position:absolute;right:8px;top:50%;transform:translateY(-50%);cursor:pointer;font-size:14pt;color:#888;display:none;" title="Clear filter and show all tunes"> ❌ </span> </div>';
+  
+  var theTuneSetDiv = theSearchBar + 
+    '<div id="tuneset-tune-list" style="overflow:auto;height:'+theHeight+'px;margin-top:12px;margin-bottom:18px;">';
 
-	for (i=0;i<nTitles;++i){
+  for (i=0;i<nTitles;++i){
+      theTuneSetDiv += '<div class="tuneset_tune" onclick="BuildTuneSetToggleSelection(this)">'+theTitles[i]+'</div>';
+  }
 
-		theTuneSetDiv += '<div class="tuneset_tune" onclick="BuildTuneSetToggleSelection(this)">'+theTitles[i]+'</div>';
-	}
-	
-	theTuneSetDiv += '</div>';
+  theTuneSetDiv += '</div>';
 
 	var form = [
 
@@ -17366,6 +17384,24 @@ function BuildTuneSet(){
 	    {name: "Repeat count:", id: "repeat_count", type:"number", cssClass:"create_tune_set_text"},
 		{html: '<p style="text-align:center;margin-top:18px;margin-bottom:20px"><input id="tuneset_open_in_player" style="margin-right:18px;" class="advancedcontrols btn btn-tuneset-inject" onclick="BuildTuneSetOpen(false);" type="button" value="Open in New Tab in Player" title="Opens the tune set in a new tab in the Player"><input id="tuneset_open_in_editor" style="margin-right:18px;" class="advancedcontrols btn btn-tuneset-inject" onclick="BuildTuneSetOpen(true);" type="button" value="Open in New Tab in Editor" title="Opens the tune set in a new tab in the Editor"><input id="tuneset_append_to_abc" class="advancedcontrols btn btn-tuneset-inject" onclick="BuildTuneSetAppend();" type="button" value="Append to ABC" title="Appends the tune set to the current ABC"></p>'}
 	];
+
+  setTimeout(() => {
+      const searchInput = document.getElementById("tuneset-search");
+      const clearBtn = document.getElementById("tuneset-search-clear");
+
+      if (searchInput) {
+          searchInput.addEventListener("input", filterTuneSetList);
+          searchInput.focus(); // auto-focus when dialog opens
+      }
+
+      if (clearBtn) {
+          clearBtn.addEventListener("click", () => {
+              searchInput.value = "";
+              filterTuneSetList();
+              searchInput.focus();
+          });
+      }
+  }, 200);
 
 	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 25, width: 700, scrollWithPage: (AllowDialogsToScroll()), autoFocus: false } ).then(function(args){
 
