@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2686_081825_1030";
+var gVersionNumber="2687_081825_1130";
 
 var gMIDIInitStillWaiting = false;
 
@@ -12311,32 +12311,25 @@ function RenderTheNotes(tune, instrument, renderAll, tuneNumber) {
 }
 
 function SetRadioValue(radioName, value) {
-	const theRadioElemSelector = "input[name=\"" + radioName + "\"]";
-	const radioButtons = document.querySelectorAll(theRadioElemSelector);
+  
+  //console.log("SetRadioValue radioName:"+radioName+" value:"+value);
 
-	for (const radioButton of radioButtons) {
-		if (radioButton.value == value) {
-			radioButton.checked = true;
-		} else {
-			radioButton.checked = false;
-		}
-	}
+  const radios = document.querySelectorAll(`input[name="${radioName}"]`);
+  
+  for (const radio of radios) {
+    // Only assign if different, avoids unnecessary DOM writes
+    radio.checked = (radio.value === value);
+  }
 }
 
 function GetRadioValue(radioName) {
+  const checked = document.querySelector(`input[name="${radioName}"]:checked`);
 
-	const theRadioElemSelector = "input[name=\"" + radioName + "\"]";
-	const radioButtons = document.querySelectorAll(theRadioElemSelector);
+  var res = checked ? checked.value : undefined;
 
-	let radiovalue;
-	for (const radioButton of radioButtons) {
-		if (radioButton.checked) {
-			radiovalue = radioButton.value;
-			break;
-		}
-	}
+  //console.log("GetRadioValue radioName:"+radioName+" res:"+res);
 
-	return radiovalue;
+  return res;
 }
 
 //
