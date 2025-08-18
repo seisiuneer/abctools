@@ -687,6 +687,8 @@ function generateAndSaveWebsiteFull() {
     // Any tunes to reformat?
     if (CountTunes() == 0){
 
+        hideTheSpinner();
+
         clearGetTuneByIndexCache();
 
         var thePrompt = "No ABC tunes to export.";
@@ -702,6 +704,8 @@ function generateAndSaveWebsiteFull() {
     }
 
     var theJSON = BatchJSONExportForWebGenerator(theABC);
+
+    hideTheSpinner();
 
     if (!theJSON){
 
@@ -1618,6 +1622,8 @@ function generateAndSaveWebsiteSimple() {
     // Any tunes to reformat?
     if (CountTunes() == 0){
 
+        hideTheSpinner();
+
         clearGetTuneByIndexCache();
 
         var thePrompt = "No ABC tunes to export.";
@@ -1633,6 +1639,8 @@ function generateAndSaveWebsiteSimple() {
     }
 
     var theJSON = BatchJSONExportForWebGenerator(theABC);
+
+    hideTheSpinner();
 
     if (!theJSON){
 
@@ -2011,6 +2019,8 @@ function generateAndSaveWebsiteImageGallery() {
     // Any tunes to reformat?
     if (number_of_tunes == 0){
 
+        hideTheSpinner();
+
         clearGetTuneByIndexCache();
 
         var thePrompt = "No ABC tunes to export.";
@@ -2027,6 +2037,8 @@ function generateAndSaveWebsiteImageGallery() {
 
     var theJSON = BatchJSONExportForWebGalleryGenerator(theABC);
 
+    hideTheSpinner();
+
     if (!theJSON){
 
         clearGetTuneByIndexCache();
@@ -2039,7 +2051,7 @@ function generateAndSaveWebsiteImageGallery() {
             theme: "modal_flat",
             top: 200
         });
-
+        
         return;
     }
 
@@ -2477,6 +2489,7 @@ function generateAndSaveWebsiteImageGallery() {
 
         // If the user pressed Cancel, exit
         if (fname == null) {
+
             return null;
         }
 
@@ -2488,6 +2501,7 @@ function generateAndSaveWebsiteImageGallery() {
 
                 // If the user pressed Cancel, exit
                 if (fname == null) {
+
                     return null;
                 }
 
@@ -2495,6 +2509,7 @@ function generateAndSaveWebsiteImageGallery() {
                 fname = fname.replace(/[^a-zA-Z0-9_\-. ]+/ig, '');
 
                 if (fname.length == 0) {
+
                     return null;
                 }
 
@@ -2534,6 +2549,7 @@ function generateAndSaveWebsiteImageGallery() {
                 setTimeout(function() {
                     window.URL.revokeObjectURL(url);
                 }, 1000);
+
             }
 
         });
@@ -2561,6 +2577,8 @@ function generateAndSaveWebsiteLightbox() {
     // Any tunes to reformat?
     if (number_of_tunes == 0){
 
+        hideTheSpinner();
+
         clearGetTuneByIndexCache();
 
         var thePrompt = "No ABC tunes to export.";
@@ -2571,11 +2589,13 @@ function generateAndSaveWebsiteLightbox() {
             theme: "modal_flat",
             top: 200
         });
-
+        
         return;
     }
 
     var theJSON = BatchJSONExportForWebGalleryGenerator(theABC);
+
+    hideTheSpinner();
 
     if (!theJSON){
 
@@ -3749,8 +3769,12 @@ function generateWebsiteFull(){
             // Restore saved settings
             SaveWebsiteSettings();
 
-            generateAndSaveWebsiteFull();
-
+            showTheSpinner("Building Your Website...");
+            
+            setTimeout(function(){
+                generateAndSaveWebsiteFull();
+            },gSpinnerDelay);
+            
         }
 
     });
@@ -3949,7 +3973,11 @@ function generateWebsiteSimple(){
             // Restore saved settings
             SaveWebsiteSettings();
 
-            generateAndSaveWebsiteSimple();
+            showTheSpinner("Building Your Website...");
+
+            setTimeout(function(){
+                generateAndSaveWebsiteSimple();
+            },gSpinnerDelay);
 
         }
 
@@ -4168,7 +4196,11 @@ function generateWebsiteImageGallery(){
             // Restore saved settings
             SaveWebsiteSettings();
 
-            generateAndSaveWebsiteImageGallery();
+            showTheSpinner("Building Your Website...");
+
+            setTimeout(function(){
+                generateAndSaveWebsiteImageGallery();
+            },gSpinnerDelay);
 
         }
 
@@ -4371,13 +4403,19 @@ function generateWebsiteLightbox(){
                 }
 
             }
- 
-            generateAndSaveWebsiteLightbox();
 
-            // Restore saved settings
-            gWebsiteImageWidth = oldImageWidth;
+            showTheSpinner("Building Your Website...");
+            
+            setTimeout(function(){
 
-            SaveWebsiteSettings();
+                generateAndSaveWebsiteLightbox();
+
+                // Restore saved settings
+                gWebsiteImageWidth = oldImageWidth;
+
+                SaveWebsiteSettings();
+
+            },gSpinnerDelay);
 
         }
 
