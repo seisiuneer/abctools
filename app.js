@@ -25813,7 +25813,7 @@ function IncipitsBuilderDialog(){
 
             // Scroll to the top
             MakeTuneVisible(true);
-            
+
        });
 
 		}
@@ -42818,7 +42818,7 @@ function PDFExportDialog(){
 
 	}, 150);
 
-	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 25, width: 760, scrollWithPage: (AllowDialogsToScroll()), okText: "Export", autoFocus: false } ).then(function(args){
+	const modal = DayPilot.Modal.form(form, theData, { theme: "modal_flat", top: 25, width: 760, scrollWithPage: false, okText: "Export", autoFocus: false } ).then(function(args){
 	
 		if (!args.canceled){
 
