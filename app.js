@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2695_081925_1530";
+var gVersionNumber="2696_081925_1630";
 
 var gMIDIInitStillWaiting = false;
 
@@ -43711,9 +43711,6 @@ function AdvancedControlsDialog(){
 
     // Idle the show tab names control
     IdleAllowShowTabNames();
-
-    // Make sure it's visible
-    ensureMoreToolsVisible();
 
   }, 50);
 
