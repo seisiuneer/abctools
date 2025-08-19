@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2693_081925_0830";
+var gVersionNumber="2694_081925_1400";
 
 var gMIDIInitStillWaiting = false;
 
@@ -25760,7 +25760,9 @@ function DoCeoltasTransformDialog(){
 
   modal_msg  += '<input id="ceoltasdialoginverse" class="advancedcontrols btn btn-injectcontrols" onclick="DoCeoltasTransform(true)" type="button" value="Comhaltas ABC to Standard ABC" title="Transforms the Comhaltas format to standard ABC format"></p>';
 
-  DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 150, width: 650,  scrollWithPage: (AllowDialogsToScroll()) });
+  DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 150, width: 650,  scrollWithPage: (AllowDialogsToScroll()) }).then(function(){
+    ensureMoreToolsVisible();
+  });
 
 }
 
@@ -25774,7 +25776,9 @@ function TuneTitlesNumbersDialog(){
 
   modal_msg  += '<input id="removetunetitlenumbers" class="advancedcontrols btn btn-injectcontrols" onclick="RemoveTuneTitleNumbers(true)" type="button" value="Remove Tune Title Numbers" title="Removes any tune title numbers that were added"></p>';
 
-  DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 200, width: 650,  scrollWithPage: (AllowDialogsToScroll()) });
+  DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 200, width: 650,  scrollWithPage: (AllowDialogsToScroll()) }).then(function(){
+    ensureMoreToolsVisible();
+  });
 
 }
 
@@ -27594,7 +27598,9 @@ function DoInjectBoxTablature(){
 
   modal_msg  += '<p style="text-align:center;margin-top:18px;"><input id="configure_anglo_fonts" class="btn btn-subdialog configure_anglo_fonts" onclick="ConfigureTablatureSettings()" type="button" value="Tablature Injection Settings" title="Configure the tablature injection settings"></p>';
 
-  DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 150, width: 650,  scrollWithPage: (AllowDialogsToScroll()) });
+  DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 150, width: 650,  scrollWithPage: (AllowDialogsToScroll()) }).then(function(){
+    ensureMoreToolsVisible();
+  });;
 
 }
 
@@ -28027,7 +28033,9 @@ function DoInjectTablature_Fiddle_Fingerings_Dialog(){
   
   modal_msg  += '<p style="text-align:center;margin-top:18px;"><input id="configure_anglo_fonts" class="btn btn-subdialog configure_anglo_fonts" onclick="ConfigureTablatureSettings()" type="button" value="Tablature Injection Settings" title="Configure the tablature injection settings"></p>';
 
-  DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 100, width: 650, scrollWithPage: (AllowDialogsToScroll()) });
+  DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 100, width: 650, scrollWithPage: (AllowDialogsToScroll()) }).then(function(){
+    ensureMoreToolsVisible();
+  });
 
 }
 
@@ -28052,7 +28060,7 @@ function DoInjectTablature_Fiddle_Fingerings(tab_style){
   gStripTab = false;
   
   RenderAsync(true,null,function(){
-    ensureDialogVisible("#fiddlefingeringsdialog");
+    ensureDialogVisible("#fiddlefingeringsdialog3");
   });
 
   // Idle the dialog
