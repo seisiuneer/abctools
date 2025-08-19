@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2694_081925_1400";
+var gVersionNumber="2695_081925_1530";
 
 var gMIDIInitStillWaiting = false;
 
@@ -4291,7 +4291,7 @@ function cleanIncipitLine(theTextIncipit){
 
 function GenerateTextIncipits(thePDF,addPageNumbers,pageNumberLocation,hideFirstPageNumber,paperStyle,tunePageMap,sortTunes){
 
-  var thePaperHeight = thePDF.internal.pageSize.getHeight();;
+  var thePaperHeight = thePDF.internal.pageSize.getHeight();
   var thePaperWidth = thePDF.internal.pageSize.getWidth()/1.55;
 
   var pageSizeWithMargins = thePaperHeight - (PAGETOPOFFSET + TEXTINCIPITBOTTOMOFFSET);
@@ -4711,7 +4711,7 @@ var FULLTEXTINCIPITLEFTMARGIN = 45;
 
 function GenerateFullTextIncipits(thePDF,addPageNumbers,pageNumberLocation,hideFirstPageNumber,paperStyle,tunePageMap,sortTunes,bDoCCETransform){
 
-  var thePaperHeight = thePDF.internal.pageSize.getHeight();;
+  var thePaperHeight = thePDF.internal.pageSize.getHeight();
   var thePaperWidth = thePDF.internal.pageSize.getWidth()/1.55;
 
   var pageSizeWithMargins = thePaperHeight - (PAGETOPOFFSET + TEXTINCIPITBOTTOMOFFSET);
@@ -5369,7 +5369,7 @@ function AppendTunebookIndex(thePDF,pageNumberLocation,hideFirstPageNumber,paper
   // Get all the tune titles (uses first T: tag found)
   var theTitles = GetTunebookIndexTitles();
  
-  var thePaperHeight = pdf.internal.pageSize.getHeight();;
+  var thePaperHeight = pdf.internal.pageSize.getHeight();
   var thePaperWidth = pdf.internal.pageSize.getWidth()/1.55;
 
   var pageSizeWithMargins = thePaperHeight - (PAGETOPOFFSET + INDEXBOTTOMOFFSET);
@@ -6265,7 +6265,7 @@ function AppendTuneTOC(thePDF,pageNumberLocation,hideFirstPageNumber,paperStyle,
   // Get all the tune titles (uses first T: tag found)
   var theTitles = GetTunebookIndexTitles();
 
-  var thePaperHeight = pdf.internal.pageSize.getHeight();;
+  var thePaperHeight = pdf.internal.pageSize.getHeight();
   var thePaperWidth = pdf.internal.pageSize.getWidth()/1.55;
 
   var pageSizeWithMargins = thePaperHeight - (PAGETOPOFFSET + TOCBOTTOMOFFSET);
@@ -6478,7 +6478,7 @@ function DryRunAddTuneTOC(thePDF,pageNumberLocation,hideFirstPageNumber,paperSty
   // Get all the tune titles (uses first T: tag found)
   var theTitles = GetTunebookIndexTitles();
 
-  var thePaperHeight = pdf.internal.pageSize.getHeight();;
+  var thePaperHeight = pdf.internal.pageSize.getHeight();
   var thePaperWidth = pdf.internal.pageSize.getWidth()/1.55;
 
   var pageSizeWithMargins = thePaperHeight - (PAGETOPOFFSET + TOCBOTTOMOFFSET);
@@ -20647,7 +20647,7 @@ function IdleFileHeaderInject(){
 
       gFileHeaderDirectives = directives;
 
-      elem = document.getElementById("injectheaderstringfh_holder");;
+      elem = document.getElementById("injectheaderstringfh_holder");
 
       if (elem){
         elem.style.display = "block";
@@ -24566,7 +24566,7 @@ function DoCeoltasTransform(doInverse){
   gIsDirty = true;
 
   RenderAsync(true,null,function(){
-    ensureDialogVisible("#ceoltasdialog");
+    ensureDialogVisible("#ceoltasanchor");
   });
 
   // Idle the dialog
@@ -25754,11 +25754,11 @@ function InjectBagpipeSounds(){
 //
 function DoCeoltasTransformDialog(){
 
-  var modal_msg  = '<p style="text-align:center;margin-bottom:36px;font-size:16pt;font-family:helvetica;margin-left:15px;">Comhaltas ABC Transform&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#advanced_comhaltas" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>';
+  var modal_msg  = '<div id="ceoltasanchor"><p style="text-align:center;margin-bottom:36px;font-size:16pt;font-family:helvetica;margin-left:15px;">Comhaltas ABC Transform&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#advanced_comhaltas" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>';
 
   modal_msg  += '<p style="text-align:center;"><input id="ceoltasdialog" class="advancedcontrols btn btn-injectcontrols" onclick="DoCeoltasTransform(false)" type="button" value="Standard ABC to Comhaltas ABC" title="Transforms the standard ABC format to Comhaltas format">';
 
-  modal_msg  += '<input id="ceoltasdialoginverse" class="advancedcontrols btn btn-injectcontrols" onclick="DoCeoltasTransform(true)" type="button" value="Comhaltas ABC to Standard ABC" title="Transforms the Comhaltas format to standard ABC format"></p>';
+  modal_msg  += '<input id="ceoltasdialoginverse" class="advancedcontrols btn btn-injectcontrols" onclick="DoCeoltasTransform(true)" type="button" value="Comhaltas ABC to Standard ABC" title="Transforms the Comhaltas format to standard ABC format"></p></div>';
 
   DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 150, width: 650,  scrollWithPage: (AllowDialogsToScroll()) }).then(function(){
     ensureMoreToolsVisible();
@@ -25770,11 +25770,11 @@ function DoCeoltasTransformDialog(){
 // Inject/remove Tune title numbers
 //
 function TuneTitlesNumbersDialog(){
-  var modal_msg  = '<p style="text-align:center;margin-bottom:36px;font-size:16pt;font-family:helvetica;margin-left:15px;">Add/Remove Tune Title Numbers&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#advanced_injecttunetitlenumbers" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>';
+  var modal_msg  = '<div id="tunetitlesanchor"><p style="text-align:center;margin-bottom:36px;font-size:16pt;font-family:helvetica;margin-left:15px;">Add/Remove Tune Title Numbers&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#advanced_injecttunetitlenumbers" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>';
 
   modal_msg  += '<p style="text-align:center;"><input id="addtunetitlenumbers" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AddTuneTitleNumbers()" type="button" value="Add Numbers to Tune Titles" title="Adds incrementing numbers to the tune titles">';
 
-  modal_msg  += '<input id="removetunetitlenumbers" class="advancedcontrols btn btn-injectcontrols" onclick="RemoveTuneTitleNumbers(true)" type="button" value="Remove Tune Title Numbers" title="Removes any tune title numbers that were added"></p>';
+  modal_msg  += '<input id="removetunetitlenumbers" class="advancedcontrols btn btn-injectcontrols" onclick="RemoveTuneTitleNumbers(true)" type="button" value="Remove Tune Title Numbers" title="Removes any tune title numbers that were added"></p></div>';
 
   DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 200, width: 650,  scrollWithPage: (AllowDialogsToScroll()) }).then(function(){
     ensureMoreToolsVisible();
@@ -26086,7 +26086,7 @@ function AddTuneTitleNumbers(){
   // Redraw
   RenderAsync(true,null, function (){
     
-    ensureMoreToolsVisible();
+    ensureDialogVisible("#tunetitlesanchor");
 
     var elem = document.getElementById("addtunetitlenumbers");
 
@@ -26253,7 +26253,7 @@ function RemoveTuneTitleNumbers(bDoRedraw){
     // Redraw
     RenderAsync(true,null, function (){
       
-      ensureMoreToolsVisible();
+      ensureDialogVisible("#tunetitlesanchor");
 
       var elem = document.getElementById("removetunetitlenumbers");
 
@@ -27590,17 +27590,17 @@ function DoInjectCustomTab(){
 //
 function DoInjectBoxTablature(){
 
-  var modal_msg  = '<p style="text-align:center;margin-bottom:36px;font-size:16pt;font-family:helvetica;margin-left:15px;">Inject Irish Button Box Tablature&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#tab_irish_box" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>';
+  var modal_msg  = '<div id="boxtabanchor"><p style="text-align:center;margin-bottom:36px;font-size:16pt;font-family:helvetica;margin-left:15px;">Inject Irish Button Box Tablature&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#tab_irish_box" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>';
 
   modal_msg  += '<p style="text-align:center;"><input id="injectbcbox" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectTablature_BC()" type="button" value="Inject B/C Box Tab" title="Injects B/C box tablature into the ABC">';
 
   modal_msg  += '<input id="injectcsdbox" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectTablature_CsD()" type="button" value="Inject C#/D Box Tab" title="Injects C#/D box tablature into the ABC"></p>';
 
-  modal_msg  += '<p style="text-align:center;margin-top:18px;"><input id="configure_anglo_fonts" class="btn btn-subdialog configure_anglo_fonts" onclick="ConfigureTablatureSettings()" type="button" value="Tablature Injection Settings" title="Configure the tablature injection settings"></p>';
+  modal_msg  += '<p style="text-align:center;margin-top:18px;"><input id="configure_anglo_fonts" class="btn btn-subdialog configure_anglo_fonts" onclick="ConfigureTablatureSettings()" type="button" value="Tablature Injection Settings" title="Configure the tablature injection settings"></p></div>';
 
   DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 150, width: 650,  scrollWithPage: (AllowDialogsToScroll()) }).then(function(){
     ensureMoreToolsVisible();
-  });;
+  });
 
 }
 
@@ -27644,7 +27644,7 @@ function DoInjectTablature_BC(){
   gStripTab = false;
   
   RenderAsync(true,null,function(){
-    ensureDialogVisible("#injectbcbox");
+    ensureDialogVisible("#boxtabanchor");
   });
 
   // Idle the dialog
@@ -27696,7 +27696,7 @@ function DoInjectTablature_CsD(){
   gStripTab = false;
   
   RenderAsync(true,null,function(){
-    ensureDialogVisible("#injectbcbox");
+    ensureDialogVisible("#boxtabanchor");
   });
 
   // Idle the dialog
@@ -28021,7 +28021,7 @@ function DoInjectTablature_Bamboo_Flute(){
 //
 function DoInjectTablature_Fiddle_Fingerings_Dialog(){
 
-  var modal_msg  = '<p style="text-align:center;margin-bottom:36px;font-size:16pt;font-family:helvetica;margin-left:15px;">Inject Fiddle Fingerings&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#tab_fiddle" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>';
+  var modal_msg  = '<div id="fiddlefingeringsanchor"><p style="text-align:center;margin-bottom:36px;font-size:16pt;font-family:helvetica;margin-left:15px;">Inject Fiddle Fingerings&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#tab_fiddle" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>';
 
   modal_msg  += '<p style="text-align:center;"><input id="fiddlefingeringsdialog" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectTablature_Fiddle_Fingerings(0)" type="button" value="Finger Number Only" title="Injects finger number (0, 1, 2, 3, 4) only.&nbsp;&nbsp;0 is an open string."></p>';
 
@@ -28031,7 +28031,7 @@ function DoInjectTablature_Fiddle_Fingerings_Dialog(){
 
   modal_msg  += '<p style="text-align:center;"><input id="fiddlefingeringsdialog4" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectTablature_Fiddle_Fingerings(3)" type="button" value="String Name + Finger Number (Number over Name)" title="Injects string name (G, D, A, E) + finger number (0, 1, 2, 3, 4) stacked vertically Number over Name.&nbsp;&nbsp;0 is an open string."></p>';
   
-  modal_msg  += '<p style="text-align:center;margin-top:18px;"><input id="configure_anglo_fonts" class="btn btn-subdialog configure_anglo_fonts" onclick="ConfigureTablatureSettings()" type="button" value="Tablature Injection Settings" title="Configure the tablature injection settings"></p>';
+  modal_msg  += '<p style="text-align:center;margin-top:18px;"><input id="configure_anglo_fonts" class="btn btn-subdialog configure_anglo_fonts" onclick="ConfigureTablatureSettings()" type="button" value="Tablature Injection Settings" title="Configure the tablature injection settings"></p></div>';
 
   DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 100, width: 650, scrollWithPage: (AllowDialogsToScroll()) }).then(function(){
     ensureMoreToolsVisible();
@@ -28060,7 +28060,7 @@ function DoInjectTablature_Fiddle_Fingerings(tab_style){
   gStripTab = false;
   
   RenderAsync(true,null,function(){
-    ensureDialogVisible("#fiddlefingeringsdialog3");
+    ensureDialogVisible("#fiddlefingeringsanchor");
   });
 
   // Idle the dialog
@@ -28079,11 +28079,10 @@ function ShowMDTabWarningDialog(){
     // Keep track of dialogs
     sendGoogleAnalytics("dialog","ShowMDTabWarningDialog");
 
-    var modal_msg  = '<p id="mdsomebadtunes" style="text-align:center;font-size:18pt;font-family:helvetica;">Some Tunes Did Not Have Complete Tab Solutions</p>';
+    var modal_msg  = '<div id="mdsomebadtunes"><p style="text-align:center;font-size:18pt;font-family:helvetica;">Some Tunes Did Not Have Complete Tab Solutions</p>';
 
     modal_msg += '<p style="font-size:12pt;line-height:18pt;margin-top:36px;">During the tablature generation the following tunes did not have complete tablature solutions and as requested were excluded from the result:</p>';
 
-    ensureDialogVisible("#mdsomebadtunes");
 
     var nBadTunes = gExcludedFromMDSolution.length;
 
@@ -28094,7 +28093,9 @@ function ShowMDTabWarningDialog(){
     }
 
     modal_msg += gExcludedFromMDSolution[nBadTunes-1];
-  modal_msg += '</p>'
+    modal_msg += '</p></div>'
+
+    ensureDialogVisible("#mdsomebadtunes");
 
     DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 75, width: 630,  scrollWithPage: (AllowDialogsToScroll()) }).then(function(){
 
@@ -41650,7 +41651,7 @@ function setMusicXMLOptions () {
     gMusicXMLImportOptions.stm = $('#musicxml_stems').prop ('checked') ? 1 : 0;
     gMusicXMLImportOptions.mnum = parseInt ($('#musicxml_mnum').val () || -1);
     gMusicXMLImportOptions.addq = $('#musicxml_addq').prop ('checked') ? 1 : 0;
-    gMusicXMLImportOptions.q = parseInt ($('#musicxml_q').val () || 100);;
+    gMusicXMLImportOptions.q = parseInt ($('#musicxml_q').val () || 100);
 
  }
 
@@ -52854,11 +52855,8 @@ function DoStartup() {
     initSamplesDB();
 
     // Listen for online state changes
-
-    //if (!gIsQuickEditor){
     window.addEventListener('online', doOnlineCheck);
     window.addEventListener('offline', doOnlineCheck);
-  //}
   
     // Fix up the div sizes on iPad two column if coming in from a share
     if (isFromShare && giPadTwoColumn && (!gOpenInEditor)){
