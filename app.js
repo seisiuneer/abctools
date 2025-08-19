@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2691_081825_2330";
+var gVersionNumber="2692_081925_0800";
 
 var gMIDIInitStillWaiting = false;
 
@@ -508,12 +508,12 @@ function ensureMoreToolsVisible(){
 
     //console.log("ensureMoreToolsVisible");
 
-    var elem = document.querySelector("#moretoolsscrollpoint");
+    var elem = document.querySelector("#injectheaderstring");
 
     if (elem){
       elem.scrollIntoView({
         behavior: "instant",
-        block: "nearest"
+        block: "center"
       });
     }
   }
@@ -532,7 +532,7 @@ function ensureDialogVisible(theID){
     if (elem){
       elem.scrollIntoView({
         behavior: "instant",
-        block: "nearest"
+        block: "center"
       });
     }
   }
@@ -43684,8 +43684,6 @@ function AdvancedControlsDialog(){
     modal_msg  += '<p style="text-align:center;margin-top:22px;"><input class="transposetokey btn btn-transposetokey" id="transposetokey" onclick="TransposeToKeyDialog()" type="button" value="Transpose to Key" title="Transposes one or all the tunes to a specific key"><input id="injectbagpipedrones" class="advancedcontrols btn btn-injectcontrols" onclick="InjectBagpipeSounds()" type="button" value="Inject Bagpipe Sounds" title="Changes the melody sound to one of several bagpipe instruments and inject drones as a second voice of the tune(s)"></p>';
   }
 
-  modal_msg += '<div id="moretoolsscrollpoint"></div>';
-
   modal_msg += '</div>';
 
   var format = GetRadioValue("notenodertab");
@@ -43704,6 +43702,9 @@ function AdvancedControlsDialog(){
 
     // Idle the show tab names control
     IdleAllowShowTabNames();
+
+    // Make sure it's visible
+    ensureMoreToolsVisible();
 
   }, 50);
 
