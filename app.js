@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2690_081825_2200";
+var gVersionNumber="2691_081825_2330";
 
 var gMIDIInitStillWaiting = false;
 
@@ -508,7 +508,7 @@ function ensureMoreToolsVisible(){
 
     //console.log("ensureMoreToolsVisible");
 
-    var elem = document.querySelector("#advanced-controls-dialog");
+    var elem = document.querySelector("#moretoolsscrollpoint");
 
     if (elem){
       elem.scrollIntoView({
@@ -43683,6 +43683,8 @@ function AdvancedControlsDialog(){
   if (gFeaturesShowBagpipeDrones){
     modal_msg  += '<p style="text-align:center;margin-top:22px;"><input class="transposetokey btn btn-transposetokey" id="transposetokey" onclick="TransposeToKeyDialog()" type="button" value="Transpose to Key" title="Transposes one or all the tunes to a specific key"><input id="injectbagpipedrones" class="advancedcontrols btn btn-injectcontrols" onclick="InjectBagpipeSounds()" type="button" value="Inject Bagpipe Sounds" title="Changes the melody sound to one of several bagpipe instruments and inject drones as a second voice of the tune(s)"></p>';
   }
+
+  modal_msg += '<div id="moretoolsscrollpoint"></div>';
 
   modal_msg += '</div>';
 
