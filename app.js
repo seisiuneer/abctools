@@ -22136,7 +22136,7 @@ const generalMIDISoundNames = [
   "Pan Flute",
   "Blown Bottle",
   "Shakuhachi",
-  "Whistle",
+  "Tin Whistle",
   "Ocarina",
   "Lead 1 (square)",
   "Lead 2 (sawtooth)",
