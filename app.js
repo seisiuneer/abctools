@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2692_081925_0800";
+var gVersionNumber="2693_081925_0830";
 
 var gMIDIInitStillWaiting = false;
 
@@ -43611,7 +43611,7 @@ function AdvancedControlsDialog(){
   var modal_msg  = '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:15px;">More ABC Tools&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#more_tools" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span><img id="moreabctoolssettings" class="moreabctoolssettings moresettingsbutton" src="img/settings.png" title="More ABC Tools Settings" onclick="Configure_AdvancedControlsDialog_UI();"</img></p>';
   modal_msg += '<div id="advanced-controls-dialog">';
   
-  modal_msg  += '<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:22px;">Show/Hide ABC Features</p>'
+  modal_msg  += '<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:20px;">Show/Hide ABC Features</p>'
   modal_msg  += '<p style="text-align:center;">'
   modal_msg  += '<input id="toggleannotations" class="advancedcontrolsdisabled btn btn-advancedcontrols" onclick="ToggleAnnotations(false)" type="button" value="Hide Annotations" title="Hides/Shows all common annotations in the ABC">';
   modal_msg  +=   '<input id="toggletext" class="advancedcontrolsdisabled btn btn-advancedcontrols" onclick="ToggleTextAnnotations(false)" type="button" value="Hide Text" title="Hides/Shows all text in the ABC">';
@@ -43620,7 +43620,7 @@ function AdvancedControlsDialog(){
   modal_msg  +=   '<input id="toggleornaments" class="advancedcontrolsdisabled btn btn-advancedcontrols" onclick="ToggleOrnaments(false)" type="button" value="Hide Ornaments" title="Hides/Shows all ~ and {} style ornaments in the ABC">';
   modal_msg  += '</p>';
   
-  modal_msg += '<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:22px;">Strip ABC Features</p>'
+  modal_msg += '<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:20px;">Strip ABC Features</p>'
   modal_msg  += '<p style="text-align:center;">';
   modal_msg  += '<input id="stripannotations" class="advancedcontrolsdisabled btn btn-injectcontrols" onclick="ToggleAnnotations(true)" type="button" value="Strip Annotations" title="Strips all common annotations from the ABC">';
   modal_msg  +=   '<input id="striptext" class="advancedcontrolsdisabled btn btn-injectcontrols" onclick="ToggleTextAnnotations(true)" type="button" value="Strip Text" title="Strips all text from the ABC">';
@@ -43628,18 +43628,18 @@ function AdvancedControlsDialog(){
   modal_msg  +=   '<input id="striptab" class="advancedcontrolsdisabled btn btn-injectcontrols" onclick="ToggleTab(true)" type="button" value="Strip Injected Tab" title="Strips all injected tablature from the ABC">';
   modal_msg  +=   '<input id="stripornaments" class="advancedcontrolsdisabled btn btn-injectcontrols" onclick="ToggleOrnaments(true)" type="button" value="Strip Ornaments" title="Strips all injected ~ and {} style ornaments from the ABC">';
   modal_msg  += '</p>';
-  modal_msg += '<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:22px;">ABC Injection Features</p>'
+  modal_msg += '<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:20px;">ABC Injection Features</p>'
   modal_msg  += '<p style="text-align:center;">'
   modal_msg  += '<input id="injecttunenumbers" class="advancedcontrols btn btn-injectcontrols-headers" onclick="TuneTitlesNumbersDialog()" type="button" value="Inject Tune Title Numbers" title="Opens a dialog where you can add or remove numbers on the tune titles">'; 
   modal_msg  += '<input id="injectsectionheader" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectSectionHeader()" type="button" value="Inject PDF Section Header" title="Injects a PDF section header placeholder tune at the cursor insertion point">';
   modal_msg  += '<input id="injectfontsettings" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectFontSettings()" type="button" value="Inject Font Settings" title="Injects all ABC font directives at the top of the current or all tunes from the current font settings">'
   modal_msg  += '</p>';
-  modal_msg  += '<p style="text-align:center;margin-top:22px;">';
+  modal_msg  += '<p style="text-align:center;margin-top:20px;">';
   modal_msg  += '<input id="injectallmidiparams" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectAllMIDIParams()" type="button" value="Inject MIDI Programs and Volumes" title="Injects MIDI Soundfont, Melody program, Bass program, Chord program, and volume annotations into one or all tunes">';
   modal_msg  += '<input id="injectmetronome" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectMetronome()" type="button" value="Inject Metronome" title="Injects ABC for a metronome into one or all tunes">';
   modal_msg  += '<input id="injectclicktrackall" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectRepeatsAndClickTrackAll()" type="button" value="Inject Repeats + Intros" title="Injects repeated copies of tunes and optional style-adaptive two-bar click intros into every tune">'; 
   modal_msg  += '</p>';
-  modal_msg  += '<p style="text-align:center;margin-top:22px;">';
+  modal_msg  += '<p style="text-align:center;margin-top:20px;">';
   modal_msg  += '<input id="injectheaderstring" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectHeaderString()" type="button" value="Inject ABC Header Text" title="Injects text at the top or bottom of the ABC header for one or all tunes">'; 
   modal_msg  += '<input id="injectstaffwidth" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectCustomStringedInstrumentTab()" type="button" value="Custom Stringed Instrument Tab" title="Injects a custom tablature description for stringed instruments">';
   modal_msg  += '<input id="injectlargeprint" class="advancedcontrols btn btn-injectcontrols-headers" onclick="NotationSpacingExplorer()" type="button" value="Notation Spacing Explorer" title="Find the right spacing and scale values for your notation">';
@@ -43647,41 +43647,41 @@ function AdvancedControlsDialog(){
 
   // Showing tablature injectors?
   if (gFeaturesShowTablatures){
-    modal_msg  += '<p style="text-align:center;margin-top:22px;">'
+    modal_msg  += '<p style="text-align:center;margin-top:20px;">'
     modal_msg  += '<input id="injectharmonicatab" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectHarmonicaTab()" type="button" value="Inject Harmonica Tab" title="Injects 10-hole diatonic harmonica tablature into the ABC">';
     modal_msg  += '<input id="injectboxtab" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectBoxTablature()" type="button" value="Inject Irish Button Box Tab" title="Injects B/C or C#/D box tablature into the ABC">';
     modal_msg  += '<input id="injectanglotab" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectTablature_Anglo()" type="button" value="Inject Anglo Concertina Tab" title="Injects Anglo Concertina tablature into the ABC">';
     modal_msg  += '</p>';
-    modal_msg  += '<p style="text-align:center;margin-top:22px;">'
+    modal_msg  += '<p style="text-align:center;margin-top:20px;">'
     modal_msg  += '<input id="injectfiddlefingerings" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectTablature_Fiddle_Fingerings_Dialog()" type="button" value="Inject Fiddle Fingerings" title="Injects Fiddle fingerings tablature with either finger numbers or string names and finger numbers into the ABC">';
     modal_msg  += '<input id="injectmd" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectTablature_MD()" type="button" value="Inject Dulcimer Tab" title="Injects Mountain Dulcimer tablature into the ABC">';
     modal_msg  += '<input id="injectbambooflute" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectTablature_Bamboo_Flute()" type="button" value="Inject Bamboo Flute Tab" title="Injects Bamboo flute tablature into the ABC">';
     modal_msg  += '</p>';
-    modal_msg  += '<p style="text-align:center;margin-top:22px;"><input id="ceoltastransform" style="margin-right:18px;" class="advancedcontrols btn btn-injectcontrols" onclick="DoCeoltasTransformDialog()" type="button" value="Comhaltas Transform" title="Brings up a dialog where you can transform the ABC to/from Comhaltas format"><input id="injectshapenotes" style="margin-right:18px;" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectTablature_ShapeNotes()" type="button" value="Inject Note Names/Shapes/Solfège" title="Injects note names (Pitch Names, Standard ABC, Comhaltas ABC), Shape Note shapes, or Solfège note names into the ABC"><input id="injectcustomtab" style="margin-right:18px;" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectCustomTab()" type="button" value="Inject Custom Tab" title="Injects custom tablature into the ABC"></p>';  
+    modal_msg  += '<p style="text-align:center;margin-top:20px;"><input id="ceoltastransform" style="margin-right:18px;" class="advancedcontrols btn btn-injectcontrols" onclick="DoCeoltasTransformDialog()" type="button" value="Comhaltas Transform" title="Brings up a dialog where you can transform the ABC to/from Comhaltas format"><input id="injectshapenotes" style="margin-right:18px;" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectTablature_ShapeNotes()" type="button" value="Inject Note Names/Shapes/Solfège" title="Injects note names (Pitch Names, Standard ABC, Comhaltas ABC), Shape Note shapes, or Solfège note names into the ABC"><input id="injectcustomtab" style="margin-right:18px;" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectCustomTab()" type="button" value="Inject Custom Tab" title="Injects custom tablature into the ABC"></p>';  
   }
 
   // Showing explorers?
   if (gFeaturesShowExplorers){
-    modal_msg  += '<p style="text-align:center;margin-top:22px;"><input id="configure_instrument_explorer" class="configure_instrument_explorer button btn btn-instrumentexplorer" onclick="InstrumentExplorer();" type="button" value="MIDI Instrument Explorer" title="Brings up a tune player where you can experiment playing the current tune with different MIDI soundfonts and melody/chord instruments"><input id="configure_swing_explorer" class="btn btn-swingexplorer configure_swing_explorer " onclick="SwingExplorer()" type="button" value="Swing Explorer" title="Brings up a tune player where you can experiment with different swing factor settings"><input id="configure_grace_explorer" class="btn btn-graceexplorer configure_grace_explorer " onclick="GraceExplorer()" type="button" value="Grace Duration Explorer" title="Brings up a tune player where you can experiment with different grace note duration settings"><input id="configure_roll_explorer" class="btn btn-rollexplorer configure_roll_explorer " onclick="RollExplorer()" type="button" value="Roll Explorer" title="Brings up a tune player where you can experiment with different roll parameters"></p>';
+    modal_msg  += '<p style="text-align:center;margin-top:20px;"><input id="configure_instrument_explorer" class="configure_instrument_explorer button btn btn-instrumentexplorer" onclick="InstrumentExplorer();" type="button" value="MIDI Instrument Explorer" title="Brings up a tune player where you can experiment playing the current tune with different MIDI soundfonts and melody/chord instruments"><input id="configure_swing_explorer" class="btn btn-swingexplorer configure_swing_explorer " onclick="SwingExplorer()" type="button" value="Swing Explorer" title="Brings up a tune player where you can experiment with different swing factor settings"><input id="configure_grace_explorer" class="btn btn-graceexplorer configure_grace_explorer " onclick="GraceExplorer()" type="button" value="Grace Duration Explorer" title="Brings up a tune player where you can experiment with different grace note duration settings"><input id="configure_roll_explorer" class="btn btn-rollexplorer configure_roll_explorer " onclick="RollExplorer()" type="button" value="Roll Explorer" title="Brings up a tune player where you can experiment with different roll parameters"></p>';
   }
 
   // Showing export and explorers?
   if (gFeaturesShowExport && gFeaturesShowExplorers){
-    modal_msg  += '<p style="text-align:center;margin-top:22px;"><input id="configure_reverb_explorer" class="btn btn-reverbexplorer configure_reverb_explorer " onclick="ReverbExplorer()" type="button" value="Reverb Explorer" title="Brings up a tune player where you can experiment with different reverb parameters"><input id="configure_batch_mp3_export" class="btn btn-batchmp3export configure_batch_mp3_export " onclick="ExportAll()" type="button" value="Export All Tunes" title="Exports all the tunes in the ABC text area as audio, image, MusicXML, and other formats"><input class="sortbutton btn btn-sortbutton" id="sortbutton" onclick="SortDialog()" type="button" value="Sort by Tag" title="Brings up the Sort by Specific Tag dialog"></p>';
+    modal_msg  += '<p style="text-align:center;margin-top:20px;"><input id="configure_reverb_explorer" class="btn btn-reverbexplorer configure_reverb_explorer " onclick="ReverbExplorer()" type="button" value="Reverb Explorer" title="Brings up a tune player where you can experiment with different reverb parameters"><input id="configure_batch_mp3_export" class="btn btn-batchmp3export configure_batch_mp3_export " onclick="ExportAll()" type="button" value="Export All Tunes" title="Exports all the tunes in the ABC text area as audio, image, MusicXML, and other formats"><input class="sortbutton btn btn-sortbutton" id="sortbutton" onclick="SortDialog()" type="button" value="Sort by Tag" title="Brings up the Sort by Specific Tag dialog"></p>';
   }
   else
   if ((!gFeaturesShowExport) && gFeaturesShowExplorers){
-    modal_msg  += '<p style="text-align:center;margin-top:22px;"><input id="configure_reverb_explorer" class="btn btn-reverbexplorer configure_reverb_explorer " style="margin-right:0px" onclick="ReverbExplorer()" type="button" value="Reverb Explorer" title="Brings up a tune player where you can experiment with different reverb parameters"></p>';
+    modal_msg  += '<p style="text-align:center;margin-top:20px;"><input id="configure_reverb_explorer" class="btn btn-reverbexplorer configure_reverb_explorer " style="margin-right:0px" onclick="ReverbExplorer()" type="button" value="Reverb Explorer" title="Brings up a tune player where you can experiment with different reverb parameters"></p>';
   }
   else
   if (gFeaturesShowExport && (!gFeaturesShowExplorers)){
-    modal_msg  += '<p style="text-align:center;margin-top:22px;"><input id="configure_batch_mp3_export" class="btn btn-batchmp3export configure_batch_mp3_export " onclick="ExportAll()" type="button" value="Export All Tunes" title="Exports all the tunes in the ABC text area as audio, image, MusicXML, and other formats"><input class="sortbutton btn btn-sortbutton" id="sortbutton" onclick="SortDialog()" type="button" value="Sort by Tag" title="Brings up the Sort by Specific Tag dialog"></p>';
+    modal_msg  += '<p style="text-align:center;margin-top:20px;"><input id="configure_batch_mp3_export" class="btn btn-batchmp3export configure_batch_mp3_export " onclick="ExportAll()" type="button" value="Export All Tunes" title="Exports all the tunes in the ABC text area as audio, image, MusicXML, and other formats"><input class="sortbutton btn btn-sortbutton" id="sortbutton" onclick="SortDialog()" type="button" value="Sort by Tag" title="Brings up the Sort by Specific Tag dialog"></p>';
 
   }
 
   // Showing only bagpipes drones/tranpose tools?
   if (gFeaturesShowBagpipeDrones){
-    modal_msg  += '<p style="text-align:center;margin-top:22px;"><input class="transposetokey btn btn-transposetokey" id="transposetokey" onclick="TransposeToKeyDialog()" type="button" value="Transpose to Key" title="Transposes one or all the tunes to a specific key"><input id="injectbagpipedrones" class="advancedcontrols btn btn-injectcontrols" onclick="InjectBagpipeSounds()" type="button" value="Inject Bagpipe Sounds" title="Changes the melody sound to one of several bagpipe instruments and inject drones as a second voice of the tune(s)"></p>';
+    modal_msg  += '<p style="text-align:center;margin-top:20px;"><input class="transposetokey btn btn-transposetokey" id="transposetokey" onclick="TransposeToKeyDialog()" type="button" value="Transpose to Key" title="Transposes one or all the tunes to a specific key"><input id="injectbagpipedrones" class="advancedcontrols btn btn-injectcontrols" onclick="InjectBagpipeSounds()" type="button" value="Inject Bagpipe Sounds" title="Changes the melody sound to one of several bagpipe instruments and inject drones as a second voice of the tune(s)"></p>';
   }
 
   modal_msg += '</div>';
