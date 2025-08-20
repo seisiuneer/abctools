@@ -3720,6 +3720,31 @@ margin-top:-7px;
 	}
 }
 
+#load_custom_anglo_names{
+	height:42px;
+	margin-top: 9px;
+	padding:12px;
+}
+
+@media (hover: hover) {
+	.load_custom_anglo_names:hover{
+	background: palegreen;
+	}
+}
+
+#save_custom_anglo_names{
+	height:42px;
+	margin-top: 9px;
+	padding:12px;
+	margin-right:24px;
+}
+
+@media (hover: hover) {
+	.save_custom_anglo_names:hover{
+	background: palegreen;
+	}
+}
+
 #configure_harmonica_custom{
 	height:42px;
 	margin-top: 0px;

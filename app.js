@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber="2696_081925_1630";
+var gVersionNumber="2697_081925_2300";
 
 var gMIDIInitStillWaiting = false;
 
@@ -41920,6 +41920,124 @@ function angloFingeringsChangeHandler(){
 
 }
 
+
+//
+// Save the custom Anglo Concertina Buttons settings to a file
+//
+function saveCustomAngloButtons(){
+
+  // Keep track of actions
+  sendGoogleAnalytics("action","saveCustomAngloButtons");
+
+  var theAngloData = {type:"CustomAnglo", buttons:gAngloButtonNames};
+
+  var theCustomAngloJSON = JSON.stringify(theAngloData);
+
+  saveTextFile("Please enter a filename for your custom Anglo Concertina button names:", "custom_anglo_buttons_settings.txt", theCustomAngloJSON);
+  
+}
+//
+// Load the custom Anglo buttons names
+//
+function loadAngloNamesClickHandler(){
+
+  var elem = document.getElementById("load_custom_anglo_names_fs");
+
+  elem.click();
+
+}
+
+function loadCustomAngloButtons(file){
+
+  // Keep track of actions
+  sendGoogleAnalytics("action","loadCustomAngloButtons");
+
+  const reader = new FileReader();
+
+  reader.addEventListener('load', (event) => {
+
+    var theText = event.target.result;
+
+    try{
+
+      var theParsedAngloButtons = JSON.parse(theText);
+
+      // Sanity check a couple of fields
+      if ((!theParsedAngloButtons.type) || (theParsedAngloButtons.type != "CustomAnglo" )){
+
+        var thePrompt = "This is not a valid custom Anglo Concertina button names file.";
+
+        // Center the string in the prompt
+        thePrompt = makeCenteredPromptString(thePrompt);
+
+        DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) });
+
+        return;
+
+      }
+
+      // Save the new tuning
+      gAngloButtonNames = theParsedAngloButtons.buttons;
+
+       // Idle the custom Anglo Names dialog with the new values
+      initAngloButtonNames();
+
+    }
+    catch(error){
+
+      var thePrompt = "This is not a valid custom Anglo Concertina button names file.";
+
+      // Center the string in the prompt
+      thePrompt = makeCenteredPromptString(thePrompt);
+
+      DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) });
+
+      return;
+
+    }
+  });
+
+  reader.readAsText(file);
+
+}
+
+//
+// Handler for the custom harmonica tunings file open control
+//
+function idleOpenCustomAnglo(){
+
+  //
+  // Setup the custom harmonica tunings file import control
+  //
+  document.getElementById("load_custom_anglo_names_fs").onchange = () => {
+
+    let fileElement = document.getElementById("load_custom_anglo_names_fs");
+
+    // check if user had selected a file
+    if (fileElement.files.length === 0) {
+
+      var thePrompt = "Please select a custom Anglo Concertina button names file";
+
+      // Center the string in the prompt
+      thePrompt = makeCenteredPromptString(thePrompt);
+
+      DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 200, scrollWithPage: (AllowDialogsToScroll()) });
+
+      return;
+
+    }
+
+    let file = fileElement.files[0];
+
+    // Read the custom tuning file
+    loadCustomAngloButtons(file);
+
+    // Reset file selectors
+    fileElement.value = "";
+
+  }
+}
+
 //
 // Configure the Anglo concertina button names
 //
@@ -41974,6 +42092,7 @@ function ConfigureAngloFingerings(){
   modal_msg += '</tr>\n';
   modal_msg += '</table>\n';
   modal_msg += '</div>\n';
+modal_msg += '<p style="text-align:center;margin-top:22px;"><input type="file" id="load_custom_anglo_names_fs" accept=".txt,.TXT" hidden/><input id="save_custom_anglo_names" class="btn btn-subdialog" onclick="saveCustomAngloButtons()" type="button" value="Save Custom Tab Button Names" title="Save a custom Anglo Concertina button names file"><input id="load_custom_anglo_names" class="btn btn-subdialog load_custom_anglo_names" onclick="loadAngloNamesClickHandler()" type="button" value="Load Custom Tab Button Names" title="Load a custom Anglo Concertina button names file"></p>\n';
   modal_msg += '<p style="text-align:center;margin-top:22px;"><input id="default_anglo_fingerings" class="btn btn-clearbutton default_anglo_fingerings" onclick="defaultAngloButtonNames()" type="button" value="Reset to Default" title="Reset the Anglo Concertina button names to their default values"></p>\n';
 
   const form = [
@@ -41984,6 +42103,7 @@ function ConfigureAngloFingerings(){
   setTimeout(function(){
 
     initAngloButtonNames();
+    idleOpenCustomAnglo();
 
   }, 150);
 
