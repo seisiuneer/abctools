@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "2698_082025_1000";
+var gVersionNumber = "2699_082025_1100";
 
 var gMIDIInitStillWaiting = false;
 
@@ -43445,6 +43445,11 @@ function defaultAngloButtonNames() {
         document.getElementById(id).value = gAngloButtonNames[i + 20];
       }
 
+      // Reset the push and draw glyphs as well
+      gInjectTab_PushGlyph = "↓";
+      gInjectTab_DrawGlyph = "↑";
+      gInjectTab_UseBarForDraw = false;
+
     }
 
   });
@@ -43508,7 +43513,6 @@ function angloFingeringsChangeHandler() {
 
 }
 
-
 //
 // Save the custom Anglo Concertina Buttons settings to a file
 //
@@ -43519,7 +43523,10 @@ function saveCustomAngloButtons() {
 
   var theAngloData = {
     type: "CustomAnglo",
-    buttons: gAngloButtonNames
+    buttons: gAngloButtonNames,
+    pushGlyph: gInjectTab_PushGlyph,
+    drawGlyph: gInjectTab_DrawGlyph,
+    useBarForDraw: gInjectTab_UseBarForDraw
   };
 
   var theCustomAngloJSON = JSON.stringify(theAngloData);
@@ -43573,6 +43580,20 @@ function loadCustomAngloButtons(file) {
 
       // Save the new tuning
       gAngloButtonNames = theParsedAngloButtons.buttons;
+
+      // Are there push and draw glyphs in the file?
+
+      if (theParsedAngloButtons.pushGlyph){
+        gInjectTab_PushGlyph = theParsedAngloButtons.pushGlyph;
+      }
+
+      if (theParsedAngloButtons.drawGlyph){
+        gInjectTab_DrawGlyph = theParsedAngloButtons.drawGlyph
+      }
+
+      if (theParsedAngloButtons.useBarForDraw){
+        gInjectTab_UseBarForDraw = theParsedAngloButtons.useBarForDraw
+      }
 
       // Idle the custom Anglo Names dialog with the new values
       initAngloButtonNames();
@@ -43650,8 +43671,11 @@ function ConfigureAngloFingerings() {
 
   const theData = {};
 
-  // Save off the original fingerings
+  // Save off the original fingerings and glyphs
   var gAngloButtonNamesOriginal = gAngloButtonNames.slice();
+  var gInjectTab_PushGlyphOriginal = gInjectTab_PushGlyph;
+  var gInjectTab_DrawGlyphOriginal = gInjectTab_DrawGlyph;
+  var gInjectTab_UseBarForDrawOriginal = gInjectTab_UseBarForDraw;
 
   var modal_msg = '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:15px;">Configure Anglo Concertina Tablature Button Names&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#injecting_box_or_anglo_concertina_tablature" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>';
   modal_msg += '<div id="anglo-button-names-dialog">';
@@ -43726,12 +43750,21 @@ function ConfigureAngloFingerings() {
 
         localStorage.angloButtonNames2 = JSON.stringify(gAngloButtonNames);
 
+        // Accordion and concertina tab bellows direction glyphs
+        localStorage.InjectTab_PushGlyph = gInjectTab_PushGlyph;
+        localStorage.InjectTab_DrawGlyph = gInjectTab_DrawGlyph;
+        localStorage.InjectTab_UseBarForDraw = gInjectTab_UseBarForDraw;
+
       }
 
     } else {
 
       // Cancelled, reset the original values
       gAngloButtonNames = gAngloButtonNamesOriginal;
+      gInjectTab_PushGlyph = gInjectTab_PushGlyphOriginal;
+      gInjectTab_DrawGlyph = gInjectTab_DrawGlyphOriginal;
+      gInjectTab_UseBarForDraw = gInjectTab_UseBarForDrawOriginal;
+
     }
 
   });
