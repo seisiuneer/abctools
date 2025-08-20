@@ -5780,7 +5780,7 @@ padding-right: 30px; /* space for badge */
 /* Pulsing animation */
 @keyframes pulse {
   0% { transform: scale(1); }
-  50% { transform: scale(1.075);  }
+  50% { transform: scale(1.08);  }
   100% { transform: scale(1); }
 }
 
