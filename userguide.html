@@ -763,6 +763,11 @@
             <summary><h3>Typing ABC Using a MIDI Input Device</h3></summary>
             <a style="text-decoration:none;" href="#midi_input">Typing ABC Using a MIDI Input Device</a>
             </details>
+
+            <details>
+            <summary><h3>General Operating System Topics</h3></summary>
+            <a style="text-decoration:none;" href="#double_space_period_fix">Fix for Typing Two Spaces Quickly Results in a Period</a>
+            </details>
             
             <details>
             <summary><h3>iOS-Specific Topics</h3></summary>
@@ -1227,6 +1232,11 @@
                         <p class="toc"><a style="text-decoration:none;" href="#midi_input">Typing ABC Using a MIDI Input Device</a></p>
                     </div>
                     
+                    <button class="accordion" title="Click to expand/collapse this section">General Operating System Topics</button>
+                    <div class="tocpanel">
+                        <p class="toc"><a style="text-decoration:none;" href="#double_space_period_fix">Fix for Typing Two Spaces Quickly Results in a Period</a></p>
+                    </div>
+
                     <button class="accordion" title="Click to expand/collapse this section">iOS-Specific Topics</button>
                     <div class="tocpanel">
                         <p class="toc"><a style="text-decoration:none;" href="#ipad_keyboard">iPad On-Screen Keyboard Tricks</a></p>
@@ -1241,7 +1251,7 @@
                         <p class="toc"><a style="text-decoration:none;" href="#safari_gracenotes_issue">Issues With Grace Note Rendering on Safari</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#safari_fontsize_issue">Incorrect Font Sizes in Exported PDFs on Safari if Zoomed</a></p>
                     </div>
-                    
+
                     <button class="accordion" title="Click to expand/collapse this section">Google Drive PDF Reader Issues</button>
                     <div class="tocpanel">
                         <p class="toc"><a style="text-decoration:none;" href="#google_drive_pdf_issues">Issues With the Google Drive PDF Reader</a></p>
@@ -6404,6 +6414,15 @@
                 <p>While entering notes using MIDI, you can click on the "ABC Transcriptions Tools" title at the top of the screen to toggle muting the MIDI input.</p>
                 <p>When muted, MIDI events won't be translated into ABC notes.</p>
                 <p>When muted, the title at the top of the tool will display "MIDI Input Muted" in red.</p>
+                <hr class="hidden-print" id="double_space_period_fix">
+                <h1 class="page_break_always h1wide">Fix for Typing Two Spaces Quickly Results in a Period<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+                <p>If on a Mac or mobile device browser (generally doesn't happen on Windows) you find it annoying that sometimes if you type two spaces quickly, a period gets inserted, that's something that's not because of the tool or your browser, it's a system keyboard input setting you have to change:</p>
+                <p>Mac: Go to System Settings → Keyboard → Input Sources and click "Edit"</p>
+                <p>Look for “Add period with double-space” and uncheck it.</p>
+                <p>This is where macOS automatically converts double spaces to a period — it affects all apps, including Chrome.</p>
+                <p>For Mobile (iOS / Android):</p>
+                <p>iOS: Settings → General → Keyboard → “.” Shortcut / "." Shortcut / “Smart Punctuation”</p>
+                <p>Android: depends on the keyboard (Gboard, Samsung Keyboard) → usually Settings → Text Correction → “Double-space period”</p>
                 <hr class="hidden-print" id="ipad_keyboard">
                 <h1 class="page_break_always">iPad On-Screen Keyboard Tricks<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/FF6LLeLNKJE" title="iPad On-Screen Keyboard Tricks" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
