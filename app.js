@@ -46100,6 +46100,7 @@ function idleAdvancedSettings() {
 function ShowBrowserInfo() {
 
   var modal_msg = '<p style="text-align:center;font-size:18pt;font-family:helvetica">Browser Information</p>';
+  modal_msg += '<p style="font-size:12pt;line-height:20pt;font-family:helvetica">Tool version: ' + gVersionNumber + '</p>';
   modal_msg += '<p style="font-size:12pt;line-height:20pt;font-family:helvetica">navigator.userAgent: ' + navigator.userAgent + '</p>';
   modal_msg += '<p style="font-size:12pt;line-height:20pt;font-family:helvetica">navigator.platform: ' + navigator.platform + '</p>';
   modal_msg += '<p style="font-size:12pt;line-height:20pt;font-family:helvetica">navigator.vendor: ' + navigator.vendor + '</p>';
@@ -46113,7 +46114,7 @@ function ShowBrowserInfo() {
 
   DayPilot.Modal.alert(modal_msg, {
     theme: "modal_flat",
-    top: 100,
+    top: 50,
     scrollWithPage: (AllowDialogsToScroll())
   });
 
