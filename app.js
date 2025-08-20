@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "2699_082025_1100";
+var gVersionNumber = "2700_082025_1400";
 
 var gMIDIInitStillWaiting = false;
 
@@ -46098,9 +46098,14 @@ function idleAdvancedSettings() {
 // Show some info on the browser
 //
 function ShowBrowserInfo() {
-
   var modal_msg = '<p style="text-align:center;font-size:18pt;font-family:helvetica">Browser Information</p>';
-  modal_msg += '<p style="font-size:12pt;line-height:20pt;font-family:helvetica">Tool version: ' + gVersionNumber + '</p>';
+
+  // Clickable version number
+  modal_msg += '<p style="font-size:12pt;line-height:20pt;font-family:helvetica">';
+  modal_msg += 'Tool version: <span id="versionNumber" style="color:blue;cursor:pointer;" ';
+  modal_msg += 'title="Click to copy">' + gVersionNumber + '</span>';
+  modal_msg += '<span id="copyTooltip" style="margin-left:10px;color:green;font-size:10pt;opacity:0;transition:opacity 0.5s;">Copied!</span></p>';
+
   modal_msg += '<p style="font-size:12pt;line-height:20pt;font-family:helvetica">navigator.userAgent: ' + navigator.userAgent + '</p>';
   modal_msg += '<p style="font-size:12pt;line-height:20pt;font-family:helvetica">navigator.platform: ' + navigator.platform + '</p>';
   modal_msg += '<p style="font-size:12pt;line-height:20pt;font-family:helvetica">navigator.vendor: ' + navigator.vendor + '</p>';
@@ -46111,6 +46116,26 @@ function ShowBrowserInfo() {
   modal_msg += '<p style="font-size:12pt;line-height:20pt;font-family:helvetica">gIsAndroid: ' + gIsAndroid + '</p>';
   modal_msg += '<p style="font-size:12pt;line-height:20pt;font-family:helvetica">localStorage available: ' + gLocalStorageAvailable + '</p>';
 
+  // Hook up click handler on version number
+  setTimeout(function() {
+    var versionElem = document.getElementById("versionNumber");
+    var tooltip = document.getElementById("copyTooltip");
+
+    if (versionElem) {
+      versionElem.addEventListener("click", function() {
+        navigator.clipboard.writeText(gVersionNumber).then(function() {
+          if (tooltip) {
+            tooltip.style.opacity = "1";   // Show "Copied!"
+            setTimeout(() => {
+              tooltip.style.opacity = "0"; // Fade it out
+            }, 1500);
+          }
+        }).catch(function(err) {
+          console.error("Could not copy version number: ", err);
+        });
+      });
+    }
+  },100)
 
   DayPilot.Modal.alert(modal_msg, {
     theme: "modal_flat",
