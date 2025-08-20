@@ -43413,7 +43413,7 @@ function defaultAngloButtonNames() {
   // Keep track of actions
   sendGoogleAnalytics("action", "defaultAngloButtonNames");
 
-  var thePrompt = "Are you sure you want to reset the Anglo Concertina button names to their default values?";
+  var thePrompt = "Are you sure you want to reset the Anglo Concertina button names and Push/Draw characters to their default values?";
 
   // Center the string in the prompt
   thePrompt = makeCenteredPromptString(thePrompt);
