@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "2701_082025_1900";
+var gVersionNumber = "2702_082025_1930";
 
 var gMIDIInitStillWaiting = false;
 
@@ -8619,14 +8619,14 @@ function ParseCommentCommands(theNotes) {
   gPDFPageHeaderVOffset = 0;
 
   // Search for a tunebook PDF page header offset request
-  searchRegExp = /^%pageheadervoffset.*$/m
+  searchRegExp = /^%headervoffset.*$/m
 
   // Detect tunebook pdf quality annotation
   var overridePageHeaderVOffset = theNotes.match(searchRegExp);
 
   if ((overridePageHeaderVOffset) && (overridePageHeaderVOffset.length > 0)) {
 
-    var thePageHeaderVOffset = overridePageHeaderVOffset[0].replace("%pageheadervoffset", "");
+    var thePageHeaderVOffset = overridePageHeaderVOffset[0].replace("%headervoffset", "");
 
     thePageHeaderVOffset = thePageHeaderVOffset.trim();
 
@@ -8643,14 +8643,14 @@ function ParseCommentCommands(theNotes) {
   gPDFPageFooterVOffset = 0;
 
   // Search for a tunebook PDF page footer offset request
-  searchRegExp = /^%pagefootervoffset.*$/m
+  searchRegExp = /^%footervoffset.*$/m
 
   // Detect tunebook pdf quality annotation
   var overridePageFooterVOffset = theNotes.match(searchRegExp);
 
   if ((overridePageFooterVOffset) && (overridePageFooterVOffset.length > 0)) {
 
-    var thePageFooterVOffset = overridePageFooterVOffset[0].replace("%pagefootervoffset", "");
+    var thePageFooterVOffset = overridePageFooterVOffset[0].replace("%footervoffset", "");
 
     thePageFooterVOffset = thePageFooterVOffset.trim();
 
