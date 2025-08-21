@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "2700_082025_1400";
+var gVersionNumber = "2701_082025_1900";
 
 var gMIDIInitStillWaiting = false;
 
@@ -178,6 +178,14 @@ var gLocalStorageAvailable = false;
 // PDF oversampling for PDF rendering
 var gPDFQuality = 0.75;
 var gQualitaet = 1200;
+
+// PDF page number offsets
+var gPDFPageNumberHOffset = 0;
+var gPDFPageNumberVOffset = 0;
+
+// PDF page header and footer offsets
+var gPDFPageHeaderVOffset = 0;
+var gPDFPageFooterVOffset = 0;
 
 // PDF font
 var gPDFFont = "Times";
@@ -8559,6 +8567,102 @@ function ParseCommentCommands(theNotes) {
     }
   }
 
+  // Set the default page number horizontal offset
+  gPDFPageNumberHOffset = 0;
+
+  // Search for a tunebook PDF page number offset request
+  searchRegExp = /^%pagenumberhoffset.*$/m
+
+  // Detect annotation
+  var overridePageNumberHOffset = theNotes.match(searchRegExp);
+
+  if ((overridePageNumberHOffset) && (overridePageNumberHOffset.length > 0)) {
+
+    var thePageNumberHOffset = overridePageNumberHOffset[0].replace("%pagenumberhoffset", "");
+
+    thePageNumberHOffset = thePageNumberHOffset.trim();
+
+    var thePageNumberHOffsetFloat = parseFloat(thePageNumberHOffset);
+
+    if (!isNaN(thePageNumberHOffsetFloat)) {
+
+      gPDFPageNumberHOffset = thePageNumberHOffsetFloat/1.5;
+
+    }
+  }
+
+  // Set the default page number vertical offset
+  gPDFPageNumberVOffset = 0;
+
+  // Search for a tunebook PDF page number offset request
+  searchRegExp = /^%pagenumbervoffset.*$/m
+
+  // Detect annotation
+  var overridePageNumberVOffset = theNotes.match(searchRegExp);
+
+  if ((overridePageNumberVOffset) && (overridePageNumberVOffset.length > 0)) {
+
+    var thePageNumberVOffset = overridePageNumberVOffset[0].replace("%pagenumbervoffset", "");
+
+    thePageNumberVOffset = thePageNumberVOffset.trim();
+
+    var thePageNumberVOffsetFloat = parseFloat(thePageNumberVOffset);
+
+    if (!isNaN(thePageNumberVOffsetFloat)) {
+
+      gPDFPageNumberVOffset = thePageNumberVOffsetFloat/1.5;
+
+    }
+  }
+
+  // Set the default page header vertical offset
+  gPDFPageHeaderVOffset = 0;
+
+  // Search for a tunebook PDF page header offset request
+  searchRegExp = /^%pageheadervoffset.*$/m
+
+  // Detect tunebook pdf quality annotation
+  var overridePageHeaderVOffset = theNotes.match(searchRegExp);
+
+  if ((overridePageHeaderVOffset) && (overridePageHeaderVOffset.length > 0)) {
+
+    var thePageHeaderVOffset = overridePageHeaderVOffset[0].replace("%pageheadervoffset", "");
+
+    thePageHeaderVOffset = thePageHeaderVOffset.trim();
+
+    var thePageHeaderVOffsetFloat = parseFloat(thePageHeaderVOffset);
+
+    if (!isNaN(thePageHeaderVOffsetFloat)) {
+
+      gPDFPageHeaderVOffset = thePageHeaderVOffsetFloat/1.5;
+
+    }
+  }
+
+  // Set the default page footer vertical offset
+  gPDFPageFooterVOffset = 0;
+
+  // Search for a tunebook PDF page footer offset request
+  searchRegExp = /^%pagefootervoffset.*$/m
+
+  // Detect tunebook pdf quality annotation
+  var overridePageFooterVOffset = theNotes.match(searchRegExp);
+
+  if ((overridePageFooterVOffset) && (overridePageFooterVOffset.length > 0)) {
+
+    var thePageFooterVOffset = overridePageFooterVOffset[0].replace("%pagefootervoffset", "");
+
+    thePageFooterVOffset = thePageFooterVOffset.trim();
+
+    var thePageFooterVOffsetFloat = parseFloat(thePageFooterVOffset);
+
+    if (!isNaN(thePageFooterVOffsetFloat)) {
+
+      gPDFPageFooterVOffset = thePageFooterVOffsetFloat/1.5;
+
+    }
+  }
+
   // Include links to pages in the index
   gIncludePageLinks = true;
 
@@ -9307,7 +9411,7 @@ function AddPageHeaderFooter(thePDF, doAddPageNumber, pageNumber, pageNumberLoca
       var textWidth = thePDF.getTextWidth(thePageHeaderProcessed);
 
       // Add the header as a hyperlink
-      thePDF.textWithLink(thePageHeaderProcessed, (thePDF.internal.pageSize.getWidth() / 3.10) - (textWidth / 2), voff, {
+      thePDF.textWithLink(thePageHeaderProcessed, (thePDF.internal.pageSize.getWidth() / 3.10) - (textWidth / 2), voff+gPDFPageHeaderVOffset, {
         align: "left",
         url: thePageHeaderURL
       });
@@ -9315,7 +9419,7 @@ function AddPageHeaderFooter(thePDF, doAddPageNumber, pageNumber, pageNumberLoca
     } else {
 
       // Add the header
-      thePDF.text(thePageHeaderProcessed, (thePDF.internal.pageSize.getWidth() / 3.10), voff, {
+      thePDF.text(thePageHeaderProcessed, (thePDF.internal.pageSize.getWidth() / 3.10), voff+gPDFPageHeaderVOffset, {
         align: "center"
       });
 
@@ -9337,7 +9441,7 @@ function AddPageHeaderFooter(thePDF, doAddPageNumber, pageNumber, pageNumberLoca
       var textWidth = thePDF.getTextWidth(thePageFooterProcessed);
 
       // Add the footer as a hyperlink
-      thePDF.textWithLink(thePageFooterProcessed, (thePDF.internal.pageSize.getWidth() / 3.10) - (textWidth / 2), thePageNumberVerticalOffset, {
+      thePDF.textWithLink(thePageFooterProcessed, (thePDF.internal.pageSize.getWidth() / 3.10) - (textWidth / 2), thePageNumberVerticalOffset-gPDFPageFooterVOffset, {
         align: "center",
         url: thePageFooterURL
       });
@@ -9345,7 +9449,7 @@ function AddPageHeaderFooter(thePDF, doAddPageNumber, pageNumber, pageNumberLoca
     } else {
 
       // Add the footer
-      thePDF.text(thePageFooterProcessed, (thePDF.internal.pageSize.getWidth() / 3.10), thePageNumberVerticalOffset, {
+      thePDF.text(thePageFooterProcessed, (thePDF.internal.pageSize.getWidth() / 3.10), thePageNumberVerticalOffset-gPDFPageFooterVOffset, {
         align: "center"
       });
 
@@ -9379,53 +9483,49 @@ function AddPageHeaderFooter(thePDF, doAddPageNumber, pageNumber, pageNumberLoca
   switch (pageNumberLocation) {
     case "tl":
       // Top left
-      thePDF.text(str, 13, voff, {
+      thePDF.text(str, 13+gPDFPageNumberHOffset, voff+gPDFPageNumberVOffset, {
         align: "center"
       });
       break;
     case "tc":
-      // Top center - don't print if there is a header
-      if (!hasHeader) {
-        thePDF.text(str, (thePDF.internal.pageSize.getWidth() / 3.10), voff, {
-          align: "center"
-        });
-      }
+      // Top center
+      thePDF.text(str, (thePDF.internal.pageSize.getWidth() / 3.10), voff+gPDFPageNumberVOffset, {
+        align: "center"
+      });
       break;
     case "tr":
       // Top right
-      thePDF.text(str, (thePDF.internal.pageSize.getWidth() / 1.55) - 12, voff, {
+      thePDF.text(str, (thePDF.internal.pageSize.getWidth() / 1.55) - (12 + gPDFPageNumberHOffset), voff+gPDFPageNumberVOffset, {
         align: "center"
       });
       break;
     case "bl":
       // Bottom left
-      thePDF.text(str, 13, thePageNumberVerticalOffset, {
+      thePDF.text(str, 13+gPDFPageNumberHOffset, thePageNumberVerticalOffset-gPDFPageNumberVOffset, {
         align: "center"
       });
       break;
     case "bc":
-      // Bottom center - don't print if there is a footer
-      if (!hasFooter) {
-        thePDF.text(str, (thePDF.internal.pageSize.getWidth() / 3.10), thePageNumberVerticalOffset, {
-          align: "center"
-        });
-      }
+      // Bottom center
+      thePDF.text(str, (thePDF.internal.pageSize.getWidth() / 3.10), thePageNumberVerticalOffset-gPDFPageNumberVOffset, {
+        align: "center"
+      });
       break;
     case "br":
       // Bottom right
-      thePDF.text(str, (thePDF.internal.pageSize.getWidth() / 1.55) - 12, thePageNumberVerticalOffset, {
+      thePDF.text(str, (thePDF.internal.pageSize.getWidth() / 1.55) - (12 + gPDFPageNumberHOffset), thePageNumberVerticalOffset-gPDFPageNumberVOffset, {
         align: "center"
       });
       break;
     case "tlr":
       if ((pageNumber % 2) == 1) {
         // Top left
-        thePDF.text(str, 13, voff, {
+        thePDF.text(str, 13+gPDFPageNumberHOffset, voff+gPDFPageNumberVOffset, {
           align: "center"
         });
       } else {
         // Top right
-        thePDF.text(str, (thePDF.internal.pageSize.getWidth() / 1.55) - 12, voff, {
+        thePDF.text(str, (thePDF.internal.pageSize.getWidth() / 1.55) - (12+gPDFPageNumberHOffset), voff+gPDFPageNumberVOffset, {
           align: "center"
         });
       }
@@ -9433,12 +9533,12 @@ function AddPageHeaderFooter(thePDF, doAddPageNumber, pageNumber, pageNumberLoca
     case "trl":
       if ((pageNumber % 2) == 1) {
         // Top right
-        thePDF.text(str, (thePDF.internal.pageSize.getWidth() / 1.55) - 12, voff, {
+        thePDF.text(str, (thePDF.internal.pageSize.getWidth() / 1.55) - (12+gPDFPageNumberHOffset), voff+gPDFPageNumberVOffset, {
           align: "center"
         });
       } else {
         // Top left
-        thePDF.text(str, 13, voff, {
+        thePDF.text(str, 13+gPDFPageNumberHOffset, voff+gPDFPageNumberVOffset, {
           align: "center"
         });
       }
@@ -9446,12 +9546,12 @@ function AddPageHeaderFooter(thePDF, doAddPageNumber, pageNumber, pageNumberLoca
     case "blr":
       if ((pageNumber % 2) == 1) {
         // Bottom left
-        thePDF.text(str, 13, thePageNumberVerticalOffset, {
+        thePDF.text(str, 13+gPDFPageNumberHOffset, thePageNumberVerticalOffset-gPDFPageNumberVOffset, {
           align: "center"
         });
       } else {
         // Bottom right
-        thePDF.text(str, (thePDF.internal.pageSize.getWidth() / 1.55) - 12, thePageNumberVerticalOffset, {
+        thePDF.text(str, (thePDF.internal.pageSize.getWidth() / 1.55) - (12+gPDFPageNumberHOffset), thePageNumberVerticalOffset-gPDFPageNumberVOffset, {
           align: "center"
         });
       }
@@ -9459,12 +9559,12 @@ function AddPageHeaderFooter(thePDF, doAddPageNumber, pageNumber, pageNumberLoca
     case "brl":
       if ((pageNumber % 2) == 1) {
         // Bottom right
-        thePDF.text(str, (thePDF.internal.pageSize.getWidth() / 1.55) - 12, thePageNumberVerticalOffset, {
+        thePDF.text(str, (thePDF.internal.pageSize.getWidth() / 1.55) - (12+gPDFPageNumberHOffset), thePageNumberVerticalOffset-gPDFPageNumberVOffset, {
           align: "center"
         });
       } else {
         // Bottom left
-        thePDF.text(str, 13, thePageNumberVerticalOffset, {
+        thePDF.text(str, 13+gPDFPageNumberHOffset, thePageNumberVerticalOffset-gPDFPageNumberVOffset, {
           align: "center"
         });
       }
@@ -54445,6 +54545,10 @@ function DoStartup() {
   gIsOneColumn = true;
   gLocalStorageAvailable = false;
   gPDFQuality = 0.75;
+  gPDFPageNumberHOffset = 0;
+  gPDFPageNumberVOffset = 0;
+  gPDFPageHeaderVOffset = 0;
+  gPDFPageFooterVOffset = 0;
   gIncludePageLinks = true;
   gDoForcePDFFilename = false;
   gForcePDFFilename = "";

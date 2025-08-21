@@ -565,6 +565,9 @@
             <a style="text-decoration:none;" href="#pdf_tunebook_spacing_overrides">PDF Tunebook Tune Size and Layout Spacing Overrides</a>
             <a style="text-decoration:none;" href="#table_of_contents_and_index_font_size_and_spacing_overrides">Table of Contents and Index Font Size and Spacing Overrides</a>
             <a style="text-decoration:none;" href="#first_page_number">Setting the First Page Number for Tune Pages</a>
+            <a style="text-decoration:none;" href="#header_footer_fontsize">Setting Header and Footer Font Size</a>
+            <a style="text-decoration:none;" href="#header_footer_pagenumber_hvoffsets">Setting Header, Footer, and Page Number Horizontal and Vertical Offsets</a>            
+            <a style="text-decoration:none;" href="#pdf_forcename">Forcing a Specific Filename for PDF Export</a>
             </details>
             
             <details>
@@ -1033,6 +1036,9 @@
                         <p class="toc"><a style="text-decoration:none;" href="#table_of_contents_and_index_font_size_and_spacing_overrides">Table of Contents and Index Font Size and Spacing Overrides</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#first_page_number">Setting the First Page Number for Tune Pages</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#pdf_tunebook_spacing_overrides">PDF Tunebook Tune Size and Layout Spacing Overrides</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#header_footer_fontsize">Setting Header and Footer Font Size</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#header_footer_pagenumber_hvoffsets">Setting Header, Footer, and Page Number Horizontal and Vertical Offsets</a></p>            
+                        <p class="toc"><a style="text-decoration:none;" href="#pdf_forcename">Forcing a Specific Filename for PDF Export</a></p>
                     </div>
                     
                     <button class="accordion" title="Click to expand/collapse this section">All Available Tunebook Annotations</button>
@@ -3854,18 +3860,6 @@
                 <p>Note: Only the first instance of the %pageheader or %pagefooter annotation is processed, any additional instances are ignored.</p>
                 <p></p>
                 <p>Page numbers can be added along with page headers and footers.</p>
-                <p>If you add a page header and you have selected top-centered page numbers, the page number will be hidden.</p>
-                <p>If you add a page footer and you have selected bottom-centered page numbers, the page number will be hidden.</p>
-                <hr>
-                <p><strong>Setting the Header and Footer Font Size</strong></p>
-                <p>You can set the font size for the header and footer using the following annotation:</p>
-                <p class="code">%headerfooterfontsize font_size - Font size for both the PDF page headers and footers. Default is: 12.</p>
-                <hr>
-                <p><strong>Forcing a Specific Filename for PDF Export</strong></p>
-                <p>If you want to force a specific filename to be used by default every time you export the PDF file, add the following comment-based directive anywhere in the ABC:</p>
-                <p></p>
-                <p class="code">%pdfname your_pdf_filename</p>
-                <p></p>
                 <hr class="hidden-print" id="tunebook_hyperlinks">
                 <h1 class="page_break_always h1wide">PDF Tunebook Hyperlinks and Automatic Play Links<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <p></p>
@@ -4106,6 +4100,28 @@
                 <p>changing the 3 to whatever you require as the first page number.</p>
                 <p>This can be useful if you know you will be manually adding additional pages in the PDF before the tunes using a program like Adobe Acrobat and want to offset the page numbers by a specific value.</p>
                 <p>Both of these can be useful for situations where some players have a physical copy of a PDF tunebook and others have it in a PDF reader on a device to help keep the page numbers in sync when specifying which page to go to for a specific tune.</p>
+                <hr class="hidden-print" id="header_footer_fontsize">
+                <h1 class="page_break_always h1wide">Setting Header and Footer Font Size<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+                <p><strong>Setting the Header and Footer Font Size</strong></p>
+                <p>You can set the font size for the header and footer using the following annotation:</p>
+                <p class="code">%headerfooterfontsize font_size - Font size for both the PDF page headers and footers. Default is: 12.</p>
+                <hr class="hidden-print" id="header_footer_pagenumber_hvoffsets">
+                <h1 class="page_break_always h1wide">Setting Header, Footer, and Page Number Horizontal and Vertical Offsets<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+                <p>To offset the page header down the page from its default position, you can use the following annotation:</p>
+                <p class="code">%pageheadervoffset offset - Vertical offset down the page in 1/72". Default is: 0.</p>
+                <p>To offset the page footer up the page from its default position, you can use the following annotation:</p>
+                <p class="code">%pagefootervoffset offset - Vertical offset up the page in 1/72". Default is: 0.</p>
+                <hr>
+                <p>To offset the page numbers vertically towards the center of the page from their default position, you can use the following annotation:</p>
+                <p class="code">%pagenumbervoffset offset - Vertical offset towards the center of the page in 1/72". Default is: 0.</p>
+                <p>To offset the left or right corner page numbers horizontally towards the center of the page from their default position, you can use the following annotation:</p>
+                <p class="code">%pagenumberhoffset offset - Horizontal offset towards the center of the page in 1/72". Default is: 0.</p>
+                <hr class="hidden-print" id="pdf_forcename">
+                <h1 class="page_break_always h1wide">Forcing a Specific Filename for PDF Export<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+                <p>If you want to force a specific filename to be used by default every time you export the PDF file, add the following comment-based directive anywhere in the ABC:</p>
+                <p></p>
+                <p class="code">%pdfname your_pdf_filename</p>
+                <p></p>
                 <hr class="hidden-print" id="all_pdf_annotations">
                 <h1 class="page_break_always">All Available Tunebook Annotations<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <p>Here are examples of all the possible comment-based annotations in the tool:</p>
@@ -4142,9 +4158,13 @@
                     %toc_no_page_numbers<br/>
                     %index_no_page_numbers<br/>
                     %firstpagenumber 3<br/>
-                    %pageheader Page Header<br/>
-                    %pagefooter Page Footer<br/>
+                    %pagenumberhoffset 0<br/>
+                    %pagenumbervoffset 0<br/>
+                    %pageheader Page Header Text<br/>
+                    %pagefooter Page Footer Text<br/>
                     %headerfooterfontsize 12<br/>
+                    %pageheadervoffset 0<br/>
+                    %pagefootervoffset 0<br/>
                     %urlpageheader https://michaeleskin.com Page Header as Hyperlink<br/>
                     %urlpagefooter https://michaeleskin.com Page Footer as Hyperlink<br/>
                     %textincipitsfontsize 12<br/>
