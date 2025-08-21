@@ -3691,6 +3691,9 @@
                 <p>To modify the line spacing you can add the following following comment-based annotations anywhere in the ABC:</p>
                 <p class="code">%titlelinespacing 1.0<br>%subtitlelinespacing 1.0</p>
                 <p>Change the 1.0 to whatever line spacing multiplier you want to use instead.</p>
+                <p>If you want to move a single line title higher on the page, you can use a negative line height multiplier and an initial &lt;br&gt; line break to force the initial negative vertical shift of the text:</p>
+                <p class="code">%titlelinespacing -2.0<br>%addtitle &lt;br&gt;This title will start higher on the page</p>
+                <p>If there are subtitles, they will appear below the shifted title exactly as before but offset below the new title position.</p>
                 <hr>
                 <p>Note: The subtitle only appears if a title page is requested.</p>
                 <p>For a title page with just a subtitle and no subtitle, just enter %addtitle with no text after it and then add %addsubtitle with your subtitle text.</p>

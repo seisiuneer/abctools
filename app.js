@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "2705_082125_1400";
+var gVersionNumber = "2706_082125_1530";
 
 var gMIDIInitStillWaiting = false;
 
@@ -8605,7 +8605,7 @@ function ParseCommentCommands(theNotes) {
 
     var theTitleSpacingFloat = parseFloat(theTitleSpacing);
 
-    if ((!isNaN(theTitleSpacingFloat)) && (theTitleSpacingFloat > 0)) {
+    if (!isNaN(theTitleSpacingFloat)) {
 
       gPDFTitleSpacing = theTitleSpacingFloat;
 
@@ -8629,7 +8629,7 @@ function ParseCommentCommands(theNotes) {
 
     var theSubTitleSpacingFloat = parseFloat(theSubTitleSpacing);
 
-    if ((!isNaN(theSubTitleSpacingFloat)) && (theSubTitleSpacingFloat > 0)) {
+    if (!isNaN(theSubTitleSpacingFloat)) {
 
       gPDFSubTitleSpacing = theSubTitleSpacingFloat;
 
