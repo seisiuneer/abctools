@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "2704_082125_1130";
+var gVersionNumber = "2705_082125_1400";
 
 var gMIDIInitStillWaiting = false;
 
@@ -186,6 +186,10 @@ var gPDFPageNumberVOffset = 0;
 // PDF page header and footer offsets
 var gPDFPageHeaderVOffset = 0;
 var gPDFPageFooterVOffset = 0;
+
+// PDF title and subtitle line spacing
+var gPDFTitleSpacing = 1.0;
+var gPDFSubTitleSpacing = 1.0;
 
 // PDF font
 var gPDFFont = "Times";
@@ -4353,10 +4357,8 @@ var TPSTOFFSET = 24;
 function AppendTuneTitlePage(thePDF, paperStyle, theTitle, theSubtitle) {
   thePDF.setPage(1);
 
-  const lineSpacingFactor = 1.2;
-
   // Helper: render lines starting at startY; returns height added
-  function renderLines(lines, startY, fontSize, url) {
+  function renderLines(lines, startY, fontSize, url, lineSpacingFactor) {
     let y = startY;
     lines.forEach(line => {
       if (line.trim() !== "") {
@@ -4412,7 +4414,7 @@ function AppendTuneTitlePage(thePDF, paperStyle, theTitle, theSubtitle) {
     // Render any additional lines (i.e., breaks after the first line)
     if (titleLines.length > 1) {
       const additionalLines = titleLines.slice(1);
-      extraTitleHeight = renderLines(additionalLines, gTPTOPOFFSET + TPTITLESIZE * lineSpacingFactor, TPTITLESIZE, theTunebookTPURL);
+      extraTitleHeight = renderLines(additionalLines, gTPTOPOFFSET + TPTITLESIZE * gPDFTitleSpacing, TPTITLESIZE, theTunebookTPURL, gPDFTitleSpacing);
     }
   }
 
@@ -4428,7 +4430,7 @@ function AppendTuneTitlePage(thePDF, paperStyle, theTitle, theSubtitle) {
     // Subtitle starts at gTPTOPOFFSET + TPSTOFFSET plus extra title height (only from additional lines)
     const subtitleStartY = gTPTOPOFFSET + TPSTOFFSET + extraTitleHeight;
 
-    renderLines(subtitleLines, subtitleStartY, TPSTTITLESIZE, theTunebookTPSTURL);
+    renderLines(subtitleLines, subtitleStartY, TPSTTITLESIZE, theTunebookTPSTURL, gPDFSubTitleSpacing);
   }
 }
 
@@ -8562,7 +8564,6 @@ function ParseCommentCommands(theNotes) {
     }
   }
 
-
   // Set the default tunebook PDF quality for 2X oversampling
   gPDFQuality = 0.75;
 
@@ -8583,6 +8584,54 @@ function ParseCommentCommands(theNotes) {
     if ((!isNaN(thePDFQualityFloat)) && (thePDFQualityFloat >= 0)) {
 
       gPDFQuality = thePDFQualityFloat;
+
+    }
+  }
+
+  // Set the default tunebook title line spacing
+  gPDFTitleSpacing = 1.0;
+
+  // Search for a tunebook title spacing
+  searchRegExp = /^%titlelinespacing.*$/m
+
+  // Detect tunebook pdf title spacing
+  var overrideTitleSpacing = theNotes.match(searchRegExp);
+
+  if ((overrideTitleSpacing) && (overrideTitleSpacing.length > 0)) {
+
+    var theTitleSpacing = overrideTitleSpacing[0].replace("%titlelinespacing", "");
+
+    theTitleSpacing = theTitleSpacing.trim();
+
+    var theTitleSpacingFloat = parseFloat(theTitleSpacing);
+
+    if ((!isNaN(theTitleSpacingFloat)) && (theTitleSpacingFloat > 0)) {
+
+      gPDFTitleSpacing = theTitleSpacingFloat;
+
+    }
+  }
+
+  // Set the default tunebook subtitle line spacing
+  gPDFSubTitleSpacing = 1.0;
+
+  // Search for a tunebook subtitle spacing
+  searchRegExp = /^%subtitlelinespacing.*$/m
+
+  // Detect tunebook pdf subtitle spacing
+  var overrideSubTitleSpacing = theNotes.match(searchRegExp);
+
+  if ((overrideSubTitleSpacing) && (overrideSubTitleSpacing.length > 0)) {
+
+    var theSubTitleSpacing = overrideSubTitleSpacing[0].replace("%subtitlelinespacing", "");
+
+    theSubTitleSpacing = theSubTitleSpacing.trim();
+
+    var theSubTitleSpacingFloat = parseFloat(theSubTitleSpacing);
+
+    if ((!isNaN(theSubTitleSpacingFloat)) && (theSubTitleSpacingFloat > 0)) {
+
+      gPDFSubTitleSpacing = theSubTitleSpacingFloat;
 
     }
   }
@@ -54565,6 +54614,8 @@ function DoStartup() {
   gIsOneColumn = true;
   gLocalStorageAvailable = false;
   gPDFQuality = 0.75;
+  gPDFTitleSpacing = 1.0;
+  gPDFSubTitleSpacing = 1.0;
   gPDFPageNumberHOffset = 0;
   gPDFPageNumberVOffset = 0;
   gPDFPageHeaderVOffset = 0;

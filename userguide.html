@@ -3687,7 +3687,11 @@
                 <p class="code">%addtitle Here is the first subtitle line&lt;br&gt;Here is the second subtitle line&lt;br&gt;Here is the third subtitle line</p>
                 <p>Additional &lt;br&gt; will result in additional blank lines between lines or even before the first line or after the last line:</p>
                 <p class="code">%addtitle Here is the first subtitle line&lt;br&gt;&lt;br&gt;Here is the second subtitle line after a blank line</p>
-                <p></p>
+                <p>The default line spacing of the additional lines is 1.0x the font size.</p>
+                <p>To modify the spacing multiplier you can add the following following comment-based annotations anywhere in the ABC:</p>
+                <p class="code">%titlelinespacing 1.0<br>%subtitlelinespacing 1.0</p>
+                <p>Change the 1.0 to whatever line spacing multiplier you want to use instead.</p>
+                <hr>
                 <p>Note: The subtitle only appears if a title page is requested.</p>
                 <p>For a title page with just a subtitle and no subtitle, just enter %addtitle with no text after it and then add %addsubtitle with your subtitle text.</p>
                 <p></p>
@@ -4123,6 +4127,8 @@
                     %urladdsubtitle https://michaeleskin.com Title Page Subtitle as Hyperlink<br/>
                     %titlefontsize 24<br/>
                     %subtitlefontsize 16<br/>
+                    %titlelinespacing 1.2<br/>
+                    %subtitlelinespacing 1.2<br/>
                     %addtoc Table of Contents<br/>
                     %addsortedtoc Table of Contents Sorted by Tune Name<br/>
                     %addlinkbacktotoc<br/>
