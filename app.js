@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "2703_082125_1000";
+var gVersionNumber = "2704_082125_1130";
 
 var gMIDIInitStillWaiting = false;
 
@@ -4351,65 +4351,85 @@ var TPSTOFFSET = 24;
 // Generate and append a tune index to the current PDF
 //
 function AppendTuneTitlePage(thePDF, paperStyle, theTitle, theSubtitle) {
-
-  // Add a new page
   thePDF.setPage(1);
 
-  if (theTitle != "") {
+  const lineSpacingFactor = 1.2;
 
-    // Set the font size
-    thePDF.setFont(gPDFFont, gPDFFontStyle, "normal");
-
-    thePDF.setFontSize(TPTITLESIZE);
-
-    if (theTunebookTPURL && (theTunebookTPURL != "")) {
-
-      var textWidth = thePDF.getTextWidth(theTitle);
-
-      // Add the title as a hyperlink     
-      thePDF.textWithLink(theTitle, (thePDF.internal.pageSize.getWidth() / 3.10) - (textWidth / 2), gTPTOPOFFSET, {
-        align: "center",
-        url: theTunebookTPURL
-      });
-
-    } else {
-
-      // Add the title
-      thePDF.text(theTitle, thePDF.internal.pageSize.getWidth() / 3.10, gTPTOPOFFSET, {
-        align: "center"
-      });
-
-    }
-
+  // Helper: render lines starting at startY; returns height added
+  function renderLines(lines, startY, fontSize, url) {
+    let y = startY;
+    lines.forEach(line => {
+      if (line.trim() !== "") {
+        if (url && url !== "") {
+          const textWidth = thePDF.getTextWidth(line);
+          thePDF.textWithLink(
+            line,
+            (thePDF.internal.pageSize.getWidth() / 3.10) - (textWidth / 2),
+            y,
+            { align: "center", url: url }
+          );
+        } else {
+          thePDF.text(
+            line,
+            thePDF.internal.pageSize.getWidth() / 3.10,
+            y,
+            { align: "center" }
+          );
+        }
+      }
+      // Increment vertical position for each line (even empty for <br>)
+      y += fontSize * lineSpacingFactor;
+    });
+    return y - startY; // total height used
   }
 
-  if (theSubtitle != "") {
+  //
+  // Process title
+  //
+  let extraTitleHeight = 0; // additional height from <br> lines (beyond first)
+  if (theTitle !== "") {
+    thePDF.setFont(gPDFFont, gPDFFontStyle, "normal");
+    thePDF.setFontSize(TPTITLESIZE);
 
-    // Set the font size
+    const titleLines = theTitle.split(/<br\s*\/?>/gi);
+
+    // Render the first line at gTPTOPOFFSET
+    const firstLine = titleLines[0].trim();
+    if (firstLine !== "") {
+      if (theTunebookTPURL && theTunebookTPURL !== "") {
+        const textWidth = thePDF.getTextWidth(firstLine);
+        thePDF.textWithLink(
+          firstLine,
+          (thePDF.internal.pageSize.getWidth() / 3.10) - (textWidth / 2),
+          gTPTOPOFFSET,
+          { align: "center", url: theTunebookTPURL }
+        );
+      } else {
+        thePDF.text(firstLine, thePDF.internal.pageSize.getWidth() / 3.10, gTPTOPOFFSET, { align: "center" });
+      }
+    }
+
+    // Render any additional lines (i.e., breaks after the first line)
+    if (titleLines.length > 1) {
+      const additionalLines = titleLines.slice(1);
+      extraTitleHeight = renderLines(additionalLines, gTPTOPOFFSET + TPTITLESIZE * lineSpacingFactor, TPTITLESIZE, theTunebookTPURL);
+    }
+  }
+
+  //
+  // Process subtitle
+  //
+  if (theSubtitle !== "") {
     thePDF.setFont(gPDFFont, gPDFFontStyle, "normal");
     thePDF.setFontSize(TPSTTITLESIZE);
 
-    if (theTunebookTPSTURL && (theTunebookTPSTURL != "")) {
+    const subtitleLines = theSubtitle.split(/<br\s*\/?>/gi);
 
-      var textWidth = thePDF.getTextWidth(theSubtitle);
+    // Subtitle starts at gTPTOPOFFSET + TPSTOFFSET plus extra title height (only from additional lines)
+    const subtitleStartY = gTPTOPOFFSET + TPSTOFFSET + extraTitleHeight;
 
-      // Add the title as a hyperlink     
-      thePDF.textWithLink(theSubtitle, (thePDF.internal.pageSize.getWidth() / 3.10) - (textWidth / 2), gTPTOPOFFSET + TPSTOFFSET, {
-        align: "center",
-        url: theTunebookTPSTURL
-      });
-
-    } else {
-
-      // Add the subtitle
-      thePDF.text(theSubtitle, thePDF.internal.pageSize.getWidth() / 3.10, gTPTOPOFFSET + TPSTOFFSET, {
-        align: "center"
-      });
-
-    }
-
+    renderLines(subtitleLines, subtitleStartY, TPSTTITLESIZE, theTunebookTPSTURL);
   }
-
 }
 
 //

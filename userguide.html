@@ -3675,10 +3675,18 @@
                 <p>To add a title page to your PDF tunebook, simply add the following comment-based annotation anywhere in the ABC:</p>
                 <p></p>
                 <p class="code">%addtitle title_text</p>
+                <p>If you want multiple lines in the title, include &lt;br&gt; in the title_text:</p>
+                <p class="code">%addtitle Here is the first title line&lt;br&gt;Here is the second title line&lt;br&gt;Here is the third title line</p>
+                <p>Additional &lt;br&gt; will result in additional blank lines between lines or even before the first line or after the last line:</p>
+                <p class="code">%addtitle Here is the first title line&lt;br&gt;&lt;br&gt;Here is the second title line after a blank line</p>
                 <p></p>
                 <p>To add a smaller subtitle below the title on the title page, simply add the following comment-based annotation anywhere in the ABC:</p>
                 <p></p>
                 <p class="code">%addsubtitle title_page_subtitle_text</p>
+                <p>If you want multiple lines in the subtitle, include &lt;br&gt; in the subtitle_text:</p>
+                <p class="code">%addtitle Here is the first subtitle line&lt;br&gt;Here is the second subtitle line&lt;br&gt;Here is the third subtitle line</p>
+                <p>Additional &lt;br&gt; will result in additional blank lines between lines or even before the first line or after the last line:</p>
+                <p class="code">%addtitle Here is the first subtitle line&lt;br&gt;&lt;br&gt;Here is the second subtitle line after a blank line</p>
                 <p></p>
                 <p>Note: The subtitle only appears if a title page is requested.</p>
                 <p>For a title page with just a subtitle and no subtitle, just enter %addtitle with no text after it and then add %addsubtitle with your subtitle text.</p>
