@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "2711_082225_1230";
+var gVersionNumber = "2712_082225_1300";
 
 var gMIDIInitStillWaiting = false;
 
@@ -34290,7 +34290,7 @@ function PlayABC(e) {
     var theSelectedABC;
 
     if (gIsMaximized) {
-
+      
       if (!gPlayABCGotMaximizedPlay) {
 
         // Try to find the current tune
@@ -52138,6 +52138,9 @@ function JumpToTune() {
         }
 
         ScrollABCTextIntoView(gTheABC, tuneOffset, tuneOffset, 10);
+
+        // Force reloading of tune when fullscreen
+        gPlayABCGotMaximizedPlay = false;
 
         if (!isPureDesktopBrowser()) {
           gTheABC.blur();
