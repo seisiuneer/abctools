@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "2709_082225_1000";
+var gVersionNumber = "2710_082225_1030";
 
 var gMIDIInitStillWaiting = false;
 
@@ -13788,7 +13788,9 @@ function Render(renderAll, tuneNumber) {
     }
 
     if (gIsMaximized){
-      ShowJumpButton();
+      if (nTunes > 1){
+        ShowJumpButton();
+      }
     }
 
     // MAE 20 July 2024 - Avoid showing bottom bar if top bar hidden
@@ -24700,7 +24702,12 @@ function DoMaximize() {
 
   }
 
-  ShowJumpButton();
+  // Idle the file status display
+  var nTunes = CountTunes();
+
+  if (nTunes > 1){
+    ShowJumpButton();
+  }
 
 }
 
