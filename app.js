@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "2706_082125_1530";
+var gVersionNumber = "2707_082125_2200";
 
 var gMIDIInitStillWaiting = false;
 
@@ -29388,11 +29388,6 @@ function DoInjectTablature_Anglo() {
       gCurrentTab = "noten";
 
       var nTunes = CountTunes();
-
-      // Only show the spinner for a large number of tunes
-      if (nTunes > 5) {
-        showTheSpinner();
-      }
 
       // To allow spinner to appear
       setTimeout(function() {
