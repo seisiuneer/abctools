@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "2707_082125_2200";
+var gVersionNumber = "2708_082225_0900";
 
 var gMIDIInitStillWaiting = false;
 
@@ -13787,6 +13787,10 @@ function Render(renderAll, tuneNumber) {
       }
     }
 
+    if (gIsMaximized){
+      ShowJumpButton();
+    }
+
     // MAE 20 July 2024 - Avoid showing bottom bar if top bar hidden
     if (gShowAllControls && gTopBarShowing) {
 
@@ -14008,6 +14012,9 @@ function Render(renderAll, tuneNumber) {
 
     // Hide the zoom control
     document.getElementById("zoombutton").style.display = "none";
+
+    // Hide the jump control
+    document.getElementById("jumpbutton").style.display = "none";
 
     if (!gIsQuickEditor) {
 
@@ -24596,6 +24603,29 @@ function HidePDFButton() {
 
 }
 
+// Handle the Jump button
+function ShowJumpButton() {
+
+  document.getElementById("jumpbutton").style.display = "block";
+
+  if (!gInPresentationMode) {
+
+    document.getElementById("jumpbutton").style.opacity = 1.0;
+
+  } else {
+
+    document.getElementById("jumpbutton").style.opacity = 0.005;
+
+  }
+
+}
+
+function HideJumpButton() {
+
+  document.getElementById("jumpbutton").style.display = "none";
+
+}
+
 //
 // Hide/show the corner buttons on an Alt-Shift click of the Zoom button
 //
@@ -24609,6 +24639,8 @@ function togglePresentationMode() {
     document.getElementById("helpbutton").style.opacity = 0.005;
     document.getElementById("playbuttonicon").style.opacity = 0.005;
     document.getElementById("pdfbuttonicon").style.opacity = 0.005;
+    document.getElementById("jumpbutton").style.opacity = 0.005;
+
   } else {
 
     gInPresentationMode = false;
@@ -24616,6 +24648,7 @@ function togglePresentationMode() {
     document.getElementById("zoombutton").style.opacity = 1.0;
     document.getElementById("helpbutton").style.opacity = 1.0;
     document.getElementById("playbuttonicon").style.opacity = 1.0;
+    document.getElementById("jumpbutton").style.opacity = 1.0;
 
     if (!gIsQuickEditor) {
 
@@ -24667,6 +24700,8 @@ function DoMaximize() {
 
   }
 
+  ShowJumpButton();
+
 }
 
 function DoMinimize() {
@@ -24702,6 +24737,7 @@ function DoMinimize() {
 
   }
 
+  HideJumpButton();
 
   if (isDesktopBrowser()) {
     gTheNotation.style.display = "inline";
@@ -49555,21 +49591,29 @@ function HandleWindowResize() {
 
         var iconSize;
         var iconOffset;
+        var offset;
 
         if (!isLandscapeOrientation()) {
 
           iconSize = "80px";
           iconOffset = "8px";
+          offset = 8;
 
         } else {
           iconSize = "54px";
           iconOffset = "16px";
+          offset = 16;
         }
 
         document.getElementById("zoombutton").style.width = iconSize;
         document.getElementById("zoombutton").style.height = iconSize;
         document.getElementById("zoombutton").style.top = iconOffset;
         document.getElementById("zoombutton").style.right = iconOffset;
+
+        document.getElementById("jumpbutton").style.width = iconSize;
+        document.getElementById("jumpbutton").style.height = iconSize;
+        document.getElementById("jumpbutton").style.top = iconOffset;
+        document.getElementById("jumpbutton").style.right = (offset+120)+"px";
 
         document.getElementById("helpbutton").style.width = iconSize;
         document.getElementById("helpbutton").style.height = iconSize;
@@ -49601,21 +49645,29 @@ function HandleWindowResize() {
 
         var iconSize;
         var iconOffset;
+        var offset;
 
         if (!isLandscapeOrientation()) {
 
           iconSize = "80px";
           iconOffset = "8px";
+          offset = 8;
 
         } else {
           iconSize = "54px";
           iconOffset = "16px";
+          offset = 16;
         }
 
         document.getElementById("zoombutton").style.width = iconSize;
         document.getElementById("zoombutton").style.height = iconSize;
         document.getElementById("zoombutton").style.top = iconOffset;
         document.getElementById("zoombutton").style.right = iconOffset;
+
+        document.getElementById("jumpbutton").style.width = iconSize;
+        document.getElementById("jumpbutton").style.height = iconSize;
+        document.getElementById("jumpbutton").style.top = iconOffset;
+        document.getElementById("jumpbutton").style.right = (offset+120)+"px";
 
         document.getElementById("helpbutton").style.width = iconSize;
         document.getElementById("helpbutton").style.height = iconSize;
@@ -54914,6 +54966,7 @@ function DoStartup() {
   if (gIsIPhone || gIsAndroid) {
 
     document.getElementById("zoombutton").style.right = "21px";
+    document.getElementById("jumpbutton").style.right = "133px";
     document.getElementById("helpbutton").style.left = "21px";
     document.getElementById("playbuttonicon").style.right = "21px";
     if (!gIsQuickEditor) {
@@ -54927,16 +54980,23 @@ function DoStartup() {
 
     var iconSize = "36px";
     var iconOffset = "8px";
+    var offset = 8;
 
     if (giPadTwoColumn) {
       iconSize = "54px";
       iconOffset = "16px";
+      offset = 16;
     }
 
     document.getElementById("zoombutton").style.width = iconSize;
     document.getElementById("zoombutton").style.height = iconSize;
     document.getElementById("zoombutton").style.top = iconOffset;
     document.getElementById("zoombutton").style.right = iconOffset;
+
+    document.getElementById("jumpbutton").style.width = iconSize;
+    document.getElementById("jumpbutton").style.height = iconSize;
+    document.getElementById("jumpbutton").style.top = iconOffset;
+    document.getElementById("jumpbutton").style.right = (offset+80)+"px";
 
     document.getElementById("helpbutton").style.width = iconSize;
     document.getElementById("helpbutton").style.height = iconSize;
@@ -55167,6 +55227,12 @@ function DoStartup() {
       } else {
         ToggleMaximize();
       }
+    };
+
+  // Hook up the jump button
+  document.getElementById("jumpbutton").onclick =
+    function(e) {
+     JumpToTune();
     };
 
   // Hook up the help button

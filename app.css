@@ -1916,6 +1916,17 @@ z-index:101;
 display:none;
 }
 
+.jumpbutton{
+position:fixed;
+width:48px;
+height:48px;
+right:112px;
+top:16px;
+padding:4px;
+z-index:101;
+display:none;
+}
+
 .helpbutton{
 position:fixed;
 width:48px;
@@ -2124,6 +2135,13 @@ left:-5000px;
 
 @media (hover: hover) {
 	.zoombutton:hover{
+	background: palegreen;
+	opacity: 1.0 !important;
+	}
+}
+
+@media (hover: hover) {
+	.jumpbutton:hover{
 	background: palegreen;
 	opacity: 1.0 !important;
 	}
@@ -6454,6 +6472,15 @@ padding-right: 30px; /* space for badge */
 	}
 
 	.zoombutton:hover {
+	    transform: matrix(1.05, 0, 0, 1.05, 0, 0); 
+	}
+
+	.jumpbutton
+	{
+	  transition: transform .1s ease-in-out 0s; 
+	}
+
+	.jumpbutton:hover {
 	    transform: matrix(1.05, 0, 0, 1.05, 0, 0); 
 	}
 
