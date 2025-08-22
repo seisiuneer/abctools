@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "2710_082225_1030";
+var gVersionNumber = "2711_082225_1230";
 
 var gMIDIInitStillWaiting = false;
 
@@ -17139,7 +17139,7 @@ function ChangeTuneOrderMobile() {
     DayPilot.Modal.alert(thePrompt, {
       theme: "modal_flat",
       top: 200,
-      scrollWithPage: (AllowDialogsToScroll())
+      scrollWithPage: false
     });
 
     return;
@@ -17186,7 +17186,7 @@ function ChangeTuneOrderMobile() {
     theme: "modal_flat",
     top: 25,
     width: 650,
-    scrollWithPage: (AllowDialogsToScroll()),
+    scrollWithPage: false,
     autoFocus: false
   }).then(function(args) {
 
@@ -17294,7 +17294,7 @@ function ChangeTuneOrder() {
     DayPilot.Modal.alert(thePrompt, {
       theme: "modal_flat",
       top: 200,
-      scrollWithPage: (AllowDialogsToScroll())
+      scrollWithPage: false
     });
 
     return;
@@ -17341,7 +17341,7 @@ function ChangeTuneOrder() {
     theme: "modal_flat",
     top: 25,
     width: 650,
-    scrollWithPage: (AllowDialogsToScroll()),
+    scrollWithPage: false,
     autoFocus: false
   }).then(function(args) {
 
@@ -17371,7 +17371,7 @@ function ChangeTuneOrder() {
       DayPilot.Modal.confirm(thePrompt, {
         top: 200,
         theme: "modal_flat",
-        scrollWithPage: (AllowDialogsToScroll())
+        scrollWithPage: false
       }).then(function(args) {
 
         if (!args.canceled) {
@@ -17546,7 +17546,7 @@ function CullTunes() {
     DayPilot.Modal.alert(thePrompt, {
       theme: "modal_flat",
       top: 200,
-      scrollWithPage: (AllowDialogsToScroll())
+      scrollWithPage: false
     });
 
     return;
@@ -17581,7 +17581,7 @@ function CullTunes() {
     theme: "modal_flat",
     top: 25,
     width: 650,
-    scrollWithPage: (AllowDialogsToScroll()),
+    scrollWithPage: false,
     autoFocus: false,
     okText: "Delete"
   }).then(function(args) {
@@ -17615,7 +17615,7 @@ function CullTunes() {
         DayPilot.Modal.confirm(thePrompt, {
           top: 200,
           theme: "modal_flat",
-          scrollWithPage: (AllowDialogsToScroll())
+          scrollWithPage: false
         }).then(function(args) {
           if (!args.canceled) {
 
@@ -52072,7 +52072,7 @@ function JumpToTune() {
     DayPilot.Modal.alert(thePrompt, {
       theme: "modal_flat",
       top: 200,
-      scrollWithPage: (AllowDialogsToScroll())
+      scrollWithPage: false
     });
 
     return;
@@ -52110,7 +52110,7 @@ function JumpToTune() {
     theme: "modal_flat",
     top: 25,
     width: 650,
-    scrollWithPage: (AllowDialogsToScroll()),
+    scrollWithPage: false,
     autoFocus: false,
     okText: "Jump"
   }).then(function(args) {
