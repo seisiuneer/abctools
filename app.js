@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "2712_082225_1300";
+var gVersionNumber = "2713_082325_0400";
 
 var gMIDIInitStillWaiting = false;
 
@@ -51995,7 +51995,7 @@ function MaximizeEditor() {
 }
 
 //
-// Jump to tune
+// Jump to searc
 //
 
 function JumpToSearch() {
@@ -52078,6 +52078,14 @@ function JumpToTune() {
     return;
   }
 
+  // Get the current tune name to scroll into position
+  var targetTuneName = null;
+
+  // Make sure we have a valid current tune index
+  if ((gCurrentTune != -1) && (gCurrentTune < nTitles)){
+    targetTuneName = theTitles[gCurrentTune];
+  }
+
   gJumpTitles = theTitles;
   gJumpTitleCount = nTitles;
 
@@ -52090,7 +52098,7 @@ function JumpToTune() {
 
   for (i = 0; i < nTitles; ++i) {
 
-    theJumpDiv += '<div class="jumpto_tune" onclick="JumpToToggleSelection(this,' + i + ')">' + theTitles[i] + '</div>';
+    theJumpDiv += '<div id="jumpto_tune_'+i+'" class="jumpto_tune" onclick="JumpToToggleSelection(this,' + i + ')">' + theTitles[i] + '</div>';
   }
 
   theJumpDiv += '</div>';
@@ -52160,6 +52168,21 @@ function JumpToTune() {
     }
 
   });
+
+  // After modal is created, wait for DOM then scroll
+  setTimeout(function() {
+    if (targetTuneName) {
+      var idx = gJumpTitles.findIndex(t => t.toLowerCase() === targetTuneName.toLowerCase());
+      if (idx !== -1) {
+        var container = document.getElementById("jumpto-tune-list");
+        var targetEl = document.getElementById("jumpto_tune_" + idx);
+        if (container && targetEl) {
+          // Scroll so the element is aligned at the top of the scrollable area
+          container.scrollTop = targetEl.offsetTop - container.offsetTop;
+        }
+      }
+    }
+  }, 100);
 
 }
 
