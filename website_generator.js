@@ -997,7 +997,7 @@ function generateAndSaveWebsiteFull() {
         else{
             theOutput +='        <select id="displayOptions" style="width:250px;margin-top:18px;">\n';
         }
-        theOutput +='           <option value="-1">Choose an Instrument</option>\n';
+        theOutput +='           <option value="-1">Select an Instrument</option>\n';
 
         var instrumentName = getInstrumentNameForWebSelector(gWebsiteMelodyInstrumentInject);
 
