@@ -473,6 +473,9 @@ var gImportRunning = false;
 var gImportAccumulator = [];
 var gImportCancelRequested = false;
 
+// Scroll Jump to Tune to last selected tune
+var gJumpToTuneAutoscroll = true;
+
 // Global reference to the ABC editor
 var gTheABC = document.getElementById("abc");
 
@@ -43079,6 +43082,12 @@ function GetInitialConfigurationSettings() {
     document.head.appendChild(style);
   }
 
+  gJumpToTuneAutoscroll = true;
+  val = localStorage.JumpToTuneAutoscroll
+  if (val) {
+    gJumpToTuneAutoscroll = (val == "true");
+  }
+
   // Save the settings, in case they were initialized
   SaveConfigurationSettings();
 
@@ -43374,6 +43383,9 @@ function SaveConfigurationSettings() {
 
     // Wide cursor
     localStorage.UseWidePlayCursor = gUseWidePlayCursor;
+
+    // Jump to tune autoscroll
+    localStorage.JumpToTuneAutoscroll = gJumpToTuneAutoscroll;
 
   }
 }
@@ -46384,6 +46396,7 @@ function AdvancedSettings() {
     configure_confirm_clear: gConfirmClear,
     configure_show_render_progress: gShowABCJSRenderProgress,
     configure_clean_smartquotes: gCleanSmartQuotes,
+    configure_jumptotune_autoscroll: gJumpToTuneAutoscroll,
   };
 
   var form = [{
@@ -46415,6 +46428,11 @@ function AdvancedSettings() {
   }, {
     name: "    Disable abcjs notation rendering",
     id: "configure_DisableRendering",
+    type: "checkbox",
+    cssClass: "advanced_settings2_form_text_checkbox"
+  }, {
+    name: "    Jump to Tune always scrolls to the last selected tune",
+    id: "configure_jumptotune_autoscroll",
     type: "checkbox",
     cssClass: "advanced_settings2_form_text_checkbox"
   }, {
@@ -46457,7 +46475,7 @@ function AdvancedSettings() {
     id: "configure_fullscreen_scaling",
     type: "number",
     cssClass: "advanced_settings2_form_text"
-  }, ]);
+  } ]);
 
   // Only show batch export delays on desktop
   if (isPureDesktopBrowser()) {
@@ -46535,6 +46553,9 @@ function AdvancedSettings() {
 
     // Get the results and store them in the global configuration
     if (!args.canceled) {
+
+      // Jump to tune autoscroll
+      gJumpToTuneAutoscroll = args.result.configure_jumptotune_autoscroll
 
       // Confirm clear
       gConfirmClear = args.result.configure_confirm_clear;
@@ -52169,20 +52190,22 @@ function JumpToTune() {
 
   });
 
-  // After modal is created, wait for DOM then scroll
-  setTimeout(function() {
-    if (targetTuneName) {
-      var idx = gJumpTitles.findIndex(t => t.toLowerCase() === targetTuneName.toLowerCase());
-      if (idx !== -1) {
-        var container = document.getElementById("jumpto-tune-list");
-        var targetEl = document.getElementById("jumpto_tune_" + idx);
-        if (container && targetEl) {
-          // Scroll so the element is aligned at the top of the scrollable area
-          container.scrollTop = targetEl.offsetTop - container.offsetTop;
+  if (gJumpToTuneAutoscroll){
+    // After modal is created, wait for DOM then scroll
+    setTimeout(function() {
+      if (targetTuneName) {
+        var idx = gJumpTitles.findIndex(t => t.toLowerCase() === targetTuneName.toLowerCase());
+        if (idx !== -1) {
+          var container = document.getElementById("jumpto-tune-list");
+          var targetEl = document.getElementById("jumpto_tune_" + idx);
+          if (container && targetEl) {
+            // Scroll so the element is aligned at the top of the scrollable area
+            container.scrollTop = targetEl.offsetTop - container.offsetTop;
+          }
         }
       }
-    }
-  }, 100);
+    }, 100);
+  }
 
 }
 
