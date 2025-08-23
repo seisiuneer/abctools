@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "2714_082325_0430";
+var gVersionNumber = "2715_082325_1030";
 
 var gMIDIInitStillWaiting = false;
 
@@ -52204,7 +52204,7 @@ function JumpToTune() {
           }
         }
       }
-    }, 50);
+    }, 25);
   }
 
 }
