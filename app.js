@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "2718_082425_0830";
+var gVersionNumber = "2719_082425_1400";
 
 var gMIDIInitStillWaiting = false;
 
@@ -53999,17 +53999,31 @@ function NormalizeVoiceKeySignatures(){
   // Set dirty
   gIsDirty = true;
 
-  // Force a redraw
-  RenderAsync(true, null, function() {
+  var thePrompt = "Voice Key Signatures Normalized!";
 
-    // Set the select point
-    gTheABC.selectionStart = 0;
-    gTheABC.selectionEnd = 0;
+  // Center the string in the prompt
+  thePrompt = makeCenteredPromptString(thePrompt);
 
-    // Focus after operation
-    FocusAfterOperation();
+  DayPilot.Modal.alert(thePrompt, {
+    theme: "modal_flat",
+    top: 200,
+    scrollWithPage: (AllowDialogsToScroll())
+  }).then(function(){
+
+    // Force a redraw
+    RenderAsync(true, null, function() {
+
+      // Set the select point
+      gTheABC.selectionStart = 0;
+      gTheABC.selectionEnd = 0;
+
+      // Focus after operation
+      FocusAfterOperation();
+
+    });
 
   });
+
 
 }
 
