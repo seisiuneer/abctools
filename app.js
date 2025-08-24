@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "2717_082325_2000";
+var gVersionNumber = "2718_082425_0830";
 
 var gMIDIInitStillWaiting = false;
 
@@ -53852,12 +53852,172 @@ function SplitVoices() {
 
 }
 
+// Normalize the voice keys
+// This makes sure that each voice starts with an inline key signature that matches the header
+function NormalizeVoiceKeySignatures(){
+  
+  //console.log("NormalizeVoiceKeySignatures")
+
+  function injectInlineKeys(abc) {
+    const lines = abc.split(/\r?\n/);
+
+    // ---- 1) Get the main key from the header ----
+    const kIndex = lines.findIndex(l => /^\s*K\s*:/.test(l));
+    if (kIndex === -1) return abc;
+    const kMatch = lines[kIndex].match(/^\s*K\s*:\s*(\S.*)$/i);
+    if (!kMatch) return abc;
+    const mainKey = kMatch[1].trim();
+
+    // ---- State ----
+    const injected = new Set();   // voices already injected
+    let pendingVoice = null;      // voice waiting for first notes
+
+    // Normalize a voice id string
+    const normId = (s) => (s || "").trim();
+
+    // Match a "V:" block declaration
+    const matchVBlock = (line) => {
+      const m = line.match(/^\s*V\s*:\s*([^\s\]]+)/i);
+      return m ? normId(m[1]) : null;
+    };
+
+    // Match an inline [V:...] at line start
+    const matchInlineV = (line) => {
+      const m = line.match(/^(\s*)(\[(?:V|v)\s*:\s*([^\]\s]+)[^\]]*\])(.*)$/);
+      return m
+        ? { leading: m[1], tag: m[2], voiceId: normId(m[3]), rest: m[4] }
+        : null;
+    };
+
+    // Identify if a line is "non-note" (metadata, directives, etc.)
+    const isMetaLine = (line) =>
+      /^\s*(%|I\s*:|K\s*:|%%)/i.test(line) || line.trim() === "";
+
+    const out = [];
+
+    for (let i = 0; i < lines.length; i++) {
+      let line = lines[i];
+
+      // ---- Case A: block V: declaration ----
+      const vIdBlock = matchVBlock(line);
+      if (vIdBlock) {
+        pendingVoice = vIdBlock;   // wait for first note line
+        out.push(line);
+        continue;
+      }
+
+      // ---- Case B: [V:...] inline ----
+      const inline = matchInlineV(line);
+      if (inline) {
+        const { leading, tag, voiceId, rest } = inline;
+
+        if (rest.trim() === "") {
+          // bracket-only voice declaration (no notes yet)
+          pendingVoice = voiceId;
+          out.push(line);
+        } else {
+          // voice + notes on same line
+          if (!injected.has(voiceId)) {
+            injected.add(voiceId);
+            out.push(`${leading}${tag}[K:${mainKey}] ${rest}`);
+          } else {
+            out.push(line);
+          }
+        }
+        continue;
+      }
+
+      // ---- Case C: inside a pending voice ----
+      if (pendingVoice) {
+        if (isMetaLine(line)) {
+          // skip injection on meta lines (K:, I:, %%, comments, blanks)
+          out.push(line);
+          continue;
+        } else {
+          // First real note line for this voice → inject
+          const vId = pendingVoice;
+          pendingVoice = null;
+          if (!injected.has(vId)) {
+            injected.add(vId);
+            const leadingWS = (line.match(/^\s*/)||[""])[0];
+            line = `${leadingWS}[K:${mainKey}] ${line.slice(leadingWS.length)}`;
+          }
+        }
+      }
+
+      out.push(line);
+    }
+
+    return out.join("\n");
+  }
+
+
+  var tuneCount = CountTunes();
+
+  if (tuneCount == 0) {
+
+    var thePrompt = "No tunes to normalize.";
+
+    // Center the string in the prompt
+    thePrompt = makeCenteredPromptString(thePrompt);
+
+    DayPilot.Modal.alert(thePrompt, {
+      theme: "modal_flat",
+      top: 200,
+      scrollWithPage: (AllowDialogsToScroll())
+    });
+
+    return;
+
+  }
+
+  // Keep track of actions
+  sendGoogleAnalytics("action", "NormalizeVoiceKeySignatures");
+
+  var theNotes = gTheABC.value;
+
+  var tuneCount = CountTunes();
+
+  // Find the tunes
+  var theTunes = theNotes.split(/^X:/gm);
+
+  var output = FindPreTuneHeader(theNotes);
+
+  for (var i = 1; i <= tuneCount; ++i) {
+
+    var thisTune = "X:" + theTunes[i];
+
+    thisTune = injectInlineKeys(thisTune);
+
+    output += thisTune;
+
+  }
+
+  // Stuff in the output
+  setABCEditorText(output);
+
+  // Set dirty
+  gIsDirty = true;
+
+  // Force a redraw
+  RenderAsync(true, null, function() {
+
+    // Set the select point
+    gTheABC.selectionStart = 0;
+    gTheABC.selectionEnd = 0;
+
+    // Focus after operation
+    FocusAfterOperation();
+
+  });
+
+}
+
 // Open the standard editor in a new tab
 function LaunchStandardEditor() {
   var url = "https://michaeleskin.com/abctools/abctools.html";
   window.open(url, '_blank');
 }
-
 
 // Open the User Guide in a new tab
 function LaunchEditorHelp() {
@@ -53999,7 +54159,12 @@ function SetupContextMenu(showUpdateItem) {
             fn: function(target) {
               SplitVoices();
             }
-          }, {}, {
+          }, {
+            name: 'Normalize Voice Keys',
+            fn: function(target) {
+              NormalizeVoiceKeySignatures();
+            }
+          },{}, {
             name: 'Inject MIDI gchord Templates',
             fn: function(target) {
               InjectMIDIGChordTemplates();
@@ -54183,7 +54348,12 @@ function SetupContextMenu(showUpdateItem) {
           fn: function(target) {
             SplitVoices();
           }
-        }, {}, {
+        }, {
+          name: 'Normalize Voice Keys',
+          fn: function(target) {
+            NormalizeVoiceKeySignatures();
+          }
+        },{}, {
           name: 'Import PDF, Website, or CSV',
           fn: function(target) {
             ImportPDF_CSV_Website();
@@ -54308,7 +54478,12 @@ function SetupContextMenu(showUpdateItem) {
             fn: function(target) {
               SplitVoices();
             }
-          }, {}, {
+          }, {
+            name: 'Normalize Voice Keys',
+            fn: function(target) {
+              NormalizeVoiceKeySignatures();
+            }
+          },{}, {
             name: 'Inject MIDI gchord Templates',
             fn: function(target) {
               InjectMIDIGChordTemplates();
@@ -54346,7 +54521,7 @@ function SetupContextMenu(showUpdateItem) {
           }, ]);
 
         // For forcing display for User Guide screen shots
-        //showUpdateItem = true;// FOOFOO
+        //showUpdateItem = true;// UPDATEFOOFOO
 
         if (showUpdateItem) {
           items = items.concat(
@@ -54491,6 +54666,11 @@ function SetupContextMenu(showUpdateItem) {
           fn: function(target) {
             SplitVoices();
           }
+        },{
+          name: 'Normalize Voice Keys',
+          fn: function(target) {
+            NormalizeVoiceKeySignatures();
+          }
         }, {}, {
           name: 'Import PDF, Website, or CSV',
           fn: function(target) {
@@ -54607,6 +54787,11 @@ function SetupContextMenu(showUpdateItem) {
         fn: function(target) {
           SplitVoices();
         }
+      },{
+        name: 'Normalize Voice Keys',
+        fn: function(target) {
+          NormalizeVoiceKeySignatures();
+        }
       }, {}, {
         name: 'Import PDF, Website, or CSV',
         fn: function(target) {
@@ -54719,6 +54904,11 @@ function SetupContextMenu(showUpdateItem) {
         name: 'Split Voices',
         fn: function(target) {
           SplitVoices();
+        }
+      },{
+        name: 'Normalize Voice Keys',
+        fn: function(target) {
+          NormalizeVoiceKeySignatures();
         }
       }, {}, {
         name: 'Import PDF, Website, or CSV',

@@ -453,6 +453,7 @@
             <a style="text-decoration:none;" href="#hamburger_normalize_title_postfixes">Normalize Title Postfixes</a>
             <a style="text-decoration:none;" href="#hamburger_reformat_xml">Reformat Using MusicXML</a>
             <a style="text-decoration:none;" href="#hamburger_split_voices">Split Voices</a>
+            <a style="text-decoration:none;" href="#hamburger_normalize_voice_keys">Normalize Voice Keys</a>
             <a style="text-decoration:none;" href="#hamburger_midigchord">Inject MIDI gchord Templates</a>
             <a style="text-decoration:none;" href="#hamburger_extracting_pdf_website">Import PDF, Website, or CSV</a>
             <a style="text-decoration:none;" href="#hamburger_toggle_top_bottom">Toggle Top/Bottom Toolbars</a>
@@ -925,6 +926,7 @@
                         <p class="toc"><a style="text-decoration:none;" href="#hamburger_normalize_title_postfixes">Normalize Title Postfixes</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#hamburger_reformat_xml">Reformat Using MusicXML</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#hamburger_split_voices">Split Voices</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#hamburger_normalize_voice_keys">Normalize Voice Keys</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#hamburger_midigchord">Inject MIDI gchord Templates</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#hamburger_extracting_pdf_website">Import PDF, Website, or CSV</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#hamburger_toggle_top_bottom">Toggle Top/Bottom Toolbars</a></p>
@@ -1464,7 +1466,7 @@
                 <p><strong>☰</strong></p>
                 <p>"Hamburger" dropdown menu that brings up additional useful commands:</p>
                 <div class="image_holder_p">
-                    <img class="image" loading="lazy" src="img/moretools_28.jpg"/>
+                    <img class="image" loading="lazy" src="img/moretools_29.jpg"/>
                 </div>
                 <hr id="hamburger_find">
                 <p><strong>Find and Replace</strong> (Desktop browsers only)</p>
@@ -1631,6 +1633,15 @@
                 <p>The split voices are appended to the current ABC as additional tunes.</p>
                 <p>Any W: tags for lyrics found in the original tune are aggregated to the bottom of each split tune.</p>
                 <p>This feature only works when there is a single multi-voice tune in the ABC editor.</p>
+                <hr id="hamburger_normalize_voice_keys">
+                <p id="splitvoices"><strong>Normalize Voice Keys</strong></p>
+                <p>This attempts to work around an issue with abcjs and multi-voice tunes where an inline [K:] tag in a voice messes up the starting key signature for subsequent voices.</p>
+                <p>This feature attempts to fix this issue by finding the key of the tune in the tune header, and injecting a matching inline [K:] tag at the start of the first line of notes for each voice.</p>
+                <p>Example - Before:</p>
+                <p class="code">X: 1<br/> T: Normalizing Voice Keys Before<br/> K: D<br/> V:1<br/>C2 D2 E2 F2| [K:C] G2 A2 B2 c2|]<br/> V:2<br/>% This line will show key signature of C instead of D:<br/>C2 D2 E2 F2| [K:C] G2 A2 B2 c2|]</p>
+                <p>After:</p>
+                <p class="code">X: 1<br/> T: Normalizing Voice Keys After<br/> K: D<br/> V:1<br/> [K:D]C2 D2 E2 F2| [K:C] G2 A2 B2 c2|]<br/> V:2<br/> [K:D]C2 D2 E2 F2| [K:C] G2 A2 B2 c2|]</p>
+                <p>There are some cases that it may not provide a 100% correct solution, but it should work or at least improve things for most cases.</p>
                 <hr id="hamburger_midigchord">
                 <p id="inject_midigchord"><strong>Inject MIDI gchord Templates</strong> (Desktop browsers only)</p>
                 <div class="image_holder_p">
