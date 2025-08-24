@@ -6,27 +6,14 @@
 //
 //
 //
-//
-//
-//
-//
-//
-//
-// Updated 23 Aug 2025 at 1030
-//
-//
-//
-//
-//
-//
-//
+// Updated 23 Aug 2025 at 1800
 //
 //
 //
 //
 //
 
-const cacheName = 'abctoolscache-2715';
+const cacheName = 'abctoolscache-2716';
 
 const contentToCache = [
     'abctools.html',
@@ -76,6 +63,8 @@ const contentToCache = [
     'img/playbutton.png',
     'img/pdfbutton.png',
     'img/jumpbutton.png',
+    'img/qerewindbutton.png',
+    'img/qetempobutton.png',
     'img/michael.jpg',
     'img/michael2.jpg',
     'img/michael240.jpg',

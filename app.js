@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "2715_082325_1030";
+var gVersionNumber = "2716_082325_1800";
 
 var gMIDIInitStillWaiting = false;
 
@@ -13780,7 +13780,18 @@ function Render(renderAll, tuneNumber) {
 
     }
 
-    if (!gIsQuickEditor) {
+    if (gIsQuickEditor){
+
+      if (isMobileBrowser() && gIsMaximized){
+        ShowQEFSPlayerButtons();
+      }
+      else{
+        if (isDesktopBrowser()){
+          ShowQEFSPlayerButtons();
+        }
+      }
+    }
+    else{
 
       if (isDesktopBrowser() || gIsMaximized) {
 
@@ -13790,10 +13801,11 @@ function Render(renderAll, tuneNumber) {
       }
     }
 
-    if (gIsMaximized){
-      if (nTunes > 1){
-        ShowJumpButton();
-      }
+    if (nTunes > 1){
+      ShowJumpButton();
+    }
+    else{
+      HideJumpButton();
     }
 
     // MAE 20 July 2024 - Avoid showing bottom bar if top bar hidden
@@ -14033,6 +14045,9 @@ function Render(renderAll, tuneNumber) {
 
       // Hide the play button
       HidePlayButton();
+
+      // Hide the rewind and tempo buttons
+      HideQEFSPlayerButtons(); 
 
     }
 
@@ -24548,11 +24563,36 @@ function ShowHelpButton() {
 }
 
 //
-// Handle the play button
+// Handle the Quick Editor play button
 //
 function QE_PlayButton_Handler() {
+  // Click the play/pause button
   const button = document.querySelector('button.abcjs-midi-start');
-  button.click();
+  if (button){
+    button.click();
+  }
+}
+
+//
+// Handle the Quick Editor rewind button
+//
+function QE_RewindButton_Handler() {
+  // Click the rewind button
+  const button = document.querySelector('button.abcjs-midi-reset');
+  if (button){
+    button.click();
+  }
+}
+
+//
+// Handle the Quick Editor tempo button
+//
+function QE_TempoButton_Handler() {
+  // Make sure there is a tempo element showing
+  var elem = document.getElementsByClassName("abcjs-midi-tempo");
+  if (elem && (elem.length > 0)) {
+    SetPlayerTempo();
+  }
 }
 
 function ShowPlayButton() {
@@ -24631,6 +24671,47 @@ function HideJumpButton() {
 
 }
 
+// Handle the Quick Editor player control buttons
+function ShowQEFSPlayerButtons() {
+
+  //console.log("ShowQEFSPlayerButtons");
+
+  document.getElementById("qerewindbutton").style.display = "block";
+
+  if (!gInPresentationMode) {
+
+    document.getElementById("qerewindbutton").style.opacity = 1.0;
+
+  } else {
+
+    document.getElementById("qerewindbutton").style.opacity = 0.005;
+
+  }
+
+  document.getElementById("qetempobutton").style.display = "block";
+
+  if (!gInPresentationMode) {
+
+    document.getElementById("qetempobutton").style.opacity = 1.0;
+
+  } else {
+
+    document.getElementById("qetempobutton").style.opacity = 0.005;
+
+  }
+
+}
+
+function HideQEFSPlayerButtons() {
+
+  //console.log("HideQEFSPlayerButtons");
+
+  document.getElementById("qerewindbutton").style.display = "none";
+  document.getElementById("qetempobutton").style.display = "none";
+
+}
+
+
 //
 // Hide/show the corner buttons on an Alt-Shift click of the Zoom button
 //
@@ -24646,6 +24727,11 @@ function togglePresentationMode() {
     document.getElementById("pdfbuttonicon").style.opacity = 0.005;
     document.getElementById("jumpbutton").style.opacity = 0.005;
 
+    if (gIsQuickEditor){
+      document.getElementById("qerewindbutton").style.opacity = 0.005;
+      document.getElementById("qetempobutton").style.opacity = 0.005;
+    }
+
   } else {
 
     gInPresentationMode = false;
@@ -24658,6 +24744,12 @@ function togglePresentationMode() {
     if (!gIsQuickEditor) {
 
       document.getElementById("pdfbuttonicon").style.opacity = 1.0;
+
+    }
+    else{
+
+      document.getElementById("qerewindbutton").style.opacity = 1.0;
+      document.getElementById("qetempobutton").style.opacity = 1.0;
 
     }
 
@@ -24701,6 +24793,7 @@ function DoMaximize() {
       ShowPlayButton();
     } else {
       ShowPlayButton();
+      ShowQEFSPlayerButtons();
     }
 
   }
@@ -24711,7 +24804,9 @@ function DoMaximize() {
   if (nTunes > 1){
     ShowJumpButton();
   }
-
+  else{
+    HideJumpButton();
+  }
 }
 
 function DoMinimize() {
@@ -24743,11 +24838,12 @@ function DoMinimize() {
 
       HidePlayButton();
 
+      // Hide the player controls
+      HideQEFSPlayerButtons();
+
     }
 
   }
-
-  HideJumpButton();
 
   if (isDesktopBrowser()) {
     gTheNotation.style.display = "inline";
@@ -41502,7 +41598,7 @@ function SetPlayerTempo(e) {
 
   const modal = DayPilot.Modal.form(form, theData, {
     theme: "modal_flat",
-    top: 250,
+    top: 125,
     width: 400,
     scrollWithPage: (AllowDialogsToScroll()),
     autoFocus: true
@@ -49641,7 +49737,13 @@ function HandleWindowResize() {
         document.getElementById("jumpbutton").style.width = iconSize;
         document.getElementById("jumpbutton").style.height = iconSize;
         document.getElementById("jumpbutton").style.top = iconOffset;
-        document.getElementById("jumpbutton").style.right = (offset+120)+"px";
+
+        if (isLandscapeOrientation()){
+          document.getElementById("jumpbutton").style.right = (offset+120)+"px";
+        }
+        else{
+          document.getElementById("jumpbutton").style.right = (offset+180)+"px";          
+        }
 
         document.getElementById("helpbutton").style.width = iconSize;
         document.getElementById("helpbutton").style.height = iconSize;
@@ -49659,6 +49761,31 @@ function HandleWindowResize() {
           document.getElementById("pdfbuttonicon").style.height = iconSize;
           document.getElementById("pdfbuttonicon").style.bottom = iconOffset;
           document.getElementById("pdfbuttonicon").style.left = iconOffset;
+
+        }
+        else{
+
+          // Position the QE rewind and tempo buttons
+          document.getElementById("qerewindbutton").style.width = iconSize;
+          document.getElementById("qerewindbutton").style.height = iconSize;
+          document.getElementById("qerewindbutton").style.bottom = iconOffset;
+          if (isLandscapeOrientation()){
+            document.getElementById("qerewindbutton").style.right = (offset+120)+"px";
+          }
+          else{
+            document.getElementById("qerewindbutton").style.right = (offset+180)+"px";            
+          }
+
+          document.getElementById("qetempobutton").style.width = iconSize;
+          document.getElementById("qetempobutton").style.height = iconSize;
+          document.getElementById("qetempobutton").style.bottom = iconOffset;
+
+          if (isLandscapeOrientation()){
+            document.getElementById("qetempobutton").style.right = (offset+240)+"px";
+          }
+          else{
+            document.getElementById("qetempobutton").style.right = (offset+360)+"px";            
+          }
 
         }
       }
@@ -49695,7 +49822,12 @@ function HandleWindowResize() {
         document.getElementById("jumpbutton").style.width = iconSize;
         document.getElementById("jumpbutton").style.height = iconSize;
         document.getElementById("jumpbutton").style.top = iconOffset;
-        document.getElementById("jumpbutton").style.right = (offset+120)+"px";
+        if (isLandscapeOrientation()){
+          document.getElementById("jumpbutton").style.right = (offset+120)+"px";
+        }
+        else{
+          document.getElementById("jumpbutton").style.right = (offset+180)+"px";          
+        }
 
         document.getElementById("helpbutton").style.width = iconSize;
         document.getElementById("helpbutton").style.height = iconSize;
@@ -49708,13 +49840,39 @@ function HandleWindowResize() {
         document.getElementById("playbuttonicon").style.right = iconOffset;
 
         if (!gIsQuickEditor) {
+
           document.getElementById("pdfbuttonicon").style.width = iconSize;
           document.getElementById("pdfbuttonicon").style.height = iconSize;
           document.getElementById("pdfbuttonicon").style.bottom = iconOffset;
           document.getElementById("pdfbuttonicon").style.left = iconOffset;
+
+        }
+        else{
+
+          // Position the QE rewind and tempo buttons
+          document.getElementById("qerewindbutton").style.width = iconSize;
+          document.getElementById("qerewindbutton").style.height = iconSize;
+          document.getElementById("qerewindbutton").style.bottom = iconOffset;
+          if (isLandscapeOrientation()){
+            document.getElementById("qerewindbutton").style.right = (offset+120)+"px";
+          }
+          else{
+            document.getElementById("qerewindbutton").style.right = (offset+180)+"px";            
+          }
+
+          document.getElementById("qetempobutton").style.width = iconSize;
+          document.getElementById("qetempobutton").style.height = iconSize;
+          document.getElementById("qetempobutton").style.bottom = iconOffset;
+
+          if (isLandscapeOrientation()){
+            document.getElementById("qetempobutton").style.right = (offset+240)+"px";
+          }
+          else{
+            document.getElementById("qetempobutton").style.right = (offset+360)+"px";            
+          }
+
         }
       }
-
     }
   }
 }
@@ -55022,11 +55180,15 @@ function DoStartup() {
   if (gIsIPhone || gIsAndroid) {
 
     document.getElementById("zoombutton").style.right = "21px";
-    document.getElementById("jumpbutton").style.right = "133px";
+    document.getElementById("jumpbutton").style.right = "153px";
     document.getElementById("helpbutton").style.left = "21px";
     document.getElementById("playbuttonicon").style.right = "21px";
     if (!gIsQuickEditor) {
       document.getElementById("pdfbuttonicon").style.left = "21px";
+    }
+    else{
+      document.getElementById("qerewindbutton").style.right = "150px";
+      document.getElementById("qetempobutton").style.right = "272px";
     }
 
   }
@@ -55069,6 +55231,20 @@ function DoStartup() {
       document.getElementById("pdfbuttonicon").style.height = iconSize;
       document.getElementById("pdfbuttonicon").style.bottom = iconOffset;
       document.getElementById("pdfbuttonicon").style.left = iconOffset;
+    }
+    else{
+
+      // Position the QE rewind and tempo buttons
+      document.getElementById("qerewindbutton").style.width = iconSize;
+      document.getElementById("qerewindbutton").style.height = iconSize;
+      document.getElementById("qerewindbutton").style.bottom = iconOffset;
+      document.getElementById("qerewindbutton").style.right = (offset+80)+"px";
+
+      document.getElementById("qetempobutton").style.width = iconSize;
+      document.getElementById("qetempobutton").style.height = iconSize;
+      document.getElementById("qetempobutton").style.bottom = iconOffset;
+      document.getElementById("qetempobutton").style.right = (offset+160)+"px";
+
     }
   }
 
@@ -55310,7 +55486,12 @@ function DoStartup() {
         PDFExportDialog();
       };
   } else {
+
+    // Set the Quick Editor play control event handlers
     document.getElementById("playbuttonicon").onclick = QE_PlayButton_Handler;
+    document.getElementById("qerewindbutton").onclick = QE_RewindButton_Handler;
+    document.getElementById("qetempobutton").onclick = QE_TempoButton_Handler;
+   
   }
 
   gStaffSpacing = STAFFSPACEOFFSET + STAFFSPACEDEFAULT;
@@ -55381,9 +55562,12 @@ function DoStartup() {
 
       // Add the PDF button
       ShowPDFButton();
+
     } else {
 
       ShowPlayButton();
+
+      ShowQEFSPlayerButtons();
 
     }
 
@@ -55412,6 +55596,9 @@ function DoStartup() {
 
   // Optimize layout of top buttons
   SetTopButtonMargins();
+
+  // Hide the jump button
+  HideJumpButton();
 
   // Force recalculation of the notation top position on ABC text area resize
 

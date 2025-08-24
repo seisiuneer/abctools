@@ -1949,6 +1949,28 @@ z-index:101;
 display:none;
 }
 
+.qerewindbutton{
+position:fixed;
+width:48px;
+height:48px;
+right:112px;
+bottom:16px;
+padding:4px;
+z-index:101;
+display:none;
+}
+
+.qetempobutton{
+position:fixed;
+width:48px;
+height:48px;
+right:200px;
+bottom:16px;
+padding:4px;
+z-index:101;
+display:none;
+}
+
 .pdfbuttonicon{
 position:fixed;
 width:48px;
@@ -2142,6 +2164,20 @@ left:-5000px;
 
 @media (hover: hover) {
 	.jumpbutton:hover{
+	background: palegreen;
+	opacity: 1.0 !important;
+	}
+}
+
+@media (hover: hover) {
+	.qerewindbutton:hover{
+	background: palegreen;
+	opacity: 1.0 !important;
+	}
+}
+
+@media (hover: hover) {
+	.qetempobutton:hover{
 	background: palegreen;
 	opacity: 1.0 !important;
 	}
@@ -6481,6 +6517,24 @@ padding-right: 30px; /* space for badge */
 	}
 
 	.jumpbutton:hover {
+	    transform: matrix(1.05, 0, 0, 1.05, 0, 0); 
+	}
+
+	.qerewindbutton
+	{
+	  transition: transform .1s ease-in-out 0s; 
+	}
+
+	.qerewindbutton:hover {
+	    transform: matrix(1.05, 0, 0, 1.05, 0, 0); 
+	}
+
+	.qetempobutton
+	{
+	  transition: transform .1s ease-in-out 0s; 
+	}
+
+	.qetempobutton:hover {
 	    transform: matrix(1.05, 0, 0, 1.05, 0, 0); 
 	}
 
