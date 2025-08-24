@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "2716_082325_1800";
+var gVersionNumber = "2717_082325_2000";
 
 var gMIDIInitStillWaiting = false;
 
@@ -41596,9 +41596,15 @@ function SetPlayerTempo(e) {
     cssClass: "configure_staffwidth_form_text"
   }, ];
 
+  var theTop = 250;
+
+  if (isMobileBrowser()){
+    theTop = 125;
+  }
+
   const modal = DayPilot.Modal.form(form, theData, {
     theme: "modal_flat",
-    top: 125,
+    top: theTop,
     width: 400,
     scrollWithPage: (AllowDialogsToScroll()),
     autoFocus: true
