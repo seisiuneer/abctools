@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "2719_082425_1400";
+var gVersionNumber = "2720_082525_0800";
 
 var gMIDIInitStillWaiting = false;
 
@@ -24566,6 +24566,7 @@ function ShowHelpButton() {
 // Handle the Quick Editor play button
 //
 function QE_PlayButton_Handler() {
+
   // Click the play/pause button
   const button = document.querySelector('button.abcjs-midi-start');
   if (button){
@@ -24576,8 +24577,20 @@ function QE_PlayButton_Handler() {
 //
 // Handle the Quick Editor rewind button
 //
-function QE_RewindButton_Handler() {
+function QE_RewindButton_Handler(e) {
   // Click the rewind button
+
+  // Shift key toggles looping
+  if (e.shiftKey){
+
+    const button = document.querySelector('button.abcjs-midi-loop');
+    if (button){
+      button.click();
+    }
+    return;
+
+  }
+
   const button = document.querySelector('button.abcjs-midi-reset');
   if (button){
     button.click();
@@ -24587,7 +24600,35 @@ function QE_RewindButton_Handler() {
 //
 // Handle the Quick Editor tempo button
 //
-function QE_TempoButton_Handler() {
+function QE_TempoButton_Handler(e) {
+
+  function setQETempo(val){
+
+    var elem = document.getElementsByClassName("abcjs-midi-tempo");
+
+    if (elem && (elem.length > 0)) {
+
+      if (gSynthControl){
+        
+        gSynthControl.pause();
+
+        gSynthControl.forceWarp(val);
+
+        gLastWarp = val;
+
+        if (gLocalStorageAvailable) {
+          localStorage.LastWarp = gLastWarp;
+        }
+      }
+    }
+  }
+
+  // Shift-alt key resets tempo
+  if (e.shiftKey){
+    setQETempo(100);
+    return;
+  }
+
   // Make sure there is a tempo element showing
   var elem = document.getElementsByClassName("abcjs-midi-tempo");
   if (elem && (elem.length > 0)) {
@@ -55686,8 +55727,13 @@ function DoStartup() {
   if (!gIsQuickEditor) {
 
     document.getElementById("playbuttonicon").onclick =
-      function() {
-        PlayABC(null);
+      function(e) {
+        if (e.shiftKey){
+          TuneTrainer(false);
+        }
+        else{
+          PlayABC(null);
+        }
       };
 
     // Hook up the PDF button
