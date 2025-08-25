@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "2720_082525_0800";
+var gVersionNumber = "2721_082525_1400";
 
 var gMIDIInitStillWaiting = false;
 
@@ -2953,30 +2953,42 @@ function DoSortTunesByMeter() {
 
     const scrollY = window.scrollY || document.documentElement.scrollTop;
 
-    // Redraw
-    RenderAsync(true, null, function() {
+    var thePrompt = "Tunes sorted by Meter!";
 
-      if (AllowDialogsToScroll()) {
-        window.scrollTo(0, scrollY);
-      }
+    // Center the string in the prompt
+    thePrompt = makeCenteredPromptString(thePrompt);
 
-      // Make sure the More Tools dialog visible
-      ensureMoreToolsVisible();
+    DayPilot.Modal.alert(thePrompt, {
+      theme: "modal_flat",
+      top: 300,
+      scrollWithPage: (AllowDialogsToScroll())
+    }).then(function(){
 
-      var elem = document.getElementById("sortbutton");
-      if (elem) {
-        elem.value = "   Sorted!   ";
-      }
+      // Redraw
+      RenderAsync(true, null, function() {
 
-      setTimeout(function() {
+        if (AllowDialogsToScroll()) {
+          window.scrollTo(0, scrollY);
+        }
+
+        // Make sure the More Tools dialog visible
+        ensureMoreToolsVisible();
 
         var elem = document.getElementById("sortbutton");
         if (elem) {
-          elem.value = "Sort by Tag";
+          elem.value = "   Sorted!   ";
         }
 
-      }, 500);
+        setTimeout(function() {
 
+          var elem = document.getElementById("sortbutton");
+          if (elem) {
+            elem.value = "Sort by Tag";
+          }
+
+        }, 500);
+
+      });
     });
 
   }, 250);
@@ -3011,30 +3023,42 @@ function DoSortTunesByKey() {
 
     const scrollY = window.scrollY || document.documentElement.scrollTop;
 
-    // Redraw
-    RenderAsync(true, null, function() {
+    var thePrompt = "Tunes sorted by Key!";
 
-      if (AllowDialogsToScroll()) {
-        window.scrollTo(0, scrollY);
-      }
+    // Center the string in the prompt
+    thePrompt = makeCenteredPromptString(thePrompt);
 
-      // Make sure the More Tools dialog visible
-      ensureMoreToolsVisible();
+    DayPilot.Modal.alert(thePrompt, {
+      theme: "modal_flat",
+      top: 300,
+      scrollWithPage: (AllowDialogsToScroll())
+    }).then(function(){
 
-      var elem = document.getElementById("sortbutton");
-      if (elem) {
-        elem.value = "   Sorted!   ";
-      }
+      // Redraw
+      RenderAsync(true, null, function() {
 
-      setTimeout(function() {
+        if (AllowDialogsToScroll()) {
+          window.scrollTo(0, scrollY);
+        }
+
+        // Make sure the More Tools dialog visible
+        ensureMoreToolsVisible();
 
         var elem = document.getElementById("sortbutton");
         if (elem) {
-          elem.value = "Sort by Tag";
+          elem.value = "   Sorted!   ";
         }
 
-      }, 500);
+        setTimeout(function() {
 
+          var elem = document.getElementById("sortbutton");
+          if (elem) {
+            elem.value = "Sort by Tag";
+          }
+
+        }, 500);
+
+      });
     });
 
   }, 250);
@@ -3189,30 +3213,42 @@ function DoSortTunesByName() {
 
     const scrollY = window.scrollY || document.documentElement.scrollTop;
 
-    // Redraw
-    RenderAsync(true, null, function() {
+    var thePrompt = "Tunes sorted by Title!";
 
-      if (AllowDialogsToScroll()) {
-        window.scrollTo(0, scrollY);
-      }
+    // Center the string in the prompt
+    thePrompt = makeCenteredPromptString(thePrompt);
 
-      // Make sure the More Tools dialog visible
-      ensureMoreToolsVisible();
+    DayPilot.Modal.alert(thePrompt, {
+      theme: "modal_flat",
+      top: 300,
+      scrollWithPage: (AllowDialogsToScroll())
+    }).then(function(){
 
-      var elem = document.getElementById("sortbutton");
-      if (elem) {
-        elem.value = "   Sorted!   ";
-      }
+      // Redraw
+      RenderAsync(true, null, function() {
 
-      setTimeout(function() {
+        if (AllowDialogsToScroll()) {
+          window.scrollTo(0, scrollY);
+        }
+
+        // Make sure the More Tools dialog visible
+        ensureMoreToolsVisible();
 
         var elem = document.getElementById("sortbutton");
         if (elem) {
-          elem.value = "Sort by Tag";
+          elem.value = "   Sorted!   ";
         }
 
-      }, 500);
+        setTimeout(function() {
 
+          var elem = document.getElementById("sortbutton");
+          if (elem) {
+            elem.value = "Sort by Tag";
+          }
+
+        }, 500);
+
+      });
     });
 
   }, 250);
@@ -3246,30 +3282,42 @@ function DoSortTunesByRhythm() {
 
     const scrollY = window.scrollY || document.documentElement.scrollTop;
 
-    // Redraw
-    RenderAsync(true, null, function() {
+    var thePrompt = "Tunes sorted by Rhythm!";
 
-      if (AllowDialogsToScroll()) {
-        window.scrollTo(0, scrollY);
-      }
+    // Center the string in the prompt
+    thePrompt = makeCenteredPromptString(thePrompt);
 
-      // Make sure the More Tools dialog visible
-      ensureMoreToolsVisible();
+    DayPilot.Modal.alert(thePrompt, {
+      theme: "modal_flat",
+      top: 300,
+      scrollWithPage: (AllowDialogsToScroll())
+    }).then(function(){
 
-      var elem = document.getElementById("sortbutton");
-      if (elem) {
-        elem.value = "   Sorted!   ";
-      }
+      // Redraw
+      RenderAsync(true, null, function() {
 
-      setTimeout(function() {
+        if (AllowDialogsToScroll()) {
+          window.scrollTo(0, scrollY);
+        }
+
+        // Make sure the More Tools dialog visible
+        ensureMoreToolsVisible();
 
         var elem = document.getElementById("sortbutton");
         if (elem) {
-          elem.value = "Sort by Tag";
+          elem.value = "   Sorted!   ";
         }
 
-      }, 500);
+        setTimeout(function() {
 
+          var elem = document.getElementById("sortbutton");
+          if (elem) {
+            elem.value = "Sort by Tag";
+          }
+
+        }, 500);
+
+      });
     });
 
   }, 250);
@@ -3303,30 +3351,42 @@ function DoSortTunesByCTag() {
 
     const scrollY = window.scrollY || document.documentElement.scrollTop;
 
-    // Redraw
-    RenderAsync(true, null, function() {
+    var thePrompt = "Tunes sorted by Composer!";
 
-      if (AllowDialogsToScroll()) {
-        window.scrollTo(0, scrollY);
-      }
+    // Center the string in the prompt
+    thePrompt = makeCenteredPromptString(thePrompt);
 
-      // Make sure the More Tools dialog visible
-      ensureMoreToolsVisible();
+    DayPilot.Modal.alert(thePrompt, {
+      theme: "modal_flat",
+      top: 300,
+      scrollWithPage: (AllowDialogsToScroll())
+    }).then(function(){
 
-      var elem = document.getElementById("sortbutton");
-      if (elem) {
-        elem.value = "   Sorted!   ";
-      }
+      // Redraw
+      RenderAsync(true, null, function() {
 
-      setTimeout(function() {
+        if (AllowDialogsToScroll()) {
+          window.scrollTo(0, scrollY);
+        }
+
+        // Make sure the More Tools dialog visible
+        ensureMoreToolsVisible();
 
         var elem = document.getElementById("sortbutton");
         if (elem) {
-          elem.value = "Sort by Tag";
+          elem.value = "   Sorted!   ";
         }
 
-      }, 500);
+        setTimeout(function() {
 
+          var elem = document.getElementById("sortbutton");
+          if (elem) {
+            elem.value = "Sort by Tag";
+          }
+
+        }, 500);
+
+      });
     });
 
   }, 250);
@@ -3360,30 +3420,42 @@ function DoSortTunesByNTag() {
 
     const scrollY = window.scrollY || document.documentElement.scrollTop;
 
-    // Redraw
-    RenderAsync(true, null, function() {
+    var thePrompt = "Tunes sorted by Notes!";
 
-      if (AllowDialogsToScroll()) {
-        window.scrollTo(0, scrollY);
-      }
+    // Center the string in the prompt
+    thePrompt = makeCenteredPromptString(thePrompt);
 
-      // Make sure the More Tools dialog visible
-      ensureMoreToolsVisible();
+    DayPilot.Modal.alert(thePrompt, {
+      theme: "modal_flat",
+      top: 300,
+      scrollWithPage: (AllowDialogsToScroll())
+    }).then(function(){
 
-      var elem = document.getElementById("sortbutton");
-      if (elem) {
-        elem.value = "   Sorted!   ";
-      }
+      // Redraw
+      RenderAsync(true, null, function() {
 
-      setTimeout(function() {
+        if (AllowDialogsToScroll()) {
+          window.scrollTo(0, scrollY);
+        }
+
+        // Make sure the More Tools dialog visible
+        ensureMoreToolsVisible();
 
         var elem = document.getElementById("sortbutton");
         if (elem) {
-          elem.value = "Sort by Tag";
+          elem.value = "   Sorted!   ";
         }
 
-      }, 500);
+        setTimeout(function() {
 
+          var elem = document.getElementById("sortbutton");
+          if (elem) {
+            elem.value = "Sort by Tag";
+          }
+
+        }, 500);
+
+      });
     });
 
   }, 250);
@@ -3417,29 +3489,42 @@ function DoSortTunesByOTag() {
 
     const scrollY = window.scrollY || document.documentElement.scrollTop;
 
-    // Redraw
-    RenderAsync(true, null, function() {
+    var thePrompt = "Tunes sorted by Origin!";
 
-      if (AllowDialogsToScroll()) {
-        window.scrollTo(0, scrollY);
-      }
+    // Center the string in the prompt
+    thePrompt = makeCenteredPromptString(thePrompt);
 
-      // Make sure the More Tools dialog visible
-      ensureMoreToolsVisible();
+    DayPilot.Modal.alert(thePrompt, {
+      theme: "modal_flat",
+      top: 300,
+      scrollWithPage: (AllowDialogsToScroll())
+    }).then(function(){
 
-      var elem = document.getElementById("sortbutton");
-      if (elem) {
-        elem.value = "   Sorted!   ";
-      }
+      // Redraw
+      RenderAsync(true, null, function() {
 
-      setTimeout(function() {
+        if (AllowDialogsToScroll()) {
+          window.scrollTo(0, scrollY);
+        }
+
+        // Make sure the More Tools dialog visible
+        ensureMoreToolsVisible();
 
         var elem = document.getElementById("sortbutton");
         if (elem) {
-          elem.value = "Sort by Tag";
+          elem.value = "   Sorted!   ";
         }
 
-      }, 500);
+        setTimeout(function() {
+
+          var elem = document.getElementById("sortbutton");
+          if (elem) {
+            elem.value = "Sort by Tag";
+          }
+
+        }, 500);
+
+      });
 
     });
 
@@ -3474,30 +3559,42 @@ function DoSortTunesByID() {
 
     const scrollY = window.scrollY || document.documentElement.scrollTop;
 
-    // Redraw
-    RenderAsync(true, null, function() {
+    var thePrompt = "Tunes sorted by ID!";
 
-      if (AllowDialogsToScroll()) {
-        window.scrollTo(0, scrollY);
-      }
+    // Center the string in the prompt
+    thePrompt = makeCenteredPromptString(thePrompt);
 
-      // Make sure the More Tools dialog visible
-      ensureMoreToolsVisible();
+    DayPilot.Modal.alert(thePrompt, {
+      theme: "modal_flat",
+      top: 300,
+      scrollWithPage: (AllowDialogsToScroll())
+    }).then(function(){
 
-      var elem = document.getElementById("sortbutton");
-      if (elem) {
-        elem.value = "   Sorted!   ";
-      }
+      // Redraw
+      RenderAsync(true, null, function() {
 
-      setTimeout(function() {
+        if (AllowDialogsToScroll()) {
+          window.scrollTo(0, scrollY);
+        }
+
+        // Make sure the More Tools dialog visible
+        ensureMoreToolsVisible();
 
         var elem = document.getElementById("sortbutton");
         if (elem) {
-          elem.value = "Sort by Tag";
+          elem.value = "   Sorted!   ";
         }
 
-      }, 500);
+        setTimeout(function() {
 
+          var elem = document.getElementById("sortbutton");
+          if (elem) {
+            elem.value = "Sort by Tag";
+          }
+
+        }, 500);
+
+      });
     });
 
   }, 250);
@@ -3549,6 +3646,17 @@ function RenumberXTags() {
 
   // Focus after operation
   FocusAfterOperation();
+
+  var thePrompt = "X: tags renumbered!";
+
+  // Center the string in the prompt
+  thePrompt = makeCenteredPromptString(thePrompt);
+
+  DayPilot.Modal.alert(thePrompt, {
+    theme: "modal_flat",
+    top: 300,
+    scrollWithPage: (AllowDialogsToScroll())
+  });
 
 }
 
@@ -13387,6 +13495,11 @@ function StripTabOne(theNotes) {
         // Strip push and draw annotations as well
         line = line.replaceAll("!push!", "");
         line = line.replaceAll("!draw!", "");
+        line = line.replaceAll("!0!", "");
+        line = line.replaceAll("!1!", "");
+        line = line.replaceAll("!2!", "");
+        line = line.replaceAll("!3!", "");
+        line = line.replaceAll("!4!", "");
         return line.replace(searchRegExp, match_callback);
       }
     })
@@ -14645,6 +14758,7 @@ function ToggleAnnotations(bDoStrip) {
     StripAnnotations();
 
     RenderAsync(true, null, function() {
+
       // Make sure the More Tools dialog visible
       ensureMoreToolsVisible();
     });
@@ -14680,6 +14794,7 @@ function ToggleTextAnnotations(bDoStrip) {
     StripTextAnnotations();
 
     RenderAsync(true, null, function() {
+
       // Make sure the More Tools dialog visible
       ensureMoreToolsVisible();
     });
@@ -14714,6 +14829,7 @@ function ToggleChords(bDoStrip) {
     StripChords();
 
     RenderAsync(true, null, function() {
+
       // Make sure the More Tools dialog visible
       ensureMoreToolsVisible();
     });
@@ -17259,6 +17375,9 @@ function ChangeTuneOrderMobile() {
           // Stuff in the new result
           setABCEditorText(result);
 
+          // Set dirty
+          gIsDirty = true;
+
           RenderAsync(true, null, function() {
 
             gTheABC.selectionStart = 0;
@@ -17271,10 +17390,6 @@ function ChangeTuneOrderMobile() {
             MakeTuneVisible(true);
 
           });
-
-          // Set dirty
-          gIsDirty = true;
-
         }
 
       });
@@ -17414,6 +17529,9 @@ function ChangeTuneOrder() {
           // Stuff in the new result
           setABCEditorText(result);
 
+          // Set dirty
+          gIsDirty = true;
+
           RenderAsync(true, null, function() {
 
             gTheABC.selectionStart = 0;
@@ -17426,10 +17544,6 @@ function ChangeTuneOrder() {
             MakeTuneVisible(true);
 
           });
-
-          // Set dirty
-          gIsDirty = true;
-
 
         }
       });
@@ -17660,6 +17774,9 @@ function CullTunes() {
             // Stuff in the new result
             setABCEditorText(result);
 
+            // Set dirty
+            gIsDirty = true;
+
             RenderAsync(true, null, function() {
 
               gTheABC.selectionStart = 0;
@@ -17673,8 +17790,6 @@ function CullTunes() {
 
             });
 
-            // Set dirty
-            gIsDirty = true;
           }
         })
       }
@@ -18167,6 +18282,9 @@ function BuildTuneSetAppend() {
 
         const scrollY = window.scrollY || document.documentElement.scrollTop;
 
+        // Set dirty
+        gIsDirty = true;
+
         RenderAsync(true, null, function() {
 
           if (AllowDialogsToScroll()) {
@@ -18198,9 +18316,6 @@ function BuildTuneSetAppend() {
           }
 
         });
-
-        // Set dirty
-        gIsDirty = true;
 
       }
     })
@@ -21195,18 +21310,30 @@ function InjectRepeatsAndClickTrackAll() {
       // Set dirty
       gIsDirty = true;
 
-      // Force a redraw
-      RenderAsync(true, null, function() {
+      var thePrompt = "Repeats injected!";
 
-        ensureMoreToolsVisible();
+      // Center the string in the prompt
+      thePrompt = makeCenteredPromptString(thePrompt);
 
-        // Set the select point
-        gTheABC.selectionStart = 0;
-        gTheABC.selectionEnd = 0;
+      DayPilot.Modal.alert(thePrompt, {
+        theme: "modal_flat",
+        top: 300,
+        scrollWithPage: (AllowDialogsToScroll())
+      }).then(function(){
 
-        // Focus after operation
-        FocusAfterOperation();
+        // Force a redraw
+        RenderAsync(true, null, function() {
 
+          ensureMoreToolsVisible();
+
+          // Set the select point
+          gTheABC.selectionStart = 0;
+          gTheABC.selectionEnd = 0;
+
+          // Focus after operation
+          FocusAfterOperation();
+
+        });
       });
     }
   });
@@ -21462,17 +21589,30 @@ function InjectSectionHeader() {
       // Set dirty
       gIsDirty = true;
 
-      // Force a redraw
-      RenderAsync(true, null, function() {
+      var thePrompt = "Section header injected!";
 
-        ensureMoreToolsVisible();
+      // Center the string in the prompt
+      thePrompt = makeCenteredPromptString(thePrompt);
 
-        // Set the select point
-        gTheABC.selectionStart = theSelectionStart;
-        gTheABC.selectionEnd = theSelectionStart;
+      DayPilot.Modal.alert(thePrompt, {
+        theme: "modal_flat",
+        top: 300,
+        scrollWithPage: (AllowDialogsToScroll())
+      }).then(function(){
 
-        // Focus after operation
-        FocusAfterOperation();
+        // Force a redraw
+        RenderAsync(true, null, function() {
+
+          ensureMoreToolsVisible();
+
+          // Set the select point
+          gTheABC.selectionStart = theSelectionStart;
+          gTheABC.selectionEnd = theSelectionStart;
+
+          // Focus after operation
+          FocusAfterOperation();
+
+        });
 
       });
 
@@ -21735,19 +21875,32 @@ function InjectHeaderString() {
           // Set dirty
           gIsDirty = true;
 
-          // Force a redraw
-          RenderAsync(true, null, function() {
+          var thePrompt = "ABC header text injected!";
 
-            ensureMoreToolsVisible();
+          // Center the string in the prompt
+          thePrompt = makeCenteredPromptString(thePrompt);
 
-            // Set the select point
-            gTheABC.selectionStart = 0;
-            gTheABC.selectionEnd = 0;
+          DayPilot.Modal.alert(thePrompt, {
+            theme: "modal_flat",
+            top: 300,
+            scrollWithPage: (AllowDialogsToScroll())
+          }).then(function(){
 
-            // Focus after operation
-            FocusAfterOperation();
+            // Force a redraw
+            RenderAsync(true, null, function() {
 
+              ensureMoreToolsVisible();
+
+              // Set the select point
+              gTheABC.selectionStart = 0;
+              gTheABC.selectionEnd = 0;
+
+              // Focus after operation
+              FocusAfterOperation();
+
+            });
           });
+
         } else {
 
           // Try to find the current tune
@@ -21785,20 +21938,31 @@ function InjectHeaderString() {
           // Set dirty
           gIsDirty = true;
 
-          // Force a redraw of the tune
-          RenderAsync(false, theSelectedTuneIndex, function() {
+          var thePrompt = "ABC header text injected!";
 
-            ensureMoreToolsVisible();
+          // Center the string in the prompt
+          thePrompt = makeCenteredPromptString(thePrompt);
 
-            // Set the select point
-            gTheABC.selectionStart = theSelectionStart;
-            gTheABC.selectionEnd = theSelectionStart;
+          DayPilot.Modal.alert(thePrompt, {
+            theme: "modal_flat",
+            top: 300,
+            scrollWithPage: (AllowDialogsToScroll())
+          }).then(function(){
 
-            // Focus after operation
-            FocusAfterOperation();
+            // Force a redraw of the tune
+            RenderAsync(false, theSelectedTuneIndex, function() {
 
+              ensureMoreToolsVisible();
+
+              // Set the select point
+              gTheABC.selectionStart = theSelectionStart;
+              gTheABC.selectionEnd = theSelectionStart;
+
+              // Focus after operation
+              FocusAfterOperation();
+
+            });
           });
-
 
         }
       }
@@ -22170,19 +22334,32 @@ function InjectCustomStringedInstrumentTab() {
         // Set dirty
         gIsDirty = true;
 
-        // Force a redraw
-        RenderAsync(true, null, function() {
+        var thePrompt = "Custom stringed instrument tablature injected!";
 
-          ensureMoreToolsVisible();
+        // Center the string in the prompt
+        thePrompt = makeCenteredPromptString(thePrompt);
 
-          // Set the select point
-          gTheABC.selectionStart = 0;
-          gTheABC.selectionEnd = 0;
+        DayPilot.Modal.alert(thePrompt, {
+          theme: "modal_flat",
+          top: 300,
+          scrollWithPage: (AllowDialogsToScroll())
+        }).then(function(){
 
-          // Focus after operation
-          FocusAfterOperation();
+          // Force a redraw
+          RenderAsync(true, null, function() {
 
+            ensureMoreToolsVisible();
+
+            // Set the select point
+            gTheABC.selectionStart = 0;
+            gTheABC.selectionEnd = 0;
+
+            // Focus after operation
+            FocusAfterOperation();
+
+          });
         });
+
       } else {
         // Try to find the current tune
         var theSelectedABC = findSelectedTune();
@@ -22225,18 +22402,30 @@ function InjectCustomStringedInstrumentTab() {
         // Set dirty
         gIsDirty = true;
 
-        // Force a redraw of the tune
-        RenderAsync(false, theSelectedTuneIndex, function() {
+        var thePrompt = "Custom stringed instrument tablature injected!";
 
-          ensureMoreToolsVisible();
+        // Center the string in the prompt
+        thePrompt = makeCenteredPromptString(thePrompt);
 
-          // Set the select point
-          gTheABC.selectionStart = theSelectionStart;
-          gTheABC.selectionEnd = theSelectionStart;
+        DayPilot.Modal.alert(thePrompt, {
+          theme: "modal_flat",
+          top: 300,
+          scrollWithPage: (AllowDialogsToScroll())
+        }).then(function(){
 
-          // Focus after operation
-          FocusAfterOperation();
+          // Force a redraw of the tune
+          RenderAsync(false, theSelectedTuneIndex, function() {
 
+            ensureMoreToolsVisible();
+
+            // Set the select point
+            gTheABC.selectionStart = theSelectionStart;
+            gTheABC.selectionEnd = theSelectionStart;
+
+            // Focus after operation
+            FocusAfterOperation();
+
+          });
         });
 
       }
@@ -22514,18 +22703,30 @@ function InjectFontSettings() {
           // Set dirty
           gIsDirty = true;
 
-          // Force a redraw
-          RenderAsync(true, null, function() {
+          var thePrompt = "Fonts injected!";
 
-            ensureMoreToolsVisible();
+          // Center the string in the prompt
+          thePrompt = makeCenteredPromptString(thePrompt);
 
-            // Set the select point
-            gTheABC.selectionStart = 0;
-            gTheABC.selectionEnd = 0;
+          DayPilot.Modal.alert(thePrompt, {
+            theme: "modal_flat",
+            top: 300,
+            scrollWithPage: (AllowDialogsToScroll())
+          }).then(function(){
 
-            // Focus after operation
-            FocusAfterOperation();
+            // Force a redraw
+            RenderAsync(true, null, function() {
 
+              ensureMoreToolsVisible();
+
+              // Set the select point
+              gTheABC.selectionStart = 0;
+              gTheABC.selectionEnd = 0;
+
+              // Focus after operation
+              FocusAfterOperation();
+
+            });
           });
         } else {
 
@@ -22558,21 +22759,31 @@ function InjectFontSettings() {
           // Set dirty
           gIsDirty = true;
 
-          // Force a redraw of the tune
-          RenderAsync(false, theSelectedTuneIndex, function() {
+          var thePrompt = "Fonts injected!";
 
-            ensureMoreToolsVisible();
+          // Center the string in the prompt
+          thePrompt = makeCenteredPromptString(thePrompt);
 
-            // Set the select point
-            gTheABC.selectionStart = theSelectionStart;
-            gTheABC.selectionEnd = theSelectionStart;
+          DayPilot.Modal.alert(thePrompt, {
+            theme: "modal_flat",
+            top: 300,
+            scrollWithPage: (AllowDialogsToScroll())
+          }).then(function(){
 
-            // Focus after operation
-            FocusAfterOperation();
+            // Force a redraw of the tune
+            RenderAsync(false, theSelectedTuneIndex, function() {
 
+              ensureMoreToolsVisible();
+
+              // Set the select point
+              gTheABC.selectionStart = theSelectionStart;
+              gTheABC.selectionEnd = theSelectionStart;
+
+              // Focus after operation
+              FocusAfterOperation();
+
+            });
           });
-
-
         }
       }
     }
@@ -23708,12 +23919,39 @@ function InjectAllMIDIParams() {
       // Set dirty
       gIsDirty = true;
 
-      // Have to redraw if in raw mode
-      if (gRawMode) {
+      var thePrompt = "MIDI programs and volumes injected!";
 
-        RenderAsync(true, null, function() {
+      // Center the string in the prompt
+      thePrompt = makeCenteredPromptString(thePrompt);
 
-          ensureMoreToolsVisible();
+      DayPilot.Modal.alert(thePrompt, {
+        theme: "modal_flat",
+        top: 300,
+        scrollWithPage: (AllowDialogsToScroll())
+      }).then(function(){
+
+        // Have to redraw if in raw mode
+        if (gRawMode) {
+
+          RenderAsync(true, null, function() {
+
+            ensureMoreToolsVisible();
+
+            var theOffset = findTuneOffsetByIndex(theCurrentTune);
+
+            // Scroll the tune ABC into view
+            ScrollABCTextIntoView(gTheABC, theOffset, theOffset, 10);
+
+            // Set the select point
+            gTheABC.selectionStart = theOffset;
+            gTheABC.selectionEnd = theOffset;
+
+            // Focus after operation
+            FocusAfterOperation();
+
+          });
+
+        } else {
 
           var theOffset = findTuneOffsetByIndex(theCurrentTune);
 
@@ -23727,23 +23965,9 @@ function InjectAllMIDIParams() {
           // Focus after operation
           FocusAfterOperation();
 
-        });
+        }
 
-      } else {
-
-        var theOffset = findTuneOffsetByIndex(theCurrentTune);
-
-        // Scroll the tune ABC into view
-        ScrollABCTextIntoView(gTheABC, theOffset, theOffset, 10);
-
-        // Set the select point
-        gTheABC.selectionStart = theOffset;
-        gTheABC.selectionEnd = theOffset;
-
-        // Focus after operation
-        FocusAfterOperation();
-
-      }
+      });
 
     }
   });
@@ -23995,17 +24219,29 @@ function InjectMetronome() {
         // Set dirty
         gIsDirty = true;
 
-        RenderAsync(true, null, function() {
+        var thePrompt = "Metronome injected!";
 
-          ensureMoreToolsVisible();
+        // Center the string in the prompt
+        thePrompt = makeCenteredPromptString(thePrompt);
 
-          // Set the select point
-          gTheABC.selectionStart = 0;
-          gTheABC.selectionEnd = 0;
+        DayPilot.Modal.alert(thePrompt, {
+          theme: "modal_flat",
+          top: 300,
+          scrollWithPage: (AllowDialogsToScroll())
+        }).then(function(){
 
-          // Focus after operation
-          FocusAfterOperation();
+          RenderAsync(true, null, function() {
 
+            ensureMoreToolsVisible();
+
+            // Set the select point
+            gTheABC.selectionStart = 0;
+            gTheABC.selectionEnd = 0;
+
+            // Focus after operation
+            FocusAfterOperation();
+
+          });
         });
 
       } else {
@@ -24036,17 +24272,30 @@ function InjectMetronome() {
         // Set dirty
         gIsDirty = true;
 
-        // Force a redraw of the tune
-        RenderAsync(false, theSelectedTuneIndex, function() {
+        var thePrompt = "Metronome injected!";
 
-          ensureMoreToolsVisible();
+        // Center the string in the prompt
+        thePrompt = makeCenteredPromptString(thePrompt);
 
-          // Set the select point
-          gTheABC.selectionStart = theSelectionStart;
-          gTheABC.selectionEnd = theSelectionStart;
+        DayPilot.Modal.alert(thePrompt, {
+          theme: "modal_flat",
+          top: 300,
+          scrollWithPage: (AllowDialogsToScroll())
+        }).then(function(){
 
-          // Focus after operation
-          FocusAfterOperation();
+          // Force a redraw of the tune
+          RenderAsync(false, theSelectedTuneIndex, function() {
+
+            ensureMoreToolsVisible();
+
+            // Set the select point
+            gTheABC.selectionStart = theSelectionStart;
+            gTheABC.selectionEnd = theSelectionStart;
+
+            // Focus after operation
+            FocusAfterOperation();
+
+          });
 
         });
 
@@ -25957,15 +26206,28 @@ function DoCeoltasTransform(doInverse) {
   // Set dirty
   gIsDirty = true;
 
-  RenderAsync(true, null, function() {
-    ensureDialogVisible("#ceoltasanchor");
+  var thePrompt = "Comhaltas ABC transform complete!";
+
+  // Center the string in the prompt
+  thePrompt = makeCenteredPromptString(thePrompt);
+
+  DayPilot.Modal.alert(thePrompt, {
+    theme: "modal_flat",
+    top: 200,
+    scrollWithPage: (AllowDialogsToScroll())
+  }).then(function(){
+
+    RenderAsync(true, null, function() {
+      ensureDialogVisible("#ceoltasanchor");
+    });
+
+    // Idle the dialog
+    IdleAdvancedControls(true);
+
+    // Idle the show tab names control
+    IdleAllowShowTabNames();
+
   });
-
-  // Idle the dialog
-  IdleAdvancedControls(true);
-
-  // Idle the show tab names control
-  IdleAllowShowTabNames();
 
 }
 
@@ -27422,19 +27684,31 @@ function IncipitsBuilderDialog() {
 
       SaveConfigurationSettings();
 
-      RenderAsync(true, null, function() {
+      var thePrompt = "Incipits built!";
 
-        ensureMoreToolsVisible();
+      // Center the string in the prompt
+      thePrompt = makeCenteredPromptString(thePrompt);
 
-        gTheABC.selectionStart = 0;
-        gTheABC.selectionEnd = 0;
+      DayPilot.Modal.alert(thePrompt, {
+        theme: "modal_flat",
+        top: 300,
+        scrollWithPage: (AllowDialogsToScroll())
+      }).then(function(){
 
-        // And reset the focus
-        gTheABC.focus();
+        RenderAsync(true, null, function() {
 
-        // Scroll to the top
-        MakeTuneVisible(true);
+          ensureMoreToolsVisible();
 
+          gTheABC.selectionStart = 0;
+          gTheABC.selectionEnd = 0;
+
+          // And reset the focus
+          gTheABC.focus();
+
+          // Scroll to the top
+          MakeTuneVisible(true);
+
+        });
       });
 
     }
@@ -27586,29 +27860,41 @@ function AddTuneTitleNumbers() {
     elem.value = "Adding Tune Title Numbers";
   }
 
-  // Redraw
-  RenderAsync(true, null, function() {
+  var thePrompt = "Tune title numbers added!";
 
-    ensureDialogVisible("#tunetitlesanchor");
+  // Center the string in the prompt
+  thePrompt = makeCenteredPromptString(thePrompt);
 
-    var elem = document.getElementById("addtunetitlenumbers");
+  DayPilot.Modal.alert(thePrompt, {
+    theme: "modal_flat",
+    top: 250,
+    scrollWithPage: (AllowDialogsToScroll())
+  }).then(function(){
 
-    if (elem) {
+    // Redraw
+    RenderAsync(true, null, function() {
 
-      // Give some feedback
-      elem.value = "Tune Title Numbers Added";
+      ensureDialogVisible("#tunetitlesanchor");
 
-      setTimeout(function() {
+      var elem = document.getElementById("addtunetitlenumbers");
 
-        var elem = document.getElementById("addtunetitlenumbers");
+      if (elem) {
 
-        if (elem) {
+        // Give some feedback
+        elem.value = "Tune Title Numbers Added";
 
-          elem.value = "Add Numbers to Tune Titles";
-        }
+        setTimeout(function() {
 
-      }, 500);
-    }
+          var elem = document.getElementById("addtunetitlenumbers");
+
+          if (elem) {
+
+            elem.value = "Add Numbers to Tune Titles";
+          }
+
+        }, 500);
+      }
+    });
 
   });
 
@@ -27757,30 +28043,42 @@ function RemoveTuneTitleNumbers(bDoRedraw) {
       elem.value = "Removing Tune Title Numbers";
     }
 
-    // Redraw
-    RenderAsync(true, null, function() {
+    var thePrompt = "Tune title numbers removed!";
 
-      ensureDialogVisible("#tunetitlesanchor");
+    // Center the string in the prompt
+    thePrompt = makeCenteredPromptString(thePrompt);
 
-      var elem = document.getElementById("removetunetitlenumbers");
+    DayPilot.Modal.alert(thePrompt, {
+      theme: "modal_flat",
+      top: 250,
+      scrollWithPage: (AllowDialogsToScroll())
+    }).then(function(){
 
-      if (elem) {
+      // Redraw
+      RenderAsync(true, null, function() {
 
-        // Give some feedback
-        elem.value = "Tune Title Numbers Removed";
+        ensureDialogVisible("#tunetitlesanchor");
 
-        setTimeout(function() {
+        var elem = document.getElementById("removetunetitlenumbers");
 
-          var elem = document.getElementById("removetunetitlenumbers");
+        if (elem) {
 
-          if (elem) {
+          // Give some feedback
+          elem.value = "Tune Title Numbers Removed";
 
-            elem.value = "Remove Added Tune Title Numbers";
-          }
+          setTimeout(function() {
 
-        }, 500);
-      }
+            var elem = document.getElementById("removetunetitlenumbers");
 
+            if (elem) {
+
+              elem.value = "Remove Added Tune Title Numbers";
+            }
+
+          }, 500);
+        }
+
+      });
     });
 
   }
@@ -28560,12 +28858,24 @@ function DoInjectHarmonicaTab() {
       // Set dirty
       gIsDirty = true;
 
-      RenderAsync(true, null, function() {
-        ensureMoreToolsVisible();
-      });
+      var thePrompt = "Diatonic Harmonica tablature injected!";
 
-      // Idle the dialog
-      IdleAdvancedControls(true);
+      // Center the string in the prompt
+      thePrompt = makeCenteredPromptString(thePrompt);
+
+      DayPilot.Modal.alert(thePrompt, {
+        theme: "modal_flat",
+        top: 300,
+        scrollWithPage: (AllowDialogsToScroll())
+      }).then(function(){
+
+        RenderAsync(true, null, function() {
+          ensureMoreToolsVisible();
+        });
+
+        // Idle the dialog
+        IdleAdvancedControls(true);
+      });
 
     }
 
@@ -29286,12 +29596,25 @@ function DoInjectCustomTab() {
       // Set dirty
       gIsDirty = true;
 
-      RenderAsync(true, null, function() {
-        ensureMoreToolsVisible();
-      });
+      var thePrompt = "Custom tablature injected!";
 
-      // Idle the dialog
-      IdleAdvancedControls(true);
+      // Center the string in the prompt
+      thePrompt = makeCenteredPromptString(thePrompt);
+
+      DayPilot.Modal.alert(thePrompt, {
+        theme: "modal_flat",
+        top: 300,
+        scrollWithPage: (AllowDialogsToScroll())
+      }).then(function(){
+
+        RenderAsync(true, null, function() {
+          ensureMoreToolsVisible();
+        });
+
+        // Idle the dialog
+        IdleAdvancedControls(true);
+
+      });
 
     }
 
@@ -29362,17 +29685,28 @@ function DoInjectTablature_BC() {
   // Show the tab after an inject
   gStripTab = false;
 
-  RenderAsync(true, null, function() {
-    ensureDialogVisible("#boxtabanchor");
+  var thePrompt = "B/C Box tablature injected!";
+
+  // Center the string in the prompt
+  thePrompt = makeCenteredPromptString(thePrompt);
+
+  DayPilot.Modal.alert(thePrompt, {
+    theme: "modal_flat",
+    top: 300,
+    scrollWithPage: (AllowDialogsToScroll())
+  }).then(function(){
+
+    RenderAsync(true, null, function() {
+      ensureDialogVisible("#boxtabanchor");
+    });
+
+    // Idle the dialog
+    IdleAdvancedControls(true);
+
+    // Idle the show tab names control
+    IdleAllowShowTabNames();
+
   });
-
-  // Idle the dialog
-  IdleAdvancedControls(true);
-
-  // Idle the show tab names control
-  IdleAllowShowTabNames();
-
-
 }
 
 //
@@ -29413,16 +29747,28 @@ function DoInjectTablature_CsD() {
 
   // Show the tab after an inject
   gStripTab = false;
+  var thePrompt = "C#/D Box tablature injected!";
 
-  RenderAsync(true, null, function() {
-    ensureDialogVisible("#boxtabanchor");
+  // Center the string in the prompt
+  thePrompt = makeCenteredPromptString(thePrompt);
+
+  DayPilot.Modal.alert(thePrompt, {
+    theme: "modal_flat",
+    top: 300,
+    scrollWithPage: (AllowDialogsToScroll())
+  }).then(function(){
+
+    RenderAsync(true, null, function() {
+      ensureDialogVisible("#boxtabanchor");
+    });
+
+    // Idle the dialog
+    IdleAdvancedControls(true);
+
+    // Idle the show tab names control
+    IdleAllowShowTabNames();
+
   });
-
-  // Idle the dialog
-  IdleAdvancedControls(true);
-
-  // Idle the show tab names control
-  IdleAllowShowTabNames();
 
 
 }
@@ -29658,16 +30004,28 @@ function DoInjectTablature_Anglo() {
             // Show the tab after an inject
             gStripTab = false;
 
-            RenderAsync(true, null, function() {
-              hideTheSpinner();
-              ensureMoreToolsVisible();
+            var thePrompt = "Anglo Concertina tablature injected!";
+
+            // Center the string in the prompt
+            thePrompt = makeCenteredPromptString(thePrompt);
+
+            DayPilot.Modal.alert(thePrompt, {
+              theme: "modal_flat",
+              top: 300,
+              scrollWithPage: (AllowDialogsToScroll())
+            }).then(function(){
+
+              RenderAsync(true, null, function() {
+                hideTheSpinner();
+                ensureMoreToolsVisible();
+              });
+
+              // Idle the dialog
+              IdleAdvancedControls(true);
+
+              // Idle the show tab names control
+              IdleAllowShowTabNames();
             });
-
-            // Idle the dialog
-            IdleAdvancedControls(true);
-
-            // Idle the show tab names control
-            IdleAllowShowTabNames();
 
           } else {
 
@@ -29689,16 +30047,29 @@ function DoInjectTablature_Anglo() {
               // Show the tab after an inject
               gStripTab = false;
 
-              RenderAsync(true, null, function() {
-                hideTheSpinner();
-                ensureMoreToolsVisible();
+              var thePrompt = "Anglo Concertina tablature injected!";
+
+              // Center the string in the prompt
+              thePrompt = makeCenteredPromptString(thePrompt);
+
+              DayPilot.Modal.alert(thePrompt, {
+                theme: "modal_flat",
+                top: 300,
+                scrollWithPage: (AllowDialogsToScroll())
+              }).then(function(){
+
+                RenderAsync(true, null, function() {
+                  hideTheSpinner();
+                  ensureMoreToolsVisible();
+                });
+
+                // Idle the dialog
+                IdleAdvancedControls(true);
+
+                // Idle the show tab names control
+                IdleAllowShowTabNames();
+
               });
-
-              // Idle the dialog
-              IdleAdvancedControls(true);
-
-              // Idle the show tab names control
-              IdleAllowShowTabNames();
 
             });
           }
@@ -29783,15 +30154,27 @@ function DoInjectTablature_Bamboo_Flute() {
       // Show the tab after an inject
       gStripTab = false;
 
-      RenderAsync(true, null, function() {
-        ensureMoreToolsVisible();
+      var thePrompt = "Bamboo flute tablature injected!";
+
+      // Center the string in the prompt
+      thePrompt = makeCenteredPromptString(thePrompt);
+
+      DayPilot.Modal.alert(thePrompt, {
+        theme: "modal_flat",
+        top: 300,
+        scrollWithPage: (AllowDialogsToScroll())
+      }).then(function(){
+
+        RenderAsync(true, null, function() {
+          ensureMoreToolsVisible();
+        });
+
+        // Idle the dialog
+        IdleAdvancedControls(true);
+
+        // Idle the show tab names control
+        IdleAllowShowTabNames();
       });
-
-      // Idle the dialog
-      IdleAdvancedControls(true);
-
-      // Idle the show tab names control
-      IdleAllowShowTabNames();
 
     }
 
@@ -29806,19 +30189,25 @@ function DoInjectTablature_Fiddle_Fingerings_Dialog() {
 
   var modal_msg = '<div id="fiddlefingeringsanchor"><p style="text-align:center;margin-bottom:36px;font-size:16pt;font-family:helvetica;margin-left:15px;">Inject Fiddle Fingerings&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#tab_fiddle" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>';
 
-  modal_msg += '<p style="text-align:center;"><input id="fiddlefingeringsdialog" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectTablature_Fiddle_Fingerings(0)" type="button" value="Finger Number Only" title="Injects finger number (0, 1, 2, 3, 4) only.&nbsp;&nbsp;0 is an open string."></p>';
+  modal_msg += '<p style="text-align:left;font-size:14pt;line-height:19pt;font-family:helvetica;margin-top:16px;">This style is the most concise and uses !0!, !1!, !2!, !3!, !4! annotations in the ABC.&nbsp;&nbsp;It is always displayed above the notes:</p>';
 
-  modal_msg += '<p style="text-align:center;"><input id="fiddlefingeringsdialog2" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectTablature_Fiddle_Fingerings(1)" type="button" value="String Name + Finger Number (Inline)" title="Injects string name (G, D, A, E) + finger number (0, 1, 2, 3, 4) together on one line.&nbsp;&nbsp;0 is an open string."></p>';
+  modal_msg += '<p style="text-align:center;"><input id="fiddlefingeringsdialog0" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectTablature_Fiddle_Fingerings(0)" type="button" value="Finger Number Only (Using !0!, !1!, !2!, !3!, !4! Annotations)" title="Injects finger number (!0!, !1!, !2!, !3!, !4!) only.&nbsp;&nbsp;!0! is an open string."></p>';
 
-  modal_msg += '<p style="text-align:center;"><input id="fiddlefingeringsdialog3" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectTablature_Fiddle_Fingerings(2)" type="button" value="String Name + Finger Number (Name over Number)" title="Injects string name (G, D, A, E) + finger number (0, 1, 2, 3, 4) stacked vertically Name over Number.&nbsp;&nbsp;0 is an open string."></p>';
+  modal_msg += '<p style="text-align:left;font-size:14pt;line-height:19pt;font-family:helvetica;margin-top:24px;">These styles use ABC text annotations.&nbsp;&nbsp;They can be displayed above or below the notes depending on the values in the Tablature Injection Settings dialog:</p>';
 
-  modal_msg += '<p style="text-align:center;"><input id="fiddlefingeringsdialog4" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectTablature_Fiddle_Fingerings(3)" type="button" value="String Name + Finger Number (Number over Name)" title="Injects string name (G, D, A, E) + finger number (0, 1, 2, 3, 4) stacked vertically Number over Name.&nbsp;&nbsp;0 is an open string."></p>';
+  modal_msg += '<p style="text-align:center;"><input id="fiddlefingeringsdialog1" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectTablature_Fiddle_Fingerings(1)" type="button" value="Finger Number Only (Using Text Annotations)" title="Injects finger number (0, 1, 2, 3, 4) only.&nbsp;&nbsp;0 is an open string."></p>';  
+
+  modal_msg += '<p style="text-align:center;"><input id="fiddlefingeringsdialog2" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectTablature_Fiddle_Fingerings(2)" type="button" value="String Name + Finger Number (Inline)" title="Injects string name (G, D, A, E) + finger number (0, 1, 2, 3, 4) together on one line.&nbsp;&nbsp;0 is an open string."></p>';
+
+  modal_msg += '<p style="text-align:center;"><input id="fiddlefingeringsdialog3" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectTablature_Fiddle_Fingerings(3)" type="button" value="String Name + Finger Number (Name over Number)" title="Injects string name (G, D, A, E) + finger number (0, 1, 2, 3, 4) stacked vertically Name over Number.&nbsp;&nbsp;0 is an open string."></p>';
+
+  modal_msg += '<p style="text-align:center;"><input id="fiddlefingeringsdialog4" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectTablature_Fiddle_Fingerings(4)" type="button" value="String Name + Finger Number (Number over Name)" title="Injects string name (G, D, A, E) + finger number (0, 1, 2, 3, 4) stacked vertically Number over Name.&nbsp;&nbsp;0 is an open string."></p>';
 
   modal_msg += '<p style="text-align:center;margin-top:18px;"><input id="configure_anglo_fonts" class="btn btn-subdialog configure_anglo_fonts" onclick="ConfigureTablatureSettings()" type="button" value="Tablature Injection Settings" title="Configure the tablature injection settings"></p></div>';
 
   DayPilot.Modal.alert(modal_msg, {
     theme: "modal_flat",
-    top: 100,
+    top: 50,
     width: 650,
     scrollWithPage: (AllowDialogsToScroll())
   }).then(function() {
@@ -29847,15 +30236,28 @@ function DoInjectTablature_Fiddle_Fingerings(tab_style) {
   // Show the tab after an inject
   gStripTab = false;
 
-  RenderAsync(true, null, function() {
-    ensureDialogVisible("#fiddlefingeringsanchor");
+  var thePrompt = "Fiddle fingerings injected!";
+
+  // Center the string in the prompt
+  thePrompt = makeCenteredPromptString(thePrompt);
+
+  DayPilot.Modal.alert(thePrompt, {
+    theme: "modal_flat",
+    top: 300,
+    scrollWithPage: (AllowDialogsToScroll())
+  }).then(function(){
+
+    RenderAsync(true, null, function() {
+      ensureDialogVisible("#fiddlefingeringsanchor");
+    });
+
+    // Idle the dialog
+    IdleAdvancedControls(true);
+
+    // Idle the show tab names control
+    IdleAllowShowTabNames();
+
   });
-
-  // Idle the dialog
-  IdleAdvancedControls(true);
-
-  // Idle the show tab names control
-  IdleAllowShowTabNames();
 
 }
 
@@ -29887,7 +30289,7 @@ function ShowMDTabWarningDialog() {
 
   DayPilot.Modal.alert(modal_msg, {
     theme: "modal_flat",
-    top: 75,
+    top: 100,
     width: 630,
     scrollWithPage: (AllowDialogsToScroll())
   }).then(function() {
@@ -29999,23 +30401,35 @@ function DoInjectTablature_MD() {
       // Show the tab after an inject
       gStripTab = false;
 
-      // Render the tunes
-      RenderAsync(true, null, function() {
+      var thePrompt = "Mountain Dulcimer tablature injected!";
 
-        if (gExcludedFromMDSolution.length > 0) {
+      // Center the string in the prompt
+      thePrompt = makeCenteredPromptString(thePrompt);
 
-          ShowMDTabWarningDialog();
+      DayPilot.Modal.alert(thePrompt, {
+        theme: "modal_flat",
+        top: 300,
+        scrollWithPage: (AllowDialogsToScroll())
+      }).then(function(){
 
-        }
+        // Render the tunes
+        RenderAsync(true, null, function() {
 
-        // Idle the dialog
-        IdleAdvancedControls(true);
+          if (gExcludedFromMDSolution.length > 0) {
 
-        // Idle the show tab names control
-        IdleAllowShowTabNames();
+            ShowMDTabWarningDialog();
 
-        // Make sure the More Tools dialog visible
-        ensureMoreToolsVisible();
+          }
+
+          // Idle the dialog
+          IdleAdvancedControls(true);
+
+          // Idle the show tab names control
+          IdleAllowShowTabNames();
+
+          // Make sure the More Tools dialog visible
+          ensureMoreToolsVisible();
+        });
 
       });
     }
@@ -30129,19 +30543,32 @@ function DoInjectTablature_ShapeNotes() {
       // Show the tab after an inject
       gStripTab = false;
 
-      // Render the tunes
-      RenderAsync(true, null, function() {
+      var thePrompt = "Note names/Solfège injected!";
 
-        // Idle the dialog
-        IdleAdvancedControls(true);
+      // Center the string in the prompt
+      thePrompt = makeCenteredPromptString(thePrompt);
 
-        // Idle the show tab names control
-        IdleAllowShowTabNames();
+      DayPilot.Modal.alert(thePrompt, {
+        theme: "modal_flat",
+        top: 300,
+        scrollWithPage: (AllowDialogsToScroll())
+      }).then(function(){
 
-        // Make sure the More Tools dialog visible
-        ensureMoreToolsVisible();
+        // Render the tunes
+        RenderAsync(true, null, function() {
 
+          // Idle the dialog
+          IdleAdvancedControls(true);
+
+          // Idle the show tab names control
+          IdleAllowShowTabNames();
+
+          // Make sure the More Tools dialog visible
+          ensureMoreToolsVisible();
+
+        });
       });
+
     }
   });
 }
@@ -51691,8 +52118,21 @@ function AlignMeasures(bDoAll) {
 
     setABCEditorText(output);
 
-    // Redraw
-    RenderAsync(true, null);
+    var thePrompt = "Measures aligned!";
+
+    // Center the string in the prompt
+    thePrompt = makeCenteredPromptString(thePrompt);
+
+    DayPilot.Modal.alert(thePrompt, {
+      theme: "modal_flat",
+      top: 300,
+      scrollWithPage: (AllowDialogsToScroll())
+    }).then(function(){
+
+      // Redraw
+      RenderAsync(true, null);
+
+    });
 
   } else {
 
@@ -52134,10 +52574,23 @@ function InjectMIDIGChordTemplates() {
 
       setABCEditorText(theABC);
 
-      // Force a redraw of the tune
-      RenderAsync(false, theSelectedTuneIndex, null);
-
       gIsDirty = true;
+
+      var thePrompt = "MIDI gchord templates injected!";
+
+      // Center the string in the prompt
+      thePrompt = makeCenteredPromptString(thePrompt);
+
+      DayPilot.Modal.alert(thePrompt, {
+          theme: "modal_flat",
+          top: 300,
+          scrollWithPage: (AllowDialogsToScroll())
+        }).then(function(){
+
+          // Force a redraw of the tune
+          RenderAsync(false, theSelectedTuneIndex, null);
+
+      });
 
     };
   });
@@ -53393,16 +53846,28 @@ function SplitLongTextAndTags() {
         // Set dirty
         gIsDirty = true;
 
-        // Force a redraw
-        RenderAsync(true, null, function() {
+        var thePrompt = "Text and tags split!";
 
-          // Set the select point
-          gTheABC.selectionStart = 0;
-          gTheABC.selectionEnd = 0;
+        // Center the string in the prompt
+        thePrompt = makeCenteredPromptString(thePrompt);
 
-          // Focus after operation
-          FocusAfterOperation();
+        DayPilot.Modal.alert(thePrompt, {
+          theme: "modal_flat",
+          top: 300,
+          scrollWithPage: (AllowDialogsToScroll())
+        }).then(function(){
 
+          // Force a redraw
+          RenderAsync(true, null, function() {
+
+            // Set the select point
+            gTheABC.selectionStart = 0;
+            gTheABC.selectionEnd = 0;
+
+            // Focus after operation
+            FocusAfterOperation();
+
+          });
         });
 
       } else {
@@ -53435,16 +53900,28 @@ function SplitLongTextAndTags() {
         // Set dirty
         gIsDirty = true;
 
-        // Force a redraw of the tune
-        RenderAsync(false, theSelectedTuneIndex, function() {
+        var thePrompt = "Text and tags split!";
+      
+        // Center the string in the prompt
+        thePrompt = makeCenteredPromptString(thePrompt);
 
-          // Set the select point
-          gTheABC.selectionStart = theSelectionStart;
-          gTheABC.selectionEnd = theSelectionStart;
+        DayPilot.Modal.alert(thePrompt, {
+          theme: "modal_flat",
+          top: 300,
+          scrollWithPage: (AllowDialogsToScroll())
+        }).then(function(){
 
-          // Focus after operation
-          FocusAfterOperation();
+          // Force a redraw of the tune
+          RenderAsync(false, theSelectedTuneIndex, function() {
 
+            // Set the select point
+            gTheABC.selectionStart = theSelectionStart;
+            gTheABC.selectionEnd = theSelectionStart;
+
+            // Focus after operation
+            FocusAfterOperation();
+
+          });
         });
 
       }
@@ -53473,16 +53950,32 @@ function DoNormalizeDiacriticals(inverse) {
   // Set dirty
   gIsDirty = true;
 
-  // Force a redraw
-  RenderAsync(true, null, function() {
+  var thePrompt = "Diacriticals normalized!";
 
-    // Set the select point
-    gTheABC.selectionStart = 0;
-    gTheABC.selectionEnd = 0;
+  if (inverse){
+    thePrompt = "Diacriticals escaped!";
+  }
 
-    // Focus after operation
-    FocusAfterOperation();
+  // Center the string in the prompt
+  thePrompt = makeCenteredPromptString(thePrompt);
 
+  DayPilot.Modal.alert(thePrompt, {
+    theme: "modal_flat",
+    top: 300,
+    scrollWithPage: (AllowDialogsToScroll())
+  }).then(function(){
+
+    // Force a redraw
+    RenderAsync(true, null, function() {
+
+      // Set the select point
+      gTheABC.selectionStart = 0;
+      gTheABC.selectionEnd = 0;
+
+      // Focus after operation
+      FocusAfterOperation();
+
+    });
   });
 
 }
@@ -53674,15 +54167,28 @@ function normalizeTitleArticles(inverse) {
   // Set dirty
   gIsDirty = true;
 
-  // Force a redraw
-  RenderAsync(true, null, function() {
+  var thePrompt = "Titles normalized!";
 
-    // Set the select point
-    gTheABC.selectionStart = 0;
-    gTheABC.selectionEnd = 0;
+  // Center the string in the prompt
+  thePrompt = makeCenteredPromptString(thePrompt);
 
-    // Focus after operation
-    FocusAfterOperation();
+  DayPilot.Modal.alert(thePrompt, {
+    theme: "modal_flat",
+    top: 300,
+    scrollWithPage: (AllowDialogsToScroll())
+  }).then(function(){
+
+    // Force a redraw
+    RenderAsync(true, null, function() {
+
+      // Set the select point
+      gTheABC.selectionStart = 0;
+      gTheABC.selectionEnd = 0;
+
+      // Focus after operation
+      FocusAfterOperation();
+
+    });
 
   });
 
@@ -54040,14 +54546,14 @@ function NormalizeVoiceKeySignatures(){
   // Set dirty
   gIsDirty = true;
 
-  var thePrompt = "Voice Key Signatures Normalized!";
+  var thePrompt = "Voice key signatures normalized!";
 
   // Center the string in the prompt
   thePrompt = makeCenteredPromptString(thePrompt);
 
   DayPilot.Modal.alert(thePrompt, {
     theme: "modal_flat",
-    top: 200,
+    top: 300,
     scrollWithPage: (AllowDialogsToScroll())
   }).then(function(){
 

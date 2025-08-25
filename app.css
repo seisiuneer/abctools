@@ -675,13 +675,17 @@ padding:12px;
 margin-right:24px;
 }
 
-#injectbambooflute,#injectclicktrackall,#injectchords,#injectheadertemplate,#injectanglotab,#looper_metronomebutton,#injectlargeprint,#pdfinjectlargeprint,#tunebookbuilder_add,#injectfontsettings,#removetunetitlenumbers,#ceoltasdialoginverse,#compliancetransform,#compliancedialoginverse,#fiddlefingeringsdialog,#fiddlefingeringsdialog2,#fiddlefingeringsdialog3,#fiddlefingeringsdialog4,#injectbagpipedrones,#websitefull,#injectheaderstringfh,#injectcsdbox,#websitelightbox,#websitesimple,#escapediacriticals{
+#injectbambooflute,#injectclicktrackall,#injectchords,#injectheadertemplate,#injectanglotab,#looper_metronomebutton,#injectlargeprint,#pdfinjectlargeprint,#tunebookbuilder_add,#injectfontsettings,#removetunetitlenumbers,#ceoltasdialoginverse,#compliancetransform,#compliancedialoginverse,#fiddlefingeringsdialog0,#fiddlefingeringsdialog1,#fiddlefingeringsdialog2,#fiddlefingeringsdialog3,#fiddlefingeringsdialog4,#injectbagpipedrones,#websitefull,#injectheaderstringfh,#injectcsdbox,#websitelightbox,#websitesimple,#escapediacriticals{
 height:42px;
 padding:12px;
 }
 
+#fiddlefingeringsdialog1{
+	margin-top:10px;
+}
+
 #fiddlefingeringsdialog2, #fiddlefingeringsdialog3, #fiddlefingeringsdialog4{
-	margin-top:16px;
+	margin-top:24px;
 }
 
 #addnewreel,#addnewjig,#changetuneorder,#cull_select_all,#mobile_tune_order_up,#smartdraw_add_set_name,#smartdraw_delete_set_name,#addnewtunetemplate,#addsongtemplate,#addbodhrantemplate,#search-previous,#search-next,#search-replace,#search-replace-all,#search-load,#websiteimages,#tuneset_select_all,#tuneset_open_in_player,#tuneset_open_in_editor,#title_normalize_forward,#pdfusebrowserprint{

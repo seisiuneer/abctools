@@ -4407,25 +4407,34 @@ var fiddleFingeringsGenerator = function (theABC,stringNameStyle){
 
             var glyphLen = glyph.length;
 
-            switch (location){
+            // If not inline !1! style, wrap in a text annotation
+            if (glyph.indexOf("!") == -1){
 
-                // Above
-                case 0:
-                    // Add double quotes to tab, to be rendered above the note
-                    var theTab = "\"^" + glyph + "\"";
+                switch (location){
 
-                    break;
+                    // Above
+                    case 0:
+                        // Add double quotes to tab, to be rendered above the note
+                        var theTab = "\"^" + glyph + "\"";
 
-                // Below
-                case 1:
+                        break;
 
-                    // Add double quotes to tab, to be rendered above the note
-                    var theTab = "\"_" + glyph + "\"";
+                    // Below
+                    case 1:
 
-                    break;
+                        // Add double quotes to tab, to be rendered above the note
+                        var theTab = "\"_" + glyph + "\"";
+
+                        break;
+
+                }
+            }
+            else{
+
+                theTab = glyph;
 
             }
-               
+                   
             var tabLen = theTab.length;
 
             //log("Merge["+i+"] index="+index+" tabLen="+tabLen+" insertedTotal="+insertedTotal);
@@ -4451,6 +4460,19 @@ var fiddleFingeringsGenerator = function (theABC,stringNameStyle){
 
         return input.substr(0, start) + s + input.substr(start + len);
 
+    }
+    //
+    // From a note name, gets the fingering
+    //
+    function getNoteGlyphConcise(note){
+
+        var thisGlyph = getNoteGlyph(note);
+
+        if (thisGlyph.indexOf("x")==-1){
+            thisGlyph = "!"+thisGlyph+"!";
+        }
+
+        return thisGlyph;    
     }
 
     //
@@ -4838,15 +4860,18 @@ var fiddleFingeringsGenerator = function (theABC,stringNameStyle){
 
                 switch (stringNameStyle){
                     case 0:
-                        theGlyph = getNoteGlyph(normalizedValue);
+                        theGlyph = getNoteGlyphConcise(normalizedValue);
                         break
                     case 1:
-                        theGlyph = getNoteGlyphWithStringName(normalizedValue);
+                        theGlyph = getNoteGlyph(normalizedValue);
                         break
                     case 2:
-                        theGlyph = getNoteGlyphWithStringName2(normalizedValue);
+                        theGlyph = getNoteGlyphWithStringName(normalizedValue);
                         break
                     case 3:
+                        theGlyph = getNoteGlyphWithStringName2(normalizedValue);
+                        break
+                    case 4:
                         theGlyph = getNoteGlyphWithStringName3(normalizedValue);
                         break
                     default:
@@ -4970,7 +4995,7 @@ var fiddleFingeringsGenerator = function (theABC,stringNameStyle){
 
             // Strip any existing tab
             thisTune = StripTabOne(thisTune);
-
+            
             // Strip chords? 
             // Above always strips
             // Below only strips if specified in the settings
