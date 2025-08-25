@@ -4999,8 +4999,15 @@ var fiddleFingeringsGenerator = function (theABC,stringNameStyle){
             // Strip chords? 
             // Above always strips
             // Below only strips if specified in the settings
-            if ((tabLocation == 0) || ((tabLocation == 1) && (stripChords))){
-                thisTune = StripChordsOne(thisTune);
+            if (stringNameStyle != 0){
+                if ((tabLocation == 0) || ((tabLocation == 1) && (stripChords))){
+                    thisTune = StripChordsOne(thisTune);
+                }
+            }
+            else{
+                if (stripChords){
+                    thisTune = StripChordsOne(thisTune); 
+                }
             }
 
             thisTune = generate_tab(thisTune);
