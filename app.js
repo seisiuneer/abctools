@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "2721_082525_1400";
+var gVersionNumber = "2722_082525_1600";
 
 var gMIDIInitStillWaiting = false;
 
@@ -13355,7 +13355,6 @@ function AreChordsInMatch(theMatch) {
 
 }
 
-
 // 
 // Are there chords in the ABC?
 //
@@ -13444,6 +13443,12 @@ function IsTabInABC(theABC) {
         }
       }
     })
+
+  if (!res){
+    if (/!(0|1|2|3|4)!/.test(theABC)) {
+      res = true;
+    }
+  }
 
   return res;
 
