@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "2729_082625_1000";
+var gVersionNumber = "2730_082625_1130";
 
 var gMIDIInitStillWaiting = false;
 
@@ -30195,11 +30195,7 @@ function DoInjectTablature_Fiddle_Fingerings_Dialog() {
 
   var modal_msg = '<div id="fiddlefingeringsanchor"><p style="text-align:center;margin-bottom:36px;font-size:16pt;font-family:helvetica;margin-left:15px;">Inject Fiddle Fingerings&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#tab_fiddle" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>';
 
-  modal_msg += '<p style="text-align:left;font-size:14pt;line-height:19pt;font-family:helvetica;margin-top:16px;">This style is the most concise and uses !0!, !1!, !2!, !3!, !4! annotations in the ABC.&nbsp;&nbsp;It is always displayed above the notes:</p>';
-
   modal_msg += '<p style="text-align:center;"><input id="fiddlefingeringsdialog0" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectTablature_Fiddle_Fingerings(0)" type="button" value="Finger Number Only (Using !0!, !1!, !2!, !3!, !4! Annotations)" title="Injects finger number (!0!, !1!, !2!, !3!, !4!) only.&nbsp;&nbsp;!0! is an open string."></p>';
-
-  modal_msg += '<p style="text-align:left;font-size:14pt;line-height:19pt;font-family:helvetica;margin-top:24px;">These styles use ABC text annotations.&nbsp;&nbsp;They can be displayed above or below the notes depending on the settings in the Tablature Injection Settings dialog:</p>';
 
   modal_msg += '<p style="text-align:center;"><input id="fiddlefingeringsdialog1" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectTablature_Fiddle_Fingerings(1)" type="button" value="Finger Number Only (Using Text Annotations)" title="Injects finger number (0, 1, 2, 3, 4) only.&nbsp;&nbsp;0 is an open string."></p>';  
 
@@ -30209,11 +30205,11 @@ function DoInjectTablature_Fiddle_Fingerings_Dialog() {
 
   modal_msg += '<p style="text-align:center;"><input id="fiddlefingeringsdialog4" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectTablature_Fiddle_Fingerings(4)" type="button" value="String Name + Finger Number (Number over Name)" title="Injects string name (G, D, A, E) + finger number (0, 1, 2, 3, 4) stacked vertically Number over Name.&nbsp;&nbsp;0 is an open string."></p>';
 
-  modal_msg += '<p style="text-align:center;margin-top:18px;"><input id="configure_anglo_fonts" class="btn btn-subdialog configure_anglo_fonts" onclick="ConfigureTablatureSettings()" type="button" value="Tablature Injection Settings" title="Configure the tablature injection settings"></p></div>';
+  modal_msg += '<p style="text-align:center;margin-top:24px;"><input id="configure_anglo_fonts" class="btn btn-subdialog configure_anglo_fonts" onclick="ConfigureTablatureSettings()" type="button" value="Tablature Injection Settings" title="Configure the tablature injection settings"></p></div>';
 
   DayPilot.Modal.alert(modal_msg, {
     theme: "modal_flat",
-    top: 50,
+    top: 100,
     width: 650,
     scrollWithPage: (AllowDialogsToScroll())
   }).then(function() {

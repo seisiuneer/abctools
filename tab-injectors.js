@@ -4978,6 +4978,14 @@ var fiddleFingeringsGenerator = function (theABC,stringNameStyle){
         var result = FindPreTuneHeader(theABC);
         
         var location = parseInt(gInjectTab_TabLocation);
+        
+        // Strip any custom CSS injected
+        result = result.replace("%%begincss\n\/* Offset fingerings below notes, shift chords down *\/\n.abcjs-annotation {transform: translate(0px,75px);}\n.abcjs-chord {transform: translate(0px,15px);}\n%%endcss\n\n","");
+
+        // If using !1! style, and below the notation, inject custom CSS to offset the annotations
+        if ((stringNameStyle == 0) && (location == 1)){
+            result = "%%begincss\n\/* Offset fingerings below notes, shift chords down *\/\n.abcjs-annotation {transform: translate(0px,75px);}\n.abcjs-chord {transform: translate(0px,15px);}\n%%endcss\n\n" + result;
+        }
 
         clearGetTuneByIndexCache();
 
