@@ -4982,9 +4982,19 @@ var fiddleFingeringsGenerator = function (theABC,stringNameStyle){
         // Strip any custom CSS injected
         result = result.replace("%%begincss\n\/* Offset fingerings below notes, shift chords down *\/\n.abcjs-annotation {transform: translate(0px,75px);}\n.abcjs-chord {transform: translate(0px,15px);}\n%%endcss\n\n","");
 
-        // If using !1! style, and below the notation, inject custom CSS to offset the annotations
-        if ((stringNameStyle == 0) && (location == 1)){
-            result = "%%begincss\n\/* Offset fingerings below notes, shift chords down *\/\n.abcjs-annotation {transform: translate(0px,75px);}\n.abcjs-chord {transform: translate(0px,15px);}\n%%endcss\n\n" + result;
+        result = result.replace("%%begincss\n\/* Offset fingerings up *\/\n.abcjs-annotation {transform: translate(0px,-2px);}\n%%endcss\n\n","");
+
+        // !1! style tab custom CSS handler
+        if (stringNameStyle == 0){
+
+            // If using !1! style, and below the notation, inject custom CSS to offset the annotations and chords
+            if (location == 1){
+                result = "%%begincss\n\/* Offset fingerings below notes, shift chords down *\/\n.abcjs-annotation {transform: translate(0px,75px);}\n.abcjs-chord {transform: translate(0px,15px);}\n%%endcss\n\n" + result;
+            }
+            // If using !1! style, and above the notation, inject custom CSS to offset the annotations
+            else{
+                result = "%%begincss\n\/* Offset fingerings up *\/\n.abcjs-annotation {transform: translate(0px,-2px);}\n%%endcss\n\n" + result;
+            }
         }
 
         clearGetTuneByIndexCache();
