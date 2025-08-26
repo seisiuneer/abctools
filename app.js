@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "2723_082525_1630";
+var gVersionNumber = "2724_082525_1700";
 
 var gMIDIInitStillWaiting = false;
 
@@ -30198,7 +30198,7 @@ function DoInjectTablature_Fiddle_Fingerings_Dialog() {
 
   modal_msg += '<p style="text-align:center;"><input id="fiddlefingeringsdialog0" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectTablature_Fiddle_Fingerings(0)" type="button" value="Finger Number Only (Using !0!, !1!, !2!, !3!, !4! Annotations)" title="Injects finger number (!0!, !1!, !2!, !3!, !4!) only.&nbsp;&nbsp;!0! is an open string."></p>';
 
-  modal_msg += '<p style="text-align:left;font-size:14pt;line-height:19pt;font-family:helvetica;margin-top:24px;">These styles use ABC text annotations.&nbsp;&nbsp;They can be displayed above or below the notes depending on the values in the Tablature Injection Settings dialog:</p>';
+  modal_msg += '<p style="text-align:left;font-size:14pt;line-height:19pt;font-family:helvetica;margin-top:24px;">These styles use ABC text annotations.&nbsp;&nbsp;They can be displayed above or below the notes depending on the settings in the Tablature Injection Settings dialog:</p>';
 
   modal_msg += '<p style="text-align:center;"><input id="fiddlefingeringsdialog1" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectTablature_Fiddle_Fingerings(1)" type="button" value="Finger Number Only (Using Text Annotations)" title="Injects finger number (0, 1, 2, 3, 4) only.&nbsp;&nbsp;0 is an open string."></p>';  
 
