@@ -11745,6 +11745,10 @@ var TuneBuilder = function TuneBuilder(tune) {
   this.getCurrentVoice = function () {
     var currLine = tune.lines[tune.lineNum];
     if (!currLine) return null;
+    // MAE 26 Aug 2025 - Prevents crash on w: with no notes
+    if (!currLine.staff){
+      return null;
+    }
     var currStaff = currLine.staff[tune.staffNum];
     if (!currStaff) return null;
     if (currStaff.voices[tune.voiceNum] !== undefined) return currStaff.voices[tune.voiceNum];else return null;
