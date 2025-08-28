@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "2733_082725_1230";
+var gVersionNumber = "2734_082825_0800";
 
 var gMIDIInitStillWaiting = false;
 
@@ -45911,7 +45911,7 @@ function PDFExportDialog() {
     theme: "modal_flat",
     top: 25,
     width: 760,
-    scrollWithPage: false,
+    scrollWithPage: (AllowDialogsToScroll()),
     okText: "Export",
     autoFocus: false
   }).then(function(args) {
