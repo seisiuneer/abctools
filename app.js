@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "2734_082825_0800";
+var gVersionNumber = "2735_082825_1400";
 
 var gMIDIInitStillWaiting = false;
 
@@ -21691,6 +21691,8 @@ function GetABCFileHeader() {
     /^%hide_cautionary_ks.*$/,
     /^%no_title_reverser.*$/,
     /^%force_power_chords.*$/,
+    /^%custom_instrument_volume_scale.*$/,
+    /^%custom_instrument_fade.*$/,
     /^[ABCDFGHILMmNORrSUZ]:/,
   ];
 
@@ -46777,7 +46779,7 @@ function readWavFile(file) {
 }
 
 //
-// Add a new ABC tune template, song template, or PDF tunebook annotation template to the current ABC
+// Idle the Advanced Settings dialog file handlers
 //
 function idleAdvancedSettings() {
 
@@ -46785,10 +46787,12 @@ function idleAdvancedSettings() {
 
     document.getElementById("loadimpulsebutton").removeAttribute("accept");
 
+    document.getElementById("loadinstrumentbutton").removeAttribute("accept");
+
   }
 
   //
-  // Setup the file import control
+  // Setup the reverb file import control
   //
   document.getElementById("loadimpulsebutton").onchange = async () => {
 
@@ -46877,6 +46881,94 @@ function idleAdvancedSettings() {
 
       }
     }
+
+    // Reset file selectors
+    fileElement.value = "";
+
+  }
+
+  // Custom instrument loader file import handler
+  document.getElementById("loadinstrumentbutton").onchange = async () => {
+
+    let fileElement = document.getElementById("loadinstrumentbutton");
+
+    // check if user had selected a file
+    if (fileElement.files.length === 0) {
+
+      var thePrompt = "Please select an custom instrument bundle .zip file";
+
+      // Center the string in the prompt
+      thePrompt = makeCenteredPromptString(thePrompt);
+
+      DayPilot.Modal.alert(thePrompt, {
+        theme: "modal_flat",
+        top: 200,
+        scrollWithPage: (AllowDialogsToScroll())
+      });
+
+      return;
+
+    }
+
+    let file = fileElement.files[0];
+
+    if (file) {
+
+      //console.log("Got file "+file.name);
+
+      var zip = new JSZip();
+
+      zip.loadAsync(file).then(async function(zip) {
+          
+          gCustomInstrumentSamples = [];
+
+          // Iterate through all files in the zip
+          for (let fileName of Object.keys(zip.files)) {
+
+              const zipEntry = zip.files[fileName];
+
+              // Only process .wav files
+              if (!zipEntry.dir && (fileName.toLowerCase().endsWith('.wav') || fileName.toLowerCase().endsWith('.mp3') || fileName.toLowerCase().endsWith('.ogg')) && (fileName.indexOf("MACOSX")== -1)) {
+
+                  const arrayBuffer = await zipEntry.async("arraybuffer");
+
+                  var theName = fileName.replace(".wav","");
+                  theName = theName.replace(".mp3","");
+                  theName = theName.replace(".ogg","");
+
+                  gCustomInstrumentSamples.push({name:theName,samples:arrayBuffer});
+
+              }
+          }
+
+          // gCustomInstrumentSamples is an array of ArrayBuffers, one for each .wav file
+          //console.log("Extracted WAV files:", gCustomInstrumentSamples.length);
+
+          // Clear the abcjs cache for the custom instrument
+          gSoundsCacheABCJS["custom"] = {};
+
+          var modal_msg = '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-bottom:24px;margin-left:15px;">Custom MIDI Instrument Loaded&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#custom_midi_instrument" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'
+          modal_msg += '<p style="text-align:center;font-size:14pt;line-height:20pt;font-family:helvetica"><strong>'+gCustomInstrumentSamples.length+' note samples loaded from: '+file.name+'</strong></p>';
+          modal_msg += '<p style="font-size:14pt;line-height:20pt;font-family:helvetica">Add the following ABC annotation to your tunes to play the custom instrument:</p>';
+          modal_msg += '<p style="font-size:14pt;line-height:20pt;font-family:helvetica"><strong>%%MIDI program custom</strong></p>';
+          modal_msg += '<p style="font-size:14pt;line-height:20pt;font-family:helvetica">To change the default sample volume multiplier from 1.0,<br/>add the following ABC annotation to your tunes:</p>';
+          modal_msg += '<p style="font-size:14pt;line-height:20pt;font-family:helvetica"><strong>%custom_instrument_volume_scale (scale_multiplier_float)</strong></p>';
+          modal_msg += '<p style="font-size:14pt;line-height:20pt;font-family:helvetica">Example:<br/>%custom_instrument_volume_scale 2.0</p>';
+          modal_msg += '<p style="font-size:14pt;line-height:20pt;font-family:helvetica">To change the default sample release fade time from 100ms,<br/>add the following ABC annotation to your tunes:</p>';
+          modal_msg += '<p style="font-size:14pt;line-height:20pt;font-family:helvetica"><strong>%custom_instrument_fade (fade_time_in_ms)</strong></p>';
+          modal_msg += '<p style="font-size:14pt;line-height:20pt;font-family:helvetica">Example:<br/>%custom_instrument_fade 250</p>';
+          modal_msg += '<p style="font-size:14pt;line-height:20pt;font-family:helvetica"><strong>&nbsp;</strong></p>';
+
+          DayPilot.Modal.alert(modal_msg, {
+            theme: "modal_flat",
+            top: 50,
+            scrollWithPage: (AllowDialogsToScroll())
+          });
+
+      });
+
+    }
+ 
 
     // Reset file selectors
     fileElement.value = "";
@@ -47104,7 +47196,7 @@ function AdvancedSettings() {
     },
 
     {
-      html: '<p style="text-align:center;margin-top:18px;margin-bottom:6px"><input id="reset_roll_parameters" class="btn btn-subdialog reset_roll_parameters" onclick="ResetRollDefaultParams()" type="button" value="Reset Roll Parameter Strings to Defaults" title="Resets the roll parameter strings to known good default values"><label class="loadimpulsebutton btn btn-subdialog " for="loadimpulsebutton" title="Load a custom reverb convolution impulse .wav file">Load Custom Reverb Impulse <input type="file" id="loadimpulsebutton"  accept=".wav,.WAV" hidden/></label><input id="resetsettings" class="btn btn-resetsettings resetsettings" onclick="ResetSettingsDialog()" type="button" value="Reset Settings" title="Opens a dialog where you can reset all tool settings to the default and/or clear the instrument notes, reverb settings, and tune search engine collection databases"></p><p style="font-size:10pt;line-height:14pt;font-family:helvetica;color:grey;position:absolute;left:20px;bottom:30px;margin:0px;cursor:pointer;" onclick="ShowBrowserInfo();" title="Click to show browser information">Click to show browser info<br/>Installed version: ' + gVersionNumber + '</p>'
+      html: '<p style="text-align:center;margin-top:18px;margin-bottom:6px"><input id="reset_roll_parameters" class="btn btn-subdialog reset_roll_parameters" onclick="ResetRollDefaultParams()" type="button" value="Reset Roll Parameters" title="Resets the roll parameter strings to known good default values"><label style="margin-right:14px" class="loadimpulsebutton btn btn-subdialog" for="loadimpulsebutton" title="Load a custom reverb convolution impulse .wav file">Load Custom Reverb Impulse <input type="file" id="loadimpulsebutton"  accept=".wav,.WAV" hidden/></label><label class="loadinstrumentbutton btn btn-subdialog" for="loadinstrumentbutton" title="Load a custom instrument notes .zip bundle.&nbsp;&nbsp;Please check the User Guide for details on creating custom instrument notes .zip bundles.">Load Custom Instrument <input type="file" id="loadinstrumentbutton" accept=".zip" hidden/></label><input id="resetsettings" class="btn btn-resetsettings resetsettings" onclick="ResetSettingsDialog()" type="button" value="Reset Settings" title="Opens a dialog where you can reset all tool settings to the default and/or clear the instrument notes, reverb settings, and tune search engine collection databases"></p><p style="font-size:10pt;line-height:14pt;font-family:helvetica;color:grey;position:absolute;left:20px;bottom:30px;margin:0px;cursor:pointer;" onclick="ShowBrowserInfo();" title="Click to show browser information">Click to show browser info<br/>Installed version: ' + gVersionNumber + '</p>'
     },
   ]);
 

@@ -269,6 +269,11 @@ var gForcePowerChords = false;
 // Allow loop state caching
 var gAllowLoopStateCaching = true;
 
+// Custom instrument samples
+var gCustomInstrumentSamples = null;
+var gCustomInstrumentVolumeScale = 1.0;
+var gCustomInstrumentFade = 100;
+
 //
 // Aggregate CSS to the document
 //
@@ -907,6 +912,83 @@ function ScanTuneForForcePowerChords(theTune){
   return false;
 
 }
+
+// Scan tune for custom instrument volume
+function ScanTuneForCustomVolumeMultiplier(theTune){
+
+  //console.log("ScanTuneForCustomVolumeMultiplier");
+
+  // Next search for an custom_instrument_volume_scale
+  searchRegExp = /^%custom_instrument_volume_scale.*$/gm
+
+  // Detect custom_instrument_volume_scale annotation
+  var foundExp  = theTune.match(searchRegExp);
+
+  if ((foundExp) && (foundExp.length > 0)){
+
+    var theParamString = foundExp[0].replace("%custom_instrument_volume_scale","");
+
+    theParamString = theParamString.trim();
+
+    var theParams = theParamString.split(" ");
+
+    if (theParams.length >= 1){
+
+      var theScalerFound = theParams[0];
+
+      var theScalerFoundFloat = parseFloat(theScalerFound);
+
+      if (!isNaN(theScalerFoundFloat)){
+
+        //console.log("Got custom instrument volume scaler: "+theScalerFoundFloat);
+
+        return theScalerFoundFloat;
+      }
+    }
+  }
+
+  return 1.0;
+
+}
+
+// Scan tune for custom instrument fade
+function ScanTuneForCustomFade(theTune){
+
+  //console.log("ScanTuneForCustomFade");
+
+  // Next search for an custom_instrument_fade
+  searchRegExp = /^%custom_instrument_fade.*$/gm
+
+  // Detect custom_instrument_volume_fade annotation
+  var foundExp  = theTune.match(searchRegExp);
+
+  if ((foundExp) && (foundExp.length > 0)){
+
+    var theParamString = foundExp[0].replace("%custom_instrument_fade","");
+
+    theParamString = theParamString.trim();
+
+    var theParams = theParamString.split(" ");
+
+    if (theParams.length >= 1){
+
+      var theFadeFound = theParams[0];
+
+      var theFadeFoundInt = parseInt(theFadeFound);
+
+      if (!isNaN(theFadeFoundInt)){
+        
+        //console.log("Got custom instrument fade: "+theFadeFoundInt);
+
+        return theFadeFoundInt;
+      }
+    }
+  }
+
+  return 100;
+
+}
+
 
 (function webpackUniversalModuleDefinition(root, factory) {
   if(typeof exports === 'object' && typeof module === 'object')
@@ -1670,9 +1752,11 @@ var tunebook = {};
 
           var workingParams = params;
 
+          var theCurrentTuneABC = book.tunes[currentTune].abc
+
           // Merge any params overrides
           gABCJSRenderingParams = null;
-          gABCJSRenderingParams = ScanTuneForABCJSRenderingParams(book.tunes[currentTune].abc);
+          gABCJSRenderingParams = ScanTuneForABCJSRenderingParams(theCurrentTuneABC);
 
           if (gABCJSRenderingParams){
 
@@ -1685,72 +1769,81 @@ var tunebook = {};
           }
 
           gLeftJustifyTitlesOneTune = false;
-          gLeftJustifyTitlesOneTune = ScanTuneForLeftAlignTitles(book.tunes[currentTune].abc);
+          gLeftJustifyTitlesOneTune = ScanTuneForLeftAlignTitles(theCurrentTuneABC);
 
           gHideInformationLabels = false;
-          gHideInformationLabels = ScanTuneForHideInformationLabels(book.tunes[currentTune].abc);
+          gHideInformationLabels = ScanTuneForHideInformationLabels(theCurrentTuneABC);
 
           gHideRhythmTag = false;
-          gHideRhythmTag = ScanTuneForHideRhythmTag(book.tunes[currentTune].abc);
+          gHideRhythmTag = ScanTuneForHideRhythmTag(theCurrentTuneABC);
 
           gHideComposerTag = false;
-          gHideComposerTag = ScanTuneForHideComposerTag(book.tunes[currentTune].abc);
+          gHideComposerTag = ScanTuneForHideComposerTag(theCurrentTuneABC);
 
           gHidePartsTag = false;
-          gHidePartsTag = ScanTuneForHidePartsTag(book.tunes[currentTune].abc);
+          gHidePartsTag = ScanTuneForHidePartsTag(theCurrentTuneABC);
 
           gHideDynamics = false;
-          gHideDynamics = ScanTuneForHideDynamics(book.tunes[currentTune].abc);
+          gHideDynamics = ScanTuneForHideDynamics(theCurrentTuneABC);
           
           // If showing whistle tab, allow checking for transpose params
           if (gAllowWhistleTabTranspose){
 
             gWhistleTabShiftOctave = 0;
-            gWhistleTabShiftOctave = ScanTuneForWhistleTabShiftOctave(book.tunes[currentTune].abc);
+            gWhistleTabShiftOctave = ScanTuneForWhistleTabShiftOctave(theCurrentTuneABC);
             
             gWhistleTabShiftSemitone = 0;
-            gWhistleTabShiftSemitone = ScanTuneForWhistleTabShiftSemitone(book.tunes[currentTune].abc);
+            gWhistleTabShiftSemitone = ScanTuneForWhistleTabShiftSemitone(theCurrentTuneABC);
           }
           // If showing recorder tab, allow checking for transpose params
           if (gAllowRecorderTabTranspose){
 
             gRecorderTabShiftOctave = 0;
-            gRecorderTabShiftOctave = ScanTuneForRecorderTabShiftOctave(book.tunes[currentTune].abc);
+            gRecorderTabShiftOctave = ScanTuneForRecorderTabShiftOctave(theCurrentTuneABC);
             
             gRecorderTabShiftSemitone = 0;
-            gRecorderTabShiftSemitone = ScanTuneForRecorderTabShiftSemitone(book.tunes[currentTune].abc);
+            gRecorderTabShiftSemitone = ScanTuneForRecorderTabShiftSemitone(theCurrentTuneABC);
           }
 
           // Allow hyperlink parsing?
           gAddSVGHyperLinks = false;
-          gAddSVGHyperLinks = ScanTuneForSVGHyperlinks(book.tunes[currentTune].abc);
+          gAddSVGHyperLinks = ScanTuneForSVGHyperlinks(theCurrentTuneABC);
           
           // Disable hyperlink parsing?
           gDisableSVGHyperLinks = false;
 
           // Only scan for disable if enable detected (optimization)
           if (gAddSVGHyperLinks){
-            gDisableSVGHyperLinks = ScanTuneForSVGDisableHyperlinks(book.tunes[currentTune].abc);
+            gDisableSVGHyperLinks = ScanTuneForSVGDisableHyperlinks(theCurrentTuneABC);
           }
 
           // Ignore parenthesized alternate chords during playback?
           gPlayAlternateChords = false;
-          gPlayAlternateChords = ScanTuneForPlayAlternateChords(book.tunes[currentTune].abc);
+          gPlayAlternateChords = ScanTuneForPlayAlternateChords(theCurrentTuneABC);
 
           // Suppress cautionary key signatures?
           gHideCautionaryKS = false;
-          gHideCautionaryKS = ScanTuneForHideCautionaryKS(book.tunes[currentTune].abc);
+          gHideCautionaryKS = ScanTuneForHideCautionaryKS(theCurrentTuneABC);
 
           // Do title reverser
           gDoTitleReverser = true;
-          gDoTitleReverser = ScanTuneForNoTitleReverser(book.tunes[currentTune].abc);
+          gDoTitleReverser = ScanTuneForNoTitleReverser(theCurrentTuneABC);
 
           // Force power chords
           gForcePowerChords = false;
-          gForcePowerChords = ScanTuneForForcePowerChords(book.tunes[currentTune].abc);
+          gForcePowerChords = ScanTuneForForcePowerChords(theCurrentTuneABC);
+
+          // Custom instrument volume scale
+          gCustomInstrumentVolumeScale = 1.0;
+          gCustomInstrumentVolumeScale = ScanTuneForCustomVolumeMultiplier(theCurrentTuneABC);
+
+          // Custom instrument volume scale
+          gCustomInstrumentFade = 100;
+          gCustomInstrumentFade = ScanTuneForCustomFade(theCurrentTuneABC);
 
           abcParser.parse(book.tunes[currentTune].abc, workingParams, book.tunes[currentTune].startPos - book.header.length);
           var tune = abcParser.getTune();
+
           //
           // Init tablatures plugins
           //
@@ -1758,6 +1851,7 @@ var tunebook = {};
             tablatures.init();
             tune.tablatures = tablatures.preparePlugins(tune, currentTune, workingParams);
           }
+
           var warnings = abcParser.getWarnings();
           if (warnings) tune.warnings = warnings;
           var override = callback(div, tune, i, book.tunes[currentTune].abc);
@@ -3647,8 +3741,14 @@ var create;
               midi.setInstrument(0);
             } 
             else
-            // MAE 1 Jan 2024 - Custom MIDI instrument processing
+            // MAE 1 Jan 2024 - Map mute to Grand Piano
             if (event.instrument == 150){
+              midi.setChannelMute(event.channel, pan);
+              midi.setInstrument(0);              
+            }
+            else
+            // MAE 28 Aug 2025 - Map custom instrument to Grand Piano
+            if (event.instrument == 151){
               midi.setChannelMute(event.channel, pan);
               midi.setInstrument(0);              
             }
@@ -4537,6 +4637,8 @@ var bookParser = function bookParser(book) {
       /^%hide_cautionary_ks.*$/,
       /^%no_title_reverser.*$/,
       /^%force_power_chords.*$/,
+      /^%custom_instrument_volume_scale.*$/,
+      /^%custom_instrument_fade.*$/,
       /^[ABCDFGHILMmNORrSUZ]:/,
     ];
 
@@ -5379,6 +5481,17 @@ var parseDirective = {};
         midi[0].end = 11;
       }
 
+      if ((midi_cmd == "program") && (midi.length == 1) && (midi[0].type == 'alpha') && (midi[0].token.toLowerCase() == "custom")){
+        //console.log("Got mute program request for "+midi_cmd);
+        midi[0].type = 'number';
+        midi[0].token = "151";
+        midi[0].intt = 151;
+        midi[0].floatt = 151;
+        midi[0].continueId = false;
+        midi[0].start = 8;
+        midi[0].end = 13;
+      }
+
       // ONE INT PARAMETER, ONE OPTIONAL PARAMETER
       if (midi.length !== 1 && midi.length !== 2) warn("Expected one or two parameters in MIDI " + midi_cmd, restOfString, 0);else if (midi[0].type !== "number") warn("Expected integer parameter in MIDI " + midi_cmd, restOfString, 0);else if (midi.length === 2 && midi[1].type !== "number") warn("Expected integer parameter in MIDI " + midi_cmd, restOfString, 0);else {
         midi_params.push(midi[0].intt);
@@ -5499,7 +5612,7 @@ var parseDirective = {};
     }
     else if (midiCmdParam1Integer1OptionalString.indexOf(midi_cmd) >= 0){
 
-      // MAE 1 January 2023 - Stuff in silence patch 150 if mute selected as the chordprog or bassprog
+      // MAE 1 Jan 2023 - Stuff in silence patch 150 if mute selected as the chordprog or bassprog
       //
       if ((midi_cmd == "chordprog") && (midi.length == 1) && (midi[0].type == 'alpha') && (midi[0].token.toLowerCase() == "mute")){
         //console.log("Got mute program request for "+midi_cmd);
@@ -5521,6 +5634,29 @@ var parseDirective = {};
         midi[0].continueId = false;
         midi[0].start = 9;
         midi[0].end = 12;
+      }
+      else
+      // MAE 28 Aug 2025 - For custom instruments
+      if ((midi_cmd == "chordprog") && (midi.length == 1) && (midi[0].type == 'alpha') && (midi[0].token.toLowerCase() == "custom")){
+        //console.log("Got custom program request for "+midi_cmd);
+        midi[0].type = 'number';
+        midi[0].token = "151";
+        midi[0].intt = 151;
+        midi[0].floatt = 151;
+        midi[0].continueId = false;
+        midi[0].start = 10;
+        midi[0].end = 15;
+      }
+      else
+      if ((midi_cmd == "bassprog") && (midi.length == 1) && (midi[0].type == 'alpha') && (midi[0].token.toLowerCase() == "custom")){
+        //console.log("Got custom program request for "+midi_cmd);
+        midi[0].type = 'number';
+        midi[0].token = "151";
+        midi[0].intt = 151;
+        midi[0].floatt = 151;
+        midi[0].continueId = false;
+        midi[0].start = 9;
+        midi[0].end = 14;
       }
 
       // ONE INT PARAMETER, ONE OPTIONAL string
@@ -18332,7 +18468,7 @@ function CreateSynth(theABC) {
         "bass_recorder": 120, // 147
         "mountain_dulcimer_s": 250, // 148        
         "mountain_dulcimer": 250, // 149        
-        "silence":100 // 150         
+        "silence":100, // 150  
      }
     }
     else{
@@ -18477,7 +18613,8 @@ function CreateSynth(theABC) {
               "bass_recorder": 0, // 147
               "mountain_dulcimer_s": 0, // 148        
               "mountain_dulcimer": 0, // 149        
-              "silence": 50      // 150
+              "silence": 50,      // 150
+              "custom":0 // 151       
             }
           }
           else{
@@ -18503,7 +18640,8 @@ function CreateSynth(theABC) {
               "bass_recorder": 0, // 147
               "mountain_dulcimer_s": 0, // 148        
               "mountain_dulcimer": 0, // 149        
-              "silence": 50      // 150
+              "silence": 50,      // 150
+              "custom":0 // 151       
             }
           }
       }
@@ -18946,8 +19084,20 @@ function CreateSynth(theABC) {
             //console.log("Got volume multiplier override: "+thisVolumeMultiplier);
         }
 
+        // For custom instruments
+        if (thisInstrument == "custom"){
+          //console.log("Setting custom volume scale")
+          theVolumeMultiplier = gCustomInstrumentVolumeScale;
+        }
+
         // Using a custom fade time for this instrument?
         var thisCustomFade = self.customFade[thisInstrument];
+
+        // For custom instruments
+        if (thisInstrument == "custom"){
+          //console.log("Setting custom instrument fade")
+          thisCustomFade = gCustomInstrumentFade;
+        }
         
         var theFade = fadeTimeSec;
 
@@ -19801,7 +19951,7 @@ module.exports = svg;
 /***/ (function(module) {
 
 // MAE Start of Change to add custom instruments
-var instrumentIndexToName = ["acoustic_grand_piano", "bright_acoustic_piano", "electric_grand_piano", "honkytonk_piano", "electric_piano_1", "electric_piano_2", "harpsichord", "clavinet", "celesta", "glockenspiel", "music_box", "vibraphone", "marimba", "xylophone", "tubular_bells", "dulcimer", "drawbar_organ", "percussive_organ", "rock_organ", "church_organ", "reed_organ", "accordion", "harmonica", "tango_accordion", "acoustic_guitar_nylon", "acoustic_guitar_steel", "electric_guitar_jazz", "electric_guitar_clean", "electric_guitar_muted", "overdriven_guitar", "distortion_guitar", "guitar_harmonics", "acoustic_bass", "electric_bass_finger", "electric_bass_pick", "fretless_bass", "slap_bass_1", "slap_bass_2", "synth_bass_1", "synth_bass_2", "violin", "viola", "cello", "contrabass", "tremolo_strings", "pizzicato_strings", "orchestral_harp", "timpani", "string_ensemble_1", "string_ensemble_2", "synth_strings_1", "synth_strings_2", "choir_aahs", "voice_oohs", "synth_choir", "orchestra_hit", "trumpet", "trombone", "tuba", "muted_trumpet", "french_horn", "brass_section", "synth_brass_1", "synth_brass_2", "soprano_sax", "alto_sax", "tenor_sax", "baritone_sax", "oboe", "english_horn", "bassoon", "clarinet", "piccolo", "flute", "recorder", "pan_flute", "blown_bottle", "shakuhachi", "whistle", "ocarina", "lead_1_square", "lead_2_sawtooth", "lead_3_calliope", "lead_4_chiff", "lead_5_charang", "lead_6_voice", "lead_7_fifths", "lead_8_bass_lead", "pad_1_new_age", "pad_2_warm", "pad_3_polysynth", "pad_4_choir", "pad_5_bowed", "pad_6_metallic", "pad_7_halo", "pad_8_sweep", "fx_1_rain", "fx_2_soundtrack", "fx_3_crystal", "fx_4_atmosphere", "fx_5_brightness", "fx_6_goblins", "fx_7_echoes", "fx_8_scifi", "sitar", "banjo", "shamisen", "koto", "kalimba", "bagpipe", "fiddle", "shanai", "tinkle_bell", "agogo", "steel_drums", "woodblock", "taiko_drum", "melodic_tom", "synth_drum", "reverse_cymbal", "guitar_fret_noise", "breath_noise", "seashore", "bird_tweet", "telephone_ring", "helicopter", "applause", "gunshot", "percussion", "uilleann", "smallpipesd", "smallpipesa", "sackpipa", "concertina", "melodica", "cajun", "solfege", "chorus_guitar_nylon","chorus_guitar_steel","bouzouki","bouzouki2","mandolin","marchingdrums","borderpipes","soprano_recorder","alto_recorder","tenor_recorder","bass_recorder","mountain_dulcimer_s","mountain_dulcimer","silence"];
+var instrumentIndexToName = ["acoustic_grand_piano", "bright_acoustic_piano", "electric_grand_piano", "honkytonk_piano", "electric_piano_1", "electric_piano_2", "harpsichord", "clavinet", "celesta", "glockenspiel", "music_box", "vibraphone", "marimba", "xylophone", "tubular_bells", "dulcimer", "drawbar_organ", "percussive_organ", "rock_organ", "church_organ", "reed_organ", "accordion", "harmonica", "tango_accordion", "acoustic_guitar_nylon", "acoustic_guitar_steel", "electric_guitar_jazz", "electric_guitar_clean", "electric_guitar_muted", "overdriven_guitar", "distortion_guitar", "guitar_harmonics", "acoustic_bass", "electric_bass_finger", "electric_bass_pick", "fretless_bass", "slap_bass_1", "slap_bass_2", "synth_bass_1", "synth_bass_2", "violin", "viola", "cello", "contrabass", "tremolo_strings", "pizzicato_strings", "orchestral_harp", "timpani", "string_ensemble_1", "string_ensemble_2", "synth_strings_1", "synth_strings_2", "choir_aahs", "voice_oohs", "synth_choir", "orchestra_hit", "trumpet", "trombone", "tuba", "muted_trumpet", "french_horn", "brass_section", "synth_brass_1", "synth_brass_2", "soprano_sax", "alto_sax", "tenor_sax", "baritone_sax", "oboe", "english_horn", "bassoon", "clarinet", "piccolo", "flute", "recorder", "pan_flute", "blown_bottle", "shakuhachi", "whistle", "ocarina", "lead_1_square", "lead_2_sawtooth", "lead_3_calliope", "lead_4_chiff", "lead_5_charang", "lead_6_voice", "lead_7_fifths", "lead_8_bass_lead", "pad_1_new_age", "pad_2_warm", "pad_3_polysynth", "pad_4_choir", "pad_5_bowed", "pad_6_metallic", "pad_7_halo", "pad_8_sweep", "fx_1_rain", "fx_2_soundtrack", "fx_3_crystal", "fx_4_atmosphere", "fx_5_brightness", "fx_6_goblins", "fx_7_echoes", "fx_8_scifi", "sitar", "banjo", "shamisen", "koto", "kalimba", "bagpipe", "fiddle", "shanai", "tinkle_bell", "agogo", "steel_drums", "woodblock", "taiko_drum", "melodic_tom", "synth_drum", "reverse_cymbal", "guitar_fret_noise", "breath_noise", "seashore", "bird_tweet", "telephone_ring", "helicopter", "applause", "gunshot", "percussion", "uilleann", "smallpipesd", "smallpipesa", "sackpipa", "concertina", "melodica", "cajun", "solfege", "chorus_guitar_nylon","chorus_guitar_steel","bouzouki","bouzouki2","mandolin","marchingdrums","borderpipes","soprano_recorder","alto_recorder","tenor_recorder","bass_recorder","mountain_dulcimer_s","mountain_dulcimer","silence","custom"];
 // MAE End of Change
 module.exports = instrumentIndexToName;
 
@@ -19821,7 +19971,12 @@ module.exports = instrumentIndexToName;
 // MAE START OF CHANGE
 var getNote = function getNote(url, instrument, name, audioContext) {
 
+  // if (instrument == "custom"){
+  //   gSoundsCacheABCJS[instrument] = {};
+  // }
+
   if (!gSoundsCacheABCJS[instrument]) gSoundsCacheABCJS[instrument] = {};
+
   var instrumentCache = gSoundsCacheABCJS[instrument];
 
   // Can't use .ogg files on Safari, falls back to .mp3
@@ -19834,6 +19989,55 @@ var getNote = function getNote(url, instrument, name, audioContext) {
   if (gIsIOS){
     isSafari = true;
   }
+
+  //debugger;
+
+  if (instrument == "custom"){
+
+      //debugger;
+      if (!instrumentCache[name]) instrumentCache[name] = new Promise(function (resolve, reject) {
+
+        //debugger;
+
+        var theNoteDataBuffer = null;
+
+        let entry = gCustomInstrumentSamples.find(f => f.name === name);
+
+        if (entry) {
+          theNoteDataBuffer = entry.samples.slice(0);
+        }
+
+        if (theNoteDataBuffer){
+
+          //console.log("Got buffer for "+name);
+
+          var noteDecodedLocal = function noteDecodedLocal(audioBuffer) {
+            
+            //console.log("Decoded buffer for "+name);
+            
+            resolve({
+              instrument: instrument,
+              name: name,
+              status: "loaded",
+              audioBuffer: audioBuffer
+            });
+          };
+
+          var maybePromise = audioContext.decodeAudioData(theNoteDataBuffer, noteDecodedLocal, function () {
+             reject(Error("Can't decode custom instrument at " + name));
+          });
+
+        }
+        else{
+          reject(Error("Custom sound note " + name + " missing!"));
+        }
+
+      });
+
+      return instrumentCache[name];
+  }
+
+  //debugger;
 
   // Track custom instrument use for redirect detect on fetch
   var isCustomInstrument = false;

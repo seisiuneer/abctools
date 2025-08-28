@@ -712,6 +712,12 @@
             <a style="text-decoration:none;" href="#advanced_resetsettings">Reset All Tool Settings</a>
             <a style="text-decoration:none;" href="#configure_fonts">Configuring ABC Rendering Fonts</a>
             </details>
+
+            <details>
+            <summary><h3>Loading and Creating Custom MIDI Instruments</h3></summary>
+            <a style="text-decoration:none;" href="#custom_midi_instrument">Loading a Custom MIDI Instrument</a>
+            <a style="text-decoration:none;" href="#creating_custom_midi_instruments">Creating Custom MIDI Instruments</a>
+            </details>
             
             <details>
             <summary><h3>MusicXML/MIDI Import</h3></summary>
@@ -1186,6 +1192,12 @@
                         <p class="toc"><a style="text-decoration:none;" href="#advanced_resetsettings">Reset All Tool Settings</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#configure_fonts">Configuring ABC Rendering Fonts</a></p>
                     </div>
+
+                    <button class="accordion" title="Click to expand/collapse this section">Loading and Creating Custom MIDI Instruments</button>
+                    <div class="tocpanel">
+                        <p class="toc"><a style="text-decoration:none;" href="#custom_midi_instrument">Loading a Custom MIDI Instrument</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#creating_custom_midi_instruments">Creating Custom MIDI Instruments</a></p>
+                    </div>
                     
                     <button class="accordion" title="Click to expand/collapse this section">MusicXML/MIDI Import</button>
                     <div class="tocpanel">
@@ -1245,7 +1257,7 @@
                     <div class="tocpanel">
                         <p class="toc"><a style="text-decoration:none;" href="#midi_input">Typing ABC Using a MIDI Input Device</a></p>
                     </div>
-                    
+
                     <button class="accordion" title="Click to expand/collapse this section">General Operating System Topics</button>
                     <div class="tocpanel">
                         <p class="toc"><a style="text-decoration:none;" href="#double_space_period_fix">Fix for Typing Two Spaces Quickly Results in a Period</a></p>
@@ -5657,7 +5669,7 @@
                 <hr class="hidden-print" id="advanced_settings">
                 <h1 class="page_break_always">Advanced Settings<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <div class="image_holder_p">
-                    <img class="image" loading="lazy" src="img/advanced_settings_30.jpg"/>
+                    <img class="image" loading="lazy" src="img/advanced_settings_31.jpg"/>
                 </div>
                 <p>These settings are available by clicking the <strong>Advanced Settings</strong> button at the bottom of the main <strong>Settings</strong> dialog.</p>
                 <p>On mobile browsers, the dialog will only show the settings that are available on mobile platforms.</p>
@@ -5772,12 +5784,16 @@
                 <p>To return to using my default API token, clear this field.</p>
                 <hr id="custom_reverb">
                 <p><strong>Load Custom Reverb Impulse</strong></p>
-                <p>This button on the <strong>Advanced Settings</strong> dialog allows you to load a custom convolution reverb impulse .wav file to use when specifying "custom" as the reverb type for the current tool session.</p>
+                <p>Click this button to specify a custom convolution reverb impulse .wav file to use when specifying "custom" as the reverb type for the current tool session.</p>
                 <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/RyMBJcT54FE" title="Custom Acoustic Environments" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
                 <p>You will find many reverb impulse files for free download at: <a href="https://www.openair.hosted.york.ac.uk/?page_id=36" target="_blank">Open Air Acoustic Impulse Responses</a></p>
                 <p>Once loaded, the custom reverb impulse file is saved in browser storage and will be used the next time the custom reverb style is requested.</p>
+                <hr>                 
+                <p><strong>Load Custom Instrument</strong></p>
+                <p>Click this button to load a custom MIDI instrument notes sample .zip bundle.</p>
+                <p>For details on sample .zip bundle creation and playback of custom instruments, please see the <a href="#custom_midi_instrument">Loading a Custom MIDI Instrument</a> section below.</p>
                 <hr id="advanced_resetsettings">
-                <p><strong>Reset Settings</strong> - Click this button on the <strong>Advanced Settings</strong> dialog to bring up a subdialog where you can reset the tool settings, clear the instrument note, reverb settings, and search engine tune search collection databases, or force an update of the tool.</p>
+                <p><strong>Reset Settings</strong> - Click this button to bring up a subdialog where you can reset the tool settings, clear the instrument note, reverb settings, and search engine tune search collection databases, or force an update of the tool.</p>
                 <div class="image_holder_p">
                     <img class="image" loading="lazy" src="img/reset_settings_5.jpg"/>
                 </div>
@@ -6478,6 +6494,46 @@
                 <p>While entering notes using MIDI, you can click on the "ABC Transcriptions Tools" title at the top of the screen to toggle muting the MIDI input.</p>
                 <p>When muted, MIDI events won't be translated into ABC notes.</p>
                 <p>When muted, the title at the top of the tool will display "MIDI Input Muted" in red.</p>
+                <hr class="hidden-print" id="custom_midi_instrument">
+                <h1 class="page_break_always h1wide">Loading a Custom MIDI Instrument<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+                <p>On the <a href="#advanced_settings">Advanced Settings</a> dialog, click the <strong>Load Custom Instrument</strong> button to load a custom MIDI instrument notes sample .zip bundle.</p>
+                <p>Once the notes bundle is loaded you can then use it for playback of your tunes just like any other MIDI instrument.</p>
+                <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/rhFyRD6MIxA" title="Custom MIDI Instrument Demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
+                <div class="image_holder_p">
+                    <img class="image" loading="lazy" src="img/custom_instrument_1.jpg"/>
+                </div>
+                <p>After a custom MIDI instrument notes sample .zip bundle has been loaded, you can add the following ABC annotation to your tunes to play the custom instrument:</p>
+                <p class="code">%%MIDI program custom</p>
+                <p>To change the default sample volume multipler from 1.0, add the following ABC annotation to your tunes:</p>
+                <p class="code">%custom_instrument_volume_scale (scale_multiplier_float)</p>
+                <p>Example:</p>
+                <p class="code">%custom_instrument_volume_scale 2.0</p>
+                <p>To change the default sample release fade time from 100ms, add the following ABC annotation to your tunes:</p>
+                <p class="code">%custom_instrument_fade (fade_time_in_ms)</p>
+                <p>Example:</p>
+                <p class="code">%custom_instrument_fade 250</p>
+                <hr class="hidden-print" id="creating_custom_midi_instruments">
+                <h1 class="page_break_always h1wide">Creating Custom MIDI Instruments<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+                <p>It is very easy to create a custom instrument note sample .zip bundle from any collection of individual note samples in .wav, .mp3, or .ogg format.</p>
+                <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/rhFyRD6MIxA" title="Custom MIDI Instrument Demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
+                <p>The note sample file requirements are as follows:</p>
+                <p><strong>.wav - 44.1 KHz, 16-bit, uncompressed, mono.</strong></p>
+                <p><strong>.mp3 - Ideally 96kbit mono.</strong></p>
+                <p><strong>.ogg - 44.1 KHz, 16-bit, uncompressed, mono.</strong></p>
+                <p>The sample files for each note in the .zip bundle must be named in a very specific way with the note name and octave number (C4 = Middle C)</p>
+                <p>The naming standard for the note sample files requires flats be designated by a <strong>b</strong> after the note name for the semitones:</p>
+                <p class="code">A3.wav<br/>Bb3.wav<br/>B3.wav<br/>C4.wav<br/>Db4.wav<br/>D4.wav<br/>.<br/>.<br/>.<br/>B4.wav<br/>C5.wav<br/>Db5.wav<br/>D5.wav<br/>etc.</p>
+                <p>or</p>
+                <p class="code">A2.mp3<br/>Bb2.mp3<br/>B2.mp3<br/>C3.mp3<br/>Db3.mp3<br/>D3.mp3<br/>.<br/>.<br/>.<br/>B3.mp3<br/>C4.mp3<br/>Db4.mp3<br/>D4.mp3<br/>etc.</p>
+                <p>You will need to create as many individual note samples as the total pitch range you expect to play with the instrument, generally two or three octaves.</p>
+                <p>Every chromatic note in the intended range for the instrument must be present in the bundle with the required note name.</p>
+                <p>The tool is not able to interpolate for missing named notes in the bundle.</p>
+                <p>Notes missing from the bundle will result in silence when played.</p>
+                <p>Once you have all your note samples, create a .zip file from all of them.</p>
+                <p>The sample files must be at the root of the .zip file, not in folders.</p>
+                <hr>
+                <p style="text-align: center"><strong>Creative use of Custom Instruments</strong></p>
+                <p>While in general the Custom Instrument feature can be used to create actual pitched instruments across several octaves, you can just as easily create "stems" triggered by specific scale notes, where each sample can be a sound effect or loop of drums or music intead of an individual note sample.</p>
                 <hr class="hidden-print" id="double_space_period_fix">
                 <h1 class="page_break_always h1wide">Fix for Typing Two Spaces Quickly Results in a Period<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <p>If on a Mac or mobile device browser (generally doesn't happen on Windows) you find it annoying that sometimes if you type two spaces quickly, a period gets inserted, that's something that's not because of the tool or your browser, it's a system keyboard input setting you have to change:</p>
