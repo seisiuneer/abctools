@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "2737_082925_1000";
+var gVersionNumber = "2738_082925_1130";
 
 var gMIDIInitStillWaiting = false;
 
@@ -46779,6 +46779,64 @@ function readWavFile(file) {
 }
 
 //
+// Load a custom instrument bundle
+//
+async function doCustomInstrumentImport(file){
+   
+  //console.log("Got file "+file.name);
+
+  var zip = new JSZip();
+
+  zip.loadAsync(file).then(async function(zip) {
+    
+    gCustomInstrumentSamples = [];
+
+    // Iterate through all files in the zip
+    for (let fileName of Object.keys(zip.files)) {
+
+        const zipEntry = zip.files[fileName];
+
+        // Only process .wav files
+        if (!zipEntry.dir && (fileName.toLowerCase().endsWith('.wav') || fileName.toLowerCase().endsWith('.mp3') || fileName.toLowerCase().endsWith('.ogg')) && (fileName.indexOf("MACOSX")== -1)) {
+
+            const arrayBuffer = await zipEntry.async("arraybuffer");
+
+            var theName = fileName.replace(".wav","");
+            theName = theName.replace(".mp3","");
+            theName = theName.replace(".ogg","");
+
+            gCustomInstrumentSamples.push({name:theName,samples:arrayBuffer});
+
+        }
+    }
+
+    // gCustomInstrumentSamples is an array of ArrayBuffers, one for each .wav file
+    //console.log("Extracted WAV files:", gCustomInstrumentSamples.length);
+
+    // Clear the abcjs cache for the custom instrument
+    gSoundsCacheABCJS["custom"] = {};
+
+    var modal_msg = '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-bottom:24px;margin-left:15px;">Custom MIDI Instrument Loaded&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#custom_midi_instrument" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'
+    modal_msg += '<p style="text-align:center;font-size:14pt;line-height:20pt;font-family:helvetica"><strong>'+gCustomInstrumentSamples.length+' note samples loaded from: '+file.name+'</strong></p>';
+    modal_msg += '<p style="font-size:14pt;line-height:20pt;font-family:helvetica">Add the following ABC annotation to your tunes to play the custom instrument:</p>';
+    modal_msg += '<p style="font-size:14pt;line-height:20pt;font-family:helvetica"><strong>%%MIDI program custom</strong></p>';
+    modal_msg += '<p style="font-size:14pt;line-height:20pt;font-family:helvetica">To change the default sample volume multiplier from 1.0,<br/>add the following ABC annotation to your tunes:</p>';
+    modal_msg += '<p style="font-size:14pt;line-height:20pt;font-family:helvetica"><strong>%custom_instrument_volume_scale (scale_multiplier_float)</strong></p>';
+    modal_msg += '<p style="font-size:14pt;line-height:20pt;font-family:helvetica">Example:<br/>%custom_instrument_volume_scale 2.0</p>';
+    modal_msg += '<p style="font-size:14pt;line-height:20pt;font-family:helvetica">To change the default sample release fade time from 100ms,<br/>add the following ABC annotation to your tunes:</p>';
+    modal_msg += '<p style="font-size:14pt;line-height:20pt;font-family:helvetica"><strong>%custom_instrument_fade (fade_time_in_ms)</strong></p>';
+    modal_msg += '<p style="font-size:14pt;line-height:20pt;font-family:helvetica">Example:<br/>%custom_instrument_fade 250</p>';
+    modal_msg += '<p style="font-size:14pt;line-height:20pt;font-family:helvetica"><strong>&nbsp;</strong></p>';
+
+    DayPilot.Modal.alert(modal_msg, {
+      theme: "modal_flat",
+      top: 50,
+      scrollWithPage: (AllowDialogsToScroll())
+    });
+  })
+}
+
+//
 // Idle the Advanced Settings dialog file handlers
 //
 function idleAdvancedSettings() {
@@ -46887,6 +46945,7 @@ function idleAdvancedSettings() {
 
   }
 
+
   // Custom instrument loader file import handler
   document.getElementById("loadinstrumentbutton").onchange = async () => {
 
@@ -46914,61 +46973,11 @@ function idleAdvancedSettings() {
 
     if (file) {
 
-      //console.log("Got file "+file.name);
 
-      var zip = new JSZip();
+      doCustomInstrumentImport(file);
 
-      zip.loadAsync(file).then(async function(zip) {
-          
-          gCustomInstrumentSamples = [];
 
-          // Iterate through all files in the zip
-          for (let fileName of Object.keys(zip.files)) {
-
-              const zipEntry = zip.files[fileName];
-
-              // Only process .wav files
-              if (!zipEntry.dir && (fileName.toLowerCase().endsWith('.wav') || fileName.toLowerCase().endsWith('.mp3') || fileName.toLowerCase().endsWith('.ogg')) && (fileName.indexOf("MACOSX")== -1)) {
-
-                  const arrayBuffer = await zipEntry.async("arraybuffer");
-
-                  var theName = fileName.replace(".wav","");
-                  theName = theName.replace(".mp3","");
-                  theName = theName.replace(".ogg","");
-
-                  gCustomInstrumentSamples.push({name:theName,samples:arrayBuffer});
-
-              }
-          }
-
-          // gCustomInstrumentSamples is an array of ArrayBuffers, one for each .wav file
-          //console.log("Extracted WAV files:", gCustomInstrumentSamples.length);
-
-          // Clear the abcjs cache for the custom instrument
-          gSoundsCacheABCJS["custom"] = {};
-
-          var modal_msg = '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-bottom:24px;margin-left:15px;">Custom MIDI Instrument Loaded&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#custom_midi_instrument" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'
-          modal_msg += '<p style="text-align:center;font-size:14pt;line-height:20pt;font-family:helvetica"><strong>'+gCustomInstrumentSamples.length+' note samples loaded from: '+file.name+'</strong></p>';
-          modal_msg += '<p style="font-size:14pt;line-height:20pt;font-family:helvetica">Add the following ABC annotation to your tunes to play the custom instrument:</p>';
-          modal_msg += '<p style="font-size:14pt;line-height:20pt;font-family:helvetica"><strong>%%MIDI program custom</strong></p>';
-          modal_msg += '<p style="font-size:14pt;line-height:20pt;font-family:helvetica">To change the default sample volume multiplier from 1.0,<br/>add the following ABC annotation to your tunes:</p>';
-          modal_msg += '<p style="font-size:14pt;line-height:20pt;font-family:helvetica"><strong>%custom_instrument_volume_scale (scale_multiplier_float)</strong></p>';
-          modal_msg += '<p style="font-size:14pt;line-height:20pt;font-family:helvetica">Example:<br/>%custom_instrument_volume_scale 2.0</p>';
-          modal_msg += '<p style="font-size:14pt;line-height:20pt;font-family:helvetica">To change the default sample release fade time from 100ms,<br/>add the following ABC annotation to your tunes:</p>';
-          modal_msg += '<p style="font-size:14pt;line-height:20pt;font-family:helvetica"><strong>%custom_instrument_fade (fade_time_in_ms)</strong></p>';
-          modal_msg += '<p style="font-size:14pt;line-height:20pt;font-family:helvetica">Example:<br/>%custom_instrument_fade 250</p>';
-          modal_msg += '<p style="font-size:14pt;line-height:20pt;font-family:helvetica"><strong>&nbsp;</strong></p>';
-
-          DayPilot.Modal.alert(modal_msg, {
-            theme: "modal_flat",
-            top: 50,
-            scrollWithPage: (AllowDialogsToScroll())
-          });
-
-      });
-
-    }
- 
+    } 
 
     // Reset file selectors
     fileElement.value = "";
@@ -50120,6 +50129,15 @@ function DoDrop(e) {
   e.preventDefault();
 
   const drop_files = Array.from(e.dataTransfer.files);
+
+  // Is this a custom instrument bundle?
+  if (drop_files && drop_files[0].name.endsWith(".zip")){
+
+    doCustomInstrumentImport(drop_files[0]);
+    
+    return;
+
+  }
 
   DoMultiReadCommon(drop_files, null);
 
