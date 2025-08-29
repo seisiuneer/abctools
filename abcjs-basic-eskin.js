@@ -270,7 +270,7 @@ var gForcePowerChords = false;
 var gAllowLoopStateCaching = true;
 
 // Custom instrument samples
-var gCustomInstrumentSamples = null;
+var gCustomInstrumentSamples = [];
 var gCustomInstrumentVolumeScale = 1.0;
 var gCustomInstrumentFade = 100;
 
@@ -19970,10 +19970,6 @@ module.exports = instrumentIndexToName;
 
 // MAE START OF CHANGE
 var getNote = function getNote(url, instrument, name, audioContext) {
-
-  // if (instrument == "custom"){
-  //   gSoundsCacheABCJS[instrument] = {};
-  // }
 
   if (!gSoundsCacheABCJS[instrument]) gSoundsCacheABCJS[instrument] = {};
 
