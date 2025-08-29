@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>ABC Transcription Tools Custom Instrument Builder</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    <script type="text/javascript" src="daypilot-modal.min-3.10.1.js?v=1"></script>
+    <style>
+    body {
+    background: #fafafa;
+    color: #222;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    max-width: 800px;
+    margin: 10px auto;
+    padding: 0 20px;
+    line-height: 1.5;
+    }
+    h1 {
+    margin-top: 18px;
+    font-size: 1.8em;
+    margin-bottom: .5em;
+    color: #000;
+    text-align: center;
+    }
+    h4 {
+    font-size: 1.2em;
+    margin-bottom: 1em;
+    color: #000;
+    }
+    p {
+    font-size: 1em;
+    }
+    label {
+    font-size: 1em;
+    display: block;
+    margin-top: 1.25em;
+    font-weight: 600;
+    }
+    input[type="file"],
+    select {
+    margin-top: 0.25em;
+    font-size: 1em;
+    padding: 0.4em;
+    width: 100%;
+    box-sizing: border-box;
+    }
+    #fileList {
+    margin-top: .5em;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 1em;
+    max-height: 40vh;
+    overflow-y: auto;
+    }
+    .file-item {
+    padding: 0.5em;
+    margin-bottom: 0.3em;
+    background: #f5f5f5;
+    border: 1px solid #e1e1e1;
+    border-radius: 3px;
+    cursor: grab;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.95em;
+    }
+    .file-item.drag-over {
+    background: #e6f7ff;
+    border-color: #91d5ff;
+    }
+    .proposed {
+    color: #555;
+    font-style: italic;
+    margin-left: 1em;
+    flex-shrink: 0;
+    }
+    button {
+    margin-top: 2em;
+    padding: 0.75em 1.2em;
+    font-size: 1em;
+    background: #005aad;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 600;
+    }
+    button:hover {
+    background: green;
+    }
+    .accordion {
+    font-size:12pt  !important;
+    font-family:"Helvetica" !important;
+    background-color: #eee;
+    color: #000 !important;
+    cursor: pointer !important;
+    padding: 8px !important;
+    width: 100% !important;
+    text-align: center !important;
+    border: .5px solid #000 !important;
+    outline: none !important;
+    margin-bottom:8px;
+    margin-top:12px;
+    }
+    .active {
+    background-color: #eee;
+    }
+    @media not all and (pointer: coarse) {
+    .accordion:hover {
+    background-color: #9f9;
+    }
+    }
+    .expandall{
+    font-size:11pt  !important;
+    font-family:"Helvetica" !important;
+    width:120px !important;
+    height:40px !important;
+    padding:7px !important;
+    border-radius:4px !important;
+    border:.5px solid #000 !important;
+    color:black !important;
+    background-color: #eee;
+    }
+    @media not all and (pointer: coarse) {
+    .expandall:hover {
+    background-color: #9f9;
+    }
+    }
+    .tocpanel {
+    padding: 8px !important;
+    display: none;
+    overflow: hidden !important;
+    }
+    
+    /* For modal dialog prompt replacement */
+    .modal_flat_background { background-color: #000; opacity: 0.4; }
+    .modal_flat_main { border: 1px solid #333; box-shadow: 0px 0px 15px -2px rgba(0,0,0,0.75);  }
+    
+    /* font size only */
+    .modal_flat_main, .modal_flat_main input, .modal_flat_main button {  font-size: 16px; }
+    
+    .modal_flat_main input, .modal_flat_main button {  padding: 5px; box-sizing: border-box; }
+    .modal_flat_inner { padding: 30px; background: #fff; color: #000; }
+    .modal_flat_content { font-family:"Helvetica"; margin: 20px 0px;}
+    .modal_flat_input { margin: 20px 0px;}
+    .modal_flat_buttons { text-align:center;margin-top: 40px; }
+    .modal_flat_main button { background-color: #ccc; color: #000; padding: 10px 20px; border: 0px; cursor: pointer; outline: none; width: 100px;  }
+    .modal_flat_cancel {margin-left: 5px;}
+    </style>
+  </head>
+  <body>
+    <h1>ABC Transcription Tools Custom Instrument Builder</h1>
+    
+    <button class="accordion" title="Click to expand/collapse this section">Click to show/hide the instructions</button>
+    
+    <div class="tocpanel" style="text-align:left;background-color:#f5ffff;">
+      <p>This tool is used to create an ABC Transcription Tools custom instrument from a directory of per-note audio sample files.</p>
+      <p>The files should be in .wav, .mp3, or .ogg format.</p>
+      <p>1)&nbsp;Click <strong>Select audio sample files in .wav, .mp3, or .ogg format</strong> to select your audio sample files.</p>
+      <p>The samples must all be in the same directory.</p>
+      <p>The output note filename for each audio sample input file is displayed at the right of each item in the list.</p>
+      <p>Drag and drop the items in the list into the scale note order you want.</p>
+      <p>2)&nbsp;Choose the starting octave number for the instrument notes.</p>
+      <p>3)&nbsp;Choose the starting scale note for the file names.</p>
+      <p>4)&nbsp;If your files have filenames that contain note names, you can try checking <strong>Try to automatically sort files by scale order (C, Db, D, Eb, E, ...)</strong> to hopefully better align the sample file list with the note names.</p>
+      <p>5)&nbsp;Click "Export as Custom ABC Transcription Tools Instrument" to export the custom instrument .zip sample bundle.</p>
+      <p>The exported file will be saved to your browser's default <strong>Downloads</strong> directory.</p>
+    </div>
+    
+    <label>Select audio sample files in .wav, .mp3, or .ogg format:
+      <input type="file" id="fileInput" accept=".wav,.mp3,.ogg" multiple>
+    </label>
+    
+    <label>Starting Octave Number:
+      <select id="startNumber">
+        <option value="0">0</option>
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+        <option value="6">6</option>
+        <option value="7">7</option>
+        <option value="8">8</option>
+        <option value="9">9</option>
+      </select>
+    </label>
+    
+    <label>Starting Scale Note:
+      <select id="startNote">
+        <option value="0">C</option>
+        <option value="1">Db</option>
+        <option value="2">D</option>
+        <option value="3">Eb</option>
+        <option value="4">E</option>
+        <option value="5">F</option>
+        <option value="6">Gb</option>
+        <option value="7">G</option>
+        <option value="8">Ab</option>
+        <option value="9">A</option>
+        <option value="10">Bb</option>
+        <option value="11">B</option>
+      </select>
+    </label>
+    
+    <label>
+      <input type="checkbox" id="autoSort">
+      Try to automatically sort files by scale order (C, Db, D, Eb, E, ...)
+    </label>
+    
+    <p style="margin-bottom:8px;"><strong>Drag the notes into the note scale order you want:</strong></p>
+    
+    <div id="fileList"></div>
+    
+    <button id="exportZip">Click to Export as a Custom ABC Transcription Tools Instrument</button>
+    
+    <script>
+    
+    function DoStartup() {
+
+        const notes = ["C", "Db", "D", "Eb", "E", "F", "Gb", "G", "Ab", "A", "Bb", "B"];
+        let files = [];
+        let originalFiles = [];
+
+        const fileInput = document.getElementById('fileInput');
+        const startNumber = document.getElementById('startNumber');
+        const startNote = document.getElementById('startNote');
+        const fileList = document.getElementById('fileList');
+        const exportZipBtn = document.getElementById('exportZip');
+        const autoSortCheckbox = document.getElementById('autoSort');
+
+        var gFileSaveName = "custom_instrument.zip";
+
+        function sortFilesIfNeeded() {
+            if (autoSortCheckbox.checked) {
+                const noteOrder = ["C", "Db", "D", "Eb", "E", "F", "Gb", "G", "Ab", "A", "Bb", "B"];
+                const sharpToFlat = {
+                    "C#": "Db",
+                    "D#": "Eb",
+                    "F#": "Gb",
+                    "G#": "Ab",
+                    "A#": "Bb",
+                    "Cs": "Db",
+                    "Ds": "Eb",
+                    "Fs": "Gb",
+                    "Gs": "Ab",
+                    "As": "Bb"
+                };
+
+                // Match note (A–G), optional accidental (#, b, s), and octave number anywhere
+                const noteRegex = /([A-G][#bs]?)(\d+)/i;
+
+                files.sort((a, b) => {
+                    const matchA = a.name.match(noteRegex);
+                    const matchB = b.name.match(noteRegex);
+
+                    if (matchA && matchB) {
+                        let noteA = matchA[1].charAt(0).toUpperCase() + (matchA[1].slice(1) || "");
+                        let octaveA = parseInt(matchA[2], 10);
+
+                        let noteB = matchB[1].charAt(0).toUpperCase() + (matchB[1].slice(1) || "");
+                        let octaveB = parseInt(matchB[2], 10);
+
+                        // Normalize sharps to flats
+                        noteA = sharpToFlat[noteA] || noteA;
+                        noteB = sharpToFlat[noteB] || noteB;
+
+                        if (octaveA !== octaveB) return octaveA - octaveB;
+                        return noteOrder.indexOf(noteA) - noteOrder.indexOf(noteB);
+                    }
+
+                    if (matchA) return -1;
+                    if (matchB) return 1;
+                    return 0;
+                });
+            } else {
+                // Restore original order
+                files = [...originalFiles];
+            }
+        }
+
+
+        fileInput.addEventListener('change', (e) => {
+            originalFiles = Array.from(e.target.files); // keep original selection order
+            files = [...originalFiles];
+
+            sortFilesIfNeeded();
+            renderList();
+        });
+
+        startNumber.addEventListener('change', (e) => {
+            renderList();
+        });
+
+        startNote.addEventListener('change', (e) => {
+            renderList();
+        });
+
+        autoSortCheckbox.addEventListener('change', () => {
+            sortFilesIfNeeded();
+            renderList();
+        });
+
+        function renderList() {
+            fileList.innerHTML = '';
+            files.forEach((file, i) => {
+                const item = document.createElement('div');
+                item.className = 'file-item';
+                item.draggable = true;
+                item.dataset.index = i;
+
+                // proposed filename
+                const proposedName = getProposedName(i, file);
+
+                item.innerHTML = `
+    <span>${file.name}</span>
+    <span style="color:#555; font-style:italic; margin-left:1em;">→ ${proposedName}</span>
+    `;
+
+                addDragHandlers(item);
+                fileList.appendChild(item);
+            });
+        }
+
+        function getProposedName(i, file) {
+            const start = parseInt(startNumber.value, 10);
+            const offset = parseInt(startNote.value, 10);
+            const noteIndex = (i + offset) % 12;
+            const octave = start + Math.floor((i + offset) / 12);
+            const ext = file.name.split('.').pop();
+            return `${notes[noteIndex]}${octave}.${ext}`;
+        }
+
+        function addDragHandlers(el) {
+            el.addEventListener('dragstart', (e) => {
+                e.dataTransfer.setData('text/plain', e.target.dataset.index);
+                e.target.classList.add('dragging');
+            });
+            el.addEventListener('dragend', (e) => {
+                e.target.classList.remove('dragging');
+                // Update files array according to new DOM order
+                const newOrder = Array.from(fileList.children).map(c => files[c.dataset.index]);
+                files = newOrder;
+                renderList(); // re-render to update proposed names
+            });
+            el.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                const dragging = document.querySelector('.dragging');
+                const bounding = el.getBoundingClientRect();
+                const offset = e.clientY - bounding.top;
+                const height = bounding.height / 2;
+                const parent = el.parentNode;
+                if (offset > height) {
+                    parent.insertBefore(dragging, el.nextSibling);
+                } else {
+                    parent.insertBefore(dragging, el);
+                }
+            });
+        }
+
+        // autoscroll while dragging
+        fileList.addEventListener('dragover', (e) => {
+            const scrollZone = 40; // px from edge
+            const scrollSpeed = 4; // px per event
+            const rect = fileList.getBoundingClientRect();
+
+            if (e.clientY < rect.top + scrollZone) {
+                fileList.scrollTop -= scrollSpeed;
+            } else if (e.clientY > rect.bottom - scrollZone) {
+                fileList.scrollTop += scrollSpeed;
+            }
+        });
+
+        exportZipBtn.addEventListener('click', async () => {
+
+            async function saveZipFile(fname) {
+                const reordered = Array.from(fileList.children).map(el => {
+                    const idx = el.dataset.index;
+                    return files[idx];
+                });
+
+                const zip = new JSZip();
+                reordered.forEach((file, i) => {
+                    const newName = getProposedName(i, file);
+                    zip.file(newName, file);
+                });
+
+                const blob = await zip.generateAsync({
+                    type: "blob"
+                });
+                const a = document.createElement('a');
+                a.href = URL.createObjectURL(blob);
+                a.download = fname;
+                a.click();
+                setTimeout(function() {
+                    window.URL.revokeObjectURL(a.href);
+                }, 1000);
+            };
+
+            if (fileList.children.length == 0) {
+
+                DayPilot.Modal.alert('<p style="text-align:center">Nothing to export!</p>', {
+                    theme: "modal_flat",
+                    top: 200
+                });
+
+                return;
+            }
+
+            var thePrompt = "Please enter a filename for your custom instrument file:";
+
+            DayPilot.Modal.prompt(thePrompt, gFileSaveName, {
+                theme: "modal_flat",
+                top: 200,
+                autoFocus: true
+            }).then(function(args) {
+
+                var fname = args.result;
+
+                // If the user pressed Cancel, exit
+                if (fname == null) {
+                    return;
+                }
+
+                if (fname.length == 0) {
+                    return;
+                }
+
+                if (!fname.endsWith(".zip")) {
+                    // Give it a good extension
+                    fname = fname.replace(/\..+$/, '');
+                    fname = fname + ".zip";
+                }
+
+                gFileSaveName = fname;
+
+                saveZipFile(fname);
+
+            });
+
+        });
+
+        var acc = document.getElementsByClassName("accordion");
+
+        for (var i = 0; i < acc.length; i++) {
+            acc[i].addEventListener("click", function() {
+                this.classList.toggle("active");
+                var panel = this.nextElementSibling;
+                if (panel.style.display === "block") {
+                    panel.style.display = "none";
+                } else {
+                    panel.style.display = "block";
+                }
+            });
+        }
+    }
+
+    function WaitForReady(fn) {
+        if (document.readyState !== 'loading') {
+            fn();
+            return;
+        }
+        document.addEventListener('DOMContentLoaded', fn);
+    }
+
+    WaitForReady(DoStartup);
+    
+    </script>
+
+  </body>
+
+</html>
