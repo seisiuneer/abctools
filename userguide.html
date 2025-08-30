@@ -5853,9 +5853,16 @@
                 <p>The sample files must be at the root of the .zip file, not in folders.</p>  
                 <hr class="hidden-print" id="custom_instrument_builder">
                 <h1 class="page_break_always h1wide">Custom MIDI Instrument Builder Utility<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-                <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/q5ZuyKm9ea8" title="Custom MIDI Instrument Builder Demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
+                <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/q5ZuyKm9ea8" title="Custom MIDI Instrument Builder Demo 1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
+                <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/DoTR3FrvnEc" title="Custom MIDI Instrument Builder Demo 2" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
                 <p>To facilitate the creation of custom MIDI instruments, I've created a simple utility that can read an entire directory of audio sample files and create a custom instrument with all the correct note names and octaves:</p>
                 <p style="text-align: center"><a href="https://michaeleskin.com/tools/custom_instrument_builder.html" target="_blank">ABC Transcription Tools Custom Instrument Builder</a></p>
+                <p>The utility can automatically detect the note range of a partial set of note samples based on the filenames and when exporting the custom instrument, synthesize any missing samples in the note range.</p>
+                <p>It does this by pitch shifting the next lowest actual note as required creating additional .wav file placeholders as required, and then saves them along with the original notes to the custom instrument .zip file.</p>
+                <p>Once you have a custom instrument .zip file, you can just drag-and-drop it onto the ABC editor, and then use it in a tune by specfying:</p>
+                <p class="code">%%MIDI program custom</p>
+                <p>in the ABC for the tune, or even a single voice in a multi-voice tune.</p>
+                <p>This allows the tool to be used with the many open-source and paid instrument libraries that are available for VST applications, where there are often only a small number of actual note samples provided.</p>
                 <hr class="hidden-print" id="custom_midi_instrument">
                 <h1 class="page_break_always h1wide">How to Load and Use a Custom MIDI Instrument<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <p>You can expand on the instruments available in the soundfonts by creating your own custom MIDI instruments.</p>
@@ -5866,7 +5873,7 @@
                 <div class="image_holder_p">
                     <img class="image" loading="lazy" src="img/custom_instrument_1.jpg"/>
                 </div>
-                <p>After a custom MIDI instrument notes sample .zip bundle has been loaded, you can add the following ABC annotation to your tunes to play the custom instrument:</p>
+                <p>After a custom MIDI instrument notes sample .zip bundle has been loaded, you can add the following ABC annotation to your tunes (or a single voice in a multi-voice tune) to play the custom instrument:</p>
                 <p class="code">%%MIDI program custom</p>
                 <p>To change the default sample volume multipler from 1.0, add the following ABC annotation to your tunes:</p>
                 <p class="code">%custom_instrument_volume_scale (scale_multiplier_float)</p>
