@@ -7,18 +7,7 @@
 //
 //
 //
-//
-//
-//
-//
-//
-// Updated 30 Aug 2025 at 1130
-//
-//
-//
-//
-//
-//
+// Updated 31 Aug 2025 at 1000
 //
 //
 //
@@ -27,7 +16,7 @@
 //
 //
 
-const cacheName = 'abctoolscache-2739';
+const cacheName = 'abctoolscache-2740';
 
 const contentToCache = [
     'abctools.html',
@@ -37,7 +26,7 @@ const contentToCache = [
     'tunesources.css',
     'credits.html',
     'tipjars.html',
-    'general_midi_extended_v9.pdf',
+    'general_midi_extended_v10.pdf',
     'abc_standard_v2.1.pdf',
     'ABCquickRefv0_6.pdf',
     'app.css',

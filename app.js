@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "2739_083025_1130";
+var gVersionNumber = "2740_083125_1000";
 
 var gMIDIInitStillWaiting = false;
 
@@ -19663,7 +19663,7 @@ function AppendDatabaseTemplate() {
   theValue += '[I:MIDI= program 120] "_120" G4 |[I:MIDI= program 121] "_121" G4 |[I:MIDI= program 122] "_122" G4 |[I:MIDI= program 123] "_123" G4 |[I:MIDI= program 124] "_124" G4 |[I:MIDI= program 125] "_125" G4 |[I:MIDI= program 126] "_126" G4 |[I:MIDI= program 127] "_127" G4 |\n';
   theValue += '[I:MIDI= program 128] "_128" G4 |[I:MIDI= program 129] "_129" G4 |[I:MIDI= program 130] "_130" G4 |[I:MIDI= program 131] "_131" G4 |[I:MIDI= program 132] "_132" G4 |[I:MIDI= program 133] "_133" G4 |[I:MIDI= program 134] "_134" G4 |[I:MIDI= program 135] "_135" G4 |\n';
   theValue += '[I:MIDI= program 136] "_136" G4 |[I:MIDI= program 137] "_137" G4 |[I:MIDI= program 138] "_138" G4 |[I:MIDI= program 139] "_139" G4 |[I:MIDI= program 140] "_140" G4 |[I:MIDI= program 141] "_141" G4 |[I:MIDI= program 142] "_142" G4 |[I:MIDI= program 143] "_143" G4 |[I:MIDI= program 144] "_144" G4 |\n';
-  theValue += '[I:MIDI= program 145] "_145" G4 |[I:MIDI= program 146] "_146" G4 |[I:MIDI= program 147] "_147" G4 |[I:MIDI= program 148] "_148" G4 |[I:MIDI= program 149] "_149" G4 | [I:MIDI= program 150] "_150" G4 |]\n';
+  theValue += '[I:MIDI= program 145] "_145" G4 |[I:MIDI= program 146] "_146" G4 |[I:MIDI= program 147] "_147" G4 |[I:MIDI= program 148] "_148" G4 |[I:MIDI= program 149] "_149" G4 | [I:MIDI= program 158] "_158" G4 |]\n';
 
   // Do common tune addition processing
   ProcessAddTune(theValue);
@@ -21692,7 +21692,23 @@ function GetABCFileHeader() {
     /^%no_title_reverser.*$/,
     /^%force_power_chords.*$/,
     /^%custom_instrument_volume_scale.*$/,
+    /^%custom_instrument_1_volume_scale.*$/,
+    /^%custom_instrument_2_volume_scale.*$/,
+    /^%custom_instrument_3_volume_scale.*$/,
+    /^%custom_instrument_4_volume_scale.*$/,
+    /^%custom_instrument_5_volume_scale.*$/,
+    /^%custom_instrument_6_volume_scale.*$/,
+    /^%custom_instrument_7_volume_scale.*$/,
+    /^%custom_instrument_8_volume_scale.*$/,
     /^%custom_instrument_fade.*$/,
+    /^%custom_instrument_1_fade.*$/,
+    /^%custom_instrument_2_fade.*$/,
+    /^%custom_instrument_3_fade.*$/,
+    /^%custom_instrument_4_fade.*$/,
+    /^%custom_instrument_5_fade.*$/,
+    /^%custom_instrument_6_fade.*$/,
+    /^%custom_instrument_7_fade.*$/,
+    /^%custom_instrument_8_fade.*$/,
     /^[ABCDFGHILMmNORrSUZ]:/,
   ];
 
@@ -23236,6 +23252,12 @@ function InjectOneTuneMIDIProgram(theTune, progNum) {
 
     thePatchName = generalMIDISoundNames[progNum + 1];
 
+    // Handle custom MIDI instruments
+    if (/^custom([1-8])$/.test(progNum)) {
+      const n = progNum.match(/^custom([1-8])$/)[1]; // extract the number
+      thePatchName = `Custom Instrument ${n}`;
+    }
+
   }
 
   toInject = "% Melody program: " + thePatchName + "\n" + "%%MIDI program " + progNum;
@@ -23265,6 +23287,12 @@ function InjectOneTuneMIDIBassProgramAndVolumes(theTune, progNum, bassVol) {
 
     thePatchName = generalMIDISoundNames[progNum + 1];
 
+    // Handle custom MIDI instruments
+    if (/^custom([1-8])$/.test(progNum)) {
+      const n = progNum.match(/^custom([1-8])$/)[1]; // extract the number
+      thePatchName = `Custom Instrument ${n}`;
+    }
+
   }
 
   toInject = "% Bass program: " + thePatchName + "\n" + "%%MIDI bassprog " + progNum;
@@ -23293,6 +23321,12 @@ function InjectOneTuneMIDIChordProgramAndVolumes(theTune, progNum, chordVol) {
   } else {
 
     thePatchName = generalMIDISoundNames[progNum + 1];
+
+    // Handle custom MIDI instruments
+    if (/^custom([1-8])$/.test(progNum)) {
+      const n = progNum.match(/^custom([1-8])$/)[1]; // extract the number
+      thePatchName = `Custom Instrument ${n}`;
+    }
 
   }
 
@@ -23557,10 +23591,18 @@ const generalMIDISoundNames = [
   "Bass Recorder", // 147
   "Mountain Dulcimer (Solo)", // 148
   "Mountain Dulcimer (DAD)", // 149
-  "Silence" // 150
+  "Custom Instrument 1", // 150
+  "Custom Instrument 2", // 151
+  "Custom Instrument 3", // 152
+  "Custom Instrument 4", // 153
+  "Custom Instrument 5", // 154
+  "Custom Instrument 6", // 155
+  "Custom Instrument 7", // 156
+  "Custom Instrument 8", // 157
+  "Silence" // 158
 ];
 
-var MIDI_PATCH_COUNT = 150;
+var MIDI_PATCH_COUNT = 158;
 
 var gLastInjectedSoundfont = null;
 var gLastInjectedProgram = 1;
@@ -23716,7 +23758,7 @@ function InjectAllMIDIParams() {
     type: "text",
     cssClass: "configure_midi_program_form_number_input"
   }, {
-    html: '<p style="font-size:14pt;line-height:19pt;font-family:helvetica;margin-bottom:30px;text-align:center;"><a href="https://michaeleskin.com/documents/general_midi_extended_v9.pdf" target="_blank">General MIDI Instrument Program Numbers</a></p>'
+    html: '<p style="font-size:14pt;line-height:19pt;font-family:helvetica;margin-bottom:30px;text-align:center;"><a href="https://michaeleskin.com/documents/general_midi_extended_v10.pdf" target="_blank">General MIDI Instrument Program Numbers</a></p>'
   }, {
     name: "            Inject all tunes",
     id: "configure_inject_all",
@@ -23794,6 +23836,11 @@ function InjectAllMIDIParams() {
           progNum = 0;
         }
 
+        // Handle custom instrument mapping
+        if (progNum >= 150 && progNum <= 157) {
+          progNum = "custom" + (progNum - 149);
+        }
+
       }
 
       var progNumBass = args.result.configure_bassprogram;
@@ -23842,6 +23889,11 @@ function InjectAllMIDIParams() {
           progNumBass = 0;
         }
 
+        // Handle custom instrument mapping
+        if (progNumBass >= 150 && progNumBass <= 157) {
+          progNumBass = "custom" + (progNumBass - 149);
+        }
+
       }
 
       // Special case for muting voices
@@ -23855,6 +23907,11 @@ function InjectAllMIDIParams() {
 
         if ((progNumChord < 0) || (progNumChord > MIDI_PATCH_COUNT)) {
           progNumChord = 0;
+        }
+
+        // Handle custom instrument mapping
+        if (progNumChord >= 150 && progNumChord <= 157) {
+          progNumChord = "custom" + (progNumChord - 149);
         }
 
       }
@@ -35364,7 +35421,7 @@ function PlayABCDialog(theABC, callback, val, metronome_state) {
       modal_msg += '<input id="abcplayer_exportbutton" class="abcplayer_exportbutton btn btn-exportaudiomidi" onclick="ExportAudioOrImage();" type="button" value="Export Audio or Image" title="Brings up a dialog where you can export the tune in various audio and image formats">';
     }
 
-    modal_msg += '<input id="abcplayer_settingsbutton" class="abcplayer_settingsbutton btn btn-configuresettingsfromhelp" onclick="ShowPlayerSettings();" type="button" value="Settings" title="Brings up the Player Instrument Settings dialog where you can select the default MIDI soundfont, MIDI instruments, and MIDI volumes to use when playing tunes.&nbsp;&nbsp;From the dialog you can also set the Player screen width percentage.">';
+    modal_msg += '<input id="abcplayer_settingsbutton" class="abcplayer_settingsbutton btn btn-configuresettingsfromhelp" onclick="ShowPlayerSettings();" type="button" value="Settings" title="Brings up the Player Instrument Settings dialog where you can select the default MIDI soundfont, MIDI instruments, and MIDI volumes to use when playing tunes.&nbsp;&nbsp;From the dialog you can also set the Player screen width percentage, load and manage custom instruments.">';
 
     if (isDesktopBrowser()) {
       modal_msg += '<input id="abcplayer_zoom_in" class="btn btn-player_zoom abcplayer_zoom_in" onclick="ZoomPlayer(true)" type="button" value="←&nbsp;→" title="Increases the player width 10% of the window screen size">';
@@ -35985,6 +36042,15 @@ function PreProcessPlayABC(theTune) {
   if (hidePtags) {
     theTune = removeAllPLines(theTune);
   }
+
+  // Replace any %%MIDI program custom with %%MIDI program custom1
+  // matches a whole line like: %%MIDI program custom
+  const re = /^(\s*%%MIDI\s+program\s+)custom(\s*)$/gmi;
+  theTune = theTune.replace(re, '$1custom1$2');
+  
+  // Same thing for volume scale and fade
+  theTune = theTune.replace("%custom_instrument_volume_scale","%custom_instrument_1_volume_scale");
+  theTune = theTune.replace("%custom_instrument_fade","%custom_instrument_1_fade");
 
   // Allow loop state caching
   gAllowLoopStateCaching = true;
@@ -38639,7 +38705,7 @@ function ScanTuneForInstrumentExplorer(theTune) {
       break;
   }
 
-  if (gTheMelodyProgram == "150") {
+  if (gTheMelodyProgram == "158") {
     gInstrumentExplorerMelodyInstrument = 0;
   } else {
     gInstrumentExplorerMelodyInstrument = parseInt(gTheMelodyProgram) + 1;
@@ -38647,7 +38713,7 @@ function ScanTuneForInstrumentExplorer(theTune) {
 
   gInstrumentExplorerMelodyInstrument = "" + gInstrumentExplorerMelodyInstrument;
 
-  if (gTheChordProgram == "150") {
+  if (gTheChordProgram == "158") {
     gInstrumentExplorerChordInstrument = 0;
   } else {
     gInstrumentExplorerChordInstrument = parseInt(gTheChordProgram) + 1;
@@ -38655,7 +38721,7 @@ function ScanTuneForInstrumentExplorer(theTune) {
 
   gInstrumentExplorerChordInstrument = "" + gInstrumentExplorerChordInstrument;
 
-  if (gTheBassProgram == "150") {
+  if (gTheBassProgram == "158") {
     gInstrumentExplorerBassInstrument = 0;
   } else {
     gInstrumentExplorerBassInstrument = parseInt(gTheBassProgram) + 1;
@@ -46757,6 +46823,416 @@ function ResetRollDefaultParams() {
 
 }
 
+// 
+// Manage the custom instrument slots
+//
+var gCustomInstrumentSlots = [null, null, null, null, null, null, null, null]; // will store File|null after closing
+var gCustomInstrumentState = null;
+
+function processCustomInstruments(){
+
+  //debugger;
+
+  var totalFiles = 0;
+
+  let index = 0;
+
+  function next() {
+
+    // stop when we’re done
+    if (index >= gCustomInstrumentState.slots.length) {
+
+      if (totalFiles == 0){
+
+        var thePrompt = "No Custom Instruments Loaded";
+
+        // Center the string in the prompt
+        thePrompt = makeCenteredPromptString(thePrompt);
+
+        DayPilot.Modal.alert(thePrompt, {
+          theme: "modal_flat",
+          top: 300,
+          scrollWithPage: (AllowDialogsToScroll())      
+        });
+
+        return;
+
+      }
+
+      var quant = "Instrument";
+      
+      if (totalFiles > 1){
+        quant = "Instruments";
+      }
+      
+      var modal_msg = '<p style="text-align:center;font-size:16pt;font-family:helvetica;margin-bottom:24px;margin-left:15px;">'+totalFiles+' Custom '+quant+' Loaded&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#custom_midi_instrument" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'
+        modal_msg += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">In the following annotations, replace (n) with 1-8 for the custom instrument number.</p>';        
+        modal_msg += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">Add the following ABC annotation to your tunes to play the custom instrument:</p>';
+        modal_msg += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica"><strong>%%MIDI program custom(n)</strong></p>';
+        modal_msg += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">Example:<br/>%%MIDI program custom1</p>';
+        modal_msg += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">To make the instrument volume louder or softer,<br/>add the following ABC annotation to your tunes:</p>';
+        modal_msg += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica"><strong>%custom_instrument_(n)_volume_scale (scale_multiplier_float)</strong></p>';
+        modal_msg += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">Example:<br/>%custom_instrument_1_volume_scale 2.0</p>';
+        modal_msg += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">To change the default note release fade time from 100ms,<br/>add the following ABC annotation to your tunes:</p>';
+        modal_msg += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica"><strong>%custom_instrument_(n)_fade (fade_time_in_ms)</strong></p>';
+        modal_msg += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">Example:<br/>%custom_instrument_1_fade 1000</p>';
+
+      DayPilot.Modal.alert(modal_msg, {
+        theme: "modal_flat",
+        top: 50,
+        scrollWithPage: (AllowDialogsToScroll())
+      });
+
+      return;
+
+    }
+
+    const entry = gCustomInstrumentState.slots[index];
+
+    index++;
+
+    if (entry) {
+      
+      totalFiles++;
+
+      // process this entry and wait for callback before continuing
+      doCustomInstrumentImport(entry, index, function () {
+        next();
+      });
+
+    } else {
+
+      // Clear the instrument cache for the missing instrument
+      gCustomInstrumentSamples[index] = [];
+      gSoundsCacheABCJS["custom"+index]= {};
+      
+      // skip null and immediately continue
+      next();
+
+    }
+
+  }
+
+  // start the chain
+  next();
+}
+
+async function manageCustomInstrumentSlots(files){
+
+  // Normalize any item into { file: File, name: string }
+  function asObj(file) {
+    return { file, name: file.name };
+  }
+  // Display helper (strip .zip for labels/chips)
+  function displayName(entry) {
+    return (entry && entry.name) ? entry.name.replace(/\.zip$/i, "") : "";
+  }
+
+  /**
+   * Present the 8-slot assignment dialog inside DayPilot.Modal.alert(),
+   * while building EVERYTHING with the DOM API (no HTML-string templating).
+   *
+   * @param {Array<File|null>} initialSlots - 8 entries; null = empty
+   * @param {Array<File>} incoming - File objects (.zip only)
+   * @returns {Promise<Array<File|null> | null>}
+   */
+
+  // Files (e.g. from <input type="file">)
+  const incomingFiles = Array.from(files || []);
+
+  // Keep only .zip files, case-insensitive
+  const zipFiles = incomingFiles.filter(file => file && file.name && file.name.toLowerCase().endsWith(".zip"));
+
+  // Setup the initial slots from the global (may contain File|null or previously stored)
+  const initialSlots = gCustomInstrumentSlots;
+
+  const UID = "slotdlg_" + Math.random().toString(36).slice(2);
+  const containerId = UID + "-root";
+
+  // Open shell via DayPilot.Modal.alert()
+  const modal = (window.DayPilot && DayPilot.Modal && DayPilot.Modal.alert) ? DayPilot.Modal : DayPilot;
+
+  const alertPromise = modal.alert(
+    `<div id="${containerId}"></div>`,
+    { top: 50, width:780, theme:"modal_flat", okText: "Done", scrollWithPage: AllowDialogsToScroll() }
+  ).then(function(){
+    
+    // Persist final mapping as File|null (not the internal objects)
+    if (gCustomInstrumentState && gCustomInstrumentState.slots) {
+      gCustomInstrumentSlots = gCustomInstrumentState.slots.map(v => v ? v.file : null);
+      processCustomInstruments();
+    }
+
+    //debugger;
+
+  });
+
+  // Let modal render
+  await new Promise(requestAnimationFrame);
+
+  const host = document.getElementById(containerId);
+  if (!host) {
+    console.warn("Slot dialog: modal host not found");
+    return null;
+  }
+
+  // --- Build state: keep {file,name} objects in both slots and pool, so File refs are preserved ---
+  // Normalize slots: accept File|null; convert File -> {file,name}, keep null as is
+  const normSlots = Array.from({ length: 8 }, (_, i) => {
+    const v = initialSlots[i] ?? null;
+    return (v instanceof File) ? asObj(v) : null;
+  });
+
+  // Build pool from incoming zip files (objects), and remove any already in slots (by file name)
+  const occupiedNames = new Set(normSlots.filter(Boolean).map(o => o.name));
+  const poolObjs = zipFiles.map(asObj).filter(o => !occupiedNames.has(o.name));
+
+  gCustomInstrumentState = {
+    slots: normSlots,          // [{file,name}] | null
+    pool: poolObjs,            // [{file,name}]
+    selectedPoolIndex: null
+  };
+
+  // --- Styles ---
+  const style = document.createElement("style");
+  style.textContent = `
+    #${UID}-wrap {
+      position: relative;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      max-width: 720px;
+      width: min(720px, 92vw);
+      margin: 0 auto;
+      box-sizing: border-box;
+    }
+    #${UID}-grid {
+      display: grid;
+      gap: 8px;
+      grid-template-columns: repeat(4, 1fr);
+      margin-bottom:24px;
+    }
+    @media (max-width: 520px) { #${UID}-grid { grid-template-columns: repeat(2, 1fr); } }
+    .${UID}-slot {
+      border: 1px solid #ccc; border-radius: 10px; padding: 10px; min-height: 40px;
+      display:flex; align-items:center; justify-content:center; text-align:center; position:relative; background:#fff;
+      user-select: none; min-width: 0;
+    }
+    .${UID}-slot[data-has="false"] { color:#666; background:#fafafa; }
+    .${UID}-slot[data-has="true"]  { font-weight: 600; }
+    .${UID}-slot.dragover { outline: 2px dashed #888; outline-offset: 2px; }
+    .${UID}-label {
+      display: block; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;font-size:11pt;
+    }
+    .${UID}-chip {
+      border:1px solid #bbb; border-radius: 999px; padding:8px 14px; margin:6px; display:inline-flex; align-items:center;
+      cursor:grab; user-select:none; background:#fff; font-size:12px;
+      max-width: 320px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0;
+    }
+    .${UID}-chip.selected { outline: 2px solid #007aff; }
+    .${UID}-chip:active { cursor:grabbing; }
+    #${UID}-buttons { display:flex; justify-content:flex-start; gap:8px; margin-top:12px; max-width:100%; padding-right:4px; box-sizing:border-box; }
+    .${UID}-btn { padding:8px 14px; min-width:80px; border-radius:10px; border:1px solid #ccc; background:#fff; cursor:pointer; font-size:13px; }
+    .${UID}-btn.primary { background:#007aff; border-color:#007aff; color:#fff; }
+    .${UID}-btn.danger  { background:#ffdbdb; border-color:#9c0d0d; color:#9c0d0d; width:120px;}
+    @media (hover:hover){ .${UID}-btn.danger:hover{ background:#D0B0B0; } }
+    #${UID}-hint {margin-top:24px;margin-bottom:18px;}
+    #${UID}-hint2 {margin-top:18px;margin-bottom:36px;}
+    .${UID}-remove { position:absolute; top:4px; right:6px; color:#888; cursor:pointer; font-size:14px; line-height:1; user-select:none; }
+    .${UID}-remove:hover { color:#e02424; }
+    #${UID}-title{ text-align:center; font-size:18pt; font-family:helvetica; margin-bottom:36px; }
+    .${UID}-slotnum { position:absolute; top:4px; left:6px; font-size:12px; color:#666; pointer-events:none; user-select:none; }
+    .${UID}-doclink { position:absolute; top:-6px; left:0px; font-size:24pt; }
+    .${UID}-doclink a { text-decoration:none; color:inherit; }
+    .${UID}-doclink a:hover { color:#007aff; }
+  `;
+  host.appendChild(style);
+
+  // --- Structure ---
+  const wrap = el("div", { id: `${UID}-wrap` }, host);
+
+  // Doc link
+  const docLinkSpan = el("span", { class: `${UID}-doclink` }, wrap);
+  el("a", {
+    text: "?",
+    attrs: {
+      href: "https://michaeleskin.com/abctools/userguide.html#custom_midi_instrument",
+      target: "_blank",
+      title: "View documentation in new tab"
+    }
+  }, docLinkSpan);
+
+  const title = el("div", { id: `${UID}-title`, text: "Assign Files to Custom Instruments" }, wrap);
+
+  const sections = el("div", { id: `${UID}-sections` }, wrap);
+
+  // Slots
+  const slotsSection = el("section", { id: `${UID}-slots` }, sections);
+  el("h3", { text: "Installed Custom Instruments" }, slotsSection);
+  const grid = el("div", { id: `${UID}-grid` }, slotsSection);
+
+  for (let i = 0; i < 8; i++) {
+    const slotEl = el("div", { class: `${UID}-slot`, attrs: { "data-slot": String(i), "data-has": gCustomInstrumentState.slots[i] ? "true" : "false" } }, grid);
+    el("span", { class: `${UID}-slotnum`, text: String(i + 1) }, slotEl);
+    const removeX = el("span", { class: `${UID}-remove`, text: "×", attrs: { title: "Remove from this slot" } }, slotEl);
+    const label = el("span", {
+      class: `${UID}-label`,
+      text: gCustomInstrumentState.slots[i] ? displayName(gCustomInstrumentState.slots[i]) : `Available`,
+      attrs: { title: gCustomInstrumentState.slots[i] ? gCustomInstrumentState.slots[i].name : `Available` }
+    }, slotEl);
+
+    // click-to-assign
+    slotEl.addEventListener("click", () => {
+      if (gCustomInstrumentState.selectedPoolIndex != null) assignPoolToSlot(gCustomInstrumentState.selectedPoolIndex, i);
+    });
+
+    // remove
+    removeX.addEventListener("click", (e) => {
+      e.stopPropagation();
+      removeFromSlot(i);
+    });
+
+    // DnD
+    slotEl.addEventListener("dragover", (e) => { e.preventDefault(); slotEl.classList.add("dragover"); });
+    slotEl.addEventListener("dragleave", () => slotEl.classList.remove("dragover"));
+    slotEl.addEventListener("drop", (e) => {
+      e.preventDefault();
+      slotEl.classList.remove("dragover");
+      try {
+        const data = JSON.parse(e.dataTransfer.getData("text/plain") || "{}");
+        if (data.type === "pool") {
+          assignPoolToSlot(data.index | 0, i);
+        } else if (data.type === "slot") {
+          const from = data.index | 0;
+          if (from === i) return;
+          const tmp = gCustomInstrumentState.slots[i];
+          gCustomInstrumentState.slots[i] = gCustomInstrumentState.slots[from];
+          gCustomInstrumentState.slots[from] = tmp;
+          renderSlots();
+        }
+      } catch { /* no-op */ }
+    });
+
+    // drag a filled slot out
+    slotEl.draggable = true;
+    slotEl.addEventListener("dragstart", (e) => {
+      e.dataTransfer.setData("text/plain", JSON.stringify({ type: "slot", index: i }));
+    });
+  }
+
+  // Pool
+  const poolSection = el("section", { id: `${UID}-pool` }, sections);
+  el("h3", { text: "Available Custom Instrument Files" }, poolSection);
+  const poolList = el("div", { id: `${UID}-poolList` }, poolSection);
+  el("div", { id: `${UID}-hint`,  text: "Drag-and-drop, or click a file then click an instrument slot." }, poolSection);
+  el("div", { id: `${UID}-hint2`, text: "Click × on an instrument slot to return its file to the list." }, poolSection);
+
+  poolList.addEventListener("dragover", (e) => e.preventDefault());
+  poolList.addEventListener("drop", (e) => {
+    e.preventDefault();
+    try {
+      const data = JSON.parse(e.dataTransfer.getData("text/plain") || "{}");
+      if (data.type === "slot") {
+        const sIdx = data.index | 0;
+        if (gCustomInstrumentState.slots[sIdx]) {
+          gCustomInstrumentState.pool.push(gCustomInstrumentState.slots[sIdx]); // push object (keeps File)
+          gCustomInstrumentState.slots[sIdx] = null;
+          gCustomInstrumentState.selectedPoolIndex = null;
+          renderSlots(); renderPool();
+        }
+      }
+    } catch { /* no-op */ }
+  });
+
+  // Buttons
+  const buttons = el("div", { id: `${UID}-buttons` }, wrap);
+  const btnClear  = el("button", { class: `${UID}-btn danger`,  text: "Clear All" }, buttons);
+
+  btnClear.addEventListener("click", () => {
+    gCustomInstrumentState.slots.forEach(v => { if (v) gCustomInstrumentState.pool.push(v); });
+    for (let i = 0; i < 8; i++) gCustomInstrumentState.slots[i] = null;
+    gCustomInstrumentState.selectedPoolIndex = null;
+    renderSlots(); renderPool();
+  });
+
+  // Keyboard: Esc cancels (close with null; slots persist is handled by .then above)
+  const onKey = (e) => { if (e.key === "Escape") DayPilot.Modal.close(null); };
+  document.addEventListener("keydown", onKey, { once: true });
+
+  // --- Renderers ---
+  function renderSlots() {
+    for (let i = 0; i < 8; i++) {
+      const slotEl = grid.querySelector(`[data-slot="${i}"]`);
+      const has = !!gCustomInstrumentState.slots[i];
+      const lbl = slotEl.querySelector(`.${UID}-label`);
+      slotEl.dataset.has = has ? "true" : "false";
+      if (has) {
+        lbl.textContent = displayName(gCustomInstrumentState.slots[i]);
+        lbl.title = gCustomInstrumentState.slots[i].name;
+      } else {
+        const placeholder = `Available`;
+        lbl.textContent = placeholder;
+        lbl.title = placeholder;
+      }
+    }
+  }
+
+  function renderPool() {
+    poolList.replaceChildren();
+    gCustomInstrumentState.pool.forEach((item, idx) => {
+      const chip = el("div", {
+        class: `${UID}-chip` + (gCustomInstrumentState.selectedPoolIndex === idx ? " selected" : ""),
+        text: displayName(item),
+        attrs: { title: item.name }
+      }, poolList);
+      chip.draggable = true;
+      chip.addEventListener("click", () => {
+        gCustomInstrumentState.selectedPoolIndex = (gCustomInstrumentState.selectedPoolIndex === idx) ? null : idx;
+        renderPool();
+      });
+      chip.addEventListener("dragstart", (e) => {
+        e.dataTransfer.setData("text/plain", JSON.stringify({ type: "pool", index: idx }));
+      });
+    });
+  }
+
+  // --- Moves (operate on whole objects so File refs are preserved) ---
+  function assignPoolToSlot(poolIdx, slotIdx) {
+    if (poolIdx == null || !gCustomInstrumentState.pool[poolIdx]) return;
+    if (gCustomInstrumentState.slots[slotIdx]) gCustomInstrumentState.pool.push(gCustomInstrumentState.slots[slotIdx]);
+    gCustomInstrumentState.slots[slotIdx] = gCustomInstrumentState.pool[poolIdx];
+    gCustomInstrumentState.pool.splice(poolIdx, 1);
+    gCustomInstrumentState.selectedPoolIndex = null;
+    renderSlots(); renderPool();
+  }
+
+  function removeFromSlot(slotIdx) {
+    if (!gCustomInstrumentState.slots[slotIdx]) return;
+    gCustomInstrumentState.pool.push(gCustomInstrumentState.slots[slotIdx]);
+    gCustomInstrumentState.slots[slotIdx] = null;
+    gCustomInstrumentState.selectedPoolIndex = null;
+    renderSlots(); renderPool();
+  }
+
+  // Element helper
+  function el(tag, opts = {}, parent) {
+    const n = document.createElement(tag);
+    if (opts.id) n.id = opts.id;
+    if (opts.class) n.className = opts.class;
+    if (opts.text != null) n.textContent = opts.text;
+    if (opts.attrs) for (const [k, v] of Object.entries(opts.attrs)) n.setAttribute(k, v);
+    if (parent) parent.appendChild(n);
+    return n;
+  }
+
+  // Initial paint
+  renderSlots();
+  renderPool();
+
+  // Wait for close and return result (DayPilot resolves with {result: ...})
+  const resultObj = await alertPromise;
+  return (resultObj && typeof resultObj === "object" && "result" in resultObj) ? resultObj.result : null;
+}
+
+
 //
 //  Read a custom reverb impulse .wav file
 //
@@ -46781,15 +47257,33 @@ function readWavFile(file) {
 //
 // Load a custom instrument bundle
 //
-async function doCustomInstrumentImport(file){
+async function doCustomInstrumentImport(entry,index,callback){
+
+  //debugger;
+
+  var file = entry.file;
+
+  if (!file){
+    callback();
+    return;
+  }
+
+  index = parseInt(index);
+  if (isNaN(index)){
+    return;
+  }
    
-  //console.log("Got file "+file.name);
+  if ((index < 1) || (index > 8)){
+    return;
+  }
+
+  //console.log("Got entry "+entry.name);
 
   var zip = new JSZip();
 
   zip.loadAsync(file).then(async function(zip) {
     
-    gCustomInstrumentSamples = [];
+    gCustomInstrumentSamples[index] = [];
 
     // Iterate through all files in the zip
     for (let fileName of Object.keys(zip.files)) {
@@ -46805,35 +47299,23 @@ async function doCustomInstrumentImport(file){
             theName = theName.replace(".mp3","");
             theName = theName.replace(".ogg","");
 
-            gCustomInstrumentSamples.push({name:theName,samples:arrayBuffer});
+            gCustomInstrumentSamples[index].push({name:theName,samples:arrayBuffer});
 
         }
     }
 
     // gCustomInstrumentSamples is an array of ArrayBuffers, one for each .wav file
-    //console.log("Extracted WAV files:", gCustomInstrumentSamples.length);
+    //console.log("Extracted WAV files:", gCustomInstrumentSamples[index].length);
 
     // Clear the abcjs cache for the custom instrument
-    gSoundsCacheABCJS["custom"] = {};
+    gSoundsCacheABCJS["custom"+index] = {};
 
-    var modal_msg = '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-bottom:24px;margin-left:15px;">Custom MIDI Instrument Loaded&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#custom_midi_instrument" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'
-    modal_msg += '<p style="text-align:center;font-size:14pt;line-height:20pt;font-family:helvetica"><strong>'+gCustomInstrumentSamples.length+' note samples loaded from: '+file.name+'</strong></p>';
-    modal_msg += '<p style="font-size:14pt;line-height:20pt;font-family:helvetica">Add the following ABC annotation to your tunes to play the custom instrument:</p>';
-    modal_msg += '<p style="font-size:14pt;line-height:20pt;font-family:helvetica"><strong>%%MIDI program custom</strong></p>';
-    modal_msg += '<p style="font-size:14pt;line-height:20pt;font-family:helvetica">To change the default sample volume multiplier from 1.0,<br/>add the following ABC annotation to your tunes:</p>';
-    modal_msg += '<p style="font-size:14pt;line-height:20pt;font-family:helvetica"><strong>%custom_instrument_volume_scale (scale_multiplier_float)</strong></p>';
-    modal_msg += '<p style="font-size:14pt;line-height:20pt;font-family:helvetica">Example:<br/>%custom_instrument_volume_scale 2.0</p>';
-    modal_msg += '<p style="font-size:14pt;line-height:20pt;font-family:helvetica">To change the default sample release fade time from 100ms,<br/>add the following ABC annotation to your tunes:</p>';
-    modal_msg += '<p style="font-size:14pt;line-height:20pt;font-family:helvetica"><strong>%custom_instrument_fade (fade_time_in_ms)</strong></p>';
-    modal_msg += '<p style="font-size:14pt;line-height:20pt;font-family:helvetica">Example:<br/>%custom_instrument_fade 250</p>';
-    modal_msg += '<p style="font-size:14pt;line-height:20pt;font-family:helvetica"><strong>&nbsp;</strong></p>';
+    if (callback){
+      callback();
+    }
 
-    DayPilot.Modal.alert(modal_msg, {
-      theme: "modal_flat",
-      top: 50,
-      scrollWithPage: (AllowDialogsToScroll())
-    });
-  })
+  });
+
 }
 
 //
@@ -46844,8 +47326,6 @@ function idleAdvancedSettings() {
   if (gIsIOS) {
 
     document.getElementById("loadimpulsebutton").removeAttribute("accept");
-
-    document.getElementById("loadinstrumentbutton").removeAttribute("accept");
 
   }
 
@@ -46944,46 +47424,6 @@ function idleAdvancedSettings() {
     fileElement.value = "";
 
   }
-
-
-  // Custom instrument loader file import handler
-  document.getElementById("loadinstrumentbutton").onchange = async () => {
-
-    let fileElement = document.getElementById("loadinstrumentbutton");
-
-    // check if user had selected a file
-    if (fileElement.files.length === 0) {
-
-      var thePrompt = "Please select an custom instrument bundle .zip file";
-
-      // Center the string in the prompt
-      thePrompt = makeCenteredPromptString(thePrompt);
-
-      DayPilot.Modal.alert(thePrompt, {
-        theme: "modal_flat",
-        top: 200,
-        scrollWithPage: (AllowDialogsToScroll())
-      });
-
-      return;
-
-    }
-
-    let file = fileElement.files[0];
-
-    if (file) {
-
-
-      doCustomInstrumentImport(file);
-
-
-    } 
-
-    // Reset file selectors
-    fileElement.value = "";
-
-  }
-
 }
 
 //
@@ -47205,7 +47645,7 @@ function AdvancedSettings() {
     },
 
     {
-      html: '<p style="text-align:center;margin-top:18px;margin-bottom:6px"><input id="reset_roll_parameters" class="btn btn-subdialog reset_roll_parameters" onclick="ResetRollDefaultParams()" type="button" value="Reset Roll Parameters" title="Resets the roll parameter strings to known good default values"><label style="margin-right:14px" class="loadimpulsebutton btn btn-subdialog" for="loadimpulsebutton" title="Load a custom reverb convolution impulse .wav file">Load Custom Reverb Impulse <input type="file" id="loadimpulsebutton"  accept=".wav,.WAV" hidden/></label><label class="loadinstrumentbutton btn btn-subdialog" for="loadinstrumentbutton" title="Load a custom instrument notes .zip bundle.&nbsp;&nbsp;Please check the User Guide for details on creating custom instrument notes .zip bundles.">Load Custom Instrument <input type="file" id="loadinstrumentbutton" accept=".zip" hidden/></label><input id="resetsettings" class="btn btn-resetsettings resetsettings" onclick="ResetSettingsDialog()" type="button" value="Reset Settings" title="Opens a dialog where you can reset all tool settings to the default and/or clear the instrument notes, reverb settings, and tune search engine collection databases"></p><p style="font-size:10pt;line-height:14pt;font-family:helvetica;color:grey;position:absolute;left:20px;bottom:30px;margin:0px;cursor:pointer;" onclick="ShowBrowserInfo();" title="Click to show browser information">Click to show browser info<br/>Installed version: ' + gVersionNumber + '</p>'
+      html: '<p style="text-align:center;margin-top:18px;margin-bottom:6px"><input id="reset_roll_parameters" class="btn btn-subdialog reset_roll_parameters" onclick="ResetRollDefaultParams()" type="button" value="Reset Roll Parameter Strings to Defaults" title="Resets the roll parameter strings to known good default values"><label class="loadimpulsebutton btn btn-subdialog " for="loadimpulsebutton" title="Load a custom reverb convolution impulse .wav file">Load Custom Reverb Impulse <input type="file" id="loadimpulsebutton"  accept=".wav,.WAV" hidden/></label><input id="resetsettings" class="btn btn-resetsettings resetsettings" onclick="ResetSettingsDialog()" type="button" value="Reset Settings" title="Opens a dialog where you can reset all tool settings to the default and/or clear the instrument notes, reverb settings, and tune search engine collection databases"></p><p style="font-size:10pt;line-height:14pt;font-family:helvetica;color:grey;position:absolute;left:20px;bottom:30px;margin:0px;cursor:pointer;" onclick="ShowBrowserInfo();" title="Click to show browser information">Click to show browser info<br/>Installed version: ' + gVersionNumber + '</p>'
     },
   ]);
 
@@ -47427,6 +47867,35 @@ function AdvancedSettings() {
   });
 
 }
+
+function idleConfigurePlayerSettings(){
+
+  if (gIsIOS) {
+
+    document.getElementById("loadinstrumentbutton").removeAttribute("accept");
+  
+  }
+
+  // Custom instrument loader file import handler
+  document.getElementById("loadinstrumentbutton").onchange = async () => {
+
+    let fileElement = document.getElementById("loadinstrumentbutton");
+
+    // check if user had selected a file
+    if (fileElement.files.length === 0) {
+
+      return;
+
+    }
+
+    manageCustomInstrumentSlots(fileElement.files);
+
+    // Reset file selectors
+    fileElement.value = "";
+
+  }
+}
+
 
 //
 // Configure default instruments and volumes for the player
@@ -47754,9 +48223,18 @@ function ConfigurePlayerSettings(player_callback) {
     cssClass: "configure_settings_form_text_checkbox_fs"
   }, ]);
 
+  form = form.concat([{html: '<p style="text-align:center;margin-top:24px"><label class="btn btn-subdialog" for="loadinstrumentbutton" title="Load a custom instrument notes .zip bundle.&nbsp;&nbsp;Please check the User Guide for details on creating custom instrument notes .zip bundles.">Load Custom Instruments <input type="file" id="loadinstrumentbutton" accept=".zip" multiple hidden/></label><input id="configurecustominstruments" class="advancedcontrols btn btn-subdialog" onclick="manageCustomInstrumentSlots()" type="button" value="Configure Custom Instruments" title="Brings up the Assign Files to Custom Instruments dialog"></p>'}]);;
+
+  // Set up the reverb impulse load callback
+  setTimeout(function() {
+
+    idleConfigurePlayerSettings();
+
+  }, 25);
+
   const modal = DayPilot.Modal.form(form, theData, {
     theme: "modal_flat",
-    top: 50,
+    top: 10,
     width: 790,
     scrollWithPage: (AllowDialogsToScroll()),
     autoFocus: false
@@ -48119,7 +48597,7 @@ function ConfigureToolSettings() {
     type: "checkbox",
     cssClass: "configure_settings_form_text_checkbox"
   }, {
-    html: '<p style="text-align:center;"><input id="abcplayer_settingsbutton" style="margin-left:0px" class="abcplayer_settingsbutton btn btn-configuresettingsfromhelp" onclick="ConfigurePlayerSettings(null);" type="button" value="Select Default Player Instruments and Volumes" title="Brings up the Player Instrument Settings dialog where you can select the default MIDI soundfont, MIDI instruments, and MIDI volumes to use when playing tunes"><input id="managedatabases" class="btn btn-managedatabases managedatabases" onclick="ManageDatabasesDialog()" type="button" value="Manage Notes, Reverb, and Tune Search Databases" title="Opens a dialog where you can manage the instrument notes, reverb settings, and tune search engine collection databases"></p>'
+    html: '<p style="text-align:center;"><input id="abcplayer_settingsbutton" style="margin-left:0px" class="abcplayer_settingsbutton btn btn-configuresettingsfromhelp" onclick="ConfigurePlayerSettings(null);" type="button" value="Select Default Player Instruments and Volumes" title="Brings up the Player Instrument Settings dialog where you can select the default MIDI soundfont, MIDI instruments, and MIDI volumes to use when playing tunes.&nbsp;&nbsp;You can also load and manage custom instruments from this dialog."><input id="managedatabases" class="btn btn-managedatabases managedatabases" onclick="ManageDatabasesDialog()" type="button" value="Manage Notes, Reverb, and Tune Search Databases" title="Opens a dialog where you can manage the instrument notes, reverb settings, and tune search engine collection databases"></p>'
   }, {
     name: "    Allow instrument notes and reverb settings database to be used offline",
     id: "configure_allow_offline_instruments",
@@ -50133,8 +50611,8 @@ function DoDrop(e) {
   // Is this a custom instrument bundle?
   if (drop_files && drop_files[0].name.endsWith(".zip")){
 
-    doCustomInstrumentImport(drop_files[0]);
-    
+    manageCustomInstrumentSlots(drop_files);
+
     return;
 
   }

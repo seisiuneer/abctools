@@ -1495,13 +1495,11 @@ top:20px;
 height:42px;
 padding:12px;
 width:auto;
-margin-right:14px;
+margin-right:20px;
 }
 
-@media (hover: hover) {
-	.reset_roll_parameters:hover{
+.reset_roll_parameters:hover{
 	background: palegreen;
-	}
 }
 
 .loadimpulsebutton {
@@ -1512,24 +1510,10 @@ margin-right:14px;
 height:42px;
 padding:12px;
 width:auto;
-margin-right:14px;
+margin-right:0px;
 }
 
 .loadimpulsebutton:hover{
-	background: palegreen;
-}
-
-.loadinstrumentbutton {
-	display: inline-block;
-}
-
-#loadinstrumentbutton{
-height:42px;
-padding:12px;
-width:auto;
-}
-
-.loadinstrumentbutton:hover{
 	background: palegreen;
 }
 
@@ -1542,11 +1526,24 @@ height:42px;
 padding:12px;
 width:auto;
 margin-right:0px;
-margin-left:14px;
+margin-left:20px;
 }
 
 .resetsettings:hover{
 	background: palegreen;
+}
+
+#loadinstrumentbutton{
+height:42px;
+padding:12px;
+width:auto;
+}
+
+#configurecustominstruments{
+height:42px;
+padding:12px;
+margin-left:18px;
+width:auto;
 }
 
 .managedatabases {
@@ -2634,7 +2631,7 @@ body.noui svg {
 	font-size:12pt;
 	line-height:20px;
 	font-family:helvetica;
-	margin-top:20px;
+	margin-top:18px;
 	display:flex;
 }
 

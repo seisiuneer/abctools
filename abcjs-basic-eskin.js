@@ -270,9 +270,9 @@ var gForcePowerChords = false;
 var gAllowLoopStateCaching = true;
 
 // Custom instrument samples
-var gCustomInstrumentSamples = [];
-var gCustomInstrumentVolumeScale = 1.0;
-var gCustomInstrumentFade = 100;
+var gCustomInstrumentSamples = [[],[],[],[],[],[],[],[],[]];
+var gCustomInstrumentVolumeScale = [1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0]
+var gCustomInstrumentFade = [100,100,100,100,100,100,100,100];
 
 //
 // Aggregate CSS to the document
@@ -914,19 +914,25 @@ function ScanTuneForForcePowerChords(theTune){
 }
 
 // Scan tune for custom instrument volume
-function ScanTuneForCustomVolumeMultiplier(theTune){
+function ScanTuneForCustomVolumeMultiplier(theTune, index){
 
-  //console.log("ScanTuneForCustomVolumeMultiplier");
+  //.log("ScanTuneForCustomVolumeMultiplier index="+index);
+
+  function makeSearchRegExp(index) {
+    // If index is null/undefined, omit it
+    const suffix = index ? `_${index}` : "";
+    return new RegExp(`^%custom_instrument${suffix}_volume_scale.*$`, "gm");
+  }
 
   // Next search for an custom_instrument_volume_scale
-  searchRegExp = /^%custom_instrument_volume_scale.*$/gm
+  searchRegExp = makeSearchRegExp(index);
 
   // Detect custom_instrument_volume_scale annotation
   var foundExp  = theTune.match(searchRegExp);
 
   if ((foundExp) && (foundExp.length > 0)){
 
-    var theParamString = foundExp[0].replace("%custom_instrument_volume_scale","");
+    var theParamString = foundExp[0].replace("%custom_instrument_"+index+"_volume_scale","");
 
     theParamString = theParamString.trim();
 
@@ -940,7 +946,7 @@ function ScanTuneForCustomVolumeMultiplier(theTune){
 
       if (!isNaN(theScalerFoundFloat)){
 
-        //console.log("Got custom instrument volume scaler: "+theScalerFoundFloat);
+        //console.log("Got custom instrument "+index+" volume scaler: "+theScalerFoundFloat);
 
         return theScalerFoundFloat;
       }
@@ -952,19 +958,25 @@ function ScanTuneForCustomVolumeMultiplier(theTune){
 }
 
 // Scan tune for custom instrument fade
-function ScanTuneForCustomFade(theTune){
+function ScanTuneForCustomFade(theTune,index){
 
-  //console.log("ScanTuneForCustomFade");
+  //console.log("ScanTuneForCustomFade index="+index);
+
+  function makeSearchRegExp(index) {
+    // If index is null/undefined, omit it
+    const suffix = index ? `_${index}` : "";
+    return new RegExp(`^%custom_instrument${suffix}_fade.*$`, "gm");
+  }
 
   // Next search for an custom_instrument_fade
-  searchRegExp = /^%custom_instrument_fade.*$/gm
+  searchRegExp = makeSearchRegExp(index);
 
   // Detect custom_instrument_volume_fade annotation
   var foundExp  = theTune.match(searchRegExp);
 
   if ((foundExp) && (foundExp.length > 0)){
 
-    var theParamString = foundExp[0].replace("%custom_instrument_fade","");
+    var theParamString = foundExp[0].replace("%custom_instrument_"+index+"_fade","");
 
     theParamString = theParamString.trim();
 
@@ -978,7 +990,7 @@ function ScanTuneForCustomFade(theTune){
 
       if (!isNaN(theFadeFoundInt)){
         
-        //console.log("Got custom instrument fade: "+theFadeFoundInt);
+        //console.log("Got custom instrument "+index+" fade: "+theFadeFoundInt);
 
         return theFadeFoundInt;
       }
@@ -1834,12 +1846,18 @@ var tunebook = {};
           gForcePowerChords = ScanTuneForForcePowerChords(theCurrentTuneABC);
 
           // Custom instrument volume scale
-          gCustomInstrumentVolumeScale = 1.0;
-          gCustomInstrumentVolumeScale = ScanTuneForCustomVolumeMultiplier(theCurrentTuneABC);
+          gCustomInstrumentVolumeScale = [1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0];
+
+          for (var j=1;j<=8;j++){
+            gCustomInstrumentVolumeScale[j-1] = ScanTuneForCustomVolumeMultiplier(theCurrentTuneABC,j);
+          }
 
           // Custom instrument volume scale
-          gCustomInstrumentFade = 100;
-          gCustomInstrumentFade = ScanTuneForCustomFade(theCurrentTuneABC);
+          gCustomInstrumentFade = [100,100,100,100,100,100,100,100];
+
+          for (var j=1;j<=8;j++){
+            gCustomInstrumentFade[j-1] = ScanTuneForCustomFade(theCurrentTuneABC,j);
+          }
 
           abcParser.parse(book.tunes[currentTune].abc, workingParams, book.tunes[currentTune].startPos - book.header.length);
           var tune = abcParser.getTune();
@@ -3742,13 +3760,13 @@ var create;
             } 
             else
             // MAE 1 Jan 2024 - Map mute to Grand Piano
-            if (event.instrument == 150){
+            if (event.instrument == 158){
               midi.setChannelMute(event.channel, pan);
               midi.setInstrument(0);              
             }
             else
-            // MAE 28 Aug 2025 - Map custom instrument to Grand Piano
-            if (event.instrument == 151){
+            // MAE 28 Aug 2025 - Map custom instruments to Grand Piano
+            if ((event.instrument >= 150) && (event.instrument <= 157)){
               midi.setChannelMute(event.channel, pan);
               midi.setInstrument(0);              
             }
@@ -4638,7 +4656,23 @@ var bookParser = function bookParser(book) {
       /^%no_title_reverser.*$/,
       /^%force_power_chords.*$/,
       /^%custom_instrument_volume_scale.*$/,
+      /^%custom_instrument_1_volume_scale.*$/,
+      /^%custom_instrument_2_volume_scale.*$/,
+      /^%custom_instrument_3_volume_scale.*$/,
+      /^%custom_instrument_4_volume_scale.*$/,
+      /^%custom_instrument_5_volume_scale.*$/,
+      /^%custom_instrument_6_volume_scale.*$/,
+      /^%custom_instrument_7_volume_scale.*$/,
+      /^%custom_instrument_8_volume_scale.*$/,
       /^%custom_instrument_fade.*$/,
+      /^%custom_instrument_1_fade.*$/,
+      /^%custom_instrument_2_fade.*$/,
+      /^%custom_instrument_3_fade.*$/,
+      /^%custom_instrument_4_fade.*$/,
+      /^%custom_instrument_5_fade.*$/,
+      /^%custom_instrument_6_fade.*$/,
+      /^%custom_instrument_7_fade.*$/,
+      /^%custom_instrument_8_fade.*$/,
       /^[ABCDFGHILMmNORrSUZ]:/,
     ];
 
@@ -5467,29 +5501,47 @@ var parseDirective = {};
     } else if (midiCmdParam1Integer1OptionalInteger.indexOf(midi_cmd) >= 0) {
       
       //
-      // MAE 1 Jan 2024 - Stuff in silence patch 150 if mute selected as the program
+      // MAE 1 Jan 2024 - Stuff in silence patch 158 if mute selected as the program
       //
       //debugger;
       if ((midi_cmd == "program") && (midi.length == 1) && (midi[0].type == 'alpha') && (midi[0].token.toLowerCase() == "mute")){
         //console.log("Got mute program request for "+midi_cmd);
         midi[0].type = 'number';
-        midi[0].token = "150";
-        midi[0].intt = 150;
-        midi[0].floatt = 150;
+        midi[0].token = "158";
+        midi[0].intt = 158;
+        midi[0].floatt = 158;
         midi[0].continueId = false;
         midi[0].start = 8;
         midi[0].end = 11;
       }
 
-      if ((midi_cmd == "program") && (midi.length == 1) && (midi[0].type == 'alpha') && (midi[0].token.toLowerCase() == "custom")){
-        //console.log("Got mute program request for "+midi_cmd);
-        midi[0].type = 'number';
-        midi[0].token = "151";
-        midi[0].intt = 151;
-        midi[0].floatt = 151;
-        midi[0].continueId = false;
-        midi[0].start = 8;
-        midi[0].end = 13;
+      if ((midi_cmd == "program") && (midi.length == 1) && (midi[0].type == 'alpha')) {
+        const token = midi[0].token.toLowerCase();
+
+        // Match "custom" or "custom1" through "custom8"
+        const match = token.match(/^custom([1-8])$/);
+
+        if (match) {
+
+          // Default program for plain "custom"
+          let program = 150;
+
+          if (match[1]) {
+            // If there's a number, offset from 150
+            const idx = parseInt(match[1], 10) - 1; // 0-based
+            program = 150 + idx;
+          }
+
+          //console.log(`Got program request for ${token}, mapped to ${program}`);
+
+          midi[0].type = 'number';
+          midi[0].token = String(program);
+          midi[0].intt = program;
+          midi[0].floatt = program;
+          midi[0].continueId = false;
+          midi[0].start = 8;
+          midi[0].end = 14;            
+        }
       }
 
       // ONE INT PARAMETER, ONE OPTIONAL PARAMETER
@@ -5612,14 +5664,14 @@ var parseDirective = {};
     }
     else if (midiCmdParam1Integer1OptionalString.indexOf(midi_cmd) >= 0){
 
-      // MAE 1 Jan 2023 - Stuff in silence patch 150 if mute selected as the chordprog or bassprog
+      // MAE 1 Jan 2023 - Stuff in silence patch 158 if mute selected as the chordprog or bassprog
       //
       if ((midi_cmd == "chordprog") && (midi.length == 1) && (midi[0].type == 'alpha') && (midi[0].token.toLowerCase() == "mute")){
         //console.log("Got mute program request for "+midi_cmd);
         midi[0].type = 'number';
-        midi[0].token = "150";
-        midi[0].intt = 150;
-        midi[0].floatt = 150;
+        midi[0].token = "158";
+        midi[0].intt = 158;
+        midi[0].floatt = 158;
         midi[0].continueId = false;
         midi[0].start = 10;
         midi[0].end = 13;
@@ -5628,35 +5680,73 @@ var parseDirective = {};
       if ((midi_cmd == "bassprog") && (midi.length == 1) && (midi[0].type == 'alpha') && (midi[0].token.toLowerCase() == "mute")){
         //console.log("Got mute program request for "+midi_cmd);
         midi[0].type = 'number';
-        midi[0].token = "150";
-        midi[0].intt = 150;
-        midi[0].floatt = 150;
+        midi[0].token = "158";
+        midi[0].intt = 158;
+        midi[0].floatt = 158;
         midi[0].continueId = false;
         midi[0].start = 9;
         midi[0].end = 12;
       }
-      else
+
       // MAE 28 Aug 2025 - For custom instruments
-      if ((midi_cmd == "chordprog") && (midi.length == 1) && (midi[0].type == 'alpha') && (midi[0].token.toLowerCase() == "custom")){
-        //console.log("Got custom program request for "+midi_cmd);
-        midi[0].type = 'number';
-        midi[0].token = "151";
-        midi[0].intt = 151;
-        midi[0].floatt = 151;
-        midi[0].continueId = false;
-        midi[0].start = 10;
-        midi[0].end = 15;
+      if ((midi_cmd == "chordprog") && (midi.length == 1) && (midi[0].type == 'alpha')){
+        
+        const token = midi[0].token.toLowerCase();
+
+        // Match "custom1" through "custom8"
+        const match = token.match(/^custom([1-8])$/);
+
+        if (match) {
+          
+          // Default program
+          let program = 150;
+
+          if (match[1]) {
+            // If there's a number, offset from 150
+            const idx = parseInt(match[1], 10) - 1; // 0-based
+            program = 150 + idx;
+          }
+
+          //console.log(`Got chordprog program request for ${token}, mapped to ${program}`);
+
+          midi[0].type = 'number';
+          midi[0].token = String(program);
+          midi[0].intt = program;
+          midi[0].floatt = program;
+          midi[0].continueId = false;
+          midi[0].start = 10;
+          midi[0].end = 16;            
+        }      
       }
-      else
-      if ((midi_cmd == "bassprog") && (midi.length == 1) && (midi[0].type == 'alpha') && (midi[0].token.toLowerCase() == "custom")){
-        //console.log("Got custom program request for "+midi_cmd);
-        midi[0].type = 'number';
-        midi[0].token = "151";
-        midi[0].intt = 151;
-        midi[0].floatt = 151;
-        midi[0].continueId = false;
-        midi[0].start = 9;
-        midi[0].end = 14;
+
+      if ((midi_cmd == "bassprog") && (midi.length == 1) && (midi[0].type == 'alpha')){
+
+        const token = midi[0].token.toLowerCase();
+
+        // Match "custom1" through "custom8"
+        const match = token.match(/^custom([1-8])$/);
+
+        if (match) {
+          
+          // Default program for plain "custom"
+          let program = 150;
+
+          if (match[1]) {
+            // If there's a number, offset from 150
+            const idx = parseInt(match[1], 10) - 1; // 0-based
+            program = 150 + idx;
+          }
+
+          //console.log(`Got bassprog program request for ${token}, mapped to ${program}`);
+
+          midi[0].type = 'number';
+          midi[0].token = String(program);
+          midi[0].intt = program;
+          midi[0].floatt = program;
+          midi[0].continueId = false;
+          midi[0].start = 9;
+          midi[0].end = 15;            
+        }      
       }
 
       // ONE INT PARAMETER, ONE OPTIONAL string
@@ -18468,7 +18558,7 @@ function CreateSynth(theABC) {
         "bass_recorder": 120, // 147
         "mountain_dulcimer_s": 250, // 148        
         "mountain_dulcimer": 250, // 149        
-        "silence":100, // 150  
+        "silence":100, // 158  
      }
     }
     else{
@@ -18520,7 +18610,7 @@ function CreateSynth(theABC) {
         "bass_recorder": 120, // 147
         "mountain_dulcimer_s": 250, // 148        
         "mountain_dulcimer": 250, // 149        
-        "silence":100, // 150    
+        "silence":100, // 158    
      }
     } 
 
@@ -18613,8 +18703,15 @@ function CreateSynth(theABC) {
               "bass_recorder": 0, // 147
               "mountain_dulcimer_s": 0, // 148        
               "mountain_dulcimer": 0, // 149        
-              "silence": 50,      // 150
-              "custom":0 // 151       
+              "custom1":0, // 150       
+              "custom2":0, // 151       
+              "custom3":0, // 152       
+              "custom4":0, // 153       
+              "custom5":0, // 154       
+              "custom6":0, // 155       
+              "custom7":0, // 156       
+              "custom8":0,  // 157      
+              "silence": 50      // 158
             }
           }
           else{
@@ -18640,8 +18737,15 @@ function CreateSynth(theABC) {
               "bass_recorder": 0, // 147
               "mountain_dulcimer_s": 0, // 148        
               "mountain_dulcimer": 0, // 149        
-              "silence": 50,      // 150
-              "custom":0 // 151       
+              "custom1":0, // 150       
+              "custom2":0, // 151       
+              "custom3":0, // 152       
+              "custom4":0, // 153       
+              "custom5":0, // 154       
+              "custom6":0, // 155       
+              "custom7":0, // 156       
+              "custom8":0,  // 157      
+              "silence": 50      // 158
             }
           }
       }
@@ -19085,18 +19189,30 @@ function CreateSynth(theABC) {
         }
 
         // For custom instruments
-        if (thisInstrument == "custom"){
-          //console.log("Setting custom volume scale")
-          theVolumeMultiplier = gCustomInstrumentVolumeScale;
+        if (thisInstrument.startsWith("custom")) {
+          // Match "custom1" to "custom8"
+          const match = thisInstrument.match(/^custom([1-8])$/);
+
+          if (match) {
+            const idx = parseInt(match[1], 10) - 1; // convert to 0-based index
+            theVolumeMultiplier = gCustomInstrumentVolumeScale[idx];
+            //console.log(`Setting custom volume scale for ${thisInstrument} at index ${idx} to ${theVolumeMultiplier}`);
+          }
         }
 
         // Using a custom fade time for this instrument?
         var thisCustomFade = self.customFade[thisInstrument];
 
         // For custom instruments
-        if (thisInstrument == "custom"){
-          //console.log("Setting custom instrument fade")
-          thisCustomFade = gCustomInstrumentFade;
+        if (thisInstrument.startsWith("custom")) {
+          // Match "custom1" to "custom8"
+          const match = thisInstrument.match(/^custom([1-8])$/);
+
+          if (match) {
+            const idx = parseInt(match[1], 10) - 1; // convert to 0-based index
+            thisCustomFade = gCustomInstrumentFade[idx];
+            //console.log(`Setting custom fade for ${thisInstrument} at index ${idx} to ${thisCustomFade}`);
+          }
         }
         
         var theFade = fadeTimeSec;
@@ -19951,7 +20067,7 @@ module.exports = svg;
 /***/ (function(module) {
 
 // MAE Start of Change to add custom instruments
-var instrumentIndexToName = ["acoustic_grand_piano", "bright_acoustic_piano", "electric_grand_piano", "honkytonk_piano", "electric_piano_1", "electric_piano_2", "harpsichord", "clavinet", "celesta", "glockenspiel", "music_box", "vibraphone", "marimba", "xylophone", "tubular_bells", "dulcimer", "drawbar_organ", "percussive_organ", "rock_organ", "church_organ", "reed_organ", "accordion", "harmonica", "tango_accordion", "acoustic_guitar_nylon", "acoustic_guitar_steel", "electric_guitar_jazz", "electric_guitar_clean", "electric_guitar_muted", "overdriven_guitar", "distortion_guitar", "guitar_harmonics", "acoustic_bass", "electric_bass_finger", "electric_bass_pick", "fretless_bass", "slap_bass_1", "slap_bass_2", "synth_bass_1", "synth_bass_2", "violin", "viola", "cello", "contrabass", "tremolo_strings", "pizzicato_strings", "orchestral_harp", "timpani", "string_ensemble_1", "string_ensemble_2", "synth_strings_1", "synth_strings_2", "choir_aahs", "voice_oohs", "synth_choir", "orchestra_hit", "trumpet", "trombone", "tuba", "muted_trumpet", "french_horn", "brass_section", "synth_brass_1", "synth_brass_2", "soprano_sax", "alto_sax", "tenor_sax", "baritone_sax", "oboe", "english_horn", "bassoon", "clarinet", "piccolo", "flute", "recorder", "pan_flute", "blown_bottle", "shakuhachi", "whistle", "ocarina", "lead_1_square", "lead_2_sawtooth", "lead_3_calliope", "lead_4_chiff", "lead_5_charang", "lead_6_voice", "lead_7_fifths", "lead_8_bass_lead", "pad_1_new_age", "pad_2_warm", "pad_3_polysynth", "pad_4_choir", "pad_5_bowed", "pad_6_metallic", "pad_7_halo", "pad_8_sweep", "fx_1_rain", "fx_2_soundtrack", "fx_3_crystal", "fx_4_atmosphere", "fx_5_brightness", "fx_6_goblins", "fx_7_echoes", "fx_8_scifi", "sitar", "banjo", "shamisen", "koto", "kalimba", "bagpipe", "fiddle", "shanai", "tinkle_bell", "agogo", "steel_drums", "woodblock", "taiko_drum", "melodic_tom", "synth_drum", "reverse_cymbal", "guitar_fret_noise", "breath_noise", "seashore", "bird_tweet", "telephone_ring", "helicopter", "applause", "gunshot", "percussion", "uilleann", "smallpipesd", "smallpipesa", "sackpipa", "concertina", "melodica", "cajun", "solfege", "chorus_guitar_nylon","chorus_guitar_steel","bouzouki","bouzouki2","mandolin","marchingdrums","borderpipes","soprano_recorder","alto_recorder","tenor_recorder","bass_recorder","mountain_dulcimer_s","mountain_dulcimer","silence","custom"];
+var instrumentIndexToName = ["acoustic_grand_piano", "bright_acoustic_piano", "electric_grand_piano", "honkytonk_piano", "electric_piano_1", "electric_piano_2", "harpsichord", "clavinet", "celesta", "glockenspiel", "music_box", "vibraphone", "marimba", "xylophone", "tubular_bells", "dulcimer", "drawbar_organ", "percussive_organ", "rock_organ", "church_organ", "reed_organ", "accordion", "harmonica", "tango_accordion", "acoustic_guitar_nylon", "acoustic_guitar_steel", "electric_guitar_jazz", "electric_guitar_clean", "electric_guitar_muted", "overdriven_guitar", "distortion_guitar", "guitar_harmonics", "acoustic_bass", "electric_bass_finger", "electric_bass_pick", "fretless_bass", "slap_bass_1", "slap_bass_2", "synth_bass_1", "synth_bass_2", "violin", "viola", "cello", "contrabass", "tremolo_strings", "pizzicato_strings", "orchestral_harp", "timpani", "string_ensemble_1", "string_ensemble_2", "synth_strings_1", "synth_strings_2", "choir_aahs", "voice_oohs", "synth_choir", "orchestra_hit", "trumpet", "trombone", "tuba", "muted_trumpet", "french_horn", "brass_section", "synth_brass_1", "synth_brass_2", "soprano_sax", "alto_sax", "tenor_sax", "baritone_sax", "oboe", "english_horn", "bassoon", "clarinet", "piccolo", "flute", "recorder", "pan_flute", "blown_bottle", "shakuhachi", "whistle", "ocarina", "lead_1_square", "lead_2_sawtooth", "lead_3_calliope", "lead_4_chiff", "lead_5_charang", "lead_6_voice", "lead_7_fifths", "lead_8_bass_lead", "pad_1_new_age", "pad_2_warm", "pad_3_polysynth", "pad_4_choir", "pad_5_bowed", "pad_6_metallic", "pad_7_halo", "pad_8_sweep", "fx_1_rain", "fx_2_soundtrack", "fx_3_crystal", "fx_4_atmosphere", "fx_5_brightness", "fx_6_goblins", "fx_7_echoes", "fx_8_scifi", "sitar", "banjo", "shamisen", "koto", "kalimba", "bagpipe", "fiddle", "shanai", "tinkle_bell", "agogo", "steel_drums", "woodblock", "taiko_drum", "melodic_tom", "synth_drum", "reverse_cymbal", "guitar_fret_noise", "breath_noise", "seashore", "bird_tweet", "telephone_ring", "helicopter", "applause", "gunshot", "percussion", "uilleann", "smallpipesd", "smallpipesa", "sackpipa", "concertina", "melodica", "cajun", "solfege", "chorus_guitar_nylon","chorus_guitar_steel","bouzouki","bouzouki2","mandolin","marchingdrums","borderpipes","soprano_recorder","alto_recorder","tenor_recorder","bass_recorder","mountain_dulcimer_s","mountain_dulcimer","custom1","custom2","custom3","custom4","custom5","custom6","custom7","custom8","silence"];
 // MAE End of Change
 module.exports = instrumentIndexToName;
 
@@ -19988,16 +20104,25 @@ var getNote = function getNote(url, instrument, name, audioContext) {
 
   //debugger;
 
-  if (instrument == "custom"){
+  // Instrument handling for custom instruments
+  if (/^custom([1-8])?$/.test(instrument)) {
 
       //debugger;
+      //console.log("Handling note "+name+" for instrument "+instrument);
+
       if (!instrumentCache[name]) instrumentCache[name] = new Promise(function (resolve, reject) {
 
         //debugger;
 
         var theNoteDataBuffer = null;
 
-        let entry = gCustomInstrumentSamples.find(f => f.name === name);
+        var index = parseInt(instrument.replace("custom",""));
+
+        if (isNaN(index)){
+          index = 0;
+        }
+
+        let entry = gCustomInstrumentSamples[index].find(f => f.name === name);
 
         if (entry) {
           theNoteDataBuffer = entry.samples.slice(0);
@@ -20055,7 +20180,7 @@ var getNote = function getNote(url, instrument, name, audioContext) {
 
       // MAE 28 June 2023 - Override specific instruments with my own
       switch (instrument){
-        case "silence":     // 150
+        case "silence":     // 158
           url = "https://michaeleskin.com/abctools/soundfonts/";
           isOgg = true;
           isCustomInstrument = true;
@@ -20328,7 +20453,7 @@ var getNote = function getNote(url, instrument, name, audioContext) {
       // MAE 28 June 29023 - Override Celtic Sound instruments with my own
       switch (instrument){
 
-        case "silence":     // 150
+        case "silence":     // 158
           url = "https://michaeleskin.com/abctools/soundfonts/";
           isOgg = true;
           isCustomInstrument = true;
