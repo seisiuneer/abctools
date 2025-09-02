@@ -271,7 +271,9 @@ var gAllowLoopStateCaching = true;
 
 // Custom instrument samples
 var gCustomInstrumentSamples = [[],[],[],[],[],[],[],[],[]];
-var gCustomInstrumentVolumeScale = [1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0]
+var gCustomInstrumentVolumeScaleOriginal = [1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0];
+var gCustomInstrumentVolumeScale = [1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0];
+var gCustomInstrumentFadeOriginal = [100,100,100,100,100,100,100,100];
 var gCustomInstrumentFade = [100,100,100,100,100,100,100,100];
 
 //
@@ -953,7 +955,7 @@ function ScanTuneForCustomVolumeMultiplier(theTune, index){
     }
   }
 
-  return 1.0;
+  return -1;
 
 }
 
@@ -997,7 +999,7 @@ function ScanTuneForCustomFade(theTune,index){
     }
   }
 
-  return 100;
+  return -1;
 
 }
 
@@ -1846,18 +1848,30 @@ var tunebook = {};
           gForcePowerChords = ScanTuneForForcePowerChords(theCurrentTuneABC);
 
           // Custom instrument volume scale
-          gCustomInstrumentVolumeScale = [1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0];
+          // Start with instrument file default
+          gCustomInstrumentVolumeScale = gCustomInstrumentVolumeScaleOriginal.slice();
 
           for (var j=1;j<=8;j++){
-            gCustomInstrumentVolumeScale[j-1] = ScanTuneForCustomVolumeMultiplier(theCurrentTuneABC,j);
+            var val = ScanTuneForCustomVolumeMultiplier(theCurrentTuneABC,j);
+            if (val != -1){
+              //console.log("Setting volume for instrument "+j+" to "+val);
+              gCustomInstrumentVolumeScale[j-1] = val;
+            }
           }
 
           // Custom instrument volume scale
-          gCustomInstrumentFade = [100,100,100,100,100,100,100,100];
+          // Start with instrument file default
+          gCustomInstrumentFade = gCustomInstrumentFadeOriginal.slice();
 
           for (var j=1;j<=8;j++){
-            gCustomInstrumentFade[j-1] = ScanTuneForCustomFade(theCurrentTuneABC,j);
+            var val = ScanTuneForCustomFade(theCurrentTuneABC,j);
+            if (val != -1){
+              //console.log("Setting fade for instrument "+j+" to "+val);
+              gCustomInstrumentFade[j-1] = val;
+            }
           }
+
+          //debugger;
 
           abcParser.parse(book.tunes[currentTune].abc, workingParams, book.tunes[currentTune].startPos - book.header.length);
           var tune = abcParser.getTune();
@@ -19200,6 +19214,8 @@ function CreateSynth(theABC) {
           }
         }
 
+        var gotCustomInstrumentFade = false;
+
         // Using a custom fade time for this instrument?
         var thisCustomFade = self.customFade[thisInstrument];
 
@@ -19212,27 +19228,22 @@ function CreateSynth(theABC) {
             const idx = parseInt(match[1], 10) - 1; // convert to 0-based index
             thisCustomFade = gCustomInstrumentFade[idx];
             //console.log(`Setting custom fade for ${thisInstrument} at index ${idx} to ${thisCustomFade}`);
+            gotCustomInstrumentFade = true;
           }
         }
         
         var theFade = fadeTimeSec;
 
         // Only check for custom fades if not overriden by the application
-        if (theFade == 0.2){
+        if ((theFade == 0.2) || gotCustomInstrumentFade){
 
           if (thisCustomFade){
               theFade = thisCustomFade / 1000;
-              //console.log("Got custom fade for "+thisInstrument+": "+theFade);
-
+              // console.log("Got custom fade for "+thisInstrument+": "+theFade);
           }
-          // else{
-          //     console.log("Got standard fade for "+thisInstrument+": "+theFade);
-          // }
-
         }
-        // else{
-        //   console.log("Got fade override from the application: ",theFade);
-        // }
+
+        //console.log("Volume/fade for "+thisInstrument+": "+theVolumeMultiplier+" "+theFade);
         
         allPromises.push(placeNote(audioBuffer, activeAudioContext().sampleRate, parts, uniqueSounds[k], theVolumeMultiplier, self.programOffsets[parts.instrument], theFade, self.noteEnd / 1000, self.debugCallback));
       }

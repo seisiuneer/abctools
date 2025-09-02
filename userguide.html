@@ -2643,8 +2643,13 @@
                 <p>Every chromatic note in the intended range for the instrument must be present in the .zip file with the required note name.</p>
                 <p>The tool is not able to interpolate for missing named notes in the .zip file.</p>
                 <p>Notes missing from the .zip file will result in silence when played.</p>
-                <p>Once you have all your note samples, create a .zip file from all of them.</p>
-                <p>The sample files must be at the root of the .zip file, not in folders.</p>  
+                <p>You may add an optional custom instrument settings file to the .zip that contains the default volume scale and fade time to use for the instrument when loaded.</p>
+                <p>It must be named <strong>abctools.json</strong> and contain the following JSON structure:</p>
+                <p class="code">{<br/>&nbsp;&nbsp;"volumeScale": 1,<br/>&nbsp;&nbsp;"fadeTimeMs": 100<br/>}</p>
+                <p>Replace the volumeScale and fadeTimeMs values with your own values for the custom instrument.</p>
+                <p>If this file is not present, the default volume scale of 1.0 and fade time of 100ms will be used.</p>
+                <p>Once you have all your note samples and optional settings file, create a .zip file from all of them.</p>
+                <p>The sample files must be at the root of the .zip file, not in folders.</p> 
                 <hr class="hidden-print" id="custom_instrument_builder">
                 <h1 class="page_break_always h1wide">Custom Instrument Builder Utility<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/q5ZuyKm9ea8" title="Custom Instrument Builder Demo 1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
@@ -2653,6 +2658,8 @@
                 <p style="text-align: center"><a href="https://michaeleskin.com/tools/custom_instrument_builder.html" target="_blank">ABC Transcription Tools Custom Instrument Builder</a></p>
                 <p>The utility can automatically detect the note range of a partial set of note samples based on the filenames and when exporting the custom instrument, synthesize any missing samples in the note range.</p>
                 <p>It does this by pitch shifting the next lowest actual note as required creating additional .wav file placeholders as required, and then saves them along with the original notes to the custom instrument .zip file.</p>
+                <p>In the utility, you may also set the volume scale multiplier and release fade time in milliseconds for the instrument.</p>
+                <p>These are the values that will be used by default for the instrument unless the ABC contains volume scale and/or release fade overrides as described below in <a href="#custom_midi_instrument">How to Load and Use Custom Instruments</a>.</p>
                 <p>Up to 8 custom instruments are supported.</p>
                 <p>Once you have one or more custom instrument .zip files, you can just drag-and-drop them onto the ABC editor, map them to custom instrument numbers 1-8, and then use them in a tune by specifying:</p>
                 <p class="code">%%MIDI program custom1<br/>%%MIDI program custom2<br/>etc.</p>

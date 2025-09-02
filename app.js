@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "2741_083125_1500";
+var gVersionNumber = "2742_090225_0900";
 
 var gMIDIInitStillWaiting = false;
 
@@ -46832,6 +46832,10 @@ var gCustomInstrumentState = null;
 function processCustomInstruments(){
 
   //debugger;
+  
+  // Reset the default volume scale and fade arrays
+  gCustomInstrumentVolumeScaleOriginal = [1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0];
+  gCustomInstrumentFadeOriginal = [100,100,100,100,100,100,100,100];
 
   var totalFiles = 0;
 
@@ -46866,14 +46870,15 @@ function processCustomInstruments(){
       }
       
       var modal_msg = '<p style="text-align:center;font-size:16pt;font-family:helvetica;margin-bottom:24px;margin-left:15px;">'+totalFiles+' Custom '+quant+' Loaded&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#custom_midi_instrument" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'
-        modal_msg += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">In the following annotations, replace (n) with 1-8 for the custom instrument number.</p>';        
-        modal_msg += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">Add the following ABC annotation to your tunes to play the custom instrument:</p>';
+        modal_msg += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">In the following, replace (n) with 1-8 for the custom instrument number.</p>';        
+        modal_msg += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">To play the custom instrument, add the following to your ABC tunes:</p>';
         modal_msg += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica"><strong>%%MIDI program custom(n)</strong></p>';
         modal_msg += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">Example:<br/>%%MIDI program custom1</p>';
-        modal_msg += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">To make the instrument volume louder or softer,<br/>add the following ABC annotation to your tunes:</p>';
+        modal_msg += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">Custom instruments have default volume scale and fade values built-in.</p>';
+        modal_msg += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">To make the instrument volume louder or softer than the default,<br/>add the following to your ABC tunes:</p>';
         modal_msg += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica"><strong>%custom_instrument_(n)_volume_scale (scale_multiplier_float)</strong></p>';
         modal_msg += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">Example:<br/>%custom_instrument_1_volume_scale 2.0</p>';
-        modal_msg += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">To change the default note release fade time from 100ms,<br/>add the following ABC annotation to your tunes:</p>';
+        modal_msg += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">To change the note release fade time from the default,<br/>add the following to your ABC tunes:</p>';
         modal_msg += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica"><strong>%custom_instrument_(n)_fade (fade_time_in_ms)</strong></p>';
         modal_msg += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">Example:<br/>%custom_instrument_1_fade 1000</p>';
 
@@ -47290,6 +47295,35 @@ async function doCustomInstrumentImport(entry,index,callback){
 
         const zipEntry = zip.files[fileName];
 
+        // Is this a settings file?
+        if (!zipEntry.dir && (fileName.toLowerCase() == "abctools.json")){
+        try {
+
+            const content = await zipEntry.async("string");   // read as text
+
+            //console.log("Settings for "+file.name+":"+content);
+            
+            const settings = JSON.parse(content);             // parse JSON
+
+            // Apply settings if present
+            if (typeof settings.volumeScale === "number") {
+              //console.log("Setting the volume scale to "+settings.volumeScale)
+              gCustomInstrumentVolumeScaleOriginal[index-1] = settings.volumeScale;
+            }
+
+            if (typeof settings.fadeTimeMs === "number") {
+              //console.log("Setting the fade to "+settings.fadeTimeMs)
+              gCustomInstrumentFadeOriginal[index-1] = settings.fadeTimeMs;
+            }
+
+          } catch (err) {
+
+            console.error("Error reading abctools.json:", err);
+
+          }   
+
+        }
+        else
         // Only process .wav files
         if (!zipEntry.dir && (fileName.toLowerCase().endsWith('.wav') || fileName.toLowerCase().endsWith('.mp3') || fileName.toLowerCase().endsWith('.ogg')) && (fileName.indexOf("MACOSX")== -1)) {
 

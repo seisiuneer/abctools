@@ -35,7 +35,7 @@
       margin-top: 1.25em;
       font-weight: 600;
     }
-    input[type="file"], select {
+    input[type="file"], select, input[type="number"] {
       margin-top: 0.25em;
       font-size: 1em;
       padding: 0.4em;
@@ -48,7 +48,7 @@
       border: 1px solid #ddd;
       border-radius: 4px;
       padding: 1em;
-      max-height: 30vh;
+      max-height: 33vh;
       overflow-y: auto;
     }
     .file-item {
@@ -103,6 +103,20 @@
       margin-bottom:8px;
       margin-top:12px;
     }
+    .form-row {
+	  display: flex;
+	  gap: 12px;
+	  align-items: flex-end; /* aligns the bottoms of the controls nicely */
+	  flex-wrap: wrap;       /* lets them wrap on narrow screens */
+  	}
+  	.form-row > label {
+  	  flex: 1 1 240px;       /* grow, shrink, min width */
+  	  margin-top: 1em;    /* keep your existing label spacing */
+  	}
+  	.form-row > label > select,
+  	.form-row > label > input[type="number"] {
+  	  width: 100%;
+  	}
     .active { background-color: #eee; }
     @media not all and (pointer: coarse) {
       .accordion:hover { background-color: #9f9; }
@@ -158,12 +172,13 @@
       <p>The samples must all be in the same directory.</p>
       <p>The output note filename for each audio sample input file is displayed at the right of each item in the list.</p>
       <p>Drag and drop the items in the list into the scale note order you want.</p>
-      <p>2)&nbsp;Choose the starting octave number for the instrument notes.</p>
-      <p>3)&nbsp;Choose the starting scale note for the file names.</p>
-      <p>4)&nbsp;If your files have filenames that contain note names, check <strong>Try to automatically sort files by scale order (C, Db, D, Eb, E, ...)</strong> to align the sample file list with the note names (checked by default).</p>
-      <p>5)&nbsp;When automatically sorting by scale order, if there are scale gaps found, select between either synthesizing (pitch shift) the missing note samples in the scale from the next available lowest note or just replacing them with placeholder silent .wav files.</p>
+      <p>2)&nbsp;Select the default volume scale and fade time for the instrument.</p>
+      <p>3)&nbsp;Choose the starting octave number for the instrument notes.</p>
+      <p>4)&nbsp;Choose the starting scale note for the file names.</p>
+      <p>5)&nbsp;If your files have filenames that contain note names, check <strong>Try to automatically sort files by scale order (C, Db, D, Eb, E, ...)</strong> to align the sample file list with the note names (checked by default).</p>
+      <p>6)&nbsp;When automatically sorting by scale order, if there are scale gaps found, select between either synthesizing (pitch shift) the missing note samples in the scale from the next available lowest note or just replacing them with placeholder silent .wav files.</p>
       <p>
-      <p>6)&nbsp;Click "Export as Custom ABC Transcription Tools Instrument" to export the custom instrument .zip sample bundle.</p>
+      <p>7)&nbsp;Click "Export as Custom ABC Transcription Tools Instrument" to export the custom instrument .zip sample bundle.</p>
       <p>The exported file will be saved to your browser's default <strong>Downloads</strong> directory.</p>
     </div>
 
@@ -171,37 +186,50 @@
       <input type="file" id="fileInput" accept=".wav,.mp3,.ogg" multiple>
     </label>
 
-    <label>Starting Octave Number:
-      <select id="startNumber">
-        <option value="0">0</option>
-        <option value="1">1</option>
-        <option value="2">2</option>
-        <option value="3">3</option>
-        <option value="4">4</option>
-        <option value="5">5</option>
-        <option value="6">6</option>
-        <option value="7">7</option>
-        <option value="8">8</option>
-        <option value="9">9</option>
-      </select>
-    </label>
+	<div class="form-row">
+	  <label>Volume scale:
+	    <input type="number" id="volumeScale" step="0.1" min="0" value="1.0" inputmode="decimal">
+	  </label>
 
-    <label>Starting Scale Note:
-      <select id="startNote">
-        <option value="0">C</option>
-        <option value="1">Db</option>
-        <option value="2">D</option>
-        <option value="3">Eb</option>
-        <option value="4">E</option>
-        <option value="5">F</option>
-        <option value="6">Gb</option>
-        <option value="7">G</option>
-        <option value="8">Ab</option>
-        <option value="9">A</option>
-        <option value="10">Bb</option>
-        <option value="11">B</option>
-      </select>
-    </label>
+	  <label>Fade time (ms):
+	    <input type="number" id="fadeTime" step="1" min="0" value="100" inputmode="numeric">
+	  </label>
+	</div>
+
+	<div class="form-row">
+	  <label>Starting Octave Number:
+	    <select id="startNumber">
+	      <option value="0">0</option>
+	      <option value="1">1</option>
+	      <option value="2">2</option>
+	      <option value="3">3</option>
+	      <option value="4">4</option>
+	      <option value="5">5</option>
+	      <option value="6">6</option>
+	      <option value="7">7</option>
+	      <option value="8">8</option>
+	      <option value="9">9</option>
+	    </select>
+	  </label>
+
+	  <label>Starting Scale Note:
+	    <select id="startNote">
+	      <option value="0">C</option>
+	      <option value="1">Db</option>
+	      <option value="2">D</option>
+	      <option value="3">Eb</option>
+	      <option value="4">E</option>
+	      <option value="5">F</option>
+	      <option value="6">Gb</option>
+	      <option value="7">G</option>
+	      <option value="8">Ab</option>
+	      <option value="9">A</option>
+	      <option value="10">Bb</option>
+	      <option value="11">B</option>
+	    </select>
+	  </label>
+	</div>
+
 
     <label>
       <input type="checkbox" id="autoSort" checked>
@@ -216,6 +244,7 @@
         <option value="silent">Fill gaps with silent WAVs</option>
       </select>
     </div>
+
 
     <p id="dragMessage" style="margin-bottom:8px;display:none;"><strong>Drag the notes into the note scale order you want:</strong></p>
 
@@ -241,6 +270,10 @@
         const gapOptions = document.getElementById('gapOptions');
         const gapMode = document.getElementById('gapMode');
         const dragMessage = document.getElementById('dragMessage');
+
+        // NEW: refs for volume/fade inputs
+        const volumeScaleInput = document.getElementById('volumeScale');
+        const fadeTimeInput = document.getElementById('fadeTime');
 
         var gFileSaveName = "custom_instrument.zip";
 
@@ -282,7 +315,6 @@
             }
           }
           if (minPI !== Infinity) {
-            // Clamp octave selector range (0–9)
             const oct = Math.max(0, Math.min(9, minOctave));
             startNote.value = String(minNoteIdx);
             startNumber.value = String(oct);
@@ -616,6 +648,23 @@
 
                 const zip = new JSZip();
 
+                // ---- NEW: add abctools.json with volume/fade settings ----
+                let volumeScale = parseFloat(volumeScaleInput.value);
+                let fadeTimeMs = parseInt(fadeTimeInput.value, 10);
+
+                if (isNaN(volumeScale)) volumeScale = 1.0;
+                if (isNaN(fadeTimeMs)) fadeTimeMs = 100;
+
+                // enforce simple bounds
+                if (volumeScale < 0) volumeScale = 0;
+                if (fadeTimeMs < 0) fadeTimeMs = 0;
+
+                const meta = {
+                  volumeScale,
+                  fadeTimeMs
+                };
+                zip.file("abctools.json", JSON.stringify(meta, null, 2));
+
                 if (!autoSortCheckbox.checked) {
                   // ORIGINAL BEHAVIOR: just rename in current visual order
                   const reordered = Array.from(fileList.children)
@@ -639,15 +688,12 @@
                     });
                   } else {
                     // Map pitchIndex -> i in the continuous range
-                    const minPI = full[0].pitchIndex;
-
-                    // Prepare quick lookup for source candidates
                     const haveAtIndex = new Map(); // idx -> file
                     full.forEach((slot, i) => { if (slot.file) haveAtIndex.set(i, slot.file); });
 
                     // Helper to find nearest source file index for a missing slot.
                     function findSourceIndex(targetIdx) {
-                      // Prefer lower pitch (as requested earlier). If none lower, use higher.
+                      // Prefer lower pitch. If none lower, use higher.
                       for (let d = 1; d < full.length; d++) {
                         const lower = targetIdx - d;
                         if (lower >= 0 && haveAtIndex.has(lower)) return lower;
