@@ -1,11 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
+
   <head>
+
     <meta charset="UTF-8">
     <title>ABC Transcription Tools - Custom Instrument Builder</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
     <script type="text/javascript" src="daypilot-modal.min-3.10.1.js?v=1"></script>
+    
     <style>
     body {
       background: #fafafa;
@@ -160,7 +163,9 @@
     </script>
 
   </head>
+
   <body>
+  
     <h1>ABC Transcription Tools&nbsp;-&nbsp;Custom Instrument Builder</h1>
 
     <button class="accordion" title="Click to expand/collapse this section">Click to show/hide the instructions</button>
@@ -186,50 +191,49 @@
       <input type="file" id="fileInput" accept=".wav,.mp3,.ogg" multiple>
     </label>
 
-	<div class="form-row">
-	  <label>Volume scale:
-	    <input type="number" id="volumeScale" step="0.1" min="0" value="1.0" inputmode="decimal">
-	  </label>
+  	<div class="form-row">
+  	  <label>Volume scale:
+  	    <input type="number" id="volumeScale" step="0.1" min="0" value="1.0" inputmode="decimal">
+  	  </label>
 
-	  <label>Fade time (ms):
-	    <input type="number" id="fadeTime" step="1" min="0" value="100" inputmode="numeric">
-	  </label>
-	</div>
+  	  <label>Fade time (ms):
+  	    <input type="number" id="fadeTime" step="1" min="0" value="100" inputmode="numeric">
+  	  </label>
+  	</div>
 
-	<div class="form-row">
-	  <label>Starting Octave Number:
-	    <select id="startNumber">
-	      <option value="0">0</option>
-	      <option value="1">1</option>
-	      <option value="2">2</option>
-	      <option value="3">3</option>
-	      <option value="4">4</option>
-	      <option value="5">5</option>
-	      <option value="6">6</option>
-	      <option value="7">7</option>
-	      <option value="8">8</option>
-	      <option value="9">9</option>
-	    </select>
-	  </label>
+  	<div class="form-row">
+  	  <label>Starting Octave Number:
+  	    <select id="startNumber">
+  	      <option value="0">0</option>
+  	      <option value="1">1</option>
+  	      <option value="2">2</option>
+  	      <option value="3">3</option>
+  	      <option value="4">4</option>
+  	      <option value="5">5</option>
+  	      <option value="6">6</option>
+  	      <option value="7">7</option>
+  	      <option value="8">8</option>
+  	      <option value="9">9</option>
+  	    </select>
+  	  </label>
 
-	  <label>Starting Scale Note:
-	    <select id="startNote">
-	      <option value="0">C</option>
-	      <option value="1">Db</option>
-	      <option value="2">D</option>
-	      <option value="3">Eb</option>
-	      <option value="4">E</option>
-	      <option value="5">F</option>
-	      <option value="6">Gb</option>
-	      <option value="7">G</option>
-	      <option value="8">Ab</option>
-	      <option value="9">A</option>
-	      <option value="10">Bb</option>
-	      <option value="11">B</option>
-	    </select>
-	  </label>
-	</div>
-
+  	  <label>Starting Scale Note:
+  	    <select id="startNote">
+  	      <option value="0">C</option>
+  	      <option value="1">Db</option>
+  	      <option value="2">D</option>
+  	      <option value="3">Eb</option>
+  	      <option value="4">E</option>
+  	      <option value="5">F</option>
+  	      <option value="6">Gb</option>
+  	      <option value="7">G</option>
+  	      <option value="8">Ab</option>
+  	      <option value="9">A</option>
+  	      <option value="10">Bb</option>
+  	      <option value="11">B</option>
+  	    </select>
+  	  </label>
+  	</div>
 
     <label>
       <input type="checkbox" id="autoSort" checked>
@@ -245,7 +249,6 @@
       </select>
     </div>
 
-
     <p id="dragMessage" style="margin-bottom:8px;display:none;"><strong>Drag the notes into the note scale order you want:</strong></p>
 
     <div id="fileList"></div>
@@ -255,7 +258,8 @@
     </div>
 
     <script>
-function DoStartup() {
+
+      function DoStartup() {
 
         const notes = ["C", "Db", "D", "Eb", "E", "F", "Gb", "G", "Ab", "A", "Bb", "B"];
         let files = [];
@@ -311,24 +315,40 @@ function DoStartup() {
         // Helpers for pitch parsing
         // =========================
         const sharpToFlat = {
-          "C#": "Db", "D#": "Eb", "F#": "Gb", "G#": "Ab", "A#": "Bb",
-          "Cs": "Db", "Ds": "Eb", "Fs": "Gb", "Gs": "Ab", "As": "Bb",
-          "CS": "Db", "DS": "Eb", "FS": "Gb", "GS": "Ab", "AS": "Bb",
+          "C#": "Db",
+          "D#": "Eb",
+          "F#": "Gb",
+          "G#": "Ab",
+          "A#": "Bb",
+          "Cs": "Db",
+          "Ds": "Eb",
+          "Fs": "Gb",
+          "Gs": "Ab",
+          "As": "Bb",
+          "CS": "Db",
+          "DS": "Eb",
+          "FS": "Gb",
+          "GS": "Ab",
+          "AS": "Bb",
         };
-        const noteOrder = ["C","Db","D","Eb","E","F","Gb","G","Ab","A","Bb","B"];
+        const noteOrder = ["C", "Db", "D", "Eb", "E", "F", "Gb", "G", "Ab", "A", "Bb", "B"];
         const noteRegex = /([A-G][#bsS]?)(\d+)/i; // same as your sorter
 
         function parsePitchFromName(name) {
           const m = name.match(noteRegex);
           if (!m) return null;
           let note = m[1];
-          const octave = parseInt(m[2],10);
+          const octave = parseInt(m[2], 10);
           note = note.charAt(0).toUpperCase() + (note.slice(1) || "");
           note = sharpToFlat[note] || note;
           const idx = noteOrder.indexOf(note);
           if (idx < 0 || isNaN(octave)) return null;
           const pitchIndex = octave * 12 + idx; // semitone index from C0
-          return { noteIdx: idx, octave, pitchIndex };
+          return {
+            noteIdx: idx,
+            octave,
+            pitchIndex
+          };
         }
 
         // Detect lowest pitch in current files and set selectors
@@ -355,44 +375,44 @@ function DoStartup() {
         // Sorting (keep your logic)
         // =========================
         function sortFilesIfNeeded() {
-            if (autoSortCheckbox.checked) {
-                files.sort((a, b) => {
-                    const matchA = a.name.match(noteRegex);
-                    const matchB = b.name.match(noteRegex);
+          if (autoSortCheckbox.checked) {
+            files.sort((a, b) => {
+              const matchA = a.name.match(noteRegex);
+              const matchB = b.name.match(noteRegex);
 
-                    if (matchA && matchB) {
-                        let noteA = matchA[1].charAt(0).toUpperCase() + (matchA[1].slice(1) || "");
-                        let octaveA = parseInt(matchA[2], 10);
+              if (matchA && matchB) {
+                let noteA = matchA[1].charAt(0).toUpperCase() + (matchA[1].slice(1) || "");
+                let octaveA = parseInt(matchA[2], 10);
 
-                        let noteB = matchB[1].charAt(0).toUpperCase() + (matchB[1].slice(1) || "");
-                        let octaveB = parseInt(matchB[2], 10);
+                let noteB = matchB[1].charAt(0).toUpperCase() + (matchB[1].slice(1) || "");
+                let octaveB = parseInt(matchB[2], 10);
 
-                        // Normalize sharps to flats
-                        noteA = sharpToFlat[noteA] || noteA;
-                        noteB = sharpToFlat[noteB] || noteB;
+                // Normalize sharps to flats
+                noteA = sharpToFlat[noteA] || noteA;
+                noteB = sharpToFlat[noteB] || noteB;
 
-                        if (octaveA !== octaveB) return octaveA - octaveB;
-                        return noteOrder.indexOf(noteA) - noteOrder.indexOf(noteB);
-                    }
+                if (octaveA !== octaveB) return octaveA - octaveB;
+                return noteOrder.indexOf(noteA) - noteOrder.indexOf(noteB);
+              }
 
-                    if (matchA) return -1;
-                    if (matchB) return 1;
-                    return 0;
-                });
-            } else {
-                // Restore original order
-                files = [...originalFiles];
-            }
+              if (matchA) return -1;
+              if (matchB) return 1;
+              return 0;
+            });
+          } else {
+            // Restore original order
+            files = [...originalFiles];
+          }
         }
 
         // Naming based on index relative to the LOWEST pitch slot when autoSort,
         // or the visual order when not autoSort.
         function getProposedNameForIndex(i, ext) {
-            const start = parseInt(startNumber.value, 10);
-            const offset = parseInt(startNote.value, 10);
-            const noteIndex = (i + offset) % 12;
-            const octave = start + Math.floor((i + offset) / 12);
-            return `${notes[noteIndex]}${octave}.${ext}`;
+          const start = parseInt(startNumber.value, 10);
+          const offset = parseInt(startNote.value, 10);
+          const noteIndex = (i + offset) % 12;
+          const octave = start + Math.floor((i + offset) / 12);
+          return `${notes[noteIndex]}${octave}.${ext}`;
         }
 
         // Build continuous pitch sequence [min..max] from matched files
@@ -403,207 +423,234 @@ function DoStartup() {
           const unmatched = [];
           for (const f of files) {
             const p = parsePitchFromName(f.name);
-            if (p) matched.push({ file: f, pitchIndex: p.pitchIndex, ext: f.name.split('.').pop() });
+            if (p) matched.push({
+              file: f,
+              pitchIndex: p.pitchIndex,
+              ext: f.name.split('.').pop()
+            });
             else unmatched.push(f);
           }
           if (matched.length === 0) {
-            return { full: [], unmatched }; // nothing to fill
+            return {
+              full: [],
+              unmatched
+            }; // nothing to fill
           }
-          matched.sort((a,b)=>a.pitchIndex-b.pitchIndex);
+          matched.sort((a, b) => a.pitchIndex - b.pitchIndex);
           const minPI = matched[0].pitchIndex;
-          const maxPI = matched[matched.length-1].pitchIndex;
+          const maxPI = matched[matched.length - 1].pitchIndex;
 
           const pitchMap = new Map();
-          for (const m of matched) if (!pitchMap.has(m.pitchIndex)) pitchMap.set(m.pitchIndex, m);
+          for (const m of matched)
+            if (!pitchMap.has(m.pitchIndex)) pitchMap.set(m.pitchIndex, m);
 
           const full = [];
-          for (let pi=minPI; pi<=maxPI; pi++) {
+          for (let pi = minPI; pi <= maxPI; pi++) {
             const m = pitchMap.get(pi) || null;
-            full.push({ file: m ? m.file : null, pitchIndex: pi, ext: m ? m.ext : "wav" });
+            full.push({
+              file: m ? m.file : null,
+              pitchIndex: pi,
+              ext: m ? m.ext : "wav"
+            });
           }
-          return { full, unmatched };
+          return {
+            full,
+            unmatched
+          };
         }
 
         // UI wiring
         fileInput.addEventListener('change', (e) => {
-            originalFiles = Array.from(e.target.files); // keep original selection order
-            files = [...originalFiles];
+          originalFiles = Array.from(e.target.files); // keep original selection order
+          files = [...originalFiles];
 
-            // NEW: detect hashed filenames and switch behavior
-            gHasHashedNames = hasHashedFilenames(files);
-            if (gHasHashedNames) {
-              applyHashedModeUIState();
-              DayPilot.Modal.alert('<p style="text-align:center;font-size:1.1em;"><strong>Hash-based Filenames Detected</strong><br/><br/>Auto-sort and note range detect initially disabled.<br/><br/>Auto-sort and note range detect may crash if enabled, so be careful.</p>', { theme: "modal_flat", top: 200 });
-            } else {
-              clearHashedModeUIState();
-            }
+          // NEW: detect hashed filenames and switch behavior
+          gHasHashedNames = hasHashedFilenames(files);
+          if (gHasHashedNames) {
+            applyHashedModeUIState();
+            DayPilot.Modal.alert('<p style="text-align:center;font-size:1.1em;"><strong>Hash-based Filenames Detected</strong><br/><br/>Auto-sort and note range detect initially disabled.<br/><br/>Auto-sort and note range detect may crash if enabled, so be careful.</p>', {
+              theme: "modal_flat",
+              top: 200
+            });
+          } else {
+            clearHashedModeUIState();
+          }
 
-            sortFilesIfNeeded();
-            if (autoSortCheckbox.checked && !gHasHashedNames){
-              detectAndApplyLowestPitch();
-            }
-            renderList();
+          sortFilesIfNeeded();
+          if (autoSortCheckbox.checked && !gHasHashedNames) {
+            detectAndApplyLowestPitch();
+          }
+          renderList();
         });
 
         startNumber.addEventListener('change', renderList);
         startNote.addEventListener('change', renderList);
 
         autoSortCheckbox.addEventListener('change', () => {
-            gapOptions.style.display = autoSortCheckbox.checked ? 'block' : 'none';
-            dragMessage.style.display = autoSortCheckbox.checked ? 'none' : 'block';
-            sortFilesIfNeeded();
-            if (autoSortCheckbox.checked){
-              detectAndApplyLowestPitch();
-            }
-            renderList();
+          gapOptions.style.display = autoSortCheckbox.checked ? 'block' : 'none';
+          dragMessage.style.display = autoSortCheckbox.checked ? 'none' : 'block';
+          sortFilesIfNeeded();
+          if (autoSortCheckbox.checked) {
+            detectAndApplyLowestPitch();
+          }
+          renderList();
         });
 
         gapMode.addEventListener('change', renderList);
 
         function renderList() {
-            fileList.innerHTML = '';
+          fileList.innerHTML = '';
 
-            if (!autoSortCheckbox.checked) {
-              // Original behavior: show only current items (no placeholders)
-              files.forEach((file, i) => {
-                  const item = document.createElement('div');
-                  item.className = 'file-item real';
-                  item.draggable = true;
-                  item.dataset.index = i;
-
-                  const proposedName = getProposedNameForIndex(i, file.name.split('.').pop());
-                  item.innerHTML = `
-                    <span>${file.name}</span>
-                    <span class="proposed">→ ${proposedName}</span>
-                  `;
-                  addDragHandlers(item);
-                  fileList.appendChild(item);
-              });
-              return;
-            }
-
-            // AutoSort ON: show continuous range placeholders from LOWEST to HIGHEST pitch found
-            const { full, unmatched } = buildContinuousRange();
-
-            if (full.length === 0) {
-              // fallback if nothing matched pitch names (or hashed mode bypass returned [])
-              files.forEach((file, i) => {
-                const item = document.createElement('div');
-                item.className = 'file-item real';
-                item.draggable = true;
-                item.dataset.index = i;
-                const proposedName = getProposedNameForIndex(i, file.name.split('.').pop());
-                item.innerHTML = `<span>${file.name}</span><span class="proposed">→ ${proposedName}</span>`;
-                addDragHandlers(item);
-                fileList.appendChild(item);
-              });
-              return;
-            }
-
-            // Show matched/placeholder range
-            full.forEach((slot, idx) => {
-              const item = document.createElement('div');
-              if (slot.file) {
-                item.className = 'file-item real';
-                item.draggable = true;
-                item.dataset.fileName = slot.file.name; // track by name
-                // We also need to map back to 'files' for reordering
-                const originalIndex = files.findIndex(f=>f===slot.file);
-                if (originalIndex >= 0) item.dataset.index = String(originalIndex);
-                const proposed = getProposedNameForIndex(idx, slot.ext);
-                item.innerHTML = `<span>${slot.file.name}</span><span class="proposed">→ ${proposed}</span>`;
-                addDragHandlers(item);
-              } else {
-                item.className = 'file-item';
-                const proposed = getProposedNameForIndex(idx, "wav");
-                const modeLabel = (gapMode.value === 'synth') ? ' (placeholder: synth)' : ' (placeholder: silent)';
-                item.innerHTML = `<span class="placeholder-label">(placeholder)</span><span class="proposed">→ ${proposed}${modeLabel}</span>`;
-              }
-              fileList.appendChild(item);
-            });
-
-            // Show unmatched extras after the continuous range, continuing naming
-            unmatched.forEach((file, i) => {
-              const idx = full.length + i;
+          if (!autoSortCheckbox.checked) {
+            // Original behavior: show only current items (no placeholders)
+            files.forEach((file, i) => {
               const item = document.createElement('div');
               item.className = 'file-item real';
               item.draggable = true;
-              item.dataset.index = files.findIndex(f=>f===file);
-              const proposed = getProposedNameForIndex(idx, file.name.split('.').pop());
-              item.innerHTML = `<span>${file.name}</span><span class="proposed">→ ${proposed}</span>`;
+              item.dataset.index = i;
+
+              const proposedName = getProposedNameForIndex(i, file.name.split('.').pop());
+              item.innerHTML = `
+                    <span>${file.name}</span>
+                    <span class="proposed">→ ${proposedName}</span>
+                  `;
               addDragHandlers(item);
               fileList.appendChild(item);
             });
+            return;
+          }
+
+          // AutoSort ON: show continuous range placeholders from LOWEST to HIGHEST pitch found
+          const {
+            full,
+            unmatched
+          } = buildContinuousRange();
+
+          if (full.length === 0) {
+            // fallback if nothing matched pitch names (or hashed mode bypass returned [])
+            files.forEach((file, i) => {
+              const item = document.createElement('div');
+              item.className = 'file-item real';
+              item.draggable = true;
+              item.dataset.index = i;
+              const proposedName = getProposedNameForIndex(i, file.name.split('.').pop());
+              item.innerHTML = `<span>${file.name}</span><span class="proposed">→ ${proposedName}</span>`;
+              addDragHandlers(item);
+              fileList.appendChild(item);
+            });
+            return;
+          }
+
+          // Show matched/placeholder range
+          full.forEach((slot, idx) => {
+            const item = document.createElement('div');
+            if (slot.file) {
+              item.className = 'file-item real';
+              item.draggable = true;
+              item.dataset.fileName = slot.file.name; // track by name
+              // We also need to map back to 'files' for reordering
+              const originalIndex = files.findIndex(f => f === slot.file);
+              if (originalIndex >= 0) item.dataset.index = String(originalIndex);
+              const proposed = getProposedNameForIndex(idx, slot.ext);
+              item.innerHTML = `<span>${slot.file.name}</span><span class="proposed">→ ${proposed}</span>`;
+              addDragHandlers(item);
+            } else {
+              item.className = 'file-item';
+              const proposed = getProposedNameForIndex(idx, "wav");
+              const modeLabel = (gapMode.value === 'synth') ? ' (placeholder: synth)' : ' (placeholder: silent)';
+              item.innerHTML = `<span class="placeholder-label">(placeholder)</span><span class="proposed">→ ${proposed}${modeLabel}</span>`;
+            }
+            fileList.appendChild(item);
+          });
+
+          // Show unmatched extras after the continuous range, continuing naming
+          unmatched.forEach((file, i) => {
+            const idx = full.length + i;
+            const item = document.createElement('div');
+            item.className = 'file-item real';
+            item.draggable = true;
+            item.dataset.index = files.findIndex(f => f === file);
+            const proposed = getProposedNameForIndex(idx, file.name.split('.').pop());
+            item.innerHTML = `<span>${file.name}</span><span class="proposed">→ ${proposed}</span>`;
+            addDragHandlers(item);
+            fileList.appendChild(item);
+          });
         }
 
         function addDragHandlers(el) {
-            el.addEventListener('dragstart', (e) => {
-                // only draggable if it's a real file item
-                if (!el.classList.contains('real')) { e.preventDefault(); return; }
-                e.dataTransfer.setData('text/plain', el.dataset.index);
-                el.classList.add('dragging');
-            });
-            el.addEventListener('dragend', () => {
-                el.classList.remove('dragging');
-                // Update files array according to new DOM order (ignore placeholders)
-                const newOrder = Array.from(fileList.children)
-                  .filter(c => c.dataset.index !== undefined && c.dataset.index !== null)
-                  .map(c => files[Number(c.dataset.index)]);
-                // Keep any files that weren't in the list (shouldn't happen, but safe)
-                if (newOrder.length) files = newOrder;
-                renderList(); // re-render to update proposed names
-            });
-            el.addEventListener('dragover', (e) => {
-                if (!document.querySelector('.dragging')) return;
-                e.preventDefault();
-                const dragging = document.querySelector('.dragging');
-                const bounding = el.getBoundingClientRect();
-                const offset = e.clientY - bounding.top;
-                const height = bounding.height / 2;
-                const parent = el.parentNode;
-                if (offset > height) {
-                    parent.insertBefore(dragging, el.nextSibling);
-                } else {
-                    parent.insertBefore(dragging, el);
-                }
-            });
+          el.addEventListener('dragstart', (e) => {
+            // only draggable if it's a real file item
+            if (!el.classList.contains('real')) {
+              e.preventDefault();
+              return;
+            }
+            e.dataTransfer.setData('text/plain', el.dataset.index);
+            el.classList.add('dragging');
+          });
+          el.addEventListener('dragend', () => {
+            el.classList.remove('dragging');
+            // Update files array according to new DOM order (ignore placeholders)
+            const newOrder = Array.from(fileList.children)
+              .filter(c => c.dataset.index !== undefined && c.dataset.index !== null)
+              .map(c => files[Number(c.dataset.index)]);
+            // Keep any files that weren't in the list (shouldn't happen, but safe)
+            if (newOrder.length) files = newOrder;
+            renderList(); // re-render to update proposed names
+          });
+          el.addEventListener('dragover', (e) => {
+            if (!document.querySelector('.dragging')) return;
+            e.preventDefault();
+            const dragging = document.querySelector('.dragging');
+            const bounding = el.getBoundingClientRect();
+            const offset = e.clientY - bounding.top;
+            const height = bounding.height / 2;
+            const parent = el.parentNode;
+            if (offset > height) {
+              parent.insertBefore(dragging, el.nextSibling);
+            } else {
+              parent.insertBefore(dragging, el);
+            }
+          });
         }
 
         // autoscroll while dragging
         fileList.addEventListener('dragover', (e) => {
-            const scrollZone = 40; // px from edge
-            const scrollSpeed = 4; // px per event
-            const rect = fileList.getBoundingClientRect();
+          const scrollZone = 40; // px from edge
+          const scrollSpeed = 4; // px per event
+          const rect = fileList.getBoundingClientRect();
 
-            if (e.clientY < rect.top + scrollZone) {
-                fileList.scrollTop -= scrollSpeed;
-            } else if (e.clientY > rect.bottom - scrollZone) {
-                fileList.scrollTop += scrollSpeed;
-            }
+          if (e.clientY < rect.top + scrollZone) {
+            fileList.scrollTop -= scrollSpeed;
+          } else if (e.clientY > rect.bottom - scrollZone) {
+            fileList.scrollTop += scrollSpeed;
+          }
         });
 
         // ======== Audio helpers (WAV + pitch shifting) ========
         function generateSilentWav(durationSec = 1, sampleRate = 44100) {
-            const numSamples = Math.floor(durationSec * sampleRate);
-            const buffer = new ArrayBuffer(44 + numSamples * 2); // 16-bit mono PCM
-            const view = new DataView(buffer);
-            function writeStr(offset, str) {
-              for (let i = 0; i < str.length; i++) view.setUint8(offset + i, str.charCodeAt(i));
-            }
-            writeStr(0, "RIFF");
-            view.setUint32(4, 36 + numSamples * 2, true);
-            writeStr(8, "WAVE");
-            writeStr(12, "fmt ");
-            view.setUint32(16, 16, true);
-            view.setUint16(20, 1, true);  // PCM
-            view.setUint16(22, 1, true);  // channels
-            view.setUint32(24, sampleRate, true);
-            view.setUint32(28, sampleRate * 2, true);
-            view.setUint16(32, 2, true);  // block align
-            view.setUint16(34, 16, true); // bits
-            writeStr(36, "data");
-            view.setUint32(40, numSamples * 2, true);
-            return new Blob([buffer], { type: "audio/wav" });
+          const numSamples = Math.floor(durationSec * sampleRate);
+          const buffer = new ArrayBuffer(44 + numSamples * 2); // 16-bit mono PCM
+          const view = new DataView(buffer);
+
+          function writeStr(offset, str) {
+            for (let i = 0; i < str.length; i++) view.setUint8(offset + i, str.charCodeAt(i));
+          }
+          writeStr(0, "RIFF");
+          view.setUint32(4, 36 + numSamples * 2, true);
+          writeStr(8, "WAVE");
+          writeStr(12, "fmt ");
+          view.setUint32(16, 16, true);
+          view.setUint16(20, 1, true); // PCM
+          view.setUint16(22, 1, true); // channels
+          view.setUint32(24, sampleRate, true);
+          view.setUint32(28, sampleRate * 2, true);
+          view.setUint16(32, 2, true); // block align
+          view.setUint16(34, 16, true); // bits
+          writeStr(36, "data");
+          view.setUint32(40, numSamples * 2, true);
+          return new Blob([buffer], {
+            type: "audio/wav"
+          });
         }
 
         function audioBufferToWav(buffer) {
@@ -617,19 +664,32 @@ function DoStartup() {
             for (let i = 0; i < str.length; i++) view.setUint8(offset + i, str.charCodeAt(i));
           }
           let pos = 0;
-          writeString(pos, "RIFF"); pos += 4;
-          view.setUint32(pos, length - 8, true); pos += 4;
-          writeString(pos, "WAVE"); pos += 4;
-          writeString(pos, "fmt "); pos += 4;
-          view.setUint32(pos, 16, true); pos += 4;
-          view.setUint16(pos, 1, true); pos += 2; // PCM
-          view.setUint16(pos, numChannels, true); pos += 2;
-          view.setUint32(pos, sampleRate, true); pos += 4;
-          view.setUint32(pos, sampleRate * numChannels * 2, true); pos += 4;
-          view.setUint16(pos, numChannels * 2, true); pos += 2;
-          view.setUint16(pos, 16, true); pos += 2; // bits
-          writeString(pos, "data"); pos += 4;
-          view.setUint32(pos, length - 44, true); pos += 4;
+          writeString(pos, "RIFF");
+          pos += 4;
+          view.setUint32(pos, length - 8, true);
+          pos += 4;
+          writeString(pos, "WAVE");
+          pos += 4;
+          writeString(pos, "fmt ");
+          pos += 4;
+          view.setUint32(pos, 16, true);
+          pos += 4;
+          view.setUint16(pos, 1, true);
+          pos += 2; // PCM
+          view.setUint16(pos, numChannels, true);
+          pos += 2;
+          view.setUint32(pos, sampleRate, true);
+          pos += 4;
+          view.setUint32(pos, sampleRate * numChannels * 2, true);
+          pos += 4;
+          view.setUint16(pos, numChannels * 2, true);
+          pos += 2;
+          view.setUint16(pos, 16, true);
+          pos += 2; // bits
+          writeString(pos, "data");
+          pos += 4;
+          view.setUint32(pos, length - 44, true);
+          pos += 4;
 
           // Interleave channels
           const channels = [];
@@ -644,14 +704,16 @@ function DoStartup() {
             }
             offset++;
           }
-          return new Blob([arrayBuffer], { type: "audio/wav" });
+          return new Blob([arrayBuffer], {
+            type: "audio/wav"
+          });
         }
 
         const decodeCache = new WeakMap(); // File -> Promise<AudioBuffer>
         async function decodeFileToAudioBuffer(file) {
           if (decodeCache.has(file)) return decodeCache.get(file);
           const p = (async () => {
-            const ac = new (window.AudioContext || window.webkitAudioContext)();
+            const ac = new(window.AudioContext || window.webkitAudioContext)();
             const arr = await file.arrayBuffer();
             const buf = await ac.decodeAudioData(arr);
             return buf;
@@ -680,177 +742,192 @@ function DoStartup() {
         // =====================
         exportZipBtn.addEventListener('click', async () => {
 
-            async function saveZipFile(fname) {
+          async function saveZipFile(fname) {
 
-                // If no files at all
-                if (!files.length) {
-                  DayPilot.Modal.alert('<p style="text-align:center">Nothing to export!</p>', { theme: "modal_flat", top: 200 });
-                  return;
+            // If no files at all
+            if (!files.length) {
+              DayPilot.Modal.alert('<p style="text-align:center">Nothing to export!</p>', {
+                theme: "modal_flat",
+                top: 200
+              });
+              return;
+            }
+
+            const zip = new JSZip();
+
+            // ---- NEW: add abctools.json with volume/fade settings ----
+            let volumeScale = parseFloat(volumeScaleInput.value);
+            let fadeTimeMs = parseInt(fadeTimeInput.value, 10);
+
+            if (isNaN(volumeScale)) volumeScale = 1.0;
+            if (isNaN(fadeTimeMs)) fadeTimeMs = 100;
+
+            // enforce simple bounds
+            if (volumeScale < 0) volumeScale = 0;
+            if (fadeTimeMs < 0) fadeTimeMs = 0;
+
+            const meta = {
+              volumeScale,
+              fadeTimeMs
+            };
+            zip.file("abctools.json", JSON.stringify(meta, null, 2));
+
+            if (!autoSortCheckbox.checked) {
+              // ORIGINAL BEHAVIOR: just rename in current visual order
+              const reordered = Array.from(fileList.children)
+                .filter(el => el.classList.contains('real'))
+                .map(el => files[Number(el.dataset.index)]);
+
+              reordered.forEach((file, i) => {
+                const newName = getProposedNameForIndex(i, file.name.split('.').pop());
+                zip.file(newName, file);
+              });
+
+            } else {
+              // AUTOSORT: Build continuous range from LOWEST to HIGHEST pitch found
+              const {
+                full,
+                unmatched
+              } = buildContinuousRange();
+
+              if (full.length === 0) {
+                // fallback if nothing matched pitch: behave like non-autosort
+                files.forEach((file, i) => {
+                  const newName = getProposedNameForIndex(i, file.name.split('.').pop());
+                  zip.file(newName, file);
+                });
+              } else {
+                // Map pitchIndex -> i in the continuous range
+                const haveAtIndex = new Map(); // idx -> file
+                full.forEach((slot, i) => {
+                  if (slot.file) haveAtIndex.set(i, slot.file);
+                });
+
+                // Helper to find nearest source file index for a missing slot.
+                function findSourceIndex(targetIdx) {
+                  // Prefer lower pitch. If none lower, use higher.
+                  for (let d = 1; d < full.length; d++) {
+                    const lower = targetIdx - d;
+                    if (lower >= 0 && haveAtIndex.has(lower)) return lower;
+                    const higher = targetIdx + d;
+                    if (higher < full.length && haveAtIndex.has(higher)) return higher;
+                  }
+                  return -1;
                 }
 
-                const zip = new JSZip();
+                // Fill the continuous range (matched files or placeholders)
+                for (let i = 0; i < full.length; i++) {
+                  const slot = full[i];
+                  const ext = slot.file ? slot.ext : "wav";
+                  const proposed = getProposedNameForIndex(i, ext);
 
-                // ---- NEW: add abctools.json with volume/fade settings ----
-                let volumeScale = parseFloat(volumeScaleInput.value);
-                let fadeTimeMs = parseInt(fadeTimeInput.value, 10);
-
-                if (isNaN(volumeScale)) volumeScale = 1.0;
-                if (isNaN(fadeTimeMs)) fadeTimeMs = 100;
-
-                // enforce simple bounds
-                if (volumeScale < 0) volumeScale = 0;
-                if (fadeTimeMs < 0) fadeTimeMs = 0;
-
-                const meta = {
-                  volumeScale,
-                  fadeTimeMs
-                };
-                zip.file("abctools.json", JSON.stringify(meta, null, 2));
-
-                if (!autoSortCheckbox.checked) {
-                  // ORIGINAL BEHAVIOR: just rename in current visual order
-                  const reordered = Array.from(fileList.children)
-                    .filter(el => el.classList.contains('real'))
-                    .map(el => files[Number(el.dataset.index)]);
-
-                  reordered.forEach((file, i) => {
-                      const newName = getProposedNameForIndex(i, file.name.split('.').pop());
-                      zip.file(newName, file);
-                  });
-
-                } else {
-                  // AUTOSORT: Build continuous range from LOWEST to HIGHEST pitch found
-                  const { full, unmatched } = buildContinuousRange();
-
-                  if (full.length === 0) {
-                    // fallback if nothing matched pitch: behave like non-autosort
-                    files.forEach((file, i) => {
-                      const newName = getProposedNameForIndex(i, file.name.split('.').pop());
-                      zip.file(newName, file);
-                    });
+                  if (slot.file) {
+                    zip.file(proposed, slot.file);
                   } else {
-                    // Map pitchIndex -> i in the continuous range
-                    const haveAtIndex = new Map(); // idx -> file
-                    full.forEach((slot, i) => { if (slot.file) haveAtIndex.set(i, slot.file); });
-
-                    // Helper to find nearest source file index for a missing slot.
-                    function findSourceIndex(targetIdx) {
-                      // Prefer lower pitch. If none lower, use higher.
-                      for (let d = 1; d < full.length; d++) {
-                        const lower = targetIdx - d;
-                        if (lower >= 0 && haveAtIndex.has(lower)) return lower;
-                        const higher = targetIdx + d;
-                        if (higher < full.length && haveAtIndex.has(higher)) return higher;
-                      }
-                      return -1;
-                    }
-
-                    // Fill the continuous range (matched files or placeholders)
-                    for (let i = 0; i < full.length; i++) {
-                      const slot = full[i];
-                      const ext = slot.file ? slot.ext : "wav";
-                      const proposed = getProposedNameForIndex(i, ext);
-
-                      if (slot.file) {
-                        zip.file(proposed, slot.file);
+                    if (gapMode.value === 'silent') {
+                      zip.file(proposed, generateSilentWav(1));
+                    } else {
+                      const srcIdx = findSourceIndex(i);
+                      if (srcIdx >= 0) {
+                        const srcFile = haveAtIndex.get(srcIdx);
+                        const semitones = i - srcIdx; // up is +, down is -
+                        const blob = await pitchShiftFile(srcFile, semitones);
+                        zip.file(proposed, blob);
                       } else {
-                        if (gapMode.value === 'silent') {
-                          zip.file(proposed, generateSilentWav(1));
-                        } else {
-                          const srcIdx = findSourceIndex(i);
-                          if (srcIdx >= 0) {
-                            const srcFile = haveAtIndex.get(srcIdx);
-                            const semitones = i - srcIdx; // up is +, down is -
-                            const blob = await pitchShiftFile(srcFile, semitones);
-                            zip.file(proposed, blob);
-                          } else {
-                            // No source at all (shouldn't happen if full.length>0), fallback to silence
-                            zip.file(proposed, generateSilentWav(1));
-                          }
-                        }
+                        // No source at all (shouldn't happen if full.length>0), fallback to silence
+                        zip.file(proposed, generateSilentWav(1));
                       }
-                    }
-
-                    // Append unmatched extras after the range, continuing the sequence index
-                    if (unmatched.length) {
-                      const startIdx = full.length;
-                      unmatched.forEach((file, j) => {
-                        const proposed = getProposedNameForIndex(startIdx + j, file.name.split('.').pop());
-                        zip.file(proposed, file);
-                      });
                     }
                   }
                 }
 
-                const blob = await zip.generateAsync({ type: "blob" });
-                const a = document.createElement('a');
-                a.href = URL.createObjectURL(blob);
-                a.download = fname;
-                a.click();
-                setTimeout(function() {
-                    window.URL.revokeObjectURL(a.href);
-                }, 1000);
-            };
-
-            if (fileList.children.length == 0) {
-                DayPilot.Modal.alert('<p style="text-align:center">Nothing to export!</p>', { theme: "modal_flat", top: 200 });
-                return;
+                // Append unmatched extras after the range, continuing the sequence index
+                if (unmatched.length) {
+                  const startIdx = full.length;
+                  unmatched.forEach((file, j) => {
+                    const proposed = getProposedNameForIndex(startIdx + j, file.name.split('.').pop());
+                    zip.file(proposed, file);
+                  });
+                }
+              }
             }
 
-            var thePrompt = "Please enter a filename for your custom instrument file:";
-
-            DayPilot.Modal.prompt(thePrompt, gFileSaveName, {
-                theme: "modal_flat",
-                top: 200,
-                autoFocus: true
-            }).then(function(args) {
-
-                var fname = args.result;
-
-                // If the user pressed Cancel, exit
-                if (fname == null) return;
-                if (fname.length == 0) return;
-
-                if (!fname.endsWith(".zip")) {
-                    fname = fname.replace(/\..+$/, '');
-                    fname = fname + ".zip";
-                }
-
-                gFileSaveName = fname;
-
-                // ensure sorting state is applied
-                sortFilesIfNeeded();
-                saveZipFile(fname);
-
+            const blob = await zip.generateAsync({
+              type: "blob"
             });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = fname;
+            a.click();
+            setTimeout(function() {
+              window.URL.revokeObjectURL(a.href);
+            }, 1000);
+          };
+
+          if (fileList.children.length == 0) {
+            DayPilot.Modal.alert('<p style="text-align:center">Nothing to export!</p>', {
+              theme: "modal_flat",
+              top: 200
+            });
+            return;
+          }
+
+          var thePrompt = "Please enter a filename for your custom instrument file:";
+
+          DayPilot.Modal.prompt(thePrompt, gFileSaveName, {
+            theme: "modal_flat",
+            top: 200,
+            autoFocus: true
+          }).then(function(args) {
+
+            var fname = args.result;
+
+            // If the user pressed Cancel, exit
+            if (fname == null) return;
+            if (fname.length == 0) return;
+
+            if (!fname.endsWith(".zip")) {
+              fname = fname.replace(/\..+$/, '');
+              fname = fname + ".zip";
+            }
+
+            gFileSaveName = fname;
+
+            // ensure sorting state is applied
+            sortFilesIfNeeded();
+            saveZipFile(fname);
+
+          });
 
         });
 
         // Accordion
         var acc = document.getElementsByClassName("accordion");
         for (var i = 0; i < acc.length; i++) {
-            acc[i].addEventListener("click", function() {
-                this.classList.toggle("active");
-                var panel = this.nextElementSibling;
-                if (panel.style.display === "block") {
-                    panel.style.display = "none";
-                } else {
-                    panel.style.display = "block";
-                }
-            });
+          acc[i].addEventListener("click", function() {
+            this.classList.toggle("active");
+            var panel = this.nextElementSibling;
+            if (panel.style.display === "block") {
+              panel.style.display = "none";
+            } else {
+              panel.style.display = "block";
+            }
+          });
         }
-    }
+      }
 
-    function WaitForReady(fn) {
+      function WaitForReady(fn) {
         if (document.readyState !== 'loading') {
-            fn();
-            return;
+          fn();
+          return;
         }
         document.addEventListener('DOMContentLoaded', fn);
-    }
+      }
 
-    WaitForReady(DoStartup);
+      WaitForReady(DoStartup);
 
     </script>
+
   </body>
+
 </html>
