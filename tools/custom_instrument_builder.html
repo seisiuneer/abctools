@@ -107,19 +107,19 @@
       margin-top:12px;
     }
     .form-row {
-	  display: flex;
-	  gap: 12px;
-	  align-items: flex-end; /* aligns the bottoms of the controls nicely */
-	  flex-wrap: wrap;       /* lets them wrap on narrow screens */
-  	}
-  	.form-row > label {
-  	  flex: 1 1 240px;       /* grow, shrink, min width */
-  	  margin-top: 1em;    /* keep your existing label spacing */
-  	}
-  	.form-row > label > select,
-  	.form-row > label > input[type="number"] {
-  	  width: 100%;
-  	}
+    display: flex;
+    gap: 12px;
+    align-items: flex-end; /* aligns the bottoms of the controls nicely */
+    flex-wrap: wrap;       /* lets them wrap on narrow screens */
+    }
+    .form-row > label {
+      flex: 1 1 240px;       /* grow, shrink, min width */
+      margin-top: 1em;    /* keep your existing label spacing */
+    }
+    .form-row > label > select,
+    .form-row > label > input[type="number"] {
+      width: 100%;
+    }
     .active { background-color: #eee; }
     @media not all and (pointer: coarse) {
       .accordion:hover { background-color: #9f9; }
@@ -191,49 +191,49 @@
       <input type="file" id="fileInput" accept=".wav,.mp3,.ogg" multiple>
     </label>
 
-  	<div class="form-row">
-  	  <label>Volume scale:
-  	    <input type="number" id="volumeScale" step="0.1" min="0" value="1.0" inputmode="decimal">
-  	  </label>
+    <div class="form-row">
+      <label>Volume scale:
+        <input type="number" id="volumeScale" step="0.1" min="0" value="1.0" inputmode="decimal">
+      </label>
 
-  	  <label>Fade time (ms):
-  	    <input type="number" id="fadeTime" step="1" min="0" value="100" inputmode="numeric">
-  	  </label>
-  	</div>
+      <label>Fade time (ms):
+        <input type="number" id="fadeTime" step="1" min="0" value="100" inputmode="numeric">
+      </label>
+    </div>
 
-  	<div class="form-row">
-  	  <label>Starting Octave Number:
-  	    <select id="startNumber">
-  	      <option value="0">0</option>
-  	      <option value="1">1</option>
-  	      <option value="2">2</option>
-  	      <option value="3">3</option>
-  	      <option value="4">4</option>
-  	      <option value="5">5</option>
-  	      <option value="6">6</option>
-  	      <option value="7">7</option>
-  	      <option value="8">8</option>
-  	      <option value="9">9</option>
-  	    </select>
-  	  </label>
+    <div class="form-row">
+      <label>Starting Octave Number:
+        <select id="startNumber">
+          <option value="0">0</option>
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
+          <option value="6">6</option>
+          <option value="7">7</option>
+          <option value="8">8</option>
+          <option value="9">9</option>
+        </select>
+      </label>
 
-  	  <label>Starting Scale Note:
-  	    <select id="startNote">
-  	      <option value="0">C</option>
-  	      <option value="1">Db</option>
-  	      <option value="2">D</option>
-  	      <option value="3">Eb</option>
-  	      <option value="4">E</option>
-  	      <option value="5">F</option>
-  	      <option value="6">Gb</option>
-  	      <option value="7">G</option>
-  	      <option value="8">Ab</option>
-  	      <option value="9">A</option>
-  	      <option value="10">Bb</option>
-  	      <option value="11">B</option>
-  	    </select>
-  	  </label>
-  	</div>
+      <label>Starting Scale Note:
+        <select id="startNote">
+          <option value="0">C</option>
+          <option value="1">Db</option>
+          <option value="2">D</option>
+          <option value="3">Eb</option>
+          <option value="4">E</option>
+          <option value="5">F</option>
+          <option value="6">Gb</option>
+          <option value="7">G</option>
+          <option value="8">Ab</option>
+          <option value="9">A</option>
+          <option value="10">Bb</option>
+          <option value="11">B</option>
+        </select>
+      </label>
+    </div>
 
     <label>
       <input type="checkbox" id="autoSort" checked>
@@ -423,11 +423,32 @@
           const unmatched = [];
           for (const f of files) {
             const p = parsePitchFromName(f.name);
-            if (p) matched.push({
+            if (p){
+
+              //console.log("noteIdx " + p.noteIdx + " octave " + p.octave + " pitchIndex " + p.pitchIndex);
+
+              // If octave ever > 8, abort into hashed mode (but DO NOT render here)
+              if (p.octave > 8) {
+                DayPilot.Modal.alert('<p style="text-align:center;font-size:1.1em;"><strong>Note Octave Out-of-Range Detected (Max is 8)</strong><br/><br/>Auto-sort and note range detect will be disabled.</p>', {
+                  theme: "modal_flat",
+                  top: 200
+                });
+                
+                gHasHashedNames = true;
+                applyHashedModeUIState();
+                setTimeout(function(){
+                  files = [...originalFiles];  // restore original selection order and rerender
+                  renderList();
+                },250);
+
+                return { full: [], unmatched: files.slice() }; // abort pitch work; 
+              }
+              matched.push({
               file: f,
               pitchIndex: p.pitchIndex,
               ext: f.name.split('.').pop()
-            });
+              });
+            }
             else unmatched.push(f);
           }
           if (matched.length === 0) {
@@ -468,7 +489,7 @@
           gHasHashedNames = hasHashedFilenames(files);
           if (gHasHashedNames) {
             applyHashedModeUIState();
-            DayPilot.Modal.alert('<p style="text-align:center;font-size:1.1em;"><strong>Hash-based Filenames Detected</strong><br/><br/>Auto-sort and note range detect initially disabled.<br/><br/>Auto-sort and note range detect may crash if enabled, so be careful.</p>', {
+            DayPilot.Modal.alert('<p style="text-align:center;font-size:1.1em;"><strong>Hash-based Filenames Detected</strong><br/><br/>Auto-sort and note range detect initially disabled.<br/><br/>Auto-sort and note range detect if enabled may abort if there are not real note names with octave numbers in the filenames.</p>', {
               theme: "modal_flat",
               top: 200
             });
