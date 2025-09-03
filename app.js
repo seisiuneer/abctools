@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "2743_090225_1200";
+var gVersionNumber = "2744_090325_1200";
 
 var gMIDIInitStillWaiting = false;
 
@@ -475,6 +475,9 @@ var gImportCancelRequested = false;
 
 // Scroll Jump to Tune to last selected tune
 var gJumpToTuneAutoscroll = true;
+
+// Show status dialog after custom instrument load
+var gCustomInstrumentShowStatus = true;
 
 // Global reference to the ABC editor
 var gTheABC = document.getElementById("abc");
@@ -43728,6 +43731,12 @@ function GetInitialConfigurationSettings() {
     gJumpToTuneAutoscroll = (val == "true");
   }
 
+  gCustomInstrumentShowStatus = true;
+  val = localStorage.CustomInstrumentShowStatus
+  if (val) {
+    gCustomInstrumentShowStatus = (val == "true");
+  }
+
   // Save the settings, in case they were initialized
   SaveConfigurationSettings();
 
@@ -44026,6 +44035,9 @@ function SaveConfigurationSettings() {
 
     // Jump to tune autoscroll
     localStorage.JumpToTuneAutoscroll = gJumpToTuneAutoscroll;
+
+    // Show status after custom instrument load
+    localStorage.CustomInstrumentShowStatus = gCustomInstrumentShowStatus;
 
   }
 }
@@ -46863,30 +46875,34 @@ function processCustomInstruments(){
 
       }
 
-      var quant = "Instrument";
-      
-      if (totalFiles > 1){
-        quant = "Instruments";
-      }
-      
-      var modal_msg = '<p style="text-align:center;font-size:16pt;font-family:helvetica;margin-bottom:24px;margin-left:15px;">'+totalFiles+' Custom '+quant+' Loaded&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#custom_midi_instrument" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'
-        modal_msg += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">In the following, replace (n) with 1-8 for the custom instrument number.</p>';        
-        modal_msg += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">To play the custom instrument, add the following to your ABC tunes:</p>';
-        modal_msg += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica"><strong>%%MIDI program custom(n)</strong></p>';
-        modal_msg += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">Example:<br/>%%MIDI program custom1</p>';
-        modal_msg += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">Custom instruments have default volume scale and fade values built-in.</p>';
-        modal_msg += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">To make the instrument volume louder or softer than the default,<br/>add the following to your ABC tunes:</p>';
-        modal_msg += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica"><strong>%custom_instrument_(n)_volume_scale (scale_multiplier_float)</strong></p>';
-        modal_msg += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">Example:<br/>%custom_instrument_1_volume_scale 2.0</p>';
-        modal_msg += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">To change the note release fade time from the default,<br/>add the following to your ABC tunes:</p>';
-        modal_msg += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica"><strong>%custom_instrument_(n)_fade (fade_time_in_ms)</strong></p>';
-        modal_msg += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">Example:<br/>%custom_instrument_1_fade 1000</p>';
+      if (gCustomInstrumentShowStatus){
 
-      DayPilot.Modal.alert(modal_msg, {
-        theme: "modal_flat",
-        top: 50,
-        scrollWithPage: (AllowDialogsToScroll())
-      });
+        var quant = "Instrument";
+        
+        if (totalFiles > 1){
+          quant = "Instruments";
+        }
+        
+        var modal_msg = '<p style="text-align:center;font-size:16pt;font-family:helvetica;margin-bottom:24px;margin-left:15px;">'+totalFiles+' Custom '+quant+' Loaded&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#custom_midi_instrument" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'
+          modal_msg += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">In the following, replace (n) with 1-8 for the custom instrument number.</p>';        
+          modal_msg += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">To play the custom instrument, add the following to your ABC tunes:</p>';
+          modal_msg += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica"><strong>%%MIDI program custom(n)</strong></p>';
+          modal_msg += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">Example:<br/>%%MIDI program custom1</p>';
+          modal_msg += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">Custom instruments have default volume scale and fade values built-in.</p>';
+          modal_msg += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">To make the instrument volume louder or softer than the default,<br/>add the following to your ABC tunes:</p>';
+          modal_msg += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica"><strong>%custom_instrument_(n)_volume_scale (scale_multiplier_float)</strong></p>';
+          modal_msg += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">Example:<br/>%custom_instrument_1_volume_scale 2.0</p>';
+          modal_msg += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">To change the note release fade time from the default,<br/>add the following to your ABC tunes:</p>';
+          modal_msg += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica"><strong>%custom_instrument_(n)_fade (fade_time_in_ms)</strong></p>';
+          modal_msg += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">Example:<br/>%custom_instrument_1_fade 1000</p>';
+
+        DayPilot.Modal.alert(modal_msg, {
+          theme: "modal_flat",
+          top: 50,
+          scrollWithPage: (AllowDialogsToScroll())
+        });
+
+      }
 
       return;
 
@@ -46961,15 +46977,11 @@ async function manageCustomInstrumentSlots(files){
     `<div id="${containerId}"></div>`,
     { top: 50, width:780, theme:"modal_flat", okText: "Done", scrollWithPage: AllowDialogsToScroll() }
   ).then(function(){
-    
     // Persist final mapping as File|null (not the internal objects)
     if (gCustomInstrumentState && gCustomInstrumentState.slots) {
       gCustomInstrumentSlots = gCustomInstrumentState.slots.map(v => v ? v.file : null);
       processCustomInstruments();
     }
-
-    //debugger;
-
   });
 
   // Let modal render
@@ -46981,14 +46993,12 @@ async function manageCustomInstrumentSlots(files){
     return null;
   }
 
-  // --- Build state: keep {file,name} objects in both slots and pool, so File refs are preserved ---
-  // Normalize slots: accept File|null; convert File -> {file,name}, keep null as is
+  // --- Build state ---
   const normSlots = Array.from({ length: 8 }, (_, i) => {
     const v = initialSlots[i] ?? null;
     return (v instanceof File) ? asObj(v) : null;
   });
 
-  // Build pool from incoming zip files (objects), and remove any already in slots (by file name)
   const occupiedNames = new Set(normSlots.filter(Boolean).map(o => o.name));
   const poolObjs = zipFiles.map(asObj).filter(o => !occupiedNames.has(o.name));
 
@@ -47034,7 +47044,7 @@ async function manageCustomInstrumentSlots(files){
     }
     .${UID}-chip.selected { outline: 2px solid #007aff; }
     .${UID}-chip:active { cursor:grabbing; }
-    #${UID}-buttons { display:flex; justify-content:flex-start; gap:8px; margin-top:12px; max-width:100%; padding-right:4px; box-sizing:border-box; }
+    #${UID}-buttons { display:flex; align-items:center; justify-content:flex-start; gap:12px; margin-top:12px; max-width:100%; padding-right:4px; box-sizing:border-box; flex-wrap: wrap; }
     .${UID}-btn { padding:8px 14px; min-width:80px; border-radius:10px; border:1px solid #ccc; background:#fff; cursor:pointer; font-size:13px; }
     .${UID}-btn.primary { background:#007aff; border-color:#007aff; color:#fff; }
     .${UID}-btn.danger  { background:#ffdbdb; border-color:#9c0d0d; color:#9c0d0d; width:120px;}
@@ -47048,6 +47058,14 @@ async function manageCustomInstrumentSlots(files){
     .${UID}-doclink { position:absolute; top:-6px; left:0px; font-size:24pt; }
     .${UID}-doclink a { text-decoration:none; color:inherit; }
     .${UID}-doclink a:hover { color:#007aff; }
+    .${UID}-chklabel {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 16px;
+      color: #333;
+      user-select: none;
+    }
   `;
   host.appendChild(style);
 
@@ -47158,6 +47176,20 @@ async function manageCustomInstrumentSlots(files){
     renderSlots(); renderPool();
   });
 
+  // --- NEW: checkbox after the "Clear All" button ---
+  const chkLabel = el("label", { class: `${UID}-chklabel` }, buttons);
+  const chkInput = el("input", { attrs: { type: "checkbox", id: `${UID}-keepChk` } }, chkLabel);
+  chkInput.checked = gCustomInstrumentShowStatus; // init from global
+  el("span", { text: "Show custom instrument load status after clicking Done" }, chkLabel);
+
+  // Update the global when the user toggles it
+  chkInput.addEventListener("change", () => {
+    gCustomInstrumentShowStatus = chkInput.checked;
+    if (gLocalStorageAvailable){
+      localStorage.CustomInstrumentShowStatus = gCustomInstrumentShowStatus;
+    }
+  });
+
   // Keyboard: Esc cancels (close with null; slots persist is handled by .then above)
   const onKey = (e) => { if (e.key === "Escape") DayPilot.Modal.close(null); };
   document.addEventListener("keydown", onKey, { once: true });
@@ -47199,7 +47231,7 @@ async function manageCustomInstrumentSlots(files){
     });
   }
 
-  // --- Moves (operate on whole objects so File refs are preserved) ---
+  // --- Moves ---
   function assignPoolToSlot(poolIdx, slotIdx) {
     if (poolIdx == null || !gCustomInstrumentState.pool[poolIdx]) return;
     if (gCustomInstrumentState.slots[slotIdx]) gCustomInstrumentState.pool.push(gCustomInstrumentState.slots[slotIdx]);
