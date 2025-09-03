@@ -2634,6 +2634,8 @@
                 <p><strong>.wav - 44.1 KHz, 16-bit, uncompressed, mono.</strong></p>
                 <p><strong>.mp3 - Ideally 96kbit mono.</strong></p>
                 <p><strong>.ogg - 44.1 KHz, 16-bit, uncompressed, mono.</strong></p>
+                <p>To avoid any delay in playback, the notes should start immediately at the very beginning of the audio file.</p>
+                <p>You will want to edit the samples using a program like Audacity or Adobe Audition to make sure there is no silence in the audio files before the notes.</p>
                 <p>The sample files for each note in the .zip file must be named in a very specific way with the note name and octave number (C4 = Middle C)</p>
                 <p>The naming standard for the note sample files requires flats be designated by a <strong>b</strong> after the note name for the semitones:</p>
                 <p class="code">A3.wav<br/>Bb3.wav<br/>B3.wav<br/>C4.wav<br/>Db4.wav<br/>D4.wav<br/>.<br/>.<br/>.<br/>B4.wav<br/>C5.wav<br/>Db5.wav<br/>D5.wav<br/>etc.</p>
@@ -2641,18 +2643,20 @@
                 <p class="code">A2.mp3<br/>Bb2.mp3<br/>B2.mp3<br/>C3.mp3<br/>Db3.mp3<br/>D3.mp3<br/>.<br/>.<br/>.<br/>B3.mp3<br/>C4.mp3<br/>Db4.mp3<br/>D4.mp3<br/>etc.</p>
                 <p>You will need to create as many individual note samples as the total pitch range you expect to play with the instrument, generally two or three octaves.</p>
                 <p>Every chromatic note in the intended range for the instrument must be present in the .zip file with the required note name.</p>
-                <p>The tool is not able to interpolate for missing named notes in the .zip file.</p>
+                <p>The ABC Transcription Tools are not able to interpolate for missing named notes in the .zip file.</p>
                 <p>Notes missing from the .zip file will result in silence when played.</p>
+                <p>You can use the <a href="#custom_instrument_builder">Custom Instrument Builder Utility</a> described below to automatically create any additional samples required to fill in the full chromatic range if required.</p>
                 <p>You may add an optional custom instrument settings file to the .zip that contains the default volume scale and fade time to use for the instrument when loaded.</p>
                 <p>It must be named <strong>abctools.json</strong> and contain the following JSON structure:</p>
                 <p class="code">{<br/>&nbsp;&nbsp;"volumeScale": 1,<br/>&nbsp;&nbsp;"fadeTimeMs": 100<br/>}</p>
                 <p>Replace the volumeScale and fadeTimeMs values with your own values for the custom instrument.</p>
                 <p>If this file is not present, the default volume scale of 1.0 and fade time of 100ms will be used.</p>
                 <p>Once you have all your note samples and optional settings file, create a .zip file from all of them.</p>
-                <p>The sample files must be at the root of the .zip file, not in folders.</p> 
+                <p>Both the sample files and the settings file must be at the root of the .zip file, not in folders.</p> 
                 <hr class="hidden-print" id="custom_instrument_builder">
                 <h1 class="page_break_always h1wide">Custom Instrument Builder Utility<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-                <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/QMLHGSVShZg" title="Custom Instrument Builder Demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
+                <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/QMLHGSVShZg" title="Custom Instrument Builder Demo 1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
+                <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/Q5-VOVO10oI" title="Custom Instrument Builder Demo 2" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
                 <p>To facilitate the creation of custom instruments, I've created a simple utility that can read an entire directory of audio sample files and create a custom instrument with all the correct note names and octaves:</p>
                 <p style="text-align: center"><a href="https://michaeleskin.com/tools/custom_instrument_builder.html" target="_blank">ABC Transcription Tools Custom Instrument Builder</a></p>
                 <p>The utility can automatically detect the note range of a partial set of note samples based on the filenames and when exporting the custom instrument, synthesize any missing samples in the note range.</p>
