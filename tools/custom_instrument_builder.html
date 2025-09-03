@@ -255,7 +255,7 @@
     </div>
 
     <script>
-    function DoStartup() {
+function DoStartup() {
 
         const notes = ["C", "Db", "D", "Eb", "E", "F", "Gb", "G", "Ab", "A", "Bb", "B"];
         let files = [];
@@ -276,6 +276,36 @@
         const fadeTimeInput = document.getElementById('fadeTime');
 
         var gFileSaveName = "custom_instrument.zip";
+
+        // =========================
+        // NEW: Hashed filename detection & UI mode control
+        // =========================
+        let gHasHashedNames = false;
+
+        function stripExtension(name) {
+          const i = name.lastIndexOf('.');
+          return i >= 0 ? name.slice(0, i) : name;
+        }
+
+        // Consider any 16+ hex characters as a "hashlike" token (e.g., _025c95dacef4407dbe5d015164fe458b)
+        const HASHLIKE_RE = /(?:^|[_\-])([0-9a-fA-F]{16,})(?:$|\b)/;
+
+        function hasHashedFilenames(list) {
+          return list.some(f => HASHLIKE_RE.test(stripExtension(f.name)));
+        }
+
+        function applyHashedModeUIState() {
+          // Lock AutoSort OFF and disable it
+          autoSortCheckbox.checked = false;
+          gapOptions.style.display = 'none';
+          dragMessage.style.display = 'block';
+        }
+
+        function clearHashedModeUIState() {
+          // Restore normal behavior
+          gapOptions.style.display = autoSortCheckbox.checked ? 'block' : 'none';
+          dragMessage.style.display = autoSortCheckbox.checked ? 'none' : 'block';
+        }
 
         // =========================
         // Helpers for pitch parsing
@@ -367,6 +397,7 @@
 
         // Build continuous pitch sequence [min..max] from matched files
         function buildContinuousRange() {
+
           // Map pitchIndex -> file (first occurrence)
           const matched = [];
           const unmatched = [];
@@ -397,14 +428,24 @@
         fileInput.addEventListener('change', (e) => {
             originalFiles = Array.from(e.target.files); // keep original selection order
             files = [...originalFiles];
+
+            // NEW: detect hashed filenames and switch behavior
+            gHasHashedNames = hasHashedFilenames(files);
+            if (gHasHashedNames) {
+              applyHashedModeUIState();
+              DayPilot.Modal.alert('<p style="text-align:center;font-size:1.1em;"><strong>Hash-based Filenames Detected</strong><br/><br/>Auto-sort and note range detect initially disabled.<br/><br/>Auto-sort and note range detect may crash if enabled, so be careful.</p>', { theme: "modal_flat", top: 200 });
+            } else {
+              clearHashedModeUIState();
+            }
+
             sortFilesIfNeeded();
-            if (autoSortCheckbox.checked){
+            if (autoSortCheckbox.checked && !gHasHashedNames){
               detectAndApplyLowestPitch();
             }
             renderList();
         });
-        startNumber.addEventListener('change', renderList);
 
+        startNumber.addEventListener('change', renderList);
         startNote.addEventListener('change', renderList);
 
         autoSortCheckbox.addEventListener('change', () => {
@@ -416,6 +457,7 @@
             }
             renderList();
         });
+
         gapMode.addEventListener('change', renderList);
 
         function renderList() {
@@ -444,7 +486,7 @@
             const { full, unmatched } = buildContinuousRange();
 
             if (full.length === 0) {
-              // fallback if nothing matched pitch names
+              // fallback if nothing matched pitch names (or hashed mode bypass returned [])
               files.forEach((file, i) => {
                 const item = document.createElement('div');
                 item.className = 'file-item real';
@@ -808,6 +850,7 @@
     }
 
     WaitForReady(DoStartup);
+
     </script>
   </body>
 </html>
