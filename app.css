@@ -1539,10 +1539,25 @@ padding:12px;
 width:auto;
 }
 
+.loadinstrumentbutton:hover{
+	background: palegreen;
+}
+
+label.btn.loadinstrumentbutton {
+  display: inline-block;
+}
+
 #configurecustominstruments{
 height:42px;
 padding:12px;
-margin-left:18px;
+margin-left:14px;
+width:auto;
+}
+
+#launchcustominstrumentbuilder{
+height:42px;
+padding:12px;
+margin-left:14px;
 width:auto;
 }
 

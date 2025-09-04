@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "2746_090325_1330";
+var gVersionNumber = "2747_090325_1730";
 
 var gMIDIInitStillWaiting = false;
 
@@ -46838,6 +46838,15 @@ function ResetRollDefaultParams() {
 // 
 // Manage the custom instrument slots
 //
+
+function launchCustomInstrumentBuilder(){
+
+  sendGoogleAnalytics("action", "LaunchCustomInstrumentBuilder");
+
+  window.open("https://michaeleskin.com/tools/custom_instrument_builder.html");
+
+}
+
 var gCustomInstrumentSlots = [null, null, null, null, null, null, null, null]; // will store File|null after closing
 var gCustomInstrumentState = null;
 
@@ -48289,7 +48298,7 @@ function ConfigurePlayerSettings(player_callback) {
     cssClass: "configure_settings_form_text_checkbox_fs"
   }, ]);
 
-  form = form.concat([{html: '<p style="text-align:center;margin-top:24px"><label class="btn btn-subdialog" for="loadinstrumentbutton" title="Load a custom instrument notes .zip bundle.&nbsp;&nbsp;Please check the User Guide for details on creating custom instrument notes .zip bundles.">Load Custom Instruments <input type="file" id="loadinstrumentbutton" accept=".zip" multiple hidden/></label><input id="configurecustominstruments" class="advancedcontrols btn btn-subdialog" onclick="manageCustomInstrumentSlots()" type="button" value="Configure Custom Instruments" title="Brings up the Assign Files to Custom Instruments dialog"></p>'}]);;
+  form = form.concat([{html: '<p style="text-align:center;margin-top:24px"><label class="btn btn-subdialog loadinstrumentbutton" for="loadinstrumentbutton" title="Load one or more Custom Instruments">Load Custom Instruments <input type="file" id="loadinstrumentbutton" accept=".zip" multiple hidden/></label><input id="configurecustominstruments" class="advancedcontrols btn btn-subdialog" onclick="manageCustomInstrumentSlots()" type="button" value="Configure Custom Instruments" title="Brings up the Assign Files to Custom Instruments dialog"><input id="launchcustominstrumentbuilder" class="advancedcontrols btn btn-subdialog" onclick="launchCustomInstrumentBuilder()" type="button" value="Launch Custom Instrument Builder" title="Launches the Custom Instrument Builder utility in a new browser tab"></p>'}]);
 
   // Set up the reverb impulse load callback
   setTimeout(function() {
