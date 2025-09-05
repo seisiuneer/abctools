@@ -60,6 +60,11 @@
       color: #FF8EC5;
       }
       
+      .accent-text-2 {
+      color: #FF8EC5;
+      margin-top: 0em;
+      }
+
       .center {
       margin-left: auto;
       margin-right: auto;
@@ -226,13 +231,14 @@
       <div class="welcome-area">
         <h1 class="accent-text">UltraBox Sample Extractor</h1>
         <p>This utility helps you take sounds from larger files with several sounds inside (such as <a href="https://en.wikipedia.org/wiki/SoundFont">soundfonts</a>, with their well-known <code>.sf2</code> file extension), and save them as individual <a href="https://en.wikipedia.org/wiki/WAV"><code>.wav</code></a> files, for use in your <a href="https://ultraabox.github.io/">UltraBox</a> songs.</p>
+        <p>To create a custom instrument for the <a href="https://michaeleskin.com/abctools/abctools.html" target="_blank">ABC Transcription Tools</a> from the extracted samples, after saving a .zip of extracted instrument .wav files, unzip the file and then open the extracted files in the <a href="https://michaeleskin.com/tools/custom_instrument_builder.html" target="_blank">ABC Transcription Tools - Custom Instrument Builder</a></p>
         <p>To start, drop a file (in one of the <a class="supported-formats-link" href="#">supported formats</a>) on this page, or use your browser's file picker:</p>
         <div class="center">
           <input type="file" multiple="" id="file-picker">
         </div>
       </div>
       <div class="sample-list-area" style="display: none;">
-        <h2 class="accent-text">Extracting from <code class="sample-list-collection-filename">filename.sf2</code></h2>
+        <h2 class="accent-text-2">Extracting from <code class="sample-list-collection-filename">filename.sf2</code></h2>
         <p>Select one or more samples:</p>
         <div class="columns">
           <div class="column">
