@@ -9412,10 +9412,10 @@ var HarmonicaTabGenerator = function (theABC){
                     harpInfo += " (Natural Minor)\n"
                     break;
                 case "6":
-                    harpInfo += " (Chromatic - 12 Hole)\n"
+                    harpInfo += " (Chromatic 12-Hole)\n"
                     break;
                 case "7":
-                    harpInfo += " (Chromatic - 16 Hole)\n"
+                    harpInfo += " (Chromatic 16-Hole)\n"
                     break;
                 case "8":
                     harpInfo += " ("+gHarmonicaCustom.name+")\n"
