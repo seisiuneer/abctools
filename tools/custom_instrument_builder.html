@@ -809,6 +809,12 @@
           else if (e.clientY>rect.bottom-scrollZone) fileList.scrollTop+=scrollSpeed;
         });
 
+        fileList.addEventListener('dragstart', () => {
+          if (gCurrentBtn && !gAudio.paused && !gAudio.ended) {
+            stopCurrentPreview();
+          }
+        });
+        
         // ===================== Export (ZIP) =====================
 
         exportZipBtn.addEventListener('click', async ()=>{
