@@ -28814,7 +28814,7 @@ function DoInjectHarmonicaTab() {
     name: "  Natural Minor",
     id: "5"
   },{
-    name: "  Chromatic (12-hole)",
+    name: "  Chromatic (12-Hole)",
     id: "6"
   },{
     name: gHarmonicaCustom.name,
