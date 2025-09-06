@@ -181,6 +181,18 @@
       }
     }
 
+    #fileList.drag-disabled {
+      user-select: none;       
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+    }
+
+    #fileList.drag-disabled .file-item.real {
+      cursor: default;        
+      opacity: 0.9;           
+    }
+
     .accordion {
       font-size: 12.1pt !important;
       font-family: "Helvetica" !important;
@@ -774,6 +786,8 @@
             ctrl.appendChild(btn); item.appendChild(nameSpan); item.appendChild(proposedSpan); item.appendChild(ctrl);
             addDragHandlers(item); fileList.appendChild(item);
           });
+
+          updateDragInteractivity();
         }
 
         function addDragHandlers(el){
@@ -814,7 +828,14 @@
             stopCurrentPreview();
           }
         });
-        
+
+        function updateDragInteractivity() {
+          const realRows = fileList.querySelectorAll('.file-item.real');
+          const enableDrag = !autoSortCheckbox.checked;   // disable when auto-sort is ON
+          realRows.forEach(row => row.setAttribute('draggable', enableDrag ? 'true' : 'false'));
+          fileList.classList.toggle('drag-disabled', !enableDrag);
+        }
+
         // ===================== Export (ZIP) =====================
 
         exportZipBtn.addEventListener('click', async ()=>{
@@ -979,6 +1000,7 @@
           sortFilesIfNeeded();
           if (autoSortCheckbox.checked) detectAndApplyLowestPitch();
           safeRenderList();
+          updateDragInteractivity();
         });
 
         gapMode.addEventListener('change', safeRenderList);
