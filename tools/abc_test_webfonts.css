@@ -80,13 +80,6 @@ margin-bottom:8px;
 background-color: #eee;
 }
 
-
-@media not all and (pointer: coarse) {
-.accordion:hover {
-background-color: #9f9;
-}
-}
-
 .expandall{
 font-size:11pt  !important;
 font-family:"Helvetica" !important;
@@ -99,10 +92,10 @@ color:black !important;
 background-color: #eee;
 }
 
-@media not all and (pointer: coarse) {
-.expandall:hover {
-background-color: #9f9;
-}
+/* Show hover highlight only on devices that actually support hover + fine pointer */
+@media (hover: hover) and (pointer: fine) {
+  .accordion:hover { background-color: #9f9; }
+  .expandall:hover { background-color: #9f9; }
 }
 
 .tocpanel {
