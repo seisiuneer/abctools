@@ -5,9 +5,9 @@
 
     <meta charset="UTF-8">
     <title>ABC Transcription Tools - Custom Instrument Builder</title>
-    <script type="text/javascript" src="jszip-min.js?v=3"></script>
-    <script type="text/javascript" src="filesaver-min.js?v=3"></script>
-    <script type="text/javascript" src="daypilot-modal.min-3.10.1.js?v=3"></script>
+    <script type="text/javascript" src="jszip-min.js?v=4"></script>
+    <script type="text/javascript" src="filesaver-min.js?v=4"></script>
+    <script type="text/javascript" src="daypilot-modal.min-3.10.1.js?v=4"></script>
     
     <style>
     body {
@@ -530,20 +530,27 @@
           if (minPI!==Infinity){ startNote.value=String(minNoteIdx); startNumber.value=String(Math.max(0,Math.min(9,minOct))); }
         }
 
-        function sortFilesIfNeeded(){
-          if (autoSortCheckbox.checked){
-            files.sort((a,b)=>{
-              const A=a.name.match(noteRegex), B=b.name.match(noteRegex);
-              if (A && B){
-                let nA=A[1].charAt(0).toUpperCase()+(A[1].slice(1)||"");
-                let nB=B[1].charAt(0).toUpperCase()+(B[1].slice(1)||"");
-                nA=sharpToFlat[nA]||nA; nB=sharpToFlat[nB]||nB;
-                const oA=parseInt(A[2],10), oB=parseInt(B[2],10);
-                if (oA!==oB) return oA-oB; return noteOrder.indexOf(nA)-noteOrder.indexOf(nB);
+        function sortFilesIfNeeded() {
+          if (autoSortCheckbox.checked) {
+            files.sort((a, b) => {
+              const A = a.name.match(noteRegex), B = b.name.match(noteRegex);
+              if (A && B) {
+                let nA = A[1].charAt(0).toUpperCase() + (A[1].slice(1) || "");
+                let nB = B[1].charAt(0).toUpperCase() + (B[1].slice(1) || "");
+                nA = sharpToFlat[nA] || nA;
+                nB = sharpToFlat[nB] || nB;
+                const oA = parseInt(A[2], 10), oB = parseInt(B[2], 10);
+                if (oA !== oB) return oA - oB;
+                return noteOrder.indexOf(nA) - noteOrder.indexOf(nB);
               }
-              if (A) return -1; if (B) return 1; return 0;
+              if (A) return -1;
+              if (B) return 1;
+              return 0;
             });
-          } else { files=[...originalFiles]; }
+          } else {
+            // IMPORTANT: keep current manual order; do NOT reset to originalFiles
+            // (was: files = [...originalFiles])
+          }
         }
 
         function getProposedNameForIndex(i, extIfNotTrim){
