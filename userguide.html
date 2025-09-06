@@ -2642,7 +2642,8 @@
                 <p><strong>.mp3 - Ideally 96kbit mono.</strong></p>
                 <p><strong>.ogg - 44.1 KHz, 16-bit, uncompressed, mono.</strong></p>
                 <p>To avoid any delay in playback, the notes should start immediately at the very beginning of the audio file.</p>
-                <p>You will need to edit the samples using a program like Audacity or Adobe Audition to ensure there is no silence in the sample audio files before the start of the notes.</p>
+                <p>The <a href="#custom_instrument_builder">Custom Instrument Builder Utility</a> can automatically strip silence from the start of the audio files when it exports a custom instrument.</p>
+                <p>Alternatively, you can use an audio editor program like Audacity or Adobe Audition to ensure there is no silence in the sample audio files before the start of the notes.</p>
                 <p>Specifically, Adobe Audition has a detect and delete silence feature that can simplify the process.</p>
                 <p>The sample files for each note in the .zip file must be named in a very specific way with the note name and octave number (C4 = Middle C)</p>
                 <p>The naming standard for the note sample files requires flats be designated by a <strong>b</strong> after the note name for the semitones:</p>
@@ -2665,13 +2666,15 @@
                 <h1 class="page_break_always h1wide">Custom Instrument Builder Utility<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/QMLHGSVShZg" title="Custom Instrument Builder Demo 1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
                 <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/Q5-VOVO10oI" title="Custom Instrument Builder Demo 2" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
+                <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/1sOguEK-NB8" title="Custom Instrument Builder Demo 3" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
                 <p>To facilitate the creation of custom instruments, I've created a simple utility that can read an entire directory of audio sample files and create a custom instrument with all the correct note names and octaves:</p>
                 <p style="text-align: center"><a href="https://michaeleskin.com/tools/custom_instrument_builder.html" target="_blank">ABC Transcription Tools Custom Instrument Builder</a></p>
                 <p>The utility can automatically detect the note range of a partial set of note samples based on the filenames and when exporting the custom instrument, synthesize any missing samples in the note range.</p>
                 <p>It does this by pitch shifting other available notes as required creating additional .wav file placeholders as required, and then saves them along with the original notes to the custom instrument .zip file.</p>
                 <p>In the utility, you may also set the volume scale multiplier and release fade time in milliseconds for the instrument.</p>
                 <p>These are the values that will be used by default for the instrument unless the ABC contains volume scale and/or release fade overrides as described below in <a href="#custom_midi_instrument">How to Load and Use Custom Instruments</a>.</p>
-                <p>Up to 8 custom instruments are supported.</p>
+                <p>Additionally, you can play the imported files as well as optionally strip silence from the start of each file, which is a requirement for custom instrument note samples.</p>
+                <p>The ABC Transcription Tools support up to 8 custom instruments at one time.</p>
                 <p>Once you have one or more custom instrument .zip files, you can just drag-and-drop them onto the ABC editor, map them to custom instrument numbers 1-8, and then use them in a tune by specifying:</p>
                 <p class="code">%%MIDI program custom1<br/>%%MIDI program custom2<br/>etc.</p>
                 <p>in the ABC for the tune, or even assign different custom instruments to each voice in a multi-voice tune.</p>
