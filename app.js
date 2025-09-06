@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "2753_090625_0930";
+var gVersionNumber = "2754_090625_1000";
 
 var gMIDIInitStillWaiting = false;
 
@@ -28817,8 +28817,11 @@ function DoInjectHarmonicaTab() {
     name: "  Chromatic (12-Hole)",
     id: "6"
   },{
-    name: gHarmonicaCustom.name,
+    name: "  Chromatic (16-Hole)",
     id: "7"
+  },{
+    name: gHarmonicaCustom.name,
+    id: "8"
   }];
 
 
