@@ -8349,61 +8349,61 @@ var HarmonicaTabGenerator = function (theABC){
 
             // Chromatic 12-hole
             case "6":
-                theTabMap[0]  = "1";    // C
-                theTabMap[1]  = "1s";   // C# / Db
-                theTabMap[2]  = "-1";   // D
-                theTabMap[3]  = "-1s";  // D# / Eb
-                theTabMap[4]  = "2";    // E
-                theTabMap[5]  = "-2";   // F
-                theTabMap[6]  = "-2s";  // F# / Gb
-                theTabMap[7]  = "3";    // G
-                theTabMap[8]  = "3s";   // G# / Ab
-                theTabMap[9]  = "-3";   // A
-                theTabMap[10] = "-3s";  // A# / Bb
-                theTabMap[11] = "-4";   // B
+                theTabMap[0]  = "x";    // C
+                theTabMap[1]  = "x";    // C# / Db
+                theTabMap[2]  = "x";    // D
+                theTabMap[3]  = "x";    // D# / Eb
+                theTabMap[4]  = "x";    // E
+                theTabMap[5]  = "x";    // F
+                theTabMap[6]  = "x";    // F# / Gb
+                theTabMap[7]  = "x";    // G
+                theTabMap[8]  = "x";    // G# / Ab
+                theTabMap[9]  = "x";    // A
+                theTabMap[10] = "x";    // A# / Bb
+                theTabMap[11] = "x";    // B
 
-                theTabMap[12] = "5";    // C
-                theTabMap[13] = "5s";   // C# / Db
-                theTabMap[14] = "-5";   // D
-                theTabMap[15] = "-5s";  // D# / Eb
-                theTabMap[16] = "6";    // E
-                theTabMap[17] = "-6";   // F
-                theTabMap[18] = "-6s";  // F# / Gb
-                theTabMap[19] = "7";    // G
-                theTabMap[20] = "7s";   // G# / Ab
-                theTabMap[21] = "-7";   // A
-                theTabMap[22] = "-7s";  // A# / Bb
-                theTabMap[23] = "-8";   // B
+                theTabMap[12] = "1";    // C
+                theTabMap[13] = "1s";   // C# / Db
+                theTabMap[14] = "-1";   // D
+                theTabMap[15] = "-1s";  // D# / Eb
+                theTabMap[16] = "2";    // E
+                theTabMap[17] = "-2";   // F
+                theTabMap[18] = "-2s";  // F# / Gb
+                theTabMap[19] = "3";    // G
+                theTabMap[20] = "3s";   // G# / Ab
+                theTabMap[21] = "-3";   // A
+                theTabMap[22] = "-3s";  // A# / Bb
+                theTabMap[23] = "-4";   // B
 
-                theTabMap[24] = "9";    // C
-                theTabMap[25] = "9s";   // C# / Db
-                theTabMap[26] = "-9";   // D
-                theTabMap[27] = "-9s";  // D# / Eb
-                theTabMap[28] = "10";   // E
-                theTabMap[29] = "-10";  // F
-                theTabMap[30] = "-10s"; // F# / Gb
-                theTabMap[31] = "11";   // G
-                theTabMap[32] = "11s";  // G# / Ab
-                theTabMap[33] = "-11";  // A
-                theTabMap[34] = "-11s"; // A# / Bb
-                theTabMap[35] = "-12";  // B
+                theTabMap[24] = "5";    // C
+                theTabMap[25] = "5s";   // C# / Db
+                theTabMap[26] = "-5";   // D
+                theTabMap[27] = "-5s";  // D# / Eb
+                theTabMap[28] = "6";    // E
+                theTabMap[29] = "-6";   // F
+                theTabMap[30] = "-6s";  // F# / Gb
+                theTabMap[31] = "7";    // G
+                theTabMap[32] = "7s";   // G# / Ab
+                theTabMap[33] = "-7";   // A
+                theTabMap[34] = "-7s";  // A# / Bb
+                theTabMap[35] = "-8";   // B
 
-                theTabMap[36] = "12";   // C
-                theTabMap[37] = "12s";  // C# / Db
-                theTabMap[38] = "-12s"; // D
-                theTabMap[39] = "x";    // D# / Eb
-                theTabMap[40] = "x";    // E
-                theTabMap[41] = "x";    // F
-                theTabMap[42] = "x";    // F# / Gb
-                theTabMap[43] = "x";    // G
-                theTabMap[44] = "x";    // G# / Ab
-                theTabMap[45] = "x";    // A
-                theTabMap[46] = "x";    // A# / Bb
-                theTabMap[47] = "x";    // B
+                theTabMap[36] = "9";    // C
+                theTabMap[37] = "9s";   // C# / Db
+                theTabMap[38] = "-9";   // D
+                theTabMap[39] = "-9s";  // D# / Eb
+                theTabMap[40] = "10";   // E
+                theTabMap[41] = "-10";  // F
+                theTabMap[42] = "-10s"; // F# / Gb
+                theTabMap[43] = "11";   // G
+                theTabMap[44] = "11s";  // G# / Ab
+                theTabMap[45] = "-11";  // A
+                theTabMap[46] = "-11s"; // A# / Bb
+                theTabMap[47] = "-12";  // B
 
-                theTabMap[48] = "x";    // C
-                theTabMap[49] = "x";    // C#
-                theTabMap[50] = "x";    // D
+                theTabMap[48] = "12";   // C
+                theTabMap[49] = "12s";  // C# / Db
+                theTabMap[50] = "-12s"; // D
                 theTabMap[51] = "x";    // D# / Eb
                 theTabMap[52] = "x";    // E
                 theTabMap[53] = "x";    // F
@@ -8414,6 +8414,7 @@ var HarmonicaTabGenerator = function (theABC){
                 theTabMap[58] = "x";    // A# / Bb
                 theTabMap[59] = "x";    // B
                 break;
+
 
             // Chromatic 16-hole
             case "7":
