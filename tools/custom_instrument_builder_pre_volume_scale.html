@@ -5,28 +5,6 @@
 
     <meta charset="UTF-8">
     <title>ABC Transcription Tools - Custom Instrument Builder</title>
-    <meta property="og:type" content="website" />
-    <meta property="og:title" content="ABC Transcription Tools - Custom Instrument Builder" />
-    <meta property="og:description" content="Utility for creating custom instruments for the ABC Transcription Tools." />
-    <meta property="og:url" content="https://michaeleskin.com/tools/custom_instrument_builder.html" />
-    <meta property="og:site_name" content="ABC Transcription Tools - Custom Instrument Builder" />
-    <meta property="og:image" content="https://michaeleskin.com/abctools/img/abc-icon.png" />
-    <meta name="msapplication-TileColor" content="#ffffff">
-    <meta name="msapplication-TileImage" content="https://michaeleskin.com/abctools/img/abc-ms-icon-144x144.png">
-    <meta name="viewport" content="width=860">
-    <link rel="apple-touch-icon" sizes="57x57" href="https://michaeleskin.com/abctools/img/abc-apple-icon-57x57.png">
-    <link rel="apple-touch-icon" sizes="60x60" href="https://michaeleskin.com/abctools/img/abc-apple-icon-60x60.png">
-    <link rel="apple-touch-icon" sizes="72x72" href="https://michaeleskin.com/abctools/img/abc-apple-icon-72x72.png">
-    <link rel="apple-touch-icon" sizes="76x76" href="https://michaeleskin.com/abctools/img/abc-apple-icon-76x76.png">
-    <link rel="apple-touch-icon" sizes="114x114" href="https://michaeleskin.com/abctools/img/abc-apple-icon-114x114.png">
-    <link rel="apple-touch-icon" sizes="120x120" href="https://michaeleskin.com/abctools/img/abc-apple-icon-120x120.png">
-    <link rel="apple-touch-icon" sizes="144x144" href="https://michaeleskin.com/abctools/img/abc-apple-icon-144x144.png">
-    <link rel="apple-touch-icon" sizes="152x152" href="https://michaeleskin.com/abctools/img/abc-apple-icon-152x152.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="https://michaeleskin.com/abctools/img/abc-apple-icon-180x180.png">
-    <link rel="icon" type="image/png" sizes="192x192" href="https://michaeleskin.com/abctools/img/abc-android-icon-192x192.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="https://michaeleskin.com/abctools/img/abc-favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="96x96" href="https://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
     <script type="text/javascript" src="jszip-min.js?v=4"></script>
     <script type="text/javascript" src="filesaver-min.js?v=4"></script>
     <script type="text/javascript" src="daypilot-modal.min-3.10.1.js?v=4"></script>
@@ -76,9 +54,6 @@
 
     /* Safari-friendly select sizing */
     select {
-      -webkit-appearance: none;
-      -moz-appearance: none;
-      appearance: none;      
       margin-top: 0.26em;
       font-size: 1.0em;
       width: 100%;
@@ -375,15 +350,14 @@
       <p>The output note filename for each audio sample input file is displayed at the right of each item in the list.</p>
       <p>Drag and drop the items in the list into the scale note order you want.</p>
       <p>2)&nbsp;Select the default volume scale and fade time for the instrument.</p>
-      <p>The preview playback includes the volume scale to help get a sense of the custom instrument volume.</p> 
       <p>3)&nbsp;Choose the starting octave number for the instrument notes.</p>
       <p>4)&nbsp;Choose the starting scale note for the file names.</p>
-      <p>5)&nbsp;If your files have filenames that contain note names, check <strong>Automatically sort files by scale order (C, Db, D, Eb, E, ...)</strong> to try to align the sample file list with the note names (checked by default).</p>
+      <p>5)&nbsp;If your files have filenames that contain note names, check <strong>Try to automatically sort files by scale order (C, Db, D, Eb, E, ...)</strong> to align the sample file list with the note names (checked by default).</p>
       <p>6)&nbsp;When automatically sorting by scale order, if there are scale gaps found, select between either synthesizing (pitch shift) the missing note samples in the scale from other available notes or just replacing them with placeholder silent .wav files.</p>
       <p>7)&nbsp;<strong>Optional:</strong> Enable <strong>Trim leading silence</strong> and set a <strong>Silence threshold (dB)</strong> to remove silence at the start of each file.</p>
       <p>Smaller db numbers represent a lower silence volume threshold. Generally -40db to -50db is a good threshold to try for most audio files (default is -40db).</p>
       <p>Click <strong>Apply</strong> to apply the threshold. Use the ▶︎ buttons to audition the result with the silence trimmed. </p>
-      <p>8)&nbsp;Click <strong>Export as Custom ABC Transcription Tools Instrument</strong> to export the custom instrument.</p>
+      <p>8)&nbsp;Click "Export as Custom ABC Transcription Tools Instrument" to export the custom instrument.</p>
       <p>The exported file will be saved to your browser's default <strong>Downloads</strong> directory.</p>
       <p style="text-align: center;"><a href="https://michaeleskin.com/abctools/userguide.html#creating_custom_midi_instruments" target="_blank">Click here for the ABC Transcription Tools User Guide section on Custom Instruments</a></p>
     </div>
@@ -448,7 +422,7 @@
       <label title="Samples below this absolute dB are considered silence. Typical: -40 dB"
              style="display:flex;align-items:center;gap:6px;">
         <span>Silence threshold (dB):</span>
-        <input type="number" id="silenceDb" step="0.5" max="0" min="-120" value="-40" inputmode="numeric" style="flex:0 0 90px;">
+        <input type="number" id="silenceDb" step="1" max="0" min="-120" value="-40" inputmode="numeric" style="flex:0 0 80px;">
         <button type="button" id="applyThresholdBtn" style="margin:0;margin-left:4px;padding:0.3em 0.7em;font-size:0.9em;transform: translateY(2px);">Apply</button>
         <span id="applyStatus" class="apply-status" role="status" aria-live="polite" aria-atomic="true"></span>
       </label>
@@ -456,7 +430,7 @@
 
     <label>
       <input type="checkbox" id="autoSort" checked>
-      Automatically sort files by scale order (C, Db, D, Eb, E, ...)
+      Try to automatically sort files by scale order (C, Db, D, Eb, E, ...)
     </label>
 
     <div id="gapOptions" class="gap-controls">
@@ -501,101 +475,45 @@
 
         var gFileSaveName = "custom_instrument.zip";
 
-        /* --- Preview playback state (Web Audio + GainNode) --- */
-        let gPrevCtx = null;         // AudioContext
-        let gPrevSource = null;      // current BufferSource
-        let gPrevGain = null;        // GainNode for volumeScale
-        let gPrevBtn = null;         // button owning current preview
-        let gPrevPlayId = 0;         // guard for stale callbacks
-        let gIsPlaying = false;      // used to lock dragging
-
-        function getPreviewContext() {
-          if (!gPrevCtx) {
-            const AC = window.AudioContext || window.webkitAudioContext;
-            gPrevCtx = new AC();
-          }
-          return gPrevCtx;
-        }
+        /* --- Preview playback state --- */
+        let gAudio = new Audio();
+        let gAudioUrl = null;
+        let gCurrentBtn = null;
+        let gPlaybackId = 0;
 
         function markPlaying(btn, on) {
-          if (btn) {
-            btn.classList.toggle('is-playing', !!on);
-            btn.setAttribute('aria-pressed', on ? 'true' : 'false');
-          }
-          gIsPlaying = !!on;
-          updateDragInteractivity(); // lock/unlock dragging while previewing
+          if (!btn) return;
+          btn.classList.toggle('is-playing', !!on);
+          btn.setAttribute('aria-pressed', on ? 'true' : 'false');
         }
-
         function stopCurrentPreview() {
-          try {
-            if (gPrevSource) {
-              gPrevSource.onended = null;
-              gPrevSource.stop(0);
-              gPrevSource.disconnect();
-            }
-            if (gPrevGain) gPrevGain.disconnect();
-          } catch(e) {}
-          gPrevSource = null;
-          gPrevGain = null;
-
-          if (gPrevBtn) markPlaying(gPrevBtn, false);
-          gPrevBtn = null;
+          try { gAudio.pause(); } catch {}
+          gAudio.removeAttribute('src');
+          gAudio.load();
+          if (gAudioUrl) { URL.revokeObjectURL(gAudioUrl); gAudioUrl = null; }
+          if (gCurrentBtn) { markPlaying(gCurrentBtn, false); gCurrentBtn = null; }
         }
-
-        async function playBufferWithScale(buffer, btn) {
-          const ctx = getPreviewContext();
-          try { await ctx.resume(); } catch(e) {}
-
-          const playId = ++gPrevPlayId;
-
-          const source = ctx.createBufferSource();
-          source.buffer = buffer;
-
-          const gain = ctx.createGain();
-          const scale = Math.max(0, parseFloat(volumeScaleInput.value) || 0);
-          gain.gain.value = scale;
-
-          source.connect(gain);
-          gain.connect(ctx.destination);
-
-          stopCurrentPreview();
-          gPrevSource = source;
-          gPrevGain = gain;
-          gPrevBtn = btn;
-          markPlaying(btn, true);
-
-          source.onended = () => {
-            if (playId !== gPrevPlayId) return;
-            stopCurrentPreview();
-          };
-
-          source.start(0);
-        }
-
-        // Live update preview gain while playing
-        volumeScaleInput.addEventListener('input', () => {
-          if (gPrevGain) {
-            const scale = Math.max(0, parseFloat(volumeScaleInput.value) || 0);
-            gPrevGain.gain.value = scale;
-          }
-        });
-
         async function previewFile(file, btn) {
           try {
-            // Toggle stop if the same button is pressed while playing
-            if (gPrevBtn === btn && gPrevSource) { stopCurrentPreview(); return; }
-
-            // Build buffer reflecting current trim option
-            let buf = await decodeFileToAudioBuffer(file);
-            if (trimSilenceCheckbox.checked) {
-              const thr = dbToLinear(Number(silenceDbInput.value));
-              buf = trimLeadingSilenceFromBuffer(buf, thr);
-            }
-            await playBufferWithScale(buf, btn);
-          } catch (e) {
-            console.error(e);
+            if (gCurrentBtn === btn && !gAudio.paused && !gAudio.ended) { stopCurrentPreview(); return; }
             stopCurrentPreview();
-          }
+            const blob = await fileToProcessedBlob(file);
+            const myId = ++gPlaybackId;
+            gAudioUrl = URL.createObjectURL(blob);
+            gAudio.src = gAudioUrl;
+            gAudio.load();
+            gCurrentBtn = btn;
+            markPlaying(btn, true);
+            gAudio.onended = () => {
+              if (myId !== gPlaybackId) return;
+              if (gAudioUrl) { URL.revokeObjectURL(gAudioUrl); gAudioUrl = null; }
+              markPlaying(btn, false);
+              if (gCurrentBtn === btn) gCurrentBtn = null;
+            };
+            gAudio.onerror = () => { if (myId !== gPlaybackId) return; stopCurrentPreview(); };
+            const p = gAudio.play();
+            if (p && typeof p.catch === 'function') p.catch(() => {});
+          } catch (e) { console.error(e); stopCurrentPreview(); }
         }
 
         // ===== Hashed filename detection =====
@@ -797,8 +715,7 @@
         // ---------- RENDER LIST ----------
 
         function safeRenderList(){
-          // With Web Audio preview, no need to block re-render; but keep behavior:
-          if (gPrevSource) return; // avoid jank during preview
+          if (gAudio && !gAudio.paused && !gAudio.ended) return; // don't rerender during preview playback
           renderList();
         }
 
@@ -816,7 +733,6 @@
               ctrl.appendChild(btn); item.appendChild(nameSpan); item.appendChild(proposedSpan); item.appendChild(ctrl);
               addDragHandlers(item); fileList.appendChild(item);
             });
-            updateDragInteractivity();
             return;
           }
 
@@ -833,7 +749,6 @@
               ctrl.appendChild(btn); item.appendChild(nameSpan); item.appendChild(proposedSpan); item.appendChild(ctrl);
               addDragHandlers(item); fileList.appendChild(item);
             });
-            updateDragInteractivity();
             return;
           }
 
@@ -878,11 +793,8 @@
         function addDragHandlers(el){
           el.addEventListener('dragstart',(e)=>{
             if (!el.classList.contains('real')){ e.preventDefault(); return; }
-            if (fileList.classList.contains('drag-disabled')) { e.preventDefault(); return; }
             e.dataTransfer.setData('text/plain', el.dataset.index);
             el.classList.add('dragging');
-            // If a preview is playing, stop it immediately for safety
-            if (gPrevSource) stopCurrentPreview();
           });
           el.addEventListener('dragend',()=>{
             el.classList.remove('dragging');
@@ -912,14 +824,14 @@
         });
 
         fileList.addEventListener('dragstart', () => {
-          // (kept: if you also want to ensure any legacy <audio> path is stopped)
-          if (gPrevSource) stopCurrentPreview();
+          if (gCurrentBtn && !gAudio.paused && !gAudio.ended) {
+            stopCurrentPreview();
+          }
         });
 
         function updateDragInteractivity() {
           const realRows = fileList.querySelectorAll('.file-item.real');
-          // Disable drag either when auto-sort is ON or while preview is playing
-          const enableDrag = !autoSortCheckbox.checked && !gIsPlaying;
+          const enableDrag = !autoSortCheckbox.checked;   // disable when auto-sort is ON
           realRows.forEach(row => row.setAttribute('draggable', enableDrag ? 'true' : 'false'));
           fileList.classList.toggle('drag-disabled', !enableDrag);
         }
@@ -1077,7 +989,6 @@
           sortFilesIfNeeded();
           if (autoSortCheckbox.checked && !gHasHashedNames) detectAndApplyLowestPitch();
           safeRenderList();
-          updateDragInteractivity();
         });
 
         startNumber.addEventListener('change', safeRenderList);
@@ -1104,7 +1015,8 @@
         });
 
         applyThresholdBtn.addEventListener('click', () => {
-          // Re-render with the new threshold value
+
+          // Re-render with the new threshold value (guarded by safeRenderList)
           safeRenderList();
 
           // Visual feedback
