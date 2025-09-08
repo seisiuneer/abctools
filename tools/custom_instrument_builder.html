@@ -27,9 +27,10 @@
     <link rel="icon" type="image/png" sizes="32x32" href="https://michaeleskin.com/abctools/img/abc-favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="96x96" href="https://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
     <link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
-    <script type="text/javascript" src="jszip-min.js?v=4"></script>
-    <script type="text/javascript" src="filesaver-min.js?v=4"></script>
-    <script type="text/javascript" src="daypilot-modal.min-3.10.1.js?v=4"></script>
+
+    <script type="text/javascript" src="jszip-min.js?v=5"></script>
+    <script type="text/javascript" src="filesaver-min.js?v=5"></script>
+    <script type="text/javascript" src="daypilot-modal.min-3.10.1.js?v=5"></script>
     
     <style>
     body {
@@ -46,6 +47,14 @@
       margin-top: 14.5px;                
       font-size: 1.73em;                 
       margin-bottom: .47em;              
+      color: #000;
+      text-align: center;
+    }
+
+    h2 {
+      font-size: 1.5em;
+      margin-top: .3em;
+      margin-bottom: .47em;
       color: #000;
       text-align: center;
     }
@@ -229,8 +238,8 @@
       text-align: center !important;
       border: .53px solid #000 !important;
       outline: none !important;
-      margin-bottom:7.3px;
-      margin-top:0px;
+      margin-bottom: 7.3px;
+      margin-top: 0px;
     }
 
     .form-row {
@@ -287,67 +296,78 @@
       background-color: #eee;
     }
 
-    .tocpanel { 
-      padding: 8.4px !important;
-      display: none; 
-      overflow: hidden !important; 
+    .modal_flat_background {
+      background-color: #000;
+      opacity: 0.4;
     }
 
-    .modal_flat_background { 
-      background-color: #000; 
-      opacity: 0.4; 
-    }
-
-    .modal_flat_main { 
-      border: 1px solid #333; 
-      box-shadow: 0px 0px 15.5px -2px rgba(0,0,0,0.75);
+    .modal_flat_main {
+      border: 1px solid #333;
+      box-shadow: 0px 0px 15.5px -2px rgba(0, 0, 0, 0.75);
     }
 
     .modal_flat_main,
     .modal_flat_main input,
-    .modal_flat_main button {  
+    .modal_flat_main button {
       font-size: 16.8px;
     }
 
-    .modal_flat_main input, 
-    .modal_flat_main button {  
+    .modal_flat_main input,
+    .modal_flat_main button {
       padding: 5.25px;
-      box-sizing: border-box; 
+      box-sizing: border-box;
     }
 
-    .modal_flat_inner { 
-      padding: 31.5px;
-      background: #fff; 
-      color: #000; 
+    .modal_flat_inner {
+      padding: 20px;
+      background: #fff;
+      color: #000;
     }
 
-    .modal_flat_content { 
-      font-family:"Helvetica"; 
+    .modal_flat_content {
+      font-family: "Helvetica";
       margin: 21px 0px;
     }
 
-    .modal_flat_input { 
+    .modal_flat_input {
       margin: 21px 0px;
     }
 
-    .modal_flat_buttons { 
-      text-align:center;
-      margin-top: 42px;
+    .modal_flat_buttons {
+      text-align: center;
+      margin-top: 20px;
+      margin-bottom: 20px;
     }
 
-    .modal_flat_main button { 
-      background-color: #ccc; 
-      color: #000; 
+    .modal_flat_main button {
+      background-color: #ccc;
+      color: #000;
       padding: 10.5px 21px;
-      border: 0px; 
-      cursor: pointer; 
-      outline: none; 
+      border: 0px;
+      cursor: pointer;
+      outline: none;
       width: 105px;
     }
 
     .modal_flat_cancel {
       margin-left: 5.25px;
     }
+
+    /* Scrollable instructions content inside modal */
+    .instr-modal {
+      text-align: left;
+      background-color: #f5ffff;
+      max-height: 70vh;
+      overflow: auto;
+      padding: 12px;
+      border: 1px solid #e1e1e1;
+      border-radius: 4px;
+    }
+
+    .instr-modal p {
+      margin: 0 0 12px 0;
+    }
+
     </style>
     
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-VM0N9HL3MK"></script>
@@ -365,30 +385,9 @@
   
     <h1>ABC Transcription Tools&nbsp;-&nbsp;Custom Instrument Builder</h1>
 
-    <button class="accordion" title="Click to expand/collapse this section">Click to show/hide the instructions</button>
+    <button id="instructionsBtn" class="accordion" title="Show instructions">Show instructions</button>
 
-    <div class="tocpanel" style="text-align:left;background-color:#f5ffff;">
-      <p>This tool is used to create an ABC Transcription Tools custom instrument from a directory of per-note audio sample files.</p>
-      <p>The files should be in .wav or .mp3 format.</p>
-      <p>1)&nbsp;Click <strong>Select audio sample files in .wav, or .mp3 format</strong> to select your audio sample files.</p>
-      <p>The samples must all be in the same directory.</p>
-      <p>The output note filename for each audio sample input file is displayed at the right of each item in the list.</p>
-      <p>Drag and drop the items in the list into the scale note order you want.</p>
-      <p>2)&nbsp;Select the default volume scale and fade time for the instrument.</p>
-      <p>The preview playback includes the volume scale to help get a sense of the custom instrument volume.</p> 
-      <p>3)&nbsp;Choose the starting octave number for the instrument notes.</p>
-      <p>4)&nbsp;Choose the starting scale note for the file names.</p>
-      <p>5)&nbsp;If your files have filenames that contain note names, check <strong>Automatically sort files by scale order (C, Db, D, Eb, E, ...)</strong> to try to align the sample file list with the note names (checked by default).</p>
-      <p>6)&nbsp;When automatically sorting by scale order, if there are scale gaps found, select between either synthesizing (pitch shift) the missing note samples in the scale from other available notes or just replacing them with placeholder silent .wav files.</p>
-      <p>7)&nbsp;<strong>Optional:</strong> Enable <strong>Trim leading silence</strong> and set a <strong>Silence threshold (dB)</strong> to remove silence at the start of each file.</p>
-      <p>Smaller db numbers represent a lower silence volume threshold. Generally -40db to -50db is a good threshold to try for most audio files (default is -40db).</p>
-      <p>Click <strong>Apply</strong> to apply the threshold. Use the ▶︎ buttons to audition the result with the silence trimmed. </p>
-      <p>8)&nbsp;Click <strong>Export as Custom ABC Transcription Tools Instrument</strong> to export the custom instrument.</p>
-      <p>The exported file will be saved to your browser's default <strong>Downloads</strong> directory.</p>
-      <p style="text-align: center;"><a href="https://michaeleskin.com/abctools/userguide.html#creating_custom_midi_instruments" target="_blank">Click here for the ABC Transcription Tools User Guide section on Custom Instruments</a></p>
-    </div>
-
-    <label>Select audio sample files in .wav or .mp3 format:
+    <label>Import audio sample files in .wav or .mp3 format:
       <input type="file" id="fileInput" accept=".wav,.mp3" multiple>
     </label>
 
@@ -472,7 +471,7 @@
     <div id="fileList"></div>
 
     <div style="text-align: center;">
-      <button id="exportZip">Click to Export as a Custom ABC Transcription Tools Instrument</button>
+      <button id="exportZip">Export Custom ABC Transcription Tools Instrument</button>
     </div>
 
     <script>
@@ -498,6 +497,7 @@
         const silenceDbInput = document.getElementById('silenceDb');
         const thresholdControls = document.getElementById('thresholdControls');
         const applyThresholdBtn = document.getElementById('applyThresholdBtn');
+        const instructionsBtn = document.getElementById('instructionsBtn');
 
         var gFileSaveName = "custom_instrument.zip";
 
@@ -927,6 +927,10 @@
         // ===================== Export (ZIP) =====================
 
         exportZipBtn.addEventListener('click', async ()=>{
+
+          // If a preview is playing, stop it immediately
+          if (gPrevSource) stopCurrentPreview();
+
           async function saveZipFile(fname){
             if (!files.length){
               DayPilot.Modal.alert('<p style="text-align:center">Nothing to export!</p>', { theme:"modal_flat", top:200 });
@@ -1126,16 +1130,31 @@
           status.classList.remove('show');
         });
 
-        // Accordion
-        var acc=document.getElementsByClassName("accordion");
-        for (var i=0;i<acc.length;i++){
-          acc[i].addEventListener("click", function(){
-            this.classList.toggle("active");
-            var panel=this.nextElementSibling;
-            if (panel.style.display==="block") panel.style.display="none";
-            else panel.style.display="block";
-          });
-        }
+        // Instructions modal (scrollable)
+        instructionsBtn.addEventListener('click', async () => {
+          const html = `
+            <div class="instr-modal">
+              <h2>Instructions</h2>
+              <p>This tool is used to create an ABC Transcription Tools custom instrument from a directory of per-note instrument audio sample files.</p>
+              <p>The files should be in .wav or .mp3 format. The samples must all be in the same directory.</p>
+              <p><strong>1)</strong> Click <strong>Import audio sample files in .wav, or .mp3 format</strong> to import your audio sample files.</p>
+              <p>The output note filename for each audio sample input file is displayed at the right of each item in the list.</p>
+              <p><strong>2)</strong> Select the default volume scale and fade time for the instrument.</p>
+              <p>These values will be applied to the instrument when used in the <strong>ABC Transcription Tools</strong>.</p>
+              <p><strong>3)</strong> Choose the starting octave number for the instrument notes.</p>
+              <p><strong>4)</strong> Choose the starting scale note for the file names.</p>
+              <p><strong>5)</strong> If your files have filenames that contain note names, check <strong>Automatically sort files by scale order (C, Db, D, Eb, E, ...)</strong> to align the sample file list with the note names (checked by default).</p>
+              <p><strong>6)</strong> When automatically sorting by scale order, if there are scale gaps found, select between either synthesizing (pitch shift) the missing note samples in the scale from other available notes or just replacing them with placeholder silent files.</p>
+              <p><strong>7)</strong> If not automatically sorting files by scale order, you can drag-and-drop the items in the list into the scale note order you want. This can be useful for loops/stems or non-pitched percussion instruments.</p>
+              <p><strong>8)</strong> <em>Optional:</em> Enable <strong>Trim leading silence</strong> and set a <strong>Silence threshold (dB)</strong> to remove silence at the start of each file. Smaller dB values are more sensitive (e.g., -40 to -50 dB is typical). Click <strong>Apply</strong> to apply the update the silence trimming to all the samples.</p>
+              <p><strong>9)</strong> Click the ▶︎ buttons next to any imported sample filename to audition it including the volume scale and, if <strong>Trim leading silence</strong> is enabled, any silence trimming applied.</p>
+              <p><strong>10)</strong> Click <strong>Export Custom ABC Transcription Tools Instrument</strong> to export the final custom instrument.</p>
+              <p>The .zip file is saved to your browser’s default <strong>Downloads</strong> folder.</p>
+              <p style="text-align:center;margin-top:12px;"><a href="https://michaeleskin.com/abctools/userguide.html#creating_custom_midi_instruments" target="_blank">ABC Transcription Tools User Guide: Custom Instruments</a></p>
+            </div>
+          `;
+          await DayPilot.Modal.alert(html, { theme: "modal_flat", top: 25, width: 760 });
+        });
       }
 
       function WaitForReady(fn){
