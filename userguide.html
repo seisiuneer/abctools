@@ -529,7 +529,7 @@
             <summary><h3>Expanding the Available Sounds With Custom Instruments</h3></summary>
             <a style="text-decoration:none;" href="#creating_custom_midi_instruments">Creating Custom Instruments</a>
             <a style="text-decoration:none;" href="#custom_instrument_builder">Custom Instrument Builder Utility</a>
-            <a style="text-decoration:none;" href="#custom_midi_instrument">How to Load and Use Custom Instruments</a>
+            <a style="text-decoration:none;" href="#custom_midi_instrument">How to Load and Use Custom Instruments in Tunes</a>
             <a style="text-decoration:none;" href="#custom_instrument_examples">Example Custom Instruments</a>
             <a style="text-decoration:none;" href="#custom_instrument_resources">Resources for Creating Custom Instruments</a>
             <a style="text-decoration:none;" href="#custom_instrument_creative">Creative Uses for Custom Instruments</a>
@@ -1024,7 +1024,7 @@
                     <div class="tocpanel">
                         <p class="toc"><a style="text-decoration:none;" href="#creating_custom_midi_instruments">Creating Custom Instruments</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#custom_instrument_builder">Custom Instrument Builder Utility</a></p>
-                        <p class="toc"><a style="text-decoration:none;" href="#custom_midi_instrument">How to Load and Use Custom Instruments</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#custom_midi_instrument">How to Load and Use Custom Instruments in Tunes</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#custom_instrument_examples">Example Custom Instruments</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#custom_instrument_resources">Resources for Creating Custom Instruments</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#custom_instrument_creative">Creative Uses for Custom Instruments</a></p>
@@ -2144,12 +2144,12 @@
                 <hr>
                 <p><strong>Load Custom Instruments</strong></p>
                 <p>Click this button to load one or more custom instrument .zip files.</p>
-                <p>For details on custom instrument .zip file creation and playback of custom instruments, please see the <a href="#custom_midi_instrument">How to Load and Use Custom Instruments</a> section below.</p>
+                <p>For details on custom instrument .zip file creation and playback of custom instruments, please see the <a href="#custom_midi_instrument">How to Load and Use Custom Instruments in Tunes</a> section below.</p>
                 <p>You can also drag-and-drop one or more custom instrument .zip files on to the editor to load them into the tool.</p>
                 <hr>                 
                 <p><strong>Manage Custom Instruments</strong></p>
                 <p>Click this button to bring up the <strong>Assign Files to Custom Instruments</strong> dialog to manage the assignment of loaded custom instruments to the 8 slots available in the tool.</p>
-                <p>For details on custom instrument .zip file creation and playback of custom instruments, please see the <a href="#custom_midi_instrument">How to Load and Use Custom Instruments</a> section below.</p>
+                <p>For details on custom instrument .zip file creation and playback of custom instruments, please see the <a href="#custom_midi_instrument">How to Load and Use Custom Instruments in Tunes</a> section below.</p>
                 <hr>       
                 <p><strong>Launch Custom Instrument Builder</strong></p>
                 <p>Click this button to launch the <a href="#custom_instrument_builder" target="_blank">Custom Instrument Builder Utility</a> in a new browser tab.</p>
@@ -2704,7 +2704,7 @@
                 <p>The utility can automatically detect the note range of a partial set of note samples based on the filenames and when exporting the custom instrument, synthesize any missing samples in the note range.</p>
                 <p>It does this by pitch shifting other available notes as required creating additional .wav file placeholders as required, and then saves them along with the original notes to the custom instrument .zip file.</p>
                 <p>In the utility, you may also set the volume scale multiplier and release fade time in milliseconds for the instrument.</p>
-                <p>These are the values that will be used by default for the instrument unless the ABC contains volume scale and/or release fade overrides as described below in <a href="#custom_midi_instrument">How to Load and Use Custom Instruments</a>.</p>
+                <p>These are the values that will be used by default for the instrument unless the ABC contains volume scale and/or release fade overrides as described below in <a href="#custom_midi_instrument">How to Load and Use Custom Instruments in Tunes</a>.</p>
                 <p>Additionally, you can play the imported files as well as optionally strip silence from the start of each file, which is a requirement for custom instrument note samples.</p>
                 <p>The ABC Transcription Tools support up to 8 custom instruments at one time.</p>
                 <p>Once you have one or more custom instrument .zip files, you can just drag-and-drop them onto the ABC editor, map them to custom instrument numbers 1-8, and then use them in a tune by specifying:</p>
@@ -2731,7 +2731,7 @@
                 <p>Note: While the custom instrument file with the .mp3 note samples itself may be smaller, ultimately at playback time the tool will uncompress the .zip file and decode the .mp3 samples essentially to an uncompressed audio format when the custom instrument is loaded.</p>
                 <p>As a result, it doesn't save any memory as far as running the tool, but it may make it easier to attach a custom instrument to an email since it most likely will be considerably smaller than one that primarily uses .wav files for the note samples.</p>
                 <hr class="hidden-print" id="custom_midi_instrument">
-                <h1 class="page_break_always h1wide">How to Load and Use Custom Instruments<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+                <h1 class="page_break_always h1wide">How to Load and Use Custom Instruments in Tunes<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <p>You can expand on the instruments available in the soundfonts by creating your own custom instruments.</p>
                 <p>The tool supports up to 8 custom instruments.</p>
                 <hr>
@@ -2791,7 +2791,7 @@
                 <p>After downloading a .zip custom instrument file, you can drag-and-drop it on the editor (or open it from the <a href="#player_settings">Player Instrument Settings</a> dialog), assign it to custom instrument slot #1, and then use it in your tunes by adding:</p>
                 <p class="code">%%MIDI program custom1</p>
                 <p>to the ABC for your tunes.</p>
-                <p>Full details on using custom instruments can be found above in the <a href="#custom_midi_instrument">How to Load and Use Custom Instruments</a> section.</p>
+                <p>Full details on using custom instruments can be found above in the <a href="#custom_midi_instrument">How to Load and Use Custom Instruments in Tunes</a> section.</p>
                 <hr>
                 <p style="text-align: center;"><strong>Custom Instruments from the Versilian Community Sample Library</strong></p>
                 <p style="text-align: center;"><a href="https://michaeleskin.com/custom_instruments/yamaha_upright_piano_custom_instrument_7sep2025.zip" target="_blank" download>Yamaha Upright Piano</a></p>
