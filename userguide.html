@@ -2715,7 +2715,9 @@
                 <p style="text-align: center;"><strong>Reducing the Size of Custom Instruments Created by the Utility</strong></p>
                 <p>Custom instruments that have many notes, particularly if the notes are of long duration (for example, 5 second harp or piano note samples) and in uncompressed .wav format, can be quite large.</p>
                 <p>If additional samples are synthesized by the Custom Instrument Builder to fill a note range gap, or initial note silence stripping is enabled, the resulting note samples in the custom instrument .zip file will all also be in .wav format, which is the highest quality uncompressed format.</p>
-                <p>If you want to reduce the size of a custom instruments, for example to make it smaller to email to someone else, you can follow the following procedure which requires an audio editor like Audacity or Adobe Audition (my audio editor of choice):</p>
+                <p>Unfortunately, currently available Javascript .mp3 encoders like Lame.js add 25ms of silence at the start of the files, making them not optimal for use as instrument note samples.</p>
+                <p>If you want to reduce the size of a custom instrument by converting all of the samples to .mp3 format, for example to make the custom instrument smaller to attach to an email, you can follow the following procedure.</p>
+                <p>This requires an audio editor like Audacity or Adobe Audition (my audio editor of choice) which do not add 25ms of silence at the start of the file when saving .mp3 files:</p>
                 <p>1) Unzip the custom instrument into its own directory.</p>
                 <p>In the directory you will find all the audio files plus the abctools.json settings file.</p>
                 <p>2) Using an audio editor (my favorite is Adobe Audition), convert all the .wav files to .mp3 format.</p>
@@ -2727,7 +2729,7 @@
                 <p>Do not select the directory itself and create the .zip, the files must be saved at the root of the .zip file.</p>
                 <p>6) The resulting .zip file that includes the .mp3 samples and the abctools.json settings file <strong>is</strong> the replacement smaller custom instrument file.</p>
                 <p>Note: While the custom instrument file with the .mp3 note samples itself may be smaller, ultimately at playback time the tool will uncompress the .zip file and decode the .mp3 samples essentially to an uncompressed audio format when the custom instrument is loaded.</p>
-                <p>As a result, it doesn't save any memory as far as running the tool, but it may make it easier to email a custom instrument to someone else since it most likely will be considerably smaller than one that primarily uses .wav files for the note samples.</p>
+                <p>As a result, it doesn't save any memory as far as running the tool, but it may make it easier to attach a custom instrument to an email since it most likely will be considerably smaller than one that primarily uses .wav files for the note samples.</p>
                 <hr class="hidden-print" id="custom_midi_instrument">
                 <h1 class="page_break_always h1wide">How to Load and Use Custom Instruments<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <p>You can expand on the instruments available in the soundfonts by creating your own custom instruments.</p>
