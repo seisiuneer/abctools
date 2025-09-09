@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "2757_090825_1000";
+var gVersionNumber = "2758_090825_2100";
 
 var gMIDIInitStillWaiting = false;
 
@@ -35286,7 +35286,6 @@ function PlayABCDialog(theABC, callback, val, metronome_state) {
 
       if (synthControl) {
 
-
         var fadeLength = computeFade(theABC);
 
         synthControl.setTune(visualObj, userAction, {
@@ -35299,6 +35298,10 @@ function PlayABCDialog(theABC, callback, val, metronome_state) {
 
           if (callback) {
             callback(val, gTheOKButton);
+          }
+          else{
+            // Check if there are any custom instruments requested but not loaded
+            verifyCustomInstrumentsLoaded(theABC);
           }
 
           // Hook up tempo dialog
@@ -35819,6 +35822,150 @@ function flattenABCParts(abcString) {
 
 }
 
+//
+// Scan an ABC tune for any use of custom1..custom8 in MIDI program/bassprog/chordprog
+// directives and return the 0-based indices whose gCustomInstrumentSamples entry
+// is null or [].
+//
+// Mapping: custom1 → index 0, ..., custom8 → index 7.
+//
+// @param {string} abc - The ABC notation text to scan.
+// @param {Array<any>} gCustomInstrumentSamples - Array of 8 entries; each may be null or an array.
+// @returns {number[]} - 0-based indices where the sample entry is null or an empty array.
+//
+function findMissingCustomInstrumentIndices(abc) {
+
+  if (!abc || !gCustomInstrumentSamples) return [];
+
+  const seen = new Set();
+
+  // 1) Line-start, strict: no space after "%%"
+  //    %%MIDI program|bassprog|chordprog customN
+  const startCustomRe = /^%%MIDI\s+(program|bassprog|chordprog)\s+custom([1-8])\b/gim;
+
+  // 2) Line-start, strict numeric mapping 150..157 → custom1..8
+  //    %%MIDI program|bassprog|chordprog 150..157
+  const startNumericRe = /^%%MIDI\s+(program|bassprog|chordprog)\s+(15[0-7])\b/gim;
+
+  // 3) Inline info fields, strict: require '=' after MIDI
+  //    [I:MIDI=program|bassprog|chordprog customN]
+  const inlineCustomRe1 = /\[I:MIDI=(program|bassprog|chordprog)\s+custom([1-8])\]/gim;
+
+  // 4) Inline info fields, strict: require ' ' after MIDI
+  //    [I:MIDI program|bassprog|chordprog customN]
+  const inlineCustomRe2 = /\[I:MIDI (program|bassprog|chordprog)\s+custom([1-8])\]/gim;
+
+  let m;
+
+  // Match line-start customN
+  while ((m = startCustomRe.exec(abc)) !== null) {
+    const n = parseInt(m[2], 10); // 1..8
+    seen.add(n);
+  }
+
+  // Match line-start numeric 150..157 → map to 1..8
+  while ((m = startNumericRe.exec(abc)) !== null) {
+    const num = parseInt(m[2], 10); // 150..157
+    const n = num - 149;            // 150→1, 151→2, ... 157→8
+    if (n >= 1 && n <= 8) seen.add(n);
+  }
+
+  // Match inline [I:MIDI=... customN]
+  while ((m = inlineCustomRe1.exec(abc)) !== null) {
+    const n = parseInt(m[2], 10); // 1..8
+    seen.add(n);
+  }
+
+  // Match inline [I:MIDI... customN]
+  while ((m = inlineCustomRe2.exec(abc)) !== null) {
+    const n = parseInt(m[2], 10); // 1..8
+    seen.add(n);
+  }
+
+  // Now check which referenced custom slots are missing (null or [])
+  const missing = [];
+  for (const n of seen) {
+    const val = gCustomInstrumentSamples[n]; // 1-based lookup
+    const isEmpty = (val == null) || (Array.isArray(val) && val.length === 0);
+    if (isEmpty) missing.push(n);            // return 1-based (customN)
+  }
+
+  // Stable order
+  missing.sort((a, b) => a - b);
+  return missing; // [1..8]
+}
+
+//
+// Generate a DayPilot.Modal.alert message for missing custom instruments.
+//
+// @param {number[]} missingIdxs - 0-based indices of missing custom instruments (e.g. [0,2,5]).
+// @returns {string|null} - The message string, or null if none missing.
+//
+function generateCustomInstrumentAlertMessage(missingIdxs) {
+
+  if (!missingIdxs || missingIdxs.length === 0) return null;
+
+  // missingIdxs now 1-based: [1..8]
+  const unique = Array.from(new Set(missingIdxs)).sort((a,b) => a - b);
+  const labels = unique.map(n => `custom${n}`);
+  const plural = labels.length > 1;
+
+  const listItems = labels.map(l => `<li><code>${l}</code></li>`).join("");
+
+  return `
+    <div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif; line-height:1.6; font-size:1.1rem;">
+      <h3 style="margin:0 0 .5em; font-size:1.5rem; color:#111; text-align:center;">
+        ${plural ? "Custom Instruments Required" : "Custom Instrument Required"}
+      </h3>
+
+      <p style="margin:.6em 0;font-size:1.05rem;">
+        One or more custom instruments are specified in the tune, but no instrument${plural ? "s are" : " is"} currently loaded for:
+      </p>
+
+      <ul style="margin:.5em 0 1em 1.4em; padding:0; font-size:1.05rem;">
+        ${listItems}
+      </ul>
+
+      <p style="margin:.6em 0;font-size:1.05rem;">To resolve this, please load the required custom instrument${plural ? "s" : ""} by either:</p>
+      <ol style="margin:.5em 0 1em 1.4em; padding:0; font-size:1.05rem;">
+        <li>Load ${plural ? "them" : "it"} from the <strong>Player Instrument Settings</strong> dialog, or</li>
+        <li>Close the Player, then drag-and-drop the custom instrument${plural ? "s" : ""} onto the work area.</li>
+      </ol>
+
+      <p style="margin:.6em 0;font-size:1.05rem;">After loading the custom instrument${plural ? "s" : ""}, assign ${plural ? "them" : "it"} to the missing custom instrument slot${plural ? "s" : ""}.</p>
+
+      <p style="margin:.6em 0; font-size:1.05rem;">
+        <em>Until ${plural ? "these custom instruments are" : "this custom instrument is"} loaded, ${plural ? "they will" : "it will"} produce no sound.</em>
+      </p>
+    </div>
+  `;
+}
+
+//
+// Check if any custom instruments requested are actually loaded
+function verifyCustomInstrumentsLoaded(theTune){
+
+    const missingIdxs = findMissingCustomInstrumentIndices(theTune);
+
+    if ((!missingIdxs) || (missingIdxs.length==0)){
+      return;
+    }
+    else{
+
+      var thePrompt = generateCustomInstrumentAlertMessage(missingIdxs);
+
+      if (!thePrompt){
+        return;
+      }
+
+      DayPilot.Modal.alert(thePrompt, {
+        theme: "modal_flat",
+        top: 100,
+        scrollWithPage: (AllowDialogsToScroll())
+      });
+
+    }
+}
 
 //
 // Based on the global injection configuration, pre-process the %%MIDI directives in the ABC
@@ -37447,6 +37594,9 @@ function SwingExplorerDialog(theOriginalABC, theProcessedABC, swing_explorer_sta
 
           console.log("Audio successfully loaded.");
 
+          // Check if there are any custom instruments requested but not loaded
+          verifyCustomInstrumentsLoaded(theProcessedABC);
+
           gSynthControl = synthControl;
 
           // Hook up tempo dialog
@@ -38224,6 +38374,10 @@ function ReverbExplorerDialog(theOriginalABC, theProcessedABC, reverb_explorer_s
         }).then(function(response) {
 
           console.log("Audio successfully loaded.");
+
+          // Check if there are any custom instruments requested but not loaded
+          verifyCustomInstrumentsLoaded(theProcessedABC);
+
           gSynthControl = synthControl;
 
           // Hook up tempo dialog
@@ -39297,6 +39451,10 @@ function InstrumentExplorerDialog(theOriginalABC, theProcessedABC, instrument_ex
         }).then(function(response) {
 
           console.log("Audio successfully loaded.");
+          
+          // Check if there are any custom instruments requested but not loaded
+          verifyCustomInstrumentsLoaded(theProcessedABC);
+
           gSynthControl = synthControl;
 
           // Hook up tempo dialog
@@ -39938,6 +40096,10 @@ function GraceExplorerDialog(theOriginalABC, theProcessedABC, grace_explorer_sta
         }).then(function(response) {
 
           console.log("Audio successfully loaded.");
+
+          // Check if there are any custom instruments requested but not loaded
+          verifyCustomInstrumentsLoaded(theProcessedABC);
+
           gSynthControl = synthControl;
 
           // Hook up tempo dialog
@@ -40738,6 +40900,10 @@ function RollExplorerDialog(theOriginalABC, theProcessedABC, roll_explorer_state
         }).then(function(response) {
 
           console.log("Audio successfully loaded.");
+
+          // Check if there are any custom instruments requested but not loaded
+          verifyCustomInstrumentsLoaded(theProcessedABC);
+
           gSynthControl = synthControl;
 
           // Hook up tempo dialog
@@ -41343,6 +41509,9 @@ function TuneTrainerDialog(theOriginalABC, theProcessedABC, looperState) {
         }).then(function(response) {
 
           console.log("Audio successfully loaded.");
+          
+          // Check if there are any custom instruments requested but not loaded
+          verifyCustomInstrumentsLoaded(theProcessedABC);
 
           //console.log("Tune is loaded, setting initial warp and loop callback");
 

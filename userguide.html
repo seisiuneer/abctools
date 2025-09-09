@@ -2765,16 +2765,22 @@
                 <p class="code">%%MIDI program custom(n)</p>
                 <p>Example:</p>
                 <p class="code">%%MIDI program custom1</p>
+                <p>When playing a tune, if a custom instrument specified in a tune hasn't been loaded, you'll be presented with a message explaining which custom instruments are missing and how to load them:</p>
+                <div class="image_holder_p">
+                    <img class="image" loading="lazy" src="img/custom_instrument_missing_1.jpg"/>
+                </div>
                 <hr>
+                <p style="text-align: center;"><strong>Changing the Volume of Custom Instruments</strong></p>
                 <p>If the samples in the custom instrument are too soft or too loud, you can scale the volume.</p>
                 <p>To change the default sample volume multipler from 1.0, add the following ABC annotation to your tunes:</p>
                 <p class="code">%custom_instrument_(n)_volume_scale (volume_multiplier_float)</p>
                 <p>Example:</p>
                 <p class="code">%custom_instrument_1_volume_scale 2.0</p>
                 <hr>
-                <p>Custom instruments are played with a default decay time of 100ms.</p>
-                <p>This may be too short for custom instruments that have long decay times like plucked strings.</p>
-                <p>To change the default sample release fade time from 100ms, add the following ABC annotation to your tunes:</p>
+                <p style="text-align: center;"><strong>Changing the Release Fade Time of Custom Instruments</strong></p>
+                <p>Custom instruments are played with a default release decay fade time of 100ms.</p>
+                <p>This may be too short for custom instruments that have long release decay fade times like plucked strings.</p>
+                <p>To change the default sample release decay fade time from 100ms, add the following ABC annotation to your tunes:</p>
                 <p class="code">%custom_instrument_(n)_fade (fade_time_in_ms)</p>
                 <p>Example:</p>
                 <p class="code">%custom_instrument_1_fade 4000</p>
