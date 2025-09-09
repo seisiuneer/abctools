@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "2759_090925_1500";
+var gVersionNumber = "2760_090925_1700";
 
 var gMIDIInitStillWaiting = false;
 
@@ -38974,7 +38974,62 @@ function ScanTuneForInstrumentExplorer(theTune) {
 
         gInstrumentExplorerMelodyInstrument = "0";
 
-      } else {
+      } 
+      else
+      if (theParamString.toLowerCase() == "custom") {
+
+        gInstrumentExplorerMelodyInstrument = "151";
+
+      } 
+      else
+      if (theParamString.toLowerCase() == "custom1") {
+
+        gInstrumentExplorerMelodyInstrument = "151";
+
+      } 
+      else
+      if (theParamString.toLowerCase() == "custom2") {
+
+        gInstrumentExplorerMelodyInstrument = "152";
+
+      } 
+      else
+      if (theParamString.toLowerCase() == "custom3") {
+
+        gInstrumentExplorerMelodyInstrument = "153";
+
+      } 
+      else
+      if (theParamString.toLowerCase() == "custom4") {
+
+        gInstrumentExplorerMelodyInstrument = "154";
+
+      } 
+      else
+      if (theParamString.toLowerCase() == "custom5") {
+
+        gInstrumentExplorerMelodyInstrument = "155";
+
+      } 
+      else
+      if (theParamString.toLowerCase() == "custom6") {
+
+        gInstrumentExplorerMelodyInstrument = "156";
+
+      } 
+      else
+      if (theParamString.toLowerCase() == "custom7") {
+
+        gInstrumentExplorerMelodyInstrument = "157";
+
+      } 
+      else
+      if (theParamString.toLowerCase() == "custom8") {
+
+        gInstrumentExplorerMelodyInstrument = "158";
+
+      } 
+      else {
 
         var theValue = parseInt(theParamString);
 
@@ -39003,7 +39058,62 @@ function ScanTuneForInstrumentExplorer(theTune) {
 
         gInstrumentExplorerBassInstrument = "0";
 
-      } else {
+      } 
+      else
+      if (theParamString.toLowerCase() == "custom") {
+
+        gInstrumentExplorerBassInstrument = "151";
+
+      } 
+      else
+      if (theParamString.toLowerCase() == "custom1") {
+
+        gInstrumentExplorerBassInstrument = "151";
+
+      } 
+      else
+      if (theParamString.toLowerCase() == "custom2") {
+
+        gInstrumentExplorerBassInstrument = "152";
+
+      } 
+      else
+      if (theParamString.toLowerCase() == "custom3") {
+
+        gInstrumentExplorerBassInstrument = "153";
+
+      } 
+      else
+      if (theParamString.toLowerCase() == "custom4") {
+
+        gInstrumentExplorerBassInstrument = "154";
+
+      } 
+      else
+      if (theParamString.toLowerCase() == "custom5") {
+
+        gInstrumentExplorerBassInstrument = "155";
+
+      } 
+      else
+      if (theParamString.toLowerCase() == "custom6") {
+
+        gInstrumentExplorerBassInstrument = "156";
+
+      } 
+      else
+      if (theParamString.toLowerCase() == "custom7") {
+
+        gInstrumentExplorerBassInstrument = "157";
+
+      } 
+      else
+      if (theParamString.toLowerCase() == "custom8") {
+
+        gInstrumentExplorerBassInstrument = "158";
+
+      } 
+      else {
 
         var theValue = parseInt(theParamString);
 
@@ -39032,7 +39142,62 @@ function ScanTuneForInstrumentExplorer(theTune) {
 
         gInstrumentExplorerChordInstrument = "0";
 
-      } else {
+      } 
+      else
+      if (theParamString.toLowerCase() == "custom") {
+
+        gInstrumentExplorerChordInstrument = "151";
+
+      } 
+      else
+      if (theParamString.toLowerCase() == "custom1") {
+
+        gInstrumentExplorerChordInstrument = "151";
+
+      } 
+      else
+      if (theParamString.toLowerCase() == "custom2") {
+
+        gInstrumentExplorerChordInstrument = "152";
+
+      } 
+      else
+      if (theParamString.toLowerCase() == "custom3") {
+
+        gInstrumentExplorerChordInstrument = "153";
+
+      } 
+      else
+      if (theParamString.toLowerCase() == "custom4") {
+
+        gInstrumentExplorerChordInstrument = "154";
+
+      } 
+      else
+      if (theParamString.toLowerCase() == "custom5") {
+
+        gInstrumentExplorerChordInstrument = "155";
+
+      } 
+      else
+      if (theParamString.toLowerCase() == "custom6") {
+
+        gInstrumentExplorerChordInstrument = "156";
+
+      } 
+      else
+      if (theParamString.toLowerCase() == "custom7") {
+
+        gInstrumentExplorerChordInstrument = "157";
+
+      } 
+      else
+      if (theParamString.toLowerCase() == "custom8") {
+
+        gInstrumentExplorerChordInstrument = "158";
+
+      } 
+      else {
 
         var theValue = parseInt(theParamString);
 
@@ -39310,7 +39475,40 @@ function InstrumentExplorerDialogInjectThisTune(theTune) {
   // Offset by one to deal with mute instrument at offset zero
   if (gInstrumentExplorerMelodyInstrument == "0") {
     theTune = InjectStringBelowTuneHeader(theTune, "%%MIDI program mute");
-  } else {
+  }
+  else
+  if (gInstrumentExplorerMelodyInstrument == "151") {
+    theTune = InjectStringBelowTuneHeader(theTune, "%%MIDI program custom1");
+  } 
+  else
+  if (gInstrumentExplorerMelodyInstrument == "152") {
+    theTune = InjectStringBelowTuneHeader(theTune, "%%MIDI program custom2");
+  } 
+  else
+  if (gInstrumentExplorerMelodyInstrument == "153") {
+    theTune = InjectStringBelowTuneHeader(theTune, "%%MIDI program custom3");
+  } 
+  else
+  if (gInstrumentExplorerMelodyInstrument == "154") {
+    theTune = InjectStringBelowTuneHeader(theTune, "%%MIDI program custom4");
+  } 
+  else
+  if (gInstrumentExplorerMelodyInstrument == "155") {
+    theTune = InjectStringBelowTuneHeader(theTune, "%%MIDI program custom5");
+  } 
+  else
+  if (gInstrumentExplorerMelodyInstrument == "156") {
+    theTune = InjectStringBelowTuneHeader(theTune, "%%MIDI program custom6");
+  } 
+  else
+  if (gInstrumentExplorerMelodyInstrument == "157") {
+    theTune = InjectStringBelowTuneHeader(theTune, "%%MIDI program custom7");
+  } 
+  else
+  if (gInstrumentExplorerMelodyInstrument == "158") {
+    theTune = InjectStringBelowTuneHeader(theTune, "%%MIDI program custom8");
+  } 
+  else {
     var theProgram = parseInt(gInstrumentExplorerMelodyInstrument) - 1;
     theTune = InjectStringBelowTuneHeader(theTune, "%%MIDI program " + theProgram);
   }
@@ -39318,7 +39516,40 @@ function InstrumentExplorerDialogInjectThisTune(theTune) {
   // Inject bass instrument
   if (gInstrumentExplorerBassInstrument == "0") {
     theTune = InjectStringBelowTuneHeader(theTune, "%%MIDI bassprog mute");
-  } else {
+  } 
+  else
+  if (gInstrumentExplorerBassInstrument == "151") {
+    theTune = InjectStringBelowTuneHeader(theTune, "%%MIDI bassprog custom1");
+  } 
+  else
+  if (gInstrumentExplorerBassInstrument == "152") {
+    theTune = InjectStringBelowTuneHeader(theTune, "%%MIDI bassprog custom2");
+  } 
+  else
+  if (gInstrumentExplorerBassInstrument == "153") {
+    theTune = InjectStringBelowTuneHeader(theTune, "%%MIDI bassprog custom3");
+  } 
+  else
+  if (gInstrumentExplorerBassInstrument == "154") {
+    theTune = InjectStringBelowTuneHeader(theTune, "%%MIDI bassprog custom4");
+  } 
+  else
+  if (gInstrumentExplorerBassInstrument == "155") {
+    theTune = InjectStringBelowTuneHeader(theTune, "%%MIDI bassprog custom5");
+  } 
+  else
+  if (gInstrumentExplorerBassInstrument == "156") {
+    theTune = InjectStringBelowTuneHeader(theTune, "%%MIDI bassprog custom6");
+  } 
+  else
+  if (gInstrumentExplorerBassInstrument == "157") {
+    theTune = InjectStringBelowTuneHeader(theTune, "%%MIDI bassprog custom7");
+  } 
+  else
+  if (gInstrumentExplorerBassInstrument == "158") {
+    theTune = InjectStringBelowTuneHeader(theTune, "%%MIDI bassprog custom8");
+  } 
+  else {
     var theProgram = parseInt(gInstrumentExplorerBassInstrument) - 1;
     theTune = InjectStringBelowTuneHeader(theTune, "%%MIDI bassprog " + theProgram);
   }
@@ -39326,7 +39557,40 @@ function InstrumentExplorerDialogInjectThisTune(theTune) {
   // Inject chord instrument
   if (gInstrumentExplorerChordInstrument == "0") {
     theTune = InjectStringBelowTuneHeader(theTune, "%%MIDI chordprog mute");
-  } else {
+  } 
+  else
+  if (gInstrumentExplorerChordInstrument == "151") {
+    theTune = InjectStringBelowTuneHeader(theTune, "%%MIDI chordprog custom1");
+  } 
+  else
+  if (gInstrumentExplorerChordInstrument == "152") {
+    theTune = InjectStringBelowTuneHeader(theTune, "%%MIDI chordprog custom2");
+  } 
+  else
+  if (gInstrumentExplorerChordInstrument == "153") {
+    theTune = InjectStringBelowTuneHeader(theTune, "%%MIDI chordprog custom3");
+  } 
+  else
+  if (gInstrumentExplorerChordInstrument == "154") {
+    theTune = InjectStringBelowTuneHeader(theTune, "%%MIDI chordprog custom4");
+  } 
+  else
+  if (gInstrumentExplorerChordInstrument == "155") {
+    theTune = InjectStringBelowTuneHeader(theTune, "%%MIDI chordprog custom5");
+  } 
+  else
+  if (gInstrumentExplorerChordInstrument == "156") {
+    theTune = InjectStringBelowTuneHeader(theTune, "%%MIDI chordprog custom6");
+  } 
+  else
+  if (gInstrumentExplorerChordInstrument == "157") {
+    theTune = InjectStringBelowTuneHeader(theTune, "%%MIDI chordprog custom7");
+  } 
+  else
+  if (gInstrumentExplorerChordInstrument == "158") {
+    theTune = InjectStringBelowTuneHeader(theTune, "%%MIDI chordprog custom8");
+  } 
+  else {
     var theProgram = parseInt(gInstrumentExplorerChordInstrument) - 1;
     theTune = InjectStringBelowTuneHeader(theTune, "%%MIDI chordprog " + theProgram);
   }
