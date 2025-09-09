@@ -2705,7 +2705,10 @@
                 <p>It does this by pitch shifting other available notes as required creating additional .wav file placeholders as required, and then saves them along with the original notes to the custom instrument .zip file.</p>
                 <p>In the utility, you may also set the volume scale multiplier and release fade time in milliseconds for the instrument.</p>
                 <p>These are the values that will be used by default for the instrument unless the ABC contains volume scale and/or release fade overrides as described below in <a href="#custom_midi_instrument">How to Load and Use Custom Instruments in Tunes</a>.</p>
-                <p>Additionally, you can play the imported files as well as optionally strip silence from the start of each file, which is a requirement for custom instrument note samples.</p>
+                <p>You can optionally strip silence from the start of each file, which is a requirement for custom instrument note samples.</p>
+                <p>To reduce the size of large custom instruments that start out as stereo .wav format note samples, optional stereo-to-mono .wav conversion of all note samples at export time is supported.</p>
+                <p>You can preview the imported files including volume scaling, silence stripping, and stereo/mono conversion.</p>
+                <hr>
                 <p>The ABC Transcription Tools support up to 8 custom instruments at one time.</p>
                 <p>Once you have one or more custom instrument .zip files, you can just drag-and-drop them onto the ABC editor, map them to custom instrument numbers 1-8, and then use them in a tune by specifying:</p>
                 <p class="code">%%MIDI program custom1<br/>%%MIDI program custom2<br/>etc.</p>
@@ -2714,7 +2717,9 @@
                 <hr>
                 <p style="text-align: center;"><strong>Reducing the Size of Custom Instruments Created by the Utility</strong></p>
                 <p>Custom instruments that have many notes, particularly if the notes are of long duration (for example, 5 second harp or piano note samples), in stereo, and in uncompressed .wav format, can be quite large.</p>
-                <p>If additional samples are synthesized by the Custom Instrument Builder to fill a note range gap, or initial note silence stripping is enabled, the resulting note samples in the custom instrument .zip file will all also be in .wav format, which is the highest quality uncompressed format.</p>
+                <p>If additional samples are synthesized by the Custom Instrument Builder to fill a note range gap, or initial note silence stripping is enabled, the resulting processed note samples in the custom instrument .zip file will all also be in .wav format, either stereo or mono depending on the original samples used for the missing note synthesis or silence stripping.</p>
+                <p>If the original samples are all in stereo .wav format, you can reduce the size of the exported custom instrument in half by enabling the <strong>Encode all exported files as mono .wav</strong> option in the Custom Instrument Builder which will convert all the samples to mono .wav at export time preserving the same RMS volume as the stereo versions.</p>
+                <p>This option will also convert any original .mp3 source files to mono .wav most likely making them larger, so probably best to only enable this option for custom instrument size reduction if the original samples are all in stereo .wav format.</p>
                 <p>Unfortunately, currently available Javascript .mp3 encoders like Lame.js add 25ms of silence at the start of the files, making them not optimal for use as instrument note samples.</p>
                 <p>If you want to reduce the size of a custom instrument by converting all of the samples to .mp3 format, for example to make the custom instrument smaller to attach to an email, you can follow the following procedure.</p>
                 <p>This requires an audio editor like Audacity or Adobe Audition (my audio editor of choice) which do not add 25ms of silence at the start of the file when saving .mp3 files:</p>
@@ -2729,7 +2734,6 @@
                 <p>5) Inside the directory, select all the files and create a new .zip file that includes all the .mp3 files and the abctools.json settings file.</p>
                 <p>Do not select the directory itself and create the .zip, the files must be saved at the root of the .zip file.</p>
                 <p>6) The resulting .zip file that includes the .mp3 samples and the abctools.json settings file <strong>is</strong> the replacement smaller custom instrument file.</p>
-                <p>If you want to stay with .wav format samples, converting them from stereo to mono will reduce the size of the instrument by half.</p>
                 <p>The reverb effect available when playing tunes can reduce the need for stereo samples.</p>
                 <p><strong>Note:</strong> While a custom instrument file with .mp3 note samples itself may be smaller, ultimately at playback time the tool will uncompress the .zip file and decode the .mp3 samples to an uncompressed audio format when the custom instrument is loaded.</p>
                 <p>As a result, it doesn't save any browser memory (generally not an issue) as far as running the tool, but it may make it easier to attach a custom instrument to an email since it most likely will be considerably smaller than one that primarily uses .wav files for the note samples.</p>
@@ -2813,7 +2817,6 @@
                 <hr>
                 <p style="text-align: center;"><a href="https://michaeleskin.com/custom_instruments/edgley_concertina_custom_instrument_4sep2025.zip" target="_blank" download>Frank Edgley Hybrid Anglo Concertina</a></p>
                 <hr>
-
                 <p style="text-align: center;"><a href="https://michaeleskin.com/custom_instruments/mandolin_tremolo_custom_instrument_9sep2025.zip" target="_blank" download>Tremlolo Mandolin</a></p>
                 <hr>
                 <p>This one is a "loop-style" custom instrument with a different 30-second bodhran pattern played in a specific tune style and tempo on each note:</p>
