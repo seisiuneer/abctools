@@ -437,14 +437,6 @@
       </label>
     </div>
 
-    <!-- NEW: force mono WAV export -->
-    <div class="form-row">
-      <label style="flex:0 0 auto;">
-        <input type="checkbox" id="forceMonoWav">
-        Encode all exported files as mono .wav
-      </label>
-    </div>
-
     <!-- Trimming UI -->
     <div class="form-row">
       <label style="flex:0 0 auto;">
@@ -454,20 +446,19 @@
     </div>
 
     <div id="thresholdControls" style="display:none; margin-top:6px;">
-      <label title="Samples below this absolute dB are considered silence. Typical: -40 dB" style="display:flex;align-items:center;gap:6px;">
+      <label title="Samples below this absolute dB are considered silence. Typical: -40 dB"
+             style="display:flex;align-items:center;gap:6px;">
         <span>Silence threshold (dB):</span>
         <input type="number" id="silenceDb" step="0.5" max="0" min="-120" value="-40" inputmode="numeric" style="flex:0 0 90px;">
         <button type="button" id="applyThresholdBtn" style="margin:0;margin-left:4px;padding:0.3em 0.7em;font-size:0.9em;transform: translateY(2px);">Apply</button>
         <span id="applyStatus" class="apply-status" role="status" aria-live="polite" aria-atomic="true"></span>
       </label>
-    </div>
+    </div>    
 
-    <div class="form-row">
-      <label>
-        <input type="checkbox" id="autoSort" checked>
-        Automatically sort files by scale order (C, Db, D, Eb, E, ...)
-      </label>
-    </div>
+    <label>
+      <input type="checkbox" id="autoSort" checked>
+      Automatically sort files by scale order (C, Db, D, Eb, E, ...)
+    </label>
 
     <div id="gapOptions" class="gap-controls">
       Missing Note Handling:
@@ -509,9 +500,6 @@
         const thresholdControls = document.getElementById('thresholdControls');
         const applyThresholdBtn = document.getElementById('applyThresholdBtn');
         const instructionsBtn = document.getElementById('instructionsBtn');
-
-        // NEW
-        const forceMonoWavCheckbox = document.getElementById('forceMonoWav');
 
         var gFileSaveName = "custom_instrument.zip";
 
@@ -599,12 +587,8 @@
             // Toggle stop if the same button is pressed while playing
             if (gPrevBtn === btn && gPrevSource) { stopCurrentPreview(); return; }
 
-            // Build buffer reflecting current options:
-            // 1) decode, 2) mix to mono if requested, 3) optional trim
+            // Build buffer reflecting current trim option
             let buf = await decodeFileToAudioBuffer(file);
-            if (forceMonoWavCheckbox.checked) {
-              buf = mixToMono(buf);
-            }
             if (trimSilenceCheckbox.checked) {
               const thr = dbToLinear(Number(silenceDbInput.value));
               buf = trimLeadingSilenceFromBuffer(buf, thr);
@@ -661,6 +645,7 @@
             });
           } else {
             // IMPORTANT: keep current manual order; do NOT reset to originalFiles
+            // (was: files = [...originalFiles])
           }
         }
 
@@ -669,76 +654,75 @@
           const offset=parseInt(startNote.value,10);
           const noteIndex=(i+offset)%12;
           const octave=start+Math.floor((i+offset)/12);
-
-          // If forcing mono WAV, always show .wav
-          if (forceMonoWavCheckbox.checked) {
-            return `${notes[noteIndex]}${octave}.wav`;
-          }
-
           const useExt=trimSilenceCheckbox.checked ? "wav" : extIfNotTrim;
           return `${notes[noteIndex]}${octave}.${useExt}`;
         }
 
-        function buildContinuousRange(){
-          const matched = [], unmatched = [];
-          const seen = new Set();
-          let hasDuplicatePitch = false;
+		function buildContinuousRange(){
+		  const matched = [], unmatched = [];
+		  const seen = new Set();
+		  let hasDuplicatePitch = false;
 
-          for (const f of files){
-            const p = parsePitchFromName(f.name);
-            if (p){
-              if (p.octave > 8){
-                DayPilot.Modal.alert(
-                  '<p style="text-align:center;font-size:1.1em;"><strong>Note Octave Out-of-Range Detected (Max is 8)</strong><br/><br/>Auto-sort and note range detect will be disabled.</p>',
-                  { theme:"modal_flat", top:200 }
-                );
-                applyHashedModeUIState();
-                setTimeout(()=>{ files=[...originalFiles]; safeRenderList(); }, 250);
-                return { full:[], unmatched: files.slice() };
-              }
+		  for (const f of files){
+		    const p = parsePitchFromName(f.name);
+		    if (p){
+		      // Abort if any octave is out of supported range (kept behavior)
+		      if (p.octave > 8){
+		        DayPilot.Modal.alert(
+		          '<p style="text-align:center;font-size:1.1em;"><strong>Note Octave Out-of-Range Detected (Max is 8)</strong><br/><br/>Auto-sort and note range detect will be disabled.</p>',
+		          { theme:"modal_flat", top:200 }
+		        );
+		        applyHashedModeUIState();  // disables auto-sort + toggles UI
+		        setTimeout(()=>{ files=[...originalFiles]; safeRenderList(); }, 250);
+		        return { full:[], unmatched: files.slice() };
+		      }
 
-              if (seen.has(p.pitchIndex)) {
-                hasDuplicatePitch = true;
-              } else {
-                seen.add(p.pitchIndex);
-              }
+		      // Detect duplicates by pitchIndex (e.g., D4.wav and D4a.wav)
+		      if (seen.has(p.pitchIndex)) {
+		        hasDuplicatePitch = true;
+		      } else {
+		        seen.add(p.pitchIndex);
+		      }
 
-              matched.push({ file:f, pitchIndex:p.pitchIndex, ext:f.name.split('.').pop() });
-            } else {
-              unmatched.push(f);
-            }
-          }
+		      matched.push({ file:f, pitchIndex:p.pitchIndex, ext:f.name.split('.').pop() });
+		    } else {
+		      unmatched.push(f);
+		    }
+		  }
 
-          if (hasDuplicatePitch) {
-            DayPilot.Modal.alert(
-              '<p style="text-align:center;font-size:1.1em;"><strong>Duplicate Pitch Detected</strong><br/><br/>Two or more files map to the same pitch.<br/><br/>Auto-sort and note range detect have been disabled.<br/><br/>Please try loading the files again without the duplicate pitch files<br/>or arrange the files manually.</p>',
-              { theme:"modal_flat", top:200 }
-            );
-            applyHashedModeUIState();
-            setTimeout(()=>{ files=[...originalFiles]; safeRenderList(); }, 250);
-            return { full:[], unmatched: files.slice() };
-          }
+		  // Abort automatic range detect if duplicates found
+		  if (hasDuplicatePitch) {
+		    DayPilot.Modal.alert(
+		      '<p style="text-align:center;font-size:1.1em;"><strong>Duplicate Pitch Detected</strong><br/><br/>Two or more files map to the same pitch.<br/><br/>Auto-sort and note range detect have been disabled.<br/><br/>Please try loading the files again without the duplicate pitch files<br/>or arrange the files manually.</p>',
+		      { theme:"modal_flat", top:200 }
+		    );
+		    applyHashedModeUIState();  // disables auto-sort + toggles UI (gapOptions hidden, drag message shown)
+		    setTimeout(()=>{ files=[...originalFiles]; safeRenderList(); }, 250);
+		    return { full:[], unmatched: files.slice() };
+		  }
 
-          if (!matched.length) return { full:[], unmatched };
+		  if (!matched.length) return { full:[], unmatched };
 
-          matched.sort((a,b)=>a.pitchIndex-b.pitchIndex);
-          const minPI = matched[0].pitchIndex, maxPI = matched[matched.length-1].pitchIndex;
+		  matched.sort((a,b)=>a.pitchIndex-b.pitchIndex);
+		  const minPI = matched[0].pitchIndex, maxPI = matched[matched.length-1].pitchIndex;
 
-          const pitchMap = new Map();
-          for (const m of matched) pitchMap.set(m.pitchIndex, m);
+		  // Build a continuous range map (no duplicates at this point)
+		  const pitchMap = new Map();
+		  for (const m of matched) pitchMap.set(m.pitchIndex, m);
 
-          const full = [];
-          for (let pi = minPI; pi <= maxPI; pi++){
-            const m = pitchMap.get(pi) || null;
-            full.push({ file: m ? m.file : null, pitchIndex: pi, ext: m ? m.ext : "wav" });
-          }
+		  const full = [];
+		  for (let pi = minPI; pi <= maxPI; pi++){
+		    const m = pitchMap.get(pi) || null;
+		    full.push({ file: m ? m.file : null, pitchIndex: pi, ext: m ? m.ext : "wav" });
+		  }
 
-          return { full, unmatched };
-        }
+		  return { full, unmatched };
+		}
 
         /* ====== Device-independent decode (single OfflineAudioContext) ====== */
         let gDecodeOffline = null;
         function getDecodeOffline(){
+          // Tiny render length; just used to access decodeAudioData without opening audio device
           if (!gDecodeOffline) gDecodeOffline = new OfflineAudioContext(1, 1, 44100);
           return gDecodeOffline;
         }
@@ -749,6 +733,7 @@
           const p = (async ()=>{
             const offline = getDecodeOffline();
             const arr = await file.arrayBuffer();
+            // slice() avoids neutering issues on some browsers
             return await offline.decodeAudioData(arr.slice(0));
           })();
           decodeCache.set(file,p);
@@ -832,93 +817,20 @@
           }
           return out;
         }
-        
-        // === RMS-PRESERVING MONO MIX (with peak safety) ===
-        // Goal: make mono loudness match stereo loudness by RMS, while avoiding clipping.
-        // Strategy:
-        //  1) Sum channels to mono (no pre-scaling).
-        //  2) Compute RMS of the original stereo field as average per-sample power across channels.
-        //  3) Compute RMS of the summed mono signal.
-        //  4) Apply gain = rmsOrig / rmsMono, then cap by peak to avoid clipping.
-        function mixToMono(buffer){
-          if (buffer.numberOfChannels === 1) return buffer;
 
-          const len = buffer.length;
-          const sr  = buffer.sampleRate;
-          const chs = buffer.numberOfChannels;
-
-          const mono = new Float32Array(len);
-
-          // Accumulate original stereo RMS (average power across channels),
-          // and build the summed mono.
-          let sumSquaresOrig = 0;
-          for (let i = 0; i < len; i++) {
-            let sum = 0;
-            let power = 0;
-            for (let ch = 0; ch < chs; ch++) {
-              const v = buffer.getChannelData(ch)[i];
-              sum   += v;
-              power += v * v;
-            }
-            mono[i] = sum;              // summed (not averaged)
-            sumSquaresOrig += power / chs; // average channel power for this frame
-          }
-
-          // RMS of mono (summed) and its peak (for safety)
-          let sumSquaresMono = 0;
-          let peakMono = 0;
-          for (let i = 0; i < len; i++) {
-            const v = mono[i];
-            sumSquaresMono += v * v;
-            const av = Math.abs(v);
-            if (av > peakMono) peakMono = av;
-          }
-
-          const rmsOrig = Math.sqrt(sumSquaresOrig / len);
-          const rmsMono = Math.sqrt(sumSquaresMono / len);
-
-          // Gain to match RMS; then cap by peak to prevent clipping.
-          let gain = 1.0;
-          if (rmsMono > 0 && rmsOrig > 0) {
-            gain = rmsOrig / rmsMono;
-          }
-          if (peakMono > 0 && peakMono * gain > 1.0) {
-            gain = 1.0 / peakMono; // peak safety cap
-          }
-
-          if (gain !== 1.0) {
-            for (let i = 0; i < len; i++) mono[i] *= gain;
-          }
-
-          const out = new AudioBuffer({ length: len, numberOfChannels: 1, sampleRate: sr });
-          out.copyToChannel(mono, 0, 0);
-          return out;
-        }
-
-
-        // Return a Blob to write into ZIP, applying mono + trimming as requested
+        // Return a Blob to write into ZIP, trimming if needed
         async function bufferToFinalBlob(buffer){
-          // Enforce mono if requested (mix before trimming for consistent thresholding)
-          if (forceMonoWavCheckbox.checked) {
-            buffer = mixToMono(buffer);
-          }
-
           if (trimSilenceCheckbox.checked){
             const thr = dbToLinear(Number(silenceDbInput.value));
-            buffer = trimLeadingSilenceFromBuffer(buffer, thr);
+            const trimmed = trimLeadingSilenceFromBuffer(buffer, thr);
+            return audioBufferToWav(trimmed);
           }
-
-          // Always emit WAV when we processed (mono/trim path routes here)
           return audioBufferToWav(buffer);
         }
 
-        // If neither trimming nor mono conversion is requested, pass the original file through.
-        // Otherwise: decode -> (mono if needed) -> (optional trim) -> WAV.
+        // If not trimming, return the original file (mp3/wav). If trimming, decode->trim->WAV.
         async function fileToProcessedBlob(file){
-          const needsProcessing = trimSilenceCheckbox.checked || forceMonoWavCheckbox.checked;
-          if (!needsProcessing) {
-            return file; // passthrough original file when no processing requested
-          }
+          if (!trimSilenceCheckbox.checked) return file;
           const buf = await decodeFileToAudioBuffer(file);
           return bufferToFinalBlob(buf);
         }
@@ -926,6 +838,7 @@
         // ---------- RENDER LIST ----------
 
         function safeRenderList(){
+          // With Web Audio preview, no need to block re-render; but keep behavior:
           if (gPrevSource) return; // avoid jank during preview
           renderList();
         }
@@ -1040,11 +953,13 @@
         });
 
         fileList.addEventListener('dragstart', () => {
+          // (kept: if you also want to ensure any legacy <audio> path is stopped)
           if (gPrevSource) stopCurrentPreview();
         });
 
         function updateDragInteractivity() {
           const realRows = fileList.querySelectorAll('.file-item.real');
+          // Disable drag either when auto-sort is ON or while preview is playing
           const enableDrag = !autoSortCheckbox.checked && !gIsPlaying;
           realRows.forEach(row => row.setAttribute('draggable', enableDrag ? 'true' : 'false'));
           fileList.classList.toggle('drag-disabled', !enableDrag);
@@ -1054,6 +969,7 @@
 
         exportZipBtn.addEventListener('click', async ()=>{
 
+          // If a preview is playing, stop it immediately
           if (gPrevSource) stopCurrentPreview();
 
           async function saveZipFile(fname){
@@ -1071,16 +987,11 @@
             if (isNaN(fadeTimeMs)) fadeTimeMs=100;
             if (volumeScale<0) volumeScale=0;
             if (fadeTimeMs<0) fadeTimeMs=0;
-            const meta={
-              volumeScale,
-              fadeTimeMs,
-              trimLeadingSilence: !!trimSilenceCheckbox.checked,
-              silenceThresholdDb: Number(silenceDbInput.value),
-              forceMonoWav: !!forceMonoWavCheckbox.checked // NEW
-            };
+            const meta={ volumeScale, fadeTimeMs, trimLeadingSilence: !!trimSilenceCheckbox.checked, silenceThresholdDb: Number(silenceDbInput.value) };
             zip.file("abctools.json", JSON.stringify(meta,null,2));
 
             if (!autoSortCheckbox.checked){
+              // Export current order (no synth)
               const reordered = Array.from(fileList.children).filter(el=>el.classList.contains('real')).map(el=>files[Number(el.dataset.index)]);
               for (let i=0;i<reordered.length;i++){
                 const file=reordered[i];
@@ -1237,14 +1148,16 @@
           safeRenderList();
         });
 
-        // reflect extension names immediately if user toggles mono-wav
-        forceMonoWavCheckbox.addEventListener('change', safeRenderList);
-
         applyThresholdBtn.addEventListener('click', () => {
+          // Re-render with the new threshold value
           safeRenderList();
+
+          // Visual feedback
           const status = document.getElementById('applyStatus');
           status.textContent = 'Applied';
           status.classList.add('show');
+
+          // Briefly disable to prevent double-click spam
           applyThresholdBtn.disabled = true;
           setTimeout(() => {
             status.classList.remove('show');
@@ -1252,6 +1165,7 @@
           }, 1200);
         });
 
+        // If the user changes the number again, hide the old "Applied" hint
         silenceDbInput.addEventListener('input', () => {
           const status = document.getElementById('applyStatus');
           status.classList.remove('show');
@@ -1274,10 +1188,8 @@
               <p><strong>6)</strong> When automatically sorting by scale order, if there are scale gaps found, select between either synthesizing (pitch shift) the missing note samples in the scale from other available notes or just replacing them with placeholder silent files.</p>
               <p><strong>7)</strong> If not automatically sorting files by scale order, you can drag-and-drop the items in the list into the scale note order you want. This can be useful for loops/stems or non-pitched percussion instruments.</p>
               <p><strong>8)</strong> <em>Optional:</em> Enable <strong>Trim leading silence</strong> and set a <strong>Silence threshold (dB)</strong> to remove silence at the start of each file. Smaller dB values are more sensitive (e.g., -40 to -50 dB is typical). Click <strong>Apply</strong> to apply the update the silence trimming to all the samples.</p>
-              <p><strong>9)</strong> Use the ▶︎ buttons to audition imports with the current volume scale and trimming settings.</p>
-              <p><strong>10)</strong> <em>Optional:</em> Enable <strong>Encode all exported files as mono .wav</strong> to force every exported file to mono .wav format, regardless of input type.</p>
-              <p>This applies to both normal export and silence-stripped files and may reduce the custom instrument size if the original samples were stereo .wav files.</p>
-              <p><strong>11)</strong> Click <strong>Export Custom ABC Transcription Tools Instrument</strong> to export the final custom instrument.</p>
+              <p><strong>9)</strong> Click the ▶︎ buttons next to any imported sample filename to audition it including the volume scale and, if <strong>Trim leading silence</strong> is enabled, any silence trimming applied.</p>
+              <p><strong>10)</strong> Click <strong>Export Custom ABC Transcription Tools Instrument</strong> to export the final custom instrument.</p>
               <p>The .zip file is saved to your browser’s default <strong>Downloads</strong> folder.</p>
               <hr>
               <h4>Additional Resources</h4>
