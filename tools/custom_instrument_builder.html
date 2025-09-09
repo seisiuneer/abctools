@@ -61,8 +61,10 @@
 
     h4 {
       font-size: 1.15em;                 
-      margin-bottom: .74em;              
+      margin-top: .75em;
+      margin-bottom: .47em;
       color: #000;
+      text-align: center;
     }
 
     p { font-size: 1.0em; }              
@@ -1189,7 +1191,13 @@
               <p><strong>9)</strong> Click the ▶︎ buttons next to any imported sample filename to audition it including the volume scale and, if <strong>Trim leading silence</strong> is enabled, any silence trimming applied.</p>
               <p><strong>10)</strong> Click <strong>Export Custom ABC Transcription Tools Instrument</strong> to export the final custom instrument.</p>
               <p>The .zip file is saved to your browser’s default <strong>Downloads</strong> folder.</p>
+              <hr>
+              <h4>Additional Resources</h4>
+              <p style="text-align:center;margin-top:12px;">User Guide Information on Custom Instrument Creation</p>
               <p style="text-align:center;margin-top:12px;"><a href="https://michaeleskin.com/abctools/userguide.html#creating_custom_midi_instruments" target="_blank">ABC Transcription Tools User Guide: Custom Instruments</a></p>
+              <p style="text-align:center;margin-top:12px;">UltraBox Utility for Extracting Samples from .sf2 Soundfonts</p>
+              <p style="text-align:center;margin-top:12px;"><a href="https://michaeleskin.com/tools/UltraBox/UltraBox_Sample_Extractor.html" target="_blank">UltraBox Sample Extractor</a></p>
+              <hr>
             </div>
           `;
           await DayPilot.Modal.alert(html, { theme: "modal_flat", top: 25, width: 760 });
