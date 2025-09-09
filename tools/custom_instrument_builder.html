@@ -28,9 +28,9 @@
     <link rel="icon" type="image/png" sizes="96x96" href="https://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
     <link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
 
-    <script type="text/javascript" src="jszip-min.js?v=5"></script>
-    <script type="text/javascript" src="filesaver-min.js?v=5"></script>
-    <script type="text/javascript" src="daypilot-modal.min-3.10.1.js?v=5"></script>
+    <script type="text/javascript" src="jszip-min.js?v=6"></script>
+    <script type="text/javascript" src="filesaver-min.js?v=6"></script>
+    <script type="text/javascript" src="daypilot-modal.min-3.10.1.js?v=6"></script>
     
     <style>
     body {
@@ -656,27 +656,66 @@
           return `${notes[noteIndex]}${octave}.${useExt}`;
         }
 
-        function buildContinuousRange(){
-          const matched=[], unmatched=[];
-          for (const f of files){
-            const p=parsePitchFromName(f.name);
-            if (p){
-              if (p.octave>8){
-                DayPilot.Modal.alert('<p style="text-align:center;font-size:1.1em;"><strong>Note Octave Out-of-Range Detected (Max is 8)</strong><br/><br/>Auto-sort and note range detect will be disabled.</p>', { theme:"modal_flat", top:200 });
-                gHasHashedNames=true; applyHashedModeUIState();
-                setTimeout(()=>{ files=[...originalFiles]; safeRenderList(); },250);
-                return { full:[], unmatched: files.slice() };
-              }
-              matched.push({ file:f, pitchIndex:p.pitchIndex, ext:f.name.split('.').pop() });
-            } else { unmatched.push(f); }
-          }
-          if (!matched.length) return { full:[], unmatched };
-          matched.sort((a,b)=>a.pitchIndex-b.pitchIndex);
-          const minPI=matched[0].pitchIndex, maxPI=matched[matched.length-1].pitchIndex;
-          const pitchMap=new Map(); for (const m of matched) if(!pitchMap.has(m.pitchIndex)) pitchMap.set(m.pitchIndex,m);
-          const full=[]; for (let pi=minPI; pi<=maxPI; pi++){ const m=pitchMap.get(pi)||null; full.push({ file:m?m.file:null, pitchIndex:pi, ext:m?m.ext:"wav" }); }
-          return { full, unmatched };
-        }
+		function buildContinuousRange(){
+		  const matched = [], unmatched = [];
+		  const seen = new Set();
+		  let hasDuplicatePitch = false;
+
+		  for (const f of files){
+		    const p = parsePitchFromName(f.name);
+		    if (p){
+		      // Abort if any octave is out of supported range (kept behavior)
+		      if (p.octave > 8){
+		        DayPilot.Modal.alert(
+		          '<p style="text-align:center;font-size:1.1em;"><strong>Note Octave Out-of-Range Detected (Max is 8)</strong><br/><br/>Auto-sort and note range detect will be disabled.</p>',
+		          { theme:"modal_flat", top:200 }
+		        );
+		        applyHashedModeUIState();  // disables auto-sort + toggles UI
+		        setTimeout(()=>{ files=[...originalFiles]; safeRenderList(); }, 250);
+		        return { full:[], unmatched: files.slice() };
+		      }
+
+		      // Detect duplicates by pitchIndex (e.g., D4.wav and D4a.wav)
+		      if (seen.has(p.pitchIndex)) {
+		        hasDuplicatePitch = true;
+		      } else {
+		        seen.add(p.pitchIndex);
+		      }
+
+		      matched.push({ file:f, pitchIndex:p.pitchIndex, ext:f.name.split('.').pop() });
+		    } else {
+		      unmatched.push(f);
+		    }
+		  }
+
+		  // Abort automatic range detect if duplicates found
+		  if (hasDuplicatePitch) {
+		    DayPilot.Modal.alert(
+		      '<p style="text-align:center;font-size:1.1em;"><strong>Duplicate Pitch Detected</strong><br/><br/>Two or more files map to the same pitch.<br/><br/>Auto-sort and note range detect have been disabled.<br/><br/>Please try loading the files again without the duplicate pitch files<br/>or arrange the files manually.</p>',
+		      { theme:"modal_flat", top:200 }
+		    );
+		    applyHashedModeUIState();  // disables auto-sort + toggles UI (gapOptions hidden, drag message shown)
+		    setTimeout(()=>{ files=[...originalFiles]; safeRenderList(); }, 250);
+		    return { full:[], unmatched: files.slice() };
+		  }
+
+		  if (!matched.length) return { full:[], unmatched };
+
+		  matched.sort((a,b)=>a.pitchIndex-b.pitchIndex);
+		  const minPI = matched[0].pitchIndex, maxPI = matched[matched.length-1].pitchIndex;
+
+		  // Build a continuous range map (no duplicates at this point)
+		  const pitchMap = new Map();
+		  for (const m of matched) pitchMap.set(m.pitchIndex, m);
+
+		  const full = [];
+		  for (let pi = minPI; pi <= maxPI; pi++){
+		    const m = pitchMap.get(pi) || null;
+		    full.push({ file: m ? m.file : null, pitchIndex: pi, ext: m ? m.ext : "wav" });
+		  }
+
+		  return { full, unmatched };
+		}
 
         /* ====== Device-independent decode (single OfflineAudioContext) ====== */
         let gDecodeOffline = null;
