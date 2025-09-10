@@ -18949,8 +18949,16 @@ function CreateSynth(theABC) {
       var error = [];
       for (var i = 0; i < response.length; i++) {
         var oneResponse = response[i];
-        var which = oneResponse.instrument + ":" + oneResponse.name;
-        if (oneResponse.status === "loaded") loaded.push(which);else if (oneResponse.status === "pending") pending.push(which);else if (oneResponse.status === "cached") cached.push(which);else error.push(which + ' ' + oneResponse.message);
+
+        // MAE 10 Sep 2025 - Odd thing that only seems to happen on Firefox
+        if (!oneResponse){
+          //console.log("oneResponse undefined!");
+          error.push(which + ' ' + "undefined");
+        }
+        else{
+          var which = oneResponse.instrument + ":" + oneResponse.name;
+          if (oneResponse.status === "loaded") loaded.push(which);else if (oneResponse.status === "pending") pending.push(which);else if (oneResponse.status === "cached") cached.push(which);else error.push(which + ' ' + oneResponse.message);
+        }
       }
       if (pending.length > 0) {
         if (self.debugCallback) self.debugCallback("pending " + JSON.stringify(pending));
