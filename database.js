@@ -412,85 +412,132 @@ function getSample_DB(url,callback) {
 }
 
 //
-// Delete all the databases
+// Robust IndexedDB deletion (Firefox/Chrome/Safari)
 //
-function delete_all_DB(){
 
-	//debugger;
-
-	// Delete legacy reverb impulses database
-	const DBDeleteRequest0 = window.indexedDB.deleteDatabase("reverb_impulses");
-
-	DBDeleteRequest0.onerror = (event) => {
-	  console.log("Error deleting reverb_impulses database.");
-	};
-
-	DBDeleteRequest0.onsuccess = (event) => {
-	  console.log("reverb_impulses database deleted successfully");
-	};
-
-	// Close any open databases, then delete them
-
-	if (gImpulseDB){
-		
-		gImpulseDB.close();
-
-		setTimeout(function(){
-
-			const DBDeleteRequest1 = window.indexedDB.deleteDatabase("reverb_impulses_all");
-
-			DBDeleteRequest1.onerror = (event) => {
-			  console.log("Error deleting reverb_impulses_all database.");
-			};
-
-			DBDeleteRequest1.onsuccess = (event) => {
-			  console.log("reverb_impulses_all database deleted successfully");
-			};
-
-		},1000);
-
-	}
-
-	if (gTuneDB){
-
-		gTuneDB.close();
-
-		setTimeout(function(){
-
-			const DBDeleteRequest2 = window.indexedDB.deleteDatabase("tune_search_database");
-
-			DBDeleteRequest2.onerror = (event) => {
-			  console.log("Error deleting tune_search_database database.");
-			};
-
-			DBDeleteRequest2.onsuccess = (event) => {
-			  console.log("tune_search_database database deleted successfully");
-			};
-
-		},1000);
-	}
-
-	if (gSamplesDB){
-
-		gSamplesDB.close();
-
-		setTimeout(function(){
-
-			const DBDeleteRequest3 = window.indexedDB.deleteDatabase("samples");
-
-			DBDeleteRequest3.onerror = (event) => {
-			  console.log("Error deleting samples database.");
-			};
-
-			DBDeleteRequest3.onsuccess = (event) => {
-			  console.log("samples database deleted successfully");
-			};
-
-		},1000);
-	}
-
-
-
-
+/**
+ * Safely closes an IDBDatabase handle and nulls your global.
+ */
+function safeCloseDB(refName) {
+  try {
+    if (window[refName] && typeof window[refName].close === "function") {
+      window[refName].close();
+    }
+  } catch (e) {
+    console.warn(`safeCloseDB(${refName}) close error:`, e);
+  } finally {
+    // Null the global so no further ops use a stale handle
+    try { window[refName] = null; } catch(_) {}
+  }
 }
+
+/**
+ * Small delay helper (avoids Safari/WebKit races after close()).
+ */
+function wait(ms) {
+  return new Promise(res => setTimeout(res, ms));
+}
+
+/**
+ * Delete an IndexedDB database by name with robust event handling.
+ * Resolves to { ok: boolean, name: string, reason?: string }
+ */
+function deleteDB(name, timeoutMs = 5000) {
+  return new Promise((resolve) => {
+    let finished = false;
+
+    // Some older Safari versions throw if name is not a string
+    if (typeof name !== "string" || !name) {
+      return resolve({ ok: false, name, reason: "invalid_name" });
+    }
+
+    let timer = setTimeout(() => {
+      if (!finished) {
+        finished = true;
+        console.warn(`deleteDatabase("${name}") timed out after ${timeoutMs}ms`);
+        resolve({ ok: false, name, reason: "timeout" });
+      }
+    }, timeoutMs);
+
+    let req;
+    try {
+      req = window.indexedDB.deleteDatabase(name);
+    } catch (e) {
+      clearTimeout(timer);
+      return resolve({ ok: false, name, reason: `exception: ${e && e.message}` });
+    }
+
+    req.addEventListener("success", () => {
+      if (finished) return;
+      finished = true;
+      clearTimeout(timer);
+      // Note: success can fire even if db didn't exist; that's fine.
+      console.log(`${name} database deleted (or did not exist).`);
+      resolve({ ok: true, name });
+    });
+
+    req.addEventListener("error", (ev) => {
+      if (finished) return;
+      finished = true;
+      clearTimeout(timer);
+      const err = (ev && ev.target && ev.target.error) ? ev.target.error.message : "unknown_error";
+      console.error(`Error deleting ${name} database:`, err);
+      resolve({ ok: false, name, reason: err });
+    });
+
+    req.addEventListener("blocked", () => {
+      // Another tab or a still-open connection is blocking. We can't force-close other tabs.
+      // Surfacing this helps diagnose Safari/Firefox “blocked” situations.
+      console.warn(`Delete for "${name}" is blocked. Close other tabs or reload.`);
+      // Don't resolve here; final outcome will still arrive via success/error/timeout.
+    });
+  });
+}
+
+/**
+ * Delete all your app databases, with safe close + staggered deletes to
+ * minimize 'blocked' in Firefox/Safari.
+ *
+ * Returns a summary object with per-DB results.
+ */
+async function delete_all_DB() {
+  // 1) Close any known open handles first (do this synchronously)
+  safeCloseDB("gImpulseDB");
+  safeCloseDB("gTuneDB");
+  safeCloseDB("gSamplesDB");
+
+  // 2) Give the UA a moment to actually tear down connections.
+  //    Safari/WebKit particularly benefits from a small wait.
+  await wait(250);
+
+  // 3) Delete databases. Stagger deletes slightly to reduce contention.
+  const results = {};
+
+  // Legacy impulses
+  results.reverb_impulses = await deleteDB("reverb_impulses");
+
+  // Small stagger can help Safari avoid "blocked"
+  await wait(150);
+  results.reverb_impulses_all = await deleteDB("reverb_impulses_all");
+
+  await wait(150);
+  results.tune_search_database = await deleteDB("tune_search_database");
+
+  await wait(150);
+  results.samples = await deleteDB("samples");
+
+  // Optional: if you support IDBFactory.databases(), you could verify deletion.
+  // Not supported in all Safari versions, so skip by default.
+
+  // 4) Log a concise summary
+  const summary = Object.values(results).map(r => {
+    const status = r.ok ? "OK" : `FAIL (${r.reason || "unknown"})`;
+    return `${r.name}: ${status}`;
+  }).join(" | ");
+
+  console.log("IndexedDB deletion summary:", summary);
+
+  return results;
+}
+
 
