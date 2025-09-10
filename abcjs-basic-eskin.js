@@ -18953,7 +18953,7 @@ function CreateSynth(theABC) {
         // MAE 10 Sep 2025 - Odd thing that only seems to happen on Firefox
         if (!oneResponse){
           //console.log("oneResponse undefined!");
-          error.push(which + ' ' + "undefined");
+          error.push("response index "+i+" was undefined");
         }
         else{
           var which = oneResponse.instrument + ":" + oneResponse.name;
