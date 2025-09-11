@@ -3,14 +3,12 @@
 //
 
 /**
- * Persistent storage for custom instrument .zip files by slot.
- * - Store: one record per slot index [0..7]
- * - Each record: { slot, name, blob, type, lastModified }
+ * Persistent storage for custom instrument zips by slot (NO File usage).
+ * Each record: { slot, name, zipBytes }  // zipBytes is an ArrayBuffer
  */
-// ===== CustomInstrumentsDB helper (NEW) =====
 const CustomInstrumentsDB = (function () {
-  const DB_NAME = "ABCToolsCustomInstruments";
-  const DB_VERSION = 1;
+  const DB_NAME = "ABCToolsCustomInstruments2";
+  const DB_VERSION = 2; // bump since schema changed
   const STORE = "instruments";
 
   function openDB() {
@@ -23,7 +21,9 @@ const CustomInstrumentsDB = (function () {
       const req = indexedDB.open(DB_NAME, DB_VERSION);
       req.onupgradeneeded = () => {
         const db = req.result;
-        if (!db.objectStoreNames.contains(STORE)) {
+        if (db.objectStoreNames.contains(STORE)) {
+          // existing store ok
+        } else {
           db.createObjectStore(STORE, { keyPath: "slot" });
         }
       };
@@ -39,7 +39,7 @@ const CustomInstrumentsDB = (function () {
       const tx = db.transaction(STORE, mode);
       const store = tx.objectStore(STORE);
       try {
-        fn(store); // your requests go here
+        fn(store);
       } catch (err) {
         reject(err);
         return;
@@ -50,7 +50,6 @@ const CustomInstrumentsDB = (function () {
     });
   }
 
-  // Ensure the DB/store exist and "touch" them so DevTools shows them on first run
   async function init() {
     await withStore("readwrite", (store) => {
       const key = -1;
@@ -59,22 +58,19 @@ const CustomInstrumentsDB = (function () {
     }).catch((e) => console.warn("CustomInstrumentsDB.init failed:", e));
   }
 
-  // Firefox-safe: store Blobs (not File) to avoid structured-clone edge cases
-  async function saveSlots(filesBySlot) {
-    if (!filesBySlot) return;
+  // Save descriptors (Array<ZipDescriptor|null> length 8)
+  async function saveSlots(descsBySlot) {
+    if (!descsBySlot) return;
 
-    // Build records first (outside the transaction)
+    // Build records outside the transaction
     const records = [];
     for (let slot = 0; slot < 8; slot++) {
-      const f = filesBySlot[slot];
-      if (f instanceof File) {
-        const blob = f.slice(0, f.size, f.type || "application/zip");
+      const d = descsBySlot[slot];
+      if (isZipDescriptor(d)) {
         records.push({
           slot,
-          name: f.name,
-          type: f.type || "application/zip",
-          lastModified: f.lastModified || Date.now(),
-          blob
+          name: d.name,
+          zipBytes: d.zipBytes  // ArrayBuffer persisted directly
         });
       }
     }
@@ -94,7 +90,7 @@ const CustomInstrumentsDB = (function () {
     });
   }
 
-  // Load mapping -> Array<File|null> length 8
+  // Load mapping -> Array<ZipDescriptor|null> length 8
   async function loadSlots() {
     const out = Array(8).fill(null);
     await withStore("readonly", (store) => {
@@ -103,14 +99,11 @@ const CustomInstrumentsDB = (function () {
         const rows = req.result || [];
         for (const r of rows) {
           try {
-            // Rebuild a File from the stored Blob
-            const f = new File([r.blob], r.name || "instrument.zip", {
-              type: r.type || "application/zip",
-              lastModified: r.lastModified || Date.now(),
-            });
-            if (r.slot >= 0 && r.slot < 8) out[r.slot] = f;
+            if (r.slot >= 0 && r.slot < 8 && r.zipBytes) {
+              out[r.slot] = { name: r.name || "instrument.zip", zipBytes: r.zipBytes };
+            }
           } catch (err) {
-            console.warn("Failed to reconstruct File from DB row:", err);
+            console.warn("Failed to reconstruct descriptor from DB row:", err);
           }
         }
       };
@@ -659,9 +652,8 @@ async function delete_all_DB() {
 
   if (USE_CUSTOM_INSTRUMENT_DB){
 	  await wait(150);
-	  results.ABCToolsCustomInstruments = await deleteDB("ABCToolsCustomInstruments");
+	  results.ABCToolsCustomInstruments2 = await deleteDB("ABCToolsCustomInstruments2");
   }
-
 
   // Optional: if you support IDBFactory.databases(), you could verify deletion.
   // Not supported in all Safari versions, so skip by default.

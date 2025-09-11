@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "2765_091025_1700";
+var gVersionNumber = "2766_091125_1230";
 
 var gMIDIInitStillWaiting = false;
 
@@ -47289,14 +47289,34 @@ function launchCustomInstrumentBuilder(){
 
 // ===== processCustomInstruments =====
 
-// Detect Firefox and disable instrument DB there
+// Detect Firefox and disable instrument DB there (keep your existing logic)
 const IS_FIREFOX = (typeof InstallTrigger !== "undefined") ||
                    (typeof navigator !== "undefined" && /firefox/i.test(navigator.userAgent));
-const USE_CUSTOM_INSTRUMENT_DB = !IS_FIREFOX; // DB on Chrome/Safari/Edge, OFF on Firefox
+//const USE_CUSTOM_INSTRUMENT_DB = !IS_FIREFOX;
 
+// Enable custom database use on all platforms
+const USE_CUSTOM_INSTRUMENT_DB = true;
 
-var gCustomInstrumentSlots = [null, null, null, null, null, null, null, null]; // will store File|null after closing
-var gCustomInstrumentState = null;
+// A descriptor that is kept in memory and DB (never a File)
+/// { name: string, zipBytes: ArrayBuffer }
+function isZipDescriptor(x){
+  return !!x && typeof x.name === "string" && x.zipBytes instanceof ArrayBuffer;
+}
+
+// Immediately convert an imported File -> descriptor and drop the File
+async function fileToZipDescriptor(file){
+  const ab = await file.arrayBuffer();
+  return { name: file.name, zipBytes: ab };
+}
+
+// For labels
+function displayZipName(desc){
+  return (desc && desc.name) ? desc.name.replace(/\.zip$/i, "") : "";
+}
+
+// Global slots now hold descriptors (or null)
+var gCustomInstrumentSlots = [null, null, null, null, null, null, null, null]; // (ZipDescriptor|null)
+var gCustomInstrumentState = null; // { slots: (ZipDescriptor|null)[], pool: ZipDescriptor[], selectedPoolIndex: number|null }
 
 function processCustomInstruments(suppressStatus /* boolean */){
 
@@ -47353,6 +47373,7 @@ function processCustomInstruments(suppressStatus /* boolean */){
 
     if (entry) {
       totalFiles++;
+      // entry is a descriptor, not a File
       doCustomInstrumentImport(entry, index, function () { next(); });
     } else {
       gCustomInstrumentSamples[index] = [];
@@ -47364,22 +47385,18 @@ function processCustomInstruments(suppressStatus /* boolean */){
   next();
 }
 
-
-// ===== manageCustomInstrumentSlots (Firefox: DB disabled) =====
+// ===== manageCustomInstrumentSlots (no File usage after import) =====
 async function manageCustomInstrumentSlots(files){
 
-  // Prevent any render after the modal is closed (Firefox can deliver late events)
   let isClosed = false;
 
-  // Normalize any item into { file: File, name: string }
-  function asObj(file) { return { file, name: file.name }; }
-  // Display helper (strip .zip for labels/chips)
-  function displayName(entry) { return (entry && entry.name) ? entry.name.replace(/\.zip$/i, "") : ""; }
-
+  // Convert only .zip Files to descriptors immediately and drop File refs
   const incomingFiles = Array.from(files || []);
   const zipFiles = incomingFiles.filter(f => f && f.name && f.name.toLowerCase().endsWith(".zip"));
+  const poolDescriptors = await Promise.all(zipFiles.map(fileToZipDescriptor));
 
-  const initialSlots = gCustomInstrumentSlots;
+  // Initial slots: keep previous descriptors as-is
+  const initialSlots = gCustomInstrumentSlots; // (ZipDescriptor|null)[]
 
   const UID = "slotdlg_" + Math.random().toString(36).slice(2);
   const containerId = UID + "-root";
@@ -47390,18 +47407,15 @@ async function manageCustomInstrumentSlots(files){
     `<div id="${containerId}"></div>`,
     { top: 50, width:780, theme:"modal_flat", okText: "Done", scrollWithPage: AllowDialogsToScroll() }
   ).then(async function(){
-    // Mark closed before any rendering/persistence to block late renders
     isClosed = true;
 
     if (gCustomInstrumentState && gCustomInstrumentState.slots) {
-      gCustomInstrumentSlots = gCustomInstrumentState.slots.map(v => v ? v.file : null);
+      // Persist plain descriptors (no Files)
+      gCustomInstrumentSlots = gCustomInstrumentState.slots.map(v => v ? { name: v.name, zipBytes: v.zipBytes } : null);
 
-      // Skip instrument DB on Firefox
       if (USE_CUSTOM_INSTRUMENT_DB && typeof CustomInstrumentsDB !== "undefined" && CustomInstrumentsDB.saveSlots) {
         try { await CustomInstrumentsDB.saveSlots(gCustomInstrumentSlots); }
         catch (e) { console.warn("Failed to persist custom instruments:", e); }
-      } else {
-        //console.info("Custom instrument persistence is disabled on Firefox.");
       }
 
       processCustomInstruments(/* suppressStatus */ false);
@@ -47416,58 +47430,42 @@ async function manageCustomInstrumentSlots(files){
     return null;
   }
 
-  // --- Build state ---
+  // --- Build state with descriptors only ---
   const normSlots = Array.from({ length: 8 }, (_, i) => {
     const v = initialSlots[i] ?? null;
-    return (v instanceof File) ? asObj(v) : null;
+    return isZipDescriptor(v) ? v : null;
   });
 
   const occupiedNames = new Set(normSlots.filter(Boolean).map(o => o.name));
-  const poolObjs = zipFiles.map(asObj).filter(o => !occupiedNames.has(o.name));
+  const poolObjs = poolDescriptors.filter(o => !occupiedNames.has(o.name));
 
   gCustomInstrumentState = {
-    slots: normSlots,          // [{file,name}] | null
-    pool: poolObjs,            // [{file,name}]
+    slots: normSlots,          // (ZipDescriptor|null)[]
+    pool: poolObjs,            // ZipDescriptor[]
     selectedPoolIndex: null
   };
 
-  // --- Styles ---
+  // --- Styles (unchanged) ---
   const style = document.createElement("style");
   style.textContent = `
-    #${UID}-wrap {
-      position: relative;
-      font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      max-width: 720px;
-      width: min(720px, 92vw);
-      margin: 0 auto;
-      box-sizing: border-box;
-    }
-    #${UID}-grid {
-      display: grid;
-      gap: 8px;
-      grid-template-columns: repeat(4, 1fr);
-      margin-bottom:24px;
-    }
+    #${UID}-wrap { position: relative; font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      max-width: 720px; width: min(720px, 92vw); margin: 0 auto; box-sizing: border-box; }
+    #${UID}-grid { display: grid; gap: 8px; grid-template-columns: repeat(4, 1fr); margin-bottom:24px; }
     @media (max-width: 520px) { #${UID}-grid { grid-template-columns: repeat(2, 1fr); } }
-    .${UID}-slot {
-      border: 1px solid #ccc; border-radius: 10px; padding: 10px; min-height: 40px;
+    .${UID}-slot { border: 1px solid #ccc; border-radius: 10px; padding: 10px; min-height: 40px;
       display:flex; align-items:center; justify-content:center; text-align:center; position:relative; background:#fff;
-      user-select: none; min-width: 0;
-    }
+      user-select: none; min-width: 0; }
     .${UID}-slot[data-has="false"] { color:#666; background:#fafafa; }
     .${UID}-slot[data-has="true"]  { font-weight: 600; }
     .${UID}-slot.dragover { outline: 2px dashed #888; outline-offset: 2px; }
-    .${UID}-label {
-      display: block; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;font-size:11pt;
-    }
-    .${UID}-chip {
-      border:1px solid #bbb; border-radius: 999px; padding:8px 14px; margin:6px; display:inline-flex; align-items:center;
-      cursor:grab; user-select:none; background:#fff; font-size:12px;
-      max-width: 320px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0;
-    }
+    .${UID}-label { display: block; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;font-size:11pt; }
+    .${UID}-chip { border:1px solid #bbb; border-radius: 999px; padding:8px 14px; margin:6px; display:inline-flex; align-items:center;
+      cursor:grab; user-select:none; background:#fff; font-size:12px; max-width: 320px; overflow: hidden; text-overflow: ellipsis;
+      white-space: nowrap; min-width: 0; }
     .${UID}-chip.selected { outline: 2px solid #007aff; }
     .${UID}-chip:active { cursor:grabbing; }
-    #${UID}-buttons { display:flex; align-items:center; justify-content:flex-start; gap:12px; margin-top:12px; max-width:100%; padding-right:4px; box-sizing:border-box; flex-wrap: wrap; }
+    #${UID}-buttons { display:flex; align-items:center; justify-content:flex-start; gap:12px; margin-top:12px; max-width:100%;
+      padding-right:4px; box-sizing:border-box; flex-wrap: wrap; }
     .${UID}-btn { padding:8px 14px; min-width:80px; border-radius:10px; border:1px solid #ccc; background:#fff; cursor:pointer; font-size:13px; }
     .${UID}-btn.primary { background:#007aff; border-color:#007aff; color:#fff; }
     .${UID}-btn.danger  { background:#ffdbdb; border-color:#9c0d0d; color:#9c0d0d; width:120px;}
@@ -47482,18 +47480,11 @@ async function manageCustomInstrumentSlots(files){
     .${UID}-doclink { position:absolute; top:-6px; left:0px; font-size:24pt; }
     .${UID}-doclink a { text-decoration:none; color:inherit; }
     .${UID}-doclink a:hover { color:#007aff; }
-    .${UID}-chklabel {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 16px;
-      color: #333;
-      user-select: none;
-    }
+    .${UID}-chklabel { display: inline-flex; align-items: center; gap: 6px; font-size: 16px; color: #333; user-select: none; }
   `;
   host.appendChild(style);
 
-  // --- Structure ---
+  // --- Structure (unchanged except display helpers) ---
   const wrap = el("div", { id: `${UID}-wrap` }, host);
 
   const docLinkSpan = el("span", { class: `${UID}-doclink` }, wrap);
@@ -47521,16 +47512,14 @@ async function manageCustomInstrumentSlots(files){
     const removeX = el("span", { class: `${UID}-remove`, text: "×", attrs: { title: "Remove from this slot" } }, slotEl);
     const label = el("span", {
       class: `${UID}-label`,
-      text: gCustomInstrumentState.slots[i] ? displayName(gCustomInstrumentState.slots[i]) : `Available`,
+      text: gCustomInstrumentState.slots[i] ? displayZipName(gCustomInstrumentState.slots[i]) : `Available`,
       attrs: { title: gCustomInstrumentState.slots[i] ? gCustomInstrumentState.slots[i].name : `Available` }
     }, slotEl);
 
-    // click-to-assign
     slotEl.addEventListener("click", () => {
       if (gCustomInstrumentState.selectedPoolIndex != null) assignPoolToSlot(gCustomInstrumentState.selectedPoolIndex, i);
     });
 
-    // remove
     removeX.addEventListener("click", (e) => {
       e.stopPropagation();
       removeFromSlot(i);
@@ -47570,12 +47559,10 @@ async function manageCustomInstrumentSlots(files){
   const poolList = el("div", { id: `${UID}-poolList` }, poolSection);
   el("div", { id: `${UID}-hint`,  text: "Drag-and-drop, or click a file then click an instrument slot." }, poolSection);
   el("div", { id: `${UID}-hint2`, text: "Click × on an instrument slot to return its file to the list." }, poolSection);
-
   if (USE_CUSTOM_INSTRUMENT_DB){
     el("div", { id: `${UID}-hint3`, text: "The custom instrument settings will be saved between sessions." }, poolSection);
-  }
-  else{
-    el("div", { id: `${UID}-hint3`, text: "Note: Firefox is unable to save custom instrument settings between sessions." }, poolSection);
+  } else {
+    el("div", { id: `${UID}-hint3`, text: "Note: This browser is unable to save custom instrument settings between sessions." }, poolSection);
   }
 
   poolList.addEventListener("dragover", (e) => e.preventDefault());
@@ -47586,7 +47573,7 @@ async function manageCustomInstrumentSlots(files){
       if (data.type === "slot") {
         const sIdx = data.index | 0;
         if (gCustomInstrumentState.slots[sIdx]) {
-          gCustomInstrumentState.pool.push(gCustomInstrumentState.slots[sIdx]); // push object (keeps File)
+          gCustomInstrumentState.pool.push(gCustomInstrumentState.slots[sIdx]);
           gCustomInstrumentState.slots[sIdx] = null;
           gCustomInstrumentState.selectedPoolIndex = null;
           renderSlots(); renderPool();
@@ -47605,24 +47592,20 @@ async function manageCustomInstrumentSlots(files){
     gCustomInstrumentState.selectedPoolIndex = null;
     renderSlots(); renderPool();
 
-    // Reflect in globals & DB immediately
+    // Reflect in globals & DB immediately (descriptors or null)
     gCustomInstrumentSlots = Array(8).fill(null);
 
-    // Skip DB clear on Firefox
     if (USE_CUSTOM_INSTRUMENT_DB && typeof CustomInstrumentsDB !== "undefined" && CustomInstrumentsDB.clearAll) {
       try { await CustomInstrumentsDB.clearAll(); }
       catch (e) { console.warn("Failed to clear instrument DB:", e); }
-    } else {
-      //console.info("Custom instrument persistence is disabled on Firefox (no DB clear).");
     }
   });
 
-  // --- Checkbox after the "Clear All" button ---
+  // Checkbox (unchanged)
   const chkLabel = el("label", { class: `${UID}-chklabel` }, buttons);
   const chkInput = el("input", { attrs: { type: "checkbox", id: `${UID}-keepChk` } }, chkLabel);
-  chkInput.checked = gCustomInstrumentShowStatus; // init from global
+  chkInput.checked = gCustomInstrumentShowStatus;
   el("span", { text: "Show custom instrument load status after clicking Done" }, chkLabel);
-
   chkInput.addEventListener("change", () => {
     gCustomInstrumentShowStatus = chkInput.checked;
     if (typeof gLocalStorageAvailable !== "undefined" && gLocalStorageAvailable){
@@ -47630,21 +47613,20 @@ async function manageCustomInstrumentSlots(files){
     }
   });
 
-  // Keyboard: Esc cancels (close with null; slots persist is handled by .then above)
   const onKey = (e) => { if (e.key === "Escape") DayPilot.Modal.close(null); };
   document.addEventListener("keydown", onKey, { once: true });
 
-  // --- Renderers (guarded against late calls after close) ---
+  // Renderers
   function renderSlots() {
     if (isClosed) return;
     for (let i = 0; i < 8; i++) {
       const slotEl = grid.querySelector(`[data-slot="${i}"]`);
-      if (!slotEl) return; // container removed
+      if (!slotEl) return;
       const has = !!gCustomInstrumentState.slots[i];
       const lbl = slotEl.querySelector(`.${UID}-label`);
       slotEl.dataset.has = has ? "true" : "false";
       if (has) {
-        lbl.textContent = displayName(gCustomInstrumentState.slots[i]);
+        lbl.textContent = displayZipName(gCustomInstrumentState.slots[i]);
         lbl.title = gCustomInstrumentState.slots[i].name;
       } else {
         const placeholder = `Available`;
@@ -47661,7 +47643,7 @@ async function manageCustomInstrumentSlots(files){
     gCustomInstrumentState.pool.forEach((item, idx) => {
       const chip = el("div", {
         class: `${UID}-chip` + (gCustomInstrumentState.selectedPoolIndex === idx ? " selected" : ""),
-        text: displayName(item),
+        text: displayZipName(item),
         attrs: { title: item.name }
       }, poolList);
       chip.draggable = true;
@@ -47675,14 +47657,14 @@ async function manageCustomInstrumentSlots(files){
     });
   }
 
-  // --- Moves ---
   function assignPoolToSlot(poolIdx, slotIdx) {
     if (poolIdx == null || !gCustomInstrumentState.pool[poolIdx]) return;
     if (gCustomInstrumentState.slots[slotIdx]) gCustomInstrumentState.pool.push(gCustomInstrumentState.slots[slotIdx]);
     gCustomInstrumentState.slots[slotIdx] = gCustomInstrumentState.pool[poolIdx];
     gCustomInstrumentState.pool.splice(poolIdx, 1);
     gCustomInstrumentState.selectedPoolIndex = null;
-    renderSlots(); renderPool();
+    renderSlots(); 
+    renderPool();
   }
 
   function removeFromSlot(slotIdx) {
@@ -47690,10 +47672,10 @@ async function manageCustomInstrumentSlots(files){
     gCustomInstrumentState.pool.push(gCustomInstrumentState.slots[slotIdx]);
     gCustomInstrumentState.slots[slotIdx] = null;
     gCustomInstrumentState.selectedPoolIndex = null;
-    renderSlots(); renderPool();
+    renderSlots(); 
+    renderPool();
   }
 
-  // Element helper
   function el(tag, opts = {}, parent) {
     const n = document.createElement(tag);
     if (opts.id) n.id = opts.id;
@@ -47704,23 +47686,18 @@ async function manageCustomInstrumentSlots(files){
     return n;
   }
 
-  // Initial paint
   renderSlots();
   renderPool();
 
-  // Wait for close and return result (DayPilot resolves with {result: ...})
   const resultObj = await alertPromise;
   return (resultObj && typeof resultObj === "object" && "result" in resultObj) ? resultObj.result : null;
 }
 
-
 //
 // Load a custom instrument bundle
 //
 //
-// Load a custom instrument bundle
-//
-// ===== doCustomInstrumentImport (NO signal, hardened) =====
+// ===== doCustomInstrumentImport (descriptor-based) =====
 async function doCustomInstrumentImport(entry, index, callback) {
 
   function done() {
@@ -47728,14 +47705,19 @@ async function doCustomInstrumentImport(entry, index, callback) {
   }
 
   try {
-    const file = entry && entry.file;
-    if (!file) return done();
+    // entry: { name, zipBytes }
+    if (!entry || !(entry.zipBytes instanceof ArrayBuffer)) return done();
 
     index = parseInt(index, 10);
     if (!Number.isFinite(index) || index < 1 || index > 8) return done();
 
     const zip = new JSZip();
-    const loadedZip = await zip.loadAsync(file); // throws if bad/corrupt
+    
+    //console.log("index "+index);
+    
+    const loadedZip = await zip.loadAsync(entry.zipBytes); // ArrayBuffer OK
+    
+    //console.log("after");
 
     // Prep slot
     gCustomInstrumentSamples[index] = [];
@@ -57990,32 +57972,39 @@ function DoStartup() {
 
   // ===== Startup: restore instruments from DB and suppress initial modal =====
   (async function initCustomInstrumentsFromDB() {
-    
+
     if (!USE_CUSTOM_INSTRUMENT_DB) {
-      //console.info("Skipping instrument DB init on Firefox.");
+      // Skipping instrument DB init (e.g., Firefox or persistence disabled).
       return;
     }
-    
+
     try {
       await CustomInstrumentsDB.init(); // ensure DB & store exist
 
-      const files = await CustomInstrumentsDB.loadSlots(); // [File|null] x 8
-      if (!files.some(Boolean)) return; // nothing stored yet
+      // Load descriptors: [{ name: string, zipBytes: ArrayBuffer } | null] x 8
+      const slots = await CustomInstrumentsDB.loadSlots();
 
-      // Restore globals
-      gCustomInstrumentSlots = files.slice();
+      // Nothing stored yet
+      if (!Array.isArray(slots) || !slots.some(Boolean)) return;
+
+      // Restore globals with descriptors only (no File objects)
+      gCustomInstrumentSlots = slots.map(d => d ? { name: d.name, zipBytes: d.zipBytes } : null);
+
       gCustomInstrumentState = {
-        slots: files.map((f) => (f ? { file: f, name: f.name } : null)),
+        // Use fresh objects to avoid accidental external mutation
+        slots: gCustomInstrumentSlots.map(d => d ? { name: d.name, zipBytes: d.zipBytes } : null),
         pool: [],
         selectedPoolIndex: null
       };
 
       // Process silently on startup
       processCustomInstruments(/* suppressStatus */ true);
+
     } catch (err) {
       console.warn("Custom instrument DB init failed:", err);
     }
   })();
+
 
   // Listen for online state changes
   window.addEventListener('online', doOnlineCheck);
