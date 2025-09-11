@@ -625,10 +625,6 @@ async function delete_all_DB() {
   safeCloseDB("gImpulseDB");
   safeCloseDB("gTuneDB");
   safeCloseDB("gSamplesDB");
-  
-  if (USE_CUSTOM_INSTRUMENT_DB){
-  	safeCloseDB("gCustomInstrumentsDB");
-  }
 
   // 2) Give the UA a moment to actually tear down connections.
   //    Safari/WebKit particularly benefits from a small wait.
