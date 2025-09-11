@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "2762_091025_1200";
+var gVersionNumber = "2765_091025_1700";
 
 var gMIDIInitStillWaiting = false;
 
@@ -47286,153 +47286,128 @@ function launchCustomInstrumentBuilder(){
 
 }
 
+
+// ===== processCustomInstruments =====
+
+// Detect Firefox and disable instrument DB there
+const IS_FIREFOX = (typeof InstallTrigger !== "undefined") ||
+                   (typeof navigator !== "undefined" && /firefox/i.test(navigator.userAgent));
+const USE_CUSTOM_INSTRUMENT_DB = !IS_FIREFOX; // DB on Chrome/Safari/Edge, OFF on Firefox
+
+
 var gCustomInstrumentSlots = [null, null, null, null, null, null, null, null]; // will store File|null after closing
 var gCustomInstrumentState = null;
 
-function processCustomInstruments(){
+function processCustomInstruments(suppressStatus /* boolean */){
 
-  //debugger;
-  
-  // Reset the default volume scale and fade arrays
+  // Reset defaults
   gCustomInstrumentVolumeScaleOriginal = [1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0];
-  gCustomInstrumentFadeOriginal = [100,100,100,100,100,100,100,100];
+  gCustomInstrumentFadeOriginal        = [100,100,100,100,100,100,100,100];
 
   var totalFiles = 0;
-
   let index = 0;
 
   function next() {
-
-    // stop when we’re done
     if (index >= gCustomInstrumentState.slots.length) {
 
       if (totalFiles == 0){
-
         var thePrompt = "No Custom Instruments Loaded";
-
-        // Center the string in the prompt
         thePrompt = makeCenteredPromptString(thePrompt);
-
         DayPilot.Modal.alert(thePrompt, {
           theme: "modal_flat",
           top: 300,
-          scrollWithPage: (AllowDialogsToScroll())      
+          scrollWithPage: (AllowDialogsToScroll())
         });
-
         return;
-
       }
 
-      if (gCustomInstrumentShowStatus){
-
-        var quant = "Instrument";
-        
-        if (totalFiles > 1){
-          quant = "Instruments";
-        }
-        
-        var modal_msg = '<p style="text-align:center;font-size:16pt;font-family:helvetica;margin-bottom:24px;margin-left:15px;">'+totalFiles+' Custom '+quant+' Loaded&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#custom_midi_instrument" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'
-          modal_msg += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">In the following, replace (n) with 1-8 for the custom instrument number.</p>';        
-          modal_msg += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">To play the custom instrument, add the following to your ABC tunes:</p>';
-          modal_msg += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica"><strong>%%MIDI program custom(n)</strong></p>';
-          modal_msg += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">Example:<br/>%%MIDI program custom1</p>';
-          modal_msg += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">Custom instruments have default volume scale and fade values built-in.</p>';
-          modal_msg += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">To make the instrument volume louder or softer than the default,<br/>add the following to your ABC tunes:</p>';
-          modal_msg += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica"><strong>%custom_instrument_(n)_volume_scale (scale_multiplier_float)</strong></p>';
-          modal_msg += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">Example:<br/>%custom_instrument_1_volume_scale 2.0</p>';
-          modal_msg += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">To change the note release fade time from the default,<br/>add the following to your ABC tunes:</p>';
-          modal_msg += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica"><strong>%custom_instrument_(n)_fade (fade_time_in_ms)</strong></p>';
-          modal_msg += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">Example:<br/>%custom_instrument_1_fade 1000</p>';
+      if (gCustomInstrumentShowStatus && !suppressStatus){
+        var quant = (totalFiles > 1) ? "Instruments" : "Instrument";
+        var modal_msg = '<p style="text-align:center;font-size:16pt;font-family:helvetica;margin-bottom:24px;margin-left:15px;">'
+          + totalFiles + ' Custom ' + quant + ' Loaded&nbsp;&nbsp;'
+          + '<span style="font-size:24pt;" title="View documentation in new tab">'
+          + '<a href="https://michaeleskin.com/abctools/userguide.html#custom_midi_instrument" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'
+          + '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">In the following, replace (n) with 1-8 for the custom instrument number.</p>'
+          + '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">To play the custom instrument, add the following to your ABC tunes:</p>'
+          + '<p style="font-size:12pt;line-height:18pt;font-family:helvetica"><strong>%%MIDI program custom(n)</strong></p>'
+          + '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">Example:<br/>%%MIDI program custom1</p>'
+          + '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">Custom instruments have default volume scale and fade values built-in.</p>'
+          + '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">To make the instrument volume louder or softer than the default,<br/>add the following to your ABC tunes:</p>'
+          + '<p style="font-size:12pt;line-height:18pt;font-family:helvetica"><strong>%custom_instrument_(n)_volume_scale (scale_multiplier_float)</strong></p>'
+          + '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">Example:<br/>%custom_instrument_1_volume_scale 2.0</p>'
+          + '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">To change the note release fade time from the default,<br/>add the following to your ABC tunes:</p>'
+          + '<p style="font-size:12pt;line-height:18pt;font-family:helvetica"><strong>%custom_instrument_(n)_fade (fade_time_in_ms)</strong></p>'
+          + '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">Example:<br/>%custom_instrument_1_fade 1000</p>';
 
         DayPilot.Modal.alert(modal_msg, {
           theme: "modal_flat",
           top: 50,
           scrollWithPage: (AllowDialogsToScroll())
         });
-
       }
-
       return;
-
     }
 
     const entry = gCustomInstrumentState.slots[index];
-
     index++;
 
     if (entry) {
-      
       totalFiles++;
-
-      // process this entry and wait for callback before continuing
-      doCustomInstrumentImport(entry, index, function () {
-        next();
-      });
-
+      doCustomInstrumentImport(entry, index, function () { next(); });
     } else {
-
-      // Clear the instrument cache for the missing instrument
       gCustomInstrumentSamples[index] = [];
       gSoundsCacheABCJS["custom"+index]= {};
-      
-      // skip null and immediately continue
       next();
-
     }
-
   }
 
-  // start the chain
   next();
 }
 
+
+// ===== manageCustomInstrumentSlots (Firefox: DB disabled) =====
 async function manageCustomInstrumentSlots(files){
 
+  // Prevent any render after the modal is closed (Firefox can deliver late events)
+  let isClosed = false;
+
   // Normalize any item into { file: File, name: string }
-  function asObj(file) {
-    return { file, name: file.name };
-  }
+  function asObj(file) { return { file, name: file.name }; }
   // Display helper (strip .zip for labels/chips)
-  function displayName(entry) {
-    return (entry && entry.name) ? entry.name.replace(/\.zip$/i, "") : "";
-  }
+  function displayName(entry) { return (entry && entry.name) ? entry.name.replace(/\.zip$/i, "") : ""; }
 
-  /**
-   * Present the 8-slot assignment dialog inside DayPilot.Modal.alert(),
-   * while building EVERYTHING with the DOM API (no HTML-string templating).
-   *
-   * @param {Array<File|null>} initialSlots - 8 entries; null = empty
-   * @param {Array<File>} incoming - File objects (.zip only)
-   * @returns {Promise<Array<File|null> | null>}
-   */
-
-  // Files (e.g. from <input type="file">)
   const incomingFiles = Array.from(files || []);
+  const zipFiles = incomingFiles.filter(f => f && f.name && f.name.toLowerCase().endsWith(".zip"));
 
-  // Keep only .zip files, case-insensitive
-  const zipFiles = incomingFiles.filter(file => file && file.name && file.name.toLowerCase().endsWith(".zip"));
-
-  // Setup the initial slots from the global (may contain File|null or previously stored)
   const initialSlots = gCustomInstrumentSlots;
 
   const UID = "slotdlg_" + Math.random().toString(36).slice(2);
   const containerId = UID + "-root";
 
-  // Open shell via DayPilot.Modal.alert()
   const modal = (window.DayPilot && DayPilot.Modal && DayPilot.Modal.alert) ? DayPilot.Modal : DayPilot;
 
   const alertPromise = modal.alert(
     `<div id="${containerId}"></div>`,
     { top: 50, width:780, theme:"modal_flat", okText: "Done", scrollWithPage: AllowDialogsToScroll() }
-  ).then(function(){
-    // Persist final mapping as File|null (not the internal objects)
+  ).then(async function(){
+    // Mark closed before any rendering/persistence to block late renders
+    isClosed = true;
+
     if (gCustomInstrumentState && gCustomInstrumentState.slots) {
       gCustomInstrumentSlots = gCustomInstrumentState.slots.map(v => v ? v.file : null);
-      processCustomInstruments();
+
+      // Skip instrument DB on Firefox
+      if (USE_CUSTOM_INSTRUMENT_DB && typeof CustomInstrumentsDB !== "undefined" && CustomInstrumentsDB.saveSlots) {
+        try { await CustomInstrumentsDB.saveSlots(gCustomInstrumentSlots); }
+        catch (e) { console.warn("Failed to persist custom instruments:", e); }
+      } else {
+        //console.info("Custom instrument persistence is disabled on Firefox.");
+      }
+
+      processCustomInstruments(/* suppressStatus */ false);
     }
   });
 
-  // Let modal render
   await new Promise(requestAnimationFrame);
 
   const host = document.getElementById(containerId);
@@ -47499,6 +47474,7 @@ async function manageCustomInstrumentSlots(files){
     @media (hover:hover){ .${UID}-btn.danger:hover{ background:#D0B0B0; } }
     #${UID}-hint {margin-top:24px;margin-bottom:18px;}
     #${UID}-hint2 {margin-top:18px;margin-bottom:36px;}
+    #${UID}-hint3 {margin-top:18px;margin-bottom:36px;}
     .${UID}-remove { position:absolute; top:4px; right:6px; color:#888; cursor:pointer; font-size:14px; line-height:1; user-select:none; }
     .${UID}-remove:hover { color:#e02424; }
     #${UID}-title{ text-align:center; font-size:18pt; font-family:helvetica; margin-bottom:36px; }
@@ -47520,7 +47496,6 @@ async function manageCustomInstrumentSlots(files){
   // --- Structure ---
   const wrap = el("div", { id: `${UID}-wrap` }, host);
 
-  // Doc link
   const docLinkSpan = el("span", { class: `${UID}-doclink` }, wrap);
   el("a", {
     text: "?",
@@ -47531,7 +47506,7 @@ async function manageCustomInstrumentSlots(files){
     }
   }, docLinkSpan);
 
-  const title = el("div", { id: `${UID}-title`, text: "Assign Files to Custom Instruments" }, wrap);
+  el("div", { id: `${UID}-title`, text: "Assign Files to Custom Instruments" }, wrap);
 
   const sections = el("div", { id: `${UID}-sections` }, wrap);
 
@@ -47596,6 +47571,13 @@ async function manageCustomInstrumentSlots(files){
   el("div", { id: `${UID}-hint`,  text: "Drag-and-drop, or click a file then click an instrument slot." }, poolSection);
   el("div", { id: `${UID}-hint2`, text: "Click × on an instrument slot to return its file to the list." }, poolSection);
 
+  if (USE_CUSTOM_INSTRUMENT_DB){
+    el("div", { id: `${UID}-hint3`, text: "The custom instrument settings will be saved between sessions." }, poolSection);
+  }
+  else{
+    el("div", { id: `${UID}-hint3`, text: "Note: Firefox is unable to save custom instrument settings between sessions." }, poolSection);
+  }
+
   poolList.addEventListener("dragover", (e) => e.preventDefault());
   poolList.addEventListener("drop", (e) => {
     e.preventDefault();
@@ -47617,23 +47599,33 @@ async function manageCustomInstrumentSlots(files){
   const buttons = el("div", { id: `${UID}-buttons` }, wrap);
   const btnClear  = el("button", { class: `${UID}-btn danger`,  text: "Clear All" }, buttons);
 
-  btnClear.addEventListener("click", () => {
+  btnClear.addEventListener("click", async () => {
     gCustomInstrumentState.slots.forEach(v => { if (v) gCustomInstrumentState.pool.push(v); });
     for (let i = 0; i < 8; i++) gCustomInstrumentState.slots[i] = null;
     gCustomInstrumentState.selectedPoolIndex = null;
     renderSlots(); renderPool();
+
+    // Reflect in globals & DB immediately
+    gCustomInstrumentSlots = Array(8).fill(null);
+
+    // Skip DB clear on Firefox
+    if (USE_CUSTOM_INSTRUMENT_DB && typeof CustomInstrumentsDB !== "undefined" && CustomInstrumentsDB.clearAll) {
+      try { await CustomInstrumentsDB.clearAll(); }
+      catch (e) { console.warn("Failed to clear instrument DB:", e); }
+    } else {
+      //console.info("Custom instrument persistence is disabled on Firefox (no DB clear).");
+    }
   });
 
-  // --- NEW: checkbox after the "Clear All" button ---
+  // --- Checkbox after the "Clear All" button ---
   const chkLabel = el("label", { class: `${UID}-chklabel` }, buttons);
   const chkInput = el("input", { attrs: { type: "checkbox", id: `${UID}-keepChk` } }, chkLabel);
   chkInput.checked = gCustomInstrumentShowStatus; // init from global
   el("span", { text: "Show custom instrument load status after clicking Done" }, chkLabel);
 
-  // Update the global when the user toggles it
   chkInput.addEventListener("change", () => {
     gCustomInstrumentShowStatus = chkInput.checked;
-    if (gLocalStorageAvailable){
+    if (typeof gLocalStorageAvailable !== "undefined" && gLocalStorageAvailable){
       localStorage.CustomInstrumentShowStatus = gCustomInstrumentShowStatus;
     }
   });
@@ -47642,10 +47634,12 @@ async function manageCustomInstrumentSlots(files){
   const onKey = (e) => { if (e.key === "Escape") DayPilot.Modal.close(null); };
   document.addEventListener("keydown", onKey, { once: true });
 
-  // --- Renderers ---
+  // --- Renderers (guarded against late calls after close) ---
   function renderSlots() {
+    if (isClosed) return;
     for (let i = 0; i < 8; i++) {
       const slotEl = grid.querySelector(`[data-slot="${i}"]`);
+      if (!slotEl) return; // container removed
       const has = !!gCustomInstrumentState.slots[i];
       const lbl = slotEl.querySelector(`.${UID}-label`);
       slotEl.dataset.has = has ? "true" : "false";
@@ -47661,6 +47655,8 @@ async function manageCustomInstrumentSlots(files){
   }
 
   function renderPool() {
+    if (isClosed) return;
+    if (!poolList) return;
     poolList.replaceChildren();
     gCustomInstrumentState.pool.forEach((item, idx) => {
       const chip = el("div", {
@@ -47719,6 +47715,83 @@ async function manageCustomInstrumentSlots(files){
 
 
 //
+// Load a custom instrument bundle
+//
+//
+// Load a custom instrument bundle
+//
+// ===== doCustomInstrumentImport (NO signal, hardened) =====
+async function doCustomInstrumentImport(entry, index, callback) {
+
+  function done() {
+    try { if (typeof callback === "function") callback(); } catch {}
+  }
+
+  try {
+    const file = entry && entry.file;
+    if (!file) return done();
+
+    index = parseInt(index, 10);
+    if (!Number.isFinite(index) || index < 1 || index > 8) return done();
+
+    const zip = new JSZip();
+    const loadedZip = await zip.loadAsync(file); // throws if bad/corrupt
+
+    // Prep slot
+    gCustomInstrumentSamples[index] = [];
+
+    const names = Object.keys(loadedZip.files);
+    for (let i = 0; i < names.length; i++) {
+      const fileName = names[i];
+      const zipEntry = loadedZip.files[fileName];
+      if (zipEntry.dir) continue;
+
+      const lower = fileName.toLowerCase();
+
+      // Settings file
+      if (lower === "abctools.json") {
+        try {
+          const content = await zipEntry.async("string");
+          const settings = JSON.parse(content);
+          if (typeof settings.volumeScale === "number") {
+            gCustomInstrumentVolumeScaleOriginal[index - 1] = settings.volumeScale;
+          }
+          if (typeof settings.fadeTimeMs === "number") {
+            gCustomInstrumentFadeOriginal[index - 1] = settings.fadeTimeMs;
+          }
+        } catch (err) {
+          console.error("Error reading abctools.json:", err);
+        }
+        continue;
+      }
+
+      // Audio files only; skip __MACOSX
+      if ((lower.endsWith(".wav") || lower.endsWith(".mp3") || lower.endsWith(".ogg")) &&
+          !lower.includes("macosx")) {
+        try {
+          const arrayBuffer = await zipEntry.async("arraybuffer");
+          const theName = fileName
+            .replace(/\.wav$/i, "")
+            .replace(/\.mp3$/i, "")
+            .replace(/\.ogg$/i, "");
+          gCustomInstrumentSamples[index].push({ name: theName, samples: arrayBuffer });
+        } catch (err) {
+          console.error("Error extracting", fileName, err);
+        }
+      }
+    }
+
+    // Clear abcjs cache for this custom instrument
+    gSoundsCacheABCJS["custom" + index] = {};
+
+    return done();
+  } catch (err) {
+    console.error("doCustomInstrumentImport failed:", err);
+    return done();
+  }
+}
+
+//
 //  Read a custom reverb impulse .wav file
 //
 // Function to read a .wav file and convert it to an ArrayBuffer
@@ -47737,99 +47810,6 @@ function readWavFile(file) {
     reader.readAsArrayBuffer(file);
 
   });
-}
-
-//
-// Load a custom instrument bundle
-//
-async function doCustomInstrumentImport(entry,index,callback){
-
-  //debugger;
-
-  var file = entry.file;
-
-  if (!file){
-    callback();
-    return;
-  }
-
-  index = parseInt(index);
-  if (isNaN(index)){
-    return;
-  }
-   
-  if ((index < 1) || (index > 8)){
-    return;
-  }
-
-  //console.log("Got entry "+entry.name);
-
-  var zip = new JSZip();
-
-  zip.loadAsync(file).then(async function(zip) {
-    
-    gCustomInstrumentSamples[index] = [];
-
-    // Iterate through all files in the zip
-    for (let fileName of Object.keys(zip.files)) {
-
-        const zipEntry = zip.files[fileName];
-
-        // Is this a settings file?
-        if (!zipEntry.dir && (fileName.toLowerCase() == "abctools.json")){
-        try {
-
-            const content = await zipEntry.async("string");   // read as text
-
-            //console.log("Settings for "+file.name+":"+content);
-            
-            const settings = JSON.parse(content);             // parse JSON
-
-            // Apply settings if present
-            if (typeof settings.volumeScale === "number") {
-              //console.log("Setting the volume scale to "+settings.volumeScale)
-              gCustomInstrumentVolumeScaleOriginal[index-1] = settings.volumeScale;
-            }
-
-            if (typeof settings.fadeTimeMs === "number") {
-              //console.log("Setting the fade to "+settings.fadeTimeMs)
-              gCustomInstrumentFadeOriginal[index-1] = settings.fadeTimeMs;
-            }
-
-          } catch (err) {
-
-            console.error("Error reading abctools.json:", err);
-
-          }   
-
-        }
-        else
-        // Only process .wav files
-        if (!zipEntry.dir && (fileName.toLowerCase().endsWith('.wav') || fileName.toLowerCase().endsWith('.mp3') || fileName.toLowerCase().endsWith('.ogg')) && (fileName.indexOf("MACOSX")== -1)) {
-
-            const arrayBuffer = await zipEntry.async("arraybuffer");
-
-            var theName = fileName.replace(".wav","");
-            theName = theName.replace(".mp3","");
-            theName = theName.replace(".ogg","");
-
-            gCustomInstrumentSamples[index].push({name:theName,samples:arrayBuffer});
-
-        }
-    }
-
-    // gCustomInstrumentSamples is an array of ArrayBuffers, one for each .wav file
-    //console.log("Extracted WAV files:", gCustomInstrumentSamples[index].length);
-
-    // Clear the abcjs cache for the custom instrument
-    gSoundsCacheABCJS["custom"+index] = {};
-
-    if (callback){
-      callback();
-    }
-
-  });
-
 }
 
 //
@@ -58007,6 +57987,35 @@ function DoStartup() {
 
   // Init the samples database
   initSamplesDB();
+
+  // ===== Startup: restore instruments from DB and suppress initial modal =====
+  (async function initCustomInstrumentsFromDB() {
+    
+    if (!USE_CUSTOM_INSTRUMENT_DB) {
+      //console.info("Skipping instrument DB init on Firefox.");
+      return;
+    }
+    
+    try {
+      await CustomInstrumentsDB.init(); // ensure DB & store exist
+
+      const files = await CustomInstrumentsDB.loadSlots(); // [File|null] x 8
+      if (!files.some(Boolean)) return; // nothing stored yet
+
+      // Restore globals
+      gCustomInstrumentSlots = files.slice();
+      gCustomInstrumentState = {
+        slots: files.map((f) => (f ? { file: f, name: f.name } : null)),
+        pool: [],
+        selectedPoolIndex: null
+      };
+
+      // Process silently on startup
+      processCustomInstruments(/* suppressStatus */ true);
+    } catch (err) {
+      console.warn("Custom instrument DB init failed:", err);
+    }
+  })();
 
   // Listen for online state changes
   window.addEventListener('online', doOnlineCheck);

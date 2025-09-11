@@ -2667,7 +2667,9 @@
                 </p>
                 <hr class="hidden-print" id="creating_custom_midi_instruments">
                 <h1 class="page_break_always h1wide">Creating Custom Instruments<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-                <p>While the tool has over 900 instrument sounds built-in between all the available soundfonts, you can add your own custom instruments and use them when playing tunes.</p>
+                <p>While the tool has over 900 instrument sounds built-in between all the available soundfonts, you can add up to 8 of your own custom instruments and use them when playing tunes.</p>
+                <p>Once custom instruments are loaded and assigned as desired to any of the 8 available instrument slots, they are stored in a browser-local database and can be used for tunes in the future without having to reload them again.</p>
+                <p><strong>Note:</strong> Custom instrument database persistence is supported on Chrome and Safari (both Mac and iOS), but due to technical limitations, not on Firefox.</p>
                 <p>It is very easy to create a custom instrument .zip file from any collection of individual note samples in .wav or .mp3 format.</p>
                 <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/rhFyRD6MIxA" title="Custom Instrument Demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
                 <p>The note sample file recommendations are as follows:</p>
@@ -2713,7 +2715,9 @@
                 <p>Once you have one or more custom instrument .zip files, you can just drag-and-drop them onto the ABC editor, map them to custom instrument numbers 1-8, and then use them in a tune by specifying:</p>
                 <p class="code">%%MIDI program custom1<br/>%%MIDI program custom2<br/>etc.</p>
                 <p>in the ABC for the tune, or even assign different custom instruments to each voice in a multi-voice tune.</p>
-                <p>This allows the tool to be used with the many open-source and paid instrument libraries that are available for VST applications, where there are often only a small number of actual note samples provided.</p>
+                <p>Once custom instruments are loaded and assigned as desired to any of the 8 available instrument slots, they are stored in a browser-local database and can be used for tunes in the future without having to reload them again.</p>
+                <p><strong>Note:</strong> Custom instrument database persistence is supported on Chrome and Safari (both Mac and iOS), but due to technical limitations, not on Firefox.</p>
+                <p>The Custom Instrument Builder allows the tool to be used with the many open-source and paid instrument libraries that are available for VST applications, where there are often only a small number of actual note samples provided.</p>
                 <hr>
                 <p style="text-align: center;"><strong>Reducing the Size of Custom Instruments Created by the Utility</strong></p>
                 <p>Custom instruments that have many notes, particularly if the notes are of long duration (for example, 5 second harp or piano note samples), in stereo, and in uncompressed .wav format, can be quite large.</p>
@@ -2739,8 +2743,11 @@
                 <p>As a result, it doesn't save any browser memory (generally not an issue) as far as running the tool, but it may make it easier to attach a custom instrument to an email since it most likely will be considerably smaller than one that primarily uses .wav files for the note samples.</p>
                 <hr class="hidden-print" id="custom_midi_instrument">
                 <h1 class="page_break_always h1wide">How to Load and Use Custom Instruments in Tunes<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+                <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/T69CvnepzRk" title="Custom Instruments Demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
                 <p>You can expand on the instruments available in the soundfonts by creating your own custom instruments.</p>
                 <p>The tool supports up to 8 custom instruments.</p>
+                <p>Once custom instruments are loaded and assigned as desired to any of the 8 available instrument slots, they are stored in a browser-local database and can be used for tunes in the future without having to reload them again.</p>
+                <p><strong>Note:</strong> Custom instrument database persistence is supported on Chrome and Safari (both Mac and iOS), but due to technical limitations, not on Firefox.</p>
                 <hr>
                 <p>On the <a href="#player_settings">Player Instrument Settings</a> dialog there are three buttons for working with custom instruments:</p>
                 <div class="image_holder_p">
@@ -2767,7 +2774,7 @@
                 <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/mRiERTk5o5I" title="Custom Instrument Demo 3" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
                 <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/RoITispalxs" title="Custom Instrument Demo 4" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
                 <hr>
-                <p>Once a custom instrument is loaded you can then use it for playback of your tunes just like any other MIDI instrument.</p>
+                <p>Once a custom instrument is loaded and assigned to a slot you can then use it for playback of your tunes just like any other MIDI instrument.</p>
                 <p>After a custom instrument .zip file has been loaded, you can add the following ABC annotation to your tunes (or a single voice in a multi-voice tune) to play the custom instruments:</p>
                 <p>Replace (n) with 1-8 for the specific custom instrument number.</p>
                 <p class="code">%%MIDI program custom(n)</p>
@@ -2777,6 +2784,7 @@
                 <div class="image_holder_p">
                     <img class="image" loading="lazy" src="img/custom_instrument_missing_1.jpg"/>
                 </div>
+                <p>If you remove a custom instrument from one of the 8 available slots, it will be removed from the database and will have to be reloaded and assigned to a slot the next time you want to use it.</p>
                 <hr>
                 <p style="text-align: center;"><strong>Changing the Volume of Custom Instruments</strong></p>
                 <p>If the samples in the custom instrument are too soft or too loud, you can scale the volume.</p>
