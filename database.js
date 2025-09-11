@@ -116,7 +116,66 @@ const CustomInstrumentsDB = (function () {
       .catch((e) => console.warn("clearAll failed:", e));
   }
 
-  return { init, saveSlots, loadSlots, clearAll };
+  // --- NEW: expose DB name
+  function name() {
+    return DB_NAME;
+  }
+
+  // --- NEW: delete this DB (robust)
+  async function _deleteDatabase(dbName, timeoutMs = 5000) {
+    return new Promise((resolve) => {
+      let finished = false;
+
+      if (typeof dbName !== "string" || !dbName) {
+        return resolve({ ok: false, name: dbName, reason: "invalid_name" });
+      }
+
+      const timer = setTimeout(() => {
+        if (!finished) {
+          finished = true;
+          console.warn(`indexedDB.deleteDatabase("${dbName}") timed out after ${timeoutMs}ms`);
+          resolve({ ok: false, name: dbName, reason: "timeout" });
+        }
+      }, timeoutMs);
+
+      let req;
+      try {
+        req = window.indexedDB.deleteDatabase(dbName);
+      } catch (e) {
+        clearTimeout(timer);
+        return resolve({ ok: false, name: dbName, reason: `exception: ${e && e.message}` });
+      }
+
+      req.addEventListener("success", () => {
+        if (finished) return;
+        finished = true;
+        clearTimeout(timer);
+        console.log(`${dbName} database deleted (or did not exist).`);
+        resolve({ ok: true, name: dbName });
+      });
+
+      req.addEventListener("error", (ev) => {
+        if (finished) return;
+        finished = true;
+        clearTimeout(timer);
+        const err = (ev && ev.target && ev.target.error) ? ev.target.error.message : "unknown_error";
+        console.error(`Error deleting ${dbName} database:`, err);
+        resolve({ ok: false, name: dbName, reason: err });
+      });
+
+      req.addEventListener("blocked", () => {
+        console.warn(`Delete for "${dbName}" is blocked. Close other tabs or reload.`);
+      });
+    });
+  }
+  
+  async function del() {
+    // No open handle stored here, so just request deletion
+    return _deleteDatabase(DB_NAME);
+  }
+
+  return { init, saveSlots, loadSlots, clearAll, name, delete: del };
+
 })();
 
 
@@ -648,7 +707,7 @@ async function delete_all_DB() {
 
   if (USE_CUSTOM_INSTRUMENT_DB){
 	  await wait(150);
-	  results.ABCToolsCustomInstruments2 = await deleteDB("ABCToolsCustomInstruments2");
+	  results[CustomInstrumentsDB.name()] = await CustomInstrumentsDB.delete();
   }
 
   // Optional: if you support IDBFactory.databases(), you could verify deletion.
