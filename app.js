@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "2767_091125_1330";
+var gVersionNumber = "2768_091125_1830";
 
 var gMIDIInitStillWaiting = false;
 
@@ -47288,11 +47288,6 @@ function launchCustomInstrumentBuilder(){
 
 
 // ===== processCustomInstruments =====
-
-// Detect Firefox and disable instrument DB there (keep your existing logic)
-const IS_FIREFOX = (typeof InstallTrigger !== "undefined") ||
-                   (typeof navigator !== "undefined" && /firefox/i.test(navigator.userAgent));
-//const USE_CUSTOM_INSTRUMENT_DB = !IS_FIREFOX;
 
 // Enable custom database use on all platforms
 const USE_CUSTOM_INSTRUMENT_DB = true;
