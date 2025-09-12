@@ -2697,11 +2697,11 @@
                 <p>Both the sample files and the settings file must be at the root of the .zip file, not in folders.</p> 
                 <hr class="hidden-print" id="custom_instrument_builder">
                 <h1 class="page_break_always h1wide">Custom Instrument Builder Utility<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+                <p>To facilitate the creation of custom instruments, I've created a simple utility that can read an entire directory of audio sample files and create a custom instrument with all the correct note names and octaves from a range of notes or even as few as one note from a real instrument:</p>
+                <p style="text-align: center"><a href="https://michaeleskin.com/tools/custom_instrument_builder.html" target="_blank">Launch the ABC Transcription Tools Custom Instrument Builder</a></p>
                 <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/QMLHGSVShZg" title="Custom Instrument Builder Demo 1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
-                <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/Q5-VOVO10oI" title="Custom Instrument Builder Demo 2" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
+                <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/M_R176CIsV4" title="Custom Instrument Builder Demo 2" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
                 <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/1sOguEK-NB8" title="Custom Instrument Builder Demo 3" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
-                <p>To facilitate the creation of custom instruments, I've created a simple utility that can read an entire directory of audio sample files and create a custom instrument with all the correct note names and octaves:</p>
-                <p style="text-align: center"><a href="https://michaeleskin.com/tools/custom_instrument_builder.html" target="_blank">ABC Transcription Tools Custom Instrument Builder</a></p>
                 <p>The utility can automatically detect the note range of a partial set of note samples based on the filenames and when exporting the custom instrument, synthesize any missing samples in the note range.</p>
                 <p>It does this by pitch shifting other available notes as required creating additional .wav file placeholders as required, and then saves them along with the original notes to the custom instrument .zip file.</p>
                 <p>In the utility, you may also set the volume scale multiplier and release fade time in milliseconds for the instrument.</p>
@@ -2710,7 +2710,7 @@
                 <p>To reduce the size of large custom instruments that start out as stereo .wav format note samples, optional stereo-to-mono .wav conversion of all note samples at export time is supported.</p>
                 <p>You can preview the imported files including volume scaling, silence stripping, and stereo/mono conversion.</p>
                 <hr>
-                <p>The ABC Transcription Tools support up to 8 custom instruments at one time.</p>
+                <p style="text-align: center;"><strong>The ABC Transcription Tools Supports Up to 8 Custom Instruments at Once</strong></p>
                 <p>Once you have one or more custom instrument .zip files, you can just drag-and-drop them onto the ABC editor, map them to custom instrument numbers 1-8, and then use them in a tune by specifying:</p>
                 <p class="code">%%MIDI program custom1<br/>%%MIDI program custom2<br/>etc.</p>
                 <p>in the ABC for the tune, or even assign different custom instruments to each voice in a multi-voice tune.</p>
