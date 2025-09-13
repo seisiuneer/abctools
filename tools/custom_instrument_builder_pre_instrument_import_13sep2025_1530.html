@@ -28,9 +28,9 @@
     <link rel="icon" type="image/png" sizes="96x96" href="https://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
     <link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
 
-    <script type="text/javascript" src="jszip-min.js?v=17"></script>
-    <script type="text/javascript" src="filesaver-min.js?v=17"></script>
-    <script type="text/javascript" src="daypilot-modal.min-3.10.1.js?v=17"></script>
+    <script type="text/javascript" src="jszip-min.js?v=16"></script>
+    <script type="text/javascript" src="filesaver-min.js?v=16"></script>
+    <script type="text/javascript" src="daypilot-modal.min-3.10.1.js?v=16"></script>
     
     <style>
 
@@ -108,8 +108,8 @@
     }
 
     .file-item {
-      padding: 0.1em 0.9em;
-      margin-bottom: 0.3em;
+      padding: 0.0em 0.60em;
+      margin-bottom: 0.25em;
       background: #f5f5f5;
       border: 1px solid #e1e1e1;
       border-radius: 3px;
@@ -118,14 +118,13 @@
       gap: 7px;
       font-size: 0.97em;
     }
-    
     .file-item.real { cursor: grab; }
     .file-item.drag-over { background: #e6f7ff; border-color: #91d5ff; }
 
     .file-item > span { align-self: center; line-height: 1.24; }
     .file-item > span:first-child { flex: 1 1 auto; }
 
-    .file-item:not(.real) { min-height: 1.6em; padding: 0.1em 0.9em; }
+    .file-item:not(.real) { min-height: 2.1em; padding: 0.60em 0.60em; }
 
     .proposed {
       color: #555;
@@ -249,26 +248,6 @@
       margin-top: 6px;
     }
     .range-controls label { margin-top: 0.2em; }
-
-    .action-row { display: flex; justify-content: center; gap: 10px; }
-
-    #exportZip {
-      margin-left:24px;
-      margin-top:12px;
-    }
-
-    #importZipBtn {
-      background-color: #471268; 
-      border-color: #471268;
-      margin-right:24px;
-      margin-top:12px;
-    }
-
-    #importZipBtn:hover {
-      background-color: green; 
-      border-color: green;
-    }
-
     </style>
     
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-VM0N9HL3MK"></script>
@@ -444,15 +423,9 @@
 
     <div id="fileList"></div>
 
-    <div id="exportStatus" role="status" aria-live="polite" style="margin-top:6px; min-height:1.2em; text-align:center; font-size:0.95em; color:#333;"></div>
-
-    <div class="action-row">
-      <button id="importZipBtn" title="Load and edit an ABC Transcription Tools existing custom instrument .zip file">Import Custom Instrument (.zip)</button>
-      <button id="exportZip" title="Export an ABC Transcription Tools custom instrument .zip file">Export Custom Instrument</button>
+    <div style="text-align: center;">
+      <button id="exportZip">Export Custom ABC Transcription Tools Instrument</button>
     </div>
-
-    <!-- Hidden file inputs for controlled flows -->
-    <input type="file" id="importZipInput" accept=".zip" style="display:none;">
 
     <script>
       function DoStartup() {
@@ -465,9 +438,6 @@
         const startNote = document.getElementById('startNote');
         const fileList = document.getElementById('fileList');
         const exportZipBtn = document.getElementById('exportZip');
-        const importZipBtn = document.getElementById('importZipBtn');
-        const importZipInput = document.getElementById('importZipInput');
-
         const autoSortCheckbox = document.getElementById('autoSort');
         const gapOptions = document.getElementById('gapOptions');
         const gapMode = document.getElementById('gapMode');
@@ -492,13 +462,6 @@
         const lowNote = document.getElementById('lowNote');
         const highOct = document.getElementById('highOct');
         const highNote = document.getElementById('highNote');
-
-        const exportStatusEl = document.getElementById('exportStatus');
-        function setExportStatus(msg){ if (exportStatusEl) exportStatusEl.textContent = msg; }
-        function clearExportStatus(){ if (exportStatusEl) exportStatusEl.textContent = ''; }
-
-        // tiny yield to let UI update between heavy steps
-        const tick = () => new Promise(r => setTimeout(r, 0));
 
         var gFileSaveName = "custom_instrument.zip";
 
@@ -907,38 +870,6 @@
           return bufferToFinalBlob(buf);
         }
 
-        // ---------- Placeholder PREVIEW helpers ----------
-        function findNearestSourceIndex(full, targetIdx){
-          for (let d=1; d<full.length; d++){
-            const lower = targetIdx - d;
-            const higher = targetIdx + d;
-            if (lower >= 0 && full[lower] && full[lower].file) return lower;
-            if (higher < full.length && full[higher] && full[higher].file) return higher;
-          }
-          return -1;
-        }
-
-        async function previewPlaceholderAtIndex(full, idx, btn){
-          try {
-            if (gPrevBtn === btn && gPrevSource) { stopCurrentPreview(); return; }
-            const srcIdx = findNearestSourceIndex(full, idx);
-            if (srcIdx < 0) return;
-            const srcFile = full[srcIdx].file;
-            let buf = await decodeFileToAudioBuffer(srcFile);
-            if (forceMonoWavCheckbox.checked) buf = mixToMono(buf);
-            if (trimSilenceCheckbox.checked) {
-              const thr = dbToLinear(Number(silenceDbInput.value));
-              buf = trimLeadingSilenceFromBuffer(buf, thr);
-            }
-            const semitones = idx - srcIdx;
-            const shifted = await pitchShiftBuffer(buf, semitones);
-            await playBufferWithScale(shifted, btn);
-          } catch (e) {
-            console.warn("Placeholder preview failed:", e);
-            stopCurrentPreview();
-          }
-        }
-
         // ---------- RENDER LIST ----------
         function safeRenderList(){
           if (gPrevSource) return;
@@ -968,8 +899,7 @@
             return;
           }
 
-          const built = buildContinuousRange();
-          const { full, unmatched, minPI, maxPI } = built;
+          const { full, unmatched, minPI, maxPI } = buildContinuousRange();
           if (minPI <= maxPI) gRenderMinPI = minPI;
 
           if (!full.length){
@@ -1004,16 +934,8 @@
             } else {
               item.className='file-item';
               const proposed=getProposedNameForIndex(idx,"wav");
-              const modeLabel=(gapMode.value==='synth')?' (synthesized)':' (silent)';
-              const ctrl=document.createElement('div'); ctrl.className='controls';
-              if (gapMode.value==='synth'){
-                const pbtn=document.createElement('button'); pbtn.className='preview-btn'; pbtn.type='button'; pbtn.textContent='▶︎';
-                pbtn.title = 'Preview synthesized placeholder';
-                pbtn.addEventListener('click',(e)=>previewPlaceholderAtIndex(full, idx, e.currentTarget));
-                ctrl.appendChild(pbtn);
-              }
-              item.innerHTML=`<span class="placeholder-label">(placeholder)</span><span class="proposed">→ ${proposed}${modeLabel}</span>`;
-              item.appendChild(ctrl);
+              const modeLabel=(gapMode.value==='synth')?' (placeholder: synth)':' (placeholder: silent)';
+              item.innerHTML=`<span class="placeholder-label">(placeholder)</span><span class="proposed">→ ${proposed}${modeLabel}</span><div class="controls"></div>`;
             }
             fileList.appendChild(item);
           });
@@ -1094,32 +1016,26 @@
         }
 
         // ===================== Export (ZIP) =====================
+
         exportZipBtn.addEventListener('click', async ()=>{
           if (gPrevSource) stopCurrentPreview();
 
-          // UI prep
-          exportZipBtn.disabled = true;
-          setExportStatus('Starting export…');
-
           async function saveZipFile(fname){
-            if (fileList.children.length == 0 || !files.length){
+            if (!files.length){
               DayPilot.Modal.alert('<p style="text-align:center">Nothing to export!</p>', { theme:"modal_flat", top:200 });
-              exportZipBtn.disabled = false;
-              clearExportStatus();
               return;
             }
 
-            const zip = new JSZip();
+            const zip=new JSZip();
 
             // Meta
-            let volumeScale = parseFloat(volumeScaleInput.value);
-            let fadeTimeMs  = parseInt(fadeTimeInput.value, 10);
-            if (isNaN(volumeScale)) volumeScale = 1.0;
-            if (isNaN(fadeTimeMs))  fadeTimeMs  = 100;
-            if (volumeScale < 0) volumeScale = 0;
-            if (fadeTimeMs  < 0) fadeTimeMs  = 0;
-
-            const meta = {
+            let volumeScale=parseFloat(volumeScaleInput.value);
+            let fadeTimeMs=parseInt(fadeTimeInput.value,10);
+            if (isNaN(volumeScale)) volumeScale=1.0;
+            if (isNaN(fadeTimeMs)) fadeTimeMs=100;
+            if (volumeScale<0) volumeScale=0;
+            if (fadeTimeMs<0) fadeTimeMs=0;
+            const meta={
               volumeScale,
               fadeTimeMs,
               trimLeadingSilence: !!trimSilenceCheckbox.checked,
@@ -1135,73 +1051,35 @@
             };
             zip.file("abctools.json", JSON.stringify(meta,null,2));
 
-            // Progress accounting
-            let processedCount = 0;
-            let plannedCount   = 0;
-
-            function updateStep(label){
-              processedCount++;
-              setExportStatus(`Processing ${processedCount} of ${plannedCount}… ${label || ''}`.trim());
-            }
-
-            // Figure out how many files we'll write
-            (function computePlannedCount(){
-              if (!autoSortCheckbox.checked && !rangeExpanderCheckbox.checked) {
-                // manual mode: count visible "real" rows
-                plannedCount = Array.from(fileList.children).filter(el => el.classList.contains('real')).length;
-              } else {
-                const plan = (autoSortCheckbox.checked || rangeExpanderCheckbox.checked) ? buildContinuousRange() : null;
-                if (plan && plan.full && plan.full.length) {
-                  plannedCount = plan.full.length;
-                  if (!rangeExpanderCheckbox.checked && plan.unmatched && plan.unmatched.length) {
-                    plannedCount += plan.unmatched.length;
-                  }
-                } else {
-                  plannedCount = files.length;
-                }
-              }
-            })();
-            await tick();
-
-            // Build only if needed
+            // --- FIX: Only build continuous range when needed (prevents warnings in manual mode) ---
             let built = null, full = null;
             if (autoSortCheckbox.checked || rangeExpanderCheckbox.checked) {
               built = buildContinuousRange();
-              full  = built.full;
+              full = built.full;
             }
 
-            // ---- Branch: Manual mode ----
             if (!autoSortCheckbox.checked && !rangeExpanderCheckbox.checked){
-              const reordered = Array.from(fileList.children)
-                .filter(el => el.classList.contains('real'))
-                .map(el => files[Number(el.dataset.index)]);
-
-              for (let i = 0; i < reordered.length; i++){
-                const file = reordered[i];
-                const ext  = file.name.split('.').pop();
-                const newName = getProposedNameForIndex(i, ext);
-                const outBlob = await fileToProcessedBlob(file);
+              const reordered = Array.from(fileList.children).filter(el=>el.classList.contains('real')).map(el=>files[Number(el.dataset.index)]);
+              for (let i=0;i<reordered.length;i++){
+                const file=reordered[i];
+                const ext=file.name.split('.').pop();
+                const newName=getProposedNameForIndex(i, ext);
+                const outBlob=await fileToProcessedBlob(file);
                 zip.file(newName, outBlob);
-                updateStep(newName);
-                await tick();
               }
 
-            // ---- Branch: Auto/Range mode ----
             } else {
               const unmatched = built ? built.unmatched : [];
 
-              if (!full || !full.length){
-                for (let i = 0; i < files.length; i++){
-                  const file = files[i];
-                  const ext  = file.name.split('.').pop();
-                  const newName = getProposedNameForIndex(i, ext);
-                  const outBlob = await fileToProcessedBlob(file);
+              if (!full.length){
+                for (let i=0;i<files.length;i++){
+                  const file=files[i];
+                  const ext=file.name.split('.').pop();
+                  const newName=getProposedNameForIndex(i, ext);
+                  const outBlob=await fileToProcessedBlob(file);
                   zip.file(newName, outBlob);
-                  updateStep(newName);
-                  await tick();
                 }
               } else {
-                // Pre-decode sources for synth where possible
                 const haveAtIndex = new Map(); // renderIdx -> file
                 full.forEach((slot,i)=>{ if (slot.file) haveAtIndex.set(i, slot.file); });
 
@@ -1213,33 +1091,28 @@
 
                 function findSourceIndex(targetIdx){
                   for (let d=1; d<full.length; d++){
-                    const lower = targetIdx - d, higher = targetIdx + d;
-                    if (lower >= 0 && decodedAtIndex.has(lower)) return lower;
-                    if (higher < full.length && decodedAtIndex.has(higher)) return higher;
+                    const lower=targetIdx-d, higher=targetIdx+d;
+                    if (lower>=0 && decodedAtIndex.has(lower)) return lower;
+                    if (higher<full.length && decodedAtIndex.has(higher)) return higher;
                   }
                   return -1;
                 }
 
-                for (let i = 0; i < full.length; i++){
-                  const slot = full[i];
+                for (let i=0;i<full.length;i++){
+                  const slot=full[i];
 
                   if (slot.file){
-                    const ext = slot.ext;
-                    const proposed = getProposedNameForIndex(i, ext);
-                    const outBlob = await fileToProcessedBlob(slot.file);
+                    const ext=slot.ext;
+                    const proposed=getProposedNameForIndex(i, ext);
+                    const outBlob=await fileToProcessedBlob(slot.file);
                     zip.file(proposed, outBlob);
-                    updateStep(proposed);
-                    await tick();
-
                   } else {
-                    const proposed = getProposedNameForIndex(i, "wav");
-                    if (gapMode.value === 'silent'){
+                    const proposed=getProposedNameForIndex(i, "wav");
+                    if (gapMode.value==='silent'){
                       zip.file(proposed, generateSilentWav(1));
-                      updateStep(proposed);
-                      await tick();
                     } else {
                       const srcIdx = findSourceIndex(i);
-                      if (srcIdx >= 0){
+                      if (srcIdx>=0){
                         try{
                           const srcBuf = decodedAtIndex.get(srcIdx);
                           const semitones = i - srcIdx; // effective PI space
@@ -1253,208 +1126,52 @@
                       } else {
                         zip.file(proposed, generateSilentWav(1));
                       }
-                      updateStep(proposed);
-                      await tick();
                     }
                   }
                 }
 
-                // Keep strict range when expander is off: append unmatched tail
+                // Keep strict range when expander is on
                 if (!rangeExpanderCheckbox.checked && unmatched.length){
-                  const startIdx = full.length;
-                  for (let j = 0; j < unmatched.length; j++){
-                    const file = unmatched[j];
-                    const ext  = file.name.split('.').pop();
-                    const proposed = getProposedNameForIndex(startIdx + j, ext);
-                    const outBlob = await fileToProcessedBlob(file);
+                  const startIdx=full.length;
+                  for (let j=0;j<unmatched.length;j++){
+                    const file=unmatched[j];
+                    const ext=file.name.split('.').pop();
+                    const proposed=getProposedNameForIndex(startIdx+j, ext);
+                    const outBlob=await fileToProcessedBlob(file);
                     zip.file(proposed, outBlob);
-                    updateStep(proposed);
-                    await tick();
                   }
                 }
               }
             }
 
-            // Generate final blob with progress
-            setExportStatus(`Zipping files… 0%`);
-            const blob = await zip.generateAsync(
-              { type: "blob" },
-              (meta) => {
-                const pct = Math.max(0, Math.min(100, Math.round(meta.percent || 0)));
-                setExportStatus(`Zipping files… ${pct}%`);
-              }
-            );
-
-            setExportStatus('Export complete. Saving…');
-            const a = document.createElement('a');
-            a.href = URL.createObjectURL(blob);
-            a.download = fname;
+            const blob=await zip.generateAsync({type:"blob"});
+            const a=document.createElement('a');
+            a.href=URL.createObjectURL(blob);
+            a.download=fname;
             a.click();
             setTimeout(()=>{ window.URL.revokeObjectURL(a.href); }, 1000);
-
-            clearExportStatus();
-            exportZipBtn.disabled = false;
           };
 
-          // Filename prompt
-          const thePrompt = "Please enter a filename for your custom instrument file:";
+          if (fileList.children.length==0){
+            DayPilot.Modal.alert('<p style="text-align:center">Nothing to export!</p>', { theme:"modal_flat", top:200 });
+            return;
+          }
+
+          var thePrompt="Please enter a filename for your custom instrument file:";
           DayPilot.Modal.prompt(thePrompt, gFileSaveName, { theme:"modal_flat", top:200, autoFocus:true })
           .then(function(args){
-            let fname = args.result;
-            if (fname == null || fname.length == 0){
-              exportZipBtn.disabled = false;
-              clearExportStatus();
-              return;
-            }
+            var fname=args.result;
+            if (fname==null) return;
+            if (fname.length==0) return;
             if (!fname.endsWith(".zip")){
-              fname = fname.replace(/\..+$/,'');
-              fname = fname + ".zip";
+              fname=fname.replace(/\..+$/,''); fname=fname+".zip";
             }
-            gFileSaveName = fname;
+            gFileSaveName=fname;
             sortFilesIfNeeded();
-            // run export
-            return saveZipFile(fname);
-          })
-          .catch((e)=>{
-            console.error(e);
-            DayPilot.Modal.alert('<p style="text-align:center">Export failed.</p>', { theme:"modal_flat", top:200 });
-          })
-          .finally(()=>{
-            // safety: ensure UI is usable even if we exited early
-            exportZipBtn.disabled = false;
+            saveZipFile(fname);
           });
+
         });
-
-
-        // ===================== Import Existing Instrument (.zip) =====================
-        importZipBtn.addEventListener('click', () => {
-          importZipInput.value = "";
-          importZipInput.click();
-        });
-
-        // Helpers to ignore macOS sidecars and clean names
-        function isIgnorableZipEntry(path) {
-          if (path.startsWith('__MACOSX/')) return true;
-          const base = path.split('/').pop();
-          if (!base) return true;
-          if (base.startsWith('._')) return true; // AppleDouble like ._A4.wav
-          if (base === '.DS_Store' || base === 'Thumbs.db') return true;
-          return false;
-        }
-        function sanitizeBaseName(path) {
-          let base = path.split('/').pop() || path;
-          if (base.startsWith('./')) base = base.slice(2);
-          return base;
-        }
-
-        importZipInput.addEventListener('change', async (e) => {
-          const zipFile = e.target.files && e.target.files[0];
-          if (!zipFile) return;
-
-          try {
-            if (gPrevSource) stopCurrentPreview();
-
-            const zip = await JSZip.loadAsync(zipFile);
-
-            // Read abctools.json if present (to apply volumeScale and fadeTimeMs)
-            let importedVolumeScale = null;
-            let importedFadeTimeMs = null;
-            const metaEntry = Object.keys(zip.files).find(n => n.toLowerCase() === "abctools.json");
-            if (metaEntry) {
-              try {
-                const metaText = await zip.file(metaEntry).async("string");
-                const meta = JSON.parse(metaText);
-                if (meta && typeof meta.volumeScale === "number" && meta.volumeScale >= 0) {
-                  importedVolumeScale = meta.volumeScale;
-                }
-                if (meta && typeof meta.fadeTimeMs === "number" && meta.fadeTimeMs >= 0) {
-                  importedFadeTimeMs = meta.fadeTimeMs;
-                }
-              } catch {}
-            }
-
-            // Collect valid audio files, ignoring macOS sidecars and duplicates
-            const imported = [];
-            const seen = new Set(); // case-insensitive basename dedupe
-
-            const entries = Object.keys(zip.files)
-              .filter(n => !zip.files[n].dir)
-              .filter(n => /\.(wav|mp3)$/i.test(n));
-
-            for (const path of entries) {
-              if (isIgnorableZipEntry(path)) continue;
-
-              const baseName = sanitizeBaseName(path);
-              const key = baseName.toLowerCase();
-              if (seen.has(key)) continue;
-              seen.add(key);
-
-              const blob = await zip.file(path).async("blob");
-              const ext = baseName.split('.').pop().toLowerCase();
-              const mime = (ext === 'wav') ? 'audio/wav' : (ext === 'mp3' ? 'audio/mpeg' : 'application/octet-stream');
-
-              const f = new File([blob], baseName, { type: mime });
-              imported.push(f);
-            }
-
-            if (!imported.length) {
-              DayPilot.Modal.alert('<p style="text-align:center">No audio files found in .zip</p>', { theme:"modal_flat", top:200 });
-              return;
-            }
-
-            // Apply requested option changes when importing a .zip
-            trimSilenceCheckbox.checked = false;
-            thresholdControls.style.display = 'none';
-            forceMonoWavCheckbox.checked = false;
-            rangeExpanderCheckbox.checked = false;      // UI will hide via updateDragInteractivity()
-
-            if (importedVolumeScale !== null) {
-              volumeScaleInput.value = String(importedVolumeScale);
-              if (gPrevGain) gPrevGain.gain.value = importedVolumeScale;
-            }
-            if (importedFadeTimeMs !== null) {
-              fadeTimeInput.value = String(importedFadeTimeMs);
-            }
-
-            // Replace current file set with imported files
-            originalFiles = [...imported];
-            files = [...imported];
-
-            // Treat just like normal files from disk
-            gHasHashedNames = hasHashedFilenames(files);
-            if (gHasHashedNames){
-              applyHashedModeUIState();
-              DayPilot.Modal.alert('<p style="text-align:center;font-size:1.1em;"><strong>Hash-based Filenames Detected</strong><br/><br/>Auto-sort and note range detect initially disabled.</p>', { theme:"modal_flat", top:200 });
-            } else {
-              clearHashedModeUIState();
-              sortFilesIfNeeded();
-              if ((autoSortCheckbox.checked || rangeExpanderCheckbox.checked) && !gHasHashedNames) {
-                detectAndApplyLowestPitch();
-              }
-            }
-
-            // Reset Range Expander range like normal file import
-            if (autoSortCheckbox.checked) {
-              const built = buildContinuousRange();
-              if (built && isFinite(built.effMin) && isFinite(built.effMax)) {
-                const loOct = Math.floor(built.effMin / 12), loNote = built.effMin % 12;
-                const hiOct = Math.floor(built.effMax / 12), hiNote = built.effMax % 12;
-                lowOct.value = String(loOct);  lowNote.value = String(loNote);
-                highOct.value = String(hiOct); highNote.value = String(hiNote);
-              }
-            }
-
-            rangeControls.style.display = 'none';
-
-            safeRenderList();
-            updateDragInteractivity();
-
-          } catch (err) {
-            console.error("Import zip failed:", err);
-            DayPilot.Modal.alert('<p style="text-align:center">Failed to import .zip</p>', { theme:"modal_flat", top:200 });
-          }
-        });
-
 
         // ===== UI wiring =====
 
@@ -1520,26 +1237,18 @@
           updateDragInteractivity();
         });
 
-        gapMode.addEventListener('change', () => {
-          stopPreviewIfPlaying();   // stop any current audition
-          safeRenderList();         // re-render rows for the new mode
-        });
+        gapMode.addEventListener('change', safeRenderList);
 
         // Trim UI
         trimSilenceCheckbox.checked=false;
         thresholdControls.style.display='none';
 
         trimSilenceCheckbox.addEventListener('change', ()=>{
-          stopPreviewIfPlaying();   // <-- stop current audition
           thresholdControls.style.display = trimSilenceCheckbox.checked ? 'block' : 'none';
           safeRenderList();
         });
 
-        // For the "Force mono .wav" checkbox
-        forceMonoWavCheckbox.addEventListener('change', () => {
-          stopPreviewIfPlaying();   // <-- stop current audition
-          safeRenderList();
-        });
+        forceMonoWavCheckbox.addEventListener('change', safeRenderList);
 
         applyThresholdBtn.addEventListener('click', () => {
           safeRenderList();
@@ -1559,12 +1268,7 @@
         });
 
         // Range Expander wiring
-        function stopPreviewIfPlaying(){ if (gPrevSource) stopCurrentPreview(); }
-
         function updateRangeExpanderUI(){
-
-          stopPreviewIfPlaying(); 
-  
           const on = rangeExpanderCheckbox.checked;
           if (!autoSortCheckbox.checked) {
             rangeExpanderCheckbox.checked = false;
@@ -1577,11 +1281,10 @@
         }
 
         rangeExpanderCheckbox.addEventListener('change', updateRangeExpanderUI);
-        const handleRangeValueChange = () => { stopPreviewIfPlaying(); safeRenderList(); };
-        lowOct.addEventListener('change', handleRangeValueChange);
-        lowNote.addEventListener('change', handleRangeValueChange);
-        highOct.addEventListener('change', handleRangeValueChange);
-        highNote.addEventListener('change', handleRangeValueChange);
+        lowOct.addEventListener('change', safeRenderList);
+        lowNote.addEventListener('change', safeRenderList);
+        highOct.addEventListener('change', safeRenderList);
+        highNote.addEventListener('change', safeRenderList);
 
         // Instructions modal
         instructionsBtn.addEventListener('click', async () => {
@@ -1590,22 +1293,21 @@
              <h2>Instructions</h2>
               <p>This tool is used to create an ABC Transcription Tools custom instrument from a directory of per-note instrument audio sample files.</p>
               <p>The files should be in .wav or .mp3 format. The samples must all be in the same directory.</p>
-              <p><strong>1)</strong> Click <strong>Choose Files</strong> to import your audio sample files.</p>
-              <p>You can import an existing custom instrument by clicking <strong>Import Custom Instrument (.zip)</strong>.</p>
-              <p>The note output filename for each audio sample is displayed to the right of each note.</p>
+              <p><strong>1)</strong> Click <strong>Import audio sample files in .wav, or .mp3 format</strong> to import your audio sample files.</p>
+              <p>The output note filename for each audio sample input file is displayed at the right of each item in the list.</p>
               <p><strong>2)</strong> Select the default volume scale and fade time for the instrument.</p>
               <p>These values will be applied to the instrument when used in the <strong>ABC Transcription Tools</strong>.</p>
               <p><strong>3)</strong> Choose the starting octave number for the instrument notes.</p>
               <p><strong>4)</strong> Choose the starting scale note for the file names.</p>
               <p><strong>5)</strong> If your files have filenames that contain note names, check <strong>Automatically sort files by scale order (C, Db, D, Eb, E, ...)</strong> to align the sample file list with the note names (checked by default).</p>
-              <p><strong>6)</strong> When automatically sorting by scale order, if there are scale gaps found, select between either synthesizing (pitch shifting) the missing note samples in the scale from other available notes or just replacing them with placeholder silent files.</p>
+              <p><strong>6)</strong> When automatically sorting by scale order, if there are scale gaps found, select between either synthesizing (pitch shift) the missing note samples in the scale from other available notes or just replacing them with placeholder silent files.</p>
               <p><strong>7)</strong> <em>Optional:</em> Turn on <strong>Range Expander</strong> (available only with Auto Sort) to set a lowest and highest desired note. The ends of the list will match your requested notes exactly, while the lowest <em>actual</em> input sample keeps the label set by “Starting Octave/Note”.</p>
               <p><strong>8)</strong> If not automatically sorting files by scale order, you can drag-and-drop the items in the list into the scale note order you want. This can be useful for loops/stems or non-pitched percussion instruments.</p>
               <p><strong>9)</strong> <em>Optional:</em> Enable <strong>Trim leading silence</strong> and set a <strong>Silence threshold (dB)</strong> to remove silence at the start of each file. Smaller dB values are more sensitive (e.g., -40 to -50 dB is typical). Click <strong>Apply</strong> to apply the update the silence trimming to all the samples.</p>
               <p><strong>10)</strong> <em>Optional:</em> Enable <strong>Encode all exported files as mono .wav</strong> to force every exported file to mono .wav format, regardless of input type.</p>
               <p>This applies to both normal export and silence-trimmed files and may reduce the custom instrument size if the original samples were stereo .wav files.</p>
-              <p><strong>11)</strong> Click the ▶︎ buttons to audition the notes with the current volume scale, silence trimming, and stereo-to-mono conversion settings.</p>
-              <p><strong>12)</strong> Click <strong>Export Custom Instrument</strong> to export the final custom instrument.</p>
+              <p><strong>11)</strong> Click the ▶︎ buttons to audition the imported notes with the current volume scale, silence trimming, and stereo-to-mono conversion settings.</p>
+              <p><strong>12)</strong> Click <strong>Export Custom ABC Transcription Tools Instrument</strong> to export the final custom instrument.</p>
               <p>The .zip file is saved to your browser’s default <strong>Downloads</strong> folder.</p>
               <hr>
               <h4>Additional Resources</h4>
@@ -1632,14 +1334,6 @@
         highOct.value = "6"; highNote.value = "0";   // C6
 
         updateDragInteractivity();
-      }
-
-      // Utility: MIME guess (kept simple)
-      function guessMimeByExt(name){
-        const ext = (name.split('.').pop()||'').toLowerCase();
-        if (ext==='wav') return 'audio/wav';
-        if (ext==='mp3') return 'audio/mpeg';
-        return 'application/octet-stream';
       }
 
       function WaitForReady(fn){
