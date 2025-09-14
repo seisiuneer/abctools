@@ -154,13 +154,25 @@
     select {
       -webkit-appearance: none;
       -moz-appearance: none;
-      appearance: none;      
+      appearance: none;
+
       margin-top: 0.26em;
       font-size: 1.0em;
       width: 100%;
       box-sizing: border-box;
       padding-block: 0.4em;
       padding-inline: 0.52em;
+
+      color: #222;             /* force text color */
+      background-color: #fff;  /* ensure white background */
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    select:focus {
+      border-color: #005aad;
+      box-shadow: 0 0 0 2px rgba(0,90,173,0.25);
+      outline: none;
     }
 
     #fileList {
