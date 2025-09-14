@@ -1717,6 +1717,9 @@
         startNote.addEventListener('change', handleStartingControlsChange);
 
         autoSortCheckbox.addEventListener('change', ()=>{
+          
+          stopPreviewIfPlaying();
+
           if (!autoSortCheckbox.checked) {
             rangeExpanderCheckbox.checked = false;
             rangeControls.style.display = 'none';
@@ -1749,15 +1752,17 @@
         thresholdControls.style.display='none';
 
         trimSilenceCheckbox.addEventListener('change', ()=>{
-          stopPreviewIfPlaying();   // <-- stop current audition
+          stopPreviewIfPlaying();
           thresholdControls.style.display = trimSilenceCheckbox.checked ? 'block' : 'none';
           safeRenderList();
+          updateDragInteractivity(); // <-- ensure the manual-mode message stays visible
         });
 
-        // For the "Force mono .wav" checkbox
+        // "Force mono .wav"
         forceMonoWavCheckbox.addEventListener('change', () => {
-          stopPreviewIfPlaying();   // <-- stop current audition
+          stopPreviewIfPlaying();
           safeRenderList();
+          updateDragInteractivity(); // <-- ensure the manual-mode message stays visible
         });
 
         applyThresholdBtn.addEventListener('click', () => {
@@ -1797,7 +1802,7 @@
         }
 
         rangeExpanderCheckbox.addEventListener('change', updateRangeExpanderUI);
-        const handleRangeValueChange = () => { stopPreviewIfPlaying(); safeRenderList(); };
+        const handleRangeValueChange = () => { stopPreviewIfPlaying(); safeRenderList();  updateDragInteractivity(); clearSelection();};
         lowOct.addEventListener('change', handleRangeValueChange);
         lowNote.addEventListener('change', handleRangeValueChange);
         highOct.addEventListener('change', handleRangeValueChange);
