@@ -28,9 +28,9 @@
   <link rel="icon" type="image/png" sizes="96x96" href="https://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
   <link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
 
-  <script type="text/javascript" src="jszip-min.js?v=18"></script>
-  <script type="text/javascript" src="filesaver-min.js?v=18"></script>
-  <script type="text/javascript" src="daypilot-modal.min-3.10.1.js?v=18"></script>
+  <script type="text/javascript" src="jszip-min.js?v=17"></script>
+  <script type="text/javascript" src="filesaver-min.js?v=17"></script>
+  <script type="text/javascript" src="daypilot-modal.min-3.10.1.js?v=17"></script>
   
   <style>
 
@@ -41,8 +41,7 @@
       max-width: 800px;
       margin: 12.5px auto;               
       padding: 0 19px;                   
-      line-height: 1.47;
-      padding-bottom: 60px                 
+      line-height: 1.47;                 
     }
 
     h1 {
@@ -348,33 +347,6 @@
       border-color: green;
     }
 
-    .touch-reorder{
-      display:flex;
-      gap:8px;
-      justify-content:center; /* centered */
-      margin-top:6px;
-    }
-
-    .file-item.selected{
-      outline:2px solid #91d5ff;
-      background:#e6f7ff;
-    }
-
-    #moveUpBtn, #moveDownBtn {
-      background-color: #008a53;  
-      border-color: #008a53;
-    }
-
-    /* Keep hover from changing color */
-    #moveUpBtn:hover, #moveDownBtn:hover {
-      background-color: #008a53 !important;
-      border-color: #008a53 !important;
-    }
-
-    #moveUpBtn{
-      margin-right:8px;
-    }
-
   </style>
     
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-VM0N9HL3MK"></script>
@@ -550,11 +522,6 @@
 
     <div id="fileList"></div>
 
-    <div id="touchReorderControls" class="touch-reorder" style="display:none;">
-      <button id="moveUpBtn" type="button" aria-label="Move selected note up">Move Up</button>
-      <button id="moveDownBtn" type="button" aria-label="Move selected note down">Move Down</button>
-    </div>
-
     <div id="exportStatus" role="status" aria-live="polite" style="margin-top:6px; min-height:1.2em; text-align:center; font-size:0.95em; color:#333;"></div>
 
     <div class="action-row">
@@ -620,79 +587,6 @@
         let gPrevBtn = null;
         let gPrevPlayId = 0;
         let gIsPlaying = false;
-
-        //
-        // Are we on iOS?
-        //
-        function isIOS() {
-          if (/iPad|iPhone|iPod/.test(navigator.platform)) {
-            return true;
-          } else {
-            return navigator.maxTouchPoints &&
-              navigator.maxTouchPoints > 2 &&
-              /MacIntel/.test(navigator.platform);
-          }
-        }
-
-        //
-        // Are we on an iPad?
-        //
-        function isIPad() {
-          return (
-            (navigator.maxTouchPoints && navigator.maxTouchPoints > 2 && /MacIntel/.test(navigator.platform)) ||
-            (navigator.maxTouchPoints && navigator.maxTouchPoints > 2 && /iPad/.test(navigator.platform))
-          );
-        }
-
-        //
-        // Are we on Android?
-        //
-        function isAndroid() {
-          if (/Android/i.test(navigator.userAgent)) {
-            return true;
-          } else {
-            return false;
-          }
-        }
-
-        // Touch/manual-reorder support
-        const isMobile = isIOS() || isIPad() || isAndroid();
-        const touchReorder = document.getElementById('touchReorderControls');
-        const moveUpBtn = document.getElementById('moveUpBtn');
-        const moveDownBtn = document.getElementById('moveDownBtn');
-        let selectedIndex = -1;
-
-        function clearSelection(){
-          selectedIndex = -1;
-          fileList.querySelectorAll('.file-item.real').forEach(el => el.classList.remove('selected'));
-          updateMoveButtons();
-        }
-        function selectManualRow(i){
-          selectedIndex = i;
-          fileList.querySelectorAll('.file-item.real').forEach((el, idx) => {
-            el.classList.toggle('selected', idx === selectedIndex);
-          });
-          updateMoveButtons();
-        }
-        function updateMoveButtons(){
-          if (!isMobile || touchReorder.style.display === 'none'){
-            if (moveUpBtn) moveUpBtn.disabled = true;
-            if (moveDownBtn) moveDownBtn.disabled = true;
-            return;
-          }
-          const len = files.length;
-          const valid = selectedIndex >= 0 && selectedIndex < len;
-          moveUpBtn.disabled = !valid || selectedIndex === 0;
-          moveDownBtn.disabled = !valid || selectedIndex === len - 1;
-        }
-        function updateMobileReorderUI(){
-          const manualMode = !autoSortCheckbox.checked && !rangeExpanderCheckbox.checked;
-          const show = isMobile && manualMode && !gIsPlaying;
-          if (touchReorder) touchReorder.style.display = show ? 'flex' : 'none';
-          if (dragMessage) dragMessage.style.display = show ? 'none' : (manualMode ? 'block' : 'none');
-          if (!show) clearSelection();
-          updateMoveButtons();
-        }
 
         // Absolute effective PI for first row
         let gRenderMinPI = 0;
@@ -1146,16 +1040,9 @@
               const btn=document.createElement('button'); btn.className='preview-btn'; btn.type='button'; btn.textContent='▶︎';
               btn.addEventListener('click',(e)=>previewFile(file,e.currentTarget));
               ctrl.appendChild(btn); item.appendChild(nameSpan); item.appendChild(proposedSpan); item.appendChild(ctrl);
-              // Mobile: allow selecting a row for move up/down buttons
-              item.addEventListener('click', () => { if (isMobile) selectManualRow(i); });
               addDragHandlers(item); fileList.appendChild(item);
             });
             updateDragInteractivity();
-            updateMobileReorderUI();
-            // Keep highlight after moves
-            if (isMobile && selectedIndex >= 0 && selectedIndex < files.length) {
-              selectManualRow(selectedIndex);
-            }
             return;
           }
 
@@ -1266,38 +1153,13 @@
 
         function updateDragInteractivity() {
           const realRows = fileList.querySelectorAll('.file-item.real');
-          const manualMode = !autoSortCheckbox.checked && !rangeExpanderCheckbox.checked;
-          const autoMode   = !manualMode;
+          const enableDrag = !autoSortCheckbox.checked && !rangeExpanderCheckbox.checked && !gIsPlaying;
+          realRows.forEach(row => row.setAttribute('draggable', enableDrag ? 'true' : 'false'));
+          fileList.classList.toggle('drag-disabled', !enableDrag);
 
-          // Desktop drag (disabled on mobile or while previewing)
-          const enableDesktopDrag = manualMode && !gIsPlaying && !isMobile;
-          realRows.forEach(row => row.setAttribute('draggable', enableDesktopDrag ? 'true' : 'false'));
-          fileList.classList.toggle('drag-disabled', !enableDesktopDrag);
-
-          // Gap options (shown only when auto/range mode is active)
+          const autoMode = autoSortCheckbox.checked || rangeExpanderCheckbox.checked;
           gapOptions.style.display = autoMode ? 'block' : 'none';
-
-          // Mobile: show touch move controls & alternate message; keep visible during preview
-          if (isMobile) {
-            // Alternate message for mobile; always hide the desktop drag text
-            dragMessage.textContent = "To reorder the notes, select a note and then click Move Up or Move Down:";
-            dragMessage.style.display = manualMode ? 'block' : 'none';
-
-            if (touchReorderControls) {
-              touchReorderControls.style.display = manualMode ? 'flex' : 'none';
-              // Optionally disable buttons when not usable
-              const disabled = !manualMode || files.length === 0;
-              const upBtn = touchReorderControls.querySelector('#moveUpBtn');
-              const dnBtn = touchReorderControls.querySelector('#moveDownBtn');
-              if (upBtn) upBtn.disabled = disabled;
-              if (dnBtn) dnBtn.disabled = disabled;
-            }
-          } else {
-            // Desktop: show the drag hint only when manual dragging is enabled
-            dragMessage.textContent = 'Drag the notes into the note scale order you want:';
-            dragMessage.style.display = manualMode ? 'block' : 'none';
-            if (touchReorderControls) touchReorderControls.style.display = 'none';
-          }
+          dragMessage.style.display = autoMode ? 'none' : 'block';
 
           // Range Expander availability depends on Auto Sort
           rangeExpanderRow.style.display = autoSortCheckbox.checked ? 'block' : 'none';
@@ -1664,7 +1526,6 @@
 
             safeRenderList();
             updateDragInteractivity();
-            clearSelection();
 
           } catch (err) {
             console.error("Import zip failed:", err);
@@ -1704,7 +1565,6 @@
 
           safeRenderList();
           updateDragInteractivity();
-          clearSelection();
         });
 
         function handleStartingControlsChange() {
@@ -1736,7 +1596,6 @@
 
           safeRenderList();
           updateDragInteractivity();
-          clearSelection();
         });
 
         gapMode.addEventListener('change', () => {
@@ -1793,7 +1652,6 @@
           sortFilesIfNeeded();
           safeRenderList();
           updateDragInteractivity();
-          clearSelection();
         }
 
         rangeExpanderCheckbox.addEventListener('change', updateRangeExpanderUI);
@@ -1802,30 +1660,6 @@
         lowNote.addEventListener('change', handleRangeValueChange);
         highOct.addEventListener('change', handleRangeValueChange);
         highNote.addEventListener('change', handleRangeValueChange);
-
-        // Move Up/Down buttons (mobile manual mode)
-        if (moveUpBtn) moveUpBtn.addEventListener('click', () => {
-          stopPreviewIfPlaying(); // <-- stop any audition          
-          if (selectedIndex <= 0) return;
-          const i = selectedIndex;
-          [files[i - 1], files[i]] = [files[i], files[i - 1]];
-          selectedIndex = i - 1;
-          stopCurrentPreview();
-          renderList();
-          dragMessage.style.display = 'block';
-          dragMessage.textContent = 'To reorder the notes, select a note and then click Move Up or Move Down:';
-        });
-        if (moveDownBtn) moveDownBtn.addEventListener('click', () => {
-          stopPreviewIfPlaying(); // <-- stop any audition          
-          if (selectedIndex < 0 || selectedIndex >= files.length - 1) return;
-          const i = selectedIndex;
-          [files[i], files[i + 1]] = [files[i + 1], files[i]];
-          selectedIndex = i + 1;
-          stopCurrentPreview();
-          renderList();
-          dragMessage.style.display = 'block';
-          dragMessage.textContent = 'To reorder the notes, select a note and then click Move Up or Move Down:';
-        });
 
         // Instructions modal
         instructionsBtn.addEventListener('click', async () => {
@@ -1844,8 +1678,7 @@
               <p><strong>5)</strong> If your files have filenames that contain note names, check <strong>Automatically sort files by scale order (C, Db, D, Eb, E, ...)</strong> to align the sample file list with the note names (checked by default).</p>
               <p><strong>6)</strong> When automatically sorting by scale order, if there are scale gaps found, select between either synthesizing (pitch shifting) the missing note samples in the scale from other available notes or just replacing them with placeholder silent files.</p>
               <p><strong>7)</strong> <em>Optional:</em> Turn on the <strong>Range Expander</strong> (available only with Auto Sort) to set a lowest and highest desired note. The ends of the list will match your requested notes exactly, while the lowest <em>actual</em> input sample keeps the label set by “Starting Octave/Note”.</p>
-              <p><strong>8)</strong> If not automatically sorting files by scale order, you can drag-and-drop the notes in the list into the scale note order you want. This can be useful for loops/stems or non-pitched percussion instruments.</p>
-              <p>On mobile browsers, select a note and then click the <strong>Move Up</strong> and <strong>Move Down</strong> buttons to reorder the list into the scale note order you want.</p>
+              <p><strong>8)</strong> If not automatically sorting files by scale order, you can drag-and-drop the items in the list into the scale note order you want. This can be useful for loops/stems or non-pitched percussion instruments.</p>
               <p><strong>9)</strong> <em>Optional:</em> Enable <strong>Trim leading silence</strong> and set a <strong>Silence threshold (dB)</strong> to remove silence at the start of each file. Smaller dB values are more sensitive (e.g., -40 to -50 dB is typical). Click <strong>Apply</strong> to apply the update the silence trimming to all the samples.</p>
               <p><strong>10)</strong> <em>Optional:</em> Enable <strong>Encode all exported files as mono .wav</strong> to force every exported file to mono .wav format, regardless of input type.</p>
               <p>This applies to both normal export and silence-trimmed files and may reduce the custom instrument size if the original samples were stereo .wav files.</p>
@@ -1877,7 +1710,6 @@
         highOct.value = "6"; highNote.value = "0";   // C6
 
         updateDragInteractivity();
-
       }
 
       // Utility: MIME guess (kept simple)
