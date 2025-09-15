@@ -1193,21 +1193,50 @@
               btn.addEventListener('click',(e)=>previewFile(slot.file,e.currentTarget));
               ctrl.appendChild(btn); item.appendChild(nameSpan); item.appendChild(proposedSpan); item.appendChild(ctrl);
               addDragHandlers(item);
-            } else {
-              item.className='file-item';
-              const proposed=getProposedNameForIndex(idx,"wav");
-              const modeLabel=(gapMode.value==='synth')?' (synthesized)':' (silent)';
-              const ctrl=document.createElement('div'); ctrl.className='controls';
-              if (gapMode.value==='synth'){
-                const pbtn=document.createElement('button'); pbtn.className='preview-btn'; pbtn.type='button'; pbtn.textContent='▶︎';
+            }
+            else {
+              item.className = 'file-item';
+              const proposed = getProposedNameForIndex(idx, "wav");
+              const modeLabel = (gapMode.value === 'synth') ? ' (synthesized)' : ' (silent)';
+
+              const nameBits = document.createElement('span');
+              nameBits.className = 'placeholder-label';
+              nameBits.textContent = '(placeholder)';
+
+              const proposedSpan = document.createElement('span');
+              proposedSpan.className = 'proposed';
+              proposedSpan.textContent = `→ ${proposed}${modeLabel}`;
+
+              const ctrl = document.createElement('div');
+              ctrl.className = 'controls';
+
+              if (gapMode.value === 'synth') {
+                const pbtn = document.createElement('button');
+                pbtn.className = 'preview-btn';
+                pbtn.type = 'button';
+                pbtn.textContent = '▶︎';
                 pbtn.title = 'Preview synthesized placeholder';
-                pbtn.addEventListener('click',(e)=>previewPlaceholderAtIndex(full, idx, e.currentTarget));
+                pbtn.addEventListener('click', (e) => previewPlaceholderAtIndex(full, idx, e.currentTarget));
                 ctrl.appendChild(pbtn);
+              } else {
+                // Spacer to keep row height identical to real-note rows
+                const spacer = document.createElement('button');
+                spacer.className = 'preview-btn';
+                spacer.type = 'button';
+                spacer.textContent = '▶︎';
+                spacer.style.visibility = 'hidden';
+                spacer.tabIndex = -1;
+                spacer.setAttribute('aria-hidden', 'true');
+                ctrl.appendChild(spacer);
               }
-              item.innerHTML=`<span class="placeholder-label">(placeholder)</span><span class="proposed">→ ${proposed}${modeLabel}</span>`;
+
+              item.appendChild(nameBits);
+              item.appendChild(proposedSpan);
               item.appendChild(ctrl);
             }
+
             fileList.appendChild(item);
+            
           });
 
           if (!rangeExpanderCheckbox.checked && unmatched.length){
