@@ -1375,6 +1375,33 @@
           exportZipBtn.disabled = true;
           setExportStatus('Starting export…');
 
+          // --- NEW: preflight check so we don't prompt if there's nothing to export ---
+          let plannedCount = 0;
+          (function computePlannedCountPreflight(){
+            if (!autoSortCheckbox.checked && !rangeExpanderCheckbox.checked) {
+              // manual mode: count visible "real" rows
+              plannedCount = Array.from(fileList.children).filter(el => el.classList.contains('real')).length;
+            } else {
+              const plan = buildContinuousRange();
+              if (plan && plan.full && plan.full.length) {
+                plannedCount = plan.full.length;
+                if (!rangeExpanderCheckbox.checked && plan.unmatched && plan.unmatched.length) {
+                  plannedCount += plan.unmatched.length;
+                }
+              } else {
+                plannedCount = files.length;
+              }
+            }
+          })();
+
+          if (plannedCount === 0) {
+            DayPilot.Modal.alert('<p style="text-align:center">Nothing to export!</p>', { theme:"modal_flat", top:200 });
+            exportZipBtn.disabled = false;
+            clearExportStatus();
+            return;
+          }
+          // --- end NEW ---
+
           async function saveZipFile(fname){
             if (fileList.children.length == 0 || !files.length){
               DayPilot.Modal.alert('<p style="text-align:center">Nothing to export!</p>', { theme:"modal_flat", top:200 });
