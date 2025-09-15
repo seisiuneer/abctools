@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "2768_091125_1830";
+var gVersionNumber = "2769_091525_0900";
 
 var gMIDIInitStillWaiting = false;
 
@@ -47454,7 +47454,7 @@ async function manageCustomInstrumentSlots(files){
     .${UID}-slot[data-has="true"]  { font-weight: 600; }
     .${UID}-slot.dragover { outline: 2px dashed #888; outline-offset: 2px; }
     .${UID}-label { display: block; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;font-size:11pt; }
-    .${UID}-chip { border:1px solid #bbb; border-radius: 999px; padding:8px 14px; margin:6px; display:inline-flex; align-items:center;
+    .${UID}-chip { border:1px solid #bbb; border-radius:8px; padding:8px 14px; margin:6px; display:inline-flex; align-items:center;
       cursor:grab; user-select:none; background:#fff; font-size:12px; max-width: 320px; overflow: hidden; text-overflow: ellipsis;
       white-space: nowrap; min-width: 0; }
     .${UID}-chip.selected { outline: 2px solid #007aff; }
