@@ -232,11 +232,11 @@
         <h1 class="accent-text">UltraBox Sample Extractor</h1>
         <p>This utility helps you take sounds from larger files with several sounds inside (such as <a href="https://en.wikipedia.org/wiki/SoundFont">soundfonts</a>, with their well-known <code>.sf2</code> file extension), and save them as individual <a href="https://en.wikipedia.org/wiki/WAV"><code>.wav</code></a> files, for use in your <a href="https://ultraabox.github.io/">UltraBox</a> songs.</p>
         <p>To create a custom instrument for the <a href="https://michaeleskin.com/abctools/abctools.html" target="_blank">ABC Transcription Tools</a> from the extracted samples, first save a .zip of extracted instrument .wav files from the .sf2 file.</p>
-        <p>Ideally, you'll want to have only a single instrument with no duplicate MIDI pitch numbers in the .zip file.</p>
-        <p>If there is no duplicate pitch numbers in the extracted samples, you can directly import the saved .zip file using the <strong>Import Custom Instrument</strong> feature of the</p>
+        <p>The <strong>ABC Transcription Tools Custom Instrument Builder</strong> can directly import and pitch-map samples that have the MIDI note number before the file extension (e.g., Piano-60.wav):</p>
         <p style="text-align: center;"><a href="https://michaeleskin.com/tools/custom_instrument_builder.html" target="_blank">ABC Transcription Tools - Custom Instrument Builder</a></p>
-        <p>If there are duplicate pitch numbers, or you wish to pick and choose the samples to use for a custom instrument, you can unzip the .zip file exported by this tool into a directory and then open the specfic samples you want to use in the Custom Instrument Builder from that directory.</p>
-        <p>The Custom Instrument Builder can directly import and pitch-map samples that have the MIDI note number before the file extension (e.g., Piano-60.wav)</p>
+        <p>Ideally, you'll want to have only a single instrument with no duplicate MIDI pitch numbers in the filenames in the .zip file.</p>
+        <p>If there are no duplicate pitch numbers in the extracted sample filenames, you can directly import the saved .zip file using the <strong>Import Custom Instrument</strong> feature of the <strong>Custom Instrument Builder</strong>.</p>
+        <p>If there are duplicate pitch numbers in the filenames, or you wish to pick and choose the samples to use for a custom instrument, you can unzip the .zip file exported by this tool into a directory and then open the specfic samples you want to use in the <strong>Custom Instrument Builder</strong> from that directory.</p>
         <p>To start, drop a file (in one of the <a class="supported-formats-link" href="#">supported formats</a>) on this page, or use your browser's file picker:</p>
         <div class="center">
           <input type="file" multiple="" id="file-picker">
