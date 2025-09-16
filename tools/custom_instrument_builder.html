@@ -385,6 +385,10 @@
 
     <label>Import audio sample files in .wav or .mp3 format:
       <input type="file" id="fileInput" accept=".wav,.mp3" multiple>
+      <label for="disableMidiDetect" style="display:flex; align-items:center; gap:6px; margin:0; white-space:nowrap;margin-top:10px !important;">
+        <input type="checkbox" id="disableMidiDetect">
+        Disable .sf2-style MIDI-number pitch name detection
+      </label>
     </label>
 
     <div class="form-row">
@@ -592,6 +596,8 @@
 
         const forceMonoWavCheckbox = document.getElementById('forceMonoWav');
 
+        const disableMidiDetectCheckbox = document.getElementById('disableMidiDetect');
+
         // Range Expander UI
         const rangeExpanderRow = document.getElementById('rangeExpanderRow');
         const rangeExpanderCheckbox = document.getElementById('rangeExpander');
@@ -703,6 +709,20 @@
           const idx = (selectedIndex >= 0 && selectedIndex < files.length) ? selectedIndex : -1;
           insertPlaceholderAfter(idx);
         });
+
+        if (disableMidiDetectCheckbox) {
+          disableMidiDetectCheckbox.addEventListener('change', () => {
+            // re-run mapping/sorting and refresh the view
+            stopPreviewIfPlaying();
+            sortFilesIfNeeded(); // will honor the new parse behavior
+            if ((autoSortCheckbox.checked || rangeExpanderCheckbox.checked) && !gHasHashedNames) {
+              detectAndApplyLowestPitch();
+            }
+            safeRenderList();
+            updateDragInteractivity();
+            clearSelection();
+          });
+        }
 
         // Generic delete button (mobile)
         if (deleteBtn) {
@@ -1006,12 +1026,82 @@
         const sharpToFlat = {"C#":"Db","D#":"Eb","F#":"Gb","G#":"Ab","A#":"Bb","Cs":"Db","Ds":"Eb","Fs":"Gb","Gs":"Ab","As":"Bb","CS":"Db","DS":"Eb","FS":"Gb","GS":"Ab","AS":"Bb"};
         const noteOrder = ["C","Db","D","Eb","E","F","Gb","G","Ab","A","Bb","B"];
         const noteRegex = /([A-G][#bsS]?)(\d+)/i;
-        function parsePitchFromName(name){
-          const m = name.match(noteRegex); if(!m) return null;
-          let note = m[1]; const octave = parseInt(m[2],10);
-          note = note.charAt(0).toUpperCase()+(note.slice(1)||""); note = sharpToFlat[note] || note;
-          const idx = noteOrder.indexOf(note); if (idx<0 || isNaN(octave)) return null;
-          return { noteIdx: idx, octave, pitchIndex: octave*12+idx };
+
+        // Existing helpers in your file we reuse:
+        // - sharpToFlat, noteOrder
+        // - stripExtension(name)  -> returns name without extension
+
+        // Extract the last 1–3 digit integer found in a file's base name.
+        // Examples:
+        //   "Foo-60.wav"                     -> 60
+        //   "ChorFemKhb - ChorFem-71.mp3"    -> 71
+        //   "Bar_062_take3.wav"              -> 3 (last number)  <-- we handle this by preferring a strict end-match first
+        function extractLastIntegerFromBaseName(filename) {
+          const base = stripExtension(filename);
+
+          // Prefer a number at the very end (common in your examples)
+          const endMatch = base.match(/(\d{1,3})\s*$/);
+          if (endMatch) {
+            return parseInt(endMatch[1], 10);
+          }
+
+          // Otherwise, fall back to "last number anywhere" (still 1–3 digits)
+          const all = base.match(/\d{1,3}/g);
+          if (all && all.length) {
+            return parseInt(all[all.length - 1], 10);
+          }
+
+          return null;
+        }
+
+        // Convert a MIDI number (C4=60) into your internal pitch parts:
+        // pitchIndex = octave*12 + noteIdx  with C0 = 0  => pitchIndex = midi - 12
+        // Returns null if midi is out of a reasonable range for your UI.
+        function midiToPitchParts(midi) {
+          if (!Number.isInteger(midi)) return null;
+
+          // Typical safe range for your UI (C0..B8) -> MIDI 12..119
+          // You can loosen if desired, but this keeps octave in 0..8, matching other code paths.
+          if (midi < 12 || midi > 119) return null;
+
+          const pitchIndex = midi - 12;                     // map MIDI to your 0-based C0 index
+          const octave     = Math.floor(pitchIndex / 12);
+          const noteIdx    = pitchIndex % 12;
+
+          return { noteIdx, octave, pitchIndex };
+        }
+
+        // First try NoteName+Octave; if that fails AND the checkbox is NOT checked,
+        // fall back to MIDI-number detection (e.g. Foo-60.wav -> 60 -> C4).
+        function parsePitchFromName(name) {
+          // Attempt 1: note name + octave
+          const m = name.match(noteRegex);
+          if (m) {
+            let note = m[1];
+            const oct = parseInt(m[2], 10);
+            if (!Number.isNaN(oct)) {
+              note = note.charAt(0).toUpperCase() + (note.slice(1) || "");
+              note = sharpToFlat[note] || note;
+              const idx = noteOrder.indexOf(note);
+              if (idx >= 0) {
+                return { noteIdx: idx, octave: oct, pitchIndex: oct * 12 + idx };
+              }
+            }
+          }
+
+          // If MIDI-number detect is disabled via the new checkbox, stop here.
+          if (disableMidiDetectCheckbox && disableMidiDetectCheckbox.checked) {
+            return null;
+          }
+
+          // Attempt 2: MIDI number fallback from filename
+          const midi = extractLastIntegerFromBaseName(name);
+          if (midi !== null) {
+            const parts = midiToPitchParts(midi);
+            if (parts) return parts;
+          }
+
+          return null;
         }
 
         function detectAndApplyLowestPitch() {
@@ -2740,15 +2830,20 @@
               <p>This tool is used to create an ABC Transcription Tools custom instrument from a directory of per-note instrument audio sample files.</p>
               <p>The files should be in .wav or .mp3 format. The samples must all be in the same directory.</p>
               <p><strong>1)</strong> Tap <strong>Choose Files</strong> (<strong>Browse...</strong> on Firefox) to import your audio sample files.</p>
+              <p>The tool will attempt to determine the note name and octave of each of the files.</p>
+              <p>Both note name (e.g., C4.wav) or patchname-(MIDI note number) filenames (e.g., Piano-60.wav), which are common in .sf2-extracted .wav files, are supported.</p>
+              <p>Note name detection is done first, and if it fails, MIDI-number pitch name detection is attempted.</p>
+              <p>If both note name pitch detections fail, the files will be loaded into the list with no pitch mapping.</p>
+              <p>If you want to specifically disable the .sf2 MIDI-number pitch name detection, check <strong>Disable .sf2-style MIDI-number pitch name detection</strong>.</p>
               <p>You can also import an existing custom instrument by tapping <strong>Import Custom Instrument (.zip)</strong>.</p>
               <p>If you re-import a previously exported custom instrument .zip, your saved volume scale and fade settings will also be restored automatically.</p>
-              <p>The note output filename for each audio sample is displayed to the right of each note.</p>
+              <p>The custom instrument note output filename for each audio sample is displayed to the right of each note.</p>
               <p><strong>2)</strong> Select the default volume scale and fade time for the instrument.</p>
               <p>These values will be applied to the instrument when used in the <strong>ABC Transcription Tools</strong>.</p>
               <p><strong>3)</strong> Choose the starting scale note for the instrument notes.</p>
               <p><strong>4)</strong> Choose the starting octave number for the instrument notes.</p>
               <p>For reference, in ABC notation, middle C on the piano (written as C) corresponds to C4, while the lowest string on a violin (written as G,) corresponds to G3.</p>
-              <p><strong>5)</strong> If your files have filenames that contain note names, check <strong>Automatically sort files by scale order (C, Db, D, Eb, E, ...)</strong> to align the sample file list with the note names (checked by default).</p>
+              <p><strong>5)</strong> If your sample filenames contain note names (e.g., C4.wav) or follow the patchname-(MIDI note number) format (e.g., Piano-60.wav), which is common in .sf2-extracted .wav files, check <strong>Automatically sort files by scale order (C, Db, D, Eb, E, ...)</strong> to align the sample file list with the note names (checked by default).</p>
               <p>If note names cannot be automatically parsed, sorting and range detection will be disabled. You can still manually reorder your samples.</p>
               <p><strong>6)</strong> If you have any original samples that don't sound good and want to instead create them by pitch-shifting from adjacent samples, you can remove them from the list by:</p>
               <p>Tap the item to select it and then tap the <strong>Delete Selected Item from List</strong> button.</p>
@@ -2802,15 +2897,20 @@
               <p>This tool is used to create an ABC Transcription Tools custom instrument from a directory of per-note instrument audio sample files.</p>
               <p>The files should be in .wav or .mp3 format. The samples must all be in the same directory.</p>
               <p><strong>1)</strong> Click <strong>Choose Files</strong> (<strong>Browse...</strong> on Firefox) to import your audio sample files.</p>
+              <p>The tool will attempt to determine the note name and octave of each of the files.</p>
+              <p>Both note name (e.g., C4.wav) or patchname-(MIDI note number) filenames (e.g., Piano-60.wav), which are common in .sf2-extracted .wav files, are supported.</p>
+              <p>Note name detection is done first, and if it fails, MIDI-number pitch name detection is attempted.</p>
+              <p>If both note name pitch detections fail, the files will be loaded into the list with no pitch mapping.</p>
+              <p>If you want to specifically disable the .sf2 MIDI-number pitch name detection, check <strong>Disable .sf2-style MIDI-number pitch name detection</strong>.</p>
               <p>You can also import an existing custom instrument by clicking <strong>Import Custom Instrument (.zip)</strong>.</p>
               <p>If you re-import a previously exported custom instrument .zip, your saved volume scale and fade settings will also be restored automatically.</p>
-              <p>The note output filename for each audio sample is displayed to the right of each note.</p>
+              <p>The custom instrument note output filename for each audio sample is displayed to the right of each note.</p>
               <p><strong>2)</strong> Select the default volume scale and fade time for the instrument.</p>
               <p>These values will be applied to the instrument when used in the <strong>ABC Transcription Tools</strong>.</p>
               <p><strong>3)</strong> Choose the starting scale note for the instrument notes.</p>
               <p><strong>4)</strong> Choose the starting octave number for the instrument notes.</p>
               <p>For reference, in ABC notation, middle C on the piano (written as C) corresponds to C4, while the lowest string on a violin (written as G,) corresponds to G3.</p>
-              <p><strong>5)</strong> If your files have filenames that contain note names, check <strong>Automatically sort files by scale order (C, Db, D, Eb, E, ...)</strong> to align the sample file list with the note names (checked by default).</p>
+              <p><strong>5)</strong> If your sample filenames contain note names (e.g., C4.wav) or follow the patchname-(MIDI note number) format (e.g., Piano-60.wav), which is common in .sf2-extracted .wav files, check <strong>Automatically sort files by scale order (C, Db, D, Eb, E, ...)</strong> to align the sample file list with the note names (checked by default).</p>
               <p>If note names cannot be automatically parsed, sorting and range detection will be disabled. You can still manually reorder your samples.</p>
               <p><strong>6)</strong> If you have any original samples that don't sound good and want to instead create them by pitch-shifting from adjacent samples, you can remove them from the list by:</p>
               <p>Right-click the item and select <strong>Delete sample from list</strong> from the context menu.</p>
