@@ -28,12 +28,11 @@
   <link rel="icon" type="image/png" sizes="96x96" href="https://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
   <link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
 
-  <script type="text/javascript" src="jszip-min.js?v=19"></script>
-  <script type="text/javascript" src="filesaver-min.js?v=19"></script>
-  <script type="text/javascript" src="daypilot-modal.min-3.10.1.js?v=19"></script>
+  <script type="text/javascript" src="jszip-min.js?v=20"></script>
+  <script type="text/javascript" src="filesaver-min.js?v=20"></script>
+  <script type="text/javascript" src="daypilot-modal.min-3.10.1.js?v=20"></script>
   
   <style>
-
     body {
       background: #fafafa;
       color: #222;
@@ -88,19 +87,18 @@
 
     input[type="file"] {
       font-size: 1em;
-      padding: 0.3em 0;         /* was 0.5em, reduced so the inner button won’t clip */
-      height: 2.2em;            /* was 2.6em, now shorter */
-      line-height: 1.2;         /* aligns better with button text */
+      padding: 0.3em 0;
+      height: 2.2em;
+      line-height: 1.2;
       border-radius: 4px;
       box-sizing: border-box;
     }
 
-    /* Modern browsers */
     input[type="file"]::file-selector-button {
       -webkit-appearance: none;
       appearance: none;
       margin-right: 0.5em;
-      padding: 0.3em 0.8em;     /* slightly reduced vertical padding */
+      padding: 0.3em 0.8em;
       border-radius: 5px;
       border: 1px solid #005aad;
       background: #005aad;
@@ -111,25 +109,15 @@
       line-height: 1.2;
     }
 
-    input[type="file"]::file-selector-button:hover {
-      background: #0a6bd1;
-      border-color: #0a6bd1;
-    }
-    input[type="file"]::file-selector-button:active {
-      background: #0a5db6;
-      border-color: #0a5db6;
-    }
+    input[type="file"]::file-selector-button:hover { background: #0a6bd1; border-color: #0a6bd1; }
+    input[type="file"]::file-selector-button:active { background: #0a5db6; border-color: #0a5db6; }
     input[type="file"]::file-selector-button:focus,
-    input[type="file"]:focus-visible::file-selector-button {
-      outline: none;
-      box-shadow: 0 0 0 2px rgba(0,90,173,0.25);
-    }
+    input[type="file"]:focus-visible::file-selector-button { outline: none; box-shadow: 0 0 0 2px rgba(0,90,173,0.25); }
 
-    /* Safari / iOS fallback */
     input[type="file"]::-webkit-file-upload-button {
       -webkit-appearance: none;
       margin-right: 0.5em;
-      padding: 0.3em 0.8em;     /* reduced vertical padding */
+      padding: 0.3em 0.8em;
       border-radius: 5px;
       border: 1px solid #005aad;
       background: #005aad;
@@ -139,33 +127,22 @@
       cursor: pointer;
       line-height: 1.2;
     }
-    input[type="file"]::-webkit-file-upload-button:hover {
-      background: #0a6bd1;
-      border-color: #0a6bd1;
-    }
-    input[type="file"]::-webkit-file-upload-button:active {
-      background: #0a5db6;
-      border-color: #0a5db6;
-    }
-    input[type="file"]:focus-visible::-webkit-file-upload-button {
-      outline: none;
-      box-shadow: 0 0 0 2px rgba(0,90,173,0.25);
-    }
+    input[type="file"]::-webkit-file-upload-button:hover { background: #0a6bd1; border-color: #0a6bd1; }
+    input[type="file"]::-webkit-file-upload-button:active { background: #0a5db6; border-color: #0a5db6; }
+    input[type="file"]:focus-visible::-webkit-file-upload-button { outline: none; box-shadow: 0 0 0 2px rgba(0,90,173,0.25); }
 
     select {
       -webkit-appearance: none;
       -moz-appearance: none;
       appearance: none;
-
       margin-top: 0.26em;
       font-size: 1.0em;
       width: 100%;
       box-sizing: border-box;
       padding-block: 0.4em;
       padding-inline: 0.52em;
-
-      color: #222;             /* force text color */
-      background-color: #fff;  /* ensure white background */
+      color: #222;
+      background-color: #fff;
       border: 1px solid #ccc;
       border-radius: 4px;
     }
@@ -177,11 +154,11 @@
     }
 
     #fileList {
-      margin-top: .47em;                 
+      margin-top: .47em;
       background: #fff;
       border: 1px solid #ddd;
       border-radius: 4px;
-      padding: 0.84em;                   
+      padding: 0.84em;
       max-height: 32vh;
       overflow-y: auto;
     }
@@ -206,13 +183,7 @@
 
     .file-item:not(.real) { min-height: 1.6em; padding: 0.1em 0.9em; }
 
-    .proposed {
-      color: #555;
-      font-style: italic;
-      margin-left: auto;
-      flex-shrink: 0;
-      align-self: center;
-    }
+    .proposed { color: #555; font-style: italic; margin-left: auto; flex-shrink: 0; align-self: center; }
 
     .controls { display: flex; align-items: center; justify-content: flex-end; margin-left: 8.5px; }
 
@@ -331,42 +302,26 @@
 
     .action-row { display: flex; justify-content: center; gap: 10px; }
 
-    #exportZip {
-      margin-left:9px;
-      margin-top:12px;
-    }
-
-    #importZipBtn {
-      background-color: #471268; 
-      border-color: #471268;
-      margin-right:9px;
-      margin-top:12px;
-    }
-
-    #importZipBtn:hover {
-      background-color: green; 
-      border-color: green;
-    }
+    #exportZip { margin-left:9px; margin-top:12px; }
+    #importZipBtn { background-color: #471268; border-color: #471268; margin-right:9px; margin-top:12px; }
+    #importZipBtn:hover { background-color: green; border-color: green; }
 
     .touch-reorder{
       display:flex;
       gap:8px;
-      justify-content:center; /* centered */
+      justify-content:center;
       margin-top:6px;
     }
 
-    .file-item.selected{
-      outline:2px solid #91d5ff;
-      background:#e6f7ff;
-    }
+    .file-item.selected{ outline:2px solid #91d5ff; background:#e6f7ff; }
 
-    #moveUpBtn, #moveDownBtn, #insertAfterBtn, #deletePlaceholderBtn {
+    /* Updated to include new Delete button */
+    #moveUpBtn, #moveDownBtn, #insertAfterBtn, #deleteBtn {
       background-color: #008a53;  
       border-color: #008a53;
     }
 
-    /* Keep hover from changing color */
-    #moveUpBtn:hover, #moveDownBtn:hover, #insertAfterBtn:hover, #deletePlaceholderBtn:hover{
+    #moveUpBtn:hover, #moveDownBtn:hover, #insertAfterBtn:hover, #deleteBtn:hover{
       background-color: #008a53 !important;
       border-color: #008a53 !important;
     }
@@ -409,21 +364,7 @@
     </div>
 
     <div class="form-row">
-      <label>Starting Octave Number:
-        <select id="startNumber">
-          <option value="0">0</option>
-          <option value="1">1</option>
-          <option value="2">2</option>
-          <option value="3">3</option>
-          <option value="4">4</option>
-          <option value="5">5</option>
-          <option value="6">6</option>
-          <option value="7">7</option>
-          <option value="8">8</option>
-        </select>
-      </label>
-
-      <label>Starting Scale Note:
+      <label>Starting scale note:
         <select id="startNote">
           <option value="0">C</option>
           <option value="1">Db</option>
@@ -437,6 +378,19 @@
           <option value="9">A</option>
           <option value="10">Bb</option>
           <option value="11">B</option>
+        </select>
+      </label>
+      <label>Starting octave number:
+        <select id="startNumber">
+          <option value="0">0</option>
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
+          <option value="6">6</option>
+          <option value="7">7</option>
+          <option value="8">8</option>
         </select>
       </label>
     </div>
@@ -477,20 +431,13 @@
     <div class="form-row" id="rangeExpanderRow">
       <label>
         <input type="checkbox" id="rangeExpander">
-        Range Expander (set lowest & highest desired notes)
+        Range Expander (set lowest and highest desired notes and octaves)
       </label>
     </div>
 
     <!-- Range Expander controls -->
     <div id="rangeControls" class="range-controls">
       <div class="row">
-        <label style="flex:1 1 220px;">Lowest desired octave:
-          <select id="lowOct">
-            <option>0</option><option>1</option><option>2</option><option>3</option>
-            <option>4</option><option>5</option><option>6</option><option>7</option>
-            <option>8</option>
-          </select>
-        </label>
         <label style="flex:1 1 220px;">Lowest desired note:
           <select id="lowNote">
             <option value="0">C</option>
@@ -507,15 +454,15 @@
             <option value="11">B</option>
           </select>
         </label>
-      </div>
-      <div class="row">
-        <label style="flex:1 1 220px;">Highest desired octave:
-          <select id="highOct">
+        <label style="flex:1 1 220px;">Lowest desired octave:
+          <select id="lowOct">
             <option>0</option><option>1</option><option>2</option><option>3</option>
             <option>4</option><option>5</option><option>6</option><option>7</option>
             <option>8</option>
           </select>
         </label>
+      </div>
+      <div class="row">
         <label style="flex:1 1 220px;">Highest desired note:
           <select id="highNote">
             <option value="0">C</option>
@@ -532,35 +479,43 @@
             <option value="11">B</option>
           </select>
         </label>
+        <label style="flex:1 1 220px;">Highest desired octave:
+          <select id="highOct">
+            <option>0</option><option>1</option><option>2</option><option>3</option>
+            <option>4</option><option>5</option><option>6</option><option>7</option>
+            <option>8</option>
+          </select>
+        </label>
       </div>
       <p style="margin:8px 2px 0;color:#444;font-size:0.95em;">
-        Files are transposed by <em>Starting Octave/Note</em> before expansion. Output is clamped to this range.
+        Files are transposed by <strong>Starting scale note/octave</strong> above before expansion. Output is clamped to this range.
       </p>
     </div>
 
     <div id="gapOptions" class="gap-controls">
-      <strong>Missing Note Handling:</strong>
+      <strong>Missing note handling:</strong>
       <select id="gapMode">
         <option value="synth">Synthesize (pitch-shift) missing notes</option>
         <option value="silent">Fill gaps with silent WAVs</option>
       </select>
     </div>
 
-    <p id="dragMessage" style="margin-bottom:8px;display:none;"><strong>Drag the notes into the note scale order you want.&nbsp;&nbsp;Right-click to insert/delete silent placeholders:</strong></p>
+    <p id="dragMessage" style="margin-bottom:8px;display:none;"><strong>Drag the notes into the scale note order you want.&nbsp;&nbsp;Right-click to insert/delete silent placeholders:</strong></p>
 
     <div id="fileList"></div>
 
+    <!-- Updated mobile control bar -->
     <div id="touchReorderControls" class="touch-reorder" style="display:none;">
       <button id="moveUpBtn" type="button" aria-label="Move selected note up">Move Up</button>
       <button id="moveDownBtn" type="button" aria-label="Move selected note down">Move Down</button>
       <button id="insertAfterBtn" type="button" aria-label="Insert silent placeholder after selected note">Insert Silent Placeholder</button>
-      <button id="deletePlaceholderBtn" type="button" aria-label="Delete selected silent placeholder">Delete Silent Placeholder</button>
+      <button id="deleteBtn" type="button" aria-label="Delete selected item from list">Delete Selected Item from List</button>
     </div>
 
     <div id="exportStatus" role="status" aria-live="polite" style="margin-top:6px; min-height:1.2em; text-align:center; font-size:0.95em; color:#333;"></div>
 
     <div class="action-row">
-      <button id="importZipBtn" title="Load and edit an ABC Transcription Tools existing custom instrument .zip file">Import Custom Instrument (.zip)</button>
+      <button id="importZipBtn" title="Load and edit an ABC Transcription Tools custom instrument (.zip)">Import Custom Instrument (.zip)</button>
       <button id="exportZip" title="Export an ABC Transcription Tools custom instrument .zip file">Export Custom Instrument</button>
     </div>
 
@@ -610,7 +565,6 @@
         function setExportStatus(msg){ if (exportStatusEl) exportStatusEl.textContent = msg; }
         function clearExportStatus(){ if (exportStatusEl) exportStatusEl.textContent = ''; }
 
-        // tiny yield to let UI update between heavy steps
         const tick = () => new Promise(r => setTimeout(r, 0));
 
         var gFileSaveName = "custom_instrument.zip";
@@ -623,128 +577,167 @@
         let gPrevPlayId = 0;
         let gIsPlaying = false;
 
-        //
-        // Are we on iOS?
-        //
         function isIOS() {
-          if (/iPad|iPhone|iPod/.test(navigator.platform)) {
-            return true;
-          } else {
-            return navigator.maxTouchPoints &&
-              navigator.maxTouchPoints > 2 &&
-              /MacIntel/.test(navigator.platform);
-          }
+          if (/iPad|iPhone|iPod/.test(navigator.platform)) return true;
+          return navigator.maxTouchPoints && navigator.maxTouchPoints > 2 && /MacIntel/.test(navigator.platform);
         }
-
-        //
-        // Are we on an iPad?
-        //
         function isIPad() {
           return (
             (navigator.maxTouchPoints && navigator.maxTouchPoints > 2 && /MacIntel/.test(navigator.platform)) ||
             (navigator.maxTouchPoints && navigator.maxTouchPoints > 2 && /iPad/.test(navigator.platform))
           );
         }
-
-        //
-        // Are we on Android?
-        //
-        function isAndroid() {
-          if (/Android/i.test(navigator.userAgent)) {
-            return true;
-          } else {
-            return false;
-          }
-        }
+        function isAndroid() { return /Android/i.test(navigator.userAgent); }
 
         // Touch/manual-reorder support
-        //const isMobile = true; // For testing mobile adaptation features
+        //const isMobile = true; // For testing mobile adaptation
         const isMobile = isIOS() || isIPad() || isAndroid();
+
         const touchReorderControls = document.getElementById('touchReorderControls');
         const moveUpBtn = document.getElementById('moveUpBtn');
         const moveDownBtn = document.getElementById('moveDownBtn');
         const insertAfterBtn = document.getElementById('insertAfterBtn');
-        const deletePlaceholderBtn = document.getElementById('deletePlaceholderBtn');
+        const deleteBtn = document.getElementById('deleteBtn');
 
-        let selectedIndex = -1;
+        let selectedIndex = -1; // manual mode selection
+
+        // Sorted-mode mobile selection
+        let selectedRef = null; // { kind: 'real'|'placeholder', fileRef: File|null, renderIdx: number }
 
         insertAfterBtn.addEventListener('click', () => {
           // Manual mode only
           if (autoSortCheckbox.checked || rangeExpanderCheckbox.checked) return;
-
-          // Stop any audition before changing the list
           stopPreviewIfPlaying();
-
-          // If no selection, add at top
           const idx = (selectedIndex >= 0 && selectedIndex < files.length) ? selectedIndex : -1;
           insertPlaceholderAfter(idx);
         });
 
-        deletePlaceholderBtn.addEventListener('click', () => {
-          // Manual mode only
-          if (autoSortCheckbox.checked || rangeExpanderCheckbox.checked) return;
-          if (selectedIndex < 0 || selectedIndex >= files.length) return;
-          const f = files[selectedIndex];
-          if (!f || !f._isPlaceholder) return;
+        // Generic delete button (mobile)
+        if (deleteBtn) {
+          deleteBtn.addEventListener('click', () => {
+            stopPreviewIfPlaying();
 
-          // Stop any audition before changing the list
-          stopPreviewIfPlaying();
+            const manualMode = !autoSortCheckbox.checked && !rangeExpanderCheckbox.checked;
 
-          deletePlaceholderAtIndex(selectedIndex);
-          // button state will be refreshed by the render/selection updates
-        });
+            if (manualMode) {
+              if (selectedIndex < 0 || selectedIndex >= files.length) return;
+              const f = files[selectedIndex];
+              if (f && f._isPlaceholder) {
+                deletePlaceholderAtIndex(selectedIndex);
+              } else {
+                deleteSampleAtIndex(selectedIndex);
+              }
+              return;
+            }
 
-        // Helper to keep delete button state in sync with selection/mode
-        function updateDeletePlaceholderBtnState() {
+            // Sorted / Range mode: only real samples deletable
+            if (!selectedRef || selectedRef.kind !== 'real' || !selectedRef.fileRef) return;
+            const idx = files.findIndex(f => f === selectedRef.fileRef);
+            if (idx >= 0) {
+              selectedRef = null;
+              deleteSampleAtIndex(idx);
+            }
+          });
+        }
+
+        function updateDeleteBtnState() {
+          if (!deleteBtn) return;
           const manualMode = !autoSortCheckbox.checked && !rangeExpanderCheckbox.checked;
-          const validSel = selectedIndex >= 0 && selectedIndex < files.length;
-          const isPh = manualMode && validSel && !!(files[selectedIndex] && files[selectedIndex]._isPlaceholder);
-          if (deletePlaceholderBtn) {
-            deletePlaceholderBtn.disabled = !isPh;
-            deletePlaceholderBtn.style.opacity = isPh ? '1' : '0.5';
-            deletePlaceholderBtn.style.cursor = isPh ? 'pointer' : 'default';
+
+          if (manualMode) {
+            const valid = selectedIndex >= 0 && selectedIndex < files.length;
+            deleteBtn.disabled = !valid;
+            deleteBtn.style.opacity = valid ? '1' : '0.5';
+            deleteBtn.style.cursor  = valid ? 'pointer' : 'default';
+          } else {
+            const canDelete = !!(selectedRef && selectedRef.kind === 'real' && selectedRef.fileRef);
+            deleteBtn.disabled = !canDelete;
+            deleteBtn.style.opacity = canDelete ? '1' : '0.5';
+            deleteBtn.style.cursor  = canDelete ? 'pointer' : 'default';
           }
         }
 
         function clearSelection(){
           selectedIndex = -1;
-          fileList.querySelectorAll('.file-item.real').forEach(el => el.classList.remove('selected'));
+          selectedRef = null;
+          fileList.querySelectorAll('.file-item').forEach(el => el.classList.remove('selected'));
           updateMoveButtons();
+          updateDeleteBtnState();
+          if (isMobile) updateMobileReorderUI(); // ensure Insert/Move buttons reflect no selection
         }
 
         function selectManualRow(i){
           selectedIndex = i;
+          selectedRef = null;
           fileList.querySelectorAll('.file-item.real').forEach((el, idx) => {
             el.classList.toggle('selected', idx === selectedIndex);
           });
           updateMoveButtons();
-          if (typeof updateDeletePlaceholderBtnState === 'function') updateDeletePlaceholderBtnState();
+          updateDeleteBtnState();
+          if (isMobile) updateMobileReorderUI(); // enable Insert-after right away
+        }
+
+        function selectRowForButton(btn){
+          const row = btn && btn.closest('.file-item.real');
+          if (!row) return;
+          const i = Number(row.dataset.index);
+          if (!Number.isInteger(i)) return;
+          selectManualRow(i);
+        }
+
+        function selectSortedRow(kind, fileRef, renderIdx) {
+          selectedRef = { kind, fileRef, renderIdx };
+          selectedIndex = -1;
+          fileList.querySelectorAll('.file-item').forEach((el) => el.classList.remove('selected'));
+          const row = fileList.querySelector(`.file-item[data-render-index="${renderIdx}"]`);
+          if (row) row.classList.add('selected');
+          updateDeleteBtnState();
         }
 
         function updateMoveButtons(){
           if (!isMobile || touchReorderControls.style.display === 'none'){
             if (moveUpBtn) moveUpBtn.disabled = true;
             if (moveDownBtn) moveDownBtn.disabled = true;
-            if (typeof updateDeletePlaceholderBtnState === 'function') updateDeletePlaceholderBtnState();
+            updateDeleteBtnState();
             return;
           }
           const len = files.length;
           const valid = selectedIndex >= 0 && selectedIndex < len;
           if (moveUpBtn)   moveUpBtn.disabled   = !valid || selectedIndex === 0;
           if (moveDownBtn) moveDownBtn.disabled = !valid || selectedIndex === len - 1;
-
-          if (typeof updateDeletePlaceholderBtnState === 'function') updateDeletePlaceholderBtnState();
+          updateDeleteBtnState();
         }
 
         function updateMobileReorderUI(){
           const manualMode = !autoSortCheckbox.checked && !rangeExpanderCheckbox.checked;
-          const show = isMobile && manualMode && !gIsPlaying;
+          const show = isMobile;                      // was: isMobile && !gIsPlaying
           if (touchReorderControls) touchReorderControls.style.display = show ? 'flex' : 'none';
-          if (dragMessage)  dragMessage.style.display  = show ? 'none' : (manualMode ? 'block' : 'none');
-          if (!show) clearSelection();
-          updateMoveButtons();
 
-          if (typeof updateDeletePlaceholderBtnState === 'function') updateDeletePlaceholderBtnState();
+          // Show/hide per-mode controls
+          if (moveUpBtn)      moveUpBtn.style.display      = manualMode ? '' : 'none';
+          if (moveDownBtn)    moveDownBtn.style.display    = manualMode ? '' : 'none';
+          if (insertAfterBtn) insertAfterBtn.style.display = manualMode ? '' : 'none';
+          if (deleteBtn)      deleteBtn.style.display      = show ? '' : 'none';
+
+          // Hint text
+          if (dragMessage) {
+            if (manualMode) {
+              dragMessage.style.display = 'block';
+              dragMessage.innerHTML = "<strong>To reorder the notes, select a note and then click Move Up or Move Down:</strong>";
+            } else {
+              dragMessage.style.display = 'none';
+            }
+          }
+
+          const allowReorder = manualMode;
+          const len = files.length;
+          const validSel = selectedIndex >= 0 && selectedIndex < len;
+
+          if (moveUpBtn)      moveUpBtn.disabled      = !allowReorder || !validSel || selectedIndex === 0;
+          if (moveDownBtn)    moveDownBtn.disabled    = !allowReorder || !validSel || selectedIndex === len - 1;
+          if (insertAfterBtn) insertAfterBtn.disabled = !allowReorder || !validSel;
+
+          updateDeleteBtnState();   // keeps Delete enabled/disabled based on selection+mode only
         }
 
         // Absolute effective PI for first row
@@ -824,9 +817,7 @@
           try {
             if (gPrevBtn === btn && gPrevSource) { stopCurrentPreview(); return; }
             let buf = await decodeFileToAudioBuffer(file);
-            if (forceMonoWavCheckbox.checked) {
-              buf = mixToMono(buf);
-            }
+            if (forceMonoWavCheckbox.checked) { buf = mixToMono(buf); }
             if (trimSilenceCheckbox.checked) {
               const thr = dbToLinear(Number(silenceDbInput.value));
               buf = trimLeadingSilenceFromBuffer(buf, thr);
@@ -904,7 +895,7 @@
           return {minPI: hi, maxPI: lo};
         }
 
-        // Build continuous range; applies Starting Octave/Note as a transpose to source pitches BEFORE expansion.
+        // Build continuous range; applies Starting Note/Octave as a transpose to source pitches BEFORE expansion.
         function buildContinuousRange(){
           const matched = [], unmatched = [];
           const seen = new Set();
@@ -946,7 +937,7 @@
           const actualMinPI = matched[0].pitchIndex;
           const actualMaxPI = matched[matched.length-1].pitchIndex;
 
-          // Starting Octave/Note -> basePI
+          // Starting Note/Octave -> basePI
           const basePI = parseInt(startNumber.value,10)*12 + parseInt(startNote.value,10);
           const transpose = basePI - actualMinPI;
 
@@ -1179,20 +1170,15 @@
         // --- Placeholder utilities ---
 
         function createPlaceholderFile() {
-          // 1 second of silence; acts like any other file
           const blob = generateSilentWav(1);
           const f = new File([blob], "placeholder.wav", { type: "audio/wav" });
-          // mark so we can purge when switching back to sorted view
           Object.defineProperty(f, "_isPlaceholder", { value: true, enumerable: false });
           return f;
         }
 
-        // Insert a manual placeholder at a given index 
-        function insertPlaceholderAfter(idx /* -1 allowed to mean 'at top' */) {
-          // Stop any playback before mutating the list
+        // Insert manual placeholder
+        function insertPlaceholderAfter(idx) {
           stopPreviewIfPlaying();
-
-          // Manual mode only
           const manualMode = !autoSortCheckbox.checked && !rangeExpanderCheckbox.checked;
           if (!manualMode) return;
 
@@ -1200,24 +1186,15 @@
           const ph = createPlaceholderFile();
           files.splice(insertAt, 0, ph);
 
-          // Keep selection sensible on mobile
-          if (isMobile) {
-            selectedIndex = insertAt;
-          }
+          if (isMobile) selectedIndex = insertAt;
 
           safeRenderList();
           updateDragInteractivity();
-
-          if (isMobile) {
-            scrollSelectedIntoView();
-          }
+          if (isMobile) scrollSelectedIntoView();
         }
 
-        // Remove a manual placeholder at a given index (no-op if not a placeholder)
         function deletePlaceholderAtIndex(idx) {
-          // Stop any playback before mutating the list
           stopPreviewIfPlaying();
-
           const manualMode = !autoSortCheckbox.checked && !rangeExpanderCheckbox.checked;
           if (!manualMode) return;
           if (idx < 0 || idx >= files.length) return;
@@ -1226,22 +1203,39 @@
 
           files.splice(idx, 1);
 
-          // Maintain mobile selection if present
           if (isMobile) {
-            // Prefer to keep selection on the same visual row if possible
             if (selectedIndex > idx) selectedIndex -= 1;
-            // Clamp to last item if we deleted the last one
             if (selectedIndex >= files.length) selectedIndex = files.length - 1;
-            // If list became empty
             if (files.length === 0) selectedIndex = -1;
           }
 
           safeRenderList();
           updateDragInteractivity();
 
-          if (isMobile && selectedIndex >= 0) {
-            scrollSelectedIntoView();
+          if (isMobile && selectedIndex >= 0) scrollSelectedIntoView();
+          updateDeleteBtnState();
+        }
+
+        // Remove a real sample and rebuild mapping (incl. Range Expander)
+        function deleteSampleAtIndex(idx) {
+          if (idx < 0 || idx >= files.length) return;
+          const f = files[idx];
+          if (!f || f._isPlaceholder) return;
+
+          stopPreviewIfPlaying();
+
+          files.splice(idx, 1);
+
+          if (autoSortCheckbox.checked || rangeExpanderCheckbox.checked) {
+            sortFilesIfNeeded();
+            if (autoSortCheckbox.checked && !gHasHashedNames) {
+              detectAndApplyLowestPitch();
+            }
           }
+
+          safeRenderList();
+          updateDragInteractivity();
+          updateDeleteBtnState();
         }
 
         // --- Minimal context menu (right-click) for manual mode ---
@@ -1267,31 +1261,46 @@
           return ctxMenuEl;
         }
 
-        function showContextMenu(x, y, idx) {
+        function showContextMenu(x, y, idx, { isPlaceholder } = {}) {
+          if (isMobile) return;
+
           const manualMode = !autoSortCheckbox.checked && !rangeExpanderCheckbox.checked;
-          if (!manualMode) return;
 
           const el = ensureContextMenu();
           clearContextMenuItems();
 
-          // Always present: insert placeholder after
-          addMenuItem('Insert silent placeholder after this note', () => {
-            hideContextMenu();
-            // Ensure any audition stops before we insert
-            stopPreviewIfPlaying();
-            insertPlaceholderAfter(idx);
-          });
-
-          // If the clicked row is a manual placeholder, add Delete option
-          const isPh = !!(files[idx] && files[idx]._isPlaceholder);
-          if (isPh) {
-            addSeparator();
-            addMenuItem('Delete silent placeholder', () => {
+          if (manualMode) {
+            addMenuItem('Insert silent placeholder after this note', () => {
               hideContextMenu();
-              // Ensure any audition stops before we delete
               stopPreviewIfPlaying();
-              deletePlaceholderAtIndex(idx);
+              insertPlaceholderAfter(idx);
             });
+
+            if (isPlaceholder) {
+              addSeparator();
+              addMenuItem('Delete silent placeholder', () => {
+                hideContextMenu();
+                stopPreviewIfPlaying();
+                deletePlaceholderAtIndex(idx);
+              });
+            } else {
+              addSeparator();
+              addMenuItem('Delete sample from list', () => {
+                hideContextMenu();
+                stopPreviewIfPlaying();
+                deleteSampleAtIndex(idx);
+              });
+            }
+          } else {
+            if (isPlaceholder) {
+              return; // no custom menu on sorted placeholders
+            } else {
+              addMenuItem('Delete sample from list', () => {
+                hideContextMenu();
+                stopPreviewIfPlaying();
+                deleteSampleAtIndex(idx);
+              });
+            }
           }
 
           el.dataset.idx = String(idx);
@@ -1299,7 +1308,6 @@
           el.style.top  = `${y}px`;
           el.style.display = 'block';
 
-          // keep onscreen
           const rect = el.getBoundingClientRect();
           const vw = window.innerWidth, vh = window.innerHeight;
           if (rect.right > vw)  el.style.left = `${Math.max(8, vw  - rect.width  - 8)}px`;
@@ -1313,21 +1321,13 @@
           }
         }
 
-        // Global dismiss for context menu
         document.addEventListener('click', (e) => {
           if (!ctxMenuEl) return;
-          if (ctxMenuEl.style.display !== 'none' && !ctxMenuEl.contains(e.target)) {
-            hideContextMenu();
-          }
+          if (ctxMenuEl.style.display !== 'none' && !ctxMenuEl.contains(e.target)) hideContextMenu();
         });
-        document.addEventListener('keydown', (e) => {
-          if (e.key === 'Escape') hideContextMenu();
-        });
+        document.addEventListener('keydown', (e) => { if (e.key === 'Escape') hideContextMenu(); });
 
-        function clearContextMenuItems() {
-          if (!ctxMenuEl) return;
-          while (ctxMenuEl.firstChild) ctxMenuEl.removeChild(ctxMenuEl.firstChild);
-        }
+        function clearContextMenuItems() { if (!ctxMenuEl) return; while (ctxMenuEl.firstChild) ctxMenuEl.removeChild(ctxMenuEl.firstChild); }
 
         function addMenuItem(label, onClick) {
           const item = document.createElement('div');
@@ -1338,7 +1338,7 @@
           item.style.fontWeight = 'normal';
           item.addEventListener('mouseover', () => { item.style.background = '#f0f0f0'; });
           item.addEventListener('mouseout',  () => { item.style.background = 'transparent'; });
-          item.addEventListener('click', () => { onClick(); });
+          item.addEventListener('click', onClick);
           ctxMenuEl.appendChild(item);
         }
 
@@ -1359,9 +1359,9 @@
         function renderList(){
           fileList.innerHTML='';
 
-          // Manual mode = Auto Sort OFF and Range Expander OFF
+          // ===== Manual mode (Auto Sort OFF and Range Expander OFF) =====
           if (!autoSortCheckbox.checked && !rangeExpanderCheckbox.checked){
-            // Anchor manual naming to Starting Octave/Note
+            // Anchor manual naming to Starting Note/Octave
             gRenderMinPI = parseInt(startNumber.value,10)*12 + parseInt(startNote.value,10);
 
             files.forEach((file,i)=>{
@@ -1369,6 +1369,7 @@
               item.className='file-item real'; 
               item.draggable=true; 
               item.dataset.index=i;
+              item.dataset.renderIndex = String(i); // keep parity with auto mode
 
               const ext=file.name.split('.').pop(); 
               const proposedName=getProposedNameForIndex(i,ext);
@@ -1381,11 +1382,12 @@
               ctrl.className='controls';
 
               if (file._isPlaceholder) {
+                // Placeholder row (manual mode)
                 nameSpan.className = 'placeholder-label';
                 nameSpan.textContent = '(placeholder)';
                 proposedSpan.textContent = `→ ${proposedName} (silent)`;
 
-                // spacer to keep height consistent (not clickable)
+                // Spacer to keep row height consistent (not clickable)
                 const spacer = document.createElement('button');
                 spacer.className = 'preview-btn';
                 spacer.type = 'button';
@@ -1394,8 +1396,9 @@
                 spacer.tabIndex = -1;
                 spacer.setAttribute('aria-hidden', 'true');
                 ctrl.appendChild(spacer);
+
               } else {
-                // normal real file row
+                // Real file row (manual mode)
                 nameSpan.textContent = file.name;
                 proposedSpan.textContent = `→ ${proposedName}`;
 
@@ -1403,7 +1406,17 @@
                 btn.className='preview-btn'; 
                 btn.type='button'; 
                 btn.textContent='▶︎';
-                btn.addEventListener('click',(e)=>previewFile(file,e.currentTarget));
+                btn.addEventListener('click',(e)=>{
+                  // On mobile in manual mode, auto-select the row so Move Up/Down work immediately
+                  if (isMobile) {
+                    const row = e.currentTarget.closest('.file-item.real');
+                    if (row && typeof selectManualRow === 'function') {
+                      const idx = Number(row.dataset.index);
+                      if (Number.isInteger(idx)) selectManualRow(idx);
+                    }
+                  }
+                  previewFile(file,e.currentTarget);
+                });
                 ctrl.appendChild(btn);
               }
 
@@ -1411,15 +1424,15 @@
               item.appendChild(proposedSpan); 
               item.appendChild(ctrl);
 
-              // Mobile: allow selecting a row for move up/down buttons
+              // Mobile: tap selects a row for Move Up/Down buttons
               item.addEventListener('click', () => { if (isMobile) selectManualRow(i); });
 
-              // Right-click menu (manual mode only, desktop only)
+              // Desktop right-click (manual): custom menu (insert/delete placeholder, delete sample)
               if (!isMobile) {
                 item.addEventListener('contextmenu', (e) => {
                   e.preventDefault();
                   stopPreviewIfPlaying();
-                  showContextMenu(e.clientX, e.clientY, i);
+                  showContextMenu(e.clientX, e.clientY, i, { isPlaceholder: !!file._isPlaceholder });
                 });
               }
 
@@ -1429,6 +1442,7 @@
 
             updateDragInteractivity();
             updateMobileReorderUI();
+
             // Keep highlight after moves
             if (isMobile && selectedIndex >= 0 && selectedIndex < files.length) {
               selectManualRow(selectedIndex);
@@ -1436,43 +1450,127 @@
             return;
           }
 
-          // ===== Auto/Range modes unchanged below =====
+          // ===== Auto/Range modes =====
           const built = buildContinuousRange();
           const { full, unmatched, minPI, maxPI } = built;
           if (minPI <= maxPI) gRenderMinPI = minPI;
 
+          // No 'full' (couldn't map): just list actual files
           if (!full.length){
             files.forEach((file,i)=>{
-              const item=document.createElement('div'); item.className='file-item real'; item.draggable=true; item.dataset.index=i;
-              const ext=file.name.split('.').pop(); const proposedName=getProposedNameForIndex(i,ext);
-              const nameSpan=document.createElement('span'); nameSpan.textContent=file.name;
-              const proposedSpan=document.createElement('span'); proposedSpan.className='proposed'; proposedSpan.textContent=`→ ${proposedName}`;
-              const ctrl=document.createElement('div'); ctrl.className='controls';
-              const btn=document.createElement('button'); btn.className='preview-btn'; btn.type='button'; btn.textContent='▶︎';
-              btn.addEventListener('click',(e)=>previewFile(file,e.currentTarget));
-              ctrl.appendChild(btn); item.appendChild(nameSpan); item.appendChild(proposedSpan); item.appendChild(ctrl);
-              addDragHandlers(item); fileList.appendChild(item);
+              const item=document.createElement('div'); 
+              item.className='file-item real'; 
+              item.draggable=true; 
+              item.dataset.index=i;
+              item.dataset.renderIndex = String(i);
+
+              const ext=file.name.split('.').pop(); 
+              const proposedName=getProposedNameForIndex(i,ext);
+
+              const nameSpan=document.createElement('span'); 
+              nameSpan.textContent=file.name;
+
+              const proposedSpan=document.createElement('span'); 
+              proposedSpan.className='proposed'; 
+              proposedSpan.textContent=`→ ${proposedName}`;
+
+              const ctrl=document.createElement('div'); 
+              ctrl.className='controls';
+
+              const btn=document.createElement('button'); 
+              btn.className='preview-btn'; 
+              btn.type='button'; 
+              btn.textContent='▶︎';
+              btn.addEventListener('click',(e)=>{
+                if (isMobile) selectSortedRow('real', file, i); // auto-select on mobile
+                previewFile(file,e.currentTarget);
+              });
+              ctrl.appendChild(btn); 
+
+              item.appendChild(nameSpan); 
+              item.appendChild(proposedSpan); 
+              item.appendChild(ctrl);
+              addDragHandlers(item); 
+              fileList.appendChild(item);
+
+              // Mobile tap selects in auto mode
+              item.addEventListener('click', () => {
+                if (isMobile) selectSortedRow('real', file, i);
+              });
+
+              // Desktop: allow Delete sample on sorted view even if no `full`
+              if (!isMobile) {
+                item.addEventListener('contextmenu', (e) => {
+                  e.preventDefault();
+                  stopPreviewIfPlaying();
+                  showContextMenu(e.clientX, e.clientY, i, { isPlaceholder: false });
+                });
+              }
             });
             updateDragInteractivity();
             return;
           }
 
+          // We have a continuous render plan (full)
           full.forEach((slot,idx)=>{
             const item=document.createElement('div');
+
             if (slot.file){
-              item.className='file-item real'; item.draggable=true; item.dataset.fileName=slot.file.name;
-              const originalIndex=files.findIndex(f=>f===slot.file); if (originalIndex>=0) item.dataset.index=String(originalIndex);
-              const nameSpan=document.createElement('span'); nameSpan.textContent=slot.file.name;
+              // Real file in mapped range
+              item.className='file-item real'; 
+              item.draggable=true; 
+              item.dataset.fileName=slot.file.name;
+              item.dataset.renderIndex = String(idx);
+
+              const originalIndex=files.findIndex(f=>f===slot.file); 
+              if (originalIndex>=0) item.dataset.index=String(originalIndex);
+
+              const nameSpan=document.createElement('span'); 
+              nameSpan.textContent=slot.file.name;
+
               const proposed=getProposedNameForIndex(idx,slot.ext);
-              const proposedSpan=document.createElement('span'); proposedSpan.className='proposed'; proposedSpan.textContent=`→ ${proposed}`;
-              const ctrl=document.createElement('div'); ctrl.className='controls';
-              const btn=document.createElement('button'); btn.className='preview-btn'; btn.type='button'; btn.textContent='▶︎';
-              btn.addEventListener('click',(e)=>previewFile(slot.file,e.currentTarget));
-              ctrl.appendChild(btn); item.appendChild(nameSpan); item.appendChild(proposedSpan); item.appendChild(ctrl);
+              const proposedSpan=document.createElement('span'); 
+              proposedSpan.className='proposed'; 
+              proposedSpan.textContent=`→ ${proposed}`;
+
+              const ctrl=document.createElement('div'); 
+              ctrl.className='controls';
+
+              const btn=document.createElement('button'); 
+              btn.className='preview-btn'; 
+              btn.type='button'; 
+              btn.textContent='▶︎';
+              btn.addEventListener('click',(e)=>{
+                if (isMobile) selectSortedRow('real', slot.file, idx); // auto-select on mobile
+                previewFile(slot.file,e.currentTarget);
+              });
+              ctrl.appendChild(btn); 
+
+              item.appendChild(nameSpan); 
+              item.appendChild(proposedSpan); 
+              item.appendChild(ctrl);
               addDragHandlers(item);
-            }
-            else {
+
+              // Mobile tap -> select this mapped real row
+              item.addEventListener('click', () => {
+                if (isMobile) selectSortedRow('real', slot.file, idx);
+              });
+
+              // Desktop: context menu (sorted) on non-placeholder => Delete sample
+              if (!isMobile) {
+                item.addEventListener('contextmenu', (e) => {
+                  e.preventDefault();
+                  stopPreviewIfPlaying();
+                  const idxInFiles = (originalIndex>=0) ? originalIndex : files.indexOf(slot.file);
+                  showContextMenu(e.clientX, e.clientY, idxInFiles, { isPlaceholder: false });
+                });
+              }
+
+            } else {
+              // Placeholder row in auto/range
               item.className = 'file-item';
+              item.dataset.renderIndex = String(idx);
+
               const proposed = getProposedNameForIndex(idx, "wav");
               const modeLabel = (gapMode.value === 'synth') ? ' (synthesized)' : ' (silent)';
 
@@ -1493,7 +1591,10 @@
                 pbtn.type = 'button';
                 pbtn.textContent = '▶︎';
                 pbtn.title = 'Preview synthesized placeholder';
-                pbtn.addEventListener('click', (e) => previewPlaceholderAtIndex(full, idx, e.currentTarget));
+                pbtn.addEventListener('click', (e) => {
+                  if (isMobile) selectSortedRow('placeholder', null, idx); // auto-select on mobile
+                  previewPlaceholderAtIndex(full, idx, e.currentTarget);
+                });
                 ctrl.appendChild(pbtn);
               } else {
                 const spacer = document.createElement('button');
@@ -1509,24 +1610,76 @@
               item.appendChild(nameBits);
               item.appendChild(proposedSpan);
               item.appendChild(ctrl);
+
+              // Mobile tap -> select this placeholder row
+              item.addEventListener('click', () => {
+                if (isMobile) selectSortedRow('placeholder', null, idx);
+              });
+
+              // Desktop: suppress default browser context menu on sorted placeholders
+              if (!isMobile) {
+                item.addEventListener('contextmenu', (e) => {
+                  e.preventDefault();
+                });
+              }
             }
 
             fileList.appendChild(item);
-
           });
 
+          // If Range Expander is OFF, append any unmatched files after the mapped region
           if (!rangeExpanderCheckbox.checked && unmatched.length){
             const startIdx=full.length;
             unmatched.forEach((file,j)=>{
-              const item=document.createElement('div'); item.className='file-item real'; item.draggable=true; item.dataset.index=files.findIndex(f=>f===file);
-              const ext=file.name.split('.').pop(); const proposed=getProposedNameForIndex(startIdx+j,ext);
-              const nameSpan=document.createElement('span'); nameSpan.textContent=file.name;
-              const proposedSpan=document.createElement('span'); proposedSpan.className='proposed'; proposedSpan.textContent=`→ ${proposed}`;
-              const ctrl=document.createElement('div'); ctrl.className='controls';
-              const btn=document.createElement('button'); btn.className='preview-btn'; btn.type='button'; btn.textContent='▶︎';
-              btn.addEventListener('click',(e)=>previewFile(file,e.currentTarget));
-              ctrl.appendChild(btn); item.appendChild(nameSpan); item.appendChild(proposedSpan); item.appendChild(ctrl);
-              addDragHandlers(item); fileList.appendChild(item);
+              const item=document.createElement('div'); 
+              item.className='file-item real'; 
+              item.draggable=true; 
+              item.dataset.index=files.findIndex(f=>f===file);
+              item.dataset.renderIndex = String(startIdx + j);
+
+              const ext=file.name.split('.').pop(); 
+              const proposed=getProposedNameForIndex(startIdx+j,ext);
+
+              const nameSpan=document.createElement('span'); 
+              nameSpan.textContent=file.name;
+
+              const proposedSpan=document.createElement('span'); 
+              proposedSpan.className='proposed'; 
+              proposedSpan.textContent=`→ ${proposed}`;
+
+              const ctrl=document.createElement('div'); 
+              ctrl.className='controls';
+
+              const btn=document.createElement('button'); 
+              btn.className='preview-btn'; 
+              btn.type='button'; 
+              btn.textContent='▶︎';
+              btn.addEventListener('click',(e)=>{
+                if (isMobile) selectSortedRow('real', file, startIdx + j); // auto-select on mobile
+                previewFile(file,e.currentTarget);
+              });
+              ctrl.appendChild(btn); 
+
+              item.appendChild(nameSpan); 
+              item.appendChild(proposedSpan); 
+              item.appendChild(ctrl);
+              addDragHandlers(item); 
+              fileList.appendChild(item);
+
+              // Mobile tap -> select unmatched real row
+              item.addEventListener('click', () => {
+                if (isMobile) selectSortedRow('real', file, startIdx + j);
+              });
+
+              // Desktop: allow Delete sample via context menu
+              if (!isMobile) {
+                item.addEventListener('contextmenu', (e) => {
+                  e.preventDefault();
+                  stopPreviewIfPlaying();
+                  const idxInFiles = files.findIndex(f=>f===file);
+                  showContextMenu(e.clientX, e.clientY, idxInFiles, { isPlaceholder: false });
+                });
+              }
             });
           }
 
@@ -1534,37 +1687,28 @@
         }
 
         function addDragHandlers(el){
-
-          // Stop preview ASAP on desktop before a drag can start, then re-enable dragging
           el.addEventListener('mousedown', (e) => {
-            if (e.button !== 0) return; // left-click only
-
-            // If the click is on the preview/play button or any interactive control,
-            // don't stop playback here—let the existing toggle logic handle it.
+            if (e.button !== 0) return;
             if (
               e.target.closest('.preview-btn') ||
               e.target.closest('button') ||
               e.target.closest('input') ||
               e.target.closest('a')
-            ) {
-              return;
-            }
+            ) return;
 
-            // For drag initiation on the row: stop preview immediately so drag can proceed.
             if (gPrevSource) {
-              stopCurrentPreview();          // updates state and calls updateDragInteractivity()
+              stopCurrentPreview();
               el.setAttribute('draggable', 'true');
               fileList.classList.remove('drag-disabled');
               updateDragInteractivity();
             }
-          }, true); // capture so this runs before default drag logic
+          }, true);
 
           el.addEventListener('dragstart',(e)=>{
             if (!el.classList.contains('real')){ e.preventDefault(); return; }
             if (fileList.classList.contains('drag-disabled')) { e.preventDefault(); return; }
             e.dataTransfer.setData('text/plain', el.dataset.index);
             el.classList.add('dragging');
-            // Safety: if anything is still playing for some reason, stop it
             if (gPrevSource) stopCurrentPreview();
           });
 
@@ -1601,39 +1745,25 @@
         function updateDragInteractivity() {
           const realRows = fileList.querySelectorAll('.file-item.real');
           const manualMode = !autoSortCheckbox.checked && !rangeExpanderCheckbox.checked;
-          const autoMode   = !manualMode;
 
-          // Desktop drag (disabled on mobile or while previewing)
           const enableDesktopDrag = manualMode && !gIsPlaying && !isMobile;
           realRows.forEach(row => row.setAttribute('draggable', enableDesktopDrag ? 'true' : 'false'));
           fileList.classList.toggle('drag-disabled', !enableDesktopDrag);
 
-          // Gap options (shown only when auto/range mode is active)
-          gapOptions.style.display = autoMode ? 'block' : 'none';
+          gapOptions.style.display = manualMode ? 'none' : 'block';
 
-          // Mobile: show touch move controls & alternate message; keep visible during preview
           if (isMobile) {
-            // Alternate message for mobile; always hide the desktop drag text
+            // keep the bar visible at all times on mobile
+            if (touchReorderControls) touchReorderControls.style.display = 'flex';
+            // hint text only in manual
             dragMessage.innerHTML = "<strong>To reorder the notes, select a note and then click Move Up or Move Down:</strong>";
             dragMessage.style.display = manualMode ? 'block' : 'none';
-
-            if (touchReorderControls) {
-              touchReorderControls.style.display = manualMode ? 'flex' : 'none';
-              // Optionally disable buttons when not usable
-              const disabled = !manualMode || files.length === 0;
-              const upBtn = touchReorderControls.querySelector('#moveUpBtn');
-              const dnBtn = touchReorderControls.querySelector('#moveDownBtn');
-              if (upBtn) upBtn.disabled = disabled;
-              if (dnBtn) dnBtn.disabled = disabled;
-            }
           } else {
-            // Desktop: show the drag hint only when manual dragging is enabled
-            dragMessage.innerHTML = '<strong>Drag the notes into the note scale order you want.&nbsp;&nbsp;Right-click to insert/delete silent placeholders:</strong>';
+            dragMessage.innerHTML = '<strong>Drag the notes into the scale note order you want.&nbsp;&nbsp;Right-click to insert/delete silent placeholders:</strong>';
             dragMessage.style.display = manualMode ? 'block' : 'none';
             if (touchReorderControls) touchReorderControls.style.display = 'none';
           }
 
-          // Range Expander availability depends on Auto Sort
           rangeExpanderRow.style.display = autoSortCheckbox.checked ? 'block' : 'none';
           if (!autoSortCheckbox.checked) {
             rangeExpanderCheckbox.checked = false;
@@ -1641,21 +1771,21 @@
           } else {
             rangeControls.style.display = rangeExpanderCheckbox.checked ? 'block' : 'none';
           }
+
+          // let the mobile UI decide per-button disabling (and keep Delete visible)
+          updateMobileReorderUI();
         }
 
         // ===================== Export (ZIP) =====================
         exportZipBtn.addEventListener('click', async ()=>{
           if (gPrevSource) stopCurrentPreview();
 
-          // UI prep
           exportZipBtn.disabled = true;
           setExportStatus('Starting export…');
 
-          // Preflight check so we don't prompt if there's nothing to export ---
           let plannedCount = 0;
           (function computePlannedCountPreflight(){
             if (!autoSortCheckbox.checked && !rangeExpanderCheckbox.checked) {
-              // manual mode: count visible "real" rows
               plannedCount = Array.from(fileList.children).filter(el => el.classList.contains('real')).length;
             } else {
               const plan = buildContinuousRange();
@@ -1676,7 +1806,6 @@
             clearExportStatus();
             return;
           }
-          // --- end NEW ---
 
           async function saveZipFile(fname){
             if (fileList.children.length == 0 || !files.length){
@@ -1688,7 +1817,6 @@
 
             const zip = new JSZip();
 
-            // Meta
             let volumeScale = parseFloat(volumeScaleInput.value);
             let fadeTimeMs  = parseInt(fadeTimeInput.value, 10);
             if (isNaN(volumeScale)) volumeScale = 1.0;
@@ -1712,7 +1840,6 @@
             };
             zip.file("abctools.json", JSON.stringify(meta,null,2));
 
-            // Progress accounting
             let processedCount = 0;
             let plannedCount   = 0;
 
@@ -1721,10 +1848,8 @@
               setExportStatus(`Processing ${processedCount} of ${plannedCount}… ${label || ''}`.trim());
             }
 
-            // Figure out how many files we'll write
             (function computePlannedCount(){
               if (!autoSortCheckbox.checked && !rangeExpanderCheckbox.checked) {
-                // manual mode: count visible "real" rows
                 plannedCount = Array.from(fileList.children).filter(el => el.classList.contains('real')).length;
               } else {
                 const plan = (autoSortCheckbox.checked || rangeExpanderCheckbox.checked) ? buildContinuousRange() : null;
@@ -1740,14 +1865,12 @@
             })();
             await tick();
 
-            // Build only if needed
             let built = null, full = null;
             if (autoSortCheckbox.checked || rangeExpanderCheckbox.checked) {
               built = buildContinuousRange();
               full  = built.full;
             }
 
-            // ---- Branch: Manual mode ----
             if (!autoSortCheckbox.checked && !rangeExpanderCheckbox.checked){
               const reordered = Array.from(fileList.children)
                 .filter(el => el.classList.contains('real'))
@@ -1763,7 +1886,6 @@
                 await tick();
               }
 
-            // ---- Branch: Auto/Range mode ----
             } else {
               const unmatched = built ? built.unmatched : [];
 
@@ -1778,8 +1900,7 @@
                   await tick();
                 }
               } else {
-                // Pre-decode sources for synth where possible
-                const haveAtIndex = new Map(); // renderIdx -> file
+                const haveAtIndex = new Map();
                 full.forEach((slot,i)=>{ if (slot.file) haveAtIndex.set(i, slot.file); });
 
                 const decodedAtIndex = new Map();
@@ -1819,7 +1940,7 @@
                       if (srcIdx >= 0){
                         try{
                           const srcBuf = decodedAtIndex.get(srcIdx);
-                          const semitones = i - srcIdx; // effective PI space
+                          const semitones = i - srcIdx;
                           const shiftedBuf = await pitchShiftBuffer(srcBuf, semitones);
                           const outBlob = await bufferToFinalBlob(shiftedBuf);
                           zip.file(proposed, outBlob);
@@ -1836,7 +1957,6 @@
                   }
                 }
 
-                // Keep strict range when expander is off: append unmatched tail
                 if (!rangeExpanderCheckbox.checked && unmatched.length){
                   const startIdx = full.length;
                   for (let j = 0; j < unmatched.length; j++){
@@ -1852,7 +1972,6 @@
               }
             }
 
-            // Generate final blob with progress
             setExportStatus(`Zipping files… 0%`);
             const blob = await zip.generateAsync(
               { type: "blob" },
@@ -1873,7 +1992,6 @@
             exportZipBtn.disabled = false;
           };
 
-          // Filename prompt
           const thePrompt = "Please enter a filename for your custom instrument file:";
           DayPilot.Modal.prompt(thePrompt, gFileSaveName, { theme:"modal_flat", top:200, autoFocus:true })
           .then(function(args){
@@ -1889,17 +2007,13 @@
             }
             gFileSaveName = fname;
             sortFilesIfNeeded();
-            // run export
             return saveZipFile(fname);
           })
           .catch((e)=>{
             console.error(e);
             DayPilot.Modal.alert('<p style="text-align:center">Export failed.</p>', { theme:"modal_flat", top:200 });
           })
-          .finally(()=>{
-            // safety: ensure UI is usable even if we exited early
-            exportZipBtn.disabled = false;
-          });
+          .finally(()=>{ exportZipBtn.disabled = false; });
         });
 
 
@@ -1909,12 +2023,11 @@
           importZipInput.click();
         });
 
-        // Helpers to ignore macOS sidecars and clean names
         function isIgnorableZipEntry(path) {
           if (path.startsWith('__MACOSX/')) return true;
           const base = path.split('/').pop();
           if (!base) return true;
-          if (base.startsWith('._')) return true; // AppleDouble like ._A4.wav
+          if (base.startsWith('._')) return true;
           if (base === '.DS_Store' || base === 'Thumbs.db') return true;
           return false;
         }
@@ -1933,7 +2046,6 @@
 
             const zip = await JSZip.loadAsync(zipFile);
 
-            // Read abctools.json if present (to apply volumeScale and fadeTimeMs)
             let importedVolumeScale = null;
             let importedFadeTimeMs = null;
             const metaEntry = Object.keys(zip.files).find(n => n.toLowerCase() === "abctools.json");
@@ -1941,18 +2053,13 @@
               try {
                 const metaText = await zip.file(metaEntry).async("string");
                 const meta = JSON.parse(metaText);
-                if (meta && typeof meta.volumeScale === "number" && meta.volumeScale >= 0) {
-                  importedVolumeScale = meta.volumeScale;
-                }
-                if (meta && typeof meta.fadeTimeMs === "number" && meta.fadeTimeMs >= 0) {
-                  importedFadeTimeMs = meta.fadeTimeMs;
-                }
+                if (meta && typeof meta.volumeScale === "number" && meta.volumeScale >= 0) importedVolumeScale = meta.volumeScale;
+                if (meta && typeof meta.fadeTimeMs === "number" && meta.fadeTimeMs >= 0) importedFadeTimeMs = meta.fadeTimeMs;
               } catch {}
             }
 
-            // Collect valid audio files, ignoring macOS sidecars and duplicates
             const imported = [];
-            const seen = new Set(); // case-insensitive basename dedupe
+            const seen = new Set();
 
             const entries = Object.keys(zip.files)
               .filter(n => !zip.files[n].dir)
@@ -1979,11 +2086,10 @@
               return;
             }
 
-            // Apply requested option changes when importing a .zip
             trimSilenceCheckbox.checked = false;
             thresholdControls.style.display = 'none';
             forceMonoWavCheckbox.checked = false;
-            rangeExpanderCheckbox.checked = false;      // UI will hide via updateDragInteractivity()
+            rangeExpanderCheckbox.checked = false;
 
             if (importedVolumeScale !== null) {
               volumeScaleInput.value = String(importedVolumeScale);
@@ -1993,11 +2099,9 @@
               fadeTimeInput.value = String(importedFadeTimeMs);
             }
 
-            // Replace current file set with imported files
             originalFiles = [...imported];
             files = [...imported];
 
-            // Treat just like normal files from disk
             gHasHashedNames = hasHashedFilenames(files);
             if (gHasHashedNames){
               applyHashedModeUIState();
@@ -2010,7 +2114,6 @@
               }
             }
 
-            // Reset Range Expander range like normal file import
             if (autoSortCheckbox.checked) {
               const built = buildContinuousRange();
               if (built && isFinite(built.effMin) && isFinite(built.effMax)) {
@@ -2052,7 +2155,6 @@
             detectAndApplyLowestPitch();
           }
 
-          // Initialize Range Expander desired range to EFFECTIVE range (after transpose)
           if (autoSortCheckbox.checked) {
             const built = buildContinuousRange();
             if (built && isFinite(built.effMin) && isFinite(built.effMax)) {
@@ -2078,14 +2180,11 @@
         startNote.addEventListener('change', handleStartingControlsChange);
 
         autoSortCheckbox.addEventListener('change', ()=>{
-          
           stopPreviewIfPlaying();
 
           if (autoSortCheckbox.checked) {
-            // Purge any manual placeholders
             files = files.filter(f => !f._isPlaceholder);
-            // turn off manual/expander artifacts
-            rangeExpanderCheckbox.checked = rangeExpanderCheckbox.checked; // keep state, UI update below
+            rangeExpanderCheckbox.checked = rangeExpanderCheckbox.checked;
           } else {
             rangeExpanderCheckbox.checked = false;
             rangeControls.style.display = 'none';
@@ -2110,8 +2209,8 @@
         });
 
         gapMode.addEventListener('change', () => {
-          stopPreviewIfPlaying();   // stop any current audition
-          safeRenderList();         // re-render rows for the new mode
+          stopPreviewIfPlaying();
+          safeRenderList();
         });
 
         // Trim UI
@@ -2122,14 +2221,13 @@
           stopPreviewIfPlaying();
           thresholdControls.style.display = trimSilenceCheckbox.checked ? 'block' : 'none';
           safeRenderList();
-          updateDragInteractivity(); // <-- ensure the manual-mode message stays visible
+          updateDragInteractivity();
         });
 
-        // "Force mono .wav"
         forceMonoWavCheckbox.addEventListener('change', () => {
           stopPreviewIfPlaying();
           safeRenderList();
-          updateDragInteractivity(); // <-- ensure the manual-mode message stays visible
+          updateDragInteractivity();
         });
 
         applyThresholdBtn.addEventListener('click', () => {
@@ -2149,17 +2247,12 @@
           status.classList.remove('show');
         });
 
-        // Range Expander wiring
         function stopPreviewIfPlaying(){ if (gPrevSource) stopCurrentPreview(); }
 
         function updateRangeExpanderUI(){
-
           stopPreviewIfPlaying(); 
-  
           const on = rangeExpanderCheckbox.checked;
-          if (!autoSortCheckbox.checked) {
-            rangeExpanderCheckbox.checked = false;
-          }
+          if (!autoSortCheckbox.checked) rangeExpanderCheckbox.checked = false;
           rangeControls.style.display = (on && autoSortCheckbox.checked) ? 'block' : 'none';
 
           sortFilesIfNeeded();
@@ -2170,7 +2263,7 @@
 
         function scrollSelectedIntoView() {
           requestAnimationFrame(() => {
-            const sel = fileList.querySelector(`.file-item.real.selected`);
+            const sel = fileList.querySelector(`.file-item.selected`);
             if (sel) sel.scrollIntoView({ block: 'nearest', inline: 'nearest' });
           });
         }
@@ -2184,30 +2277,48 @@
 
         // Move Up/Down buttons (mobile manual mode)
         if (moveUpBtn) moveUpBtn.addEventListener('click', () => {
-          stopPreviewIfPlaying(); // <-- stop any audition          
+          stopPreviewIfPlaying();
+
+          // If nothing is selected, but a preview button exists, select that row
+          if (selectedIndex < 0 && gPrevBtn) {
+            selectRowForButton(gPrevBtn);
+          }
+
           if (selectedIndex <= 0) return;
+
           const i = selectedIndex;
           [files[i - 1], files[i]] = [files[i], files[i - 1]];
           selectedIndex = i - 1;
+
           stopCurrentPreview();
           renderList();
+
           dragMessage.style.display = 'block';
           dragMessage.innerHTML = '<strong>To reorder the notes, select a note and then click Move Up or Move Down:</strong>';
-          // keep the selected row in view
+
           scrollSelectedIntoView();
         });
 
         if (moveDownBtn) moveDownBtn.addEventListener('click', () => {
-          stopPreviewIfPlaying(); // <-- stop any audition          
+          stopPreviewIfPlaying();
+
+          // If nothing is selected, but a preview button exists, select that row
+          if (selectedIndex < 0 && gPrevBtn) {
+            selectRowForButton(gPrevBtn);
+          }
+
           if (selectedIndex < 0 || selectedIndex >= files.length - 1) return;
+
           const i = selectedIndex;
           [files[i], files[i + 1]] = [files[i + 1], files[i]];
           selectedIndex = i + 1;
+
           stopCurrentPreview();
           renderList();
+
           dragMessage.style.display = 'block';
           dragMessage.innerHTML = '<strong>To reorder the notes, select a note and then click Move Up or Move Down:</strong>';
-          // keep the selected row in view
+
           scrollSelectedIntoView();
         });
 
@@ -2220,16 +2331,24 @@
               <p>The files should be in .wav or .mp3 format. The samples must all be in the same directory.</p>
               <p><strong>1)</strong> Click <strong>Choose Files</strong> (<strong>Browse...</strong> on Firefox) to import your audio sample files.</p>
               <p>You can also import an existing custom instrument by clicking <strong>Import Custom Instrument (.zip)</strong>.</p>
+              <p>If you re-import a previously exported custom instrument .zip, your saved volume scale and fade settings will also be restored automatically.</p>
               <p>The note output filename for each audio sample is displayed to the right of each note.</p>
               <p><strong>2)</strong> Select the default volume scale and fade time for the instrument.</p>
               <p>These values will be applied to the instrument when used in the <strong>ABC Transcription Tools</strong>.</p>
-              <p><strong>3)</strong> Choose the starting octave number for the instrument notes.</p>
-              <p><strong>4)</strong> Choose the starting scale note for the file names.</p>
+              <p><strong>3)</strong> Choose the starting scale note for the instrument notes.</p>
+              <p><strong>4)</strong> Choose the starting octave number for the instrument notes.</p>
               <p>For reference, in ABC notation, middle C on the piano (written as C) corresponds to C4, while the lowest string on a violin (written as G,) corresponds to G3.</p>
               <p><strong>5)</strong> If your files have filenames that contain note names, check <strong>Automatically sort files by scale order (C, Db, D, Eb, E, ...)</strong> to align the sample file list with the note names (checked by default).</p>
-              <p><strong>6)</strong> When automatically sorting by scale order, if there are scale gaps found, select whether to synthesize (pitch-shift) the missing notes from nearby samples or replace them with silent placeholder files.</p>
-              <p><strong>7)</strong> <em>Optional:</em> Turn on the <strong>Range Expander</strong> (available only with Auto Sort) to set a lowest and highest desired note. The ends of the list will match your requested notes exactly, while the lowest <em>actual</em> input sample keeps the label set by “Starting Octave/Note”.</p>
-              <p><strong>8)</strong> If not automatically sorting files by scale order, you can manually reorder the scale note order.</p>
+              <p>If note names cannot be automatically parsed, sorting and range detection will be disabled. You can still manually reorder your samples.</p>
+              <p><strong>6)</strong> If you have any original samples that don't sound good and want to instead create them by pitch shifting from adjacent samples, you can remove them from the list by:</p>
+              <p><strong>Desktop browsers:</strong></p>
+              <p>Right-click the item and select <strong>Delete sample from list</strong> from the context menu.</p>
+              <p><strong>Mobile browsers:</strong></p>
+              <p>Click the item to select it and then click the <strong>Delete Selected Item from List</strong> button.</p>
+              <p><strong>7)</strong> When automatically sorting by scale order, if there are scale gaps found, select whether to synthesize (pitch-shift) the missing notes from nearby samples or replace them with silent placeholder files.</p>
+              <p><strong>8)</strong> <em>Optional:</em> Turn on the <strong>Range Expander</strong> (available only when <strong>Automatically sort files by scale order (C, Db, D, Eb, E, ...)</strong> is enabled) to set a lowest and highest desired note and octave.</p>
+              <p>The ends of the list will match your requested notes exactly, while the lowest actual input sample retains the label determined by the <strong>Starting note/octave</strong> settings.</p>
+              <p><strong>9)</strong> If not automatically sorting files by scale order, you can manually reorder the scale note order.</p>
               <p>This can be useful for loops/stems or non-pitched percussion instruments where you want sounds to play on specific scale notes.</p>
               <p><strong>Desktop browsers:</strong></p>
               <p>Drag-and-drop the notes in the list into the scale note order you want.</p>
@@ -2242,12 +2361,15 @@
               <p>To delete a silent placeholder, right-click the silent placeholder and then select <strong>Delete silent placeholder</strong> from the context menu.</p>
               <p><strong>Mobile browsers:</strong></p>              
               <p>To insert a silent placeholder after any item in the list, select the item and then click the <strong>Insert Silent Placeholder</strong> button.</p>
-              <p>To delete a silent placeholder, select the silent placeholder and then click the <strong>Delete Silent Placeholder</strong> button.</p>
-              <p><strong>9)</strong> <em>Optional:</em> Enable <strong>Trim leading silence</strong> and set a <strong>Silence threshold (dB)</strong> to remove silence at the start of each file. Smaller dB values are more sensitive (e.g., -40 to -50 dB is typical). Click <strong>Apply</strong> to update silence trimming for all samples.</p>
-              <p><strong>10)</strong> <em>Optional:</em> Enable <strong>Encode all exported files as mono .wav</strong> to force every exported file to mono .wav format, regardless of input type.</p>
+              <p>To delete a silent placeholder, select the silent placeholder and then click the <strong>Delete Selected Item from List</strong> button.</p>
+              <p><strong>10)</strong> <em>Optional:</em> Enable <strong>Trim leading silence</strong> and set a <strong>Silence threshold (dB)</strong> to remove silence at the start of each file.</p>
+              <p>Smaller dB values are more sensitive (e.g., -40 to -50 dB is typical).</p>
+              <p>Click <strong>Apply</strong> to update silence trimming for all samples.</p>
+              <p><strong>11)</strong> <em>Optional:</em> Enable <strong>Encode all exported files as mono .wav</strong> to force every exported file to mono .wav format, regardless of input type.</p>
+              <p>If silence trimming or mono conversion is enabled, the exported filenames always use .wav extension.</p>
               <p>This applies to both normal exports and silence-trimmed files and may reduce the custom instrument size if the original samples were stereo .wav files.</p>
-              <p><strong>11)</strong> Click the ▶︎ buttons to audition the notes with the current volume scale, silence trimming, and stereo-to-mono conversion settings.</p>
-              <p><strong>12)</strong> Click <strong>Export Custom Instrument</strong> to export the final custom instrument.</p>
+              <p><strong>12)</strong> Click the ▶︎ buttons to audition the notes with the current volume scale, silence trimming, and stereo-to-mono conversion settings.</p>
+              <p><strong>13)</strong> Click <strong>Export Custom Instrument</strong> to export the final custom instrument.</p>
               <p>The .zip file is saved to your browser’s default <strong>Downloads</strong> folder.</p>
               <hr>
               <h4>Additional Resources</h4>
@@ -2274,10 +2396,8 @@
         highOct.value = "6"; highNote.value = "0";   // C6
 
         updateDragInteractivity();
-
       }
 
-      // Utility: MIME guess (kept simple)
       function guessMimeByExt(name){
         const ext = (name.split('.').pop()||'').toLowerCase();
         if (ext==='wav') return 'audio/wav';
