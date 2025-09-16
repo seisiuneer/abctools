@@ -538,12 +538,14 @@
 
     <div id="fileList"></div>
 
-    <!-- Updated mobile control bar -->
     <div id="touchReorderControls" class="touch-reorder" style="display:none;">
       <button id="moveUpBtn" type="button" aria-label="Move selected note up">Move Up</button>
       <button id="moveDownBtn" type="button" aria-label="Move selected note down">Move Down</button>
       <button id="insertAfterBtn" type="button" aria-label="Insert silent placeholder after selected note">Insert Silent Placeholder</button>
       <button id="deleteBtn" type="button" aria-label="Delete selected item from list">Delete Selected Item from List</button>
+
+      <button id="makePlaceholderBtn" type="button" aria-label="Temporarily replace with placeholder">Make Temporary Placeholder</button>
+      <button id="restoreSampleBtn" type="button" aria-label="Restore original sample">Restore Original Sample</button>
     </div>
 
     <div id="exportStatus" role="status" aria-live="polite" style="margin-top:6px; min-height:1.2em; text-align:center; font-size:0.95em; color:#333;"></div>
@@ -643,6 +645,8 @@
         const moveDownBtn = document.getElementById('moveDownBtn');
         const insertAfterBtn = document.getElementById('insertAfterBtn');
         const deleteBtn = document.getElementById('deleteBtn');
+        const makePlaceholderBtn = document.getElementById('makePlaceholderBtn');
+        const restoreSampleBtn   = document.getElementById('restoreSampleBtn');
 
         let selectedIndex = -1; // manual mode selection
 
@@ -677,6 +681,10 @@
         // Can we show the temp toggle on this platform/mode?
         function canTempToggleOnDesktopSorted(isPlaceholderRow) {
           return isDesktop() && isSortedMode() && !isPlaceholderRow;
+        }
+
+        function isTempSuppressedFile(f) {
+          return !!(f && gTempSuppressed && gTempSuppressed.has(f));
         }
 
         // Toggle one file between "real" and "temporary placeholder"
@@ -714,12 +722,27 @@
               return;
             }
 
-            // Sorted / Range mode: only real samples deletable
-            if (!selectedRef || selectedRef.kind !== 'real' || !selectedRef.fileRef) return;
-            const idx = files.findIndex(f => f === selectedRef.fileRef);
-            if (idx >= 0) {
-              selectedRef = null;
-              deleteSampleAtIndex(idx);
+            // Sorted / Range mode:
+            if (!selectedRef) return;
+
+            // Case A: real row
+            if (selectedRef.kind === 'real' && selectedRef.fileRef) {
+              const idx = files.findIndex(f => f === selectedRef.fileRef);
+              if (idx >= 0) {
+                selectedRef = null;
+                deleteSampleAtIndex(idx);
+              }
+              return;
+            }
+
+            // Case B: TEMP placeholder row (suppressed real sample)
+            if (selectedRef.kind === 'placeholder' && selectedRef.fileRef && isTempSuppressedFile(selectedRef.fileRef)) {
+              const idx = files.findIndex(f => f === selectedRef.fileRef);
+              if (idx >= 0) {
+                selectedRef = null;
+                deleteSampleAtIndex(idx);
+              }
+              return;
             }
           });
         }
@@ -733,15 +756,57 @@
         function updateDeleteBtnState() {
           if (!deleteBtn) return;
 
-          const manualMode = !autoSortCheckbox.checked && !rangeExpanderCheckbox.checked;
+          const manualMode = !isSortedMode ? (!autoSortCheckbox.checked && !rangeExpanderCheckbox.checked) : !isSortedMode();
 
           if (manualMode) {
             const valid = selectedIndex >= 0 && selectedIndex < files.length;
             setBtnState(deleteBtn, valid);
-          } else {
-            const canDelete = !!(selectedRef && selectedRef.kind === 'real' && selectedRef.fileRef);
-            setBtnState(deleteBtn, canDelete);
+            return;
           }
+
+          // sorted/range modes: allow delete if
+          //  - a real row with fileRef is selected, OR
+          //  - a placeholder row WITH fileRef that is TEMP-suppressed is selected
+          const canDelete =
+            !!selectedRef &&
+            (
+              (selectedRef.kind === 'real' && !!selectedRef.fileRef) ||
+              (selectedRef.kind === 'placeholder' && !!selectedRef.fileRef && isTempSuppressedFile(selectedRef.fileRef))
+            );
+
+          setBtnState(deleteBtn, canDelete);
+        }
+
+        function updateTempButtonsState() {
+          if (!isMobile) return;
+
+          const manualMode = !autoSortCheckbox.checked && !rangeExpanderCheckbox.checked;
+
+          // Only show these in sorted/range modes
+          if (makePlaceholderBtn) makePlaceholderBtn.style.display = manualMode ? 'none' : '';
+          if (restoreSampleBtn)   restoreSampleBtn.style.display   = manualMode ? 'none' : '';
+
+          // Default disabled
+          setBtnState(makePlaceholderBtn, false);
+          setBtnState(restoreSampleBtn, false);
+
+          if (manualMode || !selectedRef) return;
+
+          const fileRef = selectedRef.fileRef || null;
+
+          // Enable “Make Placeholder” on a real, unsuppressed mapped sample
+          if (selectedRef.kind === 'real' && fileRef && !gTempSuppressed.has(fileRef)) {
+            setBtnState(makePlaceholderBtn, true);
+          }
+
+          // Enable “Restore” if:
+          // - a real row that’s currently suppressed, or
+          // - a TEMP placeholder row that carries its original fileRef
+          const canRestore =
+            (selectedRef.kind === 'real' && fileRef && gTempSuppressed.has(fileRef)) ||
+            (selectedRef.kind === 'placeholder' && fileRef && gTempSuppressed.has(fileRef));
+
+          if (canRestore) setBtnState(restoreSampleBtn, true);
         }
 
         function clearSelection(){
@@ -750,7 +815,8 @@
           fileList.querySelectorAll('.file-item').forEach(el => el.classList.remove('selected'));
           updateMoveButtons();
           updateDeleteBtnState();
-          if (isMobile) updateMobileReorderUI(); // ensure Insert/Move buttons reflect no selection
+          updateTempButtonsState();
+          if (isMobile) updateMobileReorderUI();
         }
 
         function selectManualRow(i){
@@ -779,6 +845,7 @@
           const row = fileList.querySelector(`.file-item[data-render-index="${renderIdx}"]`);
           if (row) row.classList.add('selected');
           updateDeleteBtnState();
+          updateTempButtonsState(); 
         }
 
         function updateMoveButtons() {
@@ -806,7 +873,7 @@
         function updateMobileReorderUI() {
           const manualMode = !autoSortCheckbox.checked && !rangeExpanderCheckbox.checked;
 
-          // On mobile we keep the bar visible at all times
+          // On mobile keep the bar visible
           if (touchReorderControls) touchReorderControls.style.display = isMobile ? 'flex' : 'none';
 
           // Show/hide per-mode controls
@@ -825,7 +892,7 @@
             }
           }
 
-          // Compute enabled/disabled states
+          // Enabled/disabled states
           const len = files.length;
           const validSel = selectedIndex >= 0 && selectedIndex < len;
 
@@ -833,8 +900,9 @@
           setBtnState(moveDownBtn,    manualMode && validSel && selectedIndex < len - 1);
           setBtnState(insertAfterBtn, manualMode && validSel);
 
-          // Delete depends on mode/selection (unified)
           updateDeleteBtnState();
+
+          updateTempButtonsState(); 
         }
 
         // Absolute effective PI for first row
@@ -1561,7 +1629,6 @@
                 btn.type='button'; 
                 btn.textContent='▶︎';
                 btn.addEventListener('click',(e)=>{
-                  // On mobile in manual mode, auto-select the row so Move Up/Down work immediately
                   if (isMobile) {
                     const row = e.currentTarget.closest('.file-item.real');
                     if (row) {
@@ -1581,7 +1648,7 @@
               // Mobile: tap selects a row for Move Up/Down buttons
               item.addEventListener('click', () => { if (isMobile) selectManualRow(i); });
 
-              // Desktop right-click (manual): custom menu (insert/delete placeholder, delete sample)
+              // Desktop right-click (manual)
               if (!isMobile) {
                 item.addEventListener('contextmenu', (e) => {
                   e.preventDefault();
@@ -1597,10 +1664,11 @@
             updateDragInteractivity();
             updateMobileReorderUI();
 
-            // Keep highlight after moves
             if (isMobile && selectedIndex >= 0 && selectedIndex < files.length) {
               selectManualRow(selectedIndex);
             }
+
+            updateTempButtonsState(); // NEW: reflect current render
             return;
           }
 
@@ -1631,7 +1699,6 @@
                 badge.textContent = 'temp';
                 nameSpan.appendChild(badge);
 
-                // meta: original file + mapped note for this row
                 const absPI = gRenderMinPI + i;
                 nameSpan.appendChild(buildTempMetaBadge(file.name, absPI));
               }
@@ -1650,9 +1717,9 @@
               btn.type='button'; 
               btn.textContent='▶︎';
               btn.addEventListener('click',(e)=>{
-                if (isMobile) selectSortedRow('real', file, i); // auto-select on mobile
+                if (isMobile) selectSortedRow('real', file, i);
                 if (isSuppressed) {
-                  stopCurrentPreview(); // silence to reflect placeholder
+                  stopCurrentPreview();
                 } else {
                   previewFile(file,e.currentTarget);
                 }
@@ -1670,7 +1737,7 @@
                 if (isMobile) selectSortedRow('real', file, i);
               });
 
-              // Desktop: context menu with temp toggle + delete
+              // Desktop: context menu
               if (!isMobile) {
                 item.addEventListener('contextmenu', (e) => {
                   e.preventDefault();
@@ -1683,7 +1750,9 @@
                 });
               }
             });
+
             updateDragInteractivity();
+            updateTempButtonsState(); // NEW
             return;
           }
 
@@ -1693,7 +1762,7 @@
             const suppressed = !!(slot.file && gTempSuppressed.has(slot.file));
 
             if (slot.file && !suppressed){
-              // Real file in mapped range (normal)
+              // Real file in mapped range
               const item=document.createElement('div');
               item.className='file-item real'; 
               item.draggable=true; 
@@ -1719,7 +1788,7 @@
               btn.type='button'; 
               btn.textContent='▶︎';
               btn.addEventListener('click',(e)=>{
-                if (isMobile) selectSortedRow('real', slot.file, idx); // auto-select on mobile
+                if (isMobile) selectSortedRow('real', slot.file, idx);
                 previewFile(slot.file,e.currentTarget);
               });
               ctrl.appendChild(btn); 
@@ -1769,7 +1838,6 @@
                 badge.textContent = 'temp';
                 nameBits.appendChild(badge);
 
-                // Add meta badge: source file name + mapped note
                 const absPI = gRenderMinPI + idx;
                 nameBits.appendChild(buildTempMetaBadge(slot.file.name, absPI));
               }
@@ -1788,7 +1856,7 @@
                 pbtn.textContent = '▶︎';
                 pbtn.title = 'Preview synthesized placeholder';
                 pbtn.addEventListener('click', (e) => {
-                  if (isMobile) selectSortedRow('placeholder', null, idx); // auto-select on mobile
+                  if (isMobile) selectSortedRow('placeholder', suppressed ? slot.file : null, idx); // CHANGED
                   previewPlaceholderAtIndex(full, idx, e.currentTarget);
                 });
                 ctrl.appendChild(pbtn);
@@ -1809,7 +1877,12 @@
 
               // Mobile tap -> select this placeholder row
               item.addEventListener('click', () => {
-                if (isMobile) selectSortedRow('placeholder', null, idx);
+                if (isMobile) {
+                  const ref = suppressed && slot.file ? slot.file : null; // suppressed placeholders have a real file behind them
+                  selectSortedRow('placeholder', ref, idx);
+                  updateDeleteBtnState();
+                  if (typeof updateTempButtonsState === 'function') updateTempButtonsState();
+                }
               });
 
               // Desktop: context menu to restore if this was a temp-suppressed real
@@ -1825,7 +1898,6 @@
                   });
                 });
               } else if (!isMobile) {
-                // True placeholders: keep default suppression of context menu
                 item.addEventListener('contextmenu', (e) => { e.preventDefault(); });
               }
 
@@ -1856,7 +1928,6 @@
                 badge.textContent = 'temp';
                 nameSpan.appendChild(badge);
 
-                // meta for unmatched suppressed rows too
                 const absPI = gRenderMinPI + (startIdx + j);
                 nameSpan.appendChild(buildTempMetaBadge(file.name, absPI));
               }
@@ -1875,7 +1946,7 @@
               btn.type='button'; 
               btn.textContent='▶︎';
               btn.addEventListener('click',(e)=>{
-                if (isMobile) selectSortedRow('real', file, startIdx + j); // auto-select on mobile
+                if (isMobile) selectSortedRow(isSuppressed ? 'placeholder' : 'real', isSuppressed ? file : file, startIdx + j); // CHANGED
                 if (isSuppressed) {
                   stopCurrentPreview();
                 } else {
@@ -1890,9 +1961,10 @@
               addDragHandlers(item); 
               fileList.appendChild(item);
 
-              // Mobile tap -> select unmatched real row
+              // Mobile tap -> select unmatched row (real or placeholder)
               item.addEventListener('click', () => {
-                if (isMobile) selectSortedRow('real', file, startIdx + j);
+                // CHANGED: if suppressed, select as placeholder WITH fileRef
+                if (isMobile) selectSortedRow(isSuppressed ? 'placeholder' : 'real', file, startIdx + j);
               });
 
               // Desktop: context menu with temp toggle + delete
@@ -1912,6 +1984,7 @@
           }
 
           updateDragInteractivity();
+          updateTempButtonsState(); 
         }
 
         function addDragHandlers(el){
@@ -1981,9 +2054,7 @@
           gapOptions.style.display = manualMode ? 'none' : 'block';
 
           if (isMobile) {
-            // keep the bar visible at all times on mobile
             if (touchReorderControls) touchReorderControls.style.display = 'flex';
-            // hint text only in manual
             dragMessage.innerHTML = "<strong>To reorder the notes, select a note and then click Move Up or Move Down:</strong>";
             dragMessage.style.display = manualMode ? 'block' : 'none';
           } else {
@@ -2000,8 +2071,9 @@
             rangeControls.style.display = rangeExpanderCheckbox.checked ? 'block' : 'none';
           }
 
-          // let the mobile UI decide per-button disabling (and keep Delete visible)
           updateMobileReorderUI();
+
+          updateTempButtonsState(); 
         }
 
         // ===================== Export (ZIP) =====================
@@ -2590,9 +2662,141 @@
           scrollSelectedIntoView();
         });
 
+        // Helper: are we in a mode that supports temp placeholders?
+        function _isTempSupportedMode() {
+          return (typeof isSortedMode === 'function') ? isSortedMode()
+            : (autoSortCheckbox.checked || rangeExpanderCheckbox.checked);
+        }
+
+        if (makePlaceholderBtn) {
+          makePlaceholderBtn.addEventListener('click', () => {
+            // Only in sorted/range mode
+            if (!_isTempSupportedMode()) return;
+            if (!selectedRef || selectedRef.kind !== 'real' || !selectedRef.fileRef) return;
+
+            const fileRef   = selectedRef.fileRef;
+            const renderIdx = selectedRef.renderIdx;
+
+            // Only make placeholder if it's not already suppressed
+            if (gTempSuppressed.has(fileRef)) return;
+
+            stopPreviewIfPlaying();
+
+            // Suppress this file (becomes TEMP placeholder)
+            toggleTemporaryPlaceholderForFile(fileRef);
+
+            // Re-render, then reselect same row as a placeholder
+            safeRenderList();
+            updateDragInteractivity();
+            selectSortedRow('placeholder', fileRef, renderIdx);
+
+            // Make sure mobile buttons reflect the new state
+            updateTempButtonsState();
+          });
+        }
+
+        if (restoreSampleBtn) {
+          restoreSampleBtn.addEventListener('click', () => {
+            // Only in sorted/range mode
+            if (!_isTempSupportedMode()) return;
+            if (!selectedRef || !selectedRef.fileRef) return;
+
+            const fileRef   = selectedRef.fileRef;
+            const renderIdx = selectedRef.renderIdx;
+
+            // Can restore if: currently selected is a placeholder w/ fileRef AND suppressed,
+            // or a real row that is suppressed.
+            const isValidRestore =
+              (selectedRef.kind === 'placeholder' && gTempSuppressed.has(fileRef)) ||
+              (selectedRef.kind === 'real'        && gTempSuppressed.has(fileRef));
+
+            if (!isValidRestore) return;
+
+            stopPreviewIfPlaying();
+
+            // Unsuppress this file (back to real)
+            // (toggleTemporaryPlaceholderForFile will remove from the set if present)
+            toggleTemporaryPlaceholderForFile(fileRef);
+
+            // Re-render, then reselect same row as a real sample
+            safeRenderList();
+            updateDragInteractivity();
+            selectSortedRow('real', fileRef, renderIdx);
+
+            // Make sure mobile buttons reflect the new state
+            updateTempButtonsState();
+          });
+        }
+
         // Instructions modal
         instructionsBtn.addEventListener('click', async () => {
-          const html = `
+
+          var html;
+
+          if (isMobile){
+            html = `
+            <div class="instr-modal">
+             <h2>Instructions</h2>
+              <p>This tool is used to create an ABC Transcription Tools custom instrument from a directory of per-note instrument audio sample files.</p>
+              <p>The files should be in .wav or .mp3 format. The samples must all be in the same directory.</p>
+              <p><strong>1)</strong> Tap <strong>Choose Files</strong> (<strong>Browse...</strong> on Firefox) to import your audio sample files.</p>
+              <p>You can also import an existing custom instrument by tapping <strong>Import Custom Instrument (.zip)</strong>.</p>
+              <p>If you re-import a previously exported custom instrument .zip, your saved volume scale and fade settings will also be restored automatically.</p>
+              <p>The note output filename for each audio sample is displayed to the right of each note.</p>
+              <p><strong>2)</strong> Select the default volume scale and fade time for the instrument.</p>
+              <p>These values will be applied to the instrument when used in the <strong>ABC Transcription Tools</strong>.</p>
+              <p><strong>3)</strong> Choose the starting scale note for the instrument notes.</p>
+              <p><strong>4)</strong> Choose the starting octave number for the instrument notes.</p>
+              <p>For reference, in ABC notation, middle C on the piano (written as C) corresponds to C4, while the lowest string on a violin (written as G,) corresponds to G3.</p>
+              <p><strong>5)</strong> If your files have filenames that contain note names, check <strong>Automatically sort files by scale order (C, Db, D, Eb, E, ...)</strong> to align the sample file list with the note names (checked by default).</p>
+              <p>If note names cannot be automatically parsed, sorting and range detection will be disabled. You can still manually reorder your samples.</p>
+              <p><strong>6)</strong> If you have any original samples that don't sound good and want to instead create them by pitch-shifting from adjacent samples, you can remove them from the list by:</p>
+              <p>Tap the item to select it and then tap the <strong>Delete Selected Item from List</strong> button.</p>
+              <p><strong>7)</strong> When automatically sorting by scale order, if there are scale gaps found, select whether to synthesize (pitch-shift) the missing notes from nearby samples or replace them with silent placeholder files.</p>
+              <p>In this mode, you may also temporarily replace a real sample with a placeholder without permanently removing it from the sample list.</p>
+              <p>Select a mapped sample and tap <strong>Make Temporary Placeholder</strong> to turn it into a temporary placeholder (it will show a yellow <strong>"temp"</strong> badge and its original filename). When a temporary placeholder row is selected, tap <strong>Restore Original Sample</strong> to restore it.</p>
+              <p>You can also delete a temporary placeholder (which removes its underlying sample) by selecting it and tapping <strong>Delete Selected Item from List</strong>.</p>
+              <p>The buttons are context-aware and will enable/disable automatically based on the currently selected item (enabled on a real, mapped sample to replace; enabled on a temporary placeholder to restore the original sample).</p>
+              <p>• If <strong>Synthesize</strong> is selected for gaps, the temporarily missing note will be generated from the nearest real, non-placeholder sample.</p>
+              <p>• If <strong>Silent</strong> is selected for gaps, the temporarily missing note will preview/export as silence.</p>
+              <p><strong>8)</strong> <em>Optional:</em> Turn on the <strong>Range Expander</strong> (available only when <strong>Automatically sort files by scale order (C, Db, D, Eb, E, ...)</strong> is enabled) to set the lowest and highest desired note and octave.</p>
+              <p>The ends of the list will match your requested notes exactly, while the lowest actual input sample retains the label determined by the <strong>Starting note/octave</strong> settings.</p>
+              <p><strong>9)</strong> If not automatically sorting files by scale order, you can manually reorder the scale note order.</p>
+              <p>This can be useful for loops/stems or non-pitched percussion instruments where you want sounds to play on specific scale notes.</p>
+              <p>Select a note and then tap the <strong>Move Up</strong> and <strong>Move Down</strong> buttons to reorder the list into the scale note order you want.</p>
+              <p><strong>Adding and deleting silent placeholders:</strong></p>
+              <p>You may also add additional silent placeholders to allow you to place the notes exactly at the scale positions you want.</p>
+              <p>To insert a silent placeholder after any item in the list, select the item and then tap the <strong>Insert Silent Placeholder</strong> button.</p>
+              <p>To delete a silent placeholder, select the silent placeholder and then tap the <strong>Delete Selected Item from List</strong> button.</p>
+              <p><strong>10)</strong> <em>Optional:</em> Enable <strong>Trim leading silence</strong> and set a <strong>Silence threshold (dB)</strong> to remove silence at the start of each file.</p>
+              <p>Smaller dB values are more sensitive (e.g., -40 to -50 dB is typical).</p>
+              <p>Tap <strong>Apply</strong> to update silence trimming for all samples.</p>
+              <p><strong>11)</strong> <em>Optional:</em> Enable <strong>Encode all exported files as mono .wav</strong> to force every exported file to mono .wav format, regardless of input type.</p>
+              <p>If silence trimming or mono conversion is enabled, the exported filenames always use .wav extension.</p>
+              <p>This applies to both normal exports and silence-trimmed files and may reduce the custom instrument size if the original samples were stereo .wav files.</p>
+              <p><strong>12)</strong> Tap the ▶︎ buttons to audition the notes with the current volume scale, silence trimming, and stereo-to-mono conversion settings.</p>
+              <p><strong>13)</strong> Tap <strong>Export Custom Instrument</strong> to export the final custom instrument.</p>
+              <p>The .zip file is saved to your browser’s default <strong>Downloads</strong> folder.</p>
+              <hr>
+              <h4>Additional Resources</h4>
+              <p style="text-align:center;margin-top:12px;">User Guide Information on Custom Instrument Creation</p>
+              <p style="text-align:center;margin-top:12px;"><a href="https://michaeleskin.com/abctools/userguide.html#creating_custom_midi_instruments" target="_blank">ABC Transcription Tools User Guide: Custom Instruments</a></p>
+              <p style="text-align:center;margin-top:12px;">UltraBox Utility for Extracting Samples from .sf2 Soundfonts</p>
+              <p style="text-align:center;margin-top:12px;"><a href="https://michaeleskin.com/tools/UltraBox/UltraBox_Sample_Extractor.html" target="_blank">UltraBox Sample Extractor</a></p>
+              <hr>
+              <h4>Credits</h4>
+              <p style="text-align:center;">This tool uses several open-source Javascript libraries, credits can be found here:</p>
+              <p style="text-align:center;margin-top:12px;"><a href="https://michaeleskin.com/abctools/credits.html" target="_blank">Credits</a></p>
+              <hr>
+              <h4>Tip Jars</h4>
+              <p style="text-align:center;">This tool was created by <a href="https://michaeleskin.com" target="_blank">Michael Eskin</a>.</p>
+              <p style="text-align:center;">If you find it useful, please consider making a contribution via my online tip jars:</p>
+              <p style="text-align:center;margin-top:12px;"><a href="https://michaeleskin.com/abctools/tipjars.html" target="_blank">Tip Jars</a></p>
+            </div>
+          `;
+          }
+          else{
+            html = `
             <div class="instr-modal">
              <h2>Instructions</h2>
               <p>This tool is used to create an ABC Transcription Tools custom instrument from a directory of per-note instrument audio sample files.</p>
@@ -2608,33 +2812,24 @@
               <p>For reference, in ABC notation, middle C on the piano (written as C) corresponds to C4, while the lowest string on a violin (written as G,) corresponds to G3.</p>
               <p><strong>5)</strong> If your files have filenames that contain note names, check <strong>Automatically sort files by scale order (C, Db, D, Eb, E, ...)</strong> to align the sample file list with the note names (checked by default).</p>
               <p>If note names cannot be automatically parsed, sorting and range detection will be disabled. You can still manually reorder your samples.</p>
-              <p><strong>6)</strong> If you have any original samples that don't sound good and want to instead create them by pitch shifting from adjacent samples, you can remove them from the list by:</p>
-              <p><strong>Desktop browsers:</strong></p>
+              <p><strong>6)</strong> If you have any original samples that don't sound good and want to instead create them by pitch-shifting from adjacent samples, you can remove them from the list by:</p>
               <p>Right-click the item and select <strong>Delete sample from list</strong> from the context menu.</p>
-              <p><strong>Mobile browsers:</strong></p>
-              <p>Click the item to select it and then click the <strong>Delete Selected Item from List</strong> button.</p>
               <p><strong>7)</strong> When automatically sorting by scale order, if there are scale gaps found, select whether to synthesize (pitch-shift) the missing notes from nearby samples or replace them with silent placeholder files.</p>
-              <p><strong>7a)</strong> <em>Desktop only, sorted/range modes:</em> You may also <strong>temporarily replace a real sample with a placeholder</strong> without permanently deleting it.</p>
-              <p>Right-click a mapped sample and choose <strong>Temporarily replace with placeholder</strong>. The sample will be visually marked with a <strong>yellow “TEMP” badge</strong> and also display the original filename they came from, and it will be treated as a placeholder when previewing or exporting.</p>
-              <p>Right-click again and choose <strong>Restore original sample</strong> to bring it back.</p>
-              <p>• If <strong>Synthesize</strong> is selected for gaps, the temporarily missing note will be generated from the nearest real, unsuppressed sample (never from placeholders).</p>
+              <p>In this mode, you may also temporarily replace a real sample with a placeholder without permanently removing it from the sample list.</p>
+              <p>Right-click a mapped sample and choose <strong>Temporarily replace with placeholder</strong>. The sample will be visually marked with a yellow <strong>"temp"</strong> badge and also display the original filename it came from, and it will be treated as a placeholder when previewing or exporting.</p>
+              <p>Right-click again and choose <strong>Restore original sample</strong> to restore it.</p>
+              <p>To delete the underlying sample of a temporary placeholder from the list, right-click the placeholder and choose <strong>Delete sample from list</strong>.</p>
+              <p>• If <strong>Synthesize</strong> is selected for gaps, the temporarily missing note will be generated from the nearest real, non-placeholder sample.</p>
               <p>• If <strong>Silent</strong> is selected for gaps, the temporarily missing note will preview/export as silence.</p>
-              <p><strong>8)</strong> <em>Optional:</em> Turn on the <strong>Range Expander</strong> (available only when <strong>Automatically sort files by scale order (C, Db, D, Eb, E, ...)</strong> is enabled) to set a lowest and highest desired note and octave.</p>
+              <p><strong>8)</strong> <em>Optional:</em> Turn on the <strong>Range Expander</strong> (available only when <strong>Automatically sort files by scale order (C, Db, D, Eb, E, ...)</strong> is enabled) to set the lowest and highest desired note and octave.</p>
               <p>The ends of the list will match your requested notes exactly, while the lowest actual input sample retains the label determined by the <strong>Starting note/octave</strong> settings.</p>
               <p><strong>9)</strong> If not automatically sorting files by scale order, you can manually reorder the scale note order.</p>
               <p>This can be useful for loops/stems or non-pitched percussion instruments where you want sounds to play on specific scale notes.</p>
-              <p><strong>Desktop browsers:</strong></p>
               <p>Drag-and-drop the notes in the list into the scale note order you want.</p>
-              <p><strong>Mobile browsers:</strong></p>
-              <p>Select a note and then click the <strong>Move Up</strong> and <strong>Move Down</strong> buttons to reorder the list into the scale note order you want.</p>
               <p><strong>Adding and deleting silent placeholders:</strong></p>
               <p>You may also add additional silent placeholders to allow you to place the notes exactly at the scale positions you want.</p>
-              <p><strong>Desktop browsers:</strong></p>
               <p>To insert a silent placeholder after any item in the list, right-click the item and then select <strong>Insert silent placeholder after this note</strong> from the context menu.</p>
               <p>To delete a silent placeholder, right-click the silent placeholder and then select <strong>Delete silent placeholder</strong> from the context menu.</p>
-              <p><strong>Mobile browsers:</strong></p>              
-              <p>To insert a silent placeholder after any item in the list, select the item and then click the <strong>Insert Silent Placeholder</strong> button.</p>
-              <p>To delete a silent placeholder, select the silent placeholder and then click the <strong>Delete Selected Item from List</strong> button.</p>
               <p><strong>10)</strong> <em>Optional:</em> Enable <strong>Trim leading silence</strong> and set a <strong>Silence threshold (dB)</strong> to remove silence at the start of each file.</p>
               <p>Smaller dB values are more sensitive (e.g., -40 to -50 dB is typical).</p>
               <p>Click <strong>Apply</strong> to update silence trimming for all samples.</p>
@@ -2660,7 +2855,7 @@
               <p style="text-align:center;">If you find it useful, please consider making a contribution via my online tip jars:</p>
               <p style="text-align:center;margin-top:12px;"><a href="https://michaeleskin.com/abctools/tipjars.html" target="_blank">Tip Jars</a></p>
             </div>
-          `;
+          `;          }
           await DayPilot.Modal.alert(html, { theme: "modal_flat", top: 25, width: 780 });
         });
 
