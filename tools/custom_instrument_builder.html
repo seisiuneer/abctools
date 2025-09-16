@@ -314,6 +314,35 @@
     }
 
     .file-item.selected{ outline:2px solid #91d5ff; background:#e6f7ff; }
+    .file-item.temp-suppressed {
+      background: #fff7e6;
+      border-color: #ffd591;
+    }
+    .file-item .temp-badge {
+      margin-left: 6px;
+      padding: 1px 6px;
+      border-radius: 10px;
+      font-size: 0.8em;
+      background: #faad14;
+      color: #000;
+      font-weight: 700;
+    }
+
+    /* Add just below your existing .temp-badge / .temp-suppressed styles */
+    .temp-meta {
+      margin-left: 6px;
+      padding: 1px 6px;
+      border-radius: 10px;
+      font-size: 0.83em;
+      background: #fff1b8;              /* soft amber */
+      color: #5b4a00;                   /* readable on amber */
+      border: 1px solid #ffe58f;
+      font-weight: 600;
+      white-space: nowrap;
+      max-width: 360px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
 
     /* Updated to include new Delete button */
     #moveUpBtn, #moveDownBtn, #insertAfterBtn, #deleteBtn {
@@ -529,6 +558,10 @@
 
     <script>
       function DoStartup() {
+
+        // For mobile adaptation testing, set true to force mobile test
+        const gForceMobile = false;
+
         const notes = ["C", "Db", "D", "Eb", "E", "F", "Gb", "G", "Ab", "A", "Bb", "B"];
         let files = [];
         let originalFiles = [];
@@ -595,8 +628,15 @@
         function isAndroid() { return /Android/i.test(navigator.userAgent); }
 
         // Touch/manual-reorder support
-        //const isMobile = true; // For testing mobile adaptation
-        const isMobile = isIOS() || isIPad() || isAndroid();
+        const isMobile = gForceMobile || isIOS() || isIPad() || isAndroid();
+
+        // Desktop-only helper
+        function isDesktop() {
+          if (gForceMobile){
+            return false;
+          }
+          return !(isIOS() || isIPad() || isAndroid());
+        }
 
         const touchReorderControls = document.getElementById('touchReorderControls');
         const moveUpBtn = document.getElementById('moveUpBtn');
@@ -608,6 +648,45 @@
 
         // Sorted-mode mobile selection
         let selectedRef = null; // { kind: 'real'|'placeholder', fileRef: File|null, renderIdx: number }
+
+        // Track samples temporarily suppressed (treated as placeholders)
+        const gTempSuppressed = new WeakSet();
+
+        // Convert an absolute pitch index to a "NoteOctave" label, e.g., "Db4"
+        function piToNoteOctave(absPI) {
+          const octave = Math.floor(absPI / 12);
+          const noteIndex = absPI % 12;
+          const noteNames = ["C", "Db", "D", "Eb", "E", "F", "Gb", "G", "Ab", "A", "Bb", "B"];
+          return `${noteNames[noteIndex]}${octave}`;
+        }
+
+        // Builds a "temp-meta" badge describing where a temporary placeholder came from
+        function buildTempMetaBadge(fileName, absPI) {
+          const meta = document.createElement('span');
+          meta.className = 'temp-meta';
+          meta.textContent = `original: ${fileName}`;
+          meta.title = `Temporarily replaced\nOriginal file: ${fileName}\nMapped note: ${piToNoteOctave(absPI)}`;
+          return meta;
+        }
+
+        // Sorted/Range mode helper
+        function isSortedMode() {
+          return autoSortCheckbox.checked || rangeExpanderCheckbox.checked;
+        }
+
+        // Can we show the temp toggle on this platform/mode?
+        function canTempToggleOnDesktopSorted(isPlaceholderRow) {
+          return isDesktop() && isSortedMode() && !isPlaceholderRow;
+        }
+
+        // Toggle one file between "real" and "temporary placeholder"
+        function toggleTemporaryPlaceholderForFile(fileRef) {
+          if (!fileRef) return;
+          if (gTempSuppressed.has(fileRef)) gTempSuppressed.delete(fileRef);
+          else gTempSuppressed.add(fileRef);
+          safeRenderList();
+          updateDragInteractivity();
+        }
 
         insertAfterBtn.addEventListener('click', () => {
           // Manual mode only
@@ -1164,21 +1243,63 @@
           return -1;
         }
 
+        // ---------- PREVIEW: placeholder row (auto/range) using ONLY real, unsuppressed sources ----------
         async function previewPlaceholderAtIndex(full, idx, btn){
           try {
-            if (gPrevBtn === btn && gPrevSource) { stopCurrentPreview(); return; }
-            const srcIdx = findNearestSourceIndex(full, idx);
+            if (gPrevBtn === btn && gPrevSource) { 
+              stopCurrentPreview(); 
+              return; 
+            }
+
+            // Build a map of indices that have a REAL, UNSUPPRESSED source
+            const haveAtIndex = new Map();
+            for (let i = 0; i < full.length; i++) {
+              const slot = full[i];
+              if (slot && slot.file && !(gTempSuppressed && gTempSuppressed.has(slot.file))) {
+                haveAtIndex.set(i, slot.file);
+              }
+            }
+            if (haveAtIndex.size === 0) return; // nothing to borrow from
+
+            // Decode only those real/unsuppressed sources once
+            const decodedAtIndex = new Map();
+            await Promise.all(
+              Array.from(haveAtIndex.entries()).map(async ([i, file]) => {
+                try {
+                  decodedAtIndex.set(i, await decodeFileToAudioBuffer(file));
+                } catch (e) {
+                  console.warn("Decode failed for preview source:", file && file.name, e);
+                }
+              })
+            );
+
+            // Neighbor search that ONLY considers decodedAtIndex (i.e., real/unsuppressed)
+            function findSourceIndex(targetIdx){
+              for (let d = 1; d < full.length; d++) {
+                const lower  = targetIdx - d;
+                const higher = targetIdx + d;
+                if (lower  >= 0           && decodedAtIndex.has(lower))  return lower;
+                if (higher <  full.length && decodedAtIndex.has(higher)) return higher;
+              }
+              return -1;
+            }
+
+            const srcIdx = findSourceIndex(idx);
             if (srcIdx < 0) return;
-            const srcFile = full[srcIdx].file;
-            let buf = await decodeFileToAudioBuffer(srcFile);
-            if (forceMonoWavCheckbox.checked) buf = mixToMono(buf);
+
+            let buf = decodedAtIndex.get(srcIdx);
+            if (forceMonoWavCheckbox.checked) {
+              buf = mixToMono(buf);
+            }
             if (trimSilenceCheckbox.checked) {
               const thr = dbToLinear(Number(silenceDbInput.value));
               buf = trimLeadingSilenceFromBuffer(buf, thr);
             }
+
             const semitones = idx - srcIdx;
-            const shifted = await pitchShiftBuffer(buf, semitones);
+            const shifted   = await pitchShiftBuffer(buf, semitones);
             await playBufferWithScale(shifted, btn);
+
           } catch (e) {
             console.warn("Placeholder preview failed:", e);
             stopCurrentPreview();
@@ -1279,7 +1400,7 @@
           return ctxMenuEl;
         }
 
-        function showContextMenu(x, y, idx, { isPlaceholder } = {}) {
+        function showContextMenu(x, y, idx, { isPlaceholder, fileRef, isTempSuppressed } = {}) {
           if (isMobile) return;
 
           const manualMode = !autoSortCheckbox.checked && !rangeExpanderCheckbox.checked;
@@ -1288,6 +1409,7 @@
           clearContextMenuItems();
 
           if (manualMode) {
+            // Manual mode menu
             addMenuItem('Insert silent placeholder after this note', () => {
               hideContextMenu();
               stopPreviewIfPlaying();
@@ -1309,15 +1431,29 @@
                 deleteSampleAtIndex(idx);
               });
             }
+
           } else {
-            if (isPlaceholder) {
-              return; // no custom menu on sorted placeholders
-            } else {
+            // Sorted / Range mode menu
+            if (!isPlaceholder) {
+              if (canTempToggleOnDesktopSorted(false)) {
+                addMenuItem(
+                  isTempSuppressed ? 'Restore original sample' : 'Temporarily replace with placeholder',
+                  () => {
+                    hideContextMenu();
+                    stopPreviewIfPlaying();
+                    toggleTemporaryPlaceholderForFile(fileRef);
+                  }
+                );
+                addSeparator();
+              }
               addMenuItem('Delete sample from list', () => {
                 hideContextMenu();
                 stopPreviewIfPlaying();
                 deleteSampleAtIndex(idx);
               });
+            } else {
+              // true placeholders: suppress a menu
+              return;
             }
           }
 
@@ -1331,6 +1467,7 @@
           if (rect.right > vw)  el.style.left = `${Math.max(8, vw  - rect.width  - 8)}px`;
           if (rect.bottom > vh) el.style.top  = `${Math.max(8, vh - rect.height - 8)}px`;
         }
+
 
         function hideContextMenu() {
           if (ctxMenuEl) {
@@ -1387,7 +1524,7 @@
               item.className='file-item real'; 
               item.draggable=true; 
               item.dataset.index=i;
-              item.dataset.renderIndex = String(i); // keep parity with auto mode
+              item.dataset.renderIndex = String(i);
 
               const ext=file.name.split('.').pop(); 
               const proposedName=getProposedNameForIndex(i,ext);
@@ -1405,7 +1542,6 @@
                 nameSpan.textContent = '(placeholder)';
                 proposedSpan.textContent = `→ ${proposedName} (silent)`;
 
-                // Spacer to keep row height consistent (not clickable)
                 const spacer = document.createElement('button');
                 spacer.className = 'preview-btn';
                 spacer.type = 'button';
@@ -1428,7 +1564,7 @@
                   // On mobile in manual mode, auto-select the row so Move Up/Down work immediately
                   if (isMobile) {
                     const row = e.currentTarget.closest('.file-item.real');
-                    if (row && typeof selectManualRow === 'function') {
+                    if (row) {
                       const idx = Number(row.dataset.index);
                       if (Number.isInteger(idx)) selectManualRow(idx);
                     }
@@ -1476,8 +1612,9 @@
           // No 'full' (couldn't map): just list actual files
           if (!full.length){
             files.forEach((file,i)=>{
+              const isSuppressed = gTempSuppressed.has(file);
               const item=document.createElement('div'); 
-              item.className='file-item real'; 
+              item.className='file-item real' + (isSuppressed ? ' temp-suppressed' : ''); 
               item.draggable=true; 
               item.dataset.index=i;
               item.dataset.renderIndex = String(i);
@@ -1488,9 +1625,22 @@
               const nameSpan=document.createElement('span'); 
               nameSpan.textContent=file.name;
 
+              if (isSuppressed) {
+                const badge = document.createElement('span');
+                badge.className = 'temp-badge';
+                badge.textContent = 'temp';
+                nameSpan.appendChild(badge);
+
+                // meta: original file + mapped note for this row
+                const absPI = gRenderMinPI + i;
+                nameSpan.appendChild(buildTempMetaBadge(file.name, absPI));
+              }
+
               const proposedSpan=document.createElement('span'); 
               proposedSpan.className='proposed'; 
-              proposedSpan.textContent=`→ ${proposedName}`;
+              proposedSpan.textContent = isSuppressed
+                ? `→ ${proposedName} (placeholder)`
+                : `→ ${proposedName}`;
 
               const ctrl=document.createElement('div'); 
               ctrl.className='controls';
@@ -1501,7 +1651,11 @@
               btn.textContent='▶︎';
               btn.addEventListener('click',(e)=>{
                 if (isMobile) selectSortedRow('real', file, i); // auto-select on mobile
-                previewFile(file,e.currentTarget);
+                if (isSuppressed) {
+                  stopCurrentPreview(); // silence to reflect placeholder
+                } else {
+                  previewFile(file,e.currentTarget);
+                }
               });
               ctrl.appendChild(btn); 
 
@@ -1516,12 +1670,16 @@
                 if (isMobile) selectSortedRow('real', file, i);
               });
 
-              // Desktop: allow Delete sample on sorted view even if no `full`
+              // Desktop: context menu with temp toggle + delete
               if (!isMobile) {
                 item.addEventListener('contextmenu', (e) => {
                   e.preventDefault();
                   stopPreviewIfPlaying();
-                  showContextMenu(e.clientX, e.clientY, i, { isPlaceholder: false });
+                  showContextMenu(e.clientX, e.clientY, i, {
+                    isPlaceholder: false,
+                    fileRef: file,
+                    isTempSuppressed: isSuppressed
+                  });
                 });
               }
             });
@@ -1531,10 +1689,12 @@
 
           // We have a continuous render plan (full)
           full.forEach((slot,idx)=>{
-            const item=document.createElement('div');
+            // Treat a real slot as placeholder if it's temporarily suppressed
+            const suppressed = !!(slot.file && gTempSuppressed.has(slot.file));
 
-            if (slot.file){
-              // Real file in mapped range
+            if (slot.file && !suppressed){
+              // Real file in mapped range (normal)
+              const item=document.createElement('div');
               item.className='file-item real'; 
               item.draggable=true; 
               item.dataset.fileName=slot.file.name;
@@ -1574,19 +1734,26 @@
                 if (isMobile) selectSortedRow('real', slot.file, idx);
               });
 
-              // Desktop: context menu (sorted) on non-placeholder => Delete sample
+              // Desktop: context menu (sorted)
               if (!isMobile) {
                 item.addEventListener('contextmenu', (e) => {
                   e.preventDefault();
                   stopPreviewIfPlaying();
                   const idxInFiles = (originalIndex>=0) ? originalIndex : files.indexOf(slot.file);
-                  showContextMenu(e.clientX, e.clientY, idxInFiles, { isPlaceholder: false });
+                  showContextMenu(e.clientX, e.clientY, idxInFiles, {
+                    isPlaceholder: false,
+                    fileRef: slot.file,
+                    isTempSuppressed: false
+                  });
                 });
               }
 
+              fileList.appendChild(item);
+
             } else {
-              // Placeholder row in auto/range
-              item.className = 'file-item';
+              // Placeholder row in auto/range OR temporarily suppressed real row
+              const item=document.createElement('div');
+              item.className = 'file-item' + (suppressed ? ' temp-suppressed' : '');
               item.dataset.renderIndex = String(idx);
 
               const proposed = getProposedNameForIndex(idx, "wav");
@@ -1595,6 +1762,17 @@
               const nameBits = document.createElement('span');
               nameBits.className = 'placeholder-label';
               nameBits.textContent = '(placeholder)';
+
+              if (suppressed && slot.file) {
+                const badge = document.createElement('span');
+                badge.className = 'temp-badge';
+                badge.textContent = 'temp';
+                nameBits.appendChild(badge);
+
+                // Add meta badge: source file name + mapped note
+                const absPI = gRenderMinPI + idx;
+                nameBits.appendChild(buildTempMetaBadge(slot.file.name, absPI));
+              }
 
               const proposedSpan = document.createElement('span');
               proposedSpan.className = 'proposed';
@@ -1634,36 +1812,60 @@
                 if (isMobile) selectSortedRow('placeholder', null, idx);
               });
 
-              // Desktop: suppress default browser context menu on sorted placeholders
-              if (!isMobile) {
+              // Desktop: context menu to restore if this was a temp-suppressed real
+              if (!isMobile && suppressed && slot.file) {
+                const originalIndex = files.findIndex(f => f && slot.file && f === slot.file);
                 item.addEventListener('contextmenu', (e) => {
                   e.preventDefault();
+                  stopPreviewIfPlaying();
+                  showContextMenu(e.clientX, e.clientY, originalIndex >= 0 ? originalIndex : -1, {
+                    isPlaceholder: false,
+                    fileRef: slot.file,
+                    isTempSuppressed: true
+                  });
                 });
+              } else if (!isMobile) {
+                // True placeholders: keep default suppression of context menu
+                item.addEventListener('contextmenu', (e) => { e.preventDefault(); });
               }
-            }
 
-            fileList.appendChild(item);
+              fileList.appendChild(item);
+            }
           });
 
           // If Range Expander is OFF, append any unmatched files after the mapped region
           if (!rangeExpanderCheckbox.checked && unmatched.length){
             const startIdx=full.length;
             unmatched.forEach((file,j)=>{
+              const isSuppressed = gTempSuppressed.has(file);
               const item=document.createElement('div'); 
-              item.className='file-item real'; 
+              item.className='file-item real' + (isSuppressed ? ' temp-suppressed' : ''); 
               item.draggable=true; 
               item.dataset.index=files.findIndex(f=>f===file);
               item.dataset.renderIndex = String(startIdx + j);
 
               const ext=file.name.split('.').pop(); 
-              const proposed=getProposedNameForIndex(startIdx+j,ext);
+              const proposed=getProposedNameForIndex(startIdx + j,ext);
 
               const nameSpan=document.createElement('span'); 
               nameSpan.textContent=file.name;
 
+              if (isSuppressed) {
+                const badge = document.createElement('span');
+                badge.className = 'temp-badge';
+                badge.textContent = 'temp';
+                nameSpan.appendChild(badge);
+
+                // meta for unmatched suppressed rows too
+                const absPI = gRenderMinPI + (startIdx + j);
+                nameSpan.appendChild(buildTempMetaBadge(file.name, absPI));
+              }
+
               const proposedSpan=document.createElement('span'); 
               proposedSpan.className='proposed'; 
-              proposedSpan.textContent=`→ ${proposed}`;
+              proposedSpan.textContent = isSuppressed
+                ? `→ ${proposed} (placeholder)`
+                : `→ ${proposed}`;
 
               const ctrl=document.createElement('div'); 
               ctrl.className='controls';
@@ -1674,7 +1876,11 @@
               btn.textContent='▶︎';
               btn.addEventListener('click',(e)=>{
                 if (isMobile) selectSortedRow('real', file, startIdx + j); // auto-select on mobile
-                previewFile(file,e.currentTarget);
+                if (isSuppressed) {
+                  stopCurrentPreview();
+                } else {
+                  previewFile(file,e.currentTarget);
+                }
               });
               ctrl.appendChild(btn); 
 
@@ -1689,13 +1895,17 @@
                 if (isMobile) selectSortedRow('real', file, startIdx + j);
               });
 
-              // Desktop: allow Delete sample via context menu
+              // Desktop: context menu with temp toggle + delete
               if (!isMobile) {
                 item.addEventListener('contextmenu', (e) => {
                   e.preventDefault();
                   stopPreviewIfPlaying();
                   const idxInFiles = files.findIndex(f=>f===file);
-                  showContextMenu(e.clientX, e.clientY, idxInFiles, { isPlaceholder: false });
+                  showContextMenu(e.clientX, e.clientY, idxInFiles, {
+                    isPlaceholder: false,
+                    fileRef: file,
+                    isTempSuppressed: isSuppressed
+                  });
                 });
               }
             });
@@ -1918,20 +2128,31 @@
                   await tick();
                 }
               } else {
+                // ---- Modified synthesis prep: ONLY real, unsuppressed samples are sources ----
                 const haveAtIndex = new Map();
-                full.forEach((slot,i)=>{ if (slot.file) haveAtIndex.set(i, slot.file); });
+                full.forEach((slot, i) => {
+                  if (slot.file && !(gTempSuppressed && gTempSuppressed.has(slot.file))) {
+                    haveAtIndex.set(i, slot.file);
+                  }
+                });
 
                 const decodedAtIndex = new Map();
-                await Promise.all(Array.from(haveAtIndex.entries()).map(async ([i, file])=>{
-                  try { decodedAtIndex.set(i, await decodeFileToAudioBuffer(file)); }
-                  catch(e){ console.warn("Decode failed:", file.name, e); }
-                }));
+                await Promise.all(
+                  Array.from(haveAtIndex.entries()).map(async ([i, file]) => {
+                    try {
+                      decodedAtIndex.set(i, await decodeFileToAudioBuffer(file));
+                    } catch (e) {
+                      console.warn("Decode failed:", file && file.name, e);
+                    }
+                  })
+                );
 
                 function findSourceIndex(targetIdx){
-                  for (let d=1; d<full.length; d++){
-                    const lower = targetIdx - d, higher = targetIdx + d;
-                    if (lower >= 0 && decodedAtIndex.has(lower)) return lower;
-                    if (higher < full.length && decodedAtIndex.has(higher)) return higher;
+                  for (let d = 1; d < full.length; d++) {
+                    const lower  = targetIdx - d;
+                    const higher = targetIdx + d;
+                    if (lower  >= 0           && decodedAtIndex.has(lower))  return lower;
+                    if (higher <  full.length && decodedAtIndex.has(higher)) return higher;
                   }
                   return -1;
                 }
@@ -1939,15 +2160,17 @@
                 for (let i = 0; i < full.length; i++){
                   const slot = full[i];
 
-                  if (slot.file){
-                    const ext = slot.ext;
+                  if (slot.file && !(gTempSuppressed && gTempSuppressed.has(slot.file))) {
+                    // real, unsuppressed file → write it (with any processing)
+                    const ext      = slot.ext;
                     const proposed = getProposedNameForIndex(i, ext);
-                    const outBlob = await fileToProcessedBlob(slot.file);
+                    const outBlob  = await fileToProcessedBlob(slot.file);
                     zip.file(proposed, outBlob);
                     updateStep(proposed);
                     await tick();
 
-                  } else {
+                  } else if (slot.file && gTempSuppressed && gTempSuppressed.has(slot.file)) {
+                    // this slot is temporarily a placeholder
                     const proposed = getProposedNameForIndex(i, "wav");
                     if (gapMode.value === 'silent'){
                       zip.file(proposed, generateSilentWav(1));
@@ -1957,10 +2180,37 @@
                       const srcIdx = findSourceIndex(i);
                       if (srcIdx >= 0){
                         try{
-                          const srcBuf = decodedAtIndex.get(srcIdx);
+                          const srcBuf    = decodedAtIndex.get(srcIdx);
                           const semitones = i - srcIdx;
-                          const shiftedBuf = await pitchShiftBuffer(srcBuf, semitones);
-                          const outBlob = await bufferToFinalBlob(shiftedBuf);
+                          const shifted   = await pitchShiftBuffer(srcBuf, semitones);
+                          const outBlob   = await bufferToFinalBlob(shifted);
+                          zip.file(proposed, outBlob);
+                        } catch(e){
+                          console.warn("Synthesis failed at index", i, e);
+                          zip.file(proposed, generateSilentWav(1));
+                        }
+                      } else {
+                        zip.file(proposed, generateSilentWav(1));
+                      }
+                      updateStep(proposed);
+                      await tick();
+                    }
+
+                  } else {
+                    // slot has no file (true gap/placeholder from auto-range)
+                    const proposed = getProposedNameForIndex(i, "wav");
+                    if (gapMode.value === 'silent'){
+                      zip.file(proposed, generateSilentWav(1));
+                      updateStep(proposed);
+                      await tick();
+                    } else {
+                      const srcIdx = findSourceIndex(i);
+                      if (srcIdx >= 0){
+                        try{
+                          const srcBuf    = decodedAtIndex.get(srcIdx);
+                          const semitones = i - srcIdx;
+                          const shifted   = await pitchShiftBuffer(srcBuf, semitones);
+                          const outBlob   = await bufferToFinalBlob(shifted);
                           zip.file(proposed, outBlob);
                         } catch(e){
                           console.warn("Synthesis failed at index", i, e);
@@ -1990,7 +2240,7 @@
               }
             }
 
-            setExportStatus(`Zipping files… 0%`);
+            setExportStatus('Zipping files… 0%');
             const blob = await zip.generateAsync(
               { type: "blob" },
               (meta) => {
@@ -2364,6 +2614,11 @@
               <p><strong>Mobile browsers:</strong></p>
               <p>Click the item to select it and then click the <strong>Delete Selected Item from List</strong> button.</p>
               <p><strong>7)</strong> When automatically sorting by scale order, if there are scale gaps found, select whether to synthesize (pitch-shift) the missing notes from nearby samples or replace them with silent placeholder files.</p>
+              <p><strong>7a)</strong> <em>Desktop only, sorted/range modes:</em> You may also <strong>temporarily replace a real sample with a placeholder</strong> without permanently deleting it.</p>
+              <p>Right-click a mapped sample and choose <strong>Temporarily replace with placeholder</strong>. The sample will be visually marked with a <strong>yellow “TEMP” badge</strong> and also display the original filename they came from, and it will be treated as a placeholder when previewing or exporting.</p>
+              <p>Right-click again and choose <strong>Restore original sample</strong> to bring it back.</p>
+              <p>• If <strong>Synthesize</strong> is selected for gaps, the temporarily missing note will be generated from the nearest real, unsuppressed sample (never from placeholders).</p>
+              <p>• If <strong>Silent</strong> is selected for gaps, the temporarily missing note will preview/export as silence.</p>
               <p><strong>8)</strong> <em>Optional:</em> Turn on the <strong>Range Expander</strong> (available only when <strong>Automatically sort files by scale order (C, Db, D, Eb, E, ...)</strong> is enabled) to set a lowest and highest desired note and octave.</p>
               <p>The ends of the list will match your requested notes exactly, while the lowest actual input sample retains the label determined by the <strong>Starting note/octave</strong> settings.</p>
               <p><strong>9)</strong> If not automatically sorting files by scale order, you can manually reorder the scale note order.</p>
