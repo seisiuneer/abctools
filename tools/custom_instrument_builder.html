@@ -330,6 +330,11 @@
       margin-right:8px;
     }
 
+    #touchReorderControls button:disabled {
+      opacity: 0.5;
+      cursor: default;
+    }
+
   </style>
     
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-VM0N9HL3MK"></script>
@@ -640,20 +645,23 @@
           });
         }
 
+        // Unified enable/disable that lets CSS handle the "idle/dim" look
+        function setBtnState(btn, enabled) {
+          if (!btn) return;
+          btn.disabled = !enabled;
+        }
+
         function updateDeleteBtnState() {
           if (!deleteBtn) return;
+
           const manualMode = !autoSortCheckbox.checked && !rangeExpanderCheckbox.checked;
 
           if (manualMode) {
             const valid = selectedIndex >= 0 && selectedIndex < files.length;
-            deleteBtn.disabled = !valid;
-            deleteBtn.style.opacity = valid ? '1' : '0.5';
-            deleteBtn.style.cursor  = valid ? 'pointer' : 'default';
+            setBtnState(deleteBtn, valid);
           } else {
             const canDelete = !!(selectedRef && selectedRef.kind === 'real' && selectedRef.fileRef);
-            deleteBtn.disabled = !canDelete;
-            deleteBtn.style.opacity = canDelete ? '1' : '0.5';
-            deleteBtn.style.cursor  = canDelete ? 'pointer' : 'default';
+            setBtnState(deleteBtn, canDelete);
           }
         }
 
@@ -694,30 +702,39 @@
           updateDeleteBtnState();
         }
 
-        function updateMoveButtons(){
-          if (!isMobile || touchReorderControls.style.display === 'none'){
-            if (moveUpBtn) moveUpBtn.disabled = true;
-            if (moveDownBtn) moveDownBtn.disabled = true;
+        function updateMoveButtons() {
+          // If the mobile control bar is hidden, disable move buttons and bail
+          if (!isMobile || touchReorderControls.style.display === 'none') {
+            setBtnState(moveUpBtn,   false);
+            setBtnState(moveDownBtn, false);
             updateDeleteBtnState();
             return;
           }
+
           const len = files.length;
           const valid = selectedIndex >= 0 && selectedIndex < len;
-          if (moveUpBtn)   moveUpBtn.disabled   = !valid || selectedIndex === 0;
-          if (moveDownBtn) moveDownBtn.disabled = !valid || selectedIndex === len - 1;
+
+          // Move Up/Down are only meaningful in manual mode
+          const manualMode = !autoSortCheckbox.checked && !rangeExpanderCheckbox.checked;
+
+          setBtnState(moveUpBtn,   manualMode && valid && selectedIndex > 0);
+          setBtnState(moveDownBtn, manualMode && valid && selectedIndex < len - 1);
+
+          // Keep Delete in sync
           updateDeleteBtnState();
         }
 
-        function updateMobileReorderUI(){
+        function updateMobileReorderUI() {
           const manualMode = !autoSortCheckbox.checked && !rangeExpanderCheckbox.checked;
-          const show = isMobile;                      // was: isMobile && !gIsPlaying
-          if (touchReorderControls) touchReorderControls.style.display = show ? 'flex' : 'none';
+
+          // On mobile we keep the bar visible at all times
+          if (touchReorderControls) touchReorderControls.style.display = isMobile ? 'flex' : 'none';
 
           // Show/hide per-mode controls
           if (moveUpBtn)      moveUpBtn.style.display      = manualMode ? '' : 'none';
           if (moveDownBtn)    moveDownBtn.style.display    = manualMode ? '' : 'none';
           if (insertAfterBtn) insertAfterBtn.style.display = manualMode ? '' : 'none';
-          if (deleteBtn)      deleteBtn.style.display      = show ? '' : 'none';
+          if (deleteBtn)      deleteBtn.style.display      = isMobile ? '' : 'none';
 
           // Hint text
           if (dragMessage) {
@@ -729,15 +746,16 @@
             }
           }
 
-          const allowReorder = manualMode;
+          // Compute enabled/disabled states
           const len = files.length;
           const validSel = selectedIndex >= 0 && selectedIndex < len;
 
-          if (moveUpBtn)      moveUpBtn.disabled      = !allowReorder || !validSel || selectedIndex === 0;
-          if (moveDownBtn)    moveDownBtn.disabled    = !allowReorder || !validSel || selectedIndex === len - 1;
-          if (insertAfterBtn) insertAfterBtn.disabled = !allowReorder || !validSel;
+          setBtnState(moveUpBtn,      manualMode && validSel && selectedIndex > 0);
+          setBtnState(moveDownBtn,    manualMode && validSel && selectedIndex < len - 1);
+          setBtnState(insertAfterBtn, manualMode && validSel);
 
-          updateDeleteBtnState();   // keeps Delete enabled/disabled based on selection+mode only
+          // Delete depends on mode/selection (unified)
+          updateDeleteBtnState();
         }
 
         // Absolute effective PI for first row
