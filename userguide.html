@@ -527,11 +527,10 @@
 
             <details>
             <summary><h3>Expanding the Available Sounds With Custom Instruments</h3></summary>
+            <a style="text-decoration:none;" href="#custom_midi_instrument">How to Load and Use Custom Instruments</a>
+            <a style="text-decoration:none;" href="#custom_instrument_examples">Example Custom Instruments</a>
             <a style="text-decoration:none;" href="#creating_custom_midi_instruments">Creating Custom Instruments</a>
             <a style="text-decoration:none;" href="#custom_instrument_builder">Custom Instrument Builder Utility</a>
-            <a style="text-decoration:none;" href="#custom_midi_instrument">How to Load and Use Custom Instruments in Tunes</a>
-            <a style="text-decoration:none;" href="#custom_instrument_examples">Example Custom Instruments</a>
-            <a style="text-decoration:none;" href="#custom_instrument_resources">Resources for Creating Custom Instruments</a>
             <a style="text-decoration:none;" href="#custom_instrument_creative">Creative Uses for Custom Instruments</a>
             </details>
                         
@@ -1022,11 +1021,10 @@
 
                     <button class="accordion" title="Click to expand/collapse this section">Expanding the Available Sounds With Custom Instruments</button>
                     <div class="tocpanel">
+                        <p class="toc"><a style="text-decoration:none;" href="#custom_midi_instrument">How to Load and Use Custom Instruments</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#custom_instrument_examples">Example Custom Instruments</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#creating_custom_midi_instruments">Creating Custom Instruments</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#custom_instrument_builder">Custom Instrument Builder Utility</a></p>
-                        <p class="toc"><a style="text-decoration:none;" href="#custom_midi_instrument">How to Load and Use Custom Instruments in Tunes</a></p>
-                        <p class="toc"><a style="text-decoration:none;" href="#custom_instrument_examples">Example Custom Instruments</a></p>
-                        <p class="toc"><a style="text-decoration:none;" href="#custom_instrument_resources">Resources for Creating Custom Instruments</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#custom_instrument_creative">Creative Uses for Custom Instruments</a></p>
                     </div>
                     
@@ -2144,12 +2142,12 @@
                 <hr>
                 <p><strong>Load Custom Instruments</strong></p>
                 <p>Click this button to load one or more custom instrument .zip files.</p>
-                <p>For details on custom instrument .zip file creation and playback of custom instruments, please see the <a href="#custom_midi_instrument">How to Load and Use Custom Instruments in Tunes</a> section below.</p>
+                <p>For details on custom instrument .zip file creation and playback of custom instruments, please see the <a href="#custom_midi_instrument">How to Load and Use Custom Instruments</a> section below.</p>
                 <p>You can also drag-and-drop one or more custom instrument .zip files on to the editor to load them into the tool.</p>
                 <hr>                 
                 <p><strong>Manage Custom Instruments</strong></p>
                 <p>Click this button to bring up the <strong>Assign Files to Custom Instruments</strong> dialog to manage the assignment of loaded custom instruments to the 8 slots available in the tool.</p>
-                <p>For details on custom instrument .zip file creation and playback of custom instruments, please see the <a href="#custom_midi_instrument">How to Load and Use Custom Instruments in Tunes</a> section below.</p>
+                <p>For details on custom instrument .zip file creation and playback of custom instruments, please see the <a href="#custom_midi_instrument">How to Load and Use Custom Instruments</a> section below.</p>
                 <hr>       
                 <p><strong>Launch Custom Instrument Builder</strong></p>
                 <p>Click this button to launch the <a href="#custom_instrument_builder" target="_blank">Custom Instrument Builder Utility</a> in a new browser tab.</p>
@@ -2665,88 +2663,12 @@
                     g&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Snare Drum Ping<br/>
                     ^g&nbsp;and&nbsp;up&nbsp;&nbsp;&nbsp;Tenor Drum at various pitches<br/>
                 </p>
-                <hr class="hidden-print" id="creating_custom_midi_instruments">
-                <h1 class="page_break_always h1wide">Creating Custom Instruments<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-                <p>While the tool has over 900 instrument sounds built-in between all the available soundfonts, you can add up to 8 of your own custom instruments and use them when playing tunes.</p>
-                <p>Once custom instruments are loaded and assigned as desired to any of the 8 available instrument slots, they are stored in a browser-local database and can be used for tunes in the future without having to reload them again.</p>
-                <p>It is very easy to create a custom instrument .zip file from any collection of individual note samples in .wav or .mp3 format.</p>
-                <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/rhFyRD6MIxA" title="Custom Instrument Demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
-                <p>The note sample file recommendations are as follows:</p>
-                <p><strong>.wav - 44.1 KHz, 16-bit, uncompressed, mono.</strong></p>
-                <p><strong>.mp3 - Ideally 96kbit mono.</strong></p>
-                <p>To avoid any delay in playback, the notes should start immediately at the very beginning of the audio file.</p>
-                <p>The <a href="#custom_instrument_builder">Custom Instrument Builder Utility</a> can automatically strip silence from the start of the audio files when it exports a custom instrument.</p>
-                <p>Alternatively, you can use an audio editor program like Audacity or Adobe Audition to ensure there is no silence in the sample audio files before the start of the notes.</p>
-                <p>Specifically, Adobe Audition has a detect and delete silence feature that can simplify the process.</p>
-                <p>The sample files for each note in the .zip file must be named in a very specific way with the note name and octave number (C4 = Middle C)</p>
-                <p>The naming standard for the note sample files requires flats be designated by a <strong>b</strong> after the note name for the semitones:</p>
-                <p class="code">A3.wav<br/>Bb3.wav<br/>B3.wav<br/>C4.wav<br/>Db4.wav<br/>D4.wav<br/>.<br/>.<br/>.<br/>B4.wav<br/>C5.wav<br/>Db5.wav<br/>D5.wav<br/>etc.</p>
-                <p>or</p>
-                <p class="code">A2.mp3<br/>Bb2.mp3<br/>B2.mp3<br/>C3.mp3<br/>Db3.mp3<br/>D3.mp3<br/>.<br/>.<br/>.<br/>B3.mp3<br/>C4.mp3<br/>Db4.mp3<br/>D4.mp3<br/>etc.</p>
-                <p>You will need to create as many individual note samples as the total pitch range you expect to play with the instrument, generally two or three octaves.</p>
-                <p>Every chromatic note in the intended range for the instrument must be present in the .zip file with the required note name.</p>
-                <p>The ABC Transcription Tools are not able to interpolate for missing named notes in the .zip file.</p>
-                <p>Notes missing from the .zip file will result in silence when played.</p>
-                <p>You can use the <a href="#custom_instrument_builder">Custom Instrument Builder Utility</a> described below to automatically create any additional samples required to fill in the full chromatic range if required.</p>
-                <p>You may add an optional custom instrument settings file to the .zip that contains the default volume scale and fade time to use for the instrument when loaded.</p>
-                <p>It must be named <strong>abctools.json</strong> and contain the following JSON structure:</p>
-                <p class="code">{<br/>&nbsp;&nbsp;"volumeScale": 1,<br/>&nbsp;&nbsp;"fadeTimeMs": 100<br/>}</p>
-                <p>Replace the volumeScale and fadeTimeMs values with your own values for the custom instrument.</p>
-                <p>If this file is not present, the default volume scale of 1.0 and fade time of 100ms will be used.</p>
-                <p>Once you have all your note samples and optional settings file, create a .zip file from all of them.</p>
-                <p>Both the sample files and the settings file must be at the root of the .zip file, not in folders.</p> 
-                <hr class="hidden-print" id="custom_instrument_builder">
-                <h1 class="page_break_always h1wide">Custom Instrument Builder Utility<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-                <p>To facilitate the creation of custom instruments, I've created a simple utility that can read an entire directory of audio sample files and create a custom instrument with all the correct note names and octaves from a range of notes or even as few as one note from a real instrument:</p>
-                <p style="text-align: center"><a href="https://michaeleskin.com/tools/custom_instrument_builder.html" target="_blank">Launch the ABC Transcription Tools Custom Instrument Builder</a></p>
-                <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/QMLHGSVShZg" title="Custom Instrument Builder Demo 1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
-                <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/M_R176CIsV4" title="Custom Instrument Builder Demo 2" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
-                <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/1sOguEK-NB8" title="Custom Instrument Builder Demo 3" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
-                <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/ung_SWashoM" title="Custom Instrument Builder Demo 4" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
-                <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/bbVs_RzblYg" title="Custom Instrument Builder Demo 5" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
-                <p>The utility can automatically detect the pitch range of a partial set of note samples based on the filenames and when exporting the custom instrument, synthesize any missing samples in the pitch range.</p>
-                <p>It does this by pitch shifting other available notes as required creating additional .wav file placeholders as required, and then saves them along with the original notes to the custom instrument .zip file.</p>
-                <p>Both note name (e.g., C4.wav) or patchname-(MIDI note number) filenames (e.g., Piano-60.wav), which are common in .sf2-extracted .wav files, are supported for automatic pitch range detection.</p>
-                <p>In the utility, you may also set the volume scale multiplier and release fade time in milliseconds for the instrument.</p>
-                <p>These are the values that will be used by default for the instrument unless the ABC contains volume scale and/or release fade overrides as described below in <a href="#custom_midi_instrument">How to Load and Use Custom Instruments in Tunes</a>.</p>
-                <p>You can optionally strip silence from the start of each file, which is a requirement for custom instrument note samples.</p>
-                <p>To reduce the size of large custom instruments that start out as stereo .wav format note samples, optional stereo-to-mono .wav conversion of all note samples at export time is supported.</p>
-                <p>You can preview the imported files including volume scaling, silence stripping, and stereo/mono conversion.</p>
-                <hr>
-                <p style="text-align: center;"><strong>The ABC Transcription Tools Supports Up to 8 Custom Instruments at Once</strong></p>
-                <p>Once you have one or more custom instrument .zip files, you can just drag-and-drop them onto the ABC editor, map them to custom instrument numbers 1-8, and then use them in a tune by specifying:</p>
-                <p class="code">%%MIDI program custom1<br/>%%MIDI program custom2<br/>etc.</p>
-                <p>in the ABC for the tune, or even assign different custom instruments to each voice in a multi-voice tune.</p>
-                <p>Once custom instruments are loaded and assigned as desired to any of the 8 available instrument slots, they are stored in a browser-local database and can be used for tunes in the future without having to reload them again.</p>
-                <p>The Custom Instrument Builder allows the tool to be used with the many open-source and paid instrument libraries that are available for VST applications, where there are often only a small number of actual note samples provided.</p>
-                <hr>
-                <p style="text-align: center;"><strong>Reducing the Size of Custom Instruments Created by the Utility</strong></p>
-                <p>Custom instruments that have many notes, particularly if the notes are of long duration (for example, 5 second harp or piano note samples), in stereo, and in uncompressed .wav format, can be quite large.</p>
-                <p>If additional samples are synthesized by the Custom Instrument Builder to fill a note range gap, or initial note silence stripping is enabled, the resulting processed note samples in the custom instrument .zip file will all also be in .wav format, either stereo or mono depending on the original samples used for the missing note synthesis or silence stripping.</p>
-                <p>If the original samples are all in stereo .wav format, you can reduce the size of the exported custom instrument in half by enabling the <strong>Encode all exported files as mono .wav</strong> option in the Custom Instrument Builder which will convert all the samples to mono .wav at export time preserving the same RMS volume as the stereo versions.</p>
-                <p>This option will also convert any original .mp3 source files to mono .wav most likely making them larger, so probably best to only enable this option for custom instrument size reduction if the original samples are all in stereo .wav format.</p>
-                <p>Unfortunately, currently available Javascript .mp3 encoders like Lame.js add 25ms of silence at the start of the files, making them not optimal for use as instrument note samples.</p>
-                <p>If you want to reduce the size of a custom instrument by converting all of the samples to .mp3 format, for example to make the custom instrument smaller to attach to an email, you can follow the following procedure.</p>
-                <p>This requires an audio editor like Audacity or Adobe Audition (my audio editor of choice) which do not add 25ms of silence at the start of the file when saving .mp3 files:</p>
-                <p>1) Unzip the custom instrument into its own directory.</p>
-                <p>In the directory you will find all the audio files plus the abctools.json settings file.</p>
-                <p>2) Using an audio editor (my favorite is Adobe Audition), convert all the .wav files to .mp3 format.</p>
-                <p>For highest quality, I recommend 96kbit bitrate for mono .mp3 note samples, 192kbit bitrate for stereo .mp3 note samples. 44.1 kHz sample rate for both.</p>
-                <p>For smallest size, I suggest converting stereo samples to mono.</p>
-                <p>Depending on the audio editor, this may be a batch process (Adobe Audition support batch file audio format conversion), or may have to be done one .mp3 file at a time.</p>
-                <p>3) Make sure to save the converted files with the same filename as the .wav files, but with a .mp3 extension.</p>
-                <p>4) Copy all the converted .mp3 files and the abctools.json settings file to another directory.</p>
-                <p>5) Inside the directory, select all the files and create a new .zip file that includes all the .mp3 files and the abctools.json settings file.</p>
-                <p>Do not select the directory itself and create the .zip, the files must be saved at the root of the .zip file.</p>
-                <p>6) The resulting .zip file that includes the .mp3 samples and the abctools.json settings file <strong>is</strong> the replacement smaller custom instrument file.</p>
-                <p>The reverb effect available when playing tunes can reduce the need for stereo samples.</p>
-                <p><strong>Note:</strong> While a custom instrument file with .mp3 note samples itself may be smaller, ultimately at playback time the tool will uncompress the .zip file and decode the .mp3 samples to an uncompressed audio format when the custom instrument is loaded.</p>
-                <p>As a result, it doesn't save any browser memory (generally not an issue) as far as running the tool, but it may make it easier to attach a custom instrument to an email since it most likely will be considerably smaller than one that primarily uses .wav files for the note samples.</p>
                 <hr class="hidden-print" id="custom_midi_instrument">
-                <h1 class="page_break_always h1wide">How to Load and Use Custom Instruments in Tunes<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+                <h1 class="page_break_always h1wide">How to Load and Use Custom Instruments<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/thCE_3Dszqw" title="Custom Instruments Demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
-                <p>You can expand on the instruments available in the soundfonts by creating your own custom instruments.</p>
-                <p>The tool supports up to 8 custom instruments.</p>
+                <p>You can expand on the over 900 instruments available in the built-in soundfonts by creating your own custom instruments.</p>
+                <p>The tool supports having up to 8 custom instruments loaded at one time and once loaded, all 8 instruments are available to be used in tunes.</p>
+                <p>Multiple custom instruments can be used in the same tune.</p>
                 <p>Once custom instruments are loaded and assigned as desired to any of the 8 available instrument slots, they are stored in a browser-local database and can be used for tunes in the future without having to reload them again.</p>
                 <hr>
                 <p>On the <a href="#player_settings">Player Instrument Settings</a> dialog there are three buttons for working with custom instruments:</p>
@@ -2807,13 +2729,13 @@
                 <p>If you want to have reverb when playing tunes offline when using custom instruments, since the reverb styles kernels, like the standard soundfont instrument notes, are quite large and loaded/stored in the reverb settings database dynamically, you'll need to enable <strong>Allow instrument notes and reverb settings database to be used offline</strong> on the <strong>Settings</strong> dialog.</p>
                 <p>Most likely, if you've ever played a tune, the default reverb style kernel is already in the reverb database.</p>
                 <p>If you need other reverb styles, use <strong>Manage Reverb Settings Database</strong> from the <strong>Manage Databases</strong> dialog while online to make sure the kernels for any other reverb styles you want to use in your tunes are stored in the reverb settings database.</p>
-                <hr class="hidden-print" id="custom_instrument_examples">
+               <hr class="hidden-print" id="custom_instrument_examples">
                 <h1 class="page_break_always h1wide">Example Custom Instruments<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <p>These all were created using the <a href="#custom_instrument_builder">Custom Instrument Builder Utility</a>.</p>
                 <p>After downloading a .zip custom instrument file, you can drag-and-drop it on the editor (or open it from the <a href="#player_settings">Player Instrument Settings</a> dialog), assign it to custom instrument slot #1, and then use it in your tunes by adding:</p>
                 <p class="code">%%MIDI program custom1</p>
                 <p>to the ABC for your tunes.</p>
-                <p>Full details on using custom instruments can be found above in the <a href="#custom_midi_instrument">How to Load and Use Custom Instruments in Tunes</a> section.</p>
+                <p>Full details on using custom instruments can be found above in the <a href="#custom_midi_instrument">How to Load and Use Custom Instruments</a> section.</p>
                 <hr>
                 <p style="text-align: center;"><strong>Custom Instruments from the Versilian Community Sample Library</strong></p>
                 <p style="text-align: center;"><a href="https://michaeleskin.com/custom_instruments/yamaha_upright_piano_custom_instrument_7sep2025.zip" target="_blank" download>Yamaha Upright Piano</a></p>
@@ -2834,27 +2756,107 @@
                 <p>Here is a share link to two demo ABC tunes (reel and jig) that use the custom bodhran backing tracks custom instrument:</p>
                 <p style="text-align: center;"><a href="https://michaeleskin.com/abctools/abctools.html?lzw=BoLgjAUApFAuCWsA2BTAZgewHawAQAUBDJQhLDXMADmigGcBXAIwWXWzyJLIrAGZasFAA9YmHAWKl45SgIAqIXPIAWKXAHEATihRZcAMXgokAEzq4MaXACUMdOkxTwA5ioiLcAIQymVWwn0vQgBjAGsZF2UA8NwAYQY6WAwAW1wASSwkrQYUvTwAERQUjA8lAFU6FAsmX39AgH0mUIisFwbYGLC6BrAqgAcAJgAGQYBWADoAL3h+iBslHRMIABklMAB6GgBFdY3BgF4ATmGIAGklAFFTDC14QOg6AHdI3GGJsDHoeDu6FQatBgkEgethoBAAGrgWgAWXSBXSuH6gJcATSYAALJAAD4gLyXXAAP0ug28AEEDF5sWSvKZ1Gg6aZsfiiSTyQYycyOQZcJcDBpORAvKTaeyqTS6bgGSgmSziSKKZywN5ubzSRyQNiRaq2RzsdiILivBsQhtTLh0LgXKS0ChsaYvEThbgHWTZSazRbrNapXbXTy2egDT6XIQrbaXNi0DaoraHdTafS6SF7V4KbyMZrwVDBrD4YjkRhUYQ0iFEskUpAoGWkqkGjJsrl8r0GgA3IFNhp0ELEdTvDGGkAaKgAWmxw-Ho8nBuHY9nk7HyuHmtJE4NuPnE83VBnU+3c6oWag0G8dQCWBPAGVYABPVAbeTFfoUAByGCEGwA8iFYIRW+oaTiE8ACpQJPGxdCQXAxmGXAmH6NJcCQuIMSQtC0KAqBbEg6CxjghD0LiABiVD0KQgA9TDsJMXAADZYPgxCkIKUiyNwApwJw2i8MY9CChItjcHIjisIgmiAHYGIItDLlYsjLk4iSeOkpCDDk9CDEUqCqCkpjDAEtjyM00ScJOfC9I0dS0I0LTKGGXTrIMsjyJskyaLAMAHKQskrO82ywBGcy0K8JhfIaLxwQgUBcxgVhUHETgpB4SgaBgRgWEQeKOEkbgZF4ARYpEMRsq4aRZH4MplDUXAAAlcgwBgtAsT9rGCYE7watwkBkSqfD8c9vBaV55C6eJy1SDIsk6JsJCKEpKsqao4LPRpmnCSIOi6Ho+hQIZRkmGY5gWXAACtXAgGElForZVj2HYlD4LYDgC04LnYlJ4GER4XjaN4JnGb5fn+QFgVBC9jyhKsoDhBEkRRNE5COQcaTJXAyQ0S5x0uAp2JFbEQi8EIXRlfH0cMbGDRRtGMexQkND4XAQhpgpsfYvVlRZnGCj4Fd2NZgo8fXEBCRCBmCZTEIyZpciU0JUwGcZe10wKPUIHFl0CdJjRDGZ-n2b5rmea1A3cYtfVBwZc0XFMJlLatG38clFwSZCSVCRcPgDTt63bZtq0XadwhI2VGUZZdUkUF50OidMQYqSFslBhxmkNFpgwGYxgpacuBm+VT4lc-5Sm0xddG04zy5OU5tmlRNgW0d56vuexABdbMQBi6H8zhosEZrCsq37usG2mvIcBbdskE7btez+r5cSaWix0X7FF+XphaINNfV439el+xZVF95lehe3lez43rfd53-ft8Pjfj8v0-r-Pl-L4gC-b+v+-aMfzfn6-pvT+V9AF70XLgI+xsV5t2PFhUCwETx9XqPoK8t57yPhSM+XAb4Pzfl-P+NGXgqLwJPAAKVcNBLyGE8KCRCGQihYxlJ6XiERGhzk6FYXIVEeiQU+JsLIqYeh3CmFkX4vwtC5FBGcIoZJXhMlxFoRQEI3A4kREaQUUhNAyidJyNUqwwS5EtHSKiGZXi6ENAaKtMozyVDND6MMi4axnldFkksYQaxgUzFIRChopoEAgA&format=noten&ssp=10&name=Bodhran_Custom_Instrument_Backing_Track_Demos_2Sep2025&editor=1" target="_blank">Custom Bodhran Backing Track Demo Tunes</a></p>
                 <p>To try this example, open the link to the tunes, then drag-and-drop the bodhran backing tracks custom instrument on the editor (or open it from the <a href="#player_settings">Player Instrument Settings</a> dialog), assign it to custom instrument slot #1, then click <strong>Play</strong>.</p>
-                <p>Here is an ABC file share link to a "decoder ring" for the bodhran backing tracks custom instrument that has the mapping of each tune style and tempo to ABC note name:</p>
+                <p>Here is an ABC file share link to a "decoder ring" for the bodhran backing tracks that has the mapping of each tune style and tempo to ABC note name:</p>
                 <p style="text-align: center;"><a href="https://michaeleskin.com/abctools/abctools.html?lzw=BoLgjAUAKiDCCuBnALgewLYAIBCqAmAFgE4CGAdjiQMYDWAlmQOaZSm2KYCSZKR86AUzLIIAUjGYEKDDnzFylWg2atqNDt178hI0ZgAKJZMgFEKaTADlUJzAFkSAB0fKJEsJgDKAxyfQAjU0wAJgAGYIBWNz19VAAbGhJMAHZQzH9HLABaAD5JAGYJWISkgA40jOy82ABiQpj4xMwATgrMzFzMABF6g0aksFC2qu66ov7MMEH09s6AUV7iprAwmZGAMUWJsHzhjrz1sYaSyYAWPc6AcXqJACUBATjMCIvq07uHp4iItf3JGveenuj0wADZXt1AZhgU9QT9Kn8ugCPiDUr95lCYSl4bMDpjPphyui8pdkUCCa1iZhLviQYMIaTaU8phCAIJMyarBGdbD+QESABSdGYLypsCieiFIpxI1qEswUrBEK68sVcKpSNVwpSELmWuYyRlf3W+sJEMOpsp3JJpvpVNJtum1swrNtXNxOH8EokAHkiMKGCQnkQBFRUEQ8MoOP4AJ5ecjIOgkRioezxBioCQEYyORAgAD0+cQCeFJDoJiIqAAdGH0PmxBAgA&format=noten&ssp=10&name=Custom_Bodhran_Backing_Tracks_Instrument&editor=1" target="_blank">Bodhran Backup Loops Decoder Ring</a></p>
                 <p>The bodhran backing tracks are at full volume.</p>
                 <p>You may want to scale the volume of the bodhran backing track by including the following annotation in your ABC tunes:</p>
                 <p class="code">%custom_instrument_1_volume_scale 0.4</p>
                 <p>Change the 0.4 to whatever sounds best.</p>
+                <hr class="hidden-print" id="creating_custom_midi_instruments">
+                <h1 class="page_break_always h1wide">Creating Custom Instruments<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+                <p>While the tool has over 900 instrument sounds built-in between all the available soundfonts, you can add up to 8 of your own custom instruments and use them when playing tunes.</p>
+                <p>Once custom instruments are loaded and assigned as desired to any of the 8 available instrument slots, they are stored in a browser-local database and can be used for tunes in the future without having to reload them again.</p>
+                <p>It is very easy to create a custom instrument from any collection of individual note samples in .wav or .mp3 format.</p>
+                <p>The easiest way to create a custom instrument is to use the <a href="#custom_instrument_builder">Custom Instrument Builder Utility</a>, but it is also possible to create one manually using the following instructions.</p>
+                 <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/rhFyRD6MIxA" title="Custom Instrument Demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
+                <p>The note sample file recommendations are as follows:</p>
+                <p><strong>.wav - 44.1 KHz, 16-bit, uncompressed, mono.</strong></p>
+                <p><strong>.mp3 - Ideally 96kbit mono.</strong></p>
+                <p>To avoid any delay in playback, the notes should start immediately at the very beginning of the audio file.</p>
+                <p>The <a href="#custom_instrument_builder">Custom Instrument Builder Utility</a> can automatically strip silence from the start of the audio files when it exports a custom instrument.</p>
+                <p>Alternatively, you can use an audio editor program like Audacity or Adobe Audition to ensure there is no silence in the sample audio files before the start of the notes.</p>
+                <p>Specifically, Adobe Audition has a detect and delete silence feature that can simplify the process.</p>
+                <p>The sample files for each note in the .zip file must be named in a very specific way with the note name and octave number (C4 = Middle C)</p>
+                <p>The naming standard for the note sample files requires flats be designated by a <strong>b</strong> after the note name for the semitones:</p>
+                <p class="code">A3.wav<br/>Bb3.wav<br/>B3.wav<br/>C4.wav<br/>Db4.wav<br/>D4.wav<br/>.<br/>.<br/>.<br/>B4.wav<br/>C5.wav<br/>Db5.wav<br/>D5.wav<br/>etc.</p>
+                <p>or</p>
+                <p class="code">A2.mp3<br/>Bb2.mp3<br/>B2.mp3<br/>C3.mp3<br/>Db3.mp3<br/>D3.mp3<br/>.<br/>.<br/>.<br/>B3.mp3<br/>C4.mp3<br/>Db4.mp3<br/>D4.mp3<br/>etc.</p>
+                <p>You will need to create as many individual note samples as the total pitch range you expect to play with the instrument, generally two or three octaves.</p>
+                <p>Every chromatic note in the intended range for the instrument must be present in the .zip file with the required note name.</p>
+                <p>The ABC Transcription Tools are not able to interpolate for missing named notes in the .zip file.</p>
+                <p>Notes missing from the .zip file will result in silence when played.</p>
+                <p>You can use the <a href="#custom_instrument_builder">Custom Instrument Builder Utility</a> described below to automatically create any additional samples required to fill in the full chromatic range if required.</p>
+                <p>You may add an optional custom instrument settings file to the .zip that contains the default volume scale and fade time to use for the instrument when loaded.</p>
+                <p>It must be named <strong>abctools.json</strong> and contain the following JSON structure:</p>
+                <p class="code">{<br/>&nbsp;&nbsp;"volumeScale": 1,<br/>&nbsp;&nbsp;"fadeTimeMs": 100<br/>}</p>
+                <p>Replace the volumeScale and fadeTimeMs values with your own values for the custom instrument.</p>
+                <p>If this file is not present, the default volume scale of 1.0 and fade time of 100ms will be used.</p>
+                <p>Once you have all your note samples and optional settings file, create a .zip file from all of them.</p>
+                <p>Both the sample files and the settings file must be at the root of the .zip file, not in folders.</p> 
+                <hr class="hidden-print" id="custom_instrument_builder">
+                <h1 class="page_break_always h1wide">Custom Instrument Builder Utility<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+                <p>To facilitate the creation of custom instruments, I've created a simple utility that can read an entire directory of audio sample files and create a custom instrument with all the correct note names and octaves from a range of notes or even as few as one note from a real instrument:</p>
+                <p style="text-align: center"><a href="https://michaeleskin.com/tools/custom_instrument_builder.html" target="_blank">Launch the ABC Transcription Tools Custom Instrument Builder</a></p>
+                <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/QMLHGSVShZg" title="Custom Instrument Builder Demo 1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
+                <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/M_R176CIsV4" title="Custom Instrument Builder Demo 2" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
+                <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/1sOguEK-NB8" title="Custom Instrument Builder Demo 3" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
+                <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/ung_SWashoM" title="Custom Instrument Builder Demo 4" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
+                <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/bbVs_RzblYg" title="Custom Instrument Builder Demo 5" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
+                <p>The utility can automatically detect the pitch range of a partial set of note samples based on the filenames and when exporting the custom instrument, synthesize any missing samples in the pitch range.</p>
+                <p>It does this by pitch shifting other available notes as required creating additional .wav file placeholders as required, and then saves them along with the original notes to the custom instrument .zip file.</p>
+                <p>Both note name (e.g., C4.wav) or patchname-(MIDI note number) filenames (e.g., Piano-60.wav), which are common in .sf2-extracted .wav files, are supported for automatic pitch range detection.</p>
+                <p>In the utility, you may also set the volume scale multiplier and release fade time in milliseconds for the instrument.</p>
+                <p>These are the values that will be used by default for the instrument unless the ABC contains volume scale and/or release fade overrides as described below in <a href="#custom_midi_instrument">How to Load and Use Custom Instruments</a>.</p>
+                <p>You can optionally strip silence from the start of each file, which is a requirement for custom instrument note samples.</p>
+                <p>To reduce the size of large custom instruments that start out as stereo .wav format note samples, optional stereo-to-mono .wav conversion of all note samples at export time is supported.</p>
+                <p>You can preview the imported files including volume scaling, silence stripping, and stereo/mono conversion.</p>
                 <hr>
+                <p style="text-align: center;"><strong>The ABC Transcription Tools Supports Up to 8 Custom Instruments at Once</strong></p>
+                <p>Once you have one or more custom instrument .zip files, you can just drag-and-drop them onto the ABC editor, map them to custom instrument numbers 1-8, and then use them in a tune by specifying:</p>
+                <p class="code">%%MIDI program custom1<br/>%%MIDI program custom2<br/>etc.</p>
+                <p>in the ABC for the tune, or even assign different custom instruments to each voice in a multi-voice tune.</p>
+                <p>Once custom instruments are loaded and assigned as desired to any of the 8 available instrument slots, they are stored in a browser-local database and can be used for tunes in the future without having to reload them again.</p>
+                <p>The Custom Instrument Builder allows the tool to be used with the many open-source and paid instrument libraries that are available for VST applications, where there are often only a small number of actual note samples provided.</p>
+                <hr>
+                <p style="text-align: center;"><strong>Custom Instrument Tester ABC File</strong></p>
                 <p>This ABC file share link can be used to test custom instruments:</p>
-                <p style="text-align: center;"><a href="https://michaeleskin.com/abctools/abctools.html?lzw=BoLgBAjAUApDCGA7RB7ALvNBLFiBmuaYACvADaZaqQAMUAKuAMICuAzmigLZgCSiHAE4suAU0RF6ojlABK4WaNFkoAWXAAWAPQaoAGXAQtADigBFEEeMBeAMw06AaWawYq3gBFeYAA6CUAOaC8DwAxuycXNBwHPB4eGyiPmDGdDAAHuEc3AD6VEIi4mg5EDkAbihkhTlsoeSiYLYAdGmZEbn5aMJiEiU5ePAAJg0aDnQARDlM40wANPMaYJNMAMTjAHpzC0s5HuMe87OLkx5r6wfbkwCi41eHxzkAYuOP9zuPZ6+XOQDi4z9vSY-M4A74AQXGYMBOTBZyh3wAQuMEW8AD5QZYzb6rDZbB57C74s6EnY3O5Hd4vb4fDZfB5-UH0kHgyHguGI5HbdGYuYPHGbCknfaC3bEkVkkXPV4PGnraU7Bki4EbAEPCFQtXsh5IlGLblTGZ8s5MfH7DQnYkPMkyl4yz70-5MlVqyHmmFw7XIvUYg2hI0bP07PaDIkbEOk8aiG14O0bGMK8YBJ3rJM7CHwTUbDM7JEAI29mNCAHJ-eti6bBiWg2dK1bI1XJs88A2nmdmw6Ai3lSmW+ne2d4C28yXUQBdKBQUCQVxIVAYbC4AgSEjkSjUCB0RhgVjZHj8Ao9STSIgACgBYAAtGBOwBKOQKJQqdRgbS6AyQEzmSwmOwOKDObdXHcLxfH8IIQjALJImiGBYniRJklSH1FWTVU01ZTN1g1HNOQLA0TR2fkCKFDw3VODZSIjK4bUeWM5QdH5UJdME3VhDYWJwhE8OmQNljOXjdnGcMLTDOso0peNGzbDtk1TSZ00w7NJjzbjxnLQj+JbYMtJrFsblEFsm0Mtsu0TKsxwnKdoC3MEyFEdIkGGQQizYKAmHAehgkGLAF0Qch7zAAAJFBBEQHwsB8UQ1E0HR9EMT8LA-AAmawkIAjwuHgAArWAgM8bw-ECYIwnaKJYDaXc8gELpCl6UoKiqMQajqOzGhacqoI6aruiKPoBmGF8xlymAwAAZVEIh4DANhItCLA8CwUIwBCFAWGXFA8GmgB3KgAhAWA2B2xAAjAGgmiSgBWXLURAE9bACPBRFRQYwUeMEwA8N7BlRPBBlCQYwDBYY8FRAIkuvBpfv+1E7tER6wDuv6EUB8G7oep6oBet6Pq+n6-oBoG4dB8GAkh-GYdsOGGnxpKQHRG6wR+VEvvelnUR+BFBmRjmudRMFQlEJb+cF56Bk2tH4cRxn0RZsA2Z57nOYRPmBc20nodh+GabpqAgA&format=noten&ssp=10&name=custom_instrument_test_4sep2025&editor=1" target="_blank">Custom Instrument Test</a></p>
-                <p>It includes every note in the full ABC range and already includes the required annotations to play using custom instrument #1.</p>
-                <hr class="hidden-print" id="custom_instrument_resources">
-                <h1 class="page_break_always h1wide">Resources for Creating Custom Instruments<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+                <p style="text-align: center;"><a href="https://michaeleskin.com/abctools/abctools.html?lzw=BoLgBAjAUApDAOAnAlgOwC7oKYFt4HswAGWGAQ1VX3TPWX1QDMH0wAFMgG1rUIhIAq4AMIBXAM7p8OMAElUkxKJxYMYAVklQhYAMoALfAHdxYcWTycsYVBeuIKAc2sUAJmACCAIWE27YB1RnbXAAVXFNMEZuVipsPxw0RzApMBxaAGN9MAyJKRk0RWVVVnNLa0ZkKwSkqABZcAAWAHpGqAAZcAhmgA4oAEUu3oBeRqISAGkRUjrZABFZMCR8RwcZXMlpaBgADw38gH1C9CUVDAOIA4A3fE5ig-EMrmsAZgA6El396SOFE+LzpdGGRXNYxuNSNgdqxhBAwABaMBeOEACmEABpMQikZj0QBKKAAIgOwkJGMxjTAxLmgFsyam4ynUwnDOYMqkHACidM5bOJHOZHN5BwAYoThUKAOLciWS5kyinsjzcjxCjzMlUK4lebleIVeZm6hUAH0hWGhYGEACZsV5rWisYjDQTiaTyYyDrT6ej3XNmazveyuXzNZyBSHReKA8SpdGQxK5SGlcSNe61cMU+ztVqQ-rhobKSa4FCYS8baX7Tb8USSWSox7uayfX660Gee7+cNBe6I3WYwcZe748MB4rlXW0yr3VmDrqpwaA4WYMWLZTHZS0TbnTXhD6G02We3uRz2wLu2LB9LB3LU8rU+qpzq53mC6bzcIAKw2z8ojLYgBGW6khku7Eq4+5gYG3JYCewzQeyoqMBexKOFewwoaOxJkHewxYZm3J-k+BFgIuy7CAAbDaFE-gA5P+1GAYSGTUSBByuMx7K+sMbGHsSWDsXyzJ8WejD8f23KOKJQ4STemGiWmZCidOf6KcyykvkWZowgA7Niwg9GANG0YiTHUfR1ZAaZLFsaJnHWTxBx8aJHaOcJlnsn2EmScynkyQcClycy-kPsSykqcMoXuqSwwmcxRoALpQFAoCQKQSBoJguAEMQpAUHEPAMMwagcDEvCQIIIh5NIch-KcJTqJorAojK2ISQSOgGMYphlPA1S2CoAROC4qDuN4vh9fYg0hGA4SRNEtA2NQ1h9UkKSEOk6BZDklUFDVAKlBYPUVFUS0WLUDRgC0bSdJAvQDEMPSjBCUwWjM8yLMsqwWFtmw4Nsezbb8RRnOgFzXLc9yPM8YDvJ8-0-YD-zA6DwKghd4yfEumlgBKpaOuWzWOlW0YJr5k6KuqdbTrOmbzupmNvrjSLrr4joMTuHF7hxfr2ceganvB57uZe7nXhhBweNhEt4VqT5eHTpGrkzBm-oiAHmYxVngfZcECbBwlIQc6HE2hvm4cmgXBQcRFaqp8tYx+2ISt+TEtWZLqMTZ3LcVzXFOVBTmCaJCGSeJXlobFCVJV0U0eFYOxuFgiDUeIUDCOAAgOK4yB0AwXBQAASuAAAS+CIKg8DIPAWD1E0rQdPdd03Zaww9JM4BzOkABWsCvQsSyICsazffkf3fDgCO1YCYN3CoDxPNUMOwHDhzHJPINAiCYLoz3MB6FgrBkGYVcZMglS-hY+CiGo+CMGYRhJCAsDiPfQTEG8lrvj3RogCiLyOIwWAjSuA8MKDwYA5igNcEaRgrgMgjVBIwI0jhrTOCiLAqBv8sAAIMi8WBXhPB2j-gAk0wDQHgMgdA9BngEFIJQRUdBRpMHYPQZaEAJpv4eAlEaSBYCeFGglF4Vw+CBFCKNB4DIWBfziMkUA4Et9f7-2sL-YBXCoA8LAHwkRwjBFeDERI2+zg4GMJeFg6wLC2FQCAA&format=noten&ssp=10&name=custom_instrument_test_16sep2025&editor=1" target="_blank">Custom Instrument Test</a></p>
+                <p>It includes every note in the full ABC range with the note names, ABC and MIDI note name ranges, and already includes the required annotations to play using custom instrument #1.</p>
+                <hr>
+                <p style="text-align: center;"><strong>Versilian Studios Freeware Sample Libraries</strong></p>
                 <p>An excellent resource for free, open-source instrument samples that can be turned into custom instruments for the tool with the <a href="#custom_instrument_builder">Custom Instrument Builder Utility</a> is:</p>
                 <p style="text-align: center;"><a href="https://versilian-studios.com/#freeware" target="_blank">Versilian Studios Freeware Sample Libraries</a></p>
                 <hr>
-                <p>The following utility can be used to extract original source .wav files from .sf2 soundfonts, which can then be used to create custom instruments for the tool:</p>
+                <p style="text-align: center;"><strong>Extracting Samples from .sf2 Soundfonts</strong></p>               
+                <p>The following utility can be used to extract original source .wav samples from .sf2 soundfonts, which can then be used to create custom instruments for the tool:</p>
                 <p style="text-align: center;"><a href="https://michaeleskin.com/tools/UltraBox/UltraBox_Sample_Extractor.html" target="_blank">Ultrabox Sample Extractor</a></p>
                 <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/-mhjPIy30eQ" title="UltraBox Extraction Tool Demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
                 <p>Here are two websites with many open-source .sf2 soundfonts you can open with UltraBox, export the raw .wav files which can then be used to create custom instruments for the tool:</p>
                 <p style="text-align: center;"><a href="https://musical-artifacts.com/" target="_blank">Musical Artifacts</a></p>
                 <p style="text-align: center;"><a href="https://www.polyphone.io/en/soundfonts" target="_blank">Polyphone Soundfonts</a></p>
+                <hr>
+                <p style="text-align: center;"><strong>Reducing the Size of Custom Instruments Created by the Utility</strong></p>
+                <p>Custom instruments that have many notes, particularly if the notes are of long duration (for example, 5 second harp or piano note samples), in stereo, and in uncompressed .wav format, can be quite large.</p>
+                <p>If additional samples are synthesized by the Custom Instrument Builder to fill a note range gap, or initial note silence stripping is enabled, the resulting processed note samples in the custom instrument .zip file will all also be in .wav format, either stereo or mono depending on the original samples used for the missing note synthesis or silence stripping.</p>
+                <p>If the original samples are all in stereo .wav format, you can reduce the size of the exported custom instrument in half by enabling the <strong>Encode all exported files as mono .wav</strong> option in the Custom Instrument Builder which will convert all the samples to mono .wav at export time preserving the same RMS volume as the stereo versions.</p>
+                <p>This option will also convert any original .mp3 source files to mono .wav most likely making them larger, so probably best to only enable this option for custom instrument size reduction if the original samples are all in stereo .wav format.</p>
+                <p>Unfortunately, currently available Javascript .mp3 encoders like Lame.js add 25ms of silence at the start of the files, making them not optimal for use as instrument note samples.</p>
+                <p>If you want to reduce the size of a custom instrument by converting all of the samples to .mp3 format, for example to make the custom instrument smaller to attach to an email, you can follow the following procedure.</p>
+                <p>This requires an audio editor like Audacity or Adobe Audition (my audio editor of choice) which do not add 25ms of silence at the start of the file when saving .mp3 files:</p>
+                <p>1) Unzip the custom instrument into its own directory.</p>
+                <p>In the directory you will find all the audio files plus the abctools.json settings file.</p>
+                <p>2) Using an audio editor (my favorite is Adobe Audition), convert all the .wav files to .mp3 format.</p>
+                <p>For highest quality, I recommend 96kbit bitrate for mono .mp3 note samples, 192kbit bitrate for stereo .mp3 note samples. 44.1 kHz sample rate for both.</p>
+                <p>For smallest size, I suggest converting stereo samples to mono.</p>
+                <p>Depending on the audio editor, this may be a batch process (Adobe Audition support batch file audio format conversion), or may have to be done one .mp3 file at a time.</p>
+                <p>3) Make sure to save the converted files with the same filename as the .wav files, but with a .mp3 extension.</p>
+                <p>4) Copy all the converted .mp3 files and the abctools.json settings file to another directory.</p>
+                <p>5) Inside the directory, select all the files and create a new .zip file that includes all the .mp3 files and the abctools.json settings file.</p>
+                <p>Do not select the directory itself and create the .zip, the files must be saved at the root of the .zip file.</p>
+                <p>6) The resulting .zip file that includes the .mp3 samples and the abctools.json settings file <strong>is</strong> the replacement smaller custom instrument file.</p>
+                <p>The reverb effect available when playing tunes can reduce the need for stereo samples.</p>
+                <p><strong>Note:</strong> While a custom instrument file with .mp3 note samples itself may be smaller, ultimately at playback time the tool will uncompress the .zip file and decode the .mp3 samples to an uncompressed audio format when the custom instrument is loaded.</p>
+                <p>As a result, it doesn't save any browser memory (generally not an issue) as far as running the tool, but it may make it easier to attach a custom instrument to an email since it most likely will be considerably smaller than one that primarily uses .wav files for the note samples.</p>
                 <hr class="hidden-print" id="custom_instrument_creative">
                 <h1 class="page_break_always h1wide">Creative Uses for Custom Instruments<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/WAO7vUbxDIY" title="Creative Custom Instrument Demo 1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
