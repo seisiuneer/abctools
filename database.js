@@ -168,7 +168,7 @@ const CustomInstrumentsDB = (function () {
       });
     });
   }
-  
+
   async function del() {
     // No open handle stored here, so just request deletion
     return _deleteDatabase(DB_NAME);
@@ -177,8 +177,6 @@ const CustomInstrumentsDB = (function () {
   return { init, saveSlots, loadSlots, clearAll, name, delete: del };
 
 })();
-
-
 
 var gImpulseDB = null;
 
