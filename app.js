@@ -11242,9 +11242,30 @@ function ExportNotationPDF(title) {
     // Are we showing tablature?
     IdleAllowShowTabNames();
 
-    // Is annotation suppressed allowed, but not enabled, or is text annotation suppression allowed but not enabled, do a render
+    // Is annotation suppressed allowed, but not enabled, or is text annotation suppression allowed but not enabled, or there are Q: or P: tags do a render
     // If tabnames are being shown, hide them
-    if (gRawMode || (gAllowFilterAnnotations && (!gStripAnnotations)) || (gAllowFilterText && (!gStripTextAnnotations)) || (gAllowShowTabNames && (gShowTabNames))) {
+
+    var forceFilter = false;
+
+    var theNotes = gTheABC.value;
+
+    // Detect Q: annotation
+    var searchRegExp = /^Q:.*$/gm
+
+    // Detect Q: annotation
+    forceFilter = theNotes.search(searchRegExp) != -1;
+
+    if (!forceFilter) {
+
+      // Detect P: annotation
+      searchRegExp = /^P:.*$/gm
+
+      // Detect P: annotation
+      forceFilter = theNotes.search(searchRegExp) != -1;
+
+    }
+
+    if (gRawMode || forceFilter || (gAllowFilterAnnotations && (!gStripAnnotations)) || (gAllowFilterText && (!gStripTextAnnotations)) || (gAllowShowTabNames && (gShowTabNames))) {
 
       document.getElementById("statuspdfname").innerHTML = "Generating <font color=\"blue\">" + title + "</font>";
 
