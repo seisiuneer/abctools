@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "2771_092025_1330";
+var gVersionNumber = "2772_092025_1600";
 
 var gMIDIInitStillWaiting = false;
 
@@ -31456,11 +31456,6 @@ function ExportAll() {
   modal_msg += '<p style="text-align:center;font-size:14pt;font-family:helvetica;">';
   modal_msg += '<input id="launchcsvextractor" class="launchcsvextractor btn btn-launchcsvextractor" onclick="LaunchCSVTagExtractor();");" type="button" value="Launch the ABC Tags to CSV Extractor Utility" title="Extract all ABC tags from one or more ABC files to a CSV file">';
   modal_msg += '</p>';
-  modal_msg += '<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:28px;">SmartDraw Set List Builder</p>';
-  modal_msg += '<p style="text-align:center;font-size:14pt;font-family:helvetica;">';
-  modal_msg += '<input id="export_smartdrawbutton" class="export_smartdrawbutton btn btn-smartdraw" onclick="SmartDrawExport();" type="button" value="SmartDraw Set List Builder" title="Build a SmartDraw set list using drag and drop">'
-  modal_msg += '</p>';
-
   modal_msg += '<a id="exportall_help" href="https://michaeleskin.com/abctools/userguide.html#export_all" target="_blank" style="text-decoration:none;" title="Learn more about the audio and image exporter" class="dialogcornerbutton">?</a>';
 
   DayPilot.Modal.alert(modal_msg, {
