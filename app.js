@@ -31,12 +31,13 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "2770_091825_1030";
+var gVersionNumber = "2771_092025_1330";
 
 var gMIDIInitStillWaiting = false;
 
 var gShowAdvancedControls = false;
 var gStripAnnotations = false;
+var gStripQPTags = false;
 var gStripTextAnnotations = false;
 var gStripChords = false;
 var gStripTab = false;
@@ -4726,7 +4727,7 @@ function GenerateTextIncipits(thePDF, addPageNumbers, pageNumberLocation, hideFi
     theTune = getTuneByIndex(i);
 
     // Strip out annotations
-    theTune = StripAnnotationsOne(theTune);
+    theTune = StripAnnotationsOneForIncipits(theTune);
 
     // Strip out text annotations
     theTune = StripTextAnnotationsOne(theTune);
@@ -5192,7 +5193,7 @@ function GenerateFullTextIncipits(thePDF, addPageNumbers, pageNumberLocation, hi
     }
 
     // Strip out annotations
-    theTune = StripAnnotationsOne(theTune);
+    theTune = StripAnnotationsOneForIncipits(theTune);
 
     // Strip out atextnnotations
     theTune = StripTextAnnotationsOne(theTune);
@@ -11256,6 +11257,7 @@ function ExportNotationPDF(title) {
 
         var saveStripAnnotations = gStripAnnotations;
         gStripAnnotations = true;
+        gStripQPTags = true;
 
         var saveStripTextAnnotations = gStripTextAnnotations;
         gStripTextAnnotations = true;
@@ -11276,6 +11278,7 @@ function ExportNotationPDF(title) {
 
         // Restore the advanced controls flags
         gStripAnnotations = saveStripAnnotations;
+        gStripQPTags = false;
 
         gStripTextAnnotations = saveStripTextAnnotations;
 
@@ -13120,6 +13123,75 @@ function StripAnnotations() {
 //
 function StripAnnotationsOne(theNotes) {
 
+  // Strip out Z: annotation
+  var searchRegExp = /^Z:.*[\r\n]*/gm
+
+  // Strip out Z: annotation
+  theNotes = theNotes.replace(searchRegExp, "");
+
+  // Strip out R: annotation
+  searchRegExp = /^R:.*[\r\n]*/gm
+
+  // Strip out R: annotation
+  theNotes = theNotes.replace(searchRegExp, "");
+
+  // Strip out S: annotation
+  searchRegExp = /^S:.*[\r\n]*/gm
+
+  // Strip out S: annotation
+  theNotes = theNotes.replace(searchRegExp, "");
+
+  // Strip out N: annotation
+  searchRegExp = /^N:.*[\r\n]*/gm
+
+  // Strip out N: annotation
+  theNotes = theNotes.replace(searchRegExp, "");
+
+  // Strip out D: annotation
+  searchRegExp = /^D:.*[\r\n]*/gm
+
+  // Strip out D: annotation
+  theNotes = theNotes.replace(searchRegExp, "");
+
+  // Strip out H: annotation
+  searchRegExp = /^H:.*[\r\n]*/gm
+
+  // Strip out H: annotation
+  theNotes = theNotes.replace(searchRegExp, "");
+
+  // Strip out B: annotation
+  searchRegExp = /^B:.*[\r\n]*/gm
+
+  // Strip out B: annotation
+  theNotes = theNotes.replace(searchRegExp, "");
+
+  // Strip out C: annotation
+  searchRegExp = /^C:.*[\r\n]*/gm
+
+  // Strip out C: annotation
+  theNotes = theNotes.replace(searchRegExp, "");
+
+  // Strip out O: annotation
+  searchRegExp = /^O:.*[\r\n]*/gm
+
+  // Strip out O: annotation
+  theNotes = theNotes.replace(searchRegExp, "");
+
+  // Strip out A: annotation
+  searchRegExp = /^A:.*[\r\n]*/gm
+
+  // Strip out A: annotation
+  theNotes = theNotes.replace(searchRegExp, "");
+
+  return theNotes
+
+}
+
+//
+// Strip all annotations in a specific ABC
+//
+function StripAnnotationsOneForIncipits(theNotes) {
+
   // Strip out tempo markings
   var searchRegExp = /^Q:.*[\r\n]*/gm
 
@@ -13577,11 +13649,14 @@ function processAllStripping(theNotes) {
 
   if (gStripAnnotations) {
 
-    // Strip out tempo markings
-    searchRegExp = /^Q:.*$/gm
+    if (gStripQPTags){
 
-    // Strip out tempo markings
-    theNotes = theNotes.replace(searchRegExp, "% comment");
+      // Strip out tempo markings
+      searchRegExp = /^Q:.*$/gm
+
+      // Strip out tempo markings
+      theNotes = theNotes.replace(searchRegExp, "% comment");
+    }
 
     // Strip out Z: annotation
     searchRegExp = /^Z:.*$/gm
@@ -13643,11 +13718,16 @@ function processAllStripping(theNotes) {
     // Strip out A: annotation
     theNotes = theNotes.replace(searchRegExp, "% comment");
 
-    // Strip out P: annotation
-    searchRegExp = /^P:.*$/gm
+    if (gStripQPTags){
 
-    // Strip out P: annotation
-    theNotes = theNotes.replace(searchRegExp, "% comment");
+      // Strip out P: annotation
+      searchRegExp = /^P:.*$/gm
+
+      // Strip out P: annotation
+      theNotes = theNotes.replace(searchRegExp, "% comment");
+
+    }
+
   }
 
   if (gStripTextAnnotations) {
@@ -14244,21 +14324,11 @@ function IdleAdvancedControls(bUpdateUI) {
 
   var gotMatch = false;
 
-  // Detect tempo markings
-  searchRegExp = /^Q:.*$/gm
+  // Detect Z: annotation
+  searchRegExp = /^Z:.*$/gm
 
-  // Detect tempo markings
+  // Detect Z: annotation
   gotMatch = theNotes.search(searchRegExp) != -1;
-
-  if (!gotMatch) {
-
-    // Detect Z: annotation
-    searchRegExp = /^Z:.*$/gm
-
-    // Detect Z: annotation
-    gotMatch = theNotes.search(searchRegExp) != -1;
-
-  }
 
   if (!gotMatch) {
 
@@ -14346,16 +14416,6 @@ function IdleAdvancedControls(bUpdateUI) {
     searchRegExp = /^A:.*$/gm
 
     // Detect A: annotation
-    gotMatch = theNotes.search(searchRegExp) != -1;
-
-  }
-
-  if (!gotMatch) {
-
-    // Detect P: annotation
-    searchRegExp = /^P:.*$/gm
-
-    // Detect P: annotation
     gotMatch = theNotes.search(searchRegExp) != -1;
 
   }
@@ -14706,6 +14766,7 @@ function RestoreDefaults() {
 
   // Reset globals
   gStripAnnotations = false;
+  gStripQPTags = false;
   gStripTextAnnotations = false;
   gStripChords = false;
   gStripTab = false;
@@ -14759,7 +14820,6 @@ function ToggleAnnotations(bDoStrip) {
 
   }
 
-
   // Strips the annotations in the actual ABC and re-renders
   if (bDoStrip) {
 
@@ -14777,6 +14837,7 @@ function ToggleAnnotations(bDoStrip) {
   }
 
   gStripAnnotations = !gStripAnnotations;
+  gStripQPTags = false;
 
   RenderAsync(true, null);
 
@@ -56661,6 +56722,7 @@ function DoStartup() {
   gShowAdvancedControls = false;
   gShowShareControls = false;
   gStripAnnotations = false;
+  gStripQPTags = false;
   gStripTextAnnotations = false;
   gStripChords = false;
   gStripTab = false;

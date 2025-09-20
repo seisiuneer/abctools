@@ -46,7 +46,7 @@ function SDGenerateFullTextIncipits(){
 		var theOriginalTune = theTune;
 
 		// Strip out annotations
-		theTune = StripAnnotationsOne(theTune);
+		theTune = StripAnnotationsOneForIncipits(theTune);
 
 		// Strip out atextnnotations
 		theTune = StripTextAnnotationsOne(theTune);
@@ -218,7 +218,7 @@ function SDGenerateIncipits(){
 		var theOriginalTune = theTune;
 
 		// Strip out annotations
-		theTune = StripAnnotationsOne(theTune);
+		theTune = StripAnnotationsOneForIncipits(theTune);
 
 		// Strip out atextnnotations
 		theTune = StripTextAnnotationsOne(theTune);
