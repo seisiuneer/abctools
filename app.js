@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "2775_092025_1700";
+var gVersionNumber = "2776_092325_1500";
 
 var gMIDIInitStillWaiting = false;
 
@@ -479,6 +479,9 @@ var gJumpToTuneAutoscroll = true;
 
 // Show status dialog after custom instrument load
 var gCustomInstrumentShowStatus = true;
+
+// Light mode color
+var gLightModeColor = "#FDFDFD";
 
 // Global reference to the ABC editor
 var gTheABC = document.getElementById("abc");
@@ -1570,7 +1573,7 @@ function SetupRawModeUI() {
 
     elem.value = "Highlighting";
 
-    gTheABC.style.backgroundColor = "white";
+    gTheABC.style.backgroundColor = gLightModeColor;
 
     elem.classList.remove("rawmodebutton");
     elem.classList.add("rawmodebuttondisabled");
@@ -1591,7 +1594,7 @@ function SetupRawModeUI() {
     elem.classList.add("btn-rawmode-off");
     elem.classList.remove("btn-rawmode-on");
 
-    gTheABC.style.backgroundColor = "white";
+    gTheABC.style.backgroundColor = gLightModeColor;
 
   }
 }
@@ -1696,7 +1699,7 @@ function ToggleRawMode() {
     elem.classList.add("btn-rawmode-off");
     elem.classList.remove("btn-rawmode-on");
 
-    gTheABC.style.backgroundColor = "white";
+    gTheABC.style.backgroundColor = gLightModeColor;
 
   }
 
@@ -3823,7 +3826,7 @@ function Clear() {
     elem.classList.add("btn-rawmode-off");
     elem.classList.remove("btn-rawmode-on");
 
-    gTheABC.style.backgroundColor = "white";
+    gTheABC.style.backgroundColor = gLightModeColor;
 
     // Turn off raw mode
     gRawMode = false;
@@ -14148,7 +14151,7 @@ function Render(renderAll, tuneNumber) {
 
         document.getElementById("rawmodebutton").value = "Highlighting";
 
-        gTheABC.style.backgroundColor = "white";
+        gTheABC.style.backgroundColor = gLightModeColor;
 
         // Turn off raw mode
         gRawMode = false;
@@ -14233,7 +14236,7 @@ function Render(renderAll, tuneNumber) {
 
     document.getElementById("rawmodebutton").value = "Highlighting";
 
-    gTheABC.style.backgroundColor = "white";
+    gTheABC.style.backgroundColor = gLightModeColor;
 
     // Turn off raw mode
     gRawMode = false;
@@ -48255,7 +48258,7 @@ function AdvancedSettings() {
         elem.classList.add("btn-rawmode-off");
         elem.classList.remove("btn-rawmode-on");
 
-        gTheABC.style.backgroundColor = "white";
+        gTheABC.style.backgroundColor = gLightModeColor;
 
         gRawMode = false;
 
