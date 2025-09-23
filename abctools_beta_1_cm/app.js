@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "2786_092325_1330_BETA";
+var gVersionNumber = "2787_092325_1500_BETA";
 
 var gMIDIInitStillWaiting = false;
 
@@ -479,6 +479,9 @@ var gJumpToTuneAutoscroll = true;
 
 // Show status dialog after custom instrument load
 var gCustomInstrumentShowStatus = true;
+
+// Light mode color
+var gLightModeColor = "#FDFDFD";
 
 // Dark mode color
 var gDarkModeColor = "#E7E7E7";
@@ -1588,7 +1591,7 @@ function SetupRawModeUI() {
     elem.value = "Highlighting";
 
     // Dark mode toggle
-    setCMDarkMode(gDarkModeColor,"white");
+    setCMDarkMode(gDarkModeColor,gLightModeColor);
 
     elem.classList.remove("rawmodebutton");
     elem.classList.add("rawmodebuttondisabled");
@@ -1610,7 +1613,7 @@ function SetupRawModeUI() {
     elem.classList.remove("btn-rawmode-on");
 
     // Dark mode toggle
-    setCMDarkMode(gDarkModeColor,"white");
+    setCMDarkMode(gDarkModeColor,gLightModeColor);
 
   }
   gTheCM.refresh();
@@ -1717,7 +1720,7 @@ function ToggleRawMode() {
     elem.classList.add("btn-rawmode-off");
     elem.classList.remove("btn-rawmode-on");
 
-    setCMDarkMode(gDarkModeColor,"white");
+    setCMDarkMode(gDarkModeColor,gLightModeColor);
 
   }
 
@@ -3846,7 +3849,7 @@ function Clear() {
     elem.classList.add("btn-rawmode-off");
     elem.classList.remove("btn-rawmode-on");
 
-    setCMDarkMode(gDarkModeColor,"white");
+    setCMDarkMode(gDarkModeColor,gLightModeColor);
 
     gTheCM.refresh();
 
@@ -14173,7 +14176,7 @@ function Render(renderAll, tuneNumber) {
 
         document.getElementById("rawmodebutton").value = "Highlighting";
 
-        setCMDarkMode(gDarkModeColor,"white");
+        setCMDarkMode(gDarkModeColor,gLightModeColor);
 
         gTheCM.refresh();
 
@@ -14260,7 +14263,7 @@ function Render(renderAll, tuneNumber) {
 
     document.getElementById("rawmodebutton").value = "Highlighting";
 
-    setCMDarkMode(gDarkModeColor,"white");
+    setCMDarkMode(gDarkModeColor,gLightModeColor);
 
     gTheCM.refresh();
 
@@ -48347,7 +48350,7 @@ function AdvancedSettings() {
         elem.classList.add("btn-rawmode-off");
         elem.classList.remove("btn-rawmode-on");
 
-        setCMDarkMode(gDarkModeColor,"white");
+        setCMDarkMode(gDarkModeColor,gLightModeColor);
 
         gTheCM.refresh();
 
@@ -48485,7 +48488,7 @@ function AdvancedSettings() {
           setCMDarkMode("#ffd6ff","#F8FDF8");
         }
         else{
-          setCMDarkMode(gDarkModeColor,"white");          
+          setCMDarkMode(gDarkModeColor,gLightModeColor);          
         }
 
       }
@@ -58212,7 +58215,7 @@ function setCodeMirrorSelectionColor(bgColorUF,bgColorF) {
 }
 
 // Setup the Codemirror dark mode
-function setCMDarkMode(theDarkModeColor, theColor){
+function setCMDarkMode(theDarkModeColor, theLightModeColor){
 
   // Dark mode toggle
   if (gSyntaxDarkMode){
@@ -58226,10 +58229,10 @@ function setCMDarkMode(theDarkModeColor, theColor){
     setCodeMirrorSelectionColor("#D0D0D0","#B0B0B0");
   }
   else{
-    gTheCM.getWrapperElement().style.backgroundColor = theColor;
+    gTheCM.getWrapperElement().style.backgroundColor = theLightModeColor;
     document.querySelectorAll(".CodeMirror").forEach(el => {
       el.style.filter = "";
-      el.style.backgroundColor = theColor;
+      el.style.backgroundColor = theLightModeColor;
     });
 
     // Restore the original selection color
@@ -58646,7 +58649,7 @@ function initCodeMirror(){
     }
 
     // Dark mode toggle
-    setCMDarkMode(gDarkModeColor,"white");
+    setCMDarkMode(gDarkModeColor,gLightModeColor);
 
     // ---- Per-tune line numbers (restart at each X:, skip blanks)
     function computeAbcLineNumbers(doc) {
