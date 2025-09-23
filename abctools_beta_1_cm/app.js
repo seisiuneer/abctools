@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "2783_092225_1800_BETA";
+var gVersionNumber = "2784_092325_0800_BETA";
 
 var gMIDIInitStillWaiting = false;
 
@@ -971,8 +971,8 @@ function setABCEditorText(theText) {
 
   clearGetTuneByIndexCache();
 
-  if (typeof abcCM !== "undefined"){
-    abcCM.setValue(theText);
+  if (typeof gTheCM !== "undefined"){
+    gTheCM.setValue(theText);
   }
 
 }
@@ -981,8 +981,8 @@ function setABCEditorText(theText) {
 // Get the editor text
 //
 function getABCEditorText(){
-  if (typeof abcCM !== "undefined"){
-    return abcCM.getValue();
+  if (typeof gTheCM !== "undefined"){
+    return gTheCM.getValue();
   }
   else{
     return "";
@@ -1373,7 +1373,7 @@ function findSelectedTune() {
   var theNotes = getABCEditorText();
 
   // Obtain the object reference for the <textarea>
-  var txtarea = abcCM;
+  var txtarea = gTheCM;
 
   // Obtain the index of the first selected character
   var start = txtarea.selectionStart;
@@ -1584,7 +1584,7 @@ function SetupRawModeUI() {
 
     elem.value = "Highlighting";
 
-    abcCM.getWrapperElement().style.backgroundColor = "white";
+    gTheCM.getWrapperElement().style.backgroundColor = "white";
 
     elem.classList.remove("rawmodebutton");
     elem.classList.add("rawmodebuttondisabled");
@@ -1605,10 +1605,10 @@ function SetupRawModeUI() {
     elem.classList.add("btn-rawmode-off");
     elem.classList.remove("btn-rawmode-on");
 
-    abcCM.getWrapperElement().style.backgroundColor = "white";
+    gTheCM.getWrapperElement().style.backgroundColor = "white";
 
   }
-  abcCM.refresh();
+  gTheCM.refresh();
 
 }
 
@@ -1702,7 +1702,7 @@ function ToggleRawMode() {
     elem.classList.add("btn-rawmode-on");
     elem.classList.remove("btn-rawmode-off");
 
-    abcCM.getWrapperElement().style.backgroundColor = "#F8FDF8";
+    gTheCM.getWrapperElement().style.backgroundColor = "#F8FDF8";
 
 
   } else {
@@ -1712,11 +1712,11 @@ function ToggleRawMode() {
     elem.classList.add("btn-rawmode-off");
     elem.classList.remove("btn-rawmode-on");
 
-    abcCM.getWrapperElement().style.backgroundColor = "white";
+    gTheCM.getWrapperElement().style.backgroundColor = "white";
 
   }
 
-  abcCM.refresh();
+  gTheCM.refresh();
 
   // Redraw the tunes
   if (gIsQuickEditor) {
@@ -1888,7 +1888,7 @@ function getTuneRangeForTranspose() {
   var theNotes = getABCEditorText();
 
   // Obtain the object reference for the <textarea>
-  var txtarea = abcCM;
+  var txtarea = gTheCM;
 
   // Obtain the index of the first selected character
   var theStart = txtarea.selectionStart;
@@ -1937,8 +1937,8 @@ function resetSelectionAfterTranspose(start, end) {
   var theEndIndex = findTuneOffsetByIndex(end) + (theTune.length - 1);
 
   // Set the select point
-  abcCM.selectionStart = theStartIndex;
-  abcCM.selectionEnd = theEndIndex;
+  gTheCM.selectionStart = theStartIndex;
+  gTheCM.selectionEnd = theEndIndex;
 
   // Focus after operation
   FocusAfterOperation();
@@ -2655,7 +2655,7 @@ function DoTransposeToKey(targetKey, transposeAll) {
         }).then(function() {
 
           // Try and keep the same tune after the redraw for immediate play
-          var theSelectionStart = abcCM.selectionStart;
+          var theSelectionStart = gTheCM.selectionStart;
 
           // Reset the selection
           if (!transposeAll) {
@@ -2668,8 +2668,8 @@ function DoTransposeToKey(targetKey, transposeAll) {
           } else {
 
             // Set the select point
-            abcCM.selectionStart = 0;
-            abcCM.selectionEnd = 0;
+            gTheCM.selectionStart = 0;
+            gTheCM.selectionEnd = 0;
 
             gCurrentTune = 0;
 
@@ -2941,8 +2941,8 @@ function SortTunesByTag(theTag, doCase) {
   gIsDirty = true;
 
   // Reset the selection
-  abcCM.selectionStart = 0;
-  abcCM.selectionEnd = 0;
+  gTheCM.selectionStart = 0;
+  gTheCM.selectionEnd = 0;
 
   // Focus after operation
   FocusAfterOperation();
@@ -3203,8 +3203,8 @@ function SortTunes() {
   gIsDirty = true;
 
   // Reset the selection
-  abcCM.selectionStart = 0;
-  abcCM.selectionEnd = 0;
+  gTheCM.selectionStart = 0;
+  gTheCM.selectionEnd = 0;
 
   // Focus after operation
   FocusAfterOperation();
@@ -3663,8 +3663,8 @@ function RenumberXTags() {
   gIsDirty = true;
 
   // Reset the selection
-  abcCM.selectionStart = 0;
-  abcCM.selectionEnd = 0;
+  gTheCM.selectionStart = 0;
+  gTheCM.selectionEnd = 0;
 
   // Focus after operation
   FocusAfterOperation();
@@ -3841,8 +3841,8 @@ function Clear() {
     elem.classList.add("btn-rawmode-off");
     elem.classList.remove("btn-rawmode-on");
 
-    abcCM.getWrapperElement().style.backgroundColor = "white";
-    abcCM.refresh();
+    gTheCM.getWrapperElement().style.backgroundColor = "white";
+    gTheCM.refresh();
 
     // Turn off raw mode
     gRawMode = false;
@@ -3858,7 +3858,7 @@ function Clear() {
     RenderAsync(true, null);
 
     // And set the focus
-    abcCM.focus();
+    gTheCM.focus();
 
     // Clear the diagnostics area
     elem = document.getElementById("diagnostics");
@@ -12869,13 +12869,13 @@ function NoteClickListener(abcelem, tuneNumber, classes, analysis, drag, mouseEv
 
     window.scrollTo(0, scrollPos);
 
-    abcCM.focus();
+    gTheCM.focus();
 
     var theStart = abcelem.startChar;
 
     var theEnd = abcelem.endChar;
 
-    ScrollABCTextIntoView(abcCM, theStart, theEnd, 2);
+    ScrollABCTextIntoView(gTheCM, theStart, theEnd, 2);
 
 
   }, 10);
@@ -12913,7 +12913,7 @@ function fireSelectionChanged() {
 
         if (engraver) {
 
-          engraver.rangeHighlight(abcCM.selectionStart, abcCM.selectionEnd);
+          engraver.rangeHighlight(gTheCM.selectionStart, gTheCM.selectionEnd);
 
         }
       }
@@ -14167,8 +14167,8 @@ function Render(renderAll, tuneNumber) {
 
         document.getElementById("rawmodebutton").value = "Highlighting";
 
-        abcCM.getWrapperElement().style.backgroundColor = "white";
-        abcCM.refresh();
+        gTheCM.getWrapperElement().style.backgroundColor = "white";
+        gTheCM.refresh();
 
         // Turn off raw mode
         gRawMode = false;
@@ -14253,8 +14253,8 @@ function Render(renderAll, tuneNumber) {
 
     document.getElementById("rawmodebutton").value = "Highlighting";
 
-    abcCM.getWrapperElement().style.backgroundColor = "white";
-    abcCM.refresh();
+    gTheCM.getWrapperElement().style.backgroundColor = "white";
+    gTheCM.refresh();
 
     // Turn off raw mode
     gRawMode = false;
@@ -17491,11 +17491,11 @@ function ChangeTuneOrderMobile() {
 
           RenderAsync(true, null, function() {
 
-            abcCM.selectionStart = 0;
-            abcCM.selectionEnd = 0;
+            gTheCM.selectionStart = 0;
+            gTheCM.selectionEnd = 0;
 
             // And reset the focus
-            abcCM.focus();
+            gTheCM.focus();
 
             // Scroll to the top
             MakeTuneVisible(true);
@@ -17645,11 +17645,11 @@ function ChangeTuneOrder() {
 
           RenderAsync(true, null, function() {
 
-            abcCM.selectionStart = 0;
-            abcCM.selectionEnd = 0;
+            gTheCM.selectionStart = 0;
+            gTheCM.selectionEnd = 0;
 
             // And reset the focus
-            abcCM.focus();
+            gTheCM.focus();
 
             // Scroll to the top
             MakeTuneVisible(true);
@@ -17890,11 +17890,11 @@ function CullTunes() {
 
             RenderAsync(true, null, function() {
 
-              abcCM.selectionStart = 0;
-              abcCM.selectionEnd = 0;
+              gTheCM.selectionStart = 0;
+              gTheCM.selectionEnd = 0;
 
               // And reset the focus
-              abcCM.focus();
+              gTheCM.focus();
 
               // Scroll to the top
               MakeTuneVisible(true);
@@ -18409,15 +18409,15 @@ function BuildTuneSetAppend() {
           if (!gIsMaximized) {
 
             // Scroll the tune ABC into view
-            ScrollABCTextIntoView(abcCM, tuneOffset, tuneOffset, 10);
+            ScrollABCTextIntoView(gTheCM, tuneOffset, tuneOffset, 10);
 
             if (isMobileBrowser()) {
-              abcCM.getInputField().blur();
+              gTheCM.getInputField().blur();
               return;
             }
 
-            abcCM.getInputField().blur();
-            abcCM.focus();
+            gTheCM.getInputField().blur();
+            gTheCM.focus();
 
           }
 
@@ -19826,15 +19826,15 @@ function ProcessAddTune(theValue) {
     if (!gIsMaximized) {
 
       // Scroll the tune ABC into view
-      ScrollABCTextIntoView(abcCM, tuneOffset, tuneOffset, 10);
+      ScrollABCTextIntoView(gTheCM, tuneOffset, tuneOffset, 10);
 
       if (isMobileBrowser()) {
-        abcCM.getInputField().blur();
+        gTheCM.getInputField().blur();
         return;
       }
 
-      abcCM.getInputField().blur();
-      abcCM.focus();
+      gTheCM.getInputField().blur();
+      gTheCM.focus();
 
     }
 
@@ -20002,7 +20002,7 @@ function RenderDivClickHandler(e) {
 
             //console.log("offset = "+offset);
 
-            abcCM.selectionStart = offset;
+            gTheCM.selectionStart = offset;
 
             // If the player is up, close it
             if (gUIHiddenPlayerEnabled) {
@@ -20113,16 +20113,16 @@ function RenderDivClickHandler(e) {
 
         if (!gIsQuickEditor) {
           // Scroll the tune ABC into view
-          ScrollABCTextIntoView(abcCM, tuneOffset, tuneOffset, 10);
+          ScrollABCTextIntoView(gTheCM, tuneOffset, tuneOffset, 10);
         }
 
         if (isMobileBrowser()) {
-          abcCM.getInputField().blur();
+          gTheCM.getInputField().blur();
           return;
         }
 
-        abcCM.getInputField().blur();
-        abcCM.focus();
+        gTheCM.getInputField().blur();
+        gTheCM.focus();
 
       } else {
 
@@ -21432,8 +21432,8 @@ function InjectRepeatsAndClickTrackAll() {
           ensureMoreToolsVisible();
 
           // Set the select point
-          abcCM.selectionStart = 0;
-          abcCM.selectionEnd = 0;
+          gTheCM.selectionStart = 0;
+          gTheCM.selectionEnd = 0;
 
           // Focus after operation
           FocusAfterOperation();
@@ -21683,7 +21683,7 @@ function InjectSectionHeader() {
         return;
       }
 
-      var theSelectionStart = abcCM.selectionStart;
+      var theSelectionStart = gTheCM.selectionStart;
 
       var leftSide = getABCEditorText().substring(0, theSelectionStart);
 
@@ -21711,8 +21711,8 @@ function InjectSectionHeader() {
           ensureMoreToolsVisible();
 
           // Set the select point
-          abcCM.selectionStart = theSelectionStart;
-          abcCM.selectionEnd = theSelectionStart;
+          gTheCM.selectionStart = theSelectionStart;
+          gTheCM.selectionEnd = theSelectionStart;
 
           // Focus after operation
           FocusAfterOperation();
@@ -21809,6 +21809,8 @@ function GetABCFileHeader() {
     /^%custom_instrument_6_fade.*$/,
     /^%custom_instrument_7_fade.*$/,
     /^%custom_instrument_8_fade.*$/,
+    /^%roll_2_params.*$/,
+    /^%roll_3_params.*$/,
     /^[ABCDFGHILMmNORrSUZ]:/,
   ];
 
@@ -22015,8 +22017,8 @@ function InjectHeaderString() {
               ensureMoreToolsVisible();
 
               // Set the select point
-              abcCM.selectionStart = 0;
-              abcCM.selectionEnd = 0;
+              gTheCM.selectionStart = 0;
+              gTheCM.selectionEnd = 0;
 
               // Focus after operation
               FocusAfterOperation();
@@ -22050,7 +22052,7 @@ function InjectHeaderString() {
           theInjectedTune = theInjectedTune.replace("\n\n", "");
 
           // Try and keep the same tune after the redraw for immediate play
-          var theSelectionStart = abcCM.selectionStart;
+          var theSelectionStart = gTheCM.selectionStart;
 
           // Stuff in the injected ABC
           var theABC = getABCEditorText();
@@ -22078,8 +22080,8 @@ function InjectHeaderString() {
               ensureMoreToolsVisible();
 
               // Set the select point
-              abcCM.selectionStart = theSelectionStart;
-              abcCM.selectionEnd = theSelectionStart;
+              gTheCM.selectionStart = theSelectionStart;
+              gTheCM.selectionEnd = theSelectionStart;
 
               // Focus after operation
               FocusAfterOperation();
@@ -22474,8 +22476,8 @@ function InjectCustomStringedInstrumentTab() {
             ensureMoreToolsVisible();
 
             // Set the select point
-            abcCM.selectionStart = 0;
-            abcCM.selectionEnd = 0;
+            gTheCM.selectionStart = 0;
+            gTheCM.selectionEnd = 0;
 
             // Focus after operation
             FocusAfterOperation();
@@ -22514,7 +22516,7 @@ function InjectCustomStringedInstrumentTab() {
         theInjectedTune = theInjectedTune.replace("\n\n", "");
 
         // Try and keep the same tune after the redraw for immediate play
-        var theSelectionStart = abcCM.selectionStart;
+        var theSelectionStart = gTheCM.selectionStart;
 
         // Stuff in the injected ABC
         var theABC = getABCEditorText();
@@ -22542,8 +22544,8 @@ function InjectCustomStringedInstrumentTab() {
             ensureMoreToolsVisible();
 
             // Set the select point
-            abcCM.selectionStart = theSelectionStart;
-            abcCM.selectionEnd = theSelectionStart;
+            gTheCM.selectionStart = theSelectionStart;
+            gTheCM.selectionEnd = theSelectionStart;
 
             // Focus after operation
             FocusAfterOperation();
@@ -22843,8 +22845,8 @@ function InjectFontSettings() {
               ensureMoreToolsVisible();
 
               // Set the select point
-              abcCM.selectionStart = 0;
-              abcCM.selectionEnd = 0;
+              gTheCM.selectionStart = 0;
+              gTheCM.selectionEnd = 0;
 
               // Focus after operation
               FocusAfterOperation();
@@ -22871,7 +22873,7 @@ function InjectFontSettings() {
           theInjectedTune = theInjectedTune.replace("\n\n", "");
 
           // Try and keep the same tune after the redraw for immediate play
-          var theSelectionStart = abcCM.selectionStart;
+          var theSelectionStart = gTheCM.selectionStart;
 
           // Stuff in the injected ABC
           var theABC = getABCEditorText();
@@ -22899,8 +22901,8 @@ function InjectFontSettings() {
               ensureMoreToolsVisible();
 
               // Set the select point
-              abcCM.selectionStart = theSelectionStart;
-              abcCM.selectionEnd = theSelectionStart;
+              gTheCM.selectionStart = theSelectionStart;
+              gTheCM.selectionEnd = theSelectionStart;
 
               // Focus after operation
               FocusAfterOperation();
@@ -23005,8 +23007,8 @@ function NotationSpacingInject() {
         ensureMoreToolsVisible();
 
         // Set the select point
-        abcCM.selectionStart = 0;
-        abcCM.selectionEnd = 0;
+        gTheCM.selectionStart = 0;
+        gTheCM.selectionEnd = 0;
 
         // Focus after operation
         FocusAfterOperation();
@@ -23034,7 +23036,7 @@ function NotationSpacingInject() {
     theInjectedTune = theInjectedTune.replace("\n\n", "");
 
     // Try and keep the same tune after the redraw for immediate play
-    var theSelectionStart = abcCM.selectionStart;
+    var theSelectionStart = gTheCM.selectionStart;
 
     // Stuff in the injected ABC
     var theABC = getABCEditorText();
@@ -23060,8 +23062,8 @@ function NotationSpacingInject() {
         ensureMoreToolsVisible();
 
         // Set the select point
-        abcCM.selectionStart = theSelectionStart;
-        abcCM.selectionEnd = theSelectionStart;
+        gTheCM.selectionStart = theSelectionStart;
+        gTheCM.selectionEnd = theSelectionStart;
 
         // Focus after operation
         FocusAfterOperation();
@@ -24019,7 +24021,7 @@ function InjectAllMIDIParams() {
       // Injecting all tunes
       var bDoAll = args.result.configure_inject_all;
 
-      var theSelectionStart = abcCM.selectionStart;
+      var theSelectionStart = gTheCM.selectionStart;
       var theCurrentTune = findTuneByOffset(theSelectionStart);
 
       if (!bDoAll) {
@@ -24104,11 +24106,11 @@ function InjectAllMIDIParams() {
             var theOffset = findTuneOffsetByIndex(theCurrentTune);
 
             // Scroll the tune ABC into view
-            ScrollABCTextIntoView(abcCM, theOffset, theOffset, 10);
+            ScrollABCTextIntoView(gTheCM, theOffset, theOffset, 10);
 
             // Set the select point
-            abcCM.selectionStart = theOffset;
-            abcCM.selectionEnd = theOffset;
+            gTheCM.selectionStart = theOffset;
+            gTheCM.selectionEnd = theOffset;
 
             // Focus after operation
             FocusAfterOperation();
@@ -24120,11 +24122,11 @@ function InjectAllMIDIParams() {
           var theOffset = findTuneOffsetByIndex(theCurrentTune);
 
           // Scroll the tune ABC into view
-          ScrollABCTextIntoView(abcCM, theOffset, theOffset, 10);
+          ScrollABCTextIntoView(gTheCM, theOffset, theOffset, 10);
 
           // Set the select point
-          abcCM.selectionStart = theOffset;
-          abcCM.selectionEnd = theOffset;
+          gTheCM.selectionStart = theOffset;
+          gTheCM.selectionEnd = theOffset;
 
           // Focus after operation
           FocusAfterOperation();
@@ -24399,8 +24401,8 @@ function InjectMetronome() {
             ensureMoreToolsVisible();
 
             // Set the select point
-            abcCM.selectionStart = 0;
-            abcCM.selectionEnd = 0;
+            gTheCM.selectionStart = 0;
+            gTheCM.selectionEnd = 0;
 
             // Focus after operation
             FocusAfterOperation();
@@ -24425,7 +24427,7 @@ function InjectMetronome() {
         }
 
         // Try and keep the same tune after the redraw for immediate play
-        var theSelectionStart = abcCM.selectionStart;
+        var theSelectionStart = gTheCM.selectionStart;
 
         // Stuff in the injected ABC
         var theABC = getABCEditorText();
@@ -24453,8 +24455,8 @@ function InjectMetronome() {
             ensureMoreToolsVisible();
 
             // Set the select point
-            abcCM.selectionStart = theSelectionStart;
-            abcCM.selectionEnd = theSelectionStart;
+            gTheCM.selectionStart = theSelectionStart;
+            gTheCM.selectionEnd = theSelectionStart;
 
             // Focus after operation
             FocusAfterOperation();
@@ -24682,8 +24684,8 @@ function ShortenURL(e) {
           RenderAsync(true, null, function() {
 
             // Set the select point
-            abcCM.selectionStart = 0;
-            abcCM.selectionEnd = 0;
+            gTheCM.selectionStart = 0;
+            gTheCM.selectionEnd = 0;
 
             // Focus after operation
             FocusAfterOperation();
@@ -25323,10 +25325,10 @@ function DoMinimize() {
       if (giPadTwoColumn) {
 
         // Reset CodeMirror box symmetrical resize
-        let wrapper = abcCM.getWrapperElement();
+        let wrapper = gTheCM.getWrapperElement();
         wrapper.style.marginLeft = "0px";
         wrapper.style.width = "832px";
-        abcCM.refresh();
+        gTheCM.refresh();
 
         gInitialTextBoxWidth = 832;
         gInitialTextBoxContainerWidth = 832;
@@ -25342,7 +25344,7 @@ function DoMinimize() {
 
         // Grab the text box positions and offsets
         // Setup text box symmetrical resize 
-        gInitialTextBoxWidth = abcCM.getWrapperElement().offsetWidth;
+        gInitialTextBoxWidth = gTheCM.getWrapperElement().offsetWidth;
       }
 
       ResizeTextBox();
@@ -25355,13 +25357,13 @@ function DoMinimize() {
     // If we minimize from a window resize while maximized, we need to reset the text box location params
     if (gGotWindowResizeWhileMaximized) {
 
-      let wrapper = abcCM.getWrapperElement();
+      let wrapper = gTheCM.getWrapperElement();
 
       wrapper.style.width = gInitialTextBoxWidth + "px";
 
       wrapper.style.marginLeft = "0px";
 
-      abcCM.refresh();
+      gTheCM.refresh();
 
       var elem = document.getElementById("notenlinks");
       gInitialTextBoxContainerWidth = elem.offsetWidth;
@@ -25380,14 +25382,14 @@ function DoMinimize() {
       if (gRenderDivClickOffset != -1) {
 
         // Scroll the tune ABC into view
-        abcCM.selectionEnd = abcCM.selectionStart = gRenderDivClickOffset;
+        gTheCM.selectionEnd = gTheCM.selectionStart = gRenderDivClickOffset;
 
         if (isMobileBrowser()) {
           return;
         }
 
-        abcCM.getInputField().blur();
-        abcCM.focus();
+        gTheCM.getInputField().blur();
+        gTheCM.focus();
 
       }
 
@@ -25963,7 +25965,7 @@ function findSelectedTuneIndex() {
   }
 
   // Obtain the index of the first selected character
-  var start = abcCM.selectionStart;
+  var start = gTheCM.selectionStart;
 
   if (start == 0) {
 
@@ -27529,8 +27531,8 @@ function InjectBagpipeSounds() {
               gCurrentTune = 0;
 
               // Set the select point
-              abcCM.selectionStart = 0;
-              abcCM.selectionEnd = 0;
+              gTheCM.selectionStart = 0;
+              gTheCM.selectionEnd = 0;
 
               // Focus after operation
               FocusAfterOperation();
@@ -27604,13 +27606,13 @@ function InjectBagpipeSounds() {
             }).then(function() {
 
               // Try and keep the same tune after the redraw for immediate play
-              var theSelectionStart = abcCM.selectionStart;
+              var theSelectionStart = gTheCM.selectionStart;
 
               gCurrentTune = theSelectedTuneIndex;
 
               // Set the select point
-              abcCM.selectionStart = theSelectionStart;
-              abcCM.selectionEnd = theSelectionStart;
+              gTheCM.selectionStart = theSelectionStart;
+              gTheCM.selectionEnd = theSelectionStart;
 
               // Focus after operation
               FocusAfterOperation();
@@ -27871,11 +27873,11 @@ function IncipitsBuilderDialog() {
 
           ensureMoreToolsVisible();
 
-          abcCM.selectionStart = 0;
-          abcCM.selectionEnd = 0;
+          gTheCM.selectionStart = 0;
+          gTheCM.selectionEnd = 0;
 
           // And reset the focus
-          abcCM.focus();
+          gTheCM.focus();
 
           // Scroll to the top
           MakeTuneVisible(true);
@@ -30802,12 +30804,12 @@ function FocusAfterOperation() {
   if (isPureDesktopBrowser()) {
 
     // And reset the focus
-    abcCM.focus();
+    gTheCM.focus();
 
   } else {
 
     // And clear the focus
-    abcCM.getInputField().blur();
+    gTheCM.getInputField().blur();
 
   }
 
@@ -30819,14 +30821,14 @@ function FocusAfterOperation() {
 function FocusABC() {
 
   // Refocus back on the ABC
-  abcCM.focus();
+  gTheCM.focus();
 
   // Set the selection to the start of the tune
-  abcCM.selectionStart = 0;
-  abcCM.selectionEnd = 0;
+  gTheCM.selectionStart = 0;
+  gTheCM.selectionEnd = 0;
 
   // Scroll it to the top
-  abcCM.getScrollerElement().scrollTo(0, 0);
+  gTheCM.getScrollerElement().scrollTo(0, 0);
 }
 
 //
@@ -34878,8 +34880,8 @@ function ProcessSelectRegionForPlay(theABC) {
     return theABC;
   }
 
-  var start = abcCM.selectionStart;
-  var end = abcCM.selectionEnd;
+  var start = gTheCM.selectionStart;
+  var end = gTheCM.selectionEnd;
 
   // No selection region, just return the entire tune
   if (start == end) {
@@ -37546,7 +37548,7 @@ function SwingExplorerInject() {
     tuneWithSwing = tuneWithSwing.replace("\n\n", "");
 
     // Try and keep the same tune after the redraw for immediate play
-    var theSelectionStart = abcCM.selectionStart;
+    var theSelectionStart = gTheCM.selectionStart;
 
     // Stuff in the injected ABC
     var theABC = getABCEditorText();
@@ -37576,8 +37578,8 @@ function SwingExplorerInject() {
         }).then(function() {
 
           // Set the select point
-          abcCM.selectionStart = theSelectionStart;
-          abcCM.selectionEnd = theSelectionStart;
+          gTheCM.selectionStart = theSelectionStart;
+          gTheCM.selectionEnd = theSelectionStart;
 
           // Focus after operation
           FocusAfterOperation();
@@ -37597,8 +37599,8 @@ function SwingExplorerInject() {
       }).then(function() {
 
         // Set the select point
-        abcCM.selectionStart = theSelectionStart;
-        abcCM.selectionEnd = theSelectionStart;
+        gTheCM.selectionStart = theSelectionStart;
+        gTheCM.selectionEnd = theSelectionStart;
 
         // Focus after operation
         FocusAfterOperation();
@@ -38242,7 +38244,7 @@ function ReverbExplorerInject() {
     tuneWithReverb = tuneWithReverb.replace("\n\n", "");
 
     // Try and keep the same tune after the redraw for immediate play
-    var theSelectionStart = abcCM.selectionStart;
+    var theSelectionStart = gTheCM.selectionStart;
 
     // Stuff in the injected ABC
     var theABC = getABCEditorText();
@@ -38272,8 +38274,8 @@ function ReverbExplorerInject() {
         }).then(function() {
 
           // Set the select point
-          abcCM.selectionStart = theSelectionStart;
-          abcCM.selectionEnd = theSelectionStart;
+          gTheCM.selectionStart = theSelectionStart;
+          gTheCM.selectionEnd = theSelectionStart;
 
           // Focus after operation
           FocusAfterOperation();
@@ -38294,8 +38296,8 @@ function ReverbExplorerInject() {
       }).then(function() {
 
         // Set the select point
-        abcCM.selectionStart = theSelectionStart;
-        abcCM.selectionEnd = theSelectionStart;
+        gTheCM.selectionStart = theSelectionStart;
+        gTheCM.selectionEnd = theSelectionStart;
 
         // Focus after operation
         FocusAfterOperation();
@@ -39401,7 +39403,7 @@ function InstrumentExplorerInject() {
     gPlayerABCInstrumentExplorerInjected = InstrumentExplorerDialogInjectThisTune(gPlayerABCInstrumentExplorerProcessed);
 
     // Try and keep the same tune after the redraw for immediate play
-    var theSelectionStart = abcCM.selectionStart;
+    var theSelectionStart = gTheCM.selectionStart;
 
     // Stuff in the injected ABC
     var theABC = getABCEditorText();
@@ -39431,8 +39433,8 @@ function InstrumentExplorerInject() {
         }).then(function() {
 
           // Set the select point
-          abcCM.selectionStart = theSelectionStart;
-          abcCM.selectionEnd = theSelectionStart;
+          gTheCM.selectionStart = theSelectionStart;
+          gTheCM.selectionEnd = theSelectionStart;
 
           // Focus after operation
           FocusAfterOperation();
@@ -39453,8 +39455,8 @@ function InstrumentExplorerInject() {
       }).then(function() {
 
         // Set the select point
-        abcCM.selectionStart = theSelectionStart;
-        abcCM.selectionEnd = theSelectionStart;
+        gTheCM.selectionStart = theSelectionStart;
+        gTheCM.selectionEnd = theSelectionStart;
 
         // Focus after operation
         FocusAfterOperation();
@@ -39506,8 +39508,8 @@ function InstrumentExplorerInject() {
         }).then(function() {
 
           // Set the select point
-          abcCM.selectionStart = 0;
-          abcCM.selectionEnd = 0;
+          gTheCM.selectionStart = 0;
+          gTheCM.selectionEnd = 0;
 
           // Focus after operation
           FocusAfterOperation();
@@ -39528,8 +39530,8 @@ function InstrumentExplorerInject() {
       }).then(function() {
 
         // Set the select point
-        abcCM.selectionStart = 0;
-        abcCM.selectionEnd = 0;
+        gTheCM.selectionStart = 0;
+        gTheCM.selectionEnd = 0;
 
         // Focus after operation
         FocusAfterOperation();
@@ -40234,7 +40236,7 @@ function GraceExplorerInject() {
       tuneWithGrace = tuneWithGrace.replace("\n\n", "");
 
       // Try and keep the same tune after the redraw for immediate play
-      var theSelectionStart = abcCM.selectionStart;
+      var theSelectionStart = gTheCM.selectionStart;
 
       // Stuff in the injected ABC
       var theABC = getABCEditorText();
@@ -40264,8 +40266,8 @@ function GraceExplorerInject() {
           }).then(function() {
 
             // Set the select point
-            abcCM.selectionStart = theSelectionStart;
-            abcCM.selectionEnd = theSelectionStart;
+            gTheCM.selectionStart = theSelectionStart;
+            gTheCM.selectionEnd = theSelectionStart;
 
             // Focus after operation
             FocusAfterOperation();
@@ -40286,8 +40288,8 @@ function GraceExplorerInject() {
         }).then(function() {
 
           // Set the select point
-          abcCM.selectionStart = theSelectionStart;
-          abcCM.selectionEnd = theSelectionStart;
+          gTheCM.selectionStart = theSelectionStart;
+          gTheCM.selectionEnd = theSelectionStart;
 
           // Focus after operation
           FocusAfterOperation();
@@ -40345,8 +40347,8 @@ function GraceExplorerInject() {
           }).then(function() {
 
             // Set the select point
-            abcCM.selectionStart = 0;
-            abcCM.selectionEnd = 0;
+            gTheCM.selectionStart = 0;
+            gTheCM.selectionEnd = 0;
 
             // Focus after operation
             FocusAfterOperation();
@@ -40367,8 +40369,8 @@ function GraceExplorerInject() {
         }).then(function() {
 
           // Set the select point
-          abcCM.selectionStart = 0;
-          abcCM.selectionEnd = 0;
+          gTheCM.selectionStart = 0;
+          gTheCM.selectionEnd = 0;
 
           // Focus after operation
           FocusAfterOperation();
@@ -40953,7 +40955,7 @@ function RollExplorerInject() {
     tuneWithRoll = tuneWithRoll.replace("\n\n", "");
 
     // Try and keep the same tune after the redraw for immediate play
-    var theSelectionStart = abcCM.selectionStart;
+    var theSelectionStart = gTheCM.selectionStart;
 
     // Stuff in the injected ABC
     var theABC = getABCEditorText();
@@ -40983,8 +40985,8 @@ function RollExplorerInject() {
         }).then(function() {
 
           // Set the select point
-          abcCM.selectionStart = theSelectionStart;
-          abcCM.selectionEnd = theSelectionStart;
+          gTheCM.selectionStart = theSelectionStart;
+          gTheCM.selectionEnd = theSelectionStart;
 
           // Focus after operation
           FocusAfterOperation();
@@ -41005,8 +41007,8 @@ function RollExplorerInject() {
       }).then(function() {
 
         // Set the select point
-        abcCM.selectionStart = theSelectionStart;
-        abcCM.selectionEnd = theSelectionStart;
+        gTheCM.selectionStart = theSelectionStart;
+        gTheCM.selectionEnd = theSelectionStart;
 
         // Focus after operation
         FocusAfterOperation();
@@ -44280,6 +44282,28 @@ function GetInitialConfigurationSettings() {
     gCustomInstrumentShowStatus = (val == "true");
   }
 
+  gEnableSyntax = true;
+  val = localStorage.EnableSyntax
+  if (val) {
+    gEnableSyntax = (val == "true");
+  }
+
+  gSyntaxDarkMode = false;
+  val = localStorage.SyntaxDarkMode
+  if (val) {
+    gSyntaxDarkMode = (val == "true");
+  }
+  
+  val = localStorage.SyntaxViewportMargin;
+  if (val) {
+    gSyntaxViewportMargin = parseInt(val);
+    if (isNaN(gSyntaxViewportMargin)) {
+      gSyntaxViewportMargin = 20;
+    }
+  } else {
+    gSyntaxViewportMargin = 20;
+  }
+
   // Save the settings, in case they were initialized
   SaveConfigurationSettings();
 
@@ -44581,6 +44605,11 @@ function SaveConfigurationSettings() {
 
     // Show status after custom instrument load
     localStorage.CustomInstrumentShowStatus = gCustomInstrumentShowStatus;
+
+    // Syntax highlighting
+    localStorage.EnableSyntax = gEnableSyntax;
+    localStorage.SyntaxDarkMode = gSyntaxDarkMode;
+    localStorage.SyntaxViewportMargin = gSyntaxViewportMargin;
 
   }
 }
@@ -48061,8 +48090,15 @@ function AdvancedSettings() {
 
   var oldDiagnostics = gShowDiagnostics;
 
+  var oldEnableSyntax = gEnableSyntax;
+  var oldSyntaxDarkMode = gSyntaxDarkMode;
+  var oldSyntaxViewportMargin = gSyntaxViewportMargin;
+
   // Setup initial values
   const theData = {
+    configure_syntax_highlighting:gEnableSyntax,
+    configure_syntax_highlighting_dark:gSyntaxDarkMode,
+    configure_syntax_viewport_margin:gSyntaxViewportMargin,
     configure_fullscreen_scaling: gFullScreenScaling,
     configure_highlight_color: gRawHighlightColor,
     configure_player_status_on_left: gPlayerStatusOnLeft,
@@ -48074,8 +48110,6 @@ function AdvancedSettings() {
     configure_mp3_bitrate: gMP3Bitrate,
     configure_export_delayms: gBatchExportDelayMS,
     configure_mp3export_delayms: gBatchMP3ExportDelayMS,
-    configure_roll2_default: gRoll2DefaultParams,
-    configure_roll3_default: gRoll3DefaultParams,
     configure_DisableRendering: gDisableNotationRendering,
     configure_disable_selected_play: gDisableSelectedPlay,
     configure_show_diagnostics: gShowDiagnostics,
@@ -48093,7 +48127,26 @@ function AdvancedSettings() {
     html: '<p style="font-size:12pt;line-height:12px;font-family:helvetica;"><strong>Only change these values if you know what you are doing!</strong></p>'
   }, ];
 
-  form = form.concat([{
+  form = form.concat([
+  {
+    name: "          Enable ABC syntax highlighting",
+    id: "configure_syntax_highlighting",
+    type: "checkbox",
+    cssClass: "advanced_settings2_form_text_checkbox"
+  },  
+  {
+    name: "          Use Dark Mode for editor",
+    id: "configure_syntax_highlighting_dark",
+    type: "checkbox",
+    cssClass: "advanced_settings2_form_text_checkbox"
+  },  
+  {
+    name: "Syntax highlighting processing viewport in lines (default is 20):",
+    id: "configure_syntax_viewport_margin",
+    type: "number",
+    cssClass: "advanced_settings2_form_text"
+  },
+  {
     name: "          Always confirm before deletion when clicking Clear",
     id: "configure_confirm_clear",
     type: "checkbox",
@@ -48202,17 +48255,7 @@ function AdvancedSettings() {
     }, ]);
   }
 
-  form = form.concat([{
-      name: "Default %roll_2_params:",
-      id: "configure_roll2_default",
-      type: "text",
-      cssClass: "advanced_settings2_roll_text"
-    }, {
-      name: "Default %roll_3_params:",
-      id: "configure_roll3_default",
-      type: "text",
-      cssClass: "advanced_settings2_roll_text"
-    }, {
+  form = form.concat([ {
       name: "Private TinyURL API Token:",
       id: "configure_tinyurl",
       type: "text",
@@ -48220,7 +48263,7 @@ function AdvancedSettings() {
     },
 
     {
-      html: '<p style="text-align:center;margin-top:18px;margin-bottom:6px"><input id="reset_roll_parameters" class="btn btn-subdialog reset_roll_parameters" onclick="ResetRollDefaultParams()" type="button" value="Reset Roll Parameter Strings to Defaults" title="Resets the roll parameter strings to known good default values"><label class="loadimpulsebutton btn btn-subdialog " for="loadimpulsebutton" title="Load a custom reverb convolution impulse .wav file">Load Custom Reverb Impulse <input type="file" id="loadimpulsebutton"  accept=".wav,.WAV" hidden/></label><input id="resetsettings" class="btn btn-resetsettings resetsettings" onclick="ResetSettingsDialog()" type="button" value="Reset Settings" title="Opens a dialog where you can reset all tool settings to the default and/or clear the instrument notes, reverb settings, and tune search engine collection databases"></p><p style="font-size:10pt;line-height:14pt;font-family:helvetica;color:grey;position:absolute;left:20px;bottom:30px;margin:0px;cursor:pointer;" onclick="ShowBrowserInfo();" title="Click to show browser information">Click to show browser info<br/>Installed version: ' + gVersionNumber + '</p>'
+      html: '<p style="text-align:center;margin-top:18px;margin-bottom:6px"><label class="loadimpulsebutton btn btn-subdialog " for="loadimpulsebutton" title="Load a custom reverb convolution impulse .wav file">Load Custom Reverb Impulse <input type="file" id="loadimpulsebutton"  accept=".wav,.WAV" hidden/></label><input id="resetsettings" class="btn btn-resetsettings resetsettings" onclick="ResetSettingsDialog()" type="button" value="Reset Settings" title="Opens a dialog where you can reset all tool settings to the default and/or clear the instrument notes, reverb settings, and tune search engine collection databases"></p><p style="font-size:10pt;line-height:14pt;font-family:helvetica;color:grey;position:absolute;left:20px;bottom:30px;margin:0px;cursor:pointer;" onclick="ShowBrowserInfo();" title="Click to show browser information">Click to show browser info<br/>Installed version: ' + gVersionNumber + '</p>'
     },
   ]);
 
@@ -48241,6 +48284,25 @@ function AdvancedSettings() {
 
     // Get the results and store them in the global configuration
     if (!args.canceled) {
+
+      // Syntax highlighting
+      gEnableSyntax = args.result.configure_syntax_highlighting;
+      gSyntaxDarkMode = args.result.configure_syntax_highlighting_dark;
+      gSyntaxViewportMargin = args.result.configure_syntax_viewport_margin;
+
+      if (isNaN(parseInt(gSyntaxViewportMargin))) {
+        gSyntaxViewportMargin = 20;
+      } else {
+        gSyntaxViewportMargin = parseInt(gSyntaxViewportMargin);
+      }
+
+      if (gSyntaxViewportMargin < 10) {
+        gSyntaxViewportMargin = 10;
+      }
+
+      if (gSyntaxViewportMargin > 100) {
+        gSyntaxViewportMargin = 100;
+      }
 
       // Jump to tune autoscroll
       gJumpToTuneAutoscroll = args.result.configure_jumptotune_autoscroll
@@ -48277,8 +48339,8 @@ function AdvancedSettings() {
         elem.classList.add("btn-rawmode-off");
         elem.classList.remove("btn-rawmode-on");
 
-        abcCM.getWrapperElement().style.backgroundColor = "white";
-        abcCM.refresh();
+        gTheCM.getWrapperElement().style.backgroundColor = "white";
+        gTheCM.refresh();
 
         gRawMode = false;
 
@@ -48343,40 +48405,6 @@ function AdvancedSettings() {
         }
       }
 
-      var the_roll2_raw = args.result.configure_roll2_default;
-      the_roll2_raw = the_roll2_raw.trim();
-
-      var the_roll3_raw = args.result.configure_roll3_default;
-      the_roll3_raw = the_roll3_raw.trim();
-
-      // Validate the roll values
-      var roll2 = validate_roll_2_params(the_roll2_raw, false);
-      var roll3 = validate_roll_3_params(the_roll3_raw, false);
-
-      if (!(roll2 && roll3)) {
-
-        // Show issue with the roll parameters
-        RollParameterIssueAlert(
-
-          function() {
-            setTimeout(function() {
-              AdvancedSettings();
-            }, 250);
-          }
-        );
-
-      } else {
-
-        // Set the new roll parameters
-        roll2 = validate_roll_2_params(the_roll2_raw, true);
-        roll3 = validate_roll_3_params(the_roll3_raw, true);
-
-        // And save the default roll parameter string
-        gRoll2DefaultParams = the_roll2_raw;
-        gRoll3DefaultParams = the_roll3_raw;
-
-      }
-
       // Save the TinyURL API key
       var theTinyURLKey = args.result.configure_tinyurl;
 
@@ -48430,14 +48458,47 @@ function AdvancedSettings() {
 
         }
       }
+      
+      // Syntax highlighting-related settings
+      if (oldEnableSyntax != gEnableSyntax){
+        if (gEnableSyntax){
+          gTheCM.setOption("mode", "abc-plus");
+          gTheCM.setOption('viewportMargin', gSyntaxViewportMargin);
+        }
+        else{
+          gTheCM.setOption("mode", null);          
+        }
+      }
+      
+      if (oldSyntaxDarkMode != gSyntaxDarkMode){
+
+        // Dark mode toggle
+        if (gSyntaxDarkMode){
+          document.querySelectorAll(".CodeMirror").forEach(el => {
+            el.style.filter = "invert(100%)";
+          });
+        }
+        else{
+          document.querySelectorAll(".CodeMirror").forEach(el => {
+            el.style.filter = "";
+          });
+        }
+
+      }
+
+      if (oldSyntaxViewportMargin != gSyntaxViewportMargin){
+        if (gEnableSyntax){
+          gTheCM.setOption('viewportMargin', gSyntaxViewportMargin);
+        }
+      }
 
       // Need to adjust the editor size on diagnostics show/hide
       if (oldDiagnostics != gShowDiagnostics) {
         HandleWindowResize();
       }
-
       // Save the settings, in case they were initialized
       SaveConfigurationSettings();
+
     }
 
   });
@@ -51138,11 +51199,11 @@ function DoMultiReadCommon(the_files, fileElement) {
 
           if (!gIsMaximized) {
 
-            ScrollABCTextIntoView(abcCM, tuneOffset, tuneOffset, 10);
+            ScrollABCTextIntoView(gTheCM, tuneOffset, tuneOffset, 10);
 
             if (!isMobileBrowser) {
-              abcCM.getInputField().blur();
-              abcCM.focus();
+              gTheCM.getInputField().blur();
+              gTheCM.focus();
             }
 
           }
@@ -51278,7 +51339,7 @@ function HandleWindowResize() {
         elem.style.marginLeft = marginLeft + "px";
 
         // Reset the number of rows in the ABC editor
-        setCMRows(abcCM, 12);
+        setCMRows(gTheCM, 12);
 
         gIsOneColumn = true;
 
@@ -51330,7 +51391,7 @@ function HandleWindowResize() {
         }
 
         // Adapt the text area size
-        const wrapper = abcCM.getWrapperElement();
+        const wrapper = gTheCM.getWrapperElement();
         const style   = getComputedStyle(wrapper);
         const fontSize  = parseFloat(style.fontSize);
         const lineHeight =
@@ -51338,7 +51399,7 @@ function HandleWindowResize() {
         var nRows = Math.floor(windowHeight / lineHeight);
 
         // Resize the text box
-        setCMRows(abcCM, nRows);
+        setCMRows(gTheCM, nRows);
 
         gIsOneColumn = false;
 
@@ -51886,9 +51947,9 @@ function MIDI_NoteOn(data) {
 
     //console.log("getMIDI_note_name: "+theNoteName);
 
-    var theSelectionStart = abcCM.selectionStart;
+    var theSelectionStart = gTheCM.selectionStart;
 
-    var theSelectionEnd = abcCM.selectionEnd;
+    var theSelectionEnd = gTheCM.selectionEnd;
 
     if (theNoteName != "BACKSPACE") {
 
@@ -51904,14 +51965,14 @@ function MIDI_NoteOn(data) {
       // Set dirty
       gIsDirty = true;
 
-      abcCM.selectionStart = theSelectionStart + theNoteName.length;
+      gTheCM.selectionStart = theSelectionStart + theNoteName.length;
 
-      abcCM.selectionEnd = abcCM.selectionStart;
+      gTheCM.selectionEnd = gTheCM.selectionStart;
 
       OnABCTextChange();
 
-      // theSelectionStart = abcCM.selectionStart;
-      // theSelectionEnd = abcCM.selectionEnd;
+      // theSelectionStart = gTheCM.selectionStart;
+      // theSelectionEnd = gTheCM.selectionEnd;
 
       // console.log("theSelectionStart after: "+theSelectionStart);
       // console.log("theSelectionEnd after: "+theSelectionEnd);
@@ -51929,9 +51990,9 @@ function MIDI_NoteOn(data) {
         // Set dirty
         gIsDirty = true;
 
-        abcCM.selectionStart = theSelectionStart - 1;
+        gTheCM.selectionStart = theSelectionStart - 1;
 
-        abcCM.selectionEnd = abcCM.selectionStart;
+        gTheCM.selectionEnd = gTheCM.selectionStart;
 
         OnABCTextChange();
 
@@ -52344,7 +52405,7 @@ function ResizeTextBox() {
     // console.log("Initial container width = "+gInitialTextBoxContainerWidth);
     // console.log("Initial container left = "+gInitialTextBoxContainerLeft);
 
-    var currentWidth = abcCM.getWrapperElement().offsetWidth;
+    var currentWidth = gTheCM.getWrapperElement().offsetWidth;
 
     // console.log("current width = "+gTheABC.offsetWidth);
     // console.log("containerWidth = "+gInitialTextBoxContainerWidth);
@@ -52361,9 +52422,9 @@ function ResizeTextBox() {
 
       if (theDelta <= gInitialTextBoxContainerLeft) {
 
-        let wrapper = abcCM.getWrapperElement();
+        let wrapper = gTheCM.getWrapperElement();
         wrapper.style.marginLeft = -theDelta + "px";
-        abcCM.refresh();
+        gTheCM.refresh();
 
         if (!gIsOneColumn) {
 
@@ -52401,10 +52462,10 @@ function ResizeTextBox() {
     } else {
 
       // console.log("Setting the marginLeft to 0px");
-      let wrapper = abcCM.getWrapperElement();
+      let wrapper = gTheCM.getWrapperElement();
 
       wrapper.style.marginLeft = "0px";
-      abcCM.refresh();
+      gTheCM.refresh();
 
       // Reset the notation left margin
       gTheNotation.style.marginLeft = theDelta + "px";
@@ -52471,7 +52532,7 @@ function CleanSmartQuotes() {
 //
 function updateABCEditorFont() {
   // Get the wrapper <div> that CodeMirror uses
-  let wrapper = abcCM.getWrapperElement();
+  let wrapper = gTheCM.getWrapperElement();
 
   if (gABCEditorFontsize === 13) {
     wrapper.style.fontSize = "13pt";
@@ -52483,7 +52544,7 @@ function updateABCEditorFont() {
   }
 
   // Important: tell CodeMirror to recalc layout
-  abcCM.refresh();
+  gTheCM.refresh();
 
 }
 
@@ -53771,9 +53832,9 @@ function InjectMIDIGChordTemplates() {
 }
 
 
-// Call this once after abcCM is created (and after your page layout settles)
+// Call this once after gTheCM is created (and after your page layout settles)
 function captureEditorBaselines() {
-  const wrapper = abcCM.getWrapperElement();
+  const wrapper = gTheCM.getWrapperElement();
   const container = wrapper.parentElement;           // adjust if you use a different container
 
   // Baselines formerly taken from the textarea:
@@ -53795,8 +53856,8 @@ function MaximizeEditor() {
 
   sendGoogleAnalytics("action", "MaximizeEditor");
 
-  const wrapper = abcCM.getWrapperElement();
-  const scroller = abcCM.getScrollerElement(); // sometimes useful if you need its width/scroll
+  const wrapper = gTheCM.getWrapperElement();
+  const scroller = gTheCM.getScrollerElement(); // sometimes useful if you need its width/scroll
 
   // 1) Expand the editor to fill remaining space to the left of notation
   //    (same formula, but applied to the CM wrapper)
@@ -53808,7 +53869,7 @@ function MaximizeEditor() {
   wrapper.style.display = "block";
   wrapper.style.boxSizing = "border-box";
 
-  abcCM.refresh();
+  gTheCM.refresh();
 
   // 2) After layout settles, compute the delta and slide as before.
   //    Using rAF + a small timeout ensures fonts/wrapping are baked.
@@ -53824,7 +53885,7 @@ function MaximizeEditor() {
         // Only slide if we won’t go past the original left edge budget
         if (theDelta <= gInitialTextBoxContainerLeft) {
           wrapper.style.marginLeft = (-theDelta) + "px";
-          abcCM.refresh();
+          gTheCM.refresh();
 
           if (!gIsOneColumn) {
             const theAppContainer = document.getElementById("app-container");
@@ -53865,10 +53926,10 @@ function xMaximizeEditor() {
 
   sendGoogleAnalytics("action", "MaximizeEditor");
 
-  let wrapper = abcCM.getWrapperElement();
+  let wrapper = gTheCM.getWrapperElement();
 
   wrapper.style.width = ((window.innerWidth - gTheNotation.offsetWidth) - 125) + "px";
-  abcCM.refresh();
+  gTheCM.refresh();
 
   setTimeout(function() {
 
@@ -53890,7 +53951,7 @@ function xMaximizeEditor() {
       if (theDelta <= gInitialTextBoxContainerLeft) {
 
         wrapper.style.marginLeft = -theDelta + "px";
-        abcCM.refresh();
+        gTheCM.refresh();
 
         if (!gIsOneColumn) {
 
@@ -54066,10 +54127,10 @@ function JumpToTune() {
         var tuneOffset = findTuneOffsetByIndex(gCurrentTune)
 
         // Some browsers like Chrome require focus before setting the selection range
-        abcCM.focus();
+        gTheCM.focus();
 
-        abcCM.selectionStart = tuneOffset;
-        abcCM.selectionEnd = tuneOffset;
+        gTheCM.selectionStart = tuneOffset;
+        gTheCM.selectionEnd = tuneOffset;
 
         if (isDesktopBrowser()) {
           MakeTuneVisible(true);
@@ -54079,13 +54140,13 @@ function JumpToTune() {
           }, 250);
         }
 
-        ScrollABCTextIntoView(abcCM, tuneOffset, tuneOffset, 10);
+        ScrollABCTextIntoView(gTheCM, tuneOffset, tuneOffset, 10);
 
         // Force reloading of tune when fullscreen
         gPlayABCGotMaximizedPlay = false;
 
         if (!isPureDesktopBrowser()) {
-          abcCM.getInputField().blur();
+          gTheCM.getInputField().blur();
         }
 
         // If quick editor, force redraw 
@@ -54257,16 +54318,16 @@ function SR_highlightMatch(index) {
 
   if (gSR_matchIndexes.length === 0 || searchValue === '') return;
 
-  abcCM.focus();
+  gTheCM.focus();
 
   if (!isRegex) {
     //console.log("Not regex, setting selection to: "+gSR_matchIndexes[index].offset+" to "+(gSR_matchIndexes[index].offset + searchValue.length));
-    abcCM.setSelectionRange(gSR_matchIndexes[index].offset, gSR_matchIndexes[index].offset + searchValue.length);
-    ScrollABCTextIntoView(abcCM, gSR_matchIndexes[index].offset, gSR_matchIndexes[index].offset + searchValue.length, 2);
+    gTheCM.setSelectionRange(gSR_matchIndexes[index].offset, gSR_matchIndexes[index].offset + searchValue.length);
+    ScrollABCTextIntoView(gTheCM, gSR_matchIndexes[index].offset, gSR_matchIndexes[index].offset + searchValue.length, 2);
   } else {
     //console.log("Is regex, setting selection to: "+gSR_matchIndexes[index].offset+" to "+(gSR_matchIndexes[index].offset + gSR_matchIndexes[index].length));
-    abcCM.setSelectionRange(gSR_matchIndexes[index].offset, gSR_matchIndexes[index].offset + gSR_matchIndexes[index].length);
-    ScrollABCTextIntoView(abcCM, gSR_matchIndexes[index].offset, gSR_matchIndexes[index].offset + gSR_matchIndexes[index].length, 2);
+    gTheCM.setSelectionRange(gSR_matchIndexes[index].offset, gSR_matchIndexes[index].offset + gSR_matchIndexes[index].length);
+    ScrollABCTextIntoView(gTheCM, gSR_matchIndexes[index].offset, gSR_matchIndexes[index].offset + gSR_matchIndexes[index].length, 2);
   }
 
 
@@ -55116,8 +55177,8 @@ function SplitLongTextAndTags() {
           RenderAsync(true, null, function() {
 
             // Set the select point
-            abcCM.selectionStart = 0;
-            abcCM.selectionEnd = 0;
+            gTheCM.selectionStart = 0;
+            gTheCM.selectionEnd = 0;
 
             // Focus after operation
             FocusAfterOperation();
@@ -55144,7 +55205,7 @@ function SplitLongTextAndTags() {
         }
 
         // Try and keep the same tune after the redraw for immediate play
-        var theSelectionStart = abcCM.selectionStart;
+        var theSelectionStart = gTheCM.selectionStart;
 
         // Stuff in the injected ABC
         var theABC = getABCEditorText();
@@ -55170,8 +55231,8 @@ function SplitLongTextAndTags() {
           RenderAsync(false, theSelectedTuneIndex, function() {
 
             // Set the select point
-            abcCM.selectionStart = theSelectionStart;
-            abcCM.selectionEnd = theSelectionStart;
+            gTheCM.selectionStart = theSelectionStart;
+            gTheCM.selectionEnd = theSelectionStart;
 
             // Focus after operation
             FocusAfterOperation();
@@ -55224,8 +55285,8 @@ function DoNormalizeDiacriticals(inverse) {
     RenderAsync(true, null, function() {
 
       // Set the select point
-      abcCM.selectionStart = 0;
-      abcCM.selectionEnd = 0;
+      gTheCM.selectionStart = 0;
+      gTheCM.selectionEnd = 0;
 
       // Focus after operation
       FocusAfterOperation();
@@ -55437,8 +55498,8 @@ function normalizeTitleArticles(inverse) {
     RenderAsync(true, null, function() {
 
       // Set the select point
-      abcCM.selectionStart = 0;
-      abcCM.selectionEnd = 0;
+      gTheCM.selectionStart = 0;
+      gTheCM.selectionEnd = 0;
 
       // Focus after operation
       FocusAfterOperation();
@@ -55816,8 +55877,8 @@ function NormalizeVoiceKeySignatures(){
     RenderAsync(true, null, function() {
 
       // Set the select point
-      abcCM.selectionStart = 0;
-      abcCM.selectionEnd = 0;
+      gTheCM.selectionStart = 0;
+      gTheCM.selectionEnd = 0;
 
       // Focus after operation
       FocusAfterOperation();
@@ -56903,8 +56964,6 @@ function DoStartup() {
   gForceAndroid = false;
   gDisableAndroid = false;
 
-  initCodeMirror();
-  wireClickish(abcCM, AUTOSCROLLDEBOUNCEMS);
 
   // Is browser storage available?
   if (window.localStorage) {
@@ -56912,6 +56971,9 @@ function DoStartup() {
     gLocalStorageAvailable = true;
 
   }
+
+  initCodeMirror();
+  wireClickish(gTheCM, AUTOSCROLLDEBOUNCEMS);
 
   // Check if online (always returns true for normal case)
   doOnlineCheck();
@@ -57129,8 +57191,8 @@ function DoStartup() {
 
       if ((gIsIPhone) || (gIsAndroid)) {
 
-        setCMFont(abcCM, 16, 18)
-        setCodeMirrorRows(abcCM, 13);        
+        setCMFont(gTheCM, 16, 18)
+        setCodeMirrorRows(gTheCM, 13);        
 
         // Reset the viewport to avoid scaling
         var viewport = document.querySelector("meta[name=viewport]");
@@ -57139,7 +57201,7 @@ function DoStartup() {
       }
 
       if (gIsIPad){
-        setCMFont(abcCM, 13, 17);
+        setCMFont(gTheCM, 13, 17);
       }
 
       // Resize the app-container
@@ -57269,7 +57331,7 @@ function DoStartup() {
   //
   // --- 1) INPUT (was textarea.oninput) ----------------------------------------
   // Debounced "content changed" handling
-  abcCM.on(
+  gTheCM.on(
     "changes",
     debounce(() => {
       // Set dirty
@@ -57291,7 +57353,7 @@ function DoStartup() {
   //
   // --- 2) PASTE (was textarea.onpaste) ----------------------------------------
   // Use the DOM paste event on the CodeMirror wrapper (most robust)
-  abcCM.getWrapperElement().addEventListener("paste", function (e) {
+  gTheCM.getWrapperElement().addEventListener("paste", function (e) {
     // Detect if the paste likely contains a whole tune → force full redraw
     let forceRender = false;
 
@@ -57546,11 +57608,11 @@ function DoStartup() {
 
   // Force recalculation of the notation top position on ABC text area resize
 
-  new ResizeObserver(TextBoxResizeHandler).observe(abcCM.getWrapperElement());
+  new ResizeObserver(TextBoxResizeHandler).observe(gTheCM.getWrapperElement());
 
   if (isDesktopBrowser()) {
     
-    let wrapper = abcCM.getWrapperElement();
+    let wrapper = gTheCM.getWrapperElement();
 
     // Setup text box symmetrical resize 
     if (giPadTwoColumn) {
@@ -57559,11 +57621,11 @@ function DoStartup() {
 
       wrapper.style.marginLeft = 0 + "px";
       wrapper.style.width = gInitialTextBoxWidth + "px";
-      abcCM.refresh();
+      gTheCM.refresh();
 
 
     } else {
-      gInitialTextBoxWidth = abcCM.offsetWidth;
+      gInitialTextBoxWidth = gTheCM.offsetWidth;
     }
 
     var elem = document.getElementById("notenlinks");
@@ -57578,7 +57640,7 @@ function DoStartup() {
     // console.log("Initial container left = "+gInitialTextBoxContainerLeft);
 
     if (isPureDesktopBrowser()) {
-      new ResizeObserver(ResizeTextBox).observe(abcCM.getWrapperElement());
+      new ResizeObserver(ResizeTextBox).observe(gTheCM.getWrapperElement());
     }
 
     // Hook window resize events
@@ -57587,12 +57649,12 @@ function DoStartup() {
       HandleWindowResize();
 
       if (!gIsMaximized) {
-        let wrapper = abcCM.getWrapperElement();
+        let wrapper = gTheCM.getWrapperElement();
 
         // Reset text box symmetrical resize 
         wrapper.style.marginLeft = 0 + "px";
         wrapper.style.width = gInitialTextBoxWidth + "px";
-        abcCM.refresh();
+        gTheCM.refresh();
 
         var elem = document.getElementById("notenlinks");
         gInitialTextBoxContainerWidth = elem.offsetWidth;
@@ -57656,7 +57718,7 @@ function DoStartup() {
   //
   if (isPureDesktopBrowser()) {
 
-    let wrapper = abcCM.getWrapperElement();
+    let wrapper = gTheCM.getWrapperElement();
 
     wrapper.onmousedown = function(e) {
 
@@ -58108,18 +58170,18 @@ function DoStartup() {
   if (isMobileBrowser()){
 
       // Reduce the width of the CM a bit
-      const wrapper = abcCM.getWrapperElement();
+      const wrapper = gTheCM.getWrapperElement();
       // Get whatever the browser computed for its current width
       const currentWidth = wrapper.offsetWidth;
       wrapper.style.width = (currentWidth - 32) + "px";
       wrapper.style.marginLeft = "14px";
 
-      abcCM.refresh(); // important: force CM to recalc layout
+      gTheCM.refresh(); // important: force CM to recalc layout
 
   }
 
   // And set the focus
-  abcCM.focus();
+  gTheCM.focus();
 
 }
 
@@ -58191,10 +58253,10 @@ function wireClickish(cm, AUTOSCROLLDEBOUNCEMS) {
 
 function wireAbcDragDrop() 
 {
-  const wrapper = abcCM.getWrapperElement();
+  const wrapper = gTheCM.getWrapperElement();
 
   // We don't want text dragging/dropping inside the editor
-  abcCM.setOption("dragDrop", false);
+  gTheCM.setOption("dragDrop", false);
 
   // Desktop vs mobile behavior
   if (isPureDesktopBrowser()) {
@@ -58230,7 +58292,7 @@ function wireAbcDragDrop()
   } else {
     // Mobile: placeholder + hide desktop hint, still prevent text dragging
     // Requires addon: codemirror/addon/display/placeholder.js
-    abcCM.setOption("placeholder", "Enter the ABC for your tunes here");
+    gTheCM.setOption("placeholder", "Enter the ABC for your tunes here");
 
     const msg = document.getElementById("desktop_use_message");
     if (msg) msg.style.display = "none";
@@ -58242,7 +58304,7 @@ function wireAbcDragDrop()
 function setCMFont(cm, sizePx, lineHeightPx) {
 
     // Get the wrapper <div> that CodeMirror uses
-  let wrapper = abcCM.getWrapperElement();
+  let wrapper = gTheCM.getWrapperElement();
     wrapper.style.fontSize = sizePx + "pt";
     wrapper.style.lineHeight = lineHeightPx + "pt";
 
@@ -58474,12 +58536,71 @@ function initCodeMirror(){
     var ta = document.getElementById('abc');       // <-- your textarea id
     if (!ta) { console.error('Textarea #abcEditor not found'); return; }
 
-    var cm = CodeMirror.fromTextArea(ta, {
-      lineWrapping: true,
-      lineNumbers: false,                   // we use our own gutter
-      gutters: ["abc-line-gutter"],
-      mode: "abc-plus"   // ← enable highlighting
-    });
+    var theMode = "abc-plus";
+    var theViewportMargin = 20;
+
+    // Get CM related vars
+    if (window.localStorage){
+
+      gEnableSyntax = true;
+      val = localStorage.EnableSyntax
+      if (val) {
+        gEnableSyntax = (val == "true");
+      }
+      if (!gEnableSyntax){
+        theMode = null;
+      }
+
+      val = localStorage.SyntaxViewportMargin;
+      if (val) {
+        gSyntaxViewportMargin = parseInt(val);
+        if (isNaN(gSyntaxViewportMargin)) {
+          gSyntaxViewportMargin = 20;
+        }
+      } else {
+        gSyntaxViewportMargin = 20;
+      }
+      if (gEnableSyntax){
+        theViewportMargin = gSyntaxViewportMargin;
+      }
+    }
+
+    var cm;
+    if (gEnableSyntax){
+      cm = CodeMirror.fromTextArea(ta, {
+        lineWrapping: true,
+        lineNumbers: false,                   // we use our own gutter
+        gutters: ["abc-line-gutter"],
+        mode: theMode,   // ← enable highlighting
+        viewportMargin: theViewportMargin
+      });
+    }
+    else{
+      cm = CodeMirror.fromTextArea(ta, {
+        lineWrapping: true,
+        lineNumbers: false,                   // we use our own gutter
+        gutters: ["abc-line-gutter"],
+        mode: null   // ← disable highlighting
+      });
+    }
+
+    gSyntaxDarkMode = false;
+    val = localStorage.SyntaxDarkMode
+    if (val) {
+      gSyntaxDarkMode = (val == "true");
+    }
+
+    // Dark mode toggle
+    if (gSyntaxDarkMode){
+      document.querySelectorAll(".CodeMirror").forEach(el => {
+        el.style.filter = "invert(100%)";
+      });
+    }
+    else{
+      document.querySelectorAll(".CodeMirror").forEach(el => {
+        el.style.filter = "";
+      });
+    }
 
     // ---- Per-tune line numbers (restart at each X:, skip blanks)
     function computeAbcLineNumbers(doc) {
@@ -58540,7 +58661,7 @@ function initCodeMirror(){
     recomputeAndPaintAll();
 
     // Optional: expose cm for later setValue() calls in your app
-    window.abcCM = cm;
+    window.gTheCM = cm;
 
     // Usage after creating your CodeMirror editor
     addTextareaSelectionShim(cm);

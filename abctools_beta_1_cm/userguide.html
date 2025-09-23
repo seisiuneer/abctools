@@ -4447,6 +4447,8 @@
                     %addlinkbacktotoc<br/>
                     %tocheader Page Header Text for Table of Contents Pages<br/>
                     %toctopoffset 30<br/>
+                    %tocleftoffset 10<br/>
+                    %tocrightoffset 10<br/>
                     %toctitleoffset 35<br/>
                     %toctitlefontsize 18<br/>
                     %tocfontsize 13<br/>
@@ -4456,6 +4458,8 @@
                     %addlinkbacktoindex<br/>
                     %indexheader Page Header Text for Index Pages<br/>
                     %indextopoffset 30<br/>
+                    %indexleftoffset 10<br/>
+                    %indexrightoffset 10<br/>
                     %indextitleoffset 35<br/>
                     %indextitlefontsize 18<br/>
                     %indexfontsize 13<br/>
@@ -4501,8 +4505,6 @@
                     %bodhran_pitch A<br/>
                     %banjo_style 2<br/>
                     %grace_duration_ms 30<br/>
-                    %roll_2_params 0.95 0.8 1.0 0.75 0.9 1.0 0.75 1.0<br/>
-                    %roll_3_params 1.45 0.6 1.0 0.75 0.9 1.0 0.75 1.0<br/>
                     %use_original_abcjs_roll_solution<br/>
                     %abcjs_release_decay_time 200<br/>
                     %use_custom_gm_sounds true<br/>
@@ -4542,6 +4544,8 @@
                     %disable_hyperlinks<br/>
                     %play_alternate_chords<br/>
                     %force_power_chords<br/>
+                    %roll_2_params 0.95 0.8 1.0 0.75 0.9 1.0 0.75 1.0<br/>
+                    %roll_3_params 1.45 0.6 1.0 0.75 0.9 1.0 0.75 1.0<br/>
                     %custom_instrument_volume_scale<br/>
                     %custom_instrument_1_volume_scale<br/>
                     %custom_instrument_2_volume_scale<br/>
@@ -5946,12 +5950,22 @@
                 <hr class="hidden-print" id="advanced_settings">
                 <h1 class="page_break_always">Advanced Settings<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <div class="image_holder_p">
-                    <img class="image" loading="lazy" src="img/advanced_settings_30.jpg"/>
+                    <img class="image" loading="lazy" src="img/advanced_settings_33.jpg"/>
                 </div>
                 <p>These settings are available by clicking the <strong>Advanced Settings</strong> button at the bottom of the main <strong>Settings</strong> dialog.</p>
                 <p>On mobile browsers, the dialog will only show the settings that are available on mobile platforms.</p>
                 <hr>
                 <p style="text-align: center;"><strong>Note: Do not change these values unless you know what you are doing!</strong></p>
+                <hr>
+                <p><strong>Enable ABC syntax highlighting</strong></p>
+                <p>When checked, shows ABC directives in different colors. (Default is on)</p>
+                <hr>
+                <p><strong>Use Dark Mode for editor</strong></p>
+                <p>When checked, sets the background of the editor to black and inverts the syntax highlighting colors if syntax highlighting is enable. (Default is off)</p>
+                <hr>
+                <p><strong>Syntax highlighting processing viewport in lines (default is 20):</strong></p>
+                <p>When syntax highlighting is enabled, this sets how many lines above and below the visible text that is processed. (Default is 20)</p>
+                <p>Larger numbers on some systems may slow down the scrolling of the editor.</p>
                 <hr>
                 <p><strong>Always confirm before deletion when clicking Clear</strong></p>
                 <p>When checked, if you click the "Clear" button, you will be asked to confirm before the ABC is cleared. (Default is on)</p>
@@ -6039,16 +6053,6 @@
                 <hr>
                 <p><strong>MP3 Batch Export Delay in milliseconds (default is 250):</strong></p>
                 <p>(Desktop browsers only) Sets the delay between file saves when doing batch .MP3 export.</p>
-                <hr>
-                <p><strong>Default roll_2_params</strong></p>
-                <p>Sets the default quarter note roll parameter string.</p>
-                <p><strong>Default roll_3_params</strong></p>
-                <p>Sets the default dotted quarter note roll parameter string.</p>
-                <p>Enter the roll parameter strings in the same format as the <strong>%roll_2_params</strong> and <strong>%roll_3_params</strong> ABC annotation strings described here:</p>
-                <p><a href="#roll_timing">Custom Roll Timing</a></p>
-                <hr>
-                <p><strong>Reset Roll Parameter Strings to Defaults</strong></p>
-                <p>Resets the roll_2_params and roll_3_params roll default parameter strings to their original known good default values.</p>
                 <hr id="private_tinyurl_token">
                 <p><strong>Private TinyURL API Token</strong></p>
                 <p>If you have your own TinyURL API Token for shortening URLs, enter it here on the <strong>Advanced Settings</strong> dialog.</p>

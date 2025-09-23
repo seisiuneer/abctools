@@ -4687,6 +4687,8 @@ var bookParser = function bookParser(book) {
       /^%custom_instrument_6_fade.*$/,
       /^%custom_instrument_7_fade.*$/,
       /^%custom_instrument_8_fade.*$/,
+      /^%roll_2_params.*$/,
+      /^%roll_3_params.*$/,
       /^[ABCDFGHILMmNORrSUZ]:/,
     ];
 
