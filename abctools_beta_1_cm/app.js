@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "2784_092325_0800_BETA";
+var gVersionNumber = "2786_092325_1330_BETA";
 
 var gMIDIInitStillWaiting = false;
 
@@ -479,6 +479,9 @@ var gJumpToTuneAutoscroll = true;
 
 // Show status dialog after custom instrument load
 var gCustomInstrumentShowStatus = true;
+
+// Dark mode color
+var gDarkModeColor = "#e0e0e0";
 
 // Global reference to the ABC editor
 var gTheABC = document.getElementById("abc");
@@ -1584,7 +1587,8 @@ function SetupRawModeUI() {
 
     elem.value = "Highlighting";
 
-    gTheCM.getWrapperElement().style.backgroundColor = "white";
+    // Dark mode toggle
+    setCMDarkMode(gDarkModeColor,"white");
 
     elem.classList.remove("rawmodebutton");
     elem.classList.add("rawmodebuttondisabled");
@@ -1605,7 +1609,8 @@ function SetupRawModeUI() {
     elem.classList.add("btn-rawmode-off");
     elem.classList.remove("btn-rawmode-on");
 
-    gTheCM.getWrapperElement().style.backgroundColor = "white";
+    // Dark mode toggle
+    setCMDarkMode(gDarkModeColor,"white");
 
   }
   gTheCM.refresh();
@@ -1702,8 +1707,8 @@ function ToggleRawMode() {
     elem.classList.add("btn-rawmode-on");
     elem.classList.remove("btn-rawmode-off");
 
-    gTheCM.getWrapperElement().style.backgroundColor = "#F8FDF8";
-
+    // Dark mode toggle
+    setCMDarkMode("#ffd6ff","#F8FDF8");
 
   } else {
 
@@ -1712,7 +1717,7 @@ function ToggleRawMode() {
     elem.classList.add("btn-rawmode-off");
     elem.classList.remove("btn-rawmode-on");
 
-    gTheCM.getWrapperElement().style.backgroundColor = "white";
+    setCMDarkMode(gDarkModeColor,"white");
 
   }
 
@@ -3841,7 +3846,8 @@ function Clear() {
     elem.classList.add("btn-rawmode-off");
     elem.classList.remove("btn-rawmode-on");
 
-    gTheCM.getWrapperElement().style.backgroundColor = "white";
+    setCMDarkMode(gDarkModeColor,"white");
+
     gTheCM.refresh();
 
     // Turn off raw mode
@@ -14167,7 +14173,8 @@ function Render(renderAll, tuneNumber) {
 
         document.getElementById("rawmodebutton").value = "Highlighting";
 
-        gTheCM.getWrapperElement().style.backgroundColor = "white";
+        setCMDarkMode(gDarkModeColor,"white");
+
         gTheCM.refresh();
 
         // Turn off raw mode
@@ -14253,7 +14260,8 @@ function Render(renderAll, tuneNumber) {
 
     document.getElementById("rawmodebutton").value = "Highlighting";
 
-    gTheCM.getWrapperElement().style.backgroundColor = "white";
+    setCMDarkMode(gDarkModeColor,"white");
+
     gTheCM.refresh();
 
     // Turn off raw mode
@@ -48339,7 +48347,8 @@ function AdvancedSettings() {
         elem.classList.add("btn-rawmode-off");
         elem.classList.remove("btn-rawmode-on");
 
-        gTheCM.getWrapperElement().style.backgroundColor = "white";
+        setCMDarkMode(gDarkModeColor,"white");
+
         gTheCM.refresh();
 
         gRawMode = false;
@@ -48472,16 +48481,11 @@ function AdvancedSettings() {
       
       if (oldSyntaxDarkMode != gSyntaxDarkMode){
 
-        // Dark mode toggle
-        if (gSyntaxDarkMode){
-          document.querySelectorAll(".CodeMirror").forEach(el => {
-            el.style.filter = "invert(100%)";
-          });
+        if (gRawMode){
+          setCMDarkMode("#ffd6ff","#F8FDF8");
         }
         else{
-          document.querySelectorAll(".CodeMirror").forEach(el => {
-            el.style.filter = "";
-          });
+          setCMDarkMode(gDarkModeColor,"white");          
         }
 
       }
@@ -58185,6 +58189,55 @@ function DoStartup() {
 
 }
 
+// This needs more investigation
+function setCodeMirrorSelectionColor(bgColorUF,bgColorF) {
+
+  // Remove existing override if present
+  const existing = document.getElementById("cm-selection-style");
+  if (existing) existing.remove();
+
+  // If no colors passed, just remove override
+  if ((!bgColorUF) || (!bgColorF))  return;
+
+  // Build new CSS
+  const style = document.createElement("style");
+  style.id = "cm-selection-style";
+  style.textContent = `
+    .CodeMirror-selected { background: ${bgColorUF} !important; }
+    .CodeMirror-focused .CodeMirror-selected { background: ${bgColorF} !important; }
+  `;
+
+  document.head.appendChild(style);
+
+}
+
+// Setup the Codemirror dark mode
+function setCMDarkMode(theDarkModeColor, theColor){
+
+  // Dark mode toggle
+  if (gSyntaxDarkMode){
+    gTheCM.getWrapperElement().style.backgroundColor = theDarkModeColor;
+    document.querySelectorAll(".CodeMirror").forEach(el => {
+      el.style.filter = "invert(100%)";
+      el.style.backgroundColor = theDarkModeColor;
+    });
+
+    // Change the dark mode selection color
+    setCodeMirrorSelectionColor("#D0D0D0","#B0B0B0");
+  }
+  else{
+    gTheCM.getWrapperElement().style.backgroundColor = theColor;
+    document.querySelectorAll(".CodeMirror").forEach(el => {
+      el.style.filter = "";
+      el.style.backgroundColor = theColor;
+    });
+
+    // Restore the original selection color
+    setCodeMirrorSelectionColor();
+
+  }
+}
+
 function wireClickish(cm, AUTOSCROLLDEBOUNCEMS) {
 
   const scroller = cm.getScrollerElement();
@@ -58584,6 +58637,8 @@ function initCodeMirror(){
       });
     }
 
+    window.gTheCM = cm;
+
     gSyntaxDarkMode = false;
     val = localStorage.SyntaxDarkMode
     if (val) {
@@ -58591,16 +58646,7 @@ function initCodeMirror(){
     }
 
     // Dark mode toggle
-    if (gSyntaxDarkMode){
-      document.querySelectorAll(".CodeMirror").forEach(el => {
-        el.style.filter = "invert(100%)";
-      });
-    }
-    else{
-      document.querySelectorAll(".CodeMirror").forEach(el => {
-        el.style.filter = "";
-      });
-    }
+    setCMDarkMode(gDarkModeColor,"white");
 
     // ---- Per-tune line numbers (restart at each X:, skip blanks)
     function computeAbcLineNumbers(doc) {
@@ -58659,9 +58705,6 @@ function initCodeMirror(){
 
     // Initial paint
     recomputeAndPaintAll();
-
-    // Optional: expose cm for later setValue() calls in your app
-    window.gTheCM = cm;
 
     // Usage after creating your CodeMirror editor
     addTextareaSelectionShim(cm);
