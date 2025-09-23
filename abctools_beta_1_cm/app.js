@@ -481,7 +481,7 @@ var gJumpToTuneAutoscroll = true;
 var gCustomInstrumentShowStatus = true;
 
 // Dark mode color
-var gDarkModeColor = "#e0e0e0";
+var gDarkModeColor = "#E7E7E7";
 
 // Global reference to the ABC editor
 var gTheABC = document.getElementById("abc");
