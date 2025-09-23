@@ -1,0 +1,146 @@
+<html>
+  
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <link rel="profile" href="http://gmpg.org/xfn/11">
+    <title>Generate ABC Transcription Tools Share Link</title>
+    <link rel='dns-prefetch' href='//fonts.googleapis.com' />
+    <link rel='dns-prefetch' href='//s.w.org' />
+    <link rel='preconnect' href='https://secureservercdn.net' crossorigin />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Generate ABC Transcription Tools Share Link" />
+    <meta property="og:description" content="Sample code for generating ABC Transcription Tool share links." />
+    <meta property="og:url" content="https://michaeleskin.com/tools/create_share_link.html" />
+    <meta property="og:site_name" content="Generate ABC Transcription Tools Share Link" />
+    <meta property="og:image" content="https://michaeleskin.com/abctools/img/abc-icon.png" />
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="msapplication-TileImage" content="https://michaeleskin.com/abctools/img/abc-ms-icon-144x144.png">
+    <meta name="viewport" content="width=860">
+    <link rel="apple-touch-icon" sizes="57x57" href="https://michaeleskin.com/abctools/img/abc-apple-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="https://michaeleskin.com/abctools/img/abc-apple-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="https://michaeleskin.com/abctools/img/abc-apple-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="https://michaeleskin.com/abctools/img/abc-apple-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="https://michaeleskin.com/abctools/img/abc-apple-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="https://michaeleskin.com/abctools/img/abc-apple-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="https://michaeleskin.com/abctools/img/abc-apple-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="https://michaeleskin.com/abctools/img/abc-apple-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="https://michaeleskin.com/abctools/img/abc-apple-icon-180x180.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="https://michaeleskin.com/abctools/img/abc-android-icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="https://michaeleskin.com/abctools/img/abc-favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="https://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
+    <link rel="manifest" href="https://michaeleskin.com/abctools/img/abc-manifest.json">
+    <link rel="stylesheet" href="generate_share_link.css?v=2"/>    
+  </head>
+  <body>
+    
+    <div id="maindiv">
+      
+      <div>
+        
+        <div style="text-align: center;">
+          <h1>Generate ABC Transcription Tools Share Link</h1>
+          <h2>Sample Code for 3rd Party Developers</h2>
+        </div>
+        
+        <h4 style="margin-top:32px;">Instructions:&nbsp;&nbsp;<a href="#abcinput">Jump to Tool</a></h4>
+        
+        <p>1)&nbsp;Click "Open an existing .ABC file" to open a file or paste one or more ABC tunes into the box below.</p>
+        <p>2)&nbsp;Choose your desired tablature display option from the "Tablature options" dropdown menu.
+        <p>3)&nbsp;If you want to have the Player in the tool automatically open when a user opens the Share Link, check the "Add Auto-Play to Share Link" checkbox.
+        <p>4)&nbsp;Click "Generate Share Link".</p>
+        <p>The generated share link will appear in the "Generated Share Link" box.</p>
+        <p>5)&nbsp;Save, Copy or Test the results:</p>
+        <p>Click "Save Output to a file" to save the results to a file.</p>
+        <p>Click "Copy Output to the clipboard" to copy the results to the system clipboard for pasting into other applications.</p>
+        <p>Click "Test Output in the ABC Transcription Tools" to open and test the Share Link in my <a href="https://michaeleskin.com/abctools/abctools.html" target="_blank">ABC Transcription Tools</a></p>
+        
+      </div>
+      
+      <hr id="abcinput">
+      
+      <div style="text-align:left">
+        
+        <h4>ABC Input:</h4>
+        
+        <div style="margin-top:28px;margin-bottom:36px;">
+          <p>
+            <input type="file" id="selectabcfile" accept=".abc,.txt,.ABC,.TXT"  hidden/>
+            <label class="abcupload btn btn-controls" for="selectabcfile" title="Opens an existing ABC file">Open an existing .ABC file</label>
+          </p>
+        </div>
+
+        <p>
+          <textarea id="input" placeholder="Enter ABC notation here" spellcheck="false" autocorrect="off" autocapitalize="none">
+          </textarea>
+        </p>
+      
+        
+        <p>
+
+          <span style="">Tablature options:&nbsp;&nbsp;</span>
+          
+          <select id="tablature_options">
+            
+            <option value="noten">&nbsp;&nbsp;Standard notation only</option>
+            <option value="notenames">&nbsp;&nbsp;Note names</option>
+            <option value="mandolin">&nbsp;&nbsp;Mandolin</option>
+            <option value="gdad">&nbsp;&nbsp;GDAD Bouzouki</option>
+            <option value="cgda">&nbsp;&nbsp;CGDA Mandola</option>
+            <option value="cgdae">&nbsp;&nbsp;CGDAE Bouzouki</option>
+            <option value="dgdae">&nbsp;&nbsp;DGDAE Bouzouki</option>
+            <option value="guitare">&nbsp;&nbsp;Standard tuned guitar</option>
+            <option value="guitard">&nbsp;&nbsp;DADGAD tuned guitar</option>
+            <option value="uke">&nbsp;&nbsp;Ukulele</option>
+            <option value="whistle">&nbsp;&nbsp;Whistle</option>
+            
+          </select>
+          
+        </p>
+
+        <p><input type="checkbox" id="addAutoPlay" checked="true">&nbsp;&nbsp;Add Auto-Play to Share Link</p>
+      
+        <p style="margin-top:24px"><button id="generateShareLink" class="btn btn-generate" onClick="UI_GenerateShareLink();">Generate Share Link</button></p>
+        
+        <div style="margin-bottom: 18px;">
+          
+          <h4>Generated Share Link:</h4>
+          
+        </div>
+        
+        <textarea id="output" placeholder="Generated Share Link will appear here" spellcheck="false" autocorrect="off" autocapitalize="none"></textarea>
+        
+        <p style="margin-top:20px;">
+          
+          <button id="copybutton" class="btn btn-controls" onClick="copyOutputToClipboard();">Copy Share Link to the clipboard</button>
+          
+          <button style="margin-left:24px;" class="btn btn-controls" onClick="saveOutput();">Save Share Link to a file</button>
+          
+          <button style="margin-left:24px;" class="btn btn-controls" onClick="testOutput();">Test Share Link in the ABC Transcription Tools</button>
+          
+        </p>
+        
+      </div>
+                  
+      <hr>
+      
+      <div style="text-align: center;">
+        
+        <p style="text-align: center">Complete source code for this utility may be found on GitHub</p>
+        
+        <p style="text-align: center"> <a href="https://github.com/seisiuneer/abctools/tree/main/tools" target="_blank">Generate ABC Transcription Tools Share Link on Github</a></p>
+        
+        <hr style="margin-bottom:50px">
+        
+      </div>
+      
+    </div>
+    
+  </body>
+  
+  <script src="generate_share_link.js?v=2" type="text/javascript"></script>
+  <script type="text/javascript" src="lz-string.min.js?v=2"></script>
+  <script type="text/javascript" src="daypilot-modal.min-3.10.1.js?v=2"></script>
+  
+</html>

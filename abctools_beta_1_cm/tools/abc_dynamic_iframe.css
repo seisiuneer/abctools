@@ -1,0 +1,42 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #ffffff;
+    margin: 0px;
+    padding: 0px;
+}
+
+.container {
+    max-width: 1024px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+h1 {
+    font-size: 28px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+h2 {
+    font-size: 18px;
+    margin-bottom: 20px;
+}
+
+select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' fill='%238C98F2'><polygon points='0,0 100,0 50,50'/></svg>") no-repeat;
+    background-size: 12px;
+    background-position: calc(100% - 10px) center;
+    background-repeat: no-repeat;
+    background-color: #efefef;
+    color:black;
+    font-size: 18px;
+    padding: 5px;
+    margin-bottom: 20px;
+}
+
+iframe {
+    border: 1px solid #ccc;
+}

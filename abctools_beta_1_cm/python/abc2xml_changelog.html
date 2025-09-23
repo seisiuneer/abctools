@@ -1,0 +1,120 @@
+<!DOCTYPE HTML><html><head><meta charset="utf-8"></head>
+<body><pre>2024-04-10
+
+	* Revision: 242
+	- implement !rbstop!, meaning: the current started volta will be stopped at
+	the next bar line (limitation of MusicXML)
+
+	* Revision: 241
+	- bug: incorrect parsing of tilde in lyrics (reported by Gáspár Erdélyi)
+
+2024-02-11
+
+	* Revision: 240
+	- initial-scale bug
+
+2023-03-29
+
+	* Revision: 239
+	- added a list of diagnostic messages (global info_list)
+	- only use sys.stdin.buffer when stdin is available (i.e. when run as main
+	program on the command line)
+	- only write diagnostic messages to stdout when run as main program
+	- added function getInfo() to read and clear the diagnostic messages when
+	abc2xml is imported as a library
+
+2022-09-27
+
+	* Revision: 238
+	- made pyparsing library (2.0.1) compatible with python 3.10 In version 3.10
+	the MutableMapping class was removed from the collections module.
+
+2022-05-14
+
+	* Revision: 237
+	- explicitly merge a backwards repeat when it appears at the end of an empty
+	overlay measure
+
+2022-01-21
+
+	* Revision: 236
+	- implement a separate slur stack for each overlay voice
+
+	* Revision: 235
+	- bug: slur numbers were wrong in voice overlay (reported by Chris Spencer)
+
+2021-11-24
+
+	* Revision: 234
+	- accept '-' as valid ABC input file name for reading from standard input
+
+2021-09-30
+
+	* Revision: 233
+	- retrieve score title from xml document when writing the output file when
+	the -t option is present (allows -t and -m to be used together)
+	- split a tune collection only on X: when it occurs at the beginning of a line
+
+2021-09-01
+
+	* Revision: 232
+	- correctly translate shorted tuplet notation (p:q
+
+2021-05-28
+
+	* Revision: 231
+	- added grammer for 13th chords
+	- also recognize min6, min7, etc in addition to m6 m7 etc.
+
+2021-05-27
+
+	* Revision: 230
+	- added translation of sus chords (sus, sus4 and sus2)
+
+2020-11-15
+
+	* Revision: 229
+	- added support for melisma's (contibuted by Michael Strasser) The
+	translation uses the lyric type attribute from MusicXML 3.0 for precise
+	layout, which is unfortunately not supported by MuseScore 3.5.2
+
+2020-07-23
+
+	* Revision: 228
+	- merged patch from Martin Tarenskeen with various corrections for Python3
+	- bug: single slash division resulting in floats for &lt;duration&gt;
+
+2020-07-19
+
+	* Revision: 227
+	- avoid rounding in computation of durations for 7 and 9 tupplets
+	- use greatest common divisor to get the smallest &lt;divisions&gt; value, but not
+	smaller than 120 for backwards compatibility.
+
+2020-05-19
+
+	* Revision: 226
+	- add dummy instrument name in mkInst(). (bug MuseScore) MuseScore
+	incorrectly places unpitched notes when no instrument name is present (empty
+	instrument-name tag).
+
+	* Revision: 225
+	- bug in parameters passing to getXmlScores and mxm.parse The bug caused
+	options -b, -f and -t to stop working. Bug introduced in revision 221, 9
+	months ago
+
+2020-03-23
+
+	* Revision: 224
+	- a rest that lasts a full measure gets the attribute measure="yes" and does
+	not get an xml note type.
+
+2020-03-22
+
+	* Revision: 223
+	- also output a tie element (for playback) in addition to a tied element
+	(for notation)
+	- and remove the added tie element properly when converting an illegal tie to
+	a slur
+
+</pre></body></html>
