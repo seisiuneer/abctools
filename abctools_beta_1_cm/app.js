@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "2818_092425_1000_BETA";
+var gVersionNumber = "2821_092425_1030_BETA";
 
 var gMIDIInitStillWaiting = false;
 
@@ -58204,12 +58204,12 @@ function DoStartup() {
 }
 
 function cm_preserveScroll() {
-  return cm.getScrollInfo();           // {left, top, ...}
+  return gTheCM.getScrollInfo();           // {left, top, ...}
 }
 
 function cm_restoreScroll(s) {
-  cm.scrollTo(s.left, s.top);
-  cm.scrollIntoView(cm.getCursor(), 50);   // keep caret visible without jumping
+  gTheCM.scrollTo(s.left, s.top);
+  gTheCM.scrollIntoView(gTheCM.getCursor(), 50);   // keep caret visible without jumping
 }
 
 function isDesktopSafari() {
@@ -58228,8 +58228,8 @@ function installEditorSelectionBehavior() {
   const style = document.createElement("style");
   style.id = "cm-selection-policy";
 
-  if (isDesktopSafari()) {
-    // Desktop Safari → use CM’s own selection paint, suppress native overlay
+  if (isPureDesktopBrowser()) {
+    // Desktop browser → use CM’s own selection paint, suppress native overlay
     style.textContent = `
       /* Hide native selection overlay so CM's layer is visible */
       .CodeMirror ::selection,
@@ -58243,7 +58243,7 @@ function installEditorSelectionBehavior() {
       }
     `;
   } else {
-    // Non-desktop-Safari → **native selection** only (no special rules needed).
+    // Non-desktop → **native selection** only (no special rules needed).
     // We intentionally do NOT style .CodeMirror-selected here so native paint shows.
     style.textContent = ``;
   }
@@ -58299,8 +58299,8 @@ function fixSafariGhostSelection(cm) {
 }
 
 function setCodeMirrorSelectionColor(bgColorUF, bgColorF) {
-  // Only relevant when CM paints selection (desktop Safari)
-  if (!isDesktopSafari()) {
+  // Only relevant when CM paints selection (desktop browsers)
+  if (!isPureDesktopBrowser()) {
     // Ensure any previous CM-only overrides are removed so native paint is visible
     const existing = document.getElementById("cm-selection-style");
     if (existing) existing.remove();
@@ -58328,7 +58328,7 @@ function setCMDarkMode(theDarkModeColor, theLightModeColor){
     wrapper.style.backgroundColor = theDarkModeColor;
     scroller.style.filter = "invert(100%)";
     scroller.style.backgroundColor = theDarkModeColor;
-    if (isDesktopSafari()) setCodeMirrorSelectionColor("#D0D0D0", "#B0B0B0");
+    if (isPureDesktopBrowser()) setCodeMirrorSelectionColor("#D0D0D0", "#B0B0B0");
     else setCodeMirrorSelectionColor(); // remove override
   } else {
     wrapper.style.backgroundColor = theLightModeColor;
@@ -58741,7 +58741,7 @@ function initCodeMirror(){
 
     window.gTheCM = cm;
 
-    // Fix desktop Safari selection issues
+    // Fix desktop selection issues
     installEditorSelectionBehavior();
 
     gSyntaxDarkMode = false;
