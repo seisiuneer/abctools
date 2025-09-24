@@ -979,6 +979,10 @@ function setABCEditorText(theText) {
 
   if (typeof gTheCM !== "undefined"){
     gTheCM.setValue(theText);
+
+    // Shouldn't be required
+    //gTheCM.refresh();
+    
   }
 
 }
@@ -58192,6 +58196,48 @@ function DoStartup() {
 
 }
 
+function fixSafariGhostSelection(cm) {
+  const isMac = /Mac/.test(navigator.platform);
+  const isSafari = /^((?!chrome|crios|fxios|android).)*safari/i.test(navigator.userAgent);
+  if (!(isMac && isSafari)) return;
+
+  const wrapper = cm.getWrapperElement();
+
+  function repaint() {
+    // WebKit repaint nudge
+    wrapper.style.webkitTransform = 'translateZ(0)';
+    // flush
+    void wrapper.offsetHeight;
+    wrapper.style.webkitTransform = '';
+  }
+
+  // After any selection change, repaint once next frame.
+  cm.on('beforeSelectionChange', () => {
+    requestAnimationFrame(repaint);
+  });
+
+  // After paste, wait for DOM update -> refresh -> repaint (double rAF is safest)
+  function afterPaste() {
+    requestAnimationFrame(() => {
+      cm.refresh();           // force CM to remeasure & redraw selection layers
+      requestAnimationFrame(repaint);
+    });
+  }
+
+  // Cover both DOM and CM paste paths
+  wrapper.addEventListener('paste', () => setTimeout(afterPaste, 0), true);
+  cm.on('inputRead', (_inst, ch) => {
+    if (ch && ch.origin === 'paste') afterPaste();
+  });
+
+  // // Safety net - Disabled for now
+  // cm.on('blur', () => {
+  //   const cur = cm.getCursor();
+  //   cm.setSelection(cur, cur, { scroll: false });
+  //   repaint();
+  // });
+}
+
 // This needs more investigation
 function setCodeMirrorSelectionColor(bgColorUF,bgColorF) {
 
@@ -58711,6 +58757,8 @@ function initCodeMirror(){
 
     // Usage after creating your CodeMirror editor
     addTextareaSelectionShim(cm);
+
+    fixSafariGhostSelection(cm);
 
     // Let the DOM paint, then capture baseline metrics
     setTimeout(() => {

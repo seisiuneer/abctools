@@ -5910,6 +5910,34 @@ line-height: 1.0;          /* plays nicely with wrapped lines */
 /* Editor box */
 .CodeMirror{resize:both;overflow:auto;border:1px solid #ccc;text-align:left}
 
+/* Kill Safari's native selection overlay inside CM. 
+   CM's own selection uses .CodeMirror-selected, so you still see selections. */
+.CodeMirror ::selection { 
+  background: transparent !important; 
+  color: inherit !important;
+}
+.CodeMirror *::selection { 
+  background: transparent !important; 
+  color: inherit !important;
+}
+/* Firefox */
+.CodeMirror ::-moz-selection,
+.CodeMirror *::-moz-selection {
+  background: transparent !important; 
+  color: inherit !important;
+}
+
+/* Ensure CM's own selection is visible (tune color as you like) */
+.CodeMirror .CodeMirror-selected { 
+  background: rgba(90,150,255,0.35) !important; 
+}
+
+/* Helpful on WebKit: make sure text selection is “owned” by CM’s layers */
+.CodeMirror pre {
+  -webkit-user-select: text;
+  user-select: text;
+}
+
 /* iOS/touch patch: let the native scrollbar show */
 @supports (-webkit-touch-callout: none) {
   .CodeMirror-scroll {
