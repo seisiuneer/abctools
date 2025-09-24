@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "2821_092425_1030_BETA";
+var gVersionNumber = "2824_092425_1200_BETA";
 
 var gMIDIInitStillWaiting = false;
 
@@ -51188,7 +51188,7 @@ function DoMultiReadCommon(the_files, fileElement) {
         setABCEditorText(importedTunes);
 
         // Clean any smart quotes
-        CleanSmartQuotes();
+        setABCEditorText(CleanSmartQuotes(importedTunes));
 
         // Reset the tune cache
         clearGetTuneByIndexCache();
@@ -52512,14 +52512,12 @@ function AllowDialogsToScroll() {
 //
 // Clean "smart quotes" from the ABC
 //
-function CleanSmartQuotes() {
+function CleanSmartQuotes(val) {
 
   // Smart quote cleaning disabled
   if (!gCleanSmartQuotes) {
-    return;
+    return val;
   }
-
-  var val = getABCEditorText();
 
   // Double quotes
   val = val.replaceAll('“', '"');
@@ -52529,12 +52527,11 @@ function CleanSmartQuotes() {
   val = val.replaceAll('‘', "'");
   val = val.replaceAll('’', "'");
 
-  setABCEditorText(val);
-
   // Also clear the diagnostics area
   elem = document.getElementById("diagnostics");
   elem.innerHTML = "";
 
+  return val;
 
 }
 
@@ -52670,7 +52667,7 @@ function CheckFacebook_iOS() {
 //
 // Fix the iOS 17 URL encoded paste issue
 //
-function FixIOS17() {
+function FixIOS17(val) {
 
   // Restrict to iOS 17+
 
@@ -52682,8 +52679,6 @@ function FixIOS17() {
   if ((UA.indexOf("Version/17") != -1) || (UA.indexOf("OS 17") != -1) || (UA.indexOf("Version/18") != -1) || (UA.indexOf("OS 18") != -1) || (UA.indexOf("FxiOS") != -1)) {
 
     //alert("Doing iOS 17 fix");
-
-    var val = getABCEditorText();
 
     try {
 
@@ -52706,10 +52701,15 @@ function FixIOS17() {
 
     val = val.replaceAll("%3A", ":")
     val = val.replaceAll("x:", "X:");
-
-    setABCEditorText(val);
+    
+    return val;
+  }
+  else{
+    
+    return val;
 
   }
+
 
 }
 
@@ -57360,48 +57360,6 @@ function DoStartup() {
     }, DEBOUNCEMS)
   );
 
-
-  //
-  // Clean "smart quotes" on paste
-  //
-  // --- 2) PASTE (was textarea.onpaste) ----------------------------------------
-  // Use the DOM paste event on the CodeMirror wrapper (most robust)
-  gTheCM.getWrapperElement().addEventListener("paste", function (e) {
-    // Detect if the paste likely contains a whole tune → force full redraw
-    let forceRender = false;
-
-    var s = cm_preserveScroll;
-
-    const cd = e.clipboardData || window.clipboardData;
-    if (cd) {
-      const pasted = cd.getData("text");
-      if (pasted && pasted.indexOf("X:") !== -1) {
-        forceRender = true;
-      }
-    }
-
-    // Let CM process the paste first, then run your cleaners
-    setTimeout(function () {
-
-      cm_restoreScroll(s);
-      
-      CleanSmartQuotes();
-
-      // Set dirty
-      gIsDirty = true;
-
-      if (gIsIOS) {
-        // iOS 17 workaround
-        FixIOS17();
-      } else if (forceRender) {
-        // Force a full redraw after big pastes
-        setTimeout(function () {
-          RenderAsync(true, null);
-        }, 250);
-      }
-    }, 0);
-  });
-
   //
   // Setup the file import control
   //
@@ -58212,6 +58170,107 @@ function cm_restoreScroll(s) {
   gTheCM.scrollIntoView(gTheCM.getCursor(), 50);   // keep caret visible without jumping
 }
 
+function setupStableManualPaste(cm) {
+  const wrap = cm.getWrapperElement();
+  const input = cm.getInputField(); // hidden textarea (or contenteditable shim)
+
+  function preserve() {
+    const si = cm.getScrollInfo();
+    return {
+      left: si.left,
+      top: si.top,
+      sels: cm.listSelections(),
+      hadFocus: cm.hasFocus()
+    };
+  }
+
+  function restore(saved) {
+    requestAnimationFrame(() => {
+      cm.refresh();
+      requestAnimationFrame(() => {
+        cm.scrollTo(saved.left, saved.top);
+
+        // keep caret in view only if needed (don’t fight saved scroll)
+        const info = cm.getScrollInfo();
+        const c = cm.charCoords(cm.getCursor(), "local");
+        const margin = 50;
+        if (c.top < info.top + margin || c.bottom > info.top + info.clientHeight - margin) {
+          cm.scrollIntoView(cm.getCursor(), margin);
+        }
+        if (saved.hadFocus) cm.focus();
+      });
+    });
+  }
+
+  function handleManualPaste(e) {
+    const cd = e.clipboardData || window.clipboardData;
+    if (!cd) return; // if we can't read, let CM handle it
+
+    var text = cd.getData("text/plain");
+    
+    if (text == null) return;
+
+    // If a tune was pasted, need to force full redraw
+    var forceRender = false;
+
+    if (text.indexOf("X:") !== -1) {
+      forceRender = true;
+    }
+
+    text = CleanSmartQuotes(text);
+
+    // Set dirty
+    gIsDirty = true;
+
+    if (gIsIOS) {
+
+      // iOS 17 workaround
+      text = FixIOS17(text);
+
+    }
+
+    if (forceRender) {
+
+      // Force a full redraw if pasting tunes
+
+      setTimeout(function () {
+
+        RenderAsync(true, null);
+
+      }, 250);
+
+    }
+
+    // *** Crucial for Firefox: fully short-circuit default + CM handlers
+    e.preventDefault();
+    if (typeof e.stopImmediatePropagation === "function") e.stopImmediatePropagation();
+    e.stopPropagation();
+
+    const saved = preserve();
+
+    // Firefox can drop selection if the editor isn’t focused—force focus first
+    if (!cm.hasFocus()) cm.focus();
+
+    cm.operation(() => {
+      const sels = saved.sels && saved.sels.length ? saved.sels : cm.listSelections();
+      if (sels.length > 1) {
+        // multi-caret: paste same text in each selection and put carets at ends
+        const inserts = new Array(sels.length).fill(text);
+        cm.replaceSelections(inserts, "end", "paste-manual");
+      } else {
+        // single selection
+        cm.replaceSelections([text], "end", "paste-manual");
+      }
+    });
+
+    restore(saved);
+  }
+
+  // Capture-phase listeners so we beat CM’s internal handler on all engines
+  wrap.addEventListener("paste", handleManualPaste, true);
+  input.addEventListener("paste", handleManualPaste, true); // <-- fixes Firefox
+}
+
 function isDesktopSafari() {
   const ua = navigator.userAgent;
   const isSafari = /^((?!chrome|crios|fxios|android|edg|firefox).)*safari/i.test(ua);
@@ -58271,31 +58330,6 @@ function fixSafariGhostSelection(cm) {
   cm.on('beforeSelectionChange', () => {
     requestAnimationFrame(repaint);
   });
-
-  // After paste, wait for DOM update -> refresh -> repaint (double rAF is safest)
-  function afterPaste() {
-    requestAnimationFrame(() => {
-      cm.refresh();           // force CM to remeasure & redraw selection layers
-      requestAnimationFrame(repaint);
-    });
-  }
-  // Cover both DOM and CM paste paths
-  wrapper.addEventListener('paste', () => setTimeout(afterPaste, 0), true);
-  cm.on('inputRead', (_inst, ch) => {
-    var s = cm_preserveScroll()
-    if (ch && ch.origin === 'paste') {
-      afterPaste();
-      cm_restoreScroll(s);
-    }
-
-  });
-
-  // // Safety net - Disabled for now
-  // cm.on('blur', () => {
-  //   const cur = cm.getCursor();
-  //   cm.setSelection(cur, cur, { scroll: false });
-  //   repaint();
-  // });
 }
 
 function setCodeMirrorSelectionColor(bgColorUF, bgColorF) {
@@ -58812,6 +58846,8 @@ function initCodeMirror(){
     addTextareaSelectionShim(cm);
 
     fixSafariGhostSelection(cm);
+
+    setupStableManualPaste(gTheCM);
 
     // Let the DOM paint, then capture baseline metrics
     setTimeout(() => {
