@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "2788_092325_1700_BETA";
+var gVersionNumber = "2789_092325_1800_BETA";
 
 var gMIDIInitStillWaiting = false;
 
@@ -982,7 +982,7 @@ function setABCEditorText(theText) {
 
     // Shouldn't be required
     //gTheCM.refresh();
-    
+
   }
 
 }
@@ -57368,6 +57368,8 @@ function DoStartup() {
     // Detect if the paste likely contains a whole tune → force full redraw
     let forceRender = false;
 
+    var s = cm_preserveScroll;
+
     const cd = e.clipboardData || window.clipboardData;
     if (cd) {
       const pasted = cd.getData("text");
@@ -57378,6 +57380,9 @@ function DoStartup() {
 
     // Let CM process the paste first, then run your cleaners
     setTimeout(function () {
+
+      cm_restoreScroll(s);
+      
       CleanSmartQuotes();
 
       // Set dirty
@@ -58196,6 +58201,16 @@ function DoStartup() {
 
 }
 
+function cm_preserveScroll() {
+  return cm.getScrollInfo();           // {left, top, ...}
+}
+
+function cm_restoreScroll(s) {
+  cm.scrollTo(s.left, s.top);
+  cm.scrollIntoView(cm.getCursor(), 50);   // keep caret visible without jumping
+}
+
+
 function fixSafariGhostSelection(cm) {
   const isMac = /Mac/.test(navigator.platform);
   const isSafari = /^((?!chrome|crios|fxios|android).)*safari/i.test(navigator.userAgent);
@@ -58223,11 +58238,15 @@ function fixSafariGhostSelection(cm) {
       requestAnimationFrame(repaint);
     });
   }
-
   // Cover both DOM and CM paste paths
   wrapper.addEventListener('paste', () => setTimeout(afterPaste, 0), true);
   cm.on('inputRead', (_inst, ch) => {
-    if (ch && ch.origin === 'paste') afterPaste();
+    var s = cm_preserveScroll()
+    if (ch && ch.origin === 'paste') {
+      afterPaste();
+      cm_restoreScroll(s);
+    }
+
   });
 
   // // Safety net - Disabled for now
