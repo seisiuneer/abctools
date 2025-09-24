@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "2789_092325_1800_BETA";
+var gVersionNumber = "2818_092425_1000_BETA";
 
 var gMIDIInitStillWaiting = false;
 
@@ -56983,9 +56983,6 @@ function DoStartup() {
 
   }
 
-  initCodeMirror();
-  wireClickish(gTheCM, AUTOSCROLLDEBOUNCEMS);
-
   // Check if online (always returns true for normal case)
   doOnlineCheck();
 
@@ -57059,6 +57056,11 @@ function DoStartup() {
   if (gIsFacebook) {
     return;
   }
+
+  // Init the CodeMirror editor
+  initCodeMirror();
+
+  wireClickish(gTheCM, AUTOSCROLLDEBOUNCEMS);
 
   //
   // Uncomment these lines as desired for mobile simulation testing
@@ -58210,6 +58212,45 @@ function cm_restoreScroll(s) {
   cm.scrollIntoView(cm.getCursor(), 50);   // keep caret visible without jumping
 }
 
+function isDesktopSafari() {
+  const ua = navigator.userAgent;
+  const isSafari = /^((?!chrome|crios|fxios|android|edg|firefox).)*safari/i.test(ua);
+  const isMac = /Mac/.test(navigator.platform) || /Mac OS X/.test(ua);
+  const isTouch = (navigator.maxTouchPoints || 0) > 1; // iPadOS “Mac” quirk
+  return isSafari && isMac && !isTouch; // strictly desktop Safari
+}
+
+function installEditorSelectionBehavior() {
+  // Nuke any previous policy
+  const prev = document.getElementById("cm-selection-policy");
+  if (prev) prev.remove();
+
+  const style = document.createElement("style");
+  style.id = "cm-selection-policy";
+
+  if (isDesktopSafari()) {
+    // Desktop Safari → use CM’s own selection paint, suppress native overlay
+    style.textContent = `
+      /* Hide native selection overlay so CM's layer is visible */
+      .CodeMirror ::selection,
+      .CodeMirror *::selection { background: transparent !important; color: inherit !important; }
+      .CodeMirror ::-moz-selection,
+      .CodeMirror *::-moz-selection { background: transparent !important; color: inherit !important; }
+
+      /* Make CM's selection visible */
+      .CodeMirror .CodeMirror-selected {
+        background: rgba(90,150,255,0.35) !important;
+      }
+    `;
+  } else {
+    // Non-desktop-Safari → **native selection** only (no special rules needed).
+    // We intentionally do NOT style .CodeMirror-selected here so native paint shows.
+    style.textContent = ``;
+  }
+
+  document.head.appendChild(style);
+}
+
 
 function fixSafariGhostSelection(cm) {
   const isMac = /Mac/.test(navigator.platform);
@@ -58257,52 +58298,43 @@ function fixSafariGhostSelection(cm) {
   // });
 }
 
-// This needs more investigation
-function setCodeMirrorSelectionColor(bgColorUF,bgColorF) {
+function setCodeMirrorSelectionColor(bgColorUF, bgColorF) {
+  // Only relevant when CM paints selection (desktop Safari)
+  if (!isDesktopSafari()) {
+    // Ensure any previous CM-only overrides are removed so native paint is visible
+    const existing = document.getElementById("cm-selection-style");
+    if (existing) existing.remove();
+    return;
+  }
 
-  // Remove existing override if present
   const existing = document.getElementById("cm-selection-style");
   if (existing) existing.remove();
+  if (!bgColorUF || !bgColorF) return;
 
-  // If no colors passed, just remove override
-  if ((!bgColorUF) || (!bgColorF))  return;
-
-  // Build new CSS
   const style = document.createElement("style");
   style.id = "cm-selection-style";
   style.textContent = `
     .CodeMirror-selected { background: ${bgColorUF} !important; }
     .CodeMirror-focused .CodeMirror-selected { background: ${bgColorF} !important; }
   `;
-
   document.head.appendChild(style);
-
 }
 
-// Setup the Codemirror dark mode
 function setCMDarkMode(theDarkModeColor, theLightModeColor){
+  const wrapper = gTheCM.getWrapperElement();
+  const scroller = gTheCM.getScrollerElement();
 
-  // Dark mode toggle
   if (gSyntaxDarkMode){
-    gTheCM.getWrapperElement().style.backgroundColor = theDarkModeColor;
-    document.querySelectorAll(".CodeMirror").forEach(el => {
-      el.style.filter = "invert(100%)";
-      el.style.backgroundColor = theDarkModeColor;
-    });
-
-    // Change the dark mode selection color
-    setCodeMirrorSelectionColor("#D0D0D0","#B0B0B0");
-  }
-  else{
-    gTheCM.getWrapperElement().style.backgroundColor = theLightModeColor;
-    document.querySelectorAll(".CodeMirror").forEach(el => {
-      el.style.filter = "";
-      el.style.backgroundColor = theLightModeColor;
-    });
-
-    // Restore the original selection color
-    setCodeMirrorSelectionColor();
-
+    wrapper.style.backgroundColor = theDarkModeColor;
+    scroller.style.filter = "invert(100%)";
+    scroller.style.backgroundColor = theDarkModeColor;
+    if (isDesktopSafari()) setCodeMirrorSelectionColor("#D0D0D0", "#B0B0B0");
+    else setCodeMirrorSelectionColor(); // remove override
+  } else {
+    wrapper.style.backgroundColor = theLightModeColor;
+    scroller.style.filter = "";
+    scroller.style.backgroundColor = theLightModeColor;
+    setCodeMirrorSelectionColor(); // remove override
   }
 }
 
@@ -58693,7 +58725,8 @@ function initCodeMirror(){
         lineNumbers: false,                   // we use our own gutter
         gutters: ["abc-line-gutter"],
         mode: theMode,   // ← enable highlighting
-        viewportMargin: theViewportMargin
+        viewportMargin: theViewportMargin,
+        inputStyle: isMobileBrowser() ? "contenteditable" : "textarea",
       });
     }
     else{
@@ -58701,11 +58734,15 @@ function initCodeMirror(){
         lineWrapping: true,
         lineNumbers: false,                   // we use our own gutter
         gutters: ["abc-line-gutter"],
-        mode: null   // ← disable highlighting
+        mode: null,   // ← disable highlighting
+        inputStyle: isMobileBrowser() ? "contenteditable" : "textarea",
       });
     }
 
     window.gTheCM = cm;
+
+    // Fix desktop Safari selection issues
+    installEditorSelectionBehavior();
 
     gSyntaxDarkMode = false;
     val = localStorage.SyntaxDarkMode
@@ -58767,9 +58804,6 @@ function initCodeMirror(){
     function refreshAfterLayout() { cm.refresh(); paintViewport(); }
     window.addEventListener("resize", () => requestAnimationFrame(refreshAfterLayout));
     new ResizeObserver(() => refreshAfterLayout()).observe(cm.getWrapperElement());
-
-    // If you change font size, do it on the CM wrapper (textarea is hidden):
-    // cm.getWrapperElement().style.fontSize = '16px'; refreshAfterLayout();
 
     // Initial paint
     recomputeAndPaintAll();

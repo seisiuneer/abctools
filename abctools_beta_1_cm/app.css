@@ -5908,28 +5908,11 @@ line-height: 1.0;          /* plays nicely with wrapped lines */
 .cm-abccss { color:#a300a3 !important; }     /* Custom CSS */
 
 /* Editor box */
-.CodeMirror{resize:both;overflow:auto;border:1px solid #ccc;text-align:left}
-
-/* Kill Safari's native selection overlay inside CM. 
-   CM's own selection uses .CodeMirror-selected, so you still see selections. */
-.CodeMirror ::selection { 
-  background: transparent !important; 
-  color: inherit !important;
-}
-.CodeMirror *::selection { 
-  background: transparent !important; 
-  color: inherit !important;
-}
-/* Firefox */
-.CodeMirror ::-moz-selection,
-.CodeMirror *::-moz-selection {
-  background: transparent !important; 
-  color: inherit !important;
-}
-
-/* Ensure CM's own selection is visible (tune color as you like) */
-.CodeMirror .CodeMirror-selected { 
-  background: rgba(90,150,255,0.35) !important; 
+.CodeMirror{
+	resize:both;
+	border:1px solid #ccc;
+	text-align:left;
+	overflow:auto;
 }
 
 /* Helpful on WebKit: make sure text selection is “owned” by CM’s layers */
@@ -5958,6 +5941,12 @@ line-height: 1.0;          /* plays nicely with wrapped lines */
     border-radius: 6px;
   }
 }
+
+/*
+body{
+	color:green;
+}
+*/
 
 /******************************************************************************/
 /* STYLES RELATED TO BUTTONS                                                  */
