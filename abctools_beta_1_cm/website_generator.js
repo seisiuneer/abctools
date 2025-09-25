@@ -681,7 +681,7 @@ function generateAndSaveWebsiteFull() {
 
     var theOutput = "";
 
-    var theABC = gTheABC.value;
+    var theABC = getABCEditorText();
 
     // For local storage naming
     var postFix = generatePostfix();
@@ -1616,7 +1616,7 @@ function generateAndSaveWebsiteSimple() {
 
     var theOutput = "";
 
-    var theABC = gTheABC.value;
+    var theABC = getABCEditorText();
 
     // For local storage naming
     var postFix = generatePostfix();
@@ -2011,7 +2011,7 @@ function generateAndSaveWebsiteImageGallery() {
 
     var theOutput = "";
 
-    var theABC = gTheABC.value;
+    var theABC = getABCEditorText();
 
     // For local storage naming
     var postFix = generatePostfix();
@@ -2569,7 +2569,7 @@ function generateAndSaveWebsiteLightbox() {
 
     var theOutput = "";
 
-    var theABC = gTheABC.value;
+    var theABC = getABCEditorText();
 
     // For local storage naming
     var postFix = generatePostfix();

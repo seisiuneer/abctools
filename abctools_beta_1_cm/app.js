@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "2826_092425_1800_BETA";
+var gVersionNumber = "2827_092525_1000_BETA";
 
 var gMIDIInitStillWaiting = false;
 
@@ -480,17 +480,20 @@ var gJumpToTuneAutoscroll = true;
 // Show status dialog after custom instrument load
 var gCustomInstrumentShowStatus = true;
 
-// Enable syntax highlighting
-var gEnableSyntax = true;
-
-// Enable dark mode
-var gSyntaxDarkMode = false;
-
 // Light mode color
 var gLightModeColor = "#FDFDFD";
 
 // Dark mode color
 var gDarkModeColor = "#E7E7E7";
+
+// Default is to only use CodeMirror on desktop browsers 
+var gEnableSyntax = true;
+
+// Light mode by default
+var gSyntaxDarkMode = false;
+
+// Syntax highlighting margin in lines
+var gSyntaxViewportMargin = 20;
 
 // Global reference to the ABC editor
 var gTheABC = document.getElementById("abc");
@@ -983,12 +986,18 @@ function setABCEditorText(theText) {
 
   clearGetTuneByIndexCache();
 
-  if (typeof gTheCM !== "undefined"){
-    gTheCM.setValue(theText);
+  if (gEnableSyntax){
+ 
+    if (typeof gTheCM !== "undefined"){
+      gTheCM.setValue(theText);
 
-    // Shouldn't be required
-    //gTheCM.refresh();
+      // Shouldn't be required
+      //gTheCM.refresh();
 
+    }
+  }
+  else{
+     gTheABC.value = theText;
   }
 
 }
@@ -997,11 +1006,17 @@ function setABCEditorText(theText) {
 // Get the editor text
 //
 function getABCEditorText(){
-  if (typeof gTheCM !== "undefined"){
-    return gTheCM.getValue();
+
+  if (gEnableSyntax){
+    if (typeof gTheCM !== "undefined"){
+      return gTheCM.getValue();
+    }
+    else{
+      return "";
+    }
   }
   else{
-    return "";
+    return gTheABC.value;
   }
 }
 
@@ -1389,7 +1404,14 @@ function findSelectedTune() {
   var theNotes = getABCEditorText();
 
   // Obtain the object reference for the <textarea>
-  var txtarea = gTheCM;
+  var txtarea;
+
+  if (gEnableSyntax){
+    txtarea = gTheCM;
+  }
+  else{
+    txtarea  = gTheABC;
+  }
 
   // Obtain the index of the first selected character
   var start = txtarea.selectionStart;
@@ -1600,8 +1622,13 @@ function SetupRawModeUI() {
 
     elem.value = "Highlighting";
 
-    // Dark mode toggle
-    setCMDarkMode(gDarkModeColor,gLightModeColor);
+    if (gEnableSyntax){
+      // Dark mode toggle
+      setCMDarkMode(gDarkModeColor,gLightModeColor);
+    }
+    else{
+      gTheABC.style.backgroundColor = gLightModeColor;
+    }
 
     elem.classList.remove("rawmodebutton");
     elem.classList.add("rawmodebuttondisabled");
@@ -1622,11 +1649,19 @@ function SetupRawModeUI() {
     elem.classList.add("btn-rawmode-off");
     elem.classList.remove("btn-rawmode-on");
 
-    // Dark mode toggle
-    setCMDarkMode(gDarkModeColor,gLightModeColor);
+    if (gEnableSyntax){
+      // Dark mode toggle
+      setCMDarkMode(gDarkModeColor,gLightModeColor);
+    }
+    else{
+      gTheABC.style.backgroundColor = gLightModeColor;
+    }
 
   }
-  gTheCM.refresh();
+  
+  if (gEnableSyntax){
+    gTheCM.refresh();
+  }
 
 }
 
@@ -1720,8 +1755,13 @@ function ToggleRawMode() {
     elem.classList.add("btn-rawmode-on");
     elem.classList.remove("btn-rawmode-off");
 
-    // Dark mode toggle
-    setCMDarkMode("#ffd6ff","#F8FDF8");
+    if (gEnableSyntax){
+      // Dark mode toggle
+      setCMDarkMode("#ffd6ff","#F8FDF8");
+    }
+    else{
+      gTheABC.style.backgroundColor = "#F8FDF8";
+    }
 
   } else {
 
@@ -1730,11 +1770,18 @@ function ToggleRawMode() {
     elem.classList.add("btn-rawmode-off");
     elem.classList.remove("btn-rawmode-on");
 
-    setCMDarkMode(gDarkModeColor,gLightModeColor);
+    if (gEnableSyntax){
+      setCMDarkMode(gDarkModeColor,gLightModeColor);
+    }
+    else{
+      gTheABC.style.backgroundColor = gLightModeColor;
+    }
 
   }
 
-  gTheCM.refresh();
+  if (gEnableSyntax){
+    gTheCM.refresh();
+  }
 
   // Redraw the tunes
   if (gIsQuickEditor) {
@@ -1906,7 +1953,14 @@ function getTuneRangeForTranspose() {
   var theNotes = getABCEditorText();
 
   // Obtain the object reference for the <textarea>
-  var txtarea = gTheCM;
+  var txtarea;
+  
+  if (gEnableSyntax){
+    txtarea = gTheCM;
+  }
+  else{
+    txtarea = gTheABC;
+  }
 
   // Obtain the index of the first selected character
   var theStart = txtarea.selectionStart;
@@ -1955,8 +2009,14 @@ function resetSelectionAfterTranspose(start, end) {
   var theEndIndex = findTuneOffsetByIndex(end) + (theTune.length - 1);
 
   // Set the select point
-  gTheCM.selectionStart = theStartIndex;
-  gTheCM.selectionEnd = theEndIndex;
+  if (gEnableSyntax){
+    gTheCM.selectionStart = theStartIndex;
+    gTheCM.selectionEnd = theEndIndex;
+  }
+  else{
+    gTheABC.selectionStart = theStartIndex;
+    gTheABC.selectionEnd = theEndIndex;
+  }
 
   // Focus after operation
   FocusAfterOperation();
@@ -2673,7 +2733,14 @@ function DoTransposeToKey(targetKey, transposeAll) {
         }).then(function() {
 
           // Try and keep the same tune after the redraw for immediate play
-          var theSelectionStart = gTheCM.selectionStart;
+          var theSelectionStart;
+          
+          if (gEnableSyntax){
+            theSelectionStart = gTheCM.selectionStart;
+          }
+          else{
+            theSelectionStart = gTheABC.selectionStart;
+          }
 
           // Reset the selection
           if (!transposeAll) {
@@ -2686,8 +2753,15 @@ function DoTransposeToKey(targetKey, transposeAll) {
           } else {
 
             // Set the select point
-            gTheCM.selectionStart = 0;
-            gTheCM.selectionEnd = 0;
+            if (gEnableSyntax){
+              gTheCM.selectionStart = 0;
+              gTheCM.selectionEnd = 0;
+            }
+            else{
+              gTheABC.selectionStart = 0;
+              gTheABC.selectionEnd = 0;
+
+            }
 
             gCurrentTune = 0;
 
@@ -2959,8 +3033,14 @@ function SortTunesByTag(theTag, doCase) {
   gIsDirty = true;
 
   // Reset the selection
-  gTheCM.selectionStart = 0;
-  gTheCM.selectionEnd = 0;
+  if (gEnableSyntax){
+    gTheCM.selectionStart = 0;
+    gTheCM.selectionEnd = 0;
+  }
+  else{
+    gTheABC.selectionStart = 0;
+    gTheABC.selectionEnd = 0;
+  }
 
   // Focus after operation
   FocusAfterOperation();
@@ -3221,8 +3301,14 @@ function SortTunes() {
   gIsDirty = true;
 
   // Reset the selection
-  gTheCM.selectionStart = 0;
-  gTheCM.selectionEnd = 0;
+  if (gEnableSyntax){
+    gTheCM.selectionStart = 0;
+    gTheCM.selectionEnd = 0;
+  }
+  else{
+    gTheABC.selectionStart = 0;
+    gTheABC.selectionEnd = 0;
+  }
 
   // Focus after operation
   FocusAfterOperation();
@@ -3681,8 +3767,14 @@ function RenumberXTags() {
   gIsDirty = true;
 
   // Reset the selection
-  gTheCM.selectionStart = 0;
-  gTheCM.selectionEnd = 0;
+  if (gEnableSyntax){
+    gTheCM.selectionStart = 0;
+    gTheCM.selectionEnd = 0;
+  }
+  else{
+    gTheABC.selectionStart = 0;
+    gTheABC.selectionEnd = 0;
+  }
 
   // Focus after operation
   FocusAfterOperation();
@@ -3859,9 +3951,14 @@ function Clear() {
     elem.classList.add("btn-rawmode-off");
     elem.classList.remove("btn-rawmode-on");
 
-    setCMDarkMode(gDarkModeColor,gLightModeColor);
+    if (gEnableSyntax){
+      setCMDarkMode(gDarkModeColor,gLightModeColor);
 
-    gTheCM.refresh();
+      gTheCM.refresh();
+    }
+    else{
+      gTheABC.style.backgroundColor = gLightModeColor;
+    }
 
     // Turn off raw mode
     gRawMode = false;
@@ -3877,7 +3974,12 @@ function Clear() {
     RenderAsync(true, null);
 
     // And set the focus
-    gTheCM.focus();
+    if (gEnableSyntax){
+      gTheCM.focus();
+    }
+    else{
+      gTheABC.focus();
+    }
 
     // Clear the diagnostics area
     elem = document.getElementById("diagnostics");
@@ -12888,13 +12990,23 @@ function NoteClickListener(abcelem, tuneNumber, classes, analysis, drag, mouseEv
 
     window.scrollTo(0, scrollPos);
 
-    gTheCM.focus();
+    if (gEnableSyntax){
+      gTheCM.focus();
+    }
+    else{
+      gTheABC.focus();
+    }
 
     var theStart = abcelem.startChar;
 
     var theEnd = abcelem.endChar;
 
-    ScrollABCTextIntoView(gTheCM, theStart, theEnd, 2);
+    if (gEnableSyntax){
+      ScrollABCTextIntoView(gTheCM, theStart, theEnd, 2);
+    }
+    else{
+      ScrollABCTextIntoView(gTheABC, theStart, theEnd, 2);
+    }
 
 
   }, 10);
@@ -12932,7 +13044,12 @@ function fireSelectionChanged() {
 
         if (engraver) {
 
-          engraver.rangeHighlight(gTheCM.selectionStart, gTheCM.selectionEnd);
+          if (gEnableSyntax){
+            engraver.rangeHighlight(gTheCM.selectionStart, gTheCM.selectionEnd);
+          }
+          else{
+            engraver.rangeHighlight(gTheABC.selectionStart, gTheABC.selectionEnd);
+          }
 
         }
       }
@@ -14186,9 +14303,14 @@ function Render(renderAll, tuneNumber) {
 
         document.getElementById("rawmodebutton").value = "Highlighting";
 
-        setCMDarkMode(gDarkModeColor,gLightModeColor);
+        if (gEnableSyntax){
+          setCMDarkMode(gDarkModeColor,gLightModeColor);
 
-        gTheCM.refresh();
+          gTheCM.refresh();
+        }
+        else{
+          gTheABC.style.backgroundColor = gLightModeColor;
+        }
 
         // Turn off raw mode
         gRawMode = false;
@@ -14273,9 +14395,14 @@ function Render(renderAll, tuneNumber) {
 
     document.getElementById("rawmodebutton").value = "Highlighting";
 
-    setCMDarkMode(gDarkModeColor,gLightModeColor);
+    if (gEnableSyntax){
+      setCMDarkMode(gDarkModeColor,gLightModeColor);
 
-    gTheCM.refresh();
+      gTheCM.refresh();
+    }
+    else{
+      gTheABC.style.backgroundColor = gLightModeColor;
+    }
 
     // Turn off raw mode
     gRawMode = false;
@@ -17512,11 +17639,20 @@ function ChangeTuneOrderMobile() {
 
           RenderAsync(true, null, function() {
 
-            gTheCM.selectionStart = 0;
-            gTheCM.selectionEnd = 0;
+            if (gEnableSyntax){
+              gTheCM.selectionStart = 0;
+              gTheCM.selectionEnd = 0;
 
-            // And reset the focus
-            gTheCM.focus();
+              // And reset the focus
+              gTheCM.focus();
+            }
+            else{
+              gTheABC.selectionStart = 0;
+              gTheABC.selectionEnd = 0;
+
+              // And reset the focus
+              gTheABC.focus();
+            }
 
             // Scroll to the top
             MakeTuneVisible(true);
@@ -17666,11 +17802,20 @@ function ChangeTuneOrder() {
 
           RenderAsync(true, null, function() {
 
-            gTheCM.selectionStart = 0;
-            gTheCM.selectionEnd = 0;
+            if (gEnableSyntax){
+              gTheCM.selectionStart = 0;
+              gTheCM.selectionEnd = 0;
 
-            // And reset the focus
-            gTheCM.focus();
+              // And reset the focus
+              gTheCM.focus();
+            }
+            else{
+              gTheABC.selectionStart = 0;
+              gTheABC.selectionEnd = 0;
+
+              // And reset the focus
+              gTheABC.focus();
+            }
 
             // Scroll to the top
             MakeTuneVisible(true);
@@ -17911,11 +18056,20 @@ function CullTunes() {
 
             RenderAsync(true, null, function() {
 
-              gTheCM.selectionStart = 0;
-              gTheCM.selectionEnd = 0;
+              if (gEnableSyntax){
+                gTheCM.selectionStart = 0;
+                gTheCM.selectionEnd = 0;
 
-              // And reset the focus
-              gTheCM.focus();
+                // And reset the focus
+                gTheCM.focus();
+              }
+              else{
+                gTheABC.selectionStart = 0;
+                gTheABC.selectionEnd = 0;
+
+                // And reset the focus
+                gTheABC.focus();
+              }
 
               // Scroll to the top
               MakeTuneVisible(true);
@@ -18429,16 +18583,31 @@ function BuildTuneSetAppend() {
 
           if (!gIsMaximized) {
 
+            if (gEnableSyntax){
+              // Scroll the tune ABC into view
+              ScrollABCTextIntoView(gTheCM, tuneOffset, tuneOffset, 10);
+
+              if (isMobileBrowser()) {
+                gTheCM.getInputField().blur();
+                return;
+              }
+
+              gTheCM.getInputField().blur();
+              gTheCM.focus();
+
+            }
+          }
+          else{
             // Scroll the tune ABC into view
-            ScrollABCTextIntoView(gTheCM, tuneOffset, tuneOffset, 10);
+            ScrollABCTextIntoView(gTheABC, tuneOffset, tuneOffset, 10);
 
             if (isMobileBrowser()) {
-              gTheCM.getInputField().blur();
+              gTheABC.blur();
               return;
             }
 
-            gTheCM.getInputField().blur();
-            gTheCM.focus();
+            gTheABC.blur();
+            gTheABC.focus();
 
           }
 
@@ -19846,16 +20015,31 @@ function ProcessAddTune(theValue) {
 
     if (!gIsMaximized) {
 
-      // Scroll the tune ABC into view
-      ScrollABCTextIntoView(gTheCM, tuneOffset, tuneOffset, 10);
+      if (gEnableSyntax){
+        // Scroll the tune ABC into view
+        ScrollABCTextIntoView(gTheCM, tuneOffset, tuneOffset, 10);
 
-      if (isMobileBrowser()) {
+        if (isMobileBrowser()) {
+          gTheCM.getInputField().blur();
+          return;
+        }
+
         gTheCM.getInputField().blur();
-        return;
+        gTheCM.focus();
       }
+      else{
+        // Scroll the tune ABC into view
+        ScrollABCTextIntoView(gTheABC, tuneOffset, tuneOffset, 10);
 
-      gTheCM.getInputField().blur();
-      gTheCM.focus();
+        if (isMobileBrowser()) {
+          gTheABC.blur();
+          return;
+        }
+
+        gTheABC.blur();
+        gTheABC.focus();
+
+      }
 
     }
 
@@ -19912,34 +20096,73 @@ function getTextAreaContentHeight(textarea, offset) {
 }
 
 function ScrollABCTextIntoView(cm, startIndex, endIndex, fraction) {
-  // fraction: e.g. 2 = center, 3 = upper third, 1 = bottom edge
-  if (!fraction || fraction <= 0) fraction = 2;
+  if (gEnableSyntax){
+    // fraction: e.g. 2 = center, 3 = upper third, 1 = bottom edge
+    if (!fraction || fraction <= 0) fraction = 2;
 
-  // Convert absolute indices to CM positions
-  const from = cm.posFromIndex(startIndex);
-  const to   = cm.posFromIndex(endIndex);
+    // Convert absolute indices to CM positions
+    const from = cm.posFromIndex(startIndex);
+    const to   = cm.posFromIndex(endIndex);
 
-  // Measure y-position of the selection end relative to the scroller
-  // "local" gives coords in the editor's own scroller coordinate space.
-  const endCoords = cm.charCoords(to, "local");
+    // Measure y-position of the selection end relative to the scroller
+    // "local" gives coords in the editor's own scroller coordinate space.
+    const endCoords = cm.charCoords(to, "local");
 
-  const scroller = cm.getScrollerElement();
-  const viewH    = scroller.clientHeight;
+    const scroller = cm.getScrollerElement();
+    const viewH    = scroller.clientHeight;
 
-  // If everything fits, no need to scroll
-  if (cm.getScrollInfo().height <= viewH) {
+    // If everything fits, no need to scroll
+    if (cm.getScrollInfo().height <= viewH) {
+      cm.setSelection(from, to);
+      return;
+    }
+
+    // Target scrollTop so the selection end sits at (viewH / fraction) from the top
+    const desiredTop = Math.max(0, endCoords.top - (viewH / fraction));
+
+    // Scroll (preserve current scrollLeft)
+    cm.scrollTo(scroller.scrollLeft, desiredTop);
+
+    // Apply the selection (like textarea.setSelectionRange)
     cm.setSelection(from, to);
-    return;
   }
+  else{
+    var textarea = cm;
 
-  // Target scrollTop so the selection end sits at (viewH / fraction) from the top
-  const desiredTop = Math.max(0, endCoords.top - (viewH / fraction));
+    const fullText = textarea.value;
 
-  // Scroll (preserve current scrollLeft)
-  cm.scrollTo(scroller.scrollLeft, desiredTop);
+    // Create an off-DOM clone to measure scrollHeight without affecting visible textarea
+    var clone = textarea.cloneNode();
+    clone.style.position = "absolute";
+    clone.style.visibility = "hidden";
+    clone.style.height = "auto";
+    clone.style.overflow = "hidden";
+    clone.value = fullText.slice(0, endIndex);
 
-  // Apply the selection (like textarea.setSelectionRange)
-  cm.setSelection(from, to);
+    document.body.appendChild(clone);
+
+    let scrollHeight = clone.scrollHeight;
+
+    document.body.removeChild(clone);
+
+    // Early release
+    clone = null;
+
+    const textareaHeight = textarea.clientHeight;
+
+    // Handle case where content exactly fits
+    if (scrollHeight === textareaHeight) {
+      scrollHeight = getTextAreaContentHeight(textarea, endIndex);
+    }
+
+    // Scroll so selection is at desired fraction
+    textarea.scrollTop = Math.max(0, scrollHeight - textareaHeight / fraction);
+
+    // Avoid lifting on-screen keyboard on iPad
+    //if (!giPadTwoColumn) {
+    textarea.setSelectionRange(startIndex, endIndex);
+    //}    
+  }
 }
 
 //
@@ -20023,7 +20246,12 @@ function RenderDivClickHandler(e) {
 
             //console.log("offset = "+offset);
 
-            gTheCM.selectionStart = offset;
+            if (gEnableSyntax){
+              gTheCM.selectionStart = offset;
+            }
+            else{
+              gTheABC.selectionStart = offset;
+            }
 
             // If the player is up, close it
             if (gUIHiddenPlayerEnabled) {
@@ -20132,18 +20360,34 @@ function RenderDivClickHandler(e) {
 
       if (!gIsMaximized) {
 
-        if (!gIsQuickEditor) {
-          // Scroll the tune ABC into view
-          ScrollABCTextIntoView(gTheCM, tuneOffset, tuneOffset, 10);
-        }
+        if (gEnableSyntax){
+          if (!gIsQuickEditor) {
+            // Scroll the tune ABC into view
+            ScrollABCTextIntoView(gTheCM, tuneOffset, tuneOffset, 10);
+          }
 
-        if (isMobileBrowser()) {
+          if (isMobileBrowser()) {
+            gTheCM.getInputField().blur();
+            return;
+          }
+
           gTheCM.getInputField().blur();
-          return;
+          gTheCM.focus();
         }
+        else{
+          if (!gIsQuickEditor) {
+            // Scroll the tune ABC into view
+            ScrollABCTextIntoView(gTheABC, tuneOffset, tuneOffset, 10);
+          }
 
-        gTheCM.getInputField().blur();
-        gTheCM.focus();
+          if (isMobileBrowser()) {
+            gTheABC.blur();
+            return;
+          }
+
+          gTheABC.blur();
+          gTheABC.focus();          
+        }
 
       } else {
 
@@ -21452,9 +21696,16 @@ function InjectRepeatsAndClickTrackAll() {
 
           ensureMoreToolsVisible();
 
-          // Set the select point
-          gTheCM.selectionStart = 0;
-          gTheCM.selectionEnd = 0;
+          if (gEnableSyntax){
+            // Set the select point
+            gTheCM.selectionStart = 0;
+            gTheCM.selectionEnd = 0;
+          }
+          else{
+            // Set the select point
+            gTheABC.selectionStart = 0;
+            gTheABC.selectionEnd = 0;
+          }
 
           // Focus after operation
           FocusAfterOperation();
@@ -21703,12 +21954,25 @@ function InjectSectionHeader() {
       if (sectionHeader == null) {
         return;
       }
+      var theSelectionStart;
+      var leftSide;
+      var rightSide;
 
-      var theSelectionStart = gTheCM.selectionStart;
+      if (gEnableSyntax){
+        theSelectionStart = gTheCM.selectionStart;
 
-      var leftSide = getABCEditorText().substring(0, theSelectionStart);
+        leftSide = getABCEditorText().substring(0, theSelectionStart);
 
-      var rightSide = getABCEditorText().substring(theSelectionStart);
+        rightSide = getABCEditorText().substring(theSelectionStart);
+      }
+      else{
+        theSelectionStart = gTheABC.selectionStart;
+
+        leftSide = getABCEditorText().substring(0, theSelectionStart);
+
+        rightSide = getABCEditorText().substring(theSelectionStart);
+
+      }
 
       setABCEditorText(leftSide + "\nX:1\nT:*" + sectionHeader + "\n" + rightSide);
 
@@ -21732,8 +21996,14 @@ function InjectSectionHeader() {
           ensureMoreToolsVisible();
 
           // Set the select point
-          gTheCM.selectionStart = theSelectionStart;
-          gTheCM.selectionEnd = theSelectionStart;
+          if (gEnableSyntax){
+            gTheCM.selectionStart = theSelectionStart;
+            gTheCM.selectionEnd = theSelectionStart;
+          }
+          else{
+            gTheABC.selectionStart = theSelectionStart;
+            gTheABC.selectionEnd = theSelectionStart;
+          }
 
           // Focus after operation
           FocusAfterOperation();
@@ -22037,9 +22307,16 @@ function InjectHeaderString() {
 
               ensureMoreToolsVisible();
 
-              // Set the select point
-              gTheCM.selectionStart = 0;
-              gTheCM.selectionEnd = 0;
+              if (gEnableSyntax){
+                // Set the select point
+                gTheCM.selectionStart = 0;
+                gTheCM.selectionEnd = 0;
+              }
+              else{
+                // Set the select point
+                gTheABC.selectionStart = 0;
+                gTheABC.selectionEnd = 0;
+              }
 
               // Focus after operation
               FocusAfterOperation();
@@ -22072,8 +22349,16 @@ function InjectHeaderString() {
           // Seeing extra line breaks after the inject
           theInjectedTune = theInjectedTune.replace("\n\n", "");
 
-          // Try and keep the same tune after the redraw for immediate play
-          var theSelectionStart = gTheCM.selectionStart;
+          var theSelectionStart;
+
+          if (gEnableSyntax){
+            // Try and keep the same tune after the redraw for immediate play
+            theSelectionStart = gTheCM.selectionStart;
+          }
+          else{
+            // Try and keep the same tune after the redraw for immediate play
+            theSelectionStart = gTheABC.selectionStart;
+          }
 
           // Stuff in the injected ABC
           var theABC = getABCEditorText();
@@ -22100,9 +22385,16 @@ function InjectHeaderString() {
 
               ensureMoreToolsVisible();
 
-              // Set the select point
-              gTheCM.selectionStart = theSelectionStart;
-              gTheCM.selectionEnd = theSelectionStart;
+              if (gEnableSyntax){
+                // Set the select point
+                gTheCM.selectionStart = theSelectionStart;
+                gTheCM.selectionEnd = theSelectionStart;
+              }
+              else{
+                // Set the select point
+                gTheABC.selectionStart = theSelectionStart;
+                gTheABC.selectionEnd = theSelectionStart;
+              }
 
               // Focus after operation
               FocusAfterOperation();
@@ -22496,9 +22788,16 @@ function InjectCustomStringedInstrumentTab() {
 
             ensureMoreToolsVisible();
 
-            // Set the select point
-            gTheCM.selectionStart = 0;
-            gTheCM.selectionEnd = 0;
+            if (gEnableSyntax){
+              // Set the select point
+              gTheCM.selectionStart = 0;
+              gTheCM.selectionEnd = 0;
+            }
+            else{
+              // Set the select point
+              gTheABC.selectionStart = 0;
+              gTheABC.selectionEnd = 0;
+            }
 
             // Focus after operation
             FocusAfterOperation();
@@ -22536,8 +22835,16 @@ function InjectCustomStringedInstrumentTab() {
         // Seeing extra line breaks after the inject
         theInjectedTune = theInjectedTune.replace("\n\n", "");
 
-        // Try and keep the same tune after the redraw for immediate play
-        var theSelectionStart = gTheCM.selectionStart;
+        var theSelectionStart;
+
+        if (gEnableSyntax){
+          // Try and keep the same tune after the redraw for immediate play
+          theSelectionStart = gTheCM.selectionStart;
+        }
+        else{
+          // Try and keep the same tune after the redraw for immediate play
+          theSelectionStart = gTheABC.selectionStart;
+        }
 
         // Stuff in the injected ABC
         var theABC = getABCEditorText();
@@ -22564,9 +22871,16 @@ function InjectCustomStringedInstrumentTab() {
 
             ensureMoreToolsVisible();
 
-            // Set the select point
-            gTheCM.selectionStart = theSelectionStart;
-            gTheCM.selectionEnd = theSelectionStart;
+            if (gEnableSyntax){
+              // Set the select point
+              gTheCM.selectionStart = theSelectionStart;
+              gTheCM.selectionEnd = theSelectionStart;
+            }
+            else{
+              // Set the select point
+              gTheABC.selectionStart = theSelectionStart;
+              gTheABC.selectionEnd = theSelectionStart;
+            }
 
             // Focus after operation
             FocusAfterOperation();
@@ -22865,9 +23179,17 @@ function InjectFontSettings() {
 
               ensureMoreToolsVisible();
 
-              // Set the select point
-              gTheCM.selectionStart = 0;
-              gTheCM.selectionEnd = 0;
+              if (gEnableSyntax){
+                // Set the select point
+                gTheCM.selectionStart = 0;
+                gTheCM.selectionEnd = 0;
+              }
+              else{
+                // Set the select point
+                gTheABC.selectionStart = 0;
+                gTheABC.selectionEnd = 0;
+
+              }
 
               // Focus after operation
               FocusAfterOperation();
@@ -22893,8 +23215,15 @@ function InjectFontSettings() {
           // Seeing extra line breaks after the inject
           theInjectedTune = theInjectedTune.replace("\n\n", "");
 
-          // Try and keep the same tune after the redraw for immediate play
-          var theSelectionStart = gTheCM.selectionStart;
+          var theSelectionStart;
+
+          if (gEnableSyntax){
+            // Try and keep the same tune after the redraw for immediate play
+            theSelectionStart = gTheCM.selectionStart;
+          }
+          else{
+            theSelectionStart = gTheABC.selectionStart;
+          }
 
           // Stuff in the injected ABC
           var theABC = getABCEditorText();
@@ -22921,9 +23250,17 @@ function InjectFontSettings() {
 
               ensureMoreToolsVisible();
 
-              // Set the select point
-              gTheCM.selectionStart = theSelectionStart;
-              gTheCM.selectionEnd = theSelectionStart;
+              if (gEnableSyntax){
+                // Set the select point
+                gTheCM.selectionStart = theSelectionStart;
+                gTheCM.selectionEnd = theSelectionStart;
+              }
+              else{
+                // Set the select point
+                gTheABC.selectionStart = theSelectionStart;
+                gTheABC.selectionEnd = theSelectionStart;
+
+              }
 
               // Focus after operation
               FocusAfterOperation();
@@ -23027,9 +23364,17 @@ function NotationSpacingInject() {
 
         ensureMoreToolsVisible();
 
-        // Set the select point
-        gTheCM.selectionStart = 0;
-        gTheCM.selectionEnd = 0;
+        if (gEnableSyntax){
+          // Set the select point
+          gTheCM.selectionStart = 0;
+          gTheCM.selectionEnd = 0;
+        }
+        else{
+          // Set the select point
+          gTheABC.selectionStart = 0;
+          gTheABC.selectionEnd = 0;
+
+        }
 
         // Focus after operation
         FocusAfterOperation();
@@ -23056,8 +23401,17 @@ function NotationSpacingInject() {
     // Seeing extra line breaks after the inject
     theInjectedTune = theInjectedTune.replace("\n\n", "");
 
-    // Try and keep the same tune after the redraw for immediate play
-    var theSelectionStart = gTheCM.selectionStart;
+    var theSelectionStart;
+
+    if (gEnableSyntax){
+      // Try and keep the same tune after the redraw for immediate play
+      theSelectionStart = gTheCM.selectionStart;
+    }
+    else{
+      // Try and keep the same tune after the redraw for immediate play
+      theSelectionStart = gTheABC.selectionStart;
+
+    }
 
     // Stuff in the injected ABC
     var theABC = getABCEditorText();
@@ -23082,9 +23436,17 @@ function NotationSpacingInject() {
 
         ensureMoreToolsVisible();
 
-        // Set the select point
-        gTheCM.selectionStart = theSelectionStart;
-        gTheCM.selectionEnd = theSelectionStart;
+        if (gEnableSyntax){
+          // Set the select point
+          gTheCM.selectionStart = theSelectionStart;
+          gTheCM.selectionEnd = theSelectionStart;
+        }
+        else{
+          // Set the select point
+          gTheABC.selectionStart = theSelectionStart;
+          gTheABC.selectionEnd = theSelectionStart;
+
+        }
 
         // Focus after operation
         FocusAfterOperation();
@@ -24042,7 +24404,14 @@ function InjectAllMIDIParams() {
       // Injecting all tunes
       var bDoAll = args.result.configure_inject_all;
 
-      var theSelectionStart = gTheCM.selectionStart;
+      var theSelectionStart;
+      if (gEnableSyntax){
+        theSelectionStart = gTheCM.selectionStart;
+      }
+      else{
+        theSelectionStart = gTheABC.selectionStart;
+      }
+
       var theCurrentTune = findTuneByOffset(theSelectionStart);
 
       if (!bDoAll) {
@@ -24126,12 +24495,23 @@ function InjectAllMIDIParams() {
 
             var theOffset = findTuneOffsetByIndex(theCurrentTune);
 
-            // Scroll the tune ABC into view
-            ScrollABCTextIntoView(gTheCM, theOffset, theOffset, 10);
+            if (gEnableSyntax){
+              // Scroll the tune ABC into view
+              ScrollABCTextIntoView(gTheCM, theOffset, theOffset, 10);
 
-            // Set the select point
-            gTheCM.selectionStart = theOffset;
-            gTheCM.selectionEnd = theOffset;
+              // Set the select point
+              gTheCM.selectionStart = theOffset;
+              gTheCM.selectionEnd = theOffset;
+            }
+            else{
+              // Scroll the tune ABC into view
+              ScrollABCTextIntoView(gTheABC, theOffset, theOffset, 10);
+
+              // Set the select point
+              gTheABC.selectionStart = theOffset;
+              gTheABC.selectionEnd = theOffset;
+
+            }
 
             // Focus after operation
             FocusAfterOperation();
@@ -24142,12 +24522,23 @@ function InjectAllMIDIParams() {
 
           var theOffset = findTuneOffsetByIndex(theCurrentTune);
 
-          // Scroll the tune ABC into view
-          ScrollABCTextIntoView(gTheCM, theOffset, theOffset, 10);
+          if (gEnableSyntax){
+            // Scroll the tune ABC into view
+            ScrollABCTextIntoView(gTheCM, theOffset, theOffset, 10);
 
-          // Set the select point
-          gTheCM.selectionStart = theOffset;
-          gTheCM.selectionEnd = theOffset;
+            // Set the select point
+            gTheCM.selectionStart = theOffset;
+            gTheCM.selectionEnd = theOffset;
+          }
+          else{
+            // Scroll the tune ABC into view
+            ScrollABCTextIntoView(gTheABC, theOffset, theOffset, 10);
+
+            // Set the select point
+            gTheABC.selectionStart = theOffset;
+            gTheABC.selectionEnd = theOffset;
+
+          }
 
           // Focus after operation
           FocusAfterOperation();
@@ -24421,9 +24812,17 @@ function InjectMetronome() {
 
             ensureMoreToolsVisible();
 
-            // Set the select point
-            gTheCM.selectionStart = 0;
-            gTheCM.selectionEnd = 0;
+            if (gEnableSyntax){
+              // Set the select point
+              gTheCM.selectionStart = 0;
+              gTheCM.selectionEnd = 0;
+            }
+            else{
+              // Set the select point
+              gTheABC.selectionStart = 0;
+              gTheABC.selectionEnd = 0;
+
+            }
 
             // Focus after operation
             FocusAfterOperation();
@@ -24447,8 +24846,15 @@ function InjectMetronome() {
           return;
         }
 
-        // Try and keep the same tune after the redraw for immediate play
-        var theSelectionStart = gTheCM.selectionStart;
+        var theSelectionStart;
+        if (gEnableSyntax){
+          // Try and keep the same tune after the redraw for immediate play
+          theSelectionStart = gTheCM.selectionStart;
+        }
+        else{
+          // Try and keep the same tune after the redraw for immediate play
+          theSelectionStart = gTheABC.selectionStart;
+        }
 
         // Stuff in the injected ABC
         var theABC = getABCEditorText();
@@ -24475,9 +24881,17 @@ function InjectMetronome() {
 
             ensureMoreToolsVisible();
 
-            // Set the select point
-            gTheCM.selectionStart = theSelectionStart;
-            gTheCM.selectionEnd = theSelectionStart;
+            if (gEnableSyntax){
+              // Set the select point
+              gTheCM.selectionStart = theSelectionStart;
+              gTheCM.selectionEnd = theSelectionStart;
+            }
+            else{
+              // Set the select point
+              gTheABC.selectionStart = theSelectionStart;
+              gTheABC.selectionEnd = theSelectionStart;
+
+            }
 
             // Focus after operation
             FocusAfterOperation();
@@ -24704,9 +25118,16 @@ function ShortenURL(e) {
           // Force a redraw
           RenderAsync(true, null, function() {
 
-            // Set the select point
-            gTheCM.selectionStart = 0;
-            gTheCM.selectionEnd = 0;
+            if (gEnableSyntax){
+              // Set the select point
+              gTheCM.selectionStart = 0;
+              gTheCM.selectionEnd = 0;
+            }
+            else{
+              // Set the select point
+              gTheABC.selectionStart = 0;
+              gTheABC.selectionEnd = 0;
+            }
 
             // Focus after operation
             FocusAfterOperation();
@@ -25345,11 +25766,18 @@ function DoMinimize() {
 
       if (giPadTwoColumn) {
 
-        // Reset CodeMirror box symmetrical resize
-        let wrapper = gTheCM.getWrapperElement();
-        wrapper.style.marginLeft = "0px";
-        wrapper.style.width = "832px";
-        gTheCM.refresh();
+        if (gEnableSyntax){
+          // Reset CodeMirror box symmetrical resize
+          let wrapper = gTheCM.getWrapperElement();
+          wrapper.style.marginLeft = "0px";
+          wrapper.style.width = "832px";
+          gTheCM.refresh();
+        }
+        else{
+          // Reset text box symmetrical resize 
+          gTheABC.style.marginLeft = "0px";
+          gTheABC.style.width = "832px";
+        }
 
         gInitialTextBoxWidth = 832;
         gInitialTextBoxContainerWidth = 832;
@@ -25365,7 +25793,12 @@ function DoMinimize() {
 
         // Grab the text box positions and offsets
         // Setup text box symmetrical resize 
-        gInitialTextBoxWidth = gTheCM.getWrapperElement().offsetWidth;
+        if (gEnableSyntax){
+          gInitialTextBoxWidth = gTheCM.getWrapperElement().offsetWidth;
+        }
+        else{
+          gInitialTextBoxWidth = gTheABC.offsetWidth;
+        }
       }
 
       ResizeTextBox();
@@ -25378,13 +25811,20 @@ function DoMinimize() {
     // If we minimize from a window resize while maximized, we need to reset the text box location params
     if (gGotWindowResizeWhileMaximized) {
 
-      let wrapper = gTheCM.getWrapperElement();
+      if (gEnableSyntax){
+        let wrapper = gTheCM.getWrapperElement();
 
-      wrapper.style.width = gInitialTextBoxWidth + "px";
+        wrapper.style.width = gInitialTextBoxWidth + "px";
 
-      wrapper.style.marginLeft = "0px";
+        wrapper.style.marginLeft = "0px";
 
-      gTheCM.refresh();
+        gTheCM.refresh();
+      }
+      else{
+        gTheABC.style.width = gInitialTextBoxWidth + "px";
+
+        gTheABC.style.marginLeft = "0px";
+      }
 
       var elem = document.getElementById("notenlinks");
       gInitialTextBoxContainerWidth = elem.offsetWidth;
@@ -25402,15 +25842,29 @@ function DoMinimize() {
 
       if (gRenderDivClickOffset != -1) {
 
-        // Scroll the tune ABC into view
-        gTheCM.selectionEnd = gTheCM.selectionStart = gRenderDivClickOffset;
+        if (gEnableSyntax){
+          // Scroll the tune ABC into view
+          gTheCM.selectionEnd = gTheCM.selectionStart = gRenderDivClickOffset;
 
-        if (isMobileBrowser()) {
-          return;
+          if (isMobileBrowser()) {
+            return;
+          }
+
+          gTheCM.getInputField().blur();
+          gTheCM.focus();
         }
+        else{
+          // Scroll the tune ABC into view
+          gTheABC.selectionEnd = gTheABC.selectionStart = gRenderDivClickOffset;
 
-        gTheCM.getInputField().blur();
-        gTheCM.focus();
+          if (isMobileBrowser()) {
+            return;
+          }
+
+          gTheABC.blur();
+          gTheABC.focus();
+
+        }
 
       }
 
@@ -25986,7 +26440,13 @@ function findSelectedTuneIndex() {
   }
 
   // Obtain the index of the first selected character
-  var start = gTheCM.selectionStart;
+  var start;
+  if (gEnableSyntax){
+    start = gTheCM.selectionStart;
+  }
+  else{
+    start = gTheABC.selectionStart;
+  }
 
   if (start == 0) {
 
@@ -26073,8 +26533,7 @@ function MakeTuneVisible(forceUpdate) {
     // console.log("------------------------------------");
     // console.log("------------------------------------");
 
-    // MAE FOOFOO 22 Sep 2025
-    //console.log("MakeTuneVisible tuneIndex = "+tuneIndex+" forceUpdate = "+forceUpdate+" gCurrentTune before = "+gCurrentTune);
+     //console.log("MakeTuneVisible tuneIndex = "+tuneIndex+" forceUpdate = "+forceUpdate+" gCurrentTune before = "+gCurrentTune);
 
     // Save the current tune index
     gCurrentTune = tuneIndex;
@@ -27551,9 +28010,17 @@ function InjectBagpipeSounds() {
 
               gCurrentTune = 0;
 
-              // Set the select point
-              gTheCM.selectionStart = 0;
-              gTheCM.selectionEnd = 0;
+              if (gEnableSyntax){
+                // Set the select point
+                gTheCM.selectionStart = 0;
+                gTheCM.selectionEnd = 0;
+              }
+              else{
+                // Set the select point
+                gTheABC.selectionStart = 0;
+                gTheABC.selectionEnd = 0;
+
+              }
 
               // Focus after operation
               FocusAfterOperation();
@@ -27626,14 +28093,29 @@ function InjectBagpipeSounds() {
               scrollWithPage: (AllowDialogsToScroll())
             }).then(function() {
 
-              // Try and keep the same tune after the redraw for immediate play
-              var theSelectionStart = gTheCM.selectionStart;
+              var theSelectionStart;
 
-              gCurrentTune = theSelectedTuneIndex;
+              if (gEnableSyntax){
+                // Try and keep the same tune after the redraw for immediate play
+                theSelectionStart = gTheCM.selectionStart;
 
-              // Set the select point
-              gTheCM.selectionStart = theSelectionStart;
-              gTheCM.selectionEnd = theSelectionStart;
+                gCurrentTune = theSelectedTuneIndex;
+
+                // Set the select point
+                gTheCM.selectionStart = theSelectionStart;
+                gTheCM.selectionEnd = theSelectionStart;
+              }
+              else{
+                // Try and keep the same tune after the redraw for immediate play
+                theSelectionStart = gTheABC.selectionStart;
+
+                gCurrentTune = theSelectedTuneIndex;
+
+                // Set the select point
+                gTheABC.selectionStart = theSelectionStart;
+                gTheABC.selectionEnd = theSelectionStart;
+
+              }
 
               // Focus after operation
               FocusAfterOperation();
@@ -27894,11 +28376,21 @@ function IncipitsBuilderDialog() {
 
           ensureMoreToolsVisible();
 
-          gTheCM.selectionStart = 0;
-          gTheCM.selectionEnd = 0;
+          if (gEnableSyntax){
+            gTheCM.selectionStart = 0;
+            gTheCM.selectionEnd = 0;
 
-          // And reset the focus
-          gTheCM.focus();
+            // And reset the focus
+            gTheCM.focus();
+          }
+          else{
+            gTheABC.selectionStart = 0;
+            gTheABC.selectionEnd = 0;
+
+            // And reset the focus
+            gTheABC.focus();
+
+          }
 
           // Scroll to the top
           MakeTuneVisible(true);
@@ -30824,13 +31316,27 @@ function FocusAfterOperation() {
 
   if (isPureDesktopBrowser()) {
 
-    // And reset the focus
-    gTheCM.focus();
+    if (gEnableSyntax){
+      // And reset the focus
+      gTheCM.focus();
+    }
+    else{
+      // And reset the focus
+      gTheABC.focus();
+
+    }
 
   } else {
 
-    // And clear the focus
-    gTheCM.getInputField().blur();
+    if (gEnableSyntax){
+      // And clear the focus
+      gTheCM.getInputField().blur();
+    }
+    else{
+      // And clear the focus
+      gTheABC.blur();
+
+    }
 
   }
 
@@ -30841,15 +31347,28 @@ function FocusAfterOperation() {
 //
 function FocusABC() {
 
-  // Refocus back on the ABC
-  gTheCM.focus();
+  if (gEnableSyntax){
+    // Refocus back on the ABC
+    gTheCM.focus();
 
-  // Set the selection to the start of the tune
-  gTheCM.selectionStart = 0;
-  gTheCM.selectionEnd = 0;
+    // Set the selection to the start of the tune
+    gTheCM.selectionStart = 0;
+    gTheCM.selectionEnd = 0;
 
-  // Scroll it to the top
-  gTheCM.getScrollerElement().scrollTo(0, 0);
+    // Scroll it to the top
+    gTheCM.getScrollerElement().scrollTo(0, 0);
+  }
+  else{
+    // Refocus back on the ABC
+    gTheABC.focus();
+
+    // Set the selection to the start of the tune
+    gTheABC.selectionStart = 0;
+    gTheABC.selectionEnd = 0;
+
+    // Scroll it to the top
+    gTheABC.scrollTo(0, 0);    
+  }
 }
 
 //
@@ -34901,8 +35420,18 @@ function ProcessSelectRegionForPlay(theABC) {
     return theABC;
   }
 
-  var start = gTheCM.selectionStart;
-  var end = gTheCM.selectionEnd;
+  var start;
+  var end;
+
+  if (gEnableSyntax){
+    start = gTheCM.selectionStart;
+    end = gTheCM.selectionEnd;
+  }
+  else{
+    start = gTheABC.selectionStart;
+    end = gTheABC.selectionEnd;
+
+  }
 
   // No selection region, just return the entire tune
   if (start == end) {
@@ -37568,8 +38097,15 @@ function SwingExplorerInject() {
     // Seeing extra line breaks after the inject
     tuneWithSwing = tuneWithSwing.replace("\n\n", "");
 
-    // Try and keep the same tune after the redraw for immediate play
-    var theSelectionStart = gTheCM.selectionStart;
+    var theSelectionStart;
+
+    if (gEnableSyntax){
+      // Try and keep the same tune after the redraw for immediate play
+      theSelectionStart = gTheCM.selectionStart;
+    }
+    else{
+      theSelectionStart = gTheABC.selectionStart;
+    }
 
     // Stuff in the injected ABC
     var theABC = getABCEditorText();
@@ -37598,9 +38134,17 @@ function SwingExplorerInject() {
           scrollWithPage: (AllowDialogsToScroll())
         }).then(function() {
 
-          // Set the select point
-          gTheCM.selectionStart = theSelectionStart;
-          gTheCM.selectionEnd = theSelectionStart;
+          if (gEnableSyntax){
+            // Set the select point
+            gTheCM.selectionStart = theSelectionStart;
+            gTheCM.selectionEnd = theSelectionStart;
+          }
+          else{
+            // Set the select point
+            gTheABC.selectionStart = theSelectionStart;
+            gTheABC.selectionEnd = theSelectionStart;
+
+          }
 
           // Focus after operation
           FocusAfterOperation();
@@ -37619,9 +38163,18 @@ function SwingExplorerInject() {
         scrollWithPage: (AllowDialogsToScroll())
       }).then(function() {
 
-        // Set the select point
-        gTheCM.selectionStart = theSelectionStart;
-        gTheCM.selectionEnd = theSelectionStart;
+        if (gEnableSyntax){
+          // Set the select point
+          gTheCM.selectionStart = theSelectionStart;
+          gTheCM.selectionEnd = theSelectionStart;
+        }
+        else{
+          // Set the select point
+          gTheABC.selectionStart = theSelectionStart;
+          gTheABC.selectionEnd = theSelectionStart;
+
+        }
+
 
         // Focus after operation
         FocusAfterOperation();
@@ -38264,8 +38817,15 @@ function ReverbExplorerInject() {
     // Seeing extra line breaks after the inject
     tuneWithReverb = tuneWithReverb.replace("\n\n", "");
 
-    // Try and keep the same tune after the redraw for immediate play
-    var theSelectionStart = gTheCM.selectionStart;
+    var theSelectionStart;
+
+    if (gEnableSyntax){
+      // Try and keep the same tune after the redraw for immediate play
+      theSelectionStart = gTheCM.selectionStart;
+    }
+    else{
+      theSelectionStart = gTheABC.selectionStart;
+    }
 
     // Stuff in the injected ABC
     var theABC = getABCEditorText();
@@ -38294,9 +38854,17 @@ function ReverbExplorerInject() {
           scrollWithPage: (AllowDialogsToScroll())
         }).then(function() {
 
-          // Set the select point
-          gTheCM.selectionStart = theSelectionStart;
-          gTheCM.selectionEnd = theSelectionStart;
+          if (gEnableSyntax){
+            // Set the select point
+            gTheCM.selectionStart = theSelectionStart;
+            gTheCM.selectionEnd = theSelectionStart;
+          }
+          else{
+            // Set the select point
+            gTheABC.selectionStart = theSelectionStart;
+            gTheABC.selectionEnd = theSelectionStart;
+
+          }
 
           // Focus after operation
           FocusAfterOperation();
@@ -38316,9 +38884,17 @@ function ReverbExplorerInject() {
         scrollWithPage: (AllowDialogsToScroll())
       }).then(function() {
 
-        // Set the select point
-        gTheCM.selectionStart = theSelectionStart;
-        gTheCM.selectionEnd = theSelectionStart;
+        if (gEnableSyntax){
+          // Set the select point
+          gTheCM.selectionStart = theSelectionStart;
+          gTheCM.selectionEnd = theSelectionStart;
+        }
+        else{
+          // Set the select point
+          gTheABC.selectionStart = theSelectionStart;
+          gTheABC.selectionEnd = theSelectionStart;
+
+        }
 
         // Focus after operation
         FocusAfterOperation();
@@ -39423,8 +39999,15 @@ function InstrumentExplorerInject() {
 
     gPlayerABCInstrumentExplorerInjected = InstrumentExplorerDialogInjectThisTune(gPlayerABCInstrumentExplorerProcessed);
 
-    // Try and keep the same tune after the redraw for immediate play
-    var theSelectionStart = gTheCM.selectionStart;
+    var theSelectionStart;
+
+    if (gEnableSyntax){
+      // Try and keep the same tune after the redraw for immediate play
+      theSelectionStart = gTheCM.selectionStart;
+    }
+    else{
+      theSelectionStart = gTheABC.selectionStart;
+    }
 
     // Stuff in the injected ABC
     var theABC = getABCEditorText();
@@ -39453,9 +40036,17 @@ function InstrumentExplorerInject() {
           scrollWithPage: (AllowDialogsToScroll())
         }).then(function() {
 
-          // Set the select point
-          gTheCM.selectionStart = theSelectionStart;
-          gTheCM.selectionEnd = theSelectionStart;
+          if (gEnableSyntax){
+            // Set the select point
+            gTheCM.selectionStart = theSelectionStart;
+            gTheCM.selectionEnd = theSelectionStart;
+          }
+          else{
+            // Set the select point
+            gTheABC.selectionStart = theSelectionStart;
+            gTheABC.selectionEnd = theSelectionStart;
+
+          }
 
           // Focus after operation
           FocusAfterOperation();
@@ -39475,10 +40066,17 @@ function InstrumentExplorerInject() {
         scrollWithPage: (AllowDialogsToScroll())
       }).then(function() {
 
-        // Set the select point
-        gTheCM.selectionStart = theSelectionStart;
-        gTheCM.selectionEnd = theSelectionStart;
+        if (gEnableSyntax){
+          // Set the select point
+          gTheCM.selectionStart = theSelectionStart;
+          gTheCM.selectionEnd = theSelectionStart;
+        }
+        else{
+          // Set the select point
+          gTheABC.selectionStart = theSelectionStart;
+          gTheABC.selectionEnd = theSelectionStart;
 
+        }
         // Focus after operation
         FocusAfterOperation();
 
@@ -39528,9 +40126,16 @@ function InstrumentExplorerInject() {
           scrollWithPage: (AllowDialogsToScroll())
         }).then(function() {
 
-          // Set the select point
-          gTheCM.selectionStart = 0;
-          gTheCM.selectionEnd = 0;
+          if (gEnableSyntax){
+            // Set the select point
+            gTheCM.selectionStart = 0;
+            gTheCM.selectionEnd = 0;
+          }
+          else{
+            // Set the select point
+            gTheABC.selectionStart = 0;
+            gTheABC.selectionEnd = 0;
+          }
 
           // Focus after operation
           FocusAfterOperation();
@@ -39550,9 +40155,17 @@ function InstrumentExplorerInject() {
         scrollWithPage: (AllowDialogsToScroll())
       }).then(function() {
 
-        // Set the select point
-        gTheCM.selectionStart = 0;
-        gTheCM.selectionEnd = 0;
+        if (gEnableSyntax){
+          // Set the select point
+          gTheCM.selectionStart = 0;
+          gTheCM.selectionEnd = 0;
+        }
+        else{
+          // Set the select point
+          gTheABC.selectionStart = 0;
+          gTheABC.selectionEnd = 0;
+
+        }
 
         // Focus after operation
         FocusAfterOperation();
@@ -40256,8 +40869,17 @@ function GraceExplorerInject() {
       // Seeing extra line breaks after the inject
       tuneWithGrace = tuneWithGrace.replace("\n\n", "");
 
-      // Try and keep the same tune after the redraw for immediate play
-      var theSelectionStart = gTheCM.selectionStart;
+      var theSelectionStart;
+
+      if (gEnableSyntax){
+        // Try and keep the same tune after the redraw for immediate play
+        theSelectionStart = gTheCM.selectionStart;
+      }
+      else{
+        // Try and keep the same tune after the redraw for immediate play
+        theSelectionStart = gTheABC.selectionStart;
+       
+      }
 
       // Stuff in the injected ABC
       var theABC = getABCEditorText();
@@ -40286,9 +40908,17 @@ function GraceExplorerInject() {
             scrollWithPage: (AllowDialogsToScroll())
           }).then(function() {
 
-            // Set the select point
-            gTheCM.selectionStart = theSelectionStart;
-            gTheCM.selectionEnd = theSelectionStart;
+            if (gEnableSyntax){
+              // Set the select point
+              gTheCM.selectionStart = theSelectionStart;
+              gTheCM.selectionEnd = theSelectionStart;
+            }
+            else{
+              // Set the select point
+              gTheABC.selectionStart = theSelectionStart;
+              gTheABC.selectionEnd = theSelectionStart;
+
+            }
 
             // Focus after operation
             FocusAfterOperation();
@@ -40308,9 +40938,17 @@ function GraceExplorerInject() {
           scrollWithPage: (AllowDialogsToScroll())
         }).then(function() {
 
-          // Set the select point
-          gTheCM.selectionStart = theSelectionStart;
-          gTheCM.selectionEnd = theSelectionStart;
+          if (gEnableSyntax){
+            // Set the select point
+            gTheCM.selectionStart = theSelectionStart;
+            gTheCM.selectionEnd = theSelectionStart;
+          }
+          else{
+            // Set the select point
+            gTheABC.selectionStart = theSelectionStart;
+            gTheABC.selectionEnd = theSelectionStart;
+
+          }
 
           // Focus after operation
           FocusAfterOperation();
@@ -40367,9 +41005,17 @@ function GraceExplorerInject() {
             scrollWithPage: (AllowDialogsToScroll())
           }).then(function() {
 
-            // Set the select point
-            gTheCM.selectionStart = 0;
-            gTheCM.selectionEnd = 0;
+            if (gEnableSyntax){
+              // Set the select point
+              gTheCM.selectionStart = 0;
+              gTheCM.selectionEnd = 0;
+            }
+            else{
+              // Set the select point
+              gTheABC.selectionStart = 0;
+              gTheABC.selectionEnd = 0;
+
+            }
 
             // Focus after operation
             FocusAfterOperation();
@@ -40389,9 +41035,17 @@ function GraceExplorerInject() {
           scrollWithPage: (AllowDialogsToScroll())
         }).then(function() {
 
-          // Set the select point
-          gTheCM.selectionStart = 0;
-          gTheCM.selectionEnd = 0;
+          if (gEnableSyntax){
+            // Set the select point
+            gTheCM.selectionStart = 0;
+            gTheCM.selectionEnd = 0;
+          }
+          else{
+            // Set the select point
+            gTheABC.selectionStart = 0;
+            gTheABC.selectionEnd = 0;
+
+          }
 
           // Focus after operation
           FocusAfterOperation();
@@ -40975,8 +41629,17 @@ function RollExplorerInject() {
     // Seeing extra line breaks after the inject
     tuneWithRoll = tuneWithRoll.replace("\n\n", "");
 
-    // Try and keep the same tune after the redraw for immediate play
-    var theSelectionStart = gTheCM.selectionStart;
+    var theSelectionStart;
+
+    if (gEnableSyntax){
+      // Try and keep the same tune after the redraw for immediate play
+      theSelectionStart = gTheCM.selectionStart;
+    }
+    else{
+      // Try and keep the same tune after the redraw for immediate play
+      theSelectionStart = gTheABC.selectionStart;
+
+    }
 
     // Stuff in the injected ABC
     var theABC = getABCEditorText();
@@ -41005,9 +41668,17 @@ function RollExplorerInject() {
           scrollWithPage: (AllowDialogsToScroll())
         }).then(function() {
 
-          // Set the select point
-          gTheCM.selectionStart = theSelectionStart;
-          gTheCM.selectionEnd = theSelectionStart;
+          if (gEnableSyntax){
+            // Set the select point
+            gTheCM.selectionStart = theSelectionStart;
+            gTheCM.selectionEnd = theSelectionStart;
+          }
+          else{
+            // Set the select point
+            gTheABC.selectionStart = theSelectionStart;
+            gTheABC.selectionEnd = theSelectionStart;
+
+          }
 
           // Focus after operation
           FocusAfterOperation();
@@ -41027,9 +41698,17 @@ function RollExplorerInject() {
         scrollWithPage: (AllowDialogsToScroll())
       }).then(function() {
 
-        // Set the select point
-        gTheCM.selectionStart = theSelectionStart;
-        gTheCM.selectionEnd = theSelectionStart;
+        if (gEnableSyntax){
+          // Set the select point
+          gTheCM.selectionStart = theSelectionStart;
+          gTheCM.selectionEnd = theSelectionStart;
+        }
+        else{
+          // Set the select point
+          gTheABC.selectionStart = theSelectionStart;
+          gTheABC.selectionEnd = theSelectionStart;
+
+        }
 
         // Focus after operation
         FocusAfterOperation();
@@ -44303,7 +44982,7 @@ function GetInitialConfigurationSettings() {
     gCustomInstrumentShowStatus = (val == "true");
   }
 
-  gEnableSyntax = true;
+  gEnableSyntax = isPureDesktopBrowser();
   val = localStorage.EnableSyntax
   if (val) {
     gEnableSyntax = (val == "true");
@@ -44313,16 +44992,6 @@ function GetInitialConfigurationSettings() {
   val = localStorage.SyntaxDarkMode
   if (val) {
     gSyntaxDarkMode = (val == "true");
-  }
-  
-  val = localStorage.SyntaxViewportMargin;
-  if (val) {
-    gSyntaxViewportMargin = parseInt(val);
-    if (isNaN(gSyntaxViewportMargin)) {
-      gSyntaxViewportMargin = 20;
-    }
-  } else {
-    gSyntaxViewportMargin = 20;
   }
 
   // Save the settings, in case they were initialized
@@ -44630,7 +45299,6 @@ function SaveConfigurationSettings() {
     // Syntax highlighting
     localStorage.EnableSyntax = gEnableSyntax;
     localStorage.SyntaxDarkMode = gSyntaxDarkMode;
-    localStorage.SyntaxViewportMargin = gSyntaxViewportMargin;
 
   }
 }
@@ -48111,15 +48779,13 @@ function AdvancedSettings() {
 
   var oldDiagnostics = gShowDiagnostics;
 
-  var oldEnableSyntax = gEnableSyntax;
-  var oldSyntaxDarkMode = gSyntaxDarkMode;
-  var oldSyntaxViewportMargin = gSyntaxViewportMargin;
+  var oldForceAndroid = gForceAndroid;
+
+  var oldDisableAndroid = gDisableAndroid;
+
 
   // Setup initial values
   const theData = {
-    configure_syntax_highlighting:gEnableSyntax,
-    configure_syntax_highlighting_dark:gSyntaxDarkMode,
-    configure_syntax_viewport_margin:gSyntaxViewportMargin,
     configure_fullscreen_scaling: gFullScreenScaling,
     configure_highlight_color: gRawHighlightColor,
     configure_player_status_on_left: gPlayerStatusOnLeft,
@@ -48140,6 +48806,8 @@ function AdvancedSettings() {
     configure_show_render_progress: gShowABCJSRenderProgress,
     configure_clean_smartquotes: gCleanSmartQuotes,
     configure_jumptotune_autoscroll: gJumpToTuneAutoscroll,
+    configure_force_android: gForceAndroid,
+    configure_disable_android: gDisableAndroid,
   };
 
   var form = [{
@@ -48149,24 +48817,6 @@ function AdvancedSettings() {
   }, ];
 
   form = form.concat([
-  {
-    name: "          Enable ABC syntax highlighting",
-    id: "configure_syntax_highlighting",
-    type: "checkbox",
-    cssClass: "advanced_settings2_form_text_checkbox"
-  },  
-  {
-    name: "          Use Dark Mode for editor",
-    id: "configure_syntax_highlighting_dark",
-    type: "checkbox",
-    cssClass: "advanced_settings2_form_text_checkbox"
-  },  
-  {
-    name: "Syntax highlighting processing viewport in lines (default is 20):",
-    id: "configure_syntax_viewport_margin",
-    type: "number",
-    cssClass: "advanced_settings2_form_text"
-  },
   {
     name: "          Always confirm before deletion when clicking Clear",
     id: "configure_confirm_clear",
@@ -48276,6 +48926,24 @@ function AdvancedSettings() {
     }, ]);
   }
 
+  if ((!gIsIOS) && (!gIsIPad)) {
+    form.push({
+      name: "    Force Android phone UI (If mobile browser doesn't identify as Android)",
+      id: "configure_force_android",
+      type: "checkbox",
+      cssClass: "advanced_settings2_form_text_checkbox"
+    });
+  }
+
+  if ((!gIsIOS) && (!gIsIPad)) {
+    form.push({
+      name: "    Disable Android phone UI (If mobile browser does identify as Android)",
+      id: "configure_disable_android",
+      type: "checkbox",
+      cssClass: "advanced_settings2_form_text_checkbox"
+    });
+  }
+
   form = form.concat([ {
       name: "Private TinyURL API Token:",
       id: "configure_tinyurl",
@@ -48287,6 +48955,7 @@ function AdvancedSettings() {
       html: '<p style="text-align:center;margin-top:18px;margin-bottom:6px"><label class="loadimpulsebutton btn btn-subdialog " for="loadimpulsebutton" title="Load a custom reverb convolution impulse .wav file">Load Custom Reverb Impulse <input type="file" id="loadimpulsebutton"  accept=".wav,.WAV" hidden/></label><input id="resetsettings" class="btn btn-resetsettings resetsettings" onclick="ResetSettingsDialog()" type="button" value="Reset Settings" title="Opens a dialog where you can reset all tool settings to the default and/or clear the instrument notes, reverb settings, and tune search engine collection databases"></p><p style="font-size:10pt;line-height:14pt;font-family:helvetica;color:grey;position:absolute;left:20px;bottom:30px;margin:0px;cursor:pointer;" onclick="ShowBrowserInfo();" title="Click to show browser information">Click to show browser info<br/>Installed version: ' + gVersionNumber + '</p>'
     },
   ]);
+
 
   // Set up the reverb impulse load callback
   setTimeout(function() {
@@ -48306,25 +48975,6 @@ function AdvancedSettings() {
     // Get the results and store them in the global configuration
     if (!args.canceled) {
 
-      // Syntax highlighting
-      gEnableSyntax = args.result.configure_syntax_highlighting;
-      gSyntaxDarkMode = args.result.configure_syntax_highlighting_dark;
-      gSyntaxViewportMargin = args.result.configure_syntax_viewport_margin;
-
-      if (isNaN(parseInt(gSyntaxViewportMargin))) {
-        gSyntaxViewportMargin = 20;
-      } else {
-        gSyntaxViewportMargin = parseInt(gSyntaxViewportMargin);
-      }
-
-      if (gSyntaxViewportMargin < 10) {
-        gSyntaxViewportMargin = 10;
-      }
-
-      if (gSyntaxViewportMargin > 100) {
-        gSyntaxViewportMargin = 100;
-      }
-
       // Jump to tune autoscroll
       gJumpToTuneAutoscroll = args.result.configure_jumptotune_autoscroll
 
@@ -48337,6 +48987,15 @@ function AdvancedSettings() {
       // Show/hide the diagnostics panel
       gShowDiagnostics = args.result.configure_show_diagnostics;
       updateDiagnostics();
+
+      if (!gIsIOS) {
+
+        // Force Android
+        gForceAndroid = args.result.configure_force_android;
+
+        // Disable Android
+        gDisableAndroid = args.result.configure_disable_android;
+      }
 
       // Disable rendering? (not persistent)
       gDisableNotationRendering = args.result.configure_DisableRendering;
@@ -48360,9 +49019,14 @@ function AdvancedSettings() {
         elem.classList.add("btn-rawmode-off");
         elem.classList.remove("btn-rawmode-on");
 
-        setCMDarkMode(gDarkModeColor,gLightModeColor);
+        if (gEnableSyntax){
+          setCMDarkMode(gDarkModeColor,gLightModeColor);
 
-        gTheCM.refresh();
+          gTheCM.refresh();
+        }
+        else{
+          gTheABC.style.backgroundColor = gLightModeColor;
+        }
 
         gRawMode = false;
 
@@ -48480,42 +49144,58 @@ function AdvancedSettings() {
 
         }
       }
-      
-      // Syntax highlighting-related settings
-      if (oldEnableSyntax != gEnableSyntax){
-        if (gEnableSyntax){
-          gTheCM.setOption("mode", "abc-plus");
-          gTheCM.setOption('viewportMargin', gSyntaxViewportMargin);
-        }
-        else{
-          gTheCM.setOption("mode", null);          
-        }
-      }
-      
-      if (oldSyntaxDarkMode != gSyntaxDarkMode){
 
-        if (gRawMode){
-          setCMDarkMode("#ffd6ff","#F8FDF8");
-        }
-        else{
-          setCMDarkMode(gDarkModeColor,gLightModeColor);          
-        }
-
-      }
-
-      if (oldSyntaxViewportMargin != gSyntaxViewportMargin){
-        if (gEnableSyntax){
-          gTheCM.setOption('viewportMargin', gSyntaxViewportMargin);
-        }
-      }
 
       // Need to adjust the editor size on diagnostics show/hide
       if (oldDiagnostics != gShowDiagnostics) {
         HandleWindowResize();
       }
-      // Save the settings, in case they were initialized
+
+      // Save the settings
       SaveConfigurationSettings();
 
+      if (!gIsIOS) {
+
+        if (oldForceAndroid != gForceAndroid) {
+
+          var thePrompt = "The tool will restart since the forcing Android setting changed.";
+
+          // Center the string in the prompt
+          thePrompt = makeCenteredPromptString(thePrompt);
+
+          DayPilot.Modal.alert(thePrompt, {
+            theme: "modal_flat",
+            top: 200,
+            scrollWithPage: (AllowDialogsToScroll())
+          }).then(function(args) {
+
+            window.location.reload();
+
+          });
+
+          return;
+        }
+
+        if (oldDisableAndroid != gDisableAndroid) {
+
+          var thePrompt = "The tool will restart since the disabling Android setting changed.";
+
+          // Center the string in the prompt
+          thePrompt = makeCenteredPromptString(thePrompt);
+
+          DayPilot.Modal.alert(thePrompt, {
+            theme: "modal_flat",
+            top: 200,
+            scrollWithPage: (AllowDialogsToScroll())
+          }).then(function(args) {
+
+            window.location.reload();
+
+          });
+
+          return;
+        }
+      }
     }
 
   });
@@ -49131,11 +49811,10 @@ function ConfigureToolSettings() {
 
   var oldTabSelected = GetRadioValue("notenodertab");
 
-  var oldForceAndroid = gForceAndroid;
-
-  var oldDisableAndroid = gDisableAndroid;
-
   var oldRecorderFingeringGerman = gRecorderFingeringGerman;
+
+  var oldEnableSyntax = gEnableSyntax;
+  var oldSyntaxDarkMode = gSyntaxDarkMode;
 
   // Setup initial values
   const theData = {
@@ -49160,9 +49839,8 @@ function ConfigureToolSettings() {
     configure_allow_offline_instruments: gAllowOfflineInstruments,
     configure_ipad_two_column: giPadTwoColumn,
     configure_player_scaling: gPlayerScaling,
-    configure_force_android: gForceAndroid,
-    configure_disable_android: gDisableAndroid,
-
+    configure_syntax_highlighting:gEnableSyntax,
+    configure_syntax_highlighting_dark:gSyntaxDarkMode,
   };
 
   var form = [{
@@ -49171,13 +49849,38 @@ function ConfigureToolSettings() {
 
   // Only show batch export delays on desktop
   if (gIsIPad) {
-    form = form.concat([{
+    form.push({
       name: "    iPad Side-by-Side view (similar to desktop)",
       id: "configure_ipad_two_column",
       type: "checkbox",
       cssClass: "configure_settings_form_text_checkbox"
-    }]);
+    });
   }
+
+  // Expose syntax highlighting overrides
+  if (isPureDesktopBrowser()){
+    form.push({
+      name: "          Enable ABC syntax highlighting (change requires restart)",
+      id: "configure_syntax_highlighting",
+      type: "checkbox",
+      cssClass: "configure_settings_form_text_checkbox"
+    });
+  }
+  else{
+    form.push({
+      name: "          Enable ABC syntax highlighting (change requires restart, some issues on mobile browsers)",
+      id: "configure_syntax_highlighting",
+      type: "checkbox",
+      cssClass: "configure_settings_form_text_checkbox"
+    });
+  }
+
+  form.push({
+    name: "          Use Dark Mode for the editor when syntax highlighting is enabled",
+    id: "configure_syntax_highlighting_dark",
+    type: "checkbox",
+    cssClass: "advanced_settings2_form_text_checkbox"
+  });  
 
   form = form.concat([{
     name: "Player screen width (percentage) (min is 50, max is 100):",
@@ -49299,24 +50002,6 @@ function ConfigureToolSettings() {
     });
   };
 
-  if ((!gIsIOS) && (!gIsIPad)) {
-    form = form.concat([{
-      name: "    Force Android phone UI (If mobile browser doesn't identify as Android)",
-      id: "configure_force_android",
-      type: "checkbox",
-      cssClass: "configure_settings_form_text_checkbox"
-    }]);
-  }
-
-  if ((!gIsIOS) && (!gIsIPad)) {
-    form = form.concat([{
-      name: "    Disable Android phone UI (If mobile browser does identify as Android)",
-      id: "configure_disable_android",
-      type: "checkbox",
-      cssClass: "configure_settings_form_text_checkbox"
-    }]);
-  }
-
   // For testing
   // gUpdateAvailable = true;
   // gVersionNumber = "2209_122824_0930"
@@ -49344,6 +50029,12 @@ function ConfigureToolSettings() {
 
     // Get the results and store them in the global configuration
     if (!args.canceled) {
+
+      // Syntax highlighting
+      gEnableSyntax = args.result.configure_syntax_highlighting;
+      gSyntaxDarkMode = args.result.configure_syntax_highlighting_dark;
+
+      var isEnableSyntaxChanged = (gEnableSyntax != oldEnableSyntax);
 
       if (isPureDesktopBrowser()) {
 
@@ -49378,15 +50069,6 @@ function ConfigureToolSettings() {
 
         gSaveLastAutoSnapShot = false;
 
-      }
-
-      if (!gIsIOS) {
-
-        // Force Android
-        gForceAndroid = args.result.configure_force_android;
-
-        // Disable Android
-        gDisableAndroid = args.result.configure_disable_android;
       }
 
       if (gIsIPad) {
@@ -49501,29 +50183,32 @@ function ConfigureToolSettings() {
         }
       }
 
-      // Allow MIDI input if enabled
-      if (browserSupportsMIDI()) {
+      if (!isEnableSyntaxChanged){
 
-        gAllowMIDIInput = args.result.configure_allow_midi_input;
-        gMIDIChromatic = args.result.configure_midi_chromatic;
+        // Allow MIDI input if enabled
+        if (browserSupportsMIDI()) {
 
-        // If they've allowed MIDI input, and not currently using it
-        if (theOldAllowMIDIInput != gAllowMIDIInput) {
+          gAllowMIDIInput = args.result.configure_allow_midi_input;
+          gMIDIChromatic = args.result.configure_midi_chromatic;
 
-          if (gAllowMIDIInput) {
+          // If they've allowed MIDI input, and not currently using it
+          if (theOldAllowMIDIInput != gAllowMIDIInput) {
 
-            sendGoogleAnalytics("action", "enable_MIDI");
+            if (gAllowMIDIInput) {
 
-            initMIDI();
+              sendGoogleAnalytics("action", "enable_MIDI");
 
-            enableMIDIMute();
+              initMIDI();
 
-          } else {
+              enableMIDIMute();
 
-            disableMIDIMute();
+            } else {
+
+              disableMIDIMute();
+
+            }
 
           }
-
         }
       }
 
@@ -49595,26 +50280,29 @@ function ConfigureToolSettings() {
 
       IdleAllowShowTabNames();
 
-      if (isDesktopBrowser()) {
+      if (!isEnableSyntaxChanged){
 
-        var testEditorFontSize = args.result.configure_editor_fontsize;
+        if (isDesktopBrowser()) {
 
-        testEditorFontSize = parseInt(testEditorFontSize);
+          var testEditorFontSize = args.result.configure_editor_fontsize;
 
-        if (!isNaN(testEditorFontSize)) {
+          testEditorFontSize = parseInt(testEditorFontSize);
 
-          // Sanity check the font size value
-          if ((testEditorFontSize >= 6) && (testEditorFontSize <= 36)) {
+          if (!isNaN(testEditorFontSize)) {
 
-            gABCEditorFontsize = testEditorFontSize;
+            // Sanity check the font size value
+            if ((testEditorFontSize >= 6) && (testEditorFontSize <= 36)) {
 
-            updateABCEditorFont();
+              gABCEditorFontsize = testEditorFontSize;
 
-            // MAE 14 Jul 2024 - Need to resize text area after font size change
-            HandleWindowResize();
+              updateABCEditorFont();
+
+              // MAE 14 Jul 2024 - Need to resize text area after font size change
+              HandleWindowResize();
+
+            }
 
           }
-
         }
       }
 
@@ -49645,6 +50333,25 @@ function ConfigureToolSettings() {
 
       // Allow abcjs to process the file header?
       gProcessABCFileHeader = args.result.configure_process_abc_file_header;
+
+      if (!isEnableSyntaxChanged){
+
+        // Only change the CM if enabled
+        if (gEnableSyntax){
+          
+          if (oldSyntaxDarkMode != gSyntaxDarkMode){
+
+            if (gRawMode){
+              setCMDarkMode("#ffd6ff","#F8FDF8");
+            }
+            else{
+              setCMDarkMode(gDarkModeColor,gLightModeColor);          
+            }
+
+          }
+
+        }
+      }
 
       // Update local storage
       SaveConfigurationSettings();
@@ -49679,47 +50386,40 @@ function ConfigureToolSettings() {
         }
       }
 
-      if (!gIsIOS) {
+      // If changing syntax highlight enable, restart tool
+      if (isEnableSyntaxChanged){
 
-        if (oldForceAndroid != gForceAndroid) {
+        var prompt;
 
-          var thePrompt = "The tool will restart since the forcing Android setting changed.";
-
-          // Center the string in the prompt
-          thePrompt = makeCenteredPromptString(thePrompt);
-
-          DayPilot.Modal.alert(thePrompt, {
-            theme: "modal_flat",
-            top: 200,
-            scrollWithPage: (AllowDialogsToScroll())
-          }).then(function(args) {
-
-            window.location.reload();
-
-          });
-
-          return;
+        if (gEnableSyntax){
+          if (isPureDesktopBrowser()){
+            thePrompt = "The tool will restart with ABC syntax highlighting enabled.";
+          }
+          else{
+            if (gIsAndroid){
+              thePrompt = "The tool will restart with ABC syntax highlighting enabled.<br/><br/>Note: While usable, there may be issues with<br/>text selection context menus on Android.";
+            }
+            else{
+              thePrompt = "The tool will restart with ABC syntax highlighting enabled.<br/><br/>Note: While usable, there may be issues with<br/>text selection highlighting on iOS.";
+            }
+          }
+        }
+        else{
+          thePrompt = "The tool will restart with ABC syntax highlighting disabled.";            
         }
 
-        if (oldDisableAndroid != gDisableAndroid) {
+        // Center the string in the prompt
+        thePrompt = makeCenteredPromptString(thePrompt);
 
-          var thePrompt = "The tool will restart since the disabling Android setting changed.";
+        DayPilot.Modal.alert(thePrompt, {
+          theme: "modal_flat",
+          top: 200,
+          scrollWithPage: (AllowDialogsToScroll())
+        }).then(function(args) {
 
-          // Center the string in the prompt
-          thePrompt = makeCenteredPromptString(thePrompt);
+          window.location.reload();
 
-          DayPilot.Modal.alert(thePrompt, {
-            theme: "modal_flat",
-            top: 200,
-            scrollWithPage: (AllowDialogsToScroll())
-          }).then(function(args) {
-
-            window.location.reload();
-
-          });
-
-          return;
-        }
+        });
       }
 
       // If the user requested hiding of the tab buttons, hide them now
@@ -51216,11 +51916,21 @@ function DoMultiReadCommon(the_files, fileElement) {
 
           if (!gIsMaximized) {
 
-            ScrollABCTextIntoView(gTheCM, tuneOffset, tuneOffset, 10);
+            if (gEnableSyntax){
+              ScrollABCTextIntoView(gTheCM, tuneOffset, tuneOffset, 10);
 
-            if (!isMobileBrowser) {
-              gTheCM.getInputField().blur();
-              gTheCM.focus();
+              if (!isMobileBrowser) {
+                gTheCM.getInputField().blur();
+                gTheCM.focus();
+              }
+            }
+            else{
+              ScrollABCTextIntoView(gTheABC, tuneOffset, tuneOffset, 10);
+
+                if (!isMobileBrowser) {
+                  gTheABC.blur();
+                  gTheABC.focus();
+                }              
             }
 
           }
@@ -51356,7 +52066,12 @@ function HandleWindowResize() {
         elem.style.marginLeft = marginLeft + "px";
 
         // Reset the number of rows in the ABC editor
-        setCMRows(gTheCM, 12);
+        if (gEnableSyntax){
+          setCMRows(gTheCM, 12);
+        }
+        else{
+          gTheABC.rows = 12;
+        }
 
         gIsOneColumn = true;
 
@@ -51407,16 +52122,30 @@ function HandleWindowResize() {
           windowHeight -= 90;
         }
 
-        // Adapt the text area size
-        const wrapper = gTheCM.getWrapperElement();
-        const style   = getComputedStyle(wrapper);
-        const fontSize  = parseFloat(style.fontSize);
-        const lineHeight =
-          parseFloat(style.lineHeight) || fontSize * 1.2; // fallback if "normal"
-        var nRows = Math.floor(windowHeight / lineHeight);
+        if (gEnableSyntax){
+          // Adapt the text area size
+          const wrapper = gTheCM.getWrapperElement();
+          const style   = getComputedStyle(wrapper);
+          const fontSize  = parseFloat(style.fontSize);
+          const lineHeight =
+            parseFloat(style.lineHeight) || fontSize * 1.2; // fallback if "normal"
+          var nRows = Math.floor(windowHeight / lineHeight);
 
-        // Resize the text box
-        setCMRows(gTheCM, nRows);
+          // Resize the text box
+          setCMRows(gTheCM, nRows);
+        }
+        else{
+          // Adapt the text area size
+          elem = document.getElementById("abc");
+          const style = getComputedStyle(elem);
+          const fontSize = parseFloat(style.fontSize);
+          const lineHeight = parseFloat(style.lineHeight) || fontSize * 1.2; // Fallback to 1.2 * fontSize if line-height is not explicitly set
+
+          var nRows = Math.floor(windowHeight / lineHeight);
+
+          // Resize the text box
+          gTheABC.rows = nRows;
+        }
 
         gIsOneColumn = false;
 
@@ -51960,64 +52689,124 @@ function MIDI_NoteOn(data) {
     theNoteName = getMIDI_note_name(data);
   }
 
-  if (theNoteName) {
+  if (gEnableSyntax){
 
-    //console.log("getMIDI_note_name: "+theNoteName);
+    if (theNoteName) {
 
-    var theSelectionStart = gTheCM.selectionStart;
+      //console.log("getMIDI_note_name: "+theNoteName);
 
-    var theSelectionEnd = gTheCM.selectionEnd;
+      var theSelectionStart = gTheCM.selectionStart;
 
-    if (theNoteName != "BACKSPACE") {
+      var theSelectionEnd = gTheCM.selectionEnd;
 
-      // console.log("theSelectionStart before: "+theSelectionStart);
-      // console.log("theSelectionEnd before: "+theSelectionEnd);
+      if (theNoteName != "BACKSPACE") {
 
-      var leftSide = getABCEditorText().substring(0, theSelectionStart);
+        // console.log("theSelectionStart before: "+theSelectionStart);
+        // console.log("theSelectionEnd before: "+theSelectionEnd);
 
-      var rightSide = getABCEditorText().substring(theSelectionEnd);
-
-      setABCEditorText(leftSide + theNoteName + rightSide);
-
-      // Set dirty
-      gIsDirty = true;
-
-      gTheCM.selectionStart = theSelectionStart + theNoteName.length;
-
-      gTheCM.selectionEnd = gTheCM.selectionStart;
-
-      OnABCTextChange();
-
-      // theSelectionStart = gTheCM.selectionStart;
-      // theSelectionEnd = gTheCM.selectionEnd;
-
-      // console.log("theSelectionStart after: "+theSelectionStart);
-      // console.log("theSelectionEnd after: "+theSelectionEnd);
-    } else {
-
-      // Delete the last character
-      if (theSelectionStart != 0) {
-
-        var leftSide = getABCEditorText().substring(0, theSelectionStart - 1);
+        var leftSide = getABCEditorText().substring(0, theSelectionStart);
 
         var rightSide = getABCEditorText().substring(theSelectionEnd);
 
-        setABCEditorText(leftSide + rightSide);
+        setABCEditorText(leftSide + theNoteName + rightSide);
 
         // Set dirty
         gIsDirty = true;
 
-        gTheCM.selectionStart = theSelectionStart - 1;
+        gTheCM.selectionStart = theSelectionStart + theNoteName.length;
 
         gTheCM.selectionEnd = gTheCM.selectionStart;
 
         OnABCTextChange();
 
+        // theSelectionStart = gTheCM.selectionStart;
+        // theSelectionEnd = gTheCM.selectionEnd;
+
+        // console.log("theSelectionStart after: "+theSelectionStart);
+        // console.log("theSelectionEnd after: "+theSelectionEnd);
+      } else {
+
+        // Delete the last character
+        if (theSelectionStart != 0) {
+
+          var leftSide = getABCEditorText().substring(0, theSelectionStart - 1);
+
+          var rightSide = getABCEditorText().substring(theSelectionEnd);
+
+          setABCEditorText(leftSide + rightSide);
+
+          // Set dirty
+          gIsDirty = true;
+
+          gTheCM.selectionStart = theSelectionStart - 1;
+
+          gTheCM.selectionEnd = gTheCM.selectionStart;
+
+          OnABCTextChange();
+
+        }
       }
     }
-
   }
+  else{
+    
+    if (theNoteName) {
 
+      //console.log("getMIDI_note_name: "+theNoteName);
+
+      var theSelectionStart = gTheABC.selectionStart;
+
+      var theSelectionEnd = gTheABC.selectionEnd;
+
+      if (theNoteName != "BACKSPACE") {
+
+        // console.log("theSelectionStart before: "+theSelectionStart);
+        // console.log("theSelectionEnd before: "+theSelectionEnd);
+
+        var leftSide = getABCEditorText().substring(0, theSelectionStart);
+
+        var rightSide = getABCEditorText().substring(theSelectionEnd);
+
+        setABCEditorText(leftSide + theNoteName + rightSide);
+
+        // Set dirty
+        gIsDirty = true;
+
+        gTheABC.selectionStart = theSelectionStart + theNoteName.length;
+
+        gTheABC.selectionEnd = gTheABC.selectionStart;
+
+        OnABCTextChange();
+
+        // theSelectionStart = gTheABC.selectionStart;
+        // theSelectionEnd = gTheABC.selectionEnd;
+
+        // console.log("theSelectionStart after: "+theSelectionStart);
+        // console.log("theSelectionEnd after: "+theSelectionEnd);
+      } else {
+
+        // Delete the last character
+        if (theSelectionStart != 0) {
+
+          var leftSide = getABCEditorText().substring(0, theSelectionStart - 1);
+
+          var rightSide = getABCEditorText().substring(theSelectionEnd);
+
+          setABCEditorText(leftSide + rightSide);
+
+          // Set dirty
+          gIsDirty = true;
+
+          gTheABC.selectionStart = theSelectionStart - 1;
+
+          gTheABC.selectionEnd = gTheABC.selectionStart;
+
+          OnABCTextChange();
+
+        }      
+      }  
+    }
+  }
 }
 
 // MIDI input muting handlers
@@ -52422,7 +53211,14 @@ function ResizeTextBox() {
     // console.log("Initial container width = "+gInitialTextBoxContainerWidth);
     // console.log("Initial container left = "+gInitialTextBoxContainerLeft);
 
-    var currentWidth = gTheCM.getWrapperElement().offsetWidth;
+    var currentWidth;
+
+    if (gEnableSyntax){
+      currentWidth = gTheCM.getWrapperElement().offsetWidth;
+    }
+    else{
+      currentWidth = gTheABC.offsetWidth;      
+    }
 
     // console.log("current width = "+gTheABC.offsetWidth);
     // console.log("containerWidth = "+gInitialTextBoxContainerWidth);
@@ -52439,9 +53235,14 @@ function ResizeTextBox() {
 
       if (theDelta <= gInitialTextBoxContainerLeft) {
 
-        let wrapper = gTheCM.getWrapperElement();
-        wrapper.style.marginLeft = -theDelta + "px";
-        gTheCM.refresh();
+        if (gEnableSyntax){
+          let wrapper = gTheCM.getWrapperElement();
+          wrapper.style.marginLeft = -theDelta + "px";
+          gTheCM.refresh();
+        }
+        else{
+          gTheABC.style.marginLeft = -theDelta + "px";
+        }
 
         if (!gIsOneColumn) {
 
@@ -52478,11 +53279,16 @@ function ResizeTextBox() {
 
     } else {
 
-      // console.log("Setting the marginLeft to 0px");
-      let wrapper = gTheCM.getWrapperElement();
+      if (gEnableSyntax){
+        // console.log("Setting the marginLeft to 0px");
+        let wrapper = gTheCM.getWrapperElement();
 
-      wrapper.style.marginLeft = "0px";
-      gTheCM.refresh();
+        wrapper.style.marginLeft = "0px";
+        gTheCM.refresh();
+      }
+      else{
+        gTheABC.style.marginLeft = "0px";
+      }
 
       // Reset the notation left margin
       gTheNotation.style.marginLeft = theDelta + "px";
@@ -52545,20 +53351,34 @@ function CleanSmartQuotes(val) {
 // Update the CodeMirror editor font size
 //
 function updateABCEditorFont() {
-  // Get the wrapper <div> that CodeMirror uses
-  let wrapper = gTheCM.getWrapperElement();
+  if (gEnableSyntax){
+    // Get the wrapper <div> that CodeMirror uses
+    let wrapper = gTheCM.getWrapperElement();
 
-  if (gABCEditorFontsize === 13) {
-    wrapper.style.fontSize = "13pt";
-    wrapper.style.lineHeight = "16pt";
-  } else {
-    wrapper.style.fontSize = gABCEditorFontsize + "pt";
-    wrapper.style.lineHeight =
-      (gABCEditorFontsize + gABCEditorFontsize * 0.23) + "pt";
+    if (gABCEditorFontsize === 13) {
+      wrapper.style.fontSize = "13pt";
+      wrapper.style.lineHeight = "16pt";
+    } else {
+      wrapper.style.fontSize = gABCEditorFontsize + "pt";
+      wrapper.style.lineHeight =
+        (gABCEditorFontsize + gABCEditorFontsize * 0.23) + "pt";
+    }
+
+    // Important: tell CodeMirror to recalc layout
+    gTheCM.refresh();
   }
+  else{
 
-  // Important: tell CodeMirror to recalc layout
-  gTheCM.refresh();
+    // Make sure the default still looks the same
+    if (gABCEditorFontsize == 13) {
+      gTheABC.style.fontSize = "13pt";
+      gTheABC.style.lineHeight = "16pt";
+    } else {
+      // Scale the line height based on the font size
+      gTheABC.style.fontSize = gABCEditorFontsize + "pt";
+      gTheABC.style.lineHeight = (gABCEditorFontsize + (gABCEditorFontsize * .23)) + "pt";
+    }    
+  }
 
 }
 
@@ -53867,144 +54687,143 @@ function captureEditorBaselines() {
 
 // For the QuickEditor
 function MaximizeEditor() {
-  if (!gAllowCopy) return;
-  if (isMobileBrowser()) return;
-  if (gIsOneColumn) return;
 
-  sendGoogleAnalytics("action", "MaximizeEditor");
+  if (gEnableSyntax){
 
-  const wrapper = gTheCM.getWrapperElement();
-  const scroller = gTheCM.getScrollerElement(); // sometimes useful if you need its width/scroll
+    if (!gAllowCopy) return;
+    if (isMobileBrowser()) return;
+    if (gIsOneColumn) return;
 
-  // 1) Expand the editor to fill remaining space to the left of notation
-  //    (same formula, but applied to the CM wrapper)
-  const targetWidth = (window.innerWidth - gTheNotation.offsetWidth) - 125;
-  wrapper.style.width = Math.max(0, targetWidth) + "px";
+    sendGoogleAnalytics("action", "MaximizeEditor");
 
-  // Make sure the wrapper can “slide” left/right like the old textarea
-  // (these help in some flex/grid layouts)
-  wrapper.style.display = "block";
-  wrapper.style.boxSizing = "border-box";
+    const wrapper = gTheCM.getWrapperElement();
+    const scroller = gTheCM.getScrollerElement(); // sometimes useful if you need its width/scroll
 
-  gTheCM.refresh();
+    // 1) Expand the editor to fill remaining space to the left of notation
+    //    (same formula, but applied to the CM wrapper)
+    const targetWidth = (window.innerWidth - gTheNotation.offsetWidth) - 125;
+    wrapper.style.width = Math.max(0, targetWidth) + "px";
 
-  // 2) After layout settles, compute the delta and slide as before.
-  //    Using rAF + a small timeout ensures fonts/wrapping are baked.
-  requestAnimationFrame(() => {
-    setTimeout(() => {
-      const currentWidth = wrapper.offsetWidth;
+    // Make sure the wrapper can “slide” left/right like the old textarea
+    // (these help in some flex/grid layouts)
+    wrapper.style.display = "block";
+    wrapper.style.boxSizing = "border-box";
 
-      const theOffset = (gInitialTextBoxContainerWidth - gInitialTextBoxWidth) / 2;
+    gTheCM.refresh();
 
-      if (currentWidth > gInitialTextBoxContainerWidth) {
-        const theDelta = ((currentWidth - gInitialTextBoxWidth) / 2) - theOffset;
+    // 2) After layout settles, compute the delta and slide as before.
+    //    Using rAF + a small timeout ensures fonts/wrapping are baked.
+    requestAnimationFrame(() => {
+      setTimeout(() => {
+        const currentWidth = wrapper.offsetWidth;
 
-        // Only slide if we won’t go past the original left edge budget
-        if (theDelta <= gInitialTextBoxContainerLeft) {
-          wrapper.style.marginLeft = (-theDelta) + "px";
-          gTheCM.refresh();
+        const theOffset = (gInitialTextBoxContainerWidth - gInitialTextBoxWidth) / 2;
 
-          if (!gIsOneColumn) {
-            const theAppContainer = document.getElementById("app-container");
-            let m = theAppContainer && theAppContainer.style.marginLeft;
-            if (m) {
-              m = parseFloat(m.replace("px", ""));
-              if (!isNaN(m)) {
-                // Your “edge delta factor”
-                const edgeBudget = m - 48;
-                if (theDelta < edgeBudget) {
-                  // Slide the notation to the right but don't allow wrapping
-                  gTheNotation.style.marginLeft = theDelta + "px";
+        if (currentWidth > gInitialTextBoxContainerWidth) {
+          const theDelta = ((currentWidth - gInitialTextBoxWidth) / 2) - theOffset;
+
+          // Only slide if we won’t go past the original left edge budget
+          if (theDelta <= gInitialTextBoxContainerLeft) {
+            wrapper.style.marginLeft = (-theDelta) + "px";
+            gTheCM.refresh();
+
+            if (!gIsOneColumn) {
+              const theAppContainer = document.getElementById("app-container");
+              let m = theAppContainer && theAppContainer.style.marginLeft;
+              if (m) {
+                m = parseFloat(m.replace("px", ""));
+                if (!isNaN(m)) {
+                  // Your “edge delta factor”
+                  const edgeBudget = m - 48;
+                  if (theDelta < edgeBudget) {
+                    // Slide the notation to the right but don't allow wrapping
+                    gTheNotation.style.marginLeft = theDelta + "px";
+                  }
                 }
               }
             }
           }
         }
-      }
-    }, 100);
-  });
-}
-
-
-// For the QuickEditor
-function xMaximizeEditor() {
-
-  if (!gAllowCopy) {
-    return;
+      }, 100);
+    });
   }
+  else{
 
-  if (isMobileBrowser()) {
-    return;
-  }
+    if (!gAllowCopy) {
+      return;
+    }
 
-  if (gIsOneColumn) {
-    return;
-  }
+    if (isMobileBrowser()) {
+      return;
+    }
 
-  sendGoogleAnalytics("action", "MaximizeEditor");
+    if (gIsOneColumn) {
+      return;
+    }
 
-  let wrapper = gTheCM.getWrapperElement();
+    sendGoogleAnalytics("action", "MaximizeEditor");
 
-  wrapper.style.width = ((window.innerWidth - gTheNotation.offsetWidth) - 125) + "px";
-  gTheCM.refresh();
+    gTheABC.style.width = ((window.innerWidth - gTheNotation.offsetWidth) - 125) + "px";
 
-  setTimeout(function() {
+    setTimeout(function() {
 
-    var currentWidth = wrapper.offsetWidth;;
+      var currentWidth = gTheABC.offsetWidth;
 
-    // console.log("current width = "+gTheABC.offsetWidth);
-    // console.log("containerWidth = "+gInitialTextBoxContainerWidth);
+      // console.log("current width = "+gTheABC.offsetWidth);
+      // console.log("containerWidth = "+gInitialTextBoxContainerWidth);
 
-    var theOffset = (gInitialTextBoxContainerWidth - gInitialTextBoxWidth) / 2;
+      var theOffset = (gInitialTextBoxContainerWidth - gInitialTextBoxWidth) / 2;
 
-    // console.log("theOffset = "+theOffset);
+      // console.log("theOffset = "+theOffset);
 
-    if (currentWidth > gInitialTextBoxContainerWidth) {
+      if (currentWidth > gInitialTextBoxContainerWidth) {
 
-      // console.log("Setting the marginLeft for stretch");
+        // console.log("Setting the marginLeft for stretch");
 
-      var theDelta = ((currentWidth - gInitialTextBoxWidth) / 2) - theOffset;
+        var theDelta = ((currentWidth - gInitialTextBoxWidth) / 2) - theOffset;
 
-      if (theDelta <= gInitialTextBoxContainerLeft) {
+        if (theDelta <= gInitialTextBoxContainerLeft) {
 
-        wrapper.style.marginLeft = -theDelta + "px";
-        gTheCM.refresh();
+          gTheABC.style.marginLeft = -theDelta + "px";
 
-        if (!gIsOneColumn) {
+          if (!gIsOneColumn) {
 
-          //debugger;
+            //debugger;
 
-          var theAppContainer = document.getElementById("app-container");
+            var theAppContainer = document.getElementById("app-container");
 
-          var theAppContainerMargin = theAppContainer.style.marginLeft;
+            var theAppContainerMargin = theAppContainer.style.marginLeft;
 
-          if (theAppContainerMargin) {
+            if (theAppContainerMargin) {
 
-            theAppContainerMargin = theAppContainer.style.marginLeft.replace("px", "");
+              theAppContainerMargin = theAppContainer.style.marginLeft.replace("px", "");
 
-            theAppContainerMarginFloat = parseFloat(theAppContainerMargin);
+              theAppContainerMarginFloat = parseFloat(theAppContainerMargin);
 
-            if (!isNaN(theAppContainerMarginFloat)) {
+              if (!isNaN(theAppContainerMarginFloat)) {
 
-              // There is some edge delta factor
-              theAppContainerMarginFloat -= 48;
+                // There is some edge delta factor
+                theAppContainerMarginFloat -= 48;
 
-              if (theDelta < theAppContainerMarginFloat) {
+                if (theDelta < theAppContainerMarginFloat) {
 
-                // Slide the notation to the right but don't allow wrapping
-                gTheNotation.style.marginLeft = theDelta + "px";
+                  // Slide the notation to the right but don't allow wrapping
+                  gTheNotation.style.marginLeft = theDelta + "px";
 
+                }
               }
+
             }
 
           }
 
         }
-
       }
-    }
-  }, 100);
+    }, 100);    
+  }
 }
+
+
 
 //
 // Jump to search
@@ -54144,10 +54963,19 @@ function JumpToTune() {
         var tuneOffset = findTuneOffsetByIndex(gCurrentTune)
 
         // Some browsers like Chrome require focus before setting the selection range
-        gTheCM.focus();
+        if (gEnableSyntax){
+          gTheCM.focus();
 
-        gTheCM.selectionStart = tuneOffset;
-        gTheCM.selectionEnd = tuneOffset;
+          gTheCM.selectionStart = tuneOffset;
+          gTheCM.selectionEnd = tuneOffset;
+        }
+        else{
+          gTheABC.focus();
+
+          gTheABC.selectionStart = tuneOffset;
+          gTheABC.selectionEnd = tuneOffset;
+
+        }
 
         if (isDesktopBrowser()) {
           MakeTuneVisible(true);
@@ -54157,13 +54985,24 @@ function JumpToTune() {
           }, 250);
         }
 
-        ScrollABCTextIntoView(gTheCM, tuneOffset, tuneOffset, 10);
+        if (gEnableSyntax){
+          ScrollABCTextIntoView(gTheCM, tuneOffset, tuneOffset, 10);
+        }
+        else{
+          ScrollABCTextIntoView(gTheABC, tuneOffset, tuneOffset, 10);
+
+        }
 
         // Force reloading of tune when fullscreen
         gPlayABCGotMaximizedPlay = false;
 
         if (!isPureDesktopBrowser()) {
-          gTheCM.getInputField().blur();
+          if (gEnableSyntax){
+            gTheCM.getInputField().blur();
+          }
+          else{
+            gTheABC.blur();
+          }
         }
 
         // If quick editor, force redraw 
@@ -54335,18 +55174,32 @@ function SR_highlightMatch(index) {
 
   if (gSR_matchIndexes.length === 0 || searchValue === '') return;
 
-  gTheCM.focus();
+  if (gEnableSyntax){
+    gTheCM.focus();
 
-  if (!isRegex) {
-    //console.log("Not regex, setting selection to: "+gSR_matchIndexes[index].offset+" to "+(gSR_matchIndexes[index].offset + searchValue.length));
-    gTheCM.setSelectionRange(gSR_matchIndexes[index].offset, gSR_matchIndexes[index].offset + searchValue.length);
-    ScrollABCTextIntoView(gTheCM, gSR_matchIndexes[index].offset, gSR_matchIndexes[index].offset + searchValue.length, 2);
-  } else {
-    //console.log("Is regex, setting selection to: "+gSR_matchIndexes[index].offset+" to "+(gSR_matchIndexes[index].offset + gSR_matchIndexes[index].length));
-    gTheCM.setSelectionRange(gSR_matchIndexes[index].offset, gSR_matchIndexes[index].offset + gSR_matchIndexes[index].length);
-    ScrollABCTextIntoView(gTheCM, gSR_matchIndexes[index].offset, gSR_matchIndexes[index].offset + gSR_matchIndexes[index].length, 2);
+    if (!isRegex) {
+      //console.log("Not regex, setting selection to: "+gSR_matchIndexes[index].offset+" to "+(gSR_matchIndexes[index].offset + searchValue.length));
+      gTheCM.setSelectionRange(gSR_matchIndexes[index].offset, gSR_matchIndexes[index].offset + searchValue.length);
+      ScrollABCTextIntoView(gTheCM, gSR_matchIndexes[index].offset, gSR_matchIndexes[index].offset + searchValue.length, 2);
+    } else {
+      //console.log("Is regex, setting selection to: "+gSR_matchIndexes[index].offset+" to "+(gSR_matchIndexes[index].offset + gSR_matchIndexes[index].length));
+      gTheCM.setSelectionRange(gSR_matchIndexes[index].offset, gSR_matchIndexes[index].offset + gSR_matchIndexes[index].length);
+      ScrollABCTextIntoView(gTheCM, gSR_matchIndexes[index].offset, gSR_matchIndexes[index].offset + gSR_matchIndexes[index].length, 2);
+    }
   }
+  else{
+    gTheABC.focus();
 
+    if (!isRegex) {
+      //console.log("Not regex, setting selection to: "+gSR_matchIndexes[index].offset+" to "+(gSR_matchIndexes[index].offset + searchValue.length));
+      gTheABC.setSelectionRange(gSR_matchIndexes[index].offset, gSR_matchIndexes[index].offset + searchValue.length);
+      ScrollABCTextIntoView(gTheABC, gSR_matchIndexes[index].offset, gSR_matchIndexes[index].offset + searchValue.length, 2);
+    } else {
+      //console.log("Is regex, setting selection to: "+gSR_matchIndexes[index].offset+" to "+(gSR_matchIndexes[index].offset + gSR_matchIndexes[index].length));
+      gTheABC.setSelectionRange(gSR_matchIndexes[index].offset, gSR_matchIndexes[index].offset + gSR_matchIndexes[index].length);
+      ScrollABCTextIntoView(gTheABC, gSR_matchIndexes[index].offset, gSR_matchIndexes[index].offset + gSR_matchIndexes[index].length, 2);
+    }    
+  }
 
   // Scroll the tune into view
   MakeTuneVisible(true);
@@ -55193,9 +56046,17 @@ function SplitLongTextAndTags() {
           // Force a redraw
           RenderAsync(true, null, function() {
 
-            // Set the select point
-            gTheCM.selectionStart = 0;
-            gTheCM.selectionEnd = 0;
+            if (gEnableSyntax){
+              // Set the select point
+              gTheCM.selectionStart = 0;
+              gTheCM.selectionEnd = 0;
+            }
+            else{
+              // Set the select point
+              gTheABC.selectionStart = 0;
+              gTheABC.selectionEnd = 0;
+
+            }
 
             // Focus after operation
             FocusAfterOperation();
@@ -55221,8 +56082,17 @@ function SplitLongTextAndTags() {
           return;
         }
 
-        // Try and keep the same tune after the redraw for immediate play
-        var theSelectionStart = gTheCM.selectionStart;
+        var theSelectionStart;
+
+        if (gEnableSyntax){
+          // Try and keep the same tune after the redraw for immediate play
+          theSelectionStart = gTheCM.selectionStart;
+        }
+        else{
+          // Try and keep the same tune after the redraw for immediate play
+          theSelectionStart = gTheABC.selectionStart;
+
+        }
 
         // Stuff in the injected ABC
         var theABC = getABCEditorText();
@@ -55247,9 +56117,16 @@ function SplitLongTextAndTags() {
           // Force a redraw of the tune
           RenderAsync(false, theSelectedTuneIndex, function() {
 
-            // Set the select point
-            gTheCM.selectionStart = theSelectionStart;
-            gTheCM.selectionEnd = theSelectionStart;
+            if (gEnableSyntax){
+              // Set the select point
+              gTheCM.selectionStart = theSelectionStart;
+              gTheCM.selectionEnd = theSelectionStart;
+            }
+            else{
+              // Set the select point
+              gTheABC.selectionStart = theSelectionStart;
+              gTheABC.selectionEnd = theSelectionStart;
+            }
 
             // Focus after operation
             FocusAfterOperation();
@@ -55301,9 +56178,16 @@ function DoNormalizeDiacriticals(inverse) {
     // Force a redraw
     RenderAsync(true, null, function() {
 
-      // Set the select point
-      gTheCM.selectionStart = 0;
-      gTheCM.selectionEnd = 0;
+      if (gEnableSyntax){
+        // Set the select point
+        gTheCM.selectionStart = 0;
+        gTheCM.selectionEnd = 0;
+      }
+      else{
+        // Set the select point
+        gTheABC.selectionStart = 0;
+        gTheABC.selectionEnd = 0;
+      }
 
       // Focus after operation
       FocusAfterOperation();
@@ -55514,9 +56398,16 @@ function normalizeTitleArticles(inverse) {
     // Force a redraw
     RenderAsync(true, null, function() {
 
-      // Set the select point
-      gTheCM.selectionStart = 0;
-      gTheCM.selectionEnd = 0;
+      if (gEnableSyntax){
+        // Set the select point
+        gTheCM.selectionStart = 0;
+        gTheCM.selectionEnd = 0;
+      }
+      else{
+        // Set the select point
+        gTheABC.selectionStart = 0;
+        gTheABC.selectionEnd = 0;
+      }
 
       // Focus after operation
       FocusAfterOperation();
@@ -55893,9 +56784,16 @@ function NormalizeVoiceKeySignatures(){
     // Force a redraw
     RenderAsync(true, null, function() {
 
-      // Set the select point
-      gTheCM.selectionStart = 0;
-      gTheCM.selectionEnd = 0;
+      if (gEnableSyntax){
+        // Set the select point
+        gTheCM.selectionStart = 0;
+        gTheCM.selectionEnd = 0;
+      }
+      else{
+        // Set the select point
+        gTheABC.selectionStart = 0;
+        gTheABC.selectionEnd = 0;
+      }
 
       // Focus after operation
       FocusAfterOperation();
@@ -57063,11 +57961,6 @@ function DoStartup() {
     return;
   }
 
-  // Init the CodeMirror editor
-  initCodeMirror();
-
-  wireClickish(gTheCM, AUTOSCROLLDEBOUNCEMS);
-
   //
   // Uncomment these lines as desired for mobile simulation testing
   //
@@ -57076,6 +57969,45 @@ function DoStartup() {
   //gIsIPhone = true;  
   //gIsIPad = true;
   //giPadTwoColumn = true;  
+
+  // Set the placeholder before creating the CodeMirror
+  if (!isPureDesktopBrowser()){
+
+    // Placeholder on iOS and Android
+    gTheABC.placeholder = "Enter the ABC for your tunes here";
+
+  }
+
+  // Default is to do syntax highlighting on desktop and not on mobile unless overridden
+  if (gLocalStorageAvailable){
+    
+      gEnableSyntax = isPureDesktopBrowser();
+      var val = localStorage.EnableSyntax;
+    
+      if (val) {
+        gEnableSyntax = (val == "true");
+      }
+
+      //console.log("gEnableSyntax: "+gEnableSyntax);
+
+      gSyntaxDarkMode = false;
+      var val = localStorage.SyntaxDarkMode;
+    
+      if (val) {
+        gSyntaxDarkMode = (val == "true");
+      }
+
+      //console.log("gSyntaxDarkMode: "+gSyntaxDarkMode);
+  }
+
+  if (gEnableSyntax){
+
+    // Init the CodeMirror editor
+    initCodeMirror();
+
+    wireClickish(gTheCM, AUTOSCROLLDEBOUNCEMS);
+
+  }
 
   if (gIsIOS) {
     document.getElementById("selectabcfile").removeAttribute("accept");
@@ -57210,8 +58142,22 @@ function DoStartup() {
 
       if ((gIsIPhone) || (gIsAndroid)) {
 
-        setCMFont(gTheCM, 16, 18)
-        setCodeMirrorRows(gTheCM, 13);        
+        if (gEnableSyntax){
+          setCMFont(gTheCM, 16, 18)
+          setCodeMirrorRows(gTheCM, 13);       
+        }
+        else{
+          elem = gTheABC;
+
+          if (gIsIPhone) {
+            elem.cols = 60;
+          } else {
+            elem.cols = 58;
+          }
+
+          elem.style.fontSize = "16pt";
+          elem.style.lineHeight = "18pt";
+        } 
 
         // Reset the viewport to avoid scaling
         var viewport = document.querySelector("meta[name=viewport]");
@@ -57219,8 +58165,10 @@ function DoStartup() {
 
       }
 
-      if (gIsIPad){
-        setCMFont(gTheCM, 13, 17);
+      if (gEnableSyntax){
+        if (gIsIPad){
+          setCMFont(gTheCM, 13, 17);
+        }
       }
 
       // Resize the app-container
@@ -57348,23 +58296,160 @@ function DoStartup() {
   // If a paste was detected, force a full render because the tunes may have changed while
   // the tune count has not
   //
-  // --- 1) INPUT (was textarea.oninput) ----------------------------------------
-  // Debounced "content changed" handling
-  gTheCM.on(
-    "changes",
-    debounce(() => {
-      // Set dirty
-      gIsDirty = true;
 
-      if (!gForceFullRender) {
-        OnABCTextChange();
-      } else {
-        RenderAsync(true, null);
-      }
+  if (gEnableSyntax){
+    // --- 1) INPUT (was textarea.oninput) ----------------------------------------
+    // Debounced "content changed" handling
+    gTheCM.on(
+      "changes",
+      debounce(() => {
+        // Set dirty
+        gIsDirty = true;
 
-      gForceFullRender = false;
-    }, DEBOUNCEMS)
-  );
+        if (!gForceFullRender) {
+          OnABCTextChange();
+        } else {
+          RenderAsync(true, null);
+        }
+
+        gForceFullRender = false;
+      }, DEBOUNCEMS)
+    );
+  }
+  else{
+    document.getElementById('abc').oninput =
+        debounce(() => {
+
+          // Set dirty
+          gIsDirty = true;
+
+          if (!gForceFullRender) {
+
+            OnABCTextChange();
+
+          } else {
+
+            RenderAsync(true, null);
+
+          }
+
+          gForceFullRender = false;
+
+        }, DEBOUNCEMS);
+    //
+    // Clean "smart quotes" on paste
+    //
+    document.getElementById('abc').onpaste =
+
+      function(e) {
+
+        // Pastes over the contents sometimes don't result in the proper redraw behavior
+        // Detect if there is a tune in the paste and then force a full redraw if detected
+
+        var forceRender = false;
+
+        // Get the contents
+        var clipboardData = (e.clipboardData || window.clipboardData);
+
+        if (clipboardData) {
+
+          var thePasteContents = clipboardData.getData("text");
+
+          // Heuristic - Look for an X: tag in the paste contents to force a complete redraw
+          if (thePasteContents && (thePasteContents.indexOf("X:") != -1)) {
+
+            //console.log("\n---\nTune paste detected, forcing full redraw")
+
+            forceRender = true;
+
+          }
+
+        }
+
+        setTimeout(function() {
+
+          var txt = getABCEditorText();
+
+          txt = CleanSmartQuotes(txt);
+
+          // Set dirty
+          gIsDirty = true;
+
+          if (gIsIOS) {
+
+            // iOS 17 messed up copy and paste 
+            // appears to be double URL encoded
+            txt = FixIOS17(txt);
+
+
+          } 
+          
+          setABCEditorText(txt);
+
+          // Forcing a full redraw after paste?
+          if (forceRender) {
+
+            setTimeout(function() {
+
+              RenderAsync(true, null);
+
+            }, 250);
+          }
+
+        }, 0);
+      };
+
+    //
+    // Scroll tune notation into view when clicked
+    // Select whole tune if alt key is held when clicking
+    //
+
+    document.getElementById('abc').onclick =
+
+      debounce((event) => {
+
+        if (isPureDesktopBrowser()) {
+
+          if (event.altKey) { // Alt key held
+
+            const textarea = event.target;
+            const text = getABCEditorText();
+            const selectionStart = gTheABC.selectionStart;
+
+            // Find the start by searching backwards for a line that starts with 'X:'
+            let start = text.lastIndexOf('\nX:', selectionStart);
+            if (start === -1) {
+              start = text.indexOf('X:', 0); // If no previous 'X:' is found, find the first
+            } else {
+              start++; // Move past the newline character before 'X:'
+            }
+
+            // Find the end by searching for a blank line or the end of the text
+            var end = text.indexOf('\n\n', selectionStart); // Find double newline (blank line)
+            var end2 = text.indexOf('X:', selectionStart); // Find next tune
+
+            if ((end === -1) && (end2 === -1)) {
+              end = text.length; // If no blank line, go to the end of the text
+            } else {
+              if (end === -1) {
+                end = end2;
+              } else
+              if (end >= end2) {
+                end = end2;
+              }
+            }
+
+            // Select the text from 'X:' line to the blank line or end of text
+            gTheABC.setSelectionRange(start, end);
+          }
+        }
+
+        MakeTuneVisible(false);
+
+        fireSelectionChanged();
+
+      }, AUTOSCROLLDEBOUNCEMS);
+  }
 
   //
   // Setup the file import control
@@ -57589,26 +58674,44 @@ function DoStartup() {
   HideJumpButton();
 
   // Force recalculation of the notation top position on ABC text area resize
-
-  new ResizeObserver(TextBoxResizeHandler).observe(gTheCM.getWrapperElement());
+  if (gEnableSyntax){
+    new ResizeObserver(TextBoxResizeHandler).observe(gTheCM.getWrapperElement());
+  }
+  else{
+    new ResizeObserver(TextBoxResizeHandler).observe(gTheABC);
+  }
 
   if (isDesktopBrowser()) {
     
-    let wrapper = gTheCM.getWrapperElement();
+    if (gEnableSyntax){
+      let wrapper = gTheCM.getWrapperElement();
 
-    // Setup text box symmetrical resize 
-    if (giPadTwoColumn) {
-      // iPad two column is always fixed width
-      gInitialTextBoxWidth = 832;
+      // Setup text box symmetrical resize 
+      if (giPadTwoColumn) {
+        // iPad two column is always fixed width
+        gInitialTextBoxWidth = 832;
 
-      wrapper.style.marginLeft = 0 + "px";
-      wrapper.style.width = gInitialTextBoxWidth + "px";
-      gTheCM.refresh();
+        wrapper.style.marginLeft = 0 + "px";
+        wrapper.style.width = gInitialTextBoxWidth + "px";
+        gTheCM.refresh();
 
 
-    } else {
-      gInitialTextBoxWidth = gTheCM.offsetWidth;
+      } else {
+        gInitialTextBoxWidth = gTheCM.offsetWidth;
+      }
     }
+    else{
+      // Setup text box symmetrical resize 
+      if (giPadTwoColumn) {
+        // iPad two column is always fixed width
+        gInitialTextBoxWidth = 832;
+        gTheABC.style.marginLeft = 0 + "px";
+        gTheABC.style.width = gInitialTextBoxWidth + "px";
+
+      } else {
+        gInitialTextBoxWidth = gTheABC.offsetWidth;
+      }
+    }      
 
     var elem = document.getElementById("notenlinks");
     gInitialTextBoxContainerWidth = elem.offsetWidth;
@@ -57622,7 +58725,12 @@ function DoStartup() {
     // console.log("Initial container left = "+gInitialTextBoxContainerLeft);
 
     if (isPureDesktopBrowser()) {
-      new ResizeObserver(ResizeTextBox).observe(gTheCM.getWrapperElement());
+      if (gEnableSyntax){
+        new ResizeObserver(ResizeTextBox).observe(gTheCM.getWrapperElement());
+      }
+      else{
+        new ResizeObserver(ResizeTextBox).observe(gTheABC);
+      }
     }
 
     // Hook window resize events
@@ -57631,12 +58739,21 @@ function DoStartup() {
       HandleWindowResize();
 
       if (!gIsMaximized) {
-        let wrapper = gTheCM.getWrapperElement();
 
-        // Reset text box symmetrical resize 
-        wrapper.style.marginLeft = 0 + "px";
-        wrapper.style.width = gInitialTextBoxWidth + "px";
-        gTheCM.refresh();
+        if (gEnableSyntax){
+          let wrapper = gTheCM.getWrapperElement();
+
+          // Reset text box symmetrical resize 
+          wrapper.style.marginLeft = 0 + "px";
+          wrapper.style.width = gInitialTextBoxWidth + "px";
+          gTheCM.refresh();
+        }
+        else{
+          // Reset text box symmetrical resize 
+          gTheABC.style.marginLeft = 0 + "px";
+          gTheABC.style.width = gInitialTextBoxWidth + "px";
+
+        }
 
         var elem = document.getElementById("notenlinks");
         gInitialTextBoxContainerWidth = elem.offsetWidth;
@@ -57691,45 +58808,119 @@ function DoStartup() {
 
     $.event.props.push("dataTransfer"); // make jQuery copy the dataTransfer attribute
 
+    if (gEnableSyntax){
+      wireAbcDragDrop();
+
+    }
+    else{
+      $('#abc').on('drop', function(e) {
+
+        // Remove the drag drop highlighting
+        $(this).toggleClass('indrag', false);
+
+        DoDrop(e);
+
+      });
+
+      $('#abc').on('dragover', function(e) { // this handler makes the element accept drops and generate drop-events
+        e.stopPropagation();
+        e.preventDefault(); // the preventDefault is obligatory for drag/drop!
+        e.dataTransfer.dropEffect = 'copy'; // Explicitly show this is a copy.
+      });
+
+      $('#abc').on('dragenter dragleave', function() {
+        $(this).toggleClass('indrag');
+      });
+
+      // Disable dragging the text inside the text area
+      $('#abc').on('dragstart', function(e) { // this handler makes the element accept drops and generate drop-events
+        e.preventDefault();
+      });
+
+    }
+  }
+  else {
+
+    // Hide the desktop zoom message
+    document.getElementById("desktop_use_message").style.display = "none";
+
+    if (!gEnableSyntax){
+      // Disable dragging the text inside the text area
+      $('#abc').on('dragstart', function(e) { // this handler makes the element accept drops and generate drop-events
+        e.preventDefault();
+      });
+    }
+
   }
 
-  wireAbcDragDrop();
 
   //
   // Add text area mouse handlers on desktop browsers 
   //
   if (isPureDesktopBrowser()) {
 
-    let wrapper = gTheCM.getWrapperElement();
+    if (gEnableSyntax){
+      let wrapper = gTheCM.getWrapperElement();
 
-    wrapper.onmousedown = function(e) {
+      wrapper.onmousedown = function(e) {
 
-      if (gRawMode) {
-        setTimeout(function() {
-          gRawIsDragging = true;
-          fireSelectionChanged();
-        }, 0);
-      }
-    };
+        if (gRawMode) {
+          setTimeout(function() {
+            gRawIsDragging = true;
+            fireSelectionChanged();
+          }, 0);
+        }
+      };
 
-    wrapper.onmouseup = function(e) {
+      wrapper.onmouseup = function(e) {
 
-      if (gRawMode) {
-        gRawIsDragging = false;
-        fireSelectionChanged();
-      }
-
-    };
-
-    wrapper.onmousemove = function(e) {
-
-      if (gRawMode) {
-        if (gRawIsDragging) {
+        if (gRawMode) {
+          gRawIsDragging = false;
           fireSelectionChanged();
         }
-      }
 
-    };
+      };
+
+      wrapper.onmousemove = function(e) {
+
+        if (gRawMode) {
+          if (gRawIsDragging) {
+            fireSelectionChanged();
+          }
+        }
+
+      };
+    }
+    else{
+      gTheABC.onmousedown = function(e) {
+
+        if (gRawMode) {
+          setTimeout(function() {
+            gRawIsDragging = true;
+            fireSelectionChanged();
+          }, 0);
+        }
+      };
+
+      gTheABC.onmouseup = function(e) {
+
+        if (gRawMode) {
+          gRawIsDragging = false;
+          fireSelectionChanged();
+        }
+
+      };
+
+      gTheABC.onmousemove = function(e) {
+
+        if (gRawMode) {
+          if (gRawIsDragging) {
+            fireSelectionChanged();
+          }
+        }
+
+      };      
+    }
 
     // Raw mode is enabled by default
     gAllowRawMode = true;
@@ -58061,8 +59252,6 @@ function DoStartup() {
 
   }
 
-  //cm1.on('shown', () => console.log('Context menu shown'));
-
   // Don't count share URL consumption as a tip jar event
   if (!isFromShare) {
 
@@ -58149,21 +59338,29 @@ function DoStartup() {
     ToggleMaximize();
   }
 
-  if (isMobileBrowser()){
+  if (gEnableSyntax){
 
-      // Reduce the width of the CM a bit
-      const wrapper = gTheCM.getWrapperElement();
-      // Get whatever the browser computed for its current width
-      const currentWidth = wrapper.offsetWidth;
-      wrapper.style.width = (currentWidth - 32) + "px";
-      wrapper.style.marginLeft = "14px";
+    if (isMobileBrowser()){
 
-      gTheCM.refresh(); // important: force CM to recalc layout
+        // Reduce the width of the CM a bit
+        const wrapper = gTheCM.getWrapperElement();
+        // Get whatever the browser computed for its current width
+        const currentWidth = wrapper.offsetWidth;
+        wrapper.style.width = (currentWidth - 32) + "px";
+        wrapper.style.marginLeft = "14px";
 
+        gTheCM.refresh(); // important: force CM to recalc layout
+
+    }
+
+    // And set the focus
+    gTheCM.focus();
   }
-
-  // And set the focus
-  gTheCM.focus();
+  else{
+    // And set the focus
+    gTheABC.focus();
+   
+  }
 
 }
 
@@ -58512,20 +59709,6 @@ function setCodeMirrorRows(cm, rows) {
   cm.refresh();
 }
 
-function setCMPlaceholder(cm, text) {
-  // If placeholder addon isn't enabled, bail
-  if (!cm.state.placeholder) return;
-
-  // Update the text
-  cm.state.placeholder.text = text;
-
-  // Re-apply the node so the new text shows if editor is empty
-  if (cm.getValue() === "") {
-    cm.state.placeholder.node.textContent = text;
-    cm.state.placeholder.node.style.display = "";
-  }
-}
-
 function setCMRows(cm, rows) {
   const wrapper = cm.getWrapperElement();
   // get current line height in pixels
@@ -58730,32 +59913,11 @@ function initCodeMirror(){
     if (!ta) { console.error('Textarea #abcEditor not found'); return; }
 
     var theMode = "abc-plus";
-    var theViewportMargin = 20;
+    var theViewportMargin = gSyntaxViewportMargin;
 
     // Get CM related vars
-    if (window.localStorage){
-
-      gEnableSyntax = true;
-      val = localStorage.EnableSyntax
-      if (val) {
-        gEnableSyntax = (val == "true");
-      }
-      if (!gEnableSyntax){
-        theMode = null;
-      }
-
-      val = localStorage.SyntaxViewportMargin;
-      if (val) {
-        gSyntaxViewportMargin = parseInt(val);
-        if (isNaN(gSyntaxViewportMargin)) {
-          gSyntaxViewportMargin = 20;
-        }
-      } else {
-        gSyntaxViewportMargin = 20;
-      }
-      if (gEnableSyntax){
-        theViewportMargin = gSyntaxViewportMargin;
-      }
+    if (!gEnableSyntax){
+      theMode = null;
     }
 
     var cm;
@@ -58783,12 +59945,6 @@ function initCodeMirror(){
 
     // Fix desktop selection issues
     installEditorSelectionBehavior();
-
-    gSyntaxDarkMode = false;
-    val = localStorage.SyntaxDarkMode
-    if (val) {
-      gSyntaxDarkMode = (val == "true");
-    }
 
     // Dark mode toggle
     setCMDarkMode(gDarkModeColor,gLightModeColor);

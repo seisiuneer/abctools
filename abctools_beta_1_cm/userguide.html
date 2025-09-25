@@ -5685,7 +5685,7 @@
                 <h1 class="page_break_always">ABC Transcription Tools Settings<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <p>Clicking the <strong>Settings</strong> button at the top of the tool brings up a dialog where you can set tool-wide settings:</p>
                 <div class="image_holder_p">
-                    <img class="image" loading="lazy" src="img/abc_transcription_tool_settings_67.jpg"/>
+                    <img class="image" loading="lazy" src="img/abc_transcription_tool_settings_68.jpg"/>
                 </div>
                 <hr id="ipad_side_by_side">
                 <p><strong>iPad Side-by-Side View (similar to desktop)</strong> (iPad only)</p>
@@ -5694,6 +5694,15 @@
                 <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/uoQFU-ZnP0g" title="iPad Two Column Demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
                 <p>This feature is best used using an external keyboard on the iPad.</p>
                 <p>After changing this setting, the tool will reload itself.</p>
+                <hr>
+                <p><strong>Enable ABC syntax highlighting (change requires restart)</strong></p>
+                <p>When checked, shows ABC directives in different colors. (Default is on for desktop browsers, off for mobile browsers)</p>
+                <p><strong>Note:</strong> Enabling syntax highlighting on mobile browsers may have some minor issues on mobile devices.</p>
+                <p>On iOS, the selection region highlight may extend above or below the ABC text.</p>
+                <p>On Android, there are issues with text context menus on some browsers.</p>
+                <hr>
+                <p><strong>Use Dark Mode for the editor when syntax highlighting is enabled</strong></p>
+                <p>When checked, sets the background of the editor to black and inverts the syntax highlighting colors if syntax highlighting is enable. (Default is off)</p>
                 <hr>
                 <p><strong>Player screen width (percentage) (min is 50, max is 100)</strong></p>
                 <p>Sets the width in percentage of screen width for the Player and Explorers in the tool. Default is: 50.</p>
@@ -5912,16 +5921,6 @@
                 <p><strong>MIDI input is key and mode aware (if unchecked, enters note names with no accidentals)</strong></p>
                 <p>For full details on MIDI input, see this section:</p>
                 <p style="text-align: center;"><a style="text-decoration:none;" href="#midi_input">Typing ABC Using a MIDI Input Device</a></p>
-                <hr id="force_android">
-                <p><strong>Force Android phone UI (If mobile browser doesn't identify as Android)</strong> (non-iOS devices only)</p>
-                <p>Some modern Android browsers are no longer identifying themselves as running on Android.</p>
-                <p>When checked, the tool will force Android phone mobile device adaptation.</p>
-                <p>If you change this value, the tool will restart to reflect the change.</p>
-                <hr id="diable_mobile">
-                <p><strong>Disable Android phone UI (If mobile browser does identify as Android)</strong></p>
-                <p>Even if the browser identifies itself as running on Android, checking this box will disable any Android mobile UI or programmatic adaptation.</p>
-                <p>If you change this value, the tool will restart to reflect the change.</p>
-                <p>If both "Force Android phone UI" and "Disable Android phone UI" are checked, "Disable Android phone UI" takes priority.</p>
                 <hr>
                 <p><strong>Font Settings</strong></p>
                 <p>Brings up a dialog where you can configure all fonts used for rendering the ABC.</p>
@@ -5950,22 +5949,12 @@
                 <hr class="hidden-print" id="advanced_settings">
                 <h1 class="page_break_always">Advanced Settings<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <div class="image_holder_p">
-                    <img class="image" loading="lazy" src="img/advanced_settings_33.jpg"/>
+                    <img class="image" loading="lazy" src="img/advanced_settings_34.jpg"/>
                 </div>
                 <p>These settings are available by clicking the <strong>Advanced Settings</strong> button at the bottom of the main <strong>Settings</strong> dialog.</p>
                 <p>On mobile browsers, the dialog will only show the settings that are available on mobile platforms.</p>
                 <hr>
                 <p style="text-align: center;"><strong>Note: Do not change these values unless you know what you are doing!</strong></p>
-                <hr>
-                <p><strong>Enable ABC syntax highlighting</strong></p>
-                <p>When checked, shows ABC directives in different colors. (Default is on)</p>
-                <hr>
-                <p><strong>Use Dark Mode for editor</strong></p>
-                <p>When checked, sets the background of the editor to black and inverts the syntax highlighting colors if syntax highlighting is enable. (Default is off)</p>
-                <hr>
-                <p><strong>Syntax highlighting processing viewport in lines (default is 20):</strong></p>
-                <p>When syntax highlighting is enabled, this sets how many lines above and below the visible text that is processed. (Default is 20)</p>
-                <p>Larger numbers on some systems may slow down the scrolling of the editor.</p>
                 <hr>
                 <p><strong>Always confirm before deletion when clicking Clear</strong></p>
                 <p>When checked, if you click the "Clear" button, you will be asked to confirm before the ABC is cleared. (Default is on)</p>
@@ -6053,6 +6042,16 @@
                 <hr>
                 <p><strong>MP3 Batch Export Delay in milliseconds (default is 250):</strong></p>
                 <p>(Desktop browsers only) Sets the delay between file saves when doing batch .MP3 export.</p>
+                <hr id="force_android">
+                <p><strong>Force Android phone UI (If mobile browser doesn't identify as Android)</strong> (non-iOS devices only)</p>
+                <p>Some modern Android browsers are no longer identifying themselves as running on Android.</p>
+                <p>When checked, the tool will force Android phone mobile device adaptation.</p>
+                <p>If you change this value, the tool will restart to reflect the change.</p>
+                <hr id="diable_mobile">
+                <p><strong>Disable Android phone UI (If mobile browser does identify as Android)</strong></p>
+                <p>Even if the browser identifies itself as running on Android, checking this box will disable any Android mobile UI or programmatic adaptation.</p>
+                <p>If you change this value, the tool will restart to reflect the change.</p>
+                <p>If both "Force Android phone UI" and "Disable Android phone UI" are checked, "Disable Android phone UI" takes priority.</p>
                 <hr id="private_tinyurl_token">
                 <p><strong>Private TinyURL API Token</strong></p>
                 <p>If you have your own TinyURL API Token for shortening URLs, enter it here on the <strong>Advanced Settings</strong> dialog.</p>
