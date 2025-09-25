@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "2829_092525_1400_BETA";
+var gVersionNumber = "2830_092525_1500_BETA";
 
 var gMIDIInitStillWaiting = false;
 
@@ -1757,7 +1757,7 @@ function ToggleRawMode() {
 
     if (gEnableSyntax){
       // Dark mode toggle
-      setCMDarkMode("#ffd6ff","#F8FDF8");
+      setCMDarkMode("#ffe0ff","#F8FDF8");
     }
     else{
       gTheABC.style.backgroundColor = "#F8FDF8";
@@ -50342,7 +50342,7 @@ function ConfigureToolSettings() {
           if (oldSyntaxDarkMode != gSyntaxDarkMode){
 
             if (gRawMode){
-              setCMDarkMode("#ffd6ff","#F8FDF8");
+              setCMDarkMode("#ffe0ff","#F8FDF8");
             }
             else{
               setCMDarkMode(gDarkModeColor,gLightModeColor);          
@@ -59560,7 +59560,7 @@ function setCMDarkMode(theDarkModeColor, theLightModeColor){
     wrapper.style.backgroundColor = theDarkModeColor;
     scroller.style.filter = "invert(100%)";
     scroller.style.backgroundColor = theDarkModeColor;
-    if (isPureDesktopBrowser()) setCodeMirrorSelectionColor("#D0D0D0", "#B0B0B0");
+    if (isPureDesktopBrowser()) setCodeMirrorSelectionColor("#808080", "#808080"); // Was originally #D0D0D0 and #B0B0B0
     else setCodeMirrorSelectionColor(); // remove override
   } else {
     wrapper.style.backgroundColor = theLightModeColor;
