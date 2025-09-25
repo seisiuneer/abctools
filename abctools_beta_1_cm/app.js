@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "2828_092525_1030_BETA";
+var gVersionNumber = "2829_092525_1400_BETA";
 
 var gMIDIInitStillWaiting = false;
 
@@ -50389,23 +50389,18 @@ function ConfigureToolSettings() {
       // If changing syntax highlight enable, restart tool
       if (isEnableSyntaxChanged){
 
-        var prompt;
+        var thePrompt;
 
         if (gEnableSyntax){
-          if (isPureDesktopBrowser()){
-            thePrompt = "The tool will restart with ABC syntax highlighting enabled.";
+          if (isPureDesktopBrowser() || gIsAndroid){
+            thePrompt = "<br/>The tool will now restart with ABC syntax highlighting enabled.<br/><br/><strong>Note for Android users:</strong><br/><br/>While the tool is usable, there may be<br/>issues with text selection context menus.<br/>";
           }
           else{
-            if (gIsAndroid){
-              thePrompt = "The tool will restart with ABC syntax highlighting enabled.<br/><br/>Note: While usable, there may be issues with<br/>text selection context menus on Android.";
-            }
-            else{
-              thePrompt = "The tool will restart with ABC syntax highlighting enabled.<br/><br/>Note: While usable, there may be issues with<br/>text selection highlighting on iOS.";
-            }
+            thePrompt = "<br/>The tool will now restart with ABC syntax highlighting enabled.<br/><br/><strong>Note for iOS users:</strong><br/><br/>While the tool is usable, there may be <br/>issues with text selection highlighting.<br/>";
           }
         }
         else{
-          thePrompt = "The tool will restart with ABC syntax highlighting disabled.";            
+          thePrompt = "<br/>The tool will now restart with ABC syntax highlighting disabled.<br/>";            
         }
 
         // Center the string in the prompt
