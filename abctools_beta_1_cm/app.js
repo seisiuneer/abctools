@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "2830_092525_1500_BETA";
+var gVersionNumber = "2832_092525_1600_BETA";
 
 var gMIDIInitStillWaiting = false;
 
@@ -59560,7 +59560,7 @@ function setCMDarkMode(theDarkModeColor, theLightModeColor){
     wrapper.style.backgroundColor = theDarkModeColor;
     scroller.style.filter = "invert(100%)";
     scroller.style.backgroundColor = theDarkModeColor;
-    if (isPureDesktopBrowser()) setCodeMirrorSelectionColor("#808080", "#808080"); // Was originally #D0D0D0 and #B0B0B0
+    if (isPureDesktopBrowser()) setCodeMirrorSelectionColor("#808050", "#808050"); // Was originally #D0D0D0 and #B0B0B0, #808080 is also viable
     else setCodeMirrorSelectionColor(); // remove override
   } else {
     wrapper.style.backgroundColor = theLightModeColor;
