@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "2827_092525_1000_BETA";
+var gVersionNumber = "2828_092525_1030_BETA";
 
 var gMIDIInitStillWaiting = false;
 
@@ -44983,7 +44983,7 @@ function GetInitialConfigurationSettings() {
   }
 
   gEnableSyntax = isPureDesktopBrowser();
-  val = localStorage.EnableSyntax
+  val = localStorage.EnableSyntax2
   if (val) {
     gEnableSyntax = (val == "true");
   }
@@ -45297,7 +45297,7 @@ function SaveConfigurationSettings() {
     localStorage.CustomInstrumentShowStatus = gCustomInstrumentShowStatus;
 
     // Syntax highlighting
-    localStorage.EnableSyntax = gEnableSyntax;
+    localStorage.EnableSyntax2 = gEnableSyntax;
     localStorage.SyntaxDarkMode = gSyntaxDarkMode;
 
   }
@@ -57982,7 +57982,7 @@ function DoStartup() {
   if (gLocalStorageAvailable){
     
       gEnableSyntax = isPureDesktopBrowser();
-      var val = localStorage.EnableSyntax;
+      var val = localStorage.EnableSyntax2;
     
       if (val) {
         gEnableSyntax = (val == "true");
