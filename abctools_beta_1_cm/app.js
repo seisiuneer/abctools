@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "2825_092425_1300_BETA";
+var gVersionNumber = "2826_092425_1800_BETA";
 
 var gMIDIInitStillWaiting = false;
 
@@ -479,6 +479,12 @@ var gJumpToTuneAutoscroll = true;
 
 // Show status dialog after custom instrument load
 var gCustomInstrumentShowStatus = true;
+
+// Enable syntax highlighting
+var gEnableSyntax = true;
+
+// Enable dark mode
+var gSyntaxDarkMode = false;
 
 // Light mode color
 var gLightModeColor = "#FDFDFD";
