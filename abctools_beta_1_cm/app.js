@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "2832_092525_1600_BETA";
+var gVersionNumber = "2833_092625_1400_BETA";
 
 var gMIDIInitStillWaiting = false;
 
@@ -44994,6 +44994,9 @@ function GetInitialConfigurationSettings() {
     gSyntaxDarkMode = (val == "true");
   }
 
+  // Apply custom theme
+  ensureInitialAbcThemeApplied();
+
   // Save the settings, in case they were initialized
   SaveConfigurationSettings();
 
@@ -45299,6 +45302,7 @@ function SaveConfigurationSettings() {
     // Syntax highlighting
     localStorage.EnableSyntax2 = gEnableSyntax;
     localStorage.SyntaxDarkMode = gSyntaxDarkMode;
+
 
   }
 }
@@ -48952,7 +48956,7 @@ function AdvancedSettings() {
     },
 
     {
-      html: '<p style="text-align:center;margin-top:18px;margin-bottom:6px"><label class="loadimpulsebutton btn btn-subdialog " for="loadimpulsebutton" title="Load a custom reverb convolution impulse .wav file">Load Custom Reverb Impulse <input type="file" id="loadimpulsebutton"  accept=".wav,.WAV" hidden/></label><input id="resetsettings" class="btn btn-resetsettings resetsettings" onclick="ResetSettingsDialog()" type="button" value="Reset Settings" title="Opens a dialog where you can reset all tool settings to the default and/or clear the instrument notes, reverb settings, and tune search engine collection databases"></p><p style="font-size:10pt;line-height:14pt;font-family:helvetica;color:grey;position:absolute;left:20px;bottom:30px;margin:0px;cursor:pointer;" onclick="ShowBrowserInfo();" title="Click to show browser information">Click to show browser info<br/>Installed version: ' + gVersionNumber + '</p>'
+      html: '<p style="text-align:center;margin-top:18px;margin-bottom:6px"><input id="customthemeeditor" class="btn btn-subdialog" onclick="customThemeEditor()" type="button" value="ABC Syntax Highlighting Theme Editor" title="Opens the ABC Syntax Highlighting Theme Editor"><label class="loadimpulsebutton btn btn-subdialog " for="loadimpulsebutton" title="Load a custom reverb convolution impulse .wav file">Load Custom Reverb Impulse <input type="file" id="loadimpulsebutton"  accept=".wav,.WAV" hidden/></label><input id="resetsettings" class="btn btn-resetsettings resetsettings" onclick="ResetSettingsDialog()" type="button" value="Reset Settings" title="Opens a dialog where you can reset all tool settings to the default and/or clear the instrument notes, reverb settings, and tune search engine collection databases"></p><p style="font-size:10pt;line-height:14pt;font-family:helvetica;color:grey;position:absolute;left:20px;bottom:30px;margin:0px;cursor:pointer;" onclick="ShowBrowserInfo();" title="Click to show browser information">Click to show browser info<br/>Installed version: ' + gVersionNumber + '</p>'
     },
   ]);
 
@@ -59359,6 +59363,391 @@ function DoStartup() {
 
 }
 
+// ABC Syntax highlighting and CodeMirror-related code
+
+// Custom ABC syntax theme editor
+const ABC_THEME_ITEMS = [
+  { id:"cm-abc-header-title", label:"Titles/Subtitles", className:"cm-abc-header-title",
+    color:"#00608a", styleWeight:"bold", sample:"The Kesh" },
+
+  { id:"cm-abc-header-tag",   label:"Header Tags",   className:"cm-abc-header-tag",
+    color:"#0000A0", styleWeight:"bold", sample:"X: T: L: M: K:" },
+
+  { id:"cm-abc-header-val",   label:"Header Values",   className:"cm-abc-header-val",
+    color:"#444444", styleWeight:"normal", sample:"6/8, G major" },
+
+  { id:"cm-abc-meta",         label:"%% Directives",         className:"cm-abc-meta",
+    color:"#5924bc", styleWeight:"bold", sample:"%%MIDI program 0" },
+
+  { id:"cm-abc-font-directive", label:"Font Directives", className:"cm-abc-font-directive",
+    color:"#7c2243", styleWeight:"normal", sample:"%%font-..." },
+
+  { id:"cm-abc-comment",      label:"Comments",      className:"cm-abc-comment",
+    color:"#005231", styleWeight:"italic", sample:"% comment" },
+
+  { id:"cm-abc-extended-directive", label:"Tool-private Directives", className:"cm-abc-extended-directive",
+    color:"#B00023", styleWeight:"normal", sample:"%soundfont fluid" },
+
+  { id:"cm-abc-note",         label:"Notes and Rests",         className:"cm-abc-note",
+    color:"#000000", styleWeight:"normal", sample:"A B c d' e'' z" },
+
+  { id:"cm-abc-note-prefix",  label:"Note Prefixes",  className:"cm-abc-note-prefix",
+    color:"#189800", styleWeight:"normal", sample:"^ _ =" },
+
+  { id:"cm-abc-string",       label:"Chords",       className:"cm-abc-string",
+    color:"#6200a8", styleWeight:"normal", sample:"\"Am\"  \"D\"  \"G\"" },
+
+  { id:"cm-abc-number",       label:"Tuple Numbers",       className:"cm-abc-number",
+    color:"#010604", styleWeight:"normal", sample:"(3abc  (2de  (5f)" },
+
+  { id:"cm-abc-builtin",      label:"Block Chords",      className:"cm-abc-builtin",
+    color:"#77bb55", styleWeight:"normal", sample:"[CEG]  [DFA]" },
+
+  { id:"cm-abc-bar",          label:"Barlines",          className:"cm-abc-bar",
+    color:"#006999", styleWeight:"normal", sample:"|| :| [| |]" },
+
+  { id:"cm-abc-ending",       label:"Endings",       className:"cm-abc-ending",
+    color:"#006999", styleWeight:"normal", sample:"|1  |2  [1  [2" },
+
+  { id:"cm-abc-qualifier",    label:"!*! Annotations",    className:"cm-abc-qualifier",
+    color:"#090005", styleWeight:"normal", sample:"!trill!" },
+
+  { id:"cm-abc-operator",     label:"Slurs and Ties",     className:"cm-abc-operator",
+    color:"#555555", styleWeight:"normal", sample:"( slur )  - tie -" },
+
+  { id:"cm-abc-abccss",       label:"Custom CSS",       className:"cm-abc-abccss",
+    color:"#a300a3", styleWeight:"normal", sample:".abcjs-note" }
+];
+
+// Restore dialog fields to the original ABC_THEME_ITEMS defaults (doesn't save until you click "Save Theme")
+window.__abcRestoreDefaultsInDialog = function () {
+  for (const i of ABC_THEME_ITEMS) {
+    const colorEl = document.getElementById(i.id + "_color");
+    const styleEl = document.getElementById(i.id + "_style");
+    if (colorEl) colorEl.value = i.color;
+    if (styleEl) styleEl.value = i.styleWeight;
+    // refresh previews
+    __abcUpdatePreview(i.id);
+  }
+};
+
+/* --------------------------
+   Theme build/apply
+--------------------------- */
+function buildAbcThemeCss(theme){
+  const lines=[];
+  for(const i of ABC_THEME_ITEMS){
+    const conf=theme[i.id]||{color:i.color,styleWeight:i.styleWeight};
+    const fw = conf.styleWeight==="bold"?"font-weight:700;":"font-weight:400;";
+    const fs = conf.styleWeight==="italic"?"font-style:italic;":"font-style:normal;";
+    lines.push(`.${i.className} { color:${conf.color} !important; ${fw} ${fs} }`);
+  }
+  return lines.join("\n");
+}
+function applyAbcTheme(theme){
+  const css = buildAbcThemeCss(theme);
+  let tag = document.getElementById("abc-theme-style");
+  if(!tag){ tag=document.createElement("style"); tag.id="abc-theme-style"; document.head.appendChild(tag); }
+  tag.textContent = css;
+  return css;
+}
+
+/* --------------------------
+   Storage + defaults + init
+--------------------------- */
+const ABC_STORAGE_KEY = "abcTheme_v1";
+
+function getDefaultAbcTheme(){
+  const t={}; for(const i of ABC_THEME_ITEMS){ t[i.id]={color:i.color,styleWeight:i.styleWeight}; } return t;
+}
+function loadAbcThemeFromStorage(){
+  try{
+    const raw = localStorage.getItem(ABC_STORAGE_KEY);
+    if(!raw) return null;
+    const parsed = JSON.parse(raw);
+    return (parsed && typeof parsed==="object") ? parsed : null;
+  }catch{ return null; }
+}
+function saveAbcThemeToStorage(theme){
+  try{ localStorage.setItem(ABC_STORAGE_KEY, JSON.stringify(theme)); }catch{}
+}
+function ensureInitialAbcThemeApplied(){
+  const stored = loadAbcThemeFromStorage();
+  if (stored) {
+    applyAbcTheme(stored);
+  } else {
+    const defaults = getDefaultAbcTheme();
+    // Write defaults into localStorage so there’s always something saved
+    saveAbcThemeToStorage(defaults);
+    applyAbcTheme(defaults);
+  }
+}
+
+/* --------------------------
+   Read actual computed CSS
+--------------------------- */
+function __abcRgbToHex(color) {
+  if (!color) return null;
+  if (color.startsWith("#")) {
+    if (color.length === 4) return "#" + [...color.slice(1)].map(c => c+c).join("");
+    return color.slice(0,7);
+  }
+  const m = color.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/i);
+  if (!m) return null;
+  const r = Number(m[1]).toString(16).padStart(2, "0");
+  const g = Number(m[2]).toString(16).padStart(2, "0");
+  const b = Number(m[3]).toString(16).padStart(2, "0");
+  return `#${r}${g}${b}`;
+}
+function __abcStyleToWeight(fontStyle, fontWeight) {
+  if ((fontStyle||"").toLowerCase()==="italic") return "italic";
+  const fw = String(fontWeight||"400");
+  return (fw==="bold" || parseInt(fw,10)>=600) ? "bold" : "normal";
+}
+function readCurrentCssTheme() {
+  const probeRoot = document.createElement("div");
+  probeRoot.style.cssText = "position:absolute;left:-99999px;top:-99999px;visibility:hidden;";
+  document.body.appendChild(probeRoot);
+
+  const theme = {};
+  for (const it of ABC_THEME_ITEMS) {
+    const el = document.createElement("span");
+    el.className = it.className;
+    el.textContent = "probe";
+    probeRoot.appendChild(el);
+    const cs = getComputedStyle(el);
+    theme[it.id] = {
+      color: __abcRgbToHex(cs.color) || it.color,
+      styleWeight: __abcStyleToWeight(cs.fontStyle, cs.fontWeight) || it.styleWeight
+    };
+  }
+  probeRoot.remove();
+  return theme;
+}
+
+/* --------------------------
+   Global preview updaters
+--------------------------- */
+window.__abcApplyPreviewStyle = function(el, color, sw){
+  if(!el) return;
+  el.style.color = color || "";
+  el.style.fontWeight = (sw==="bold") ? "700" : "400";
+  el.style.fontStyle  = (sw==="italic") ? "italic" : "normal";
+};
+window.__abcUpdatePreview = function(id){
+  const color = document.getElementById(id+"_color")?.value;
+  const sw    = document.getElementById(id+"_style")?.value;
+  __abcApplyPreviewStyle(document.getElementById(id+"_prev_normal"), color, sw);
+  __abcApplyPreviewStyle(document.getElementById(id+"_prev_invert"), color, sw);
+};
+window.__abcSaveThemeFromAlert = function(){
+  const theme={};
+  for(const i of ABC_THEME_ITEMS){
+    theme[i.id] = {
+      color: document.getElementById(i.id+"_color").value,
+      styleWeight: document.getElementById(i.id+"_style").value
+    };
+  }
+  const css = buildAbcThemeCss(theme);
+  DayPilot.Modal.close({theme, css});
+};
+window.__abcCancelAlert = function(){
+  DayPilot.Modal.close(null);
+};
+
+/* --------------------------
+   Editor HTML (with help ?)
+--------------------------- */
+function buildEditorHtml(seed, contentId){
+  const styleSel = (id, val) =>
+    `<select id="${id}" class="abc-sel" onchange="__abcUpdatePreview('${id.replace('_style','')}')">
+      <option value="normal"${val==='normal'?' selected':''}>Normal</option>
+      <option value="bold"${val==='bold'?' selected':''}>Bold</option>
+      <option value="italic"${val==='italic'?' selected':''}>Italic</option>
+     </select>`;
+
+  const items = ABC_THEME_ITEMS;
+
+  const rows = items.map(item=>{
+    const color = seed[`${item.id}_color`] ?? item.color;
+    const sw    = seed[`${item.id}_style`] ?? item.styleWeight;
+    const fw    = (sw==="bold")?"700":"400";
+    const fs    = (sw==="italic")?"italic":"normal";
+
+    return `
+      <div class="abc-row">
+        <div class="abc-cell c1 key"><code>${item.label}</code></div>
+        <div class="abc-cell c2">
+          <input id="${item.id}_color" type="color" value="${color}" class="abc-color"
+                 oninput="__abcUpdatePreview('${item.id}')" />
+        </div>
+        <div class="abc-cell c3">
+          ${styleSel(`${item.id}_style`, sw)}
+        </div>
+        <div class="abc-cell c4 preview">
+          <div id="${item.id}_prev_normal"
+               class="abc-preview"
+               style="color:${color};font-weight:${fw};font-style:${fs};">${item.sample}</div>
+        </div>
+        <div class="abc-cell c5 preview">
+          <div class="abc-invert">
+            <div id="${item.id}_prev_invert"
+                 class="abc-preview"
+                 style="color:${color};font-weight:${fw};font-style:${fs};">${item.sample}</div>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join("");
+
+  return `
+  <style>
+    .dp-modal .dp-modal-main { width: 780px !important; max-width: 780px !important; }
+    .dp-modal .dp-modal-title { text-align: center !important; }
+
+    .abc-theme { font-family: system-ui,-apple-system,Segoe UI,Roboto,sans-serif; font-size: 13px; }
+    .abc-wrap  { width: 740px; margin: 0px -10px; position:relative; }
+    .abc-title { text-align:center; font-size: 24px; margin: 6px 0 24px; }
+
+    .abc-help {
+      position:absolute; left:-11px; top:-16px;
+      display:inline-flex; align-items:center; justify-content:center;
+      width:36px; height:36px;
+      font-size:30px; line-height:1; text-decoration:none; color:#111;
+    }
+    .abc-help:hover { background:#e5e7eb; }
+    .abc-help:focus { outline:2px solid #2563eb; outline-offset:2px; }
+
+    .abc-grid {display:grid; grid-template-columns: 170px 64px 120px 1fr 1fr; column-gap:10px; align-items:center; }
+    .abc-grid-head { margin-bottom: 8px; }
+    .abc-head { font-family: system-ui,-apple-system,Segoe UI,Roboto,sans-serif; font-size: 14px;font-weight:600; color:#111827; padding: 0 2px 2px;}
+
+    .abc-grid-body { row-gap: 8px; }
+    .abc-row { display: contents; }
+
+    .abc-cell.c1 { grid-column:1; }
+    .abc-cell.c2 { grid-column:2; }
+    .abc-cell.c3 { grid-column:3; }
+    .abc-cell.c4 { grid-column:4; }
+    .abc-cell.c5 { grid-column:5; }
+
+    .abc-cell.key { white-space: nowrap; }
+    .abc-cell.key code {font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; font-size: 14px; font-weight: 700; /* bold */ color: #111827; }
+    .abc-color { width: 48px; height: 33px; padding:0; border:1px solid #cfd4dc; border-radius:4px; background:#f9fafb; }
+    .abc-sel   { width: 100%; height:28px; padding:2px 8px; border:1px solid #cfd4dc; border-radius:4px; background:#fff; }
+
+    .abc-preview {padding: 8px 10px; border:1px solid #e5e7eb; white-space:pre-wrap; background:#fff; border-radius:4px; } .abc-invert  { filter: invert(100%); border-radius:10px; background:#fff; }
+
+    .abc-actions { display:flex; gap:32px; justify-content:center; margin-top:14px; flex-wrap:wrap; }
+    .abc-btn { appearance:none; border:1px solid #cfd4dc; border-radius:4px; padding:5px 12px; background:#fff; cursor:pointer; }
+    .abc-btn.primary { background:darkblue; color:#fff; border-color:darkblue; }
+    .abc-btn.ghost {
+      background: #484;         /* darker gray background */
+      color: #fff;              /* white text */
+      border-color: #333;       /* darker border */
+      min-width: 160px;         /* wider button */
+    }
+    @media (hover: hover) {
+      .abc-btn:hover {
+        background: #8888CC;   
+      }
+    }
+    .abc-btn:active { transform: translateY(1px); }
+    .abc-actions .abc-btn { font-size:14px; height:auto; min-height:32px; width:180px; line-height:1.2; white-space:nowrap; }
+    .modal_flat_buttons .abc-actions, .dp-modal-buttons .abc-actions { margin-top:0; }
+  </style>
+
+  <div class="abc-theme abc-wrap" id="${contentId}">
+    <a class="abc-help" href="https://michaeleskin.com/abctools_beta_1_cm/userguide.html#customthemeeditor" target="_blank" rel="noopener noreferrer" aria-label="ABC Tools User Guide">?</a>
+
+    <div class="abc-title">ABC Syntax Highlighting Theme Editor</div>
+
+    <div class="abc-grid abc-grid-head">
+      <div class="abc-head">&nbsp;</div>
+      <div class="abc-head">Color</div>
+      <div class="abc-head">Style</div>
+      <div class="abc-head">Light Mode</div>
+      <div class="abc-head">Dark Mode</div>
+    </div>
+
+    <div class="abc-grid abc-grid-body">
+      ${rows}
+    </div>
+
+    <!-- Will be moved into THIS modal's footer -->
+    <div class="abc-actions">
+      <button class="abc-btn ghost" onclick="__abcRestoreDefaultsInDialog()">Restore Defaults</button>
+      <button class="abc-btn primary" onclick="__abcSaveThemeFromAlert()">Apply and Save Theme</button>
+      <button class="abc-btn" onclick="__abcCancelAlert()">Cancel</button>
+    </div>
+  </div>`;
+}
+
+/* --------------------------
+   Open editor (scoped footer)
+--------------------------- */
+async function customThemeEditor(currentTheme = {}) {
+
+  // 1) Ensure page has something applied
+  ensureInitialAbcThemeApplied();
+
+  // 2) Seed from actual computed CSS (live values)
+  const pageTheme = readCurrentCssTheme();
+  const seed = {};
+  for (const i of ABC_THEME_ITEMS) {
+    const cur = pageTheme[i.id] || currentTheme[i.id] || { color: i.color, styleWeight: i.styleWeight };
+    seed[`${i.id}_color`] = cur.color;
+    seed[`${i.id}_style`] = cur.styleWeight;
+  }
+
+  // Unique id for this modal's content
+  const uid = `abc-theme-${Date.now()}-${Math.random().toString(36).slice(2,8)}`;
+  const html = buildEditorHtml(seed, uid);
+
+  // Open (don't await yet)
+  const promise = DayPilot.Modal.alert(html, {
+    width: 780,
+    theme: "modal_flat",
+    top: 25,
+    scrollWithPage: (typeof AllowDialogsToScroll === "function" ? AllowDialogsToScroll() : true)
+  });
+
+  // Move ONLY this editor's actions into ONLY this modal's footer
+  const scopeMove = (tries = 30) => {
+    const root = document.getElementById(uid);
+    if (!root) { if (tries) return setTimeout(() => scopeMove(tries - 1), 25); return; }
+
+    const container = root.closest(".modal_flat_main, .dp-modal");
+    if (!container) { if (tries) return setTimeout(() => scopeMove(tries - 1), 25); return; }
+
+    const footer  = container.querySelector(".modal_flat_buttons, .dp-modal-buttons");
+    const actions = root.querySelector(".abc-actions");
+    const okBtn   = footer && (footer.querySelector(".dp-modal-button-ok") || footer.querySelector("button"));
+
+    if (!footer || !actions) { if (tries) return setTimeout(() => scopeMove(tries - 1), 25); return; }
+
+    if (okBtn) okBtn.remove();
+    footer.innerHTML = "";
+    footer.appendChild(actions);
+  };
+  scopeMove();
+
+  // Wait for user's action
+  const res = await promise;
+  if (!res || !res.result) return null;
+
+  // 3) Persist & apply the new theme
+  const { theme } = res.result;
+  saveAbcThemeToStorage(theme);
+  applyAbcTheme(theme);
+
+  return res.result;   // { theme, css }
+}
+
+//
+// CodeMirror related functions
+//
+
 function cm_preserveScroll() {
   return gTheCM.getScrollInfo();           // {left, top, ...}
 }
@@ -59782,23 +60171,23 @@ CodeMirror.defineMode("abc-plus", function () {
       if (state.inCss) {
         if (stream.sol() && stream.match(/^\s*%%endcss\b.*$/i)) {
           state.inCss = false;
-          return "meta";
+          return "abc-meta";
         }
         stream.skipToEnd();
         //return "string";
-        return "abccss";
+        return "abc-abccss";
       }
 
       // ===== SOL: directives & comments =====
       if (stream.sol()) {
-        if (stream.match(/^\s*%%begincss\b.*$/i)) { state.inCss = true; return "meta"; }
+        if (stream.match(/^\s*%%begincss\b.*$/i)) { state.inCss = true; return "abc-meta"; }
 
         // Font directives on their own color
         if (stream.match(/^\s*%%(?:gchordfont|partsfont|tripletfont|vocalfont|textfont|annotationfont|historyfont|infofont|measurefont|repeatfont|wordsfont|composerfont|titlefont|subtitlefont|tempofont|voicefont|headerfont|tablabelfont|tabnumberfont|tabgracefont|barlabelfont|barnumberfont|barnumfont)\b.*$/i)) {
           return "abc-font-directive";
         }
 
-        if (stream.match(/^\s*%%[A-Za-z].*$/)) { return "meta"; }
+        if (stream.match(/^\s*%%[A-Za-z].*$/)) { return "abc-meta"; }
       }
 
       // ===== Extended %directives =====
@@ -59806,7 +60195,7 @@ CodeMirror.defineMode("abc-plus", function () {
         return "abc-extended-directive";
       }
 
-      if (stream.peek() === "%") { stream.skipToEnd(); return "comment"; }
+      if (stream.peek() === "%") { stream.skipToEnd(); return "abc-comment"; }
 
       if (stream.eatSpace()) return null;
 
@@ -59838,7 +60227,7 @@ CodeMirror.defineMode("abc-plus", function () {
       }
 
       // ===== Inline fields [K:...], [V:...] (not note-chords) =====
-      if (stream.match(/^\[[A-Za-z]\s*:[^\]\n]*\]/)) return "atom";
+      if (stream.match(/^\[[A-Za-z]\s*:[^\]\n]*\]/)) return "abc-header-tag";
 
       // ===== Ending markers & barlines =====
       if (stream.match(/^\[(\d+)\b/)) return "abc-ending";
@@ -59862,22 +60251,22 @@ CodeMirror.defineMode("abc-plus", function () {
 
       // ===== Music tokens =====
       // Chord symbols "G7"
-      if (stream.match(/^"[^"\n]*"/)) return "string";
+      if (stream.match(/^"[^"\n]*"/)) return "abc-string";
 
       // Note-chords [CEG] (not [1 or [K:…; those handled earlier)
-      if (stream.match(/^\[(?:\^{1,2}|_{1,2}|=)?[A-Ga-g][^\]\n]*\]/)) return "builtin";
+      if (stream.match(/^\[(?:\^{1,2}|_{1,2}|=)?[A-Ga-g][^\]\n]*\]/)) return "abc-builtin";
 
       // Decorations / annotations
-      if (stream.match(DECO_RE)) return "qualifier";
+      if (stream.match(DECO_RE)) return "abc-qualifier";
 
       // Grace groups
-      if (stream.match(/^\{[^}\n]*\}/)) return "meta";
+      if (stream.match(/^\{[^}\n]*\}/)) return "abc-meta";
 
       // Tuplets
-      if (stream.match(TUPLET_RE)) return "number";
+      if (stream.match(TUPLET_RE)) return "abc-number";
 
       // Rests
-      if (stream.match(REST_RE)) return "variable-3";
+      if (stream.match(REST_RE)) return "abc-note";
 
       // --- NOTE PREFIXES (highlight before notes only) ---
       if (stream.match(/^([.\~uvHJjLMOPRSTt]+)(?=(?:\^{1,2}|_{1,2}|=)?[A-Ga-g])/)) {
@@ -59885,11 +60274,11 @@ CodeMirror.defineMode("abc-plus", function () {
       }
 
       // Notes
-      if (stream.match(NOTE_RE)) return "variable-3";
+      if (stream.match(NOTE_RE)) return "abc-note";
 
       // Ties/slurs & explicit continuation
-      if (stream.match(/^[-()]/)) return "operator";
-      if (stream.match(/^\\$/))   return "meta";
+      if (stream.match(/^[-()]/)) return "abc-operator";
+      if (stream.match(/^\\$/))   return "abc-meta";
 
       // Fallback: consume one char
       stream.next();
