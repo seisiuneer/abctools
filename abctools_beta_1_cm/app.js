@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "2833_092625_1400_BETA";
+var gVersionNumber = "2834_092625_1430_BETA";
 
 var gMIDIInitStillWaiting = false;
 
@@ -59708,7 +59708,7 @@ async function customThemeEditor(currentTheme = {}) {
   const promise = DayPilot.Modal.alert(html, {
     width: 780,
     theme: "modal_flat",
-    top: 25,
+    top: 15,
     scrollWithPage: (typeof AllowDialogsToScroll === "function" ? AllowDialogsToScroll() : true)
   });
 

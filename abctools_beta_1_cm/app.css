@@ -5895,24 +5895,24 @@ padding: 0 0.5em 0 0;      /* right-pad so numbers aren’t cramped */
 line-height: 1.0;          /* plays nicely with wrapped lines */
 }
 
-.cm-abc-bar        { color:#006999 !important;}  /* barlines & repeats */
-.cm-abc-ending     { color:#006999 !important;}  /* digits in |1, :|2, [1, [2, ... */
-.cm-abc-header-tag { color:#0000A0 !important; font-weight:700 !important;} /* X: T: L: ... */
-.cm-abc-header-val { color:#444 !important;}    /* entire header value line */
-.cm-abc-header-title { color:#00608a !important; font-weight:700 !important; }/* special T: titles */
-.cm-abc-note { color:#000 !important; }  /* notes/rests */
-.cm-abc-string     { color:#6200a8 !important; }     /* "chords" */
-.cm-abc-builtin    { color:#7b5 !important; }     /* note-chords [CEG] */
-.cm-abc-qualifier  { color:#905 !important; }     /* !trill! +orn+ */
-.cm-abc-number     { color:#164 !important; }  /* tuplets */
-.cm-abc-operator   { color:#555 !important; }     /* ties/slurs () - */
-.cm-abc-comment    { color:#005231 !important; font-style:italic !important; }
-.cm-abc-meta       { color:#5924bc !important; font-weight:bold !important; }
-.cm-abc-font-directive {color: #7c2243 !important;}
-.cm-abc-note-prefix { color:#189800 !important; } 
-.cm-abc-extended-directive {color: #B00023 !important;  }
-.cm-abc-abccss { color:#a300a3 !important; }     /* Custom CSS */
-.cm-abc-atom { color:#219 !important; }     /* Inline directives */
+.cm-abc-bar        { color:#006999;}  /* barlines & repeats */
+.cm-abc-ending     { color:#006999;}  /* digits in |1, :|2, [1, [2, ... */
+.cm-abc-header-tag { color:#0000A0; font-weight:bold;} /* X: T: L: ... */
+.cm-abc-header-val { color:#040404;}    /* entire header value line */
+.cm-abc-header-title { color:#00608a; font-weight:bold; }/* special T: titles */
+.cm-abc-note { color:#000000; }  /* notes/rests */
+.cm-abc-string     { color:#6200a8; }     /* "chords" */
+.cm-abc-builtin    { color:#070b05; }     /* note-chords [CEG] */
+.cm-abc-qualifier  { color:#090005; }     /* !trill! +orn+ */
+.cm-abc-number     { color:#010604; }  /* tuplets */
+.cm-abc-operator   { color:#050505; }     /* ties/slurs () - */
+.cm-abc-comment    { color:#005231; font-style:italic; }
+.cm-abc-meta       { color:#5924bc; font-weight:bold; }
+.cm-abc-font-directive {color: #7c2243;}
+.cm-abc-note-prefix { color:#189800; } 
+.cm-abc-extended-directive {color: #B00023;  }
+.cm-abc-abccss { color:#a300a3; }     /* Custom CSS */
+.cm-abc-atom { color:#020109; }     /* Inline directives */
 
 /* Editor box */
 .CodeMirror{
