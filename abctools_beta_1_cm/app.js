@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "2834_092625_1430_BETA";
+var gVersionNumber = "2835_092625_1430_BETA";
 
 var gMIDIInitStillWaiting = false;
 
@@ -59653,7 +59653,7 @@ function buildEditorHtml(seed, contentId){
       }
     }
     .abc-btn:active { transform: translateY(1px); }
-    .abc-actions .abc-btn { font-size:14px; height:auto; min-height:32px; width:180px; line-height:1.2; white-space:nowrap; }
+    .abc-actions .abc-btn { font-size:14px; height:auto; min-height:32px; width:195px; line-height:1.2; white-space:nowrap; }
     .modal_flat_buttons .abc-actions, .dp-modal-buttons .abc-actions { margin-top:0; }
   </style>
 
