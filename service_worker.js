@@ -4,28 +4,13 @@
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
-// Updated 25 Sep 2025 at 1400
-//
-//
-//
-//
-//
-//
-//
+// Updated 27 Sep 2025 at 0830
 //
 //
 //
 //
 
-const cacheName = 'abctoolscache-2777';
+const cacheName = 'abctoolscache-2778';
 
 const contentToCache = [
     'abctools.html',
