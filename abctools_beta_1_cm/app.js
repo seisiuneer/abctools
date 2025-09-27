@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "2835_092625_1430_BETA";
+var gVersionNumber = "2836_092725_0830_BETA";
 
 var gMIDIInitStillWaiting = false;
 
@@ -778,6 +778,47 @@ function customSortTitleWithDiacriticals(a, b) {
 
   return accentCompare;
 
+}
+
+//
+// Adjust the diagnostics line numbers by the ABC header length
+//
+function adjustWarningLineNumbers(data){
+
+  if ((!data) || (data.length==0)){
+    return data;
+  }
+
+  function adjustDataLine(line, amount) {
+  const re = /^"([^"]+)"(\s*-\s*)(\d+)(?=:\d+)/;
+
+  return line.replace(re, (_, title, sep, firstNum) => {
+    const orig = Number(firstNum);
+    const newFirst = orig - amount;
+
+    if (newFirst < amount) {
+      const clamped = Math.max(0, newFirst + amount);
+      return `ABC Header${sep}${clamped}`;
+    }
+
+    return `"${title}"${sep}${newFirst-1}`;
+  });
+}
+
+  var len = 0;
+  var header = GetABCFileHeader();
+  if (header && header.length){
+    len = header.split(/\r\n|\r|\n/)   // split into lines
+    .filter(line => line.trim() !== '')  // keep only non-empty
+    .length;
+  }
+
+  var nData = data.length;
+  for (var i=0;i<nData;++i){
+    data[i] = adjustDataLine(data[i],len);
+  }
+
+  return data;
 }
 
 // Setup event handler for mobile embedded use
@@ -13214,6 +13255,9 @@ function RenderTheNotes(tune, instrument, renderAll, tuneNumber) {
       if ((visualObj) && (visualObj[0])) {
 
         var data = visualObj[0].warnings;
+
+        // Offset the warning line numbers by the ABC header length
+        data = adjustWarningLineNumbers(data);       
 
         var elem = document.getElementById("diagnostics");
 
@@ -59687,6 +59731,9 @@ function buildEditorHtml(seed, contentId){
    Open editor (scoped footer)
 --------------------------- */
 async function customThemeEditor(currentTheme = {}) {
+
+  // Keep track of dialogs
+  sendGoogleAnalytics("dialog", "CustomThemeEditor");
 
   // 1) Ensure page has something applied
   ensureInitialAbcThemeApplied();

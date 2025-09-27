@@ -1885,7 +1885,12 @@ var tunebook = {};
           }
 
           var warnings = abcParser.getWarnings();
-          if (warnings) tune.warnings = warnings;
+          if (warnings){
+            for (var i = 0; i < warnings.length; i++) {
+              warnings[i] = '"'+book.tunes[currentTune].title+'" - '+ warnings[i];
+            }
+            tune.warnings = warnings;
+          }
           var override = callback(div, tune, i, book.tunes[currentTune].abc);
           ret.push(override ? override : tune);
         } else {
@@ -4168,8 +4173,7 @@ var Parse = function Parse() {
     var bad_char = line[col_num];
     if (bad_char === ' ' || !bad_char) bad_char = "SPACE";
     var clean_line = encode(line.substring(col_num - 64, col_num)) + '<span style="text-decoration:underline;font-size:1.3em;font-weight:bold;">' + bad_char + '</span>' + encode(line.substring(col_num + 1).substring(0, 64));
-    // MAE 23 Sep 2025 - Seems to be off by one
-    addWarning("Music Line:" + (tokenizer.lineIndex-1) + ":" + (col_num + 1) + ': ' + str + ":  " + clean_line);
+    addWarning(tokenizer.lineIndex + ":" + (col_num + 1) + ' - ' + str + " " + clean_line);
     addWarningObject({
       message: str,
       line: line,
