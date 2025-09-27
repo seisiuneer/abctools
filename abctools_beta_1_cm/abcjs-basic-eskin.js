@@ -1886,8 +1886,8 @@ var tunebook = {};
 
           var warnings = abcParser.getWarnings();
           if (warnings){
-            for (var i = 0; i < warnings.length; i++) {
-              warnings[i] = '"'+book.tunes[currentTune].title+'" - '+ warnings[i];
+            for (var j = 0; j < warnings.length; j++) {
+              warnings[j] = '"'+book.tunes[currentTune].title+'" - '+ warnings[j];
             }
             tune.warnings = warnings;
           }
