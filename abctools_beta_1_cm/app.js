@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "2841_092825_1400_BETA";
+var gVersionNumber = "2842_092825_1700_BETA";
 
 var gMIDIInitStillWaiting = false;
 
@@ -59581,7 +59581,7 @@ function buildAbcjsEditorHtml(seed, contentId){
     </div>
 
     <div class="abcjs_custom_css-actions">
-      <button class="abcjs_custom_css-btn restore" onclick="__abcjsRestoreDefaultsInDialog()">Reset to Black</button>
+      <button class="abcjs_custom_css-btn restore" onclick="__abcjsRestoreDefaultsInDialog()">Reset All to Black</button>
       <button class="abcjs_custom_css-btn primary" onclick="__abcjsSaveAbcjsColorsFromAlert()">Inject Custom CSS</button>
       <button class="abcjs_custom_css-btn" onclick="__abcjsCancelAlert()">Cancel</button>
     </div>
