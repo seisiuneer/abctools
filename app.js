@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "2779_092725_2030";
+var gVersionNumber = "2780_092825_0900";
 
 var gMIDIInitStillWaiting = false;
 
@@ -13118,7 +13118,7 @@ function RenderTheNotes(tune, instrument, renderAll, tuneNumber) {
           }
           elem.innerHTML = allMessages;
         } else {
-          elem.innerHTML = '<p class="diagnostics_message">No issues found</p>';
+          elem.innerHTML = '<p class="diagnostics_message">"'+gLastRenderedTuneName+'" - No issues found</p>';
         }
       }
 
