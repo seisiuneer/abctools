@@ -43,7 +43,7 @@
         
         <style>
         
-        p {
+        p,li {
         font-size:14pt;
         font-family:"Helvetica";
         line-height: 26px;
@@ -418,7 +418,6 @@
             <details>
             <summary><h3>Basic Operation</h3></summary>
             <a style="text-decoration:none;" href="#introduction">Introduction</a>
-            <a style="text-decoration:none;" href="#using_chatgpt">Get Answers Using ChatGPT</a>
             <a style="text-decoration:none;" href="#walkthrough">Walkthrough Tutorial</a>
             <a style="text-decoration:none;" href="#getting_started">Getting Started</a>
             <a style="text-decoration:none;" href="#abc_editor">ABC Editor</a>
@@ -912,7 +911,6 @@
                     <button class="accordion" title="Click to expand/collapse this section">Basic Operation</button>
                     <div class="tocpanel">
                         <p class="toc"><a style="text-decoration:none;" href="#introduction">Introduction</a></p>
-                        <p class="toc"><a style="text-decoration:none;" href="#using_chatgpt">Get Answers Using ChatGPT</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#walkthrough">Walkthrough Tutorial</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#getting_started">Getting Started</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#abc_editor">ABC Editor</a></p>
@@ -1389,32 +1387,19 @@
                 <hr class="hidden-print" id="introduction">
                 <h1 class="page_break_never">Introduction<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/z7z4ptMmhmk" title="ABC Transcription Tools Overview" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
-                <p>ABC Transcription Tools is a free, web-based, open-source tool for converting music in ABC, MusicXML, BWW, and MIDI format to both standard notation and tablature for a wide variety of instruments.</p>
-                <p>Imports and exports tunes in ABC, MusicXML, and MIDI formats.</p>
-                <p>Imports bagpipes tunes in BWW format.</p>
-                <p>Search for ABC tunes by name from a built-in database of over 60,000 ABC tune settings and quickly add them to your tunebooks.</p>
-                <p>Play your tunes with seven different General MIDI soundfonts providing over 800 high-quality, sampled instruments.</p>
-                <p>Use the Tune Trainer to practice your tunes starting slowly and then with increasing tempos.</p>
-                <p>Create PDF tunebooks with title pages, table of contents, tune index, custom headers, footers, hyperlinks, tune incipits (notation or raw ABC), and sharing QR codes using the tool's built-in Export PDF feature.</p>
-                <p>Automagically generate complete websites from your ABC tunebooks.</p>
-                <p>Quickly transpose a single ABC tune or entire ABC tunebooks to any key.</p>
-                <p>Sort your tunes by name, key, meter, rhythm, and other ABC headers.</p>
-                <p>Search and replace text in your ABC with full regular expression support.</p>
-                <p>You can fully customize the look of your notation using the standard ABC spacing and font annotations.</p>
-                <p>Easily share your tunes with others via Share URLs and QR Codes.</p>
-                <p>After first run, the tool runs both online and offline (Airplane mode).</p>
-                <p>If you are coming from another ABC tool like EasyABC, please read the following section to decide if this tool will meet your needs:</p>
-                <p style="text-align: center;"><a href="#tool_differences"><strong>Differences Between this Tool and Other ABC Tools</strong></a></p>
-                <hr class="hidden-print" id="using_chatgpt">
-                <h1 class="page_break_never">Get Answers Using ChatGPT<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-                <p>You can search this User Guide using the browser's own Find feature, generally by pressing Ctrl-F (Windows) or ⌘-F (Mac).</p>
-                <p>If you have a more specific question about some feature in the tool, you can use a free ChatGPT account at:</p>
-                <p style="text-align: center;"><a href="https://chatgpt.com" target="_blank">https://chatgpt.com</a></p>
-                <p>to search this User Guide conversationally.</p>
-                <p>Try using the following ChatGPT prompts, replacing the question with whatever you are looking for:</p>
-                <p class="code">On the following website, how do I sort all of my ABC tunes by name?<br/><br/>https://michaeleskin.com/abctools/userguide.html</p>
-                <p class="code">On the following website, how do I add harmonica tab to my ABC?<br/><br/>https://michaeleskin.com/abctools/userguide.html</p>
-                <p class="code">On the following website, how do I create a PDF tunebook from my ABC?<br/><br/>https://michaeleskin.com/abctools/userguide.html</p>
+                <div id="user-guide-intro">
+                    <p><strong>ABC Transcription Tools</strong> is a free, web-based, open-source platform for anyone who works with traditional music—players, teachers, arrangers, and tune collectors. It transforms ABC, MusicXML, BWW, and MIDI files into beautiful standard notation and tablature for many different instruments, right in your browser.</p>
+                    <ul>
+                        <li><strong>Bring tunes in from anywhere.</strong> Import ABC, MusicXML, and MIDI files with ease. Bagpipers can also load BWW files.</li>
+                        <li><strong>Tap into a huge tune library.</strong> Search by name in a built-in database of more than 60,000 ABC settings and add new pieces to your tunebooks instantly.</li>
+                        <li><strong>Hear your music.</strong> Play tunes using seven General MIDI soundfonts with over 800 realistic instruments as well as up to 8 custom instruments.</li>
+                        <li><strong>Practice smarter.</strong> Use the built-in <em>Tune Trainer</em> to start slow and gradually speed up as you master each tune.</li>
+                        <li><strong>Create professional results.</strong> Build polished PDF tunebooks complete with title pages, tables of contents, tune indexes, custom headers/footers, hyperlinks, tune incipits (notation or raw ABC), and shareable QR codes. You can even generate full interactive websites from your tunebooks automatically.</li>
+                        <li><strong>Edit and organize with power.</strong> Transpose single tunes or entire tunebooks to any key. Sort by name, key, meter, rhythm, and other ABC headers. Perform fast text search and replace—including full regular expression support.</li>
+                        <li><strong>Stay connected or work offline.</strong> After the first visit, the tool runs seamlessly without an internet connection—perfect for practice or travel.</li>
+                    </ul>
+                </div>
+                <p>ABC Transcription Tools brings everything you need into one place: learning, arranging, sharing, and publishing traditional music has never been this easy.</p>
                 <hr class="hidden-print" id="walkthrough">
                 <h1 class="page_break_never">Walkthrough Tutorial<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/NYCfRW8EbXM" title="ABC Transcription Tools Webinar" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
