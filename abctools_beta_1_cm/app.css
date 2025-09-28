@@ -669,13 +669,13 @@ opacity: 0.4;
 padding:12px;
 }
 
-#ceoltasdialog,#injectheaderstring,#injectallmidiparams,#injectharmonicatab,#injectboxtab,#injectfiddlefingerings,#injectmd,#injectmelody,#injectstaffwidth,#injectmetronome,#injectshapenotes,#injectsectionheader,#injecttunenumbers,#addtunetitlenumbers,#compliancedialog,#ceoltastransform,#injectbcbox,#normalizediacriticals{
+#ceoltasdialog,#injectheaderstring,#injectallmidiparams,#injectharmonicatab,#injectboxtab,#injectfiddlefingerings,#injectmd,#injectmelody,#injectstaffwidth,#injectmetronome,#injectshapenotes,#injectsectionheader,#injecttunenumbers,#addtunetitlenumbers,#compliancedialog,#ceoltastransform,#injectbcbox,#normalizediacriticals,#customcssgenerator{
 height:42px;
 padding:12px;
 margin-right:24px;
 }
 
-#injectbambooflute,#injectclicktrackall,#injectchords,#injectheadertemplate,#injectanglotab,#looper_metronomebutton,#injectlargeprint,#pdfinjectlargeprint,#tunebookbuilder_add,#injectfontsettings,#removetunetitlenumbers,#ceoltasdialoginverse,#compliancetransform,#compliancedialoginverse,#fiddlefingeringsdialog0,#fiddlefingeringsdialog1,#fiddlefingeringsdialog2,#fiddlefingeringsdialog3,#fiddlefingeringsdialog4,#injectbagpipedrones,#websitefull,#injectheaderstringfh,#injectcsdbox,#websitelightbox,#websitesimple,#escapediacriticals{
+#injectbambooflute,#injectclicktrackall,#injectchords,#injectheadertemplate,#injectanglotab,#looper_metronomebutton,#injectlargeprint,#pdfinjectlargeprint,#tunebookbuilder_add,#injectfontsettings,#removetunetitlenumbers,#ceoltasdialoginverse,#compliancetransform,#compliancedialoginverse,#fiddlefingeringsdialog0,#fiddlefingeringsdialog1,#fiddlefingeringsdialog2,#fiddlefingeringsdialog3,#fiddlefingeringsdialog4,#websitefull,#injectheaderstringfh,#injectcsdbox,#websitelightbox,#websitesimple,#escapediacriticals,#injectbagpipedrones{
 height:42px;
 padding:12px;
 }
@@ -3656,7 +3656,7 @@ margin-top:-7px;
 
 .configure_ui_options_form_text{
 	font-size:12pt;
-	line-height:16px;
+	line-height:24px;
 	font-family:helvetica;
 	margin-top:24px;
 	display:flex;
@@ -6061,6 +6061,11 @@ body{
 }
 
 .btn-transposetokey{
+  --color: black;
+  --background-color: #f0fff0;
+}
+
+.btn-cssgenerator {
   --color: black;
   --background-color: #f0fff0;
 }

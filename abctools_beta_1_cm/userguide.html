@@ -722,8 +722,9 @@
             </details>
             
             <details>
-            <summary><h3>Sort by Tag, Transpose to Key, and Inject Bagpipe Sounds</h3></summary>
+            <summary><h3>Sort by Tag, abcjs Custom CSS Generator, Transpose to Key, and Inject Bagpipe Sounds</h3></summary>
             <a style="text-decoration:none;" href="#sort_dialog">Sort by Tag</a>
+            <a style="text-decoration:none;" href="#advanced_customcssgenerator">abcjs Custom CSS Generator</a>
             <a style="text-decoration:none;" href="#advanced_transposetokey">Transpose to Key</a>
             <a style="text-decoration:none;" href="#advanced_injectbagpipesounds">Inject Bagpipe Sounds</a>
             </details>
@@ -1214,9 +1215,10 @@
                         <p class="toc"><a style="text-decoration:none;" href="#smartdraw_export">SmartDraw Set List Builder</a></p>
                     </div>
                     
-                    <button class="accordion" title="Click to expand/collapse this section">Sort by Tag, Transpose to Key, and Inject Bagpipe Sounds</button>
+                    <button class="accordion" title="Click to expand/collapse this section">Sort by Tag, abcjs Custom CSS Generator, Transpose to Key, and Inject Bagpipe Sounds</button>
                     <div class="tocpanel">
                         <p class="toc"><a style="text-decoration:none;" href="#sort_dialog">Sort by Tag</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#advanced_customcssgenerator">abcjs Custom CSS Generator</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#advanced_transposetokey">Transpose to Key</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#advanced_injectbagpipesounds">Inject Bagpipe Sounds</a></p>
                     </div>
@@ -4770,11 +4772,11 @@
                 <h1 class="page_break_always">More ABC Tools<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <p>Clicking the <strong>More Tools</strong> button brings up the More ABC Tools dialog:</p>
                 <div class="image_holder_p">
-                    <img class="image" loading="lazy" src="img/more_abc_tools_24.jpg"/>
+                    <img class="image" loading="lazy" src="img/more_abc_tools_25.jpg"/>
                 </div>
                 <p>If you would like to only show the buttons for the features you commonly use and hide the others, click the controls icon at the top-right of the dialog to choose features of the dialog you would like to show/hide:</p>
                 <div class="image_holder_p">
-                    <img class="image" loading="lazy" src="img/more_abc_tools_feature_options_9.jpg"/>
+                    <img class="image" loading="lazy" src="img/more_abc_tools_feature_options_10.jpg"/>
                 </div>
                 <p>The most commonly used buttons are always shown.</p>
                 <p>Your preferences are saved and restored the next time you use the tool.</p>
@@ -5425,6 +5427,21 @@
                 <p style="margin-left:30px;"><strong>Sort by Origin (O:)</strong> - This sorts all the tunes by the first origin O: tag found in the tune.</p>
                 <p style="margin-left:30px;"><strong>Sort by ID (X:)</strong> - This sorts all the tunes by the value found in X: tag in the tune.</p>
                 <p style="margin-left:30px;"><strong>Renumber all X: Tags</strong> - This renumbers all the X: tags in the tunebook starting at 1.</p>
+                <hr class="hidden-print" id="advanced_customcssgenerator">
+                <h1 class="page_break_always h1wide">abcjs Custom CSS Generator<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+                <p>Brings up a dialog that makes it simple to inject a custom CSS block at the top of the ABC for setting abcjs notation element colors.</p>
+                <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/bc-XoPFddFw" title="abcjs Custom CSS Generator Demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
+                <div class="image_holder_p">
+                    <img class="image" loading="lazy" src="img/custom_css_generator_1.jpg"/>
+                </div>
+                <p>Select a color for each element by clicking on the color examples next to the element names.</p>
+                <p>Click <strong>Reset to Black</strong> to reset all the colors to black.</p>
+                <p>Click <strong>Inject Custom CSS</strong> to add a %%begincss / %%endcss block with the custom styling to the top of the ABC.</p>
+                <p>If a previous %%begincss / %%endcss block is found at the top of the ABC, it will be replaced.</p>
+                <p>If you reset all the colors to black and click <strong>Inject Custom CSS</strong>, any previous %%begincss / %%endcss block found at the top will be removed.</p>
+                <p>The dialog colors are saved and used the next time you open the dialog.</p>
+                <p>Click <strong>Cancel</strong> to exit the dialog without making any changes.</p>
+                <p>Full details on custom CSS in the <a href="#customabcjscss">Adding Custom abcjs CSS Styling</a> section below.</p>
                 <hr class="hidden-print" id="advanced_transposetokey">
                 <h1 class="page_break_always h1wide">Transpose to Key<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/DkNUePXKtaA" title="Transpose to Key" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>

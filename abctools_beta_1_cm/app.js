@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "2840_092825_0900_BETA";
+var gVersionNumber = "2841_092825_1400_BETA";
 
 var gMIDIInitStillWaiting = false;
 
@@ -47930,7 +47930,7 @@ function Configure_AdvancedControlsDialog_UI() {
   }
 
   form.push({
-    name: "          Show Transpose to Key and Inject Bagpipe Sounds",
+    name: "          Show abcjs Custom CSS Generator, Transpose to Key, and Inject Bagpipe Sounds",
     id: "showbagpipedrones",
     type: "checkbox",
     cssClass: "configure_ui_options_form_text"
@@ -48085,7 +48085,7 @@ function AdvancedControlsDialog() {
 
   // Showing only bagpipes drones/tranpose tools?
   if (gFeaturesShowBagpipeDrones) {
-    modal_msg += '<p style="text-align:center;margin-top:20px;"><input class="transposetokey btn btn-transposetokey" id="transposetokey" onclick="TransposeToKeyDialog()" type="button" value="Transpose to Key" title="Transposes one or all the tunes to a specific key"><input id="injectbagpipedrones" class="advancedcontrols btn btn-injectcontrols" onclick="InjectBagpipeSounds()" type="button" value="Inject Bagpipe Sounds" title="Changes the melody sound to one of several bagpipe instruments and inject drones as a second voice of the tune(s)"></p>';
+    modal_msg += '<p style="text-align:center;margin-top:20px;"><input id="customcssgenerator" class="advancedcontrols btn btn-cssgenerator" onclick="abcjsColorEditor()" type="button" value="abcjs Custom CSS Generator" title="Inject a custom CSS block at the top of the ABC where you can set the color of each abcjs element"><input class="transposetokey btn btn-transposetokey" id="transposetokey" onclick="TransposeToKeyDialog()" type="button" value="Transpose to Key" title="Transposes one or all the tunes to a specific key"><input id="injectbagpipedrones" class="advancedcontrols btn btn-injectcontrols" onclick="InjectBagpipeSounds()" type="button" value="Inject Bagpipe Sounds" title="Changes the melody sound to one of several bagpipe instruments and inject drones as a second voice of the tune(s)"></p>';
   }
 
   modal_msg += '</div>';
@@ -54924,7 +54924,6 @@ var gJumpTitleCount = 0;
 function JumpToTune() {
 
   //console.log("JumpToTune");
-
   var i;
 
   gJumpTune = -1;
@@ -59405,6 +59404,263 @@ function DoStartup() {
    
   }
 
+}
+
+// abcjs Custom CSS Generator
+// Returns %%begincss{...%%endcss} with ONLY non-black rules, defaults all black, reset to black.
+
+// ------------------------------------------------------------------
+// 1) Config: full class list (defaults = black)
+// ------------------------------------------------------------------
+const ABCJS_STYLE_ITEMS = [
+  { id: "abcjs-ending",          label: "1st/2nd Ending",                     selectors: [".abcjs-ending"],          color: "#000000" },
+  { id: "abcjs-lyric",           label: "Aligned Lyrics (w:)",                selectors: [".abcjs-lyric"],           color: "#000000" },
+  { id: "abcjs-meta-bottom",     label: "All Metadata Above Notation",        selectors: [".abcjs-meta-bottom"],     color: "#000000" },
+  { id: "abcjs-meta-top",        label: "All Metadata Below Notation",        selectors: [".abcjs-meta-top"],        color: "#000000" },
+  { id: "abcjs-annotation",      label: "Annotations (^...)",                 selectors: [".abcjs-annotation"],      color: "#000000" },
+  { id: "abcjs-author",          label: "Author (A:)",                        selectors: [".abcjs-author"],          color: "#000000" },
+  { id: "abcjs-bar",             label: "Barlines",                           selectors: [".abcjs-bar"],             color: "#000000" },
+  { id: "abcjs-bar-number",      label: "Bar Numbers",                        selectors: [".abcjs-bar-number"],      color: "#000000" },
+  { id: "abcjs-beam-elem",       label: "Beams",                              selectors: [".abcjs-beam-elem"],       color: "#000000" },
+  { id: "abcjs-brace",           label: "Brace (Grand Staff)",                selectors: [".abcjs-brace"],           color: "#000000" },
+  { id: "abcjs-bracket",         label: "Bracket (Choir)",                    selectors: [".abcjs-bracket"],         color: "#000000" },
+  { id: "abcjs-chord",           label: "Chord Symbols (\"Am\")",             selectors: [".abcjs-chord"],           color: "#000000" },
+  { id: "abcjs-clef",            label: "Clefs",                              selectors: [".abcjs-clef"],            color: "#000000" },
+  { id: "abcjs-composer",        label: "Composer (C:)",                      selectors: [".abcjs-composer"],        color: "#000000" },
+  { id: "abcjs-decoration",      label: "Decorations",                        selectors: [".abcjs-decoration"],      color: "#000000" },
+  { id: "abcjs-dynamics",        label: "Dynamics (p, f)",                    selectors: [".abcjs-dynamics"],        color: "#000000" },
+  { id: "abcjs-key-signature",   label: "Key Signatures",                     selectors: [".abcjs-key-signature"],   color: "#000000" },
+  { id: "abcjs-ledger",          label: "Ledger Lines",                       selectors: [".abcjs-ledger"],          color: "#000000" },
+  { id: "abcjs-note",            label: "Notes",                              selectors: [".abcjs-note"],            color: "#000000" },
+  { id: "abcjs-text",            label: "Other Text",                         selectors: [".abcjs-text"],            color: "#000000" },
+  { id: "abcjs-part",            label: "Part (P:)",                          selectors: [".abcjs-part"],            color: "#000000" },
+  { id: "abcjs-part-order",      label: "Part Order (P: in header)",          selectors: [".abcjs-part-order"],      color: "#000000" },
+  { id: "abcjs-rest",            label: "Rests",                              selectors: [".abcjs-rest"],            color: "#000000" },
+  { id: "abcjs-rhythm",          label: "Rhythm (R:)",                        selectors: [".abcjs-rhythm"],          color: "#000000" },
+  { id: "abcjs-slur",            label: "Slurs/Ties",                         selectors: [".abcjs-slur"],            color: "#000000" },
+  { id: "abcjs-tie",             label: "Tie",                                selectors: [".abcjs-tie"],             color: "#000000" },
+  { id: "abcjs-legato",          label: "Slur (legato)",                      selectors: [".abcjs-legato"],          color: "#000000" },
+  { id: "abcjs-staff",           label: "Staff Lines",                        selectors: [".abcjs-staff"],           color: "#000000" },
+  { id: "abcjs-staff-extra",     label: "Staff Extras (clef/key/time)",       selectors: [".abcjs-staff-extra"],     color: "#000000" },
+  { id: "abcjs-stem",            label: "Stems",                              selectors: [".abcjs-stem"],            color: "#000000" },
+  { id: "abcjs-subtitle",        label: "Subtitle (Subsequent T:)",           selectors: [".abcjs-subtitle"],        color: "#000000" },
+  { id: "abcjs-symbol",          label: "Symbols (trill, etc.)",              selectors: [".abcjs-symbol"],          color: "#000000" },
+  { id: "abcjs-tempo",           label: "Tempo (Q:)",                         selectors: [".abcjs-tempo"],           color: "#000000" },
+  { id: "abcjs-defined-text",    label: "Text (%%text, %%center, %%right)",   selectors: [".abcjs-defined-text"],    color: "#000000" },
+  { id: "abcjs-time-signature",  label: "Time Signatures (M:)",               selectors: [".abcjs-time-signature"],  color: "#000000" },
+  { id: "abcjs-title",           label: "Title (First T:)",                   selectors: [".abcjs-title"],           color: "#000000" },
+  { id: "abcjs-top-line",        label: "Top Line Marker",                    selectors: [".abcjs-top-line"],        color: "#000000" },
+  { id: "abcjs-top-of-system",   label: "Top Of System",                      selectors: [".abcjs-top-of-system"],   color: "#000000" },
+  { id: "abcjs-triplet",         label: "Triplet Markers",                    selectors: [".abcjs-triplet"],         color: "#000000" },
+  { id: "abcjs-unaligned-words", label: "Unaligned Lyrics (W:)",              selectors: [".abcjs-unaligned-words"], color: "#000000" },
+  { id: "abcjs-voices",          label: "Voices 0-7",                         selectors: [".abcjs-v0", ".abcjs-v1", ".abcjs-v2", ".abcjs-v3", ".abcjs-v4", ".abcjs-v5", ".abcjs-v6", ".abcjs-v7"], color: "#000000" },
+  { id: "mark",                  label: "!mark!, !mark1!, ..., !mark10! ",    selectors: [".mark",".mark1",".mark2",".mark3",".mark4",".mark5",".mark6",".mark7",".mark8",".mark9",".mark10" ],        color: "#000000" },
+  { id: "push-draw",             label: "!push!, !draw!",                     selectors: [".push", ".draw"],        color: "#000000" }
+];
+
+// ------------------------------------------------------------------
+// 2) Storage (localStorage)
+// ------------------------------------------------------------------
+const ABCJS_COLOR_STORAGE_KEY = "abcjsColors_v1";
+
+function getDefaultAbcjsColors(){ const t = {}; for(const i of ABCJS_STYLE_ITEMS){ t[i.id] = { color: "#000000" }; } return t; }
+function loadAbcjsColorsFromStorage(){ try{ const raw = localStorage.getItem(ABCJS_COLOR_STORAGE_KEY); if(!raw) return null; const parsed = JSON.parse(raw); return (parsed && typeof parsed === "object") ? parsed : null; }catch{ return null; } }
+function saveAbcjsColorsToStorage(theme){ try{ localStorage.setItem(ABCJS_COLOR_STORAGE_KEY, JSON.stringify(theme)); }catch{} }
+function ensureInitialAbcjsColorsApplied(){ const stored = loadAbcjsColorsFromStorage(); if (stored) { } else { const defaults = getDefaultAbcjsColors(); saveAbcjsColorsToStorage(defaults); } }
+
+// ------------------------------------------------------------------
+// 3) Build CSS and CSS Block (robust to null/undefined theme)
+// ------------------------------------------------------------------
+function buildAbcjsCss(theme){
+  theme = (theme && typeof theme === "object") ? theme : {};
+  return ABCJS_STYLE_ITEMS.map(i => {
+    const color = theme?.[i.id]?.color || "#000000";
+    return `${i.selectors.join(", ")} { fill:${color} !important; color:${color} !important; }`;
+  }).join("\n");
+}
+function buildAbcjsCssBlock(theme) {
+  // Only include non-black rules; one rule per line. If none, return empty string.
+  theme = (theme && typeof theme === "object") ? theme : {};
+  const cssLines = [];
+
+  for (const i of ABCJS_STYLE_ITEMS) {
+    let color = theme?.[i.id]?.color || "#000000";
+    color = String(color).toLowerCase();
+    const isBlack = (color === "#000000" || color === "#000");
+    if (!isBlack) {
+      // create one line per selector
+      for (const sel of i.selectors) {
+        cssLines.push(`${sel} { fill:${color} !important; color:${color} !important; }`);
+      }
+    }
+  }
+
+  if (cssLines.length === 0) return "";
+
+  const css = cssLines.join("\n");
+  return `%%begincss
+/* Created by the abcjs Custom CSS Generator */
+${css}
+%%endcss`;
+}
+
+// ------------------------------------------------------------------
+// 4) Dialog helpers
+// ------------------------------------------------------------------
+window.__abcjsRestoreDefaultsInDialog = function(){
+  for(const i of ABCJS_STYLE_ITEMS){ const el = document.getElementById(i.id+"_color"); if(el) el.value = "#000000"; }
+};
+window.__abcjsSaveAbcjsColorsFromAlert = function(){
+  const theme = {};
+  for(const i of ABCJS_STYLE_ITEMS){ const el = document.getElementById(i.id+"_color"); theme[i.id] = { color: el ? el.value : "#000000" }; }
+  const css = buildAbcjsCss(theme);
+  const cssBlock = buildAbcjsCssBlock(theme);
+  DayPilot.Modal.close({ theme, css, cssBlock });
+};
+window.__abcjsCancelAlert = function(){ DayPilot.Modal.close(null); };
+
+// ------------------------------------------------------------------
+// 5) Editor HTML (scrollable rows, sticky header, centered title)
+// ------------------------------------------------------------------
+function buildAbcjsEditorHtml(seed, contentId){
+  const rows = ABCJS_STYLE_ITEMS.map(item => {
+    const color = seed[`${item.id}_color`] || "#000000";
+    return `<div class="abcjs_custom_css-row">
+      <div class="abcjs_custom_css-cell c1 key"><code>${item.label}</code></div>
+      <div class="abcjs_custom_css-cell c2"><input id="${item.id}_color" type="color" value="${color}" class="abcjs_custom_css-color" /></div>
+    </div>`;
+  }).join("");
+
+  return `
+  <style>
+    .dp-modal .dp-modal-main { width: 700px !important; max-width: 700px !important; }
+
+    .abcjs_custom_css-theme { font-family: system-ui,-apple-system,Segoe UI,Roboto,sans-serif; font-size: 13px; }
+    .abcjs_custom_css-title { text-align:center; font-size: 24px; margin: 6px 0 24px; }
+
+    .abcjs_custom_css-scroll { max-height: 760px; overflow: auto; border: 1px solid #e5e7eb; border-radius: 8px; background: #fff; }
+    .abcjs_custom_css-head { font-size: 16px; font-weight: 600; color: #111827; text-align:center; }
+
+    .abcjs_custom_css-help {position:absolute; left:10px; top:10px; display:inline-flex; align-items:center; justify-content:center; width:36px; height:36px; font-size:30px; line-height:1; text-decoration:none; color:#111; } 
+    .abcjs_custom_css-help:hover { background:#e5e7eb; }
+    .abcjs_custom_css-help:focus { outline:2px solid #2563eb; outline-offset:2px; }
+
+    .abcjs_custom_css-grid-body { padding: 8px; }
+    .abcjs_custom_css-cell.key code { color: #111827; font-family: Helvetica, Arial, sans-serif; font-size: 12pt; }
+
+    .abcjs_custom_css-grid-head {position: sticky; top: 0; z-index: 1; display: grid; grid-template-columns: 45% 55%; column-gap: 6px; align-items: center; padding: 8px; background: #f9fafb; border-bottom: 1px solid #e5e7eb; }
+    .abcjs_custom_css-row {display: grid; grid-template-columns: 45% 55%; align-items: center; gap: 6px; margin: 10px 0; }
+    .abcjs_custom_css-color {width: 96%; height: 45px; padding: 0; border: 1px solid #cfd4dc; border-radius: 6px; }
+    .abcjs_custom_css-actions { display: flex; gap: 30px; justify-content: center; margin-top: 10px; flex-wrap: wrap; }
+
+    .abcjs_custom_css-btn {appearance: none; border: 1px solid #cfd4dc; border-radius: 6px; padding: 8px 14px; background: #fff; cursor: pointer; font-size: 14px; min-width: 180px; transition: background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease; }
+
+    .abcjs_custom_css-btn.primary {background: darkblue; color: #fff; border-color: darkblue; }
+
+    .abcjs_custom_css-btn.restore {background: #111827; color: #fff; border-color: #111827; } 
+
+    @media (hover: hover) {
+      .abcjs_custom_css-btn:hover {
+        background: #8888CC;   
+      }
+    }
+
+  </style>
+  <div class="abcjs_custom_css-theme" id="${contentId}">
+
+    <a class="abcjs_custom_css-help" href="https://michaeleskin.com/abctools_beta_1_cm/userguide.html#advanced_customcssgenerator" target="_blank" rel="noopener noreferrer" aria-label="ABC Tools User Guide">?</a>
+
+    <div class="abcjs_custom_css-title">abcjs Custom CSS Generator</div>
+
+    <div class="abcjs_custom_css-scroll" id="${contentId}-scroll">
+      <div class="abcjs_custom_css-grid-head">
+        <div class="abcjs_custom_css-head">abcjs CSS Element</div>
+        <div class="abcjs_custom_css-head">Color</div>
+      </div>
+      <div class="abcjs_custom_css-grid-body">${rows}</div>
+    </div>
+
+    <div class="abcjs_custom_css-actions">
+      <button class="abcjs_custom_css-btn restore" onclick="__abcjsRestoreDefaultsInDialog()">Reset to Black</button>
+      <button class="abcjs_custom_css-btn primary" onclick="__abcjsSaveAbcjsColorsFromAlert()">Inject Custom CSS</button>
+      <button class="abcjs_custom_css-btn" onclick="__abcjsCancelAlert()">Cancel</button>
+    </div>
+  </div>`;
+}
+
+// ------------------------------------------------------------------
+// 6) Public opener
+// ------------------------------------------------------------------
+async function abcjsColorEditor(currentTheme = {}){
+
+  ensureInitialAbcjsColorsApplied();
+
+  const stored = loadAbcjsColorsFromStorage() || getDefaultAbcjsColors();
+  const seed = {};
+  for(const i of ABCJS_STYLE_ITEMS){
+    const cur = (currentTheme && currentTheme[i.id]) || (stored && stored[i.id]) || { color: "#000000" };
+    seed[`${i.id}_color`] = cur.color;
+  }
+
+  const uid = `abcjs_custom_css-colors-${Date.now()}-${Math.random().toString(36).slice(2,8)}`;
+  const html = buildAbcjsEditorHtml(seed, uid);
+
+  const promise = DayPilot.Modal.alert(html, {
+    width: 700,
+    theme: 'modal_flat',
+    top: 35,
+    scrollWithPage: (typeof AllowDialogsToScroll === 'function' ? AllowDialogsToScroll() : true)
+  });
+
+  // Move ONLY this editor's actions into ONLY this modal's footer
+  const scopeMove = (tries = 40) => {
+    const root = document.getElementById(uid);
+    if (!root) { if (tries) return setTimeout(() => scopeMove(tries - 1), 25); return; }
+
+    const container = root.closest(".modal_flat_main, .dp-modal");
+    if (!container) { if (tries) return setTimeout(() => scopeMove(tries - 1), 25); return; }
+
+    const footer  = container.querySelector(".modal_flat_buttons, .dp-modal-buttons");
+    const actions = root.querySelector(".abcjs_custom_css-actions, .abc-actions");
+    const okBtn   = footer && (footer.querySelector(".dp-modal-button-ok") || footer.querySelector("button"));
+
+    if (!footer || !actions) { if (tries) return setTimeout(() => scopeMove(tries - 1), 25); return; }
+
+    if (okBtn) okBtn.remove();
+    footer.innerHTML = "";
+    footer.appendChild(actions);
+  };
+
+  scopeMove();
+
+  // Wait for user's action
+  const res = await promise;
+
+  if (!res || !res.result) return;
+
+  const { theme, css, cssBlock } = res.result;
+
+  saveAbcjsColorsToStorage(theme);
+
+  var theABC = getABCEditorText();
+
+  theABC = theABC.replace(/%%begincss[\s\S]*?%%endcss/gim, "").trim();
+
+  if (cssBlock){
+
+    setABCEditorText(cssBlock + "\n\n" + theABC);
+
+  }
+  else{
+
+    // Just strip the CSS block
+    setABCEditorText(theABC);
+
+  }
+
+  RenderAsync(true, null);
+
+  return;
 }
 
 // ABC Syntax highlighting and CodeMirror-related code
