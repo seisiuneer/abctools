@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "2845_092925_0830_BETA";
+var gVersionNumber = "2846_092925_0830_BETA";
 
 var gMIDIInitStillWaiting = false;
 
@@ -59414,7 +59414,7 @@ function DoStartup() {
 //    NOTE: If props is omitted, we default to ['fill','color']
 // ------------------------------------------------------------------
 const ABCJS_STYLE_ITEMS = [
-  { id: "abcjs-ending",          label: "1st/2nd Ending",                     selectors: [".abcjs-ending"],          props: ["color"],             color: "#000000" },
+  { id: "abcjs-ending",          label: "1st/2nd Endings",                    selectors: [".abcjs-ending"],          props: ["color"],             color: "#000000" },
   { id: "abcjs-lyric",           label: "Aligned Lyrics (w:)",                selectors: [".abcjs-lyric"],           props: ["color"],             color: "#000000" },
   { id: "abcjs-meta-bottom",     label: "All Metadata Above Notation",        selectors: [".abcjs-meta-bottom"],     props: ["color"],             color: "#000000" },
   { id: "abcjs-meta-top",        label: "All Metadata Below Notation",        selectors: [".abcjs-meta-top"],        props: ["color"],             color: "#000000" },
@@ -59430,15 +59430,11 @@ const ABCJS_STYLE_ITEMS = [
   { id: "abcjs-decoration",      label: "Decorations",                        selectors: [".abcjs-decoration"],      props: ["color"],             color: "#000000" },
   { id: "abcjs-dynamics",        label: "Dynamics (p, f)",                    selectors: [".abcjs-dynamics"],        props: ["color"],             color: "#000000" },
   { id: "abcjs-key-signature",   label: "Key Signatures",                     selectors: [".abcjs-key-signature"],   props: ["color"],             color: "#000000" },
-  { id: "abcjs-note",            label: "Notes",                              selectors: [".abcjs-note",".abcjs-beam-elem",".abcjs-stem"],  props: ["color"],    color: "#000000" },
+  { id: "abcjs-note",            label: "Notes/Rests",                        selectors: [".abcjs-note",".abcjs-beam-elem",".abcjs-stem",".abcjs-rest",".abcjs-slur",".abcjs-tie",".abcjs-legato",".abcjs-triplet"],  props: ["color"],    color: "#000000" },
   { id: "abcjs-text",            label: "Other Text",                         selectors: [".abcjs-text"],            props: ["color"],             color: "#000000" },
   { id: "abcjs-part",            label: "Part (P:)",                          selectors: [".abcjs-part"],            props: ["color"],             color: "#000000" },
   { id: "abcjs-part-order",      label: "Part Order (P: in header)",          selectors: [".abcjs-part-order"],      props: ["color"],             color: "#000000" },
-  { id: "abcjs-rest",            label: "Rests",                              selectors: [".abcjs-rest"],            props: ["color"],             color: "#000000" },
   { id: "abcjs-rhythm",          label: "Rhythm (R:)",                        selectors: [".abcjs-rhythm"],          props: ["color"],             color: "#000000" },
-  { id: "abcjs-slur",            label: "Slurs/Ties",                         selectors: [".abcjs-slur"],            props: ["color"],             color: "#000000" },
-  { id: "abcjs-tie",             label: "Tie",                                selectors: [".abcjs-tie"],             props: ["color"],             color: "#000000" },
-  { id: "abcjs-legato",          label: "Slur",                               selectors: [".abcjs-legato"],          props: ["color"],             color: "#000000" },
   { id: "abcjs-staff",           label: "Staff Lines",                        selectors: [".abcjs-staff",".abcjs-ledger"],  props: ["color"],      color: "#000000" },
   { id: "abcjs-staff-extra",     label: "Staff Extras (clef/key/time)",       selectors: [".abcjs-staff-extra"],     props: ["color"],             color: "#000000" },
   { id: "abcjs-subtitle",        label: "Subtitle (Subsequent T:)",           selectors: [".abcjs-subtitle"],        props: ["color"],             color: "#000000" },
@@ -59447,9 +59443,8 @@ const ABCJS_STYLE_ITEMS = [
   { id: "abcjs-defined-text",    label: "Text (%%text, %%center, %%right)",   selectors: [".abcjs-defined-text"],    props: ["color"],             color: "#000000" },
   { id: "abcjs-time-signature",  label: "Time Signatures (M:)",               selectors: [".abcjs-time-signature"],  props: ["color"],             color: "#000000" },
   { id: "abcjs-title",           label: "Title (First T:)",                   selectors: [".abcjs-title"],           props: ["color"],             color: "#000000" },
-  { id: "abcjs-triplet",         label: "Triplet Markers",                    selectors: [".abcjs-triplet"],         props: ["color"],             color: "#000000" },
   { id: "abcjs-unaligned-words", label: "Unaligned Lyrics (W:)",              selectors: [".abcjs-unaligned-words"], props: ["color"],             color: "#000000" },
-  { id: "abcjs-voices",          label: "Voices #1-8",                        selectors: [".abcjs-v0", ".abcjs-v1", ".abcjs-v2", ".abcjs-v3", ".abcjs-v4", ".abcjs-v5", ".abcjs-v6", ".abcjs-v7"], props: ["color"], color: "#000000" },
+  { id: "abcjs-voices",          label: "Voice #1-8",                         selectors: [".abcjs-v0", ".abcjs-v1", ".abcjs-v2", ".abcjs-v3", ".abcjs-v4", ".abcjs-v5", ".abcjs-v6", ".abcjs-v7"], props: ["color"], color: "#000000" },
   { id: "abcjs-voice-name",       label: "Voice Names",                       selectors: [".abcjs-voice-name"],      props: ["color"],             color: "#000000" },
   { id: "mark",                  label: "!mark!, !mark1!, ..., !mark10! ",    selectors: [".mark",".mark1",".mark2",".mark3",".mark4",".mark5",".mark6",".mark7",".mark8",".mark9",".mark10"], props: ["fill"], color: "#000000" },
   { id: "push-draw",             label: "!push!, !draw!",                     selectors: [".push", ".draw"],         props: ["fill"],             color: "#000000" }
