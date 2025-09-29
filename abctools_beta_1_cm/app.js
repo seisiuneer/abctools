@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "2844_092925_0800_BETA";
+var gVersionNumber = "2845_092925_0830_BETA";
 
 var gMIDIInitStillWaiting = false;
 
@@ -59422,7 +59422,6 @@ const ABCJS_STYLE_ITEMS = [
   { id: "abcjs-author",          label: "Author (A:)",                        selectors: [".abcjs-author"],          props: ["color"],             color: "#000000" },
   { id: "abcjs-bar",             label: "Barlines",                           selectors: [".abcjs-bar"],             props: ["color"],             color: "#000000" },
   { id: "abcjs-bar-number",      label: "Bar Numbers",                        selectors: [".abcjs-bar-number"],      props: ["color"],             color: "#000000" },
-  { id: "abcjs-beam-elem",       label: "Beams",                              selectors: [".abcjs-beam-elem"],       props: ["color"],             color: "#000000" },
   { id: "abcjs-brace",           label: "Brace (Grand Staff)",                selectors: [".abcjs-brace"],           props: ["color"],             color: "#000000" },
   { id: "abcjs-bracket",         label: "Bracket (Choir)",                    selectors: [".abcjs-bracket"],         props: ["color"],             color: "#000000" },
   { id: "abcjs-chord",           label: "Chord Symbols (\"Am\")",             selectors: [".abcjs-chord"],           props: ["color"],             color: "#000000" },
@@ -59431,7 +59430,7 @@ const ABCJS_STYLE_ITEMS = [
   { id: "abcjs-decoration",      label: "Decorations",                        selectors: [".abcjs-decoration"],      props: ["color"],             color: "#000000" },
   { id: "abcjs-dynamics",        label: "Dynamics (p, f)",                    selectors: [".abcjs-dynamics"],        props: ["color"],             color: "#000000" },
   { id: "abcjs-key-signature",   label: "Key Signatures",                     selectors: [".abcjs-key-signature"],   props: ["color"],             color: "#000000" },
-  { id: "abcjs-note",            label: "Notes",                              selectors: [".abcjs-note"],            props: ["color"],             color: "#000000" },
+  { id: "abcjs-note",            label: "Notes",                              selectors: [".abcjs-note",".abcjs-beam-elem",".abcjs-stem"],  props: ["color"],    color: "#000000" },
   { id: "abcjs-text",            label: "Other Text",                         selectors: [".abcjs-text"],            props: ["color"],             color: "#000000" },
   { id: "abcjs-part",            label: "Part (P:)",                          selectors: [".abcjs-part"],            props: ["color"],             color: "#000000" },
   { id: "abcjs-part-order",      label: "Part Order (P: in header)",          selectors: [".abcjs-part-order"],      props: ["color"],             color: "#000000" },
@@ -59442,7 +59441,6 @@ const ABCJS_STYLE_ITEMS = [
   { id: "abcjs-legato",          label: "Slur",                               selectors: [".abcjs-legato"],          props: ["color"],             color: "#000000" },
   { id: "abcjs-staff",           label: "Staff Lines",                        selectors: [".abcjs-staff",".abcjs-ledger"],  props: ["color"],      color: "#000000" },
   { id: "abcjs-staff-extra",     label: "Staff Extras (clef/key/time)",       selectors: [".abcjs-staff-extra"],     props: ["color"],             color: "#000000" },
-  { id: "abcjs-stem",            label: "Stems",                              selectors: [".abcjs-stem"],            props: ["color"],             color: "#000000" },
   { id: "abcjs-subtitle",        label: "Subtitle (Subsequent T:)",           selectors: [".abcjs-subtitle"],        props: ["color"],             color: "#000000" },
   { id: "abcjs-symbol",          label: "Symbols (trill, etc.)",              selectors: [".abcjs-symbol"],          props: ["color"],             color: "#000000" },
   { id: "abcjs-tempo",           label: "Tempo (Q:)",                         selectors: [".abcjs-tempo"],           props: ["color"],             color: "#000000" },
