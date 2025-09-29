@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "2843_092925_0700_BETA";
+var gVersionNumber = "2844_092925_0800_BETA";
 
 var gMIDIInitStillWaiting = false;
 
@@ -59410,76 +59410,81 @@ function DoStartup() {
 // Returns %%begincss{...%%endcss} with ONLY non-black rules, defaults all black, reset to black.
 
 // ------------------------------------------------------------------
-// 1) Config: full class list (defaults = black)
+// 1) Config: full class list (defaults = black) + per-item props
+//    NOTE: If props is omitted, we default to ['fill','color']
 // ------------------------------------------------------------------
 const ABCJS_STYLE_ITEMS = [
-  { id: "abcjs-ending",          label: "1st/2nd Ending",                     selectors: [".abcjs-ending"],          color: "#000000" },
-  { id: "abcjs-lyric",           label: "Aligned Lyrics (w:)",                selectors: [".abcjs-lyric"],           color: "#000000" },
-  { id: "abcjs-meta-bottom",     label: "All Metadata Above Notation",        selectors: [".abcjs-meta-bottom"],     color: "#000000" },
-  { id: "abcjs-meta-top",        label: "All Metadata Below Notation",        selectors: [".abcjs-meta-top"],        color: "#000000" },
-  { id: "abcjs-annotation",      label: "Annotations (^...)",                 selectors: [".abcjs-annotation"],      color: "#000000" },
-  { id: "abcjs-author",          label: "Author (A:)",                        selectors: [".abcjs-author"],          color: "#000000" },
-  { id: "abcjs-bar",             label: "Barlines",                           selectors: [".abcjs-bar"],             color: "#000000" },
-  { id: "abcjs-bar-number",      label: "Bar Numbers",                        selectors: [".abcjs-bar-number"],      color: "#000000" },
-  { id: "abcjs-beam-elem",       label: "Beams",                              selectors: [".abcjs-beam-elem"],       color: "#000000" },
-  { id: "abcjs-brace",           label: "Brace (Grand Staff)",                selectors: [".abcjs-brace"],           color: "#000000" },
-  { id: "abcjs-bracket",         label: "Bracket (Choir)",                    selectors: [".abcjs-bracket"],         color: "#000000" },
-  { id: "abcjs-chord",           label: "Chord Symbols (\"Am\")",             selectors: [".abcjs-chord"],           color: "#000000" },
-  { id: "abcjs-clef",            label: "Clefs",                              selectors: [".abcjs-clef"],            color: "#000000" },
-  { id: "abcjs-composer",        label: "Composer (C:)",                      selectors: [".abcjs-composer"],        color: "#000000" },
-  { id: "abcjs-decoration",      label: "Decorations",                        selectors: [".abcjs-decoration"],      color: "#000000" },
-  { id: "abcjs-dynamics",        label: "Dynamics (p, f)",                    selectors: [".abcjs-dynamics"],        color: "#000000" },
-  { id: "abcjs-key-signature",   label: "Key Signatures",                     selectors: [".abcjs-key-signature"],   color: "#000000" },
-  { id: "abcjs-ledger",          label: "Ledger Lines",                       selectors: [".abcjs-ledger"],          color: "#000000" },
-  { id: "abcjs-note",            label: "Notes",                              selectors: [".abcjs-note"],            color: "#000000" },
-  { id: "abcjs-text",            label: "Other Text",                         selectors: [".abcjs-text"],            color: "#000000" },
-  { id: "abcjs-part",            label: "Part (P:)",                          selectors: [".abcjs-part"],            color: "#000000" },
-  { id: "abcjs-part-order",      label: "Part Order (P: in header)",          selectors: [".abcjs-part-order"],      color: "#000000" },
-  { id: "abcjs-rest",            label: "Rests",                              selectors: [".abcjs-rest"],            color: "#000000" },
-  { id: "abcjs-rhythm",          label: "Rhythm (R:)",                        selectors: [".abcjs-rhythm"],          color: "#000000" },
-  { id: "abcjs-slur",            label: "Slurs/Ties",                         selectors: [".abcjs-slur"],            color: "#000000" },
-  { id: "abcjs-tie",             label: "Tie",                                selectors: [".abcjs-tie"],             color: "#000000" },
-  { id: "abcjs-legato",          label: "Slur (legato)",                      selectors: [".abcjs-legato"],          color: "#000000" },
-  { id: "abcjs-staff",           label: "Staff Lines",                        selectors: [".abcjs-staff"],           color: "#000000" },
-  { id: "abcjs-staff-extra",     label: "Staff Extras (clef/key/time)",       selectors: [".abcjs-staff-extra"],     color: "#000000" },
-  { id: "abcjs-stem",            label: "Stems",                              selectors: [".abcjs-stem"],            color: "#000000" },
-  { id: "abcjs-subtitle",        label: "Subtitle (Subsequent T:)",           selectors: [".abcjs-subtitle"],        color: "#000000" },
-  { id: "abcjs-symbol",          label: "Symbols (trill, etc.)",              selectors: [".abcjs-symbol"],          color: "#000000" },
-  { id: "abcjs-tempo",           label: "Tempo (Q:)",                         selectors: [".abcjs-tempo"],           color: "#000000" },
-  { id: "abcjs-defined-text",    label: "Text (%%text, %%center, %%right)",   selectors: [".abcjs-defined-text"],    color: "#000000" },
-  { id: "abcjs-time-signature",  label: "Time Signatures (M:)",               selectors: [".abcjs-time-signature"],  color: "#000000" },
-  { id: "abcjs-title",           label: "Title (First T:)",                   selectors: [".abcjs-title"],           color: "#000000" },
-  { id: "abcjs-top-line",        label: "Top Line Marker",                    selectors: [".abcjs-top-line"],        color: "#000000" },
-  { id: "abcjs-top-of-system",   label: "Top Of System",                      selectors: [".abcjs-top-of-system"],   color: "#000000" },
-  { id: "abcjs-triplet",         label: "Triplet Markers",                    selectors: [".abcjs-triplet"],         color: "#000000" },
-  { id: "abcjs-unaligned-words", label: "Unaligned Lyrics (W:)",              selectors: [".abcjs-unaligned-words"], color: "#000000" },
-  { id: "abcjs-voices",          label: "Voices 0-7",                         selectors: [".abcjs-v0", ".abcjs-v1", ".abcjs-v2", ".abcjs-v3", ".abcjs-v4", ".abcjs-v5", ".abcjs-v6", ".abcjs-v7"], color: "#000000" },
-  { id: "mark",                  label: "!mark!, !mark1!, ..., !mark10! ",    selectors: [".mark",".mark1",".mark2",".mark3",".mark4",".mark5",".mark6",".mark7",".mark8",".mark9",".mark10" ],        color: "#000000" },
-  { id: "push-draw",             label: "!push!, !draw!",                     selectors: [".push", ".draw"],        color: "#000000" }
+  { id: "abcjs-ending",          label: "1st/2nd Ending",                     selectors: [".abcjs-ending"],          props: ["color"],             color: "#000000" },
+  { id: "abcjs-lyric",           label: "Aligned Lyrics (w:)",                selectors: [".abcjs-lyric"],           props: ["color"],             color: "#000000" },
+  { id: "abcjs-meta-bottom",     label: "All Metadata Above Notation",        selectors: [".abcjs-meta-bottom"],     props: ["color"],             color: "#000000" },
+  { id: "abcjs-meta-top",        label: "All Metadata Below Notation",        selectors: [".abcjs-meta-top"],        props: ["color"],             color: "#000000" },
+  { id: "abcjs-annotation",      label: "Annotations (^...)",                 selectors: [".abcjs-annotation"],      props: ["color"],             color: "#000000" },
+  { id: "abcjs-author",          label: "Author (A:)",                        selectors: [".abcjs-author"],          props: ["color"],             color: "#000000" },
+  { id: "abcjs-bar",             label: "Barlines",                           selectors: [".abcjs-bar"],             props: ["color"],             color: "#000000" },
+  { id: "abcjs-bar-number",      label: "Bar Numbers",                        selectors: [".abcjs-bar-number"],      props: ["color"],             color: "#000000" },
+  { id: "abcjs-beam-elem",       label: "Beams",                              selectors: [".abcjs-beam-elem"],       props: ["color"],             color: "#000000" },
+  { id: "abcjs-brace",           label: "Brace (Grand Staff)",                selectors: [".abcjs-brace"],           props: ["color"],             color: "#000000" },
+  { id: "abcjs-bracket",         label: "Bracket (Choir)",                    selectors: [".abcjs-bracket"],         props: ["color"],             color: "#000000" },
+  { id: "abcjs-chord",           label: "Chord Symbols (\"Am\")",             selectors: [".abcjs-chord"],           props: ["color"],             color: "#000000" },
+  { id: "abcjs-clef",            label: "Clefs",                              selectors: [".abcjs-clef"],            props: ["color"],             color: "#000000" },
+  { id: "abcjs-composer",        label: "Composer (C:)",                      selectors: [".abcjs-composer"],        props: ["color"],             color: "#000000" },
+  { id: "abcjs-decoration",      label: "Decorations",                        selectors: [".abcjs-decoration"],      props: ["color"],             color: "#000000" },
+  { id: "abcjs-dynamics",        label: "Dynamics (p, f)",                    selectors: [".abcjs-dynamics"],        props: ["color"],             color: "#000000" },
+  { id: "abcjs-key-signature",   label: "Key Signatures",                     selectors: [".abcjs-key-signature"],   props: ["color"],             color: "#000000" },
+  { id: "abcjs-note",            label: "Notes",                              selectors: [".abcjs-note"],            props: ["color"],             color: "#000000" },
+  { id: "abcjs-text",            label: "Other Text",                         selectors: [".abcjs-text"],            props: ["color"],             color: "#000000" },
+  { id: "abcjs-part",            label: "Part (P:)",                          selectors: [".abcjs-part"],            props: ["color"],             color: "#000000" },
+  { id: "abcjs-part-order",      label: "Part Order (P: in header)",          selectors: [".abcjs-part-order"],      props: ["color"],             color: "#000000" },
+  { id: "abcjs-rest",            label: "Rests",                              selectors: [".abcjs-rest"],            props: ["color"],             color: "#000000" },
+  { id: "abcjs-rhythm",          label: "Rhythm (R:)",                        selectors: [".abcjs-rhythm"],          props: ["color"],             color: "#000000" },
+  { id: "abcjs-slur",            label: "Slurs/Ties",                         selectors: [".abcjs-slur"],            props: ["color"],             color: "#000000" },
+  { id: "abcjs-tie",             label: "Tie",                                selectors: [".abcjs-tie"],             props: ["color"],             color: "#000000" },
+  { id: "abcjs-legato",          label: "Slur",                               selectors: [".abcjs-legato"],          props: ["color"],             color: "#000000" },
+  { id: "abcjs-staff",           label: "Staff Lines",                        selectors: [".abcjs-staff",".abcjs-ledger"],  props: ["color"],      color: "#000000" },
+  { id: "abcjs-staff-extra",     label: "Staff Extras (clef/key/time)",       selectors: [".abcjs-staff-extra"],     props: ["color"],             color: "#000000" },
+  { id: "abcjs-stem",            label: "Stems",                              selectors: [".abcjs-stem"],            props: ["color"],             color: "#000000" },
+  { id: "abcjs-subtitle",        label: "Subtitle (Subsequent T:)",           selectors: [".abcjs-subtitle"],        props: ["color"],             color: "#000000" },
+  { id: "abcjs-symbol",          label: "Symbols (trill, etc.)",              selectors: [".abcjs-symbol"],          props: ["color"],             color: "#000000" },
+  { id: "abcjs-tempo",           label: "Tempo (Q:)",                         selectors: [".abcjs-tempo"],           props: ["color"],             color: "#000000" },
+  { id: "abcjs-defined-text",    label: "Text (%%text, %%center, %%right)",   selectors: [".abcjs-defined-text"],    props: ["color"],             color: "#000000" },
+  { id: "abcjs-time-signature",  label: "Time Signatures (M:)",               selectors: [".abcjs-time-signature"],  props: ["color"],             color: "#000000" },
+  { id: "abcjs-title",           label: "Title (First T:)",                   selectors: [".abcjs-title"],           props: ["color"],             color: "#000000" },
+  { id: "abcjs-triplet",         label: "Triplet Markers",                    selectors: [".abcjs-triplet"],         props: ["color"],             color: "#000000" },
+  { id: "abcjs-unaligned-words", label: "Unaligned Lyrics (W:)",              selectors: [".abcjs-unaligned-words"], props: ["color"],             color: "#000000" },
+  { id: "abcjs-voices",          label: "Voices #1-8",                        selectors: [".abcjs-v0", ".abcjs-v1", ".abcjs-v2", ".abcjs-v3", ".abcjs-v4", ".abcjs-v5", ".abcjs-v6", ".abcjs-v7"], props: ["color"], color: "#000000" },
+  { id: "abcjs-voice-name",       label: "Voice Names",                       selectors: [".abcjs-voice-name"],      props: ["color"],             color: "#000000" },
+  { id: "mark",                  label: "!mark!, !mark1!, ..., !mark10! ",    selectors: [".mark",".mark1",".mark2",".mark3",".mark4",".mark5",".mark6",".mark7",".mark8",".mark9",".mark10"], props: ["fill"], color: "#000000" },
+  { id: "push-draw",             label: "!push!, !draw!",                     selectors: [".push", ".draw"],         props: ["fill"],             color: "#000000" }
 ];
 
 // ------------------------------------------------------------------
-// 2) Storage (localStorage)
+// 2) Storage (localStorage) — unchanged
 // ------------------------------------------------------------------
 const ABCJS_COLOR_STORAGE_KEY = "abcjsColors_v1";
-
 function getDefaultAbcjsColors(){ const t = {}; for(const i of ABCJS_STYLE_ITEMS){ t[i.id] = { color: "#000000" }; } return t; }
 function loadAbcjsColorsFromStorage(){ try{ const raw = localStorage.getItem(ABCJS_COLOR_STORAGE_KEY); if(!raw) return null; const parsed = JSON.parse(raw); return (parsed && typeof parsed === "object") ? parsed : null; }catch{ return null; } }
 function saveAbcjsColorsToStorage(theme){ try{ localStorage.setItem(ABCJS_COLOR_STORAGE_KEY, JSON.stringify(theme)); }catch{} }
 function ensureInitialAbcjsColorsApplied(){ const stored = loadAbcjsColorsFromStorage(); if (stored) { } else { const defaults = getDefaultAbcjsColors(); saveAbcjsColorsToStorage(defaults); } }
 
 // ------------------------------------------------------------------
-// 3) Build CSS and CSS Block (robust to null/undefined theme)
+// 3) Build CSS and CSS Block (uses per-item props)
 // ------------------------------------------------------------------
+function buildDeclarations(props, color) {
+  const list = Array.isArray(props) && props.length ? props : ["fill","color"];
+  return list.map(p => `${p}:${color} !important;`).join(" ");
+}
+
 function buildAbcjsCss(theme){
   theme = (theme && typeof theme === "object") ? theme : {};
   return ABCJS_STYLE_ITEMS.map(i => {
     const color = theme?.[i.id]?.color || "#000000";
-    return `${i.selectors.join(", ")} { fill:${color} !important; color:${color} !important; }`;
+    const decls = buildDeclarations(i.props, color);
+    return `${i.selectors.join(", ")} { ${decls} }`;
   }).join("\n");
 }
+
 function buildAbcjsCssBlock(theme) {
-  // Only include non-black rules; one rule per line. If none, return empty string.
+  // Only include non-black rules; one rule per selector. If none, return empty string.
   theme = (theme && typeof theme === "object") ? theme : {};
   const cssLines = [];
 
@@ -59488,9 +59493,9 @@ function buildAbcjsCssBlock(theme) {
     color = String(color).toLowerCase();
     const isBlack = (color === "#000000" || color === "#000");
     if (!isBlack) {
-      // create one line per selector
+      const decls = buildDeclarations(i.props, color);
       for (const sel of i.selectors) {
-        cssLines.push(`${sel} { fill:${color} !important; color:${color} !important; }`);
+        cssLines.push(`${sel} { ${decls} }`);
       }
     }
   }
@@ -59503,7 +59508,6 @@ function buildAbcjsCssBlock(theme) {
 ${css}
 %%endcss`;
 }
-
 // ------------------------------------------------------------------
 // 4) Dialog helpers
 // ------------------------------------------------------------------
