@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "2842_092825_1700_BETA";
+var gVersionNumber = "2843_092925_0700_BETA";
 
 var gMIDIInitStillWaiting = false;
 
@@ -59592,6 +59592,9 @@ function buildAbcjsEditorHtml(seed, contentId){
 // 6) Public opener
 // ------------------------------------------------------------------
 async function abcjsColorEditor(currentTheme = {}){
+
+  // Keep track of dialogs
+  sendGoogleAnalytics("dialog", "CustomCSSGenerator");
 
   ensureInitialAbcjsColorsApplied();
 
