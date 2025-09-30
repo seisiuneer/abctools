@@ -5902,7 +5902,7 @@ line-height: 1.0;          /* plays nicely with wrapped lines */
 .cm-abc-header-title { color:#00608a; font-weight:bold; }/* special T: titles */
 .cm-abc-note { color:#000000; }  /* notes/rests */
 .cm-abc-string     { color:#6200a8; }     /* "chords" */
-.cm-abc-builtin    { color:#070b05; }     /* note-chords [CEG] */
+.cm-abc-builtin    { color:#487830; }     /* note-chords [CEG] */
 .cm-abc-qualifier  { color:#090005; }     /* !trill! +orn+ */
 .cm-abc-number     { color:#010604; }  /* tuplets */
 .cm-abc-operator   { color:#050505; }     /* ties/slurs () - */

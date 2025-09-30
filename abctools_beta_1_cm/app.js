@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "2847_092925_0900_BETA";
+var gVersionNumber = "2848_092925_0930_BETA";
 
 var gMIDIInitStillWaiting = false;
 
@@ -59701,7 +59701,7 @@ const ABC_THEME_ITEMS = [
     color:"#010604", styleWeight:"normal", sample:"(3abc  (2de  (5f)" },
 
   { id:"cm-abc-builtin",      label:"Block Chords",      className:"cm-abc-builtin",
-    color:"#77bb55", styleWeight:"normal", sample:"[CEG]  [DFA]" },
+    color:"#487830", styleWeight:"normal", sample:"[CEG]  [DFA]" },
 
   { id:"cm-abc-bar",          label:"Barlines",          className:"cm-abc-bar",
     color:"#006999", styleWeight:"normal", sample:"|| :| [| |]" },
