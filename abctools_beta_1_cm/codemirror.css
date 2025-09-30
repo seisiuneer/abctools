@@ -348,3 +348,13 @@ div.CodeMirror-dragcursors {
 
 /* Help users use markselection to safely style text background */
 span.CodeMirror-selectedtext { background: none; }
+
+/* When CodeMirror has the placeholder addon enabled and is empty */
+.CodeMirror .CodeMirror-placeholder { 
+  color: #757575 !important; 
+}
+.CodeMirror-empty .CodeMirror-lines::before { 
+  color: #757575 !important; 
+}
+
+
