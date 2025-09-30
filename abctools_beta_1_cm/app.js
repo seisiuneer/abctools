@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "2849_092925_1030_BETA";
+var gVersionNumber = "2850_093025_1530_BETA";
 
 var gMIDIInitStillWaiting = false;
 
@@ -59710,7 +59710,7 @@ const ABC_THEME_ITEMS = [
     color:"#006999", styleWeight:"normal", sample:"|1  |2  [1  [2" },
 
   { id:"cm-abc-qualifier",    label:"!*! Annotations",    className:"cm-abc-qualifier",
-    color:"#090005", styleWeight:"normal", sample:"!trill!" },
+    color:"#73160d", styleWeight:"normal", sample:"!p!  !mf!  !trill!" },
 
   { id:"cm-abc-operator",     label:"Slurs and Ties",     className:"cm-abc-operator",
     color:"#555555", styleWeight:"normal", sample:"( slur )  - tie -" },
