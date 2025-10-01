@@ -5731,6 +5731,15 @@
                 <hr>
                 <p><strong>Use Dark Mode for the editor when syntax highlighting is enabled</strong></p>
                 <p>When checked, sets the background of the editor to black and inverts the syntax highlighting colors if syntax highlighting is enable. (Default is off)</p>
+                <p>If you want everything on the screen dark instead of only the ABC text editor, you can add the following custom CSS at the top of ABC in light mode:</p>
+                <p class="code">%%begincss<br/>
+                html { filter: invert(97%); background-color: #f0f0f0; }<br/>
+                .btn { outline: 1px solid #ccc;<br/>
+                box-shadow: none !important; }<br/>
+                .btn:after { content: none }<br/>
+                .CodeMirror * { filter: none !important; }<br/>
+                #notation-holder {filter:invert(97%);background-color:lightgrey !important;}<br/>
+                %%endcss</p>
                 <hr>
                 <p><strong>Player screen width (percentage) (min is 50, max is 100)</strong></p>
                 <p>Sets the width in percentage of screen width for the Player and Explorers in the tool. Default is: 50.</p>
@@ -6105,6 +6114,15 @@
                 <p>Click <strong>Apply and Save Theme</strong> to apply the edited theme to the current session.</p>
                 <p>Click <strong>Cancel</strong> to exit the dialog without applying or saving any changes.</p>
                 <p>The edited theme is saved in browser local storage and will be used going forward.</p>
+                <p>If you want everything on the screen dark instead of only the ABC text editor, you can add the following custom CSS at the top of ABC in light mode:</p>
+                <p class="code">%%begincss<br/>
+                html { filter: invert(97%); background-color: #f0f0f0; }<br/>
+                .btn { outline: 1px solid #ccc;<br/>
+                box-shadow: none !important; }<br/>
+                .btn:after { content: none }<br/>
+                .CodeMirror * { filter: none !important; }<br/>
+                #notation-holder {filter:invert(97%);background-color:lightgrey !important;}<br/>
+                %%endcss</p>
                 <hr id="custom_reverb">
                 <p><strong>Load Custom Reverb Impulse</strong></p>
                 <p>Click this button to specify a custom convolution reverb impulse .wav file to use when specifying "custom" as the reverb type for the current tool session.</p>
