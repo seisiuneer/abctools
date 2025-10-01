@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "2851_100125_1230_BETA";
+var gVersionNumber = "2852_100125_1300_BETA";
 
 var gMIDIInitStillWaiting = false;
 
@@ -59692,13 +59692,13 @@ const ABC_THEME_ITEMS = [
     color:"#000000", styleWeight:"normal", sample:"A B c d' e'' z" },
 
   { id:"cm-abc-note-prefix",  label:"Note Prefixes",  className:"cm-abc-note-prefix",
-    color:"#148500", styleWeight:"normal", sample:"^ _ =" },
+    color:"#148500", styleWeight:"normal", sample:"~ T P H u v" },
 
   { id:"cm-abc-string",       label:"Chords",       className:"cm-abc-string",
     color:"#6200a8", styleWeight:"normal", sample:"\"Am\"  \"D\"  \"G\"" },
 
   { id:"cm-abc-number",       label:"Tuple Numbers",       className:"cm-abc-number",
-    color:"#010604", styleWeight:"normal", sample:"(3abc  (2de  (5f)" },
+    color:"#010604", styleWeight:"normal", sample:"(3  (2  (5" },
 
   { id:"cm-abc-builtin",      label:"Block Chords",      className:"cm-abc-builtin",
     color:"#487830", styleWeight:"normal", sample:"[CEG]  [DFA]" },
