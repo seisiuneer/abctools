@@ -5909,7 +5909,7 @@ line-height: 1.0;          /* plays nicely with wrapped lines */
 .cm-abc-comment    { color:#005231; font-style:italic; }
 .cm-abc-meta       { color:#5924bc; font-weight:bold; }
 .cm-abc-font-directive {color: #7c2243;}
-.cm-abc-note-prefix { color:#189800; } 
+.cm-abc-note-prefix { color:#148500; } 
 .cm-abc-extended-directive {color: #B00023;  }
 .cm-abc-abccss { color:#a300a3; }     /* Custom CSS */
 .cm-abc-atom { color:#020109; }     /* Inline directives */
