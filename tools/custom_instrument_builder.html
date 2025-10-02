@@ -28,9 +28,9 @@
   <link rel="icon" type="image/png" sizes="96x96" href="https://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
   <link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
 
-  <script type="text/javascript" src="jszip-min.js?v=20"></script>
-  <script type="text/javascript" src="filesaver-min.js?v=20"></script>
-  <script type="text/javascript" src="daypilot-modal.min-3.10.1.js?v=20"></script>
+  <script type="text/javascript" src="jszip-min.js?v=21"></script>
+  <script type="text/javascript" src="filesaver-min.js?v=21"></script>
+  <script type="text/javascript" src="daypilot-modal.min-3.10.1.js?v=21"></script>
   
   <style>
     body {
@@ -891,6 +891,7 @@
         }
 
         function updateMobileReorderUI() {
+
           const manualMode = !autoSortCheckbox.checked && !rangeExpanderCheckbox.checked;
 
           // On mobile keep the bar visible
@@ -1752,7 +1753,10 @@
             });
 
             updateDragInteractivity();
-            updateMobileReorderUI();
+
+            if (isMobile){
+              updateMobileReorderUI();
+            }
 
             if (isMobile && selectedIndex >= 0 && selectedIndex < files.length) {
               selectManualRow(selectedIndex);
@@ -2161,7 +2165,9 @@
             rangeControls.style.display = rangeExpanderCheckbox.checked ? 'block' : 'none';
           }
 
-          updateMobileReorderUI();
+          if (isMobile){
+            updateMobileReorderUI();
+          }
 
           updateTempButtonsState(); 
         }
