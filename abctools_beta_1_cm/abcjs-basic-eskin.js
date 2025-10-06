@@ -2337,7 +2337,6 @@ module.exports = keyAccidentals;
 /***/ (function(module) {
 
 // All these keys have the same number of accidentals
-// All these keys have the same number of accidentals
 var keys = {
   'C': {
     modes: ['CMaj', 'CIon', 'Amin', 'Am', 'AAeo', 'GMix', 'DDor', 'EPhr', 'FLyd', 'BLoc'],
@@ -4643,6 +4642,9 @@ var bookParser = function bookParser(book) {
       /^%%\S+margin.*$/,
       /^%%staffwidth.*$/,
       /^%%stretchlast.*$/,
+      /^%%leftmargin.*$/,
+      /^%%rightmargin.*$/,
+      /^%%scale.*$/,
       /^%%barnumbers.*$/,
       /^%%barsperstaff.*$/,
       /^%%\S+space.*$/,
@@ -5385,14 +5387,86 @@ var parseDirective = {};
     tune.formatting[cmd] = getFontParameter(tokens, tune.formatting[cmd], str, 0, cmd);
     return null;
   };
+   // MAE 6 Oct 2025 - Scale simulation using left and right margins
   var setScale = function setScale(cmd, tokens) {
+
+    //console.log("setScale");
+
+    /**
+     * Maps x in (approximately) 1..0.125 to y with:
+     * 1 → 0
+     * 0.75 → 130
+     * 0.5 → 400
+     * 0.25 → 1200
+     * 0.125 → 3000
+     * Clamp x >= 1 to 0, x <= 0.125 to 3000.
+     */
+    function customLogMap(x) {
+      // clamps
+      if (x >= 1) return 0;
+      if (x <= 0.125) return 3000;
+
+      // keypoints
+      const P = [
+        { x: 1.0,   y: 0    },
+        { x: 0.75,  y: 130  },
+        { x: 0.5,   y: 400  },
+        { x: 0.25,  y: 1200 },
+        { x: 0.125, y: 3000 },
+      ];
+
+      // Segment 1: [0.75, 1] — linear (since y=0 at x=1 breaks log/power fits)
+      if (x > 0.75 && x < 1.0) {
+        const x1 = P[0].x, y1 = P[0].y;       // (1.0, 0)
+        const x2 = P[1].x, y2 = P[1].y;       // (0.75, 130)
+        const t = (x1 - x) / (x1 - x2);       // t in [0,1] as x descends 1→0.75
+        return y1 + t * (y2 - y1);
+      }
+
+      // Helper: power-law fit on a segment [xa, xb] passing through (xa, ya), (xb, yb)
+      function powerInterp(xa, ya, xb, yb, xq) {
+        // y = C * x^a -> solve a, C from endpoints
+        const a = Math.log(yb / ya) / Math.log(xb / xa);
+        const C = ya / Math.pow(xa, a);
+        return C * Math.pow(xq, a);
+      }
+
+      // Segment 2: [0.5, 0.75]
+      if (x > 0.5 && x <= 0.75) {
+        return powerInterp(0.75, 130, 0.5, 400, x);
+      }
+
+      // Segment 3: [0.25, 0.5]
+      if (x > 0.25 && x <= 0.5) {
+        return powerInterp(0.5, 400, 0.25, 1200, x);
+      }
+
+      // Segment 4: [0.125, 0.25]
+      // (x > 0.125 guaranteed by earlier clamp)
+      return powerInterp(0.25, 1200, 0.125, 3000, x);
+    }
+
     var scratch = "";
+
     tokens.forEach(function (tok) {
       scratch += tok.token;
     });
+
     var num = parseFloat(scratch);
+
     if (isNaN(num) || num === 0) return "Directive \"" + cmd + "\" requires a number as a parameter.";
-    tune.formatting.scale = num;
+
+    var logVal = customLogMap(num);
+
+    //console.log("input: "+num+" output: "+logVal);
+
+    tune.formatting.leftmargin = logVal;
+    tune.formatting.rightmargin = logVal;
+
+    //tune.formatting.scale = num;
+
+    return null;
+
   };
   // starts at 35
   var drumNames = ["acoustic-bass-drum", "bass-drum-1", "side-stick", "acoustic-snare", "hand-clap", "electric-snare", "low-floor-tom", "closed-hi-hat", "high-floor-tom", "pedal-hi-hat", "low-tom", "open-hi-hat", "low-mid-tom", "hi-mid-tom", "crash-cymbal-1", "high-tom", "ride-cymbal-1", "chinese-cymbal", "ride-bell", "tambourine", "splash-cymbal", "cowbell", "crash-cymbal-2", "vibraslap", "ride-cymbal-2", "hi-bongo", "low-bongo", "mute-hi-conga", "open-hi-conga", "low-conga", "high-timbale", "low-timbale", "high-agogo", "low-agogo", "cabasa", "maracas", "short-whistle", "long-whistle", "short-guiro", "long-guiro", "claves", "hi-wood-block", "low-wood-block", "mute-cuica", "open-cuica", "mute-triangle", "open-triangle"];
@@ -5991,7 +6065,7 @@ var parseDirective = {};
         tuneBuilder.addSpacing(vskip);
         return null;
       case "scale":
-        setScale(cmd, tokens);
+        return setScale(cmd, tokens);
         break;
       case "sep":
         if (tokens.length === 0) tuneBuilder.addSeparator(14, 14, 85, {
@@ -6419,7 +6493,9 @@ var parseDirective = {};
             getChangingFont(cmd, tokens, value);
             break;
           case "scale":
-            setScale(cmd, tokens);
+            // MAE 6 October 2025 - For scale simulation using margins
+            scratch = setScale(cmd, tokens);
+            if (scratch !== null) warn(scratch);            
             break;
           case "partsbox":
             scratch = addMultilineVarBool('partsBox', cmd, tokens);
