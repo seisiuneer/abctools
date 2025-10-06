@@ -4529,6 +4529,9 @@
                     % These directives can be added to each tune or added to the ABC file header:<br/>
                     %%visualtranspose 2<br/>
                     %%maxstaves 1<br/>
+                    %%leftmargin 200<br/>
+                    %%rightmargin 200<br/>
+                    %%scale 0.8<br/>
                     %hide_first_title_on_play<br/>
                     %hide_vskip_on_play<br/>
                     %hide_information_labels<br/>
@@ -5213,6 +5216,13 @@
                 <p><strong>Inject Spacing into the ABC</strong> Injects the spacing values into either the currently selected tune or all the tunes in the ABC depending on if <strong>Inject all tunes:</strong> is checked.</p>
                 <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/OVxA8VZaxMI" title="Notation Spacing Explorer" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
                 <p>Once the spacing values are injected into the ABC, they can be modified in place if additional adjustments are desired.</p>
+                <hr>
+                <p style="text-align: center;"><strong>%%scale is now supported</strong>
+                <p><strong>Note:</strong> Versions of the tool after 6 October 2025 also support the ABC %%scale command directly, which simplifies making the notation smaller:</p>
+                <p class="code">%% Set the scaling<br/>%%scale 0.8</p>
+                <p>The tool does this by calculating and injecting %%leftmargin and %%rightmargin values that will result in the requested scaling.</p>
+                <p>As a result, you cannot use %%scale along with %%leftmargin or %%rightmargin.</p>
+                <p>Having some level of support for %%scale should significantly simplify solving some pageflow layout issues.</p>
                 <hr class="hidden-print" id="midi_instrument_explorer">
                 <h1 class="page_break_always">MIDI Instrument Explorer<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <p>Brings up a player where you can experiment with playing the currently selected tune using all of the available MIDI soundfonts, melody, bass, and chord programs/volumes:</p>
@@ -6970,7 +6980,7 @@
                 <p>You'll need to move the directives into the tunes themselves or the ABC file header.</p>
                 <hr>
                 <p><strong>If you are using a lot of ABC page layout and spacing options, this tool may not meet your needs or produce the formatted output you expect.</strong></p>
-                <p>If you are doing a lot of very specific page layout using the ABC file header, ABC spacing annotations between tunes, relying on the %%scale annotation, then this tool most likely will not meet your needs and you should stick with whatever you are currently using.</p>
+                <p>If you are doing a lot of very specific page layout using the ABC file header, ABC spacing annotations between tunes, then this tool most likely will not meet your needs and you should stick with whatever you are currently using.</p>
                 <p>While it is often possible to make some minimal changes to existing ABC files that have extensive formatting directives to make them produce good results with this tool, the additional work may not be worth the trouble.</p>
                 <hr>
                 <p><strong>Include files are not supported by this tool or any other web-based ABC tool.</strong></p>
