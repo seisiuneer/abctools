@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "2786_100625_0900";
+var gVersionNumber = "2787_100725_0800";
 
 var gMIDIInitStillWaiting = false;
 
@@ -43832,8 +43832,8 @@ function GetInitialConfigurationSettings() {
     gDisableSelectedPlay = (val == "true");
   }
 
-  gRollUseRollForIrishRoll = false;
-  val = localStorage.RollUseRollForIrishRoll;
+  gRollUseRollForIrishRoll = true;
+  val = localStorage.RollUseRollForIrishRoll2;
   if (val) {
     gRollUseRollForIrishRoll = (val == "true");
   }
@@ -44488,7 +44488,7 @@ function SaveConfigurationSettings() {
     localStorage.PlayerStatusOnLeft = gPlayerStatusOnLeft;
 
     // Use the custom roll solution for tilde rolls
-    localStorage.RollUseRollForIrishRoll = gRollUseRollForIrishRoll;
+    localStorage.RollUseRollForIrishRoll2 = gRollUseRollForIrishRoll;
 
     // Default roll parameters
     localStorage.Roll2DefaultParams = gRoll2DefaultParams;
