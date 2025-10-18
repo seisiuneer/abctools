@@ -122,7 +122,7 @@ var angloFingeringsGenerator = function (theABC, callback){
 
         // Middle row, RH
         "R1": new Button("R1", ["c", "B"], 1, "r1"),
-         "R2": new Button("R2", ["e", "d"], 2, "r2"),
+        "R2": new Button("R2", ["e", "d"], 2, "r2"),
         "R3": new Button("R3", ["g", "f"], 2, "r3"),
         "R4": new Button("R4", ["c'", "a"], 2, "r4"),
         "R5": new Button("R5", ["e'", "b"], 2, "r4"),
@@ -212,9 +212,8 @@ var angloFingeringsGenerator = function (theABC, callback){
         "R2a": new Button("R2a", ["a", "g"], 10, "r2"),
         "R3a": new Button("R3a", ["^g", "_b"], 10, "r3"),
         "R4a": new Button("R4a", ["^c'", "_e'"], 10, "r4"),
-        "R5a": new Button("R5a", ["a", "f'"], 10, "r4"),
+        "R5a": new Button("R5a", ["a'", "f'"], 10, "r4"),
     };
-    
 
     var gAngloButtonNames_GaryCoover = [
 
@@ -1162,74 +1161,54 @@ var angloFingeringsGenerator = function (theABC, callback){
     }
 
     function respell(note) {
-
-        var ret = note;
-
-        // enharmonic respellings
-
         var respellings = {
-            //    "_A": "^G",
-            //"^A": "_B",
-            "_B": "^A",
-            //    "B": "_C",
-            "^B": "C",
-            "_C": "B",
-            //    "C": "^B",
-            //    "^C": "_D",
+            "_A": "^G",
+            "^A": "_B",
             "_D": "^C",
             "^D": "_E",
             "_E": "^D",
-            //    "E": "_F",
-            "^E": "F",
-            "_F": "E",
-            //    "F": "^E",
-            //    "^F": "_G",
             "_G": "^F",
-            "^G": "_A"
         };
 
         for (var x in respellings) {
-            ret = ret.replace(x, respellings[x]);
-            ret = ret.replace(x.toLowerCase(), respellings[x].toLowerCase());
+            if (note.includes(x)) {
+                return note.replace(x, respellings[x]);
+            }
+            if (note.includes(x.toLowerCase())) {
+                return note.replace(x.toLowerCase(), respellings[x].toLowerCase());
+            }
         }
 
-        return ret;
+        // no replacement performed
+        return note;
     }
 
     function respellNormalized(note) {
-
         var ret = note;
 
-        // enharmonic respellings
-
         var respellings = {
-            //    "_A": "^G",
+            "_A": "^G",
             "^A": "_B",
-            //"_B": "^A",
-            //    "B": "_C",
-            //"^B": "C",
-            //"_C": "B",
-            //    "C": "^B",
-            //    "^C": "_D",
-            //"_D": "^C",
+            "_D": "^C",
             "^D": "_E",
-            //"_E": "^D", 
-            //    "E": "_F",
-            //"^E": "F",
-            //"_F": "E",
-            //    "F": "^E",
-            //    "^F": "_G",
-            //"_G": "^F",
-            "^G": "_A"
+            "_E": "^D", 
+            "_G": "^F"
         };
 
         for (var x in respellings) {
-            ret = ret.replace(x, respellings[x]);
-            ret = ret.replace(x.toLowerCase(), respellings[x].toLowerCase());
+            if (ret.includes(x)) {
+                return ret.replace(x, respellings[x]);
+            }
+            if (ret.includes(x.toLowerCase())) {
+                return ret.replace(x.toLowerCase(), respellings[x].toLowerCase());
+            }
         }
 
+        // No replacements performed
         return ret;
     }
+
+
 
     // Normalizes the given note string, given the key signature.
     // This means making sharps or flats explicit, and removing
