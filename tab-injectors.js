@@ -32,6 +32,9 @@ var angloFingeringsGenerator = function (theABC, callback){
 
     var abcOutput = "";
 
+    // *** CHANGE: collect tunes that needed `x` substitutions
+    var tunesWithX = [];
+    var currentTuneHadX = false;
 
     // Button constructor
     var Button = function(name, notes, cost, finger) {
@@ -89,14 +92,6 @@ var angloFingeringsGenerator = function (theABC, callback){
     //
     // Cross-row map for Wheatstone
     //
-    // Original values commented out
-    //
-    // Prefers:
-    // Press d' on the left G row
-    // Draw e' on the left G row
-    //
-    //
-
     var baseMapCrossRowWheatstone = {
 
         // Top row, LH
@@ -139,13 +134,6 @@ var angloFingeringsGenerator = function (theABC, callback){
     //
     // My preferred fingering map for Cross-Row playing
     //
-    // Prefers:
-    // Draw B on right C row
-    // Draw c' on the left G row
-    // Press d' on the left G row
-    // Draw e' on the left G row
-    //
-
     var baseMapCrossRow = {
 
         // Top row, LH
@@ -456,9 +444,6 @@ var angloFingeringsGenerator = function (theABC, callback){
 
 
     // Path constructor.
-    //
-    // buttons: list of States
-    // cost: integer cost of total set of buttons, lower is better
     var Path = function(states, cost) {
         this.states = states;
         this.cost = cost;
@@ -467,12 +452,7 @@ var angloFingeringsGenerator = function (theABC, callback){
     // Note constructor
     var Note = function(index, unNormalizedValue, normalizedValue) {
         this.index = index; // Index of this note in the original ABC input string
-
-        // These values an ABC string like "G" or "^A'"
-        // Unnormalized means it's the literal note string from the ABC source.
         this.unNormalizedValue = unNormalizedValue;
-
-        // Normalized means it's adjusted by the key signature and extra decorations are removed.
         this.normalizedValue = normalizedValue;
     };
 
@@ -484,16 +464,9 @@ var angloFingeringsGenerator = function (theABC, callback){
         this.nextStates = [];
         this.id = stateCount++;
 
-        // This toString() function is needed to make sure this object is unique
-        // in a hash map. JS can only use strings as keys in hashes (objects).
         this.toString = function() {
             var s = "[" + this.id + "] Note:";
-            if (this.note) {
-                s += this.note.normalizedValue;
-            } else {
-                s += "none";
-            }
-
+            if (this.note) { s += this.note.normalizedValue; } else { s += "none"; }
             s += " Button:" + this.button.name;
             return s;
         };
@@ -501,8 +474,6 @@ var angloFingeringsGenerator = function (theABC, callback){
 
 
     // Determines the key signature
-    // abcInput: ABC input string
-    // returns: key signature map to use, or null on error.
     function findKeySignature(abcInput) {
 
         var myMap = null;
@@ -644,13 +615,33 @@ var angloFingeringsGenerator = function (theABC, callback){
 
         var location = parseInt(gInjectTab_TabLocation);
 
-        // Button name is in path.states[i].button.finger first character
-
         for (var i = 0; i < path.states.length; ++i) {
 
             var index = notes[i].index + insertedTotal;
 
             var fingering = path.states[i].button.name;
+
+            // *** CHANGE: mark tune if we render an x or if direction is invalid
+            const dir = path.states[i].direction;
+            const hasValidDir = (dir === PUSH_NAME || dir === DRAW_NAME);
+
+            if (fingering === "x" || !hasValidDir) {
+                currentTuneHadX = true;
+                let simpleX;
+                switch (location) {
+                    case 0: // Above
+                        simpleX = "\"^x\"";
+                        break;
+                    case 1: // Below
+                        simpleX = "\"_x\"";
+                        break;
+                    default:
+                        simpleX = "\"^x\"";
+                }
+                result = result.substr(0, index) + simpleX + result.substr(index);
+                insertedTotal += simpleX.length;
+                continue;
+            }
 
             if (gInjectTab_GaryCoover){
 
@@ -796,9 +787,7 @@ var angloFingeringsGenerator = function (theABC, callback){
                 }
             }
 
-
             var fingLen = fingering.length;
-            //angloLog("Merge["+i+"] index="+index+" fingLen="+fingLen+" insertedTotal="+insertedTotal);
 
             result = result.substr(0, index) + fingering + result.substr(index);
 
@@ -841,22 +830,13 @@ var angloFingeringsGenerator = function (theABC, callback){
     }
 
 
-    // Determines if these two buttons would be a hop if 
-    // played back-to-back
+    // Determines if these two buttons would be a hop if played back-to-back
     function isHop(button1, button2) {
-
-        // Check for finger hops (i.e. same finger, different button)
-        return (button1.finger == button2.finger &&
-            button1.name != button2.name);
+        return (button1.finger == button2.finger && button1.name != button2.name);
     }
 
 
     // Generate a state tree from the notes.
-    // Each note will generate several possible states, each representing
-    // a possible button.  All states corresponding to a note will be
-    // cross-connected to all states in the next note.
-    // Returns an initial (dummy) State, with next states corresponding to
-    // the first note of the tune.
     function generateStateTree(notes, noteToButtonMap) {
 
         var firstNoteStates = null;
@@ -874,26 +854,25 @@ var angloFingeringsGenerator = function (theABC, callback){
                 var otherName = respell(normalizedValue);
                 angloLog("Respelled as " + otherName);
                 buttons = noteToButtonMap[otherName];
+
+                // *** CHANGE: if still not found, inject a fallback 'x' button and mark tune
                 if (buttons == null || buttons.length < 1) {
-                    angloLog("Respelling as " + otherName + " failed to find a button.");
-                    abcOutput = "ERROR:Failed to find button for note '" + normalizedValue + "'";
-                    return null;
+                    angloLog("Respelling as " + otherName + " failed to find a button. Inserting fallback 'x'.");
+                    const fallbackButton = new Button("x", [normalizedValue, normalizedValue], 0, "na");
+                    buttons = [fallbackButton];
+                    currentTuneHadX = true; // mark for this tune
                 }
             }
 
             var states = [];
             // Create a state per button
             buttons.forEach(function(button) {
-
                 states.push(new State(note, button, findBellowsDirection(note, button)));
-
             });
 
-            // Remember the start of the tree - that's what we will return
             if (firstNoteStates == null) {
                 firstNoteStates = states;
             }
-            // Cross-connect the last set of states to these new states 
             if (lastNoteStates != null) {
                 lastNoteStates.forEach(function(lastState) {
                     lastState.nextStates = states;
@@ -911,30 +890,17 @@ var angloFingeringsGenerator = function (theABC, callback){
 
 
 
-    // Chooses fingerings.
-    // returns: a Path object with the best button choices
-    // 
-    // This is the guts of this program.  Uses various
-    // heuristics to choose semi-optimal fingerings
-    // for the given note sequence. 
-    //
-    // Recursively chooses the best fingering from
-    // all possible fingerings.
+    // Chooses fingerings (wrapper)
     function chooseFingerings(stateTree) {
-
         bestCost = 100000000;
-
         bestPathFromState = {};
-
         return chooseFingeringsRecursive(stateTree);
     }
 
     // Choose best fingerings for current state.
-    // Returns a Path
     function chooseFingeringsRecursive(state) {
 
         if (state.nextStates.length == 0) {
-            // Done with notes. Bubble back up.
             angloLog("Last state, note=" + state.note.normalizedValue + " button=" + state.button.name + ". Popping up the stack");
             return new Path([state], state.button.cost);
         }
@@ -975,22 +941,16 @@ var angloFingeringsGenerator = function (theABC, callback){
 
             if (path.states.length != 0) {
                 var nextButton = path.states[0].button;
-                var nextFinger = path.states[0].button.finger;
 
-                // Check for finger hops (i.e. same finger, different button)
                 if (isHop(state.button, nextButton)) {
-                    // Penalize finger hops (i.e. same finger, different button)
                     angloLog("Penalizing finger hop for note " + normalizedValue);
                     myCost += HOP_COST;
                 }
             }
 
-
             angloLog("path had cost of " + path.cost + " my cost=" + myCost);
             if (path.cost + myCost < bestPath.cost) {
-                // Best choice so far.
-                // Prepend this State to the list
-                var newStateList = path.states.slice(0); // clone array
+                var newStateList = path.states.slice(0);
                 newStateList.unshift(state);
                 bestPath = new Path(newStateList, path.cost + myCost);
                 angloLog("New best path for note[" + normalizedValue + "], cost=" + bestPath.cost);
@@ -998,37 +958,23 @@ var angloFingeringsGenerator = function (theABC, callback){
 
         } // end for nextState
 
-        // Memoize
         bestPathFromState[state] = bestPath;
 
         angloLog("Done choosing: current note=" + normalizedValue + " button=" + state.button.name + " best cost=" + bestPath.cost);
-
 
         return bestPath;
 
     } // end chooseFingeringsRecursive
 
     // Replaces parts of the given string with '*'
-    // input: string to replace
-    // start: index to start sanitizing
-    // len: length to sanitize
-    // Returns a new string
     function sanitizeString(input, start, len) {
         var s = "";
-        for (var i = 0; i < len; ++i) {
-            s += "*";
-        }
-
+        for (var i = 0; i < len; ++i) { s += "*"; }
         return input.substr(0, start) + s + input.substr(start + len);
-
     }
 
     // Returns an array of Notes from the ABC string input
     function getAbcNotes(input) {
-
-        // Sanitize the input, removing header and footer, but keeping
-        // the same offsets for the notes. We'll just replace header
-        // and footer sections with '*'.
 
         var sanitizedInput = input;
         var headerRegex = /^\w:.*$/mg;
@@ -1039,105 +985,58 @@ var angloFingeringsGenerator = function (theABC, callback){
 
         // Sanitize chord markings
         var searchRegExp = /"[^"]*"/gm
-
         while (m = searchRegExp.exec(sanitizedInput)) {
-
-
             var start = m.index;
             var end = start + m[0].length;
-
-            //console.log(m[0],start,end);
-
             for (var index=start;index<end;++index){
-
                 sanitizedInput = sanitizedInput.substring(0, index) + '*' + sanitizedInput.substring(index + 1);
-
             }
-
         }
 
         // Sanitize in-abc chords in brackets
         searchRegExp = /\[[^\]|]*\]/g
-
         while (m = searchRegExp.exec(sanitizedInput)) {
-
-
             var start = m.index;
             var end = start + m[0].length;
-
-            //console.log(m[0],start,end);
-
             for (var index=start;index<end;++index){
-
                 sanitizedInput = sanitizedInput.substring(0, index) + '*' + sanitizedInput.substring(index + 1);
-
             }
-
         }  
 
         // Sanitize !*! style annotations
         searchRegExp = /![^!\n]*!/gm 
-
         while (m = searchRegExp.exec(sanitizedInput)) {
-
             var start = m.index;
             var end = start + m[0].length;
-
-            //console.log(m[0],start,end);
-
             for (var index=start;index<end;++index){
-
                 sanitizedInput = sanitizedInput.substring(0, index) + '*' + sanitizedInput.substring(index + 1);
-
             }
-
         }
 
         // Sanitize multi-line comments
         searchRegExp = /^%%begintext((.|\n)*)%%endtext/gm
-
         while (m = searchRegExp.exec(sanitizedInput)) {
-
-            //debugger;
-
             var start = m.index;
             var end = start + m[0].length;
-
-            //console.log(m[0],start,end);
-
             for (var index=start;index<end;++index){
-
                 sanitizedInput = sanitizedInput.substring(0, index) + '*' + sanitizedInput.substring(index + 1);
-
             }
-
         }  
 
         // Sanitize comments
         searchRegExp = /^%.*$/gm
-
         while (m = searchRegExp.exec(sanitizedInput)) {
-
-            //debugger;
-
             var start = m.index;
             var end = start + m[0].length;
-
-            //console.log(m[0],start,end);
-
             for (var index=start;index<end;++index){
-
                 sanitizedInput = sanitizedInput.substring(0, index) + '*' + sanitizedInput.substring(index + 1);
-
             }
-
         }    
 
-        // Sanitize ! 
+        // Sanitize !
         sanitizedInput = sanitizedInput.replaceAll("!","*");
 
         angloLog("orginal input:\n" + input);
-
         angloLog("sanitized input:\n" + sanitizedInput);
 
         // Find all the notes
@@ -1208,15 +1107,9 @@ var angloFingeringsGenerator = function (theABC, callback){
         return ret;
     }
 
-
-
     // Normalizes the given note string, given the key signature.
-    // This means making sharps or flats explicit, and removing
-    // extraneous natural signs.
-    // Returns the normalized note string.
     function normalize(value) {
 
-        // Find note base name
         var i = value.search(/[A-G]/i);
         if (i == -1) {
             angloLog("Failed to find basename for value!");
@@ -1248,7 +1141,6 @@ var angloFingeringsGenerator = function (theABC, callback){
         }
 
         // Transform to key signature
-
         if (keySignature.accidentalNaturals.search(baseName) != -1) {
             return value;
         }
@@ -1266,26 +1158,15 @@ var angloFingeringsGenerator = function (theABC, callback){
         return value;
     }
 
-    // Sorts the button entries in the given note->button map, with
-    // the lowest cost buttons first
+    // Sorts the button entries in the given note->button map, with lowest cost first
     function sortButtonMap(noteToButtonMap) {
-
         for (var note in noteToButtonMap) {
             var buttons = noteToButtonMap[note];
-
-            buttons.sort(function(a, b) {
-                return a.cost - b.cost;
-            });
+            buttons.sort(function(a, b) { return a.cost - b.cost; });
         }
-
     }
 
-
-    // Given a button->note map, generates
-    // the corresponding note->button map.
-    // Keys of this map are filtered through "respell".
-    // The values of this map are buttons.
-    // Returns the note->button map
+    // Given a button->note map, generate the corresponding note->button map.
     function generateNoteToButtonMap(buttonToNoteMap) {
 
         var noteMap = {};
@@ -1299,37 +1180,23 @@ var angloFingeringsGenerator = function (theABC, callback){
                 continue;
             }
 
-            notes.forEach(
+            notes.forEach(function(v) {
 
-                function(v) {
+                if (noteMap[v] == null) {
+                    noteMap[v] = [buttonToNoteMap[buttonName]];
+                } else {
+                    noteMap[v].push(buttonToNoteMap[buttonName]);
+                }
 
-                    if (noteMap[v] == null) {
+                v = respell(v);
 
-                        // Create a new button list for this note.
-                        noteMap[v] = [buttonToNoteMap[buttonName]];
+                if (noteMap[v] == null) {
+                    noteMap[v] = [buttonToNoteMap[buttonName]];
+                } else {
+                    noteMap[v].push(buttonToNoteMap[buttonName]);
+                }
 
-                    } else {
-
-                        // Insert this button into an existing button list for this note.
-                        noteMap[v].push(buttonToNoteMap[buttonName]);
-
-                    }
-
-                    v = respell(v);
-
-                    if (noteMap[v] == null) {
-
-                        // Create a new button list for this note.
-                        noteMap[v] = [buttonToNoteMap[buttonName]];
-
-                    } else {
-
-                        // Insert this button into an existing button list for this note.
-                        noteMap[v].push(buttonToNoteMap[buttonName]);
-
-                    }
-
-                });
+            });
 
         }
 
@@ -1340,16 +1207,10 @@ var angloFingeringsGenerator = function (theABC, callback){
     // Count the tunes in the text area
     //
     function angloCountTunes(theABC) {
-
-        // Count the tunes in the ABC
         var theNotes = theABC;
-
         var theTunes = theNotes.split(/^X:.*$/gm);
-
         var nTunes = theTunes.length - 1;
-
         return nTunes;
-
     }
 
     // Glyphs for bellows push and draw indications
@@ -1389,8 +1250,10 @@ var angloFingeringsGenerator = function (theABC, callback){
         for (var i = 0; i < nTunes; ++i) {
 
             var thisTune = getTuneByIndex(i);
-
             var originalTune = thisTune;
+
+            // *** CHANGE: reset per-tune flag
+            currentTuneHadX = false;
 
             // Don't inject section header tune fragments or multi-voice tunes
             if (isSectionHeader(thisTune) || isMultiVoiceTune(thisTune)){
@@ -1403,31 +1266,27 @@ var angloFingeringsGenerator = function (theABC, callback){
             // Strip any existing tab
             thisTune = StripTabOne(thisTune);
 
-            // Strip chords? 
-            // Above always strips
-            // Below only strips if specified in the settings
+            // Strip chords?
             if (gInjectTab_GaryCoover || (tabLocation == 0) || ((tabLocation == 1) && (stripChords))){
-
                 thisTune = StripChordsOne(thisTune);
             }
  
             try{
-
                 thisTune = generateAngloFingerings(thisTune);
-
             }
             catch(err){
-
                 result += originalTune;
-
                 var thisTitle = getTuneTitle(originalTune);
-
                 badTunes.push(thisTitle);
-
                 gotError = true;
-
                 continue;
+            }
 
+            // *** CHANGE: if we used any 'x' in this tune, record its title
+            if (currentTuneHadX) {
+                var thisTitleX = getTuneTitle(originalTune);
+                if (thisTitleX) tunesWithX.push(thisTitleX);
+                gotError = true;
             }
 
             thisTune = InjectStringBelowTuneHeaderConditional(thisTune, "%%staffsep " + staffSep);
@@ -1440,27 +1299,37 @@ var angloFingeringsGenerator = function (theABC, callback){
             thisTune = thisTune.replaceAll("\n\n","\n");
 
             result += thisTune;
-            
             result += "\n\n";
-
         }
         
         result = normalizeBlankLines(result);
 
         if (gotError){
 
-            var thePrompt = '<p style="text-align:center;font-size:18px;margin-bottom:18px">No Anglo Concertina tablature generated for one or more tunes:</p>';
+            var thePrompt = "";
 
-            for (var j=0;j<badTunes.length;++j){
-                thePrompt += '<p style="text-align:center;font-size:18px;">'+badTunes[j]+'</p>';
+            if (badTunes.length > 0){
+
+                thePrompt += '<p style="text-align:center;font-size:18px;margin-bottom:18px">No Anglo Concertina tablature was generated for one or more tunes:</p>';
+
+                for (var j=0;j<badTunes.length;++j){
+                    thePrompt += '<p style="text-align:center;font-size:18px;">'+badTunes[j]+'</p>';
+                }
             }
 
-            thePrompt += '<p style="text-align:center;font-size:18px;line-height:24px;margin-top:18px">Some notes may be outside the range or not available on the selected style of Anglo concertina.</p>';
+            if (tunesWithX.length > 0){
+
+                thePrompt += '<p style="text-align:center;font-size:18px;line-height:24px;margin-top:18px">Some notes may be outside the range or not available on the selected style of Anglo Concertina (indicated by x in the tablature):</p>';
+
+                for (var j=0;j<tunesWithX.length;++j){
+                    thePrompt += '<p style="text-align:center;font-size:18px;">'+tunesWithX[j]+'</p>';
+                }
+
+            }
 
             callback(result,true,thePrompt);
-            
 
-         }
+        }
         else{
 
             callback(result,false,"");
