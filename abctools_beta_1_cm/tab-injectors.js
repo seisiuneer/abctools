@@ -1067,6 +1067,8 @@ var angloFingeringsGenerator = function (theABC, callback){
             "^D": "_E",
             "_E": "^D",
             "_G": "^F",
+            "_F": "E",
+            "^E": "F"
         };
 
         for (var x in respellings) {
@@ -1091,7 +1093,9 @@ var angloFingeringsGenerator = function (theABC, callback){
             "_D": "^C",
             "^D": "_E",
             "_E": "^D", 
-            "_G": "^F"
+            "_G": "^F",
+            "_F": "E",
+            "^E": "F"
         };
 
         for (var x in respellings) {
