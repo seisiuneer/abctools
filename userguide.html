@@ -404,7 +404,7 @@
         .copy-btn:hover {
           background-color: #464;
         }
-        
+
         #user-guide-intro ul {
           margin: 1.5em 0;
           padding-left: 1.4em; /* indents bullets nicely */
@@ -720,10 +720,15 @@
             <summary><h3>SmartDraw Set List Builder</h3></summary>
             <a style="text-decoration:none;" href="#smartdraw_export">SmartDraw Set List Builder</a>
             </details>
+
+            <details>
+            <summary><h3>Sort by Tag</h3></summary>
+            <a style="text-decoration:none;" href="#sort_dialog">Sort by Tag</a>
+            </details>
             
             <details>
-            <summary><h3>Sort by Tag, Transpose to Key, and Inject Bagpipe Sounds</h3></summary>
-            <a style="text-decoration:none;" href="#sort_dialog">Sort by Tag</a>
+            <summary><h3>abcjs Custom CSS Generator, Transpose to Key, and Inject Bagpipe Sounds</h3></summary>
+            <a style="text-decoration:none;" href="#advanced_customcssgenerator">abcjs Custom CSS Generator</a>
             <a style="text-decoration:none;" href="#advanced_transposetokey">Transpose to Key</a>
             <a style="text-decoration:none;" href="#advanced_injectbagpipesounds">Inject Bagpipe Sounds</a>
             </details>
@@ -1214,9 +1219,14 @@
                         <p class="toc"><a style="text-decoration:none;" href="#smartdraw_export">SmartDraw Set List Builder</a></p>
                     </div>
                     
-                    <button class="accordion" title="Click to expand/collapse this section">Sort by Tag, Transpose to Key, and Inject Bagpipe Sounds</button>
+                    <button class="accordion" title="Click to expand/collapse this section">Sort by Tag</button>
                     <div class="tocpanel">
                         <p class="toc"><a style="text-decoration:none;" href="#sort_dialog">Sort by Tag</a></p>
+                    </div>
+
+                    <button class="accordion" title="Click to expand/collapse this section">abcjs Custom CSS Generator, Transpose to Key, and Inject Bagpipe Sounds</button>
+                    <div class="tocpanel">
+                        <p class="toc"><a style="text-decoration:none;" href="#advanced_customcssgenerator">abcjs Custom CSS Generator</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#advanced_transposetokey">Transpose to Key</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#advanced_injectbagpipesounds">Inject Bagpipe Sounds</a></p>
                     </div>
@@ -1413,6 +1423,7 @@
                         <li><strong>Practice smarter.</strong> Use the built-in <em>Tune Trainer</em> to start slow and gradually speed up as you master each tune.</li>
                         <li><strong>Create professional results.</strong> Build polished PDF tunebooks complete with title pages, tables of contents, tune indexes, custom headers/footers, hyperlinks, tune incipits (notation or raw ABC), and shareable QR codes. You can even generate full interactive websites from your tunebooks automatically.</li>
                         <li><strong>Edit and organize with power.</strong> Transpose single tunes or entire tunebooks to any key. Sort by name, key, meter, rhythm, and other ABC headers. Perform fast text search and replace—including full regular expression support.</li>
+                        <li><strong>Customize your look.</strong> Control spacing, fonts, and colors to match your style. Optional ABC syntax highlighting includes light and dark themes with customizable colors.</li>
                         <li><strong>Stay connected or work offline.</strong> After the first visit, the tool runs seamlessly without an internet connection—perfect for practice or travel.</li>
                     </ul>
                 </div>
@@ -4507,8 +4518,6 @@
                     %bodhran_pitch A<br/>
                     %banjo_style 2<br/>
                     %grace_duration_ms 30<br/>
-                    %roll_2_params 0.95 0.8 1.0 0.75 0.9 1.0 0.75 1.0<br/>
-                    %roll_3_params 1.45 0.6 1.0 0.75 0.9 1.0 0.75 1.0<br/>
                     %use_original_abcjs_roll_solution<br/>
                     %abcjs_release_decay_time 200<br/>
                     %use_custom_gm_sounds true<br/>
@@ -4551,6 +4560,8 @@
                     %disable_hyperlinks<br/>
                     %play_alternate_chords<br/>
                     %force_power_chords<br/>
+                    %roll_2_params 0.95 0.8 1.0 0.75 0.9 1.0 0.75 1.0<br/>
+                    %roll_3_params 1.45 0.6 1.0 0.75 0.9 1.0 0.75 1.0<br/>
                     %custom_instrument_volume_scale<br/>
                     %custom_instrument_1_volume_scale<br/>
                     %custom_instrument_2_volume_scale<br/>
@@ -4772,11 +4783,11 @@
                 <h1 class="page_break_always">More ABC Tools<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <p>Clicking the <strong>More Tools</strong> button brings up the More ABC Tools dialog:</p>
                 <div class="image_holder_p">
-                    <img class="image" loading="lazy" src="img/more_abc_tools_24.jpg"/>
+                    <img class="image" loading="lazy" src="img/more_abc_tools_25.jpg"/>
                 </div>
                 <p>If you would like to only show the buttons for the features you commonly use and hide the others, click the controls icon at the top-right of the dialog to choose features of the dialog you would like to show/hide:</p>
                 <div class="image_holder_p">
-                    <img class="image" loading="lazy" src="img/more_abc_tools_feature_options_9.jpg"/>
+                    <img class="image" loading="lazy" src="img/more_abc_tools_feature_options_10.jpg"/>
                 </div>
                 <p>The most commonly used buttons are always shown.</p>
                 <p>Your preferences are saved and restored the next time you use the tool.</p>
@@ -5435,6 +5446,21 @@
                 <p style="margin-left:30px;"><strong>Sort by Origin (O:)</strong> - This sorts all the tunes by the first origin O: tag found in the tune.</p>
                 <p style="margin-left:30px;"><strong>Sort by ID (X:)</strong> - This sorts all the tunes by the value found in X: tag in the tune.</p>
                 <p style="margin-left:30px;"><strong>Renumber all X: Tags</strong> - This renumbers all the X: tags in the tunebook starting at 1.</p>
+                <hr class="hidden-print" id="advanced_customcssgenerator">
+                <h1 class="page_break_always h1wide">abcjs Custom CSS Generator<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+                <p>Brings up a dialog that makes it simple to inject a custom CSS block at the top of the ABC for setting abcjs notation element colors.</p>
+                <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/bc-XoPFddFw" title="abcjs Custom CSS Generator Demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
+                <div class="image_holder_p">
+                    <img class="image" loading="lazy" src="img/custom_css_generator_2.jpg"/>
+                </div>
+                <p>Select a color for each element by clicking on the color examples next to the element names.</p>
+                <p>Click <strong>Reset All to Black</strong> to reset all the element colors to black.</p>
+                <p>Click <strong>Inject Custom CSS</strong> to add a %%begincss / %%endcss block with the custom styling to the top of the ABC.</p>
+                <p>If a previous %%begincss / %%endcss block is found at the top of the ABC, it will be replaced.</p>
+                <p>If you reset all the colors to black and click <strong>Inject Custom CSS</strong>, any previous %%begincss / %%endcss block found at the top will be removed.</p>
+                <p>The dialog colors are saved and used the next time you open the dialog.</p>
+                <p>Click <strong>Cancel</strong> to exit the dialog without making any changes.</p>
+                <p>Full details on custom CSS in the <a style="text-decoration:none;" href="#customabcjscss">Adding Custom abcjs CSS Styling</a> section below.</p>
                 <hr class="hidden-print" id="advanced_transposetokey">
                 <h1 class="page_break_always h1wide">Transpose to Key<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/DkNUePXKtaA" title="Transpose to Key" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
@@ -5698,7 +5724,7 @@
                 <h1 class="page_break_always">ABC Transcription Tools Settings<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <p>Clicking the <strong>Settings</strong> button at the top of the tool brings up a dialog where you can set tool-wide settings:</p>
                 <div class="image_holder_p">
-                    <img class="image" loading="lazy" src="img/abc_transcription_tool_settings_67.jpg"/>
+                    <img class="image" loading="lazy" src="img/abc_transcription_tool_settings_68.jpg"/>
                 </div>
                 <hr id="ipad_side_by_side">
                 <p><strong>iPad Side-by-Side View (similar to desktop)</strong> (iPad only)</p>
@@ -5707,6 +5733,24 @@
                 <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/uoQFU-ZnP0g" title="iPad Two Column Demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
                 <p>This feature is best used using an external keyboard on the iPad.</p>
                 <p>After changing this setting, the tool will reload itself.</p>
+                <hr>
+                <p><strong>Enable ABC syntax highlighting (change requires restart)</strong></p>
+                <p>When checked, shows ABC directives in different colors. (Default is on for desktop browsers, off for mobile browsers)</p>
+                <p><strong>Note:</strong> Enabling syntax highlighting on mobile browsers may have some minor issues on mobile devices.</p>
+                <p>On iOS, the selection region highlight may extend above or below the ABC text.</p>
+                <p>On Android, there are issues with text context menus on some browsers.</p>
+                <hr>
+                <p><strong>Use Dark Mode for the editor when syntax highlighting is enabled</strong></p>
+                <p>When checked, sets the background of the editor to black and inverts the syntax highlighting colors if syntax highlighting is enable. (Default is off)</p>
+                <p>If you want everything on the screen dark instead of only the ABC text editor, you can add the following custom CSS at the top of ABC in light mode:</p>
+                <p class="code">%%begincss<br/>
+                html { filter: invert(97%); background-color: #f0f0f0; }<br/>
+                .btn { outline: 1px solid #ccc;<br/>
+                box-shadow: none !important; }<br/>
+                .btn:after { content: none }<br/>
+                .CodeMirror * { filter: none !important; }<br/>
+                #notation-holder {filter:invert(97%);background-color:lightgrey !important;}<br/>
+                %%endcss</p>
                 <hr>
                 <p><strong>Player screen width (percentage) (min is 50, max is 100)</strong></p>
                 <p>Sets the width in percentage of screen width for the Player and Explorers in the tool. Default is: 50.</p>
@@ -5925,16 +5969,6 @@
                 <p><strong>MIDI input is key and mode aware (if unchecked, enters note names with no accidentals)</strong></p>
                 <p>For full details on MIDI input, see this section:</p>
                 <p style="text-align: center;"><a style="text-decoration:none;" href="#midi_input">Typing ABC Using a MIDI Input Device</a></p>
-                <hr id="force_android">
-                <p><strong>Force Android phone UI (If mobile browser doesn't identify as Android)</strong> (non-iOS devices only)</p>
-                <p>Some modern Android browsers are no longer identifying themselves as running on Android.</p>
-                <p>When checked, the tool will force Android phone mobile device adaptation.</p>
-                <p>If you change this value, the tool will restart to reflect the change.</p>
-                <hr id="diable_mobile">
-                <p><strong>Disable Android phone UI (If mobile browser does identify as Android)</strong></p>
-                <p>Even if the browser identifies itself as running on Android, checking this box will disable any Android mobile UI or programmatic adaptation.</p>
-                <p>If you change this value, the tool will restart to reflect the change.</p>
-                <p>If both "Force Android phone UI" and "Disable Android phone UI" are checked, "Disable Android phone UI" takes priority.</p>
                 <hr>
                 <p><strong>Font Settings</strong></p>
                 <p>Brings up a dialog where you can configure all fonts used for rendering the ABC.</p>
@@ -5963,7 +5997,7 @@
                 <hr class="hidden-print" id="advanced_settings">
                 <h1 class="page_break_always">Advanced Settings<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <div class="image_holder_p">
-                    <img class="image" loading="lazy" src="img/advanced_settings_30.jpg"/>
+                    <img class="image" loading="lazy" src="img/advanced_settings_35.jpg"/>
                 </div>
                 <p>These settings are available by clicking the <strong>Advanced Settings</strong> button at the bottom of the main <strong>Settings</strong> dialog.</p>
                 <p>On mobile browsers, the dialog will only show the settings that are available on mobile platforms.</p>
@@ -6056,16 +6090,16 @@
                 <hr>
                 <p><strong>MP3 Batch Export Delay in milliseconds (default is 250):</strong></p>
                 <p>(Desktop browsers only) Sets the delay between file saves when doing batch .MP3 export.</p>
-                <hr>
-                <p><strong>Default roll_2_params</strong></p>
-                <p>Sets the default quarter note roll parameter string.</p>
-                <p><strong>Default roll_3_params</strong></p>
-                <p>Sets the default dotted quarter note roll parameter string.</p>
-                <p>Enter the roll parameter strings in the same format as the <strong>%roll_2_params</strong> and <strong>%roll_3_params</strong> ABC annotation strings described here:</p>
-                <p><a href="#roll_timing">Custom Roll Timing</a></p>
-                <hr>
-                <p><strong>Reset Roll Parameter Strings to Defaults</strong></p>
-                <p>Resets the roll_2_params and roll_3_params roll default parameter strings to their original known good default values.</p>
+                <hr id="force_android">
+                <p><strong>Force Android phone UI (If mobile browser doesn't identify as Android)</strong> (non-iOS devices only)</p>
+                <p>Some modern Android browsers are no longer identifying themselves as running on Android.</p>
+                <p>When checked, the tool will force Android phone mobile device adaptation.</p>
+                <p>If you change this value, the tool will restart to reflect the change.</p>
+                <hr id="diable_mobile">
+                <p><strong>Disable Android phone UI (If mobile browser does identify as Android)</strong></p>
+                <p>Even if the browser identifies itself as running on Android, checking this box will disable any Android mobile UI or programmatic adaptation.</p>
+                <p>If you change this value, the tool will restart to reflect the change.</p>
+                <p>If both "Force Android phone UI" and "Disable Android phone UI" are checked, "Disable Android phone UI" takes priority.</p>
                 <hr id="private_tinyurl_token">
                 <p><strong>Private TinyURL API Token</strong></p>
                 <p>If you have your own TinyURL API Token for shortening URLs, enter it here on the <strong>Advanced Settings</strong> dialog.</p>
@@ -6076,6 +6110,30 @@
                 <p>and paste the API token in this field.</p>
                 <p>Once entered, it will be saved and used for all future URL shortening operations.</p>
                 <p>To return to using my default API token, clear this field.</p>
+                <hr id="customthemeeditor">
+                <p><strong>ABC Syntax Highlighting Theme Editor</strong></p>
+                <p>Brings up a dialog where you can set the light and dark mode colors and font styling for each ABC text element.</p>
+                <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/AGm0qAPRQw0" title="Custom ABC Syntax Highlighting Theme Editor Demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
+                <div class="image_holder_p">
+                    <img class="image" loading="lazy" src="img/custom_theme_editor_2.jpg"/>
+                </div>
+                <p>For any ABC element, click on the color swatches to pick a color for the element.</p>
+                <p>The dark mode in the editor is just a simple inversion of the light mode colors.</p>
+                <p>When picking colors for dark mode, while clicking and dragging in the color pickers, just look at the dark mode preview on the right until you get the color you want for the ABC element.</p>
+                <p>For any ABC element, click on the font style selector to choose between Normal, Bold, or Italic style for the element.</p>
+                <p>Click <strong>Restore Defaults</strong> to go back to the original default colors.</p>
+                <p>Click <strong>Apply and Save Theme</strong> to apply the edited theme to the current session.</p>
+                <p>Click <strong>Cancel</strong> to exit the dialog without applying or saving any changes.</p>
+                <p>The edited theme is saved in browser local storage and will be used going forward.</p>
+                <p>If you want everything on the screen dark instead of only the ABC text editor, you can add the following custom CSS at the top of ABC in light mode:</p>
+                <p class="code">%%begincss<br/>
+                html { filter: invert(97%); background-color: #f0f0f0; }<br/>
+                .btn { outline: 1px solid #ccc;<br/>
+                box-shadow: none !important; }<br/>
+                .btn:after { content: none }<br/>
+                .CodeMirror * { filter: none !important; }<br/>
+                #notation-holder {filter:invert(97%);background-color:lightgrey !important;}<br/>
+                %%endcss</p>
                 <hr id="custom_reverb">
                 <p><strong>Load Custom Reverb Impulse</strong></p>
                 <p>Click this button to specify a custom convolution reverb impulse .wav file to use when specifying "custom" as the reverb type for the current tool session.</p>
@@ -6195,6 +6253,7 @@
                 <p><strong>Here is the full list of available custom abcjs classes:</strong></p>
                 <br/>
                 <table><thead><tr><th>Class</th><th>Description</th></tr></thead><tbody><tr><td>.abcjs-annotation</td><td>Text added with the <code>&quot;^...&quot;</code> format.</td></tr><tr><td>.abcjs-author</td><td>The author text</td></tr><tr><td>.abcjs-bar</td><td>The bar lines.</td></tr><tr><td>.abcjs-bar-number</td><td>The bar numbers.</td></tr><tr><td>.abcjs-beam-elem</td><td>The beams connecting eighth notes together.</td></tr><tr><td>.abcjs-brace</td><td>The brace on the left side of the staff (like for piano music.)</td></tr><tr><td>.abcjs-bracket</td><td>The bracket on the left side of the staff.</td></tr><tr><td>.abcjs-chord</td><td>The chord symbols, specified in quotes.</td></tr><tr><td>.abcjs-clef</td><td>All clefs</td></tr><tr><td>.abcjs-composer</td><td>The composer text</td></tr><tr><td>.abcjs-container</td><td>The notation display div</td></tr><tr><td>.abcjs-cursor</td><td>The vertical playback cursor</td></tr><tr><td>.abcjs-d0-25, etc.</td><td>The duration of the note. (Replace the dash with a decimal point. That is, the example is a duration of 0.25, or a quarter note.)</td></tr><tr><td>.abcjs-decoration</td><td>Everything to do with the extra symbols, like crescendo.</td></tr><tr><td>.abcjs-defined-text</td><td>Text that appears between the lines of music, created with <code>%%text</code>.</td></tr><tr><td>.abcjs-dynamics</td><td>The dynamics markings: <code>p</code> for instance. Also the crescendo mark.</td></tr><tr><td>.abcjs-end-m0-n0</td><td>Added to slurs to indicate the ending note.</td></tr><tr><td>.abcjs-ending</td><td>The line and decoration for the 1st and 2nd ending.</td></tr><tr><td>.abcjs-key-signature</td><td>All key signatures</td></tr><tr><td>.abcjs-l0, .abcjs-l1, etc.</td><td>(lower case L, followed by a number) The staff line number, starting at zero.</td></tr><tr><td>.abcjs-ledger</td><td>ledger line.</td></tr><tr><td>.abcjs-lyric</td><td>The lyric line.</td></tr><tr><td>.abcjs-m0, .abcjs-m1, etc.</td><td>The measure count from the START OF THE LINE.</td></tr><tr><td>.abcjs-mm0, .abcjs-mm1, etc.</td><td>The measure count from the START OF THE TUNE.</td></tr><tr><td>.abcjs-meta-bottom</td><td>Everything that is printed after all the music.</td></tr><tr><td>.abcjs-meta-top</td><td>Everything that is printed before the first staff line.</td></tr><tr><td>.abcjs-n0, .abcjs-n1, etc.</td><td>The note count from the START OF THE MEASURE.</td></tr><tr><td>.abcjs-note</td><td>Everything to do with a note.</td></tr><tr><td>.abcjs-note_selected</td><td>This is the element that the user has clicked on.</td></tr><tr><td>.abcjs-p-1, .abcjs-p1, etc.</td><td>The y-position of the note (where middle-C is zero).</td></tr><tr><td>.abcjs-part</td><td>Each part marking in the music itself.</td></tr><tr><td>.abcjs-part-order</td><td>The part order indicator at the top.</td></tr><tr><td>.abcjs-rest</td><td>Everything to do with a rest.</td></tr><tr><td>.abcjs-rhythm</td><td>The rhythm text.</td></tr><tr><td>.abcjs-slur</td><td>Slurs and ties. (backwards compatible)</td></tr><tr><td>.abcjs-start-m0-n0</td><td>Added to slurs to indicate the beginning note.</td></tr><tr><td>.abcjs-tie</td><td>Tie.</td></tr><tr><td>.abcjs-legato</td><td>Slur. Because &quot;.abcjs-slur&quot; was historically used to indicate either a slur or a tie this indicates only a slur.</td></tr><tr><td>.abcjs-staff</td><td>The horizontal lines that make up the staff.</td></tr><tr><td>.abcjs-staff-extra</td><td>Clefs, key signatures, time signatures.</td></tr><tr><td>.abcjs-stem</td><td>Note stems</td></tr><tr><td>.abcjs-subtitle</td><td>The subtitle, both on the top and inserted in the middle</td></tr><tr><td>.abcjs-symbol</td><td>Any special symbol, like a trill.</td></tr><tr><td>.abcjs-tempo</td><td>The tempo marking.</td></tr><tr><td>.abcjs-text</td><td>Extra text that is not part of the music.</td></tr><tr><td>.abcjs-time-signature</td><td>All time signatures</td></tr><tr><td>.abcjs-title</td><td>The line specified by T:</td></tr><tr><td>.abcjs-top-line</td><td>This marks the top line of each staff. This is useful if you are trying to find where on the page the music has been drawn.</td></tr><tr><td>.abcjs-top-of-system</td><td>This marks the top of each set of staves. This is useful if you are trying to find where on the page the music has been drawn.</td></tr><tr><td>.abcjs-triplet</td><td>The extra markings that indicate a triplet. (But not the notes themselves.)</td></tr><tr><td>.abcjs-unaligned-words</td><td>Lyrics at the bottom that aren&#39;t lined up with notes.</td></tr><tr><td>.abcjs-v0, .abcjs-v1, etc.</td><td>the voice number, starting at zero.</td></tr><tr><td>.highlight</td><td>Highlighted notes during playback.</td></tr><tr><td>.mark, .mark1, .mark2, .mark3, ..., .mark10</td><td>All notes with !mark! and !mark1!, !mark2!, !mark3!, ..., !mark10! decorations.</td></tr><tr><td>.push, .draw</td><td>All notes with !push! and !draw! decorations.</td></tr><tr><td>[class^="abcjs-"]</td><td>Wildcard selector for all abcjs- prefixed classes.</td></tr><tr><td>#abc</td><td>The ABC editor textarea.</td></tr></tbody></table>
+                <p>The <a style="text-decoration:none;" href="#advanced_customcssgenerator">abcjs Custom CSS Generator</a> dialog available on the <a style="text-decoration:none;" href="#more_tools">More ABC Tools</a> dialog can be used to create a boiler plate custom CSS block for setting custom CSS colors for most abcjs elements.</p>
                 <hr class="hidden-print" id="customcssexamples">
                 <h1 class="page_break_always h1wide">Custom abcjs CSS Examples<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <hr>
@@ -6981,7 +7040,7 @@
                 <p>You'll need to move the directives into the tunes themselves or the ABC file header.</p>
                 <hr>
                 <p><strong>If you are using a lot of ABC page layout and spacing options, this tool may not meet your needs or produce the formatted output you expect.</strong></p>
-                <p>If you are doing a lot of very specific page layout using the ABC file header, ABC spacing annotations between tunes, then this tool most likely will not meet your needs and you should stick with whatever you are currently using.</p>
+                <p>If you are doing a lot of very specific page layout using the ABC file header, ABC spacing annotations between tunes, relying on the %%scale annotation, then this tool most likely will not meet your needs and you should stick with whatever you are currently using.</p>
                 <p>While it is often possible to make some minimal changes to existing ABC files that have extensive formatting directives to make them produce good results with this tool, the additional work may not be worth the trouble.</p>
                 <hr>
                 <p><strong>Include files are not supported by this tool or any other web-based ABC tool.</strong></p>

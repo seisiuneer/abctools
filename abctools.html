@@ -48,18 +48,19 @@
 		<script>
 		// Register service worker
 		if ('serviceWorker' in navigator){
-			navigator.serviceWorker.register('https://michaeleskin.com/abctools/service_worker.js',{updateViaCache: "none"})
-			.then(reg => {
-				console.log("Service Worker Registered!");
-			})
-			.catch(err => {
-				console.log("Service Worker Registration failed: "+err);
-		 	});
+		 	navigator.serviceWorker.register('https://michaeleskin.com/abctools/service_worker.js',{updateViaCache: "none"})
+		 	.then(reg => {
+		 		console.log("Service Worker Registered!");
+	 		})
+		 	.catch(err => {
+		 		console.log("Service Worker Registration failed: "+err);
+		  	});
 		}	
-		</script>		
-		
+		</script>
+
 		<link rel="manifest" href="https://michaeleskin.com/abctools/img/abc-manifest.json">
 		<link href="app.css" media="all" rel="stylesheet" type="text/css">
+		<link href="codemirror.css" media="all" rel="stylesheet" type="text/css">
 		
 	</head>
 
@@ -74,6 +75,7 @@
 				<img id="pdfbuttonicon" class="pdfbuttonicon" src="img/pdfbutton.png"  title="Export the tunes as a PDF tunebook"/>
 				<img id="zoombutton" class="zoombutton" src="img/zoomout.png"  title="Toggles between showing the ABC editor and displaying the notation full screen.&nbsp;&nbsp;Alt-click to hide/show all corner buttons and enter Presentation mode."/>
 				<img id="jumpbutton" class="jumpbutton" src="img/jumpbutton.png"  title="Opens up the Jump to Tune dialog"/>
+				
 				<div id="spinnerOverlay">
 				  <div id="spinnerContainer">
 				    <div id="spinnerLabel">Rendering ABC</div>
@@ -121,7 +123,7 @@
 						<font size="5" face="Comic Sans MS" id="toolpagetitle">ABC Transcription Tools</font>
 
 						<p>
-							<a href="userguide.html" target="_blank">User Guide</a>&nbsp;-&nbsp;<a href="tunesources.html" target="_blank" onclick="AddFromSearch(event,null);">Search for Tunes</a>&nbsp;-&nbsp;<a href="tunesources.html" target="_blank">Tune Sources</a>&nbsp;-&nbsp;<a href="abc_standard_v2.1.pdf" target="_blank">ABC Spec</a>&nbsp;-&nbsp;<a href="general_midi_extended_v10.pdf" target="_blank">MIDI</a>&nbsp;-&nbsp;<a href="https://michaeleskin.com/tunebooks.html" target="_blank">Tunebooks</a>&nbsp;-&nbsp;<a href="credits.html" target="_blank">Credits</a>&nbsp;-&nbsp;<a href="tipjars.html" target="_blank">Tip Jars</a>&nbsp;-&nbsp;<a style="color:#E00000;" href="https://michaeleskin.com/abctools_beta_1_cm/abctools.html" target="_blank" title="Try the new beta version that has ABC syntax highlighting, custom color themes, and more!">Try the Beta!</a>
+							<a href="userguide.html" target="_blank">User Guide</a>&nbsp;-&nbsp;<a href="tunesources.html" target="_blank" onclick="AddFromSearch(event,null);">Search for Tunes</a>&nbsp;-&nbsp;<a href="tunesources.html" target="_blank">Tune Sources</a>&nbsp;-&nbsp;<a href="abc_standard_v2.1.pdf" target="_blank">ABC Spec</a>&nbsp;-&nbsp;<a href="general_midi_extended_v10.pdf" target="_blank">MIDI</a>&nbsp;-&nbsp;<a href="https://michaeleskin.com/tunebooks.html" target="_blank">Tunebooks</a>&nbsp;-&nbsp;<a href="credits.html" target="_blank">Credits</a>&nbsp;-&nbsp;<a href="tipjars.html" target="_blank">Tip Jars</a>
 						</p>
 
 					</div>
@@ -233,7 +235,7 @@
 	<script type="text/javascript" src="abcjs-chord-intervals.js"></script><!-- chord intervals used by abcjs - non-minified -->
 	<script type="text/javascript" src="abcjs-basic-eskin-min.js"></script><!-- to convert ABC to sheet music svg with tablature, transposition and audio playback options -->
 	<script type="text/javascript" src="jspdf.min.js"></script><!-- to generate PDF using Javscript -->
-	<script type="text/javascript" src="pdf-lib-min.js"></script><!-- PDF tools -->
+	<script type="text/javascript" src="pdf-lib-min.js"></script><!-- PDF tools -->		
 	<script type="text/javascript" src="html2image.js"></script><!-- to convert HTML elements to bitmaps -->
 	<script type="text/javascript" src="qrcode.js"></script><!-- to generate QR codes for the share links -->
 	<script type="text/javascript" src="lz-string.min.js"></script><!-- used for share URL generation -->
@@ -253,6 +255,9 @@
 	<script type="text/javascript" src="website_generator.js"></script><!-- Generate website -->	
 	<script type="text/javascript" src="pdf-website-import.js"></script><!-- PDF and website import -->	
 	<script type="text/javascript" src="context-menu.js"></script><!-- Dropdown context menus -->	
+	<script type="text/javascript" src="codemirror.js"></script><!-- CodeMirror 5 -->	
+	<script type="text/javascript" src="simple.min.js"></script><!-- CodeMirror 5 Highlighting -->	
+	<script type="text/javascript" src="placeholder.min.js"></script><!-- CodeMirror 5 Placeholder -->	
 	<script type="text/javascript" src="app-min.js"></script><!-- main application business logic -->
 	<script type="text/javascript" src="api-keys.js"></script><!-- API keys used by the tool -->
 

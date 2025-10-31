@@ -1015,7 +1015,7 @@ function ExportSmartDrawSetList(){
 					//debugger;
 
 					// Generate the injected hyperlink tune array
-					SDTuneArray = SDGenerateTuneArray(gTheABC.value);
+					SDTuneArray = SDGenerateTuneArray(getABCEditorText());
 
 					switch (SDExportFormat){
 						case "0":

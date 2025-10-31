@@ -6,16 +6,14 @@
 //
 //
 //
-// Updated 19 Oct 2025 at 1830
-//
+// Updated 31 Oct 2025 at 1200
 //
 //
 //
 //
 //
 
-
-const cacheName = 'abctoolscache-2790';
+const cacheName = 'abctoolscache-3000';
 
 const contentToCache = [
     'abctools.html',
@@ -29,6 +27,7 @@ const contentToCache = [
     'abc_standard_v2.1.pdf',
     'ABCquickRefv0_6.pdf',
     'app.css',
+    'codemirror.css',
     'app-min.js',
     'jquery-1.11.1.min.js',
 	'jszip.min.js',
@@ -59,6 +58,9 @@ const contentToCache = [
 	'api-keys.js',
     'notoserif-regular.js',
     'notosans-regular.js',
+    'codemirror.js',
+    'simple.min.js',
+    'placeholder.min.js',
     'img/zoomin.png',
     'img/zoomout.png',
     'img/helpbutton.png',

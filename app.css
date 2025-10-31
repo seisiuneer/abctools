@@ -669,13 +669,13 @@ opacity: 0.4;
 padding:12px;
 }
 
-#ceoltasdialog,#injectheaderstring,#injectallmidiparams,#injectharmonicatab,#injectboxtab,#injectfiddlefingerings,#injectmd,#injectmelody,#injectstaffwidth,#injectmetronome,#injectshapenotes,#injectsectionheader,#injecttunenumbers,#addtunetitlenumbers,#compliancedialog,#ceoltastransform,#injectbcbox,#normalizediacriticals{
+#ceoltasdialog,#injectheaderstring,#injectallmidiparams,#injectharmonicatab,#injectboxtab,#injectfiddlefingerings,#injectmd,#injectmelody,#injectstaffwidth,#injectmetronome,#injectshapenotes,#injectsectionheader,#injecttunenumbers,#addtunetitlenumbers,#compliancedialog,#ceoltastransform,#injectbcbox,#normalizediacriticals,#customcssgenerator{
 height:42px;
 padding:12px;
 margin-right:24px;
 }
 
-#injectbambooflute,#injectclicktrackall,#injectchords,#injectheadertemplate,#injectanglotab,#looper_metronomebutton,#injectlargeprint,#pdfinjectlargeprint,#tunebookbuilder_add,#injectfontsettings,#removetunetitlenumbers,#ceoltasdialoginverse,#compliancetransform,#compliancedialoginverse,#fiddlefingeringsdialog0,#fiddlefingeringsdialog1,#fiddlefingeringsdialog2,#fiddlefingeringsdialog3,#fiddlefingeringsdialog4,#injectbagpipedrones,#websitefull,#injectheaderstringfh,#injectcsdbox,#websitelightbox,#websitesimple,#escapediacriticals{
+#injectbambooflute,#injectclicktrackall,#injectchords,#injectheadertemplate,#injectanglotab,#looper_metronomebutton,#injectlargeprint,#pdfinjectlargeprint,#tunebookbuilder_add,#injectfontsettings,#removetunetitlenumbers,#ceoltasdialoginverse,#compliancetransform,#compliancedialoginverse,#fiddlefingeringsdialog0,#fiddlefingeringsdialog1,#fiddlefingeringsdialog2,#fiddlefingeringsdialog3,#fiddlefingeringsdialog4,#websitefull,#injectheaderstringfh,#injectcsdbox,#websitelightbox,#websitesimple,#escapediacriticals,#injectbagpipedrones{
 height:42px;
 padding:12px;
 }
@@ -1499,6 +1499,22 @@ margin-right:20px;
 }
 
 .reset_roll_parameters:hover{
+	background: palegreen;
+}
+
+
+.customthemeeditor {
+	display: inline-block;
+}
+
+#customthemeeditor{
+height:42px;
+padding:12px;
+width:auto;
+margin-right:20px;
+}
+
+.loadimpulsebutton:hover{
 	background: palegreen;
 }
 
@@ -3640,7 +3656,7 @@ margin-top:-7px;
 
 .configure_ui_options_form_text{
 	font-size:12pt;
-	line-height:16px;
+	line-height:24px;
 	font-family:helvetica;
 	margin-top:24px;
 	display:flex;
@@ -5864,6 +5880,81 @@ padding-right: 30px; /* space for badge */
   100% { transform: scale(1); }
 }
 
+/* Custom ABC per-tune line number gutter */
+.CodeMirror-gutters {
+border-right: 1px solid #ddd;
+background: #f7f7f7;
+}
+.abc-line-gutter {
+width: 2.3em;              /* tweak if you expect >999 lines */
+text-align: right;
+color: #666;
+}
+.abc-line-gutter .abc-ln {
+padding: 0 0.5em 0 0;      /* right-pad so numbers aren’t cramped */
+line-height: 1.0;          /* plays nicely with wrapped lines */
+}
+
+.cm-abc-bar        { color:#006999;}  /* barlines & repeats */
+.cm-abc-ending     { color:#006999;}  /* digits in |1, :|2, [1, [2, ... */
+.cm-abc-header-tag { color:#0000A0; font-weight:bold;} /* X: T: L: ... */
+.cm-abc-header-val { color:#040404;}    /* entire header value line */
+.cm-abc-header-title { color:#00608a; font-weight:bold; }/* special T: titles */
+.cm-abc-note { color:#000000; }  /* notes/rests */
+.cm-abc-string     { color:#6200a8; }     /* "chords" */
+.cm-abc-builtin    { color:#487830; }     /* note-chords [CEG] */
+.cm-abc-qualifier  { color:#73160d; }     /* !trill! +orn+ */
+.cm-abc-number     { color:#010604; }  /* tuplets */
+.cm-abc-operator   { color:#050505; }     /* ties/slurs () - */
+.cm-abc-comment    { color:#005231; font-style:italic; }
+.cm-abc-meta       { color:#5924bc; font-weight:bold; }
+.cm-abc-font-directive {color: #7c2243;}
+.cm-abc-note-prefix { color:#148500; } 
+.cm-abc-extended-directive {color: #B00023;  }
+.cm-abc-abccss { color:#a300a3; }     /* Custom CSS */
+.cm-abc-atom { color:#020109; }     /* Inline directives */
+
+/* Editor box */
+.CodeMirror{
+	resize:both;
+	border:1px solid #ccc;
+	text-align:left;
+	overflow:auto;
+}
+
+/* Helpful on WebKit: make sure text selection is “owned” by CM’s layers */
+.CodeMirror pre {
+  -webkit-user-select: text;
+  user-select: text;
+}
+
+/* iOS/touch patch: let the native scrollbar show */
+@supports (-webkit-touch-callout: none) {
+  .CodeMirror-scroll {
+    /* undo CM’s hiding tricks */
+    margin-right: 0 !important;
+    padding-right: 0 !important;
+    overflow-y: scroll !important;
+    -webkit-overflow-scrolling: touch;
+  }
+  /* Optional: reserve gutter so layout doesn't shift when bar appears */
+  .CodeMirror-scroll {
+    scrollbar-gutter: stable both-edges;
+  }
+  /* Optional: style WebKit scrollbar so it’s visible */
+  .CodeMirror-scroll::-webkit-scrollbar { width: 12px; }
+  .CodeMirror-scroll::-webkit-scrollbar-thumb {
+    background: rgba(0,0,0,0.35);
+    border-radius: 6px;
+  }
+}
+
+/*
+body{
+	color:green;
+}
+*/
+
 /******************************************************************************/
 /* STYLES RELATED TO BUTTONS                                                  */
 /******************************************************************************/
@@ -5970,6 +6061,11 @@ padding-right: 30px; /* space for badge */
 }
 
 .btn-transposetokey{
+  --color: black;
+  --background-color: #f0fff0;
+}
+
+.btn-cssgenerator {
   --color: black;
   --background-color: #f0fff0;
 }

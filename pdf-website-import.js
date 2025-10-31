@@ -134,7 +134,7 @@ function extractPDFTunes(file){
         ClearNoRender();
 
         // Add them to the work area
-        gTheABC.value = outVal;
+        setABCEditorText(outVal);
 
         setTimeout(function(){
 
@@ -271,7 +271,7 @@ function doExtractWebsiteTunes(rawText,filename){
     ClearNoRender();
 
     // Add them to the work area
-    gTheABC.value = outVal;
+    setABCEditorText(outVal);
 
     setTimeout(function(){
 
@@ -474,7 +474,7 @@ function extractCSVTunes(file){
         ClearNoRender();
 
         // Add them to the work area
-        gTheABC.value = outVal;
+        setABCEditorText(outVal);
 
         setTimeout(function(){
 

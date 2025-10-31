@@ -4695,6 +4695,8 @@ var bookParser = function bookParser(book) {
       /^%custom_instrument_6_fade.*$/,
       /^%custom_instrument_7_fade.*$/,
       /^%custom_instrument_8_fade.*$/,
+      /^%roll_2_params.*$/,
+      /^%roll_3_params.*$/,
       /^[ABCDFGHILMmNORrSUZ]:/,
     ];
 
@@ -5385,7 +5387,7 @@ var parseDirective = {};
     tune.formatting[cmd] = getFontParameter(tokens, tune.formatting[cmd], str, 0, cmd);
     return null;
   };
-  // MAE 6 Oct 2025 - Scale simulation using left and right margins
+   // MAE 6 Oct 2025 - Scale simulation using left and right margins
   var setScale = function setScale(cmd, tokens) {
 
     //console.log("setScale");
