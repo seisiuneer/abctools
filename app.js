@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3000_103125_1200";
+var gVersionNumber = "3001_103125_1200";
 
 var gMIDIInitStillWaiting = false;
 
@@ -56853,7 +56853,7 @@ function NormalizeVoiceKeySignatures(){
 
 // Open the standard editor in a new tab
 function LaunchStandardEditor() {
-  var url = "https://michaeleskin.com/abctools_beta_1_cm/abctools.html";
+  var url = "https://michaeleskin.com/abctools/abctools.html";
   window.open(url, '_blank');
 }
 
@@ -56865,7 +56865,7 @@ function LaunchEditorHelp() {
 
 // Open the quick editor in a new tab
 function LaunchQuickEditor() {
-  var url = "https://michaeleskin.com/abctools_beta_1_cm/abctools-quick-editor.html";
+  var url = "https://michaeleskin.com/abctools/abctools-quick-editor.html";
   window.open(url, '_blank');
 }
 
@@ -56887,7 +56887,7 @@ function DoVersionCheck() {
   try {
 
     // Get the latest version JSON file 
-    fetch('https://michaeleskin.com/abctools_beta_1_cm/abc_tools_version.json')
+    fetch('https://michaeleskin.com/abctools/abc_tools_version.json')
       .then((response) => response.json())
       .then((json) => {
 
@@ -59569,7 +59569,7 @@ function buildAbcjsEditorHtml(seed, contentId){
   </style>
   <div class="abcjs_custom_css-theme" id="${contentId}">
 
-    <a class="abcjs_custom_css-help" href="https://michaeleskin.com/abctools_beta_1_cm/userguide.html#advanced_customcssgenerator" target="_blank" rel="noopener noreferrer" aria-label="ABC Tools User Guide">?</a>
+    <a class="abcjs_custom_css-help" href="https://michaeleskin.com/abctools/userguide.html#advanced_customcssgenerator" target="_blank" rel="noopener noreferrer" aria-label="ABC Tools User Guide">?</a>
 
     <div class="abcjs_custom_css-title">abcjs Custom CSS Generator</div>
 
@@ -59962,7 +59962,7 @@ function buildEditorHtml(seed, contentId){
   </style>
 
   <div class="abc-theme abc-wrap" id="${contentId}">
-    <a class="abc-help" href="https://michaeleskin.com/abctools_beta_1_cm/userguide.html#customthemeeditor" target="_blank" rel="noopener noreferrer" aria-label="ABC Tools User Guide">?</a>
+    <a class="abc-help" href="https://michaeleskin.com/abctools/userguide.html#customthemeeditor" target="_blank" rel="noopener noreferrer" aria-label="ABC Tools User Guide">?</a>
 
     <div class="abc-title">ABC Syntax Highlighting Theme Editor</div>
 

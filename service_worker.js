@@ -13,7 +13,7 @@
 //
 //
 
-const cacheName = 'abctoolscache-3000';
+const cacheName = 'abctoolscache-3001';
 
 const contentToCache = [
     'abctools.html',
