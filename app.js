@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3001_103125_1200";
+var gVersionNumber = "3002_110325_1500";
 
 var gMIDIInitStillWaiting = false;
 
@@ -23524,9 +23524,7 @@ function InjectOneTuneSpacingHeader(theTune, staffSep, leftMargin, rightMargin, 
 function NotationSpacingExplorer() {
 
   if (!gAllowCopy) {
-
     return;
-
   }
 
   // If currently rendering PDF, exit immediately
@@ -23539,50 +23537,188 @@ function NotationSpacingExplorer() {
 
   // Try to find the current tune
   var theABC = findSelectedTune();
-
   if (theABC == "") {
     // This should never happen
     return;
   }
 
   var instrument = GetRadioValue("notenodertab");
-
   var abcOptions = GetABCJSParams(instrument);
-
   abcOptions.oneSvgPerLine = false;
 
   // Adapt the top based on the player control size
-  var theTop = 40;
+  var theTop = 20;
+  var theHeight = window.innerHeight - 360;
 
-  var theHeight = window.innerHeight - 340;
+  // === Helpers for Mode/Scale (scoped to this function) ===
 
-  modal_msg = '<div id="notationspacingexplorerholder" style="height:' + theHeight + 'px;overflow-y:auto;margin-bottom:15px;padding:4px;">';
+  // MAE 6 Oct 2025 - Scale simulation using left and right margins
+  function mapScaleToLayout(scale) {
 
-  modal_msg += '<div id="notationspacingexplorer-paper"></div>';
+    //console.log("setScale");
 
+    /**
+     * Maps x in (approximately) 1..0.125 to y with:
+     * 1 → 0
+     * 0.75 → 130
+     * 0.5 → 400
+     * 0.25 → 1200
+     * 0.125 → 3000
+     * Clamp x >= 1 to 0, x <= 0.125 to 3000.
+     */
+    function customLogMap(x) {
+      // clamps
+      if (x >= 1) return 0;
+      if (x <= 0.125) return 3000;
+
+      // keypoints
+      const P = [
+        { x: 1.0,   y: 0    },
+        { x: 0.75,  y: 130  },
+        { x: 0.5,   y: 400  },
+        { x: 0.25,  y: 1200 },
+        { x: 0.125, y: 3000 },
+      ];
+
+      // Segment 1: [0.75, 1] — linear (since y=0 at x=1 breaks log/power fits)
+      if (x > 0.75 && x < 1.0) {
+        const x1 = P[0].x, y1 = P[0].y;       // (1.0, 0)
+        const x2 = P[1].x, y2 = P[1].y;       // (0.75, 130)
+        const t = (x1 - x) / (x1 - x2);       // t in [0,1] as x descends 1→0.75
+        return y1 + t * (y2 - y1);
+      }
+
+      // Helper: power-law fit on a segment [xa, xb] passing through (xa, ya), (xb, yb)
+      function powerInterp(xa, ya, xb, yb, xq) {
+        // y = C * x^a -> solve a, C from endpoints
+        const a = Math.log(yb / ya) / Math.log(xb / xa);
+        const C = ya / Math.pow(xa, a);
+        return C * Math.pow(xq, a);
+      }
+
+      // Segment 2: [0.5, 0.75]
+      if (x > 0.5 && x <= 0.75) {
+        return powerInterp(0.75, 130, 0.5, 400, x);
+      }
+
+      // Segment 3: [0.25, 0.5]
+      if (x > 0.25 && x <= 0.5) {
+        return powerInterp(0.5, 400, 0.25, 1200, x);
+      }
+
+      // Segment 4: [0.125, 0.25]
+      // (x > 0.125 guaranteed by earlier clamp)
+      return powerInterp(0.25, 1200, 0.125, 3000, x);
+    }
+
+
+    var num = parseFloat(scale);
+
+    if (isNaN(num) || num === 0) return null;
+
+    var logVal = customLogMap(num);
+
+    return {leftMargin:Math.round(logVal),rightMargin:Math.round(logVal)};
+
+  };
+
+  function updateFieldsForMode() {
+    var modeSel  = document.getElementById("layout_mode");
+    var scaleWrap= document.getElementById("layout_scale_wrap");
+    var scaleEl  = document.getElementById("layout_scale");
+    var leftEl   = document.getElementById("layout_left_margin");
+    var rightEl  = document.getElementById("layout_right_margin");
+    var staffEl  = document.getElementById("layout_staff_width");
+
+    if (!modeSel || !leftEl || !rightEl || !staffEl) return;
+
+    var mode = modeSel.value || "scale";
+
+    if (mode === "scale") {
+      if (scaleWrap) scaleWrap.style.display = "";
+      var sv = parseFloat(scaleEl && scaleEl.value ? scaleEl.value : "1");
+
+      if (isNaN(sv) || sv <= 0) sv = 1;
+
+      var calc = mapScaleToLayout(sv);
+
+      leftEl.disabled  = true;
+      rightEl.disabled = true;
+
+      if (calc){
+
+        // Populate computed values and lock fields
+        leftEl.value  = calc.leftMargin;
+        rightEl.value = calc.rightMargin;
+
+        // Keep globals in sync so preview/inject use computed values
+        gNotationSpacingLeftMargin  = calc.leftMargin;
+        gNotationSpacingRightMargin = calc.rightMargin;
+        gNotationSpacingStaffWidth  = calc.staffwidth;
+
+      }
+
+    } else {
+      if (scaleWrap) scaleWrap.style.display = "none";
+      leftEl.disabled  = false;
+      rightEl.disabled = false;
+    }
+  }
+
+  function onModeChange() {
+    updateFieldsForMode();
+    testSpacingChange(); // re-render with current values
+  }
+
+  function onScaleChange() {
+    var modeSel = document.getElementById("layout_mode");
+    if (modeSel && modeSel.value === "scale") {
+      updateFieldsForMode();
+      testSpacingChange();
+    }
+  }
+
+  // === Build dialog HTML ===
+  var modal_msg = '<div id="notationspacingexplorerholder" style="height:' + theHeight + 'px;overflow-y:auto;margin-bottom:15px;padding:4px;">';
+  modal_msg +=   '<div id="notationspacingexplorer-paper"></div>';
   modal_msg += '</div>';
 
-  modal_msg += '<p class="configure_layout_text" style="text-align:center;margin:0px;margin-top:20px">';
-  modal_msg += '<span>Staff Separation:</span> <input style="width:70px;margin-right:14px;" id="layout_staff_sep" type="number" min="-100" step="1" max="1000" title="Staff separation" autocomplete="off" onchange="testSpacingChange();"/>';
-  modal_msg += '<span>Left Margin:</span> <input style="width:70px;margin-right:14px;" id="layout_left_margin" type="number" min="0" step="1" max="1000" title="Left margin" autocomplete="off" onchange="testSpacingChange();"/>';
-  modal_msg += '<span>Right Margin:</span> <input style="width:70px;margin-right:14px;" id="layout_right_margin" type="number" min="0" step="1" max="1000" title="Right margin" autocomplete="off" onchange="testSpacingChange();"/>';
-  modal_msg += '<span>Staff Width:</span> <input style="width:80px;margin-right:0px;" id="layout_staff_width" type="number" min="0" step="1" max="2000" title="Staff width" autocomplete="off" onchange="testSpacingChange();"/>';
+  // New row: Mode + Scale (NO inline handlers)
+  modal_msg += '<p class="configure_layout_text" style="text-align:center;margin:0px;margin-top:12px;margin-bottom:20px">';
+  modal_msg +=   '<span>Mode:</span> ';
+  modal_msg +=   '<select id="layout_mode">';
+  modal_msg +=     '<option value="scale">Scale-based (Auto-calculate margins)</option>';
+  modal_msg +=     '<option value="manual">Manual (enter left and right margins)</option>';
+  modal_msg +=   '</select>';
+  modal_msg +=   '<span id="layout_scale_wrap" style="display:none">';
+  modal_msg +=     '<span>Scale:</span> ';
+  modal_msg +=     '<input style="width:80px;margin-right:14px;" id="layout_scale" type="number" min="0.1" step="0.01" title="Scale" autocomplete="off"/>';
+  modal_msg +=   '</span>';
   modal_msg += '</p>';
-  modal_msg += '<p class="configure_layout_text" style="text-align:center;margin:0px;margin-top:20px">';
-  modal_msg += '<span style="font-size:12pt;font-family:helvetica;">Add %%noexpandtowidest:</span><input style="width:16px;margin-left:8px;margin-right:24px;" id="layout_inject_noexpand" type="checkbox" onchange="testSpacingChange();"/>';
-  modal_msg += '<input id="notationspacingexplorertest" style="margin-right:36px;" class="notationspacingexplorerinject button btn btn-notationspacingexplorertest" onclick="testSpacingChange();" type="button" value="Test Values" title="Tests the spacing changes ABC">';
-  modal_msg += '<span style="font-size:12pt;font-family:helvetica;">Inject all tunes:</span><input style="width:16px;margin-left:8px;margin-right:24px;" id="layout_inject_all" type="checkbox"/>';
-  modal_msg += '<input id="notationspacingexplorerinject" class="notationspacingexplorerinject button btn btn-notationspacingexplorerinject" onclick="NotationSpacingInject();" type="button" style="margin-right:0px;" value="Inject Spacing into the ABC" title="Injects the spacing values into the ABC">';
+
+  // Existing row: staff sep + margins + staff width (kept inline for your current flow)
+  modal_msg += '<p class="configure_layout_text" style="text-align:center;margin:0px;margin-top:12px">';
+  modal_msg +=   '<span>Staff Separation:</span> <input style="width:70px;margin-right:14px;" id="layout_staff_sep" type="number" min="-100" step="1" max="1000" title="Staff separation" autocomplete="off" onchange="testSpacingChange();"/>';
+  modal_msg +=   '<span>Left Margin:</span>  <input style="width:70px;margin-right:14px;" id="layout_left_margin" type="number" min="0" step="1" max="1000" title="Left margin" autocomplete="off" onchange="testSpacingChange();"/>';
+  modal_msg +=   '<span>Right Margin:</span> <input style="width:70px;margin-right:14px;" id="layout_right_margin" type="number" min="0" step="1" max="1000" title="Right margin" autocomplete="off" onchange="testSpacingChange();"/>';
+  modal_msg +=   '<span>Staff Width:</span>  <input style="width:80px;margin-right:0px;"  id="layout_staff_width" type="number" min="0" step="1" max="2000" title="Staff width" autocomplete="off" onchange="testSpacingChange();"/>';
   modal_msg += '</p>';
+
+  // Existing row: options + actions
+  modal_msg += '<p class="configure_layout_text" style="text-align:center;margin:0px;margin-top:20px">';
+  modal_msg +=   '<span style="font-size:12pt;font-family:helvetica;">Add %%noexpandtowidest:</span><input style="width:16px;margin-left:8px;margin-right:24px;" id="layout_inject_noexpand" type="checkbox" onchange="testSpacingChange();"/>';
+  modal_msg +=   '<input id="notationspacingexplorertest" style="margin-right:36px;" class="notationspacingexplorerinject button btn btn-notationspacingexplorertest" type="button" value="Test Values" title="Tests the spacing changes ABC">';
+  modal_msg +=   '<span style="font-size:12pt;font-family:helvetica;">Inject all tunes:</span><input style="width:16px;margin-left:8px;margin-right:24px;" id="layout_inject_all" type="checkbox"/>';
+  modal_msg +=   '<input id="notationspacingexplorerinject" class="notationspacingexplorerinject button btn btn-notationspacingexplorerinject" type="button" style="margin-right:0px;" value="Inject Spacing into the ABC" title="Injects the spacing values into the ABC">';
+  modal_msg += '</p>';
+
   modal_msg += '<a id="notationspacingexplorer_help" href="https://michaeleskin.com/abctools/userguide.html#advanced_notationspacingexplorer" target="_blank" style="text-decoration:none;" title="Learn more about the Notation Spacing Explorer" class="dialogcornerbutton">?</a>';
 
   // Scale the player for larger screens
   var windowWidth = window.innerWidth;
-
   var theWidth;
 
   if (isDesktopBrowser()) {
-
     if (giPadTwoColumn) {
       if (isLandscapeOrientation()) {
         theWidth = windowWidth * (gPlayerScaling / 100);
@@ -23592,22 +23728,16 @@ function NotationSpacingExplorer() {
     } else {
       theWidth = windowWidth * (gPlayerScaling / 100);
     }
-
     if (theWidth < 850) {
       theWidth = 850;
     }
-
   } else {
-
     theWidth = 800;
-
   }
 
   // Make initial spacing identical to standard viewer
-
-  // Inject %%staffsep 
-  var searchRegExp = /^X:.*$/gm
-
+  // Inject %%staffsep
+  var searchRegExp = /^X:.*$/gm;
   theABC = theABC.replace(searchRegExp, "X:1\n%%staffsep " + gStaffSpacing);
 
   var originalABC = theABC;
@@ -23620,123 +23750,106 @@ function NotationSpacingExplorer() {
     scrollWithPage: (isMobileBrowser())
   });
 
-  // Get the default
+  // Defaults
   gNotationSpacingLeftMargin = 15;
 
   // See if there are already values injected
-  var searchRegExp = /^%%leftmargin.*$/m
-
+  searchRegExp = /^%%leftmargin.*$/m;
   var testMatch = theABC.match(searchRegExp);
-
   if ((testMatch) && (testMatch.length > 0)) {
-
     var theVal = testMatch[0].replace("%%leftmargin", "");
-
     theVal = theVal.trim();
-
     var theValParsed = parseInt(theVal);
-
     if (!isNaN(theValParsed)) {
-
       gNotationSpacingLeftMargin = theValParsed;
-
     }
   }
 
   // Get the default
   gNotationSpacingRightMargin = 15;
-
-  searchRegExp = /^%%rightmargin.*$/gm
-
+  searchRegExp = /^%%rightmargin.*$/gm;
   testMatch = theABC.match(searchRegExp);
-
   if ((testMatch) && (testMatch.length > 0)) {
-
     var theVal = testMatch[testMatch.length - 1].replace("%%rightmargin", "");
-
     theVal = theVal.trim();
-
     var theValParsed = parseInt(theVal);
-
     if (!isNaN(theValParsed)) {
-
       gNotationSpacingRightMargin = theValParsed;
-
     }
   }
 
   // Get the default
   gNotationSpacingStaffWidth = 556;
-
-  searchRegExp = /^%%staffwidth.*$/gm
-
+  searchRegExp = /^%%staffwidth.*$/gm;
   testMatch = theABC.match(searchRegExp);
-
   if ((testMatch) && (testMatch.length > 0)) {
-
     var theVal = testMatch[testMatch.length - 1].replace("%%staffwidth", "");
-
     theVal = theVal.trim();
-
     var theValParsed = parseInt(theVal);
-
     if (!isNaN(theValParsed)) {
-
       gNotationSpacingStaffWidth = theValParsed;
-
     }
   }
 
   // Get the default
   gNotationSpacingStaffSep = gStaffSpacing;
-
-  searchRegExp = /^%%staffsep.*$/gm
-
+  searchRegExp = /^%%staffsep.*$/gm;
   testMatch = theABC.match(searchRegExp);
-
   if ((testMatch) && (testMatch.length > 0)) {
-
     var theVal = testMatch[testMatch.length - 1].replace("%%staffsep", "");
-
     theVal = theVal.trim();
-
     var theValParsed = parseInt(theVal);
-
     if (!isNaN(theValParsed)) {
-
       gNotationSpacingStaffSep = theValParsed;
-
     }
   }
 
-
   // Get the default
   gNotationSpacingNoExpand = false;
-
-  searchRegExp = /^%%noexpandtowidest.*$/m
-
+  searchRegExp = /^%%noexpandtowidest.*$/m;
   testMatch = theABC.match(searchRegExp);
-
   if ((testMatch) && (testMatch.length > 0)) {
     gNotationSpacingNoExpand = true;
   }
 
+  // Seed the inputs
   document.getElementById("layout_left_margin").value = gNotationSpacingLeftMargin;
   document.getElementById("layout_right_margin").value = gNotationSpacingRightMargin;
   document.getElementById("layout_staff_width").value = gNotationSpacingStaffWidth;
   document.getElementById("layout_staff_sep").value = gNotationSpacingStaffSep;
   document.getElementById("layout_inject_noexpand").checked = gNotationSpacingNoExpand;
 
+  // Initialize new mode/scale controls
+  var modeEl  = document.getElementById("layout_mode");
+  var scaleEl = document.getElementById("layout_scale");
+  var testBtn = document.getElementById("notationspacingexplorertest");
+  var injectBtn = document.getElementById("notationspacingexplorerinject");
+
+  if (modeEl)  modeEl.value = "scale"; // default mode; change if you want to remember user choice
+  if (scaleEl) scaleEl.value = "1.0";   // default scale
+
+  // Wire events (no inline handlers)
+  if (modeEl)  modeEl.addEventListener("change", onModeChange);
+  if (scaleEl) scaleEl.addEventListener("change", onScaleChange);
+  if (testBtn) testBtn.addEventListener("click", testSpacingChange);
+  if (injectBtn) injectBtn.addEventListener("click", NotationSpacingInject);
+
+  // Apply initial mode effects (show/hide scale, lock/unlock fields, compute if needed)
+  updateFieldsForMode();
+
   // Setup the redraw callback
   gNotationCallback = function() {
-
-    //console.log("notation callback called");
-
-    theABC = InjectOneTuneSpacingHeader(originalABC, gNotationSpacingStaffSep, gNotationSpacingLeftMargin, gNotationSpacingRightMargin, gNotationSpacingStaffWidth, gNotationSpacingNoExpand);
+    theABC = InjectOneTuneSpacingHeader(
+      originalABC,
+      gNotationSpacingStaffSep,
+      gNotationSpacingLeftMargin,
+      gNotationSpacingRightMargin,
+      gNotationSpacingStaffWidth,
+      gNotationSpacingNoExpand
+    );
 
     // Strip titlespace
     theABC = theABC.replace(/%%titlespace\s.*\r?\n/g, '');
-
     theABC = GetABCFileHeader() + theABC;
 
     var visualObj = ABCJS.renderAbc("notationspacingexplorer-paper", theABC, abcOptions)[0];
@@ -23747,25 +23860,22 @@ function NotationSpacingExplorer() {
     // Put a light reference border around the notation
     var theSVG = document.querySelectorAll('div[id="notationspacingexplorer-paper"] > svg');
     theSVG[0].style.boxShadow = "inset 0px 0px 0px 1px #b8b8b8";
+  };
 
-  }
-
-  // Strip titlespace
+  // Initial render
   theABC = theABC.replace(/%%titlespace\s.*\r?\n/g, '');
-
   theABC = GetABCFileHeader() + theABC;
 
   var visualObj = ABCJS.renderAbc("notationspacingexplorer-paper", theABC, abcOptions)[0];
-
-  // Post process whistle or note name tab
   postProcessTab([visualObj], "notationspacingexplorer-paper", instrument, true);
 
-  // Put a light reference border around the notation
   var theSVG = document.querySelectorAll('div[id="notationspacingexplorer-paper"] > svg');
   theSVG[0].style.boxShadow = "inset 0px 0px 0px 1px #b8b8b8";
 
-
+  // Render once with seeded values
+  testSpacingChange();
 }
+
 
 //
 // Inject MIDI program number directive below the tune header
