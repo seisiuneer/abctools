@@ -23692,7 +23692,7 @@ function NotationSpacingExplorer() {
   modal_msg +=   '</select>';
   modal_msg +=   '<span id="layout_scale_wrap" style="display:none">';
   modal_msg +=     '<span>Scale:</span> ';
-  modal_msg +=     '<input style="width:80px;margin-right:14px;" id="layout_scale" type="number" min="0.1" step="0.01" title="Scale" autocomplete="off"/>';
+  modal_msg +=     '<input style="width:80px;margin-right:14px;" id="layout_scale" type="number" min="0.125" max="1.00" step="0.01" title="Scale" autocomplete="off"/>';
   modal_msg +=   '</span>';
   modal_msg += '</p>';
 
