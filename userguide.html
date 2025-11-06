@@ -5438,7 +5438,7 @@
                 <h1 class="page_break_always">Notes Incipits Builder<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <p>Brings up a dialog where you can easily format the ABC specifically for notation incipits PDF export with only a few bars per tune:</p>
                 <div class="image_holder_p">
-                    <img class="image" loading="lazy" src="img/incipits_builder_10.jpg"/>
+                    <img class="image" loading="lazy" src="img/incipits_builder_11.jpg"/>
                 </div>
                 <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/RyWa4qBCTBk" title="Incipits Builder" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
                 <p>Since this modifies the ABC, you may want to grab a <strong>Snapshot</strong> or save the ABC before running this command.</p>
@@ -5448,6 +5448,7 @@
                 <p>Usually, these issues can be resolved with minor changes to the tune.</p>
                 <p>Note: When generating multi-part incipits the staff width is not used and all text blocks are stripped.</p>
                 <p>Additionally, unlike standard first-line incipits which contain the full tune but only draw the first staff, the multi-part incipits, which are highly processed versions of the original tunes, do not play the full tune if play links are attached to them are clicked.</p>
+                <p><strong>Multi-part incipits parts on their own staves</strong> - When checked and creating multi-part incipits, puts each of the parts on their own stave. When unchecked, the parts are concatenated on a single stave.</p>
                 <p><strong>Bars per staff</strong> - Sets the number of measures shown in the incipit. Default is 3.</p>
                 <p><strong>Staff width</strong> - Compresses the horizontal size of the incipit notation compared to the standard of 556. Default is 400.</p>
                 <p><strong>Add tune title numbers</strong> - When checked, prepends the tune titles with incrementing numbers. Default is false.</p>
@@ -5462,6 +5463,10 @@
                 <p>Here is an example of a two-column notation incipits PDF exported using the default settings (multi-part, left-justify titles):</p>
                 <div class="image_holder_p">
                     <img class="image" loading="lazy" src="img/incipits_builder_example_4.jpg"/>
+                </div>
+                <p>Here is an example of a PDF exported using multi-part, 3 measures-per-part, each part on its own stave:</p>
+                <div class="image_holder_p">
+                    <img class="image" loading="lazy" src="img/incipits_builder_example_5.jpg"/>
                 </div>
                 <p><strong>Note:</strong> You may run into occasional cases where the number of measures in the incipits doesn't exactly match the requested number.</p>
                 <p>You can try changing the %%barsperstaff value on any tune that has an issue.</p>                <hr class="hidden-print" id="advanced_customcssgenerator">
