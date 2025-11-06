@@ -238,6 +238,7 @@ padding:12px;}
 #sortbutton{
 	height:42px;
 	padding:12px;
+	margin-right: 24px;
 }
 
 @media (hover: hover) {
