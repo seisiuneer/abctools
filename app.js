@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3004_110625_0500";
+var gVersionNumber = "3005_110625_0530";
 
 var gMIDIInitStillWaiting = false;
 
@@ -28778,7 +28778,7 @@ function IncipitsBuilderDialog() {
           // Scroll to the top
           MakeTuneVisible(true);
 
-          ensureDialogVisible("#exportpdfanchor");
+          ensureDialogVisible("#incipitsbuilder");
 
         });
       });
