@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3002_110325_1500";
+var gVersionNumber = "3003_110525_1900";
 
 var gMIDIInitStillWaiting = false;
 
@@ -533,6 +533,208 @@ function getFirstPage() {
 //
 // Tune utility functions
 // 
+
+function buildABCIncipitsSingleTune(abcText, measuresPerPart, options = {}) {
+  const FIELD_RE = /^\s*[A-Za-z]\s*:\s*/;
+  const MUSIC_HINT_RE = /[\|\[\]:]|["'][^"']*["']|[A-Ga-gzxy]/;
+
+  function splitHeaderAndBody(full) {
+    const lines = full.replace(/\r/g, "").split("\n");
+    const headerLines = [];
+    let musicStartIdx = 0;
+    for (let i = 0; i < lines.length; i++) {
+      const ln = lines[i];
+      const isBlank = /^\s*$/.test(ln);
+      const isPercent = /^\s*%/.test(ln);
+      const isField = FIELD_RE.test(ln);
+      const looksLikeMusic = MUSIC_HINT_RE.test(ln);
+      if (!isBlank && !isPercent && !isField && looksLikeMusic) { musicStartIdx = i; break; }
+      headerLines.push(ln);
+      musicStartIdx = i + 1;
+    }
+    return { headerText: headerLines.join("\n"), bodyText: lines.slice(musicStartIdx).join("\n") };
+  }
+
+  function filterToVoice(body, desiredVoice) {
+    const hasVoices = /\nV\s*:/i.test("\n" + body);
+    if (!hasVoices) return body;
+    const chunks = body.split(/\n(?=V\s*:[^\n]*\n?)/i);
+    const voiceBlocks = new Map();
+    const idOf = (vLine) => vLine.replace(/^V\s*:\s*/i, "").trim().split(/\s+/)[0];
+    for (const chunk of chunks) {
+      if (!/^\s*V\s*:/i.test(chunk)) { voiceBlocks.set("_PRE_", (voiceBlocks.get("_PRE_") || "") + chunk); continue; }
+      const lines = chunk.split("\n");
+      const vid = idOf(lines[0]);
+      const music = lines.slice(1).join("\n");
+      voiceBlocks.set(vid, (voiceBlocks.get(vid) || "") + music);
+    }
+    const chosen = desiredVoice || [...voiceBlocks.keys()].find((k) => k !== "_PRE_");
+    let out = (voiceBlocks.get(chosen) || "").trim();
+    if (voiceBlocks.has("_PRE_")) out = (voiceBlocks.get("_PRE_") + "\n" + out).trim();
+    return out;
+  }
+
+  // ---------- Measure slicing & anchors ----------
+  function sliceMeasures(music) {
+    let s = music.replace(/\r/g, "");
+    // drop inline fields inside body (P:, K:, V:, etc.)
+    s = s.replace(/\n(?:[A-Za-z]\s*:[^\n]*)/g, "\n");
+
+    // NEW: ignore any trailing '!' or '\' at end of lines (but don't touch mid-line decorations like !trill!)
+    s = s.replace(/[!\\]+\s*(?=\n|$)/g, "");
+
+    const measures = [];
+    const anchors  = [];   // indices where the NEXT measure starts a new part
+    const barTypes = [];   // bar type that closed each flushed measure
+    let buf = "";
+
+    const flush = (barType = null) => {
+      const t = buf.trim();
+      if (t) { measures.push(t); barTypes.push(barType); }
+      buf = "";
+    };
+
+    const isWs = (ch) => ch === ' ' || ch === '\t' || ch === '\n';
+
+    for (let i = 0; i < s.length; i++) {
+      // Voltas like "|1", "|2"
+      if (s[i] === '|' && /[0-9]/.test(s[i + 1] || '')) {
+        flush('volta');
+        i += 1;
+        while (/[0-9]/.test(s[i + 1] || '')) i += 1;
+        while (s[i + 1] === ' ') i += 1;
+        continue;
+      }
+      // Voltas like "[1", "[2"
+      if (s[i] === '[' && /[0-9]/.test(s[i + 1] || '')) {
+        flush('volta');
+        i += 1;
+        while (/[0-9]/.test(s[i + 1] || '')) i += 1;
+        while (s[i + 1] === ' ') i += 1;
+        continue;
+      }
+
+      const three = s.slice(i, i + 3);
+      const two   = s.slice(i, i + 2);
+      let bar = null;
+      if (three === "[|]" || three === "|||") bar = three;
+      else if (two === "|:" || two === ":|" || two === "::" || two === "||" || two === "|]" || two === "[|") bar = two;
+      else if (s[i] === "|") bar = "|";
+
+      if (bar) {
+        let thisBarType = 'other';
+        if (bar === "|:") thisBarType = 'start_repeat';
+        else if (bar === ":|") thisBarType = 'end_repeat';
+        // NEW: treat |] and [|] as "double" too
+        else if (bar === "||" || bar === "|||" || bar === "|]" || bar === "[|]") thisBarType = 'double';
+        else if (bar === "|") thisBarType = 'single';
+
+        flush(thisBarType);
+
+        if (bar === "|:") {
+          anchors.push(measures.length);
+
+        } else if (bar === ":|") {
+          // Look ahead ACROSS WHITESPACE/NEWLINES for optional [ and digits
+          let j = i + 2;
+          while (isWs(s[j])) j++;
+          if (s[j] === '[') { j++; while (isWs(s[j])) j++; }
+          let isSecondEnding = false;
+          if (/[0-9]/.test(s[j] || '')) {
+            if (s[j] === '2') isSecondEnding = true;
+            while (/[0-9]/.test(s[j] || '')) j++;
+            while (isWs(s[j])) j++;
+          }
+          if (!isSecondEnding) anchors.push(measures.length);
+          i = j - 1;
+
+        } else if (thisBarType === 'double') {
+          // Double bars (||, |||, |], [|]) always start a new part (dedupe later prevents :|| double-anchors)
+          anchors.push(measures.length);
+        }
+
+        i += bar.length - 1;
+        continue;
+      }
+
+      buf += s[i];
+    }
+
+    const tail = buf.trim();
+    if (tail) { measures.push(tail); barTypes.push(null); }
+
+    // strictly increasing anchors
+    const uniq = [];
+    for (const a of anchors) { if (!uniq.length || a > uniq[uniq.length - 1]) uniq.push(a); }
+
+    return { measures, anchors: uniq, barTypes };
+  }
+
+  function buildPart(measures, startIdx, nMeasures) {
+    const take = measures.slice(startIdx, startIdx + Number(nMeasures));
+    return take.join(" | ");
+  }
+
+  // You can ignore the ! characters at the end of the ABC lines.
+
+  function withQuotedCaret(snippet, label) {
+    const t = snippet.trim();
+    return t ? `"^${label}" ${t}` : t;
+  }
+
+  const neat = (s) => s.replace(/[ \t]+/g, " ")
+                       .replace(/\s*\|\s*/g, " | ")
+                       .replace(/\s+\n/g, "\n")
+                       .trim();
+
+  // ---------- main ----------
+  const { headerText, bodyText } = splitHeaderAndBody(abcText);
+  const sampledBody = filterToVoice(bodyText, options?.voice);
+  const { measures, anchors, barTypes } = sliceMeasures(sampledBody);
+
+  // Pickup-aware Part-A start (|: only):
+  let startA = 0;
+  if (anchors.length && anchors[0] === 1 && barTypes[0] === 'start_repeat') {
+    startA = 1; // upbeat inside opening repeat
+  } else if (barTypes.length >= 2 && barTypes[0] === 'single' && barTypes[1] === 'start_repeat' && anchors.length) {
+    startA = anchors[0]; // pickup before first |:
+  } else if (anchors.length && anchors[0] === 0) {
+    startA = 0; // tune starts with |:
+  }
+
+  // Part starts: startA, then every anchor > startA
+  const starts = [startA];
+  for (const a of anchors) if (a > startA) starts.push(a);
+
+  // Emit all parts, each N measures
+  const N = Number(measuresPerPart);
+  const pieces = [];
+  for (let p = 0; p < starts.length; p++) {
+    const start = Math.min(starts[p], measures.length);
+    if (start >= measures.length) break;
+
+    let snippet = buildPart(measures, start, N);
+    snippet = neat(snippet);
+    if (!snippet) continue;
+
+    const label = indexToLetters(p) + " Part"; // A, B, C...
+    pieces.push(withQuotedCaret(snippet, `${label}`));
+  }
+
+  // If there are no notes, just return the original ABC (section headers, for example)
+  if (!pieces.length) return abcText;
+
+  let combinedBody = pieces.join(" || ").replace(/\s+$/g, "");
+  if (!/\|\|\s*$/.test(combinedBody)) combinedBody += " ||";
+
+  return headerText.replace(/\s+$/g, "") + "\n" + combinedBody + "\n";
+
+  function indexToLetters(idx) {
+    let n = idx + 1, out = "";
+    while (n > 0) { const r = (n - 1) % 26; out = String.fromCharCode(65 + r) + out; n = Math.floor((n - 1) / 26); }
+    return out;
+  }
+}
 
 //
 // Make sure the More Tools dialog isn't scrolled out of view
@@ -28348,8 +28550,9 @@ function TuneTitlesNumbersDialog() {
 var gIncipitsBuilderBars = 3;
 var gIncipitsBuilderWidth = 400;
 var gIncipitsBuilderLeftJustify = true;
-var gIncipitsBuilderInjectNumbers = true;
+var gIncipitsBuilderInjectNumbers = false;
 var gIncipitsBuilderStripText = true;
+var gIncipitsBuilderMultiPart = true;
 var gIncipitsTagsToStrip = "ABCDINOSWwZ";
 
 function IncipitsBuilderDialog() {
@@ -28362,6 +28565,7 @@ function IncipitsBuilderDialog() {
     IncipitsBuilderInjectNumbers: gIncipitsBuilderInjectNumbers,
     IncipitsBuilderStripText: gIncipitsBuilderStripText,
     IncipitsBuilderStripTags: gIncipitsTagsToStrip,
+    IncipitsBuilderMultiPart: gIncipitsBuilderMultiPart
   };
 
   var form = [{
@@ -28370,6 +28574,14 @@ function IncipitsBuilderDialog() {
     html: '<p style="font-size:12pt;line-height:18pt;font-family:helvetica;">Clicking "Build" will extensively reformat the ABC, so you may want to grab a Snapshot or save the ABC before using this feature.</p>'
   }, {
     html: '<p style="font-size:12pt;line-height:18pt;font-family:helvetica;margin-bottom:24px;">The reformatted ABC can be exported as first-line Notes Incipits from the Export PDF dialog.</p>'
+  }, 
+  {
+    html: '<p style="font-size:12pt;line-height:18pt;font-family:helvetica;margin-bottom:24px;"><strong>Note:</strong> When generating multi-part incipits the staff width is not used and all text blocks are stripped.</p>'
+  }, {
+    name: "    Create multi-part incipits (Part A, Part B, etc.)",
+    id: "IncipitsBuilderMultiPart",
+    type: "checkbox",
+    cssClass: "incipits_builder_form_text_checkbox"
   }, {
     name: "Number of bars: (Default is 3)",
     id: "IncipitsBuilderBars",
@@ -28395,8 +28607,8 @@ function IncipitsBuilderDialog() {
     id: "IncipitsBuilderStripText",
     type: "checkbox",
     cssClass: "incipits_builder_form_text_checkbox"
-  }, {
-    name: "          Tags to strip (Default is ABCDINOSWwZ):",
+  },{
+    name: "    Tags to strip (Default is ABCDINOSWwZ):",
     id: "IncipitsBuilderStripTags",
     type: "text",
     cssClass: "incipits_striptags_text"
@@ -28439,6 +28651,8 @@ function IncipitsBuilderDialog() {
 
       gIncipitsTagsToStrip = args.result.IncipitsBuilderStripTags;
 
+      gIncipitsBuilderMultiPart = args.result.IncipitsBuilderMultiPart;
+
       var nTunes = CountTunes();
 
       // Should never get here, but just to be safe...
@@ -28469,8 +28683,22 @@ function IncipitsBuilderDialog() {
 
         var theTune = "X:" + theTunes[i];
 
-        // Inject an easily identified block of annotations
-        var stringToInject = stringToInject = "%incipits_inject_start\n%%maxstaves 1\n%%noexpandtowidest\n%%barsperstaff " + (nBars + 1) + "\n%%staffwidth " + theWidth + "\n%%printtempo 0\n%hide_rhythm_tag\n";
+        var stringToInject;
+
+        if (gIncipitsBuilderMultiPart){
+          theTune = StripChordsOne(theTune);
+          theTune = StripTextAnnotationsOne(theTune);
+          theTune = buildABCIncipitsSingleTune(theTune,gIncipitsBuilderBars);
+        }
+
+        if (gIncipitsBuilderMultiPart){
+          // Inject an easily identified block of annotations
+          stringToInject = "%incipits_inject_start\n%%maxstaves 1\n%%staffwidth 556\n%%printtempo 0\n%hide_rhythm_tag\n";
+        }
+        else {
+          // Inject an easily identified block of annotations
+          stringToInject = "%incipits_inject_start\n%%maxstaves 1\n%%noexpandtowidest\n%%barsperstaff " + (nBars + 1) + "\n%%staffwidth " + theWidth + "\n%%printtempo 0\n%hide_rhythm_tag\n";
+       }
 
         if (gIncipitsBuilderLeftJustify) {
           stringToInject += "%left_justify_titles\n%incipits_inject_end";
@@ -45091,6 +45319,12 @@ function GetInitialConfigurationSettings() {
     gIncipitsTagsToStrip = "ABCDINOSWwZ";
   }
 
+  gIncipitsBuilderMultiPart = true;
+  val = localStorage.IncipitsBuilderMultiPart;
+  if (val) {
+    gIncipitsBuilderMultiPart = (val == "true");
+  }
+
   val = localStorage.LastWarp;
   if (val) {
     gLastWarp = parseInt(val);
@@ -45438,6 +45672,7 @@ function SaveConfigurationSettings() {
     localStorage.IncipitsBuilderInjectNumbers = gIncipitsBuilderInjectNumbers;
     localStorage.IncipitsBuilderStripText = gIncipitsBuilderStripText;
     localStorage.IncipitsTagsToStrip = gIncipitsTagsToStrip;
+    localStorage.IncipitsBuilderMultiPart = gIncipitsBuilderMultiPart;
 
     // Warp
     localStorage.LastWarp = gLastWarp;
