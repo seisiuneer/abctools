@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3003_110525_1900";
+var gVersionNumber = "3004_110625_0500";
 
 var gMIDIInitStillWaiting = false;
 
@@ -28759,8 +28759,6 @@ function IncipitsBuilderDialog() {
 
         RenderAsync(true, null, function() {
 
-          ensureMoreToolsVisible();
-
           if (gEnableSyntax){
             gTheCM.selectionStart = 0;
             gTheCM.selectionEnd = 0;
@@ -28779,6 +28777,8 @@ function IncipitsBuilderDialog() {
 
           // Scroll to the top
           MakeTuneVisible(true);
+
+          ensureDialogVisible("#exportpdfanchor");
 
         });
       });
@@ -47478,7 +47478,7 @@ function PDFExportDialog() {
         type: "checkbox",
         cssClass: "configure_pdf_settings_form_text"
       }, {
-        html: '<p style="margin-top:20px;font-size:12pt;line-height:18px;font-family:helvetica;">Font for Title Page, Table of Contents, Index, Page Headers/Footers, Page Numbers, Text Incipits:</p>'
+        html: '<p id="exportpdfanchor" style="margin-top:20px;font-size:12pt;line-height:18px;font-family:helvetica;">Font for Title Page, Table of Contents, Index, Page Headers/Footers, Page Numbers, Text Incipits:</p>'
       }, {
         name: "Font:",
         id: "configure_fontname",
@@ -47545,7 +47545,7 @@ function PDFExportDialog() {
         type: "checkbox",
         cssClass: "configure_pdf_settings_form_text"
       }, {
-        html: '<p style="margin-top:20px;font-size:12pt;line-height:18px;font-family:helvetica;">Font for Title Page, Table of Contents, Index, Page Headers/Footers, Page Numbers, Text Incipits:</p>'
+        html: '<p id="exportpdfanchor" style="margin-top:20px;font-size:12pt;line-height:18px;font-family:helvetica;">Font for Title Page, Table of Contents, Index, Page Headers/Footers, Page Numbers, Text Incipits:</p>'
       }, {
         name: "Font:",
         id: "configure_fontname",
@@ -47613,7 +47613,7 @@ function PDFExportDialog() {
       type: "checkbox",
       cssClass: "configure_pdf_settings_form_text"
     }, {
-      html: '<p style="margin-top:20px;font-size:12pt;line-height:18px;font-family:helvetica;">Font for Title Page, Table of Contents, Index, Page Headers/Footers, Page Numbers, Text Incipits:</p>'
+      html: '<p id="exportpdfanchor" style="margin-top:20px;font-size:12pt;line-height:18px;font-family:helvetica;">Font for Title Page, Table of Contents, Index, Page Headers/Footers, Page Numbers, Text Incipits:</p>'
     }, {
       name: "Font:",
       id: "configure_fontname",
