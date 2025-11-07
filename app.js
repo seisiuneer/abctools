@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3009_110625_1300";
+var gVersionNumber = "3010_110625_1700";
 
 var gMIDIInitStillWaiting = false;
 
@@ -589,7 +589,7 @@ function buildABCIncipitsSingleTune(abcText, measuresPerPart, options = {}) {
     // drop inline fields inside body (P:, K:, V:, etc.)
     s = s.replace(/\n(?:[A-Za-z]\s*:[^\n]*)/g, "\n");
 
-    // ignore trailing '!' or '\' at end of lines (doesn't touch mid-line decorations like !trill!)
+    // ignore any trailing '!' or '\' at end of lines (but don't touch mid-line decorations like !trill!)
     s = s.replace(/[!\\]+\s*(?=\n|$)/g, "");
 
     const measures = [];
@@ -634,17 +634,18 @@ function buildABCIncipitsSingleTune(abcText, measuresPerPart, options = {}) {
         let thisBarType = 'other';
         if (bar === "|:") thisBarType = 'start_repeat';
         else if (bar === ":|") thisBarType = 'end_repeat';
-        // treat |], [|] as double bars too
+        // treat |], [|] as "double" too
         else if (bar === "||" || bar === "|||" || bar === "|]" || bar === "[|]") thisBarType = 'double';
         else if (bar === "|") thisBarType = 'single';
 
         flush(thisBarType);
 
         if (bar === "|:") {
+          // New part begins after start-repeat
           anchors.push(measures.length);
 
         } else if (bar === ":|") {
-          // Look ahead ACROSS WHITESPACE/NEWLINES for optional '[' and bare digits
+          // Look ahead ACROSS WHITESPACE/NEWLINES for optional '[' and digits
           let j = i + 2;
           while (isWs(s[j])) j++;
           if (s[j] === '[') { j++; while (isWs(s[j])) j++; }
@@ -654,11 +655,13 @@ function buildABCIncipitsSingleTune(abcText, measuresPerPart, options = {}) {
             while (/[0-9]/.test(s[j] || '')) j++;
             while (isWs(s[j])) j++;
           }
+          // Only anchor if NOT a second ending
           if (!isSecondEnding) anchors.push(measures.length);
+          // Consume whatever we examined so digits/brackets never leak
           i = j - 1;
 
         } else if (thisBarType === 'double') {
-          // Double bars always start a new part (dedupe later prevents :|| double-anchors)
+          // Double bars start a new part (dedupe later prevents :|| double-anchors)
           anchors.push(measures.length);
         }
 
@@ -694,6 +697,11 @@ function buildABCIncipitsSingleTune(abcText, measuresPerPart, options = {}) {
                        .replace(/\s+\n/g, "\n")
                        .trim();
 
+  // NEW: strip any stray leading ":" or leading "|" that might survive edge cases
+  function cleanPartStart(s) {
+    return s.replace(/^\s*:+/, "").replace(/^\s*\|+/, "").trim();
+  }
+
   // ---------- main ----------
   const { headerText, bodyText } = splitHeaderAndBody(abcText);
   const sampledBody = filterToVoice(bodyText, options?.voice);
@@ -722,6 +730,7 @@ function buildABCIncipitsSingleTune(abcText, measuresPerPart, options = {}) {
 
     let snippet = buildPart(measures, start, N);
     snippet = neat(snippet);
+    snippet = cleanPartStart(snippet); // <<< NEW: remove leading ":" or "|" if present
     if (!snippet) continue;
 
     const label = indexToLetters(p) + " Part"; // A, B, C...
@@ -731,7 +740,7 @@ function buildABCIncipitsSingleTune(abcText, measuresPerPart, options = {}) {
   // If there are no notes, just return the original ABC (section headers, for example)
   if (!pieces.length) return abcText;
 
-  // NEW: allow parts to be placed on separate lines
+  // Optional: put parts on separate lines
   const partsOnNewLines = !!options.partsOnNewLines;
   let combinedBody = partsOnNewLines
     ? pieces.join(" ||\n")
@@ -748,6 +757,7 @@ function buildABCIncipitsSingleTune(abcText, measuresPerPart, options = {}) {
     return out;
   }
 }
+
 
 
 //
