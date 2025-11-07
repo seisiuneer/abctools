@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3010_110625_1700";
+var gVersionNumber = "3011_110725_0700";
 
 var gMIDIInitStillWaiting = false;
 
@@ -61033,19 +61033,48 @@ function initCodeMirror(){
     // Dark mode toggle
     setCMDarkMode(gDarkModeColor,gLightModeColor);
 
-    // ---- Per-tune line numbers (restart at each X:, skip blanks)
+    // ---- Per-tune line numbers (restart at each X:, skip blanks, stop after blank)
     function computeAbcLineNumbers(doc) {
       var n = doc.lineCount(), map = new Array(n);
       var inTune = false, cur = 0, Xre = /^\s*X\s*:/i;
-      for (var i=0;i<n;i++) {
+      var suspended = false;  // new: after a blank, we suspend numbering
+
+      for (var i = 0; i < n; i++) {
         var t = doc.getLine(i) || "";
-        if (Xre.test(t)) { inTune = true; cur = 1; map[i] = cur; continue; }
-        if (!inTune) { map[i] = null; continue; }
-        if (/^\s*$/.test(t)) { map[i] = null; continue; }
-        cur++; map[i] = cur;
+
+        if (Xre.test(t)) {
+          inTune = true;
+          suspended = false;  // re-enable numbering mode
+          cur = 1;
+          map[i] = cur;
+          continue;
+        }
+
+        if (!inTune) {
+          map[i] = null;
+          continue;
+        }
+
+        // blank line: suspend numbering
+        if (/^\s*$/.test(t)) {
+          suspended = true;
+          map[i] = null;
+          continue;
+        }
+
+        // non-blank but suspended? -> no numbers until next X:
+        if (suspended) {
+          map[i] = null;
+          continue;
+        }
+
+        // normal numbered line
+        cur++;
+        map[i] = cur;
       }
       return map;
     }
+
     var abcLineMap = computeAbcLineNumbers(cm.getDoc());
 
     function makeMarker(n) {
