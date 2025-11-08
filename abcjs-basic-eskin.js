@@ -4498,7 +4498,7 @@ var Parse = function Parse() {
     strTune = strTune.replace(/\r\n?/g, '\n') + '\n';
 
     // MAE 8 Nov 2025 - Allow for escaped %
-    strTune = strTune.replaceAll("\\%","％");
+    strTune = strTune.replaceAll("\\%","％ ");
 
     // get rid of latex commands. If a line starts with a backslash, then it is replaced by spaces to keep the character count the same.
     var arr = strTune.split("\n\\");
