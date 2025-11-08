@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3011_110725_0700";
+var gVersionNumber = "3012_110825_0730";
 
 var gMIDIInitStillWaiting = false;
 
@@ -589,7 +589,7 @@ function buildABCIncipitsSingleTune(abcText, measuresPerPart, options = {}) {
     // drop inline fields inside body (P:, K:, V:, etc.)
     s = s.replace(/\n(?:[A-Za-z]\s*:[^\n]*)/g, "\n");
 
-    // ignore any trailing '!' or '\' at end of lines (but don't touch mid-line decorations like !trill!)
+    // ignore any trailing '!' or '\' at end of lines (don’t touch mid-line !trill!)
     s = s.replace(/[!\\]+\s*(?=\n|$)/g, "");
 
     const measures = [];
@@ -634,14 +634,13 @@ function buildABCIncipitsSingleTune(abcText, measuresPerPart, options = {}) {
         let thisBarType = 'other';
         if (bar === "|:") thisBarType = 'start_repeat';
         else if (bar === ":|") thisBarType = 'end_repeat';
-        // treat |], [|] as "double" too
+        // treat |], [|] as double bars too
         else if (bar === "||" || bar === "|||" || bar === "|]" || bar === "[|]") thisBarType = 'double';
         else if (bar === "|") thisBarType = 'single';
 
         flush(thisBarType);
 
         if (bar === "|:") {
-          // New part begins after start-repeat
           anchors.push(measures.length);
 
         } else if (bar === ":|") {
@@ -655,13 +654,11 @@ function buildABCIncipitsSingleTune(abcText, measuresPerPart, options = {}) {
             while (/[0-9]/.test(s[j] || '')) j++;
             while (isWs(s[j])) j++;
           }
-          // Only anchor if NOT a second ending
           if (!isSecondEnding) anchors.push(measures.length);
-          // Consume whatever we examined so digits/brackets never leak
           i = j - 1;
 
         } else if (thisBarType === 'double') {
-          // Double bars start a new part (dedupe later prevents :|| double-anchors)
+          // Double bars always start a new part (dedupe later prevents :|| double-anchors)
           anchors.push(measures.length);
         }
 
@@ -697,9 +694,28 @@ function buildABCIncipitsSingleTune(abcText, measuresPerPart, options = {}) {
                        .replace(/\s+\n/g, "\n")
                        .trim();
 
-  // NEW: strip any stray leading ":" or leading "|" that might survive edge cases
+  // Remove stray leading ":" or "|" that might survive edge cases
   function cleanPartStart(s) {
     return s.replace(/^\s*:+/, "").replace(/^\s*\|+/, "").trim();
+  }
+
+  // Decide whether a caret-starting snippet is an annotation (needs opening quote) or a sharped note.
+  function fixLeadingCaretAnnotation(s) {
+    const trimmed = s.replace(/^\s+/, "");
+    if (!trimmed.startsWith("^")) return s;       // nothing to do
+    if (/^\s*"/.test(s)) return s;                // already quoted
+
+    // Examine what follows the caret
+    const after = trimmed.slice(1);
+
+    // If it matches a *note* start (^[A-Ga-g][,']*(len)? then optional tie/boundary), do NOT quote.
+    // - length: digits and optional slash, e.g., 2 or 3/ or 3/2
+    // - boundary: space, bar, close bracket/paren, end, or tie '-'
+    const noteLike = /^[A-Ga-g][,']*(?:\d+(?:\/\d*)?)?(?=$|[\s\|\]\)-]|-)/.test(after);
+    if (noteLike) return s; // sharped note, not an annotation
+
+    // Otherwise, treat it as an annotation that lost its opening quote
+    return '"' + s;
   }
 
   // ---------- main ----------
@@ -730,7 +746,8 @@ function buildABCIncipitsSingleTune(abcText, measuresPerPart, options = {}) {
 
     let snippet = buildPart(measures, start, N);
     snippet = neat(snippet);
-    snippet = cleanPartStart(snippet); // <<< NEW: remove leading ":" or "|" if present
+    snippet = cleanPartStart(snippet);
+    snippet = fixLeadingCaretAnnotation(snippet); // refined: only quote caret if not a sharped note
     if (!snippet) continue;
 
     const label = indexToLetters(p) + " Part"; // A, B, C...
@@ -757,8 +774,6 @@ function buildABCIncipitsSingleTune(abcText, measuresPerPart, options = {}) {
     return out;
   }
 }
-
-
 
 //
 // Make sure the More Tools dialog isn't scrolled out of view
