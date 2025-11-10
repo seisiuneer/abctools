@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3014_110825_1530";
+var gVersionNumber = "3015_111025_1000";
 
 var gMIDIInitStillWaiting = false;
 
@@ -494,6 +494,9 @@ var gSyntaxDarkMode = false;
 
 // Syntax highlighting margin in lines
 var gSyntaxViewportMargin = 20;
+
+// Always flatten playbackparts
+var gAlwaysFlattenParts = false;
 
 // Global reference to the ABC editor
 var gTheABC = document.getElementById("abc");
@@ -37089,16 +37092,27 @@ function PreProcessPlayABC(theTune) {
     theTune = removeFirstTitleLine(theTune);
   }
 
-  searchRegExp = /^%play_flatten_parts.*$/gm
+  // Always flatten parts?
+  if (gAlwaysFlattenParts){
 
-  var flattenPartsRequested = searchRegExp.test(theTune);
-
-  if (flattenPartsRequested) {
-    // console.log("Before:");
-    // console.log(theTune);
     theTune = flattenABCParts(theTune);
-    // console.log("After:");
-    // console.log(theTune);
+
+  }
+  else{
+
+    // No, see if play flattening enabled for this specific tune
+
+    searchRegExp = /^%play_flatten_parts.*$/gm
+
+    var flattenPartsRequested = searchRegExp.test(theTune);
+
+    if (flattenPartsRequested) {
+      // console.log("Before:");
+      // console.log(theTune);
+      theTune = flattenABCParts(theTune);
+      // console.log("After:");
+      // console.log(theTune);
+    }
   }
 
   // Allow lowercase chords?
@@ -45451,6 +45465,12 @@ function GetInitialConfigurationSettings() {
     gSyntaxDarkMode = (val == "true");
   }
 
+  gAlwaysFlattenParts = false;
+  val = localStorage.AlwaysFlattenParts
+  if (val) {
+    gAlwaysFlattenParts = (val == "true");
+  }
+
   // Apply custom theme
   ensureInitialAbcThemeApplied();
 
@@ -45761,6 +45781,9 @@ function SaveConfigurationSettings() {
     // Syntax highlighting
     localStorage.EnableSyntax3 = gEnableSyntax;
     localStorage.SyntaxDarkMode = gSyntaxDarkMode;
+
+    // Always flatten parts
+    localStorage.AlwaysFlattenParts = gAlwaysFlattenParts;
 
   }
 }
@@ -49758,7 +49781,8 @@ function ConfigurePlayerSettings(player_callback) {
     configure_metronome_low_sound: gMetronomeLowSound,
     configure_metronome_high_volume: gMetronomeHighVolume,
     configure_metronome_low_volume: gMetronomeLowVolume,
-    configure_wide_playback_cursor: gUseWidePlayCursor
+    configure_wide_playback_cursor: gUseWidePlayCursor,
+    configure_always_flatten_parts: gAlwaysFlattenParts
   };
 
   const sound_font_options = [{
@@ -50015,7 +50039,12 @@ function ConfigurePlayerSettings(player_callback) {
     id: "configure_wide_playback_cursor",
     type: "checkbox",
     cssClass: "configure_settings_form_text_checkbox_fs"
-  }, ]);
+  }, {
+    name: "            Always flatten playback parts when P:AABBCC style parts order is specified in a tune",
+    id: "configure_always_flatten_parts",
+    type: "checkbox",
+    cssClass: "configure_settings_form_text_checkbox_fs"
+  }]);
 
   form = form.concat([{html: '<p style="text-align:center;margin-top:24px"><label class="btn btn-subdialog loadinstrumentbutton" for="loadinstrumentbutton" title="Load one or more Custom Instruments">Load Custom Instruments <input type="file" id="loadinstrumentbutton" accept=".zip" multiple hidden/></label><input id="configurecustominstruments" class="advancedcontrols btn btn-subdialog" onclick="manageCustomInstrumentSlots()" type="button" value="Configure Custom Instruments" title="Brings up the Assign Files to Custom Instruments dialog"><input id="launchcustominstrumentbuilder" class="advancedcontrols btn btn-subdialog" onclick="launchCustomInstrumentBuilder()" type="button" value="Launch Custom Instrument Builder" title="Launches the Custom Instrument Builder utility in a new browser tab"></p>'}]);
 
@@ -50039,6 +50068,9 @@ function ConfigurePlayerSettings(player_callback) {
 
       // Do rescale from player
       if (player_callback) {
+
+        // Always flatten parts
+        gAlwaysFlattenParts = args.result.configure_always_flatten_parts;
 
         // Sanity check the player scaling
         gPlayerScaling = args.result.configure_player_scaling;
