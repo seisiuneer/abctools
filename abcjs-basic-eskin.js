@@ -4643,6 +4643,7 @@ var bookParser = function bookParser(book) {
     const patterns = [
       /^%%\S+font.*$/,
       /^%%\S+margin.*$/,
+      /^%%staffsep.*$/,      
       /^%%staffwidth.*$/,
       /^%%stretchlast.*$/,
       /^%%leftmargin.*$/,

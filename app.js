@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3015_111025_1000";
+var gVersionNumber = "3016_111125_1300";
 
 var gMIDIInitStillWaiting = false;
 
@@ -776,6 +776,11 @@ function buildABCIncipitsSingleTune(abcText, measuresPerPart, options = {}) {
     while (n > 0) { const r = (n - 1) % 26; out = String.fromCharCode(65 + r) + out; n = Math.floor((n - 1) / 26); }
     return out;
   }
+}
+
+// Is there a %%staffsep annotation at the start of any line in some text?
+function hasStaffSep(text) {
+  return text.split(/\r?\n/).some(line => line.trim().toLowerCase().startsWith('%%staffsep'));
 }
 
 //
@@ -14538,7 +14543,11 @@ function Render(renderAll, tuneNumber) {
 
     // Generate the rendering divs
     // Only required if rendering all the tunes, otherwise will re-use an existing div
+
+    var theFileHeader = GetABCFileHeader();
+
     if (renderAll) {
+
       if (gIsQuickEditor) {
 
         //console.log("Quick editor renderAll true");
@@ -14546,7 +14555,7 @@ function Render(renderAll, tuneNumber) {
 
         if (!gRawMode) {
           // Just get the ABC for the current tune
-          theNotes = GetABCFileHeader() + getTuneByIndex(tuneNumber);
+          theNotes = theFileHeader + getTuneByIndex(tuneNumber);
         } else {
           // Need the entire ABC for highlighting
           theNotes = getABCEditorText();
@@ -14563,7 +14572,7 @@ function Render(renderAll, tuneNumber) {
 
         if (!gRawMode) {
           // Just get the ABC for the current tune
-          theNotes = GetABCFileHeader() + getTuneByIndex(gCurrentTune);
+          theNotes = theFileHeader + getTuneByIndex(gCurrentTune);
         } else {
           // Need the entire ABC for highlighting
           theNotes = getABCEditorText();
@@ -14572,7 +14581,7 @@ function Render(renderAll, tuneNumber) {
       } else {
 
         // Just get the ABC for the current tune
-        theNotes = GetABCFileHeader() + getTuneByIndex(tuneNumber);
+        theNotes = theFileHeader + getTuneByIndex(tuneNumber);
 
       }
     }
@@ -14613,10 +14622,14 @@ function Render(renderAll, tuneNumber) {
 
       theNotes = processAllStripping(theNotes);
 
-      // Inject %%staffsep 
-      var searchRegExp = /^X:.*$/gm
+      if (!hasStaffSep(theFileHeader)){
 
-      theNotes = theNotes.replace(searchRegExp, "X:1\n%%staffsep " + gStaffSpacing);
+        // Inject %%staffsep 
+        var searchRegExp = /^X:.*$/gm
+
+        theNotes = theNotes.replace(searchRegExp, "X:1\n%%staffsep " + gStaffSpacing);
+
+      }
 
     }
 
@@ -22336,6 +22349,7 @@ function GetABCFileHeader() {
   const patterns = [
     /^%%\S+font.*$/,
     /^%%\S+margin.*$/,
+    /^%%staffsep.*$/,      
     /^%%staffwidth.*$/,
     /^%%stretchlast.*$/,
     /^%%leftmargin.*$/,
@@ -23962,6 +23976,8 @@ function NotationSpacingExplorer() {
   var windowWidth = window.innerWidth;
   var theWidth;
 
+  var theFileHeader = GetABCFileHeader();
+
   if (isDesktopBrowser()) {
     if (giPadTwoColumn) {
       if (isLandscapeOrientation()) {
@@ -23982,7 +23998,12 @@ function NotationSpacingExplorer() {
   // Make initial spacing identical to standard viewer
   // Inject %%staffsep
   var searchRegExp = /^X:.*$/gm;
-  theABC = theABC.replace(searchRegExp, "X:1\n%%staffsep " + gStaffSpacing);
+
+  if (!hasStaffSep(theFileHeader)){
+
+    theABC = theABC.replace(searchRegExp, "X:1\n%%staffsep " + gStaffSpacing);
+
+  }
 
   var originalABC = theABC;
 
@@ -24094,7 +24115,7 @@ function NotationSpacingExplorer() {
 
     // Strip titlespace
     theABC = theABC.replace(/%%titlespace\s.*\r?\n/g, '');
-    theABC = GetABCFileHeader() + theABC;
+    theABC = theFileHeader + theABC;
 
     var visualObj = ABCJS.renderAbc("notationspacingexplorer-paper", theABC, abcOptions)[0];
 
@@ -24108,7 +24129,7 @@ function NotationSpacingExplorer() {
 
   // Initial render
   theABC = theABC.replace(/%%titlespace\s.*\r?\n/g, '');
-  theABC = GetABCFileHeader() + theABC;
+  theABC = theFileHeader + theABC;
 
   var visualObj = ABCJS.renderAbc("notationspacingexplorer-paper", theABC, abcOptions)[0];
   postProcessTab([visualObj], "notationspacingexplorer-paper", instrument, true);
@@ -54341,10 +54362,15 @@ function inlinePlayback() {
 
       theABC = processAllStripping(theABC);
 
-      // Inject %%staffsep 
-      var searchRegExp = /^X:.*$/gm
+      var theFileHeader = GetABCFileHeader();
 
-      theABC = theABC.replace(searchRegExp, "X:1\n%%staffsep " + gStaffSpacing);
+      if (!hasStaffSep(theFileHeader)){
+
+        // Inject %%staffsep 
+        var searchRegExp = /^X:.*$/gm
+
+        theABC = theABC.replace(searchRegExp, "X:1\n%%staffsep " + gStaffSpacing);
+      }
 
     }
 

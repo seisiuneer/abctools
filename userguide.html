@@ -4355,7 +4355,7 @@
                 <p>This value is used in the layout of multiple tunes per page.</p>
                 <p>For the most compact PDF layout possible to maximize the number of tunes per page when generating a PDF, set the value to zero:</p>
                 <p class="code">%pdf_between_tune_space 0</p>
-                <p>The Staff spacing value in the ABC Transcription Tools Settings dialog can be easily overridden by setting a %%staffsep value in the ABC just below the tune header.</p>
+                <p>The Staff spacing value in the ABC Transcription Tools Settings dialog can be easily overridden by setting a %%staffsep value in the ABC just below the tune header or having a %%staffsep value in the ABC file header before the tunes.</p>
                 <p>This can be very useful particularly for getting as much tab notation on a single page as possible.</p>
                 <p>Any spacing overrides must be applied on a tune-by-tune basis.</p>
                 <p>For the absolute minimum spacing between staffs, turn off the tab names, hide the tune annotations, and add the following just below the tune header:</p>
@@ -4528,6 +4528,7 @@
                     %allow_lowercase_chords<br/>
                     %<br/>
                     % These directives can be added to each tune or added to the ABC file header:<br/>
+                    %%staffsep 40<br/>
                     %%visualtranspose 2<br/>
                     %%maxstaves 1<br/>
                     %%leftmargin 200<br/>
