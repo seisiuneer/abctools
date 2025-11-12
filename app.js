@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3016_111125_1300";
+var gVersionNumber = "3017_111225_0800";
 
 var gMIDIInitStillWaiting = false;
 
@@ -50090,9 +50090,6 @@ function ConfigurePlayerSettings(player_callback) {
       // Do rescale from player
       if (player_callback) {
 
-        // Always flatten parts
-        gAlwaysFlattenParts = args.result.configure_always_flatten_parts;
-
         // Sanity check the player scaling
         gPlayerScaling = args.result.configure_player_scaling;
 
@@ -50117,6 +50114,9 @@ function ConfigurePlayerSettings(player_callback) {
           gPlayerScaling = 100;
         }
       }
+
+      // Always flatten parts?
+      gAlwaysFlattenParts = args.result.configure_always_flatten_parts;
 
       gDefaultSoundFont = args.result.configure_soundfont;
 
