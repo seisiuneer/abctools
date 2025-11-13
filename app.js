@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3017_111225_0800";
+var gVersionNumber = "3018_111325_1030";
 
 var gMIDIInitStillWaiting = false;
 
@@ -53847,6 +53847,15 @@ function CleanSmartQuotes(val) {
   val = val.replaceAll('‘', "'");
   val = val.replaceAll('’', "'");
 
+  // Double prime
+  val = val.replaceAll('″', '"');
+
+  // Single prime
+  val = val.replaceAll('′', "'");
+
+  // Emoticons
+  val = val.replaceAll('😐', ':|');
+
   // Also clear the diagnostics area
   elem = document.getElementById("diagnostics");
   elem.innerHTML = "";
@@ -55687,34 +55696,45 @@ function SR_highlightMatch(index) {
   if (gSR_matchIndexes.length === 0 || searchValue === '') return;
 
   if (gEnableSyntax){
-    gTheCM.focus();
+   	gTheCM.focus();
 
     if (!isRegex) {
       //console.log("Not regex, setting selection to: "+gSR_matchIndexes[index].offset+" to "+(gSR_matchIndexes[index].offset + searchValue.length));
       gTheCM.setSelectionRange(gSR_matchIndexes[index].offset, gSR_matchIndexes[index].offset + searchValue.length);
-      ScrollABCTextIntoView(gTheCM, gSR_matchIndexes[index].offset, gSR_matchIndexes[index].offset + searchValue.length, 2);
+      if (isPureDesktopBrowser()){
+      	ScrollABCTextIntoView(gTheCM, gSR_matchIndexes[index].offset, gSR_matchIndexes[index].offset + searchValue.length, 2);
+      }
     } else {
       //console.log("Is regex, setting selection to: "+gSR_matchIndexes[index].offset+" to "+(gSR_matchIndexes[index].offset + gSR_matchIndexes[index].length));
       gTheCM.setSelectionRange(gSR_matchIndexes[index].offset, gSR_matchIndexes[index].offset + gSR_matchIndexes[index].length);
-      ScrollABCTextIntoView(gTheCM, gSR_matchIndexes[index].offset, gSR_matchIndexes[index].offset + gSR_matchIndexes[index].length, 2);
+      if (isPureDesktopBrowser()){
+      	ScrollABCTextIntoView(gTheCM, gSR_matchIndexes[index].offset, gSR_matchIndexes[index].offset + gSR_matchIndexes[index].length, 2);
+      }
     }
   }
   else{
-    gTheABC.focus();
+
+   	gTheABC.focus();
 
     if (!isRegex) {
       //console.log("Not regex, setting selection to: "+gSR_matchIndexes[index].offset+" to "+(gSR_matchIndexes[index].offset + searchValue.length));
       gTheABC.setSelectionRange(gSR_matchIndexes[index].offset, gSR_matchIndexes[index].offset + searchValue.length);
-      ScrollABCTextIntoView(gTheABC, gSR_matchIndexes[index].offset, gSR_matchIndexes[index].offset + searchValue.length, 2);
+      if (isPureDesktopBrowser()){
+      	ScrollABCTextIntoView(gTheABC, gSR_matchIndexes[index].offset, gSR_matchIndexes[index].offset + searchValue.length, 2);
+      }
     } else {
       //console.log("Is regex, setting selection to: "+gSR_matchIndexes[index].offset+" to "+(gSR_matchIndexes[index].offset + gSR_matchIndexes[index].length));
       gTheABC.setSelectionRange(gSR_matchIndexes[index].offset, gSR_matchIndexes[index].offset + gSR_matchIndexes[index].length);
-      ScrollABCTextIntoView(gTheABC, gSR_matchIndexes[index].offset, gSR_matchIndexes[index].offset + gSR_matchIndexes[index].length, 2);
+      if (isPureDesktopBrowser()){
+      	ScrollABCTextIntoView(gTheABC, gSR_matchIndexes[index].offset, gSR_matchIndexes[index].offset + gSR_matchIndexes[index].length, 2);
+      }
     }    
   }
 
   // Scroll the tune into view
-  MakeTuneVisible(true);
+  if (isPureDesktopBrowser()){
+  	MakeTuneVisible(true);
+  }
 
 }
 
@@ -56106,11 +56126,21 @@ function FindAndReplace() {
 
   var modal_msg = '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:15px;margin-bottom:12px;">Find and Replace&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#moretoolsdropdown" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>';
 
-  modal_msg += '<p style="font-size:12pt;line-height:24pt;margin-top:0px;">Find:<br/><textarea style="width:625px;padding:6px;" id="searchText" title="Enter text to find here" autocomplete="off" autocorrect="off" spellcheck="false" autocapitalize="none" placeholder="Text to find..." rows="7"></textarea></p>';
+  if (isPureDesktopBrowser()){
+    modal_msg += '<p style="font-size:12pt;line-height:24pt;margin-top:0px;">Find:<br/><textarea style="width:625px;padding:6px;" id="searchText" title="Enter text to find here" autocomplete="off" autocorrect="off" spellcheck="false" autocapitalize="none" placeholder="Text to find..." rows="7"></textarea></p>';
+  }
+  else{
+    modal_msg += '<p style="font-size:12pt;line-height:24pt;margin-top:0px;">Find:<br/><textarea style="width:625px;padding:6px;" id="searchText" title="Enter text to find here" autocomplete="off" autocorrect="off" spellcheck="false" autocapitalize="none" placeholder="Text to find..." rows="4"></textarea></p>';    
+  }
 
   modal_msg += '<p style="font-size:12pt;line-height:12pt;margin-top:0px;">Case sensitive?&nbsp;<input id="searchCaseSensitive" type="checkbox" style="margin-top:-5px;margin-bottom:0px;" onchange="SR_findMatches();" checked/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Match using regular expression?&nbsp;<input id="searchRegex" type="checkbox" style="margin-top:-5px;margin-bottom:0px;" onchange="SR_findMatches();"/></p>';
 
-  modal_msg += '<p style="font-size:12pt;line-height:24pt;margin-top:0px;">Replace with:<br/><textarea style="width:625px;padding:6px;" id="replacementText" title="Enter replacement text here" autocomplete="off" autocorrect="off" spellcheck="false" autocapitalize="none" placeholder="Replace with..." rows="7"></textarea></p>';
+  if (isPureDesktopBrowser()){
+    modal_msg += '<p style="font-size:12pt;line-height:24pt;margin-top:0px;">Replace with:<br/><textarea style="width:625px;padding:6px;" id="replacementText" title="Enter replacement text here" autocomplete="off" autocorrect="off" spellcheck="false" autocapitalize="none" placeholder="Replace with..." rows="7"></textarea></p>';
+  }
+  else{
+    modal_msg += '<p style="font-size:12pt;line-height:24pt;margin-top:0px;">Replace with:<br/><textarea style="width:625px;padding:6px;" id="replacementText" title="Enter replacement text here" autocomplete="off" autocorrect="off" spellcheck="false" autocapitalize="none" placeholder="Replace with..." rows="5"></textarea></p>';
+  }
 
   modal_msg += '<p style="font-size:12pt;text-align:center;margin-top:24px;"><input class="btn btn-search-previous search-previous" id="search-previous" onclick="SR_search_previous();" type="button" value="Find Previous" title="Find previous match"/><input class="btn btn-search-next search-next" id="search-next" onclick="SR_search_next();" type="button" value="Find Next" title="Find next match"/><input class="btn btn-search-replace search-replace" id="search-replace" onclick="SR_replaceOne();" type="button" value="Replace" title="Replace one text instance"/><input class="btn btn-search-replace-all search-replace-all" id="search-replace-all" onclick="SR_replaceAll();" type="button" value="Replace All" title="Replace all text instances"/><input type="file" id="load_find_replace_fs" accept=".txt,.TXT" hidden/><input class="btn btn-search-load search-load" id="search-load" onclick="SR_TriggerLoad();" type="button" value="Load" title="Load Find and Replace settings"/><input class="btn btn-search-save search-save" id="search-save" onclick="SR_save();" type="button" value="Save" title="Save Find and Replace settings"/></p>';
 
@@ -56118,8 +56148,18 @@ function FindAndReplace() {
     theme: "modal_flat",
     top: 25,
     width: 700,
-    scrollWithPage: (AllowDialogsToScroll())
-  }).then(function() {});
+    scrollWithPage: (isPureDesktopBrowser())
+  }).then(function() {
+  	if (!isPureDesktopBrowser()){
+  		if (gEnableSyntax){
+   			gTheCM.focus();
+   		}
+   		else{
+   			gTheABC.focus();
+   		}
+  	}
+
+  });
 
   //
   // Setup the file import control
@@ -57592,7 +57632,14 @@ function SetupContextMenu(showUpdateItem) {
         items.unshift(theFindItem);
 
       } else {
-        items = [{
+        items = [
+        {
+          name: 'Find and Replace',
+          fn: function(target) {
+            FindAndReplace();
+          }
+        },{},
+        {
           name: 'Jump to Tune',
           fn: function(target) {
             JumpToTune();
@@ -57910,7 +57957,13 @@ function SetupContextMenu(showUpdateItem) {
 
       } else {
 
-        items = [{
+        items = [
+        {
+          name: 'Find and Replace',
+          fn: function(target) {
+            FindAndReplace();
+          }
+        },{},{
           name: 'Jump to Tune',
           fn: function(target) {
             JumpToTune();
@@ -58031,7 +58084,13 @@ function SetupContextMenu(showUpdateItem) {
   } else {
     if (gIsQuickEditor) {
 
-      items = [{
+      items = [
+      {
+          name: 'Find and Replace',
+          fn: function(target) {
+            FindAndReplace();
+          }
+        },{},{
         name: 'Jump to Tune',
         fn: function(target) {
           JumpToTune();
@@ -58149,7 +58208,14 @@ function SetupContextMenu(showUpdateItem) {
       }
     } else {
 
-      items = [{
+      items = [
+      {
+        name: 'Find and Replace',
+          fn: function(target) {
+            FindAndReplace();
+          }
+        },{},
+      {
         name: 'Jump to Tune',
         fn: function(target) {
           JumpToTune();
