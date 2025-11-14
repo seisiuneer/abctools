@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3019_111425_0730";
+var gVersionNumber = "3020_111425_1200";
 
 var gMIDIInitStillWaiting = false;
 
@@ -50905,6 +50905,9 @@ function ConfigureToolSettings() {
         var thePrompt;
 
         if (gEnableSyntax){
+
+          sendGoogleAnalytics("action", "EnableSyntax");
+
           if (isPureDesktopBrowser() || gIsAndroid){
             thePrompt = "<br/>The tool will now restart with ABC syntax highlighting enabled.<br/><br/><strong>Note for Android users:</strong><br/><br/>While the tool is usable, there may be<br/>issues with text selection context menus.<br/>";
           }
@@ -50913,6 +50916,8 @@ function ConfigureToolSettings() {
           }
         }
         else{
+          sendGoogleAnalytics("action", "DisableSyntax");
+          
           thePrompt = "<br/>The tool will now restart with ABC syntax highlighting disabled.<br/>";            
         }
 
