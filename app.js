@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3018_111325_1030";
+var gVersionNumber = "3019_111425_0730";
 
 var gMIDIInitStillWaiting = false;
 
@@ -53855,6 +53855,15 @@ function CleanSmartQuotes(val) {
 
   // Emoticons
   val = val.replaceAll('😐', ':|');
+
+  // Ellipsis
+  val = val.replaceAll("…","...");
+
+  // En dash 
+  val = val.replaceAll("–","-");
+
+  // Em dash 
+  val = val.replaceAll("—","-");
 
   // Also clear the diagnostics area
   elem = document.getElementById("diagnostics");
