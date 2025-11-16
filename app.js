@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3021_111525_1600";
+var gVersionNumber = "3022_111625_0630";
 
 var gMIDIInitStillWaiting = false;
 
@@ -51558,6 +51558,35 @@ function importMusicXML(theXML, fileName) {
 //
 
 //
+// Check for an MusicXML file with a missing XML header
+function checkForMissingXMLHeader(input){
+
+  //console.log("checkForMissingXMLHeader");
+
+  // Match only if the string begins with: <score-partwise version="X.Y">
+  const re = /^<score-partwise\s+version="([^"]+)">/;
+
+  const m = input.match(re);
+  if (!m) {
+    // No match → return unchanged
+    //console.log("Returning unchanged");
+    return input;
+  }
+
+  const version = m[1]; // Extracted version number
+
+  const header =
+    `<?xml version="1.0" encoding="UTF-8"?>\n` +
+    `<!DOCTYPE score-partwise PUBLIC "-//Recordare//DTD MusicXML ${version} Partwise//EN" ` +
+    `"http://www.musicxml.org/dtds/partwise.dtd">\n`;
+  
+  //console.log("Returning with appended XML header");
+
+  return header + input;
+
+}
+
+//
 // Shared functionality for all file reads
 //
 function DoReadCommon(theText, callback) {
@@ -51935,6 +51964,10 @@ function DoFileRead(file, callback) {
     reader.addEventListener('load', (event) => {
 
       var theText = event.target.result;
+
+      // MAE 16 Nov 2025
+      // Check for MusicXML missing an XML header
+      theText = checkForMissingXMLHeader(theText);
 
       // Check for MusicXML format
       if (isXML(theText)) {
