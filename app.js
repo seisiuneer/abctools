@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3020_111425_1200";
+var gVersionNumber = "3021_111525_1600";
 
 var gMIDIInitStillWaiting = false;
 
@@ -4729,6 +4729,10 @@ var PAGEHEIGHTA4 = 842;
 var PAGEHEIGHTLETTER_LANDSCAPE = 580;
 var PAGEHEIGHTA4_LANDSCAPE = 565;
 var BETWEENTUNESPACE = 20;
+var gPDFLeftMarginOverride = 0;
+var gPDFLeftMarginOverrideRequested = false;
+var gPDFNotationWidthOverride = 0;
+var gPDFNotationWidthOverrideRequested = false;
 
 var gBetweenTuneSpace = 20; // Can be overriden with a %pdf_between_tune_space directive
 var gGotBetweenTuneSpace = false;
@@ -8191,17 +8195,26 @@ function ProcessTunesForContinuousLayout(pageBreakList, pageHeight, doIncipits) 
 
     var theRenderingDivsHeight = renderingDivs[i].height;
 
-    // Need to scale up the rendering size if landscape
+    // Need to scale up the rendering size if landscape or width overridden
 
-    if (gPDFOrientation == "landscape") {
+    if (gPDFNotationWidthOverrideRequested && (!doIncipits)){
 
-      if (gPDFPaperSize == "letter") {
+        theRenderingDivsHeight = (theRenderingDivsHeight * gPDFNotationWidthOverride) / 535;
 
-        theRenderingDivsHeight = (theRenderingDivsHeight * 718) / 535;
+    }
+    else{
 
-      } else {
+      if (gPDFOrientation == "landscape") {
 
-        theRenderingDivsHeight = (theRenderingDivsHeight * 785) / 535;
+        if (gPDFPaperSize == "letter") {
+
+          theRenderingDivsHeight = (theRenderingDivsHeight * 718) / 535;
+
+        } else {
+
+          theRenderingDivsHeight = (theRenderingDivsHeight * 785) / 535;
+
+        }
 
       }
 
@@ -9928,6 +9941,56 @@ function ParseCommentCommands(theNotes) {
 
   }
 
+  // Did they request a left margin override
+  gPDFLeftMarginOverrideRequested = false;
+
+  // Search for a tunebook PDF left margin request
+  searchRegExp = /^%pdf_left_margin.*$/m
+
+  // Detect tunebook pdf left margin annotation
+  var pdfleftmargin = theNotes.match(searchRegExp);
+
+  if ((pdfleftmargin) && (pdfleftmargin.length > 0)) {
+
+    var thepdfleftmargin = pdfleftmargin[0].replace("%pdf_left_margin", "");
+
+    thepdfleftmargin = thepdfleftmargin.trim();
+
+    var thepdfleftmarginfloat = parseFloat(thepdfleftmargin);
+
+    if (!isNaN(thepdfleftmarginfloat)) {
+
+      gPDFLeftMarginOverride = thepdfleftmarginfloat;
+      gPDFLeftMarginOverrideRequested = true;
+
+    }
+  }
+
+  // Did they request a left margin override
+  gPDFNotationWidthOverrideRequested = false;
+
+  // Search for a tunebook PDF left margin request
+  searchRegExp = /^%pdf_notation_width.*$/m
+
+  // Detect tunebook pdf left margin annotation
+  var pdfnotationwidth = theNotes.match(searchRegExp);
+
+  if ((pdfnotationwidth) && (pdfnotationwidth.length > 0)) {
+
+    var thepdfnotationwidth = pdfnotationwidth[0].replace("%pdf_notation_width", "");
+
+    thepdfnotationwidth = thepdfnotationwidth.trim();
+
+    var thepdfnotationwidthfloat = parseFloat(thepdfnotationwidth);
+
+    if (!isNaN(thepdfnotationwidthfloat)) {
+
+      gPDFNotationWidthOverride = thepdfnotationwidthfloat;
+      gPDFNotationWidthOverrideRequested = true;
+
+    }
+  }
+
 }
 
 //
@@ -10409,6 +10472,15 @@ function RenderPDFBlock(theBlock, blockIndex, doSinglePage, pageBreakList, addPa
       if (paperStyle == "a4") {
 
         hoff = PAGELEFTOFFSETA4;
+
+      }
+
+      if (!doIncipits){
+
+        // MAE 15 Nov 2025 - For left margin overide
+        if (gPDFLeftMarginOverrideRequested){
+          hoff = gPDFLeftMarginOverride;
+        }
 
       }
 
@@ -11597,6 +11669,13 @@ function ExportNotationPDF(title) {
 
   // Process comment-based PDF commands
   ParseCommentCommands(getABCEditorText());
+
+  if (!incipitsRequested){
+    // MAE 15 Nov 2025 - For width override
+    if (gPDFNotationWidthOverrideRequested){
+      gPageWidth = gPDFNotationWidthOverride;
+    }
+  }
 
   // If doing PDF per tune, need to generate a TOC to get a page map
   if (doPDFPerTune) {
@@ -61044,7 +61123,7 @@ CodeMirror.defineMode("abc-plus", function () {
       }
 
       // ===== Extended %directives =====
-      if (stream.sol() && stream.match(/^%(?:pdfquality|pdf_between_tune_space|pdfname|pdffont|addtitle|addsubtitle|urladdtitle|urladdsubtitle|titlefontsize|subtitlefontsize|titlelinespacing|subtitlelinespacing|addtoc|addsortedtoc|addlinkbacktotoc|tocheader|toctopoffset|toctitleoffset|toctitlefontsize|tocfontsize|toclinespacing|addindex|addsortedindex|addlinkbacktoindex|indexheader|indextopoffset|indextitleoffset|indextitlefontsize|indexfontsize|indexlinespacing|no_toc_or_index_links|toc_no_page_numbers|index_no_page_numbers|firstpagenumber|pagenumberhoffset|pagenumbervoffset|pageheader|pagefooter|headerfooterfontsize|headervoffset|footervoffset|urlpageheader|urlpagefooter|textincipitsfontsize|textincipitslinespacing|add_all_links_to_thesession|add_all_playback_links|add_all_playback_volumes|playback_links_are_complete_tunebook|add_all_fonts|swing_all_hornpipes|noswing_all_hornpipes|no_edit_allowed|links_open_in_editor|qrcode|caption_for_qrcode|abcjs_soundfont|soundfont|hyperlink|add_link_to_thesession|add_playback_link|swing|swing_offset|noswing|bodhran_tuning|bodhran_pitch|banjo_style|grace_duration_ms|roll_2_params|roll_3_params|use_original_abcjs_roll_solution|abcjs_release_decay_time|use_custom_gm_sounds|disable_play_highlight|play_highlight_v1_only|irish_rolls_on|irish_rolls_off|voice_tuning_cents|tab_first_voice_only|tab_first_voice_exclude|reverb|ornament_divider|ornament_offset|tremolo_divider|play_flatten_parts|allow_lowercase_chords|hide_first_title_on_play|hide_vskip_on_play|hide_information_labels|hide_rhythm_tag|hide_composer_tag|hide_part_tags|hide_player_part_tags|hide_dynamics|hide_cautionary_ks|left_justify_titles|no_title_reverser|whistle_tab_key|whistle_tab_octave|recorder_tab_key|recorder_tab_octave|enable_hyperlinks|disable_hyperlinks|play_alternate_chords|force_power_chords|custom_instrument_volume_scale|custom_instrument_[1-8]_volume_scale|custom_instrument_fade|custom_instrument_[1-8]_fade|abcjs_render_params|tocleftoffset|tocrightoffset|indexleftoffset|indexrightoffset)\b.*/i)) {
+      if (stream.sol() && stream.match(/^%(?:pdfquality|pdf_between_tune_space|pdfname|pdffont|addtitle|addsubtitle|urladdtitle|urladdsubtitle|titlefontsize|subtitlefontsize|titlelinespacing|subtitlelinespacing|addtoc|addsortedtoc|addlinkbacktotoc|tocheader|toctopoffset|toctitleoffset|toctitlefontsize|tocfontsize|toclinespacing|addindex|addsortedindex|addlinkbacktoindex|indexheader|indextopoffset|indextitleoffset|indextitlefontsize|indexfontsize|indexlinespacing|no_toc_or_index_links|toc_no_page_numbers|index_no_page_numbers|firstpagenumber|pagenumberhoffset|pagenumbervoffset|pageheader|pagefooter|headerfooterfontsize|headervoffset|footervoffset|urlpageheader|urlpagefooter|textincipitsfontsize|textincipitslinespacing|add_all_links_to_thesession|add_all_playback_links|add_all_playback_volumes|playback_links_are_complete_tunebook|add_all_fonts|swing_all_hornpipes|noswing_all_hornpipes|no_edit_allowed|links_open_in_editor|qrcode|caption_for_qrcode|abcjs_soundfont|soundfont|hyperlink|add_link_to_thesession|add_playback_link|swing|swing_offset|noswing|bodhran_tuning|bodhran_pitch|banjo_style|grace_duration_ms|roll_2_params|roll_3_params|use_original_abcjs_roll_solution|abcjs_release_decay_time|use_custom_gm_sounds|disable_play_highlight|play_highlight_v1_only|irish_rolls_on|irish_rolls_off|voice_tuning_cents|tab_first_voice_only|tab_first_voice_exclude|reverb|ornament_divider|ornament_offset|tremolo_divider|play_flatten_parts|allow_lowercase_chords|hide_first_title_on_play|hide_vskip_on_play|hide_information_labels|hide_rhythm_tag|hide_composer_tag|hide_part_tags|hide_player_part_tags|hide_dynamics|hide_cautionary_ks|left_justify_titles|no_title_reverser|whistle_tab_key|whistle_tab_octave|recorder_tab_key|recorder_tab_octave|enable_hyperlinks|disable_hyperlinks|play_alternate_chords|force_power_chords|custom_instrument_volume_scale|custom_instrument_[1-8]_volume_scale|custom_instrument_fade|custom_instrument_[1-8]_fade|abcjs_render_params|tocleftoffset|tocrightoffset|indexleftoffset|indexrightoffset|pdf_notation_width|pdf_left_margin)\b.*/i)) {
         return "abc-extended-directive";
       }
 

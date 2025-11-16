@@ -603,7 +603,8 @@
             <details>
             <summary><h3>PDF Tunebook Advanced Formatting</h3></summary>
             <a style="text-decoration:none;" href="#pdf_tunebook_spacing_overrides">PDF Tunebook Tune Size and Layout Spacing Overrides</a>
-            <a style="text-decoration:none;" href="#table_of_contents_and_index_font_size_and_spacing_overrides">Table of Contents and Index Font Size and Spacing Overrides</a>
+            <a style="text-decoration:none;" href="#pdf_margin_width_overrides">PDF Notation Width and Left Margin Overrides</a>
+            <a style="text-decoration:none;" href="#header_footer_pagenumber_hvoffsets">Setting Page Header, Page Footer, and Page Number Horizontal and Vertical Offsets</a>       
             <a style="text-decoration:none;" href="#first_page_number">Setting the First Page Number for Tune Pages</a>
             <a style="text-decoration:none;" href="#header_footer_fontsize">Setting Header and Footer Font Size</a>
             <a style="text-decoration:none;" href="#header_footer_pagenumber_hvoffsets">Setting Page Header, Page Footer, and Page Number Horizontal and Vertical Offsets</a>            
@@ -1107,6 +1108,7 @@
                         <p class="toc"><a style="text-decoration:none;" href="#table_of_contents_and_index_font_size_and_spacing_overrides">Table of Contents and Index Font Size and Spacing Overrides</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#first_page_number">Setting the First Page Number for Tune Pages</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#pdf_tunebook_spacing_overrides">PDF Tunebook Tune Size and Layout Spacing Overrides</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#pdf_margin_width_overrides">PDF Notation Width and Left Margin Overrides</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#header_footer_fontsize">Setting Header and Footer Font Size</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#header_footer_pagenumber_hvoffsets">Setting Page Header, Page Footer, and Page Number Horizontal and Vertical Offsets</a></p>            
                         <p class="toc"><a style="text-decoration:none;" href="#pdf_forcename">Forcing a Specific Filename for PDF Export</a></p>
@@ -4380,6 +4382,69 @@
                 <p>Please refer to the <a href="http://abcnotation.com/wiki/abc:standard:v2.1" target="_blank">official ABC 2.1 specification</a> for more details.</p>
                 <p>Another good reference is this handy ABC 2.1 Quick Reference Card put together by Stephen Merrony: </p>
                 <p style="text-align: center;"><a href="ABCquickRefv0_6.pdf" target="_blank">ABC Quick Reference Card</a></p>
+                <hr class="hidden-print" id="pdf_margin_width_overrides">
+                <h1 class="page_break_always">PDF Notation Width and Left Margin Overrides<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+                <p>When exporting either one tune-per-page or multiple tunes-per-page, by default the tool will use the following left margin and notation width (in 1/72&quot;) for the two available paper sizes:</p>
+                <table style="border-collapse: collapse; margin: 12px 0; font-size: 0.95em;">
+                  <thead>
+                    <tr>
+                      <th style="border: 1px solid #ccc; padding: 6px 10px; text-align: center; background-color: #f0f0f0;">Paper Size</th>
+                      <th style="border: 1px solid #ccc; padding: 6px 10px; text-align: center; background-color: #f0f0f0;">Orientation</th>
+                      <th style="border: 1px solid #ccc; padding: 6px 10px; text-align: center; background-color: #f0f0f0;">Full Page Width (1/72&quot;)</th>
+                      <th style="border: 1px solid #ccc; padding: 6px 10px; text-align: center; background-color: #f0f0f0;">Default Notation Width (1/72&quot;)</th>
+                      <th style="border: 1px solid #ccc; padding: 6px 10px; text-align: center; background-color: #f0f0f0;">Default Left Margin (1/72&quot;)</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td style="border: 1px solid #ccc; padding: 6px 10px;">Letter</td>
+                      <td style="border: 1px solid #ccc; padding: 6px 10px;">Portrait</td>
+                      <td style="border: 1px solid #ccc; padding: 6px 10px; text-align: center;">612</td>
+                      <td style="border: 1px solid #ccc; padding: 6px 10px; text-align: center;">535</td>
+                      <td style="border: 1px solid #ccc; padding: 6px 10px; text-align: center;">37</td>
+                    </tr>
+                    <tr>
+                      <td style="border: 1px solid #ccc; padding: 6px 10px;">Letter</td>
+                      <td style="border: 1px solid #ccc; padding: 6px 10px;">Landscape</td>
+                      <td style="border: 1px solid #ccc; padding: 6px 10px; text-align: center;">792</td>
+                      <td style="border: 1px solid #ccc; padding: 6px 10px; text-align: center;">718</td>
+                      <td style="border: 1px solid #ccc; padding: 6px 10px; text-align: center;">37</td>
+                    </tr>
+                    <tr>
+                      <td style="border: 1px solid #ccc; padding: 6px 10px;">A4</td>
+                      <td style="border: 1px solid #ccc; padding: 6px 10px;">Portrait</td>
+                      <td style="border: 1px solid #ccc; padding: 6px 10px; text-align: center;">595</td>                      
+                      <td style="border: 1px solid #ccc; padding: 6px 10px; text-align: center;">535</td>
+                      <td style="border: 1px solid #ccc; padding: 6px 10px; text-align: center;">29</td>
+                    </tr>
+                    <tr>
+                      <td style="border: 1px solid #ccc; padding: 6px 10px;">A4</td>
+                      <td style="border: 1px solid #ccc; padding: 6px 10px;">Landscape</td>
+                      <td style="border: 1px solid #ccc; padding: 6px 10px; text-align: center;">842</td>
+                      <td style="border: 1px solid #ccc; padding: 6px 10px; text-align: center;">785</td>
+                      <td style="border: 1px solid #ccc; padding: 6px 10px; text-align: center;">29</td>
+                    </tr>
+                  </tbody>
+                </table>
+                <p>If you wish to override the default left margin or the page width values, you can include the following comment-based annotations anywhere in the ABC:</p>
+                <p class="code">%<br/>
+                    % Example #1:<br/>
+                    %<br/>
+                    % For letter paper size, portrait orientation, set the notation width to 8.5" in 1/72" increments<br/>
+                    %pdf_notation_width 612<br/>
+                    %<br/>
+                    % Set the left margin size to zero<br/>
+                    %pdf_left_margin 0<br/>
+                    %</p>
+                <p class="code">%<br/>
+                    % Example #2:<br/>
+                    %<br/>
+                    % For letter paper size, portrait orientation, set the notation width to 4" in 1/72" increments<br/>
+                    %pdf_notation_width 288<br/>
+                    %<br/>
+                    % Set the left margin size to center 4" wide notation on an 8.5" wide page<br/>
+                    %pdf_left_margin 162<br/>
+                    %</p>
                 <hr class="hidden-print" id="table_of_contents_and_index_font_size_and_spacing_overrides">
                 <h1 class="page_break_always">Table of Contents and Index Font Size and Spacing Overrides<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <p>You may override various spacing offsets and font sizes for the Table of Contents and Index by adding the following comment-based annotations anywhere in your ABC:</p>
@@ -4439,6 +4504,8 @@
                     %pdf_between_tune_space 20<br/>
                     %pdfname your_pdf_filename<br/>
                     %pdffont fontname style<br/>
+                    %pdf_left_margin 0<br/>
+                    %pdf_notation_width 612<br/>
                     %addtitle Title Page Title<br/>
                     %addsubtitle Title Page Subtitle<br/>
                     %urladdtitle https://michaeleskin.com Title Page Title as Hyperlink<br/>
