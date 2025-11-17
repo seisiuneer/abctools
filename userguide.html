@@ -4100,6 +4100,13 @@
                     %indexfontsize 18<br/>
                 %indexlinespacing 20</p>
                 <p>Adding a table of contents or index also adds bookmarks for the tunes to the PDF file.</p>
+                <p></p>
+                <p>By default, if << and >> TOC and Index hyperlinks are included on the left or right side of the pages using %addlinkbacktotoc and/or %addlinkbacktoindex, they are drawn centered vertically in the left and right margins.</p>
+                <p>To change the vertical position of the markers in the margins, you may include the following annotation anywhere in the ABC:</p>
+                <p class="code">%toc_index_backlink_vpos (vertical position percentage down the page from 0-100)</p>
+                <p>For example, to position the << and >> markers 90% down the page:</p>
+                <p class="code">%toc_index_backlink_vpos 90</p>
+                <p>This can be useful for repositioning the hyperlinks when setting a wide notation width using %pdf_notation_width to avoid having the hyperlinks overlay the notation.</p>
                 <hr class="hidden-print" id="pdf_section_headers">
                 <h1 class="page_break_always h1wide">Adding Table of Contents and Index Section Headers<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/ZdBg6Yd8lNU" title="PDF Tunebook Section Headers" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
@@ -4553,6 +4560,7 @@
                     %toc_no_page_numbers<br/>
                     %index_no_page_numbers<br/>
                     %firstpagenumber 3<br/>
+                    %toc_index_backlink_vpos 50<br/>
                     %pagenumberhoffset 0<br/>
                     %pagenumbervoffset 0<br/>
                     %pageheader Page Header Text<br/>

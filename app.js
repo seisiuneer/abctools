@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3022_111625_0630";
+var gVersionNumber = "3023_111625_1900";
 
 var gMIDIInitStillWaiting = false;
 
@@ -4733,6 +4733,8 @@ var gPDFLeftMarginOverride = 0;
 var gPDFLeftMarginOverrideRequested = false;
 var gPDFNotationWidthOverride = 0;
 var gPDFNotationWidthOverrideRequested = false;
+var gPDFTOCIndexPercent = 0.5;
+var gPDFTOCIndexPercentRequested = false;
 
 var gBetweenTuneSpace = 20; // Can be overriden with a %pdf_between_tune_space directive
 var gGotBetweenTuneSpace = false;
@@ -7101,23 +7103,46 @@ function PostProcessTOCAndIndexLinks(pdf, startPage, endPage, addTOCLinks, theTO
     var pageWidth = pdf.internal.pageSize.getWidth();
     var pageHeight = pdf.internal.pageSize.getHeight();
 
+    // Default is 50%
+    var theHeight = (pageHeight / 1.55);
+
+    // Offsetting markers requested
+    if (gPDFTOCIndexPercentRequested){
+
+      if (gPDFTOCIndexPercent != 0.5){
+
+        var lowerEnd = ((pageHeight * 1.55) - pageHeight) / 1.55;
+
+        var upperEnd = lowerEnd + (pageHeight / 1.55);
+
+        //console.log("lowerEnd: "+lowerEnd+" upperEnd: "+upperEnd);
+
+        theHeight = lowerEnd + ((upperEnd - lowerEnd) * gPDFTOCIndexPercent);
+
+        //console.log("theHeight after: "+theHeight)
+
+      }
+
+    }
+
     if (addTOCLinks) {
+
       // Add the TOC link
-      pdf.textWithLink("<<", 5, (pageHeight / 1.55), {
+      pdf.textWithLink("<<", 5, theHeight, {
         align: "left",
         pageNumber: theTOCLinkPage
       });
+
     }
 
     if (addIndexLinks) {
       // Add the Index link
       var textWidth = pdf.getTextWidth(">>");
-      pdf.textWithLink(">>", (pageWidth / 1.55) - (textWidth + 5), (pageHeight / 1.55), {
+      pdf.textWithLink(">>", (pageWidth / 1.55) - (textWidth + 5), theHeight, {
         align: "left",
         pageNumber: theIndexLinkPage
       });
     }
-
 
   }
 
@@ -9987,6 +10012,34 @@ function ParseCommentCommands(theNotes) {
 
       gPDFNotationWidthOverride = thepdfnotationwidthfloat;
       gPDFNotationWidthOverrideRequested = true;
+
+    }
+  }
+
+  // Did they request a TOC / Index backlink vertical position override
+  gPDFTOCIndexPercent = 0.5;
+  gPDFTOCIndexPercentRequested = false;
+
+  // Search for a tunebook TOC/Index backlink positioning request
+  searchRegExp = /^%toc_index_backlink_vpos.*$/m
+
+  // Detect tunebook TOC/Index backlink positioning request
+  var PDFTOCIndexPercentRequested = theNotes.match(searchRegExp);
+
+  if ((PDFTOCIndexPercentRequested) && (PDFTOCIndexPercentRequested.length > 0)) {
+
+    var thePDFTOCIndexPercentRequested = PDFTOCIndexPercentRequested[0].replace("%toc_index_backlink_vpos", "");
+
+    thePDFTOCIndexPercentRequested = thePDFTOCIndexPercentRequested.trim();
+
+    var thePDFTOCIndexPercentRequestedFloat = parseFloat(thePDFTOCIndexPercentRequested);
+
+    if (!isNaN(thePDFTOCIndexPercentRequestedFloat)) {
+
+      gPDFTOCIndexPercent = thePDFTOCIndexPercentRequestedFloat/100;
+      gPDFTOCIndexPercentRequested = true;
+
+      //console.log("Got toc_index_backlink_vpos, value is: "+gPDFTOCIndexPercent);
 
     }
   }
@@ -61156,7 +61209,7 @@ CodeMirror.defineMode("abc-plus", function () {
       }
 
       // ===== Extended %directives =====
-      if (stream.sol() && stream.match(/^%(?:pdfquality|pdf_between_tune_space|pdfname|pdffont|addtitle|addsubtitle|urladdtitle|urladdsubtitle|titlefontsize|subtitlefontsize|titlelinespacing|subtitlelinespacing|addtoc|addsortedtoc|addlinkbacktotoc|tocheader|toctopoffset|toctitleoffset|toctitlefontsize|tocfontsize|toclinespacing|addindex|addsortedindex|addlinkbacktoindex|indexheader|indextopoffset|indextitleoffset|indextitlefontsize|indexfontsize|indexlinespacing|no_toc_or_index_links|toc_no_page_numbers|index_no_page_numbers|firstpagenumber|pagenumberhoffset|pagenumbervoffset|pageheader|pagefooter|headerfooterfontsize|headervoffset|footervoffset|urlpageheader|urlpagefooter|textincipitsfontsize|textincipitslinespacing|add_all_links_to_thesession|add_all_playback_links|add_all_playback_volumes|playback_links_are_complete_tunebook|add_all_fonts|swing_all_hornpipes|noswing_all_hornpipes|no_edit_allowed|links_open_in_editor|qrcode|caption_for_qrcode|abcjs_soundfont|soundfont|hyperlink|add_link_to_thesession|add_playback_link|swing|swing_offset|noswing|bodhran_tuning|bodhran_pitch|banjo_style|grace_duration_ms|roll_2_params|roll_3_params|use_original_abcjs_roll_solution|abcjs_release_decay_time|use_custom_gm_sounds|disable_play_highlight|play_highlight_v1_only|irish_rolls_on|irish_rolls_off|voice_tuning_cents|tab_first_voice_only|tab_first_voice_exclude|reverb|ornament_divider|ornament_offset|tremolo_divider|play_flatten_parts|allow_lowercase_chords|hide_first_title_on_play|hide_vskip_on_play|hide_information_labels|hide_rhythm_tag|hide_composer_tag|hide_part_tags|hide_player_part_tags|hide_dynamics|hide_cautionary_ks|left_justify_titles|no_title_reverser|whistle_tab_key|whistle_tab_octave|recorder_tab_key|recorder_tab_octave|enable_hyperlinks|disable_hyperlinks|play_alternate_chords|force_power_chords|custom_instrument_volume_scale|custom_instrument_[1-8]_volume_scale|custom_instrument_fade|custom_instrument_[1-8]_fade|abcjs_render_params|tocleftoffset|tocrightoffset|indexleftoffset|indexrightoffset|pdf_notation_width|pdf_left_margin)\b.*/i)) {
+      if (stream.sol() && stream.match(/^%(?:pdfquality|pdf_between_tune_space|pdfname|pdffont|addtitle|addsubtitle|urladdtitle|urladdsubtitle|titlefontsize|subtitlefontsize|titlelinespacing|subtitlelinespacing|addtoc|addsortedtoc|addlinkbacktotoc|tocheader|toctopoffset|toctitleoffset|toctitlefontsize|tocfontsize|toclinespacing|addindex|addsortedindex|addlinkbacktoindex|indexheader|indextopoffset|indextitleoffset|indextitlefontsize|indexfontsize|indexlinespacing|no_toc_or_index_links|toc_no_page_numbers|index_no_page_numbers|firstpagenumber|pagenumberhoffset|pagenumbervoffset|pageheader|pagefooter|headerfooterfontsize|headervoffset|footervoffset|urlpageheader|urlpagefooter|textincipitsfontsize|textincipitslinespacing|add_all_links_to_thesession|add_all_playback_links|add_all_playback_volumes|playback_links_are_complete_tunebook|add_all_fonts|swing_all_hornpipes|noswing_all_hornpipes|no_edit_allowed|links_open_in_editor|qrcode|caption_for_qrcode|abcjs_soundfont|soundfont|hyperlink|add_link_to_thesession|add_playback_link|swing|swing_offset|noswing|bodhran_tuning|bodhran_pitch|banjo_style|grace_duration_ms|roll_2_params|roll_3_params|use_original_abcjs_roll_solution|abcjs_release_decay_time|use_custom_gm_sounds|disable_play_highlight|play_highlight_v1_only|irish_rolls_on|irish_rolls_off|voice_tuning_cents|tab_first_voice_only|tab_first_voice_exclude|reverb|ornament_divider|ornament_offset|tremolo_divider|play_flatten_parts|allow_lowercase_chords|hide_first_title_on_play|hide_vskip_on_play|hide_information_labels|hide_rhythm_tag|hide_composer_tag|hide_part_tags|hide_player_part_tags|hide_dynamics|hide_cautionary_ks|left_justify_titles|no_title_reverser|whistle_tab_key|whistle_tab_octave|recorder_tab_key|recorder_tab_octave|enable_hyperlinks|disable_hyperlinks|play_alternate_chords|force_power_chords|custom_instrument_volume_scale|custom_instrument_[1-8]_volume_scale|custom_instrument_fade|custom_instrument_[1-8]_fade|abcjs_render_params|tocleftoffset|tocrightoffset|indexleftoffset|indexrightoffset|pdf_notation_width|pdf_left_margin|toc_index_backlink_vpos)\b.*/i)) {
         return "abc-extended-directive";
       }
 
