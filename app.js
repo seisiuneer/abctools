@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3023_111625_1900";
+var gVersionNumber = "3024_111725_1000";
 
 var gMIDIInitStillWaiting = false;
 
@@ -4733,6 +4733,8 @@ var gPDFLeftMarginOverride = 0;
 var gPDFLeftMarginOverrideRequested = false;
 var gPDFNotationWidthOverride = 0;
 var gPDFNotationWidthOverrideRequested = false;
+var gPDFNotationWidthAutoOverride = 0;
+var gPDFNotationWidthAutoOverrideRequested = false;
 var gPDFTOCIndexPercent = 0.5;
 var gPDFTOCIndexPercentRequested = false;
 
@@ -8222,9 +8224,11 @@ function ProcessTunesForContinuousLayout(pageBreakList, pageHeight, doIncipits) 
 
     // Need to scale up the rendering size if landscape or width overridden
 
-    if (gPDFNotationWidthOverrideRequested && (!doIncipits)){
+    if ((gPDFNotationWidthOverrideRequested  ||  gPDFNotationWidthAutoOverrideRequested ) && (!doIncipits)){
 
-        theRenderingDivsHeight = (theRenderingDivsHeight * gPDFNotationWidthOverride) / 535;
+        //console.log("Got width or width percentage override. gPageWidth: "+gPageWidth);
+
+        theRenderingDivsHeight = (theRenderingDivsHeight * gPageWidth) / 535;
 
     }
     else{
@@ -9991,13 +9995,13 @@ function ParseCommentCommands(theNotes) {
     }
   }
 
-  // Did they request a left margin override
+  // Did they request a notation width override
   gPDFNotationWidthOverrideRequested = false;
 
-  // Search for a tunebook PDF left margin request
+  // Search for a tunebook PDF notation width request
   searchRegExp = /^%pdf_notation_width.*$/m
 
-  // Detect tunebook pdf left margin annotation
+  // Detect tunebook pdf notation width annotation
   var pdfnotationwidth = theNotes.match(searchRegExp);
 
   if ((pdfnotationwidth) && (pdfnotationwidth.length > 0)) {
@@ -10012,6 +10016,31 @@ function ParseCommentCommands(theNotes) {
 
       gPDFNotationWidthOverride = thepdfnotationwidthfloat;
       gPDFNotationWidthOverrideRequested = true;
+
+    }
+  }
+
+  // Did they request a notation width auto override
+  gPDFNotationWidthAutoOverrideRequested = false;
+
+  // Search for a tunebook PDF left margin request
+  searchRegExp = /^%pdf_notation_percent_width.*$/m
+
+  // Detect tunebook pdf left margin annotation
+  var pdfnotationwidthauto = theNotes.match(searchRegExp);
+
+  if ((pdfnotationwidthauto) && (pdfnotationwidthauto.length > 0)) {
+
+    var thepdfnotationwidthauto = pdfnotationwidthauto[0].replace("%pdf_notation_percent_width", "");
+
+    thepdfnotationwidthauto = thepdfnotationwidthauto.trim();
+
+    var thepdfnotationwidthautofloat = parseFloat(thepdfnotationwidthauto);
+
+    if (!isNaN(thepdfnotationwidthautofloat)) {
+
+      gPDFNotationWidthAutoOverride = thepdfnotationwidthautofloat/100;
+      gPDFNotationWidthAutoOverrideRequested = true;
 
     }
   }
@@ -10038,8 +10067,6 @@ function ParseCommentCommands(theNotes) {
 
       gPDFTOCIndexPercent = thePDFTOCIndexPercentRequestedFloat/100;
       gPDFTOCIndexPercentRequested = true;
-
-      //console.log("Got toc_index_backlink_vpos, value is: "+gPDFTOCIndexPercent);
 
     }
   }
@@ -10530,9 +10557,31 @@ function RenderPDFBlock(theBlock, blockIndex, doSinglePage, pageBreakList, addPa
 
       if (!doIncipits){
 
+        if (gPDFNotationWidthOverrideRequested || gPDFNotationWidthAutoOverrideRequested){
+
+          if (paperStyle == "letter"){
+              if (gPDFOrientation == "portrait"){
+                hoff = (612 - gPageWidth) / 2;
+              }
+              else{
+                hoff = (792 - gPageWidth) / 2;
+              }
+          }
+          else{
+             if (gPDFOrientation == "portrait"){
+                hoff = (595 - gPageWidth) / 2;
+              }
+              else{
+                hoff = (842 - gPageWidth) / 2;
+              }
+          }
+          //console.log("Got width override, left margin result is: "+hoff);
+        }
+
         // MAE 15 Nov 2025 - For left margin overide
         if (gPDFLeftMarginOverrideRequested){
           hoff = gPDFLeftMarginOverride;
+          //console.log("Got left margin override, left margin result is: "+hoff);
         }
 
       }
@@ -11724,9 +11773,30 @@ function ExportNotationPDF(title) {
   ParseCommentCommands(getABCEditorText());
 
   if (!incipitsRequested){
+    
     // MAE 15 Nov 2025 - For width override
     if (gPDFNotationWidthOverrideRequested){
       gPageWidth = gPDFNotationWidthOverride;
+    }
+
+    if (gPDFNotationWidthAutoOverrideRequested){
+      if (paperStyle == "letter"){
+          if (gPDFOrientation == "portrait"){
+            gPageWidth = gPDFNotationWidthAutoOverride * 612;
+          }
+          else{
+            gPageWidth = gPDFNotationWidthAutoOverride * 792;
+          }
+      }
+      else{
+         if (gPDFOrientation == "portrait"){
+            gPageWidth = gPDFNotationWidthAutoOverride * 595;
+          }
+          else{
+            gPageWidth = gPDFNotationWidthAutoOverride * 842;
+          }
+      }
+      //console.log("Got width percentage override, result is: "+gPageWidth);
     }
   }
 
@@ -61209,7 +61279,7 @@ CodeMirror.defineMode("abc-plus", function () {
       }
 
       // ===== Extended %directives =====
-      if (stream.sol() && stream.match(/^%(?:pdfquality|pdf_between_tune_space|pdfname|pdffont|addtitle|addsubtitle|urladdtitle|urladdsubtitle|titlefontsize|subtitlefontsize|titlelinespacing|subtitlelinespacing|addtoc|addsortedtoc|addlinkbacktotoc|tocheader|toctopoffset|toctitleoffset|toctitlefontsize|tocfontsize|toclinespacing|addindex|addsortedindex|addlinkbacktoindex|indexheader|indextopoffset|indextitleoffset|indextitlefontsize|indexfontsize|indexlinespacing|no_toc_or_index_links|toc_no_page_numbers|index_no_page_numbers|firstpagenumber|pagenumberhoffset|pagenumbervoffset|pageheader|pagefooter|headerfooterfontsize|headervoffset|footervoffset|urlpageheader|urlpagefooter|textincipitsfontsize|textincipitslinespacing|add_all_links_to_thesession|add_all_playback_links|add_all_playback_volumes|playback_links_are_complete_tunebook|add_all_fonts|swing_all_hornpipes|noswing_all_hornpipes|no_edit_allowed|links_open_in_editor|qrcode|caption_for_qrcode|abcjs_soundfont|soundfont|hyperlink|add_link_to_thesession|add_playback_link|swing|swing_offset|noswing|bodhran_tuning|bodhran_pitch|banjo_style|grace_duration_ms|roll_2_params|roll_3_params|use_original_abcjs_roll_solution|abcjs_release_decay_time|use_custom_gm_sounds|disable_play_highlight|play_highlight_v1_only|irish_rolls_on|irish_rolls_off|voice_tuning_cents|tab_first_voice_only|tab_first_voice_exclude|reverb|ornament_divider|ornament_offset|tremolo_divider|play_flatten_parts|allow_lowercase_chords|hide_first_title_on_play|hide_vskip_on_play|hide_information_labels|hide_rhythm_tag|hide_composer_tag|hide_part_tags|hide_player_part_tags|hide_dynamics|hide_cautionary_ks|left_justify_titles|no_title_reverser|whistle_tab_key|whistle_tab_octave|recorder_tab_key|recorder_tab_octave|enable_hyperlinks|disable_hyperlinks|play_alternate_chords|force_power_chords|custom_instrument_volume_scale|custom_instrument_[1-8]_volume_scale|custom_instrument_fade|custom_instrument_[1-8]_fade|abcjs_render_params|tocleftoffset|tocrightoffset|indexleftoffset|indexrightoffset|pdf_notation_width|pdf_left_margin|toc_index_backlink_vpos)\b.*/i)) {
+      if (stream.sol() && stream.match(/^%(?:pdfquality|pdf_between_tune_space|pdfname|pdffont|addtitle|addsubtitle|urladdtitle|urladdsubtitle|titlefontsize|subtitlefontsize|titlelinespacing|subtitlelinespacing|addtoc|addsortedtoc|addlinkbacktotoc|tocheader|toctopoffset|toctitleoffset|toctitlefontsize|tocfontsize|toclinespacing|addindex|addsortedindex|addlinkbacktoindex|indexheader|indextopoffset|indextitleoffset|indextitlefontsize|indexfontsize|indexlinespacing|no_toc_or_index_links|toc_no_page_numbers|index_no_page_numbers|firstpagenumber|pagenumberhoffset|pagenumbervoffset|pageheader|pagefooter|headerfooterfontsize|headervoffset|footervoffset|urlpageheader|urlpagefooter|textincipitsfontsize|textincipitslinespacing|add_all_links_to_thesession|add_all_playback_links|add_all_playback_volumes|playback_links_are_complete_tunebook|add_all_fonts|swing_all_hornpipes|noswing_all_hornpipes|no_edit_allowed|links_open_in_editor|qrcode|caption_for_qrcode|abcjs_soundfont|soundfont|hyperlink|add_link_to_thesession|add_playback_link|swing|swing_offset|noswing|bodhran_tuning|bodhran_pitch|banjo_style|grace_duration_ms|roll_2_params|roll_3_params|use_original_abcjs_roll_solution|abcjs_release_decay_time|use_custom_gm_sounds|disable_play_highlight|play_highlight_v1_only|irish_rolls_on|irish_rolls_off|voice_tuning_cents|tab_first_voice_only|tab_first_voice_exclude|reverb|ornament_divider|ornament_offset|tremolo_divider|play_flatten_parts|allow_lowercase_chords|hide_first_title_on_play|hide_vskip_on_play|hide_information_labels|hide_rhythm_tag|hide_composer_tag|hide_part_tags|hide_player_part_tags|hide_dynamics|hide_cautionary_ks|left_justify_titles|no_title_reverser|whistle_tab_key|whistle_tab_octave|recorder_tab_key|recorder_tab_octave|enable_hyperlinks|disable_hyperlinks|play_alternate_chords|force_power_chords|custom_instrument_volume_scale|custom_instrument_[1-8]_volume_scale|custom_instrument_fade|custom_instrument_[1-8]_fade|abcjs_render_params|tocleftoffset|tocrightoffset|indexleftoffset|indexrightoffset|pdf_notation_width|pdf_left_margin|toc_index_backlink_vpos|pdf_notation_percent_width)\b.*/i)) {
         return "abc-extended-directive";
       }
 

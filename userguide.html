@@ -4433,38 +4433,35 @@
                     </tr>
                   </tbody>
                 </table>
-                <p>If you wish to override the default left margin or the page width values, you can include the following comment-based annotations anywhere in the ABC:</p>
+                <p>If you wish to override the page width values, you can include the following comment-based annotations anywhere in the ABC:</p>
                 <p class="code">%<br/>
                     % Example #1:<br/>
                     %<br/>
                     % For letter paper size, portrait orientation, set the notation width to 8.5" in 1/72" increments<br/>
                     %pdf_notation_width 612<br/>
-                    %<br/>
-                    % Set the left margin size to zero<br/>
-                    %pdf_left_margin 0<br/>
                     %</p>
                 <p class="code">%<br/>
                     % Example #2:<br/>
                     %<br/>
                     % For letter paper size, portrait orientation, set the notation width to 4" in 1/72" increments<br/>
                     %pdf_notation_width 288<br/>
-                    %<br/>
-                    % Set the left margin size to center 4" wide notation on an 8.5" wide page<br/>
-                    %pdf_left_margin 162<br/>
                     %</p>
-                <p><strong>Note:</strong> Only the first %pdf_notation_width or %pdf_left_margin values detected in the ABC will be used for the entire PDF, it cannot be changed "on-the-fly".</p>
-                <hr>
-                <p style="text-align:center;"><strong>Example Notation Width and Margin Calculation</strong></p>
-                <p>To determine the notation width and left margin to center the notation on the page for a particular desired notation width, do the following calculation:</p>
-                <p>All width and margin values are in increments of 1/72".</p>
-                <p>In the table above find the full page width of the the paper size and orientation in 1/72".</p>
-                <p>For example, for Letter paper size in Portrait orientation, the full page width is<br/>(8.5" x 72) = 612</p>
-                <p>The center would then be at<br/>(612 / 2) = 306</p>
-                <p>If you want the notation to be 5 inches wide set %pdf_notation_width to<br/>(5" x 72) = 360</p>
-                <p>To center the notation, set %pdf_left_margin to the center value minus half of the notation width<br/>(306 - (360 / 2)) = 126</p>
-                <p>With these two values calculated, the final annotations to put in the ABC would be:</p>
-                <p class="code">%pdf_notation_width 360<br/>
-                %pdf_left_margin 126</p>
+                <p>If instead you prefer to specify the notation width as a percentage of the page width, you can include the following comment-based annotation anywhere in the ABC:</p>
+                <p class="code">% Example #1:<br/>
+                    %<br/>
+                    % Set the notation width to 50% of the page width<br/>
+                    %pdf_notation_percent_width 50</p> 
+                <p class="code">% Example #2:<br/>
+                    %<br/>
+                    % Set the notation width to 75% of the page width<br/>
+                    %pdf_notation_percent_width 75</p>                     
+                <p>When %pdf_notation_width or %pdf_notation_percent_width is used, the notation will be centered at the specified width on the page.</p>
+                <p>If both %pdf_notation_width and %pdf_notation_percent_width are present, %pdf_notation_percent_width takes precedence.</p>
+                <p>To override the automatic centering and specify the left margin size in 1/72" increments, you can include the following comment-based annotation anywhere in the ABC:</p>
+                <p class="code">%pdf_left_margin (offset in 1/72" increments)</p>
+                <p>For example, to set the left margin to 2 inches (2 * 72 = 144):</p>
+                <p class="code">%pdf_left_margin 144</p> 
+                <p><strong>Note:</strong> Only the first %pdf_notation_width, %pdf_notation_percent_width, or %pdf_left_margin values detected in the ABC will be used for the entire PDF, it cannot be changed "on-the-fly".</p>
                 <hr class="hidden-print" id="table_of_contents_and_index_font_size_and_spacing_overrides">
                 <h1 class="page_break_always">Table of Contents and Index Font Size and Spacing Overrides<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <p>You may override various spacing offsets and font sizes for the Table of Contents and Index by adding the following comment-based annotations anywhere in your ABC:</p>
@@ -4526,6 +4523,7 @@
                     %pdffont fontname style<br/>
                     %pdf_left_margin 0<br/>
                     %pdf_notation_width 612<br/>
+                    %pdf_notation_percent_width 50<br/>
                     %addtitle Title Page Title<br/>
                     %addsubtitle Title Page Subtitle<br/>
                     %urladdtitle https://michaeleskin.com Title Page Title as Hyperlink<br/>
