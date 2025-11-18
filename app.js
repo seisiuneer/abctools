@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3024_111725_1000";
+var gVersionNumber = "3025_111825_1000";
 
 var gMIDIInitStillWaiting = false;
 
@@ -494,6 +494,9 @@ var gSyntaxDarkMode = false;
 
 // Syntax highlighting margin in lines
 var gSyntaxViewportMargin = 20;
+
+// Message delivered about syntax highlighting
+var gEnableSyntaxDelivered = false;
 
 // Always flatten playbackparts
 var gAlwaysFlattenParts = false;
@@ -45676,8 +45679,8 @@ function GetInitialConfigurationSettings() {
   }
 
   // Doing syntax highlighting?
-  gEnableSyntax = false;
-  val = localStorage.EnableSyntax3;
+  gEnableSyntax = isPureDesktopBrowser();
+  val = localStorage.EnableSyntax4;
   if (val) {
     gEnableSyntax = (val == "true");
   }
@@ -45686,6 +45689,12 @@ function GetInitialConfigurationSettings() {
   val = localStorage.SyntaxDarkMode
   if (val) {
     gSyntaxDarkMode = (val == "true");
+  }
+
+  gEnableSyntaxMessageDelivered = false;
+  val = localStorage.EnableSyntaxMessageDelivered
+  if (val) {
+    gEnableSyntaxMessageDelivered = (val == "true");
   }
 
   gAlwaysFlattenParts = false;
@@ -46002,7 +46011,7 @@ function SaveConfigurationSettings() {
     localStorage.CustomInstrumentShowStatus = gCustomInstrumentShowStatus;
 
     // Syntax highlighting
-    localStorage.EnableSyntax3 = gEnableSyntax;
+    localStorage.EnableSyntax4 = gEnableSyntax;
     localStorage.SyntaxDarkMode = gSyntaxDarkMode;
 
     // Always flatten parts
@@ -53863,6 +53872,22 @@ function TipJarReminderDialog() {
 
 }
 
+// Show the Syntax Highlighting info dialog
+//
+function SyntaxHighlightInfoDialog() {
+
+  // Keep track of dialogs
+  var modal_msg = '<p style="text-align:center;font-size:17pt;font-family:helvetica">ABC Syntax Highlighting is Enabled</p>';
+  modal_msg += '<p style="font-size:14pt;line-height:18pt;font-family:helvetica;text-align:center;margin-top:36px;">Please try out the new ABC syntax highlighting features.</p>';
+  modal_msg += '<p style="font-size:14pt;line-height:20pt;font-family:helvetica;text-align:center;margin-top:36px;">If you decide you don\'t like it,<br/>you can easily disable it from the Settings dialog.</p>';
+  DayPilot.Modal.alert(modal_msg, {
+    theme: "modal_flat",
+    top: 150,
+    scrollWithPage: (AllowDialogsToScroll())
+  });
+
+}
+
 //
 // Show the TinyURL reminder
 //
@@ -58808,8 +58833,8 @@ function DoStartup() {
   if (gLocalStorageAvailable){
     
       // Doing syntax highlighting?
-      gEnableSyntax = false;
-      var val = localStorage.EnableSyntax3;
+      gEnableSyntax = isPureDesktopBrowser();
+      var val = localStorage.EnableSyntax4;
     
       if (val) {
         gEnableSyntax = (val == "true");
@@ -58822,6 +58847,12 @@ function DoStartup() {
     
       if (val) {
         gSyntaxDarkMode = (val == "true");
+      }
+
+      gEnableSyntaxMessageDelivered = false;
+      val = localStorage.EnableSyntaxMessageDelivered
+      if (val) {
+        gEnableSyntaxMessageDelivered = (val == "true");
       }
 
       //console.log("gSyntaxDarkMode: "+gSyntaxDarkMode);
@@ -60101,6 +60132,19 @@ function DoStartup() {
   if (gAllowMIDIInput) {
 
     initMIDI();
+
+  }
+
+  // Put up reminder about syntax highlighting
+  if ((!isFromShare) && isPureDesktopBrowser() && (!gEnableSyntaxMessageDelivered)){
+
+    SyntaxHighlightInfoDialog();
+
+    gEnableSyntaxMessageDelivered = true;
+
+    if (gLocalStorageAvailable) {
+      localStorage.EnableSyntaxMessageDelivered = true;
+    }
 
   }
 
