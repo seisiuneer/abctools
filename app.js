@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3025_111825_1000";
+var gVersionNumber = "3026_111825_1200";
 
 var gMIDIInitStillWaiting = false;
 
@@ -496,7 +496,7 @@ var gSyntaxDarkMode = false;
 var gSyntaxViewportMargin = 20;
 
 // Message delivered about syntax highlighting
-var gEnableSyntaxDelivered = false;
+var gEnableSyntaxMessageDelivered = false;
 
 // Always flatten playbackparts
 var gAlwaysFlattenParts = false;
