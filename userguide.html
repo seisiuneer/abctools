@@ -609,6 +609,7 @@
             <a style="text-decoration:none;" href="#header_footer_fontsize">Setting Header and Footer Font Size</a>
             <a style="text-decoration:none;" href="#header_footer_pagenumber_hvoffsets">Setting Page Header, Page Footer, and Page Number Horizontal and Vertical Offsets</a>            
             <a style="text-decoration:none;" href="#pdf_forcename">Forcing a Specific Filename for PDF Export</a>
+            <a style="text-decoration:none;" href="#pdf_maximize_tunes_per_page">Maximizing the Tunes-per-Page in the Exported PDF</a>
             </details>
             
             <details>
@@ -1112,6 +1113,8 @@
                         <p class="toc"><a style="text-decoration:none;" href="#header_footer_fontsize">Setting Header and Footer Font Size</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#header_footer_pagenumber_hvoffsets">Setting Page Header, Page Footer, and Page Number Horizontal and Vertical Offsets</a></p>            
                         <p class="toc"><a style="text-decoration:none;" href="#pdf_forcename">Forcing a Specific Filename for PDF Export</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#pdf_maximize_tunes_per_page">Maximizing the Tunes-per-Page in the Exported PDF</a></p>
+
                     </div>
                     
                     <button class="accordion" title="Click to expand/collapse this section">All Available Tunebook Annotations</button>
@@ -4513,6 +4516,20 @@
                 <p></p>
                 <p class="code">%pdfname your_pdf_filename</p>
                 <p></p>
+                <hr class="hidden-print" id="pdf_maximize_tunes_per_page">
+                <h1 class="page_break_always h1wide">Maximizing the Tunes-per-Page in the Exported PDF<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+                <p>If you want to maximize the number of tunes-per-page in the exported PDF files, here are two simple techniques:</p>
+                <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/1kxUpsud8-A" title="Maximizing PDF Tunes-per-Page" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
+                <p>The annotations recommended in the video are:</p>
+                <p>Scaling the notation but keeping the same notation aspect ratio:</p>
+                <p class="code">%%scale 0.55</p>
+                <p>Setting a wider staffwidth to create less tall staves but keep the same width:</p>
+                <p class="code">%%staffwidth 1050<br/>%%stretchlast true</p>
+                <p>Beyond the two methods demonstrated in the video, you can also further reduce the tune height by minimizing the space between the staves in each tune:</p>
+                <p class="code">%%staffsep 0</p>                
+                <p>and also setting the space between the tunes to zero in the PDF export directives:</p>
+                <p class="code">%pdf_between_tune_space 0</p>                                
+                <p>After changing anything in the ABC file header before the tunes, force a full redraw of all the tunes before exporting the PDF by clicking <strong>Snapshot</strong> and then <strong>Restore</strong>.</p>
                 <hr class="hidden-print" id="all_pdf_annotations">
                 <h1 class="page_break_always">All Available Tunebook Annotations<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <p>Here are examples of all the possible comment-based annotations in the tool:</p>
