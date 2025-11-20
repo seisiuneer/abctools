@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3027_112025_1100";
+var gVersionNumber = "3028_112025_1130";
 
 var gMIDIInitStillWaiting = false;
 
@@ -31970,6 +31970,12 @@ function ChangeTab() {
     // Keep track of tab use
     sendGoogleAnalytics("ChangeTab", theTab);
 
+    RenderAsync(true, null);
+
+  }
+  else{
+
+    // Just force a full redraw of the tunes
     RenderAsync(true, null);
 
   }
