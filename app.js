@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3029_112025_1700";
+var gVersionNumber = "3030_112025_1900";
 
 var gMIDIInitStillWaiting = false;
 
@@ -56255,7 +56255,8 @@ function SR_replaceAll(callback) {
 
       DayPilot.Modal.alert(prompt, {
         theme: "modal_flat",
-        top: 270
+        top: 270,
+        scrollWithPage: false
       });
 
     }, 100);
@@ -56295,7 +56296,7 @@ function SR_LoadFindAndReplace(file) {
         DayPilot.Modal.alert(thePrompt, {
           theme: "modal_flat",
           top: 200,
-          scrollWithPage: (AllowDialogsToScroll())
+          scrollWithPage: false
         });
 
         return;
@@ -56327,7 +56328,7 @@ function SR_LoadFindAndReplace(file) {
       DayPilot.Modal.alert(thePrompt, {
         theme: "modal_flat",
         top: 200,
-        scrollWithPage: (AllowDialogsToScroll())
+        scrollWithPage: false
       });
 
       return;
@@ -56428,7 +56429,7 @@ function FindAndReplace() {
     theme: "modal_flat",
     top: 25,
     width: 700,
-    scrollWithPage: (isPureDesktopBrowser())
+    scrollWithPage: false
   }).then(function() {
   	if (!isPureDesktopBrowser()){
   		if (gEnableSyntax){
@@ -56459,7 +56460,7 @@ function FindAndReplace() {
       DayPilot.Modal.alert(thePrompt, {
         theme: "modal_flat",
         top: 200,
-        scrollWithPage: (AllowDialogsToScroll())
+        scrollWithPage: false
       });
 
       return;
