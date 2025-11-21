@@ -6916,7 +6916,9 @@ var ParseHeader = function ParseHeader(tokenizer, warn, multilineVars, tune, tun
         }
         if (tokens.length !== 0) throw "Unexpected string at end of Q: field";
       }
-      if (multilineVars.printTempo === false) tempo.suppress = true;
+      if (multilineVars.printTempo === false){
+        tempo.suppress = true;
+      }
       return {
         type: delaySet ? 'delaySet' : 'immediate',
         tempo: tempo
@@ -24278,8 +24280,11 @@ AbstractEngraver.prototype.createABCElement = function (isFirstStaff, isSingleLi
       elemset[0] = abselem;
       break;
     case "tempo":
+      // MAE 20 Nov 2025 For %%printtempo after initial header
       var abselem3 = new AbsoluteElement(elem, 0, 0, 'tempo', this.tuneNumber);
-      abselem3.addFixedX(new TempoElement(elem, this.tuneNumber, createNoteHead));
+      if (!elem.suppress){
+        abselem3.addFixedX(new TempoElement(elem, this.tuneNumber, createNoteHead));
+      }
       elemset[0] = abselem3;
       break;
     case "style":

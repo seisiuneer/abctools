@@ -782,6 +782,7 @@
             <summary><h3>Advanced abcjs Rendering Options</h3></summary>
             <a style="text-decoration:none;" href="#customabcjsparams">Adding Custom abcjs Rendering Parameters</a>
             <a style="text-decoration:none;" href="#left_justify_titles">Forcing Left-Justified Titles and Subtitles</a>
+            <a style="text-decoration:none;" href="#hide_tempos">Showing/Hiding Tempo Marks</a>
             <a style="text-decoration:none;" href="#hide_information_labels">Hiding Information Labels</a>
             <a style="text-decoration:none;" href="#hide_rhythm_tag">Hiding Rhythm Tag Display</a>
             <a style="text-decoration:none;" href="#hide_composer_tag">Hiding Composer Tag Display</a>
@@ -1288,6 +1289,7 @@
                     <div class="tocpanel">
                         <p class="toc"><a style="text-decoration:none;" href="#customabcjsparams">Adding Custom abcjs Rendering Parameters</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#left_justify_titles">Forcing Left-Justified Titles and Subtitles</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#hide_tempos">Showing/Hiding Tempo Marks</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#hide_information_labels">Hiding Information Labels</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#hide_rhythm_tag">Hiding Rhythm Tag Display</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#hide_composer_tag">Hiding Composer Tag Display</a></p>
@@ -6671,6 +6673,12 @@
                 <p class="code">% Left justify titles<br/><br/>%left_justify_titles</p>
                 <p>The presence of this annotation in a tune will force both the displayed notation in the editor, exported PDF notation, and tunes played from play links to have left justified titles and subtitles.</p>
                 <p>If placed in the ABC file header, it will apply to all of the tunes.</p>
+                <hr class="hidden-print" id="hide_tempos">
+                <h1 class="page_break_always h1wide">Showing/Hiding Tempo marks<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+                <p>You may show/hide the tempos in Q: tags by adding the following annotations anywhere in the tune (default is to show them):</p>
+                <p class="code">% Show tempo tags<br/><br/>%%printtempo true<br/><br/>% Hide tempo tags<br/><br/>%%printtempo false</p>
+                <p>This annotation should appear before the Q: tag being shown or hidden.</p>
+                <p>You can show/hide tempo tags multiple times as desired within a specific tune using these annotations.</p>
                 <hr class="hidden-print" id="hide_information_labels">
                 <h1 class="page_break_always h1wide">Hiding Information Labels<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <p>You may hide the labels before the Book, Source, Discography, Notes, Transcription, History, Copyright, Creator, and Edited by metadata information tags in a single tune by adding the following annotation anywhere in the tune:</p>
