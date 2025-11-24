@@ -17,7 +17,7 @@ function UpdateToLatestVersion(){
 	function callback(restartRequested){
 
 		// Hide the spinner
-		document.getElementById("loading-bar-spinner").style.display = "none";
+		hideTheSpinner();
 
 		if (restartRequested){
 
@@ -45,7 +45,7 @@ function UpdateToLatestVersion(){
 					}
 
 					// Show the spinner while waiting for the reload
-					document.getElementById("loading-bar-spinner").style.display = "block";
+					showTheSpinner("Waiting for reload");
 
 					window.location.reload();
 
@@ -71,7 +71,7 @@ function ForceUpdate(callback){
 			console.log("Tool update requested");
 			
 			// Show the spinner
-			document.getElementById("loading-bar-spinner").style.display = "block";
+			showTheSpinner("Tool update requested");
 
 			// Give some time to show the spinner
 			setTimeout(function(){
@@ -305,7 +305,7 @@ function ResetSettingsDialog(){
 			function callback3(restartRequested){
 
 				// Hide the spinner
-				document.getElementById("loading-bar-spinner").style.display = "none";
+				hideTheSpinner();
 
 				doForceUpdate = restartRequested;
 
@@ -335,7 +335,7 @@ function ResetSettingsDialog(){
 							}
 
 							// Show the spinner while waiting for the reload
-							document.getElementById("loading-bar-spinner").style.display = "block";
+							showTheSpinner("Waiting for reload");
 
 							window.location.reload();
 
@@ -441,9 +441,6 @@ function idleManageSamplesDialog(showActionButtons){
 			var thisInstrumentIndex = 0;
 			var isDone = false;
 
-			// Show the spinner
-			document.getElementById("loading-bar-spinner").style.display = "block";
-
 			document.getElementById("noteLoadProgress").style.display = "block";
 
 			var thisName = gLoadAllNotesSet[thisInstrumentIndex];
@@ -464,8 +461,8 @@ function idleManageSamplesDialog(showActionButtons){
 				if ((thisInstrumentIndex == nInstruments) || cancelRequested){
 
 					//console.log("Done!")
+					hideTheSpinner();
 
-					document.getElementById("loading-bar-spinner").style.display = "none";
 					document.getElementById("noteLoadProgress").style.display = "none";
 
 					var thePrompt = "All notes for all instruments successfully saved!";
@@ -580,8 +577,6 @@ function idleManageSamplesDialog(showActionButtons){
 
 	function fetchUrlsSequentially(instrumentName,urls,callback) {
 
-		document.getElementById("loading-bar-spinner").style.display = "block";
-
 		// Initialize index to keep track of current URL being fetched
 		let index = 0;
 
@@ -659,9 +654,6 @@ function idleManageSamplesDialog(showActionButtons){
 					callback();
 					return;
 				}
-
-				// Hide the spinner
-				document.getElementById("loading-bar-spinner").style.display = "none";
 
 				// Hide the progress bar
 				document.getElementById("noteLoadProgress").style.display = "none";
@@ -777,7 +769,7 @@ function idleManageSamplesDialog(showActionButtons){
         var items = [];
 
 		// Show the spinner
-		document.getElementById("loading-bar-spinner").style.display = "block";
+		showTheSpinner("Updating instrument list");
 
 	    cursorRequest.onsuccess = function(event) {
 			
@@ -787,7 +779,7 @@ function idleManageSamplesDialog(showActionButtons){
 	    		//console.log("fetchAndDisplayItems: Got early out");
 
 	    		// Hide the spinner
-				document.getElementById("loading-bar-spinner").style.display = "none";
+				hideTheSpinner();
 
 	    		return;
 	    	}
@@ -967,7 +959,7 @@ function idleManageSamplesDialog(showActionButtons){
 	            });
 				
 				// Hide the spinner
-				document.getElementById("loading-bar-spinner").style.display = "none";
+				hideTheSpinner();
 
 	        };
 	    }
@@ -1066,7 +1058,7 @@ function idleManageSamplesDialog(showActionButtons){
 
     	gInSampleRetrieval = true;
 
-		document.getElementById("loading-bar-spinner").style.display = "block";
+		showTheSpinner("Deleting instrument");
 
 		// Start a transaction to read/write from the database
 		let transaction = gSamplesDB.transaction(["samples"], "readwrite")
@@ -1101,7 +1093,7 @@ function idleManageSamplesDialog(showActionButtons){
 
 			} else {
 
-				document.getElementById("loading-bar-spinner").style.display = "none";
+				hideTheSpinner();
 
 				// Displayed name on status
 		   		var instrumentName = item.replace("https://michaeleskin.com/abctools/soundfonts/","");
@@ -1217,7 +1209,7 @@ function SaveReverbSetting(style){
 
 	gInReverbRetrieval = true;
 	
-	document.getElementById("loading-bar-spinner").style.display = "block";
+	showTheSpinner("Loading reverb setting")
 
 	var theReverbURL = "https://michaeleskin.com/abctools/soundfonts/reverb_kernels/";
 
@@ -1310,7 +1302,7 @@ function SaveReverbSetting(style){
 
 	      if (!response.ok){
 
-			document.getElementById("loading-bar-spinner").style.display = "none";
+			hideTheSpinner();
 
 			var thePrompt = "Unable to save "+promptName+" reverb setting.";
 			
@@ -1331,7 +1323,7 @@ function SaveReverbSetting(style){
 
 	        saveImpulse_DB(styleName,theBuffer);
 
-			document.getElementById("loading-bar-spinner").style.display = "none";
+			hideTheSpinner();
 
 			var thePrompt = promptName+" reverb setting successfully saved!";
 			
@@ -1348,7 +1340,7 @@ function SaveReverbSetting(style){
 	    }
 	    catch(error){
 
-			document.getElementById("loading-bar-spinner").style.display = "none";
+			hideTheSpinner();
 
 			var thePrompt = "Unable to save "+promptName+" reverb setting.";
 			
@@ -1364,7 +1356,7 @@ function SaveReverbSetting(style){
 	})
 	.catch(error => {
 
-		document.getElementById("loading-bar-spinner").style.display = "none";
+		hideTheSpinner();
 
 		var thePrompt = "Unable to save "+promptName+" reverb setting.";
 		
@@ -1439,7 +1431,7 @@ function LoadSearchCollection(index){
 
 	gInSearchEngineRetrieval = true;
 	
-	document.getElementById("loading-bar-spinner").style.display = "block";
+	showTheSpinner("Loading tune search collection");
 
 	var url = "https://michaeleskin.com/abctools/abctunes_gavin_heneghan_10nov2023.json";
 
@@ -1454,7 +1446,7 @@ function LoadSearchCollection(index){
         // Persist the database for later reads
         saveTuneDatabase_DB(json, (index==1));
 
-		document.getElementById("loading-bar-spinner").style.display = "none";
+		hideTheSpinner();
 
 		gInSearchEngineRetrieval = false;
 
@@ -1472,7 +1464,7 @@ function LoadSearchCollection(index){
     })
     .catch(function(error) {
 
-		document.getElementById("loading-bar-spinner").style.display = "none";
+		hideTheSpinner();
 
 		gInSearchEngineRetrieval = false;
 

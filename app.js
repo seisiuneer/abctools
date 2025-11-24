@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3030_112025_1900";
+var gVersionNumber = "3031_112425_0800";
 
 var gMIDIInitStillWaiting = false;
 
@@ -19453,7 +19453,7 @@ function AddABC() {
     modal_msg += '</p>';
     modal_msg += '<p style="text-align:center;margin-top:16px;">';
     modal_msg += '<input id="addbodhrantemplate" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AddBodhranTemplate();" type="button" value="Add Bodhran Backing Track Template" title="Opens a dialog where you can choose a bodhran backing track template of common tune styles to add to the end of the ABC">';
-    modal_msg += '<input id="adddatabasetemplate" class="advancedcontrols btn btn-injectcontrols-headers" style="margin-right:24px;" onclick="AppendDatabaseTemplate();" type="button" value="Add Offline Notes Database Loader Templates" title="Adds a template that makes it easy to load a full set of instrument notes and reverb settings into the database">';
+    modal_msg += '<input id="addpdfannotationstemplate" class="advancedcontrols btn btn-injectcontrols-headers" style="margin-right:24px;" onclick="AddPDFAnnotationsTemplate(event);" type="button" value="Add PDF Tunebook Features Template" title="Adds a template that contains the most common PDF tunebook export feature annotations">';
     modal_msg += '</p>';
   }
 
@@ -20343,12 +20343,54 @@ function AppendSampleSong() {
 }
 
 //
-// Add the J.S. Bach 2-Part Invention #1
+// Add a common PDF annotations template
 //
-function AppendDatabaseTemplate() {
+function AddPDFAnnotationsTemplate(e) {
+
+  if (e.shiftKey && e.altKey){
+    AddDatabaseTemplate();
+    return;
+  }
 
   // Keep track of actions
-  sendGoogleAnalytics("action", "AppendDatabaseTemplate");
+  sendGoogleAnalytics("action", "AddPDFAnnotationsTemplate");
+
+  // Stuff in the most common PDF annotations
+  var theValue = '% Start of PDF Tunebook Features\n';
+  theValue += '%\n';
+  theValue += '%pdfquality 0.75\n';
+  theValue += '%pdf_between_tune_space 20\n';
+  theValue += '%addtitle Title Page\n';
+  theValue += '%titlefontsize 24\n';
+  theValue += '%addsubtitle This is the Subtitle\n';
+  theValue += '%subtitlefontsize 16\n';
+  theValue += '%addtoc Table of Contents\n';
+  theValue += '%addlinkbacktotoc\n';
+  theValue += '%tocleftoffset 0\n';
+  theValue += '%tocrightoffset 0\n';
+  theValue += '%addsortedindex Index\n';
+  theValue += '%addlinkbacktoindex\n';
+  theValue += '%indexleftoffset 0\n';
+  theValue += '%indexrightoffset 0\n';
+  theValue += '%pageheader This is the Page Header\n';
+  theValue += '%pagefooter This is the Page Footer\n';
+  theValue += '%add_all_playback_links 0 0 0 fatboy\n';
+  theValue += '%add_all_playback_volumes 64 64\n';
+  theValue += '%\n';
+  theValue += '% End of PDF Tunebook Features\n\n';
+
+  // Put the annotations at the top
+  setABCEditorText(theValue + getABCEditorText());
+
+}
+
+//
+// Add note database loader template
+//
+function AddDatabaseTemplate() {
+
+  // Keep track of actions
+  sendGoogleAnalytics("action", "AddDatabaseTemplate");
 
   // Stuff in some default ABC with additional options explained
   var theValue = ""
