@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3031_112425_0800";
+var gVersionNumber = "3032_112425_1800";
 
 var gMIDIInitStillWaiting = false;
 
@@ -15937,6 +15937,192 @@ function resetPDFTunebookConfig() {
   }
 }
 
+// Parse a single playback program token ("mute" or 0-based int) back
+// into the 1-based program number used in gPDFTunebookConfig (0 = mute)
+function parsePlaybackProgramFromDirective(token) {
+
+  if (token === "mute") {
+    return 0;
+  }
+  var n = parseInt(token, 10);
+  if (isNaN(n)) {
+    return 0;
+  }
+  if (typeof MIDI_PATCH_COUNT !== "undefined") {
+    if (n < 0) n = 0;
+    if (n > MIDI_PATCH_COUNT) n = MIDI_PATCH_COUNT;
+  }
+  // Stored in directive as 0-based; UI/config uses 1-based, 0 = mute
+  return n + 1;
+}
+
+// Parse the contents of the "% Start of PDF Tunebook Features" block
+// and overwrite any corresponding fields in gPDFTunebookConfig
+
+function mapPdfQualityToClosest(value) {
+  const allowed = [0.4, 0.5, 0.75];
+  let closest = allowed[0];
+  let bestDiff = Math.abs(value - closest);
+
+  for (let i = 1; i < allowed.length; i++) {
+    const diff = Math.abs(value - allowed[i]);
+    if (diff < bestDiff) {
+      bestDiff = diff;
+      closest = allowed[i];
+    }
+  }
+
+  return closest;
+}
+
+function parsePDFTunebookFeaturesBlock(block) {
+  if (!block) return;
+
+  // --- If a block exists, reset all text fields ---
+  gPDFTunebookConfig.addtitle = "";
+  gPDFTunebookConfig.addsubtitle = "";
+  gPDFTunebookConfig.addtoc = "";
+  gPDFTunebookConfig.addindex = "";
+  gPDFTunebookConfig.pageheader = "";
+  gPDFTunebookConfig.pagefooter = "";
+  gPDFTunebookConfig.qrcode_link = "";
+  gPDFTunebookConfig.caption_for_qrcode = "";
+
+  // --- Reset playback-related toggles ---
+  // (These will only be set true if found in the block)
+  gPDFTunebookConfig.bAdd_add_all_playback_links = false;
+  gPDFTunebookConfig.bAdd_add_full_tunebook = false;
+  gPDFTunebookConfig.bAdd_add_fonts = false;
+  gPDFTunebookConfig.bInjectInstruments = false;
+  gPDFTunebookConfig.bAdd_QRCode = false;
+
+  var lines = block.split(/\r?\n/);
+
+  for (var i = 0; i < lines.length; i++) {
+    var t = lines[i].trim();
+    if (!t || t.charAt(0) !== "%") continue;
+
+    t = t.substring(1).trim();
+    if (!t) continue;
+
+    var parts = t.split(/\s+/);
+    var cmd = parts[0];
+    var rest = t.substring(cmd.length).trim();
+
+    switch (cmd) {
+
+      case "pdfquality": {
+        if (parts.length > 1) {
+          var q = parseFloat(parts[1]);
+          if (!isNaN(q)) {
+            // Map to closest valid UI value
+            gPDFTunebookConfig.pdfquality = mapPdfQualityToClosest(q);
+          }
+        }
+        break;
+      }
+
+      case "pdf_between_tune_space":
+        if (parts.length > 1) {
+          var sp = parseInt(parts[1], 10);
+          if (!isNaN(sp)) gPDFTunebookConfig.pdf_between_tune_space = sp;
+        }
+        break;
+
+      case "addtitle":
+        gPDFTunebookConfig.addtitle = rest;
+        break;
+
+      case "addsubtitle":
+        gPDFTunebookConfig.addsubtitle = rest;
+        break;
+
+      case "addtoc":
+        gPDFTunebookConfig.addtoc = rest;
+        break;
+
+      case "addsortedindex":
+        gPDFTunebookConfig.addindex = rest;
+        break;
+
+      case "pageheader":
+        gPDFTunebookConfig.pageheader = rest;
+        break;
+
+      case "pagefooter":
+        gPDFTunebookConfig.pagefooter = rest;
+        break;
+
+      case "add_all_playback_links":
+        // Found → enable playback links
+        if (parts.length >= 5) {
+
+          debugger;
+
+          gPDFTunebookConfig.bAdd_add_all_playback_links = true;
+          gPDFTunebookConfig.bInjectInstruments = true;
+
+          gPDFTunebookConfig.melody_instrument = parsePlaybackProgramFromDirective(parts[1]);
+          gPDFTunebookConfig.bass_instrument   = parsePlaybackProgramFromDirective(parts[2]);
+          gPDFTunebookConfig.chord_instrument  = parsePlaybackProgramFromDirective(parts[3]);
+          gPDFTunebookConfig.sound_font        = parts[4];
+        }
+        break;
+
+      case "add_all_playback_volumes":
+        if (parts.length >= 3) {
+          var vb = parseInt(parts[1], 10);
+          if (!isNaN(vb)) gPDFTunebookConfig.bass_volume = vb;
+
+          var vc = parseInt(parts[2], 10);
+          if (!isNaN(vc)) gPDFTunebookConfig.chord_volume = vc;
+        }
+        break;
+
+      case "playback_links_are_complete_tunebook":
+        gPDFTunebookConfig.bAdd_add_full_tunebook = true;
+        break;
+
+      case "add_all_fonts":
+        gPDFTunebookConfig.bAdd_add_fonts = true;
+        break;
+
+      case "qrcode":
+        gPDFTunebookConfig.bAdd_QRCode = true;
+        gPDFTunebookConfig.qrcode_link = rest; // blank = default share URL
+        break;
+
+      case "caption_for_qrcode":
+        gPDFTunebookConfig.caption_for_qrcode = rest;
+        break;
+
+      default:
+        break;
+    }
+  }
+}
+
+// Look in the current ABC text for a PDF Tunebook Features block and,
+// if present, parse it and update gPDFTunebookConfig from any found values.
+function loadPDFTunebookConfigFromABC() {
+  var theNotes = getABCEditorText();
+  if (!theNotes) return;
+
+  var startMarker = "% Start of PDF Tunebook Features";
+  var endMarker   = "% End of PDF Tunebook Features";
+
+  var startIndex = theNotes.indexOf(startMarker);
+  if (startIndex === -1) return;
+
+  var endIndex = theNotes.indexOf(endMarker, startIndex + startMarker.length);
+  if (endIndex === -1) return;
+
+  var block = theNotes.substring(startIndex + startMarker.length, endIndex);
+  parsePDFTunebookFeaturesBlock(block);
+}
+
+
+
 function idlePDFTunebookBuilder() {
 
   $('[name="addtitle"]').attr('placeholder', 'No Title Page will be included');
@@ -15960,13 +16146,20 @@ function PDFTunebookBuilder() {
   // Keep track of dialogs
   sendGoogleAnalytics("dialog", "PDFTunebookBuilder");
 
+  // NEW: If the ABC contains a PDF Tunebook Features block, use it
+  // to initialize gPDFTunebookConfig before opening the dialog.
+  loadPDFTunebookConfigFromABC();
+
   // sound_font was added later, make sure the field is present
   if ((!gPDFTunebookConfig.sound_font) || (gPDFTunebookConfig.sound_font == "")) {
     gPDFTunebookConfig.sound_font = "fluid";
   }
 
   // bass_instrument was added later, make sure the field is present
-  if ((!gPDFTunebookConfig.bass_instrument) || (gPDFTunebookConfig.bass_instrument == "")) {
+  if (gPDFTunebookConfig.bass_instrument === undefined ||
+    gPDFTunebookConfig.bass_instrument === null ||
+    gPDFTunebookConfig.bass_instrument === "") {
+
     gPDFTunebookConfig.bass_instrument = 1;
   }
 
@@ -16452,13 +16645,20 @@ function PDFTunebookBuilderPlayOnly() {
   // Keep track of dialogs
   sendGoogleAnalytics("dialog", "PDFTunebookBuilderPlayOnly");
 
+  // NEW: If the ABC contains a PDF Tunebook Features block, use it
+  // to initialize gPDFTunebookConfig before opening the dialog.
+  loadPDFTunebookConfigFromABC();  
+
   // sound_font was added later, make sure the field is present
   if ((!gPDFTunebookConfig.sound_font) || (gPDFTunebookConfig.sound_font == "")) {
     gPDFTunebookConfig.sound_font = "fluid";
   }
 
   // bass_instrument was added later, make sure the field is present
-  if ((!gPDFTunebookConfig.bass_instrument) || (gPDFTunebookConfig.bass_instrument == "")) {
+  if (gPDFTunebookConfig.bass_instrument === undefined ||
+    gPDFTunebookConfig.bass_instrument === null ||
+    gPDFTunebookConfig.bass_instrument === "") {
+
     gPDFTunebookConfig.bass_instrument = 1;
   }
 
@@ -48336,13 +48536,20 @@ function Do_Browser_PDF_Export() {
   // Keep track of use of the native PDF exporter
   sendGoogleAnalytics("export", "PrintToPDF");
 
+  // NEW: If the ABC contains a PDF Tunebook Features block, use it
+  // to initialize gPDFTunebookConfig before opening the dialog.
+  loadPDFTunebookConfigFromABC();
+
   // sound_font was added later, make sure the field is present
   if ((!gPDFTunebookConfig.sound_font) || (gPDFTunebookConfig.sound_font == "")) {
     gPDFTunebookConfig.sound_font = "fluid";
   }
 
   // bass_instrument was added later, make sure the field is present
-  if ((!gPDFTunebookConfig.bass_instrument) || (gPDFTunebookConfig.bass_instrument == "")) {
+  if (gPDFTunebookConfig.bass_instrument === undefined ||
+    gPDFTunebookConfig.bass_instrument === null ||
+    gPDFTunebookConfig.bass_instrument === "") {
+
     gPDFTunebookConfig.bass_instrument = 1;
   }
 
