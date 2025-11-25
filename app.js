@@ -1300,16 +1300,33 @@ function setABCEditorText(theText) {
 //
 function getABCEditorText(){
 
+  // Check both sources regardless of gEnableSyntax to handle edge cases
+  var textFromCM = "";
+  var textFromABC = "";
+
+  if (typeof gTheCM !== "undefined" && gTheCM && typeof gTheCM.getValue === "function"){
+    textFromCM = gTheCM.getValue();
+  }
+
+  if (typeof gTheABC !== "undefined" && gTheABC){
+    textFromABC = gTheABC.value;
+  }
+
+  // Prefer CodeMirror if gEnableSyntax is true, otherwise prefer textarea
+  // But use whichever has content if one is empty
   if (gEnableSyntax){
-    if (typeof gTheCM !== "undefined"){
-      return gTheCM.getValue();
-    }
-    else{
-      return "";
+    if (textFromCM){
+      return textFromCM;
+    } else {
+      return textFromABC;
     }
   }
   else{
-    return gTheABC.value;
+    if (textFromABC){
+      return textFromABC;
+    } else {
+      return textFromCM;
+    }
   }
 }
 
@@ -1815,9 +1832,27 @@ function CountTunes() {
   // Count the tunes in the text area
   var theNotes = getABCEditorText();
 
+  // Strip leading/trailing whitespace
+  theNotes = theNotes.trim();
+
+  // If empty, return 0
+  if (theNotes.length === 0) {
+    gTotalTunes = 0;
+    return 0;
+  }
+
   var theTunes = theNotes.split(/^X:.*$/gm);
 
   var nTunes = theTunes.length - 1;
+
+  // If no X: headers found but there's content, treat it as 1 tune
+  // (common case: ABC text without X: header)
+  if (nTunes === 0 && theNotes.length > 0) {
+    // Check if it looks like ABC notation (has common ABC fields)
+    if (theNotes.match(/^[A-Z]:|^[|\[\(]/m)) {
+      nTunes = 1;
+    }
+  }
 
   // Save the global tune count anytime this is called
   gTotalTunes = nTunes;
@@ -47941,11 +47976,11 @@ function PDFExportDialog() {
     dialog_PDFFont = "Times";
   }
 
+  var dialog_PDFFontStyle = gPDFFontStyle;
+
   if ((pdffontlc == "noto-serif") || (pdffontlc == "noto-sans")) {
     dialog_PDFFontStyle = "Normal";
   }
-
-  var dialog_PDFFontStyle = gPDFFontStyle;
 
   if (dialog_PDFFontStyle == "") {
     dialog_PDFFontStyle = "Normal";
@@ -59908,6 +59943,19 @@ function DoStartup() {
   // Initially show the controls as soon as some ABC is entered
   //
   ShowAllControls();
+
+  // Check if ABC text is already present and render if needed
+  // This handles cases where ABC text is loaded before Render() is called
+  setTimeout(function() {
+    var abcText = getABCEditorText();
+    if (abcText && abcText.trim().length > 0) {
+      var nTunes = CountTunes();
+      if (nTunes > 0) {
+        // ABC text is present, trigger a render to enable buttons
+        RenderAsync(true, null);
+      }
+    }
+  }, 100);
 
 
   if (!isFromShare) {
