@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3032_112425_1800";
+var gVersionNumber = "3033_112525_1800";
 
 var gMIDIInitStillWaiting = false;
 
@@ -36324,12 +36324,93 @@ function JustTheNotes(theTune) {
   return theNotes;
 }
 
+// --- Helpers for meter-based rest calculation --------------------------------
+
+// Get the last header field value (M:, L:, etc.) appearing before upToIndex
+function getHeaderFieldValue(theABC, field, upToIndex) {
+  var sub = (typeof upToIndex === "number") ? theABC.substring(0, upToIndex) : theABC;
+  var re = new RegExp("^\\s*" + field + "\\s*:\\s*([^\\r\\n]+)", "gm");
+  var m, last = null;
+  while ((m = re.exec(sub)) !== null) {
+    last = m[1].trim();
+  }
+  return last;
+}
+
+function parseFraction(str) {
+  if (!str) return null;
+  var m = String(str).trim().match(/^(\d+)\s*\/\s*(\d+)/);
+  if (!m) return null;
+  return { num: parseInt(m[1], 10), den: parseInt(m[2], 10) };
+}
+
+function parseMeterString(str) {
+  if (!str) return null;
+  str = str.trim();
+
+  // Common time / cut time
+  if (/^C\|/i.test(str)) {
+    return { num: 2, den: 2 }; // cut time
+  }
+  if (/^C\b/i.test(str)) {
+    return { num: 4, den: 4 }; // common time
+  }
+
+  var frac = parseFraction(str);
+  if (frac) return frac;
+
+  // Unsupported / "none" / etc.
+  return null;
+}
+
+// Default L: according to ABC rules
+// If M < 3/4 => 1/16, else 1/8
+function defaultUnitForMeter(meter) {
+  if (!meter) return { num: 1, den: 8 };
+  var val = meter.num / meter.den;
+  if (val < 0.75) {
+    return { num: 1, den: 16 };
+  } else {
+    return { num: 1, den: 8 };
+  }
+}
+
+// Compute a single full-bar rest token (e.g., "z", "z6", "z8") or null
+function computeOneBarRest(theABC, notesOffset) {
+  var meterStr = getHeaderFieldValue(theABC, "M", notesOffset);
+  if (!meterStr) return null;
+
+  var meter = parseMeterString(meterStr);
+  if (!meter) return null;
+
+  var lStr = getHeaderFieldValue(theABC, "L", notesOffset);
+  var unit = lStr ? parseFraction(lStr) : null;
+  if (!unit) unit = defaultUnitForMeter(meter);
+
+  var num = meter.num, den = meter.den;
+  var lnum = unit.num, lden = unit.den;
+
+  // barLength / unitLength = (num/den) / (lnum/lden) = num*lden / (den*lnum)
+  var units = num * lden / (den * lnum);
+  if (!isFinite(units) || units <= 0) return null;
+
+  var rounded = Math.round(units);
+  if (Math.abs(rounded - units) > 1e-6) {
+    // Non-integer, give up rather than generate something weird
+    return null;
+  }
+
+  var dur = (rounded === 1) ? "" : String(rounded);
+  return "z" + dur;
+}
+
+// --- Main function -----------------------------------------------------------
 //
 // See if there is a select region for the tune and return partial ABC version
 //
 function ProcessSelectRegionForPlay(theABC) {
 
-  //console.log("ProcessSelectRegionForPlay");
+  //console.log("ProcessSelectRegionForPlay\n"+theABC);
 
   // Allow disable from the advanced settings dialog
   if (gDisableSelectedPlay) {
@@ -36351,8 +36432,9 @@ function ProcessSelectRegionForPlay(theABC) {
   else{
     start = gTheABC.selectionStart;
     end = gTheABC.selectionEnd;
-
   }
+
+  //console.log("start: "+start+" end: "+end);
 
   // No selection region, just return the entire tune
   if (start == end) {
@@ -36363,6 +36445,8 @@ function ProcessSelectRegionForPlay(theABC) {
   if (theABC.indexOf("V:") != -1) {
     return theABC;
   }
+
+  //console.log("gPlayABCTuneIndex: "+gPlayABCTuneIndex);
 
   var theTuneOffset = findTuneOffsetByIndex(gPlayABCTuneIndex);
   var length = theABC.length;
@@ -36534,8 +36618,17 @@ function PlayABC(e) {
     } else {
       // If shift key click on play, open the Tune Trainer
       if (e && e.shiftKey) {
+        
+        // Get the current tune index and tune count
+        gPlayABCTuneIndex = findSelectedTuneIndex();
+        gPlayABCTuneCount = CountTunes();
+
+        //console.log("gPlayABCTuneIndex: "+gPlayABCTuneIndex)
+
         TuneTrainer(false);
+
         return;
+
       } else
         // Select random tune if user clicks play with the alt keys pressed
         if (e && e.altKey) {
@@ -43226,8 +43319,12 @@ function TuneTrainer(bIsFromPlayer) {
     // Fixes bug reported by Alix on 11 Apr 2024 for tunes with tags at the end and extra blank lines
     theSelectedABC = theSelectedABC.trim();
 
+    //console.log("before: \n"+theSelectedABC);
+
     // See if there is a select region and return the partial tune
     theSelectedABC = ProcessSelectRegionForPlay(theSelectedABC);
+
+    //console.log("after: \n"+theSelectedABC);
 
     // Pre-process the ABC to inject any requested programs or volumes
     var theProcessedABC = PreProcessPlayABC(theSelectedABC);
@@ -43388,6 +43485,18 @@ function ToggleLoopCountdown() {
 }
 
 // 
+// Save the add measure state
+//
+function ToggleTuneTrainerAddMeasure() {
+
+  gLooperAddMeasure = document.getElementById("looper_addmeasure").checked;
+
+  if (gLocalStorageAvailable) {
+    localStorage.LooperAddMeasure = gLooperAddMeasure;
+  }
+}
+
+// 
 // Save the countdown state
 //
 function SaveLoopCountdown() {
@@ -43426,10 +43535,16 @@ var gTouchIncrementFive = false;
 var gLooperDoCountdown = true;
 var gLooperCountdown = 5;
 
+// Add a measure after in the Tune Trainer
+var gLooperAddMeasure = false;
+
 function TuneTrainerDialog(theOriginalABC, theProcessedABC, looperState) {
 
   // Keep track of dialogs
   sendGoogleAnalytics("dialog", "TuneTrainer");
+
+  // console.log("original \n"+theOriginalABC);
+  // console.log("processed \n"+theProcessedABC);
 
   var totalLoops = 0;
   var loopCount = 0;
@@ -43447,6 +43562,25 @@ function TuneTrainerDialog(theOriginalABC, theProcessedABC, looperState) {
 
   if (gPlayMetronome) {
     theProcessedABC = inject_one_metronome(gPlayerLooperProcessed, false);
+  }
+
+  // // Optionally add one extra bar of meter-appropriate rests
+  if (gLooperAddMeasure) {
+    var restBar = computeOneBarRest(theProcessedABC, theProcessedABC.length);
+    if (restBar) {
+      var trimmed = theProcessedABC.replace(/\s+$/,"");
+      var lastChar = trimmed.charAt(trimmed.length - 1);
+
+      if ("|:]".indexOf(lastChar) === -1) {
+        // Not ending on a barline: start a new bar and end it after the rest
+        // ...notes... |z4|
+        theProcessedABC = trimmed + " |" + restBar + "|";
+      } else {
+        // Already ends on a barline (|, : or ]): just add the rest and close with |
+        // ...:| z4|
+        theProcessedABC = trimmed + " " + restBar + "|";
+      }
+    }
   }
 
   gLooperCurrent = gLooperSpeedStart;
@@ -44012,15 +44146,17 @@ function TuneTrainerDialog(theOriginalABC, theProcessedABC, looperState) {
     modal_msg += '<span id="looper_text_4">Increment tempo after how many loops:</span> <input style="width:60px;margin-right:14px;" id="looper_count" type="number" min="1" step="1" max="100" title="Increment tempo after this many times through the tune" autocomplete="off"/><span id="looper_text_5">Countdown?</span><input style="width:18px;margin-left:8px;margin-right:14px;" id="looper_docountdown" type="checkbox" onchange="ToggleLoopCountdown();"/><span id="looper_text_6">Countdown secs:</span><input style="width:60px;margin-left:8px;" id="looper_countdown" type="number" min="1" step="1" max="30" title="Countdown secs" autocomplete="off" onchange="SaveLoopCountdown();"/>';
     modal_msg += '</p>';
     modal_msg += '<p class="configure_looper_text" style="text-align:center;margin:0px;margin-top:20px">';
-    modal_msg += '<input id="looperreset" class="looperreset button btn btn-looperreset" onclick="TuneTrainerReset();" type="button" value="Apply Tune Trainer Settings and Reload the Player" title="Applies the entered tune trainer settings and reloads the player">';
+    modal_msg += '<input id="looperreset" class="looperreset button btn btn-looperreset" onclick="TuneTrainerReset();" type="button" value="Apply Tune Trainer Settings and Reload" title="Applies the entered tune trainer settings and reloads the player">';
 
     if (gPlayMetronome) {
       modal_msg += '<input id="looper_metronomebutton" class="looper_metronome button btn btn-metronome" onclick="ToggleTuneTrainerMetronome();" type="button" value="Disable Metronome" title="Disables the metronome">';
     } else {
       modal_msg += '<input id="looper_metronomebutton" class="looper_metronome button btn btn-metronome" onclick="ToggleTuneTrainerMetronome();" type="button" value="Enable Metronome" title="Enables the metronome">';
     }
+    modal_msg += '<span id="looper_text_7" style="margin-left:14px;">Add a measure rest?</span><input style="width:18px;margin-left:8px;margin-right:14px;" id="looper_addmeasure" type="checkbox" onchange="ToggleTuneTrainerAddMeasure();"/>';
 
     modal_msg += '</p>';
+    
     modal_msg += '<a id="looperhelp" href="https://michaeleskin.com/abctools/userguide.html#tune_trainer" target="_blank" style="text-decoration:none;" title="Learn more about the Tune Trainer" class="dialogcornerbutton">?</a>';
     modal_msg += '<p id="looperstatus"></p>';
     modal_msg += '<div id="looperstatusbar"></div>';
@@ -44072,6 +44208,8 @@ function TuneTrainerDialog(theOriginalABC, theProcessedABC, looperState) {
 
     document.getElementById("looper_docountdown").checked = gLooperDoCountdown;
     document.getElementById("looper_countdown").value = gLooperCountdown;
+
+    document.getElementById("looper_addmeasure").checked = gLooperAddMeasure;
 
     // Are we using the trainer touch controls
     if (gTrainerTouchControls) {
@@ -45951,6 +46089,12 @@ function GetInitialConfigurationSettings() {
     gAlwaysFlattenParts = (val == "true");
   }
 
+  gLooperAddMeasure = false;
+  val = localStorage.LooperAddMeasure
+  if (val) {
+    gLooperAddMeasure = (val == "true");
+  }
+
   // Apply custom theme
   ensureInitialAbcThemeApplied();
 
@@ -46264,6 +46408,9 @@ function SaveConfigurationSettings() {
 
     // Always flatten parts
     localStorage.AlwaysFlattenParts = gAlwaysFlattenParts;
+
+    // Add measure in Tune Trainer
+    localStorage.LooperAddMeasure = gLooperAddMeasure;
 
   }
 }
@@ -50269,7 +50416,7 @@ function ConfigurePlayerSettings(player_callback) {
     configure_metronome_high_volume: gMetronomeHighVolume,
     configure_metronome_low_volume: gMetronomeLowVolume,
     configure_wide_playback_cursor: gUseWidePlayCursor,
-    configure_always_flatten_parts: gAlwaysFlattenParts
+    configure_always_flatten_parts: gAlwaysFlattenParts,
   };
 
   const sound_font_options = [{

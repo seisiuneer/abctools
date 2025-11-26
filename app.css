@@ -1364,7 +1364,7 @@ top:20px;
 height:42px;
 padding:12px;
 width:auto;
-margin-right:24px;
+margin-right:18px;
 }
 
 @media (hover: hover) {
@@ -3581,7 +3581,7 @@ margin-top:-7px;
 	margin-right:10px;
 }
 
-#looper_text_1,#looper_text_2,#looper_text_3,#looper_text_4,#looper_text_5,#looper_text_6,#looper_percent_span_1,#looper_percent_span_2,#looper_percent_span_3{
+#looper_text_1,#looper_text_2,#looper_text_3,#looper_text_4,#looper_text_5,#looper_text_6,#looper_text_7,#looper_percent_span_1,#looper_percent_span_2,#looper_percent_span_3{
 	-webkit-user-select: none;
     user-select: none;
 }
