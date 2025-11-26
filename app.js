@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3033_112525_1800";
+var gVersionNumber = "3034_112625_1100";
 
 var gMIDIInitStillWaiting = false;
 
@@ -43537,6 +43537,7 @@ var gLooperCountdown = 5;
 
 // Add a measure after in the Tune Trainer
 var gLooperAddMeasure = false;
+var gLooperAddMeasureCount = 1;
 
 function TuneTrainerDialog(theOriginalABC, theProcessedABC, looperState) {
 
@@ -43564,21 +43565,28 @@ function TuneTrainerDialog(theOriginalABC, theProcessedABC, looperState) {
     theProcessedABC = inject_one_metronome(gPlayerLooperProcessed, false);
   }
 
-  // // Optionally add one extra bar of meter-appropriate rests
+  // Optionally add one extra bar of meter-appropriate rests
   if (gLooperAddMeasure) {
     var restBar = computeOneBarRest(theProcessedABC, theProcessedABC.length);
     if (restBar) {
       var trimmed = theProcessedABC.replace(/\s+$/,"");
       var lastChar = trimmed.charAt(trimmed.length - 1);
 
+      // Build N measures of rests
+      var restMeasures = "";
+      for (var i = 0; i < gLooperAddMeasureCount; i++) {
+        restMeasures += restBar + "|";
+        if (i < gLooperAddMeasureCount - 1) restMeasures += " ";
+      }
+
       if ("|:]".indexOf(lastChar) === -1) {
-        // Not ending on a barline: start a new bar and end it after the rest
-        // ...notes... |z4|
-        theProcessedABC = trimmed + " |" + restBar + "|";
+        // Not ending on a barline: prepend barline before first rest bar
+        // ...notes... |z4| z4| z4|
+        theProcessedABC = trimmed + " |" + restMeasures;
       } else {
-        // Already ends on a barline (|, : or ]): just add the rest and close with |
-        // ...:| z4|
-        theProcessedABC = trimmed + " " + restBar + "|";
+        // Ends on a barline (|, : or ])
+        // ...| z4| z4| z4|
+        theProcessedABC = trimmed + " " + restMeasures;
       }
     }
   }
@@ -44153,7 +44161,14 @@ function TuneTrainerDialog(theOriginalABC, theProcessedABC, looperState) {
     } else {
       modal_msg += '<input id="looper_metronomebutton" class="looper_metronome button btn btn-metronome" onclick="ToggleTuneTrainerMetronome();" type="button" value="Enable Metronome" title="Enables the metronome">';
     }
-    modal_msg += '<span id="looper_text_7" style="margin-left:14px;">Add a measure rest?</span><input style="width:18px;margin-left:8px;margin-right:14px;" id="looper_addmeasure" type="checkbox" onchange="ToggleTuneTrainerAddMeasure();"/>';
+
+    // Change message based on requested add measure count
+    if (gLooperAddMeasureCount == 1){
+      modal_msg += '<span id="looper_text_7" style="margin-left:14px;">Add a measure of rests?</span><input style="width:18px;margin-left:8px;margin-right:14px;" id="looper_addmeasure" type="checkbox" onchange="ToggleTuneTrainerAddMeasure();"/>';
+    }
+    else{
+      modal_msg += '<span id="looper_text_7" style="margin-left:14px;">Add '+gLooperAddMeasureCount+' measures of rests?</span><input style="width:18px;margin-left:8px;margin-right:14px;" id="looper_addmeasure" type="checkbox" onchange="ToggleTuneTrainerAddMeasure();"/>';
+    }
 
     modal_msg += '</p>';
     
@@ -46094,6 +46109,17 @@ function GetInitialConfigurationSettings() {
   if (val) {
     gLooperAddMeasure = (val == "true");
   }
+  
+  gLooperAddMeasureCount = 1;
+  val = localStorage.LooperAddMeasureCount;
+  if (val) {
+    gLooperAddMeasureCount = parseInt(val);
+    if (isNaN(gLooperAddMeasureCount)) {
+      gLooperAddMeasureCount = 1;
+    }
+  } else {
+    gLooperAddMeasureCount = 1;
+  }
 
   // Apply custom theme
   ensureInitialAbcThemeApplied();
@@ -46411,6 +46437,9 @@ function SaveConfigurationSettings() {
 
     // Add measure in Tune Trainer
     localStorage.LooperAddMeasure = gLooperAddMeasure;
+
+    // Number of measures to add
+    localStorage.LooperAddMeasureCount = gLooperAddMeasureCount;
 
   }
 }
@@ -49925,6 +49954,7 @@ function AdvancedSettings() {
     configure_jumptotune_autoscroll: gJumpToTuneAutoscroll,
     configure_force_android: gForceAndroid,
     configure_disable_android: gDisableAndroid,
+    configure_looper_add_measure_count: gLooperAddMeasureCount
   };
 
   var form = [{
@@ -49999,7 +50029,14 @@ function AdvancedSettings() {
     id: "configure_trainer_touch_controls",
     type: "checkbox",
     cssClass: "advanced_settings2_form_text_checkbox"
-  }, {
+  }, 
+  {
+    name: "Tune Trainer add extra measure count:",
+    id: "configure_looper_add_measure_count",
+    type: "text",
+    cssClass: "advanced_settings2_form_text"
+  }, 
+  {
     name: "Full screen tune display width scaling (percentage) (default is 50):",
     id: "configure_fullscreen_scaling",
     type: "number",
@@ -50205,6 +50242,14 @@ function AdvancedSettings() {
 
         if (gMP3Bitrate > 384) {
           gMP3Bitrate = 384;
+        }
+      }
+
+      // Tune trainer measure count
+      val = parseInt(args.result.configure_looper_add_measure_count);
+      if (!isNaN(val)) {
+        if ((gLooperAddMeasureCount > 0) && (gLooperAddMeasureCount <= 16)) {
+          gLooperAddMeasureCount = val;
         }
       }
 
