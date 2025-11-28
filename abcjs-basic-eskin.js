@@ -4480,6 +4480,43 @@ var Parse = function Parse() {
     }
   }
 
+  // Find and merge any continuation lines after a tag, but keep the character count the same
+  function mergeContinuationLines(text) {
+    const lines = text.split(/\r?\n/);
+    const out = [];
+    let i = 0;
+
+    const baseRe = /^[A-Za-z]:/;   // F: ...   (no capture needed)
+    const plusRe = /^\+:(.*)$/;    // +: ...  (capture EVERYTHING after +:)
+
+    while (i < lines.length) {
+      const line = lines[i];
+
+      if (baseRe.test(line)) {
+        let merged = line;
+        let j = i + 1;
+
+        // Collect all +: lines (preserve exact spacing)
+        while (j < lines.length) {
+          const m = lines[j].match(plusRe);
+          if (!m) break;
+
+          const raw = m[1]; // exact text INCLUDING leading spaces
+          merged += "   " + raw;  // always prepend 3 spaces
+          j++;
+        }
+
+        out.push(merged);
+        i = j;
+      } else {
+        out.push(line);
+        i++;
+      }
+    }
+
+    return out.join("\n");
+  }
+
   this.parse = function (strTune, switches, startPos) {
     // the switches are optional and cause a difference in the way the tune is parsed.
     // switches.header_only : stop parsing when the header is finished
@@ -4499,6 +4536,9 @@ var Parse = function Parse() {
 
     // MAE 8 Nov 2025 - Allow for escaped %
     strTune = strTune.replaceAll("\\%","％ ");
+
+    // MAE 28 Nov 2025 - For continuation +: fields
+    strTune = mergeContinuationLines(strTune);
 
     // get rid of latex commands. If a line starts with a backslash, then it is replaced by spaces to keep the character count the same.
     var arr = strTune.split("\n\\");
