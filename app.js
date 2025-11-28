@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3035_112825_0800";
+var gVersionNumber = "3036_112825_0830";
 
 var gMIDIInitStillWaiting = false;
 
@@ -61795,8 +61795,11 @@ CodeMirror.defineMode("abc-plus", function () {
       if (stream.sol() && stream.match(/^\s*T\s*:\s*/)) {
         state.inTitleVal = true;  return "abc-header-tag";
       }
-      if (stream.sol() && stream.match(/^\s*[A-Za-z]\s*:\s*/)) {
-        state.inHeaderVal = true; return "abc-header-tag";
+
+      // Added +: detect 28 Nov 2025
+      if (stream.sol() && stream.match(/^\s*(?:[A-Za-z]|[+])\s*:\s*/)) {
+        state.inHeaderVal = true;
+        return "abc-header-tag";
       }
 
       // ===== Ending digits after a bar (no bleed) =====
