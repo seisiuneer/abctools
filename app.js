@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3037_112925_1930";
+var gVersionNumber = "3038_113025_0800";
 
 var gMIDIInitStillWaiting = false;
 
@@ -54740,9 +54740,9 @@ function FixIOS17(val) {
   //alert("navigator.userAgent: "+UA);
 
   // Checking both Safari as well as Chrome/Firefox user agent strings
-  if ((UA.indexOf("Version/17") != -1) || (UA.indexOf("OS 17") != -1) || (UA.indexOf("Version/18") != -1) || (UA.indexOf("OS 18") != -1) || (UA.indexOf("FxiOS") != -1)) {
+  if ((UA.indexOf("Version/17") != -1) || (UA.indexOf("OS 17") != -1) || (UA.indexOf("Version/18") != -1) || (UA.indexOf("OS 18") != -1) || (UA.indexOf("FxiOS") != -1) || (UA.indexOf("Version/26") != -1) || (UA.indexOf("OS 26") != -1)) {
 
-    //alert("Doing iOS 17 fix");
+    //alert("Doing iOS 17+ fix");
 
     try {
 
