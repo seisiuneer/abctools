@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3036_112825_0830";
+var gVersionNumber = "3037_112925_1930";
 
 var gMIDIInitStillWaiting = false;
 
@@ -54657,7 +54657,7 @@ function CheckFacebook_iOS() {
   if (gIsFacebook) {
 
     // If on iOS 17 or 18, put up button to launch into Safari
-    if ((UA.indexOf("Version/17") != -1) || (UA.indexOf("OS 17") != -1) || (UA.indexOf("Version/18") != -1) || (UA.indexOf("OS 18") != -1)) {
+    if ((UA.indexOf("Version/17") != -1) || (UA.indexOf("OS 17") != -1) || (UA.indexOf("Version/18") != -1) ||  (UA.indexOf("OS 18") != -1) || (UA.indexOf("Version/26") != -1) || (UA.indexOf("OS 26") != -1)) {
 
       try {
 
