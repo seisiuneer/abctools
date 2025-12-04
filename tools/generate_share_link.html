@@ -410,78 +410,6 @@
 //
 // ********************************************************************************************************************
 
-// Compression mode ids
-var COMPRESSION_MODE_LZW = 0;      // existing LZ-String / LZW
-var COMPRESSION_MODE_DEFLATE = 1;  // new Deflate+Base64URL
-
-// Base64/Base64URL helpers for Deflate mode
-function bytesToBase64(bytes) {
-    var binary = "";
-    var len = bytes.length;
-    for (var i = 0; i < len; i++) {
-        binary += String.fromCharCode(bytes[i]);
-    }
-    return btoa(binary);
-}
-
-function base64ToBytes(base64) {
-    var binary = atob(base64);
-    var len = binary.length;
-    var bytes = new Uint8Array(len);
-    for (var i = 0; i < len; i++) {
-        bytes[i] = binary.charCodeAt(i);
-    }
-    return bytes;
-}
-
-function bytesToBase64URL(bytes) {
-    return bytesToBase64(bytes)
-        .replace(/\+/g, "-")
-        .replace(/\//g, "_")
-        .replace(/=+$/, "");
-}
-
-function base64URLToBytes(base64url) {
-    var base64 = base64url
-        .replace(/-/g, "+")
-        .replace(/_/g, "/");
-
-    var pad = base64.length % 4;
-    if (pad === 2) base64 += "==";
-    else if (pad === 3) base64 += "=";
-    else if (pad !== 0) {
-        throw new Error("Invalid Base64URL length");
-    }
-    return base64ToBytes(base64);
-}
-
-// LZW compression wrapper (existing behavior)
-function compressABC_LZW(abcText) {
-    return LZString.compressToEncodedURIComponent(abcText);
-}
-
-// Deflate-based compression
-function compressABC_Deflate(abcText) {
-    if (typeof pako === "undefined") {
-        throw new Error("pako (Deflate library) is not loaded.");
-    }
-    var encoder = new TextEncoder();
-    var utf8Bytes = encoder.encode(abcText);
-    var deflated = pako.deflate(utf8Bytes, { level: 9 });
-    return bytesToBase64URL(deflated);
-}
-
-// Deflate-based decompression
-function decompressABC_Deflate(encoded) {
-    if (typeof pako === "undefined") {
-        throw new Error("pako (Deflate library) is not loaded.");
-    }
-    var deflatedBytes = base64URLToBytes(encoded);
-    var inflatedBytes = pako.inflate(deflatedBytes);
-    var decoder = new TextDecoder();
-    return decoder.decode(inflatedBytes);
-}
-
 // Read selected compression mode from radio buttons
 function getSelectedCompressionMode() {
     var radios = document.getElementsByName("compressionMode");
@@ -499,11 +427,121 @@ function getSelectedCompressionMode() {
     return mode;
 }
 
-// Verify that a generated share link round-trips back to the original ABC
-// Decoder logic:
-//   If lzw param present -> use LZW
-//   else if def param present -> use Deflate
-function verifyShareLink(url, originalABC) {
+//
+// Main function for generating a share link
+//
+
+// Compression mode ids
+var COMPRESSION_MODE_LZW = 0;      // existing LZ-String / LZW
+var COMPRESSION_MODE_DEFLATE = 1;  // new Deflate+Base64URL
+
+function generateShareLink(abcText,shareName,tablatureOption,addAutoPlay) {
+
+    // Base64/Base64URL helpers for Deflate mode
+    function bytesToBase64(bytes) {
+        var binary = "";
+        var len = bytes.length;
+        for (var i = 0; i < len; i++) {
+            binary += String.fromCharCode(bytes[i]);
+        }
+        return btoa(binary);
+    }
+
+    function bytesToBase64URL(bytes) {
+      return bytesToBase64(bytes)
+          .replace(/\+/g, "-")
+          .replace(/\//g, "_")
+          .replace(/=+$/, "");
+    }
+
+    // LZW compression wrapper (existing behavior)
+    function compressABC_LZW(abcText) {
+        return LZString.compressToEncodedURIComponent(abcText);
+    }
+
+    // Deflate-based compression
+    function compressABC_Deflate(abcText) {
+      if (typeof pako === "undefined") {
+          throw new Error("pako (Deflate library) is not loaded.");
+      }
+      var encoder = new TextEncoder();
+      var utf8Bytes = encoder.encode(abcText);
+      var deflated = pako.deflate(utf8Bytes, { level: 9 });
+      return bytesToBase64URL(deflated);
+    }
+
+    var baseUrl = "https://michaeleskin.com/abctools/abctools.html";
+
+    // Choose compression mode (replace this with your own UI code as required)
+    var compressionMode = getSelectedCompressionMode();
+
+    var url = "";
+    if (compressionMode === COMPRESSION_MODE_DEFLATE) {
+        // Deflate-based link: def=...
+        var defEncoded = compressABC_Deflate(abcText);
+        url = baseUrl + "?def=" + defEncoded + "&format=" + tablatureOption + "&ssp=45&name=" + shareName;
+        if (addAutoPlay){
+            url += "&play=1";
+        }
+    } else {
+        // Existing LZW behavior: lzw=...
+        var abcInLZW = compressABC_LZW(abcText);
+        url = baseUrl + "?lzw=" + abcInLZW + "&format="+tablatureOption+"&ssp=45&name=" + shareName;
+        if (addAutoPlay){
+            url += "&play=1";
+        }
+    }
+
+    // Limit URLs to 8100 characters
+    if (url.length > 8100) {
+        return null;
+    }
+
+    return url;
+
+  }
+
+  // Verify that a generated share link round-trips back to the original ABC
+  // Decoder logic:
+  //   If lzw param present -> use LZW
+  //   else if def param present -> use Deflate
+  function verifyShareLink(url, originalABC) {
+
+    // Deflate-based decompression
+    function decompressABC_Deflate(encoded) {
+        if (typeof pako === "undefined") {
+            throw new Error("pako (Deflate library) is not loaded.");
+        }
+        var deflatedBytes = base64URLToBytes(encoded);
+        var inflatedBytes = pako.inflate(deflatedBytes);
+        var decoder = new TextDecoder();
+        return decoder.decode(inflatedBytes);
+    }
+
+    function base64ToBytes(base64) {
+        var binary = atob(base64);
+        var len = binary.length;
+        var bytes = new Uint8Array(len);
+        for (var i = 0; i < len; i++) {
+            bytes[i] = binary.charCodeAt(i);
+        }
+        return bytes;
+    }
+
+    function base64URLToBytes(base64url) {
+        var base64 = base64url
+            .replace(/-/g, "+")
+            .replace(/_/g, "/");
+
+        var pad = base64.length % 4;
+        if (pad === 2) base64 += "==";
+        else if (pad === 3) base64 += "=";
+        else if (pad !== 0) {
+            throw new Error("Invalid Base64URL length");
+        }
+        return base64ToBytes(base64);
+    }
+    
     try {
         var qIndex = url.indexOf("?");
         if (qIndex === -1) {
@@ -536,39 +574,7 @@ function verifyShareLink(url, originalABC) {
         console.log("verifyShareLink error:", e);
         return false;
     }
-}
-
-function generateShareLink(abcText,shareName,tablatureOption,addAutoPlay) {
-
-    var baseUrl = "https://michaeleskin.com/abctools/abctools.html";
-
-    // Choose compression mode
-    var compressionMode = getSelectedCompressionMode();
-
-    var url = "";
-    if (compressionMode === COMPRESSION_MODE_DEFLATE) {
-        // Deflate-based link: def=...
-        var defEncoded = compressABC_Deflate(abcText);
-        url = baseUrl + "?def=" + defEncoded + "&format=" + tablatureOption + "&ssp=45&name=" + shareName;
-        if (addAutoPlay){
-            url += "&play=1";
-        }
-    } else {
-        // Existing LZW behavior: lzw=...
-        var abcInLZW = compressABC_LZW(abcText);
-        url = baseUrl + "?lzw=" + abcInLZW + "&format="+tablatureOption+"&ssp=45&name=" + shareName;
-        if (addAutoPlay){
-            url += "&play=1";
-        }
-    }
-
-    // Limit URLs to 8100 characters
-    if (url.length > 8100) {
-        return null;
-    }
-
-    return url;
-}
+  }
 
 // ********************************************************************************************************************
 //
