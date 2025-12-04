@@ -10,6 +10,14 @@ function extractLZWParameter(url) {
     return match ? match[0] : null;
 }
 
+function extractDefParameter(url) {
+   // Use a regular expression to find the part starting with &def= followed by any characters until the next &
+    const match = url.match(/def=([^&]*)/);
+
+    // If a match is found, return the part after &def=
+    return match ? match[0] : null;
+}
+
 //
 // Extract tunes from an previously exported PDF
 // 
@@ -103,6 +111,26 @@ function extractPDFTunes(file){
                         nFound++;
 
                         outVal += `${abcInLZW}\n\n`;
+
+                    }
+
+                }
+                else
+                // Look for def params but exclude any with dx=1
+                if ((link.indexOf("def=") != -1) && (link.indexOf("dx=1") == -1)){
+
+                    var originalAbcInDeflate = extractDefParameter(link);
+
+                    originalAbcInDeflate = originalAbcInDeflate.replace("def=","");
+                
+                    var abcInDef = decompressABC_Deflate(originalAbcInDeflate);
+
+                    // Sometimes the Deflate fails if the link is too long for the PDF or some other issue
+                    if (abcInDef){
+
+                        nFound++;
+
+                        outVal += `${abcInDef}\n\n`;
 
                     }
 
@@ -240,6 +268,26 @@ function doExtractWebsiteTunes(rawText,filename){
                     nFound++;
 
                     outVal += `${abcInLZW}\n\n`;
+
+                }
+
+            }
+            else
+            // Look for def params but exclude any with dx=1
+            if ((link.indexOf("def=") != -1) && (link.indexOf("dx=1") == -1)){
+
+                var originalAbcInDeflate = extractDefParameter(link);
+
+                originalAbcInDeflate = originalAbcInDeflate.replace("def=","");
+            
+                var abcInDef = decompressABC_Deflate(originalAbcInDeflate);
+
+                // Sometimes the Deflate fails if the link is too long for the PDF or some other issue
+                if (abcInDef){
+
+                    nFound++;
+
+                    outVal += `${abcInDef}\n\n`;
 
                 }
 
@@ -447,6 +495,27 @@ function extractCSVTunes(file){
                     }
 
                 }
+                else
+                // Look for def params but exclude any with dx=1
+                if ((link.indexOf("def=") != -1) && (link.indexOf("dx=1") == -1)){
+
+                    var originalAbcInDeflate = extractDefParameter(link);
+
+                    originalAbcInDeflate = originalAbcInDeflate.replace("def=","");
+                
+                    var abcInDef = decompressABC_Deflate(originalAbcInDeflate);
+
+                    // Sometimes the Deflate fails if the link is too long for the PDF or some other issue
+                    if (abcInDef){
+
+                        nFound++;
+
+                        outVal += `${abcInDef}\n\n`;
+
+                    }
+
+                }
+
 
             });
         }

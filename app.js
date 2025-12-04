@@ -4,7 +4,7 @@
  *
  * Project repo at: https://github.com/seisiuneer/abctools
  * 
- * 
+ *
  * MIT License
  * 
  * Copyright (c) 2025 Michael Eskin
@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3038_113025_0800";
+var gVersionNumber = "3039_120425_1200";
 
 var gMIDIInitStillWaiting = false;
 
@@ -6760,7 +6760,7 @@ function GetAllTuneHyperlinks(theLinks) {
       tuneWithPatch = GetABCFileHeader() + tuneWithPatch;
 
       // Create a share URL for this tune
-      var theURL = FillUrlBoxWithAbcInLZW(tuneWithPatch, false);
+      var theURL = FillUrlBoxWithAbcInLZWOrDef(tuneWithPatch, false);
 
       // Test max share URL length and one-time warn if too long
       if (theURL.length >= 8100) {
@@ -6942,7 +6942,7 @@ function GetAllTuneHyperlinks(theLinks) {
       tuneWithPatch = GetABCFileHeader() + tuneWithPatch;
 
       // Create a share URL for this tune
-      var theURL = FillUrlBoxWithAbcInLZW(tuneWithPatch, false);
+      var theURL = FillUrlBoxWithAbcInLZWOrDef(tuneWithPatch, false);
 
       // MAE 11 Jul 2024 - For open in editor
       if (!gOpenInEditor) {
@@ -7647,7 +7647,7 @@ function AppendPDFTuneQRCode(thePDF, paperStyle, theABC, theTitle, callback) {
   theABC = GetABCFileHeader() + theABC;
 
   // Can we make a QR code from the current share link URL?
-  theURL = FillUrlBoxWithAbcInLZW(theABC, false);
+  theURL = FillUrlBoxWithAbcInLZWOrDef(theABC, false);
 
   // Adding play links?
   if (gAddPlaybackHyperlinks) {
@@ -7661,7 +7661,7 @@ function AppendPDFTuneQRCode(thePDF, paperStyle, theABC, theTitle, callback) {
   if (theURL.length > 2300) {
 
     // URL too long for QR code...
-    theURL = FillUrlBoxWithAbcInLZW("X:1\nT:" + theTitle + "\nT:Tune ABC was too long to generate a valid QR Code\n", false);
+    theURL = FillUrlBoxWithAbcInLZWOrDef("X:1\nT:" + theTitle + "\nT:Tune ABC was too long to generate a valid QR Code\n", false);
 
     isValidURL = false;
 
@@ -7848,7 +7848,7 @@ function AppendQRCode(thePDF, paperStyle, callback) {
   if (!gDoForceQRCodeURLOverride) {
 
     // Can we make a QR code from the current share link URL?
-    theURL = FillUrlBoxWithAbcInLZW(null, false);
+    theURL = FillUrlBoxWithAbcInLZWOrDef(null, false);
 
     if (!gAllowQRCodeSave) {
 
@@ -16057,8 +16057,6 @@ function parsePDFTunebookFeaturesBlock(block) {
         // Found → enable playback links
         if (parts.length >= 5) {
 
-          debugger;
-
           gPDFTunebookConfig.bAdd_add_all_playback_links = true;
           gPDFTunebookConfig.bInjectInstruments = true;
 
@@ -19112,7 +19110,7 @@ function BuildTuneSetOpen(bOpenInNewTabInEditor) {
 
     result += tuneSet;
 
-    var theURL = FillUrlBoxWithAbcInLZW(result, false);
+    var theURL = FillUrlBoxWithAbcInLZWOrDef(result, false);
 
     if (bOpenInNewTabInEditor) {
 
@@ -21203,14 +21201,14 @@ function GenerateRenderingDivs(nTunes) {
 //
 function getUrlWithoutParams() {
 
-  return "https://michaeleskin.com/abctools/abctools.html";
+  return "https://michaeleskin.com/abctools/abctools.html"; 
 
 }
 
 //
 // Generate a share link for either all the tunes or just what's passed in
 //
-function FillUrlBoxWithAbcInLZW(ABCtoEncode, bUpdateUI, theFormat) {
+function FillUrlBoxWithAbcInLZWOrDef(ABCtoEncode, bUpdateUI, theFormat, allowDef=false) {
 
   //console.log("theFormat: "+theFormat);
 
@@ -21223,7 +21221,17 @@ function FillUrlBoxWithAbcInLZW(ABCtoEncode, bUpdateUI, theFormat) {
     abcText = ABCtoEncode;
   }
 
-  var abcInLZW = LZString.compressToEncodedURIComponent(abcText);
+  var abc_compressed;
+
+  if (allowDef){
+    var encoder = new TextEncoder();
+    var utf8Bytes = encoder.encode(abcText);
+    var deflated = pako.deflate(utf8Bytes, { level: 9 });
+    abc_compressed = def_bytesToBase64URL(deflated);
+  }
+  else{
+    abc_compressed = LZString.compressToEncodedURIComponent(abcText);
+  }
 
   // Optimization for website generation
   var format = theFormat;
@@ -21236,7 +21244,14 @@ function FillUrlBoxWithAbcInLZW(ABCtoEncode, bUpdateUI, theFormat) {
 
   var ssp = gStaffSpacing - STAFFSPACEOFFSET;
 
-  var url = getUrlWithoutParams() + "?lzw=" + abcInLZW + "&format=" + format + "&ssp=" + ssp;
+  var url;
+
+  if (allowDef){
+    url = getUrlWithoutParams() + "?def=" + abc_compressed + "&format=" + format + "&ssp=" + ssp;
+  }
+  else{
+    url = getUrlWithoutParams() + "?lzw=" + abc_compressed + "&format=" + format + "&ssp=" + ssp;
+  }
 
   // Add a capo parameter for mandolin and guitar
   var postfix = "";
@@ -21319,7 +21334,7 @@ function FillUrlBoxWithAbcInLZW(ABCtoEncode, bUpdateUI, theFormat) {
 
   if (bUpdateUI) {
 
-    var urltextbox = document.getElementById("urltextbox");
+    urltextbox = document.getElementById("urltextbox");
 
     if (!gAllowURLSave) {
 
@@ -21375,17 +21390,48 @@ function FillUrlBoxWithAbcInLZW(ABCtoEncode, bUpdateUI, theFormat) {
   return url;
 }
 
+var urltextbox = null;
+
 function CreateURLfromHTML() {
 
-  FillUrlBoxWithAbcInLZW(null, true);
-
   urltextbox = document.getElementById("urltextbox");
+
+  var urlallowdef = false;
+
+  var elem = document.getElementById("urlallowdef");
+
+  if (elem){
+    urlallowdef = elem.checked;
+  }
+
+  FillUrlBoxWithAbcInLZWOrDef(null, true, null, urlallowdef);
+
   urltextbox.focus();
   urltextbox.setSelectionRange(0, 0);
 
   // Clear the QR code
   clearQRCode();
 
+  if (urltextbox){
+    
+    // Make sure the URl wasn't too long before showing the length
+    if (urltextbox.value.indexOf("*** The URL link") == -1){
+
+      // Update the share link size
+      updateShareLinkSize();
+
+    }
+    else{
+
+      elem = document.getElementById("shareurlcaption");
+
+      if (elem){
+        elem.innerText = "Share URL";
+      }
+
+    }
+  }
+  
 }
 
 //
@@ -26886,6 +26932,62 @@ function isLandscapeOrientation() {
   return false;
 }
 
+// ---------- Base64 / Base64URL helpers ----------
+
+// Base64/Base64URL helpers for Deflate mode
+function def_bytesToBase64(bytes) {
+    var binary = "";
+    var len = bytes.length;
+    for (var i = 0; i < len; i++) {
+        binary += String.fromCharCode(bytes[i]);
+    }
+    return btoa(binary);
+}
+
+function def_base64ToBytes(base64) {
+    var binary = atob(base64);
+    var len = binary.length;
+    var bytes = new Uint8Array(len);
+    for (var i = 0; i < len; i++) {
+        bytes[i] = binary.charCodeAt(i);
+    }
+    return bytes;
+}
+
+function def_bytesToBase64URL(bytes) {
+    return def_bytesToBase64(bytes)
+        .replace(/\+/g, "-")
+        .replace(/\//g, "_")
+        .replace(/=+$/, "");
+}
+
+function def_base64URLToBytes(base64url) {
+    var base64 = base64url
+        .replace(/-/g, "+")
+        .replace(/_/g, "/");
+
+    var pad = base64.length % 4;
+    if (pad === 2) base64 += "==";
+    else if (pad === 3) base64 += "=";
+    else if (pad !== 0) {
+        throw new Error("Invalid Base64URL length");
+    }
+    return def_base64ToBytes(base64);
+}
+
+// ---------- Deflate decoder ----------
+
+function decompressABC_Deflate(encoded) {
+    if (typeof pako === "undefined") {
+        throw new Error("pako (Deflate library) is not loaded.");
+    }
+
+    var deflatedBytes = def_base64URLToBytes(encoded);
+    var inflatedBytes = pako.inflate(deflatedBytes);
+    var decoder = new TextDecoder();
+    return decoder.decode(inflatedBytes);
+}
+
 // 
 // Check for a share link and process it
 //
@@ -26909,7 +27011,7 @@ function processShareLink() {
 
     var originalAbcInLZW = urlParams.get("lzw");
 
-    abcInLZW = LZString.decompressFromEncodedURIComponent(originalAbcInLZW);
+    var abcInLZW = LZString.decompressFromEncodedURIComponent(originalAbcInLZW);
 
     const abcText = abcInLZW;
 
@@ -26929,6 +27031,33 @@ function processShareLink() {
 
       }
     }
+  }
+  else
+  if (urlParams.has("def")) {
+
+    var originalAbcInDeflate = urlParams.get("def");
+
+    abcInDeflate = decompressABC_Deflate(originalAbcInDeflate);
+
+    const abcText = abcInDeflate;
+
+    if (abcText.length > 0) {
+      SetAbcText(abcText);
+      RestoreDefaults();
+      doRender = true;
+      gIsDirty = true;
+    } else {
+      // If it's a long Deflate, most likely an Acrobat truncation issue
+      if (originalAbcInDeflate.length > 2000) {
+        // Bad decode, possibly from a truncated Adobe Acrobat link
+        ShowAcrobatHyperlinkLengthWarning();
+      } else {
+        // Bad decode
+        ShowHyperlinkBadDecodeAlert();
+
+      }
+    }
+
   }
 
   // Handler for format parameter
@@ -34050,7 +34179,7 @@ function BatchJSONExport() {
 
     thisTune = GetABCFileHeader() + thisTune;
 
-    var theURL = FillUrlBoxWithAbcInLZW(thisTune, false);
+    var theURL = FillUrlBoxWithAbcInLZWOrDef(thisTune, false);
 
     var titleURL = title.replaceAll("&", "");
     titleURL = titleURL.replaceAll(" ", "_");
@@ -34121,7 +34250,7 @@ function BatchCSVExport() {
 
     thisTune = GetABCFileHeader() + thisTune;
 
-    var theURL = FillUrlBoxWithAbcInLZW(thisTune, false);
+    var theURL = FillUrlBoxWithAbcInLZWOrDef(thisTune, false);
 
     var titleURL = title.replaceAll("&", "");
     titleURL = titleURL.replaceAll(" ", "_");
@@ -47705,10 +47834,26 @@ function ConfigureFonts() {
 
 }
 
-
 //
 // Sharing controls dialog
 //
+
+// Update the share link size
+function updateShareLinkSize(){
+
+  if (urltextbox){
+
+    var theSize = urltextbox.value.length;
+
+    var elem = document.getElementById("shareurlcaption");
+
+    if (elem){
+      elem.innerText = "Share URL ("+theSize+" bytes)";
+    }
+
+  }
+
+}
 
 // Add the autoplay string to the URL
 function AddAutoPlay() {
@@ -47734,6 +47879,8 @@ function AddAutoPlay() {
     }
 
   }, 500);
+
+  updateShareLinkSize();
 
 }
 
@@ -47762,6 +47909,8 @@ function AddDisableEditing() {
 
   }, 500);
 
+  updateShareLinkSize();
+
 }
 
 // Add the open in editor parameter to the URL
@@ -47788,6 +47937,8 @@ function AddOpenInEditor() {
     }
 
   }, 500);
+
+  updateShareLinkSize();
 
 }
 
@@ -47816,6 +47967,8 @@ function AddNoUI() {
 
   }, 500);
 
+  updateShareLinkSize();
+
 }
 
 function SharingControlsDialog() {
@@ -47837,13 +47990,22 @@ function SharingControlsDialog() {
   modal_msg += '</textarea>';
   modal_msg += '</p>';
   modal_msg += '<p id="shareurlcaption">Share URL</p>';
-  modal_msg += '<p style="text-align:center;margin-top:36px;"><input id="addautoplay" class="urlcontrols btn btn-urlcontrols" onclick="AddAutoPlay()" type="button" value="Add Auto-Play" title="Adds &play=1 to the ShareURL.&nbsp;&nbsp;Tune will open in the player."><input id="addopenineditor" class="urlcontrols btn btn-urlcontrols" onclick="AddOpenInEditor()" type="button" value="Add Open in Editor" title="Adds &editor=1 to the ShareURL.&nbsp;&nbsp;Share links will load in the editor.&nbsp;&nbsp;This setting overrides Add Auto-Play."><input id="adddisableediting" class="urlcontrols btn btn-urlcontrols" onclick="AddDisableEditing()" type="button" value="Add Disable Editing" title="Adds &dx=1 to the ShareURL.&nbsp;&nbsp;Entering the editor from the full screen tune view will be disabled.&nbsp;&nbsp;Also overrides Add Open in Editor."><input id="addnoui" class="urlcontrolslast btn btn-urlcontrols" onclick="AddNoUI()" type="button" value="Add Hide UI" title="Adds &noui to the ShareURL for responsive iframe embedding.&nbsp;&nbsp;When the link is opened, hides the UI.&nbsp;&nbsp;Overrides Add Open in Editor and Add Auto-Play."></p>';
+  modal_msg += '<p style="text-align:center;margin-top:36px;"><input id="addautoplay" class="urlcontrols btn btn-urlcontrols" onclick="AddAutoPlay()" type="button" value="Add Auto-Play" title="Adds &play=1 to the ShareURL.&nbsp;&nbsp;Tune will open in the player."><input id="addopenineditor" class="urlcontrols btn btn-urlcontrols" onclick="AddOpenInEditor()" type="button" value="Add Open in Editor" title="Adds &editor=1 to the ShareURL.&nbsp;&nbsp;Share links will load in the editor.&nbsp;&nbsp;This setting overrides Add Auto-Play."><input id="adddisableediting" class="urlcontrols btn btn-urlcontrols" onclick="AddDisableEditing()" type="button" value="Add Disable Editing" title="Adds &dx=1 to the ShareURL.&nbsp;&nbsp;Entering the editor from the full screen tune view will be disabled.&nbsp;&nbsp;Also overrides Add Open in Editor."><input id="addnoui" class="urlcontrolslast btn btn-urlcontrols" onclick="AddNoUI()" type="button" value="Add Hide UI" title="Adds &noui to the ShareURL for responsive iframe embedding.&nbsp;&nbsp;When the link is opened, hides the UI.&nbsp;&nbsp;Overrides Add Open in Editor and Add Auto-Play.">&nbsp;&nbsp;&nbsp;&nbsp;<input id="urlallowdef" type="checkbox" style="margin-top:-5px;margin-bottom:0px;"/>&nbsp;Use Deflate</p>';
 
   modal_msg += '</div>';
 
   setTimeout(function() {
 
     CreateURLfromHTML();
+
+    // Toggle compression mode
+    var allowdef = document.getElementById("urlallowdef");
+    if (allowdef){
+      allowdef.onchange = 
+      function(){
+        CreateURLfromHTML();
+      };
+    }
 
   }, 200);
 
@@ -48881,7 +49043,7 @@ function Do_Browser_PDF_Export() {
 
           thisTune = GetABCFileHeader() + thisTune;
 
-          var theURL = FillUrlBoxWithAbcInLZW(thisTune, false);
+          var theURL = FillUrlBoxWithAbcInLZWOrDef(thisTune, false);
 
           var titleURL = title.replaceAll(" ", "_");
           titleURL = titleURL.replaceAll("#", "^");

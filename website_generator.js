@@ -453,7 +453,7 @@ function GetWebsiteTuneName(tuneABC){
 //
 // Export all the tunes Share URL in a JSON file
 //
-function BatchJSONExportForWebGenerator(theABC){
+function BatchJSONExportForWebGenerator(theABC,allowDeflate){
 
     // Make sure there are tunes to convert
 
@@ -495,7 +495,7 @@ function BatchJSONExportForWebGenerator(theABC){
 
         thisTune = GetABCFileHeader() + thisTune;
 
-        var theURL = FillUrlBoxWithAbcInLZW(thisTune,false,format);
+        var theURL = FillUrlBoxWithAbcInLZWOrDef(thisTune,false,format,false);
 
         var titleURL = title.replaceAll("&","");
         titleURL = titleURL.replaceAll(" ","_");
@@ -568,7 +568,7 @@ function BatchJSONExportForWebGalleryGenerator(theABC){
 
         thisTune = GetABCFileHeader() + thisTune;
 
-        var theURL = FillUrlBoxWithAbcInLZW(thisTune,false,format);
+        var theURL = FillUrlBoxWithAbcInLZWOrDef(thisTune,false,format,false);
 
         var titleURL = title.replaceAll("&","");
         titleURL = titleURL.replaceAll(" ","_");
@@ -707,7 +707,7 @@ function generateAndSaveWebsiteFull() {
         return;
     }
 
-    var theJSON = BatchJSONExportForWebGenerator(theABC);
+    var theJSON = BatchJSONExportForWebGenerator(theABC,false);
 
     hideTheSpinner();
 
@@ -1642,7 +1642,7 @@ function generateAndSaveWebsiteSimple() {
         return;
     }
 
-    var theJSON = BatchJSONExportForWebGenerator(theABC);
+    var theJSON = BatchJSONExportForWebGenerator(theABC,false);
 
     hideTheSpinner();
 

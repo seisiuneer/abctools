@@ -7,17 +7,7 @@
 //
 //
 //
-//
-//
-//
-//
-//
-// Updated 30 Nov 2025 at 0800
-//
-//
-//
-//
-//
+// Updated 4 Dec 2025 at 1200
 //
 //
 //
@@ -26,7 +16,8 @@
 //
 //
 
-const cacheName = 'abctoolscache-3038';
+
+const cacheName = 'abctoolscache-3039';
 
 const contentToCache = [
     'abctools.html',
@@ -52,6 +43,7 @@ const contentToCache = [
 	'html2image.js',
 	'qrcode.js',
 	'lz-string.min.js',
+    'pako.min.js',
 	'daypilot-modal.min-3.10.1.js',
 	'lame.min.js',
 	'unmute.min.js',
