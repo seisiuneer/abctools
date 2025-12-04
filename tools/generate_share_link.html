@@ -31,7 +31,247 @@
     <link rel="icon" type="image/png" sizes="96x96" href="https://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
     <link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
     <link rel="manifest" href="https://michaeleskin.com/abctools/img/abc-manifest.json">
-    <link rel="stylesheet" href="generate_share_link.css?v=2"/>    
+
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-VM0N9HL3MK"></script>
+    
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-VM0N9HL3MK');
+    </script>
+
+    <style>
+      
+      textarea {
+      width:600px;height:200px
+      }
+
+      body {
+      background-color: #ffffff;
+      }
+
+      select{
+      margin-left:24px;
+      }
+
+      textarea#input {
+      width: 100%;
+      margin-bottom: 0px;
+      }
+
+      textarea#output {
+      width: 100%;
+      }
+
+      p {
+      font-size:12pt;
+      font-family:"Helvetica";
+      line-height: 24px;
+      margin-bottom:0px;
+      }
+
+      h1 {
+      font-size:18pt;
+      font-family:"Helvetica";
+      margin-bottom:0px;
+      }
+
+      h2 {
+      font-size:14pt;
+      font-family:"Helvetica";
+      margin-bottom:18px;
+      }
+
+      h4 {
+      font-size:14pt;
+      font-family:"Helvetica";
+      margin-bottom:8px;
+      }
+
+      hr {
+      margin-top:24px;
+      margin-bottom:24px;
+      }
+
+      body {
+      padding:20px;
+      }
+
+      .image_holder{
+      text-align: center;
+      width:240px;
+      height:240px;
+      margin-left:auto;
+      margin-right:auto;
+      }
+
+      #maindiv{
+      position: absolute;
+      left: 50%;
+      margin-right: -50%;
+      transform: translate(-50%, 0%);
+      text-align: left;
+      width: 800px;
+      background-color: white;
+      }
+
+      .inputbox{
+        position:absolute;
+        left:170px;
+      }
+
+      .recommended{
+        position:absolute;
+        left:300px;
+      }
+
+      select {
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      appearance: none;
+      background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' fill='%238C98F2'><polygon points='0,0 100,0 50,50'/></svg>") no-repeat;
+      background-size: 12px;
+      background-position: calc(100% - 10px) center;
+      background-repeat: no-repeat;
+      background-color: #efefef;
+      color:black;
+      }
+
+      #tablature_options{
+      font-size:11pt;
+      font-family:"Helvetica";
+      height:32px;
+      width:205px;
+      margin-left:0px;
+      }
+
+      #layout{
+      font-size:11pt;
+      font-family:"Helvetica";
+      height:32px;
+      width:85px;
+      margin-left:0px;
+      margin-right:24px;
+      }
+
+      #root_scale{
+      font-size:11pt;
+      font-family:"Helvetica";
+      height:32px;
+      width:80px;
+      margin-left:0px;
+      }
+
+
+      .btn {
+        --color: #000000;
+        --background-color: #d8d8d8;
+        --border-color: darken(#d8d8d8, 7.5%);
+        color: var(--color);
+        font-family: helvetica !important;
+        font-size: 11pt !important;
+        background-color: var(--background-color);
+        padding: 0.7rem 0.7rem;
+        padding-top: 0.8rem;
+        border: solid 1px var(--border-color);
+        outline: none;
+        position: relative;
+        border-radius: 0.5rem;
+        user-select: none;
+        box-shadow: 0 0.1rem 0.1rem rgba(0, 0, 0, 0.25), 0 -0.1rem 0.5rem rgba(0, 0, 0, 0.1) inset;
+        transition: box-shadow 64ms ease-out;
+        -webkit-appearance:none;
+      }
+
+      .btn:after {
+        content: "";
+        background-color: #ffffff;
+        width: 75%;
+        height: 12.5%;
+        position: absolute;
+        top: 0.15rem;
+        left: 12.5%;
+        border-radius: 50%;
+        filter: blur(0.15rem);
+        transition: opacity 64ms ease-out;
+      }
+
+      .btn:active {
+        box-shadow: 0 0 0 rgba(0, 0, 0, 0.4), 0 0.4rem 1rem rgba(0, 0, 0, 0.3) inset;
+      }
+      .btn:active:after {
+        opacity: 0;
+      }
+
+      .btn-info {
+        --color: #ffffff;
+        --background-color: #0091ea;
+        --border-color: #0079c4;
+      }
+      .btn-info:active {
+        --color: #ececec;
+      }
+      .btn-success {
+        --color: #ffffff;
+        --background-color: #00c853;
+        --border-color: #00a243;
+      }
+      .btn-success:active {
+        --color: #ececec;
+      }
+      .btn-warning {
+        --color: #3e2723;
+        --background-color: #ffc400;
+        --border-color: #d9a700;
+      }
+      .btn-warning:active {
+        --color: #261815;
+      }
+      .btn-error {
+        --color: #ffffff;
+        --background-color: #d50000;
+        --border-color: #af0000;
+      }
+      .btn-error:active {
+        --color: #ececec;
+      }
+      .btn-dark {
+        --color: #ffffff;
+        --background-color: #303030;
+        --border-color: #1d1d1d;
+      }
+      .btn-dark:active {
+        --color: #ececec;
+      }
+
+
+      .btn-controls{
+        --color: black;
+        --background-color: lavender;
+      }
+
+      .btn-generate{
+        --color: black;
+        --background-color: #BBFFBB;
+      }
+
+
+      /* For modal dialog prompt replacement */
+      .modal_flat_background { background-color: #000; opacity: 0.4; }
+      .modal_flat_main { border: 1px solid #333; box-shadow: 0px 0px 15px -2px rgba(0,0,0,0.75);  }
+
+      /* font size only */
+      .modal_flat_main, .modal_flat_main input, .modal_flat_main button {  font-size: 16px; }
+
+      .modal_flat_main input, .modal_flat_main button {  padding: 5px; box-sizing: border-box; }
+      .modal_flat_inner { padding: 30px; background: #fff; color: #000; }
+      .modal_flat_content { font-family:"Helvetica"; margin: 20px 0px;}
+      .modal_flat_input { margin: 20px 0px;}
+      .modal_flat_buttons { text-align:center;margin-top: 40px; }
+      .modal_flat_main button { background-color: #ccc; color: #000; padding: 10px 20px; border: 0px; cursor: pointer; outline: none; width: 100px;  }
+      .modal_flat_cancel {margin-left: 5px;}
+  </style>
   </head>
   <body>
     
@@ -49,9 +289,10 @@
         <p>1)&nbsp;Click "Open an existing .ABC file" to open a file or paste one or more ABC tunes into the box below.</p>
         <p>2)&nbsp;Choose your desired tablature display option from the "Tablature options" dropdown menu.
         <p>3)&nbsp;If you want to have the Player in the tool automatically open when a user opens the Share Link, check the "Add Auto-Play to Share Link" checkbox.
-        <p>4)&nbsp;Click "Generate Share Link".</p>
+        <p>4)&nbsp;Select your desired compression algorithm (LZW or Deflate) from the Compression options.</p>
+        <p>5)&nbsp;Click "Generate Share Link".</p>
         <p>The generated share link will appear in the "Generated Share Link" box.</p>
-        <p>5)&nbsp;Save, Copy or Test the results:</p>
+        <p>6)&nbsp;Save, Copy or Test the results:</p>
         <p>Click "Save Output to a file" to save the results to a file.</p>
         <p>Click "Copy Output to the clipboard" to copy the results to the system clipboard for pasting into other applications.</p>
         <p>Click "Test Output in the ABC Transcription Tools" to open and test the Share Link in my <a href="https://michaeleskin.com/abctools/abctools.html" target="_blank">ABC Transcription Tools</a></p>
@@ -78,7 +319,6 @@
       
         
         <p>
-
           <span style="">Tablature options:&nbsp;&nbsp;</span>
           
           <select id="tablature_options">
@@ -100,14 +340,26 @@
         </p>
 
         <p><input type="checkbox" id="addAutoPlay" checked="true">&nbsp;&nbsp;Add Auto-Play to Share Link</p>
+
+        <!-- NEW: Compression mode selection -->
+        <p style="margin-top:8px;margin-bottom:8px;font-size:11pt;font-family:Helvetica;">
+          <span>Compression:</span>
+          <label style="margin-left:12px;">
+            <input type="radio" name="compressionMode" value="lzw" checked> LZW (standard)
+          </label>
+          <label style="margin-left:12px;">
+            <input type="radio" name="compressionMode" value="deflate"> Deflate (higher compresssion)
+          </label>
+        </p>
       
         <p style="margin-top:24px"><button id="generateShareLink" class="btn btn-generate" onClick="UI_GenerateShareLink();">Generate Share Link</button></p>
         
-        <div style="margin-bottom: 18px;">
-          
+        <div style="margin-bottom: 8px;">
           <h4>Generated Share Link:</h4>
-          
         </div>
+
+        <!-- NEW: link size display -->
+        <p id="linkSize" style="font-size:11pt;font-family:Helvetica;margin-bottom:8px;"></p>
         
         <textarea id="output" placeholder="Generated Share Link will appear here" spellcheck="false" autocorrect="off" autocapitalize="none"></textarea>
         
@@ -139,8 +391,672 @@
     
   </body>
   
-  <script src="generate_share_link.js?v=2" type="text/javascript"></script>
   <script type="text/javascript" src="lz-string.min.js?v=2"></script>
+  <script type="text/javascript" src="pako.min.js?v=1"></script>
   <script type="text/javascript" src="daypilot-modal.min-3.10.1.js?v=2"></script>
+
+  <script>
+
+// ********************************************************************************************************************
+//
+// Generate an ABC Transcription Tools Share Link from ABC with specified share name and optional auto-play when opened
+//
+// If you are building share link generation into your own web page or Javascript tool, all you need is the
+// generateShareLink() function and including the lz-string.min.js and pako.min.js files in your project.
+//
+// This sample also supports an optional Deflate-based compression mode:
+//   - LZW mode:   ?lzw=<LZ-String data>&...
+//   - Deflate mode: ?def=<Base64URL deflate data>&...
+//
+// ********************************************************************************************************************
+
+// Compression mode ids
+var COMPRESSION_MODE_LZW = 0;      // existing LZ-String / LZW
+var COMPRESSION_MODE_DEFLATE = 1;  // new Deflate+Base64URL
+
+// Base64/Base64URL helpers for Deflate mode
+function bytesToBase64(bytes) {
+    var binary = "";
+    var len = bytes.length;
+    for (var i = 0; i < len; i++) {
+        binary += String.fromCharCode(bytes[i]);
+    }
+    return btoa(binary);
+}
+
+function base64ToBytes(base64) {
+    var binary = atob(base64);
+    var len = binary.length;
+    var bytes = new Uint8Array(len);
+    for (var i = 0; i < len; i++) {
+        bytes[i] = binary.charCodeAt(i);
+    }
+    return bytes;
+}
+
+function bytesToBase64URL(bytes) {
+    return bytesToBase64(bytes)
+        .replace(/\+/g, "-")
+        .replace(/\//g, "_")
+        .replace(/=+$/, "");
+}
+
+function base64URLToBytes(base64url) {
+    var base64 = base64url
+        .replace(/-/g, "+")
+        .replace(/_/g, "/");
+
+    var pad = base64.length % 4;
+    if (pad === 2) base64 += "==";
+    else if (pad === 3) base64 += "=";
+    else if (pad !== 0) {
+        throw new Error("Invalid Base64URL length");
+    }
+    return base64ToBytes(base64);
+}
+
+// LZW compression wrapper (existing behavior)
+function compressABC_LZW(abcText) {
+    return LZString.compressToEncodedURIComponent(abcText);
+}
+
+// Deflate-based compression
+function compressABC_Deflate(abcText) {
+    if (typeof pako === "undefined") {
+        throw new Error("pako (Deflate library) is not loaded.");
+    }
+    var encoder = new TextEncoder();
+    var utf8Bytes = encoder.encode(abcText);
+    var deflated = pako.deflate(utf8Bytes, { level: 9 });
+    return bytesToBase64URL(deflated);
+}
+
+// Deflate-based decompression
+function decompressABC_Deflate(encoded) {
+    if (typeof pako === "undefined") {
+        throw new Error("pako (Deflate library) is not loaded.");
+    }
+    var deflatedBytes = base64URLToBytes(encoded);
+    var inflatedBytes = pako.inflate(deflatedBytes);
+    var decoder = new TextDecoder();
+    return decoder.decode(inflatedBytes);
+}
+
+// Read selected compression mode from radio buttons
+function getSelectedCompressionMode() {
+    var radios = document.getElementsByName("compressionMode");
+    var mode = COMPRESSION_MODE_LZW;
+    for (var i = 0; i < radios.length; i++) {
+        if (radios[i].checked) {
+            if (radios[i].value === "deflate") {
+                mode = COMPRESSION_MODE_DEFLATE;
+            } else {
+                mode = COMPRESSION_MODE_LZW;
+            }
+            break;
+        }
+    }
+    return mode;
+}
+
+// Verify that a generated share link round-trips back to the original ABC
+// Decoder logic:
+//   If lzw param present -> use LZW
+//   else if def param present -> use Deflate
+function verifyShareLink(url, originalABC) {
+    try {
+        var qIndex = url.indexOf("?");
+        if (qIndex === -1) {
+            return false;
+        }
+        var query = url.substring(qIndex + 1);
+        var params = new URLSearchParams(query);
+
+        var reconstructed = null;
+
+        var lzwParam = params.get("lzw");
+        var defParam = params.get("def");
+
+        if (lzwParam != null) {
+            // LZW mode
+            reconstructed = LZString.decompressFromEncodedURIComponent(lzwParam);
+        } else if (defParam != null) {
+            // Deflate mode
+            reconstructed = decompressABC_Deflate(defParam);
+        } else {
+            return false;
+        }
+
+        if (reconstructed === null) {
+            return false;
+        }
+
+        return reconstructed === originalABC;
+    } catch (e) {
+        console.log("verifyShareLink error:", e);
+        return false;
+    }
+}
+
+function generateShareLink(abcText,shareName,tablatureOption,addAutoPlay) {
+
+    var baseUrl = "https://michaeleskin.com/abctools/abctools.html";
+
+    // Choose compression mode
+    var compressionMode = getSelectedCompressionMode();
+
+    var url = "";
+    if (compressionMode === COMPRESSION_MODE_DEFLATE) {
+        // Deflate-based link: def=...
+        var defEncoded = compressABC_Deflate(abcText);
+        url = baseUrl + "?def=" + defEncoded + "&format=" + tablatureOption + "&ssp=45&name=" + shareName;
+        if (addAutoPlay){
+            url += "&play=1";
+        }
+    } else {
+        // Existing LZW behavior: lzw=...
+        var abcInLZW = compressABC_LZW(abcText);
+        url = baseUrl + "?lzw=" + abcInLZW + "&format="+tablatureOption+"&ssp=45&name=" + shareName;
+        if (addAutoPlay){
+            url += "&play=1";
+        }
+    }
+
+    // Limit URLs to 8100 characters
+    if (url.length > 8100) {
+        return null;
+    }
+
+    return url;
+}
+
+// ********************************************************************************************************************
+//
+// The rest of this Javascript is specfically for use by the Share Link demo application.
+// You do not need to include it in your own web page or Javascript tool
+//
+// ********************************************************************************************************************
+
+// Globals
+
+// Suggested filename for save
+var gSaveFilename = "";
+
+//
+// Main processor
+//
+function UI_GenerateShareLink(){
+
+    // Get the source ABC
+    var abcText = document.getElementById('input').value;
+
+    if (abcText.length == 0) {
+
+        DayPilot.Modal.alert("No input to process!", {
+            theme: "modal_flat",
+            top: 50
+        });
+
+        return;
+    }
+
+    // Auto-play requested?
+    var addAutoPlay = false;
+
+    if  (document.getElementById('addAutoPlay').checked){
+
+        addAutoPlay = true;
+    
+    }
+
+    // Get the tablature option from the dropdown
+    var tablatureOption = document.getElementById('tablature_options').value;
+
+    //
+    // Generate the Share Link
+    //
+    var url = generateShareLink(abcText,"Share_Link_Test",tablatureOption,addAutoPlay)
+
+    if (url == null){
+       DayPilot.Modal.alert("ABC text is too long to generate a valid Share Link!", {
+            theme: "modal_flat",
+            top: 50
+        });
+
+        // clear size display
+        var sz = document.getElementById("linkSize");
+        if (sz) {
+            sz.innerHTML = "";
+        }
+    }
+    else{
+
+        document.getElementById("output").value = url;
+
+        // show link size
+        var sz = document.getElementById("linkSize");
+        if (sz) {
+            sz.innerHTML = "Share link length: " + url.length + " characters";
+        }
+
+        // verify round-trip
+        var ok = verifyShareLink(url, abcText);
+        if (!ok) {
+            DayPilot.Modal.alert("Warning: The decompressed Share Link does not match the original ABC text!", {
+                theme: "modal_flat",
+                top: 50
+            });
+        }
+
+        // Give some feedback
+        document.getElementById("generateShareLink").innerHTML = "Share Link Generated!";
+
+        setTimeout(function() {
+
+            document.getElementById("generateShareLink").innerHTML = "Generate Share Link";
+
+        }, 1250);
+       
+    }
+}
+
+//
+// Save the Output to a file
+//
+function saveOutput() {
+
+    var theData = document.getElementById("output").value;
+
+    if (theData.length == 0) {
+
+        DayPilot.Modal.alert("Nothing to save!", {
+            theme: "modal_flat",
+            top: 50
+        });
+
+        return;
+    }
+
+    if (gSaveFilename == ""){
+        gSaveFilename = "abc_tools_share_link";
+    }
+
+    var thePlaceholder = gSaveFilename;
+
+
+    var thePrompt = "Please enter a filename for your output Share Link file:";
+
+    DayPilot.Modal.prompt(thePrompt, thePlaceholder, {
+        theme: "modal_flat",
+        top: 194,
+        autoFocus: false
+    }).then(function(args) {
+
+        var fname = args.result;
+
+        // If the user pressed Cancel, exit
+        if (fname == null) {
+            return null;
+        }
+
+        // Strip out any naughty HTML tag characters
+        fname = fname.replace(/[^a-zA-Z0-9_\-. ]+/ig, '');
+
+        if (fname.length == 0) {
+            return null;
+        }
+
+        // Give it a good extension
+        if ((!gIsAndroid) && (!gIsIOS)) {
+
+            if ((!fname.endsWith(".txt")) && (!fname.endsWith(".TXT"))) {
+
+                // Give it a good extension
+                fname = fname.replace(/\..+$/, '');
+                fname = fname + ".txt";
+
+            }
+        } else {
+            // iOS and Android have odd rules about text file saving
+            // Give it a good extension
+            fname = fname.replace(/\..+$/, '');
+            fname = fname + ".txt";
+
+        }
+
+        var a = document.createElement("a");
+
+        document.body.appendChild(a);
+
+        a.style = "display: none";
+
+        var blob = new Blob([theData], {
+                type: "text/plain"
+            }),
+
+        url = window.URL.createObjectURL(blob);
+        a.href = url;
+        a.download = fname;
+        a.click();
+
+        document.body.removeChild(a);
+
+        setTimeout(function() {
+            window.URL.revokeObjectURL(url);
+        }, 1000);
+
+    });
+
+}
+
+
+//
+// Copy the output text are to the clipboard 
+// 
+function copyOutputToClipboard() {
+
+    var textToCopy = document.getElementById('output').value;
+
+    if (textToCopy.length == 0) {
+
+        DayPilot.Modal.alert("Nothing to copy!", {
+            theme: "modal_flat",
+            top: 50
+        });
+
+        return;
+
+    }
+
+    copyToClipboard(textToCopy);
+
+    // Give some feedback
+    document.getElementById("copybutton").innerHTML = "Share link copied!";
+
+    setTimeout(function() {
+
+        document.getElementById("copybutton").innerHTML = "Copy share link to the clipboard";
+
+    }, 1250);
+}
+
+//
+// Copy to Clipboard Polyfill
+//
+function copyToClipboard(textToCopy) {
+
+    //
+    // Put this in a try/catch just to be safe
+    //
+    try {
+
+        // navigator clipboard api needs a secure context (https)
+        if (navigator.clipboard && window.isSecureContext) {
+
+            // navigator clipboard api method'
+            return navigator.clipboard.writeText(textToCopy);
+
+        } else {
+
+            // text area method
+
+            let textArea = document.createElement("textarea");
+
+            textArea.value = textToCopy;
+
+            // make the textarea out of viewport
+            textArea.style.position = "fixed";
+            textArea.style.left = "-999999px";
+            textArea.style.top = "-999999px";
+
+            document.body.appendChild(textArea);
+
+            textArea.focus();
+            textArea.select();
+
+            return new Promise((res, rej) => {
+                // here the magic happens
+                document.execCommand('copy') ? res() : rej();
+                textArea.remove();
+            });
+        }
+
+    } catch (error) {
+
+        console.log("CopyToClipboard error: " + error);
+
+    }
+}
+
+//
+// Generate and open an ABC Transcription Tools Share URL for the output
+//
+function testOutput() {
+
+    var url = document.getElementById('output').value;
+
+    if (url.length > 8100) {
+
+        DayPilot.Modal.alert("Output too long to test!", {
+            theme: "modal_flat",
+            top: 50
+        });
+
+        return;
+    }
+
+    // Open the transcription tools with the share link
+    var w = window.open(url);
+
+}
+
+//
+// Are we on iOS?
+//
+function isIOS() {
+    if (/iPad|iPhone|iPod/.test(navigator.platform)) {
+        return true;
+    } else {
+        return navigator.maxTouchPoints &&
+            navigator.maxTouchPoints > 2 &&
+            /MacIntel/.test(navigator.platform);
+    }
+}
+
+//
+// Are we on an iPhone?
+//
+function isIPhone() {
+    if (/iPad|iPhone|iPod/.test(navigator.platform)) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+//
+// Are we on an iPad?
+//
+function isIPad() {
+    return navigator.maxTouchPoints &&
+        navigator.maxTouchPoints > 2 &&
+        /MacIntel/.test(navigator.platform);
+}
+
+//
+// Are we on Android?
+//
+function isAndroid() {
+    if (/Android/i.test(navigator.userAgent)) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+//
+// Are we on Safari?
+//
+function isSafari(){
+
+    if (/Safari/i.test(navigator.userAgent) && /Apple Computer/.test(navigator.vendor)) {
+        return true;
+    }
+    else{
+        return false;
+    }
+}
+
+//
+// Are we on Chrome?
+//
+function isChrome(){
+
+    if (/chrome|chromium|crios/i.test(navigator.userAgent)) {
+        return true;
+    }
+    else{
+        return false;
+    }
+}
+
+//
+// Globals
+//
+var gIsIOS = false;
+var gIsAndroid = false;
+var gIsSafari = false;
+var gIsChrome = false;
+
+//
+// Initialization 
+//
+function DoStartup() {
+
+    var theValue = "";
+    theValue += "X: 1\n";
+    theValue += "T: The Kesh\n";
+    theValue += "R: Jig\n";
+    theValue += "M: 6/8\n";
+    theValue += "L: 1/8\n";
+    theValue += "K: Gmaj\n";
+    theValue += "C: Traditional\n";
+    theValue += '|:GAG GAB|ABA ABd|edd gdd|edB dBA|\n';
+    theValue += 'GAG GAB|ABA ABd|edd gdB|AGF G3:|\n';
+    theValue += '|:BAB dBd|ege dBA|BAB dBG|ABA AGA|\n';
+    theValue += 'BAB dBd|ege dBd|gfg aga|bgf g3:|\n';
+
+    document.getElementById('input').value = theValue;
+    document.getElementById('output').value = "";
+    var sz = document.getElementById("linkSize");
+    if (sz) {
+        sz.innerHTML = "";
+    }
+
+    // Reset file selectors
+    var fileElement = document.getElementById('selectabcfile');
+
+    fileElement.value = "";
+
+    // Are we on iOS?
+    gIsIOS = false;
+    if (isIOS()) {
+        gIsIOS = true;
+    }
+
+    // Are we on Android?
+    gIsAndroid = false;
+
+    if (isAndroid()) {
+        gIsAndroid = true;
+    }
+
+    if (gIsIOS) {
+        document.getElementById("selectabcfile").removeAttribute("accept");
+    }
+
+    // Are we on Safari?
+    gIsSafari = false;
+    if (isSafari()){
+        gIsSafari = true;
+    }
+
+    // Are we on Chrome?
+    gIsChrome = false;
+
+    if (!gIsSafari){
+        if (isChrome()){
+            gIsChrome = true;
+        }
+    }
+
+    //
+    // Setup the file import control
+    //
+    document.getElementById("selectabcfile").onchange = () => {
+
+        let fileElement = document.getElementById("selectabcfile");
+
+        let file = fileElement.files[0];
+
+        gSaveFilename = file.name;
+
+        // Trim any whitespace
+        gSaveFilename = gSaveFilename.trim();
+
+        // Strip out any naughty HTML tag characters
+        gSaveFilename = gSaveFilename.replace(/[^a-zA-Z0-9_\-. ]+/ig, '');
+
+        // Replace any spaces
+        gSaveFilename = gSaveFilename.replace(/\s/g, '_');
+
+        // Strip the extension
+        gSaveFilename = gSaveFilename.replace(/\..+$/, '');
+       
+        // Clean up the notation while the new file is loading
+        document.getElementById('input').value = "";
+
+        const reader = new FileReader();
+
+        reader.addEventListener('load', (event) => {
+
+            document.getElementById('input').value = event.target.result;
+
+            // Reset file selectors
+            let fileElement = document.getElementById('selectabcfile');
+
+            fileElement.value = "";
+
+
+        });
+
+        reader.readAsText(file);
+
+    }
+
+}
+
+//
+// Wait for the document to be ready, then fire a function
+//
+
+function WaitForReady(fn) {
+
+    if (document.readyState !== 'loading') {
+        fn();
+        return;
+    }
+
+    document.addEventListener('DOMContentLoaded', fn);
+
+}
+
+//
+// Wait for the document to be ready, then startup
+//
+
+WaitForReady(DoStartup);
+
+</script>
   
 </html>
