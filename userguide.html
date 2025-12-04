@@ -5869,17 +5869,18 @@
                 <p style="text-align: center;"><a href="https://github.com/seisiuneer/abctools/tree/main/tools" target="_blank">Generate ABC Transcription Tools Share Link on GitHub</a></p>
                 <p>To run the demo, the source files you should download:</p>
                 <p>generate_share_link.html</p>
-                <p>generate_share_link.css</p>
-                <p>generate_share_link.js</p>
                 <p>lz-string.min.js (for LZW compression of the ABC)</p>
+                <p>pako.min.js (for Deflate compression of the ABC)</p>
                 <p>daypilot-modal.min-3.10.1.js (only required to run the demo tool, used for dialogs and alerts)</p>
                 <p>To run the demo locally, after downloading the source files, double-click generate_share_link.html to open it in your browser.</p>
                 <hr>
-                <p>If you want to add share link encoding to your website or Javascript tool, all you need to include is:</p>
+                <p>If you want to add share link encoding to your website or Javascript tool, you need to include:</p>
                 <p>lz-string.min.js</p>
-                <p>and the</p>
+                <p>pako.min.js</p>
+                <p>This function shows how to do the share link generation:</p>
                 <p>function generateShareLink(abcText,shareName,tablatureOption,addAutoPlay)</p>
-                <p>function at the top of generate_share_link.js.</p>
+                <p>And this function contains example of how to isolate the compressed tunes in a share link URL and decompress them to the original ABC:</p>
+                <p>function verifyShareLink(url, originalABC)</p>
                 <hr class="hidden-print" id="settings_dialog">
                 <h1 class="page_break_always">ABC Transcription Tools Settings<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <p>Clicking the <strong>Settings</strong> button at the top of the tool brings up a dialog where you can set tool-wide settings:</p>
