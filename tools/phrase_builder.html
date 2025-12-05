@@ -1,0 +1,1836 @@
+<html>
+  
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <link rel="profile" href="http://gmpg.org/xfn/11">
+    <title>ABC Phrase-by-Phrase Tune Builder</title>
+    <link rel='dns-prefetch' href='//fonts.googleapis.com' />
+    <link rel='dns-prefetch' href='//s.w.org' />
+    <link rel='preconnect' href='https://secureservercdn.net' crossorigin />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="ABC Phrase-by-Phrase Tune Builder" />
+    <meta property="og:description" content="ABC Phrase-by-Phrase Tune Builder." />
+    <meta property="og:url" content="https://michaeleskin.com/tools/phrase_builder.html" />
+    <meta property="og:site_name" content="ABC Phrase-by-Phrase Tune Builder" />
+    <meta property="og:image" content="https://michaeleskin.com/abctools/img/abc-icon.png" />
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="msapplication-TileImage" content="https://michaeleskin.com/abctools/img/abc-ms-icon-144x144.png">
+    <meta name="viewport" content="width=860">
+    <link rel="apple-touch-icon" sizes="57x57" href="https://michaeleskin.com/abctools/img/abc-apple-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="https://michaeleskin.com/abctools/img/abc-apple-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="https://michaeleskin.com/abctools/img/abc-apple-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="https://michaeleskin.com/abctools/img/abc-apple-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="https://michaeleskin.com/abctools/img/abc-apple-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="https://michaeleskin.com/abctools/img/abc-apple-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="https://michaeleskin.com/abctools/img/abc-apple-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="https://michaeleskin.com/abctools/img/abc-apple-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="https://michaeleskin.com/abctools/img/abc-apple-icon-180x180.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="https://michaeleskin.com/abctools/img/abc-android-icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="https://michaeleskin.com/abctools/img/abc-favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="https://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
+    <link rel="manifest" href="https://michaeleskin.com/abctools/img/abc-manifest.json">
+
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-VM0N9HL3MK"></script>
+    
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-VM0N9HL3MK');
+    </script>
+
+    <style>
+      
+      textarea {
+      width:600px;height:200px
+      }
+
+      body {
+      background-color: #ffffff;
+      }
+
+      select{
+      margin-left:24px;
+      }
+
+      textarea#input {
+      width: 100%;
+      margin-bottom: 0px;
+      }
+
+      textarea#output {
+      width: 100%;
+      }
+
+      p {
+      font-size:12pt;
+      font-family:"Helvetica";
+      line-height: 24px;
+      margin-bottom:0px;
+      }
+
+      h1 {
+      font-size:18pt;
+      font-family:"Helvetica";
+      margin-bottom:0px;
+      }
+
+      h2 {
+      font-size:14pt;
+      font-family:"Helvetica";
+      margin-bottom:18px;
+      }
+
+      h4 {
+      font-size:14pt;
+      font-family:"Helvetica";
+      margin-bottom:8px;
+      }
+
+      hr {
+      margin-top:24px;
+      margin-bottom:24px;
+      }
+
+      body {
+      padding:20px;
+      }
+
+      .image_holder{
+      text-align: center;
+      width:240px;
+      height:240px;
+      margin-left:auto;
+      margin-right:auto;
+      }
+
+      #maindiv{
+      position: absolute;
+      left: 50%;
+      margin-right: -50%;
+      transform: translate(-50%, 0%);
+      text-align: left;
+      width: 800px;
+      background-color: white;
+      }
+
+      .inputbox{
+        position:absolute;
+        left:170px;
+      }
+
+      .recommended{
+        position:absolute;
+        left:300px;
+      }
+
+      select {
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      appearance: none;
+      background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' fill='%238C98F2'><polygon points='0,0 100,0 50,50'/></svg>") no-repeat;
+      background-size: 12px;
+      background-position: calc(100% - 10px) center;
+      background-repeat: no-repeat;
+      background-color: #efefef;
+      color:black;
+      }
+
+      #tablature_options{
+      font-size:11pt;
+      font-family:"Helvetica";
+      height:32px;
+      width:205px;
+      margin-left:0px;
+      }
+
+      #layout{
+      font-size:11pt;
+      font-family:"Helvetica";
+      height:32px;
+      width:85px;
+      margin-left:0px;
+      margin-right:24px;
+      }
+
+      #root_scale{
+      font-size:11pt;
+      font-family:"Helvetica";
+      height:32px;
+      width:80px;
+      margin-left:0px;
+      }
+
+      #phraseLength{
+      font-size:12pt;
+      font-family:"Helvetica";
+      width:60px;
+      padding:5px;
+      }
+
+      .btn {
+        --color: #000000;
+        --background-color: #d8d8d8;
+        --border-color: darken(#d8d8d8, 7.5%);
+        color: var(--color);
+        font-family: helvetica !important;
+        font-size: 11pt !important;
+        background-color: var(--background-color);
+        padding: 0.7rem 0.7rem;
+        padding-top: 0.8rem;
+        border: solid 1px var(--border-color);
+        outline: none;
+        position: relative;
+        border-radius: 0.5rem;
+        user-select: none;
+        box-shadow: 0 0.1rem 0.1rem rgba(0, 0, 0, 0.25), 0 -0.1rem 0.5rem rgba(0, 0, 0, 0.1) inset;
+        transition: box-shadow 64ms ease-out;
+        -webkit-appearance:none;
+      }
+
+      .btn:after {
+        content: "";
+        background-color: #ffffff;
+        width: 75%;
+        height: 12.5%;
+        position: absolute;
+        top: 0.15rem;
+        left: 12.5%;
+        border-radius: 50%;
+        filter: blur(0.15rem);
+        transition: opacity 64ms ease-out;
+      }
+
+      .btn:active {
+        box-shadow: 0 0 0 rgba(0, 0, 0, 0.4), 0 0.4rem 1rem rgba(0, 0, 0, 0.3) inset;
+      }
+      .btn:active:after {
+        opacity: 0;
+      }
+
+      .btn-info {
+        --color: #ffffff;
+        --background-color: #0091ea;
+        --border-color: #0079c4;
+      }
+      .btn-info:active {
+        --color: #ececec;
+      }
+      .btn-success {
+        --color: #ffffff;
+        --background-color: #00c853;
+        --border-color: #00a243;
+      }
+      .btn-success:active {
+        --color: #ececec;
+      }
+      .btn-warning {
+        --color: #3e2723;
+        --background-color: #ffc400;
+        --border-color: #d9a700;
+      }
+      .btn-warning:active {
+        --color: #261815;
+      }
+      .btn-error {
+        --color: #ffffff;
+        --background-color: #d50000;
+        --border-color: #af0000;
+      }
+      .btn-error:active {
+        --color: #ececec;
+      }
+      .btn-dark {
+        --color: #ffffff;
+        --background-color: #303030;
+        --border-color: #1d1d1d;
+      }
+      .btn-dark:active {
+        --color: #ececec;
+      }
+
+
+      .btn-controls{
+        --color: black;
+        --background-color: lavender;
+      }
+
+      .btn-generate{
+        --color: black;
+        --background-color: #BBFFBB;
+      }
+
+
+      /* For modal dialog prompt replacement */
+      .modal_flat_background { background-color: #000; opacity: 0.4; }
+      .modal_flat_main { border: 1px solid #333; box-shadow: 0px 0px 15px -2px rgba(0,0,0,0.75);  }
+
+      /* font size only */
+      .modal_flat_main, .modal_flat_main input, .modal_flat_main button {  font-size: 16px; }
+
+      .modal_flat_main input, .modal_flat_main button {  padding: 5px; box-sizing: border-box; }
+      .modal_flat_inner { padding: 30px; background: #fff; color: #000; }
+      .modal_flat_content { font-family:"Helvetica"; margin: 20px 0px;}
+      .modal_flat_input { margin: 20px 0px;}
+      .modal_flat_buttons { text-align:center;margin-top: 40px; }
+      .modal_flat_main button { background-color: #ccc; color: #000; padding: 10px 20px; border: 0px; cursor: pointer; outline: none; width: 100px;  }
+      .modal_flat_cancel {margin-left: 5px;}
+  </style>
+  </head>
+  <body>
+    
+	<div id="maindiv">
+	      
+	  <div>
+	    <div style="text-align: center;">
+	      <h1>ABC Phrase-by-Phrase Tune Builder</h1>
+	      <h2>For use with the ABC Transcription Tools "Tune Trainer"</h2>
+	      
+	      <hr>
+
+	      <!-- New button to show instructions in a modal -->
+	      <p style="margin-top:16px;">
+	        <button class="btn btn-controls" onclick="showInstructionsModal();">
+	          How to Use this Tool
+	        </button>
+	      </p>
+	    </div>
+
+	    <!-- Instructions are now hidden here and only used as modal content -->
+	    <div id="instructions" style="display:none;">
+	      <h1 style="text-align: center;">Instructions</h1>
+	      <p>This utility walks through all the tunes in an ABC tunebook, flattens all tune repeats, divides the tunes in to specified measure number phrases and inserts the same number of full measure rests after each phrase.</p>
+	      <p>This makes it easy to do "call-and-response" style practice using the ABC Transcription Tools "Tune Trainer".</p>
+	      <p>The utility works best on tunes that have complete measures inside of repeat bars.</p>
+	      <p>You may need to rework the ABC for tunes with partial measures inside of repeat bars to use them with this tool.</p>
+	      <p>Partial measure pickups before the first full bar in a tune will be stripped.</p>
+	      <p>1)&nbsp;Click <strong>Open an existing .ABC file</strong> to open a file or paste a ABC tune into the <strong>Original ABC Tunes</strong> box below.</p>
+	      <p>2)&nbsp;Enter your desired phrase length (default is 2).</p>
+	      <p>5)&nbsp;Click <strong>Generate Phrase-by-Phrase ABC Version</strong>.</p>
+	      <p>5)&nbsp;The generated phrase-by-phrase ABC version will be shown in the <strong>Expanded Phrase-by-Phrase ABC Version</strong> box.</p>
+	      <p>6)&nbsp;Save, Copy or Open the results:</p>
+	      <p>- Click <strong>Save to a file</strong> to save the phrase-by-phrase ABC version to a file.</p>
+	      <p>- Click <strong>Copy to the clipboard</strong> to copy the phrase-by-phrase ABC version to the system clipboard for pasting into other applications.</p>
+	      <p>- Click <strong>Open in the ABC Transcription Tools</strong> to open the phrase-by-phrase ABC version in my <a href="https://michaeleskin.com/abctools/abctools.html" target="_blank">ABC Transcription Tools</a></p>
+	      <p>If the share link generated to directly open the tunes is too long to open, you will be presented with an alert explaining the issue.</p>
+	      <p>If this happens, click <strong>Copy to the clipboard</strong> and then paste the ABC into the ABC Transcription Tools.</p>
+	    </div>
+	  </div>
+      
+      <hr id="abcinput">
+      
+      <div style="text-align:left">
+        
+        <h4>Original ABC Tunes:</h4>
+        
+        <div style="margin-top:28px;margin-bottom:36px;">
+          <p>
+            <input type="file" id="selectabcfile" accept=".abc,.txt,.ABC,.TXT"  hidden/>
+            <label class="abcupload btn btn-controls" for="selectabcfile" title="Opens an existing ABC file">Open an existing .ABC file</label>
+          </p>
+        </div>
+
+        <p>
+          <textarea id="input" placeholder="Enter one or more ABC tunes here" spellcheck="false" autocorrect="off" autocapitalize="none">
+          </textarea>
+        </p>
+      
+        <p>
+          Phrase length in measures:&nbsp;&nbsp;<input type="number" id="phraseLength" value="2"/>
+        </p>
+        
+        <p style="margin-top:24px"><button id="generateShareLink" class="btn btn-generate" onClick="UI_GeneratePhraseByPhrase();">Generate Phrase-by-Phrase Version</button></p>
+        
+        <div style="margin-bottom: 8px;">
+          <h4>Expanded Phrase-by-Phrase ABC Version:</h4>
+        </div>
+        
+        <textarea id="output" placeholder="Expanded phrase-by-phrase ABC versions will appear here" spellcheck="false" autocorrect="off" autocapitalize="none"></textarea>
+        
+        <h4>Options for opening directly in the ABC Transcription Tools:</h4>
+        
+        <p>
+
+          <span style="">Tablature option:&nbsp;&nbsp;</span>
+          
+          <select id="tablature_options">
+            
+            <option value="noten">&nbsp;&nbsp;Standard notation only</option>
+            <option value="notenames">&nbsp;&nbsp;Note names</option>
+            <option value="mandolin">&nbsp;&nbsp;Mandolin</option>
+            <option value="gdad">&nbsp;&nbsp;GDAD Bouzouki</option>
+            <option value="cgda">&nbsp;&nbsp;CGDA Mandola</option>
+            <option value="cgdae">&nbsp;&nbsp;CGDAE Bouzouki</option>
+            <option value="dgdae">&nbsp;&nbsp;DGDAE Bouzouki</option>
+            <option value="guitare">&nbsp;&nbsp;Standard tuned guitar</option>
+            <option value="guitard">&nbsp;&nbsp;DADGAD tuned guitar</option>
+            <option value="uke">&nbsp;&nbsp;Ukulele</option>
+            <option value="whistle">&nbsp;&nbsp;Whistle</option>
+            
+          </select>
+          
+        </p>
+
+        <p><input type="checkbox" id="addAutoPlay" checked="true">&nbsp;&nbsp;Add Auto-Play </p>
+      
+        <p style="margin-top:20px;text-align: center;">
+          
+          <button id="copybutton" class="btn btn-controls" onClick="copyOutputToClipboard();">Copy to the clipboard</button>
+          
+          <button style="margin-left:24px;" class="btn btn-controls" onClick="saveOutput();">Save to a file</button>
+          
+          <button style="margin-left:24px;" class="btn btn-controls" onClick="testOutput();">Open in the ABC Transcription Tools</button>
+          
+        </p>
+        
+      </div>
+                  
+      <hr>
+      
+      <div style="text-align: center;">
+        
+        <p style="text-align: center">Complete source code for this utility may be found on GitHub</p>
+        
+        <p style="text-align: center"> <a href="https://github.com/seisiuneer/abctools/tree/main/tools" target="_blank">Generate ABC Transcription Tools Share Link on Github</a></p>
+        
+        <hr style="margin-bottom:50px">
+        
+      </div>
+      
+    </div>
+    
+  </body>
+  
+  <script type="text/javascript" src="lz-string.min.js?v=2"></script>
+  <script type="text/javascript" src="pako.min.js?v=1"></script>
+  <script type="text/javascript" src="daypilot-modal.min-3.10.1.js?v=2"></script>
+
+  <script>
+/**
+ * Process one or more ABC tunes.
+ *
+ * - abcText: full ABC text, possibly containing multiple tunes.
+ *   Each tune must start with an X: line.
+ * - phraseBars: integer phrase length in bars.
+ *
+ * Returns all processed tunes, joined with a blank line between them.
+ */
+function processAbcPhrases(abcText, phraseBars) {
+  if (!Number.isInteger(phraseBars) || phraseBars <= 0) {
+    throw new Error("phraseBars must be a positive integer.");
+  }
+
+  // Normalize line endings
+  let norm = abcText.replace(/\r\n/g, "\n");
+
+  // Ignore any text before the first X:
+  const firstX = norm.search(/^\s*X\s*:/m);
+  if (firstX === -1) {
+    throw new Error("No X: tag found in input.");
+  }
+  norm = norm.slice(firstX);
+
+  const lines = norm.split("\n");
+
+  const tunes = [];
+  let cur = [];
+
+  for (const ln of lines) {
+    if (/^\s*X\s*:/i.test(ln)) {
+      if (cur.length > 0) {
+        tunes.push(cur.join("\n").trim());
+      }
+      cur = [ln];
+    } else {
+      cur.push(ln);
+    }
+  }
+  if (cur.length > 0) {
+    tunes.push(cur.join("\n").trim());
+  }
+
+  const outputs = tunes
+    .map(t => t.trim())
+    .filter(t => t.length > 0)
+    .map(t => processSingleTune(t, phraseBars));
+
+  return outputs.join("\n\n");
+}
+
+function processSingleTune(abcText, phraseBars) {
+  const lines = abcText.replace(/\r\n/g, "\n").split("\n");
+
+  // Reject multiple voices
+  for (const ln of lines) {
+    if (/^\s*V\s*:/i.test(ln)) {
+      throw new Error("Multiple voices (V:) are not supported.");
+    }
+  }
+
+  // ---- Separate header and body ----
+  let headerLines = [];
+  let bodyLines = [];
+  let inBody = false;
+  let sawK = false;
+
+  for (const ln of lines) {
+    const trimmed = ln.trim();
+
+    if (!inBody) {
+      // Still in header region
+      if (/^\s*K\s*:/i.test(trimmed)) {
+        sawK = true;
+        headerLines.push(ln);
+        continue;
+      }
+
+      if (!sawK) {
+        // Before K:, everything is header
+        headerLines.push(ln);
+      } else {
+        // After K:, still treat % / %% / field lines / blanks as header
+        if (
+          /^\s*[%]/.test(trimmed) ||          // % or %%
+          /^\s*[A-Za-z]\s*:/.test(trimmed) || // another field line
+          /^\s*$/.test(trimmed)               // blank
+        ) {
+          headerLines.push(ln);
+        } else {
+          // First real music line -> body starts here
+          inBody = true;
+          bodyLines.push(ln);
+        }
+      }
+    } else {
+      // ---- We are in the body (music region) ----
+
+      // Skip any % line after the header (e.g. %newpage)
+      if (/^\s*%/.test(trimmed)) {
+        continue;
+      }
+
+      bodyLines.push(ln);
+    }
+  }
+
+  if (!sawK) {
+    throw new Error("No K: line found; not valid ABC for this processor.");
+  }
+
+  const header = headerLines.join("\n");
+  let body = bodyLines.join("\n").trim();
+
+  if (!body) {
+    return abcText; // no notes, just return tune as-is
+  }
+
+  // ---- Extract M: and L: for pickup/rest calculations ----
+  const mMatch = abcText.match(/^\s*M\s*:\s*([\d]+)\/([\d]+)/im);
+  if (!mMatch) {
+    throw new Error("M: meter field is required.");
+  }
+  const meterNum = parseInt(mMatch[1], 10);
+  const meterDen = parseInt(mMatch[2], 10);
+
+  const lMatch = abcText.match(/^\s*L\s*:\s*([\d]+)\/([\d]+)/im);
+  let lNum, lDen;
+  if (lMatch) {
+    lNum = parseInt(lMatch[1], 10);
+    lDen = parseInt(lMatch[2], 10);
+  } else {
+    // ABC default
+    lNum = 1;
+    lDen = 8;
+  }
+
+  // ---- One-bar rest string ----
+  const oneBarRest = computeOneBarRest(meterNum, meterDen, lNum, lDen);
+
+  // ---- Pickup detection (first bar only) ----
+  let hasPickup = detectPickupInFirstBar(body, meterNum, meterDen, lNum, lDen);
+
+  // If there is a partial pickup *before* the first barline,
+  // strip those notes completely so the tune starts at the first full bar.
+  if (hasPickup) {
+    const firstBarIdx = body.indexOf("|");
+    if (firstBarIdx !== -1) {
+      // Keep the barline itself; drop everything before it
+      body = body.slice(firstBarIdx);
+      // Pickup is gone now
+      hasPickup = false;
+    }
+  }
+
+  // ---- Normalize [1/[2 endings to |1/|2 ----
+  body = normalizeEndings(body);
+
+  // ---- Parse body into measures ----
+  const measures = parseMeasures(body);
+
+  // ---- Expand repeats & first/second endings ----
+  const flatMeasures = expandRepeatsAndEndings(measures);
+
+  // ---- Insert phrase-length rest measures after each phrase ----
+  let phrasedMeasures = injectPhraseRests(flatMeasures, phraseBars, oneBarRest, hasPickup);
+
+  // ---- Clear any internal |]; final |] will be added in rebuild ----
+  phrasedMeasures = phrasedMeasures.map(m =>
+    m.bar === "|]" ? { ...m, bar: "|" } : m
+  );
+
+  // ---- Rebuild body (wrap to 8 bars/line & final bar = |]) ----
+  const newBody = rebuildBodyFromMeasures(phrasedMeasures);
+
+  return header + "\n" + newBody;
+}
+
+
+/* ----------------- Helper: compute one bar rest ------------------ */
+
+function computeOneBarRest(mNum, mDen, lNum, lDen) {
+  const unitsPerBar = (mNum * lDen) / (mDen * lNum);
+
+  if (!Number.isFinite(unitsPerBar) || unitsPerBar <= 0) {
+    throw new Error("Invalid meter or default length for computing bar rest.");
+  }
+
+  const rounded = Math.round(unitsPerBar);
+  if (Math.abs(unitsPerBar - rounded) > 1e-6) {
+    throw new Error(
+      "This function only supports bar lengths that are integer multiples of L:; " +
+      `got ${unitsPerBar} units per bar.`
+    );
+  }
+
+  if (rounded === 1) return "z";
+  return "z" + rounded; // e.g. z4 for 2/4 with L:1/8
+}
+
+/* ----------------- Helper: pickup detection ------------------ */
+
+function detectPickupInFirstBar(body, mNum, mDen, lNum, lDen) {
+  const idx = body.indexOf("|");
+  if (idx === -1) return false; // only one bar, assume no pickup
+
+  let firstBarText = body.slice(0, idx);
+
+  // Remove grace notes { ... }
+  firstBarText = firstBarText.replace(/\{[^}]*\}/g, "");
+
+  const unitsPerBar = (mNum * lDen) / (mDen * lNum);
+
+  let pos = 0;
+  let totalUnits = 0;
+
+  while (pos < firstBarText.length) {
+    const ch = firstBarText[pos];
+
+    if (
+      /\s/.test(ch) ||
+      ch === "!" || ch === "\"" ||
+      ch === "(" || ch === ")" ||
+      ch === "[" || ch === "]"
+    ) {
+      pos++;
+      continue;
+    }
+
+    if (ch === "^" || ch === "_" || ch === "=") {
+      pos++;
+      continue;
+    }
+
+    if (/[A-Ga-gzZxY]/.test(ch)) {
+      pos++;
+      while (pos < firstBarText.length && /[,'’]/.test(firstBarText[pos])) pos++;
+
+      const { value: lengthUnits, newPos } = parseAbcLength(firstBarText, pos);
+      pos = newPos;
+      totalUnits += lengthUnits;
+      continue;
+    }
+
+    pos++; // unknown char, skip
+  }
+
+  return totalUnits > 0 && totalUnits < unitsPerBar - 1e-6;
+}
+
+function parseAbcLength(s, pos) {
+  let numStr = "";
+  while (pos < s.length && /\d/.test(s[pos])) {
+    numStr += s[pos++];
+  }
+
+  let num = numStr ? parseInt(numStr, 10) : 1;
+  let denom = 1;
+
+  let slashCount = 0;
+  while (pos < s.length && s[pos] === "/") {
+    slashCount++;
+    pos++;
+  }
+
+  if (slashCount > 0) {
+    denom = Math.pow(2, slashCount);
+  }
+
+  const value = num / denom;
+  return { value, newPos: pos };
+}
+
+/* ----------------- Helper: normalize [1/[2 endings ------------------ */
+
+function normalizeEndings(body) {
+  let out = body;
+  // |[1 → |1, :[1 → :1
+  out = out.replace(/(\||:)\[([12])/g, "$1$2");
+  // Standalone [1 at line start or after space → |1
+  out = out.replace(/(^|\s)\[([12])/g, "$1|$2");
+  return out;
+}
+
+/* ----------------- Helper: parse measures (no original newlines) ---- */
+
+function parseMeasures(body) {
+  const measures = [];
+  let cur = "";
+
+  function pushMeasure(barToken) {
+    const notes = cur.replace(/\s+$/g, ""); // trim right
+    measures.push({
+      notes,
+      bar: barToken
+    });
+    cur = "";
+  }
+
+  let i = 0;
+  while (i < body.length) {
+    const ch = body[i];
+
+    // Normalize original newlines to at most a single space
+    if (ch === "\n" || ch === "\r") {
+      if (cur && !/\s$/.test(cur)) {
+        cur += " ";
+      }
+      i++;
+      continue;
+    }
+
+    if (ch === "|") {
+      const next = body[i + 1] || "";
+      const next2 = body[i + 2] || "";
+
+      if (next === ":") {
+        pushMeasure("|:");
+        i += 2;
+      } else if (next === "|") {
+        pushMeasure("||");
+        i += 2;
+      } else if (next === "1" || next === "2") {
+        pushMeasure("|" + next);
+        i += 2;
+      } else if (next === "]") {
+        pushMeasure("|]");
+        i += 2;
+      } else {
+        pushMeasure("|");
+        i += 1;
+      }
+    } else if (ch === ":") {
+      const next = body[i + 1] || "";
+      const next2 = body[i + 2] || "";
+
+      if (next === "|") {
+        if (next2 === "1" || next2 === "2") {
+          pushMeasure(":|" + next2);
+          i += 3;
+        } else {
+          pushMeasure(":|");
+          i += 2;
+        }
+      } else {
+        cur += ch;
+        i++;
+      }
+    } else {
+      cur += ch;
+      i++;
+    }
+  }
+
+  if (cur.trim().length > 0) {
+    const notes = cur.replace(/\s+$/g, "");
+    measures.push({ notes, bar: "" });
+  }
+
+  return measures;
+}
+
+/* ----------------- Helper: expand repeats & endings ------------------ */
+
+function expandRepeatsAndEndings(measures) {
+  // Find first explicit start repeat |:
+  const firstStartIdx = measures.findIndex(m => m.bar === "|:");
+
+  // No explicit start repeats anywhere → all :| are "repeat from section start"
+  if (firstStartIdx === -1) {
+    return expandUnmatchedEndRepeats(measures);
+  }
+
+  // Prefix (before the first |:) may contain orphan :| repeats (A parts)
+  const prefix = measures.slice(0, firstStartIdx);
+  const suffix = measures.slice(firstStartIdx);
+
+  const expandedPrefix = expandUnmatchedEndRepeats(prefix);
+  const expandedSuffix = expandWithExplicitStarts(suffix);
+
+  return expandedPrefix.concat(expandedSuffix);
+}
+
+/**
+ * Handle tunes (or prefixes) that have :| end repeats with no |: in that region.
+ * Each section from the last section start (0, or after previous :|)
+ * up to a :| is repeated twice.
+ */
+function expandUnmatchedEndRepeats(measures) {
+  const sections = [];
+  let startIdx = 0;
+
+  for (let i = 0; i < measures.length; i++) {
+    const bar = measures[i].bar || "";
+    if (bar.indexOf(":|") !== -1) {
+      // section [startIdx..i] ends here and is repeated
+      sections.push({
+        measures: measures.slice(startIdx, i + 1),
+        repeat: true
+      });
+      startIdx = i + 1;
+    }
+  }
+
+  // Remainder (if any) with no :| → no repeat
+  if (startIdx < measures.length) {
+    sections.push({
+      measures: measures.slice(startIdx),
+      repeat: false
+    });
+  }
+
+  const out = [];
+
+  function copyOnce(seg) {
+    for (const m of seg) {
+      let bar = m.bar;
+      // Normalize :| variants to simple |
+      if (bar && bar.indexOf(":|") !== -1) {
+        bar = bar.replace(":|", "|");
+      }
+      if (bar === "||") bar = "|";
+      out.push({
+        notes: m.notes,
+        bar
+      });
+    }
+  }
+
+  for (const sec of sections) {
+    if (sec.repeat) {
+      copyOnce(sec.measures);
+      copyOnce(sec.measures);
+    } else {
+      copyOnce(sec.measures);
+    }
+  }
+
+  return out;
+}
+
+/**
+ * Handle repeats when we know there is at least one explicit |: start.
+ * Supports:
+ *   |: ... :|
+ *   |: ... |1 firstEnding :|2 secondEnding ...
+ *   plus [1 / [2 forms normalized to |1 / |2 by normalizeEndings().
+ */
+function expandWithExplicitStarts(measures) {
+  const out = [];
+  const n = measures.length;
+
+  function isStrongEnd(bar) {
+    return !!bar && (bar.indexOf(":|") !== -1 || bar === "||" || bar === "|]");
+  }
+
+  function normalizeBarPlayback(bar) {
+    if (!bar) return bar;
+    if (bar === "||") return "|";
+    if (
+      bar === "|1" || bar === "|2" ||
+      bar === ":|1" || bar === ":|2" ||
+      bar === ":|"
+    ) {
+      return "|";
+    }
+    return bar;
+  }
+
+  let i = 0;
+
+  while (i < n) {
+    const m = measures[i];
+
+    if (m.bar !== "|:") {
+      // Not a start repeat, just copy through
+      out.push({ notes: m.notes, bar: m.bar });
+      i++;
+      continue;
+    }
+
+    const repeatStart = i + 1;
+
+    // Find first bar containing "1" (first ending marker) and "2" (second ending marker)
+    let firstMarkerIdx = -1;
+    let secondMarkerIdx = -1;
+    for (let j = repeatStart; j < n; j++) {
+      const b = measures[j].bar || "";
+      if (firstMarkerIdx === -1 && b.indexOf("1") !== -1) {
+        firstMarkerIdx = j;
+      }
+      if (secondMarkerIdx === -1 && b.indexOf("2") !== -1) {
+        secondMarkerIdx = j;
+      }
+      if (firstMarkerIdx !== -1 && secondMarkerIdx !== -1) break;
+    }
+
+    // Helper: simple |: ... :| repeat (no endings)
+    function simpleRepeat(endIdx) {
+      out.push({ notes: m.notes, bar: "|" });
+      for (let j = repeatStart; j <= endIdx; j++) {
+        out.push({
+          notes: measures[j].notes,
+          bar: normalizeBarPlayback(measures[j].bar)
+        });
+      }
+      for (let j = repeatStart; j <= endIdx; j++) {
+        out.push({
+          notes: measures[j].notes,
+          bar: normalizeBarPlayback(measures[j].bar)
+        });
+      }
+    }
+
+    // No first ending marker → just repeat until first strong end
+    if (firstMarkerIdx === -1) {
+      let endIdx = -1;
+      for (let j = repeatStart; j < n; j++) {
+        if (isStrongEnd(measures[j].bar)) {
+          endIdx = j;
+          break;
+        }
+      }
+      if (endIdx === -1) {
+        // Malformed; treat |: as a normal bar
+        out.push({ notes: m.notes, bar: "|" });
+        i++;
+        continue;
+      }
+      simpleRepeat(endIdx);
+      i = endIdx + 1;
+      continue;
+    }
+
+    // ---- We have first/second endings ----
+    // First ending starts *after* the bar that carries "1"
+    const firstEndingStart = firstMarkerIdx + 1;
+
+    // End of first ending: first strong end at/after firstEndingStart
+    let firstEndingEnd = -1;
+    for (let j = firstEndingStart; j < n; j++) {
+      if (isStrongEnd(measures[j].bar)) {
+        firstEndingEnd = j;
+        break;
+      }
+    }
+    if (firstEndingEnd === -1) {
+      // Fallback: behave like a simple repeat
+      let endIdx = -1;
+      for (let j = repeatStart; j < n; j++) {
+        if (isStrongEnd(measures[j].bar)) {
+          endIdx = j;
+          break;
+        }
+      }
+      if (endIdx === -1) {
+        out.push({ notes: m.notes, bar: "|" });
+        i++;
+        continue;
+      }
+      simpleRepeat(endIdx);
+      i = endIdx + 1;
+      continue;
+    }
+
+    // Body is from repeatStart up to (and including) the bar that had "1"
+    // so that its NOTES stay with the body (e.g. EF A/B/c/A/ in Mícheál's)
+    const bodyStart = repeatStart;
+    const bodyEnd = Math.max(bodyStart, firstMarkerIdx);
+
+    // If no second ending marker, just treat body+first ending as simple repeat
+    if (secondMarkerIdx === -1) {
+      const endIdx = firstEndingEnd;
+      out.push({ notes: m.notes, bar: "|" });
+      for (let j = bodyStart; j <= endIdx; j++) {
+        out.push({
+          notes: measures[j].notes,
+          bar: normalizeBarPlayback(measures[j].bar)
+        });
+      }
+      for (let j = bodyStart; j <= endIdx; j++) {
+        out.push({
+          notes: measures[j].notes,
+          bar: normalizeBarPlayback(measures[j].bar)
+        });
+      }
+      i = endIdx + 1;
+      continue;
+    }
+
+    // Second ending starts after the bar that carries "2"
+    let secondEndingStart = secondMarkerIdx + 1;
+    if (secondEndingStart >= n) {
+      // No notes in second ending; fallback to simple repeat
+      const endIdx = firstEndingEnd;
+      out.push({ notes: m.notes, bar: "|" });
+      for (let j = bodyStart; j <= endIdx; j++) {
+        out.push({
+          notes: measures[j].notes,
+          bar: normalizeBarPlayback(measures[j].bar)
+        });
+      }
+      for (let j = bodyStart; j <= endIdx; j++) {
+        out.push({
+          notes: measures[j].notes,
+          bar: normalizeBarPlayback(measures[j].bar)
+        });
+      }
+      i = endIdx + 1;
+      continue;
+    }
+
+    // End of second ending: first strong end after secondEndingStart
+    let secondEndingEnd = -1;
+    for (let j = secondEndingStart; j < n; j++) {
+      if (isStrongEnd(measures[j].bar)) {
+        secondEndingEnd = j;
+        break;
+      }
+    }
+    if (secondEndingEnd === -1) {
+      secondEndingEnd = n - 1;
+    }
+
+    // ---- First pass: body + first ending ----
+    out.push({ notes: m.notes, bar: "|" });
+
+    for (let j = bodyStart; j <= bodyEnd; j++) {
+      out.push({
+        notes: measures[j].notes,
+        bar: normalizeBarPlayback(measures[j].bar)
+      });
+    }
+    for (let j = firstEndingStart; j <= firstEndingEnd; j++) {
+      out.push({
+        notes: measures[j].notes,
+        bar: normalizeBarPlayback(measures[j].bar)
+      });
+    }
+
+    // ---- Second pass: body + second ending ----
+    for (let j = bodyStart; j <= bodyEnd; j++) {
+      out.push({
+        notes: measures[j].notes,
+        bar: normalizeBarPlayback(measures[j].bar)
+      });
+    }
+    for (let j = secondEndingStart; j <= secondEndingEnd; j++) {
+      out.push({
+        notes: measures[j].notes,
+        bar: normalizeBarPlayback(measures[j].bar)
+      });
+    }
+
+    i = secondEndingEnd + 1;
+  }
+
+  return out;
+}
+
+/* ----------------- Helper: phrase rest injection ------------------ */
+
+function injectPhraseRests(measures, phraseBars, oneBarRest, hasPickup) {
+  const result = [];
+
+  // First measure with real notes
+  let firstNoteIdx = measures.findIndex(
+    (m) => m.notes && m.notes.trim().length > 0
+  );
+  if (firstNoteIdx === -1) {
+    return measures.slice();
+  }
+
+  let phraseStartIndex = firstNoteIdx + (hasPickup ? 1 : 0);
+  if (phraseStartIndex >= measures.length) {
+    phraseStartIndex = measures.length;
+  }
+
+  let barCounter = 0;
+
+  for (let idx = 0; idx < measures.length; idx++) {
+    const m = measures[idx];
+    result.push({ ...m });
+
+    const hasNotes = m.notes && m.notes.trim().length > 0;
+    const hasBar = !!m.bar;
+
+    const countable =
+      idx >= phraseStartIndex &&
+      hasBar &&
+      hasNotes;
+
+    if (countable) {
+      barCounter++;
+
+      if (barCounter === phraseBars) {
+        // Insert phrase-length rest (phraseBars bars of rest)
+        for (let k = 0; k < phraseBars; k++) {
+          result.push({
+            notes: oneBarRest,
+            bar: "|"
+          });
+        }
+        barCounter = 0;
+      }
+    }
+  }
+
+  return result;
+}
+
+/* ----------------- Helper: rebuild body with wrapping & final |] ---- */
+
+function rebuildBodyFromMeasures(measures) {
+  // Drop any measures that are only a barline (no notes),
+  // and any completely empty trailing measures.
+  measures = measures.filter((m) => {
+    const hasNotes = m.notes && m.notes.trim().length > 0;
+    const hasBar = !!m.bar;
+    if (!hasNotes && hasBar) return false;  // bar-only measure
+    if (!hasNotes && !hasBar) return false; // totally empty
+    return true;
+  });
+
+  if (!measures.length) {
+    return "\n";
+  }
+
+  // Force the final barline to |] (double bar at end of tune)
+  const lastIdx = measures.length - 1;
+  measures[lastIdx].bar = "|]";
+
+  // Rebuild text, wrapping to at most 8 bars per line
+  let out = "";
+  let barCount = 0;
+
+  measures.forEach((m, idx) => {
+    const notes = m.notes || "";
+    let bar = m.bar || "";
+
+    // Never output ||; normalize to single |
+    if (bar === "||") bar = "|";
+
+    out += notes;
+
+    if (bar) {
+      out += bar;
+      barCount++;
+
+      // Wrap line after 8 bars, if more measures follow.
+      if (barCount === 8 && idx < measures.length - 1) {
+        out += "\n";
+        barCount = 0;
+      }
+    }
+  });
+
+  return out.trim() + "\n";
+}
+
+
+// 
+// Strip all the chords in the ABC
+//
+function StripChords(theNotes) {
+
+  function match_callback(match) {
+
+    // Don't strip tab annotations, only chords
+    if ((match.indexOf('"_') == -1) && (match.indexOf('"^') == -1)) {
+
+      // Try and avoid stripping long text strings that aren't chords
+      if (match.length > 9) {
+        return match;
+      } else
+        // If there are spaces in the match, also probably not a chord
+        if (match.indexOf(" ") != -1) {
+          return match;
+        }
+      else {
+        return "";
+      }
+    } else {
+      return match;
+    }
+
+  }
+
+  // Strip out chord markings and not text annotations
+  var searchRegExp = /"[^"]*"/gm
+
+  const output = theNotes
+    .split('\n')
+    .map(line => {
+      // If line starts with one of the forbidden prefixes, skip replacement
+      if (/^[XTMKLQWZRCAOPNGHBDFSIV]:/.test(line) || /^%/.test(line)) {
+        return line;
+      } else {
+        return line.replace(searchRegExp, match_callback);
+      }
+    })
+    .join('\n');
+
+  // Replace the ABC
+  return output;
+
+}
+/* ----------------- Share link generation for sending output to the ABC Transcription Tools ---- */
+
+// Compression mode ids
+var COMPRESSION_MODE_LZW = 0;      // existing LZ-String / LZW
+var COMPRESSION_MODE_DEFLATE = 1;  // new Deflate+Base64URL
+
+function generateShareLink(abcText,shareName,tablatureOption,addAutoPlay) {
+
+    // Base64/Base64URL helpers for Deflate mode
+    function bytesToBase64(bytes) {
+        var binary = "";
+        var len = bytes.length;
+        for (var i = 0; i < len; i++) {
+            binary += String.fromCharCode(bytes[i]);
+        }
+        return btoa(binary);
+    }
+
+    function bytesToBase64URL(bytes) {
+      return bytesToBase64(bytes)
+          .replace(/\+/g, "-")
+          .replace(/\//g, "_")
+          .replace(/=+$/, "");
+    }
+
+    // LZW compression wrapper (existing behavior)
+    function compressABC_LZW(abcText) {
+        return LZString.compressToEncodedURIComponent(abcText);
+    }
+
+    // Deflate-based compression
+    function compressABC_Deflate(abcText) {
+      if (typeof pako === "undefined") {
+          throw new Error("pako (Deflate library) is not loaded.");
+      }
+      var encoder = new TextEncoder();
+      var utf8Bytes = encoder.encode(abcText);
+      var deflated = pako.deflate(utf8Bytes, { level: 6 });
+      return bytesToBase64URL(deflated);
+    }
+
+    var baseUrl = "https://michaeleskin.com/abctools/abctools.html";
+
+    // Choose compression mode (replace this with your own UI code as required)
+    var compressionMode = COMPRESSION_MODE_LZW;
+
+    var url = "";
+    if (compressionMode === COMPRESSION_MODE_DEFLATE) {
+        // Deflate-based link: def=...
+        var defEncoded = compressABC_Deflate(abcText);
+        url = baseUrl + "?def=" + defEncoded + "&format=" + tablatureOption + "&ssp=0&name=" + shareName;
+        if (addAutoPlay){
+            url += "&play=1";
+        }
+        else{
+            url += "&editor=1";        	
+        }
+    } else {
+        // Existing LZW behavior: lzw=...
+        var abcInLZW = compressABC_LZW(abcText);
+        url = baseUrl + "?lzw=" + abcInLZW + "&format="+tablatureOption+"&ssp=0&name=" + shareName;
+        if (addAutoPlay){
+            url += "&play=1";
+        }
+       else{
+            url += "&editor=1";        	
+        }
+    }
+
+    // Limit URLs to 8100 characters
+    if (url.length > 8100) {
+        return null;
+    }
+
+    return url;
+
+  }
+
+// Globals
+
+// Suggested filename for save
+var gSaveFilename = "";
+
+//
+// Main processor
+//
+
+//
+// Create a centered prompt string
+//
+function makeCenteredPromptString(thePrompt) {
+  return '<p style="font-size:12pt;line-height:18pt;font-family:helvetica;text-align:center">' + thePrompt + '</p>';
+}
+
+function UI_GeneratePhraseByPhrase(){
+
+	var phraseBars = document.getElementById("phraseLength").value;
+
+	phraseBars = parseInt(phraseBars);
+
+	if ((phraseBars <= 0) ||(isNaN(phraseBars))){
+
+		var thePrompt = makeCenteredPromptString("Phrase length must be a positive integer");
+	    
+	    DayPilot.Modal.alert(thePrompt, {
+            theme: "modal_flat",
+            top: 150
+        });
+
+	    return;
+	}
+
+	try {
+	  
+	  var originalAbcText = document.getElementById("input").value;
+
+	  originalAbcText = StripChords(originalAbcText);
+
+	  originalAbcText = originalAbcText.replaceAll("!","");
+
+	  var flattened = processAbcPhrases(originalAbcText, phraseBars);
+	  
+	  document.getElementById("output").value = flattened;
+
+	} catch (e) {
+
+		var thePrompt = makeCenteredPromptString("An issue occured during processing: "+e.message);
+	    
+	    DayPilot.Modal.alert(thePrompt, {
+            theme: "modal_flat",
+            top: 150
+        });
+
+	}
+
+}
+
+function GenerateShareLink(){
+
+    // Get the source ABC
+    var abcText = document.getElementById('output').value;
+
+    if (abcText.length == 0) {
+		
+		var thePrompt = makeCenteredPromptString("No ABC to process!")
+
+        DayPilot.Modal.alert(thePrompt, {
+            theme: "modal_flat",
+            top: 150
+        });
+
+        return;
+    }
+
+    // Auto-play requested?
+    var addAutoPlay = false;
+
+    if  (document.getElementById('addAutoPlay').checked){
+
+        addAutoPlay = true;
+    
+    }
+
+    // Get the tablature option from the dropdown
+    var tablatureOption = document.getElementById('tablature_options').value;
+
+    //
+    // Generate the Share Link
+    //
+    var url = generateShareLink(abcText,"Phrase_by_Phrase",tablatureOption,addAutoPlay)
+
+    if (url == null){
+	   
+	   var thePrompt = makeCenteredPromptString("ABC text is too long to generate a Share Link!\n\nInstead, copy and paste the phrase-by-phrase results into the ABC Transcription Tools.");
+       
+       DayPilot.Modal.alert(thePrompt, {
+            theme: "modal_flat",
+            top: 150
+        });
+
+        // clear size display
+        var sz = document.getElementById("linkSize");
+        if (sz) {
+            sz.innerHTML = "";
+        }
+    }
+    else{
+		return url;       
+    }
+}
+
+//
+// Save the Output to a file
+//
+function saveOutput() {
+
+    var theData = document.getElementById("output").value;
+
+    if (theData.length == 0) {
+
+	   var thePrompt = makeCenteredPromptString("Nothing to save!");
+
+        DayPilot.Modal.alert(thePrompt, {
+            theme: "modal_flat",
+            top: 150
+        });
+
+        return;
+    }
+
+    if (gSaveFilename == ""){
+        gSaveFilename = "phrase_by_phrase_tune";
+    }
+
+    var thePlaceholder = gSaveFilename;
+
+
+    var thePrompt = "Please enter a filename for your saved ABC file:";
+
+    DayPilot.Modal.prompt(thePrompt, thePlaceholder, {
+        theme: "modal_flat",
+        top: 194,
+        autoFocus: false
+    }).then(function(args) {
+
+        var fname = args.result;
+
+        // If the user pressed Cancel, exit
+        if (fname == null) {
+            return null;
+        }
+
+        // Strip out any naughty HTML tag characters
+        fname = fname.replace(/[^a-zA-Z0-9_\-. ]+/ig, '');
+
+        if (fname.length == 0) {
+            return null;
+        }
+
+        // Give it a good extension
+        if ((!gIsAndroid) && (!gIsIOS)) {
+
+            if ((!fname.endsWith(".txt")) && (!fname.endsWith(".TXT"))) {
+
+                // Give it a good extension
+                fname = fname.replace(/\..+$/, '');
+                fname = fname + ".txt";
+
+            }
+        } else {
+            // iOS and Android have odd rules about text file saving
+            // Give it a good extension
+            fname = fname.replace(/\..+$/, '');
+            fname = fname + ".txt";
+
+        }
+
+        var a = document.createElement("a");
+
+        document.body.appendChild(a);
+
+        a.style = "display: none";
+
+        var blob = new Blob([theData], {
+                type: "text/plain"
+            }),
+
+        url = window.URL.createObjectURL(blob);
+        a.href = url;
+        a.download = fname;
+        a.click();
+
+        document.body.removeChild(a);
+
+        setTimeout(function() {
+            window.URL.revokeObjectURL(url);
+        }, 1000);
+
+    });
+
+}
+
+
+//
+// Copy the output text are to the clipboard 
+// 
+function copyOutputToClipboard() {
+
+    var textToCopy = document.getElementById('output').value;
+
+    if (textToCopy.length == 0) {
+
+	    var thePrompt = makeCenteredPromptString("Nothing to copy!")
+
+        DayPilot.Modal.alert(thePrompt, {
+            theme: "modal_flat",
+            top: 150
+        });
+
+        return;
+
+    }
+
+    copyToClipboard(textToCopy);
+
+    // Give some feedback
+    document.getElementById("copybutton").innerHTML = "Copied!";
+
+    setTimeout(function() {
+
+        document.getElementById("copybutton").innerHTML = "Copy to the clipboard";
+
+    }, 1250);
+}
+
+//
+// Copy to Clipboard Polyfill
+//
+function copyToClipboard(textToCopy) {
+
+    //
+    // Put this in a try/catch just to be safe
+    //
+    try {
+
+        // navigator clipboard api needs a secure context (https)
+        if (navigator.clipboard && window.isSecureContext) {
+
+            // navigator clipboard api method'
+            return navigator.clipboard.writeText(textToCopy);
+
+        } else {
+
+            // text area method
+
+            let textArea = document.createElement("textarea");
+
+            textArea.value = textToCopy;
+
+            // make the textarea out of viewport
+            textArea.style.position = "fixed";
+            textArea.style.left = "-999999px";
+            textArea.style.top = "-999999px";
+
+            document.body.appendChild(textArea);
+
+            textArea.focus();
+            textArea.select();
+
+            return new Promise((res, rej) => {
+                // here the magic happens
+                document.execCommand('copy') ? res() : rej();
+                textArea.remove();
+            });
+        }
+
+    } catch (error) {
+
+        console.log("CopyToClipboard error: " + error);
+
+    }
+}
+
+//
+// Generate and open an ABC Transcription Tools Share URL for the output
+//
+function testOutput() {
+
+	var theOutput = document.getElementById("output").value;
+
+	if (theOutput.length == 0){
+
+		var thePrompt = makeCenteredPromptString("Nothing to open");
+
+        DayPilot.Modal.alert(thePrompt, {
+            theme: "modal_flat",
+            top: 150
+        });	
+        return;	
+	}
+
+    var url = GenerateShareLink();
+
+    if (url.length > 8100) {
+
+	   var thePrompt = makeCenteredPromptString("Output too long to test!");
+
+        DayPilot.Modal.alert(thePrompt, {
+            theme: "modal_flat",
+            top: 150
+        });
+
+        return;
+    }
+
+    // Open the transcription tools with the share link
+    var w = window.open(url);
+
+}
+
+function showInstructionsModal() {
+  var instr = document.getElementById("instructions");
+  if (!instr) return;
+
+  var html = instr.innerHTML;
+
+  DayPilot.Modal.alert(html, {
+    theme: "modal_flat",
+    top: 50,
+    width:800
+  });
+}
+
+//
+// Are we on iOS?
+//
+function isIOS() {
+    if (/iPad|iPhone|iPod/.test(navigator.platform)) {
+        return true;
+    } else {
+        return navigator.maxTouchPoints &&
+            navigator.maxTouchPoints > 2 &&
+            /MacIntel/.test(navigator.platform);
+    }
+}
+
+//
+// Are we on an iPhone?
+//
+function isIPhone() {
+    if (/iPad|iPhone|iPod/.test(navigator.platform)) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+//
+// Are we on an iPad?
+//
+function isIPad() {
+    return navigator.maxTouchPoints &&
+        navigator.maxTouchPoints > 2 &&
+        /MacIntel/.test(navigator.platform);
+}
+
+//
+// Are we on Android?
+//
+function isAndroid() {
+    if (/Android/i.test(navigator.userAgent)) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+//
+// Are we on Safari?
+//
+function isSafari(){
+
+    if (/Safari/i.test(navigator.userAgent) && /Apple Computer/.test(navigator.vendor)) {
+        return true;
+    }
+    else{
+        return false;
+    }
+}
+
+//
+// Are we on Chrome?
+//
+function isChrome(){
+
+    if (/chrome|chromium|crios/i.test(navigator.userAgent)) {
+        return true;
+    }
+    else{
+        return false;
+    }
+}
+
+//
+// Globals
+//
+var gIsIOS = false;
+var gIsAndroid = false;
+var gIsSafari = false;
+var gIsChrome = false;
+
+//
+// Initialization 
+//
+function DoStartup() {
+
+    var theValue = "";
+    theValue += "X: 1\n";
+    theValue += "T: The Kesh\n";
+    theValue += "R: Jig\n";
+    theValue += "M: 6/8\n";
+    theValue += "L: 1/8\n";
+    theValue += "K: Gmaj\n";
+    theValue += "C: Traditional\n";
+    theValue += '|:GAG GAB|ABA ABd|edd gdd|edB dBA|\n';
+    theValue += 'GAG GAB|ABA ABd|edd gdB|AGF G3:|\n';
+    theValue += '|:BAB dBd|ege dBA|BAB dBG|ABA AGA|\n';
+    theValue += 'BAB dBd|ege dBd|gfg aga|bgf g3:|\n';
+
+    document.getElementById('input').value = theValue;
+    document.getElementById('output').value = "";
+
+    // Reset file selectors
+    var fileElement = document.getElementById('selectabcfile');
+
+    fileElement.value = "";
+
+    // Are we on iOS?
+    gIsIOS = false;
+    if (isIOS()) {
+        gIsIOS = true;
+    }
+
+    // Are we on Android?
+    gIsAndroid = false;
+
+    if (isAndroid()) {
+        gIsAndroid = true;
+    }
+
+    if (gIsIOS) {
+        document.getElementById("selectabcfile").removeAttribute("accept");
+    }
+
+    // Are we on Safari?
+    gIsSafari = false;
+    if (isSafari()){
+        gIsSafari = true;
+    }
+
+    // Are we on Chrome?
+    gIsChrome = false;
+
+    if (!gIsSafari){
+        if (isChrome()){
+            gIsChrome = true;
+        }
+    }
+
+    //
+    // Setup the file import control
+    //
+    document.getElementById("selectabcfile").onchange = () => {
+
+        let fileElement = document.getElementById("selectabcfile");
+
+        let file = fileElement.files[0];
+
+        gSaveFilename = file.name;
+
+        // Trim any whitespace
+        gSaveFilename = gSaveFilename.trim();
+
+        // Strip out any naughty HTML tag characters
+        gSaveFilename = gSaveFilename.replace(/[^a-zA-Z0-9_\-. ]+/ig, '');
+
+        // Replace any spaces
+        gSaveFilename = gSaveFilename.replace(/\s/g, '_');
+
+        // Strip the extension
+        gSaveFilename = gSaveFilename.replace(/\..+$/, '');
+       
+        // Clean up the notation while the new file is loading
+        document.getElementById('input').value = "";
+
+        const reader = new FileReader();
+
+        reader.addEventListener('load', (event) => {
+
+            document.getElementById('input').value = event.target.result;
+
+            // Reset file selectors
+            let fileElement = document.getElementById('selectabcfile');
+
+            fileElement.value = "";
+
+
+        });
+
+        reader.readAsText(file);
+
+    }
+
+}
+
+//
+// Wait for the document to be ready, then fire a function
+//
+
+function WaitForReady(fn) {
+
+    if (document.readyState !== 'loading') {
+        fn();
+        return;
+    }
+
+    document.addEventListener('DOMContentLoaded', fn);
+
+}
+
+//
+// Wait for the document to be ready, then startup
+//
+
+WaitForReady(DoStartup);
+
+</script>
+  
+</html>
