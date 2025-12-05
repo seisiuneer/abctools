@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3039_120425_1200";
+var gVersionNumber = "3040_120525_0900";
 
 var gMIDIInitStillWaiting = false;
 
@@ -21226,7 +21226,7 @@ function FillUrlBoxWithAbcInLZWOrDef(ABCtoEncode, bUpdateUI, theFormat, allowDef
   if (allowDef){
     var encoder = new TextEncoder();
     var utf8Bytes = encoder.encode(abcText);
-    var deflated = pako.deflate(utf8Bytes, { level: 9 });
+    var deflated = pako.deflate(utf8Bytes, { level: 6 });
     abc_compressed = def_bytesToBase64URL(deflated);
   }
   else{
