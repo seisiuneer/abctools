@@ -466,7 +466,7 @@ function generateShareLink(abcText,shareName,tablatureOption,addAutoPlay) {
       }
       var encoder = new TextEncoder();
       var utf8Bytes = encoder.encode(abcText);
-      var deflated = pako.deflate(utf8Bytes, { level: 9 });
+      var deflated = pako.deflate(utf8Bytes, { level: 6 });
       return bytesToBase64URL(deflated);
     }
 
