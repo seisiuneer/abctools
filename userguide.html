@@ -733,10 +733,11 @@
             </details>
             
             <details>
-            <summary><h3>abcjs Custom CSS Generator, Transpose to Key, and Inject Bagpipe Sounds</h3></summary>
-            <a style="text-decoration:none;" href="#advanced_customcssgenerator">abcjs Custom CSS Generator</a>
+            <summary><h3>Phrase Builder, Custom CSS Generator, Transpose to Key, and Inject Bagpipes</h3></summary>
+            <a style="text-decoration:none;" href="#advanced_phrasebuilder">Phrase Builder</a>
+            <a style="text-decoration:none;" href="#advanced_customcssgenerator">Custom CSS Generator</a>
             <a style="text-decoration:none;" href="#advanced_transposetokey">Transpose to Key</a>
-            <a style="text-decoration:none;" href="#advanced_injectbagpipesounds">Inject Bagpipe Sounds</a>
+            <a style="text-decoration:none;" href="#advanced_injectbagpipesounds">Inject Bagpipes</a>
             </details>
             
             <details>
@@ -1239,11 +1240,12 @@
                     </div>
 
 
-                    <button class="accordion" title="Click to expand/collapse this section">abcjs Custom CSS Generator, Transpose to Key, and Inject Bagpipe Sounds</button>
+                    <button class="accordion" title="Click to expand/collapse this section">Phrase Builder, Custom CSS Generator, Transpose to Key, and Inject Bagpipes</button>
                     <div class="tocpanel">
-                        <p class="toc"><a style="text-decoration:none;" href="#advanced_customcssgenerator">abcjs Custom CSS Generator</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#advanced_phrasebuilder">Phrase Builder</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#advanced_customcssgenerator">Custom CSS Generator</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#advanced_transposetokey">Transpose to Key</a></p>
-                        <p class="toc"><a style="text-decoration:none;" href="#advanced_injectbagpipesounds">Inject Bagpipe Sounds</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#advanced_injectbagpipesounds">Inject Bagpipes</a></p>
                     </div>
                     
                     <button class="accordion" title="Click to expand/collapse this section">Sharing Tunes via Share URLs and QR Codes</button>
@@ -1809,7 +1811,7 @@
                 <p>Pitch is shifted to A=480 Hz using the following directive:</p>
                 <p class="code">%voice_tuning_cents 48 148</p>
                 <p>For more information on the %voice_tuning_cents directive, see the <a href="#voice_tuning">Setting the Tuning Offset for Individual Voices</a> section below.</p>
-                <p>To inject drone and chanter sounds into a tune imported from a BWW file, check out the <a href="#advanced_injectbagpipesounds">Inject Bagpipe Sounds</a> command on the <strong>More Tools</strong> dialog.</p>
+                <p>To inject drone and chanter sounds into a tune imported from a BWW file, check out the <a href="#advanced_injectbagpipesounds">Inject Bagpipes</a> command on the <strong>More Tools</strong> dialog.</p>
                 <p><strong>.mid, or .midi</strong></p>
                 <p>Imports one or more MIDI files from your computer, converts them first to MusicXML, converts the MusicXML to ABC, and loads the ABC into the ABC Editor.</p>
                 <p>Details on MusicXML and MIDI import settings below in the <a style="text-decoration:none;" href="#musicxml">MusicXML/MIDI Import Settings</a> section.</p>
@@ -2696,7 +2698,7 @@
                 <p><strong>Use the Border Pipes instrument (%%MIDI program 143) for extended range tunes.</strong></p>
                 <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/PsrVAsU-BCY " title="Extended Range Folded Bagpipe Demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
                 <p>The Border Pipes instrument (%%MIDI program 143) is a custom "folded" version of the Bagpipe (%%MIDI program 109) instrument that will automatically folds notes outside the range of the chanter into the range, emulating how one might actually play an extended range tune on the real instrument.</p>
-                <p>This instrument is used by the "Inject Bagpipe Sounds" feature when injecting tunes that were not previously imported from BWW files.</p>
+                <p>This instrument is used by the "Inject Bagpipes" feature when injecting tunes that were not previously imported from BWW files.</p>
                 <p>Nothing you need to do, you'll just notice that these extended range tunes sound more realistic when used with the Great Highland Bagpipe and Border Pipes sound injection.</p>
                 <hr class="hidden-print" id="marching_drums_map">
                 <h1 class="page_break_always h1wide">Using the Marching Drums (%%MIDI program 142) Instrument<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
@@ -4902,11 +4904,11 @@
                 <h1 class="page_break_always">More ABC Tools<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <p>Clicking the <strong>More Tools</strong> button brings up the More ABC Tools dialog:</p>
                 <div class="image_holder_p">
-                    <img class="image" loading="lazy" src="img/more_abc_tools_26.jpg"/>
+                    <img class="image" loading="lazy" src="img/more_abc_tools_27.jpg"/>
                 </div>
                 <p>If you would like to only show the buttons for the features you commonly use and hide the others, click the controls icon at the top-right of the dialog to choose features of the dialog you would like to show/hide:</p>
                 <div class="image_holder_p">
-                    <img class="image" loading="lazy" src="img/more_abc_tools_feature_options_11.jpg"/>
+                    <img class="image" loading="lazy" src="img/more_abc_tools_feature_options_12.jpg"/>
                 </div>
                 <p>The most commonly used buttons are always shown.</p>
                 <p>Your preferences are saved and restored the next time you use the tool.</p>
@@ -5603,8 +5605,20 @@
                     <img class="image" loading="lazy" src="img/incipits_builder_example_5.jpg"/>
                 </div>
                 <p><strong>Note:</strong> You may run into occasional cases where the number of measures in the incipits doesn't exactly match the requested number.</p>
-                <p>You can try changing the %%barsperstaff value on any tune that has an issue.</p>                <hr class="hidden-print" id="advanced_customcssgenerator">
-                <h1 class="page_break_always h1wide">abcjs Custom CSS Generator<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+                <p>You can try changing the %%barsperstaff value on any tune that has an issue.</p>       
+                <hr class="hidden-print" id="advanced_phrasebuilder">
+                <h1 class="page_break_always h1wide">Phrase Builderr<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+                <p>Brings up a dialog that makes it simple to break the current tune or all the tunes into a selectable number of measure phrases followed by the same number of measures of rests.</p>
+                <p>This creates version of the tunes that are ideal for "Call and Response" style tune practice in the Tune Trainer.</p>
+                <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/77aDC2TsWZs" title="Phrase Builder demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
+                <div class="image_holder_p">
+                    <img class="image" loading="lazy" src="img/phrase_builder_1.jpg"/>
+                </div>
+                <p>Check <strong>Process all tunes</strong> to process all the tunes. Only processes the current tune being edited if unchecked.</p> 
+                <p>All chords are stripped as well as all pickups before the first full measure of the tune(s).</p>
+                <p><strong>Note:</strong> This feature works best for tunes with complete measures inside of repeats.</p>
+                <hr class="hidden-print" id="advanced_customcssgenerator">
+                <h1 class="page_break_always h1wide">Custom CSS Generator<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <p>Brings up a dialog that makes it simple to inject a custom CSS block at the top of the ABC for setting abcjs notation element colors.</p>
                 <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/bc-XoPFddFw" title="abcjs Custom CSS Generator Demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
                 <div class="image_holder_p">
@@ -5632,14 +5646,14 @@
                 <p><strong>If the Transpose to Key results are too high or too low:</strong></p>
                 <p>Click in a single tune or select across one or more tunes in the ABC editor then Alt-click the lower toolbar <strong>Transpose Up</strong> or <strong>Transpose Down</strong> buttons to transpose the tune(s) down or up an octave.</p>
                 <hr>
-                <p style="text-align: center;"><strong>Using "Transpose to Key" for "Inject Bagpipe Sounds" Pre-Processing</strong></p>
-                <p>This feature can be particularly useful for pre-processing tunebooks for the <strong>Inject Bagpipe Sounds</strong> feature.</p>
+                <p style="text-align: center;"><strong>Using "Transpose to Key" for "Inject Bagpipes" Pre-Processing</strong></p>
+                <p>This feature can be particularly useful for pre-processing tunebooks for the <strong>Inject Bagpipes</strong> feature.</p>
                 <p>For, example, transposing all tune to a root key of A before doing Great Highland Bagpipe injection will result in tunes that are all consonant with the drones.</p>
                 <p>For bagpipe sound injection with chanter range folding, having the tunes in a lower octave will often favor lower notes in the folding results.</p>
                 <p>If the <strong>Transpose to Key</strong> results seem too high or two low, before doing the bagpipe sound injection (it has to be done before, not after) you can transpose individual tunes down or up an octave by first clicking in the ABC for the tune and then holding down the Alt key while clicking the <strong>Transpose Down</strong> or <strong>Transpose Up</strong> buttons on the toolbar below the editor.</p>
                 <hr class="hidden-print" id="advanced_injectbagpipesounds">
-                <h1 class="page_break_always h1wide">Inject Bagpipe Sounds<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-                <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/cfkLNtqcLQ0" title="Inject Bagpipe Sounds Demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
+                <h1 class="page_break_always h1wide">Inject Bagpipes<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+                <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/cfkLNtqcLQ0" title="Inject Bagpipes Demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
                 <p>Brings up a dialog where you can change the melody sound to various bagpipes and optionally inject bagpipe drones as a second voice for the current tune or all tunes in the ABC work area.</p>
                 <div class="image_holder_p">
                     <img class="image" loading="lazy" src="img/inject_bagpipe_drones_6.jpg"/>
@@ -5671,17 +5685,17 @@
                 <p>Check the <strong>Fold the displayed and played notes into the chanter range</strong> checkbox if you want to "fold" the notes of the melody outside the range of the chanter to the range of the chanter:</p>
                 <p>Great Highland Bagpipe, Border Pipes, and Smallpipes:<br/>ABC notes G to a</p>
                 <p>Swedish Säckpipa:<br/>ABC notes C to d</p>
-                <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/3NywGCDx-E4" title="Inject Bagpipe Sounds Folding Demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
+                <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/3NywGCDx-E4" title="Inject Bagpipes Folding Demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
                 <hr>
                 <p>If you want to automatically shift the drone pitch to match the key of the melody, check the <strong>Shift drone pitch to match tune key (non-BWW imported tunes only)</strong> checkbox.</p>
-                <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/cYwnUklGMI0" title="Inject Bagpipe Sounds Drone Shift Demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
+                <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/cYwnUklGMI0" title="Inject Bagpipes Drone Shift Demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
                 <p>While not necessarily representative of the real instrument, this option can be used for interesting results.</p>
                 <p><strong>Note:</strong> This feature may not provide a workable solution if the tune is in a key where there is an Ab or Db in the key signature.</p>
                 <p>For these cases you may need to manually adjust the second value for the drone tuning on the %voice_tuning_cents annotation to fix the drone pitch.</p>
                 <p>Generally adding 100 (one semitone in cents) to the value will fix the problem.</p>
                 <hr>
                 <p>If you want to only change the melody to the selected bagpipe chanter sound and not inject drones, uncheck the <strong>Inject drones</strong> checkbox.</p>
-                <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/36doaXiKpXQ" title="Inject Bagpipe Sounds No Drones Demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
+                <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/36doaXiKpXQ" title="Inject Bagpipes No Drones Demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
                 <hr>
                 <p>If you want to hide the injected drone voice in the notation, check the <strong>Hide drone voice</strong> checkbox.</p>
                 <hr>
@@ -6425,7 +6439,7 @@
                 <p><strong>Here is the full list of available custom abcjs classes:</strong></p>
                 <br/>
                 <table><thead><tr><th>Class</th><th>Description</th></tr></thead><tbody><tr><td>.abcjs-annotation</td><td>Text added with the <code>&quot;^...&quot;</code> format.</td></tr><tr><td>.abcjs-author</td><td>The author text</td></tr><tr><td>.abcjs-bar</td><td>The bar lines.</td></tr><tr><td>.abcjs-bar-number</td><td>The bar numbers.</td></tr><tr><td>.abcjs-beam-elem</td><td>The beams connecting eighth notes together.</td></tr><tr><td>.abcjs-brace</td><td>The brace on the left side of the staff (like for piano music.)</td></tr><tr><td>.abcjs-bracket</td><td>The bracket on the left side of the staff.</td></tr><tr><td>.abcjs-chord</td><td>The chord symbols, specified in quotes.</td></tr><tr><td>.abcjs-clef</td><td>All clefs</td></tr><tr><td>.abcjs-composer</td><td>The composer text</td></tr><tr><td>.abcjs-container</td><td>The notation display div</td></tr><tr><td>.abcjs-cursor</td><td>The vertical playback cursor</td></tr><tr><td>.abcjs-d0-25, etc.</td><td>The duration of the note. (Replace the dash with a decimal point. That is, the example is a duration of 0.25, or a quarter note.)</td></tr><tr><td>.abcjs-decoration</td><td>Everything to do with the extra symbols, like crescendo.</td></tr><tr><td>.abcjs-defined-text</td><td>Text that appears between the lines of music, created with <code>%%text</code>.</td></tr><tr><td>.abcjs-dynamics</td><td>The dynamics markings: <code>p</code> for instance. Also the crescendo mark.</td></tr><tr><td>.abcjs-end-m0-n0</td><td>Added to slurs to indicate the ending note.</td></tr><tr><td>.abcjs-ending</td><td>The line and decoration for the 1st and 2nd ending.</td></tr><tr><td>.abcjs-key-signature</td><td>All key signatures</td></tr><tr><td>.abcjs-l0, .abcjs-l1, etc.</td><td>(lower case L, followed by a number) The staff line number, starting at zero.</td></tr><tr><td>.abcjs-ledger</td><td>ledger line.</td></tr><tr><td>.abcjs-lyric</td><td>The lyric line.</td></tr><tr><td>.abcjs-m0, .abcjs-m1, etc.</td><td>The measure count from the START OF THE LINE.</td></tr><tr><td>.abcjs-mm0, .abcjs-mm1, etc.</td><td>The measure count from the START OF THE TUNE.</td></tr><tr><td>.abcjs-meta-bottom</td><td>Everything that is printed after all the music.</td></tr><tr><td>.abcjs-meta-top</td><td>Everything that is printed before the first staff line.</td></tr><tr><td>.abcjs-n0, .abcjs-n1, etc.</td><td>The note count from the START OF THE MEASURE.</td></tr><tr><td>.abcjs-note</td><td>Everything to do with a note.</td></tr><tr><td>.abcjs-note_selected</td><td>This is the element that the user has clicked on.</td></tr><tr><td>.abcjs-p-1, .abcjs-p1, etc.</td><td>The y-position of the note (where middle-C is zero).</td></tr><tr><td>.abcjs-part</td><td>Each part marking in the music itself.</td></tr><tr><td>.abcjs-part-order</td><td>The part order indicator at the top.</td></tr><tr><td>.abcjs-rest</td><td>Everything to do with a rest.</td></tr><tr><td>.abcjs-rhythm</td><td>The rhythm text.</td></tr><tr><td>.abcjs-slur</td><td>Slurs and ties. (backwards compatible)</td></tr><tr><td>.abcjs-start-m0-n0</td><td>Added to slurs to indicate the beginning note.</td></tr><tr><td>.abcjs-tie</td><td>Tie.</td></tr><tr><td>.abcjs-legato</td><td>Slur. Because &quot;.abcjs-slur&quot; was historically used to indicate either a slur or a tie this indicates only a slur.</td></tr><tr><td>.abcjs-staff</td><td>The horizontal lines that make up the staff.</td></tr><tr><td>.abcjs-staff-extra</td><td>Clefs, key signatures, time signatures.</td></tr><tr><td>.abcjs-stem</td><td>Note stems</td></tr><tr><td>.abcjs-subtitle</td><td>The subtitle, both on the top and inserted in the middle</td></tr><tr><td>.abcjs-symbol</td><td>Any special symbol, like a trill.</td></tr><tr><td>.abcjs-tempo</td><td>The tempo marking.</td></tr><tr><td>.abcjs-text</td><td>Extra text that is not part of the music.</td></tr><tr><td>.abcjs-time-signature</td><td>All time signatures</td></tr><tr><td>.abcjs-title</td><td>The line specified by T:</td></tr><tr><td>.abcjs-top-line</td><td>This marks the top line of each staff. This is useful if you are trying to find where on the page the music has been drawn.</td></tr><tr><td>.abcjs-top-of-system</td><td>This marks the top of each set of staves. This is useful if you are trying to find where on the page the music has been drawn.</td></tr><tr><td>.abcjs-triplet</td><td>The extra markings that indicate a triplet. (But not the notes themselves.)</td></tr><tr><td>.abcjs-unaligned-words</td><td>Lyrics at the bottom that aren&#39;t lined up with notes.</td></tr><tr><td>.abcjs-v0, .abcjs-v1, etc.</td><td>the voice number, starting at zero.</td></tr><tr><td>.highlight</td><td>Highlighted notes during playback.</td></tr><tr><td>.mark, .mark1, .mark2, .mark3, ..., .mark10</td><td>All notes with !mark! and !mark1!, !mark2!, !mark3!, ..., !mark10! decorations.</td></tr><tr><td>.push, .draw</td><td>All notes with !push! and !draw! decorations.</td></tr><tr><td>[class^="abcjs-"]</td><td>Wildcard selector for all abcjs- prefixed classes.</td></tr><tr><td>#abc</td><td>The ABC editor textarea.</td></tr></tbody></table>
-                <p>The <a style="text-decoration:none;" href="#advanced_customcssgenerator">abcjs Custom CSS Generator</a> dialog available on the <a style="text-decoration:none;" href="#more_tools">More ABC Tools</a> dialog can be used to create a boiler plate custom CSS block for setting custom CSS colors for most abcjs elements.</p>
+                <p>The <a style="text-decoration:none;" href="#advanced_customcssgenerator">Custom CSS Generator</a> dialog available on the <a style="text-decoration:none;" href="#more_tools">More ABC Tools</a> dialog can be used to create a boiler plate custom CSS block for setting custom CSS colors for most abcjs elements.</p>
                 <hr class="hidden-print" id="customcssexamples">
                 <h1 class="page_break_always h1wide">Custom abcjs CSS Examples<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <hr>
