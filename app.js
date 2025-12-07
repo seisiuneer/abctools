@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3044_120725_1100";
+var gVersionNumber = "3045_120725_1230";
 
 var gMIDIInitStillWaiting = false;
 
@@ -60917,19 +60917,20 @@ function processAbcPhrases(abcText, phraseBars) {
     let sawK = false;
 
     for (const ln of lines) {
+      
       const trimmed = ln.trim();
 
       if (!inBody) {
         // Still in header region
         if (/^\s*K\s*:/i.test(trimmed)) {
           sawK = true;
-          headerLines.push(ln);
+          headerLines.push(trimmed);
           continue;
         }
 
         if (!sawK) {
           // Before K:, everything is header
-          headerLines.push(ln);
+          headerLines.push(trimmed);
         } else {
           // After K:, still treat % / %% / field lines / blanks as header
           if (
@@ -60937,11 +60938,11 @@ function processAbcPhrases(abcText, phraseBars) {
             /^\s*[A-Za-z]\s*:/.test(trimmed) || // another field line
             /^\s*$/.test(trimmed)               // blank
           ) {
-            headerLines.push(ln);
+            headerLines.push(trimmed);
           } else {
             // First real music line -> body starts here
             inBody = true;
-            bodyLines.push(ln);
+            bodyLines.push(trimmed);
           }
         }
       } else {
@@ -60952,7 +60953,7 @@ function processAbcPhrases(abcText, phraseBars) {
           continue;
         }
 
-        bodyLines.push(ln);
+        bodyLines.push(trimmed);
       }
     }
 
@@ -61607,7 +61608,7 @@ function processAbcPhrases(abcText, phraseBars) {
     let barCount = 0;
 
     measures.forEach((m, idx) => {
-      const notes = m.notes || "";
+      const notes = m.notes.trim() || "";
       let bar = m.bar || "";
 
       // Never output ||; normalize to single |
@@ -61626,6 +61627,8 @@ function processAbcPhrases(abcText, phraseBars) {
         }
       }
     });
+
+    out = out.replace(/\s{2,}/g, ' ');
 
     return out.trim() + "\n";
   }
