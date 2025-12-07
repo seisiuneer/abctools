@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3043_12725_0900";
+var gVersionNumber = "3044_120725_1100";
 
 var gMIDIInitStillWaiting = false;
 
@@ -60968,12 +60968,33 @@ function processAbcPhrases(abcText, phraseBars) {
     }
 
     // ---- Extract M: and L: for pickup/rest calculations ----
-    const mMatch = abcText.match(/^\s*M\s*:\s*([\d]+)\/([\d]+)/im);
-    if (!mMatch) {
+    // Handle numeric meters AND M:C / M:C|
+    const mLineMatch = abcText.match(/^\s*M\s*:\s*([^\r\n]+)/im);
+    if (!mLineMatch) {
       return abcText;
     }
-    const meterNum = parseInt(mMatch[1], 10);
-    const meterDen = parseInt(mMatch[2], 10);
+
+    const mValueRaw = mLineMatch[1].trim();
+    let meterNum, meterDen;
+
+    if (/^C\|$/i.test(mValueRaw)) {
+      // Cut time: M:C|  -> 2/2
+      meterNum = 2;
+      meterDen = 2;
+    } else if (/^C$/i.test(mValueRaw)) {
+      // Common time: M:C  -> 4/4
+      meterNum = 4;
+      meterDen = 4;
+    } else {
+      // Standard numeric meter like 4/4, 6/8, etc.
+      const mMatch = mValueRaw.match(/^(\d+)\s*\/\s*(\d+)$/);
+      if (!mMatch) {
+        // Unrecognized meter format, bail out and leave tune unchanged
+        return abcText;
+      }
+      meterNum = parseInt(mMatch[1], 10);
+      meterDen = parseInt(mMatch[2], 10);
+    }
 
     const lMatch = abcText.match(/^\s*L\s*:\s*([\d]+)\/([\d]+)/im);
     let lNum, lDen;
@@ -61026,7 +61047,6 @@ function processAbcPhrases(abcText, phraseBars) {
 
     return header + "\n" + newBody;
   }
-
 
   /* ----------------- Helper: compute one bar rest ------------------ */
 
@@ -61619,6 +61639,26 @@ var gPhraseBuilderLength = 2;
 //
 function PhraseBuilder(){
 
+  function foundVTag(abcText){
+    
+    // Split the text into lines
+    const theLines = abcText.split('\n');
+
+    // Regular expression to match voice fields
+    const voiceRegex = /^V:\s*(\S+)/;
+
+    // Iterate over each line
+    for (const theLine of theLines) {
+      const match = theLine.match(voiceRegex);
+      if (match) {
+        return true;
+      }
+    }
+
+    return false;
+
+  }
+
   const theData = {
     phraseLength: gPhraseBuilderLength,
     buildPhraseAll: false
@@ -61634,7 +61674,11 @@ function PhraseBuilder(){
       html: '<p style="margin-top:24px;margin-bottom:24px;font-size:12pt;line-height:18pt;font-family:helvetica">This feature works best for tunes with complete measures inside of repeats.</p>'
   }, {
       html: '<p style="margin-top:24px;margin-bottom:24px;font-size:12pt;line-height:18pt;font-family:helvetica">Additionally, all chords are stripped as well as all pickups before the first full measure of the tune(s).</p>'
-  }, {
+  },
+  {
+      html: '<p style="margin-top:24px;margin-bottom:24px;font-size:12pt;line-height:18pt;font-family:helvetica">Tunes with one or more V: tags will be skipped.</p>'
+  }, 
+  {
     name: "Phrase length:",
     id: "phraseLength",
     type: "number",
@@ -61689,15 +61733,28 @@ function PhraseBuilder(){
 
         var output = FindPreTuneHeader(theNotes);
 
+        var gotVTag = false;
+
         for (var i = 1; i <= nTunes; ++i) {
 
           var theTune = "X:" + theTunes[i];
 
-          theTune = StripChordsOne(theTune);
+          if (!foundVTag(theTune)){
 
-          theTune = processAbcPhrases(theTune,gPhraseBuilderLength)
+            theTune = StripChordsOne(theTune);
 
-          output += theTune + "\n";
+            theTune = processAbcPhrases(theTune,gPhraseBuilderLength)
+
+            output += theTune + "\n";
+
+          }
+          else{
+
+            gotVTag = true;
+            
+            output += theTune;
+
+          }
 
         }
 
@@ -61735,6 +61792,18 @@ function PhraseBuilder(){
             // Focus after operation
             FocusAfterOperation();
 
+            if (gotVTag){
+
+              // Center the string in the prompt
+              var thePrompt = makeCenteredPromptString("One or more tunes had V: tags and were skipped.");
+
+              DayPilot.Modal.alert(thePrompt, {
+                theme: "modal_flat",
+                top: 300,
+                scrollWithPage: (AllowDialogsToScroll())
+              });
+
+            }
           });
         });
       }
@@ -61750,63 +61819,88 @@ function PhraseBuilder(){
           return;
         }
 
-        var thePhrases = StripChordsOne(theSelectedABC);
+        var doPhrasesRender = true;
+        
+        // Ignore tunes with a V: tag
+        if (!foundVTag(theSelectedABC)){
 
-        thePhrases = processAbcPhrases(thePhrases,gPhraseBuilderLength)
+          var thePhrases = StripChordsOne(theSelectedABC);
 
-        var theSelectionStart;
+          thePhrases = processAbcPhrases(thePhrases,gPhraseBuilderLength);
 
-        if (gEnableSyntax){
-          // Try and keep the same tune after the redraw for immediate play
-          theSelectionStart = gTheCM.selectionStart;
         }
         else{
-          // Try and keep the same tune after the redraw for immediate play
-          theSelectionStart = gTheABC.selectionStart;
+
+          thePhrases = theSelectedABC;
+
+          // Center the string in the prompt
+          var thePrompt = makeCenteredPromptString("This tune has one or more V: tags and cannot have phrases expanded.");
+
+          DayPilot.Modal.alert(thePrompt, {
+            theme: "modal_flat",
+            top: 300,
+            scrollWithPage: (AllowDialogsToScroll())
+          });
+
+          doPhrasesRender = false;
+
         }
 
-        // Stuff in the processed ABC
-        var theABC = getABCEditorText();
-        theABC = theABC.replace(theSelectedABC, thePhrases);
+        if (doPhrasesRender){
 
-        setABCEditorText(theABC);
+          var theSelectionStart;
 
-        // Set dirty
-        gIsDirty = true;
+          if (gEnableSyntax){
+            // Try and keep the same tune after the redraw for immediate play
+            theSelectionStart = gTheCM.selectionStart;
+          }
+          else{
+            // Try and keep the same tune after the redraw for immediate play
+            theSelectionStart = gTheABC.selectionStart;
+          }
 
-        var thePrompt = "Phrase-by-phrase version of tune created!";
+          // Stuff in the processed ABC
+          var theABC = getABCEditorText();
+          theABC = theABC.replace(theSelectedABC, thePhrases);
 
-        // Center the string in the prompt
-        thePrompt = makeCenteredPromptString(thePrompt);
+          setABCEditorText(theABC);
 
-        DayPilot.Modal.alert(thePrompt, {
-          theme: "modal_flat",
-          top: 300,
-          scrollWithPage: (AllowDialogsToScroll())
-        }).then(function(){
+          // Set dirty
+          gIsDirty = true;
 
-          // Force a redraw of the tune
-          RenderAsync(false, theSelectedTuneIndex, function() {
+          var thePrompt = "Phrase-by-phrase version of the tune created!";
 
-            ensureMoreToolsVisible();
+          // Center the string in the prompt
+          thePrompt = makeCenteredPromptString(thePrompt);
 
-            if (gEnableSyntax){
-              // Set the select point
-              gTheCM.selectionStart = theSelectionStart;
-              gTheCM.selectionEnd = theSelectionStart;
-            }
-            else{
-              // Set the select point
-              gTheABC.selectionStart = theSelectionStart;
-              gTheABC.selectionEnd = theSelectionStart;
-            }
+          DayPilot.Modal.alert(thePrompt, {
+            theme: "modal_flat",
+            top: 300,
+            scrollWithPage: (AllowDialogsToScroll())
+          }).then(function(){
 
-            // Focus after operation
-            FocusAfterOperation();
+            // Force a redraw of the tune
+            RenderAsync(false, theSelectedTuneIndex, function() {
 
+              ensureMoreToolsVisible();
+
+              if (gEnableSyntax){
+                // Set the select point
+                gTheCM.selectionStart = theSelectionStart;
+                gTheCM.selectionEnd = theSelectionStart;
+              }
+              else{
+                // Set the select point
+                gTheABC.selectionStart = theSelectionStart;
+                gTheABC.selectionEnd = theSelectionStart;
+              }
+
+              // Focus after operation
+              FocusAfterOperation();
+
+            });
           });
-        });
-
+        }
       }
     }
 
