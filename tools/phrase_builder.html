@@ -456,7 +456,7 @@ function processAbcPhrases(abcText, phraseBars) {
     .filter(t => t.length > 0)
     .map(t => processSingleTune(t, phraseBars));
 
-  return outputs.join("\n\n");
+  return outputs.join("\n");
 }
 
 function processSingleTune(abcText, phraseBars) {
@@ -482,13 +482,13 @@ function processSingleTune(abcText, phraseBars) {
       // Still in header region
       if (/^\s*K\s*:/i.test(trimmed)) {
         sawK = true;
-        headerLines.push(ln);
+        headerLines.push(trimmed);
         continue;
       }
 
       if (!sawK) {
         // Before K:, everything is header
-        headerLines.push(ln);
+        headerLines.push(trimmed);
       } else {
         // After K:, still treat % / %% / field lines / blanks as header
         if (
@@ -496,11 +496,11 @@ function processSingleTune(abcText, phraseBars) {
           /^\s*[A-Za-z]\s*:/.test(trimmed) || // another field line
           /^\s*$/.test(trimmed)               // blank
         ) {
-          headerLines.push(ln);
+          headerLines.push(trimmed);
         } else {
           // First real music line -> body starts here
           inBody = true;
-          bodyLines.push(ln);
+          bodyLines.push(trimmed);
         }
       }
     } else {
@@ -511,7 +511,7 @@ function processSingleTune(abcText, phraseBars) {
         continue;
       }
 
-      bodyLines.push(ln);
+      bodyLines.push(trimmed);
     }
   }
 
@@ -527,12 +527,32 @@ function processSingleTune(abcText, phraseBars) {
   }
 
   // ---- Extract M: and L: for pickup/rest calculations ----
-  const mMatch = abcText.match(/^\s*M\s*:\s*([\d]+)\/([\d]+)/im);
-  if (!mMatch) {
+  // Handle numeric meters AND M:C / M:C|
+  const mLineMatch = abcText.match(/^\s*M\s*:\s*([^\r\n]+)/im);
+  if (!mLineMatch) {
     throw new Error("M: meter field is required.");
   }
-  const meterNum = parseInt(mMatch[1], 10);
-  const meterDen = parseInt(mMatch[2], 10);
+
+  const mValueRaw = mLineMatch[1].trim();
+  let meterNum, meterDen;
+
+  if (/^C\|$/i.test(mValueRaw)) {
+    // Cut time: M:C|  -> 2/2
+    meterNum = 2;
+    meterDen = 2;
+  } else if (/^C$/i.test(mValueRaw)) {
+    // Common time: M:C  -> 4/4
+    meterNum = 4;
+    meterDen = 4;
+  } else {
+    // Standard numeric meter like 4/4, 6/8, etc.
+    const mMatch = mValueRaw.match(/^(\d+)\s*\/\s*(\d+)$/);
+    if (!mMatch) {
+      throw new Error("Unsupported M: meter format.");
+    }
+    meterNum = parseInt(mMatch[1], 10);
+    meterDen = parseInt(mMatch[2], 10);
+  }
 
   const lMatch = abcText.match(/^\s*L\s*:\s*([\d]+)\/([\d]+)/im);
   let lNum, lDen;
@@ -585,7 +605,6 @@ function processSingleTune(abcText, phraseBars) {
 
   return header + "\n" + newBody;
 }
-
 
 /* ----------------- Helper: compute one bar rest ------------------ */
 
@@ -1145,7 +1164,7 @@ function rebuildBodyFromMeasures(measures) {
   let barCount = 0;
 
   measures.forEach((m, idx) => {
-    const notes = m.notes || "";
+    const notes = m.notes.trim() || "";
     let bar = m.bar || "";
 
     // Never output ||; normalize to single |
@@ -1164,6 +1183,8 @@ function rebuildBodyFromMeasures(measures) {
       }
     }
   });
+  
+  out = out.replace(/\s{2,}/g, ' ');
 
   return out.trim() + "\n";
 }
