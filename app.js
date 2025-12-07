@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3042_120625_1200";
+var gVersionNumber = "3043_12725_0900";
 
 var gMIDIInitStillWaiting = false;
 
@@ -21224,6 +21224,9 @@ function FillUrlBoxWithAbcInLZWOrDef(ABCtoEncode, bUpdateUI, theFormat, allowDef
   var abc_compressed;
 
   if (allowDef){
+
+    sendGoogleAnalytics("action", "Deflate");
+
     var encoder = new TextEncoder();
     var utf8Bytes = encoder.encode(abcText);
     var deflated = pako.deflate(utf8Bytes, { level: 6 });
@@ -61644,6 +61647,8 @@ function PhraseBuilder(){
     cssClass: "configure_transposetokey_text"
   }
   ];
+
+  sendGoogleAnalytics("dialog", "PhraseBuilder");
 
   const modal = DayPilot.Modal.form(form, theData, {
     theme: "modal_flat",
