@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3045_120725_1230";
+var gVersionNumber = "3046_120725_1630";
 
 var gMIDIInitStillWaiting = false;
 
@@ -61635,6 +61635,297 @@ function processAbcPhrases(abcText, phraseBars) {
 
 }
 
+/**
+ * Detects whether an ABC tune contains any partial measures
+ * *other than* an initial pickup that can be stripped.
+ *
+ * Returns true if a non-pickup partial bar is found, false otherwise.
+ */
+function hasNonPickupPartialMeasures(abcText) {
+  // Normalize line endings
+  const text = abcText.replace(/\r\n/g, "\n");
+  const lines = text.split("\n");
+
+  // ---- Separate header and body (same logic as processSingleTune) ----
+  let headerLines = [];
+  let bodyLines = [];
+  let inBody = false;
+  let sawK = false;
+
+  for (const ln of lines) {
+    const trimmed = ln.trim();
+
+    if (!inBody) {
+      if (/^\s*K\s*:/i.test(trimmed)) {
+        sawK = true;
+        headerLines.push(trimmed);
+        continue;
+      }
+
+      if (!sawK) {
+        headerLines.push(trimmed);
+      } else {
+        if (
+          /^\s*[%]/.test(trimmed) ||          // % or %%
+          /^\s*[A-Za-z]\s*:/.test(trimmed) || // another field line
+          /^\s*$/.test(trimmed)               // blank
+        ) {
+          headerLines.push(trimmed);
+        } else {
+          inBody = true;
+          bodyLines.push(trimmed);
+        }
+      }
+    } else {
+      // In body: skip % lines
+      if (/^\s*%/.test(trimmed)) {
+        continue;
+      }
+      bodyLines.push(trimmed);
+    }
+  }
+
+  if (!sawK) {
+    // No key, treat as not analyzable
+    return false;
+  }
+
+  let body = bodyLines.join("\n").trim();
+  if (!body) {
+    return false;
+  }
+
+  // ---- Extract M: and L: (support M:C and M:C|) ----
+  const mLineMatch = text.match(/^\s*M\s*:\s*([^\r\n]+)/im);
+  if (!mLineMatch) {
+    return false;
+  }
+
+  const mValueRaw = mLineMatch[1].trim();
+  let meterNum, meterDen;
+
+  if (/^C\|$/i.test(mValueRaw)) {
+    // Cut time: M:C|  -> 2/2
+    meterNum = 2;
+    meterDen = 2;
+  } else if (/^C$/i.test(mValueRaw)) {
+    // Common time: M:C  -> 4/4
+    meterNum = 4;
+    meterDen = 4;
+  } else {
+    const mMatch = mValueRaw.match(/^(\d+)\s*\/\s*(\d+)$/);
+    if (!mMatch) {
+      return false;
+    }
+    meterNum = parseInt(mMatch[1], 10);
+    meterDen = parseInt(mMatch[2], 10);
+  }
+
+  const lMatch = text.match(/^\s*L\s*:\s*([\d]+)\/([\d]+)/im);
+  let lNum, lDen;
+  if (lMatch) {
+    lNum = parseInt(lMatch[1], 10);
+    lDen = parseInt(lMatch[2], 10);
+  } else {
+    // ABC default
+    lNum = 1;
+    lDen = 8;
+  }
+
+  const unitsPerBar = (meterNum * lDen) / (meterDen * lNum);
+  if (!Number.isFinite(unitsPerBar) || unitsPerBar <= 0) {
+    return false;
+  }
+
+  // ---- Detect initial pickup (same logic as detectPickupInFirstBar) ----
+  const firstBarIdx = body.indexOf("|");
+  let hasPickup = false;
+
+  if (firstBarIdx !== -1) {
+    let firstBarText = body.slice(0, firstBarIdx);
+    firstBarText = firstBarText.replace(/\{[^}]*\}/g, ""); // remove grace
+
+    const firstLen = measureLengthUnits(firstBarText);
+
+    if (firstLen > 0 && firstLen < unitsPerBar - 1e-6) {
+      hasPickup = true;
+    }
+  }
+
+  // ---- Normalize endings and parse measures exactly like main code ----
+  body = normalizeEndingsForScan(body);
+  const measures = parseMeasuresForScan(body);
+
+  if (!measures.length) return false;
+
+  // ---- Now scan each measure for partials ----
+  // Treat measure[0] as ignorable pickup if hasPickup is true.
+  for (let i = 0; i < measures.length; i++) {
+    const notes = (measures[i].notes || "").trim();
+    if (!notes) continue; // empty / bar-only measure
+
+    const len = measureLengthUnits(notes);
+
+    // Ignore the initial pickup bar if applicable
+    if (i === 0 && hasPickup) {
+      continue;
+    }
+
+    // Partial bar: some notes, but less than a full bar
+    if (len > 0 && len < unitsPerBar - 1e-6) {
+      return true;
+    }
+  }
+
+  return false;
+
+  // ---- Helpers used only by this function ----
+
+  function measureLengthUnits(txt) {
+    // Remove grace notes again (for safety)
+    let s = txt.replace(/\{[^}]*\}/g, "");
+
+    let pos = 0;
+    let totalUnits = 0;
+
+    while (pos < s.length) {
+      const ch = s[pos];
+
+      if (
+        /\s/.test(ch) ||
+        ch === "!" || ch === "\"" ||
+        ch === "(" || ch === ")" ||
+        ch === "[" || ch === "]"
+      ) {
+        pos++;
+        continue;
+      }
+
+      // Accidentals
+      if (ch === "^" || ch === "_" || ch === "=") {
+        pos++;
+        continue;
+      }
+
+      if (/[A-Ga-gzZxY]/.test(ch)) {
+        pos++;
+        // Skip octave marks
+        while (pos < s.length && /[,'’]/.test(s[pos])) pos++;
+
+        const parsed = parseAbcLengthForScan(s, pos);
+        totalUnits += parsed.value;
+        pos = parsed.newPos;
+        continue;
+      }
+
+      pos++;
+    }
+
+    return totalUnits;
+  }
+
+  function parseAbcLengthForScan(s, pos) {
+    let numStr = "";
+    while (pos < s.length && /\d/.test(s[pos])) {
+      numStr += s[pos++];
+    }
+
+    let num = numStr ? parseInt(numStr, 10) : 1;
+    let denom = 1;
+
+    let slashCount = 0;
+    while (pos < s.length && s[pos] === "/") {
+      slashCount++;
+      pos++;
+    }
+
+    if (slashCount > 0) {
+      denom = Math.pow(2, slashCount);
+    }
+
+    const value = num / denom; // in "L units"
+    return { value, newPos: pos };
+  }
+
+  // Light-weight versions of your normalize/parse just for scanning
+  function normalizeEndingsForScan(bodyText) {
+    let out = bodyText;
+    out = out.replace(/(\||:)\[([12])/g, "$1$2");
+    out = out.replace(/(^|\s)\[([12])/g, "$1|$2");
+    return out;
+  }
+
+  function parseMeasuresForScan(bodyText) {
+    const measures = [];
+    let cur = "";
+
+    function pushMeasure(barToken) {
+      const notes = cur.replace(/\s+$/g, "");
+      measures.push({ notes, bar: barToken });
+      cur = "";
+    }
+
+    let i = 0;
+    while (i < bodyText.length) {
+      const ch = bodyText[i];
+
+      if (ch === "\n" || ch === "\r") {
+        if (cur && !/\s$/.test(cur)) cur += " ";
+        i++;
+        continue;
+      }
+
+      if (ch === "|") {
+        const next = bodyText[i + 1] || "";
+        const next2 = bodyText[i + 2] || "";
+
+        if (next === ":") {
+          pushMeasure("|:");
+          i += 2;
+        } else if (next === "|") {
+          pushMeasure("||");
+          i += 2;
+        } else if (next === "1" || next === "2") {
+          pushMeasure("|" + next);
+          i += 2;
+        } else if (next === "]") {
+          pushMeasure("|]");
+          i += 2;
+        } else {
+          pushMeasure("|");
+          i += 1;
+        }
+      } else if (ch === ":") {
+        const next = bodyText[i + 1] || "";
+        const next2 = bodyText[i + 2] || "";
+
+        if (next === "|") {
+          if (next2 === "1" || next2 === "2") {
+            pushMeasure(":|" + next2);
+            i += 3;
+          } else {
+            pushMeasure(":|");
+            i += 2;
+          }
+        } else {
+          cur += ch;
+          i++;
+        }
+      } else {
+        cur += ch;
+        i++;
+      }
+    }
+
+    if (cur.trim().length > 0) {
+      const notes = cur.replace(/\s+$/g, "");
+      measures.push({ notes, bar: "" });
+    }
+
+    return measures;
+  }
+}
+
 var gPhraseBuilderLength = 2;
 
 //
@@ -61679,7 +61970,7 @@ function PhraseBuilder(){
       html: '<p style="margin-top:24px;margin-bottom:24px;font-size:12pt;line-height:18pt;font-family:helvetica">Additionally, all chords are stripped as well as all pickups before the first full measure of the tune(s).</p>'
   },
   {
-      html: '<p style="margin-top:24px;margin-bottom:24px;font-size:12pt;line-height:18pt;font-family:helvetica">Tunes with one or more V: tags will be skipped.</p>'
+      html: '<p style="margin-top:24px;margin-bottom:24px;font-size:12pt;line-height:18pt;font-family:helvetica">Tunes with partial measures or one or more V: tags will be skipped.</p>'
   }, 
   {
     name: "Phrase length:",
@@ -61738,34 +62029,59 @@ function PhraseBuilder(){
 
         var gotVTag = false;
 
+        var gotPartialMeasures = false;
+
         for (var i = 1; i <= nTunes; ++i) {
 
           var theTune = "X:" + theTunes[i];
 
-          if (!foundVTag(theTune)){
-
-            theTune = StripChordsOne(theTune);
-
-            theTune = processAbcPhrases(theTune,gPhraseBuilderLength)
-
-            output += theTune + "\n";
+          if (hasNonPickupPartialMeasures(theTune)){
+              
+              gotPartialMeasures = true;
+              
+              output += theTune;
 
           }
           else{
 
-            gotVTag = true;
-            
-            output += theTune;
+            if (!foundVTag(theTune)){
 
+              theTune = StripChordsOne(theTune);
+
+              theTune = processAbcPhrases(theTune,gPhraseBuilderLength)
+
+              output += theTune + "\n";
+
+            }
+            else{
+
+              gotVTag = true;
+              
+              output += theTune;
+
+            }
           }
-
         }
 
         setABCEditorText(output);
 
         gIsDirty = true;
 
-        var thePrompt = "Phrase-by-phrase versions created for all tunes!";
+        var thePrompt = "Phrase-by-phrase versions of all tunes created!";
+
+        if (gotVTag){
+          if (!gotPartialMeasures){
+            thePrompt = "All tunes processed, but some tunes had V: tags and were skipped during phrase-by-phrase processing.";
+          }
+          else{
+            thePrompt = "All tunes processed, but some tunes had V: tags and/or partial measures other than initial pickup notes and were skipped during phrase-by-phrase processing.";         
+          }
+        }
+        else{
+          if (gotPartialMeasures){
+            thePrompt = "All tunes processed, but some tunes had partial measures other than initial pickup notes and were skipped during phrase-by-phrase processing.";  
+          }
+        }
 
         // Center the string in the prompt
         thePrompt = makeCenteredPromptString(thePrompt);
@@ -61795,18 +62111,6 @@ function PhraseBuilder(){
             // Focus after operation
             FocusAfterOperation();
 
-            if (gotVTag){
-
-              // Center the string in the prompt
-              var thePrompt = makeCenteredPromptString("One or more tunes had V: tags and were skipped.");
-
-              DayPilot.Modal.alert(thePrompt, {
-                theme: "modal_flat",
-                top: 300,
-                scrollWithPage: (AllowDialogsToScroll())
-              });
-
-            }
           });
         });
       }
@@ -61823,33 +62127,36 @@ function PhraseBuilder(){
         }
 
         var doPhrasesRender = true;
-        
-        // Ignore tunes with a V: tag
-        if (!foundVTag(theSelectedABC)){
+
+        var gotVTag = foundVTag(theSelectedABC);
+
+        var gotPartialMeasures = hasNonPickupPartialMeasures(theSelectedABC);
+
+        var theTitle = getTuneTitle(theSelectedABC)
+
+        var thePrompt = "Phrase-by-phrase version of " + '"' + theTitle + '"' +" created!";
+
+        if (gotVTag){
+          if (!gotPartialMeasures){
+            thePrompt = '"' + theTitle + '"' + " has one or more V: tags and cannot have phrases expanded.";
+          }
+          else{
+            thePrompt = '"' + theTitle + '"' + " has one or more V: tags and partial measures other than initial pickup notes and cannot have phrases expanded.";            
+          }
+          doPhrasesRender = false;
+        }
+        else{
+          if (gotPartialMeasures){
+            thePrompt = '"' + theTitle + '"' + " has partial measures other than initial pickup notes and cannot have phrases expanded.";  
+            doPhrasesRender = false;
+          }
+        }
+
+        if (doPhrasesRender){
 
           var thePhrases = StripChordsOne(theSelectedABC);
 
           thePhrases = processAbcPhrases(thePhrases,gPhraseBuilderLength);
-
-        }
-        else{
-
-          thePhrases = theSelectedABC;
-
-          // Center the string in the prompt
-          var thePrompt = makeCenteredPromptString("This tune has one or more V: tags and cannot have phrases expanded.");
-
-          DayPilot.Modal.alert(thePrompt, {
-            theme: "modal_flat",
-            top: 300,
-            scrollWithPage: (AllowDialogsToScroll())
-          });
-
-          doPhrasesRender = false;
-
-        }
-
-        if (doPhrasesRender){
 
           var theSelectionStart;
 
@@ -61870,8 +62177,6 @@ function PhraseBuilder(){
 
           // Set dirty
           gIsDirty = true;
-
-          var thePrompt = "Phrase-by-phrase version of the tune created!";
 
           // Center the string in the prompt
           thePrompt = makeCenteredPromptString(thePrompt);
@@ -61903,6 +62208,17 @@ function PhraseBuilder(){
 
             });
           });
+        }
+        else{
+
+          // Center the string in the prompt
+          thePrompt = makeCenteredPromptString(thePrompt);
+
+          DayPilot.Modal.alert(thePrompt, {
+            theme: "modal_flat",
+            top: 300,
+            scrollWithPage: (AllowDialogsToScroll())}
+          );
         }
       }
     }
