@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3046_120725_1630";
+var gVersionNumber = "3047_120725_1800";
 
 var gMIDIInitStillWaiting = false;
 
@@ -62157,6 +62157,8 @@ function PhraseBuilder(){
           var thePhrases = StripChordsOne(theSelectedABC);
 
           thePhrases = processAbcPhrases(thePhrases,gPhraseBuilderLength);
+
+          thePhrases = thePhrases.trim();
 
           var theSelectionStart;
 
