@@ -170,6 +170,14 @@
       padding:5px;
       }
 
+      #phrasePadding{
+      font-size:12pt;
+      font-family:"Helvetica";
+      width:60px;
+      padding:5px;
+      }
+
+
       .btn {
         --color: #000000;
         --background-color: #d8d8d8;
@@ -307,8 +315,9 @@
 	      <p>You may need to rework the ABC for tunes with partial measures inside of repeat bars to use them with this tool.</p>
 	      <p>Partial measure pickups before the first full bar in a tune will be stripped.</p>
 	      <p>1)&nbsp;Click <strong>Open an existing .ABC file</strong> to open a file or paste a ABC tune into the <strong>Original ABC Tunes</strong> box below.</p>
-	      <p>2)&nbsp;Enter your desired phrase length (default is 2).</p>
-	      <p>5)&nbsp;Click <strong>Generate Phrase-by-Phrase ABC Version</strong>.</p>
+	      <p>2)&nbsp;Enter your desired phrase length in <strong>Phrase length in measures</strong> (default is 2).</p>
+        <p>3)&nbsp;If you want additional full measure padding between the phrases, enter a number into <strong>Additional full-measure rest padding between phrases</strong></p>
+	      <p>4)&nbsp;Click <strong>Generate Phrase-by-Phrase ABC Version</strong>.</p>
 	      <p>5)&nbsp;The generated phrase-by-phrase ABC version will be shown in the <strong>Expanded Phrase-by-Phrase ABC Version</strong> box.</p>
 	      <p>6)&nbsp;Save, Copy or Open the results:</p>
 	      <p>- Click <strong>Save to a file</strong> to save the phrase-by-phrase ABC version to a file.</p>
@@ -340,7 +349,11 @@
         <p>
           Phrase length in measures:&nbsp;&nbsp;<input type="number" id="phraseLength" value="2"/>
         </p>
-        
+
+        <p>
+          Additional full-measure rest padding between phrases:&nbsp;&nbsp;<input type="number" id="phrasePadding" value="0"/>
+        </p>    
+
         <p style="margin-top:24px"><button id="generateShareLink" class="btn btn-generate" onClick="UI_GeneratePhraseByPhrase();">Generate Phrase-by-Phrase Version</button></p>
         
         <div style="margin-bottom: 8px;">
@@ -420,9 +433,16 @@
 //
 // Flatten repeats and break tune into phrases for the Tune Trainer
 //
-function processAbcPhrases(abcText, phraseBars) {
+//
+// Flatten repeats and break tune into phrases for the Tune Trainer
+//
+function processAbcPhrases(abcText, phraseBars, phrasePadding) {
 
   if (!Number.isInteger(phraseBars) || phraseBars <= 0) {
+    return abcText;
+  }
+
+  if (!Number.isInteger(phrasePadding) || phrasePadding < 0) {
     return abcText;
   }
 
@@ -461,14 +481,14 @@ function processAbcPhrases(abcText, phraseBars) {
   const outputs = tunes
     .map(t => t.trim())
     .filter(t => t.length > 0)
-    .map(t => processSingleTune(t, phraseBars));
+    .map(t => processSingleTune(t, phraseBars, phrasePadding));
 
   return outputs.join("\n");
 
   // ------------------------------------------------------------
   // Process a single tune
   // ------------------------------------------------------------
-  function processSingleTune(abcText, phraseBars) {
+  function processSingleTune(abcText, phraseBars, phrasePadding) {
     const lines = abcText.replace(/\r\n/g, "\n").split("\n");
 
     // Reject multiple voices
@@ -595,7 +615,7 @@ function processAbcPhrases(abcText, phraseBars) {
     const hasPickup = detectInitialPickupMeasure(fullBarMeasures, meterNum, meterDen, lNum, lDen);
 
     // ---- Insert phrase-length rest measures after each phrase ----
-    let phrasedMeasures = injectPhraseRests(fullBarMeasures, phraseBars, oneBarRest, hasPickup);
+    let phrasedMeasures = injectPhraseRests(fullBarMeasures, phraseBars, phrasePadding, oneBarRest, hasPickup);
 
     // ---- Clear any internal |]; final |] will be added in rebuild ----
     phrasedMeasures = phrasedMeasures.map(m =>
@@ -1229,7 +1249,7 @@ function processAbcPhrases(abcText, phraseBars) {
 
   /* ----------------- Helper: phrase rest injection ------------------ */
 
-  function injectPhraseRests(measures, phraseBars, oneBarRest, hasPickup) {
+  function injectPhraseRests(measures, phraseBars, phrasePadding, oneBarRest, hasPickup) {
     const result = [];
 
     let firstNoteIdx = measures.findIndex(
@@ -1263,7 +1283,7 @@ function processAbcPhrases(abcText, phraseBars) {
         barCounter++;
 
         if (barCounter === phraseBars) {
-          for (let k = 0; k < phraseBars; k++) {
+          for (let k = 0; k < (phraseBars + phrasePadding); k++) {
             result.push({
               notes: oneBarRest,
               bar: "|"
@@ -1487,7 +1507,7 @@ function UI_GeneratePhraseByPhrase(){
 
 	phraseBars = parseInt(phraseBars);
 
-	if ((phraseBars <= 0) ||(isNaN(phraseBars))){
+	if ((phraseBars <= 0) || (isNaN(phraseBars))){
 
 		var thePrompt = makeCenteredPromptString("Phrase length must be a positive integer");
 	    
@@ -1498,14 +1518,30 @@ function UI_GeneratePhraseByPhrase(){
 
 	    return;
 	}
-	  
+
+  var phrasePadding = document.getElementById("phrasePadding").value;
+
+  phrasePadding = parseInt(phrasePadding);
+
+  if ((phrasePadding < 0) || (isNaN(phrasePadding))){
+
+    var thePrompt = makeCenteredPromptString("Phrase padding must be greater or equal to zero");
+      
+      DayPilot.Modal.alert(thePrompt, {
+            theme: "modal_flat",
+            top: 150
+        });
+
+      return;
+  }
+
   var originalAbcText = document.getElementById("input").value;
 
   originalAbcText = StripChords(originalAbcText);
 
   originalAbcText = originalAbcText.replaceAll("!","");
 
-  var flattened = processAbcPhrases(originalAbcText, phraseBars);
+  var flattened = processAbcPhrases(originalAbcText, phraseBars, phrasePadding);
   
   document.getElementById("output").value = flattened;
 
@@ -1585,7 +1621,7 @@ function saveOutput() {
     }
 
     if (gSaveFilename == ""){
-        gSaveFilename = "phrase_by_phrase_tune";
+        gSaveFilename = "phrase_by_phrase_tune.abc";
     }
 
     var thePlaceholder = gSaveFilename;
