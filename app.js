@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3048_120825_2300";
+var gVersionNumber = "3049_120925_0700";
 
 var gMIDIInitStillWaiting = false;
 
@@ -21757,13 +21757,11 @@ function SaveABCAsMusicXML(theTune, fname) {
 
       a.style = "display: none";
 
-      var url;
-
       var blob = new Blob([data], {
           type: "text/plain"
-        }),
+        });
 
-      url = window.URL.createObjectURL(blob);
+      var url = window.URL.createObjectURL(blob);
       a.href = url;
       a.download = fname;
       a.click();
@@ -21854,13 +21852,11 @@ function doSaveABCFile(fname, theData) {
 
   a.style = "display: none";
 
-  var url;
-
   var blob = new Blob([theData], {
       type: "text/plain"
-    }),
+    });
 
-  url = window.URL.createObjectURL(blob);
+  var url = window.URL.createObjectURL(blob);
   a.href = url;
   a.download = fname;
   a.click();
@@ -21963,13 +21959,11 @@ function saveTextFile(thePrompt, thePlaceholder, theData) {
 
     a.style = "display: none";
 
-    var url;
-
     var blob = new Blob([theData], {
         type: "text/plain"
-      }),
+      });
 
-    url = window.URL.createObjectURL(blob);
+    var url = window.URL.createObjectURL(blob);
     a.href = url;
     a.download = fname;
     a.click();
@@ -22025,13 +22019,11 @@ function saveTextFileDeveloper(thePrompt, thePlaceholder, theData) {
 
     a.style = "display: none";
 
-    var url;
-
     var blob = new Blob([theData], {
         type: "text/plain"
-      }),
+      });
 
-    url = window.URL.createObjectURL(blob);
+    var url = window.URL.createObjectURL(blob);
     a.href = url;
     a.download = fname;
     a.click();
@@ -22082,13 +22074,11 @@ function saveCSVFile(thePrompt, thePlaceholder, theData) {
 
     a.style = "display: none";
 
-    var url;
-
     var blob = new Blob([theData], {
         type: "text/csv"
-      }),
+      });
 
-    url = window.URL.createObjectURL(blob);
+    var url = window.URL.createObjectURL(blob);
     a.href = url;
     a.download = fname;
     a.click();
@@ -33922,13 +33912,11 @@ function ExportOneABCTune(theABC, fname, callback, errorCallback) {
 
   a.style = "display: none";
 
-  var url;
-
   var blob = new Blob([theABC], {
       type: "text/plain"
-    }),
+    });
 
-  url = window.URL.createObjectURL(blob);
+  var url = window.URL.createObjectURL(blob);
   a.href = url;
   a.download = fname;
   a.click();
@@ -34104,13 +34092,11 @@ function ExportMusicXML(theABC, fname, callback, errorCallback) {
 
       a.style = "display: none";
 
-      var url;
-
       var blob = new Blob([data], {
           type: "text/plain"
-        }),
+        });
 
-      url = window.URL.createObjectURL(blob);
+      var url = window.URL.createObjectURL(blob);
       a.href = url;
       a.download = fname;
       a.click();
@@ -60865,9 +60851,13 @@ function DoStartup() {
 //
 // Flatten repeats and break tune into phrases for the Tune Trainer
 //
-function processAbcPhrases(abcText, phraseBars) {
+function processAbcPhrases(abcText, phraseBars, phrasePadding) {
 
   if (!Number.isInteger(phraseBars) || phraseBars <= 0) {
+    return abcText;
+  }
+
+  if (!Number.isInteger(phrasePadding) || phrasePadding < 0) {
     return abcText;
   }
 
@@ -60906,14 +60896,14 @@ function processAbcPhrases(abcText, phraseBars) {
   const outputs = tunes
     .map(t => t.trim())
     .filter(t => t.length > 0)
-    .map(t => processSingleTune(t, phraseBars));
+    .map(t => processSingleTune(t, phraseBars, phrasePadding));
 
   return outputs.join("\n\n");
 
   // ------------------------------------------------------------
   // Process a single tune
   // ------------------------------------------------------------
-  function processSingleTune(abcText, phraseBars) {
+  function processSingleTune(abcText, phraseBars, phrasePadding) {
     const lines = abcText.replace(/\r\n/g, "\n").split("\n");
 
     // Reject multiple voices
@@ -61040,7 +61030,7 @@ function processAbcPhrases(abcText, phraseBars) {
     const hasPickup = detectInitialPickupMeasure(fullBarMeasures, meterNum, meterDen, lNum, lDen);
 
     // ---- Insert phrase-length rest measures after each phrase ----
-    let phrasedMeasures = injectPhraseRests(fullBarMeasures, phraseBars, oneBarRest, hasPickup);
+    let phrasedMeasures = injectPhraseRests(fullBarMeasures, phraseBars, phrasePadding, oneBarRest, hasPickup);
 
     // ---- Clear any internal |]; final |] will be added in rebuild ----
     phrasedMeasures = phrasedMeasures.map(m =>
@@ -61674,7 +61664,7 @@ function processAbcPhrases(abcText, phraseBars) {
 
   /* ----------------- Helper: phrase rest injection ------------------ */
 
-  function injectPhraseRests(measures, phraseBars, oneBarRest, hasPickup) {
+  function injectPhraseRests(measures, phraseBars, phrasePadding, oneBarRest, hasPickup) {
     const result = [];
 
     let firstNoteIdx = measures.findIndex(
@@ -61708,7 +61698,7 @@ function processAbcPhrases(abcText, phraseBars) {
         barCounter++;
 
         if (barCounter === phraseBars) {
-          for (let k = 0; k < phraseBars; k++) {
+          for (let k = 0; k < (phraseBars + phrasePadding); k++) {
             result.push({
               notes: oneBarRest,
               bar: "|"
@@ -61786,8 +61776,8 @@ function processAbcPhrases(abcText, phraseBars) {
 
 }
 
-
 var gPhraseBuilderLength = 2;
+var gPhraseBuilderPadding = 0;
 
 //
 // Phrase builder dialog
@@ -61816,6 +61806,7 @@ function PhraseBuilder(){
 
   const theData = {
     phraseLength: gPhraseBuilderLength,
+    phrasePadding: gPhraseBuilderPadding,
     buildPhraseAll: false
   };
 
@@ -61823,6 +61814,8 @@ function PhraseBuilder(){
      html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-left:15px;">Phrase-by-Phrase Tune Trainer Builder&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#advanced_phrasebuilder" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'
   },{
       html: '<p style="margin-top:24px;margin-bottom:24px;font-size:12pt;line-height:18pt;font-family:helvetica">This will break the tune(s) into groups of measures of the phrase length specified below followed by the same number of measures of rests.</p>'
+  },{
+      html: '<p style="margin-top:24px;margin-bottom:24px;font-size:12pt;line-height:18pt;font-family:helvetica">If you want additional full-measure rest time between the phrases, set the rest padding value as desired.</p>'
   },{ 
       html: '<p style="margin-top:24px;margin-bottom:24px;font-size:12pt;line-height:18pt;font-family:helvetica">The resulting ABC can be brought into the Tune Trainer for "Call and Response" style phrase-by-phrase tune training.</p>'
   }, {
@@ -61834,6 +61827,12 @@ function PhraseBuilder(){
   {
     name: "Phrase length:",
     id: "phraseLength",
+    type: "number",
+    cssClass: "configure_phrase_length"
+  },
+ {
+    name: "Additional full-measure rest padding between phrases:",
+    id: "phrasePadding",
     type: "number",
     cssClass: "configure_phrase_length"
   },
@@ -61857,6 +61856,7 @@ function PhraseBuilder(){
 
     if (!args.canceled) {
 
+      // Get the phrase length
       var phraseLengthStr = args.result.phraseLength;
 
       if (phraseLengthStr == null) {
@@ -61868,10 +61868,31 @@ function PhraseBuilder(){
       var phraseLength = parseInt(phraseLengthStr);
 
       if ((isNaN(phraseLength)) || (phraseLength == undefined) || (phraseLength < 1) || (phraseLength > 32)) {
+
         return;
+
       }
 
       gPhraseBuilderLength = phraseLength;
+
+      // Get the phrase rest padding
+      var phrasePaddingStr = args.result.phrasePadding;
+
+      if (phrasePaddingStr == null) {
+
+        return;
+      
+      }
+
+      var phrasePadding = parseInt(phrasePaddingStr);
+
+      if ((isNaN(phrasePadding)) || (phrasePadding == undefined) || (phrasePadding < 0) || (phrasePadding > 32)) {
+
+        return;
+
+      }
+
+      gPhraseBuilderPadding = phrasePadding;
 
       var doAllTunes = args.result.buildPhraseAll;
 
@@ -61896,7 +61917,7 @@ function PhraseBuilder(){
 
             theTune = StripChordsOne(theTune);
 
-            theTune = processAbcPhrases(theTune,gPhraseBuilderLength)
+            theTune = processAbcPhrases(theTune,gPhraseBuilderLength,gPhraseBuilderPadding)
 
             output += theTune + "\n";
 
@@ -61981,7 +62002,7 @@ function PhraseBuilder(){
 
           var thePhrases = StripChordsOne(theSelectedABC);
 
-          thePhrases = processAbcPhrases(thePhrases,gPhraseBuilderLength);
+          thePhrases = processAbcPhrases(thePhrases,gPhraseBuilderLength,gPhraseBuilderPadding);
 
           thePhrases = thePhrases.trim();
 
