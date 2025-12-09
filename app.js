@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3049_120925_0700";
+var gVersionNumber = "3050_120925_0730";
 
 var gMIDIInitStillWaiting = false;
 
@@ -61037,8 +61037,8 @@ function processAbcPhrases(abcText, phraseBars, phrasePadding) {
       m.bar === "|]" ? { ...m, bar: "|" } : m
     );
 
-    // ---- Rebuild body (first line 9 bars if pickup, then 8) ----
-    const newBody = rebuildBodyFromMeasures(phrasedMeasures, hasPickup);
+    // ---- Rebuild body ----
+    const newBody = rebuildBodyFromMeasures(phrasedMeasures, phraseBars, phrasePadding, hasPickup);
 
     return header + "\n" + newBody;
   }
@@ -61714,7 +61714,8 @@ function processAbcPhrases(abcText, phraseBars, phrasePadding) {
 
   /* ----------------- Helper: rebuild body with wrapping & final |] ---- */
 
-  function rebuildBodyFromMeasures(measures, hasPickup) {
+  function rebuildBodyFromMeasures(measures, phraseBars, phrasePadding, hasPickup) {
+
     // Drop measures that have no notes
     measures = measures.filter((m) => {
       const hasNotes = m.notes && m.notes.trim().length > 0;
@@ -61736,9 +61737,14 @@ function processAbcPhrases(abcText, phraseBars, phrasePadding) {
     let barCount = 0;
 
     let firstLine = true;
-    // If we have a pickup, allow 9 bars on the first line (pickup + 8 full bars),
-    // otherwise 8 bars. All subsequent lines: 8 bars.
-    let maxBarsThisLine = hasPickup ? 9 : 8;
+
+    // If we have a pickup, allow an extra bar on the first line
+
+    let maxBarsThisLine = (phraseBars*2) + phrasePadding;
+
+    if (hasPickup){
+      maxBarsThisLine += 1;
+    }
 
     measures.forEach((m, idx) => {
       const notes = m.notes.trim() || "";
@@ -61763,7 +61769,7 @@ function processAbcPhrases(abcText, phraseBars, phrasePadding) {
 
           if (firstLine) {
             firstLine = false;
-            maxBarsThisLine = 8;
+            maxBarsThisLine = (phraseBars*2) + phrasePadding;
           }
         }
       }
