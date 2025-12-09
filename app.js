@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3052_120925_1200";
+var gVersionNumber = "3053_120925_1600";
 
 var gMIDIInitStillWaiting = false;
 
@@ -6696,17 +6696,17 @@ function GetAllTuneHyperlinks(theLinks) {
       // Don't add hyperlinks to section headers
       if (theTitles[i].indexOf("*") == 0) {
 
-        output += thisTune;
+        output += thisTune+"\n\n";
 
       } else {
 
         thisTune = processSingleTunePlaybackInjects(thisTune);
-        output += thisTune;
+        output += thisTune+"\n\n";
 
       }
 
     }
-
+    
     return output;
 
   }
