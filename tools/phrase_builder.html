@@ -417,10 +417,17 @@
  *
  * Returns all processed tunes, joined with a blank line between them.
  */
+//
+// Flatten repeats and break tune into phrases for the Tune Trainer
+//
 function processAbcPhrases(abcText, phraseBars) {
+
   if (!Number.isInteger(phraseBars) || phraseBars <= 0) {
-    throw new Error("phraseBars must be a positive integer.");
+    return abcText;
   }
+
+  // Strip all ! at the end of lines
+  abcText = abcText.replace(/!+$/gm, "");
 
   // Normalize line endings
   let norm = abcText.replace(/\r\n/g, "\n");
@@ -428,7 +435,7 @@ function processAbcPhrases(abcText, phraseBars) {
   // Ignore any text before the first X:
   const firstX = norm.search(/^\s*X\s*:/m);
   if (firstX === -1) {
-    throw new Error("No X: tag found in input.");
+    return abcText;
   }
   norm = norm.slice(firstX);
 
@@ -457,483 +464,498 @@ function processAbcPhrases(abcText, phraseBars) {
     .map(t => processSingleTune(t, phraseBars));
 
   return outputs.join("\n");
-}
 
-function processSingleTune(abcText, phraseBars) {
-  const lines = abcText.replace(/\r\n/g, "\n").split("\n");
+  // ------------------------------------------------------------
+  // Process a single tune
+  // ------------------------------------------------------------
+  function processSingleTune(abcText, phraseBars) {
+    const lines = abcText.replace(/\r\n/g, "\n").split("\n");
 
-  // Reject multiple voices
-  for (const ln of lines) {
-    if (/^\s*V\s*:/i.test(ln)) {
-      throw new Error("Multiple voices (V:) are not supported.");
-    }
-  }
-
-  // ---- Separate header and body ----
-  let headerLines = [];
-  let bodyLines = [];
-  let inBody = false;
-  let sawK = false;
-
-  for (const ln of lines) {
-    const trimmed = ln.trim();
-
-    if (!inBody) {
-      // Still in header region
-      if (/^\s*K\s*:/i.test(trimmed)) {
-        sawK = true;
-        headerLines.push(trimmed);
-        continue;
+    // Reject multiple voices
+    for (const ln of lines) {
+      if (/^\s*V\s*:/i.test(ln)) {
+        return abcText;
       }
+    }
 
-      if (!sawK) {
-        // Before K:, everything is header
-        headerLines.push(trimmed);
-      } else {
-        // After K:, still treat % / %% / field lines / blanks as header
-        if (
-          /^\s*[%]/.test(trimmed) ||          // % or %%
-          /^\s*[A-Za-z]\s*:/.test(trimmed) || // another field line
-          /^\s*$/.test(trimmed)               // blank
-        ) {
+    // ---- Separate header and body ----
+    let headerLines = [];
+    let bodyLines = [];
+    let inBody = false;
+    let sawK = false;
+
+    for (const ln of lines) {
+
+      const trimmed = ln.trim();
+
+      if (!inBody) {
+        // Still in header region
+        if (/^\s*K\s*:/i.test(trimmed)) {
+          sawK = true;
+          headerLines.push(trimmed);
+          continue;
+        }
+
+        if (!sawK) {
+          // Before K:, everything is header
           headerLines.push(trimmed);
         } else {
-          // First real music line -> body starts here
-          inBody = true;
-          bodyLines.push(trimmed);
+          // After K:, still treat % / %% / field lines / blanks as header
+          if (
+            /^\s*[%]/.test(trimmed) ||          // % or %%
+            /^\s*[A-Za-z]\s*:/.test(trimmed) || // another field line
+            /^\s*$/.test(trimmed)               // blank
+          ) {
+            headerLines.push(trimmed);
+          } else {
+            // First real music line -> body starts here
+            inBody = true;
+            bodyLines.push(trimmed);
+          }
         }
-      }
-    } else {
-      // ---- We are in the body (music region) ----
+      } else {
+        // ---- We are in the body (music region) ----
 
-      // Skip any % line after the header (e.g. %newpage)
-      if (/^\s*%/.test(trimmed)) {
+        // Skip any % line after the header (e.g. %newpage)
+        if (/^\s*%/.test(trimmed)) {
+          continue;
+        }
+
+        bodyLines.push(trimmed);
+      }
+    }
+
+    if (!sawK) {
+      return abcText;
+    }
+
+    const header = headerLines.join("\n");
+    let body = bodyLines.join("\n").trim();
+
+    if (!body) {
+      return abcText; // no notes, just return tune as-is
+    }
+
+    // ---- Extract M: and L: for pickup/rest calculations ----
+    // Handle numeric meters AND M:C / M:C|
+    const mLineMatch = abcText.match(/^\s*M\s*:\s*([^\r\n]+)/im);
+    if (!mLineMatch) {
+      return abcText;
+    }
+
+    const mValueRaw = mLineMatch[1].trim();
+    let meterNum, meterDen;
+
+    if (/^C\|$/i.test(mValueRaw)) {
+      // Cut time: M:C|  -> 2/2
+      meterNum = 2;
+      meterDen = 2;
+    } else if (/^C$/i.test(mValueRaw)) {
+      // Common time: M:C  -> 4/4
+      meterNum = 4;
+      meterDen = 4;
+    } else {
+      // Standard numeric meter like 4/4, 6/8, etc.
+      const mMatch = mValueRaw.match(/^(\d+)\s*\/\s*(\d+)$/);
+      if (!mMatch) {
+        // Unrecognized meter format, bail out and leave tune unchanged
+        return abcText;
+      }
+      meterNum = parseInt(mMatch[1], 10);
+      meterDen = parseInt(mMatch[2], 10);
+    }
+
+    const lMatch = abcText.match(/^\s*L\s*:\s*([\d]+)\/([\d]+)/im);
+    let lNum, lDen;
+    if (lMatch) {
+      lNum = parseInt(lMatch[1], 10);
+      lDen = parseInt(lMatch[2], 10);
+    } else {
+      // ABC default
+      lNum = 1;
+      lDen = 8;
+    }
+
+    // ---- One-bar rest string ----
+    const oneBarRest = computeOneBarRest(meterNum, meterDen, lNum, lDen);
+
+    // ---- Normalize [1/[2 endings to |1/|2 ----
+    body = normalizeEndings(body);
+
+    // ---- Parse body into measures ----
+    const measures = parseMeasures(body);
+
+    // ---- Expand repeats & first/second endings ----
+    let flatMeasures = expandRepeatsAndEndings(measures);
+
+    // ---- Regroup into full-length bars (only a single initial pickup may remain partial)
+    let fullBarMeasures = resegmentIntoFullBars(flatMeasures, meterNum, meterDen, lNum, lDen);
+
+    // ---- Detect if the very first note measure is a partial pickup ----
+    const hasPickup = detectInitialPickupMeasure(fullBarMeasures, meterNum, meterDen, lNum, lDen);
+
+    // ---- Insert phrase-length rest measures after each phrase ----
+    let phrasedMeasures = injectPhraseRests(fullBarMeasures, phraseBars, oneBarRest, hasPickup);
+
+    // ---- Clear any internal |]; final |] will be added in rebuild ----
+    phrasedMeasures = phrasedMeasures.map(m =>
+      m.bar === "|]" ? { ...m, bar: "|" } : m
+    );
+
+    // ---- Rebuild body (first line 9 bars if pickup, then 8) ----
+    const newBody = rebuildBodyFromMeasures(phrasedMeasures, hasPickup);
+
+    return header + "\n" + newBody;
+  }
+
+  /* ----------------- Helper: compute one bar rest ------------------ */
+
+  function computeOneBarRest(mNum, mDen, lNum, lDen) {
+    const unitsPerBar = (mNum * lDen) / (mDen * lNum);
+
+    if (!Number.isFinite(unitsPerBar) || unitsPerBar <= 0) {
+      // Fallback
+      return "z4";
+    }
+
+    const rounded = Math.round(unitsPerBar);
+    if (Math.abs(unitsPerBar - rounded) > 1e-6) {
+      // Non-integer bar length in L: units – fallback
+      return "z4";
+    }
+
+    if (rounded === 1) return "z";
+    return "z" + rounded; // e.g. z4 for 2/4 with L:1/8
+  }
+
+  /* ----------------- Helper: note length parsing ------------------ */
+
+  function parseAbcLength(s, pos) {
+    let numStr = "";
+    while (pos < s.length && /\d/.test(s[pos])) {
+      numStr += s[pos++];
+    }
+
+    let num = numStr ? parseInt(numStr, 10) : 1;
+    let denom = 1;
+
+    let slashCount = 0;
+    while (pos < s.length && s[pos] === "/") {
+      slashCount++;
+      pos++;
+    }
+
+    if (slashCount > 0) {
+      denom = Math.pow(2, slashCount);
+    }
+
+    const value = num / denom;
+    return { value, newPos: pos };
+  }
+
+  /**
+   * Compute the length (in L: units) of a measure's notes.
+   * Ignores decorations, chords, grace notes, etc.
+   * Simple support for triplets: (3ABC = 3 notes in the time of 2.
+   */
+  function computeMeasureUnits(text) {
+    let s = text || "";
+
+    // Remove grace notes { ... }
+    s = s.replace(/\{[^}]*\}/g, "");
+
+    let pos = 0;
+    let totalUnits = 0;
+
+    let tupletNotesLeft = 0;
+    let tupletFactor = 1; // multiply note length by this inside tuplet
+
+    while (pos < s.length) {
+      const ch = s[pos];
+
+      // Whitespace or simple decorations
+      if (
+        /\s/.test(ch) ||
+        ch === "!" || ch === "\"" ||
+        ch === "[" || ch === "]"
+      ) {
+        pos++;
         continue;
       }
 
-      bodyLines.push(trimmed);
-    }
-  }
-
-  if (!sawK) {
-    throw new Error("No K: line found; not valid ABC for this processor.");
-  }
-
-  const header = headerLines.join("\n");
-  let body = bodyLines.join("\n").trim();
-
-  if (!body) {
-    return abcText; // no notes, just return tune as-is
-  }
-
-  // ---- Extract M: and L: for pickup/rest calculations ----
-  // Handle numeric meters AND M:C / M:C|
-  const mLineMatch = abcText.match(/^\s*M\s*:\s*([^\r\n]+)/im);
-  if (!mLineMatch) {
-    throw new Error("M: meter field is required.");
-  }
-
-  const mValueRaw = mLineMatch[1].trim();
-  let meterNum, meterDen;
-
-  if (/^C\|$/i.test(mValueRaw)) {
-    // Cut time: M:C|  -> 2/2
-    meterNum = 2;
-    meterDen = 2;
-  } else if (/^C$/i.test(mValueRaw)) {
-    // Common time: M:C  -> 4/4
-    meterNum = 4;
-    meterDen = 4;
-  } else {
-    // Standard numeric meter like 4/4, 6/8, etc.
-    const mMatch = mValueRaw.match(/^(\d+)\s*\/\s*(\d+)$/);
-    if (!mMatch) {
-      throw new Error("Unsupported M: meter format.");
-    }
-    meterNum = parseInt(mMatch[1], 10);
-    meterDen = parseInt(mMatch[2], 10);
-  }
-
-  const lMatch = abcText.match(/^\s*L\s*:\s*([\d]+)\/([\d]+)/im);
-  let lNum, lDen;
-  if (lMatch) {
-    lNum = parseInt(lMatch[1], 10);
-    lDen = parseInt(lMatch[2], 10);
-  } else {
-    // ABC default
-    lNum = 1;
-    lDen = 8;
-  }
-
-  // ---- One-bar rest string ----
-  const oneBarRest = computeOneBarRest(meterNum, meterDen, lNum, lDen);
-
-  // ---- Pickup detection (first bar only) ----
-  let hasPickup = detectPickupInFirstBar(body, meterNum, meterDen, lNum, lDen);
-
-  // If there is a partial pickup *before* the first barline,
-  // strip those notes completely so the tune starts at the first full bar.
-  if (hasPickup) {
-    const firstBarIdx = body.indexOf("|");
-    if (firstBarIdx !== -1) {
-      // Keep the barline itself; drop everything before it
-      body = body.slice(firstBarIdx);
-      // Pickup is gone now
-      hasPickup = false;
-    }
-  }
-
-  // ---- Normalize [1/[2 endings to |1/|2 ----
-  body = normalizeEndings(body);
-
-  // ---- Parse body into measures ----
-  const measures = parseMeasures(body);
-
-  // ---- Expand repeats & first/second endings ----
-  const flatMeasures = expandRepeatsAndEndings(measures);
-
-  // ---- Insert phrase-length rest measures after each phrase ----
-  let phrasedMeasures = injectPhraseRests(flatMeasures, phraseBars, oneBarRest, hasPickup);
-
-  // ---- Clear any internal |]; final |] will be added in rebuild ----
-  phrasedMeasures = phrasedMeasures.map(m =>
-    m.bar === "|]" ? { ...m, bar: "|" } : m
-  );
-
-  // ---- Rebuild body (wrap to 8 bars/line & final bar = |]) ----
-  const newBody = rebuildBodyFromMeasures(phrasedMeasures);
-
-  return header + "\n" + newBody;
-}
-
-/* ----------------- Helper: compute one bar rest ------------------ */
-
-function computeOneBarRest(mNum, mDen, lNum, lDen) {
-  const unitsPerBar = (mNum * lDen) / (mDen * lNum);
-
-  if (!Number.isFinite(unitsPerBar) || unitsPerBar <= 0) {
-    throw new Error("Invalid meter or default length for computing bar rest.");
-  }
-
-  const rounded = Math.round(unitsPerBar);
-  if (Math.abs(unitsPerBar - rounded) > 1e-6) {
-    throw new Error(
-      "This function only supports bar lengths that are integer multiples of L:; " +
-      `got ${unitsPerBar} units per bar.`
-    );
-  }
-
-  if (rounded === 1) return "z";
-  return "z" + rounded; // e.g. z4 for 2/4 with L:1/8
-}
-
-/* ----------------- Helper: pickup detection ------------------ */
-
-function detectPickupInFirstBar(body, mNum, mDen, lNum, lDen) {
-  const idx = body.indexOf("|");
-  if (idx === -1) return false; // only one bar, assume no pickup
-
-  let firstBarText = body.slice(0, idx);
-
-  // Remove grace notes { ... }
-  firstBarText = firstBarText.replace(/\{[^}]*\}/g, "");
-
-  const unitsPerBar = (mNum * lDen) / (mDen * lNum);
-
-  let pos = 0;
-  let totalUnits = 0;
-
-  while (pos < firstBarText.length) {
-    const ch = firstBarText[pos];
-
-    if (
-      /\s/.test(ch) ||
-      ch === "!" || ch === "\"" ||
-      ch === "(" || ch === ")" ||
-      ch === "[" || ch === "]"
-    ) {
-      pos++;
-      continue;
-    }
-
-    if (ch === "^" || ch === "_" || ch === "=") {
-      pos++;
-      continue;
-    }
-
-    if (/[A-Ga-gzZxY]/.test(ch)) {
-      pos++;
-      while (pos < firstBarText.length && /[,'’]/.test(firstBarText[pos])) pos++;
-
-      const { value: lengthUnits, newPos } = parseAbcLength(firstBarText, pos);
-      pos = newPos;
-      totalUnits += lengthUnits;
-      continue;
-    }
-
-    pos++; // unknown char, skip
-  }
-
-  return totalUnits > 0 && totalUnits < unitsPerBar - 1e-6;
-}
-
-function parseAbcLength(s, pos) {
-  let numStr = "";
-  while (pos < s.length && /\d/.test(s[pos])) {
-    numStr += s[pos++];
-  }
-
-  let num = numStr ? parseInt(numStr, 10) : 1;
-  let denom = 1;
-
-  let slashCount = 0;
-  while (pos < s.length && s[pos] === "/") {
-    slashCount++;
-    pos++;
-  }
-
-  if (slashCount > 0) {
-    denom = Math.pow(2, slashCount);
-  }
-
-  const value = num / denom;
-  return { value, newPos: pos };
-}
-
-/* ----------------- Helper: normalize [1/[2 endings ------------------ */
-
-function normalizeEndings(body) {
-  let out = body;
-  // |[1 → |1, :[1 → :1
-  out = out.replace(/(\||:)\[([12])/g, "$1$2");
-  // Standalone [1 at line start or after space → |1
-  out = out.replace(/(^|\s)\[([12])/g, "$1|$2");
-  return out;
-}
-
-/* ----------------- Helper: parse measures (no original newlines) ---- */
-
-function parseMeasures(body) {
-  const measures = [];
-  let cur = "";
-
-  function pushMeasure(barToken) {
-    const notes = cur.replace(/\s+$/g, ""); // trim right
-    measures.push({
-      notes,
-      bar: barToken
-    });
-    cur = "";
-  }
-
-  let i = 0;
-  while (i < body.length) {
-    const ch = body[i];
-
-    // Normalize original newlines to at most a single space
-    if (ch === "\n" || ch === "\r") {
-      if (cur && !/\s$/.test(cur)) {
-        cur += " ";
-      }
-      i++;
-      continue;
-    }
-
-    if (ch === "|") {
-      const next = body[i + 1] || "";
-      const next2 = body[i + 2] || "";
-
-      if (next === ":") {
-        pushMeasure("|:");
-        i += 2;
-      } else if (next === "|") {
-        pushMeasure("||");
-        i += 2;
-      } else if (next === "1" || next === "2") {
-        pushMeasure("|" + next);
-        i += 2;
-      } else if (next === "]") {
-        pushMeasure("|]");
-        i += 2;
-      } else {
-        pushMeasure("|");
-        i += 1;
-      }
-    } else if (ch === ":") {
-      const next = body[i + 1] || "";
-      const next2 = body[i + 2] || "";
-
-      if (next === "|") {
-        if (next2 === "1" || next2 === "2") {
-          pushMeasure(":|" + next2);
-          i += 3;
+      // Tuplet start: (3 -> next 3 notes in the time of 2
+      if (ch === "(") {
+        const next = s[pos + 1];
+        if (next && /[2-9]/.test(next)) {
+          const n = parseInt(next, 10);
+          if (n === 3) {
+            tupletNotesLeft = 3;
+            tupletFactor = 2 / 3; // 3 notes in time of 2
+          } else {
+            tupletNotesLeft = 0;
+            tupletFactor = 1;
+          }
+          pos += 2;
+          continue;
         } else {
-          pushMeasure(":|");
+          pos++;
+          continue;
+        }
+      }
+
+      // Accidentals
+      if (ch === "^" || ch === "_" || ch === "=") {
+        pos++;
+        continue;
+      }
+
+      if (/[A-Ga-gzZxY]/.test(ch)) {
+        pos++;
+        // Skip octave marks , ' ’
+        while (pos < s.length && /[,'’]/.test(s[pos])) pos++;
+
+        const { value: baseUnits, newPos } = parseAbcLength(s, pos);
+        pos = newPos;
+
+        let lengthUnits = baseUnits;
+        if (tupletNotesLeft > 0) {
+          lengthUnits *= tupletFactor;
+          tupletNotesLeft--;
+          if (tupletNotesLeft === 0) {
+            tupletFactor = 1;
+          }
+        }
+
+        totalUnits += lengthUnits;
+        continue;
+      }
+
+      // Anything else: skip
+      pos++;
+    }
+
+    return totalUnits;
+  }
+
+  /* ----------------- Helper: detect initial pickup measure ------------------ */
+
+  function detectInitialPickupMeasure(measures, mNum, mDen, lNum, lDen) {
+    const unitsPerBar = (mNum * lDen) / (mDen * lNum);
+    const EPS = 1e-6;
+
+    const firstNoteIdx = measures.findIndex(
+      (m) => m.notes && m.notes.trim().length > 0
+    );
+    if (firstNoteIdx === -1) return false;
+
+    const firstLen = computeMeasureUnits(measures[firstNoteIdx].notes || "");
+    if (firstLen > EPS && firstLen < unitsPerBar - EPS) {
+      // true => there is a pickup at the very start of the tune
+      return true;
+    }
+    return false;
+  }
+
+  /* ----------------- Helper: normalize [1/[2 and spaced endings ------ */
+
+  function normalizeEndings(body) {
+    let out = body;
+
+    // Collapse spaces between barlines and 1/2 so parseMeasures sees |1, |2, :|1, :|2
+    out = out.replace(/(\|\s+)([12])/g, "|$2");
+    out = out.replace(/(:\|\s+)([12])/g, ":|$2");
+
+    // Convert [1 / [2 forms to |1 / |2 so they’re also recognized
+    out = out.replace(/(\||:)\[([12])/g, "$1$2");
+    out = out.replace(/(^|\s)\[([12])/g, "$1|$2");
+
+    return out;
+  }
+
+  /* ----------------- Helper: parse measures (no original newlines) ---- */
+
+  function parseMeasures(body) {
+    const measures = [];
+    let cur = "";
+
+    function pushMeasure(barToken) {
+      const notes = cur.replace(/\s+$/g, ""); // trim right
+      measures.push({
+        notes,
+        bar: barToken
+      });
+      cur = "";
+    }
+
+    let i = 0;
+    while (i < body.length) {
+      const ch = body[i];
+
+      // Normalize original newlines to at most a single space
+      if (ch === "\n" || ch === "\r") {
+        if (cur && !/\s$/.test(cur)) {
+          cur += " ";
+        }
+        i++;
+        continue;
+      }
+
+      if (ch === "|") {
+        const next = body[i + 1] || "";
+        const next2 = body[i + 2] || "";
+
+        if (next === ":") {
+          pushMeasure("|:");
           i += 2;
+        } else if (next === "|") {
+          pushMeasure("||");
+          i += 2;
+        } else if (next === "1" || next === "2") {
+          pushMeasure("|" + next);
+          i += 2;
+        } else if (next === "]") {
+          pushMeasure("|]");
+          i += 2;
+        } else {
+          pushMeasure("|");
+          i += 1;
+        }
+      } else if (ch === ":") {
+        const next = body[i + 1] || "";
+        const next2 = body[i + 2] || "";
+
+        if (next === "|") {
+          if (next2 === "1" || next2 === "2") {
+            pushMeasure(":|" + next2);
+            i += 3;
+          } else {
+            pushMeasure(":|");
+            i += 2;
+          }
+        } else {
+          cur += ch;
+          i++;
         }
       } else {
         cur += ch;
         i++;
       }
-    } else {
-      cur += ch;
-      i++;
     }
+
+    if (cur.trim().length > 0) {
+      const notes = cur.replace(/\s+$/g, "");
+      measures.push({ notes, bar: "" });
+    }
+
+    return measures;
   }
 
-  if (cur.trim().length > 0) {
-    const notes = cur.replace(/\s+$/g, "");
-    measures.push({ notes, bar: "" });
+  /* ----------------- Helper: expand repeats & endings ------------------ */
+
+  function expandRepeatsAndEndings(measures) {
+    // Find first explicit start repeat |:
+    const firstStartIdx = measures.findIndex(m => m.bar === "|:");
+
+    // No explicit start repeats anywhere → all :| are "repeat from section start"
+    if (firstStartIdx === -1) {
+      return expandUnmatchedEndRepeats(measures);
+    }
+
+    // Prefix (before the first |:) may contain orphan :| repeats (A parts)
+    const prefix = measures.slice(0, firstStartIdx);
+    const suffix = measures.slice(firstStartIdx);
+
+    const expandedPrefix = expandUnmatchedEndRepeats(prefix);
+    const expandedSuffix = expandWithExplicitStarts(suffix);
+
+    return expandedPrefix.concat(expandedSuffix);
   }
 
-  return measures;
-}
+  function expandUnmatchedEndRepeats(measures) {
+    const sections = [];
+    let startIdx = 0;
 
-/* ----------------- Helper: expand repeats & endings ------------------ */
+    for (let i = 0; i < measures.length; i++) {
+      const bar = measures[i].bar || "";
+      if (bar.indexOf(":|") !== -1) {
+        sections.push({
+          measures: measures.slice(startIdx, i + 1),
+          repeat: true
+        });
+        startIdx = i + 1;
+      }
+    }
 
-function expandRepeatsAndEndings(measures) {
-  // Find first explicit start repeat |:
-  const firstStartIdx = measures.findIndex(m => m.bar === "|:");
-
-  // No explicit start repeats anywhere → all :| are "repeat from section start"
-  if (firstStartIdx === -1) {
-    return expandUnmatchedEndRepeats(measures);
-  }
-
-  // Prefix (before the first |:) may contain orphan :| repeats (A parts)
-  const prefix = measures.slice(0, firstStartIdx);
-  const suffix = measures.slice(firstStartIdx);
-
-  const expandedPrefix = expandUnmatchedEndRepeats(prefix);
-  const expandedSuffix = expandWithExplicitStarts(suffix);
-
-  return expandedPrefix.concat(expandedSuffix);
-}
-
-/**
- * Handle tunes (or prefixes) that have :| end repeats with no |: in that region.
- * Each section from the last section start (0, or after previous :|)
- * up to a :| is repeated twice.
- */
-function expandUnmatchedEndRepeats(measures) {
-  const sections = [];
-  let startIdx = 0;
-
-  for (let i = 0; i < measures.length; i++) {
-    const bar = measures[i].bar || "";
-    if (bar.indexOf(":|") !== -1) {
-      // section [startIdx..i] ends here and is repeated
+    if (startIdx < measures.length) {
       sections.push({
-        measures: measures.slice(startIdx, i + 1),
-        repeat: true
-      });
-      startIdx = i + 1;
-    }
-  }
-
-  // Remainder (if any) with no :| → no repeat
-  if (startIdx < measures.length) {
-    sections.push({
-      measures: measures.slice(startIdx),
-      repeat: false
-    });
-  }
-
-  const out = [];
-
-  function copyOnce(seg) {
-    for (const m of seg) {
-      let bar = m.bar;
-      // Normalize :| variants to simple |
-      if (bar && bar.indexOf(":|") !== -1) {
-        bar = bar.replace(":|", "|");
-      }
-      if (bar === "||") bar = "|";
-      out.push({
-        notes: m.notes,
-        bar
+        measures: measures.slice(startIdx),
+        repeat: false
       });
     }
-  }
 
-  for (const sec of sections) {
-    if (sec.repeat) {
-      copyOnce(sec.measures);
-      copyOnce(sec.measures);
-    } else {
-      copyOnce(sec.measures);
-    }
-  }
+    const out = [];
 
-  return out;
-}
-
-/**
- * Handle repeats when we know there is at least one explicit |: start.
- * Supports:
- *   |: ... :|
- *   |: ... |1 firstEnding :|2 secondEnding ...
- *   plus [1 / [2 forms normalized to |1 / |2 by normalizeEndings().
- */
-function expandWithExplicitStarts(measures) {
-  const out = [];
-  const n = measures.length;
-
-  function isStrongEnd(bar) {
-    return !!bar && (bar.indexOf(":|") !== -1 || bar === "||" || bar === "|]");
-  }
-
-  function normalizeBarPlayback(bar) {
-    if (!bar) return bar;
-    if (bar === "||") return "|";
-    if (
-      bar === "|1" || bar === "|2" ||
-      bar === ":|1" || bar === ":|2" ||
-      bar === ":|"
-    ) {
-      return "|";
-    }
-    return bar;
-  }
-
-  let i = 0;
-
-  while (i < n) {
-    const m = measures[i];
-
-    if (m.bar !== "|:") {
-      // Not a start repeat, just copy through
-      out.push({ notes: m.notes, bar: m.bar });
-      i++;
-      continue;
-    }
-
-    const repeatStart = i + 1;
-
-    // Find first bar containing "1" (first ending marker) and "2" (second ending marker)
-    let firstMarkerIdx = -1;
-    let secondMarkerIdx = -1;
-    for (let j = repeatStart; j < n; j++) {
-      const b = measures[j].bar || "";
-      if (firstMarkerIdx === -1 && b.indexOf("1") !== -1) {
-        firstMarkerIdx = j;
+    function copyOnce(seg) {
+      for (const m of seg) {
+        let bar = m.bar;
+        if (bar && bar.indexOf(":|") !== -1) {
+          bar = bar.replace(":|", "|");
+        }
+        if (bar === "||") bar = "|";
+        out.push({
+          notes: m.notes,
+          bar
+        });
       }
-      if (secondMarkerIdx === -1 && b.indexOf("2") !== -1) {
-        secondMarkerIdx = j;
-      }
-      if (firstMarkerIdx !== -1 && secondMarkerIdx !== -1) break;
     }
 
-    // Helper: simple |: ... :| repeat (no endings)
-    function simpleRepeat(endIdx) {
-      out.push({ notes: m.notes, bar: "|" });
-      for (let j = repeatStart; j <= endIdx; j++) {
+    for (const sec of sections) {
+      if (sec.repeat) {
+        copyOnce(sec.measures);
+        copyOnce(sec.measures);
+      } else {
+        copyOnce(sec.measures);
+      }
+    }
+
+    return out;
+  }
+
+  function expandWithExplicitStarts(measures) {
+    const out = [];
+    const n = measures.length;
+
+    function isStrongEnd(bar) {
+      return !!bar && (bar.indexOf(":|") !== -1 || bar === "||" || bar === "|]");
+    }
+
+    function normalizeBarPlayback(bar) {
+      if (!bar) return bar;
+      if (bar === "||") return "|";
+      if (
+        bar === "|1" || bar === "|2" ||
+        bar === ":|1" || bar === ":|2" ||
+        bar === ":|"
+      ) {
+        return "|";
+      }
+      if (bar.indexOf(":|") !== -1) {
+        // handle combined tokens like ":|2"
+        return "|";
+      }
+      return bar;
+    }
+
+    function simpleRepeat(startIdx, repeatStart, repeatEndIdx) {
+      // |: becomes |
+      out.push({ notes: measures[startIdx].notes, bar: "|" });
+      for (let j = repeatStart; j <= repeatEndIdx; j++) {
         out.push({
           notes: measures[j].notes,
           bar: normalizeBarPlayback(measures[j].bar)
         });
       }
-      for (let j = repeatStart; j <= endIdx; j++) {
+      for (let j = repeatStart; j <= repeatEndIdx; j++) {
         out.push({
           notes: measures[j].notes,
           bar: normalizeBarPlayback(measures[j].bar)
@@ -941,254 +963,383 @@ function expandWithExplicitStarts(measures) {
       }
     }
 
-    // No first ending marker → just repeat until first strong end
-    if (firstMarkerIdx === -1) {
-      let endIdx = -1;
+    let i = 0;
+
+    while (i < n) {
+      const m = measures[i];
+
+      if (m.bar !== "|:") {
+        out.push({ notes: m.notes, bar: m.bar });
+        i++;
+        continue;
+      }
+
+      const startIdx = i;
+      const repeatStart = i + 1;
+
+      // 1) Find the local end of this repeat block (first strong end after |:)
+      let repeatEndIdx = -1;
       for (let j = repeatStart; j < n; j++) {
         if (isStrongEnd(measures[j].bar)) {
-          endIdx = j;
+          repeatEndIdx = j;
           break;
         }
       }
-      if (endIdx === -1) {
-        // Malformed; treat |: as a normal bar
+
+      if (repeatEndIdx === -1) {
+        // Malformed: treat |: as normal bar and continue
         out.push({ notes: m.notes, bar: "|" });
         i++;
         continue;
       }
-      simpleRepeat(endIdx);
-      i = endIdx + 1;
-      continue;
-    }
 
-    // ---- We have first/second endings ----
-    // First ending starts *after* the bar that carries "1"
-    const firstEndingStart = firstMarkerIdx + 1;
+      // 2) Search for |1 and |2 markers
+      let marker1 = -1;
+      let marker2 = -1;
 
-    // End of first ending: first strong end at/after firstEndingStart
-    let firstEndingEnd = -1;
-    for (let j = firstEndingStart; j < n; j++) {
-      if (isStrongEnd(measures[j].bar)) {
-        firstEndingEnd = j;
-        break;
+      for (let j = repeatStart; j <= repeatEndIdx; j++) {
+        const b = measures[j].bar || "";
+        if (marker1 === -1 && b.indexOf("1") !== -1) {
+          marker1 = j;
+        }
+        if (marker2 === -1 && b.indexOf("2") !== -1) {
+          marker2 = j;
+        }
+        if (marker1 !== -1 && marker2 !== -1) break;
       }
-    }
-    if (firstEndingEnd === -1) {
-      // Fallback: behave like a simple repeat
-      let endIdx = -1;
-      for (let j = repeatStart; j < n; j++) {
-        if (isStrongEnd(measures[j].bar)) {
-          endIdx = j;
+
+      // If we didn't find a 2 in the block, look just after it
+      if (marker2 === -1) {
+        for (let j = repeatEndIdx + 1; j < n; j++) {
+          const b = measures[j].bar || "";
+          if (measures[j].bar === "|:") break;    // next repeat start
+          if (isStrongEnd(b)) break;              // next strong break
+          if (b.indexOf("2") !== -1) {
+            marker2 = j;
+            break;
+          }
+        }
+      }
+
+      // 3) No |1 marker -> simple |: ... :| repeat
+      if (marker1 === -1) {
+        simpleRepeat(startIdx, repeatStart, repeatEndIdx);
+        i = repeatEndIdx + 1;
+        continue;
+      }
+
+      // NOTE: In ABC, the "1" attaches to the *following* bar.
+      // The measure that carries "|1" belongs to the BODY, and
+      // the first-ending notes start in the next measure.
+      const bodyStart = repeatStart;
+      const bodyEnd = Math.max(bodyStart, marker1); // body includes the marker1 measure
+
+      const firstEndingStart = marker1 + 1;
+      const firstEndingEnd = repeatEndIdx; // up to the :| (or ||, etc.)
+
+      if (firstEndingStart > firstEndingEnd || firstEndingStart >= n) {
+        // No usable first ending; degrade to a simple repeat
+        simpleRepeat(startIdx, repeatStart, repeatEndIdx);
+        i = repeatEndIdx + 1;
+        continue;
+      }
+
+      // Still no |2 marker -> treat as simple repeat of everything
+      if (marker2 === -1) {
+        simpleRepeat(startIdx, repeatStart, repeatEndIdx);
+        i = repeatEndIdx + 1;
+        continue;
+      }
+
+      // In ABC, the "2" also attaches to the following bar, so the
+      // second-ending notes begin at marker2 + 1.
+      let secondEndingStart = marker2 + 1;
+      if (secondEndingStart >= n) {
+        simpleRepeat(startIdx, repeatStart, repeatEndIdx);
+        i = repeatEndIdx + 1;
+        continue;
+      }
+
+      let secondEndingEnd = -1;
+      for (let j = secondEndingStart; j < n; j++) {
+        const b = measures[j].bar || "";
+        if (isStrongEnd(b) || (j > secondEndingStart && measures[j].bar === "|:")) {
+          secondEndingEnd = j;
           break;
         }
       }
-      if (endIdx === -1) {
-        out.push({ notes: m.notes, bar: "|" });
-        i++;
+      if (secondEndingEnd === -1) {
+        secondEndingEnd = n - 1;
+      }
+
+      // 4) Expand: body + firstEnding, body + secondEnding
+      out.push({ notes: measures[startIdx].notes, bar: "|" }); // |: becomes |
+
+      // body
+      for (let j = bodyStart; j <= bodyEnd; j++) {
+        out.push({
+          notes: measures[j].notes,
+          bar: normalizeBarPlayback(measures[j].bar)
+        });
+      }
+      // first ending
+      for (let j = firstEndingStart; j <= firstEndingEnd; j++) {
+        out.push({
+          notes: measures[j].notes,
+          bar: normalizeBarPlayback(measures[j].bar)
+        });
+      }
+      // body again
+      for (let j = bodyStart; j <= bodyEnd; j++) {
+        out.push({
+          notes: measures[j].notes,
+          bar: normalizeBarPlayback(measures[j].bar)
+        });
+      }
+      // second ending
+      for (let j = secondEndingStart; j <= secondEndingEnd; j++) {
+        out.push({
+          notes: measures[j].notes,
+          bar: normalizeBarPlayback(measures[j].bar)
+        });
+      }
+
+      i = secondEndingEnd + 1;
+    }
+
+    return out;
+  }
+
+  /* ----------------- Helper: resegment into full bars ------------------ */
+  // After repeats are flattened:
+  // - Turn the entire tune into a single sequence of note "events" (in order).
+  // - Re-bucket that sequence into bars of length unitsPerBar.
+  // - Allow at most one partial: an initial pickup at the very start of the tune.
+  // - Avoid ever exceeding unitsPerBar; do NOT glue a short bar to a full bar.
+  function resegmentIntoFullBars(measures, mNum, mDen, lNum, lDen) {
+    const unitsPerBar = (mNum * lDen) / (mDen * lNum);
+    const EPS = 1e-6;
+
+    // 1) Flatten all note-bearing measures into a linear sequence of events.
+    //    Ignore original bar tokens here; they were only needed for repeats.
+    const events = [];
+    for (const m of measures) {
+      const notes = (m.notes || "").trim();
+      if (!notes) continue;
+
+      const len = computeMeasureUnits(notes);
+      if (!Number.isFinite(len) || len <= 0) continue;
+
+      events.push({ notes, len });
+    }
+
+    const out = [];
+    let pickupHandled = false;
+    let curNotes = "";
+    let curLen = 0;
+
+    function flushCur() {
+      if (curNotes.trim()) {
+        out.push({
+          notes: curNotes.trim(),
+          bar: "|"
+        });
+      }
+      curNotes = "";
+      curLen = 0;
+    }
+
+    for (let idx = 0; idx < events.length; idx++) {
+      const ev = events[idx];
+      const notes = ev.notes;
+      const len = ev.len;
+
+      const isFull = Math.abs(len - unitsPerBar) <= EPS;
+      const isPartial = len < unitsPerBar - EPS;
+
+      // Tune-level pickup: only allowed as the very first short event
+      if (
+        !pickupHandled &&
+        out.length === 0 &&
+        curLen === 0 &&
+        isPartial
+      ) {
+        out.push({
+          notes,
+          bar: "|"
+        });
+        pickupHandled = true;
         continue;
       }
-      simpleRepeat(endIdx);
-      i = endIdx + 1;
-      continue;
-    }
 
-    // Body is from repeatStart up to (and including) the bar that had "1"
-    // so that its NOTES stay with the body (e.g. EF A/B/c/A/ in Mícheál's)
-    const bodyStart = repeatStart;
-    const bodyEnd = Math.max(bodyStart, firstMarkerIdx);
-
-    // If no second ending marker, just treat body+first ending as simple repeat
-    if (secondMarkerIdx === -1) {
-      const endIdx = firstEndingEnd;
-      out.push({ notes: m.notes, bar: "|" });
-      for (let j = bodyStart; j <= endIdx; j++) {
-        out.push({
-          notes: measures[j].notes,
-          bar: normalizeBarPlayback(measures[j].bar)
-        });
-      }
-      for (let j = bodyStart; j <= endIdx; j++) {
-        out.push({
-          notes: measures[j].notes,
-          bar: normalizeBarPlayback(measures[j].bar)
-        });
-      }
-      i = endIdx + 1;
-      continue;
-    }
-
-    // Second ending starts after the bar that carries "2"
-    let secondEndingStart = secondMarkerIdx + 1;
-    if (secondEndingStart >= n) {
-      // No notes in second ending; fallback to simple repeat
-      const endIdx = firstEndingEnd;
-      out.push({ notes: m.notes, bar: "|" });
-      for (let j = bodyStart; j <= endIdx; j++) {
-        out.push({
-          notes: measures[j].notes,
-          bar: normalizeBarPlayback(measures[j].bar)
-        });
-      }
-      for (let j = bodyStart; j <= endIdx; j++) {
-        out.push({
-          notes: measures[j].notes,
-          bar: normalizeBarPlayback(measures[j].bar)
-        });
-      }
-      i = endIdx + 1;
-      continue;
-    }
-
-    // End of second ending: first strong end after secondEndingStart
-    let secondEndingEnd = -1;
-    for (let j = secondEndingStart; j < n; j++) {
-      if (isStrongEnd(measures[j].bar)) {
-        secondEndingEnd = j;
-        break;
-      }
-    }
-    if (secondEndingEnd === -1) {
-      secondEndingEnd = n - 1;
-    }
-
-    // ---- First pass: body + first ending ----
-    out.push({ notes: m.notes, bar: "|" });
-
-    for (let j = bodyStart; j <= bodyEnd; j++) {
-      out.push({
-        notes: measures[j].notes,
-        bar: normalizeBarPlayback(measures[j].bar)
-      });
-    }
-    for (let j = firstEndingStart; j <= firstEndingEnd; j++) {
-      out.push({
-        notes: measures[j].notes,
-        bar: normalizeBarPlayback(measures[j].bar)
-      });
-    }
-
-    // ---- Second pass: body + second ending ----
-    for (let j = bodyStart; j <= bodyEnd; j++) {
-      out.push({
-        notes: measures[j].notes,
-        bar: normalizeBarPlayback(measures[j].bar)
-      });
-    }
-    for (let j = secondEndingStart; j <= secondEndingEnd; j++) {
-      out.push({
-        notes: measures[j].notes,
-        bar: normalizeBarPlayback(measures[j].bar)
-      });
-    }
-
-    i = secondEndingEnd + 1;
-  }
-
-  return out;
-}
-
-/* ----------------- Helper: phrase rest injection ------------------ */
-
-function injectPhraseRests(measures, phraseBars, oneBarRest, hasPickup) {
-  const result = [];
-
-  // First measure with real notes
-  let firstNoteIdx = measures.findIndex(
-    (m) => m.notes && m.notes.trim().length > 0
-  );
-  if (firstNoteIdx === -1) {
-    return measures.slice();
-  }
-
-  let phraseStartIndex = firstNoteIdx + (hasPickup ? 1 : 0);
-  if (phraseStartIndex >= measures.length) {
-    phraseStartIndex = measures.length;
-  }
-
-  let barCounter = 0;
-
-  for (let idx = 0; idx < measures.length; idx++) {
-    const m = measures[idx];
-    result.push({ ...m });
-
-    const hasNotes = m.notes && m.notes.trim().length > 0;
-    const hasBar = !!m.bar;
-
-    const countable =
-      idx >= phraseStartIndex &&
-      hasBar &&
-      hasNotes;
-
-    if (countable) {
-      barCounter++;
-
-      if (barCounter === phraseBars) {
-        // Insert phrase-length rest (phraseBars bars of rest)
-        for (let k = 0; k < phraseBars; k++) {
-          result.push({
-            notes: oneBarRest,
+      if (curLen === 0) {
+        // No partial in progress
+        if (isFull || len > unitsPerBar + EPS) {
+          // Treat as a full bar on its own
+          out.push({
+            notes,
+            bar: "|"
+          });
+        } else {
+          // Start a new partial bar
+          curNotes = notes;
+          curLen = len;
+        }
+      } else {
+        // We have a partial bar in progress
+        if (isPartial) {
+          const sum = curLen + len;
+          if (sum <= unitsPerBar + EPS) {
+            // Combine partial+partial if they fit into one bar
+            curNotes = curNotes + " " + notes;
+            curLen = sum;
+            if (Math.abs(curLen - unitsPerBar) <= EPS) {
+              flushCur();
+            }
+          } else {
+            // Would overshoot -> flush current partial, start anew
+            flushCur();
+            if (isFull || len > unitsPerBar + EPS) {
+              out.push({
+                notes,
+                bar: "|"
+              });
+            } else {
+              curNotes = notes;
+              curLen = len;
+            }
+          }
+        } else {
+          // Current event is a full bar while a partial is open:
+          // close the partial as its own (short) bar, then add this full bar.
+          flushCur();
+          out.push({
+            notes,
             bar: "|"
           });
         }
-        barCounter = 0;
       }
     }
+
+    // Any leftover (normally zero or a single short bar at the end)
+    flushCur();
+
+    return out;
   }
 
-  return result;
-}
+  /* ----------------- Helper: phrase rest injection ------------------ */
 
-/* ----------------- Helper: rebuild body with wrapping & final |] ---- */
+  function injectPhraseRests(measures, phraseBars, oneBarRest, hasPickup) {
+    const result = [];
 
-function rebuildBodyFromMeasures(measures) {
-  // Drop any measures that are only a barline (no notes),
-  // and any completely empty trailing measures.
-  measures = measures.filter((m) => {
-    const hasNotes = m.notes && m.notes.trim().length > 0;
-    const hasBar = !!m.bar;
-    if (!hasNotes && hasBar) return false;  // bar-only measure
-    if (!hasNotes && !hasBar) return false; // totally empty
-    return true;
-  });
+    let firstNoteIdx = measures.findIndex(
+      (m) => m.notes && m.notes.trim().length > 0
+    );
+    if (firstNoteIdx === -1) {
+      return measures.slice();
+    }
 
-  if (!measures.length) {
-    return "\n";
-  }
+    // If hasPickup, skip counting this first partial bar.
+    let phraseStartIndex = firstNoteIdx + (hasPickup ? 1 : 0);
+    if (phraseStartIndex >= measures.length) {
+      phraseStartIndex = measures.length;
+    }
 
-  // Force the final barline to |] (double bar at end of tune)
-  const lastIdx = measures.length - 1;
-  measures[lastIdx].bar = "|]";
+    let barCounter = 0;
 
-  // Rebuild text, wrapping to at most 8 bars per line
-  let out = "";
-  let barCount = 0;
+    for (let idx = 0; idx < measures.length; idx++) {
+      const m = measures[idx];
+      result.push({ ...m });
 
-  measures.forEach((m, idx) => {
-    const notes = m.notes.trim() || "";
-    let bar = m.bar || "";
+      const hasNotes = m.notes && m.notes.trim().length > 0;
+      const hasBar = !!m.bar;
 
-    // Never output ||; normalize to single |
-    if (bar === "||") bar = "|";
+      const countable =
+        idx >= phraseStartIndex &&
+        hasBar &&
+        hasNotes;
 
-    out += notes;
+      if (countable) {
+        barCounter++;
 
-    if (bar) {
-      out += bar;
-      barCount++;
-
-      // Wrap line after 8 bars, if more measures follow.
-      if (barCount === 8 && idx < measures.length - 1) {
-        out += "\n";
-        barCount = 0;
+        if (barCounter === phraseBars) {
+          for (let k = 0; k < phraseBars; k++) {
+            result.push({
+              notes: oneBarRest,
+              bar: "|"
+            });
+          }
+          barCounter = 0;
+        }
       }
     }
-  });
-  
-  out = out.replace(/\s{2,}/g, ' ');
 
-  return out.trim() + "\n";
+    return result;
+  }
+
+  /* ----------------- Helper: rebuild body with wrapping & final |] ---- */
+
+  function rebuildBodyFromMeasures(measures, hasPickup) {
+    // Drop measures that have no notes
+    measures = measures.filter((m) => {
+      const hasNotes = m.notes && m.notes.trim().length > 0;
+      const hasBar = !!m.bar;
+      if (!hasNotes && hasBar) return false;
+      if (!hasNotes && !hasBar) return false;
+      return true;
+    });
+
+    if (!measures.length) {
+      return "\n";
+    }
+
+    // Force final bar to |]
+    const lastIdx = measures.length - 1;
+    measures[lastIdx].bar = "|]";
+
+    let out = "";
+    let barCount = 0;
+
+    let firstLine = true;
+    // If we have a pickup, allow 9 bars on the first line (pickup + 8 full bars),
+    // otherwise 8 bars. All subsequent lines: 8 bars.
+    let maxBarsThisLine = hasPickup ? 9 : 8;
+
+    measures.forEach((m, idx) => {
+      const notes = m.notes.trim() || "";
+      let bar = m.bar || "";
+
+      if (bar === "||") bar = "|";
+
+      if (notes) {
+        if (out && !/\s|\|$/.test(out[out.length - 1])) {
+          out += " ";
+        }
+        out += notes;
+      }
+
+      if (bar) {
+        out += bar;
+        barCount++;
+
+        if (barCount === maxBarsThisLine && idx < measures.length - 1) {
+          out += "\n";
+          barCount = 0;
+
+          if (firstLine) {
+            firstLine = false;
+            maxBarsThisLine = 8;
+          }
+        }
+      }
+    });
+
+    out = out.replace(/\s{2,}/g, " ");
+
+    return out.trim() + "\n";
+  }
+
 }
-
 
 // 
 // Strip all the chords in the ABC
@@ -1347,29 +1498,16 @@ function UI_GeneratePhraseByPhrase(){
 
 	    return;
 	}
-
-	try {
 	  
-	  var originalAbcText = document.getElementById("input").value;
+  var originalAbcText = document.getElementById("input").value;
 
-	  originalAbcText = StripChords(originalAbcText);
+  originalAbcText = StripChords(originalAbcText);
 
-	  originalAbcText = originalAbcText.replaceAll("!","");
+  originalAbcText = originalAbcText.replaceAll("!","");
 
-	  var flattened = processAbcPhrases(originalAbcText, phraseBars);
-	  
-	  document.getElementById("output").value = flattened;
-
-	} catch (e) {
-
-		var thePrompt = makeCenteredPromptString("An issue occured during processing: "+e.message);
-	    
-	    DayPilot.Modal.alert(thePrompt, {
-            theme: "modal_flat",
-            top: 150
-        });
-
-	}
+  var flattened = processAbcPhrases(originalAbcText, phraseBars);
+  
+  document.getElementById("output").value = flattened;
 
 }
 
@@ -1478,11 +1616,11 @@ function saveOutput() {
         // Give it a good extension
         if ((!gIsAndroid) && (!gIsIOS)) {
 
-            if ((!fname.endsWith(".txt")) && (!fname.endsWith(".TXT"))) {
+            if ((!fname.endsWith(".abc")) && (!fname.endsWith(".ABC"))) {
 
                 // Give it a good extension
                 fname = fname.replace(/\..+$/, '');
-                fname = fname + ".txt";
+                fname = fname + ".abc";
 
             }
         } else {
@@ -1492,6 +1630,8 @@ function saveOutput() {
             fname = fname + ".txt";
 
         }
+
+        var url;
 
         var a = document.createElement("a");
 
