@@ -5623,12 +5623,15 @@
                 <p>Instead of showing notation followed by rests on the same stave, if you would prefer to show staves of notation separated by staves of rests, you can add:</p>
                 <p class="code">%%barsperstaff (measure count)</p>
                 <p>to the header of a tune to force the notation to wrap to a new staff at a specific measure count.</p>
+                <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/62ScOTsyU0k" title="Phrase Builder %%barsperstaff demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
                 <p>This only works if there is no additional rest padding measures added.</p>
                 <p>For example If you chose 8 bars-per-phrase (no additional rest padding) and find the notation too small, you can force the rests on to their own stave by adding the following annotation before the ABC notes:</p>
                 <p class="code">%%barsperstaff 8</p>
                 <p>If you prefer 4 bars-per-staff try:</p>
                 <p class="code">%%barsperstaff 4</p>
-                <p>You can do this manually for a single tune, or if you want to add it to all the tunes in the editor use the <a href="#advanced_injectabcheader">Inject ABC Header Text</a> feature on the <strong>More Tools</strong> dialog.</p>
+                <p>The Phrase Builder adds a placeholder for this annotation if you create phrases with no additional rest padding specified:</p>
+                <p class="code">%<br/>% Remove the x from the start of the next line to format<br/>% the ABC with alternating staves of notation and rests:<br/>%<br/>%%xbarsperstaff 8<br/>%<br/>% If there is a partial measure pickup before the tune, to use<br/>% barsperstaff you will need to manually delete the pickup from the ABC.<br/>% </p>
+                <p>Simply remove the x from xbarsperstaff to enable the formatting.</p>
                 <p>When using %%barsperstaff, if the tune has a partial measure pickup before the first measure, you will want to manually delete it from the ABC for the staves to align properly since the first staff will have one additional measure as a result of the pickup.</p>
                 <p>Here is an example of "The Kesh" with 8 bars-per-phrase and %%barsperstaff 8 added:</p>
                 <p style="text-align: center"><a href="https://michaeleskin.com/abctools/abctools.html?lzw=FADQXABAjMAqmwBYFMIGlkGdHAMIICcBDAEwEsAXMgewDsiAbYAJUgCkyBzYAWUgDYA9AA5gAGUhQRwAIqQAzCIC8UAEwAGYGkgBxALZEAVsACkpiAFVMqCiggAzBgFcyJCJmpPaJe3QphTDy8fPwdnV1NzK1QiWggAQQBjT0wqRIgdYm8IAAUyWOp3T2zfAghbVD1kBmoSAE8AkxMeAEkAERaIAAcCak5iPQhNMxNLawhYhOSnVLJ0zNi3PIKHajKKiETENZJMRub2zq2dnr6hyNHoibiAZTraWwgAISJMTCLg1fW7ACNXvdMBw6ED+b1OnAg8lEIwgN2QFAm7i6yESZHscwmemKCOo9ncAHcyLROI1MITiUMAHSqACsFxMfwImGRTIoRHseNEOniOgy8SeAB9+fEEk8SALkCQ3JwpRKSE8IPL4gLubzuYLhaLxZLpfKhToAGIZeQCgBe-DNFvNlpt1rtFuAqr5GqeIv52qlEBlHoVSpVPOdQtdWrluo1huNtqt0ajseArt9YolnFQfoTiqeOiDbu5AvT8u1KYz4s49ghRE4RAFP1LXpN9tjDYb8f5xeTqddedb8qzmp5yvzSeQRYLAtL5cr1drnHrMabc5jAF1gEA&format=noten&ssp=0&name=The_Kesh_Phrase_Builder_Example&editor=1" target="_blank">Phrase Builder %%barsperstaff 8 Example</a></p>

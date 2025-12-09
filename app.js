@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3051_120925_1130";
+var gVersionNumber = "3052_120925_1200";
 
 var gMIDIInitStillWaiting = false;
 
@@ -60962,6 +60962,19 @@ function processAbcPhrases(abcText, phraseBars, phrasePadding) {
 
     if (!sawK) {
       return abcText;
+    }
+
+    // Only offer barsperstaff if no padding
+    if (phrasePadding == 0){
+      headerLines.push("%");
+      headerLines.push("% Remove the x from the start of the next line to display");
+      headerLines.push("% the ABC with alternating staves of notation and rests:");
+      headerLines.push("%");
+      headerLines.push("%%xbarsperstaff "+phraseBars);
+      headerLines.push("%");
+      headerLines.push("% If there is a partial measure pickup before the tune, to use");
+      headerLines.push("% barsperstaff you will need to manually delete the pickup from the ABC.");
+      headerLines.push("% ");
     }
 
     const header = headerLines.join("\n");
