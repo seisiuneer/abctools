@@ -5607,7 +5607,7 @@
                 <p><strong>Note:</strong> You may run into occasional cases where the number of measures in the incipits doesn't exactly match the requested number.</p>
                 <p>You can try changing the %%barsperstaff value on any tune that has an issue.</p>       
                 <hr class="hidden-print" id="advanced_phrasebuilder">
-                <h1 class="page_break_always h1wide">Phrase Builderr<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+                <h1 class="page_break_always h1wide">Phrase Builder<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <p>Brings up a dialog that makes it simple to break the current tune or all the tunes into a selectable number of measure phrases followed by the same number of measures of rests.</p>
                 <p>This creates version of the tunes that are ideal for "Call and Response" style tune practice in the Tune Trainer.</p>
                 <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/FFfQDOfaHAs" title="Phrase Builder demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
@@ -5618,8 +5618,25 @@
                 <p>If you add additional rest padding, you may find turning the metronome on in the Tune Trainer (or Player) useful.</p>
                 <p>Check <strong>Process all tunes</strong> to process all the tunes. Only processes the current tune being edited if unchecked.</p> 
                 <p>All chords are stripped from the the tune(s).</p>
-                <p><strong>Limitations:</strong></p>
-                <p>The feature is able to handle tunes with initial partial measure pickups as well as anacrusis partial measure pickups and partial measure endings inside of repeats, including 1st and 2nd endings.</p>
+                <hr>
+                <p style="text-align: center;"><strong>Phrase Builder Tips and Tricks</strong></p>
+                <p>Instead of showing notation followed by rests on the same stave, if you would prefer to show staves of notation separated by staves of rests, you can add:</p>
+                <p class="code">%%barsperstaff (measure count)</p>
+                <p>to the header of a tune to force the notation to wrap to a new staff at a specific measure count.</p>
+                <p>This only works if there is no additional rest padding measures added.</p>
+                <p>For example If you chose 8 bars-per-phrase (no additional rest padding) and find the notation too small, you can force the rests on to their own stave by adding the following annotation before the ABC notes:</p>
+                <p class="code">%%barsperstaff 8</p>
+                <p>If you prefer 4 bars-per-staff try:</p>
+                <p class="code">%%barsperstaff 4</p>
+                <p>You can do this manually for a single tune, or if you want to add it to all the tunes in the editor use the <a href="#advanced_injectabcheader">Inject ABC Header Text</a> feature on the <strong>More Tools</strong> dialog.</p>
+                <p>When using %%barsperstaff, if the tune has a partial measure pickup before the first measure, you will want to manually delete it from the ABC for the staves to align properly since the first staff will have one additional measure as a result of the pickup.</p>
+                <p>Here is an example of "The Kesh" with 8 bars-per-phrase and %%barsperstaff 8 added:</p>
+                <p style="text-align: center"><a href="https://michaeleskin.com/abctools/abctools.html?lzw=FADQXABAjMAqmwBYFMIGlkGdHAMIICcBDAEwEsAXMgewDsiAbYAJUgCkyBzYAWUgDYA9AA5gAGUhQRwAIqQAzCIC8UAEwAGYGkgBxALZEAVsACkpiAFVMqCiggAzBgFcyJCJmpPaJe3QphTDy8fPwdnV1NzK1QiWggAQQBjT0wqRIgdYm8IAAUyWOp3T2zfAghbVD1kBmoSAE8AkxMeAEkAERaIAAcCak5iPQhNMxNLawhYhOSnVLJ0zNi3PIKHajKKiETENZJMRub2zq2dnr6hyNHoibiAZTraWwgAISJMTCLg1fW7ACNXvdMBw6ED+b1OnAg8lEIwgN2QFAm7i6yESZHscwmemKCOo9ncAHcyLROI1MITiUMAHSqACsFxMfwImGRTIoRHseNEOniOgy8SeAB9+fEEk8SALkCQ3JwpRKSE8IPL4gLubzuYLhaLxZLpfKhToAGIZeQCgBe-DNFvNlpt1rtFuAqr5GqeIv52qlEBlHoVSpVPOdQtdWrluo1huNtqt0ajseArt9YolnFQfoTiqeOiDbu5AvT8u1KYz4s49ghRE4RAFP1LXpN9tjDYb8f5xeTqddedb8qzmp5yvzSeQRYLAtL5cr1drnHrMabc5jAF1gEA&format=noten&ssp=0&name=The_Kesh_Phrase_Builder_Example&editor=1" target="_blank">Phrase Builder %%barsperstaff 8 Example</a></p>
+                <p>Here is an example of "The Kesh" with 8 bars-per-phrase and %%barsperstaff 4 added:</p>
+                <p style="text-align: center"><a href="https://michaeleskin.com/abctools/abctools.html?lzw=FADQXABAjMAqmwBYFMIGlkGdHAMIICcBDAEwEsAXMgewDsiAbYAJUgCkyBzYAWUgDYA9AA5gAGUhQRwAIqQAzCIC8UAEwAGYGkgBxALZEAVsACkpiAFVMqCiggAzBgFcyJCJmpPaJe3QphTDy8fPwdnV1NzK1QiWggAQQBjT0wqRIgdYm8IAAUyWOp3T2zfAghbVD1kBmoSAE8AkxMeAEkAERaIAAcCak5iPQhNMxNLawhYhOSnVLJ0zNi3PIKHajKKiETENZJMRub2zq2dnr6hyNHoibiAZTraWwgAISJMTCLg1fW7ACNXvdMBw6ED+b1OnAg8lEIwgN2QFAm7i6yESZHscwmemKCOo9ncAHcyLROI1MITiUMAHSqACsFxMfwImGRTIoRHseIALMAdPEdBl4k8AD6C+IJJ4kIXIEhuTgyqUkJ4QRXxIW8-m84Wi8WS6WyxUinQAMQy8iFAC9+BarZbrXbbQ6rTy+QKtU8xYLdTKIHKvUqVWqXZqRe6dQr9Vrjab7TbYzH48B3f6JVLOKgA0nlU8dCGPbyhZnFbq01nJZx7BCiJwiEKfuWfWbHfGm03E4LS6n0+6C+3FTntXzVYWU8gS0WheXK9Xa-XOI24y2F3GALrAIA&format=noten&ssp=0&name=The_Kesh_Phrase_Builder_Example&editor=1" target="_blank">Phrase Builder %%barsperstaff 4 Example</a></p>
+                <hr>
+                <p style="text-align: center;"><strong>Phrase Builder Limitations</strong></p>
+                <p>The Phrase Builder is able to handle tunes with initial partial measure pickups as well as anacrusis partial measure pickups and partial measure endings inside of repeats, including 1st and 2nd endings.</p>
                 <p>While I've tested it extensively on many hundreds of tunes in several different tunebooks, there may be some tune constructs where it does not provide an optimum solution.</p>
                 <p>If that occurs, you may be able to reorganize the tune so that the Phrase Builder will work correctly.</p>
                 <p>Here is an example of how to reorganize a tune with partial measures inside of repeats to work optimally with the Phrase Builder:</p>
