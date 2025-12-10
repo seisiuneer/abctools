@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3054_120925_2300";
+var gVersionNumber = "3055_121025_1200";
 
 var gMIDIInitStillWaiting = false;
 
@@ -60864,6 +60864,9 @@ function processAbcPhrases(abcText, phraseBars, phrasePadding) {
   // Strip all ! at the end of lines
   abcText = abcText.replace(/!+$/gm, "");
 
+  // Strip all \ at the end of lines
+  abcText = abcText.replace(/\\$/gm, "");
+
   // Normalize line endings
   let norm = abcText.replace(/\r\n/g, "\n");
 
@@ -60971,10 +60974,11 @@ function processAbcPhrases(abcText, phraseBars, phrasePadding) {
       headerLines.push("% the ABC with alternating staves of notation and rests:");
       headerLines.push("%");
       headerLines.push("%%xbarsperstaff "+phraseBars);
+      headerLines.push("%%stretchlast 1");
       headerLines.push("%");
       headerLines.push("% If there is a partial measure pickup before the tune, to use");
       headerLines.push("% barsperstaff you will need to manually delete the pickup from the ABC.");
-      headerLines.push("% ");
+      headerLines.push("%");
     }
 
     const header = headerLines.join("\n");
@@ -61802,9 +61806,9 @@ var gPhraseBuilderPadding = 0;
 // Phrase builder dialog
 //
 function PhraseBuilder(){
-
-  function foundVTag(abcText){
     
+  function hasProblemTags(abcText) {
+
     // Split the text into lines
     const theLines = abcText.split('\n');
 
@@ -61819,7 +61823,15 @@ function PhraseBuilder(){
       }
     }
 
-    return false;
+    // Now test just the notes for problem tags
+    var justTheNotes = JustTheNotes(abcText);
+
+    // Matches start of any line (after optional spaces)
+    // followed by a single letter OR '+' and then a colon.
+    // It does NOT care what comes after the colon (space or not).
+    const re = /^[ \t]*[A-Za-z+]:/m;
+
+    return re.test(justTheNotes);
 
   }
 
@@ -61841,7 +61853,7 @@ function PhraseBuilder(){
       html: '<p style="margin-top:24px;margin-bottom:24px;font-size:12pt;line-height:18pt;font-family:helvetica">All chords in the tune(s) will be stripped.</p>'
   },
   {
-      html: '<p style="margin-top:24px;margin-bottom:24px;font-size:12pt;line-height:18pt;font-family:helvetica">Tunes with one or more V: tags will be skipped.</p>'
+      html: '<p style="margin-top:24px;margin-bottom:24px;font-size:12pt;line-height:18pt;font-family:helvetica">Tunes with V: tags or other ABC tags at the start of lines outside the header will be skipped.</p>'
   }, 
   {
     name: "Phrase length:",
@@ -61926,13 +61938,13 @@ function PhraseBuilder(){
 
         var output = FindPreTuneHeader(theNotes);
 
-        var gotVTag = false;
+        var gotProblemTags = false;
 
         for (var i = 1; i <= nTunes; ++i) {
 
           var theTune = "X:" + theTunes[i];
 
-          if (!foundVTag(theTune)){
+          if (!hasProblemTags(theTune)){
 
             theTune = StripChordsOne(theTune);
 
@@ -61943,7 +61955,7 @@ function PhraseBuilder(){
           }
           else{
 
-            gotVTag = true;
+            gotProblemTags = true;
             
             output += theTune;
 
@@ -61957,8 +61969,8 @@ function PhraseBuilder(){
 
         var thePrompt = "Phrase-by-phrase versions of all tunes created!";
 
-        if (gotVTag){
-            thePrompt = "All tunes processed, but some tunes had V: tags and were skipped during phrase-by-phrase processing.";
+        if (gotProblemTags){
+            thePrompt = "All tunes processed, but some tunes contain a V: tag or have other tags after the header and were skipped during phrase-by-phrase processing.";
         }
 
         // Center the string in the prompt
@@ -62006,14 +62018,14 @@ function PhraseBuilder(){
 
         var doPhrasesRender = true;
 
-        var gotVTag = foundVTag(theSelectedABC);
+        var gotProblemTags = hasProblemTags(theSelectedABC);
 
         var theTitle = getTuneTitle(theSelectedABC)
 
         var thePrompt = "Phrase-by-phrase version of " + '"' + theTitle + '"' +" created!";
 
-        if (gotVTag){
-            thePrompt = '"' + theTitle + '"' + " has one or more V: tags and cannot have phrases expanded.";
+        if (gotProblemTags){
+            thePrompt = '"' + theTitle + '"' + " contains a V: tag or tags after the header and cannot have phrases expanded.";
             doPhrasesRender = false;
         }
   
