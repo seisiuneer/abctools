@@ -433,9 +433,6 @@
 //
 // Flatten repeats and break tune into phrases for the Tune Trainer
 //
-//
-// Flatten repeats and break tune into phrases for the Tune Trainer
-//
 function processAbcPhrases(abcText, phraseBars, phrasePadding) {
 
   if (!Number.isInteger(phraseBars) || phraseBars <= 0) {
@@ -448,6 +445,9 @@ function processAbcPhrases(abcText, phraseBars, phrasePadding) {
 
   // Strip all ! at the end of lines
   abcText = abcText.replace(/!+$/gm, "");
+
+  // Strip all \ at the end of lines
+  abcText = abcText.replace(/\\$/gm, "");
 
   // Normalize line endings
   let norm = abcText.replace(/\r\n/g, "\n");
@@ -549,6 +549,20 @@ function processAbcPhrases(abcText, phraseBars, phrasePadding) {
       return abcText;
     }
 
+    // Only offer barsperstaff if no padding
+    if (phrasePadding == 0){
+      headerLines.push("%");
+      headerLines.push("% Remove the x from the start of the next line to display");
+      headerLines.push("% the ABC with alternating staves of notation and rests:");
+      headerLines.push("%");
+      headerLines.push("%%xbarsperstaff "+phraseBars);
+      headerLines.push("%%stretchlast 1");
+      headerLines.push("%");
+      headerLines.push("% If there is a partial measure pickup before the tune, to use");
+      headerLines.push("% barsperstaff you will need to manually delete the pickup from the ABC.");
+      headerLines.push("%");
+    }
+
     const header = headerLines.join("\n");
     let body = bodyLines.join("\n").trim();
 
@@ -622,8 +636,8 @@ function processAbcPhrases(abcText, phraseBars, phrasePadding) {
       m.bar === "|]" ? { ...m, bar: "|" } : m
     );
 
-    // ---- Rebuild body (first line 9 bars if pickup, then 8) ----
-    const newBody = rebuildBodyFromMeasures(phrasedMeasures, hasPickup);
+    // ---- Rebuild body ----
+    const newBody = rebuildBodyFromMeasures(phrasedMeasures, phraseBars, phrasePadding, hasPickup);
 
     return header + "\n" + newBody;
   }
@@ -1299,7 +1313,8 @@ function processAbcPhrases(abcText, phraseBars, phrasePadding) {
 
   /* ----------------- Helper: rebuild body with wrapping & final |] ---- */
 
-  function rebuildBodyFromMeasures(measures, hasPickup) {
+  function rebuildBodyFromMeasures(measures, phraseBars, phrasePadding, hasPickup) {
+
     // Drop measures that have no notes
     measures = measures.filter((m) => {
       const hasNotes = m.notes && m.notes.trim().length > 0;
@@ -1321,9 +1336,14 @@ function processAbcPhrases(abcText, phraseBars, phrasePadding) {
     let barCount = 0;
 
     let firstLine = true;
-    // If we have a pickup, allow 9 bars on the first line (pickup + 8 full bars),
-    // otherwise 8 bars. All subsequent lines: 8 bars.
-    let maxBarsThisLine = hasPickup ? 9 : 8;
+
+    // If we have a pickup, allow an extra bar on the first line
+
+    let maxBarsThisLine = (phraseBars*2) + phrasePadding;
+
+    if (hasPickup){
+      maxBarsThisLine += 1;
+    }
 
     measures.forEach((m, idx) => {
       const notes = m.notes.trim() || "";
@@ -1348,7 +1368,7 @@ function processAbcPhrases(abcText, phraseBars, phrasePadding) {
 
           if (firstLine) {
             firstLine = false;
-            maxBarsThisLine = 8;
+            maxBarsThisLine = (phraseBars*2) + phrasePadding;
           }
         }
       }
@@ -1360,7 +1380,6 @@ function processAbcPhrases(abcText, phraseBars, phrasePadding) {
   }
 
 }
-
 // 
 // Strip all the chords in the ABC
 //
@@ -1407,6 +1426,7 @@ function StripChords(theNotes) {
   return output;
 
 }
+
 /* ----------------- Share link generation for sending output to the ABC Transcription Tools ---- */
 
 // Compression mode ids
