@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3055_121025_1200";
+var gVersionNumber = "3056_121025_1500";
 
 var gMIDIInitStillWaiting = false;
 
@@ -61254,7 +61254,6 @@ function processAbcPhrases(abcText, phraseBars, phrasePadding) {
 
       if (ch === "|") {
         const next = body[i + 1] || "";
-        const next2 = body[i + 2] || "";
 
         if (next === ":") {
           pushMeasure("|:");
@@ -61302,6 +61301,25 @@ function processAbcPhrases(abcText, phraseBars, phrasePadding) {
     return measures;
   }
 
+  /* ----------------- Helper: normalize bars for playback --------------- */
+
+  function normalizeBarPlayback(bar) {
+    if (!bar) return bar;
+    if (bar === "||") return "|";
+    if (
+      bar === "|1" || bar === "|2" ||
+      bar === ":|1" || bar === ":|2" ||
+      bar === ":|"
+    ) {
+      return "|";
+    }
+    if (bar.indexOf(":|") !== -1) {
+      // handles combined tokens like ":|2"
+      return "|";
+    }
+    return bar;
+  }
+
   /* ----------------- Helper: expand repeats & endings ------------------ */
 
   function expandRepeatsAndEndings(measures) {
@@ -61323,55 +61341,157 @@ function processAbcPhrases(abcText, phraseBars, phrasePadding) {
     return expandedPrefix.concat(expandedSuffix);
   }
 
+  // ----- Smarter handling of :| with 1st/2nd endings and no |: -----
+
   function expandUnmatchedEndRepeats(measures) {
-    const sections = [];
-    let startIdx = 0;
-
-    for (let i = 0; i < measures.length; i++) {
-      const bar = measures[i].bar || "";
-      if (bar.indexOf(":|") !== -1) {
-        sections.push({
-          measures: measures.slice(startIdx, i + 1),
-          repeat: true
-        });
-        startIdx = i + 1;
-      }
-    }
-
-    if (startIdx < measures.length) {
-      sections.push({
-        measures: measures.slice(startIdx),
-        repeat: false
-      });
-    }
-
     const out = [];
+    const n = measures.length;
+    let i = 0;
+    let sectionStart = 0;
 
-    function copyOnce(seg) {
-      for (const m of seg) {
-        let bar = m.bar;
-        if (bar && bar.indexOf(":|") !== -1) {
-          bar = bar.replace(":|", "|");
-        }
-        if (bar === "||") bar = "|";
+    function copySimple(start, end) {
+      for (let j = start; j <= end; j++) {
+        const m = measures[j];
         out.push({
           notes: m.notes,
-          bar
+          bar: normalizeBarPlayback(m.bar)
         });
       }
     }
 
-    for (const sec of sections) {
-      if (sec.repeat) {
-        copyOnce(sec.measures);
-        copyOnce(sec.measures);
+    while (i < n) {
+      const bar = measures[i].bar || "";
+      if (bar.indexOf(":|") !== -1) {
+        // We reached the end (i) of a repeating block [sectionStart..i].
+        const start = sectionStart;
+        const end = i;
+
+        // Look for |1 and |2 within this block
+        let marker1 = -1;
+        let marker2 = -1;
+        for (let j = start; j <= end; j++) {
+          const b = measures[j].bar || "";
+          if (marker1 === -1 && b.indexOf("1") !== -1) {
+            marker1 = j;
+          }
+          if (marker2 === -1 && b.indexOf("2") !== -1) {
+            marker2 = j;
+          }
+          if (marker1 !== -1 && marker2 !== -1) break;
+        }
+
+        // Try to find second-ending notes AFTER the :|2 bar if marker2 == end
+        let secondStart = -1;
+        let secondEnd = -1;
+
+        if (marker2 !== -1) {
+          if (marker2 === end && end + 1 < n) {
+            // Typical Cooley's-style: |1 ... :|2 <2nd-ending-notes>...
+            secondStart = end + 1;
+
+            // Extend second ending until strong boundary
+            let j = secondStart;
+            while (j < n) {
+              const b = measures[j].bar || "";
+              if (
+                j > secondStart &&
+                (b.indexOf(":|") !== -1 || measures[j].bar === "|:" || b === "||" || b === "|]")
+              ) {
+                break;
+              }
+              secondEnd = j;
+              if (b === "||" || b === "|]") {
+                j++;
+                break;
+              }
+              j++;
+            }
+            if (secondEnd === -1) {
+              secondEnd = secondStart;
+            }
+          } else if (marker2 + 1 <= end) {
+            // Weird but possible: |2 is inside the section and second-ending notes follow it
+            secondStart = marker2 + 1;
+            secondEnd = end;
+          }
+        }
+
+        // If we can't sensibly identify a 1st+2nd ending, fall back to simple double repeat
+        if (marker1 === -1 || marker2 === -1 || secondStart === -1) {
+          copySimple(start, end);
+          copySimple(start, end);
+          i = end + 1;
+          sectionStart = i;
+          continue;
+        }
+
+        // ABC semantics: "1" attaches to the following bar, so the measure
+        // that carries "|1" belongs to the body; first-ending notes begin at marker1+1.
+        const bodyStart = start;
+        const bodyEnd = marker1;
+        const firstStart = marker1 + 1;
+        const firstEnd = end;
+
+        if (firstStart > firstEnd || firstStart >= n) {
+          // Degrade to simple repeat
+          copySimple(start, end);
+          copySimple(start, end);
+          i = end + 1;
+          sectionStart = i;
+          continue;
+        }
+
+        // --- First pass: body + first ending
+        for (let j = bodyStart; j <= bodyEnd; j++) {
+          out.push({
+            notes: measures[j].notes,
+            bar: normalizeBarPlayback(measures[j].bar)
+          });
+        }
+        for (let j = firstStart; j <= firstEnd; j++) {
+          out.push({
+            notes: measures[j].notes,
+            bar: normalizeBarPlayback(measures[j].bar)
+          });
+        }
+
+        // --- Second pass: body + second ending
+        for (let j = bodyStart; j <= bodyEnd; j++) {
+          out.push({
+            notes: measures[j].notes,
+            bar: normalizeBarPlayback(measures[j].bar)
+          });
+        }
+        for (let j = secondStart; j <= secondEnd; j++) {
+          out.push({
+            notes: measures[j].notes,
+            bar: normalizeBarPlayback(measures[j].bar)
+          });
+        }
+
+        // Advance past the second-ending measures
+        i = secondEnd + 1;
+        sectionStart = i;
       } else {
-        copyOnce(sec.measures);
+        i++;
+      }
+    }
+
+    // Any leftover measures after the last :|
+    if (sectionStart < n) {
+      for (let j = sectionStart; j < n; j++) {
+        const m = measures[j];
+        out.push({
+          notes: m.notes,
+          bar: normalizeBarPlayback(m.bar)
+        });
       }
     }
 
     return out;
   }
+
+  // ----- EXPLICIT |: HANDLING + buffering of unmatched segments -----
 
   function expandWithExplicitStarts(measures) {
     const out = [];
@@ -61381,21 +61501,16 @@ function processAbcPhrases(abcText, phraseBars, phrasePadding) {
       return !!bar && (bar.indexOf(":|") !== -1 || bar === "||" || bar === "|]");
     }
 
-    function normalizeBarPlayback(bar) {
-      if (!bar) return bar;
-      if (bar === "||") return "|";
-      if (
-        bar === "|1" || bar === "|2" ||
-        bar === ":|1" || bar === ":|2" ||
-        bar === ":|"
-      ) {
-        return "|";
+    // Buffer for regions *without* explicit |:
+    let buffer = [];
+
+    function flushBuffer() {
+      if (!buffer.length) return;
+      const expanded = expandUnmatchedEndRepeats(buffer);
+      for (const m of expanded) {
+        out.push(m);
       }
-      if (bar.indexOf(":|") !== -1) {
-        // handle combined tokens like ":|2"
-        return "|";
-      }
-      return bar;
+      buffer = [];
     }
 
     function simpleRepeat(startIdx, repeatStart, repeatEndIdx) {
@@ -61421,10 +61536,14 @@ function processAbcPhrases(abcText, phraseBars, phrasePadding) {
       const m = measures[i];
 
       if (m.bar !== "|:") {
-        out.push({ notes: m.notes, bar: m.bar });
+        // Part of a non-explicit segment; buffer it.
+        buffer.push({ notes: m.notes, bar: m.bar });
         i++;
         continue;
       }
+
+      // We hit an explicit |:; first flush any buffered unmatched segment.
+      flushBuffer();
 
       const startIdx = i;
       const repeatStart = i + 1;
@@ -61541,6 +61660,7 @@ function processAbcPhrases(abcText, phraseBars, phrasePadding) {
           bar: normalizeBarPlayback(measures[j].bar)
         });
       }
+
       // body again
       for (let j = bodyStart; j <= bodyEnd; j++) {
         out.push({
@@ -61558,6 +61678,9 @@ function processAbcPhrases(abcText, phraseBars, phrasePadding) {
 
       i = secondEndingEnd + 1;
     }
+
+    // Flush any leftover unmatched segment after the last |:
+    flushBuffer();
 
     return out;
   }
@@ -61757,7 +61880,7 @@ function processAbcPhrases(abcText, phraseBars, phrasePadding) {
 
     // If we have a pickup, allow an extra bar on the first line
 
-    let maxBarsThisLine = (phraseBars*2) + phrasePadding;
+    let maxBarsThisLine = (phraseBars * 2) + phrasePadding;
 
     if (hasPickup){
       maxBarsThisLine += 1;
@@ -61786,7 +61909,7 @@ function processAbcPhrases(abcText, phraseBars, phrasePadding) {
 
           if (firstLine) {
             firstLine = false;
-            maxBarsThisLine = (phraseBars*2) + phrasePadding;
+            maxBarsThisLine = (phraseBars * 2) + phrasePadding;
           }
         }
       }
