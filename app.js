@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3056_121025_1500";
+var gVersionNumber = "3057_121125_0800";
 
 var gMIDIInitStillWaiting = false;
 
@@ -50015,7 +50015,7 @@ function idleAdvancedSettings() {
 
         DayPilot.Modal.alert(thePrompt, {
           theme: "modal_flat",
-          top: 300,
+          top: 200,
           scrollWithPage: (AllowDialogsToScroll())
         });
 
@@ -51731,12 +51731,7 @@ function ConfigureToolSettings() {
 
           sendGoogleAnalytics("action", "EnableSyntax");
 
-          if (isPureDesktopBrowser() || gIsAndroid){
-            thePrompt = "<br/>The tool will now restart with ABC syntax highlighting enabled.<br/><br/><strong>Note for Android users:</strong><br/><br/>While the tool is usable, there may be<br/>issues with text selection context menus.<br/>";
-          }
-          else{
-            thePrompt = "<br/>The tool will now restart with ABC syntax highlighting enabled.<br/><br/><strong>Note for iOS users:</strong><br/><br/>While the tool is usable, there may be <br/>issues with text selection highlighting.<br/>";
-          }
+          thePrompt = "<br/>The tool will now restart with ABC syntax highlighting enabled.<br/>";
         }
         else{
           sendGoogleAnalytics("action", "DisableSyntax");
@@ -52602,7 +52597,7 @@ function DoFileRead(file, callback) {
 
           DayPilot.Modal.alert(thePrompt, {
             theme: "modal_flat",
-            top: 100,
+            top: 200,
             scrollWithPage: (AllowDialogsToScroll())
           }).then(function() {
 
@@ -52682,7 +52677,7 @@ function DoFileRead(file, callback) {
 
               DayPilot.Modal.alert(thePrompt, {
                 theme: "modal_flat",
-                top: 100,
+                top: 200,
                 scrollWithPage: (AllowDialogsToScroll())
               }).then(function() {
 
@@ -59774,6 +59769,12 @@ function DoStartup() {
     gTheCM.on(
       "changes",
       debounce(() => {
+
+        // MAE 11 Dec 2025 For MIDI import messaging issue
+        if (gImportRunning){
+          return;
+        }
+
         // Set dirty
         gIsDirty = true;
 
@@ -59959,7 +59960,6 @@ function DoStartup() {
     }
 
     setABCEditorText("");
-
     Render(true, null);
 
     // Mark as clean
