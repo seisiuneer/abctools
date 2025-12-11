@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3057_121125_0800";
+var gVersionNumber = "3058_121125_0930";
 
 var gMIDIInitStillWaiting = false;
 
@@ -27006,6 +27006,57 @@ function processShareLink() {
   theSearchURL = theSearchURL.replaceAll("&amp;", "&");
 
   const urlParams = new URLSearchParams(theSearchURL);
+
+  // Early check and process redirect to Pure Ocarina tune trainer
+  if (urlParams.has("ocarina")) {
+
+    var defParam = urlParams.get("def") || null;
+    var lzwParam = urlParams.get("lzw") || null;
+
+    if (defParam){
+
+      sendGoogleAnalytics("action", "Ocarina");
+
+      setTimeout(function(){
+
+        // Redirect to Pure Ocarinas with the same def parameter
+        var redirectUrl = "https://pureocarinas.com/phrase-by-phrase-abc-tune-tool?def=" +
+                          encodeURIComponent(defParam);
+
+        window.location.href = redirectUrl;
+
+      },250);
+
+    }
+    else
+    if (lzwParam){
+
+      sendGoogleAnalytics("action", "Ocarina");
+
+      // Transcode LZW to Deflate
+      var abcInLZW = LZString.decompressFromEncodedURIComponent(lzwParam);
+
+      var encoder = new TextEncoder();
+      var utf8Bytes = encoder.encode(abcInLZW);
+      var deflated = pako.deflate(utf8Bytes, { level: 6 });
+      deflated = def_bytesToBase64URL(deflated);
+
+      setTimeout(function(){
+
+        // Redirect to Pure Ocarinas
+        var redirectUrl = "https://pureocarinas.com/phrase-by-phrase-abc-tune-tool?def=" + deflated;
+
+        window.location.href = redirectUrl;
+
+      },250);
+      
+    }
+
+    // Do not continue processing this page
+    return false;
+  }
+
+  // ------------------------------------------------------------------
 
   // Process URL params
 
