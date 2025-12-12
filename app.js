@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3059_121125_1900";
+var gVersionNumber = "3060_121225_0430";
 
 var gMIDIInitStillWaiting = false;
 
@@ -27033,18 +27033,11 @@ function processShareLink() {
 
       sendGoogleAnalytics("action", "Ocarina");
 
-      // Transcode LZW to Deflate
-      var abcInLZW = LZString.decompressFromEncodedURIComponent(lzwParam);
-
-      var encoder = new TextEncoder();
-      var utf8Bytes = encoder.encode(abcInLZW);
-      var deflated = pako.deflate(utf8Bytes, { level: 6 });
-      deflated = def_bytesToBase64URL(deflated);
-
       setTimeout(function(){
 
-        // Redirect to Pure Ocarinas
-        var redirectUrl = "https://pureocarinas.com/phrase-by-phrase-abc-tune-tool?def=" + deflated;
+        // Redirect to Pure Ocarinas with the same def parameter
+        var redirectUrl = "https://pureocarinas.com/phrase-by-phrase-abc-tune-tool?lzw=" +
+                          encodeURIComponent(lzwParam);
 
         window.location.href = redirectUrl;
 
