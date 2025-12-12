@@ -746,6 +746,7 @@
             <a style="text-decoration:none;" href="#shortening_abc_share_urls">Shortening Share URLs</a>
             <a style="text-decoration:none;" href="#shared_tunes_open_full_screen">Shared Tunes Open Full Screen</a>
             <a style="text-decoration:none;" href="#hiding_ui">Hiding the UI for Responsive iframe Embedding</a>
+            <a style="text-decoration:none;" href="#pure_ocarinas">Opening Share Links in the Pure Ocarinas ABC Tune Practice Tool</a>
             <a style="text-decoration:none;" href="#adding_a_qr_code_to_the_pdf_export">Adding a QR Code to the PDF Export</a>
             <a style="text-decoration:none;" href="#reading_the_qr_codes">Reading the QR Codes</a>
             <a style="text-decoration:none;" href="#qr_code_example">QR Code Example</a>
@@ -1254,6 +1255,7 @@
                         <p class="toc"><a style="text-decoration:none;" href="#shortening_abc_share_urls">Shortening Share URLs</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#shared_tunes_open_full_screen">Shared Tunes Open Full Screen</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#hiding_ui">Hiding the UI for Responsive iframe Embedding</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#pure_ocarinas">Opening Share Links in the Pure Ocarinas ABC Tune Practice Tool</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#adding_a_qr_code_to_the_pdf_export">Adding a QR Code to the PDF Export</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#reading_the_qr_codes">Reading the QR Codes</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#qr_code_example">QR Code Example</a></p>
@@ -5818,6 +5820,7 @@
                 <p><strong>Add Hide UI</strong> - Adds &noui to the URL.</p>
                 <p>When the link is opened, hides the UI for responsive iframe embedding.</p>
                 <p>Overrides Add Open in Editor and Add Auto-Play.</p>
+                <p>Shift click to add &ocarina to the URL to have the share link automatically redirect to the <strong>Pure Ocarinas Phrase-by-Phrase ABC tune practice tool</strong>.</p>
                 <p><strong>Use Deflate</strong> - Compresses the URL using a Deflate algorithm instead of LZW.</p>
                 <p>In many cases, using Deflate instead of LZW as the URL compression algorithm may provide a 50% or greater reduction in share link size, but decodes slightly slower.</p>
                 <hr>
@@ -5860,6 +5863,15 @@
                 <p>On mobile browsers, you can double-tap on an embedded tune to start/pause/resume play or long press to rewind the tune to the beginning.</p>
                 <p>If you don't want tunes to play when clicked you must manually add the following URL parameter to any share links you create:</p>
                 <p class="code">&noui-noclick</p>
+                <hr class="hidden-print" id="pure_ocarinas">
+                <h1 class="page_break_always h1wide">Opening Share Links in the Pure Ocarinas ABC Tune Practice Tool<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+                <p>Robert Hickman at Pure Ocarinas and I have been collaborating on adding share links to his tool that will easily allow my tool to send tunes directly to his <strong>Phrase-by-Phrase ABC tune practice tool</strong>.</p>
+                <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/MjuJFr1dzpk" title="Share URL Integration with Pure Ocarinas" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
+                <p>The Pure Ocarinas tool goes beyond what I'm able to do with my <strong>Phrase Builder</strong>, which just subdivides the tune(s) into phrases of a specified measure length for playback in the <strong>Tune Trainer</strong>.</p>
+                <p>Robert's tool takes things to the next level and breaks the ABC tune into phrases of selectable length, plays each phrase, listens to your playing, and evaluates your accuracy before moving on to the next phrase.</p>
+                <p>To have any share link created with this tool redirect to the <strong>Phrase-by-Phrase ABC tune practice tool</strong>, you can add the following URL parameter to it to have the link automatically redirected to Robert's tool:</p>
+                <p class="code">&ocarina</p>
+                <p>In the <strong>Sharing Controls</strong> dialog, you can Shift-click the <strong>Add Hide UI</strong> button to automatically add this parameter to the share link.</p>
                 <hr class="hidden-print" id="adding_a_qr_code_to_the_pdf_export">
                 <h1 class="page_break_always">Adding a QR Code to the PDF Export<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <p>To append a QR code representing the Share URL for tune set or a specific URL as a final page on your PDF, add the following comment-based annotation anywhere in the ABC:</p>
