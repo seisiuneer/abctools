@@ -7,7 +7,13 @@
 //
 //
 //
-// Updated 12 Dec 2025 at 0430
+//
+//
+//
+// Updated 12 Dec 2025 at 1630
+//
+//
+//
 //
 //
 //
@@ -16,7 +22,7 @@
 //
 //
 
-const cacheName = 'abctoolscache-3060';
+const cacheName = 'abctoolscache-3061';
 
 const contentToCache = [
     'abctools.html',
@@ -77,6 +83,9 @@ const contentToCache = [
     'img/michael2.jpg',
     'img/michael240.jpg',
     'img/settings.png',
+    'img/pureocarinas.png',
+    'img/abcjs_logo.png',
+    'img/external_share.png',
     'img/abc-android-icon-144x144.png',
     'img/abc-android-icon-192x192.png',
     'img/abc-android-icon-36x36.png',

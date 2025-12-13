@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3060_121225_0430";
+var gVersionNumber = "3061_121225_1630";
 
 var gMIDIInitStillWaiting = false;
 
@@ -27007,48 +27007,6 @@ function processShareLink() {
 
   const urlParams = new URLSearchParams(theSearchURL);
 
-  // Early check and process redirect to Pure Ocarina tune trainer
-  if (urlParams.has("ocarina")) {
-
-    var defParam = urlParams.get("def") || null;
-    var lzwParam = urlParams.get("lzw") || null;
-
-    if (defParam){
-
-      sendGoogleAnalytics("action", "Ocarina");
-
-      setTimeout(function(){
-
-        // Redirect to Pure Ocarinas with the same def parameter
-        var redirectUrl = "https://pureocarinas.com/phrase-by-phrase-abc-tune-tool?def=" +
-                          encodeURIComponent(defParam);
-
-        window.location.href = redirectUrl;
-
-      },250);
-
-    }
-    else
-    if (lzwParam){
-
-      sendGoogleAnalytics("action", "Ocarina");
-
-      setTimeout(function(){
-
-        // Redirect to Pure Ocarinas with the same def parameter
-        var redirectUrl = "https://pureocarinas.com/phrase-by-phrase-abc-tune-tool?lzw=" +
-                          encodeURIComponent(lzwParam);
-
-        window.location.href = redirectUrl;
-
-      },250);
-      
-    }
-
-    // Do not continue processing this page
-    return false;
-  }
-
   // ------------------------------------------------------------------
 
   // Process URL params
@@ -37067,6 +37025,7 @@ function VoiceTuningCallback(notes, context) {
   }
 }
 
+
 // Keep track where you are in the tune collection
 var gPlayABCTuneIndex = 0;
 var gPlayABCTuneCount = 0;
@@ -37292,6 +37251,9 @@ function PlayABCDialog(theABC, callback, val, metronome_state) {
 
     modal_msg += '<a id="abcplayer_help" href="https://michaeleskin.com/abctools/userguide.html#playing_your_tunes" target="_blank" style="text-decoration:none;" title="Learn more about the Player" class="dialogcornerbutton">?</a>';
 
+    // Add the share controls
+    modal_msg += '<img id="external_tools_share" class="external_tools_share" src="img/external_share.png" title="Open the tune in an external ABC tool"/>';
+
     if (gPlayABCTuneCount > 1) {
 
       if (gPlayerStatusOnLeft) {
@@ -37354,6 +37316,11 @@ function PlayABCDialog(theABC, callback, val, metronome_state) {
       okText: "Close",
       scrollWithPage: (isMobileBrowser())
     });
+
+    var elem = document.getElementById("external_tools_share");
+    elem.onclick = function(){
+      openInExternalTool(theABC);
+    };
 
     // Style previous and next tune buttons depending on tune count state
     if (gPlayABCTuneCount > 1) {
@@ -47990,12 +47957,7 @@ function AddOpenInEditor() {
 }
 
 // Add the noui param to the URL
-function AddNoUI(event) {
-
-  if (event.shiftKey){
-    AddOcarinaParam();
-    return;
-  }
+function AddNoUI() {
 
   var theURL = urltextbox.value;
 
@@ -48008,35 +47970,6 @@ function AddNoUI(event) {
 
   // Give some feedback
   document.getElementById("addnoui").value = "Hide UI Added!";
-
-  setTimeout(function() {
-
-    var elem = document.getElementById("addnoui");
-
-    if (elem) {
-      elem.value = "Add Hide UI";
-    }
-
-  }, 500);
-
-  updateShareLinkSize();
-
-}
-
-// Add the ocarina param to the URL
-function AddOcarinaParam() {
-
-  var theURL = urltextbox.value;
-
-  // Check if a disable editor directive already present
-  if (theURL.indexOf("&ocarina") == -1) {
-    theURL += "&ocarina";
-  }
-
-  urltextbox.value = theURL;
-
-  // Give some feedback
-  document.getElementById("addnoui").value = "Ocarina Added!";
 
   setTimeout(function() {
 
@@ -48070,8 +48003,9 @@ function SharingControlsDialog() {
   modal_msg += '<textarea id="urltextbox" rows="10" cols="80" spellcheck="false" autocorrect="off" autocapitalize="off" placeholder="URL for sharing will appear here" >';
   modal_msg += '</textarea>';
   modal_msg += '</p>';
+  modal_msg += '<img id="external_tools_share" class="external_tools_share" src="img/external_share.png" title="Open the ABC in an external ABC tool"/>';
   modal_msg += '<p id="shareurlcaption">Share URL</p>';
-  modal_msg += '<p style="text-align:center;margin-top:36px;"><input id="addautoplay" class="urlcontrols btn btn-urlcontrols" onclick="AddAutoPlay()" type="button" value="Add Auto-Play" title="Adds &play=1 to the ShareURL.&nbsp;&nbsp;Tune will open in the player."><input id="addopenineditor" class="urlcontrols btn btn-urlcontrols" onclick="AddOpenInEditor()" type="button" value="Add Open in Editor" title="Adds &editor=1 to the ShareURL.&nbsp;&nbsp;Share links will load in the editor.&nbsp;&nbsp;This setting overrides Add Auto-Play."><input id="adddisableediting" class="urlcontrols btn btn-urlcontrols" onclick="AddDisableEditing()" type="button" value="Add Disable Editing" title="Adds &dx=1 to the ShareURL.&nbsp;&nbsp;Entering the editor from the full screen tune view will be disabled.&nbsp;&nbsp;Also overrides Add Open in Editor."><input id="addnoui" class="urlcontrolslast btn btn-urlcontrols" onclick="AddNoUI(event)" type="button" value="Add Hide UI" title="Adds &noui to the ShareURL for responsive iframe embedding.&nbsp;&nbsp;When the link is opened, hides the UI.&nbsp;&nbsp;Overrides Add Open in Editor and Add Auto-Play.&nbsp;&nbsp;Shift-click to add &ocarina to the ShareURL to redirect to the Pure Ocarinas ABC Tune Trainer.">&nbsp;&nbsp;&nbsp;&nbsp;<input id="urlallowdef" type="checkbox" style="margin-top:-5px;margin-bottom:0px;" title="When checked uses Deflate instead of LZW for compressing the ABC in the Share URL resulting in a shorter link"/>&nbsp;Use Deflate</p>';
+  modal_msg += '<p style="text-align:center;margin-top:36px;"><input id="addautoplay" class="urlcontrols btn btn-urlcontrols" onclick="AddAutoPlay()" type="button" value="Add Auto-Play" title="Adds &play=1 to the ShareURL.&nbsp;&nbsp;Tune will open in the player."><input id="addopenineditor" class="urlcontrols btn btn-urlcontrols" onclick="AddOpenInEditor()" type="button" value="Add Open in Editor" title="Adds &editor=1 to the ShareURL.&nbsp;&nbsp;Share links will load in the editor.&nbsp;&nbsp;This setting overrides Add Auto-Play."><input id="adddisableediting" class="urlcontrols btn btn-urlcontrols" onclick="AddDisableEditing()" type="button" value="Add Disable Editing" title="Adds &dx=1 to the ShareURL.&nbsp;&nbsp;Entering the editor from the full screen tune view will be disabled.&nbsp;&nbsp;Also overrides Add Open in Editor."><input id="addnoui" class="urlcontrolslast btn btn-urlcontrols" onclick="AddNoUI()" type="button" value="Add Hide UI" title="Adds &noui to the ShareURL for responsive iframe embedding.&nbsp;&nbsp;When the link is opened, hides the UI.&nbsp;&nbsp;Overrides Add Open in Editor and Add Auto-Play.">&nbsp;&nbsp;&nbsp;&nbsp;<input id="urlallowdef" type="checkbox" style="margin-top:-5px;margin-bottom:0px;" title="When checked uses Deflate instead of LZW for compressing the ABC in the Share URL resulting in a shorter link"/>&nbsp;Use Deflate</p>';
 
   modal_msg += '</div>';
 
@@ -48087,6 +48021,12 @@ function SharingControlsDialog() {
         CreateURLfromHTML();
       };
     }
+
+    var elem = document.getElementById("external_tools_share");
+    elem.onclick = function(){
+      var theABC = getABCEditorText();
+      openInExternalTool(theABC);
+    };
 
   }, 200);
 
@@ -62304,6 +62244,86 @@ function PhraseBuilder(){
     }
 
   });
+
+}
+
+//
+// Share tunes with third party tools
+//
+
+//
+// Open in Pure Ocarinas tune trainer
+//
+function OpenInPureOcarinas(abcText){
+
+    var encoder = new TextEncoder();
+    var utf8Bytes = encoder.encode(abcText);
+    var deflated = pako.deflate(utf8Bytes, { level: 6 });
+    var theDef = def_bytesToBase64URL(deflated);
+
+    var theURL = "https://pureocarinas.com/phrase-by-phrase-abc-tune-tool?def="+theDef;
+
+    if (theURL.length < 8100)
+    {
+      var w = window.open(theURL);
+    }
+    else{
+
+      DayPilot.Modal.alert('<p style="text-align:center;font-family:helvetica;font-size:12pt;">Share URL is too long to open in the Pure Ocarinas tool.</p>', {
+        theme: "modal_flat",
+        top: 230,
+        scrollWithPage: (AllowDialogsToScroll())
+      });
+
+    }
+}
+
+//
+// Open in abcjs Quick Editor
+//
+function OpenInABCJSQuickEditor(abcText){
+
+    var theURL = "https://editor.drawthedots.com/?t=" + encodeURIComponent(abcText);
+
+    if (theURL.length < 8100)
+    {
+      var w = window.open(theURL);
+    }
+    else{
+
+      DayPilot.Modal.alert('<p style="text-align:center;font-family:helvetica;font-size:12pt;">Share URL is too long to open in the abcjs Quick Editor.</p>', {
+        theme: "modal_flat",
+        top: 230,
+        scrollWithPage: (AllowDialogsToScroll())
+      });
+
+    }
+}
+
+function openInExternalTool(theABC){
+
+  var modal_msg = '<div id="ceoltasanchor"><p style="text-align:center;margin-bottom:36px;font-size:16pt;font-family:helvetica;margin-left:15px;">Open ABC in External Tool&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#external_tools" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>';
+
+  modal_msg += '<p style="text-align:center;"> <span class="external-tool" style="display:inline-block; margin-right:48px;margin-bottom:12px;"> <img id="external_pureocarinas" src="img/pureocarinas.png" title="Open the ABC in the Pure Ocarinas Phrase-by-phrase ABC tune practice tool" alt="Pure Ocarinas Phrase-by-phrase ABC practice tool"><br> <span style="font-size:1.2em;">Phrase-by-phrase ABC practice tool</span> </span> <span class="external-tool" style="display:inline-block;margin-bottom:12px;"> <img id="external_abcjs" src="img/abcjs_logo.png" title="Open the ABC in the abcjs quick editor" alt="abcjs quick editor"><br> <span style="font-size:1.2em;">abcjs quick editor</span> </span> </p>';
+
+  DayPilot.Modal.alert(modal_msg, {
+    theme: "modal_flat",
+    top: 150,
+    width: 650,
+    scrollWithPage: (AllowDialogsToScroll())
+  });
+
+  var elem = document.getElementById("external_pureocarinas");
+
+  elem.onclick = function(){
+    OpenInPureOcarinas(theABC);
+  }
+
+  var elem = document.getElementById("external_abcjs");
+
+  elem.onclick = function(){
+    OpenInABCJSQuickEditor(theABC);
+  }
 
 }
 

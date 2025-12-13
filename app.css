@@ -5993,6 +5993,37 @@ body{
 }
 */
 
+.external_tools_share{
+position:absolute;
+width:30px;
+height:40px;
+right:16px;
+top:8px;
+padding:4px;
+z-index:101;
+display:block;
+}
+
+@media (hover: hover) {
+	.external_tools_share:hover{
+	background: palegreen;
+	opacity: 1.0 !important;
+	}
+}
+
+.external-tool {
+  padding: 8px;
+  border: 2px solid transparent;   /* prevents layout shift */
+  border-radius: 6px;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+  cursor: pointer;
+}
+
+.external-tool:hover {
+  border-color: #006999;            /* ABC Tools blue */
+  background-color: rgba(0,105,153,0.06);
+}
+
 /******************************************************************************/
 /* STYLES RELATED TO BUTTONS                                                  */
 /******************************************************************************/
@@ -6617,7 +6648,6 @@ body{
   --color: black;
   --background-color: lavender;
 }
-
 
 @media (hover: hover) {
 	

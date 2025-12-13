@@ -746,11 +746,15 @@
             <a style="text-decoration:none;" href="#shortening_abc_share_urls">Shortening Share URLs</a>
             <a style="text-decoration:none;" href="#shared_tunes_open_full_screen">Shared Tunes Open Full Screen</a>
             <a style="text-decoration:none;" href="#hiding_ui">Hiding the UI for Responsive iframe Embedding</a>
-            <a style="text-decoration:none;" href="#pure_ocarinas">Opening Share Links in the Pure Ocarinas ABC Tune Practice Tool</a>
             <a style="text-decoration:none;" href="#adding_a_qr_code_to_the_pdf_export">Adding a QR Code to the PDF Export</a>
             <a style="text-decoration:none;" href="#reading_the_qr_codes">Reading the QR Codes</a>
             <a style="text-decoration:none;" href="#qr_code_example">QR Code Example</a>
             <a style="text-decoration:none;" href="#generate_share_link">Adding Tune Share Link Generation to Your Website</a>
+            </details>
+
+            <details>
+            <summary><h3>Open ABC in External Tool</h3></summary>
+            <a style="text-decoration:none;" href="#external_tools">Open ABC in External Tool</a>
             </details>
             
             <details>
@@ -1255,13 +1259,17 @@
                         <p class="toc"><a style="text-decoration:none;" href="#shortening_abc_share_urls">Shortening Share URLs</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#shared_tunes_open_full_screen">Shared Tunes Open Full Screen</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#hiding_ui">Hiding the UI for Responsive iframe Embedding</a></p>
-                        <p class="toc"><a style="text-decoration:none;" href="#pure_ocarinas">Opening Share Links in the Pure Ocarinas ABC Tune Practice Tool</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#adding_a_qr_code_to_the_pdf_export">Adding a QR Code to the PDF Export</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#reading_the_qr_codes">Reading the QR Codes</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#qr_code_example">QR Code Example</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#generate_share_link">Adding Tune Share Link Generation to Your Website</a></p>
                     </div>
-                    
+
+                    <button class="accordion" title="Click to expand/collapse this section">Open ABC in External Tool</button>
+                    <div class="tocpanel">
+                        <p class="toc"><a style="text-decoration:none;" href="#external_tools">Open ABC in External Tool</a></p>
+                    </div>
+                 
                     <button class="accordion" title="Click to expand/collapse this section">Tool Settings</button>
                     <div class="tocpanel">
                         <p class="toc"><a style="text-decoration:none;" href="#settings_dialog">ABC Transcription Tools Settings</a></p>
@@ -2117,7 +2125,7 @@
                 <p>The tool will find the tune you've clicked on and bring it up in the ABC Player for playback.</p>
                 <p>If you have selected some notes in the tune, only the selected notes will be played.</p>
                 <div class="image_holder_p">
-                    <img class="image" loading="lazy" src="img/player_16.jpg"/>
+                    <img class="image" loading="lazy" src="img/player_17.jpg"/>
                 </div>
                 <p>On desktop browsers you can double-click the tune notation in any Player in the tool (including the Tune Trainer and Explorers) to start/pause/resume play, or shift-click to rewind play.</p>
                 <p>On mobile browsers, you can double-tap the tune notation in any Player in the tool (including the Tune Trainer and Explorers) to start/pause/resume play or long press to rewind play.</p>
@@ -2152,6 +2160,8 @@
                 <hr>
                 <p>Click <strong>Export Audio, Image, or PDF</strong> to bring up a dialog where you can export your tune as a file in various audio, MIDI, image, or PDF formats.</p>
                 <p>Full details below in the <a style="text-decoration:none;" href="#export_audio_image">Exporting Tune Audio, Image, or PDF Files from the Player</a> section below.</p>
+                <hr>
+                <p>Click the share icon at the top-right corner to bring up the <a href="#external_tools">Open ABC in External Tool</a> dialog where you can open the current tune in an external ABC tool.</p>
                 <hr id="player_settings">
                 <h1 class="page_break_always">Player Instrument Settings<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <p>Click <strong>Settings</strong> to bring up a dialog where you can select default MIDI soundfont, programs, and volumes to use for the Melody, Bass, Chords, and Metronome:</p>
@@ -5784,7 +5794,7 @@
                 <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/I8KcG4swmUQ" title="Sharing Tunes with Share URLs and QR Codes" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
                 <p>Clicking the <strong>Sharing</strong> button brings up the Sharing Controls dialog:</p>
                 <div class="image_holder_p">
-                    <img class="image" loading="lazy" style="width:700px;"src="img/share_controls_7.jpg"/>
+                    <img class="image" loading="lazy" style="width:700px;"src="img/share_controls_8.jpg"/>
                 </div>
                 <p>Share URLs and QR Codes are a quick and easy way to share your ABC tunes with friends or to post tunes on social media sites.</p>
                 <p>Anyone with the Share URL or QR Code can view, edit, save, and share their own copy of the tunes.</p>
@@ -5820,9 +5830,9 @@
                 <p><strong>Add Hide UI</strong> - Adds &noui to the URL.</p>
                 <p>When the link is opened, hides the UI for responsive iframe embedding.</p>
                 <p>Overrides Add Open in Editor and Add Auto-Play.</p>
-                <p>Shift click to add &ocarina to the URL to have the share link automatically redirect to the <strong>Pure Ocarinas Phrase-by-Phrase ABC tune practice tool</strong>.</p>
                 <p><strong>Use Deflate</strong> - Compresses the URL using a Deflate algorithm instead of LZW.</p>
                 <p>In many cases, using Deflate instead of LZW as the URL compression algorithm may provide a 50% or greater reduction in share link size, but decodes slightly slower.</p>
+                <p><strong>Share icon (upper right corner)</strong> - Opens the <a href="#external_tools">Open ABC in External Tool</a> dialog where you can open all the tunes in an external ABC tool.</p>
                 <hr>
                 <p>On desktop browsers you can double-click on an embedded tune to start/pause/resume play, or shift-click to rewind play.</p>
                 <p>On mobile browsers, you can double-tap on an embedded tune to start/pause/resume play or long press to rewind the tune to the beginning.</p>
@@ -5863,15 +5873,6 @@
                 <p>On mobile browsers, you can double-tap on an embedded tune to start/pause/resume play or long press to rewind the tune to the beginning.</p>
                 <p>If you don't want tunes to play when clicked you must manually add the following URL parameter to any share links you create:</p>
                 <p class="code">&noui-noclick</p>
-                <hr class="hidden-print" id="pure_ocarinas">
-                <h1 class="page_break_always h1wide">Opening Share Links in the Pure Ocarinas ABC Tune Practice Tool<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-                <p>Robert Hickman at Pure Ocarinas and I have been collaborating on adding share links to his tool that will easily allow my tool to send tunes directly to his <strong>Phrase-by-Phrase ABC tune practice tool</strong>.</p>
-                <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/MjuJFr1dzpk" title="Share URL Integration with Pure Ocarinas" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
-                <p>The Pure Ocarinas tool goes beyond what I'm able to do with my <strong>Phrase Builder</strong>, which just subdivides the tune(s) into phrases of a specified measure length for playback in the <strong>Tune Trainer</strong>.</p>
-                <p>Robert's tool takes things to the next level and breaks the ABC tune into phrases of selectable length, plays each phrase, listens to your playing, and evaluates your accuracy before moving on to the next phrase.</p>
-                <p>To have any share link created with this tool redirect to the <strong>Phrase-by-Phrase ABC tune practice tool</strong>, you can add the following URL parameter to it to have the link automatically redirected to Robert's tool:</p>
-                <p class="code">&ocarina</p>
-                <p>In the <strong>Sharing Controls</strong> dialog, you can Shift-click the <strong>Add Hide UI</strong> button to automatically add this parameter to the share link.</p>
                 <hr class="hidden-print" id="adding_a_qr_code_to_the_pdf_export">
                 <h1 class="page_break_always">Adding a QR Code to the PDF Export<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <p>To append a QR code representing the Share URL for tune set or a specific URL as a final page on your PDF, add the following comment-based annotation anywhere in the ABC:</p>
@@ -5941,6 +5942,30 @@
                 <p>function generateShareLink(abcText,shareName,tablatureOption,addAutoPlay)</p>
                 <p>And this function contains example of how to isolate the compressed tunes in a share link URL and decompress them to the original ABC:</p>
                 <p>function verifyShareLink(url, originalABC)</p>
+                <hr class="hidden-print" id="external_tools">
+                <h1 class="page_break_always">Open ABC in External Tool<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+                <p>Brings up a dialog where you can open ABC tunes in an external ABC tool:</p>
+                <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/0I_RHuFzyqg" title="Open ABC in External Tool Demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
+                <div class="image_holder_p">
+                    <img class="image" loading="lazy" src="img/external_tools_1.jpg"/>
+                </div>
+                <hr>
+                <p>Currently there are two supported external ABC tools:<p>
+                <hr>
+                <p><strong>Pure Ocarinas Phrase-by-phrase ABC tune practice tool</strong></p>
+                <p>A powerful tune practice tool that plays the tune phrase-by-phrase and evaluates your playing before proceeding to the next phrase.</p>
+                <hr>
+                <p><strong>abcjs quick editor</strong></p>
+                <p>Paul Rosen's reference abcjs editor that is useful for sanity checking any issues found with a tune when using the ABC Transcription Tools.</p>
+                <p>If the ABC for a tune has an issue in the abcjs quick editor, then the problem is most likely with abcjs itself.</p>
+                <p>If a tune has an issue in the ABC Transcription Tools but not the abcjs quick editor, then it is an issue with the ABC Transcription Tools.</p>
+                <hr>
+                <p>If this dialog is opened from the <strong>Player</strong>, you can open the currently displayed tune in the external tool.</p>
+                <p>If this dialog is opened from the <strong>Sharing Controls</strong> dialog, you can open all the tunes in the editor in the external tool.</p>
+                <p>In both cases, if the URL created for the external tool is over 8100 characters, you will be alerted that the link is too long to open.</p>
+                <hr>
+                <p style="text-align: center;"><strong>Information for ABC Software Developers</strong></p>
+                <p>If you are an ABC software developer interested in being able to have this tool send ABC directly to your tool and having your tool added to the list of available external ABC tools, please visit the <a href="#generate_share_link">Adding Tune Share Link Generation to Your Website</a> section for a link to sample code available to help facilitate building tool integrations via a common share link structure.</p>
                 <hr class="hidden-print" id="settings_dialog">
                 <h1 class="page_break_always">ABC Transcription Tools Settings<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <p>Clicking the <strong>Settings</strong> button at the top of the tool brings up a dialog where you can set tool-wide settings:</p>
