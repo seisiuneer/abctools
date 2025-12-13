@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3061_121225_1630";
+var gVersionNumber = "3062_121225_1900";
 
 var gMIDIInitStillWaiting = false;
 
@@ -37319,7 +37319,11 @@ function PlayABCDialog(theABC, callback, val, metronome_state) {
 
     var elem = document.getElementById("external_tools_share");
     elem.onclick = function(){
+
+      sendGoogleAnalytics("dialog", "ExternalToolsPlayer");
+
       openInExternalTool(theABC);
+    
     };
 
     // Style previous and next tune buttons depending on tune count state
@@ -48023,9 +48027,14 @@ function SharingControlsDialog() {
     }
 
     var elem = document.getElementById("external_tools_share");
+    
     elem.onclick = function(){
+
+      sendGoogleAnalytics("dialog", "ExternalToolsShareDialog");
+
       var theABC = getABCEditorText();
       openInExternalTool(theABC);
+
     };
 
   }, 200);
@@ -62256,6 +62265,8 @@ function PhraseBuilder(){
 //
 function OpenInPureOcarinas(abcText){
 
+    sendGoogleAnalytics("action", "OpenInPureOcarinas");
+
     var encoder = new TextEncoder();
     var utf8Bytes = encoder.encode(abcText);
     var deflated = pako.deflate(utf8Bytes, { level: 6 });
@@ -62282,6 +62293,8 @@ function OpenInPureOcarinas(abcText){
 // Open in abcjs Quick Editor
 //
 function OpenInABCJSQuickEditor(abcText){
+
+    sendGoogleAnalytics("action", "OpenInABCJSQuickEditor");
 
     var theURL = "https://editor.drawthedots.com/?t=" + encodeURIComponent(abcText);
 
