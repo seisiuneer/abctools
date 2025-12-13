@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3063_121225_1930";
+var gVersionNumber = "3064_121325_0500";
 
 var gMIDIInitStillWaiting = false;
 
@@ -76,6 +76,8 @@ var gPlayerTouchStartTime = 0;
 const gPlayerSwipeThreshold = 50; // px
 
 var gPlayerScaling = 50;
+
+var gPlayerShowExternalToolsIcon = true;
 
 var gRenderingPDF = false;
 
@@ -37252,7 +37254,9 @@ function PlayABCDialog(theABC, callback, val, metronome_state) {
     modal_msg += '<a id="abcplayer_help" href="https://michaeleskin.com/abctools/userguide.html#playing_your_tunes" target="_blank" style="text-decoration:none;" title="Learn more about the Player" class="dialogcornerbutton">?</a>';
 
     // Add the share controls
-    modal_msg += '<img id="external_tools_share" class="external_tools_share" src="img/external_share.png" title="Open the tune in an external ABC tool"/>';
+    if (gPlayerShowExternalToolsIcon){
+      modal_msg += '<img id="external_tools_share" class="external_tools_share" src="img/external_share.png" title="Open the tune in an external ABC tool"/>';
+    }
 
     if (gPlayABCTuneCount > 1) {
 
@@ -37317,14 +37321,19 @@ function PlayABCDialog(theABC, callback, val, metronome_state) {
       scrollWithPage: (isMobileBrowser())
     });
 
-    var elem = document.getElementById("external_tools_share");
-    elem.onclick = function(){
+    // Add external tools icon?
+    if (gPlayerShowExternalToolsIcon){
 
-      sendGoogleAnalytics("dialog", "ExternalToolsPlayer");
+      var elem = document.getElementById("external_tools_share");
+      elem.onclick = function(){
 
-      openInExternalTool(theABC);
-    
-    };
+        sendGoogleAnalytics("dialog", "ExternalToolsPlayer");
+
+        openInExternalTool(theABC);
+      
+      };
+
+    }
 
     // Style previous and next tune buttons depending on tune count state
     if (gPlayABCTuneCount > 1) {
@@ -46268,6 +46277,12 @@ function GetInitialConfigurationSettings() {
     gLooperAddMeasureCount = 1;
   }
 
+  gPlayerShowExternalToolsIcon = true;
+  val = localStorage.PlayerShowExternalToolsIcon
+  if (val) {
+    gPlayerShowExternalToolsIcon = (val == "true");
+  }
+
   // Apply custom theme
   ensureInitialAbcThemeApplied();
 
@@ -46587,6 +46602,9 @@ function SaveConfigurationSettings() {
 
     // Number of measures to add
     localStorage.LooperAddMeasureCount = gLooperAddMeasureCount;
+
+    // Show external tools icon on Player
+    localStorage.PlayerShowExternalToolsIcon = gPlayerShowExternalToolsIcon;
 
   }
 }
@@ -50654,6 +50672,7 @@ function ConfigurePlayerSettings(player_callback) {
     configure_metronome_low_volume: gMetronomeLowVolume,
     configure_wide_playback_cursor: gUseWidePlayCursor,
     configure_always_flatten_parts: gAlwaysFlattenParts,
+    configure_show_external_tools: gPlayerShowExternalToolsIcon,
   };
 
   const sound_font_options = [{
@@ -50915,6 +50934,11 @@ function ConfigurePlayerSettings(player_callback) {
     id: "configure_always_flatten_parts",
     type: "checkbox",
     cssClass: "configure_settings_form_text_checkbox_fs"
+  },{
+    name: "            Show open ABC in external tool icon at top right of the Player",
+    id: "configure_show_external_tools",
+    type: "checkbox",
+    cssClass: "configure_settings_form_text_checkbox_fs"
   }]);
 
   form = form.concat([{html: '<p style="text-align:center;margin-top:24px"><label class="btn btn-subdialog loadinstrumentbutton" for="loadinstrumentbutton" title="Load one or more Custom Instruments">Load Custom Instruments <input type="file" id="loadinstrumentbutton" accept=".zip" multiple hidden/></label><input id="configurecustominstruments" class="advancedcontrols btn btn-subdialog" onclick="manageCustomInstrumentSlots()" type="button" value="Configure Custom Instruments" title="Brings up the Assign Files to Custom Instruments dialog"><input id="launchcustominstrumentbuilder" class="advancedcontrols btn btn-subdialog" onclick="launchCustomInstrumentBuilder()" type="button" value="Launch Custom Instrument Builder" title="Launches the Custom Instrument Builder utility in a new browser tab"></p>'}]);
@@ -50964,6 +50988,9 @@ function ConfigurePlayerSettings(player_callback) {
           gPlayerScaling = 100;
         }
       }
+
+      // Show external tools icon
+      gPlayerShowExternalToolsIcon = args.result.configure_show_external_tools
 
       // Always flatten parts?
       gAlwaysFlattenParts = args.result.configure_always_flatten_parts;
