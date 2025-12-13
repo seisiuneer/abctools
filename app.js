@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3065_121325_1200";
+var gVersionNumber = "3066_121325_1500";
 
 var gMIDIInitStillWaiting = false;
 
@@ -37240,7 +37240,7 @@ function PlayABCDialog(theABC, callback, val, metronome_state) {
       modal_msg += '<input id="abcplayer_exportbutton" class="abcplayer_exportbutton btn btn-exportaudiomidi" onclick="ExportAudioOrImage();" type="button" value="Export Audio or Image" title="Brings up a dialog where you can export the tune in various audio and image formats">';
     }
 
-    modal_msg += '<input id="abcplayer_settingsbutton" class="abcplayer_settingsbutton btn btn-configuresettingsfromhelp" onclick="ShowPlayerSettings();" type="button" value="Settings" title="Brings up the Player Instrument Settings dialog where you can select the default MIDI soundfont, MIDI instruments, and MIDI volumes to use when playing tunes.&nbsp;&nbsp;From the dialog you can also set the Player screen width percentage, load and manage custom instruments.">';
+    modal_msg += '<input id="abcplayer_settingsbutton" class="abcplayer_settingsbutton btn btn-configuresettingsfromhelp" onclick="ShowPlayerSettings();" type="button" value="Settings" title="Brings up the Player Settings dialog where you can select the default MIDI soundfont, MIDI instruments, and MIDI volumes to use when playing tunes.&nbsp;&nbsp;From the dialog you can also set the Player screen width percentage, load and manage custom instruments.">';
 
     if (isDesktopBrowser()) {
       modal_msg += '<input id="abcplayer_zoom_in" class="btn btn-player_zoom abcplayer_zoom_in" onclick="ZoomPlayer(true)" type="button" value="←&nbsp;→" title="Increases the player width 10% of the window screen size">';
@@ -37255,7 +37255,7 @@ function PlayABCDialog(theABC, callback, val, metronome_state) {
 
     // Add the share controls
     if (gPlayerShowExternalToolsIcon){
-      modal_msg += '<img id="external_tools_share" class="external_tools_share" src="img/external_share.png" title="Open the tune in an external ABC tool"/>';
+      modal_msg += '<img id="external_tools_share" class="external_tools_share" src="img/external_share.png" title="Open the tune in an external ABC tool.&nbsp;&nbsp;This control can be shown/hidden in the Player by a setting in the Player Settings dialog."/>';
     }
 
     if (gPlayABCTuneCount > 1) {
@@ -37754,7 +37754,7 @@ function generateCustomInstrumentAlertMessage(missingIdxs) {
 
       <p style="margin:.6em 0;font-size:1.05rem;">To resolve this, please load the required custom instrument${plural ? "s" : ""} by either:</p>
       <ol style="margin:.5em 0 1em 1.4em; padding:0; font-size:1.05rem;">
-        <li>Load ${plural ? "them" : "it"} from the <strong>Player Instrument Settings</strong> dialog, or</li>
+        <li>Load ${plural ? "them" : "it"} from the <strong>Player Settings</strong> dialog, or</li>
         <li>Close the Player, then drag-and-drop the custom instrument${plural ? "s" : ""} onto the work area.</li>
       </ol>
 
@@ -50842,7 +50842,7 @@ function ConfigurePlayerSettings(player_callback) {
   }]
 
   var form = [{
-    html: '<p style="text-align:center;font-size:16pt;font-family:helvetica;margin-left:15px;">Player Instrument Settings&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#default_player_settings" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'
+    html: '<p style="text-align:center;font-size:16pt;font-family:helvetica;margin-left:15px;">Player Settings&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#default_player_settings" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'
   }, {
     html: '<p class="configure_settings_form_text_fs">The following values are used as the instrument and volume defaults if not already specified in a tune:</p>'
   }, {
@@ -51344,7 +51344,7 @@ function ConfigureToolSettings() {
     type: "checkbox",
     cssClass: "configure_settings_form_text_checkbox"
   }, {
-    html: '<p style="text-align:center;"><input id="abcplayer_settingsbutton" style="margin-left:0px" class="abcplayer_settingsbutton btn btn-configuresettingsfromhelp" onclick="ConfigurePlayerSettings(null);" type="button" value="Select Default Player Instruments and Volumes" title="Brings up the Player Instrument Settings dialog where you can select the default MIDI soundfont, MIDI instruments, and MIDI volumes to use when playing tunes.&nbsp;&nbsp;You can also load and manage custom instruments from this dialog."><input id="managedatabases" class="btn btn-managedatabases managedatabases" onclick="ManageDatabasesDialog()" type="button" value="Manage Notes, Reverb, and Tune Search Databases" title="Opens a dialog where you can manage the instrument notes, reverb settings, and tune search engine collection databases"></p>'
+    html: '<p style="text-align:center;"><input id="abcplayer_settingsbutton" style="margin-left:0px" class="abcplayer_settingsbutton btn btn-configuresettingsfromhelp" onclick="ConfigurePlayerSettings(null);" type="button" value="Select Default Player Instruments and Volumes" title="Brings up the Player Settings dialog where you can select the default MIDI soundfont, MIDI instruments, and MIDI volumes to use when playing tunes.&nbsp;&nbsp;You can also load and manage custom instruments from this dialog."><input id="managedatabases" class="btn btn-managedatabases managedatabases" onclick="ManageDatabasesDialog()" type="button" value="Manage Notes, Reverb, and Tune Search Databases" title="Opens a dialog where you can manage the instrument notes, reverb settings, and tune search engine collection databases"></p>'
   }, {
     name: "    Allow instrument notes and reverb settings database to be used offline",
     id: "configure_allow_offline_instruments",
