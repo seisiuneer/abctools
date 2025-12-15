@@ -18645,7 +18645,7 @@ function CreateSynth(theABC) {
         "whistle": 2.0,     // 78 
         "banjo": 2.0,       // 105
         "bagpipe":3.0,     // 109 
-        "fiddle": 2.0,      // 110
+        "fiddle": 5.0,      // 110
         "melodic_tom": 3.25,  // 117
         "uilleann": 1.75,    // 129
         "smallpipesd": 1.75, // 130
@@ -20512,7 +20512,7 @@ var getNote = function getNote(url, instrument, name, audioContext) {
 
         // Force fiddle to use mp3
         case "fiddle":      // 110
-          url = "https://michaeleskin.com/abctools/soundfonts/fiddle_1/";
+          url = "https://michaeleskin.com/abctools/soundfonts/fiddle_2/";
           isOgg = false;
           isCustomInstrument = true;
           break;
