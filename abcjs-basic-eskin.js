@@ -18641,11 +18641,11 @@ function CreateSynth(theABC) {
       self.customVolumeMultiplier = {
         "dulcimer":2.0,     // 15
         "accordion": 2.0,   // 21
-        "flute": 2.0,       // 73
-        "whistle": 2.0,     // 78 
+        "flute": 1.8,       // 73
+        "whistle": 1.8,     // 78 
         "banjo": 2.0,       // 105
         "bagpipe":3.0,     // 109 
-        "fiddle": 5.5,      // 110
+        "fiddle": 5.0,      // 110
         "melodic_tom": 3.25,  // 117
         "uilleann": 1.75,    // 129
         "smallpipesd": 1.75, // 130
