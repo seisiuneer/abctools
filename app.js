@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3069_121525_1900";
+var gVersionNumber = "3070_121525_1930";
 
 var gMIDIInitStillWaiting = false;
 
@@ -56491,6 +56491,16 @@ function JumpToTune() {
         }
       }
     }, 25);
+  }
+
+  // Auto focus on the search field
+  if (isPureDesktopBrowser()){
+    setTimeout(function(){
+     var elem=document.getElementById("jumpToSearchValue");
+     if (elem){
+      elem.focus();
+     }
+    },50);
   }
 
 }
