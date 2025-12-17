@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3070_121525_1930";
+var gVersionNumber = "3071_121625_1630";
 
 var gMIDIInitStillWaiting = false;
 
@@ -57970,15 +57970,15 @@ function splitVoices(abcTune) {
   let isInVoice = false;
   let wLines = [];
 
-  const voicePattern1 = /^V:\s*(\d+)(.*)$/; // Matches "V: number"
-  const voicePattern2 = /^\[V:\s*(\d+)\s*\](.*)$/; // Matches "[V: number]"
-  const wPattern = /^W:/; // Matches "W:" lines
+  // Allow zero or more spaces after V:
+  // Voice id may be numeric or named (LH, RH, etc.)
+  const voicePattern1 = /^V:\s*([A-Za-z0-9_.-]+)(.*)$/;        // V:1, V: 1, V:LH, V: LH
+  const voicePattern2 = /^\[V:\s*([A-Za-z0-9_.-]+)\s*\](.*)$/; // [V:1], [V: LH]
+  const wPattern = /^W:/;
 
   lines.forEach(line => {
     // Skip %%score lines
-    if (line.startsWith('%%score')) {
-      return;
-    }
+    if (line.startsWith('%%score')) return;
 
     // Capture and skip W: lines
     if (wPattern.test(line)) {
@@ -57989,28 +57989,17 @@ function splitVoices(abcTune) {
     const matchVoice1 = line.match(voicePattern1);
     const matchVoice2 = line.match(voicePattern2);
 
-    if (matchVoice1) {
-      const voiceId = matchVoice1[1];
-      const extraText = matchVoice1[2].trim();
+    if (matchVoice1 || matchVoice2) {
+      const match = matchVoice1 || matchVoice2;
+      const voiceId = match[1];
+      const extraText = (match[2] || "").trim();
+
       currentVoice = voiceId;
 
       if (!voices[currentVoice]) {
         voices[currentVoice] = [...header];
         if (extraText !== "") {
-          voices[currentVoice].push(`V:1 ${extraText}`);
-        }
-      }
-
-      isInVoice = true;
-    } else if (matchVoice2) {
-      const voiceId = matchVoice2[1];
-      const extraText = matchVoice2[2].trim();
-      currentVoice = voiceId;
-
-      if (!voices[currentVoice]) {
-        voices[currentVoice] = [...header];
-        if (extraText !== "") {
-          voices[currentVoice].push(`V:1 ${extraText}`);
+          voices[currentVoice].push(`V:${voiceId} ${extraText}`);
         }
       } else {
         if (extraText !== "") {
@@ -58019,7 +58008,10 @@ function splitVoices(abcTune) {
       }
 
       isInVoice = true;
-    } else if (!isInVoice) {
+      return;
+    }
+
+    if (!isInVoice) {
       header.push(line);
     } else if (currentVoice) {
       voices[currentVoice].push(line);
@@ -58027,11 +58019,9 @@ function splitVoices(abcTune) {
   });
 
   // Append W: lines to the end of each voice
-  const splitTunes = Object.keys(voices).map(voice => {
-    return voices[voice].concat(wLines).join('\n');
-  });
-
-  return splitTunes;
+  return Object.keys(voices).map(voiceId =>
+    voices[voiceId].concat(wLines).join('\n')
+  );
 }
 
 function SplitVoices() {
