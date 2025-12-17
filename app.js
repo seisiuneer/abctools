@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3071_121625_1630";
+var gVersionNumber = "3072_121725_1000";
 
 var gMIDIInitStillWaiting = false;
 
@@ -57979,6 +57979,9 @@ function splitVoices(abcTune) {
   lines.forEach(line => {
     // Skip %%score lines
     if (line.startsWith('%%score')) return;
+
+    // Skip %%staves lines
+    if (line.startsWith('%%staves')) return;
 
     // Capture and skip W: lines
     if (wPattern.test(line)) {
