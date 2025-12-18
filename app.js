@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3073_121725_1230";
+var gVersionNumber = "3074_121725_2200";
 
 var gMIDIInitStillWaiting = false;
 
@@ -44334,6 +44334,11 @@ function TuneTrainerDialog(theOriginalABC, theProcessedABC, looperState) {
     modal_msg += '<div id="looperstatusbaroverlay"></div>';
     modal_msg += '<div id="loopercountdown" class="looper-modal"><div class="looper-modal-content"><div class="looper-modal-text" id="loopercountdowntext"></div></div></div>';
 
+    // Add the share controls
+    if (gPlayerShowExternalToolsIcon){
+      modal_msg += '<img id="external_tools_share" class="external_tools_share" src="img/external_share.png" title="Open the tune in an external ABC tool.&nbsp;&nbsp;This control can be shown/hidden in the Tune Trainer by a setting in the Player Settings dialog."/>';
+    }
+
     // Scale the player for larger screens
     var windowWidth = window.innerWidth;
 
@@ -44370,6 +44375,20 @@ function TuneTrainerDialog(theOriginalABC, theProcessedABC, looperState) {
       okText: "Close",
       scrollWithPage: (isMobileBrowser())
     });
+
+    // Add external tools icon?
+    if (gPlayerShowExternalToolsIcon){
+
+      var elem = document.getElementById("external_tools_share");
+      elem.onclick = function(){
+
+        sendGoogleAnalytics("dialog", "ExternalToolsTuneTrainer");
+
+        openInExternalTool(theOriginalABC);
+      
+      };
+
+    }
 
     // Set the initial loop parameters
     document.getElementById("looper_start_percent").value = gLooperSpeedStart;
@@ -50935,7 +50954,7 @@ function ConfigurePlayerSettings(player_callback) {
     type: "checkbox",
     cssClass: "configure_settings_form_text_checkbox_fs"
   },{
-    name: "            Show open ABC in external tool icon at top right of the Player",
+    name: '            Show "Open ABC in External Tool" icon at top right of the Player and Tune Trainer',
     id: "configure_show_external_tools",
     type: "checkbox",
     cssClass: "configure_settings_form_text_checkbox_fs"
