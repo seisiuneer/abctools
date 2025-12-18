@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3074_121725_2200";
+var gVersionNumber = "3075_121825_0800";
 
 var gMIDIInitStillWaiting = false;
 
@@ -389,10 +389,7 @@ var gMixedNotationAndQRCode = false;
 var gFeaturesShowSearch = true;
 var gFeaturesShowExamples = true;
 var gFeaturesShowTemplates = true;
-var gFeaturesShowTablatures = true;
-var gFeaturesShowExplorers = true;
 var gFeaturesShowTabButtons = true;
-var gFeaturesShowBagpipeDrones = true;
 
 // Force an update of local storage for the tab
 var gForceTabSave = false;
@@ -45867,30 +45864,6 @@ function GetInitialConfigurationSettings() {
     gFeaturesShowTemplates = (val == "true");
   }
 
-  gFeaturesShowTablatures = true;
-  val = localStorage.FeaturesShowTablatures;
-  if (val) {
-    gFeaturesShowTablatures = (val == "true");
-  }
-
-  gFeaturesShowExplorers = true;
-  val = localStorage.FeaturesShowExplorers;
-  if (val) {
-    gFeaturesShowExplorers = (val == "true");
-  }
-
-  gFeaturesShowExport = true;
-  val = localStorage.FeaturesShowExport;
-  if (val) {
-    gFeaturesShowExport = (val == "true");
-  }
-
-  gFeaturesShowBagpipeDrones = true;
-  val = localStorage.FeaturesShowBagpipeDrones;
-  if (val) {
-    gFeaturesShowBagpipeDrones = (val == "true");
-  }
-
   gFeaturesShowTabButtons = true;
   val = localStorage.FeaturesShowTabButtons;
   if (val) {
@@ -46511,11 +46484,7 @@ function SaveConfigurationSettings() {
     localStorage.FeaturesShowSearch = gFeaturesShowSearch;
     localStorage.FeaturesShowExamples = gFeaturesShowExamples;
     localStorage.FeaturesShowTemplates = gFeaturesShowTemplates;
-    localStorage.FeaturesShowTablatures = gFeaturesShowTablatures;
-    localStorage.FeaturesShowExplorers = gFeaturesShowExplorers;
-    localStorage.FeaturesShowExport = gFeaturesShowExport;
     localStorage.FeaturesShowTabButtons = gFeaturesShowTabButtons;
-    localStorage.FeaturesShowBagpipeDrones = gFeaturesShowBagpipeDrones;
 
     // Save Editor font size
     localStorage.ABCEditorFontSize = gABCEditorFontsize;
@@ -49201,230 +49170,187 @@ function Do_Browser_PDF_Export() {
 }
 
 //
-// Advanced controls dialog
+// More ABC Tools Dialog
 //
-//
 
-// Add an ABC file, sample tune, or template
-//
-var gMoreABCToolsOKButton = null;
+// ------------------------------------------------------------
+// Remember last selected More Tools tab
+// ------------------------------------------------------------
+var gMoreToolsLastTab = "";
 
-function Configure_AdvancedControlsDialog_UI() {
+function AdvancedControls_SelectTab(tabId) {
+  var dialog = document.getElementById("advanced-controls-dialog");
+  if (!dialog) return;
 
-  //console.log("Configure_AdvancedControlsDialog_UI");
+  // Remember last tab
+  gMoreToolsLastTab = tabId;
 
-  var old_gFeaturesShowTablatures = gFeaturesShowTablatures;
-  var old_gFeaturesShowExplorers = gFeaturesShowExplorers;
-  var old_gFeaturesShowExport = gFeaturesShowExport;
-  var old_gFeaturesShowBagpipeDrones = gFeaturesShowBagpipeDrones;
+  var buttons = dialog.querySelectorAll(".adv-tab-btn");
+  var panels  = dialog.querySelectorAll(".adv-tab-panel");
 
-  // Setup initial values
-  const theData = {
-    showtablatures: gFeaturesShowTablatures,
-    showexplorers: gFeaturesShowExplorers,
-    showexport: gFeaturesShowExport,
-    showbagpipedrones: gFeaturesShowBagpipeDrones
-  };
-
-  var form = [{
-    html: '<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-left:15px;">More ABC Tools Feature Options</p>'
-  }, {
-    name: "          Show Tablature Injectors",
-    id: "showtablatures",
-    type: "checkbox",
-    cssClass: "configure_ui_options_form_text"
-  }, {
-    name: "          Show MIDI, Swing, Grace, Roll, and Reverb Explorers",
-    id: "showexplorers",
-    type: "checkbox",
-    cssClass: "configure_ui_options_form_text"
-  }, ];
-
-  if (isDesktopBrowser()) {
-    form.push({
-      name: "          Show Export All Tunes, Sort by Tag, and Incipits Builder",
-      id: "showexport",
-      type: "checkbox",
-      cssClass: "configure_ui_options_form_text"
-    });
-  } else {
-    form.push({
-      name: "          Show Sort by Tag and Incipits Builder",
-      id: "showexport",
-      type: "checkbox",
-      cssClass: "configure_ui_options_form_text"
-    });
-  }
-
-  form.push({
-    name: "          Show Phrase Builder, Custom CSS Generator, Transpose to Key, and Inject Bagpipes",
-    id: "showbagpipedrones",
-    type: "checkbox",
-    cssClass: "configure_ui_options_form_text"
+  buttons.forEach(function(btn) {
+    var active = (btn.getAttribute("data-tab") === tabId);
+    btn.classList.toggle("active", active);
+    btn.setAttribute("aria-selected", active ? "true" : "false");
   });
 
-  const modal = DayPilot.Modal.form(form, theData, {
-    theme: "modal_flat",
-    top: 100,
-    width: 500,
-    scrollWithPage: (AllowDialogsToScroll()),
-    autoFocus: false
-  }).then(function(args) {
-
-    if (!args.canceled) {
-
-      gFeaturesShowTablatures = args.result.showtablatures;
-
-      gFeaturesShowExplorers = args.result.showexplorers;
-
-      gFeaturesShowExport = args.result.showexport;
-
-      gFeaturesShowBagpipeDrones = args.result.showbagpipedrones;
-
-      // No change, just return;
-      if ((gFeaturesShowTablatures == old_gFeaturesShowTablatures) &&
-        (gFeaturesShowExplorers == old_gFeaturesShowExplorers) &&
-        (gFeaturesShowExport == old_gFeaturesShowExport) &&
-        (gFeaturesShowBagpipeDrones == old_gFeaturesShowBagpipeDrones)
-      ) {
-
-        //console.log("Configure_AdvancedControlsDialog_UI - No change in settings");
-
-        return;
-
-      }
-
-      // Save the settings
-      SaveConfigurationSettings();
-
-      // Close the ABC tools dialog
-      gMoreABCToolsOKButton.click();
-
-      // And relaunch it after a short delay
-      setTimeout(function() {
-
-        AdvancedControlsDialog();
-
-      }, 250);
-    }
-
+  panels.forEach(function(panel) {
+    panel.classList.toggle("active", panel.id === tabId);
   });
 }
 
-// Find the OK button for the options dialog use
-function IdleMoreABCTools() {
+function AdvancedControls_InitTabs() {
+  var dialog = document.getElementById("advanced-controls-dialog");
+  if (!dialog) return;
 
-  // Find the OK button
-  var theOKButtons = document.getElementsByClassName("modal_flat_ok");
+  var tabBar = dialog.querySelector(".adv-tab-bar");
+  if (!tabBar) return;
 
-  // Find the button that says "OK" to use to close the dialog when changing UI settings
-  var theOKButton = null;
+  var btns = tabBar.querySelectorAll(".adv-tab-btn");
+  if (!btns.length) return;
 
-  for (var i = 0; i < theOKButtons.length; ++i) {
-
-    theOKButton = theOKButtons[i];
-
-    if (theOKButton.innerText == "OK") {
-
-      //console.log("Found OK button");
-      gMoreABCToolsOKButton = theOKButton;
-
-      break;
-
-    }
+  // Restore remembered tab if it exists
+  if (gMoreToolsLastTab && dialog.querySelector("#" + gMoreToolsLastTab)) {
+    AdvancedControls_SelectTab(gMoreToolsLastTab);
+  } else {
+    AdvancedControls_SelectTab(btns[0].getAttribute("data-tab"));
   }
 }
 
 function AdvancedControlsDialog() {
 
-  // Keep track of advanced controls dialog
   sendGoogleAnalytics("dialog", "AdvancedControlsDialog");
 
-  // Moving the advanced controls to their own dialog
-  var modal_msg = '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:15px;">More ABC Tools&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#more_tools" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span><img id="moreabctoolssettings" class="moreabctoolssettings moresettingsbutton" src="img/settings.png" title="More ABC Tools Settings" onclick="Configure_AdvancedControlsDialog_UI();"</img></p>';
+  var modal_msg = '';
+  modal_msg += '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:15px;">';
+  modal_msg += 'More ABC Tools';
+  modal_msg += '<span style="font-size:24pt;" title="View documentation in new tab">';
+  modal_msg += '<a href="https://michaeleskin.com/abctools/userguide.html#more_tools" target="_blank" ';
+  modal_msg += 'style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a>';
+  modal_msg += '</span>';
+  modal_msg += '</p>';
+
   modal_msg += '<div id="advanced-controls-dialog">';
 
-  modal_msg += '<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:20px;">Show/Hide ABC Features</p>'
-  modal_msg += '<p style="text-align:center;">'
-  modal_msg += '<input id="toggleannotations" class="advancedcontrolsdisabled btn btn-advancedcontrols" onclick="ToggleAnnotations(false)" type="button" value="Hide Annotations" title="Hides/Shows all common annotations in the ABC">';
-  modal_msg += '<input id="toggletext" class="advancedcontrolsdisabled btn btn-advancedcontrols" onclick="ToggleTextAnnotations(false)" type="button" value="Hide Text" title="Hides/Shows all text in the ABC">';
-  modal_msg += '<input id="togglechords" class="advancedcontrolsdisabled btn btn-advancedcontrols" onclick="ToggleChords(false)" type="button" value="Hide Chords" title="Hides/Shows all chords in the ABC">';
-  modal_msg += '<input id="toggletab" class="advancedcontrolsdisabled btn btn-advancedcontrols" onclick="ToggleTab(false)" type="button" value="Hide Injected Tab" title="Hides/Shows all injected tablature in the ABC">';
-  modal_msg += '<input id="toggleornaments" class="advancedcontrolsdisabled btn btn-advancedcontrols" onclick="ToggleOrnaments(false)" type="button" value="Hide Ornaments" title="Hides/Shows all ~ and {} style ornaments in the ABC">';
-  modal_msg += '</p>';
+  /* ===========================================================
+     ALWAYS VISIBLE: SHOW / HIDE
+     =========================================================== */
 
-  modal_msg += '<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:20px;">Strip ABC Features</p>'
+  modal_msg += '<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:20px;">Show/Hide ABC Features</p>';
   modal_msg += '<p style="text-align:center;">';
-  modal_msg += '<input id="stripannotations" class="advancedcontrolsdisabled btn btn-injectcontrols" onclick="ToggleAnnotations(true)" type="button" value="Strip Annotations" title="Strips all common annotations from the ABC">';
-  modal_msg += '<input id="striptext" class="advancedcontrolsdisabled btn btn-injectcontrols" onclick="ToggleTextAnnotations(true)" type="button" value="Strip Text" title="Strips all text from the ABC">';
-  modal_msg += '<input id="stripchords" class="advancedcontrolsdisabled btn btn-injectcontrols" onclick="ToggleChords(true)" type="button" value="Strip Chords" title="Strips all chords from the ABC">';
-  modal_msg += '<input id="striptab" class="advancedcontrolsdisabled btn btn-injectcontrols" onclick="ToggleTab(true)" type="button" value="Strip Injected Tab" title="Strips all injected tablature from the ABC">';
-  modal_msg += '<input id="stripornaments" class="advancedcontrolsdisabled btn btn-injectcontrols" onclick="ToggleOrnaments(true)" type="button" value="Strip Ornaments" title="Strips all injected ~ and {} style ornaments from the ABC">';
-  modal_msg += '</p>';
-  modal_msg += '<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:20px;">ABC Injection Features</p>'
-  modal_msg += '<p style="text-align:center;">'
-  modal_msg += '<input id="injecttunenumbers" class="advancedcontrols btn btn-injectcontrols-headers" onclick="TuneTitlesNumbersDialog()" type="button" value="Inject Tune Title Numbers" title="Opens a dialog where you can add or remove numbers on the tune titles">';
-  modal_msg += '<input id="injectsectionheader" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectSectionHeader()" type="button" value="Inject PDF Section Header" title="Injects a PDF section header placeholder tune at the cursor insertion point">';
-  modal_msg += '<input id="injectfontsettings" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectFontSettings()" type="button" value="Inject Font Settings" title="Injects all ABC font directives at the top of the current or all tunes from the current font settings">'
-  modal_msg += '</p>';
-  modal_msg += '<p style="text-align:center;margin-top:20px;">';
-  modal_msg += '<input id="injectallmidiparams" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectAllMIDIParams()" type="button" value="Inject MIDI Programs and Volumes" title="Injects MIDI Soundfont, Melody program, Bass program, Chord program, and volume annotations into one or all tunes">';
-  modal_msg += '<input id="injectmetronome" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectMetronome()" type="button" value="Inject Metronome" title="Injects ABC for a metronome into one or all tunes">';
-  modal_msg += '<input id="injectclicktrackall" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectRepeatsAndClickTrackAll()" type="button" value="Inject Repeats + Intros" title="Injects repeated copies of tunes and optional style-adaptive two-bar click intros into every tune">';
-  modal_msg += '</p>';
-  modal_msg += '<p style="text-align:center;margin-top:20px;">';
-  modal_msg += '<input id="injectheaderstring" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectHeaderString()" type="button" value="Inject ABC Header Text" title="Injects text at the top or bottom of the ABC header for one or all tunes">';
-  modal_msg += '<input id="injectstaffwidth" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectCustomStringedInstrumentTab()" type="button" value="Custom Stringed Instrument Tab" title="Injects a custom tablature description for stringed instruments">';
-  modal_msg += '<input id="injectlargeprint" class="advancedcontrols btn btn-injectcontrols-headers" onclick="NotationSpacingExplorer()" type="button" value="Notation Spacing Explorer" title="Find the right spacing and scale values for your notation">';
+  modal_msg += '<input id="toggleannotations" class="advancedcontrolsdisabled btn btn-advancedcontrols" onclick="ToggleAnnotations(false)" type="button" value="Hide Annotations">';
+  modal_msg += '<input id="toggletext" class="advancedcontrolsdisabled btn btn-advancedcontrols" onclick="ToggleTextAnnotations(false)" type="button" value="Hide Text">';
+  modal_msg += '<input id="togglechords" class="advancedcontrolsdisabled btn btn-advancedcontrols" onclick="ToggleChords(false)" type="button" value="Hide Chords">';
+  modal_msg += '<input id="toggletab" class="advancedcontrolsdisabled btn btn-advancedcontrols" onclick="ToggleTab(false)" type="button" value="Hide Injected Tab">';
+  modal_msg += '<input id="toggleornaments" class="advancedcontrolsdisabled btn btn-advancedcontrols" onclick="ToggleOrnaments(false)" type="button" value="Hide Ornaments">';
   modal_msg += '</p>';
 
-  // Showing tablature injectors?
-  if (gFeaturesShowTablatures) {
-    modal_msg += '<p style="text-align:center;margin-top:20px;">'
-    modal_msg += '<input id="injectharmonicatab" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectHarmonicaTab()" type="button" value="Inject Harmonica Tab" title="Injects 10-hole diatonic harmonica tablature into the ABC">';
-    modal_msg += '<input id="injectboxtab" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectBoxTablature()" type="button" value="Inject Irish Button Box Tab" title="Injects B/C or C#/D box tablature into the ABC">';
-    modal_msg += '<input id="injectanglotab" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectTablature_Anglo()" type="button" value="Inject Anglo Concertina Tab" title="Injects Anglo Concertina tablature into the ABC">';
-    modal_msg += '</p>';
-    modal_msg += '<p style="text-align:center;margin-top:20px;">'
-    modal_msg += '<input id="injectfiddlefingerings" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectTablature_Fiddle_Fingerings_Dialog()" type="button" value="Inject Fiddle Fingerings" title="Injects Fiddle fingerings tablature with either finger numbers or string names and finger numbers into the ABC">';
-    modal_msg += '<input id="injectmd" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectTablature_MD()" type="button" value="Inject Dulcimer Tab" title="Injects Mountain Dulcimer tablature into the ABC">';
-    modal_msg += '<input id="injectbambooflute" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectTablature_Bamboo_Flute()" type="button" value="Inject Bamboo Flute Tab" title="Injects Bamboo flute tablature into the ABC">';
-    modal_msg += '</p>';
-    modal_msg += '<p style="text-align:center;margin-top:20px;"><input id="ceoltastransform" style="margin-right:18px;" class="advancedcontrols btn btn-injectcontrols" onclick="DoCeoltasTransformDialog()" type="button" value="Comhaltas Transform" title="Brings up a dialog where you can transform the ABC to/from Comhaltas format"><input id="injectshapenotes" style="margin-right:18px;" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectTablature_ShapeNotes()" type="button" value="Inject Note Names/Shapes/Solfège" title="Injects note names (Pitch Names, Standard ABC, Comhaltas ABC), Shape Note shapes, or Solfège note names into the ABC"><input id="injectcustomtab" style="margin-right:18px;" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectCustomTab()" type="button" value="Inject Custom Tab" title="Injects custom tablature into the ABC"></p>';
-  }
+  /* ===========================================================
+     ALWAYS VISIBLE: STRIP
+     =========================================================== */
 
-  // Showing explorers?
-  if (gFeaturesShowExplorers) {
-    modal_msg += '<p style="text-align:center;margin-top:20px;"><input id="configure_instrument_explorer" class="configure_instrument_explorer button btn btn-instrumentexplorer" onclick="InstrumentExplorer();" type="button" value="MIDI Instrument Explorer" title="Brings up a tune player where you can experiment playing the current tune with different MIDI soundfonts and melody/chord instruments"><input id="configure_swing_explorer" class="btn btn-swingexplorer configure_swing_explorer " onclick="SwingExplorer()" type="button" value="Swing Explorer" title="Brings up a tune player where you can experiment with different swing factor settings"><input id="configure_grace_explorer" class="btn btn-graceexplorer configure_grace_explorer " onclick="GraceExplorer()" type="button" value="Grace Duration Explorer" title="Brings up a tune player where you can experiment with different grace note duration settings"><input id="configure_roll_explorer" class="btn btn-rollexplorer configure_roll_explorer " onclick="RollExplorer()" type="button" value="Roll Explorer" title="Brings up a tune player where you can experiment with different roll parameters"></p>';
-  }
+  modal_msg += '<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:20px;">Strip ABC Features</p>';
+  modal_msg += '<p style="text-align:center;">';
+  modal_msg += '<input id="stripannotations" class="advancedcontrolsdisabled btn btn-injectcontrols" onclick="ToggleAnnotations(true)" type="button" value="Strip Annotations">';
+  modal_msg += '<input id="striptext" class="advancedcontrolsdisabled btn btn-injectcontrols" onclick="ToggleTextAnnotations(true)" type="button" value="Strip Text">';
+  modal_msg += '<input id="stripchords" class="advancedcontrolsdisabled btn btn-injectcontrols" onclick="ToggleChords(true)" type="button" value="Strip Chords">';
+  modal_msg += '<input id="striptab" class="advancedcontrolsdisabled btn btn-injectcontrols" onclick="ToggleTab(true)" type="button" value="Strip Injected Tab">';
+  modal_msg += '<input id="stripornaments" class="advancedcontrolsdisabled btn btn-injectcontrols" onclick="ToggleOrnaments(true)" type="button" value="Strip Ornaments">';
+  modal_msg += '</p>';
+  modal_msg += '<hr style="margin-top:26px;">';
 
-  // Showing export and explorers?
-  if (gFeaturesShowExport && gFeaturesShowExplorers) {
-    modal_msg += '<p style="text-align:center;margin-top:20px;"><input id="configure_reverb_explorer" class="btn btn-reverbexplorer configure_reverb_explorer " onclick="ReverbExplorer()" type="button" value="Reverb Explorer" title="Brings up a tune player where you can experiment with different reverb parameters"><input id="configure_batch_mp3_export" class="btn btn-batchmp3export configure_batch_mp3_export " onclick="ExportAll()" type="button" value="Export All Tunes" title="Exports all the tunes in the ABC text area as audio, image, MusicXML, and other formats"><input class="sortbutton btn btn-sortbutton" id="sortbutton" onclick="SortDialog()" type="button" value="Sort by Tag" title="Brings up the Sort by Specific Tag dialog"><input class="incipitsbuilder btn btn-incipitsbuilder" id="incipitsbuilder" onclick="IncipitsBuilderDialog()" type="button" value="Notes Incipits Builder" title="Formats the ABC for notation incipits PDF export"></p>';
-  } else
-  if ((!gFeaturesShowExport) && gFeaturesShowExplorers) {
-    modal_msg += '<p style="text-align:center;margin-top:20px;"><input id="configure_reverb_explorer" class="btn btn-reverbexplorer configure_reverb_explorer " style="margin-right:0px" onclick="ReverbExplorer()" type="button" value="Reverb Explorer" title="Brings up a tune player where you can experiment with different reverb parameters"></p>';
-  } else
-  if (gFeaturesShowExport && (!gFeaturesShowExplorers)) {
-    modal_msg += '<p style="text-align:center;margin-top:20px;"><input id="configure_batch_mp3_export" class="btn btn-batchmp3export configure_batch_mp3_export " onclick="ExportAll()" type="button" value="Export All Tunes" title="Exports all the tunes in the ABC text area as audio, image, MusicXML, and other formats"><input class="sortbutton btn btn-sortbutton" id="sortbutton" onclick="SortDialog()" type="button" value="Sort by Tag" title="Brings up the Sort by Specific Tag dialog"><input class="incipitsbuilder btn btn-incipitsbuilder" id="incipitsbuilder" onclick="IncipitsBuilderDialog()" type="button" value="Notes Incipits Builder" title="Formats the ABC for notation incipits PDF export"></p>';
+  /* ===========================================================
+     TABS
+     =========================================================== */
 
-  }
+  modal_msg += '<div class="adv-tabs">';
+  modal_msg += '<div class="adv-tab-bar">';
 
-  // Showing only bagpipes drones/tranpose tools?
-  if (gFeaturesShowBagpipeDrones) {
-    modal_msg += '<p style="text-align:center;margin-top:20px;"><input id="phrasebuilder" class="advancedcontrols btn btn-phrasebuilder" onclick="PhraseBuilder()" type="button" value="Phrase Builder" title="Builds a phrase-by-phrase version of the tune for use with the Tune Trainer"><input id="customcssgenerator" class="advancedcontrols btn btn-cssgenerator" onclick="abcjsColorEditor()" type="button" value="Custom CSS Generator" title="Inject a custom CSS block at the top of the ABC where you can set the color of each abcjs element"><input class="transposetokey btn btn-transposetokey" id="transposetokey" onclick="TransposeToKeyDialog()" type="button" value="Transpose to Key" title="Transposes one or all the tunes to a specific key"><input id="injectbagpipedrones" class="advancedcontrols btn btn-injectcontrols" onclick="InjectBagpipeSounds()" type="button" value="Inject Bagpipes" title="Changes the melody sound to one of several bagpipe instruments and inject drones as a second voice of the tune(s)"></p>';
-  }
+  modal_msg += '<button class="adv-tab-btn" data-tab="adv-tab-injection" onclick="AdvancedControls_SelectTab(\'adv-tab-injection\')">ABC<br/>Features</button>';
 
-  modal_msg += '</div>';
+  modal_msg += '<button class="adv-tab-btn" data-tab="adv-tab-tablatures" onclick="AdvancedControls_SelectTab(\'adv-tab-tablatures\')">Inject<br/>Tablature</button>';
+
+  modal_msg += '<button class="adv-tab-btn" data-tab="adv-tab-players" onclick="AdvancedControls_SelectTab(\'adv-tab-players\')">Explorers</button>';
+
+  modal_msg += '<button class="adv-tab-btn" data-tab="adv-tab-bagpipes" onclick="AdvancedControls_SelectTab(\'adv-tab-bagpipes\')">Other<br/>Tools</button>';
+
+  modal_msg += '</div><div class="adv-tab-panels">';
+
+  /* ---------------- Injection tab ---------------- */
+
+  modal_msg += '<div id="adv-tab-injection" class="adv-tab-panel">';
+  modal_msg += '<p style="text-align:center;">';
+  modal_msg += '<input id="injecttunenumbers" class="advancedcontrols btn btn-injectcontrols-headers" onclick="TuneTitlesNumbersDialog()" type="button" value="Inject Tune Title Numbers">';
+  modal_msg += '<input id="injectsectionheader" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectSectionHeader()" type="button" value="Inject PDF Section Header">';
+  modal_msg += '<input id="injectfontsettings" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectFontSettings()" type="button" value="Inject Font Settings">';
+  modal_msg += '</p>';
+
+  modal_msg += '<p style="text-align:center;margin-top:24px;">';
+  modal_msg += '<input id="injectallmidiparams" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectAllMIDIParams()" type="button" value="Inject MIDI Programs and Volumes">';
+  modal_msg += '<input id="injectmetronome" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectMetronome()" type="button" value="Inject Metronome">';
+  modal_msg += '<input id="injectclicktrackall" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectRepeatsAndClickTrackAll()" type="button" value="Inject Repeats + Intros">';
+  modal_msg += '</p>';
+
+  modal_msg += '<p style="text-align:center;margin-top:24px;">';
+  modal_msg += '<input id="injectheaderstring" style="margin-right:20px;" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectHeaderString()" type="button" value="Inject ABC Header Text">';
+  modal_msg += '<input id="injectcustomstringedtab" style="margin-right:20px;" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectCustomStringedInstrumentTab()" type="button" value="Inject Custom Stringed Instrument Tab">';
+  modal_msg += '<input id="ceoltastransform" class="advancedcontrols btn btn-injectcontrols-headers" onclick="DoCeoltasTransformDialog()" type="button" value="Comhaltas Transform" title="Brings up a dialog where you can transform the ABC to/from Comhaltas format">';
+  modal_msg += '</p></div>';
+
+  /* ---------------- Tablatures tab ---------------- */
+
+  modal_msg += '<div id="adv-tab-tablatures" class="adv-tab-panel">';
+  modal_msg += '<p style="text-align:center;">';
+  modal_msg += '<input id="injectharmonicatab" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectHarmonicaTab()" type="button" value="Inject Harmonica Tab">';
+  modal_msg += '<input id="injectboxtab" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectBoxTablature()" type="button" value="Inject Irish Button Box Tab">';
+  modal_msg += '<input id="injectanglotab" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectTablature_Anglo()" type="button" value="Inject Anglo Concertina Tab">';
+  modal_msg += '</p>';
+
+  modal_msg += '<p style="text-align:center;margin-top:24px;">';
+  modal_msg += '<input id="injectfiddlefingerings" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectTablature_Fiddle_Fingerings_Dialog()" type="button" value="Inject Fiddle Fingerings">';
+  modal_msg += '<input id="injectmd" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectTablature_MD()" type="button" value="Inject Dulcimer Tab">';
+  modal_msg += '<input id="injectbambooflute" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectTablature_Bamboo_Flute()" type="button" value="Inject Bamboo Flute Tab">';
+  modal_msg += '<p style="text-align:center;margin-top:24px;">';
+  modal_msg += '<input id="injectshapenotes" style="margin-right:24px;" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectTablature_ShapeNotes()" type="button" value="Inject Note Names/Shapes/Solfège" title="Injects note names (Pitch Names, Standard ABC, Comhaltas ABC), Shape Note shapes, or Solfège note names into the ABC">';
+  modal_msg += '<input id="injectcustomtab" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectCustomTab()" type="button" value="Inject Custom Tab" title="Injects custom tablature into the ABC">';
+  modal_msg += '</p></div>';
+
+  /* ---------------- Explorers tab ---------------- */
+
+  modal_msg += '<div id="adv-tab-players" class="adv-tab-panel">';
+  modal_msg += '<p style="text-align:center;">';
+
+  modal_msg += '<input id="configure_instrument_explorer" class="btn btn-instrumentexplorer" onclick="InstrumentExplorer()" type="button" value="MIDI Instrument Explorer">';
+  modal_msg += '<input id="configure_swing_explorer" class="btn btn-swingexplorer" onclick="SwingExplorer()" type="button" value="Swing Explorer">';
+  modal_msg += '<input id="configure_grace_explorer" class="btn btn-graceexplorer" onclick="GraceExplorer()" type="button" value="Grace Duration Explorer">';
+  modal_msg += '</p>';
+
+  modal_msg += '<p style="text-align:center;margin-top:24px;">';
+  modal_msg += '<input id="configure_roll_explorer" class="btn btn-rollexplorer" onclick="RollExplorer()" type="button" value="Roll Explorer">';
+  modal_msg += '<input id="configure_reverb_explorer" class="btn btn-reverbexplorer" onclick="ReverbExplorer()" type="button" value="Reverb Explorer">';
+  modal_msg += '<input id="injectlargeprint" class="advancedcontrols btn btn-notation-spacing-explorer" onclick="NotationSpacingExplorer()" type="button" value="Notation Spacing Explorer">';
+
+  modal_msg += '</p></div>';
+
+  /* ---------------- Other tools tab ---------------- */
+
+  modal_msg += '<div id="adv-tab-bagpipes" class="adv-tab-panel">';
+  modal_msg += '<p style="text-align:center;">';
+  modal_msg += '<input id="configure_batch_mp3_export" class="btn btn-batchmp3export" onclick="ExportAll()" type="button" value="Export All Tunes">';
+  modal_msg += '<input id="sortbutton" class="sortbutton btn btn-sortbutton" onclick="SortDialog()" type="button" value="Sort by Tag">';
+  modal_msg += '<input id="incipitsbuilder" class="incipitsbuilder btn btn-incipitsbuilder" onclick="IncipitsBuilderDialog()" type="button" value="Notes Incipits Builder">';
+  modal_msg += '<input id="phrasebuilder" class="advancedcontrols btn btn-phrasebuilder" onclick="PhraseBuilder()" type="button" value="Phrase Builder">';
+  modal_msg += '</p>';
+  modal_msg += '<p style="text-align:center;margin-top:24px;">';
+  modal_msg += '<input id="customcssgenerator" class="advancedcontrols btn btn-cssgenerator" onclick="abcjsColorEditor()" type="button" value="Custom CSS Generator">';
+  modal_msg += '<input id="transposetokey" class="transposetokey btn btn-transposetokey" onclick="TransposeToKeyDialog()" type="button" value="Transpose to Key">';
+  modal_msg += '<input id="injectbagpipedrones" class="advancedcontrols btn btn-injectcontrols" onclick="InjectBagpipeSounds()" type="button" value="Inject Bagpipe Sounds">';
+  modal_msg += '</p></div>';
+
+  modal_msg += '<p style="font-size:2pt;">&nbsp;</p>';
+  modal_msg += '</div></div></div>';
 
   var format = GetRadioValue("notenodertab");
-
-  // Find the OK button for the settings dialog
-  setTimeout(function() {
-
-    IdleMoreABCTools();
-
-  }, 25);
 
   setTimeout(function() {
 
@@ -49434,34 +49360,24 @@ function AdvancedControlsDialog() {
     // Idle the show tab names control
     IdleAllowShowTabNames();
 
+    // Init the tabs
+    AdvancedControls_InitTabs();
+
   }, 50);
 
 
   DayPilot.Modal.alert(modal_msg, {
     theme: "modal_flat",
-    top: 20,
+    top: 50,
     width: 740,
-    scrollWithPage: (AllowDialogsToScroll())
-  }).then(function() {
-
+    scrollWithPage: AllowDialogsToScroll()
   });
 
-  // Change button label for export all for whistle
-
-  var elem = document.getElementById("configure_batch_mp3_export");
-
-  if (elem) {
-    // Hide the batch exporter button on mobile
-    if (isMobileBrowser()) {
-      document.getElementById("configure_batch_mp3_export").style.display = "none";
-    }
+  if (isMobileBrowser()) {
+    var e = document.getElementById("configure_batch_mp3_export");
+    if (e) e.style.display = "none";
   }
 }
-
-//
-// Advanced tool settings
-// This is used for less-commonly access settings and options
-//
 
 // Reset the default roll parameter strings
 function ResetRollDefaultParams() {

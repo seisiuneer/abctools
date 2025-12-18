@@ -262,7 +262,7 @@ padding:12px;}
 #incipitsbuilder{
 	height:42px;
 	padding:12px;
-	margin-right:0px;
+	margin-right:24px;
 }
 
 @media (hover: hover) {
@@ -670,13 +670,13 @@ opacity: 0.4;
 padding:12px;
 }
 
-#ceoltasdialog,#injectheaderstring,#injectallmidiparams,#injectharmonicatab,#injectboxtab,#injectfiddlefingerings,#injectmd,#injectmelody,#injectstaffwidth,#injectmetronome,#injectshapenotes,#injectsectionheader,#injecttunenumbers,#addtunetitlenumbers,#compliancedialog,#ceoltastransform,#injectbcbox,#normalizediacriticals,#customcssgenerator,#phrasebuilder{
+#ceoltasdialog,#injectheaderstring,#injectallmidiparams,#injectharmonicatab,#injectboxtab,#injectfiddlefingerings,#injectmd,#injectmelody,#injectstaffwidth,#injectmetronome,#injectshapenotes,#injectsectionheader,#injecttunenumbers,#addtunetitlenumbers,#compliancedialog,#injectbcbox,#normalizediacriticals,#customcssgenerator,#injectcustomstringedtab{
 height:42px;
 padding:12px;
 margin-right:24px;
 }
 
-#injectbambooflute,#injectclicktrackall,#injectchords,#injectheadertemplate,#injectanglotab,#looper_metronomebutton,#injectlargeprint,#pdfinjectlargeprint,#tunebookbuilder_add,#injectfontsettings,#removetunetitlenumbers,#ceoltasdialoginverse,#compliancetransform,#compliancedialoginverse,#fiddlefingeringsdialog0,#fiddlefingeringsdialog1,#fiddlefingeringsdialog2,#fiddlefingeringsdialog3,#fiddlefingeringsdialog4,#websitefull,#injectheaderstringfh,#injectcsdbox,#websitelightbox,#websitesimple,#escapediacriticals,#injectbagpipedrones{
+#injectbambooflute,#injectclicktrackall,#injectchords,#injectheadertemplate,#injectanglotab,#looper_metronomebutton,#pdfinjectlargeprint,#tunebookbuilder_add,#injectfontsettings,#removetunetitlenumbers,#ceoltasdialoginverse,#compliancetransform,#compliancedialoginverse,#fiddlefingeringsdialog0,#fiddlefingeringsdialog1,#fiddlefingeringsdialog2,#fiddlefingeringsdialog3,#fiddlefingeringsdialog4,#websitefull,#injectheaderstringfh,#injectcsdbox,#websitelightbox,#websitesimple,#escapediacriticals,#injectbagpipedrones,#injectlargeprint,#phrasebuilder,#ceoltastransform{
 height:42px;
 padding:12px;
 }
@@ -1450,7 +1450,7 @@ margin-bottom:100px;
 #configure_instrument_explorer{
 height:42px;
 padding:12px;
-margin-right:18px;
+margin-right:24px;
 }
 
 @media (hover: hover) {
@@ -3716,7 +3716,7 @@ margin-top:-7px;
 #configure_swing_explorer{
 	height:42px;
 	padding:12px;
-	margin-right:18px;
+	margin-right:24px;
 }
 
 @media (hover: hover) {
@@ -3728,7 +3728,6 @@ margin-top:-7px;
 #configure_grace_explorer{
 	height:42px;
 	padding:12px;
-	margin-right:18px;
 }
 
 @media (hover: hover) {
@@ -3740,6 +3739,7 @@ margin-top:-7px;
 #configure_roll_explorer{
 	height:42px;
 	padding:12px;
+	margin-right:24px;
 }
 
 @media (hover: hover) {
@@ -6024,6 +6024,49 @@ display:block;
   background-color: rgba(0,105,153,0.06);
 }
 
+/* ============================================================
+   Advanced Controls Tabs
+   ============================================================ */
+
+.adv-tabs {
+  margin-top: 12px;
+}
+
+.adv-tab-bar {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom:28px;
+  margin-top:20px;
+}
+
+.adv-tab-btn {
+  font-family: helvetica, sans-serif;
+  display: inline-flex;          /* key */
+  align-items: center;           /* vertical centering */
+  justify-content: center;       /* horizontal centering */
+  text-align: center;            /* fallback */
+  background: #ddd !important;        
+  line-height: 1.2;              /* prevents font-weight jump */
+  white-space: normal;           /* allows wrapping like “ABC\nFeatures” */
+}
+
+.adv-tab-btn.active {
+  background: #ffffff !important;
+  border-color: #888;
+  font-weight: bold;
+  text-align:center;
+}
+
+.adv-tab-panel {
+  display: none;
+}
+
+.adv-tab-panel.active {
+  display: block;
+}
+
 /******************************************************************************/
 /* STYLES RELATED TO BUTTONS                                                  */
 /******************************************************************************/
@@ -6430,6 +6473,11 @@ display:block;
 }
 
 .btn-reverbexplorer{
+  --color: black;
+  --background-color: #C8ECFE;
+}
+
+.btn-notation-spacing-explorer{
   --color: black;
   --background-color: #C8ECFE;
 }
