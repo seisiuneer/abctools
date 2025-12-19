@@ -4603,9 +4603,10 @@ display:none;
 #zoombanner>p{
 font-size:12pt;
 font-family:helvetica;
+color:white;
 margin-top:0px;
 margin-bottom:0px;
-background-color:#A0FF80;
+background-color:#b80000;
 cursor: pointer;
 padding: 3px;
 }
