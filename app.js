@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3076_121925_1230";
+var gVersionNumber = "3077_121925_1300";
 
 var gMIDIInitStillWaiting = false;
 
@@ -386,9 +386,6 @@ var gDisableSelectedPlay = false;
 var gMixedNotationAndQRCode = false;
 
 // For showing and hiding features
-var gFeaturesShowSearch = true;
-var gFeaturesShowExamples = true;
-var gFeaturesShowTemplates = true;
 var gFeaturesShowTabButtons = true;
 
 // Force an update of local storage for the tab
@@ -2672,7 +2669,7 @@ function TransposeToKeyDialog() {
 
   const modal = DayPilot.Modal.form(form, theData, {
     theme: "modal_flat_wide",
-    top: 200,
+    top: 100,
     width: 600,
     scrollWithPage: (AllowDialogsToScroll()),
     okText: "Transpose",
@@ -4170,7 +4167,7 @@ function SortDialog() {
 
   const modal = DayPilot.Modal.form(form, theData, {
     theme: "modal_flat",
-    top: 200,
+    top: 175,
     width: 500,
     scrollWithPage: (AllowDialogsToScroll()),
     okText: "Sort",
@@ -19501,83 +19498,7 @@ function BuildTuneSet() {
 // Add an ABC file, sample tune, or template
 //
 var gAddABCOKButton = null;
-
-function Configure_AddABC_UI() {
-
-  //console.log("Configure_AddABC_UI");
-
-  var old_gFeaturesShowSearch = gFeaturesShowSearch;
-  var old_gFeaturesShowExamples = gFeaturesShowExamples;
-  var old_gFeaturesShowTemplates = gFeaturesShowTemplates;
-
-  // Setup initial values
-  const theData = {
-    showsearch: gFeaturesShowSearch,
-    showexampletunes: gFeaturesShowExamples,
-    showexampletemplates: gFeaturesShowTemplates,
-
-  };
-
-  var form = [{
-    html: '<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-left:15px;">Select Add ABC Feature Options</p>'
-  }, {
-    name: "          Show Search and Add Tunes",
-    id: "showsearch",
-    type: "checkbox",
-    cssClass: "configure_ui_options_form_text"
-  }, {
-    name: "          Show Example Tunes",
-    id: "showexampletunes",
-    type: "checkbox",
-    cssClass: "configure_ui_options_form_text"
-  }, {
-    name: "          Show Example Templates",
-    id: "showexampletemplates",
-    type: "checkbox",
-    cssClass: "configure_ui_options_form_text"
-  }, ];
-
-  const modal = DayPilot.Modal.form(form, theData, {
-    theme: "modal_flat",
-    top: 100,
-    width: 500,
-    scrollWithPage: (AllowDialogsToScroll()),
-    autoFocus: false
-  }).then(function(args) {
-
-    if (!args.canceled) {
-
-      gFeaturesShowSearch = args.result.showsearch;
-      gFeaturesShowExamples = args.result.showexampletunes;
-      gFeaturesShowTemplates = args.result.showexampletemplates;
-
-      // No change, just return;
-      if ((gFeaturesShowSearch == old_gFeaturesShowSearch) &&
-        (gFeaturesShowExamples == old_gFeaturesShowExamples) &&
-        (gFeaturesShowTemplates == old_gFeaturesShowTemplates)) {
-
-        //console.log("Configure_AddABC_UI - No change in settings");
-
-        return;
-
-      }
-
-      // Save the settings
-      SaveConfigurationSettings();
-
-      // Close the Add ABC dialog
-      gAddABCOKButton.click();
-
-      // And relaunch it after a short delay
-      setTimeout(function() {
-
-        AddABC();
-
-      }, 250);
-    }
-
-  });
-}
+var gAddABCLastTab = "";
 
 //
 // Close the Add dialog after adding tunes to the workarea
@@ -19591,12 +19512,54 @@ function AddABCCallback() {
 
 }
 
+function AddABC_SelectTab(tabId) {
+
+  var dialog = document.getElementById("add-new-tune-dialog");
+  if (!dialog) return;
+
+  // Remember last tab
+  gAddABCLastTab = tabId;
+
+  var buttons = dialog.querySelectorAll(".adv-tab-btn");
+  var panels  = dialog.querySelectorAll(".adv-tab-panel");
+
+  buttons.forEach(function(btn) {
+    var active = (btn.getAttribute("data-tab") === tabId);
+    btn.classList.toggle("active", active);
+    btn.setAttribute("aria-selected", active ? "true" : "false");
+  });
+
+  panels.forEach(function(panel) {
+    panel.classList.toggle("active", panel.id === tabId);
+  });
+
+}
+
+function AddABC_InitTabs() {
+
+  var dialog = document.getElementById("add-new-tune-dialog");
+  if (!dialog) return;
+
+  var tabBar = dialog.querySelector(".adv-tab-bar");
+  if (!tabBar) return;
+
+  var btns = tabBar.querySelectorAll(".adv-tab-btn");
+  if (!btns.length) return;
+
+  // Restore remembered tab if it exists
+  if (gAddABCLastTab && dialog.querySelector("#" + gAddABCLastTab)) {
+    AddABC_SelectTab(gAddABCLastTab);
+  } else {
+    AddABC_SelectTab(btns[0].getAttribute("data-tab"));
+  }
+}
+
 function AddABC() {
 
   // Keep track of dialogs
   sendGoogleAnalytics("dialog", "AddABC");
 
-  var modal_msg = '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:15px;">Add ABC Tunes, Templates, and PDF Features&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#add_templates_dialog" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span><img id="moreaddabcsettings" class="moreaddabcsettings moresettingsbutton" src="img/settings.png" title="Add ABC Settings" onclick="Configure_AddABC_UI()"></img></p>';
+  var modal_msg = '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:15px;">Add ABC Tunes, Templates, and PDF Features&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#add_templates_dialog" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>';
   modal_msg += '<div id="add-new-tune-dialog">';
   modal_msg += '<p style="text-align:center;margin-top:28px;font-size:18px;">Add Your Own Tunes from ABC, MusicXML, BWW, or MIDI Files</p>';
   modal_msg += '<p style="text-align:center;margin-top:16px;">';
@@ -19606,14 +19569,9 @@ function AddABC() {
   modal_msg += '<input class="dialogrestoreautobutton btn btn-restorebutton" id="dialogrestoreautobutton" onclick="RestoreSnapshot(event,true,true);" type="button" value="Restore from Auto-Snapshot" title="Replaces the contents of the ABC editor with an Auto-Snapshot saved in browser storage" style="display:none;">';
   modal_msg += '</p>';
 
-  // Showing search?
-  if (gFeaturesShowSearch) {
-
-    modal_msg += '<p style="text-align:center;font-size:18px;margin-top:24px;">Search and Add Tunes (Over 65,000 Tunes Available)</p>';
-    modal_msg += '<p style="text-align:center;margin-top:16px;">';
-    modal_msg += '<input id="searchandaddtunes" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AddFromSearch(null,AddABCCallback);" type="button" value="Tune Search Engine" title="Search for tunes to add to your tunebook.&nbsp;&nbsp;Over 65,000 tunes available.">';
-
-  }
+  modal_msg += '<p style="text-align:center;font-size:18px;margin-top:24px;">Search and Add Tunes (Over 65,000 Tunes Available)</p>';
+  modal_msg += '<p style="text-align:center;margin-top:16px;">';
+  modal_msg += '<input id="searchandaddtunes" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AddFromSearch(null,AddABCCallback);" type="button" value="Tune Search Engine" title="Search for tunes to add to your tunebook.&nbsp;&nbsp;Over 65,000 tunes available.">';
 
   modal_msg += '<p style="text-align:center;font-size:18px;margin-top:24px;">Change the Order or Delete Tunes</p>';
   modal_msg += '<p style="text-align:center;margin-top:16px;">';
@@ -19630,42 +19588,65 @@ function AddABC() {
   modal_msg += '<input id="culltunes" class="advancedcontrols btn btn-injectcontrols-headers" onclick="CullTunes();" type="button" value="Delete Tunes from the Tunebook" title="Delete selected tunes from the tunebook">';
   modal_msg += '</p>';
 
-  // Showing examples?
-  if (gFeaturesShowExamples) {
-    modal_msg += '<p style="text-align:center;font-size:18px;margin-top:24px;">Add an Example ABC Tune</p>';
-    modal_msg += '<p style="text-align:center;margin-top:16px;">';
-    modal_msg += '<input id="addnewreel" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AppendSampleReel();" type="button" value="Cooley\'s (reel)" title="Adds an example reel (Cooley\'s) to the end of the ABC">';
-    modal_msg += '<input id="addnewjig" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AppendSampleJig();" type="button" value="The Kesh (jig)" title="Adds an example jig (The Kesh) to the end of the ABC">';
-    modal_msg += '<input id="addnewhornpipe" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AppendSampleHornpipe();" type="button" value="Alexander\'s (hornpipe)" title="Adds an example Hornpipe (Alexander\'s) to the end of the ABC">';
-    modal_msg += '</p>';
-  }
+  modal_msg += '<hr style="margin-top:26px;">';
 
-  // Showing templates?
-  if (gFeaturesShowTemplates) {
-    modal_msg += '<p style="text-align:center;margin-top:24px;font-size:18px;">Add an ABC Template</p>';
-    modal_msg += '<p style="text-align:center;margin-top:16px;">';
-    modal_msg += '<input id="addnewtunetemplate" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AppendTuneTempate();" type="button" value="Add a Tune Template" title="Adds a tune template to the end of the ABC">';
-    modal_msg += '<input id="addsongtemplate" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AppendSongTemplate();" type="button" value="Add a Song Template" title="Adds a minimal song template to the end of the ABC">';
-    modal_msg += '<input id="addnewsong" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AppendSampleSong();" type="button" value="Add an Example Song" title="Adds an example song to the end of the ABC">';
-    modal_msg += '</p>';
-    modal_msg += '<p style="text-align:center;margin-top:16px;">';
-    modal_msg += '<input id="addbodhrantemplate" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AddBodhranTemplate();" type="button" value="Add Bodhran Backing Track Template" title="Opens a dialog where you can choose a bodhran backing track template of common tune styles to add to the end of the ABC">';
-    modal_msg += '<input id="addpdfannotationstemplate" class="advancedcontrols btn btn-injectcontrols-headers" style="margin-right:24px;" onclick="AddPDFAnnotationsTemplate(event);" type="button" value="Add PDF Tunebook Features Template" title="Adds a template that contains the most common PDF tunebook export feature annotations">';
-    modal_msg += '</p>';
-  }
+  /* ===========================================================
+     TABS
+     =========================================================== */
 
-  modal_msg += '<p style="text-align:center;margin-top:24px;font-size:18px;">Inject PDF Tunebook Features</p>';
-  modal_msg += '<p style="text-align:center;margin-top:24px;"><input id="tunebookbuilder-add-play" class="advancedcontrols btn btn-injectcontrols-tunebookbuilder-play" onclick="PDFTunebookBuilderPlayOnly();" type="button" value="Inject Only PDF Tunebook Play Features" title="Inject only minimal playback-related instrument and volume commands at the top of your tunebook ABC"><input id="tunebookbuilder_add" class="advancedcontrols btn btn-injectcontrols-tunebookbuilder" onclick="PDFTunebookBuilder();" type="button" value="Inject All PDF Tunebook Features" title="Inject commands at the top of your tunebook ABC for adding a Title Page, Table of Contents, Index, Page Headers, Page Footers, instruments and volumes for Playback Links, and Custom QR Code"></p>';
+  modal_msg += '<div class="adv-tabs">';
+  modal_msg += '<div class="adv-tab-bar">';
 
-  modal_msg += '<p style="text-align:center;margin-top:24px;">';
-  modal_msg += '</p>';
+  modal_msg += '<button class="adv-tab-btn" data-tab="addabc-tab-examples" onclick="AddABC_SelectTab(\'addabc-tab-examples\')">Add<br/>Example<br/>Tunes</button>';
+
+  modal_msg += '<button class="adv-tab-btn" data-tab="addabc-tab-templates" onclick="AddABC_SelectTab(\'addabc-tab-templates\')">Add<br/>Example<br/>Templates</button>';
+
+  modal_msg += '<button class="adv-tab-btn" data-tab="addabc-tab-pdf-features" onclick="AddABC_SelectTab(\'addabc-tab-pdf-features\')">Inject<br/>PDF<br/>Features</button>';
+
   modal_msg += '</div>';
+  modal_msg += '<div class="adv-tab-panels">';
+
+  /* ---------------- Example ABC tunes tab ---------------- */
+
+  modal_msg += '<div id="addabc-tab-examples" class="adv-tab-panel">';
+
+  modal_msg += '<p style="text-align:center;margin-top:16px;">';
+  modal_msg += '<input id="addnewreel" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AppendSampleReel();" type="button" value="Cooley\'s (reel)" title="Adds an example reel (Cooley\'s) to the end of the ABC">';
+  modal_msg += '<input id="addnewjig" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AppendSampleJig();" type="button" value="The Kesh (jig)" title="Adds an example jig (The Kesh) to the end of the ABC">';
+  modal_msg += '<input id="addnewhornpipe" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AppendSampleHornpipe();" type="button" value="Alexander\'s (hornpipe)" title="Adds an example Hornpipe (Alexander\'s) to the end of the ABC">';
+  modal_msg += '</p>';
+  modal_msg += '<p style="text-align:center;margin-top:16px;">';
+  modal_msg  += '<input id="addjsbach" class="advancedcontrols btn btn-injectcontrols-headers" style="margin-right:24px;" onclick="AppendJSBach();" type="button" value="J.S. Bach Two-Part Invention #1" title="Adds the J.S. Bach 2-Part Invention #1 to the end of the ABC">';
+  modal_msg  += '<input id="addjsbach" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AppendJSBach2();" type="button" value="J.S. Bach BWV570 Fantasia" title="Adds the J.S. Bach BWV570 Fantasia for Pipe Organ to the end of the ABC">';
+  modal_msg += '</p></div>';
+
+  /* ---------------- ABC templates tab ---------------- */
+  modal_msg += '<div id="addabc-tab-templates" class="adv-tab-panel">';
+  modal_msg += '<p style="text-align:center;margin-top:16px;">';
+  modal_msg += '<input id="addnewtunetemplate" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AppendTuneTempate();" type="button" value="Add a Tune Template" title="Adds a tune template to the end of the ABC">';
+  modal_msg += '<input id="addsongtemplate" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AppendSongTemplate();" type="button" value="Add a Song Template" title="Adds a minimal song template to the end of the ABC">';
+  modal_msg += '<input id="addnewsong" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AppendSampleSong();" type="button" value="Add an Example Song" title="Adds an example song to the end of the ABC">';
+  modal_msg += '</p>';
+  modal_msg += '<p style="text-align:center;margin-top:16px;">';
+  modal_msg += '<input id="addbodhrantemplate" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AddBodhranTemplate();" type="button" value="Add Bodhran Backing Track Template" title="Opens a dialog where you can choose a bodhran backing track template of common tune styles to add to the end of the ABC">';
+  modal_msg += '<input id="addpdfannotationstemplate" class="advancedcontrols btn btn-injectcontrols-headers" style="margin-right:24px;" onclick="AddPDFAnnotationsTemplate(event);" type="button" value="Add PDF Tunebook Features Template" title="Adds a template that contains the most common PDF tunebook export feature annotations">';
+  modal_msg += '</p></div>';
+
+  /* ---------------- PDF features tab ---------------- */
+  modal_msg += '<div id="addabc-tab-pdf-features" class="adv-tab-panel">';
+  modal_msg += '<p style="text-align:center;margin-top:24px;"><input id="tunebookbuilder-add-play" class="advancedcontrols btn btn-injectcontrols-tunebookbuilder-play" onclick="PDFTunebookBuilderPlayOnly();" type="button" value="Inject Only PDF Tunebook Play Features" title="Inject only minimal playback-related instrument and volume commands at the top of your tunebook ABC"><input id="tunebookbuilder_add" class="advancedcontrols btn btn-injectcontrols-tunebookbuilder" onclick="PDFTunebookBuilder();" type="button" value="Inject All PDF Tunebook Features" title="Inject commands at the top of your tunebook ABC for adding a Title Page, Table of Contents, Index, Page Headers, Page Footers, instruments and volumes for Playback Links, and Custom QR Code"></p></div>';
+
+  modal_msg += '<p style="font-size:2pt;">&nbsp;</p>';
+  modal_msg += '</div></div></div>';
 
   setTimeout(function() {
 
     idleAddABC();
 
-  }, 25);
+    // Init the tabs
+    AddABC_InitTabs();
+
+  }, 50);
 
   DayPilot.Modal.alert(modal_msg, {
     theme: "modal_flat",
@@ -20544,11 +20525,6 @@ function AppendSampleSong() {
 //
 function AddPDFAnnotationsTemplate(e) {
 
-  if (e.shiftKey && e.altKey){
-    AddDatabaseTemplate();
-    return;
-  }
-
   // Keep track of actions
   sendGoogleAnalytics("action", "AddPDFAnnotationsTemplate");
 
@@ -20582,129 +20558,184 @@ function AddPDFAnnotationsTemplate(e) {
 }
 
 //
-// Add note database loader template
+// Add the J.S. Bach 2-Part Invention #1
 //
-function AddDatabaseTemplate() {
+function AppendJSBach(){
 
   // Keep track of actions
-  sendGoogleAnalytics("action", "AddDatabaseTemplate");
+  sendGoogleAnalytics("action","AppendJSBach");
 
   // Stuff in some default ABC with additional options explained
   var theValue = ""
 
   var nTunes = CountTunes();
 
-  if (nTunes > 0) {
+  if (nTunes > 0){
     theValue += "\n";
   }
 
-  // Tempate 1 - Offline Single Instrument Notes + Reverb Database Loader
+  theValue += 'X:1\n';
+  theValue += "%\n";
+  theValue += "% Example J.S. Bach transcription originally imported from MusicXML\n";
+  theValue += "%\n";  
+  theValue += '% Click "Play" to play\n';
+  theValue += "%\n";
+  theValue += 'T:Two-Part Invention #1\n';
+  theValue += 'C:J.S. Bach\n';
+  theValue += 'L:1/16\n';
+  theValue += 'Q:1/4=84\n';
+  theValue += 'M:4/4\n';
+  theValue += 'K:C\n';
+  theValue += '%\n';
+  theValue += '% Try changing the abcjs_soundfont value to\n';
+  theValue += '% fluid, fluidhq, musyng, fatboy, canvas, mscore, or arachno:\n';
+  theValue += '%\n';  
+  theValue += '%abcjs_soundfont fluid\n'; 
+  theValue += '%\n';  
+  theValue += '%%staffsep 40\n';
+  theValue += '%%stretchlast true\n';
+  theValue += '%\n';
+  theValue += '% Try changing these to %%MIDI program mute\n';
+  theValue += '% to isolate individual voices:\n';
+  theValue += '%\n';
+  theValue += 'V:1 treble\n';
+  theValue += '%%MIDI program 6\n';
+  theValue += 'V:2 bass\n';
+  theValue += '%%MIDI program 6\n';
+  theValue += 'V:1\n';
+  theValue += 'z CDE FDEC G2c2 B/A/Bc2 | dGAB cABG d2g2 f/e/fg2 |\n'; 
+  theValue += 'eagf egfa gfed cedf | edcB AcBd cBAG ^FAGB |\n'; 
+  theValue += 'A2D2 c/B/c2d BAG^F EGFA | GBAc Bdce dB/c/dg B/c/BAG |\n';
+  theValue += '.G4 z4 z GAB cABG | .^F4 z4 z ABc dBcA |\n';
+  theValue += '.B4 z4 z dcB AcBd | .c4 z4 z edc Bd^ce |\n';
+  theValue += 'd2^c2d2e2 f2A2B2c2 | d2^F2^G2A2 B2c2 d4 |\n';
+  theValue += 'z E^F^G AFGE edce dcBd | ca^gb aefd ^Gfed c/d/cBA |\n';
+  theValue += 'Aagf egfa g8- | gefg afge f8 |\n';
+  theValue += 'z gfe dfeg f8- | fdef gefd e8- |\n';
+  theValue += "ecde fdec defg afge | fgab c'abg c'2g2 e/f/edc|\n";
+  theValue += '[][Q:1/4=56][M:2/4]c_BAG FAGB|[Q:1/4=42]A=BcE DcFB |[M:4/4][EGc]16|]\n'; 
+  theValue += 'V:2\n';
+  theValue += 'z8 z C,D,E, F,D,E,C, | G,2G,,2 z4 z G,A,B, CA,B,G, |\n'; 
+  theValue += 'C2B,2C2D2 E2G,2A,2B,2 | C2E,2^F,2G,2 A,2B,2 C4- |\n';
+  theValue += 'CD,E,^F, G,E,F,D, G,2B,,2C,2D,2 | E,2^F,2G,2E,2 B,,2>C,2 D,2D,,2 |\n';
+  theValue += 'z G,,A,,B,, C,A,,B,,G,, D,2G,2^F,2G,2 | A,D,E,^F, G,E,F,D, A,2D2C2D2 |\n';
+  theValue += 'G,GFE DFEG F2E2F2D2 | EAGF EGFA G2F2G2E2 |\n';
+  theValue += 'F_BAG FAGB AGFE DFEG | FEDC B,DCE DCB,A, ^G,B,A,C |\n';
+  theValue += 'B,2E,2D/C/.D3 CB,A,G, ^F,A,^G,B, | A,CB,D CEDF E2A,2E2E,2 |\n';
+  theValue += 'A,2A,,2 z4 z EDC B,D^CE | D8- DA,B,C DB,CA, |\n';
+  theValue += 'B,8- B,DCB, A,CB,D | C8- CG,A,_B, CA,B,G, |\n';
+  theValue += 'A,2_B,2A,2G,2 F,2D2C2B,2 | A,2F2E2D2 ED,E,F, G,E,F,D, |\n';
+  theValue += '[][Q:1/4=56][M:2/4]E,2C,2D,2E,2|[Q:1/4=42]F,D,E,F, G,2G,,2 |[M:4/4][C,,C,]16 |]\n';
+
+  // Do common tune addition processing
+  ProcessAddTune(theValue);
+
+}
+
+//
+// Add the J.S. Bach Fantasia BWV570
+//
+function AppendJSBach2(){
+
+  // Keep track of actions
+  sendGoogleAnalytics("action","AppendJSBach2");
+
+  // Stuff in some default ABC with additional options explained
+  var theValue = ""
+
+  var nTunes = CountTunes();
+
+  if (nTunes > 0){
+    theValue += "\n";
+  }
 
   theValue += 'X:1\n';
-  theValue += 'T: Single Soundfont Instrument Notes + Reverb Setting Database Loader\n';
-  theValue += 'M: 4/4\n';
-  theValue += 'L: 1/8\n';
-  theValue += 'K: C\n';
-  theValue += 'Q: 1/4=400\n';
+  theValue += "%\n";
+  theValue += "% Example J.S. Bach transcription originally imported from MusicXML\n";
+  theValue += "%\n";  
+  theValue += '% Click "Play" to play\n';
+  theValue += "%\n";
+  theValue += 'T:Fantasia\n';
+  theValue += 'T:BWV570\n';
+  theValue += 'T:Johann Sebastian Bach (1685-1750)\n';
+  theValue += '%%score { 1 | 2 | 3 | 4 }\n';
+  theValue += 'L:1/16\n';
+  theValue += 'M:4/4\n';
+  theValue += 'K:C\n';
   theValue += '%\n';
-  theValue += '% 1) Select the soundfont:\n';
+  theValue += '% Try changing the abcjs_soundfont value to\n';
+  theValue += '% fluid, fluidhq, musyng, fatboy, canvas, mscore, or arachno:\n';
+  theValue += '%\n';  
+  theValue += '%abcjs_soundfont fluid\n'; 
+  theValue += '%\n';   
+  theValue += '% Add some large church-style reverb\n';
   theValue += '%\n';
-  theValue += '% Available soundfonts are:\n';
-  theValue += '% fluid, musyng, fatboy, canvas, mscore, arachno, and fluidhq\n';
+  theValue += '%reverb church 0.8 0.2\n';
+  theValue += '%\n';    
+  theValue += '%%stretchlast true\n';
+  theValue += '%%staffsep 40\n';
+  theValue += 'Q:1/4=100\n';
   theValue += '%\n';
-  theValue += '%soundfont fluid\n';
+  theValue += '% Try changing these to %%MIDI program mute\n';
+  theValue += '% to isolate individual voices:\n';
   theValue += '%\n';
-  theValue += '% 2) Select the MIDI instrument program you want to use\n';
-  theValue += '% in the soundfont and have all the notes stored in the database:\n';
-  theValue += '%\n';
-  theValue += '% Example: Acoustic Grand Piano\n';
-  theValue += '%%MIDI program 0\n';
-  theValue += '%\n';
-  theValue += '% 3) Select the reverb environment you want to have stored in the database\n';
-  theValue += '%\n';
-  theValue += '% Available reverb environments are:\n';
-  theValue += '% off, room1, room2, room3, chamber1, chamber2, chamber3,\n';
-  theValue += '% hall1, hall2, hall3, church1,\n';
-  theValue += '% room (same as room3), chamber (same as chamber2),\n';
-  theValue += '% hall (same as hall2), and church (same as church1)\n';
-  theValue += '%\n';
-  theValue += '% chamber is the default reverb, so probably already stored:\n';
-  theValue += '%\n';
-  theValue += '%reverb chamber 0.9 0.1\n';
-  theValue += '%\n';
-  theValue += '% 4) While online, click "Play" to load the ABC into the player.\n';
-  theValue += '%\n';
-  theValue += "% You do not need to actually play the tune, just loading the template\n";
-  theValue += "% into the player is enough to save the notes and reverb setting in\n";
-  theValue += "% the instrument notes and reverb database.\n";
-  theValue += '%\n';
-  theValue += '[|C,,,4 ^C,,,4 D,,,4 ^D,,,4 E,,,4 F,,,4 ^F,,,4 G,,,4 ^G,,,4 A,,,4 ^A,,,4 B,,,4 |\n';
-  theValue += 'C,,4 ^C,,4 D,,4 ^D,,4 E,,4 F,,4 ^F,,4 G,,4 ^G,,4 A,,4 ^A,,4 B,,4 |\n';
-  theValue += 'C,4 ^C,4 D,4, ^D,4 E,4 F,4 ^F,4 G,4 ^G,4 A,4 ^A,4 B,4 |\n';
-  theValue += 'C4 ^C4 D4 ^D4 E4 F4 ^F4 G4 ^G4 A4 ^A4 B4 |\n';
-  theValue += 'c4 ^c4 d4 ^d4 e4 f4 ^f4 g4 ^g4 a4 ^a4 b4 |\n';
-  theValue += "c'4 ^c'4 d'4 ^d'4 e'4 f'4 ^f'4 g'4 ^g'4 a'4 ^a'4 b'4|\n";
-  theValue += "c''4 ^c''4 d''4 ^d''4 e''4 f''4 ^f''4 g''4 ^g''4 a''4 ^a''4 b''4|]\n\n";
+  theValue += 'V:1 treble\n';
+  theValue += '%%MIDI program 19\n';
+  theValue += 'V:2 treble\n';
+  theValue += '%%MIDI program 19\n';
+  theValue += 'V:3 bass\n';
+  theValue += '%%MIDI program 19\n';
+  theValue += 'V:4 bass\n';
+  theValue += '%%MIDI program 19\n';
+  theValue += 'V:1\n';
+  theValue += 'G4 c6 d2 B4 | e6 f2 d6 e2 | c8- c2e2d2c2 | B2A2 B4 z2 e2g2e2 |\n';
+  theValue += 'c2e2G2c2 A2c2d2e2 | f2e2d2c2 B2G2 c4- | c2dcB2cB A8- | A2Bc d6 efB2cd |\n';
+  theValue += '^G6 AB A2Bcd2cd | B6 cB A6 B^G | c8- c2dc_B2cA | _B8- B2>G2A2GA |\n';
+  theValue += 'F6 EF G2A_B A4- | A2Bc d6 Bcd2ef | e8- e2dc d4- | d2ef e6 fg f4- |\n';
+  theValue += 'f2ga g6 ag f4- | f2gf e6 fe d4 | d8d8- | d2cB c6 dc B4 |\n';
+  theValue += 'c4 z12 | z4 d8 c4- | c8 B4 _B4 | A4 B4 G8 |\n';
+  theValue += 'A4 c4 B8 | c8c8 | f8 e8- | e6e6 d4- |\n';
+  theValue += 'd4 d2ef g2agf2gf | e4 g6 ag f4- | f2gfe2fe d8 | g2agf2gf e6 fe |\n';
+  theValue += 'd6 ed c6 dc | B4 c4 d4 e4- | e2fe d6 ef e4- | e2fe d6 efg2ab |\n';
+  theValue += 'c2Bcd2ef B4 c4- | cdBd cdBd cedf egfa | gGAB c4- cede fdef | B2cd2<c2B c8- |\n';
+  theValue += 'c8c8 | c16 |]\n';
+  theValue += 'V:2\n';
+  theValue += 'G8G8- | G2G2 c6 c2 B4- | B2B2 A6A6- | A4 G4 z8 |\n';
+  theValue += 'z16 | z16 | z4 G4 E8 | F8F8- |\n';
+  theValue += 'F2ED C4 E8- | E8E8- | E8 D8- | D2E^F G6 E2- E4- |\n';
+  theValue += 'E2D^C D4 E6 ^FG | ^F6 EF G8- | G2AB c4 A6 Bc | B6 cd c6 de |\n';
+  theValue += 'd6 ef e6 dc | d6 cB c6 BA | B8B8 | G6 FE F6 ED |\n';
+  theValue += 'E6 FG A6 Bc | B8- B6 A^G | A8 G8 | F8 E6 FE |\n';
+  theValue += 'D6 ED D4 G4 | G4 A6A6 | d8- d2cB c4- | c2dc c6 dc c4- |\n';
+  theValue += 'c2BA B6 c4 B2 | c4 d4 c6 dc | B4 c6 BA B4 | c4 B6 cB A4- |\n';
+  theValue += 'A2BA G6 AG ^F4 | G8 B4 c4- | c6 BA B6 cd | c6 BA B8 |\n';
+  theValue += 'A8 G8- | G8G8- | G8G8- | G6G6 F4 |\n';
+  theValue += 'G4 F6 GF EFDF | E16 |]\n';
+  theValue += 'V:3\n';
+  theValue += 'E8 D8- | D4 C4 D4 G4 | E8 D8- | D8 C8- |\n';
+  theValue += 'C8 C8 | D6D6 E2FE | D8 ^C8 | D4 A,2B,C B,8- |\n';
+  theValue += 'B,4 A,8 ^G,4- | G,2A,B, C6 B,A, B,4- | B,2A,^G,A,2E,=G, ^F,8 | G,6 A,_B,- B,4 A,4- |\n';
+  theValue += 'A,8 _B,4 E,4 | A,8 G,8- | G,6 E,C, ^F,6 D,2 | G,8G,8- |\n';
+  theValue += 'G,8G,8- | G,8G,8- | G,2G,A,B,2CD G,2A,B,D,2E,F, | E,4 A,4 D,4 G,4- |\n';
+  theValue += 'G,2A,B, C6 DE F4- | F8 E8- | E4 D8 C4- | C4 D6 CB, C4- |\n';
+  theValue += 'C2B,C A,4 B,4 E4- | E8 F8- | F4 G6G6 | A8A8 |\n';
+  theValue += 'G4 G2F2 E4 D4 | C2DCB,2CB, A,4 D4- | D4 E2C2 G6 FG | E2FED2ED C6 DC |\n';
+  theValue += 'B,6 CB, A,2B,2 C4 | D4 E4 G8 | A4 D4 G8- | G8G8 |\n';
+  theValue += 'E4 D8 E4- | E2D2E2D2 E2B,2C2D2 | E4- EEDC D8- | D4 F4 E4 C4|\n';
+  theValue += 'z2 C_B,A,2G,F, G,6 F,2 | G,16 |]\n';
+  theValue += 'V:4\n';
+  theValue += 'C,2D,2E,2C,2 G,8- | G,8G,8 | A,6 G,2 ^F,8 | G,6 F,2 E,8- |\n';
+  theValue += 'E,8 F,8- | F,4 ^F,4 G,8- | G,8- G,2A,_B,A,2G,A, | F,8 D,8 |\n';
+  theValue += 'E,8E,8- | E,8E,8 | A,,8 D,8- | D,8 ^C,8 |\n';
+  theValue += 'D,6D,6 ^C,4 | C,8 B,,8 | C,8 ^F,,8 | G,,8G,,8- |\n';
+  theValue += 'G,,8G,,8- | G,,8G,,8- | G,,4 z12 | z16 |\n';
+  theValue += 'C,6 D,E, F,6 G,A, | D,2E,F,B,,2C,D, ^G,,2E,,2 A,,4- | A,,2A,G,^F,2E,D, G,2D,=F,E,2D,C, | F,2C,E,D,2C,B,, E,8 |\n';
+  theValue += 'F,4 ^F,4 G,2G,=F,E,2E,D, | C,2C,B,,A,,2A,,G,, F,,2A,,G,,F,,2F,,E,, | D,,2D,C,B,,2A,,G,, C,6 D,E, | A,,6 B,,C, F,,4 ^F,,2E,,F,, |\n';
+  theValue += 'G,,4 z8 x4 | z16 | G,8G,8- | G,8G,8- |\n';
+  theValue += 'G,8G,8- | G,2G,F,E,2D,C, B,,2A,,G,,F,,2E,,D,, | F,,4 F,4 G,8- | G,8G,8- |\n';
+  theValue += 'G,4 F,6 G,F,E,2D,C, | G,8G,8- | G,8G,8- | G,8 C,2C_B,A,2G,F, |\n';
+  theValue += 'E,4 F,4 C,8 | C,16 |]\n';
 
-  // Template 2 - Complete Soundfont Instrument Notes Database Loader Primer
-
-  theValue += "X: 2\n";
-  theValue += "T: All Soundfont Instruments Notes Database Primer Loader\n";
-  theValue += "M: 4/4\n";
-  theValue += "L: 1/8\n";
-  theValue += "K: C\n";
-  theValue += "Q: 1/8=400\n";
-  theValue += "%\n";
-  theValue += "% Loads one note for each MIDI instrument in an entire soundfont\n";
-  theValue += "% into the instrument notes database to allow you to easily\n";
-  theValue += "% load the rest of the notes for all the instruments.\n";
-  theValue += "%\n";
-  theValue += "% 1) Select the soundfont you want to load:\n";
-  theValue += "%\n";
-  theValue += "% Available soundfonts are:\n";
-  theValue += "% fluid, musyng, fatboy, canvas, mscore, arachno, and fluidhq\n";
-  theValue += "%\n";
-  theValue += "%soundfont fluid\n";
-  theValue += "%\n";
-  theValue += '% 2) While online, click "Play" to load the ABC into the player.\n';
-  theValue += "%\n";
-  theValue += "% You don't need to actually play the file, just loading the template\n";
-  theValue += "% into the player is enough to create single note placeholder\n";
-  theValue += "% entries in the instrument notes database.\n";
-  theValue += "%\n";
-  theValue += "% 3) Once the player load is complete, you can close the player.\n";
-  theValue += "%\n";
-  theValue += '% 4) Open "Settings"/"Manage Notes, Reverb, and Tune Search Databases"\n';
-  theValue += "%\n";
-  theValue += '% 5) Click "Instrument Notes Database"\n';
-  theValue += "%\n";
-  theValue += '% 6) Click "Load All Notes for All Instruments"\n';
-  theValue += "%\n";
-  theValue += "% 7) The tool will download all the notes for all the instruments.\n";
-  theValue += "%\n";
-  theValue += "% This is a very aggressive use of the database loader feature.\n";
-  theValue += "%\n";
-  theValue += "% While I do not expect there to be any issues, use at your own risk.\n";
-  theValue += "%\n";
-  theValue += '[I:MIDI= program 0] "_0" G4 |[I:MIDI= program 1] "_1" G4 |[I:MIDI= program 2] "_2" G4 |[I:MIDI= program 3] "_3" G4 |[I:MIDI= program 4] "_4" G4 |[I:MIDI= program 5] "_5" G4 |[I:MIDI= program 6] "_6" G4 |[I:MIDI= program 7] "_7" G4 |\n';
-  theValue += '[I:MIDI= program 8] "_8" G4 |[I:MIDI= program 9] "_9" G4 |[I:MIDI= program 10] "_10" G4 |[I:MIDI= program 11] "_11" G4 |[I:MIDI= program 12] "_12" G4 |[I:MIDI= program 13] "_13" G4 |[I:MIDI= program 14] "_14" G4 |[I:MIDI= program 15] "_15" G4 |\n';
-  theValue += '[I:MIDI= program 16] "_16" G4 |[I:MIDI= program 17] "_17" G4 |[I:MIDI= program 18] "_18" G4 |[I:MIDI= program 19] "_19" G4 |[I:MIDI= program 20] "_20" G4 |[I:MIDI= program 21] "_21" G4 |[I:MIDI= program 22] "_22" G4 |[I:MIDI= program 23] "_23" G4 |\n';
-  theValue += '[I:MIDI= program 24] "_24" G4 |[I:MIDI= program 25] "_25" G4 |[I:MIDI= program 26] "_26" G4 |[I:MIDI= program 27] "_27" G4 |[I:MIDI= program 28] "_28" G4 |[I:MIDI= program 29] "_29" G4 |[I:MIDI= program 30] "_30" G4 |[I:MIDI= program 31] "_31" G4 |\n';
-  theValue += '[I:MIDI= program 32] "_32" G4 |[I:MIDI= program 33] "_33" G4 |[I:MIDI= program 34] "_34" G4 |[I:MIDI= program 35] "_35" G4 |[I:MIDI= program 36] "_36" G4 |[I:MIDI= program 37] "_37" G4 |[I:MIDI= program 38] "_38" G4 |[I:MIDI= program 39] "_39" G4 |\n';
-  theValue += '[I:MIDI= program 40] "_40" G4 |[I:MIDI= program 41] "_41" G4 |[I:MIDI= program 42] "_42" G4 |[I:MIDI= program 43] "_43" G4 |[I:MIDI= program 44] "_44" G4 |[I:MIDI= program 45] "_45" G4 |[I:MIDI= program 46] "_46" G4 |[I:MIDI= program 47] "_47" G4 |\n';
-  theValue += '[I:MIDI= program 48] "_48" G4 |[I:MIDI= program 49] "_49" G4 |[I:MIDI= program 50] "_50" G4 |[I:MIDI= program 51] "_51" G4 |[I:MIDI= program 52] "_52" G4 |[I:MIDI= program 53] "_53" G4 |[I:MIDI= program 54] "_54" G4 |[I:MIDI= program 55] "_55" G4 |\n';
-  theValue += '[I:MIDI= program 56] "_56" G4 |[I:MIDI= program 57] "_57" G4 |[I:MIDI= program 58] "_58" G4 |[I:MIDI= program 59] "_59" G4 |[I:MIDI= program 60] "_60" G4 |[I:MIDI= program 61] "_61" G4 |[I:MIDI= program 62] "_62" G4 |[I:MIDI= program 63] "_63" G4 |\n';
-  theValue += '[I:MIDI= program 64] "_64" G4 |[I:MIDI= program 65] "_65" G4 |[I:MIDI= program 66] "_66" G4 |[I:MIDI= program 67] "_67" G4 |[I:MIDI= program 68] "_68" G4 |[I:MIDI= program 69] "_69" G4 |[I:MIDI= program 70] "_70" G4 |[I:MIDI= program 71] "_71" G4 |\n';
-  theValue += '[I:MIDI= program 72] "_72" G4 |[I:MIDI= program 73] "_73" G4 |[I:MIDI= program 74] "_74" G4 |[I:MIDI= program 75] "_75" G4 |[I:MIDI= program 76] "_76" G4 |[I:MIDI= program 77] "_77" G4 |[I:MIDI= program 78] "_78" G4 |[I:MIDI= program 79] "_79" G4 |\n';
-  theValue += '[I:MIDI= program 80] "_80" G4 |[I:MIDI= program 81] "_81" G4 |[I:MIDI= program 82] "_82" G4 |[I:MIDI= program 83] "_83" G4 |[I:MIDI= program 84] "_84" G4 |[I:MIDI= program 85] "_85" G4 |[I:MIDI= program 86] "_86" G4 |[I:MIDI= program 87] "_87" G4 |\n';
-  theValue += '[I:MIDI= program 88] "_88" G4 |[I:MIDI= program 89] "_89" G4 |[I:MIDI= program 90] "_90" G4 |[I:MIDI= program 91] "_91" G4 |[I:MIDI= program 92] "_92" G4 |[I:MIDI= program 93] "_93" G4 |[I:MIDI= program 94] "_94" G4 |[I:MIDI= program 95] "_95" G4 |\n';
-  theValue += '[I:MIDI= program 96] "_96" G4 |[I:MIDI= program 97] "_97" G4 |[I:MIDI= program 98] "_98" G4 |[I:MIDI= program 99] "_99" G4 |[I:MIDI= program 100] "_100" G4 |[I:MIDI= program 101] "_101" G4 |[I:MIDI= program 102] "_102" G4 |[I:MIDI= program 103] "_103" G4 |\n';
-  theValue += '[I:MIDI= program 104] "_104" G4 |[I:MIDI= program 105] "_105" G4 |[I:MIDI= program 106] "_106" G4 |[I:MIDI= program 107] "_107" G4 |[I:MIDI= program 108] "_108" G4 |[I:MIDI= program 109] "_109" G4 |[I:MIDI= program 110] "_110" G4 |[I:MIDI= program 111] "_111" G4 |\n';
-  theValue += '[I:MIDI= program 112] "_112" G4 |[I:MIDI= program 113] "_113" G4 |[I:MIDI= program 114] "_114" G4 |[I:MIDI= program 115] "_115" G4 |[I:MIDI= program 116] "_116" G4 |[I:MIDI= program 117] "_117" G4 |[I:MIDI= program 118] "_118" G4 |[I:MIDI= program 119] "_119" G4 |\n';
-  theValue += '[I:MIDI= program 120] "_120" G4 |[I:MIDI= program 121] "_121" G4 |[I:MIDI= program 122] "_122" G4 |[I:MIDI= program 123] "_123" G4 |[I:MIDI= program 124] "_124" G4 |[I:MIDI= program 125] "_125" G4 |[I:MIDI= program 126] "_126" G4 |[I:MIDI= program 127] "_127" G4 |\n';
-  theValue += '[I:MIDI= program 128] "_128" G4 |[I:MIDI= program 129] "_129" G4 |[I:MIDI= program 130] "_130" G4 |[I:MIDI= program 131] "_131" G4 |[I:MIDI= program 132] "_132" G4 |[I:MIDI= program 133] "_133" G4 |[I:MIDI= program 134] "_134" G4 |[I:MIDI= program 135] "_135" G4 |\n';
-  theValue += '[I:MIDI= program 136] "_136" G4 |[I:MIDI= program 137] "_137" G4 |[I:MIDI= program 138] "_138" G4 |[I:MIDI= program 139] "_139" G4 |[I:MIDI= program 140] "_140" G4 |[I:MIDI= program 141] "_141" G4 |[I:MIDI= program 142] "_142" G4 |[I:MIDI= program 143] "_143" G4 |[I:MIDI= program 144] "_144" G4 |\n';
-  theValue += '[I:MIDI= program 145] "_145" G4 |[I:MIDI= program 146] "_146" G4 |[I:MIDI= program 147] "_147" G4 |[I:MIDI= program 148] "_148" G4 |[I:MIDI= program 149] "_149" G4 | [I:MIDI= program 158] "_158" G4 |]\n';
 
   // Do common tune addition processing
   ProcessAddTune(theValue);
@@ -22396,7 +22427,7 @@ function InjectRepeatsAndClickTrackAll() {
 
   const modal = DayPilot.Modal.form(form, theData, {
     theme: "modal_flat",
-    top: 100,
+    top: 50,
     width: 760,
     scrollWithPage: (AllowDialogsToScroll()),
     okText: "Inject",
@@ -23037,7 +23068,7 @@ function InjectHeaderString() {
 
   const modal = DayPilot.Modal.form(form, theData, {
     theme: "modal_flat",
-    top: 100,
+    top: 25,
     width: 650,
     scrollWithPage: (AllowDialogsToScroll()),
     okText: "Inject",
@@ -23373,7 +23404,7 @@ function InjectCustomStringedInstrumentTab() {
 
   const modal = DayPilot.Modal.form(form, theData, {
     theme: "modal_flat",
-    top: 50,
+    top: 25,
     width: 650,
     scrollWithPage: (AllowDialogsToScroll()),
     okText: "Inject",
@@ -23822,7 +23853,7 @@ function InjectFontSettings() {
 
   const modal = DayPilot.Modal.form(form, gTheFontInjectData, {
     theme: "modal_flat",
-    top: 75,
+    top: 25,
     width: 675,
     scrollWithPage: (AllowDialogsToScroll()),
     okText: "Inject",
@@ -28934,7 +28965,7 @@ function InjectBagpipeSounds() {
 
   const modal = DayPilot.Modal.form(form, theData, {
     theme: "modal_flat",
-    top: 75,
+    top: 25,
     width: 685,
     scrollWithPage: (AllowDialogsToScroll()),
     okText: "Inject",
@@ -29266,7 +29297,7 @@ function IncipitsBuilderDialog() {
 
   const modal = DayPilot.Modal.form(form, theData, {
     theme: "modal_flat",
-    top: 100,
+    top: 25,
     width: 600,
     scrollWithPage: (AllowDialogsToScroll()),
     okText: "Build",
@@ -30550,7 +30581,7 @@ function DoInjectHarmonicaTab() {
 
   const modal = DayPilot.Modal.form(form, theData, {
     theme: "modal_flat",
-    top: 50,
+    top: 37,
     width: 700,
     scrollWithPage: (AllowDialogsToScroll()),
     okText: "Inject",
@@ -31601,7 +31632,7 @@ function DoInjectTablature_Anglo() {
 
   const modal = DayPilot.Modal.form(form, theData, {
     theme: "modal_flat",
-    top: 100,
+    top: 75,
     width: 720,
     scrollWithPage: (AllowDialogsToScroll()),
     okText: "Inject",
@@ -33083,7 +33114,7 @@ function ExportAll() {
 
   DayPilot.Modal.alert(modal_msg, {
     theme: "modal_flat",
-    top: 37,
+    top: 25,
     width: 670,
     scrollWithPage: (AllowDialogsToScroll())
   })
@@ -45845,25 +45876,6 @@ function GetInitialConfigurationSettings() {
     gShapeNoteStyle = val;
   }
 
-  // Save feature selections
-  gFeaturesShowSearch = true;
-  val = localStorage.FeaturesShowSearch;
-  if (val) {
-    gFeaturesShowSearch = (val == "true");
-  }
-
-  gFeaturesShowExamples = true;
-  val = localStorage.FeaturesShowExamples;
-  if (val) {
-    gFeaturesShowExamples = (val == "true");
-  }
-
-  gFeaturesShowTemplates = true;
-  val = localStorage.FeaturesShowTemplates;
-  if (val) {
-    gFeaturesShowTemplates = (val == "true");
-  }
-
   gFeaturesShowTabButtons = true;
   val = localStorage.FeaturesShowTabButtons;
   if (val) {
@@ -46481,9 +46493,6 @@ function SaveConfigurationSettings() {
     localStorage.DisableSelectedPlay = gDisableSelectedPlay;
 
     // Save UI features preferences
-    localStorage.FeaturesShowSearch = gFeaturesShowSearch;
-    localStorage.FeaturesShowExamples = gFeaturesShowExamples;
-    localStorage.FeaturesShowTemplates = gFeaturesShowTemplates;
     localStorage.FeaturesShowTabButtons = gFeaturesShowTabButtons;
 
     // Save Editor font size
@@ -49179,6 +49188,7 @@ function Do_Browser_PDF_Export() {
 var gMoreToolsLastTab = "";
 
 function AdvancedControls_SelectTab(tabId) {
+
   var dialog = document.getElementById("advanced-controls-dialog");
   if (!dialog) return;
 
@@ -49197,9 +49207,11 @@ function AdvancedControls_SelectTab(tabId) {
   panels.forEach(function(panel) {
     panel.classList.toggle("active", panel.id === tabId);
   });
+
 }
 
 function AdvancedControls_InitTabs() {
+  
   var dialog = document.getElementById("advanced-controls-dialog");
   if (!dialog) return;
 
@@ -49274,7 +49286,8 @@ function AdvancedControlsDialog() {
 
   modal_msg += '<button class="adv-tab-btn" data-tab="adv-tab-bagpipes" onclick="AdvancedControls_SelectTab(\'adv-tab-bagpipes\')">Other<br/>Tools</button>';
 
-  modal_msg += '</div><div class="adv-tab-panels">';
+  modal_msg += '</div>';
+  modal_msg += '<div class="adv-tab-panels">';
 
   /* ---------------- Injection tab ---------------- */
 
@@ -61994,7 +62007,7 @@ function PhraseBuilder(){
 
   const modal = DayPilot.Modal.form(form, theData, {
     theme: "modal_flat",
-    top: 100,
+    top: 37,
     width: 600,
     scrollWithPage: (AllowDialogsToScroll()),
     autoFocus: true
@@ -62507,7 +62520,7 @@ async function abcjsColorEditor(currentTheme = {}){
   const promise = DayPilot.Modal.alert(html, {
     width: 700,
     theme: 'modal_flat',
-    top: 35,
+    top: 25,
     scrollWithPage: (typeof AllowDialogsToScroll === 'function' ? AllowDialogsToScroll() : true)
   });
 

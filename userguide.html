@@ -491,7 +491,8 @@
             <a style="text-decoration:none;" href="#tune_search_engine">Tune Search Engine</a>
             <a style="text-decoration:none;" href="#change_tune_order">Change the Order of the Tunes</a>
             <a style="text-decoration:none;" href="#delete_selected_tunes">Delete Tunes from the Tunebook</a>
-            <a style="text-decoration:none;" href="#add_examples">Add Example Tunes and Templates to Your Tunebook</a>
+            <a style="text-decoration:none;" href="#add_examples">Add Example Tunes</a>
+            <a style="text-decoration:none;" href="#add_templates">Add Example Templates</a>
             <a style="text-decoration:none;" href="#add_bodhran_backing_track">Add Bodhran Backing Track Tune Template</a>
             <a style="text-decoration:none;" href="#add_pdf_tunebook_features_templates">Add PDF Tunebook Features Template</a>
             <a style="text-decoration:none;" href="#add_pdf_play_features">Inject Only PDF Play Features</a>
@@ -997,7 +998,8 @@
                         <p class="toc"><a style="text-decoration:none;" href="#tune_search_engine">Tune Search Engine</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#change_tune_order">Change the Order of the Tunes</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#delete_selected_tunes">Delete Tunes from the Tunebook</a></p>
-                        <p class="toc"><a style="text-decoration:none;" href="#add_examples">Add Example Tunes and Templates to Your Tunebook</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#add_examples">Add Example Tunes</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#add_templates">Add Example Templates</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#add_bodhran_backing_track">Add Bodhran Backing Track Tune Template</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#add_pdf_tunebook_features_templates">Add PDF Tunebook Features Template</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#add_pdf_play_features">Inject Only PDF Play Features</a></p>
@@ -1822,21 +1824,14 @@
                 <p><strong>Add:</strong></p>
                 <p>Brings up a dialog where you can add your own ABC, MusicXML, BWW, or MIDI tunes, restore from previously saved Snapshots, re-order the tunes, delete tunes, add example ABC tunes, add useful ABC templates, or inject the commands for PDF tunebook features:</p>
                 <div class="image_holder_p">
-                    <img class="image" loading="lazy" src="img/add_example_template_30.jpg"/>
+                    <img class="image" loading="lazy" src="img/add_example_template_31.jpg"/>
                 </div>
-                <p>If you would like to only show the buttons for the features you commonly use and hid the others, click the controls icon at the top-right of the dialog to choose features of the dialog you would like to show/hide:</p>
-                <div class="image_holder_p">
-                    <img class="image" loading="lazy" src="img/add_abc_features_options_1.jpg"/>
-                </div>
-                <p>The most commonly used buttons are always shown.</p>
-                <p>Your preferences are saved and restored the next time you use the tool.</p>
                 <hr class="hidden-print" id="add_choose">
                 <h1 class="page_break_always h1wide">Choose Files to Add<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <hr id="add_choose">
                 <p>Browse your system for ABC, MusicXML, BWW, or MIDI files with one or more tunes to add to the end of the current tunes.</p>
                 <hr class="hidden-print" id="add_restore">
                 <h1 class="page_break_always h1wide">Restore from Snapshot<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-                <p>This feature is on the <a style="text-decoration:none;" href="#add_templates_dialog">Add ABC Tunes, Templates, and PDF Features</a> dialog.</p>
                 <p>This button appears if there is a saved Snapshot available in browser storage.</p>
                 <p>When clicked, restores a saved Snapshot from browser storage, replacing the contents of the ABC editor.</p>
                 <p>There are four Snapshots available in browser storage.</p>
@@ -1849,14 +1844,12 @@
                 <p>Since it completely replaces the contents of the ABC editor, you will be asked to confirm the operation.</p>
                 <hr class="hidden-print" id="add_restore_auto">
                 <h1 class="page_break_always h1wide">Restore from Auto-Snapshot<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-                <p>This feature is on the <a style="text-decoration:none;" href="#add_templates_dialog">Add ABC Tunes, Templates, and PDF Features</a> dialog.</p>
                 <p>This button appears if there is a saved Auto-Snapshot available in browser storage. (Desktop browsers only)</p>
                 <p>When clicked, restores the last Auto-Snapshot, replacing the contents of the ABC editor.</p>
                 <p>Since it completely replaces the contents of the ABC editor, you will be asked to confirm the operation.</p>
                 <p>On desktop browsers, automatic Snapshots when closing or reloading the browser tab the tool is running in can be enabled in the tool's <strong>Settings</strong> dialog. </p>
                 <hr class="hidden-print" id="tune_search_engine">
                 <h1 class="page_break_always">Tune Search Engine<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-                <p>This feature is on the <a style="text-decoration:none;" href="#add_templates_dialog">Add ABC Tunes, Templates, and PDF Features</a> dialog.</p>
                 <p>Brings up a dialog where you search either Gavin Heneghan's tune collection (over 20,000 tune settings) or the FolkFriend.app tune collection (over 45,000 tune settings) by tune name and style and then optionally add them to your tunebook:</p>
                 <div class="image_holder_p">
                     <img class="image" loading="lazy" src="img/tune_search_13.jpg"/>
@@ -1883,7 +1876,6 @@
                 <p>You can also get to this dialog by clicking the <strong>Search for Tunes</strong> link at the top of the tool.</p>
                 <hr class="hidden-print" id="change_tune_order">
                 <h1 class="page_break_always h1wide">Change the Order of the Tunes<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-                <p>This feature is on the <a style="text-decoration:none;" href="#add_templates_dialog">Add ABC Tunes, Templates, and PDF Features</a> dialog.</p>
                 <p>On desktop browsers, brings up a dialog where you can drag and drop the tune names to change their order in the tunebook:</p>
                 <div class="image_holder_p">
                     <img class="image" loading="lazy" src="img/change_order_2.jpg"/>
@@ -1895,7 +1887,6 @@
                 </div>
                 <hr class="hidden-print" id="delete_selected_tunes">
                 <h1 class="page_break_always h1wide">Delete Tunes from the Tunebook<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-                <p>This feature is on the <a style="text-decoration:none;" href="#add_templates_dialog">Add ABC Tunes, Templates, and PDF Features</a> dialog.</p>
                 <p>Brings up a dialog where you can select tunes to delete from the tunebook:</p>
                 <div class="image_holder_p">
                     <img class="image" loading="lazy" src="img/delete_selected_tunes_1.jpg"/>
@@ -1906,8 +1897,7 @@
                 <p>Click <strong>Clear Selection</strong> to unselect all the tunes for deletion.</p>
                 <p>Click <strong>Delete</strong> to delete the tunes after confirmation.</p>
                 <hr class="hidden-print" id="add_examples">
-                <h1 class="page_break_always h1wide">Add Example Tunes and Templates to Your Tunebook<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-                <p>This feature is on the <a style="text-decoration:none;" href="#add_templates_dialog">Add ABC Tunes, Templates, and PDF Features</a> dialog.</p>
+                <h1 class="page_break_always h1wide">Add Example Tunes<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <p><strong>Cooley's (reel):</strong></p>
                 <p>Adds "Cooley's" as an example of a typical reel.</p>
                 <hr>
@@ -1917,6 +1907,15 @@
                 <p><strong>Alexander's (hornpipe):</strong></p>
                 <p>Adds "Alexander's" as an example of a typical hornpipe.</p>
                 <hr>
+                <p><strong>J.S. Bach Two-Part Invention #1:</strong></p>
+                <p>Adds the J.S. Bach Two-Part Invention #1 for Harpsichord.</p>
+                <p>This piece was originally imported from a MusicXML transcription.</p>
+                <hr>
+                <p><strong>J.S. Bach BWV570 Fantasia:</strong></p>
+                <p>Adds the J.S. Bach BWV570 Fantasia in four parts for Pipe Organ.</p>
+                <p>This piece was originally imported from a MusicXML transcription.</p>
+                <hr class="hidden-print" id="add_templates">
+                <h1 class="page_break_always h1wide">Add Example Templates<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <p><strong>Add a Tune Template:</strong></p>
                 <p>Adds a minimal ABC template for a tune.</p>
                 <hr>
@@ -1930,7 +1929,6 @@
                 <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/VpfQH4CiW1A" title="Bodhran backing track template demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
                 <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/Lz2_wMc_gZY" title="All bodhran backing track templates" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
                 <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/dtrc0CbwaDs" title="Setting the Bodhran pitch" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
-                <p>This feature is on the <a style="text-decoration:none;" href="#add_templates_dialog">Add ABC Tunes, Templates, and PDF Features</a> dialog.</p>
                 <p>Brings up a dialog where you can add a bodhran backing track for various tune styles to the end of the ABC.</p>
                 <p>These are two-voice templates.</p>
                 <p>Voice 1 is the melody. Replace the rests in the template with your tune.</p>
@@ -1942,7 +1940,6 @@
                 <p>If no pitch is specified, the default is A.</p>
                 <p>Full details on the Bodhran ABC note-to-sound mapping are available in the following section:</p>
                 <p style="text-align: center;"><a style="text-decoration:none;" href="#bodhran_map"><strong>Using the Bodhran (%%MIDI program 117) Instrument</strong></a></p>
-
                 <hr class="hidden-print" id="add_pdf_tunebook_features_templates">
                 <h1 class="page_break_always h1wide">Add PDF Tunebook Features Template<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <p>Adds a PDF tunebook features template at the top of the ABC that contains the most commonly used PDF export features:</p>
@@ -1954,28 +1951,21 @@
                 <p>Page header</p>
                 <p>Page footer</p>
                 <p>Play links on the tunes</p>
-                <p>Holding down the Shift and Alt keys while clicking this button will add the <strong>Offline Notes Database Loader Templates</strong> instead:</p>
-                <hr>
-                <p><strong>Single Soundfont Instrument Notes + Reverb Setting Database Loader</strong></p>
-                <p>ABC template with all notes for a specific MIDI soundfont and MIDI instrument as well as reverb setting to make it easy to load all the notes for a single instrument plus a single reverb setting into the instrument notes and reverb settings database for offline use.</p>
-                <p>After setting your desired MIDI instrument and reverb setting in the template, click <strong>Play</strong> to load the notes and reverb setting into the database.</p>
-                <p>You do not need to actually play the ABC, simply opening the template in the player will fetch the instrument notes and reverb setting and save them in the database.</p>
-                <p><strong>All Soundfont Instruments Notes Database Primer Loader</strong></p>
-                <p>ABC template MIDI soundfont MIDI instrument notes database primer loader that includes a single note assigned to each of the 128 MIDI instruments in a soundfont (plus the built-in custom instruments 129-149).</p>
-                <p>After setting your desired MIDI soundfont in the template, click <strong>Play</strong> to load the single notes of each instrument into the database.</p>
-                <p>You do not need to actually play the ABC, simply opening the template in the player will fetch the instrument notes save them in the database.</p>
-                <p>Once the single notes for each MIDI soundfont instrument are in the database, use the <strong>Load All Notes for All Instruments</strong> feature on the <strong>Manage Notes, Reverb, and Tune Search Databases</strong> / <strong>Instrument Notes Database</strong> dialog to load all the rest of the notes for all the instruments in the MIDI soundfont into the database for use offline.</p>
-                <hr>
-                <p>For more details, see the <strong><a style="text-decoration:none;" href="#manage_databases">Managing Notes, Reverb, and Tune Search Databases for Offline Use</a></strong> section below.</p>
                 <hr class="hidden-print" id="add_pdf_play_features">
                 <h1 class="page_break_always h1wide">Inject Only PDF Play Features<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-                <p>This feature is on the <a style="text-decoration:none;" href="#add_templates_dialog">Add ABC Tunes, Templates, and PDF Features</a> dialog.</p>
                 <p>Brings up a dialog that you can use to inject a minimal set of commands at the top of the ABC that will enable playing the tunes in the PDF by clicking the title.</p>
                 <p>Full details on playback-related PDF tunebook features can be found in the <a style="text-decoration:none;" href="#inject_pdf_tunebook_features_play"><strong>Inject Only PDF Play Features</strong></a> section of <a style="text-decoration:none;" href="#export_pdf_tunebook"><strong>Exporting a PDF Tunebook</strong></a>.</p>
                 <hr class="hidden-print" id="add_all_pdf_features">
                 <h1 class="page_break_always h1wide">Inject All PDF Tunebook Features<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>                
-                <p>This feature is on the <a style="text-decoration:none;" href="#add_templates_dialog">Add ABC Tunes, Templates, and PDF Features</a> dialog.</p>
-                <p>Brings up a dialog that you can use to inject commands at the top of the ABC that will add an optional Title Page, Table of Contents, Index, Page Header, Page Footer, instrument and volumes for playback links, and/or QR code to an exported PDF tunebook.</p>
+                <p>Adds a PDF tunebook features template at the top of the ABC that contains the most commonly used PDF export features:</p>
+                <p>Title page</p>
+                <p>Table of Contents</p>
+                <p>Tune page links back to the Table of Contents</p>
+                <p>Index</p>
+                <p>Tune page links back to the Index</p>
+                <p>Page header</p>
+                <p>Page footer</p>
+                <p>Play links on the tunes</p>
                 <p>Full details on PDF tunebook features can be found in the <a style="text-decoration:none;" href="#inject_pdf_tunebook_features"><strong>Inject All PDF Tunebook Features</strong></a> section of <a style="text-decoration:none;" href="#export_pdf_tunebook"><strong>Exporting a PDF Tunebook</strong></a>.</p>
                 <hr class="hidden-print" id="highlighting">
                 <h1 class="page_break_always">Notation and ABC Highlighting<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
