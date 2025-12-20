@@ -1373,6 +1373,18 @@ margin-right:18px;
 	}
 }
 
+#trainer_phrase_builder{
+height:42px;
+padding:12px;
+width:auto;
+}
+
+@media (hover: hover) {
+	.trainer_phrase_builder:hover{
+	background: palegreen;
+	}
+}
+
 #looperhelp{
 font-size:24pt;
 position:absolute;
@@ -1411,7 +1423,7 @@ display:none;
 #looper_metronomebutton{
 height:42px;
 padding:12px;
-margin-right:0px;
+margin-right:18px;
 width: auto;
 }
 

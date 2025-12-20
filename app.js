@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3079_122025_0930";
+var gVersionNumber = "3080_122025_1530";
 
 var gMIDIInitStillWaiting = false;
 
@@ -19569,25 +19569,6 @@ function AddABC() {
   modal_msg += '<input class="dialogrestoreautobutton btn btn-restorebutton" id="dialogrestoreautobutton" onclick="RestoreSnapshot(event,true,true);" type="button" value="Restore from Auto-Snapshot" title="Replaces the contents of the ABC editor with an Auto-Snapshot saved in browser storage" style="display:none;">';
   modal_msg += '</p>';
 
-  modal_msg += '<p style="text-align:center;font-size:18px;margin-top:24px;">Search and Add Tunes (Over 65,000 Tunes Available)</p>';
-  modal_msg += '<p style="text-align:center;margin-top:16px;">';
-  modal_msg += '<input id="searchandaddtunes" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AddFromSearch(null,AddABCCallback);" type="button" value="Tune Search Engine" title="Search for tunes to add to your tunebook.&nbsp;&nbsp;Over 65,000 tunes available.">';
-
-  modal_msg += '<p style="text-align:center;font-size:18px;margin-top:24px;">Change the Order or Delete Tunes</p>';
-  modal_msg += '<p style="text-align:center;margin-top:16px;">';
-
-  // Reorder uses drag and drop on desktop
-  if (isPureDesktopBrowser()) {
-    modal_msg += '<input id="changetuneorder" class="advancedcontrols btn btn-injectcontrols-headers" onclick="ChangeTuneOrder();" type="button" value="Change the Order of the Tunes" title="Change the order of the tunes">';
-  }
-  // Reorder uses up / down buttons on mobile
-  else {
-    modal_msg += '<input id="changetuneorder" class="advancedcontrols btn btn-injectcontrols-headers" onclick="ChangeTuneOrderMobile();" type="button" value="Change the Order of the Tunes" title="Change the order of the tunes">';
-  }
-
-  modal_msg += '<input id="culltunes" class="advancedcontrols btn btn-injectcontrols-headers" onclick="CullTunes();" type="button" value="Delete Tunes from the Tunebook" title="Delete selected tunes from the tunebook">';
-  modal_msg += '</p>';
-
   modal_msg += '<hr style="margin-top:26px;">';
 
   /* ===========================================================
@@ -19637,7 +19618,28 @@ function AddABC() {
   modal_msg += '<p style="text-align:center;margin-top:24px;"><input id="tunebookbuilder-add-play" class="advancedcontrols btn btn-injectcontrols-tunebookbuilder-play" onclick="PDFTunebookBuilderPlayOnly();" type="button" value="Inject Only PDF Tunebook Play Features" title="Inject only minimal playback-related instrument and volume commands at the top of your tunebook ABC"><input id="tunebookbuilder_add" class="advancedcontrols btn btn-injectcontrols-tunebookbuilder" onclick="PDFTunebookBuilder();" type="button" value="Inject All PDF Tunebook Features" title="Inject commands at the top of your tunebook ABC for adding a Title Page, Table of Contents, Index, Page Headers, Page Footers, instruments and volumes for Playback Links, and Custom QR Code"></p></div>';
 
   modal_msg += '<p style="font-size:2pt;">&nbsp;</p>';
-  modal_msg += '</div></div></div>';
+  modal_msg += '</div></div>';
+
+  modal_msg += '<p style="text-align:center;font-size:18px;margin-top:26px;">Search and Add Tunes (Over 65,000 Tunes Available)</p>';
+  modal_msg += '<p style="text-align:center;margin-top:16px;">';
+  modal_msg += '<input id="searchandaddtunes" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AddFromSearch(null,AddABCCallback);" type="button" value="Tune Search Engine" title="Search for tunes to add to your tunebook.&nbsp;&nbsp;Over 65,000 tunes available.">';
+
+  modal_msg += '<p style="text-align:center;font-size:18px;margin-top:24px;">Change the Order or Delete Tunes</p>';
+  modal_msg += '<p style="text-align:center;margin-top:16px;">';
+
+  // Reorder uses drag and drop on desktop
+  if (isPureDesktopBrowser()) {
+    modal_msg += '<input id="changetuneorder" class="advancedcontrols btn btn-injectcontrols-headers" onclick="ChangeTuneOrder();" type="button" value="Change the Order of the Tunes" title="Change the order of the tunes">';
+  }
+  // Reorder uses up / down buttons on mobile
+  else {
+    modal_msg += '<input id="changetuneorder" class="advancedcontrols btn btn-injectcontrols-headers" onclick="ChangeTuneOrderMobile();" type="button" value="Change the Order of the Tunes" title="Change the order of the tunes">';
+  }
+
+  modal_msg += '<input id="culltunes" class="advancedcontrols btn btn-injectcontrols-headers" onclick="CullTunes();" type="button" value="Delete Tunes from the Tunebook" title="Delete selected tunes from the tunebook">';
+  modal_msg += '</p>';
+
+  modal_msg += '</div>';
 
   setTimeout(function() {
 
@@ -43458,6 +43460,32 @@ function RollExplorerDialog(theOriginalABC, theProcessedABC, roll_explorer_state
 //
 
 //
+// Tune trainer phrase builder
+function TrainerPhraseBuilder(){
+
+ PhraseBuilder(phrase_builder_callback);
+
+  function phrase_builder_callback(thePhrases){
+
+    if (thePhrases){
+      gPlayerLooperProcessed = thePhrases;
+    }
+
+     // Click the OK button in the player
+    gTheOKButton.click();
+
+    setTimeout(function() {
+
+      // Launch the trainer
+      TuneTrainerDialog(gPlayerLooperOriginal, gPlayerLooperProcessed, true);
+
+    }, 250);
+
+  }
+ 
+}
+
+//
 // Launched from the player, close the player, launch the trainer
 function TuneTrainerLaunchFromPlayer() {
 
@@ -44338,7 +44366,7 @@ function TuneTrainerDialog(theOriginalABC, theProcessedABC, looperState) {
     modal_msg += '<span id="looper_text_4">Increment tempo after how many loops:</span> <input style="width:60px;margin-right:14px;" id="looper_count" type="number" min="1" step="1" max="100" title="Increment tempo after this many times through the tune" autocomplete="off"/><span id="looper_text_5">Countdown?</span><input style="width:18px;margin-left:8px;margin-right:14px;" id="looper_docountdown" type="checkbox" onchange="ToggleLoopCountdown();"/><span id="looper_text_6">Countdown secs:</span><input style="width:60px;margin-left:8px;" id="looper_countdown" type="number" min="1" step="1" max="30" title="Countdown secs" autocomplete="off" onchange="SaveLoopCountdown();"/>';
     modal_msg += '</p>';
     modal_msg += '<p class="configure_looper_text" style="text-align:center;margin:0px;margin-top:20px">';
-    modal_msg += '<input id="looperreset" class="looperreset button btn btn-looperreset" onclick="TuneTrainerReset();" type="button" value="Apply Tune Trainer Settings and Reload" title="Applies the entered tune trainer settings and reloads the player">';
+    modal_msg += '<input id="looperreset" class="looperreset button btn btn-looperreset" onclick="TuneTrainerReset();" type="button" value="Apply Settings and Reload" title="Applies the entered tune trainer settings and reloads the player">';
 
     if (gPlayMetronome) {
       modal_msg += '<input id="looper_metronomebutton" class="looper_metronome button btn btn-metronome" onclick="ToggleTuneTrainerMetronome();" type="button" value="Disable Metronome" title="Disables the metronome">';
@@ -44346,13 +44374,9 @@ function TuneTrainerDialog(theOriginalABC, theProcessedABC, looperState) {
       modal_msg += '<input id="looper_metronomebutton" class="looper_metronome button btn btn-metronome" onclick="ToggleTuneTrainerMetronome();" type="button" value="Enable Metronome" title="Enables the metronome">';
     }
 
-    // Change message based on requested add measure count
-    if (gLooperAddMeasureCount == 1){
-      modal_msg += '<span id="looper_text_7" style="margin-left:14px;">Add a measure of rests?</span><input style="width:18px;margin-left:8px;margin-right:14px;" id="looper_addmeasure" type="checkbox" onchange="ToggleTuneTrainerAddMeasure();"/>';
-    }
-    else{
-      modal_msg += '<span id="looper_text_7" style="margin-left:14px;">Add '+gLooperAddMeasureCount+' measures of rests?</span><input style="width:18px;margin-left:8px;margin-right:14px;" id="looper_addmeasure" type="checkbox" onchange="ToggleTuneTrainerAddMeasure();"/>';
-    }
+    modal_msg += '<input id="trainer_phrase_builder" class="trainer_phrase_builder button btn btn-phrasebuilder" onclick="TrainerPhraseBuilder();" type="button" value="Phrase Builder" title="Builds phrases of specified measure length for the tune and then reloads the Tune Trainer.&nbsp;&nbsp;This does not change the original tune ABC.">';
+    
+    modal_msg += '<span id="looper_text_7" style="margin-left:12px;" title="Adds additional full measure trailing rests at the end of the ABC.&nbsp;&nbsp;The number of measures of rests to add can be configured in the Advanced Settings dialog.">Add trailing rests?</span><input style="width:18px;margin-left:8px;margin-right:14px;" id="looper_addmeasure" type="checkbox" onchange="ToggleTuneTrainerAddMeasure();" title="Adds additional full measure trailing rests at the end of the ABC.&nbsp;&nbsp;The number of measures of rests to add can be configured in the Advanced Settings dialog."/>';
 
     modal_msg += '</p>';
     
@@ -49352,7 +49376,7 @@ function AdvancedControlsDialog() {
   modal_msg += '<input id="configure_batch_mp3_export" class="btn btn-batchmp3export" onclick="ExportAll()" type="button" value="Export All Tunes">';
   modal_msg += '<input id="sortbutton" class="sortbutton btn btn-sortbutton" onclick="SortDialog()" type="button" value="Sort by Tag">';
   modal_msg += '<input id="incipitsbuilder" class="incipitsbuilder btn btn-incipitsbuilder" onclick="IncipitsBuilderDialog()" type="button" value="Notes Incipits Builder">';
-  modal_msg += '<input id="phrasebuilder" class="advancedcontrols btn btn-phrasebuilder" onclick="PhraseBuilder()" type="button" value="Phrase Builder">';
+  modal_msg += '<input id="phrasebuilder" class="advancedcontrols btn btn-phrasebuilder" onclick="PhraseBuilder(null)" type="button" value="Phrase Builder">';
   modal_msg += '</p>';
   modal_msg += '<p style="text-align:center;margin-top:24px;">';
   modal_msg += '<input id="customcssgenerator" class="advancedcontrols btn btn-cssgenerator" onclick="abcjsColorEditor()" type="button" value="Custom CSS Generator">';
@@ -61933,7 +61957,7 @@ var gPhraseBuilderPadding = 0;
 //
 // Phrase builder dialog
 //
-function PhraseBuilder(){
+function PhraseBuilder(callback){
     
   function hasProblemTags(abcText) {
 
@@ -61994,16 +62018,26 @@ function PhraseBuilder(){
     id: "phrasePadding",
     type: "number",
     cssClass: "configure_phrase_length"
-  },
-  {
-    name: "      Process all tunes",
-    id: "buildPhraseAll",
-    type: "checkbox",
-    cssClass: "configure_transposetokey_text"
-  }
-  ];
+  }];
 
-  sendGoogleAnalytics("dialog", "PhraseBuilder");
+  if (!callback){
+
+    form = form.concat(
+      [{
+        name: "      Process all tunes",
+        id: "buildPhraseAll",
+        type: "checkbox",
+        cssClass: "configure_transposetokey_text"
+      }]);
+
+    sendGoogleAnalytics("dialog", "PhraseBuilder");
+  
+  }
+  else{
+
+    sendGoogleAnalytics("dialog", "TrainerPhraseBuilder");
+
+  }
 
   const modal = DayPilot.Modal.form(form, theData, {
     theme: "modal_flat",
@@ -62013,12 +62047,43 @@ function PhraseBuilder(){
     autoFocus: true
   }).then(function(args) {
 
+    // If canceled from the Tune Trainer, just return the original 
+    if (callback){
+
+      if (args.canceled){
+
+        var theSelectedTuneIndex = findSelectedTuneIndex();
+
+        // Try to find the current tune
+        var theSelectedABC = findSelectedTune();
+
+        if (theSelectedABC == "") {
+          // This should never happen
+
+            callback(null);
+          
+        }
+        else{
+        
+          callback(theSelectedABC);
+
+        }
+
+        return;
+
+      }
+    }
+
     if (!args.canceled) {
 
       // Get the phrase length
       var phraseLengthStr = args.result.phraseLength;
 
       if (phraseLengthStr == null) {
+        
+        if (callback){
+          callback(null);
+        }
 
         return;
       
@@ -62027,6 +62092,11 @@ function PhraseBuilder(){
       var phraseLength = parseInt(phraseLengthStr);
 
       if ((isNaN(phraseLength)) || (phraseLength == undefined) || (phraseLength < 1) || (phraseLength > 32)) {
+
+        // Just return the processed phrases?
+        if (callback){
+          callback(null);
+        }
 
         return;
 
@@ -62039,6 +62109,10 @@ function PhraseBuilder(){
 
       if (phrasePaddingStr == null) {
 
+        if (callback){
+          callback(null);
+        }
+
         return;
       
       }
@@ -62047,13 +62121,25 @@ function PhraseBuilder(){
 
       if ((isNaN(phrasePadding)) || (phrasePadding == undefined) || (phrasePadding < 0) || (phrasePadding > 32)) {
 
+        if (callback){
+          callback(null);
+        }
+
         return;
 
       }
 
+
       gPhraseBuilderPadding = phrasePadding;
 
-      var doAllTunes = args.result.buildPhraseAll;
+      var doAllTunes;
+
+      if (callback){
+        doAllTunes = false;
+      }
+      else{
+        doAllTunes = args.result.buildPhraseAll;
+      }
 
       if (doAllTunes){
 
@@ -62141,6 +62227,14 @@ function PhraseBuilder(){
 
         if (theSelectedABC == "") {
           // This should never happen
+
+          // Just return the processed phrases?
+          if (callback){
+
+            callback(null);
+          
+          }
+
           return;
         }
 
@@ -62156,6 +62250,32 @@ function PhraseBuilder(){
             thePrompt = '"' + theTitle + '"' + " contains a V: tag or tags after the header and cannot have phrases expanded.";
             doPhrasesRender = false;
         }
+
+        // If just returning the phrases, but there is an error
+        if (!doPhrasesRender){
+
+          //debugger;
+
+          // Just return the processed phrases?
+          if (callback){
+
+            // Center the string in the prompt
+            thePrompt = makeCenteredPromptString(thePrompt);
+
+            DayPilot.Modal.alert(thePrompt, {
+              theme: "modal_flat",
+              top: 300,
+              scrollWithPage: (AllowDialogsToScroll())}
+            ).then(function(){
+
+              callback(null);
+
+            });
+
+            return;
+          }
+
+        }
   
         if (doPhrasesRender){
 
@@ -62164,6 +62284,15 @@ function PhraseBuilder(){
           thePhrases = processAbcPhrases(thePhrases,gPhraseBuilderLength,gPhraseBuilderPadding);
 
           thePhrases = thePhrases.trim();
+
+          // Just return the processed phrases?
+          if (callback){
+
+            callback(thePhrases);
+            
+            return;
+
+          }
 
           var theSelectionStart;
 
@@ -62175,7 +62304,6 @@ function PhraseBuilder(){
             // Try and keep the same tune after the redraw for immediate play
             theSelectionStart = gTheABC.selectionStart;
           }
-
           // Stuff in the processed ABC
           var theABC = getABCEditorText();
           theABC = theABC.replace(theSelectedABC, thePhrases);
