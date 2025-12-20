@@ -6029,43 +6029,99 @@ display:block;
    Advanced Controls Tabs
    ============================================================ */
 
+/* Container */
 .adv-tabs {
-  margin-top: 12px;
+  margin-top: 9px;
+  padding-top: 12px;
 }
 
+/* Tab bar: looks like tabs attached to a panel */
 .adv-tab-bar {
   display: flex;
   justify-content: center;
-  gap: 8px;
+  gap: 6px;
   flex-wrap: wrap;
-  margin-bottom:28px;
-  margin-top:20px;
+  margin: 0 0 0 0;
+  padding: 0 6px;
+  border-bottom: 1px solid #dadada;   /* the "track" line under tabs */
 }
 
+/* Tab buttons */
 .adv-tab-btn {
+  appearance: none;
+  -webkit-appearance: none;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
   font-family: helvetica, sans-serif;
-  display: inline-flex;          /* key */
-  align-items: center;           /* vertical centering */
-  justify-content: center;       /* horizontal centering */
-  text-align: center;            /* fallback */
-  background: #ddd !important;        
-  line-height: 1.2;              /* prevents font-weight jump */
-  white-space: normal;           /* allows wrapping like “ABC\nFeatures” */
+  font-size: 12pt;
+  line-height: 1.2;
+
+  padding: 10px 14px;
+  margin: 0;
+
+  border: 1px solid transparent;      /* inactive tabs are flatter */
+  border-bottom: none;                 /* so active can connect */
+  background: transparent;
+
+  color: #333;
+  cursor: pointer;
+
+  border-top-left-radius: 6px;
+  border-top-right-radius: 6px;
+
+  transition: background 0.15s ease, border-color 0.15s ease;
 }
 
+/* Inactive hover */
+.adv-tab-btn:hover {
+  background: #f6f6f6;
+  border-color: #e0e0e0;
+  border-bottom: none;
+}
+
+/* Active tab = "connected" to panel */
 .adv-tab-btn.active {
-  background: #ffffff !important;
-  border-color: #888;
-  font-weight: bold;
-  text-align:center;
+  background: #ffffff;
+  border-color: #cfcfcf;
+  border-bottom: 1px solid #ffffff;   /* hides bar line under active tab */
+  font-weight: 600;
 }
 
+/* Panel surface */
+.adv-tab-panels {
+  border: 1px solid #cfcfcf;
+  border-top: none;                   /* tab bar already provides top edge */
+  background: #ffffff;
+  padding: 14px 10px 8px 10px;
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+}
+
+/* Panels */
 .adv-tab-panel {
   display: none;
 }
 
 .adv-tab-panel.active {
   display: block;
+}
+
+.adv-tab-btn.active {
+  position: relative;
+}
+
+.adv-tab-btn.active::after {
+  content: "";
+  position: absolute;
+  left: 10px;
+  right: 10px;
+  bottom: -2px;
+  height: 3px;
+  background: #4a90e2;  /* change to match your site */
+  border-radius: 2px;
 }
 
 /******************************************************************************/

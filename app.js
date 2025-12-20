@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3077_121925_1300";
+var gVersionNumber = "3078_122025_0730";
 
 var gMIDIInitStillWaiting = false;
 
@@ -19597,11 +19597,11 @@ function AddABC() {
   modal_msg += '<div class="adv-tabs">';
   modal_msg += '<div class="adv-tab-bar">';
 
-  modal_msg += '<button class="adv-tab-btn" data-tab="addabc-tab-examples" onclick="AddABC_SelectTab(\'addabc-tab-examples\')">Add<br/>Example<br/>Tunes</button>';
+  modal_msg += '<button class="adv-tab-btn" data-tab="addabc-tab-examples" onclick="AddABC_SelectTab(\'addabc-tab-examples\')">Add Example Tunes</button>';
 
-  modal_msg += '<button class="adv-tab-btn" data-tab="addabc-tab-templates" onclick="AddABC_SelectTab(\'addabc-tab-templates\')">Add<br/>Example<br/>Templates</button>';
+  modal_msg += '<button class="adv-tab-btn" data-tab="addabc-tab-templates" onclick="AddABC_SelectTab(\'addabc-tab-templates\')">Add Example Templates</button>';
 
-  modal_msg += '<button class="adv-tab-btn" data-tab="addabc-tab-pdf-features" onclick="AddABC_SelectTab(\'addabc-tab-pdf-features\')">Inject<br/>PDF<br/>Features</button>';
+  modal_msg += '<button class="adv-tab-btn" data-tab="addabc-tab-pdf-features" onclick="AddABC_SelectTab(\'addabc-tab-pdf-features\')">Inject PDF Features</button>';
 
   modal_msg += '</div>';
   modal_msg += '<div class="adv-tab-panels">';
@@ -49278,13 +49278,13 @@ function AdvancedControlsDialog() {
   modal_msg += '<div class="adv-tabs">';
   modal_msg += '<div class="adv-tab-bar">';
 
-  modal_msg += '<button class="adv-tab-btn" data-tab="adv-tab-injection" onclick="AdvancedControls_SelectTab(\'adv-tab-injection\')">ABC<br/>Features</button>';
+  modal_msg += '<button class="adv-tab-btn" data-tab="adv-tab-injection" onclick="AdvancedControls_SelectTab(\'adv-tab-injection\')">ABC Features</button>';
 
-  modal_msg += '<button class="adv-tab-btn" data-tab="adv-tab-tablatures" onclick="AdvancedControls_SelectTab(\'adv-tab-tablatures\')">Inject<br/>Tablature</button>';
+  modal_msg += '<button class="adv-tab-btn" data-tab="adv-tab-tablatures" onclick="AdvancedControls_SelectTab(\'adv-tab-tablatures\')">Inject Tablature</button>';
 
   modal_msg += '<button class="adv-tab-btn" data-tab="adv-tab-players" onclick="AdvancedControls_SelectTab(\'adv-tab-players\')">Explorers</button>';
 
-  modal_msg += '<button class="adv-tab-btn" data-tab="adv-tab-bagpipes" onclick="AdvancedControls_SelectTab(\'adv-tab-bagpipes\')">Other<br/>Tools</button>';
+  modal_msg += '<button class="adv-tab-btn" data-tab="adv-tab-bagpipes" onclick="AdvancedControls_SelectTab(\'adv-tab-bagpipes\')">Other Tools</button>';
 
   modal_msg += '</div>';
   modal_msg += '<div class="adv-tab-panels">';
