@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3078_122025_0730";
+var gVersionNumber = "3079_122025_0930";
 
 var gMIDIInitStillWaiting = false;
 
@@ -19615,7 +19615,7 @@ function AddABC() {
   modal_msg += '<input id="addnewjig" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AppendSampleJig();" type="button" value="The Kesh (jig)" title="Adds an example jig (The Kesh) to the end of the ABC">';
   modal_msg += '<input id="addnewhornpipe" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AppendSampleHornpipe();" type="button" value="Alexander\'s (hornpipe)" title="Adds an example Hornpipe (Alexander\'s) to the end of the ABC">';
   modal_msg += '</p>';
-  modal_msg += '<p style="text-align:center;margin-top:16px;">';
+  modal_msg += '<p style="text-align:center;margin-top:24px;">';
   modal_msg  += '<input id="addjsbach" class="advancedcontrols btn btn-injectcontrols-headers" style="margin-right:24px;" onclick="AppendJSBach();" type="button" value="J.S. Bach Two-Part Invention #1" title="Adds the J.S. Bach 2-Part Invention #1 to the end of the ABC">';
   modal_msg  += '<input id="addjsbach" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AppendJSBach2();" type="button" value="J.S. Bach BWV570 Fantasia" title="Adds the J.S. Bach BWV570 Fantasia for Pipe Organ to the end of the ABC">';
   modal_msg += '</p></div>';
@@ -19627,7 +19627,7 @@ function AddABC() {
   modal_msg += '<input id="addsongtemplate" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AppendSongTemplate();" type="button" value="Add a Song Template" title="Adds a minimal song template to the end of the ABC">';
   modal_msg += '<input id="addnewsong" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AppendSampleSong();" type="button" value="Add an Example Song" title="Adds an example song to the end of the ABC">';
   modal_msg += '</p>';
-  modal_msg += '<p style="text-align:center;margin-top:16px;">';
+  modal_msg += '<p style="text-align:center;margin-top:24px;">';
   modal_msg += '<input id="addbodhrantemplate" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AddBodhranTemplate();" type="button" value="Add Bodhran Backing Track Template" title="Opens a dialog where you can choose a bodhran backing track template of common tune styles to add to the end of the ABC">';
   modal_msg += '<input id="addpdfannotationstemplate" class="advancedcontrols btn btn-injectcontrols-headers" style="margin-right:24px;" onclick="AddPDFAnnotationsTemplate(event);" type="button" value="Add PDF Tunebook Features Template" title="Adds a template that contains the most common PDF tunebook export feature annotations">';
   modal_msg += '</p></div>';

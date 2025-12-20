@@ -25,7 +25,7 @@ function UpdateToLatestVersion(){
 
 			setTimeout(function(){
 
-				var thePrompt = "All changes applied!<br/><br/>Click OK to restart the tool.";
+				var thePrompt = "<strong>All changes applied!</strong><br/><br/>Click OK to restart the tool.";
 				
 				// Center the string in the prompt
 				thePrompt = makeCenteredPromptString(thePrompt);
@@ -315,7 +315,7 @@ function ResetSettingsDialog(){
 
 					setTimeout(function(){
 
-						var thePrompt = "All changes applied!<br/><br/>Click OK to restart the tool.";
+						var thePrompt = "<strong>All changes applied!</strong><br/><br/>Click OK to restart the tool.";
 						
 						// Center the string in the prompt
 						thePrompt = makeCenteredPromptString(thePrompt);
