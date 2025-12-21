@@ -62071,7 +62071,7 @@ function PhraseBuilder(theTrainerTune,callback){
 
   const modal = DayPilot.Modal.form(form, theData, {
     theme: "modal_flat",
-    top: 37,
+    top: 51,
     width: 600,
     scrollWithPage: (AllowDialogsToScroll()),
     autoFocus: true
