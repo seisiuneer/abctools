@@ -14,7 +14,13 @@
 //
 //
 //
-// Updated 21 Dec 2025 at 0600
+//
+//
+//
+// Updated 21 Dec 2025 at 0630
+//
+//
+//
 //
 //
 //
@@ -30,7 +36,7 @@
 //
 //
 
-const cacheName = 'abctoolscache-3084';
+const cacheName = 'abctoolscache-3085';
 
 const contentToCache = [
     'abctools.html',
@@ -61,8 +67,6 @@ const contentToCache = [
 	'lame.min.js',
 	'unmute.min.js',
 	'tab-injectors-min.js',
-    'visualscript-sdk.js',
-    'smartdraw-export-min.js',
     'acoustic_grand_piano-mp3.js',
     'percussion-mp3.js',
     'online-check.js',
