@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3083_122025_1900";
+var gVersionNumber = "3084_122125_0600";
 
 var gMIDIInitStillWaiting = false;
 
@@ -19571,10 +19571,10 @@ function AddABC() {
   var isTemplatesActive = (initialTab === "addabc-tab-templates");
   var isPDFFeaturesActive = (initialTab === "addabc-tab-pdf-features");
 
-  var modal_msg = '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:15px;">Add ABC Tunes, Templates, and PDF Features&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#add_templates_dialog" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>';
+  var modal_msg = '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:15px;margin-bottom:10px;">Add ABC Tunes, Templates, and PDF Features<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#add_templates_dialog" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>';
   modal_msg += '<div id="add-new-tune-dialog">';
-  modal_msg += '<p style="text-align:center;margin-top:28px;font-size:18px;">Add Your Own Tunes from ABC, MusicXML, BWW, or MIDI Files</p>';
-  modal_msg += '<p style="text-align:center;margin-top:16px;">';
+  modal_msg += '<p style="text-align:center;font-size:18px;">Add Your Own Tunes from ABC, MusicXML, BWW, or MIDI Files</p>';
+  modal_msg += '<p style="text-align:center;margin-top:24px;">';
   modal_msg += '<label class="abcuploaddialog btn btn-top" for="addabcfilebutton" title="Adds tunes from an existing ABC, MusicXML, BWW, or MIDI file to the end of the ABC">Choose Files to Add <input type="file" id="addabcfilebutton" accept=".abc,.txt,.ABC,.TXT,.xml,.XML,.musicxml,.mxl,.MXL,.mid,.MID,.midi,.MIDI,.bww,.BWW" hidden multiple/></label>';
   modal_msg += '<input class="dialogrestorebutton btn btn-restorebutton" id="dialogrestorebutton" onclick="RestoreSnapshot(event,false,true);" type="button" value="Restore from Snapshot" title="Replaces the contents of the ABC editor with a Snapshot saved in browser storage.&nbsp;&nbsp;Click for Snapshot #1, Shift-click for Snapshot #2, Alt-click for Snapshot #3, Shift-Alt-click for Snapshot #4." style="display:none;">';
   modal_msg += '<input class="dialogrestoreautobutton btn btn-restorebutton" id="dialogrestoreautobutton" onclick="RestoreSnapshot(event,true,true);" type="button" value="Restore from Auto-Snapshot" title="Replaces the contents of the ABC editor with an Auto-Snapshot saved in browser storage" style="display:none;">';
@@ -43466,11 +43466,17 @@ function RollExplorerDialog(theOriginalABC, theProcessedABC, roll_explorer_state
 
 //
 // Tune trainer phrase builder
-function TrainerPhraseBuilder(){
- 
- var theTrainerTune = gPlayerLooperOriginal;
+function TrainerPhraseBuilder(e){
 
- PhraseBuilder(theTrainerTune,phrase_builder_callback);
+  // Shift key restores original tune
+  if (e.shiftKey){
+      phrase_builder_callback(gPlayerLooperOriginal);
+      return;
+  }
+ 
+  var theTrainerTune = gPlayerLooperOriginal;
+
+  PhraseBuilder(theTrainerTune,phrase_builder_callback);
 
   function phrase_builder_callback(thePhrases){
 
@@ -44381,7 +44387,7 @@ function TuneTrainerDialog(theOriginalABC, theProcessedABC, looperState) {
       modal_msg += '<input id="looper_metronomebutton" class="looper_metronome button btn btn-metronome" onclick="ToggleTuneTrainerMetronome();" type="button" value="Enable Metronome" title="Enables the metronome">';
     }
 
-    modal_msg += '<input id="trainer_phrase_builder" class="trainer_phrase_builder button btn btn-phrasebuilder" onclick="TrainerPhraseBuilder();" type="button" value="Phrase Builder" title="Builds phrases of specified measure length for the tune and then reloads the Tune Trainer.&nbsp;&nbsp;This does not change the original tune ABC.">';
+    modal_msg += '<input id="trainer_phrase_builder" class="trainer_phrase_builder button btn btn-phrasebuilder" onclick="TrainerPhraseBuilder(event);" type="button" value="Phrase Builder" title="Builds phrases of specified measure length for the tune and then reloads the Tune Trainer.&nbsp;&nbsp;This does not change the original tune ABC.&nbsp;&nbsp;Shift-click to restore the original tune.">';
     
     modal_msg += '<span id="looper_text_7" style="margin-left:12px;" title="Adds additional full measure trailing rests at the end of the ABC.&nbsp;&nbsp;The number of measures of rests to add can be configured in the Advanced Settings dialog.">Add trailing rests?</span><input style="width:18px;margin-left:8px;margin-right:14px;" id="looper_addmeasure" type="checkbox" onchange="ToggleTuneTrainerAddMeasure();" title="Adds additional full measure trailing rests at the end of the ABC.&nbsp;&nbsp;The number of measures of rests to add can be configured in the Advanced Settings dialog."/>';
 
