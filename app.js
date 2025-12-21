@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3080_122025_1530";
+var gVersionNumber = "3081_122025_1630";
 
 var gMIDIInitStillWaiting = false;
 
@@ -43462,8 +43462,10 @@ function RollExplorerDialog(theOriginalABC, theProcessedABC, roll_explorer_state
 //
 // Tune trainer phrase builder
 function TrainerPhraseBuilder(){
+ 
+ var theTrainerTune = gPlayerLooperOriginal;
 
- PhraseBuilder(phrase_builder_callback);
+ PhraseBuilder(theTrainerTune,phrase_builder_callback);
 
   function phrase_builder_callback(thePhrases){
 
@@ -49376,7 +49378,7 @@ function AdvancedControlsDialog() {
   modal_msg += '<input id="configure_batch_mp3_export" class="btn btn-batchmp3export" onclick="ExportAll()" type="button" value="Export All Tunes">';
   modal_msg += '<input id="sortbutton" class="sortbutton btn btn-sortbutton" onclick="SortDialog()" type="button" value="Sort by Tag">';
   modal_msg += '<input id="incipitsbuilder" class="incipitsbuilder btn btn-incipitsbuilder" onclick="IncipitsBuilderDialog()" type="button" value="Notes Incipits Builder">';
-  modal_msg += '<input id="phrasebuilder" class="advancedcontrols btn btn-phrasebuilder" onclick="PhraseBuilder(null)" type="button" value="Phrase Builder">';
+  modal_msg += '<input id="phrasebuilder" class="advancedcontrols btn btn-phrasebuilder" onclick="PhraseBuilder(null,null)" type="button" value="Phrase Builder">';
   modal_msg += '</p>';
   modal_msg += '<p style="text-align:center;margin-top:24px;">';
   modal_msg += '<input id="customcssgenerator" class="advancedcontrols btn btn-cssgenerator" onclick="abcjsColorEditor()" type="button" value="Custom CSS Generator">';
@@ -61957,7 +61959,7 @@ var gPhraseBuilderPadding = 0;
 //
 // Phrase builder dialog
 //
-function PhraseBuilder(callback){
+function PhraseBuilder(theTrainerTune,callback){
     
   function hasProblemTags(abcText) {
 
@@ -62051,23 +62053,8 @@ function PhraseBuilder(callback){
     if (callback){
 
       if (args.canceled){
-
-        var theSelectedTuneIndex = findSelectedTuneIndex();
-
-        // Try to find the current tune
-        var theSelectedABC = findSelectedTune();
-
-        if (theSelectedABC == "") {
-          // This should never happen
-
-            callback(null);
-          
-        }
-        else{
         
-          callback(theSelectedABC);
-
-        }
+        callback(theTrainerTune);
 
         return;
 
@@ -62223,7 +62210,14 @@ function PhraseBuilder(callback){
         var theSelectedTuneIndex = findSelectedTuneIndex();
 
         // Try to find the current tune
-        var theSelectedABC = findSelectedTune();
+        var theSelectedABC;
+
+        if (callback){ 
+          theSelectedABC = theTrainerTune;
+        }
+        else{
+          theSelectedABC = findSelectedTune();
+        }
 
         if (theSelectedABC == "") {
           // This should never happen
