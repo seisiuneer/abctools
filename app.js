@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3082_122025_1800";
+var gVersionNumber = "3083_122025_1900";
 
 var gMIDIInitStillWaiting = false;
 
@@ -19559,11 +19559,22 @@ function AddABC() {
   // Keep track of dialogs
   sendGoogleAnalytics("dialog", "AddABC");
 
+  // Decide initial tab BEFORE rendering (prevents flash)
+  var initialTab = "addabc-tab-examples";
+  if (gAddABCLastTab === "addabc-tab-examples" ||
+      gAddABCLastTab === "addabc-tab-templates" ||
+      gAddABCLastTab === "addabc-tab-pdf-features") {
+    initialTab = gAddABCLastTab;
+  }
+
+  var isExamplesActive  = (initialTab === "addabc-tab-examples");
+  var isTemplatesActive = (initialTab === "addabc-tab-templates");
+  var isPDFFeaturesActive = (initialTab === "addabc-tab-pdf-features");
+
   var modal_msg = '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:15px;">Add ABC Tunes, Templates, and PDF Features&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#add_templates_dialog" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>';
   modal_msg += '<div id="add-new-tune-dialog">';
   modal_msg += '<p style="text-align:center;margin-top:28px;font-size:18px;">Add Your Own Tunes from ABC, MusicXML, BWW, or MIDI Files</p>';
   modal_msg += '<p style="text-align:center;margin-top:16px;">';
-  //modal_msg += '';
   modal_msg += '<label class="abcuploaddialog btn btn-top" for="addabcfilebutton" title="Adds tunes from an existing ABC, MusicXML, BWW, or MIDI file to the end of the ABC">Choose Files to Add <input type="file" id="addabcfilebutton" accept=".abc,.txt,.ABC,.TXT,.xml,.XML,.musicxml,.mxl,.MXL,.mid,.MID,.midi,.MIDI,.bww,.BWW" hidden multiple/></label>';
   modal_msg += '<input class="dialogrestorebutton btn btn-restorebutton" id="dialogrestorebutton" onclick="RestoreSnapshot(event,false,true);" type="button" value="Restore from Snapshot" title="Replaces the contents of the ABC editor with a Snapshot saved in browser storage.&nbsp;&nbsp;Click for Snapshot #1, Shift-click for Snapshot #2, Alt-click for Snapshot #3, Shift-Alt-click for Snapshot #4." style="display:none;">';
   modal_msg += '<input class="dialogrestoreautobutton btn btn-restorebutton" id="dialogrestoreautobutton" onclick="RestoreSnapshot(event,true,true);" type="button" value="Restore from Auto-Snapshot" title="Replaces the contents of the ABC editor with an Auto-Snapshot saved in browser storage" style="display:none;">';
@@ -19578,19 +19589,18 @@ function AddABC() {
   modal_msg += '<div class="adv-tabs">';
   modal_msg += '<div class="adv-tab-bar">';
 
-  modal_msg += '<button class="adv-tab-btn" data-tab="addabc-tab-examples" onclick="AddABC_SelectTab(\'addabc-tab-examples\')">Add Example Tunes</button>';
+  modal_msg += '<button class="adv-tab-btn' + (isExamplesActive ? ' active' : '') + '" data-tab="addabc-tab-examples" aria-selected="' + (isExamplesActive ? 'true' : 'false') + '" onclick="AddABC_SelectTab(\'addabc-tab-examples\')">Add Example Tunes</button>';
 
-  modal_msg += '<button class="adv-tab-btn" data-tab="addabc-tab-templates" onclick="AddABC_SelectTab(\'addabc-tab-templates\')">Add Example Templates</button>';
+  modal_msg += '<button class="adv-tab-btn' + (isTemplatesActive ? ' active' : '') + '" data-tab="addabc-tab-templates" aria-selected="' + (isTemplatesActive ? 'true' : 'false') + '" onclick="AddABC_SelectTab(\'addabc-tab-templates\')">Add Example Templates</button>';
 
-  modal_msg += '<button class="adv-tab-btn" data-tab="addabc-tab-pdf-features" onclick="AddABC_SelectTab(\'addabc-tab-pdf-features\')">Inject PDF Features</button>';
+  modal_msg += '<button class="adv-tab-btn' + (isPDFFeaturesActive ? ' active' : '') + '" data-tab="addabc-tab-pdf-features" aria-selected="' + (isPDFFeaturesActive ? 'true' : 'false') + '" onclick="AddABC_SelectTab(\'addabc-tab-pdf-features\')">Inject PDF Features</button>';
 
   modal_msg += '</div>';
   modal_msg += '<div class="adv-tab-panels">';
 
   /* ---------------- Example ABC tunes tab ---------------- */
 
-  modal_msg += '<div id="addabc-tab-examples" class="adv-tab-panel">';
-
+  modal_msg += '<div id="addabc-tab-examples" class="adv-tab-panel' + (isExamplesActive ? ' active' : '') + '">';
   modal_msg += '<p style="text-align:center;margin-top:16px;">';
   modal_msg += '<input id="addnewreel" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AppendSampleReel();" type="button" value="Cooley\'s (reel)" title="Adds an example reel (Cooley\'s) to the end of the ABC">';
   modal_msg += '<input id="addnewjig" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AppendSampleJig();" type="button" value="The Kesh (jig)" title="Adds an example jig (The Kesh) to the end of the ABC">';
@@ -19602,7 +19612,8 @@ function AddABC() {
   modal_msg += '</p></div>';
 
   /* ---------------- ABC templates tab ---------------- */
-  modal_msg += '<div id="addabc-tab-templates" class="adv-tab-panel">';
+
+  modal_msg += '<div id="addabc-tab-templates" class="adv-tab-panel' + (isTemplatesActive ? ' active' : '') + '">';
   modal_msg += '<p style="text-align:center;margin-top:16px;">';
   modal_msg += '<input id="addnewtunetemplate" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AppendTuneTempate();" type="button" value="Add a Tune Template" title="Adds a tune template to the end of the ABC">';
   modal_msg += '<input id="addsongtemplate" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AppendSongTemplate();" type="button" value="Add a Song Template" title="Adds a minimal song template to the end of the ABC">';
@@ -19614,7 +19625,8 @@ function AddABC() {
   modal_msg += '</p></div>';
 
   /* ---------------- PDF features tab ---------------- */
-  modal_msg += '<div id="addabc-tab-pdf-features" class="adv-tab-panel">';
+
+  modal_msg += '<div id="addabc-tab-pdf-features" class="adv-tab-panel' + (isPDFFeaturesActive ? ' active' : '') + '">';
   modal_msg += '<p style="text-align:center;margin-top:24px;"><input id="tunebookbuilder-add-play" class="advancedcontrols btn btn-injectcontrols-tunebookbuilder-play" onclick="PDFTunebookBuilderPlayOnly();" type="button" value="Inject Only PDF Tunebook Play Features" title="Inject only minimal playback-related instrument and volume commands at the top of your tunebook ABC"><input id="tunebookbuilder_add" class="advancedcontrols btn btn-injectcontrols-tunebookbuilder" onclick="PDFTunebookBuilder();" type="button" value="Inject All PDF Tunebook Features" title="Inject commands at the top of your tunebook ABC for adding a Title Page, Table of Contents, Index, Page Headers, Page Footers, instruments and volumes for Playback Links, and Custom QR Code"></p></div>';
 
   modal_msg += '<p style="font-size:2pt;">&nbsp;</p>';
@@ -19627,12 +19639,9 @@ function AddABC() {
   modal_msg += '<p style="text-align:center;font-size:18px;margin-top:24px;">Change the Order or Delete Tunes</p>';
   modal_msg += '<p style="text-align:center;margin-top:16px;">';
 
-  // Reorder uses drag and drop on desktop
   if (isPureDesktopBrowser()) {
     modal_msg += '<input id="changetuneorder" class="advancedcontrols btn btn-injectcontrols-headers" onclick="ChangeTuneOrder();" type="button" value="Change the Order of the Tunes" title="Change the order of the tunes">';
-  }
-  // Reorder uses up / down buttons on mobile
-  else {
+  } else {
     modal_msg += '<input id="changetuneorder" class="advancedcontrols btn btn-injectcontrols-headers" onclick="ChangeTuneOrderMobile();" type="button" value="Change the Order of the Tunes" title="Change the order of the tunes">';
   }
 
@@ -19641,13 +19650,10 @@ function AddABC() {
 
   modal_msg += '</div>';
 
+  // Keep your idle handler; init-tabs is now optional (won't cause flicker)
   setTimeout(function() {
-
     idleAddABC();
-
-    // Init the tabs
-    AddABC_InitTabs();
-
+    // AddABC_InitTabs();  // optional now; safe to remove
   }, 50);
 
   DayPilot.Modal.alert(modal_msg, {
@@ -19657,10 +19663,9 @@ function AddABC() {
     scrollWithPage: false
   }).then(function() {
 
-
   });
-
 }
+
 
 //
 // Bodhran templates
@@ -49259,6 +49264,21 @@ function AdvancedControlsDialog() {
 
   sendGoogleAnalytics("dialog", "AdvancedControlsDialog");
 
+  // Decide initial tab BEFORE rendering to prevent flashing
+  // Uses your global from earlier: gMoreToolsLastTab
+  var initialTab = "adv-tab-injection";
+  if (gMoreToolsLastTab === "adv-tab-injection" ||
+      gMoreToolsLastTab === "adv-tab-tablatures" ||
+      gMoreToolsLastTab === "adv-tab-players" ||
+      gMoreToolsLastTab === "adv-tab-bagpipes") {
+    initialTab = gMoreToolsLastTab;
+  }
+
+  var isInjectionActive   = (initialTab === "adv-tab-injection");
+  var isTablaturesActive  = (initialTab === "adv-tab-tablatures");
+  var isPlayersActive     = (initialTab === "adv-tab-players");
+  var isOtherToolsActive  = (initialTab === "adv-tab-bagpipes");
+
   var modal_msg = '';
   modal_msg += '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:15px;">';
   modal_msg += 'More ABC Tools';
@@ -49304,20 +49324,28 @@ function AdvancedControlsDialog() {
   modal_msg += '<div class="adv-tabs">';
   modal_msg += '<div class="adv-tab-bar">';
 
-  modal_msg += '<button class="adv-tab-btn" data-tab="adv-tab-injection" onclick="AdvancedControls_SelectTab(\'adv-tab-injection\')">ABC Features</button>';
+  modal_msg += '<button class="adv-tab-btn' + (isInjectionActive ? ' active' : '') +
+               '" data-tab="adv-tab-injection" aria-selected="' + (isInjectionActive ? 'true' : 'false') +
+               '" onclick="AdvancedControls_SelectTab(\'adv-tab-injection\')">ABC Features</button>';
 
-  modal_msg += '<button class="adv-tab-btn" data-tab="adv-tab-tablatures" onclick="AdvancedControls_SelectTab(\'adv-tab-tablatures\')">Inject Tablature</button>';
+  modal_msg += '<button class="adv-tab-btn' + (isTablaturesActive ? ' active' : '') +
+               '" data-tab="adv-tab-tablatures" aria-selected="' + (isTablaturesActive ? 'true' : 'false') +
+               '" onclick="AdvancedControls_SelectTab(\'adv-tab-tablatures\')">Inject Tablature</button>';
 
-  modal_msg += '<button class="adv-tab-btn" data-tab="adv-tab-players" onclick="AdvancedControls_SelectTab(\'adv-tab-players\')">Explorers</button>';
+  modal_msg += '<button class="adv-tab-btn' + (isPlayersActive ? ' active' : '') +
+               '" data-tab="adv-tab-players" aria-selected="' + (isPlayersActive ? 'true' : 'false') +
+               '" onclick="AdvancedControls_SelectTab(\'adv-tab-players\')">Explorers</button>';
 
-  modal_msg += '<button class="adv-tab-btn" data-tab="adv-tab-bagpipes" onclick="AdvancedControls_SelectTab(\'adv-tab-bagpipes\')">Other Tools</button>';
+  modal_msg += '<button class="adv-tab-btn' + (isOtherToolsActive ? ' active' : '') +
+               '" data-tab="adv-tab-bagpipes" aria-selected="' + (isOtherToolsActive ? 'true' : 'false') +
+               '" onclick="AdvancedControls_SelectTab(\'adv-tab-bagpipes\')">Other Tools</button>';
 
   modal_msg += '</div>';
   modal_msg += '<div class="adv-tab-panels">';
 
   /* ---------------- Injection tab ---------------- */
 
-  modal_msg += '<div id="adv-tab-injection" class="adv-tab-panel">';
+  modal_msg += '<div id="adv-tab-injection" class="adv-tab-panel' + (isInjectionActive ? ' active' : '') + '">';
   modal_msg += '<p style="text-align:center;">';
   modal_msg += '<input id="injecttunenumbers" class="advancedcontrols btn btn-injectcontrols-headers" onclick="TuneTitlesNumbersDialog()" type="button" value="Inject Tune Title Numbers">';
   modal_msg += '<input id="injectsectionheader" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectSectionHeader()" type="button" value="Inject PDF Section Header">';
@@ -49338,7 +49366,7 @@ function AdvancedControlsDialog() {
 
   /* ---------------- Tablatures tab ---------------- */
 
-  modal_msg += '<div id="adv-tab-tablatures" class="adv-tab-panel">';
+  modal_msg += '<div id="adv-tab-tablatures" class="adv-tab-panel' + (isTablaturesActive ? ' active' : '') + '">';
   modal_msg += '<p style="text-align:center;">';
   modal_msg += '<input id="injectharmonicatab" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectHarmonicaTab()" type="button" value="Inject Harmonica Tab">';
   modal_msg += '<input id="injectboxtab" class="advancedcontrols btn btn-injectcontrols" onclick="DoInjectBoxTablature()" type="button" value="Inject Irish Button Box Tab">';
@@ -49356,7 +49384,7 @@ function AdvancedControlsDialog() {
 
   /* ---------------- Explorers tab ---------------- */
 
-  modal_msg += '<div id="adv-tab-players" class="adv-tab-panel">';
+  modal_msg += '<div id="adv-tab-players" class="adv-tab-panel' + (isPlayersActive ? ' active' : '') + '">';
   modal_msg += '<p style="text-align:center;">';
 
   modal_msg += '<input id="configure_instrument_explorer" class="btn btn-instrumentexplorer" onclick="InstrumentExplorer()" type="button" value="MIDI Instrument Explorer">';
@@ -49373,9 +49401,12 @@ function AdvancedControlsDialog() {
 
   /* ---------------- Other tools tab ---------------- */
 
-  modal_msg += '<div id="adv-tab-bagpipes" class="adv-tab-panel">';
+  // Hide Export All Tunes on mobile BEFORE render to prevent a layout jump
+  var exportAllTunesStyle = isMobileBrowser() ? ' style="display:none;"' : '';
+
+  modal_msg += '<div id="adv-tab-bagpipes" class="adv-tab-panel' + (isOtherToolsActive ? ' active' : '') + '">';
   modal_msg += '<p style="text-align:center;">';
-  modal_msg += '<input id="configure_batch_mp3_export" class="btn btn-batchmp3export" onclick="ExportAll()" type="button" value="Export All Tunes">';
+  modal_msg += '<input id="configure_batch_mp3_export" class="btn btn-batchmp3export" onclick="ExportAll()" type="button" value="Export All Tunes"' + exportAllTunesStyle + '>';
   modal_msg += '<input id="sortbutton" class="sortbutton btn btn-sortbutton" onclick="SortDialog()" type="button" value="Sort by Tag">';
   modal_msg += '<input id="incipitsbuilder" class="incipitsbuilder btn btn-incipitsbuilder" onclick="IncipitsBuilderDialog()" type="button" value="Notes Incipits Builder">';
   modal_msg += '<input id="phrasebuilder" class="advancedcontrols btn btn-phrasebuilder" onclick="PhraseBuilder(null,null)" type="button" value="Phrase Builder">';
@@ -49399,11 +49430,10 @@ function AdvancedControlsDialog() {
     // Idle the show tab names control
     IdleAllowShowTabNames();
 
-    // Init the tabs
+    // Init the tabs (safe now: panels are hidden by default and one is already active)
     AdvancedControls_InitTabs();
 
   }, 50);
-
 
   DayPilot.Modal.alert(modal_msg, {
     theme: "modal_flat",
@@ -49412,10 +49442,6 @@ function AdvancedControlsDialog() {
     scrollWithPage: AllowDialogsToScroll()
   });
 
-  if (isMobileBrowser()) {
-    var e = document.getElementById("configure_batch_mp3_export");
-    if (e) e.style.display = "none";
-  }
 }
 
 // Reset the default roll parameter strings
