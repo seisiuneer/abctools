@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3087_122125_1530";
+var gVersionNumber = "3088_122125_1600";
 
 var gMIDIInitStillWaiting = false;
 
@@ -49317,7 +49317,7 @@ function AdvancedControlsDialog() {
   modal_msg += '<input id="striptab" class="advancedcontrolsdisabled btn btn-injectcontrols" onclick="ToggleTab(true)" type="button" value="Strip Injected Tab">';
   modal_msg += '<input id="stripornaments" class="advancedcontrolsdisabled btn btn-injectcontrols" onclick="ToggleOrnaments(true)" type="button" value="Strip Ornaments">';
   modal_msg += '</p>';
-  modal_msg += '<hr style="margin-top:26px;">';
+  modal_msg += '<hr style="margin-top:24px;">';
 
   /* ===========================================================
      TABS
