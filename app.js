@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3086_122125_0830";
+var gVersionNumber = "3087_122125_1530";
 
 var gMIDIInitStillWaiting = false;
 
@@ -15685,111 +15685,6 @@ function ToggleOrnaments(bDoStrip) {
 
 }
 
-
-//
-// Add a new ABC tune template, song template, or PDF tunebook annotation template to the current ABC
-//
-function idleAddABC() {
-
-  if (gIsIOS) {
-
-    document.getElementById("addabcfilebutton").removeAttribute("accept");
-
-  }
-
-  //
-  // Setup the file import control
-  //
-  document.getElementById("addabcfilebutton").onchange = () => {
-
-    let fileElement = document.getElementById("addabcfilebutton");
-
-    // check if user had selected a file
-    if (fileElement.files.length === 0) {
-
-      var thePrompt = "Please select an ABC, MusicXML, or MIDI file";
-
-      // Center the string in the prompt
-      thePrompt = makeCenteredPromptString(thePrompt);
-
-      DayPilot.Modal.alert(thePrompt, {
-        theme: "modal_flat",
-        top: 200,
-        scrollWithPage: (AllowDialogsToScroll())
-      });
-
-      return;
-
-    }
-
-    const add_files = Array.from(fileElement.files);
-
-    // Use the common multi-file reader
-    DoMultiReadCommon(add_files, fileElement);
-
-  }
-
-  // Show the snapshot button if one is available in browser storage
-  var elem1 = document.getElementById("dialogrestorebutton");
-
-  elem1.style.display = "none";
-
-  var elem2 = document.getElementById("dialogrestoreautobutton");
-
-  elem2.style.display = "none";
-
-  if (gLocalStorageAvailable) {
-
-    var theSnapshot = localStorage.SavedSnapshot;
-    var theSnapshot2 = localStorage.SavedSnapshot2;
-    var theSnapshot3 = localStorage.SavedSnapshot3;
-    var theSnapshot4 = localStorage.SavedSnapshot4;
-
-    var bTheSnapShotAvailable = (((theSnapshot) && (theSnapshot != "")) || ((theSnapshot2) && (theSnapshot2 != "")) || ((theSnapshot3) && (theSnapshot3 != "")) || ((theSnapshot4) && (theSnapshot4 != "")));
-
-    var theLastAutoSnapShot = localStorage.LastAutoSnapShot;
-
-    var bTheLastAutoSnapShotAvailable = ((theLastAutoSnapShot) && (theLastAutoSnapShot != ""));
-
-    if (bTheSnapShotAvailable) {
-
-      elem1.style.display = "inline";
-
-    }
-
-    if (bTheLastAutoSnapShotAvailable) {
-
-      elem2.style.display = "inline";
-
-    }
-
-  }
-
-  // Find the OK button
-
-  var theOKButtons = document.getElementsByClassName("modal_flat_ok");
-
-  // Find the button that says "OK" to use to close the dialog when changing UI settings
-  var theOKButton = null;
-
-  gAddABCOKButton = null;
-
-  for (var i = 0; i < theOKButtons.length; ++i) {
-
-    theOKButton = theOKButtons[i];
-
-    if (theOKButton.innerText == "OK") {
-
-      //console.log("Found OK button");
-      gAddABCOKButton = theOKButton;
-
-      break;
-
-    }
-  }
-
-}
-
 //
 // PDF Tunebook builder
 //
@@ -19554,10 +19449,110 @@ function AddABC_InitTabs() {
   }
 }
 
+//
+// Add a new ABC tune template, song template, or PDF tunebook annotation template to the current ABC
+//
+function idleAddABC() {
+
+  if (gIsIOS) {
+
+    document.getElementById("addabcfilebutton").removeAttribute("accept");
+
+  }
+
+  //
+  // Setup the file import control
+  //
+  document.getElementById("addabcfilebutton").onchange = () => {
+
+    let fileElement = document.getElementById("addabcfilebutton");
+
+    // check if user had selected a file
+    if (fileElement.files.length === 0) {
+
+      var thePrompt = "Please select an ABC, MusicXML, or MIDI file";
+
+      // Center the string in the prompt
+      thePrompt = makeCenteredPromptString(thePrompt);
+
+      DayPilot.Modal.alert(thePrompt, {
+        theme: "modal_flat",
+        top: 200,
+        scrollWithPage: (AllowDialogsToScroll())
+      });
+
+      return;
+
+    }
+
+    const add_files = Array.from(fileElement.files);
+
+    // Use the common multi-file reader
+    DoMultiReadCommon(add_files, fileElement);
+
+  }
+
+  // Find the OK button
+
+  var theOKButtons = document.getElementsByClassName("modal_flat_ok");
+
+  // Find the button that says "OK" to use to close the dialog when changing UI settings
+  var theOKButton = null;
+
+  gAddABCOKButton = null;
+
+  for (var i = 0; i < theOKButtons.length; ++i) {
+
+    theOKButton = theOKButtons[i];
+
+    if (theOKButton.innerText == "OK") {
+
+      //console.log("Found OK button");
+      gAddABCOKButton = theOKButton;
+
+      break;
+
+    }
+  }
+
+}
+
 function AddABC() {
 
   // Keep track of dialogs
   sendGoogleAnalytics("dialog", "AddABC");
+
+  // ------------------------------------------------------------
+  // Inline idleAddABC() logic BEFORE rendering to avoid flashing
+  // ------------------------------------------------------------
+  var showSnapshotButton = false;
+  var showAutoSnapshotButton = false;
+
+  if (gLocalStorageAvailable) {
+
+    var theSnapshot  = localStorage.SavedSnapshot;
+    var theSnapshot2 = localStorage.SavedSnapshot2;
+    var theSnapshot3 = localStorage.SavedSnapshot3;
+    var theSnapshot4 = localStorage.SavedSnapshot4;
+
+    var bTheSnapShotAvailable =
+      (((theSnapshot)  && (theSnapshot  !== "")) ||
+       ((theSnapshot2) && (theSnapshot2 !== "")) ||
+       ((theSnapshot3) && (theSnapshot3 !== "")) ||
+       ((theSnapshot4) && (theSnapshot4 !== "")));
+
+    var theLastAutoSnapShot = localStorage.LastAutoSnapShot;
+    var bTheLastAutoSnapShotAvailable =
+      ((theLastAutoSnapShot) && (theLastAutoSnapShot !== ""));
+
+    if (bTheSnapShotAvailable) {
+      showSnapshotButton = true;
+    }
+
+    if (bTheLastAutoSnapShotAvailable) {
+      showAutoSnapshotButton = true;
+    }
+  }
 
   // Decide initial tab BEFORE rendering (prevents flash)
   var initialTab = "addabc-tab-examples";
@@ -19567,17 +19562,24 @@ function AddABC() {
     initialTab = gAddABCLastTab;
   }
 
-  var isExamplesActive  = (initialTab === "addabc-tab-examples");
-  var isTemplatesActive = (initialTab === "addabc-tab-templates");
-  var isPDFFeaturesActive = (initialTab === "addabc-tab-pdf-features");
+  var isExamplesActive     = (initialTab === "addabc-tab-examples");
+  var isTemplatesActive    = (initialTab === "addabc-tab-templates");
+  var isPDFFeaturesActive  = (initialTab === "addabc-tab-pdf-features");
+
+  // Precompute button display styles so they are correct on first paint
+  var snapshotDisplayStyle     = showSnapshotButton ? "inline" : "none";
+  var autoSnapshotDisplayStyle = showAutoSnapshotButton ? "inline" : "none";
 
   var modal_msg = '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:15px;margin-bottom:10px;">Add ABC Tunes, Templates, and PDF Features<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#add_templates_dialog" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>';
   modal_msg += '<div id="add-new-tune-dialog">';
   modal_msg += '<p style="text-align:center;font-size:18px;">Add Your Own Tunes from ABC, MusicXML, BWW, or MIDI Files</p>';
   modal_msg += '<p style="text-align:center;margin-top:24px;">';
   modal_msg += '<label class="abcuploaddialog btn btn-top" for="addabcfilebutton" title="Adds tunes from an existing ABC, MusicXML, BWW, or MIDI file to the end of the ABC">Choose Files to Add <input type="file" id="addabcfilebutton" accept=".abc,.txt,.ABC,.TXT,.xml,.XML,.musicxml,.mxl,.MXL,.mid,.MID,.midi,.MIDI,.bww,.BWW" hidden multiple/></label>';
-  modal_msg += '<input class="dialogrestorebutton btn btn-restorebutton" id="dialogrestorebutton" onclick="RestoreSnapshot(event,false,true);" type="button" value="Restore from Snapshot" title="Replaces the contents of the ABC editor with a Snapshot saved in browser storage.&nbsp;&nbsp;Click for Snapshot #1, Shift-click for Snapshot #2, Alt-click for Snapshot #3, Shift-Alt-click for Snapshot #4." style="display:none;">';
-  modal_msg += '<input class="dialogrestoreautobutton btn btn-restorebutton" id="dialogrestoreautobutton" onclick="RestoreSnapshot(event,true,true);" type="button" value="Restore from Auto-Snapshot" title="Replaces the contents of the ABC editor with an Auto-Snapshot saved in browser storage" style="display:none;">';
+
+  modal_msg += '<input class="dialogrestorebutton btn btn-restorebutton" id="dialogrestorebutton" onclick="RestoreSnapshot(event,false,true);" type="button" value="Restore from Snapshot" title="Replaces the contents of the ABC editor with a Snapshot saved in browser storage.&nbsp;&nbsp;Click for Snapshot #1, Shift-click for Snapshot #2, Alt-click for Snapshot #3, Shift-Alt-click for Snapshot #4." style="display:' + snapshotDisplayStyle + ';">';
+
+  modal_msg += '<input class="dialogrestoreautobutton btn btn-restorebutton" id="dialogrestoreautobutton" onclick="RestoreSnapshot(event,true,true);" type="button" value="Restore from Auto-Snapshot" title="Replaces the contents of the ABC editor with an Auto-Snapshot saved in browser storage" style="display:' + autoSnapshotDisplayStyle + ';">';
+
   modal_msg += '</p>';
 
   modal_msg += '<hr style="margin-top:26px;">';
@@ -19607,8 +19609,8 @@ function AddABC() {
   modal_msg += '<input id="addnewhornpipe" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AppendSampleHornpipe();" type="button" value="Alexander\'s (hornpipe)" title="Adds an example Hornpipe (Alexander\'s) to the end of the ABC">';
   modal_msg += '</p>';
   modal_msg += '<p style="text-align:center;margin-top:24px;">';
-  modal_msg  += '<input id="addjsbach" class="advancedcontrols btn btn-injectcontrols-headers" style="margin-right:24px;" onclick="AppendJSBach();" type="button" value="J.S. Bach Two-Part Invention #1" title="Adds the J.S. Bach 2-Part Invention #1 to the end of the ABC">';
-  modal_msg  += '<input id="addjsbach" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AppendJSBach2();" type="button" value="J.S. Bach BWV570 Fantasia" title="Adds the J.S. Bach BWV570 Fantasia for Pipe Organ to the end of the ABC">';
+  modal_msg += '<input id="addjsbach" class="advancedcontrols btn btn-injectcontrols-headers" style="margin-right:24px;" onclick="AppendJSBach();" type="button" value="J.S. Bach Two-Part Invention #1" title="Adds the J.S. Bach 2-Part Invention #1 to the end of the ABC">';
+  modal_msg += '<input id="addjsbach" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AppendJSBach2();" type="button" value="J.S. Bach BWV570 Fantasia" title="Adds the J.S. Bach BWV570 Fantasia for Pipe Organ to the end of the ABC">';
   modal_msg += '</p></div>';
 
   /* ---------------- ABC templates tab ---------------- */
@@ -19650,10 +19652,10 @@ function AddABC() {
 
   modal_msg += '</div>';
 
-  // Keep your idle handler; init-tabs is now optional (won't cause flicker)
+  // With snapshot visibility handled pre-render, this can go away.
+  // Keep any other init you still need here; tabs should not flash now.
   setTimeout(function() {
     idleAddABC();
-    // AddABC_InitTabs();  // optional now; safe to remove
   }, 50);
 
   DayPilot.Modal.alert(modal_msg, {
@@ -19661,11 +19663,9 @@ function AddABC() {
     top: 25,
     width: 730,
     scrollWithPage: false
-  }).then(function() {
-
   });
-}
 
+}
 
 //
 // Bodhran templates
