@@ -20556,7 +20556,7 @@ function AddPDFAnnotationsTemplate() {
   theValue += '%indexrightoffset 0\n';
   theValue += '%pageheader This is the Page Header\n';
   theValue += '%pagefooter This is the Page Footer\n';
-  theValue += '%add_all_playback_links 0 0 0 fatboy\n';
+  theValue += '%add_all_playback_links 0 0 0 fluid\n';
   theValue += '%add_all_playback_volumes 64 64\n';
   theValue += '%\n';
   theValue += '% End of PDF Tunebook Features\n\n';
@@ -20579,7 +20579,7 @@ function AddPDFPlayOnlyTemplate() {
   theValue += '%\n';
   theValue += '%pageheader Click the tune title to play\n';
   theValue += '%\n';
-  theValue += '%add_all_playback_links 0 0 0 fatboy\n';
+  theValue += '%add_all_playback_links 0 0 0 fluid\n';
   theValue += '%add_all_playback_volumes 64 64\n';
   theValue += '%\n';
   theValue += '% End of PDF Tunebook Features\n\n';
