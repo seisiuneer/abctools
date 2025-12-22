@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3089_122125_1700";
+var gVersionNumber = "3090_122125_1800";
 
 var gMIDIInitStillWaiting = false;
 
@@ -25136,7 +25136,7 @@ function InjectAllMIDIParams() {
   var form = [{
     html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-left:15px;">Inject MIDI Soundfont, Melody, Bass, and Chords&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#selecting_the_instruments_for_playback" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'
   }, {
-    html: '<p style="margin-top:24px;margin-bottom:24px;font-size:12pt;line-height:18pt;font-family:helvetica">This will inject a %soundfont directive into the ABC:</p>'
+    html: '<p style="margin-top:18px;margin-bottom:18px;font-size:12pt;line-height:18pt;font-family:helvetica">This will inject a %soundfont directive into the ABC:</p>'
   }, {
     name: "            Inject MIDI Soundfont",
     id: "configure_inject_soundfont",
@@ -25149,7 +25149,7 @@ function InjectAllMIDIParams() {
     options: sound_fonts_list,
     cssClass: "configure_soundfont_select"
   }, {
-    html: '<p style="margin-top:24px;margin-bottom:24px;font-size:12pt;line-height:18pt;font-family:helvetica">This will inject a %%MIDI program directive into the ABC:</p>'
+    html: '<p style="margin-top:18px;margin-bottom:18px;font-size:12pt;line-height:18pt;font-family:helvetica">This will inject a %%MIDI program directive into the ABC:</p>'
   }, {
     name: "            Inject MIDI Melody program",
     id: "configure_inject_melody_program",
@@ -25162,7 +25162,7 @@ function InjectAllMIDIParams() {
     options: midi_program_list,
     cssClass: "configure_midi_program_select"
   }, {
-    html: '<p style="margin-top:24px;margin-bottom:24px;font-size:12pt;line-height:18pt;font-family:helvetica">This will inject %%MIDI bassprog and %%MIDI bassvol directives into the ABC:</p>'
+    html: '<p style="margin-top:18px;margin-bottom:18px;font-size:12pt;line-height:18pt;font-family:helvetica">This will inject %%MIDI bassprog and %%MIDI bassvol directives into the ABC:</p>'
   }, {
     name: "            Inject MIDI Bass program and volumes",
     id: "configure_inject_bass_program",
@@ -25180,7 +25180,7 @@ function InjectAllMIDIParams() {
     type: "text",
     cssClass: "configure_midi_program_form_number_input"
   }, {
-    html: '<p style="margin-top:24px;margin-bottom:24px;font-size:12pt;line-height:18pt;font-family:helvetica">This will inject %%MIDI chordprog and %%MIDI chordvol directives into the ABC:</p>'
+    html: '<p style="margin-top:18px;margin-bottom:18px;font-size:12pt;line-height:18pt;font-family:helvetica">This will inject %%MIDI chordprog and %%MIDI chordvol directives into the ABC:</p>'
   }, {
     name: "            Inject MIDI Chord program and volumes",
     id: "configure_inject_chord_program",
@@ -25198,7 +25198,7 @@ function InjectAllMIDIParams() {
     type: "text",
     cssClass: "configure_midi_program_form_number_input"
   }, {
-    html: '<p style="font-size:14pt;line-height:19pt;font-family:helvetica;margin-bottom:30px;text-align:center;"><a href="https://michaeleskin.com/documents/general_midi_extended_v10.pdf" target="_blank">General MIDI Instrument Program Numbers</a></p>'
+    html: '<p style="font-size:14pt;line-height:19pt;font-family:helvetica;margin-bottom:24px;text-align:center;"><a href="https://michaeleskin.com/documents/general_midi_extended_v10.pdf" target="_blank">General MIDI Instrument Program Numbers</a></p>'
   }, {
     name: "            Inject all tunes",
     id: "configure_inject_all",
