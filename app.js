@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3088_122125_1600";
+var gVersionNumber = "3089_122125_1700";
 
 var gMIDIInitStillWaiting = false;
 
@@ -33051,8 +33051,43 @@ function LaunchCSVTagExtractor() {
 }
 
 //
-// Export All Audio and Images
+// Export All dialog
 //
+
+var gExportAllLastTab = "exportall-tab-audio";
+
+function AdvTabs_SelectTab(rootId, tabId) {
+  var root = document.getElementById(rootId);
+  if (!root) return;
+
+  // Remember last used tab for ExportAll dialog
+  if (rootId === "exportall-dialog") {
+    gExportAllLastTab = tabId;
+  }
+
+  root.querySelectorAll(".adv-tab-btn").forEach(function(btn) {
+    btn.classList.toggle("active", btn.getAttribute("data-tab") === tabId);
+    btn.setAttribute("aria-selected", (btn.getAttribute("data-tab") === tabId) ? "true" : "false");
+  });
+
+  root.querySelectorAll(".adv-tab-panel").forEach(function(panel) {
+    panel.classList.toggle("active", panel.id === tabId);
+  });
+}
+
+function AdvTabs_Init(rootId) {
+  var root = document.getElementById(rootId);
+  if (!root) return;
+
+  // If already active (preselected in HTML), don't change anything.
+  if (root.querySelector(".adv-tab-btn.active") && root.querySelector(".adv-tab-panel.active")) return;
+
+  var firstBtn = root.querySelector(".adv-tab-btn");
+  if (!firstBtn) return;
+
+  AdvTabs_SelectTab(rootId, firstBtn.getAttribute("data-tab"));
+}
+
 function ExportAll() {
 
   // Apparently doesn't work on mobile
@@ -33079,52 +33114,119 @@ function ExportAll() {
 
   var format = GetRadioValue("notenodertab");
 
-  var modal_msg = '<p style="text-align:center;font-size:20pt;font-family:helvetica">Export All Tunes</p>';
+  // Restore last selected tab if available
+  var initialTab = (typeof gExportAllLastTab === "string" && gExportAllLastTab) ? gExportAllLastTab : "exportall-tab-audio";
 
-  modal_msg += '<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:28px;">Export All Tunes as Audio/MIDI</p>';
-  modal_msg += '<p style="text-align:center;font-size:18pt;font-family:helvetica;">';
-  modal_msg += '<input id="exportall_mp3button" class="exportall_mp3button btn btn-allmp3download" onclick="BatchMP3Export();" type="button" value="Export all as MP3 Audio" title="Saves the audio for all the tunes as .MP3 files">'
-  modal_msg += '<input id="exportall_midibutton" class="exportall_midibutton btn btn-allmididownload" onclick="BatchMIDIExport();" type="button" value="Export all as MIDI" title="Saves the MIDI file for all the tunes">'
-  modal_msg += '</p>';
+  var validTabs = ["exportall-tab-audio", "exportall-tab-image", "exportall-tab-abcmxl", "exportall-tab-titles", "exportall-tab-dev"];
 
-  modal_msg += '<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:28px;">Export All Tunes as Images</p>';
-  modal_msg += '<p style="text-align:center;font-size:14pt;font-family:helvetica;">';
-  modal_msg += '<input id="exportall_jpegbutton" class="exportall_jpegbutton btn btn-alljpegdownload" onclick="BatchJPEGExport();" type="button" value="Export all as JPEG" title="Saves the images for all the tunes as bitmap JPEG files">'
-  modal_msg += '<input id="exportall_pngbutton" class="exportall_pngbutton btn btn-allpngdownload" onclick="BatchPNGExport();" type="button" value="Export all as PNG" title="Saves the images for all the tunes as bitmap PNG files">'
-  modal_msg += '<input id="exportall_svgbutton" class="exportall_svgbutton btn btn-allsvgdownload" onclick="BatchSVGExport();" type="button" value="Export all as SVG" title="Saves the images for all the tunes as vector format SVG files">'
-  modal_msg += '</p>';
-  modal_msg += '<p class="export_all_text">';
-  modal_msg += 'Image width to export: <input id="export_width" type="number" min="0" step="1" max="4096" title="Image width to export" autocomplete="off"/>';
-  modal_msg += '</p>';
-  modal_msg += '<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:28px;">Export All Tunes as ABC or MusicXML</p>';
-  modal_msg += '<p style="text-align:center;font-size:14pt;font-family:helvetica;">';
-  modal_msg += '<input id="exportall_abcbutton" class="exportall_abcbutton btn btn-allabcdownload" onclick="BatchABCExport();" type="button" value="Export all Tunes as ABC" title="Saves each tune in its own ABC file">'
-  modal_msg += '<input id="exportall_musicxmlbutton" class="exportall_musicxmlbutton btn btn-allmusicxmldownload" onclick="BatchMusicXMLExport();" type="button" value="Export all Tunes as MusicXML" title="Saves each tune in its own MusicXML file">'
-  modal_msg += '</p>';
-  modal_msg += '<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:28px;">Export All Tunes Titles</p>';
-  modal_msg += '<p style="text-align:center;font-size:14pt;font-family:helvetica;">';
-  modal_msg += '<input id="export_tunetitlesbutton" class="export_tunetitlesbutton btn btn-exporttunetitles" onclick="ExportAllTuneTitles();" type="button" value="Export All Tune Titles" title="Saves a text file with all the tune titles">'
-  modal_msg += '<p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:28px;">Developer Share URL Batch Export Tools</p>';
-  modal_msg += '<p style="text-align:center;font-size:14pt;font-family:helvetica;">';
-  modal_msg += '<input id="exportall_jsonbutton" class="exportall_jsonbutton btn btn-alljsondownload" onclick="BatchJSONExport();" type="button" value="Export all Share URLs as JSON" title="Saves the Share URLs for all the tunes as a JSON file">'
-  modal_msg += '<input id="exportall_csvbutton" class="exportall_csvbutton btn btn-allcsvdownload" onclick="BatchCSVExport();" type="button" value="Export all Share URLs as CSV" title="Saves the Share URLs for all the tunes as a CSV file">'
-  modal_msg += '</p>';
-  modal_msg += '<p style="text-align:center;font-size:14pt;font-family:helvetica;">';
-  modal_msg += '<input id="launchcsvextractor" class="launchcsvextractor btn btn-launchcsvextractor" onclick="LaunchCSVTagExtractor();");" type="button" value="Launch the ABC Tags to CSV Extractor Utility" title="Extract all ABC tags from one or more ABC files to a CSV file">';
-  modal_msg += '</p>';
+  if (validTabs.indexOf(initialTab) === -1) initialTab = "exportall-tab-audio";
 
+  var modal_msg = '<div id="exportall-dialog">';
+
+  modal_msg += '<p style="text-align:center;font-size:18pt;font-family:helvetica">Export All Tunes</p>';
+
+  // Help corner button (keep same id & link)
   modal_msg += '<a id="exportall_help" href="https://michaeleskin.com/abctools/userguide.html#export_all" target="_blank" style="text-decoration:none;" title="Learn more about the audio and image exporter" class="dialogcornerbutton">?</a>';
+
+  // Tabs container (uses your existing adv-* CSS)
+  modal_msg += '<div class="adv-tabs">';
+  modal_msg += '  <div class="adv-tab-bar" role="tablist" aria-label="Export All Tabs">';
+
+  modal_msg += '    <button type="button" class="adv-tab-btn' + (initialTab === "exportall-tab-audio" ? ' active' : '') + '" data-tab="exportall-tab-audio" onclick="AdvTabs_SelectTab(\'exportall-dialog\', \'exportall-tab-audio\')">Audio/MIDI</button>';
+  modal_msg += '    <button type="button" class="adv-tab-btn' + (initialTab === "exportall-tab-image" ? ' active' : '') + '" data-tab="exportall-tab-image" onclick="AdvTabs_SelectTab(\'exportall-dialog\', \'exportall-tab-image\')">Image</button>';
+  modal_msg += '    <button type="button" class="adv-tab-btn' + (initialTab === "exportall-tab-abcmxl" ? ' active' : '') + '" data-tab="exportall-tab-abcmxl" onclick="AdvTabs_SelectTab(\'exportall-dialog\', \'exportall-tab-abcmxl\')">ABC/MusicXML</button>';
+  modal_msg += '    <button type="button" class="adv-tab-btn' + (initialTab === "exportall-tab-titles" ? ' active' : '') + '" data-tab="exportall-tab-titles" onclick="AdvTabs_SelectTab(\'exportall-dialog\', \'exportall-tab-titles\')">Titles</button>';
+  modal_msg += '    <button type="button" class="adv-tab-btn' + (initialTab === "exportall-tab-dev" ? ' active' : '') + '" data-tab="exportall-tab-dev" onclick="AdvTabs_SelectTab(\'exportall-dialog\', \'exportall-tab-dev\')">Developer Tools</button>';
+
+  modal_msg += '  </div>';
+
+  modal_msg += '  <div class="adv-tab-panels">';
+
+  // -------------------------------------------------------------------
+  // Audio tab
+  // -------------------------------------------------------------------
+  modal_msg += '    <div id="exportall-tab-audio" class="adv-tab-panel' + (initialTab === "exportall-tab-audio" ? ' active' : '') + '">';
+  //modal_msg += '      <p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:18px;">Export All Tunes as Audio/MIDI</p>';
+  modal_msg += '      <p style="text-align:center;font-size:18pt;font-family:helvetica;">';
+  modal_msg += '        <input id="exportall_mp3button" class="exportall_mp3button btn btn-allmp3download" onclick="BatchMP3Export();" type="button" value="Export all as MP3 Audio" title="Saves the audio for all the tunes as .MP3 files">';
+  modal_msg += '        <input id="exportall_midibutton" class="exportall_midibutton btn btn-allmididownload" onclick="BatchMIDIExport();" type="button" value="Export all as MIDI" title="Saves the MIDI file for all the tunes">';
+  modal_msg += '      </p>';
+  modal_msg += '    </div>';
+
+  // -------------------------------------------------------------------
+  // Image tab
+  // -------------------------------------------------------------------
+  modal_msg += '    <div id="exportall-tab-image" class="adv-tab-panel' + (initialTab === "exportall-tab-image" ? ' active' : '') + '">';
+  //modal_msg += '      <p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:18px;">Export All Tunes as Images</p>';
+  modal_msg += '      <p style="text-align:center;font-size:14pt;font-family:helvetica;">';
+  modal_msg += '        <input id="exportall_jpegbutton" class="exportall_jpegbutton btn btn-alljpegdownload" onclick="BatchJPEGExport();" type="button" value="Export all as JPEG" title="Saves the images for all the tunes as bitmap JPEG files">';
+  modal_msg += '        <input id="exportall_pngbutton" class="exportall_pngbutton btn btn-allpngdownload" onclick="BatchPNGExport();" type="button" value="Export all as PNG" title="Saves the images for all the tunes as bitmap PNG files">';
+  modal_msg += '        <input id="exportall_svgbutton" class="exportall_svgbutton btn btn-allsvgdownload" onclick="BatchSVGExport();" type="button" value="Export all as SVG" title="Saves the images for all the tunes as vector format SVG files">';
+  modal_msg += '      </p>';
+  modal_msg += '      <p class="export_all_text">';
+  modal_msg += '        Image width to export: <input id="export_width" type="number" min="0" step="1" max="4096" title="Image width to export" autocomplete="off"/>';
+  modal_msg += '      </p>';
+  modal_msg += '    </div>';
+
+  // -------------------------------------------------------------------
+  // ABC/MusicXML tab
+  // -------------------------------------------------------------------
+  modal_msg += '    <div id="exportall-tab-abcmxl" class="adv-tab-panel' + (initialTab === "exportall-tab-abcmxl" ? ' active' : '') + '">';
+  //modal_msg += '      <p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:18px;">Export All Tunes as ABC or MusicXML</p>';
+  modal_msg += '      <p style="text-align:center;font-size:14pt;font-family:helvetica;">';
+  modal_msg += '        <input id="exportall_abcbutton" class="exportall_abcbutton btn btn-allabcdownload" onclick="BatchABCExport();" type="button" value="Export all Tunes as ABC" title="Saves each tune in its own ABC file">';
+  modal_msg += '        <input id="exportall_musicxmlbutton" class="exportall_musicxmlbutton btn btn-allmusicxmldownload" onclick="BatchMusicXMLExport();" type="button" value="Export all Tunes as MusicXML" title="Saves each tune in its own MusicXML file">';
+  modal_msg += '      </p>';
+  modal_msg += '    </div>';
+
+  // -------------------------------------------------------------------
+  // Titles tab
+  // -------------------------------------------------------------------
+  modal_msg += '    <div id="exportall-tab-titles" class="adv-tab-panel' + (initialTab === "exportall-tab-titles" ? ' active' : '') + '">';
+  //modal_msg += '      <p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:18px;">Export All Tunes Titles</p>';
+  modal_msg += '      <p style="text-align:center;font-size:14pt;font-family:helvetica;">';
+  modal_msg += '        <input id="export_tunetitlesbutton" class="export_tunetitlesbutton btn btn-exporttunetitles" onclick="ExportAllTuneTitles();" type="button" value="Export All Tune Titles" title="Saves a text file with all the tune titles">';
+  modal_msg += '      </p>';
+  modal_msg += '    </div>';
+
+  // -------------------------------------------------------------------
+  // Developer Tools tab
+  // -------------------------------------------------------------------
+  modal_msg += '    <div id="exportall-tab-dev" class="adv-tab-panel' + (initialTab === "exportall-tab-dev" ? ' active' : '') + '">';
+  //modal_msg += '      <p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:18px;">Developer Share URL Batch Export Tools</p>';
+  modal_msg += '      <p style="text-align:center;font-size:14pt;font-family:helvetica;">';
+  modal_msg += '        <input id="exportall_jsonbutton" class="exportall_jsonbutton btn btn-alljsondownload" onclick="BatchJSONExport();" type="button" value="Export all Share URLs as JSON" title="Saves the Share URLs for all the tunes as a JSON file">';
+  modal_msg += '        <input id="exportall_csvbutton" class="exportall_csvbutton btn btn-allcsvdownload" onclick="BatchCSVExport();" type="button" value="Export all Share URLs as CSV" title="Saves the Share URLs for all the tunes as a CSV file">';
+  modal_msg += '      </p>';
+  modal_msg += '      <p style="text-align:center;font-size:14pt;font-family:helvetica;">';
+  modal_msg += '        <input id="launchcsvextractor" class="launchcsvextractor btn btn-launchcsvextractor" onclick="LaunchCSVTagExtractor();" type="button" value="Launch the ABC Tags to CSV Extractor Utility" title="Extract all ABC tags from one or more ABC files to a CSV file">';
+  modal_msg += '      </p>';
+  modal_msg += '    </div>';
+
+  modal_msg += '  </div>'; // adv-tab-panels
+  modal_msg += '</div>';   // adv-tabs
+
+  modal_msg += '</div>';   // exportall-dialog
 
   DayPilot.Modal.alert(modal_msg, {
     theme: "modal_flat",
-    top: 25,
-    width: 670,
+    top: 150,
+    width: 740,
     scrollWithPage: (AllowDialogsToScroll())
-  })
+  });
 
-  document.getElementById("export_width").value = gExportWidthAll;
+  // Set export width after dialog exists
+  setTimeout(function() {
 
+    var w = document.getElementById("export_width");
+    if (w) w.value = gExportWidthAll;
+
+    // Safety init (should be no-op because we preselected)
+    AdvTabs_Init("exportall-dialog");
+
+  }, 0);
 }
+
 
 // 
 // Batch image exporters
@@ -62670,7 +62772,7 @@ async function abcjsColorEditor(currentTheme = {}){
   const promise = DayPilot.Modal.alert(html, {
     width: 700,
     theme: 'modal_flat',
-    top: 25,
+    top: 12,
     scrollWithPage: (typeof AllowDialogsToScroll === 'function' ? AllowDialogsToScroll() : true)
   });
 
