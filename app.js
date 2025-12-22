@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3090_122125_1800";
+var gVersionNumber = "3091_122225_0600";
 
 var gMIDIInitStillWaiting = false;
 
@@ -19636,18 +19636,18 @@ function AddABC() {
 
   modal_msg += '<p style="text-align:center;font-size:18px;margin-top:26px;">Search and Add Tunes (Over 65,000 Tunes Available)</p>';
   modal_msg += '<p style="text-align:center;margin-top:16px;">';
-  modal_msg += '<input id="searchandaddtunes" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AddFromSearch(null,AddABCCallback);" type="button" value="Tune Search Engine" title="Search for tunes to add to your tunebook.&nbsp;&nbsp;Over 65,000 tunes available.">';
+  modal_msg += '<input id="searchandaddtunes" class="advancedcontrols btn btn-injectcontrols-addabc" onclick="AddFromSearch(null,AddABCCallback);" type="button" value="Tune Search Engine" title="Search for tunes to add to your tunebook.&nbsp;&nbsp;Over 65,000 tunes available.">';
 
   modal_msg += '<p style="text-align:center;font-size:18px;margin-top:24px;">Change the Order or Delete Tunes</p>';
   modal_msg += '<p style="text-align:center;margin-top:16px;">';
 
   if (isPureDesktopBrowser()) {
-    modal_msg += '<input id="changetuneorder" class="advancedcontrols btn btn-injectcontrols-headers" onclick="ChangeTuneOrder();" type="button" value="Change the Order of the Tunes" title="Change the order of the tunes">';
+    modal_msg += '<input id="changetuneorder" class="advancedcontrols btn btn-injectcontrols-addabc" onclick="ChangeTuneOrder();" type="button" value="Change the Order of the Tunes" title="Change the order of the tunes">';
   } else {
-    modal_msg += '<input id="changetuneorder" class="advancedcontrols btn btn-injectcontrols-headers" onclick="ChangeTuneOrderMobile();" type="button" value="Change the Order of the Tunes" title="Change the order of the tunes">';
+    modal_msg += '<input id="changetuneorder" class="advancedcontrols btn btn-injectcontrols-addabc" onclick="ChangeTuneOrderMobile();" type="button" value="Change the Order of the Tunes" title="Change the order of the tunes">';
   }
 
-  modal_msg += '<input id="culltunes" class="advancedcontrols btn btn-injectcontrols-headers" onclick="CullTunes();" type="button" value="Delete Tunes from the Tunebook" title="Delete selected tunes from the tunebook">';
+  modal_msg += '<input id="culltunes" class="advancedcontrols btn btn-injectcontrols-addabc" onclick="CullTunes();" type="button" value="Delete Tunes from the Tunebook" title="Delete selected tunes from the tunebook">';
   modal_msg += '</p>';
 
   modal_msg += '</div>';
@@ -33198,7 +33198,7 @@ function ExportAll() {
   modal_msg += '        <input id="exportall_jsonbutton" class="exportall_jsonbutton btn btn-alljsondownload" onclick="BatchJSONExport();" type="button" value="Export all Share URLs as JSON" title="Saves the Share URLs for all the tunes as a JSON file">';
   modal_msg += '        <input id="exportall_csvbutton" class="exportall_csvbutton btn btn-allcsvdownload" onclick="BatchCSVExport();" type="button" value="Export all Share URLs as CSV" title="Saves the Share URLs for all the tunes as a CSV file">';
   modal_msg += '      </p>';
-  modal_msg += '      <p style="text-align:center;font-size:14pt;font-family:helvetica;">';
+  modal_msg += '      <p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:24px;">';
   modal_msg += '        <input id="launchcsvextractor" class="launchcsvextractor btn btn-launchcsvextractor" onclick="LaunchCSVTagExtractor();" type="button" value="Launch the ABC Tags to CSV Extractor Utility" title="Extract all ABC tags from one or more ABC files to a CSV file">';
   modal_msg += '      </p>';
   modal_msg += '    </div>';
@@ -49491,14 +49491,14 @@ function AdvancedControlsDialog() {
   modal_msg += '<div id="adv-tab-players" class="adv-tab-panel' + (isPlayersActive ? ' active' : '') + '">';
   modal_msg += '<p style="text-align:center;">';
 
-  modal_msg += '<input id="configure_instrument_explorer" class="btn btn-instrumentexplorer" onclick="InstrumentExplorer()" type="button" value="MIDI Instrument Explorer">';
-  modal_msg += '<input id="configure_swing_explorer" class="btn btn-swingexplorer" onclick="SwingExplorer()" type="button" value="Swing Explorer">';
-  modal_msg += '<input id="configure_grace_explorer" class="btn btn-graceexplorer" onclick="GraceExplorer()" type="button" value="Grace Duration Explorer">';
+  modal_msg += '<input id="configure_instrument_explorer" class="advancedcontrols btn btn-instrumentexplorer" onclick="InstrumentExplorer()" type="button" value="MIDI Instrument Explorer">';
+  modal_msg += '<input id="configure_swing_explorer" class="advancedcontrols btn btn-swingexplorer" onclick="SwingExplorer()" type="button" value="Swing Explorer">';
+  modal_msg += '<input id="configure_grace_explorer" class="advancedcontrols btn btn-graceexplorer" onclick="GraceExplorer()" type="button" value="Grace Duration Explorer">';
   modal_msg += '</p>';
 
   modal_msg += '<p style="text-align:center;margin-top:24px;">';
-  modal_msg += '<input id="configure_roll_explorer" class="btn btn-rollexplorer" onclick="RollExplorer()" type="button" value="Roll Explorer">';
-  modal_msg += '<input id="configure_reverb_explorer" class="btn btn-reverbexplorer" onclick="ReverbExplorer()" type="button" value="Reverb Explorer">';
+  modal_msg += '<input id="configure_roll_explorer" class="advancedcontrols btn btn-rollexplorer" onclick="RollExplorer()" type="button" value="Roll Explorer">';
+  modal_msg += '<input id="configure_reverb_explorer" class="advancedcontrols btn btn-reverbexplorer" onclick="ReverbExplorer()" type="button" value="Reverb Explorer">';
   modal_msg += '<input id="injectlargeprint" class="advancedcontrols btn btn-notation-spacing-explorer" onclick="NotationSpacingExplorer()" type="button" value="Notation Spacing Explorer">';
 
   modal_msg += '</p></div>';
@@ -49510,15 +49510,15 @@ function AdvancedControlsDialog() {
 
   modal_msg += '<div id="adv-tab-bagpipes" class="adv-tab-panel' + (isOtherToolsActive ? ' active' : '') + '">';
   modal_msg += '<p style="text-align:center;">';
-  modal_msg += '<input id="configure_batch_mp3_export" class="btn btn-batchmp3export" onclick="ExportAll()" type="button" value="Export All Tunes"' + exportAllTunesStyle + '>';
-  modal_msg += '<input id="sortbutton" class="sortbutton btn btn-sortbutton" onclick="SortDialog()" type="button" value="Sort by Tag">';
-  modal_msg += '<input id="incipitsbuilder" class="incipitsbuilder btn btn-incipitsbuilder" onclick="IncipitsBuilderDialog()" type="button" value="Notes Incipits Builder">';
+  modal_msg += '<input id="configure_batch_mp3_export" class="advancedcontrols btn btn-batchmp3export" onclick="ExportAll()" type="button" value="Export All Tunes"' + exportAllTunesStyle + '>';
+  modal_msg += '<input id="sortbutton" class="advancedcontrols sortbutton btn btn-sortbutton" onclick="SortDialog()" type="button" value="Sort by Tag">';
+  modal_msg += '<input id="incipitsbuilder" class="advancedcontrols incipitsbuilder btn btn-incipitsbuilder" onclick="IncipitsBuilderDialog()" type="button" value="Notes Incipits Builder">';
   modal_msg += '<input id="phrasebuilder" class="advancedcontrols btn btn-phrasebuilder" onclick="PhraseBuilder(null,null)" type="button" value="Phrase Builder">';
   modal_msg += '</p>';
   modal_msg += '<p style="text-align:center;margin-top:24px;">';
   modal_msg += '<input id="customcssgenerator" class="advancedcontrols btn btn-cssgenerator" onclick="abcjsColorEditor()" type="button" value="Custom CSS Generator">';
-  modal_msg += '<input id="transposetokey" class="transposetokey btn btn-transposetokey" onclick="TransposeToKeyDialog()" type="button" value="Transpose to Key">';
-  modal_msg += '<input id="injectbagpipedrones" class="advancedcontrols btn btn-injectcontrols" onclick="InjectBagpipeSounds()" type="button" value="Inject Bagpipe Sounds">';
+  modal_msg += '<input id="transposetokey" class="advancedcontrols transposetokey btn btn-transposetokey" onclick="TransposeToKeyDialog()" type="button" value="Transpose to Key">';
+  modal_msg += '<input id="injectbagpipedrones" class="advancedcontrols btn btn-injectbagpipedrones" onclick="InjectBagpipeSounds()" type="button" value="Inject Bagpipe Sounds">';
   modal_msg += '</p></div>';
 
   modal_msg += '<p style="font-size:2pt;">&nbsp;</p>';

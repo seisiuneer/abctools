@@ -6256,7 +6256,7 @@ display:block;
 
 .btn-sortbutton{
   --color: black;
-  --background-color: #F0F0F0;
+  --background-color: #f0fff0;
 }
 
 .btn-transposetokey{
@@ -6317,6 +6317,11 @@ display:block;
 .btn-injectcontrols-headers{
   --color: black;
   --background-color: #f0fff0;
+}
+
+.btn-injectcontrols-addabc{
+  --color: black;
+  --background-color: #DCF3FE;
 }
 
 .btn-injectcontrols-injectpdfheaders{
@@ -6504,9 +6509,9 @@ display:block;
 
 }
 
-.btn-batchmp3export{
+.btn-export{
   --color: black;
-  --background-color: lavender;
+  --background-color: #f0fff0;
 }
 
 .btn-swingexplorer{
@@ -6784,6 +6789,16 @@ display:block;
   --background-color: lavender;
 }
 
+.btn-injectbagpipedrones{
+  --color: black;
+  --background-color: #f0fff0;
+}
+
+.btn-batchmp3export{
+  --color: black;
+  --background-color: #f0fff0;	
+}
+
 @media (hover: hover) {
 	
 	.btn
@@ -6810,6 +6825,24 @@ display:block;
 	}
 
 	.modal_flat_cancel:hover {
+	    transform: matrix(1.04, 0, 0, 1.04, 0, 0); 
+	}
+
+	.modal_flat_wide_ok
+	{
+	  transition: transform .1s ease-in-out 0s; 
+	}
+
+	.modal_flat_wide_ok:hover {
+	    transform: matrix(1.04, 0, 0, 1.04, 0, 0); 
+	}
+
+	.modal_flat_wide_cancel
+	{
+	  transition: transform .1s ease-in-out 0s; 
+	}
+
+	.modal_flat_wide_cancel:hover {
 	    transform: matrix(1.04, 0, 0, 1.04, 0, 0); 
 	}
 
