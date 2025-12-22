@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3092_122225_0700";
+var gVersionNumber = "3093_122225_1300";
 
 var gMIDIInitStillWaiting = false;
 
@@ -62108,6 +62108,17 @@ function processAbcPhrases(abcText, phraseBars, phrasePadding) {
 
 }
 
+//
+// Strip [I*] style annotations
+//
+function StripInlineAnnotations(abc){
+
+  abc = abc.replace(/\[[A-Za-z]:[^\]\r\n]*\]/g, "");
+  
+  return abc;
+
+}
+
 var gPhraseBuilderLength = 2;
 var gPhraseBuilderPadding = 0;
 
@@ -62304,6 +62315,8 @@ function PhraseBuilder(theTrainerTune,callback){
 
             theTune = StripChordsOne(theTune);
 
+            theTune = StripInlineAnnotations(theTune);
+
             theTune = processAbcPhrases(theTune,gPhraseBuilderLength,gPhraseBuilderPadding)
 
             output += theTune + "\n";
@@ -62429,6 +62442,8 @@ function PhraseBuilder(theTrainerTune,callback){
         if (doPhrasesRender){
 
           var thePhrases = StripChordsOne(theSelectedABC);
+          
+          thePhrases = StripInlineAnnotations(thePhrases);
 
           thePhrases = processAbcPhrases(thePhrases,gPhraseBuilderLength,gPhraseBuilderPadding);
 
