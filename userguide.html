@@ -491,9 +491,10 @@
             <a style="text-decoration:none;" href="#add_examples">Add Example Tunes</a>
             <a style="text-decoration:none;" href="#add_templates">Add Example Templates</a>
             <a style="text-decoration:none;" href="#add_bodhran_backing_track">Add Bodhran Backing Track Tune Template</a>
-            <a style="text-decoration:none;" href="#add_pdf_tunebook_features_templates">Add PDF Tunebook Features Template</a>
             <a style="text-decoration:none;" href="#add_pdf_play_features">Inject Only PDF Play Features</a>
             <a style="text-decoration:none;" href="#add_all_pdf_features">Inject All PDF Tunebook Features</a>
+            <a style="text-decoration:none;" href="#add_pdf_play_only_features_templates">Example PDF Only Play Features Template</a>
+            <a style="text-decoration:none;" href="#add_pdf_tunebook_features_templates">Example PDF All Features Template</a>
             <a style="text-decoration:none;" href="#tune_search_engine">Tune Search Engine</a>
             <a style="text-decoration:none;" href="#change_tune_order">Change the Order of the Tunes</a>
             <a style="text-decoration:none;" href="#delete_selected_tunes">Delete Tunes from the Tunebook</a>
@@ -993,9 +994,10 @@
                         <p class="toc"><a style="text-decoration:none;" href="#add_examples">Add Example Tunes</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#add_templates">Add Example Templates</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#add_bodhran_backing_track">Add Bodhran Backing Track Tune Template</a></p>
-                        <p class="toc"><a style="text-decoration:none;" href="#add_pdf_tunebook_features_templates">Add PDF Tunebook Features Template</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#add_pdf_play_features">Inject Only PDF Play Features</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#add_all_pdf_features">Inject All PDF Tunebook Features</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#add_pdf_play_only_features_templates">Example PDF Only Play Features Template</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#add_pdf_tunebook_features_templates">Example PDF All Features Template</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#tune_search_engine">Tune Search Engine</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#change_tune_order">Change the Order of the Tunes</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#delete_selected_tunes">Delete Tunes from the Tunebook</a></p>
@@ -1882,17 +1884,6 @@
                 <p>If no pitch is specified, the default is A.</p>
                 <p>Full details on the Bodhran ABC note-to-sound mapping are available in the following section:</p>
                 <p style="text-align: center;"><a style="text-decoration:none;" href="#bodhran_map"><strong>Using the Bodhran (%%MIDI program 117) Instrument</strong></a></p>
-                <hr class="hidden-print" id="add_pdf_tunebook_features_templates">
-                <h1 class="page_break_always h1wide">Add PDF Tunebook Features Template<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
-                <p>Adds a PDF tunebook features template at the top of the ABC that contains the most commonly used PDF export features:</p>
-                <p>Title page</p>
-                <p>Table of Contents</p>
-                <p>Tune page links back to the Table of Contents</p>
-                <p>Index</p>
-                <p>Tune page links back to the Index</p>
-                <p>Page header</p>
-                <p>Page footer</p>
-                <p>Play links on the tunes</p>
                 <hr class="hidden-print" id="add_pdf_play_features">
                 <h1 class="page_break_always h1wide">Inject Only PDF Play Features<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <p>Brings up a dialog that you can use to inject a minimal set of commands at the top of the ABC that will enable playing the tunes in the PDF by clicking the title.</p>
@@ -1909,6 +1900,22 @@
                 <p>Page footer</p>
                 <p>Play links on the tunes</p>
                 <p>Full details on PDF tunebook features can be found in the <a style="text-decoration:none;" href="#inject_pdf_tunebook_features"><strong>Inject All PDF Tunebook Features</strong></a> section of <a style="text-decoration:none;" href="#export_pdf_tunebook"><strong>Exporting a PDF Tunebook</strong></a>.</p>
+                <hr class="hidden-print" id="add_pdf_play_only_features_templates">
+                <h1 class="page_break_always h1wide">Example PDF Only Play Features Template<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+                <p>Adds a PDF tunebook features template at the top of the ABC that a minimum set of PDF export features that will allow tunes to be played when the titles are clicked:</p>
+                <p>Page header</p>
+                <p>Play links on the tunes</p>
+                <hr class="hidden-print" id="add_pdf_tunebook_features_templates">
+                <h1 class="page_break_always h1wide">Example PDF All Features Template<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
+                <p>Adds a PDF tunebook features template at the top of the ABC that contains the most commonly used PDF export features:</p>
+                <p>Title page</p>
+                <p>Table of Contents</p>
+                <p>Tune page links back to the Table of Contents</p>
+                <p>Index</p>
+                <p>Tune page links back to the Index</p>
+                <p>Page header</p>
+                <p>Page footer</p>
+                <p>Play links on the tunes</p>
                 <hr class="hidden-print" id="tune_search_engine">
                 <h1 class="page_break_always">Tune Search Engine<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <p>Brings up a dialog where you search either Gavin Heneghan's tune collection (over 20,000 tune settings) or the FolkFriend.app tune collection (over 45,000 tune settings) by tune name and style and then optionally add them to your tunebook:</p>

@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3091_122225_0600";
+var gVersionNumber = "3092_122225_0700";
 
 var gMIDIInitStillWaiting = false;
 
@@ -19623,13 +19623,15 @@ function AddABC() {
   modal_msg += '</p>';
   modal_msg += '<p style="text-align:center;margin-top:24px;">';
   modal_msg += '<input id="addbodhrantemplate" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AddBodhranTemplate();" type="button" value="Add Bodhran Backing Track Template" title="Opens a dialog where you can choose a bodhran backing track template of common tune styles to add to the end of the ABC">';
-  modal_msg += '<input id="addpdfannotationstemplate" class="advancedcontrols btn btn-injectcontrols-headers" style="margin-right:24px;" onclick="AddPDFAnnotationsTemplate(event);" type="button" value="Add PDF Tunebook Features Template" title="Adds a template that contains the most common PDF tunebook export feature annotations">';
   modal_msg += '</p></div>';
 
   /* ---------------- PDF features tab ---------------- */
 
   modal_msg += '<div id="addabc-tab-pdf-features" class="adv-tab-panel' + (isPDFFeaturesActive ? ' active' : '') + '">';
-  modal_msg += '<p style="text-align:center;margin-top:24px;"><input id="tunebookbuilder-add-play" class="advancedcontrols btn btn-injectcontrols-tunebookbuilder-play" onclick="PDFTunebookBuilderPlayOnly();" type="button" value="Inject Only PDF Tunebook Play Features" title="Inject only minimal playback-related instrument and volume commands at the top of your tunebook ABC"><input id="tunebookbuilder_add" class="advancedcontrols btn btn-injectcontrols-tunebookbuilder" onclick="PDFTunebookBuilder();" type="button" value="Inject All PDF Tunebook Features" title="Inject commands at the top of your tunebook ABC for adding a Title Page, Table of Contents, Index, Page Headers, Page Footers, instruments and volumes for Playback Links, and Custom QR Code"></p></div>';
+  modal_msg += '<p style="text-align:center;margin-top:24px;"><input id="tunebookbuilder-add-play" class="advancedcontrols btn btn-injectcontrols-tunebookbuilder-play" onclick="PDFTunebookBuilderPlayOnly();" type="button" value="Inject Only PDF Tunebook Play Features" title="Inject only minimal playback-related instrument and volume commands at the top of your tunebook ABC"><input id="tunebookbuilder_add" class="advancedcontrols btn btn-injectcontrols-tunebookbuilder" onclick="PDFTunebookBuilder();" type="button" value="Inject All PDF Tunebook Features" title="Inject commands at the top of your tunebook ABC for adding a Title Page, Table of Contents, Index, Page Headers, Page Footers, instruments and volumes for Playback Links, and Custom QR Code"></p>';
+  modal_msg += '<p style="text-align:center;margin-top:24px;"><input id="addpdfplayonlytemplate" class="advancedcontrols btn btn-injectcontrols-headers" style="margin-right:24px;" onclick="AddPDFPlayOnlyTemplate();" type="button" value="Example PDF Only Play Features Template" title="Inject an example template with only minimal playback-related instrument and volume commands at the top of your tunebook ABC">';
+  modal_msg += '<input id="addpdfannotationstemplate" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AddPDFAnnotationsTemplate();" type="button" value="Example PDF All Features Template" title="Inject an example template that contains the most common PDF tunebook export feature annotations"></p>';
+  modal_msg += '</div>';
 
   modal_msg += '<p style="font-size:2pt;">&nbsp;</p>';
   modal_msg += '</div></div>';
@@ -20530,7 +20532,7 @@ function AppendSampleSong() {
 //
 // Add a common PDF annotations template
 //
-function AddPDFAnnotationsTemplate(e) {
+function AddPDFAnnotationsTemplate() {
 
   // Keep track of actions
   sendGoogleAnalytics("action", "AddPDFAnnotationsTemplate");
@@ -20554,6 +20556,29 @@ function AddPDFAnnotationsTemplate(e) {
   theValue += '%indexrightoffset 0\n';
   theValue += '%pageheader This is the Page Header\n';
   theValue += '%pagefooter This is the Page Footer\n';
+  theValue += '%add_all_playback_links 0 0 0 fatboy\n';
+  theValue += '%add_all_playback_volumes 64 64\n';
+  theValue += '%\n';
+  theValue += '% End of PDF Tunebook Features\n\n';
+
+  // Put the annotations at the top
+  setABCEditorText(theValue + getABCEditorText());
+
+}
+
+function AddPDFPlayOnlyTemplate() {
+
+  // Keep track of actions
+  sendGoogleAnalytics("action", "AddPDFPlayOnlyTemplate");
+
+  // Stuff in the most common PDF annotations
+  var theValue = '% Start of PDF Tunebook Features\n';
+  theValue += '%\n';
+  theValue += '%pdfquality 0.75\n';
+  theValue += '%pdf_between_tune_space 20\n';
+  theValue += '%\n';
+  theValue += '%pageheader Click the tune title to play\n';
+  theValue += '%\n';
   theValue += '%add_all_playback_links 0 0 0 fatboy\n';
   theValue += '%add_all_playback_volumes 64 64\n';
   theValue += '%\n';
