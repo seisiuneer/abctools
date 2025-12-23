@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3094_122225_2100";
+var gVersionNumber = "3095_122325_1000";
 
 var gMIDIInitStillWaiting = false;
 
@@ -54563,6 +54563,93 @@ function initMIDI() {
 }
 
 //
+// Show the holiday-themed What's New screen
+//
+function showWhatsNewScreen() {
+
+  // Keep track of dialogs
+  sendGoogleAnalytics("dialog", "showWhatsNewScreen");
+
+  // --- Inline styles to keep this self-contained like your existing dialog ---
+  var modal_msg = '';
+  modal_msg += '<div style="font-family:helvetica; line-height:16pt;">';
+
+  // Header (festive banner)
+  modal_msg += '<div style="text-align:center; padding:14px 10px; border-radius:12px;';
+  modal_msg += 'background: linear-gradient(135deg, #b3001b 0%, #0f7a3c 100%);';
+  modal_msg += 'box-shadow: 0 6px 16px rgba(0,0,0,0.12); color:#fff;">';
+  modal_msg += '<div style="font-size:20pt; line-height:24pt; font-weight:bold;">🎄 What&apos;s New</div>';
+  modal_msg += '<div style="font-size:11pt; opacity:0.95; margin-top:4px;">Version ' + gVersionNumber + '</div>';
+  modal_msg += '</div>';
+
+  // Short intro
+  modal_msg += '<p style="margin:14px 4px 10px 4px; font-size:12pt;">';
+  modal_msg += 'A festive holiday update has arrived — here are the newest goodies in my ABC Transcription Tools:';
+  modal_msg += '</p>';
+
+  // Feature card
+  modal_msg += '<div style="margin:10px 0 6px 0; padding:12px 12px; border-radius:12px;';
+  modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);">';
+
+  modal_msg += '<div style="font-size:14pt; font-weight:bold; margin-bottom:12px;">';
+  modal_msg += '✨ Phrase-by-phrase practice inside the Tune Trainer</div>';
+
+  modal_msg += '<p style="margin:6px 0 8px 0; font-size:12pt;margin-bottom:12px;">';
+  modal_msg += 'You can now do <strong>phrase-by-phrase practice</strong> from right inside the <strong>Tune Trainer</strong>!';
+  modal_msg += '</p>';
+
+  // Steps
+  modal_msg += '<div style="margin:8px 0 0 0; padding:10px 10px; border-radius:10px;';
+  modal_msg += 'background:#f7faf8; border:1px solid #e6f0ea;">';
+
+  modal_msg += '<div style="font-size:12pt; font-weight:bold; margin-bottom:6px;">How it works</div>';
+  modal_msg += '<p style="margin:6px 0; font-size:12pt;">';
+  modal_msg += '1) Launch the <strong>Tune Trainer</strong>.</p>';
+
+  modal_msg += '<p style="margin:6px 0; font-size:12pt;">';
+  modal_msg += '2) Click <strong>Phrase Builder</strong> to break the tune into phrases of a specified number of measures, followed by the same number of measures of rests.</p>';
+
+  modal_msg += '<p style="margin:6px 0; font-size:12pt;">';
+  modal_msg += '3) Play the tune, listen to each phrase, then play along during the rests.</p>';
+
+  modal_msg += '<p style="margin:6px 0; font-size:12pt;">';
+  modal_msg += '<strong>Tip:</strong> Turn on the metronome to help keep a steady tempo.</p>';
+ 
+  modal_msg += '</div>'; // end how-it-works block
+  modal_msg += '</div>'; // end feature card
+
+  // More info link
+  modal_msg += '<p style="margin:12px 4px 8px 4px; font-size:12pt; text-align:center;">';
+  modal_msg += 'For more information on the <strong>Tune Trainer</strong>, ';
+  modal_msg += '<a href="https://michaeleskin.com/abctools/userguide.html#tune_trainer" ';
+  modal_msg += 'target="_blank" style="color:#0f7a3c; text-decoration:none; font-weight:bold;">';
+  modal_msg += 'click here</a>.';
+  modal_msg += '</p>';
+
+  // Launch tips (festive footer panel)
+  modal_msg += '<div style="margin-top:10px; padding:10px 12px; border-radius:12px;';
+  modal_msg += 'background:#fff7e6; border:1px solid #ffe2ad;">';
+
+  modal_msg += '<div style="font-size:12pt; font-weight:bold; margin-bottom:6px;">✨ Two ways to launch the Tune Trainer:</div>';
+  modal_msg += '<p style="margin:6px 0; font-size:12pt;">• Click the <strong>Launch Tune Trainer</strong> button on the <strong>Player</strong></p>';
+  modal_msg += '<p style="margin:6px 0; font-size:12pt;">• Or <strong>Shift-click</strong> the <strong>Play</strong> button at the top of the tool</p>';
+  modal_msg += '</div>';
+
+  // Footer
+  modal_msg += '<p style="text-align:center; margin:14px 0 0 0; font-size:11pt; color:#666;">';
+  modal_msg += 'Happy practicing! ❄️</p>';
+
+  modal_msg += '</div>'; // wrapper
+
+  DayPilot.Modal.alert(modal_msg, {
+    theme: "modal_flat",
+    top: 25,
+    scrollWithPage: (AllowDialogsToScroll())
+  });
+
+}
+
+//
 // Show the first run welcome screen
 //
 function showWelcomeScreen() {
@@ -61030,6 +61117,21 @@ function DoStartup() {
     // And set the focus
     gTheABC.focus();
    
+  }
+
+  // Show update message?
+  if (gLocalStorageAvailable && (!isFromShare)){
+
+    var updatePresented = localStorage.sawUpdate_23dec2025;
+
+    if (updatePresented != "true") {
+
+      showWhatsNewScreen();
+
+      localStorage.sawUpdate_23dec2025 = true;
+
+    }
+
   }
 
 }
