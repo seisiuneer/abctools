@@ -54652,7 +54652,7 @@ function showWhatsNewScreen() {
 
   // Footer
   modal_msg += '<p style="text-align:center; margin:14px 0 0 0; font-size:11pt; color:#666;">';
-  modal_msg += 'Happy practicing! ❄️</p>';
+  modal_msg += '❄️ Happy practicing! ❄️</p>';
 
   modal_msg += '</div>'; // wrapper
 
