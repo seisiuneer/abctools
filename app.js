@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3093_122225_1300";
+var gVersionNumber = "3094_122225_2100";
 
 var gMIDIInitStillWaiting = false;
 
@@ -37384,7 +37384,7 @@ function PlayABCDialog(theABC, callback, val, metronome_state) {
       modal_msg += '<input id="abcplayer_zoom_out" class="btn btn-player_zoom abcplayer_zoom_out" onclick="ZoomPlayer(false)" type="button" value="→&nbsp;←" title="Decreases the player width 10% of the window screen size">';
     }
 
-    modal_msg += '<input id="abcplayer_trainer" class="btn btn-looper abcplayer_trainer" onclick="TuneTrainerLaunchFromPlayer()" type="button" value="Start Tune Trainer" title="Opens the Tune Trainer for practicing tunes with increasing tempos">';
+    modal_msg += '<input id="abcplayer_trainer" class="btn btn-looper abcplayer_trainer" onclick="TuneTrainerLaunchFromPlayer()" type="button" value="Launch Tune Trainer" title="Launches the Tune Trainer to practice the tune with increasing tempos and optional phrase-by-phrase call-and-response training">';
 
     if (gPlayMetronome) {
       modal_msg += '<input id="abcplayer_metronomebutton" class="abcplayer_metronome button btn btn-metronome" onclick="ToggleMetronome();" type="button" value="Disable Metronome" title="Disables the metronome">';
