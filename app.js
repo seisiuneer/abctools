@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3095_122325_1000";
+var gVersionNumber = "3096_122325_1130";
 
 var gMIDIInitStillWaiting = false;
 
@@ -27428,6 +27428,21 @@ function processShareLink() {
           top: 200,
           scrollWithPage: (AllowDialogsToScroll())
         });
+      }
+
+      // Show update message?
+      if (gLocalStorageAvailable){
+
+        var updatePresented = localStorage.sawUpdate_23dec2025;
+
+        if (updatePresented != "true") {
+
+          showWhatsNewScreen();
+
+          localStorage.sawUpdate_23dec2025 = true;
+
+        }
+
       }
 
     });
