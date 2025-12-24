@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3097_122325_1500";
+var gVersionNumber = "3098_122425_1030";
 
 var gMIDIInitStillWaiting = false;
 
@@ -19609,8 +19609,10 @@ function AddABC() {
   modal_msg += '<input id="addnewhornpipe" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AppendSampleHornpipe();" type="button" value="Alexander\'s (hornpipe)" title="Adds an example Hornpipe (Alexander\'s) to the end of the ABC">';
   modal_msg += '</p>';
   modal_msg += '<p style="text-align:center;margin-top:24px;">';
+  modal_msg += '<input id="addragtime" class="advancedcontrols btn btn-injectcontrols-headers"  style="margin-right:24px;" onclick="AddRagtimeNightingale();" type="button" value="Ragtime Nightingale" title="Adds Ragtime Nightingale by Joseph Lamb to the end of the ABC">';
   modal_msg += '<input id="addjsbach" class="advancedcontrols btn btn-injectcontrols-headers" style="margin-right:24px;" onclick="AppendJSBach();" type="button" value="J.S. Bach Two-Part Invention #1" title="Adds the J.S. Bach 2-Part Invention #1 to the end of the ABC">';
-  modal_msg += '<input id="addjsbach" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AppendJSBach2();" type="button" value="J.S. Bach BWV570 Fantasia" title="Adds the J.S. Bach BWV570 Fantasia for Pipe Organ to the end of the ABC">';
+  modal_msg += '<input id="addjsbach2" class="advancedcontrols btn btn-injectcontrols-headers" onclick="AppendJSBach2();" type="button" value="J.S. Bach Fantasia" title="Adds the J.S. Bach BWV570 Fantasia for Pipe Organ to the end of the ABC">';
+
   modal_msg += '</p></div>';
 
   /* ---------------- ABC templates tab ---------------- */
@@ -20768,6 +20770,178 @@ function AppendJSBach2(){
   theValue += 'G,4 F,6 G,F,E,2D,C, | G,8G,8- | G,8G,8- | G,8 C,2C_B,A,2G,F, |\n';
   theValue += 'E,4 F,4 C,8 | C,16 |]\n';
 
+
+  // Do common tune addition processing
+  ProcessAddTune(theValue);
+
+}
+
+// 
+// Add Ragtime Nightingale by Joseph Lamb
+//
+
+function AddRagtimeNightingale(){
+
+    // Keep track of actions
+  sendGoogleAnalytics("action","AddRagtimeNightingale");
+
+  // Stuff in some default ABC with additional options explained
+  var theValue = ""
+
+  var nTunes = CountTunes();
+
+  if (nTunes > 0){
+    theValue += "\n";
+  }
+
+  theValue += "X:1\n";
+  theValue += "T:Ragtime Nightingale\n";
+  theValue += "C:Joseph Lamb\n";
+  theValue += "%%score { ( 4 5 ) | ( 1 2 3 ) }\n";
+  theValue += "L:1/4\n";
+  theValue += "M:2/4\n";
+  theValue += "Q:80\n";
+  theValue += "K:Eb\n";
+  theValue += "%\n";
+  theValue += "%%staffsep 80\n";
+  theValue += "%\n";
+  theValue += "%abcjs_soundfont fatboy\n";
+  theValue += "V:1 bass stems=auto\n";
+  theValue += "% Acoustic Grand Piano\n";
+  theValue += "%%MIDI program 0\n";
+  theValue += "V:2 bass stems=auto\n";
+  theValue += "% Acoustic Grand Piano\n";
+  theValue += "%%MIDI program 0\n";
+  theValue += "V:3 bass stems=auto\n";
+  theValue += "% Acoustic Grand Piano\n";
+  theValue += "%%MIDI program 0\n";
+  theValue += "V:4 treble\n";
+  theValue += "% Acoustic Grand Piano\n";
+  theValue += "%%MIDI program 0\n";
+  theValue += "V:5 treble\n";
+  theValue += "% Acoustic Grand Piano\n";
+  theValue += "%%MIDI program 0\n";
+  theValue += "%\n";
+  theValue += "V:1\n";
+  theValue += "C,,/4!<(!G,,/4C,/4D,/4 E,/4G,/4C/4!<)!E/4 | [A,D]/[A,D]/4[G,D]/4- [G,D]/ z/ | [A,C]/>[A,C]/- [A,C]/[A,E]/ | [G,D] !^![G,,,G,,]/ [G,=B,F]/ %4\n";
+  theValue += "|: C,,/4G,,/4C,/4D,/4 E,/4G,/4C/4E/4 | [A,D]/[A,D]/ [G,D]/[=B,F]/ | C,,/4G,,/4C,/4D,/4 E,/4G,/4C/4E/4 | [A,D]/[A,D]/ [G,D]/ z/ | %8\n";
+  theValue += "[G,,G,]/[B,C=E]/[C,,C,]/[B,CE]/ | [F,,F,]/[A,CF]/ [C,,C,]/[A,CF]/ | [F,,F,]/[A,B,D]/ [B,,,B,,]/[A,B,D]/ | [E,,E,]/[G,B,E]/ [D,,D,]/[G,=B,F]/ | %12\n";
+  theValue += "C,,/4G,,/4C,/4D,/4 E,/4G,/4C/4E/4 | [A,D]/[A,D]/ [G,D]/[=B,F]/ | C,,/4G,,/4C,/4D,/4 E,/4G,/4C/4E/4 | [A,D]/[A,D]/ [G,D]/ z/ | %16\n";
+  theValue += "[G,,G,]/[B,C=E]/ [C,,C,]/[B,CE]/ | [F,,F,]/[A,CF]/ [A,,A,]/[=A,,=A,]/ | [B,,B,]/[=B,EG]/ [_B,,_B,]/[B,FA]/ |1 [E,E]/[B,,B,]/ [E,,E,]/[D,,D,]/ :| %20\n";
+  theValue += "|2 [E,E]/[B,,B,]/!<(! [E,,E,]/ z/ |: [F,,F,]/[A,B,D]/!<)! [B,,,B,,]/[A,,,A,,]/ | [G,,,G,,]/[G,B,E]/ [G,,G,]/[_G,,_G,]/ | [F,,F,]/[A,B,D]/ [B,,,B,,]/[A,B,D]/ | %24\n";
+  theValue += "[E,,E,]/[G,B,E]/ [G,,G,]/[_G,,_G,]/ | [F,,F,]/[A,B,D]/ [B,,,B,,]/[A,,,A,,]/ | [G,,,G,,]/[G,B,E]/ [E,,E,]/[G,B,E]/ | x C/4=A,/4^F,/4D,/4 | %28\n";
+  theValue += "x/!8va(! x/!8va)! z | x2 | x2 | x2 | %32\n";
+  theValue += "x2 | x2 | x2 | x2 | %36\n";
+  theValue += "|1 x2 :|2 E,/[B,,B,]/ [E,,E,]/[D,,D,]/ |] C,,/4G,,/4C,/4D,/4 E,/4G,/4C/4E/4 | [A,D]/[A,D]/ [G,D]/[=B,F]/ | %40\n";
+  theValue += "C,,/4G,,/4C,/4D,/4 E,/4G,/4C/4E/4 | [A,D]/[A,D]/ [G,D]/ z/ | [G,,G,]/[B,C=E]/[C,,C,]/[B,CE]/ | [F,,F,]/[A,CF]/ [C,,C,]/[A,CF]/ | %44\n";
+  theValue += "[F,,F,]/[A,B,D]/ [B,,,B,,]/[A,B,D]/ | [E,,E,]/[G,B,E]/ [D,,D,]/[G,=B,F]/ | C,,/4G,,/4C,/4D,/4 E,/4G,/4C/4E/4 | [A,D]/[A,D]/ [G,D]/[=B,F]/ | %48\n";
+  theValue += "C,,/4G,,/4C,/4D,/4 E,/4G,/4C/4E/4 | [A,D]/[A,D]/ [G,D]/ z/ | [G,,G,]/[B,C=E]/ [C,,C,]/[B,CE]/ | [F,,F,]/[A,CF]/ [A,,A,]/[=A,,=A,]/ | %52\n";
+  theValue += "[B,,B,]/[=B,EG]/ [_B,,_B,]/[B,FA]/ | [E,E]/[B,,B,]/ [E,,E,]/ z/ |:[K:Ab] [A,,A,]/[E,A,C]/ [C,C]/[E,A,C]/ | [B,,B,]/[E,G,D]/ [E,,E,]/[D,,D,]/ | %56\n";
+  theValue += "[C,,C,]/[E,A,C]/ [E,,E,]/[E,A,C]/ | [B,,B,]/[E,G,D]/ [E,,E,]/[D,,D,]/ | [C,,C,]/[E,A,C]/ [C,C]/[_C,_C]/ |!<(! [B,,B,]/[B,EG]/!<)! [=A,,=A,]/[A,E^F]/ | %60\n";
+  theValue += "[B,,B,]/[B,=DA]/ [B,,,B,,]/[A,B,D]/ | [E,,E,]/[B,,A,]/ [E,G,]/ z/ | [A,,,A,,]/[E,A,C]/ [C,,C,]/[E,A,C]/ | [B,,,B,,]/[E,G,D]/ [E,,E,]/[D,,D,]/ | %64\n";
+  theValue += "[C,,C,]/[E,A,C]/ [E,,E,]/[E,A,C]/ | [B,,B,]/[E,G,D]/ [E,,E,]/[E,G,D]/ | [A,,A,]/[=A,C_G]/ [C,C]/[A,EG]/ | [D,D]/[A,DF]/ [F,F]/[=D,=D]/ | %68\n";
+  theValue += "[E,E]/[A,CE]/ [E,,E,]/[E,B,_D]/ |1 [A,,A,]/[=A,C^F]/ [B,DG]/ z/ :|2 [A,,_A,]/ z/ [A,,,A,,]/ z/ ||[K:Eb] [B,D]/ z/ z | %72\n";
+  theValue += "z !^![B,,,B,,] | z2 | z/ !^![B,,,B,,] z/ |] [F,,F,]/[A,B,D]/ [B,,,B,,]/[A,,,A,,]/ | %76\n";
+  theValue += "[G,,,G,,]/[G,B,E]/ [G,,G,]/[_G,,_G,]/ | [F,,F,]/[A,B,D]/ [B,,,B,,]/[A,B,D]/ | [E,,E,]/[G,B,E]/ [G,,G,]/[_G,,_G,]/ | [F,,F,]/[A,B,D]/ [B,,,B,,]/[A,,,A,,]/ | %80\n";
+  theValue += "[G,,,G,,]/[G,B,E]/ [E,,E,]/[G,B,E]/ | x C/4=A,/4^F,/4D,/4 | x/!8va(! x/!8va)! z | [F,,F,]/[A,B,D]/ [B,,,B,,]/[A,,,A,,]/ | %84\n";
+  theValue += "[G,,,G,,]/[G,B,E]/ [G,,G,]/[_G,,_G,]/ | [F,,F,]/[A,B,D]/ [B,,,B,,]/[A,B,D]/ | [E,,E,]/[G,B,E]/ [G,,G,]/[G,B,E]/ | [A,,A,]/[A,=B,F]/ [A,B,F]/[=B,,=B,]/ | %88\n";
+  theValue += "[_B,,_B,]/[B,EG]/ [G,,,G,,] | [F,,,F,,]/[F,A,C]/ [B,,,B,,]/[A,B,D]/ | [B,EG]/!>![B,,B,]/ !>![E,,E,]/ z/ |] %91\n";
+  theValue += "V:2\n";
+  theValue += "x2 | x2 | x2 | x2 %4\n";
+  theValue += "|: x2 | x2 | x2 | x2 | %8\n";
+  theValue += "x2 | x2 | x2 | x2 | %12\n";
+  theValue += "x2 | x2 | x2 | x2 | %16\n";
+  theValue += "x2 | x2 | x2 |1 x2 :| %20\n";
+  theValue += "|2 x2 |: x2 | x2 | x2 | %24\n";
+  theValue += "x2 | x2 | x2 | [D,,D,]/[D,G,B,]/ C,/D,,/ | %28\n";
+  theValue += "x/!8va(! G/8B/8d/8g/8!8va)! z | [F,,F,]/[A,B,D]/ [B,,,B,,]/[A,,,A,,]/ | [G,,,G,,]/[G,B,E]/ [G,,G,]/[_G,,_G,]/ | [F,,F,]/[A,B,D]/ [B,,,B,,]/[A,B,D]/ | %32\n";
+  theValue += "[E,,E,]/[G,B,E]/ [G,,G,]/[G,B,E]/ | [A,,A,]/[A,=B,F]/ [A,B,F]/[=B,,=B,]/ | [_B,,_B,]/[B,EG]/ z | [F,,,F,,]/[F,A,C]/ [B,,,B,,]/[A,B,D]/ | %36\n";
+  theValue += "|1 E,/[B,,B,]/ [E,,E,]/ z/ :|2 x2 |] x2 | x2 | %40\n";
+  theValue += "x2 | x2 | x2 | x2 | %44\n";
+  theValue += "x2 | x2 | x2 | x2 | %48\n";
+  theValue += "x2 | x2 | x2 | x2 | %52\n";
+  theValue += "x2 | x2 |:[K:Ab] x2 | x2 | %56\n";
+  theValue += "x2 | x2 | x2 | x2 | %60\n";
+  theValue += "x2 | x2 | x2 | x2 | %64\n";
+  theValue += "x2 | x2 | x2 | x2 | %68\n";
+  theValue += "x2 |1 x2 :|2 x2 ||[K:Eb] x2 | %72\n";
+  theValue += "x2 | x2 | x2 |] x2 | %76\n";
+  theValue += "x2 | x2 | x2 | x2 | %80\n";
+  theValue += "x2 | [D,,D,]/[D,G,B,]/ C,/D,,/ | x/!8va(! G/8B/8d/8g/8!8va)! z | x2 | %84\n";
+  theValue += "x2 | x2 | x2 | x2 | %88\n";
+  theValue += "x2 | x2 | x2 |] %91\n";
+  theValue += "V:3\n";
+  theValue += "x2 | x2 | x2 | x2  %4\n";
+  theValue += "|: x2 | x2 | x2 | x2 | %8\n";
+  theValue += "x2 | x2 | x2 | x2 | %12\n";
+  theValue += "x2 | x2 | x2 | x2 | %16\n";
+  theValue += "x2 | x2 | x2 |1 x2 :| %20\n";
+  theValue += "|2 x2 |: x2 | x2 | x2 | %24\n";
+  theValue += "x2 | x2 | x2 | x2 | %28\n";
+  theValue += "G,, x | x2 | x2 | x2 | %32\n";
+  theValue += "x2 | x2 | x2 | x2 | %36\n";
+  theValue += "|1 x2 :|2 x2 |] x2 | x2 | %40\n";
+  theValue += "x2 | x2 | x2 | x2 | %44\n";
+  theValue += "x2 | x2 | x2 | x2 | %48\n";
+  theValue += "x2 | x2 | x2 | x2 | %52\n";
+  theValue += "x2 | x2 |:[K:Ab] x2 | x2 | %56\n";
+  theValue += "x2 | x2 | x2 | x2 | %60\n";
+  theValue += "x2 | x2 | x2 | x2 | %64\n";
+  theValue += "x2 | x2 | x2 | x2 | %68\n";
+  theValue += "x2 |1 x2 :|2 x2 ||[K:Eb] x2 | %72\n";
+  theValue += "x2 | x2 | x2 |] x2 | %76\n";
+  theValue += "x2 | x2 | x2 | x2 | %80\n";
+  theValue += "x2 | x2 | G,, x | x2 | %84\n";
+  theValue += "x2 | x2 | x2 | x2 | %88\n";
+  theValue += "x2 | x2 | x2 |] %91\n";
+  theValue += "V:4\n";
+  theValue += "!mf! x2 | [Fc]/4f/4[Fc]/4[G=Bg]/4- [GBg]/4G/4g/4f/4 | e/4d/4c/4e/4- e/4d/4c/ | [G=Bg] z/4 G/4[dg]/4G/4 %4\n";
+  theValue += "|: e/<g/- g | x2 | e/<g/- g | x2 | %8\n";
+  theValue += "x2 | x2 | x2 | x2 | %12\n";
+  theValue += "e/<g/- g | x2 | e/<g/- g | x2 | %16\n";
+  theValue += "x2 | x f/4e/4=f/4^f/4 | [Geg]/4[Bb]/4[=B=b]/4[cdac']/4- [cdac']/4[_B_b]/4[cdac']/ |1 [GBe]- [GBe]/4G/4[=Bg]/4G/4 :| %20\n";
+  theValue += "|2 [G_Be]- [GBe]/4[ee']/4[dd']/4[cc']/4 |: [=Bfa=b] [cfac']/4 [DA_Bd]3/4 | [DGBd]/4[EGBe]/[B-eg-b-]/4 [B^^egb]/4[ee']/4[dd']/4[cc']/4 | [=Bfa=b]/4[cfac']/[dfad']/4- [dfad']/4[ee']/4[dd']/4[cc']/4 | %24\n";
+  theValue += "[=Beg=b]/4[cegc']/[dgbd']/4- [dgbd']/4[ee']/4[dd']/4[cc']/4 | [=Bfa=b]/<[cfac']/ [^CG_B^c]/<[DABd]/ | [DGBd]/4[EGBe]/[Begb]/4- [Begb]/4[=A=a]/4[Bb]/4[cc']/4 | [dgbd']/4[Bb]/4[Gg]/4[EG=Ae]/4 [EGAe]/[DAcd]/ | %28\n";
+  theValue += "[GBdg]/ z/ g'/4[ee']/4[dd']/4[cc']/4 | [=Bfa=b] [cfac']/4 [DA_Bd]3/4 | [DGBd]/4[EGBe]/[Begb]/4- [Begb]/4[ee']/4[dd']/4[cc']/4 | [=Bfa=b]/4[cfac']/[dfad']/4- [dfad']/4[ee']/4[dd']/4[cc']/4 | %32\n";
+  theValue += "[=Beg=b]/4[cegc']/[dgbd']/4- [dgbd']/4[_B_b]/4[=A=a]/4[Bb]/4 | [=Be=b]/4[ee']/[EAe]/4- [EAe]/4[Ee]/4[F=Af]/4[^F^f]/4 | [G_Beg]/4[Bb]/4[cc']/4[d=ebd']/4 z | [B_db]/4[Aca]/[GBg]/4- [GBg]/[FAf]/ | %36\n";
+  theValue += "|1 [EGe]- [EGe]/4[ee']/4[dd']/4[cc']/4 :|2 [EGe]- [EGe]/4!>(!G/4[=Bg]/4!>)!G/4 |] e/<g/- g | x2 | %40\n";
+  theValue += "e/<g/- g | x2 | x2 | x2 | %44\n";
+  theValue += "x2 | x2 | e/<g/- g | x2 | %48\n";
+  theValue += "e/<g/- g | x2 | x2 | x f/4e/4=f/4^f/4 | %52\n";
+  theValue += "[Geg]/4[Bb]/4[=B=b]/4[cdac']/4- [cdac']/4[_B_b]/4[cdac']/ | [GBe]- [GBe]/ (3c'/4e'/4c'/4 |:[K:Ab] e/4e'/4c'/4e'/4 c'/4e'/4c'/4e'/4 | [d'e']/4[d'e']/[d'e']/4- [d'e']/!8va(! x/ | %56\n";
+  theValue += "e'/4e''/4c''/4e''/4 c''/4e''/4c''/4e''/4 | [d''e'']/4[d''e'']/[d''e'']/4- [d''e'']/!8va)! x/ | e/4e'/4c'/4e'/4 c'/<e'/ | x2 | %60\n";
+  theValue += "b/a/4b/4 g/4b/4f/4b/4 | e/ (5:4:5B/8c/8B/8=A/8B/8 e/ (3c/4e/4c/4 | E/4e/4c/4e/4 c/4e/4c/4e/4 | [de]/4[de]/4x/4[de]/4- [de]/ x/ | %64\n";
+  theValue += "e/4e'/4c'/4e'/4 c'/4e'/4c'/4e'/4 | d'/4d'/[d'e']/4- [d'e']/ x/ | A/4a/4_g/4a/4 g/4a/4g/4a/4 | [fa]/>[da]/- [da]/4a/4=g/4f/4 | %68\n";
+  theValue += "e/4f/4a/4g/4- g/4f/4e/ |1 .[Acea]/Te/{=de} e'/(3c'/4e'/4c'/4 :|2 .[Acea]/ z/ [Acea]/ z/ ||[K:Eb]!mf! B/f/ b/!8va(!f'/!8va)! | %72\n";
+  theValue += "x z/ (3c/4f/4d/4 | B/ (3c'/4f'/4d'/4 a/ (3c'/4f'/4d'/4 | (3b/ [da]/ z/ z/4!ff! [Bb]/4[=A=a]/4[Bb]/4 |] [=Bf=a=b] [cfac']/4 [DA_Bd]3/4 | %76\n";
+  theValue += "[DGBd]/4[EGBe]/[Begb]/4- [Begb]/4[ee']/4[dd']/4[cc']/4 | [=Bfa=b]/4[cfac']/[dfad']/4- [dfad']/4[ee']/4[dd']/4[cc']/4 | [=Beg=b]/4[cegc']/[dgbd']/4- [dgbd']/4[ee']/4[dd']/4[cc']/4 | [=Bfa=b]/<[cfac']/ [^CG_B^c]/<[DABd]/ | %80\n";
+  theValue += "[DGBd]/4[EGBe]/[Begb]/4- [Begb]/4[=A=a]/4[Bb]/4[cc']/4 | [dgbd']/4[Bb]/4[Gg]/4[EG=Ae]/4 [EGAe]/[DAcd]/ | [GBdg]/ z/ g'/4[ee']/4[dd']/4[cc']/4 | [=Bfa=b] [cfac']/4 [DA_Bd]3/4 | %84\n";
+  theValue += "[DGBd]/4[EGBe]/[Begb]/4- [Begb]/4[ee']/4[dd']/4[cc']/4 | [=Bfa=b]/4[cfac']/[dfad']/4- [dfad']/4[ee']/4[dd']/4[cc']/4 | [=Beg=b]/4[cegc']/[dgbd']/4- [dgbd']/4[_B_b]/4[=A=a]/4[Bb]/4 | [=Be=b]/4[ee']/[EAe]/4- [EAe]/4[Ee]/4[F=Af]/4[^F^f]/4 | %88\n";
+  theValue += "[G_Beg]/4[Bb]/4[cc']/4[d=ebd']/4 [Gg] | [Aca]/4[Bb]/4[cc']/4[dad']/4- [dad']/4[cc']/4[Bdb]/ | [egbe'] [egbe']/ z/ |] %91\n";
+  theValue += "V:5\n";
+  theValue += "x2 | x2 | F/>^F/- F/F/ | x2  %4\n";
+  theValue += "|: !mp! [Gce]2 | [Fc]/4f/4[Fc]/4[G=Bg]/4- [GBg]/4G/4[dg]/4G/4 | [Gce]2 | [Fc]/4f/4[Fc]/4[G=Bg]/4- [GBg]/g/4f/4 | %8\n";
+  theValue += "=e/4c'/4[_db]/4c'/4 [ca]/4c'/4[Bg]/4c'/4 | [Acf]/4g/4c/4[Acf]/4- [Acf]/4g/4[Af]/4e/4 | [Ad]/4b/4[ca]/4b/4 [Bg]/4b/4[Af]/4b/4 | [Ge]/4g/4G/4[=Bf]/4- [Bf]/4G/4[dg]/4G/4 | %12\n";
+  theValue += "[Gce]2 | [Fc]/4f/4[Fc]/4[G=Bg]/4- [GBg]/4G/4[dg]/4G/4 | [Gce]2 | [Fc]/4f/4[Fc]/4[G=Bg]/4- [GBg]/g/4f/4 | %16\n";
+  theValue += "=e/4c'/4[_db]/4c'/4 [ca]/4c'/4[Bg]/4c'/4 | [Acf]/4g/4c/4[Fcf]/4- [Fcf]/[=Fc]/ | x2 |1 x2 :| %20\n";
+  theValue += "|2 x2 |: x2 | x2 | x2 | %24\n";
+  theValue += "x2 | x2 | x2 | x2 | %28\n";
+  theValue += "x2 | x2 | x2 | x2 | %32\n";
+  theValue += "x2 | x2 | x2 | x2 | %36\n";
+  theValue += "|1 x2 :|2 x2 |]!mp! [Gce]2 | [Fc]/4f/4[Fc]/4[G=Bg]/4- [GBg]/4G/4[dg]/4G/4 | %40\n";
+  theValue += "[Gce]2 | [Fc]/4f/4[Fc]/4[G=Bg]/4- [GBg]/g/4f/4 | =e/4c'/4[_db]/4c'/4 [ca]/4c'/4[Bg]/4c'/4 | [Acf]/4g/4c/4[Acf]/4- [Acf]/4g/4[Af]/4e/4 | %44\n";
+  theValue += "[Ad]/4b/4[ca]/4b/4 [Bg]/4b/4[Af]/4b/4 | [Ge]/4g/4G/4[=Bf]/4- [Bf]/4G/4[dg]/4G/4 | [Gce]2 | [Fc]/4f/4[Fc]/4[G=Bg]/4- [GBg]/4G/4[dg]/4G/4 | %48\n";
+  theValue += "[Gce]2 | [Fc]/4f/4[Fc]/4[G=Bg]/4- [GBg]/g/4f/4 | =e/4c'/4[_db]/4c'/4 [ca]/4c'/4[Bg]/4c'/4 | [Acf]/4g/4c/4[Fcf]/4- [Fcf]/[=Fc]/ | %52\n";
+  theValue += "x2 | x2 |:[K:Ab]!mp! e/f/ a/c'/ | a/4f/g/4- g/!8va(! (3c''/4e''/4c''/4 | %56\n";
+  theValue += "e'/f'/ a'/c''/ | a'/4f'/g'/4- g'/!8va)! (3c'/4e'/4c'/4 | e/f/ a/f/4^f/4 | g/4[Bb]/4[cc']/4[=d=f=d']/4- [dfd']/4[cfc']/[dfd']/4 | %60\n";
+  theValue += "[B=d]/c/ B/A/ | G/!>(!F/!>)! E/ x/ | E/F/ _A/B/ | A/4F/G/4- G/ (3c'/4e'/4c'/4 | %64\n";
+  theValue += "e/f/a/c'/ | a/4f/g/4- g/(3c/4e/4c/4 | A/=A/B/c/ | B/4F/_A/4- A/[A=B]/ | %68\n";
+  theValue += "[Ac]/>[Gd]/- [Gd]/[Gd]/ |1 x2 :|2 x2 ||[K:Eb] x3/2!8va(! x/!8va)! | %72\n";
+  theValue += "b'!f! x/ [EA]/ | [DA]/ [ea]/ d/[ea]/ | x2 |] x2 | %76\n";
+  theValue += "x2 | x2 | x2 | x2 | %80\n";
+  theValue += "x2 | x2 | x2 | x2 | %84\n";
+  theValue += "x2 | x2 | x2 | x2 | %88\n";
+  theValue += "x2 | x2 | x2 |] %91\n";
 
   // Do common tune addition processing
   ProcessAddTune(theValue);
@@ -27433,13 +27607,13 @@ function processShareLink() {
       // Show update message?
       if (gLocalStorageAvailable){
 
-        var updatePresented = localStorage.sawUpdate_23dec2025;
+        var updatePresented = localStorage.sawUpdate_24dec2025;
 
         if (updatePresented != "true") {
 
           showWhatsNewScreen();
 
-          localStorage.sawUpdate_23dec2025 = true;
+          localStorage.sawUpdate_24dec2025 = true;
 
         }
 
@@ -54619,7 +54793,7 @@ function showWhatsNewScreen() {
 
   modal_msg += '<div style="font-size:12pt; font-weight:bold; margin-bottom:6px;">How it works</div>';
   modal_msg += '<p style="margin:6px 0; font-size:12pt;">';
-  modal_msg += '1) Launch the <strong>Tune Trainer</strong>.</p>';
+  modal_msg += '1) Launch the <strong>Tune Trainer</strong> from the <strong>Player</strong> (or Shift-click the <strong>Play</strong> button).</p>';
 
   modal_msg += '<p style="margin:6px 0; font-size:12pt;">';
   modal_msg += '2) Click <strong>Phrase Builder</strong> to break the tune into phrases of a specified number of measures, followed by the same number of measures of rests.</p>';
@@ -54641,13 +54815,12 @@ function showWhatsNewScreen() {
   modal_msg += 'click here</a>.';
   modal_msg += '</p>';
 
-  // Launch tips (festive footer panel)
+  // New sample tune
   modal_msg += '<div style="margin-top:10px; padding:10px 12px; border-radius:12px;';
   modal_msg += 'background:#fff7e6; border:1px solid #ffe2ad;">';
 
-  modal_msg += '<div style="font-size:12pt; font-weight:bold; margin-bottom:6px;">✨ Two ways to launch the Tune Trainer:</div>';
-  modal_msg += '<p style="margin:6px 0; font-size:12pt;">• Click the <strong>Launch Tune Trainer</strong> button on the <strong>Player</strong></p>';
-  modal_msg += '<p style="margin:6px 0; font-size:12pt;">• Or <strong>Shift-click</strong> the <strong>Play</strong> button at the top of the tool</p>';
+  modal_msg += '<div style="font-size:12pt; font-weight:bold; margin-bottom:6px;">New Example Tune</div>';
+  modal_msg += '<p style="margin:6px 0; font-size:12pt;">Added "Ragtime Nightingale" by Joseph Lamb to the <strong>Add Example Tunes</strong> section on the <strong>Add</strong> dialog.</p>';
   modal_msg += '</div>';
 
   // Footer
@@ -61137,13 +61310,13 @@ function DoStartup() {
   // Show update message?
   if (gLocalStorageAvailable && (!isFromShare)){
 
-    var updatePresented = localStorage.sawUpdate_23dec2025;
+    var updatePresented = localStorage.sawUpdate_24dec2025;
 
     if (updatePresented != "true") {
 
       showWhatsNewScreen();
 
-      localStorage.sawUpdate_23dec2025 = true;
+      localStorage.sawUpdate_24dec2025 = true;
 
     }
 
