@@ -20803,7 +20803,7 @@ function AddRagtimeNightingale(){
   theValue += "Q:80\n";
   theValue += "K:Eb\n";
   theValue += "%\n";
-  theValue += "%%staffsep 80\n";
+  theValue += "%%staffsep 85\n";
   theValue += "%\n";
   theValue += "%abcjs_soundfont fatboy\n";
   theValue += "V:1 bass stems=auto\n";
