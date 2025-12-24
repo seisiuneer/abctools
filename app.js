@@ -20832,7 +20832,7 @@ function AddRagtimeNightingale(){
   theValue += "[E,,E,]/[G,B,E]/ [G,,G,]/[_G,,_G,]/ | [F,,F,]/[A,B,D]/ [B,,,B,,]/[A,,,A,,]/ | [G,,,G,,]/[G,B,E]/ [E,,E,]/[G,B,E]/ | x C/4=A,/4^F,/4D,/4 | %28\n";
   theValue += "x/!8va(! x/!8va)! z | x2 | x2 | x2 | %32\n";
   theValue += "x2 | x2 | x2 | x2 | %36\n";
-  theValue += "|1 x2 :|2 E,/[B,,B,]/ [E,,E,]/[D,,D,]/ |] C,,/4G,,/4C,/4D,/4 E,/4G,/4C/4E/4 | [A,D]/[A,D]/ [G,D]/[=B,F]/ | %40\n";
+  theValue += "|1 x2 :|2 E,/[B,,B,]/ [E,,E,]/[D,,D,]/ || C,,/4G,,/4C,/4D,/4 E,/4G,/4C/4E/4 | [A,D]/[A,D]/ [G,D]/[=B,F]/ | %40\n";
   theValue += "C,,/4G,,/4C,/4D,/4 E,/4G,/4C/4E/4 | [A,D]/[A,D]/ [G,D]/ z/ | [G,,G,]/[B,C=E]/[C,,C,]/[B,CE]/ | [F,,F,]/[A,CF]/ [C,,C,]/[A,CF]/ | %44\n";
   theValue += "[F,,F,]/[A,B,D]/ [B,,,B,,]/[A,B,D]/ | [E,,E,]/[G,B,E]/ [D,,D,]/[G,=B,F]/ | C,,/4G,,/4C,/4D,/4 E,/4G,/4C/4E/4 | [A,D]/[A,D]/ [G,D]/[=B,F]/ | %48\n";
   theValue += "C,,/4G,,/4C,/4D,/4 E,/4G,/4C/4E/4 | [A,D]/[A,D]/ [G,D]/ z/ | [G,,G,]/[B,C=E]/ [C,,C,]/[B,CE]/ | [F,,F,]/[A,CF]/ [A,,A,]/[=A,,=A,]/ | %52\n";
@@ -20841,7 +20841,7 @@ function AddRagtimeNightingale(){
   theValue += "[B,,B,]/[B,=DA]/ [B,,,B,,]/[A,B,D]/ | [E,,E,]/[B,,A,]/ [E,G,]/ z/ | [A,,,A,,]/[E,A,C]/ [C,,C,]/[E,A,C]/ | [B,,,B,,]/[E,G,D]/ [E,,E,]/[D,,D,]/ | %64\n";
   theValue += "[C,,C,]/[E,A,C]/ [E,,E,]/[E,A,C]/ | [B,,B,]/[E,G,D]/ [E,,E,]/[E,G,D]/ | [A,,A,]/[=A,C_G]/ [C,C]/[A,EG]/ | [D,D]/[A,DF]/ [F,F]/[=D,=D]/ | %68\n";
   theValue += "[E,E]/[A,CE]/ [E,,E,]/[E,B,_D]/ |1 [A,,A,]/[=A,C^F]/ [B,DG]/ z/ :|2 [A,,_A,]/ z/ [A,,,A,,]/ z/ ||[K:Eb] [B,D]/ z/ z | %72\n";
-  theValue += "z !^![B,,,B,,] | z2 | z/ !^![B,,,B,,] z/ |] [F,,F,]/[A,B,D]/ [B,,,B,,]/[A,,,A,,]/ | %76\n";
+  theValue += "z !^![B,,,B,,] | z2 | z/ !^![B,,,B,,] z/ || [F,,F,]/[A,B,D]/ [B,,,B,,]/[A,,,A,,]/ | %76\n";
   theValue += "[G,,,G,,]/[G,B,E]/ [G,,G,]/[_G,,_G,]/ | [F,,F,]/[A,B,D]/ [B,,,B,,]/[A,B,D]/ | [E,,E,]/[G,B,E]/ [G,,G,]/[_G,,_G,]/ | [F,,F,]/[A,B,D]/ [B,,,B,,]/[A,,,A,,]/ | %80\n";
   theValue += "[G,,,G,,]/[G,B,E]/ [E,,E,]/[G,B,E]/ | x C/4=A,/4^F,/4D,/4 | x/!8va(! x/!8va)! z | [F,,F,]/[A,B,D]/ [B,,,B,,]/[A,,,A,,]/ | %84\n";
   theValue += "[G,,,G,,]/[G,B,E]/ [G,,G,]/[_G,,_G,]/ | [F,,F,]/[A,B,D]/ [B,,,B,,]/[A,B,D]/ | [E,,E,]/[G,B,E]/ [G,,G,]/[G,B,E]/ | [A,,A,]/[A,=B,F]/ [A,B,F]/[=B,,=B,]/ | %88\n";
@@ -20856,7 +20856,7 @@ function AddRagtimeNightingale(){
   theValue += "x2 | x2 | x2 | [D,,D,]/[D,G,B,]/ C,/D,,/ | %28\n";
   theValue += "x/!8va(! G/8B/8d/8g/8!8va)! z | [F,,F,]/[A,B,D]/ [B,,,B,,]/[A,,,A,,]/ | [G,,,G,,]/[G,B,E]/ [G,,G,]/[_G,,_G,]/ | [F,,F,]/[A,B,D]/ [B,,,B,,]/[A,B,D]/ | %32\n";
   theValue += "[E,,E,]/[G,B,E]/ [G,,G,]/[G,B,E]/ | [A,,A,]/[A,=B,F]/ [A,B,F]/[=B,,=B,]/ | [_B,,_B,]/[B,EG]/ z | [F,,,F,,]/[F,A,C]/ [B,,,B,,]/[A,B,D]/ | %36\n";
-  theValue += "|1 E,/[B,,B,]/ [E,,E,]/ z/ :|2 x2 |] x2 | x2 | %40\n";
+  theValue += "|1 E,/[B,,B,]/ [E,,E,]/ z/ :|2 x2 || x2 | x2 | %40\n";
   theValue += "x2 | x2 | x2 | x2 | %44\n";
   theValue += "x2 | x2 | x2 | x2 | %48\n";
   theValue += "x2 | x2 | x2 | x2 | %52\n";
@@ -20865,7 +20865,7 @@ function AddRagtimeNightingale(){
   theValue += "x2 | x2 | x2 | x2 | %64\n";
   theValue += "x2 | x2 | x2 | x2 | %68\n";
   theValue += "x2 |1 x2 :|2 x2 ||[K:Eb] x2 | %72\n";
-  theValue += "x2 | x2 | x2 |] x2 | %76\n";
+  theValue += "x2 | x2 | x2 || x2 | %76\n";
   theValue += "x2 | x2 | x2 | x2 | %80\n";
   theValue += "x2 | [D,,D,]/[D,G,B,]/ C,/D,,/ | x/!8va(! G/8B/8d/8g/8!8va)! z | x2 | %84\n";
   theValue += "x2 | x2 | x2 | x2 | %88\n";
@@ -20880,7 +20880,7 @@ function AddRagtimeNightingale(){
   theValue += "x2 | x2 | x2 | x2 | %28\n";
   theValue += "G,, x | x2 | x2 | x2 | %32\n";
   theValue += "x2 | x2 | x2 | x2 | %36\n";
-  theValue += "|1 x2 :|2 x2 |] x2 | x2 | %40\n";
+  theValue += "|1 x2 :|2 x2 || x2 | x2 | %40\n";
   theValue += "x2 | x2 | x2 | x2 | %44\n";
   theValue += "x2 | x2 | x2 | x2 | %48\n";
   theValue += "x2 | x2 | x2 | x2 | %52\n";
@@ -20889,7 +20889,7 @@ function AddRagtimeNightingale(){
   theValue += "x2 | x2 | x2 | x2 | %64\n";
   theValue += "x2 | x2 | x2 | x2 | %68\n";
   theValue += "x2 |1 x2 :|2 x2 ||[K:Eb] x2 | %72\n";
-  theValue += "x2 | x2 | x2 |] x2 | %76\n";
+  theValue += "x2 | x2 | x2 || x2 | %76\n";
   theValue += "x2 | x2 | x2 | x2 | %80\n";
   theValue += "x2 | x2 | G,, x | x2 | %84\n";
   theValue += "x2 | x2 | x2 | x2 | %88\n";
@@ -20904,7 +20904,7 @@ function AddRagtimeNightingale(){
   theValue += "[=Beg=b]/4[cegc']/[dgbd']/4- [dgbd']/4[ee']/4[dd']/4[cc']/4 | [=Bfa=b]/<[cfac']/ [^CG_B^c]/<[DABd]/ | [DGBd]/4[EGBe]/[Begb]/4- [Begb]/4[=A=a]/4[Bb]/4[cc']/4 | [dgbd']/4[Bb]/4[Gg]/4[EG=Ae]/4 [EGAe]/[DAcd]/ | %28\n";
   theValue += "[GBdg]/ z/ g'/4[ee']/4[dd']/4[cc']/4 | [=Bfa=b] [cfac']/4 [DA_Bd]3/4 | [DGBd]/4[EGBe]/[Begb]/4- [Begb]/4[ee']/4[dd']/4[cc']/4 | [=Bfa=b]/4[cfac']/[dfad']/4- [dfad']/4[ee']/4[dd']/4[cc']/4 | %32\n";
   theValue += "[=Beg=b]/4[cegc']/[dgbd']/4- [dgbd']/4[_B_b]/4[=A=a]/4[Bb]/4 | [=Be=b]/4[ee']/[EAe]/4- [EAe]/4[Ee]/4[F=Af]/4[^F^f]/4 | [G_Beg]/4[Bb]/4[cc']/4[d=ebd']/4 z | [B_db]/4[Aca]/[GBg]/4- [GBg]/[FAf]/ | %36\n";
-  theValue += "|1 [EGe]- [EGe]/4[ee']/4[dd']/4[cc']/4 :|2 [EGe]- [EGe]/4!>(!G/4[=Bg]/4!>)!G/4 |] e/<g/- g | x2 | %40\n";
+  theValue += "|1 [EGe]- [EGe]/4[ee']/4[dd']/4[cc']/4 :|2 [EGe]- [EGe]/4!>(!G/4[=Bg]/4!>)!G/4 || e/<g/- g | x2 | %40\n";
   theValue += "e/<g/- g | x2 | x2 | x2 | %44\n";
   theValue += "x2 | x2 | e/<g/- g | x2 | %48\n";
   theValue += "e/<g/- g | x2 | x2 | x f/4e/4=f/4^f/4 | %52\n";
@@ -20913,7 +20913,7 @@ function AddRagtimeNightingale(){
   theValue += "b/a/4b/4 g/4b/4f/4b/4 | e/ (5:4:5B/8c/8B/8=A/8B/8 e/ (3c/4e/4c/4 | E/4e/4c/4e/4 c/4e/4c/4e/4 | [de]/4[de]/4x/4[de]/4- [de]/ x/ | %64\n";
   theValue += "e/4e'/4c'/4e'/4 c'/4e'/4c'/4e'/4 | d'/4d'/[d'e']/4- [d'e']/ x/ | A/4a/4_g/4a/4 g/4a/4g/4a/4 | [fa]/>[da]/- [da]/4a/4=g/4f/4 | %68\n";
   theValue += "e/4f/4a/4g/4- g/4f/4e/ |1 .[Acea]/Te/{=de} e'/(3c'/4e'/4c'/4 :|2 .[Acea]/ z/ [Acea]/ z/ ||[K:Eb]!mf! B/f/ b/!8va(!f'/!8va)! | %72\n";
-  theValue += "x z/ (3c/4f/4d/4 | B/ (3c'/4f'/4d'/4 a/ (3c'/4f'/4d'/4 | (3b/ [da]/ z/ z/4!ff! [Bb]/4[=A=a]/4[Bb]/4 |] [=Bf=a=b] [cfac']/4 [DA_Bd]3/4 | %76\n";
+  theValue += "x z/ (3c/4f/4d/4 | B/ (3c'/4f'/4d'/4 a/ (3c'/4f'/4d'/4 | (3b/ [da]/ z/ z/4!ff! [Bb]/4[=A=a]/4[Bb]/4 || [=Bf=a=b] [cfac']/4 [DA_Bd]3/4 | %76\n";
   theValue += "[DGBd]/4[EGBe]/[Begb]/4- [Begb]/4[ee']/4[dd']/4[cc']/4 | [=Bfa=b]/4[cfac']/[dfad']/4- [dfad']/4[ee']/4[dd']/4[cc']/4 | [=Beg=b]/4[cegc']/[dgbd']/4- [dgbd']/4[ee']/4[dd']/4[cc']/4 | [=Bfa=b]/<[cfac']/ [^CG_B^c]/<[DABd]/ | %80\n";
   theValue += "[DGBd]/4[EGBe]/[Begb]/4- [Begb]/4[=A=a]/4[Bb]/4[cc']/4 | [dgbd']/4[Bb]/4[Gg]/4[EG=Ae]/4 [EGAe]/[DAcd]/ | [GBdg]/ z/ g'/4[ee']/4[dd']/4[cc']/4 | [=Bfa=b] [cfac']/4 [DA_Bd]3/4 | %84\n";
   theValue += "[DGBd]/4[EGBe]/[Begb]/4- [Begb]/4[ee']/4[dd']/4[cc']/4 | [=Bfa=b]/4[cfac']/[dfad']/4- [dfad']/4[ee']/4[dd']/4[cc']/4 | [=Beg=b]/4[cegc']/[dgbd']/4- [dgbd']/4[_B_b]/4[=A=a]/4[Bb]/4 | [=Be=b]/4[ee']/[EAe]/4- [EAe]/4[Ee]/4[F=Af]/4[^F^f]/4 | %88\n";
@@ -20928,7 +20928,7 @@ function AddRagtimeNightingale(){
   theValue += "x2 | x2 | x2 | x2 | %28\n";
   theValue += "x2 | x2 | x2 | x2 | %32\n";
   theValue += "x2 | x2 | x2 | x2 | %36\n";
-  theValue += "|1 x2 :|2 x2 |]!mp! [Gce]2 | [Fc]/4f/4[Fc]/4[G=Bg]/4- [GBg]/4G/4[dg]/4G/4 | %40\n";
+  theValue += "|1 x2 :|2 x2 ||!mp! [Gce]2 | [Fc]/4f/4[Fc]/4[G=Bg]/4- [GBg]/4G/4[dg]/4G/4 | %40\n";
   theValue += "[Gce]2 | [Fc]/4f/4[Fc]/4[G=Bg]/4- [GBg]/g/4f/4 | =e/4c'/4[_db]/4c'/4 [ca]/4c'/4[Bg]/4c'/4 | [Acf]/4g/4c/4[Acf]/4- [Acf]/4g/4[Af]/4e/4 | %44\n";
   theValue += "[Ad]/4b/4[ca]/4b/4 [Bg]/4b/4[Af]/4b/4 | [Ge]/4g/4G/4[=Bf]/4- [Bf]/4G/4[dg]/4G/4 | [Gce]2 | [Fc]/4f/4[Fc]/4[G=Bg]/4- [GBg]/4G/4[dg]/4G/4 | %48\n";
   theValue += "[Gce]2 | [Fc]/4f/4[Fc]/4[G=Bg]/4- [GBg]/g/4f/4 | =e/4c'/4[_db]/4c'/4 [ca]/4c'/4[Bg]/4c'/4 | [Acf]/4g/4c/4[Fcf]/4- [Fcf]/[=Fc]/ | %52\n";
@@ -20937,7 +20937,7 @@ function AddRagtimeNightingale(){
   theValue += "[B=d]/c/ B/A/ | G/!>(!F/!>)! E/ x/ | E/F/ _A/B/ | A/4F/G/4- G/ (3c'/4e'/4c'/4 | %64\n";
   theValue += "e/f/a/c'/ | a/4f/g/4- g/(3c/4e/4c/4 | A/=A/B/c/ | B/4F/_A/4- A/[A=B]/ | %68\n";
   theValue += "[Ac]/>[Gd]/- [Gd]/[Gd]/ |1 x2 :|2 x2 ||[K:Eb] x3/2!8va(! x/!8va)! | %72\n";
-  theValue += "b'!f! x/ [EA]/ | [DA]/ [ea]/ d/[ea]/ | x2 |] x2 | %76\n";
+  theValue += "b'!f! x/ [EA]/ | [DA]/ [ea]/ d/[ea]/ | x2 || x2 | %76\n";
   theValue += "x2 | x2 | x2 | x2 | %80\n";
   theValue += "x2 | x2 | x2 | x2 | %84\n";
   theValue += "x2 | x2 | x2 | x2 | %88\n";
