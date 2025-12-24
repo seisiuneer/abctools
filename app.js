@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3101_122425_1230";
+var gVersionNumber = "3102_122425_1500";
 
 var gMIDIInitStillWaiting = false;
 
@@ -20806,13 +20806,13 @@ function AddRagtimeNightingale(){
   theValue += "%%staffsep 85\n";
   theValue += "%\n";
   theValue += "%abcjs_soundfont fatboy\n";
-  theValue += "V:1 bass stems=auto\n";
+  theValue += "V:1 bass stems=down\n";
   theValue += "% Acoustic Grand Piano\n";
   theValue += "%%MIDI program 0\n";
-  theValue += "V:2 bass stems=auto\n";
+  theValue += "V:2 bass stems=down\n";
   theValue += "% Acoustic Grand Piano\n";
   theValue += "%%MIDI program 0\n";
-  theValue += "V:3 bass stems=auto\n";
+  theValue += "V:3 bass stems=down\n";
   theValue += "% Acoustic Grand Piano\n";
   theValue += "%%MIDI program 0\n";
   theValue += "V:4 treble\n";
