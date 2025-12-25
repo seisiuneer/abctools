@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3103_122525_0930";
+var gVersionNumber = "3104_122525_1000";
 
 var gMIDIInitStillWaiting = false;
 
@@ -20824,7 +20824,7 @@ function AddRagtimeNightingale(){
   theValue += "%%MIDI program 0\n";
   theValue += "%\n";
   theValue += "V:1\n";
-  theValue += "C,,/4!<(!G,,/4C,/4D,/4 E,/4G,/4C/4!<)!E/4 | [A,D]/[A,D]/4[G,D]/4- [G,D]/ z/ | [A,C]/>[A,C]/- [A,C]/[A,E]/ | [G,D] !^![G,,,G,,]/ [G,=B,F]/ %4\n";
+  theValue += "C,,/4!<(!G,,/4C,/4D,/4 E,/4G,/4C/4!<)!E/4 | [A,D]/[A,D]/4[G,D]/4- [G,D]/ z/ | [A,C]/>[A,C]/- [A,C]/[A,E]/ | [G,D] !^![G,,,G,,]/ [G,=B,F]/ | %4\n";
   theValue += "|: C,,/4G,,/4C,/4D,/4 E,/4G,/4C/4E/4 | [A,D]/[A,D]/ [G,D]/[=B,F]/ | C,,/4G,,/4C,/4D,/4 E,/4G,/4C/4E/4 | [A,D]/[A,D]/ [G,D]/ z/ | %8\n";
   theValue += "[G,,G,]/[B,C=E]/[C,,C,]/[B,CE]/ | [F,,F,]/[A,CF]/ [C,,C,]/[A,CF]/ | [F,,F,]/[A,B,D]/ [B,,,B,,]/[A,B,D]/ | [E,,E,]/[G,B,E]/ [D,,D,]/[G,=B,F]/ | %12\n";
   theValue += "C,,/4G,,/4C,/4D,/4 E,/4G,/4C/4E/4 | [A,D]/[A,D]/ [G,D]/[=B,F]/ | C,,/4G,,/4C,/4D,/4 E,/4G,/4C/4E/4 | [A,D]/[A,D]/ [G,D]/ z/ | %16\n";
@@ -20848,7 +20848,7 @@ function AddRagtimeNightingale(){
   theValue += "[G,,,G,,]/[G,B,E]/ [G,,G,]/[_G,,_G,]/ | [F,,F,]/[A,B,D]/ [B,,,B,,]/[A,B,D]/ | [E,,E,]/[G,B,E]/ [G,,G,]/[G,B,E]/ | [A,,A,]/[A,=B,F]/ [A,B,F]/[=B,,=B,]/ | %88\n";
   theValue += "[_B,,_B,]/[B,EG]/ [G,,,G,,] | [F,,,F,,]/[F,A,C]/ [B,,,B,,]/[A,B,D]/ | [B,EG]/!>![B,,B,]/ !>![E,,E,]/ z/ |] %91\n";
   theValue += "V:2\n";
-  theValue += "x2 | x2 | x2 | x2 %4\n";
+  theValue += "x2 | x2 | x2 | x2 | %4\n";
   theValue += "|: x2 | x2 | x2 | x2 | %8\n";
   theValue += "x2 | x2 | x2 | x2 | %12\n";
   theValue += "x2 | x2 | x2 | x2 | %16\n";
@@ -20872,7 +20872,7 @@ function AddRagtimeNightingale(){
   theValue += "x2 | x2 | x2 | x2 | %88\n";
   theValue += "x2 | x2 | x2 |] %91\n";
   theValue += "V:3\n";
-  theValue += "x2 | x2 | x2 | x2  %4\n";
+  theValue += "x2 | x2 | x2 | x2 | %4\n";
   theValue += "|: x2 | x2 | x2 | x2 | %8\n";
   theValue += "x2 | x2 | x2 | x2 | %12\n";
   theValue += "x2 | x2 | x2 | x2 | %16\n";
@@ -20896,7 +20896,7 @@ function AddRagtimeNightingale(){
   theValue += "x2 | x2 | x2 | x2 | %88\n";
   theValue += "x2 | x2 | x2 |] %91\n";
   theValue += "V:4\n";
-  theValue += "!mf! x2 | [Fc]/4f/4[Fc]/4[G=Bg]/4- [GBg]/4G/4g/4f/4 | e/4d/4c/4e/4- e/4d/4c/ | [G=Bg] z/4 G/4[dg]/4G/4 %4\n";
+  theValue += "!mf! x2 | [Fc]/4f/4[Fc]/4[G=Bg]/4- [GBg]/4G/4g/4f/4 | e/4d/4c/4e/4- e/4d/4c/ | [G=Bg] z/4 G/4[dg]/4G/4 | %4\n";
   theValue += "|: e/<g/- g | x2 | e/<g/- g | x2 | %8\n";
   theValue += "x2 | x2 | x2 | x2 | %12\n";
   theValue += "e/<g/- g | x2 | e/<g/- g | x2 | %16\n";
@@ -20920,7 +20920,7 @@ function AddRagtimeNightingale(){
   theValue += "[DGBd]/4[EGBe]/[Begb]/4- [Begb]/4[ee']/4[dd']/4[cc']/4 | [=Bfa=b]/4[cfac']/[dfad']/4- [dfad']/4[ee']/4[dd']/4[cc']/4 | [=Beg=b]/4[cegc']/[dgbd']/4- [dgbd']/4[_B_b]/4[=A=a]/4[Bb]/4 | [=Be=b]/4[ee']/[EAe]/4- [EAe]/4[Ee]/4[F=Af]/4[^F^f]/4 | %88\n";
   theValue += "[G_Beg]/4[Bb]/4[cc']/4[d=ebd']/4 [Gg] | [Aca]/4[Bb]/4[cc']/4[dad']/4- [dad']/4[cc']/4[Bdb]/ | [egbe'] [egbe']/ z/ |] %91\n";
   theValue += "V:5\n";
-  theValue += "x2 | x2 | F/>^F/- F/F/ | x2  %4\n";
+  theValue += "x2 | x2 | F/>^F/- F/F/ | x2 | %4\n";
   theValue += "|: !mp! [Gce]2 | [Fc]/4f/4[Fc]/4[G=Bg]/4- [GBg]/4G/4[dg]/4G/4 | [Gce]2 | [Fc]/4f/4[Fc]/4[G=Bg]/4- [GBg]/g/4f/4 | %8\n";
   theValue += "=e/4c'/4[_db]/4c'/4 [ca]/4c'/4[Bg]/4c'/4 | [Acf]/4g/4c/4[Acf]/4- [Acf]/4g/4[Af]/4e/4 | [Ad]/4b/4[ca]/4b/4 [Bg]/4b/4[Af]/4b/4 | [Ge]/4g/4G/4[=Bf]/4- [Bf]/4G/4[dg]/4G/4 | %12\n";
   theValue += "[Gce]2 | [Fc]/4f/4[Fc]/4[G=Bg]/4- [GBg]/4G/4[dg]/4G/4 | [Gce]2 | [Fc]/4f/4[Fc]/4[G=Bg]/4- [GBg]/g/4f/4 | %16\n";
