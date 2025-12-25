@@ -6082,7 +6082,7 @@ display:block;
   text-align: center;
 
   /* Spacing */
-  padding: 8px 20px;            /* wider tabs */
+  padding: 12px 20px !important;            /* wider tabs */
   margin: 0;
 
   /* Visual style */
