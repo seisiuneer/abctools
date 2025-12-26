@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3114_122625_1000";
+var gVersionNumber = "3115_122625_1300";
 
 var gMIDIInitStillWaiting = false;
 
@@ -2120,15 +2120,22 @@ function ToggleRawMode() {
 
     if (gRawMode) {
 
-      // Disable the play button
+      // Disable the play and train buttons
       document.getElementById("playbutton").classList.remove("playbutton");
       document.getElementById("playbutton").classList.add("playbuttondisabled");
 
+      document.getElementById("tunetrainerbutton").classList.remove("playbutton");
+      document.getElementById("tunetrainerbutton").classList.add("playbuttondisabled");
+
     } else {
 
-      // Enable the play button
+      // Enable the play and train button
       document.getElementById("playbutton").classList.remove("playbuttondisabled");
       document.getElementById("playbutton").classList.add("playbutton");
+
+      // Enable the play button
+      document.getElementById("tunetrainerbutton").classList.remove("playbuttondisabled");
+      document.getElementById("tunetrainerbutton").classList.add("playbutton");
 
     }
 
@@ -14725,19 +14732,20 @@ function Render(renderAll, tuneNumber) {
     document.getElementById("saveaswebsite").classList.add("saveaswebsite");
     gAllowWebExport = true;
 
-    // Enable the copy button
-    document.getElementById("copybutton").classList.remove("copybuttondisabled");
-    document.getElementById("copybutton").classList.add("copybutton");
-
-    // Enable the play button
+    // Enable the play and train buttons
     if (!gIsQuickEditor) {
       document.getElementById("playbutton").classList.remove("playbuttondisabled");
       document.getElementById("playbutton").classList.add("playbutton");
+      document.getElementById("tunetrainerbutton").classList.remove("playbuttondisabled");
+      document.getElementById("tunetrainerbutton").classList.add("playbutton");
+     tunetrainerbutton
     } else {
-      // Don't enable play button on raw mode on the Quick Editor
+      // Don't enable play or train button on raw mode on the Quick Editor
       if (!gRawMode) {
         document.getElementById("playbutton").classList.remove("playbuttondisabled");
         document.getElementById("playbutton").classList.add("playbutton");
+        document.getElementById("tunetrainerbutton").classList.remove("playbuttondisabled");
+        document.getElementById("tunetrainerbutton").classList.add("playbutton");
       }
     }
 
@@ -14891,13 +14899,13 @@ function Render(renderAll, tuneNumber) {
     // Disable the control display toggle
     gAllowControlToggle = false;
 
-    // Disable the copy button
-    document.getElementById("copybutton").classList.remove("copybutton");
-    document.getElementById("copybutton").classList.add("copybuttondisabled");
-
     // Disable the play button
     document.getElementById("playbutton").classList.remove("playbutton");
     document.getElementById("playbutton").classList.add("playbuttondisabled");
+
+    // Disable the tune trainer button
+    document.getElementById("tunetrainerbutton").classList.remove("playbutton");
+    document.getElementById("tunetrainerbutton").classList.add("playbuttondisabled");
 
     // Disable the raw mode button
     document.getElementById("rawmodebutton").classList.remove("rawmodebutton");
@@ -26075,8 +26083,6 @@ function InjectMetronome() {
 //
 // Copy the ABC to the clipboard
 //
-// If shift key is pressed, copy the text and open the ABC in editor.drawthedots.com
-//
 function CopyABC() {
 
   if (gAllowCopy) {
@@ -26086,16 +26092,34 @@ function CopyABC() {
     // Copy the abc to the clipboard
     CopyToClipboard(theData);
 
-    // Give some feedback
-    document.getElementById("copybutton").value = "Copied!";
+    var thePrompt = "All tunes copied to the clipboard!"
+      
+    // Center the string in the prompt
+    thePrompt = makeCenteredPromptString(thePrompt);
 
-    setTimeout(function() {
-
-      document.getElementById("copybutton").value = "Copy All";
-
-    }, 500);
+    // Nope, exit
+    DayPilot.Modal.alert(thePrompt, {
+      theme: "modal_flat",
+      top: 200,
+      scrollWithPage: (AllowDialogsToScroll())
+    });
 
   }
+  else{
+
+    var thePrompt = "No tunes to copy."
+
+    // Center the string in the prompt
+    thePrompt = makeCenteredPromptString(thePrompt);
+
+    // Nope, exit
+    DayPilot.Modal.alert(thePrompt, {
+      theme: "modal_flat",
+      top: 200,
+      scrollWithPage: (AllowDialogsToScroll())
+    });
+  }
+
 }
 
 //
@@ -27619,13 +27643,13 @@ function processShareLink() {
       // Show update message?
       if (gLocalStorageAvailable){
 
-        var updatePresented = localStorage.sawUpdate_25dec2025_3;
+        var updatePresented = localStorage.sawUpdate_26dec2025;
 
         if (updatePresented != "true") {
 
           showWhatsNewScreen();
 
-          localStorage.sawUpdate_25dec2025_3 = true;
+          localStorage.sawUpdate_26dec2025 = true;
 
         }
 
@@ -37126,35 +37150,21 @@ function PlayABC(e) {
         }
       }
     } else {
-      // If shift key click on play, open the Tune Trainer
-      if (e && e.shiftKey) {
-        
-        // Get the current tune index and tune count
-        gPlayABCTuneIndex = findSelectedTuneIndex();
+      // Select random tune if user clicks play with the alt keys pressed
+      if (e && e.altKey) {
+
         gPlayABCTuneCount = CountTunes();
 
-        //console.log("gPlayABCTuneIndex: "+gPlayABCTuneIndex)
+        gPlayABCTuneIndex = Math.floor(Math.random() * gPlayABCTuneCount);
 
-        TuneTrainer(false);
+        theSelectedABC = getTuneByIndex(gPlayABCTuneIndex);
 
-        return;
-
-      } else
-        // Select random tune if user clicks play with the alt keys pressed
-        if (e && e.altKey) {
-
-          gPlayABCTuneCount = CountTunes();
-
-          gPlayABCTuneIndex = Math.floor(Math.random() * gPlayABCTuneCount);
-
-          theSelectedABC = getTuneByIndex(gPlayABCTuneIndex);
-
-          if (theSelectedABC == "") {
-            // This should never happen
-            return;
-          }
-
+        if (theSelectedABC == "") {
+          // This should never happen
+          return;
         }
+
+      }
       else {
 
         // Try to find the current tune
@@ -43850,6 +43860,17 @@ function TuneTrainerLaunchFromPlayer() {
     TuneTrainer(true);
 
   }, 250);
+}
+
+function TuneTrainerTopBar(){
+        
+    // Get the current tune index and tune count
+    gPlayABCTuneIndex = findSelectedTuneIndex();
+    gPlayABCTuneCount = CountTunes();
+
+    //console.log("gPlayABCTuneIndex: "+gPlayABCTuneIndex)
+
+    TuneTrainer(false);
 }
 
 function TuneTrainer(bIsFromPlayer) {
@@ -54830,7 +54851,7 @@ function showWhatsNewScreen() {
 
   modal_msg += '<div style="font-size:12pt; font-weight:bold; margin-bottom:6px;">How it works</div>';
   modal_msg += '<p style="margin:6px 0; font-size:12pt;">';
-  modal_msg += '1) Launch the <strong>Tune Trainer</strong> from the <strong>Player</strong> (or Shift-click the <strong>Play</strong> button).</p>';
+  modal_msg += '1) Click <strong>Train</strong> to launch the <strong>Tune Trainer</strong>.</p>';
 
   modal_msg += '<p style="margin:6px 0; font-size:12pt;">';
   modal_msg += '2) Click <strong>Phrase Builder</strong> to break the tune into phrases of a specified number of measures, followed by the same number of measures of rests.</p>';
@@ -54857,8 +54878,8 @@ function showWhatsNewScreen() {
   modal_msg += 'background:#fff8db; border:1px solid #ffe39a;">';
 
   modal_msg += '<div style="font-size:12pt; font-weight:bold; margin-bottom:6px;">Updated or changed features:</div>';
-  modal_msg += '<p style="margin:6px 0; font-size:12pt;">Added "Ragtime Nightingale" by Joseph Lamb to the <strong>Add Example Tunes</strong> section on the <strong>Add</strong> dialog.</p>';
-  modal_msg += '<p style="margin:6px 0; font-size:12pt;">The ☰ dropdown menu has been simplified, moving many less commonly used esoteric features to the <strong>More ABC Tools</strong> dialog.</p>';
+  modal_msg += '<p style="margin:6px 0; font-size:12pt;">There is now a dedicated <strong>Train</strong> button on the top button bar that brings up the <strong>Tune Trainer</strong> loaded with the currently selected tune.</p>';
+  modal_msg += '<p style="margin:6px 0; font-size:12pt;">The ☰ dropdown menu has been simplified, added <strong>Copy All Tunes</strong>, and moved many less commonly used  features to the <strong>More ABC Tools</strong> dialog.</p>';
   modal_msg += '</div>';
 
   // Footer (New Year)
@@ -54870,6 +54891,7 @@ function showWhatsNewScreen() {
   DayPilot.Modal.alert(modal_msg, {
     theme: "modal_flat",
     top: 25,
+    width: 675,
     scrollWithPage: (AllowDialogsToScroll())
   });
 
@@ -58830,8 +58852,8 @@ function DoVersionCheck() {
 
 function SetupContextMenu(showUpdateItem) {
 
-  // For screenshots
-  // showUpdateItem = true;
+  // For context menu screenshots
+  //showUpdateItem = true;
 
   var items;
 
@@ -58842,6 +58864,11 @@ function SetupContextMenu(showUpdateItem) {
       if (isPureDesktopBrowser()) {
 
         items = [{}, {
+          name: 'Copy All Tunes',
+          fn: function(target) {
+            CopyABC();
+          }
+        }, {}, {
           name: 'Reorder Tunes',
           fn: function(target) {
             ChangeTuneOrder();
@@ -59021,6 +59048,12 @@ function SetupContextMenu(showUpdateItem) {
           fn: function(target) {
             BuildTuneSet();
           }
+        }, {}, 
+        {
+          name: 'Copy All Tunes',
+          fn: function(target) {
+            CopyABC();
+          }
         }, {}, {
           name: 'Reorder Tunes',
           fn: function(target) {
@@ -59112,7 +59145,12 @@ function SetupContextMenu(showUpdateItem) {
 
       if (isPureDesktopBrowser()) {
 
-        items = [{}, {
+        items = [{},{
+          name: 'Copy All Tunes',
+          fn: function(target) {
+            CopyABC();
+          }
+        }, {}, {
           name: 'Reorder Tunes',
           fn: function(target) {
             ChangeTuneOrder();
@@ -59187,9 +59225,6 @@ function SetupContextMenu(showUpdateItem) {
               LaunchQuickEditor();
             }
           }, ]);
-
-        // For forcing display for User Guide screen shots
-        //showUpdateItem = true;// UPDATEFOOFOO
 
         if (showUpdateItem) {
           items = items.concat(
@@ -59291,6 +59326,11 @@ function SetupContextMenu(showUpdateItem) {
             BuildTuneSet();
           }
         }, {}, {
+          name: 'Copy All Tunes',
+          fn: function(target) {
+            CopyABC();
+          }
+        }, {},{
           name: 'Reorder Tunes',
           fn: function(target) {
             ChangeTuneOrderMobile();
@@ -59393,6 +59433,11 @@ function SetupContextMenu(showUpdateItem) {
           BuildTuneSet();
         }
       }, {}, {
+        name: 'Copy All Tunes',
+        fn: function(target) {
+          CopyABC();
+        }
+      }, {}, {
         name: 'Reorder Tunes',
         fn: function(target) {
           ChangeTuneOrderMobile();
@@ -59493,6 +59538,11 @@ function SetupContextMenu(showUpdateItem) {
           BuildTuneSet();
         }
       }, {}, {
+        name: 'Copy All Tunes',
+        fn: function(target) {
+          CopyABC();
+        }
+      }, {}, {
         name: 'Reorder Tunes',
         fn: function(target) {
           ChangeTuneOrderMobile();
@@ -59581,7 +59631,7 @@ function SetTopButtonMargins() {
 
   if (gIsQuickEditor) {
 
-    var elems = ["openabcfile", "newabcfile", "saveabcfile", "saveaswebsite", "copybutton", "playbutton", "rawmodebutton"];
+    var elems = ["openabcfile", "newabcfile", "saveabcfile", "saveaswebsite", "tunetrainerbutton", "playbutton", "rawmodebutton"];
 
     var theMargin = 20;
 
@@ -59609,7 +59659,7 @@ function SetTopButtonMargins() {
 
   } else {
 
-    var elems = ["openabcfile", "newabcfile", "saveabcfile", "saveaspdf", "saveaswebsite", "copybutton", "playbutton", "rawmodebutton"];
+    var elems = ["openabcfile", "newabcfile", "saveabcfile", "saveaspdf", "saveaswebsite", "tunetrainerbutton", "playbutton", "rawmodebutton"];
 
     var theMargin = 8;
 
@@ -61209,13 +61259,13 @@ function DoStartup() {
   // Show update message?
   if (gLocalStorageAvailable && (!isFromShare)){
 
-    var updatePresented = localStorage.sawUpdate_25dec2025_3;
+    var updatePresented = localStorage.sawUpdate_26dec2025;
 
     if (updatePresented != "true") {
 
       showWhatsNewScreen();
 
-      localStorage.sawUpdate_25dec2025_3 = true;
+      localStorage.sawUpdate_26dec2025 = true;
 
     }
 

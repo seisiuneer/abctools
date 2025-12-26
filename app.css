@@ -1771,22 +1771,6 @@ opacity:0.4;
 	}
 }
 
-.copybutton{
-margin-left:0px;
-opacity:1.0;
-}
-
-.copybuttondisabled{
-margin-left:0px;
-opacity:0.4;
-}
-
-@media (hover: hover) {
-	.copybutton:hover{
-	background: palegreen;
-	}
-}
-
 .trainerbutton{
 margin-left:0px;
 margin-right:12px;
@@ -6238,6 +6222,11 @@ display:block;
 .btn-play {
   --color: black;
   --background-color: #C8ECFE;
+}
+
+.btn-train{
+  --color: black;
+  --background-color: #dcffb8;	
 }
 
 .btn-toggleallcontrols {
