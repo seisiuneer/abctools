@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3112_122525_2130";
+var gVersionNumber = "3113_122525_2200";
 
 var gMIDIInitStillWaiting = false;
 
@@ -790,7 +790,7 @@ function ensureMoreToolsVisible() {
 
     //console.log("ensureMoreToolsVisible");
 
-    var elem = document.querySelector("#injectheaderstring");
+    var elem = document.querySelector("#moretoolsanchor");
 
     if (elem) {
       elem.scrollIntoView({
@@ -33918,13 +33918,23 @@ function BatchMusicXMLRoundTripCurrentTune() {
         if (gRawMode) {
 
           RenderAsync(true, null, function() {
+
             hideTheSpinner();
+
+            // Make sure the More Tools dialog visible
+            ensureMoreToolsVisible();
+
           });
 
         } else {
 
           RenderAsync(true, theSelectedTuneIndex, function() {
+
             hideTheSpinner();
+
+            // Make sure the More Tools dialog visible
+            ensureMoreToolsVisible();
+
           });
 
         }
@@ -33984,7 +33994,12 @@ function BatchMusicXMLRoundTripWorker() {
         setABCEditorText(gBatchMusicXMLRoundTripAccum);
 
         RenderAsync(true, null, function() {
+          
           hideTheSpinner();
+
+          // Make sure the More Tools dialog visible
+          ensureMoreToolsVisible();
+
         });
 
         gIsDirty = true;
@@ -49640,7 +49655,7 @@ function AdvancedControlsDialog() {
      TABS
      =========================================================== */
 
-  modal_msg += '<div class="adv-tabs">';
+  modal_msg += '<div id="moretoolsanchor" class="adv-tabs">';
   modal_msg += '<div class="adv-tab-bar">';
 
   modal_msg += '<button class="adv-tab-btn' + (isInjectionActive ? ' active' : '') +
@@ -56533,7 +56548,12 @@ function InjectMIDIGChordTemplates() {
         }).then(function(){
 
           // Force a redraw of the tune
-          RenderAsync(false, theSelectedTuneIndex, null);
+          RenderAsync(false, theSelectedTuneIndex, function(){
+            
+            // Make sure the More Tools dialog visible
+            ensureMoreToolsVisible();
+
+          });
 
       });
 
@@ -57972,6 +57992,8 @@ function SplitLongTextAndTags() {
 
             }
 
+            ensureMoreToolsVisible();
+
             // Focus after operation
             FocusAfterOperation();
 
@@ -58042,6 +58064,8 @@ function SplitLongTextAndTags() {
               gTheABC.selectionEnd = theSelectionStart;
             }
 
+            ensureMoreToolsVisible();
+
             // Focus after operation
             FocusAfterOperation();
 
@@ -58102,6 +58126,9 @@ function DoNormalizeDiacriticals(inverse) {
         gTheABC.selectionStart = 0;
         gTheABC.selectionEnd = 0;
       }
+
+      // Make sure the More Tools dialog visible
+      ensureMoreToolsVisible();
 
       // Focus after operation
       FocusAfterOperation();
@@ -58322,6 +58349,9 @@ function normalizeTitleArticles(inverse) {
         gTheABC.selectionStart = 0;
         gTheABC.selectionEnd = 0;
       }
+
+      // Make sure the More Tools dialog visible
+      ensureMoreToolsVisible();
 
       // Focus after operation
       FocusAfterOperation();
@@ -58701,6 +58731,9 @@ function NormalizeVoiceKeySignatures(){
         gTheABC.selectionStart = 0;
         gTheABC.selectionEnd = 0;
       }
+
+      // Make sure the More Tools dialog visible
+      ensureMoreToolsVisible();
 
       // Focus after operation
       FocusAfterOperation();
