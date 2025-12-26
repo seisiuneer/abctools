@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3107_122525_1800";
+var gVersionNumber = "3112_122525_2130";
 
 var gMIDIInitStillWaiting = false;
 
@@ -27608,13 +27608,13 @@ function processShareLink() {
       // Show update message?
       if (gLocalStorageAvailable){
 
-        var updatePresented = localStorage.sawUpdate_24dec2025;
+        var updatePresented = localStorage.sawUpdate_25dec2025_3;
 
         if (updatePresented != "true") {
 
           showWhatsNewScreen();
 
-          localStorage.sawUpdate_24dec2025 = true;
+          localStorage.sawUpdate_25dec2025_3 = true;
 
         }
 
@@ -33836,7 +33836,7 @@ function BatchMusicXMLRoundTrip() {
   };
 
   const form = [{
-    html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-left:15px;">Reformat Using MusicXML&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#reformatusingxml" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'
+    html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-left:15px;">Reformat Using MusicXML&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#reformat_using_musicxml" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'
   }, {
     html: '<p style="margin-top:36px;margin-bottom:12px;font-size:12pt;line-height:18pt;font-family:helvetica">Click OK to reformat either the current tune or all the tunes in the ABC by exporting the tune(s) in MusicXML format and then re-import them using the current MusicXML import settings.</p>'
   }, {
@@ -49599,7 +49599,7 @@ function AdvancedControlsDialog() {
   var isOtherToolsActive  = (initialTab === "adv-tab-bagpipes");
 
   var modal_msg = '';
-  modal_msg += '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:15px;">';
+  modal_msg += '<p style="text-align:center;font-size:18pt;font-family:helvetica;">';
   modal_msg += 'More ABC Tools';
   modal_msg += '<span style="font-size:24pt;" title="View documentation in new tab">';
   modal_msg += '<a href="https://michaeleskin.com/abctools/userguide.html#more_tools" target="_blank" ';
@@ -49663,6 +49663,8 @@ function AdvancedControlsDialog() {
   modal_msg += '<div class="adv-tab-panels">';
 
   /* ---------------- Injection tab ---------------- */
+  // Hide Export All Tunes on mobile BEFORE render to prevent a layout jump
+  var exportAllTunesStyle = isMobileBrowser() ? ' style="display:none;"' : '';
 
   modal_msg += '<div id="adv-tab-injection" class="adv-tab-panel' + (isInjectionActive ? ' active' : '') + '">';
   modal_msg += '<p style="text-align:center;">';
@@ -49681,6 +49683,12 @@ function AdvancedControlsDialog() {
   modal_msg += '<input id="injectheaderstring" style="margin-right:20px;" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectHeaderString()" type="button" value="Inject ABC Header Text">';
   modal_msg += '<input id="injectcustomstringedtab" style="margin-right:20px;" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectCustomStringedInstrumentTab()" type="button" value="Inject Custom Stringed Instrument Tab">';
   modal_msg += '<input id="ceoltastransform" class="advancedcontrols btn btn-injectcontrols-headers" onclick="DoCeoltasTransformDialog()" type="button" value="Comhaltas Transform" title="Brings up a dialog where you can transform the ABC to/from Comhaltas format">';
+  modal_msg += '</p>';
+  modal_msg += '<p style="text-align:center;margin-top:24px;">';
+  modal_msg += '<input id="phrasebuilder" class="advancedcontrols btn btn-phrasebuilder" onclick="PhraseBuilder(null,null)" type="button" value="Phrase Builder">';
+  modal_msg += '<input id="incipitsbuilder" class="advancedcontrols incipitsbuilder btn btn-incipitsbuilder" onclick="IncipitsBuilderDialog()" type="button" value="Notes Incipits Builder">';
+  modal_msg += '<input id="configure_batch_mp3_export" class="advancedcontrols btn btn-batchmp3export" onclick="ExportAll()" type="button" value="Export All Tunes"' + exportAllTunesStyle + '>';
+
   modal_msg += '</p></div>';
 
   /* ---------------- Tablatures tab ---------------- */
@@ -49720,21 +49728,23 @@ function AdvancedControlsDialog() {
 
   /* ---------------- Other tools tab ---------------- */
 
-  // Hide Export All Tunes on mobile BEFORE render to prevent a layout jump
-  var exportAllTunesStyle = isMobileBrowser() ? ' style="display:none;"' : '';
-
   modal_msg += '<div id="adv-tab-bagpipes" class="adv-tab-panel' + (isOtherToolsActive ? ' active' : '') + '">';
   modal_msg += '<p style="text-align:center;">';
-  modal_msg += '<input id="configure_batch_mp3_export" class="advancedcontrols btn btn-batchmp3export" onclick="ExportAll()" type="button" value="Export All Tunes"' + exportAllTunesStyle + '>';
-  modal_msg += '<input id="sortbutton" class="advancedcontrols sortbutton btn btn-sortbutton" onclick="SortDialog()" type="button" value="Sort by Tag">';
-  modal_msg += '<input id="incipitsbuilder" class="advancedcontrols incipitsbuilder btn btn-incipitsbuilder" onclick="IncipitsBuilderDialog()" type="button" value="Notes Incipits Builder">';
-  modal_msg += '<input id="phrasebuilder" class="advancedcontrols btn btn-phrasebuilder" onclick="PhraseBuilder(null,null)" type="button" value="Phrase Builder">';
-  modal_msg += '</p>';
-  modal_msg += '<p style="text-align:center;margin-top:24px;">';
   modal_msg += '<input id="customcssgenerator" class="advancedcontrols btn btn-cssgenerator" onclick="abcjsColorEditor()" type="button" value="Custom CSS Generator">';
   modal_msg += '<input id="transposetokey" class="advancedcontrols transposetokey btn btn-transposetokey" onclick="TransposeToKeyDialog()" type="button" value="Transpose to Key">';
   modal_msg += '<input id="injectbagpipedrones" class="advancedcontrols btn btn-injectbagpipedrones" onclick="InjectBagpipeSounds()" type="button" value="Inject Bagpipe Sounds">';
-  modal_msg += '</p></div>';
+  modal_msg += '</p>';
+  modal_msg += '<p style="text-align:center;margin-top:24px;">';
+  modal_msg += '<input id="splitlongtextandtags" class="advancedcontrols btn btn-splitlongtextandtags" onclick="SplitLongTextAndTags()" type="button" value="Split Long Tags and Text">';
+  modal_msg += '<input id="normalizediacriticals" class="advancedcontrols  btn btn-normalizediacriticals" onclick="NormalizeDiacriticals()" type="button" value="Normalize Diacriticals">';
+  modal_msg += '<input id="normalizetitles" class="advancedcontrols btn btn-normalizetitles" onclick="NormalizeTitles()" type="button" value="Normalize Title Postfixes">';
+  modal_msg += '</p>';
+  modal_msg += '<p style="text-align:center;margin-top:24px;">';
+  modal_msg += '<input id="normalizevoicekeysignatures" class="advancedcontrols btn btn-normalizevoicekeysignatures" onclick="NormalizeVoiceKeySignatures()" type="button" value="Normalize Voice Keys">';
+  modal_msg += '<input id="reformatusingmusicxml" class="advancedcontrols  btn btn-reformatusingmusicxml" onclick="BatchMusicXMLRoundTrip()" type="button" value="Reformat Using MusicXML">';
+  modal_msg += '<input id="injectmidigchord" class="advancedcontrols btn btn-injectmidigchord" onclick="InjectMIDIGChordTemplates()" type="button" value="Inject MIDI gchord Templates">';
+  modal_msg += '</p>';
+  modal_msg += '</div>';
 
   modal_msg += '<p style="font-size:2pt;">&nbsp;</p>';
   modal_msg += '</div></div></div>';
@@ -54753,7 +54763,7 @@ function initMIDI() {
 }
 
 //
-// Show the holiday-themed What's New screen
+// Show the Happy New Year-themed What's New screen
 //
 function showWhatsNewScreen() {
 
@@ -54764,17 +54774,17 @@ function showWhatsNewScreen() {
   var modal_msg = '';
   modal_msg += '<div style="font-family:helvetica; line-height:16pt;">';
 
-  // Header (festive banner)
+  // Header (New Year banner)
   modal_msg += '<div style="text-align:center; padding:14px 10px; border-radius:12px;';
-  modal_msg += 'background: linear-gradient(135deg, #b3001b 0%, #0f7a3c 100%);';
-  modal_msg += 'box-shadow: 0 6px 16px rgba(0,0,0,0.12); color:#fff;">';
-  modal_msg += '<div style="font-size:20pt; line-height:24pt; font-weight:bold;">🎄 What&apos;s New</div>';
-  modal_msg += '<div style="font-size:11pt; opacity:0.95; margin-top:4px;">Version ' + gVersionNumber + '</div>';
+  modal_msg += 'background: linear-gradient(135deg, #0b1f4a 0%, #5b2aa8 55%, #d4a62a 100%);';
+  modal_msg += 'box-shadow: 0 6px 16px rgba(0,0,0,0.14); color:#fff;">';
+  modal_msg += '<div style="font-size:20pt; line-height:24pt; font-weight:bold;">What&apos;s New</div>';
+  modal_msg += '<div style="font-size:11pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + '</div>';
   modal_msg += '</div>';
 
   // Short intro
   modal_msg += '<p style="margin:14px 4px 10px 4px; font-size:12pt;">';
-  modal_msg += 'A festive holiday update has arrived — here are the newest goodies in my ABC Transcription Tools:';
+  modal_msg += 'Starting the new year with fresh updates — here’s what’s new in my ABC Transcription Tools:';
   modal_msg += '</p>';
 
   // Feature card
@@ -54784,13 +54794,13 @@ function showWhatsNewScreen() {
   modal_msg += '<div style="font-size:14pt; font-weight:bold; margin-bottom:12px;">';
   modal_msg += '✨ Phrase-by-phrase practice inside the Tune Trainer</div>';
 
-  modal_msg += '<p style="margin:6px 0 8px 0; font-size:12pt;margin-bottom:12px;">';
+  modal_msg += '<p style="margin:6px 0 8px 0; font-size:12pt; margin-bottom:12px;">';
   modal_msg += 'You can now do <strong>phrase-by-phrase practice</strong> from right inside the <strong>Tune Trainer</strong>!';
   modal_msg += '</p>';
 
   // Steps
   modal_msg += '<div style="margin:8px 0 0 0; padding:10px 10px; border-radius:10px;';
-  modal_msg += 'background:#f7faf8; border:1px solid #e6f0ea;">';
+  modal_msg += 'background:#f6f7ff; border:1px solid #e3e6ff;">';
 
   modal_msg += '<div style="font-size:12pt; font-weight:bold; margin-bottom:6px;">How it works</div>';
   modal_msg += '<p style="margin:6px 0; font-size:12pt;">';
@@ -54804,29 +54814,30 @@ function showWhatsNewScreen() {
 
   modal_msg += '<p style="margin:6px 0; font-size:12pt;">';
   modal_msg += '<strong>Tip:</strong> Turn on the metronome to help keep a steady tempo.</p>';
- 
+
   modal_msg += '</div>'; // end how-it-works block
   modal_msg += '</div>'; // end feature card
 
-  // More info link
+  // More info link (New Year accent)
   modal_msg += '<p style="margin:12px 4px 8px 4px; font-size:12pt; text-align:center;">';
   modal_msg += 'For more information on the <strong>Tune Trainer</strong>, ';
   modal_msg += '<a href="https://michaeleskin.com/abctools/userguide.html#tune_trainer" ';
-  modal_msg += 'target="_blank" style="color:#0f7a3c; text-decoration:none; font-weight:bold;">';
+  modal_msg += 'target="_blank" style="color:#5b2aa8; text-decoration:none; font-weight:bold;">';
   modal_msg += 'click here</a>.';
   modal_msg += '</p>';
 
-  // New sample tune
+  // New sample tune (New Year highlight)
   modal_msg += '<div style="margin-top:10px; padding:10px 12px; border-radius:12px;';
-  modal_msg += 'background:#fff7e6; border:1px solid #ffe2ad;">';
+  modal_msg += 'background:#fff8db; border:1px solid #ffe39a;">';
 
-  modal_msg += '<div style="font-size:12pt; font-weight:bold; margin-bottom:6px;">New Example Tune</div>';
+  modal_msg += '<div style="font-size:12pt; font-weight:bold; margin-bottom:6px;">Updated or changed features:</div>';
   modal_msg += '<p style="margin:6px 0; font-size:12pt;">Added "Ragtime Nightingale" by Joseph Lamb to the <strong>Add Example Tunes</strong> section on the <strong>Add</strong> dialog.</p>';
+  modal_msg += '<p style="margin:6px 0; font-size:12pt;">The ☰ dropdown menu has been simplified, moving many less commonly used esoteric features to the <strong>More ABC Tools</strong> dialog.</p>';
   modal_msg += '</div>';
 
-  // Footer
+  // Footer (New Year)
   modal_msg += '<p style="text-align:center; margin:14px 0 0 0; font-size:11pt; color:#666;">';
-  modal_msg += '❄️ Happy practicing! ❄️</p>';
+  modal_msg += '🎉 Happy New Year — Happy Practicing! 🎶</p>';
 
   modal_msg += '</div>'; // wrapper
 
@@ -57836,7 +57847,7 @@ function SplitLongTextAndTags() {
   };
 
   const form = [{
-    html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-left:15px;">Split Long Tags and Text&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#moretoolsdropdown" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'
+    html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-left:15px;">Split Long Tags and Text&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#hamburger_split" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'
   }, {
     html: '<p style="margin-top:36px;margin-bottom:24px;font-size:12pt;line-height:18pt;font-family:helvetica">This will split long strings in tags and/or text at the specified line length.</p>'
   }, {
@@ -58775,6 +58786,9 @@ function DoVersionCheck() {
 
 function SetupContextMenu(showUpdateItem) {
 
+  // For screenshots
+  // showUpdateItem = true;
+
   var items;
 
   if (isDesktopBrowser()) {
@@ -58823,41 +58837,11 @@ function SetupContextMenu(showUpdateItem) {
               AlignMeasures(true);
             }
           }, {}, {
-            name: 'Split Long Tags and Text',
-            fn: function(target) {
-              SplitLongTextAndTags();
-            }
-          }, {}, {
-            name: 'Normalize Diacriticals',
-            fn: function(target) {
-              NormalizeDiacriticals();
-            }
-          }, {
-            name: 'Normalize Title Postfixes',
-            fn: function(target) {
-              NormalizeTitles();
-            }
-          }, {}, {
-            name: 'Reformat Using MusicXML',
-            fn: function(target) {
-              BatchMusicXMLRoundTrip();
-            }
-          }, {}, {
             name: 'Split Voices',
             fn: function(target) {
               SplitVoices();
             }
-          }, {
-            name: 'Normalize Voice Keys',
-            fn: function(target) {
-              NormalizeVoiceKeySignatures();
-            }
           },{}, {
-            name: 'Inject MIDI gchord Templates',
-            fn: function(target) {
-              InjectMIDIGChordTemplates();
-            }
-          }, {}, {
             name: 'Import PDF, Website, or CSV',
             fn: function(target) {
               ImportPDF_CSV_Website();
@@ -58911,7 +58895,7 @@ function SetupContextMenu(showUpdateItem) {
           // Turn the button red
           var elem = document.getElementById("morecommands");
           elem.classList.add("attention");
-          elem.title = "An update to the tool is available!"
+          elem.title = "An update to the tool is available!";
         }
 
         var theTuneSetItem = {
@@ -59019,36 +59003,11 @@ function SetupContextMenu(showUpdateItem) {
             AlignMeasures(true);
           }
         }, {}, {
-          name: 'Split Long Tags and Text',
-          fn: function(target) {
-            SplitLongTextAndTags();
-          }
-        }, {}, {
-          name: 'Normalize Diacriticals',
-          fn: function(target) {
-            NormalizeDiacriticals();
-          }
-        }, {
-          name: 'Normalize Title Postfixes',
-          fn: function(target) {
-            NormalizeTitles();
-          }
-        }, {}, {
-          name: 'Reformat Using MusicXML',
-          fn: function(target) {
-            BatchMusicXMLRoundTrip();
-          }
-        }, {}, {
           name: 'Split Voices',
           fn: function(target) {
             SplitVoices();
           }
-        }, {
-          name: 'Normalize Voice Keys',
-          fn: function(target) {
-            NormalizeVoiceKeySignatures();
-          }
-        },{}, {
+        }, {}, {
           name: 'Import PDF, Website, or CSV',
           fn: function(target) {
             ImportPDF_CSV_Website();
@@ -59102,7 +59061,7 @@ function SetupContextMenu(showUpdateItem) {
           // Turn the button red
           var elem = document.getElementById("morecommands");
           elem.classList.add("attention");
-          elem.title = "An update to the tool is available!"
+          elem.title = "An update to the tool is available!";
         }
       }
     } else {
@@ -59149,39 +59108,9 @@ function SetupContextMenu(showUpdateItem) {
               AlignMeasures(true);
             }
           }, {}, {
-            name: 'Split Long Tags and Text',
-            fn: function(target) {
-              SplitLongTextAndTags();
-            }
-          }, {}, {
-            name: 'Normalize Diacriticals',
-            fn: function(target) {
-              NormalizeDiacriticals();
-            }
-          }, {
-            name: 'Normalize Title Postfixes',
-            fn: function(target) {
-              NormalizeTitles();
-            }
-          }, {}, {
-            name: 'Reformat Using MusicXML',
-            fn: function(target) {
-              BatchMusicXMLRoundTrip();
-            }
-          }, {}, {
             name: 'Split Voices',
             fn: function(target) {
               SplitVoices();
-            }
-          }, {
-            name: 'Normalize Voice Keys',
-            fn: function(target) {
-              NormalizeVoiceKeySignatures();
-            }
-          },{}, {
-            name: 'Inject MIDI gchord Templates',
-            fn: function(target) {
-              InjectMIDIGChordTemplates();
             }
           }, {}, {
             name: 'Import PDF, Website, or CSV',
@@ -59235,7 +59164,7 @@ function SetupContextMenu(showUpdateItem) {
           // Turn the button red
           var elem = document.getElementById("morecommands");
           elem.classList.add("attention");
-          elem.title = "An update to the tool is available!"
+          elem.title = "An update to the tool is available!";
         }
 
         var theTuneSetItem = {
@@ -59343,34 +59272,9 @@ function SetupContextMenu(showUpdateItem) {
             AlignMeasures(true);
           }
         }, {}, {
-          name: 'Split Long Tags and Text',
-          fn: function(target) {
-            SplitLongTextAndTags();
-          }
-        }, {}, {
-          name: 'Normalize Diacriticals',
-          fn: function(target) {
-            NormalizeDiacriticals();
-          }
-        }, {
-          name: 'Normalize Title Postfixes',
-          fn: function(target) {
-            NormalizeTitles();
-          }
-        }, {}, {
-          name: 'Reformat Using MusicXML',
-          fn: function(target) {
-            BatchMusicXMLRoundTrip();
-          }
-        }, {}, {
           name: 'Split Voices',
           fn: function(target) {
             SplitVoices();
-          }
-        },{
-          name: 'Normalize Voice Keys',
-          fn: function(target) {
-            NormalizeVoiceKeySignatures();
           }
         }, {}, {
           name: 'Import PDF, Website, or CSV',
@@ -59421,7 +59325,7 @@ function SetupContextMenu(showUpdateItem) {
           // Turn the button red
           var elem = document.getElementById("morecommands");
           elem.classList.add("attention");
-          elem.title = "An update to the tool is available!"
+          elem.title = "An update to the tool is available!";
         }
       }
     }
@@ -59430,7 +59334,7 @@ function SetupContextMenu(showUpdateItem) {
 
       items = [
       {
-          name: 'Find and Replace',
+        name: 'Find and Replace',
           fn: function(target) {
             FindAndReplace();
           }
@@ -59470,36 +59374,11 @@ function SetupContextMenu(showUpdateItem) {
           AlignMeasures(true);
         }
       }, {}, {
-        name: 'Split Long Tags and Text',
-        fn: function(target) {
-          SplitLongTextAndTags();
-        }
-      }, {}, {
-        name: 'Normalize Diacriticals',
-        fn: function(target) {
-          NormalizeDiacriticals();
-        }
-      }, {
-        name: 'Normalize Title Postfixes',
-        fn: function(target) {
-          NormalizeTitles();
-        }
-      }, {}, {
-        name: 'Reformat Using MusicXML',
-        fn: function(target) {
-          BatchMusicXMLRoundTrip();
-        }
-      }, {}, {
         name: 'Split Voices',
         fn: function(target) {
           SplitVoices();
         }
-      },{
-        name: 'Normalize Voice Keys',
-        fn: function(target) {
-          NormalizeVoiceKeySignatures();
-        }
-      }, {}, {
+      },{}, {
         name: 'Import PDF, Website, or CSV',
         fn: function(target) {
           ImportPDF_CSV_Website();
@@ -59595,34 +59474,9 @@ function SetupContextMenu(showUpdateItem) {
           AlignMeasures(true);
         }
       }, {}, {
-        name: 'Split Long Tags and Text',
-        fn: function(target) {
-          SplitLongTextAndTags();
-        }
-      }, {}, {
-        name: 'Normalize Diacriticals',
-        fn: function(target) {
-          NormalizeDiacriticals();
-        }
-      }, {
-        name: 'Normalize Title Postfixes',
-        fn: function(target) {
-          NormalizeTitles();
-        }
-      }, {}, {
-        name: 'Reformat Using MusicXML',
-        fn: function(target) {
-          BatchMusicXMLRoundTrip();
-        }
-      }, {}, {
         name: 'Split Voices',
         fn: function(target) {
           SplitVoices();
-        }
-      },{
-        name: 'Normalize Voice Keys',
-        fn: function(target) {
-          NormalizeVoiceKeySignatures();
         }
       }, {}, {
         name: 'Import PDF, Website, or CSV',
@@ -59668,7 +59522,7 @@ function SetupContextMenu(showUpdateItem) {
         // Turn the button red
         var elem = document.getElementById("morecommands");
         elem.classList.add("attention");
-        elem.title = "An update to the tool is available!"
+        elem.title = "An update to the tool is available!";
       }
     }
   }
@@ -61311,13 +61165,13 @@ function DoStartup() {
   // Show update message?
   if (gLocalStorageAvailable && (!isFromShare)){
 
-    var updatePresented = localStorage.sawUpdate_24dec2025;
+    var updatePresented = localStorage.sawUpdate_25dec2025_3;
 
     if (updatePresented != "true") {
 
       showWhatsNewScreen();
 
-      localStorage.sawUpdate_24dec2025 = true;
+      localStorage.sawUpdate_25dec2025_3 = true;
 
     }
 

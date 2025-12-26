@@ -262,7 +262,7 @@ padding:12px;}
 #incipitsbuilder{
 	height:42px;
 	padding:12px;
-	margin-right:24px;
+	margin-right:0px;
 }
 
 @media (hover: hover) {
@@ -669,13 +669,13 @@ opacity: 0.4;
 padding:12px;
 }
 
-#ceoltasdialog,#injectheaderstring,#injectallmidiparams,#injectharmonicatab,#injectboxtab,#injectfiddlefingerings,#injectmd,#injectmelody,#injectstaffwidth,#injectmetronome,#injectshapenotes,#injectsectionheader,#injecttunenumbers,#addtunetitlenumbers,#compliancedialog,#injectbcbox,#normalizediacriticals,#customcssgenerator,#injectcustomstringedtab{
+#ceoltasdialog,#injectheaderstring,#injectallmidiparams,#injectharmonicatab,#injectboxtab,#injectfiddlefingerings,#injectmd,#injectmelody,#injectstaffwidth,#injectmetronome,#injectshapenotes,#injectsectionheader,#injecttunenumbers,#addtunetitlenumbers,#compliancedialog,#injectbcbox,#normalizediacriticals,#customcssgenerator,#injectcustomstringedtab,#phrasebuilder,#splitlongtextandtags,#normalizevoicekeysignatures,#reformatusingmusicxml{
 height:42px;
 padding:12px;
 margin-right:24px;
 }
 
-#injectbambooflute,#injectclicktrackall,#injectchords,#injectheadertemplate,#injectanglotab,#looper_metronomebutton,#pdfinjectlargeprint,#tunebookbuilder_add,#injectfontsettings,#removetunetitlenumbers,#ceoltasdialoginverse,#compliancetransform,#compliancedialoginverse,#fiddlefingeringsdialog0,#fiddlefingeringsdialog1,#fiddlefingeringsdialog2,#fiddlefingeringsdialog3,#fiddlefingeringsdialog4,#websitefull,#injectheaderstringfh,#injectcsdbox,#websitelightbox,#websitesimple,#escapediacriticals,#injectbagpipedrones,#injectlargeprint,#phrasebuilder,#ceoltastransform{
+#injectbambooflute,#injectclicktrackall,#injectchords,#injectheadertemplate,#injectanglotab,#looper_metronomebutton,#pdfinjectlargeprint,#tunebookbuilder_add,#injectfontsettings,#removetunetitlenumbers,#ceoltasdialoginverse,#compliancetransform,#compliancedialoginverse,#fiddlefingeringsdialog0,#fiddlefingeringsdialog1,#fiddlefingeringsdialog2,#fiddlefingeringsdialog3,#fiddlefingeringsdialog4,#websitefull,#injectheaderstringfh,#injectcsdbox,#websitelightbox,#websitesimple,#escapediacriticals,#injectbagpipedrones,#injectlargeprint,#ceoltastransform,#normalizetitles,#injectmidigchord{
 height:42px;
 padding:12px;
 }
@@ -3715,7 +3715,7 @@ margin-top:-7px;
 #configure_batch_mp3_export{
 	height:42px;
 	padding:12px;
-	margin-right:24px;
+	margin-left:24px;
 }
 
 @media (hover: hover) {
@@ -6796,6 +6796,36 @@ display:block;
 }
 
 .btn-batchmp3export{
+  --color: black;
+  --background-color: #f0fff0;	
+}
+
+.btn-splitlongtextandtags{
+  --color: black;
+  --background-color: #f0fff0;	
+}
+
+.btn-normalizediacriticals{
+  --color: black;
+  --background-color: #f0fff0;	
+}
+
+.btn-normalizetitles{
+  --color: black;
+  --background-color: #f0fff0;	
+}
+
+.btn-normalizevoicekeysignatures{
+  --color: black;
+  --background-color: #f0fff0;	
+}
+
+.btn-reformatusingmusicxml{
+  --color: black;
+  --background-color: #f0fff0;	
+}
+
+.btn-injectmidigchord{
   --color: black;
   --background-color: #f0fff0;	
 }
