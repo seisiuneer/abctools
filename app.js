@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3113_122525_2200";
+var gVersionNumber = "3114_122625_1000";
 
 var gMIDIInitStillWaiting = false;
 
@@ -785,39 +785,75 @@ function hasStaffSep(text) {
 //
 // Make sure the More Tools dialog isn't scrolled out of view
 function ensureMoreToolsVisible() {
+  
+  //debugger;
 
-  if (AllowDialogsToScroll()) {
+  //console.log("ensureMoreToolsVisible");
 
-    //console.log("ensureMoreToolsVisible");
-
-    var elem = document.querySelector("#moretoolsanchor");
-
-    if (elem) {
-      elem.scrollIntoView({
-        behavior: "instant",
-        block: "center"
-      });
-    }
+  if (!AllowDialogsToScroll()){
+    //console.log("dialogs not allowed to scroll");
+    return;
   }
+
+  const elem = document.querySelector("#moretoolsanchor");
+  if (!elem){
+    //console.log("#moretoolsanchor missing, returning");
+    return;
+  }
+
+  const rect = elem.getBoundingClientRect();
+  const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
+
+  const isVisible =
+    rect.top >= 0 &&
+    rect.bottom <= viewportHeight;
+
+  if (!isVisible) {
+    //console.log("scrolling into view");
+    elem.scrollIntoView({
+      behavior: "instant",
+      block: "center"
+    });
+  }
+  // else{
+  //   console.log("visible already, not scrolling into view");
+  // }
 }
 
 //
-// Make sure the a specific dialog isn't scrolled out of view
+// Make sure a specific dialog isn't scrolled out of view
 function ensureDialogVisible(theID) {
 
-  if (AllowDialogsToScroll()) {
+  //console.log("ensureDialogVisible ID:"+theID);
 
-    //console.log("ensureDialogVisible ID:"+theID);
-
-    var elem = document.querySelector(theID);
-
-    if (elem) {
-      elem.scrollIntoView({
-        behavior: "instant",
-        block: "center"
-      });
-    }
+  if (!AllowDialogsToScroll()){
+    //console.log("dialogs not allowed to scroll");
+    return;
   }
+  
+  const elem = document.querySelector(theID);
+  if (!elem){
+    //console.log(theID+" missing, returning");
+    return;
+  }
+
+  const rect = elem.getBoundingClientRect();
+  const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
+
+  const isVisible =
+    rect.top >= 0 &&
+    rect.bottom <= viewportHeight;
+
+  if (!isVisible) {
+    //console.log("scrolling into view");
+    elem.scrollIntoView({
+      behavior: "instant",
+      block: "center"
+    });
+  }
+  // else{
+  //   console.log("visible already, not scrolling into view");
+  // }
 }
 
 function loadScript(url, callback) {
@@ -3380,9 +3416,6 @@ function DoSortTunesByMeter() {
           window.scrollTo(0, scrollY);
         }
 
-        // Make sure the More Tools dialog visible
-        ensureMoreToolsVisible();
-
         var elem = document.getElementById("sortbutton");
         if (elem) {
           elem.value = "   Sorted!   ";
@@ -3449,9 +3482,6 @@ function DoSortTunesByKey() {
         if (AllowDialogsToScroll()) {
           window.scrollTo(0, scrollY);
         }
-
-        // Make sure the More Tools dialog visible
-        ensureMoreToolsVisible();
 
         var elem = document.getElementById("sortbutton");
         if (elem) {
@@ -3563,7 +3593,6 @@ function SortTunes() {
 
   }
 
-
   // Sort tunes by name
   tunesToProcess.sort(customSortTitleWithDiacriticals);
 
@@ -3646,9 +3675,6 @@ function DoSortTunesByName() {
           window.scrollTo(0, scrollY);
         }
 
-        // Make sure the More Tools dialog visible
-        ensureMoreToolsVisible();
-
         var elem = document.getElementById("sortbutton");
         if (elem) {
           elem.value = "   Sorted!   ";
@@ -3714,9 +3740,6 @@ function DoSortTunesByRhythm() {
         if (AllowDialogsToScroll()) {
           window.scrollTo(0, scrollY);
         }
-
-        // Make sure the More Tools dialog visible
-        ensureMoreToolsVisible();
 
         var elem = document.getElementById("sortbutton");
         if (elem) {
@@ -3784,9 +3807,6 @@ function DoSortTunesByCTag() {
           window.scrollTo(0, scrollY);
         }
 
-        // Make sure the More Tools dialog visible
-        ensureMoreToolsVisible();
-
         var elem = document.getElementById("sortbutton");
         if (elem) {
           elem.value = "   Sorted!   ";
@@ -3852,9 +3872,6 @@ function DoSortTunesByNTag() {
         if (AllowDialogsToScroll()) {
           window.scrollTo(0, scrollY);
         }
-
-        // Make sure the More Tools dialog visible
-        ensureMoreToolsVisible();
 
         var elem = document.getElementById("sortbutton");
         if (elem) {
@@ -3922,9 +3939,6 @@ function DoSortTunesByOTag() {
           window.scrollTo(0, scrollY);
         }
 
-        // Make sure the More Tools dialog visible
-        ensureMoreToolsVisible();
-
         var elem = document.getElementById("sortbutton");
         if (elem) {
           elem.value = "   Sorted!   ";
@@ -3991,9 +4005,6 @@ function DoSortTunesByID() {
         if (AllowDialogsToScroll()) {
           window.scrollTo(0, scrollY);
         }
-
-        // Make sure the More Tools dialog visible
-        ensureMoreToolsVisible();
 
         var elem = document.getElementById("sortbutton");
         if (elem) {
