@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3106_122525_1600";
+var gVersionNumber = "3107_122525_1800";
 
 var gMIDIInitStillWaiting = false;
 
@@ -19665,7 +19665,7 @@ function AddABC() {
   DayPilot.Modal.alert(modal_msg, {
     theme: "modal_flat",
     top: 50,
-    width: 730,
+    width: 700,
     scrollWithPage: false
   });
 
