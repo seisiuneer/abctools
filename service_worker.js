@@ -11,7 +11,13 @@
 //
 //
 //
-// Updated 26 Dec 2025 at 1300
+//
+//
+//
+// Updated 27 Dec 2025 at 1000
+//
+//
+//
 //
 //
 //
@@ -24,7 +30,7 @@
 //
 //
 
-const cacheName = 'abctoolscache-3115';
+const cacheName = 'abctoolscache-3116';
 
 const contentToCache = [
     'abctools.html',
@@ -37,8 +43,8 @@ const contentToCache = [
     'general_midi_extended_v10.pdf',
     'abc_standard_v2.1.pdf',
     'ABCquickRefv0_6.pdf',
-    'app.css',
-    'codemirror.css',
+    'app-min.css',
+    'codemirror-min.css',
     'app-min.js',
     'jquery-1.11.1.min.js',
 	'jszip.min.js',
