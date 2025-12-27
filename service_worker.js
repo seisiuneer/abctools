@@ -5,32 +5,14 @@
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
-//
-// Updated 27 Dec 2025 at 1000
-//
-//
-//
-//
-//
-//
-//
-//
-//
+// Updated 27 Dec 2025 at 1030
 //
 //
 //
 //
 //
 
-const cacheName = 'abctoolscache-3116';
+const cacheName = 'abctoolscache-3117';
 
 const contentToCache = [
     'abctools.html',
@@ -74,7 +56,7 @@ const contentToCache = [
 	'api-keys.js',
     'notoserif-regular.js',
     'notosans-regular.js',
-    'codemirror.js',
+    'codemirror-min.js',
     'simple.min.js',
     'placeholder.min.js',
     'img/zoomin.png',
