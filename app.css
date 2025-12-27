@@ -1364,12 +1364,7 @@ height:42px;
 padding:12px;
 width:auto;
 margin-right:18px;
-}
-
-@media (hover: hover) {
-	.looperreset:hover{
-	background: palegreen;
-	}
+opacity: 0.4;
 }
 
 #trainer_phrase_builder{
@@ -5894,6 +5889,21 @@ padding-right: 30px; /* space for badge */
   100% { transform: scale(1); }
 }
 
+/* Tune trainer attention style */
+.tt_attention {
+  color: black !important;
+  opacity: 1.0 !important;
+  background-color:#FFC0C0 !important;
+  animation: tt_pulse 1.25s infinite;
+}
+
+/* Pulsing animation */
+@keyframes tt_pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.06);  }
+  100% { transform: scale(1); }
+}
+
 /* Custom ABC per-tune line number gutter */
 .CodeMirror-gutters {
 border-right: 1px solid #ddd;
@@ -6586,7 +6596,7 @@ display:block;
 
 .btn-looperreset{
   --color: black;
-  --background-color: #C8ECFE;
+  --background-color: #F0F0F0;
 }
 
 .btn-metronome{

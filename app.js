@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3117_122725_1030";
+var gVersionNumber = "3118_122725_1200";
 
 var gMIDIInitStillWaiting = false;
 
@@ -43931,6 +43931,14 @@ function TuneTrainerReset() {
 
   //console.log("TuneTrainerReset");
 
+  // --- NEW: clear dirty styling immediately on click ---
+  // (Dialog is about to close/reopen; this prevents "red flash" during reload)
+  var btn = document.getElementById("looperreset");
+  if (btn) {
+    btn.style.background = "";
+    btn.style.color = "";
+  }
+
   var bDoReload = false;
 
   // Set the initial loop parameters
@@ -43939,10 +43947,17 @@ function TuneTrainerReset() {
   var looperSpeedIncrement = document.getElementById("looper_increment").value;
   var looperCount = document.getElementById("looper_count").value;
 
+  // --- NEW: also capture the other controls you listed ---
+  var looperDoCountdown = document.getElementById("looper_docountdown").checked;
+  var looperCountdown = document.getElementById("looper_countdown").value;
+  var looperAddMeasure = document.getElementById("looper_addmeasure").checked;
+
   looperSpeedStart = parseFloat(looperSpeedStart);
   looperSpeedEnd = parseFloat(looperSpeedEnd);
   looperSpeedIncrement = parseFloat(looperSpeedIncrement);
   looperCount = parseFloat(looperCount);
+
+  looperCountdown = parseInt(looperCountdown, 10);
 
   if ((!isNaN(looperSpeedStart)) && (!isNaN(looperSpeedEnd)) && (!isNaN(looperSpeedIncrement)) && (!isNaN(looperCount))) {
 
@@ -43954,6 +43969,16 @@ function TuneTrainerReset() {
       gLooperCount = looperCount;
       gLooperCurrent = gLooperSpeedStart;
       gLooperLoopCount = gLooperCount;
+
+      // --- NEW: apply the other settings to globals too ---
+      gLooperDoCountdown = !!looperDoCountdown;
+
+      if (isNaN(looperCountdown) || looperCountdown < 1) {
+        looperCountdown = 5;
+      }
+      gLooperCountdown = looperCountdown;
+
+      gLooperAddMeasure = !!looperAddMeasure;
 
       bDoReload = true;
 
@@ -43992,6 +44017,7 @@ function TuneTrainerReset() {
 
   }
 }
+
 
 //
 // Toggle the metronome version of the tune;
@@ -44138,6 +44164,33 @@ function TuneTrainerDialog(theOriginalABC, theProcessedABC, looperState) {
   gMIDIbuffer = null;
   gTheOKButton = null;
 
+  // --- NEW: keep initial settings snapshot for "dirty" checking ---
+  var gTuneTrainerInitialSettings = null;
+
+  // --- NEW: helper to set/reset Apply button to red when settings changed ---
+  function updateApplyButtonDirtyState() {
+
+    if (!gTuneTrainerInitialSettings) return;
+
+    var isDirty =
+      document.getElementById("looper_start_percent").value !== gTuneTrainerInitialSettings.start ||
+      document.getElementById("looper_end_percent").value !== gTuneTrainerInitialSettings.end ||
+      document.getElementById("looper_increment").value !== gTuneTrainerInitialSettings.increment ||
+      document.getElementById("looper_count").value !== gTuneTrainerInitialSettings.count ||
+      document.getElementById("looper_docountdown").checked !== gTuneTrainerInitialSettings.doCountdown ||
+      document.getElementById("looper_countdown").value !== gTuneTrainerInitialSettings.countdownSecs ||
+      document.getElementById("looper_addmeasure").checked !== gTuneTrainerInitialSettings.addMeasure;
+
+    var applyBtn = document.getElementById("looperreset");
+    if (!applyBtn) return;
+
+    if (isDirty) {
+      applyBtn.classList.add("tt_attention");
+    } else {
+      applyBtn.classList.remove("tt_attention");
+    }
+  }
+
   // We came in because of a looper param change, don't init the tune cache
   if (!looperState) {
 
@@ -44242,8 +44295,6 @@ function TuneTrainerDialog(theOriginalABC, theProcessedABC, looperState) {
           // Check if there are any custom instruments requested but not loaded
           verifyCustomInstrumentsLoaded(theProcessedABC);
 
-          //console.log("Tune is loaded, setting initial warp and loop callback");
-
           // Stuff in the initial warp
           synthControl.forceWarp(gLooperCurrent);
 
@@ -44265,13 +44316,10 @@ function TuneTrainerDialog(theOriginalABC, theProcessedABC, looperState) {
           // Are we using the trainer touch controls
           if (gTrainerTouchControls) {
 
-            //debugger;
-
             var elems1 = document.getElementsByClassName("abcjs-midi-clock");
             var elems2 = document.getElementsByClassName("abcjs-midi-current-tempo-wrapper");
 
             if (elems1 && elems2 && (elems1.length > 0) && (elems2.length > 0)) {
-
 
               var elem = elems1[0];
               elem.onclick = DecrementTempo;
@@ -44318,12 +44366,8 @@ function TuneTrainerDialog(theOriginalABC, theProcessedABC, looperState) {
   //
   function UpdateProgressBar() {
 
-    //debugger;
-
     if (loopCount > totalLoops) {
-
       return;
-
     }
 
     if ((gLooperSpeedStart == gLooperSpeedEnd) || (gLooperSpeedIncrement == 0)) {
@@ -44366,9 +44410,7 @@ function TuneTrainerDialog(theOriginalABC, theProcessedABC, looperState) {
   function CalcTotalLoops() {
 
     if ((gLooperSpeedStart == gLooperSpeedEnd) || (gLooperSpeedIncrement == 0)) {
-
       return 1;
-
     }
 
     var count = 0;
@@ -44385,17 +44427,11 @@ function TuneTrainerDialog(theOriginalABC, theProcessedABC, looperState) {
       start += looperSpeedIncrement;
     }
 
-    //console.log("count = "+count);
-
     return count;
   }
 
   // Callback at end of each loop
   function LoopCallback() {
-
-    //console.log("LoopCallback");
-
-    //console.log("gPlayerInPause "+gPlayerInPause);
 
     if (!gPlayerInPause) {
 
@@ -44447,7 +44483,6 @@ function TuneTrainerDialog(theOriginalABC, theProcessedABC, looperState) {
             }
           } else {
             elem.innerHTML = "Tempo:&nbsp;" + gLooperCurrent + "%";
-
           }
 
           // Update the progress bar
@@ -44484,8 +44519,6 @@ function TuneTrainerDialog(theOriginalABC, theProcessedABC, looperState) {
 
   // Called once when the user first clicks play before the play starts
   function PreStartPlayCallback(callback) {
-
-    //console.log("PreStartPlayCallback");
 
     gLooperDoCountdown = document.getElementById("looper_docountdown").checked;
     gLooperCountdown = document.getElementById("looper_countdown").value;
@@ -44547,34 +44580,24 @@ function TuneTrainerDialog(theOriginalABC, theProcessedABC, looperState) {
   //
   function IncrementDecrementControlValue(event) {
 
-    //debugger;
-
-    //console.log("IncrementDecrementControlValue this ="+this);
-
-    //console.log("Control text = "+this.innerHTML);
-
     var theText = this.innerHTML;
 
     var theControl = null;
     var theControlIndex = 0;
 
     if (theText.indexOf("Starting") == 0) {
-      //console.log("Start control");
       theControl = document.getElementById("looper_start_percent");
       theControlIndex = 0;
     } else
     if (theText.indexOf("Ending") == 0) {
-      //console.log("End control");
       theControl = document.getElementById("looper_end_percent");
       theControlIndex = 1;
     } else
     if (theText.indexOf("Tempo") == 0) {
-      //console.log("Increment control");
       theControl = document.getElementById("looper_increment");
       theControlIndex = 2;
     } else
     if (theText.indexOf("Increment") == 0) {
-      //console.log("Count control");
       theControl = document.getElementById("looper_count");
       theControlIndex = 3;
     }
@@ -44591,7 +44614,6 @@ function TuneTrainerDialog(theOriginalABC, theProcessedABC, looperState) {
       isDecrement = false;
 
       if (theControlIndex != 3) {
-
         if (gTouchIncrementFive) {
           delta = 5;
         }
@@ -44600,23 +44622,18 @@ function TuneTrainerDialog(theOriginalABC, theProcessedABC, looperState) {
     } else {
 
       if (theControlIndex != 3) {
-
         if (gTouchIncrementFive) {
           delta = 5;
         }
-
       }
 
     }
-
-    //console.log("isDecrement = "+isDecrement);
 
     var theValue = theControl.value;
 
     switch (theControlIndex) {
 
-      // Start
-      // End
+      // Start / End
       case 0:
       case 1:
         theValue = parseFloat(theValue);
@@ -44633,7 +44650,7 @@ function TuneTrainerDialog(theOriginalABC, theProcessedABC, looperState) {
         }
         break;
 
-        // Increment
+      // Increment
       case 2:
         theValue = parseFloat(theValue);
         if (isDecrement) {
@@ -44649,8 +44666,7 @@ function TuneTrainerDialog(theOriginalABC, theProcessedABC, looperState) {
         }
         break;
 
-
-        // Count
+      // Count
       case 3:
         theValue = parseInt(theValue);
         if (isDecrement) {
@@ -44668,6 +44684,9 @@ function TuneTrainerDialog(theOriginalABC, theProcessedABC, looperState) {
     }
 
     theControl.value = theValue;
+
+    // --- NEW: touch-controls modify values programmatically; update dirty state ---
+    updateApplyButtonDirtyState();
   }
 
   //
@@ -44739,12 +44758,12 @@ function TuneTrainerDialog(theOriginalABC, theProcessedABC, looperState) {
     modal_msg += '<span id="looper_text_4">Increment tempo after how many loops:</span> <input style="width:60px;margin-right:14px;" id="looper_count" type="number" min="1" step="1" max="100" title="Increment tempo after this many times through the tune" autocomplete="off"/><span id="looper_text_5">Countdown?</span><input style="width:18px;margin-left:8px;margin-right:14px;" id="looper_docountdown" type="checkbox" onchange="ToggleLoopCountdown();"/><span id="looper_text_6">Countdown secs:</span><input style="width:60px;margin-left:8px;" id="looper_countdown" type="number" min="1" step="1" max="30" title="Countdown secs" autocomplete="off" onchange="SaveLoopCountdown();"/>';
     modal_msg += '</p>';
     modal_msg += '<p class="configure_looper_text" style="text-align:center;margin:0px;margin-top:20px">';
-    modal_msg += '<input id="looperreset" class="looperreset button btn btn-looperreset" onclick="TuneTrainerReset();" type="button" value="Apply Settings and Reload" title="Applies the entered tune trainer settings and reloads the player">';
+    modal_msg += '<input id="looperreset" class="looperreset button btn btn-looperreset" onclick="TuneTrainerReset();" type="button" value="Apply Changes and Reload" title="Applies the changed Tune Trainer settings and reloads the trainer">';
 
     if (gPlayMetronome) {
-      modal_msg += '<input id="looper_metronomebutton" class="looper_metronome button btn btn-metronome" onclick="ToggleTuneTrainerMetronome();" type="button" value="Disable Metronome" title="Disables the metronome">';
+      modal_msg += '<input id="looper_metronomebutton" class="looper_metronomebutton button btn btn-metronome" onclick="ToggleTuneTrainerMetronome();" type="button" value="Disable Metronome" title="Disables the metronome">';
     } else {
-      modal_msg += '<input id="looper_metronomebutton" class="looper_metronome button btn btn-metronome" onclick="ToggleTuneTrainerMetronome();" type="button" value="Enable Metronome" title="Enables the metronome">';
+      modal_msg += '<input id="looper_metronomebutton" class="looper_metronomebutton button btn btn-metronome" onclick="ToggleTuneTrainerMetronome();" type="button" value="Enable Metronome" title="Enables the metronome">';
     }
 
     modal_msg += '<input id="trainer_phrase_builder" class="trainer_phrase_builder button btn btn-phrasebuilder" onclick="TrainerPhraseBuilder(event);" type="button" value="Phrase Builder" title="Builds phrases of specified measure length for the tune and then reloads the Tune Trainer.&nbsp;&nbsp;This does not change the original tune ABC.&nbsp;&nbsp;Shift-click to restore the original tune.">';
@@ -44825,6 +44844,32 @@ function TuneTrainerDialog(theOriginalABC, theProcessedABC, looperState) {
     document.getElementById("looper_countdown").value = gLooperCountdown;
 
     document.getElementById("looper_addmeasure").checked = gLooperAddMeasure;
+
+    // --- NEW: snapshot initial values now that controls are populated ---
+    gTuneTrainerInitialSettings = {
+      start: document.getElementById("looper_start_percent").value,
+      end: document.getElementById("looper_end_percent").value,
+      increment: document.getElementById("looper_increment").value,
+      count: document.getElementById("looper_count").value,
+      doCountdown: document.getElementById("looper_docountdown").checked,
+      countdownSecs: document.getElementById("looper_countdown").value,
+      addMeasure: document.getElementById("looper_addmeasure").checked
+    };
+
+    // --- NEW: hook listeners to mark Apply button dirty/clean ---
+    ["looper_start_percent","looper_end_percent","looper_increment","looper_count","looper_countdown"].forEach(function(id) {
+      var el = document.getElementById(id);
+      if (el) el.addEventListener("input", updateApplyButtonDirtyState);
+    });
+
+    var el = document.getElementById("looper_docountdown");
+    if (el) el.addEventListener("change", updateApplyButtonDirtyState);
+
+    el = document.getElementById("looper_addmeasure");
+    if (el) el.addEventListener("change", updateApplyButtonDirtyState);
+
+    // Ensure correct initial state
+    updateApplyButtonDirtyState();
 
     // Are we using the trainer touch controls
     if (gTrainerTouchControls) {
@@ -44949,6 +44994,7 @@ function TuneTrainerDialog(theOriginalABC, theProcessedABC, looperState) {
   initPlay();
 
 }
+
 
 // Used by the IncrementTempo and DecrementTempo functions
 var gSynthControl = null;
