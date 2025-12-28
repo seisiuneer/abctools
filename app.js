@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3118_122725_1200";
+var gVersionNumber = "3120_122825_0930";
 
 var gMIDIInitStillWaiting = false;
 
@@ -24702,7 +24702,7 @@ function NotationSpacingExplorer() {
   modal_msg +=   '</select>';
   modal_msg +=   '<span id="layout_scale_wrap" style="display:none">';
   modal_msg +=     '<span>Scale:</span> ';
-  modal_msg +=     '<input style="width:80px;margin-right:14px;" id="layout_scale" type="number" min="0.125" max="1.00" step="0.01" title="Scale" autocomplete="off"/>';
+  modal_msg +=     '<input style="width:80px;margin-right:14px;" id="layout_scale" type="number" min="0.125" max="1.00" step="0.001" title="Scale" autocomplete="off"/>';
   modal_msg +=   '</span>';
   modal_msg += '</p>';
 
@@ -39753,7 +39753,6 @@ function SwingExplorerInject() {
 }
 
 
-
 // 
 // Swing Explorer Dialog
 //
@@ -39768,6 +39767,35 @@ function SwingExplorerDialog(theOriginalABC, theProcessedABC, swing_explorer_sta
 
   gMIDIbuffer = null;
   gTheOKButton = null;
+
+  // --- NEW: snapshot of initial settings for dirty checking ---
+  // NOTE: these are dialog-instance scoped.
+  var gSwingExplorerInitialSettings = null;
+
+  // --- NEW: helper to set/reset the Reload button to red when settings changed ---
+  function updateSwingExplorerDirtyState() {
+
+    if (!gSwingExplorerInitialSettings) return;
+
+    var factorEl = document.getElementById("swing_explorer_factor");
+    var offsetEl = document.getElementById("swing_explorer_offset");
+
+    if (!factorEl || !offsetEl) return;
+
+    var isDirty =
+      (factorEl.value !== gSwingExplorerInitialSettings.factor) ||
+      (offsetEl.value !== gSwingExplorerInitialSettings.offset);
+
+    // Only color the Reload button
+    var btnReload = document.getElementById("swingexplorertest");
+    if (!btnReload) return;
+
+    if (isDirty) {
+      btnReload.classList.add("apply_attention");
+    } else {
+      btnReload.classList.remove("apply_attention");
+    }
+  }
 
   // We came in because of a swing change, don't init the tune cache
   if (!swing_explorer_state) {
@@ -39806,7 +39834,6 @@ function SwingExplorerDialog(theOriginalABC, theProcessedABC, swing_explorer_sta
     }
   }
 
-
   function setTune(userAction) {
 
     synthControl.disable(true);
@@ -39826,8 +39853,6 @@ function SwingExplorerDialog(theOriginalABC, theProcessedABC, swing_explorer_sta
     midiBuffer.init({
       visualObj: visualObj
     }).then(function(response) {
-
-      //console.log(response);
 
       if (synthControl) {
 
@@ -39853,8 +39878,6 @@ function SwingExplorerDialog(theOriginalABC, theProcessedABC, swing_explorer_sta
           // Are we using the trainer touch controls
           if (gTrainerTouchControls) {
 
-            //debugger;
-
             var elems1 = document.getElementsByClassName("abcjs-midi-clock");
             var elems2 = document.getElementsByClassName("abcjs-midi-current-tempo-wrapper");
 
@@ -39868,7 +39891,6 @@ function SwingExplorerDialog(theOriginalABC, theProcessedABC, swing_explorer_sta
             }
 
           }
-
 
         }).catch(function(error) {
 
@@ -40012,12 +40034,26 @@ function SwingExplorerDialog(theOriginalABC, theProcessedABC, swing_explorer_sta
     // Set the initial swing offset 
     document.getElementById("swing_explorer_offset").value = gSwingOffset;
 
+    // --- NEW: snapshot initial values AFTER controls are populated ---
+    gSwingExplorerInitialSettings = {
+      factor: document.getElementById("swing_explorer_factor").value,
+      offset: document.getElementById("swing_explorer_offset").value
+    };
+
+    // --- NEW: hook listeners to update dirty/clean UI ---
+    // Use input so arrow stepper + typing both trigger immediately
+    var el = document.getElementById("swing_explorer_factor");
+    if (el) el.addEventListener("input", updateSwingExplorerDirtyState);
+
+    el = document.getElementById("swing_explorer_offset");
+    if (el) el.addEventListener("input", updateSwingExplorerDirtyState);
+
+    // Ensure correct initial state
+    updateSwingExplorerDirtyState();
+
     var theOKButtons = document.getElementsByClassName("modal_flat_ok");
 
     // Find the button that says "Close" and hook its click handler to make sure music stops on close
-    // Need to search through the modals since there may be a first time share dialog also present
-    // the first time someone plays a linked PDF tune
-
     var theOKButton = null;
 
     for (var i = 0; i < theOKButtons.length; ++i) {
@@ -40066,7 +40102,6 @@ function SwingExplorerDialog(theOriginalABC, theProcessedABC, swing_explorer_sta
         displayWarp: true
       });
 
-
     } else {
 
       document.querySelector("#playback-audio").innerHTML = "<div class='audio-error'>Audio is not supported in this browser.</div>";
@@ -40093,16 +40128,14 @@ function SwingExplorerDialog(theOriginalABC, theProcessedABC, swing_explorer_sta
 
     // Pass it to unmute if the context exists... ie WebAudio is supported
     if (context) {
-      // If you need to be able to disable unmute at a later time, you can use the returned handle's dispose() method
-      // if you don't need to do that (most folks won't) then you can simply ignore the return value
       gTheMuteHandle = unmute(context, allowBackgroundPlayback, forceIOSBehavior);
-
     }
   }
 
   initPlay();
 
 }
+
 
 //
 // Reverb Explorer
@@ -40160,7 +40193,7 @@ function ReverbExplorerRegenerate() {
 }
 
 //
-// Scan tune for swing annotation for the swing explorer
+// Scan tune for reverb annotation for the reverb explorer
 //
 function ScanTuneForReverbExplorer(theTune) {
 
@@ -40564,6 +40597,42 @@ function ReverbExplorerDialog(theOriginalABC, theProcessedABC, reverb_explorer_s
   gMIDIbuffer = null;
   gTheOKButton = null;
 
+  // --- NEW: snapshot of initial settings for dirty checking ---
+  // dialog-instance scoped
+  var gReverbExplorerInitialSettings = null;
+
+  // --- NEW: track whether user clicked "Load Custom Reverb Impulse" ---
+  // This should light up the reload/apply button even if other values haven't changed.
+  var gReverbExplorerImpulseTouched = false;
+
+  // --- NEW: helper to set/reset the Reload button to red when settings changed ---
+  function updateReverbExplorerDirtyState() {
+
+    if (!gReverbExplorerInitialSettings) return;
+
+    var dryEl = document.getElementById("reverb_explorer_dry");
+    var wetEl = document.getElementById("reverb_explorer_wet");
+    var styleEl = document.getElementById("reverb_explorer_settings");
+
+    if (!dryEl || !wetEl || !styleEl) return;
+
+    var isDirty =
+      (dryEl.value !== gReverbExplorerInitialSettings.dry) ||
+      (wetEl.value !== gReverbExplorerInitialSettings.wet) ||
+      (styleEl.value !== gReverbExplorerInitialSettings.style) ||
+      (gReverbExplorerImpulseTouched === true); // <-- NEW
+
+    // Only color the Reload button
+    var btnReload = document.getElementById("reverbexplorertest");
+    if (!btnReload) return;
+
+    if (isDirty) {
+      btnReload.classList.add("apply_attention");
+    } else {
+      btnReload.classList.remove("apply_attention");
+    }
+  }
+
   // We came in because of a reverb change, don't init the tune cache
   if (!reverb_explorer_state) {
 
@@ -40673,7 +40742,6 @@ function ReverbExplorerDialog(theOriginalABC, theProcessedABC, reverb_explorer_s
 
           }
 
-
         }).catch(function(error) {
 
           // MAE 10 Jul 2024 - Hide the spinner
@@ -40764,7 +40832,6 @@ function ReverbExplorerDialog(theOriginalABC, theProcessedABC, reverb_explorer_s
       modal_msg += '<a id="reverbexplorerhelp" href="https://michaeleskin.com/abctools/userguide.html#reverb_explorer" target="_blank" style="text-decoration:none;" title="Learn more about the Reverb Explorer" class="dialogcornerbutton">?</a>';
     } else {
 
-
       modal_msg += '<p class="configure_reverbexplorer_text" style="text-align:center;margin:0px;margin-top:22px">';
 
       modal_msg += "Reverb style:" + gReverbExplorerSettings;
@@ -40831,6 +40898,37 @@ function ReverbExplorerDialog(theOriginalABC, theProcessedABC, reverb_explorer_s
     document.getElementById("reverb_explorer_wet").value = gReverbExplorerWet;
     document.getElementById("reverb_explorer_settings").value = gReverbExplorerStyle;
 
+    // --- NEW: snapshot initial values AFTER controls are populated ---
+    gReverbExplorerInitialSettings = {
+      dry: document.getElementById("reverb_explorer_dry").value,
+      wet: document.getElementById("reverb_explorer_wet").value,
+      style: document.getElementById("reverb_explorer_settings").value
+    };
+
+    // --- NEW: hook listeners for dirty/clean UI ---
+    // Use input so typing + steppers trigger immediately
+    var el = document.getElementById("reverb_explorer_dry");
+    if (el) el.addEventListener("input", updateReverbExplorerDirtyState);
+
+    el = document.getElementById("reverb_explorer_wet");
+    if (el) el.addEventListener("input", updateReverbExplorerDirtyState);
+
+    // Style dropdown should use change
+    el = document.getElementById("reverb_explorer_settings");
+    if (el) el.addEventListener("change", updateReverbExplorerDirtyState);
+
+    // --- NEW: clicking "Load Custom Reverb Impulse" should also light up Reload/Apply ---
+    el = document.getElementById("loadimpulsebutton");
+    if (el) {
+      el.addEventListener("change", function() {
+        gReverbExplorerImpulseTouched = true;
+        updateReverbExplorerDirtyState();
+      });
+    }
+
+    // Ensure correct initial state
+    updateReverbExplorerDirtyState();
+
     var theOKButtons = document.getElementsByClassName("modal_flat_ok");
 
     // Find the button that says "Close" and hook its click handler to make sure music stops on close
@@ -40885,7 +40983,6 @@ function ReverbExplorerDialog(theOriginalABC, theProcessedABC, reverb_explorer_s
         displayWarp: true
       });
 
-
     } else {
 
       document.querySelector("#playback-audio").innerHTML = "<div class='audio-error'>Audio is not supported in this browser.</div>";
@@ -40912,16 +41009,15 @@ function ReverbExplorerDialog(theOriginalABC, theProcessedABC, reverb_explorer_s
 
     // Pass it to unmute if the context exists... ie WebAudio is supported
     if (context) {
-      // If you need to be able to disable unmute at a later time, you can use the returned handle's dispose() method
-      // if you don't need to do that (most folks won't) then you can simply ignore the return value
       gTheMuteHandle = unmute(context, allowBackgroundPlayback, forceIOSBehavior);
-
     }
   }
 
   initPlay();
 
 }
+
+
 
 //
 // MIDI Instrument Explorer
@@ -41935,6 +42031,43 @@ function InstrumentExplorerDialog(theOriginalABC, theProcessedABC, instrument_ex
   gMIDIbuffer = null;
   gTheOKButton = null;
 
+  // --- NEW: snapshot of initial settings for dirty checking (EXCLUDES inject_all) ---
+  var gInstrumentExplorerInitialSettings = null;
+
+  // --- NEW: helper to set/reset the Reload button to red when settings changed ---
+  function updateInstrumentExplorerDirtyState() {
+
+    if (!gInstrumentExplorerInitialSettings) return;
+
+    var sf = document.getElementById("instrument_explorer_soundfont");
+    var mel = document.getElementById("instrument_explorer_melody_program");
+    var bass = document.getElementById("instrument_explorer_bass_program");
+    var chord = document.getElementById("instrument_explorer_chord_program");
+    var bassVol = document.getElementById("instrument_explorer_bass_volume");
+    var chordVol = document.getElementById("instrument_explorer_chord_volume");
+
+    if (!sf || !mel || !bass || !chord || !bassVol || !chordVol) return;
+
+    var isDirty =
+      (sf.value !== gInstrumentExplorerInitialSettings.soundfont) ||
+      (mel.value !== gInstrumentExplorerInitialSettings.melody) ||
+      (bass.value !== gInstrumentExplorerInitialSettings.bass) ||
+      (chord.value !== gInstrumentExplorerInitialSettings.chords) ||
+      (bassVol.value !== gInstrumentExplorerInitialSettings.bassVol) ||
+      (chordVol.value !== gInstrumentExplorerInitialSettings.chordVol);
+
+    // Only color the Reload button
+    var btnReload = document.getElementById("instrumentexplorertest");
+    if (!btnReload) return;
+
+    if (isDirty) {
+      btnReload.classList.add("apply_attention");
+    } else {
+      btnReload.classList.remove("apply_attention");
+    }
+
+  }
+
   // We came in because of an instrument change, don't init the tune cache
   if (!instrument_explorer_state) {
 
@@ -41967,7 +42100,6 @@ function InstrumentExplorerDialog(theOriginalABC, theProcessedABC, instrument_ex
   if (!PlayerSetupCommon(theProcessedABC)) {
     return;
   }
-
 
   var instrument = GetRadioValue("notenodertab");
 
@@ -42050,7 +42182,6 @@ function InstrumentExplorerDialog(theOriginalABC, theProcessedABC, instrument_ex
             }
 
           }
-
 
         }).catch(function(error) {
 
@@ -42143,7 +42274,6 @@ function InstrumentExplorerDialog(theOriginalABC, theProcessedABC, instrument_ex
 
     modal_msg += '<a id="instrumentexplorerhelp" href="https://michaeleskin.com/abctools/userguide.html#midi_instrument_explorer" target="_blank" style="text-decoration:none;" title="Learn more about the MIDI Instrument Explorer" class="dialogcornerbutton">?</a>';
 
-
     // Scale the player for larger screens
     var windowWidth = window.innerWidth;
 
@@ -42188,6 +42318,36 @@ function InstrumentExplorerDialog(theOriginalABC, theProcessedABC, instrument_ex
     document.getElementById("instrument_explorer_chord_program").value = gInstrumentExplorerChordInstrument;
     document.getElementById("instrument_explorer_bass_volume").value = gInstrumentExplorerBassVolume;
     document.getElementById("instrument_explorer_chord_volume").value = gInstrumentExplorerChordVolume;
+
+    // --- NEW: snapshot initial values AFTER controls populated (EXCLUDES inject_all) ---
+    gInstrumentExplorerInitialSettings = {
+      soundfont: document.getElementById("instrument_explorer_soundfont").value,
+      melody: document.getElementById("instrument_explorer_melody_program").value,
+      bass: document.getElementById("instrument_explorer_bass_program").value,
+      chords: document.getElementById("instrument_explorer_chord_program").value,
+      bassVol: document.getElementById("instrument_explorer_bass_volume").value,
+      chordVol: document.getElementById("instrument_explorer_chord_volume").value
+    };
+
+    // --- NEW: hook listeners for dirty/clean UI (EXCLUDES inject_all) ---
+    ["instrument_explorer_soundfont",
+     "instrument_explorer_melody_program",
+     "instrument_explorer_bass_program",
+     "instrument_explorer_chord_program"
+    ].forEach(function(id) {
+      var el = document.getElementById(id);
+      if (el) el.addEventListener("change", updateInstrumentExplorerDirtyState);
+    });
+
+    ["instrument_explorer_bass_volume",
+     "instrument_explorer_chord_volume"
+    ].forEach(function(id) {
+      var el = document.getElementById(id);
+      if (el) el.addEventListener("input", updateInstrumentExplorerDirtyState);
+    });
+
+    // Ensure correct initial state
+    updateInstrumentExplorerDirtyState();
 
     var theOKButtons = document.getElementsByClassName("modal_flat_ok");
 
@@ -42242,7 +42402,6 @@ function InstrumentExplorerDialog(theOriginalABC, theProcessedABC, instrument_ex
         displayProgress: true,
         displayWarp: true
       });
-
 
     } else {
 
@@ -42394,7 +42553,7 @@ function ScanTuneForGraceExplorer(theTune) {
 }
 
 //
-// Inject the tune with the Swing Explorer values
+// Inject the tune with the Grace Explorer values
 //
 
 function GraceExplorerInject() {
@@ -42640,6 +42799,30 @@ function GraceExplorerDialog(theOriginalABC, theProcessedABC, grace_explorer_sta
   gMIDIbuffer = null;
   gTheOKButton = null;
 
+  // --- NEW: snapshot of initial settings for dirty checking ---
+  var gGraceExplorerInitialSettings = null;
+
+  // --- NEW: helper to set/reset the Reload button to red when settings changed ---
+  function updateGraceExplorerDirtyState() {
+
+    if (!gGraceExplorerInitialSettings) return;
+
+    var durEl = document.getElementById("grace_explorer_duration");
+    if (!durEl) return;
+
+    var isDirty = (durEl.value !== gGraceExplorerInitialSettings.duration);
+
+    // Only color the Reload button
+    var btnReload = document.getElementById("graceexplorertest");
+    if (!btnReload) return;
+
+    if (isDirty) {
+      btnReload.classList.add("apply_attention");
+    } else {
+      btnReload.classList.remove("apply_attention");
+    }
+  }
+
   // We came in because of a grace duration change, don't init the tune cache
   if (!grace_explorer_state) {
 
@@ -42736,7 +42919,6 @@ function GraceExplorerDialog(theOriginalABC, theProcessedABC, grace_explorer_sta
             }
 
           }
-
 
         }).catch(function(error) {
 
@@ -42849,7 +43031,6 @@ function GraceExplorerDialog(theOriginalABC, theProcessedABC, grace_explorer_sta
 
     }
 
-
     DayPilot.Modal.alert(modal_msg, {
       theme: "modal_flat",
       top: theTop,
@@ -42860,6 +43041,19 @@ function GraceExplorerDialog(theOriginalABC, theProcessedABC, grace_explorer_sta
 
     // Set the initial grace duration
     document.getElementById("grace_explorer_duration").value = gGraceDuration / .001;
+
+    // --- NEW: snapshot initial values AFTER control is populated ---
+    gGraceExplorerInitialSettings = {
+      duration: document.getElementById("grace_explorer_duration").value
+    };
+
+    // --- NEW: hook listener to update dirty/clean UI ---
+    // Use input so arrow stepper + typing both trigger immediately
+    var el = document.getElementById("grace_explorer_duration");
+    if (el) el.addEventListener("input", updateGraceExplorerDirtyState);
+
+    // Ensure correct initial state
+    updateGraceExplorerDirtyState();
 
     var theOKButtons = document.getElementsByClassName("modal_flat_ok");
 
@@ -42915,7 +43109,6 @@ function GraceExplorerDialog(theOriginalABC, theProcessedABC, grace_explorer_sta
         displayWarp: true
       });
 
-
     } else {
 
       document.querySelector("#playback-audio").innerHTML = "<div class='audio-error'>Audio is not supported in this browser.</div>";
@@ -42952,6 +43145,7 @@ function GraceExplorerDialog(theOriginalABC, theProcessedABC, grace_explorer_sta
   initPlay();
 
 }
+
 
 //
 // Roll Explorer
@@ -43468,6 +43662,61 @@ function RollExplorerDialog(theOriginalABC, theProcessedABC, roll_explorer_state
   gMIDIbuffer = null;
   gTheOKButton = null;
 
+  // --- NEW: snapshot of initial settings for dirty checking ---
+  var gRollExplorerInitialSettings = null;
+
+  // --- NEW: helper to set/reset the Reload button to red when settings changed ---
+  function updateRollExplorerDirtyState() {
+
+    if (!gRollExplorerInitialSettings) return;
+
+    // List of all roll parameter input IDs we want to monitor
+    var ids = [
+      // Quarter note roll
+      "roll_2_slot_1",
+      "roll_2_slot_2",
+      "roll_2_fraction_1",
+      "roll_2_fraction_2",
+      "roll_2_fraction_3",
+      "roll_2_volume_1",
+      "roll_2_volume_2",
+      "roll_2_volume_3",
+
+      // Dotted quarter note roll
+      "roll_3_slot_1",
+      "roll_3_slot_2",
+      "roll_3_fraction_1",
+      "roll_3_fraction_2",
+      "roll_3_fraction_3",
+      "roll_3_volume_1",
+      "roll_3_volume_2",
+      "roll_3_volume_3"
+    ];
+
+    var isDirty = false;
+
+    for (var i = 0; i < ids.length; i++) {
+      var el = document.getElementById(ids[i]);
+      if (!el) continue; // if something doesn't exist, ignore it
+
+      if (el.value !== gRollExplorerInitialSettings[ids[i]]) {
+        isDirty = true;
+        break;
+      }
+    }
+
+    // Only color the Reload button
+    var btnReload = document.getElementById("rollexplorertest");
+    if (!btnReload) return;
+
+    if (isDirty) {
+      btnReload.classList.add("apply_attention");
+    } else {
+      btnReload.classList.remove("apply_attention");
+    }
+
+  }
+
   // We came in because of a grace duration change, don't init the tune cache
   if (!roll_explorer_state) {
 
@@ -43669,8 +43918,8 @@ function RollExplorerDialog(theOriginalABC, theProcessedABC, roll_explorer_state
     modal_msg += 'Volume 3: <input style="width:85px;" id="roll_3_volume_3" title="Dotted quarter note volume 3" autocomplete="off" type="number" min="0" step="0.05" max="2"/>';
     modal_msg += '</p>';
     modal_msg += '<p class="configure_rollexplorer_text" style="text-align:center;margin:0px;margin-top:24px">';
-    modal_msg += '<input id="rollexplorertest" class="rollexplorertest button btn btn-rollexplorertest" onclick="RollExplorerRegenerate();" type="button" value="Reload Tune with Parameters" title="Reloads the tune into the player with the entered roll parameters">';
-    modal_msg += '<input id="rollexplorerinject" class="rollexplorerinject button btn btn-rollexplorerinject" onclick="RollExplorerInject();" type="button" value="Inject Parameters into ABC" title="Injects the current roll parameters and roll transformations into the tune ABC">';
+    modal_msg += '<input id="rollexplorertest" class="rollexplorertest button btn btn-rollexplorertest" onclick="RollExplorerRegenerate();" type="button" value="Reload Tune with Changes" title="Reloads the tune into the player with the entered roll parameters">';
+    modal_msg += '<input id="rollexplorerinject" class="rollexplorerinject button btn btn-rollexplorerinject" onclick="RollExplorerInject();" type="button" value="Inject Roll Parameters into ABC" title="Injects the current roll parameters and roll transformations into the tune ABC">';
     modal_msg += '<input id="rollexplorertransform" class="rollexplorertransform button btn btn-rollexplorertransform" onclick="RollExplorerTransformReel(false);" type="button" value="~G3 → G~G2" title="Transforms ~G3 style rolls to G~G2 style, may be useful for creating a better sounding roll for reels">';
     modal_msg += '<input id="rollexplorertransform2" style="margin-right:0px" class="rollexplorertransform2 button btn btn-rollexplorertransform" onclick="RollExplorerTransformReel(true);" type="button" value="~G3 → ~G2G" title="Transforms ~G3 style rolls to ~G2G style, may be useful for creating a better sounding roll for reels">';
     modal_msg += '</p>';
@@ -43715,6 +43964,47 @@ function RollExplorerDialog(theOriginalABC, theProcessedABC, roll_explorer_state
 
     // Set the initial roll parameters
     idleRollExplorer();
+
+    // --- NEW: snapshot initial values AFTER idleRollExplorer populates controls ---
+    (function snapshotRollExplorerInitialValuesAndHook() {
+
+      var ids = [
+        // Quarter note roll
+        "roll_2_slot_1",
+        "roll_2_slot_2",
+        "roll_2_fraction_1",
+        "roll_2_fraction_2",
+        "roll_2_fraction_3",
+        "roll_2_volume_1",
+        "roll_2_volume_2",
+        "roll_2_volume_3",
+
+        // Dotted quarter note roll
+        "roll_3_slot_1",
+        "roll_3_slot_2",
+        "roll_3_fraction_1",
+        "roll_3_fraction_2",
+        "roll_3_fraction_3",
+        "roll_3_volume_1",
+        "roll_3_volume_2",
+        "roll_3_volume_3"
+      ];
+
+      gRollExplorerInitialSettings = {};
+
+      for (var i = 0; i < ids.length; i++) {
+        var el = document.getElementById(ids[i]);
+        if (!el) continue;
+        gRollExplorerInitialSettings[ids[i]] = el.value;
+
+        // Hook input listener so typing + steppers update immediately
+        el.addEventListener("input", updateRollExplorerDirtyState);
+      }
+
+      // Ensure correct initial state
+      updateRollExplorerDirtyState();
+
+    })();
 
     var theOKButtons = document.getElementsByClassName("modal_flat_ok");
 
@@ -43807,6 +44097,7 @@ function RollExplorerDialog(theOriginalABC, theProcessedABC, roll_explorer_state
   initPlay();
 
 }
+
 
 
 //
@@ -44185,9 +44476,9 @@ function TuneTrainerDialog(theOriginalABC, theProcessedABC, looperState) {
     if (!applyBtn) return;
 
     if (isDirty) {
-      applyBtn.classList.add("tt_attention");
+      applyBtn.classList.add("apply_attention");
     } else {
-      applyBtn.classList.remove("tt_attention");
+      applyBtn.classList.remove("apply_attention");
     }
   }
 

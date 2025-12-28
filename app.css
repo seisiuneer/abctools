@@ -1242,18 +1242,12 @@ left:9px;
 top:5px;
 }
 
-
 #swingexplorertest{
 height:42px;
 padding:12px;
 width:auto;
 margin-right:36px;
-}
-
-@media (hover: hover) {
-	.swingexplorertest:hover{
-	background: palegreen;
-	}
+opacity: 0.4;
 }
 
 #swingexplorerhelp{
@@ -1281,13 +1275,9 @@ height:42px;
 padding:12px;
 width:auto;
 margin-right:36px;
+opacity: 0.4;
 }
 
-@media (hover: hover) {
-	.graceexplorertest:hover{
-	background: palegreen;
-	}
-}
 
 #graceexplorerhelp{
 font-size:24pt;
@@ -1338,18 +1328,12 @@ margin-left:0px;
 	}
 }
 
-
 #rollexplorertest{
 height:42px;
 padding:12px;
 width:auto;
 margin-right:20px;
-}
-
-@media (hover: hover) {
-	.rollexplorertest:hover{
-	background: palegreen;
-	}
+opacity: 0.4;
 }
 
 #rollexplorerhelp{
@@ -1470,14 +1454,8 @@ height:42px;
 padding:12px;
 width:auto;
 margin-right:36px;
+opacity: 0.4;
 }
-
-@media (hover: hover) {
-	.instrumentexplorertest:hover{
-	background: palegreen;
-	}
-}
-
 
 #instrumentexplorerinject{
 height:42px;
@@ -5003,12 +4981,7 @@ height:42px;
 padding:12px;
 width:auto;
 margin-right:24px;
-}
-
-@media (hover: hover) {
-	.reverbexplorertest:hover{
-	background: palegreen;
-	}
+opacity: 0.4;
 }
 
 #reverbexplorerinject{
@@ -5890,15 +5863,15 @@ padding-right: 30px; /* space for badge */
 }
 
 /* Tune trainer attention style */
-.tt_attention {
+.apply_attention {
   color: black !important;
   opacity: 1.0 !important;
   background-color:#FFC0C0 !important;
-  animation: tt_pulse 1.25s infinite;
+  animation: apply_pulse 1.25s infinite;
 }
 
 /* Pulsing animation */
-@keyframes tt_pulse {
+@keyframes apply_pulse {
   0% { transform: scale(1); }
   50% { transform: scale(1.06);  }
   100% { transform: scale(1); }
@@ -6521,7 +6494,7 @@ display:block;
 
 .btn-swingexplorertest{
   --color: black;
-  --background-color: #C8ECFE;
+  --background-color: #F0F0F0;
 }
 
 .btn-swingexplorerinject{
@@ -6536,7 +6509,7 @@ display:block;
 
 .btn-graceexplorertest{
   --color: black;
-  --background-color: #C8ECFE;
+  --background-color: #F0F0F0;
 }
 
 .btn-graceexplorerinject{
@@ -6551,7 +6524,7 @@ display:block;
 
 .btn-rollexplorertest{
   --color: black;
-  --background-color: #C8ECFE;
+  --background-color: #F0F0F0;
 }
 
 .btn-rollexplorerinject{
@@ -6581,7 +6554,7 @@ display:block;
 
 .btn-instrumentexplorertest{
   --color: black;
-  --background-color: #C8ECFE;
+  --background-color: #F0F0F0;
 }
 
 .btn-instrumentexplorerinject{
@@ -6761,7 +6734,7 @@ display:block;
 
 .btn-reverbexplorertest{
   --color: black;
-  --background-color: #C8ECFE;
+  --background-color: #F0F0F0;
 }
 
 .btn-reverbexplorerinject{
