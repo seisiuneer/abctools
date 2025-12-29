@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3121_122825_1730";
+var gVersionNumber = "3122_122825_1730";
 
 var gMIDIInitStillWaiting = false;
 
@@ -18029,14 +18029,24 @@ function AddFromSearch(e, callback) {
 
   SwitchTuneDatabase();
 
-  // Focus the search field when the dialog opens
+  // Focus/select after modal is fully present
   setTimeout(function () {
+
     var input = document.getElementById("tuneNameToSearch");
-    if (input) {
-      input.focus();
+    if (!input) return;
+
+    input.focus({ preventScroll: true });
+
+    // More reliable than input.select() on iOS
+    var len = input.value.length;
+    
+    try {
+      input.setSelectionRange(0, len);
+    } catch (e) {
+      // fallback
       input.select();
     }
-  }, 0);
+  }, 50);
 
 }
 
