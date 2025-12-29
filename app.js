@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3120_122825_0930";
+var gVersionNumber = "3121_122825_1730";
 
 var gMIDIInitStillWaiting = false;
 
@@ -17921,7 +17921,7 @@ function AddFromSearch(e, callback) {
     if (callback) {
       callback();
     }
-  })
+  });
 
   // Default initial max results to 25
   document.getElementById("maxtunesearchresults").value = "25";
@@ -18028,6 +18028,15 @@ function AddFromSearch(e, callback) {
   document.getElementById("tuneNameToSearch").value = gLastTuneSearchValue;
 
   SwitchTuneDatabase();
+
+  // Focus the search field when the dialog opens
+  setTimeout(function () {
+    var input = document.getElementById("tuneNameToSearch");
+    if (input) {
+      input.focus();
+      input.select();
+    }
+  }, 0);
 
 }
 
