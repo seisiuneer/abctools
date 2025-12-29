@@ -1797,6 +1797,8 @@ opacity:0.4;
 .newabcfile{
 margin-left:0px;
 opacity:1.0;
+padding:0.7rem 0.85rem !important;
+padding-top:0.8rem !important;
 }
 
 @media (hover: hover) {
