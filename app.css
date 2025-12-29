@@ -6140,7 +6140,7 @@ display:block;
   position: relative;
   border-radius: 0.5rem;
   user-select: none;
-  box-shadow: 0 0.1rem 0.1rem rgba(0, 0, 0, 0.25), 0 -0.1rem 0.5rem rgba(0, 0, 0, 0.1) inset;
+  box-shadow: 0 0.1rem 0.1rem rgba(0, 0, 0, 0.25), 0 -0.1rem 0.5rem rgba(0, 0, 0, 0.15) inset;
   -webkit-appearance:none;
 }
 .btn:after {
