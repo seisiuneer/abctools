@@ -786,6 +786,18 @@ margin-left:20px;
 	}
 }
 
+#abcplayer_settingsbutton_d{
+height:42px;
+padding:12px;
+margin-top:10px;
+}
+
+@media (hover: hover) {
+	.abcplayer_settingsbutton_d:hover{
+	background: palegreen;
+	}
+}
+
 #abcplayer_trainer{
 	height:42px;
 	margin-top: 9px;
@@ -1562,16 +1574,11 @@ margin-left:14px;
 width:auto;
 }
 
-.managedatabases {
-	display: inline-block;
-}
-
 #managedatabases{
 height:42px;
 padding:12px;
 width:auto;
-margin-right:0px;
-margin-left:12px;
+margin-top:10px;
 }
 
 .managedatabases:hover{
@@ -2589,7 +2596,7 @@ body.noui svg {
 
 .configure_settings_form_text_checkbox{
 	font-size:12pt;
-	line-height:11px;
+	line-height:24px;
 	font-family:helvetica;
 	margin-top:9px;
 	display:flex;
@@ -2597,7 +2604,7 @@ body.noui svg {
 
 .configure_settings_form_text{
 	font-size:12pt;
-	line-height:11px;
+	line-height:20px;
 	font-family:helvetica;
 	margin-top:16px;
 	display:flex;
@@ -2608,7 +2615,7 @@ body.noui svg {
 	font-family:helvetica;
 	margin-left:12px;
 	width: 60px;
-	margin-top:-9px;
+	margin-top:-5px;
 	padding:4px;
 }
 
@@ -2704,7 +2711,7 @@ margin-top:-7px;
 
 .advanced_settings2_form_text{
 	font-size:12pt;
-	line-height:10px;
+	line-height:20px;
 	font-family:helvetica;
 	margin-top:14px;
 	display:flex;
@@ -2715,12 +2722,12 @@ margin-top:-7px;
 	font-family:helvetica;
 	margin-left:12px;
 	width: 100px;
-	margin-top:-11px;
+	margin-top:-5px;
 }
 
 .advanced_settings2_roll_text{
 	font-size:12pt;
-	line-height:16px;
+	line-height:24px;
 	font-family:helvetica;
 	margin-top:14px;
 	display:flex;
@@ -2736,7 +2743,7 @@ margin-top:-7px;
 
 .advanced_settings2_tinyurl_text{
 	font-size:12pt;
-	line-height:16px;
+	line-height:24px;
 	font-family:helvetica;
 	margin-top:14px;
 	display:flex;
@@ -2747,11 +2754,11 @@ margin-top:-7px;
 	font-family:helvetica;
 	margin-left: 12px;
 	width: 500px;
-	margin-top:-8px;
+	margin-top:-4px;
 }
 .advanced_settings2_reverb_text{
 	font-size:12pt;
-	line-height:16px;
+	line-height:24px;
 	font-family:helvetica;
 	margin-top:14px;
 	display:flex;
@@ -2762,12 +2769,12 @@ margin-top:-7px;
 	font-family:helvetica;
 	margin-left: 12px;
 	width: 215px;
-	margin-top:-8px;
+	margin-top:-4px;
 }
 
 .advanced_settings2_form_text_checkbox{
 	font-size:12pt;
-	line-height:11px;
+	line-height:24px;
 	font-family:helvetica;
 	margin-top:7px;
 	display:flex;
@@ -6123,6 +6130,19 @@ display:block;
 /* Optional: reduces paint jitter on some browsers */
 #add-new-tune-dialog { contain: layout paint; }
 
+/* Configure Settings: fixed-height tab content area */
+.configure-settings-tab-panels{
+  height: 450px;           /* adjust if you want taller/shorter */
+  overflow-y: auto;
+  box-sizing: border-box;
+}
+
+/* Optional: tighten spacing a bit inside panels for DayPilot form rows */
+.configure-settings-tab-panels .dpmodal_form_item{
+  margin-top: 2px;
+}
+
+.configure-settings-tab-panels.is-building { visibility: hidden; }
 
 /******************************************************************************/
 /* STYLES RELATED TO BUTTONS                                                  */

@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3124_122925_1200";
+var gVersionNumber = "3125_123025_1100";
 
 var gMIDIInitStillWaiting = false;
 
@@ -50858,7 +50858,424 @@ function ShowBrowserInfo() {
 
 }
 
+function LoadLastTab(storageKey, fallbackTabId) {
+  try {
+    if (gLocalStorageAvailable && localStorage[storageKey]) return localStorage[storageKey];
+  } catch (e) {}
+  return fallbackTabId;
+}
+
+function SaveLastTab(storageKey, tabId) {
+  try {
+    if (gLocalStorageAvailable) localStorage[storageKey] = tabId;
+  } catch (e) {}
+}
+
+function ActivateAdvTabs(rootId, storageKey, tabId) {
+  var root = document.getElementById(rootId);
+  if (!root) return;
+
+  var btns = root.querySelectorAll(".adv-tab-btn");
+  var panels = root.querySelectorAll(".adv-tab-panel");
+
+  btns.forEach(function(b) {
+    b.classList.toggle("active", b.getAttribute("data-tab") === tabId);
+  });
+
+  panels.forEach(function(p) {
+    p.classList.toggle("active", p.id === tabId);
+  });
+
+  SaveLastTab(storageKey, tabId);
+}
+
+function InitAdvTabs(rootId, storageKey, fallbackTabId) {
+  var root = document.getElementById(rootId);
+  if (!root) return;
+
+  // hook clicks
+  root.querySelectorAll(".adv-tab-btn").forEach(function(btn) {
+    btn.addEventListener("click", function() {
+      ActivateAdvTabs(rootId, storageKey, btn.getAttribute("data-tab"));
+    });
+  });
+
+  // select last
+  var desired = LoadLastTab(storageKey, fallbackTabId);
+  if (!root.querySelector("#" + desired)) {
+    var first = root.querySelector(".adv-tab-btn");
+    desired = first ? first.getAttribute("data-tab") : fallbackTabId;
+  }
+
+  ActivateAdvTabs(rootId, storageKey, desired);
+}
+
+// Theme-aware mover: moves a full modal_flat_form_item row by input name
+function MoveModalFieldRowByName(modalRoot, fieldName, destId) {
+  var dest = document.getElementById(destId);
+  if (!dest) return false;
+
+  var q = 'input[name="' + fieldName + '"], select[name="' + fieldName + '"], textarea[name="' + fieldName + '"]';
+  var el = modalRoot.querySelector(q);
+  if (!el) return false;
+
+  var row = el.closest(".modal_flat_form_item") || el.closest("div") || el;
+  dest.appendChild(row);
+  return true;
+}
+
+var gAdvancedSettingsLastTab = "adv_tab_general";
+
 function AdvancedSettings() {
+
+  // Keep track of dialogs
+  sendGoogleAnalytics("dialog", "AdvancedSettings");
+
+  var oldHighlightColor = gRawHighlightColor;
+  var oldDiagnostics = gShowDiagnostics;
+  var oldForceAndroid = gForceAndroid;
+  var oldDisableAndroid = gDisableAndroid;
+
+  // Setup initial values
+  const theData = {
+    configure_fullscreen_scaling: gFullScreenScaling,
+    configure_highlight_color: gRawHighlightColor,
+    configure_player_status_on_left: gPlayerStatusOnLeft,
+    configure_large_player_controls: gLargePlayerControls,
+    configure_autoscrollplayer: gAutoscrollPlayer,
+    configure_autoscrollsmooth: gAutoscrollSmooth,
+    configure_autoscrolltarget: gAutoscrollTarget,
+    configure_trainer_touch_controls: gTrainerTouchControls,
+    configure_mp3_bitrate: gMP3Bitrate,
+    configure_export_delayms: gBatchExportDelayMS,
+    configure_mp3export_delayms: gBatchMP3ExportDelayMS,
+    configure_DisableRendering: gDisableNotationRendering,
+    configure_disable_selected_play: gDisableSelectedPlay,
+    configure_show_diagnostics: gShowDiagnostics,
+    configure_reverb: gReverbString,
+    configure_tinyurl: gTinyURLAPIKeyOverride,
+    configure_confirm_clear: gConfirmClear,
+    configure_show_render_progress: gShowABCJSRenderProgress,
+    configure_clean_smartquotes: gCleanSmartQuotes,
+    configure_jumptotune_autoscroll: gJumpToTuneAutoscroll,
+    configure_force_android: gForceAndroid,
+    configure_disable_android: gDisableAndroid,
+    configure_looper_add_measure_count: gLooperAddMeasureCount
+  };
+
+  var form = [{
+    html: '<p style="text-align:center;font-size:16pt;font-family:helvetica;margin-bottom:24px;margin-left:15px;">Advanced Settings&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#advanced_settings" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'
+  }, {
+    html: '<p style="font-size:12pt;line-height:12px;font-family:helvetica;"><strong>Only change these values if you know what you are doing!</strong></p>'
+  }];
+
+  // --- Tabs scaffold (panels empty; we'll move rows in after render) ---
+  form.push({
+    html:
+      '<div id="advanced_settings_tabs_root" class="adv-tabs">' +
+        '<div class="adv-tab-bar">' +
+          '<button type="button" class="adv-tab-btn" data-tab="adv_tab_general">General</button>' +
+          '<button type="button" class="adv-tab-btn" data-tab="adv_tab_player">Player</button>' +
+          '<button type="button" class="adv-tab-btn" data-tab="adv_tab_export">Export</button>' +
+          '<button type="button" class="adv-tab-btn" data-tab="adv_tab_system">System</button>' +
+        '</div>' +
+        '<div class="adv-tab-panels" style="height:415px; overflow-y:auto;">' +
+          '<div id="adv_tab_general" class="adv-tab-panel"><div id="adv_tab_general_fields"></div></div>' +
+          '<div id="adv_tab_player" class="adv-tab-panel"><div id="adv_tab_player_fields"></div></div>' +
+          '<div id="adv_tab_export" class="adv-tab-panel"><div id="adv_tab_export_fields"></div></div>' +
+          '<div id="adv_tab_system" class="adv-tab-panel"><div id="adv_tab_system_fields"></div></div>' +
+        '</div>' +
+      '</div>'
+  });
+
+  // ---- Original fields (unchanged) ----
+  form = form.concat([
+    { name: "          Always confirm before deletion when clicking Clear", id: "configure_confirm_clear", type: "checkbox", cssClass: "advanced_settings2_form_text_checkbox" },
+    { name: "          Always replace curly single and double quotes with standard versions on Open or Paste", id: "configure_clean_smartquotes", type: "checkbox", cssClass: "advanced_settings2_form_text_checkbox" },
+    { name: "          Show ABC syntax validation panel", id: "configure_show_diagnostics", type: "checkbox", cssClass: "advanced_settings2_form_text_checkbox" },
+    { name: "          Show tune rendering progress in Javascript console", id: "configure_show_render_progress", type: "checkbox", cssClass: "advanced_settings2_form_text_checkbox" },
+    { name: "    Disable abcjs notation rendering", id: "configure_DisableRendering", type: "checkbox", cssClass: "advanced_settings2_form_text_checkbox" },
+    { name: "    Jump to Tune always scrolls to the last selected tune", id: "configure_jumptotune_autoscroll", type: "checkbox", cssClass: "advanced_settings2_form_text_checkbox" },
+    { name: "    Autoscroll player when playing", id: "configure_autoscrollplayer", type: "checkbox", cssClass: "advanced_settings2_form_text_checkbox" },
+    { name: "    Smooth autoscroll when playing (when Autoscroll player is enabled)", id: "configure_autoscrollsmooth", type: "checkbox", cssClass: "advanced_settings2_form_text_checkbox" },
+    { name: "    Player autoscroll vertical position target percentage (default is 66):", id: "configure_autoscrolltarget", type: "text", cssClass: "advanced_settings2_form_text" },
+    { name: "    Player/Tune Trainer always plays full tune even if there is a selection region", id: "configure_disable_selected_play", type: "checkbox", cssClass: "advanced_settings2_form_text_checkbox" },
+    { name: "    Player uses large controls (easier to touch on phone/tablet)", id: "configure_large_player_controls", type: "checkbox", cssClass: "advanced_settings2_form_text_checkbox" },
+    { name: "    Player tunebook navigation controls on left side", id: "configure_player_status_on_left", type: "checkbox", cssClass: "advanced_settings2_form_text_checkbox" },
+    { name: "    Player/Tune Trainer uses label L/R side click to decrement/increment values", id: "configure_trainer_touch_controls", type: "checkbox", cssClass: "advanced_settings2_form_text_checkbox" },
+    { name: "Tune Trainer add extra measure count:", id: "configure_looper_add_measure_count", type: "text", cssClass: "advanced_settings2_form_text" },
+    { name: "Full screen tune display width scaling (percentage) (default is 50):", id: "configure_fullscreen_scaling", type: "number", cssClass: "advanced_settings2_form_text" }
+  ]);
+
+  if (isPureDesktopBrowser()) {
+    form = form.concat([
+      { name: "Highlighting color (HTML format) (default is #F00000):", id: "configure_highlight_color", type: "text", cssClass: "advanced_settings2_form_text" }
+    ]);
+  }
+
+  form = form.concat([
+    { name: "Default %reverb annotation (blank = no reverb):", id: "configure_reverb", type: "text", cssClass: "advanced_settings2_reverb_text" },
+    { name: "MP3 audio export bitrate (kbit/sec) (default is 224):", id: "configure_mp3_bitrate", type: "number", cssClass: "advanced_settings2_form_text" }
+  ]);
+
+  if (isPureDesktopBrowser()) {
+    form = form.concat([
+      { name: "Image/ABC Batch Export Delay in milliseconds (default is 200):", id: "configure_export_delayms", type: "text", cssClass: "advanced_settings2_form_text" },
+      { name: "MP3 Batch Export Delay in milliseconds (default is 250):", id: "configure_mp3export_delayms", type: "text", cssClass: "advanced_settings2_form_text" }
+    ]);
+  }
+
+  if ((!gIsIOS) && (!gIsIPad)) {
+    form.push({ name: "    Force Android phone UI (If mobile browser doesn't identify as Android)", id: "configure_force_android", type: "checkbox", cssClass: "advanced_settings2_form_text_checkbox" });
+    form.push({ name: "    Disable Android phone UI (If mobile browser does identify as Android)", id: "configure_disable_android", type: "checkbox", cssClass: "advanced_settings2_form_text_checkbox" });
+  }
+
+  // NOTE: keep your bottom buttons + version message OUTSIDE tabs (unchanged)
+  form = form.concat([{
+      name: "Private TinyURL API Token:",
+      id: "configure_tinyurl",
+      type: "text",
+      cssClass: "advanced_settings2_tinyurl_text"
+    },
+    {
+      html: '<p style="text-align:center;margin-top:18px;margin-bottom:6px"><input id="customthemeeditor" class="btn btn-subdialog" onclick="customThemeEditor()" type="button" value="ABC Syntax Highlighting Theme Editor" title="Opens the ABC Syntax Highlighting Theme Editor"><label class="loadimpulsebutton btn btn-subdialog " for="loadimpulsebutton" title="Load a custom reverb convolution impulse .wav file">Load Custom Reverb Impulse <input type="file" id="loadimpulsebutton"  accept=".wav,.WAV" hidden/></label><input id="resetsettings" class="btn btn-resetsettings resetsettings" onclick="ResetSettingsDialog()" type="button" value="Reset Settings" title="Opens a dialog where you can reset all tool settings to the default and/or clear the instrument notes, reverb settings, and tune search engine collection databases"></p><p style="font-size:10pt;line-height:14pt;font-family:helvetica;color:grey;position:absolute;left:20px;bottom:30px;margin:0px;cursor:pointer;" onclick="ShowBrowserInfo();" title="Click to show browser information">Click to show browser info<br/>Installed version: ' + gVersionNumber + '</p>'
+    }
+  ]);
+
+  // Set up the reverb impulse load callback
+  setTimeout(function() { idleAdvancedSettings(); }, 25);
+
+  const modal = DayPilot.Modal.form(form, theData, {
+    theme: "modal_flat",
+    top: 10,
+    width: 800,
+    scrollWithPage: (AllowDialogsToScroll()),
+    autoFocus: false
+  });
+
+  // After DayPilot builds DOM, move the modal_flat_form_item rows into tab panels
+  requestAnimationFrame(function() {
+    requestAnimationFrame(function() {
+
+      var tabsRoot = document.getElementById("advanced_settings_tabs_root");
+      if (tabsRoot) {
+
+        var modalRoot =
+          tabsRoot.closest(".modal_flat") ||
+          tabsRoot.closest(".dpmodal") ||
+          document;
+
+        // General
+        MoveModalFieldRowByName(modalRoot, "configure_confirm_clear", "adv_tab_general_fields");
+        MoveModalFieldRowByName(modalRoot, "configure_clean_smartquotes", "adv_tab_general_fields");
+        MoveModalFieldRowByName(modalRoot, "configure_show_diagnostics", "adv_tab_general_fields");
+        MoveModalFieldRowByName(modalRoot, "configure_show_render_progress", "adv_tab_general_fields");
+        MoveModalFieldRowByName(modalRoot, "configure_DisableRendering", "adv_tab_general_fields");
+        MoveModalFieldRowByName(modalRoot, "configure_jumptotune_autoscroll", "adv_tab_general_fields");
+
+        // Player
+        MoveModalFieldRowByName(modalRoot, "configure_autoscrollplayer", "adv_tab_player_fields");
+        MoveModalFieldRowByName(modalRoot, "configure_autoscrollsmooth", "adv_tab_player_fields");
+        MoveModalFieldRowByName(modalRoot, "configure_autoscrolltarget", "adv_tab_player_fields");
+        MoveModalFieldRowByName(modalRoot, "configure_highlight_color", "adv_tab_player_fields");
+        MoveModalFieldRowByName(modalRoot, "configure_disable_selected_play", "adv_tab_player_fields");
+        MoveModalFieldRowByName(modalRoot, "configure_large_player_controls", "adv_tab_player_fields");
+        MoveModalFieldRowByName(modalRoot, "configure_player_status_on_left", "adv_tab_player_fields");
+        MoveModalFieldRowByName(modalRoot, "configure_trainer_touch_controls", "adv_tab_player_fields");
+        MoveModalFieldRowByName(modalRoot, "configure_looper_add_measure_count", "adv_tab_player_fields");
+        MoveModalFieldRowByName(modalRoot, "configure_fullscreen_scaling", "adv_tab_player_fields");
+        MoveModalFieldRowByName(modalRoot, "configure_reverb", "adv_tab_player_fields");
+
+        // Export
+        MoveModalFieldRowByName(modalRoot, "configure_mp3_bitrate", "adv_tab_export_fields");
+
+        if (isPureDesktopBrowser()) {
+          MoveModalFieldRowByName(modalRoot, "configure_mp3export_delayms", "adv_tab_export_fields");
+          MoveModalFieldRowByName(modalRoot, "configure_export_delayms", "adv_tab_export_fields");
+        }
+
+        // System
+        if ((!gIsIOS) && (!gIsIPad)) {
+          MoveModalFieldRowByName(modalRoot, "configure_force_android", "adv_tab_system_fields");
+          MoveModalFieldRowByName(modalRoot, "configure_disable_android", "adv_tab_system_fields");
+        }
+
+        MoveModalFieldRowByName(modalRoot, "configure_tinyurl", "adv_tab_system_fields");
+        
+      }
+
+      // init tabs + remember last
+      InitAdvTabs("advanced_settings_tabs_root", "AdvancedSettingsLastTab", "adv_tab_general");
+
+    });
+  });
+
+  modal.then(function(args) {
+
+    // Get the results and store them in the global configuration
+    if (!args.canceled) {
+
+      gJumpToTuneAutoscroll = args.result.configure_jumptotune_autoscroll;
+
+      gConfirmClear = args.result.configure_confirm_clear;
+      gCleanSmartQuotes = args.result.configure_clean_smartquotes;
+
+      gShowDiagnostics = args.result.configure_show_diagnostics;
+      updateDiagnostics();
+
+      if (!gIsIOS) {
+        gForceAndroid = args.result.configure_force_android;
+        gDisableAndroid = args.result.configure_disable_android;
+      }
+
+      gDisableNotationRendering = args.result.configure_DisableRendering;
+
+      if (gDisableNotationRendering) {
+
+        sendGoogleAnalytics("action", "RenderDisable");
+
+        var notationHolder = gTheNotation;
+        notationHolder.innerHTML = "";
+
+        var elem = document.getElementById("rawmodebutton");
+        gRawLastIndex = -1;
+
+        elem.value = "Highlighting";
+        elem.classList.add("btn-rawmode-off");
+        elem.classList.remove("btn-rawmode-on");
+
+        if (gEnableSyntax){
+          setCMDarkMode(gDarkModeColor,gLightModeColor);
+          gTheCM.refresh();
+        } else {
+          gTheABC.style.backgroundColor = gLightModeColor;
+        }
+
+        gRawMode = false;
+      }
+
+      gShowABCJSRenderProgress = args.result.configure_show_render_progress;
+
+      gFullScreenScaling = args.result.configure_fullscreen_scaling;
+      gFullScreenScaling = gFullScreenScaling.replace("%", "");
+
+      if (isNaN(parseInt(gFullScreenScaling))) gFullScreenScaling = 50;
+      else gFullScreenScaling = parseInt(gFullScreenScaling);
+
+      if (gFullScreenScaling < 25) gFullScreenScaling = 25;
+      if (gFullScreenScaling > 100) gFullScreenScaling = 100;
+
+      gPlayerStatusOnLeft = args.result.configure_player_status_on_left;
+      gLargePlayerControls = args.result.configure_large_player_controls;
+
+      gAutoscrollPlayer = args.result.configure_autoscrollplayer;
+      gAutoscrollSmooth = args.result.configure_autoscrollsmooth;
+
+      var val = parseFloat(args.result.configure_autoscrolltarget);
+      if (!isNaN(val)) {
+        if ((gAutoscrollTarget >= 0) && (gAutoscrollTarget <= 100)) {
+          gAutoscrollTarget = val;
+        }
+      }
+
+      gTrainerTouchControls = args.result.configure_trainer_touch_controls;
+      gDisableSelectedPlay = args.result.configure_disable_selected_play;
+
+      gReverbString = args.result.configure_reverb;
+
+      var testMP3Bitrate = parseInt(args.result.configure_mp3_bitrate);
+      if (!isNaN(testMP3Bitrate)) {
+        gMP3Bitrate = testMP3Bitrate;
+        if (gMP3Bitrate < 96) gMP3Bitrate = 96;
+        if (gMP3Bitrate > 384) gMP3Bitrate = 384;
+      }
+
+      val = parseInt(args.result.configure_looper_add_measure_count);
+      if (!isNaN(val)) {
+        if ((gLooperAddMeasureCount > 0) && (gLooperAddMeasureCount <= 16)) {
+          gLooperAddMeasureCount = val;
+        }
+      }
+
+      var theTinyURLKey = args.result.configure_tinyurl;
+      if (theTinyURLKey) theTinyURLKey = theTinyURLKey.trim();
+
+      if (theTinyURLKey && (theTinyURLKey != "")) {
+        if (!gDoTinyURLAPIKeyOverride) {
+          sendGoogleAnalytics("sharing", "custom_tinyurl_token_entered");
+        }
+        gTinyURLAPIKeyOverride = theTinyURLKey;
+        gDoTinyURLAPIKeyOverride = true;
+      } else {
+        gTinyURLAPIKeyOverride = "";
+        gDoTinyURLAPIKeyOverride = false;
+      }
+
+      IdleAllowShowTabNames();
+
+      if (isPureDesktopBrowser()) {
+
+        gRawHighlightColor = args.result.configure_highlight_color;
+
+        val = parseInt(args.result.configure_export_delayms);
+        if (!isNaN(val)) { if (val >= 0) gBatchExportDelayMS = val; }
+
+        val = parseInt(args.result.configure_mp3export_delayms);
+        if (!isNaN(val)) { if (val >= 0) gBatchMP3ExportDelayMS = val; }
+
+        if (gRawMode && (gRawHighlightColor != oldHighlightColor)) {
+          RenderAsync(true, null);
+        }
+      }
+
+      if (oldDiagnostics != gShowDiagnostics) {
+        HandleWindowResize();
+      }
+
+      SaveConfigurationSettings();
+
+      if (!gIsIOS) {
+
+        if (oldForceAndroid != gForceAndroid) {
+
+          var thePrompt = "The tool will restart since the forcing Android setting changed.";
+          thePrompt = makeCenteredPromptString(thePrompt);
+
+          DayPilot.Modal.alert(thePrompt, {
+            theme: "modal_flat",
+            top: 200,
+            scrollWithPage: (AllowDialogsToScroll())
+          }).then(function(args) {
+            window.location.reload();
+          });
+
+          return;
+        }
+
+        if (oldDisableAndroid != gDisableAndroid) {
+
+          var thePrompt2 = "The tool will restart since the disabling Android setting changed.";
+          thePrompt2 = makeCenteredPromptString(thePrompt2);
+
+          DayPilot.Modal.alert(thePrompt2, {
+            theme: "modal_flat",
+            top: 200,
+            scrollWithPage: (AllowDialogsToScroll())
+          }).then(function(args) {
+            window.location.reload();
+          });
+
+          return;
+        }
+      }
+    }
+
+  });
+
+}
+
+
+function xAdvancedSettings() {
 
   // Keep track of dialogs
   sendGoogleAnalytics("dialog", "AdvancedSettings");
@@ -51901,6 +52318,73 @@ function ConfigurePlayerSettings(player_callback) {
 
 }
 
+// Remember last-opened tab for the Configure Settings dialog
+var gConfigureSettingsLastTab = "tab_editor";
+
+// Load from localStorage if available
+function LoadConfigureSettingsLastTab() {
+  try {
+    if (gLocalStorageAvailable && localStorage.ConfigureSettingsLastTab) {
+      gConfigureSettingsLastTab = localStorage.ConfigureSettingsLastTab;
+    }
+  } catch (e) {}
+}
+
+// Save to localStorage
+function SaveConfigureSettingsLastTab(tabId) {
+  gConfigureSettingsLastTab = tabId;
+  try {
+    if (gLocalStorageAvailable) {
+      localStorage.ConfigureSettingsLastTab = tabId;
+    }
+  } catch (e) {}
+}
+
+// Activate a tab inside the Configure Settings dialog
+function ConfigureSettingsActivateTab(containerId, tabId) {
+  var root = document.getElementById(containerId);
+  if (!root) return;
+
+  var btns = root.querySelectorAll(".adv-tab-btn");
+  var panels = root.querySelectorAll(".adv-tab-panel");
+
+  btns.forEach(function(b) {
+    b.classList.toggle("active", b.getAttribute("data-tab") === tabId);
+  });
+
+  panels.forEach(function(p) {
+    p.classList.toggle("active", p.id === tabId);
+  });
+
+  SaveConfigureSettingsLastTab(tabId);
+}
+
+// Wire up tab buttons
+function InitConfigureSettingsTabs() {
+  var containerId = "configure_settings_tabs_root";
+
+  var root = document.getElementById(containerId);
+  if (!root) return;
+
+  // Hook tab clicks
+  var btns = root.querySelectorAll(".adv-tab-btn");
+  btns.forEach(function(btn) {
+    btn.addEventListener("click", function() {
+      var tabId = btn.getAttribute("data-tab");
+      ConfigureSettingsActivateTab(containerId, tabId);
+    });
+  });
+
+  // Select last tab (fallback to first)
+  var desired = gConfigureSettingsLastTab || "tab_editor";
+  var exists = root.querySelector("#" + desired);
+  if (!exists && btns.length) {
+    desired = btns[0].getAttribute("data-tab");
+  }
+
+  ConfigureSettingsActivateTab(containerId, desired);
+}
+
 //
 // Configuration settings dialog
 //
@@ -51909,32 +52393,21 @@ function ConfigureToolSettings() {
   // Keep track of advanced controls dialog
   sendGoogleAnalytics("dialog", "ConfigureToolSettings");
 
+  LoadConfigureSettingsLastTab();
+
   var theOldSaveLastAutoSnapShot = gSaveLastAutoSnapShot;
-
   var theOldStaffSpacing = gStaffSpacing - STAFFSPACEOFFSET;
-
   var theOldShowTabNames = gShowTabNames;
-
   var theOldCapo = gCapo;
-
   var theOldUseCustomGMSounds = gUseCustomGMSounds;
-
   var theOldAllowMIDIInput = gAllowMIDIInput;
-
   var theOldFeaturesShowTabButtons = gFeaturesShowTabButtons;
-
   var theOldComhaltas = gUseComhaltasABC;
-
   var theOldForceComhaltas = gForceComhaltasABC;
-
   var oldiPadTwoColumn = giPadTwoColumn;
-
   var oldRecorderTab = gShowRecorderTab;
-
   var oldTabSelected = GetRadioValue("notenodertab");
-
   var oldRecorderFingeringGerman = gRecorderFingeringGerman;
-
   var oldEnableSyntax = gEnableSyntax;
   var oldSyntaxDarkMode = gSyntaxDarkMode;
 
@@ -51961,15 +52434,70 @@ function ConfigureToolSettings() {
     configure_allow_offline_instruments: gAllowOfflineInstruments,
     configure_ipad_two_column: giPadTwoColumn,
     configure_player_scaling: gPlayerScaling,
-    configure_syntax_highlighting:gEnableSyntax,
-    configure_syntax_highlighting_dark:gSyntaxDarkMode,
+    configure_syntax_highlighting: gEnableSyntax,
+    configure_syntax_highlighting_dark: gSyntaxDarkMode,
   };
 
-  var form = [{
-    html: '<p style="text-align:center;font-size:16pt;font-family:helvetica;margin-left:15px;">ABC Transcription Tools Settings&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#settings_dialog" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'
-  }, ];
+  var form = [];
 
-  // Only show batch export delays on desktop
+  // Title/header
+  form.push({
+    html:
+      '<p style="text-align:center;font-size:16pt;font-family:helvetica;margin-left:15px;">' +
+      'ABC Transcription Tools Settings&nbsp;&nbsp;' +
+      '<span style="font-size:24pt;" title="View documentation in new tab">' +
+      '<a href="https://michaeleskin.com/abctools/userguide.html#settings_dialog" target="_blank" ' +
+      'style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a>' +
+      '</span>' +
+      '</p>'
+  });
+
+  if (browserSupportsMIDI()){
+
+    // --- Tabs scaffold (NOT including bottom buttons/version text) ---
+    form.push({
+      html:
+        '<div id="configure_settings_tabs_root" class="adv-tabs">' +
+          '<div class="adv-tab-bar">' +
+            '<button type="button" class="adv-tab-btn" data-tab="tab_editor">Editor</button>' +
+            '<button type="button" class="adv-tab-btn" data-tab="tab_tabs">Tabs &amp; Layout</button>' +
+            '<button type="button" class="adv-tab-btn" data-tab="tab_playback">Playback</button>' +
+            '<button type="button" class="adv-tab-btn" data-tab="tab_midi">MIDI Input</button>' +
+          '</div>' +
+          '<div class="adv-tab-panels configure-settings-tab-panels">' +
+            '<div id="tab_editor" class="adv-tab-panel"><div id="tab_editor_fields"></div></div>' +
+            '<div id="tab_tabs" class="adv-tab-panel"><div id="tab_tabs_fields"></div></div>' +
+            '<div id="tab_playback" class="adv-tab-panel"><div id="tab_playback_fields"></div></div>' +
+            '<div id="tab_midi" class="adv-tab-panel"><div id="tab_midi_fields"></div></div>' +
+          '</div>' +
+        '</div>'
+    });
+  }
+  else{
+
+    // --- Tabs scaffold (NOT including bottom buttons/version text) ---
+    form.push({
+      html:
+        '<div id="configure_settings_tabs_root" class="adv-tabs">' +
+          '<div class="adv-tab-bar">' +
+            '<button type="button" class="adv-tab-btn" data-tab="tab_editor">Editor</button>' +
+            '<button type="button" class="adv-tab-btn" data-tab="tab_tabs">Tabs &amp; Layout</button>' +
+            '<button type="button" class="adv-tab-btn" data-tab="tab_playback">Playback</button>' +
+          '</div>' +
+          '<div class="adv-tab-panels configure-settings-tab-panels">' +
+            '<div id="tab_editor" class="adv-tab-panel"><div id="tab_editor_fields"></div></div>' +
+            '<div id="tab_tabs" class="adv-tab-panel"><div id="tab_tabs_fields"></div></div>' +
+            '<div id="tab_playback" class="adv-tab-panel"><div id="tab_playback_fields"></div></div>' +
+          '</div>' +
+        '</div>'
+    });
+
+  }
+
+  // =============== TAB: Editor ===============
+  form.push({ html: '<div id="tab_editor" class="adv-tab-panel">' });
+
+  // iPad two-column option (only if iPad)
   if (gIsIPad) {
     form.push({
       name: "    iPad Side-by-Side view (similar to desktop)",
@@ -51979,7 +52507,7 @@ function ConfigureToolSettings() {
     });
   }
 
-  // Expose syntax highlighting overrides
+  // Syntax highlighting enable (desktop vs mobile label)
   if (isPureDesktopBrowser()){
     form.push({
       name: "          Enable ABC syntax highlighting (change requires restart)",
@@ -51987,8 +52515,7 @@ function ConfigureToolSettings() {
       type: "checkbox",
       cssClass: "configure_settings_form_text_checkbox"
     });
-  }
-  else{
+  } else {
     form.push({
       name: "          Enable ABC syntax highlighting (change requires restart, some issues on mobile browsers)",
       id: "configure_syntax_highlighting",
@@ -52001,31 +52528,10 @@ function ConfigureToolSettings() {
     name: "          Use Dark Mode for the editor when syntax highlighting is enabled",
     id: "configure_syntax_highlighting_dark",
     type: "checkbox",
-    cssClass: "advanced_settings2_form_text_checkbox"
-  });  
-
-  form = form.concat([{
-    name: "Player screen width (percentage) (min is 50, max is 100):",
-    id: "configure_player_scaling",
-    type: "number",
-    cssClass: "configure_settings_form_text"
-  }, {
-    name: "          Show instrument tablature button bar below ABC editor",
-    id: "configure_show_tab_buttons",
-    type: "checkbox",
     cssClass: "configure_settings_form_text_checkbox"
-  }, ]);
+  });
 
-  // Disallowing auto snapshots on mobile
-  if (isPureDesktopBrowser()) {
-    form.push({
-      name: "   Save an Auto-Snapshot on browser tab close or reload (Restore it from the Add dialog)",
-      id: "configure_save_exit_snapshot",
-      type: "checkbox",
-      cssClass: "configure_settings_form_text_checkbox"
-    });
-  }
-
+  // Editor font size only on desktop
   if (isDesktopBrowser()) {
     form.push({
       name: "ABC Editor Font Size (default is 13):",
@@ -52035,109 +52541,202 @@ function ConfigureToolSettings() {
     });
   }
 
-  form = form.concat([{
-    name: "Space between the staves (default is 10, minimum is -40):",
-    id: "configure_staff_spacing",
-    type: "number",
-    cssClass: "configure_settings_form_text"
-  }, {
+  // Auto-snapshot only on pure desktop
+  if (isPureDesktopBrowser()) {
+    form.push({
+      name: "   Save an Auto-Snapshot on browser tab close or reload (Restore it from the Add dialog)",
+      id: "configure_save_exit_snapshot",
+      type: "checkbox",
+      cssClass: "configure_settings_form_text_checkbox"
+    });
+  }
+
+  form.push({ html: '</div>' }); // end tab_editor
+
+  // =============== TAB: Tabs & Layout ===============
+  form.push({ html: '<div id="tab_tabs" class="adv-tab-panel">' });
+
+ 
+  form.push({
+    name: "          Show instrument tablature button bar below ABC editor",
+    id: "configure_show_tab_buttons",
+    type: "checkbox",
+    cssClass: "configure_settings_form_text_checkbox"
+  });
+
+  form.push({
     name: "    Note name tablature uses Comhaltas style ABC (D' E' F' instead of d e f for octave notes)",
     id: "configure_comhaltas",
     type: "checkbox",
     cssClass: "configure_settings_form_text_checkbox"
-  }, {
+  });
+
+  form.push({
     name: "          Show CGDA as the 4-string tab option (default is GDAD)",
     id: "configure_show_cgda",
     type: "checkbox",
     cssClass: "configure_settings_form_text_checkbox"
-  }, {
+  });
+
+  form.push({
     name: "          Show DGDAE as the 5-string tab option (default is CGDAE)",
     id: "configure_show_dgdae",
     type: "checkbox",
     cssClass: "configure_settings_form_text_checkbox"
-  }, {
+  });
+
+  form.push({
     name: "Stringed instrument capo fret position:",
     id: "configure_capo",
     type: "number",
     cssClass: "configure_settings_form_text"
-  }, {
+  });
+
+  form.push({
     name: "    Show stringed instrument names on tablature (single-voice tunes only, not shown in the Player)",
     id: "configure_show_tab_names",
     type: "checkbox",
     cssClass: "configure_settings_form_text_checkbox"
-  }, {
+  });
+
+  form.push({
     name: "          Show Recorder tab button instead of the Whistle tab button",
     id: "configure_show_recorder",
     type: "checkbox",
     cssClass: "configure_settings_form_text_checkbox"
-  }, {
+  });
+
+  form.push({
     name: "          Use German Recorder fingerings (default is Baroque Recorder fingerings)",
     id: "configure_recorder_german",
     type: "checkbox",
     cssClass: "configure_settings_form_text_checkbox"
-  }, {
-    html: '<p style="text-align:center;"><input id="abcplayer_settingsbutton" style="margin-left:0px" class="abcplayer_settingsbutton btn btn-configuresettingsfromhelp" onclick="ConfigurePlayerSettings(null);" type="button" value="Select Default Player Instruments and Volumes" title="Brings up the Player Settings dialog where you can select the default MIDI soundfont, MIDI instruments, and MIDI volumes to use when playing tunes.&nbsp;&nbsp;You can also load and manage custom instruments from this dialog."><input id="managedatabases" class="btn btn-managedatabases managedatabases" onclick="ManageDatabasesDialog()" type="button" value="Manage Notes, Reverb, and Tune Search Databases" title="Opens a dialog where you can manage the instrument notes, reverb settings, and tune search engine collection databases"></p>'
-  }, {
+  });
+
+  form.push({
+    name: "Default space between the staves (default is 10, minimum is -40):",
+    id: "configure_staff_spacing",
+    type: "number",
+    cssClass: "configure_settings_form_text"
+  });
+
+  form.push({
+    name: "Player screen width (percentage) (min is 50, max is 100):",
+    id: "configure_player_scaling",
+    type: "number",
+    cssClass: "configure_settings_form_text"
+  });
+
+  form.push({
+    html: '<p style="text-align:center;"><input id="abcplayer_settingsbutton_d" class="abcplayer_settingsbutton_d btn btn-configuresettingsfromhelp" onclick="ConfigurePlayerSettings(null);" type="button" value="Select Default Player Instruments and Volumes" title="Brings up the Player Settings dialog where you can select the default MIDI soundfont, MIDI instruments, and MIDI volumes to use when playing tunes.&nbsp;&nbsp;You can also load and manage custom instruments from this dialog."></p><p style="text-align:center;"><input id="managedatabases" class="btn btn-managedatabases managedatabases" onclick="ManageDatabasesDialog()" type="button" value="Manage Notes, Reverb, and Tune Search Databases" title="Opens a dialog where you can manage the instrument notes, reverb settings, and tune search engine collection databases"></p>'
+  });
+
+  form.push({ html: '</div>' }); // end tab_tabs
+
+  // =============== TAB: Playback ===============
+  form.push({ html: '<div id="tab_playback" class="adv-tab-panel">' });
+
+  form.push({
     name: "    Allow instrument notes and reverb settings database to be used offline",
     id: "configure_allow_offline_instruments",
     type: "checkbox",
     cssClass: "configure_settings_form_text_checkbox"
-  }, {
+  });
+
+  form.push({
     name: "    Use custom sounds for Dulcimer, Accordion, Flute, Whistle, Banjo, Bagpipe, Fiddle, and Bodhran",
     id: "configure_use_custom_gm_sounds",
     type: "checkbox",
     cssClass: "configure_settings_form_text_checkbox"
-  }, {
+  });
+
+  form.push({
     name: "            Automatically swing Hornpipes when playing (enabled if R:Hornpipe is found in the tune)",
     id: "configure_auto_swing_hornpipes",
     type: "checkbox",
     cssClass: "configure_settings_form_text_checkbox"
-  }, {
+  });
+
+  form.push({
     name: "Auto-swing scale factor (range is -0.9 to 0.9, default for Hornpipes is 0.25):",
     id: "configure_auto_swing_factor",
     type: "number",
     cssClass: "configure_settings_form_text"
-  }, {
+  });
+
+  form.push({
     name: "    Rolls indicated in the ABC with ~ use the custom abcjs roll playback solution",
     id: "configure_RollUseRollForIrishRoll",
     type: "checkbox",
     cssClass: "configure_settings_form_text_checkbox"
-  }, {
+  });
+
+  form.push({
     name: "            Open exported PDF and Website play links in the Tune Trainer",
     id: "configure_open_links_in_trainer",
     type: "checkbox",
     cssClass: "configure_settings_form_text_checkbox"
-  }, ]);
+  });
+
+  form.push({ html: '</div>' }); // end tab_playback
 
   if (browserSupportsMIDI()) {
+
+    // =============== TAB: MIDI ===============
+    form.push({ html: '<div id="tab_midi" class="adv-tab-panel">' });
+
     form.push({
       name: "    Allow MIDI input for ABC text entry",
       id: "configure_allow_midi_input",
       type: "checkbox",
       cssClass: "configure_settings_form_text_checkbox"
     });
+
     form.push({
       name: "    MIDI input is key and mode aware (if unchecked, enters note names with no accidentals)",
       id: "configure_midi_chromatic",
       type: "checkbox",
       cssClass: "configure_settings_form_text_checkbox"
     });
-  };
 
-  // For testing
-  // gUpdateAvailable = true;
-  // gVersionNumber = "2209_122824_0930"
-  // gUpdateVersion = "2211_122924_0300";
+    form.push({ html: '</div>' }); // end tab_midi
 
+  }
+
+  // Close tab panels + tabs wrapper
+  form.push({ html: '</div></div>' });
+
+  // --- Bottom area (NOT in a tab) ---
+  // Keep your existing sub-dialog buttons + version/update message (absolute positioned)
   if (gUpdateAvailable) {
-
     form.push({
-      html: '<p style="text-align:center;"><input id="configure_fonts" class="btn btn-subdialog configure_fonts" onclick="ConfigureFonts()" type="button" value="Font Settings" title="Configure the fonts used for rendering the ABC"><input id="configure_box" class="btn btn-subdialog configure_box" onclick="ConfigureTablatureSettings()" type="button" value="Tablature Injection Settings" title="Configure the tablature injection settings"><input id="configure_musicxml_import" class="btn btn-subdialog configure_musicxml_import" onclick="ConfigureMusicXMLImport()" type="button" value="MusicXML/MIDI Settings" title="Configure MusicXML/MIDI import settings"><input id="configure_developer_settings" class="btn btn-subdialog configure_developer_settings" onclick="AdvancedSettings()" type="button" value="Advanced Settings" title="Configure low level tool settings"></p><p style="font-size:10pt;font-family:helvetica;line-height:14pt;color:red;position:absolute;left:20px;bottom:20px;margin:0px;cursor:pointer;" title="Click to update to the latest version of the tool" onclick="UpdateToLatestVersion();">Click here to update to the latest version<br/>Latest version: ' + gUpdateVersion + '<br/>Installed version: ' + gVersionNumber + '</p>'
+      html:
+        '<p style="text-align:center;">' +
+          '<input id="configure_fonts" class="btn btn-subdialog configure_fonts" onclick="ConfigureFonts()" type="button" value="Font Settings" title="Configure the fonts used for rendering the ABC">' +
+          '<input id="configure_box" class="btn btn-subdialog configure_box" onclick="ConfigureTablatureSettings()" type="button" value="Tablature Injection Settings" title="Configure the tablature injection settings">' +
+          '<input id="configure_musicxml_import" class="btn btn-subdialog configure_musicxml_import" onclick="ConfigureMusicXMLImport()" type="button" value="MusicXML/MIDI Settings" title="Configure MusicXML/MIDI import settings">' +
+          '<input id="configure_developer_settings" class="btn btn-subdialog configure_developer_settings" onclick="AdvancedSettings()" type="button" value="Advanced Settings" title="Configure low level tool settings">' +
+        '</p>' +
+        '<p style="font-size:10pt;font-family:helvetica;line-height:14pt;color:red;position:absolute;left:20px;bottom:20px;margin:0px;cursor:pointer;" title="Click to update to the latest version of the tool" onclick="UpdateToLatestVersion();">' +
+          'Click here to update to the latest version of the tool<br/>' +
+          'Latest version: ' + gUpdateVersion + '<br/>' +
+          'Installed version: ' + gVersionNumber +
+        '</p>'
     });
   } else {
-
     form.push({
-      html: '<p style="text-align:center;"><input id="configure_fonts" class="btn btn-subdialog configure_fonts" onclick="ConfigureFonts()" type="button" value="Font Settings" title="Configure the fonts used for rendering the ABC"><input id="configure_box" class="btn btn-subdialog configure_box" onclick="ConfigureTablatureSettings()" type="button" value="Tablature Injection Settings" title="Configure the tablature injection settings"><input id="configure_musicxml_import" class="btn btn-subdialog configure_musicxml_import" onclick="ConfigureMusicXMLImport()" type="button" value="MusicXML/MIDI Settings" title="Configure MusicXML/MIDI import settings"><input id="configure_developer_settings" class="btn btn-subdialog configure_developer_settings" onclick="AdvancedSettings()" type="button" value="Advanced Settings" title="Configure low level tool settings"></p><p style="font-size:10pt;font-family:helvetica;line-height:14pt;color:grey;position:absolute;left:20px;bottom:20px;margin:0px;cursor:pointer;" title="Click to update to the latest version" onclick="UpdateToLatestVersion();">You have the latest version<br/>Version: ' + gVersionNumber + '<br>Click here to force an update</p>'
+      html:
+        '<p style="text-align:center;">' +
+          '<input id="configure_fonts" class="btn btn-subdialog configure_fonts" onclick="ConfigureFonts()" type="button" value="Font Settings" title="Configure the fonts used for rendering the ABC">' +
+          '<input id="configure_box" class="btn btn-subdialog configure_box" onclick="ConfigureTablatureSettings()" type="button" value="Tablature Injection Settings" title="Configure the tablature injection settings">' +
+          '<input id="configure_musicxml_import" class="btn btn-subdialog configure_musicxml_import" onclick="ConfigureMusicXMLImport()" type="button" value="MusicXML/MIDI Settings" title="Configure MusicXML/MIDI import settings">' +
+          '<input id="configure_developer_settings" class="btn btn-subdialog configure_developer_settings" onclick="AdvancedSettings()" type="button" value="Advanced Settings" title="Configure low level tool settings">' +
+        '</p>' +
+        '<p style="font-size:10pt;font-family:helvetica;line-height:14pt;color:grey;position:absolute;left:20px;bottom:20px;margin:0px;cursor:pointer;" title="Click to update to the latest version" onclick="UpdateToLatestVersion();">' +
+          'You have the latest version<br/>' +
+          'Version: ' + gVersionNumber + '<br>' +
+          'Click here to force an update' +
+        '</p>'
     });
   }
 
@@ -52166,43 +52765,32 @@ function ConfigureToolSettings() {
         if (!gSaveLastAutoSnapShot) {
 
           if (gLocalStorageAvailable) {
-
             localStorage.LastAutoSnapShot = "";
-
           }
 
           // Was on before, now is off
           if (theOldSaveLastAutoSnapShot != gSaveLastAutoSnapShot) {
-
             RemoveTabCloseListener();
-
           }
 
         } else {
           // Was off, now is on
           if (theOldSaveLastAutoSnapShot != gSaveLastAutoSnapShot) {
-
             AddTabCloseListener();
-
           }
         }
 
       } else {
-
         gSaveLastAutoSnapShot = false;
-
       }
 
       if (gIsIPad) {
-
         // Two column display for iPad?
         giPadTwoColumn = args.result.configure_ipad_two_column;
-
       }
 
       // Sanity check the player scaling
       gPlayerScaling = args.result.configure_player_scaling;
-
       gPlayerScaling = gPlayerScaling.replace("%", "");
 
       if (isNaN(parseInt(gPlayerScaling))) {
@@ -52215,14 +52803,8 @@ function ConfigureToolSettings() {
         gPlayerScaling = parseInt(gPlayerScaling);
       }
 
-      if (gPlayerScaling < 50) {
-        gPlayerScaling = 50;
-
-      }
-
-      if (gPlayerScaling > 100) {
-        gPlayerScaling = 100;
-      }
+      if (gPlayerScaling < 50) gPlayerScaling = 50;
+      if (gPlayerScaling > 100) gPlayerScaling = 100;
 
       // Allow offline instruments?
       gAllowOfflineInstruments = args.result.configure_allow_offline_instruments;
@@ -52233,18 +52815,15 @@ function ConfigureToolSettings() {
       if ((theOldFeaturesShowTabButtons == true) && (gFeaturesShowTabButtons == false)) {
         sendGoogleAnalytics("action", "HidingTabButtonBar");
       }
-
       if ((theOldFeaturesShowTabButtons == false) && (gFeaturesShowTabButtons == true)) {
         sendGoogleAnalytics("action", "ShowingTabButtonBar");
       }
 
       // Validate the staff spacing value
       var testStaffSpacing = args.result.configure_staff_spacing;
-
       testStaffSpacing = parseInt(testStaffSpacing);
 
       if (!((isNaN(testStaffSpacing)) || (testStaffSpacing == undefined))) {
-
         // Limit is the negative staffsep offset
         if (testStaffSpacing < (-1 * STAFFSPACEOFFSET)) {
           testStaffSpacing = (-1 * STAFFSPACEOFFSET);
@@ -52254,25 +52833,17 @@ function ConfigureToolSettings() {
       }
 
       if (!isNaN(testStaffSpacing)) {
-
         if (testStaffSpacing != theOldStaffSpacing) {
-
           gStaffSpacing = testStaffSpacing + STAFFSPACEOFFSET;
-
         }
-
       }
 
       // Sanity check the new capo value
       var testCapo = args.result.configure_capo;
-
       if (!isNaN(parseInt(testCapo))) {
-
         var theCapo = parseInt(testCapo);
         if ((theCapo >= 0) && (theCapo <= 12)) {
-
           gCapo = parseInt(testCapo);
-
         }
       }
 
@@ -52282,26 +52853,19 @@ function ConfigureToolSettings() {
 
       // If changing the custom GM sounds setting, clear the abcjs sample cache
       if (gUseCustomGMSounds != theOldUseCustomGMSounds) {
-
         // Reset the abcjs sounds cache
         gSoundsCacheABCJS = {};
       }
 
       gOpenLinksInTrainer = args.result.configure_open_links_in_trainer;
-
       gAutoSwingHornpipes = args.result.configure_auto_swing_hornpipes;
 
       // Sanity check the autoswing factor value
       var testSwing = args.result.configure_auto_swing_factor;
-
       if (!isNaN(parseFloat(testSwing))) {
-
         var theSwing = parseFloat(testSwing);
-
         if ((theSwing >= -0.9) && (theSwing <= 0.9)) {
-
           gAutoSwingFactor = theSwing;
-
         }
       }
 
@@ -52407,7 +52971,6 @@ function ConfigureToolSettings() {
         if (isDesktopBrowser()) {
 
           var testEditorFontSize = args.result.configure_editor_fontsize;
-
           testEditorFontSize = parseInt(testEditorFontSize);
 
           if (!isNaN(testEditorFontSize)) {
@@ -52431,9 +52994,7 @@ function ConfigureToolSettings() {
       // Force change of saved staff spacing if user modifies it in the dialog
       // Related to avoiding resetting of saved staff spacing if changed by a shared file
       if (gLocalStorageAvailable) {
-
         localStorage.abcStaffSpacing = testStaffSpacing;
-
       }
 
       if (gIsIPad) {
@@ -52564,7 +53125,117 @@ function ConfigureToolSettings() {
 
   });
 
+  // Initialize tabs after the modal DOM is present
+  requestAnimationFrame(function() {
+    requestAnimationFrame(function() {
+      MoveConfigureSettingsFieldsToTabs();
+      InitConfigureSettingsTabs();
+      var panels = document.querySelector(".configure-settings-tab-panels");
+      if (panels) panels.classList.remove("is-building");
+    });
+  });
+
 }
+
+function MoveConfigureSettingsFieldsToTabs() {
+
+  var tabsRoot = document.getElementById("configure_settings_tabs_root");
+  if (!tabsRoot) return;
+
+  // find the modal container that holds this dialog
+  var modalRoot =
+    tabsRoot.closest(".modal_flat") ||          // some builds
+    tabsRoot.closest(".dpmodal") ||             // others
+    document;
+
+  function moveByName(fieldName, destId) {
+    var dest = document.getElementById(destId);
+    if (!dest) return false;
+
+    var input = modalRoot.querySelector('input[name="' + fieldName + '"], select[name="' + fieldName + '"], textarea[name="' + fieldName + '"]');
+    if (!input) return false;
+
+    // Your theme uses modal_flat_form_item as the row wrapper
+    var row = input.closest(".modal_flat_form_item") ||
+              input.closest(".modal_flat_form_item_checkbox") ||
+              input.closest("div");   // last resort
+
+    if (!row) return false;
+
+    dest.appendChild(row);
+    return true;
+  }
+
+  function moveByElementId(elemId, destId) {
+    var dest = document.getElementById(destId);
+    if (!dest) return false;
+
+    var el = document.getElementById(elemId);
+    if (!el) return false;
+
+    // move the button row/container if it exists, else move the element itself
+    var row = el.closest(".modal_flat_form_item") || el.closest("div") || el;
+    dest.appendChild(row);
+    return true;
+  }
+
+  function moveButtonByValueContains(textNeedle, destId) {
+    var dest = document.getElementById(destId);
+    if (!dest) return false;
+
+    // find buttons rendered inside this modal
+    var btns = modalRoot.querySelectorAll('input[type="button"], button');
+    textNeedle = textNeedle.trim();
+
+    for (var i = 0; i < btns.length; i++) {
+      var t = (btns[i].value || btns[i].textContent || "").replace(/\s+/g, " ").trim();
+      if (t.indexOf(textNeedle) !== -1) {
+        var row = btns[i].closest(".modal_flat_form_item") || btns[i].closest("div") || btns[i];
+        dest.appendChild(row);
+        return true;
+      }
+    }
+    return false;
+  }
+
+
+  // ---- Editor tab ----
+  if (gIsIPad) moveByName("configure_ipad_two_column", "tab_editor_fields");
+  if (isDesktopBrowser()) moveByName("configure_editor_fontsize", "tab_editor_fields");
+  moveByName("configure_syntax_highlighting", "tab_editor_fields");
+  moveByName("configure_syntax_highlighting_dark", "tab_editor_fields");
+  if (isPureDesktopBrowser()) moveByName("configure_save_exit_snapshot", "tab_editor_fields");
+
+  // ---- Tabs & Layout tab ----
+  moveByName("configure_show_tab_buttons", "tab_tabs_fields");
+  moveByName("configure_comhaltas", "tab_tabs_fields");
+  moveByName("configure_show_cgda", "tab_tabs_fields");
+  moveByName("configure_show_dgdae", "tab_tabs_fields");
+  moveByName("configure_capo", "tab_tabs_fields");
+  moveByName("configure_show_tab_names", "tab_tabs_fields");
+  moveByName("configure_show_recorder", "tab_tabs_fields");
+  moveByName("configure_recorder_german", "tab_tabs_fields");
+  moveByName("configure_staff_spacing", "tab_tabs_fields");
+
+  // ---- Playback tab ----
+  moveByName("configure_player_scaling", "tab_playback_fields");
+  moveByName("configure_allow_offline_instruments", "tab_playback_fields");
+  moveByName("configure_use_custom_gm_sounds", "tab_playback_fields");
+  moveByName("configure_auto_swing_hornpipes", "tab_playback_fields");
+  moveByName("configure_auto_swing_factor", "tab_playback_fields");
+  moveByName("configure_RollUseRollForIrishRoll", "tab_playback_fields");
+  moveByName("configure_open_links_in_trainer", "tab_playback_fields");
+  moveButtonByValueContains("Select Default Player Instruments and Volumes", "tab_playback_fields");
+  moveButtonByValueContains("Manage Notes, Reverb, and Tune Search Databases", "tab_playback_fields");
+
+  // ---- MIDI tab ----
+  if (browserSupportsMIDI()) {
+    moveByName("configure_allow_midi_input", "tab_midi_fields");
+    moveByName("configure_midi_chromatic", "tab_midi_fields");
+  }
+}
+
+
 
 // 
 // Is a file XML data
