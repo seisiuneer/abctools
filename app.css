@@ -6142,7 +6142,10 @@ display:block;
   margin-top: 2px;
 }
 
-.configure-settings-tab-panels.is-building { visibility: hidden; }
+/* While building tabbed modals, hide DayPilot modal_flat form rows globally */
+body.dp-tabs-building .modal_flat_main {
+  visibility: hidden;
+}
 
 /******************************************************************************/
 /* STYLES RELATED TO BUTTONS                                                  */

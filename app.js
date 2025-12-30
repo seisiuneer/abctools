@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3125_123025_1100";
+var gVersionNumber = "3126_123025_1300";
 
 var gMIDIInitStillWaiting = false;
 
@@ -50931,6 +50931,9 @@ function AdvancedSettings() {
   // Keep track of dialogs
   sendGoogleAnalytics("dialog", "AdvancedSettings");
 
+    // Flash reduction
+  document.body.classList.add("dp-tabs-building");
+
   var oldHighlightColor = gRawHighlightColor;
   var oldDiagnostics = gShowDiagnostics;
   var oldForceAndroid = gForceAndroid;
@@ -51106,6 +51109,9 @@ function AdvancedSettings() {
 
       // init tabs + remember last
       InitAdvTabs("advanced_settings_tabs_root", "AdvancedSettingsLastTab", "adv_tab_general");
+
+      // Flash reduction
+      document.body.classList.remove("dp-tabs-building");
 
     });
   });
@@ -52393,6 +52399,9 @@ function ConfigureToolSettings() {
   // Keep track of advanced controls dialog
   sendGoogleAnalytics("dialog", "ConfigureToolSettings");
 
+  // Flash reduction
+  document.body.classList.add("dp-tabs-building");
+
   LoadConfigureSettingsLastTab();
 
   var theOldSaveLastAutoSnapShot = gSaveLastAutoSnapShot;
@@ -53128,10 +53137,14 @@ function ConfigureToolSettings() {
   // Initialize tabs after the modal DOM is present
   requestAnimationFrame(function() {
     requestAnimationFrame(function() {
+
       MoveConfigureSettingsFieldsToTabs();
+      
       InitConfigureSettingsTabs();
-      var panels = document.querySelector(".configure-settings-tab-panels");
-      if (panels) panels.classList.remove("is-building");
+
+      // Flash reduction
+      document.body.classList.remove("dp-tabs-building");
+
     });
   });
 
