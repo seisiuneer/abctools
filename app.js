@@ -51050,7 +51050,7 @@ function AdvancedSettings() {
 
   const modal = DayPilot.Modal.form(form, theData, {
     theme: "modal_flat",
-    top: 10,
+    top: 25,
     width: 800,
     scrollWithPage: (AllowDialogsToScroll()),
     autoFocus: false
@@ -52751,7 +52751,7 @@ function ConfigureToolSettings() {
 
   const modal = DayPilot.Modal.form(form, theData, {
     theme: "modal_flat",
-    top: 10,
+    top: 25,
     width: 790,
     scrollWithPage: (AllowDialogsToScroll()),
     autoFocus: false
