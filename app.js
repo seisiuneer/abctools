@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3126_123025_1300";
+var gVersionNumber = "3127_123025_1330";
 
 var gMIDIInitStillWaiting = false;
 
@@ -50982,7 +50982,7 @@ function AdvancedSettings() {
           '<button type="button" class="adv-tab-btn" data-tab="adv_tab_export">Export</button>' +
           '<button type="button" class="adv-tab-btn" data-tab="adv_tab_system">System</button>' +
         '</div>' +
-        '<div class="adv-tab-panels" style="height:415px; overflow-y:auto;">' +
+        '<div class="adv-tab-panels" style="height:405px; overflow-y:auto;">' +
           '<div id="adv_tab_general" class="adv-tab-panel"><div id="adv_tab_general_fields"></div></div>' +
           '<div id="adv_tab_player" class="adv-tab-panel"><div id="adv_tab_player_fields"></div></div>' +
           '<div id="adv_tab_export" class="adv-tab-panel"><div id="adv_tab_export_fields"></div></div>' +
@@ -52466,7 +52466,7 @@ function ConfigureToolSettings() {
     // --- Tabs scaffold (NOT including bottom buttons/version text) ---
     form.push({
       html:
-        '<div id="configure_settings_tabs_root" class="adv-tabs">' +
+        '<div id="configure_settings_tabs_root" style="padding-top:0px" class="adv-tabs">' +
           '<div class="adv-tab-bar">' +
             '<button type="button" class="adv-tab-btn" data-tab="tab_editor">Editor</button>' +
             '<button type="button" class="adv-tab-btn" data-tab="tab_tabs">Tabs &amp; Layout</button>' +
@@ -52487,7 +52487,7 @@ function ConfigureToolSettings() {
     // --- Tabs scaffold (NOT including bottom buttons/version text) ---
     form.push({
       html:
-        '<div id="configure_settings_tabs_root" class="adv-tabs">' +
+        '<div id="configure_settings_tabs_root" style="padding-top:0px" class="adv-tabs">' +
           '<div class="adv-tab-bar">' +
             '<button type="button" class="adv-tab-btn" data-tab="tab_editor">Editor</button>' +
             '<button type="button" class="adv-tab-btn" data-tab="tab_tabs">Tabs &amp; Layout</button>' +
