@@ -668,7 +668,7 @@
             <a style="text-decoration:none;" href="#advanced_injectsectionheader">Inject PDF Section Header</a>
             <a style="text-decoration:none;" href="#advanced_inject_font_settings">Inject Font Settings</a>
             <a style="text-decoration:none;" href="#advanced_injectmidi">Inject MIDI Programs and Volumes</a>
-            <a style="text-decoration:none;" href="#advanced_injectmetronome">Inject Metronome</a>
+            <a style="text-decoration:none;" href="#adding_a_metronome">Inject Metronome</a>
             <a style="text-decoration:none;" href="#injectrepeatsandtwobarclickintros">Inject Repeats + Intros</a>
             <a style="text-decoration:none;" href="#advanced_injectabcheader">Inject ABC Header Text</a>
             <a style="text-decoration:none;" href="#custom_string_tab">Inject Custom Stringed Instrument Tab</a>
@@ -778,6 +778,8 @@
             <a style="text-decoration:none;" href="#player_adv_settings_tab">Player Advanced Settings</a>
             <a style="text-decoration:none;" href="#export_adv_settings_tab">Export Advanced Settings</a>
             <a style="text-decoration:none;" href="#system_adv_settings_tab">System Advanced Settings</a>
+            <a style="text-decoration:none;" href="#customthemeeditor">ABC Syntax Highlighting Theme Editor</a>
+            <a style="text-decoration:none;" href="#custom_reverb">Load Custom Reverb Impulse</a>
             <a style="text-decoration:none;" href="#advanced_resetsettings">Reset All Tool Settings</a>
             <a style="text-decoration:none;" href="#configure_fonts">Configuring ABC Rendering Fonts</a>
             </details>
@@ -1185,7 +1187,7 @@
                         <p class="toc"><a style="text-decoration:none;" href="#advanced_injectsectionheader">Inject PDF Section Header</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#advanced_inject_font_settings">Inject Font Settings</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#advanced_injectmidi">Inject MIDI Programs and Volumes</a></p>
-                        <p class="toc"><a style="text-decoration:none;" href="#advanced_injectmetronome">Inject Metronome</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#adding_a_metronome">Inject Metronome</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#injectrepeatsandtwobarclickintros">Inject Repeats + Intros</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#advanced_injectabcheader">Inject ABC Header Text</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#custom_string_tab">Inject Custom Stringed Instrument Tab</a></p>
@@ -1295,6 +1297,8 @@
                         <p class="toc"><a style="text-decoration:none;" href="#player_adv_settings_tab">Player Advanced Settings</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#export_adv_settings_tab">Export Advanced Settings</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#system_adv_settings_tab">System Advanced Settings</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#customthemeeditor">ABC Syntax Highlighting Theme Editor</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#custom_reverb">Load Custom Reverb Impulse</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#advanced_resetsettings">Reset All Tool Settings</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#configure_fonts">Configuring ABC Rendering Fonts</a></p>
                      </div>
@@ -4967,7 +4971,7 @@
                 <p>Select "Inject all tunes" to add the selected MIDI annotations to all tunes.</p>
                 <p>If "Inject all tunes" is not checked, the MIDI annotation is added at the current text insertion point.</p>
                 <hr>
-                <p id="advanced_injectmetronome"><strong>Inject Metronome</strong> - Injects a playable metronome into one or all tunes based on the meter of the tune as specified in the M: tag.</p>
+                <p id="adding_a_metronome"><strong>Inject Metronome</strong> - Injects a playable metronome into one or all tunes based on the meter of the tune as specified in the M: tag.</p>
                 <hr>
                 <p id="injectrepeatsandtwobarclickintros"><strong>Inject Repeats + Intros</strong> - Allows you to increase the number of times through each tune by duplicating the ABC for the tune.</p>
                 <p>Additionally, you may optionally inject two bars of silence or a two-bar style-appropriate click intro at the top of each tune.</p>
@@ -6428,8 +6432,8 @@
                 <p>and paste the API token in this field.</p>
                 <p>Once entered, it will be saved and used for all future URL shortening operations.</p>
                 <p>To return to using my default API token, clear this field.</p>
-                <hr id="customthemeeditor">
-                <p><strong>ABC Syntax Highlighting Theme Editor</strong></p>
+                <hr class="hidden-print" id="customthemeeditor">
+                <h1 class="page_break_always h1wide">ABC Syntax Highlighting Theme Editor<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <p>Brings up a dialog where you can set the light and dark mode colors and font styling for each ABC text element.</p>
                 <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/AGm0qAPRQw0" title="Custom ABC Syntax Highlighting Theme Editor Demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
                 <div class="image_holder_p">
@@ -6452,8 +6456,8 @@
                 .CodeMirror * { filter: none !important; }<br/>
                 #notation-holder {filter:invert(97%);background-color:lightgrey !important;}<br/>
                 %%endcss</p>
-                <hr id="custom_reverb">
-                <p><strong>Load Custom Reverb Impulse</strong></p>
+                <hr class="hidden-print" id="custom_reverb">
+                <h1 class="page_break_always">Load Custom Reverb Impulse<span class="hidden-print">&nbsp;&nbsp;&nbsp;(</span><a style="text-decoration:none;" href="#table_of_contents" class="hidden-print">Top</a><span class="hidden-print">)</span></h1>
                 <p>Click this button to specify a custom convolution reverb impulse .wav file to use when specifying "custom" as the reverb type for the current tool session.</p>
                 <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/RyMBJcT54FE" title="Custom Acoustic Environments" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
                 <p>You will find many reverb impulse files for free download at: <a href="https://www.openair.hosted.york.ac.uk/?page_id=36" target="_blank">Open Air Acoustic Impulse Responses</a></p>
@@ -7424,221 +7428,274 @@
     </body>
     
     <script>
-    
+
+    //
+    // Expand the TOC section that contains the current #hash target
+    //
+    function expandTOCSectionForHash() {
+
+        if (!window.location.hash) return;
+
+        var gIsIOS = isIOS();
+        var gIsAndroid = isAndroid();
+
+        // Normalize id (remove leading #, decode)
+        var raw = window.location.hash.substring(1);
+        var targetId = "";
+        try {
+            targetId = decodeURIComponent(raw);
+        } catch (e) {
+            targetId = raw;
+        }
+        
+        if (!targetId) return;
+
+        var sidebar = document.getElementById("sidebar");
+
+        // ----------------------------
+        // Desktop: sidebar <details>
+        // ----------------------------
+        if (!(gIsIOS || gIsAndroid)) {
+
+            // Find the matching link in the sidebar
+            var a = sidebar.querySelector('a[href="#' + CSS.escape(targetId) + '"]');
+
+            // Fallback (older browsers that might not like CSS.escape in this context)
+            if (!a) {
+                a = sidebar.querySelector('a[href="#' + targetId.replace(/"/g, '\\"') + '"]');
+            }
+
+            if (a) {
+                var detail = a.closest("details");
+                if (detail) {
+                    detail.open = true;
+                    // Optional: make sure the entry is visible in the sidebar
+                    a.scrollIntoView({
+                        block: "center"
+                    });
+                }
+            }
+        } 
+    }
+
     //
     // Expand the table of contents
     //
     function ExpandAll() {
-    
-    var i;
-    
-    var acc = document.getElementsByClassName("accordion");
-    
-    for (i = 0; i < acc.length; i++) {
-    var thisAcc = acc[i];
-    thisAcc.classList.add("active");
+
+        var i;
+
+        var acc = document.getElementsByClassName("accordion");
+
+        for (i = 0; i < acc.length; i++) {
+            var thisAcc = acc[i];
+            thisAcc.classList.add("active");
+        }
+
+        var thePanels = document.getElementsByClassName("tocpanel");
+
+        for (i = 0; i < thePanels.length; i++) {
+            var thisPanel = thePanels[i];
+            thisPanel.style.display = "block";
+        }
     }
-    
-    var thePanels = document.getElementsByClassName("tocpanel");
-    
-    for (i = 0; i < thePanels.length; i++) {
-    var thisPanel = thePanels[i];
-    thisPanel.style.display = "block";
-    }
-    }
-    
+
     //
     // Collapse the table of contents
     //
     function CollapseAll() {
-    
-    var i;
-    
-    var acc = document.getElementsByClassName("accordion");
-    
-    for (i = 0; i < acc.length; i++) {
-    var thisAcc = acc[i];
-    thisAcc.classList.remove("active");
+
+        var i;
+
+        var acc = document.getElementsByClassName("accordion");
+
+        for (i = 0; i < acc.length; i++) {
+            var thisAcc = acc[i];
+            thisAcc.classList.remove("active");
+        }
+
+        var thePanels = document.getElementsByClassName("tocpanel");
+
+        for (i = 0; i < thePanels.length; i++) {
+            var thisPanel = thePanels[i];
+            thisPanel.style.display = "none";
+        }
     }
-    
-    var thePanels = document.getElementsByClassName("tocpanel");
-    
-    for (i = 0; i < thePanels.length; i++) {
-    var thisPanel = thePanels[i];
-    thisPanel.style.display = "none";
-    }
-    }
-    
+
     //
     // Expand the sidebar table of contents
     //
     function SidebarExpandAll() {
-    
-    document.querySelectorAll('details').forEach(detail => {
-    detail.open = true;
-    });
-    
+
+        document.querySelectorAll('details').forEach(detail => {
+            detail.open = true;
+        });
+
     }
-    
+
     //
     // Collapse the sidebar table of contents
     //
     function SidebarCollapseAll() {
-    
-    document.querySelectorAll('details').forEach(detail => {
-    detail.open = false;
-    });
-    
+
+        document.querySelectorAll('details').forEach(detail => {
+            detail.open = false;
+        });
+
     }
-    
+
     //
     // Are we on Android?
     //
-    function isAndroid(){
-    if (/Android|SamsungBrowser/i.test(navigator.userAgent)){
-    return true;
+    function isAndroid() {
+        if (/Android|SamsungBrowser/i.test(navigator.userAgent)) {
+            return true;
+        } else {
+            return false;
+        }
     }
-    else{
-    return false;
-    }
-    }
-    
+
     //
     // Are we on iOS?
     //
     function isIOS() {
-    
-    if (/iPad|iPhone|iPod/.test(navigator.platform)) {
-    return true;
-    } else {
-    return navigator.maxTouchPoints &&
-    navigator.maxTouchPoints > 2 &&
-    /MacIntel/.test(navigator.platform);
+
+        if (/iPad|iPhone|iPod/.test(navigator.platform)) {
+            return true;
+        } else {
+            return navigator.maxTouchPoints &&
+                navigator.maxTouchPoints > 2 &&
+                /MacIntel/.test(navigator.platform);
+        }
     }
-    }
-    
+
     function DoStartup() {
-    
-    //
-    // iOS Styling adaptation
-    //
-    
-    var gIsIOS = isIOS();
-    var gIsAndroid = isAndroid();
-    
-    //gIsIOS = true; // FOOFOO Set true for mobile adaptation testing
-    
-    if (gIsIOS) {
-    // Fix the title font
-    var elem = document.getElementById("pagetitle");
-    elem.size = 5;
-    elem.style.fontFamily = "Helvetica";
-    }
-    
-    if (gIsIOS || gIsAndroid) {
-    // Hide the sidebar navigation on mobile
-    elem = document.getElementById("sidebar");
-    elem.style.display = "none";
-    elem = document.getElementById("maindiv");
-    elem.style.marginLeft = "0px";
-    
-    } else {
-    // Hide the accordion navigation on desktop
-    elem = document.getElementById("mobile_table_of_contents");
-    elem.style.display = "none";
-    }
-    
-    var acc = document.getElementsByClassName("accordion");
-    var i;
-    
-    for (i = 0; i < acc.length; i++) {
-    acc[i].addEventListener("click", function() {
-    this.classList.toggle("active");
-    var panel = this.nextElementSibling;
-    if (panel.style.display === "block") {
-    panel.style.display = "none";
-    } else {
-    panel.style.display = "block";
-    }
-    });
-    
-    }
-    
-    // Start with all topics collapsed
-    if (gIsIOS || gIsAndroid) {
-    CollapseAll();
-    } else {
-    SidebarCollapseAll();
-    }
 
-    // Add a copy button to all the code blocks
-    document.querySelectorAll("p.code").forEach((p) => {
-        const btn = document.createElement("button");
-        btn.textContent = "Copy";
-        btn.className = "copy-btn";
+        //
+        // iOS Styling adaptation
+        //
 
-        btn.addEventListener("click", () => {
-          let lines = [];
-          let currentLine = "";
+        var gIsIOS = isIOS();
+        var gIsAndroid = isAndroid();
 
-          p.childNodes.forEach(node => {
-            // Skip the button itself
-            if (node === btn) return;
+        //gIsIOS = true; // FOOFOO Set true for mobile adaptation testing
 
-            if (node.nodeType === Node.TEXT_NODE) {
-              currentLine += node.textContent;
-            } else if (node.nodeName === "BR") {
-              lines.push(currentLine.trim());
-              currentLine = "";
-            } else {
-              currentLine += node.textContent;
-            }
-          });
+        if (gIsIOS) {
+            // Fix the title font
+            var elem = document.getElementById("pagetitle");
+            elem.size = 5;
+            elem.style.fontFamily = "Helvetica";
+        }
 
-          if (currentLine.trim() !== "") {
-            lines.push(currentLine.trim());
-          }
+        if (gIsIOS || gIsAndroid) {
+            // Hide the sidebar navigation on mobile
+            elem = document.getElementById("sidebar");
+            elem.style.display = "none";
+            elem = document.getElementById("maindiv");
+            elem.style.marginLeft = "0px";
 
-          const cleanedText = lines.join("\n") + "\n";
+        } else {
+            // Hide the accordion navigation on desktop
+            elem = document.getElementById("mobile_table_of_contents");
+            elem.style.display = "none";
+        }
 
-          navigator.clipboard.writeText(cleanedText).then(() => {
-            btn.textContent = "Copied!";
-            setTimeout(() => (btn.textContent = "Copy"), 1000);
-          }).catch(err => {
-            console.error("Copy failed", err);
-          });
+        var acc = document.getElementsByClassName("accordion");
+        var i;
+
+        for (i = 0; i < acc.length; i++) {
+            acc[i].addEventListener("click", function() {
+                this.classList.toggle("active");
+                var panel = this.nextElementSibling;
+                if (panel.style.display === "block") {
+                    panel.style.display = "none";
+                } else {
+                    panel.style.display = "block";
+                }
+            });
+
+        }
+
+        // Start with all topics collapsed
+        if (gIsIOS || gIsAndroid) {
+            CollapseAll();
+        } else {
+            SidebarCollapseAll();
+        }
+
+        // Add a copy button to all the code blocks
+        document.querySelectorAll("p.code").forEach((p) => {
+            const btn = document.createElement("button");
+            btn.textContent = "Copy";
+            btn.className = "copy-btn";
+
+            btn.addEventListener("click", () => {
+                let lines = [];
+                let currentLine = "";
+
+                p.childNodes.forEach(node => {
+                    // Skip the button itself
+                    if (node === btn) return;
+
+                    if (node.nodeType === Node.TEXT_NODE) {
+                        currentLine += node.textContent;
+                    } else if (node.nodeName === "BR") {
+                        lines.push(currentLine.trim());
+                        currentLine = "";
+                    } else {
+                        currentLine += node.textContent;
+                    }
+                });
+
+                if (currentLine.trim() !== "") {
+                    lines.push(currentLine.trim());
+                }
+
+                const cleanedText = lines.join("\n") + "\n";
+
+                navigator.clipboard.writeText(cleanedText).then(() => {
+                    btn.textContent = "Copied!";
+                    setTimeout(() => (btn.textContent = "Copy"), 1000);
+                }).catch(err => {
+                    console.error("Copy failed", err);
+                });
+            });
+
+            p.style.position = "relative";
+            p.appendChild(btn);
         });
 
-        p.style.position = "relative";
-        p.appendChild(btn);
-      });
+        expandTOCSectionForHash();
+
     }
-    
+
     DoStartup();
-    
+
     // If offline, hide all the YouTube videos and images
     function removeOfflineContent() {
-    
-    if (!navigator.onLine) {
-    
-    const iframes = document.querySelectorAll('iframe');
-    
-    iframes.forEach(iframe => iframe.remove());
-    
-    // Remove all the images
-    var divs = document.querySelectorAll('div.image_holder');
-    
-    divs.forEach(div => div.remove());
-    
-    divs = document.querySelectorAll('div.image_holder_p');
-    
-    divs.forEach(div => div.remove());
-    
+
+        if (!navigator.onLine) {
+
+            const iframes = document.querySelectorAll('iframe');
+
+            iframes.forEach(iframe => iframe.remove());
+
+            // Remove all the images
+            var divs = document.querySelectorAll('div.image_holder');
+
+            divs.forEach(div => div.remove());
+
+            divs = document.querySelectorAll('div.image_holder_p');
+
+            divs.forEach(div => div.remove());
+
+        }
     }
-    }
-    
+
     // Run the function on page load
     document.addEventListener('DOMContentLoaded', removeOfflineContent);
+
+    //window.addEventListener("hashchange", expandTOCSectionForHash);
     
     </script>
     
