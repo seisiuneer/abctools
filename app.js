@@ -23649,7 +23649,7 @@ function InjectCustomStringedInstrumentTab() {
 
   const modal = DayPilot.Modal.form(form, theData, {
     theme: "modal_flat",
-    top: 25,
+    top: 40,
     width: 650,
     scrollWithPage: (AllowDialogsToScroll()),
     okText: "Inject",
