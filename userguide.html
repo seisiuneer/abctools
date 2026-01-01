@@ -71,6 +71,21 @@
         }
         }
         
+        h4 {
+        text-align: center;
+        font-size:18pt;
+        line-height:32px;
+        font-family:"Helvetica";
+        margin-bottom:32px;
+        padding-left:0px !important;
+        }
+                
+        @media print {
+        h4 {
+        padding-left:0px;
+        }
+        }
+
         hr {
         margin-top:24px;
         margin-bottom:24px;
@@ -967,7 +982,7 @@
                 <div id="mobile_table_of_contents" class="hidden-print">
                     <hr>
                     <p style="margin-bottom:20px;line-height:12px;padding-left:0px;text-align: center;">Click any topic to show/hide the subtopics</p>
-                    <h1 style="margin-bottom:16px;padding-left:0px;"><button class="expandall" onclick="ExpandAll();">Expand All</button>&nbsp;&nbsp;&nbsp;<button class="expandall" onclick="CollapseAll();">Collapse All</button></h1>
+                    <h4 style="margin-bottom:16px;padding-left:0px;"><button class="expandall" onclick="ExpandAll();">Expand All</button>&nbsp;&nbsp;&nbsp;<button class="expandall" onclick="CollapseAll();">Collapse All</button></h4>
                     
                     <button class="accordion" title="Click to expand/collapse this section">Basic Operation</button>
                     <div class="tocpanel">
