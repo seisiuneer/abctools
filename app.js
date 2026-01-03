@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3135_010126_1300";
+var gVersionNumber = "3136_010226_2300";
 
 var gMIDIInitStillWaiting = false;
 
@@ -44140,6 +44140,10 @@ function TrainerPhraseBuilder(e){
   function phrase_builder_callback(thePhrases){
 
     if (thePhrases){
+
+      // Inject any default instruments, volumes, and other settings if required      
+      thePhrases = PreProcessPlayABC(thePhrases);
+
       gPlayerLooperProcessed = thePhrases;
     }
 
