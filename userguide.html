@@ -1738,8 +1738,10 @@
                 <p>The %%right command for the replace should be followed by a space so that there is a space between the command and the composer text.</p>
                 <hr>
                 <p style="text-align: center"><strong>Limitations of "Create Tune Set"</strong></p>
-                <p>In general, tune sets can be creating from single voice tunes, such as common traditional Irish tunes.</p>
-                <p>Multi-voice tunes probably will not work correctly with the tune set creator.</p>
+                <p>The primary use case for this feature is to create tune sets from single voice tunes, such as common traditional Irish tunes.</p>
+                <p>Avoid the use of multi-voice tunes when creating sets as they will probably have issues particularly if there are voice definition declarations in the tune header.</p>
+                <p>Mixing single voice tunes and multi-voice tunes will not work correctly with the tune set creator.</p>
+                <p>If you need to mix single voice and multi-voice tunes in a set, either delete the additional voices in the tunes before creating the set reducing them to a single voice or manually delete the extra voices (V:2, V:3, etc.) after set creation.</p>
                 <p>Additionally, tunes with existing P: part tags will not work correctly with the tune set creator.</p>
                 <hr id="hamburger_copy_all">
                 <p><strong>Copy All Tunes</strong></p>
