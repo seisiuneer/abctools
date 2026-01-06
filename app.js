@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3136_010226_2300";
+var gVersionNumber = "3137_010626_0830";
 
 var gMIDIInitStillWaiting = false;
 
@@ -18717,9 +18717,65 @@ function CullTunes() {
 }
 
 
+
 //
 // Create a set of tunes
 //
+
+//
+// Return true if every tune in abcTunes has the same *count of distinct voices*
+// (based on V: tags), otherwise false.
+//
+function allTunesHaveSameVoiceCount(abcTunes) {
+  if (!Array.isArray(abcTunes)) return false;
+
+  const counts = abcTunes.map(countVoicesFromVTags);
+
+  // Empty list → trivially true
+  if (counts.length === 0) return true;
+
+  const first = counts[0];
+  for (let i = 1; i < counts.length; i++) {
+    if (counts[i] !== first) return false;
+  }
+  return true;
+}
+
+//
+// Count distinct voices in a single ABC tune by scanning V: tags.
+// If no V: tags are found, assume a single voice.
+//
+function countVoicesFromVTags(abc) {
+  if (typeof abc !== "string") return 1;
+
+  const voices = new Set();
+
+  // Matches:
+  //   V:1
+  //   V: LH
+  //   [V:1]
+  //   [V:RH]
+  // Allows zero or more spaces after V:
+  const re = /^\s*(?:\[\s*)?V:\s*([^\s\]]+)(?:\s*\])?/gm;
+
+  let m;
+  while ((m = re.exec(abc)) !== null) {
+    // Skip comment lines
+    const lineStart = abc.lastIndexOf("\n", m.index) + 1;
+    const lineEnd = abc.indexOf("\n", m.index);
+    const line = abc.slice(
+      lineStart,
+      lineEnd === -1 ? abc.length : lineEnd
+    );
+    if (/^\s*%/.test(line)) continue;
+
+    voices.add(m[1]);
+  }
+
+  // If no V: tags found, assume one voice
+  return voices.size === 0 ? 1 : voices.size;
+}
+
 function removeExtraTags(abcText, theTag) {
 
   // Split the ABC into lines
@@ -18764,7 +18820,6 @@ function removeAllTags(abcText, theTag) {
   // Join the lines back into a single string
   return lines.join('\n');
 }
-
 
 function generateIndexedRepeatedString(str, itemCount, repeatCount) {
   let result = [];
@@ -18999,6 +19054,7 @@ function BuildTuneSetOpen(bOpenInNewTabInEditor) {
   var theABC = getABCEditorText();
   var tuneSet = "";
   var setNames = [];
+  var tunesForVoiceCheck = [];
 
   // Add selected tunes in order
   for (i = 0; i < BuildTuneSetSelectionOrder.length; ++i) {
@@ -19012,11 +19068,24 @@ function BuildTuneSetOpen(bOpenInNewTabInEditor) {
     if (index !== -1) {
       const tuneABC = getTuneByIndex(index).trim() + "\n\n";
       tuneSet += tuneABC;
+      
+      tunesForVoiceCheck.push(tuneABC);
+
       setNames.push(tuneName);
     }
 
   }
 
+  // Check that the tunes all have the same number of voices
+  if (!allTunesHaveSameVoiceCount(tunesForVoiceCheck)){
+      DayPilot.Modal.alert('<div style="text-align:center;font-family:helvetica;"><p style="font-size:14pt;">Unable to Create Tune Set</p><p style="font-size:12pt;margin-top:36px;">The tunes have different number of voices.</p><p style="font-size:12pt;line-height:24px;">To fix, edit the tunes as required to make them have<br/>the same number of voices, then try again.</p></div>', {
+        theme: "modal_flat",
+        top: 230,
+        scrollWithPage: (AllowDialogsToScroll())
+      });
+      return;
+  }
+  
   tuneSet = processTuneSet(tuneSet, setNames, bRepeat, nRepeat, bIsVerbose);
 
   var tuneSetName = setNames.join(' / ');
@@ -19142,6 +19211,7 @@ function BuildTuneSetAppend() {
   var theABC = getABCEditorText();
   var tuneSet = "";
   var setNames = [];
+  var tunesForVoiceCheck = [];
 
   // Add selected tunes in order
   for (i = 0; i < BuildTuneSetSelectionOrder.length; ++i) {
@@ -19155,9 +19225,22 @@ function BuildTuneSetAppend() {
     if (index !== -1) {
       const tuneABC = getTuneByIndex(index).trim() + "\n\n";
       tuneSet += tuneABC;
+      
+      tunesForVoiceCheck.push(tuneABC);
+
       setNames.push(tuneName);
     }
 
+  }
+
+  // Check that the tunes all have the same number of voices
+  if (!allTunesHaveSameVoiceCount(tunesForVoiceCheck)){
+      DayPilot.Modal.alert('<div style="text-align:center;font-family:helvetica;"><p style="font-size:14pt;">Unable to Create Tune Set</p><p style="font-size:12pt;margin-top:36px;">The tunes have different number of voices.</p><p style="font-size:12pt;line-height:24px;">To fix, edit the tunes as required to make them have<br/>the same number of voices, then try again.</p></div>', {
+        theme: "modal_flat",
+        top: 230,
+        scrollWithPage: (AllowDialogsToScroll())
+      });
+      return;
   }
 
   tuneSet = processTuneSet(tuneSet, setNames, bRepeat, nRepeat, bIsVerbose);
@@ -19257,6 +19340,7 @@ function BuildTuneSetAppend() {
   }
 
 }
+
 
 function BuildTuneSetClearSelection() {
 
