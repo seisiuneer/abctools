@@ -494,7 +494,7 @@ let refinedHistory = [];
 let trackers = [];
 
 // ---------- Settings ----------
-const PITCH_FFT_SIZE = 2048;
+const PITCH_FFT_SIZE = 4096; // was 2048
 
 // coarse spectrum (hint only)
 const SPEC_FFT_SIZE_PREF = 32768;
@@ -692,8 +692,9 @@ function yinPitch(buffer, sampleRate, minFreq, maxFreq, threshold) {
   if (tauEstimate === -1) return null;
 
   const probability = 1 - cmnd[tauEstimate];
-  if (probability < 0.75) return null;
 
+  if (probability < 0.75) return null;
+  
   const x0 = tauEstimate > 1 ? tauEstimate - 1 : tauEstimate;
   const x2 = tauEstimate + 1 <= maxTau ? tauEstimate + 1 : tauEstimate;
   const s0 = cmnd[x0], s1 = cmnd[tauEstimate], s2 = cmnd[x2];
@@ -1176,6 +1177,7 @@ function tick() {
       silenceTimer = null;
 
       const yin = yinPitch(timeDataPitch, audioCtx.sampleRate, 55, 2000, 0.12);
+
       if (yin && yin.freq) {
         pitchHistory.push(yin.freq);
         if (pitchHistory.length > STABLE_PITCH_HISTORY) pitchHistory.shift();
@@ -1292,8 +1294,34 @@ function onProcess(e){
 
 // ---------- Start/Stop ----------
 async function startAudio(){
+
   audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-  const stream = await navigator.mediaDevices.getUserMedia({ audio:true });
+
+  // Ask the browser/OS to NOT apply automatic input processing (AGC/NS/EC),
+  // which can make the apparent input level “pump” while you play.
+  // Note: some browsers/devices may ignore some of these constraints.
+  const stream = await navigator.mediaDevices.getUserMedia({
+    audio: {
+      autoGainControl: false,
+      echoCancellation: false,
+      noiseSuppression: false
+    }
+  });
+
+  const track = stream.getAudioTracks()[0];
+
+  if (track && track.applyConstraints) {
+    try {
+      await track.applyConstraints({
+        autoGainControl: false,
+        echoCancellation: false,
+        noiseSuppression: false
+      });
+    } catch (e) {
+      console.log("applyConstraints failed/ignored:", e);
+    }
+  }
+
   streamSource = audioCtx.createMediaStreamSource(stream);
 
   analyserPitch = audioCtx.createAnalyser();
