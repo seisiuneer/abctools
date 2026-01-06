@@ -320,7 +320,32 @@
           <th>Ideal Hz (ET)</th>
           <th>Ref Hz</th>
           <th>Δ Hz (from ET)</th>
-          <th>Musette (Cents)</th>
+          <th>
+            <div style="display:flex; align-items:center; justify-content:space-between; gap:12px;">
+              <span>Musette (Cents)</span>
+              <button id="clear-table-btn"
+                title="Clear table"
+                aria-label="Clear table"
+                style="
+                  width:18px;
+                  height:18px;
+                  padding:0;
+                  border-radius:50%;
+                  border:none;
+                  background:#ff3e3e;
+                  color:#000;
+                  font-weight:900;
+                  cursor:pointer;
+                  font-size:14px;
+                  line-height:18px;
+                  display:flex;
+                  align-items:center;
+                  justify-content:center;
+                  flex:0 0 auto;
+                  margin-bottom:9px;
+                ">✕</button>
+            </div>
+          </th>
         </tr>
       </thead>
       <tbody id="report-body"></tbody>
@@ -408,12 +433,13 @@
       <div style="margin-bottom:12px;">
         <b>5) Understand the results table</b><br/>
         Each saved row includes:
-        <ul style="margin:8px 0 0 20px;">
+        <ul style="margin:8px 0 8px 20px;">
           <li style="margin-bottom:6px;"><b>Ideal Hz (ET)</b>: the equal-tempered target for the detected note.</li>
           <li style="margin-bottom:6px;"><b>Ref Hz</b>: measured reference reed frequency.</li>
           <li style="margin-bottom:6px;"><b>Δ Hz (from ET)</b>: how far the reference reed is from equal temperament.</li>
           <li><b>Musette (cents)</b>: reed-to-reed offset(s) relative to the reference reed.</li>
         </ul>
+        Click the red x to clear the results.
       </div>
 
       <div>
@@ -1448,6 +1474,13 @@ document.getElementById('help-close').onclick = () => { helpModal.style.display 
 helpModal.addEventListener('click', (e) => {
   if (e.target === helpModal) helpModal.style.display = "none";
 });
+
+// Clear button
+document.getElementById('clear-table-btn').onclick = () => {
+  history = [];
+  updateTable();
+};
+
 </script>
 </body>
 </html>
