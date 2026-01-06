@@ -473,6 +473,9 @@ const NOTES = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
 let isLocked = false;
 let silenceTimer = null;
 
+/* MAE 06 Jan 2026 - require NEXT NOTE after config change (MM <-> MMM or basis change) */
+let needsNextNoteAfterConfigChange = false;
+
 let history = [];
 let lastStable = null;
 
@@ -603,6 +606,18 @@ function setNeedleElCents(el, cents){
   const needleCents = (cents == null) ? 0 : clamp(Math.round(cents), -MAX_CENTS_DISPLAY, MAX_CENTS_DISPLAY);
   const pos = 50 + (needleCents * NEEDLE_SCALE);
   el.style.left = clamp(pos, 0, 100) + "%";
+}
+
+/* MAE 06 Jan 2026 - gate listening after config change */
+function requireNextNoteAfterConfigChange(){
+  if (!audioCtx) return; // only enforce after START
+  needsNextNoteAfterConfigChange = true;
+  isLocked = true;                 // stop processing
+  showLockedIndicator(false);
+  clearTimeout(silenceTimer);
+  silenceTimer = null;
+  setTopStatusVisible(true);
+  setStatus("Configuration changed — press NEXT NOTE", "status-warn");
 }
 
 // ---------- Canvas ----------
@@ -963,7 +978,7 @@ function trackerProcessBlock(tr, input){
     const q = x * s;
 
     tr.iLP = (1-tr.lpA)*i + tr.lpA*tr.iLP;
-    tr.qLP = (1-tr.lpA)*q + tr.lpA*tr.qLP;
+    tr.qLP = (1-tr.lpA)*q + tr.hpA*tr.qLP;
 
     tr.iMean = (1-tr.hpA)*tr.iLP + tr.hpA*tr.iMean;
     tr.qMean = (1-tr.hpA)*tr.qLP + tr.hpA*tr.qMean;
@@ -1181,7 +1196,7 @@ function tick() {
 
 // ---------- ScriptProcessor (refined estimates) ----------
 function onProcess(e){
-  if (!audioCtx || isLocked) return;
+  if (!audioCtx || isLocked || needsNextNoteAfterConfigChange) return;
 
   const input = e.inputBuffer.getChannelData(0);
   if (!(rmsOfArray(input) > RMS_SILENCE)) return;
@@ -1325,6 +1340,9 @@ document.getElementById('start-btn').onclick = async () => {
 };
 
 document.getElementById('reset-btn').onclick = () => {
+  /* MAE 06 Jan 2026 - clear gate */
+  needsNextNoteAfterConfigChange = false;
+
   isLocked = false;
   showLockedIndicator(false);
   lastStable = null;
@@ -1370,6 +1388,9 @@ cfgSel.addEventListener('change', () => {
   setNeedleCents(0);
   setNeedleElCents(needleLow, 0);
   setNeedleElCents(needleHigh, 0);
+
+  /* MAE 06 Jan 2026 - require NEXT NOTE after config change (after START) */
+  requireNextNoteAfterConfigChange();
 });
 
 document.querySelectorAll('input[name="mmmBasis"]').forEach(r => {
@@ -1383,6 +1404,9 @@ document.querySelectorAll('input[name="mmmBasis"]').forEach(r => {
 
     // keep MMM needles visible if MMM mode
     setNeedleMode(cfgSel.value);
+
+    /* MAE 06 Jan 2026 - require NEXT NOTE after basis change (after START) */
+    requireNextNoteAfterConfigChange();
   });
 });
 
