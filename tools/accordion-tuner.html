@@ -89,6 +89,21 @@
       width:3px; height:100%; background:#ff3e3e; position:absolute; left:50%;
       transform:translateX(-50%); transition:left .12s ease-out; z-index:2;
     }
+
+    /* MMM dual needles (only shown when MMM is active) */
+    .mmm-needle{
+      width:3px;
+      height:100%;
+      position:absolute;
+      left:50%;
+      transform:translateX(-50%);
+      transition:left .12s ease-out;
+      z-index:2;
+      display:none;
+    }
+    #needle-low{ background:#7CFFB2; }   /* low offset needle (light green) */
+    #needle-high{ background:#ff3e3e; }  /* high offset needle (red) */
+
     .center-mark{ position:absolute; left:50%; width:2px; height:100%; background:var(--accent); opacity:.55; }
     .edge-mark{ position:absolute; top:0; height:100%; width:1px; background:#444; opacity:0.9; }
     .edge-left{ left:10%; }
@@ -277,11 +292,17 @@
     <div id="note" class="note-display">--</div>
     <div id="freq" class="freq-display">0.00 Hz (reference)</div>
 
-    <div class="meter-box" title="MM: needle shows musette cents above reference. MMM: needle shows cents deviation from the reference note.">
+    <div class="meter-box" title="MM: needle shows musette cents above reference. MMM: needles show low/high musette cents relative to the reference reed.">
       <div class="center-mark"></div>
       <div class="edge-mark edge-left"></div>
       <div class="edge-mark edge-right"></div>
+
+      <!-- MM (single needle) -->
       <div id="needle"></div>
+
+      <!-- MMM (two needles: low + high offsets) -->
+      <div id="needle-low" class="mmm-needle"></div>
+      <div id="needle-high" class="mmm-needle"></div>
     </div>
 
     <div id="musette-line"></div>
@@ -361,7 +382,7 @@
               </li>
             </ul>
             <div style="margin-top:6px; color:#bdbdbd; font-size:0.95rem;">
-              <b>MMM needle:</b> shows how the <b>reference reed</b> sits relative to the detected note.
+              <b>MMM needle:</b> center = reference reed, other two needles shows the two musette reed offsets
             </div>
           </li>
         </ul>
@@ -440,6 +461,8 @@ let procNode = null;
 const canvas = document.getElementById('scope');
 const cctx = canvas.getContext('2d');
 const needle = document.getElementById('needle');
+const needleLow = document.getElementById('needle-low');
+const needleHigh = document.getElementById('needle-high');
 const cfgSel = document.getElementById('cfg');
 const mmmBasisWrap = document.getElementById('mmmBasisWrap');
 const lockedIndicatorEl = document.getElementById('locked-indicator');
@@ -563,6 +586,25 @@ function showLockedIndicator(on){
   lockedIndicatorEl.style.display = on ? "inline-block" : "none";
 }
 
+// ---------- Needle visibility ----------
+function setNeedleMode(cfg){
+  if (cfg === "MMM") {
+    needle.style.display = "none";
+    needleLow.style.display = "block";
+    needleHigh.style.display = "block";
+  } else {
+    needle.style.display = "block";
+    needleLow.style.display = "none";
+    needleHigh.style.display = "none";
+  }
+}
+
+function setNeedleElCents(el, cents){
+  const needleCents = (cents == null) ? 0 : clamp(Math.round(cents), -MAX_CENTS_DISPLAY, MAX_CENTS_DISPLAY);
+  const pos = 50 + (needleCents * NEEDLE_SCALE);
+  el.style.left = clamp(pos, 0, 100) + "%";
+}
+
 // ---------- Canvas ----------
 function resizeCanvasToCSS(){
   const rect = canvas.getBoundingClientRect();
@@ -676,11 +718,6 @@ function updateLatchedMidiUsingRefHz(refHz){
   } else {
     latchCandidateCount = 0;
   }
-}
-
-function centsFromLatchedNote(refHz){
-  if (latchedMidi == null || !(refHz > 0)) return null;
-  return centsBetween(refHz, midiToFreq(latchedMidi));
 }
 
 function idealHzForLatched(){
@@ -971,9 +1008,7 @@ function getConfig() {
 
 // ---------- UI helpers ----------
 function setNeedleCents(cents){
-  const needleCents = (cents == null) ? 0 : clamp(Math.round(cents), -MAX_CENTS_DISPLAY, MAX_CENTS_DISPLAY);
-  const pos = 50 + (needleCents * NEEDLE_SCALE);
-  needle.style.left = clamp(pos, 0, 100) + "%";
+  setNeedleElCents(needle, cents);
 }
 
 function updateNeedleForMM(refHz, musHz){
@@ -982,9 +1017,11 @@ function updateNeedleForMM(refHz, musHz){
   setNeedleCents(Math.max(0, musCents));         // never allow left-of-center in MM
 }
 
-function updateNeedleFromRefHz(refHz){
-  const c = centsFromLatchedNote(refHz);
-  setNeedleCents(c == null ? 0 : c);
+function updateMMMNeedles(off1, off2){
+  const lo = Math.min(off1, off2);
+  const hi = Math.max(off1, off2);
+  setNeedleElCents(needleLow, lo);
+  setNeedleElCents(needleHigh, hi);
 }
 
 function updateTable() {
@@ -1032,7 +1069,6 @@ function lockData() {
 }
 
 function pushRefined(res){
-
   refinedHistory.push(res);
   if (refinedHistory.length > STABLE_REFINED_HISTORY) refinedHistory.shift();
 }
@@ -1082,19 +1118,24 @@ function medianStableRefinedMMM(){
   };
 }
 
-function renderRealtime(cfg, note, refHz, musetteLine, needleCents){
+function renderRealtime(cfg, note, refHz, musetteLine, mmmOff1, mmmOff2, mmNeedleCents){
   document.getElementById('note').innerText = note;
   document.getElementById('freq').innerText = `${fmtHz(refHz)} Hz (reference)`;
   document.getElementById('musette-line').innerText = musetteLine;
 
-  // If caller provided a needle value, use it.
-  if (needleCents != null && isFinite(needleCents)) {
-    setNeedleCents(needleCents);
+  setNeedleMode(cfg);
+
+  if (cfg === "MMM") {
+    if (isFinite(mmmOff1) && isFinite(mmmOff2)) updateMMMNeedles(mmmOff1, mmmOff2);
     return;
   }
 
-  // Otherwise fall back to MMM behavior (ref vs latched note).
-  updateNeedleFromRefHz(refHz);
+  // MM
+  if (mmNeedleCents != null && isFinite(mmNeedleCents)) {
+    setNeedleCents(mmNeedleCents);
+  } else {
+    setNeedleCents(0);
+  }
 }
 
 // ---------- Main tick (scope + silence lock + pitch) ----------
@@ -1176,26 +1217,17 @@ function onProcess(e){
     const musHz = refined2[1];
     const musCents = centsBetween(musHz, refHz);
 
-    // MM needle = musette offset from reference (center)
-    updateNeedleForMM(refHz, musHz);
-
     updateLatchedMidiUsingRefHz(refHz);
     const note = (latchedMidi == null) ? "--" : midiToNoteName(latchedMidi);
 
     pushRefined({ cfg:"MM", note, refHz, musetteCents: musCents });
 
     const stable = medianStableRefinedMM();
-
     if (stable) {
       lastStable = stable;
-
-      // stable.musetteCents is the median musette offset already
-      setNeedleCents(Math.max(0, stable.musetteCents));
-
-      renderRealtime("MM", stable.note, stable.refHz, `Musette:   ${stable.musetteStr}`, Math.max(0, stable.musetteCents));
-
+      const mmNeedle = Math.max(0, stable.musetteCents);
+      renderRealtime("MM", stable.note, stable.refHz, `Musette:   ${stable.musetteStr}`, null, null, mmNeedle);
     }
-
     return;
   }
 
@@ -1239,8 +1271,7 @@ function onProcess(e){
   const stable3 = medianStableRefinedMMM();
   if (stable3) {
     lastStable = stable3;
-    renderRealtime("MMM", stable3.note, stable3.refHz, `Musette:   ${stable3.musetteStr}`);
-
+    renderRealtime("MMM", stable3.note, stable3.refHz, `Musette:   ${stable3.musetteStr}`, stable3.off1, stable3.off2, null);
   }
 }
 
@@ -1272,6 +1303,9 @@ async function startAudio(){
 
   setStatus("Listening", "status-ok");
   setTopStatusVisible(true);
+
+  // ensure correct needles visible for current config
+  setNeedleMode(cfgSel.value);
 
   requestAnimationFrame(tick);
 }
@@ -1308,8 +1342,13 @@ document.getElementById('reset-btn').onclick = () => {
 
   document.getElementById('note').innerText = "--";
   document.getElementById('freq').innerText = `0.00 Hz (reference)`;
-  setNeedleCents(0);
   document.getElementById('musette-line').innerText = "";
+
+  // reset needles
+  setNeedleMode(cfgSel.value);
+  setNeedleCents(0);
+  setNeedleElCents(needleLow, 0);
+  setNeedleElCents(needleHigh, 0);
 
   setStatus("Listening", "status-ok");
   setTopStatusVisible(true);
@@ -1326,6 +1365,11 @@ cfgSel.addEventListener('change', () => {
   showLockedIndicator(false);
   isLocked = false;
   setTopStatusVisible(true);
+
+  setNeedleMode(cfgSel.value);
+  setNeedleCents(0);
+  setNeedleElCents(needleLow, 0);
+  setNeedleElCents(needleHigh, 0);
 });
 
 document.querySelectorAll('input[name="mmmBasis"]').forEach(r => {
@@ -1336,10 +1380,14 @@ document.querySelectorAll('input[name="mmmBasis"]').forEach(r => {
     showLockedIndicator(false);
     isLocked = false;
     setTopStatusVisible(true);
+
+    // keep MMM needles visible if MMM mode
+    setNeedleMode(cfgSel.value);
   });
 });
 
 syncBasisVisibility();
+setNeedleMode(cfgSel.value);
 
 // ---------- Help modal ----------
 const helpModal = document.getElementById('help-modal');
