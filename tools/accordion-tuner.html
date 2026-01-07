@@ -59,7 +59,7 @@
 
     .row{
       display:grid;
-      grid-template-columns: minmax(320px, 1fr) minmax(320px, 1fr);
+      grid-template-columns: minmax(260px, 1fr) minmax(220px, 1fr) minmax(260px, 1fr);
       gap:10px;
       margin:10px 0 6px;
       align-items:start;
@@ -384,6 +384,54 @@
         border-radius: 16px !important;
         padding: 14px 14px 12px !important;
       }
+
+      .live-mode-box{
+        padding: 14px 12px;   /* matches your mobile select/radio-box padding */
+        min-height: 52px;
+      }
+      #live-only{
+        width: 18px;
+        height: 18px;
+      }
+      .live-mode-label{
+        font-size: 1.05rem;
+      }
+
+    }
+
+    /* --- Live mode checkbox: make it match the selects --- */
+    .live-mode-wrap{
+      margin: 0;              /* no extra vertical spacing */
+      text-align: left;
+    }
+
+    .live-mode-box{
+      /* override the generic .radio-box padding/feel so it matches <select> */
+      display: flex;
+      align-items: center;
+      gap: 10px;
+
+      padding: 10px 10px;     /* same as select */
+      border-radius: 10px;    /* same as select */
+      min-height: 44px;       /* keeps it from being taller than the selects */
+      box-sizing: border-box;
+    }
+
+    /* checkbox sizing */
+    #live-only{
+      width: 16px;
+      height: 16px;
+      flex: 0 0 auto;
+      margin: 0;
+      cursor: pointer;
+    }
+
+    /* label text sizing/weight to match */
+    .live-mode-label{
+      margin: 0;
+      font-size: 0.95rem;     /* same ballpark as select text */
+      font-weight: 400;
+      line-height: 1;
     }
 
   </style>
@@ -403,29 +451,10 @@
         <label for="cfg">Reed configuration</label>
         <div class="select-wrap">
           <select id="cfg">
-            <option value="MM">MM (2 reeds)</option>
-            <option value="MMM_MIDDLE">MMM (3 reeds)  -/+ (middle reference)</option>
-            <option value="MMM_LOWEST">MMM (3 reeds)  +/+ (lowest reference)</option>
+            <option value="MM">MM (2 reeds):&nbsp;&nbsp;&nbsp;0 / +</option>
+            <option value="MMM_MIDDLE">MMM (3 reeds):&nbsp;&nbsp;&nbsp;0 / - / +</option>
+            <option value="MMM_LOWEST">MMM (3 reeds):&nbsp;&nbsp;&nbsp;0 / + / +</option>
           </select>
-        </div>
-      </div>
-
-      <!-- Kept in DOM (no CSS changes elsewhere), but no longer used -->
-      <div id="mmmBasisWrap" style="display:none;">
-        <label>MMM reference basis</label>
-        <div class="radio-box">
-          <div style="margin-top:8px;">
-            <input type="radio" name="mmmBasis" id="basisMiddle" value="middle" checked>
-            <label for="basisMiddle">Reference = <b>Middle</b> reed (-/+)</label>
-          </div>
-          <div>
-            <input type="radio" name="mmmBasis" id="basisLowest" value="lowest">
-            <label for="basisLowest">Reference = <b>Lowest</b> reed (+/+)</label>
-          </div>
-          <div class="hint">
-            -/+ : one lower, one higher<br/>
-            +/+ : both musette reeds higher
-          </div>
         </div>
       </div>
 
@@ -443,6 +472,15 @@
             <option value="445">445</option>
             <option value="446">446</option>
           </select>
+        </div>
+      </div>
+
+      <!-- Live mode (now on the same row as the selects) -->
+      <div class="live-mode-wrap">
+        <label>If checked, don't save values</label>
+        <div class="radio-box live-mode-box">
+          <input type="checkbox" id="live-only">
+          <label for="live-only" class="live-mode-label">Live mode</label>
         </div>
       </div>
     </div>
@@ -614,7 +652,12 @@
 
       <div>
         <b>7) Measure the next note</b><br/>
-        Click <b>NEXT NOTE</b> to reset and repeat for another pitch.
+        Click <b>NEXT NOTE</b> to reset and repeat for another pitch.<br/><br/>
+      </div>
+
+      <div>
+        <b>8) Live mode</b><br/>
+        Check the <b>Live mode</b> checkbox to continuously recognize notes and musette offsets without saving results.
       </div>
 
       <div>
@@ -665,6 +708,13 @@ const lockedIndicatorEl = document.getElementById('locked-indicator');
 
 const NOTES = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
 
+// ---------- NEW: Live mode ----------
+const liveOnlyCheckbox = document.getElementById('live-only');
+function isLiveOnlyEnabled(){
+  return !!(liveOnlyCheckbox && liveOnlyCheckbox.checked);
+}
+// ---------- END NEW ----------
+
 // ---------- Lock / state ----------
 let isLocked = false;
 let silenceTimer = null;
@@ -688,6 +738,9 @@ let refinedHistory = [];
 
 // trackers (2 for MM, 3 for MMM)
 let trackers = [];
+
+// For live mode exit
+let suppressAutoSaveAfterLiveExit = false;
 
 // ---------- Settings ----------
 const PITCH_FFT_SIZE = 4096; // was 2048
@@ -1386,6 +1439,9 @@ function updateTable() {
 function lockData() {
   if (!lastStable || isLocked) return;
 
+  /* NEW: In Live mode, never lock or save to table */
+  if (isLiveOnlyEnabled()) return;
+
   isLocked = true;
   showLockedIndicator(true);
 
@@ -1497,13 +1553,32 @@ function tick() {
     const rms = rmsOfArray(timeDataPitch);
 
     if (rms < RMS_SILENCE) {
-      if (!silenceTimer && pitchHistory.length >= STABLE_PITCH_NEED && lastStable) {
-        setStatus("Saving", "status-ok");
-        silenceTimer = setTimeout(() => lockData(), LOCK_AFTER_MS);
+
+      /* NEW: Live mode disables locking/saving and keeps listening */
+      if (isLiveOnlyEnabled()) {
+        clearTimeout(silenceTimer);
+        silenceTimer = null;
+
+        // keep UI in "Listening" state (don't hide the top pill)
+        showLockedIndicator(false);
+        setTopStatusVisible(true);
+
+        // Only show this once we're actually started; otherwise leave "Microphone off"
+        setStatus("Listening (Live mode)", "status-ok");
+      } else {
+        if (!suppressAutoSaveAfterLiveExit) {
+          if (!silenceTimer && pitchHistory.length >= STABLE_PITCH_NEED && lastStable) {
+            setStatus("Saving", "status-ok");
+            silenceTimer = setTimeout(() => lockData(), LOCK_AFTER_MS);
+          }
+        }
       }
+
     } else {
       clearTimeout(silenceTimer);
       silenceTimer = null;
+
+      suppressAutoSaveAfterLiveExit = false;
 
       const yin = yinPitch(timeDataPitch, audioCtx.sampleRate, 55, 2000, 0.12);
 
@@ -1517,7 +1592,7 @@ function tick() {
       if (pitchHistory.length < STABLE_PITCH_NEED || !(lastF0 > 0)) {
         setStatus("Listening… Please hold a steady note", "status-warn");
       } else {
-        setStatus("Listening", "status-ok");
+        setStatus(isLiveOnlyEnabled() ? "Listening (Live mode)" : "Listening", "status-ok");
       }
     }
   }
@@ -1685,7 +1760,7 @@ async function startAudio(){
   resizeCanvasToCSS();
   showLockedIndicator(false);
 
-  setStatus("Listening", "status-ok");
+  setStatus(isLiveOnlyEnabled() ? "Listening (Live mode)" : "Listening", "status-ok");
   setTopStatusVisible(true);
 
   // ensure correct needles visible for current config
@@ -1709,6 +1784,7 @@ document.getElementById('start-btn').onclick = async () => {
 };
 
 document.getElementById('reset-btn').onclick = () => {
+
   /* MAE 06 Jan 2026 - clear gate */
   needsNextNoteAfterConfigChange = false;
 
@@ -1737,8 +1813,11 @@ document.getElementById('reset-btn').onclick = () => {
   setNeedleElCents(needleLow, 0);
   setNeedleElCents(needleHigh, 0);
 
-  setStatus("Listening", "status-ok");
+  setStatus(isLiveOnlyEnabled() ? "Listening (Live mode)" : "Listening", "status-ok");
   setTopStatusVisible(true);
+
+  suppressAutoSaveAfterLiveExit = false;
+
 };
 
 // A4 reference (concert pitch)
@@ -1787,6 +1866,35 @@ cfgSel.addEventListener('change', () => {
 // Initial UI state
 if (mmmBasisWrap) mmmBasisWrap.style.display = "none";
 setNeedleMode(getCfgOnly());
+
+// ---------- NEW: Live mode checkbox behavior ----------
+if (liveOnlyCheckbox) {
+  liveOnlyCheckbox.addEventListener('change', () => {
+    // Always clear any pending "save" timer.
+    clearTimeout(silenceTimer);
+    silenceTimer = null;
+
+    if (isLiveOnlyEnabled()) {
+      // Entering Live mode
+      suppressAutoSaveAfterLiveExit = false;
+
+      // Ensure we are not locked and never show "Saved" in live mode.
+      isLocked = false;
+      showLockedIndicator(false);
+      setTopStatusVisible(true);
+
+      if (audioCtx) setStatus("Listening (Live mode)", "status-ok");
+    } else {
+      // Exiting Live mode: do NOT immediately save whatever the lastStable was
+      suppressAutoSaveAfterLiveExit = true;
+
+      showLockedIndicator(false);
+      setTopStatusVisible(true);
+      if (audioCtx) setStatus("Listening", "status-ok");
+    }
+  });
+}
+// ---------- END NEW ----------
 
 // ---------- Help modal ----------
 const helpModal = document.getElementById('help-modal');
