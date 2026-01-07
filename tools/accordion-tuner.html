@@ -233,6 +233,158 @@
       color: #9DFFD0;            /* slightly brighter on hover */
       text-decoration: underline;
     }
+    
+    /* ============================================================
+       Mobile / Portrait Usability Overrides
+       Paste this at the END of your <style> block
+       ============================================================ */
+
+    @media (max-width: 600px) {
+
+      /* Make the page feel less “boxed in” on phones */
+      body{
+        padding: 12px;
+      }
+
+      /* Slightly tighter card padding; keep it comfortable */
+      #tuner-ui{
+        padding: 16px;
+        border-radius: 14px;
+      }
+
+      /* Title: smaller and tighter spacing */
+      #tuner-ui h1{
+        font-size: 1.25rem !important;
+        margin: 0 0 12px 0 !important;
+      }
+
+      /* Instructions button: thumb-friendly but not huge */
+      #help-btn.btn-small{
+        font-size: 1.05rem;
+        padding: 12px 14px;
+        margin-bottom: 12px;
+        border-radius: 12px;
+      }
+
+      /* ------------------------------------------------------------
+         Stack the top config controls vertically (MOST IMPORTANT)
+         ------------------------------------------------------------ */
+      .row{
+        grid-template-columns: 1fr !important;
+        gap: 14px !important;
+        margin: 10px 0 8px;
+      }
+
+      label{
+        font-size: 0.9rem;
+        margin-bottom: 8px;
+      }
+
+      /* Bigger tap targets for selects */
+      select, .radio-box{
+        font-size: 1.05rem;
+        padding: 14px 12px;
+        border-radius: 12px;
+      }
+
+      .select-wrap select{
+        padding-right: 52px; /* leave room for caret */
+      }
+
+      .select-wrap::after{
+        right: 18px;
+        font-size: 1.1rem;
+        opacity: 0.9;
+      }
+
+      /* Status pills */
+      .status-pill{
+        font-size: 1rem;
+        padding: 10px 14px;
+        margin-top: 12px;
+        margin-bottom: 8px;
+      }
+
+      /* Scope: reduce height to reclaim vertical space */
+      canvas{
+        height: 56px;
+        margin: 10px 0 12px;
+        border-radius: 10px;
+      }
+
+      /* Big, glanceable live readouts */
+      .note-display{
+        font-size: 4.6rem;
+        margin-top: 2px;
+      }
+
+      .freq-display{
+        font-size: 1.2rem;
+        margin-bottom: 14px;
+      }
+
+      /* Meter: taller for readability */
+      .meter-box{
+        height: 64px;
+        margin: 18px 0 10px;
+        border-radius: 12px;
+      }
+
+      /* Musette line bigger */
+      #musette-line{
+        font-size: 1.3rem;
+        min-height: 1.6em;
+        margin-top: 14px;
+      }
+
+      /* Primary buttons: larger, stick to bottom for easy access */
+      .btn-main,
+      .btn-reset{
+        font-size: 1.2rem;
+        padding: 16px 18px;
+        border-radius: 14px;
+      }
+
+      /* Sticky controls so START/NEXT NOTE don't scroll away */
+      #start-btn,
+      #reset-btn{
+        position: sticky;
+        bottom: 12px;
+        z-index: 20;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.6);
+      }
+
+      /* Results table: reduce density a bit (still scrollable) */
+      #report-wrap{
+        border-radius: 12px;
+        margin-top: 14px;
+      }
+
+      #report-table th,
+      #report-table td{
+        font-size: 0.92rem;
+        padding: 8px 6px;
+      }
+
+      /* Slightly reduce the “panel gutter” padding on mobile */
+      #report-table th:first-child,
+      #report-table td:first-child{
+        padding-left: 14px;
+      }
+
+      #report-table th:last-child,
+      #report-table td:last-child{
+        padding-right: 14px;
+      }
+
+      /* Help modal: maximize readable area on small screens */
+      #help-modal > div{
+        width: calc(100% - 24px) !important;
+        margin: 18px auto 0 !important;
+        border-radius: 16px !important;
+        padding: 14px 14px 12px !important;
+      }
+    }
 
   </style>
 
