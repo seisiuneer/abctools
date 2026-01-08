@@ -865,6 +865,28 @@ function fmtETBeats(refHz){
   if (ideal == null || !(refHz > 0)) return "--";
   return fmtBeats(Math.abs(refHz - ideal)); // beat rate in beats/sec
 }
+//
+// Are we on iOS?
+//
+function isIOS() {
+  if (/iPad|iPhone|iPod/.test(navigator.platform)) {
+    return true;
+  } else {
+    return navigator.maxTouchPoints &&
+      navigator.maxTouchPoints > 2 &&
+      /MacIntel/.test(navigator.platform);
+  }
+}
+//
+// Are we on Android?
+//
+function isAndroid() {
+  if (/Android/i.test(navigator.userAgent)) {
+    return true;
+  } else {
+    return false;
+  }
+}
 // ---------- Status ----------
 const statusEl = document.getElementById('status');
 
@@ -1769,26 +1791,60 @@ async function startAudio(){
   // Ask the browser/OS to NOT apply automatic input processing (AGC/NS/EC),
   // which can make the apparent input level “pump” while you play.
   // Note: some browsers/devices may ignore some of these constraints.
-  const stream = await navigator.mediaDevices.getUserMedia({
-    audio: {
-      autoGainControl: false,
-      echoCancellation: false,
-      noiseSuppression: false
-    }
-  });
 
-  const track = stream.getAudioTracks()[0];
+  var stream;
+  var track;
 
-  if (track && track.applyConstraints) {
-    try {
-      await track.applyConstraints({
+  // Don't override constraints on mobile
+  if (!(isIOS() || isAndroid())){
+
+    stream = await navigator.mediaDevices.getUserMedia({
+      audio: {
         autoGainControl: false,
         echoCancellation: false,
         noiseSuppression: false
-      });
-    } catch (e) {
-      console.log("applyConstraints failed/ignored:", e);
+      }
+    });
+
+    track = stream.getAudioTracks()[0];
+
+    if (track && track.applyConstraints) {
+      try {
+        await track.applyConstraints({
+          autoGainControl: false,
+          echoCancellation: false,
+          noiseSuppression: false
+        });
+      } catch (e) {
+        console.log("applyConstraints failed/ignored:", e);
+      }
     }
+
+  }
+  else{
+
+    stream = await navigator.mediaDevices.getUserMedia({
+      audio: {
+        autoGainControl: true,
+        echoCancellation: false,
+        noiseSuppression: false
+      }
+    });
+
+    track = stream.getAudioTracks()[0];
+
+    if (track && track.applyConstraints) {
+      try {
+        await track.applyConstraints({
+          autoGainControl: true,
+          echoCancellation: false,
+          noiseSuppression: false
+        });
+      } catch (e) {
+        console.log("applyConstraints failed/ignored:", e);
+      }
+    }
+
   }
 
   streamSource = audioCtx.createMediaStreamSource(stream);
