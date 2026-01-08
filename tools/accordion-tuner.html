@@ -442,6 +442,10 @@
         font-size: 1.05rem;
       }
 
+      #export-csv-btn{
+        display:none !important;
+      }
+
     }
 
     /* --- Live mode checkbox: make it match the selects --- */
@@ -567,7 +571,7 @@
         background-image: none !important;
       }
 
-      #clear-table-btn{
+      #clear-table-btn, #export-csv-btn{
         display: none !important;
       }
 
@@ -675,27 +679,50 @@
           <th>
             <div style="display:flex; align-items:center; justify-content:space-between; gap:12px;">
               <span>Musette</span>
-              <button id="clear-table-btn"
-                title="Clear table"
-                aria-label="Clear table"
-                style="
-                  width:20px;
-                  height:20px;
-                  padding:0;
-                  border-radius:50%;
-                  border:none;
-                  background:#ff3e3e;
-                  color:#000;
-                  font-weight:900;
-                  cursor:pointer;
-                  font-size:15px;
-                  line-height:18px;
-                  display:flex;
-                  align-items:center;
-                  justify-content:center;
-                  flex:0 0 auto;
-                  margin-bottom:8px;
-                ">✕</button>
+              <div style="display:flex; align-items:center; gap:8px; flex:0 0 auto; margin-bottom:8px;">
+                <button id="export-csv-btn"
+                  title="Export table as CSV"
+                  aria-label="Export table as CSV"
+                  style="
+                    width:20px;
+                    height:20px;
+                    padding:0;
+                    padding-right:24px;
+                    padding-bottom:3px;
+                    border-radius:50%;
+                    border:none;
+                    background:#2a2a2a;
+                    color:#0F0;
+                    font-weight:900;
+                    cursor:pointer;
+                    font-size:1rem;
+                    line-height:18px;
+                    display:flex;
+                    align-items:center;
+                    justify-content:center;
+                    flex:0 0 auto;
+                  ">CSV</button>
+                <button id="clear-table-btn"
+                  title="Clear table"
+                  aria-label="Clear table"
+                  style="
+                    width:20px;
+                    height:20px;
+                    padding:0;
+                    border-radius:50%;
+                    border:none;
+                    background:#ff3e3e;
+                    color:#000;
+                    font-weight:900;
+                    cursor:pointer;
+                    font-size:15px;
+                    line-height:18px;
+                    display:flex;
+                    align-items:center;
+                    justify-content:center;
+                    flex:0 0 auto;
+                  ">✕</button>
+              </div>
             </div>
           </th>
         </tr>
@@ -816,11 +843,18 @@
 
       <div>
          <b>9) Printing the results</b><br/>
-         You can use the Print feature in your browser to print the results table.
+         You can use the Print feature in your browser to print the results table.<br/><br/>
+      </div>
       </div>
 
       <div>
-        <br/><b>Tip Jars</b><br/>
+         <b>10) Export the results as a CSV file</b><br/>
+         Click <b>CSV</b> at the top of the results table to export the results as a CSV file.<br/>
+         The file will be saved into your browser's default Downloads directory.<br/><br/>
+      </div>
+
+      <div>
+        <b>Tip Jars</b><br/>
         This tool was created by <a href="https://michaeleskin.com" target="_blank">Michael Eskin</a>.<br/>
         If you find it useful, please consider making a contribution via my online tip jars:<br/><br/>
       </div>
@@ -1018,6 +1052,64 @@ function fmtETBeats(refHz){
   if (ideal == null || !(refHz > 0)) return "--";
   return fmtBeats(Math.abs(refHz - ideal)); // beat rate in beats/sec
 }
+
+// ---------- CSV export ----------
+function csvEscapeCell(v){
+  if (v == null) return "";
+  const s = String(v);
+  if (/[",\r\n]/.test(s)) return `"${s.replace(/"/g, '""')}"`;
+  return s;
+}
+
+function exportResultsTableAsCSV(){
+  const table = document.getElementById('report-table');
+  if (!table) return;
+
+  const rows = [];
+  const trs = table.querySelectorAll('tr');
+
+  trs.forEach(tr => {
+    const cells = tr.querySelectorAll('th,td');
+    const line = Array.from(cells).map(cell => {
+      let text = "";
+
+      if (cell.tagName === "TH") {
+        const label = cell.querySelector("span");
+        text = label ? label.innerText.trim() : cell.innerText.trim();
+      } else {
+        text = cell.innerText.trim();
+      }
+
+      return csvEscapeCell(
+        text
+          .replace(/\u00A0/g, " ")
+          .replace(/\r\n/g, "\n")
+          .replace(/\r/g, "\n")
+      );
+    }).join(',');
+    rows.push(line);
+  });
+
+  const csv = rows.join('\r\n');
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+
+  const a = document.createElement('a');
+  a.href = url;
+
+  const pad2 = (n) => String(n).padStart(2, '0');
+  const d = new Date();
+  const filename = `accordion_musette_tuner_${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}_${pad2(d.getHours())}${pad2(d.getMinutes())}.csv`;
+
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+
+  setTimeout(() => URL.revokeObjectURL(url), 2500);
+}
+// ---------- END CSV export ----------
+
 // ---------- Status ----------
 const statusEl = document.getElementById('status');
 
@@ -2116,6 +2208,11 @@ helpModal.addEventListener('click', (e) => {
 document.getElementById('clear-table-btn').onclick = () => {
   history = [];
   updateTable();
+};
+
+// Export CSV button
+document.getElementById('export-csv-btn').onclick = () => {
+  exportResultsTableAsCSV();
 };
 
 </script>
