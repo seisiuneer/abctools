@@ -509,7 +509,7 @@
     <canvas id="scope"></canvas>
 
     <div id="note" class="note-display">--</div>
-    <div id="freq" class="freq-display">0.00 Hz (reference)</div>
+    <div id="freq" class="freq-display">Reference: 0.00 Hz</div>
 
     <div class="meter-box" title="MM: needle shows musette cents above reference. MMM: needles show low/high musette cents relative to the reference reed.">
       <div class="center-mark"></div>
@@ -538,10 +538,10 @@
           <th>Note</th>
           <th>Ideal Hz (ET)</th>
           <th>Ref Hz</th>
-          <th>Δ Hz (from ET)</th>
+          <th>Δ from ET</th>
           <th>
             <div style="display:flex; align-items:center; justify-content:space-between; gap:12px;">
-              <span>Musette (Cents)</span>
+              <span>Musette</span>
               <button id="clear-table-btn"
                 title="Clear table"
                 aria-label="Clear table"
@@ -642,7 +642,7 @@
         While holding a steady note:
         <ul style="margin:8px 0 0 20px;">
           <li style="margin-bottom:6px;"><b>Note</b> shows the detected note name (based on the reference reed).</li>
-          <li style="margin-bottom:6px;"><b>Ref Hz</b> shows the measured frequency of the reference reed.</li>
+          <li style="margin-bottom:6px;"><b>Reference:</b> shows the measured frequency of the reference reed and deltas in Hz and cents from ideal ET.</li>
           <li style="margin-bottom:6px;"><b>Needle</b> shows the tuning/offset behavior described above for MM or MMM.</li>
           <li><b>Musette</b> shows the cents offset(s) of the musette reed(s) relative to the reference reed.</li>
         </ul>
@@ -660,7 +660,7 @@
         <ul style="margin:8px 0 8px 20px;">
           <li style="margin-bottom:6px;"><b>Ideal Hz (ET)</b>: the equal-tempered target for the detected note.</li>
           <li style="margin-bottom:6px;"><b>Ref Hz</b>: measured reference reed frequency.</li>
-          <li style="margin-bottom:6px;"><b>Δ Hz (from ET)</b>: how far the reference reed is from equal temperament.</li>
+          <li style="margin-bottom:6px;"><b>Δ from ET: deviation of the reference reed from equal temperament, shown in Hz and cents.</li>
           <li><b>Musette (cents)</b>: reed-to-reed offset(s) relative to the reference reed.</li>
         </ul>
         Click the red x to clear the results.
@@ -832,6 +832,18 @@ function fmtHzSigned(hz){
   if (hz == null || !isFinite(hz)) return "--";
   const v = Math.round(hz * 100) / 100;
   return (v > 0 ? "+" : "") + v.toFixed(2);
+}
+function fmtHzAndCentsDelta(refHz){
+  const ideal = idealHzForLatched();
+  if (ideal == null || !(refHz > 0)) return "--";
+
+  const deltaHz = refHz - ideal;
+  const deltaCents = centsBetween(refHz, ideal);
+
+  const hzStr = fmtHzSigned(deltaHz).replace("+", "");
+  const centsStr = fmtCentsSigned(deltaCents).replace("+", "");
+
+  return `${hzStr} Hz / ${centsStr} cents`;
 }
 function rmsOfArray(buf){
   let sum = 0;
@@ -1446,7 +1458,7 @@ function updateTable() {
       <td>${r.note}</td>
       <td class="mono">${r.idealHz}</td>
       <td class="mono">${fmtHz(r.refHz)}</td>
-      <td class="mono">${r.refDeltaHz}</td>
+      <td class="mono">${r.refDelta}</td>
       <td class="mono">${r.musette}</td>
     </tr>
   `).join('');
@@ -1470,15 +1482,14 @@ function lockData() {
   const ideal = idealHzForLatched();
   const idealStr = (ideal == null) ? "--" : fmtHz(ideal);
 
-  const refDeltaHz = hzDeviationFromET(lastStable.refHz);
-  const dhz = (refDeltaHz == null) ? "--" : fmtHzSigned(refDeltaHz);
+  const deltaStr = fmtHzAndCentsDelta(lastStable.refHz);
 
   history.push({
     cfg: lastStable.cfg,
     note: lastStable.note,
     idealHz: idealStr,
     refHz: Number(lastStable.refHz),
-    refDeltaHz: dhz,
+    refDelta: deltaStr,
     musette: lastStable.musetteStr
   });
 
@@ -1537,7 +1548,9 @@ function medianStableRefinedMMM(){
 
 function renderRealtime(cfg, note, refHz, musetteLine, mmmOff1, mmmOff2, mmNeedleCents){
   document.getElementById('note').innerText = note;
-  document.getElementById('freq').innerText = `${fmtHz(refHz)} Hz (reference)`;
+  document.getElementById('freq').innerText =
+  `Reference: ${fmtHz(refHz)} Hz - Δ from ET: ${fmtHzAndCentsDelta(refHz)}`;
+
   document.getElementById('musette-line').innerText = musetteLine;
 
   setNeedleMode(cfg);
@@ -1820,7 +1833,7 @@ document.getElementById('reset-btn').onclick = () => {
   silenceTimer = null;
 
   document.getElementById('note').innerText = "--";
-  document.getElementById('freq').innerText = `0.00 Hz (reference)`;
+  document.getElementById('freq').innerText = `Reference: 0.00 Hz`;
   document.getElementById('musette-line').innerText = "";
 
   // reset needles
