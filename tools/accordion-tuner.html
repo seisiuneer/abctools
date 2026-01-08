@@ -898,6 +898,18 @@ let analyserPitch, analyserSpec;
 let timeDataPitch, magSpec;
 let procNode = null;
 
+/* MAE 08 Jan 2026 - iOS-only input gain to address low mic levels on iOS */
+let inputGainNode = null;
+function isIOS(){
+  // iPhone/iPad/iPod OR iPadOS (MacIntel + touch)
+  const ua = navigator.userAgent || "";
+  const iOSUA = /iPad|iPhone|iPod/.test(ua);
+  const iPadOS = (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+  return iOSUA || iPadOS;
+}
+const IOS_INPUT_GAIN = 3.0; // minimal boost; isolated to iOS only
+/* END iOS-only input gain */
+
 // ---------- UI ----------
 const canvas = document.getElementById('scope');
 const cctx = canvas.getContext('2d');
@@ -2051,9 +2063,23 @@ async function startAudio(){
   procNode = audioCtx.createScriptProcessor(1024, 1, 1);
   procNode.onaudioprocess = onProcess;
 
-  streamSource.connect(analyserPitch);
-  streamSource.connect(analyserSpec);
-  streamSource.connect(procNode);
+  /* MAE 08 Jan 2026 - iOS-only: apply a small input gain before analysis */
+  if (isIOS()) {
+    inputGainNode = audioCtx.createGain();
+    inputGainNode.gain.value = IOS_INPUT_GAIN;
+
+    streamSource.connect(inputGainNode);
+
+    inputGainNode.connect(analyserPitch);
+    inputGainNode.connect(analyserSpec);
+    inputGainNode.connect(procNode);
+  } else {
+    streamSource.connect(analyserPitch);
+    streamSource.connect(analyserSpec);
+    streamSource.connect(procNode);
+  }
+  /* END iOS-only input gain */
+
   procNode.connect(audioCtx.destination);
 
   resizeCanvasToCSS();
