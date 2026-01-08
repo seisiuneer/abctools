@@ -1549,7 +1549,7 @@ function medianStableRefinedMMM(){
 function renderRealtime(cfg, note, refHz, musetteLine, mmmOff1, mmmOff2, mmNeedleCents){
   document.getElementById('note').innerText = note;
   document.getElementById('freq').innerText =
-  `Reference: ${fmtHz(refHz)} Hz - Δ from ET: ${fmtHzAndCentsDelta(refHz)}`;
+  `Reference: ${fmtHz(refHz)} Hz\u00A0\u00A0Δ from ET: ${fmtHzAndCentsDelta(refHz)}`;
 
   document.getElementById('musette-line').innerText = musetteLine;
 
