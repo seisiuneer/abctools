@@ -14,7 +14,7 @@
   <meta property="og:image" content="https://michaeleskin.com/img/bouebe-thumbnail.jpg" />
   <meta name="msapplication-TileColor" content="#ffffff">
   <meta name="msapplication-TileImage" content="https://michaeleskin.com/abctools/img/abc-ms-icon-144x144.png">
-  <meta name="viewport" content="width=860">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="apple-touch-icon" sizes="57x57" href="https://michaeleskin.com/abctools/img/abc-apple-icon-57x57.png">
   <link rel="apple-touch-icon" sizes="60x60" href="https://michaeleskin.com/abctools/img/abc-apple-icon-60x60.png">
   <link rel="apple-touch-icon" sizes="72x72" href="https://michaeleskin.com/abctools/img/abc-apple-icon-72x72.png">
@@ -48,7 +48,7 @@
       --panel:#1a1a1a;
       --text:#e0e0e0;
 
-      --ui-max: 760px; /* <-- pick 720–820 to taste */
+      --ui-max: 800px; /* <-- pick 720–820 to taste */
     }
     body{
       font-family:'Segoe UI',sans-serif; background:var(--bg); color:var(--text);
@@ -162,13 +162,18 @@
       width:100%;
       border-collapse:collapse;
       background:transparent;
+      max-width: 100%;
+      table-layout: fixed;
     }
     #report-table th,
     #report-table td{
-      padding:10px 11px; /* was 8px */
+      padding:10px 8px; /* was 11px */
       border-bottom:1px solid #222;
       font-size:1rem;
       text-align:left;
+    }
+    #report-table td{
+      word-break: keep-all;
     }
     /* Add “panel-like” gutter without reducing table width */
     #report-table th:first-child,
@@ -181,11 +186,6 @@
       padding-right:22px;
     }
 
-    #report-table th:nth-child(6),
-    #report-table td:nth-child(6){
-      white-space: nowrap;
-    }
-
     #report-table th{
       background:#222;
       color:var(--accent);
@@ -194,6 +194,41 @@
     #report-wrap{
       overflow-x: auto;
       -webkit-overflow-scrolling: touch;
+    }
+
+    #report-table th:nth-child(1),
+    #report-table td:nth-child(1){
+      width: 50px;
+      max-width: 50px;
+    }
+
+    #report-table th:nth-child(2),
+    #report-table td:nth-child(2){
+      width: 40px;
+      max-width: 40px;
+    }
+
+    #report-table th:nth-child(3),
+    #report-table td:nth-child(3){
+      width: 70px;
+      max-width: 70px;
+    }
+
+    #report-table th:nth-child(4),
+    #report-table td:nth-child(4){
+      width: 70px;
+      max-width: 70px;
+    }
+
+    #report-table th:nth-child(5),
+    #report-table td:nth-child(5){
+      width: 155px;
+      max-width: 155px;
+    }
+
+    /* iOS Safari fix: prevent header background from “bleeding” down a column */
+    #report-table td{
+      background: var(--panel);
     }
 
     .mono{ font-family: ui-monospace, Menlo, Consolas, monospace; }
@@ -442,6 +477,111 @@
       font-weight: 400;
       line-height: 1;
     }
+    
+    @media print {
+
+      @media print {
+
+      /* Kill ALL shadows/filters everywhere */
+      *{
+        box-shadow: none !important;
+        text-shadow: none !important;
+        filter: none !important;
+      }
+
+      html, body{
+        background:#fff !important;
+        color:#000 !important;
+        margin:0 !important;
+        padding:0 !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+
+      /* Remove layout for EVERYTHING by default (prevents blank pages) */
+      body *{
+        display: none !important;
+      }
+
+      /* Re-enable only what you want printed */
+      #report-wrap,
+      #report-wrap *{
+        display: block !important;
+      }
+
+      /* If you also want the title, uncomment these: */
+      #tuner-ui,
+      #tuner-ui h1{
+        display: block !important;
+      }
+
+      /* Ensure title area is plain white */
+      #tuner-ui{
+        background: transparent !important;
+      }
+
+      /* Title text: black, no glow/shadow */
+      #tuner-ui h1{
+        background: transparent !important;
+        color: #000 !important;
+        text-shadow: none !important;
+        box-shadow: none !important;
+      }
+
+      /* In case the title sits in its own header bar */
+      #tuner-ui h1 *{
+        text-shadow: none !important;
+        font-weight: 700 !important;
+        letter-spacing: 0 !important;
+      }
+
+      /* Make sure wrappers don't preserve “card” layout */
+      #report-wrap{
+        background: transparent !important;
+        border: none !important;
+        border-radius: 0 !important;
+        max-width: none !important;
+        width: 100% !important;
+        margin: 0 !important;
+        overflow: visible !important;
+      }
+
+      /* Table needs to be a table in print (not block) */
+      #report-table{ display: table !important; width:100% !important; border-collapse:collapse !important; table-layout:auto !important; }
+      #report-table thead{ display: table-header-group !important; }
+      #report-table tbody{ display: table-row-group !important; }
+      #report-table tr{ display: table-row !important; break-inside: avoid !important; page-break-inside: avoid !important; }
+      #report-table th, #report-table td{ display: table-cell !important; }
+
+      #report-table th,
+      #report-table td{
+        background: transparent !important;
+        color:#000 !important;
+        border: 1px solid #000 !important;
+        padding: 6pt 8pt !important;
+        font-size: 10.5pt !important;
+      }
+
+      #report-table th{
+        background: #fff !important;
+        background-image: none !important;
+      }
+
+      #clear-table-btn{
+        display: none !important;
+      }
+
+      #tuner-ui,
+      #tuner-ui::before,
+      #tuner-ui::after {
+        border: none !important;
+        outline: none !important;
+        box-shadow: none !important;
+        background: transparent !important;
+      }
+
+    }
+
 
   </style>
 
@@ -636,7 +776,7 @@
         While holding a steady note:
         <ul style="margin:8px 0 0 20px;">
           <li style="margin-bottom:6px;"><b>Note</b> shows the detected note name (based on the reference reed).</li>
-          <li style="margin-bottom:6px;"><b>Reference:</b> shows the measured frequency of the reference reed and deltas in Hz, cents, and beats from ideal ET.</li>
+          <li style="margin-bottom:6px;"><b>Reference:</b> shows the measured frequency of the reference reed and delta in Hz and cents from ideal ET.</li>
           <li style="margin-bottom:6px;"><b>Needle</b> shows the tuning/offset behavior described above for MM or MMM.</li>
           <li><b>Musette</b> shows the cents and beats offset(s) of the musette reed(s) relative to the reference reed.</li>
         </ul>
@@ -656,7 +796,7 @@
           <li style="margin-bottom:6px;"><b>Note</b>:<br/>Note name.</li>          
           <li style="margin-bottom:6px;"><b>ET Hz</b>:<br/>The equal-tempered target for the detected note.</li>
           <li style="margin-bottom:6px;"><b>Ref Hz</b>:<br/>Measured reference reed frequency.</li>
-          <li style="margin-bottom:6px;"><b>Δ from ET</b>:<br/>Deviation of the reference reed from equal temperament, shown in Hz, cents, and beats.</li>
+          <li style="margin-bottom:6px;"><b>Δ from ET</b>:<br/>Delta of the reference reed from equal temperament, shown in Hz and cents.</li>
           <li><b>Musette</b>:<br/>Reed-to-reed offset(s) in cents and beats relative to the reference reed.</li>
         </ul>
         Click the red x to clear the results.
@@ -836,14 +976,10 @@ function fmtHzAndCentsDelta(refHz){
   const deltaHz = refHz - ideal;
   const deltaCents = centsBetween(refHz, ideal);
 
-  // Beats between Ref and ET is simply the absolute Hz difference
-  const deltaBeats = Math.abs(deltaHz);
-
   const hzStr = fmtHzSigned(deltaHz).replace("+", "");
   const centsStr = fmtCentsSigned(deltaCents).replace("+", "");
-  const beatsStr = fmtBeats(deltaBeats);
 
-  return `${hzStr} Hz / ${centsStr}c / ${beatsStr}b`;
+  return `${hzStr} Hz / ${centsStr}c`;
 }
 function beatsFromCents(refHz, cents){
   if (!(refHz > 0) || !isFinite(cents)) return null;
@@ -1531,7 +1667,7 @@ function medianStableRefinedMM(){
     note: latest.note,
     refHz,
     musetteCents: mus,
-    musetteStr: `  ${fmtCentsSigned(mus)}c / ${fmtBeats(beatsFromCents(refHz, mus))}b`
+    musetteStr: `  ${fmtCentsSigned(mus)}c / ${fmtBeats(beatsFromCents(refHz, mus))}bps`
   };
 }
 
@@ -1565,7 +1701,7 @@ function medianStableRefinedMMM(){
     refHz,
     off1: c1,
     off2: c2,
-    musetteStr: `  ${cStr1}c / ${cStr2}c\u00A0\u00A0${bStr1}b / ${bStr2}b`
+    musetteStr: `  ${cStr1}c / ${cStr2}c\u00A0\u00A0${bStr1}bps / ${bStr2}bps`
   };
 
 }
