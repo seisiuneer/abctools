@@ -815,14 +815,16 @@
       ">Instructions</div>
 
     <div style="max-height: 60vh; overflow-y: auto; padding-right: 24px; padding-left: 8px; text-align:left; line-height:1.75; font-size:1rem; color:#ddd; "> <div style="margin-bottom:12px;">
-      This tool can be used to measure the in-tune note pitch and musette offsets for both MM (2 reeds) and MMM (3 reeds) tuned accordions.<br/><br/>
+      This tool can be used to measure the in-tune note pitch and musette offsets for both MM (2 reeds) and MMM (3 reeds) accordions.<br/><br/>
       This is a free open-source AI collaboration experiment.<br/><br/>
       <span style="color:#ff5d5d">Use it at your own risk.</span><br/><br/>
       I make no warranty as to its accuracy or usefulness.<br/><br/>
       Please sanity-check any results against a professional accordion tuner program like Dirk's Accordion Tuner before modifying any reeds.<br/><br/>
-      <b>Limitations:</b> The tool may struggle to detect notes below C4.<br/><br/>
-
+      <b>Limitations:</b><br/><br/>- The tool may struggle to detect notes below C4.<br/>
+      - It also may struggle to determine the correct musette offsets on fairly dry-tuned instruments.<br/><br/>
       <div style="margin-bottom:18px;">
+        <b>How to use the tuner:</b><br/><br/>
+
         <b>1) Choose your reed configuration</b><br/>
         <ul style="margin:8px 0 0 20px;">
           <li style="margin-bottom:10px;">
@@ -1280,15 +1282,16 @@ function setNeedleMode(cfg){
 }
 
 function setNeedleElCents(el, cents){
-  const needleCents = (cents == null) ? 0 : clamp(Math.round(cents), -MAX_CENTS_DISPLAY, MAX_CENTS_DISPLAY);
+  // Do NOT round: preserve sub-cent movement (important for "dry" musette)
+  const needleCents = (cents == null) ? 0 : clamp(cents, -MAX_CENTS_DISPLAY, MAX_CENTS_DISPLAY);
   const pos = 50 + (needleCents * NEEDLE_SCALE);
   el.style.left = clamp(pos, 0, 100) + "%";
 }
 
-// NEW: keep label aligned with same cents->position mapping
+// keep label aligned with same cents->position mapping
 function setNeedleLabelCents(labelEl, cents){
   if (!labelEl) return;
-  const needleCents = (cents == null) ? 0 : clamp(Math.round(cents), -MAX_CENTS_DISPLAY, MAX_CENTS_DISPLAY);
+  const needleCents = (cents == null) ? 0 : clamp(cents, -MAX_CENTS_DISPLAY, MAX_CENTS_DISPLAY);
   const pos = 50 + (needleCents * NEEDLE_SCALE);
   labelEl.style.left = clamp(pos, 0, 100) + "%";
 }
@@ -1541,7 +1544,7 @@ function octaveCorrectF0(f0){
 
   analyserSpec.getFloatFrequencyData(magSpec);
 
-  const LOW_UPWARD_GUARD_HZ = 277.18; // E4
+  const LOW_UPWARD_GUARD_HZ = 277.18; // C#4
   const fHalf = 0.5 * f0;
   const fDbl  = 2.0 * f0;
 
@@ -1763,9 +1766,13 @@ function makeTracker(fs, targetHz){
 function updateTrackerTarget(tr, newHz){
   newHz = clamp(newHz, 30, SPEC_MAX_FREQ);
   if (Math.abs(newHz - tr.targetHz) < 0.03) return;
+
   tr.targetHz = newHz;
   tr.phaseInc = 2*Math.PI*newHz/tr.fs;
-  tr.bp = makeBandpassBiquad(tr.fs, newHz, 35);
+
+  // Keep bandpass Q consistent with makeTracker() (bpQ = 60 there)
+  tr.bp = makeBandpassBiquad(tr.fs, newHz, 60);
+
   tr.offsetHzHist = [];
   tr.refinedHz = null;
   tr.haveLast = false;
