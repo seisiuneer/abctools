@@ -1072,6 +1072,32 @@ const HARMONIC_REJECT_CENTS = 25;
 const OCTAVE_STRONGER_DB = 6;
 
 // ---------- Utils ----------
+
+const DISPLAY_SMOOTH_TAU_MS = 180;    // higher = smoother, slower response
+const DISPLAY_SMOOTH_DT_CAP_MS = 250; // avoids huge jumps after tab sleeps
+let gDisplaySmooth = {
+  inited: false,
+  lastTs: 0,
+  refHz: 0,
+  mmMusHz: 0,
+  mmCents: 0,
+  mmmLowHz: 0,
+  mmmHighHz: 0,
+  mmmOff1: 0,
+  mmmOff2: 0
+};
+
+function resetDisplaySmoothing(){
+  gDisplaySmooth.inited = false;
+  gDisplaySmooth.lastTs = 0;
+}
+
+function smoothTo(prev, next, alpha){
+  if (!isFinite(next)) return prev;
+  if (!isFinite(prev)) return next;
+  return prev + alpha * (next - prev);
+}
+
 function clamp(v, lo, hi){ return Math.max(lo, Math.min(hi, v)); }
 function median(arr){
   if (!arr || !arr.length) return null;
@@ -1845,24 +1871,70 @@ function lockData() {
   const ideal = idealHzForLatched();
   const idealStr = (ideal == null) ? "--" : fmtHz(ideal);
 
-  const deltaStr = fmtHzAndCentsDelta(lastStable.refHz);
+  // --- NEW: save the last smoothed display values ---
+  const haveSmooth = (typeof gDisplaySmooth !== "undefined") && !!gDisplaySmooth.inited;
+
+  const refHzSaved =
+    (haveSmooth && isFinite(gDisplaySmooth.refHz) && gDisplaySmooth.refHz > 0)
+      ? gDisplaySmooth.refHz
+      : lastStable.refHz;
+
+  const deltaStr = fmtHzAndCentsDelta(refHzSaved);
+
+  const cfg = lastStable.cfg;
+  const note = lastStable.note;
+
+  // Default (in case anything is missing)
+  let musetteStr = lastStable.musetteStr;
+  let musetteStrHTML = lastStable.musetteStrHTML || null;
+
+  if (cfg === "MM") {
+    const cents =
+      (haveSmooth && isFinite(gDisplaySmooth.mmCents)) ? Math.max(0, gDisplaySmooth.mmCents)
+        : (isFinite(lastStable.musetteCents) ? Math.max(0, lastStable.musetteCents) : 0);
+
+    const beats = beatsFromCents(refHzSaved, cents);
+
+    musetteStr = `  ${fmtCentsSigned(cents)}c / ${fmtBeats(beats)}bps`;
+    musetteStrHTML = null; // MM stays plain text like before
+  } else if (cfg === "MMM") {
+    // Use smoothed offsets (and enforce low/high ordering like the display)
+    let o1 = (haveSmooth && isFinite(gDisplaySmooth.mmmOff1)) ? gDisplaySmooth.mmmOff1 : lastStable.off1;
+    let o2 = (haveSmooth && isFinite(gDisplaySmooth.mmmOff2)) ? gDisplaySmooth.mmmOff2 : lastStable.off2;
+
+    const c1 = Math.min(o1, o2);
+    const c2 = Math.max(o1, o2);
+
+    const b1 = beatsFromCents(refHzSaved, c1);
+    const b2 = beatsFromCents(refHzSaved, c2);
+
+    const cStr1 = fmtCentsSigned(c1);
+    const cStr2 = fmtCentsSigned(c2);
+
+    const bStr1 = fmtBeats(b1);
+    const bStr2 = fmtBeats(b2);
+
+    musetteStr = `  ${cStr1}c / ${cStr2}c\u00A0\u00A0${bStr1}bps / ${bStr2}bps`;
+    musetteStrHTML = `  ${cStr1}c / ${cStr2}c<br>${bStr1}bps / ${bStr2}bps`;
+  }
 
   history.push({
-    cfg: lastStable.cfg,
-    note: lastStable.note,
+    cfg: cfg,
+    note: note,
     idealHz: idealStr,
-    refHz: Number(lastStable.refHz),
+    refHz: Number(refHzSaved),
     refDelta: deltaStr,
 
     // keep existing field (plain text)
-    musette: lastStable.musetteStr,
+    musette: musetteStr,
 
     // new optional HTML field (MMM only)
-    musetteHTML: lastStable.musetteStrHTML || null
+    musetteHTML: musetteStrHTML
   });
 
   updateTable();
 }
+
 
 function pushRefined(res){
   refinedHistory.push(res);
@@ -1948,35 +2020,106 @@ function medianStableRefinedMMM(){
 
 
 function renderRealtime(cfg, note, refHz, musetteLine, mmmOff1, mmmOff2, mmNeedleCents, mmMusHz, mmmLowHz, mmmHighHz){
+
+  // --- NEW: time-based smoothing alpha ---
+  const now = (typeof performance !== "undefined" && performance.now) ? performance.now() : Date.now();
+  let dt = gDisplaySmooth.lastTs ? (now - gDisplaySmooth.lastTs) : 16;
+  gDisplaySmooth.lastTs = now;
+  dt = clamp(dt, 1, DISPLAY_SMOOTH_DT_CAP_MS);
+
+  const alpha = 1 - Math.exp(-dt / DISPLAY_SMOOTH_TAU_MS);
+
+  // Initialize smoothing state on first call (or after reset)
+  if (!gDisplaySmooth.inited){
+    gDisplaySmooth.inited = true;
+
+    gDisplaySmooth.refHz = (isFinite(refHz) && refHz > 0) ? refHz : 0;
+
+    gDisplaySmooth.mmMusHz = (isFinite(mmMusHz) && mmMusHz > 0) ? mmMusHz : 0;
+    gDisplaySmooth.mmCents = (isFinite(mmNeedleCents)) ? mmNeedleCents : 0;
+
+    gDisplaySmooth.mmmLowHz  = (isFinite(mmmLowHz)  && mmmLowHz  > 0) ? mmmLowHz  : 0;
+    gDisplaySmooth.mmmHighHz = (isFinite(mmmHighHz) && mmmHighHz > 0) ? mmmHighHz : 0;
+    gDisplaySmooth.mmmOff1 = (isFinite(mmmOff1)) ? mmmOff1 : 0;
+    gDisplaySmooth.mmmOff2 = (isFinite(mmmOff2)) ? mmmOff2 : 0;
+  } else {
+    // Smooth reference Hz (UI only)
+    if (isFinite(refHz) && refHz > 0) gDisplaySmooth.refHz = smoothTo(gDisplaySmooth.refHz, refHz, alpha);
+
+    // Smooth MM display values
+    if (isFinite(mmMusHz) && mmMusHz > 0) gDisplaySmooth.mmMusHz = smoothTo(gDisplaySmooth.mmMusHz, mmMusHz, alpha);
+    if (isFinite(mmNeedleCents)) gDisplaySmooth.mmCents = smoothTo(gDisplaySmooth.mmCents, mmNeedleCents, alpha);
+
+    // Smooth MMM display values
+    if (isFinite(mmmLowHz) && mmmLowHz > 0)   gDisplaySmooth.mmmLowHz  = smoothTo(gDisplaySmooth.mmmLowHz,  mmmLowHz,  alpha);
+    if (isFinite(mmmHighHz) && mmmHighHz > 0) gDisplaySmooth.mmmHighHz = smoothTo(gDisplaySmooth.mmmHighHz, mmmHighHz, alpha);
+    if (isFinite(mmmOff1)) gDisplaySmooth.mmmOff1 = smoothTo(gDisplaySmooth.mmmOff1, mmmOff1, alpha);
+    if (isFinite(mmmOff2)) gDisplaySmooth.mmmOff2 = smoothTo(gDisplaySmooth.mmmOff2, mmmOff2, alpha);
+  }
+
+  // --- Use smoothed values for UI rendering ---
+  const refHzDisp = gDisplaySmooth.refHz;
+
   document.getElementById('note').innerText = note;
   document.getElementById('freq').innerText =
-  `Reference: ${fmtHz(refHz)} Hz\u00A0\u00A0Δ from ET: ${fmtHzAndCentsDelta(refHz)}`;
-
-  document.getElementById('musette-line').innerText = musetteLine;
+    `Reference: ${fmtHz(refHzDisp)} Hz\u00A0\u00A0Δ from ET: ${fmtHzAndCentsDelta(refHzDisp)}`;
 
   setNeedleMode(cfg);
 
   if (cfg === "MMM") {
-    if (isFinite(mmmOff1) && isFinite(mmmOff2)) updateMMMNeedles(mmmOff1, mmmOff2);
+    // Smooth offsets drive needles
+    const s1 = gDisplaySmooth.mmmOff1;
+    const s2 = gDisplaySmooth.mmmOff2;
 
-    // NEW: MMM label text (one decimal)
-    if (freqLowLabel)  freqLowLabel.innerText  = (mmmLowHz  > 0) ? `${mmmLowHz.toFixed(1)} Hz`  : `0.0 Hz`;
-    if (freqHighLabel) freqHighLabel.innerText = (mmmHighHz > 0) ? `${mmmHighHz.toFixed(1)} Hz` : `0.0 Hz`;
+    // Keep ordering consistent for display/needles
+    const c1 = Math.min(s1, s2);
+    const c2 = Math.max(s1, s2);
+
+    if (isFinite(c1) && isFinite(c2)) updateMMMNeedles(c1, c2);
+
+    // Smooth label frequencies
+    const lowHzDisp  = gDisplaySmooth.mmmLowHz;
+    const highHzDisp = gDisplaySmooth.mmmHighHz;
+
+    if (freqLowLabel)  freqLowLabel.innerText  = (lowHzDisp  > 0) ? `${lowHzDisp.toFixed(1)} Hz`  : `0.0 Hz`;
+    if (freqHighLabel) freqHighLabel.innerText = (highHzDisp > 0) ? `${highHzDisp.toFixed(1)} Hz` : `0.0 Hz`;
+
+    // Recompute musette line from smoothed display values (UI only)
+    const b1 = beatsFromCents(refHzDisp, c1);
+    const b2 = beatsFromCents(refHzDisp, c2);
+
+    const cStr1 = fmtCentsSigned(c1);
+    const cStr2 = fmtCentsSigned(c2);
+
+    const bStr1 = fmtBeats(b1);
+    const bStr2 = fmtBeats(b2);
+
+    document.getElementById('musette-line').innerText =
+      `Musette:\u00A0  ${cStr1}c / ${cStr2}c\u00A0\u00A0${bStr1}bps / ${bStr2}bps`;
+
     return;
   }
 
   // MM
-  if (mmNeedleCents != null && isFinite(mmNeedleCents)) {
-    setNeedleCents(mmNeedleCents);
-    setNeedleLabelCents(freqMMLabel, mmNeedleCents);
+  const mmCentsDisp = Math.max(0, gDisplaySmooth.mmCents); // never left-of-center in MM
+  const mmMusHzDisp = gDisplaySmooth.mmMusHz;
+
+  if (isFinite(mmCentsDisp)) {
+    setNeedleCents(mmCentsDisp);
+    setNeedleLabelCents(freqMMLabel, mmCentsDisp);
   } else {
     setNeedleCents(0);
     setNeedleLabelCents(freqMMLabel, 0);
   }
 
-  // NEW: MM label text (one decimal)
-  if (freqMMLabel) freqMMLabel.innerText = (mmMusHz > 0) ? `${mmMusHz.toFixed(1)} Hz` : `0.0 Hz`;
+  if (freqMMLabel) freqMMLabel.innerText = (mmMusHzDisp > 0) ? `${mmMusHzDisp.toFixed(1)} Hz` : `0.0 Hz`;
+
+  // Recompute musette line from smoothed display values (UI only)
+  const beats = beatsFromCents(refHzDisp, mmCentsDisp);
+  document.getElementById('musette-line').innerText =
+    `Musette:\u00A0  ${fmtCentsSigned(mmCentsDisp)}c / ${fmtBeats(beats)}bps`;
 }
+
 
 // ---------- Main tick (scope + silence lock + pitch) ----------
 function tick() {
@@ -2267,6 +2410,8 @@ document.getElementById('reset-btn').onclick = () => {
   latchedMidi = null;
   latchCandidateCount = 0;
 
+  resetDisplaySmoothing();
+
   clearTimeout(silenceTimer);
   silenceTimer = null;
 
@@ -2319,6 +2464,9 @@ if (a4RefSelect) {
     if (freqLowLabel) freqLowLabel.innerText = `0.0 Hz`;
     if (freqHighLabel) freqHighLabel.innerText = `0.0 Hz`;
     if (freqMMLabel) freqMMLabel.innerText = `0.0 Hz`;
+
+    resetDisplaySmoothing();
+
   });
 }
 
@@ -2349,6 +2497,9 @@ cfgSel.addEventListener('change', () => {
 
   /* MAE 06 Jan 2026 - require NEXT NOTE after config change (after START) */
   requireNextNoteAfterConfigChange();
+
+  resetDisplaySmoothing();
+
 });
 
 // Initial UI state
