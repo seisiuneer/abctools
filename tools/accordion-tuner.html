@@ -1035,8 +1035,8 @@ const PITCH_FFT_SIZE = 4096; // was 2048
 const SPEC_FFT_SIZE_PREF = 32768;
 const SPEC_FFT_SIZE_FALLBACK = 16384;
 const SPEC_MAX_FREQ  = 2000;
-const SPEC_PEAK_DB_THRESHOLD = -90;
-const SPEC_MIN_PEAK_HZ_SEP = 0.25;
+const SPEC_PEAK_DB_THRESHOLD = -110; // Was 90
+const SPEC_MIN_PEAK_HZ_SEP = 0.12; // Was 0.25;
 
 const MM_WINDOW_CENTS  = 60;
 const MMM_WINDOW_CENTS = 95;
@@ -1738,7 +1738,7 @@ function onePoleAlpha(fs, cutoffHz){
 }
 
 function makeTracker(fs, targetHz){
-  const bpQ = 35;
+  const bpQ = 60;  // Was 35
   return {
     fs,
     targetHz,
