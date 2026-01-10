@@ -1785,7 +1785,9 @@ function trackerProcessBlock(tr, input){
     const q = x * s;
 
     tr.iLP = (1-tr.lpA)*i + tr.lpA*tr.iLP;
-    tr.qLP = (1-tr.lpA)*q + tr.hpA*tr.qLP;
+
+    // FIX: use lpA here (was hpA), keeps I/Q filtering consistent
+    tr.qLP = (1-tr.lpA)*q + tr.lpA*tr.qLP;
 
     tr.iMean = (1-tr.hpA)*tr.iLP + tr.hpA*tr.iMean;
     tr.qMean = (1-tr.hpA)*tr.qLP + tr.hpA*tr.qMean;
