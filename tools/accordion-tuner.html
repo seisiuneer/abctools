@@ -485,13 +485,11 @@
     
     @media print {
 
-      @media print {
-
-      /* Kill ALL shadows/filters everywhere */
+      /* Kill shadows/filters everywhere */
       *{
-        box-shadow: none !important;
-        text-shadow: none !important;
-        filter: none !important;
+        box-shadow:none !important;
+        text-shadow:none !important;
+        filter:none !important;
       }
 
       html, body{
@@ -503,88 +501,94 @@
         print-color-adjust: exact;
       }
 
-      /* Remove layout for EVERYTHING by default (prevents blank pages) */
+      /* Hide everything by default */
       body *{
-        display: none !important;
+        display:none !important;
       }
 
-      /* Re-enable only what you want printed */
-      #report-wrap,
-      #report-wrap *{
-        display: block !important;
-      }
-
-      /* If you also want the title, uncomment these: */
+      /* Show only title + report area (but do NOT force children to block) */
       #tuner-ui,
-      #tuner-ui h1{
-        display: block !important;
-      }
-
-      /* Ensure title area is plain white */
-      #tuner-ui{
-        background: transparent !important;
-      }
-
-      /* Title text: black, no glow/shadow */
-      #tuner-ui h1{
-        background: transparent !important;
-        color: #000 !important;
-        text-shadow: none !important;
-        box-shadow: none !important;
-      }
-
-      /* In case the title sits in its own header bar */
-      #tuner-ui h1 *{
-        text-shadow: none !important;
-        font-weight: 700 !important;
-        letter-spacing: 0 !important;
-      }
-
-      /* Make sure wrappers don't preserve “card” layout */
+      #tuner-ui h1,
       #report-wrap{
-        background: transparent !important;
-        border: none !important;
-        border-radius: 0 !important;
-        max-width: none !important;
-        width: 100% !important;
-        margin: 0 !important;
-        overflow: visible !important;
+        display:block !important;
       }
 
-      /* Table needs to be a table in print (not block) */
-      #report-table{ display: table !important; width:100% !important; border-collapse:collapse !important; table-layout:auto !important; }
-      #report-table thead{ display: table-header-group !important; }
-      #report-table tbody{ display: table-row-group !important; }
-      #report-table tr{ display: table-row !important; break-inside: avoid !important; page-break-inside: avoid !important; }
-      #report-table th, #report-table td{ display: table-cell !important; }
+      /* Make title compact */
+      #tuner-ui{
+        background:transparent !important;
+        border:none !important;
+        box-shadow:none !important;
+        padding:0 !important;
+        margin:0 0 10pt 0 !important;
+      }
+      #tuner-ui h1{
+        margin:0 0 8pt 0 !important;
+        font-size:16pt !important;
+        font-weight:800 !important;
+        color:#000 !important;
+        text-shadow:none !important;
+        letter-spacing:0 !important;
+      }
 
+      /* Report wrapper: no “card” styling */
+      #report-wrap{
+        background:transparent !important;
+        border:none !important;
+        border-radius:0 !important;
+        margin:0 !important;
+        padding:0 !important;
+        overflow:visible !important;
+        max-width:none !important;
+        width:100% !important;
+      }
+
+      /* Restore TRUE table layout explicitly */
+      #report-table{
+        display:table !important;
+        width:100% !important;
+        border-collapse:collapse !important;
+        table-layout:auto !important;
+      }
+      #report-table thead{ display:table-header-group !important; }
+      #report-table tbody{ display:table-row-group !important; }
+      #report-table tr{
+        display:table-row !important;
+        break-inside:avoid !important;
+        page-break-inside:avoid !important;
+      }
       #report-table th,
       #report-table td{
-        background: transparent !important;
+        display:table-cell !important;
+        border:1px solid #000 !important;
+        background:transparent !important;
         color:#000 !important;
-        border: 1px solid #000 !important;
-        padding: 6pt 8pt !important;
-        font-size: 10.5pt !important;
+
+        /* Make it compact */
+        padding:2pt 5pt !important;
+        font-size:9pt !important;
+        line-height:1.05 !important;
+        vertical-align:middle !important;
       }
 
-      #report-table th{
-        background: #fff !important;
-        background-image: none !important;
+      /* Keep most columns tight */
+      #report-table th,
+      #report-table td{
+        white-space:nowrap !important;
       }
 
-      #clear-table-btn, #export-csv-btn{
-        display: none !important;
+      /* Allow Musette column to wrap ONLY at your <br> (not random wraps) */
+      #report-table th:last-child,
+      #report-table td:last-child{
+        white-space:pre-line !important;   /* honors <br> nicely */
+        font-size:9pt !important;
+        line-height:1.05 !important;
       }
 
-      #tuner-ui,
-      #tuner-ui::before,
-      #tuner-ui::after {
-        border: none !important;
-        outline: none !important;
-        box-shadow: none !important;
-        background: transparent !important;
+      /* Hide UI-only buttons in print */
+      #clear-table-btn,
+      #export-csv-btn{
+        display:none !important;
       }
-
     }
 
 
