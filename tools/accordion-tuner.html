@@ -483,114 +483,148 @@
       line-height: 1;
     }
     
-    @media print {
+  @media print {
 
-      /* Kill shadows/filters everywhere */
-      *{
-        box-shadow:none !important;
-        text-shadow:none !important;
-        filter:none !important;
-      }
-
-      html, body{
-        background:#fff !important;
-        color:#000 !important;
-        margin:0 !important;
-        padding:0 !important;
-        -webkit-print-color-adjust: exact;
-        print-color-adjust: exact;
-      }
-
-      /* Hide everything by default */
-      body *{
-        display:none !important;
-      }
-
-      /* Show only title + report area (but do NOT force children to block) */
-      #tuner-ui,
-      #tuner-ui h1,
-      #report-wrap{
-        display:block !important;
-      }
-
-      /* Make title compact */
-      #tuner-ui{
-        background:transparent !important;
-        border:none !important;
-        box-shadow:none !important;
-        padding:0 !important;
-        margin:0 0 10pt 0 !important;
-      }
-      #tuner-ui h1{
-        margin:0 0 8pt 0 !important;
-        font-size:16pt !important;
-        font-weight:800 !important;
-        color:#000 !important;
-        text-shadow:none !important;
-        letter-spacing:0 !important;
-      }
-
-      /* Report wrapper: no “card” styling */
-      #report-wrap{
-        background:transparent !important;
-        border:none !important;
-        border-radius:0 !important;
-        margin:0 !important;
-        padding:0 !important;
-        overflow:visible !important;
-        max-width:none !important;
-        width:100% !important;
-      }
-
-      /* Restore TRUE table layout explicitly */
-      #report-table{
-        display:table !important;
-        width:100% !important;
-        border-collapse:collapse !important;
-        table-layout:auto !important;
-      }
-      #report-table thead{ display:table-header-group !important; }
-      #report-table tbody{ display:table-row-group !important; }
-      #report-table tr{
-        display:table-row !important;
-        break-inside:avoid !important;
-        page-break-inside:avoid !important;
-      }
-      #report-table th,
-      #report-table td{
-        display:table-cell !important;
-        border:1px solid #000 !important;
-        background:transparent !important;
-        color:#000 !important;
-
-        /* Make it compact */
-        padding:2pt 5pt !important;
-        font-size:9pt !important;
-        line-height:1.05 !important;
-        vertical-align:middle !important;
-      }
-
-      /* Keep most columns tight */
-      #report-table th,
-      #report-table td{
-        white-space:nowrap !important;
-      }
-
-      /* Allow Musette column to wrap ONLY at your <br> (not random wraps) */
-      #report-table th:last-child,
-      #report-table td:last-child{
-        white-space:pre-line !important;   /* honors <br> nicely */
-        font-size:9pt !important;
-        line-height:1.05 !important;
-      }
-
-      /* Hide UI-only buttons in print */
-      #clear-table-btn,
-      #export-csv-btn{
-        display:none !important;
-      }
+    /* ------------------------------------------------------------
+       Global reset for print
+       ------------------------------------------------------------ */
+    *{
+      box-shadow:none !important;
+      text-shadow:none !important;
+      filter:none !important;
     }
 
+    html, body{
+      background:#fff !important;
+      color:#000 !important;
+      margin:0 !important;
+      padding:0 !important;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+
+    /* Hide everything by default */
+    body *{
+      display:none !important;
+    }
+
+    /* ------------------------------------------------------------
+       Show only title + report area
+       ------------------------------------------------------------ */
+    #tuner-ui,
+    #tuner-ui h1,
+    #report-wrap,
+    #report-wrap *{
+      display:initial !important;
+    }
+
+    /* ------------------------------------------------------------
+       Title
+       ------------------------------------------------------------ */
+    #tuner-ui{
+      background:transparent !important;
+      border:none !important;
+      box-shadow:none !important;
+      padding:0 !important;
+      margin:0 0 10pt 0 !important;
+    }
+
+    #tuner-ui h1{
+      margin:0 0 8pt 0 !important;
+      font-size:16pt !important;
+      font-weight:800 !important;
+      color:#000 !important;
+      text-align:center !important;
+    }
+
+    /* ------------------------------------------------------------
+       Report wrapper
+       ------------------------------------------------------------ */
+    #report-wrap{
+      background:transparent !important;
+      border:none !important;
+      border-radius:0 !important;
+      margin:0 !important;
+      padding:0 !important;
+      overflow:visible !important;
+      max-width:none !important;
+      width:100% !important;
+    }
+
+    /* ------------------------------------------------------------
+       Table layout
+       ------------------------------------------------------------ */
+    #report-table{
+      display:table !important;
+      width:100% !important;
+      border-collapse:collapse !important;
+      table-layout:auto !important;
+    }
+
+    #report-table thead{ display:table-header-group !important; }
+    #report-table tbody{ display:table-row-group !important; }
+
+    #report-table tr{
+      display:table-row !important;
+      page-break-inside:avoid !important;
+      break-inside:avoid !important;
+    }
+
+    #report-table th,
+    #report-table td{
+      display:table-cell !important;
+      border:1px solid #000 !important;
+      background:transparent !important;
+      color:#000 !important;
+
+      padding:2pt 5pt !important;
+      font-size:9pt !important;
+      line-height:1.05 !important;
+      vertical-align:middle !important;
+      white-space:nowrap !important;
+    }
+
+    /* ------------------------------------------------------------
+       Musette column: allow line breaks ONLY where provided
+       ------------------------------------------------------------ */
+    #report-table th:last-child,
+    #report-table td:last-child{
+      white-space:pre-line !important;  /* honors \n */
+    }
+
+    /* ------------------------------------------------------------
+       Fix Musette header (remove flex + buttons)
+       ------------------------------------------------------------ */
+
+    /* Flatten the flex wrapper */
+    #report-table th:last-child > div{
+      display:block !important;
+      margin:0 !important;
+      padding:0 !important;
+    }
+
+    /* Hide CSV / ✕ buttons */
+    #report-table th:last-child > div > div{
+      display:none !important;
+    }
+
+    /* Ensure the "Musette" label behaves like plain text */
+    #report-table th:last-child > div > span{
+      display:inline !important;
+      margin:0 !important;
+      padding:0 !important;
+      line-height:1.05 !important;
+      font-weight:700 !important;
+    }
+
+    /* ------------------------------------------------------------
+       Explicitly hide UI-only buttons
+       ------------------------------------------------------------ */
+    #clear-table-btn,
+    #export-csv-btn{
+      display:none !important;
+    }
+  }
 
   </style>
 
@@ -1924,7 +1958,8 @@ function lockData() {
     const bStr2 = fmtBeats(b2);
 
     musetteStr = `  ${cStr1}c / ${cStr2}c\u00A0\u00A0${bStr1}bps / ${bStr2}bps`;
-    musetteStrHTML = `  ${cStr1}c / ${cStr2}c<br>${bStr1}bps / ${bStr2}bps`;
+    musetteStrHTML = `  ${cStr1}c / ${cStr2}c\n${bStr1}bps / ${bStr2}bps`;
+
   }
 
   history.push({
@@ -2023,7 +2058,8 @@ function medianStableRefinedMMM(){
     musetteStr: `  ${cStr1}c / ${cStr2}c\u00A0\u00A0${bStr1}bps / ${bStr2}bps`,
 
     // ADD THIS FOR TABLE ONLY
-    musetteStrHTML: `  ${cStr1}c / ${cStr2}c<br>${bStr1}bps / ${bStr2}bps`
+    musetteStrHTML: `  ${cStr1}c / ${cStr2}c\n${bStr1}bps / ${bStr2}bps`
+
   };
 }
 
