@@ -407,8 +407,6 @@
 
       #start-btn,
       #reset-btn{
-        position: sticky;
-        bottom: 12px;
         z-index: 20;
         box-shadow: 0 10px 25px rgba(0,0,0,0.6);
       }
@@ -611,6 +609,7 @@
     #export-csv-btn{
       display:none !important;
     }
+
   }
 
   </style>
@@ -991,14 +990,31 @@ let procNode = null;
 
 /* MAE 08 Jan 2026 - iOS-only input gain to address low mic levels on iOS */
 let inputGainNode = null;
+
 function isIOS(){
   const ua = navigator.userAgent || "";
   const iOSUA = /iPad|iPhone|iPod/.test(ua);
   const iPadOS = (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
   return iOSUA || iPadOS;
 }
+
 const IOS_INPUT_GAIN = 3.0;
+
 /* END iOS-only input gain */
+
+// ---------- iOS/Safari: ensure AudioContext is running ----------
+async function ensureAudioContextRunning() {
+  if (!audioCtx) return;
+
+  try {
+    if (audioCtx.state === "suspended") {
+      await audioCtx.resume();
+    }
+  } catch (e) {
+    // Safari can throw if resume() is called at an odd time; safe to ignore
+    // console.log("AudioContext resume() failed/ignored:", e);
+  }
+}
 
 // ---------- UI ----------
 const canvas = document.getElementById('scope');
@@ -2168,6 +2184,8 @@ function tick() {
     }
   }
 
+  ensureAudioContextRunning();
+
   requestAnimationFrame(tick);
 }
 
@@ -2287,6 +2305,8 @@ async function startAudio(){
 
   audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
+  await ensureAudioContextRunning();
+
   const stream = await navigator.mediaDevices.getUserMedia({
     audio: {
       autoGainControl: false,
@@ -2294,6 +2314,8 @@ async function startAudio(){
       noiseSuppression: false
     }
   });
+
+  await ensureAudioContextRunning();
 
   const track = stream.getAudioTracks()[0];
 
@@ -2472,6 +2494,27 @@ cfgSel.addEventListener('change', () => {
 
 // Initial UI state
 setNeedleMode(getCfgOnly());
+
+
+// iOS/Safari: if the context gets suspended later, any user gesture will re-resume it.
+function addIOSResumeGestures() {
+  const handler = async () => {
+    if (audioCtx) await ensureAudioContextRunning();
+  };
+
+  window.addEventListener("touchstart", handler, { passive: true });
+  window.addEventListener("mousedown", handler, { passive: true });
+  window.addEventListener("keydown", handler, { passive: true });
+
+  document.addEventListener("visibilitychange", () => {
+    if (!document.hidden && audioCtx) ensureAudioContextRunning();
+  });
+
+}
+
+if (isIOS()){
+  addIOSResumeGestures();
+}
 
 // Live mode checkbox behavior
 if (liveOnlyCheckbox) {
