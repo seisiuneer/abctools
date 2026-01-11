@@ -14,7 +14,6 @@
   <meta property="og:image" content="https://michaeleskin.com/img/bouebe-thumbnail.jpg" />
   <meta name="msapplication-TileColor" content="#ffffff">
   <meta name="msapplication-TileImage" content="https://michaeleskin.com/abctools/img/abc-ms-icon-144x144.png">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="apple-touch-icon" sizes="57x57" href="https://michaeleskin.com/abctools/img/abc-apple-icon-57x57.png">
   <link rel="apple-touch-icon" sizes="60x60" href="https://michaeleskin.com/abctools/img/abc-apple-icon-60x60.png">
   <link rel="apple-touch-icon" sizes="72x72" href="https://michaeleskin.com/abctools/img/abc-apple-icon-72x72.png">
@@ -849,13 +848,11 @@
       ">Instructions</div>
 
     <div style="max-height: 60vh; overflow-y: auto; padding-right: 24px; padding-left: 8px; text-align:left; line-height:1.75; font-size:1rem; color:#ddd; "> <div style="margin-bottom:12px;">
-      This tool can be used to measure the in-tune note pitch and musette offsets for both MM (2 reeds) and MMM (3 reeds) accordions.<br/><br/>
+      This tool can be used to measure the in-tune note pitch and musette offsets for both<br/>MM (2 reeds/note) and MMM (3 reeds/note) configured accordions.<br/><br/>
       This is a free open-source AI collaboration experiment.<br/><br/>
       <span style="color:#ff5d5d">Use it at your own risk.</span><br/><br/>
       I make no warranty as to its accuracy or usefulness.<br/><br/>
       Please sanity-check any results against a professional accordion tuner program like Dirk's Accordion Tuner before modifying any reeds.<br/><br/>
-      <b>Limitations:</b><br/><br/>- The tool may struggle to detect notes below C4.<br/>
-      - It also may struggle to determine the correct musette offsets on fairly dry-tuned instruments.<br/><br/>
       <div style="margin-bottom:18px;">
         <b>How to use the tuner:</b><br/><br/>
 
@@ -956,6 +953,12 @@
       </div>
 
       <div>
+        <b>Limitations</b><br/>
+        - The tool may struggle to detect notes below C4.<br/>
+        - It also may struggle to determine the correct musette offsets on fairly dry-tuned instruments.<br/><br/>
+      </div>
+
+      <div>
         <b>Tip Jars</b><br/>
         This tool was created by <a href="https://michaeleskin.com" target="_blank">Michael Eskin</a>.<br/>
         If you find it useful, please consider making a contribution via my online tip jars:<br/><br/>
@@ -1020,7 +1023,6 @@ const needle = document.getElementById('needle');
 const needleLow = document.getElementById('needle-low');
 const needleHigh = document.getElementById('needle-high');
 const cfgSel = document.getElementById('cfg');
-const mmmBasisWrap = document.getElementById('mmmBasisWrap'); // kept but unused (hidden)
 const lockedIndicatorEl = document.getElementById('locked-indicator');
 
 // NEW: needle frequency labels
@@ -1078,7 +1080,7 @@ const MM_WINDOW_CENTS  = 60;
 const MMM_WINDOW_CENTS = 95;
 
 const RMS_SILENCE = 0.008;
-const LOCK_AFTER_MS = 450;
+const LOCK_AFTER_MS = 450; 
 
 const STABLE_PITCH_HISTORY = 17;
 const STABLE_PITCH_NEED = 9;
@@ -2518,9 +2520,6 @@ if (a4RefSelect) {
 // Config selector
 cfgSel.addEventListener('change', () => {
 
-  // MMM basis controls removed from UI; ensure it stays hidden
-  if (mmmBasisWrap) mmmBasisWrap.style.display = "none";
-
   refinedHistory = [];
   trackers = [];
   lastStable = null;
@@ -2548,7 +2547,6 @@ cfgSel.addEventListener('change', () => {
 });
 
 // Initial UI state
-if (mmmBasisWrap) mmmBasisWrap.style.display = "none";
 setNeedleMode(getCfgOnly());
 
 // ---------- NEW: Live mode checkbox behavior ----------
