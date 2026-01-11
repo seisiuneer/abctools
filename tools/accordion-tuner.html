@@ -29,14 +29,14 @@
   <link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
 
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-VM0N9HL3MK"></script>
-  
+
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
     gtag('config', 'G-VM0N9HL3MK');
   </script>
-    
+
   <title>Accordion Musette Tuner (MM / MMM)</title>
 
   <style>
@@ -86,6 +86,22 @@
       border-radius:10px; padding:10px 10px; font-size:0.95rem;
     }
 
+    /* Top selector row: three items on one line */
+    .row.select-row{
+      display:grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap:12px;
+    }
+
+    /* Second line: checkboxes side-by-side (now only Live mode) */
+    .check-row{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:10px;
+      margin:10px 0 6px;
+      align-items:start;
+    }
+
     canvas{ width:100%; height:80px; background:#000; border-radius:8px; margin:10px 0 14px; border:1px solid #333; }
 
     .note-display{
@@ -93,7 +109,7 @@
       text-shadow:0 0 20px var(--accent); font-weight:900;
     }
     .freq-display{
-      font-size:1.1rem; color:#888;
+      font-size:1.1rem; color:#FEFEFE;
       font-family:ui-monospace, Menlo, Consolas, monospace;
       margin-top:2px;
       margin-bottom:18px;
@@ -166,7 +182,7 @@
     }
     #report-table th,
     #report-table td{
-      padding:10px 8px; /* was 11px */
+      padding:10px 8px;
       border-bottom:1px solid #222;
       font-size:1rem;
       text-align:left;
@@ -210,20 +226,20 @@
 
     #report-table th:nth-child(3),
     #report-table td:nth-child(3){
-      width: 70px;
-      max-width: 70px;
+      width: 75px;
+      max-width: 75px;
     }
 
     #report-table th:nth-child(4),
     #report-table td:nth-child(4){
-      width: 70px;
-      max-width: 70px;
+      width: 75px;
+      max-width: 75px;
     }
 
     #report-table th:nth-child(5),
     #report-table td:nth-child(5){
-      width: 155px;
-      max-width: 155px;
+      width: 195px;
+      max-width: 195px;
     }
 
     /* iOS Safari fix: prevent header background from “bleeding” down a column */
@@ -257,7 +273,7 @@
     .select-wrap::after{
       content: "▾";
       position: absolute;
-      right: 14px;          /* <-- move left/right here */
+      right: 14px;
       top: 50%;
       transform: translateY(-50%);
       pointer-events: none;
@@ -275,35 +291,39 @@
 
     /* Light green links inside the Instructions modal */
     #help-modal a{
-      color: #7CFFB2;            /* light green */
+      color: #7CFFB2;
       text-decoration: underline;
     }
 
     #help-modal a:hover{
-      color: #9DFFD0;            /* slightly brighter on hover */
+      color: #9DFFD0;
       text-decoration: underline;
     }
-    
+
+    #freq-high-label{
+      bottom:10px;
+    }
+
+    #freq-low-label{
+      top:12px;
+    }
+
     @media (max-width: 600px) {
 
-      /* Make the page feel less “boxed in” on phones */
       body{
         padding: 12px;
       }
 
-      /* Slightly tighter card padding; keep it comfortable */
       #tuner-ui{
         padding: 16px;
         border-radius: 14px;
       }
 
-      /* Title: smaller and tighter spacing */
       #tuner-ui h1{
         font-size: 1.25rem !important;
         margin: 0 0 12px 0 !important;
       }
 
-      /* Instructions button: thumb-friendly but not huge */
       #help-btn.btn-small{
         font-size: 1.05rem;
         padding: 12px 14px;
@@ -311,13 +331,15 @@
         border-radius: 12px;
       }
 
-      /* ------------------------------------------------------------
-         Stack the top config controls vertically (MOST IMPORTANT)
-         ------------------------------------------------------------ */
       .row{
         grid-template-columns: 1fr !important;
         gap: 14px !important;
         margin: 10px 0 8px;
+      }
+
+      .check-row{
+        grid-template-columns: 1fr !important;
+        gap:14px !important;
       }
 
       label{
@@ -325,7 +347,6 @@
         margin-bottom: 8px;
       }
 
-      /* Bigger tap targets for selects */
       select, .radio-box{
         font-size: 1.05rem;
         padding: 14px 12px;
@@ -333,7 +354,7 @@
       }
 
       .select-wrap select{
-        padding-right: 52px; /* leave room for caret */
+        padding-right: 52px;
       }
 
       .select-wrap::after{
@@ -342,7 +363,6 @@
         opacity: 0.9;
       }
 
-      /* Status pills */
       .status-pill{
         font-size: 1rem;
         padding: 10px 14px;
@@ -350,14 +370,12 @@
         margin-bottom: 8px;
       }
 
-      /* Scope: reduce height to reclaim vertical space */
       canvas{
         height: 56px;
         margin: 10px 0 12px;
         border-radius: 10px;
       }
 
-      /* Big, glanceable live readouts */
       .note-display{
         font-size: 4.2rem;
         margin-top: 2px;
@@ -368,21 +386,18 @@
         margin-bottom: 14px;
       }
 
-      /* Meter: taller for readability */
       .meter-box{
         height: 64px;
         margin: 18px 0 10px;
         border-radius: 12px;
       }
 
-      /* Musette line bigger */
       #musette-line{
         font-size: 1.3rem;
         min-height: 1.6em;
         margin-top: 14px;
       }
 
-      /* Primary buttons: larger, stick to bottom for easy access */
       .btn-main,
       .btn-reset{
         font-size: 1.2rem;
@@ -390,7 +405,6 @@
         border-radius: 14px;
       }
 
-      /* Sticky controls so START/NEXT NOTE don't scroll away */
       #start-btn,
       #reset-btn{
         position: sticky;
@@ -399,7 +413,6 @@
         box-shadow: 0 10px 25px rgba(0,0,0,0.6);
       }
 
-      /* Results table: reduce density a bit (still scrollable) */
       #report-wrap{
         border-radius: 12px;
         margin-top: 14px;
@@ -411,7 +424,6 @@
         padding: 8px 6px;
       }
 
-      /* Slightly reduce the “panel gutter” padding on mobile */
       #report-table th:first-child,
       #report-table td:first-child{
         padding-left: 14px;
@@ -422,7 +434,6 @@
         padding-right: 14px;
       }
 
-      /* Help modal: maximize readable area on small screens */
       #help-modal > div{
         width: calc(100% - 24px) !important;
         margin: 18px auto 0 !important;
@@ -431,7 +442,7 @@
       }
 
       .live-mode-box{
-        padding: 14px 12px;   /* matches your mobile select/radio-box padding */
+        padding: 14px 12px;
         min-height: 52px;
       }
       #live-only{
@@ -446,11 +457,19 @@
         display:none !important;
       }
 
+      #freq-high-label{
+        bottom:6px;
+      }
+
+      #freq-low-label{
+        top:7px;
+      }
+
     }
 
     /* --- Live mode checkbox: make it match the selects --- */
     .live-mode-wrap{
-      margin: 0;              /* no extra vertical spacing */
+      margin: 0;
       text-align: left;
     }
 
@@ -459,13 +478,12 @@
       align-items: center;
       gap: 10px;
 
-      padding: 10px 10px;     /* same as select */
-      border-radius: 10px;    /* same as select */
-      min-height: 44px;       /* keeps it from being taller than the selects */
+      padding: 10px 10px;
+      border-radius: 10px;
+      min-height: 44px;
       box-sizing: border-box;
     }
 
-    /* checkbox sizing */
     #live-only{
       width: 16px;
       height: 16px;
@@ -474,19 +492,15 @@
       cursor: pointer;
     }
 
-    /* label text sizing/weight to match */
     .live-mode-label{
       margin: 0;
-      font-size: 0.95rem;     /* same ballpark as select text */
+      font-size: 0.95rem;
       font-weight: 400;
       line-height: 1;
     }
-    
+
   @media print {
 
-    /* ------------------------------------------------------------
-       Global reset for print
-       ------------------------------------------------------------ */
     *{
       box-shadow:none !important;
       text-shadow:none !important;
@@ -502,14 +516,10 @@
       print-color-adjust: exact;
     }
 
-    /* Hide everything by default */
     body *{
       display:none !important;
     }
 
-    /* ------------------------------------------------------------
-       Show only title + report area
-       ------------------------------------------------------------ */
     #tuner-ui,
     #tuner-ui h1,
     #report-wrap,
@@ -517,9 +527,6 @@
       display:initial !important;
     }
 
-    /* ------------------------------------------------------------
-       Title
-       ------------------------------------------------------------ */
     #tuner-ui{
       background:transparent !important;
       border:none !important;
@@ -536,9 +543,6 @@
       text-align:center !important;
     }
 
-    /* ------------------------------------------------------------
-       Report wrapper
-       ------------------------------------------------------------ */
     #report-wrap{
       background:transparent !important;
       border:none !important;
@@ -550,9 +554,6 @@
       width:100% !important;
     }
 
-    /* ------------------------------------------------------------
-       Table layout
-       ------------------------------------------------------------ */
     #report-table{
       display:table !important;
       width:100% !important;
@@ -583,31 +584,21 @@
       white-space:nowrap !important;
     }
 
-    /* ------------------------------------------------------------
-       Musette column: allow line breaks ONLY where provided
-       ------------------------------------------------------------ */
     #report-table th:last-child,
     #report-table td:last-child{
-      white-space:pre-line !important;  /* honors \n */
+      white-space:pre-line !important;
     }
 
-    /* ------------------------------------------------------------
-       Fix Musette header (remove flex + buttons)
-       ------------------------------------------------------------ */
-
-    /* Flatten the flex wrapper */
     #report-table th:last-child > div{
       display:block !important;
       margin:0 !important;
       padding:0 !important;
     }
 
-    /* Hide CSV / ✕ buttons */
     #report-table th:last-child > div > div{
       display:none !important;
     }
 
-    /* Ensure the "Musette" label behaves like plain text */
     #report-table th:last-child > div > span{
       display:inline !important;
       margin:0 !important;
@@ -616,9 +607,6 @@
       font-weight:700 !important;
     }
 
-    /* ------------------------------------------------------------
-       Explicitly hide UI-only buttons
-       ------------------------------------------------------------ */
     #clear-table-btn,
     #export-csv-btn{
       display:none !important;
@@ -632,14 +620,14 @@
 <body>
 
   <div id="tuner-ui">
-  
+
     <h1 style="margin: 0 0 18px 0; font-size: 1.6rem; font-weight: 900; letter-spacing: 0.4px; color: #e0e0e0; text-align: center; ">Accordion Musette Tuner (MM / MMM)</h1>
 
     <button id="help-btn" class="btn-small" type="button">Instructions</button>
 
-    <div class="row">
+    <div class="row select-row">
       <div>
-        <label for="cfg">Reed configuration</label>
+        <label for="cfg">&nbsp;&nbsp;Reed configuration</label>
         <div class="select-wrap">
           <select id="cfg">
             <option value="MM">MM (2 reeds):&nbsp;&nbsp;&nbsp;0 / +</option>
@@ -650,7 +638,7 @@
       </div>
 
       <div>
-        <label for="a4ref">A4 reference (Hz)</label>
+        <label for="a4ref">&nbsp;&nbsp;A4 reference (Hz)</label>
         <div class="select-wrap">
           <select id="a4ref">
             <option value="438">438</option>
@@ -666,9 +654,11 @@
         </div>
       </div>
 
-      <!-- Live mode (now on the same row as the selects) -->
+      <!-- Live mode moved up into this row -->
       <div class="live-mode-wrap">
-        <label>If checked, don't save values</label>
+        <div style="font-size:0.85rem; color:#bbb; margin-bottom:6px; text-align:left;">
+          &nbsp;&nbsp;If checked, don't save values
+        </div>
         <div class="radio-box live-mode-box">
           <input type="checkbox" id="live-only">
           <label for="live-only" class="live-mode-label">Live mode</label>
@@ -678,7 +668,6 @@
 
     <div id="status" class="status-pill status-off">Microphone off</div>
 
-    <!-- Locked indicator moved below config selector and above graph -->
     <div id="locked-indicator" class="status-pill status-locked">Saved</div>
 
     <canvas id="scope"></canvas>
@@ -691,18 +680,14 @@
       <div class="edge-mark edge-left"></div>
       <div class="edge-mark edge-right"></div>
 
-      <!-- MM (single needle) -->
       <div id="needle"></div>
 
-      <!-- MMM (two needles: low + high offsets) -->
       <div id="needle-low" class="mmm-needle"></div>
       <div id="needle-high" class="mmm-needle"></div>
 
-      <!-- NEW: Needle frequency displays -->
-      <!-- MMM: low frequency at top (to avoid collisions); high at bottom -->
+      <!-- MMM: low frequency at top; high at bottom -->
       <div id="freq-low-label" style="
         position:absolute;
-        top:12px;
         left:50%;
         transform:translateX(-50%);
         font-size:0.85rem;
@@ -720,7 +705,6 @@
 
       <div id="freq-high-label" style="
         position:absolute;
-        bottom:10px;
         left:50%;
         transform:translateX(-50%);
         font-size:0.85rem;
@@ -754,7 +738,6 @@
         z-index:100;
         white-space:nowrap;
       ">0.0 Hz</div>
-      <!-- END needle frequency displays -->
 
     </div>
 
@@ -835,153 +818,153 @@
   ">
     <div style="
       max-width:720px; width:calc(100% - 40px);
-      margin: 32px auto 0;   /* higher on screen */
+      margin: 32px auto 0;
       background:#1c1c1c; border:1px solid #3a3a3a; border-radius:18px;
       box-shadow:0 24px 60px rgba(0,0,0,0.75);
       padding:18px 18px 16px;
       color:#eaeaea;
     ">
-    
+
     <div style="
-        padding:14px 14px; font-weight:900; font-size:1.55rem;   /* larger title */
+        padding:14px 14px; font-weight:900; font-size:1.55rem;
         text-align:center; margin-bottom:18px;
       ">Instructions</div>
 
-    <div style="max-height: 60vh; overflow-y: auto; padding-right: 24px; padding-left: 8px; text-align:left; line-height:1.75; font-size:1rem; color:#ddd; "> <div style="margin-bottom:12px;">
-      This tool can be used to measure the in-tune note pitch and musette offsets for both<br/>MM (2 reeds/note) and MMM (3 reeds/note) configured accordions.<br/><br/>
-      This is a free open-source AI collaboration experiment.<br/><br/>
-      <span style="color:#ff5d5d">Use it at your own risk.</span><br/><br/>
-      I make no warranty as to its accuracy or usefulness.<br/><br/>
-      Please sanity-check any results against a professional accordion tuner program like Dirk's Accordion Tuner before modifying any reeds.<br/><br/>
-      <div style="margin-bottom:18px;">
-        <b>How to use the tuner:</b><br/><br/>
+    <div style="max-height: 60vh; overflow-y: auto; padding-right: 24px; padding-left: 8px; text-align:left; line-height:1.75; font-size:1rem; color:#ddd; ">
+      <div style="margin-bottom:12px;">
+        This tool can be used to measure the in-tune note pitch and musette offsets for both<br/>MM (2 reeds/note) and MMM (3 reeds/note) configured accordions.<br/><br/>
+        This is a free open-source AI collaboration experiment.<br/><br/>
+        <span style="color:#ff5d5d">Use it at your own risk.</span><br/><br/>
+        I make no warranty as to its accuracy or usefulness.<br/><br/>
+        Please sanity-check any results against a professional accordion tuner program like Dirk's Accordion Tuner before modifying any reeds.<br/><br/>
 
-        <b>1) Choose your reed configuration</b><br/>
-        <ul style="margin:8px 0 0 20px;">
-          <li style="margin-bottom:10px;">
-            <b>MM (2 reeds):&nbsp;&nbsp;&nbsp;0 / +</b><br/>
-            One reed is treated as the <b>reference reed</b> (the <b>lower</b> pitch).<br/>The other reed is the <b>musette reed</b>.<br/>
-            The musette value is the cents/beats difference between the two reeds.
-            <div style="margin-top:6px;">
-              <b>MM needle:</b><br/>Center = reference reed, needle shows the musette reed offset (normally to the <b>right</b>).
-            </div>
-          </li>
+        <div style="margin-bottom:18px;">
+          <b>How to use the tuner:</b><br/><br/>
 
-          <li>
-            <b>MMM (3 reeds)</b><br/>
-            Choose which reference basis you want using the Reed configuration dropdown:<br/>
-            <ul style="margin:6px 0 0 18px;">
-              <li style="margin-bottom:6px;">
-                <b>MMM (3 reeds):&nbsp;&nbsp;&nbsp;- / 0 / +</b>:<br/>The middle reed is the reference, one musette reed is below and one is above.
-              </li>
-              <li>
-                <b>MMM (3 reeds):&nbsp;&nbsp;&nbsp;0 / + / +</b>:<br/>The lowest reed is the reference, both musette reeds are above.
-              </li>
-            </ul>
-            The musette values are the cents/beats difference between the reference reed and the two reeds.<br/>
-            <div style="margin-top:6px;">
-              <b>MMM needles:</b><br/>Center = reference reed, other two needles shows the two musette reed offsets
-            </div>
-          </li>
-        </ul>
-      </div>
+          <b>1) Choose your reed configuration</b><br/>
+          <ul style="margin:8px 0 0 20px;">
+            <li style="margin-bottom:10px;">
+              <b>MM (2 reeds):&nbsp;&nbsp;&nbsp;0 / +</b><br/>
+              One reed is treated as the <b>reference reed</b> (the <b>lower</b> pitch).<br/>The other reed is the <b>musette reed</b>.<br/>
+              The musette value is the cents/beats difference between the two reeds.
+              <div style="margin-top:6px;">
+                <b>MM needle:</b><br/>Center = reference reed, needle shows the musette reed offset (normally to the <b>right</b>).
+              </div>
+            </li>
 
-      <div style="margin-bottom:18px;">
-        <b>2) Select your A4 tuning</b><br/>Range is 438-446 Hz, default is 440 Hz.
-      </div>
-
-      <div style="margin-bottom:18px;">
-        <b>3) Start the tuner</b><br/>
-        Click <b>START</b> and allow microphone access when prompted.<br/>
-        For best results, play one steady note at a time.<br/>
-        Hold the note for a moment so the display stabilizes.
-        <div style="margin-top:8px;">
-          Tips: use normal bellows pressure, avoid vibrato, and tune in a quiet room.
+            <li>
+              <b>MMM (3 reeds)</b><br/>
+              Choose which reference basis you want using the Reed configuration dropdown:<br/>
+              <ul style="margin:6px 0 0 18px;">
+                <li style="margin-bottom:6px;">
+                  <b>MMM (3 reeds):&nbsp;&nbsp;&nbsp;- / 0 / +</b>:<br/>The middle reed is the reference, one musette reed is below and one is above.
+                </li>
+                <li>
+                  <b>MMM (3 reeds):&nbsp;&nbsp;&nbsp;0 / + / +</b>:<br/>The lowest reed is the reference, both musette reeds are above.
+                </li>
+              </ul>
+              The musette values are the cents/beats difference between the reference reed and the two reeds.<br/>
+              <div style="margin-top:6px;">
+                <b>MMM needles:</b><br/>Center = reference reed, other two needles shows the two musette reed offsets.
+              </div>
+            </li>
+          </ul>
         </div>
-      </div>
 
-      <div style="margin-bottom:18px;">
-        <b>4) Watch the live display</b><br/>
-        While holding a steady note:
-        <ul style="margin:8px 0 0 20px;">
-          <li style="margin-bottom:6px;"><b>Note</b> shows the detected note name (based on the reference reed).</li>
-          <li style="margin-bottom:6px;"><b>Reference:</b> shows the measured frequency of the reference reed and delta in Hz and cents from ideal ET.</li>
-          <li style="margin-bottom:6px;"><b>Needle</b> shows the tuning/offset behavior described above for MM or MMM.</li>
-          <li><b>Musette</b> shows the cents and beats offset(s) of the musette reed(s) relative to the reference reed.</li>
-        </ul>
-      </div>
+        <div style="margin-bottom:18px;">
+          <b>2) Select your A4 tuning</b><br/>Range is 438-446 Hz, default is 440 Hz.
+        </div>
 
-      <div style="margin-bottom:18px;">
-        <b>5) Release the note to lock and save</b><br/>
-        When you <b>stop playing</b>, the tuner automatically <b>locks</b> and saves a row in the table.<br/>
-        The “Saved” indicator confirms the measurement was recorded.
-      </div>
+        <div style="margin-bottom:18px;">
+          <b>3) Start the tuner</b><br/>
+          Click <b>START</b> and allow microphone access when prompted.<br/>
+          For best results, play one steady note at a time.<br/>
+          Hold the note for a moment so the display stabilizes.
+          <div style="margin-top:8px;">
+            Tips: use normal bellows pressure, avoid vibrato, and tune in a quiet room.
+          </div>
+        </div>
 
-      <div style="margin-bottom:18px;">
-        <b>6) Understand the results table</b><br/>
-        Each saved row includes:
-        <ul style="margin:8px 0 8px 20px;">
-          <li style="margin-bottom:6px;"><b>Config</b>:<br/>MM or MMM reed configuration.</li>
-          <li style="margin-bottom:6px;"><b>Note</b>:<br/>Note name.</li>          
-          <li style="margin-bottom:6px;"><b>ET Hz</b>:<br/>The equal-tempered target for the detected note.</li>
-          <li style="margin-bottom:6px;"><b>Ref Hz</b>:<br/>Measured reference reed frequency.</li>
-          <li style="margin-bottom:6px;"><b>Δ from ET</b>:<br/>Delta of the reference reed from equal temperament, shown in Hz and cents.</li>
-          <li><b>Musette</b>:<br/>Reed-to-reed offset(s) in cents and beats relative to the reference reed.</li>
-        </ul>
-        Click the red x to clear the results.
-      </div>
+        <div style="margin-bottom:18px;">
+          <b>4) Watch the live display</b><br/>
+          While holding a steady note:
+          <ul style="margin:8px 0 0 20px;">
+            <li style="margin-bottom:6px;"><b>Note</b> shows the detected note name (based on the reference reed).</li>
+            <li style="margin-bottom:6px;"><b>Reference:</b> shows the measured frequency of the reference reed and delta in Hz and cents from ideal ET.</li>
+            <li style="margin-bottom:6px;"><b>Needle</b> shows the tuning/offset behavior described above for MM or MMM.</li>
+            <li><b>Musette</b> shows the cents and beats offset(s) of the musette reed(s) relative to the reference reed.</li>
+          </ul>
+        </div>
 
-      <div>
-        <b>7) Measure the next note</b><br/>
-        Click <b>NEXT NOTE</b> to reset and repeat for another pitch.<br/><br/>
-      </div>
+        <div style="margin-bottom:18px;">
+          <b>5) Release the note to lock and save</b><br/>
+          When you <b>stop playing</b>, the tuner automatically <b>locks</b> and saves a row in the table.<br/>
+          The “Saved” indicator confirms the measurement was recorded.
+        </div>
 
-      <div>
-        <b>8) Live mode</b><br/>
-        Check the <b>Live mode</b> checkbox to continuously recognize notes and musette offsets without saving results.<br/><br/>
-      </div>
+        <div style="margin-bottom:18px;">
+          <b>6) Understand the results table</b><br/>
+          Each saved row includes:
+          <ul style="margin:8px 0 8px 20px;">
+            <li style="margin-bottom:6px;"><b>Config</b>:<br/>MM or MMM reed configuration.</li>
+            <li style="margin-bottom:6px;"><b>Note</b>:<br/>Note name.</li>
+            <li style="margin-bottom:6px;"><b>ET Hz</b>:<br/>The equal-tempered target for the detected note.</li>
+            <li style="margin-bottom:6px;"><b>Ref Hz</b>:<br/>Measured reference reed frequency.</li>
+            <li style="margin-bottom:6px;"><b>Δ from ET</b>:<br/>Delta of the reference reed from equal temperament, shown in Hz and cents.</li>
+            <li><b>Musette</b>:<br/>Reed-to-reed offset(s) in cents and beats relative to the reference reed.</li>
+          </ul>
+          Click the red x to clear the results.
+        </div>
 
-      <div>
-         <b>9) Printing the results</b><br/>
-         You can use the Print feature in your browser to print the results table.<br/><br/>
-      </div>
+        <div>
+          <b>7) Measure the next note</b><br/>
+          Click <b>NEXT NOTE</b> to reset and repeat for another pitch.<br/><br/>
+        </div>
 
-      <div>
-         <b>10) Export the results as a CSV file</b><br/>
-         Click <b>CSV</b> at the top of the results table to export the results as a CSV file.<br/>
-         The file will be saved into your browser's default Downloads directory.<br/><br/>
-      </div>
+        <div>
+          <b>8) Live mode</b><br/>
+          Check the <b>Live mode</b> checkbox to continuously recognize notes and musette offsets without saving results.<br/><br/>
+        </div>
 
-      <div>
-        <b>Limitations</b><br/>
-        - The tool may struggle to detect notes below C4.<br/>
-        - It also may struggle to determine the correct musette offsets on fairly dry-tuned instruments.<br/><br/>
-      </div>
+        <div>
+          <b>9) Printing the results</b><br/>
+          You can use the Print feature in your browser to print the results table.<br/><br/>
+        </div>
 
-      <div>
-        <b>Tip Jars</b><br/>
-        This tool was created by <a href="https://michaeleskin.com" target="_blank">Michael Eskin</a>.<br/>
-        If you find it useful, please consider making a contribution via my online tip jars:<br/><br/>
-      </div>
+        <div>
+          <b>10) Export the results as a CSV file</b><br/>
+          Click <b>CSV</b> at the top of the results table to export the results as a CSV file.<br/>
+          The file will be saved into your browser's default Downloads directory.<br/><br/>
+        </div>
 
-      <div style="text-align: center">
-        <a href="https://michaeleskin.com/abctools/tipjars.html" target="_blank">Michael Eskin's Tip Jars</a><br/>
-      </div>
+        <div>
+          <b>Limitations</b><br/>The tool may struggle to detect notes below C4.<br/><br/>
+        </div>
 
-      <div>
-        <br/><b>Source Code</b><br/>
-        The full source code for this tool is available on my GitHub repository.<br/>
-        The source for the utility is completely contained in the file <b>accordion-tuner.html</b>:<br/><br/>
-      </div>
+        <div>
+          <b>Tip Jars</b><br/>
+          This tool was created by <a href="https://michaeleskin.com" target="_blank">Michael Eskin</a>.<br/>
+          If you find it useful, please consider making a contribution via my online tip jars:<br/><br/>
+        </div>
 
-      <div style="text-align: center">
-        <a href="https://github.com/seisiuneer/abctools/tree/main/tools" target="_blank">Michael Eskin's GitHub Repository</a><br/>
-        &nbsp;
-      </div>
+        <div style="text-align: center">
+          <a href="https://michaeleskin.com/abctools/tipjars.html" target="_blank">Michael Eskin's Tip Jars</a><br/>
+        </div>
 
+        <div>
+          <br/><b>Source Code</b><br/>
+          The full source code for this tool is available on my GitHub repository.<br/>
+          The source is completely contained in the one file: <b>accordion-tuner.html</b>:<br/><br/>
+        </div>
+
+        <div style="text-align: center">
+          <a href="https://github.com/seisiuneer/abctools/tree/main/tools" target="_blank">Michael Eskin's GitHub Repository</a><br/>
+          &nbsp;
+        </div>
+
+      </div>
     </div>
 
-    <!-- close button at the bottom -->
     <button id="help-close" style="
       width:100%; margin-top:18px; padding:12px 14px;
       background:#2a2a2a; border:1px solid #444; border-radius:12px;
@@ -991,6 +974,7 @@
   </div>
 
 <script>
+
 /* ============================================================
    NOTE: This version hides the TOP status pill when locked,
          to avoid showing both:
@@ -1007,13 +991,12 @@ let procNode = null;
 /* MAE 08 Jan 2026 - iOS-only input gain to address low mic levels on iOS */
 let inputGainNode = null;
 function isIOS(){
-  // iPhone/iPad/iPod OR iPadOS (MacIntel + touch)
   const ua = navigator.userAgent || "";
   const iOSUA = /iPad|iPhone|iPod/.test(ua);
   const iPadOS = (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
   return iOSUA || iPadOS;
 }
-const IOS_INPUT_GAIN = 3.0; // minimal boost; isolated to iOS only
+const IOS_INPUT_GAIN = 3.0;
 /* END iOS-only input gain */
 
 // ---------- UI ----------
@@ -1025,7 +1008,7 @@ const needleHigh = document.getElementById('needle-high');
 const cfgSel = document.getElementById('cfg');
 const lockedIndicatorEl = document.getElementById('locked-indicator');
 
-// NEW: needle frequency labels
+// needle frequency labels
 const freqLowLabel = document.getElementById('freq-low-label');
 const freqHighLabel = document.getElementById('freq-high-label');
 const freqMMLabel = document.getElementById('freq-mm-label');
@@ -1066,25 +1049,23 @@ let trackers = [];
 // For live mode exit
 let suppressAutoSaveAfterLiveExit = false;
 
+// stabilize note recognition to prevent semitone flips
+let midiFloatHistory = [];
+
 // ---------- Settings ----------
-const PITCH_FFT_SIZE = 4096; // was 2048
+const PITCH_FFT_SIZE = 4096;
 
 // coarse spectrum (hint only)
 const SPEC_FFT_SIZE_PREF = 32768;
 const SPEC_FFT_SIZE_FALLBACK = 16384;
 const SPEC_MAX_FREQ  = 2000;
-const SPEC_PEAK_DB_THRESHOLD = -110; // Was 90
-const SPEC_MIN_PEAK_HZ_SEP = 0.12; // Was 0.25;
+const SPEC_PEAK_DB_THRESHOLD = -110;
+const SPEC_MIN_PEAK_HZ_SEP = 0.12;
 
 const MM_WINDOW_CENTS  = 60;
 const MMM_WINDOW_CENTS = 95;
 
 const RMS_SILENCE = 0.008;
-const LOCK_AFTER_MS = 450; 
-
-const STABLE_PITCH_HISTORY = 17;
-const STABLE_PITCH_NEED = 9;
-const STABLE_REFINED_HISTORY = 18;
 
 const NOTE_LATCH_MIN_FRAMES = 10;
 const NOTE_LATCH_CHANGE_CENTS = 80;
@@ -1098,7 +1079,7 @@ const MUS_MIN_CENTS = 0.25;
 const MAX_CENTS_DISPLAY = 50;
 const NEEDLE_SCALE = 0.80;
 
-// tracker params
+// tracker params (standard mode improvements preserved)
 const TRACK_LP_CUTOFF_HZ = 20;
 const TRACK_HP_CUTOFF_HZ = 0.3;
 const TRACK_OFFSET_MEDIAN = 21;
@@ -1109,10 +1090,42 @@ const TRACK_MAX_OFFSET_HZ = 12;
 const HARMONIC_REJECT_CENTS = 25;
 const OCTAVE_STRONGER_DB = 6;
 
-// ---------- Utils ----------
+// ---------- Standard gating (improvements kept) ----------
+const GATE = {
+  pitchHist: 17,
+  pitchNeed: 9,
+  refinedHistMM: 18,
+  refinedHistMMM: 18,
+  lockAfterMs: 250
+};
 
-const DISPLAY_SMOOTH_TAU_MS = 180;    // higher = smoother, slower response
-const DISPLAY_SMOOTH_DT_CAP_MS = 250; // avoids huge jumps after tab sleeps
+function effectiveRmsSilence(){
+  return RMS_SILENCE;
+}
+
+function pitchNeedForCurrentF0(){
+  // For lower notes, allow fewer frames to qualify as "stable enough" to start tracking.
+  const f0 = lastF0 || 0;
+  if (f0 > 0 && f0 < 220) { // ~A3 and below
+    return Math.max(12, Math.floor(GATE.pitchNeed * 0.65));
+  }
+  return GATE.pitchNeed;
+}
+
+function pitchHistForCurrentF0(){
+  const f0 = lastF0 || 0;
+  if (f0 > 0 && f0 < 220) {
+    return Math.max(24, Math.floor(GATE.pitchHist * 0.75));
+  }
+  return GATE.pitchHist;
+}
+
+function refinedHistTargetForCfg(cfg){
+  return (cfg === "MM") ? GATE.refinedHistMM : GATE.refinedHistMMM;
+}
+
+// ---------- Display smoothing (standard) ----------
+const DISPLAY_SMOOTH_DT_CAP_MS = 250;
 let gDisplaySmooth = {
   inited: false,
   lastTs: 0,
@@ -1130,6 +1143,11 @@ function resetDisplaySmoothing(){
   gDisplaySmooth.lastTs = 0;
 }
 
+function displaySmoothTauMs(){
+  return 180;
+}
+
+// ---------- Utils ----------
 function smoothTo(prev, next, alpha){
   if (!isFinite(next)) return prev;
   if (!isFinite(prev)) return next;
@@ -1168,6 +1186,10 @@ function fmtHzSigned(hz){
   const v = Math.round(hz * 100) / 100;
   return (v > 0 ? "+" : "") + v.toFixed(2);
 }
+function idealHzForLatched(){
+  if (latchedMidi == null) return null;
+  return midiToFreq(latchedMidi);
+}
 function fmtHzAndCentsDelta(refHz){
   const ideal = idealHzForLatched();
   if (ideal == null || !(refHz > 0)) return "--";
@@ -1182,7 +1204,6 @@ function fmtHzAndCentsDelta(refHz){
 }
 function beatsFromCents(refHz, cents){
   if (!(refHz > 0) || !isFinite(cents)) return null;
-  // Beat rate is absolute frequency difference between reeds
   const beats = Math.abs(refHz * (Math.pow(2, cents / 1200) - 1));
   return beats;
 }
@@ -1194,11 +1215,6 @@ function rmsOfArray(buf){
   let sum = 0;
   for (let i=0;i<buf.length;i++){ const v = buf[i]; sum += v*v; }
   return Math.sqrt(sum / buf.length);
-}
-function fmtETBeats(refHz){
-  const ideal = idealHzForLatched();
-  if (ideal == null || !(refHz > 0)) return "--";
-  return fmtBeats(Math.abs(refHz - ideal)); // beat rate in beats/sec
 }
 
 // ---------- CSV export ----------
@@ -1283,12 +1299,10 @@ function getConfig() {
     return { cfg: "MM", basis: "middle" };
   }
 
-  // Two MMM modes are encoded directly in the selector now
   if (raw === "MMM_LOWEST") {
-    return { cfg: "MMM", basis: "lowest" }; // +/+
+    return { cfg: "MMM", basis: "lowest" };
   }
 
-  // Default MMM option: middle reference (-/+)
   return { cfg: "MMM", basis: "middle" };
 }
 
@@ -1318,13 +1332,11 @@ function setNeedleMode(cfg){
 }
 
 function setNeedleElCents(el, cents){
-  // Do NOT round: preserve sub-cent movement (important for "dry" musette)
   const needleCents = (cents == null) ? 0 : clamp(cents, -MAX_CENTS_DISPLAY, MAX_CENTS_DISPLAY);
   const pos = 50 + (needleCents * NEEDLE_SCALE);
   el.style.left = clamp(pos, 0, 100) + "%";
 }
 
-// keep label aligned with same cents->position mapping
 function setNeedleLabelCents(labelEl, cents){
   if (!labelEl) return;
   const needleCents = (cents == null) ? 0 : clamp(cents, -MAX_CENTS_DISPLAY, MAX_CENTS_DISPLAY);
@@ -1334,9 +1346,9 @@ function setNeedleLabelCents(labelEl, cents){
 
 /* MAE 06 Jan 2026 - gate listening after config change */
 function requireNextNoteAfterConfigChange(){
-  if (!audioCtx) return; // only enforce after START
+  if (!audioCtx) return;
   needsNextNoteAfterConfigChange = true;
-  isLocked = true;                 // stop processing
+  isLocked = true;
   showLockedIndicator(false);
   clearTimeout(silenceTimer);
   silenceTimer = null;
@@ -1416,9 +1428,8 @@ function yinPitch(buffer, sampleRate, minFreq, maxFreq, threshold) {
   if (tauEstimate === -1) return null;
 
   const probability = 1 - cmnd[tauEstimate];
-
   if (probability < 0.75) return null;
-  
+
   const x0 = tauEstimate > 1 ? tauEstimate - 1 : tauEstimate;
   const x2 = tauEstimate + 1 <= maxTau ? tauEstimate + 1 : tauEstimate;
   const s0 = cmnd[x0], s1 = cmnd[tauEstimate], s2 = cmnd[x2];
@@ -1440,11 +1451,23 @@ function yinPitch(buffer, sampleRate, minFreq, maxFreq, threshold) {
 function updateLatchedMidiUsingRefHz(refHz){
   if (!(refHz > 0)) return;
 
-  const midiNow = Math.round(freqToMidi(refHz));
+  const midiFloat = freqToMidi(refHz);
+  if (!isFinite(midiFloat)) return;
+
+  midiFloatHistory.push(midiFloat);
+  if (midiFloatHistory.length > 9) midiFloatHistory.shift();
+
+  const midiMed = median(midiFloatHistory);
+  if (midiMed == null || !isFinite(midiMed)) return;
+
+  const midiNow = Math.round(midiMed);
 
   if (latchedMidi == null) {
     latchCandidateCount++;
-    if (latchCandidateCount >= NOTE_LATCH_MIN_FRAMES) latchedMidi = midiNow;
+    if (latchCandidateCount >= NOTE_LATCH_MIN_FRAMES) {
+      latchedMidi = midiNow;
+      latchCandidateCount = 0;
+    }
     return;
   }
 
@@ -1454,21 +1477,11 @@ function updateLatchedMidiUsingRefHz(refHz){
     if (latchCandidateCount >= NOTE_LATCH_MIN_FRAMES) {
       latchedMidi = midiNow;
       latchCandidateCount = 0;
+      midiFloatHistory = [];
     }
   } else {
     latchCandidateCount = 0;
   }
-}
-
-function idealHzForLatched(){
-  if (latchedMidi == null) return null;
-  return midiToFreq(latchedMidi);
-}
-
-function hzDeviationFromET(refHz){
-  const ideal = idealHzForLatched();
-  if (ideal == null || !(refHz > 0)) return null;
-  return refHz - ideal;
 }
 
 // ---------- Spectrum helpers (coarse hint) ----------
@@ -1495,8 +1508,6 @@ function getDbAtHz(hz){
   return magSpec[k];
 }
 
-// Find the strongest spectral peak near targetHz within +/- windowCents.
-// Returns peak frequency in Hz (parabolically interpolated), or null if unavailable.
 function findPeakHzAround(targetHz, windowCents){
   if (!audioCtx || !analyserSpec || !magSpec) return null;
   const sr = audioCtx.sampleRate;
@@ -1513,7 +1524,6 @@ function findPeakHzAround(targetHz, windowCents){
     if (v > vMax){ vMax = v; kMax = k; }
   }
 
-  // Parabolic interpolation around kMax
   const y0 = magSpec[kMax - 1];
   const y1 = magSpec[kMax];
   const y2 = magSpec[kMax + 1];
@@ -1527,14 +1537,11 @@ function findPeakHzAround(targetHz, windowCents){
   return (kPeak * sr) / fftSize;
 }
 
-// For low notes, reduce semitone slips by refining pitch using the 2nd harmonic peak.
-// If 2*f0 is clearly stronger than f0, lock the pitch to (peakNear2f0 / 2).
 function refineLowPitchFromHarmonic(f0){
   const LOW_REFINE_HZ = 329.63; // E4
   if (!(f0 > 0) || f0 > LOW_REFINE_HZ) return f0;
   if (!audioCtx || !analyserSpec || !magSpec) return f0;
 
-  // Ensure spectrum is current for this block
   analyserSpec.getFloatFrequencyData(magSpec);
 
   const f2 = 2 * f0;
@@ -1543,17 +1550,15 @@ function refineLowPitchFromHarmonic(f0){
   const db1 = getDbAtHz(f0);
   const db2 = getDbAtHz(f2);
 
-  // Only refine when 2nd harmonic dominates meaningfully.
   if (!(isFinite(db1) && isFinite(db2) && (db2 > db1 + 4))) return f0;
 
-  const peak2 = findPeakHzAround(f2, 120); // +/- 120 cents around 2*f0
+  const peak2 = findPeakHzAround(f2, 120);
   if (!(peak2 > 0)) return f0;
 
   const fRef = peak2 / 2;
 
-  // Accept only if the refined value is reasonably close (avoid octave mistakes).
   const cents = 1200 * Math.log2(fRef / f0);
-  if (Math.abs(cents) > 80) return f0; // don't jump more than ~0.8 semitone
+  if (Math.abs(cents) > 80) return f0;
 
   return fRef;
 }
@@ -1569,13 +1574,6 @@ function isNearHarmonic(hz, f0) {
 }
 
 function octaveCorrectF0(f0){
-  // Spectrum-assisted octave correction:
-  // YIN can lock onto a strong harmonic; for accordion reeds the 2nd harmonic can dominate.
-  // Compare energy near f0, f0/2, and 2*f0 and only flip octaves when clearly warranted.
-  //
-  // IMPORTANT LOW-NOTE GUARD:
-  // Below C#4 (~277.18 Hz), upward octave mistakes (e.g., C4->C5, G3->G4) are common due to strong harmonics.
-  // For this low range we *never* apply an upward (2*f0) correction; we only allow a downward (f0/2) correction.
   if (!audioCtx || !analyserSpec || !magSpec || !(f0 > 0)) return f0;
 
   analyserSpec.getFloatFrequencyData(magSpec);
@@ -1588,16 +1586,12 @@ function octaveCorrectF0(f0){
   const dbHalf = (fHalf >= 55 && fHalf < SPEC_MAX_FREQ) ? getDbAtHz(fHalf) : -Infinity;
   const dbDbl  = (fDbl  >= 55 && fDbl  < SPEC_MAX_FREQ) ? getDbAtHz(fDbl)  : -Infinity;
 
-  // Prefer the lower octave if the subharmonic is meaningfully stronger than both f0 and 2*f0.
   if (isFinite(dbHalf) && isFinite(dbF) && (dbHalf > dbF + 4) && (dbHalf > dbDbl + 2)) {
     return fHalf;
   }
 
-  // Guard: do not apply upward octave correction in the low range.
   if (f0 <= LOW_UPWARD_GUARD_HZ) return f0;
 
-  // Prefer the higher octave only when 2*f0 is clearly stronger than f0,
-  // and f0 isn't already supported by a strong subharmonic.
   if (isFinite(dbDbl) && isFinite(dbF) && (dbDbl > dbF + OCTAVE_STRONGER_DB) && (fDbl < SPEC_MAX_FREQ)) {
     if (!(isFinite(dbHalf) && (dbHalf > dbF - 3))) {
       return fDbl;
@@ -1607,10 +1601,6 @@ function octaveCorrectF0(f0){
   return f0;
 }
 
-
-// For low notes, the fundamental can be weak and the 2nd harmonic can be cleaner.
-// We optionally run the musette peak/tracker logic around 2*f0, then map results back down.
-// Returns { fMusette, factor } where factor is 1 or 2.
 function chooseMusetteF0(f0){
   const C4_HZ = 261.625565;
   if (!audioCtx || !analyserSpec || !magSpec || !(f0 > 0)) return { fMusette: f0, factor: 1 };
@@ -1620,20 +1610,16 @@ function chooseMusetteF0(f0){
   const f2 = 2 * f0;
   if (f2 >= SPEC_MAX_FREQ) return { fMusette: f0, factor: 1 };
 
-  // Ensure spectrum buffer is current
   analyserSpec.getFloatFrequencyData(magSpec);
 
   const db1 = getDbAtHz(f0);
   const db2 = getDbAtHz(f2);
 
-  // If 2nd harmonic is noticeably stronger, analyze around it.
-  // (Cents offsets are invariant, so we can convert back by dividing by 2.)
   if (isFinite(db1) && isFinite(db2) && (db2 > db1 + 6)) {
     return { fMusette: f2, factor: 2 };
   }
   return { fMusette: f0, factor: 1 };
 }
-
 
 function collectPeaksAroundF0(f0, windowCents){
   if (!audioCtx || !analyserSpec || !magSpec || !(f0 > 0)) return [];
@@ -1697,7 +1683,6 @@ function coarseMMCandidates(f0){
   return [best.a, best.b].sort((x,y)=>x-y);
 }
 
-// MM refined validation (same style as MMM validation)
 function validateMMForRefLowest(sorted2){
   if (!sorted2 || sorted2.length !== 2) return { ok:false };
   const ref = sorted2[0];
@@ -1707,7 +1692,6 @@ function validateMMForRefLowest(sorted2){
   return { ok, refIndex:0, musIndex:1, off };
 }
 
-// MMM candidate + validation
 function validateMMMForBasis(sorted3, basis){
   if (!sorted3 || sorted3.length !== 3) return { ok:false };
 
@@ -1777,7 +1761,7 @@ function onePoleAlpha(fs, cutoffHz){
 }
 
 function makeTracker(fs, targetHz){
-  const bpQ = 60;  // Was 35
+  const bpQ = 60;
   return {
     fs,
     targetHz,
@@ -1806,12 +1790,14 @@ function updateTrackerTarget(tr, newHz){
   tr.targetHz = newHz;
   tr.phaseInc = 2*Math.PI*newHz/tr.fs;
 
-  // Keep bandpass Q consistent with makeTracker() (bpQ = 60 there)
   tr.bp = makeBandpassBiquad(tr.fs, newHz, 60);
 
   tr.offsetHzHist = [];
   tr.refinedHz = null;
   tr.haveLast = false;
+
+  tr.lpA = onePoleAlpha(tr.fs, TRACK_LP_CUTOFF_HZ);
+  tr.hpA = onePoleAlpha(tr.fs, TRACK_HP_CUTOFF_HZ);
 }
 
 function trackerProcessBlock(tr, input){
@@ -1849,6 +1835,7 @@ function trackerProcessBlock(tr, input){
 
       if (isFinite(offHz) && Math.abs(offHz) <= TRACK_MAX_OFFSET_HZ) {
         tr.offsetHzHist.push(offHz);
+
         if (tr.offsetHzHist.length > TRACK_OFFSET_MEDIAN) tr.offsetHzHist.shift();
         if (tr.offsetHzHist.length >= TRACK_MIN_OFFSET_SAMPLES) {
           const med = median(tr.offsetHzHist);
@@ -1867,19 +1854,12 @@ function setNeedleCents(cents){
   setNeedleElCents(needle, cents);
 }
 
-function updateNeedleForMM(refHz, musHz){
-  if (!(refHz > 0) || !(musHz > 0)) { setNeedleCents(0); return; }
-  const musCents = centsBetween(musHz, refHz);   // should be positive in MM
-  setNeedleCents(Math.max(0, musCents));         // never allow left-of-center in MM
-}
-
 function updateMMMNeedles(off1, off2){
   const lo = Math.min(off1, off2);
   const hi = Math.max(off1, off2);
   setNeedleElCents(needleLow, lo);
   setNeedleElCents(needleHigh, hi);
 
-  // NEW: align MMM labels with each needle position
   setNeedleLabelCents(freqLowLabel, lo);
   setNeedleLabelCents(freqHighLabel, hi);
 }
@@ -1898,25 +1878,21 @@ function updateTable() {
   `).join('');
 }
 
+// ---------- Recommended lockData() (keeps smoothed saved values + MMM HTML line breaks) ----------
 function lockData() {
   if (!lastStable || isLocked) return;
 
-  /* NEW: In Live mode, never lock or save to table */
   if (isLiveOnlyEnabled()) return;
 
   isLocked = true;
   showLockedIndicator(true);
 
-  // Hide the top status pill while locked so you don't see two "Locked" pills.
   setTopStatusVisible(false);
-
-  // Keep status text/class updated even though the pill is hidden.
-  setStatus("Locked", "status-locked");
+  //setStatus("Locked", "status-locked");
 
   const ideal = idealHzForLatched();
   const idealStr = (ideal == null) ? "--" : fmtHz(ideal);
 
-  // --- NEW: save the last smoothed display values ---
   const haveSmooth = (typeof gDisplaySmooth !== "undefined") && !!gDisplaySmooth.inited;
 
   const refHzSaved =
@@ -1929,7 +1905,6 @@ function lockData() {
   const cfg = lastStable.cfg;
   const note = lastStable.note;
 
-  // Default (in case anything is missing)
   let musetteStr = lastStable.musetteStr;
   let musetteStrHTML = lastStable.musetteStrHTML || null;
 
@@ -1941,9 +1916,8 @@ function lockData() {
     const beats = beatsFromCents(refHzSaved, cents);
 
     musetteStr = `  ${fmtCentsSigned(cents)}c / ${fmtBeats(beats)}bps`;
-    musetteStrHTML = null; // MM stays plain text like before
+    musetteStrHTML = null;
   } else if (cfg === "MMM") {
-    // Use smoothed offsets (and enforce low/high ordering like the display)
     let o1 = (haveSmooth && isFinite(gDisplaySmooth.mmmOff1)) ? gDisplaySmooth.mmmOff1 : lastStable.off1;
     let o2 = (haveSmooth && isFinite(gDisplaySmooth.mmmOff2)) ? gDisplaySmooth.mmmOff2 : lastStable.off2;
 
@@ -1960,8 +1934,7 @@ function lockData() {
     const bStr2 = fmtBeats(b2);
 
     musetteStr = `  ${cStr1}c / ${cStr2}c\u00A0\u00A0${bStr1}bps / ${bStr2}bps`;
-    musetteStrHTML = `  ${cStr1}c / ${cStr2}c\n${bStr1}bps / ${bStr2}bps`;
-
+    musetteStrHTML = `  ${cStr1}c / ${cStr2}c<br>${bStr1}bps / ${bStr2}bps`;
   }
 
   history.push({
@@ -1970,38 +1943,34 @@ function lockData() {
     idealHz: idealStr,
     refHz: Number(refHzSaved),
     refDelta: deltaStr,
-
-    // keep existing field (plain text)
     musette: musetteStr,
-
-    // new optional HTML field (MMM only)
     musetteHTML: musetteStrHTML
   });
 
   updateTable();
 }
 
-
 function pushRefined(res){
   refinedHistory.push(res);
-  if (refinedHistory.length > STABLE_REFINED_HISTORY) refinedHistory.shift();
+
+  const cfg = (res && res.cfg) ? res.cfg : getCfgOnly();
+  const cap = refinedHistTargetForCfg(cfg);
+  while (refinedHistory.length > cap) refinedHistory.shift();
 }
 
 function medianStableRefinedMM(){
-  if (refinedHistory.length < Math.floor(STABLE_REFINED_HISTORY/2)) return null;
+  const cap = refinedHistTargetForCfg("MM");
+  if (refinedHistory.length < Math.floor(cap/2)) return null;
 
   const latest = refinedHistory[refinedHistory.length-1];
 
-  // Use stable Hz medians, then derive cents/beats from those so everything matches (needle label + musette line)
   const refHz = median(refinedHistory.map(x=>x.refHz).filter(v=>isFinite(v) && v > 0));
   const musHz = median(refinedHistory.map(x=>x.musHz).filter(v=>isFinite(v) && v > 0));
   if (!(refHz > 0) || !(musHz > 0)) return null;
 
-  // Derive musette cents from the same stable Hz values
   let musCents = centsBetween(musHz, refHz);
   if (!isFinite(musCents)) return null;
 
-  // MM convention: musette reed should be >= reference (never left of center)
   musCents = Math.max(0, musCents);
 
   return {
@@ -2015,22 +1984,20 @@ function medianStableRefinedMM(){
 }
 
 function medianStableRefinedMMM(){
-  if (refinedHistory.length < Math.floor(STABLE_REFINED_HISTORY/2)) return null;
+  const cap = refinedHistTargetForCfg("MMM");
+  if (refinedHistory.length < Math.floor(cap/2)) return null;
 
   const latest = refinedHistory[refinedHistory.length-1];
 
-  // Stable medians in Hz (these are what drive the needle frequency labels)
   const refHz  = median(refinedHistory.map(x=>x.refHz).filter(v=>isFinite(v) && v > 0));
   const lowHz  = median(refinedHistory.map(x=>x.lowHz).filter(v=>isFinite(v) && v > 0));
   const highHz = median(refinedHistory.map(x=>x.highHz).filter(v=>isFinite(v) && v > 0));
   if (!(refHz > 0) || !(lowHz > 0) || !(highHz > 0)) return null;
 
-  // Derive cents directly from the same stable Hz values so musette line == needle labels
   let cLow  = centsBetween(lowHz,  refHz);
   let cHigh = centsBetween(highHz, refHz);
   if (!isFinite(cLow) || !isFinite(cHigh)) return null;
 
-  // Ensure ordering matches "low needle" then "high needle"
   const c1 = Math.min(cLow, cHigh);
   const c2 = Math.max(cLow, cHigh);
 
@@ -2047,36 +2014,24 @@ function medianStableRefinedMMM(){
     cfg: latest.cfg,
     note: latest.note,
     refHz,
-
-    // offsets used for needle positioning
     off1: c1,
     off2: c2,
-
-    // keep these stable Hz values for the frequency labels
     lowHz,
     highHz,
-
-    // KEEP THIS PLAIN TEXT (used everywhere)
     musetteStr: `  ${cStr1}c / ${cStr2}c\u00A0\u00A0${bStr1}bps / ${bStr2}bps`,
-
-    // ADD THIS FOR TABLE ONLY
-    musetteStrHTML: `  ${cStr1}c / ${cStr2}c\n${bStr1}bps / ${bStr2}bps`
-
+    musetteStrHTML: `  ${cStr1}c / ${cStr2}c<br>${bStr1}bps / ${bStr2}bps`
   };
 }
 
+function renderRealtime(cfg, note, refHz, mmmOff1, mmmOff2, mmNeedleCents, mmMusHz, mmmLowHz, mmmHighHz){
 
-function renderRealtime(cfg, note, refHz, musetteLine, mmmOff1, mmmOff2, mmNeedleCents, mmMusHz, mmmLowHz, mmmHighHz){
-
-  // --- NEW: time-based smoothing alpha ---
   const now = (typeof performance !== "undefined" && performance.now) ? performance.now() : Date.now();
   let dt = gDisplaySmooth.lastTs ? (now - gDisplaySmooth.lastTs) : 16;
   gDisplaySmooth.lastTs = now;
   dt = clamp(dt, 1, DISPLAY_SMOOTH_DT_CAP_MS);
 
-  const alpha = 1 - Math.exp(-dt / DISPLAY_SMOOTH_TAU_MS);
+  const alpha = 1 - Math.exp(-dt / displaySmoothTauMs());
 
-  // Initialize smoothing state on first call (or after reset)
   if (!gDisplaySmooth.inited){
     gDisplaySmooth.inited = true;
 
@@ -2090,21 +2045,17 @@ function renderRealtime(cfg, note, refHz, musetteLine, mmmOff1, mmmOff2, mmNeedl
     gDisplaySmooth.mmmOff1 = (isFinite(mmmOff1)) ? mmmOff1 : 0;
     gDisplaySmooth.mmmOff2 = (isFinite(mmmOff2)) ? mmmOff2 : 0;
   } else {
-    // Smooth reference Hz (UI only)
     if (isFinite(refHz) && refHz > 0) gDisplaySmooth.refHz = smoothTo(gDisplaySmooth.refHz, refHz, alpha);
 
-    // Smooth MM display values
     if (isFinite(mmMusHz) && mmMusHz > 0) gDisplaySmooth.mmMusHz = smoothTo(gDisplaySmooth.mmMusHz, mmMusHz, alpha);
     if (isFinite(mmNeedleCents)) gDisplaySmooth.mmCents = smoothTo(gDisplaySmooth.mmCents, mmNeedleCents, alpha);
 
-    // Smooth MMM display values
     if (isFinite(mmmLowHz) && mmmLowHz > 0)   gDisplaySmooth.mmmLowHz  = smoothTo(gDisplaySmooth.mmmLowHz,  mmmLowHz,  alpha);
     if (isFinite(mmmHighHz) && mmmHighHz > 0) gDisplaySmooth.mmmHighHz = smoothTo(gDisplaySmooth.mmmHighHz, mmmHighHz, alpha);
     if (isFinite(mmmOff1)) gDisplaySmooth.mmmOff1 = smoothTo(gDisplaySmooth.mmmOff1, mmmOff1, alpha);
     if (isFinite(mmmOff2)) gDisplaySmooth.mmmOff2 = smoothTo(gDisplaySmooth.mmmOff2, mmmOff2, alpha);
   }
 
-  // --- Use smoothed values for UI rendering ---
   const refHzDisp = gDisplaySmooth.refHz;
 
   document.getElementById('note').innerText = note;
@@ -2114,24 +2065,20 @@ function renderRealtime(cfg, note, refHz, musetteLine, mmmOff1, mmmOff2, mmNeedl
   setNeedleMode(cfg);
 
   if (cfg === "MMM") {
-    // Smooth offsets drive needles
     const s1 = gDisplaySmooth.mmmOff1;
     const s2 = gDisplaySmooth.mmmOff2;
 
-    // Keep ordering consistent for display/needles
     const c1 = Math.min(s1, s2);
     const c2 = Math.max(s1, s2);
 
     if (isFinite(c1) && isFinite(c2)) updateMMMNeedles(c1, c2);
 
-    // Smooth label frequencies
     const lowHzDisp  = gDisplaySmooth.mmmLowHz;
     const highHzDisp = gDisplaySmooth.mmmHighHz;
 
     if (freqLowLabel)  freqLowLabel.innerText  = (lowHzDisp  > 0) ? `${lowHzDisp.toFixed(1)} Hz`  : `0.0 Hz`;
     if (freqHighLabel) freqHighLabel.innerText = (highHzDisp > 0) ? `${highHzDisp.toFixed(1)} Hz` : `0.0 Hz`;
 
-    // Recompute musette line from smoothed display values (UI only)
     const b1 = beatsFromCents(refHzDisp, c1);
     const b2 = beatsFromCents(refHzDisp, c2);
 
@@ -2147,8 +2094,7 @@ function renderRealtime(cfg, note, refHz, musetteLine, mmmOff1, mmmOff2, mmNeedl
     return;
   }
 
-  // MM
-  const mmCentsDisp = Math.max(0, gDisplaySmooth.mmCents); // never left-of-center in MM
+  const mmCentsDisp = Math.max(0, gDisplaySmooth.mmCents);
   const mmMusHzDisp = gDisplaySmooth.mmMusHz;
 
   if (isFinite(mmCentsDisp)) {
@@ -2161,14 +2107,12 @@ function renderRealtime(cfg, note, refHz, musetteLine, mmmOff1, mmmOff2, mmNeedl
 
   if (freqMMLabel) freqMMLabel.innerText = (mmMusHzDisp > 0) ? `${mmMusHzDisp.toFixed(1)} Hz` : `0.0 Hz`;
 
-  // Recompute musette line from smoothed display values (UI only)
   const beats = beatsFromCents(refHzDisp, mmCentsDisp);
   document.getElementById('musette-line').innerText =
     `Musette:\u00A0  ${fmtCentsSigned(mmCentsDisp)}c / ${fmtBeats(beats)}bps`;
 }
 
-
-// ---------- Main tick (scope + silence lock + pitch) ----------
+// ---------- Main tick ----------
 function tick() {
   if (!audioCtx || !analyserPitch) {
     requestAnimationFrame(tick);
@@ -2181,24 +2125,20 @@ function tick() {
 
     const rms = rmsOfArray(timeDataPitch);
 
-    if (rms < RMS_SILENCE) {
+    if (rms < effectiveRmsSilence()) {
 
-      /* NEW: Live mode disables locking/saving and keeps listening */
       if (isLiveOnlyEnabled()) {
         clearTimeout(silenceTimer);
         silenceTimer = null;
 
-        // keep UI in "Listening" state (don't hide the top pill)
         showLockedIndicator(false);
         setTopStatusVisible(true);
-
-        // Only show this once we're actually started; otherwise leave "Microphone off"
         setStatus("Listening (Live mode)", "status-ok");
       } else {
         if (!suppressAutoSaveAfterLiveExit) {
-          if (!silenceTimer && pitchHistory.length >= STABLE_PITCH_NEED && lastStable) {
+          if (!silenceTimer && lastStable) {
             setStatus("Saving", "status-ok");
-            silenceTimer = setTimeout(() => lockData(), LOCK_AFTER_MS);
+            silenceTimer = setTimeout(() => lockData(), GATE.lockAfterMs);
           }
         }
       }
@@ -2213,12 +2153,13 @@ function tick() {
 
       if (yin && yin.freq) {
         pitchHistory.push(yin.freq);
-        if (pitchHistory.length > STABLE_PITCH_HISTORY) pitchHistory.shift();
+        while (pitchHistory.length > pitchHistForCurrentF0()) pitchHistory.shift();
+
         const stableF0 = median(pitchHistory);
         if (stableF0) lastF0 = stableF0;
       }
 
-      if (pitchHistory.length < STABLE_PITCH_NEED || !(lastF0 > 0)) {
+      if (pitchHistory.length < pitchNeedForCurrentF0() || !(lastF0 > 0)) {
         setStatus("Listening… Please hold a steady note", "status-warn");
       } else {
         setStatus(isLiveOnlyEnabled() ? "Listening (Live mode)" : "Listening", "status-ok");
@@ -2229,24 +2170,23 @@ function tick() {
   requestAnimationFrame(tick);
 }
 
-// ---------- ScriptProcessor (refined estimates) ----------
+// ---------- ScriptProcessor ----------
 function onProcess(e){
   if (!audioCtx || isLocked || needsNextNoteAfterConfigChange) return;
 
   const input = e.inputBuffer.getChannelData(0);
-  if (!(rmsOfArray(input) > RMS_SILENCE)) return;
+  if (!(rmsOfArray(input) > effectiveRmsSilence())) return;
 
   const { cfg, basis } = getConfig();
-  if (!(lastF0 > 0) || pitchHistory.length < STABLE_PITCH_NEED) return;
+  if (!(lastF0 > 0) || pitchHistory.length < pitchNeedForCurrentF0()) return;
 
   let f0Pitch = octaveCorrectF0(lastF0);
   f0Pitch = refineLowPitchFromHarmonic(f0Pitch);
   const mus = chooseMusetteF0(f0Pitch);
   const f0 = mus.fMusette;
-  const musFactor = mus.factor; // 1 (fundamental) or 2 (2nd harmonic analysis)
+  const musFactor = mus.factor;
   const fs = audioCtx.sampleRate;
 
-  // ---- MM ----
   if (cfg === "MM") {
     const coarse2 = coarseMMCandidates(f0);
     if (!coarse2) return;
@@ -2264,8 +2204,6 @@ function onProcess(e){
     if (!(trackers[0].refinedHz > 0) || !(trackers[1].refinedHz > 0)) return;
 
     const refined2Raw = [trackers[0].refinedHz, trackers[1].refinedHz].sort((a,b)=>a-b);
-
-    // If we analyzed at 2*f0, map reed frequencies back down to the fundamental.
     const refined2 = (musFactor === 2) ? refined2Raw.map(hz => hz / 2) : refined2Raw;
 
     const v = validateMMForRefLowest(refined2);
@@ -2284,12 +2222,11 @@ function onProcess(e){
     if (stable) {
       lastStable = stable;
       const mmNeedle = Math.max(0, stable.musetteCents);
-      renderRealtime("MM", stable.note, stable.refHz, `Musette:\u00A0${stable.musetteStr}`, null, null, mmNeedle, stable.musHz, null, null);
+      renderRealtime("MM", stable.note, stable.refHz, null, null, mmNeedle, stable.musHz, null, null);
     }
     return;
   }
 
-  // ---- MMM ----
   const coarse3 = coarseMMMCandidates(f0, basis);
   if (!coarse3) return;
 
@@ -2308,8 +2245,6 @@ function onProcess(e){
   if (!(trackers[0].refinedHz > 0) || !(trackers[1].refinedHz > 0) || !(trackers[2].refinedHz > 0)) return;
 
   const refined3Raw = [trackers[0].refinedHz, trackers[1].refinedHz, trackers[2].refinedHz].sort((a,b)=>a-b);
-
-  // If we analyzed at 2*f0, map reed frequencies back down to the fundamental.
   const refined3 = (musFactor === 2) ? refined3Raw.map(hz => hz / 2) : refined3Raw;
 
   const v3 = validateMMMForBasis(refined3, basis);
@@ -2328,14 +2263,11 @@ function onProcess(e){
     off2 = centsBetween(refined3[2], refHz);
   }
 
-  // NEW: MMM low/high frequencies (match low/high needles)
   let lowHz, highHz;
   if (basis === "lowest") {
-    // refined3 is already sorted: [ref, mus1, mus2]
     lowHz = refined3[1];
     highHz = refined3[2];
   } else {
-    // refined3 is sorted: [low, ref, high]
     lowHz = refined3[0];
     highHz = refined3[2];
   }
@@ -2345,7 +2277,7 @@ function onProcess(e){
   const stable3 = medianStableRefinedMMM();
   if (stable3) {
     lastStable = stable3;
-    renderRealtime("MMM", stable3.note, stable3.refHz, `Musette:\u00A0${stable3.musetteStr}`, stable3.off1, stable3.off2, null, null, stable3.lowHz, stable3.highHz);
+    renderRealtime("MMM", stable3.note, stable3.refHz, stable3.off1, stable3.off2, null, null, stable3.lowHz, stable3.highHz);
   }
 }
 
@@ -2353,11 +2285,6 @@ function onProcess(e){
 async function startAudio(){
 
   audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-
-  // Ask the browser/OS to NOT apply automatic input processing (AGC/NS/EC),
-  // which can make the apparent input level “pump” while you play.
-  // Note: some browsers/devices may ignore some of these constraints.
-
 
   const stream = await navigator.mediaDevices.getUserMedia({
     audio: {
@@ -2395,7 +2322,6 @@ async function startAudio(){
   procNode = audioCtx.createScriptProcessor(1024, 1, 1);
   procNode.onaudioprocess = onProcess;
 
-  /* MAE 08 Jan 2026 - iOS-only: apply a small input gain before analysis */
   if (isIOS()) {
     inputGainNode = audioCtx.createGain();
     inputGainNode.gain.value = IOS_INPUT_GAIN;
@@ -2410,9 +2336,12 @@ async function startAudio(){
     streamSource.connect(analyserSpec);
     streamSource.connect(procNode);
   }
-  /* END iOS-only input gain */
 
-  procNode.connect(audioCtx.destination);
+  const silentGain = audioCtx.createGain();
+  silentGain.gain.value = 0;
+
+  procNode.connect(silentGain);
+  silentGain.connect(audioCtx.destination);
 
   resizeCanvasToCSS();
   showLockedIndicator(false);
@@ -2420,7 +2349,6 @@ async function startAudio(){
   setStatus(isLiveOnlyEnabled() ? "Listening (Live mode)" : "Listening", "status-ok");
   setTopStatusVisible(true);
 
-  // ensure correct needles visible for current config
   setNeedleMode(getCfgOnly());
 
   requestAnimationFrame(tick);
@@ -2442,7 +2370,6 @@ document.getElementById('start-btn').onclick = async () => {
 
 document.getElementById('reset-btn').onclick = () => {
 
-  /* MAE 06 Jan 2026 - clear gate */
   needsNextNoteAfterConfigChange = false;
 
   isLocked = false;
@@ -2456,6 +2383,7 @@ document.getElementById('reset-btn').onclick = () => {
 
   latchedMidi = null;
   latchCandidateCount = 0;
+  midiFloatHistory = [];
 
   resetDisplaySmoothing();
 
@@ -2466,7 +2394,6 @@ document.getElementById('reset-btn').onclick = () => {
   document.getElementById('freq').innerText = `Reference: 0.00 Hz`;
   document.getElementById('musette-line').innerText = "";
 
-  // reset needles
   setNeedleMode(getCfgOnly());
   setNeedleCents(0);
   setNeedleElCents(needleLow, 0);
@@ -2483,10 +2410,9 @@ document.getElementById('reset-btn').onclick = () => {
   setTopStatusVisible(true);
 
   suppressAutoSaveAfterLiveExit = false;
-
 };
 
-// A4 reference (concert pitch)
+// A4 reference
 const a4RefSelect = document.getElementById('a4ref');
 if (a4RefSelect) {
   gA4RefHz = parseFloat(a4RefSelect.value) || 440;
@@ -2494,13 +2420,13 @@ if (a4RefSelect) {
   a4RefSelect.addEventListener('change', () => {
     gA4RefHz = parseFloat(a4RefSelect.value) || 440;
 
-    // Reset tracking so displayed note/ideal Hz update cleanly under the new reference.
     refinedHistory = [];
     trackers = [];
     lastStable = null;
     showLockedIndicator(false);
     isLocked = false;
     setTopStatusVisible(true);
+
     setNeedleCents(0);
     setNeedleElCents(needleLow, 0);
     setNeedleElCents(needleHigh, 0);
@@ -2513,7 +2439,6 @@ if (a4RefSelect) {
     if (freqMMLabel) freqMMLabel.innerText = `0.0 Hz`;
 
     resetDisplaySmoothing();
-
   });
 }
 
@@ -2539,35 +2464,35 @@ cfgSel.addEventListener('change', () => {
   if (freqHighLabel) freqHighLabel.innerText = `0.0 Hz`;
   if (freqMMLabel) freqMMLabel.innerText = `0.0 Hz`;
 
-  /* MAE 06 Jan 2026 - require NEXT NOTE after config change (after START) */
   requireNextNoteAfterConfigChange();
 
   resetDisplaySmoothing();
-
 });
 
 // Initial UI state
 setNeedleMode(getCfgOnly());
 
-// ---------- NEW: Live mode checkbox behavior ----------
+// Live mode checkbox behavior
 if (liveOnlyCheckbox) {
   liveOnlyCheckbox.addEventListener('change', () => {
-    // Always clear any pending "save" timer.
     clearTimeout(silenceTimer);
     silenceTimer = null;
 
     if (isLiveOnlyEnabled()) {
-      // Entering Live mode
       suppressAutoSaveAfterLiveExit = false;
 
-      // Ensure we are not locked and never show "Saved" in live mode.
       isLocked = false;
       showLockedIndicator(false);
       setTopStatusVisible(true);
 
-      if (audioCtx) setStatus("Listening (Live mode)", "status-ok");
+      if (audioCtx) {
+        if (needsNextNoteAfterConfigChange) {
+          setStatus("Configuration changed — Click NEXT NOTE", "status-warn");
+        } else {
+          setStatus("Listening (Live mode)", "status-ok");
+        }
+      }
     } else {
-      // Exiting Live mode: do NOT immediately save whatever the lastStable was
       suppressAutoSaveAfterLiveExit = true;
 
       showLockedIndicator(false);
@@ -2576,9 +2501,8 @@ if (liveOnlyCheckbox) {
     }
   });
 }
-// ---------- END NEW ----------
 
-// ---------- Help modal ----------
+// Help modal
 const helpModal = document.getElementById('help-modal');
 document.getElementById('help-btn').onclick = () => { helpModal.style.display = "block"; };
 document.getElementById('help-close').onclick = () => { helpModal.style.display = "none"; };
