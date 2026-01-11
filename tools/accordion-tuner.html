@@ -153,6 +153,35 @@
     .btn-main{ background:var(--accent); color:#000;margin-top:14px;font-size:1.15rem; }
     .btn-reset{ background:#444; color:#fff;margin-top:14px;font-size:1.15rem;}
 
+    /* Gentle desktop-only hover effect for START and NEXT NOTE */
+    @media (hover: hover) and (pointer: fine) {
+
+      #reset-btn.btn-reset{
+        transition: filter 125ms ease;
+      }
+
+      #reset-btn.btn-reset:hover{
+        filter: brightness(1.4);
+      }
+
+      #reset-btn.btn-reset:active{
+        filter: brightness(1.0);
+      }
+
+      #start-btn.btn-main{
+        transition: filter 125ms ease;
+      }
+
+      #start-btn.btn-main:hover{
+        filter: brightness(1.75);
+      }
+
+      #start-btn.btn-main:active{
+        filter: brightness(1.0);
+      }
+
+    }
+
     .btn-small{
       padding:10px 14px;
       font-size:1.1rem;
