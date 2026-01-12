@@ -853,152 +853,156 @@
       color:#eaeaea;
     ">
 
-    <div style="
-        padding:14px 14px; font-weight:900; font-size:1.55rem;
-        text-align:center; margin-bottom:18px;
-      ">Instructions</div>
+      <div style="
+          padding:14px 14px; font-weight:900; font-size:1.55rem;
+          text-align:center; margin-bottom:18px;
+        ">Instructions</div>
 
-    <div style="max-height: 60vh; overflow-y: auto; padding-right: 24px; padding-left: 8px; text-align:left; line-height:1.75; font-size:1rem; color:#ddd; ">
-      <div style="margin-bottom:12px;">
-        This tool can be used to measure the in-tune note pitch and musette offsets for both<br/>MM (2 reeds/note) and MMM (3 reeds/note) configured accordions.<br/><br/>
-        This is a free open-source AI collaboration experiment.<br/><br/>
-        <span style="color:#ff5d5d">Use it at your own risk.</span><br/><br/>
-        I make no warranty as to its accuracy or usefulness.<br/><br/>
-        Please sanity-check any results against a professional accordion tuner program like Dirk's Accordion Tuner before modifying any reeds.<br/><br/>
+      <div style="max-height: 60vh; overflow-y: auto; padding-right: 24px; padding-left: 8px; text-align:left; line-height:1.75; font-size:1rem; color:#ddd; ">
 
-        <div style="margin-bottom:18px;">
-          <b>How to use the tuner:</b><br/><br/>
+        <div style="margin-bottom:12px;">
+          This tool can be used to measure the in-tune note pitch and musette offsets for both<br/>MM (2 reeds/note) and MMM (3 reeds/note) configured accordions.<br/><br/>
+          This is a free open-source AI collaboration experiment.<br/><br/>
+          <span style="color:#ff5d5d">Use it at your own risk.</span><br/><br/>
+          I make no warranty as to its accuracy or usefulness.<br/><br/>
+          Please sanity-check any results against a professional accordion tuner program like Dirk's Accordion Tuner before modifying any reeds.<br/><br/>
 
-          <b>1) Choose your reed configuration</b><br/>
-          <ul style="margin:8px 0 0 20px;">
-            <li style="margin-bottom:10px;">
-              <b>MM (2 reeds):&nbsp;&nbsp;&nbsp;0 / +</b><br/>
-              One reed is treated as the <b>reference reed</b> (the <b>lower</b> pitch).<br/>The other reed is the <b>musette reed</b>.<br/>
-              The musette value is the cents/beats difference between the two reeds.
-              <div style="margin-top:6px;">
-                <b>MM needle:</b><br/>Center = reference reed, needle shows the musette reed offset (normally to the <b>right</b>).
-              </div>
-            </li>
+          <div style="margin-bottom:18px;">
+            <b>How to use the tuner:</b><br/><br/>
 
-            <li>
-              <b>MMM (3 reeds)</b><br/>
-              Choose which reference basis you want using the Reed configuration dropdown:<br/>
-              <ul style="margin:6px 0 0 18px;">
-                <li style="margin-bottom:6px;">
-                  <b>MMM (3 reeds):&nbsp;&nbsp;&nbsp;- / 0 / +</b>:<br/>The middle reed is the reference, one musette reed is below and one is above.
-                </li>
-                <li>
-                  <b>MMM (3 reeds):&nbsp;&nbsp;&nbsp;0 / + / +</b>:<br/>The lowest reed is the reference, both musette reeds are above.
-                </li>
-              </ul>
-              The musette values are the cents/beats difference between the reference reed and the two reeds.<br/>
-              <div style="margin-top:6px;">
-                <b>MMM needles:</b><br/>Center = reference reed, other two needles shows the two musette reed offsets.
-              </div>
-            </li>
-          </ul>
-        </div>
+            <b>1) Choose your reed configuration</b><br/>
+            <ul style="margin:8px 0 0 20px;">
+              <li style="margin-bottom:10px;">
+                <b>MM (2 reeds):&nbsp;&nbsp;&nbsp;0 / +</b><br/>
+                One reed is treated as the <b>reference reed</b> (the <b>lower</b> pitch).<br/>The other reed is the <b>musette reed</b>.<br/>
+                The musette value is the cents/beats difference between the two reeds.
+                <div style="margin-top:6px;">
+                  <b>MM needle:</b><br/>Center = reference reed, needle shows the musette reed offset (normally to the <b>right</b>).
+                </div>
+              </li>
 
-        <div style="margin-bottom:18px;">
-          <b>2) Select your A4 tuning</b><br/>Range is 438-446 Hz, default is 440 Hz.
-        </div>
-
-        <div style="margin-bottom:18px;">
-          <b>3) Start the tuner</b><br/>
-          Click <b>START</b> and allow microphone access when prompted.<br/>
-          For best results, play one steady note at a time.<br/>
-          Hold the note for a moment so the display stabilizes.
-          <div style="margin-top:8px;">
-            Tips: use normal bellows pressure, avoid vibrato, and tune in a quiet room.
+              <li>
+                <b>MMM (3 reeds)</b><br/>
+                Choose which reference basis you want using the Reed configuration dropdown:<br/>
+                <ul style="margin:6px 0 0 18px;">
+                  <li style="margin-bottom:6px;">
+                    <b>MMM (3 reeds):&nbsp;&nbsp;&nbsp;- / 0 / +</b>:<br/>The middle reed is the reference, one musette reed is below and one is above.
+                  </li>
+                  <li>
+                    <b>MMM (3 reeds):&nbsp;&nbsp;&nbsp;0 / + / +</b>:<br/>The lowest reed is the reference, both musette reeds are above.
+                  </li>
+                </ul>
+                The musette values are the cents/beats difference between the reference reed and the two reeds.<br/>
+                <div style="margin-top:6px;">
+                  <b>MMM needles:</b><br/>Center = reference reed, other two needles shows the two musette reed offsets.
+                </div>
+              </li>
+            </ul>
           </div>
-        </div>
 
-        <div style="margin-bottom:18px;">
-          <b>4) Watch the live display</b><br/>
-          While holding a steady note:
-          <ul style="margin:8px 0 0 20px;">
-            <li style="margin-bottom:6px;"><b>Note</b> shows the detected note name (based on the reference reed).</li>
-            <li style="margin-bottom:6px;"><b>Reference:</b> shows the measured frequency of the reference reed and delta in Hz and cents from ideal ET.</li>
-            <li style="margin-bottom:6px;"><b>Needle</b> shows the tuning/offset behavior described above for MM or MMM.</li>
-            <li><b>Musette</b> shows the cents and beats offset(s) of the musette reed(s) relative to the reference reed.</li>
-          </ul>
-        </div>
+          <div style="margin-bottom:18px;">
+            <b>2) Select your A4 tuning</b><br/>Range is 438-446 Hz, default is 440 Hz.
+          </div>
 
-        <div style="margin-bottom:18px;">
-          <b>5) Release the note to lock and save</b><br/>
-          When you <b>stop playing</b>, the tuner automatically <b>locks</b> and saves a row in the table.<br/>
-          The “Saved” indicator confirms the measurement was recorded.
-        </div>
+          <div style="margin-bottom:18px;">
+            <b>3) Start the tuner</b><br/>
+            Click <b>START</b> and allow microphone access when prompted.<br/>
+            For best results, play one steady note at a time.<br/>
+            Hold the note for a moment so the display stabilizes.
+            <div style="margin-top:8px;">
+              Tips: use normal bellows pressure, avoid vibrato, and tune in a quiet room.
+            </div>
+          </div>
 
-        <div style="margin-bottom:18px;">
-          <b>6) Understand the results table</b><br/>
-          Each saved row includes:
-          <ul style="margin:8px 0 8px 20px;">
-            <li style="margin-bottom:6px;"><b>Config</b>:<br/>MM or MMM reed configuration.</li>
-            <li style="margin-bottom:6px;"><b>Note</b>:<br/>Note name.</li>
-            <li style="margin-bottom:6px;"><b>ET Hz</b>:<br/>The equal-tempered target for the detected note.</li>
-            <li style="margin-bottom:6px;"><b>Ref Hz</b>:<br/>Measured reference reed frequency.</li>
-            <li style="margin-bottom:6px;"><b>Δ from ET</b>:<br/>Delta of the reference reed from equal temperament, shown in Hz and cents.</li>
-            <li><b>Musette</b>:<br/>Reed-to-reed offset(s) in cents and beats relative to the reference reed.</li>
-          </ul>
-          Click the red x to clear the results.
-        </div>
+          <div style="margin-bottom:18px;">
+            <b>4) Watch the live display</b><br/>
+            While holding a steady note:
+            <ul style="margin:8px 0 0 20px;">
+              <li style="margin-bottom:6px;"><b>Note</b> shows the detected note name (based on the reference reed).</li>
+              <li style="margin-bottom:6px;"><b>Reference:</b> shows the measured frequency of the reference reed and delta in Hz and cents from ideal ET.</li>
+              <li style="margin-bottom:6px;"><b>Needle</b> shows the tuning/offset behavior described above for MM or MMM.</li>
+              <li><b>Musette</b> shows the cents and beats offset(s) of the musette reed(s) relative to the reference reed.</li>
+            </ul>
+          </div>
 
-        <div>
-          <b>7) Measure the next note</b><br/>
-          Click <b>NEXT NOTE</b> to reset and repeat for another pitch.<br/><br/>
-        </div>
+          <div style="margin-bottom:18px;">
+            <b>5) Release the note to lock and save</b><br/>
+            When you <b>stop playing</b>, the tuner automatically <b>locks</b> and saves a row in the table.<br/>
+            The “Saved” indicator confirms the measurement was recorded.
+          </div>
 
-        <div>
-          <b>8) Live mode</b><br/>
-          Check the <b>Live mode</b> checkbox to continuously recognize notes and musette offsets without saving results.<br/><br/>
-        </div>
+          <div style="margin-bottom:18px;">
+            <b>6) Understand the results table</b><br/>
+            Each saved row includes:
+            <ul style="margin:8px 0 8px 20px;">
+              <li style="margin-bottom:6px;"><b>Config</b>:<br/>MM or MMM reed configuration.</li>
+              <li style="margin-bottom:6px;"><b>Note</b>:<br/>Note name.</li>
+              <li style="margin-bottom:6px;"><b>ET Hz</b>:<br/>The equal-tempered target for the detected note.</li>
+              <li style="margin-bottom:6px;"><b>Ref Hz</b>:<br/>Measured reference reed frequency.</li>
+              <li style="margin-bottom:6px;"><b>Δ from ET</b>:<br/>Delta of the reference reed from equal temperament, shown in Hz and cents.</li>
+              <li><b>Musette</b>:<br/>Reed-to-reed offset(s) in cents and beats relative to the reference reed.</li>
+            </ul>
+            Click the red x to clear the results.
+          </div>
 
-        <div>
-          <b>9) Printing the results</b><br/>
-          You can use the Print feature in your browser to print the results table.<br/><br/>
-        </div>
+          <div>
+            <b>7) Measure the next note</b><br/>
+            Click <b>NEXT NOTE</b> to reset and repeat for another pitch.<br/><br/>
+          </div>
 
-        <div>
-          <b>10) Export the results as a CSV file</b><br/>
-          Click <b>CSV</b> at the top of the results table to export the results as a CSV file.<br/>
-          The file will be saved into your browser's default Downloads directory.<br/><br/>
-        </div>
+          <div>
+            <b>8) Live mode</b><br/>
+            Check the <b>Live mode</b> checkbox to continuously recognize notes and musette offsets without saving results.<br/><br/>
+          </div>
 
-        <div>
-          <b>Limitations</b><br/>- The tool may have difficulty detecting notes below C4.<br/>
-          - The tool may struggle to provide accurate musette measures for dry-tuned accordions.<br/><br/>
-        </div>
+          <div>
+            <b>9) Printing the results</b><br/>
+            You can use the Print feature in your browser to print the results table.<br/><br/>
+          </div>
 
-        <div>
-          <b>Tip Jars</b><br/>
-          This tool was created by <a href="https://michaeleskin.com" target="_blank">Michael Eskin</a>.<br/>
-          If you find it useful, please consider making a contribution via my online tip jars:<br/><br/>
-        </div>
+          <div>
+            <b>10) Export the results as a CSV file</b><br/>
+            Click <b>CSV</b> at the top of the results table to export the results as a CSV file.<br/>
+            The file will be saved into your browser's default Downloads directory.<br/><br/>
+          </div>
 
-        <div style="text-align: center">
-          <a href="https://michaeleskin.com/abctools/tipjars.html" target="_blank">Michael Eskin's Tip Jars</a><br/>
-        </div>
+          <div>
+            <b>Limitations</b><br/>- The tool may have difficulty detecting notes below C4.<br/>
+            - The tool may struggle to provide accurate musette measures for dry-tuned accordions.<br/><br/>
+          </div>
 
-        <div>
-          <br/><b>Source Code</b><br/>
-          The full source code for this tool is available on my GitHub repository.<br/>
-          The source is completely contained in the one file: <b>accordion-tuner.html</b>:<br/><br/>
-        </div>
+          <div>
+            <b>Tip Jars</b><br/>
+            This tool was created by <a href="https://michaeleskin.com" target="_blank">Michael Eskin</a>.<br/>
+            If you find it useful, please consider making a contribution via my online tip jars:<br/><br/>
+          </div>
 
-        <div style="text-align: center">
-          <a href="https://github.com/seisiuneer/abctools/tree/main/tools" target="_blank">Michael Eskin's GitHub Repository</a><br/>
-          &nbsp;
+          <div style="text-align: center">
+            <a href="https://michaeleskin.com/abctools/tipjars.html" target="_blank">Michael Eskin's Tip Jars</a><br/>
+          </div>
+
+          <div>
+            <br/><b>Source Code</b><br/>
+            The full source code for this tool is available on my GitHub repository.<br/>
+            The source is completely contained in the one file: <b>accordion-tuner.html</b>:<br/><br/>
+          </div>
+
+          <div style="text-align: center">
+            <a href="https://github.com/seisiuneer/abctools/tree/main/tools" target="_blank">Michael Eskin's GitHub Repository</a><br/>
+            &nbsp;
+          </div>
+
         </div>
 
       </div>
-    </div>
 
-    <button id="help-close" style="
-      width:100%; margin-top:18px; padding:12px 14px;
-      background:#2a2a2a; border:1px solid #444; border-radius:12px;
-      color:#fff; font-weight:900; cursor:pointer; font-size:1.25rem;
-    ">Close</button>
+      <button id="help-close" style="
+        width:100%; margin-top:18px; padding:12px 14px;
+        background:#2a2a2a; border:1px solid #444; border-radius:12px;
+        color:#fff; font-weight:900; cursor:pointer; font-size:1.25rem;
+      ">Close</button>
+
+    </div>
 
   </div>
 
@@ -1139,6 +1143,10 @@ const GATE = {
 const MM_HIGH_ACCURACY_REFINED_MULT = 2.0;
 const MM_HIGH_ACCURACY_LOCK_MS = 450;
 
+// MMM default "High Accuracy" behavior (now also on for MMM)
+const MMM_HIGH_ACCURACY_REFINED_MULT = 2.0;
+const MMM_HIGH_ACCURACY_LOCK_MS = 450;
+
 function effectiveRmsSilence(){
   return RMS_SILENCE;
 }
@@ -1164,13 +1172,15 @@ function refinedHistTargetForCfg(cfg){
   if (cfg === "MM") {
     return Math.round(GATE.refinedHistMM * MM_HIGH_ACCURACY_REFINED_MULT);
   }
-  // MMM: unchanged
-  return GATE.refinedHistMMM;
+  // MMM: now also use the longer "high accuracy" averaging
+  return Math.round(GATE.refinedHistMMM * MMM_HIGH_ACCURACY_REFINED_MULT);
 }
 
 function lockAfterMs(){
-  // MM: longer lock so the extra averaging can stabilize before saving
-  return (getCfgOnly() === "MM") ? MM_HIGH_ACCURACY_LOCK_MS : GATE.lockAfterMs;
+  // MM/MMM: longer lock so the extra averaging can stabilize before saving
+  return (getCfgOnly() === "MM") ? MM_HIGH_ACCURACY_LOCK_MS
+       : (getCfgOnly() === "MMM") ? MMM_HIGH_ACCURACY_LOCK_MS
+       : GATE.lockAfterMs;
 }
 
 // ---------- Display smoothing (standard) ----------
@@ -2070,9 +2080,10 @@ function medianStableRefinedMMM(){
 
   const latest = refinedHistory[refinedHistory.length-1];
 
-  const refHz  = median(refinedHistory.map(x=>x.refHz).filter(v=>isFinite(v) && v > 0));
-  const lowHz  = median(refinedHistory.map(x=>x.lowHz).filter(v=>isFinite(v) && v > 0));
-  const highHz = median(refinedHistory.map(x=>x.highHz).filter(v=>isFinite(v) && v > 0));
+  // MMM: now use the same "high precision" center estimator as MM (trimmed mean)
+  const refHz  = trimmedMean(refinedHistory.map(x=>x.refHz).filter(v=>isFinite(v) && v > 0), 0.20);
+  const lowHz  = trimmedMean(refinedHistory.map(x=>x.lowHz).filter(v=>isFinite(v) && v > 0), 0.20);
+  const highHz = trimmedMean(refinedHistory.map(x=>x.highHz).filter(v=>isFinite(v) && v > 0), 0.20);
   if (!(refHz > 0) || !(lowHz > 0) || !(highHz > 0)) return null;
 
   let cLow  = centsBetween(lowHz,  refHz);
