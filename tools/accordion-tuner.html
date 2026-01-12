@@ -1206,6 +1206,69 @@ function displaySmoothTauMs(){
   return 180;
 }
 
+// --- Live mode: reset musette when note changes ---
+let gLastLiveNoteName = null;          // (UI/render tracking)
+let gLastLiveNoteNameProcess = null;   // (processing tracking)
+
+// Reset musette *before* stable calc, so we don't mix old/new note samples.
+function maybeResetLiveOnNoteChange(note){
+  if (!isLiveOnlyEnabled()) {
+    gLastLiveNoteNameProcess = null;
+    return false;
+  }
+
+  if (!note || note === "--") return false;
+
+  if (gLastLiveNoteNameProcess && note !== gLastLiveNoteNameProcess) {
+    resetMusetteOnLiveNoteChange();
+
+    // Also clear lastStable so nothing “old” can be used downstream.
+    lastStable = null;
+
+    gLastLiveNoteNameProcess = note;
+    return true;
+  }
+
+  gLastLiveNoteNameProcess = note;
+  return false;
+}
+
+function resetMusetteOnLiveNoteChange(){
+  // reset visual smoothing so old offsets don't bleed into the new note
+  resetDisplaySmoothing();
+
+  // clear musette refinement buffers so the new note starts fresh
+  refinedHistory = [];
+
+  // clear tracker histories (keep array; next onProcess will repopulate/retarget)
+  if (trackers && trackers.length){
+    trackers.forEach(tr => {
+      if (!tr) return;
+      tr.offsetHzHist = [];
+      tr.refinedHz = null;
+      tr.haveLast = false;
+      tr.lastAngle = 0;
+      tr.iLP = tr.qLP = 0;
+      tr.iMean = tr.qMean = 0;
+    });
+  }
+
+  // reset UI musette displays
+  document.getElementById('musette-line').innerText = "";
+
+  setNeedleCents(0);
+  setNeedleElCents(needleLow, 0);
+  setNeedleElCents(needleHigh, 0);
+
+  setNeedleLabelCents(freqLowLabel, 0);
+  setNeedleLabelCents(freqHighLabel, 0);
+  setNeedleLabelCents(freqMMLabel, 0);
+
+  if (freqLowLabel)  freqLowLabel.innerText  = `0.0 Hz`;
+  if (freqHighLabel) freqHighLabel.innerText = `0.0 Hz`;
+  if (freqMMLabel)   freqMMLabel.innerText   = `0.0 Hz`;
+}
+
 // ---------- Utils ----------
 function smoothTo(prev, next, alpha){
   if (!isFinite(next)) return prev;
@@ -2117,6 +2180,9 @@ function medianStableRefinedMMM(){
 
 function renderRealtime(cfg, note, refHz, mmmOff1, mmmOff2, mmNeedleCents, mmMusHz, mmmLowHz, mmmHighHz){
 
+  // Track last rendered note (UI only)
+  gLastLiveNoteName = isLiveOnlyEnabled() ? note : null;
+
   const now = (typeof performance !== "undefined" && performance.now) ? performance.now() : Date.now();
   let dt = gDisplaySmooth.lastTs ? (now - gDisplaySmooth.lastTs) : 16;
   gDisplaySmooth.lastTs = now;
@@ -2311,6 +2377,9 @@ function onProcess(e){
     updateLatchedMidiUsingRefHz(refHz);
     const note = (latchedMidi == null) ? "--" : midiToNoteName(latchedMidi);
 
+    // Live mode: if note changed, reset BEFORE pushing/averaging so we don't mix notes
+    maybeResetLiveOnNoteChange(note);
+
     pushRefined({ cfg:"MM", note, refHz, musetteCents: musCents, musHz: musHz });
 
     const stable = medianStableRefinedMM();
@@ -2348,6 +2417,9 @@ function onProcess(e){
   const refHz = refined3[v3.refIndex];
   updateLatchedMidiUsingRefHz(refHz);
   const note = (latchedMidi == null) ? "--" : midiToNoteName(latchedMidi);
+
+  // Live mode: if note changed, reset BEFORE pushing/averaging so we don't mix notes
+  maybeResetLiveOnNoteChange(note);
 
   let off1, off2;
   if (basis === "lowest") {
@@ -2487,6 +2559,8 @@ document.getElementById('reset-btn').onclick = () => {
 
   clearTimeout(silenceTimer);
   silenceTimer = null;
+  gLastLiveNoteName = null;
+  gLastLiveNoteNameProcess = null;
 
   document.getElementById('note').innerText = "--";
   document.getElementById('freq').innerText = `Reference: 0.00 Hz`;
@@ -2508,6 +2582,7 @@ document.getElementById('reset-btn').onclick = () => {
   setTopStatusVisible(true);
 
   suppressAutoSaveAfterLiveExit = false;
+
 };
 
 // A4 reference
@@ -2524,6 +2599,8 @@ if (a4RefSelect) {
     showLockedIndicator(false);
     isLocked = false;
     setTopStatusVisible(true);
+    gLastLiveNoteName = null;
+    gLastLiveNoteNameProcess = null;
 
     setNeedleCents(0);
     setNeedleElCents(needleLow, 0);
@@ -2537,6 +2614,7 @@ if (a4RefSelect) {
     if (freqMMLabel) freqMMLabel.innerText = `0.0 Hz`;
 
     resetDisplaySmoothing();
+
   });
 }
 
@@ -2549,6 +2627,8 @@ cfgSel.addEventListener('change', () => {
   showLockedIndicator(false);
   isLocked = false;
   setTopStatusVisible(true);
+  gLastLiveNoteName = null;
+  gLastLiveNoteNameProcess = null;
 
   setNeedleMode(getCfgOnly());
   setNeedleCents(0);
@@ -2565,6 +2645,7 @@ cfgSel.addEventListener('change', () => {
   requireNextNoteAfterConfigChange();
 
   resetDisplaySmoothing();
+
 });
 
 // Initial UI state
