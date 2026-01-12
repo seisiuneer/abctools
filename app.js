@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3138_011026_0630";
+var gVersionNumber = "3139_011226_1200";
 
 var gMIDIInitStillWaiting = false;
 
@@ -14625,9 +14625,29 @@ function Render(renderAll, tuneNumber) {
 
       fileSelected.innerText = gDisplayedName + "  (" + nTunes + " Tune)";
 
+      if (gDisplayedName != "No ABC file selected"){
+
+        document.title =  gDisplayedName + "  (" + nTunes + " Tune)";
+
+      }
+      else{
+
+        document.title =  nTunes + " Tune (unsaved)";
+
+      }
+
     } else {
 
       fileSelected.innerText = gDisplayedName + "  (" + nTunes + " Tunes)";
+
+      if (gDisplayedName != "No ABC file selected"){
+        document.title = gDisplayedName + "  (" + nTunes + " Tunes)";
+      }
+      else{
+
+        document.title =  nTunes + " Tunes (unsaved)";
+
+      }
 
     }
 
@@ -14969,6 +14989,8 @@ function Render(renderAll, tuneNumber) {
     var fileSelected = document.getElementById('abc-selected');
 
     fileSelected.innerText = "No ABC file selected";
+
+    document.title = "Michael Eskin's ABC Tools";
 
     gDisplayedName = "No ABC file selected";
 
@@ -22141,6 +22163,8 @@ function SaveABCAsMusicXML(theTune, fname) {
       var fileSelected = document.getElementById('abc-selected');
       fileSelected.innerText = fname;
 
+      document.title = fname;
+
       // Clear the dirty count
       gIsDirty = false;
 
@@ -22235,6 +22259,8 @@ function doSaveABCFile(fname, theData) {
   // Update the displayed filename
   var fileSelected = document.getElementById('abc-selected');
   fileSelected.innerText = fname;
+
+  document.title = fname;
 
   // Clear the dirty count
   gIsDirty = false;
