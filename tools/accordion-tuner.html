@@ -1003,14 +1003,6 @@
   </div>
 
 <script>
-
-/* ============================================================
-   NOTE: This version hides the TOP status pill when locked,
-         to avoid showing both:
-           - "Locked" (top pill)
-           - "Locked (saved to table)" (indicator pill)
-   ============================================================ */
-
 // ---------- Audio nodes ----------
 let audioCtx, streamSource;
 let analyserPitch, analyserSpec;
@@ -1026,10 +1018,9 @@ function isIOS(){
   const iPadOS = (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
   return iOSUA || iPadOS;
 }
-
 const IOS_INPUT_GAIN = 3.0;
-
 /* END iOS-only input gain */
+
 
 // ---------- iOS/Safari: ensure AudioContext is running ----------
 async function ensureAudioContextRunning() {
@@ -1061,12 +1052,11 @@ const freqMMLabel = document.getElementById('freq-mm-label');
 
 const NOTES = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
 
-// ---------- NEW: Live mode ----------
+// ---------- Live mode ----------
 const liveOnlyCheckbox = document.getElementById('live-only');
 function isLiveOnlyEnabled(){
   return !!(liveOnlyCheckbox && liveOnlyCheckbox.checked);
 }
-// ---------- END NEW ----------
 
 // ---------- Lock / state ----------
 let isLocked = false;
@@ -1136,7 +1126,7 @@ const TRACK_MAX_OFFSET_HZ = 12;
 const HARMONIC_REJECT_CENTS = 25;
 const OCTAVE_STRONGER_DB = 6;
 
-// ---------- Standard gating (improvements kept) ----------
+// ---------- Standard gating ----------
 const GATE = {
   pitchHist: 17,
   pitchNeed: 9,
@@ -1145,12 +1135,15 @@ const GATE = {
   lockAfterMs: 250
 };
 
+// MM default "High Accuracy" behavior (always on for MM)
+const MM_HIGH_ACCURACY_REFINED_MULT = 2.0;
+const MM_HIGH_ACCURACY_LOCK_MS = 450;
+
 function effectiveRmsSilence(){
   return RMS_SILENCE;
 }
 
 function pitchNeedForCurrentF0(){
-  // For lower notes, allow fewer frames to qualify as "stable enough" to start tracking.
   const f0 = lastF0 || 0;
   if (f0 > 0 && f0 < 220) { // ~A3 and below
     return Math.max(12, Math.floor(GATE.pitchNeed * 0.65));
@@ -1167,7 +1160,17 @@ function pitchHistForCurrentF0(){
 }
 
 function refinedHistTargetForCfg(cfg){
-  return (cfg === "MM") ? GATE.refinedHistMM : GATE.refinedHistMMM;
+  // MM: always use the longer "high accuracy" averaging
+  if (cfg === "MM") {
+    return Math.round(GATE.refinedHistMM * MM_HIGH_ACCURACY_REFINED_MULT);
+  }
+  // MMM: unchanged
+  return GATE.refinedHistMMM;
+}
+
+function lockAfterMs(){
+  // MM: longer lock so the extra averaging can stabilize before saving
+  return (getCfgOnly() === "MM") ? MM_HIGH_ACCURACY_LOCK_MS : GATE.lockAfterMs;
 }
 
 // ---------- Display smoothing (standard) ----------
@@ -1206,6 +1209,39 @@ function median(arr){
   const s = arr.slice().sort((a,b)=>a-b);
   return s[Math.floor(s.length/2)];
 }
+
+function trimmedMean(arr, trimFrac){
+  if (!arr || !arr.length) return null;
+  const s = arr.slice().sort((a,b)=>a-b);
+  const n = s.length;
+
+  if (n < 5) {
+    return median(s);
+  }
+
+  const k = Math.floor(n * trimFrac);
+  const lo = clamp(k, 0, Math.floor((n-1)/2));
+  const hi = n - lo;
+
+  const slice = s.slice(lo, hi);
+  if (!slice.length) return median(s);
+
+  let sum = 0;
+  for (const v of slice) sum += v;
+  return sum / slice.length;
+}
+
+function robustCenter(arr){
+  const vals = (arr || []).filter(v => isFinite(v) && v > 0);
+  if (!vals.length) return null;
+
+  // MM: use trimmed mean (more stable over time, less jumpy than median)
+  if (getCfgOnly() === "MM") return trimmedMean(vals, 0.20);
+
+  // MMM: keep original median behavior
+  return median(vals);
+}
+
 let gA4RefHz = 440;
 
 function freqToMidi(freq){ return 12 * (Math.log2(freq / gA4RefHz)) + 69; }
@@ -1924,7 +1960,7 @@ function updateTable() {
   `).join('');
 }
 
-// ---------- Recommended lockData() (keeps smoothed saved values + MMM HTML line breaks) ----------
+// ---------- Recommended lockData() ----------
 function lockData() {
   if (!lastStable || isLocked) return;
 
@@ -1934,7 +1970,6 @@ function lockData() {
   showLockedIndicator(true);
 
   setTopStatusVisible(false);
-  //setStatus("Locked", "status-locked");
 
   const ideal = idealHzForLatched();
   const idealStr = (ideal == null) ? "--" : fmtHz(ideal);
@@ -2010,8 +2045,8 @@ function medianStableRefinedMM(){
 
   const latest = refinedHistory[refinedHistory.length-1];
 
-  const refHz = median(refinedHistory.map(x=>x.refHz).filter(v=>isFinite(v) && v > 0));
-  const musHz = median(refinedHistory.map(x=>x.musHz).filter(v=>isFinite(v) && v > 0));
+  const refHz = robustCenter(refinedHistory.map(x=>x.refHz));
+  const musHz = robustCenter(refinedHistory.map(x=>x.musHz));
   if (!(refHz > 0) || !(musHz > 0)) return null;
 
   let musCents = centsBetween(musHz, refHz);
@@ -2184,7 +2219,7 @@ function tick() {
         if (!suppressAutoSaveAfterLiveExit) {
           if (!silenceTimer && lastStable) {
             setStatus("Saving", "status-ok");
-            silenceTimer = setTimeout(() => lockData(), GATE.lockAfterMs);
+            silenceTimer = setTimeout(() => lockData(), lockAfterMs());
           }
         }
       }
@@ -2226,6 +2261,7 @@ function onProcess(e){
   if (!(rmsOfArray(input) > effectiveRmsSilence())) return;
 
   const { cfg, basis } = getConfig();
+
   if (!(lastF0 > 0) || pitchHistory.length < pitchNeedForCurrentF0()) return;
 
   let f0Pitch = octaveCorrectF0(lastF0);
@@ -2333,8 +2369,7 @@ function onProcess(e){
 async function startAudio(){
 
   audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-
-  await ensureAudioContextRunning();
+ await ensureAudioContextRunning();
 
   const stream = await navigator.mediaDevices.getUserMedia({
     audio: {
@@ -2343,8 +2378,8 @@ async function startAudio(){
       noiseSuppression: false
     }
   });
+await ensureAudioContextRunning();
 
-  await ensureAudioContextRunning();
 
   const track = stream.getAudioTracks()[0];
 
@@ -2523,7 +2558,6 @@ cfgSel.addEventListener('change', () => {
 
 // Initial UI state
 setNeedleMode(getCfgOnly());
-
 
 // iOS/Safari: if the context gets suspended later, any user gesture will re-resume it.
 function addIOSResumeGestures() {
