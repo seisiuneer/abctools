@@ -1267,6 +1267,13 @@ function resetMusetteOnLiveNoteChange(){
   if (freqLowLabel)  freqLowLabel.innerText  = `0.0 Hz`;
   if (freqHighLabel) freqHighLabel.innerText = `0.0 Hz`;
   if (freqMMLabel)   freqMMLabel.innerText   = `0.0 Hz`;
+
+  // MAE 13 Jan 2026 - Live mode: on note change, immediately clear the main display
+  // so we do not show the *previous* note/frequency while the new musette stabilizes.
+  const noteEl = document.getElementById('note');
+  const freqEl = document.getElementById('freq');
+  if (noteEl) noteEl.innerText = "--";
+  if (freqEl) freqEl.innerText = "Reference: 0.00 Hz";
 }
 
 // ---------- Utils ----------
