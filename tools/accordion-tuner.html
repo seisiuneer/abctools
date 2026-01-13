@@ -1318,7 +1318,7 @@ function robustCenter(arr){
   // MM: use trimmed mean (more stable over time, less jumpy than median)
   if (getCfgOnly() === "MM") return trimmedMean(vals, 0.20);
 
-  // MMM: keep original median behavior
+  // MMM: (no longer used for stable MMM calc; MMM uses trimmedMean in medianStableRefinedMMM)
   return median(vals);
 }
 
@@ -1823,11 +1823,25 @@ function collectPeaksAroundF0(f0, windowCents){
   return peaks.sort((a,b)=>a-b);
 }
 
-// MM candidate pair (coarse)
 function coarseMMCandidates(f0){
   const peaks = collectPeaksAroundF0(f0, MM_WINDOW_CENTS);
-  if (peaks.length < 2) return null;
+  
+  if (!peaks || peaks.length === 0) return null;
 
+  // Updated: Dry Tuning Logic
+  // If we only find 1 strong peak, the two reeds are likely very close (merged peak).
+  // We force a "split" search by seeding the trackers slightly apart (+/- 3 cents).
+  // The high-Q trackers defined above will then pull towards the actual frequencies 
+  // if they exist, or converge back to the center if it is truly a single reed.
+  if (peaks.length === 1) {
+    const p = peaks[0];
+    const offsetRatio = Math.pow(2, 3/1200); // 3 cents spread
+    const low = p / offsetRatio;
+    const high = p * offsetRatio;
+    return [low, high];
+  }
+
+  // Standard logic for 2 distinct peaks (wet tuning)
   let best = null;
   for (let i=0;i<peaks.length;i++){
     for (let j=i+1;j<peaks.length;j++){
@@ -1898,7 +1912,8 @@ function coarseMMMCandidates(f0, basis){
 // ---------- Narrowband quadrature tracker ----------
 function makeBandpassBiquad(fs, f0, Q){
   f0 = clamp(f0, 20, fs/2 - 100);
-  Q = clamp(Q, 2, 120);
+  // Updated: Increased max Q clamp from 120 to 200 to allow for drier tuning separation
+  Q = clamp(Q, 2, 200);
   const w0 = 2*Math.PI * f0 / fs;
   const cosw0 = Math.cos(w0);
   const sinw0 = Math.sin(w0);
@@ -1923,7 +1938,8 @@ function onePoleAlpha(fs, cutoffHz){
 }
 
 function makeTracker(fs, targetHz){
-  const bpQ = 60;
+  // Updated: Increased Q from 60 to 130 for better separation of dry musette
+  const bpQ = 130;
   return {
     fs,
     targetHz,
@@ -1952,7 +1968,8 @@ function updateTrackerTarget(tr, newHz){
   tr.targetHz = newHz;
   tr.phaseInc = 2*Math.PI*newHz/tr.fs;
 
-  tr.bp = makeBandpassBiquad(tr.fs, newHz, 60);
+  // Updated: Increased Q from 60 to 130
+  tr.bp = makeBandpassBiquad(tr.fs, newHz, 130);
 
   tr.offsetHzHist = [];
   tr.refinedHz = null;
@@ -2421,30 +2438,30 @@ function onProcess(e){
   const v3 = validateMMMForBasis(refined3, basis);
   if (!v3.ok) return;
 
+  // --- MMM: normalize low/high reeds so they can't flip across frames ---
   const refHz = refined3[v3.refIndex];
+
+  // collect the two non-reference reeds and sort them by frequency
+  const others = refined3
+    .filter((_, idx) => idx !== v3.refIndex)
+    .sort((a,b)=>a-b);
+
+  const lowHz  = others[0];
+  const highHz = others[1];
+
+  // offsets always relative to the reference reed
+  const offLow  = centsBetween(lowHz,  refHz);
+  const offHigh = centsBetween(highHz, refHz);
+
+  // keep offsets ordered for display/saving
+  const off1 = Math.min(offLow, offHigh);
+  const off2 = Math.max(offLow, offHigh);
+
   updateLatchedMidiUsingRefHz(refHz);
   const note = (latchedMidi == null) ? "--" : midiToNoteName(latchedMidi);
 
   // Live mode: if note changed, reset BEFORE pushing/averaging so we don't mix notes
   maybeResetLiveOnNoteChange(note);
-
-  let off1, off2;
-  if (basis === "lowest") {
-    off1 = centsBetween(refined3[1], refHz);
-    off2 = centsBetween(refined3[2], refHz);
-  } else {
-    off1 = centsBetween(refined3[0], refHz);
-    off2 = centsBetween(refined3[2], refHz);
-  }
-
-  let lowHz, highHz;
-  if (basis === "lowest") {
-    lowHz = refined3[1];
-    highHz = refined3[2];
-  } else {
-    lowHz = refined3[0];
-    highHz = refined3[2];
-  }
 
   pushRefined({ cfg:"MMM", note, refHz, off1, off2, lowHz, highHz });
 
