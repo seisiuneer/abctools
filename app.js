@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3139_011226_1200";
+var gVersionNumber = "3140_011326_0900";
 
 var gMIDIInitStillWaiting = false;
 
@@ -14632,7 +14632,7 @@ function Render(renderAll, tuneNumber) {
       }
       else{
 
-        document.title =  nTunes + " Tune (unsaved)";
+        document.title =  nTunes + " Tune";
 
       }
 
@@ -14645,7 +14645,7 @@ function Render(renderAll, tuneNumber) {
       }
       else{
 
-        document.title =  nTunes + " Tunes (unsaved)";
+        document.title =  nTunes + " Tunes";
 
       }
 
