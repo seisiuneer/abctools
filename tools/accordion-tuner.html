@@ -1007,8 +1007,7 @@ const PITCH_FFT_SIZE = 4096;
 const PITCH_FFT_SIZE_LOW = 16384;
 
 // coarse spectrum (hint only)
-const SPEC_FFT_SIZE_PREF = 32768;
-const SPEC_FFT_SIZE_FALLBACK = 16384;
+const SPEC_FFT_SIZES = [65536, 32768, 16384, 8192];
 const SPEC_MAX_FREQ  = 2000;
 const SPEC_PEAK_DB_THRESHOLD = -110;
 const SPEC_MIN_PEAK_HZ_SEP = 0.12;
@@ -2523,7 +2522,23 @@ async function startAudio(){
   gPitchFFTLast = PITCH_FFT_SIZE;
 
   analyserSpec = audioCtx.createAnalyser();
-  analyserSpec.fftSize = (audioCtx.sampleRate >= 44100) ? SPEC_FFT_SIZE_PREF : SPEC_FFT_SIZE_FALLBACK;
+
+  // Robust FFT selection (prevents "Microphone error" on browsers that reject huge fftSize)
+  const SPEC_FFT_SIZES = [65536, 32768, 16384, 8192];
+  let chosenFFT = SPEC_FFT_SIZES[SPEC_FFT_SIZES.length - 1]; // fallback
+  for (const size of SPEC_FFT_SIZES) {
+    try {
+      analyserSpec.fftSize = size;
+      chosenFFT = size;
+      break;
+    } catch (e) {
+      // try smaller
+    }
+  }
+
+  console.log("Using analyzer FFT size "+chosenFFT);
+
+  analyserSpec.fftSize = chosenFFT;
   analyserSpec.smoothingTimeConstant = 0.0;
   magSpec = new Float32Array(analyserSpec.frequencyBinCount);
 
@@ -2561,6 +2576,7 @@ async function startAudio(){
 
   requestAnimationFrame(tick);
 }
+
 
 document.getElementById('start-btn').onclick = async () => {
   try{
