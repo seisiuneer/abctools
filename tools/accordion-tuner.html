@@ -636,7 +636,7 @@
       <!-- Low note mode -->
       <div class="live-mode-wrap">
         <div style="font-size:0.85rem; color:#bbb; margin-bottom:6px; text-align:left;">
-          &nbsp;&nbsp;Improves low notes (below C4)
+          &nbsp;&nbsp;Improves low notes (below D4)
         </div>
         <div class="radio-box live-mode-box">
           <input type="checkbox" id="low-note-mode">
@@ -1031,7 +1031,7 @@ const NEEDLE_SCALE = 0.80;
 // tracker params (base; can be overridden by dry mode)
 const TRACK_LP_CUTOFF_HZ_BASE = 20;
 const TRACK_HP_CUTOFF_HZ_BASE = 0.3;
-const TRACK_OFFSET_MEDIAN_BASE = 21;
+const TRACK_OFFSET_MEDIAN_BASE = 25;
 const TRACK_MIN_OFFSET_SAMPLES_BASE = 9;
 const TRACK_MAX_OFFSET_HZ_BASE = 12;
 
@@ -1112,13 +1112,9 @@ function pitchHistForCurrentF0(){
 }
 
 function refinedHistTargetMM(){
-  // base high-accuracy multiplier is preserved;
-  // in dry modes, lengthen a bit more for stability
-  const base = Math.round(GATE.refinedHistMM * MM_HIGH_ACCURACY_REFINED_MULT);
-  const d = drySensitivityLevel();
-  if (d === 1) return Math.round(base * 1.15);
-  if (d === 2) return Math.round(base * 1.30);
-  return base;
+  // Keep the MM "High Accuracy" baseline, but do NOT lengthen further in dry modes.
+  // Lengthening here can make small offsets feel laggy or fail to lock.
+  return Math.round(GATE.refinedHistMM * MM_HIGH_ACCURACY_REFINED_MULT);
 }
 
 function lockAfterMs(){
@@ -2524,7 +2520,6 @@ async function startAudio(){
   analyserSpec = audioCtx.createAnalyser();
 
   // Robust FFT selection (prevents "Microphone error" on browsers that reject huge fftSize)
-  const SPEC_FFT_SIZES = [65536, 32768, 16384, 8192];
   let chosenFFT = SPEC_FFT_SIZES[SPEC_FFT_SIZES.length - 1]; // fallback
   for (const size of SPEC_FFT_SIZES) {
     try {
