@@ -631,6 +631,32 @@
       </div>
     </div>
 
+    <!-- NEW: modes row (added controls only; defaults preserve existing behavior) -->
+    <div class="row">
+      <!-- Low note mode -->
+      <div class="live-mode-wrap">
+        <div style="font-size:0.85rem; color:#bbb; margin-bottom:6px; text-align:left;">
+          &nbsp;&nbsp;Improves low notes (below C4)
+        </div>
+        <div class="radio-box live-mode-box">
+          <input type="checkbox" id="low-note-mode">
+          <label for="low-note-mode" class="live-mode-label">Low note mode</label>
+        </div>
+      </div>
+
+      <!-- Dry tuning sensitivity -->
+      <div>
+        <label for="dry-sensitivity">&nbsp;&nbsp;Dry tuning sensitivity</label>
+        <div class="select-wrap">
+          <select id="dry-sensitivity">
+            <option value="0" selected>Normal</option>
+            <option value="1">Dry</option>
+            <option value="2">Very Dry</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
     <div id="status" class="status-pill status-off">Microphone off</div>
 
     <div id="locked-indicator" class="status-pill status-locked">Saved</div>
@@ -774,8 +800,14 @@
             Range is 438-446 Hz, default is 440 Hz.
           </div>
 
+          <div>
+            <b>2) Select your note detection options</b><br/>
+            Check the <b>Low note mode</b> checkbox to improve results with notes C4 or below<br/><br/>
+            If measuring a dry-tuned accordion the <b>Dry</b> or <b>Very Dry</b> options on the <b>Dry tuning sensitivity</b> dropdown may provide better results. (Default is <b>Normal</b><br/><br/>
+          </div>
+
           <div style="margin-bottom:18px;">
-            <b>2) Start the tuner</b><br/>
+            <b>3) Start the tuner</b><br/>
             Click <b>START</b> and allow microphone access when prompted.<br/>
             For best results, play one steady note at a time.<br/>
             Hold the note for a moment so the display stabilizes.
@@ -785,7 +817,7 @@
           </div>
 
           <div style="margin-bottom:18px;">
-            <b>3) Watch the live display</b><br/>
+            <b>4) Watch the live display</b><br/>
             While holding a steady note:
             <ul style="margin:8px 0 0 20px;">
               <li style="margin-bottom:6px;"><b>Note</b> shows the detected note name (based on the reference reed).</li>
@@ -796,13 +828,13 @@
           </div>
 
           <div style="margin-bottom:18px;">
-            <b>4) Release the note to lock and save</b><br/>
+            <b>5) Release the note to lock and save</b><br/>
             When you <b>stop playing</b>, the tuner automatically <b>locks</b> and saves a row in the table.<br/>
             The “Saved” indicator confirms the measurement was recorded.
           </div>
 
           <div style="margin-bottom:18px;">
-            <b>5) Understand the results table</b><br/>
+            <b>6) Understand the results table</b><br/>
             Each saved row includes:
             <ul style="margin:8px 0 8px 20px;">
               <li style="margin-bottom:6px;"><b>Config</b>:<br/>Always <b>MM</b> in this version.</li>
@@ -816,29 +848,29 @@
           </div>
 
           <div>
-            <b>6) Measure the next note</b><br/>
+            <b>7) Measure the next note</b><br/>
             Click <b>NEXT NOTE</b> to reset and repeat for another pitch.<br/><br/>
           </div>
 
           <div>
-            <b>7) Live mode</b><br/>
+            <b>8) Live mode</b><br/>
             Check the <b>Live mode</b> checkbox to continuously recognize notes and musette offsets without saving results.<br/><br/>
           </div>
 
           <div>
-            <b>8) Printing the results</b><br/>
+            <b>9) Printing the results</b><br/>
             You can use the Print feature in your browser to print the results table.<br/><br/>
           </div>
 
           <div>
-            <b>9) Export the results as a CSV file</b><br/>
+            <b>10) Export the results as a CSV file</b><br/>
             Click <b>CSV</b> at the top of the results table to export the results as a CSV file.<br/>
             The file will be saved into your browser's default Downloads directory.<br/><br/>
           </div>
 
           <div>
-            <b>Limitations</b><br/>- The tool may have difficulty detecting notes below C4.<br/>
-            - The tool may struggle to provide accurate musette measures for very dry-tuned accordions.<br/><br/>
+            <b>Limitations</b><br/>
+            In <b>Dry</b> or <b>Very Dry</b> mode, the tool may still struggle to provide accurate musette measures for dry-tuned accordions.<br/><br/>
           </div>
 
           <div>
@@ -926,6 +958,21 @@ function isLiveOnlyEnabled(){
   return !!(liveOnlyCheckbox && liveOnlyCheckbox.checked);
 }
 
+// ---------- NEW: Modes (defaults preserve existing behavior) ----------
+const lowNoteModeCheckbox = document.getElementById('low-note-mode');
+function isLowNoteModeEnabled(){
+  return !!(lowNoteModeCheckbox && lowNoteModeCheckbox.checked);
+}
+
+const drySensitivitySelect = document.getElementById('dry-sensitivity');
+function drySensitivityLevel(){
+  const v = drySensitivitySelect ? parseInt(drySensitivitySelect.value, 10) : 0;
+  return (v === 1 || v === 2) ? v : 0; // 0=Normal, 1=Dry, 2=Very Dry
+}
+function isDryModeEnabled(){
+  return drySensitivityLevel() > 0;
+}
+
 // ---------- Lock / state ----------
 let isLocked = false;
 let silenceTimer = null;
@@ -956,6 +1003,9 @@ let midiFloatHistory = [];
 // ---------- Settings ----------
 const PITCH_FFT_SIZE = 4096;
 
+// NEW: Low note mode pitch FFT sizes (dynamic)
+const PITCH_FFT_SIZE_LOW = 16384;
+
 // coarse spectrum (hint only)
 const SPEC_FFT_SIZE_PREF = 32768;
 const SPEC_FFT_SIZE_FALLBACK = 16384;
@@ -970,21 +1020,21 @@ const RMS_SILENCE = 0.008;
 const NOTE_LATCH_MIN_FRAMES = 10;
 const NOTE_LATCH_CHANGE_CENTS = 80;
 
-// musette constraints
-const MUS_ABS_MAX_CENTS = 25;
-const MUS_ABS_TOL_CENTS = 3;
-const MUS_MIN_CENTS = 0.25;
+// musette constraints (base; can be overridden by dry mode)
+const MUS_ABS_MAX_CENTS_BASE = 25;
+const MUS_ABS_TOL_CENTS_BASE = 3;
+const MUS_MIN_CENTS_BASE = 0.25;
 
 // needle
 const MAX_CENTS_DISPLAY = 50;
 const NEEDLE_SCALE = 0.80;
 
-// tracker params (standard mode improvements preserved)
-const TRACK_LP_CUTOFF_HZ = 20;
-const TRACK_HP_CUTOFF_HZ = 0.3;
-const TRACK_OFFSET_MEDIAN = 21;
-const TRACK_MIN_OFFSET_SAMPLES = 9;
-const TRACK_MAX_OFFSET_HZ = 12;
+// tracker params (base; can be overridden by dry mode)
+const TRACK_LP_CUTOFF_HZ_BASE = 20;
+const TRACK_HP_CUTOFF_HZ_BASE = 0.3;
+const TRACK_OFFSET_MEDIAN_BASE = 21;
+const TRACK_MIN_OFFSET_SAMPLES_BASE = 9;
+const TRACK_MAX_OFFSET_HZ_BASE = 12;
 
 // harmonics sanity
 const HARMONIC_REJECT_CENTS = 25;
@@ -1001,6 +1051,44 @@ const GATE = {
 // MM default "High Accuracy" behavior (always on for MM)
 const MM_HIGH_ACCURACY_REFINED_MULT = 2.0;
 const MM_HIGH_ACCURACY_LOCK_MS = 450;
+
+// ---------- NEW: Derived params driven by modes ----------
+function musAbsMaxCents(){
+  return MUS_ABS_MAX_CENTS_BASE;
+}
+function musAbsTolCents(){
+  return MUS_ABS_TOL_CENTS_BASE;
+}
+function musMinCents(){
+  const d = drySensitivityLevel();
+  if (d === 1) return 0.15;
+  if (d === 2) return 0.10;
+  return MUS_MIN_CENTS_BASE;
+}
+function trackOffsetMedian(){
+  const d = drySensitivityLevel();
+  if (d === 1) return 31;
+  if (d === 2) return 41;
+  return TRACK_OFFSET_MEDIAN_BASE;
+}
+function trackMinOffsetSamples(){
+  const d = drySensitivityLevel();
+  if (d === 1) return 12;
+  if (d === 2) return 15;
+  return TRACK_MIN_OFFSET_SAMPLES_BASE;
+}
+function trackLPHz(){
+  const d = drySensitivityLevel();
+  if (d === 2) return 14;
+  if (d === 1) return 16;
+  return TRACK_LP_CUTOFF_HZ_BASE;
+}
+function trackHPHz(){
+  return TRACK_HP_CUTOFF_HZ_BASE;
+}
+function trackMaxOffsetHz(){
+  return TRACK_MAX_OFFSET_HZ_BASE;
+}
 
 function effectiveRmsSilence(){
   return RMS_SILENCE;
@@ -1025,11 +1113,29 @@ function pitchHistForCurrentF0(){
 }
 
 function refinedHistTargetMM(){
-  return Math.round(GATE.refinedHistMM * MM_HIGH_ACCURACY_REFINED_MULT);
+  // base high-accuracy multiplier is preserved;
+  // in dry modes, lengthen a bit more for stability
+  const base = Math.round(GATE.refinedHistMM * MM_HIGH_ACCURACY_REFINED_MULT);
+  const d = drySensitivityLevel();
+  if (d === 1) return Math.round(base * 1.15);
+  if (d === 2) return Math.round(base * 1.30);
+  return base;
 }
 
 function lockAfterMs(){
-  return MM_HIGH_ACCURACY_LOCK_MS;
+  // Preserve existing MM lock ms as baseline; extend for dry & low-note mode
+  let ms = MM_HIGH_ACCURACY_LOCK_MS;
+
+  const d = drySensitivityLevel();
+  if (d === 1) ms = Math.max(ms, 700);
+  if (d === 2) ms = Math.max(ms, 900);
+
+  if (isLowNoteModeEnabled()) {
+    if (lastF0 > 0 && lastF0 < 300) ms = Math.max(ms, 900);
+    if (lastF0 > 0 && lastF0 < 200) ms = Math.max(ms, 1100);
+  }
+
+  return ms;
 }
 
 // ---------- Display smoothing (standard) ----------
@@ -1048,6 +1154,10 @@ function resetDisplaySmoothing(){
 }
 
 function displaySmoothTauMs(){
+  // preserve baseline; slightly slower for dry mode
+  const d = drySensitivityLevel();
+  if (d === 1) return 240;
+  if (d === 2) return 300;
   return 180;
 }
 
@@ -1093,6 +1203,8 @@ function resetMusetteOnLiveNoteChange(){
       tr.iMean = tr.qMean = 0;
     });
   }
+
+  resetDryBeatEstimator();
 
   document.getElementById('musette-line').innerText = "";
 
@@ -1627,8 +1739,8 @@ function coarseMMCandidates(f0){
     for (let j=i+1;j<peaks.length;j++){
       const a = peaks[i], b = peaks[j];
       const off = Math.abs(centsBetween(b, a));
-      if (off < MUS_MIN_CENTS) continue;
-      if (off > (MUS_ABS_MAX_CENTS + MUS_ABS_TOL_CENTS)) continue;
+      if (off < musMinCents()) continue;
+      if (off > (musAbsMaxCents() + musAbsTolCents())) continue;
 
       const score = off + 0.12*(Math.abs(centsBetween(a,f0)) + Math.abs(centsBetween(b,f0)));
       if (!best || score < best.score) best = { a, b, score };
@@ -1644,7 +1756,7 @@ function validateMMForRefLowest(sorted2){
   const ref = sorted2[0];
   const mus = sorted2[1];
   const off = centsBetween(mus, ref);
-  const ok = (off >= MUS_MIN_CENTS && off <= MUS_ABS_MAX_CENTS + MUS_ABS_TOL_CENTS);
+  const ok = (off >= musMinCents() && off <= musAbsMaxCents() + musAbsTolCents());
   return { ok, refIndex:0, musIndex:1, off };
 }
 
@@ -1684,8 +1796,8 @@ function makeTracker(fs, targetHz){
     phaseInc: 2*Math.PI*targetHz/fs,
     bp: makeBandpassBiquad(fs, targetHz, bpQ),
 
-    lpA: onePoleAlpha(fs, TRACK_LP_CUTOFF_HZ),
-    hpA: onePoleAlpha(fs, TRACK_HP_CUTOFF_HZ),
+    lpA: onePoleAlpha(fs, trackLPHz()),
+    hpA: onePoleAlpha(fs, trackHPHz()),
 
     iLP:0, qLP:0,
     iMean:0, qMean:0,
@@ -1711,8 +1823,8 @@ function updateTrackerTarget(tr, newHz){
   tr.refinedHz = null;
   tr.haveLast = false;
 
-  tr.lpA = onePoleAlpha(tr.fs, TRACK_LP_CUTOFF_HZ);
-  tr.hpA = onePoleAlpha(tr.fs, TRACK_HP_CUTOFF_HZ);
+  tr.lpA = onePoleAlpha(tr.fs, trackLPHz());
+  tr.hpA = onePoleAlpha(tr.fs, trackHPHz());
 }
 
 function trackerProcessBlock(tr, input){
@@ -1746,11 +1858,11 @@ function trackerProcessBlock(tr, input){
 
       const offHz = (d * fs) / (2*Math.PI);
 
-      if (isFinite(offHz) && Math.abs(offHz) <= TRACK_MAX_OFFSET_HZ) {
+      if (isFinite(offHz) && Math.abs(offHz) <= trackMaxOffsetHz()) {
         tr.offsetHzHist.push(offHz);
 
-        if (tr.offsetHzHist.length > TRACK_OFFSET_MEDIAN) tr.offsetHzHist.shift();
-        if (tr.offsetHzHist.length >= TRACK_MIN_OFFSET_SAMPLES) {
+        if (tr.offsetHzHist.length > trackOffsetMedian()) tr.offsetHzHist.shift();
+        if (tr.offsetHzHist.length >= trackMinOffsetSamples()) {
           const med = median(tr.offsetHzHist);
           tr.refinedHz = tr.targetHz + med;
         }
@@ -1761,6 +1873,240 @@ function trackerProcessBlock(tr, input){
     tr.haveLast = true;
   }
 }
+
+// ---------- NEW: Dry tuning beat estimator (envelope-based) ----------
+// This is ONLY used when dry mode is enabled AND peaks are merged/unreliable.
+// It estimates beat frequency (difference Hz) from the amplitude envelope of a narrow band around f0.
+let gDryBeat = {
+  inited: false,
+  fs: 0,
+  bp: null,
+  lpA: 0,
+  envLP: 0,
+  ds: 256,          // downsample factor (set at init)
+  dsCount: 0,
+  envBuf: [],
+  envBufMax: 700,   // cap
+  lastBeatHz: null,
+  lastBeatTs: 0,
+  lastTargetHz: 0
+};
+
+function resetDryBeatEstimator(){
+  gDryBeat.inited = false;
+  gDryBeat.fs = 0;
+  gDryBeat.bp = null;
+  gDryBeat.lpA = 0;
+  gDryBeat.envLP = 0;
+  gDryBeat.dsCount = 0;
+  gDryBeat.envBuf = [];
+  gDryBeat.lastBeatHz = null;
+  gDryBeat.lastBeatTs = 0;
+  gDryBeat.lastTargetHz = 0;
+}
+
+function initDryBeatEstimator(fs, targetHz){
+  resetDryBeatEstimator();
+
+  gDryBeat.inited = true;
+  gDryBeat.fs = fs;
+
+  // Bandpass wide enough to pass both close reeds (not trying to separate them here)
+  // Q is modest so merged dry tuning still passes.
+  const Q = 25;
+
+  gDryBeat.bp = makeBandpassBiquad(fs, targetHz, Q);
+
+  // Envelope lowpass cutoff: keep beats up to ~12 Hz, reject higher ripple
+  // Slightly lower cutoff for dry modes to stabilize the envelope
+  const d = drySensitivityLevel();
+  const ENV_LP_CUTOFF = (d === 2) ? 12 : (d === 1) ? 14 : 18; // Hz
+  gDryBeat.lpA = onePoleAlpha(fs, ENV_LP_CUTOFF);
+  gDryBeat.envLP = 0;
+
+  // Downsample to ~170 Hz at 44.1k with ds=256 (works fine for beat <=12Hz)
+  gDryBeat.ds = 256;
+  gDryBeat.dsCount = 0;
+
+  gDryBeat.envBufMax = 700;
+  gDryBeat.envBuf = [];
+  gDryBeat.lastBeatHz = null;
+  gDryBeat.lastBeatTs = 0;
+  gDryBeat.lastTargetHz = targetHz;
+}
+
+function updateDryBeatTargetIfNeeded(targetHz){
+  if (!gDryBeat.inited || !gDryBeat.bp) return;
+  if (!(targetHz > 0)) return;
+
+  // Only update if target changes materially, to avoid resetting buffer constantly
+  if (Math.abs(targetHz - gDryBeat.lastTargetHz) < 0.25) return;
+
+  // Re-init around new target (clear buffer to prevent mixing notes)
+  initDryBeatEstimator(gDryBeat.fs, targetHz);
+}
+
+function feedDryBeatEstimator(input, targetHz){
+  if (!isDryModeEnabled()) return;
+
+  const fs = audioCtx ? audioCtx.sampleRate : 0;
+  if (!(fs > 0)) return;
+  if (!(targetHz > 0)) return;
+
+  if (!gDryBeat.inited) {
+    initDryBeatEstimator(fs, targetHz);
+  } else {
+    updateDryBeatTargetIfNeeded(targetHz);
+  }
+
+  // Process block: bandpass -> rectify -> lowpass -> downsample into buffer
+  for (let i=0; i<input.length; i++){
+    const x = biquadProcess(gDryBeat.bp, input[i]);
+    const r = Math.abs(x);
+    gDryBeat.envLP = (1 - gDryBeat.lpA) * r + gDryBeat.lpA * gDryBeat.envLP;
+
+    gDryBeat.dsCount++;
+    if (gDryBeat.dsCount >= gDryBeat.ds) {
+      gDryBeat.dsCount = 0;
+      gDryBeat.envBuf.push(gDryBeat.envLP);
+      if (gDryBeat.envBuf.length > gDryBeat.envBufMax) gDryBeat.envBuf.shift();
+    }
+  }
+}
+
+function estimateBeatHzFromEnvelope(){
+  if (!gDryBeat.inited) return null;
+  const env = gDryBeat.envBuf;
+  if (!env || env.length < 240) return null; // need enough to see slow beats
+
+  const fsEnv = gDryBeat.fs / gDryBeat.ds;
+  if (!(fsEnv > 0)) return null;
+
+  // Beat frequency range (Hz)
+  const MIN_HZ = 0.35;   // allow very slow beats for very dry low notes
+  const MAX_HZ = 14.0;   // reasonable ceiling for typical musette offsets
+
+  const lagMin = Math.floor(fsEnv / MAX_HZ);
+  const lagMax = Math.floor(fsEnv / MIN_HZ);
+
+  const N = env.length;
+  const WIN = Math.min(560, N);
+  const start = N - WIN;
+
+  // Mean remove + light normalization
+  let mean = 0;
+  for (let i=start; i<N; i++) mean += env[i];
+  mean /= WIN;
+
+  let e0 = 0;
+  for (let i=start; i<N; i++){
+    const v = env[i] - mean;
+    e0 += v*v;
+  }
+  if (e0 <= 1e-12) return null;
+
+  const L0 = clamp(lagMin, 2, WIN-3);
+  const L1 = clamp(lagMax, L0+1, WIN-2);
+
+  let bestLag = -1;
+  let bestCorr = -Infinity;
+
+  // Autocorrelation normalized by energy (approx)
+  for (let lag=L0; lag<=L1; lag++){
+    let c = 0;
+    for (let i=start; i<N-lag; i++){
+      const a = env[i] - mean;
+      const b = env[i+lag] - mean;
+      c += a*b;
+    }
+    const corr = c / (e0 + 1e-12);
+    if (corr > bestCorr){
+      bestCorr = corr;
+      bestLag = lag;
+    }
+  }
+
+  if (bestLag < 0) return null;
+
+  // Reject weak peaks (tighten in dry modes)
+  const d = drySensitivityLevel();
+  const minCorr = (d === 2) ? 0.13 : (d === 1) ? 0.11 : 0.08;
+  if (bestCorr < minCorr) return null;
+
+  // Helper: correlation at a specific lag (normalized)
+  const corrAtLag = (lag) => {
+    if (lag < L0 || lag > L1) return -Infinity;
+    let c = 0;
+    for (let i=start; i<N-lag; i++){
+      const a = env[i] - mean;
+      const b = env[i+lag] - mean;
+      c += a*b;
+    }
+    return c / (e0 + 1e-12);
+  };
+
+  // Guard against choosing half/double-period if they are similarly strong
+  const corr2 = corrAtLag(bestLag * 2);
+  const corrHalf = corrAtLag(Math.floor(bestLag / 2));
+
+  if (d >= 1) {
+    // If double-lag is almost as good, it's often the true beat for dry tuning
+    if (isFinite(corr2) && corr2 > bestCorr - 0.02) {
+      bestLag = bestLag * 2;
+      bestCorr = corr2;
+    }
+    // If half-lag is stronger by a meaningful amount, adopt it (rare but happens)
+    if (isFinite(corrHalf) && corrHalf > bestCorr + 0.03) {
+      bestLag = Math.floor(bestLag / 2);
+      bestCorr = corrHalf;
+    }
+  }
+
+  // Small local refinement around bestLag (parabolic)
+  // Evaluate corr at lag-1, lag, lag+1
+  const c0 = corrAtLag(bestLag - 1);
+  const c1 = bestCorr;
+  const c2 = corrAtLag(bestLag + 1);
+
+  let refinedLag = bestLag;
+  const denom = (c0 - 2*c1 + c2);
+  if (isFinite(c0) && isFinite(c2) && Math.abs(denom) > 1e-9) {
+    const delta = 0.5 * (c0 - c2) / denom;   // in [-~0.5, +~0.5]
+    refinedLag = bestLag + clamp(delta, -0.5, 0.5);
+  }
+
+  let beatHz = fsEnv / refinedLag;
+
+  if (!(beatHz > 0) || beatHz < MIN_HZ) return null;
+
+  // Mode-aware max clamp:
+  // - Dry / Very Dry: respect tracker limit (typically 12 Hz)
+  // - Normal: allow a bit higher (>= 14 Hz) for higher notes / wider musette
+  const maxBeat =
+    (d >= 1)
+      ? trackMaxOffsetHz()                  // Dry/Very Dry
+      : Math.max(14.0, trackMaxOffsetHz()); // Normal (at least 14)
+
+  // If it's beyond the mode limit, clamp it (keeps UI stable)
+  // and also reject it if it was wildly beyond (likely noise latch)
+  if (beatHz > maxBeat) {
+    if (beatHz > maxBeat * 1.35) return null; // reject obvious junk
+    beatHz = maxBeat;                         // soft clamp
+  }
+
+  // Still respect MAX_HZ as a hard upper bound (belt + suspenders)
+  if (beatHz > MAX_HZ) beatHz = MAX_HZ;
+
+  // (Optional) store lastBeat for debugging; harmless
+  gDryBeat.lastBeatHz = beatHz;
+  gDryBeat.lastBeatTs =
+    (typeof performance !== "undefined" && performance.now)
+      ? performance.now()
+      : Date.now();
+
+  return beatHz;
+}
+
 
 // ---------- Table ----------
 function updateTable() {
@@ -1901,6 +2247,50 @@ function renderRealtime(note, refHz, mmNeedleCents, mmMusHz){
     `Musette:\u00A0  ${fmtCentsSigned(mmCentsDisp)}c / ${fmtBeats(beats)}bps`;
 }
 
+// ---------- NEW: Low note mode - dynamic pitch FFT ----------
+let gPitchFFTLast = PITCH_FFT_SIZE;
+
+function maybeAdjustPitchFFT(){
+  if (!audioCtx || !analyserPitch) return;
+
+  // Only change FFT size when low note mode is enabled
+  if (!isLowNoteModeEnabled()) {
+    if (gPitchFFTLast !== PITCH_FFT_SIZE) {
+      try{
+        analyserPitch.fftSize = PITCH_FFT_SIZE;
+        timeDataPitch = new Float32Array(analyserPitch.fftSize);
+        gPitchFFTLast = PITCH_FFT_SIZE;
+        // Reset histories to avoid mixing window sizes
+        pitchHistory = [];
+        lastF0 = 0;
+      }catch(e){}
+    }
+    return;
+  }
+
+  // If we've got a stable low-ish f0, switch to a larger FFT for YIN
+  const f0 = lastF0 || 0;
+  const wantLow = (f0 > 0 && f0 < 300);
+
+  const target = wantLow ? PITCH_FFT_SIZE_LOW : PITCH_FFT_SIZE;
+
+  if (gPitchFFTLast !== target) {
+    try{
+      analyserPitch.fftSize = target;
+      timeDataPitch = new Float32Array(analyserPitch.fftSize);
+      gPitchFFTLast = target;
+
+      // Reset histories because the underlying analysis window changed
+      pitchHistory = [];
+      refinedHistory = [];
+      trackers = [];
+      resetDisplaySmoothing();
+      resetDryBeatEstimator();
+      lastStable = null;
+    }catch(e){}
+  }
+}
+
 // ---------- Main tick ----------
 function tick() {
   if (!audioCtx || !analyserPitch) {
@@ -1909,6 +2299,8 @@ function tick() {
   }
 
   if (!isLocked) {
+    maybeAdjustPitchFFT();
+
     analyserPitch.getFloatTimeDomainData(timeDataPitch);
     drawScope(timeDataPitch);
 
@@ -1972,14 +2364,90 @@ function onProcess(e){
 
   let f0Pitch = octaveCorrectF0(lastF0);
   f0Pitch = refineLowPitchFromHarmonic(f0Pitch);
+
   const mus = chooseMusetteF0(f0Pitch);
   const f0 = mus.fMusette;
   const musFactor = mus.factor;
   const fs = audioCtx.sampleRate;
 
+  // Always feed dry beat estimator (it is inert unless dry mode is enabled)
+  // Use the *reference* (musFactor adjusted) targetHz so envelope tracks the audible component.
+  const envTargetHz = f0; // this matches what the bandpass sees (before /2 correction)
+  feedDryBeatEstimator(input, envTargetHz);
+
+  // Standard coarse peak-based MM candidates
   const coarse2 = coarseMMCandidates(f0);
+
+  // If we have merged peaks and dry mode enabled, use envelope beat estimator + single ref tracker
+  let useDryBeatFallback = false;
+
+  if (isDryModeEnabled()) {
+    if (!coarse2) {
+      useDryBeatFallback = true;
+    } else if (coarse2.length === 2) {
+      const offC = Math.abs(centsBetween(coarse2[1], coarse2[0]));
+      const d = drySensitivityLevel();
+
+      // In Very Dry, peaks can look "separated" but still be unreliable; widen threshold a bit.
+      const mergedThresh = (d === 2) ? 16 : 12;
+
+      if (offC < mergedThresh) useDryBeatFallback = true;
+    }
+  }
+
+  if (useDryBeatFallback) {
+
+    // Single tracker centered at f0 to estimate the reference frequency
+    if (trackers.length !== 1){
+      trackers = [makeTracker(fs, f0)];
+    } else {
+      updateTrackerTarget(trackers[0], f0);
+    }
+
+    trackerProcessBlock(trackers[0], input);
+
+    if (!(trackers[0].refinedHz > 0)) return;
+
+    // Correct back if we were tracking 2nd harmonic
+    const refHzRaw = trackers[0].refinedHz;
+    const refHz = (musFactor === 2) ? (refHzRaw / 2) : refHzRaw;
+
+    // Estimate beat frequency from envelope
+    const beatHz = estimateBeatHzFromEnvelope();
+    if (!(beatHz > 0)) return;
+
+    // Convert beat Hz to cents: for close reeds, beat ~= |musHz - refHz|
+    const musHz = refHz + beatHz;
+    let musCents = centsBetween(musHz, refHz);
+    if (!isFinite(musCents)) return;
+
+    // Clamp to plausible musette limits
+    if (musCents < musMinCents()) return;
+    if (musCents > musAbsMaxCents() + musAbsTolCents()) return;
+
+    updateLatchedMidiUsingRefHz(refHz);
+    const note = (latchedMidi == null) ? "--" : midiToNoteName(latchedMidi);
+
+    // Live mode: if note changed, reset BEFORE pushing/averaging so we don't mix notes
+    maybeResetLiveOnNoteChange(note);
+
+    // Push into refined history using the estimated musHz
+    pushRefined({ cfg:"MM", note, refHz, musetteCents: musCents, musHz: musHz });
+
+    const stable = medianStableRefinedMM();
+    if (stable) {
+      lastStable = stable;
+      const mmNeedle = Math.max(0, stable.musetteCents);
+      renderRealtime(stable.note, stable.refHz, mmNeedle, stable.musHz);
+    }
+
+    return;
+  }
+
+  // If no candidates at all, bail (preserves existing behavior)
   if (!coarse2) return;
 
+  // Standard 2-tracker path (existing behavior preserved)
   if (trackers.length !== 2){
     trackers = [makeTracker(fs, coarse2[0]), makeTracker(fs, coarse2[1])];
   } else {
@@ -2052,6 +2520,7 @@ async function startAudio(){
   analyserPitch = audioCtx.createAnalyser();
   analyserPitch.fftSize = PITCH_FFT_SIZE;
   timeDataPitch = new Float32Array(analyserPitch.fftSize);
+  gPitchFFTLast = PITCH_FFT_SIZE;
 
   analyserSpec = audioCtx.createAnalyser();
   analyserSpec.fftSize = (audioCtx.sampleRate >= 44100) ? SPEC_FFT_SIZE_PREF : SPEC_FFT_SIZE_FALLBACK;
@@ -2123,6 +2592,7 @@ document.getElementById('reset-btn').onclick = () => {
   midiFloatHistory = [];
 
   resetDisplaySmoothing();
+  resetDryBeatEstimator();
 
   clearTimeout(silenceTimer);
   silenceTimer = null;
@@ -2170,7 +2640,52 @@ if (a4RefSelect) {
     if (freqMMLabel) freqMMLabel.innerText = `0.0 Hz`;
 
     resetDisplaySmoothing();
+    resetDryBeatEstimator();
+
+    // Changing ref impacts note calc; clear latch
+    latchedMidi = null;
+    latchCandidateCount = 0;
+    midiFloatHistory = [];
   });
+}
+
+// NEW: Mode controls behavior (do not change behavior unless user toggles)
+function onModeControlChanged(){
+  // Clear state so we don't mix buffers/trackers across mode changes mid-note
+  refinedHistory = [];
+  trackers = [];
+  lastStable = null;
+  showLockedIndicator(false);
+  isLocked = false;
+  setTopStatusVisible(true);
+  gLastLiveNoteName = null;
+  gLastLiveNoteNameProcess = null;
+
+  pitchHistory = [];
+  lastF0 = 0;
+
+  resetDisplaySmoothing();
+  resetDryBeatEstimator();
+
+  setNeedleCents(0);
+  setNeedleLabelCents(freqMMLabel, 0);
+  if (freqMMLabel) freqMMLabel.innerText = `0.0 Hz`;
+
+  // Keep UI labels intact; do not force text changes, just reset the readouts
+  document.getElementById('note').innerText = "--";
+  document.getElementById('freq').innerText = `Reference: 0.00 Hz`;
+  document.getElementById('musette-line').innerText = "";
+
+  if (audioCtx) {
+    setStatus(isLiveOnlyEnabled() ? "Listening (Live mode)" : "Listening", "status-ok");
+  }
+}
+
+if (lowNoteModeCheckbox) {
+  lowNoteModeCheckbox.addEventListener('change', onModeControlChanged);
+}
+if (drySensitivitySelect) {
+  drySensitivitySelect.addEventListener('change', onModeControlChanged);
 }
 
 // iOS/Safari: if the context gets suspended later, any user gesture will re-resume it.
