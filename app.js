@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3140_011326_0900";
+var gVersionNumber = "3141_011526_0900";
 
 var gMIDIInitStillWaiting = false;
 
@@ -59507,6 +59507,12 @@ function LaunchQuickEditorHelp() {
   window.open(url, '_blank');
 }
 
+// Open the Chromatic tuner
+function LaunchChromaticTuner(){
+  var url = "https://michaeleskin.com/tuner.html";
+  window.open(url, '_blank');
+}
+
 //
 // Check if an update is available
 // 
@@ -59641,6 +59647,11 @@ function SetupContextMenu(showUpdateItem) {
             name: 'Advanced Settings',
             fn: function(target) {
               AdvancedSettings();
+            }
+          }, {}, {
+            name: 'Launch Chromatic Tuner',
+            fn: function(target) {
+              LaunchChromaticTuner();
             }
           }, {}, {
             name: 'Launch Standard Editor',
@@ -59815,6 +59826,11 @@ function SetupContextMenu(showUpdateItem) {
             AdvancedSettings();
           }
         }, {}, {
+          name: 'Launch Chromatic Tuner',
+          fn: function(target) {
+            LaunchChromaticTuner();
+          }
+        }, {}, {
           name: 'Launch Standard Editor',
           fn: function(target) {
             LaunchStandardEditor();
@@ -59923,6 +59939,11 @@ function SetupContextMenu(showUpdateItem) {
             name: 'Advanced Settings',
             fn: function(target) {
               AdvancedSettings();
+            }
+          }, {}, {
+            name: 'Launch Chromatic Tuner',
+            fn: function(target) {
+              LaunchChromaticTuner();
             }
           }, {}, {
             name: 'Launch Quick Editor',
@@ -60091,6 +60112,11 @@ function SetupContextMenu(showUpdateItem) {
             AdvancedSettings();
           }
         }, {}, {
+          name: 'Launch Chromatic Tuner',
+          fn: function(target) {
+            LaunchChromaticTuner();
+          }
+        }, {}, {
           name: 'Launch Quick Editor',
           fn: function(target) {
             LaunchQuickEditor();
@@ -60191,6 +60217,11 @@ function SetupContextMenu(showUpdateItem) {
         name: 'Advanced Settings',
         fn: function(target) {
           AdvancedSettings();
+        }
+      }, {}, {
+        name: 'Launch Chromatic Tuner',
+        fn: function(target) {
+          LaunchChromaticTuner();
         }
       }, {}, {
         name: 'Launch Standard Editor',
@@ -60296,6 +60327,11 @@ function SetupContextMenu(showUpdateItem) {
         name: 'Advanced Settings',
         fn: function(target) {
           AdvancedSettings();
+        }
+      },  {}, {
+        name: 'Launch Chromatic Tuner',
+        fn: function(target) {
+          LaunchChromaticTuner();
         }
       }, {}, {
         name: 'Launch Quick Editor',
