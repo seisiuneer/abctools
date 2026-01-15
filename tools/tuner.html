@@ -72,9 +72,11 @@
     #tuner-live{
       transition: opacity 125ms ease, filter 125ms ease;
     }
+    /* Slower fade-to-dark (dimmed), quick fade-to-light (undimmed) */
     #tuner-live.dimmed{
       opacity: 0.40;
       filter: saturate(0.85);
+      transition-duration: 550ms, 550ms; /* opacity, filter */
     }
 
     .row{
@@ -351,9 +353,9 @@
   // - Color-shift needle near ±2c (GREEN)
   // - Auto-centering snap at ±1c (GREEN snap stays)
   // - Yellow highlight when "close to 0" but not in the green range
-  const NEEDLE_IN_TUNE_CENTS = 2.0;     // <= this => GREEN
+  const NEEDLE_IN_TUNE_CENTS = 3.5;     // <= this => GREEN
   const NEEDLE_SNAP_CENTS = 1.0;        // <= this => snap to 0 (still GREEN because <=2)
-  const NEEDLE_NEAR_CENTS = 6.0;        // <= this => YELLOW (unless green)
+  const NEEDLE_NEAR_CENTS = 8.0;        // <= this => YELLOW (unless green)
 
   // Colors
   const NEEDLE_COLOR_OUT  = "#ff3e3e";
