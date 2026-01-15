@@ -96,10 +96,9 @@
        - right edge is exactly 22px from the right edge of #tuner-ui */
     #level-meter{
       position:absolute;
-      top:22px;                 /* align with title's top margin 0 (in the inline style) */
+      top:22px;
       height:10px;
-
-      right:22px;               /* right edge 22px from container edge */
+      right:22px;
       width:86px;
       border-radius:3px;
       background:#0a0a0a;
@@ -108,11 +107,6 @@
       overflow:hidden;
       opacity:0.55;
       pointer-events:none;
-
-      /* vertical center alignment relative to the title line-height:
-         title font-size 1.6rem, typical line-height ~ normal (~1.2),
-         but we can make it deterministic by using 1.1 in the inline H1.
-         To avoid touching the H1, we align by translating from the top. */
       transform: translateY(calc((1.6rem * 1.1 - 10px) / 2));
     }
     #level-meter-fill{
@@ -192,8 +186,8 @@
         width:74px;
         height:9px;
         opacity:0.5;
-        right:22px; /* keep the 22px rule */
-        transform: translateY(calc((1.25rem * 1.1 - 9px) / 2)); /* matches mobile H1 size below */
+        right:22px;
+        transform: translateY(calc((1.25rem * 1.1 - 9px) / 2));
       }
     }
 
@@ -208,13 +202,15 @@
       transition-duration: 550ms, 550ms; /* opacity, filter */
     }
 
+    /* Two dropdowns side-by-side; stacked on mobile */
     .row{
       display:grid;
-      grid-template-columns: 1fr;
+      grid-template-columns: 1fr 1fr;
       gap:12px;
       margin:10px 0 10px;
       align-items:start;
     }
+
     label{
       display:block;
       font-size:0.85rem;
@@ -327,6 +323,7 @@
       background: #3a0f12;
       border: 1px solid #7a2b30;
       box-shadow: 0 10px 24px rgba(0,0,0,0.35);
+      grid-column: 1 / -1; /* allow banner to span both columns if it ends up in the grid */
     }
 
     button{
@@ -382,6 +379,10 @@
       .freq-display{ font-size:1.35rem; margin-bottom:10px; }
       .meter-box{ height:64px; margin:18px 0 8px; border-radius:12px; }
       button{ font-size:1.2rem; padding:16px 18px; border-radius:14px; }
+
+      .row{
+        grid-template-columns: 1fr; /* stack on mobile */
+      }
     }
   </style>
 </head>
@@ -417,6 +418,7 @@
     </h1>
 
     <div class="row">
+
       <div>
         <label for="a4ref">&nbsp;&nbsp;A4 reference (Hz)</label>
         <div class="select-wrap">
@@ -433,6 +435,19 @@
           </select>
         </div>
       </div>
+
+      <div>
+        <label for="inputboost">&nbsp;&nbsp;Input level boost</label>
+        <div class="select-wrap">
+          <select id="inputboost">
+            <option value="1.0" selected>None</option>
+            <option value="1.5">Low</option>
+            <option value="2.5">Medium</option>
+            <option value="4.0">High</option>
+          </select>
+        </div>
+      </div>
+
     </div>
 
     <!-- Mic error message (hidden by default) -->
@@ -474,11 +489,19 @@
   </div>
 
 <script>
+  // ---------- LocalStorage keys ----------
+  const LS_KEY_A4REF = "abctools_tuner_a4ref_hz";
+  const LS_KEY_BOOST = "abctools_tuner_input_boost";
+
   // ---------- Audio nodes ----------
   let audioCtx = null;
   let streamSource = null;
   let analyserPitch = null;
   let timeDataPitch = null;
+
+  /* Optional user-selected input boost (all platforms) */
+  let userBoostGainNode = null;
+  let gUserBoostGain = 1.0;
 
   /* iOS-only input gain to address low mic levels on iOS */
   let inputGainNode = null;
@@ -561,24 +584,23 @@
   const RMS_SILENCE = 0.020;
 
   // --- Adaptive thresholding (RMS gate) ---
-  // Tracks a noise floor and derives a per-device/per-room silence threshold.
   let noiseFloorRms = 0;
   let noiseFloorPrimed = false;
   let adaptiveRmsGate = RMS_SILENCE;
 
-  const GATE_CALIBRATION_FRAMES = 30;     // ~0.5s @ 60fps
+  const GATE_CALIBRATION_FRAMES = 30;
   let gateCalibrationFramesLeft = GATE_CALIBRATION_FRAMES;
 
-  const NOISE_FLOOR_ALPHA = 0.06;         // noise floor EMA rate (quiet frames)
-  const NOISE_FLOOR_ALPHA_FAST = 0.25;    // during calibration
+  const NOISE_FLOOR_ALPHA = 0.06;
+  const NOISE_FLOOR_ALPHA_FAST = 0.25;
 
-  // iOS: use a more permissive gate
-  const GATE_MULTIPLIER = isIOS() ? 2.0 : 3.0;            // how far above the noise floor counts as "signal"
-  const GATE_OFFSET     = isIOS() ? 0.0015 : 0.003;       // small additive margin
-  const GATE_MIN        = isIOS() ? 0.0030 : 0.006;       // never go below this
+  // iOS: more permissive gate
+  const GATE_MULTIPLIER = isIOS() ? 2.0 : 3.0;
+  const GATE_OFFSET     = isIOS() ? 0.0015 : 0.003;
+  const GATE_MIN        = isIOS() ? 0.0030 : 0.006;
 
-  const SILENCE_FRAMES_TO_RESET_FAST = 1;     // fast reset when deep silence
-  const DEEP_SILENCE_FACTOR = 0.45;           // deep silence if rms < 45% of gate
+  const SILENCE_FRAMES_TO_RESET_FAST = 1;
+  const DEEP_SILENCE_FACTOR = 0.45;
 
   // iOS: only learn the floor during calibration when actually quiet
   const IOS_CALIBRATION_QUIET_MAX_RMS = 0.030;
@@ -591,12 +613,10 @@
   }
 
   function updateAdaptiveGate(rms){
-    // During startup calibration, learn baseline quickly (assumes user is quiet for a moment)
     if (gateCalibrationFramesLeft > 0) {
 
-      // iOS: don't "learn" the floor unless we're actually quiet
       if (isIOS() && rms > IOS_CALIBRATION_QUIET_MAX_RMS) {
-        return; // keep calibration frames left unchanged
+        return;
       }
 
       const a = NOISE_FLOOR_ALPHA_FAST;
@@ -610,8 +630,6 @@
 
       gateCalibrationFramesLeft--;
     } else {
-      // After calibration: only update the floor when we're near "quiet"
-      // (prevents learning sustained notes as noise).
       const quietBand = adaptiveRmsGate * 1.15;
 
       if (rms <= quietBand) {
@@ -638,28 +656,25 @@
   const PITCH_HIST_FRAMES = 15;
   const PITCH_NEED_FRAMES = 8;
 
-  // Reset behavior to avoid "first note jump"
+  // Reset behavior
   let silentFrames = 0;
-  const SILENCE_FRAMES_TO_RESET = 4; // ~100ms at 60fps; tweak 4-10
+  const SILENCE_FRAMES_TO_RESET = 4;
   let lastDetectedMidi = null;
 
-  // Requested features:
-  // - Color-shift needle near ±2c (GREEN)
-  // - Auto-centering snap at ±1c (GREEN snap stays)
-  // - Yellow highlight when "close to 0" but not in the green range
-  const NEEDLE_IN_TUNE_CENTS = 3.5;     // <= this => GREEN
-  const NEEDLE_SNAP_CENTS = 1.0;        // <= this => snap to 0
-  const NEEDLE_NEAR_CENTS = 8.0;        // <= this => YELLOW (unless green)
+  // Ranges
+  const NEEDLE_IN_TUNE_CENTS = 3.5;
+  const NEEDLE_SNAP_CENTS = 1.0;
+  const NEEDLE_NEAR_CENTS = 8.0;
 
-  // Visual-layer exponential smoothing for the needle
-  const NEEDLE_SMOOTH_ALPHA = 0.20; // smaller = smoother/slower, larger = snappier
+  // Visual smoothing (needle)
+  const NEEDLE_SMOOTH_ALPHA = 0.20;
   let visualCentsSmoothed = 0;
   let visualSmoothingPrimed = false;
 
   // Colors
   const NEEDLE_COLOR_OUT  = "#ff3e3e";
-  const NEEDLE_COLOR_NEAR = "#ffd34d";  // yellow
-  const NEEDLE_COLOR_IN   = "#28a745";  // green
+  const NEEDLE_COLOR_NEAR = "#ffd34d";
+  const NEEDLE_COLOR_IN   = "#28a745";
 
   // Microphone error handling
   const micErrorEl = document.getElementById('mic-error');
@@ -676,7 +691,7 @@
 
   function showMicError(html){
     if (!micErrorEl) return;
-    micErrorEl.innerHTML = html;     // <-- allows <br/> etc.
+    micErrorEl.innerHTML = html;
     micErrorEl.style.display = "block";
   }
 
@@ -706,7 +721,6 @@
       return "Microphone access is blocked by the browser security policy.<br/><br/>Please open this page via HTTPS and try again.";
     }
 
-    // Fallback: escape err.message so it can't inject HTML
     return (err && err.message)
       ? `${base}<br/>${escapeHTML(err.message)}`
       : base;
@@ -759,11 +773,11 @@
     const a = Math.abs(cents || 0);
 
     if (a <= NEEDLE_IN_TUNE_CENTS) {
-      needle.style.backgroundColor = NEEDLE_COLOR_IN;      // green
+      needle.style.backgroundColor = NEEDLE_COLOR_IN;
     } else if (a <= NEEDLE_NEAR_CENTS) {
-      needle.style.backgroundColor = NEEDLE_COLOR_NEAR;    // yellow
+      needle.style.backgroundColor = NEEDLE_COLOR_NEAR;
     } else {
-      needle.style.backgroundColor = NEEDLE_COLOR_OUT;     // red
+      needle.style.backgroundColor = NEEDLE_COLOR_OUT;
     }
   }
 
@@ -779,7 +793,6 @@
   function applyVisualNeedleSmoothing(cents){
     if (!isFinite(cents)) return cents;
 
-    // clamp before smoothing so the smoother doesn't chase out-of-range values
     const target = clamp(cents, -MAX_CENTS_DISPLAY, MAX_CENTS_DISPLAY);
 
     if (!visualSmoothingPrimed){
@@ -798,7 +811,6 @@
     setNeedleCents(0);
     setNeedleColorByCents(0);
 
-    // also clear state that affects first-frame behavior
     pitchHistory = [];
     lastDetectedMidi = null;
     silentFrames = 0;
@@ -806,9 +818,51 @@
 
     resetAdaptiveGate();
 
-    // level meter back to zero
     levelMeterSmoothed = 0;
     setLevelMeter01(0);
+  }
+
+  // ---------- Gain helper ----------
+  function setUserBoostGainFromUI(){
+    const sel = document.getElementById("inputboost");
+    if (!sel) return;
+    const v = parseFloat(sel.value);
+    gUserBoostGain = (isFinite(v) && v > 0) ? v : 1.0;
+
+    if (userBoostGainNode) {
+      try { userBoostGainNode.gain.value = gUserBoostGain; } catch(e){ /* ignore */ }
+    }
+  }
+
+  // ---------- LocalStorage save/restore ----------
+  function restoreSettingsFromLocalStorage(){
+    try{
+      const a4 = localStorage.getItem(LS_KEY_A4REF);
+      const boost = localStorage.getItem(LS_KEY_BOOST);
+
+      const a4Sel = document.getElementById("a4ref");
+      if (a4Sel && a4 && a4Sel.querySelector(`option[value="${CSS.escape(a4)}"]`)) {
+        a4Sel.value = a4;
+      }
+
+      const boostSel = document.getElementById("inputboost");
+      if (boostSel && boost && boostSel.querySelector(`option[value="${CSS.escape(boost)}"]`)) {
+        boostSel.value = boost;
+      }
+    } catch(e){
+      /* ignore */
+    }
+  }
+
+  function saveSettingsToLocalStorage(){
+    try{
+      const a4Sel = document.getElementById("a4ref");
+      const boostSel = document.getElementById("inputboost");
+      if (a4Sel) localStorage.setItem(LS_KEY_A4REF, String(a4Sel.value));
+      if (boostSel) localStorage.setItem(LS_KEY_BOOST, String(boostSel.value));
+    } catch(e){
+      /* ignore */
+    }
   }
 
   // ---------- YIN Pitch ----------
@@ -877,8 +931,6 @@
     analyserPitch.getFloatTimeDomainData(timeDataPitch);
     const rms = rmsOfArray(timeDataPitch);
 
-    // update small level meter (maps rms to 0..1)
-    // 0.10 is "very loud" here; this is just a diagnostic bar, not a calibrated meter.
     setLevelMeter01(clamp(rms / 0.10, 0, 1));
 
     updateAdaptiveGate(rms);
@@ -886,20 +938,17 @@
     if (rms < adaptiveRmsGate){
       setDimmed(true);
 
-      // Deep silence => reset faster so the next note attack isn't missed
       const isDeepSilence = (rms < (adaptiveRmsGate * DEEP_SILENCE_FACTOR));
 
       silentFrames++;
 
       const framesNeeded = isDeepSilence ? SILENCE_FRAMES_TO_RESET_FAST : SILENCE_FRAMES_TO_RESET;
 
-      // IMPORTANT: fire once (do NOT use >= here) or you'll keep resetting every frame
       if (silentFrames === framesNeeded) {
         pitchHistory = [];
         lastDetectedMidi = null;
         resetNeedleSmoothing();
 
-        // iOS: keep the learned floor; full resets can make the gate "forget" and miss quiet attacks
         if (!isIOS()) {
           resetAdaptiveGate();
         }
@@ -910,18 +959,15 @@
       return;
     }
 
-    // sound present
     silentFrames = 0;
     setDimmed(false);
 
     const yin = yinPitch(timeDataPitch, audioCtx.sampleRate, 55, 2000, 0.12);
 
     if (yin && yin.freq){
-      // Determine current midi early so we can detect note changes
       const midiFloatNow = freqToMidi(yin.freq);
       const midiNow = Math.round(midiFloatNow);
 
-      // If the detected MIDI note changes, reset history so we don't "blend" notes
       if (lastDetectedMidi !== null && midiNow !== lastDetectedMidi) {
         pitchHistory = [];
         resetNeedleSmoothing();
@@ -941,18 +987,15 @@
           const ideal = midiToFreq(midi);
 
           let cents = centsBetween(f0, ideal);
-
-          // keep same snap behavior (<= ±1c snaps to 0)
           cents = applySnapIfNeeded(cents);
 
           noteEl.innerText = note;
           deltaEl.innerHTML = `${fmtCentsSigned(cents)} cents`;
 
-          // exponential smoothing at the visual layer (needle only)
           const visualCents = applyVisualNeedleSmoothing(cents);
 
           setNeedleCents(visualCents);
-          setNeedleColorByCents(cents); // color based on the real (snapped) cents, not smoothed
+          setNeedleColorByCents(cents);
         }
       }
     }
@@ -964,6 +1007,9 @@
   // ---------- Start ----------
   async function startAudio(){
     hideMicError();
+
+    // ensure current dropdown value is applied
+    setUserBoostGainFromUI();
 
     audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     await ensureAudioContextRunning();
@@ -994,6 +1040,9 @@
     analyserPitch.fftSize = PITCH_FFT_SIZE;
     timeDataPitch = new Float32Array(analyserPitch.fftSize);
 
+    userBoostGainNode = audioCtx.createGain();
+    userBoostGainNode.gain.value = gUserBoostGain;
+
     if (isIOS()) {
       inputGainNode = audioCtx.createGain();
       inputGainNode.gain.value = IOS_INPUT_GAIN;
@@ -1005,11 +1054,13 @@
       iosCompressorNode.attack.value = 0.003;
       iosCompressorNode.release.value = 0.25;
 
-      streamSource.connect(inputGainNode);
+      streamSource.connect(userBoostGainNode);
+      userBoostGainNode.connect(inputGainNode);
       inputGainNode.connect(iosCompressorNode);
       iosCompressorNode.connect(analyserPitch);
     } else {
-      streamSource.connect(analyserPitch);
+      streamSource.connect(userBoostGainNode);
+      userBoostGainNode.connect(analyserPitch);
     }
 
     const silentGain = audioCtx.createGain();
@@ -1053,7 +1104,8 @@
     a4RefSelect.addEventListener('change', () => {
       gA4RefHz = parseFloat(a4RefSelect.value) || 440;
 
-      // changing reference should reset any running history/smoothing
+      saveSettingsToLocalStorage();
+
       pitchHistory = [];
       lastDetectedMidi = null;
       silentFrames = 0;
@@ -1061,6 +1113,26 @@
       clearDisplay();
     });
   }
+
+  // Input boost dropdown
+  const inputBoostSelect = document.getElementById('inputboost');
+  if (inputBoostSelect) {
+    setUserBoostGainFromUI();
+    inputBoostSelect.addEventListener('change', () => {
+      setUserBoostGainFromUI();
+      saveSettingsToLocalStorage();
+      // Don't clear display/state; this is a live diagnostic/boost.
+    });
+  }
+
+  // Restore saved settings before initial wiring applies values
+  restoreSettingsFromLocalStorage();
+
+  // Apply restored values to runtime vars immediately
+  if (a4RefSelect){
+    gA4RefHz = parseFloat(a4RefSelect.value) || 440;
+  }
+  setUserBoostGainFromUI();
 
   // iOS/Safari resume
   function addIOSResumeGestures() {
