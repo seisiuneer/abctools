@@ -184,6 +184,22 @@
       padding:0 2px;
     }
 
+    /* Mic / permission error banner */
+    #mic-error{
+      display:none;                 /* JS toggles */
+      margin: 10px 0 4px;
+      padding: 12px 12px;
+      border-radius: 12px;
+      text-align: left;
+      font-weight: 800;
+      font-size: 0.98rem;
+      line-height: 1.35;
+      color: #ffecec;
+      background: #3a0f12;
+      border: 1px solid #7a2b30;
+      box-shadow: 0 10px 24px rgba(0,0,0,0.35);
+    }
+
     button{
       padding:14px 18px;
       border:none;
@@ -265,6 +281,9 @@
         </div>
       </div>
     </div>
+
+    <!-- Mic error message (hidden by default) -->
+    <div id="mic-error" style="display:none;"></div>
 
     <!-- Everything below dims during silence -->
     <div id="tuner-live">
@@ -371,6 +390,57 @@
   const NEEDLE_COLOR_OUT  = "#ff3e3e";
   const NEEDLE_COLOR_NEAR = "#ffd34d";  // yellow
   const NEEDLE_COLOR_IN   = "#28a745";  // green
+
+  // Microphone error handling
+  const micErrorEl = document.getElementById('mic-error');
+
+  function escapeHTML(s){
+    return String(s).replace(/[&<>"']/g, ch => ({
+      "&":"&amp;",
+      "<":"&lt;",
+      ">":"&gt;",
+      '"':"&quot;",
+      "'":"&#39;"
+    }[ch]));
+  }
+
+  function showMicError(html){
+    if (!micErrorEl) return;
+    micErrorEl.innerHTML = html;     // <-- allows <br/> etc.
+    micErrorEl.style.display = "block";
+  }
+
+  function hideMicError(){
+    if (!micErrorEl) return;
+    micErrorEl.innerHTML = "";
+    micErrorEl.style.display = "none";
+  }
+
+  function micErrorMessageFromException(err){
+    const name = (err && err.name) ? err.name : "";
+    const base = "Microphone access failed.";
+
+    if (name === "NotAllowedError" || name === "PermissionDeniedError") {
+      return "Microphone access permission was denied.<br/><br/>Reload the page, click <b>START</b>, and allow microphone access when asked by your browser.";
+    }
+    if (name === "NotFoundError" || name === "DevicesNotFoundError") {
+      return "No microphone was found.<br/><br/>Please connect/select a microphone and try again.";
+    }
+    if (name === "NotReadableError" || name === "TrackStartError") {
+      return "Your microphone is in use by another app or unavailable.<br/><br/>Close other apps using the mic and try again.";
+    }
+    if (name === "OverconstrainedError" || name === "ConstraintNotSatisfiedError") {
+      return "Your browser could not satisfy the microphone constraints.<br/><br/>Try again, or try a different browser/device.";
+    }
+    if (name === "SecurityError") {
+      return "Microphone access is blocked by the browser security policy.<br/><br/>Please open this page via HTTPS and try again.";
+    }
+
+    // Fallback: escape err.message so it can't inject HTML
+    return (err && err.message)
+      ? `${base}<br/>${escapeHTML(err.message)}`
+      : base;
+  }
 
   // Once started, dim live area when no sound is detected
   let tunerStarted = false;
@@ -600,6 +670,9 @@
 
   // ---------- Start ----------
   async function startAudio(){
+    
+    hideMicError();
+
     audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     await ensureAudioContextRunning();
 
@@ -660,6 +733,9 @@
       btn.style.display = "none";
     }catch(err){
       console.error(err);
+
+      showMicError(micErrorMessageFromException(err));
+
       const btn = document.getElementById('start-btn');
       btn.disabled = false;
       btn.innerText = "START";
