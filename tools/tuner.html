@@ -349,6 +349,11 @@
   const PITCH_HIST_FRAMES = 15;
   const PITCH_NEED_FRAMES = 8;
 
+  // Reset behavior to avoid "first note jump"
+  let silentFrames = 0;
+  const SILENCE_FRAMES_TO_RESET = 4; // ~100ms at 60fps; tweak 4-10
+  let lastDetectedMidi = null;
+
   // Requested features:
   // - Color-shift needle near ±2c (GREEN)
   // - Auto-centering snap at ±1c (GREEN snap stays)
@@ -357,6 +362,11 @@
   const NEEDLE_SNAP_CENTS = 1.0;        // <= this => snap to 0
   const NEEDLE_NEAR_CENTS = 8.0;        // <= this => YELLOW (unless green)
 
+  // Visual-layer exponential smoothing for the needle
+  const NEEDLE_SMOOTH_ALPHA = 0.20; // smaller = smoother/slower, larger = snappier
+  let visualCentsSmoothed = 0;
+  let visualSmoothingPrimed = false;
+
   // Colors
   const NEEDLE_COLOR_OUT  = "#ff3e3e";
   const NEEDLE_COLOR_NEAR = "#ffd34d";  // yellow
@@ -364,13 +374,6 @@
 
   // Once started, dim live area when no sound is detected
   let tunerStarted = false;
-
-  // ---------- Visual smoothing (exponential smoothing at UI layer) ----------
-  // Smaller alpha = smoother (more inertia), larger alpha = snappier.
-  // This only affects the needle display (not pitch detection).
-  const NEEDLE_SMOOTH_ALPHA = 0.20;
-  let gSmoothedCents = 0;
-  let gHasSmoothedCents = false;
 
   // ---------- Utils ----------
   function clamp(v, lo, hi){ return Math.max(lo, Math.min(hi, v)); }
@@ -429,25 +432,24 @@
     return (Math.abs(cents) <= NEEDLE_SNAP_CENTS) ? 0 : cents;
   }
 
-  function applyNeedleSmoothing(measuredCents){
-    if (!isFinite(measuredCents)) return measuredCents;
-
-    // Clamp input to the display range before smoothing so edges don't "pull" weirdly.
-    const target = clamp(measuredCents, -MAX_CENTS_DISPLAY, MAX_CENTS_DISPLAY);
-
-    if (!gHasSmoothedCents){
-      gSmoothedCents = target;
-      gHasSmoothedCents = true;
-      return gSmoothedCents;
-    }
-
-    gSmoothedCents = gSmoothedCents + (target - gSmoothedCents) * NEEDLE_SMOOTH_ALPHA;
-    return gSmoothedCents;
+  function resetNeedleSmoothing(){
+    visualSmoothingPrimed = false;
   }
 
-  function resetNeedleSmoothing(){
-    gSmoothedCents = 0;
-    gHasSmoothedCents = false;
+  function applyVisualNeedleSmoothing(cents){
+    if (!isFinite(cents)) return cents;
+
+    // clamp before smoothing so the smoother doesn't chase out-of-range values
+    const target = clamp(cents, -MAX_CENTS_DISPLAY, MAX_CENTS_DISPLAY);
+
+    if (!visualSmoothingPrimed){
+      visualCentsSmoothed = target;
+      visualSmoothingPrimed = true;
+      return target;
+    }
+
+    visualCentsSmoothed = (NEEDLE_SMOOTH_ALPHA * target) + ((1 - NEEDLE_SMOOTH_ALPHA) * visualCentsSmoothed);
+    return visualCentsSmoothed;
   }
 
   function clearDisplay(){
@@ -455,6 +457,11 @@
     deltaEl.innerHTML = "-- cents";
     setNeedleCents(0);
     setNeedleColorByCents(0);
+
+    // also clear state that affects first-frame behavior
+    pitchHistory = [];
+    lastDetectedMidi = null;
+    silentFrames = 0;
     resetNeedleSmoothing();
   }
 
@@ -526,18 +533,38 @@
 
     if (rms < RMS_SILENCE){
       setDimmed(true);
-      // freeze smoothing while silent so it doesn't drift; reset so next note "locks" quickly
-      resetNeedleSmoothing();
+
+      // count silent frames; once it’s "really silent", purge history so new note starts clean
+      silentFrames++;
+      if (silentFrames === SILENCE_FRAMES_TO_RESET) {
+        pitchHistory = [];
+        lastDetectedMidi = null;
+        resetNeedleSmoothing();
+      }
+
       ensureAudioContextRunning();
       requestAnimationFrame(tick);
       return;
     }
 
+    // sound present
+    silentFrames = 0;
     setDimmed(false);
 
     const yin = yinPitch(timeDataPitch, audioCtx.sampleRate, 55, 2000, 0.12);
 
     if (yin && yin.freq){
+      // Determine current midi early so we can detect note changes
+      const midiFloatNow = freqToMidi(yin.freq);
+      const midiNow = Math.round(midiFloatNow);
+
+      // If the detected MIDI note changes, reset history so we don't "blend" notes
+      if (lastDetectedMidi !== null && midiNow !== lastDetectedMidi) {
+        pitchHistory = [];
+        resetNeedleSmoothing();
+      }
+      lastDetectedMidi = midiNow;
+
       pitchHistory.push(yin.freq);
       while (pitchHistory.length > PITCH_HIST_FRAMES) pitchHistory.shift();
 
@@ -555,14 +582,14 @@
           // keep same snap behavior (<= ±1c snaps to 0)
           cents = applySnapIfNeeded(cents);
 
-          // Smooth ONLY the needle (visual layer)
-          const needleCents = applyNeedleSmoothing(cents);
-
           noteEl.innerText = note;
           deltaEl.innerHTML = `${fmtCentsSigned(cents)} cents`;
 
-          setNeedleCents(needleCents);
-          setNeedleColorByCents(needleCents);
+          // exponential smoothing at the visual layer (needle only)
+          const visualCents = applyVisualNeedleSmoothing(cents);
+
+          setNeedleCents(visualCents);
+          setNeedleColorByCents(cents); // color based on the real (snapped) cents, not smoothed
         }
       }
     }
@@ -616,7 +643,6 @@
     analyserPitch.connect(silentGain);
     silentGain.connect(audioCtx.destination);
 
-    pitchHistory = [];
     clearDisplay();
 
     tunerStarted = true;
@@ -649,7 +675,12 @@
 
     a4RefSelect.addEventListener('change', () => {
       gA4RefHz = parseFloat(a4RefSelect.value) || 440;
+
+      // changing reference should reset any running history/smoothing
       pitchHistory = [];
+      lastDetectedMidi = null;
+      silentFrames = 0;
+      resetNeedleSmoothing();
       clearDisplay();
     });
   }
