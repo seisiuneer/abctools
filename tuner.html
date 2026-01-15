@@ -91,6 +91,38 @@
       #help-btn:active{ filter: brightness(1.0); }
     }
 
+    /* Small subtle volume level meter:
+       - vertically centered to the title row (same vertical center as the H1)
+       - right edge is exactly 22px from the right edge of #tuner-ui */
+    #level-meter{
+      position:absolute;
+      top:22px;                 /* align with title's top margin 0 (in the inline style) */
+      height:10px;
+
+      right:22px;               /* right edge 22px from container edge */
+      width:86px;
+      border-radius:3px;
+      background:#0a0a0a;
+      border:1px solid #2f2f2f;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.02);
+      overflow:hidden;
+      opacity:0.55;
+      pointer-events:none;
+
+      /* vertical center alignment relative to the title line-height:
+         title font-size 1.6rem, typical line-height ~ normal (~1.2),
+         but we can make it deterministic by using 1.1 in the inline H1.
+         To avoid touching the H1, we align by translating from the top. */
+      transform: translateY(calc((1.6rem * 1.1 - 10px) / 2));
+    }
+    #level-meter-fill{
+      height:100%;
+      width:0%;
+      background:var(--accent);
+      opacity:0.65;
+      transition: width 80ms linear;
+    }
+
     /* Troubleshooting modal */
     #troubleshoot-overlay{
       display:none;
@@ -153,6 +185,15 @@
         font-size:1.2rem;
         padding:16px 18px;
         border-radius:14px;
+      }
+
+      /* keep the meter subtle & tucked in on small screens */
+      #level-meter{
+        width:74px;
+        height:9px;
+        opacity:0.5;
+        right:22px; /* keep the 22px rule */
+        transform: translateY(calc((1.25rem * 1.1 - 9px) / 2)); /* matches mobile H1 size below */
       }
     }
 
@@ -351,6 +392,11 @@
     <!-- Help / Troubleshooting button -->
     <div id="help-btn" title="Troubleshooting">?</div>
 
+    <!-- Small subtle volume meter (top right) -->
+    <div id="level-meter" title="Input level">
+      <div id="level-meter-fill"></div>
+    </div>
+
     <!-- Troubleshooting modal (hidden by default) -->
     <div id="troubleshoot-overlay" aria-hidden="true">
       <div id="troubleshoot-modal" role="dialog" aria-modal="true" aria-label="Troubleshooting">
@@ -366,7 +412,7 @@
       </div>
     </div>
 
-    <h1 style="margin: 0 0 16px 0; font-size: 1.6rem; font-weight: 900; letter-spacing: 0.4px; color: #e0e0e0; text-align: center;" title="This utility was developed by Michael Eskin - https://michaeleskin.com">
+    <h1 style="margin: 0 0 16px 0; font-size: 1.6rem; line-height:1.1; font-weight: 900; letter-spacing: 0.4px; color: #e0e0e0; text-align: center;" title="This utility was developed by Michael Eskin - https://michaeleskin.com">
       Chromatic Tuner
     </h1>
 
@@ -461,6 +507,17 @@
   const needle = document.getElementById('needle');
   const noteEl = document.getElementById('note');
   const deltaEl = document.getElementById('freq');
+
+  // Small level meter
+  const levelMeterFill = document.getElementById('level-meter-fill');
+  let levelMeterSmoothed = 0; // 0..1
+  const LEVEL_METER_ALPHA = 0.25; // higher = snappier
+  function setLevelMeter01(x){
+    if (!levelMeterFill) return;
+    const v = Math.max(0, Math.min(1, x || 0));
+    levelMeterSmoothed = (LEVEL_METER_ALPHA * v) + ((1 - LEVEL_METER_ALPHA) * levelMeterSmoothed);
+    levelMeterFill.style.width = Math.round(levelMeterSmoothed * 100) + "%";
+  }
 
   // Troubleshooting modal wiring
   const helpBtn = document.getElementById('help-btn');
@@ -748,6 +805,10 @@
     resetNeedleSmoothing();
 
     resetAdaptiveGate();
+
+    // level meter back to zero
+    levelMeterSmoothed = 0;
+    setLevelMeter01(0);
   }
 
   // ---------- YIN Pitch ----------
@@ -816,9 +877,11 @@
     analyserPitch.getFloatTimeDomainData(timeDataPitch);
     const rms = rmsOfArray(timeDataPitch);
 
-    updateAdaptiveGate(rms);
+    // update small level meter (maps rms to 0..1)
+    // 0.10 is "very loud" here; this is just a diagnostic bar, not a calibrated meter.
+    setLevelMeter01(clamp(rms / 0.10, 0, 1));
 
-    //console.log("gate: "+adaptiveRmsGate);
+    updateAdaptiveGate(rms);
 
     if (rms < adaptiveRmsGate){
       setDimmed(true);
@@ -900,7 +963,6 @@
 
   // ---------- Start ----------
   async function startAudio(){
-    
     hideMicError();
 
     audioCtx = new (window.AudioContext || window.webkitAudioContext)();
