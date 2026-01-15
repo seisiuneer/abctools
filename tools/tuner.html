@@ -354,7 +354,7 @@
   // - Auto-centering snap at ±1c (GREEN snap stays)
   // - Yellow highlight when "close to 0" but not in the green range
   const NEEDLE_IN_TUNE_CENTS = 3.5;     // <= this => GREEN
-  const NEEDLE_SNAP_CENTS = 1.0;        // <= this => snap to 0 (still GREEN because <=2)
+  const NEEDLE_SNAP_CENTS = 1.0;        // <= this => snap to 0
   const NEEDLE_NEAR_CENTS = 8.0;        // <= this => YELLOW (unless green)
 
   // Colors
@@ -364,6 +364,13 @@
 
   // Once started, dim live area when no sound is detected
   let tunerStarted = false;
+
+  // ---------- Visual smoothing (exponential smoothing at UI layer) ----------
+  // Smaller alpha = smoother (more inertia), larger alpha = snappier.
+  // This only affects the needle display (not pitch detection).
+  const NEEDLE_SMOOTH_ALPHA = 0.20;
+  let gSmoothedCents = 0;
+  let gHasSmoothedCents = false;
 
   // ---------- Utils ----------
   function clamp(v, lo, hi){ return Math.max(lo, Math.min(hi, v)); }
@@ -422,11 +429,33 @@
     return (Math.abs(cents) <= NEEDLE_SNAP_CENTS) ? 0 : cents;
   }
 
+  function applyNeedleSmoothing(measuredCents){
+    if (!isFinite(measuredCents)) return measuredCents;
+
+    // Clamp input to the display range before smoothing so edges don't "pull" weirdly.
+    const target = clamp(measuredCents, -MAX_CENTS_DISPLAY, MAX_CENTS_DISPLAY);
+
+    if (!gHasSmoothedCents){
+      gSmoothedCents = target;
+      gHasSmoothedCents = true;
+      return gSmoothedCents;
+    }
+
+    gSmoothedCents = gSmoothedCents + (target - gSmoothedCents) * NEEDLE_SMOOTH_ALPHA;
+    return gSmoothedCents;
+  }
+
+  function resetNeedleSmoothing(){
+    gSmoothedCents = 0;
+    gHasSmoothedCents = false;
+  }
+
   function clearDisplay(){
     noteEl.innerText = "--";
     deltaEl.innerHTML = "-- cents";
     setNeedleCents(0);
     setNeedleColorByCents(0);
+    resetNeedleSmoothing();
   }
 
   // ---------- YIN Pitch ----------
@@ -497,6 +526,8 @@
 
     if (rms < RMS_SILENCE){
       setDimmed(true);
+      // freeze smoothing while silent so it doesn't drift; reset so next note "locks" quickly
+      resetNeedleSmoothing();
       ensureAudioContextRunning();
       requestAnimationFrame(tick);
       return;
@@ -524,11 +555,14 @@
           // keep same snap behavior (<= ±1c snaps to 0)
           cents = applySnapIfNeeded(cents);
 
+          // Smooth ONLY the needle (visual layer)
+          const needleCents = applyNeedleSmoothing(cents);
+
           noteEl.innerText = note;
           deltaEl.innerHTML = `${fmtCentsSigned(cents)} cents`;
 
-          setNeedleCents(cents);
-          setNeedleColorByCents(cents);
+          setNeedleCents(needleCents);
+          setNeedleColorByCents(needleCents);
         }
       }
     }
