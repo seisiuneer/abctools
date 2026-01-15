@@ -68,6 +68,94 @@
       max-width: var(--ui-max);
     }
 
+    /* Troubleshooting (?) button */
+    #help-btn{
+      position:absolute;
+      top:8px;
+      left:8px;
+      width:52px;
+      height:52px;
+      border: 0px;
+      color:#e8e8e8;
+      font-weight:900;
+      font-size:1.75rem;
+      line-height:52px;
+      text-align:center;
+      cursor:pointer;
+      user-select:none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    @media (hover: hover) and (pointer: fine) {
+      #help-btn{ transition: filter 125ms ease; }
+      #help-btn:hover{ filter: brightness(1.5); }
+      #help-btn:active{ filter: brightness(1.0); }
+    }
+
+    /* Troubleshooting modal */
+    #troubleshoot-overlay{
+      display:none;
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,0.65);
+      z-index:9999;
+      padding:16px;
+      box-sizing:border-box;
+    }
+    #troubleshoot-modal{
+      max-width:600px;
+      width:100%;
+      margin:0 auto;
+      background:var(--panel);
+      border:1px solid #333;
+      border-radius:16px;
+      box-shadow:0 20px 50px rgba(0,0,0,0.7);
+      padding:18px;
+      box-sizing:border-box;
+      position:relative;
+      top:3vh;
+      text-align:left;
+    }
+    #troubleshoot-title{
+      font-size:1.25rem;
+      font-weight:900;
+      margin:10px 0 10px 0;
+      color:#e0e0e0;
+    }
+    #troubleshoot-body{
+      font-size:1.0rem;
+      line-height:1.45;
+      color:#e0e0e0;
+      margin:0 0 14px 0;
+    }
+    #troubleshoot-close{
+      width:100%;
+      margin-top:12px;
+      margin-bottom:12px;
+      padding:14px 18px;
+      border:1px solid #333;
+      font-weight:900;
+      cursor:pointer;
+      transition:.2s;
+      font-size:1.15rem;
+      background:var(--accent);
+      color:#FEFEFE;
+      background-color: black;
+    }
+    @media (max-width: 600px) {
+      #help-btn{
+        top:0px;
+        left:0px;
+      }
+      #troubleshoot-modal{
+        top:3vh;
+      }
+      #troubleshoot-close{
+        font-size:1.2rem;
+        padding:16px 18px;
+        border-radius:14px;
+      }
+    }
+
     /* Only dim the "live" area (note+delta+meter) */
     #tuner-live{
       transition: opacity 125ms ease, filter 125ms ease;
@@ -259,6 +347,25 @@
 
 <body>
   <div id="tuner-ui">
+
+    <!-- Help / Troubleshooting button -->
+    <div id="help-btn" title="Troubleshooting">?</div>
+
+    <!-- Troubleshooting modal (hidden by default) -->
+    <div id="troubleshoot-overlay" aria-hidden="true">
+      <div id="troubleshoot-modal" role="dialog" aria-modal="true" aria-label="Troubleshooting">
+        <div id="troubleshoot-title" style="text-align:center;">Troubleshooting</div>
+        <div id="troubleshoot-body">
+          <br/>You must grant the browser microphone permission for this tool to work.<br/><br/>
+          <b>If no audio is detected even if microphone permission was granted:</b><br/><br/>
+          On Windows systems, you may need to increase the microphone input volume and disable any automatic microphone noise reduction being done by the audio drivers.<br/><br/>
+          Open the Windows settings and search for Microphone settings, make any required changes to the settings, then reload the tuner tab in the browser.
+          <br/><br/>
+        </div>
+        <button id="troubleshoot-close" type="button">CLOSE</button>
+      </div>
+    </div>
+
     <h1 style="margin: 0 0 16px 0; font-size: 1.6rem; font-weight: 900; letter-spacing: 0.4px; color: #e0e0e0; text-align: center;" title="This utility was developed by Michael Eskin - https://michaeleskin.com">
       Chromatic Tuner
     </h1>
@@ -350,6 +457,38 @@
   const needle = document.getElementById('needle');
   const noteEl = document.getElementById('note');
   const deltaEl = document.getElementById('freq');
+
+  // Troubleshooting modal wiring
+  const helpBtn = document.getElementById('help-btn');
+  const troubleshootOverlay = document.getElementById('troubleshoot-overlay');
+  const troubleshootClose = document.getElementById('troubleshoot-close');
+
+  function openTroubleshooting(){
+    if (!troubleshootOverlay) return;
+    troubleshootOverlay.style.display = "block";
+    troubleshootOverlay.setAttribute("aria-hidden", "false");
+  }
+  function closeTroubleshooting(){
+    if (!troubleshootOverlay) return;
+    troubleshootOverlay.style.display = "none";
+    troubleshootOverlay.setAttribute("aria-hidden", "true");
+  }
+
+  if (helpBtn){
+    helpBtn.addEventListener("click", openTroubleshooting);
+    helpBtn.addEventListener("touchstart", (e) => { e.preventDefault(); openTroubleshooting(); }, { passive:false });
+  }
+  if (troubleshootClose){
+    troubleshootClose.addEventListener("click", closeTroubleshooting);
+  }
+  if (troubleshootOverlay){
+    troubleshootOverlay.addEventListener("click", (e) => {
+      if (e.target === troubleshootOverlay) closeTroubleshooting();
+    });
+  }
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") closeTroubleshooting();
+  });
 
   const NOTES = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
 
