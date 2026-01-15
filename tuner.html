@@ -404,10 +404,12 @@
         <div id="troubleshoot-title" style="text-align:center;">Troubleshooting</div>
         <div id="troubleshoot-body">
           <br/>You must grant the browser microphone permission for this tool to work.<br/><br/>
-          <b>If no audio is detected even if microphone permission was granted:</b><br/><br/>
           The audio input level is displayed in a bar at the top right of the tool.<br/><br/>
-          If the audio input level is very low, you can try boosting it using the options on the <b>Input level boost</b> dropdown.<br/><br/>
-          On Windows systems, you may need to increase the microphone input volume and disable any automatic microphone noise reduction being done by the audio drivers.<br/><br/>
+          <b>If no audio is detected or the audio input meter is maxed out and no notes are getting recognized:</b><br/><br/>
+          First, I recommend that you adjust your system's microphone level settings.<br/><br/>
+          You can also reduce/boost the microphone signal level from within the tool using the options on the <b>Input level adjustment</b> dropdown.<br/><br/>
+          On Windows systems, you may need to also disable any automatic microphone noise reduction being done by the system audio drivers.<br/><br/>
+          To the noise reduction system, continous tones may be mistaken for background noise (fans, AC hum, etc.) and filtered out.<br/><br/>
           Open the Windows settings and search for Microphone settings, make any required changes to the settings, then reload the tuner tab in the browser.
           <br/><br/>
         </div>
@@ -439,13 +441,18 @@
       </div>
 
       <div>
-        <label for="inputboost">&nbsp;&nbsp;Input level boost</label>
+        <label for="inputboost">&nbsp;&nbsp;Input level adjustment</label>
         <div class="select-wrap">
           <select id="inputboost">
-            <option value="1.0" selected>None</option>
-            <option value="1.5">Low</option>
-            <option value="2.5">Medium</option>
-            <option value="4.0">High</option>
+            <option value="0.125">-18 dB</option>            
+            <option value="0.25">-12 dB</option>
+            <option value="0.5">-6 dB</option>
+            <option value="0.7079">-3 dB</option>
+            <option value="1.0" selected>0 dB</option>
+            <option value="1.4125">+3 dB</option>
+            <option value="2.0">+6 dB</option>
+            <option value="4.0">+12 dB</option>
+            <option value="8.0">+18 dB</option>
           </select>
         </div>
       </div>
@@ -493,7 +500,7 @@
 <script>
   // ---------- LocalStorage keys ----------
   const LS_KEY_A4REF = "abctools_tuner_a4ref_hz";
-  const LS_KEY_BOOST = "abctools_tuner_input_boost";
+  const LS_KEY_BOOST = "abctools_tuner_input_boost_v2";
 
   // ---------- Audio nodes ----------
   let audioCtx = null;
