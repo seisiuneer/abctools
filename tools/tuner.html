@@ -360,6 +360,62 @@
   const PITCH_FFT_SIZE = 4096;
   const RMS_SILENCE = 0.020;
 
+  // --- Adaptive thresholding (RMS gate) ---
+  // Tracks a noise floor and derives a per-device/per-room silence threshold.
+  let noiseFloorRms = 0;
+  let noiseFloorPrimed = false;
+  let adaptiveRmsGate = RMS_SILENCE;
+
+  const GATE_CALIBRATION_FRAMES = 30;     // ~0.5s @ 60fps
+  let gateCalibrationFramesLeft = GATE_CALIBRATION_FRAMES;
+
+  const NOISE_FLOOR_ALPHA = 0.06;         // noise floor EMA rate (quiet frames)
+  const NOISE_FLOOR_ALPHA_FAST = 0.25;    // during calibration
+  const GATE_MULTIPLIER = 3.0;            // how far above the noise floor counts as "signal"
+  const GATE_OFFSET = 0.003;              // small additive margin
+  const GATE_MIN = 0.006;                 // never go below this
+
+  function resetAdaptiveGate(){
+    noiseFloorRms = 0;
+    noiseFloorPrimed = false;
+    adaptiveRmsGate = RMS_SILENCE;
+    gateCalibrationFramesLeft = GATE_CALIBRATION_FRAMES;
+  }
+
+  function updateAdaptiveGate(rms){
+    // During startup calibration, learn baseline quickly (assumes user is quiet for a moment)
+    if (gateCalibrationFramesLeft > 0) {
+      const a = NOISE_FLOOR_ALPHA_FAST;
+
+      if (!noiseFloorPrimed) {
+        noiseFloorRms = rms;
+        noiseFloorPrimed = true;
+      } else {
+        noiseFloorRms = (a * rms) + ((1 - a) * noiseFloorRms);
+      }
+
+      gateCalibrationFramesLeft--;
+    } else {
+      // After calibration: only update the floor when we're near "quiet"
+      // (prevents learning sustained notes as noise).
+      const quietBand = adaptiveRmsGate * 1.15;
+
+      if (rms <= quietBand) {
+        const a = NOISE_FLOOR_ALPHA;
+
+        if (!noiseFloorPrimed) {
+          noiseFloorRms = rms;
+          noiseFloorPrimed = true;
+        } else {
+          noiseFloorRms = (a * rms) + ((1 - a) * noiseFloorRms);
+        }
+      }
+    }
+
+    const floor = noiseFloorPrimed ? noiseFloorRms : rms;
+    adaptiveRmsGate = Math.max(GATE_MIN, (floor * GATE_MULTIPLIER) + GATE_OFFSET);
+  }
+
   // Needle scale: -/+50 cents
   const MAX_CENTS_DISPLAY = 50;
 
@@ -533,6 +589,8 @@
     lastDetectedMidi = null;
     silentFrames = 0;
     resetNeedleSmoothing();
+
+    resetAdaptiveGate();
   }
 
   // ---------- YIN Pitch ----------
@@ -601,7 +659,11 @@
     analyserPitch.getFloatTimeDomainData(timeDataPitch);
     const rms = rmsOfArray(timeDataPitch);
 
-    if (rms < RMS_SILENCE){
+    updateAdaptiveGate(rms);
+
+    //console.log("gate: "+adaptiveRmsGate);
+
+    if (rms < adaptiveRmsGate){
       setDimmed(true);
 
       // count silent frames; once it’s "really silent", purge history so new note starts clean
@@ -610,6 +672,7 @@
         pitchHistory = [];
         lastDetectedMidi = null;
         resetNeedleSmoothing();
+        resetAdaptiveGate();
       }
 
       ensureAudioContextRunning();
