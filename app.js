@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3141_011526_0900";
+var gVersionNumber = "3142_011526_0930";
 
 var gMIDIInitStillWaiting = false;
 
@@ -59509,7 +59509,7 @@ function LaunchQuickEditorHelp() {
 
 // Open the Chromatic tuner
 function LaunchChromaticTuner(){
-  var url = "https://michaeleskin.com/tuner.html";
+  var url = "https://michaeleskin.com/abctools/tuner.html";
   window.open(url, '_blank');
 }
 

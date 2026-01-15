@@ -6,7 +6,13 @@
 //
 //
 //
-// Updated 15 Jan 2026 at 0900
+//
+//
+//
+// Updated 15 Jan 2026 at 0930
+//
+//
+//
 //
 //
 //
@@ -14,7 +20,7 @@
 //
 //
 
-const cacheName = 'abctoolscache-3141';
+const cacheName = 'abctoolscache-3142';
 
 const contentToCache = [
     'abctools.html',
@@ -24,6 +30,7 @@ const contentToCache = [
     'tunesources.css',
     'credits.html',
     'tipjars.html',
+    'tuner.html',
     'general_midi_extended_v10.pdf',
     'abc_standard_v2.1.pdf',
     'ABCquickRefv0_6.pdf',

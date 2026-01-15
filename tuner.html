@@ -1,0 +1,1023 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Chromatic Tuner" />
+  <meta property="og:description" content="Simple chromatic instrument tuner (ET, adjustable A4 reference)." />
+  <meta property="og:url" content="https://michaeleskin.com/abctools/tuner.html" />
+  <meta property="og:site_name" content="Chromatic Tuner" />
+  <meta property="og:image" content="https://michaeleskin.com/abctools/img/abc-icon.png" />
+  <meta name="msapplication-TileColor" content="#ffffff">
+  <meta name="msapplication-TileImage" content="https://michaeleskin.com/abctools/img/abc-ms-icon-144x144.png">
+  <link rel="apple-touch-icon" sizes="57x57" href="https://michaeleskin.com/abctools/img/abc-apple-icon-57x57.png">
+  <link rel="apple-touch-icon" sizes="60x60" href="https://michaeleskin.com/abctools/img/abc-apple-icon-60x60.png">
+  <link rel="apple-touch-icon" sizes="72x72" href="https://michaeleskin.com/abctools/img/abc-apple-icon-72x72.png">
+  <link rel="apple-touch-icon" sizes="76x76" href="https://michaeleskin.com/abctools/img/abc-apple-icon-76x76.png">
+  <link rel="apple-touch-icon" sizes="114x114" href="https://michaeleskin.com/abctools/img/abc-apple-icon-114x114.png">
+  <link rel="apple-touch-icon" sizes="120x120" href="https://michaeleskin.com/abctools/img/abc-apple-icon-120x120.png">
+  <link rel="apple-touch-icon" sizes="144x144" href="https://michaeleskin.com/abctools/img/abc-apple-icon-144x144.png">
+  <link rel="apple-touch-icon" sizes="152x152" href="https://michaeleskin.com/abctools/img/abc-apple-icon-152x152.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="https://michaeleskin.com/abctools/img/abc-apple-icon-180x180.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="https://michaeleskin.com/abctools/img/abc-android-icon-192x192.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="https://michaeleskin.com/abctools/img/abc-favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="96x96" href="https://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
+
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-VM0N9HL3MK"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-VM0N9HL3MK');
+  </script>
+
+  <title>Chromatic Tuner</title>
+
+  <style>
+    :root{
+      --accent:#00f2ff;
+      --bg:#0f0f0f;
+      --panel:#1a1a1a;
+      --text:#e0e0e0;
+      --ui-max: 700px;
+    }
+
+    body{
+      font-family:'Segoe UI',sans-serif;
+      background:var(--bg);
+      color:var(--text);
+      margin:0;
+      padding:20px;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+    }
+
+    #tuner-ui{
+      background:var(--panel);
+      border-radius:16px;
+      padding:22px;
+      box-shadow:0 20px 50px rgba(0,0,0,0.7);
+      width:100%;
+      text-align:center;
+      border:1px solid #333;
+      position:relative;
+      max-width: var(--ui-max);
+    }
+
+    /* Troubleshooting (?) button */
+    #help-btn{
+      position:absolute;
+      top:8px;
+      left:8px;
+      width:52px;
+      height:52px;
+      border: 0px;
+      color:#e8e8e8;
+      font-weight:900;
+      font-size:1.75rem;
+      line-height:52px;
+      text-align:center;
+      cursor:pointer;
+      user-select:none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    @media (hover: hover) and (pointer: fine) {
+      #help-btn{ transition: filter 125ms ease; }
+      #help-btn:hover{ filter: brightness(1.5); }
+      #help-btn:active{ filter: brightness(1.0); }
+    }
+
+    /* Troubleshooting modal */
+    #troubleshoot-overlay{
+      display:none;
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,0.65);
+      z-index:9999;
+      padding:16px;
+      box-sizing:border-box;
+    }
+    #troubleshoot-modal{
+      max-width:600px;
+      width:100%;
+      margin:0 auto;
+      background:var(--panel);
+      border:1px solid #333;
+      border-radius:16px;
+      box-shadow:0 20px 50px rgba(0,0,0,0.7);
+      padding:18px;
+      box-sizing:border-box;
+      position:relative;
+      top:3vh;
+      text-align:left;
+    }
+    #troubleshoot-title{
+      font-size:1.25rem;
+      font-weight:900;
+      margin:10px 0 10px 0;
+      color:#e0e0e0;
+    }
+    #troubleshoot-body{
+      font-size:1.0rem;
+      line-height:1.45;
+      color:#e0e0e0;
+      margin:0 0 14px 0;
+    }
+    #troubleshoot-close{
+      width:100%;
+      margin-top:12px;
+      margin-bottom:12px;
+      padding:14px 18px;
+      border:1px solid #333;
+      font-weight:900;
+      cursor:pointer;
+      transition:.2s;
+      font-size:1.15rem;
+      background:var(--accent);
+      color:#FEFEFE;
+      background-color: black;
+    }
+    @media (max-width: 600px) {
+      #help-btn{
+        top:0px;
+        left:0px;
+      }
+      #troubleshoot-modal{
+        top:3vh;
+      }
+      #troubleshoot-close{
+        font-size:1.2rem;
+        padding:16px 18px;
+        border-radius:14px;
+      }
+    }
+
+    /* Only dim the "live" area (note+delta+meter) */
+    #tuner-live{
+      transition: opacity 125ms ease, filter 125ms ease;
+    }
+    /* Slower fade-to-dark (dimmed), quick fade-to-light (undimmed) */
+    #tuner-live.dimmed{
+      opacity: 0.3;
+      filter: saturate(0.85);
+      transition-duration: 550ms, 550ms; /* opacity, filter */
+    }
+
+    .row{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:12px;
+      margin:10px 0 10px;
+      align-items:start;
+    }
+    label{
+      display:block;
+      font-size:0.85rem;
+      color:#bbb;
+      margin-bottom:6px;
+      text-align:left;
+    }
+    select{
+      width:100%;
+      background:#0b0b0b;
+      color:#e8e8e8;
+      border:1px solid #333;
+      border-radius:10px;
+      padding:10px 10px;
+      font-size:0.95rem;
+    }
+
+    .note-display{
+      font-size:5rem;
+      color:#fff;
+      line-height:1;
+      margin:0;
+      text-shadow:0 0 20px var(--accent);
+      font-weight:900;
+      margin-top: 32px;
+    }
+
+    .freq-display{
+      font-size:1.35rem;
+      color:#FEFEFE;
+      font-family:ui-monospace, Menlo, Consolas, monospace;
+      margin-top:10px;
+      margin-bottom:10px;
+      line-height:1.35;
+      font-weight:800;
+    }
+
+    .meter-box{
+      width:100%;
+      height:80px;
+      background:#000;
+      position:relative;
+      border-radius:10px;
+      margin:14px 0 8px;
+      border:1px solid #333;
+      overflow:hidden;
+    }
+
+    #needle{
+      width:3px;
+      height:100%;
+      background:#ff3e3e;
+      position:absolute;
+      left:50%;
+      transform:translateX(-50%);
+      transition:left .10s ease-out, background-color .10s ease-out;
+      z-index:2;
+    }
+
+    .center-mark{
+      position:absolute;
+      left:50%;
+      width:2px;
+      height:100%;
+      background:var(--accent);
+      opacity:.55;
+    }
+
+    .edge-mark{
+      position:absolute;
+      top:0;
+      height:100%;
+      width:1px;
+      background:#444;
+      opacity:0.9;
+    }
+    .edge-left{ left:0%; }
+    .edge-right{ left:100%; }
+
+    .tick-mark{
+      position:absolute;
+      top:0;
+      height:100%;
+      width:1px;
+      background:#2b2b2b;
+      opacity:0.8;
+    }
+
+    .meter-labels{
+      display:flex;
+      justify-content:space-between;
+      font-family:ui-monospace, Menlo, Consolas, monospace;
+      font-size:0.9rem;
+      color:#bbb;
+      margin-top:8px;
+      padding:0 2px;
+    }
+
+    /* Mic / permission error banner */
+    #mic-error{
+      display:none;                 /* JS toggles */
+      margin: 10px 0 4px;
+      padding: 12px 12px;
+      border-radius: 12px;
+      text-align: left;
+      font-weight: 800;
+      font-size: 0.98rem;
+      line-height: 1.35;
+      color: #ffecec;
+      background: #3a0f12;
+      border: 1px solid #7a2b30;
+      box-shadow: 0 10px 24px rgba(0,0,0,0.35);
+    }
+
+    button{
+      padding:14px 18px;
+      border:none;
+      border-radius:10px;
+      font-weight:900;
+      cursor:pointer;
+      transition:.2s;
+      width:100%;
+      margin-top:12px;
+      font-size:1.15rem;
+    }
+    .btn-main{ background:var(--accent); color:#000; }
+
+    @media (hover: hover) and (pointer: fine) {
+      #start-btn.btn-main{ transition: filter 125ms ease; }
+      #start-btn.btn-main:hover{ filter: brightness(1.75); }
+      #start-btn.btn-main:active{ filter: brightness(1.0); }
+    }
+
+    .select-wrap{ position: relative; }
+    .select-wrap select{
+      -webkit-appearance:none;
+      -moz-appearance:none;
+      appearance:none;
+      padding-right:46px;
+      background-image:none;
+    }
+    .select-wrap::after{
+      content:"▾";
+      position:absolute;
+      right:14px;
+      top:50%;
+      transform:translateY(-50%);
+      pointer-events:none;
+      color:#e8e8e8;
+      font-size:0.95rem;
+      line-height:1;
+      opacity:0.85;
+    }
+    .select-wrap select::-ms-expand{ display:none; }
+
+    @media (max-width: 600px) {
+      body{ padding:12px; }
+      #tuner-ui{ padding:16px; border-radius:14px; }
+      #tuner-ui h1{ font-size:1.25rem !important; margin:0 0 12px 0 !important; }
+      label{ font-size:0.9rem; margin-bottom:8px; }
+      select{ font-size:1.05rem; padding:14px 12px; border-radius:12px; }
+      .select-wrap select{ padding-right:52px; }
+      .select-wrap::after{ right:18px; font-size:1.1rem; opacity:0.9; }
+      .note-display{ font-size:5rem; margin-top:2px;margin-top:24px; }
+      .freq-display{ font-size:1.35rem; margin-bottom:10px; }
+      .meter-box{ height:64px; margin:18px 0 8px; border-radius:12px; }
+      button{ font-size:1.2rem; padding:16px 18px; border-radius:14px; }
+    }
+  </style>
+</head>
+
+<body>
+  <div id="tuner-ui">
+
+    <!-- Help / Troubleshooting button -->
+    <div id="help-btn" title="Troubleshooting">?</div>
+
+    <!-- Troubleshooting modal (hidden by default) -->
+    <div id="troubleshoot-overlay" aria-hidden="true">
+      <div id="troubleshoot-modal" role="dialog" aria-modal="true" aria-label="Troubleshooting">
+        <div id="troubleshoot-title" style="text-align:center;">Troubleshooting</div>
+        <div id="troubleshoot-body">
+          <br/>You must grant the browser microphone permission for this tool to work.<br/><br/>
+          <b>If no audio is detected even if microphone permission was granted:</b><br/><br/>
+          On Windows systems, you may need to increase the microphone input volume and disable any automatic microphone noise reduction being done by the audio drivers.<br/><br/>
+          Open the Windows settings and search for Microphone settings, make any required changes to the settings, then reload the tuner tab in the browser.
+          <br/><br/>
+        </div>
+        <button id="troubleshoot-close" type="button">CLOSE</button>
+      </div>
+    </div>
+
+    <h1 style="margin: 0 0 16px 0; font-size: 1.6rem; font-weight: 900; letter-spacing: 0.4px; color: #e0e0e0; text-align: center;" title="This utility was developed by Michael Eskin - https://michaeleskin.com">
+      Chromatic Tuner
+    </h1>
+
+    <div class="row">
+      <div>
+        <label for="a4ref">&nbsp;&nbsp;A4 reference (Hz)</label>
+        <div class="select-wrap">
+          <select id="a4ref">
+            <option value="438">438</option>
+            <option value="439">439</option>
+            <option value="440" selected>440</option>
+            <option value="441">441</option>
+            <option value="442">442</option>
+            <option value="443">443</option>
+            <option value="444">444</option>
+            <option value="445">445</option>
+            <option value="446">446</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mic error message (hidden by default) -->
+    <div id="mic-error" style="display:none;"></div>
+
+    <!-- Everything below dims during silence -->
+    <div id="tuner-live">
+      <div id="note" class="note-display">--</div>
+      <div id="freq" class="freq-display">-- cents</div>
+
+      <div class="meter-box" title="Needle shows cents relative to equal temperament (ET). Range: -50 to +50 cents.">
+        <div class="center-mark"></div>
+
+        <div class="edge-mark edge-left"></div>
+        <div class="edge-mark edge-right"></div>
+
+        <!-- tick marks for ±50c range: every 10c -->
+        <div class="tick-mark" style="left:10%;"></div>
+        <div class="tick-mark" style="left:20%;"></div>
+        <div class="tick-mark" style="left:30%;"></div>
+        <div class="tick-mark" style="left:40%;"></div>
+        <div class="tick-mark" style="left:60%;"></div>
+        <div class="tick-mark" style="left:70%;"></div>
+        <div class="tick-mark" style="left:80%;"></div>
+        <div class="tick-mark" style="left:90%;"></div>
+
+        <div id="needle"></div>
+      </div>
+
+      <!-- UPDATED LABELS FOR ±50c -->
+      <div class="meter-labels">
+        <div>-50 cents</div>
+        <div>0</div>
+        <div>+50 cents</div>
+      </div>
+    </div>
+
+    <button id="start-btn" class="btn-main" type="button">START</button>
+  </div>
+
+<script>
+  // ---------- Audio nodes ----------
+  let audioCtx = null;
+  let streamSource = null;
+  let analyserPitch = null;
+  let timeDataPitch = null;
+
+  /* iOS-only input gain to address low mic levels on iOS */
+  let inputGainNode = null;
+
+  /* iOS-only compressor to lift quiet sustained tones */
+  let iosCompressorNode = null;
+
+  function isIOS(){
+    const ua = navigator.userAgent || "";
+    const iOSUA = /iPad|iPhone|iPod/.test(ua);
+    const iPadOS = (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+    return iOSUA || iPadOS;
+  }
+  const IOS_INPUT_GAIN = 3.0;
+
+  // ---------- iOS/Safari: ensure AudioContext is running ----------
+  async function ensureAudioContextRunning() {
+    if (!audioCtx) return;
+    try {
+      if (audioCtx.state === "suspended") await audioCtx.resume();
+    } catch (e) { /* ignore */ }
+  }
+
+  // ---------- UI ----------
+  const tunerLive = document.getElementById('tuner-live');
+  const needle = document.getElementById('needle');
+  const noteEl = document.getElementById('note');
+  const deltaEl = document.getElementById('freq');
+
+  // Troubleshooting modal wiring
+  const helpBtn = document.getElementById('help-btn');
+  const troubleshootOverlay = document.getElementById('troubleshoot-overlay');
+  const troubleshootClose = document.getElementById('troubleshoot-close');
+
+  function openTroubleshooting(){
+    if (!troubleshootOverlay) return;
+    troubleshootOverlay.style.display = "block";
+    troubleshootOverlay.setAttribute("aria-hidden", "false");
+  }
+  function closeTroubleshooting(){
+    if (!troubleshootOverlay) return;
+    troubleshootOverlay.style.display = "none";
+    troubleshootOverlay.setAttribute("aria-hidden", "true");
+  }
+
+  if (helpBtn){
+    helpBtn.addEventListener("click", openTroubleshooting);
+    helpBtn.addEventListener("touchstart", (e) => { e.preventDefault(); openTroubleshooting(); }, { passive:false });
+  }
+  if (troubleshootClose){
+    troubleshootClose.addEventListener("click", closeTroubleshooting);
+  }
+  if (troubleshootOverlay){
+    troubleshootOverlay.addEventListener("click", (e) => {
+      if (e.target === troubleshootOverlay) closeTroubleshooting();
+    });
+  }
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") closeTroubleshooting();
+  });
+
+  const NOTES = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
+
+  // ---------- Settings ----------
+  let gA4RefHz = 440;
+
+  // Pitch analysis
+  const PITCH_FFT_SIZE = 4096;
+  const RMS_SILENCE = 0.020;
+
+  // --- Adaptive thresholding (RMS gate) ---
+  // Tracks a noise floor and derives a per-device/per-room silence threshold.
+  let noiseFloorRms = 0;
+  let noiseFloorPrimed = false;
+  let adaptiveRmsGate = RMS_SILENCE;
+
+  const GATE_CALIBRATION_FRAMES = 30;     // ~0.5s @ 60fps
+  let gateCalibrationFramesLeft = GATE_CALIBRATION_FRAMES;
+
+  const NOISE_FLOOR_ALPHA = 0.06;         // noise floor EMA rate (quiet frames)
+  const NOISE_FLOOR_ALPHA_FAST = 0.25;    // during calibration
+
+  // iOS: use a more permissive gate
+  const GATE_MULTIPLIER = isIOS() ? 2.0 : 3.0;            // how far above the noise floor counts as "signal"
+  const GATE_OFFSET     = isIOS() ? 0.0015 : 0.003;       // small additive margin
+  const GATE_MIN        = isIOS() ? 0.0030 : 0.006;       // never go below this
+
+  const SILENCE_FRAMES_TO_RESET_FAST = 1;     // fast reset when deep silence
+  const DEEP_SILENCE_FACTOR = 0.45;           // deep silence if rms < 45% of gate
+
+  // iOS: only learn the floor during calibration when actually quiet
+  const IOS_CALIBRATION_QUIET_MAX_RMS = 0.030;
+
+  function resetAdaptiveGate(){
+    noiseFloorRms = 0;
+    noiseFloorPrimed = false;
+    adaptiveRmsGate = RMS_SILENCE;
+    gateCalibrationFramesLeft = GATE_CALIBRATION_FRAMES;
+  }
+
+  function updateAdaptiveGate(rms){
+    // During startup calibration, learn baseline quickly (assumes user is quiet for a moment)
+    if (gateCalibrationFramesLeft > 0) {
+
+      // iOS: don't "learn" the floor unless we're actually quiet
+      if (isIOS() && rms > IOS_CALIBRATION_QUIET_MAX_RMS) {
+        return; // keep calibration frames left unchanged
+      }
+
+      const a = NOISE_FLOOR_ALPHA_FAST;
+
+      if (!noiseFloorPrimed) {
+        noiseFloorRms = rms;
+        noiseFloorPrimed = true;
+      } else {
+        noiseFloorRms = (a * rms) + ((1 - a) * noiseFloorRms);
+      }
+
+      gateCalibrationFramesLeft--;
+    } else {
+      // After calibration: only update the floor when we're near "quiet"
+      // (prevents learning sustained notes as noise).
+      const quietBand = adaptiveRmsGate * 1.15;
+
+      if (rms <= quietBand) {
+        const a = NOISE_FLOOR_ALPHA;
+
+        if (!noiseFloorPrimed) {
+          noiseFloorRms = rms;
+          noiseFloorPrimed = true;
+        } else {
+          noiseFloorRms = (a * rms) + ((1 - a) * noiseFloorRms);
+        }
+      }
+    }
+
+    const floor = noiseFloorPrimed ? noiseFloorRms : rms;
+    adaptiveRmsGate = Math.max(GATE_MIN, (floor * GATE_MULTIPLIER) + GATE_OFFSET);
+  }
+
+  // Needle scale: -/+50 cents
+  const MAX_CENTS_DISPLAY = 50;
+
+  // Stability
+  let pitchHistory = [];
+  const PITCH_HIST_FRAMES = 15;
+  const PITCH_NEED_FRAMES = 8;
+
+  // Reset behavior to avoid "first note jump"
+  let silentFrames = 0;
+  const SILENCE_FRAMES_TO_RESET = 4; // ~100ms at 60fps; tweak 4-10
+  let lastDetectedMidi = null;
+
+  // Requested features:
+  // - Color-shift needle near ±2c (GREEN)
+  // - Auto-centering snap at ±1c (GREEN snap stays)
+  // - Yellow highlight when "close to 0" but not in the green range
+  const NEEDLE_IN_TUNE_CENTS = 3.5;     // <= this => GREEN
+  const NEEDLE_SNAP_CENTS = 1.0;        // <= this => snap to 0
+  const NEEDLE_NEAR_CENTS = 8.0;        // <= this => YELLOW (unless green)
+
+  // Visual-layer exponential smoothing for the needle
+  const NEEDLE_SMOOTH_ALPHA = 0.20; // smaller = smoother/slower, larger = snappier
+  let visualCentsSmoothed = 0;
+  let visualSmoothingPrimed = false;
+
+  // Colors
+  const NEEDLE_COLOR_OUT  = "#ff3e3e";
+  const NEEDLE_COLOR_NEAR = "#ffd34d";  // yellow
+  const NEEDLE_COLOR_IN   = "#28a745";  // green
+
+  // Microphone error handling
+  const micErrorEl = document.getElementById('mic-error');
+
+  function escapeHTML(s){
+    return String(s).replace(/[&<>"']/g, ch => ({
+      "&":"&amp;",
+      "<":"&lt;",
+      ">":"&gt;",
+      '"':"&quot;",
+      "'":"&#39;"
+    }[ch]));
+  }
+
+  function showMicError(html){
+    if (!micErrorEl) return;
+    micErrorEl.innerHTML = html;     // <-- allows <br/> etc.
+    micErrorEl.style.display = "block";
+  }
+
+  function hideMicError(){
+    if (!micErrorEl) return;
+    micErrorEl.innerHTML = "";
+    micErrorEl.style.display = "none";
+  }
+
+  function micErrorMessageFromException(err){
+    const name = (err && err.name) ? err.name : "";
+    const base = "Microphone access failed.";
+
+    if (name === "NotAllowedError" || name === "PermissionDeniedError") {
+      return "Microphone access permission was denied.<br/><br/>Reload the page, click <b>START</b>, and allow microphone access when asked by your browser.";
+    }
+    if (name === "NotFoundError" || name === "DevicesNotFoundError") {
+      return "No microphone was found.<br/><br/>Please connect/select a microphone and try again.";
+    }
+    if (name === "NotReadableError" || name === "TrackStartError") {
+      return "Your microphone is in use by another app or unavailable.<br/><br/>Close other apps using the mic and try again.";
+    }
+    if (name === "OverconstrainedError" || name === "ConstraintNotSatisfiedError") {
+      return "Your browser could not satisfy the microphone constraints.<br/><br/>Try again, or try a different browser/device.";
+    }
+    if (name === "SecurityError") {
+      return "Microphone access is blocked by the browser security policy.<br/><br/>Please open this page via HTTPS and try again.";
+    }
+
+    // Fallback: escape err.message so it can't inject HTML
+    return (err && err.message)
+      ? `${base}<br/>${escapeHTML(err.message)}`
+      : base;
+  }
+
+  // Once started, dim live area when no sound is detected
+  let tunerStarted = false;
+
+  // ---------- Utils ----------
+  function clamp(v, lo, hi){ return Math.max(lo, Math.min(hi, v)); }
+  function median(arr){
+    if (!arr || !arr.length) return null;
+    const s = arr.slice().sort((a,b)=>a-b);
+    return s[Math.floor(s.length/2)];
+  }
+  function rmsOfArray(buf){
+    let sum = 0;
+    for (let i=0;i<buf.length;i++){ const v = buf[i]; sum += v*v; }
+    return Math.sqrt(sum / buf.length);
+  }
+
+  function freqToMidi(freq){ return 12 * (Math.log2(freq / gA4RefHz)) + 69; }
+  function midiToFreq(midi){ return gA4RefHz * Math.pow(2, (midi - 69) / 12); }
+  function centsBetween(fA, fB){ return 1200 * Math.log2(fA / fB); }
+
+  function midiToNoteName(midi){
+    const pc = ((midi % 12) + 12) % 12;
+    const octave = Math.floor(midi / 12) - 1;
+    return NOTES[pc] + octave;
+  }
+  function fmtCentsSigned(c){
+    if (c == null || !isFinite(c)) return "--";
+    const v = Math.round(c * 10) / 10;
+    return (v > 0 ? "+" : "") + v.toFixed(1);
+  }
+
+  // ---------- UI helpers ----------
+  function setDimmed(on){
+    if (!tunerStarted) return;
+    tunerLive.classList.toggle("dimmed", !!on);
+  }
+
+  function setNeedleCents(cents){
+    const c = (cents == null) ? 0 : clamp(cents, -MAX_CENTS_DISPLAY, MAX_CENTS_DISPLAY);
+    const pos = 50 + (c / MAX_CENTS_DISPLAY) * 50;
+    needle.style.left = clamp(pos, 0, 100) + "%";
+  }
+
+  function setNeedleColorByCents(cents){
+    const a = Math.abs(cents || 0);
+
+    if (a <= NEEDLE_IN_TUNE_CENTS) {
+      needle.style.backgroundColor = NEEDLE_COLOR_IN;      // green
+    } else if (a <= NEEDLE_NEAR_CENTS) {
+      needle.style.backgroundColor = NEEDLE_COLOR_NEAR;    // yellow
+    } else {
+      needle.style.backgroundColor = NEEDLE_COLOR_OUT;     // red
+    }
+  }
+
+  function applySnapIfNeeded(cents){
+    if (!isFinite(cents)) return cents;
+    return (Math.abs(cents) <= NEEDLE_SNAP_CENTS) ? 0 : cents;
+  }
+
+  function resetNeedleSmoothing(){
+    visualSmoothingPrimed = false;
+  }
+
+  function applyVisualNeedleSmoothing(cents){
+    if (!isFinite(cents)) return cents;
+
+    // clamp before smoothing so the smoother doesn't chase out-of-range values
+    const target = clamp(cents, -MAX_CENTS_DISPLAY, MAX_CENTS_DISPLAY);
+
+    if (!visualSmoothingPrimed){
+      visualCentsSmoothed = target;
+      visualSmoothingPrimed = true;
+      return target;
+    }
+
+    visualCentsSmoothed = (NEEDLE_SMOOTH_ALPHA * target) + ((1 - NEEDLE_SMOOTH_ALPHA) * visualCentsSmoothed);
+    return visualCentsSmoothed;
+  }
+
+  function clearDisplay(){
+    noteEl.innerText = "--";
+    deltaEl.innerHTML = "-- cents";
+    setNeedleCents(0);
+    setNeedleColorByCents(0);
+
+    // also clear state that affects first-frame behavior
+    pitchHistory = [];
+    lastDetectedMidi = null;
+    silentFrames = 0;
+    resetNeedleSmoothing();
+
+    resetAdaptiveGate();
+  }
+
+  // ---------- YIN Pitch ----------
+  function yinPitch(buffer, sampleRate, minFreq, maxFreq, threshold) {
+    const halfSize = Math.floor(buffer.length / 2);
+
+    const minTau = Math.floor(sampleRate / maxFreq);
+    const maxTau = Math.floor(sampleRate / minFreq);
+    if (maxTau >= halfSize) return null;
+
+    const d = new Float32Array(maxTau + 1);
+    for (let tau = 1; tau <= maxTau; tau++) {
+      let sum = 0;
+      for (let i = 0; i < halfSize; i++) {
+        const delta = buffer[i] - buffer[i + tau];
+        sum += delta * delta;
+      }
+      d[tau] = sum;
+    }
+
+    const cmnd = new Float32Array(maxTau + 1);
+    cmnd[0] = 1;
+    let runningSum = 0;
+    for (let tau = 1; tau <= maxTau; tau++) {
+      runningSum += d[tau];
+      cmnd[tau] = d[tau] * tau / (runningSum || 1e-12);
+    }
+
+    let tauEstimate = -1;
+    for (let tau = Math.max(2, minTau); tau <= maxTau; tau++) {
+      if (cmnd[tau] < threshold && cmnd[tau] < cmnd[tau - 1]) {
+        while (tau + 1 <= maxTau && cmnd[tau + 1] < cmnd[tau]) tau++;
+        tauEstimate = tau;
+        break;
+      }
+    }
+    if (tauEstimate === -1) return null;
+
+    const probability = 1 - cmnd[tauEstimate];
+    if (probability < 0.75) return null;
+
+    const x0 = tauEstimate > 1 ? tauEstimate - 1 : tauEstimate;
+    const x2 = tauEstimate + 1 <= maxTau ? tauEstimate + 1 : tauEstimate;
+    const s0 = cmnd[x0], s1 = cmnd[tauEstimate], s2 = cmnd[x2];
+
+    const denom = (2 * s1 - s2 - s0);
+    let betterTau = tauEstimate;
+    if (Math.abs(denom) > 1e-12) {
+      const delta = (s2 - s0) / (2 * denom);
+      betterTau = tauEstimate + delta;
+    }
+
+    const freq = sampleRate / betterTau;
+    if (!(freq > 0) || freq < minFreq || freq > maxFreq) return null;
+
+    return { freq, probability };
+  }
+
+  // ---------- Main tick ----------
+  function tick(){
+    if (!audioCtx || !analyserPitch) {
+      requestAnimationFrame(tick);
+      return;
+    }
+
+    analyserPitch.getFloatTimeDomainData(timeDataPitch);
+    const rms = rmsOfArray(timeDataPitch);
+
+    updateAdaptiveGate(rms);
+
+    //console.log("gate: "+adaptiveRmsGate);
+
+    if (rms < adaptiveRmsGate){
+      setDimmed(true);
+
+      // Deep silence => reset faster so the next note attack isn't missed
+      const isDeepSilence = (rms < (adaptiveRmsGate * DEEP_SILENCE_FACTOR));
+
+      silentFrames++;
+
+      const framesNeeded = isDeepSilence ? SILENCE_FRAMES_TO_RESET_FAST : SILENCE_FRAMES_TO_RESET;
+
+      // IMPORTANT: fire once (do NOT use >= here) or you'll keep resetting every frame
+      if (silentFrames === framesNeeded) {
+        pitchHistory = [];
+        lastDetectedMidi = null;
+        resetNeedleSmoothing();
+
+        // iOS: keep the learned floor; full resets can make the gate "forget" and miss quiet attacks
+        if (!isIOS()) {
+          resetAdaptiveGate();
+        }
+      }
+
+      ensureAudioContextRunning();
+      requestAnimationFrame(tick);
+      return;
+    }
+
+    // sound present
+    silentFrames = 0;
+    setDimmed(false);
+
+    const yin = yinPitch(timeDataPitch, audioCtx.sampleRate, 55, 2000, 0.12);
+
+    if (yin && yin.freq){
+      // Determine current midi early so we can detect note changes
+      const midiFloatNow = freqToMidi(yin.freq);
+      const midiNow = Math.round(midiFloatNow);
+
+      // If the detected MIDI note changes, reset history so we don't "blend" notes
+      if (lastDetectedMidi !== null && midiNow !== lastDetectedMidi) {
+        pitchHistory = [];
+        resetNeedleSmoothing();
+      }
+      lastDetectedMidi = midiNow;
+
+      pitchHistory.push(yin.freq);
+      while (pitchHistory.length > PITCH_HIST_FRAMES) pitchHistory.shift();
+
+      if (pitchHistory.length >= PITCH_NEED_FRAMES){
+        const f0 = median(pitchHistory);
+
+        if (f0 && isFinite(f0) && f0 > 0){
+          const midiFloat = freqToMidi(f0);
+          const midi = Math.round(midiFloat);
+          const note = midiToNoteName(midi);
+          const ideal = midiToFreq(midi);
+
+          let cents = centsBetween(f0, ideal);
+
+          // keep same snap behavior (<= ±1c snaps to 0)
+          cents = applySnapIfNeeded(cents);
+
+          noteEl.innerText = note;
+          deltaEl.innerHTML = `${fmtCentsSigned(cents)} cents`;
+
+          // exponential smoothing at the visual layer (needle only)
+          const visualCents = applyVisualNeedleSmoothing(cents);
+
+          setNeedleCents(visualCents);
+          setNeedleColorByCents(cents); // color based on the real (snapped) cents, not smoothed
+        }
+      }
+    }
+
+    ensureAudioContextRunning();
+    requestAnimationFrame(tick);
+  }
+
+  // ---------- Start ----------
+  async function startAudio(){
+    
+    hideMicError();
+
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    await ensureAudioContextRunning();
+
+    const stream = await navigator.mediaDevices.getUserMedia({
+      audio: {
+        autoGainControl: false,
+        echoCancellation: false,
+        noiseSuppression: false
+      }
+    });
+    await ensureAudioContextRunning();
+
+    const track = stream.getAudioTracks()[0];
+    if (track && track.applyConstraints) {
+      try {
+        await track.applyConstraints({
+          autoGainControl: false,
+          echoCancellation: false,
+          noiseSuppression: false
+        });
+      } catch (e) { /* ignore */ }
+    }
+
+    streamSource = audioCtx.createMediaStreamSource(stream);
+
+    analyserPitch = audioCtx.createAnalyser();
+    analyserPitch.fftSize = PITCH_FFT_SIZE;
+    timeDataPitch = new Float32Array(analyserPitch.fftSize);
+
+    if (isIOS()) {
+      inputGainNode = audioCtx.createGain();
+      inputGainNode.gain.value = IOS_INPUT_GAIN;
+
+      iosCompressorNode = audioCtx.createDynamicsCompressor();
+      iosCompressorNode.threshold.value = -48;
+      iosCompressorNode.knee.value = 30;
+      iosCompressorNode.ratio.value = 12;
+      iosCompressorNode.attack.value = 0.003;
+      iosCompressorNode.release.value = 0.25;
+
+      streamSource.connect(inputGainNode);
+      inputGainNode.connect(iosCompressorNode);
+      iosCompressorNode.connect(analyserPitch);
+    } else {
+      streamSource.connect(analyserPitch);
+    }
+
+    const silentGain = audioCtx.createGain();
+    silentGain.gain.value = 0;
+    analyserPitch.connect(silentGain);
+    silentGain.connect(audioCtx.destination);
+
+    clearDisplay();
+
+    tunerStarted = true;
+    setDimmed(true);
+
+    requestAnimationFrame(tick);
+  }
+
+  document.getElementById('start-btn').onclick = async () => {
+    try{
+      const btn = document.getElementById('start-btn');
+      btn.disabled = true;
+      btn.innerText = "STARTING…";
+      await startAudio();
+      btn.style.display = "none";
+    }catch(err){
+      console.error(err);
+
+      showMicError(micErrorMessageFromException(err));
+
+      const btn = document.getElementById('start-btn');
+      btn.disabled = false;
+      btn.innerText = "START";
+      tunerStarted = false;
+      setDimmed(false);
+    }
+  };
+
+  // A4 reference
+  const a4RefSelect = document.getElementById('a4ref');
+  if (a4RefSelect) {
+    gA4RefHz = parseFloat(a4RefSelect.value) || 440;
+
+    a4RefSelect.addEventListener('change', () => {
+      gA4RefHz = parseFloat(a4RefSelect.value) || 440;
+
+      // changing reference should reset any running history/smoothing
+      pitchHistory = [];
+      lastDetectedMidi = null;
+      silentFrames = 0;
+      resetNeedleSmoothing();
+      clearDisplay();
+    });
+  }
+
+  // iOS/Safari resume
+  function addIOSResumeGestures() {
+    const handler = async () => {
+      if (audioCtx) await ensureAudioContextRunning();
+    };
+    window.addEventListener("touchstart", handler, { passive: true });
+    window.addEventListener("mousedown", handler, { passive: true });
+    window.addEventListener("keydown", handler, { passive: true });
+
+    document.addEventListener("visibilitychange", () => {
+      if (!document.hidden && audioCtx) ensureAudioContextRunning();
+    });
+  }
+  if (isIOS()){
+    addIOSResumeGestures();
+  }
+
+  clearDisplay();
+</script>
+</body>
+</html>
