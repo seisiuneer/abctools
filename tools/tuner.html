@@ -513,6 +513,8 @@
   const GATE_MULTIPLIER = 3.0;            // how far above the noise floor counts as "signal"
   const GATE_OFFSET = 0.003;              // small additive margin
   const GATE_MIN = 0.006;                 // never go below this
+  const SILENCE_FRAMES_TO_RESET_FAST = 1;     // fast reset when deep silence
+  const DEEP_SILENCE_FACTOR = 0.45;           // deep silence if rms < 45% of gate
 
   function resetAdaptiveGate(){
     noiseFloorRms = 0;
@@ -805,9 +807,15 @@
     if (rms < adaptiveRmsGate){
       setDimmed(true);
 
-      // count silent frames; once it’s "really silent", purge history so new note starts clean
+      // Deep silence => reset faster so the next note attack isn't missed
+      const isDeepSilence = (rms < (adaptiveRmsGate * DEEP_SILENCE_FACTOR));
+
       silentFrames++;
-      if (silentFrames === SILENCE_FRAMES_TO_RESET) {
+
+      const framesNeeded = isDeepSilence ? SILENCE_FRAMES_TO_RESET_FAST : SILENCE_FRAMES_TO_RESET;
+
+      // IMPORTANT: fire once (do NOT use >= here) or you'll keep resetting every frame
+      if (silentFrames === framesNeeded) {
         pitchHistory = [];
         lastDetectedMidi = null;
         resetNeedleSmoothing();
