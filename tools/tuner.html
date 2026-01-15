@@ -436,6 +436,10 @@
 
   /* iOS-only input gain to address low mic levels on iOS */
   let inputGainNode = null;
+
+  /* iOS-only compressor to lift quiet sustained tones */
+  let iosCompressorNode = null;
+
   function isIOS(){
     const ua = navigator.userAgent || "";
     const iOSUA = /iPad|iPhone|iPod/.test(ua);
@@ -510,11 +514,17 @@
 
   const NOISE_FLOOR_ALPHA = 0.06;         // noise floor EMA rate (quiet frames)
   const NOISE_FLOOR_ALPHA_FAST = 0.25;    // during calibration
-  const GATE_MULTIPLIER = 3.0;            // how far above the noise floor counts as "signal"
-  const GATE_OFFSET = 0.003;              // small additive margin
-  const GATE_MIN = 0.006;                 // never go below this
+
+  // iOS: use a more permissive gate
+  const GATE_MULTIPLIER = isIOS() ? 2.0 : 3.0;            // how far above the noise floor counts as "signal"
+  const GATE_OFFSET     = isIOS() ? 0.0015 : 0.003;       // small additive margin
+  const GATE_MIN        = isIOS() ? 0.0030 : 0.006;       // never go below this
+
   const SILENCE_FRAMES_TO_RESET_FAST = 1;     // fast reset when deep silence
   const DEEP_SILENCE_FACTOR = 0.45;           // deep silence if rms < 45% of gate
+
+  // iOS: only learn the floor during calibration when actually quiet
+  const IOS_CALIBRATION_QUIET_MAX_RMS = 0.030;
 
   function resetAdaptiveGate(){
     noiseFloorRms = 0;
@@ -526,6 +536,12 @@
   function updateAdaptiveGate(rms){
     // During startup calibration, learn baseline quickly (assumes user is quiet for a moment)
     if (gateCalibrationFramesLeft > 0) {
+
+      // iOS: don't "learn" the floor unless we're actually quiet
+      if (isIOS() && rms > IOS_CALIBRATION_QUIET_MAX_RMS) {
+        return; // keep calibration frames left unchanged
+      }
+
       const a = NOISE_FLOOR_ALPHA_FAST;
 
       if (!noiseFloorPrimed) {
@@ -819,7 +835,11 @@
         pitchHistory = [];
         lastDetectedMidi = null;
         resetNeedleSmoothing();
-        resetAdaptiveGate();
+
+        // iOS: keep the learned floor; full resets can make the gate "forget" and miss quiet attacks
+        if (!isIOS()) {
+          resetAdaptiveGate();
+        }
       }
 
       ensureAudioContextRunning();
@@ -915,8 +935,17 @@
     if (isIOS()) {
       inputGainNode = audioCtx.createGain();
       inputGainNode.gain.value = IOS_INPUT_GAIN;
+
+      iosCompressorNode = audioCtx.createDynamicsCompressor();
+      iosCompressorNode.threshold.value = -48;
+      iosCompressorNode.knee.value = 30;
+      iosCompressorNode.ratio.value = 12;
+      iosCompressorNode.attack.value = 0.003;
+      iosCompressorNode.release.value = 0.25;
+
       streamSource.connect(inputGainNode);
-      inputGainNode.connect(analyserPitch);
+      inputGainNode.connect(iosCompressorNode);
+      iosCompressorNode.connect(analyserPitch);
     } else {
       streamSource.connect(analyserPitch);
     }
