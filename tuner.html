@@ -202,10 +202,10 @@
       transition-duration: 550ms, 550ms; /* opacity, filter */
     }
 
-    /* Two dropdowns side-by-side; stacked on mobile */
+    /* Three dropdowns side-by-side; stacked on mobile */
     .row{
       display:grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: 1fr 1fr 1fr;
       gap:12px;
       margin:10px 0 10px;
       align-items:start;
@@ -259,6 +259,74 @@
       overflow:hidden;
     }
 
+    /* Strobe layer (hidden unless strobe mode) */
+    #strobe-layer{
+      position:absolute;
+      inset:0;
+      display:none;
+      z-index:1;
+      overflow:hidden;
+      pointer-events:none;
+      opacity:0.95;
+
+      /* subtle dark base like the reference */
+      background:#050a2a;
+
+      /* soft edge shading */
+      box-shadow: inset 0 0 18px rgba(0,0,0,0.55);
+    }
+
+    /* Initially dim strobe before audio is started */
+    body.not-started #strobe-layer{
+      opacity:0.25;
+      filter:saturate(0.85);
+    }
+
+    /* Horizontal-style strobe look:
+       - vertical cyan/navy stripes (like a rotated version of the far-right bar)
+       - hard edges (no blur)
+       - slight “gloss” overlay to match the app-like feel */
+    #strobe-pattern{
+      position:absolute;
+      inset:-40px;
+      will-change: background-position;
+
+      --strobe-cyan: #21c7ff;
+      --strobe-navy: #07104a;
+
+      /* one 32px “tile”: 16px navy + 16px cyan (wider segments) */
+      background-image:
+        linear-gradient(
+          90deg,
+          var(--strobe-navy) 0px,
+          var(--strobe-navy) 16px,
+          var(--strobe-cyan) 16px,
+          var(--strobe-cyan) 32px
+        ),
+        linear-gradient(
+          180deg,
+          rgba(255,255,255,0.10) 0%,
+          rgba(255,255,255,0.03) 18%,
+          rgba(0,0,0,0.10) 55%,
+          rgba(0,0,0,0.18) 100%
+        );
+
+      background-repeat: repeat, no-repeat;
+      background-size: 32px 100%, 100% 100%;
+      background-position: 0px 0px, 0px 0px;
+    }
+
+    /* Center reference line for strobe mode */
+    #strobe-center{
+      position:absolute;
+      left:50%;
+      top:0;
+      height:100%;
+      width:2px;
+      background:var(--accent);
+      opacity:0.30;
+    }
+
     #needle{
       width:3px;
       height:100%;
@@ -270,6 +338,14 @@
       z-index:2;
     }
 
+    /* Additionally dim the whole needle area (meter + labels) before START, but only in needle mode */
+    body.not-started.mode-needle .meter-box{
+      opacity:0.25;
+    }
+    body.not-started.mode-needle .meter-labels{
+      opacity:0.25;
+    }
+
     .center-mark{
       position:absolute;
       left:50%;
@@ -277,6 +353,7 @@
       height:100%;
       background:var(--accent);
       opacity:.55;
+      z-index:1;
     }
 
     .edge-mark{
@@ -286,6 +363,7 @@
       width:1px;
       background:#444;
       opacity:0.9;
+      z-index:1;
     }
     .edge-left{ left:0%; }
     .edge-right{ left:100%; }
@@ -297,6 +375,7 @@
       width:1px;
       background:#2b2b2b;
       opacity:0.8;
+      z-index:1;
     }
 
     .meter-labels{
@@ -308,6 +387,13 @@
       margin-top:8px;
       padding:0 2px;
     }
+
+    /* Hide needle reference marks/labels when in strobe mode */
+    body.mode-strobe .meter-labels{ display:none !important; }
+    body.mode-strobe .center-mark,
+    body.mode-strobe .edge-mark,
+    body.mode-strobe .tick-mark{ display:none !important; }
+    body.mode-strobe #strobe-center{ display:none !important; }
 
     /* Mic / permission error banner */
     #mic-error{
@@ -323,7 +409,7 @@
       background: #3a0f12;
       border: 1px solid #7a2b30;
       box-shadow: 0 10px 24px rgba(0,0,0,0.35);
-      grid-column: 1 / -1; /* allow banner to span both columns if it ends up in the grid */
+      grid-column: 1 / -1; /* allow banner to span all columns if it ends up in the grid */
     }
 
     button{
@@ -409,7 +495,7 @@
           First, I recommend that you adjust your system's microphone level settings.<br/><br/>
           You can also reduce/boost the microphone signal level from within the tool using the options on the <b>Input level adjustment</b> dropdown.<br/><br/>
           On Windows systems, you may need to also disable any automatic microphone noise reduction being done by the system audio drivers.<br/><br/>
-          To the noise reduction system, continous tones may be mistaken for background noise (fans, AC hum, etc.) and filtered out.<br/><br/>
+          To the noise reduction system, continuous tones may be mistaken for background noise (fans, AC hum, etc.) and filtered out.<br/><br/>
           Open the Windows settings and search for Microphone settings, make any required changes to the settings, then reload the tuner tab in the browser.
           <br/><br/>
         </div>
@@ -422,6 +508,16 @@
     </h1>
 
     <div class="row">
+
+      <div>
+        <label for="displaymode">&nbsp;&nbsp;Display mode</label>
+        <div class="select-wrap">
+          <select id="displaymode">
+            <option value="needle" selected>Needle</option>
+            <option value="strobe">Strobe</option>
+          </select>
+        </div>
+      </div>
 
       <div>
         <label for="a4ref">&nbsp;&nbsp;A4 reference (Hz)</label>
@@ -444,7 +540,7 @@
         <label for="inputboost">&nbsp;&nbsp;Input level adjustment</label>
         <div class="select-wrap">
           <select id="inputboost">
-            <option value="0.125">-18 dB</option>            
+            <option value="0.125">-18 dB</option>
             <option value="0.25">-12 dB</option>
             <option value="0.5">-6 dB</option>
             <option value="0.7079">-3 dB</option>
@@ -467,7 +563,13 @@
       <div id="note" class="note-display">--</div>
       <div id="freq" class="freq-display">-- cents</div>
 
-      <div class="meter-box" title="Needle shows cents relative to equal temperament (ET). Range: -50 to +50 cents.">
+      <div class="meter-box" title="In Needle mode shows cents relative to equal temperament (ET). Range: -50 to +50 cents.&nbsp;&nbsp;In Strobe mode, stripes moves left if note is flat, right if sharp.&nbsp;&nbsp;Strobe stops when note is in tune.">
+        <!-- Strobe overlay (only visible in strobe mode) -->
+        <div id="strobe-layer" aria-hidden="true">
+          <div id="strobe-pattern"></div>
+          <div id="strobe-center"></div>
+        </div>
+
         <div class="center-mark"></div>
 
         <div class="edge-mark edge-left"></div>
@@ -501,6 +603,7 @@
   // ---------- LocalStorage keys ----------
   const LS_KEY_A4REF = "abctools_tuner_a4ref_hz";
   const LS_KEY_BOOST = "abctools_tuner_input_boost_v2";
+  const LS_KEY_MODE  = "abctools_tuner_display_mode_v1";
 
   // ---------- Audio nodes ----------
   let audioCtx = null;
@@ -534,11 +637,101 @@
     } catch (e) { /* ignore */ }
   }
 
+  // ---------- Utils ----------
+  function clamp(v, lo, hi){ return Math.max(lo, Math.min(hi, v)); }
+  function median(arr){
+    if (!arr || !arr.length) return null;
+    const s = arr.slice().sort((a,b)=>a-b);
+    return s[Math.floor(s.length/2)];
+  }
+  function rmsOfArray(buf){
+    let sum = 0;
+    for (let i=0;i<buf.length;i++){ const v = buf[i]; sum += v*v; }
+    return Math.sqrt(sum / buf.length);
+  }
+
+  function freqToMidi(freq){ return 12 * (Math.log2(freq / gA4RefHz)) + 69; }
+  function midiToFreq(midi){ return gA4RefHz * Math.pow(2, (midi - 69) / 12); }
+  function centsBetween(fA, fB){ return 1200 * Math.log2(fA / fB); }
+
+  function midiToNoteName(midi){
+    const pc = ((midi % 12) + 12) % 12;
+    const octave = Math.floor(midi / 12) - 1;
+    return NOTES[pc] + octave;
+  }
+  function fmtCentsSigned(c){
+    if (c == null || !isFinite(c)) return "--";
+    const v = Math.round(c * 10) / 10;
+    return (v > 0 ? "+" : "") + v.toFixed(1);
+  }
+
   // ---------- UI ----------
   const tunerLive = document.getElementById('tuner-live');
   const needle = document.getElementById('needle');
   const noteEl = document.getElementById('note');
   const deltaEl = document.getElementById('freq');
+
+  // Strobe UI
+  const strobeLayer = document.getElementById('strobe-layer');
+  const strobePattern = document.getElementById('strobe-pattern');
+  let gDisplayMode = "needle";
+
+  // Strobe state
+  let strobePhasePx = 0;
+  let strobeLastT = performance.now();
+  const STROBE_PX_PER_CENT = 7.0;     // tuning feel; px/sec per cent
+  const STROBE_MAX_PX_PER_SEC = 420;  // clamp to prevent extreme blur
+
+  function resetStrobe(){
+    strobePhasePx = 0;
+    strobeLastT = performance.now();
+    if (strobePattern) strobePattern.style.backgroundPosition = "0px 0px";
+  }
+
+  function setBodyModeClasses(){
+    document.body.classList.toggle("mode-strobe", gDisplayMode === "strobe");
+    document.body.classList.toggle("mode-needle", gDisplayMode !== "strobe");
+  }
+
+  function applyDisplayModeFromUI(){
+    const sel = document.getElementById("displaymode");
+    if (!sel) return;
+    const v = String(sel.value || "needle");
+    gDisplayMode = (v === "strobe") ? "strobe" : "needle";
+
+    setBodyModeClasses();
+
+    if (strobeLayer){
+      strobeLayer.style.display = (gDisplayMode === "strobe") ? "block" : "none";
+      strobeLayer.setAttribute("aria-hidden", (gDisplayMode === "strobe") ? "false" : "true");
+    }
+    if (needle){
+      needle.style.display = (gDisplayMode === "strobe") ? "none" : "block";
+    }
+    resetStrobe();
+  }
+
+  function updateStrobe(detuneCents){
+    if (gDisplayMode !== "strobe") return;
+    if (!strobePattern) return;
+
+    const now = performance.now();
+    const dt = Math.max(0, Math.min(0.06, (now - strobeLastT) / 1000)); // clamp dt
+    strobeLastT = now;
+
+    // Move pattern proportional to detune; sign indicates direction
+    let pxPerSec = (detuneCents || 0) * STROBE_PX_PER_CENT;
+    pxPerSec = clamp(pxPerSec, -STROBE_MAX_PX_PER_SEC, STROBE_MAX_PX_PER_SEC);
+
+    strobePhasePx += pxPerSec * dt;
+
+    // Keep numbers bounded
+    if (strobePhasePx > 100000) strobePhasePx -= 100000;
+    if (strobePhasePx < -100000) strobePhasePx += 100000;
+
+    const px = Math.round(strobePhasePx);
+    strobePattern.style.backgroundPosition = `${px}px 0, 0 0`;
+  }
 
   // Small level meter
   const levelMeterFill = document.getElementById('level-meter-fill');
@@ -738,33 +931,6 @@
   // Once started, dim live area when no sound is detected
   let tunerStarted = false;
 
-  // ---------- Utils ----------
-  function clamp(v, lo, hi){ return Math.max(lo, Math.min(hi, v)); }
-  function median(arr){
-    if (!arr || !arr.length) return null;
-    const s = arr.slice().sort((a,b)=>a-b);
-    return s[Math.floor(s.length/2)];
-  }
-  function rmsOfArray(buf){
-    let sum = 0;
-    for (let i=0;i<buf.length;i++){ const v = buf[i]; sum += v*v; }
-    return Math.sqrt(sum / buf.length);
-  }
-
-  function freqToMidi(freq){ return 12 * (Math.log2(freq / gA4RefHz)) + 69; }
-  function midiToFreq(midi){ return gA4RefHz * Math.pow(2, (midi - 69) / 12); }
-  function centsBetween(fA, fB){ return 1200 * Math.log2(fA / fB); }
-
-  function midiToNoteName(midi){
-    const pc = ((midi % 12) + 12) % 12;
-    const octave = Math.floor(midi / 12) - 1;
-    return NOTES[pc] + octave;
-  }
-  function fmtCentsSigned(c){
-    if (c == null || !isFinite(c)) return "--";
-    const v = Math.round(c * 10) / 10;
-    return (v > 0 ? "+" : "") + v.toFixed(1);
-  }
 
   // ---------- UI helpers ----------
   function setDimmed(on){
@@ -829,6 +995,8 @@
 
     levelMeterSmoothed = 0;
     setLevelMeter01(0);
+
+    resetStrobe();
   }
 
   // ---------- Gain helper ----------
@@ -846,8 +1014,14 @@
   // ---------- LocalStorage save/restore ----------
   function restoreSettingsFromLocalStorage(){
     try{
+      const mode = localStorage.getItem(LS_KEY_MODE);
       const a4 = localStorage.getItem(LS_KEY_A4REF);
       const boost = localStorage.getItem(LS_KEY_BOOST);
+
+      const modeSel = document.getElementById("displaymode");
+      if (modeSel && mode && modeSel.querySelector(`option[value="${CSS.escape(mode)}"]`)) {
+        modeSel.value = mode;
+      }
 
       const a4Sel = document.getElementById("a4ref");
       if (a4Sel && a4 && a4Sel.querySelector(`option[value="${CSS.escape(a4)}"]`)) {
@@ -865,8 +1039,10 @@
 
   function saveSettingsToLocalStorage(){
     try{
+      const modeSel = document.getElementById("displaymode");
       const a4Sel = document.getElementById("a4ref");
       const boostSel = document.getElementById("inputboost");
+      if (modeSel) localStorage.setItem(LS_KEY_MODE, String(modeSel.value));
       if (a4Sel) localStorage.setItem(LS_KEY_A4REF, String(a4Sel.value));
       if (boostSel) localStorage.setItem(LS_KEY_BOOST, String(boostSel.value));
     } catch(e){
@@ -947,6 +1123,9 @@
     if (rms < adaptiveRmsGate){
       setDimmed(true);
 
+      // Freeze strobe naturally (no updates while gated)
+      strobeLastT = performance.now();
+
       const isDeepSilence = (rms < (adaptiveRmsGate * DEEP_SILENCE_FACTOR));
 
       silentFrames++;
@@ -957,6 +1136,7 @@
         pitchHistory = [];
         lastDetectedMidi = null;
         resetNeedleSmoothing();
+        resetStrobe();
 
         if (!isIOS()) {
           resetAdaptiveGate();
@@ -980,6 +1160,7 @@
       if (lastDetectedMidi !== null && midiNow !== lastDetectedMidi) {
         pitchHistory = [];
         resetNeedleSmoothing();
+        resetStrobe();
       }
       lastDetectedMidi = midiNow;
 
@@ -995,14 +1176,22 @@
           const note = midiToNoteName(midi);
           const ideal = midiToFreq(midi);
 
-          let cents = centsBetween(f0, ideal);
-          cents = applySnapIfNeeded(cents);
+          // raw cents for strobe motion
+          const centsRaw = centsBetween(f0, ideal);
+
+          // snapped cents for display + needle behavior
+          let cents = applySnapIfNeeded(centsRaw);
 
           noteEl.innerText = note;
           deltaEl.innerHTML = `${fmtCentsSigned(cents)} cents`;
 
-          const visualCents = applyVisualNeedleSmoothing(cents);
+          // Strobe motion (use raw, not snapped, so it never "sticks" incorrectly)
+          const STROBE_STOP_CENTS = 1.0;
+          const centsForStrobe = (Math.abs(centsRaw) <= STROBE_STOP_CENTS) ? 0 : centsRaw;
+          updateStrobe(centsForStrobe);
 
+          // Needle visuals only when needle mode (needle hidden in strobe mode)
+          const visualCents = applyVisualNeedleSmoothing(cents);
           setNeedleCents(visualCents);
           setNeedleColorByCents(cents);
         }
@@ -1017,8 +1206,9 @@
   async function startAudio(){
     hideMicError();
 
-    // ensure current dropdown value is applied
+    // ensure current dropdown values are applied
     setUserBoostGainFromUI();
+    applyDisplayModeFromUI();
 
     audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     await ensureAudioContextRunning();
@@ -1080,6 +1270,7 @@
     clearDisplay();
 
     tunerStarted = true;
+    document.body.classList.remove("not-started");
     setDimmed(true);
 
     requestAnimationFrame(tick);
@@ -1105,6 +1296,16 @@
     }
   };
 
+  // Display mode dropdown
+  const displayModeSelect = document.getElementById('displaymode');
+  if (displayModeSelect) {
+    displayModeSelect.addEventListener('change', () => {
+      applyDisplayModeFromUI();
+      saveSettingsToLocalStorage();
+      // no other state changes
+    });
+  }
+
   // A4 reference
   const a4RefSelect = document.getElementById('a4ref');
   if (a4RefSelect) {
@@ -1119,6 +1320,7 @@
       lastDetectedMidi = null;
       silentFrames = 0;
       resetNeedleSmoothing();
+      resetStrobe();
       clearDisplay();
     });
   }
@@ -1137,11 +1339,15 @@
   // Restore saved settings before initial wiring applies values
   restoreSettingsFromLocalStorage();
 
+  // Initial state: before START, allow strobe to be visible (if selected) but dim it
+  document.body.classList.add("not-started");
+
   // Apply restored values to runtime vars immediately
   if (a4RefSelect){
     gA4RefHz = parseFloat(a4RefSelect.value) || 440;
   }
   setUserBoostGainFromUI();
+  applyDisplayModeFromUI();
 
   // iOS/Safari resume
   function addIOSResumeGestures() {
