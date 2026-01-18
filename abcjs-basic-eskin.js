@@ -2568,7 +2568,7 @@ var Tune = function Tune() {
             var voice = lines[i].staff[j].voices[v];
             var tripletMultiplier = 1;
             for (var el = 0; el < voice.length; el++) {
-              var isSpacer = voice[el].rest && voice[el].rest.type === "spacer";
+              var isSpacer = voice[el].rest && (voice[el].rest.type === "spacer" || voice[el].rest.type === "spacer_zero");
               if (voice[el].startTriplet) tripletMultiplier = voice[el].tripletMultiplier;
               if (voice[el].duration && !isSpacer && voice[el].el_type !== "tempo") pickupLength += voice[el].duration * tripletMultiplier;
               if (voice[el].endTriplet) tripletMultiplier = 1;
@@ -2729,7 +2729,7 @@ var Tune = function Tune() {
       duration: 0
     };
     var realDuration = element.durationClass ? element.durationClass : element.duration;
-    if (element.abcelem.rest && element.abcelem.rest.type === "spacer") realDuration = 0;
+    if (element.abcelem.rest && (element.abcelem.rest.type === "spacer" || element.abcelem.rest.type === "spacer_zero")) realDuration = 0;
     if (realDuration > 0) {
       var es = [];
       // If there is an invisible rest, then there are not elements, so don't push a null one.
@@ -8390,7 +8390,7 @@ var isInTie = function isInTie(multilineVars, overlayLevel, el) {
   // If this is single voice music then the voice index isn't set, so we use the first voice.
   var voiceIndex = multilineVars.currentVoice ? multilineVars.currentVoice.staffNum * 100 + multilineVars.currentVoice.index : 0;
   if (multilineVars.inTie[overlayLevel][voiceIndex]) {
-    if (el.pitches !== undefined || el.rest.type !== 'spacer') return true;
+    if (el.pitches !== undefined || (el.rest.type !== 'spacer' && el.rest.type !== 'spacer_zero')) return true;
   }
   return false;
 };
@@ -8598,6 +8598,15 @@ MusicParser.prototype.parseMusic = function (line) {
           i += ret.consumed;
         }
 
+        // MAE 17 Jan 2026 - 'Y' is treated as a *marker* only:
+        // If present between a grace-note group and the following note, it suppresses the grace slur.
+        // It is otherwise ignored (no spacing, no duration, no playback effect).
+        if (line[i] === 'Y') {
+          el.suppressGraceSlur = true;
+          i += 1;
+          continue;
+        }
+
         // handle chords.
         if (line[i] === '[') {
           var chordStartChar = i;
@@ -8661,7 +8670,7 @@ MusicParser.prototype.parseMusic = function (line) {
                   });
                   setIsInTie(multilineVars, overlayLevel, false);
                 }
-                if (tripletNotesLeft > 0 && !(el.rest && el.rest.type === "spacer")) {
+                if (tripletNotesLeft > 0 && !(el.rest && (el.rest.type === "spacer" || el.rest.type === "spacer_zero"))) {
                   tripletNotesLeft--;
                   if (tripletNotesLeft === 0) {
                     el.endTriplet = true;
@@ -8775,14 +8784,14 @@ MusicParser.prototype.parseMusic = function (line) {
             if (isInTie(multilineVars, overlayLevel, el)) {
               if (el.pitches !== undefined) {
                 el.pitches[0].endTie = true;
-              } else if (el.rest.type !== 'spacer') {
+              } else if ((el.rest.type !== 'spacer' && el.rest.type !== 'spacer_zero')) {
                 el.rest.endTie = true;
               }
               setIsInTie(multilineVars, overlayLevel, false);
             }
             if (core.startTie || el.startTie) setIsInTie(multilineVars, overlayLevel, true);
             i = core.endChar;
-            if (tripletNotesLeft > 0 && !(core.rest && core.rest.type === "spacer")) {
+            if (tripletNotesLeft > 0 && !(core.rest && (core.rest.type === "spacer" || core.rest.type === "spacer_zero"))) {
               tripletNotesLeft--;
               if (tripletNotesLeft === 0) {
                 el.endTriplet = true;
@@ -8802,7 +8811,7 @@ MusicParser.prototype.parseMusic = function (line) {
             // Only durations less than a whole note are tested because whole note durations have some tricky rules.
 
             if (el.duration < 1 && durations.indexOf(el.duration) === -1 && el.duration !== 0) {
-              if (!el.rest || el.rest.type !== 'spacer') warn("Duration not representable: " + line.substring(startI, i), line, i);
+              if (!el.rest || (el.rest.type !== 'spacer' && el.rest.type !== 'spacer_zero')) warn("Duration not representable: " + line.substring(startI, i), line, i);
             }
             multilineVars.addFormattingOptions(el, tune.formatting, 'note');
             tuneBuilder.appendElement('note', startOfLine + startI, startOfLine + i, el);
@@ -9380,6 +9389,7 @@ var getCoreNote = function getCoreNote(line, index, el, canHaveBrokenRhythm) {
       case 'x':
       case 'X':
       case 'y':
+      case 'Y':
       case 'z':
       case 'Z':
         if (state === 'startSlur') {
@@ -9561,7 +9571,7 @@ module.exports.volumeDecorations = ['p', 'pp', 'f', 'ff', 'mf', 'mp', 'ppp', 'pp
 module.exports.dynamicDecorations = ['crescendo(', 'crescendo)', 'diminuendo(', 'diminuendo)', 'glissando(', 'glissando)', '~(', '~)'];
 module.exports.accentPseudonyms = [['<', 'accent'], ['>', 'accent'], ['tr', 'trill'], ['plus', '+'], ['emphasis', 'accent'], ['^', 'umarcato'], ['marcato', 'umarcato']];
 module.exports.accentDynamicPseudonyms = [['<(', 'crescendo('], ['<)', 'crescendo)'], ['>(', 'diminuendo('], ['>)', 'diminuendo)']];
-module.exports.nonDecorations = 'ABCDEFGabcdefgxyzZ[]|^_{'; // use this to prescreen so we don't have to look for a decoration at every note.
+module.exports.nonDecorations = 'ABCDEFGabcdefgxyzYZ[]|^_{'; // use this to prescreen so we don't have to look for a decoration at every note.
 
 module.exports.durations = [0.5, 0.75, 0.875, 0.9375, 0.96875, 0.984375, 0.25, 0.375, 0.4375, 0.46875, 0.484375, 0.4921875, 0.125, 0.1875, 0.21875, 0.234375, 0.2421875, 0.24609375, 0.0625, 0.09375, 0.109375, 0.1171875, 0.12109375, 0.123046875, 0.03125, 0.046875, 0.0546875, 0.05859375, 0.060546875, 0.0615234375, 0.015625, 0.0234375, 0.02734375, 0.029296875, 0.0302734375, 0.03076171875];
 module.exports.pitches = {
@@ -9584,6 +9594,7 @@ module.exports.rests = {
   x: 'invisible',
   X: 'invisible-multimeasure',
   y: 'spacer',
+  Y: 'spacer_zero',
   z: 'rest',
   Z: 'multimeasure'
 };
@@ -13933,6 +13944,11 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
       var startingTempo = options.qpm;
       var timeCounter = 0;
       var tempoMultiplier = 1;
+
+      // MAE 17 Jan 2026 - spacer_zero (Y) playback behavior:
+      // 1) Y is ignored for playback (takes zero time)
+      // 2) If grace notes are attached to Y, move them so they play before the next note.
+      var pendingGraceNotesForNextNote = null;
       for (var j = 0; j < voice.length; j++) {
         var element = voice[j];
         if (element.el_type === 'tempo') {
@@ -13940,9 +13956,34 @@ var pitchesToPerc = __webpack_require__(/*! ./pitches-to-perc */ "./src/synth/pi
           continue;
         }
 
+        // If we previously saw grace notes attached to a spacer_zero (Y),
+        // then attach them to the next actual note (one with pitches).
+        if (pendingGraceNotesForNextNote && element.el_type === 'note' && element.pitches && element.pitches.length > 0) {
+          if (element.gracenotes && element.gracenotes.length) {
+            element.gracenotes = pendingGraceNotesForNextNote.concat(element.gracenotes);
+          } else {
+            element.gracenotes = pendingGraceNotesForNextNote;
+          }
+          pendingGraceNotesForNextNote = null;
+        }
+
         // For convenience, put the current time in each event so that it doesn't have to be calculated in the complicated stuff that follows.
         element.time = timeCounter;
         var thisDuration = element.duration ? element.duration : 0;
+
+        // Ignore spacer_zero (Y) during playback: do not advance time.
+        // Also carry any grace notes attached to it forward to the next note.
+        if (element.el_type === 'note' && element.abcelem && element.abcelem.rest && element.abcelem.rest.type === 'spacer_zero') {
+          thisDuration = 0;
+          if (element.gracenotes && element.gracenotes.length) {
+            if (pendingGraceNotesForNextNote) {
+              pendingGraceNotesForNextNote = pendingGraceNotesForNextNote.concat(element.gracenotes);
+            } else {
+              pendingGraceNotesForNextNote = element.gracenotes;
+            }
+          }
+          delete element.gracenotes;
+        }
         timeCounter += Math.round(thisDuration * tempoMultiplier * 1000000); // To compensate for JS rounding problems, do all intermediate calcs on integers.
 
         // If there are pitches then put the duration in the pitch object and if there are ties then change the duration of the first note in the tie.
@@ -16274,6 +16315,8 @@ var parseCommon = __webpack_require__(/*! ../parse/abc_common */ "./src/parse/ab
             var tripletDurationTotal = 0; // try to mitigate the js rounding problems.
             var tripletDurationCount = 0;
             currentVolume = [105, 95, 85, 1];
+            // MAE 17 Jan 2026 - carry grace notes attached to spacer_zero (Y) forward to the next played note.
+            var pendingGraceNotesFromSpacerZero = null;
             for (var v = 0; v < voice.length; v++) {
               // For each element in a voice
               var elem = voice[v];
@@ -16299,8 +16342,18 @@ var parseCommon = __webpack_require__(/*! ../parse/abc_common */ "./src/parse/ab
                   }
                   setDynamics(elem);
 
+                  // MAE 17 Jan 2026 - If grace notes are attached to a spacer_zero (Y),
+                  // then hold them and apply them to the next actual note (with pitches).
+                  if (elem.rest && elem.rest.type === "spacer_zero" && elem.gracenotes && elem.gracenotes.length) {
+                    if (pendingGraceNotesFromSpacerZero) {
+                      pendingGraceNotesFromSpacerZero = pendingGraceNotesFromSpacerZero.concat(parseCommon.cloneArray(elem.gracenotes));
+                    } else {
+                      pendingGraceNotesFromSpacerZero = parseCommon.cloneArray(elem.gracenotes);
+                    }
+                  }
+
                   // regular items are just pushed.
-                  if (!elem.rest || elem.rest.type !== 'spacer') {
+                  if (!elem.rest || elem.rest.type !== 'spacer' && elem.rest.type !== 'spacer_zero') {
                     var noteElem = {
                       elem: elem,
                       el_type: "note",
@@ -16338,6 +16391,17 @@ var parseCommon = __webpack_require__(/*! ../parse/abc_common */ "./src/parse/ab
                     if (elem.decoration) noteElem.decoration = elem.decoration.slice(0);
                     if (elem.pitches) noteElem.pitches = parseCommon.cloneArray(elem.pitches);
                     if (elem.gracenotes) noteElem.gracenotes = parseCommon.cloneArray(elem.gracenotes);
+
+                    // MAE 17 Jan 2026 - Apply any grace notes that were attached to a spacer_zero (Y)
+                    // to the next actual note (with pitches).
+                    if (pendingGraceNotesFromSpacerZero && noteElem.pitches && noteElem.pitches.length > 0) {
+                      if (noteElem.gracenotes && noteElem.gracenotes.length)
+                        noteElem.gracenotes = pendingGraceNotesFromSpacerZero.concat(noteElem.gracenotes);
+                      else
+                        noteElem.gracenotes = pendingGraceNotesFromSpacerZero;
+                      pendingGraceNotesFromSpacerZero = null;
+                    }
+
                     if (elem.chord) noteElem.chord = parseCommon.cloneArray(elem.chord);
                     voices[voiceNumber].push(noteElem);
                     if (elem.style === "rhythm") {
@@ -24516,8 +24580,10 @@ AbstractEngraver.prototype.addGraceNotes = function (elem, voice, abselem, noteh
     // there is a slur if graceSlurs is specifically set.
     // there is no slur if it is bagpipes.
     // there is not a slur if the element is a spacer or invisible rest.
-    var isInvisibleRest = elem.rest && (elem.rest.type === "spacer" || elem.rest.type === "invisible");
-    if (i === 0 && !isBagpipes && this.graceSlurs && !isInvisibleRest) {
+    var isInvisibleRest = elem.rest && (elem.rest.type === "spacer" || elem.rest.type === "spacer_zero" || elem.rest.type === "invisible");
+    // MAE 17 Jan 2026 - If a Y (spacer-zero marker) was used between the grace notes and this element,
+    // then suppress drawing the grace slur even though the grace notes are still attached to this element.
+    if (i === 0 && !isBagpipes && this.graceSlurs && !isInvisibleRest && !elem.suppressGraceSlur) {
       // This is the overall slur that is under the grace notes.
       voice.addOther(new TieElem({
         anchor1: grace,
@@ -24568,6 +24634,7 @@ function addRestToAbsElement(abselem, elem, duration, dot, isMultiVoice, stemdir
     case "invisible":
     case "invisible-multimeasure":
     case "spacer":
+    case "spacer_zero":
       c = "";
       elem.averagepitch = restpitch;
       elem.minpitch = restpitch;
@@ -24903,13 +24970,14 @@ AbstractEngraver.prototype.createNote = function (elem, nostem, isSingleLineStaf
   var durationForSpacing = duration * this.tripletmultiplier;
   if (elem.rest && elem.rest.type === 'multimeasure') durationForSpacing = 1;
   if (elem.rest && elem.rest.type === 'invisible-multimeasure') durationForSpacing = this.measureLength * elem.rest.text;
+  if (elem.rest && elem.rest.type === 'spacer_zero') durationForSpacing = 0;
   var absType = elem.rest ? "rest" : "note";
   var abselem = new AbsoluteElement(elem, durationForSpacing, 1, absType, this.tuneNumber, {
     durationClassOveride: elem.duration * this.tripletmultiplier
   });
   if (hint) abselem.setHint();
   if (elem.rest) {
-    if (this.measureLength === duration && elem.rest.type !== 'invisible' && elem.rest.type !== 'spacer' && elem.rest.type.indexOf('multimeasure') < 0) elem.rest.type = 'whole'; // If the rest is exactly a measure, always use a whole rest
+    if (this.measureLength === duration && elem.rest.type !== 'invisible' && elem.rest.type !== 'spacer' && elem.rest.type !== 'spacer_zero' && elem.rest.type.indexOf('multimeasure') < 0) elem.rest.type = 'whole'; // If the rest is exactly a measure, always use a whole rest
     var ret1 = addRestToAbsElement(abselem, elem, duration, dot, voice.voicetotal > 1, this.stemdir, isSingleLineStaff, durlog, this.voiceScale);
     notehead = ret1.noteHead;
     roomtaken = ret1.roomTaken;
@@ -24959,7 +25027,7 @@ AbstractEngraver.prototype.createNote = function (elem, nostem, isSingleLineStaf
   if (elem.endTriplet && this.triplet) {
     this.triplet.setCloseAnchor(notehead);
   }
-  if (this.triplet && !elem.startTriplet && !elem.endTriplet && !(elem.rest && elem.rest.type === "spacer")) {
+  if (this.triplet && !elem.startTriplet && !elem.endTriplet && !(elem.rest && (elem.rest.type === "spacer" || elem.rest.type === "spacer_zero"))) {
     this.triplet.middleNote(notehead);
   }
   return abselem;
@@ -26370,7 +26438,7 @@ AbsoluteElement.prototype.addRight = function (right) {
   //  !(this.type.indexOf("clef") >= -1 && right.c === "8") &&
   //  this.type.indexOf("key-signature") === -1 &&
   //  this.type.indexOf("time-signature") === -1 &&
-  //  !(this.abcelem && this.abcelem.rest && this.abcelem.rest.type === "spacer") &&
+  //  !(this.abcelem && this.abcelem.rest && ( this.abcelem.(rest.type === \"spacer\" || rest.type === \"spacer_zero\") || rest && (  this.abcelem.rest.type === "spacer_zero")) &&
   //  !(this.abcelem && this.abcelem.rest && this.abcelem.rest.type === "invisible") &&
   //  !(right.type === "text" && right.position === "relative") &&
   //  !(right.type === "text" && right.position === "right") &&
@@ -30574,7 +30642,7 @@ function drawVoice(renderer, params, bartop, selectables, staffPos) {
 }
 function isNonSpacerRest(elem) {
   if (elem.type !== 'rest') return false;
-  if (elem.abcelem && elem.abcelem.rest && elem.abcelem.rest.type !== 'spacer') return true;
+  if (elem.abcelem && elem.abcelem.rest && elem.abcelem.rest.type !== 'spacer' && elem.abcelem.rest.type !== 'spacer_zero') return true;
   return false;
 }
 module.exports = drawVoice;

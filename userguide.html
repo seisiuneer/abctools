@@ -875,6 +875,7 @@
             <a style="text-decoration:none;" href="#maxstaves">Setting the Maximum Number of Staves to Display</a>
             <a style="text-decoration:none;" href="#hidevskip">Hiding %%vskip When Playing Tunes</a>
             <a style="text-decoration:none;" href="#hidefirsttitle">Hiding the First Title When Playing Tunes</a>
+            <a style="text-decoration:none;" href="#gracenoslurs">Hiding Slur Marks When Using Grace Notes</a>
             </details>
             
             <details>
@@ -1395,6 +1396,8 @@
                         <p class="toc"><a style="text-decoration:none;" href="#maxstaves">Setting the Maximum Number of Staves to Display</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#hidevskip">Hiding %%vskip When Playing Tunes</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#hidefirsttitle">Hiding the First Title When Playing Tunes</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#gracenoslurs">Hiding Slur Marks When Using Grace Notes</a></p>
+
                     </div>
                     
                     <button class="accordion" title="Click to expand/collapse this section">ABC Tricks, Tips, and Limitations</button>
@@ -7539,6 +7542,16 @@
                 <p>This can be useful for tune sets where you have an initial T: tag for the set title, followed later by a T: tag for the first tune title and don't want to see the set title along with the first tune title when playing the tune.</p>
                 <p>This annotation is added by default when creating a tune set using the <strong>Create Tune Set</strong> feature.</p>
                 <p>If placed in the ABC file header, it will apply to all of the tunes.</p>
+                <hr class="hidden-print" id="gracenoslurs">
+                <h1 class="page_break_always">Hiding Slur Marks When Using Grace Notes</h1>
+                <a href="#table_of_contents" class="index-pill hidden-print">
+                  Table of Contents
+                </a>
+                <p>By default, abcjs always draws slur marks between graces and the notes they target.</p>
+                <p>If you wish to have a mix of graces with and without slurs, you can do the following, inserting a "zero-width spacer" marker by adding the letter Y between the graces and the target note:</p>
+                <p class="code">% This has a slur mark for the graces<br/>{AB}A<br/><br/>% This does not have a slur mark for the graces:<br/>{AB}YA</p>
+                <p>You can disable all grace slur marks by adding the following annotation to a tune:</p>
+                <p class="code">%%graceslurs 0</p>
                 <hr class="hidden-print" id="tabtranspose">
                 <h1 class="page_break_always">Transposing Notation Independent of Tablature</h1>
 				<a href="#table_of_contents" class="index-pill hidden-print">
