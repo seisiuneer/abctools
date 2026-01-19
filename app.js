@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3148_011826_1700";
+var gVersionNumber = "3149_011926_1030";
 
 var gMIDIInitStillWaiting = false;
 
@@ -53461,6 +53461,55 @@ function checkForMissingXMLHeader(input){
 }
 
 //
+// Do text encoding conversion if required
+//
+function decodeFileToUnicodeString(arrayBuffer) {
+  const bytes = new Uint8Array(arrayBuffer);
+
+  // --- 1) BOM checks (most reliable) ---
+  // UTF-8 BOM
+  if (bytes.length >= 3 && bytes[0] === 0xEF && bytes[1] === 0xBB && bytes[2] === 0xBF) {
+    return new TextDecoder("utf-8").decode(bytes.subarray(3));
+  }
+
+  // UTF-16 LE BOM
+  if (bytes.length >= 2 && bytes[0] === 0xFF && bytes[1] === 0xFE) {
+    return new TextDecoder("utf-16le").decode(bytes.subarray(2));
+  }
+
+  // UTF-16 BE BOM
+  if (bytes.length >= 2 && bytes[0] === 0xFE && bytes[1] === 0xFF) {
+    // TextDecoder supports utf-16be in modern browsers, but not all.
+    // If unsupported, you can swap bytes manually (rare for your use case).
+    try {
+      return new TextDecoder("utf-16be").decode(bytes.subarray(2));
+    } catch (e) {
+      // Fallback: swap bytes and decode as LE
+      const swapped = new Uint8Array(bytes.length - 2);
+      for (let i = 2, j = 0; i + 1 < bytes.length; i += 2, j += 2) {
+        swapped[j] = bytes[i + 1];
+        swapped[j + 1] = bytes[i];
+      }
+      return new TextDecoder("utf-16le").decode(swapped);
+    }
+  }
+
+  // --- 2) Strict UTF-8 attempt (fail fast if invalid) ---
+  try {
+    return new TextDecoder("utf-8", { fatal: true }).decode(bytes);
+  } catch (e) {
+    // not valid UTF-8 -> fall through
+  }
+
+  // --- 3) Common legacy fallback(s) ---
+  // For ABC files from Windows-era tools: cp1252 is overwhelmingly common.
+  // If you also expect MacRoman or other encodings, you can add them here,
+  // but keep the list short to avoid mis-decoding real UTF-8.
+  return new TextDecoder("windows-1252").decode(bytes);
+}
+
+
+//
 // Shared functionality for all file reads
 //
 function DoReadCommon(theText, callback) {
@@ -53833,44 +53882,35 @@ function DoFileRead(file, callback) {
 
     // Not MXL or MIDI, just read the file
     // If XML, decode
+    
     const reader = new FileReader();
 
-    reader.addEventListener('load', (event) => {
+    reader.addEventListener("load", (event) => {
+      // Read as bytes first
+      const arrayBuffer = event.target.result;
 
-      var theText = event.target.result;
+      // Decode with detection + fallback
+      let theText = decodeFileToUnicodeString(arrayBuffer);
 
-      // MAE 16 Nov 2025
-      // Check for MusicXML missing an XML header
+      // Optional: normalize Unicode (helps with mixed composed/combining accents)
+      // This can reduce “weird” accent behavior when comparing strings.
+      theText = theText.normalize("NFC");
+
+      // Your existing logic
       theText = checkForMissingXMLHeader(theText);
 
-      // Check for MusicXML format
       if (isXML(theText)) {
-
-        // Keep track of actions
-        //sendGoogleAnalytics("action", "DoFileRead_XML");
-
         theText = importMusicXML(theText, gDisplayedName);
-
-      } else
-        // Importing BWW?
-        if (isBWWFile(theText)) {
-
-          // Keep track of actions
-          //sendGoogleAnalytics("action", "DoFileRead_BWW");
-
-          theText = convert_bww_to_abc(theText);
-
-        }
-      // else {
-      //   // Keep track of actions
-      //   sendGoogleAnalytics("action", "DoFileRead_ABC");
-      // }
+      } else if (isBWWFile(theText)) {
+        theText = convert_bww_to_abc(theText);
+      }
 
       DoReadCommon(theText, callback);
-
     });
 
-    reader.readAsText(file);
+    // IMPORTANT: read as ArrayBuffer, not text
+    reader.readAsArrayBuffer(file);
+
   } else {
     // Unsupported file extension, just callback immediately
     if (typeof callback === "function") {
