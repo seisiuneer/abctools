@@ -91,9 +91,7 @@
       #help-btn:active{ filter: brightness(1.0); }
     }
 
-    /* Small subtle volume level meter:
-       - vertically centered to the title row (same vertical center as the H1)
-       - right edge is exactly 22px from the right edge of #tuner-ui */
+    /* Small subtle volume level meter */
     #level-meter{
       position:absolute;
       top:22px;
@@ -127,8 +125,10 @@
       padding:16px;
       box-sizing:border-box;
     }
+
+    /* Make the modal match the tuner UI height, and keep Close button pinned */
     #troubleshoot-modal{
-      max-width:600px;
+      max-width:700px;
       width:100%;
       margin:0 auto;
       background:var(--panel);
@@ -138,25 +138,52 @@
       padding:18px;
       box-sizing:border-box;
       position:relative;
-      top:3vh;
+      top:0vh;
       text-align:left;
+
+      /* NEW: flex layout + height sync */
+      display:flex;
+      flex-direction:column;
+
+      /* fallback */
+      max-height: calc(100vh - 32px - 6vh);
+
+      /* NEW: will be set by JS to match #tuner-ui height */
+      height: auto;
     }
+
     #troubleshoot-title{
       font-size:1.25rem;
       font-weight:900;
-      margin:10px 0 10px 0;
+      margin:0 0 15px 0;
       color:#e0e0e0;
+      flex: 0 0 auto;
     }
+
+    /* NEW: scrolling container */
+    #troubleshoot-scroll{
+      flex: 1 1 auto;
+      overflow:auto;
+      -webkit-overflow-scrolling: touch;
+      border:1px solid #2a2a2a;
+      border-radius:12px;
+      padding:12px 12px;
+      background:#0b0b0b;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.02);
+    }
+
     #troubleshoot-body{
       font-size:1.0rem;
       line-height:1.45;
       color:#e0e0e0;
-      margin:0 0 14px 0;
+      margin:0;
+      padding-top:6px;
     }
+
     #troubleshoot-close{
       width:100%;
       margin-top:12px;
-      margin-bottom:12px;
+      margin-bottom:-7px;
       padding:14px 18px;
       border:1px solid #333;
       font-weight:900;
@@ -166,7 +193,9 @@
       background:var(--accent);
       color:#FEFEFE;
       background-color: black;
+      flex: 0 0 auto;
     }
+
     @media (max-width: 600px) {
       #help-btn{
         top:0px;
@@ -181,7 +210,6 @@
         border-radius:14px;
       }
 
-      /* keep the meter subtle & tucked in on small screens */
       #level-meter{
         width:74px;
         height:9px;
@@ -191,18 +219,16 @@
       }
     }
 
-    /* Only dim the "live" area (note+delta+meter) */
+    /* Only dim the "live" area */
     #tuner-live{
       transition: opacity 125ms ease, filter 125ms ease;
     }
-    /* Slower fade-to-dark (dimmed), quick fade-to-light (undimmed) */
     #tuner-live.dimmed{
       opacity: 0.3;
       filter: saturate(0.85);
-      transition-duration: 550ms, 550ms; /* opacity, filter */
+      transition-duration: 550ms, 550ms;
     }
 
-    /* Three dropdowns side-by-side; stacked on mobile */
     .row{
       display:grid;
       grid-template-columns: 1fr 1fr 1fr;
@@ -259,7 +285,6 @@
       overflow:hidden;
     }
 
-    /* Strobe layer (hidden unless strobe mode) */
     #strobe-layer{
       position:absolute;
       inset:0;
@@ -268,24 +293,15 @@
       overflow:hidden;
       pointer-events:none;
       opacity:0.95;
-
-      /* subtle dark base like the reference */
       background:#050a2a;
-
-      /* soft edge shading */
       box-shadow: inset 0 0 18px rgba(0,0,0,0.55);
     }
 
-    /* Initially dim strobe before audio is started */
     body.not-started #strobe-layer{
       opacity:0.25;
       filter:saturate(0.85);
     }
 
-    /* Horizontal-style strobe look:
-       - vertical cyan/navy stripes (like a rotated version of the far-right bar)
-       - hard edges (no blur)
-       - slight “gloss” overlay to match the app-like feel */
     #strobe-pattern{
       position:absolute;
       inset:-40px;
@@ -294,7 +310,6 @@
       --strobe-cyan: #21c7ff;
       --strobe-navy: #07104a;
 
-      /* one 32px “tile”: 16px navy + 16px cyan (wider segments) */
       background-image:
         linear-gradient(
           90deg,
@@ -316,7 +331,6 @@
       background-position: 0px 0px, 0px 0px;
     }
 
-    /* Center reference line for strobe mode */
     #strobe-center{
       position:absolute;
       left:50%;
@@ -338,7 +352,6 @@
       z-index:2;
     }
 
-    /* Additionally dim the whole needle area (meter + labels) before START, but only in needle mode */
     body.not-started.mode-needle .meter-box{
       opacity:0.25;
     }
@@ -388,16 +401,14 @@
       padding:0 2px;
     }
 
-    /* Hide needle reference marks/labels when in strobe mode */
     body.mode-strobe .meter-labels{ display:none !important; }
     body.mode-strobe .center-mark,
     body.mode-strobe .edge-mark,
     body.mode-strobe .tick-mark{ display:none !important; }
     body.mode-strobe #strobe-center{ display:none !important; }
 
-    /* Mic / permission error banner */
     #mic-error{
-      display:none;                 /* JS toggles */
+      display:none;
       margin: 10px 0 4px;
       padding: 12px 12px;
       border-radius: 12px;
@@ -409,7 +420,7 @@
       background: #3a0f12;
       border: 1px solid #7a2b30;
       box-shadow: 0 10px 24px rgba(0,0,0,0.35);
-      grid-column: 1 / -1; /* allow banner to span all columns if it ends up in the grid */
+      grid-column: 1 / -1;
     }
 
     button{
@@ -467,7 +478,7 @@
       button{ font-size:1.2rem; padding:16px 18px; border-radius:14px; }
 
       .row{
-        grid-template-columns: 1fr; /* stack on mobile */
+        grid-template-columns: 1fr;
       }
     }
   </style>
@@ -476,29 +487,33 @@
 <body>
   <div id="tuner-ui">
 
-    <!-- Help / Troubleshooting button -->
     <div id="help-btn" title="Troubleshooting">?</div>
 
-    <!-- Small subtle volume meter (top right) -->
     <div id="level-meter" title="Input level">
       <div id="level-meter-fill"></div>
     </div>
 
-    <!-- Troubleshooting modal (hidden by default) -->
     <div id="troubleshoot-overlay" aria-hidden="true">
       <div id="troubleshoot-modal" role="dialog" aria-modal="true" aria-label="Troubleshooting">
         <div id="troubleshoot-title" style="text-align:center;">Troubleshooting</div>
-        <div id="troubleshoot-body">
-          <br/>You must grant the browser microphone permission for this tool to work.<br/><br/>
-          The audio input level is displayed in a bar at the top right of the tool.<br/><br/>
-          <b>If no audio is detected or the audio input meter is maxed out and no notes are getting recognized:</b><br/><br/>
-          First, I recommend that you adjust your system's microphone level settings.<br/><br/>
-          You can also reduce/boost the microphone signal level from within the tool using the options on the <b>Input level adjustment</b> dropdown.<br/><br/>
-          On Windows systems, you may need to also disable any automatic microphone noise reduction being done by the system audio drivers.<br/><br/>
-          To the noise reduction system, continuous tones may be mistaken for background noise (fans, AC hum, etc.) and filtered out.<br/><br/>
-          Open the Windows settings and search for Microphone settings, make any required changes to the settings, then reload the tuner tab in the browser.
-          <br/><br/>
+
+        <!-- NEW: scrolling area -->
+        <div id="troubleshoot-scroll">
+          <div id="troubleshoot-body">
+            You must grant the browser microphone permission for this tool to work.<br/><br/>
+            The audio input level is displayed in a bar at the top-right of the tool.<br/><br/>
+            <b>If no audio is detected or the audio input meter is maxed-out and no notes are getting recognized:</b><br/><br/>
+            This tuner is designed to be used in a quiet environment.<br/><br/>
+            It may not work well or at all with loud background noise or other instruments playing in the background.<br/><br/>
+            To optimize the signal level coming into the tuner, I recommend that you first verify and adjust your system's microphone level settings as required to get a strong audio signal coming into the tuner.<br/><br/>
+            If necessary, you can also reduce or boost the microphone signal level from within the tuner using the options in the <b>Input level adjustment</b> dropdown.<br/><br/>
+            On Windows systems, you may also need to disable any automatic microphone noise reduction performed by the system audio drivers.<br/><br/>
+            Noise reduction audio driver software may mistake continuous tones for background noise (such as fans or AC hum) and filter them out.<br/><br/>
+            Open Windows Settings, search for Microphone settings, make any required changes, and then reload the tuner tab in your browser.
+            <br/><br/>
+          </div>
         </div>
+
         <button id="troubleshoot-close" type="button">CLOSE</button>
       </div>
     </div>
@@ -555,16 +570,13 @@
 
     </div>
 
-    <!-- Mic error message (hidden by default) -->
     <div id="mic-error" style="display:none;"></div>
 
-    <!-- Everything below dims during silence -->
     <div id="tuner-live">
       <div id="note" class="note-display">--</div>
       <div id="freq" class="freq-display">-- cents</div>
 
       <div class="meter-box" title="In Needle mode shows cents relative to equal temperament (ET). Range: -50 to +50 cents.&nbsp;&nbsp;In Strobe mode, stripes moves left if note is flat, right if sharp.&nbsp;&nbsp;Strobe stops when note is in tune.">
-        <!-- Strobe overlay (only visible in strobe mode) -->
         <div id="strobe-layer" aria-hidden="true">
           <div id="strobe-pattern"></div>
           <div id="strobe-center"></div>
@@ -575,7 +587,6 @@
         <div class="edge-mark edge-left"></div>
         <div class="edge-mark edge-right"></div>
 
-        <!-- tick marks for ±50c range: every 10c -->
         <div class="tick-mark" style="left:10%;"></div>
         <div class="tick-mark" style="left:20%;"></div>
         <div class="tick-mark" style="left:30%;"></div>
@@ -588,7 +599,6 @@
         <div id="needle"></div>
       </div>
 
-      <!-- UPDATED LABELS FOR ±50c -->
       <div class="meter-labels">
         <div>-50 cents</div>
         <div>0</div>
@@ -600,25 +610,19 @@
   </div>
 
 <script>
-  // ---------- LocalStorage keys ----------
   const LS_KEY_A4REF = "abctools_tuner_a4ref_hz";
   const LS_KEY_BOOST = "abctools_tuner_input_boost_v2";
   const LS_KEY_MODE  = "abctools_tuner_display_mode_v1";
 
-  // ---------- Audio nodes ----------
   let audioCtx = null;
   let streamSource = null;
   let analyserPitch = null;
   let timeDataPitch = null;
 
-  /* Optional user-selected input boost (all platforms) */
   let userBoostGainNode = null;
   let gUserBoostGain = 1.0;
 
-  /* iOS-only input gain to address low mic levels on iOS */
   let inputGainNode = null;
-
-  /* iOS-only compressor to lift quiet sustained tones */
   let iosCompressorNode = null;
 
   function isIOS(){
@@ -629,15 +633,13 @@
   }
   const IOS_INPUT_GAIN = 3.0;
 
-  // ---------- iOS/Safari: ensure AudioContext is running ----------
   async function ensureAudioContextRunning() {
     if (!audioCtx) return;
     try {
       if (audioCtx.state === "suspended") await audioCtx.resume();
-    } catch (e) { /* ignore */ }
+    } catch (e) { }
   }
 
-  // ---------- Utils ----------
   function clamp(v, lo, hi){ return Math.max(lo, Math.min(hi, v)); }
   function median(arr){
     if (!arr || !arr.length) return null;
@@ -665,22 +667,19 @@
     return (v > 0 ? "+" : "") + v.toFixed(1);
   }
 
-  // ---------- UI ----------
   const tunerLive = document.getElementById('tuner-live');
   const needle = document.getElementById('needle');
   const noteEl = document.getElementById('note');
   const deltaEl = document.getElementById('freq');
 
-  // Strobe UI
   const strobeLayer = document.getElementById('strobe-layer');
   const strobePattern = document.getElementById('strobe-pattern');
   let gDisplayMode = "needle";
 
-  // Strobe state
   let strobePhasePx = 0;
   let strobeLastT = performance.now();
-  const STROBE_PX_PER_CENT = 7.0;     // tuning feel; px/sec per cent
-  const STROBE_MAX_PX_PER_SEC = 420;  // clamp to prevent extreme blur
+  const STROBE_PX_PER_CENT = 7.0;
+  const STROBE_MAX_PX_PER_SEC = 420;
 
   function resetStrobe(){
     strobePhasePx = 0;
@@ -716,16 +715,14 @@
     if (!strobePattern) return;
 
     const now = performance.now();
-    const dt = Math.max(0, Math.min(0.06, (now - strobeLastT) / 1000)); // clamp dt
+    const dt = Math.max(0, Math.min(0.06, (now - strobeLastT) / 1000));
     strobeLastT = now;
 
-    // Move pattern proportional to detune; sign indicates direction
     let pxPerSec = (detuneCents || 0) * STROBE_PX_PER_CENT;
     pxPerSec = clamp(pxPerSec, -STROBE_MAX_PX_PER_SEC, STROBE_MAX_PX_PER_SEC);
 
     strobePhasePx += pxPerSec * dt;
 
-    // Keep numbers bounded
     if (strobePhasePx > 100000) strobePhasePx -= 100000;
     if (strobePhasePx < -100000) strobePhasePx += 100000;
 
@@ -733,10 +730,9 @@
     strobePattern.style.backgroundPosition = `${px}px 0, 0 0`;
   }
 
-  // Small level meter
   const levelMeterFill = document.getElementById('level-meter-fill');
-  let levelMeterSmoothed = 0; // 0..1
-  const LEVEL_METER_ALPHA = 0.25; // higher = snappier
+  let levelMeterSmoothed = 0;
+  const LEVEL_METER_ALPHA = 0.25;
   function setLevelMeter01(x){
     if (!levelMeterFill) return;
     const v = Math.max(0, Math.min(1, x || 0));
@@ -744,15 +740,32 @@
     levelMeterFill.style.width = Math.round(levelMeterSmoothed * 100) + "%";
   }
 
-  // Troubleshooting modal wiring
   const helpBtn = document.getElementById('help-btn');
   const troubleshootOverlay = document.getElementById('troubleshoot-overlay');
   const troubleshootClose = document.getElementById('troubleshoot-close');
+
+  /* NEW: sync troubleshooting modal height to tuner UI */
+  function syncTroubleshootHeight(){
+    const ui = document.getElementById("tuner-ui");
+    const modal = document.getElementById("troubleshoot-modal");
+    if (!ui || !modal) return;
+
+    const r = ui.getBoundingClientRect();
+    const uiH = Math.max(0, Math.round(r.height));
+
+    const maxH = Math.round(window.innerHeight - 32 - (window.innerHeight * 0.06));
+    const finalH = clamp(uiH, 240, maxH);
+
+    modal.style.height = finalH + "px";
+  }
 
   function openTroubleshooting(){
     if (!troubleshootOverlay) return;
     troubleshootOverlay.style.display = "block";
     troubleshootOverlay.setAttribute("aria-hidden", "false");
+
+    syncTroubleshootHeight();
+    requestAnimationFrame(syncTroubleshootHeight);
   }
   function closeTroubleshooting(){
     if (!troubleshootOverlay) return;
@@ -776,16 +789,19 @@
     if (e.key === "Escape") closeTroubleshooting();
   });
 
+  window.addEventListener("resize", () => {
+    if (troubleshootOverlay && troubleshootOverlay.style.display === "block") {
+      syncTroubleshootHeight();
+    }
+  });
+
   const NOTES = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
 
-  // ---------- Settings ----------
   let gA4RefHz = 440;
 
-  // Pitch analysis
   const PITCH_FFT_SIZE = 4096;
   const RMS_SILENCE = 0.020;
 
-  // --- Adaptive thresholding (RMS gate) ---
   let noiseFloorRms = 0;
   let noiseFloorPrimed = false;
   let adaptiveRmsGate = RMS_SILENCE;
@@ -796,7 +812,6 @@
   const NOISE_FLOOR_ALPHA = 0.06;
   const NOISE_FLOOR_ALPHA_FAST = 0.25;
 
-  // iOS: more permissive gate
   const GATE_MULTIPLIER = isIOS() ? 2.0 : 3.0;
   const GATE_OFFSET     = isIOS() ? 0.0015 : 0.003;
   const GATE_MIN        = isIOS() ? 0.0030 : 0.006;
@@ -804,7 +819,6 @@
   const SILENCE_FRAMES_TO_RESET_FAST = 1;
   const DEEP_SILENCE_FACTOR = 0.45;
 
-  // iOS: only learn the floor during calibration when actually quiet
   const IOS_CALIBRATION_QUIET_MAX_RMS = 0.030;
 
   function resetAdaptiveGate(){
@@ -850,35 +864,28 @@
     adaptiveRmsGate = Math.max(GATE_MIN, (floor * GATE_MULTIPLIER) + GATE_OFFSET);
   }
 
-  // Needle scale: -/+50 cents
   const MAX_CENTS_DISPLAY = 50;
 
-  // Stability
   let pitchHistory = [];
   const PITCH_HIST_FRAMES = 15;
   const PITCH_NEED_FRAMES = 8;
 
-  // Reset behavior
   let silentFrames = 0;
   const SILENCE_FRAMES_TO_RESET = 4;
   let lastDetectedMidi = null;
 
-  // Ranges
   const NEEDLE_IN_TUNE_CENTS = 3.5;
   const NEEDLE_SNAP_CENTS = 1.0;
   const NEEDLE_NEAR_CENTS = 8.0;
 
-  // Visual smoothing (needle)
   const NEEDLE_SMOOTH_ALPHA = 0.20;
   let visualCentsSmoothed = 0;
   let visualSmoothingPrimed = false;
 
-  // Colors
   const NEEDLE_COLOR_OUT  = "#ff3e3e";
   const NEEDLE_COLOR_NEAR = "#ffd34d";
   const NEEDLE_COLOR_IN   = "#28a745";
 
-  // Microphone error handling
   const micErrorEl = document.getElementById('mic-error');
 
   function escapeHTML(s){
@@ -928,11 +935,8 @@
       : base;
   }
 
-  // Once started, dim live area when no sound is detected
   let tunerStarted = false;
 
-
-  // ---------- UI helpers ----------
   function setDimmed(on){
     if (!tunerStarted) return;
     tunerLive.classList.toggle("dimmed", !!on);
@@ -999,7 +1003,6 @@
     resetStrobe();
   }
 
-  // ---------- Gain helper ----------
   function setUserBoostGainFromUI(){
     const sel = document.getElementById("inputboost");
     if (!sel) return;
@@ -1007,11 +1010,10 @@
     gUserBoostGain = (isFinite(v) && v > 0) ? v : 1.0;
 
     if (userBoostGainNode) {
-      try { userBoostGainNode.gain.value = gUserBoostGain; } catch(e){ /* ignore */ }
+      try { userBoostGainNode.gain.value = gUserBoostGain; } catch(e){ }
     }
   }
 
-  // ---------- LocalStorage save/restore ----------
   function restoreSettingsFromLocalStorage(){
     try{
       const mode = localStorage.getItem(LS_KEY_MODE);
@@ -1033,7 +1035,6 @@
         boostSel.value = boost;
       }
     } catch(e){
-      /* ignore */
     }
   }
 
@@ -1046,11 +1047,9 @@
       if (a4Sel) localStorage.setItem(LS_KEY_A4REF, String(a4Sel.value));
       if (boostSel) localStorage.setItem(LS_KEY_BOOST, String(boostSel.value));
     } catch(e){
-      /* ignore */
     }
   }
 
-  // ---------- YIN Pitch ----------
   function yinPitch(buffer, sampleRate, minFreq, maxFreq, threshold) {
     const halfSize = Math.floor(buffer.length / 2);
 
@@ -1106,7 +1105,6 @@
     return { freq, probability };
   }
 
-  // ---------- Main tick ----------
   function tick(){
     if (!audioCtx || !analyserPitch) {
       requestAnimationFrame(tick);
@@ -1123,7 +1121,6 @@
     if (rms < adaptiveRmsGate){
       setDimmed(true);
 
-      // Freeze strobe naturally (no updates while gated)
       strobeLastT = performance.now();
 
       const isDeepSilence = (rms < (adaptiveRmsGate * DEEP_SILENCE_FACTOR));
@@ -1176,21 +1173,17 @@
           const note = midiToNoteName(midi);
           const ideal = midiToFreq(midi);
 
-          // raw cents for strobe motion
           const centsRaw = centsBetween(f0, ideal);
 
-          // snapped cents for display + needle behavior
           let cents = applySnapIfNeeded(centsRaw);
 
           noteEl.innerText = note;
           deltaEl.innerHTML = `${fmtCentsSigned(cents)} cents`;
 
-          // Strobe motion (use raw, not snapped, so it never "sticks" incorrectly)
           const STROBE_STOP_CENTS = 1.0;
           const centsForStrobe = (Math.abs(centsRaw) <= STROBE_STOP_CENTS) ? 0 : centsRaw;
           updateStrobe(centsForStrobe);
 
-          // Needle visuals only when needle mode (needle hidden in strobe mode)
           const visualCents = applyVisualNeedleSmoothing(cents);
           setNeedleCents(visualCents);
           setNeedleColorByCents(cents);
@@ -1202,11 +1195,9 @@
     requestAnimationFrame(tick);
   }
 
-  // ---------- Start ----------
   async function startAudio(){
     hideMicError();
 
-    // ensure current dropdown values are applied
     setUserBoostGainFromUI();
     applyDisplayModeFromUI();
 
@@ -1230,7 +1221,7 @@
           echoCancellation: false,
           noiseSuppression: false
         });
-      } catch (e) { /* ignore */ }
+      } catch (e) { }
     }
 
     streamSource = audioCtx.createMediaStreamSource(stream);
@@ -1296,17 +1287,14 @@
     }
   };
 
-  // Display mode dropdown
   const displayModeSelect = document.getElementById('displaymode');
   if (displayModeSelect) {
     displayModeSelect.addEventListener('change', () => {
       applyDisplayModeFromUI();
       saveSettingsToLocalStorage();
-      // no other state changes
     });
   }
 
-  // A4 reference
   const a4RefSelect = document.getElementById('a4ref');
   if (a4RefSelect) {
     gA4RefHz = parseFloat(a4RefSelect.value) || 440;
@@ -1325,31 +1313,25 @@
     });
   }
 
-  // Input boost dropdown
   const inputBoostSelect = document.getElementById('inputboost');
   if (inputBoostSelect) {
     setUserBoostGainFromUI();
     inputBoostSelect.addEventListener('change', () => {
       setUserBoostGainFromUI();
       saveSettingsToLocalStorage();
-      // Don't clear display/state; this is a live diagnostic/boost.
     });
   }
 
-  // Restore saved settings before initial wiring applies values
   restoreSettingsFromLocalStorage();
 
-  // Initial state: before START, allow strobe to be visible (if selected) but dim it
   document.body.classList.add("not-started");
 
-  // Apply restored values to runtime vars immediately
   if (a4RefSelect){
     gA4RefHz = parseFloat(a4RefSelect.value) || 440;
   }
   setUserBoostGainFromUI();
   applyDisplayModeFromUI();
 
-  // iOS/Safari resume
   function addIOSResumeGestures() {
     const handler = async () => {
       if (audioCtx) await ensureAudioContextRunning();
