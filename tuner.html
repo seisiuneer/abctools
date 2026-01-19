@@ -625,12 +625,14 @@
   let inputGainNode = null;
   let iosCompressorNode = null;
 
-  function isIOS(){
+  // Compute once
+  const IS_IOS = (() => {
     const ua = navigator.userAgent || "";
     const iOSUA = /iPad|iPhone|iPod/.test(ua);
     const iPadOS = (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
     return iOSUA || iPadOS;
-  }
+  })();
+
   const IOS_INPUT_GAIN = 3.0;
 
   async function ensureAudioContextRunning() {
@@ -812,9 +814,9 @@
   const NOISE_FLOOR_ALPHA = 0.06;
   const NOISE_FLOOR_ALPHA_FAST = 0.25;
 
-  const GATE_MULTIPLIER = isIOS() ? 2.0 : 3.0;
-  const GATE_OFFSET     = isIOS() ? 0.0015 : 0.003;
-  const GATE_MIN        = isIOS() ? 0.0030 : 0.006;
+  const GATE_MULTIPLIER = IS_IOS ? 2.0 : 3.0;
+  const GATE_OFFSET     = IS_IOS ? 0.0015 : 0.003;
+  const GATE_MIN        = IS_IOS ? 0.0030 : 0.006;
 
   const SILENCE_FRAMES_TO_RESET_FAST = 1;
   const DEEP_SILENCE_FACTOR = 0.45;
@@ -831,7 +833,7 @@
   function updateAdaptiveGate(rms){
     if (gateCalibrationFramesLeft > 0) {
 
-      if (isIOS() && rms > IOS_CALIBRATION_QUIET_MAX_RMS) {
+      if (IS_IOS && rms > IOS_CALIBRATION_QUIET_MAX_RMS) {
         return;
       }
 
@@ -1086,7 +1088,9 @@
     if (tauEstimate === -1) return null;
 
     const probability = 1 - cmnd[tauEstimate];
-    if (probability < 0.75) return null;
+
+    const PROB_MIN = IS_IOS ? 0.62 : 0.75;
+    if (probability < PROB_MIN) return null;
 
     const x0 = tauEstimate > 1 ? tauEstimate - 1 : tauEstimate;
     const x2 = tauEstimate + 1 <= maxTau ? tauEstimate + 1 : tauEstimate;
@@ -1135,7 +1139,7 @@
         resetNeedleSmoothing();
         resetStrobe();
 
-        if (!isIOS()) {
+        if (!IS_IOS) {
           resetAdaptiveGate();
         }
       }
@@ -1233,7 +1237,7 @@
     userBoostGainNode = audioCtx.createGain();
     userBoostGainNode.gain.value = gUserBoostGain;
 
-    if (isIOS()) {
+    if (IS_IOS) {
       inputGainNode = audioCtx.createGain();
       inputGainNode.gain.value = IOS_INPUT_GAIN;
 
@@ -1344,7 +1348,7 @@
       if (!document.hidden && audioCtx) ensureAudioContextRunning();
     });
   }
-  if (isIOS()){
+  if (IS_IOS){
     addIOSResumeGestures();
   }
 
