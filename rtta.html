@@ -179,7 +179,7 @@
 
     .instr-title{
       font-weight:900;
-      font-size:1.05rem;
+      font-size:1.1rem;
       margin:0 0 10px 0;
       color:#f0f0f0;
     }
@@ -449,10 +449,12 @@
           <div id="troubleshoot-body">
 
             <div class="instr-title">Original RTTA Tool</div>
-            <div class="instr-body">This tool was inspired by Terry McGee's original Tartini-R Polygraph RTTA tool at:<br/>
-              <a href="https://www.mcgee-flutes.com/ReelTimeTuningAnalysis.htm" target="_blank">
-                  https://www.mcgee-flutes.com/ReelTimeTuningAnalysis.htm
-              </a>
+            <div class="instr-body">This tool was inspired by Terry McGee's original Tartini-R Polygraph RTTA tool at:<br/><br/>
+              <div style="text-align: center">
+                <a href="https://www.mcgee-flutes.com/ReelTimeTuningAnalysis.htm" target="_blank">
+                    https://www.mcgee-flutes.com/ReelTimeTuningAnalysis.htm
+                </a><br/><br/>
+              </div>
             </div>
 
             <hr style="border:0; border-top:1px solid #2a2a2a; margin: 14px 0 14px 0;"/>
@@ -491,6 +493,27 @@
             Noise reduction audio driver software may mistake continuous tones for background noise and filter them out.<br/><br/>
             Open Windows Settings, search for Microphone settings, make any required changes, and then reload this tab in your browser.
             <br/><br/>
+
+            <hr style="border:0; border-top:1px solid #2a2a2a; margin: 14px 0 14px 0;"/>
+
+            <div class="instr-title">Tip Jars</div>
+              This tool was created by <a href="https://michaeleskin.com" target="_blank">Michael Eskin</a>.<br/>
+              If you find it useful, please consider making a contribution via my online tip jars:<br/><br/>
+
+            <div style="text-align: center">
+              <a href="https://michaeleskin.com/abctools/tipjars.html" target="_blank">Michael Eskin's Tip Jars</a><br/><br/>
+            </div>
+
+            <hr style="border:0; border-top:1px solid #2a2a2a; margin: 14px 0 14px 0;"/>
+            <div class="instr-title">Source Code</div>
+              The full source code for this tool is available on my GitHub repository.<br/>
+              The source is completely contained in the one file: <b>rtta.html</b>:<br/><br/>
+
+              <div style="text-align: center">
+                <a href="https://github.com/seisiuneer/abctools/tree/main" target="_blank">Michael Eskin's GitHub Repository</a><br/>
+                &nbsp;
+              </div>
+
           </div>
         </div>
         <button id="troubleshoot-close" type="button">CLOSE</button>
@@ -900,7 +923,7 @@
   }
 
   // Plot data model
-  const noteSamples = new Map(); // midi:int -> Array<number>
+  const noteSamples = new Map();
   const MAX_SAMPLES_PER_NOTE = 3000;
 
   const MIN_MS_BETWEEN_SAMPLES = 80;
@@ -1048,15 +1071,30 @@
       return plotY0 + plotH - t * plotH;
     };
 
-    ctx.lineWidth = 1;
+    ctx.lineWidth = 1.1; 
     for (const t of ticks){
       const y = yToPx(t);
-      ctx.strokeStyle = getCSSVar("--plot-grid") || "#242424";
-      ctx.setLineDash([3,4]);
-      ctx.beginPath();
-      ctx.moveTo(plotX0, y);
-      ctx.lineTo(plotX0 + plotW, y);
-      ctx.stroke();
+
+      if (t === 0){
+        ctx.setLineDash([]); // solid
+        ctx.strokeStyle = "rgba(0, 255, 150, 0.28)";
+        ctx.lineWidth = 1.6;
+        ctx.beginPath();
+        ctx.moveTo(plotX0, y);
+        ctx.lineTo(plotX0 + plotW, y);
+        ctx.stroke();
+        ctx.lineWidth = 1.25;
+        ctx.setLineDash([3,4]); // restore dashed for remaining grid lines (next loop iteration resets anyway)
+      }
+      else{
+        ctx.strokeStyle = "#4a4a4a"; 
+        ctx.setLineDash([3,4]);
+        ctx.beginPath();
+        ctx.moveTo(plotX0, y);
+        ctx.lineTo(plotX0 + plotW, y);
+        ctx.stroke();
+
+      }
 
       ctx.setLineDash([]);
       ctx.fillStyle = getCSSVar("--plot-axis") || "#bdbdbd";
