@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3149_011926_1030";
+var gVersionNumber = "3150_012026_1530";
 
 var gMIDIInitStillWaiting = false;
 
@@ -27772,13 +27772,13 @@ function processShareLink() {
       // Show update message?
       if (gLocalStorageAvailable){
 
-        var updatePresented = localStorage.sawUpdate_26dec2025;
+        var updatePresented = localStorage.sawUpdate_20jan2026;
 
         if (updatePresented != "true") {
 
           showWhatsNewScreen();
 
-          localStorage.sawUpdate_26dec2025 = true;
+          localStorage.sawUpdate_20jan2026 = true;
 
         }
 
@@ -55576,7 +55576,7 @@ function showWhatsNewScreen() {
 
   // Short intro
   modal_msg += '<p style="margin:14px 4px 10px 4px; font-size:12pt;">';
-  modal_msg += 'Starting the new year with fresh updates — here’s what’s new in my ABC Transcription Tools:';
+  modal_msg += 'Here’s what’s new in the ABC Transcription Tools:';
   modal_msg += '</p>';
 
   // Feature card
@@ -55610,7 +55610,6 @@ function showWhatsNewScreen() {
   modal_msg += '</div>'; // end how-it-works block
   modal_msg += '</div>'; // end feature card
 
-  // More info link (New Year accent)
   modal_msg += '<p style="margin:12px 4px 8px 4px; font-size:12pt; text-align:center;">';
   modal_msg += 'For more information on the <strong>Tune Trainer</strong>, ';
   modal_msg += '<a href="https://michaeleskin.com/abctools/userguide.html#tune_trainer" ';
@@ -55618,18 +55617,15 @@ function showWhatsNewScreen() {
   modal_msg += 'click here</a>.';
   modal_msg += '</p>';
 
-  // New sample tune (New Year highlight)
   modal_msg += '<div style="margin-top:10px; padding:10px 12px; border-radius:12px;';
   modal_msg += 'background:#fff8db; border:1px solid #ffe39a;">';
 
   modal_msg += '<div style="font-size:12pt; font-weight:bold; margin-bottom:6px;">Updated or changed features:</div>';
-  modal_msg += '<p style="margin:6px 0; font-size:12pt;">There is now a dedicated <strong>Train</strong> button on the top button bar that brings up the <strong>Tune Trainer</strong> loaded with the currently selected tune.</p>';
-  modal_msg += '<p style="margin:6px 0; font-size:12pt;">The ☰ dropdown menu has been simplified, added <strong>Copy All Tunes</strong>, and moved many less commonly used  features to the <strong>More ABC Tools</strong> dialog.</p>';
+  modal_msg += '<p style="margin:6px 0; font-size:12pt;">- When opening an ABC file the tool now automatically converts from Windows-1252 encoding used in legacy ABC tools to UTF-8 fixing issues with characters with diacritical marks and other special characters.</p>';
+  modal_msg += '<p style="margin:6px 0; font-size:12pt;">- Added direct links to my Chromatic Tuner and Real Time Tuning Analysis (RTTA) tool to the ☰ dropdown menu.</p>';
   modal_msg += '</div>';
 
-  // Footer (New Year)
   modal_msg += '<p style="text-align:center; margin:14px 0 0 0; font-size:11pt; color:#666;">';
-  modal_msg += '🎉 Happy New Year — Happy Practicing! 🎶</p>';
 
   modal_msg += '</div>'; // wrapper
 
@@ -59553,6 +59549,12 @@ function LaunchChromaticTuner(){
   window.open(url, '_blank');
 }
 
+// Open the RTTA tuner
+function LaunchRTTA(){
+  var url = "https://michaeleskin.com/abctools/rtta.html";
+  window.open(url, '_blank');
+}
+
 //
 // Check if an update is available
 // 
@@ -59692,6 +59694,11 @@ function SetupContextMenu(showUpdateItem) {
             name: 'Launch Chromatic Tuner',
             fn: function(target) {
               LaunchChromaticTuner();
+            }
+          },{
+            name: 'Launch RTTA',
+            fn: function(target) {
+              LaunchRTTA();
             }
           }, {}, {
             name: 'Launch Standard Editor',
@@ -59870,6 +59877,11 @@ function SetupContextMenu(showUpdateItem) {
           fn: function(target) {
             LaunchChromaticTuner();
           }
+        },{
+          name: 'Launch RTTA',
+          fn: function(target) {
+            LaunchRTTA();
+          }
         }, {}, {
           name: 'Launch Standard Editor',
           fn: function(target) {
@@ -59984,6 +59996,11 @@ function SetupContextMenu(showUpdateItem) {
             name: 'Launch Chromatic Tuner',
             fn: function(target) {
               LaunchChromaticTuner();
+            }
+          },{
+            name: 'Launch RTTA',
+            fn: function(target) {
+              LaunchRTTA();
             }
           }, {}, {
             name: 'Launch Quick Editor',
@@ -60156,6 +60173,11 @@ function SetupContextMenu(showUpdateItem) {
           fn: function(target) {
             LaunchChromaticTuner();
           }
+        },{
+          name: 'Launch RTTA',
+          fn: function(target) {
+            LaunchRTTA();
+          }
         }, {}, {
           name: 'Launch Quick Editor',
           fn: function(target) {
@@ -60262,6 +60284,11 @@ function SetupContextMenu(showUpdateItem) {
         name: 'Launch Chromatic Tuner',
         fn: function(target) {
           LaunchChromaticTuner();
+        }
+      },{
+        name: 'Launch RTTA',
+        fn: function(target) {
+          LaunchRTTA();
         }
       }, {}, {
         name: 'Launch Standard Editor',
@@ -60372,6 +60399,11 @@ function SetupContextMenu(showUpdateItem) {
         name: 'Launch Chromatic Tuner',
         fn: function(target) {
           LaunchChromaticTuner();
+        }
+      },{
+        name: 'Launch RTTA',
+        fn: function(target) {
+          LaunchRTTA();
         }
       }, {}, {
         name: 'Launch Quick Editor',
@@ -62040,13 +62072,13 @@ function DoStartup() {
   // Show update message?
   if (gLocalStorageAvailable && (!isFromShare)){
 
-    var updatePresented = localStorage.sawUpdate_26dec2025;
+    var updatePresented = localStorage.sawUpdate_20jan2026;
 
     if (updatePresented != "true") {
 
       showWhatsNewScreen();
 
-      localStorage.sawUpdate_26dec2025 = true;
+      localStorage.sawUpdate_20jan2026 = true;
 
     }
 
