@@ -431,6 +431,13 @@
         transform: translateY(calc((1.25rem * 1.1 - 9px) / 2));
       }
     }
+
+    @media (min-width: 1100px){
+      :root{
+        --ui-max: 1200px;
+      }
+    }
+
   </style>
 </head>
 
@@ -960,17 +967,32 @@
   const ctx = canvas.getContext("2d");
   let gYRange = 50;
 
+  let canvasCssW = 0;
+  let canvasCssH = 0;
+
   function resizeCanvasToCSS(){
-    const dpr = Math.max(1, Math.min(3, window.devicePixelRatio || 1));
+    // CHANGED: force integer DPR for crisper canvas text (fixes “distorted” look)
+    let dpr = window.devicePixelRatio || 1;
+    dpr = Math.max(1, Math.min(3, Math.round(dpr)));
+
     const r = canvas.getBoundingClientRect();
-    const w = Math.max(320, Math.floor(r.width));
-    const h = Math.max(300, Math.floor(r.height));
-    const pxW = Math.floor(w * dpr);
-    const pxH = Math.floor(h * dpr);
+
+    // CHANGED: snap CSS size to integers to avoid fractional coordinates
+    const w = Math.max(320, Math.round(r.width));
+    const h = Math.max(300, Math.round(r.height));
+
+    canvasCssW = w;
+    canvasCssH = h;
+
+    const pxW = Math.max(1, Math.round(w * dpr));
+    const pxH = Math.max(1, Math.round(h * dpr));
+
     if (canvas.width !== pxW || canvas.height !== pxH){
       canvas.width = pxW;
       canvas.height = pxH;
-      ctx.setTransform(dpr,0,0,dpr,0,0);
+
+      // draw in CSS pixels
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     }
   }
 
@@ -1026,8 +1048,8 @@
   function drawPlot(){
     resizeCanvasToCSS();
 
-    const w = canvas.getBoundingClientRect().width;
-    const h = canvas.getBoundingClientRect().height;
+    const w = canvasCssW || canvas.getBoundingClientRect().width;
+    const h = canvasCssH || canvas.getBoundingClientRect().height;
 
     const padL = 72;
     const padR = 20;
@@ -1520,6 +1542,23 @@
     requestPlotRedraw(true);
     syncLivePairLayout();
   });
+  
+  // Redraw if the canvas element’s CSS size changes after layout settles
+  if (window.ResizeObserver) {
+    const ro = new ResizeObserver(() => {
+      requestPlotRedraw(true);
+      drawPlot();
+    });
+    ro.observe(canvas);
+  }
+
+  // Also redraw once fonts are ready (prevents post-load “squeeze”)
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(() => {
+      requestPlotRedraw(true);
+      drawPlot();
+    });
+  }
 
   // NEW: second pass after initial layout
   setTimeout(syncLivePairLayout, 0);
