@@ -6,7 +6,7 @@
 
   <meta property="og:type" content="website" />
   <meta property="og:title" content="Chromatic Tuner" />
-  <meta property="og:description" content="Simple chromatic instrument tuner (ET, adjustable A4 reference)." />
+  <meta property="og:description" content="Simple chromatic instrument tuner. Adjustable temperament (ET or Just Intonation), A4 reference, and input boost." />
   <meta property="og:url" content="https://michaeleskin.com/abctools/tuner.html" />
   <meta property="og:site_name" content="Chromatic Tuner" />
   <meta property="og:image" content="https://michaeleskin.com/abctools/img/abc-icon.png" />
@@ -42,7 +42,7 @@
       --bg:#0f0f0f;
       --panel:#1a1a1a;
       --text:#e0e0e0;
-      --ui-max: 700px;
+      --ui-max: 800px;
     }
 
     body{
@@ -68,7 +68,7 @@
       max-width: var(--ui-max);
     }
 
-    /* Troubleshooting (?) button */
+    /* instructions (?) button */
     #help-btn{
       position:absolute;
       top:8px;
@@ -115,8 +115,8 @@
       transition: width 80ms linear;
     }
 
-    /* Troubleshooting modal */
-    #troubleshoot-overlay{
+    /* instructions modal */
+    #instructions-overlay{
       display:none;
       position:fixed;
       inset:0;
@@ -127,7 +127,7 @@
     }
 
     /* Make the modal match the tuner UI height, and keep Close button pinned */
-    #troubleshoot-modal{
+    #instructions-modal{
       max-width:700px;
       width:100%;
       margin:0 auto;
@@ -152,7 +152,7 @@
       height: auto;
     }
 
-    #troubleshoot-title{
+    #instructions-title{
       font-size:1.25rem;
       font-weight:900;
       margin:0 0 15px 0;
@@ -161,7 +161,7 @@
     }
 
     /* NEW: scrolling container */
-    #troubleshoot-scroll{
+    #instructions-scroll{
       flex: 1 1 auto;
       overflow:auto;
       -webkit-overflow-scrolling: touch;
@@ -172,15 +172,15 @@
       box-shadow: inset 0 0 0 1px rgba(255,255,255,0.02);
     }
 
-    #troubleshoot-body{
+    #instructions-body{
       font-size:1.0rem;
-      line-height:1.45;
+      line-height:1.6;
       color:#e0e0e0;
-      margin:0;
+      margin:0 0 14px 0;
       padding-top:6px;
     }
 
-    #troubleshoot-close{
+    #instructions-close{
       width:100%;
       margin-top:12px;
       margin-bottom:-7px;
@@ -196,12 +196,24 @@
       flex: 0 0 auto;
     }
 
+    .instructions-subtitle{
+      font-weight:900;
+      font-size:1.1rem;
+      margin:0 0 10px 0;
+      color:#f0f0f0;
+    }
+
+    .instructions-subbody{
+      margin:0 0 14px 0;
+      color:#e6e6e6;
+    }
+
     @media (max-width: 600px) {
       #help-btn{
         top:0px;
         left:0px;
       }
-      #troubleshoot-close{
+      #instructions-close{
         font-size:1.2rem;
         padding:16px 18px;
         border-radius:14px;
@@ -234,6 +246,11 @@
       align-items:start;
     }
 
+    /* Make the 2nd row use 2 equal columns (full-width with no empty third column) */
+    .row-intonation{
+      grid-template-columns: 1fr 1fr;
+    }
+
     label{
       display:block;
       font-size:0.85rem;
@@ -249,6 +266,12 @@
       border-radius:10px;
       padding:10px 10px;
       font-size:0.95rem;
+    }
+
+    /* Disabled: dim + not-allowed cursor (including dropdown wrapper area) */
+    select:disabled{
+      cursor: not-allowed;
+      opacity: 0.45;
     }
 
     .note-display{
@@ -273,11 +296,11 @@
 
     .meter-box{
       width:100%;
-      height:80px;
+      height:90px;
       background:#000;
       position:relative;
       border-radius:10px;
-      margin:14px 0 8px;
+      margin:18px 0 8px;
       border:1px solid #333;
       overflow:hidden;
     }
@@ -461,6 +484,18 @@
     }
     .select-wrap select::-ms-expand{ display:none; }
 
+    /* Also reflect disabled state via wrapper cursor + dim arrow */
+    .select-wrap select:disabled{
+      pointer-events: none;
+    }
+    .select-wrap:has(select:disabled){
+      cursor: not-allowed;
+      opacity: 0.55;
+    }
+    .select-wrap:has(select:disabled)::after{
+      opacity: 0.45;
+    }
+
     @media (max-width: 600px) {
       body{ padding:12px; }
       #tuner-ui{ padding:16px; border-radius:14px; }
@@ -469,49 +504,69 @@
       select{ font-size:1.05rem; padding:14px 12px; border-radius:12px; }
       .select-wrap select{ padding-right:52px; }
       .select-wrap::after{ right:18px; font-size:1.1rem; opacity:0.9; }
-      .note-display{ font-size:5rem; margin-top:2px;margin-top:24px; }
+      .note-display{ font-size:5rem; margin-top:24px; }
       .freq-display{ font-size:1.35rem; margin-bottom:10px; }
-      .meter-box{ height:64px; margin:18px 0 8px; border-radius:12px; }
+      .meter-box{ height:90px; margin:18px 0 8px; border-radius:12px; }
       button{ font-size:1.2rem; padding:16px 18px; border-radius:14px; }
 
       .row{
         grid-template-columns: 1fr;
       }
     }
+
+   @media (min-width: 900px){
+      :root{
+        --ui-max: 1000px;
+      }
+    }
+
   </style>
 </head>
 
 <body>
   <div id="tuner-ui">
 
-    <div id="help-btn" title="Troubleshooting">?</div>
+    <div id="help-btn" title="Instructions">?</div>
 
     <div id="level-meter" title="Input level">
       <div id="level-meter-fill"></div>
     </div>
 
-    <div id="troubleshoot-overlay" aria-hidden="true">
-      <div id="troubleshoot-modal" role="dialog" aria-modal="true" aria-label="Troubleshooting">
-        <div id="troubleshoot-title" style="text-align:center;">Troubleshooting</div>
+    <div id="instructions-overlay" aria-hidden="true">
+      <div id="instructions-modal" role="dialog" aria-modal="true" aria-label="Instructions">
+        <div id="instructions-title" style="text-align:center;">Instructions</div>
 
-        <!-- NEW: scrolling area -->
-        <div id="troubleshoot-scroll">
-          <div id="troubleshoot-body">
-            You must grant the browser microphone permission for this tool to work.<br/><br/>
-            The audio input level is displayed in a bar at the top-right of the tool.<br/><br/>
-            <b>If no audio is detected or the audio input meter is maxed-out and no notes are getting recognized:</b><br/><br/>
-            This tuner is designed to be used in a quiet environment.<br/><br/>
-            It may not work well or at all with loud background noise or other instruments playing in the background.<br/><br/>
-            To optimize the signal level coming into the tuner, I recommend that you first verify and adjust your system's microphone level settings as required to get a strong audio signal coming into the tuner.<br/><br/>
-            If necessary, you can also reduce or boost the microphone signal level from within the tuner using the options in the <b>Input level adjustment</b> dropdown.<br/><br/>
-            On Windows systems, you may also need to disable any automatic microphone noise reduction performed by the system audio drivers.<br/><br/>
-            Noise reduction audio driver software may mistake continuous tones for background noise (such as fans or AC hum) and filter them out.<br/><br/>
-            Open Windows Settings, search for Microphone settings, make any required changes, and then reload the tuner tab in your browser.
-            <br/><br/>
+        <div id="instructions-scroll">
+          <div id="instructions-body">
+            <div class="instructions-subtitle">How to use this tuner</div>
+            <div class="instructions-subbody">
+
+              1) Select the A4 reference frequency, display mode (Needle or Strobe), and input level adjustment.<br/>
+              2) Select the intonation system: Equal Temperament or Just Intonation.<br/>
+              3) If you select Just Intonation also select the root note for the temperament.<br/>
+              4) Click <b>START</b> and play a steady tone. The note name and cents offset will be shown for the selected intonation system.
+
+            </div>
+
+            <hr style="border:0; border-top:1px solid #2a2a2a; margin: 14px 0 14px 0;"/>
+
+            <div class="instructions-subtitle">Troubleshooting</div>
+            <div class="instructions-subbody">
+              You must grant the browser microphone permission for this tool to work.<br/><br/>
+              The audio input level is displayed in a bar at the top-right of the tool.<br/><br/>
+              <b>If no audio is detected or the audio input meter is maxed-out and no notes are getting recognized:</b><br/><br/>
+              This tuner is designed to be used in a quiet environment.<br/><br/>
+              It may not work well or at all with loud background noise or other instruments playing in the background.<br/><br/>
+              To optimize the signal level coming into the tuner, I recommend that you first verify and adjust your system's microphone level settings as required to get a strong audio signal coming into the tuner.<br/><br/>
+              If necessary, you can also reduce or boost the microphone signal level from within the tuner using the options in the <b>Input level adjustment</b> dropdown.<br/><br/>
+              On Windows systems, you may also need to disable any automatic microphone noise reduction performed by the system audio drivers.<br/><br/>
+              Noise reduction audio driver software may mistake continuous tones for background noise (such as fans or AC hum) and filter them out.<br/><br/>
+              Open Windows Settings, search for Microphone settings, make any required changes, and then reload the tuner tab in your browser.
+            </div>
           </div>
         </div>
 
-        <button id="troubleshoot-close" type="button">CLOSE</button>
+        <button id="instructions-close" type="button">CLOSE</button>
       </div>
     </div>
 
@@ -577,13 +632,48 @@
 
     </div>
 
+    <!-- Second line of dropdowns (full width, 2 columns) -->
+    <div class="row row-intonation">
+
+      <div>
+        <label for="intonation">&nbsp;&nbsp;Intonation</label>
+        <div class="select-wrap">
+          <select id="intonation">
+            <option value="et" selected>Equal Temperament</option>
+            <option value="just">Just Intonation</option>
+          </select>
+        </div>
+      </div>
+
+      <div>
+        <label for="rootnote">&nbsp;&nbsp;Root note</label>
+        <div class="select-wrap">
+          <select id="rootnote" disabled>
+            <option value="0" selected>C</option>
+            <option value="1">C#</option>
+            <option value="2">D</option>
+            <option value="3">D#</option>
+            <option value="4">E</option>
+            <option value="5">F</option>
+            <option value="6">F#</option>
+            <option value="7">G</option>
+            <option value="8">G#</option>
+            <option value="9">A</option>
+            <option value="10">A#</option>
+            <option value="11">B</option>
+          </select>
+        </div>
+      </div>
+
+    </div>
+
     <div id="mic-error" style="display:none;"></div>
 
     <div id="tuner-live">
       <div id="note" class="note-display">--</div>
       <div id="freq" class="freq-display">-- cents</div>
 
-      <div class="meter-box" title="In Needle mode shows cents relative to equal temperament (ET). Range: -50 to +50 cents.&nbsp;&nbsp;In Strobe mode, stripes moves left if note is flat, right if sharp.&nbsp;&nbsp;Strobe stops when note is in tune.">
+      <div class="meter-box" title="In Needle mode shows cents relative to the selected temperament. Range: -50 to +50 cents.&nbsp;&nbsp;In Strobe mode, stripes moves left if note is flat, right if sharp.&nbsp;&nbsp;Strobe stops when note is in tune.">
         <div id="strobe-layer" aria-hidden="true">
           <div id="strobe-pattern"></div>
           <div id="strobe-center"></div>
@@ -621,6 +711,9 @@
   const LS_KEY_BOOST = "abctools_tuner_input_boost_v2";
   const LS_KEY_MODE  = "abctools_tuner_display_mode_v1";
 
+  const LS_KEY_INTONATION = "abctools_tuner_intonation_v1";
+  const LS_KEY_ROOTNOTE   = "abctools_tuner_rootnote_v1";
+
   let audioCtx = null;
   let streamSource = null;
   let analyserPitch = null;
@@ -632,7 +725,6 @@
   let inputGainNode = null;
   let iosCompressorNode = null;
 
-  // Compute once
   const IS_IOS = (() => {
     const ua = navigator.userAgent || "";
     const iOSUA = /iPad|iPhone|iPod/.test(ua);
@@ -750,13 +842,12 @@
   }
 
   const helpBtn = document.getElementById('help-btn');
-  const troubleshootOverlay = document.getElementById('troubleshoot-overlay');
-  const troubleshootClose = document.getElementById('troubleshoot-close');
+  const instructionsOverlay = document.getElementById('instructions-overlay');
+  const instructionsClose = document.getElementById('instructions-close');
 
-  /* NEW: sync troubleshooting modal height to tuner UI */
-  function syncTroubleshootHeight(){
+  function syncinstructionsHeight(){
     const ui = document.getElementById("tuner-ui");
-    const modal = document.getElementById("troubleshoot-modal");
+    const modal = document.getElementById("instructions-modal");
     if (!ui || !modal) return;
 
     const r = ui.getBoundingClientRect();
@@ -768,39 +859,39 @@
     modal.style.height = finalH + "px";
   }
 
-  function openTroubleshooting(){
-    if (!troubleshootOverlay) return;
-    troubleshootOverlay.style.display = "block";
-    troubleshootOverlay.setAttribute("aria-hidden", "false");
+  function openinstructions(){
+    if (!instructionsOverlay) return;
+    instructionsOverlay.style.display = "block";
+    instructionsOverlay.setAttribute("aria-hidden", "false");
 
-    syncTroubleshootHeight();
-    requestAnimationFrame(syncTroubleshootHeight);
+    syncinstructionsHeight();
+    requestAnimationFrame(syncinstructionsHeight);
   }
-  function closeTroubleshooting(){
-    if (!troubleshootOverlay) return;
-    troubleshootOverlay.style.display = "none";
-    troubleshootOverlay.setAttribute("aria-hidden", "true");
+  function closeinstructions(){
+    if (!instructionsOverlay) return;
+    instructionsOverlay.style.display = "none";
+    instructionsOverlay.setAttribute("aria-hidden", "true");
   }
 
   if (helpBtn){
-    helpBtn.addEventListener("click", openTroubleshooting);
-    helpBtn.addEventListener("touchstart", (e) => { e.preventDefault(); openTroubleshooting(); }, { passive:false });
+    helpBtn.addEventListener("click", openinstructions);
+    helpBtn.addEventListener("touchstart", (e) => { e.preventDefault(); openinstructions(); }, { passive:false });
   }
-  if (troubleshootClose){
-    troubleshootClose.addEventListener("click", closeTroubleshooting);
+  if (instructionsClose){
+    instructionsClose.addEventListener("click", closeinstructions);
   }
-  if (troubleshootOverlay){
-    troubleshootOverlay.addEventListener("click", (e) => {
-      if (e.target === troubleshootOverlay) closeTroubleshooting();
+  if (instructionsOverlay){
+    instructionsOverlay.addEventListener("click", (e) => {
+      if (e.target === instructionsOverlay) closeinstructions();
     });
   }
   document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape") closeTroubleshooting();
+    if (e.key === "Escape") closeinstructions();
   });
 
   window.addEventListener("resize", () => {
-    if (troubleshootOverlay && troubleshootOverlay.style.display === "block") {
-      syncTroubleshootHeight();
+    if (instructionsOverlay && instructionsOverlay.style.display === "block") {
+      syncinstructionsHeight();
     }
   });
 
@@ -808,7 +899,6 @@
 
   let gA4RefHz = 440;
 
-  const PITCH_FFT_SIZE = 4096;
   const RMS_SILENCE = 0.020;
 
   let noiseFloorRms = 0;
@@ -824,9 +914,6 @@
   const GATE_MULTIPLIER = IS_IOS ? 2.0 : 3.0;
   const GATE_OFFSET     = IS_IOS ? 0.0015 : 0.003;
   const GATE_MIN        = IS_IOS ? 0.0030 : 0.006;
-
-  const SILENCE_FRAMES_TO_RESET_FAST = 1;
-  const DEEP_SILENCE_FACTOR = 0.45;
 
   const IOS_CALIBRATION_QUIET_MAX_RMS = 0.030;
 
@@ -877,14 +964,11 @@
 
   let pitchHistory = [];
   const PITCH_HIST_FRAMES = 15;
-  const PITCH_NEED_FRAMES = 8;
 
   let silentFrames = 0;
-  const SILENCE_FRAMES_TO_RESET = 4;
   let lastDetectedMidi = null;
 
   const NEEDLE_IN_TUNE_CENTS = 3.5;
-  const NEEDLE_SNAP_CENTS = 1.0;
   const NEEDLE_NEAR_CENTS = 8.0;
 
   const NEEDLE_SMOOTH_ALPHA = 0.20;
@@ -969,11 +1053,6 @@
     }
   }
 
-  function applySnapIfNeeded(cents){
-    if (!isFinite(cents)) return cents;
-    return (Math.abs(cents) <= NEEDLE_SNAP_CENTS) ? 0 : cents;
-  }
-
   function resetNeedleSmoothing(){
     visualSmoothingPrimed = false;
   }
@@ -1023,26 +1102,112 @@
     }
   }
 
+  let gIntonation = "et";
+  let gRootPc = 0;
+
+  /*
+    JUST INTONATION (CHROMATIC) - UPDATED
+
+    These specific ratios match your hardware tuner’s behavior for:
+      m2  = 25/24  (~70.7c)
+      tritone = 25/18 (~568.7c)
+      aug5 = 25/16 (~772.6c)
+
+    The rest of the set remains the common 5-limit chromatic mapping.
+  */
+  const JUST_RATIOS = [
+    1/1,     // unison
+    25/24,   // m2 (chromatic semitone)  <-- changed from 16/15
+    9/8,     // M2
+    6/5,     // m3
+    5/4,     // M3
+    4/3,     // P4
+    25/18,   // tritone                 <-- changed from 45/32
+    3/2,     // P5
+    25/16,   // aug5 (often used for #5 / enharmonic m6 region) <-- changed from 8/5
+    5/3,     // M6
+    9/5,     // m7
+    15/8     // M7
+  ];
+
+  function getActiveRatios(){
+    if (gIntonation === "just") return JUST_RATIOS;
+    return null;
+  }
+
+  function ratioForSemitoneDistance(d, ratios){
+    const nOct = Math.floor(d / 12);
+    const interval = ((d % 12) + 12) % 12;
+    return ratios[interval] * Math.pow(2, nOct);
+  }
+
+  function temperamentIdealFreqForMidi(midi){
+    if (gIntonation === "et") return midiToFreq(midi);
+
+    const rootMidi = 60 + (gRootPc % 12); // root at octave 4
+    const rootFreq = midiToFreq(rootMidi); // lock root to ET under A4 ref
+
+    const d = midi - rootMidi;
+
+    const ratios = getActiveRatios(); // just arrays
+    if (!ratios) return midiToFreq(midi);
+
+    const ratio = ratioForSemitoneDistance(d, ratios);
+    return rootFreq * ratio;
+  }
+
+  function updateRootEnablement(){
+    const rootSel = document.getElementById("rootnote");
+    if (!rootSel) return;
+    rootSel.disabled = (gIntonation === "et");
+  }
+
+  function applyIntonationFromUI(){
+    const intSel = document.getElementById("intonation");
+    if (intSel) {
+      const v = String(intSel.value || "et");
+      gIntonation = (v === "just") ? "just" : "et";
+    }
+
+    const rootSel = document.getElementById("rootnote");
+    if (rootSel) {
+      const n = parseInt(rootSel.value, 10);
+      gRootPc = (isFinite(n) ? n : 0) % 12;
+    }
+
+    updateRootEnablement();
+
+    pitchHistory = [];
+    lastDetectedMidi = null;
+    silentFrames = 0;
+    resetNeedleSmoothing();
+    resetStrobe();
+    clearDisplay();
+  }
+
   function restoreSettingsFromLocalStorage(){
     try{
       const mode = localStorage.getItem(LS_KEY_MODE);
       const a4 = localStorage.getItem(LS_KEY_A4REF);
       const boost = localStorage.getItem(LS_KEY_BOOST);
+      const intonation = localStorage.getItem(LS_KEY_INTONATION);
+      const rootnote = localStorage.getItem(LS_KEY_ROOTNOTE);
 
       const modeSel = document.getElementById("displaymode");
-      if (modeSel && mode && modeSel.querySelector(`option[value="${CSS.escape(mode)}"]`)) {
-        modeSel.value = mode;
-      }
+      if (modeSel && mode && modeSel.querySelector(`option[value="${CSS.escape(mode)}"]`)) modeSel.value = mode;
 
       const a4Sel = document.getElementById("a4ref");
-      if (a4Sel && a4 && a4Sel.querySelector(`option[value="${CSS.escape(a4)}"]`)) {
-        a4Sel.value = a4;
-      }
+      if (a4Sel && a4 && a4Sel.querySelector(`option[value="${CSS.escape(a4)}"]`)) a4Sel.value = a4;
 
       const boostSel = document.getElementById("inputboost");
-      if (boostSel && boost && boostSel.querySelector(`option[value="${CSS.escape(boost)}"]`)) {
-        boostSel.value = boost;
-      }
+      if (boostSel && boost && boostSel.querySelector(`option[value="${CSS.escape(boost)}"]`)) boostSel.value = boost;
+
+      const intSel = document.getElementById("intonation");
+      if (intSel && intonation && intSel.querySelector(`option[value="${CSS.escape(intonation)}"]`)) intSel.value = intonation;
+
+      const rootSel = document.getElementById("rootnote");
+      if (rootSel && rootnote && rootSel.querySelector(`option[value="${CSS.escape(rootnote)}"]`)) rootSel.value = rootnote;
+
     } catch(e){
     }
   }
@@ -1055,6 +1220,11 @@
       if (modeSel) localStorage.setItem(LS_KEY_MODE, String(modeSel.value));
       if (a4Sel) localStorage.setItem(LS_KEY_A4REF, String(a4Sel.value));
       if (boostSel) localStorage.setItem(LS_KEY_BOOST, String(boostSel.value));
+
+      const intSel = document.getElementById("intonation");
+      const rootSel = document.getElementById("rootnote");
+      if (intSel) localStorage.setItem(LS_KEY_INTONATION, String(intSel.value));
+      if (rootSel) localStorage.setItem(LS_KEY_ROOTNOTE, String(rootSel.value));
     } catch(e){
     }
   }
@@ -1126,7 +1296,6 @@
     const rms = rmsOfArray(timeDataPitch);
 
     setLevelMeter01(clamp(rms / 0.10, 0, 1));
-
     updateAdaptiveGate(rms);
 
     if (rms < adaptiveRmsGate){
@@ -1134,11 +1303,10 @@
 
       strobeLastT = performance.now();
 
-      const isDeepSilence = (rms < (adaptiveRmsGate * DEEP_SILENCE_FACTOR));
-
+      const isDeepSilence = (rms < (adaptiveRmsGate * 0.45));
       silentFrames++;
 
-      const framesNeeded = isDeepSilence ? SILENCE_FRAMES_TO_RESET_FAST : SILENCE_FRAMES_TO_RESET;
+      const framesNeeded = isDeepSilence ? 1 : 4;
 
       if (silentFrames === framesNeeded) {
         pitchHistory = [];
@@ -1173,29 +1341,29 @@
       lastDetectedMidi = midiNow;
 
       pitchHistory.push(yin.freq);
-      while (pitchHistory.length > PITCH_HIST_FRAMES) pitchHistory.shift();
+      while (pitchHistory.length > 15) pitchHistory.shift();
 
-      if (pitchHistory.length >= PITCH_NEED_FRAMES){
+      if (pitchHistory.length >= 8){
         const f0 = median(pitchHistory);
 
         if (f0 && isFinite(f0) && f0 > 0){
           const midiFloat = freqToMidi(f0);
           const midi = Math.round(midiFloat);
           const note = midiToNoteName(midi);
-          const ideal = midiToFreq(midi);
+
+          const ideal = temperamentIdealFreqForMidi(midi);
 
           const centsRaw = centsBetween(f0, ideal);
-
-          let cents = applySnapIfNeeded(centsRaw);
+          let cents = (Math.abs(centsRaw) <= 1.0) ? 0 : centsRaw;
+          cents = (Math.abs(cents) <= 1.0) ? 0 : cents;
 
           noteEl.innerText = note;
           deltaEl.innerHTML = `${fmtCentsSigned(cents)} cents`;
 
-          const STROBE_STOP_CENTS = 1.0;
-          const centsForStrobe = (Math.abs(centsRaw) <= STROBE_STOP_CENTS) ? 0 : centsRaw;
+          const centsForStrobe = (Math.abs(centsRaw) <= 1.0) ? 0 : centsRaw;
           updateStrobe(centsForStrobe);
 
-          const visualCents = applyVisualNeedleSmoothing(cents);
+          const visualCents = applyVisualNeedleSmoothing((Math.abs(cents) <= 1.0) ? 0 : cents);
           setNeedleCents(visualCents);
           setNeedleColorByCents(cents);
         }
@@ -1211,6 +1379,7 @@
 
     setUserBoostGainFromUI();
     applyDisplayModeFromUI();
+    applyIntonationFromUI();
 
     audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     await ensureAudioContextRunning();
@@ -1238,7 +1407,7 @@
     streamSource = audioCtx.createMediaStreamSource(stream);
 
     analyserPitch = audioCtx.createAnalyser();
-    analyserPitch.fftSize = PITCH_FFT_SIZE;
+    analyserPitch.fftSize = 4096;
     timeDataPitch = new Float32Array(analyserPitch.fftSize);
 
     userBoostGainNode = audioCtx.createGain();
@@ -1246,7 +1415,7 @@
 
     if (IS_IOS) {
       inputGainNode = audioCtx.createGain();
-      inputGainNode.gain.value = IOS_INPUT_GAIN;
+      inputGainNode.gain.value = 3.0;
 
       iosCompressorNode = audioCtx.createDynamicsCompressor();
       iosCompressorNode.threshold.value = -48;
@@ -1333,6 +1502,22 @@
     });
   }
 
+  const intonationSelect = document.getElementById('intonation');
+  if (intonationSelect) {
+    intonationSelect.addEventListener('change', () => {
+      applyIntonationFromUI();
+      saveSettingsToLocalStorage();
+    });
+  }
+
+  const rootNoteSelect = document.getElementById('rootnote');
+  if (rootNoteSelect) {
+    rootNoteSelect.addEventListener('change', () => {
+      applyIntonationFromUI();
+      saveSettingsToLocalStorage();
+    });
+  }
+
   restoreSettingsFromLocalStorage();
 
   document.body.classList.add("not-started");
@@ -1342,6 +1527,7 @@
   }
   setUserBoostGainFromUI();
   applyDisplayModeFromUI();
+  applyIntonationFromUI();
 
   function addIOSResumeGestures() {
     const handler = async () => {

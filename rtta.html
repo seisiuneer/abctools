@@ -6,7 +6,7 @@
 
   <meta property="og:type" content="website" />
   <meta property="og:title" content="Real Time Tuning Analysis" />
-  <meta property="og:description" content="Real-time tuning analysis (box-plot style) from live mic input. Adjustable A4 reference + input boost." />
+  <meta property="og:description" content="Real-time tuning analysis (box-plot style) from live mic input. Adjustable temperament (ET or Just Intonation), A4 reference, and input boost." />
   <meta property="og:url" content="https://michaeleskin.com/abctools/rtta.html" />
   <meta property="og:site_name" content="Real Time Tuning Analysis" />
   <meta property="og:image" content="https://michaeleskin.com/abctools/img/abc-icon.png" />
@@ -212,6 +212,11 @@
       align-items:start;
     }
 
+    /* NEW: temperament row uses 2 equal columns */
+    .row-intonation{
+      grid-template-columns: 1fr 1fr;
+    }
+
     label{
       display:block;
       font-size:0.85rem;
@@ -227,6 +232,12 @@
       border-radius:10px;
       padding:10px 10px;
       font-size:0.95rem;
+    }
+
+    /* Disabled: dim + not-allowed cursor (including dropdown wrapper area) */
+    select:disabled{
+      cursor: not-allowed;
+      opacity: 0.45;
     }
 
     .select-wrap{ position: relative; }
@@ -468,11 +479,13 @@
 
             <div class="instr-title">How to use this tool</div>
             <div class="instr-body">
-              1) Click <b>START</b> and allow microphone access when prompted.<br/>
-              2) Play <b>sustained single notes</b> (a second or so each).<br/>
-              3) The tool measures each note and builds a distribution of <b>cents offset</b> for that note.<br/>
-              4) You can change the cents range of the graph using the <b>Cents range (display)</b> menu.<br/>
-              5) Click <b>RESET</b> to clear the graph and start over.
+              1) Select the A4 reference frequency and input level adjustment.<br/>
+              2) Select the intonation system: Equal Temperament or Just Intonation.<br/>
+              3) If you select Just Intonation, also select the root note for the temperament.<br/>
+              4) Click <b>START</b> and allow microphone access when prompted.<br/>
+              5) Play <b>sustained single notes</b> (a second or so each). The tool measures each note and builds a distribution of <b>cents offset</b> relative to the selected intonation system.<br/>
+              6) You can change the cents range of the graph using the <b>Cents range (display)</b> menu.<br/>
+              7) Click <b>RESET</b> to clear the graph and start over.
             </div>
 
             <hr style="border:0; border-top:1px solid #2a2a2a; margin: 14px 0 14px 0;"/>
@@ -601,6 +614,41 @@
       </div>
     </div>
 
+    <!-- NEW: Second line of dropdowns (full width, 2 columns) -->
+    <div class="row row-intonation">
+
+      <div>
+        <label for="intonation">&nbsp;&nbsp;Intonation</label>
+        <div class="select-wrap">
+          <select id="intonation">
+            <option value="et" selected>Equal Temperament</option>
+            <option value="just">Just Intonation</option>
+          </select>
+        </div>
+      </div>
+
+      <div>
+        <label for="rootnote">&nbsp;&nbsp;Root note</label>
+        <div class="select-wrap">
+          <select id="rootnote" disabled>
+            <option value="0" selected>C</option>
+            <option value="1">C#</option>
+            <option value="2">D</option>
+            <option value="3">D#</option>
+            <option value="4">E</option>
+            <option value="5">F</option>
+            <option value="6">F#</option>
+            <option value="7">G</option>
+            <option value="8">G#</option>
+            <option value="9">A</option>
+            <option value="10">A#</option>
+            <option value="11">B</option>
+          </select>
+        </div>
+      </div>
+
+    </div>
+
     <div id="mic-error"></div>
 
     <div id="live-readout">
@@ -628,6 +676,9 @@
   const LS_KEY_A4REF = "abctools_rt_tuning_a4ref_hz";
   const LS_KEY_BOOST = "abctools_rt_tuning_input_boost_v1";
   const LS_KEY_YRANGE = "abctools_rt_tuning_yrange_v1";
+
+  const LS_KEY_INTONATION = "abctools_rt_tuning_intonation_v1";
+  const LS_KEY_ROOTNOTE   = "abctools_rt_tuning_rootnote_v1";
 
   let audioCtx = null;
   let streamSource = null;
@@ -950,6 +1001,85 @@
     }
   }
 
+  // ------------------- Intonation (ET / Just) -------------------
+  let gIntonation = "et";
+  let gRootPc = 0;
+
+  /*
+    JUST INTONATION (CHROMATIC)
+
+    These specific ratios match your hardware tuner’s behavior for:
+      m2  = 25/24  (~70.7c)
+      tritone = 25/18 (~568.7c)
+      aug5 = 25/16 (~772.6c)
+
+    The rest of the set remains the common 5-limit chromatic mapping.
+  */
+  const JUST_RATIOS = [
+    1/1,     // unison
+    25/24,   // m2 (chromatic semitone)
+    9/8,     // M2
+    6/5,     // m3
+    5/4,     // M3
+    4/3,     // P4
+    25/18,   // tritone
+    3/2,     // P5
+    25/16,   // aug5
+    5/3,     // M6
+    9/5,     // m7
+    15/8     // M7
+  ];
+
+  function ratioForSemitoneDistance(d, ratios){
+    const nOct = Math.floor(d / 12);
+    const interval = ((d % 12) + 12) % 12;
+    return ratios[interval] * Math.pow(2, nOct);
+  }
+
+  function temperamentIdealFreqForMidi(midi){
+    if (gIntonation === "et") return midiToFreq(midi);
+
+    // Root anchored to ET under the selected A4 reference
+    const rootMidi = 60 + (gRootPc % 12); // root at octave 4
+    const rootFreq = midiToFreq(rootMidi);
+
+    const d = midi - rootMidi;
+    const ratio = ratioForSemitoneDistance(d, JUST_RATIOS);
+    return rootFreq * ratio;
+  }
+
+  function updateRootEnablement(){
+    const rootSel = document.getElementById("rootnote");
+    if (!rootSel) return;
+    rootSel.disabled = (gIntonation === "et");
+  }
+
+  function applyIntonationFromUI(){
+    const intSel = document.getElementById("intonation");
+    if (intSel) {
+      const v = String(intSel.value || "et");
+      gIntonation = (v === "just") ? "just" : "et";
+    }
+
+    const rootSel = document.getElementById("rootnote");
+    if (rootSel) {
+      const n = parseInt(rootSel.value, 10);
+      gRootPc = (isFinite(n) ? n : 0) % 12;
+    }
+
+    updateRootEnablement();
+  }
+
+  function getYAxisLabel(){
+    if (gIntonation === "just") {
+      const rootName = NOTES[(gRootPc % 12 + 12) % 12] || "C";
+      return `Cents Difference from Just Intonation (${rootName})`;
+    }
+    return "Cents Difference from Equal Temperament";
+  }
+
+  // -------------------------------------------------------------
+
   // Plot data model
   const noteSamples = new Map();
   const MAX_SAMPLES_PER_NOTE = 3000;
@@ -1058,6 +1188,10 @@
   let lastPlotT = 0;
   const PLOT_MAX_FPS = 12;
 
+  const SINGLE_TONE_IQR_CENTS = 0.35;     // threshold for “collapsed” box
+  const SINGLE_TONE_SPREAD_CENTS = 0.60;  // threshold for “collapsed” whiskers
+  const SINGLE_TONE_COLOR = "#21c7ff";    // blue/cyan that pops on dark bg
+
   function requestPlotRedraw(force){
     plotDirty = true;
     if (force) plotForce = true;
@@ -1095,7 +1229,7 @@
     ctx.rotate(-Math.PI/2);
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
-    ctx.fillText("Cents difference from ET", 0, 0);
+    ctx.fillText(getYAxisLabel(), 0, 0);
     ctx.restore();
 
     // X label — visually centered like the title
@@ -1190,15 +1324,27 @@
       }
       ctx.restore();
 
-      if (!st) {
+      // Treat “too few samples” OR “collapsed box plot” as a single-tone mark
+      const isSingleToneLike = (!st) || (
+        st && (
+          Math.abs(st.q3 - st.q1) <= SINGLE_TONE_IQR_CENTS ||
+          Math.abs(st.wHi - st.wLo) <= SINGLE_TONE_SPREAD_CENTS
+        )
+      );
+
+      if (isSingleToneLike) {
         if (samples.length) {
-          const sMed = median(samples);
+          const sMed = st ? st.med : median(samples);
           const y = yToPx(sMed);
-          ctx.strokeStyle = "#666";
-          ctx.lineWidth = 2;
+
+          const halfW = boxW / 2;       // <-- MATCH yellow box width
+
+          ctx.strokeStyle = SINGLE_TONE_COLOR;
+          ctx.lineWidth = 1.5;
+
           ctx.beginPath();
-          ctx.moveTo(cx - 6, y);
-          ctx.lineTo(cx + 6, y);
+          ctx.moveTo(cx - halfW, y);
+          ctx.lineTo(cx + halfW, y);
           ctx.stroke();
         }
         continue;
@@ -1216,8 +1362,8 @@
       const yLo = yToPx(wLo);
       const yHi = yToPx(wHi);
 
-      const x0 = cx - boxW/2;
-      const x1 = cx + boxW/2;
+      const cx0 = cx - boxW/2;
+      const cx1 = cx + boxW/2;
 
       ctx.strokeStyle = whiskerStroke;
       ctx.lineWidth = 1.5;
@@ -1248,15 +1394,15 @@
       ctx.lineWidth = 1.5;
 
       ctx.beginPath();
-      ctx.rect(x0, boxTop, boxW, boxH);
+      ctx.rect(cx0, boxTop, boxW, boxH);
       ctx.fill();
       ctx.stroke();
 
       ctx.strokeStyle = medianStroke;
       ctx.lineWidth = 3;
       ctx.beginPath();
-      ctx.moveTo(x0 + 1, yMed);
-      ctx.lineTo(x1 - 1, yMed);
+      ctx.moveTo(cx0 + 1, yMed);
+      ctx.lineTo(cx1 - 1, yMed);
       ctx.stroke();
     }
   }
@@ -1266,6 +1412,9 @@
       const a4 = localStorage.getItem(LS_KEY_A4REF);
       const boost = localStorage.getItem(LS_KEY_BOOST);
       const yr = localStorage.getItem(LS_KEY_YRANGE);
+
+      const intonation = localStorage.getItem(LS_KEY_INTONATION);
+      const rootnote = localStorage.getItem(LS_KEY_ROOTNOTE);
 
       const a4Sel = document.getElementById("a4ref");
       if (a4Sel && a4 && a4Sel.querySelector(`option[value="${CSS.escape(a4)}"]`)) {
@@ -1279,6 +1428,16 @@
       if (yrSel && yr && yrSel.querySelector(`option[value="${CSS.escape(yr)}"]`)) {
         yrSel.value = yr;
       }
+
+      const intSel = document.getElementById("intonation");
+      if (intSel && intonation && intSel.querySelector(`option[value="${CSS.escape(intonation)}"]`)) {
+        intSel.value = intonation;
+      }
+      const rootSel = document.getElementById("rootnote");
+      if (rootSel && rootnote && rootSel.querySelector(`option[value="${CSS.escape(rootnote)}"]`)) {
+        rootSel.value = rootnote;
+      }
+
     } catch(e){}
   }
 
@@ -1290,6 +1449,11 @@
       if (a4Sel) localStorage.setItem(LS_KEY_A4REF, String(a4Sel.value));
       if (boostSel) localStorage.setItem(LS_KEY_BOOST, String(boostSel.value));
       if (yrSel) localStorage.setItem(LS_KEY_YRANGE, String(yrSel.value));
+
+      const intSel = document.getElementById("intonation");
+      const rootSel = document.getElementById("rootnote");
+      if (intSel) localStorage.setItem(LS_KEY_INTONATION, String(intSel.value));
+      if (rootSel) localStorage.setItem(LS_KEY_ROOTNOTE, String(rootSel.value));
     } catch(e){}
   }
 
@@ -1392,7 +1556,8 @@
           const midiFloat = freqToMidi(f0);
           const midi = Math.round(midiFloat);
           const note = midiToNoteName(midi);
-          const ideal = midiToFreq(midi);
+
+          const ideal = temperamentIdealFreqForMidi(midi);
           const cents = centsBetween(f0, ideal);
 
           updateLiveReadout(note, cents);
@@ -1409,6 +1574,7 @@
   async function startAudio(){
     hideMicError();
     setUserBoostGainFromUI();
+    applyIntonationFromUI();
 
     audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     await ensureAudioContextRunning();
@@ -1534,6 +1700,30 @@
     });
   }
 
+  // NEW: intonation controls
+
+  const intonationSelect = document.getElementById("intonation");
+  if (intonationSelect) {
+    intonationSelect.addEventListener("change", () => {
+      applyIntonationFromUI();
+      saveSettingsToLocalStorage();
+      if (analysisStarted) clearAnalysis();
+      requestPlotRedraw(true);
+      drawPlot(); // <-- NEW: update axis label immediately even before START
+    });
+  }
+
+  const rootNoteSelect = document.getElementById("rootnote");
+  if (rootNoteSelect) {
+    rootNoteSelect.addEventListener("change", () => {
+      applyIntonationFromUI();
+      saveSettingsToLocalStorage();
+      if (analysisStarted) clearAnalysis();
+      requestPlotRedraw(true);
+      drawPlot(); // <-- NEW
+    });
+  }
+
   function addIOSResumeGestures() {
     const handler = async () => {
       if (audioCtx) await ensureAudioContextRunning();
@@ -1555,6 +1745,7 @@
   if (a4RefSelect) gA4RefHz = parseFloat(a4RefSelect.value) || 440;
   if (yRangeSelect) gYRange = parseInt(yRangeSelect.value, 10) || 50;
   setUserBoostGainFromUI();
+  applyIntonationFromUI();
 
   window.addEventListener("resize", () => {
     requestPlotRedraw(true);
