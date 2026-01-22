@@ -331,6 +331,14 @@
       line-height:1.35;
     }
 
+    /* Firefox: large-font vertical centering is a bit off vs Chrome/Safari */
+    .is-firefox #live-note{
+      transform: translate(-50%, -50%) translateY(0.08em);
+    }
+
+    .is-firefox #live-cents{
+      transform: translateY(-50%) translateY(0.08em);
+    }
 
     #plot-wrap{
       margin-top: 10px;
@@ -1003,6 +1011,10 @@
 
   const LS_KEY_INTONATION = "abctools_rt_tuning_intonation_v1";
   const LS_KEY_ROOTNOTE   = "abctools_rt_tuning_rootnote_v1";
+
+  // Firefox centering tweak for large text metrics
+  const IS_FIREFOX = /firefox/i.test(navigator.userAgent || "");
+  if (IS_FIREFOX) document.documentElement.classList.add("is-firefox");
 
   let audioCtx = null;
   let streamSource = null;
