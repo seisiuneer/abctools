@@ -403,6 +403,8 @@
       #start-btn.btn-main:hover{ filter: brightness(1.75) drop-shadow(0 0 12px rgba(0,242,255,0.25)); }
       #start-btn.btn-main:active{ filter: brightness(1.0) drop-shadow(0 0 8px rgba(0,242,255,0.18)); }
     }
+    
+    .title-short{ display:none; }
 
     @media (max-width: 600px) {
       body{ padding:12px; }
@@ -415,6 +417,8 @@
       canvas{ height: 420px; }
       button{ font-size:1.2rem; padding:16px 18px; border-radius:14px; }
       .row{ grid-template-columns: 1fr; }
+      .title-long{ display:none; }
+      .title-short{ display:inline; }
 
       .btn-row{
         flex-direction:column;
@@ -552,9 +556,10 @@
     </div>
 
     <h1 style="margin: 0 0 16px 0; font-size: 1.6rem; line-height:1.1; font-weight: 900; letter-spacing: 0.4px; color: #e0e0e0; text-align: center;" title="This utility was developed by Michael Eskin - https://michaeleskin.com">
-      Real Time Tuning Analysis
+      <span class="title-long">Real Time Tuning Analysis</span>
+      <span class="title-short">RTTA</span>
     </h1>
-
+ 
     <div class="row">
       <div>
         <label for="a4ref">&nbsp;&nbsp;A4 reference (Hz)</label>
