@@ -2,30 +2,11 @@
 // Service worker for abctools offline use resource caching
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
-//
-// Updated 21 Jan 2026 at 1930
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
+// Updated 23 Jan 2026 at 0900
 //
 //
 
-const cacheName = 'abctoolscache-3155';
+const cacheName = 'abctoolscache-3156';
 
 const contentToCache = [
     'abctools.html',
@@ -36,7 +17,6 @@ const contentToCache = [
     'credits.html',
     'tipjars.html',
     'tuner.html',
-    'rtta.html',
     'general_midi_extended_v10.pdf',
     'abc_standard_v2.1.pdf',
     'ABCquickRefv0_6.pdf',

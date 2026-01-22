@@ -310,7 +310,7 @@
     #live-cents{
       position: absolute;
       top: 50%;
-      left: calc(50% + (var(--noteW) / 2) + 18px); 
+      left: calc(50% + (var(--noteW) / 2) + 18px);
       transform: translateY(-50%);
       white-space: nowrap;
 
@@ -340,6 +340,7 @@
       padding: 10px;
       box-sizing:border-box;
       overflow:hidden;
+      position: relative; /* NEW: anchor export button */
     }
     #plot-title{
       font-size:1.15rem;
@@ -348,12 +349,86 @@
       color:#e9e9e9;
       letter-spacing:0.2px;
     }
+
+    /* Export button: small blue icon button in bottom-right of the plot area */
+    #export-plot-btn{
+      position:absolute;
+      right:14px;
+      bottom:14px;
+
+      width:34px;
+      height:34px;
+      padding:0;                 /* override global button padding */
+      border-radius:8px;
+      border:1px solid rgba(255,255,255,0.20);
+      background:#1e7cff;        /* small blue button */
+      color:#fff;                /* makes SVG visible when using currentColor */
+      display:flex;
+      align-items:center;
+      justify-content:center;
+
+      box-shadow:0 10px 22px rgba(0,0,0,0.35);
+      z-index:3;
+    }
+
+    #export-plot-btn svg{
+      width:18px;
+      height:18px;
+      display:block;
+    }
+
+    #export-plot-btn svg path{
+      fill:none;
+      stroke:#fff;               /* force visible, avoids currentColor edge cases */
+      stroke-width:2.2;
+      stroke-linecap:round;
+      stroke-linejoin:round;
+    }
+
+    @media (hover: hover) and (pointer: fine) {
+      #export-plot-btn:hover{ filter: brightness(1.15); }
+      #export-plot-btn:active{ filter: brightness(1.0); }
+    }
+
     canvas{
       width:100%;
       height: 460px;
       display:block;
       border-radius:10px;
       background: #0b0b0b;
+    }
+
+    /* NEW: tiny export button bottom-right of plot area */
+    #export-plot-btn{
+      position:absolute;
+      right:14px;
+      bottom:14px;
+      width:34px;
+      height:34px;
+      border-radius:9px;
+      border:1px solid rgba(255,255,255,0.14);
+      background: #00a1d6eb;
+      color:#001018;
+      font-weight:900;
+      font-size:16px;
+      line-height:34px;
+      cursor:pointer;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      user-select:none;
+      -webkit-tap-highlight-color: transparent;
+      box-shadow: 0 10px 24px rgba(0,0,0,0.35);
+      z-index:5;
+    }
+
+    @media (hover: hover) and (pointer: fine) {
+      #export-plot-btn{ transition: filter 120ms ease, transform 120ms ease; }
+      #export-plot-btn:hover{ filter: brightness(1.15); transform: translateY(-1px); }
+      #export-plot-btn:active{ filter: brightness(0.95); transform: translateY(0px); }
+    }
+    @media print {
+      #export-plot-btn{ display:none !important; }
     }
 
     /* CHANGED: center buttons */
@@ -376,7 +451,7 @@
       font-weight:900;
       cursor:pointer;
       transition:.2s;
-      font-size:1.15rem;
+      font-size:1.25rem;
 
       /* CHANGED: ensure consistent vertical centering and “glow alignment” */
       display:inline-flex;
@@ -403,7 +478,7 @@
       #start-btn.btn-main:hover{ filter: brightness(1.75) drop-shadow(0 0 12px rgba(0,242,255,0.25)); }
       #start-btn.btn-main:active{ filter: brightness(1.0) drop-shadow(0 0 8px rgba(0,242,255,0.18)); }
     }
-    
+
     .title-short{ display:none; }
 
     @media (max-width: 600px) {
@@ -487,7 +562,8 @@
       #troubleshoot-modal,
       #troubleshoot-close,
       #live-readout,
-      #mic-error{
+      #mic-error,
+      #export-plot-btn{
         display:none !important;
       }
 
@@ -593,6 +669,80 @@
       }
     }
 
+    /* Export dialog overlay */
+    #exportdlg-overlay{
+      display:none;
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,0.65);
+      z-index:10000;
+      padding:16px;
+      box-sizing:border-box;
+    }
+
+    #exportdlg-modal{
+      max-width:540px;
+      width:100%;
+      margin:0 auto;
+      background:var(--panel);
+      border:1px solid #333;
+      border-radius:16px;
+      box-shadow:0 20px 50px rgba(0,0,0,0.7);
+      padding:18px;
+      box-sizing:border-box;
+      position:relative;
+      top:10vh;
+      text-align:left;
+    }
+
+    #exportdlg-title{
+      font-size:1.2rem;
+      font-weight:900;
+      margin:0 0 14px 0;
+      color:#e0e0e0;
+      text-align:center;
+    }
+
+    #exportdlg-body input{
+      width:100%;
+      background:#0b0b0b;
+      color:#e8e8e8;
+      border:1px solid #333;
+      border-radius:10px;
+      padding:12px 12px;
+      font-size:1.05rem;
+      box-sizing:border-box;
+      outline:none;
+      margin-bottom:10px;
+    }
+
+    #exportdlg-body input:focus{
+      border-color: rgba(0,242,255,0.55);
+      box-shadow: 0 0 0 2px rgba(0,242,255,0.12);
+    }
+
+    #exportdlg-hint{
+      margin-top:10px;
+      color:#bdbdbd;
+      font-size:0.95rem;
+      line-height:1.35;
+    }
+
+    #exportdlg-buttons{
+      display:flex;
+      gap:12px;
+      justify-content:flex-end;
+      margin-top:16px;
+    }
+
+    #exportdlg-buttons button{
+      width:auto;
+      min-width:90px;
+      padding:10px 14px;
+      font-size:0.95rem;
+      border-radius:8px;
+    }
+
   </style>
 </head>
 
@@ -625,11 +775,12 @@
             <div class="instr-body">
               1) Select the A4 reference frequency and input level adjustment.<br/>
               2) Select the temperament: Equal Temperament or Just Intonation.<br/>
-              3) If you select Just Intonation, also select the root note for the temperament.<br/>
+              3) If you select Just Intonation, also select the root note for the temperament. Root note is not used for Equal Temperament.<br/>
               4) Click <b>START</b> and allow microphone access when prompted.<br/>
               5) Play <b>sustained single notes</b> (a second or so each). The tool measures each note and builds a distribution of <b>cents offset</b> relative to the selected temperament.<br/>
               6) You can change the cents range of the graph using the <b>Cents range (display)</b> menu.<br/>
-              7) Click <b>RESET</b> to clear the graph and start over.
+              7) Click the <b>&#x2913;</b> button at the bottom right of the graph area to save a JPEG image of the graph.<br/>
+              8) Click <b>RESET</b> to clear the graph and start over.
             </div>
 
             <hr style="border:0; border-top:1px solid #2a2a2a; margin: 14px 0 14px 0;"/>
@@ -642,7 +793,7 @@
               • The <b>dashed whiskers</b> show the typical low/high range (1.5×IQR rule).<br/>
               Values above 0 are <b>sharp</b>, below 0 are <b>flat</b>. Taller boxes/long whiskers mean less consistency.
             </div>
-            
+
             <hr style="border:0; border-top:1px solid #2a2a2a; margin: 14px 0 14px 0;"/>
 
             <div class="instr-title">A4 Reference Frequency</div>
@@ -652,7 +803,7 @@
             </div>
 
             <hr style="border:0; border-top:1px solid #2a2a2a; margin: 14px 0 14px 0;"/>
-            
+
             <div class="instr-title">Troubleshooting</div>
 
             You must grant the browser microphone permission for this tool to work.<br/><br/>
@@ -700,7 +851,7 @@
       <span class="title-long">Real Time Tuning Analysis</span>
       <span class="title-short">RTTA</span>
     </h1>
- 
+
     <div class="row">
       <div>
         <label for="a4ref">&nbsp;&nbsp;A4 reference (Hz)</label>
@@ -809,11 +960,39 @@
     <div id="plot-wrap">
       <div id="plot-title">Pitch Distribution</div>
       <canvas id="plot"></canvas>
+
+      <button id="export-plot-btn" type="button" title="Export graph as PNG" aria-label="Export graph as PNG">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path d="M12 3v11" />
+          <path d="M8 10l4 4 4-4" />
+          <path d="M4 19h16" />
+        </svg>
+      </button>
+
     </div>
 
     <div class="btn-row">
       <button id="start-btn" class="btn-main" type="button">START</button>
       <button id="reset-btn" class="btn-sub" type="button" style="display:none;">RESET</button>
+    </div>
+  </div>
+
+  <!-- Export filename dialog -->
+  <div id="exportdlg-overlay" aria-hidden="true">
+    <div id="exportdlg-modal" role="dialog" aria-modal="true" aria-label="Export image">
+      <div id="exportdlg-title">Export Graph as JPEG Image</div>
+
+      <div id="exportdlg-body">
+        <label for="exportdlg-filename" style="margin:20px 0 8px 4px; font-weight:800; color:#bbb; display:block;">
+          Filename:
+        </label>
+        <input id="exportdlg-filename" type="text" autocomplete="off" spellcheck="false" />
+      </div>
+
+      <div id="exportdlg-buttons">
+        <button id="exportdlg-cancel" type="button" class="btn-sub">Cancel</button>
+        <button id="exportdlg-save" type="button" class="btn-main">Save</button>
+      </div>
     </div>
   </div>
 
@@ -1393,7 +1572,7 @@
       return plotY0 + plotH - t * plotH;
     };
 
-    ctx.lineWidth = 1.1; 
+    ctx.lineWidth = 1.1;
     for (const t of ticks){
       const y = yToPx(t);
 
@@ -1409,7 +1588,7 @@
         ctx.setLineDash([3,4]); // restore dashed for remaining grid lines (next loop iteration resets anyway)
       }
       else{
-        ctx.strokeStyle = "#4a4a4a"; 
+        ctx.strokeStyle = "#4a4a4a";
         ctx.setLineDash([3,4]);
         ctx.beginPath();
         ctx.moveTo(plotX0, y);
@@ -1601,6 +1780,144 @@
       if (rootSel) localStorage.setItem(LS_KEY_ROOTNOTE, String(rootSel.value));
     } catch(e){}
   }
+
+  // -------------------- NEW: Export plot as JPEG --------------------
+  const exportPlotBtn = document.getElementById("export-plot-btn");
+
+  function showExportFilenameDialog(defaultName){
+    return new Promise((resolve) => {
+      const overlay = document.getElementById("exportdlg-overlay");
+      const input   = document.getElementById("exportdlg-filename");
+      const btnSave = document.getElementById("exportdlg-save");
+      const btnCancel = document.getElementById("exportdlg-cancel");
+
+      if (!overlay || !input || !btnSave || !btnCancel){
+        resolve(null);
+        return;
+      }
+
+      let done = false;
+      const finish = (val) => {
+        if (done) return;
+        done = true;
+
+        overlay.style.display = "none";
+        overlay.setAttribute("aria-hidden", "true");
+
+        // cleanup listeners
+        overlay.removeEventListener("click", onOverlayClick);
+        btnCancel.removeEventListener("click", onCancel);
+        btnSave.removeEventListener("click", onSave);
+        document.removeEventListener("keydown", onKey);
+
+        resolve(val);
+      };
+
+      const normalizeName = (s) => {
+        let v = (s || "").trim();
+
+        // Basic sanitize for common filesystem-illegal chars
+        v = v.replace(/[\/\\:*?"<>|]+/g, "-").replace(/\s+/g, " ");
+
+        // Ensure .jpg extension
+        if (v && !/\.jpe?g$/i.test(v)) v += ".jpg";
+
+        return v;
+      };
+
+      const onSave = () => {
+        const v = normalizeName(input.value);
+        if (!v) return; // keep dialog open
+        finish(v);
+      };
+
+      const onCancel = () => finish(null);
+
+      const onKey = (e) => {
+        if (e.key === "Escape") {
+          e.preventDefault();
+          onCancel();
+        } else if (e.key === "Enter") {
+          e.preventDefault();
+          onSave();
+        }
+      };
+
+      const onOverlayClick = (e) => {
+        if (e.target === overlay) onCancel();
+      };
+
+      // Show
+      overlay.style.display = "block";
+      overlay.setAttribute("aria-hidden", "false");
+      input.value = defaultName;
+
+      // Focus + select base name (without extension) for easy typing
+      requestAnimationFrame(() => {
+        input.focus();
+        const dot = input.value.lastIndexOf(".");
+        if (dot > 0) input.setSelectionRange(0, dot);
+        else input.select();
+      });
+
+      overlay.addEventListener("click", onOverlayClick);
+      btnCancel.addEventListener("click", onCancel);
+      btnSave.addEventListener("click", onSave);
+      document.addEventListener("keydown", onKey);
+    });
+  }
+
+  async function exportPlotAsJPG(){
+    if (!canvas) return;
+
+    // Ensure latest render
+    try { drawPlot(); } catch(e){}
+
+    const intSel = document.getElementById("intonation");
+    const rootSel = document.getElementById("rootnote");
+    const a4Sel   = document.getElementById("a4ref");
+
+    const temperament = (intSel && intSel.value === "just") ? "JI" : "ET";
+    const a4 = a4Sel ? a4Sel.value : "440";
+
+    let rootPart = "";
+    if (temperament === "JI" && rootSel){
+      const rootName = NOTES[parseInt(rootSel.value,10) % 12];
+      rootPart = `_${rootName}`;
+    }
+
+    const defaultName =
+      `rtta_${temperament}${rootPart}_A${a4}.jpg`;
+
+    const filename = await showExportFilenameDialog(defaultName);
+    if (!filename) return;
+
+    canvas.toBlob(blob => {
+      if (!blob) return;
+
+      const url = URL.createObjectURL(blob);
+
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+
+      // Revoke after a short delay to ensure download has started
+      setTimeout(() => {
+        URL.revokeObjectURL(url);
+      }, 2000);
+
+    }, "image/jpeg", 0.95);
+
+  }
+
+  if (exportPlotBtn){
+    exportPlotBtn.addEventListener("click", exportPlotAsJPG);
+  }
+
+  // ---------------------------------------------------------------
 
   // Sampling + analysis
   let analysisStarted = false;
@@ -1896,7 +2213,7 @@
     requestPlotRedraw(true);
     syncLivePairLayout();
   });
-  
+
   // Redraw if the canvas element’s CSS size changes after layout settles
   if (window.ResizeObserver) {
     const ro = new ResizeObserver(() => {
