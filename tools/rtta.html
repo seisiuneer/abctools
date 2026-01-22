@@ -439,11 +439,10 @@
       #export-plot-btn{ display:none !important; }
     }
 
-    /* CHANGED: center buttons */
     .btn-row{
       display:flex;
       justify-content:center;
-      gap:12px;
+      gap:24px;
       margin-top: 22px;
       flex-wrap:wrap;
     }
@@ -787,10 +786,11 @@
               4) Click <b>START</b> and allow microphone access when prompted.<br/>
               5) Play <b>sustained single notes</b> (a second or so each). The tool measures each note and builds a distribution of <b>cents offset</b> relative to the selected temperament.<br/>
               6) You can change the cents range of the graph using the <b>Cents range (display)</b> menu.<br/>
-              7) Click the <b>&#x2913;</b> button at the bottom right of the graph area to save a JPEG image file of the graph.<br/>
+              7) Click <b>PAUSE</b> to pause the pitch detection. Click <b>RESUME</b> to resume.<br/>
+              8) Click the <b>&#x2913;</b> button at the bottom right of the graph area to save a JPEG image file of the graph.<br/>
               The JPEG image file will be saved to your browser's default Downloads directory.<br/>
               On mobile devices, rotate your device to Landscape orientation before doing the export to get the best JPEG image results.<br/>
-              8) Click <b>RESET</b> to clear the graph and start over.
+              9) Click <b>RESET</b> to clear the graph and start over.
             </div>
 
             <hr style="border:0; border-top:1px solid #2a2a2a; margin: 14px 0 14px 0;"/>
@@ -829,7 +829,6 @@
             On Windows systems, you may also need to disable any automatic microphone noise reduction performed by the system audio drivers.<br/><br/>
             Noise reduction audio driver software may mistake continuous tones for background noise and filter them out.<br/><br/>
             Open Windows Settings, search for Microphone settings, make any required changes, and then reload this tab in your browser.
-            <br/><br/>
 
             <hr style="border:0; border-top:1px solid #2a2a2a; margin: 14px 0 14px 0;"/>
 
@@ -983,6 +982,10 @@
 
     <div class="btn-row">
       <button id="start-btn" class="btn-main" type="button">START</button>
+
+      <!-- NEW: Pause/Resume button (hidden until START), placed left of RESET -->
+      <button id="pause-btn" class="btn-sub" type="button" style="display:none;">PAUSE</button>
+
       <button id="reset-btn" class="btn-sub" type="button" style="display:none;">RESET</button>
     </div>
   </div>
@@ -1431,6 +1434,34 @@
 
   let silentFrames = 0;
   let lastDetectedMidi = null;
+
+  // -------------------- NEW: Pause/Resume state --------------------
+  let detectionPaused = false;
+
+  function setDetectionPaused(paused){
+    detectionPaused = !!paused;
+
+    const pauseBtn = document.getElementById("pause-btn");
+    if (pauseBtn){
+      pauseBtn.textContent = detectionPaused ? "RESUME" : "PAUSE";
+      pauseBtn.title = detectionPaused ? "Resume pitch detection" : "Pause pitch detection";
+      pauseBtn.setAttribute("aria-label", pauseBtn.title);
+    }
+
+    // When pausing, freeze the live readout and stop the level meter motion.
+    // (Graph remains visible; no new samples are collected.)
+    if (detectionPaused){
+      // keep last values on screen; do not clearAnalysis()
+      // freeze the meter at current value by simply not updating it while paused
+    } else {
+      // On resume, re-prime the gate and pitch history to avoid “stale buffer” jumps
+      pitchHistory = [];
+      silentFrames = 0;
+      lastDetectedMidi = null;
+      resetAdaptiveGate();
+    }
+  }
+  // ----------------------------------------------------------------
 
   function clearAnalysis(){
     noteSamples.clear();
@@ -1984,6 +2015,15 @@
       return;
     }
 
+    // -------------------- NEW: paused => no detection, no sampling, no meter motion --------------------
+    if (analysisStarted && detectionPaused) {
+      ensureAudioContextRunning();
+      schedulePlotPaintIfNeeded(); // plot may still need to repaint (resize, etc.)
+      requestAnimationFrame(tick);
+      return;
+    }
+    // -----------------------------------------------------------------------------------------------
+
     analyserPitch.getFloatTimeDomainData(timeDataPitch);
     const rms = rmsOfArray(timeDataPitch);
 
@@ -2112,11 +2152,16 @@
     clearAnalysis();
 
     analysisStarted = true;
+
+    // NEW: ensure pause state is reset on a fresh START
+    setDetectionPaused(false);
+
     requestAnimationFrame(tick);
   }
 
   // Controls
   const startBtn = document.getElementById("start-btn");
+  const pauseBtn = document.getElementById("pause-btn");
   const resetBtn = document.getElementById("reset-btn");
 
   startBtn.onclick = async () => {
@@ -2129,6 +2174,7 @@
       if (liveHintEl) liveHintEl.style.display = "none";
 
       startBtn.style.display = "none";
+      pauseBtn.style.display = "inline-flex"; // NEW
       resetBtn.style.display = "inline-flex";
     } catch(err){
       console.error(err);
@@ -2136,13 +2182,24 @@
       startBtn.disabled = false;
       startBtn.innerText = "START";
       startBtn.style.display = "inline-flex";
+      if (pauseBtn) pauseBtn.style.display = "none"; // NEW
       resetBtn.style.display = "none";
       analysisStarted = false;
     }
   };
 
+  // NEW: Pause/Resume button
+  if (pauseBtn){
+    pauseBtn.title = "Pause pitch detection";
+    pauseBtn.addEventListener("click", () => {
+      if (!analysisStarted) return;
+      setDetectionPaused(!detectionPaused);
+    });
+  }
+
   resetBtn.onclick = () => {
     if (!analysisStarted) return;
+    // If paused, keep it paused but clear the accumulated graph (and keep UI consistent)
     clearAnalysis();
   };
 
