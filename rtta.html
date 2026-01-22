@@ -298,8 +298,7 @@
       top: 50%;
       transform: translate(-50%, -50%);
       white-space: nowrap;
-
-      font-size:3.2rem;
+      font-size:3.75rem;
       font-weight:900;
       color:#fff;
       text-shadow:0 0 20px var(--accent);
@@ -311,7 +310,7 @@
     #live-cents{
       position: absolute;
       top: 50%;
-      left: calc(50% + (var(--noteW) / 2) + 14px); /* 14px = your desired gap */
+      left: calc(50% + (var(--noteW) / 2) + 18px); 
       transform: translateY(-50%);
       white-space: nowrap;
 
@@ -654,7 +653,7 @@
     <div id="live-readout">
       <div id="live-pair">
         <div id="live-note">--</div>
-        <div id="live-cents">-- cents</div>
+        <div id="live-cents"> -- cents</div>
       </div>
       <div id="live-hint">
         Click <b>START</b>, play sustained notes, and this tool will accumulate cents offsets per note and render a live box-plot style distribution.&nbsp;&nbsp;Click <b>RESET</b> to clear the graph and start over.
@@ -1104,7 +1103,7 @@
     levelMeterSmoothed = 0;
     setLevelMeter01(0);
     liveNoteEl.textContent = "--";
-    liveCentsEl.textContent = "-- cents";
+    liveCentsEl.textContent = " -- cents";
     syncLivePairLayout();
 
     requestPlotRedraw(true);
@@ -1463,9 +1462,9 @@
   function updateLiveReadout(noteName, cents){
     liveNoteEl.textContent = noteName || "--";
     if (cents == null || !isFinite(cents)){
-      liveCentsEl.textContent = "-- cents";
+      liveCentsEl.textContent = " -- cents";
     } else {
-      liveCentsEl.textContent = `${fmtCentsSigned(cents)} cents`;
+      liveCentsEl.textContent = ` ${fmtCentsSigned(cents)} cents`;
     }
 
     // NEW: keep note center pinned; position cents based on measured note width
