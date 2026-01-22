@@ -452,6 +452,141 @@
       }
     }
 
+    @media print {
+
+      /* Page margins + avoid browser "print dark backgrounds" issues */
+      @page {
+        margin: 0.55in;
+      }
+
+      html, body {
+        background: #ffffff !important;
+        color: #000000 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+
+      /* Make the outer panel print like a document, full width */
+      #ui{
+        max-width: none !important;
+        width: 100% !important;
+        border: 0 !important;
+        border-radius: 0 !important;
+        background: #ffffff !important;
+        box-shadow: none !important;
+        padding: 0 !important;
+        text-align: left !important;
+      }
+
+      /* Hide non-print UI / overlays */
+      #help-btn,
+      #level-meter,
+      #troubleshoot-overlay,
+      #troubleshoot-modal,
+      #troubleshoot-close,
+      #live-readout,
+      #mic-error{
+        display:none !important;
+      }
+
+      /* Title */
+      #ui h1{
+        color:#000 !important;
+        text-shadow:none !important;
+        text-align:center !important;
+        margin: 0 0 12px 0 !important;
+        font-size: 18pt !important;
+      }
+
+      /* Keep long title for print */
+      .title-long{ display:inline !important; }
+      .title-short{ display:none !important; }
+
+      /* Settings area: compact, print-friendly */
+      .row{
+        display:grid !important;
+        grid-template-columns: 1fr 1fr 1fr !important;
+        gap: 10px !important;
+        margin: 10px 0 10px !important;
+        break-inside: avoid;
+      }
+      .row-intonation{
+        grid-template-columns: 1fr 1fr !important;
+      }
+
+      label{
+        color:#000 !important;
+        font-size: 10pt !important;
+        margin-bottom: 4px !important;
+      }
+
+      /* Print selects like clean boxes */
+      .select-wrap::after{ display:none !important; }
+      select{
+        background:#fff !important;
+        color:#000 !important;
+        border:1px solid #000 !important;
+        border-radius: 6px !important;
+        padding: 6px 8px !important;
+        font-size: 10pt !important;
+      }
+      select:disabled{
+        opacity: 1 !important;
+      }
+
+      /* Live readout: remove glow, tighten */
+      #live-readout{
+        margin: 8px 0 10px 0 !important;
+        break-inside: avoid;
+      }
+      #live-note{
+        color:#000 !important;
+        text-shadow:none !important;
+      }
+      #live-cents{
+        color:#000 !important;
+      }
+      #live-hint{
+        color:#000 !important;
+        font-size: 10.5pt !important;
+        max-width: none !important;
+      }
+
+      /* Plot wrapper: white background + border, no rounding */
+      #plot-wrap{
+        background:#fff !important;
+        border:1px solid #000 !important;
+        border-radius: 0 !important;
+        padding: 8px !important;
+        margin-top: 10px !important;
+        break-inside: avoid;
+      }
+      #plot-title{
+        color:#000 !important;
+        margin: 6px 0 8px 0 !important;
+        text-align:center !important;
+        font-size: 12pt !important;
+      }
+
+      /* Canvas prints best when not clipped; keep size reasonable */
+      canvas{
+        background:#fff !important;
+        border-radius: 0 !important;
+        height: 5.6in !important;   /* good default for letter portrait */
+        width: 100% !important;
+      }
+
+      /* Hide buttons for print */
+      .btn-row{
+        display:none !important;
+      }
+
+      /* Avoid weird breaks */
+      #plot-wrap, .row, .row-intonation, #live-readout { page-break-inside: avoid; }
+    }
+
   </style>
 </head>
 
