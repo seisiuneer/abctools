@@ -963,7 +963,7 @@
       <!-- NEW: two export buttons (JPEG + CSV), CSV is to the right -->
       <div id="export-buttons">
         <button id="export-plot-btn" type="button" title="Export graph as JPEG image" aria-label="Export graph as JPEG image">JPEG</button>
-        <button id="export-csv-btn" type="button" title="Export graph values as CSV file" aria-label="Export graph values as CSV file">CSV</button>
+        <button id="export-csv-btn" type="button" title="Export graph as CSV file" aria-label="Export graph as CSV file">CSV</button>
       </div>
       <!-- /NEW -->
 
@@ -2017,7 +2017,7 @@
     const defaultName = buildDefaultExportBaseName() + ".csv";
     const filename = await showExportFilenameDialog(defaultName, {
       ext: "csv",
-      title: "Export Graph Values as CSV File"
+      title: "Export Graph as CSV File"
     });
     if (!filename) return;
 
