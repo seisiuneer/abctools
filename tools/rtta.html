@@ -358,85 +358,12 @@
       letter-spacing:0.2px;
     }
 
-    /* Export button: small blue icon button in bottom-right of the plot area */
-    #export-plot-btn{
-      position:absolute;
-      right:14px;
-      bottom:14px;
-
-      width:34px;
-      height:34px;
-      padding:0;                 /* override global button padding */
-      border-radius:8px;
-      border:1px solid rgba(255,255,255,0.20);
-      background:#1e7cff;        /* small blue button */
-      color:#fff;                /* makes SVG visible when using currentColor */
-      display:flex;
-      align-items:center;
-      justify-content:center;
-
-      box-shadow:0 10px 22px rgba(0,0,0,0.35);
-      z-index:3;
-    }
-
-    #export-plot-btn svg{
-      width:18px;
-      height:18px;
-      display:block;
-    }
-
-    #export-plot-btn svg path{
-      fill:none;
-      stroke:#fff;               /* force visible, avoids currentColor edge cases */
-      stroke-width:2.2;
-      stroke-linecap:round;
-      stroke-linejoin:round;
-    }
-
-    @media (hover: hover) and (pointer: fine) {
-      #export-plot-btn:hover{ filter: brightness(1.15); }
-      #export-plot-btn:active{ filter: brightness(1.0); }
-    }
-
     canvas{
       width:100%;
       height: 460px;
       display:block;
       border-radius:10px;
       background: #0b0b0b;
-    }
-
-    /* NEW: tiny export button bottom-right of plot area */
-    #export-plot-btn{
-      position:absolute;
-      right:14px;
-      bottom:14px;
-      width:34px;
-      height:34px;
-      border-radius:9px;
-      border:1px solid rgba(255,255,255,0.14);
-      background: #00a1d6eb;
-      color:#001018;
-      font-weight:900;
-      font-size:16px;
-      line-height:34px;
-      cursor:pointer;
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      user-select:none;
-      -webkit-tap-highlight-color: transparent;
-      box-shadow: 0 10px 24px rgba(0,0,0,0.35);
-      z-index:5;
-    }
-
-    @media (hover: hover) and (pointer: fine) {
-      #export-plot-btn{ transition: filter 120ms ease, transform 120ms ease; }
-      #export-plot-btn:hover{ filter: brightness(1.15); transform: translateY(-1px); }
-      #export-plot-btn:active{ filter: brightness(0.95); transform: translateY(0px); }
-    }
-    @media print {
-      #export-plot-btn{ display:none !important; }
     }
 
     .btn-row{
@@ -487,7 +414,7 @@
       #pause-btn.btn-sub{ transition: filter 125ms ease; }
       #pause-btn.btn-sub:hover{ filter: brightness(1.75) drop-shadow(0 0 12px rgba(0,242,255,0.25)); }
       #pause-btn.btn-sub:active{ filter: brightness(1.0) drop-shadow(0 0 8px rgba(0,242,255,0.18)); }
-      #reset-btnn.btn-sub{ transition: filter 125ms ease; }
+      #reset-btn.btn-sub{ transition: filter 125ms ease; }
       #reset-btn.btn-sub:hover{ filter: brightness(1.75) drop-shadow(0 0 12px rgba(0,242,255,0.25)); }
       #reset-btn.btn-sub:active{ filter: brightness(1.0) drop-shadow(0 0 8px rgba(0,242,255,0.18)); }
     }
@@ -575,8 +502,7 @@
       #troubleshoot-modal,
       #troubleshoot-close,
       #live-readout,
-      #mic-error,
-      #export-plot-btn{
+      #mic-error{
         display:none !important;
       }
 
@@ -756,6 +682,62 @@
       border-radius:8px;
     }
 
+    /* -------------------- Export buttons (JPEG + CSV) -------------------- */
+    #export-buttons{
+      position:absolute;
+      right:8px;
+      bottom:8px;
+      display:flex;
+      gap:18px;
+      z-index:5;
+    }
+
+    /* Shared button styling */
+    #export-plot-btn,
+    #export-csv-btn{
+      width:48px;
+      height:34px;
+      border-radius:9px;
+      border:1px solid rgba(255,255,255,0.14);
+      background:#00a1d6eb;
+      color:#001018;
+      font-weight:900;
+      font-size:12px;      /* same size for both */
+      line-height:34px;
+      cursor:pointer;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      user-select:none;
+      -webkit-tap-highlight-color:transparent;
+      box-shadow:0 10px 24px rgba(0,0,0,0.35);
+      padding:0;           /* prevent global button padding from changing size */
+    }
+
+    /* Hover/active */
+    @media (hover: hover) and (pointer: fine) {
+      #export-plot-btn,
+      #export-csv-btn{
+        transition: filter 120ms ease, transform 120ms ease;
+      }
+      #export-plot-btn:hover,
+      #export-csv-btn:hover{
+        filter: brightness(1.15);
+        transform: translateY(-1px);
+      }
+      #export-plot-btn:active,
+      #export-csv-btn:active{
+        filter: brightness(0.95);
+        transform: translateY(0px);
+      }
+    }
+
+    @media print {
+      #export-buttons{ display:none !important; }
+    }
+
+    /* ----------------------------------------------------------------------------------- */
+
   </style>
 </head>
 
@@ -793,10 +775,12 @@
               5) Play <b>sustained single notes</b> (a second or so each). The tool measures each note and builds a distribution of <b>cents offset</b> relative to the selected temperament.<br/>
               6) You can change the cents range of the graph using the <b>Cents range (display)</b> menu.<br/>
               7) Click <b>PAUSE</b> to pause the pitch detection. Click <b>RESUME</b> to resume.<br/>
-              8) Click the <b>&#x2913;</b> button at the bottom right of the graph area to save a JPEG image file of the graph.<br/>
+              8) Click the <b>JPEG</b> button at the bottom right of the graph area to save a JPEG image file of the graph.<br/>
               The JPEG image file will be saved to your browser's default Downloads directory.<br/>
               On mobile devices, rotate your device to Landscape orientation before doing the export to get the best JPEG image results.<br/>
-              9) Click <b>RESET</b> to clear the graph and start over.
+              9) Click the <b>CSV</b> button at the bottom right of the graph area to save the graph values as a CSV file with the median cents offset value for each note.<br/>
+              The exported files will be saved to your browser's default Downloads directory.<br/>
+              10) Click <b>RESET</b> to clear the graph and start over.
             </div>
 
             <hr style="border:0; border-top:1px solid #2a2a2a; margin: 14px 0 14px 0;"/>
@@ -976,13 +960,12 @@
       <div id="plot-title">Pitch Distribution</div>
       <canvas id="plot"></canvas>
 
-      <button id="export-plot-btn" type="button" title="Export graph as PNG" aria-label="Export graph as PNG">
-        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-          <path d="M12 3v11" />
-          <path d="M8 10l4 4 4-4" />
-          <path d="M4 19h16" />
-        </svg>
-      </button>
+      <!-- NEW: two export buttons (JPEG + CSV), CSV is to the right -->
+      <div id="export-buttons">
+        <button id="export-plot-btn" type="button" title="Export graph as JPEG image" aria-label="Export graph as JPEG image">JPEG</button>
+        <button id="export-csv-btn" type="button" title="Export graph values as CSV file" aria-label="Export graph values as CSV file">CSV</button>
+      </div>
+      <!-- /NEW -->
 
     </div>
 
@@ -1845,19 +1828,34 @@
     } catch(e){}
   }
 
-  // -------------------- NEW: Export plot as JPEG --------------------
+  // -------------------- NEW: Export plot as JPEG / CSV --------------------
   const exportPlotBtn = document.getElementById("export-plot-btn");
+  const exportCsvBtn  = document.getElementById("export-csv-btn");
 
-  function showExportFilenameDialog(defaultName){
+  function showExportFilenameDialog(defaultName, opts){
+    opts = opts || {};
+    const wantedExt = String(opts.ext || "jpg").replace(/^\./, "").toLowerCase();
+    const dlgTitle = String(opts.title || "Export Graph as JPEG Image");
+
     return new Promise((resolve) => {
       const overlay = document.getElementById("exportdlg-overlay");
       const input   = document.getElementById("exportdlg-filename");
       const btnSave = document.getElementById("exportdlg-save");
       const btnCancel = document.getElementById("exportdlg-cancel");
+      const titleEl = document.getElementById("exportdlg-title");
+      const modalEl = document.getElementById("exportdlg-modal");
 
       if (!overlay || !input || !btnSave || !btnCancel){
         resolve(null);
         return;
+      }
+
+      // Set dialog title (only thing that changes between JPEG/CSV per your request)
+      if (titleEl) titleEl.textContent = dlgTitle;
+
+      // Keep aria-label reasonably aligned (optional, but harmless)
+      if (modalEl) {
+        modalEl.setAttribute("aria-label", dlgTitle);
       }
 
       let done = false;
@@ -1883,8 +1881,9 @@
         // Basic sanitize for common filesystem-illegal chars
         v = v.replace(/[\/\\:*?"<>|]+/g, "-").replace(/\s+/g, " ");
 
-        // Ensure .jpg extension
-        if (v && !/\.jpe?g$/i.test(v)) v += ".jpg";
+        // Ensure requested extension
+        const re = new RegExp("\\." + wantedExt.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "$", "i");
+        if (v && !re.test(v)) v += "." + wantedExt;
 
         return v;
       };
@@ -1931,12 +1930,7 @@
     });
   }
 
-  async function exportPlotAsJPG(){
-    if (!canvas) return;
-
-    // Ensure latest render
-    try { drawPlot(); } catch(e){}
-
+  function buildDefaultExportBaseName(){
     const intSel = document.getElementById("intonation");
     const rootSel = document.getElementById("rootnote");
     const a4Sel   = document.getElementById("a4ref");
@@ -1950,10 +1944,20 @@
       rootPart = `_${rootName}`;
     }
 
-    const defaultName =
-      `rtta_${temperament}${rootPart}_A${a4}.jpg`;
+    return `rtta_${temperament}${rootPart}_A${a4}`;
+  }
 
-    const filename = await showExportFilenameDialog(defaultName);
+  async function exportPlotAsJPG(){
+    if (!canvas) return;
+
+    // Ensure latest render
+    try { drawPlot(); } catch(e){}
+
+    const defaultName = buildDefaultExportBaseName() + ".jpg";
+    const filename = await showExportFilenameDialog(defaultName, {
+      ext: "jpg",
+      title: "Export Graph as JPEG Image"
+    });
     if (!filename) return;
 
     canvas.toBlob(blob => {
@@ -1977,8 +1981,66 @@
 
   }
 
+  function csvEscape(v){
+    const s = (v == null) ? "" : String(v);
+    if (/[",\r\n]/.test(s)) return '"' + s.replace(/"/g, '""') + '"';
+    return s;
+  }
+
+  function formatMedianCentsForCSV(c){
+    if (c == null || !isFinite(c)) return "";
+    // match the UI rounding style (1 decimal) but as a plain number
+    const v = Math.round(c * 10) / 10;
+    return v.toFixed(1);
+  }
+
+  async function exportPlotAsCSV(){
+    // Build rows: NoteName (ascending MIDI), MedianCents
+    const mids = Array.from(noteSamples.keys()).sort((a,b)=>a-b);
+    if (!mids.length) return;
+
+    const rows = [];
+    rows.push(["Note", "MedianCents"]);
+
+    for (const midi of mids){
+      const samples = noteSamples.get(midi) || [];
+      if (!samples.length) continue;
+
+      const st = statsForSamples(samples);
+      const med = (st && isFinite(st.med)) ? st.med : median(samples);
+
+      rows.push([midiToNoteName(midi), formatMedianCentsForCSV(med)]);
+    }
+
+    const csvText = rows.map(r => r.map(csvEscape).join(",")).join("\r\n") + "\r\n";
+
+    const defaultName = buildDefaultExportBaseName() + ".csv";
+    const filename = await showExportFilenameDialog(defaultName, {
+      ext: "csv",
+      title: "Export Graph Values as CSV File"
+    });
+    if (!filename) return;
+
+    const blob = new Blob([csvText], { type: "text/csv;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+
+    setTimeout(() => {
+      URL.revokeObjectURL(url);
+    }, 2000);
+  }
+
   if (exportPlotBtn){
     exportPlotBtn.addEventListener("click", exportPlotAsJPG);
+  }
+  if (exportCsvBtn){
+    exportCsvBtn.addEventListener("click", exportPlotAsCSV);
   }
 
   // ---------------------------------------------------------------
