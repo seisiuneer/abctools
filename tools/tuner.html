@@ -6,7 +6,7 @@
 
   <meta property="og:type" content="website" />
   <meta property="og:title" content="Chromatic Tuner" />
-  <meta property="og:description" content="Simple chromatic instrument tuner. Adjustable temperament (ET or Just Intonation), A4 reference, and input boost." />
+  <meta property="og:description" content="Simple chromatic instrument tuner. Adjustable temperament (ET, Just Intonation, or Pythagorean/Perfect fifths), A4 reference, and input boost." />
   <meta property="og:url" content="https://michaeleskin.com/tools/tuner.html" />
   <meta property="og:site_name" content="Chromatic Tuner" />
   <meta property="og:image" content="https://michaeleskin.com/abctools/img/abc-icon.png" />
@@ -542,10 +542,46 @@
             <div class="instructions-subbody">
 
               1) Select the A4 reference frequency, display mode (Needle or Strobe), and input level adjustment.<br/>
-              2) Select the temperament: Equal Temperament or Just Intonation.<br/>
-              3) If you select Just Intonation also select the root note for the temperament.<br/>
+              2) Select the temperament: Equal Temperament, Just Intonation, or Pythagorean (Perfect fifths).<br/>
+              3) If you select Just Intonation or Pythagorean, also select the root note for the temperament.<br/>
               4) Click <b>START</b> and play a steady tone. The note name and cents offset will be shown for the selected temperament.
 
+            </div>
+
+            <hr style="border:0; border-top:1px solid #2a2a2a; margin: 14px 0 14px 0;"/>
+
+            <!-- Replace ONLY the “Pythagorean (Perfect fifths) for fiddlers (G-D-A-E)” block in the instructions modal
+                 with the updated, more fiddle-centric text below. -->
+
+            <div class="instructions-subtitle">Pythagorean (Perfect fifths) for fiddlers (G–D–A–E)</div>
+            <div class="instructions-subbody">
+              This mode uses <b>pure 3:2 fifths</b> (Pythagorean tuning).<br/><br/>
+              It is ideal for tuning a fiddle so the <b>open strings</b> and
+              <b>fifth-based double stops</b> sound clean and consonant, with
+              <b>minimal beating</b>.<br/><br/>
+
+              <b>Recommended fiddle tuning workflow:<br/><br/>
+              Root = D (recommended), start on the D string</b><br/><br/>
+
+              1) Set the <b>Temperament</b> to <b>Pythagorean (Perfect fifths)</b>.<br/>
+              2) Set the <b>Root note</b> to <b>D</b>.<br/>
+              3) Tune the <b>D string</b> until the tuner reads <b>0.0 cents</b>.<br/>
+              4) Tune the <b>A string</b> until it reads <b>0.0 cents</b>.<br/>
+              5) Tune the <b>G string</b> until it reads <b>0.0 cents</b>.<br/>
+              6) Finally, tune the <b>E string</b> until it reads <b>0.0 cents</b>.<br/><br/>
+
+              <b>Alternative workflow:</b><br/><br/>
+              <b>Root = A, start on the A string</b><br/><br/>
+
+              1) Set the <b>Temperament</b> to <b>Pythagorean (Perfect fifths)</b>.<br/>
+              2) Set the <b>Root note</b> to <b>A</b>.<br/>
+              3) Tune the <b>A string</b> until the tuner reads <b>0.0 cents</b>.<br/>
+              4) Tune the <b>D string</b> until it reads <b>0.0 cents</b>.<br/>
+              5) Tune the <b>E string</b> until it reads <b>0.0 cents</b>.<br/>
+              6) Finally, tune the <b>G string</b> until it reads <b>0.0 cents</b>.<br/><br/>
+
+              In both cases, the strings are tuned in <b>pure fifths</b>, which is why
+              all strings read <b>0.0 cents</b> when correctly tuned.
             </div>
 
             <hr style="border:0; border-top:1px solid #2a2a2a; margin: 14px 0 14px 0;"/>
@@ -641,6 +677,7 @@
           <select id="intonation">
             <option value="et" selected>Equal Temperament</option>
             <option value="just">Just Intonation</option>
+            <option value="pyth">Pythagorean (Perfect fifths)</option>
           </select>
         </div>
       </div>
@@ -1130,8 +1167,41 @@
     15/8     // M7
   ];
 
+  /*
+    PYTHAGOREAN (PERFECT FIFTHS)
+
+    Standard Pythagorean chromatic mapping within one octave, relative to the chosen root:
+      0  = 1/1
+      1  = 2187/2048
+      2  = 9/8
+      3  = 19683/16384
+      4  = 81/64
+      5  = 4/3
+      6  = 729/512
+      7  = 3/2
+      8  = 6561/4096
+      9  = 27/16
+      10 = 59049/32768
+      11 = 243/128
+  */
+  const PYTH_RATIOS = [
+    1/1,             // unison
+    2187/2048,       // chromatic semitone
+    9/8,             // whole tone
+    19683/16384,     // minor third (pyth)
+    81/64,           // major third (pyth)
+    4/3,             // perfect fourth
+    729/512,         // tritone (pyth)
+    3/2,             // perfect fifth
+    6561/4096,       // minor sixth (pyth)
+    27/16,           // major sixth (pyth)
+    59049/32768,     // minor seventh (pyth)
+    243/128          // major seventh (pyth)
+  ];
+
   function getActiveRatios(){
     if (gIntonation === "just") return JUST_RATIOS;
+    if (gIntonation === "pyth") return PYTH_RATIOS;
     return null;
   }
 
@@ -1144,15 +1214,24 @@
   function temperamentIdealFreqForMidi(midi){
     if (gIntonation === "et") return midiToFreq(midi);
 
-    const rootMidi = 60 + (gRootPc % 12); // root at octave 4
-    const rootFreq = midiToFreq(rootMidi); // lock root to ET under A4 ref
-
+    const rootMidi = 60 + (gRootPc % 12);     // root at octave 4
+    const rootFreq = midiToFreq(rootMidi);    // lock root to ET under A4 ref
     const d = midi - rootMidi;
 
-    const ratios = getActiveRatios(); // just arrays
+    const ratios = getActiveRatios();         // just/pyth arrays
     if (!ratios) return midiToFreq(midi);
 
-    const ratio = ratioForSemitoneDistance(d, ratios);
+    // Default behavior (kept exactly as-is for JUST)
+    if (gIntonation !== "pyth") {
+      const ratio = ratioForSemitoneDistance(d, ratios);
+      return rootFreq * ratio;
+    }
+
+    // PYTHAGOREAN ONLY: fix negative intervals by using reciprocal of upward ratio
+    const ratio = (d >= 0)
+      ? ratioForSemitoneDistance(d, ratios)
+      : (1 / ratioForSemitoneDistance(-d, ratios));
+
     return rootFreq * ratio;
   }
 
@@ -1166,7 +1245,7 @@
     const intSel = document.getElementById("intonation");
     if (intSel) {
       const v = String(intSel.value || "et");
-      gIntonation = (v === "just") ? "just" : "et";
+      gIntonation = (v === "just" || v === "pyth") ? v : "et";
     }
 
     const rootSel = document.getElementById("rootnote");
