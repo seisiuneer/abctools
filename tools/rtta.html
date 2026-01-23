@@ -1457,10 +1457,17 @@
     // When pausing, freeze the live readout and stop the level meter motion.
     // (Graph remains visible; no new samples are collected.)
     if (detectionPaused){
+
+      liveNoteEl.textContent = "Paused";
+      liveCentsEl.textContent = " ";
+
       // keep last values on screen; do not clearAnalysis()
       // freeze the meter at current value by simply not updating it while paused
     } else {
       // On resume, re-prime the gate and pitch history to avoid “stale buffer” jumps
+      liveNoteEl.textContent = "--";
+      liveCentsEl.textContent = " -- cents";
+
       pitchHistory = [];
       silentFrames = 0;
       lastDetectedMidi = null;
@@ -1478,8 +1485,14 @@
     resetAdaptiveGate();
     levelMeterSmoothed = 0;
     setLevelMeter01(0);
-    liveNoteEl.textContent = "--";
-    liveCentsEl.textContent = " -- cents";
+    if (detectionPaused){
+      liveNoteEl.textContent = "Paused";
+      liveCentsEl.textContent = " ";
+    }
+    else{
+      liveNoteEl.textContent = "--";
+      liveCentsEl.textContent = " -- cents";
+    }
     syncLivePairLayout();
 
     requestPlotRedraw(true);
