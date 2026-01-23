@@ -3,10 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-
   <meta property="og:type" content="website" />
   <meta property="og:title" content="Chromatic Tuner" />
-  <meta property="og:description" content="Simple chromatic instrument tuner. Adjustable temperament (ET, Just Intonation, or Pythagorean/Perfect fifths), A4 reference, and input boost." />
+  <meta property="og:description" content="Simple chromatic instrument tuner. Adjustable temperament (ET, Just Intonation, Pythagorean, Fiddle sweetened), A4 reference, and input boost." />
   <meta property="og:url" content="https://michaeleskin.com/abctools/tuner.html" />
   <meta property="og:site_name" content="Chromatic Tuner" />
   <meta property="og:image" content="https://michaeleskin.com/abctools/img/abc-icon.png" />
@@ -519,7 +518,6 @@
         --ui-max: 1000px;
       }
     }
-
   </style>
 </head>
 
@@ -542,16 +540,14 @@
             <div class="instructions-subbody">
 
               1) Select the A4 reference frequency, display mode (Needle or Strobe), and input level adjustment.<br/>
-              2) Select the temperament: Equal Temperament, Just Intonation, or Pythagorean (Perfect fifths).<br/>
+              2) Select the temperament: Equal Temperament, Just Intonation, Pythagorean (Perfect fifths), or the Fiddle sweetened modes.<br/>
               3) If you select Just Intonation or Pythagorean, also select the root note for the temperament.<br/>
-              4) Click <b>START</b> and play a steady tone. The note name and cents offset will be shown for the selected temperament.
+              4) For the fiddle sweetened modes, the root note selector is disabled because the anchor is fixed by the selected mode.<br/>
+              5) Click <b>START</b> and play a steady tone. The note name and cents offset will be shown for the selected temperament.
 
             </div>
 
             <hr style="border:0; border-top:1px solid #2a2a2a; margin: 14px 0 14px 0;"/>
-
-            <!-- Replace ONLY the “Pythagorean (Perfect fifths) for fiddlers (G-D-A-E)” block in the instructions modal
-                 with the updated, more fiddle-centric text below. -->
 
             <div class="instructions-subtitle">Pythagorean (Perfect fifths) for fiddlers (G–D–A–E)</div>
             <div class="instructions-subbody">
@@ -582,6 +578,37 @@
 
               In both cases, the strings are tuned in <b>pure fifths</b>, which is why
               all strings read <b>0.0 cents</b> when correctly tuned.
+            </div>
+
+            <hr style="border:0; border-top:1px solid #2a2a2a; margin: 14px 0 14px 0;"/>
+
+            <div class="instructions-subtitle">Fiddle sweetened (open strings pure fifths, everything else ET)</div>
+            <div class="instructions-subbody">
+              These two modes are designed for traditional fiddle tuning where you want the <b>open strings (G–D–A–E)</b> to be tuned
+              in <b>pure 3:2 fifths</b> for clean resonance and double stops, but want <b>all other notes</b> to match
+              <b>Equal Temperament</b> for compatibility with other instruments.<br/><br/>
+
+              <b>Fiddle sweetened (Anchor on D)</b><br/>
+              • D4 is locked to the Equal Temperament D (based on the selected A4 reference).<br/>
+              • G3, A4, and E5 are derived from D using pure 3:2 fifth ratios.<br/>
+              • All other notes are Equal Temperament.<br/><br/>
+
+              <b>Recommended workflow (Anchor on D):</b><br/>
+              1) Select <b>Fiddle sweetened (Anchor on D)</b>.<br/>
+              2) Tune <b>D</b> first until the tuner reads <b>0.0 cents</b>.<br/>
+              3) Tune <b>A</b>, then <b>G</b>, then <b>E</b> until each reads <b>0.0 cents</b>.<br/><br/>
+
+              <b>Fiddle sweetened (Anchor on A)</b><br/>
+              • A4 is locked to the Equal Temperament A (based on the selected A4 reference).<br/>
+              • G3, D4, and E5 are derived from A using pure 3:2 fifth ratios.<br/>
+              • All other notes are Equal Temperament.<br/><br/>
+
+              <b>Recommended workflow (Anchor on A):</b><br/>
+              1) Select <b>Fiddle sweetened (Anchor on A)</b>.<br/>
+              2) Tune <b>A</b> first until the tuner reads <b>0.0 cents</b>.<br/>
+              3) Tune <b>D</b>, then <b>E</b>, then <b>G</b> until each reads <b>0.0 cents</b>.<br/><br/>
+
+              <b>Note:</b> In these sweetened fifths modes, the <b>Root note</b> selector is disabled because the anchor is fixed by the selected mode.
             </div>
 
             <hr style="border:0; border-top:1px solid #2a2a2a; margin: 14px 0 14px 0;"/>
@@ -678,6 +705,8 @@
             <option value="et" selected>Equal Temperament</option>
             <option value="just">Just Intonation</option>
             <option value="pyth">Pythagorean (Perfect fifths)</option>
+            <option value="fiddle_d">Fiddle sweetened (Anchor on D)</option>
+            <option value="fiddle_a">Fiddle sweetened (Anchor on A)</option>
           </select>
         </div>
       </div>
@@ -1139,7 +1168,14 @@
     }
   }
 
-  let gIntonation = "et";
+  // intonation modes
+  const INTON_ET       = "et";
+  const INTON_JUST     = "just";
+  const INTON_PYTH     = "pyth";
+  const INTON_FIDDLE_D = "fiddle_d"; // open strings pure fifths, anchor D4 to ET
+  const INTON_FIDDLE_A = "fiddle_a"; // open strings pure fifths, anchor A4 to ET
+
+  let gIntonation = INTON_ET;
   let gRootPc = 0;
 
   /*
@@ -1169,20 +1205,6 @@
 
   /*
     PYTHAGOREAN (PERFECT FIFTHS)
-
-    Standard Pythagorean chromatic mapping within one octave, relative to the chosen root:
-      0  = 1/1
-      1  = 2187/2048
-      2  = 9/8
-      3  = 19683/16384
-      4  = 81/64
-      5  = 4/3
-      6  = 729/512
-      7  = 3/2
-      8  = 6561/4096
-      9  = 27/16
-      10 = 59049/32768
-      11 = 243/128
   */
   const PYTH_RATIOS = [
     1/1,             // unison
@@ -1199,9 +1221,29 @@
     243/128          // major seventh (pyth)
   ];
 
+  // Sweetened fiddle open-string mappings (ratios relative to the anchor note)
+  // MIDI: G3=55, D4=62, A4=69, E5=76
+  const FIDDLE_OPEN_MIDI = { G3:55, D4:62, A4:69, E5:76 };
+
+  // Anchor on D4 (locked to ET under A4 reference), derive G3/A4/E5 by pure fifth ratios
+  const FIDDLE_D_RATIOS_BY_MIDI = {
+    55: 2/3,  // G3 = D4 * (2/3)
+    62: 1/1,  // D4 = anchor
+    69: 3/2,  // A4 = D4 * (3/2)
+    76: 9/4   // E5 = D4 * (9/4)
+  };
+
+  // Anchor on A4 (locked to ET under A4 reference), derive D4/G3/E5 by pure fifth ratios
+  const FIDDLE_A_RATIOS_BY_MIDI = {
+    55: 4/9,  // G3 = A4 * (4/9)  (down two fifths)
+    62: 2/3,  // D4 = A4 * (2/3)
+    69: 1/1,  // A4 = anchor
+    76: 3/2   // E5 = A4 * (3/2)
+  };
+
   function getActiveRatios(){
-    if (gIntonation === "just") return JUST_RATIOS;
-    if (gIntonation === "pyth") return PYTH_RATIOS;
+    if (gIntonation === INTON_JUST) return JUST_RATIOS;
+    if (gIntonation === INTON_PYTH) return PYTH_RATIOS;
     return null;
   }
 
@@ -1211,8 +1253,36 @@
     return ratios[interval] * Math.pow(2, nOct);
   }
 
+  function fiddleSweetenedIdealFreqForMidi(midi){
+    // All non-open-string notes are ET
+    const et = midiToFreq(midi);
+
+    if (gIntonation === INTON_FIDDLE_D){
+      const anchorMidi = FIDDLE_OPEN_MIDI.D4; // 62
+      const ratio = FIDDLE_D_RATIOS_BY_MIDI[midi];
+      if (!ratio) return et;
+      const anchorFreq = midiToFreq(anchorMidi); // ET D4 under A4 reference
+      return anchorFreq * ratio;
+    }
+
+    if (gIntonation === INTON_FIDDLE_A){
+      const anchorMidi = FIDDLE_OPEN_MIDI.A4; // 69
+      const ratio = FIDDLE_A_RATIOS_BY_MIDI[midi];
+      if (!ratio) return et;
+      const anchorFreq = midiToFreq(anchorMidi); // ET A4 under A4 reference
+      return anchorFreq * ratio;
+    }
+
+    return et;
+  }
+
   function temperamentIdealFreqForMidi(midi){
-    if (gIntonation === "et") return midiToFreq(midi);
+    // New hybrid fiddle modes
+    if (gIntonation === INTON_FIDDLE_D || gIntonation === INTON_FIDDLE_A){
+      return fiddleSweetenedIdealFreqForMidi(midi);
+    }
+
+    if (gIntonation === INTON_ET) return midiToFreq(midi);
 
     const rootMidi = 60 + (gRootPc % 12);     // root at octave 4
     const rootFreq = midiToFreq(rootMidi);    // lock root to ET under A4 ref
@@ -1222,7 +1292,7 @@
     if (!ratios) return midiToFreq(midi);
 
     // Default behavior (kept exactly as-is for JUST)
-    if (gIntonation !== "pyth") {
+    if (gIntonation !== INTON_PYTH) {
       const ratio = ratioForSemitoneDistance(d, ratios);
       return rootFreq * ratio;
     }
@@ -1238,20 +1308,35 @@
   function updateRootEnablement(){
     const rootSel = document.getElementById("rootnote");
     if (!rootSel) return;
-    rootSel.disabled = (gIntonation === "et");
+
+    // Root note is only meaningful/adjustable for JUST and PYTH.
+    rootSel.disabled = !(gIntonation === INTON_JUST || gIntonation === INTON_PYTH);
   }
 
   function applyIntonationFromUI(){
     const intSel = document.getElementById("intonation");
     if (intSel) {
-      const v = String(intSel.value || "et");
-      gIntonation = (v === "just" || v === "pyth") ? v : "et";
+      const v = String(intSel.value || INTON_ET);
+      if (v === INTON_JUST || v === INTON_PYTH || v === INTON_FIDDLE_D || v === INTON_FIDDLE_A) {
+        gIntonation = v;
+      } else {
+        gIntonation = INTON_ET;
+      }
     }
 
     const rootSel = document.getElementById("rootnote");
     if (rootSel) {
-      const n = parseInt(rootSel.value, 10);
-      gRootPc = (isFinite(n) ? n : 0) % 12;
+      // For the sweetened fiddle modes, force the root note display to match the anchor.
+      if (gIntonation === INTON_FIDDLE_D){
+        gRootPc = 2; // D
+        rootSel.value = "2";
+      } else if (gIntonation === INTON_FIDDLE_A){
+        gRootPc = 9; // A
+        rootSel.value = "9";
+      } else {
+        const n = parseInt(rootSel.value, 10);
+        gRootPc = (isFinite(n) ? n : 0) % 12;
+      }
     }
 
     updateRootEnablement();
