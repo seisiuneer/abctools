@@ -543,7 +543,7 @@
               2) Select the temperament: Equal Temperament, Just Intonation, Pythagorean (Perfect fifths), or the Fiddle Sweetened modes.<br/>
               3) If you select Just Intonation or Pythagorean, also select the root note for the temperament.<br/>
               4) For the Fiddle Sweetened modes, the root note selector is disabled because the anchor is fixed by the selected mode.<br/>
-              5) Click <b>START</b> and play a steady tone. The note name and cents offset will be shown for the selected temperament.
+              5) Click <b>START TUNING</b> and play a steady tone. The note name and cents offset will be shown for the selected temperament.
 
             </div>
 
@@ -769,7 +769,7 @@
       </div>
     </div>
 
-    <button id="start-btn" class="btn-main" type="button">START</button>
+    <button id="start-btn" class="btn-main" type="button">START TUNING</button>
   </div>
 
 <script>
@@ -1074,7 +1074,7 @@
     const base = "Microphone access failed.";
 
     if (name === "NotAllowedError" || name === "PermissionDeniedError") {
-      return "Microphone access permission was denied.<br/><br/>Reload the page, click <b>START</b>, and allow microphone access when asked by your browser.";
+      return "Microphone access permission was denied.<br/><br/>Reload the page, click <b>START TUNING</b>, and allow microphone access when asked by your browser.";
     }
     if (name === "NotFoundError" || name === "DevicesNotFoundError") {
       return "No microphone was found.<br/><br/>Please connect/select a microphone and try again.";
@@ -1625,7 +1625,7 @@
 
       const btn = document.getElementById('start-btn');
       btn.disabled = false;
-      btn.innerText = "START";
+      btn.innerText = "START TUNING";
       tunerStarted = false;
       setDimmed(false);
     }
