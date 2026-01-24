@@ -523,7 +523,7 @@
        Tone Generator panel (NEW)
     ------------------------------ */
     #tonegen{
-      margin-top: 16px;
+      margin-top: 32px;
       padding: 14px 14px 12px 14px;
       border-radius: 14px;
       border: 1px solid #333;
@@ -619,6 +619,17 @@
       white-space:nowrap;       /* prevent wrap on narrow screens */
     }
 
+    #tonegen-btn {
+      outline: none;
+    }
+
+    #tonegen-btn:focus,
+    #tonegen-btn:focus-visible,
+    #tonegen-btn:active {
+      outline: none !important;
+      box-shadow: none !important;
+    }
+
     @media (max-width: 600px) {
       .tone-row, .tone-row-3, #tonegen-io{
         grid-template-columns: 1fr;
@@ -663,7 +674,7 @@
               2) Select the temperament: Equal Temperament, Just Intonation, Pythagorean (Perfect fifths), or the Fiddle Sweetened modes.<br/>
               3) If you select Just Intonation or Pythagorean, also select the root note for the temperament.<br/>
               4) For the Fiddle Sweetened modes, the root note selector is disabled because the anchor is fixed by the selected mode.<br/>
-              5) Click <b>START</b> and play a steady tone. The note name and cents offset will be shown for the selected temperament.
+              5) Click <b>START TUNING</b> and play a steady tone. The note name and cents offset will be shown for the selected temperament.
 
             </div>
 
@@ -729,6 +740,27 @@
               3) Tune <b>D</b>, then <b>E</b>, then <b>G</b> until each reads <b>0.0 cents</b>.<br/><br/>
 
               <b>Note:</b> In these sweetened fifths modes, the <b>Root note</b> selector is disabled because the anchor is fixed by the selected mode.
+            </div>
+
+            <hr style="border:0; border-top:1px solid #2a2a2a; margin: 14px 0 14px 0;"/>
+
+            <div class="instructions-subtitle">Tone Generator</div>
+            <div class="instructions-subbody">
+              The <b>Tone Generator</b> produces a steady reference pitch for tuning by ear.<br/><br/>
+
+              <b>How to use it:</b><br/>
+              1) Choose a <b>Tone note</b>.<br/>
+              2) Choose the <b>Temperament</b> you want the tone generated in.<br/>
+              3) If you choose <b>Just Intonation</b> or <b>Pythagorean</b>, also choose a <b>Root note</b> (this enables the root selector).<br/>
+              4) Choose a <b>Waveform</b> and set the <b>Volume</b>.<br/>
+              5) Click <b>PLAY TONE</b> to start the tone, and <b>STOP TONE</b> to stop it.<br/><br/>
+
+              The frequency readout shows the selected note name and the exact frequency being generated.<br/><br/>
+
+              <b>Keyboard shortcuts:</b><br/>
+              • <b>[</b> and <b>]</b> : step the <b>Tone note</b> down/up (wraps around).<br/>
+              • <b>{</b> and <b>}</b> : step the <b>Root note</b> down/up (wraps around).<br/>
+              &nbsp;&nbsp;&nbsp;&nbsp;(<b>{</b> and <b>}</b> only work when the tone generator Root note selector is enabled — i.e., in <b>Just Intonation</b> or <b>Pythagorean</b> mode.)<br/><br/>
             </div>
 
             <hr style="border:0; border-top:1px solid #2a2a2a; margin: 14px 0 14px 0;"/>
@@ -889,6 +921,8 @@
       </div>
     </div>
 
+    <button id="start-btn" class="btn-main" type="button">START TUNING</button>
+
     <!-- ------------------------------
          Tone Generator (NEW)
          Independent of tuner listening/intonation selections
@@ -968,7 +1002,6 @@
       </div>
     </div>
 
-    <button id="start-btn" class="btn-main" type="button">START</button>
   </div>
 
 <script>
@@ -1288,7 +1321,7 @@
     const base = "Microphone access failed.";
 
     if (name === "NotAllowedError" || name === "PermissionDeniedError") {
-      return "Microphone access permission was denied.<br/><br/>Reload the page, click <b>START</b>, and allow microphone access when asked by your browser.";
+      return "Microphone access permission was denied.<br/><br/>Reload the page, click <b>START TUNING</b>, and allow microphone access when asked by your browser.";
     }
     if (name === "NotFoundError" || name === "DevicesNotFoundError") {
       return "No microphone was found.<br/><br/>Please connect/select a microphone and try again.";
@@ -2151,7 +2184,7 @@
 
       const btn = document.getElementById('start-btn');
       btn.disabled = false;
-      btn.innerText = "START";
+      btn.innerText = "START TUNING";
       tunerStarted = false;
       setDimmed(false);
     }
@@ -2306,6 +2339,86 @@
       }
     }, { passive:false });
   }
+
+  // ------------------------------
+  // Keyboard shortcuts for Tone Generator (FIXED)
+  // [ / ] = tone note down/up (wrap)
+  // { / } = tone root down/up (wrap) when enabled
+  //
+  // Works even when other dropdowns/buttons are focused.
+  // Ignores only actual text entry fields (input/textarea/contenteditable).
+  // Uses e.code so it works reliably across layouts:
+  //   BracketLeft  + no shift  => [
+  //   BracketRight + no shift  => ]
+  //   BracketLeft  + shift     => {
+  //   BracketRight + shift     => }
+  // ------------------------------
+
+  function stepSelectWrapped(sel, dir){
+    if (!sel || !sel.options || sel.options.length < 2) return false;
+
+    let idx = sel.selectedIndex;
+    if (idx < 0) idx = 0;
+
+    const n = sel.options.length;
+    idx = (idx + dir) % n;
+    if (idx < 0) idx += n;
+
+    sel.selectedIndex = idx;
+
+    // Ensure any UI that depends on 'change' sees it (some browsers need this)
+    sel.dispatchEvent(new Event("change", { bubbles: true }));
+    return true;
+  }
+
+  function shouldIgnoreShortcut(e){
+    const t = e.target;
+    if (!t) return false;
+
+    if (t.isContentEditable) return true;
+
+    const tag = (t.tagName || "").toUpperCase();
+    // Only ignore actual typing fields. Allow SELECT focus.
+    if (tag === "INPUT" || tag === "TEXTAREA") return true;
+
+    // Ignore if modifier keys that imply browser shortcuts are held
+    if (e.altKey || e.ctrlKey || e.metaKey) return true;
+
+    return false;
+  }
+
+  document.addEventListener("keydown", (e) => {
+    if (shouldIgnoreShortcut(e)) return;
+
+    let handled = false;
+
+    // Prefer e.code for robustness across keyboard layouts
+    // Note stepping: [ and ]
+    if (e.code === "BracketLeft" && !e.shiftKey) {
+      handled = stepSelectWrapped(toneNoteSel, -1);
+    } else if (e.code === "BracketRight" && !e.shiftKey) {
+      handled = stepSelectWrapped(toneNoteSel, +1);
+
+    // Root stepping: { and } (Shift+[ or Shift+])
+    } else if (e.code === "BracketLeft" && e.shiftKey) {
+      if (toneRootSel && !toneRootSel.disabled){
+        handled = stepSelectWrapped(toneRootSel, -1);
+      }
+    } else if (e.code === "BracketRight" && e.shiftKey) {
+      if (toneRootSel && !toneRootSel.disabled){
+        handled = stepSelectWrapped(toneRootSel, +1);
+      }
+    }
+
+    if (handled){
+      // Apply + persist + update oscillator immediately
+      applyToneParamsFromUI();
+      saveToneSettings();
+
+      e.preventDefault();
+      e.stopPropagation();
+    }
+  }, { capture: true, passive: false });
 
   // Stop tone when leaving tab (avoids stuck oscillator)
   document.addEventListener("visibilitychange", () => {
