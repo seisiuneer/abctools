@@ -39,6 +39,7 @@
   <style>
     :root{
       --accent:#00f2ff;
+      --paused-accent:#ff2b2b;
       --bg:#0f0f0f;
       --panel:#1a1a1a;
       --text:#e0e0e0;
@@ -421,6 +422,15 @@
     }
 
     .title-short{ display:none; }
+
+    .is-paused #live-note{
+      text-shadow: 0 0 20px var(--paused-accent) !important;
+    }
+
+    .is-paused #pause-btn{
+      border-color: rgba(255, 43, 43, 0.55);
+      box-shadow: 0 0 0 2px rgba(255, 43, 43, 0.12), 0 10px 24px rgba(0,0,0,0.35);
+    }
 
     @media (max-width: 600px) {
       body{ padding:12px; }
@@ -1596,7 +1606,11 @@
   let detectionPaused = false;
 
   function setDetectionPaused(paused){
+
     detectionPaused = !!paused;
+
+    // NEW: toggle paused styling
+    document.documentElement.classList.toggle("is-paused", detectionPaused);
 
     const pauseBtn = document.getElementById("pause-btn");
     if (pauseBtn){
