@@ -6,7 +6,7 @@
 
   <meta property="og:type" content="website" />
   <meta property="og:title" content="Real Time Tuning Analysis" />
-  <meta property="og:description" content="Real-time tuning analysis (box-plot style) from live mic input. Adjustable temperament (ET or Just Intonation), A4 reference, and input boost." />
+  <meta property="og:description" content="Real-time tuning analysis (box-plot style) from live mic input. Adjustable temperament (ET, Just Intonation, Pythagorean, Fiddle Sweetened), A4 reference, and input boost." />
   <meta property="og:url" content="https://michaeleskin.com/tools/rtta.html" />
   <meta property="og:site_name" content="Real Time Tuning Analysis" />
   <meta property="og:image" content="https://michaeleskin.com/abctools/img/abc-icon.png" />
@@ -95,6 +95,7 @@
       user-select:none;
       -webkit-tap-highlight-color: transparent;
     }
+    
     @media (hover: hover) and (pointer: fine) {
       #help-btn{ transition: filter 125ms ease; }
       #help-btn:hover{ filter: brightness(1.5); }
@@ -171,7 +172,7 @@
     }
     #troubleshoot-body{
       font-size:1.0rem;
-      line-height:1.6;
+      line-height:1.8;
       color:#e0e0e0;
       margin:0;
       padding:8px;
@@ -551,18 +552,6 @@
         opacity: 1 !important;
       }
 
-      /* Live readout: remove glow, tighten */
-      #live-readout{
-        margin: 8px 0 10px 0 !important;
-        break-inside: avoid;
-      }
-      #live-note{
-        color:#000 !important;
-        text-shadow:none !important;
-      }
-      #live-cents{
-        color:#000 !important;
-      }
       #live-hint{
         color:#000 !important;
         font-size: 10.5pt !important;
@@ -769,8 +758,9 @@
             <div class="instr-title">How to use this tool</div>
             <div class="instr-body">
               1) Select the A4 reference frequency and input level adjustment.<br/>
-              2) Select the temperament: Equal Temperament or Just Intonation.<br/>
-              3) If you select Just Intonation, also select the root note for the temperament. Root note is not used for Equal Temperament.<br/>
+              2) Select the temperament: Equal Temperament, Just Intonation, Pythagorean, or a Fiddle Sweetened preset.<br/>
+              3) If you select Just Intonation or Pythagorean, also select the root note for the temperament.<br/>
+              Root note is not used for Equal Temperament or the Fiddle Sweetened presets.<br/>
               4) Click <b>START</b> and allow microphone access when prompted.<br/>
               5) Play <b>sustained single notes</b> (a second or so each). The tool measures each note and builds a distribution of <b>cents offset</b> relative to the selected temperament.<br/>
               6) You can change the cents range of the graph using the <b>Cents range (display)</b> menu.<br/>
@@ -793,12 +783,75 @@
               • The <b>dashed whiskers</b> show the typical low/high range (1.5×IQR rule).<br/>
               Values above 0 are <b>sharp</b>, below 0 are <b>flat</b>. Taller boxes/long whiskers mean less consistency.
             </div>
+            <hr style="border:0; border-top:1px solid #2a2a2a; margin: 14px 0 14px 0;"/>
+
+            <div class="instr-title">Pythagorean (Perfect fifths)</div>
+            <div class="instr-body">
+              This mode uses <b>pure 3:2 fifths</b> (Pythagorean tuning).<br/><br/>
+              It is ideal for tuning a fiddle so the <b>open strings</b> and
+              <b>fifth-based double stops</b> sound clean and consonant, with
+              <b>minimal beating</b>.<br/><br/>
+
+              <b>Recommended GDAE fiddle tuning workflow:<br/><br/>
+              Root = D (recommended), start on the D string</b><br/><br/>
+
+              1) Set the <b>Temperament</b> to <b>Pythagorean (Perfect fifths)</b>.<br/>
+              2) Set the <b>Root note</b> to <b>D</b>.<br/>
+              3) Tune the <b>D string</b> until the tuner reads <b>0.0 cents</b>.<br/>
+              4) Tune the <b>A string</b> until it reads <b>0.0 cents</b>.<br/>
+              5) Tune the <b>G string</b> until it reads <b>0.0 cents</b>.<br/>
+              6) Finally, tune the <b>E string</b> until it reads <b>0.0 cents</b>.<br/><br/>
+
+              <b>Alternative GDAE fiddle tuning workflow:</b><br/><br/>
+              <b>Root = A, start on the A string</b><br/><br/>
+
+              1) Set the <b>Temperament</b> to <b>Pythagorean (Perfect fifths)</b>.<br/>
+              2) Set the <b>Root note</b> to <b>A</b>.<br/>
+              3) Tune the <b>A string</b> until the tuner reads <b>0.0 cents</b>.<br/>
+              4) Tune the <b>D string</b> until it reads <b>0.0 cents</b>.<br/>
+              5) Tune the <b>E string</b> until it reads <b>0.0 cents</b>.<br/>
+              6) Finally, tune the <b>G string</b> until it reads <b>0.0 cents</b>.<br/><br/>
+
+              In both cases, the strings are tuned in <b>pure fifths</b>, which is why
+              all strings read <b>0.0 cents</b> when correctly tuned.
+            </div>
+
+            <hr style="border:0; border-top:1px solid #2a2a2a; margin: 14px 0 14px 0;"/>
+
+            <div class="instr-title">Fiddle Sweetened (open strings pure fifths, everything else ET)</div>
+            <div class="instr-body">
+              These two modes are designed for traditional fiddle tuning where you want the <b>open strings (G–D–A–E)</b> to be tuned
+              in <b>pure 3:2 fifths</b> for clean resonance and double stops, but want <b>all other notes</b> to match
+              <b>Equal Temperament</b> for compatibility with other instruments.<br/><br/>
+
+              <b>Fiddle Sweetened (Anchor on D)</b><br/>
+              • D4 is locked to the Equal Temperament D (based on the selected A4 reference).<br/>
+              • G3, A4, and E5 are derived from D using pure 3:2 fifth ratios.<br/>
+              • All other notes are Equal Temperament.<br/><br/>
+
+              <b>Recommended workflow (Anchor on D):</b><br/>
+              1) Select <b>Fiddle Sweetened (Anchor on D)</b>.<br/>
+              2) Tune <b>D</b> first until the tuner reads <b>0.0 cents</b>.<br/>
+              3) Tune <b>A</b>, then <b>G</b>, then <b>E</b> until each reads <b>0.0 cents</b>.<br/><br/>
+
+              <b>Fiddle Sweetened (Anchor on A)</b><br/>
+              • A4 is locked to the Equal Temperament A (based on the selected A4 reference).<br/>
+              • G3, D4, and E5 are derived from A using pure 3:2 fifth ratios.<br/>
+              • All other notes are Equal Temperament.<br/><br/>
+
+              <b>Recommended workflow (Anchor on A):</b><br/>
+              1) Select <b>Fiddle Sweetened (Anchor on A)</b>.<br/>
+              2) Tune <b>A</b> first until the tuner reads <b>0.0 cents</b>.<br/>
+              3) Tune <b>D</b>, then <b>E</b>, then <b>G</b> until each reads <b>0.0 cents</b>.<br/><br/>
+
+              <b>Note:</b> In these sweetened fifths modes, the <b>Root note</b> selector is disabled because the anchor is fixed by the selected mode.
+            </div>
 
             <hr style="border:0; border-top:1px solid #2a2a2a; margin: 14px 0 14px 0;"/>
 
             <div class="instr-title">A4 Reference Frequency</div>
             <div class="instr-body">
-              The options includes modern A4 reference frequencies from A:438 to A:446 as well as A:415 for Baroque, A:392 for French Baroque, and common Scottish bagpipes A4 references from A:465 to A:482.<br/></br/>
+              The options includes modern A4 reference frequencies from A:438 to A:446 as well as A:415 for Baroque, A:392 for French Baroque, and common Scottish bagpipes A4 references from A:465 to A:482.<br/><br/>
               The reference value is saved and restored the next time you run the tuner.
             </div>
 
@@ -909,7 +962,7 @@
       </div>
     </div>
 
-    <!-- NEW: Second line of dropdowns (full width, 2 columns) -->
+    <!-- Second line of dropdowns (full width, 2 columns) -->
     <div class="row row-intonation">
 
       <div>
@@ -918,6 +971,9 @@
           <select id="intonation">
             <option value="et" selected>Equal Temperament</option>
             <option value="just">Just Intonation</option>
+            <option value="pyth">Pythagorean</option>
+            <option value="fiddle_d">Fiddle Sweetened (Anchor on D)</option>
+            <option value="fiddle_a">Fiddle Sweetened (Anchor on A)</option>
           </select>
         </div>
       </div>
@@ -960,19 +1016,18 @@
       <div id="plot-title">Pitch Distribution</div>
       <canvas id="plot"></canvas>
 
-      <!-- NEW: two export buttons (JPEG + CSV), CSV is to the right -->
+      <!-- two export buttons (JPEG + CSV), CSV is to the right -->
       <div id="export-buttons">
         <button id="export-plot-btn" type="button" title="Export graph as JPEG image" aria-label="Export graph as JPEG image">JPEG</button>
         <button id="export-csv-btn" type="button" title="Export graph as CSV file" aria-label="Export graph as CSV file">CSV</button>
       </div>
-      <!-- /NEW -->
 
     </div>
 
     <div class="btn-row">
       <button id="start-btn" class="btn-main" type="button">START</button>
 
-      <!-- NEW: Pause/Resume button (hidden until START), placed left of RESET -->
+      <!-- Pause/Resume button (hidden until START), placed left of RESET -->
       <button id="pause-btn" class="btn-sub" type="button" style="display:none;">PAUSE</button>
 
       <button id="reset-btn" class="btn-sub" type="button" style="display:none;">RESET</button>
@@ -1318,7 +1373,7 @@
     livePairEl.style.setProperty("--noteW", w + "px");
   }
 
-  // NEW: avoid startup overlap (measure "--" immediately)
+  // avoid startup overlap (measure "--" immediately)
   requestAnimationFrame(syncLivePairLayout);
 
   function setUserBoostGainFromUI(){
@@ -1331,8 +1386,8 @@
     }
   }
 
-  // ------------------- Intonation (ET / Just) -------------------
-  let gIntonation = "et";
+  // ------------------- Intonation (ET / Just / Pythagorean / Fiddle presets) -------------------
+  let gIntonation = "et";  // "et" | "just" | "pyth" | "fiddle_d" | "fiddle_a"
   let gRootPc = 0;
 
   /*
@@ -1360,6 +1415,78 @@
     15/8     // M7
   ];
 
+  /*
+    PYTHAGOREAN (PERFECT FIFTHS)
+  */
+  const PYTH_RATIOS = [
+    1/1,             // unison
+    2187/2048,       // chromatic semitone
+    9/8,             // whole tone
+    19683/16384,     // minor third (pyth)
+    81/64,           // major third (pyth)
+    4/3,             // perfect fourth
+    729/512,         // tritone (pyth)
+    3/2,             // perfect fifth
+    6561/4096,       // minor sixth (pyth)
+    27/16,           // major sixth (pyth)
+    59049/32768,     // minor seventh (pyth)
+    243/128          // major seventh (pyth)
+  ];
+
+  // ------------------- Fiddle Sweetened presets (Violin): Open strings = pure fifths, stopped notes = ET -------------------
+  //
+  // Violin open strings (standard tuning): G3, D4, A4, E5
+  // MIDI: G3=55, D4=62, A4=69, E5=76
+  //
+  const FIDDLE_OPEN_MIDI = { G3:55, D4:62, A4:69, E5:76 };
+
+  const FIDDLE_D_ANCHOR_MIDI = 62; // D4 (ET-anchored)
+  const FIDDLE_A_ANCHOR_MIDI = 69; // A4 (ET-anchored)
+
+  // Ratios are relative to the preset anchor, but the anchor frequency itself is taken from ET using the current A4 reference.
+  const FIDDLE_D_RATIOS_BY_MIDI = {
+    55: 2/3,  // G3 = D4 * (2/3)  (down a fifth)
+    62: 1/1,  // D4 = anchor
+    69: 3/2,  // A4 = D4 * (3/2)
+    76: 9/4   // E5 = D4 * (9/4)
+  };
+
+  const FIDDLE_A_RATIOS_BY_MIDI = {
+    55: 4/9,  // G3 = A4 * (4/9)  (down two fifths)
+    62: 2/3,  // D4 = A4 * (2/3)
+    69: 1/1,  // A4 = anchor
+    76: 3/2   // E5 = A4 * (3/2)
+  };
+
+  function getActiveRatios(){
+    if (gIntonation === "just") return JUST_RATIOS;
+    if (gIntonation === "pyth") return PYTH_RATIOS;
+    return null;
+  }
+
+  function fiddleSweetenedIdealFreqForMidi(midi){
+    // All non-open-string notes are ET
+    const et = midiToFreq(midi);
+
+    if (gIntonation === "fiddle_d"){
+      const anchorMidi = FIDDLE_OPEN_MIDI.D4; // 62
+      const ratio = FIDDLE_D_RATIOS_BY_MIDI[midi];
+      if (!ratio) return et;
+      const anchorFreq = midiToFreq(anchorMidi); // ET D4 under A4 reference
+      return anchorFreq * ratio;
+    }
+
+    if (gIntonation === "fiddle_a"){
+      const anchorMidi = FIDDLE_OPEN_MIDI.A4; // 69
+      const ratio = FIDDLE_A_RATIOS_BY_MIDI[midi];
+      if (!ratio) return et;
+      const anchorFreq = midiToFreq(anchorMidi); // ET A4 under A4 reference
+      return anchorFreq * ratio;
+    }
+
+    return et;
+  }
+
   function ratioForSemitoneDistance(d, ratios){
     const nOct = Math.floor(d / 12);
     const interval = ((d % 12) + 12) % 12;
@@ -1367,34 +1494,65 @@
   }
 
   function temperamentIdealFreqForMidi(midi){
+    // New hybrid fiddle modes
+    if (gIntonation === "fiddle_d" || gIntonation === "fiddle_a"){
+      return fiddleSweetenedIdealFreqForMidi(midi);
+    }
+
     if (gIntonation === "et") return midiToFreq(midi);
 
-    // Root anchored to ET under the selected A4 reference
-    const rootMidi = 60 + (gRootPc % 12); // root at octave 4
-    const rootFreq = midiToFreq(rootMidi);
-
+    const rootMidi = 60 + (gRootPc % 12);     // root at octave 4
+    const rootFreq = midiToFreq(rootMidi);    // lock root to ET under A4 ref
     const d = midi - rootMidi;
-    const ratio = ratioForSemitoneDistance(d, JUST_RATIOS);
+
+    const ratios = getActiveRatios();         // just/pyth arrays
+    if (!ratios) return midiToFreq(midi);
+
+    // Default behavior (kept exactly as-is for JUST)
+    if (gIntonation !== "pyth") {
+      const ratio = ratioForSemitoneDistance(d, ratios);
+      return rootFreq * ratio;
+    }
+
+    // PYTHAGOREAN ONLY: fix negative intervals by using reciprocal of upward ratio
+    const ratio = (d >= 0)
+      ? ratioForSemitoneDistance(d, ratios)
+      : (1 / ratioForSemitoneDistance(-d, ratios));
+
     return rootFreq * ratio;
+  }
+
+  function rootIsSelectableForMode(mode){
+    return (mode === "just" || mode === "pyth");
   }
 
   function updateRootEnablement(){
     const rootSel = document.getElementById("rootnote");
     if (!rootSel) return;
-    rootSel.disabled = (gIntonation === "et");
+    rootSel.disabled = !rootIsSelectableForMode(gIntonation);
   }
 
   function applyIntonationFromUI(){
     const intSel = document.getElementById("intonation");
     if (intSel) {
       const v = String(intSel.value || "et");
-      gIntonation = (v === "just") ? "just" : "et";
+      const allowed = new Set(["et","just","pyth","fiddle_d","fiddle_a"]);
+      gIntonation = allowed.has(v) ? v : "et";
     }
 
     const rootSel = document.getElementById("rootnote");
     if (rootSel) {
-      const n = parseInt(rootSel.value, 10);
-      gRootPc = (isFinite(n) ? n : 0) % 12;
+      // For the sweetened fiddle modes, force the root note display to match the anchor.
+      if (gIntonation === "fiddle_d"){
+        gRootPc = 2; // D
+        rootSel.value = "2";
+      } else if (gIntonation === "fiddle_a"){
+        gRootPc = 9; // A
+        rootSel.value = "9";
+      } else {
+        const n = parseInt(rootSel.value, 10);
+        gRootPc = (isFinite(n) ? n : 0) % 12;
+      }
     }
 
     updateRootEnablement();
@@ -1404,6 +1562,16 @@
     if (gIntonation === "just") {
       const rootName = NOTES[(gRootPc % 12 + 12) % 12] || "C";
       return `Cents Difference from Just Intonation (${rootName})`;
+    }
+    if (gIntonation === "pyth") {
+      const rootName = NOTES[(gRootPc % 12 + 12) % 12] || "C";
+      return `Cents Difference from Pythagorean (${rootName})`;
+    }
+    if (gIntonation === "fiddle_d") {
+      return "Cents Difference from Fiddle Sweetened (D)";
+    }
+    if (gIntonation === "fiddle_a") {
+      return "Cents Difference from Fiddle Sweetened (A)";
     }
     return "Cents Difference from Equal Temperament";
   }
@@ -1424,7 +1592,7 @@
   let silentFrames = 0;
   let lastDetectedMidi = null;
 
-  // -------------------- NEW: Pause/Resume state --------------------
+  // Pause/Resume state
   let detectionPaused = false;
 
   function setDetectionPaused(paused){
@@ -1437,17 +1605,10 @@
       pauseBtn.setAttribute("aria-label", pauseBtn.title);
     }
 
-    // When pausing, freeze the live readout and stop the level meter motion.
-    // (Graph remains visible; no new samples are collected.)
     if (detectionPaused){
-
       liveNoteEl.textContent = "Paused";
       liveCentsEl.textContent = " ";
-
-      // keep last values on screen; do not clearAnalysis()
-      // freeze the meter at current value by simply not updating it while paused
     } else {
-      // On resume, re-prime the gate and pitch history to avoid “stale buffer” jumps
       liveNoteEl.textContent = "--";
       liveCentsEl.textContent = " -- cents";
 
@@ -1457,7 +1618,6 @@
       resetAdaptiveGate();
     }
   }
-  // ----------------------------------------------------------------
 
   function clearAnalysis(){
     noteSamples.clear();
@@ -1490,13 +1650,13 @@
   let canvasCssH = 0;
 
   function resizeCanvasToCSS(){
-    // CHANGED: force integer DPR for crisper canvas text (fixes “distorted” look)
+    // force integer DPR for crisper canvas text (fixes “distorted” look)
     let dpr = window.devicePixelRatio || 1;
     dpr = Math.max(1, Math.min(3, Math.round(dpr)));
 
     const r = canvas.getBoundingClientRect();
 
-    // CHANGED: snap CSS size to integers to avoid fractional coordinates
+    // snap CSS size to integers to avoid fractional coordinates
     const w = Math.max(320, Math.round(r.width));
     const h = Math.max(300, Math.round(r.height));
 
@@ -1553,7 +1713,7 @@
     return { q1, med, q3, wLo, wHi, n: s.length };
   }
 
-  // Plot scheduling (DECLARED ONCE — fixes your error)
+  // Plot scheduling
   let plotDirty = true;
   let plotForce = false;
   let lastPlotT = 0;
@@ -1608,7 +1768,7 @@
     ctx.textBaseline = "alphabetic";
     ctx.fillText(
       "Note",
-      w / 2,                     // center of the canvas
+      w / 2,
       plotY0 + plotH + 57
     );
 
@@ -1632,7 +1792,7 @@
         ctx.lineTo(plotX0 + plotW, y);
         ctx.stroke();
         ctx.lineWidth = 1.25;
-        ctx.setLineDash([3,4]); // restore dashed for remaining grid lines (next loop iteration resets anyway)
+        ctx.setLineDash([3,4]);
       }
       else{
         ctx.strokeStyle = "#4a4a4a";
@@ -1708,7 +1868,7 @@
           const sMed = st ? st.med : median(samples);
           const y = yToPx(sMed);
 
-          const halfW = boxW / 2;       // <-- MATCH yellow box width
+          const halfW = boxW / 2;
 
           ctx.strokeStyle = SINGLE_TONE_COLOR;
           ctx.lineWidth = 1.5;
@@ -1828,7 +1988,7 @@
     } catch(e){}
   }
 
-  // -------------------- NEW: Export plot as JPEG / CSV --------------------
+  // Export plot as JPEG / CSV
   const exportPlotBtn = document.getElementById("export-plot-btn");
   const exportCsvBtn  = document.getElementById("export-csv-btn");
 
@@ -1850,13 +2010,8 @@
         return;
       }
 
-      // Set dialog title (only thing that changes between JPEG/CSV per your request)
       if (titleEl) titleEl.textContent = dlgTitle;
-
-      // Keep aria-label reasonably aligned (optional, but harmless)
-      if (modalEl) {
-        modalEl.setAttribute("aria-label", dlgTitle);
-      }
+      if (modalEl) modalEl.setAttribute("aria-label", dlgTitle);
 
       let done = false;
       const finish = (val) => {
@@ -1866,7 +2021,6 @@
         overlay.style.display = "none";
         overlay.setAttribute("aria-hidden", "true");
 
-        // cleanup listeners
         overlay.removeEventListener("click", onOverlayClick);
         btnCancel.removeEventListener("click", onCancel);
         btnSave.removeEventListener("click", onSave);
@@ -1877,11 +2031,8 @@
 
       const normalizeName = (s) => {
         let v = (s || "").trim();
-
-        // Basic sanitize for common filesystem-illegal chars
         v = v.replace(/[\/\\:*?"<>|]+/g, "-").replace(/\s+/g, " ");
 
-        // Ensure requested extension
         const re = new RegExp("\\." + wantedExt.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "$", "i");
         if (v && !re.test(v)) v += "." + wantedExt;
 
@@ -1890,7 +2041,7 @@
 
       const onSave = () => {
         const v = normalizeName(input.value);
-        if (!v) return; // keep dialog open
+        if (!v) return;
         finish(v);
       };
 
@@ -1910,12 +2061,10 @@
         if (e.target === overlay) onCancel();
       };
 
-      // Show
       overlay.style.display = "block";
       overlay.setAttribute("aria-hidden", "false");
       input.value = defaultName;
 
-      // Focus + select base name (without extension) for easy typing
       requestAnimationFrame(() => {
         input.focus();
         const dot = input.value.lastIndexOf(".");
@@ -1930,27 +2079,40 @@
     });
   }
 
-  function buildDefaultExportBaseName(){
-    const intSel = document.getElementById("intonation");
-    const rootSel = document.getElementById("rootnote");
-    const a4Sel   = document.getElementById("a4ref");
+  function getModeShortTag(){
+    if (gIntonation === "et") return "ET";
+    if (gIntonation === "just") return "JI";
+    if (gIntonation === "pyth") return "PYTH";
+    if (gIntonation === "fiddle_d") return "FIDDLE_D";
+    if (gIntonation === "fiddle_a") return "FIDDLE_A";
+    return "ET";
+  }
 
-    const temperament = (intSel && intSel.value === "just") ? "JI" : "ET";
+  function getEffectiveRootPcForFilename(){
+    if (gIntonation === "just" || gIntonation === "pyth") return (gRootPc % 12 + 12) % 12;
+    if (gIntonation === "fiddle_d") return 2; // D
+    if (gIntonation === "fiddle_a") return 9; // A
+    return null;
+  }
+
+  function buildDefaultExportBaseName(){
+    const a4Sel   = document.getElementById("a4ref");
     const a4 = a4Sel ? a4Sel.value : "440";
 
+    const tag = getModeShortTag();
+
     let rootPart = "";
-    if (temperament === "JI" && rootSel){
-      const rootName = NOTES[parseInt(rootSel.value,10) % 12];
-      rootPart = `_${rootName}`;
+    const effRoot = getEffectiveRootPcForFilename();
+    if (effRoot !== null && effRoot !== undefined){
+      rootPart = `_${NOTES[effRoot]}`;
     }
 
-    return `rtta_${temperament}${rootPart}_A${a4}`;
+    return `rtta_${tag}${rootPart}_A${a4}`;
   }
 
   async function exportPlotAsJPG(){
     if (!canvas) return;
 
-    // Ensure latest render
     try { drawPlot(); } catch(e){}
 
     const defaultName = buildDefaultExportBaseName() + ".jpg";
@@ -1972,7 +2134,6 @@
       a.click();
       a.remove();
 
-      // Revoke after a short delay to ensure download has started
       setTimeout(() => {
         URL.revokeObjectURL(url);
       }, 2000);
@@ -1989,13 +2150,11 @@
 
   function formatMedianCentsForCSV(c){
     if (c == null || !isFinite(c)) return "";
-    // match the UI rounding style (1 decimal) but as a plain number
     const v = Math.round(c * 10) / 10;
     return v.toFixed(1);
   }
 
   async function exportPlotAsCSV(){
-    // Build rows: NoteName (ascending MIDI), MedianCents
     const mids = Array.from(noteSamples.keys()).sort((a,b)=>a-b);
     if (!mids.length) return;
 
@@ -2043,8 +2202,6 @@
     exportCsvBtn.addEventListener("click", exportPlotAsCSV);
   }
 
-  // ---------------------------------------------------------------
-
   // Sampling + analysis
   let analysisStarted = false;
 
@@ -2056,7 +2213,6 @@
       liveCentsEl.textContent = ` ${fmtCentsSigned(cents)} cents`;
     }
 
-    // NEW: keep note center pinned; position cents based on measured note width
     requestAnimationFrame(syncLivePairLayout);
   }
 
@@ -2096,14 +2252,12 @@
       return;
     }
 
-    // -------------------- NEW: paused => no detection, no sampling, no meter motion --------------------
     if (analysisStarted && detectionPaused) {
       ensureAudioContextRunning();
-      schedulePlotPaintIfNeeded(); // plot may still need to repaint (resize, etc.)
+      schedulePlotPaintIfNeeded();
       requestAnimationFrame(tick);
       return;
     }
-    // -----------------------------------------------------------------------------------------------
 
     analyserPitch.getFloatTimeDomainData(timeDataPitch);
     const rms = rmsOfArray(timeDataPitch);
@@ -2155,7 +2309,10 @@
           const note = midiToNoteName(midi);
 
           const ideal = temperamentIdealFreqForMidi(midi);
-          const cents = centsBetween(f0, ideal);
+
+          // NEW: clamp to 0.0 cents when within 1 cent of ideal
+          let cents = centsBetween(f0, ideal);
+          if (isFinite(cents) && Math.abs(cents) <= 1.0) cents = 0.0;
 
           updateLiveReadout(note, cents);
           pushSample(midi, cents);
@@ -2233,8 +2390,6 @@
     clearAnalysis();
 
     analysisStarted = true;
-
-    // NEW: ensure pause state is reset on a fresh START
     setDetectionPaused(false);
 
     requestAnimationFrame(tick);
@@ -2251,11 +2406,10 @@
       startBtn.innerText = "STARTING…";
       await startAudio();
 
-      // NEW: hide the hint once started (removes the “click start” messaging)
       if (liveHintEl) liveHintEl.style.display = "none";
 
       startBtn.style.display = "none";
-      pauseBtn.style.display = "inline-flex"; // NEW
+      pauseBtn.style.display = "inline-flex";
       resetBtn.style.display = "inline-flex";
     } catch(err){
       console.error(err);
@@ -2263,13 +2417,12 @@
       startBtn.disabled = false;
       startBtn.innerText = "START";
       startBtn.style.display = "inline-flex";
-      if (pauseBtn) pauseBtn.style.display = "none"; // NEW
+      if (pauseBtn) pauseBtn.style.display = "none";
       resetBtn.style.display = "none";
       analysisStarted = false;
     }
   };
 
-  // NEW: Pause/Resume button
   if (pauseBtn){
     pauseBtn.title = "Pause pitch detection";
     pauseBtn.addEventListener("click", () => {
@@ -2280,7 +2433,6 @@
 
   resetBtn.onclick = () => {
     if (!analysisStarted) return;
-    // If paused, keep it paused but clear the accumulated graph (and keep UI consistent)
     clearAnalysis();
   };
 
@@ -2314,8 +2466,6 @@
     });
   }
 
-  // NEW: intonation controls
-
   const intonationSelect = document.getElementById("intonation");
   if (intonationSelect) {
     intonationSelect.addEventListener("change", () => {
@@ -2323,7 +2473,7 @@
       saveSettingsToLocalStorage();
       if (analysisStarted) clearAnalysis();
       requestPlotRedraw(true);
-      drawPlot(); // <-- NEW: update axis label immediately even before START
+      drawPlot();
     });
   }
 
@@ -2334,7 +2484,7 @@
       saveSettingsToLocalStorage();
       if (analysisStarted) clearAnalysis();
       requestPlotRedraw(true);
-      drawPlot(); // <-- NEW
+      drawPlot();
     });
   }
 
@@ -2366,7 +2516,6 @@
     syncLivePairLayout();
   });
 
-  // Redraw if the canvas element’s CSS size changes after layout settles
   if (window.ResizeObserver) {
     const ro = new ResizeObserver(() => {
       requestPlotRedraw(true);
@@ -2375,7 +2524,6 @@
     ro.observe(canvas);
   }
 
-  // Also redraw once fonts are ready (prevents post-load “squeeze”)
   if (document.fonts && document.fonts.ready) {
     document.fonts.ready.then(() => {
       requestPlotRedraw(true);
@@ -2383,11 +2531,9 @@
     });
   }
 
-  // NEW: second pass after initial layout
   setTimeout(syncLivePairLayout, 0);
 
   requestPlotRedraw(true);
-
   drawPlot();
 
 </script>

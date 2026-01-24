@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <meta property="og:type" content="website" />
   <meta property="og:title" content="Chromatic Tuner" />
-  <meta property="og:description" content="Simple chromatic instrument tuner. Adjustable temperament (ET, Just Intonation, Pythagorean, Fiddle sweetened), A4 reference, and input boost." />
+  <meta property="og:description" content="Simple chromatic instrument tuner. Adjustable temperament (ET, Just Intonation, Pythagorean, Fiddle Sweetened), A4 reference, and input boost." />
   <meta property="og:url" content="https://michaeleskin.com/abctools/tuner.html" />
   <meta property="og:site_name" content="Chromatic Tuner" />
   <meta property="og:image" content="https://michaeleskin.com/abctools/img/abc-icon.png" />
@@ -173,7 +173,7 @@
 
     #instructions-body{
       font-size:1.0rem;
-      line-height:1.6;
+      line-height:1.7;
       color:#e0e0e0;
       margin:0 0 14px 0;
       padding-top:6px;
@@ -540,23 +540,23 @@
             <div class="instructions-subbody">
 
               1) Select the A4 reference frequency, display mode (Needle or Strobe), and input level adjustment.<br/>
-              2) Select the temperament: Equal Temperament, Just Intonation, Pythagorean (Perfect fifths), or the Fiddle sweetened modes.<br/>
+              2) Select the temperament: Equal Temperament, Just Intonation, Pythagorean (Perfect fifths), or the Fiddle Sweetened modes.<br/>
               3) If you select Just Intonation or Pythagorean, also select the root note for the temperament.<br/>
-              4) For the fiddle sweetened modes, the root note selector is disabled because the anchor is fixed by the selected mode.<br/>
+              4) For the Fiddle Sweetened modes, the root note selector is disabled because the anchor is fixed by the selected mode.<br/>
               5) Click <b>START</b> and play a steady tone. The note name and cents offset will be shown for the selected temperament.
 
             </div>
 
             <hr style="border:0; border-top:1px solid #2a2a2a; margin: 14px 0 14px 0;"/>
 
-            <div class="instructions-subtitle">Pythagorean (Perfect fifths) for fiddlers (G–D–A–E)</div>
+            <div class="instructions-subtitle">Pythagorean (Perfect fifths)</div>
             <div class="instructions-subbody">
               This mode uses <b>pure 3:2 fifths</b> (Pythagorean tuning).<br/><br/>
               It is ideal for tuning a fiddle so the <b>open strings</b> and
               <b>fifth-based double stops</b> sound clean and consonant, with
               <b>minimal beating</b>.<br/><br/>
 
-              <b>Recommended fiddle tuning workflow:<br/><br/>
+              <b>Recommended GDAE fiddle tuning workflow:<br/><br/>
               Root = D (recommended), start on the D string</b><br/><br/>
 
               1) Set the <b>Temperament</b> to <b>Pythagorean (Perfect fifths)</b>.<br/>
@@ -566,7 +566,7 @@
               5) Tune the <b>G string</b> until it reads <b>0.0 cents</b>.<br/>
               6) Finally, tune the <b>E string</b> until it reads <b>0.0 cents</b>.<br/><br/>
 
-              <b>Alternative workflow:</b><br/><br/>
+              <b>Alternative GDAE fiddle tuning workflow:</b><br/><br/>
               <b>Root = A, start on the A string</b><br/><br/>
 
               1) Set the <b>Temperament</b> to <b>Pythagorean (Perfect fifths)</b>.<br/>
@@ -582,29 +582,29 @@
 
             <hr style="border:0; border-top:1px solid #2a2a2a; margin: 14px 0 14px 0;"/>
 
-            <div class="instructions-subtitle">Fiddle sweetened (open strings pure fifths, everything else ET)</div>
+            <div class="instructions-subtitle">Fiddle Sweetened (open strings pure fifths, everything else ET)</div>
             <div class="instructions-subbody">
               These two modes are designed for traditional fiddle tuning where you want the <b>open strings (G–D–A–E)</b> to be tuned
               in <b>pure 3:2 fifths</b> for clean resonance and double stops, but want <b>all other notes</b> to match
               <b>Equal Temperament</b> for compatibility with other instruments.<br/><br/>
 
-              <b>Fiddle sweetened (Anchor on D)</b><br/>
+              <b>Fiddle Sweetened (Anchor on D)</b><br/>
               • D4 is locked to the Equal Temperament D (based on the selected A4 reference).<br/>
               • G3, A4, and E5 are derived from D using pure 3:2 fifth ratios.<br/>
               • All other notes are Equal Temperament.<br/><br/>
 
               <b>Recommended workflow (Anchor on D):</b><br/>
-              1) Select <b>Fiddle sweetened (Anchor on D)</b>.<br/>
+              1) Select <b>Fiddle Sweetened (Anchor on D)</b>.<br/>
               2) Tune <b>D</b> first until the tuner reads <b>0.0 cents</b>.<br/>
               3) Tune <b>A</b>, then <b>G</b>, then <b>E</b> until each reads <b>0.0 cents</b>.<br/><br/>
 
-              <b>Fiddle sweetened (Anchor on A)</b><br/>
+              <b>Fiddle Sweetened (Anchor on A)</b><br/>
               • A4 is locked to the Equal Temperament A (based on the selected A4 reference).<br/>
               • G3, D4, and E5 are derived from A using pure 3:2 fifth ratios.<br/>
               • All other notes are Equal Temperament.<br/><br/>
 
               <b>Recommended workflow (Anchor on A):</b><br/>
-              1) Select <b>Fiddle sweetened (Anchor on A)</b>.<br/>
+              1) Select <b>Fiddle Sweetened (Anchor on A)</b>.<br/>
               2) Tune <b>A</b> first until the tuner reads <b>0.0 cents</b>.<br/>
               3) Tune <b>D</b>, then <b>E</b>, then <b>G</b> until each reads <b>0.0 cents</b>.<br/><br/>
 
@@ -705,8 +705,8 @@
             <option value="et" selected>Equal Temperament</option>
             <option value="just">Just Intonation</option>
             <option value="pyth">Pythagorean (Perfect fifths)</option>
-            <option value="fiddle_d">Fiddle sweetened (Anchor on D)</option>
-            <option value="fiddle_a">Fiddle sweetened (Anchor on A)</option>
+            <option value="fiddle_d">Fiddle Sweetened (Anchor on D)</option>
+            <option value="fiddle_a">Fiddle Sweetened (Anchor on A)</option>
           </select>
         </div>
       </div>
@@ -715,9 +715,9 @@
         <label for="rootnote">&nbsp;&nbsp;Root note</label>
         <div class="select-wrap">
           <select id="rootnote" disabled>
-            <option value="0" selected>C</option>
+            <option value="0">C</option>
             <option value="1">C#</option>
-            <option value="2">D</option>
+            <option value="2" selected>D</option>
             <option value="3">D#</option>
             <option value="4">E</option>
             <option value="5">F</option>
