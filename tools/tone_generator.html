@@ -574,7 +574,6 @@
     }
     #tonegen-btn{
       margin-top: 0;
-      background: var(--accent);
       color:#000;
       border-radius: 12px;
     }
@@ -607,6 +606,19 @@
       opacity:0.9;
     }
 
+    /* Keep Play Tone button height fixed regardless of label text */
+    #tonegen-btn{
+      height:48px;              /* pick the height you want */
+      min-height:48px;
+      line-height:48px;         /* vertical centering fallback */
+      padding:0 18px;           /* avoid changing height via padding */
+      display:flex;             /* robust centering */
+      align-items:center;
+      justify-content:center;
+      box-sizing:border-box;
+      white-space:nowrap;       /* prevent wrap on narrow screens */
+    }
+
     @media (max-width: 600px) {
       .tone-row, .tone-row-3, #tonegen-io{
         grid-template-columns: 1fr;
@@ -618,6 +630,13 @@
       #tonegen-title{
         font-size: 1.1rem;
       }
+      #tonegen-btn{
+        height:54px;
+        min-height:54px;
+        line-height:54px;
+        padding:0 18px;
+      }
+
     }
   </style>
 </head>
