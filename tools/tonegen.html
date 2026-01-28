@@ -1188,7 +1188,6 @@
 
   if (helpBtn){
     helpBtn.addEventListener("click", openinstructions);
-    helpBtn.addEventListener("touchstart", (e) => { e.preventDefault(); openinstructions(); }, { passive:false });
   }
   if (instructionsClose){
     instructionsClose.addEventListener("click", closeinstructions);
@@ -1228,7 +1227,9 @@
   const GATE_OFFSET     = IS_IOS ? 0.0015 : 0.003;
   const GATE_MIN        = IS_IOS ? 0.0030 : 0.006;
 
+  // Quiet-learn cap (prevents noise floor "learning" from non-quiet audio and runaway gates)
   const IOS_CALIBRATION_QUIET_MAX_RMS = 0.030;
+  const DESKTOP_QUIET_LEARN_MAX_RMS   = 0.040; // NEW (same fix as RTTA)
 
   function resetAdaptiveGate(){
     noiseFloorRms = 0;
@@ -1238,9 +1239,13 @@
   }
 
   function updateAdaptiveGate(rms){
+    // Cap learning to truly-quiet frames (both during calibration and steady-state)
+    const quietLearnCap = IS_IOS ? IOS_CALIBRATION_QUIET_MAX_RMS : DESKTOP_QUIET_LEARN_MAX_RMS;
+
     if (gateCalibrationFramesLeft > 0) {
 
-      if (IS_IOS && rms > IOS_CALIBRATION_QUIET_MAX_RMS) {
+      // NEW: on ALL platforms, only calibrate from quiet frames
+      if (rms > quietLearnCap) {
         return;
       }
 
@@ -1257,7 +1262,8 @@
     } else {
       const quietBand = adaptiveRmsGate * 1.15;
 
-      if (rms <= quietBand) {
+      // NEW: steady-state learning also requires absolute-quiet cap
+      if (rms <= quietBand && rms <= quietLearnCap) {
         const a = NOISE_FLOOR_ALPHA;
 
         if (!noiseFloorPrimed) {
@@ -2330,14 +2336,6 @@
         console.error(e);
       }
     });
-    toneBtn.addEventListener("touchstart", async (e) => {
-      e.preventDefault();
-      try{
-        await toggleTone();
-      }catch(err){
-        console.error(err);
-      }
-    }, { passive:false });
   }
 
   // ------------------------------

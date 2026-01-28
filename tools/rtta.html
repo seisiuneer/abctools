@@ -861,7 +861,7 @@
 
             <div class="instr-title">A4 Reference Frequency</div>
             <div class="instr-body">
-              The options includes modern A4 reference frequencies from A:438 to A:446 as well as A:415 for Baroque, A:392 for French Baroque, and common Scottish bagpipes A4 references from A:465 to A:482.<br/><br/>
+              The options include modern A4 reference frequencies from A:438 to A:446 as well as A:415 for Baroque, A:392 for French Baroque, and common Scottish bagpipes A4 references from A:465 to A:482.<br/><br/>
               The reference value is saved and restored the next time you run the tuner.
             </div>
 
@@ -1183,7 +1183,6 @@
   }
   if (helpBtn){
     helpBtn.addEventListener("click", openTroubleshooting);
-    helpBtn.addEventListener("touchstart", (e) => { e.preventDefault(); openTroubleshooting(); }, { passive:false });
   }
   if (troubleshootClose){
     troubleshootClose.addEventListener("click", closeTroubleshooting);
@@ -1322,6 +1321,10 @@
   const GATE_OFFSET     = IS_IOS ? 0.0015 : 0.003;
   const GATE_MIN        = IS_IOS ? 0.0030 : 0.006;
 
+  // NEW: desktop calibration should only learn from quiet frames (prevents gate runaway)
+  const DESKTOP_CALIBRATION_QUIET_MAX_RMS = 0.030;  // tune if needed (0.02–0.04 typical)
+  const GATE_RUNAWAY_MAX = 0.20;                    // if gate exceeds this, it's clearly wrong
+
   const SILENCE_FRAMES_TO_RESET_FAST = 1;
   const DEEP_SILENCE_FACTOR = 0.45;
   const SILENCE_FRAMES_TO_RESET = 4;
@@ -1336,9 +1339,20 @@
   }
 
   function updateAdaptiveGate(rms){
+
+    // NEW: runaway protection — if gate becomes absurd, hard reset and start over
+    if (adaptiveRmsGate > GATE_RUNAWAY_MAX) {
+      resetAdaptiveGate();
+      // optional: logEvent("Adaptive gate runaway -> reset");
+    }
+
+    const quietMax = IS_IOS ? IOS_CALIBRATION_QUIET_MAX_RMS : DESKTOP_CALIBRATION_QUIET_MAX_RMS;
+
     if (gateCalibrationFramesLeft > 0) {
 
-      if (IS_IOS && rms > IOS_CALIBRATION_QUIET_MAX_RMS) {
+      // NEW: during calibration, ONLY learn from quiet frames
+      // If user is playing, skip learning rather than baking that into "noise floor".
+      if (rms > quietMax) {
         return;
       }
 
@@ -1352,7 +1366,8 @@
       }
 
       gateCalibrationFramesLeft--;
-    } else {
+    }
+    else {
       const quietBand = adaptiveRmsGate * 1.15;
 
       if (rms <= quietBand) {
@@ -1369,6 +1384,9 @@
 
     const floor = noiseFloorPrimed ? noiseFloorRms : rms;
     adaptiveRmsGate = Math.max(GATE_MIN, (floor * GATE_MULTIPLIER) + GATE_OFFSET);
+
+    // NEW: secondary clamp (belt + suspenders)
+    adaptiveRmsGate = Math.min(adaptiveRmsGate, GATE_RUNAWAY_MAX);
   }
 
   // UI
