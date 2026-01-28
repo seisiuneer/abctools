@@ -1,0 +1,2703 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Real Time Tuning / Volume Analysis" />
+  <meta property="og:description" content="Real-time tuning and volume analysis (box-plot style) from live mic input. Adjustable temperament (ET, Just Intonation, Pythagorean, Fiddle Sweetened), A4 reference, and input boost." />
+  <meta property="og:url" content="https://michaeleskin.com/tools/rttva.html" />
+  <meta property="og:site_name" content="Real Time Tuning / Volume Analysis" />
+  <meta property="og:image" content="https://michaeleskin.com/abctools/img/abc-icon.png" />
+  <meta name="msapplication-TileColor" content="#ffffff">
+  <meta name="msapplication-TileImage" content="https://michaeleskin.com/abctools/img/abc-ms-icon-144x144.png">
+  <link rel="apple-touch-icon" sizes="57x57" href="https://michaeleskin.com/abctools/img/abc-apple-icon-57x57.png">
+  <link rel="apple-touch-icon" sizes="60x60" href="https://michaeleskin.com/abctools/img/abc-apple-icon-60x60.png">
+  <link rel="apple-touch-icon" sizes="72x72" href="https://michaeleskin.com/abctools/img/abc-apple-icon-72x72.png">
+  <link rel="apple-touch-icon" sizes="76x76" href="https://michaeleskin.com/abctools/img/abc-apple-icon-76x76.png">
+  <link rel="apple-touch-icon" sizes="114x114" href="https://michaeleskin.com/abctools/img/abc-apple-icon-114x114.png">
+  <link rel="apple-touch-icon" sizes="120x120" href="https://michaeleskin.com/abctools/img/abc-apple-icon-120x120.png">
+  <link rel="apple-touch-icon" sizes="144x144" href="https://michaeleskin.com/abctools/img/abc-apple-icon-144x144.png">
+  <link rel="apple-touch-icon" sizes="152x152" href="https://michaeleskin.com/abctools/img/abc-apple-icon-152x152.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="https://michaeleskin.com/abctools/img/abc-apple-icon-180x180.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="https://michaeleskin.com/abctools/img/abc-android-icon-192x192.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="https://michaeleskin.com/abctools/img/abc-favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="96x96" href="https://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
+
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-VM0N9HL3MK"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-VM0N9HL3MK');
+  </script>
+
+  <title>Real Time Tuning / Volume Analysis</title>
+
+  <style>
+    :root{
+      --accent:#00f2ff;
+      --paused-accent:#ff2b2b;
+      --bg:#0f0f0f;
+      --panel:#1a1a1a;
+      --text:#e0e0e0;
+      --ui-max: 900px;
+
+      --plot-bg:#0b0b0b;
+      --plot-border:#333;
+      --plot-grid:#242424;
+      --plot-axis:#bdbdbd;
+      --plot-box:#ffd400;
+      --plot-box-stroke:#0a0a0a;
+      --plot-median:#000000;
+      --plot-whisker:#cfcfcf;
+    }
+
+    body{
+      font-family:'Segoe UI',sans-serif;
+      background:var(--bg);
+      color:var(--text);
+      margin:0;
+      padding:20px;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      font-size: 17px;
+    }
+
+    #ui{
+      background:var(--panel);
+      border-radius:16px;
+      padding:22px;
+      box-shadow:0 20px 50px rgba(0,0,0,0.7);
+      width:100%;
+      text-align:center;
+      border:1px solid #333;
+      position:relative;
+      max-width: var(--ui-max);
+      box-sizing:border-box;
+    }
+
+    #help-btn{
+      position:absolute;
+      top:8px;
+      left:8px;
+      width:52px;
+      height:52px;
+      border:0px;
+      color:#e8e8e8;
+      font-weight:900;
+      font-size:1.75rem;
+      line-height:52px;
+      text-align:center;
+      cursor:pointer;
+      user-select:none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    
+    @media (hover: hover) and (pointer: fine) {
+      #help-btn{ transition: filter 125ms ease; }
+      #help-btn:hover{ filter: brightness(1.5); }
+      #help-btn:active{ filter: brightness(1.0); }
+    }
+
+    #level-meter{
+      position:absolute;
+      top:22px;
+      height:10px;
+      right:22px;
+      width:86px;
+      border-radius:3px;
+      background:#0a0a0a;
+      border:1px solid #2f2f2f;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.02);
+      overflow:hidden;
+      opacity:0.55;
+      pointer-events:none;
+      transform: translateY(calc((1.6rem * 1.1 - 10px) / 2));
+    }
+    #level-meter-fill{
+      height:100%;
+      width:0%;
+      background:var(--accent);
+      opacity:0.65;
+      transition: width 80ms linear;
+    }
+
+    #troubleshoot-overlay{
+      display:none;
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,0.65);
+      z-index:9999;
+      padding:16px;
+      box-sizing:border-box;
+    }
+    #troubleshoot-modal{
+      max-width:900px;
+      width:100%;
+      margin:0 auto;
+      background:var(--panel);
+      border:1px solid #333;
+      border-radius:16px;
+      box-shadow:0 20px 50px rgba(0,0,0,0.7);
+      padding:18px;
+      box-sizing:border-box;
+      position:relative;
+      top:0vh;
+      text-align:left;
+      display:flex;
+      flex-direction:column;
+      max-height: calc(100vh - 32px - 6vh);
+      height:auto;
+    }
+    #troubleshoot-title{
+      font-size:1.25rem;
+      font-weight:900;
+      margin:0 0 15px 0;
+      color:#e0e0e0;
+      flex: 0 0 auto;
+      text-align:center;
+    }
+    #troubleshoot-scroll{
+      flex: 1 1 auto;
+      overflow:auto;
+      -webkit-overflow-scrolling: touch;
+      border:1px solid #2a2a2a;
+      border-radius:12px;
+      padding:12px 12px;
+      background:#0b0b0b;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.02);
+    }
+    #troubleshoot-body{
+      font-size:1.0rem;
+      line-height:1.8;
+      color:#e0e0e0;
+      margin:0;
+      padding:8px;
+    }
+
+    .instr-title{
+      font-weight:900;
+      font-size:1.1rem;
+      margin:0 0 10px 0;
+      color:#f0f0f0;
+    }
+    .instr-body{
+      margin:0 0 14px 0;
+      color:#e6e6e6;
+    }
+
+    #troubleshoot-close{
+      width:100%;
+      margin-top:12px;
+      margin-bottom:-7px;
+      padding:14px 18px;
+      border:1px solid #333;
+      font-weight:900;
+      cursor:pointer;
+      transition:.2s;
+      font-size:1.15rem;
+      background:var(--accent);
+      color:#FEFEFE;
+      background-color: black;
+      flex: 0 0 auto;
+    }
+
+    .row{
+      display:grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap:12px;
+      margin:10px 0 10px;
+      align-items:start;
+    }
+
+    .row-intonation{
+      grid-template-columns: 1fr 1fr;
+    }
+
+    label{
+      display:block;
+      font-size:0.85rem;
+      color:#bbb;
+      margin-bottom:6px;
+      text-align:left;
+    }
+    select{
+      width:100%;
+      background:#0b0b0b;
+      color:#e8e8e8;
+      border:1px solid #333;
+      border-radius:10px;
+      padding:10px 10px;
+      font-size:0.95rem;
+    }
+
+    select:disabled{
+      cursor: not-allowed;
+      opacity: 0.45;
+    }
+
+    .select-wrap{ position: relative; }
+    .select-wrap select{
+      -webkit-appearance:none;
+      -moz-appearance:none;
+      appearance:none;
+      padding-right:46px;
+      background-image:none;
+    }
+    .select-wrap::after{
+      content:"▾";
+      position:absolute;
+      right:14px;
+      top:50%;
+      transform:translateY(-50%);
+      pointer-events:none;
+      color:#e8e8e8;
+      font-size:0.95rem;
+      line-height:1;
+      opacity:0.85;
+    }
+    .select-wrap select::-ms-expand{ display:none; }
+
+    #mic-error{
+      display:none;
+      margin: 10px 0 4px;
+      padding: 12px 12px;
+      border-radius: 12px;
+      text-align: left;
+      font-weight: 800;
+      font-size: 0.98rem;
+      line-height: 1.35;
+      color: #ffecec;
+      background: #3a0f12;
+      border: 1px solid #7a2b30;
+      box-shadow: 0 10px 24px rgba(0,0,0,0.35);
+    }
+
+    #live-readout{
+      margin-top: 15px;
+      margin-bottom: 12px;
+    }
+
+    #live-pair{
+      position: relative;
+      width: 100%;
+      height: 3.4rem;
+      --noteW: 2.2ch;
+    }
+
+    #live-note{
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      white-space: nowrap;
+      font-size:3.75rem;
+      font-weight:900;
+      color:#fff;
+      text-shadow:0 0 20px var(--accent);
+      line-height:1;
+      margin:0;
+    }
+
+    #live-cents{
+      position: absolute;
+      top: 50%;
+      left: calc(50% + (var(--noteW) / 2) + 18px);
+      transform: translateY(-50%);
+      white-space: nowrap;
+
+      font-size:1.35rem;
+      font-weight:900;
+      font-family:ui-monospace, Menlo, Consolas, monospace;
+      color:#f3f3f3;
+      line-height:1;
+      margin:0;
+    }
+
+    #live-hint{
+      width:100%;
+      max-width:720px;
+      margin:6px auto 0 auto;
+      font-size:1.05rem;
+      color:#bdbdbd;
+      line-height:1.35;
+    }
+
+    .is-firefox #live-note{
+      transform: translate(-50%, -50%) translateY(0.08em);
+    }
+
+    .is-firefox #live-cents{
+      transform: translateY(-50%) translateY(0.08em);
+    }
+
+    #plot-wrap{
+      margin-top: 10px;
+      background: var(--plot-bg);
+      border:1px solid var(--plot-border);
+      border-radius:12px;
+      padding: 10px;
+      box-sizing:border-box;
+      overflow:hidden;
+      position: relative;
+    }
+    #plot-title{
+      font-size:1.15rem;
+      font-weight:900;
+      margin: 20px 0 10px 0;
+      color:#e9e9e9;
+      letter-spacing:0.2px;
+    }
+
+    canvas{
+      width:100%;
+      height: 460px;
+      display:block;
+      border-radius:10px;
+      background: #0b0b0b;
+    }
+
+    .btn-row{
+      display:flex;
+      justify-content:center;
+      gap:24px;
+      margin-top: 22px;
+      flex-wrap:wrap;
+    }
+    .btn-row button{
+      width:220px;
+      max-width:100%;
+    }
+
+    button{
+      padding:14px 18px;
+      border:none;
+      border-radius:10px;
+      font-weight:900;
+      cursor:pointer;
+      transition:.2s;
+      font-size:1.25rem;
+
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      line-height:1.1;
+    }
+
+    .btn-main{
+      background:var(--accent);
+      color:#000;
+      filter: drop-shadow(0 0 10px rgba(0,242,255,0.18));
+    }
+    .btn-sub{ background:#222; color:#e8e8e8; border:1px solid #333; }
+
+    a{
+      color:#9DFFD0;
+      text-decoration:underline;
+    }
+
+    @media (hover: hover) and (pointer: fine) {
+      #start-btn.btn-main{ transition: filter 125ms ease; }
+      #start-btn.btn-main:hover{ filter: brightness(1.75) drop-shadow(0 0 12px rgba(0,242,255,0.25)); }
+      #start-btn.btn-main:active{ filter: brightness(1.0) drop-shadow(0 0 8px rgba(0,242,255,0.18)); }
+      #pause-btn.btn-sub{ transition: filter 125ms ease; }
+      #pause-btn.btn-sub:hover{ filter: brightness(1.75) drop-shadow(0 0 12px rgba(0,242,255,0.25)); }
+      #pause-btn.btn-sub:active{ filter: brightness(1.0) drop-shadow(0 0 8px rgba(0,242,255,0.18)); }
+      #reset-btn.btn-sub{ transition: filter 125ms ease; }
+      #reset-btn.btn-sub:hover{ filter: brightness(1.75) drop-shadow(0 0 12px rgba(0,242,255,0.25)); }
+      #reset-btn.btn-sub:active{ filter: brightness(1.0) drop-shadow(0 0 8px rgba(0,242,255,0.18)); }
+    }
+
+    .title-short{ display:none; }
+
+    .is-paused #live-note{
+      text-shadow: 0 0 20px var(--paused-accent) !important;
+    }
+
+    .is-paused #pause-btn{
+      border-color: rgba(255, 43, 43, 0.55);
+      box-shadow: 0 0 0 2px rgba(255, 43, 43, 0.12), 0 10px 24px rgba(0,0,0,0.35);
+    }
+
+    @media (max-width: 750px) {
+      body{ padding:12px; }
+      #ui{ padding:16px; border-radius:14px; }
+      #ui h1{ font-size:1.25rem !important; margin:0 0 12px 0 !important; }
+      label{ font-size:0.9rem; margin-bottom:8px; }
+      select{ font-size:1.05rem; padding:14px 12px; border-radius:12px; }
+      .select-wrap select{ padding-right:52px; }
+      .select-wrap::after{ right:18px; font-size:1.1rem; opacity:0.9; }
+      canvas{ height: 420px; }
+      button{ font-size:1.2rem; padding:16px 18px; border-radius:14px; }
+      .row{ grid-template-columns: 1fr; }
+      .title-long{ display:none; }
+      .title-short{ display:inline; }
+
+      .btn-row{
+        flex-direction:column;
+        align-items:center;
+      }
+      .btn-row button{
+        width:100%;
+      }
+      #help-btn{
+        top:0px;
+        left:0px;
+      }
+      #troubleshoot-close{
+        font-size:1.2rem;
+        padding:16px 18px;
+        border-radius:14px;
+      }
+
+      #level-meter{
+        width:74px;
+        height:9px;
+        opacity:0.5;
+        right:22px;
+        transform: translateY(calc((1.25rem * 1.1 - 9px) / 2));
+      }
+    }
+
+    @media (min-width: 1100px){
+      :root{
+        --ui-max: 1200px;
+      }
+    }
+
+    @media print {
+
+      @page {
+        margin: 0.55in;
+      }
+
+      html, body {
+        background: #ffffff !important;
+        color: #000000 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+
+      #ui{
+        max-width: none !important;
+        width: 100% !important;
+        border: 0 !important;
+        border-radius: 0 !important;
+        background: #ffffff !important;
+        box-shadow: none !important;
+        padding: 0 !important;
+        text-align: left !important;
+      }
+
+      #help-btn,
+      #level-meter,
+      #troubleshoot-overlay,
+      #troubleshoot-modal,
+      #troubleshoot-close,
+      #live-readout,
+      #mic-error{
+        display:none !important;
+      }
+
+      #ui h1{
+        color:#000 !important;
+        text-shadow:none !important;
+        text-align:center !important;
+        margin: 0 0 12px 0 !important;
+        font-size: 18pt !important;
+      }
+
+      .title-long{ display:inline !important; }
+      .title-short{ display:none !important; }
+
+      .row{
+        display:grid !important;
+        grid-template-columns: 1fr 1fr 1fr !important;
+        gap: 10px !important;
+        margin: 10px 0 10px !important;
+        break-inside: avoid;
+      }
+      .row-intonation{
+        grid-template-columns: 1fr 1fr !important;
+      }
+
+      label{
+        color:#000 !important;
+        font-size: 10pt !important;
+        margin-bottom: 4px !important;
+      }
+
+      .select-wrap::after{ display:none !important; }
+      select{
+        background:#fff !important;
+        color:#000 !important;
+        border:1px solid #000 !important;
+        border-radius: 6px !important;
+        padding: 6px 8px !important;
+        font-size: 10pt !important;
+      }
+      select:disabled{
+        opacity: 1 !important;
+      }
+
+      #live-hint{
+        color:#000 !important;
+        font-size: 10.5pt !important;
+        max-width: none !important;
+      }
+
+      #plot-wrap{
+        background:#fff !important;
+        border:1px solid #000 !important;
+        border-radius: 0 !important;
+        padding: 8px !important;
+        margin-top: 10px !important;
+        break-inside: avoid;
+      }
+      #plot-title{
+        color:#000 !important;
+        margin: 6px 0 8px 0 !important;
+        text-align:center !important;
+        font-size: 12pt !important;
+      }
+
+      canvas{
+        background:#fff !important;
+        border-radius: 0 !important;
+        height: 5.6in !important;
+        width: 100% !important;
+      }
+
+      .btn-row{
+        display:none !important;
+      }
+
+      #plot-wrap, .row, .row-intonation, #live-readout { page-break-inside: avoid; }
+    }
+
+    @media (max-width: 600px) and (orientation: portrait) {
+      canvas {
+        height: 65vh;
+      }
+    }
+
+    #exportdlg-overlay{
+      display:none;
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,0.65);
+      z-index:10000;
+      padding:16px;
+      box-sizing:border-box;
+    }
+
+    #exportdlg-modal{
+      max-width:540px;
+      width:100%;
+      margin:0 auto;
+      background:var(--panel);
+      border:1px solid #333;
+      border-radius:16px;
+      box-shadow:0 20px 50px rgba(0,0,0,0.7);
+      padding:18px;
+      box-sizing:border-box;
+      position:relative;
+      top:10vh;
+      text-align:left;
+    }
+
+    #exportdlg-title{
+      font-size:1.2rem;
+      font-weight:900;
+      margin:0 0 14px 0;
+      color:#e0e0e0;
+      text-align:center;
+    }
+
+    #exportdlg-body input{
+      width:100%;
+      background:#0b0b0b;
+      color:#e8e8e8;
+      border:1px solid #333;
+      border-radius:10px;
+      padding:12px 12px;
+      font-size:1.05rem;
+      box-sizing:border-box;
+      outline:none;
+      margin-bottom:10px;
+    }
+
+    #exportdlg-body input:focus{
+      border-color: rgba(0,242,255,0.55);
+      box-shadow: 0 0 0 2px rgba(0,242,255,0.12);
+    }
+
+    #exportdlg-hint{
+      margin-top:10px;
+      color:#bdbdbd;
+      font-size:0.95rem;
+      line-height:1.35;
+    }
+
+    #exportdlg-buttons{
+      display:flex;
+      gap:12px;
+      justify-content:flex-end;
+      margin-top:16px;
+    }
+
+    #exportdlg-buttons button{
+      width:auto;
+      min-width:90px;
+      padding:10px 14px;
+      font-size:0.95rem;
+      border-radius:8px;
+    }
+
+    /* CHANGED: unified bottom row inside plot-wrap */
+    #plot-buttons{
+      position:absolute;
+      left:8px;
+      right:8px;
+      bottom:8px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:14px;
+      z-index:5;
+      pointer-events:auto;
+    }
+
+    #plot-buttons-right{
+      display:flex;
+      gap:18px;
+      align-items:center;
+      justify-content:flex-end;
+    }
+
+    #mode-toggle-btn,
+    #export-plot-btn,
+    #export-csv-btn{
+      width:48px;
+      height:34px;
+      border-radius:9px;
+      border:1px solid rgba(255,255,255,0.14);
+      background:#00a1d6eb;
+      color:#001018;
+      font-weight:900;
+      font-size:12px;
+      line-height:34px;
+      cursor:pointer;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      user-select:none;
+      -webkit-tap-highlight-color:transparent;
+      box-shadow:0 10px 24px rgba(0,0,0,0.35);
+      padding:0;
+    }
+
+    /* CHANGED: give the toggle button a slightly wider label without changing look */
+    #mode-toggle-btn{
+      width:72px;
+      letter-spacing:0.2px;
+    }
+
+    @media (hover: hover) and (pointer: fine) {
+      #mode-toggle-btn,
+      #export-plot-btn,
+      #export-csv-btn{
+        transition: filter 120ms ease, transform 120ms ease;
+      }
+      #mode-toggle-btn:hover,
+      #export-plot-btn:hover,
+      #export-csv-btn:hover{
+        filter: brightness(1.15);
+        transform: translateY(-1px);
+      }
+      #mode-toggle-btn:active,
+      #export-plot-btn:active,
+      #export-csv-btn:active{
+        filter: brightness(0.95);
+        transform: translateY(0px);
+      }
+    }
+
+    @media print {
+      /* CHANGED: hide selector button in print CSS (and the whole bottom row) */
+      #plot-buttons{ display:none !important; }
+      #mode-toggle-btn{ display:none !important; }
+    }
+  </style>
+</head>
+
+<body>
+  <div id="ui">
+    <div id="help-btn" title="Instructions">?</div>
+
+    <div id="level-meter" title="Input level">
+      <div id="level-meter-fill"></div>
+    </div>
+
+    <div id="troubleshoot-overlay" aria-hidden="true">
+      <div id="troubleshoot-modal" role="dialog" aria-modal="true" aria-label="Instructions">
+        <div id="troubleshoot-title">Instructions</div>
+        <div id="troubleshoot-scroll">
+          <div id="troubleshoot-body">
+
+            <div class="instr-title">Original RTTA Tool</div>
+            <div class="instr-body">This tool was inspired by Terry McGee's original Tartini-R Polygraph RTTA tool at:<br/><br/>
+              <div style="text-align: center">
+                <a href="https://www.mcgee-flutes.com/ReelTimeTuningAnalysis.htm" target="_blank">
+                    https://www.mcgee-flutes.com/ReelTimeTuningAnalysis.htm
+                </a><br/><br/>
+              </div>
+            </div>
+
+            <hr style="border:0; border-top:1px solid #2a2a2a; margin: 14px 0 14px 0;"/>
+
+            <div class="instr-title">How to use this tool</div>
+            <div class="instr-body">
+              1) Select the A4 reference frequency and input level adjustment.<br/>
+              2) Select the temperament: Equal Temperament, Just Intonation, Pythagorean, or a Fiddle Sweetened preset.<br/>
+              3) If you select Just Intonation or Pythagorean, also select the root note for the temperament.<br/>
+              Root note is not used for Equal Temperament or the Fiddle Sweetened presets.<br/>
+              4) Click <b>START</b> and allow microphone access when prompted.<br/>
+              5) Play <b>sustained single notes</b> (a second or so each). The tool measures each note and builds distributions for both <b>pitch (cents)</b> and <b>volume (dB relative to full scale, i.e. dBFS)</b>.<br/>
+              6) You can change the cents range of the pitch graph using the <b>Cents range (display)</b> menu.<br/>
+              7) Use the <b>PITCH</b> / <b>VOLUME</b> toggle button at the bottom-left of the graph to switch between <b>Pitch</b> and <b>Volume</b> graph display at any time.<br/>
+              8) Click <b>PAUSE</b> to pause pitch/volume detection. Click <b>RESUME</b> to resume.<br/>
+              9) Click the <b>JPEG</b> button at the bottom right of the graph area to save a JPEG image file of the currently displayed graph.<br/>
+              The JPEG image file will be saved to your browser's default Downloads directory.<br/>
+              On mobile devices, rotate your device to Landscape orientation before doing the export to get the best JPEG image results.<br/>
+              10) Click the <b>CSV</b> button at the bottom right of the graph area to save the graph values as a CSV file with the median tuning cents and median volume value for each note.<br/>
+              The exported files will be saved to your browser's default Downloads directory.<br/>
+              11) Click <b>RESET</b> to clear the graph and start over.
+            </div>
+
+            <hr style="border:0; border-top:1px solid #2a2a2a; margin: 14px 0 14px 0;"/>
+
+            <div class="instr-title">How to interpret the graphs</div>
+            <div class="instr-body">
+              This tool can show <b>pitch</b> (cents) or <b>volume</b> (dBFS) distributions per-note as box plots.<br/><br/>
+
+              <b>Pitch (cents) mode:</b><br/>
+              • The box is the middle 50% of pitch measurements (25th–75th percentile).<br/>
+              • The median line inside the box is the typical cents offset.<br/>
+              • Whiskers show the typical low/high range (1.5×IQR rule).<br/><br/>
+
+              <b>Relative Volume (dBFS) mode:</b><br/>
+              • The box is the middle 50% of volume measurements (25th–75th percentile).<br/>
+              • The median line is the typical volume value for that note.<br/>
+              • Whiskers show the typical low/high range (1.5×IQR rule).<br/>
+              Relative volume is shown as <b>dBFS</b> (0 at the top, more negative values are quieter).
+            </div>
+
+            <hr style="border:0; border-top:1px solid #2a2a2a; margin: 14px 0 14px 0;"/>
+
+            <div class="instr-title">Pythagorean (Perfect fifths)</div>
+            <div class="instr-body">
+              This mode uses <b>pure 3:2 fifths</b> (Pythagorean tuning).<br/><br/>
+              It is ideal for tuning a fiddle so the <b>open strings</b> and
+              <b>fifth-based double stops</b> sound clean and consonant, with
+              <b>minimal beating</b>.<br/><br/>
+
+              <b>Recommended GDAE fiddle tuning workflow:<br/><br/>
+              Root = D (recommended), start on the D string</b><br/><br/>
+
+              1) Set the <b>Temperament</b> to <b>Pythagorean (Perfect fifths)</b>.<br/>
+              2) Set the <b>Root note</b> to <b>D</b>.<br/>
+              3) Tune the <b>D string</b> until the tuner reads <b>0.0 cents</b>.<br/>
+              4) Tune the <b>A string</b> until it reads <b>0.0 cents</b>.<br/>
+              5) Tune the <b>G string</b> until it reads <b>0.0 cents</b>.<br/>
+              6) Finally, tune the <b>E string</b> until it reads <b>0.0 cents</b>.<br/><br/>
+
+              <b>Alternative GDAE fiddle tuning workflow:</b><br/><br/>
+              <b>Root = A, start on the A string</b><br/><br/>
+
+              1) Set the <b>Temperament</b> to <b>Pythagorean (Perfect fifths)</b>.<br/>
+              2) Set the <b>Root note</b> to <b>A</b>.<br/>
+              3) Tune the <b>A string</b> until the tuner reads <b>0.0 cents</b>.<br/>
+              4) Tune the <b>D string</b> until it reads <b>0.0 cents</b>.<br/>
+              5) Tune the <b>E string</b> until it reads <b>0.0 cents</b>.<br/>
+              6) Finally, tune the <b>G string</b> until it reads <b>0.0 cents</b>.<br/><br/>
+
+              In both cases, the strings are tuned in <b>pure fifths</b>, which is why
+              all strings read <b>0.0 cents</b> when correctly tuned.
+            </div>
+
+            <hr style="border:0; border-top:1px solid #2a2a2a; margin: 14px 0 14px 0;"/>
+
+            <div class="instr-title">Fiddle Sweetened (open strings pure fifths, everything else ET)</div>
+            <div class="instr-body">
+              These two modes are designed for traditional fiddle tuning where you want the <b>open strings (G–D–A–E)</b> to be tuned
+              in <b>pure 3:2 fifths</b> for clean resonance and double stops, but want <b>all other notes</b> to match
+              <b>Equal Temperament</b> for compatibility with other instruments.<br/><br/>
+
+              <b>Fiddle Sweetened (Anchor on D)</b><br/>
+              • D4 is locked to the Equal Temperament D (based on the selected A4 reference).<br/>
+              • G3, A4, and E5 are derived from D using pure 3:2 fifth ratios.<br/>
+              • All other notes are Equal Temperament.<br/><br/>
+
+              <b>Recommended workflow (Anchor on D):</b><br/>
+              1) Select <b>Fiddle Sweetened (Anchor on D)</b>.<br/>
+              2) Tune <b>D</b> first until the tuner reads <b>0.0 cents</b>.<br/>
+              3) Tune <b>A</b>, then <b>G</b>, then <b>E</b> until each reads <b>0.0 cents</b>.<br/><br/>
+
+              <b>Fiddle Sweetened (Anchor on A)</b><br/>
+              • A4 is locked to the Equal Temperament A (based on the selected A4 reference).<br/>
+              • G3, D4, and E5 are derived from A using pure 3:2 fifth ratios.<br/>
+              • All other notes are Equal Temperament.<br/><br/>
+
+              <b>Recommended workflow (Anchor on A):</b><br/>
+              1) Select <b>Fiddle Sweetened (Anchor on A)</b>.<br/>
+              2) Tune <b>A</b> first until the tuner reads <b>0.0 cents</b>.<br/>
+              3) Tune <b>D</b>, then <b>E</b>, then <b>G</b> until each reads <b>0.0 cents</b>.<br/><br/>
+
+              <b>Note:</b> In these sweetened fifths modes, the <b>Root note</b> selector is disabled because the anchor is fixed by the selected mode.
+            </div>
+
+            <hr style="border:0; border-top:1px solid #2a2a2a; margin: 14px 0 14px 0;"/>
+
+            <div class="instr-title">A4 Reference Frequency</div>
+            <div class="instr-body">
+              The options include modern A4 reference frequencies from A:438 to A:446 as well as A:415 for Baroque, A:392 for French Baroque, and common Scottish bagpipes A4 references from A:465 to A:485.<br/><br/>
+              The reference value is saved and restored the next time you run the tuner.
+            </div>
+
+            <hr style="border:0; border-top:1px solid #2a2a2a; margin: 14px 0 14px 0;"/>
+
+            <div class="instr-title">Troubleshooting</div>
+
+            You must grant the browser microphone permission for this tool to work.<br/><br/>
+            The audio input level is displayed in a bar at the top-right of the tool.
+
+            <hr style="border:0; border-top:1px solid #2a2a2a; margin: 14px 0 14px 0;"/>
+
+            <div class="instr-title">If no audio is detected or the audio input meter is maxed-out and no notes are getting recognized:</div>
+            This tool is designed to be used in a quiet environment.<br/><br/>
+            It may not work well or at all with loud background noise or other instruments playing in the background.<br/><br/>
+            To optimize the signal level coming into the tool, verify and adjust your system's microphone level settings as required to get a strong audio signal coming in.<br/><br/>
+            If necessary, you can also reduce or boost the microphone signal level using the <b>Input level adjustment</b> dropdown.<br/><br/>
+            On Windows systems, you may also need to disable any automatic microphone noise reduction performed by the system audio drivers.<br/><br/>
+            Noise reduction audio driver software may mistake continuous tones for background noise and filter them out.<br/><br/>
+            Open Windows Settings, search for Microphone settings, make any required changes, and then reload this tab in your browser.
+
+            <hr style="border:0; border-top:1px solid #2a2a2a; margin: 14px 0 14px 0;"/>
+
+            <div class="instr-title">Tip Jars</div>
+              This tool was created by <a href="https://michaeleskin.com" target="_blank">Michael Eskin</a>.<br/>
+              If you find it useful, please consider making a contribution via my online tip jars:<br/><br/>
+
+            <div style="text-align: center">
+              <a href="https://michaeleskin.com/abctools/tipjars.html" target="_blank">Michael Eskin's Tip Jars</a><br/><br/>
+            </div>
+
+            <hr style="border:0; border-top:1px solid #2a2a2a; margin: 14px 0 14px 0;"/>
+            <div class="instr-title">Source Code</div>
+              The full source code for this tool is available on my GitHub repository.<br/>
+              The source is completely contained in the one file: <b>rtta.html</b>:<br/><br/>
+
+              <div style="text-align: center">
+                <a href="https://github.com/seisiuneer/abctools/tree/main" target="_blank">Michael Eskin's GitHub Repository</a><br/>
+                &nbsp;
+              </div>
+
+          </div>
+        </div>
+        <button id="troubleshoot-close" type="button">CLOSE</button>
+      </div>
+    </div>
+
+    <h1 style="margin: 0 0 16px 0; font-size: 1.6rem; line-height:1.1; font-weight: 900; letter-spacing: 0.4px; color: #e0e0e0; text-align: center;" title="This utility was developed by Michael Eskin - https://michaeleskin.com">
+      <span class="title-long">Real Time Tuning / Volume Analysis</span>
+      <span class="title-short">RTTVA</span>
+    </h1>
+
+    <div class="row">
+      <div>
+        <label for="a4ref">&nbsp;&nbsp;A4 reference (Hz)</label>
+        <div class="select-wrap">
+          <select id="a4ref">
+            <option value="392">392</option>
+            <option value="415">415</option>
+            <option value="438">438</option>
+            <option value="439">439</option>
+            <option value="440" selected>440</option>
+            <option value="441">441</option>
+            <option value="442">442</option>
+            <option value="443">443</option>
+            <option value="444">444</option>
+            <option value="445">445</option>
+            <option value="446">446</option>
+            <option value="465">465</option>
+            <option value="470">470</option>
+            <option value="472">472</option>
+            <option value="475">475</option>
+            <option value="478">478</option>
+            <option value="480">480</option>
+            <option value="482">482</option>
+            <option value="485">485</option>
+          </select>
+        </div>
+      </div>
+
+      <div>
+        <label for="inputboost">&nbsp;&nbsp;Input level adjustment</label>
+        <div class="select-wrap">
+          <select id="inputboost">
+            <option value="0.125">-18 dB</option>
+            <option value="0.25">-12 dB</option>
+            <option value="0.5">-6 dB</option>
+            <option value="0.7079">-3 dB</option>
+            <option value="1.0" selected>0 dB</option>
+            <option value="1.4125">+3 dB</option>
+            <option value="2.0">+6 dB</option>
+            <option value="4.0">+12 dB</option>
+            <option value="8.0">+18 dB</option>
+          </select>
+        </div>
+      </div>
+
+      <div>
+        <label for="yrange">&nbsp;&nbsp;Cents range (display)</label>
+        <div class="select-wrap">
+          <select id="yrange">
+            <option value="25">±25 cents</option>
+            <option value="50" selected>±50 cents</option>
+            <option value="75">±75 cents</option>
+            <option value="100">±100 cents</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="row row-intonation">
+      <div>
+        <label for="intonation">&nbsp;&nbsp;Temperament</label>
+        <div class="select-wrap">
+          <select id="intonation">
+            <option value="et" selected>Equal Temperament</option>
+            <option value="just">Just Intonation</option>
+            <option value="pyth">Pythagorean</option>
+            <option value="fiddle_d">Fiddle Sweetened (Anchor on D)</option>
+            <option value="fiddle_a">Fiddle Sweetened (Anchor on A)</option>
+          </select>
+        </div>
+      </div>
+
+      <div>
+        <label for="rootnote">&nbsp;&nbsp;Root note</label>
+        <div class="select-wrap">
+          <select id="rootnote" disabled>
+            <option value="0" selected>C</option>
+            <option value="1">C#</option>
+            <option value="2">D</option>
+            <option value="3">D#</option>
+            <option value="4">E</option>
+            <option value="5">F</option>
+            <option value="6">F#</option>
+            <option value="7">G</option>
+            <option value="8">G#</option>
+            <option value="9">A</option>
+            <option value="10">A#</option>
+            <option value="11">B</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div id="mic-error"></div>
+
+    <div id="live-readout">
+      <div id="live-pair">
+        <div id="live-note">--</div>
+        <div id="live-cents"> -- cents</div>
+      </div>
+      <div id="live-hint">
+        Click <b>START</b>, play sustained notes, and this tool will accumulate tuning offsets and volume levels per-note and render a live box-plot style distribution.&nbsp;&nbsp;Click <b>PITCH / VOLUME</b> to switch between pitch offset and volume level plots.&nbsp;&nbsp;Click <b>RESET</b> to clear the graph and start over.
+      </div>
+    </div>
+
+    <div id="plot-wrap">
+      <div id="plot-title">Pitch Distribution</div>
+      <canvas id="plot"></canvas>
+
+      <!-- CHANGED: toggle button on left, JPEG/CSV on right, same line -->
+      <div id="plot-buttons">
+        <button id="mode-toggle-btn" type="button" title="Toggle graph: Pitch / Volume" aria-label="Toggle graph: Pitch / Volume">PITCH</button>
+        <div id="plot-buttons-right">
+          <button id="export-plot-btn" type="button" title="Export graph as JPEG image" aria-label="Export graph as JPEG image">JPEG</button>
+          <button id="export-csv-btn" type="button" title="Export graph as CSV file" aria-label="Export graph as CSV file">CSV</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button id="start-btn" class="btn-main" type="button">START</button>
+      <button id="pause-btn" class="btn-sub" type="button" style="display:none;">PAUSE</button>
+      <button id="reset-btn" class="btn-sub" type="button" style="display:none;">RESET</button>
+    </div>
+  </div>
+
+  <div id="exportdlg-overlay" aria-hidden="true">
+    <div id="exportdlg-modal" role="dialog" aria-modal="true" aria-label="Export image">
+      <div id="exportdlg-title">Export Graph as JPEG Image</div>
+
+      <div id="exportdlg-body">
+        <label for="exportdlg-filename" style="margin:20px 0 8px 4px; font-weight:800; color:#bbb; display:block;">
+          Filename:
+        </label>
+        <input id="exportdlg-filename" type="text" autocomplete="off" spellcheck="false" />
+      </div>
+
+      <div id="exportdlg-buttons">
+        <button id="exportdlg-cancel" type="button" class="btn-sub">Cancel</button>
+        <button id="exportdlg-save" type="button" class="btn-main">Save</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+  const LS_KEY_A4REF = "abctools_rtl_tuning_a4ref_hz";
+  const LS_KEY_BOOST = "abctools_rtl_tuning_input_boost_v1";
+  const LS_KEY_YRANGE = "abctools_rtl_tuning_yrange_v1";
+
+  const LS_KEY_INTONATION = "abctools_rtl_tuning_intonation_v1";
+  const LS_KEY_ROOTNOTE   = "abctools_rtl_tuning_rootnote_v1";
+
+  const IS_FIREFOX = /firefox/i.test(navigator.userAgent || "");
+  if (IS_FIREFOX) document.documentElement.classList.add("is-firefox");
+
+  let audioCtx = null;
+  let streamSource = null;
+  let analyserPitch = null;
+  let timeDataPitch = null;
+
+  let userBoostGainNode = null;
+  let gUserBoostGain = 1.0;
+
+  let inputGainNode = null;
+
+  const IS_IOS = (() => {
+    const ua = navigator.userAgent || "";
+    const iOSUA = /iPad|iPhone|iPod/.test(ua);
+    const iPadOS = (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+    return iOSUA || iPadOS;
+  })();
+
+  const IOS_INPUT_GAIN = 3.0;
+
+  async function ensureAudioContextRunning() {
+    if (!audioCtx) return;
+    try {
+      if (audioCtx.state === "suspended") await audioCtx.resume();
+    } catch (e) { }
+  }
+
+  function clamp(v, lo, hi){ return Math.max(lo, Math.min(hi, v)); }
+  function median(arr){
+    if (!arr || !arr.length) return null;
+    const s = arr.slice().sort((a,b)=>a-b);
+    return s[Math.floor(s.length/2)];
+  }
+  function rmsOfArray(buf){
+    let sum = 0;
+    for (let i=0;i<buf.length;i++){ const v = buf[i]; sum += v*v; }
+    return Math.sqrt(sum / buf.length);
+  }
+
+  function percentileSorted(sorted, p){
+    const n = sorted.length;
+    if (!n) return null;
+    const x = (n - 1) * p;
+    const i = Math.floor(x);
+    const frac = x - i;
+    if (i + 1 < n) return sorted[i] * (1 - frac) + sorted[i + 1] * frac;
+    return sorted[i];
+  }
+
+  const NOTES = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
+
+  let gA4RefHz = 440;
+  function freqToMidi(freq){ return 12 * (Math.log2(freq / gA4RefHz)) + 69; }
+  function midiToFreq(midi){ return gA4RefHz * Math.pow(2, (midi - 69) / 12); }
+  function centsBetween(fA, fB){ return 1200 * Math.log2(fA / fB); }
+  function midiToNoteName(midi){
+    const pc = ((midi % 12) + 12) % 12;
+    const octave = Math.floor(midi / 12) - 1;
+    return NOTES[pc] + octave;
+  }
+  function fmtCentsSigned(c){
+    if (c == null || !isFinite(c)) return "--";
+    const v = Math.round(c * 10) / 10;
+    return (v > 0 ? "+" : "") + v.toFixed(1);
+  }
+
+  const levelMeterFill = document.getElementById('level-meter-fill');
+  let levelMeterSmoothed = 0;
+  const LEVEL_METER_ALPHA = 0.25;
+  function setLevelMeter01(x){
+    if (!levelMeterFill) return;
+    const v = Math.max(0, Math.min(1, x || 0));
+    levelMeterSmoothed = (LEVEL_METER_ALPHA * v) + ((1 - LEVEL_METER_ALPHA) * levelMeterSmoothed);
+    levelMeterFill.style.width = Math.round(levelMeterSmoothed * 100) + "%";
+  }
+
+  // Instructions modal
+  const helpBtn = document.getElementById('help-btn');
+  const troubleshootOverlay = document.getElementById('troubleshoot-overlay');
+  const troubleshootClose = document.getElementById('troubleshoot-close');
+
+  function syncTroubleshootHeight(){
+    const ui = document.getElementById("ui");
+    const modal = document.getElementById("troubleshoot-modal");
+    if (!ui || !modal) return;
+
+    const r = ui.getBoundingClientRect();
+    const uiH = Math.max(0, Math.round(r.height));
+
+    const maxH = Math.round(window.innerHeight - 32 - (window.innerHeight * 0.06));
+    const finalH = clamp(uiH, 240, maxH);
+
+    modal.style.height = finalH + "px";
+  }
+  function openTroubleshooting(){
+    if (!troubleshootOverlay) return;
+    troubleshootOverlay.style.display = "block";
+    troubleshootOverlay.setAttribute("aria-hidden", "false");
+    syncTroubleshootHeight();
+    requestAnimationFrame(syncTroubleshootHeight);
+  }
+  function closeTroubleshooting(){
+    if (!troubleshootOverlay) return;
+    troubleshootOverlay.style.display = "none";
+    troubleshootOverlay.setAttribute("aria-hidden", "true");
+  }
+  if (helpBtn){
+    helpBtn.addEventListener("click", openTroubleshooting);
+  }
+  if (troubleshootClose){
+    troubleshootClose.addEventListener("click", closeTroubleshooting);
+  }
+  if (troubleshootOverlay){
+    troubleshootOverlay.addEventListener("click", (e) => {
+      if (e.target === troubleshootOverlay) closeTroubleshooting();
+    });
+  }
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") closeTroubleshooting();
+  });
+  window.addEventListener("resize", () => {
+    if (troubleshootOverlay && troubleshootOverlay.style.display === "block") {
+      syncTroubleshootHeight();
+    }
+  });
+
+  const micErrorEl = document.getElementById('mic-error');
+  function escapeHTML(s){
+    return String(s).replace(/[&<>"']/g, ch => ({
+      "&":"&amp;",
+      "<":"&lt;",
+      ">":"&gt;",
+      '"':"&quot;",
+      "'":"&#39;"
+    }[ch]));
+  }
+  function showMicError(html){
+    if (!micErrorEl) return;
+    micErrorEl.innerHTML = html;
+    micErrorEl.style.display = "block";
+  }
+  function hideMicError(){
+    if (!micErrorEl) return;
+    micErrorEl.innerHTML = "";
+    micErrorEl.style.display = "none";
+  }
+  function micErrorMessageFromException(err){
+    const name = (err && err.name) ? err.name : "";
+    const base = "Microphone access failed.";
+
+    if (name === "NotAllowedError" || name === "PermissionDeniedError") {
+      return "Microphone access permission was denied.<br/><br/>Reload the page, click <b>START</b>, and allow microphone access when asked by your browser.";
+    }
+    if (name === "NotFoundError" || name === "DevicesNotFoundError") {
+      return "No microphone was found.<br/><br/>Please connect/select a microphone and try again.";
+    }
+    if (name === "NotReadableError" || name === "TrackStartError") {
+      return "Your microphone is in use by another app or unavailable.<br/><br/>Close other apps using the mic and try again.";
+    }
+    if (name === "OverconstrainedError" || name === "ConstraintNotSatisfiedError") {
+      return "Your browser could not satisfy the microphone constraints.<br/><br/>Try again, or try a different browser/device.";
+    }
+    if (name === "SecurityError") {
+      return "Microphone access is blocked by the browser security policy.<br/><br/>Please open this page via HTTPS and try again.";
+    }
+
+    return (err && err.message)
+      ? `${base}<br/>${escapeHTML(err.message)}`
+      : base;
+  }
+
+  // Pitch detector (YIN)
+  function yinPitch(buffer, sampleRate, minFreq, maxFreq, threshold) {
+    const halfSize = Math.floor(buffer.length / 2);
+
+    const minTau = Math.floor(sampleRate / maxFreq);
+    const maxTau = Math.floor(sampleRate / minFreq);
+    if (maxTau >= halfSize) return null;
+
+    const d = new Float32Array(maxTau + 1);
+    for (let tau = 1; tau <= maxTau; tau++) {
+      let sum = 0;
+      for (let i = 0; i < halfSize; i++) {
+        const delta = buffer[i] - buffer[i + tau];
+        sum += delta * delta;
+      }
+      d[tau] = sum;
+    }
+
+    const cmnd = new Float32Array(maxTau + 1);
+    cmnd[0] = 1;
+    let runningSum = 0;
+    for (let tau = 1; tau <= maxTau; tau++) {
+      runningSum += d[tau];
+      cmnd[tau] = d[tau] * tau / (runningSum || 1e-12);
+    }
+
+    let tauEstimate = -1;
+    for (let tau = Math.max(2, minTau); tau <= maxTau; tau++) {
+      if (cmnd[tau] < threshold && cmnd[tau] < cmnd[tau - 1]) {
+        while (tau + 1 <= maxTau && cmnd[tau + 1] < cmnd[tau]) tau++;
+        tauEstimate = tau;
+        break;
+      }
+    }
+    if (tauEstimate === -1) return null;
+
+    const probability = 1 - cmnd[tauEstimate];
+    const PROB_MIN = IS_IOS ? 0.62 : 0.75;
+    if (probability < PROB_MIN) return null;
+
+    const x0 = tauEstimate > 1 ? tauEstimate - 1 : tauEstimate;
+    const x2 = tauEstimate + 1 <= maxTau ? tauEstimate + 1 : tauEstimate;
+    const s0 = cmnd[x0], s1 = cmnd[tauEstimate], s2 = cmnd[x2];
+
+    const denom = (2 * s1 - s2 - s0);
+    let betterTau = tauEstimate;
+    if (Math.abs(denom) > 1e-12) {
+      const delta = (s2 - s0) / (2 * denom);
+      betterTau = tauEstimate + delta;
+    }
+
+    const freq = sampleRate / betterTau;
+    if (!(freq > 0) || freq < minFreq || freq > maxFreq) return null;
+
+    return { freq, probability };
+  }
+
+  // Adaptive gate
+  const PITCH_FFT_SIZE = 4096;
+  const RMS_SILENCE = 0.020;
+
+  let noiseFloorRms = 0;
+  let noiseFloorPrimed = false;
+  let adaptiveRmsGate = RMS_SILENCE;
+
+  const GATE_CALIBRATION_FRAMES = 30;
+  let gateCalibrationFramesLeft = GATE_CALIBRATION_FRAMES;
+
+  const NOISE_FLOOR_ALPHA = 0.06;
+  const NOISE_FLOOR_ALPHA_FAST = 0.25;
+
+  const GATE_MULTIPLIER = IS_IOS ? 2.0 : 3.0;
+  const GATE_OFFSET     = IS_IOS ? 0.0015 : 0.003;
+  const GATE_MIN        = IS_IOS ? 0.0030 : 0.006;
+
+  const SILENCE_FRAMES_TO_RESET_FAST = 1;
+  const DEEP_SILENCE_FACTOR = 0.45;
+  const SILENCE_FRAMES_TO_RESET = 4;
+
+  const IOS_CALIBRATION_QUIET_MAX_RMS = 0.030;
+  const DESKTOP_CALIBRATION_QUIET_MAX_RMS = 0.030;
+  const GATE_RUNAWAY_MAX = 0.20;
+  
+  function resetAdaptiveGate(){
+    noiseFloorRms = 0;
+    noiseFloorPrimed = false;
+    adaptiveRmsGate = RMS_SILENCE;
+    gateCalibrationFramesLeft = GATE_CALIBRATION_FRAMES;
+  }
+
+  function updateAdaptiveGate(rms){
+
+    if (adaptiveRmsGate > GATE_RUNAWAY_MAX) {
+      resetAdaptiveGate();
+    }
+
+    const quietMax = IS_IOS ? IOS_CALIBRATION_QUIET_MAX_RMS : DESKTOP_CALIBRATION_QUIET_MAX_RMS;
+
+    if (gateCalibrationFramesLeft > 0) {
+
+      if (rms > quietMax) {
+        return;
+      }
+
+      const a = NOISE_FLOOR_ALPHA_FAST;
+
+      if (!noiseFloorPrimed) {
+        noiseFloorRms = rms;
+        noiseFloorPrimed = true;
+      } else {
+        noiseFloorRms = (a * rms) + ((1 - a) * noiseFloorRms);
+      }
+
+      gateCalibrationFramesLeft--;
+    }
+    else {
+      const quietBand = adaptiveRmsGate * 1.15;
+
+      if (rms <= quietBand) {
+        const a = NOISE_FLOOR_ALPHA;
+
+        if (!noiseFloorPrimed) {
+          noiseFloorRms = rms;
+          noiseFloorPrimed = true;
+        } else {
+          noiseFloorRms = (a * rms) + ((1 - a) * noiseFloorRms);
+        }
+      }
+    }
+
+    const floor = noiseFloorPrimed ? noiseFloorRms : rms;
+    adaptiveRmsGate = Math.max(GATE_MIN, (floor * GATE_MULTIPLIER) + GATE_OFFSET);
+    adaptiveRmsGate = Math.min(adaptiveRmsGate, GATE_RUNAWAY_MAX);
+  }
+
+  // UI
+  const liveNoteEl = document.getElementById("live-note");
+  const liveCentsEl = document.getElementById("live-cents");
+  const liveHintEl = document.getElementById("live-hint");
+  const livePairEl = document.getElementById("live-pair");
+
+  function syncLivePairLayout(){
+    if (!livePairEl || !liveNoteEl) return;
+    const w = liveNoteEl.getBoundingClientRect().width || 0;
+    livePairEl.style.setProperty("--noteW", w + "px");
+  }
+  requestAnimationFrame(syncLivePairLayout);
+
+  function setUserBoostGainFromUI(){
+    const sel = document.getElementById("inputboost");
+    if (!sel) return;
+    const v = parseFloat(sel.value);
+    gUserBoostGain = (isFinite(v) && v > 0) ? v : 1.0;
+    if (userBoostGainNode) {
+      try { userBoostGainNode.gain.value = gUserBoostGain; } catch(e){ }
+    }
+  }
+
+  // ------------------- Intonation (ET / Just / Pythagorean / Fiddle presets) -------------------
+  let gIntonation = "et";
+  let gRootPc = 0;
+
+  const JUST_RATIOS = [
+    1/1, 25/24, 9/8, 6/5, 5/4, 4/3, 25/18, 3/2, 25/16, 5/3, 9/5, 15/8
+  ];
+
+  const PYTH_RATIOS = [
+    1/1, 2187/2048, 9/8, 19683/16384, 81/64, 4/3, 729/512, 3/2, 6561/4096, 27/16, 59049/32768, 243/128
+  ];
+
+  const FIDDLE_OPEN_MIDI = { G3:55, D4:62, A4:69, E5:76 };
+
+  const FIDDLE_D_RATIOS_BY_MIDI = { 55: 2/3, 62: 1/1, 69: 3/2, 76: 9/4 };
+  const FIDDLE_A_RATIOS_BY_MIDI = { 55: 4/9, 62: 2/3, 69: 1/1, 76: 3/2 };
+
+  function getActiveRatios(){
+    if (gIntonation === "just") return JUST_RATIOS;
+    if (gIntonation === "pyth") return PYTH_RATIOS;
+    return null;
+  }
+
+  function fiddleSweetenedIdealFreqForMidi(midi){
+    const et = midiToFreq(midi);
+
+    if (gIntonation === "fiddle_d"){
+      const anchorMidi = FIDDLE_OPEN_MIDI.D4;
+      const ratio = FIDDLE_D_RATIOS_BY_MIDI[midi];
+      if (!ratio) return et;
+      const anchorFreq = midiToFreq(anchorMidi);
+      return anchorFreq * ratio;
+    }
+
+    if (gIntonation === "fiddle_a"){
+      const anchorMidi = FIDDLE_OPEN_MIDI.A4;
+      const ratio = FIDDLE_A_RATIOS_BY_MIDI[midi];
+      if (!ratio) return et;
+      const anchorFreq = midiToFreq(anchorMidi);
+      return anchorFreq * ratio;
+    }
+
+    return et;
+  }
+
+  function ratioForSemitoneDistance(d, ratios){
+    const nOct = Math.floor(d / 12);
+    const interval = ((d % 12) + 12) % 12;
+    return ratios[interval] * Math.pow(2, nOct);
+  }
+
+  function temperamentIdealFreqForMidi(midi){
+    if (gIntonation === "fiddle_d" || gIntonation === "fiddle_a"){
+      return fiddleSweetenedIdealFreqForMidi(midi);
+    }
+
+    if (gIntonation === "et") return midiToFreq(midi);
+
+    const rootMidi = 60 + (gRootPc % 12);
+    const rootFreq = midiToFreq(rootMidi);
+    const d = midi - rootMidi;
+
+    const ratios = getActiveRatios();
+    if (!ratios) return midiToFreq(midi);
+
+    if (gIntonation !== "pyth") {
+      const ratio = ratioForSemitoneDistance(d, ratios);
+      return rootFreq * ratio;
+    }
+
+    const ratio = (d >= 0)
+      ? ratioForSemitoneDistance(d, ratios)
+      : (1 / ratioForSemitoneDistance(-d, ratios));
+
+    return rootFreq * ratio;
+  }
+
+  function rootIsSelectableForMode(mode){
+    return (mode === "just" || mode === "pyth");
+  }
+
+  function updateRootEnablement(){
+    const rootSel = document.getElementById("rootnote");
+    if (!rootSel) return;
+    rootSel.disabled = !rootIsSelectableForMode(gIntonation);
+  }
+
+  function applyIntonationFromUI(){
+    const intSel = document.getElementById("intonation");
+    if (intSel) {
+      const v = String(intSel.value || "et");
+      const allowed = new Set(["et","just","pyth","fiddle_d","fiddle_a"]);
+      gIntonation = allowed.has(v) ? v : "et";
+    }
+
+    const rootSel = document.getElementById("rootnote");
+    if (rootSel) {
+      if (gIntonation === "fiddle_d"){
+        gRootPc = 2;
+        rootSel.value = "2";
+      } else if (gIntonation === "fiddle_a"){
+        gRootPc = 9;
+        rootSel.value = "9";
+      } else {
+        const n = parseInt(rootSel.value, 10);
+        gRootPc = (isFinite(n) ? n : 0) % 12;
+      }
+    }
+
+    updateRootEnablement();
+  }
+
+  function getYAxisLabel(){
+    if (gIntonation === "just") {
+      const rootName = NOTES[(gRootPc % 12 + 12) % 12] || "C";
+      return `Cents Difference from Just Intonation (${rootName})`;
+    }
+    if (gIntonation === "pyth") {
+      const rootName = NOTES[(gRootPc % 12 + 12) % 12] || "C";
+      return `Cents Difference from Pythagorean (${rootName})`;
+    }
+    if (gIntonation === "fiddle_d") {
+      return "Cents Difference from Fiddle Sweetened (D)";
+    }
+    if (gIntonation === "fiddle_a") {
+      return "Cents Difference from Fiddle Sweetened (A)";
+    }
+    return "Cents Difference from Equal Temperament";
+  }
+
+  // -------------------------------------------------------------
+
+  // Plot data model (pitch)
+  const noteSamples = new Map();
+  const MAX_SAMPLES_PER_NOTE = 3000;
+
+  const MIN_MS_BETWEEN_SAMPLES = 80;
+  const lastSampleTimeByMidi = new Map();
+
+  // Plot data model (volume)
+  const noteVolumeDb = new Map();             // midi -> array of dBFS samples
+  const MAX_VOLUME_SAMPLES_PER_NOTE = 3000;
+  const MIN_MS_BETWEEN_VOLUME_SAMPLES = 80;
+  const lastVolSampleTimeByMidi = new Map();
+
+  function rmsToDbFS(rms){
+    const eps = 1e-9;
+    const v = Math.max(eps, rms);
+    return 20 * Math.log10(v);
+  }
+  function clampDb(db){ return clamp(db, -80, 0); }
+
+  // CHANGED: plot mode toggle
+  const PLOT_MODE_PITCH = "pitch";
+  const PLOT_MODE_VOLUME = "volume";
+  let gPlotMode = PLOT_MODE_PITCH; // default should be pitch
+
+  const plotTitleEl = document.getElementById("plot-title");
+  const modeToggleBtn = document.getElementById("mode-toggle-btn");
+
+  function syncPlotModeUI(){
+    if (!plotTitleEl || !modeToggleBtn) return;
+
+    if (gPlotMode === PLOT_MODE_VOLUME){
+      plotTitleEl.textContent = "Volume Distribution";
+      modeToggleBtn.textContent = "VOLUME";
+      modeToggleBtn.title = "Toggle graph: Pitch / Volume";
+      modeToggleBtn.setAttribute("aria-label", modeToggleBtn.title);
+    } else {
+      plotTitleEl.textContent = "Pitch Distribution";
+      modeToggleBtn.textContent = "PITCH";
+      modeToggleBtn.title = "Toggle graph: Pitch / Volume";
+      modeToggleBtn.setAttribute("aria-label", modeToggleBtn.title);
+    }
+  }
+
+  if (modeToggleBtn){
+    modeToggleBtn.addEventListener("click", () => {
+      gPlotMode = (gPlotMode === PLOT_MODE_PITCH) ? PLOT_MODE_VOLUME : PLOT_MODE_PITCH;
+      syncPlotModeUI();
+      requestPlotRedraw(true);
+      drawPlot();
+    });
+  }
+
+  let pitchHistory = [];
+  const PITCH_HIST_FRAMES = 15;
+  const PITCH_NEED_FRAMES = 8;
+
+  let silentFrames = 0;
+  let lastDetectedMidi = null;
+
+  let detectionPaused = false;
+
+  function setDetectionPaused(paused){
+
+    detectionPaused = !!paused;
+
+    document.documentElement.classList.toggle("is-paused", detectionPaused);
+
+    const pauseBtn = document.getElementById("pause-btn");
+    if (pauseBtn){
+      pauseBtn.textContent = detectionPaused ? "RESUME" : "PAUSE";
+      pauseBtn.title = detectionPaused ? "Resume pitch/volume detection" : "Pause pitch/volume detection";
+      pauseBtn.setAttribute("aria-label", pauseBtn.title);
+    }
+
+    if (detectionPaused){
+      liveNoteEl.textContent = "Paused";
+      liveCentsEl.textContent = " ";
+    } else {
+      liveNoteEl.textContent = "--";
+      liveCentsEl.textContent = " -- cents";
+
+      pitchHistory = [];
+      silentFrames = 0;
+      lastDetectedMidi = null;
+      resetAdaptiveGate();
+    }
+  }
+
+  function clearAnalysis(){
+    noteSamples.clear();
+    lastSampleTimeByMidi.clear();
+
+    noteVolumeDb.clear();
+    lastVolSampleTimeByMidi.clear();
+
+    pitchHistory = [];
+    silentFrames = 0;
+    lastDetectedMidi = null;
+    resetAdaptiveGate();
+    levelMeterSmoothed = 0;
+    setLevelMeter01(0);
+    if (detectionPaused){
+      liveNoteEl.textContent = "Paused";
+      liveCentsEl.textContent = " ";
+    }
+    else{
+      liveNoteEl.textContent = "--";
+      liveCentsEl.textContent = " -- cents";
+    }
+    syncLivePairLayout();
+
+    requestPlotRedraw(true);
+  }
+
+  // Canvas plotting
+  const canvas = document.getElementById("plot");
+  const ctx = canvas.getContext("2d");
+  let gYRange = 50;
+
+  let canvasCssW = 0;
+  let canvasCssH = 0;
+
+  function resizeCanvasToCSS(){
+    let dpr = window.devicePixelRatio || 1;
+    dpr = Math.max(1, Math.min(3, Math.round(dpr)));
+
+    const r = canvas.getBoundingClientRect();
+
+    const w = Math.max(320, Math.round(r.width));
+    const h = Math.max(300, Math.round(r.height));
+
+    canvasCssW = w;
+    canvasCssH = h;
+
+    const pxW = Math.max(1, Math.round(w * dpr));
+    const pxH = Math.max(1, Math.round(h * dpr));
+
+    if (canvas.width !== pxW || canvas.height !== pxH){
+      canvas.width = pxW;
+      canvas.height = pxH;
+
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+  }
+
+  function getCSSVar(name){
+    const v = getComputedStyle(document.documentElement).getPropertyValue(name);
+    return (v || "").trim();
+  }
+
+  function niceTicksForRange(rangeAbs){
+    const r = Math.max(5, rangeAbs);
+    if (r <= 25) return [-20,-10,0,10,20];
+    if (r <= 50) return [-40,-20,0,20,40];
+    if (r <= 75) return [-60,-30,0,30,60];
+    return [-100,-50,0,50,100].filter(t => Math.abs(t) <= r);
+  }
+
+  function statsForSamples(samples){
+    if (!samples || samples.length < 3) return null;
+
+    const s = samples.slice().sort((a,b)=>a-b);
+    const q1 = percentileSorted(s, 0.25);
+    const med = percentileSorted(s, 0.50);
+    const q3 = percentileSorted(s, 0.75);
+    const iqr = (q3 - q1);
+
+    const loFence = q1 - 1.5 * iqr;
+    const hiFence = q3 + 1.5 * iqr;
+
+    let wLo = s[0];
+    let wHi = s[s.length - 1];
+
+    for (let i=0;i<s.length;i++){
+      if (s[i] >= loFence){ wLo = s[i]; break; }
+    }
+    for (let i=s.length-1;i>=0;i--){
+      if (s[i] <= hiFence){ wHi = s[i]; break; }
+    }
+
+    return { q1, med, q3, wLo, wHi, n: s.length };
+  }
+
+  // Plot scheduling
+  let plotDirty = true;
+  let plotForce = false;
+  let lastPlotT = 0;
+  const PLOT_MAX_FPS = 12;
+
+  const SINGLE_TONE_IQR_CENTS = 0.35;
+  const SINGLE_TONE_SPREAD_CENTS = 0.60;
+  const SINGLE_TONE_COLOR = "#21c7ff";
+
+  // volume single-tone thresholds
+  const SINGLE_TONE_IQR_DB = 0.60;
+  const SINGLE_TONE_SPREAD_DB = 1.00;
+
+  function requestPlotRedraw(force){
+    plotDirty = true;
+    if (force) plotForce = true;
+  }
+
+  function drawPlot(){
+    resizeCanvasToCSS();
+
+    const w = canvasCssW || canvas.getBoundingClientRect().width;
+    const h = canvasCssH || canvas.getBoundingClientRect().height;
+
+    const isPitchMode = (gPlotMode !== PLOT_MODE_VOLUME);
+
+    const padL = 82;
+    const padR = 30;
+    const padT = 20;
+    const padB = 68;
+
+    const plotX0 = padL;
+    const plotY0 = padT;
+    const plotW = Math.max(10, w - padL - padR);
+    const plotH = Math.max(10, h - padT - padB);
+
+    // Background
+    ctx.clearRect(0,0,w,h);
+    ctx.fillStyle = "#0b0b0b";
+    ctx.fillRect(0,0,w,h);
+
+    // Border
+    ctx.strokeStyle = getCSSVar("--plot-border") || "#333";
+    ctx.lineWidth = 1;
+    ctx.strokeRect(plotX0, plotY0, plotW, plotH);
+
+    // X-axis label
+    ctx.fillStyle = getCSSVar("--plot-axis") || "#bdbdbd";
+    ctx.font = "800 18px Segoe UI, sans-serif";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "alphabetic";
+    ctx.fillText("Note", w / 2, plotY0 + plotH + 57);
+
+    // --- Axis mappings ---
+    const yToPxCents = (cents) => {
+      const v = clamp(cents, -gYRange, gYRange);
+      const t = (v + gYRange) / (2 * gYRange);
+      return plotY0 + plotH - t * plotH;
+    };
+
+    const DB_MIN = -36;
+    const DB_MAX = 0;
+    const dbToPx = (db) => {
+      const v = clamp(db, DB_MIN, DB_MAX);
+      const t = (v - DB_MIN) / (DB_MAX - DB_MIN);
+      return plotY0 + plotH - t * plotH;
+    };
+
+    // --- Draw ONLY the active Y axis (ticks + grid + label), always (even with no data) ---
+    if (isPitchMode){
+      // Y label (pitch)
+      ctx.save();
+      ctx.translate(18, plotY0 + plotH/2);
+      ctx.rotate(-Math.PI/2);
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillStyle = getCSSVar("--plot-axis") || "#bdbdbd";
+      ctx.font = "800 18px Segoe UI, sans-serif";
+      ctx.fillText(getYAxisLabel(), 0, 0);
+      ctx.restore();
+
+      // Pitch ticks + grid
+      const ticks = niceTicksForRange(gYRange);
+
+      ctx.font = "700 13px ui-monospace, Menlo, Consolas, monospace";
+      ctx.textAlign = "right";
+      ctx.textBaseline = "middle";
+
+      for (const t of ticks){
+        const y = yToPxCents(t);
+
+        if (t === 0){
+          ctx.setLineDash([]);
+          ctx.strokeStyle = "rgba(0, 255, 150, 0.28)";
+          ctx.lineWidth = 1.6;
+        } else {
+          ctx.setLineDash([3,4]);
+          ctx.strokeStyle = "rgba(150,150,150,0.25)";
+          ctx.lineWidth = 1.1;
+        }
+
+        ctx.beginPath();
+        ctx.moveTo(plotX0, y);
+        ctx.lineTo(plotX0 + plotW, y);
+        ctx.stroke();
+
+        ctx.setLineDash([]);
+        ctx.fillStyle = getCSSVar("--plot-axis") || "#bdbdbd";
+        ctx.fillText(String(t), plotX0 - 10, y);
+      }
+    }
+    else {
+      // Y label (volume)  <-- CHANGED: now white
+      ctx.save();
+      ctx.translate(18, plotY0 + plotH/2);
+      ctx.rotate(-Math.PI/2);
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillStyle = "rgba(255,255,255,0.92)"; // CHANGED (was teal)
+      ctx.font = "800 18px Segoe UI, sans-serif";
+      ctx.fillText("Relative Volume (dBFS)", 0, 0);
+      ctx.restore();
+
+      // Volume ticks + grid
+      const volTicks = [-36, -30, -24, -18, -12, -6, 0];
+
+      ctx.font = "700 13px ui-monospace, Menlo, Consolas, monospace";
+      ctx.textAlign = "right";
+      ctx.textBaseline = "middle";
+
+      for (const t of volTicks){
+        const y = dbToPx(t);
+
+        ctx.setLineDash([4,4]);
+        ctx.strokeStyle = "rgba(120,220,220,0.22)";
+        ctx.lineWidth = 1.1;
+
+        ctx.beginPath();
+        ctx.moveTo(plotX0, y);
+        ctx.lineTo(plotX0 + plotW, y);
+        ctx.stroke();
+
+        ctx.setLineDash([]);
+        ctx.fillStyle = "rgba(255,255,255,0.82)"; // CHANGED (was teal)
+        ctx.fillText(String(t), plotX0 - 10, y);
+      }
+    }
+
+    // --- Data drawing (skip if no notes yet) ---
+    const mids = Array.from(noteSamples.keys()).sort((a,b)=>a-b);
+    const volMids = Array.from(noteVolumeDb.keys()).sort((a,b)=>a-b);
+
+    const activeMids = isPitchMode ? mids : volMids;
+    if (!activeMids.length) return;
+
+    const n = activeMids.length;
+    const slot = plotW / n;
+    const boxW = Math.max(10, Math.min(42, slot * 0.55));
+    const whiskerCapW = Math.max(10, Math.min(28, boxW * 0.7));
+
+    ctx.font = "800 16px ui-monospace, Menlo, Consolas, monospace";
+
+    for (let i=0;i<n;i++){
+      const midi = activeMids[i];
+      const cx = plotX0 + slot * (i + 0.5);
+
+      // Note labels
+      const lbl = midiToNoteName(midi);
+      ctx.save();
+      const labelY = plotY0 + plotH + 12;
+      if (n > 11){
+        ctx.translate(cx, labelY);
+        ctx.rotate(-Math.PI/6);
+        ctx.fillStyle = "#cfcfcf";
+        ctx.textAlign = "right";
+        ctx.textBaseline = "middle";
+        ctx.fillText(lbl, 0, 0);
+      } else {
+        ctx.fillStyle = "#cfcfcf";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "top";
+        ctx.fillText(lbl, cx, labelY);
+      }
+      ctx.restore();
+
+      if (isPitchMode){
+        const samples = noteSamples.get(midi) || [];
+        const st = statsForSamples(samples);
+        if (!st) continue;
+
+        const isSingleToneLike = (
+          Math.abs(st.q3 - st.q1) <= SINGLE_TONE_IQR_CENTS ||
+          Math.abs(st.wHi - st.wLo) <= SINGLE_TONE_SPREAD_CENTS
+        );
+
+        if (isSingleToneLike && samples.length){
+          const y = yToPxCents(st.med);
+          ctx.strokeStyle = SINGLE_TONE_COLOR;
+          ctx.lineWidth = 1.5;
+          ctx.beginPath();
+          ctx.moveTo(cx - boxW/2, y);
+          ctx.lineTo(cx + boxW/2, y);
+          ctx.stroke();
+          continue;
+        }
+
+        const q1 = clamp(st.q1, -gYRange, gYRange);
+        const q3 = clamp(st.q3, -gYRange, gYRange);
+        const med = clamp(st.med, -gYRange, gYRange);
+        const wLo = clamp(st.wLo, -gYRange, gYRange);
+        const wHi = clamp(st.wHi, -gYRange, gYRange);
+
+        const yQ1 = yToPxCents(q1);
+        const yQ3 = yToPxCents(q3);
+        const yMed = yToPxCents(med);
+        const yLo = yToPxCents(wLo);
+        const yHi = yToPxCents(wHi);
+
+        const boxFill = getCSSVar("--plot-box") || "#ffd400";
+        const boxStroke = getCSSVar("--plot-box-stroke") || "#0a0a0a";
+        const whiskerStroke = getCSSVar("--plot-whisker") || "#cfcfcf";
+        const medianStroke = getCSSVar("--plot-median") || "#000";
+
+        ctx.strokeStyle = whiskerStroke;
+        ctx.lineWidth = 1.5;
+        ctx.setLineDash([5,4]);
+        ctx.beginPath();
+        ctx.moveTo(cx, yHi); ctx.lineTo(cx, yQ3);
+        ctx.moveTo(cx, yQ1); ctx.lineTo(cx, yLo);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        ctx.beginPath();
+        ctx.moveTo(cx - whiskerCapW/2, yHi); ctx.lineTo(cx + whiskerCapW/2, yHi);
+        ctx.moveTo(cx - whiskerCapW/2, yLo); ctx.lineTo(cx + whiskerCapW/2, yLo);
+        ctx.stroke();
+
+        const boxTop = Math.min(yQ1, yQ3);
+        const boxBot = Math.max(yQ1, yQ3);
+        const boxH = Math.max(2, boxBot - boxTop);
+
+        ctx.fillStyle = boxFill;
+        ctx.strokeStyle = boxStroke;
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.rect(cx - boxW/2, boxTop, boxW, boxH);
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.strokeStyle = medianStroke;
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.moveTo(cx - boxW/2 + 1, yMed);
+        ctx.lineTo(cx + boxW/2 - 1, yMed);
+        ctx.stroke();
+      }
+      else {
+        const volArr = noteVolumeDb.get(midi) || [];
+        const vst = statsForSamples(volArr);
+        if (!vst) continue;
+
+        // Clamp to -36..0
+        const q1 = clamp(vst.q1, DB_MIN, DB_MAX);
+        const q3 = clamp(vst.q3, DB_MIN, DB_MAX);
+        const med = clamp(vst.med, DB_MIN, DB_MAX);
+        const wLo = clamp(vst.wLo, DB_MIN, DB_MAX);
+        const wHi = clamp(vst.wHi, DB_MIN, DB_MAX);
+
+        const yQ1 = dbToPx(q1);
+        const yQ3 = dbToPx(q3);
+        const yMed = dbToPx(med);
+        const yLo = dbToPx(wLo);
+        const yHi = dbToPx(wHi);
+
+        // Light teal for all volume plots
+        const vStroke = "rgba(120,220,220,0.85)";
+        const vFill   = "rgba(120,220,220,0.25)";
+
+        ctx.strokeStyle = vStroke;
+        ctx.lineWidth = 1.4;
+        ctx.setLineDash([4,4]);
+        ctx.beginPath();
+        ctx.moveTo(cx, yHi); ctx.lineTo(cx, yQ3);
+        ctx.moveTo(cx, yQ1); ctx.lineTo(cx, yLo);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        ctx.beginPath();
+        ctx.moveTo(cx - whiskerCapW/2, yHi); ctx.lineTo(cx + whiskerCapW/2, yHi);
+        ctx.moveTo(cx - whiskerCapW/2, yLo); ctx.lineTo(cx + whiskerCapW/2, yLo);
+        ctx.stroke();
+
+        const boxTop = Math.min(yQ1, yQ3);
+        const boxBot = Math.max(yQ1, yQ3);
+        const boxH = Math.max(2, boxBot - boxTop);
+
+        ctx.fillStyle = vFill;
+        ctx.strokeStyle = vStroke;
+        ctx.lineWidth = 1.4;
+        ctx.beginPath();
+        ctx.rect(cx - boxW/2, boxTop, boxW, boxH);
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.lineWidth = 2.2;
+        ctx.beginPath();
+        ctx.moveTo(cx - boxW/2 + 1, yMed);
+        ctx.lineTo(cx + boxW/2 - 1, yMed);
+        ctx.stroke();
+      }
+    }
+  }
+
+  function restoreSettingsFromLocalStorage(){
+    try{
+      const a4 = localStorage.getItem(LS_KEY_A4REF);
+      const boost = localStorage.getItem(LS_KEY_BOOST);
+      const yr = localStorage.getItem(LS_KEY_YRANGE);
+
+      const intonation = localStorage.getItem(LS_KEY_INTONATION);
+      const rootnote = localStorage.getItem(LS_KEY_ROOTNOTE);
+
+      const a4Sel = document.getElementById("a4ref");
+      if (a4Sel && a4 && a4Sel.querySelector(`option[value="${CSS.escape(a4)}"]`)) {
+        a4Sel.value = a4;
+      }
+      const boostSel = document.getElementById("inputboost");
+      if (boostSel && boost && boostSel.querySelector(`option[value="${CSS.escape(boost)}"]`)) {
+        boostSel.value = boost;
+      }
+      const yrSel = document.getElementById("yrange");
+      if (yrSel && yr && yrSel.querySelector(`option[value="${CSS.escape(yr)}"]`)) {
+        yrSel.value = yr;
+      }
+
+      const intSel = document.getElementById("intonation");
+      if (intSel && intonation && intSel.querySelector(`option[value="${CSS.escape(intonation)}"]`)) {
+        intSel.value = intonation;
+      }
+      const rootSel = document.getElementById("rootnote");
+      if (rootSel && rootnote && rootSel.querySelector(`option[value="${CSS.escape(rootnote)}"]`)) {
+        rootSel.value = rootnote;
+      }
+
+    } catch(e){}
+  }
+
+  function saveSettingsToLocalStorage(){
+    try{
+      const a4Sel = document.getElementById("a4ref");
+      const boostSel = document.getElementById("inputboost");
+      const yrSel = document.getElementById("yrange");
+      if (a4Sel) localStorage.setItem(LS_KEY_A4REF, String(a4Sel.value));
+      if (boostSel) localStorage.setItem(LS_KEY_BOOST, String(boostSel.value));
+      if (yrSel) localStorage.setItem(LS_KEY_YRANGE, String(yrSel.value));
+
+      const intSel = document.getElementById("intonation");
+      const rootSel = document.getElementById("rootnote");
+      if (intSel) localStorage.setItem(LS_KEY_INTONATION, String(intSel.value));
+      if (rootSel) localStorage.setItem(LS_KEY_ROOTNOTE, String(rootSel.value));
+    } catch(e){}
+  }
+
+  // Export plot as JPEG / CSV
+  const exportPlotBtn = document.getElementById("export-plot-btn");
+  const exportCsvBtn  = document.getElementById("export-csv-btn");
+
+  function showExportFilenameDialog(defaultName, opts){
+    opts = opts || {};
+    const wantedExt = String(opts.ext || "jpg").replace(/^\./, "").toLowerCase();
+    const dlgTitle = String(opts.title || "Export Graph as JPEG Image");
+
+    return new Promise((resolve) => {
+      const overlay = document.getElementById("exportdlg-overlay");
+      const input   = document.getElementById("exportdlg-filename");
+      const btnSave = document.getElementById("exportdlg-save");
+      const btnCancel = document.getElementById("exportdlg-cancel");
+      const titleEl = document.getElementById("exportdlg-title");
+      const modalEl = document.getElementById("exportdlg-modal");
+
+      if (!overlay || !input || !btnSave || !btnCancel){
+        resolve(null);
+        return;
+      }
+
+      if (titleEl) titleEl.textContent = dlgTitle;
+      if (modalEl) modalEl.setAttribute("aria-label", dlgTitle);
+
+      let done = false;
+      const finish = (val) => {
+        if (done) return;
+        done = true;
+
+        overlay.style.display = "none";
+        overlay.setAttribute("aria-hidden", "true");
+
+        overlay.removeEventListener("click", onOverlayClick);
+        btnCancel.removeEventListener("click", onCancel);
+        btnSave.removeEventListener("click", onSave);
+        document.removeEventListener("keydown", onKey);
+
+        resolve(val);
+      };
+
+      const normalizeName = (s) => {
+        let v = (s || "").trim();
+        v = v.replace(/[\/\\:*?"<>|]+/g, "-").replace(/\s+/g, " ");
+
+        const re = new RegExp("\\." + wantedExt.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "$", "i");
+        if (v && !re.test(v)) v += "." + wantedExt;
+
+        return v;
+      };
+
+      const onSave = () => {
+        const v = normalizeName(input.value);
+        if (!v) return;
+        finish(v);
+      };
+
+      const onCancel = () => finish(null);
+
+      const onKey = (e) => {
+        if (e.key === "Escape") {
+          e.preventDefault();
+          onCancel();
+        } else if (e.key === "Enter") {
+          e.preventDefault();
+          onSave();
+        }
+      };
+
+      const onOverlayClick = (e) => {
+        if (e.target === overlay) onCancel();
+      };
+
+      overlay.style.display = "block";
+      overlay.setAttribute("aria-hidden", "false");
+      input.value = defaultName;
+
+      requestAnimationFrame(() => {
+        input.focus();
+        const dot = input.value.lastIndexOf(".");
+        if (dot > 0) input.setSelectionRange(0, dot);
+        else input.select();
+      });
+
+      overlay.addEventListener("click", onOverlayClick);
+      btnCancel.addEventListener("click", onCancel);
+      btnSave.addEventListener("click", onSave);
+      document.addEventListener("keydown", onKey);
+    });
+  }
+
+  function getModeShortTag(){
+    if (gIntonation === "et") return "ET";
+    if (gIntonation === "just") return "JI";
+    if (gIntonation === "pyth") return "PYTH";
+    if (gIntonation === "fiddle_d") return "FIDDLE";
+    if (gIntonation === "fiddle_a") return "FIDDLE";
+    return "ET";
+  }
+
+  function getEffectiveRootPcForFilename(){
+    if (gIntonation === "just" || gIntonation === "pyth") return (gRootPc % 12 + 12) % 12;
+    if (gIntonation === "fiddle_d") return 2;
+    if (gIntonation === "fiddle_a") return 9;
+    return null;
+  }
+
+  function buildDefaultExportBaseNameCSV(){
+    const a4Sel   = document.getElementById("a4ref");
+    const a4 = a4Sel ? a4Sel.value : "440";
+
+    const tag = getModeShortTag();
+
+    let rootPart = "";
+    const effRoot = getEffectiveRootPcForFilename();
+    if (effRoot !== null && effRoot !== undefined){
+      rootPart = `_${NOTES[effRoot]}`;
+    }
+
+    return `rttva_${tag}${rootPart}_A${a4}`;
+  }
+
+  function buildDefaultExportBaseNameJPG(){
+    const a4Sel   = document.getElementById("a4ref");
+    const a4 = a4Sel ? a4Sel.value : "440";
+
+    const tag = getModeShortTag();
+
+    let rootPart = "";
+    const effRoot = getEffectiveRootPcForFilename();
+    if (effRoot !== null && effRoot !== undefined){
+      rootPart = `_${NOTES[effRoot]}`;
+    }
+
+    // CHANGED: add graph mode tag so exported filenames are self-describing
+    const graphTag = (gPlotMode === PLOT_MODE_VOLUME) ? "_VOLUME" : "_PITCH";
+
+    return `rttva_${tag}${rootPart}${graphTag}_A${a4}`;
+  }
+
+  async function exportPlotAsJPG(){
+    if (!canvas) return;
+
+    try { drawPlot(); } catch(e){}
+
+    const defaultName = buildDefaultExportBaseNameJPG() + ".jpg";
+    const filename = await showExportFilenameDialog(defaultName, {
+      ext: "jpg",
+      title: "Export Graph as JPEG Image"
+    });
+    if (!filename) return;
+
+    canvas.toBlob(blob => {
+      if (!blob) return;
+
+      const url = URL.createObjectURL(blob);
+
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+
+      setTimeout(() => {
+        URL.revokeObjectURL(url);
+      }, 2000);
+
+    }, "image/jpeg", 0.95);
+
+  }
+
+  function csvEscape(v){
+    const s = (v == null) ? "" : String(v);
+    if (/[",\r\n]/.test(s)) return '"' + s.replace(/"/g, '""') + '"';
+    return s;
+  }
+
+  function formatMedianCentsForCSV(c){
+    if (c == null || !isFinite(c)) return "";
+    const v = Math.round(c * 10) / 10;
+    return v.toFixed(1);
+  }
+
+  function formatMedianDbForCSV(db){
+    if (db == null || !isFinite(db)) return "";
+    const v = Math.round(db * 10) / 10;
+    return v.toFixed(1);
+  }
+
+  async function exportPlotAsCSV(){
+    // Union of notes that have pitch samples and/or volume samples
+    const allMidiSet = new Set([
+      ...Array.from(noteSamples.keys()),
+      ...Array.from(noteVolumeDb.keys())
+    ]);
+    const mids = Array.from(allMidiSet).sort((a,b)=>a-b);
+    if (!mids.length) return;
+
+    const rows = [];
+    // CSV includes note, pitch median, and volume median
+    rows.push(["Note", "PitchMedianCents", "VolumeMedianDbFS"]);
+
+    for (const midi of mids){
+      const samples = noteSamples.get(midi) || [];
+      const volArr  = noteVolumeDb.get(midi) || [];
+
+      // Pitch median (blank if none)
+      let med = "";
+      if (samples.length){
+        const st = statsForSamples(samples);
+        const m = (st && isFinite(st.med)) ? st.med : median(samples);
+        med = formatMedianCentsForCSV(m);
+      }
+
+      // Volume median (blank if none)
+      let vmed = "";
+      if (volArr.length){
+        const vst = statsForSamples(volArr);
+        const vm = (vst && isFinite(vst.med)) ? vst.med : median(volArr);
+        vmed = formatMedianDbForCSV(vm);
+      }
+
+      // If a note has neither (shouldn’t happen given the union), skip it
+      if (med === "" && vmed === "") continue;
+
+      rows.push([
+        midiToNoteName(midi),
+        med,
+        vmed
+      ]);
+    }
+
+    const csvText = rows.map(r => r.map(csvEscape).join(",")).join("\r\n") + "\r\n";
+
+    const defaultName = buildDefaultExportBaseNameCSV() + ".csv";
+    const filename = await showExportFilenameDialog(defaultName, {
+      ext: "csv",
+      title: "Export Graph as CSV File"
+    });
+    if (!filename) return;
+
+    const blob = new Blob([csvText], { type: "text/csv;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+
+    setTimeout(() => {
+      URL.revokeObjectURL(url);
+    }, 2000);
+  }
+
+  if (exportPlotBtn){
+    exportPlotBtn.addEventListener("click", exportPlotAsJPG);
+  }
+  if (exportCsvBtn){
+    exportCsvBtn.addEventListener("click", exportPlotAsCSV);
+  }
+
+  // Sampling + analysis
+  let analysisStarted = false;
+
+  function updateLiveReadout(noteName, cents){
+    liveNoteEl.textContent = noteName || "--";
+    if (cents == null || !isFinite(cents)){
+      liveCentsEl.textContent = " -- cents";
+    } else {
+      liveCentsEl.textContent = ` ${fmtCentsSigned(cents)} cents`;
+    }
+
+    requestAnimationFrame(syncLivePairLayout);
+  }
+
+  function pushSample(midi, cents){
+    const now = performance.now();
+    const lastT = lastSampleTimeByMidi.get(midi) || 0;
+    if ((now - lastT) < MIN_MS_BETWEEN_SAMPLES) return;
+    lastSampleTimeByMidi.set(midi, now);
+
+    const arr = noteSamples.get(midi) || [];
+    arr.push(cents);
+
+    if (arr.length > MAX_SAMPLES_PER_NOTE) {
+      arr.splice(0, arr.length - MAX_SAMPLES_PER_NOTE);
+    }
+
+    noteSamples.set(midi, arr);
+    requestPlotRedraw(false);
+  }
+
+  // store volume sample (dBFS) aligned with accepted pitch samples
+  function pushVolumeSample(midi, rms){
+    const now = performance.now();
+    const lastT = lastVolSampleTimeByMidi.get(midi) || 0;
+    if ((now - lastT) < MIN_MS_BETWEEN_VOLUME_SAMPLES) return;
+    lastVolSampleTimeByMidi.set(midi, now);
+
+    const db = clampDb(rmsToDbFS(rms));
+    const arr = noteVolumeDb.get(midi) || [];
+    arr.push(db);
+
+    if (arr.length > MAX_VOLUME_SAMPLES_PER_NOTE) {
+      arr.splice(0, arr.length - MAX_VOLUME_SAMPLES_PER_NOTE);
+    }
+
+    noteVolumeDb.set(midi, arr);
+    requestPlotRedraw(false);
+  }
+
+  function schedulePlotPaintIfNeeded(){
+    const now = performance.now();
+    const minDt = 1000 / PLOT_MAX_FPS;
+    const okToPaint = plotForce || (plotDirty && (now - lastPlotT) >= minDt);
+
+    if (okToPaint){
+      lastPlotT = now;
+      plotDirty = false;
+      plotForce = false;
+      drawPlot();
+    }
+  }
+
+  function tick(){
+    if (!audioCtx || !analyserPitch) {
+      requestAnimationFrame(tick);
+      return;
+    }
+
+    if (analysisStarted && detectionPaused) {
+      ensureAudioContextRunning();
+      schedulePlotPaintIfNeeded();
+      requestAnimationFrame(tick);
+      return;
+    }
+
+    analyserPitch.getFloatTimeDomainData(timeDataPitch);
+    const rms = rmsOfArray(timeDataPitch);
+
+    setLevelMeter01(clamp(rms / 0.10, 0, 1));
+    updateAdaptiveGate(rms);
+
+    if (rms < adaptiveRmsGate){
+      silentFrames++;
+
+      const isDeepSilence = (rms < (adaptiveRmsGate * DEEP_SILENCE_FACTOR));
+      const framesNeeded = isDeepSilence ? SILENCE_FRAMES_TO_RESET_FAST : SILENCE_FRAMES_TO_RESET;
+
+      if (silentFrames === framesNeeded) {
+        pitchHistory = [];
+        lastDetectedMidi = null;
+        if (!IS_IOS) resetAdaptiveGate();
+        updateLiveReadout("--", null);
+      }
+
+      ensureAudioContextRunning();
+      schedulePlotPaintIfNeeded();
+      requestAnimationFrame(tick);
+      return;
+    }
+
+    silentFrames = 0;
+
+    const yin = yinPitch(timeDataPitch, audioCtx.sampleRate, 55, 2000, 0.12);
+
+    if (yin && yin.freq){
+      const midiFloatNow = freqToMidi(yin.freq);
+      const midiNow = Math.round(midiFloatNow);
+
+      if (lastDetectedMidi !== null && midiNow !== lastDetectedMidi) {
+        pitchHistory = [];
+      }
+      lastDetectedMidi = midiNow;
+
+      pitchHistory.push(yin.freq);
+      while (pitchHistory.length > PITCH_HIST_FRAMES) pitchHistory.shift();
+
+      if (pitchHistory.length >= PITCH_NEED_FRAMES){
+        const f0 = median(pitchHistory);
+
+        if (f0 && isFinite(f0) && f0 > 0){
+          const midiFloat = freqToMidi(f0);
+          const midi = Math.round(midiFloat);
+          const note = midiToNoteName(midi);
+
+          const ideal = temperamentIdealFreqForMidi(midi);
+
+          let cents = centsBetween(f0, ideal);
+          if (isFinite(cents) && Math.abs(cents) <= 1.0) cents = 0.0;
+
+          updateLiveReadout(note, cents);
+
+          // Continue to collect BOTH pitch and volume always
+          pushSample(midi, cents);
+          pushVolumeSample(midi, rms);
+        }
+      }
+    }
+
+    ensureAudioContextRunning();
+    schedulePlotPaintIfNeeded();
+    requestAnimationFrame(tick);
+  }
+
+async function startAudio(){
+  hideMicError();
+  setUserBoostGainFromUI();
+  applyIntonationFromUI();
+
+  audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  await ensureAudioContextRunning();
+
+  const stream = await navigator.mediaDevices.getUserMedia({
+    audio: {
+      autoGainControl: false,
+      echoCancellation: false,
+      noiseSuppression: false
+    }
+  });
+  await ensureAudioContextRunning();
+
+  const track = stream.getAudioTracks()[0];
+  if (track && track.applyConstraints) {
+    try {
+      await track.applyConstraints({
+        autoGainControl: false,
+        echoCancellation: false,
+        noiseSuppression: false
+      });
+    } catch (e) { }
+  }
+
+  streamSource = audioCtx.createMediaStreamSource(stream);
+
+  analyserPitch = audioCtx.createAnalyser();
+  analyserPitch.fftSize = PITCH_FFT_SIZE;
+  timeDataPitch = new Float32Array(analyserPitch.fftSize);
+
+  userBoostGainNode = audioCtx.createGain();
+  userBoostGainNode.gain.value = gUserBoostGain;
+
+  if (IS_IOS) {
+    // iOS: keep a fixed input gain boost, but DO NOT use a compressor
+    inputGainNode = audioCtx.createGain();
+    inputGainNode.gain.value = IOS_INPUT_GAIN;
+
+    streamSource.connect(userBoostGainNode);
+    userBoostGainNode.connect(inputGainNode);
+    inputGainNode.connect(analyserPitch);
+  } else {
+    streamSource.connect(userBoostGainNode);
+    userBoostGainNode.connect(analyserPitch);
+  }
+
+  // Keep the AudioContext "alive" without audible output
+  const silentGain = audioCtx.createGain();
+  silentGain.gain.value = 0;
+  analyserPitch.connect(silentGain);
+  silentGain.connect(audioCtx.destination);
+
+  clearAnalysis();
+
+  analysisStarted = true;
+  setDetectionPaused(false);
+
+  requestAnimationFrame(tick);
+}
+
+  // Controls
+  const startBtn = document.getElementById("start-btn");
+  const pauseBtn = document.getElementById("pause-btn");
+  const resetBtn = document.getElementById("reset-btn");
+
+  startBtn.onclick = async () => {
+    try{
+      startBtn.disabled = true;
+      startBtn.innerText = "STARTING…";
+      await startAudio();
+
+      if (liveHintEl) liveHintEl.style.display = "none";
+
+      startBtn.style.display = "none";
+      pauseBtn.style.display = "inline-flex";
+      resetBtn.style.display = "inline-flex";
+    } catch(err){
+      console.error(err);
+      showMicError(micErrorMessageFromException(err));
+      startBtn.disabled = false;
+      startBtn.innerText = "START";
+      startBtn.style.display = "inline-flex";
+      if (pauseBtn) pauseBtn.style.display = "none";
+      resetBtn.style.display = "none";
+      analysisStarted = false;
+    }
+  };
+
+  if (pauseBtn){
+    pauseBtn.title = "Pause pitch detection";
+    pauseBtn.addEventListener("click", () => {
+      if (!analysisStarted) return;
+      setDetectionPaused(!detectionPaused);
+    });
+  }
+
+  resetBtn.onclick = () => {
+    if (!analysisStarted) return;
+    clearAnalysis();
+  };
+
+  const a4RefSelect = document.getElementById("a4ref");
+  if (a4RefSelect) {
+    gA4RefHz = parseFloat(a4RefSelect.value) || 440;
+    a4RefSelect.addEventListener("change", () => {
+      gA4RefHz = parseFloat(a4RefSelect.value) || 440;
+      saveSettingsToLocalStorage();
+      if (analysisStarted) clearAnalysis();
+      requestPlotRedraw(true);
+    });
+  }
+
+  const inputBoostSelect = document.getElementById("inputboost");
+  if (inputBoostSelect) {
+    setUserBoostGainFromUI();
+    inputBoostSelect.addEventListener("change", () => {
+      setUserBoostGainFromUI();
+      saveSettingsToLocalStorage();
+    });
+  }
+
+  const yRangeSelect = document.getElementById("yrange");
+  if (yRangeSelect) {
+    gYRange = parseInt(yRangeSelect.value, 10) || 50;
+    yRangeSelect.addEventListener("change", () => {
+      gYRange = parseInt(yRangeSelect.value, 10) || 50;
+      saveSettingsToLocalStorage();
+      requestPlotRedraw(true);
+    });
+  }
+
+  const intonationSelect = document.getElementById("intonation");
+  if (intonationSelect) {
+    intonationSelect.addEventListener("change", () => {
+      applyIntonationFromUI();
+      saveSettingsToLocalStorage();
+      if (analysisStarted) clearAnalysis();
+      requestPlotRedraw(true);
+      drawPlot();
+    });
+  }
+
+  const rootNoteSelect = document.getElementById("rootnote");
+  if (rootNoteSelect) {
+    rootNoteSelect.addEventListener("change", () => {
+      applyIntonationFromUI();
+      saveSettingsToLocalStorage();
+      if (analysisStarted) clearAnalysis();
+      requestPlotRedraw(true);
+      drawPlot();
+    });
+  }
+
+  function addIOSResumeGestures() {
+    const handler = async () => {
+      if (audioCtx) await ensureAudioContextRunning();
+    };
+    window.addEventListener("touchstart", handler, { passive: true });
+    window.addEventListener("mousedown", handler, { passive: true });
+    window.addEventListener("keydown", handler, { passive: true });
+
+    document.addEventListener("visibilitychange", () => {
+      if (!document.hidden && audioCtx) ensureAudioContextRunning();
+    });
+  }
+  if (IS_IOS){
+    addIOSResumeGestures();
+  }
+
+  // Initialize
+  restoreSettingsFromLocalStorage();
+  if (a4RefSelect) gA4RefHz = parseFloat(a4RefSelect.value) || 440;
+  if (yRangeSelect) gYRange = parseInt(yRangeSelect.value, 10) || 50;
+  setUserBoostGainFromUI();
+  applyIntonationFromUI();
+
+  // CHANGED: ensure mode UI is correct at startup
+  syncPlotModeUI();
+
+  window.addEventListener("resize", () => {
+    requestPlotRedraw(true);
+    syncLivePairLayout();
+  });
+
+  if (window.ResizeObserver) {
+    const ro = new ResizeObserver(() => {
+      requestPlotRedraw(true);
+      drawPlot();
+    });
+    ro.observe(canvas);
+  }
+
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(() => {
+      requestPlotRedraw(true);
+      drawPlot();
+    });
+  }
+
+  setTimeout(syncLivePairLayout, 0);
+
+  requestPlotRedraw(true);
+  drawPlot();
+</script>
+</body>
+</html>
