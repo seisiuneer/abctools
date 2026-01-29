@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3160_012326_1700";
+var gVersionNumber = "3161_012826_1900";
 
 var gMIDIInitStillWaiting = false;
 
@@ -59545,13 +59545,13 @@ function LaunchQuickEditorHelp() {
 
 // Open the Chromatic tuner
 function LaunchChromaticTuner(){
-  var url = "https://michaeleskin.com/abctools/tuner.html";
+  var url = "https://michaeleskin.com/tools/tuner.html";
   window.open(url, '_blank');
 }
 
 // Open the RTTA tuner
 function LaunchRTTA(){
-  var url = "https://michaeleskin.com/abctools/rtta.html";
+  var url = "https://michaeleskin.com/tools/rtta.html";
   window.open(url, '_blank');
 }
 
