@@ -779,6 +779,7 @@
 
   const LS_KEY_INTONATION = "abctools_tuner_intonation_v1";
   const LS_KEY_ROOTNOTE   = "abctools_tuner_rootnote_v1";
+  const LS_KEY_INSTRUCTIONS_SHOWN = "abctools_tuner_instructions_shown_v1";
 
   let audioCtx = null;
   let streamSource = null;
@@ -1617,6 +1618,18 @@
     requestAnimationFrame(tick);
   }
 
+  function maybeShowInstructionsOnFirstUse(){
+    try {
+      const seen = localStorage.getItem(LS_KEY_INSTRUCTIONS_SHOWN);
+      if (!seen) {
+        openinstructions(); // your existing function
+        localStorage.setItem(LS_KEY_INSTRUCTIONS_SHOWN, "1");
+      }
+    } catch (e) {
+      // If storage is unavailable, fail silently
+    }
+  }
+
   document.getElementById('start-btn').onclick = async () => {
     try{
       const btn = document.getElementById('start-btn');
@@ -1716,6 +1729,10 @@
   }
 
   clearDisplay();
+
+  // Show instructions on first run
+  setTimeout(maybeShowInstructionsOnFirstUse, 500);
+
 </script>
 </body>
 </html>

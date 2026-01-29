@@ -1064,12 +1064,14 @@
   </div>
 
 <script>
+
   const LS_KEY_A4REF = "abctools_rt_tuning_a4ref_hz";
   const LS_KEY_BOOST = "abctools_rt_tuning_input_boost_v1";
   const LS_KEY_YRANGE = "abctools_rt_tuning_yrange_v1";
 
   const LS_KEY_INTONATION = "abctools_rt_tuning_intonation_v1";
   const LS_KEY_ROOTNOTE   = "abctools_rt_tuning_rootnote_v1";
+  const LS_KEY_INSTRUCTIONS_SHOWN = "abctools_rt_instructions_shown_v1";
 
   // Firefox centering tweak for large text metrics
   const IS_FIREFOX = /firefox/i.test(navigator.userAgent || "");
@@ -2427,6 +2429,18 @@
     requestAnimationFrame(tick);
   }
 
+  function maybeShowInstructionsOnFirstUse(){
+    try {
+      const seen = localStorage.getItem(LS_KEY_INSTRUCTIONS_SHOWN);
+      if (!seen) {
+        openTroubleshooting(); // your existing function
+        localStorage.setItem(LS_KEY_INSTRUCTIONS_SHOWN, "1");
+      }
+    } catch (e) {
+      // If storage is unavailable, fail silently
+    }
+  }
+
   // Controls
   const startBtn = document.getElementById("start-btn");
   const pauseBtn = document.getElementById("pause-btn");
@@ -2567,6 +2581,9 @@
 
   requestPlotRedraw(true);
   drawPlot();
+
+  // Show instructions on first run
+  setTimeout(maybeShowInstructionsOnFirstUse, 500);
 
 </script>
 </body>

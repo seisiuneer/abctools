@@ -1090,6 +1090,8 @@
   const LS_KEY_INTONATION = "abctools_rtl_tuning_intonation_v1";
   const LS_KEY_ROOTNOTE   = "abctools_rtl_tuning_rootnote_v1";
 
+  const LS_KEY_INSTRUCTIONS_SHOWN = "abctools_rtl_instructions_shown_v1";
+
   const IS_FIREFOX = /firefox/i.test(navigator.userAgent || "");
   if (IS_FIREFOX) document.documentElement.classList.add("is-firefox");
 
@@ -2509,69 +2511,81 @@
     requestAnimationFrame(tick);
   }
 
-async function startAudio(){
-  hideMicError();
-  setUserBoostGainFromUI();
-  applyIntonationFromUI();
+  async function startAudio(){
+    hideMicError();
+    setUserBoostGainFromUI();
+    applyIntonationFromUI();
 
-  audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-  await ensureAudioContextRunning();
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    await ensureAudioContextRunning();
 
-  const stream = await navigator.mediaDevices.getUserMedia({
-    audio: {
-      autoGainControl: false,
-      echoCancellation: false,
-      noiseSuppression: false
-    }
-  });
-  await ensureAudioContextRunning();
-
-  const track = stream.getAudioTracks()[0];
-  if (track && track.applyConstraints) {
-    try {
-      await track.applyConstraints({
+    const stream = await navigator.mediaDevices.getUserMedia({
+      audio: {
         autoGainControl: false,
         echoCancellation: false,
         noiseSuppression: false
-      });
-    } catch (e) { }
+      }
+    });
+    await ensureAudioContextRunning();
+
+    const track = stream.getAudioTracks()[0];
+    if (track && track.applyConstraints) {
+      try {
+        await track.applyConstraints({
+          autoGainControl: false,
+          echoCancellation: false,
+          noiseSuppression: false
+        });
+      } catch (e) { }
+    }
+
+    streamSource = audioCtx.createMediaStreamSource(stream);
+
+    analyserPitch = audioCtx.createAnalyser();
+    analyserPitch.fftSize = PITCH_FFT_SIZE;
+    timeDataPitch = new Float32Array(analyserPitch.fftSize);
+
+    userBoostGainNode = audioCtx.createGain();
+    userBoostGainNode.gain.value = gUserBoostGain;
+
+    if (IS_IOS) {
+      // iOS: keep a fixed input gain boost, but DO NOT use a compressor
+      inputGainNode = audioCtx.createGain();
+      inputGainNode.gain.value = IOS_INPUT_GAIN;
+
+      streamSource.connect(userBoostGainNode);
+      userBoostGainNode.connect(inputGainNode);
+      inputGainNode.connect(analyserPitch);
+    } else {
+      streamSource.connect(userBoostGainNode);
+      userBoostGainNode.connect(analyserPitch);
+    }
+
+    // Keep the AudioContext "alive" without audible output
+    const silentGain = audioCtx.createGain();
+    silentGain.gain.value = 0;
+    analyserPitch.connect(silentGain);
+    silentGain.connect(audioCtx.destination);
+
+    clearAnalysis();
+
+    analysisStarted = true;
+    setDetectionPaused(false);
+
+    requestAnimationFrame(tick);
   }
 
-  streamSource = audioCtx.createMediaStreamSource(stream);
-
-  analyserPitch = audioCtx.createAnalyser();
-  analyserPitch.fftSize = PITCH_FFT_SIZE;
-  timeDataPitch = new Float32Array(analyserPitch.fftSize);
-
-  userBoostGainNode = audioCtx.createGain();
-  userBoostGainNode.gain.value = gUserBoostGain;
-
-  if (IS_IOS) {
-    // iOS: keep a fixed input gain boost, but DO NOT use a compressor
-    inputGainNode = audioCtx.createGain();
-    inputGainNode.gain.value = IOS_INPUT_GAIN;
-
-    streamSource.connect(userBoostGainNode);
-    userBoostGainNode.connect(inputGainNode);
-    inputGainNode.connect(analyserPitch);
-  } else {
-    streamSource.connect(userBoostGainNode);
-    userBoostGainNode.connect(analyserPitch);
+  function maybeShowInstructionsOnFirstUse(){
+    try {
+      const seen = localStorage.getItem(LS_KEY_INSTRUCTIONS_SHOWN);
+      if (!seen) {
+        openTroubleshooting(); // your existing function
+        localStorage.setItem(LS_KEY_INSTRUCTIONS_SHOWN, "1");
+      }
+    } catch (e) {
+      // If storage is unavailable, fail silently
+    }
   }
-
-  // Keep the AudioContext "alive" without audible output
-  const silentGain = audioCtx.createGain();
-  silentGain.gain.value = 0;
-  analyserPitch.connect(silentGain);
-  silentGain.connect(audioCtx.destination);
-
-  clearAnalysis();
-
-  analysisStarted = true;
-  setDetectionPaused(false);
-
-  requestAnimationFrame(tick);
-}
 
   // Controls
   const startBtn = document.getElementById("start-btn");
@@ -2716,6 +2730,10 @@ async function startAudio(){
 
   requestPlotRedraw(true);
   drawPlot();
+
+  // Show instructions on first run
+  setTimeout(maybeShowInstructionsOnFirstUse, 500);
+
 </script>
 </body>
 </html>
