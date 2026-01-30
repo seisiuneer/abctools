@@ -84,6 +84,12 @@
       user-select:none;
       -webkit-tap-highlight-color: transparent;
     }
+
+    a{
+      color:#9DFFD0;
+      text-decoration:underline;
+    }
+
     @media (hover: hover) and (pointer: fine) {
       #help-btn{ transition: filter 125ms ease; }
       #help-btn:hover{ filter: brightness(1.5); }
@@ -767,8 +773,17 @@
 
             <div class="instructions-subtitle">Troubleshooting</div>
             <div class="instructions-subbody">
+
+              If you are having issues with the tool not hearing your instrument, please click the link below to open an audio input test utility that will check if the audio input on your system has the correct levels and settings:<br/><br/>
+
+              <div style="text-align: center">
+                <a href="https://michaeleskin.com/tools/audiotest.html" target="_blank">Audio Input Tester</a>
+              </div>
+
+              <hr style="border:0; border-top:1px solid #2a2a2a; margin: 14px 0 14px 0;"/>
               You must grant the browser microphone permission for this tool to work.<br/><br/>
               The audio input level is displayed in a bar at the top-right of the tool.<br/><br/>
+              <hr style="border:0; border-top:1px solid #2a2a2a; margin: 14px 0 14px 0;"/>
               <b>If no audio is detected or the audio input meter is maxed-out and no notes are getting recognized:</b><br/><br/>
               This tuner is designed to be used in a quiet environment.<br/><br/>
               It may not work well or at all with loud background noise or other instruments playing in the background.<br/><br/>
@@ -778,6 +793,31 @@
               Noise reduction audio driver software may mistake continuous tones for background noise (such as fans or AC hum) and filter them out.<br/><br/>
               Open Windows Settings, search for Microphone settings, make any required changes, and then reload the tuner tab in your browser.
             </div>
+
+            <hr style="border:0; border-top:1px solid #2a2a2a; margin: 14px 0 14px 0;"/>
+
+            <div class="instructions-subtitle">Tip Jars</div>
+            <div class="instructions-subbody">
+              This tool was created by <a href="https://michaeleskin.com" target="_blank">Michael Eskin</a>.<br/>
+              If you find it useful, please consider making a contribution via my online tip jars:<br/><br/>
+
+              <div style="text-align: center">
+                <a href="https://michaeleskin.com/abctools/tipjars.html" target="_blank">Michael Eskin's Tip Jars</a><br/><br/>
+              </div>
+            </div>
+
+            <hr style="border:0; border-top:1px solid #2a2a2a; margin: 14px 0 14px 0;"/>
+
+            <div class="instructions-subtitle">Source Code</div>
+            <div class="instructions-subbody">
+              The full source code for this tool is available on my GitHub repository.<br/>
+              The source is completely contained in the one file: <b>rtta.html</b>:<br/><br/>
+
+              <div style="text-align: center">
+                <a href="https://github.com/seisiuneer/abctools/tree/main/tools" target="_blank">Michael Eskin's GitHub Repository</a>
+              </div>
+            </div>
+
           </div>
         </div>
 
