@@ -170,6 +170,115 @@
       font-size:1.0rem;
     }
 
+    /* RESULTS modal (same style as instructions) */
+    #results-overlay{
+      display:none;
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,0.65);
+      z-index:10000; /* above instructions */
+      padding:16px;
+      box-sizing:border-box;
+    }
+    #results-modal{
+      max-width:700px;
+      width:100%;
+      margin:0 auto;
+      background:var(--panel);
+      border:1px solid #333;
+      border-radius:16px;
+      box-shadow:0 20px 50px rgba(0,0,0,0.7);
+      padding:18px;
+      box-sizing:border-box;
+      position:relative;
+      text-align:left;
+      display:flex;
+      flex-direction:column;
+      max-height: calc(100vh - 32px - 6vh);
+      transform: translateY(42px);
+    }
+    #results-title{
+      font-size:1.25rem;
+      font-weight:900;
+      margin:0 0 12px 0;
+      color:#e0e0e0;
+      text-align:center;
+    }
+    #results-scroll{
+      flex:1 1 auto;
+      overflow:auto;
+      -webkit-overflow-scrolling: touch;
+      border:1px solid #2a2a2a;
+      border-radius:12px;
+      padding:12px;
+      background:#0b0b0b;
+    }
+    #results-ok{
+      width:100%;
+      margin-top:12px;
+      padding:14px 18px;
+      border:1px solid #333;
+      font-weight:900;
+      cursor:pointer;
+      font-size:1.15rem;
+      background:black;
+      color:#fff;
+      border-radius:12px;
+    }
+
+    /* optional summary helpers */
+    .summary-row{
+      display:grid;
+      grid-template-columns: 1fr 140px 1fr; /* label | status | details (aligned) */
+      align-items:center;
+      column-gap:14px;
+      margin: 12px 0;
+    }
+    .summary-label{
+      font-weight:900;
+      color:#e6e6e6;
+    }
+    .summary-status{
+      display:flex;
+      justify-content:flex-start;
+      align-items:center;
+      min-width:140px; /* keeps PASS/FAIL column aligned */
+    }
+    .summary-detail{
+      color:#e6e6e6;
+    }
+
+    .summary-pill{
+      display:inline-block;
+      padding:6px 10px;
+      border-radius:8px;
+      border:1px solid #333;
+      background:#0b0b0b;
+      color:#e8e8e8;
+      font-weight:900;
+      font-size:0.86rem;
+      letter-spacing:0.4px;
+      white-space:nowrap;
+      width: 128px;           /* FIXED width => vertical alignment */
+      text-align:center;      /* centered text */
+      box-sizing:border-box;
+    }
+    .summary-pill.ok{
+      background: var(--ok-bg);
+      border-color: var(--ok-br);
+      color: var(--ok-tx);
+    }
+    .summary-pill.warn{
+      background: var(--meas-bg);
+      border-color: var(--meas-br);
+      color: var(--meas-tx);
+    }
+    .summary-pill.bad{
+      background: var(--fail-bg);
+      border-color: var(--fail-br);
+      color: var(--fail-tx);
+    }
+
     h1{
       margin:0 0 8px 0;
       font-size:1.6rem;
@@ -259,7 +368,7 @@
       border:1px solid #2a2a2a;
       border-radius:12px;
       background:#070707;
-      height: calc(1.45em * 5);    /* 5 lines at the legend line-height */
+      height: calc(1.45em * 5);
       overflow: hidden;
     }
 
@@ -307,13 +416,12 @@
       filter: grayscale(0.15);
     }
 
-    /* Keep both pills the same height and prevent wrapping differences */
     #stepPill,
     #stepStatusPill{
-      font-size: 0.90rem;     /* same as .pill (explicit) */
-      line-height: 1.15;      /* consistent vertical feel */
-      letter-spacing: 0.4px;  /* consistent tracking */
-      font-weight: 900;       /* consistent weight */
+      font-size: 0.90rem;
+      line-height: 1.15;
+      letter-spacing: 0.4px;
+      font-weight: 900;
       height: 38px;
       display: flex;
       align-items: center;
@@ -339,8 +447,19 @@
       #help-btn{ top:0; left:0; }
       .btnrow{ grid-template-columns: 1fr; }
       .pill{ min-width: 0; flex: 1 1 auto; }
-    }
 
+      /* On narrow screens, allow grid to wrap naturally */
+      .summary-row{
+        grid-template-columns: 1fr;
+        row-gap:8px;
+      }
+      .summary-status{
+        min-width: 0;
+      }
+      .summary-pill{
+        width: 140px;
+      }
+    }
   </style>
 </head>
 
@@ -365,10 +484,10 @@
             <div class="instructions-subtitle">Three quick checks:</div>
             <div class="instructions-subbody">
               <b>Step 1:</b><br/>Stay quiet for a few seconds so the tool can measure the background noise level.<br/><br/>
-              <b>Step 2:</b><br/>Play a normal note.<br/>Only clearly clipping audio fails this step.<br/>The status will show <b>PASS</b> after the level stays in-range for <b>1 second</b>.<br/><br/>
+              <b>Step 2:</b><br/>Play a normal note.<br/>Only clearly clipping audio fails this step.<br/>The status will show <b>PASS</b> after the level stays in-range for <b>2.5 seconds</b>.<br/><br/>
               <b>Step 3:</b><br/>Hold a steady tone.<br/>If the tone stays “present” for <b>2.5 seconds</b> or more, you pass.
             </div>
-            
+
             <hr style="border:0; border-top:1px solid #2a2a2a; margin: 14px 0 14px 0;"/>
 
             <div class="instructions-subtitle">What the graph shows:</div>
@@ -415,6 +534,17 @@
       </div>
     </div>
 
+    <!-- Results Summary (shown after Step 3 completes) -->
+    <div id="results-overlay" aria-hidden="true">
+      <div id="results-modal" role="dialog" aria-modal="true" aria-label="Test Results Summary">
+        <div id="results-title">Test Results</div>
+        <div id="results-scroll">
+          <div id="results-body"></div>
+        </div>
+        <button id="results-ok" type="button">OK</button>
+      </div>
+    </div>
+
     <h1 title="This utility was developed by Michael Eskin - https://michaeleskin.com">Audio Input Tester</h1>
 
     <div class="pillrow">
@@ -458,7 +588,7 @@
   // Step 2: require hearing in "pass zone" for at least 1s before showing PASS
   const STEP2_PASS_ZONE_MIN_RMS = 0.030;     // "audible / usable" (not ultra-quiet)
   const STEP2_PASS_ZONE_MAX_RMS = 0.160;     // still well below clip line
-  const STEP2_PASS_HOLD_SECONDS = 1.0;
+  const STEP2_PASS_HOLD_SECONDS = 2.5;
 
   // Step 3: continuous tone "present" for 2.5 seconds => PASS.
   const TONE_CONTINUOUS_PASS_SECONDS = 2.5;
@@ -467,6 +597,9 @@
   const MIN_TONE_PRESENT_RMS = 0.020;
   const TONE_PRESENT_MULT = 3.0;
   const TONE_PRESENT_OFFSET = 0.003;
+
+  // Cap the tone-present threshold so high noise floors don't make Step 3 impossible
+  const MAX_TONE_PRESENT_THRESHOLD_RMS = 0.080;  // adjust if needed (0.07–0.10 typical)
 
   // Graph buffer
   const GRAPH_SECONDS = 8.0;
@@ -479,6 +612,10 @@
   const helpBtn = document.getElementById("help-btn");
   const instructionsOverlay = document.getElementById("instructions-overlay");
   const instructionsClose = document.getElementById("instructions-close");
+
+  const resultsOverlay = document.getElementById("results-overlay");
+  const resultsOk = document.getElementById("results-ok");
+  const resultsBody = document.getElementById("results-body");
 
   const startBtn = document.getElementById("start-btn");
   const nextBtn  = document.getElementById("next-btn");
@@ -532,7 +669,7 @@
   }
 
   // ==========
-  // Modal
+  // Modal: Instructions
   // ==========
   function openInstructions(){
     instructionsOverlay.style.display = "block";
@@ -545,7 +682,27 @@
   helpBtn.addEventListener("click", openInstructions);
   instructionsClose.addEventListener("click", closeInstructions);
   instructionsOverlay.addEventListener("click", (e)=>{ if (e.target === instructionsOverlay) closeInstructions(); });
-  document.addEventListener("keydown", (e)=>{ if (e.key === "Escape") closeInstructions(); });
+
+  // ==========
+  // Modal: Results Summary
+  // ==========
+  function openResults(){
+    resultsOverlay.style.display = "block";
+    resultsOverlay.setAttribute("aria-hidden", "false");
+  }
+  function closeResults(){
+    resultsOverlay.style.display = "none";
+    resultsOverlay.setAttribute("aria-hidden", "true");
+  }
+  resultsOk.addEventListener("click", closeResults);
+  resultsOverlay.addEventListener("click", (e)=>{ if (e.target === resultsOverlay) closeResults(); });
+
+  // Single Escape handler: close Results first (if open), otherwise close Instructions
+  document.addEventListener("keydown", (e)=>{
+    if (e.key !== "Escape") return;
+    if (resultsOverlay.style.display === "block") closeResults();
+    else closeInstructions();
+  });
 
   // ==========
   // Audio
@@ -557,6 +714,26 @@
   let timeData = null;
   let running = false;
   let rafId = 0;
+
+  // ==========
+  // Graph run control: freeze when a step completes
+  // ==========
+  let graphFrozen = false;
+
+  function freezeGraph(){
+    graphFrozen = true;
+    if (rafId){
+      cancelAnimationFrame(rafId);
+      rafId = 0;
+    }
+  }
+
+  function resumeGraph(){
+    graphFrozen = false;
+    if (running && !rafId){
+      rafId = requestAnimationFrame(tick);
+    }
+  }
 
   async function ensureAudioContextRunning(){
     if (!audioCtx) return;
@@ -608,8 +785,9 @@
 
   function stopAudio(){
     running = false;
-    if (rafId) cancelAnimationFrame(rafId);
-    rafId = 0;
+
+    // Stop graph loop
+    freezeGraph();
 
     try{
       if (stream) stream.getTracks().forEach(t => { try{ t.stop(); }catch(e){} });
@@ -647,6 +825,119 @@
   let step3Passed = false;
   let step3NudgeShown = false;
   let testsCompleted = false;
+
+  // Summary tracking
+  let resultsShown = false;
+  let step1Result = "NOT RUN";   // "PASS" | "WARN" | "NOT RUN"
+  let step2Result = "NOT RUN";   // "PASS" | "FAIL" | "NOT RUN"
+  let step3Result = "NOT RUN";   // "PASS" | "FAIL" | "NOT RUN"
+  let step1NoiseFloor = 0;
+  let step2MaxRMS = 0;
+  let step3BestRun = 0;
+
+  function resetAllResults(){
+    resultsShown = false;
+    step1Result = "NOT RUN";
+    step2Result = "NOT RUN";
+    step3Result = "NOT RUN";
+    step1NoiseFloor = 0;
+    step2MaxRMS = 0;
+    step3BestRun = 0;
+  }
+
+  function buildResultsHTML(){
+    const s1Class = (step1Result === "PASS") ? "ok" : (step1Result === "WARN") ? "warn" : "warn";
+    const s2Class = (step2Result === "PASS") ? "ok" : (step2Result === "FAIL") ? "bad" : "warn";
+    const s3Class = (step3Result === "PASS") ? "ok" : (step3Result === "FAIL") ? "bad" : "warn";
+
+    const s1Label = (step1Result === "WARN") ? "HIGH" : step1Result;
+
+    let tips = [];
+    if (step1Result === "WARN"){
+      tips.push("Step 1: Background noise is higher than ideal. Try a quieter room, move away from fans/AC, or use a different mic.");
+    }
+    if (step2Result === "FAIL"){
+      tips.push("Step 2: Clipping risk detected. Reduce system mic level, move farther from the mic, or disable mic boost.");
+    }
+    if (step3Result === "FAIL"){
+      tips.push("Step 3: Sustained tones may be getting suppressed by noise reduction/voice enhancement. Try disabling those features or use a different device/browser.");
+    }
+    if (tips.length === 0){
+      tips.push("Your audio input looks well-suited for the Chromatic Tuner and RTTA tools.");
+    }
+
+    return `
+      <div class="instructions-subtitle">Summary</div>
+      <div class="instructions-subbody">
+        Here are your results for the three checks:
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-label">Step 1: Background noise</div>
+        <div class="summary-status">
+          <span class="summary-pill ${s1Class}">${escapeHTML(s1Label)}</span>
+        </div>
+        <div class="summary-detail">
+          Noise floor: <b>${escapeHTML(fmt(step1NoiseFloor || noiseFloor, 4))}</b>
+        </div>
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-label">Step 2: Input level</div>
+        <div class="summary-status">
+          <span class="summary-pill ${s2Class}">${escapeHTML(step2Result)}</span>
+        </div>
+        <div class="summary-detail">
+          Max RMS seen: <b>${escapeHTML(fmt(step2MaxRMS || step2MaxSeen, 4))}</b>
+        </div>
+      </div>
+
+      <div class="summary-row">
+        <div class="summary-label">Step 3: Continuous tone</div>
+        <div class="summary-status">
+          <span class="summary-pill ${s3Class}">${escapeHTML(step3Result)}</span>
+        </div>
+        <div class="summary-detail">
+          Tone detected for: <b>${escapeHTML((step3BestRun || bestToneRunSeconds || 0).toFixed(2))}s</b>
+        </div>
+      </div>
+
+      <hr style="border:0; border-top:1px solid #2a2a2a; margin: 14px 0 14px 0;"/>
+
+      <div class="instructions-subtitle">Notes</div>
+      <div class="instructions-subbody">
+        ${tips.map(t => `• ${escapeHTML(t)}`).join("<br/>")}
+      </div>
+    `;
+  }
+
+  function cancelResultsModalDelay(){
+    if (resultsShowTimer){
+      clearTimeout(resultsShowTimer);
+      resultsShowTimer = 0;
+    }
+  }
+
+  function showResultsModalOnce(){
+    if (resultsShown) return;
+    resultsShown = true;
+    resultsBody.innerHTML = buildResultsHTML();
+    openResults();
+  }
+
+  // Delay before showing Results modal after Step 3 completes
+  const RESULTS_MODAL_DELAY_MS = 1250; 
+  let resultsShowTimer = 0;
+
+  function showResultsModalOnceDelayed(){
+    if (resultsShown) return;
+    if (resultsShowTimer) return;
+
+    resultsShowTimer = setTimeout(() => {
+      resultsShowTimer = 0;
+      showResultsModalOnce();
+    }, RESULTS_MODAL_DELAY_MS);
+  }
 
   // Graph
   const hist = new Array(SAMPLES).fill(0);
@@ -702,7 +993,7 @@
         `Keep the room quiet and don’t play.`;
     } else if (step === 2){
       headline.textContent = "Step 2: Input level (clipping check)";
-      subhead.textContent = "Play a normal note. PASS shows after 1.0s in-range.";
+      subhead.textContent = "Play a normal note. PASS shows after 2.5s in-range.";
       stepStatusPill.textContent = "LISTENING…";
       setPillState(stepStatusPill, "warn");
       legend.innerHTML =
@@ -725,6 +1016,8 @@
     if (step === 1){
       noiseFloor = 0;
       noisePrimed = false;
+      step1Result = "NOT RUN";
+      step1NoiseFloor = 0;
     }
     if (step === 2){
       step2MaxSeen = 0;
@@ -733,20 +1026,39 @@
 
       step2InZoneStartT = null;
       step2PassZoneHeld = false;
+
+      step2Result = "NOT RUN";
+      step2MaxRMS = 0;
     }
     if (step === 3){
-      tonePresentThreshold = Math.max(
+      const computed = Math.max(
         MIN_TONE_PRESENT_RMS,
         (noiseFloor * TONE_PRESENT_MULT) + TONE_PRESENT_OFFSET
       );
+
+      // If Step 1 noise floor was high, computed can become unreachable.
+      // Clamp it so Step 3 can still detect tones.
+      tonePresentThreshold = Math.min(computed, MAX_TONE_PRESENT_THRESHOLD_RMS);
       toneRunStartT = null;
       bestToneRunSeconds = 0;
       step3Passed = false;
       step3NudgeShown = false;
+
+      step3Result = "NOT RUN";
+      step3BestRun = 0;
     }
   }
 
   function passStep(msg){
+    // Record per-step results (Steps 1 and 2 primarily)
+    if (step === 1){
+      step1Result = "PASS";
+      step1NoiseFloor = noiseFloor;
+    } else if (step === 2){
+      step2Result = "PASS";
+      step2MaxRMS = step2MaxSeen;
+    }
+
     stepStatusPill.textContent = "PASS";
     setPillState(stepStatusPill, "ok");
     legend.innerHTML = msg + (step < 3 ? "<br/><br/>Click <b>NEXT STEP</b>." : "");
@@ -758,24 +1070,44 @@
     } else {
       setNextCompleted();
     }
+
+    // Freeze graph once step is decided
+    freezeGraph();
   }
 
   function failStep(msg){
+    if (step === 2){
+      step2Result = "FAIL";
+      step2MaxRMS = step2MaxSeen;
+    }
+
     stepStatusPill.textContent = "FAIL";
     setPillState(stepStatusPill, "bad");
     legend.innerHTML = msg + "<br/><br/>You can click <b>RETRY STEP</b>.";
     nextBtn.disabled = true;
     retryBtn.disabled = false;
     resetNextDefault();
+
+    // Freeze graph once step is decided
+    freezeGraph();
   }
 
   function softFailStep(msg){
-    stepStatusPill.textContent = "FAIL (CAN CONTINUE)";
+    // Step 1 "high noise" is a WARN / can continue
+    if (step === 1){
+      step1Result = "WARN";
+      step1NoiseFloor = noiseFloor;
+    }
+
+    stepStatusPill.textContent = "FAIL";
     setPillState(stepStatusPill, "bad");
     legend.innerHTML = msg + "<br/><br/>You can click <b>RETRY STEP</b> or <b>NEXT STEP</b>.";
     nextBtn.disabled = false;
     retryBtn.disabled = false;
     resetNextDefault();
+
+    // Freeze graph once step is decided
+    freezeGraph();
   }
 
   function drawGraph(rmsNow){
@@ -828,12 +1160,9 @@
     }
     if (step >= 2){
       drawLine(CLIP_FAIL_RMS, "#ff3e3e", `clip fail ${fmt(CLIP_FAIL_RMS,3)}`);
-      // pass-zone band (two lines)
       drawLine(STEP2_PASS_ZONE_MIN_RMS, "#2bd16a", `pass min ${fmt(STEP2_PASS_ZONE_MIN_RMS,3)}`);
       drawLine(STEP2_PASS_ZONE_MAX_RMS, "#2bd16a", `optimal max ${fmt(STEP2_PASS_ZONE_MAX_RMS,3)}`);
     }
-
-    // NOTE: Step 3 "tone present" line intentionally removed per request.
 
     // history curve
     ctx.strokeStyle = "rgba(0,242,255,0.95)";
@@ -857,13 +1186,17 @@
   }
 
   function tick(){
-    if (!running || !analyser || !timeData){
-      rafId = requestAnimationFrame(tick);
+    // If frozen, do not continue scheduling frames
+    if (graphFrozen){
       return;
     }
 
-    // If tests are complete, keep the graph running but do NOT update legend anymore.
-    // (Graph + pills can still be updated; legend stays frozen on completion message.)
+    if (!running || !analyser || !timeData){
+      if (!graphFrozen) rafId = requestAnimationFrame(tick);
+      return;
+    }
+
+    // If tests are complete, keep the graph frozen (we freeze on completion anyway)
     const freezeLegend = (step === 3 && testsCompleted);
 
     analyser.getFloatTimeDomainData(timeData);
@@ -899,11 +1232,9 @@
       }
 
     } else if (step === 2){
-      // ---- Step 2: live detection (clipping + in-range hold) ----
       step2MaxSeen = Math.max(step2MaxSeen, rms);
       if (rms >= CLIP_FAIL_RMS) step2FailedClip = true;
 
-      // pass hold detection: require >= min and < clip (pass-max line is informational only)
       const inPassZone = (rms >= STEP2_PASS_ZONE_MIN_RMS && rms < CLIP_FAIL_RMS);
 
       if (inPassZone){
@@ -914,7 +1245,6 @@
         step2InZoneStartT = null;
       }
 
-      // ---- Step 2: pill status (purely live; not "decided") ----
       if (step2FailedClip){
         stepStatusPill.textContent = "FAIL: CLIPPING";
         setPillState(stepStatusPill, "bad");
@@ -931,8 +1261,6 @@
         }
       }
 
-      // ---- Step 2: Decide only when we truly have a result ----
-      // Fail immediately if clipping is detected.
       if (!step2Decided && step2FailedClip){
         step2Decided = true;
         retryBtn.disabled = false;
@@ -944,7 +1272,6 @@
         );
       }
 
-      // Pass only after the level has stayed above min and below clipping for 1 second.
       if (!step2Decided && step2PassZoneHeld){
         step2Decided = true;
         retryBtn.disabled = false;
@@ -955,7 +1282,6 @@
         );
       }
 
-      // If we haven't decided yet, keep showing the live legend (no flashing).
       if (!step2Decided){
         const heldSec = (step2InZoneStartT != null) ? ((now - step2InZoneStartT)/1000) : 0;
 
@@ -973,9 +1299,8 @@
     } else if (step === 3){
       const present = (rms >= tonePresentThreshold);
 
-      // ===== If Step 3 already completed, freeze legend and do not update it anymore =====
+      // If Step 3 already completed, keep legend frozen and ensure modal shown once.
       if (testsCompleted){
-        // Keep pill stable; legend frozen from when completion occurred.
         if (step3Passed){
           stepStatusPill.textContent = "PASS";
           setPillState(stepStatusPill, "ok");
@@ -984,8 +1309,10 @@
           setPillState(stepStatusPill, "bad");
         }
 
+        showResultsModalOnceDelayed();
+
         ensureAudioContextRunning();
-        rafId = requestAnimationFrame(tick);
+        if (!graphFrozen) rafId = requestAnimationFrame(tick);
         return;
       }
 
@@ -1010,19 +1337,26 @@
             `Current run: <b>${runSec.toFixed(2)}s</b> &nbsp; Best run: <b>${bestToneRunSeconds.toFixed(2)}s</b>`;
         }
 
-        // PASS condition => finalize Step 3 + freeze legend
+        // PASS condition => finalize Step 3 + freeze legend + show summary modal + freeze graph
         if (!step3Passed && bestToneRunSeconds >= TONE_CONTINUOUS_PASS_SECONDS){
           step3Passed = true;
 
-          // mark completion
+          // Record step 3 result for modal
+          step3Result = "PASS";
+          step3BestRun = bestToneRunSeconds;
+
           setNextCompleted();
 
-          // Freeze legend to final status (and stop updating it on subsequent ticks)
           legend.innerHTML =
             `<b>Step 3 result: PASS</b><br/>` +
             `Continuous tone passed (≥ ${TONE_CONTINUOUS_PASS_SECONDS.toFixed(1)}s).<br/><br/><b>All tests complete.</b>`;
 
           testsCompleted = true;
+
+          showResultsModalOnceDelayed();
+
+          // Freeze graph once step is decided
+          freezeGraph();
         }
 
       } else {
@@ -1046,22 +1380,21 @@
         }
       }
 
-      // FAIL condition (timeout / nudge) => finalize Step 3 + freeze legend
+      // FAIL condition (timeout / nudge) => finalize Step 3 + freeze legend + show summary modal + freeze graph
       if (!step3Passed && !step3NudgeShown && elapsed >= 12.0 && toneRunStartT == null){
         step3NudgeShown = true;
-
-        // This is the point where we declare Step 3 as failed (user can retry).
         step3Passed = false;
 
         stepStatusPill.textContent = "FAIL";
         setPillState(stepStatusPill, "bad");
-
         retryBtn.disabled = false;
 
-        // mark completion
+        // Record step 3 result for modal
+        step3Result = "FAIL";
+        step3BestRun = bestToneRunSeconds;
+
         setNextCompleted();
 
-        // Freeze legend to final status (and stop updating it on subsequent ticks)
         legend.innerHTML =
           `<b>Step 3 result: FAIL</b><br/>` +
           `Not seeing a ${TONE_CONTINUOUS_PASS_SECONDS.toFixed(1)}-second continuous run.<br/>` +
@@ -1069,11 +1402,16 @@
           `<b>All tests complete.</b>`;
 
         testsCompleted = true;
+
+        showResultsModalOnceDelayed();
+
+        // Freeze graph once step is decided
+        freezeGraph();
       }
     }
 
     ensureAudioContextRunning();
-    rafId = requestAnimationFrame(tick);
+    if (!graphFrozen) rafId = requestAnimationFrame(tick);
   }
 
   function setControlsEnabledOnRun(on){
@@ -1092,18 +1430,25 @@
   }
 
   function beginStep(n){
+    // Starting a fresh run at Step 1: reset stored results + modal state
+    if (n === 1){
+      resetAllResults();
+      closeResults();
+    }
+
+    cancelResultsModalDelay();
+
     step = n;
     setStepUI();
     resetStepState();
+
+    // Resume graph loop for the new step
+    resumeGraph();
+
     updateStartButtonLabel();
 
-    if (step < 3){
-      resetNextDefault();
-      nextBtn.disabled = true;
-    } else {
-      resetNextDefault();
-      nextBtn.disabled = true;
-    }
+    resetNextDefault();
+    nextBtn.disabled = true;
   }
 
   // ==========
@@ -1136,10 +1481,13 @@
       clearHistory();
       running = true;
 
+      // Ensure graph loop is allowed to run
+      resumeGraph();
+
       setControlsEnabledOnRun(true);
       beginStep(1);
 
-      rafId = requestAnimationFrame(tick);
+      // (beginStep resumes the graph and schedules tick)
     } catch(err){
       console.error(err);
       showMicError(micErrorMessageFromException(err));
@@ -1149,7 +1497,6 @@
       startBtn.textContent = "START";
     }
   });
-
 
   nextBtn.addEventListener("click", () => {
     if (!running) return;
@@ -1164,6 +1511,17 @@
   retryBtn.addEventListener("click", () => {
     if (!running) return;
     clearHistory();
+
+    // Retrying step 3 should allow the modal to appear again on completion
+    if (step === 3){
+      resultsShown = false;
+      closeResults();
+      step3Result = "NOT RUN";
+      step3BestRun = 0;
+    }
+
+    cancelResultsModalDelay();
+
     beginStep(step);
   });
 
@@ -1173,6 +1531,9 @@
 
     step = 0;
     testsCompleted = false;
+    resetAllResults();
+    cancelResultsModalDelay();
+    closeResults();
 
     stepPill.textContent = "STEP 1 of 3";
     stepStatusPill.textContent = "Not started";
@@ -1206,24 +1567,26 @@
     try {
       const seen = localStorage.getItem(LS_KEY_INSTRUCTIONS_SHOWN);
       if (!seen) {
-        openInstructions(); // your existing function
+        openInstructions();
         localStorage.setItem(LS_KEY_INSTRUCTIONS_SHOWN, "1");
       }
-    } catch (e) {
-      // If storage is unavailable, fail silently
-    }
+    } catch (e) {}
   }
 
   // init
   hideMicError();
   clearHistory();
   setControlsEnabledOnRun(false);
+  resetAllResults();
+
+  // Ensure graph is not running until START is pressed
+  freezeGraph();
+
   ctx.fillStyle = "#000";
   ctx.fillRect(0,0,canvas.width,canvas.height);
 
   // Show instructions on first run
   setTimeout(maybeShowInstructionsOnFirstUse, 500);
-
 </script>
 </body>
 </html>
