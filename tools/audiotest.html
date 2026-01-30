@@ -200,7 +200,7 @@
       display:flex;
       flex-direction:column;
       max-height: calc(100vh - 32px - 6vh);
-      transform: translateY(42px);
+      transform: translateY(66px);
     }
     #results-title{
       font-size:1.25rem;
@@ -359,7 +359,7 @@
     canvas{
       display:block;
       width:100%;
-      height:180px;
+      height:260px;
     }
 
     .legend{
@@ -447,9 +447,9 @@
       body{ padding:12px; }
       #tuner-ui{ padding:16px; border-radius:14px; }
       h1{ font-size:1.25rem; }
-      canvas{ height:170px; }
+      canvas{ height:240px; }
       button{ font-size:1.2rem; padding:16px 18px; }
-      #help-btn{ top:0; left:0; }
+      #help-btn{top:-16px;left:0px; }
       .btnrow{ grid-template-columns: 1fr; }
       .pill{ min-width: 0; flex: 1 1 auto; }
 
@@ -563,7 +563,7 @@
     <div id="mic-error"></div>
 
     <div id="graphWrap">
-      <canvas id="graph" width="900" height="240"></canvas>
+      <canvas id="graph" width="900" height="360"></canvas>
     </div>
 
     <div class="legend" id="legend">
@@ -610,6 +610,18 @@
   const GRAPH_SECONDS = 8.0;
   const FPS = 30;
   const SAMPLES = Math.floor(GRAPH_SECONDS * FPS);
+
+  let iosInputGainNode = null;
+  let iosCompressorNode = null;
+
+  const IS_IOS = (() => {
+    const ua = navigator.userAgent || "";
+    const iOSUA = /iPad|iPhone|iPod/.test(ua);
+    const iPadOS = (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+    return iOSUA || iPadOS;
+  })();
+
+  const IOS_INPUT_GAIN = 3.0;
 
   // ==========
   // DOM
@@ -775,11 +787,30 @@
     }
 
     source = audioCtx.createMediaStreamSource(stream);
+
     analyser = audioCtx.createAnalyser();
     analyser.fftSize = 4096;
     timeData = new Float32Array(analyser.fftSize);
 
-    source.connect(analyser);
+    if (IS_IOS) {
+      // Boost low iOS mic levels BEFORE the analyser so RMS reflects it.
+      iosInputGainNode = audioCtx.createGain();
+      iosInputGainNode.gain.value = IOS_INPUT_GAIN;
+
+      // Light compression to keep loud peaks from getting too spiky.
+      iosCompressorNode = audioCtx.createDynamicsCompressor();
+      iosCompressorNode.threshold.value = -48;
+      iosCompressorNode.knee.value = 30;
+      iosCompressorNode.ratio.value = 12;
+      iosCompressorNode.attack.value = 0.003;
+      iosCompressorNode.release.value = 0.25;
+
+      source.connect(iosInputGainNode);
+      iosInputGainNode.connect(iosCompressorNode);
+      iosCompressorNode.connect(analyser);
+    } else {
+      source.connect(analyser);
+    }
 
     // keep AudioContext alive without output
     const silentGain = audioCtx.createGain();
@@ -798,6 +829,9 @@
       if (stream) stream.getTracks().forEach(t => { try{ t.stop(); }catch(e){} });
     }catch(e){}
     stream = null; source = null; analyser = null; timeData = null;
+
+    iosInputGainNode = null;
+    iosCompressorNode = null;
 
     if (audioCtx){
       try{ audioCtx.close(); }catch(e){}
@@ -1564,7 +1598,10 @@
       if (!document.hidden && audioCtx) ensureAudioContextRunning();
     });
   }
-  addIOSResumeGestures();
+
+  if (IS_IOS){
+    addIOSResumeGestures();
+  }
 
   const LS_KEY_INSTRUCTIONS_SHOWN = "abctools_tester_instructions_shown_v1";
 
