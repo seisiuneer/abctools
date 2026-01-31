@@ -7,7 +7,7 @@
  *
  * MIT License
  * 
- * Copyright (c) 2025 Michael Eskin
+ * Copyright (c) 2026 Michael Eskin
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3161_012826_1900";
+var gVersionNumber = "3163_013126_0800";
 
 var gMIDIInitStillWaiting = false;
 
@@ -27772,13 +27772,13 @@ function processShareLink() {
       // Show update message?
       if (gLocalStorageAvailable){
 
-        var updatePresented = localStorage.sawUpdate_20jan2026;
+        var updatePresented = localStorage.sawUpdate_31jan2026;
 
         if (updatePresented != "true") {
 
           showWhatsNewScreen();
 
-          localStorage.sawUpdate_20jan2026 = true;
+          localStorage.sawUpdate_31jan2026 = true;
 
         }
 
@@ -55583,49 +55583,8 @@ function showWhatsNewScreen() {
   modal_msg += '<div style="margin:10px 0 6px 0; padding:12px 12px; border-radius:12px;';
   modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);">';
 
-  modal_msg += '<div style="font-size:14pt; font-weight:bold; margin-bottom:12px;">';
-  modal_msg += '✨ Phrase-by-phrase practice inside the Tune Trainer</div>';
-
-  modal_msg += '<p style="margin:6px 0 8px 0; font-size:12pt; margin-bottom:12px;">';
-  modal_msg += 'You can now do <strong>phrase-by-phrase practice</strong> from right inside the <strong>Tune Trainer</strong>!';
-  modal_msg += '</p>';
-
-  // Steps
-  modal_msg += '<div style="margin:8px 0 0 0; padding:10px 10px; border-radius:10px;';
-  modal_msg += 'background:#f6f7ff; border:1px solid #e3e6ff;">';
-
-  modal_msg += '<div style="font-size:12pt; font-weight:bold; margin-bottom:6px;">How it works</div>';
-  modal_msg += '<p style="margin:6px 0; font-size:12pt;">';
-  modal_msg += '1) Click <strong>Train</strong> to launch the <strong>Tune Trainer</strong>.</p>';
-
-  modal_msg += '<p style="margin:6px 0; font-size:12pt;">';
-  modal_msg += '2) Click <strong>Phrase Builder</strong> to break the tune into phrases of a specified number of measures, followed by the same number of measures of rests.</p>';
-
-  modal_msg += '<p style="margin:6px 0; font-size:12pt;">';
-  modal_msg += '3) Play the tune, listen to each phrase, then play along during the rests.</p>';
-
-  modal_msg += '<p style="margin:6px 0; font-size:12pt;">';
-  modal_msg += '<strong>Tip:</strong> Turn on the metronome to help keep a steady tempo.</p>';
-
-  modal_msg += '</div>'; // end how-it-works block
-  modal_msg += '</div>'; // end feature card
-
-  modal_msg += '<p style="margin:12px 4px 8px 4px; font-size:12pt; text-align:center;">';
-  modal_msg += 'For more information on the <strong>Tune Trainer</strong>, ';
-  modal_msg += '<a href="https://michaeleskin.com/abctools/userguide.html#tune_trainer" ';
-  modal_msg += 'target="_blank" style="color:#5b2aa8; text-decoration:none; font-weight:bold;">';
-  modal_msg += 'click here</a>.';
-  modal_msg += '</p>';
-
-  modal_msg += '<div style="margin-top:10px; padding:10px 12px; border-radius:12px;';
-  modal_msg += 'background:#fff8db; border:1px solid #ffe39a;">';
-
-  modal_msg += '<div style="font-size:12pt; font-weight:bold; margin-bottom:6px;">Updated or changed features:</div>';
-  modal_msg += '<p style="margin:6px 0; font-size:12pt;">- When opening an ABC file the tool now automatically converts from Windows-1252 encoding used in legacy ABC tools to UTF-8 fixing issues with characters with diacritical marks and other special characters.</p>';
-  modal_msg += '<p style="margin:6px 0; font-size:12pt;">- Added direct links to my Chromatic Tuner and Real Time Tuning Analysis (RTTA) tool to the ☰ dropdown menu.</p>';
+  modal_msg += '<p style="margin:6px 0; font-size:12pt;">Added <strong>Tuning Tools</strong> to the <strong>☰</strong> dropdown menu.<br/><br/>Brings up a dialog where you can launch the Chromatic Tuner, Real Time Tuning Analysis (RTTA), Real Time Tuning / Volume Analysis (RTTVA), Chromatic Tuner / Tone Generator, and Audio Input Tester utilities.</p>';
   modal_msg += '</div>';
-
-  modal_msg += '<p style="text-align:center; margin:14px 0 0 0; font-size:11pt; color:#666;">';
 
   modal_msg += '</div>'; // wrapper
 
@@ -59555,6 +59514,24 @@ function LaunchRTTA(){
   window.open(url, '_blank');
 }
 
+// Open the RTTVA tuner
+function LaunchRTTVA(){
+  var url = "https://michaeleskin.com/tools/rttva.html";
+  window.open(url, '_blank');
+}
+
+// Open the tone generator
+function LaunchToneGen(){
+  var url = "https://michaeleskin.com/tools/tonegen.html";
+  window.open(url, '_blank');
+}
+
+// Open the audio tester
+function LaunchAudioTester(){
+  var url = "https://michaeleskin.com/tools/audiotest.html";
+  window.open(url, '_blank');
+}
+
 //
 // Check if an update is available
 // 
@@ -59691,14 +59668,9 @@ function SetupContextMenu(showUpdateItem) {
               AdvancedSettings();
             }
           }, {}, {
-            name: 'Launch Chromatic Tuner',
+            name: 'Tuning Tools',
             fn: function(target) {
-              LaunchChromaticTuner();
-            }
-          },{
-            name: 'Launch RTTA',
-            fn: function(target) {
-              LaunchRTTA();
+              TuningTools();
             }
           }, {}, {
             name: 'Launch Standard Editor',
@@ -59873,14 +59845,9 @@ function SetupContextMenu(showUpdateItem) {
             AdvancedSettings();
           }
         }, {}, {
-          name: 'Launch Chromatic Tuner',
+          name: 'Tuning Tools',
           fn: function(target) {
-            LaunchChromaticTuner();
-          }
-        },{
-          name: 'Launch RTTA',
-          fn: function(target) {
-            LaunchRTTA();
+            TuningTools();
           }
         }, {}, {
           name: 'Launch Standard Editor',
@@ -59993,14 +59960,9 @@ function SetupContextMenu(showUpdateItem) {
               AdvancedSettings();
             }
           }, {}, {
-            name: 'Launch Chromatic Tuner',
+            name: 'Tuning Tools',
             fn: function(target) {
-              LaunchChromaticTuner();
-            }
-          },{
-            name: 'Launch RTTA',
-            fn: function(target) {
-              LaunchRTTA();
+              TuningTools();
             }
           }, {}, {
             name: 'Launch Quick Editor',
@@ -60169,14 +60131,9 @@ function SetupContextMenu(showUpdateItem) {
             AdvancedSettings();
           }
         }, {}, {
-          name: 'Launch Chromatic Tuner',
+          name: 'Tuning Tools',
           fn: function(target) {
-            LaunchChromaticTuner();
-          }
-        },{
-          name: 'Launch RTTA',
-          fn: function(target) {
-            LaunchRTTA();
+            TuningTools();
           }
         }, {}, {
           name: 'Launch Quick Editor',
@@ -60281,14 +60238,9 @@ function SetupContextMenu(showUpdateItem) {
           AdvancedSettings();
         }
       }, {}, {
-        name: 'Launch Chromatic Tuner',
+        name: 'Tuning Tools',
         fn: function(target) {
-          LaunchChromaticTuner();
-        }
-      },{
-        name: 'Launch RTTA',
-        fn: function(target) {
-          LaunchRTTA();
+          TuningTools();
         }
       }, {}, {
         name: 'Launch Standard Editor',
@@ -60396,14 +60348,9 @@ function SetupContextMenu(showUpdateItem) {
           AdvancedSettings();
         }
       },  {}, {
-        name: 'Launch Chromatic Tuner',
+        name: 'Tuning Tools',
         fn: function(target) {
-          LaunchChromaticTuner();
-        }
-      },{
-        name: 'Launch RTTA',
-        fn: function(target) {
-          LaunchRTTA();
+          TuningTools();
         }
       }, {}, {
         name: 'Launch Quick Editor',
@@ -62072,13 +62019,13 @@ function DoStartup() {
   // Show update message?
   if (gLocalStorageAvailable && (!isFromShare)){
 
-    var updatePresented = localStorage.sawUpdate_20jan2026;
+    var updatePresented = localStorage.sawUpdate_31jan2026;
 
     if (updatePresented != "true") {
 
       showWhatsNewScreen();
 
-      localStorage.sawUpdate_20jan2026 = true;
+      localStorage.sawUpdate_31jan2026 = true;
 
     }
 
@@ -63637,9 +63584,36 @@ function OpenInABCJSQuickEditor(abcText){
 
 function openInExternalTool(theABC){
 
-  var modal_msg = '<div id="ceoltasanchor"><p style="text-align:center;margin-bottom:36px;font-size:16pt;font-family:helvetica;margin-left:15px;">Open ABC in External Tool&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#external_tools" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>';
+  var modal_msg =
+    '<div id="ceoltasanchor">' +
+      '<p style="text-align:center;margin-bottom:36px;font-size:16pt;font-family:helvetica;margin-left:15px;">' +
+        'Open ABC in External Tool&nbsp;&nbsp;' +
+        '<span style="font-size:24pt;" title="View documentation in new tab">' +
+          '<a href="https://michaeleskin.com/abctools/userguide.html#external_tools" target="_blank" ' +
+             'style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a>' +
+        '</span>' +
+      '</p>';
 
-  modal_msg += '<p style="text-align:center;"> <span class="external-tool" style="display:inline-block; margin-right:48px;margin-bottom:12px;"> <img id="external_pureocarinas" src="img/pureocarinas.png" title="Open the ABC in the Pure Ocarinas Phrase-by-phrase ABC tune practice tool" alt="Pure Ocarinas Phrase-by-phrase ABC practice tool"><br> <span style="font-size:1.2em;">Phrase-by-phrase ABC practice tool</span> </span> <span class="external-tool" style="display:inline-block;margin-bottom:12px;"> <img id="external_abcjs" src="img/abcjs_logo.png" title="Open the ABC in the abcjs quick editor" alt="abcjs quick editor"><br> <span style="font-size:1.2em;">abcjs quick editor</span> </span> </p>';
+  modal_msg +=
+    '<p style="text-align:center;">' +
+
+      '<span class="external-tool" style="display:inline-block; margin-right:48px;margin-bottom:12px; text-align:center;">' +
+        '<img id="external_pureocarinas" src="img/pureocarinas.png" ' +
+             'title="Open the ABC in the Pure Ocarinas Phrase-by-phrase ABC tune practice tool" ' +
+             'alt="Pure Ocarinas Phrase-by-phrase ABC practice tool" style="cursor:pointer;">' +
+        '<br>' +
+        '<span style="font-size:1.2em;">Phrase-by-phrase ABC practice tool</span>' +
+      '</span>' +
+
+      '<span class="external-tool" style="display:inline-block;margin-bottom:12px; text-align:center;">' +
+        '<img id="external_abcjs" src="img/abcjs_logo.png" ' +
+             'title="Open the ABC in the abcjs quick editor" alt="abcjs quick editor" style="cursor:pointer;">' +
+        '<br>' +
+        '<span style="font-size:1.2em;">abcjs quick editor</span>' +
+      '</span>' +
+
+    '</p>' +
+    '</div>';
 
   DayPilot.Modal.alert(modal_msg, {
     theme: "modal_flat",
@@ -63649,18 +63623,96 @@ function openInExternalTool(theABC){
   });
 
   var elem = document.getElementById("external_pureocarinas");
-
-  elem.onclick = function(){
+  if (elem) elem.onclick = function(){
     OpenInPureOcarinas(theABC);
-  }
+  };
 
-  var elem = document.getElementById("external_abcjs");
-
-  elem.onclick = function(){
+  elem = document.getElementById("external_abcjs");
+  if (elem) elem.onclick = function(){
     OpenInABCJSQuickEditor(theABC);
-  }
-
+  };
 }
+
+function TuningTools(){
+
+  var modal_msg =
+    '<div id="tuningtoolsanchor">'
+  + '  <p style="text-align:center;margin-bottom:36px;font-size:16pt;font-family:helvetica;margin-left:15px;"> Tuning Tools&nbsp;&nbsp;' 
+  + '    <span style="font-size:24pt;" title="View documentation in new tab">'
+  + '    <a href="https://michaeleskin.com/abctools/userguide.html#hamburger_tuning_tools" target="_blank" ' 
+  + '    style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a>' 
+  + '    </span>' 
+  + '  </p>'
+
+  // Outer layout: two explicit rows
+  + '  <div style="display:flex; flex-direction:column; align-items:center; gap:22px; padding:0 15px 10px 15px;">'
+
+  // Row 1 (3 items)
+  + '    <div style="display:flex; justify-content:center; gap:24px; width:100%;">'
+
+  + '      <div class="tuning-tool" style="text-align:center; width:180px;">'
+  + '        <img id="tuning_tools_tuner" src="img/tool_tuner_1.jpg" title="Simple chromatic instrument tuner. Needle and strobe views. Adjustable temperament (ET, Just Intonation, Pythagorean, Fiddle Sweetened), A4 reference, and input boost." alt="Chromatic Tuner"'
+  + '             style="width:150px;height:auto;cursor:pointer;">'
+  + '        <div style="font-size:1.2em; margin-top:6px; height:3.2em; display:flex; align-items:center; justify-content:center; line-height:1.2;">Chromatic Tuner</div>'
+  + '      </div>'
+
+  + '      <div class="tuning-tool" style="text-align:center; width:180px;">'
+  + '        <img id="tuning_tools_rtta" src="img/tool_rtta_1.jpg" title="Real-time tuning analysis (box-plot style) from live mic input. Adjustable temperament (ET, Just Intonation, Pythagorean, Fiddle Sweetened), A4 reference, and input boost." alt="Real Time Tuning Analysis (RTTA)"'
+  + '             style="width:150px;height:auto;cursor:pointer;">'
+  + '        <div style="font-size:1.2em; margin-top:6px; height:3.2em; display:flex; align-items:center; justify-content:center; line-height:1.2;">Real Time Tuning Analysis (RTTA)</div>'
+  + '      </div>'
+
+  + '      <div class="tuning-tool" style="text-align:center; width:180px;">'
+  + '        <img id="tuning_tools_rttva" src="img/tool_rttva_1.jpg" title="Real-time tuning and volume analysis (box-plot style) from live mic input. Adjustable temperament (ET, Just Intonation, Pythagorean, Fiddle Sweetened), A4 reference, and input boost." alt="Real Time Tuning / Volume Analysis (RTTVA)"'
+  + '             style="width:150px;height:auto;cursor:pointer;">'
+  + '        <div style="font-size:1.2em; margin-top:6px; height:3.2em; display:flex; align-items:center; justify-content:center; line-height:1.2;">Real Time Tuning / Volume Analysis (RTTVA)</div>'
+  + '      </div>'
+
+  + '    </div>'
+
+  // Row 2 (2 items)
+  + '    <div style="display:flex; justify-content:center; gap:24px; width:100%;">'
+
+  + '      <div class="tuning-tool" style="text-align:center; width:180px;">'
+  + '        <img id="tuning_tools_tonegen" src="img/tool_tonegen_1.jpg" title="Simple chromatic instrument tuner with tone generator. Needle and strobe views. Adjustable temperament (ET, Just Intonation, Pythagorean, Fiddle Sweetened), A4 reference, and input boost." alt="Chromatic Tuner / Tone Generator"'
+  + '             style="width:150px;height:auto;cursor:pointer;">'
+  + '        <div style="font-size:1.2em; margin-top:6px; height:3.2em; display:flex; align-items:center; justify-content:center; line-height:1.2;">Chromatic Tuner / Tone Generator</div>'
+  + '      </div>'
+
+  + '      <div class="tuning-tool" style="text-align:center; width:180px;">'
+  + '        <img id="tuning_tools_tester" src="img/tool_audiotester_1.jpg" title="3-step audio input tester for the Chromatic Tuner and RTTA utilities: background noise, level range, and continuous tone test." alt="Audio Input Tester"'
+  + '             style="width:150px;height:auto;cursor:pointer;">'
+  + '        <div style="font-size:1.2em; margin-top:6px; height:3.2em; display:flex; align-items:center; justify-content:center; line-height:1.2;">Audio Input Tester</div>'
+  + '      </div>'
+
+  + '    </div>'
+
+  + '  </div>'
+  + '</div>';
+
+  DayPilot.Modal.alert(modal_msg, {
+    theme: "modal_flat",
+    top: 50,
+    width: 700,
+    scrollWithPage: (AllowDialogsToScroll())
+  });
+
+  var elem = document.getElementById("tuning_tools_tuner");
+  if (elem) elem.onclick = function(){ LaunchChromaticTuner(); };
+
+  elem = document.getElementById("tuning_tools_rtta");
+  if (elem) elem.onclick = function(){ LaunchRTTA(); };
+
+  elem = document.getElementById("tuning_tools_rttva");
+  if (elem) elem.onclick = function(){ LaunchRTTVA(); };
+
+  elem = document.getElementById("tuning_tools_tonegen");
+  if (elem) elem.onclick = function(){ LaunchToneGen(); };
+
+  elem = document.getElementById("tuning_tools_tester");
+  if (elem) elem.onclick = function(){ LaunchAudioTester(); };
+}
+
 
 // abcjs Custom CSS Generator
 // Returns %%begincss{...%%endcss} with ONLY non-black rules, defaults all black, reset to black.

@@ -11,7 +11,13 @@
 //
 //
 //
-// Updated 28 Jan 2026 at 1900
+//
+//
+//
+// Updated 31 Jan 2026 at 0800
+//
+//
+//
 //
 //
 //
@@ -23,7 +29,7 @@
 //
 //
 
-const cacheName = 'abctoolscache-3161';
+const cacheName = 'abctoolscache-3163';
 
 const contentToCache = [
     'abctools.html',
@@ -85,6 +91,11 @@ const contentToCache = [
     'img/pureocarinas.png',
     'img/abcjs_logo.png',
     'img/external_share.png',
+    'img/tool_tuner_1.jpg',
+    'img/tool_rtta_1.jpg',
+    'img/tool_rttva_1.jpg',
+    'img/tool_tonegen_1.jpg',
+    'img/tool_audiotester_1.jpg',
     'img/abc-android-icon-144x144.png',
     'img/abc-android-icon-192x192.png',
     'img/abc-android-icon-36x36.png',

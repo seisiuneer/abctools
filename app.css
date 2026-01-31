@@ -6012,6 +6012,19 @@ display:block;
   background-color: rgba(0,105,153,0.06);
 }
 
+.tuning-tool {
+  padding: 8px;
+  border: 2px solid transparent;   /* prevents layout shift */
+  border-radius: 6px;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+  cursor: pointer;
+}
+
+.tuning-tool:hover {
+  border-color: #006999;            /* ABC Tools blue */
+  background-color: rgba(0,105,153,0.06);
+}
+
 /* ============================================================
    Advanced Controls Tabs
    ============================================================ */
