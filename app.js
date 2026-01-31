@@ -59504,30 +59504,45 @@ function LaunchQuickEditorHelp() {
 
 // Open the Chromatic tuner
 function LaunchChromaticTuner(){
+
+  sendGoogleAnalytics("action", "LaunchChromaticTuner");
+
   var url = "https://michaeleskin.com/tools/tuner.html";
   window.open(url, '_blank');
 }
 
 // Open the RTTA tuner
 function LaunchRTTA(){
+
+  sendGoogleAnalytics("action", "LaunchRTTA");
+
   var url = "https://michaeleskin.com/tools/rtta.html";
   window.open(url, '_blank');
 }
 
 // Open the RTTVA tuner
 function LaunchRTTVA(){
+
+  sendGoogleAnalytics("action", "LaunchRTTVA");
+
   var url = "https://michaeleskin.com/tools/rttva.html";
   window.open(url, '_blank');
 }
 
 // Open the tone generator
 function LaunchToneGen(){
+
+  sendGoogleAnalytics("action", "LaunchToneGen");
+
   var url = "https://michaeleskin.com/tools/tonegen.html";
   window.open(url, '_blank');
 }
 
 // Open the audio tester
 function LaunchAudioTester(){
+  
+  sendGoogleAnalytics("action", "LaunchAudioTester");
+
   var url = "https://michaeleskin.com/tools/audiotest.html";
   window.open(url, '_blank');
 }
@@ -63634,6 +63649,9 @@ function openInExternalTool(theABC){
 }
 
 function TuningTools(){
+
+  // Keep track of dialogs
+  sendGoogleAnalytics("dialog", "TuningTools");
 
   var modal_msg =
     '<div id="tuningtoolsanchor">'
