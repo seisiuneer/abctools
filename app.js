@@ -63666,7 +63666,7 @@ function TuningTools(){
   + '  </p>'
 
   // Outer layout: two explicit rows
-  + '  <div style="display:flex; flex-direction:column; align-items:center; gap:22px; padding:0 15px 10px 15px;">'
+  + '  <div style="display:flex; flex-direction:column; align-items:center; gap:22px; padding:0 15px 0px 15px;">'
 
   // Row 1 (3 items)
   + '    <div style="display:flex; justify-content:center; gap:24px; width:100%;">'
