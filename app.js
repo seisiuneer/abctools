@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3164_013126_1200";
+var gVersionNumber = "3165_020126_0800";
 
 var gMIDIInitStillWaiting = false;
 
@@ -27772,13 +27772,13 @@ function processShareLink() {
       // Show update message?
       if (gLocalStorageAvailable){
 
-        var updatePresented = localStorage.sawUpdate_31jan2026;
+        var updatePresented = localStorage.sawUpdate_1feb2026;
 
         if (updatePresented != "true") {
 
           showWhatsNewScreen();
 
-          localStorage.sawUpdate_31jan2026 = true;
+          localStorage.sawUpdate_1feb2026 = true;
 
         }
 
@@ -33572,13 +33572,15 @@ function ExportAll() {
   // Developer Tools tab
   // -------------------------------------------------------------------
   modal_msg += '    <div id="exportall-tab-dev" class="adv-tab-panel' + (initialTab === "exportall-tab-dev" ? ' active' : '') + '">';
-  //modal_msg += '      <p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:18px;">Developer Share URL Batch Export Tools</p>';
   modal_msg += '      <p style="text-align:center;font-size:14pt;font-family:helvetica;">';
   modal_msg += '        <input id="exportall_jsonbutton" class="exportall_jsonbutton btn btn-alljsondownload" onclick="BatchJSONExport();" type="button" value="Export all Share URLs as JSON" title="Saves the Share URLs for all the tunes as a JSON file">';
   modal_msg += '        <input id="exportall_csvbutton" class="exportall_csvbutton btn btn-allcsvdownload" onclick="BatchCSVExport();" type="button" value="Export all Share URLs as CSV" title="Saves the Share URLs for all the tunes as a CSV file">';
   modal_msg += '      </p>';
   modal_msg += '      <p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:24px;">';
   modal_msg += '        <input id="launchcsvextractor" class="launchcsvextractor btn btn-launchcsvextractor" onclick="LaunchCSVTagExtractor();" type="button" value="Launch the ABC Tags to CSV Extractor Utility" title="Extract all ABC tags from one or more ABC files to a CSV file">';
+  modal_msg += '      </p>';
+  modal_msg += '      <p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:24px;">';
+  modal_msg += '        <input id="export_smartdrawbutton" class="export_smartdrawbutton btn btn-smartdraw" onclick="SmartDrawExport();" type="button" value="SmartDraw Set List Builder" title="Build a SmartDraw set list using drag and drop">';
   modal_msg += '      </p>';
   modal_msg += '    </div>';
 
@@ -55571,7 +55573,7 @@ function showWhatsNewScreen() {
   modal_msg += 'background: linear-gradient(135deg, #0b1f4a 0%, #5b2aa8 55%, #d4a62a 100%);';
   modal_msg += 'box-shadow: 0 6px 16px rgba(0,0,0,0.14); color:#fff;">';
   modal_msg += '<div style="font-size:20pt; line-height:24pt; font-weight:bold;">What&apos;s New</div>';
-  modal_msg += '<div style="font-size:11pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + '</div>';
+  modal_msg += '<div style="font-size:11pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' 1 February 2026</div>';
   modal_msg += '</div>';
 
   // Short intro
@@ -55584,6 +55586,13 @@ function showWhatsNewScreen() {
   modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);">';
 
   modal_msg += '<p style="margin:6px 0; font-size:12pt;">Added <strong>Tuning Tools</strong> to the <strong>☰</strong> dropdown menu.<br/><br/>Brings up a dialog where you can launch the Chromatic Tuner, Real Time Tuning Analysis (RTTA), Real Time Tuning / Volume Analysis (RTTVA), Chromatic Tuner / Tone Generator, and Audio Input Tester utilities.</p>';
+  modal_msg += '</div>';
+
+  modal_msg += '<div style="margin:10px 0 6px 0; padding:12px 12px; border-radius:12px;';
+  modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);">';
+  
+  modal_msg += '<p style="margin:6px 0; font-size:12pt;">Reinstated the <strong>SmartDraw Set List Builder</strong> on the Export All Tunes/Developers tab.<br/><br/>Brings up a dialog where you can build tune sets and then export them in SmartDraw format. Each tune in the SmartDraw diagram has a hyperlink that when clicked, plays the tune.</p>';
+
   modal_msg += '</div>';
 
   modal_msg += '</div>'; // wrapper
@@ -62034,13 +62043,13 @@ function DoStartup() {
   // Show update message?
   if (gLocalStorageAvailable && (!isFromShare)){
 
-    var updatePresented = localStorage.sawUpdate_31jan2026;
+    var updatePresented = localStorage.sawUpdate_1feb2026;
 
     if (updatePresented != "true") {
 
       showWhatsNewScreen();
 
-      localStorage.sawUpdate_31jan2026 = true;
+      localStorage.sawUpdate_1feb2026 = true;
 
     }
 
