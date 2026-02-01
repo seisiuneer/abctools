@@ -55591,7 +55591,7 @@ function showWhatsNewScreen() {
   modal_msg += '<div style="margin:10px 0 6px 0; padding:12px 12px; border-radius:12px;';
   modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);">';
   
-  modal_msg += '<p style="margin:6px 0; font-size:12pt;">Reinstated the <strong>SmartDraw Set List Builder</strong> on the Export All Tunes/Developers tab.<br/><br/>Brings up a dialog where you can build tune sets and then export them in SmartDraw format. Each tune in the SmartDraw diagram has a hyperlink that when clicked, plays the tune.</p>';
+  modal_msg += '<p style="margin:6px 0; font-size:12pt;">Reinstated the <strong>SmartDraw Set List Builder</strong> on the Export All Tunes/Developers tab (Desktop browsers only).<br/><br/>Brings up a dialog where you can build tune sets and then export them in SmartDraw format. Each tune in the SmartDraw diagram has a hyperlink that when clicked, plays the tune.</p>';
 
   modal_msg += '</div>';
 
