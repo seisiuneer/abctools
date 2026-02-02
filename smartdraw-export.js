@@ -422,10 +422,13 @@ function SDEncodeABCToolsShareURL(theABC,setName,displayFormat,staffSpacing,addP
 
     theABC = GetABCFileHeader() + theABC;
 
-    // Encode the ABC into LZW format with URI syntax
-    var abcInLZW = LZString.compressToEncodedURIComponent(theABC);
+    // Encode the ABC into DEF format with URI syntax
+    var encoder = new TextEncoder();
+    var utf8Bytes = encoder.encode(theABC);
+    var deflated = pako.deflate(utf8Bytes, { level: 6 });
+    var abc_compressed = def_bytesToBase64URL(deflated);
 
-    var url = "https://michaeleskin.com/abctools/abctools.html?lzw=" + abcInLZW + "&format=" + displayFormat + "&ssp=" + staffSpacing+ "&pdf=one&pn=br&fp=yes&name="+setName;
+    var url = "https://michaeleskin.com/abctools/abctools.html?def=" + abc_compressed + "&format=" + displayFormat + "&ssp=" + staffSpacing+ "&pdf=one&pn=br&fp=yes&name="+setName;
 
     if (addPlayLink){
       url = url + "&play=1";
@@ -439,24 +442,6 @@ function SDEncodeABCToolsShareURL(theABC,setName,displayFormat,staffSpacing,addP
 
     return url;
 
-}
-
-//
-// Inject soundfont and MIDI info
-//
-function SDInjectPlaybackHeaders(theTune){
-
-    theTune = InjectStringBelowTuneHeader(theTune, "%abcjs_soundfont fatboy");
-    theTune = InjectStringBelowTuneHeader(theTune, "%%MIDI program 0");
-    theTune = InjectStringBelowTuneHeader(theTune, "%%MIDI bassprog 0");
-    theTune = InjectStringBelowTuneHeader(theTune, "%%MIDI chordprog 0");
-    theTune = InjectStringBelowTuneHeader(theTune, "%%MIDI bassvol 64");
-    theTune = InjectStringBelowTuneHeader(theTune, "%%MIDI chordvol 64");
-    
-    // Seeing extra linefeeds after the inject
-    theTune = theTune.replace("\n\n","");
-
-    return theTune;
 }
 
 // Generate array of tunes
@@ -474,8 +459,6 @@ function SDGenerateTuneArray(theABC){
     for (var i=1;i<nTunes;++i){
 
         var thisTune = "X:"+theTunes[i];
-
-        thisTune = SDInjectPlaybackHeaders(thisTune);
 
         var thisTuneName = getTuneTitle(thisTune);
 

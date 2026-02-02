@@ -495,7 +495,7 @@ function BatchJSONExportForWebGenerator(theABC,allowDeflate){
 
         thisTune = GetABCFileHeader() + thisTune;
 
-        var theURL = FillUrlBoxWithAbcInLZWOrDef(thisTune,false,format,false);
+        var theURL = FillUrlBoxWithAbcInLZWOrDef(thisTune,false,format,allowDeflate);
 
         var titleURL = title.replaceAll("&","");
         titleURL = titleURL.replaceAll(" ","_");
@@ -568,7 +568,7 @@ function BatchJSONExportForWebGalleryGenerator(theABC){
 
         thisTune = GetABCFileHeader() + thisTune;
 
-        var theURL = FillUrlBoxWithAbcInLZWOrDef(thisTune,false,format,false);
+        var theURL = FillUrlBoxWithAbcInLZWOrDef(thisTune,false,format,true);
 
         var titleURL = title.replaceAll("&","");
         titleURL = titleURL.replaceAll(" ","_");
@@ -1642,7 +1642,7 @@ function generateAndSaveWebsiteSimple() {
         return;
     }
 
-    var theJSON = BatchJSONExportForWebGenerator(theABC,false);
+    var theJSON = BatchJSONExportForWebGenerator(theABC,true);
 
     hideTheSpinner();
 

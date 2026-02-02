@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3166_020126_1800";
+var gVersionNumber = "3167_020226_0700";
 
 var gMIDIInitStillWaiting = false;
 
@@ -6774,7 +6774,8 @@ function GetAllTuneHyperlinks(theLinks) {
       tuneWithPatch = GetABCFileHeader() + tuneWithPatch;
 
       // Create a share URL for this tune
-      var theURL = FillUrlBoxWithAbcInLZWOrDef(tuneWithPatch, false);
+      // 2 Feb 2026 - Switch to Deflate
+      var theURL = FillUrlBoxWithAbcInLZWOrDef(tuneWithPatch, false, null, true);
 
       // Test max share URL length and one-time warn if too long
       if (theURL.length >= 8100) {
@@ -6956,7 +6957,7 @@ function GetAllTuneHyperlinks(theLinks) {
       tuneWithPatch = GetABCFileHeader() + tuneWithPatch;
 
       // Create a share URL for this tune
-      var theURL = FillUrlBoxWithAbcInLZWOrDef(tuneWithPatch, false);
+      var theURL = FillUrlBoxWithAbcInLZWOrDef(tuneWithPatch, false, null, true);
 
       // MAE 11 Jul 2024 - For open in editor
       if (!gOpenInEditor) {
@@ -7661,7 +7662,7 @@ function AppendPDFTuneQRCode(thePDF, paperStyle, theABC, theTitle, callback) {
   theABC = GetABCFileHeader() + theABC;
 
   // Can we make a QR code from the current share link URL?
-  theURL = FillUrlBoxWithAbcInLZWOrDef(theABC, false);
+  theURL = FillUrlBoxWithAbcInLZWOrDef(theABC, false, null, true);
 
   // Adding play links?
   if (gAddPlaybackHyperlinks) {
@@ -7675,7 +7676,7 @@ function AppendPDFTuneQRCode(thePDF, paperStyle, theABC, theTitle, callback) {
   if (theURL.length > 2300) {
 
     // URL too long for QR code...
-    theURL = FillUrlBoxWithAbcInLZWOrDef("X:1\nT:" + theTitle + "\nT:Tune ABC was too long to generate a valid QR Code\n", false);
+    theURL = FillUrlBoxWithAbcInLZWOrDef("X:1\nT:" + theTitle + "\nT:Tune ABC was too long to generate a valid QR Code\n", false, null, true);
 
     isValidURL = false;
 
@@ -7862,7 +7863,7 @@ function AppendQRCode(thePDF, paperStyle, callback) {
   if (!gDoForceQRCodeURLOverride) {
 
     // Can we make a QR code from the current share link URL?
-    theURL = FillUrlBoxWithAbcInLZWOrDef(null, false);
+    theURL = FillUrlBoxWithAbcInLZWOrDef(null, false, null, true);
 
     if (!gAllowQRCodeSave) {
 
@@ -19130,7 +19131,7 @@ function BuildTuneSetOpen(bOpenInNewTabInEditor) {
 
     result += tuneSet;
 
-    var theURL = FillUrlBoxWithAbcInLZWOrDef(result, false);
+    var theURL = FillUrlBoxWithAbcInLZWOrDef(result, false, null, true);
 
     if (bOpenInNewTabInEditor) {
 
@@ -27772,13 +27773,13 @@ function processShareLink() {
       // Show update message?
       if (gLocalStorageAvailable){
 
-        var updatePresented = localStorage.sawUpdate_1feb2026;
+        var updatePresented = localStorage.sawUpdate_2feb2026;
 
         if (updatePresented != "true") {
 
           showWhatsNewScreen();
 
-          localStorage.sawUpdate_1feb2026 = true;
+          localStorage.sawUpdate_2feb2026 = true;
 
         }
 
@@ -34715,7 +34716,7 @@ function BatchJSONExport() {
 
     thisTune = GetABCFileHeader() + thisTune;
 
-    var theURL = FillUrlBoxWithAbcInLZWOrDef(thisTune, false);
+    var theURL = FillUrlBoxWithAbcInLZWOrDef(thisTune, false, null, true);
 
     var titleURL = title.replaceAll("&", "");
     titleURL = titleURL.replaceAll(" ", "_");
@@ -34786,7 +34787,7 @@ function BatchCSVExport() {
 
     thisTune = GetABCFileHeader() + thisTune;
 
-    var theURL = FillUrlBoxWithAbcInLZWOrDef(thisTune, false);
+    var theURL = FillUrlBoxWithAbcInLZWOrDef(thisTune, false, null, true);
 
     var titleURL = title.replaceAll("&", "");
     titleURL = titleURL.replaceAll(" ", "_");
@@ -48893,7 +48894,7 @@ function SharingControlsDialog() {
   modal_msg += '</p>';
   modal_msg += '<img id="external_tools_share" class="external_tools_share" src="img/external_share.png" title="Open the ABC in an external ABC tool"/>';
   modal_msg += '<p id="shareurlcaption">Share URL</p>';
-  modal_msg += '<p style="text-align:center;margin-top:36px;"><input id="addautoplay" class="urlcontrols btn btn-urlcontrols" onclick="AddAutoPlay()" type="button" value="Add Auto-Play" title="Adds &play=1 to the ShareURL.&nbsp;&nbsp;Tune will open in the player."><input id="addopenineditor" class="urlcontrols btn btn-urlcontrols" onclick="AddOpenInEditor()" type="button" value="Add Open in Editor" title="Adds &editor=1 to the ShareURL.&nbsp;&nbsp;Share links will load in the editor.&nbsp;&nbsp;This setting overrides Add Auto-Play."><input id="adddisableediting" class="urlcontrols btn btn-urlcontrols" onclick="AddDisableEditing()" type="button" value="Add Disable Editing" title="Adds &dx=1 to the ShareURL.&nbsp;&nbsp;Entering the editor from the full screen tune view will be disabled.&nbsp;&nbsp;Also overrides Add Open in Editor."><input id="addnoui" class="urlcontrolslast btn btn-urlcontrols" onclick="AddNoUI()" type="button" value="Add Hide UI" title="Adds &noui to the ShareURL for responsive iframe embedding.&nbsp;&nbsp;When the link is opened, hides the UI.&nbsp;&nbsp;Overrides Add Open in Editor and Add Auto-Play.">&nbsp;&nbsp;&nbsp;&nbsp;<input id="urlallowdef" type="checkbox" style="margin-top:-5px;margin-bottom:0px;" title="When checked uses Deflate instead of LZW for compressing the ABC in the Share URL resulting in a shorter link"/>&nbsp;Use Deflate</p>';
+  modal_msg += '<p style="text-align:center;margin-top:36px;"><input id="addautoplay" class="urlcontrols btn btn-urlcontrols" onclick="AddAutoPlay()" type="button" value="Add Auto-Play" title="Adds &play=1 to the ShareURL.&nbsp;&nbsp;Tune will open in the player."><input id="addopenineditor" class="urlcontrols btn btn-urlcontrols" onclick="AddOpenInEditor()" type="button" value="Add Open in Editor" title="Adds &editor=1 to the ShareURL.&nbsp;&nbsp;Share links will load in the editor.&nbsp;&nbsp;This setting overrides Add Auto-Play."><input id="adddisableediting" class="urlcontrols btn btn-urlcontrols" onclick="AddDisableEditing()" type="button" value="Add Disable Editing" title="Adds &dx=1 to the ShareURL.&nbsp;&nbsp;Entering the editor from the full screen tune view will be disabled.&nbsp;&nbsp;Also overrides Add Open in Editor."><input id="addnoui" class="urlcontrolslast btn btn-urlcontrols" onclick="AddNoUI()" type="button" value="Add Hide UI" title="Adds &noui to the ShareURL for responsive iframe embedding.&nbsp;&nbsp;When the link is opened, hides the UI.&nbsp;&nbsp;Overrides Add Open in Editor and Add Auto-Play.">&nbsp;&nbsp;&nbsp;&nbsp;<input id="urlallowdef" type="checkbox" style="margin-top:-5px;margin-bottom:0px;" title="When checked uses Deflate instead of LZW for compressing the ABC in the Share URL resulting in a shorter link" checked/>&nbsp;Use Deflate</p>';
 
   modal_msg += '</div>';
 
@@ -49957,7 +49958,7 @@ function Do_Browser_PDF_Export() {
 
           thisTune = GetABCFileHeader() + thisTune;
 
-          var theURL = FillUrlBoxWithAbcInLZWOrDef(thisTune, false);
+          var theURL = FillUrlBoxWithAbcInLZWOrDef(thisTune, false, null, true);
 
           var titleURL = title.replaceAll(" ", "_");
           titleURL = titleURL.replaceAll("#", "^");
@@ -55573,7 +55574,7 @@ function showWhatsNewScreen() {
   modal_msg += 'background: linear-gradient(135deg, #0b1f4a 0%, #5b2aa8 55%, #d4a62a 100%);';
   modal_msg += 'box-shadow: 0 6px 16px rgba(0,0,0,0.14); color:#fff;">';
   modal_msg += '<div style="font-size:20pt; line-height:24pt; font-weight:bold;">What&apos;s New</div>';
-  modal_msg += '<div style="font-size:11pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' 1 February 2026</div>';
+  modal_msg += '<div style="font-size:11pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 2 February 2026</div>';
   modal_msg += '</div>';
 
   // Short intro
@@ -55588,10 +55589,18 @@ function showWhatsNewScreen() {
   modal_msg += '<p style="margin:6px 0; font-size:12pt;">Added <strong>Tuning Tools</strong> to the <strong>☰</strong> dropdown menu.<br/><br/>Brings up a dialog where you can launch the Chromatic Tuner, Real Time Tuning Analysis (RTTA), Real Time Tuning / Volume Analysis (RTTVA), Chromatic Tuner / Tone Generator, and Audio Input Tester utilities.</p>';
   modal_msg += '</div>';
 
+  // Feature card
   modal_msg += '<div style="margin:10px 0 6px 0; padding:12px 12px; border-radius:12px;';
   modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);">';
   
   modal_msg += '<p style="margin:6px 0; font-size:12pt;">Reinstated the <strong>SmartDraw Set List Builder</strong> on the Export All Tunes/Developers tab (Desktop browsers only).<br/><br/>Brings up a dialog where you can build tune sets and then export them in SmartDraw format. Each tune in the SmartDraw diagram has a hyperlink that when clicked, plays the tune.</p>';
+
+  modal_msg += '</div>';
+
+  modal_msg += '<div style="margin:10px 0 6px 0; padding:12px 12px; border-radius:12px;';
+  modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);">';
+  
+  modal_msg += '<p style="margin:6px 0; font-size:12pt;">Share links are now createdusing <b>Deflate</b> as the compression algorithm for the ABC instead of <b>LZW</b>.<br/><br/>Deflate creates share links that can be as much as 50% smaller than LZW.<br/><br/>This is particularly helpful for large tunes in PDF files intended to be opened by Adobe Acrobat which has a relatively small limit for hyperlink length.<br/><br/>The only exception is that LZW is still used for <b>Full Featured Websites</b> since the LZW code is included in the source code for the sites to instrument and tablature change on-the-fly.</p>';
 
   modal_msg += '</div>';
 
@@ -62043,13 +62052,13 @@ function DoStartup() {
   // Show update message?
   if (gLocalStorageAvailable && (!isFromShare)){
 
-    var updatePresented = localStorage.sawUpdate_1feb2026;
+    var updatePresented = localStorage.sawUpdate_2feb2026;
 
     if (updatePresented != "true") {
 
       showWhatsNewScreen();
 
-      localStorage.sawUpdate_1feb2026 = true;
+      localStorage.sawUpdate_2feb2026 = true;
 
     }
 
