@@ -39,10 +39,23 @@
 		<!-- Google tag (gtag.js) -->
 		<script async src="https://www.googletagmanager.com/gtag/js?id=G-5C74XEDW40"></script>
 		<script>
-			window.dataLayer = window.dataLayer || [];
-			function gtag(){dataLayer.push(arguments);}
-			gtag('js', new Date());
-			gtag('config', 'G-5C74XEDW40');
+			
+		  window.dataLayer = window.dataLayer || [];
+		  function gtag(){ dataLayer.push(arguments); }
+
+		  gtag('js', new Date());
+
+		  // Disable automatic page_view
+		  gtag('config', 'G-5C74XEDW40', {
+		    send_page_view: false
+		  });
+
+		  // Send your own page_view with a fixed title
+		  gtag('event', 'page_view', {
+		    page_title: "Michael Eskin's ABC Tools",
+		    page_location: location.origin + location.pathname
+		  });
+
 		</script>
 		
 		<script>
