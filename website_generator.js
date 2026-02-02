@@ -707,7 +707,20 @@ function generateAndSaveWebsiteFull() {
         return;
     }
 
-    var theJSON = BatchJSONExportForWebGenerator(theABC,false);
+    var theJSON;
+
+    if (gWebsiteTabSelector){
+
+        theJSON = BatchJSONExportForWebGenerator(theABC,false);
+
+    }
+    else{
+
+        // Allow Deflate if no tab selector
+        theJSON = BatchJSONExportForWebGenerator(theABC,true);
+
+    }
+
 
     hideTheSpinner();
 

@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3167_020226_0700";
+var gVersionNumber = "3168_020226_0800";
 
 var gMIDIInitStillWaiting = false;
 
@@ -27773,13 +27773,13 @@ function processShareLink() {
       // Show update message?
       if (gLocalStorageAvailable){
 
-        var updatePresented = localStorage.sawUpdate_2feb2026;
+        var updatePresented = localStorage.sawUpdate_2feb2026a;
 
         if (updatePresented != "true") {
 
           showWhatsNewScreen();
 
-          localStorage.sawUpdate_2feb2026 = true;
+          localStorage.sawUpdate_2feb2026a = true;
 
         }
 
@@ -55589,18 +55589,10 @@ function showWhatsNewScreen() {
   modal_msg += '<p style="margin:6px 0; font-size:12pt;">Added <strong>Tuning Tools</strong> to the <strong>☰</strong> dropdown menu.<br/><br/>Brings up a dialog where you can launch the Chromatic Tuner, Real Time Tuning Analysis (RTTA), Real Time Tuning / Volume Analysis (RTTVA), Chromatic Tuner / Tone Generator, and Audio Input Tester utilities.</p>';
   modal_msg += '</div>';
 
-  // Feature card
   modal_msg += '<div style="margin:10px 0 6px 0; padding:12px 12px; border-radius:12px;';
   modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);">';
   
-  modal_msg += '<p style="margin:6px 0; font-size:12pt;">Reinstated the <strong>SmartDraw Set List Builder</strong> on the Export All Tunes/Developers tab (Desktop browsers only).<br/><br/>Brings up a dialog where you can build tune sets and then export them in SmartDraw format. Each tune in the SmartDraw diagram has a hyperlink that when clicked, plays the tune.</p>';
-
-  modal_msg += '</div>';
-
-  modal_msg += '<div style="margin:10px 0 6px 0; padding:12px 12px; border-radius:12px;';
-  modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);">';
-  
-  modal_msg += '<p style="margin:6px 0; font-size:12pt;">Share links are now createdusing <b>Deflate</b> as the compression algorithm for the ABC instead of <b>LZW</b>.<br/><br/>Deflate creates share links that can be as much as 50% smaller than LZW.<br/><br/>This is particularly helpful for large tunes in PDF files intended to be opened by Adobe Acrobat which has a relatively small limit for hyperlink length.<br/><br/>The only exception is that LZW is still used for <b>Full Featured Websites</b> since the LZW code is included in the source code for the sites to instrument and tablature change on-the-fly.</p>';
+  modal_msg += '<p style="margin:6px 0; font-size:12pt;">Share links are now created using <b>Deflate</b> as the compression algorithm for the ABC instead of <b>LZW</b>.<br/><br/>Deflate creates share links that can be as much as 50% smaller than LZW.<br/><br/>This is particularly helpful for large tunes in PDF files intended to be opened by Adobe Acrobat which has a relatively small limit for hyperlink length.<br/><br/>The only exception is that LZW is still used for <b>Full Featured Websites</b> that include a dropdown tab/instrument selector since the LZW code is included in the source code for the sites to instrument and tablature change on-the-fly.</p>';
 
   modal_msg += '</div>';
 
@@ -62052,13 +62044,13 @@ function DoStartup() {
   // Show update message?
   if (gLocalStorageAvailable && (!isFromShare)){
 
-    var updatePresented = localStorage.sawUpdate_2feb2026;
+    var updatePresented = localStorage.sawUpdate_2feb2026a;
 
     if (updatePresented != "true") {
 
       showWhatsNewScreen();
 
-      localStorage.sawUpdate_2feb2026 = true;
+      localStorage.sawUpdate_2feb2026a = true;
 
     }
 
