@@ -798,6 +798,18 @@ margin-top:10px;
 	}
 }
 
+#abcplayer_updatebutton_d{
+height:42px;
+padding:12px;
+margin-top:10px;
+}
+
+@media (hover: hover) {
+	.abcplayer_updatebutton_d:hover{
+	background: palegreen;
+	}
+}
+
 #abcplayer_trainer{
 	height:42px;
 	margin-top: 9px;

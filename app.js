@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3168_020226_0800";
+var gVersionNumber = "3169_020226_1400";
 
 var gMIDIInitStillWaiting = false;
 
@@ -52140,12 +52140,14 @@ function ConfigureToolSettings() {
             '<button type="button" class="adv-tab-btn" data-tab="tab_tabs">Tabs &amp; Layout</button>' +
             '<button type="button" class="adv-tab-btn" data-tab="tab_playback">Playback</button>' +
             '<button type="button" class="adv-tab-btn" data-tab="tab_midi">MIDI Input</button>' +
+            '<button type="button" class="adv-tab-btn" data-tab="tab_update">Update</button>' +
           '</div>' +
           '<div class="adv-tab-panels configure-settings-tab-panels">' +
             '<div id="tab_editor" class="adv-tab-panel"><div id="tab_editor_fields"></div></div>' +
             '<div id="tab_tabs" class="adv-tab-panel"><div id="tab_tabs_fields"></div></div>' +
             '<div id="tab_playback" class="adv-tab-panel"><div id="tab_playback_fields"></div></div>' +
             '<div id="tab_midi" class="adv-tab-panel"><div id="tab_midi_fields"></div></div>' +
+            '<div id="tab_update" class="adv-tab-panel"><div id="tab_update_fields"></div></div>' +
           '</div>' +
         '</div>'
     });
@@ -52160,11 +52162,13 @@ function ConfigureToolSettings() {
             '<button type="button" class="adv-tab-btn" data-tab="tab_editor">Editor</button>' +
             '<button type="button" class="adv-tab-btn" data-tab="tab_tabs">Tabs &amp; Layout</button>' +
             '<button type="button" class="adv-tab-btn" data-tab="tab_playback">Playback</button>' +
+            '<button type="button" class="adv-tab-btn" data-tab="tab_update">Update</button>' +
           '</div>' +
           '<div class="adv-tab-panels configure-settings-tab-panels">' +
             '<div id="tab_editor" class="adv-tab-panel"><div id="tab_editor_fields"></div></div>' +
             '<div id="tab_tabs" class="adv-tab-panel"><div id="tab_tabs_fields"></div></div>' +
             '<div id="tab_playback" class="adv-tab-panel"><div id="tab_playback_fields"></div></div>' +
+            '<div id="tab_update" class="adv-tab-panel"><div id="tab_update_fields"></div></div>' +
           '</div>' +
         '</div>'
     });
@@ -52232,7 +52236,6 @@ function ConfigureToolSettings() {
 
   // =============== TAB: Tabs & Layout ===============
   form.push({ html: '<div id="tab_tabs" class="adv-tab-panel">' });
-
  
   form.push({
     name: "          Show instrument tablature button bar below ABC editor",
@@ -52379,6 +52382,15 @@ function ConfigureToolSettings() {
     form.push({ html: '</div>' }); // end tab_midi
 
   }
+
+  // =============== TAB: Update ===============
+  form.push({ html: '<div id="tab_update" class="adv-tab-panel">' });
+
+  form.push({
+    html: '<p style="text-align:center;font-size:12pt;margin-top:140px;">Click the button below to force an update to the latest version of the tool:</p><p style="text-align:center;"><input id="abcplayer_updatebutton_d" class="abcplayer_updatebutton_d btn btn-configuresettingsfromhelp" onclick="UpdateToLatestVersion();" type="button" value="Update to the Latest Version" title="Forces an update of the tool to the latest available version."></p>'
+  });
+
+  form.push({ html: '</div>' }); // end tab_update
 
   // Close tab panels + tabs wrapper
   form.push({ html: '</div></div>' });
@@ -52914,8 +52926,11 @@ function MoveConfigureSettingsFieldsToTabs() {
     moveByName("configure_allow_midi_input", "tab_midi_fields");
     moveByName("configure_midi_chromatic", "tab_midi_fields");
   }
-}
 
+  // ---- Update tab ----
+  moveButtonByValueContains("Update to the Latest Version", "tab_update_fields");
+
+}
 
 
 // 
