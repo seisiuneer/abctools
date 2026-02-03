@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3169_020226_1400";
+var gVersionNumber = "3170_020326_1000";
 
 var gMIDIInitStillWaiting = false;
 
@@ -52383,12 +52383,22 @@ function ConfigureToolSettings() {
 
   }
 
+  // For testing only
+  //gUpdateAvailable = true;
+
   // =============== TAB: Update ===============
   form.push({ html: '<div id="tab_update" class="adv-tab-panel">' });
+  if (gUpdateAvailable){
+    form.push({
+        html: '<p style="text-align:center;font-size:12pt;margin-top:120px;">Click the button below to force an update to the latest version of the tool:</p><p style="text-align:center;"><input id="abcplayer_updatebutton_d" class="abcplayer_updatebutton_d btn btn-configuresettingsfromhelp" onclick="UpdateToLatestVersion();" type="button" value="Update to the Latest Version" title="Forces an update of the tool to the latest available version."></p><p style="text-align:center;font-size:12pt;line-height:18pt;margin-top:24px;color:red;">Latest version: ' + gUpdateVersion + '<br/>Installed version: ' + gVersionNumber + '</p>'
+      });  
+  }
+  else{
+    form.push({
+        html: '<p style="text-align:center;font-size:12pt;margin-top:120px;">Click the button below to force an update to the latest version of the tool:</p><p style="text-align:center;"><input id="abcplayer_updatebutton_d" class="abcplayer_updatebutton_d btn btn-configuresettingsfromhelp" onclick="UpdateToLatestVersion();" type="button" value="Update to the Latest Version" title="Forces an update of the tool to the latest available version."></p><p style="text-align:center;font-size:12pt;line-height:18pt;margin-top:24px;">You have the latest version:<br/>Version: ' + gVersionNumber + '</p>'
+      });  
 
-  form.push({
-    html: '<p style="text-align:center;font-size:12pt;margin-top:140px;">Click the button below to force an update to the latest version of the tool:</p><p style="text-align:center;"><input id="abcplayer_updatebutton_d" class="abcplayer_updatebutton_d btn btn-configuresettingsfromhelp" onclick="UpdateToLatestVersion();" type="button" value="Update to the Latest Version" title="Forces an update of the tool to the latest available version."></p>'
-  });
+  }  
 
   form.push({ html: '</div>' }); // end tab_update
 
@@ -52407,7 +52417,7 @@ function ConfigureToolSettings() {
           '<input id="configure_developer_settings" class="btn btn-subdialog configure_developer_settings" onclick="AdvancedSettings()" type="button" value="Advanced Settings" title="Configure low level tool settings">' +
         '</p>' +
         '<p style="font-size:10pt;font-family:helvetica;line-height:14pt;color:red;position:absolute;left:20px;bottom:20px;margin:0px;cursor:pointer;" title="Click to update to the latest version of the tool" onclick="UpdateToLatestVersion();">' +
-          'Click here to update to the latest version of the tool<br/>' +
+          'Click here to update to the latest version<br/>' +
           'Latest version: ' + gUpdateVersion + '<br/>' +
           'Installed version: ' + gVersionNumber +
         '</p>'
