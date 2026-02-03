@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3170_020326_1000";
+var gVersionNumber = "3171_020326_1200";
 
 var gMIDIInitStillWaiting = false;
 
@@ -63225,7 +63225,7 @@ function PhraseBuilder(theTrainerTune,callback){
       html: '<p style="margin-top:24px;margin-bottom:24px;font-size:12pt;line-height:18pt;font-family:helvetica">Tunes with V: tags or other ABC tags at the start of lines outside the header will be skipped.</p>'
   }, 
   {
-    name: "Phrase length:",
+    name: "Phrase length in measures:",
     id: "phraseLength",
     type: "number",
     cssClass: "configure_phrase_length"
