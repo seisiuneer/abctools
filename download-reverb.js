@@ -181,6 +181,8 @@ function addReverbOffline(audioBuffer, callback) {
 //
 function DownloadWaveWithReverb() {
 
+	//console.log("DownloadWaveWithReverb");
+
 	// Keep track of export
 	sendGoogleAnalytics("export","DownloadWaveWithReverb");
 
@@ -202,7 +204,7 @@ function DownloadWaveWithReverb() {
 		elem.value = "Saving WAV File With Reverb";
 	}
 
-	document.getElementById("loading-bar-spinner").style.display = "block";
+	showTheSpinner("Saving WAV File With Reverb");
 
 	setTimeout(function(){
 
@@ -264,7 +266,7 @@ function DownloadWaveWithReverb() {
 								elem.value = "Save WAV File With Reverb";
 							}
 
-							document.getElementById("loading-bar-spinner").style.display = "none";
+							hideTheSpinner();
 
 							DownloadWave();
 
@@ -297,8 +299,7 @@ function DownloadWaveWithReverb() {
 							elem.value = "Save WAV File With Reverb";
 						}
 
-						document.getElementById("loading-bar-spinner").style.display = "none";
-
+						hideTheSpinner();
 
 					});
 				}, function(err) {
@@ -310,7 +311,7 @@ function DownloadWaveWithReverb() {
 						elem.value = "Save WAV File With Reverb";
 					}
 
-					document.getElementById("loading-bar-spinner").style.display = "none";
+					hideTheSpinner();
 
 				});
 
@@ -330,7 +331,7 @@ function DownloadWaveWithReverb() {
 				elem.value = "Save WAV File With Reverb";
 			}
 
-			document.getElementById("loading-bar-spinner").style.display = "none";
+			hideTheSpinner();
 
 			var thePrompt = "A problem occured when exporting the .wav file.";
 
@@ -462,9 +463,9 @@ function DownloadMP3WithReverb(callback,val){
 		if (elem){
 			elem.value = "Saving MP3 File With Reverb";
 		}
-	}
 
-	document.getElementById("loading-bar-spinner").style.display = "block";
+		showTheSpinner("Saving MP3 File With Reverb");
+	}
 
 	setTimeout(function(){
 
@@ -529,7 +530,7 @@ function DownloadMP3WithReverb(callback,val){
 								}
 							}
 
-							document.getElementById("loading-bar-spinner").style.display = "none";
+							hideTheSpinner();
 
 							gInDownloadMP3 = false;
 
@@ -581,7 +582,7 @@ function DownloadMP3WithReverb(callback,val){
 								}
 							}
 
-							document.getElementById("loading-bar-spinner").style.display = "none";
+							hideTheSpinner();
 
 							gInDownloadMP3 = false;
 
@@ -605,7 +606,7 @@ function DownloadMP3WithReverb(callback,val){
 						}
 					}	
 
-					document.getElementById("loading-bar-spinner").style.display = "none";
+					hideTheSpinner();
 
 					gInDownloadMP3 = false;
 
@@ -634,7 +635,7 @@ function DownloadMP3WithReverb(callback,val){
 				}
 			}
 
-			document.getElementById("loading-bar-spinner").style.display = "none";
+			hideTheSpinner();
 
 			gInDownloadMP3 = false;
 

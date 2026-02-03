@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3171_020326_1200";
+var gVersionNumber = "3172_020326_1230";
 
 var gMIDIInitStillWaiting = false;
 
@@ -35710,9 +35710,9 @@ function DownloadMP3(callback, val) {
       if (elem) {
         elem.value = "Encoding .MP3";
       }
-    }
 
-    showTheSpinner();
+      showTheSpinner("Encoding .MP3");
+    }
 
     // Give the UI a chance to update
     setTimeout(async function() {
@@ -35762,9 +35762,9 @@ function DownloadMP3(callback, val) {
             elem.value = "Save as .MP3";
           }
 
-        }
+          hideTheSpinner();
 
-        hideTheSpinner();
+        }
 
         gInDownloadMP3 = false;
 
@@ -35798,9 +35798,10 @@ function DownloadMP3(callback, val) {
         elem.value = "Save as .MP3";
       }
 
+      hideTheSpinner();
+
     }
 
-    hideTheSpinner();
 
     gInDownloadMP3 = false;
 
