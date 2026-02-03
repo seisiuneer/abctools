@@ -18605,10 +18605,10 @@ function CreateSynth(theABC) {
     gMIDIInitStillWaiting = true;
     setTimeout(function(){
 
-      if (gMIDIInitStillWaiting){
-        //console.log("showing spinner")
-        document.getElementById("loading-bar-spinner").style.display = "block";
-      }
+      // if (gMIDIInitStillWaiting){
+      //   //console.log("showing spinner")
+      //   document.getElementById("loading-bar-spinner").style.display = "block";
+      // }
 
     },600);
 
@@ -19113,7 +19113,7 @@ function CreateSynth(theABC) {
 
           // MAE 10 Jul 2024 - Hide the spinner
           gMIDIInitStillWaiting = false;
-          document.getElementById("loading-bar-spinner").style.display = "none";
+          //document.getElementById("loading-bar-spinner").style.display = "none";
           
           resolve(results);
         }
