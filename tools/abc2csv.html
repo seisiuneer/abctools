@@ -31,7 +31,7 @@
     <link rel="icon" type="image/png" sizes="96x96" href="https://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
     <link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
     <link rel="manifest" href="https://michaeleskin.com/abctools/img/abc-manifest.json">
-    <link rel="stylesheet" href="abc2csv.css?v=53"/>
+    <link rel="stylesheet" href="abc2csv.css?v=54"/>
     
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-VM0N9HL3MK"></script>
 
@@ -73,13 +73,15 @@
         <div class="tocpanel" style="text-align:left;background-color:#f5ffff;">
           <p>1)&nbsp;If you want the original source file name as first column of the CSV file, check the box labeled "Include filenames for each tune as the first CSV column" (default is checked).</p>
           <p>2)&nbsp;If you want ShareURLs to my <a href="https://michaeleskin.com/abctools/abctools.html" target="_blank">ABC Transcription Tools</a> for each tune as the last column of the CSV file, check the box labeled "Include ShareURLs for each tune as the last CSV column" (default is checked).</p>
-          <p>3)&nbsp;If you want to inject a copy of any ABC file header font, spacing, and *: annotations found in each file into each tune found in the file just below the tune's X: tag, check the box labeled "Inject ABC file header font, spacing, and *: annotations below the X: tag of each tune" (default is unchecked).</p>
+          <p>3)&nbsp;There are two compression schemes available for the tunes in the ShareURLs: LZW or Deflate.</p>
+          <p>Deflate allows for ShareURLs that are as much as 50% smaller than LZW. Check the box labeled "Use Deflate as the ShareURL compression scheme (unchecked uses LZW)" to choose Deflate (default is checked).</p>
+          <p>4)&nbsp;If you want to inject a copy of any ABC file header font, spacing, and *: annotations found in each file into each tune found in the file just below the tune's X: tag, check the box labeled "Inject ABC file header font, spacing, and *: annotations below the X: tag of each tune" (default is unchecked).</p>
           <p>If this box is checked, any *: ABC annotations found in the ABC file header will be aggregated in the tag extraction results for the tunes in the file.</p>
-          <p>4)&nbsp;Click "Open One or Multiple .ABC Files for Tag Extraction and Save to a CSV File" to open one or multiple .abc or .txt files containing ABC tunes.</p>
-          <p>5)&nbsp;Select the ABC files you want to extract the tags from.</p>
-          <p>6)&nbsp;Click "Open".</p>
-          <p>7)&nbsp;When requested, enter a filename for the exported CSV file.</p>
-          <p>8)&nbsp;Click "Save".</p>
+          <p>5)&nbsp;Click "Open One or Multiple .ABC Files for Tag Extraction and Save to a CSV File" to open one or multiple .abc or .txt files containing ABC tunes.</p>
+          <p>6)&nbsp;Select the ABC files you want to extract the tags from.</p>
+          <p>7)&nbsp;Click "Open".</p>
+          <p>8)&nbsp;When requested, enter a filename for the exported CSV file.</p>
+          <p>9)&nbsp;Click "Save".</p>
           <p>The complete set of possible ABC tag columns in the saved CSV are:</p>
           <p>Filename,X:,T:,Subtitles,C:,O:,A:,R:,L:,M:,Q:,K:,D:,S:,Z:,N:,H:,B:,G:,r:,F:,ShareURL</p>
         </div>
@@ -87,6 +89,7 @@
         <div style="text-align:left;">
           <p><input type="checkbox" id="includeFilenames" checked>&nbsp;&nbsp;Include filenames for each tune as the first CSV column</p>
           <p><input type="checkbox" id="includeShareURLs" checked>&nbsp;&nbsp;Include ShareURLs for each tune as the last CSV column</p>
+          <p><input type="checkbox" id="useDeflate" checked>&nbsp;&nbsp;Use Deflate as the ShareURL compression scheme (unchecked uses LZW)</p>
           <p><input type="checkbox" id="injectABCFileHeader">&nbsp;&nbsp;Inject ABC file header font, spacing, and *: annotations below the X: tag of each tune</p>
         </div>
        
@@ -167,9 +170,9 @@
     
   </body>
   
-  <script type="text/javascript" src="pako.min.js?v=53"></script>
-  <script src="abc2csv.js?v=53" type="text/javascript"></script>
-  <script type="text/javascript" src="daypilot-modal.min-3.10.1.js?v=53"></script>
+  <script type="text/javascript" src="pako.min.js?v=54"></script>
+  <script type="text/javascript" src="abc2csv.js?v=54" ></script>
+  <script type="text/javascript" src="daypilot-modal.min-3.10.1.js?v=54"></script>
 
   
 </html>

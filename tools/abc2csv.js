@@ -10,6 +10,7 @@
 var gIncludeShareURLs = true;
 var gIncludeFilenames = true;
 var gInjectABCFileHeader = false;
+var gUseDeflate = true;
 var gSaveCSVFilename = "";
 var gSaveABCFilename = "";
 var gTotalTunes = 0;
@@ -71,10 +72,27 @@ function getAbcInLZW(ABCtoEncode, title) {
 
     var url = "https://michaeleskin.com/abctools/abctools.html?lzw=" + abcInLZW + "&format=noten&ssp=10&name=" + titleURL + "&play=1";
 
-    // If just encoding some ABC, return it now
     return url;
 
 }
+
+function getAbcInDeflate(ABCtoEncode, title) {
+
+    var encoder = new TextEncoder();
+    var utf8Bytes = encoder.encode(ABCtoEncode);
+    var deflated = pako.deflate(utf8Bytes, { level: 6 });
+    var abcInDeflate = def_bytesToBase64URL(deflated);
+
+    var titleURL = title.replaceAll("&", "");
+    titleURL = titleURL.replaceAll(" ", "_");
+    titleURL = titleURL.replaceAll("#", "^");
+
+    var url = "https://michaeleskin.com/abctools/abctools.html?def=" + abcInDeflate + "&format=noten&ssp=10&name=" + titleURL + "&play=1";
+
+    return url;
+
+}
+
 
 function extractLZWParameter(url) {
    // Use a regular expression to find the part starting with &lzw= followed by any characters until the next &
@@ -607,7 +625,12 @@ function extractTags(theTune, fileName) {
             tuneName = "No Name";
         }
 
-        shareURL = getAbcInLZW(theTune, tuneName);
+        if (gUseDeflate){
+            shareURL = getAbcInDeflate(theTune, tuneName);
+        }
+        else{
+            shareURL = getAbcInLZW(theTune, tuneName);
+        }
 
         shareURL = escapeForCSV(shareURL);
 
@@ -1228,6 +1251,7 @@ function DoStartup() {
         gIncludeFilenames = document.getElementById("includeFilenames").checked;
         gIncludeShareURLs = document.getElementById("includeShareURLs").checked;
         gInjectABCFileHeader = document.getElementById("injectABCFileHeader").checked;
+        gUseDeflate = document.getElementById("useDeflate").checked;
 
         function readABCFiles() {
 
