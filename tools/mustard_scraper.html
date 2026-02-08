@@ -1,0 +1,616 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <link rel="profile" href="http://gmpg.org/xfn/11">
+  <title>thesession Tune Settings Scraper</title>
+  <link rel='dns-prefetch' href='//fonts.googleapis.com' />
+  <link rel='dns-prefetch' href='//s.w.org' />
+  <link rel='preconnect' href='https://secureservercdn.net' crossorigin />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="thesession Tune Settings Scraper" />
+  <meta property="og:description" content="thesession Tune Settings Scraper" />
+  <meta property="og:url" content="https://michaeleskin.com/tools/mustard_scraper.html" />
+  <meta property="og:site_name" content="thesession Tune Settings Scraper" />
+  <meta property="og:image" content="https://michaeleskin.com/abctools/img/abc-icon.png"/>
+  <meta name="msapplication-TileColor" content="#ffffff">
+  <meta name="msapplication-TileImage" content="https://michaeleskin.com/abctools/img/abc-ms-icon-144x144.png">
+  <link rel="apple-touch-icon" sizes="57x57" href="https://michaeleskin.com/abctools/img/abc-apple-icon-57x57.png">
+  <link rel="apple-touch-icon" sizes="60x60" href="https://michaeleskin.com/abctools/img/abc-apple-icon-60x60.png">
+  <link rel="apple-touch-icon" sizes="72x72" href="https://michaeleskin.com/abctools/img/abc-apple-icon-72x72.png">
+  <link rel="apple-touch-icon" sizes="76x76" href="https://michaeleskin.com/abctools/img/abc-apple-icon-76x76.png">
+  <link rel="apple-touch-icon" sizes="114x114" href="https://michaeleskin.com/abctools/img/abc-apple-icon-114x114.png">
+  <link rel="apple-touch-icon" sizes="120x120" href="https://michaeleskin.com/abctools/img/abc-apple-icon-120x120.png">
+  <link rel="apple-touch-icon" sizes="144x144" href="https://michaeleskin.com/abctools/img/abc-apple-icon-144x144.png">
+  <link rel="apple-touch-icon" sizes="152x152" href="https://michaeleskin.com/abctools/img/abc-apple-icon-152x152.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="https://michaeleskin.com/abctools/img/abc-apple-icon-180x180.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="https://michaeleskin.com/abctools/img/abc-android-icon-192x192.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="https://michaeleskin.com/abctools/img/abc-favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="96x96" href="https://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
+  <link rel="manifest" href="https://michaeleskin.com/abctools/img/abc-manifest.json">
+
+  <title>thesession Tune Settings Scraper</title>
+
+  <style>
+    :root {
+      color-scheme: light dark;
+
+      /* Responsive typography (bigger overall, still mobile-safe) */
+      --fs-base: clamp(15px, 1.05vw + 12px, 17px);
+      --fs-small: clamp(13px, 0.7vw + 11px, 14.5px);
+      --fs-h2: clamp(20px, 1.2vw + 16px, 24px);
+    }
+
+    html, body { height: 100%; margin: 0; }
+
+    body {
+      font-family: system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+      padding: 10px;              /* slightly cleaner base */
+      box-sizing: border-box;
+      overflow: hidden;
+      font-size: var(--fs-base);
+      line-height: 1.35;
+    }
+
+    .app {
+      height: calc(100vh - 28px);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      overflow: hidden;
+      padding: 14px;       
+      box-sizing: border-box;
+    }
+
+    h2 {
+      margin: 0;
+      font-size: var(--fs-h2);
+      margin-bottom: 8px;
+    }
+
+    p { margin: 0; }
+
+    .row {
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+    }
+
+    /* Let controls inherit the base size */
+    input, textarea, button { font-size: 1em; }
+
+    input[type="text"] {
+      padding: 8px 10px;
+      width: min(360px, 100%);
+    }
+
+    button {
+      padding: 8px 12px;
+      cursor: pointer;
+    }
+
+    .muted { opacity: 0.75; }
+
+    .small { font-size: var(--fs-small); }
+
+    .card {
+      border: 1px solid rgba(127,127,127,.35);
+      border-radius: 12px;
+      padding: 12px;
+      box-sizing: border-box;
+      overflow: hidden;
+    }
+
+    .status {
+      white-space: pre-wrap;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      overflow: auto;
+      max-height: 120px;
+
+      /* Slightly roomier + readable monospace */
+      font-size: 0.95em;
+      line-height: 1.45;
+    }
+
+    /* Main two-column layout that always fits the screen */
+    .main {
+      flex: 1;
+      display: flex;
+      gap: 12px;
+      overflow: hidden;
+      min-height: 0;
+    }
+
+    .left, .right {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      overflow: hidden;
+      min-height: 0;
+    }
+
+    textarea {
+      width: 100%;
+      padding: 10px;
+      border-radius: 10px;
+      box-sizing: border-box;
+      resize: none;
+      overflow: auto;
+      min-height: 0;
+
+      /* Slightly larger + nicer leading */
+      font-size: 0.98em;
+      line-height: 1.35;
+    }
+
+    #out { flex: 1; }
+
+    .rightHeader {
+      display:flex;
+      gap:10px;
+      align-items:center;
+      flex-wrap:wrap;
+      margin-bottom:8px;
+    }
+
+    .spacer { flex: 1; }
+
+    code {
+      background: rgba(127,127,127,.15);
+      padding: 2px 4px;
+      border-radius: 4px;
+      font-size: 0.95em; /* keeps inline code from looking tiny */
+    }
+
+    /* For modal dialog prompt replacement */
+    .modal_flat_background { background-color: #000; opacity: 0.4; }
+    .modal_flat_main { border: 1px solid #333; box-shadow: 0px 0px 15px -2px rgba(0,0,0,0.75);  }
+
+    .modal_flat_main, .modal_flat_main input, .modal_flat_main button { font-size: 16px; }
+    .modal_flat_main input, .modal_flat_main button { padding: 5px; box-sizing: border-box; }
+    .modal_flat_inner { padding: 30px; background: #fff; color: #000; }
+    .modal_flat_content { font-family:"Helvetica"; margin: 20px 0px;}
+    .modal_flat_input { margin: 20px 0px;}
+    .modal_flat_buttons { text-align:center;margin-top: 40px; }
+    .modal_flat_main button { background-color: #ccc; color: #000; padding: 10px 20px; border: 0px; cursor: pointer; outline: none; width: 100px; }
+    .modal_flat_cancel { margin-left: 5px; }
+  </style>
+</head>
+
+<body>
+  <div class="app">
+    <div>
+      <h2>thesession Tune Settings Scraper</h2>
+      <p class="muted small" style="margin-top:6px">
+        Paste a thesession.org tune URL like <code>https://thesession.org/tunes/1</code>:
+      </p>
+    </div>
+
+    <div class="main">
+      <!-- LEFT COLUMN -->
+      <div class="left">
+        <div class="card">
+          <div class="row">
+            <label for="tuneUrl"><strong>thesession Tune URL</strong></label>
+            <input id="tuneUrl" type="text" value="https://thesession.org/tunes/1" />
+            <button id="btnFetch">Fetch All Tune Settings</button>
+          </div>
+
+          <div class="row" style="margin-top:10px">
+            <button id="btnCopy" disabled>Copy ABC</button>
+            <button id="btnDownload" disabled>Download .abc</button>
+            <button id="btnOpenInTools" disabled>Open All Settings in the ABC Transcription Tools</button>
+            <div class="spacer"></div>
+            <div class="muted small" id="meta"></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <strong>Status</strong>
+          <div id="status" class="status muted" style="margin-top:8px">Ready.</div>
+        </div>
+      </div>
+
+      <!-- RIGHT COLUMN -->
+      <div class="right">
+        <div class="card" style="flex:1; display:flex; flex-direction:column; min-height:0;">
+          <div class="rightHeader">
+            <strong>Tune Settings ABC</strong>
+          </div>
+          <textarea id="out" spellcheck="false"></textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+/* ============================================================
+   Core function requested (with ! -> newline + per-line trim)
+   - K: from setting.key
+   - M: defaults by tune type if missing in ABC
+   ============================================================ */
+
+async function fetchAllTuneVersionsAsABC(tuneUrl) {
+  const tuneId = extractTuneIdFromSessionUrl(tuneUrl);
+  if (!tuneId) throw new Error("Could not extract tune id from: " + tuneUrl);
+
+  const apiUrl = `https://thesession.org/tunes/${encodeURIComponent(tuneId)}?format=json`;
+  const res = await fetch(apiUrl, { method: "GET", mode: "cors", cache: "no-store" });
+  if (!res.ok) throw new Error(`The Session fetch failed: ${res.status} ${apiUrl}`);
+
+  const data = await res.json();
+
+  const tuneTitle = (data && data.name) ? String(data.name) : `Tune ${tuneId}`;
+  const tuneType  = (data && data.type) ? normalizeTuneType(String(data.type)) : "";
+
+  const settings = (data && Array.isArray(data.settings)) ? data.settings : [];
+  if (!settings.length) throw new Error("No settings found for tune: " + tuneUrl);
+
+  const built = [];
+
+  for (let i = 0; i < settings.length; i++) {
+    const setting = settings[i] || {};
+    const rawAbc = typeof setting.abc === "string" ? setting.abc : "";
+    if (!rawAbc.trim()) continue;
+
+    const xNum = i + 1;
+    const tLine = tuneTitle + (settings.length > 1 ? ` (${xNum} of ${settings.length})` : "");
+
+    // Prefer tune type; else try to use R: from the setting
+    const rLine = tuneType || (extractHeader(rawAbc, "R") || "").trim() || "";
+
+    // M/L from ABC if present; otherwise defaults
+    const mFromAbc = (extractHeader(rawAbc, "M") || "").trim();
+    const mLine = mFromAbc || defaultMForRhythm(rLine) || "4/4";
+
+    const lLine = (extractHeader(rawAbc, "L") || "").trim() || "1/8";
+
+    // Q from ABC if present; otherwise default by rhythm
+    const qExisting = (extractHeader(rawAbc, "Q") || "").trim();
+    const qVal = qExisting ? qExisting.replace(/^Q:\s*/i, "") : defaultQForRhythm(rLine);
+
+    // K from JSON setting.key
+    const kRaw = (typeof setting.key === "string") ? setting.key : "";
+    const kLine = normalizeKValue(kRaw) || "Dmaj";
+
+    // Body: extract, then replace ! with newlines, then trim each line
+    const body = extractBody(rawAbc)
+      .replace(/!/g, "\n")
+      .split(/\r?\n/)
+      .map(line => line.trim())
+      .join("\n");
+
+    const header =
+      `X:${xNum}\n` +
+      `T:${tLine}\n` +
+      `R:${rLine || "reel"}\n` +
+      `M:${mLine}\n` +
+      `L:${lLine}\n` +
+      `Q:${qVal}\n` +
+      `K:${kLine}\n` +
+      `S:${tuneUrl}\n`;
+
+    const finalAbc = header + body.trimEnd() + "\n";
+    built.push(finalAbc);
+  }
+
+  if (!built.length) throw new Error("Settings had no ABC text.");
+
+  return {
+    combined: built.join("\n"),
+    tuneTitle,
+    tuneType,
+    tuneId,
+    settingsCount: built.length
+  };
+}
+
+/* ============================================================
+   Helpers (ABC parsing + defaults)
+   ============================================================ */
+
+function extractTuneIdFromSessionUrl(s) {
+  try {
+    const u = new URL(String(s));
+    const m = u.pathname.match(/^\/tunes\/(\d+)\b/);
+    return m ? m[1] : null;
+  } catch {
+    const m = String(s).match(/\/tunes\/(\d+)\b/);
+    return m ? m[1] : null;
+  }
+}
+
+function normalizeTuneType(type) {
+  return String(type || "").trim().toLowerCase();
+}
+
+function canonicalRhythm(r) {
+  return String(r || "")
+    .trim()
+    .toLowerCase()
+    .replace(/\s+/g, " ")
+    .replace(/\u2011|\u2012|\u2013|\u2014/g, "-");
+}
+
+function defaultMForRhythm(r) {
+  const rr = canonicalRhythm(r);
+
+  if (rr === "reel" || rr === "hornpipe" || rr === "barndance" || rr === "barn dance" ||
+      rr === "strathspey" || rr === "march") {
+    return "4/4";
+  }
+  if (rr === "jig") return "6/8";
+  if (rr === "slip jig" || rr === "slipjig") return "9/8";
+  if (rr === "hop jig" || rr === "hopjig") return "9/8";
+  if (rr === "slide") return "12/8";
+  if (rr === "waltz" || rr === "mazurka") return "3/4";
+  if (rr === "polka") return "2/4";
+  if (rr === "three-two" || rr === "three two" || rr === "3-2" || rr === "3/2") return "3/2";
+
+  return "";
+}
+
+function defaultQForRhythm(r) {
+  const rr = canonicalRhythm(r);
+
+  if (rr === "jig" || rr === "slip jig" || rr === "slipjig" || rr === "slide" || rr === "hop jig" || rr === "hopjig") {
+    return "3/8=120";
+  }
+  if (rr === "reel") {
+    return "1/2=90";
+  }
+  if (rr === "hornpipe" || rr === "march"  || rr === "barndance" || rr === "barn dance") {
+    return "1/2=80";
+  }
+  if (rr === "strathspey") {
+    return "1/2=70";
+  }
+  if (rr === "polka") {
+    return "1/4=120";
+  }
+  if (rr === "waltz" || rr === "mazurka") {
+    return "1/4=120";
+  }
+  if (rr === "three-two" || rr === "three two" || rr === "3-2" || rr === "3/2") {
+    return "1/2=80";
+  }
+  return "1/2=90";
+}
+
+function extractHeader(abcText, tagLetter) {
+  const re = new RegExp(`^\\s*${tagLetter}\\s*:\\s*(.*)$`, "mi");
+  const m = String(abcText).match(re);
+  return m ? m[1] : "";
+}
+
+function extractBody(abcText) {
+  const lines = String(abcText).replace(/^\uFEFF/, "").split(/\r?\n/);
+
+  let i = 0;
+  while (i < lines.length) {
+    const line = lines[i];
+    if (/^\s*$/.test(line) || /^\s*%/.test(line)) i++;
+    else break;
+  }
+
+  while (i < lines.length) {
+    const line = lines[i];
+    if (
+      /^\s*[A-Za-z][A-Za-z0-9]*\s*:/.test(line) ||
+      /^\s*\+:\s*/.test(line) ||
+      /^\s*%%/.test(line) ||
+      /^\s*%/.test(line) ||
+      /^\s*$/.test(line)
+    ) {
+      i++;
+      continue;
+    }
+    break;
+  }
+
+  const bodyLines = lines.slice(i);
+  if (!bodyLines.join("\n").trim()) return String(abcText);
+  return bodyLines.join("\n").trimStart() + "\n";
+}
+
+/* ============================================================
+   K: tag normalization (input like "Eminor" -> "Emin")
+   ============================================================ */
+
+function normalizeKValue(k) {
+  k = String(k || "").trim();
+  if (!k) return "";
+
+  const tonicMatch = k.match(/^([A-Ga-g])\s*([#b]?)(.*)$/);
+  if (!tonicMatch) return k;
+
+  const tonic = tonicMatch[1].toUpperCase() + (tonicMatch[2] || "");
+  let rest = (tonicMatch[3] || "").trim().toLowerCase();
+
+  if (!rest) return tonic + "maj";
+  rest = rest.replace(/^[:\s]+/, "");
+
+  const shortToken = rest.match(/^(maj|min|dor|mix|phr|lyd|loc)\b/);
+  if (shortToken) return tonic + shortToken[1];
+
+  const mode = normalizeMode(rest);
+  return tonic + (mode || "maj");
+}
+
+function normalizeMode(mode) {
+  mode = String(mode || "").trim().toLowerCase();
+  if (!mode) return "";
+
+  if (mode === "major" || mode === "maj" || mode === "ionian") return "maj";
+  if (mode === "minor" || mode === "min" || mode === "aeolian") return "min";
+  if (mode === "dorian" || mode === "dor") return "dor";
+  if (mode === "mixolydian" || mode === "mix") return "mix";
+  if (mode === "phrygian" || mode === "phr") return "phr";
+  if (mode === "lydian" || mode === "lyd") return "lyd";
+  if (mode === "locrian" || mode === "loc") return "loc";
+
+  if (/^(maj|min|dor|mix|phr|lyd|loc)$/.test(mode)) return mode;
+
+  if (mode.includes("minor")) return "min";
+  if (mode.includes("major")) return "maj";
+  if (mode.includes("dorian")) return "dor";
+  if (mode.includes("mixolyd")) return "mix";
+  if (mode.includes("phryg")) return "phr";
+  if (mode.includes("lyd")) return "lyd";
+  if (mode.includes("locr")) return "loc";
+
+  return "";
+}
+
+/* ============================================================
+   UI wiring
+   ============================================================ */
+
+const $ = (id) => document.getElementById(id);
+const statusEl = $("status");
+const outEl = $("out");
+const metaEl = $("meta");
+
+let lastResult = null;
+
+function setStatus(msg) {
+  statusEl.textContent = msg;
+}
+
+function safeFilename(s) {
+  return String(s || "tune")
+    .replace(/[^\w\-]+/g, "_")
+    .replace(/_+/g, "_")
+    .replace(/^_+|_+$/g, "")
+    .slice(0, 80) || "tune";
+}
+
+function enableActions(on) {
+  $("btnCopy").disabled = !on;
+  $("btnDownload").disabled = !on;
+  $("btnOpenInTools").disabled = !on;
+}
+
+$("btnFetch").addEventListener("click", async () => {
+  const url = $("tuneUrl").value.trim();
+  enableActions(false);
+  outEl.value = "";
+  metaEl.textContent = "";
+  lastResult = null;
+
+  setStatus("Fetching all tune settings and building ABC…");
+  try {
+    const result = await fetchAllTuneVersionsAsABC(url);
+    lastResult = result;
+
+    outEl.value = result.combined;
+    metaEl.textContent = `${result.tuneTitle} — settings: ${result.settingsCount}`;
+
+    enableActions(true);
+
+    setStatus(
+      "Success.\n" +
+      `- Title: ${result.tuneTitle}\n` +
+      `- Type: ${result.tuneType || "(varies / not provided)"}\n` +
+      `- Settings built: ${result.settingsCount}\n` +
+      "You can now copy/download the ABC settings or open them in the ABC Transcription Tools."
+    );
+  } catch (e) {
+    console.error(e);
+    setStatus("Error: " + (e && e.message ? e.message : String(e)));
+  }
+});
+
+$("btnCopy").addEventListener("click", async () => {
+  try {
+    await navigator.clipboard.writeText(outEl.value);
+    setStatus("Copied ABC to clipboard.");
+  } catch (e) {
+    setStatus("Copy failed (browser permission). You can still select-all and copy manually.");
+  }
+});
+
+$("btnDownload").addEventListener("click", () => {
+  if (!lastResult) return;
+  const blob = new Blob([outEl.value], { type: "text/plain;charset=utf-8" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = `${safeFilename(lastResult.tuneTitle)}_thesession_${lastResult.tuneId}.abc`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(function(){
+    URL.revokeObjectURL(a.href);
+  },1000);
+});
+
+$("btnOpenInTools").addEventListener("click", () => {
+  try {
+    if (!lastResult) return;
+    openInAbcTools(outEl.value);
+    setStatus("ABC opened in the ABC Transcription Tools.");
+  } catch (e) {
+    console.error(e);
+    setStatus("Open in ABC Transcription Tools failed: " + (e && e.message ? e.message : String(e)));
+  }
+});
+
+/* ============================================================
+   Base64/Base64URL helpers for Deflate mode
+   ============================================================ */
+
+function def_bytesToBase64(bytes) {
+  var binary = "";
+  var len = bytes.length;
+  for (var i = 0; i < len; i++) binary += String.fromCharCode(bytes[i]);
+  return btoa(binary);
+}
+
+function def_bytesToBase64URL(bytes) {
+  return def_bytesToBase64(bytes)
+    .replace(/\+/g, "-")
+    .replace(/\//g, "_")
+    .replace(/=+$/, "");
+}
+
+/* ============================================================
+   Open the tunes in the ABC Transcription Tools
+   ============================================================ */
+
+function openInAbcTools(theABC) {
+  var m = String(theABC).match(/^\s*T\s*:\s*(.+)\s*$/m);
+  var tuneTitle = (m && m[1]) ? m[1].trim() : "tune";
+  tuneTitle = encodeURIComponent(tuneTitle.replace(/\s+/g, "_"));
+
+  var encoder = new TextEncoder();
+  var utf8Bytes = encoder.encode(theABC);
+  var deflated = pako.deflate(utf8Bytes, { level: 6 });
+  var abc_compressed = def_bytesToBase64URL(deflated);
+
+  var url =
+    "https://michaeleskin.com/abctools/abctools.html?def=" + abc_compressed +
+    "&format=noten&ssp=0" +
+    "&name=" + tuneTitle +
+    "&editor=1";
+
+  if (url.length < 8100) {
+    window.open(url, "_blank", "noopener,noreferrer");
+  } else {
+    DayPilot.Modal.alert(
+      '<p style="text-align:center;font-family:helvetica;font-size:12pt;">Share URL is too long to open in ABC Transcription Tools.</p>',
+      { theme: "modal_flat", top: 230, scrollWithPage: false }
+    );
+  }
+}
+</script>
+
+<script type="text/javascript" src="pako.min.js?v=1"></script>
+<script type="text/javascript" src="daypilot-modal.min-3.10.1.js?v=1"></script>
+
+</body>
+</html>
