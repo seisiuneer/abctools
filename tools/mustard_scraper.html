@@ -544,6 +544,7 @@ const $ = (id) => document.getElementById(id);
 const statusEl = $("status");
 const outEl = $("out");
 const metaEl = $("meta");
+const tuneUrlInput = $("tuneUrl");
 
 let lastResult = null;
 
@@ -676,10 +677,18 @@ function openInAbcTools(theABC) {
     );
   }
 }
+
+tuneUrlInput.addEventListener("keydown", (e) => {
+  if (e.key === "Enter") {
+    e.preventDefault();          // prevent form submission / hints
+    $("btnFetch").click();       // reuse existing logic
+  }
+});
+
 </script>
 
-<script type="text/javascript" src="pako.min.js?v=2"></script>
-<script type="text/javascript" src="daypilot-modal.min-3.10.1.js?v=2"></script>
+<script type="text/javascript" src="pako.min.js?v=4"></script>
+<script type="text/javascript" src="daypilot-modal.min-3.10.1.js?v=4"></script>
 
 </body>
 </html>
