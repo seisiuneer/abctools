@@ -34,6 +34,7 @@
   <title>thesession Tune Settings Scraper</title>
 
   <style>
+
     :root {
       color-scheme: light dark;
 
@@ -43,106 +44,122 @@
       --fs-h2: clamp(20px, 1.2vw + 16px, 24px);
     }
 
-    html, body { height: 100%; margin: 0; }
+    html, body {
+      height: 100%;
+      margin: 0;
+    }
 
     body {
       font-family: system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
-      padding: 10px;              /* slightly cleaner base */
+      padding: 24px;                 /* more space around everything */
       box-sizing: border-box;
-      overflow: hidden;
+      overflow: hidden;              /* keep everything within viewport */
       font-size: var(--fs-base);
       line-height: 1.35;
     }
 
+    /* App layout */
     .app {
-      height: calc(100vh - 28px);
+      height: calc(100vh - 48px);    /* matches body padding */
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 14px;
       overflow: hidden;
-      padding: 14px;       
-      box-sizing: border-box;
     }
 
     h2 {
-      margin: 0;
+      margin: 0 0 8px 0;
       font-size: var(--fs-h2);
-      margin-bottom: 8px;
     }
 
     p { margin: 0; }
 
     .row {
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-      align-items:center;
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: center;
     }
 
-    /* Let controls inherit the base size */
-    input, textarea, button { font-size: 1em; }
+    input, textarea, button {
+      font-size: 1em;
+    }
 
     input[type="text"] {
-      padding: 8px 10px;
+      padding: 9px 12px;
       width: min(360px, 100%);
     }
 
     button {
-      padding: 8px 12px;
+      padding: 9px 14px;
       cursor: pointer;
     }
 
     .muted { opacity: 0.75; }
-
     .small { font-size: var(--fs-small); }
 
+    /* Cards */
     .card {
       border: 1px solid rgba(127,127,127,.35);
       border-radius: 12px;
-      padding: 12px;
+      padding: 14px;
       box-sizing: border-box;
       overflow: hidden;
     }
 
+    /* Status box */
     .status {
       white-space: pre-wrap;
       font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
       overflow: auto;
-      max-height: 120px;
-
-      /* Slightly roomier + readable monospace */
+      max-height: 140px;
       font-size: 0.95em;
       line-height: 1.45;
     }
 
-    /* Main two-column layout that always fits the screen */
+    /* Main two-column layout */
     .main {
       flex: 1;
       display: flex;
-      gap: 12px;
+      gap: 14px;
       overflow: hidden;
       min-height: 0;
     }
 
-    .left, .right {
+    .left,
+    .right {
       flex: 1;
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 14px;
       overflow: hidden;
       min-height: 0;
     }
 
+    /* === TEXTAREA SCROLL FIX === */
+    /* Rounded wrapper clips scrollbar cleanly */
+    .taWrap {
+      flex: 1;
+      min-height: 0;
+      border-radius: 10px;
+      overflow: hidden;              /* prevents scrollbar corner bleed */
+      border: 1px solid rgba(127,127,127,.35);
+      background: Canvas;
+    }
+
+    /* Actual textarea */
     textarea {
       width: 100%;
-      padding: 10px;
-      border-radius: 10px;
+      height: 100%;
+      padding: 12px;
+      border: 0;
+      border-radius: 0;
+      background: transparent;
       box-sizing: border-box;
       resize: none;
       overflow: auto;
       min-height: 0;
 
-      /* Slightly larger + nicer leading */
       font-size: 0.98em;
       line-height: 1.35;
     }
@@ -150,35 +167,77 @@
     #out { flex: 1; }
 
     .rightHeader {
-      display:flex;
-      gap:10px;
-      align-items:center;
-      flex-wrap:wrap;
-      margin-bottom:8px;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-bottom: 8px;
     }
 
     .spacer { flex: 1; }
 
     code {
       background: rgba(127,127,127,.15);
-      padding: 2px 4px;
+      padding: 2px 5px;
       border-radius: 4px;
-      font-size: 0.95em; /* keeps inline code from looking tiny */
+      font-size: 0.95em;
     }
 
-    /* For modal dialog prompt replacement */
-    .modal_flat_background { background-color: #000; opacity: 0.4; }
-    .modal_flat_main { border: 1px solid #333; box-shadow: 0px 0px 15px -2px rgba(0,0,0,0.75);  }
+    /* DayPilot modal styling */
+    .modal_flat_background {
+      background-color: #000;
+      opacity: 0.4;
+    }
 
-    .modal_flat_main, .modal_flat_main input, .modal_flat_main button { font-size: 16px; }
-    .modal_flat_main input, .modal_flat_main button { padding: 5px; box-sizing: border-box; }
-    .modal_flat_inner { padding: 30px; background: #fff; color: #000; }
-    .modal_flat_content { font-family:"Helvetica"; margin: 20px 0px;}
-    .modal_flat_input { margin: 20px 0px;}
-    .modal_flat_buttons { text-align:center;margin-top: 40px; }
-    .modal_flat_main button { background-color: #ccc; color: #000; padding: 10px 20px; border: 0px; cursor: pointer; outline: none; width: 100px; }
-    .modal_flat_cancel { margin-left: 5px; }
-  </style>
+    .modal_flat_main {
+      border: 1px solid #333;
+      box-shadow: 0 0 15px -2px rgba(0,0,0,0.75);
+    }
+
+    .modal_flat_main,
+    .modal_flat_main input,
+    .modal_flat_main button {
+      font-size: 16px;
+    }
+
+    .modal_flat_main input,
+    .modal_flat_main button {
+      padding: 6px;
+      box-sizing: border-box;
+    }
+
+    .modal_flat_inner {
+      padding: 30px;
+      background: #fff;
+      color: #000;
+    }
+
+    .modal_flat_content {
+      font-family: Helvetica, Arial, sans-serif;
+      margin: 20px 0;
+    }
+
+    .modal_flat_input { margin: 20px 0; }
+
+    .modal_flat_buttons {
+      text-align: center;
+      margin-top: 40px;
+    }
+
+    .modal_flat_main button {
+      background-color: #ccc;
+      color: #000;
+      padding: 10px 20px;
+      border: 0;
+      cursor: pointer;
+      outline: none;
+      width: 100px;
+    }
+
+    .modal_flat_cancel { margin-left: 6px; }
+
+</style>
+
 </head>
 
 <body>
@@ -221,7 +280,9 @@
           <div class="rightHeader">
             <strong>Tune Settings ABC</strong>
           </div>
-          <textarea id="out" spellcheck="false"></textarea>
+          <div class="taWrap">
+            <textarea id="out" spellcheck="false"></textarea>
+          </div>
         </div>
       </div>
     </div>
