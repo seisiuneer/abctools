@@ -112,7 +112,7 @@
       white-space: pre-wrap;
       font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
       overflow: auto;
-      max-height: 140px;
+      max-height: 300px;
       font-size: 0.95em;
       line-height: 1.45;
     }
@@ -578,6 +578,12 @@ function enableActions(on) {
   $("btnOpenInTools").disabled = !on;
 }
 
+function capitalizeFirst(str) {
+  if (!str) return str;
+  const [first, ...rest] = str;
+  return first.toUpperCase() + rest.join("");
+}
+
 $("btnFetch").addEventListener("click", async () => {
   const url = $("tuneUrl").value.trim();
   enableActions(false);
@@ -596,10 +602,10 @@ $("btnFetch").addEventListener("click", async () => {
     enableActions(true);
 
     setStatus(
-      "Success.\n" +
+      "Success!\n\n" +
       `- Title: ${result.tuneTitle}\n` +
-      `- Type: ${result.tuneType || "(varies / not provided)"}\n` +
-      `- Settings built: ${result.settingsCount}\n` +
+      `- Type: ${capitalizeFirst((result.tuneType || "(varies / not provided)"))}\n` +
+      `- # of Settings: ${result.settingsCount}\n\n` +
       "You can now copy/download the ABC settings or open them in the ABC Transcription Tools."
     );
   } catch (e) {
@@ -699,8 +705,8 @@ tuneUrlInput.addEventListener("keydown", (e) => {
 
 </script>
 
-<script type="text/javascript" src="pako.min.js?v=6"></script>
-<script type="text/javascript" src="daypilot-modal.min-3.10.1.js?v=6"></script>
+<script type="text/javascript" src="pako.min.js?v=7"></script>
+<script type="text/javascript" src="daypilot-modal.min-3.10.1.js?v=7"></script>
 
 </body>
 </html>
