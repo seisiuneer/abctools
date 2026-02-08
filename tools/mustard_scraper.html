@@ -384,7 +384,7 @@ gtag('config', 'G-VM0N9HL3MK');
 
 async function fetchAllTuneVersionsAsABC(tuneUrl) {
   const tuneId = extractTuneIdFromSessionUrl(tuneUrl);
-  if (!tuneId) throw new Error("Could not extract tune id from: " + tuneUrl);
+  if (!tuneId) throw new Error("Could not extract tunes from: " + tuneUrl);
 
   const apiUrl = `https://thesession.org/tunes/${encodeURIComponent(tuneId)}?format=json`;
   const res = await fetch(apiUrl, { method: "GET", mode: "cors", cache: "no-store" });
