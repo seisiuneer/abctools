@@ -33,261 +33,288 @@
 
   <title>thesession.org Tune Settings Scraper</title>
 
-<style>
-  :root {
-    color-scheme: light dark;
+  <style>
+    :root{
+      color-scheme: light dark;
 
-    /* Responsive typography (bigger overall, still mobile-safe) */
-    --fs-base: clamp(15px, 1.05vw + 12px, 17px);
-    --fs-small: clamp(13px, 0.7vw + 11px, 14.5px);
-    --fs-h2: clamp(20px, 1.2vw + 16px, 24px);
-  }
+      /* Responsive typography (bigger overall, still mobile-safe) */
+      --fs-base: clamp(15px, 1.05vw + 12px, 17px);
+      --fs-small: clamp(13px, 0.7vw + 11px, 14.5px);
+      --fs-h2: clamp(20px, 1.2vw + 16px, 24px);
 
-  html, body {
-    height: 100%;
-    margin: 0;
-  }
+      /* Page padding (requested) */
+      --page-pad: 24px;
+    }
 
-  body {
-    font-family: system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
-    padding: 24px;
-    box-sizing: border-box;
-    overflow: hidden;
-    font-size: var(--fs-base);
-    line-height: 1.35;
-  }
+    html, body{
+      height:100%;
+      margin:0;
+    }
 
-  /* App layout */
-  .app {
-    height: calc(100vh - 48px);
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-    overflow: hidden;
-  }
+    /* iOS/iPad Safari safe-area + dynamic viewport fixes */
+    body{
+      font-family: system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
 
-  h2 {
-    margin: 0 0 8px 0;
-    font-size: var(--fs-h2);
-  }
+      /* Keep your padding, but also respect iOS safe areas so content isn't clipped */
+      padding:
+        calc(var(--page-pad) + env(safe-area-inset-top))
+        calc(var(--page-pad) + env(safe-area-inset-right))
+        calc(var(--page-pad) + env(safe-area-inset-bottom))
+        calc(var(--page-pad) + env(safe-area-inset-left));
 
-  p { margin: 0; }
+      box-sizing:border-box;
+      overflow:hidden;                 /* app handles scrolling internally */
+      font-size:var(--fs-base);
+      line-height:1.35;
+      -webkit-text-size-adjust:100%;
+    }
 
-  .row {
-    display: flex;
-    gap: 12px;
-    flex-wrap: wrap;
-    align-items: center;
-  }
+    /* App layout */
+    .app{
+      /* Fallback */
+      height: calc(100vh - (2 * var(--page-pad)));
+      display:flex;
+      flex-direction:column;
+      gap:14px;
+      overflow:hidden;
+      min-height:0;
+    }
 
-  /* Inherit typography everywhere */
-  input, textarea, button {
-    font: inherit;
-    color: inherit;
-    -webkit-text-size-adjust: 100%;
-  }
+    /* Prefer dynamic viewport height on iOS/iPadOS (fixes cut-off) */
+    @supports (height: 100dvh){
+      .app{
+        height: calc(
+          100dvh
+          - (2 * var(--page-pad))
+          - env(safe-area-inset-top)
+          - env(safe-area-inset-bottom)
+        );
+      }
+    }
 
-  /* ---------- INPUT ---------- */
-  input[type="text"] {
-    -webkit-appearance: none;
-    appearance: none;
+    h2{
+      margin:0 0 8px 0;
+      font-size:var(--fs-h2);
+    }
 
-    border: 1px solid rgba(127,127,127,.35);
-    background: rgba(127,127,127,.06);
-    color: inherit;
+    p{ margin:0; }
 
-    border-radius: 10px;
-    padding: 10px 12px;
-    line-height: 1.2;
-    width: min(360px, 100%);
-  }
+    .row{
+      display:flex;
+      gap:12px;
+      flex-wrap:wrap;
+      align-items:center;
+    }
 
-  /* ---------- BUTTONS (iOS FIXES) ---------- */
-  button {
-    -webkit-appearance: none;
-    appearance: none;
+    /* Inherit typography everywhere */
+    input, textarea, button{
+      font:inherit;
+      color:inherit;
+    }
 
-    border: 1px solid rgba(127,127,127,.35);
-    background: rgba(127,127,127,.12);
-    color: inherit;
+    /* ---------- INPUT ---------- */
+    input[type="text"]{
+      -webkit-appearance:none;
+      appearance:none;
 
-    border-radius: 12px;
-    padding: 10px 14px;
-    line-height: 1.15;
-    font-weight: 600;
+      border:1px solid rgba(127,127,127,.35);
+      background: rgba(127,127,127,.06);
+      color:inherit;
 
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
+      border-radius:10px;
+      padding:10px 12px;
+      line-height:1.2;
+      width:min(360px, 100%);
+    }
 
-    cursor: pointer;
-    user-select: none;
-    -webkit-tap-highlight-color: transparent;
-  }
+    /* ---------- BUTTONS (iOS fixes) ---------- */
+    button{
+      -webkit-appearance:none;
+      appearance:none;
 
-  button:active {
-    transform: translateY(0.5px);
-  }
+      border:1px solid rgba(127,127,127,.35);
+      background: rgba(127,127,127,.12);
+      color:inherit;
 
-  button:disabled {
-    opacity: 0.5;
-    cursor: default;
-    transform: none;
-  }
+      border-radius:12px;
+      padding:10px 14px;
+      line-height:1.15;
+      font-weight:600;
 
-  /* Allow long button text to wrap cleanly on iOS */
-  .row button {
-    white-space: normal;
-    text-align: center;
-  }
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
 
-  .muted { opacity: 0.75; }
-  .small { font-size: var(--fs-small); }
+      cursor:pointer;
+      user-select:none;
+      -webkit-tap-highlight-color:transparent;
+    }
 
-  /* Cards */
-  .card {
-    border: 1px solid rgba(127,127,127,.35);
-    border-radius: 12px;
-    padding: 14px;
-    box-sizing: border-box;
-    overflow: hidden;
-  }
+    button:active{ transform: translateY(0.5px); }
 
-  /* Status box */
-  .status {
-    white-space: pre-wrap;
-    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
-    overflow: auto;
-    max-height: 300px;
-    font-size: 0.95em;
-    line-height: 1.45;
-  }
+    button:disabled{
+      opacity:0.5;
+      cursor:default;
+      transform:none;
+    }
 
-  /* Main two-column layout */
-  .main {
-    flex: 1;
-    display: flex;
-    gap: 14px;
-    overflow: hidden;
-    min-height: 0;
-  }
+    /* Allow long button text to wrap cleanly */
+    .row button{
+      white-space:normal;
+      text-align:center;
+    }
 
-  .left,
-  .right {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-    overflow: hidden;
-    min-height: 0;
-  }
+    .muted{ opacity:0.75; }
+    .small{ font-size:var(--fs-small); }
 
-  /* Textarea scroll fix */
-  .taWrap {
-    flex: 1;
-    min-height: 0;
-    border-radius: 10px;
-    overflow: hidden;
-    border: 1px solid rgba(127,127,127,.35);
-    background: Canvas;
-  }
+    /* Cards */
+    .card{
+      border:1px solid rgba(127,127,127,.35);
+      border-radius:12px;
+      padding:14px;
+      box-sizing:border-box;
+      overflow:hidden;
+    }
 
-  textarea {
-    width: 100%;
-    height: 100%;
-    padding: 12px;
-    border: 0;
-    border-radius: 0;
-    background: transparent;
-    box-sizing: border-box;
-    resize: none;
-    overflow: auto;
-    min-height: 0;
-    font-size: 0.98em;
-    line-height: 1.35;
-  }
+    /* Status box */
+    .status{
+      white-space:pre-wrap;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      overflow:auto;
+      max-height:400px;
+      font-size:0.95em;
+      line-height:1.45;
 
-  #out { flex: 1; }
+      /* iOS momentum scrolling */
+      -webkit-overflow-scrolling: touch;
+    }
 
-  .rightHeader {
-    display: flex;
-    gap: 10px;
-    align-items: center;
-    flex-wrap: wrap;
-    margin-bottom: 8px;
-  }
+    /* Main two-column layout */
+    .main{
+      flex:1;
+      display:flex;
+      gap:14px;
+      overflow:hidden;
+      min-height:0;
+    }
 
-  .spacer { flex: 1; }
+    .left, .right{
+      flex:1;
+      display:flex;
+      flex-direction:column;
+      gap:14px;
+      overflow:hidden;
+      min-height:0;
+    }
 
-  code {
-    background: rgba(127,127,127,.15);
-    padding: 2px 5px;
-    border-radius: 4px;
-    font-size: 0.95em;
-  }
+    /* Textarea scroll fix */
+    .taWrap{
+      flex:1;
+      min-height:0;
+      border-radius:10px;
+      overflow:hidden; /* clips scrollbar corners cleanly */
+      border:1px solid rgba(127,127,127,.35);
+      background:Canvas;
+    }
 
-  /* DayPilot modal styling */
-  .modal_flat_background {
-    background-color: #000;
-    opacity: 0.4;
-  }
+    textarea{
+      width:100%;
+      height:100%;
+      padding:12px;
+      border:0;
+      border-radius:0;
+      background:transparent;
+      box-sizing:border-box;
+      resize:none;
+      overflow:auto;
+      min-height:0;
 
-  .modal_flat_main {
-    border: 1px solid #333;
-    box-shadow: 0 0 15px -2px rgba(0,0,0,0.75);
-  }
+      font-size:0.98em;
+      line-height:1.35;
 
-  .modal_flat_main,
-  .modal_flat_main input,
-  .modal_flat_main button {
-    font-size: 16px;
-  }
+      /* iOS momentum scrolling */
+      -webkit-overflow-scrolling: touch;
+    }
 
-  .modal_flat_main input,
-  .modal_flat_main button {
-    padding: 6px;
-    box-sizing: border-box;
-  }
+    .rightHeader{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      flex-wrap:wrap;
+      margin-bottom:8px;
+    }
 
-  .modal_flat_inner {
-    padding: 30px;
-    background: #fff;
-    color: #000;
-  }
+    .spacer{ flex:1; }
 
-  .modal_flat_content {
-    font-family: Helvetica, Arial, sans-serif;
-    margin: 20px 0;
-  }
+    code{
+      background: rgba(127,127,127,.15);
+      padding:2px 5px;
+      border-radius:4px;
+      font-size:0.95em;
+    }
 
-  .modal_flat_input { margin: 20px 0; }
+    /* DayPilot modal styling */
+    .modal_flat_background{
+      background-color:#000;
+      opacity:0.4;
+    }
 
-  .modal_flat_buttons {
-    text-align: center;
-    margin-top: 40px;
-  }
+    .modal_flat_main{
+      border:1px solid #333;
+      box-shadow:0 0 15px -2px rgba(0,0,0,0.75);
+    }
 
-  .modal_flat_main button {
-    background-color: #ccc;
-    color: #000;
-    padding: 10px 20px;
-    border: 0;
-    cursor: pointer;
-    outline: none;
-    width: 100px;
-  }
+    .modal_flat_main,
+    .modal_flat_main input,
+    .modal_flat_main button{
+      font-size:16px;
+    }
 
-  .modal_flat_cancel { margin-left: 6px; }
+    .modal_flat_main input,
+    .modal_flat_main button{
+      padding:6px;
+      box-sizing:border-box;
+    }
 
-  /* Optional: phone-friendly layout */
-  @media (max-width: 720px) {
-    .row { gap: 10px; }
-    button { width: 100%; }
-    input[type="text"] { width: 100%; }
-  }
+    .modal_flat_inner{
+      padding:30px;
+      background:#fff;
+      color:#000;
+    }
 
-</style>
+    .modal_flat_content{
+      font-family: Helvetica, Arial, sans-serif;
+      margin:20px 0;
+    }
+
+    .modal_flat_input{ margin:20px 0; }
+
+    .modal_flat_buttons{
+      text-align:center;
+      margin-top:40px;
+    }
+
+    .modal_flat_main button{
+      background-color:#ccc;
+      color:#000;
+      padding:10px 20px;
+      border:0;
+      cursor:pointer;
+      outline:none;
+      width:100px;
+      border-radius:10px; /* keep modal buttons looking normal */
+    }
+
+    .modal_flat_cancel{ margin-left:6px; }
+
+    /* Optional: phone-friendly layout */
+    @media (max-width: 720px){
+      .row{ gap:10px; }
+      button{ width:100%; }
+      input[type="text"]{ width:100%; }
+    }
+  </style>
+
 
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-VM0N9HL3MK"></script>
 
