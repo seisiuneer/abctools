@@ -345,6 +345,17 @@ async function fetchAllTuneVersionsAsABC(tuneUrl) {
 
     // K from JSON setting.key
     const kRaw = (typeof setting.key === "string") ? setting.key : "";
+    
+    // Z: prefer ABC Z: if present; otherwise use thesession member name
+    const zFromAbc = (extractHeader(rawAbc, "Z") || "").trim();
+
+    const memberName =
+      (setting && setting.member && typeof setting.member.name === "string")
+        ? setting.member.name.trim()
+        : "";
+
+    const zLine = zFromAbc || memberName;   // fallback to member name
+
     const kLine = normalizeKValue(kRaw) || "Dmaj";
 
     // Body: extract, then replace ! with newlines, then trim each line
@@ -362,7 +373,8 @@ async function fetchAllTuneVersionsAsABC(tuneUrl) {
       `L:${lLine}\n` +
       `Q:${qVal}\n` +
       `K:${kLine}\n` +
-      `S:${tuneUrl}\n`;
+      `S:${tuneUrl}\n` +
+      (zLine ? `Z:${zLine}\n` : "");
 
     const finalAbc = header + body.trimEnd() + "\n";
     built.push(finalAbc);
@@ -687,8 +699,8 @@ tuneUrlInput.addEventListener("keydown", (e) => {
 
 </script>
 
-<script type="text/javascript" src="pako.min.js?v=4"></script>
-<script type="text/javascript" src="daypilot-modal.min-3.10.1.js?v=4"></script>
+<script type="text/javascript" src="pako.min.js?v=5"></script>
+<script type="text/javascript" src="daypilot-modal.min-3.10.1.js?v=5"></script>
 
 </body>
 </html>
