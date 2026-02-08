@@ -33,208 +33,259 @@
 
   <title>thesession.org Tune Settings Scraper</title>
 
-  <style>
+<style>
+  :root {
+    color-scheme: light dark;
 
-    :root {
-      color-scheme: light dark;
+    /* Responsive typography (bigger overall, still mobile-safe) */
+    --fs-base: clamp(15px, 1.05vw + 12px, 17px);
+    --fs-small: clamp(13px, 0.7vw + 11px, 14.5px);
+    --fs-h2: clamp(20px, 1.2vw + 16px, 24px);
+  }
 
-      /* Responsive typography (bigger overall, still mobile-safe) */
-      --fs-base: clamp(15px, 1.05vw + 12px, 17px);
-      --fs-small: clamp(13px, 0.7vw + 11px, 14.5px);
-      --fs-h2: clamp(20px, 1.2vw + 16px, 24px);
-    }
+  html, body {
+    height: 100%;
+    margin: 0;
+  }
 
-    html, body {
-      height: 100%;
-      margin: 0;
-    }
+  body {
+    font-family: system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+    padding: 24px;
+    box-sizing: border-box;
+    overflow: hidden;
+    font-size: var(--fs-base);
+    line-height: 1.35;
+  }
 
-    body {
-      font-family: system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
-      padding: 24px;                 /* more space around everything */
-      box-sizing: border-box;
-      overflow: hidden;              /* keep everything within viewport */
-      font-size: var(--fs-base);
-      line-height: 1.35;
-    }
+  /* App layout */
+  .app {
+    height: calc(100vh - 48px);
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    overflow: hidden;
+  }
 
-    /* App layout */
-    .app {
-      height: calc(100vh - 48px);    /* matches body padding */
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-      overflow: hidden;
-    }
+  h2 {
+    margin: 0 0 8px 0;
+    font-size: var(--fs-h2);
+  }
 
-    h2 {
-      margin: 0 0 8px 0;
-      font-size: var(--fs-h2);
-    }
+  p { margin: 0; }
 
-    p { margin: 0; }
+  .row {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
 
-    .row {
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
-      align-items: center;
-    }
+  /* Inherit typography everywhere */
+  input, textarea, button {
+    font: inherit;
+    color: inherit;
+    -webkit-text-size-adjust: 100%;
+  }
 
-    input, textarea, button {
-      font-size: 1em;
-    }
+  /* ---------- INPUT ---------- */
+  input[type="text"] {
+    -webkit-appearance: none;
+    appearance: none;
 
-    input[type="text"] {
-      padding: 9px 12px;
-      width: min(360px, 100%);
-    }
+    border: 1px solid rgba(127,127,127,.35);
+    background: rgba(127,127,127,.06);
+    color: inherit;
 
-    button {
-      padding: 9px 14px;
-      cursor: pointer;
-    }
+    border-radius: 10px;
+    padding: 10px 12px;
+    line-height: 1.2;
+    width: min(360px, 100%);
+  }
 
-    .muted { opacity: 0.75; }
-    .small { font-size: var(--fs-small); }
+  /* ---------- BUTTONS (iOS FIXES) ---------- */
+  button {
+    -webkit-appearance: none;
+    appearance: none;
 
-    /* Cards */
-    .card {
-      border: 1px solid rgba(127,127,127,.35);
-      border-radius: 12px;
-      padding: 14px;
-      box-sizing: border-box;
-      overflow: hidden;
-    }
+    border: 1px solid rgba(127,127,127,.35);
+    background: rgba(127,127,127,.12);
+    color: inherit;
 
-    /* Status box */
-    .status {
-      white-space: pre-wrap;
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
-      overflow: auto;
-      max-height: 300px;
-      font-size: 0.95em;
-      line-height: 1.45;
-    }
+    border-radius: 12px;
+    padding: 10px 14px;
+    line-height: 1.15;
+    font-weight: 600;
 
-    /* Main two-column layout */
-    .main {
-      flex: 1;
-      display: flex;
-      gap: 14px;
-      overflow: hidden;
-      min-height: 0;
-    }
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
 
-    .left,
-    .right {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-      overflow: hidden;
-      min-height: 0;
-    }
+    cursor: pointer;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+  }
 
-    /* === TEXTAREA SCROLL FIX === */
-    /* Rounded wrapper clips scrollbar cleanly */
-    .taWrap {
-      flex: 1;
-      min-height: 0;
-      border-radius: 10px;
-      overflow: hidden;              /* prevents scrollbar corner bleed */
-      border: 1px solid rgba(127,127,127,.35);
-      background: Canvas;
-    }
+  button:active {
+    transform: translateY(0.5px);
+  }
 
-    /* Actual textarea */
-    textarea {
-      width: 100%;
-      height: 100%;
-      padding: 12px;
-      border: 0;
-      border-radius: 0;
-      background: transparent;
-      box-sizing: border-box;
-      resize: none;
-      overflow: auto;
-      min-height: 0;
+  button:disabled {
+    opacity: 0.5;
+    cursor: default;
+    transform: none;
+  }
 
-      font-size: 0.98em;
-      line-height: 1.35;
-    }
+  /* Allow long button text to wrap cleanly on iOS */
+  .row button {
+    white-space: normal;
+    text-align: center;
+  }
 
-    #out { flex: 1; }
+  .muted { opacity: 0.75; }
+  .small { font-size: var(--fs-small); }
 
-    .rightHeader {
-      display: flex;
-      gap: 10px;
-      align-items: center;
-      flex-wrap: wrap;
-      margin-bottom: 8px;
-    }
+  /* Cards */
+  .card {
+    border: 1px solid rgba(127,127,127,.35);
+    border-radius: 12px;
+    padding: 14px;
+    box-sizing: border-box;
+    overflow: hidden;
+  }
 
-    .spacer { flex: 1; }
+  /* Status box */
+  .status {
+    white-space: pre-wrap;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+    overflow: auto;
+    max-height: 300px;
+    font-size: 0.95em;
+    line-height: 1.45;
+  }
 
-    code {
-      background: rgba(127,127,127,.15);
-      padding: 2px 5px;
-      border-radius: 4px;
-      font-size: 0.95em;
-    }
+  /* Main two-column layout */
+  .main {
+    flex: 1;
+    display: flex;
+    gap: 14px;
+    overflow: hidden;
+    min-height: 0;
+  }
 
-    /* DayPilot modal styling */
-    .modal_flat_background {
-      background-color: #000;
-      opacity: 0.4;
-    }
+  .left,
+  .right {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    overflow: hidden;
+    min-height: 0;
+  }
 
-    .modal_flat_main {
-      border: 1px solid #333;
-      box-shadow: 0 0 15px -2px rgba(0,0,0,0.75);
-    }
+  /* Textarea scroll fix */
+  .taWrap {
+    flex: 1;
+    min-height: 0;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid rgba(127,127,127,.35);
+    background: Canvas;
+  }
 
-    .modal_flat_main,
-    .modal_flat_main input,
-    .modal_flat_main button {
-      font-size: 16px;
-    }
+  textarea {
+    width: 100%;
+    height: 100%;
+    padding: 12px;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-sizing: border-box;
+    resize: none;
+    overflow: auto;
+    min-height: 0;
+    font-size: 0.98em;
+    line-height: 1.35;
+  }
 
-    .modal_flat_main input,
-    .modal_flat_main button {
-      padding: 6px;
-      box-sizing: border-box;
-    }
+  #out { flex: 1; }
 
-    .modal_flat_inner {
-      padding: 30px;
-      background: #fff;
-      color: #000;
-    }
+  .rightHeader {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 8px;
+  }
 
-    .modal_flat_content {
-      font-family: Helvetica, Arial, sans-serif;
-      margin: 20px 0;
-    }
+  .spacer { flex: 1; }
 
-    .modal_flat_input { margin: 20px 0; }
+  code {
+    background: rgba(127,127,127,.15);
+    padding: 2px 5px;
+    border-radius: 4px;
+    font-size: 0.95em;
+  }
 
-    .modal_flat_buttons {
-      text-align: center;
-      margin-top: 40px;
-    }
+  /* DayPilot modal styling */
+  .modal_flat_background {
+    background-color: #000;
+    opacity: 0.4;
+  }
 
-    .modal_flat_main button {
-      background-color: #ccc;
-      color: #000;
-      padding: 10px 20px;
-      border: 0;
-      cursor: pointer;
-      outline: none;
-      width: 100px;
-    }
+  .modal_flat_main {
+    border: 1px solid #333;
+    box-shadow: 0 0 15px -2px rgba(0,0,0,0.75);
+  }
 
-    .modal_flat_cancel { margin-left: 6px; }
+  .modal_flat_main,
+  .modal_flat_main input,
+  .modal_flat_main button {
+    font-size: 16px;
+  }
+
+  .modal_flat_main input,
+  .modal_flat_main button {
+    padding: 6px;
+    box-sizing: border-box;
+  }
+
+  .modal_flat_inner {
+    padding: 30px;
+    background: #fff;
+    color: #000;
+  }
+
+  .modal_flat_content {
+    font-family: Helvetica, Arial, sans-serif;
+    margin: 20px 0;
+  }
+
+  .modal_flat_input { margin: 20px 0; }
+
+  .modal_flat_buttons {
+    text-align: center;
+    margin-top: 40px;
+  }
+
+  .modal_flat_main button {
+    background-color: #ccc;
+    color: #000;
+    padding: 10px 20px;
+    border: 0;
+    cursor: pointer;
+    outline: none;
+    width: 100px;
+  }
+
+  .modal_flat_cancel { margin-left: 6px; }
+
+  /* Optional: phone-friendly layout */
+  @media (max-width: 720px) {
+    .row { gap: 10px; }
+    button { width: 100%; }
+    input[type="text"] { width: 100%; }
+  }
 
 </style>
 
@@ -254,7 +305,7 @@ gtag('config', 'G-VM0N9HL3MK');
     <div>
       <h2>thesession.org Tune Settings Scraper</h2>
       <p class="muted small" style="margin-top:6px">
-        Paste a thesession.org tune URL like <code>https://thesession.org/tunes/1</code>:
+        Paste a thesession.org tune URL like <code>https://thesession.org/tunes/1</code>
       </p>
     </div>
 
