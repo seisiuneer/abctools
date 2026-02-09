@@ -31,8 +31,6 @@
   <link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
   <link rel="manifest" href="https://michaeleskin.com/abctools/img/abc-manifest.json">
 
-  <title>thesession.org Tune Settings Scraper</title>
-
   <style>
     :root{
       color-scheme: light dark;
@@ -53,7 +51,6 @@
 
     *, *::before, *::after{ box-sizing:border-box; }
 
-    /* ---------- BASE (desktop/tablet): fixed viewport app, internal scrolling ---------- */
     body{
       font-family: system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
 
@@ -64,8 +61,6 @@
         calc(var(--page-pad) + env(safe-area-inset-left));
 
       box-sizing:border-box;
-
-      /* Desktop mode: keep everything within viewport; internal panes scroll */
       overflow:hidden;
 
       font-size:var(--fs-base);
@@ -73,7 +68,6 @@
       -webkit-text-size-adjust:100%;
     }
 
-    /* Make flex items actually shrink (important on iOS, avoids overflow) */
     .app, .main, .left, .right, .card, .taWrap{ min-width:0; }
 
     .app{
@@ -117,7 +111,6 @@
       max-width:100%;
     }
 
-    /* ---------- INPUT ---------- */
     input[type="text"]{
       -webkit-appearance:none;
       appearance:none;
@@ -130,13 +123,11 @@
       padding:10px 12px;
       line-height:1.2;
 
-      /* flex-friendly */
       flex: 1 1 260px;
       min-width: 0;
       width:auto;
     }
 
-    /* ---------- BUTTONS ---------- */
     button{
       -webkit-appearance:none;
       appearance:none;
@@ -179,13 +170,12 @@
     #btnFetch{ flex: 1 1 220px; }
     #btnOpenInTools{ flex-basis: 100%; }
 
-    .muted{ 
-      opacity:0.75; 
-      line-height:1.75; 
+    .muted{
+      opacity:0.75;
+      line-height:1.75;
     }
     .small{ font-size:var(--fs-small); }
 
-    /* Cards */
     .card{
       border:1px solid rgba(127,127,127,.35);
       border-radius:12px;
@@ -194,13 +184,10 @@
       min-width:0;
     }
 
-    /* Status box */
     .status{
       white-space:pre-wrap;
       font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
       overflow:auto;
-
-      /* Desktop: keep it compact */
       max-height:400px;
 
       font-size:0.95em;
@@ -212,7 +199,6 @@
       -webkit-overflow-scrolling: touch;
     }
 
-    /* Main two-column layout */
     .main{
       flex:1;
       display:flex;
@@ -232,7 +218,6 @@
       min-width:0;
     }
 
-    /* Textarea scroll fix */
     .taWrap{
       flex:1;
       min-height:0;
@@ -258,7 +243,6 @@
       line-height:1.35;
 
       overflow-wrap:anywhere;
-
       -webkit-overflow-scrolling: touch;
     }
 
@@ -278,7 +262,27 @@
       font-size:0.95em;
     }
 
-    /* DayPilot modal styling */
+    /* Checkbox row */
+    .checkRow{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      margin-top:10px;
+      flex-wrap:wrap;
+    }
+    .checkRow label{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      cursor:pointer;
+      user-select:none;
+    }
+    .checkRow input[type="checkbox"]{
+      width: 18px;
+      height: 18px;
+      accent-color: auto;
+    }
+
     .modal_flat_background{
       background-color:#000;
       opacity:0.4;
@@ -332,24 +336,21 @@
 
     .modal_flat_cancel{ margin-left:6px; }
 
-    /* ---------- MOBILE (iOS fix): allow PAGE to scroll so nothing gets cut off ---------- */
-    /* This is the key change for the “cut off after fetch” issue. */
     @media (max-width: 980px){
       body{
-        overflow:auto;                 /* let the page scroll */
+        overflow:auto;
         -webkit-overflow-scrolling: touch;
-        padding-bottom:
-          calc(var(--page-pad) + env(safe-area-inset-bottom) + 12px); /* room above Safari bar */
+        padding-bottom: calc(var(--page-pad) + env(safe-area-inset-bottom) + 12px);
       }
 
       .app{
-        height:auto;                   /* stop forcing viewport height */
+        height:auto;
         overflow:visible;
         min-height:0;
       }
 
       .main{
-        flex-direction:column;         /* stack */
+        flex-direction:column;
         overflow:visible;
         min-height:auto;
       }
@@ -359,20 +360,16 @@
         min-height:auto;
       }
 
-      /* Give the ABC area a sensible visible height, but still scrollable */
       .taWrap{
-        height: 55vh;                  /* adjust as you like */
+        height: 55vh;
         min-height: 320px;
       }
 
-      /* Status should not be artificially clipped on phones */
       .status{
         max-height:none;
       }
-
     }
 
-    /* Extra tightening for small phones */
     @media (max-width: 720px){
       .row{ gap:10px; }
       .row button{ flex-basis:100%; }
@@ -381,15 +378,13 @@
     }
   </style>
 
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-VM0N9HL3MK"></script>
-
-<script>
-window.dataLayer = window.dataLayer || [];
-function gtag(){dataLayer.push(arguments);}
-gtag('js', new Date());
-gtag('config', 'G-VM0N9HL3MK');
-</script>
-
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-VM0N9HL3MK"></script>
+  <script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-VM0N9HL3MK');
+  </script>
 </head>
 
 <body>
@@ -409,6 +404,14 @@ gtag('config', 'G-VM0N9HL3MK');
             <label for="tuneUrl"><strong>thesession.org Tune URL:</strong></label>
             <input id="tuneUrl" type="text" value="https://thesession.org/tunes/1" />
             <button id="btnFetch">Fetch All Tune Settings</button>
+          </div>
+
+          <!-- NEW: chord filter option -->
+          <div class="checkRow">
+            <label for="onlyChords">
+              <input id="onlyChords" type="checkbox" />
+              <span>Only include tune settings that include chords</span>
+            </label>
           </div>
 
           <div class="row" style="margin-top:10px">
@@ -440,18 +443,19 @@ gtag('config', 'G-VM0N9HL3MK');
 
 <script>
 /* ============================================================
-   Core function requested (with ! -> newline + per-line trim)
-   - K: from setting.key
-   - M: defaults by tune type if missing in ABC
+   Core function requested
    ============================================================ */
 
-async function fetchAllTuneVersionsAsABC(tuneUrl) {
+async function fetchAllTuneVersionsAsABC(tuneUrl, opts) {
+  opts = opts || {};
+  const onlyChords = !!opts.onlyChords;
+
   const tuneId = extractTuneIdFromSessionUrl(tuneUrl);
-  if (!tuneId) throw new Error("Could not extract tunes from: " + tuneUrl);
+  if (!tuneId) throw new Error("Error: Could not extract tunes from: " + tuneUrl);
 
   const apiUrl = `https://thesession.org/tunes/${encodeURIComponent(tuneId)}?format=json`;
   const res = await fetch(apiUrl, { method: "GET", mode: "cors", cache: "no-store" });
-  if (!res.ok) throw new Error(`The Session fetch failed: ${res.status} ${apiUrl}`);
+  if (!res.ok) throw new Error(`Error: The Session fetch failed: ${res.status} ${apiUrl}`);
 
   const data = await res.json();
 
@@ -459,52 +463,70 @@ async function fetchAllTuneVersionsAsABC(tuneUrl) {
   const tuneType  = (data && data.type) ? normalizeTuneType(String(data.type)) : "";
 
   const settings = (data && Array.isArray(data.settings)) ? data.settings : [];
-  if (!settings.length) throw new Error("No settings found for tune: " + tuneUrl);
+  if (!settings.length) throw new Error("Error: No settings found for tune: " + tuneUrl);
 
-  const built = [];
+  // ---- PASS 1: filter and pre-normalize bodies so counting is correct ----
+  const included = [];
+  let skippedNoChords = 0;
 
   for (let i = 0; i < settings.length; i++) {
     const setting = settings[i] || {};
     const rawAbc = typeof setting.abc === "string" ? setting.abc : "";
     if (!rawAbc.trim()) continue;
 
-    const xNum = i + 1;
-    const tLine = tuneTitle + (settings.length > 1 ? ` (${xNum} of ${settings.length})` : "");
+    const bodyNormalized = extractBody(rawAbc)
+      .replace(/!/g, "\n")
+      .split(/\r?\n/)
+      .map(line => line.trim())
+      .join("\n")
+      .trimEnd();
 
-    // Prefer tune type; else try to use R: from the setting
+    if (onlyChords && !abcBodyHasChords(bodyNormalized)) {
+      skippedNoChords++;
+      continue;
+    }
+
+    included.push({ setting, rawAbc, bodyNormalized });
+  }
+
+  if (!included.length) {
+    if (onlyChords) {
+      throw new Error(settings.length+" tune settings available but no settings contained chords.");
+    }
+    throw new Error("Error: Settings had no ABC text.");
+  }
+
+  const totalIncluded = included.length;
+
+  // ---- PASS 2: build output using totalIncluded for the title count ----
+  const built = [];
+
+  for (let j = 0; j < included.length; j++) {
+    const { setting, rawAbc, bodyNormalized } = included[j];
+
+    const xNum = j + 1;
+    const tLine = tuneTitle + (totalIncluded > 1 ? ` (${xNum} of ${totalIncluded})` : "");
+
     const rLine = tuneType || (extractHeader(rawAbc, "R") || "").trim() || "";
 
-    // M/L from ABC if present; otherwise defaults
     const mFromAbc = (extractHeader(rawAbc, "M") || "").trim();
     const mLine = mFromAbc || defaultMForRhythm(rLine) || "4/4";
 
     const lLine = (extractHeader(rawAbc, "L") || "").trim() || "1/8";
 
-    // Q from ABC if present; otherwise default by rhythm
     const qExisting = (extractHeader(rawAbc, "Q") || "").trim();
     const qVal = qExisting ? qExisting.replace(/^Q:\s*/i, "") : defaultQForRhythm(rLine);
 
-    // K from JSON setting.key
     const kRaw = (typeof setting.key === "string") ? setting.key : "";
-    
-    // Z: prefer ABC Z: if present; otherwise use thesession member name
-    const zFromAbc = (extractHeader(rawAbc, "Z") || "").trim();
 
+    const zFromAbc = (extractHeader(rawAbc, "Z") || "").trim();
     const memberName =
       (setting && setting.member && typeof setting.member.name === "string")
         ? setting.member.name.trim()
         : "";
-
-    const zLine = zFromAbc || memberName;   // fallback to member name
+    const zLine = zFromAbc || memberName;
 
     const kLine = normalizeKValue(kRaw) || "Dmaj";
-
-    // Body: extract, then replace ! with newlines, then trim each line
-    const body = extractBody(rawAbc)
-      .replace(/!/g, "\n")
-      .split(/\r?\n/)
-      .map(line => line.trim())
-      .join("\n");
 
     const header =
       `X:${xNum}\n` +
@@ -517,19 +539,55 @@ async function fetchAllTuneVersionsAsABC(tuneUrl) {
       `S:${tuneUrl}\n` +
       (zLine ? `Z:${zLine}\n` : "");
 
-    const finalAbc = header + body.trimEnd() + "\n";
-    built.push(finalAbc);
+    built.push(header + bodyNormalized + "\n");
   }
-
-  if (!built.length) throw new Error("Settings had no ABC text.");
 
   return {
     combined: built.join("\n"),
     tuneTitle,
     tuneType,
     tuneId,
-    settingsCount: built.length
+    settingsCount: totalIncluded,
+    skippedNoChords
   };
+}
+
+
+/* ============================================================
+   Chord detection (ABC)
+   - Looks for quoted chord annotations: "Am" "G" "D7" "G/B" etc.
+   ============================================================ */
+
+function abcBodyHasChords(bodyText) {
+  const s = String(bodyText || "");
+  // quick reject
+  if (s.indexOf('"') === -1) return false;
+
+  // ABC chords are typically: "Am", "G", "D7", "G/B", "F#m", "Bb", "N.C.", etc.
+  // This pattern tries to avoid matching empty quotes or random prose.
+  const chordRe = /"[^"\r\n]{1,20}"/g;
+
+  const matches = s.match(chordRe);
+  if (!matches) return false;
+
+  for (const token of matches) {
+    const inner = token.slice(1, -1).trim();
+    if (!inner) continue;
+
+    // Common chord-ish forms:
+    // Root: A-G optional #/b, optional quality/extensions, optional slash bass.
+    // Also allow "N.C." or "NC".
+    if (/^(N\.?C\.?|NC)$/i.test(inner)) return true;
+
+    if (/^[A-Ga-g](?:#|b)?(?:m|min|maj|dim|aug|sus|add)?\d{0,2}(?:\([^)]*\))?(?:[\/][A-Ga-g](?:#|b)?)?$/.test(inner)) {
+      return true;
+    }
+
+    // A bit looser fallback (still chord-ish): starts with a pitch letter
+    if (/^[A-Ga-g](?:#|b)?/.test(inner)) return true;
+  }
+
+  return false;
 }
 
 /* ============================================================
@@ -563,9 +621,7 @@ function defaultMForRhythm(r) {
   const rr = canonicalRhythm(r);
 
   if (rr === "reel" || rr === "hornpipe" || rr === "barndance" || rr === "barn dance" ||
-      rr === "strathspey" || rr === "march") {
-    return "4/4";
-  }
+      rr === "strathspey" || rr === "march") return "4/4";
   if (rr === "jig") return "6/8";
   if (rr === "slip jig" || rr === "slipjig") return "9/8";
   if (rr === "hop jig" || rr === "hopjig") return "9/8";
@@ -573,34 +629,20 @@ function defaultMForRhythm(r) {
   if (rr === "waltz" || rr === "mazurka") return "3/4";
   if (rr === "polka") return "2/4";
   if (rr === "three-two" || rr === "three two" || rr === "3-2" || rr === "3/2") return "3/2";
-
   return "";
 }
 
 function defaultQForRhythm(r) {
   const rr = canonicalRhythm(r);
 
-  if (rr === "jig" || rr === "slip jig" || rr === "slipjig" || rr === "slide" || rr === "hop jig" || rr === "hopjig") {
+  if (rr === "jig" || rr === "slip jig" || rr === "slipjig" || rr === "slide" || rr === "hop jig" || rr === "hopjig")
     return "3/8=120";
-  }
-  if (rr === "reel") {
-    return "1/2=90";
-  }
-  if (rr === "hornpipe" || rr === "march"  || rr === "barndance" || rr === "barn dance") {
-    return "1/2=80";
-  }
-  if (rr === "strathspey") {
-    return "1/2=70";
-  }
-  if (rr === "polka") {
-    return "1/4=120";
-  }
-  if (rr === "waltz" || rr === "mazurka") {
-    return "1/4=120";
-  }
-  if (rr === "three-two" || rr === "three two" || rr === "3-2" || rr === "3/2") {
-    return "1/2=80";
-  }
+  if (rr === "reel") return "1/2=90";
+  if (rr === "hornpipe" || rr === "march"  || rr === "barndance" || rr === "barn dance") return "1/2=80";
+  if (rr === "strathspey") return "1/2=70";
+  if (rr === "polka") return "1/4=120";
+  if (rr === "waltz" || rr === "mazurka") return "1/4=120";
+  if (rr === "three-two" || rr === "three two" || rr === "3-2" || rr === "3/2") return "1/2=80";
   return "1/2=90";
 }
 
@@ -697,6 +739,7 @@ const $ = (id) => document.getElementById(id);
 const statusEl = $("status");
 const outEl = $("out");
 const tuneUrlInput = $("tuneUrl");
+const onlyChordsEl = $("onlyChords");
 
 let lastResult = null;
 
@@ -726,29 +769,37 @@ function capitalizeFirst(str) {
 
 $("btnFetch").addEventListener("click", async () => {
   const url = $("tuneUrl").value.trim();
+  const onlyChords = !!onlyChordsEl.checked;
+
   enableActions(false);
   outEl.value = "";
   lastResult = null;
 
   setStatus("Fetching all tune settings and building ABC…");
   try {
-    const result = await fetchAllTuneVersionsAsABC(url);
+    const result = await fetchAllTuneVersionsAsABC(url, { onlyChords });
     lastResult = result;
 
     outEl.value = result.combined;
-    
     enableActions(true);
+
+    const skippedLine =
+      onlyChords
+        ? `\n- Skipped (no chords): ${result.skippedNoChords}`
+        : "";
 
     setStatus(
       "Success!\n\n" +
       `- Title: ${result.tuneTitle}\n` +
       `- Type: ${capitalizeFirst((result.tuneType || "(varies / not provided)"))}\n` +
-      `- # of Settings: ${result.settingsCount}\n\n` +
+      `- # of Settings: ${result.settingsCount}` +
+      skippedLine +
+      "\n\n" +
       "You can now copy/download the ABC settings or open them in the ABC Transcription Tools."
     );
   } catch (e) {
     console.error(e);
-    setStatus("Error: " + (e && e.message ? e.message : String(e)));
+    setStatus(e && e.message ? e.message : String(e));
   }
 });
 
@@ -836,11 +887,10 @@ function openInAbcTools(theABC) {
 
 tuneUrlInput.addEventListener("keydown", (e) => {
   if (e.key === "Enter") {
-    e.preventDefault();          // prevent form submission / hints
-    $("btnFetch").click();       // reuse existing logic
+    e.preventDefault();
+    $("btnFetch").click();
   }
 });
-
 </script>
 
 <script type="text/javascript" src="pako.min.js?v=8"></script>
