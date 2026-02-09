@@ -491,7 +491,12 @@ async function fetchAllTuneVersionsAsABC(tuneUrl, opts) {
 
   if (!included.length) {
     if (onlyChords) {
-      throw new Error(settings.length+" tune settings available but no settings contained chords.");
+      if (settings.length > 1){
+        throw new Error(settings.length+" tune settings available but no settings contained chords.");
+      }
+      else{
+        throw new Error(settings.length+" tune setting available but it did not contain chords.");
+      }
     }
     throw new Error("Error: Settings had no ABC text.");
   }
