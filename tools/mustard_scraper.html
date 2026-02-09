@@ -42,7 +42,7 @@
       --fs-small: clamp(13px, 0.7vw + 11px, 14.5px);
       --fs-h2: clamp(20px, 1.2vw + 16px, 24px);
 
-      /* Page padding (requested) */
+      /* Page padding */
       --page-pad: 24px;
     }
 
@@ -51,11 +51,12 @@
       margin:0;
     }
 
-    /* iOS/iPad Safari safe-area + dynamic viewport fixes */
+    *, *::before, *::after{ box-sizing:border-box; }
+
+    /* ---------- BASE (desktop/tablet): fixed viewport app, internal scrolling ---------- */
     body{
       font-family: system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
 
-      /* Keep your padding, but also respect iOS safe areas so content isn't clipped */
       padding:
         calc(var(--page-pad) + env(safe-area-inset-top))
         calc(var(--page-pad) + env(safe-area-inset-right))
@@ -63,15 +64,19 @@
         calc(var(--page-pad) + env(safe-area-inset-left));
 
       box-sizing:border-box;
-      overflow:hidden;                 /* app handles scrolling internally */
+
+      /* Desktop mode: keep everything within viewport; internal panes scroll */
+      overflow:hidden;
+
       font-size:var(--fs-base);
       line-height:1.35;
       -webkit-text-size-adjust:100%;
     }
 
-    /* App layout */
+    /* Make flex items actually shrink (important on iOS, avoids overflow) */
+    .app, .main, .left, .right, .card, .taWrap{ min-width:0; }
+
     .app{
-      /* Fallback */
       height: calc(100vh - (2 * var(--page-pad)));
       display:flex;
       flex-direction:column;
@@ -80,7 +85,6 @@
       min-height:0;
     }
 
-    /* Prefer dynamic viewport height on iOS/iPadOS (fixes cut-off) */
     @supports (height: 100dvh){
       .app{
         height: calc(
@@ -104,12 +108,13 @@
       gap:12px;
       flex-wrap:wrap;
       align-items:center;
+      min-width:0;
     }
 
-    /* Inherit typography everywhere */
     input, textarea, button{
       font:inherit;
       color:inherit;
+      max-width:100%;
     }
 
     /* ---------- INPUT ---------- */
@@ -124,10 +129,14 @@
       border-radius:10px;
       padding:10px 12px;
       line-height:1.2;
-      width:min(360px, 100%);
+
+      /* flex-friendly */
+      flex: 1 1 260px;
+      min-width: 0;
+      width:auto;
     }
 
-    /* ---------- BUTTONS (iOS fixes) ---------- */
+    /* ---------- BUTTONS ---------- */
     button{
       -webkit-appearance:none;
       appearance:none;
@@ -148,6 +157,9 @@
       cursor:pointer;
       user-select:none;
       -webkit-tap-highlight-color:transparent;
+
+      max-width:100%;
+      min-width:0;
     }
 
     button:active{ transform: translateY(0.5px); }
@@ -158,11 +170,14 @@
       transform:none;
     }
 
-    /* Allow long button text to wrap cleanly */
     .row button{
       white-space:normal;
       text-align:center;
+      flex: 1 1 180px;
     }
+
+    #btnFetch{ flex: 1 1 220px; }
+    #btnOpenInTools{ flex-basis: 100%; }
 
     .muted{ opacity:0.75; }
     .small{ font-size:var(--fs-small); }
@@ -172,8 +187,8 @@
       border:1px solid rgba(127,127,127,.35);
       border-radius:12px;
       padding:14px;
-      box-sizing:border-box;
       overflow:hidden;
+      min-width:0;
     }
 
     /* Status box */
@@ -181,11 +196,16 @@
       white-space:pre-wrap;
       font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
       overflow:auto;
+
+      /* Desktop: keep it compact */
       max-height:400px;
+
       font-size:0.95em;
       line-height:1.45;
 
-      /* iOS momentum scrolling */
+      overflow-wrap:anywhere;
+      word-break:break-word;
+
       -webkit-overflow-scrolling: touch;
     }
 
@@ -196,6 +216,7 @@
       gap:14px;
       overflow:hidden;
       min-height:0;
+      min-width:0;
     }
 
     .left, .right{
@@ -205,6 +226,7 @@
       gap:14px;
       overflow:hidden;
       min-height:0;
+      min-width:0;
     }
 
     /* Textarea scroll fix */
@@ -212,9 +234,10 @@
       flex:1;
       min-height:0;
       border-radius:10px;
-      overflow:hidden; /* clips scrollbar corners cleanly */
+      overflow:hidden;
       border:1px solid rgba(127,127,127,.35);
       background:Canvas;
+      min-width:0;
     }
 
     textarea{
@@ -224,7 +247,6 @@
       border:0;
       border-radius:0;
       background:transparent;
-      box-sizing:border-box;
       resize:none;
       overflow:auto;
       min-height:0;
@@ -232,7 +254,8 @@
       font-size:0.98em;
       line-height:1.35;
 
-      /* iOS momentum scrolling */
+      overflow-wrap:anywhere;
+
       -webkit-overflow-scrolling: touch;
     }
 
@@ -242,9 +265,8 @@
       align-items:center;
       flex-wrap:wrap;
       margin-bottom:8px;
+      min-width:0;
     }
-
-    .spacer{ flex:1; }
 
     code{
       background: rgba(127,127,127,.15);
@@ -302,19 +324,59 @@
       cursor:pointer;
       outline:none;
       width:100px;
-      border-radius:10px; /* keep modal buttons looking normal */
+      border-radius:10px;
     }
 
     .modal_flat_cancel{ margin-left:6px; }
 
-    /* Optional: phone-friendly layout */
+    /* ---------- MOBILE (iOS fix): allow PAGE to scroll so nothing gets cut off ---------- */
+    /* This is the key change for the “cut off after fetch” issue. */
+    @media (max-width: 980px){
+      body{
+        overflow:auto;                 /* let the page scroll */
+        -webkit-overflow-scrolling: touch;
+        padding-bottom:
+          calc(var(--page-pad) + env(safe-area-inset-bottom) + 12px); /* room above Safari bar */
+      }
+
+      .app{
+        height:auto;                   /* stop forcing viewport height */
+        overflow:visible;
+        min-height:0;
+      }
+
+      .main{
+        flex-direction:column;         /* stack */
+        overflow:visible;
+        min-height:auto;
+      }
+
+      .left, .right{
+        overflow:visible;
+        min-height:auto;
+      }
+
+      /* Give the ABC area a sensible visible height, but still scrollable */
+      .taWrap{
+        height: 55vh;                  /* adjust as you like */
+        min-height: 320px;
+      }
+
+      /* Status should not be artificially clipped on phones */
+      .status{
+        max-height:none;
+      }
+
+    }
+
+    /* Extra tightening for small phones */
     @media (max-width: 720px){
       .row{ gap:10px; }
-      button{ width:100%; }
-      input[type="text"]{ width:100%; }
+      .row button{ flex-basis:100%; }
+      input[type="text"]{ flex-basis:100%; }
+      .taWrap{ height: 60vh; min-height: 300px; }
     }
   </style>
-
 
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-VM0N9HL3MK"></script>
 
@@ -350,8 +412,6 @@ gtag('config', 'G-VM0N9HL3MK');
             <button id="btnCopy" disabled>Copy ABC</button>
             <button id="btnDownload" disabled>Download .abc</button>
             <button id="btnOpenInTools" disabled>Open All Settings in the ABC Transcription Tools</button>
-            <div class="spacer"></div>
-            <div class="muted small" id="meta"></div>
           </div>
         </div>
 
@@ -633,7 +693,6 @@ function normalizeMode(mode) {
 const $ = (id) => document.getElementById(id);
 const statusEl = $("status");
 const outEl = $("out");
-const metaEl = $("meta");
 const tuneUrlInput = $("tuneUrl");
 
 let lastResult = null;
@@ -666,7 +725,6 @@ $("btnFetch").addEventListener("click", async () => {
   const url = $("tuneUrl").value.trim();
   enableActions(false);
   outEl.value = "";
-  metaEl.textContent = "";
   lastResult = null;
 
   setStatus("Fetching all tune settings and building ABC…");
@@ -675,8 +733,7 @@ $("btnFetch").addEventListener("click", async () => {
     lastResult = result;
 
     outEl.value = result.combined;
-    metaEl.textContent = `${result.tuneTitle} — settings: ${result.settingsCount}`;
-
+    
     enableActions(true);
 
     setStatus(
