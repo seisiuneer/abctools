@@ -669,7 +669,7 @@ async function fetchTuneOrBookmarksAsABC(inputUrl, opts) {
     const it = included[j];
 
     const xNum = j + 1;
-    const tLine = it.tuneTitle + (totalIncluded > 1 ? ` (${xNum} of ${totalIncluded})` : "");
+    const tLine = it.tuneTitle;
 
     const rLine = it.tuneType || (extractHeader(it.rawAbc, "R") || "").trim() || "";
 
