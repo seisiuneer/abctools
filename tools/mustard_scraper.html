@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
@@ -172,7 +173,7 @@
 
     .muted{
       opacity:0.75;
-      line-height:1.75;
+      line-height:2.0;
     }
     .small{ font-size:var(--fs-small); }
 
@@ -188,7 +189,7 @@
       white-space:pre-wrap;
       font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
       overflow:auto;
-      max-height:400px;
+      max-height:300px;
 
       font-size:0.95em;
       line-height:1.45;
@@ -226,25 +227,37 @@
       border:1px solid rgba(127,127,127,.35);
       background:Canvas;
       min-width:0;
+
+      /* NEW */
+      display:flex;      /* makes textarea flex sizing reliable in Chrome */
+      padding: 1px;      /* keeps the anti-clipping fix */
     }
 
     textarea{
-      width:100%;
-      height:100%;
+      /* REPLACE the width/height sizing with flex sizing */
+      flex: 1 1 auto;
+      min-height: 0;
+
+      width: auto;       /* optional, but avoids some Chrome quirks */
+      height: auto;      /* important: don't use height:100% in this layout */
+
       padding:12px;
       border:0;
       border-radius:0;
       background:transparent;
       resize:none;
       overflow:auto;
-      min-height:0;
 
       font-size:0.98em;
       line-height:1.35;
 
       overflow-wrap:anywhere;
       -webkit-overflow-scrolling: touch;
+
+      box-sizing:border-box;
+      display:block;
     }
+
 
     .rightHeader{
       display:flex;
@@ -336,6 +349,22 @@
 
     .modal_flat_cancel{ margin-left:6px; }
 
+    .exampleLink{
+      color: inherit;
+      text-decoration: underline;
+      cursor: pointer;
+      word-break: break-all;
+    }
+    
+    .instructions{
+      font-size: clamp(14.5px, 0.9vw + 13px, 16.5px);
+      line-height: 2.0;
+    }
+
+    .instructions a.exampleLink{
+      font-weight: 500;
+    }
+
     @media (max-width: 980px){
       body{
         overflow:auto;
@@ -364,10 +393,6 @@
         height: 55vh;
         min-height: 320px;
       }
-
-      .status{
-        max-height:none;
-      }
     }
 
     @media (max-width: 720px){
@@ -391,8 +416,12 @@
   <div class="app">
     <div>
       <h2><a href="https://thesession.org/tunes" target="_blank">thesession.org</a> Tune Settings Scraper</h2>
-      <p class="muted small" style="margin-top:6px">
-        Paste a thesession.org tune URL like <code>https://thesession.org/tunes/1</code>
+      <p class="muted small instructions" style="margin-top:6px">
+        Paste a thesession.org tune URL like
+        <a href="https://thesession.org/tunes/1" class="exampleLink" data-fill-url="https://thesession.org/tunes/1">https://thesession.org/tunes/1</a>
+        <br/>
+        or a member's bookmarks page URL like
+        <a href="https://thesession.org/members/22376/bookmarks" class="exampleLink" data-fill-url="https://thesession.org/members/22376/bookmarks">https://thesession.org/members/22376/bookmarks</a>
       </p>
     </div>
 
@@ -401,12 +430,11 @@
       <div class="left">
         <div class="card">
           <div class="row">
-            <label for="tuneUrl"><strong>thesession.org Tune URL:</strong></label>
+            <label for="tuneUrl"><strong>thesession.org URL:</strong></label>
             <input id="tuneUrl" type="text" value="https://thesession.org/tunes/1" />
-            <button id="btnFetch">Fetch All Tune Settings</button>
+            <button id="btnFetch">Fetch</button>
           </div>
 
-          <!-- NEW: chord filter option -->
           <div class="checkRow">
             <label for="onlyChords">
               <input id="onlyChords" type="checkbox" />
@@ -443,7 +471,290 @@
 
 <script>
 /* ============================================================
-   Core function requested
+   Status accumulation helpers
+   ============================================================ */
+
+const $ = (id) => document.getElementById(id);
+const statusEl = $("status");
+const outEl = $("out");
+const tuneUrlInput = $("tuneUrl");
+const onlyChordsEl = $("onlyChords");
+
+// Click-to-fill example links
+document.addEventListener("click", (e) => {
+  const a = e.target.closest("a.exampleLink");
+  if (!a) return;
+
+  e.preventDefault();
+
+  const urlToFill = a.getAttribute("data-fill-url") || a.getAttribute("href") || "";
+  if (!urlToFill) return;
+
+  tuneUrlInput.value = urlToFill;
+  tuneUrlInput.focus();
+  tuneUrlInput.select(); // handy on mobile/desktop
+});
+
+function clearStatus(msg) {
+  statusEl.textContent = (msg == null ? "" : String(msg));
+  statusEl.scrollTop = statusEl.scrollHeight;
+}
+
+function appendStatus(msg) {
+  const s = String(msg == null ? "" : msg);
+  if (!s) return;
+
+  if (statusEl.textContent && !statusEl.textContent.endsWith("\n")) {
+    statusEl.textContent += "\n";
+  }
+  statusEl.textContent += s + "\n";
+  statusEl.scrollTop = statusEl.scrollHeight;
+}
+
+/* ============================================================
+   Core entry (tune URL OR bookmarks URL)
+   ============================================================ */
+
+async function fetchTuneOrBookmarksAsABC(inputUrl, opts) {
+  opts = opts || {};
+  const onlyChords = !!opts.onlyChords;
+
+  const url = String(inputUrl || "").trim();
+  if (!url) throw new Error("Error: Please enter a URL.");
+
+  if (isSessionTuneUrl(url)) {
+    return await fetchAllTuneVersionsAsABC(url, opts);
+  }
+
+  if (!isSessionBookmarksUrl(url)) {
+    throw new Error("Error: URL must be a thesession.org tune URL (/tunes/####) or a bookmarks URL (/members/####/bookmarks).");
+  }
+
+  // ---- Bookmarks flow (PAGED JSON) ----
+  appendStatus("Loading bookmarks…");
+  const items = await fetchAllBookmarksItemsPaged(url);
+
+  if (!items.length) throw new Error("No bookmark items found.");
+
+  // Collect ONLY bookmarked SETTINGS from object.url where objectType === "setting"
+  // PLUS: capture the displayName so status can show tune name while fetching.
+  const settingItems = [];
+  for (const it of items) {
+    const obj = (it && it.object) ? it.object : null;
+    const objType = (obj && typeof obj.objectType === "string") ? obj.objectType : "";
+    if (objType !== "setting") continue;
+
+    const objUrl = (obj && typeof obj.url === "string") ? obj.url.trim() : "";
+    if (!objUrl) continue;
+
+    // This is the tune name for the bookmarked setting (per your example JSON)
+    const displayName = (obj && typeof obj.displayName === "string") ? obj.displayName.trim() : "";
+
+    settingItems.push({
+      url: objUrl,
+      displayName: displayName
+    });
+  }
+
+  if (!settingItems.length) throw new Error("No bookmarked settings found (objectType=setting).");
+
+  // De-dupe by URL (keep first seen displayName)
+  const seen = new Set();
+  const uniqSettingItems = [];
+  for (const si of settingItems) {
+    if (seen.has(si.url)) continue;
+    seen.add(si.url);
+    uniqSettingItems.push(si);
+  }
+
+  appendStatus(`Found ${uniqSettingItems.length} bookmarked setting(s).`);
+
+  // Cache tune JSON per tuneId
+  const tuneCache = new Map(); // tuneId -> { tuneData, tuneUrlNoHash, tuneTitle, tuneType }
+
+  const included = [];
+  let skippedNoChords = 0;
+  let skippedNotFound = 0;
+
+  for (let i = 0; i < uniqSettingItems.length; i++) {
+    const settingUrl = uniqSettingItems[i].url;
+    const statusTuneName = uniqSettingItems[i].displayName || ""; // <-- name from bookmark JSON
+
+    const tuneId = extractTuneIdFromSettingUrl(settingUrl);
+    const settingId = extractSettingIdFromSettingUrl(settingUrl);
+
+    if (!tuneId || !settingId) {
+      skippedNotFound++;
+      appendStatus(`Skip: could not parse tune/setting from ${settingUrl}`);
+      continue;
+    }
+
+    let cached = tuneCache.get(tuneId);
+    if (!cached) {
+      const tuneUrlNoHash = `https://thesession.org/tunes/${encodeURIComponent(tuneId)}`;
+      const tuneJsonUrl = normalizeToJsonUrl(tuneUrlNoHash);
+
+      // CHANGED: show tune name (from bookmark displayName) instead of tune number
+      // Fall back to tune id if displayName missing.
+      appendStatus(`Loading tune ${i+1} of ${uniqSettingItems.length}: ${statusTuneName || tuneId}`);
+
+      const tr = await fetch(tuneJsonUrl, { method: "GET", mode: "cors", cache: "no-store" });
+      if (!tr.ok) throw new Error(`Error: Tune fetch failed: ${tr.status} ${tuneJsonUrl}`);
+      const tuneData = await tr.json();
+
+      const tuneTitle = (tuneData && tuneData.name) ? String(tuneData.name) : (statusTuneName || `Tune ${tuneId}`);
+      const tuneType  = (tuneData && tuneData.type) ? normalizeTuneType(String(tuneData.type)) : "";
+
+      cached = { tuneData, tuneUrlNoHash, tuneTitle, tuneType };
+      tuneCache.set(tuneId, cached);
+    }
+
+    const picked = findSettingById(cached.tuneData, cached.tuneUrlNoHash, settingId);
+    if (!picked || typeof picked.abc !== "string" || !picked.abc.trim()) {
+      skippedNotFound++;
+      appendStatus(`Skip: setting ${settingId} not found in tune ${statusTuneName || tuneId}`);
+      continue;
+    }
+
+    const rawAbc = picked.abc;
+
+    const bodyNormalized = extractBody(rawAbc)
+      .replace(/!/g, "\n")
+      .split(/\r?\n/)
+      .map(line => line.trim())
+      .join("\n")
+      .trimEnd();
+
+    if (onlyChords && !abcBodyHasChords(bodyNormalized)) {
+      skippedNoChords++;
+      continue;
+    }
+
+    included.push({
+      setting: picked,
+      rawAbc,
+      bodyNormalized,
+      tuneTitle: cached.tuneTitle,
+      tuneType: cached.tuneType,
+      sourceSettingUrl: settingUrl
+    });
+  }
+
+  if (!included.length) {
+    if (onlyChords) throw new Error("No bookmarked settings contained chords.");
+    throw new Error("No bookmarked settings could be loaded.");
+  }
+
+  const totalIncluded = included.length;
+  appendStatus(`Building ABC for ${totalIncluded} bookmarked setting(s)…`);
+
+  const built = [];
+  for (let j = 0; j < included.length; j++) {
+    const it = included[j];
+
+    const xNum = j + 1;
+    const tLine = it.tuneTitle + (totalIncluded > 1 ? ` (${xNum} of ${totalIncluded})` : "");
+
+    const rLine = it.tuneType || (extractHeader(it.rawAbc, "R") || "").trim() || "";
+
+    const mFromAbc = (extractHeader(it.rawAbc, "M") || "").trim();
+    const mLine = mFromAbc || defaultMForRhythm(rLine) || "4/4";
+
+    const lLine = (extractHeader(it.rawAbc, "L") || "").trim() || "1/8";
+
+    const qExisting = (extractHeader(it.rawAbc, "Q") || "").trim();
+    const qVal = qExisting ? qExisting.replace(/^Q:\s*/i, "") : defaultQForRhythm(rLine);
+
+    const kRaw = (typeof it.setting.key === "string") ? it.setting.key : "";
+    const kLine = normalizeKValue(kRaw) || "Dmaj";
+
+    const zFromAbc = (extractHeader(it.rawAbc, "Z") || "").trim();
+    const memberName =
+      (it.setting && it.setting.member && typeof it.setting.member.name === "string")
+        ? it.setting.member.name.trim()
+        : "";
+    const zLine = zFromAbc || memberName;
+
+    const header =
+      `X:${xNum}\n` +
+      `T:${tLine}\n` +
+      `R:${rLine || "reel"}\n` +
+      `M:${mLine}\n` +
+      `L:${lLine}\n` +
+      `Q:${qVal}\n` +
+      `K:${kLine}\n` +
+      `S:${it.sourceSettingUrl}\n` +
+      (zLine ? `Z:${zLine}\n` : "");
+
+    built.push(header + it.bodyNormalized + "\n");
+  }
+
+  return {
+    combined: built.join("\n"),
+    tuneTitle: "Bookmarks",
+    tuneType: "",
+    tuneId: "",
+    settingsCount: totalIncluded,
+    skippedNoChords,
+    skippedNotFound,
+    bookmarkItemsCount: items.length,
+    bookmarkSettingsCount: uniqSettingItems.length
+  };
+}
+
+/* ============================================================
+   Bookmarks paging
+   - Requests page=1,2,3,... with format=json
+   - Stops when:
+     - items array is empty, OR
+     - fetch fails (non-2xx), OR
+     - safety max page reached
+   ============================================================ */
+
+async function fetchAllBookmarksItemsPaged(bookmarksUrl) {
+  const all = [];
+  const base = new URL(String(bookmarksUrl));
+  base.hash = ""; // ignore
+
+  const MAX_PAGES = 250; // safety (prevents infinite loops)
+
+  for (let page = 1; page <= MAX_PAGES; page++) {
+    const pageUrl = new URL(base.toString());
+    pageUrl.searchParams.set("format", "json");
+    pageUrl.searchParams.set("page", String(page));
+
+    appendStatus(`- Fetching bookmarks page ${page}…`);
+
+    let res;
+    try {
+      res = await fetch(pageUrl.toString(), { method: "GET", mode: "cors", cache: "no-store" });
+    } catch (e) {
+      appendStatus(`  Stop: fetch error on page ${page}.`);
+      break;
+    }
+
+    if (!res.ok) {
+      appendStatus(`  Stop: HTTP ${res.status} on page ${page}.`);
+      break;
+    }
+
+    const data = await res.json();
+    const items = (data && Array.isArray(data.items)) ? data.items : [];
+
+    if (!items.length) {
+      appendStatus(`  All bookmarked settings fetched!`);
+      break;
+    }
+
+    all.push.apply(all, items);
+  }
+
+  return all;
+}
+
+/* ============================================================
+   Existing: fetch all tune settings from /tunes/{id}?format=json
+   + chord filter with correct counts
    ============================================================ */
 
 async function fetchAllTuneVersionsAsABC(tuneUrl, opts) {
@@ -465,7 +776,6 @@ async function fetchAllTuneVersionsAsABC(tuneUrl, opts) {
   const settings = (data && Array.isArray(data.settings)) ? data.settings : [];
   if (!settings.length) throw new Error("Error: No settings found for tune: " + tuneUrl);
 
-  // ---- PASS 1: filter and pre-normalize bodies so counting is correct ----
   const included = [];
   let skippedNoChords = 0;
 
@@ -491,19 +801,13 @@ async function fetchAllTuneVersionsAsABC(tuneUrl, opts) {
 
   if (!included.length) {
     if (onlyChords) {
-      if (settings.length > 1){
-        throw new Error(settings.length+" tune settings available but no settings contained chords.");
-      }
-      else{
-        throw new Error(settings.length+" tune setting available but it did not contain chords.");
-      }
+      if (settings.length > 1) throw new Error(settings.length + " tune settings available but no settings contained chords.");
+      throw new Error(settings.length + " tune setting available but it did not contain chords.");
     }
     throw new Error("Error: Settings had no ABC text.");
   }
 
   const totalIncluded = included.length;
-
-  // ---- PASS 2: build output using totalIncluded for the title count ----
   const built = [];
 
   for (let j = 0; j < included.length; j++) {
@@ -557,21 +861,79 @@ async function fetchAllTuneVersionsAsABC(tuneUrl, opts) {
   };
 }
 
+/* ============================================================
+   URL detection + JSON URL
+   ============================================================ */
+
+function isSessionTuneUrl(s) {
+  try {
+    const u = new URL(String(s));
+    return /^\/tunes\/\d+\b/.test(u.pathname);
+  } catch {
+    return /\/tunes\/\d+\b/.test(String(s));
+  }
+}
+
+function isSessionBookmarksUrl(s) {
+  try {
+    const u = new URL(String(s));
+    return /^\/members\/\d+\/bookmarks\/?$/.test(u.pathname);
+  } catch {
+    return /\/members\/\d+\/bookmarks\/?$/.test(String(s));
+  }
+}
+
+function normalizeToJsonUrl(url) {
+  const u = new URL(String(url));
+  u.searchParams.set("format", "json");
+  return u.toString();
+}
+
+function extractTuneIdFromSettingUrl(s) {
+  try {
+    const u = new URL(String(s));
+    const m = u.pathname.match(/^\/tunes\/(\d+)\b/);
+    return m ? m[1] : null;
+  } catch {
+    const m = String(s).match(/\/tunes\/(\d+)\b/);
+    return m ? m[1] : null;
+  }
+}
+
+function extractSettingIdFromSettingUrl(s) {
+  const m = String(s).match(/#setting-?(\d+)\b/i);
+  return m ? m[1] : null;
+}
+
+// Prefer matching by numeric setting.id, fallback to URL equivalence.
+function findSettingById(tuneData, tuneUrlNoHash, settingIdStr) {
+  const settings = (tuneData && Array.isArray(tuneData.settings)) ? tuneData.settings : [];
+  const targetId = String(settingIdStr || "");
+  if (!targetId) return null;
+
+  for (const s of settings) {
+    if (s && (String(s.id) === targetId)) return s;
+  }
+
+  const targetUrl = `${String(tuneUrlNoHash).replace(/\?.*$/, "")}#setting${targetId}`;
+  for (const s of settings) {
+    if (!s) continue;
+    const sid = (s.id != null) ? String(s.id) : "";
+    if (sid && (`${String(tuneUrlNoHash).replace(/\?.*$/, "")}#setting${sid}` === targetUrl)) return s;
+  }
+
+  return null;
+}
 
 /* ============================================================
    Chord detection (ABC)
-   - Looks for quoted chord annotations: "Am" "G" "D7" "G/B" etc.
    ============================================================ */
 
 function abcBodyHasChords(bodyText) {
   const s = String(bodyText || "");
-  // quick reject
   if (s.indexOf('"') === -1) return false;
 
-  // ABC chords are typically: "Am", "G", "D7", "G/B", "F#m", "Bb", "N.C.", etc.
-  // This pattern tries to avoid matching empty quotes or random prose.
   const chordRe = /"[^"\r\n]{1,20}"/g;
-
   const matches = s.match(chordRe);
   if (!matches) return false;
 
@@ -579,19 +941,14 @@ function abcBodyHasChords(bodyText) {
     const inner = token.slice(1, -1).trim();
     if (!inner) continue;
 
-    // Common chord-ish forms:
-    // Root: A-G optional #/b, optional quality/extensions, optional slash bass.
-    // Also allow "N.C." or "NC".
     if (/^(N\.?C\.?|NC)$/i.test(inner)) return true;
 
     if (/^[A-Ga-g](?:#|b)?(?:m|min|maj|dim|aug|sus|add)?\d{0,2}(?:\([^)]*\))?(?:[\/][A-Ga-g](?:#|b)?)?$/.test(inner)) {
       return true;
     }
 
-    // A bit looser fallback (still chord-ish): starts with a pitch letter
     if (/^[A-Ga-g](?:#|b)?/.test(inner)) return true;
   }
-
   return false;
 }
 
@@ -740,17 +1097,7 @@ function normalizeMode(mode) {
    UI wiring
    ============================================================ */
 
-const $ = (id) => document.getElementById(id);
-const statusEl = $("status");
-const outEl = $("out");
-const tuneUrlInput = $("tuneUrl");
-const onlyChordsEl = $("onlyChords");
-
 let lastResult = null;
-
-function setStatus(msg) {
-  statusEl.textContent = msg;
-}
 
 function safeFilename(s) {
   return String(s || "tune")
@@ -780,49 +1127,69 @@ $("btnFetch").addEventListener("click", async () => {
   outEl.value = "";
   lastResult = null;
 
-  setStatus("Fetching all tune settings and building ABC…");
+  clearStatus("Fetching and building ABC…");
+
   try {
-    const result = await fetchAllTuneVersionsAsABC(url, { onlyChords });
+    const result = await fetchTuneOrBookmarksAsABC(url, { onlyChords });
     lastResult = result;
 
     outEl.value = result.combined;
-    enableActions(true);
 
-    const skippedLine =
-      onlyChords
-        ? `\n- Skipped (no chords): ${result.skippedNoChords}`
-        : "";
+    // Status summary
+    clearStatus("Success!\n");
 
-    setStatus(
-      "Success!\n\n" +
-      `- Title: ${result.tuneTitle}\n` +
-      `- Type: ${capitalizeFirst((result.tuneType || "(varies / not provided)"))}\n` +
-      `- # of Settings: ${result.settingsCount}` +
-      skippedLine +
-      "\n\n" +
-      "You can now copy/download the ABC settings or open them in the ABC Transcription Tools."
-    );
+    if (isSessionTuneUrl(url)) {
+      appendStatus(`- Title: ${result.tuneTitle}`);
+      appendStatus(`- Type: ${capitalizeFirst((result.tuneType || "(varies / not provided)"))}`);
+    } else {
+      appendStatus("- Source: Bookmarks");
+      if (result.bookmarkItemsCount != null) appendStatus(`- Bookmark items fetched: ${result.bookmarkItemsCount}`);
+      if (result.bookmarkSettingsCount != null) appendStatus(`- Bookmarked settings found: ${result.bookmarkSettingsCount}`);
+    }
+
+    appendStatus(`- # of Settings: ${result.settingsCount}`);
+
+    if (onlyChords) appendStatus(`- Skipped (no chords): ${result.skippedNoChords || 0}`);
+    if (result.skippedNotFound != null && result.skippedNotFound > 0) appendStatus(`- Skipped (missing setting): ${result.skippedNotFound}`);
+
+    appendStatus("");
+
+    // Test URL length and enable/disable the open in ABC Transcriptions Tool button as required
+    if (testOpenInAbcTools(outEl.value)){
+      enableActions(true);
+      appendStatus("You can now copy/download the ABC settings or open them in the ABC Transcription Tools.");
+    }
+    else{
+      // Disable the open in ABC tools
+      enableActions(true);
+      $("btnOpenInTools").disabled = true;
+      appendStatus("You can now copy/download the ABC settings.");      
+    }
   } catch (e) {
     console.error(e);
-    setStatus(e && e.message ? e.message : String(e));
+    clearStatus(e && e.message ? e.message : String(e));
   }
 });
 
 $("btnCopy").addEventListener("click", async () => {
   try {
     await navigator.clipboard.writeText(outEl.value);
-    setStatus("Copied ABC to clipboard.");
+    clearStatus("Copied ABC to clipboard.");
   } catch (e) {
-    setStatus("Copy failed (browser permission). You can still select-all and copy manually.");
+    clearStatus("Copy failed (browser permission). You can still select-all and copy manually.");
   }
 });
 
 $("btnDownload").addEventListener("click", () => {
   if (!lastResult) return;
+
+  // If bookmarks, make filename reflect that
+  const baseName = (lastResult.tuneTitle && lastResult.tuneTitle !== "Bookmarks") ? lastResult.tuneTitle : "bookmarks";
+
   const blob = new Blob([outEl.value], { type: "text/plain;charset=utf-8" });
   const a = document.createElement("a");
   a.href = URL.createObjectURL(blob);
-  a.download = `${safeFilename(lastResult.tuneTitle)}_thesession_${lastResult.tuneId}.abc`;
+  a.download = `${safeFilename(baseName)}_thesession${lastResult.tuneId ? ("_" + lastResult.tuneId) : ""}.abc`;
   document.body.appendChild(a);
   a.click();
   a.remove();
@@ -835,10 +1202,10 @@ $("btnOpenInTools").addEventListener("click", () => {
   try {
     if (!lastResult) return;
     openInAbcTools(outEl.value);
-    setStatus("ABC opened in the ABC Transcription Tools.");
+    clearStatus("ABC opened in the ABC Transcription Tools.");
   } catch (e) {
     console.error(e);
-    setStatus("Open in ABC Transcription Tools failed: " + (e && e.message ? e.message : String(e)));
+    clearStatus("Open in ABC Transcription Tools failed: " + (e && e.message ? e.message : String(e)));
   }
 });
 
@@ -864,6 +1231,30 @@ function def_bytesToBase64URL(bytes) {
    Open the tunes in the ABC Transcription Tools
    ============================================================ */
 
+function testOpenInAbcTools(theABC) {
+  var m = String(theABC).match(/^\s*T\s*:\s*(.+)\s*$/m);
+  var tuneTitle = (m && m[1]) ? m[1].trim() : "tune";
+  tuneTitle = encodeURIComponent(tuneTitle.replace(/\s+/g, "_"));
+
+  var encoder = new TextEncoder();
+  var utf8Bytes = encoder.encode(theABC);
+  var deflated = pako.deflate(utf8Bytes, { level: 6 });
+  var abc_compressed = def_bytesToBase64URL(deflated);
+
+  var url =
+    "https://michaeleskin.com/abctools/abctools.html?def=" + abc_compressed +
+    "&format=noten&ssp=0" +
+    "&name=" + tuneTitle +
+    "&editor=1";
+
+  if (url.length < 8100) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+
 function openInAbcTools(theABC) {
   var m = String(theABC).match(/^\s*T\s*:\s*(.+)\s*$/m);
   var tuneTitle = (m && m[1]) ? m[1].trim() : "tune";
@@ -884,7 +1275,7 @@ function openInAbcTools(theABC) {
     window.open(url, "_blank", "noopener,noreferrer");
   } else {
     DayPilot.Modal.alert(
-      '<p style="text-align:center;font-family:helvetica;font-size:12pt;">Share URL is too long to open in ABC Transcription Tools.</p>',
+      '<p style="text-align:center;font-family:helvetica;font-size:12pt;">The Share URL is too long to open in ABC Transcription Tools.<br/><br/>Instead, copy and paste the ABC or save it to an ABC file and load it from the tools.</p>',
       { theme: "modal_flat", top: 230, scrollWithPage: false }
     );
   }
