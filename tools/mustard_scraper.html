@@ -124,7 +124,7 @@
       padding:10px 12px;
       line-height:1.2;
 
-      flex: 1 1 260px;
+      flex: 3 1 360px;
       min-width: 0;
       width:auto;
     }
@@ -168,7 +168,12 @@
       flex: 1 1 180px;
     }
 
-    #btnFetch{ flex: 1 1 220px; }
+    #btnFetch{
+      flex: 0 0 180px;   /* narrower */
+      padding-left: 12px;
+      padding-right: 12px;
+    }
+
     #btnOpenInTools{ flex-basis: 100%; }
 
     .muted{
@@ -257,7 +262,6 @@
       box-sizing:border-box;
       display:block;
     }
-
 
     .rightHeader{
       display:flex;
@@ -393,6 +397,11 @@
         height: 55vh;
         min-height: 320px;
       }
+
+      #btnFetch{
+        flex: 1 0 100% !important;
+        width: 100% !important;
+      }
     }
 
     @media (max-width: 720px){
@@ -400,6 +409,13 @@
       .row button{ flex-basis:100%; }
       input[type="text"]{ flex-basis:100%; }
       .taWrap{ height: 60vh; min-height: 300px; }
+      #btnFetch{
+        flex: 1 0 100% !important;
+        width: 100% !important;
+      }
+      .instructions a.exampleLink{
+        font-size: 0.92em;     /* slightly smaller than surrounding text */
+      }   
     }
   </style>
 
@@ -619,7 +635,7 @@ async function fetchTuneOrBookmarksAsABC(inputUrl, opts) {
     const rawAbc = picked.abc;
 
     const bodyNormalized = extractBody(rawAbc)
-      .replace(/!/g, "\n")
+      .replace(/\|\!\s/g, "|\n")
       .split(/\r?\n/)
       .map(line => line.trim())
       .join("\n")
@@ -785,7 +801,7 @@ async function fetchAllTuneVersionsAsABC(tuneUrl, opts) {
     if (!rawAbc.trim()) continue;
 
     const bodyNormalized = extractBody(rawAbc)
-      .replace(/!/g, "\n")
+      .replace(/\|\!\s/g, "|\n")
       .split(/\r?\n/)
       .map(line => line.trim())
       .join("\n")
@@ -1254,7 +1270,6 @@ function testOpenInAbcTools(theABC) {
   }
 }
 
-
 function openInAbcTools(theABC) {
   var m = String(theABC).match(/^\s*T\s*:\s*(.+)\s*$/m);
   var tuneTitle = (m && m[1]) ? m[1].trim() : "tune";
@@ -1287,10 +1302,11 @@ tuneUrlInput.addEventListener("keydown", (e) => {
     $("btnFetch").click();
   }
 });
+
 </script>
 
-<script type="text/javascript" src="pako.min.js?v=8"></script>
-<script type="text/javascript" src="daypilot-modal.min-3.10.1.js?v=8"></script>
+<script type="text/javascript" src="pako.min.js?v=9"></script>
+<script type="text/javascript" src="daypilot-modal.min-3.10.1.js?v=9"></script>
 
 </body>
 </html>
