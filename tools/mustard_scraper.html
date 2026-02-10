@@ -369,6 +369,11 @@
       font-weight: 500;
     }
 
+    /* Bottom Help button */
+    #btnHelp{
+      width: 100%;
+    }
+
     @media (max-width: 980px){
       body{
         overflow:auto;
@@ -416,6 +421,9 @@
       .instructions a.exampleLink{
         font-size: 0.92em;     /* slightly smaller than surrounding text */
       }   
+      #instructions_div{
+        display: none !important;
+      }
     }
   </style>
 
@@ -482,6 +490,9 @@
           </div>
         </div>
       </div>
+    </div>
+    <div id="instructions_div" class="card">
+      <button id="btnHelp">Instructions</button>
     </div>
   </div>
 
@@ -1302,6 +1313,77 @@ tuneUrlInput.addEventListener("keydown", (e) => {
     $("btnFetch").click();
   }
 });
+
+// Help / Instructions modal
+$("btnHelp").addEventListener("click", () => {
+  const html =
+    '<div style="font-family:Helvetica, Arial, sans-serif; font-size:12.5pt; line-height:1.6;">' +
+
+    '  <div style="text-align:center; font-size:16pt; font-weight:700; margin-bottom:14px;">Instructions</div>' +
+
+    '  <div style="margin-bottom:16px;">' +
+    '    Enter either a thesession.org tune URL, or a member bookmarks page URL into the <b>thesession.org URL</b> field and click <b>Fetch</b>.' +
+    '  </div>' +
+
+    '  <div style="margin-bottom:16px;">' +
+    '    <div style="font-weight:700; margin-bottom:6px;">Examples (tap to fill the URL field):</div>' +
+    '    <div style="margin-bottom:6px;">' +
+    '      <a href="https://thesession.org/tunes/1" class="exampleLink" data-fill-url="https://thesession.org/tunes/1">https://thesession.org/tunes/1</a>' +
+    '    </div>' +
+    '    <div>' +
+    '      <a href="https://thesession.org/members/22376/bookmarks" class="exampleLink" data-fill-url="https://thesession.org/members/22376/bookmarks">https://thesession.org/members/22376/bookmarks</a>' +
+    '    </div>' +
+    '  </div>' +
+
+    '  <div style="margin-bottom:16px;">' +
+    '    <div style="font-weight:700; margin-bottom:6px;">Guitar chords filter</div>' +
+    '    <div>' +
+    '      If <b>“Only include tune settings that have chords”</b> is checked, the tool will ' +
+    '      include only settings that contain guitar-style chord annotations ' +
+    '      (for example <code>"Em"</code>, <code>"D"</code>, <code>"G/B"</code>, etc.) in the ABC.' +
+    '    </div>' +
+    '    <div style="opacity:0.8; margin-top:6px;">' +
+    '      This is useful if you want to quickly collect settings with chords ' +
+    '      and skip melody-only versions.' +
+    '    </div>' +
+    '  </div>' +
+
+    '  <hr style="border:0; border-top:1px solid #ccc; margin:18px 0;">' +
+
+    '  <div style="text-align:center; font-size:15pt; font-weight:700; margin-bottom:10px;">Tip Jars</div>' +
+    '  <div style="text-align:center; margin-bottom:12px;">' +
+    '    If you find this tool useful, please consider buying me a beer<br/>' +
+    '    by tossing a few bucks into one of my virtual tip jars:' +
+    '  </div>' +
+
+    '  <div style="text-align:center; margin-bottom:10px;">' +
+    '    <div style="font-weight:700;">PayPal</div>' +
+    '    <div><a href="https://paypal.me/MichaelEskin" target="_blank" rel="noopener noreferrer">https://paypal.me/MichaelEskin</a></div>' +
+    '  </div>' +
+
+    '  <div style="text-align:center; margin-bottom:16px;">' +
+    '    <div style="font-weight:700;">Venmo</div>' +
+    '    <div>@MichaelEskin</div>' +
+    '  </div>' +
+
+    '  <hr style="border:0; border-top:1px solid #ccc; margin:18px 0;">' +
+
+    '  <div style="margin-bottom:6px; text-align:center;"><b>The source code for this tool is available on GitHub:</b></div>' +
+    '  <div style="margin-bottom:6px; text-align:center;">' +
+    '    <a href="https://github.com/seisiuneer/abctools/blob/main/tools/mustard_scraper.html" target="_blank" rel="noopener noreferrer">' +
+    '      https://github.com/seisiuneer/abctools/blob/main/tools/mustard_scraper.html' +
+    '    </a>' +
+    '  </div>' +
+
+    '</div>';
+
+  DayPilot.Modal.alert(html, {
+    theme: "modal_flat",
+    top: 50,
+    scrollWithPage: true
+  });
+});
+
 
 </script>
 
