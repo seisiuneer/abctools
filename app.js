@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3172_020326_1230";
+var gVersionNumber = "3173_020926_2000";
 
 var gMIDIInitStillWaiting = false;
 
@@ -37109,7 +37109,7 @@ function ProcessSelectRegionForPlay(theABC) {
   }
 
   // Doesn't work for multivoice tunes
-  if (theABC.indexOf("V:") != -1) {
+  if (isMultiVoiceTune(theABC)){
     return theABC;
   }
 
