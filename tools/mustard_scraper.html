@@ -1273,6 +1273,23 @@ function normalizeMembersUrl(inputUrl, wantTunes) {
 
 let lastResult = null;
 
+let fetchInProgress = false;
+
+function setFetchBusy(busy) {
+  fetchInProgress = !!busy;
+
+  // Disable the fetch button + prevent Enter re-triggering
+  $("btnFetch").disabled = fetchInProgress;
+
+  // Optional: prevent changing inputs while running (nice UX)
+  $("tuneUrl").disabled = fetchInProgress;
+  $("onlyChords").disabled = fetchInProgress;
+  $("memberUseTunes").disabled = fetchInProgress;
+
+  // Optional: show busy label
+  $("btnFetch").textContent = fetchInProgress ? "Fetching…" : "Fetch";
+}
+
 function safeFilename(s) {
   return String(s || "tune")
     .replace(/[^\w\-]+/g, "_")
@@ -1302,6 +1319,16 @@ $("btnMembers").addEventListener("click", async () => {
 });
 
 $("btnFetch").addEventListener("click", async () => {
+
+  // ---- NON-REENTRANT GUARD ----
+  if (fetchInProgress) {
+    // Optional: a gentle status message
+    appendStatus("Fetch already in progress…");
+    return;
+  }
+
+  setFetchBusy(true);
+
   const url = $("tuneUrl").value.trim();
   const onlyChords = !!onlyChordsEl.checked;
   const memberUseTunes = !!memberUseTunesEl.checked;
@@ -1316,7 +1343,9 @@ $("btnFetch").addEventListener("click", async () => {
     const result = await fetchTuneOrBookmarksAsABC(url, { onlyChords, memberUseTunes });
     lastResult = result;
 
-    outEl.value = "%\n% Make hyperlinks in the ABC notation clickable\n%enable_hyperlinks\n%\n\n"+result.combined;
+    outEl.value =
+      "%\n% Make hyperlinks in the ABC notation clickable\n%enable_hyperlinks\n%\n\n" +
+      result.combined;
 
     // Status summary
     clearStatus("Success!\n");
@@ -1327,7 +1356,6 @@ $("btnFetch").addEventListener("click", async () => {
     } else {
       const label = (result && result.memberSourceLabel) ? result.memberSourceLabel : "Bookmarks";
 
-      // Prefer the new generic counters, but keep compatibility with your old ones
       const itemsCount = (result.memberItemsCount != null) ? result.memberItemsCount : result.bookmarkItemsCount;
       const settingsCount = (result.memberSettingsCount != null) ? result.memberSettingsCount : result.bookmarkSettingsCount;
 
@@ -1338,30 +1366,31 @@ $("btnFetch").addEventListener("click", async () => {
         if (itemsCount != null) appendStatus(`- Bookmarks items fetched: ${itemsCount}`);
         if (settingsCount != null) appendStatus(`- ${label} tune settings found: ${settingsCount}`);
       }
-
     }
 
     appendStatus(`- # of Settings: ${result.settingsCount}`);
 
     if (onlyChords) appendStatus(`- Skipped (no chords): ${result.skippedNoChords || 0}`);
-    if (result.skippedNotFound != null && result.skippedNotFound > 0) appendStatus(`- Skipped (missing tune setting): ${result.skippedNotFound}`);
+    if (result.skippedNotFound != null && result.skippedNotFound > 0)
+      appendStatus(`- Skipped (missing tune setting): ${result.skippedNotFound}`);
 
     appendStatus("");
 
     // Test URL length and enable/disable the open in ABC Transcriptions Tool button as required
-    if (testOpenInAbcTools(outEl.value)){
+    if (testOpenInAbcTools(outEl.value)) {
       enableActions(true);
       appendStatus("You can now copy/download the ABC settings or open them in the ABC Transcription Tools.");
-    }
-    else{
-      // Disable the open in ABC tools
+    } else {
       enableActions(true);
       $("btnOpenInTools").disabled = true;
       appendStatus("You can now copy/download the ABC settings.");
     }
+
   } catch (e) {
     console.error(e);
     clearStatus(e && e.message ? e.message : String(e));
+  } finally {
+    setFetchBusy(false);
   }
 });
 
