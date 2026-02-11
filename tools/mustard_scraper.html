@@ -442,10 +442,10 @@
       <h2>thesession.org Tune Settings Scraper</h2>
       <p class="muted small instructions" style="margin-top:6px">
         Enter a thesession.org tune URL like:<br/>
-        <a title="Loads the sample tune URL into thesession.org URL field" href="https://thesession.org/tunes/1" class="exampleLink" data-fill-url="https://thesession.org/tunes/1">https://thesession.org/tunes/1</a>
+        <a title="Click to load the example tune URL into thesession.org URL field" href="https://thesession.org/tunes/1" class="exampleLink" data-fill-url="https://thesession.org/tunes/1">https://thesession.org/tunes/1</a>
         <br/>
         or a member's page URL like (will fetch all bookmarked tunes):<br/>
-        <a title="Loads the sample member's URL into thesession.org URL field"href="https://thesession.org/members/22376" class="exampleLink" data-fill-url="https://thesession.org/members/22376">https://thesession.org/members/22376</a>
+        <a title="Click to load the example member's URL into thesession.org URL field"href="https://thesession.org/members/22376" class="exampleLink" data-fill-url="https://thesession.org/members/22376">https://thesession.org/members/22376</a>
       </p>
     </div>
 
@@ -464,7 +464,7 @@
           <div class="row">
             <label for="tuneUrl"><strong>thesession.org URL:</strong></label>
             <input title="Enter a thesession.org tune or member page URL" id="tuneUrl" type="text" value="https://thesession.org/tunes/1" />
-            <button title="Fetches either all the tune settings or the members's bookmarked tunes depending on the URL" id="btnFetch">Fetch</button>
+            <button title="Fetches either all the specified tune settings or the members's bookmarked tunes depending on the URL" id="btnFetch">Fetch</button>
           </div>
 
           <div class="checkRow">
@@ -475,9 +475,9 @@
           </div>
 
           <div class="row" style="margin-top:10px">
-            <button title="Copies the tune settings ABC to the clipboard" id="btnCopy" disabled>Copy ABC</button>
-            <button title="Saves the tune settings ABC to a file" id="btnDownload" disabled>Download .abc File</button>
-            <button title="Opens the tune settings ABC in the ABC Transcription Tools" id="btnOpenInTools" disabled>Open All Settings in the ABC Transcription Tools</button>
+            <button title="Copies all the fetched tune settings ABC to the clipboard" id="btnCopy" disabled>Copy ABC</button>
+            <button title="Saves all the fetched tune settings ABC to a file" id="btnDownload" disabled>Download .abc File</button>
+            <button title="Opens all the fetched tune settings ABC in the ABC Transcription Tools" id="btnOpenInTools" disabled>Open All Settings in the ABC Transcription Tools</button>
           </div>
         </div>
 
@@ -657,7 +657,7 @@ async function fetchTuneOrBookmarksAsABC(inputUrl, opts) {
     const rawAbc = picked.abc;
 
     const bodyNormalized = extractBody(rawAbc)
-      .replace(/\|\!\s/g, "|\n")
+      .replace(/\!\s/g, "\n")
       .split(/\r?\n/)
       .map(line => line.trim())
       .join("\n")
@@ -826,7 +826,7 @@ async function fetchAllTuneVersionsAsABC(tuneUrl, opts) {
     if (!rawAbc.trim()) continue;
 
     const bodyNormalized = extractBody(rawAbc)
-      .replace(/\|\!\s/g, "|\n")
+      .replace(/\!\s/g, "\n")      
       .split(/\r?\n/)
       .map(line => line.trim())
       .join("\n")
