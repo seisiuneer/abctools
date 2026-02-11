@@ -583,7 +583,7 @@ async function fetchTuneOrBookmarksAsABC(inputUrl, opts) {
     });
   }
 
-  if (!settingItems.length) throw new Error("No bookmarked settings found (objectType=setting).");
+  if (!settingItems.length) throw new Error("No bookmarked tune settings found.");
 
   // De-dupe by URL (keep first seen displayName)
   const seen = new Set();
@@ -594,7 +594,7 @@ async function fetchTuneOrBookmarksAsABC(inputUrl, opts) {
     uniqSettingItems.push(si);
   }
 
-  appendStatus(`Found ${uniqSettingItems.length} bookmarked setting(s).`);
+  appendStatus(`Found ${uniqSettingItems.length} bookmarked tune setting(s).`);
 
   // Cache tune JSON per tuneId
   const tuneCache = new Map(); // tuneId -> { tuneData, tuneUrlNoHash, tuneTitle, tuneType }
@@ -668,12 +668,12 @@ async function fetchTuneOrBookmarksAsABC(inputUrl, opts) {
   }
 
   if (!included.length) {
-    if (onlyChords) throw new Error("No bookmarked settings contained chords.");
-    throw new Error("No bookmarked settings could be loaded.");
+    if (onlyChords) throw new Error("No bookmarked tune settings contained chords.");
+    throw new Error("No bookmarked tune settings could be loaded.");
   }
 
   const totalIncluded = included.length;
-  appendStatus(`Building ABC for ${totalIncluded} bookmarked setting(s)…`);
+  appendStatus(`Building ABC for ${totalIncluded} bookmarked tune setting(s)…`);
 
   const built = [];
   for (let j = 0; j < included.length; j++) {
