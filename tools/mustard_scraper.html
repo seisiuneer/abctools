@@ -864,6 +864,15 @@ async function fetchAllTuneVersionsAsABC(tuneUrl, opts) {
 
     const kLine = normalizeKValue(kRaw) || "Dmaj";
 
+    // Use per-setting URL (if provided by the API) for the S: tag.
+    // Fallback to the base tune URL if missing.
+    let sUrl = "";
+    if (setting && typeof setting.url === "string" && setting.url.trim()) {
+      sUrl = setting.url.trim();
+    } else {
+      sUrl = tuneUrl;
+    }
+
     const header =
       `X:${xNum}\n` +
       `T:${tLine}\n` +
@@ -872,7 +881,7 @@ async function fetchAllTuneVersionsAsABC(tuneUrl, opts) {
       `L:${lLine}\n` +
       `Q:${qVal}\n` +
       `K:${kLine}\n` +
-      `S:${tuneUrl}\n` +
+      `S:${sUrl}\n` +
       (zLine ? `Z:${zLine}\n` : "");
 
     built.push(header + bodyNormalized + "\n");
