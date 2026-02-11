@@ -439,37 +439,45 @@
 <body>
   <div class="app">
     <div>
-      <h2><a href="https://thesession.org/tunes" target="_blank">thesession.org</a> Tune Settings Scraper</h2>
+      <h2>thesession.org Tune Settings Scraper</h2>
       <p class="muted small instructions" style="margin-top:6px">
         Enter a thesession.org tune URL like:<br/>
-        <a href="https://thesession.org/tunes/1" class="exampleLink" data-fill-url="https://thesession.org/tunes/1">https://thesession.org/tunes/1</a>
+        <a title="Loads the sample tune URL into thesession.org URL field" href="https://thesession.org/tunes/1" class="exampleLink" data-fill-url="https://thesession.org/tunes/1">https://thesession.org/tunes/1</a>
         <br/>
-        or a member's bookmarks page URL like:<br/>
-        <a href="https://thesession.org/members/22376/bookmarks" class="exampleLink" data-fill-url="https://thesession.org/members/22376/bookmarks">https://thesession.org/members/22376/bookmarks</a>
+        or a member's page URL like (will fetch all bookmarked tunes):<br/>
+        <a title="Loads the sample member's URL into thesession.org URL field"href="https://thesession.org/members/22376" class="exampleLink" data-fill-url="https://thesession.org/members/22376">https://thesession.org/members/22376</a>
       </p>
     </div>
 
     <div class="main">
       <!-- LEFT COLUMN -->
       <div class="left">
+
+        <div class="card">
+          <div class="row">
+            <button title="Opens the thesession.org tune search page in a new tab" id="btnTune">Open Tunes Search Page</button>
+            <button title="Opens the thesession.org members search page in a new tab" id="btnMembers">Open Members Search Page</button>
+          </div>
+        </div>
+
         <div class="card">
           <div class="row">
             <label for="tuneUrl"><strong>thesession.org URL:</strong></label>
-            <input id="tuneUrl" type="text" value="https://thesession.org/tunes/1" />
-            <button id="btnFetch">Fetch</button>
+            <input title="Enter a thesession.org tune or member page URL" id="tuneUrl" type="text" value="https://thesession.org/tunes/1" />
+            <button title="Fetches either all the tune settings or the members's bookmarked tunes depending on the URL" id="btnFetch">Fetch</button>
           </div>
 
           <div class="checkRow">
             <label for="onlyChords">
-              <input id="onlyChords" type="checkbox" />
-              <span>Only include tune settings that have chords</span>
+              <input title="When checked, only fetches tune settings that have chords" id="onlyChords" type="checkbox" />
+              <span title="When checked, only fetches tune settings that have chords">Only include tune settings that have chords</span>
             </label>
           </div>
 
           <div class="row" style="margin-top:10px">
-            <button id="btnCopy" disabled>Copy ABC</button>
-            <button id="btnDownload" disabled>Download .abc File</button>
-            <button id="btnOpenInTools" disabled>Open All Settings in the ABC Transcription Tools</button>
+            <button title="Copies the tune settings ABC to the clipboard" id="btnCopy" disabled>Copy ABC</button>
+            <button title="Saves the tune settings ABC to a file" id="btnDownload" disabled>Download .abc File</button>
+            <button title="Opens the tune settings ABC in the ABC Transcription Tools" id="btnOpenInTools" disabled>Open All Settings in the ABC Transcription Tools</button>
           </div>
         </div>
 
@@ -492,7 +500,7 @@
       </div>
     </div>
     <div id="instructions_div" class="card">
-      <button id="btnHelp">Instructions</button>
+      <button title="Click to show the instructions" id="btnHelp">Instructions</button>
     </div>
   </div>
 
@@ -546,15 +554,18 @@ async function fetchTuneOrBookmarksAsABC(inputUrl, opts) {
   opts = opts || {};
   const onlyChords = !!opts.onlyChords;
 
-  const url = String(inputUrl || "").trim();
+  let url = String(inputUrl || "").trim();
   if (!url) throw new Error("Error: Please enter a URL.");
+
+  // NEW: If it's any /members/{id} URL, treat it as bookmarks and normalize it.
+  url = normalizeMembersToBookmarksUrl(url);
 
   if (isSessionTuneUrl(url)) {
     return await fetchAllTuneVersionsAsABC(url, opts);
   }
 
   if (!isSessionBookmarksUrl(url)) {
-    throw new Error("Error: URL must be a thesession.org tune URL (/tunes/####) or a bookmarks URL (/members/####/bookmarks).");
+    throw new Error("Error: URL must be a thesession.org tune URL (/tunes/####) or a member bookmarks URL (/members/####[/bookmarks]).");
   }
 
   // ---- Bookmarks flow (PAGED JSON) ----
@@ -749,8 +760,11 @@ async function fetchAllBookmarksItemsPaged(bookmarksUrl) {
     const pageUrl = new URL(base.toString());
     pageUrl.searchParams.set("format", "json");
     pageUrl.searchParams.set("page", String(page));
+    pageUrl.searchParams.set("perpage", "50");
 
     appendStatus(`- Fetching bookmarks page ${page}…`);
+
+    //console.log(pageUrl.toString());
 
     let res;
     try {
@@ -1129,6 +1143,51 @@ function normalizeMode(mode) {
   return "";
 }
 
+// If input is a members URL like /members/22376 or /members/22376/anything,
+// normalize it to /members/22376/bookmarks (preserving query if present).
+function normalizeMembersToBookmarksUrl(inputUrl) {
+  const s = String(inputUrl || "").trim();
+  if (!s) return s;
+
+  try {
+    const u = new URL(s);
+
+    // Only normalize thesession.org members URLs
+    if (!/thesession\.org$/i.test(u.hostname)) return s;
+
+    const path = u.pathname || "";
+    const m = path.match(/^\/members\/(\d+)(?:\/([^?#]*))?\/?$/i);
+    if (!m) return s;
+
+    const memberId = m[1];
+    const trailing = (m[2] || "").toLowerCase();
+
+    // If already explicitly /bookmarks or /bookmarks/..., leave it
+    if (trailing.startsWith("bookmarks")) return u.toString();
+
+    // Otherwise force to /members/{id}/bookmarks
+    u.pathname = `/members/${memberId}/bookmarks`;
+    u.hash = "";
+    return u.toString();
+  } catch {
+    // Non-URL input (or missing scheme). Handle common cases.
+    const m = s.match(/^(https?:\/\/thesession\.org)?(\/members\/(\d+))(\/[^?#]*)?/i);
+    if (!m) return s;
+
+    const prefix = m[1] || "https://thesession.org";
+    const memberId = m[3];
+
+    // If the original already contains /bookmarks after the member id, keep it
+    if (/\/members\/\d+\/bookmarks\b/i.test(s)) {
+      // Ensure it has a scheme+host
+      return s.startsWith("http") ? s : (prefix + s);
+    }
+
+    return `${prefix}/members/${memberId}/bookmarks`;
+  }
+}
+
+
 /* ============================================================
    UI wiring
    ============================================================ */
@@ -1154,6 +1213,14 @@ function capitalizeFirst(str) {
   const [first, ...rest] = str;
   return first.toUpperCase() + rest.join("");
 }
+
+$("btnTune").addEventListener("click", async () => {
+  window.open("https://thesession.org/tunes", "_blank");
+});
+
+$("btnMembers").addEventListener("click", async () => {
+  window.open("https://thesession.org/members", "_blank");
+});
 
 $("btnFetch").addEventListener("click", async () => {
   const url = $("tuneUrl").value.trim();
