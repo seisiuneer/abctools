@@ -769,7 +769,7 @@ async function fetchAllBookmarksItemsPaged(bookmarksUrl) {
     const items = (data && Array.isArray(data.items)) ? data.items : [];
 
     if (!items.length) {
-      appendStatus(`  All bookmarked settings fetched!`);
+      appendStatus(`  All bookmarked tune settings fetched!`);
       break;
     }
 
@@ -1171,13 +1171,13 @@ $("btnFetch").addEventListener("click", async () => {
     } else {
       appendStatus("- Source: Bookmarks");
       if (result.bookmarkItemsCount != null) appendStatus(`- Bookmark items fetched: ${result.bookmarkItemsCount}`);
-      if (result.bookmarkSettingsCount != null) appendStatus(`- Bookmarked settings found: ${result.bookmarkSettingsCount}`);
+      if (result.bookmarkSettingsCount != null) appendStatus(`- Bookmarked tune settings found: ${result.bookmarkSettingsCount}`);
     }
 
     appendStatus(`- # of Settings: ${result.settingsCount}`);
 
     if (onlyChords) appendStatus(`- Skipped (no chords): ${result.skippedNoChords || 0}`);
-    if (result.skippedNotFound != null && result.skippedNotFound > 0) appendStatus(`- Skipped (missing setting): ${result.skippedNotFound}`);
+    if (result.skippedNotFound != null && result.skippedNotFound > 0) appendStatus(`- Skipped (missing tune setting): ${result.skippedNotFound}`);
 
     appendStatus("");
 
