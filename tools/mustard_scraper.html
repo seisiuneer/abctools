@@ -1236,7 +1236,7 @@ $("btnFetch").addEventListener("click", async () => {
     const result = await fetchTuneOrBookmarksAsABC(url, { onlyChords });
     lastResult = result;
 
-    outEl.value = result.combined;
+    outEl.value = "%\n% Make hyperlinks in the ABC notation clickable\n%enable_hyperlinks\n%\n\n"+result.combined;
 
     // Status summary
     clearStatus("Success!\n");
