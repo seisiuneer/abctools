@@ -323,7 +323,7 @@
     }
 
     .modal_flat_inner{
-      padding:30px;
+      padding:16px;
       background:#fff;
       color:#000;
     }
@@ -1314,15 +1314,16 @@ tuneUrlInput.addEventListener("keydown", (e) => {
   }
 });
 
-// Help / Instructions modal
+// Instructions modal
 $("btnHelp").addEventListener("click", () => {
-  const html =
-    '<div style="font-family:Helvetica, Arial, sans-serif; font-size:12.5pt; line-height:1.6;">' +
 
-    '  <div style="text-align:center; font-size:16pt; font-weight:700; margin-bottom:14px;">Instructions</div>' +
-
+  // scrollable inner content
+  const content =
     '  <div style="margin-bottom:16px;">' +
     '    Enter either a thesession.org tune URL, or a member bookmarks page URL into the <b>thesession.org URL</b> field and click <b>Fetch</b>.' +
+    '  </div>' +
+    '  <div style="margin-bottom:16px;">' +
+    '    You can copy the results to the clipboard, save them to a .ABC file, or if the ShareURL length would be less than 8100 characters, open the results directly in the <a href="https://michaeleskin.com/abctools/abctools.html" target="_blank" rel="noopener noreferrer">ABC Transcription Tools.</a>' +
     '  </div>' +
 
     '  <div style="margin-bottom:16px;">' +
@@ -1371,19 +1372,34 @@ $("btnHelp").addEventListener("click", () => {
     '  <div style="margin-bottom:6px; text-align:center;"><b>The source code for this tool is available on GitHub:</b></div>' +
     '  <div style="margin-bottom:6px; text-align:center;">' +
     '    <a href="https://github.com/seisiuneer/abctools/blob/main/tools/mustard_scraper.html" target="_blank" rel="noopener noreferrer">' +
-    '      https://github.com/seisiuneer/abctools/blob/main/tools/mustard_scraper.html' +
+    '      mustard_scraper.html' +
     '    </a>' +
-    '  </div>' +
+    '  </div>';
 
+  const html =
+    '<div style="font-family:Helvetica, Arial, sans-serif; font-size:12.5pt; line-height:1.6;">' +
+    '  <div style="text-align:center; font-size:16pt; font-weight:700; margin-bottom:14px;">Instructions</div>' +
+
+    // scroll container (keeps dialog from getting super tall)
+    '<div style="' +
+      'width:100%;' +
+      'max-height:min(60vh, 520px);' +
+      'overflow:auto;' +
+      '-webkit-overflow-scrolling:touch;' +
+      'padding:0 12px 2px 12px;' +
+      'padding-left:30px !important;' +
+      'box-sizing:border-box;' +
+    '">' +
+    content +
+    '  </div>' +
     '</div>';
 
   DayPilot.Modal.alert(html, {
     theme: "modal_flat",
     top: 50,
-    scrollWithPage: true
+    scrollWithPage: false
   });
 });
-
 
 </script>
 
