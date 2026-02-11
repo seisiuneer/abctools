@@ -359,7 +359,7 @@
       cursor: pointer;
       word-break: break-all;
     }
-    
+
     .instructions{
       font-size: clamp(14.5px, 0.9vw + 13px, 16.5px);
       line-height: 2.0;
@@ -420,7 +420,7 @@
       }
       .instructions a.exampleLink{
         font-size: 0.92em;     /* slightly smaller than surrounding text */
-      }   
+      }
       #instructions_div{
         display: none !important;
       }
@@ -444,7 +444,7 @@
         Enter a thesession.org tune URL like:<br/>
         <a title="Click to load the example tune URL into thesession.org URL field" href="https://thesession.org/tunes/1" class="exampleLink" data-fill-url="https://thesession.org/tunes/1">https://thesession.org/tunes/1</a>
         <br/>
-        or a member's page URL like (will fetch all bookmarked tunes):<br/>
+        or a member's page URL like (will fetch all member submitted tune settings or bookmarked tune settings):<br/>
         <a title="Click to load the example member's URL into thesession.org URL field"href="https://thesession.org/members/22376" class="exampleLink" data-fill-url="https://thesession.org/members/22376">https://thesession.org/members/22376</a>
       </p>
     </div>
@@ -464,7 +464,14 @@
           <div class="row">
             <label for="tuneUrl"><strong>thesession.org URL:</strong></label>
             <input title="Enter a thesession.org tune or member page URL" id="tuneUrl" type="text" value="https://thesession.org/tunes/1" />
-            <button title="Fetches either all the specified tune settings or the members's bookmarked tunes depending on the URL" id="btnFetch">Fetch</button>
+            <button title="Fetches either all the specified tune settings or the members's bookmarked tune settings depending on the URL and checkboxes below" id="btnFetch">Fetch</button>
+          </div>
+
+          <div class="checkRow">
+            <label for="memberUseTunes">
+              <input title="When checked and a member URL is entered, fetch that member's bookmarked tune settings instead of submitted tune settings" id="memberUseTunes" type="checkbox" />
+              <span title="When checked and a member URL is entered, fetch that member's bookmarked tune settings instead of submitted tune settings">For member URLs, get bookmarked tune settings instead of submitted tune settings</span>
+            </label>
           </div>
 
           <div class="checkRow">
@@ -514,6 +521,7 @@ const statusEl = $("status");
 const outEl = $("out");
 const tuneUrlInput = $("tuneUrl");
 const onlyChordsEl = $("onlyChords");
+const memberUseTunesEl = $("memberUseTunes"); 
 
 // Click-to-fill example links
 document.addEventListener("click", (e) => {
@@ -547,54 +555,84 @@ function appendStatus(msg) {
 }
 
 /* ============================================================
-   Core entry (tune URL OR bookmarks URL)
+   Core entry (tune URL OR member bookmarks/tunes URL)
    ============================================================ */
 
 async function fetchTuneOrBookmarksAsABC(inputUrl, opts) {
   opts = opts || {};
   const onlyChords = !!opts.onlyChords;
+  const memberUseTunes = !!opts.memberUseTunes;
 
   let url = String(inputUrl || "").trim();
   if (!url) throw new Error("Error: Please enter a URL.");
 
-  // NEW: If it's any /members/{id} URL, treat it as bookmarks and normalize it.
-  url = normalizeMembersToBookmarksUrl(url);
+  // Normalize member URLs to either /bookmarks or /tunes based on checkbox
+  url = normalizeMembersUrl(url, memberUseTunes);
 
   if (isSessionTuneUrl(url)) {
     return await fetchAllTuneVersionsAsABC(url, opts);
   }
 
-  if (!isSessionBookmarksUrl(url)) {
-    throw new Error("Error: URL must be a thesession.org tune URL (/tunes/####) or a member bookmarks URL (/members/####[/bookmarks]).");
+  if (!isSessionBookmarksUrl(url) && !isSessionMemberTunesUrl(url)) {
+    throw new Error("Error: URL must be a thesession.org tune URL (/tunes/####) or a member URL (/members/####).");
   }
 
-  // ---- Bookmarks flow (PAGED JSON) ----
-  appendStatus("Loading bookmarks…");
-  const items = await fetchAllBookmarksItemsPaged(url);
+  const sourceLabel = isSessionMemberTunesUrl(url) ? "Settings" : "Bookmarks";
 
-  if (!items.length) throw new Error("No bookmark items found.");
+  // ---- Member list flow (PAGED JSON; same system for /bookmarks and /tunes) ----
+  if (sourceLabel == "Settings"){
+    appendStatus(`Loading submitted tune settings…`);
+  }
+  else{
+    appendStatus(`Loading bookmarked tune settings…`);    
+  }
 
-  // Collect ONLY bookmarked SETTINGS from object.url where objectType === "setting"
+  const items = await fetchAllMemberItemsPaged(url, sourceLabel);
+
+  if (!items.length) throw new Error(`No ${sourceLabel.toLowerCase()} items found.`);
+
+  // Collect ONLY SETTINGS from object.url where objectType === "setting"
   // PLUS: capture the displayName so status can show tune name while fetching.
+  // Normalize BOTH member sources to the same shape:
+  //   [{ url: "https://thesession.org/tunes/....#setting....", displayName: "Tune Name" }, ...]
   const settingItems = [];
-  for (const it of items) {
-    const obj = (it && it.object) ? it.object : null;
-    const objType = (obj && typeof obj.objectType === "string") ? obj.objectType : "";
-    if (objType !== "setting") continue;
 
-    const objUrl = (obj && typeof obj.url === "string") ? obj.url.trim() : "";
-    if (!objUrl) continue;
+  if (isSessionMemberTunesUrl(url)) {
+    // /members/{id}/tunes?format=json returns { settings: [...] } per page
+    // Each element already represents a setting.
+    for (const s of items) {
+      const settingUrl = (s && typeof s.url === "string") ? s.url.trim() : "";
+      if (!settingUrl) continue;
 
-    // This is the tune name for the bookmarked setting (per your example JSON)
-    const displayName = (obj && typeof obj.displayName === "string") ? obj.displayName.trim() : "";
+      const tuneName =
+        (s && s.tune && typeof s.tune.name === "string") ? s.tune.name.trim() : "";
 
-    settingItems.push({
-      url: objUrl,
-      displayName: displayName
-    });
+      settingItems.push({
+        url: settingUrl,
+        displayName: tuneName
+      });
+    }
+  } else {
+    // /members/{id}/bookmarks?format=json returns { items: [...] } per page
+    // Each item has .object with objectType "setting".
+    for (const it of items) {
+      const obj = (it && it.object) ? it.object : null;
+      const objType = (obj && typeof obj.objectType === "string") ? obj.objectType : "";
+      if (objType !== "setting") continue;
+
+      const objUrl = (obj && typeof obj.url === "string") ? obj.url.trim() : "";
+      if (!objUrl) continue;
+
+      const displayName = (obj && typeof obj.displayName === "string") ? obj.displayName.trim() : "";
+
+      settingItems.push({
+        url: objUrl,
+        displayName
+      });
+    }
   }
 
-  if (!settingItems.length) throw new Error("No bookmarked tune settings found.");
+  if (!settingItems.length) throw new Error(`No ${sourceLabel.toLowerCase()} tune settings found.`);
 
   // De-dupe by URL (keep first seen displayName)
   const seen = new Set();
@@ -605,7 +643,7 @@ async function fetchTuneOrBookmarksAsABC(inputUrl, opts) {
     uniqSettingItems.push(si);
   }
 
-  appendStatus(`Found ${uniqSettingItems.length} bookmarked tune setting(s).`);
+  appendStatus(`Found ${uniqSettingItems.length} tune setting(s).`);
 
   // Cache tune JSON per tuneId
   const tuneCache = new Map(); // tuneId -> { tuneData, tuneUrlNoHash, tuneTitle, tuneType }
@@ -616,7 +654,7 @@ async function fetchTuneOrBookmarksAsABC(inputUrl, opts) {
 
   for (let i = 0; i < uniqSettingItems.length; i++) {
     const settingUrl = uniqSettingItems[i].url;
-    const statusTuneName = uniqSettingItems[i].displayName || ""; // <-- name from bookmark JSON
+    const statusTuneName = uniqSettingItems[i].displayName || "";
 
     const tuneId = extractTuneIdFromSettingUrl(settingUrl);
     const settingId = extractSettingIdFromSettingUrl(settingUrl);
@@ -632,8 +670,6 @@ async function fetchTuneOrBookmarksAsABC(inputUrl, opts) {
       const tuneUrlNoHash = `https://thesession.org/tunes/${encodeURIComponent(tuneId)}`;
       const tuneJsonUrl = normalizeToJsonUrl(tuneUrlNoHash);
 
-      // CHANGED: show tune name (from bookmark displayName) instead of tune number
-      // Fall back to tune id if displayName missing.
       appendStatus(`Loading tune ${i+1} of ${uniqSettingItems.length}: ${statusTuneName || tuneId}`);
 
       const tr = await fetch(tuneJsonUrl, { method: "GET", mode: "cors", cache: "no-store" });
@@ -679,12 +715,12 @@ async function fetchTuneOrBookmarksAsABC(inputUrl, opts) {
   }
 
   if (!included.length) {
-    if (onlyChords) throw new Error("No bookmarked tune settings contained chords.");
-    throw new Error("No bookmarked tune settings could be loaded.");
+    if (onlyChords) throw new Error(`No ${sourceLabel.toLowerCase()} tune settings contained chords.`);
+    throw new Error(`No ${sourceLabel.toLowerCase()} tune settings could be loaded.`);
   }
 
   const totalIncluded = included.length;
-  appendStatus(`Building ABC for ${totalIncluded} bookmarked tune setting(s)…`);
+  appendStatus(`Building ABC for ${totalIncluded} ${sourceLabel.toLowerCase()} tune setting(s)…`);
 
   const built = [];
   for (let j = 0; j < included.length; j++) {
@@ -729,19 +765,25 @@ async function fetchTuneOrBookmarksAsABC(inputUrl, opts) {
 
   return {
     combined: built.join("\n"),
-    tuneTitle: "Bookmarks",
+    tuneTitle: sourceLabel,          // "Bookmarks" or "Settings"
     tuneType: "",
     tuneId: "",
     settingsCount: totalIncluded,
     skippedNoChords,
     skippedNotFound,
+
+    // keep old names for backward compatibility, but also provide generic names
     bookmarkItemsCount: items.length,
-    bookmarkSettingsCount: uniqSettingItems.length
+    bookmarkSettingsCount: uniqSettingItems.length,
+
+    memberSourceLabel: sourceLabel,
+    memberItemsCount: items.length,
+    memberSettingsCount: uniqSettingItems.length
   };
 }
 
 /* ============================================================
-   Bookmarks paging
+   Member list paging (works for /bookmarks AND /tunes)
    - Requests page=1,2,3,... with format=json
    - Stops when:
      - items array is empty, OR
@@ -749,22 +791,25 @@ async function fetchTuneOrBookmarksAsABC(inputUrl, opts) {
      - safety max page reached
    ============================================================ */
 
-async function fetchAllBookmarksItemsPaged(bookmarksUrl) {
+async function fetchAllMemberItemsPaged(listUrl, sourceLabel) {
   const all = [];
-  const base = new URL(String(bookmarksUrl));
+  const base = new URL(String(listUrl));
   base.hash = ""; // ignore
 
   const MAX_PAGES = 250; // safety (prevents infinite loops)
 
+  // If the endpoint tells us total pages, we can stop earlier.
+  let knownTotalPages = null;
+
   for (let page = 1; page <= MAX_PAGES; page++) {
+    if (knownTotalPages != null && page > knownTotalPages) break;
+
     const pageUrl = new URL(base.toString());
     pageUrl.searchParams.set("format", "json");
     pageUrl.searchParams.set("page", String(page));
     pageUrl.searchParams.set("perpage", "50");
 
-    appendStatus(`- Fetching bookmarks page ${page}…`);
-
-    //console.log(pageUrl.toString());
+    appendStatus(`- Fetching ${sourceLabel.toLowerCase()} page ${page}…`);
 
     let res;
     try {
@@ -780,14 +825,39 @@ async function fetchAllBookmarksItemsPaged(bookmarksUrl) {
     }
 
     const data = await res.json();
-    const items = (data && Array.isArray(data.items)) ? data.items : [];
 
-    if (!items.length) {
-      appendStatus(`  All bookmarked tune settings fetched!`);
-      break;
+    // Bookmarks JSON shape:
+    //   { items: [...] }
+    // Member tunes JSON shape:
+    //   { settings: [...], pages: N, page: P, total: T }
+    const items = (data && Array.isArray(data.items)) ? data.items : null;
+    const settings = (data && Array.isArray(data.settings)) ? data.settings : null;
+
+    if (knownTotalPages == null && data && typeof data.pages === "number" && isFinite(data.pages)) {
+      knownTotalPages = data.pages;
     }
 
-    all.push.apply(all, items);
+    if (items) {
+      if (!items.length) {
+        appendStatus(`  All ${sourceLabel.toLowerCase()} tune settings fetched!`);
+        break;
+      }
+      all.push.apply(all, items);
+      continue;
+    }
+
+    if (settings) {
+      if (!settings.length) {
+        appendStatus(`  All ${sourceLabel.toLowerCase()} tune settings fetched!`);
+        break;
+      }
+      all.push.apply(all, settings);
+      continue;
+    }
+
+    // Unknown/unexpected shape
+    appendStatus(`  Stop: Unexpected JSON format on page ${page}.`);
+    break;
   }
 
   return all;
@@ -826,7 +896,7 @@ async function fetchAllTuneVersionsAsABC(tuneUrl, opts) {
     if (!rawAbc.trim()) continue;
 
     const bodyNormalized = extractBody(rawAbc)
-      .replace(/\!\s/g, "\n")      
+      .replace(/\!\s/g, "\n")
       .split(/\r?\n/)
       .map(line => line.trim())
       .join("\n")
@@ -930,6 +1000,15 @@ function isSessionBookmarksUrl(s) {
     return /^\/members\/\d+\/bookmarks\/?$/.test(u.pathname);
   } catch {
     return /\/members\/\d+\/bookmarks\/?$/.test(String(s));
+  }
+}
+
+function isSessionMemberTunesUrl(s) {
+  try {
+    const u = new URL(String(s));
+    return /^\/members\/\d+\/tunes\/?$/.test(u.pathname);
+  } catch {
+    return /\/members\/\d+\/tunes\/?$/.test(String(s));
   }
 }
 
@@ -1143,16 +1222,22 @@ function normalizeMode(mode) {
   return "";
 }
 
-// If input is a members URL like /members/22376 or /members/22376/anything,
-// normalize it to /members/22376/bookmarks (preserving query if present).
-function normalizeMembersToBookmarksUrl(inputUrl) {
+/* ============================================================
+   Member URL normalization
+   - If input is /members/### (or /members/###/anything),
+     normalize to /members/###/bookmarks OR /members/###/tunes
+     depending on wantTunes.
+   ============================================================ */
+
+function normalizeMembersUrl(inputUrl, wantTunes) {
   const s = String(inputUrl || "").trim();
   if (!s) return s;
+
+  const targetTail = wantTunes ? "bookmarks" : "tunes";
 
   try {
     const u = new URL(s);
 
-    // Only normalize thesession.org members URLs
     if (!/thesession\.org$/i.test(u.hostname)) return s;
 
     const path = u.pathname || "";
@@ -1162,31 +1247,25 @@ function normalizeMembersToBookmarksUrl(inputUrl) {
     const memberId = m[1];
     const trailing = (m[2] || "").toLowerCase();
 
-    // If already explicitly /bookmarks or /bookmarks/..., leave it
-    if (trailing.startsWith("bookmarks")) return u.toString();
+    if (trailing.startsWith("bookmarks") || trailing.startsWith("tunes")) return u.toString();
 
-    // Otherwise force to /members/{id}/bookmarks
-    u.pathname = `/members/${memberId}/bookmarks`;
+    u.pathname = `/members/${memberId}/${targetTail}`;
     u.hash = "";
     return u.toString();
   } catch {
-    // Non-URL input (or missing scheme). Handle common cases.
     const m = s.match(/^(https?:\/\/thesession\.org)?(\/members\/(\d+))(\/[^?#]*)?/i);
     if (!m) return s;
 
     const prefix = m[1] || "https://thesession.org";
     const memberId = m[3];
 
-    // If the original already contains /bookmarks after the member id, keep it
-    if (/\/members\/\d+\/bookmarks\b/i.test(s)) {
-      // Ensure it has a scheme+host
+    if (/\/members\/\d+\/(bookmarks|tunes)\b/i.test(s)) {
       return s.startsWith("http") ? s : (prefix + s);
     }
 
-    return `${prefix}/members/${memberId}/bookmarks`;
+    return `${prefix}/members/${memberId}/${targetTail}`;
   }
 }
-
 
 /* ============================================================
    UI wiring
@@ -1225,6 +1304,7 @@ $("btnMembers").addEventListener("click", async () => {
 $("btnFetch").addEventListener("click", async () => {
   const url = $("tuneUrl").value.trim();
   const onlyChords = !!onlyChordsEl.checked;
+  const memberUseTunes = !!memberUseTunesEl.checked;
 
   enableActions(false);
   outEl.value = "";
@@ -1233,7 +1313,7 @@ $("btnFetch").addEventListener("click", async () => {
   clearStatus("Fetching and building ABC…");
 
   try {
-    const result = await fetchTuneOrBookmarksAsABC(url, { onlyChords });
+    const result = await fetchTuneOrBookmarksAsABC(url, { onlyChords, memberUseTunes });
     lastResult = result;
 
     outEl.value = "%\n% Make hyperlinks in the ABC notation clickable\n%enable_hyperlinks\n%\n\n"+result.combined;
@@ -1245,9 +1325,20 @@ $("btnFetch").addEventListener("click", async () => {
       appendStatus(`- Title: ${result.tuneTitle}`);
       appendStatus(`- Type: ${capitalizeFirst((result.tuneType || "(varies / not provided)"))}`);
     } else {
-      appendStatus("- Source: Bookmarks");
-      if (result.bookmarkItemsCount != null) appendStatus(`- Bookmark items fetched: ${result.bookmarkItemsCount}`);
-      if (result.bookmarkSettingsCount != null) appendStatus(`- Bookmarked tune settings found: ${result.bookmarkSettingsCount}`);
+      const label = (result && result.memberSourceLabel) ? result.memberSourceLabel : "Bookmarks";
+
+      // Prefer the new generic counters, but keep compatibility with your old ones
+      const itemsCount = (result.memberItemsCount != null) ? result.memberItemsCount : result.bookmarkItemsCount;
+      const settingsCount = (result.memberSettingsCount != null) ? result.memberSettingsCount : result.bookmarkSettingsCount;
+
+      if (label === "Settings") {
+        if (itemsCount != null) appendStatus(`- Member submitted settings fetched: ${itemsCount}`);
+        if (settingsCount != null) appendStatus(`- ${label} found: ${settingsCount}`);
+      } else {
+        if (itemsCount != null) appendStatus(`- Bookmarks items fetched: ${itemsCount}`);
+        if (settingsCount != null) appendStatus(`- ${label} tune settings found: ${settingsCount}`);
+      }
+
     }
 
     appendStatus(`- # of Settings: ${result.settingsCount}`);
@@ -1266,7 +1357,7 @@ $("btnFetch").addEventListener("click", async () => {
       // Disable the open in ABC tools
       enableActions(true);
       $("btnOpenInTools").disabled = true;
-      appendStatus("You can now copy/download the ABC settings.");      
+      appendStatus("You can now copy/download the ABC settings.");
     }
   } catch (e) {
     console.error(e);
@@ -1286,8 +1377,10 @@ $("btnCopy").addEventListener("click", async () => {
 $("btnDownload").addEventListener("click", () => {
   if (!lastResult) return;
 
-  // If bookmarks, make filename reflect that
-  const baseName = (lastResult.tuneTitle && lastResult.tuneTitle !== "Bookmarks") ? lastResult.tuneTitle : "bookmarks";
+  const baseName =
+    (lastResult.tuneTitle && lastResult.tuneTitle !== "Bookmarks" && lastResult.tuneTitle !== "Settings")
+      ? lastResult.tuneTitle
+      : ((lastResult.memberSourceLabel === "Settings") ? "settings" : "bookmarks");
 
   const blob = new Blob([outEl.value], { type: "text/plain;charset=utf-8" });
   const a = document.createElement("a");
@@ -1396,22 +1489,39 @@ $("btnHelp").addEventListener("click", () => {
   // scrollable inner content
   const content =
     '  <div style="margin-bottom:16px;">' +
-    '    Enter either a thesession.org tune URL, or a member bookmarks page URL into the <b>thesession.org URL</b> field and click <b>Fetch</b>.' +
+    '    You can open thesession.org tune or members search pages in a new browser tab by clicking the <b>Open Tune Search Page</b> or <b>Open Members Search Page</b> buttons.' +
+    '  </div>' +
+    '  <div style="margin-bottom:16px;">' +
+    '    Enter either a thesession.org <b>tune URL</b>, or a <b>member URL</b> into the <b>thesession.org URL</b> field and click <b>Fetch</b>.' +
     '  </div>' +
     '  <div style="margin-bottom:16px;">' +
     '    You can copy the results to the clipboard, save them to a .ABC file, or if the ShareURL length would be less than 8100 characters, open the results directly in the <a href="https://michaeleskin.com/abctools/abctools.html" target="_blank" rel="noopener noreferrer">ABC Transcription Tools.</a>' +
     '  </div>' +
-
+    '  <div style="margin-bottom:16px;">' +
+    '    For <b>member URLs</b>, the tool can fetch either:' +
+    '    <ul style="margin:10px 0 0 10px;">' +
+    '      <li>Member submitted tune settings (default)</li>' +
+    '      <li>Bookmarked tune settings</li>' +
+    '    </ul>' +
+    '  </div>' +
     '  <div style="margin-bottom:16px;">' +
     '    <div style="font-weight:700; margin-bottom:6px;">Examples (click to fill the thesession.org URL field):</div>' +
     '    <div style="margin-bottom:6px;">' +
     '      <a href="https://thesession.org/tunes/1" class="exampleLink" data-fill-url="https://thesession.org/tunes/1">https://thesession.org/tunes/1</a>' +
     '    </div>' +
-    '    <div>' +
-    '      <a href="https://thesession.org/members/22376/bookmarks" class="exampleLink" data-fill-url="https://thesession.org/members/22376/bookmarks">https://thesession.org/members/22376/bookmarks</a>' +
+    '    <div style="margin-bottom:6px;">' +
+    '      <a href="https://thesession.org/members/22376" class="exampleLink" data-fill-url="https://thesession.org/members/22376">https://thesession.org/members/22376</a>' +
+    '      <span style="opacity:0.8;"></span>' +
     '    </div>' +
     '  </div>' +
 
+    '  <div style="margin-bottom:16px;">' +
+    '    <div style="font-weight:700; margin-bottom:6px;">Member URL source option</div>' +
+    '    <div>' +
+    '      If <b>“For member URLs, get bookmarked tune settings instead of submitted tune settings”</b> is checked, ' +
+    '      the tool will fetch the member\'s bookmarked tune settings instead of submitted tune settings.' +
+    '    </div>' +
+    '  </div>' +
     '  <div style="margin-bottom:16px;">' +
     '    <div style="font-weight:700; margin-bottom:6px;">Guitar chords filter</div>' +
     '    <div>' +
@@ -1477,10 +1587,11 @@ $("btnHelp").addEventListener("click", () => {
   });
 });
 
+
 </script>
 
-<script type="text/javascript" src="pako.min.js?v=9"></script>
-<script type="text/javascript" src="daypilot-modal.min-3.10.1.js?v=9"></script>
+<script type="text/javascript" src="pako.min.js?v=10"></script>
+<script type="text/javascript" src="daypilot-modal.min-3.10.1.js?v=10"></script>
 
 </body>
 </html>
