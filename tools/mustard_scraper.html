@@ -580,15 +580,13 @@ async function fetchTuneOrBookmarksAsABC(inputUrl, opts) {
   const sourceLabel = isSessionMemberTunesUrl(url) ? "Settings" : "Bookmarks";
 
   // ---- Member list flow (PAGED JSON; same system for /bookmarks and /tunes) ----
-  if (sourceLabel == "Settings"){
+  if (sourceLabel === "Settings") {
     appendStatus(`Loading submitted tune settings…`);
-  }
-  else{
-    appendStatus(`Loading bookmarked tune settings…`);    
+  } else {
+    appendStatus(`Loading bookmarked tune settings…`);
   }
 
   const items = await fetchAllMemberItemsPaged(url, sourceLabel);
-
   if (!items.length) throw new Error(`No ${sourceLabel.toLowerCase()} items found.`);
 
   // Collect ONLY SETTINGS from object.url where objectType === "setting"
@@ -646,7 +644,8 @@ async function fetchTuneOrBookmarksAsABC(inputUrl, opts) {
   appendStatus(`Found ${uniqSettingItems.length} tune setting(s).`);
 
   // Cache tune JSON per tuneId
-  const tuneCache = new Map(); // tuneId -> { tuneData, tuneUrlNoHash, tuneTitle, tuneType }
+  // Also cache failures so we don't re-try the same tuneId repeatedly in one run.
+  const tuneCache = new Map(); // tuneId -> { tuneData, tuneUrlNoHash, tuneTitle, tuneType, failed }
 
   const included = [];
   let skippedNoChords = 0;
@@ -666,20 +665,45 @@ async function fetchTuneOrBookmarksAsABC(inputUrl, opts) {
     }
 
     let cached = tuneCache.get(tuneId);
+
+    // If we previously tried and failed to load this tuneId, skip immediately.
+    if (cached && cached.failed) {
+      skippedNotFound++;
+      appendStatus(`Skip: tune ${tuneId} previously failed to load.`);
+      continue;
+    }
+
     if (!cached) {
       const tuneUrlNoHash = `https://thesession.org/tunes/${encodeURIComponent(tuneId)}`;
       const tuneJsonUrl = normalizeToJsonUrl(tuneUrlNoHash);
 
-      appendStatus(`Loading tune ${i+1} of ${uniqSettingItems.length}: ${statusTuneName || tuneId}`);
+      appendStatus(`Loading tune ${i + 1} of ${uniqSettingItems.length}: ${statusTuneName || tuneId}`);
 
-      const tr = await fetch(tuneJsonUrl, { method: "GET", mode: "cors", cache: "no-store" });
-      if (!tr.ok) throw new Error(`Error: Tune fetch failed: ${tr.status} ${tuneJsonUrl}`);
-      const tuneData = await tr.json();
+      let tuneData = null;
+
+      try {
+        const tr = await fetch(tuneJsonUrl, { method: "GET", mode: "cors", cache: "no-store" });
+
+        if (!tr.ok) {
+          skippedNotFound++;
+          appendStatus(`Skip: tune ${tuneId} fetch failed (HTTP ${tr.status}).`);
+          // Cache a sentinel so we don't re-try this tuneId for later settings
+          tuneCache.set(tuneId, { failed: true, tuneId, tuneJsonUrl });
+          continue;
+        }
+
+        tuneData = await tr.json();
+      } catch (e) {
+        skippedNotFound++;
+        appendStatus(`Skip: tune ${tuneId} fetch failed (${e && e.message ? e.message : "network error"}).`);
+        tuneCache.set(tuneId, { failed: true, tuneId, tuneJsonUrl });
+        continue;
+      }
 
       const tuneTitle = (tuneData && tuneData.name) ? String(tuneData.name) : (statusTuneName || `Tune ${tuneId}`);
       const tuneType  = (tuneData && tuneData.type) ? normalizeTuneType(String(tuneData.type)) : "";
 
-      cached = { tuneData, tuneUrlNoHash, tuneTitle, tuneType };
+      cached = { tuneData, tuneUrlNoHash, tuneTitle, tuneType, failed: false };
       tuneCache.set(tuneId, cached);
     }
 
@@ -715,8 +739,10 @@ async function fetchTuneOrBookmarksAsABC(inputUrl, opts) {
   }
 
   if (!included.length) {
-    if (onlyChords) throw new Error(`No ${sourceLabel.toLowerCase()} tune settings contained chords.`);
-    throw new Error(`No ${sourceLabel.toLowerCase()} tune settings could be loaded.`);
+    if (onlyChords) {
+      throw new Error(`No ${sourceLabel.toLowerCase()} tune settings contained chords (skipped ${skippedNotFound} due to load failures).`);
+    }
+    throw new Error(`No ${sourceLabel.toLowerCase()} tune settings could be loaded (skipped ${skippedNotFound} due to load failures).`);
   }
 
   const totalIncluded = included.length;
