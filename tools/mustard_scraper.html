@@ -569,10 +569,12 @@ async function fetchTuneOrBookmarksAsABC(inputUrl, opts) {
   // Normalize member URLs to either /bookmarks or /tunes based on checkbox
   url = normalizeMembersUrl(url, memberUseTunes);
 
+  // Single-tune flow
   if (isSessionTuneUrl(url)) {
     return await fetchAllTuneVersionsAsABC(url, opts);
   }
 
+  // Member flow validation
   if (!isSessionBookmarksUrl(url) && !isSessionMemberTunesUrl(url)) {
     throw new Error("Error: URL must be a thesession.org tune URL (/tunes/####) or a member URL (/members/####).");
   }
@@ -589,15 +591,12 @@ async function fetchTuneOrBookmarksAsABC(inputUrl, opts) {
   const items = await fetchAllMemberItemsPaged(url, sourceLabel);
   if (!items.length) throw new Error(`No ${sourceLabel.toLowerCase()} items found.`);
 
-  // Collect ONLY SETTINGS from object.url where objectType === "setting"
-  // PLUS: capture the displayName so status can show tune name while fetching.
-  // Normalize BOTH member sources to the same shape:
+  // Normalize BOTH member sources to:
   //   [{ url: "https://thesession.org/tunes/....#setting....", displayName: "Tune Name" }, ...]
   const settingItems = [];
 
   if (isSessionMemberTunesUrl(url)) {
     // /members/{id}/tunes?format=json returns { settings: [...] } per page
-    // Each element already represents a setting.
     for (const s of items) {
       const settingUrl = (s && typeof s.url === "string") ? s.url.trim() : "";
       if (!settingUrl) continue;
@@ -612,7 +611,6 @@ async function fetchTuneOrBookmarksAsABC(inputUrl, opts) {
     }
   } else {
     // /members/{id}/bookmarks?format=json returns { items: [...] } per page
-    // Each item has .object with objectType "setting".
     for (const it of items) {
       const obj = (it && it.object) ? it.object : null;
       const objType = (obj && typeof obj.objectType === "string") ? obj.objectType : "";
@@ -649,7 +647,8 @@ async function fetchTuneOrBookmarksAsABC(inputUrl, opts) {
 
   const included = [];
   let skippedNoChords = 0;
-  let skippedNotFound = 0;
+  let skippedNotFound = 0;     // includes unparseable, missing setting, and tune fetch failures (kept for your UI summary)
+  let skippedFetchFail = 0;    // additional detail, not required by your UI but useful if you want it later
 
   for (let i = 0; i < uniqSettingItems.length; i++) {
     const settingUrl = uniqSettingItems[i].url;
@@ -686,6 +685,7 @@ async function fetchTuneOrBookmarksAsABC(inputUrl, opts) {
 
         if (!tr.ok) {
           skippedNotFound++;
+          skippedFetchFail++;
           appendStatus(`Skip: tune ${tuneId} fetch failed (HTTP ${tr.status}).`);
           // Cache a sentinel so we don't re-try this tuneId for later settings
           tuneCache.set(tuneId, { failed: true, tuneId, tuneJsonUrl });
@@ -695,6 +695,7 @@ async function fetchTuneOrBookmarksAsABC(inputUrl, opts) {
         tuneData = await tr.json();
       } catch (e) {
         skippedNotFound++;
+        skippedFetchFail++;
         appendStatus(`Skip: tune ${tuneId} fetch failed (${e && e.message ? e.message : "network error"}).`);
         tuneCache.set(tuneId, { failed: true, tuneId, tuneJsonUrl });
         continue;
@@ -716,8 +717,8 @@ async function fetchTuneOrBookmarksAsABC(inputUrl, opts) {
 
     const rawAbc = picked.abc;
 
+    // IMPORTANT: body only; do NOT read headers from ABC
     const bodyNormalized = extractBody(rawAbc)
-      .replace(/\!\s/g, "\n")
       .split(/\r?\n/)
       .map(line => line.trim())
       .join("\n")
@@ -753,32 +754,28 @@ async function fetchTuneOrBookmarksAsABC(inputUrl, opts) {
     const it = included[j];
 
     const xNum = j + 1;
+
+    // IMPORTANT: Headers are NEVER read from the ABC
+    const rLine = it.tuneType || "reel";
+    const mLine = defaultMForRhythm(rLine) || "4/4";
+    const lLine = "1/8";
+    const qVal  = defaultQForRhythm(rLine);
+
     const tLine = it.tuneTitle;
-
-    const rLine = it.tuneType || (extractHeader(it.rawAbc, "R") || "").trim() || "";
-
-    const mFromAbc = (extractHeader(it.rawAbc, "M") || "").trim();
-    const mLine = mFromAbc || defaultMForRhythm(rLine) || "4/4";
-
-    const lLine = (extractHeader(it.rawAbc, "L") || "").trim() || "1/8";
-
-    const qExisting = (extractHeader(it.rawAbc, "Q") || "").trim();
-    const qVal = qExisting ? qExisting.replace(/^Q:\s*/i, "") : defaultQForRhythm(rLine);
 
     const kRaw = (typeof it.setting.key === "string") ? it.setting.key : "";
     const kLine = normalizeKValue(kRaw) || "Dmaj";
 
-    const zFromAbc = (extractHeader(it.rawAbc, "Z") || "").trim();
     const memberName =
       (it.setting && it.setting.member && typeof it.setting.member.name === "string")
         ? it.setting.member.name.trim()
         : "";
-    const zLine = zFromAbc || memberName;
+    const zLine = memberName;
 
     const header =
       `X:${xNum}\n` +
       `T:${tLine}\n` +
-      `R:${rLine || "reel"}\n` +
+      `R:${rLine}\n` +
       `M:${mLine}\n` +
       `L:${lLine}\n` +
       `Q:${qVal}\n` +
@@ -797,6 +794,9 @@ async function fetchTuneOrBookmarksAsABC(inputUrl, opts) {
     settingsCount: totalIncluded,
     skippedNoChords,
     skippedNotFound,
+
+    // extra detail if you ever want it (won't break existing callers)
+    skippedFetchFail,
 
     // keep old names for backward compatibility, but also provide generic names
     bookmarkItemsCount: items.length,
@@ -921,8 +921,8 @@ async function fetchAllTuneVersionsAsABC(tuneUrl, opts) {
     const rawAbc = typeof setting.abc === "string" ? setting.abc : "";
     if (!rawAbc.trim()) continue;
 
+    // IMPORTANT: body only; do NOT read headers from ABC
     const bodyNormalized = extractBody(rawAbc)
-      .replace(/\!\s/g, "\n")
       .split(/\r?\n/)
       .map(line => line.trim())
       .join("\n")
@@ -933,7 +933,7 @@ async function fetchAllTuneVersionsAsABC(tuneUrl, opts) {
       continue;
     }
 
-    included.push({ setting, rawAbc, bodyNormalized });
+    included.push({ setting, bodyNormalized });
   }
 
   if (!included.length) {
@@ -947,32 +947,26 @@ async function fetchAllTuneVersionsAsABC(tuneUrl, opts) {
   const totalIncluded = included.length;
   const built = [];
 
+  // IMPORTANT: Headers are NEVER read from the ABC
+  const rLine = tuneType || "reel";
+  const mLine = defaultMForRhythm(rLine) || "4/4";
+  const lLine = "1/8";
+  const qVal  = defaultQForRhythm(rLine);
+
   for (let j = 0; j < included.length; j++) {
-    const { setting, rawAbc, bodyNormalized } = included[j];
+    const { setting, bodyNormalized } = included[j];
 
     const xNum = j + 1;
     const tLine = tuneTitle + (totalIncluded > 1 ? ` (${xNum} of ${totalIncluded})` : "");
 
-    const rLine = tuneType || (extractHeader(rawAbc, "R") || "").trim() || "";
-
-    const mFromAbc = (extractHeader(rawAbc, "M") || "").trim();
-    const mLine = mFromAbc || defaultMForRhythm(rLine) || "4/4";
-
-    const lLine = (extractHeader(rawAbc, "L") || "").trim() || "1/8";
-
-    const qExisting = (extractHeader(rawAbc, "Q") || "").trim();
-    const qVal = qExisting ? qExisting.replace(/^Q:\s*/i, "") : defaultQForRhythm(rLine);
-
     const kRaw = (typeof setting.key === "string") ? setting.key : "";
+    const kLine = normalizeKValue(kRaw) || "Dmaj";
 
-    const zFromAbc = (extractHeader(rawAbc, "Z") || "").trim();
     const memberName =
       (setting && setting.member && typeof setting.member.name === "string")
         ? setting.member.name.trim()
         : "";
-    const zLine = zFromAbc || memberName;
-
-    const kLine = normalizeKValue(kRaw) || "Dmaj";
+    const zLine = memberName;
 
     // Use per-setting URL (if provided by the API) for the S: tag.
     // Fallback to the base tune URL if missing.
@@ -986,7 +980,7 @@ async function fetchAllTuneVersionsAsABC(tuneUrl, opts) {
     const header =
       `X:${xNum}\n` +
       `T:${tLine}\n` +
-      `R:${rLine || "reel"}\n` +
+      `R:${rLine}\n` +
       `M:${mLine}\n` +
       `L:${lLine}\n` +
       `Q:${qVal}\n` +
@@ -1181,33 +1175,17 @@ function extractHeader(abcText, tagLetter) {
 }
 
 function extractBody(abcText) {
-  const lines = String(abcText).replace(/^\uFEFF/, "").split(/\r?\n/);
+  // Pass through *all* lines as-is (including any "*:" header/tag lines),
+  // but preserve your behavior that "!<whitespace>" becomes a newline.
+  const body = String(abcText || "")
+    .replace(/^\uFEFF/, "")
+    .replace(/\!\s/g, "\n")
+    .split(/\r?\n/)
+    .map(l => l.trim())
+    .join("\n")
+    .trim();
 
-  let i = 0;
-  while (i < lines.length) {
-    const line = lines[i];
-    if (/^\s*$/.test(line) || /^\s*%/.test(line)) i++;
-    else break;
-  }
-
-  while (i < lines.length) {
-    const line = lines[i];
-    if (
-      /^\s*[A-Za-z][A-Za-z0-9]*\s*:/.test(line) ||
-      /^\s*\+:\s*/.test(line) ||
-      /^\s*%%/.test(line) ||
-      /^\s*%/.test(line) ||
-      /^\s*$/.test(line)
-    ) {
-      i++;
-      continue;
-    }
-    break;
-  }
-
-  const bodyLines = lines.slice(i);
-  if (!bodyLines.join("\n").trim()) return String(abcText);
-  return bodyLines.join("\n").trimStart() + "\n";
+  return body ? (body + "\n") : "\n";
 }
 
 /* ============================================================
