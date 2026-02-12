@@ -483,9 +483,9 @@
           </div>
 
           <div class="row" style="margin-top:10px">
-            <button title="Copies all the fetched tune settings ABC to the clipboard" id="btnCopy" disabled>Copy ABC</button>
-            <button title="Saves all the fetched tune settings ABC to a file" id="btnDownload" disabled>Download .abc File</button>
-            <button title="Opens all the fetched tune settings ABC in the ABC Transcription Tools" id="btnOpenInTools" disabled>Open All Settings in the ABC Transcription Tools</button>
+            <button title="Copies all the fetched ABC tune settings to the clipboard" id="btnCopy" disabled>Copy ABC</button>
+            <button title="Saves all the fetched ABC tune settings to a file" id="btnDownload" disabled>Download .abc File</button>
+            <button title="Opens all the fetched ABC tune settings in the ABC Transcription Tools" id="btnOpenInTools" disabled>Open All Settings in the ABC Transcription Tools</button>
           </div>
         </div>
 
@@ -499,7 +499,7 @@
       <div class="right">
         <div class="card" style="flex:1; display:flex; flex-direction:column; min-height:0;">
           <div class="rightHeader">
-            <strong>Tune Settings ABC</strong>
+            <strong>ABC Tune Settings</strong>
           </div>
           <div class="taWrap">
             <textarea id="out" spellcheck="false"></textarea>
@@ -1438,11 +1438,11 @@ $("btnFetch").addEventListener("click", async () => {
     // Test URL length and enable/disable the open in ABC Transcriptions Tool button as required
     if (testOpenInAbcTools(outEl.value)) {
       enableActions(true);
-      appendStatus("You can now copy/download the ABC settings or open them in the ABC Transcription Tools.");
+      appendStatus("You can now copy or download the ABC tune settings or open them in the ABC Transcription Tools.");
     } else {
       enableActions(true);
       $("btnOpenInTools").disabled = true;
-      appendStatus("You can now copy/download the ABC settings.");
+      appendStatus("You can now copy or download the ABC tune settings.");
     }
 
   } catch (e) {
@@ -1456,9 +1456,9 @@ $("btnFetch").addEventListener("click", async () => {
 $("btnCopy").addEventListener("click", async () => {
   try {
     await navigator.clipboard.writeText(outEl.value);
-    clearStatus("Copied ABC to clipboard.");
+    appendStatus("ABC tune settings copied to the clipboard.");
   } catch (e) {
-    clearStatus("Copy failed (browser permission). You can still select-all and copy manually.");
+    appendStatus("ABC tune settings copy failed (browser permission). You can still select-all and copy manually.");
   }
 });
 
@@ -1494,10 +1494,11 @@ $("btnDownload").addEventListener("click", () => {
   const a = document.createElement("a");
   a.href = URL.createObjectURL(blob);
 
-  a.download =
-    `${safeFilename(baseName)}` +
+  var fname =  `${safeFilename(baseName)}` +
     (lastResult.tuneId ? `_${lastResult.tuneId}` : "") +
     `.abc`;
+
+  a.download = fname;
 
   document.body.appendChild(a);
   a.click();
@@ -1506,16 +1507,19 @@ $("btnDownload").addEventListener("click", () => {
   setTimeout(function(){
     URL.revokeObjectURL(a.href);
   }, 1000);
+
+  appendStatus("ABC tune settings saved to "+fname);
+
 });
 
 $("btnOpenInTools").addEventListener("click", () => {
   try {
     if (!lastResult) return;
     openInAbcTools(outEl.value);
-    clearStatus("ABC opened in the ABC Transcription Tools.");
+    appendStatus("ABC tune settings opened in the ABC Transcription Tools.");
   } catch (e) {
     console.error(e);
-    clearStatus("Open in ABC Transcription Tools failed: " + (e && e.message ? e.message : String(e)));
+    appendStatus("Open tune settings in ABC Transcription Tools failed: " + (e && e.message ? e.message : String(e)));
   }
 });
 
@@ -1612,7 +1616,7 @@ $("btnHelp").addEventListener("click", () => {
     '    Enter either a thesession.org <b>tune URL</b>, or a <b>member URL</b> into the <b>thesession.org URL</b> field and click <b>Fetch</b>.' +
     '  </div>' +
     '  <div style="margin-bottom:16px;">' +
-    '    You can copy the results to the clipboard, save them to a .ABC file, or if the ShareURL length would be less than 8100 characters, open the results directly in the <a href="https://michaeleskin.com/abctools/abctools.html" target="_blank" rel="noopener noreferrer">ABC Transcription Tools.</a>' +
+    '    You can copy the fetched ABC tune settings to the clipboard, save them to a .ABC file, or if the generated ShareURL length would be less than 8100 characters, open the tune settings directly in the <a href="https://michaeleskin.com/abctools/abctools.html" target="_blank" rel="noopener noreferrer">ABC Transcription Tools.</a>' +
     '  </div>' +
     '  <div style="margin-bottom:16px;">' +
     '    For <b>member URLs</b>, the tool can fetch either:' +
@@ -1657,7 +1661,7 @@ $("btnHelp").addEventListener("click", () => {
     '      Tune settings are fetched in chronological order, with the most recently created setting (either submitted by the member or saved as a bookmark) appearing first.' +
     '    </div>' +
     '    <div style="margin-top:6px;">' +
-    '     If you would like to sort the fetched tune settings by tune name, style, or key, simply open the results in the <a href="https://michaeleskin.com/abctools/abctools.html" target="_blank" rel="noopener noreferrer">ABC Transcription Tools</a> and sort them as desired using the <b>Sort Tunes by Tag</b> feature on the <b>☰</b> dropdown menu.' +
+    '     If you would like to sort the fetched tune settings by tune name, style, or key, simply open the tune settings in the <a href="https://michaeleskin.com/abctools/abctools.html" target="_blank" rel="noopener noreferrer">ABC Transcription Tools</a> and sort them as desired using the <b>Sort Tunes by Tag</b> feature on the <b>☰</b> dropdown menu.' +
     '    </div>' +
     '  </div>' +
 
