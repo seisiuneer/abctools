@@ -455,8 +455,9 @@
 
         <div class="card">
           <div class="row">
-            <button title="Opens the thesession.org tune search page in a new tab" id="btnTune">Open Tunes Search Page</button>
-            <button title="Opens the thesession.org members search page in a new tab" id="btnMembers">Open Members Search Page</button>
+            <button title="Opens the thesession.org tune search page in a new browser tab" id="btnTune">Open Tunes Search Page</button>
+            <button title="Opens the thesession.org members search page in a new browser tab" id="btnMembers">Open Members Search Page</button>
+            <button title="Launches the ABC Transcription Tools in a new browser tab" id="btnABCTools">ABC Transcription Tools</button>
           </div>
         </div>
 
@@ -1372,6 +1373,10 @@ $("btnMembers").addEventListener("click", async () => {
   window.open("https://thesession.org/members", "_blank");
 });
 
+$("btnABCTools").addEventListener("click", async () => {
+  window.open("https://michaeleskin.com/abctools/abctools.html", "_blank");
+});
+
 $("btnFetch").addEventListener("click", async () => {
 
   // ---- NON-REENTRANT GUARD ----
@@ -1599,6 +1604,9 @@ $("btnHelp").addEventListener("click", () => {
   const content =
     '  <div style="margin-bottom:16px;">' +
     '    You can open thesession.org tune or members search pages in a new browser tab by clicking the <b>Open Tune Search Page</b> or <b>Open Members Search Page</b> buttons.' +
+    '  </div>' +
+    '  <div style="margin-bottom:16px;">' +
+    '    You can launch the ABC Transcription Tools in a new browser tab by clicking the <b>ABC Transcription Tools</b> button.' +
     '  </div>' +
     '  <div style="margin-bottom:16px;">' +
     '    Enter either a thesession.org <b>tune URL</b>, or a <b>member URL</b> into the <b>thesession.org URL</b> field and click <b>Fetch</b>.' +
