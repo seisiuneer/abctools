@@ -740,9 +740,9 @@ async function fetchTuneOrBookmarksAsABC(inputUrl, opts) {
 
   if (!included.length) {
     if (onlyChords) {
-      throw new Error(`No ${sourceLabel.toLowerCase()} tune settings contained chords (skipped ${skippedNotFound} due to load failures).`);
+      throw new Error(`No ${sourceLabel.toLowerCase()} tune settings contained chords.`);
     }
-    throw new Error(`No ${sourceLabel.toLowerCase()} tune settings could be loaded (skipped ${skippedNotFound} due to load failures).`);
+    throw new Error(`No ${sourceLabel.toLowerCase()} tune settings could be loaded.`);
   }
 
   const totalIncluded = included.length;
@@ -1035,6 +1035,17 @@ function isSessionMemberTunesUrl(s) {
     return /^\/members\/\d+\/tunes\/?$/.test(u.pathname);
   } catch {
     return /\/members\/\d+\/tunes\/?$/.test(String(s));
+  }
+}
+
+function extractMemberIdFromSessionUrl(s) {
+  try {
+    const u = new URL(String(s));
+    const m = u.pathname.match(/^\/members\/(\d+)\b/i);
+    return m ? m[1] : null;
+  } catch {
+    const m = String(s).match(/\/members\/(\d+)\b/i);
+    return m ? m[1] : null;
   }
 }
 
@@ -1432,21 +1443,47 @@ $("btnCopy").addEventListener("click", async () => {
 $("btnDownload").addEventListener("click", () => {
   if (!lastResult) return;
 
-  const baseName =
-    (lastResult.tuneTitle && lastResult.tuneTitle !== "Bookmarks" && lastResult.tuneTitle !== "Settings")
-      ? lastResult.tuneTitle
-      : ((lastResult.memberSourceLabel === "Settings") ? "settings" : "bookmarks");
+  const originalUrl = $("tuneUrl").value.trim();
+  const memberId = extractMemberIdFromSessionUrl(originalUrl);
+
+  let baseName;
+
+  // Tune URL case
+  if (isSessionTuneUrl(originalUrl)) {
+    baseName =
+      (lastResult.tuneTitle && lastResult.tuneTitle !== "Bookmarks" && lastResult.tuneTitle !== "Settings")
+        ? lastResult.tuneTitle
+        : "tune";
+  }
+  // Member URL case
+  else if (memberId) {
+    const label =
+      lastResult.memberSourceLabel === "Settings"
+        ? "settings"
+        : "bookmarks";
+
+    baseName = `${label}_member_${memberId}`;
+  }
+  else {
+    baseName = "thesession";
+  }
 
   const blob = new Blob([outEl.value], { type: "text/plain;charset=utf-8" });
   const a = document.createElement("a");
   a.href = URL.createObjectURL(blob);
-  a.download = `${safeFilename(baseName)}_thesession${lastResult.tuneId ? ("_" + lastResult.tuneId) : ""}.abc`;
+
+  a.download =
+    `${safeFilename(baseName)}` +
+    (lastResult.tuneId ? `_${lastResult.tuneId}` : "") +
+    `.abc`;
+
   document.body.appendChild(a);
   a.click();
   a.remove();
+
   setTimeout(function(){
     URL.revokeObjectURL(a.href);
-  },1000);
+  }, 1000);
 });
 
 $("btnOpenInTools").addEventListener("click", () => {
