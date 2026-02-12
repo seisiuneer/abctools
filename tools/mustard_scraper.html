@@ -441,10 +441,10 @@
     <div>
       <h2>thesession.org Tune Settings Scraper</h2>
       <p class="muted small instructions" style="margin-top:6px">
-        Enter a thesession.org tune URL like:<br/>
+        Enter a thesession.org Tune URL like:<br/>
         <a title="Click to load the example tune URL into thesession.org URL field" href="https://thesession.org/tunes/1" class="exampleLink" data-fill-url="https://thesession.org/tunes/1">https://thesession.org/tunes/1</a>
         <br/>
-        or a member's page URL like (will fetch all member submitted tune settings or bookmarked tune settings):<br/>
+        or a Member's URL like (will fetch all member submitted tune settings or bookmarked tune settings):<br/>
         <a title="Click to load the example member's URL into thesession.org URL field"href="https://thesession.org/members/22376" class="exampleLink" data-fill-url="https://thesession.org/members/22376">https://thesession.org/members/22376</a>
       </p>
     </div>
@@ -1398,7 +1398,7 @@ $("btnFetch").addEventListener("click", async () => {
     lastResult = result;
 
     outEl.value =
-      "%\n% Make hyperlinks in the ABC notation clickable\n%enable_hyperlinks\n%\n\n" +
+      "%\n% Make S: tag hyperlinks in the rendered ABC notation clickable\n%\n%enable_hyperlinks\n%\n\n" +
       result.combined;
 
     // Status summary
