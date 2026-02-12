@@ -1174,12 +1174,51 @@ function extractHeader(abcText, tagLetter) {
   return m ? m[1] : "";
 }
 
+function replaceBangSpaceWithNewlinePreservingDecorations(s) {
+  s = String(s || "");
+
+  let out = "";
+  let inDecoration = false; // toggles on '!' ... off on next '!'
+
+  for (let i = 0; i < s.length; i++) {
+    const ch = s[i];
+
+    if (ch !== "!") {
+      out += ch;
+      continue;
+    }
+
+    const next = (i + 1 < s.length) ? s[i + 1] : "";
+
+    // If this is "!<whitespace>":
+    // - If we're currently inside a decoration, this '!' is the closing '!' -> KEEP IT.
+    // - If we're NOT inside a decoration, treat it like your delimiter bang -> convert to newline and consume the whitespace.
+    if (next && /\s/.test(next)) {
+      if (inDecoration) {
+        out += "!";
+        inDecoration = false; // close the decoration
+      } else {
+        out += "\n";
+        i++; // consume the whitespace char that followed '!' (matches old /\!\s/ behavior)
+      }
+      continue;
+    }
+
+    // Otherwise, it's a normal decoration delimiter: toggle state and keep '!'
+    out += "!";
+    inDecoration = !inDecoration;
+  }
+
+  return out;
+}
+
 function extractBody(abcText) {
-  // Pass through *all* lines as-is (including any "*:" header/tag lines),
-  // but preserve your behavior that "!<whitespace>" becomes a newline.
-  const body = String(abcText || "")
-    .replace(/^\uFEFF/, "")
-    .replace(/\!\s/g, "\n")
+  // Pass through everything, including "*:" header/tag lines, as-is.
+  // But convert the delimiter form "!<whitespace>" to newline,
+  // while preserving real ABC decorations like !fine! and !coda!.
+  const body = replaceBangSpaceWithNewlinePreservingDecorations(
+      String(abcText || "").replace(/^\uFEFF/, "")
+    )
     .split(/\r?\n/)
     .map(l => l.trim())
     .join("\n")
