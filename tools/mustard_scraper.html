@@ -232,8 +232,6 @@
       border:1px solid rgba(127,127,127,.35);
       background:Canvas;
       min-width:0;
-
-      /* NEW */
       display:flex;      /* makes textarea flex sizing reliable in Chrome */
       padding: 1px;      /* keeps the anti-clipping fix */
     }
@@ -374,6 +372,38 @@
       width: 100%;
     }
 
+    select{
+      -webkit-appearance: none;
+      appearance: none;
+
+      font:inherit;
+      color:#000;              /* black text */
+      background:#fff;         /* white background */
+
+      border:1px solid rgba(127,127,127,.35);
+      border-radius:10px;
+
+      padding:10px 52px 10px 12px;  /* more space for larger arrow */
+      line-height:1.2;
+
+      cursor:pointer;
+
+      /* Larger black triangle */
+      background-image: url("data:image/svg+xml;utf8,\
+    <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'>\
+    <polygon points='6,9 18,9 12,17' fill='%23000'/>\
+    </svg>");
+      background-repeat:no-repeat;
+      background-position:right 16px center;
+      background-size:22px 22px;   /* bigger */
+    }
+
+    /* Disabled */
+    select:disabled{
+      cursor:not-allowed;
+      opacity:0.45;
+    }
+
     @media (max-width: 980px){
       body{
         overflow:auto;
@@ -421,8 +451,51 @@
       .instructions a.exampleLink{
         font-size: 0.92em;     /* slightly smaller than surrounding text */
       }
-      #instructions_div{
+      #xinstructions_div{
         display: none !important;
+      }
+      .checkRow.sortRow label{
+        display:flex;
+        flex-wrap:wrap;
+        align-items:flex-start;
+        gap:10px;
+        width:100%;
+      }
+
+      .checkRow.sortRow label > span{
+        flex: 1 0 100%;     /* force the label text to its own line */
+        min-width: 0;
+      }
+
+      .checkRow.sortRow select,
+      .checkRow.sortRow button{
+        flex: 1 0 100%;     /* put each control on a new line */
+        width: 100%;
+      }
+      
+      /* Constrain the outer modal box to the viewport */
+      .modal_flat_main{
+        width: calc(100vw - 24px) !important;
+        max-width: calc(100vw - 24px) !important;
+
+        max-height: calc(100dvh - 24px) !important; /* iOS-friendly */
+        overflow: hidden !important;                /* keep scrolling inside */
+      }
+
+      /* Make the inner area scroll if needed */
+      .modal_flat_inner{
+        max-height: calc(100dvh - 24px) !important;
+        overflow: auto !important;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      /* Keep the OK button area visible */
+      .modal_flat_buttons{
+        margin-top: 16px !important;
+        position: sticky;
+        bottom: 0;
+        background: #fff;
+        padding: 12px 0 6px 0;
       }
     }
   </style>
@@ -445,7 +518,7 @@
         <a title="Click to load the example tune URL into thesession.org URL field" href="https://thesession.org/tunes/1" class="exampleLink" data-fill-url="https://thesession.org/tunes/1">https://thesession.org/tunes/1</a>
         <br/>
         or a Member's URL like (will fetch all member submitted tune settings or bookmarked tune settings):<br/>
-        <a title="Click to load the example member's URL into thesession.org URL field"href="https://thesession.org/members/22376" class="exampleLink" data-fill-url="https://thesession.org/members/22376">https://thesession.org/members/22376</a>
+        <a title="Click to load the example member's URL into thesession.org URL field"href="https://thesession.org/members/12799" class="exampleLink" data-fill-url="https://thesession.org/members/12799">https://thesession.org/members/12799</a>
       </p>
     </div>
 
@@ -482,6 +555,26 @@
             </label>
           </div>
 
+          <div class="checkRow sortRow">
+            <label for="memberSort">
+              <span style="min-width:160px;"><strong>Sort member tune settings results:</strong></span>
+
+              <select id="memberSort" title="Sorting applies only to member bookmarks/submitted settings results">
+                <option value="orig" selected>Original chronological order</option>
+                <option value="title">Sorted by title (T:)</option>
+                <option value="key">Sorted by key (K:)</option>
+                <option value="rhythm">Sorted by rhythm (R:)</option>
+              </select>
+
+              <button id="btnResort"
+                      title="Re-sort the existing results using the current sort option"
+                      disabled
+                      style="padding:10px 14px;">
+                Re-sort
+              </button>
+            </label>
+          </div>
+
           <div class="row" style="margin-top:10px">
             <button title="Copies all the fetched ABC tune settings to the clipboard" id="btnCopy" disabled>Copy ABC</button>
             <button title="Saves all the fetched ABC tune settings to a file" id="btnDownload" disabled>Download .abc File</button>
@@ -507,12 +600,14 @@
         </div>
       </div>
     </div>
+
     <div id="instructions_div" class="card">
       <button title="Click to show the instructions" id="btnHelp">Instructions</button>
     </div>
   </div>
 
 <script>
+
 /* ============================================================
    Status accumulation helpers
    ============================================================ */
@@ -523,6 +618,75 @@ const outEl = $("out");
 const tuneUrlInput = $("tuneUrl");
 const onlyChordsEl = $("onlyChords");
 const memberUseTunesEl = $("memberUseTunes"); 
+
+function parseHeaderLine(abcText, tagLetter) {
+  // Reads first occurrence of e.g. "T:" at start of a line.
+  const re = new RegExp(`^\\s*${tagLetter}\\s*:\\s*(.*)$`, "mi");
+  const m = String(abcText || "").match(re);
+  return m ? String(m[1] || "").trim() : "";
+}
+
+/* ============================================================
+   Sorting helpers (used by member result sorting)
+   ============================================================ */
+
+function normKeyForSort(kLine) {
+  // keep simple: uppercase, remove spaces
+  return String(kLine || "").trim().toUpperCase().replace(/\s+/g, "");
+}
+
+function canonicalRhythmForSort(r) {
+  return String(r || "")
+    .trim()
+    .toLowerCase()
+    .replace(/\s+/g, " ")
+    .replace(/\u2011|\u2012|\u2013|\u2014/g, "-");
+}
+
+const RHYTHM_SORT_ORDER = [
+  "reel",
+  "hornpipe",
+  "barndance",
+  "barn dance",
+  "strathspey",
+  "march",
+  "jig",
+  "slip jig",
+  "slipjig",
+  "hop jig",
+  "hopjig",
+  "slide",
+  "polka",
+  "waltz",
+  "mazurka",
+  "three-two",
+  "three two",
+  "3-2",
+  "3/2"
+];
+
+const RHYTHM_SORT_RANK = (() => {
+  const m = new Map();
+  for (let i = 0; i < RHYTHM_SORT_ORDER.length; i++) {
+    m.set(canonicalRhythmForSort(RHYTHM_SORT_ORDER[i]), i);
+  }
+  return m;
+})();
+
+function rhythmRank(rLine) {
+  const rr = canonicalRhythmForSort(rLine);
+  return RHYTHM_SORT_RANK.has(rr) ? RHYTHM_SORT_RANK.get(rr) : 9999;
+}
+
+function stableSort(arr, compareFn) {
+  return arr
+    .map((v, i) => ({ v, i }))
+    .sort((a, b) => {
+      const c = compareFn(a.v, b.v);
+      return c !== 0 ? c : (a.i - b.i);
+    })
+    .map(o => o.v);
+}
 
 // Click-to-fill example links
 document.addEventListener("click", (e) => {
@@ -555,6 +719,15 @@ function appendStatus(msg) {
   statusEl.scrollTop = statusEl.scrollHeight;
 }
 
+function isConcurrencyEnabledFromUrl() {
+  try {
+    const u = new URL(window.location.href);
+    return u.searchParams.get("concurrent") === "true";
+  } catch {
+    return false;
+  }
+}
+
 async function fetchMemberNameById(memberId) {
   const id = String(memberId || "").trim();
   if (!id) return "";
@@ -573,14 +746,162 @@ async function fetchMemberNameById(memberId) {
   }
 }
 
+function updateResortEnabled() {
+  const btnResort = $("btnResort");
+  if (!btnResort) return;
+
+  const url = ($("tuneUrl") && $("tuneUrl").value) ? $("tuneUrl").value.trim() : "";
+  const isTune = isSessionTuneUrl(url);
+
+  const can =
+    !fetchInProgress &&
+    !!lastResult &&
+    !isTune &&
+    Array.isArray(lastResult.includedUnsorted) &&
+    lastResult.includedUnsorted.length > 0;
+
+  btnResort.disabled = !can;
+}
+
+
 /* ============================================================
    Core entry (tune URL OR member bookmarks/tunes URL)
+   ============================================================ */
+
+/* ============================================================
+   - Implements:
+     * title article-moving rule for title comparisons (processTitleForSorting)
+     * key/rhythm primary sorts
+     * within same key/rhythm: subsort by title (also article-processed)
+     * title ties (and any remaining ties): subsort by setting number from S: (#settingNNN)
+     * stableSort preserves original order if still tied
+   ============================================================ */
+
+function sortIncludedForMember(includedUnsorted, sortMode) {
+  const included = (includedUnsorted || []).slice();
+  const mode = String(sortMode || "orig");
+
+  const titleKey = (it) => processTitleForSorting(it.tuneTitle || "");
+
+  const getSettingNumberForSortFromSUrl = (sUrl) => {
+    const m = String(sUrl || "").match(/#setting-?(\d+)\b/i);
+    return m ? parseInt(m[1], 10) : 0;
+  };
+
+  const settingNum = (it) => getSettingNumberForSortFromSUrl(it.sourceSettingUrl);
+
+  // Compare by title (article-shifted), then by setting number
+  const cmpTitleThenSetting = (a, b) => {
+    const t = titleKey(a).localeCompare(titleKey(b), undefined, { sensitivity: "base" });
+    if (t !== 0) return t;
+
+    const sa = settingNum(a);
+    const sb = settingNum(b);
+    if (sa !== sb) return sa - sb;
+
+    return 0; // stableSort will preserve original order
+  };
+
+  if (mode === "title") {
+    return stableSort(included, cmpTitleThenSetting);
+  }
+
+  if (mode === "key") {
+    return stableSort(included, (a, b) => {
+      // 1) key
+      const ka = normKeyForSort(normalizeKValue((a.setting && a.setting.key) ? a.setting.key : ""));
+      const kb = normKeyForSort(normalizeKValue((b.setting && b.setting.key) ? b.setting.key : ""));
+      const k = ka.localeCompare(kb, undefined, { sensitivity: "base" });
+      if (k !== 0) return k;
+
+      // 2) title (article-shifted)
+      // 3) setting number (from S:)
+      return cmpTitleThenSetting(a, b);
+    });
+  }
+
+  if (mode === "rhythm") {
+    return stableSort(included, (a, b) => {
+      // 1) rhythm rank
+      const ra = rhythmRank(a.tuneType || "");
+      const rb = rhythmRank(b.tuneType || "");
+      if (ra !== rb) return ra - rb;
+
+      // 2) title (article-shifted)
+      // 3) setting number (from S:)
+      return cmpTitleThenSetting(a, b);
+    });
+  }
+
+  // "orig"
+  return included;
+}
+
+/* ============================================================
+   - Rebuilds the combined ABC from an already-fetched included array
+   - Used both by fetch (after sorting) and by the Re-sort button
+   ============================================================ */
+
+function buildMemberABCFromIncluded(included, sourceLabel) {
+  const built = [];
+
+  for (let j = 0; j < included.length; j++) {
+    const it = included[j];
+
+    const xNum = j + 1;
+
+    const rLine = it.tuneType || "reel";
+    const mLine = defaultMForRhythm(rLine) || "4/4";
+    const lLine = "1/8";
+    const qVal  = defaultQForRhythm(rLine);
+
+    const tLine = it.tuneTitle;
+
+    const kRaw = (typeof it.setting.key === "string") ? it.setting.key : "";
+    const kLine = normalizeKValue(kRaw) || "Dmaj";
+
+    const settingMemberName =
+      (it.setting && it.setting.member && typeof it.setting.member.name === "string")
+        ? it.setting.member.name.trim()
+        : "";
+
+    const header =
+      `X:${xNum}\n` +
+      `T:${tLine}\n` +
+      `R:${rLine}\n` +
+      `M:${mLine}\n` +
+      `L:${lLine}\n` +
+      `Q:${qVal}\n` +
+      `K:${kLine}\n` +
+      `S:${it.sourceSettingUrl}\n` +
+      (settingMemberName ? `Z:${settingMemberName}\n` : "");
+
+    built.push(header + it.bodyNormalized + "\n");
+  }
+
+  return {
+    combined: built.join("\n"),
+    settingsCount: included.length,
+    memberSourceLabel: sourceLabel
+  };
+}
+
+/* ============================================================
+   3) CHANGE: fetchTuneOrBookmarksAsABC()
+   - Removes concurrency option (always sequential)
+   - Captures includedUnsorted (baseline) before sorting
+   - Applies sorting via sortIncludedForMember()
+   - Builds ABC via buildMemberABCFromIncluded()
+   - Returns includedUnsorted so UI can re-sort without refetch
    ============================================================ */
 
 async function fetchTuneOrBookmarksAsABC(inputUrl, opts) {
   opts = opts || {};
   const onlyChords = !!opts.onlyChords;
   const memberUseTunes = !!opts.memberUseTunes;
+
+  // member sort mode: "orig" | "title" | "key" | "rhythm"
+  const memberSortMode = String(opts.memberSortMode || "orig");
 
   let url = String(inputUrl || "").trim();
   if (!url) throw new Error("Error: Please enter a URL.");
@@ -590,9 +911,7 @@ async function fetchTuneOrBookmarksAsABC(inputUrl, opts) {
 
   // Single-tune flow
   if (isSessionTuneUrl(url)) {
-
     clearStatus("Fetching all tune settings");
-
     return await fetchAllTuneVersionsAsABC(url, opts);
   }
 
@@ -605,7 +924,6 @@ async function fetchTuneOrBookmarksAsABC(inputUrl, opts) {
   // Fetch member name from base member JSON (before paging)
   const memberId = extractMemberIdFromSessionUrl(url);
   const memberName = memberId ? await fetchMemberNameById(memberId) : "";
-
   const who = memberName ? `${memberName}'s` : "member's";
 
   if (sourceLabel === "Settings") {
@@ -619,6 +937,7 @@ async function fetchTuneOrBookmarksAsABC(inputUrl, opts) {
 
   const settingItems = [];
 
+  // /members/{id}/tunes => JSON has "settings" array
   if (isSessionMemberTunesUrl(url)) {
     for (const s of items) {
       const settingUrl = (s && typeof s.url === "string") ? s.url.trim() : "";
@@ -632,7 +951,9 @@ async function fetchTuneOrBookmarksAsABC(inputUrl, opts) {
         displayName: tuneName
       });
     }
-  } else {
+  }
+  // /members/{id}/bookmarks => JSON has "items" array with item.object
+  else {
     for (const it of items) {
       const obj = (it && it.object) ? it.object : null;
       const objType = (obj && typeof obj.objectType === "string") ? obj.objectType : "";
@@ -655,7 +976,7 @@ async function fetchTuneOrBookmarksAsABC(inputUrl, opts) {
     throw new Error(`Member: ${memberName} - No ${sourceLabel.toLowerCase()} tune settings found.`);
   }
 
-  // De-dupe by URL
+  // De-dupe by URL (preserves order)
   const seen = new Set();
   const uniqSettingItems = [];
   for (const si of settingItems) {
@@ -668,17 +989,20 @@ async function fetchTuneOrBookmarksAsABC(inputUrl, opts) {
 
   const tuneCache = new Map(); // tuneId -> { tuneData, tuneUrlNoHash, tuneTitle, tuneType, failed }
 
-  const included = [];
+  let included = [];
   let skippedNoChords = 0;
   let skippedNotFound = 0;
 
-  for (let i = 0; i < uniqSettingItems.length; i++) {
+  // Ordered slots to preserve initial fetched order (before optional sorting)
+  const resultsByIndex = new Array(uniqSettingItems.length);
 
-    const settingUrl = uniqSettingItems[i].url;
-    const statusTuneName = uniqSettingItems[i].displayName || "";
+  async function processOne(index) {
+    const settingItem = uniqSettingItems[index];
+    const settingUrl = settingItem.url;
+    const statusTuneName = settingItem.displayName || "";
 
     // Always show monotonically increasing progress
-    appendStatus(`Loading setting ${i + 1} of ${uniqSettingItems.length}: ${statusTuneName}`);
+    appendStatus(`Loading setting ${index + 1} of ${uniqSettingItems.length}: ${statusTuneName}`);
 
     const tuneId = extractTuneIdFromSettingUrl(settingUrl);
     const settingId = extractSettingIdFromSettingUrl(settingUrl);
@@ -686,7 +1010,7 @@ async function fetchTuneOrBookmarksAsABC(inputUrl, opts) {
     if (!tuneId || !settingId) {
       skippedNotFound++;
       appendStatus(`Skip: could not parse tune/setting from ${settingUrl}`);
-      continue;
+      return;
     }
 
     let cached = tuneCache.get(tuneId);
@@ -694,14 +1018,12 @@ async function fetchTuneOrBookmarksAsABC(inputUrl, opts) {
     if (cached && cached.failed) {
       skippedNotFound++;
       appendStatus(`Skip: tune ${tuneId} previously failed to load.`);
-      continue;
+      return;
     }
 
     if (!cached) {
       const tuneUrlNoHash = `https://thesession.org/tunes/${encodeURIComponent(tuneId)}`;
       const tuneJsonUrl = normalizeToJsonUrl(tuneUrlNoHash);
-
-      let tuneData = null;
 
       try {
         const tr = await fetch(tuneJsonUrl, { method: "GET", mode: "cors", cache: "no-store" });
@@ -710,33 +1032,34 @@ async function fetchTuneOrBookmarksAsABC(inputUrl, opts) {
           skippedNotFound++;
           appendStatus(`Skip: tune ${tuneId} fetch failed (HTTP ${tr.status}).`);
           tuneCache.set(tuneId, { failed: true });
-          continue;
+          return;
         }
 
-        tuneData = await tr.json();
+        const tuneData = await tr.json();
+
+        const tuneTitle =
+          (tuneData && tuneData.name) ? String(tuneData.name) :
+          (statusTuneName || `Tune ${tuneId}`);
+
+        const tuneType =
+          (tuneData && tuneData.type) ? normalizeTuneType(String(tuneData.type)) : "";
+
+        cached = { tuneData, tuneUrlNoHash, tuneTitle, tuneType, failed: false };
+        tuneCache.set(tuneId, cached);
+
       } catch (e) {
         skippedNotFound++;
         appendStatus(`Skip: tune ${tuneId} fetch failed (${e && e.message ? e.message : "network error"}).`);
         tuneCache.set(tuneId, { failed: true });
-        continue;
+        return;
       }
-
-      const tuneTitle =
-        (tuneData && tuneData.name) ? String(tuneData.name) :
-        (statusTuneName || `Tune ${tuneId}`);
-
-      const tuneType =
-        (tuneData && tuneData.type) ? normalizeTuneType(String(tuneData.type)) : "";
-
-      cached = { tuneData, tuneUrlNoHash, tuneTitle, tuneType, failed: false };
-      tuneCache.set(tuneId, cached);
     }
 
     const picked = findSettingById(cached.tuneData, cached.tuneUrlNoHash, settingId);
     if (!picked || typeof picked.abc !== "string" || !picked.abc.trim()) {
       skippedNotFound++;
       appendStatus(`Skip: setting ${settingId} not found in tune ${statusTuneName}`);
-      continue;
+      return;
     }
 
     const rawAbc = picked.abc;
@@ -749,16 +1072,26 @@ async function fetchTuneOrBookmarksAsABC(inputUrl, opts) {
 
     if (onlyChords && !abcBodyHasChords(bodyNormalized)) {
       skippedNoChords++;
-      continue;
+      return;
     }
 
-    included.push({
+    resultsByIndex[index] = {
       setting: picked,
       bodyNormalized,
       tuneTitle: cached.tuneTitle,
       tuneType: cached.tuneType,
       sourceSettingUrl: settingUrl
-    });
+    };
+  }
+
+  // Always sequential (concurrency option removed)
+  for (let i = 0; i < uniqSettingItems.length; i++) {
+    await processOne(i);
+  }
+
+  // Convert ordered slots -> included array (in original fetched order)
+  for (let i = 0; i < resultsByIndex.length; i++) {
+    if (resultsByIndex[i]) included.push(resultsByIndex[i]);
   }
 
   if (!included.length) {
@@ -768,50 +1101,23 @@ async function fetchTuneOrBookmarksAsABC(inputUrl, opts) {
     throw new Error(`Member: ${memberName} - No ${sourceLabel.toLowerCase()} tune settings could be loaded.`);
   }
 
+  // Baseline for UI re-sort (original fetched order)
+  const includedUnsorted = included.slice();
+
+  // Apply sort for member URLs only
+  included = sortIncludedForMember(includedUnsorted, memberSortMode);
+
   appendStatus(`Building ABC for ${included.length} ${sourceLabel.toLowerCase()} tune setting(s)…`);
 
-  const built = [];
-
-  for (let j = 0; j < included.length; j++) {
-    const it = included[j];
-
-    const xNum = j + 1;
-
-    const rLine = it.tuneType || "reel";
-    const mLine = defaultMForRhythm(rLine) || "4/4";
-    const lLine = "1/8";
-    const qVal  = defaultQForRhythm(rLine);
-
-    const tLine = it.tuneTitle;
-
-    const kRaw = (typeof it.setting.key === "string") ? it.setting.key : "";
-    const kLine = normalizeKValue(kRaw) || "Dmaj";
-
-    const memberName =
-      (it.setting && it.setting.member && typeof it.setting.member.name === "string")
-        ? it.setting.member.name.trim()
-        : "";
-
-    const header =
-      `X:${xNum}\n` +
-      `T:${tLine}\n` +
-      `R:${rLine}\n` +
-      `M:${mLine}\n` +
-      `L:${lLine}\n` +
-      `Q:${qVal}\n` +
-      `K:${kLine}\n` +
-      `S:${it.sourceSettingUrl}\n` +
-      (memberName ? `Z:${memberName}\n` : "");
-
-    built.push(header + it.bodyNormalized + "\n");
-  }
+  // Build output
+  const rebuilt = buildMemberABCFromIncluded(included, sourceLabel);
 
   return {
-    combined: built.join("\n"),
+    combined: rebuilt.combined,
     tuneTitle: sourceLabel,
     tuneType: "",
     tuneId: "",
-    settingsCount: included.length,
+    settingsCount: rebuilt.settingsCount,
     skippedNoChords,
     skippedNotFound,
     bookmarkItemsCount: items.length,
@@ -819,9 +1125,10 @@ async function fetchTuneOrBookmarksAsABC(inputUrl, opts) {
     memberSourceLabel: sourceLabel,
     memberItemsCount: items.length,
     memberSettingsCount: uniqSettingItems.length,
-    memberName: memberName || ""
+    memberName: memberName || "",
+    memberSortMode,          // for status display
+    includedUnsorted         // <-- enables re-sorting without refetch
   };
-
 }
 
 /* ============================================================
@@ -1132,6 +1439,11 @@ function abcBodyHasChords(bodyText) {
    Helpers (ABC parsing + defaults)
    ============================================================ */
 
+function getSettingNumberForSortFromSUrl(sUrl) {
+  const m = String(sUrl || "").match(/#setting-?(\d+)\b/i);
+  return m ? parseInt(m[1], 10) : 0;
+}
+
 function extractTuneIdFromSessionUrl(s) {
   try {
     const u = new URL(String(s));
@@ -1227,6 +1539,37 @@ function replaceBangSpaceWithNewlinePreservingDecorations(s) {
 
   return out;
 }
+
+function processTitleForSorting(thisTitle) {
+
+  thisTitle = String(thisTitle || "").trim();
+
+  const prefixMap = {
+    "The ": ", The",
+    "Da ": ", Da",
+    "An ": ", An",
+    "A ": ", A",
+    "Le ": ", Le",
+    "La ": ", La",
+    "Ye ": ", Ye",
+    "Les ": ", Les",
+    "an ": ", an",
+    "Der ": ", Der",
+    "Die ": ", Die",
+    "Das ": ", Das",
+    "Ein ": ", Ein",
+    "Eine ": ", Eine"
+  };
+
+  for (const [prefix, suffix] of Object.entries(prefixMap)) {
+    if (thisTitle.startsWith(prefix)) {
+      return thisTitle.slice(prefix.length) + suffix;
+    }
+  }
+
+  return thisTitle;
+}
+
 
 function extractBody(abcText) {
   // Pass through everything, including "*:" header/tag lines, as-is.
@@ -1350,14 +1693,13 @@ function setFetchBusy(busy) {
 
   // Disable the fetch button + prevent Enter re-triggering
   $("btnFetch").disabled = fetchInProgress;
-
-  // Optional: prevent changing inputs while running (nice UX)
   $("tuneUrl").disabled = fetchInProgress;
   $("onlyChords").disabled = fetchInProgress;
   $("memberUseTunes").disabled = fetchInProgress;
-
-  // Optional: show busy label
   $("btnFetch").textContent = fetchInProgress ? "Fetching…" : "Fetch";
+  $("memberSort").disabled = fetchInProgress;
+
+  updateResortEnabled();
 }
 
 function safeFilename(s) {
@@ -1396,7 +1738,6 @@ $("btnFetch").addEventListener("click", async () => {
 
   // ---- NON-REENTRANT GUARD ----
   if (fetchInProgress) {
-    // Optional: a gentle status message
     appendStatus("Fetch already in progress…");
     return;
   }
@@ -1406,13 +1747,15 @@ $("btnFetch").addEventListener("click", async () => {
   const url = $("tuneUrl").value.trim();
   const onlyChords = !!onlyChordsEl.checked;
   const memberUseTunes = !!memberUseTunesEl.checked;
+  const memberSortModeEl = $("memberSort"); 
+  const memberSortMode = memberSortModeEl ? String(memberSortModeEl.value || "orig") : "orig";
 
   enableActions(false);
   outEl.value = "";
   lastResult = null;
 
   try {
-    const result = await fetchTuneOrBookmarksAsABC(url, { onlyChords, memberUseTunes });
+    const result = await fetchTuneOrBookmarksAsABC(url, { onlyChords, memberUseTunes, memberSortMode });
     lastResult = result;
 
     outEl.value =
@@ -1421,20 +1764,30 @@ $("btnFetch").addEventListener("click", async () => {
 
     // Status summary
     clearStatus("Success!\n");
+    if (!isSessionTuneUrl(url)) {
+      const memberLine = (result && result.memberName) ? result.memberName : "";
+      appendStatus(`Member: ${memberLine}`);  // <-- requested one-line status (no leading "-")
+    }
 
     if (isSessionTuneUrl(url)) {
       appendStatus(`- Title: ${result.tuneTitle}`);
       appendStatus(`- Type: ${capitalizeFirst((result.tuneType || "(varies / not provided)"))}`);
     } else {
 
-      if (result && result.memberName) {
-        appendStatus(`- Member: ${result.memberName}`);
-      }
-
       const label = (result && result.memberSourceLabel) ? result.memberSourceLabel : "Bookmarks";
 
       const itemsCount = (result.memberItemsCount != null) ? result.memberItemsCount : result.bookmarkItemsCount;
       const settingsCount = (result.memberSettingsCount != null) ? result.memberSettingsCount : result.bookmarkSettingsCount;
+
+      if (result && result.memberSortMode) {
+        const sortLabel =
+          result.memberSortMode === "orig" ? "Original chronological order" :
+          result.memberSortMode === "title" ? "Sorted by title (T:)" :
+          result.memberSortMode === "key" ? "Sorted by key (K:)" :
+          result.memberSortMode === "rhythm" ? "Sorted by rhythm (R:)" :
+          "Original chronological order";
+        appendStatus(`- Member results sort: ${sortLabel}`);
+      }
 
       if (label === "Settings") {
         if (itemsCount != null) appendStatus(`- Submitted settings fetched: ${itemsCount}`);
@@ -1446,8 +1799,9 @@ $("btnFetch").addEventListener("click", async () => {
     }
 
     if (onlyChords) appendStatus(`- Skipped (no chords): ${result.skippedNoChords || 0}`);
-    if (result.skippedNotFound != null && result.skippedNotFound > 0)
+    if (result.skippedNotFound != null && result.skippedNotFound > 0) {
       appendStatus(`- Skipped (missing tune setting): ${result.skippedNotFound}`);
+    }
 
     appendStatus(`- Final # of settings added to results: ${result.settingsCount}`);
 
@@ -1470,6 +1824,58 @@ $("btnFetch").addEventListener("click", async () => {
     setFetchBusy(false);
   }
 });
+
+$("btnResort").addEventListener("click", () => {
+  if (!lastResult || !Array.isArray(lastResult.includedUnsorted) || !lastResult.includedUnsorted.length) {
+    return;
+  }
+
+  const mode = String(($("memberSort") && $("memberSort").value) || "orig");
+  const sourceLabel = lastResult.memberSourceLabel || "Bookmarks";
+
+  const sorted = sortIncludedForMember(lastResult.includedUnsorted, mode);
+  const rebuilt = buildMemberABCFromIncluded(sorted, sourceLabel);
+
+  // Update lastResult + textarea
+  lastResult = {
+    ...lastResult,
+    combined: rebuilt.combined,
+    settingsCount: rebuilt.settingsCount,
+    memberSortMode: mode
+  };
+
+  outEl.value =
+    "%\n% Make S: tag hyperlinks in the rendered ABC notation clickable\n%\n%enable_hyperlinks\n%\n\n" +
+    lastResult.combined;
+
+  // Status summary
+  clearStatus("Re-sorted!\n");
+  if (lastResult.memberName) appendStatus(`Member: ${lastResult.memberName}`);
+
+  const sortLabel =
+    mode === "orig" ? "Original chronological order" :
+    mode === "title" ? "Sorted by title (T:)" :
+    mode === "key" ? "Sorted by key (K:)" :
+    mode === "rhythm" ? "Sorted by rhythm (R:)" :
+    "Original chronological order";
+
+  appendStatus(`- Member results sort: ${sortLabel}`);
+  appendStatus(`- Final # of settings added to results: ${lastResult.settingsCount}`);
+  appendStatus("");
+
+  // Re-check Open-in-tools length and enable/disable accordingly
+  if (testOpenInAbcTools(outEl.value)) {
+    enableActions(true);
+  } else {
+    enableActions(true);
+    $("btnOpenInTools").disabled = true;
+  }
+
+  appendStatus("Done.");
+
+  updateResortEnabled();
+});
+
 
 $("btnCopy").addEventListener("click", async () => {
   try {
@@ -1631,10 +2037,10 @@ $("btnHelp").addEventListener("click", () => {
     '    You can launch the ABC Transcription Tools in a new browser tab by clicking the <b>ABC Transcription Tools</b> button.' +
     '  </div>' +
     '  <div style="margin-bottom:16px;">' +
-    '    Enter either a thesession.org <b>tune URL</b>, or a <b>member URL</b> into the <b>thesession.org URL</b> field and click <b>Fetch</b>.' +
+    '    Enter either a thesession.org <b>tune URL</b> or a <b>member URL</b> into the <b>thesession.org URL</b> field, then click <b>Fetch</b>.' +
     '  </div>' +
     '  <div style="margin-bottom:16px;">' +
-    '    You can copy the fetched ABC tune settings to the clipboard, save them to a .ABC file, or if the generated ShareURL length would be less than 8100 characters, open the tune settings directly in the <a href="https://michaeleskin.com/abctools/abctools.html" target="_blank" rel="noopener noreferrer">ABC Transcription Tools.</a>' +
+    '    You can copy the fetched ABC tune settings to the clipboard, save them to a .ABC file, or if the generated ShareURL is less than 8100 characters, open the tune settings directly in the <a href="https://michaeleskin.com/abctools/abctools.html" target="_blank" rel="noopener noreferrer">ABC Transcription Tools.</a>' +
     '  </div>' +
     '  <div style="margin-bottom:16px;">' +
     '    For <b>member URLs</b>, the tool can fetch either:' +
@@ -1643,13 +2049,14 @@ $("btnHelp").addEventListener("click", () => {
     '      <li>Bookmarked tune settings</li>' +
     '    </ul>' +
     '  </div>' +
+
     '  <div style="margin-bottom:16px;">' +
     '    <div style="font-weight:700; margin-bottom:6px;">Examples (click to fill the thesession.org URL field):</div>' +
     '    <div style="margin-bottom:6px;">' +
     '      <a href="https://thesession.org/tunes/1" class="exampleLink" data-fill-url="https://thesession.org/tunes/1">https://thesession.org/tunes/1</a>' +
     '    </div>' +
     '    <div style="margin-bottom:6px;">' +
-    '      <a href="https://thesession.org/members/22376" class="exampleLink" data-fill-url="https://thesession.org/members/22376">https://thesession.org/members/22376</a>' +
+    '      <a href="https://thesession.org/members/12799" class="exampleLink" data-fill-url="https://thesession.org/members/12799">https://thesession.org/members/12799</a>' +
     '      <span style="opacity:0.8;"></span>' +
     '    </div>' +
     '  </div>' +
@@ -1661,25 +2068,64 @@ $("btnHelp").addEventListener("click", () => {
     '      the tool will fetch the member\'s bookmarked tune settings instead of submitted tune settings.' +
     '    </div>' +
     '  </div>' +
+
     '  <div style="margin-bottom:16px;">' +
     '    <div style="font-weight:700; margin-bottom:6px;">Guitar chords filter</div>' +
     '    <div>' +
     '      If <b>“Only include tune settings that have chords”</b> is checked, the tool will ' +
     '      include only settings that contain guitar-style chord annotations ' +
-    '      (for example <code>"Em"</code>, <code>"D"</code>, <code>"G/B"</code>, etc.) in the ABC.' +
+    '      (for example, <code>"Em"</code>, <code>"D"</code>, <code>"G/B"</code>, etc.) in the ABC.' +
     '    </div>' +
     '    <div style="opacity:0.8; margin-top:6px;">' +
     '      This is useful if you want to quickly collect settings with chords ' +
     '      and skip melody-only versions.' +
     '    </div>' +
     '  </div>' +
+
     '  <div style="margin-bottom:16px;">' +
-    '    <div style="font-weight:700; margin-bottom:6px;">Member Tune Settings Results are in Chronological Order</div>' +
+    '    <div style="font-weight:700; margin-bottom:6px;">Sorting member tune settings results</div>' +
     '    <div>' +
-    '      Tune settings are fetched in chronological order, with the most recently created setting (either submitted by the member or saved as a bookmark) appearing first.' +
+    '      For <b>member URLs</b>, you can choose how the fetched member tune settings are sorted using the <b>Sort member tune settings results</b> options.' +
     '    </div>' +
-    '    <div style="margin-top:6px;">' +
-    '     If you would like to sort the fetched tune settings by tune name, style, or key, simply open the tune settings in the <a href="https://michaeleskin.com/abctools/abctools.html" target="_blank" rel="noopener noreferrer">ABC Transcription Tools</a> and sort them as desired using the <b>Sort Tunes by Tag</b> feature on the <b>☰</b> dropdown menu.' +
+    '    <div style="margin-top:10px;">' +
+    '      <ul style="margin:10px 0 0 10px;">' +
+    '        <li><b>Original chronological order</b>: Newest settings or bookmarks first (the default order returned by thesession.org)</li>' +
+    '        <li><b>Sorted by title (T:)</b>: Sorted alphabetically by tune title, using the title sorting rules described below</li>' +
+    '        <li><b>Sorted by key (K:)</b>: Grouped by key in alphabetical key order, and within each key, sorted by title using the same title sorting rules</li>' +
+    '        <li><b>Sorted by tune rhythm (R:)</b>: Grouped by rhythm (reel, jig, etc.), and within each rhythm, sorted by title using the same title sorting rules</li>' +
+    '      </ul>' +
+    '    </div>' +
+    '  </div>' +
+    '  <div style="margin-bottom:16px;">' +
+    '     <div style="margin-top:10px;">' +
+    '       After results have been fetched, you can change the sort option and click the <b>Re-sort</b> button to re-order the existing results instantly without re-fetching the data again from thesession.org.' +
+    '     </div>' +
+    '  </div>' +
+    '  <div style="margin-bottom:16px;">' +
+    '    <div style="font-weight:700; margin-bottom:6px;">Title sorting rules</div>' +
+    '    <div>' +
+    '      When sorting by title (and when sub-sorting titles within a key or rhythm), common leading articles are ignored by moving them to the end.' +
+    '      For example:' +
+    '      <ul style="margin:10px 0 0 10px;">' +
+    '        <li><b>The</b> Silver Spear → Silver Spear, The</li>' +
+    '        <li><b>An</b> Bhean Udaí Thall → Bhean Udaí Thall, An</li>' +
+    '        <li><b>A</b> Fig for a Kiss → Fig for a Kiss, A</li>' +
+    '      </ul>' +
+    '      The tune title shown in the ABC (<code>T:</code>) is <b>not changed</b>; this only affects sorting.' +
+    '    </div>' +
+    '  </div>' +
+
+    '  <div style="margin-bottom:16px;">' +
+    '    <div style="font-weight:700; margin-bottom:6px;">Rhythm sort order</div>' +
+    '    <div>' +
+    '      When sorting by rhythm, rhythms are ordered using a standard session-friendly list. ' +
+    '      Items with unknown or uncommon rhythms are placed after the known types.' +
+    '    </div>' +
+    '    <div style="margin-top:10px;">' +
+    '      <div style="opacity:0.95;">Rhythm sorting order:</div>' +
+    '      <div style="margin-top:6px; padding-left:10px; line-height:1.8;">' +
+    '        Reel, Hornpipe, Barndance, Strathspey, March, Jig, Slip Jig, Hop Jig, Slide, Polka, Waltz, Mazurka, Three-Two' +
+    '      </div>' +
     '    </div>' +
     '  </div>' +
 
@@ -1721,7 +2167,7 @@ $("btnHelp").addEventListener("click", () => {
       'overflow:auto;' +
       '-webkit-overflow-scrolling:touch;' +
       'padding:0 12px 2px 12px;' +
-      'padding-left:30px !important;' +
+      'padding-left:30px;' +
       'box-sizing:border-box;' +
     '">' +
     content +
@@ -1735,11 +2181,53 @@ $("btnHelp").addEventListener("click", () => {
   });
 });
 
+function resetUIToDefaults() {
+  // Clear app state
+  lastResult = null;
+  fetchInProgress = false;
+
+  // Reset controls (set these defaults to whatever you want)
+  $("tuneUrl").value = "https://thesession.org/tunes/1";
+  $("onlyChords").checked = false;
+  $("memberUseTunes").checked = false;
+  $("memberSort").value = "orig";
+
+  // Clear results
+  outEl.value = "";
+  clearStatus("Ready.");
+
+  // Disable actions
+  enableActions(false);
+  $("btnOpenInTools").disabled = true;
+
+  // Button text and enabled state
+  $("btnFetch").textContent = "Fetch";
+  $("btnFetch").disabled = false;
+  $("tuneUrl").disabled = false;
+  $("onlyChords").disabled = false;
+  $("memberUseTunes").disabled = false;
+  $("memberSort").disabled = false;
+
+  // If you added the Re-sort button earlier
+  if ($("btnResort")) $("btnResort").disabled = true;
+}
+
+// Run on normal page load
+document.addEventListener("DOMContentLoaded", () => {
+  resetUIToDefaults();
+});
+
+// Run when coming from bfcache (common in Firefox)
+window.addEventListener("pageshow", (e) => {
+  if (e.persisted) {
+    resetUIToDefaults();
+  }
+});
 
 </script>
 
-<script type="text/javascript" src="pako.min.js?v=10"></script>
-<script type="text/javascript" src="daypilot-modal.min-3.10.1.js?v=10"></script>
+<script type="text/javascript" src="pako.min.js?v=11"></script>
+<script type="text/javascript" src="daypilot-modal.min-3.10.1.js?v=11"></script>
 
 </body>
 </html>
