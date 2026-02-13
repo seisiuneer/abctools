@@ -555,6 +555,24 @@ function appendStatus(msg) {
   statusEl.scrollTop = statusEl.scrollHeight;
 }
 
+async function fetchMemberNameById(memberId) {
+  const id = String(memberId || "").trim();
+  if (!id) return "";
+
+  const url = `https://thesession.org/members/${encodeURIComponent(id)}?format=json`;
+
+  try {
+    const res = await fetch(url, { method: "GET", mode: "cors", cache: "no-store" });
+    if (!res.ok) return "";
+
+    const data = await res.json();
+    const name = (data && typeof data.name === "string") ? data.name.trim() : "";
+    return name;
+  } catch {
+    return "";
+  }
+}
+
 /* ============================================================
    Core entry (tune URL OR member bookmarks/tunes URL)
    ============================================================ */
@@ -572,6 +590,9 @@ async function fetchTuneOrBookmarksAsABC(inputUrl, opts) {
 
   // Single-tune flow
   if (isSessionTuneUrl(url)) {
+
+    clearStatus("Fetching all tune settings");
+
     return await fetchAllTuneVersionsAsABC(url, opts);
   }
 
@@ -581,14 +602,20 @@ async function fetchTuneOrBookmarksAsABC(inputUrl, opts) {
 
   const sourceLabel = isSessionMemberTunesUrl(url) ? "Settings" : "Bookmarks";
 
+  // Fetch member name from base member JSON (before paging)
+  const memberId = extractMemberIdFromSessionUrl(url);
+  const memberName = memberId ? await fetchMemberNameById(memberId) : "";
+
+  const who = memberName ? `${memberName}'s` : "member's";
+
   if (sourceLabel === "Settings") {
-    appendStatus(`Loading submitted tune settings…`);
+    clearStatus(`Fetching ${who} submitted tune settings`);
   } else {
-    appendStatus(`Loading bookmarked tune settings…`);
+    clearStatus(`Fetching ${who} bookmarked tune settings`);
   }
 
   const items = await fetchAllMemberItemsPaged(url, sourceLabel);
-  if (!items.length) throw new Error(`No ${sourceLabel.toLowerCase()} items found.`);
+  if (!items.length) throw new Error(`Member: ${memberName} - No tune ${sourceLabel.toLowerCase()} found.`);
 
   const settingItems = [];
 
@@ -625,7 +652,7 @@ async function fetchTuneOrBookmarksAsABC(inputUrl, opts) {
   }
 
   if (!settingItems.length) {
-    throw new Error(`No ${sourceLabel.toLowerCase()} tune settings found.`);
+    throw new Error(`Member: ${memberName} - No ${sourceLabel.toLowerCase()} tune settings found.`);
   }
 
   // De-dupe by URL
@@ -736,9 +763,9 @@ async function fetchTuneOrBookmarksAsABC(inputUrl, opts) {
 
   if (!included.length) {
     if (onlyChords) {
-      throw new Error(`No ${sourceLabel.toLowerCase()} tune settings contained chords.`);
+      throw new Error(`Member: ${memberName} - No ${sourceLabel.toLowerCase()} tune settings contained chords.`);
     }
-    throw new Error(`No ${sourceLabel.toLowerCase()} tune settings could be loaded.`);
+    throw new Error(`Member: ${memberName} - No ${sourceLabel.toLowerCase()} tune settings could be loaded.`);
   }
 
   appendStatus(`Building ABC for ${included.length} ${sourceLabel.toLowerCase()} tune setting(s)…`);
@@ -791,8 +818,10 @@ async function fetchTuneOrBookmarksAsABC(inputUrl, opts) {
     bookmarkSettingsCount: uniqSettingItems.length,
     memberSourceLabel: sourceLabel,
     memberItemsCount: items.length,
-    memberSettingsCount: uniqSettingItems.length
+    memberSettingsCount: uniqSettingItems.length,
+    memberName: memberName || ""
   };
+
 }
 
 /* ============================================================
@@ -1382,8 +1411,6 @@ $("btnFetch").addEventListener("click", async () => {
   outEl.value = "";
   lastResult = null;
 
-  clearStatus("Fetching and building ABC…");
-
   try {
     const result = await fetchTuneOrBookmarksAsABC(url, { onlyChords, memberUseTunes });
     lastResult = result;
@@ -1399,13 +1426,18 @@ $("btnFetch").addEventListener("click", async () => {
       appendStatus(`- Title: ${result.tuneTitle}`);
       appendStatus(`- Type: ${capitalizeFirst((result.tuneType || "(varies / not provided)"))}`);
     } else {
+
+      if (result && result.memberName) {
+        appendStatus(`- Member: ${result.memberName}`);
+      }
+
       const label = (result && result.memberSourceLabel) ? result.memberSourceLabel : "Bookmarks";
 
       const itemsCount = (result.memberItemsCount != null) ? result.memberItemsCount : result.bookmarkItemsCount;
       const settingsCount = (result.memberSettingsCount != null) ? result.memberSettingsCount : result.bookmarkSettingsCount;
 
       if (label === "Settings") {
-        if (itemsCount != null) appendStatus(`- Member submitted settings fetched: ${itemsCount}`);
+        if (itemsCount != null) appendStatus(`- Submitted settings fetched: ${itemsCount}`);
         if (settingsCount != null) appendStatus(`- ${label} found: ${settingsCount}`);
       } else {
         if (itemsCount != null) appendStatus(`- Bookmarks items fetched: ${itemsCount}`);
@@ -1413,11 +1445,11 @@ $("btnFetch").addEventListener("click", async () => {
       }
     }
 
-    appendStatus(`- # of Settings: ${result.settingsCount}`);
-
     if (onlyChords) appendStatus(`- Skipped (no chords): ${result.skippedNoChords || 0}`);
     if (result.skippedNotFound != null && result.skippedNotFound > 0)
       appendStatus(`- Skipped (missing tune setting): ${result.skippedNotFound}`);
+
+    appendStatus(`- Final # of settings added to results: ${result.settingsCount}`);
 
     appendStatus("");
 
