@@ -570,7 +570,7 @@ async function fetchTuneOrBookmarksAsABC(inputUrl, opts) {
   // Normalize member URLs to either /bookmarks or /tunes based on checkbox
   url = normalizeMembersUrl(url, memberUseTunes);
 
-  // Tune URL flow (leave as-is / sequential)
+  // Single-tune flow
   if (isSessionTuneUrl(url)) {
     return await fetchAllTuneVersionsAsABC(url, opts);
   }
@@ -581,19 +581,18 @@ async function fetchTuneOrBookmarksAsABC(inputUrl, opts) {
 
   const sourceLabel = isSessionMemberTunesUrl(url) ? "Settings" : "Bookmarks";
 
-  // ---- Member list flow (PAGED JSON; same system for /bookmarks and /tunes) ----
-  if (sourceLabel === "Settings") appendStatus("Loading submitted tune settings…");
-  else appendStatus("Loading bookmarked tune settings…");
+  if (sourceLabel === "Settings") {
+    appendStatus(`Loading submitted tune settings…`);
+  } else {
+    appendStatus(`Loading bookmarked tune settings…`);
+  }
 
   const items = await fetchAllMemberItemsPaged(url, sourceLabel);
   if (!items.length) throw new Error(`No ${sourceLabel.toLowerCase()} items found.`);
 
-  // Normalize BOTH member sources to:
-  //   [{ url: "https://thesession.org/tunes/....#setting....", displayName: "Tune Name" }, ...]
   const settingItems = [];
 
   if (isSessionMemberTunesUrl(url)) {
-    // /members/{id}/tunes?format=json returns { settings: [...] } per page
     for (const s of items) {
       const settingUrl = (s && typeof s.url === "string") ? s.url.trim() : "";
       if (!settingUrl) continue;
@@ -601,10 +600,12 @@ async function fetchTuneOrBookmarksAsABC(inputUrl, opts) {
       const tuneName =
         (s && s.tune && typeof s.tune.name === "string") ? s.tune.name.trim() : "";
 
-      settingItems.push({ url: settingUrl, displayName: tuneName });
+      settingItems.push({
+        url: settingUrl,
+        displayName: tuneName
+      });
     }
   } else {
-    // /members/{id}/bookmarks?format=json returns { items: [...] } per page
     for (const it of items) {
       const obj = (it && it.object) ? it.object : null;
       const objType = (obj && typeof obj.objectType === "string") ? obj.objectType : "";
@@ -613,14 +614,21 @@ async function fetchTuneOrBookmarksAsABC(inputUrl, opts) {
       const objUrl = (obj && typeof obj.url === "string") ? obj.url.trim() : "";
       if (!objUrl) continue;
 
-      const displayName = (obj && typeof obj.displayName === "string") ? obj.displayName.trim() : "";
-      settingItems.push({ url: objUrl, displayName });
+      const displayName =
+        (obj && typeof obj.displayName === "string") ? obj.displayName.trim() : "";
+
+      settingItems.push({
+        url: objUrl,
+        displayName
+      });
     }
   }
 
-  if (!settingItems.length) throw new Error(`No ${sourceLabel.toLowerCase()} tune settings found.`);
+  if (!settingItems.length) {
+    throw new Error(`No ${sourceLabel.toLowerCase()} tune settings found.`);
+  }
 
-  // De-dupe by URL (keep first seen displayName)
+  // De-dupe by URL
   const seen = new Set();
   const uniqSettingItems = [];
   for (const si of settingItems) {
@@ -631,52 +639,19 @@ async function fetchTuneOrBookmarksAsABC(inputUrl, opts) {
 
   appendStatus(`Found ${uniqSettingItems.length} tune setting(s).`);
 
-  // ---- PARALLEL FETCH (5 at a time) ----
-  const MAX_CONCURRENCY = 5;
+  const tuneCache = new Map(); // tuneId -> { tuneData, tuneUrlNoHash, tuneTitle, tuneType, failed }
 
-  // Cache tune fetches by tuneId, but store PROMISES so parallel requests dedupe properly.
-  // Map tuneId -> Promise<{ failed:boolean, tuneData?, tuneUrlNoHash?, tuneTitle?, tuneType? }>
-  const tunePromiseCache = new Map();
-
-  function getTuneRecord(tuneId, fallbackName) {
-    if (tunePromiseCache.has(tuneId)) return tunePromiseCache.get(tuneId);
-
-    const tuneUrlNoHash = `https://thesession.org/tunes/${encodeURIComponent(tuneId)}`;
-    const tuneJsonUrl = normalizeToJsonUrl(tuneUrlNoHash);
-
-    const p = (async () => {
-      try {
-        const tr = await fetch(tuneJsonUrl, { method: "GET", mode: "cors", cache: "no-store" });
-        if (!tr.ok) {
-          return { failed: true, tuneId, tuneJsonUrl, httpStatus: tr.status };
-        }
-        const tuneData = await tr.json();
-
-        const tuneTitle =
-          (tuneData && tuneData.name) ? String(tuneData.name) : (fallbackName || `Tune ${tuneId}`);
-        const tuneType =
-          (tuneData && tuneData.type) ? normalizeTuneType(String(tuneData.type)) : "";
-
-        return { failed: false, tuneData, tuneUrlNoHash, tuneTitle, tuneType };
-      } catch (e) {
-        return { failed: true, tuneId, tuneJsonUrl, error: (e && e.message) ? e.message : "network error" };
-      }
-    })();
-
-    tunePromiseCache.set(tuneId, p);
-    return p;
-  }
-
-  const includedByIndex = new Array(uniqSettingItems.length).fill(null);
+  const included = [];
   let skippedNoChords = 0;
   let skippedNotFound = 0;
 
-  async function processOne(si, i) {
-    const settingUrl = si.url;
-    const statusTuneName = si.displayName || "";
+  for (let i = 0; i < uniqSettingItems.length; i++) {
 
-    // Per-item progress line (may interleave with others when running in parallel)
-    appendStatus(`Loading ${i + 1} of ${uniqSettingItems.length}: ${statusTuneName || settingUrl}`);
+    const settingUrl = uniqSettingItems[i].url;
+    const statusTuneName = uniqSettingItems[i].displayName || "";
+
+    // Always show monotonically increasing progress
+    appendStatus(`Loading setting ${i + 1} of ${uniqSettingItems.length}: ${statusTuneName}`);
 
     const tuneId = extractTuneIdFromSettingUrl(settingUrl);
     const settingId = extractSettingIdFromSettingUrl(settingUrl);
@@ -684,33 +659,62 @@ async function fetchTuneOrBookmarksAsABC(inputUrl, opts) {
     if (!tuneId || !settingId) {
       skippedNotFound++;
       appendStatus(`Skip: could not parse tune/setting from ${settingUrl}`);
-      return;
+      continue;
     }
 
-    const tuneRec = await getTuneRecord(tuneId, statusTuneName);
+    let cached = tuneCache.get(tuneId);
 
-    if (tuneRec.failed) {
+    if (cached && cached.failed) {
       skippedNotFound++;
-      if (tuneRec.httpStatus != null) {
-        appendStatus(`Skip: tune ${tuneId} fetch failed (HTTP ${tuneRec.httpStatus}).`);
-      } else {
-        appendStatus(`Skip: tune ${tuneId} fetch failed (${tuneRec.error || "error"}).`);
-      }
-      return;
+      appendStatus(`Skip: tune ${tuneId} previously failed to load.`);
+      continue;
     }
 
-    const picked = findSettingById(tuneRec.tuneData, tuneRec.tuneUrlNoHash, settingId);
+    if (!cached) {
+      const tuneUrlNoHash = `https://thesession.org/tunes/${encodeURIComponent(tuneId)}`;
+      const tuneJsonUrl = normalizeToJsonUrl(tuneUrlNoHash);
+
+      let tuneData = null;
+
+      try {
+        const tr = await fetch(tuneJsonUrl, { method: "GET", mode: "cors", cache: "no-store" });
+
+        if (!tr.ok) {
+          skippedNotFound++;
+          appendStatus(`Skip: tune ${tuneId} fetch failed (HTTP ${tr.status}).`);
+          tuneCache.set(tuneId, { failed: true });
+          continue;
+        }
+
+        tuneData = await tr.json();
+      } catch (e) {
+        skippedNotFound++;
+        appendStatus(`Skip: tune ${tuneId} fetch failed (${e && e.message ? e.message : "network error"}).`);
+        tuneCache.set(tuneId, { failed: true });
+        continue;
+      }
+
+      const tuneTitle =
+        (tuneData && tuneData.name) ? String(tuneData.name) :
+        (statusTuneName || `Tune ${tuneId}`);
+
+      const tuneType =
+        (tuneData && tuneData.type) ? normalizeTuneType(String(tuneData.type)) : "";
+
+      cached = { tuneData, tuneUrlNoHash, tuneTitle, tuneType, failed: false };
+      tuneCache.set(tuneId, cached);
+    }
+
+    const picked = findSettingById(cached.tuneData, cached.tuneUrlNoHash, settingId);
     if (!picked || typeof picked.abc !== "string" || !picked.abc.trim()) {
       skippedNotFound++;
-      appendStatus(`Skip: setting ${settingId} not found in tune ${statusTuneName || tuneId}`);
-      return;
+      appendStatus(`Skip: setting ${settingId} not found in tune ${statusTuneName}`);
+      continue;
     }
 
     const rawAbc = picked.abc;
 
-    // Keep your existing body normalization path (using your extractBody)
     const bodyNormalized = extractBody(rawAbc)
-      .replace(/\!\s/g, "\n")
       .split(/\r?\n/)
       .map(line => line.trim())
       .join("\n")
@@ -718,59 +722,40 @@ async function fetchTuneOrBookmarksAsABC(inputUrl, opts) {
 
     if (onlyChords && !abcBodyHasChords(bodyNormalized)) {
       skippedNoChords++;
-      return;
+      continue;
     }
 
-    includedByIndex[i] = {
+    included.push({
       setting: picked,
-      rawAbc,
       bodyNormalized,
-      tuneTitle: tuneRec.tuneTitle,
-      tuneType: tuneRec.tuneType,
+      tuneTitle: cached.tuneTitle,
+      tuneType: cached.tuneType,
       sourceSettingUrl: settingUrl
-    };
-  }
-
-  // Simple worker pool
-  let nextIndex = 0;
-  async function worker() {
-    while (true) {
-      const i = nextIndex++;
-      if (i >= uniqSettingItems.length) break;
-      await processOne(uniqSettingItems[i], i);
-    }
-  }
-
-  const workerCount = Math.min(MAX_CONCURRENCY, uniqSettingItems.length);
-  const workers = [];
-  for (let w = 0; w < workerCount; w++) workers.push(worker());
-  await Promise.all(workers);
-
-  // Preserve original ordering from the member settings list by walking includedByIndex in index order
-  const included = [];
-  for (let i = 0; i < includedByIndex.length; i++) {
-    if (includedByIndex[i]) included.push(includedByIndex[i]);
+    });
   }
 
   if (!included.length) {
-    if (onlyChords) throw new Error(`No ${sourceLabel.toLowerCase()} tune settings contained chords.`);
+    if (onlyChords) {
+      throw new Error(`No ${sourceLabel.toLowerCase()} tune settings contained chords.`);
+    }
     throw new Error(`No ${sourceLabel.toLowerCase()} tune settings could be loaded.`);
   }
 
-  const totalIncluded = included.length;
-  appendStatus(`Building ABC for ${totalIncluded} ${sourceLabel.toLowerCase()} tune setting(s)…`);
+  appendStatus(`Building ABC for ${included.length} ${sourceLabel.toLowerCase()} tune setting(s)…`);
 
   const built = [];
+
   for (let j = 0; j < included.length; j++) {
     const it = included[j];
 
     const xNum = j + 1;
-    const tLine = it.tuneTitle;
 
-    const rLine = it.tuneType || ""; // (you said: derive programmatically; keep here if you later change)
+    const rLine = it.tuneType || "reel";
     const mLine = defaultMForRhythm(rLine) || "4/4";
     const lLine = "1/8";
     const qVal  = defaultQForRhythm(rLine);
+
+    const tLine = it.tuneTitle;
 
     const kRaw = (typeof it.setting.key === "string") ? it.setting.key : "";
     const kLine = normalizeKValue(kRaw) || "Dmaj";
@@ -779,40 +764,36 @@ async function fetchTuneOrBookmarksAsABC(inputUrl, opts) {
       (it.setting && it.setting.member && typeof it.setting.member.name === "string")
         ? it.setting.member.name.trim()
         : "";
-    const zLine = memberName;
 
     const header =
       `X:${xNum}\n` +
       `T:${tLine}\n` +
-      `R:${rLine || "reel"}\n` +
+      `R:${rLine}\n` +
       `M:${mLine}\n` +
       `L:${lLine}\n` +
       `Q:${qVal}\n` +
       `K:${kLine}\n` +
       `S:${it.sourceSettingUrl}\n` +
-      (zLine ? `Z:${zLine}\n` : "");
+      (memberName ? `Z:${memberName}\n` : "");
 
     built.push(header + it.bodyNormalized + "\n");
   }
 
   return {
     combined: built.join("\n"),
-    tuneTitle: sourceLabel,          // "Bookmarks" or "Settings"
+    tuneTitle: sourceLabel,
     tuneType: "",
     tuneId: "",
-    settingsCount: totalIncluded,
+    settingsCount: included.length,
     skippedNoChords,
     skippedNotFound,
-
     bookmarkItemsCount: items.length,
     bookmarkSettingsCount: uniqSettingItems.length,
-
     memberSourceLabel: sourceLabel,
     memberItemsCount: items.length,
     memberSettingsCount: uniqSettingItems.length
   };
 }
-
 
 /* ============================================================
    Member list paging (works for /bookmarks AND /tunes)
