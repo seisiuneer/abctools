@@ -437,6 +437,10 @@
         flex: 1 0 100% !important;
         width: 100% !important;
       }
+
+      #instructions_div{
+        margin-bottom: calc(env(safe-area-inset-bottom) + var(--page-pad));
+      }
     }
 
     @media (max-width: 720px){
@@ -451,8 +455,8 @@
       .instructions a.exampleLink{
         font-size: 0.92em;     /* slightly smaller than surrounding text */
       }
-      #xinstructions_div{
-        display: none !important;
+      #instructions_div{
+        margin-bottom: calc(env(safe-area-inset-bottom) + var(--page-pad));
       }
       .checkRow.sortRow label{
         display:flex;
