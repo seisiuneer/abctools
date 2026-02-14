@@ -1724,14 +1724,23 @@ function capitalizeFirst(str) {
 }
 
 $("btnTune").addEventListener("click", async () => {
+
+  sendGoogleAnalytics("action", "open_tunes");
+
   window.open("https://thesession.org/tunes", "_blank");
 });
 
 $("btnMembers").addEventListener("click", async () => {
+  
+  sendGoogleAnalytics("action", "open_members");
+
   window.open("https://thesession.org/members", "_blank");
 });
 
 $("btnABCTools").addEventListener("click", async () => {
+  
+  sendGoogleAnalytics("action", "open_abctools");
+
   window.open("https://michaeleskin.com/abctools/abctools.html", "_blank");
 });
 
@@ -1771,11 +1780,16 @@ $("btnFetch").addEventListener("click", async () => {
     }
 
     if (isSessionTuneUrl(url)) {
+
+      sendGoogleAnalytics("action", "tune_settings");
+
       appendStatus(`- Title: ${result.tuneTitle}`);
       appendStatus(`- Type: ${capitalizeFirst((result.tuneType || "(varies / not provided)"))}`);
     } else {
 
       const label = (result && result.memberSourceLabel) ? result.memberSourceLabel : "Bookmarks";
+
+      sendGoogleAnalytics("action", "user_"+label.toLowerCase());
 
       const itemsCount = (result.memberItemsCount != null) ? result.memberItemsCount : result.bookmarkItemsCount;
       const settingsCount = (result.memberSettingsCount != null) ? result.memberSettingsCount : result.bookmarkSettingsCount;
@@ -1832,6 +1846,9 @@ $("btnResort").addEventListener("click", () => {
   }
 
   const mode = String(($("memberSort") && $("memberSort").value) || "orig");
+
+  sendGoogleAnalytics("action", "resort_"+mode);
+
   const sourceLabel = lastResult.memberSourceLabel || "Bookmarks";
 
   const sorted = sortIncludedForMember(lastResult.includedUnsorted, mode);
@@ -1879,6 +1896,9 @@ $("btnResort").addEventListener("click", () => {
 
 
 $("btnCopy").addEventListener("click", async () => {
+
+  sendGoogleAnalytics("action", "copy");
+
   try {
     await navigator.clipboard.writeText(outEl.value);
     appendStatus("ABC tune settings copied to the clipboard.");
@@ -1888,6 +1908,9 @@ $("btnCopy").addEventListener("click", async () => {
 });
 
 $("btnDownload").addEventListener("click", () => {
+
+  sendGoogleAnalytics("action", "download");
+
   if (!lastResult) return;
 
   const originalUrl = $("tuneUrl").value.trim();
@@ -1938,6 +1961,9 @@ $("btnDownload").addEventListener("click", () => {
 });
 
 $("btnOpenInTools").addEventListener("click", () => {
+
+  sendGoogleAnalytics("action", "abctools_shareurl");
+
   try {
     if (!lastResult) return;
     openInAbcTools(outEl.value);
@@ -2028,6 +2054,8 @@ tuneUrlInput.addEventListener("keydown", (e) => {
 
 // Instructions modal
 $("btnHelp").addEventListener("click", () => {
+
+  sendGoogleAnalytics("action", "instructions");
 
   // scrollable inner content
   const content =
@@ -2224,6 +2252,70 @@ window.addEventListener("pageshow", (e) => {
     resetUIToDefaults();
   }
 });
+
+//
+// Send gtag analytics
+//
+function sendGoogleAnalytics(theCategory, theAction, theLabel) {
+
+  //console.log("sendGoogleAnalytics category: "+theCategory+" action: "+theAction+" label: "+theLabel);
+
+  // Don't send analytics if offline
+  if (!navigator.onLine) {
+    //console.log("sendGoogleAnalytics - Offline: Not sending info ")
+    return;
+  }
+
+  // Don't send analytics on iOS Safari
+  if (gIsIOS) {
+    return;
+  }
+
+  // Don't send analytics if local storage not available
+  if (!gLocalStorageAvailable) {
+    return;
+  }
+
+  if (typeof gtag !== "undefined") {
+
+    if ((gtag) && (gtag instanceof Function)) {
+
+      if (!theLabel) {
+        theLabel = "none";
+      }
+
+      gtag('event', 'must_' + theCategory + "_" + theAction, {
+          event_category: theCategory,
+          event_action: theAction,
+          event_label: theLabel
+        });
+    }
+  }
+}
+
+//
+// Are we on iOS?
+//
+function isIOS() {
+  if (/iPad|iPhone|iPod/.test(navigator.platform)) {
+    return true;
+  } else {
+    return navigator.maxTouchPoints &&
+      navigator.maxTouchPoints > 2 &&
+      /MacIntel/.test(navigator.platform);
+  }
+}
+
+const gIsIOS = isIOS();
+
+//
+// Is local storage available
+//
+let gLocalStorageAvailable = false;
+
+if (window.localStorage) {
+  gLocalStorageAvailable = true;
+}
 
 </script>
 
