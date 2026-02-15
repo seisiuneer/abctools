@@ -609,6 +609,35 @@
 
 <script>
 
+
+/* ============================================================
+   Runtime environment checks
+   ============================================================ */
+//
+
+// Are we on iOS?
+//
+function isIOS() {
+  if (/iPad|iPhone|iPod/.test(navigator.platform)) {
+    return true;
+  } else {
+    return navigator.maxTouchPoints &&
+      navigator.maxTouchPoints > 2 &&
+      /MacIntel/.test(navigator.platform);
+  }
+}
+
+const gIsIOS = isIOS();
+
+//
+// Is local storage available
+//
+let gLocalStorageAvailable = false;
+
+if (window.localStorage) {
+  gLocalStorageAvailable = true;
+}
+
 /* ============================================================
    Status accumulation helpers
    ============================================================ */
@@ -620,16 +649,16 @@ const tuneUrlInput = $("tuneUrl");
 const onlyChordsEl = $("onlyChords");
 const memberUseTunesEl = $("memberUseTunes"); 
 
+/* ============================================================
+   Sorting helpers (used by member result sorting)
+   ============================================================ */
+
 function parseHeaderLine(abcText, tagLetter) {
   // Reads first occurrence of e.g. "T:" at start of a line.
   const re = new RegExp(`^\\s*${tagLetter}\\s*:\\s*(.*)$`, "mi");
   const m = String(abcText || "").match(re);
   return m ? String(m[1] || "").trim() : "";
 }
-
-/* ============================================================
-   Sorting helpers (used by member result sorting)
-   ============================================================ */
 
 function normKeyForSort(kLine) {
   // keep simple: uppercase, remove spaces
@@ -1478,11 +1507,6 @@ function abcBodyHasChords(bodyText) {
    Helpers (ABC parsing + defaults)
    ============================================================ */
 
-function getSettingNumberForSortFromSUrl(sUrl) {
-  const m = String(sUrl || "").match(/#setting-?(\d+)\b/i);
-  return m ? parseInt(m[1], 10) : 0;
-}
-
 function extractTuneIdFromSessionUrl(s) {
   try {
     const u = new URL(String(s));
@@ -1765,21 +1789,21 @@ $("btnTune").addEventListener("click", async () => {
 
   sendGoogleAnalytics("action", "open_tunes");
 
-  window.open("https://thesession.org/tunes", "_blank");
+  window.open("https://thesession.org/tunes", "_blank","noopener,noreferrer");
 });
 
 $("btnMembers").addEventListener("click", async () => {
   
   sendGoogleAnalytics("action", "open_members");
 
-  window.open("https://thesession.org/members", "_blank");
+  window.open("https://thesession.org/members", "_blank","noopener,noreferrer");
 });
 
 $("btnABCTools").addEventListener("click", async () => {
   
   sendGoogleAnalytics("action", "open_abctools");
 
-  window.open("https://michaeleskin.com/abctools/abctools.html", "_blank");
+  window.open("https://michaeleskin.com/abctools/abctools.html", "_blank","noopener,noreferrer");
 });
 
 $("btnFetch").addEventListener("click", async () => {
@@ -2329,30 +2353,6 @@ function sendGoogleAnalytics(theCategory, theAction, theLabel) {
         });
     }
   }
-}
-
-//
-// Are we on iOS?
-//
-function isIOS() {
-  if (/iPad|iPhone|iPod/.test(navigator.platform)) {
-    return true;
-  } else {
-    return navigator.maxTouchPoints &&
-      navigator.maxTouchPoints > 2 &&
-      /MacIntel/.test(navigator.platform);
-  }
-}
-
-const gIsIOS = isIOS();
-
-//
-// Is local storage available
-//
-let gLocalStorageAvailable = false;
-
-if (window.localStorage) {
-  gLocalStorageAvailable = true;
 }
 
 </script>
