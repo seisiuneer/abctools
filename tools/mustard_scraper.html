@@ -720,15 +720,6 @@ function appendStatus(msg) {
   statusEl.scrollTop = statusEl.scrollHeight;
 }
 
-function isConcurrencyEnabledFromUrl() {
-  try {
-    const u = new URL(window.location.href);
-    return u.searchParams.get("concurrent") === "true";
-  } catch {
-    return false;
-  }
-}
-
 async function fetchMemberNameById(memberId) {
   const id = String(memberId || "").trim();
   if (!id) return "";
@@ -886,16 +877,6 @@ function buildMemberABCFromIncluded(included, sourceLabel) {
     memberSourceLabel: sourceLabel
   };
 }
-
-/* ============================================================
-   3) CHANGE: fetchTuneOrBookmarksAsABC()
-   - Removes concurrency option (always sequential)
-   - Captures includedUnsorted (baseline) before sorting
-   - Applies sorting via sortIncludedForMember()
-   - Builds ABC via buildMemberABCFromIncluded()
-   - Returns includedUnsorted so UI can re-sort without refetch
-   ============================================================ */
-
 async function fetchTuneOrBookmarksAsABC(inputUrl, opts) {
   opts = opts || {};
   const onlyChords = !!opts.onlyChords;
@@ -988,7 +969,9 @@ async function fetchTuneOrBookmarksAsABC(inputUrl, opts) {
 
   appendStatus(`Found ${uniqSettingItems.length} tune setting(s).`);
 
-  const tuneCache = new Map(); // tuneId -> { tuneData, tuneUrlNoHash, tuneTitle, tuneType, failed }
+  // Cache per tuneId (and in-flight dedupe)
+  const tuneCache = new Map();        // tuneId -> { tuneData, tuneUrlNoHash, tuneTitle, tuneType, failed }
+  const tuneInFlight = new Map();     // tuneId -> Promise<cachedObj>
 
   let included = [];
   let skippedNoChords = 0;
@@ -997,69 +980,93 @@ async function fetchTuneOrBookmarksAsABC(inputUrl, opts) {
   // Ordered slots to preserve initial fetched order (before optional sorting)
   const resultsByIndex = new Array(uniqSettingItems.length);
 
-  async function processOne(index) {
-    const settingItem = uniqSettingItems[index];
-    const settingUrl = settingItem.url;
-    const statusTuneName = settingItem.displayName || "";
+  // Buffer per-index status details (so status stays in the same order as sequential)
+  const logsByIndex = new Array(uniqSettingItems.length);
 
-    // Always show monotonically increasing progress
-    appendStatus(`Loading setting ${index + 1} of ${uniqSettingItems.length}: ${statusTuneName}`);
+  async function getTuneCached(tuneId, statusTuneNameForFallback, log) {
+    // Already cached?
+    const cached = tuneCache.get(tuneId);
+    if (cached) return cached;
 
-    const tuneId = extractTuneIdFromSettingUrl(settingUrl);
-    const settingId = extractSettingIdFromSettingUrl(settingUrl);
+    // Already fetching this tuneId?
+    const inflight = tuneInFlight.get(tuneId);
+    if (inflight) return await inflight;
 
-    if (!tuneId || !settingId) {
-      skippedNotFound++;
-      appendStatus(`Skip: could not parse tune/setting from ${settingUrl}`);
-      return;
-    }
+    const tuneUrlNoHash = `https://thesession.org/tunes/${encodeURIComponent(tuneId)}`;
+    const tuneJsonUrl = normalizeToJsonUrl(tuneUrlNoHash);
 
-    let cached = tuneCache.get(tuneId);
-
-    if (cached && cached.failed) {
-      skippedNotFound++;
-      appendStatus(`Skip: tune ${tuneId} previously failed to load.`);
-      return;
-    }
-
-    if (!cached) {
-      const tuneUrlNoHash = `https://thesession.org/tunes/${encodeURIComponent(tuneId)}`;
-      const tuneJsonUrl = normalizeToJsonUrl(tuneUrlNoHash);
-
+    const p = (async () => {
       try {
         const tr = await fetch(tuneJsonUrl, { method: "GET", mode: "cors", cache: "no-store" });
 
         if (!tr.ok) {
-          skippedNotFound++;
-          appendStatus(`Skip: tune ${tuneId} fetch failed (HTTP ${tr.status}).`);
-          tuneCache.set(tuneId, { failed: true });
-          return;
+          const failObj = { failed: true };
+          tuneCache.set(tuneId, failObj);
+          return failObj;
         }
 
         const tuneData = await tr.json();
 
         const tuneTitle =
           (tuneData && tuneData.name) ? String(tuneData.name) :
-          (statusTuneName || `Tune ${tuneId}`);
+          (statusTuneNameForFallback || `Tune ${tuneId}`);
 
         const tuneType =
           (tuneData && tuneData.type) ? normalizeTuneType(String(tuneData.type)) : "";
 
-        cached = { tuneData, tuneUrlNoHash, tuneTitle, tuneType, failed: false };
-        tuneCache.set(tuneId, cached);
+        const okObj = { tuneData, tuneUrlNoHash, tuneTitle, tuneType, failed: false };
+        tuneCache.set(tuneId, okObj);
+        return okObj;
 
       } catch (e) {
-        skippedNotFound++;
-        appendStatus(`Skip: tune ${tuneId} fetch failed (${e && e.message ? e.message : "network error"}).`);
-        tuneCache.set(tuneId, { failed: true });
-        return;
+        const failObj = { failed: true, error: e };
+        tuneCache.set(tuneId, failObj);
+        return failObj;
+      } finally {
+        tuneInFlight.delete(tuneId);
       }
+    })();
+
+    tuneInFlight.set(tuneId, p);
+    return await p;
+  }
+
+  async function processOne(index) {
+    const logs = [];
+    const log = (m) => logs.push(String(m));
+
+    const settingItem = uniqSettingItems[index];
+    const settingUrl = settingItem.url;
+    const statusTuneName = settingItem.displayName || "";
+
+    const tuneId = extractTuneIdFromSettingUrl(settingUrl);
+    const settingId = extractSettingIdFromSettingUrl(settingUrl);
+
+    if (!tuneId || !settingId) {
+      skippedNotFound++;
+      log(`Skip: could not parse tune/setting from ${settingUrl}`);
+      logsByIndex[index] = logs;
+      return;
+    }
+
+    const cached = await getTuneCached(tuneId, statusTuneName, log);
+
+    if (!cached || cached.failed) {
+      skippedNotFound++;
+      const msg =
+        (cached && cached.error && cached.error.message)
+          ? cached.error.message
+          : "network/HTTP error";
+      log(`Skip: tune ${tuneId} failed to load (${msg}).`);
+      logsByIndex[index] = logs;
+      return;
     }
 
     const picked = findSettingById(cached.tuneData, cached.tuneUrlNoHash, settingId);
     if (!picked || typeof picked.abc !== "string" || !picked.abc.trim()) {
       skippedNotFound++;
-      appendStatus(`Skip: setting ${settingId} not found in tune ${statusTuneName}`);
+      log(`Skip: setting ${settingId} not found in tune ${statusTuneName}`);
+      logsByIndex[index] = logs;
       return;
     }
 
@@ -1073,6 +1080,7 @@ async function fetchTuneOrBookmarksAsABC(inputUrl, opts) {
 
     if (onlyChords && !abcBodyHasChords(bodyNormalized)) {
       skippedNoChords++;
+      logsByIndex[index] = logs;
       return;
     }
 
@@ -1083,11 +1091,41 @@ async function fetchTuneOrBookmarksAsABC(inputUrl, opts) {
       tuneType: cached.tuneType,
       sourceSettingUrl: settingUrl
     };
+
+    logsByIndex[index] = logs;
   }
 
-  // Always sequential (concurrency option removed)
+  // ---- CONCURRENCY LIMIT (2 at a time), while keeping sequential-like ordering ----
+  // NOTE: DO NOT CHANGE THIS VALUE
+  // Making this larger is not friendly to thesession.org database connections
+  const CONCURRENCY = 2;
+  const running = new Set();
+
+  async function runLimited(i) {
+    while (running.size >= CONCURRENCY) {
+      await Promise.race(running);
+    }
+    // IMPORTANT: emit the progress line in strict index order (here, in the for-loop below)
+    const p = processOne(i).finally(() => running.delete(p));
+    running.add(p);
+  }
+
+  // Schedule in order (this keeps "Loading setting i of N" in order)
   for (let i = 0; i < uniqSettingItems.length; i++) {
-    await processOne(i);
+    const statusTuneName = uniqSettingItems[i].displayName || "";
+    appendStatus(`Loading setting ${i + 1} of ${uniqSettingItems.length}: ${statusTuneName}`);
+    await runLimited(i);
+  }
+
+  // Wait for remaining
+  await Promise.all(Array.from(running));
+
+  // Flush any per-index detail logs in order (so status reads like sequential)
+  for (let i = 0; i < logsByIndex.length; i++) {
+    const logs = logsByIndex[i];
+    if (logs && logs.length) {
+      for (const line of logs) appendStatus(line);
+    }
   }
 
   // Convert ordered slots -> included array (in original fetched order)
@@ -1128,7 +1166,7 @@ async function fetchTuneOrBookmarksAsABC(inputUrl, opts) {
     memberSettingsCount: uniqSettingItems.length,
     memberName: memberName || "",
     memberSortMode,          // for status display
-    includedUnsorted         // <-- enables re-sorting without refetch
+    includedUnsorted         // enables re-sorting without refetch
   };
 }
 
