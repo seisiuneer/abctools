@@ -432,7 +432,7 @@ function generateShareLink(abcText, shareName, tablatureOption, addAutoPlay) {
     //   - lzw=... OR def=...   (this is the embedded ABC payload)
     //   - format=...           (tablature/notation mode)
     //   - name=...             (display name/title)
-    //   - ssp=45               (example of passing other tool options)
+    //   - ssp=10               (example of passing other tool options)
     //   - play=1               (optional: auto-open the player)
     //
     // NOTE: shareName should be URL-safe.
@@ -448,7 +448,7 @@ function generateShareLink(abcText, shareName, tablatureOption, addAutoPlay) {
         url = baseUrl
             + "?def=" + defEncoded
             + "&format=" + tablatureOption
-            + "&ssp=45"
+            + "&ssp=10"
             + "&name=" + shareName;
 
         if (addAutoPlay) {
@@ -464,7 +464,7 @@ function generateShareLink(abcText, shareName, tablatureOption, addAutoPlay) {
         url = baseUrl
             + "?lzw=" + abcInLZW
             + "&format=" + tablatureOption
-            + "&ssp=45"
+            + "&ssp=10"
             + "&name=" + shareName;
 
         if (addAutoPlay) {

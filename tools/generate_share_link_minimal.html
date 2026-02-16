@@ -33,7 +33,7 @@
        - name=<shareName>           (URLSearchParams will encode it)
        - play=1                     (optional: Opens the tune(s) in the Player)
        - editor=1                   (optional: Opens the tunes(s) in the Editor)
-       - ssp=45                     (example of another tool option)
+       - ssp=10                     (example of another tool option)
 
      Practical URL-length limit:
        This demo enforces 8100 chars (safe-ish). If you exceed it, return null and
@@ -128,7 +128,7 @@ function generateShareLink_Minimal(opts) {
 
   // Optional tool configuration parameters
   params.set("format", tablatureOption);
-  params.set("ssp", "45");           // example of passing another option
+  params.set("ssp", "10");           // example of passing another option
   params.set("name", shareName);
 
   if (addAutoPlay) {
