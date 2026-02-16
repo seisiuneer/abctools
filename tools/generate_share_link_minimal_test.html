@@ -5,18 +5,71 @@
   <meta name="viewport" content="width=device-width,initial-scale=1.0" />
   <title>Generate ABC Tools Share Link - Minimal Demo</title>
   <style>
-    body { font-family: Helvetica, Arial, sans-serif; margin: 24px; max-width: 980px; }
+    body { font-family: Helvetica, Arial, sans-serif; margin: 24px; max-width: 980px;padding:10px;}
     h1 { font-size: 18pt; margin: 0 0 8px 0; }
     p  { line-height: 1.5; }
-    textarea { width: 100%; height: 220px; font-family: ui-monospace, monospace; }
-    label { display: inline-block; margin: 10px 10px 10px 0; }
+    textarea { width: 100%; height: 300px; font-family: ui-monospace, monospace; font-size:13pt; margin-top:8px;}
+    label { display: inline-block; margin: 0 10px 0 0; }
     select, input[type="text"] { padding: 6px; font-size: 11pt; }
     button { padding: 10px 14px; font-size: 11pt; cursor: pointer; }
     .row { display: flex; gap: 14px; flex-wrap: wrap; align-items: center; }
-    .box { margin-top: 14px; }
+    .box { margin-top: 18px; }
     .muted { color: #444; font-size: 10.5pt; }
-    .out { width: 100%; height: 90px; }
-    .pill { display:inline-block; font-size:12pt; }
+    .out { width: 100%; height: 150px; }
+    .pill { display:inline-block; font-size:12pt; margin-left:12px; }
+
+    .btn {
+      --color: #000000;
+      --background-color: #d8d8d8;
+      --border-color: darken(#d8d8d8, 7.5%);
+      color: var(--color);
+      font-family: helvetica !important;
+      font-size: 11pt !important;
+      background-color: var(--background-color);
+      padding: 0.7rem 0.7rem;
+      padding-top: 0.8rem;
+      border: solid 1px var(--border-color);
+      outline: none;
+      position: relative;
+      border-radius: 0.5rem;
+      user-select: none;
+      box-shadow: 0 0.1rem 0.1rem rgba(0, 0, 0, 0.25), 0 -0.1rem 0.5rem rgba(0, 0, 0, 0.1) inset;
+      transition: box-shadow 64ms ease-out;
+      -webkit-appearance:none;
+    }
+
+    .btn:after {
+      content: "";
+      background-color: #ffffff;
+      width: 75%;
+      height: 12.5%;  
+      position: absolute;
+      top: 0.15rem;
+      left: 12.5%;
+      border-radius: 50%;
+      filter: blur(0.15rem);
+      transition: opacity 64ms ease-out;
+    }
+
+    .btn:active {
+      box-shadow: 0 0 0 rgba(0, 0, 0, 0.4), 0 0.4rem 1rem rgba(0, 0, 0, 0.3) inset;
+    }
+    .btn:active:after { opacity: 0; }
+
+    .btn-controls{ --color: black; --background-color: lavender; }
+
+    select {
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      appearance: none;
+      background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' fill='%238C98F2'><polygon points='0,0 100,0 50,50'/></svg>") no-repeat;
+      background-size: 12px;
+      background-position: calc(100% - 10px) center;
+      background-repeat: no-repeat;
+      background-color: #efefef;
+      color:black;
+    }
+
   </style>
 </head>
 <body>
@@ -24,8 +77,6 @@
 <h1>Generate ABC Transcription Tools Share Link — Minimal Demo</h1>
 <p class="muted">
   Paste ABC, choose options, generate a link, and open it.<br>
-  <strong>Note:</strong> Only one of the two launch options below should be checked.
-  Checking one will automatically uncheck the other.
 </p>
 
 <div class="box">
@@ -36,13 +87,15 @@
 <div class="box row">
   <label>
     Share name:
-    <input id="shareName" type="text" value="My Share Link Test" size="26" />
+    <input id="shareName" type="text" value="My Share Link Test" size="20" />
   </label>
+</div>
 
+<div class="box row">
   <label>
-    format:
-    <select id="format">
-      <option value="noten">Standard notation only</option>
+    Notation format:
+    <select style="width:200px" id="format">
+      <option value="noten">Standard notation</option>
       <option value="notenames">Note names</option>
       <option value="mandolin">Mandolin</option>
       <option value="gdad">GDAD Bouzouki</option>
@@ -58,11 +111,14 @@
 
   <label>
     ABC encoding:
-    <select id="compression">
+    <select style="width:150px" id="compression">
       <option value="deflate">Deflate</option>
       <option value="lzw">LZW (Legacy)</option>
     </select>
   </label>
+</div>
+
+<div class="box row">
 
   <label>
     <input id="autoPlay" type="checkbox" checked />
@@ -73,16 +129,17 @@
     <input id="openEditor" type="checkbox" />
     Add &editor=1 (Open in Editor)
   </label>
+
 </div>
 
 <div class="box row">
-  <button id="btnGenerate">Generate Share Link</button>
-  <button id="btnOpen" disabled>Open in ABC Tools</button>
-  <button id="btnCopy" disabled>Copy link</button>
+  <button id="btnGenerate" class="btn btn-controls" style="margin-right:12px;">Generate Share Link</button>
+  <button id="btnOpen" class="btn btn-controls" style="margin-right:12px;" disabled>Open in ABC Tools</button>
+  <button id="btnCopy" class="btn btn-controls" disabled>Copy link</button>
   <span id="status" class="pill">Ready</span>
 </div>
 
-<div class="box">
+<div class="box" style="margin-top:24px;">
   <label for="out">Generated Share Link:</label>
   <textarea id="out" class="out" spellcheck="false" readonly></textarea>
   <div id="len" class="muted"></div>
