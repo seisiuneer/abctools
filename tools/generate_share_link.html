@@ -5,6 +5,17 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <link rel="profile" href="http://gmpg.org/xfn/11">
     <title>Generate ABC Transcription Tools Share Link</title>
+
+    <!--
+      This page is a *developer example*: it shows how to generate a URL ("Share Link")
+      that opens ABC Transcription Tools with ABC already loaded + optional settings.
+
+      If you're embedding this in your own app/site, the ONLY essential parts are:
+        - lz-string.min.js (for LZW mode)   OR
+        - pako.min.js + TextEncoder (for Deflate mode)
+        - the generateShareLink() function (and whatever UI you want around it)
+    -->
+
     <link rel='dns-prefetch' href='//fonts.googleapis.com' />
     <link rel='dns-prefetch' href='//s.w.org' />
     <link rel='preconnect' href='https://secureservercdn.net' crossorigin />
@@ -32,8 +43,11 @@
     <link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
     <link rel="manifest" href="https://michaeleskin.com/abctools/img/abc-manifest.json">
 
+    <!--
+      Analytics is unrelated to share-link generation.
+      Remove if you are copying this into your own project.
+    -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-VM0N9HL3MK"></script>
-    
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
@@ -42,127 +56,73 @@
     </script>
 
     <style>
-      
-      textarea {
-      width:600px;height:200px
-      }
+      /* (UI styling below is just for the demo page; not required for share link generation.) */
 
-      body {
-      background-color: #ffffff;
-      }
+      textarea { width:600px;height:200px }
+      body { background-color: #ffffff; padding:20px; }
 
-      select{
-      margin-left:24px;
-      }
+      select{ margin-left:24px; }
 
-      textarea#input {
-      width: 100%;
-      margin-bottom: 0px;
-      }
+      textarea#input { width: 100%; margin-bottom: 0px; }
+      textarea#output { width: 100%; }
 
-      textarea#output {
-      width: 100%;
-      }
+      p { font-size:12pt; font-family:"Helvetica"; line-height: 24px; margin-bottom:0px; }
+      h1 { font-size:18pt; font-family:"Helvetica"; margin-bottom:0px; }
+      h2 { font-size:14pt; font-family:"Helvetica"; margin-bottom:18px; }
+      h4 { font-size:14pt; font-family:"Helvetica"; margin-bottom:8px; }
+      hr { margin-top:24px; margin-bottom:24px; }
 
-      p {
-      font-size:12pt;
-      font-family:"Helvetica";
-      line-height: 24px;
-      margin-bottom:0px;
-      }
-
-      h1 {
-      font-size:18pt;
-      font-family:"Helvetica";
-      margin-bottom:0px;
-      }
-
-      h2 {
-      font-size:14pt;
-      font-family:"Helvetica";
-      margin-bottom:18px;
-      }
-
-      h4 {
-      font-size:14pt;
-      font-family:"Helvetica";
-      margin-bottom:8px;
-      }
-
-      hr {
-      margin-top:24px;
-      margin-bottom:24px;
-      }
-
-      body {
-      padding:20px;
-      }
-
-      .image_holder{
-      text-align: center;
-      width:240px;
-      height:240px;
-      margin-left:auto;
-      margin-right:auto;
-      }
+      .image_holder{ text-align: center; width:240px; height:240px; margin-left:auto; margin-right:auto; }
 
       #maindiv{
-      position: absolute;
-      left: 50%;
-      margin-right: -50%;
-      transform: translate(-50%, 0%);
-      text-align: left;
-      width: 800px;
-      background-color: white;
+        position: absolute;
+        left: 50%;
+        margin-right: -50%;
+        transform: translate(-50%, 0%);
+        text-align: left;
+        width: 800px;
+        background-color: white;
       }
 
-      .inputbox{
-        position:absolute;
-        left:170px;
-      }
-
-      .recommended{
-        position:absolute;
-        left:300px;
-      }
+      .inputbox{ position:absolute; left:170px; }
+      .recommended{ position:absolute; left:300px; }
 
       select {
-      -webkit-appearance: none;
-      -moz-appearance: none;
-      appearance: none;
-      background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' fill='%238C98F2'><polygon points='0,0 100,0 50,50'/></svg>") no-repeat;
-      background-size: 12px;
-      background-position: calc(100% - 10px) center;
-      background-repeat: no-repeat;
-      background-color: #efefef;
-      color:black;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' fill='%238C98F2'><polygon points='0,0 100,0 50,50'/></svg>") no-repeat;
+        background-size: 12px;
+        background-position: calc(100% - 10px) center;
+        background-repeat: no-repeat;
+        background-color: #efefef;
+        color:black;
       }
 
       #tablature_options{
-      font-size:11pt;
-      font-family:"Helvetica";
-      height:32px;
-      width:205px;
-      margin-left:0px;
+        font-size:11pt;
+        font-family:"Helvetica";
+        height:32px;
+        width:205px;
+        margin-left:0px;
       }
 
       #layout{
-      font-size:11pt;
-      font-family:"Helvetica";
-      height:32px;
-      width:85px;
-      margin-left:0px;
-      margin-right:24px;
+        font-size:11pt;
+        font-family:"Helvetica";
+        height:32px;
+        width:85px;
+        margin-left:0px;
+        margin-right:24px;
       }
 
       #root_scale{
-      font-size:11pt;
-      font-family:"Helvetica";
-      height:32px;
-      width:80px;
-      margin-left:0px;
+        font-size:11pt;
+        font-family:"Helvetica";
+        height:32px;
+        width:80px;
+        margin-left:0px;
       }
-
 
       .btn {
         --color: #000000;
@@ -200,70 +160,26 @@
       .btn:active {
         box-shadow: 0 0 0 rgba(0, 0, 0, 0.4), 0 0.4rem 1rem rgba(0, 0, 0, 0.3) inset;
       }
-      .btn:active:after {
-        opacity: 0;
-      }
+      .btn:active:after { opacity: 0; }
 
-      .btn-info {
-        --color: #ffffff;
-        --background-color: #0091ea;
-        --border-color: #0079c4;
-      }
-      .btn-info:active {
-        --color: #ececec;
-      }
-      .btn-success {
-        --color: #ffffff;
-        --background-color: #00c853;
-        --border-color: #00a243;
-      }
-      .btn-success:active {
-        --color: #ececec;
-      }
-      .btn-warning {
-        --color: #3e2723;
-        --background-color: #ffc400;
-        --border-color: #d9a700;
-      }
-      .btn-warning:active {
-        --color: #261815;
-      }
-      .btn-error {
-        --color: #ffffff;
-        --background-color: #d50000;
-        --border-color: #af0000;
-      }
-      .btn-error:active {
-        --color: #ececec;
-      }
-      .btn-dark {
-        --color: #ffffff;
-        --background-color: #303030;
-        --border-color: #1d1d1d;
-      }
-      .btn-dark:active {
-        --color: #ececec;
-      }
+      .btn-info { --color: #ffffff; --background-color: #0091ea; --border-color: #0079c4; }
+      .btn-info:active { --color: #ececec; }
+      .btn-success { --color: #ffffff; --background-color: #00c853; --border-color: #00a243; }
+      .btn-success:active { --color: #ececec; }
+      .btn-warning { --color: #3e2723; --background-color: #ffc400; --border-color: #d9a700; }
+      .btn-warning:active { --color: #261815; }
+      .btn-error { --color: #ffffff; --background-color: #d50000; --border-color: #af0000; }
+      .btn-error:active { --color: #ececec; }
+      .btn-dark { --color: #ffffff; --background-color: #303030; --border-color: #1d1d1d; }
+      .btn-dark:active { --color: #ececec; }
 
-
-      .btn-controls{
-        --color: black;
-        --background-color: lavender;
-      }
-
-      .btn-generate{
-        --color: black;
-        --background-color: #BBFFBB;
-      }
-
+      .btn-controls{ --color: black; --background-color: lavender; }
+      .btn-generate{ --color: black; --background-color: #BBFFBB; }
 
       /* For modal dialog prompt replacement */
       .modal_flat_background { background-color: #000; opacity: 0.4; }
       .modal_flat_main { border: 1px solid #333; box-shadow: 0px 0px 15px -2px rgba(0,0,0,0.75);  }
-
-      /* font size only */
       .modal_flat_main, .modal_flat_main input, .modal_flat_main button {  font-size: 16px; }
-
       .modal_flat_main input, .modal_flat_main button {  padding: 5px; box-sizing: border-box; }
       .modal_flat_inner { padding: 30px; background: #fff; color: #000; }
       .modal_flat_content { font-family:"Helvetica"; margin: 20px 0px;}
@@ -271,14 +187,12 @@
       .modal_flat_buttons { text-align:center;margin-top: 40px; }
       .modal_flat_main button { background-color: #ccc; color: #000; padding: 10px 20px; border: 0px; cursor: pointer; outline: none; width: 100px;  }
       .modal_flat_cancel {margin-left: 5px;}
-  </style>
+    </style>
   </head>
+
   <body>
-    
     <div id="maindiv">
-      
       <div>
-        
         <div style="text-align: center;">
           <h1>Generate ABC Transcription Tools Share Link</h1>
           <h2>Sample Code for 3rd Party Developers</h2>
@@ -296,13 +210,11 @@
         <p>Click "Save Output to a file" to save the results to a file.</p>
         <p>Click "Copy Output to the clipboard" to copy the results to the system clipboard for pasting into other applications.</p>
         <p>Click "Test Output in the ABC Transcription Tools" to open and test the Share Link in my <a href="https://michaeleskin.com/abctools/abctools.html" target="_blank">ABC Transcription Tools</a></p>
-        
       </div>
       
       <hr id="abcinput">
       
       <div style="text-align:left">
-        
         <h4>ABC Input:</h4>
         
         <div style="margin-top:28px;margin-bottom:36px;">
@@ -317,12 +229,9 @@
           </textarea>
         </p>
       
-        
         <p>
           <span style="">Tablature options:&nbsp;&nbsp;</span>
-          
           <select id="tablature_options">
-            
             <option value="noten">&nbsp;&nbsp;Standard notation only</option>
             <option value="notenames">&nbsp;&nbsp;Note names</option>
             <option value="mandolin">&nbsp;&nbsp;Mandolin</option>
@@ -334,14 +243,13 @@
             <option value="guitard">&nbsp;&nbsp;DADGAD tuned guitar</option>
             <option value="uke">&nbsp;&nbsp;Ukulele</option>
             <option value="whistle">&nbsp;&nbsp;Whistle</option>
-            
           </select>
-          
         </p>
 
         <p><input type="checkbox" id="addAutoPlay" checked="true">&nbsp;&nbsp;Add Auto-Play to Share Link</p>
 
-        <!-- NEW: Compression mode selection -->
+        <!-- Compression mode selection.
+             In your own tool/app, you can pick one mode and remove this UI entirely. -->
         <p style="margin-top:8px;margin-bottom:8px;font-size:11pt;font-family:Helvetica;">
           <span>Compression:</span>
           <label style="margin-left:12px;">
@@ -358,39 +266,42 @@
           <h4>Generated Share Link:</h4>
         </div>
 
-        <!-- NEW: link size display -->
+        <!-- Link-size display is demo-only, but it's useful because Share Links have a practical max length. -->
         <p id="linkSize" style="font-size:11pt;font-family:Helvetica;margin-bottom:8px;"></p>
         
         <textarea id="output" placeholder="Generated Share Link will appear here" spellcheck="false" autocorrect="off" autocapitalize="none"></textarea>
         
         <p style="margin-top:20px;">
-          
           <button id="copybutton" class="btn btn-controls" onClick="copyOutputToClipboard();">Copy Share Link to the clipboard</button>
-          
           <button style="margin-left:24px;" class="btn btn-controls" onClick="saveOutput();">Save Share Link to a file</button>
-          
           <button style="margin-left:24px;" class="btn btn-controls" onClick="testOutput();">Test Share Link in the ABC Transcription Tools</button>
-          
         </p>
-        
       </div>
                   
       <hr>
       
       <div style="text-align: center;">
-        
         <p style="text-align: center">Complete source code for this utility may be found on GitHub</p>
-        
         <p style="text-align: center"> <a href="https://github.com/seisiuneer/abctools/tree/main/tools" target="_blank">Generate ABC Transcription Tools Share Link on Github</a></p>
-        
         <hr style="margin-bottom:50px">
-        
       </div>
-      
     </div>
-    
   </body>
   
+  <!--
+    REQUIRED LIBRARIES FOR SHARE LINKS:
+
+    1) LZ-String:
+       Needed if you want to build LZW-based links using the "lzw=" URL parameter.
+       (This is the long-standing/standard share-link method.)
+
+    2) Pako:
+       Needed if you want to build Deflate-based links using the "def=" URL parameter.
+       (Typically produces shorter links for larger ABC.)
+
+    3) DayPilot:
+       Not required for share-link generation. This demo uses it only for nice alert/prompt dialogs.
+  -->
   <script type="text/javascript" src="lz-string.min.js?v=2"></script>
   <script type="text/javascript" src="pako.min.js?v=1"></script>
   <script type="text/javascript" src="daypilot-modal.min-3.10.1.js?v=2"></script>
@@ -404,40 +315,64 @@
 // If you are building share link generation into your own web page or Javascript tool, all you need is the
 // generateShareLink() function and including the lz-string.min.js and pako.min.js files in your project.
 //
-// This sample also supports an optional Deflate-based compression mode:
-//   - LZW mode:   ?lzw=<LZ-String data>&...
-//   - Deflate mode: ?def=<Base64URL deflate data>&...
+// This sample supports two *equivalent* ways to embed ABC into a URL:
+//
+//   A) LZW mode (standard / compatible / simple):
+//        https://michaeleskin.com/abctools/abctools.html?lzw=<LZString.compressToEncodedURIComponent(ABC)>&...
+//
+//   B) Deflate mode (often shorter for large ABC):
+//        https://michaeleskin.com/abctools/abctools.html?def=<base64url(deflate(utf8(ABC)))>&...
+//
+// In both cases, the rest of the URL is just normal query parameters that configure the tool.
 //
 // ********************************************************************************************************************
 
-// Read selected compression mode from radio buttons
+// Read selected compression mode from radio buttons (demo UI helper).
+// In your own application you can:
+//   - hardcode a choice (LZW or Deflate), OR
+//   - provide your own UI, OR
+//   - decide dynamically (e.g., try Deflate first, fall back to LZW if needed).
 function getSelectedCompressionMode() {
     var radios = document.getElementsByName("compressionMode");
     var mode = COMPRESSION_MODE_LZW;
     for (var i = 0; i < radios.length; i++) {
         if (radios[i].checked) {
-            if (radios[i].value === "deflate") {
-                mode = COMPRESSION_MODE_DEFLATE;
-            } else {
-                mode = COMPRESSION_MODE_LZW;
-            }
+            mode = (radios[i].value === "deflate") ? COMPRESSION_MODE_DEFLATE : COMPRESSION_MODE_LZW;
             break;
         }
     }
     return mode;
 }
 
+// Compression mode ids (internal to this demo)
+var COMPRESSION_MODE_LZW = 0;      // uses "lzw=" param (LZString output)
+var COMPRESSION_MODE_DEFLATE = 1;  // uses "def=" param (Deflate + Base64URL output)
+
 //
 // Main function for generating a share link
 //
+// PARAMETERS (what a 3rd-party developer usually provides):
+//   abcText          = The ABC text you want loaded when the link opens
+//   shareName        = Title shown by the tools (you typically URL-encode it first)
+//   tablatureOption  = The tools "format" parameter (e.g., noten, whistle, uke, etc.)
+//   addAutoPlay      = If true, adds play=1 so the Player auto-opens
+//
+// RETURNS:
+//   A fully-formed URL string, or null if it would exceed the max length.
+//
+function generateShareLink(abcText, shareName, tablatureOption, addAutoPlay) {
 
-// Compression mode ids
-var COMPRESSION_MODE_LZW = 0;      // existing LZ-String / LZW
-var COMPRESSION_MODE_DEFLATE = 1;  // new Deflate+Base64URL
-
-function generateShareLink(abcText,shareName,tablatureOption,addAutoPlay) {
-
-    // Base64/Base64URL helpers for Deflate mode
+    // ----------------------------
+    // Deflate mode helpers
+    // ----------------------------
+    // Deflate returns a byte array (Uint8Array). URLs need *text*, so we encode bytes to Base64,
+    // then convert Base64 to "Base64URL" (safe for query strings without extra escaping).
+    //
+    // If you implement this in another language (Swift, Python, etc.), the algorithm is the same:
+    //   utf8_bytes = UTF8(abcText)
+    //   deflated   = DEFLATE(utf8_bytes, level=6)
+    //   b64        = BASE64(deflated)
+    //   b64url     = b64 with '+'->'-', '/'->'_', and strip trailing '=' padding
     function bytesToBase64(bytes) {
         var binary = "";
         var len = bytes.length;
@@ -454,12 +389,20 @@ function generateShareLink(abcText,shareName,tablatureOption,addAutoPlay) {
           .replace(/=+$/, "");
     }
 
-    // LZW compression wrapper (existing behavior)
+    // ----------------------------
+    // LZW mode helper
+    // ----------------------------
+    // LZ-String already returns a URL-safe encoding with compressToEncodedURIComponent().
     function compressABC_LZW(abcText) {
         return LZString.compressToEncodedURIComponent(abcText);
     }
 
-    // Deflate-based compression
+    // ----------------------------
+    // Deflate compression helper
+    // ----------------------------
+    // Uses pako.deflate() at level 6 (a good size/speed trade-off).
+    // NOTE: TextEncoder is supported in modern browsers. If you need older compatibility,
+    // you would add a UTF-8 encoding polyfill.
     function compressABC_Deflate(abcText) {
       if (typeof pako === "undefined") {
           throw new Error("pako (Deflate library) is not loaded.");
@@ -470,54 +413,92 @@ function generateShareLink(abcText,shareName,tablatureOption,addAutoPlay) {
       return bytesToBase64URL(deflated);
     }
 
+    // ----------------------------
+    // 1) Base URL (the tool you're launching)
+    // ----------------------------
+    // Your code always starts from this URL, then adds query parameters.
     var baseUrl = "https://michaeleskin.com/abctools/abctools.html";
 
-    // Choose compression mode (replace this with your own UI code as required)
+    // ----------------------------
+    // 2) Choose compression mode
+    // ----------------------------
+    // Demo uses a radio button. Replace with your own logic as needed.
     var compressionMode = getSelectedCompressionMode();
 
+    // ----------------------------
+    // 3) Build the URL query string
+    // ----------------------------
+    // Important parameters used here:
+    //   - lzw=... OR def=...   (this is the embedded ABC payload)
+    //   - format=...           (tablature/notation mode)
+    //   - name=...             (display name/title)
+    //   - ssp=45               (example of passing other tool options)
+    //   - play=1               (optional: auto-open the player)
+    //
+    // NOTE: shareName should be URL-safe.
+    // In this demo, shareName is already a simple string ("Share_Link_Test"),
+    // but in real use you should do: encodeURIComponent(shareName).
     var url = "";
     if (compressionMode === COMPRESSION_MODE_DEFLATE) {
+
         // Deflate-based link: def=...
+        // This typically yields shorter URLs for longer ABC text.
         var defEncoded = compressABC_Deflate(abcText);
-        url = baseUrl + "?def=" + defEncoded + "&format=" + tablatureOption + "&ssp=45&name=" + shareName;
-        if (addAutoPlay){
+
+        url = baseUrl
+            + "?def=" + defEncoded
+            + "&format=" + tablatureOption
+            + "&ssp=45"
+            + "&name=" + shareName;
+
+        if (addAutoPlay) {
             url += "&play=1";
         }
+
     } else {
-        // Existing LZW behavior: lzw=...
+
+        // LZW-based link: lzw=...
+        // Very simple: compress and drop it in as a query parameter.
         var abcInLZW = compressABC_LZW(abcText);
-        url = baseUrl + "?lzw=" + abcInLZW + "&format="+tablatureOption+"&ssp=45&name=" + shareName;
-        if (addAutoPlay){
+
+        url = baseUrl
+            + "?lzw=" + abcInLZW
+            + "&format=" + tablatureOption
+            + "&ssp=45"
+            + "&name=" + shareName;
+
+        if (addAutoPlay) {
             url += "&play=1";
         }
     }
 
-    // Limit URLs to 8100 characters
+    // ----------------------------
+    // 4) Enforce the practical URL-length limit
+    // ----------------------------
+    // Browsers, proxies, and servers can reject very long URLs.
+    // This demo uses 8100 as a safe-ish maximum (consistent with your tool ecosystem).
     if (url.length > 8100) {
         return null;
     }
 
     return url;
+}
 
-  }
+//
+// Optional developer sanity-check: verify that a generated share link "round-trips" correctly.
+//
+// This is *not required* to generate a share link, but it's useful if you're implementing the
+// encoder/decoder in another language and want to confirm you didn't break UTF-8 or Base64URL.
+//
+// Decoder logic:
+//   If lzw param present -> LZString.decompressFromEncodedURIComponent()
+//   Else if def param present -> Base64URL decode -> pako.inflate() -> UTF-8 decode
+//
+function verifyShareLink(url, originalABC) {
 
-  // Verify that a generated share link round-trips back to the original ABC
-  // Decoder logic:
-  //   If lzw param present -> use LZW
-  //   else if def param present -> use Deflate
-  function verifyShareLink(url, originalABC) {
-
-    // Deflate-based decompression
-    function decompressABC_Deflate(encoded) {
-        if (typeof pako === "undefined") {
-            throw new Error("pako (Deflate library) is not loaded.");
-        }
-        var deflatedBytes = base64URLToBytes(encoded);
-        var inflatedBytes = pako.inflate(deflatedBytes);
-        var decoder = new TextDecoder();
-        return decoder.decode(inflatedBytes);
-    }
-
+    // ----------------------------
+    // Deflate-based decompression helpers
+    // ----------------------------
     function base64ToBytes(base64) {
         var binary = atob(base64);
         var len = binary.length;
@@ -528,6 +509,8 @@ function generateShareLink(abcText,shareName,tablatureOption,addAutoPlay) {
         return bytes;
     }
 
+    // Base64URL is just Base64 with a few substitutions + stripped padding.
+    // To decode, reverse the substitutions and restore padding to a multiple of 4 chars.
     function base64URLToBytes(base64url) {
         var base64 = base64url
             .replace(/-/g, "+")
@@ -541,12 +524,21 @@ function generateShareLink(abcText,shareName,tablatureOption,addAutoPlay) {
         }
         return base64ToBytes(base64);
     }
-    
+
+    function decompressABC_Deflate(encoded) {
+        if (typeof pako === "undefined") {
+            throw new Error("pako (Deflate library) is not loaded.");
+        }
+        var deflatedBytes = base64URLToBytes(encoded);
+        var inflatedBytes = pako.inflate(deflatedBytes);
+        var decoder = new TextDecoder();
+        return decoder.decode(inflatedBytes);
+    }
+
     try {
         var qIndex = url.indexOf("?");
-        if (qIndex === -1) {
-            return false;
-        }
+        if (qIndex === -1) return false;
+
         var query = url.substring(qIndex + 1);
         var params = new URLSearchParams(query);
 
@@ -556,25 +548,26 @@ function generateShareLink(abcText,shareName,tablatureOption,addAutoPlay) {
         var defParam = params.get("def");
 
         if (lzwParam != null) {
-            // LZW mode
+            // LZW mode: one-liner decode
             reconstructed = LZString.decompressFromEncodedURIComponent(lzwParam);
         } else if (defParam != null) {
-            // Deflate mode
+            // Deflate mode: Base64URL -> bytes -> inflate -> UTF-8 string
             reconstructed = decompressABC_Deflate(defParam);
         } else {
+            // No ABC payload found in the URL
             return false;
         }
 
-        if (reconstructed === null) {
-            return false;
-        }
+        if (reconstructed === null) return false;
 
+        // Exact string match: this will catch subtle issues like newline normalization or encoding bugs.
         return reconstructed === originalABC;
+
     } catch (e) {
         console.log("verifyShareLink error:", e);
         return false;
     }
-  }
+}
 
 // ********************************************************************************************************************
 //
@@ -610,9 +603,7 @@ function UI_GenerateShareLink(){
     var addAutoPlay = false;
 
     if  (document.getElementById('addAutoPlay').checked){
-
         addAutoPlay = true;
-    
     }
 
     // Get the tablature option from the dropdown
@@ -621,7 +612,11 @@ function UI_GenerateShareLink(){
     //
     // Generate the Share Link
     //
-    var url = generateShareLink(abcText,"Share_Link_Test",tablatureOption,addAutoPlay)
+    // NOTE FOR DEVELOPERS:
+    //   - Replace "Share_Link_Test" with your own title (ideally encodeURIComponent()).
+    //   - Pass whatever tablatureOption/format you want.
+    //   - Decide whether to add play=1 (auto-open player).
+    var url = generateShareLink(abcText, "Share_Link_Test", tablatureOption, addAutoPlay);
 
     if (url == null){
        DayPilot.Modal.alert("ABC text is too long to generate a valid Share Link!", {
@@ -639,13 +634,13 @@ function UI_GenerateShareLink(){
 
         document.getElementById("output").value = url;
 
-        // show link size
+        // show link size (handy when you're tuning compression decisions)
         var sz = document.getElementById("linkSize");
         if (sz) {
             sz.innerHTML = "Share link length: " + url.length + " characters";
         }
 
-        // verify round-trip
+        // verify round-trip (optional developer check)
         var ok = verifyShareLink(url, abcText);
         if (!ok) {
             DayPilot.Modal.alert("Warning: The decompressed Share Link does not match the original ABC text!", {
@@ -658,9 +653,7 @@ function UI_GenerateShareLink(){
         document.getElementById("generateShareLink").innerHTML = "Share Link Generated!";
 
         setTimeout(function() {
-
             document.getElementById("generateShareLink").innerHTML = "Generate Share Link";
-
         }, 1250);
        
     }
@@ -689,7 +682,6 @@ function saveOutput() {
 
     var thePlaceholder = gSaveFilename;
 
-
     var thePrompt = "Please enter a filename for your output Share Link file:";
 
     DayPilot.Modal.prompt(thePrompt, thePlaceholder, {
@@ -716,18 +708,14 @@ function saveOutput() {
         if ((!gIsAndroid) && (!gIsIOS)) {
 
             if ((!fname.endsWith(".txt")) && (!fname.endsWith(".TXT"))) {
-
-                // Give it a good extension
                 fname = fname.replace(/\..+$/, '');
                 fname = fname + ".txt";
-
             }
+
         } else {
             // iOS and Android have odd rules about text file saving
-            // Give it a good extension
             fname = fname.replace(/\..+$/, '');
             fname = fname + ".txt";
-
         }
         
         var a = document.createElement("a");
@@ -736,9 +724,7 @@ function saveOutput() {
 
         a.style = "display: none";
 
-        var blob = new Blob([theData], {
-                type: "text/plain"
-            });
+        var blob = new Blob([theData], { type: "text/plain" });
 
         var url = window.URL.createObjectURL(blob);
         a.href = url;
@@ -754,7 +740,6 @@ function saveOutput() {
     });
 
 }
-
 
 //
 // Copy the output text are to the clipboard 
@@ -780,9 +765,7 @@ function copyOutputToClipboard() {
     document.getElementById("copybutton").innerHTML = "Share link copied!";
 
     setTimeout(function() {
-
         document.getElementById("copybutton").innerHTML = "Copy share link to the clipboard";
-
     }, 1250);
 }
 
@@ -791,23 +774,14 @@ function copyOutputToClipboard() {
 //
 function copyToClipboard(textToCopy) {
 
-    //
-    // Put this in a try/catch just to be safe
-    //
     try {
 
         // navigator clipboard api needs a secure context (https)
         if (navigator.clipboard && window.isSecureContext) {
-
-            // navigator clipboard api method'
             return navigator.clipboard.writeText(textToCopy);
-
         } else {
 
-            // text area method
-
             let textArea = document.createElement("textarea");
-
             textArea.value = textToCopy;
 
             // make the textarea out of viewport
@@ -821,16 +795,13 @@ function copyToClipboard(textToCopy) {
             textArea.select();
 
             return new Promise((res, rej) => {
-                // here the magic happens
                 document.execCommand('copy') ? res() : rej();
                 textArea.remove();
             });
         }
 
     } catch (error) {
-
         console.log("CopyToClipboard error: " + error);
-
     }
 }
 
@@ -853,7 +824,6 @@ function testOutput() {
 
     // Open the transcription tools with the share link
     var w = window.open(url);
-
 }
 
 //
@@ -901,44 +871,17 @@ function isAndroid() {
 }
 
 //
-// Are we on Safari?
-//
-function isSafari(){
-
-    if (/Safari/i.test(navigator.userAgent) && /Apple Computer/.test(navigator.vendor)) {
-        return true;
-    }
-    else{
-        return false;
-    }
-}
-
-//
-// Are we on Chrome?
-//
-function isChrome(){
-
-    if (/chrome|chromium|crios/i.test(navigator.userAgent)) {
-        return true;
-    }
-    else{
-        return false;
-    }
-}
-
-//
 // Globals
 //
 var gIsIOS = false;
 var gIsAndroid = false;
-var gIsSafari = false;
-var gIsChrome = false;
 
 //
 // Initialization 
 //
 function DoStartup() {
 
+    // Demo ABC pre-fill (not needed for developers using generateShareLink() elsewhere)
     var theValue = "";
     theValue += "X: 1\n";
     theValue += "T: The Kesh\n";
@@ -954,69 +897,37 @@ function DoStartup() {
 
     document.getElementById('input').value = theValue;
     document.getElementById('output').value = "";
+
     var sz = document.getElementById("linkSize");
-    if (sz) {
-        sz.innerHTML = "";
-    }
+    if (sz) sz.innerHTML = "";
 
     // Reset file selectors
     var fileElement = document.getElementById('selectabcfile');
-
     fileElement.value = "";
 
-    // Are we on iOS?
-    gIsIOS = false;
-    if (isIOS()) {
-        gIsIOS = true;
-    }
-
-    // Are we on Android?
-    gIsAndroid = false;
-
-    if (isAndroid()) {
-        gIsAndroid = true;
-    }
+    // Platform detection (demo UI behavior only)
+    gIsIOS = isIOS();
+    gIsAndroid = isAndroid();
 
     if (gIsIOS) {
+        // iOS can be picky about "accept" filters; demo removes it.
         document.getElementById("selectabcfile").removeAttribute("accept");
     }
 
-    // Are we on Safari?
-    gIsSafari = false;
-    if (isSafari()){
-        gIsSafari = true;
-    }
-
-    // Are we on Chrome?
-    gIsChrome = false;
-
-    if (!gIsSafari){
-        if (isChrome()){
-            gIsChrome = true;
-        }
-    }
-
     //
-    // Setup the file import control
+    // Setup the file import control (demo-only)
     //
     document.getElementById("selectabcfile").onchange = () => {
 
         let fileElement = document.getElementById("selectabcfile");
-
         let file = fileElement.files[0];
 
         gSaveFilename = file.name;
 
-        // Trim any whitespace
+        // Normalize filename for saves
         gSaveFilename = gSaveFilename.trim();
-
-        // Strip out any naughty HTML tag characters
         gSaveFilename = gSaveFilename.replace(/[^a-zA-Z0-9_\-. ]+/ig, '');
-
-        // Replace any spaces
         gSaveFilename = gSaveFilename.replace(/\s/g, '_');
-
-        // Strip the extension
         gSaveFilename = gSaveFilename.replace(/\..+$/, '');
        
         // Clean up the notation while the new file is loading
@@ -1028,24 +939,18 @@ function DoStartup() {
 
             document.getElementById('input').value = event.target.result;
 
-            // Reset file selectors
+            // Reset file selector so the same file can be re-selected if desired
             let fileElement = document.getElementById('selectabcfile');
-
             fileElement.value = "";
-
-
         });
 
         reader.readAsText(file);
-
     }
-
 }
 
 //
 // Wait for the document to be ready, then fire a function
 //
-
 function WaitForReady(fn) {
 
     if (document.readyState !== 'loading') {
@@ -1054,13 +959,11 @@ function WaitForReady(fn) {
     }
 
     document.addEventListener('DOMContentLoaded', fn);
-
 }
 
 //
 // Wait for the document to be ready, then startup
 //
-
 WaitForReady(DoStartup);
 
 </script>

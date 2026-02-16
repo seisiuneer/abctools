@@ -1,0 +1,197 @@
+<!-- =========================================================================================
+     COPY/PASTE FOR DEVELOPERS (MINIMAL SHARE-LINK GENERATOR)
+     =========================================================================================
+
+     Goal:
+       Create a URL that opens https://michaeleskin.com/abctools/abctools.html with your ABC
+       content already loaded, plus optional settings like tablature format and auto-play.
+
+     You need ONE of these payload styles:
+
+       (A) LZW / LZ-String (standard):
+           ?lzw=<LZString.compressToEncodedURIComponent(ABC)>&...
+
+           Requirements:
+             - Include lz-string.min.js
+             - Call LZString.compressToEncodedURIComponent(abcText)
+
+       (B) Deflate / Pako (often shorter):
+           ?def=<base64url(deflate(utf8(ABC)))>&...
+
+           Requirements:
+             - Include pako.min.js
+             - Encode ABC as UTF-8 bytes (TextEncoder in browsers)
+             - pako.deflate(bytes, {level: 6})
+             - Base64 encode bytes
+             - Convert Base64 -> Base64URL: +->-, /->_, strip trailing '='
+
+     Core tool URL (always the same):
+       https://michaeleskin.com/abctools/abctools.html
+
+     Common parameters used in this demo (you can add/remove as desired):
+       - format=<tablatureOption>   (e.g. noten, whistle, uke, mandolin, etc.)
+       - name=<shareName>           (URL-encode if it contains spaces/special chars)
+       - play=1                     (optional: auto-open the Player)
+       - ssp=45                     (example of another tool option)
+
+     Practical URL-length limit:
+       This demo enforces 8100 chars (safe-ish). If you exceed it, return null and
+       consider:
+         - switching from LZW to Deflate,
+         - removing optional params,
+         - splitting content, or
+         - using a hosted file approach instead of a URL payload.
+
+     Minimal includes (pick what you need):
+       <script src="lz-string.min.js"></script>     // for LZW links
+       <script src="pako.min.js"></script>          // for Deflate links
+
+     Then copy the "MINIMAL IMPLEMENTATION" functions below:
+       - generateShareLink_Minimal(...)
+       - compressABC_LZW(...)
+       - compressABC_Deflate(...) + Base64URL helpers (if using Deflate)
+
+     ========================================================================================= -->
+
+<script>
+  
+/* =========================================================================================
+   MINIMAL IMPLEMENTATION (LZW + optional Deflate)
+
+   Drop this into your page/app, then call:
+
+     const url = generateShareLink_Minimal({
+       abcText: abcString,
+       shareName: "My Tune Book",      // will be URL-encoded for you
+       tablatureOption: "noten",       // e.g. "whistle", "uke", "mandolin", etc.
+       addAutoPlay: true,              // adds &play=1
+       compressionMode: "deflate"      // "lzw" or "deflate"
+     });
+
+   ========================================================================================= */
+
+// Base URL of the ABC Transcription Tools
+const ABC_TOOLS_BASE_URL = "https://michaeleskin.com/abctools/abctools.html";
+
+// Practical max URL length used by this ecosystem
+const SHARE_LINK_MAX_LEN = 8100;
+
+/**
+ * Generate a share link that opens ABC Transcription Tools with ABC preloaded.
+ *
+ * @param {Object} opts
+ * @param {string} opts.abcText - Full ABC text payload to embed in the URL
+ * @param {string} opts.shareName - Display name/title shown by the tools
+ * @param {string} opts.tablatureOption - Value for the "format=" query param
+ * @param {boolean} opts.addAutoPlay - If true, appends "&play=1"
+ * @param {"lzw"|"deflate"} opts.compressionMode - Which payload scheme to use
+ *
+ * @returns {string|null} Share link URL, or null if it would be too long
+ */
+function generateShareLink_Minimal(opts) {
+  const abcText = (opts && opts.abcText) ? opts.abcText : "";
+  const tablatureOption = (opts && opts.tablatureOption) ? opts.tablatureOption : "noten";
+  const addAutoPlay = !!(opts && opts.addAutoPlay);
+  const compressionMode = (opts && opts.compressionMode) ? opts.compressionMode : "lzw";
+
+  // IMPORTANT: Always URL-encode user-visible strings (titles can contain spaces, apostrophes, etc.)
+  const shareName = encodeURIComponent((opts && opts.shareName) ? opts.shareName : "Share_Link");
+
+  // 1) Create the compressed ABC payload for either lzw= or def=
+  let payloadParamName = "";
+  let payloadParamValue = "";
+
+  if (compressionMode === "deflate") {
+    payloadParamName = "def";
+    payloadParamValue = compressABC_Deflate(abcText); // Base64URL string
+  } else {
+    payloadParamName = "lzw";
+    payloadParamValue = compressABC_LZW(abcText);     // EncodedURIComponent-safe string
+  }
+
+  // 2) Build the URL
+  // NOTE: URLSearchParams is used here for correctness (escaping, ordering, etc.)
+  const params = new URLSearchParams();
+
+  // The ABC payload itself (one of these is required)
+  params.set(payloadParamName, payloadParamValue);
+
+  // Optional tool configuration parameters
+  params.set("format", tablatureOption);
+  params.set("ssp", "45");           // example of passing another option
+  params.set("name", shareName);
+
+  if (addAutoPlay) {
+    params.set("play", "1");
+  }
+
+  const url = `${ABC_TOOLS_BASE_URL}?${params.toString()}`;
+
+  // 3) Enforce practical max length
+  return (url.length > SHARE_LINK_MAX_LEN) ? null : url;
+}
+
+/* ---------------------------
+   LZW (standard) compression
+   ---------------------------
+
+   Uses LZ-String's URL-safe output. This is the simplest method.
+
+   REQUIREMENT:
+     Include lz-string.min.js so LZString is defined.
+*/
+function compressABC_LZW(abcText) {
+  if (typeof LZString === "undefined") {
+    throw new Error("LZString (lz-string.min.js) is not loaded.");
+  }
+  return LZString.compressToEncodedURIComponent(abcText);
+}
+
+/* ---------------------------
+   Deflate (often shorter) compression
+   ---------------------------
+
+   Steps:
+     1) UTF-8 encode the string -> bytes
+     2) pako.deflate(bytes, {level:6}) -> compressed bytes
+     3) Base64 encode bytes
+     4) Convert Base64 to Base64URL for query-string safety
+
+   REQUIREMENTS:
+     - Include pako.min.js so pako is defined
+     - Modern browser: TextEncoder exists (most do)
+*/
+function compressABC_Deflate(abcText) {
+  if (typeof pako === "undefined") {
+    throw new Error("pako (pako.min.js) is not loaded.");
+  }
+  if (typeof TextEncoder === "undefined") {
+    throw new Error("TextEncoder is not available in this environment.");
+  }
+
+  const utf8Bytes = new TextEncoder().encode(abcText);
+  const deflatedBytes = pako.deflate(utf8Bytes, { level: 6 });
+
+  return bytesToBase64URL(deflatedBytes);
+}
+
+// --- Base64URL helpers (Deflate mode) ---
+
+function bytesToBase64(bytes) {
+  // Convert raw bytes to a binary string for btoa().
+  // (This is fine for moderate sizes; for extremely large payloads you might chunk it.)
+  let binary = "";
+  for (let i = 0; i < bytes.length; i++) {
+    binary += String.fromCharCode(bytes[i]);
+  }
+  return btoa(binary);
+}
+
+function bytesToBase64URL(bytes) {
+  // Base64URL: replace +/, strip =
+  return bytesToBase64(bytes)
+    .replace(/\+/g, "-")
+    .replace(/\//g, "_")
+    .replace(/=+$/, "");
+}
+</script>

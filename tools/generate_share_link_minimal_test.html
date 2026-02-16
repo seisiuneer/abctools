@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>ABC Tools Share Link - Minimal Demo</title>
+  <style>
+    body { font-family: Helvetica, Arial, sans-serif; margin: 24px; max-width: 980px; }
+    h1 { font-size: 18pt; margin: 0 0 8px 0; }
+    p  { line-height: 1.5; }
+    textarea { width: 100%; height: 220px; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    label { display: inline-block; margin: 10px 10px 10px 0; }
+    select, input[type="text"] { padding: 6px; font-size: 11pt; }
+    button { padding: 10px 14px; font-size: 11pt; cursor: pointer; }
+    .row { display: flex; gap: 14px; flex-wrap: wrap; align-items: center; }
+    .box { margin-top: 14px; }
+    .muted { color: #444; font-size: 10.5pt; }
+    .out { width: 100%; height: 90px; }
+    .pill { display:inline-block; padding:2px 8px; border:1px solid #bbb; border-radius:999px; font-size:10pt; }
+  </style>
+</head>
+<body>
+
+<h1>ABC Transcription Tools Share Link — Minimal Demo</h1>
+<p class="muted">
+  This page is a tiny test harness for the “COPY/PASTE” share-link generator. Paste ABC, choose options, generate a link, and open it.
+</p>
+
+<div class="box">
+  <label for="abc">ABC Input:</label>
+  <textarea id="abc" spellcheck="false"></textarea>
+</div>
+
+<div class="box row">
+  <label>
+    Share name:
+    <input id="shareName" type="text" value="My Share Link Test" size="26" />
+  </label>
+
+  <label>
+    format:
+    <select id="format">
+      <option value="noten">Standard notation only</option>
+      <option value="notenames">Note names</option>
+      <option value="mandolin">Mandolin</option>
+      <option value="gdad">GDAD Bouzouki</option>
+      <option value="cgda">CGDA Mandola</option>
+      <option value="cgdae">CGDAE Bouzouki</option>
+      <option value="dgdae">DGDAE Bouzouki</option>
+      <option value="guitare">Standard tuned guitar</option>
+      <option value="guitard">DADGAD tuned guitar</option>
+      <option value="uke">Ukulele</option>
+      <option value="whistle">Whistle</option>
+    </select>
+  </label>
+
+  <label>
+    compression:
+    <select id="compression">
+      <option value="lzw">LZW (standard)</option>
+      <option value="deflate">Deflate (often shorter)</option>
+    </select>
+  </label>
+
+  <label>
+    <input id="autoPlay" type="checkbox" checked />
+    add play=1 (auto-open player)
+  </label>
+</div>
+
+<div class="box row">
+  <button id="btnGenerate">Generate Share Link</button>
+  <button id="btnOpen" disabled>Open in ABC Tools</button>
+  <button id="btnCopy" disabled>Copy link</button>
+  <span id="status" class="pill">Ready</span>
+</div>
+
+<div class="box">
+  <label for="out">Generated Share Link:</label>
+  <textarea id="out" class="out" spellcheck="false" readonly></textarea>
+  <div id="len" class="muted"></div>
+</div>
+
+<!-- Required libs for the generator -->
+<script src="lz-string.min.js"></script>
+<script src="pako.min.js"></script>
+
+<script>
+/* =========================================================================================
+   MINIMAL IMPLEMENTATION (LZW + optional Deflate)
+   ========================================================================================= */
+
+const ABC_TOOLS_BASE_URL = "https://michaeleskin.com/abctools/abctools.html";
+const SHARE_LINK_MAX_LEN = 8100;
+
+function generateShareLink_Minimal(opts) {
+  const abcText = (opts && opts.abcText) ? opts.abcText : "";
+  const tablatureOption = (opts && opts.tablatureOption) ? opts.tablatureOption : "noten";
+  const addAutoPlay = !!(opts && opts.addAutoPlay);
+  const compressionMode = (opts && opts.compressionMode) ? opts.compressionMode : "lzw";
+
+  // URL-encode titles/names (spaces, apostrophes, etc.)
+  const shareName = encodeURIComponent((opts && opts.shareName) ? opts.shareName : "Share_Link");
+
+  // Create compressed payload for either lzw= or def=
+  let payloadParamName = "";
+  let payloadParamValue = "";
+
+  if (compressionMode === "deflate") {
+    payloadParamName = "def";
+    payloadParamValue = compressABC_Deflate(abcText);
+  } else {
+    payloadParamName = "lzw";
+    payloadParamValue = compressABC_LZW(abcText);
+  }
+
+  // Build URL query string safely
+  const params = new URLSearchParams();
+  params.set(payloadParamName, payloadParamValue);
+
+  // Common tool params (edit/remove as desired)
+  params.set("format", tablatureOption);
+  params.set("ssp", "45");
+  params.set("name", shareName);
+
+  if (addAutoPlay) {
+    params.set("play", "1");
+  }
+
+  const url = `${ABC_TOOLS_BASE_URL}?${params.toString()}`;
+  return (url.length > SHARE_LINK_MAX_LEN) ? null : url;
+}
+
+function compressABC_LZW(abcText) {
+  if (typeof LZString === "undefined") {
+    throw new Error("LZString (lz-string.min.js) is not loaded.");
+  }
+  return LZString.compressToEncodedURIComponent(abcText);
+}
+
+function compressABC_Deflate(abcText) {
+  if (typeof pako === "undefined") {
+    throw new Error("pako (pako.min.js) is not loaded.");
+  }
+  if (typeof TextEncoder === "undefined") {
+    throw new Error("TextEncoder is not available in this environment.");
+  }
+
+  const utf8Bytes = new TextEncoder().encode(abcText);
+  const deflatedBytes = pako.deflate(utf8Bytes, { level: 6 });
+
+  return bytesToBase64URL(deflatedBytes);
+}
+
+function bytesToBase64(bytes) {
+  let binary = "";
+  for (let i = 0; i < bytes.length; i++) {
+    binary += String.fromCharCode(bytes[i]);
+  }
+  return btoa(binary);
+}
+
+function bytesToBase64URL(bytes) {
+  return bytesToBase64(bytes)
+    .replace(/\+/g, "-")
+    .replace(/\//g, "_")
+    .replace(/=+$/, "");
+}
+
+/* =========================================================================================
+   DEMO UI WIRING
+   ========================================================================================= */
+
+const elABC = document.getElementById("abc");
+const elShareName = document.getElementById("shareName");
+const elFormat = document.getElementById("format");
+const elCompression = document.getElementById("compression");
+const elAutoPlay = document.getElementById("autoPlay");
+const elOut = document.getElementById("out");
+const elLen = document.getElementById("len");
+const elStatus = document.getElementById("status");
+
+const btnGenerate = document.getElementById("btnGenerate");
+const btnOpen = document.getElementById("btnOpen");
+const btnCopy = document.getElementById("btnCopy");
+
+let lastURL = "";
+
+function setStatus(msg) {
+  elStatus.textContent = msg;
+}
+
+function updateButtons(enabled) {
+  btnOpen.disabled = !enabled;
+  btnCopy.disabled = !enabled;
+}
+
+btnGenerate.addEventListener("click", () => {
+  try {
+    const abcText = (elABC.value || "").trim();
+
+    if (!abcText) {
+      setStatus("No ABC input");
+      elOut.value = "";
+      elLen.textContent = "";
+      lastURL = "";
+      updateButtons(false);
+      return;
+    }
+
+    const url = generateShareLink_Minimal({
+      abcText,
+      shareName: elShareName.value || "Share_Link",
+      tablatureOption: elFormat.value,
+      addAutoPlay: elAutoPlay.checked,
+      compressionMode: elCompression.value
+    });
+
+    if (!url) {
+      setStatus("Too long (>8100)");
+      elOut.value = "";
+      elLen.textContent = "";
+      lastURL = "";
+      updateButtons(false);
+      return;
+    }
+
+    lastURL = url;
+    elOut.value = url;
+    elLen.textContent = `Share link length: ${url.length} characters`;
+    setStatus("Generated");
+    updateButtons(true);
+
+  } catch (e) {
+    console.error(e);
+    setStatus("Error (see console)");
+    elOut.value = "";
+    elLen.textContent = "";
+    lastURL = "";
+    updateButtons(false);
+  }
+});
+
+btnOpen.addEventListener("click", () => {
+  if (lastURL) window.open(lastURL, "_blank", "noopener");
+});
+
+btnCopy.addEventListener("click", async () => {
+  if (!lastURL) return;
+
+  try {
+    if (navigator.clipboard && window.isSecureContext) {
+      await navigator.clipboard.writeText(lastURL);
+    } else {
+      // fallback
+      elOut.focus();
+      elOut.select();
+      document.execCommand("copy");
+      window.getSelection().removeAllRanges();
+    }
+    setStatus("Copied");
+    setTimeout(() => setStatus("Generated"), 900);
+  } catch (e) {
+    console.error(e);
+    setStatus("Copy failed");
+  }
+});
+
+// Prefill sample ABC (so you can click Generate immediately)
+(function fillSample() {
+  let s = "";
+  s += "X: 1\n";
+  s += "T: The Kesh\n";
+  s += "R: Jig\n";
+  s += "M: 6/8\n";
+  s += "L: 1/8\n";
+  s += "K: Gmaj\n";
+  s += "C: Traditional\n";
+  s += "|:GAG GAB|ABA ABd|edd gdd|edB dBA|\n";
+  s += "GAG GAB|ABA ABd|edd gdB|AGF G3:|\n";
+  s += "|:BAB dBd|ege dBA|BAB dBG|ABA AGA|\n";
+  s += "BAB dBd|ege dBd|gfg aga|bgf g3:|\n";
+  elABC.value = s;
+})();
+</script>
+
+</body>
+</html>
