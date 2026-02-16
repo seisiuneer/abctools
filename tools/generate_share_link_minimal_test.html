@@ -96,12 +96,18 @@ const ABC_TOOLS_BASE_URL = "https://michaeleskin.com/abctools/abctools.html";
 const SHARE_LINK_MAX_LEN = 8100;
 
 function generateShareLink_Minimal(opts) {
+  opts = opts || {};
   const abcText = opts.abcText || "";
   const tablatureOption = opts.tablatureOption || "noten";
-  const addAutoPlay = !!opts.addAutoPlay;
-  const openEditor = !!opts.openEditor;
-  const compressionMode = opts.compressionMode || "lzw";
-  const shareName = encodeURIComponent(opts.shareName || "Share_Link");
+  const compressionMode = opts.compressionMode || "deflate";
+  const shareName = (opts && opts.shareName) ? opts.shareName : "Share_Link";
+  let addAutoPlay = !!(opts && opts.addAutoPlay);
+  let addOpenInEditor = !!(opts && opts.addOpenInEditor);
+
+  // Only one should be enabled. If both are true, prefer Editor.
+  if (addAutoPlay && addOpenInEditor) {
+    addAutoPlay = false;
+  }
 
   let payloadParamName = "";
   let payloadParamValue = "";
@@ -121,7 +127,7 @@ function generateShareLink_Minimal(opts) {
   params.set("name", shareName);
 
   if (addAutoPlay) params.set("play", "1");
-  if (openEditor) params.set("editor", "1");
+  if (addOpenInEditor) params.set("editor", "1");
 
   const url = `${ABC_TOOLS_BASE_URL}?${params.toString()}`;
   return (url.length > SHARE_LINK_MAX_LEN) ? null : url;
@@ -189,8 +195,11 @@ btnGenerate.addEventListener("click", () => {
   const abcText = (elABC.value || "").trim();
   if (!abcText) {
     setStatus("No ABC input");
+    lastURL = "";
+    elOut.value = "";
+    elLen.textContent = "";
     updateButtons(false);
-    return;
+  return;
   }
 
   const url = generateShareLink_Minimal({
@@ -198,12 +207,15 @@ btnGenerate.addEventListener("click", () => {
     shareName: elShareName.value,
     tablatureOption: elFormat.value,
     addAutoPlay: elAutoPlay.checked,
-    openEditor: elOpenEditor.checked,
+    addOpenInEditor: elOpenEditor.checked,
     compressionMode: elCompression.value
   });
 
   if (!url) {
     setStatus("Too long (>8100)");
+    lastURL = "";
+    elOut.value = "";
+    elLen.textContent = "";
     updateButtons(false);
     return;
   }

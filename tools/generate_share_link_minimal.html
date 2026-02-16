@@ -30,8 +30,9 @@
 
      Common parameters used in this demo (you can add/remove as desired):
        - format=<tablatureOption>   (e.g. noten, whistle, uke, mandolin, etc.)
-       - name=<shareName>           (URL-encode if it contains spaces/special chars)
-       - play=1                     (optional: auto-open the Player)
+       - name=<shareName>           (URLSearchParams will encode it)
+       - play=1                     (optional: Opens the tune(s) in the Player)
+       - editor=1                   (optional: Opens the tunes(s) in the Editor)
        - ssp=45                     (example of another tool option)
 
      Practical URL-length limit:
@@ -64,7 +65,9 @@
        abcText: abcString,
        shareName: "My Tune Book",      // will be URL-encoded for you
        tablatureOption: "noten",       // e.g. "whistle", "uke", "mandolin", etc.
-       addAutoPlay: true,              // adds &play=1
+       addAutoPlay: true,              // adds &play=1 to open the tune in the Player
+       // or:
+       // addOpenInEditor: true,       // adds &editor=1 to open the tune in the Editor
        compressionMode: "deflate"      // "lzw" or "deflate"
      });
 
@@ -84,18 +87,25 @@ const SHARE_LINK_MAX_LEN = 8100;
  * @param {string} opts.shareName - Display name/title shown by the tools
  * @param {string} opts.tablatureOption - Value for the "format=" query param
  * @param {boolean} opts.addAutoPlay - If true, appends "&play=1"
+ * @param {boolean} opts.addOpenInEditor - If true, appends "&editor=1"
  * @param {"lzw"|"deflate"} opts.compressionMode - Which payload scheme to use
  *
  * @returns {string|null} Share link URL, or null if it would be too long
  */
 function generateShareLink_Minimal(opts) {
+  opts = opts || {};
   const abcText = (opts && opts.abcText) ? opts.abcText : "";
   const tablatureOption = (opts && opts.tablatureOption) ? opts.tablatureOption : "noten";
-  const addAutoPlay = !!(opts && opts.addAutoPlay);
-  const compressionMode = (opts && opts.compressionMode) ? opts.compressionMode : "lzw";
+  const compressionMode = (opts && opts.compressionMode) ? opts.compressionMode : "deflate";
+  const shareName = (opts && opts.shareName) ? opts.shareName : "Share_Link";
 
-  // IMPORTANT: Always URL-encode user-visible strings (titles can contain spaces, apostrophes, etc.)
-  const shareName = encodeURIComponent((opts && opts.shareName) ? opts.shareName : "Share_Link");
+  let addAutoPlay = !!(opts && opts.addAutoPlay);
+  let addOpenInEditor = !!(opts && opts.addOpenInEditor);
+
+  // Only one should be enabled. If both are true, prefer Editor.
+  if (addAutoPlay && addOpenInEditor) {
+    addAutoPlay = false;
+  }
 
   // 1) Create the compressed ABC payload for either lzw= or def=
   let payloadParamName = "";
@@ -123,6 +133,10 @@ function generateShareLink_Minimal(opts) {
 
   if (addAutoPlay) {
     params.set("play", "1");
+  }
+
+  if (addOpenInEditor) {
+    params.set("editor", "1");
   }
 
   const url = `${ABC_TOOLS_BASE_URL}?${params.toString()}`;
