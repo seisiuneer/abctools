@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>Decode ABC Tools Share Link (lzw/def) - Minimal Developer Demo</title>
+  <style>
+    body { font-family: Helvetica, Arial, sans-serif; margin: 24px; max-width: 980px; }
+    h1 { font-size: 18pt; margin: 0 0 8px 0; }
+    p { line-height: 1.5; }
+    textarea { width: 100%; height: 110px; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Courier New", monospace; }
+    .big { height: 320px; }
+    button { padding: 10px 14px; font-size: 11pt; cursor: pointer; margin-right: 10px; }
+    .row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin: 12px 0; }
+    .muted { color: #444; font-size: 10.5pt; }
+    .pill { display:inline-block; font-size:12pt; margin-left:8px; }
+    code { background:#f3f3f3; padding:1px 4px; border-radius:4px; }
+  </style>
+</head>
+<body>
+
+<h1>Decode ABC Tools Share Link — Developer Demo</h1>
+<p class="muted">
+  Paste a share link that contains <code>lzw=</code> or <code>def=</code>, click Decode, and the extracted ABC
+  will appear below. This demo includes detailed comments explaining each step.
+</p>
+
+<label for="shareUrl"><b>Share Link URL:</b></label>
+<textarea id="shareUrl" spellcheck="false" placeholder="Paste full share link here..."></textarea>
+
+<div class="row">
+  <button id="btnDecode">Decode</button>
+  <span id="status" class="pill">Ready</span>
+</div>
+
+<label for="abcOut"><b>Extracted ABC:</b></label>
+<textarea id="abcOut" class="big" spellcheck="false" readonly></textarea>
+
+<div id="info" class="muted"></div>
+
+<!--
+  REQUIRED LIBRARIES
+
+  1) LZ-String is required to decode "lzw=" payloads
+     - LZString.decompressFromEncodedURIComponent(...)
+
+  2) Pako is required to inflate "def=" payloads
+     - pako.inflate(...)
+
+  IMPORTANT:
+  - These script src paths assume lz-string.min.js and pako.min.js are next to this HTML file.
+  - If they are hosted elsewhere, change the paths accordingly.
+-->
+<script src="lz-string.min.js"></script>
+<script src="pako.min.js"></script>
+
+<script>
+/* =========================================================================================
+   DEVELOPER EXPLANATION: WHAT YOU ARE DECODING
+   =========================================================================================
+
+   ABC Transcription Tools share links embed the ABC text in the URL using ONE of two schemes:
+
+   (A) LZW / LZ-String (standard / legacy / simple)
+       https://michaeleskin.com/abctools/abctools.html?lzw=<PAYLOAD>&...
+
+       Encoding (how the link was created):
+         payload = LZString.compressToEncodedURIComponent(abcText)
+
+       Decoding (what we do in this demo):
+         abcText = LZString.decompressFromEncodedURIComponent(payload)
+
+       Notes:
+         - "compressToEncodedURIComponent" produces a string that is safe inside query parameters.
+         - If the payload is corrupted or truncated, decompression can FAIL and return null.
+
+   (B) Deflate / Pako (often shorter for longer ABC)
+       https://michaeleskin.com/abctools/abctools.html?def=<PAYLOAD>&...
+
+       Encoding (how the link was created):
+         1) utf8Bytes = UTF8(abcText)                  // TextEncoder in browsers
+         2) deflated  = DEFLATE(utf8Bytes, level=6)    // pako.deflate
+         3) b64       = BASE64(deflated)
+         4) b64url    = Base64URL(b64):
+                       '+' -> '-'
+                       '/' -> '_'
+                       strip trailing '=' padding
+
+       Decoding (what we do in this demo):
+         1) base64 = Base64URL -> Base64 (reverse substitutions, restore '=' padding)
+         2) bytes  = atob(base64) -> Uint8Array
+         3) raw    = pako.inflate(bytes)
+         4) abcText = UTF8_DECODE(raw)                 // TextDecoder in browsers
+
+       Notes:
+         - Base64URL is used so the deflated payload can live in a query string without extra escaping.
+         - If the payload is corrupted or truncated, inflate() will throw or decode will be garbage.
+
+   ========================================================================================= */
+
+
+/* =========================================================================================
+   Helper: UI status display
+   ========================================================================================= */
+function setStatus(msg) {
+  document.getElementById("status").textContent = msg;
+}
+
+
+/* =========================================================================================
+   DEFLATE / Base64URL DECODING HELPERS
+   =========================================================================================
+
+   The "def=" parameter is Base64URL text (URL-safe Base64 variant):
+     - '-' means '+'
+     - '_' means '/'
+     - '=' padding is stripped during encoding
+
+   To decode, we must:
+     1) Convert Base64URL back to normal Base64
+     2) Restore padding so the length is a multiple of 4
+     3) atob() to get a binary string
+     4) Convert that binary string into a Uint8Array (bytes)
+*/
+
+/**
+ * Convert a normal Base64 string into bytes.
+ * @param {string} base64 Normal Base64 (uses + and / and includes padding)
+ * @returns {Uint8Array}
+ */
+function base64ToBytes(base64) {
+  const binary = atob(base64);            // atob gives a "binary string" (each char code 0..255)
+  const len = binary.length;
+  const bytes = new Uint8Array(len);
+  for (let i = 0; i < len; i++) bytes[i] = binary.charCodeAt(i);
+  return bytes;
+}
+
+/**
+ * Convert Base64URL into bytes.
+ *
+ * IMPORTANT DEVELOPER NOTE:
+ * Base64URL strings commonly omit '=' padding. atob() requires correct padding.
+ * If padding is wrong, you'll get an error (or nonsense output).
+ *
+ * @param {string} base64url Base64URL (uses - and _ and typically no '=' padding)
+ * @returns {Uint8Array}
+ */
+function base64URLToBytes(base64url) {
+  // Reverse URL-safe substitutions
+  let base64 = base64url.replace(/-/g, "+").replace(/_/g, "/");
+
+  // Restore '=' padding so length is a multiple of 4
+  const pad = base64.length % 4;
+  if (pad === 2) base64 += "==";
+  else if (pad === 3) base64 += "=";
+  else if (pad !== 0) {
+    // If mod 4 is 1, it's not valid Base64/Base64URL.
+    // That usually means the payload is truncated or corrupted.
+    throw new Error("Invalid Base64URL length (payload may be truncated/corrupt).");
+  }
+
+  return base64ToBytes(base64);
+}
+
+
+/* =========================================================================================
+   CORE DECODER: Extract ABC from a share link (supports lzw= and def=)
+   =========================================================================================
+
+   decodeABCFromShareLink(...) accepts either:
+     - a FULL URL (e.g. https://.../abctools.html?lzw=...&format=noten...)
+     - OR just a query string (e.g. ?lzw=...&format=noten...)
+
+   It returns an object:
+     { mode: "lzw"|"deflate", abc: "<decoded abc text>" }
+
+   Or it throws an Error if it cannot decode.
+*/
+
+/**
+ * Decode ABC from a share link containing either lzw= or def=.
+ *
+ * IMPORTANT DEVELOPER NOTE ABOUT NULL:
+ * - In LZW mode, LZString.decompressFromEncodedURIComponent(payload) can return null.
+ *   That indicates a decoding failure. Common causes:
+ *     - The payload was truncated (URL too long; copy/paste cut it off; messaging apps wrapped/broke it)
+ *     - The payload was corrupted (characters changed, URL-decoding issues, etc.)
+ *     - You are using the wrong decompression method (must be decompressFromEncodedURIComponent)
+ *
+ * - In Deflate mode, failures typically show up as:
+ *     - Base64URL padding errors (invalid length)
+ *     - pako.inflate throwing (bad compressed bytes)
+ *     - TextDecoder producing garbage if bytes are not valid UTF-8
+ *
+ * @param {string} urlOrQueryString Full URL or query string that contains lzw= or def=
+ * @returns {{mode: "lzw"|"deflate", abc: string}}
+ */
+function decodeABCFromShareLink(urlOrQueryString) {
+  // Defensive normalization: accept full URL or just query
+  let query = urlOrQueryString || "";
+
+  // If it's a full URL, keep everything after '?'
+  if (query.includes("?")) query = query.split("?")[1];
+
+  // If someone passes a fragment-like string "#lzw=...", strip '#'
+  if (query.startsWith("#")) query = query.slice(1);
+
+  const params = new URLSearchParams(query);
+
+  // Your ecosystem uses "lzw" for LZString payload and "def" for Deflate payload.
+  const lzw = params.get("lzw");
+  const def = params.get("def");
+
+  // ----- LZW MODE -----
+  if (lzw != null) {
+    if (typeof LZString === "undefined") {
+      throw new Error("LZString not loaded. Include lz-string.min.js to decode lzw= payloads.");
+    }
+
+    const abc = LZString.decompressFromEncodedURIComponent(lzw);
+
+    // CRITICAL: null means decode failed.
+    if (abc == null) {
+      throw new Error(
+        "LZW decode returned null. This indicates a problem with the payload.\n" +
+        "Common causes: URL truncated, characters corrupted, or wrong decode method.\n" +
+        "Verify the full lzw= value is intact and you are using decompressFromEncodedURIComponent()."
+      );
+    }
+
+    return { mode: "lzw", abc };
+  }
+
+  // ----- DEFLATE MODE -----
+  if (def != null) {
+    if (typeof pako === "undefined") {
+      throw new Error("pako not loaded. Include pako.min.js to decode def= payloads.");
+    }
+    if (typeof TextDecoder === "undefined") {
+      throw new Error("TextDecoder not available in this environment (required for UTF-8 decode).");
+    }
+
+    // 1) Base64URL -> bytes
+    const deflatedBytes = base64URLToBytes(def);
+
+    // 2) Inflate (decompress) the raw DEFLATE byte stream
+    //    If payload is corrupted, pako.inflate will typically throw.
+    const inflatedBytes = pako.inflate(deflatedBytes);
+
+    // 3) Decode UTF-8 bytes back into JS string
+    const abc = new TextDecoder().decode(inflatedBytes);
+
+    return { mode: "deflate", abc };
+  }
+
+  // If neither is present, it's not a payload-bearing share link
+  throw new Error("No lzw= or def= parameter found in the URL.");
+}
+
+
+/* =========================================================================================
+   Demo UI wiring (not required for your own use)
+   ========================================================================================= */
+
+const elShareUrl = document.getElementById("shareUrl");
+const elAbcOut = document.getElementById("abcOut");
+const elInfo = document.getElementById("info");
+
+document.getElementById("btnDecode").addEventListener("click", () => {
+  try {
+    elAbcOut.value = "";
+    elInfo.textContent = "";
+
+    const input = (elShareUrl.value || "").trim();
+    if (!input) {
+      setStatus("Paste a URL first");
+      return;
+    }
+
+    const { mode, abc } = decodeABCFromShareLink(input);
+
+    elAbcOut.value = abc;
+    elInfo.textContent = `Decoded via: ${mode}. ABC length: ${abc.length} characters.`;
+    setStatus("Decoded");
+  } catch (e) {
+    console.error(e);
+    setStatus("Error (see console)");
+    elInfo.textContent = String(e.message || e);
+  }
+});
+
+</script>
+
+</body>
+</html>
