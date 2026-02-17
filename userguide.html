@@ -979,8 +979,8 @@
             </details>
 
             <details>
-            <summary><h3>Adding Tune Share Link Generation to Your Website</h3></summary>
-            <a style="text-decoration:none;" href="#generate_share_link">Adding Tune Share Link Generation to Your Website</a>
+            <summary><h3>Adding Tune Share Link Generation/Decoding to Your Website</h3></summary>
+            <a style="text-decoration:none;" href="#generate_share_link">Adding Tune Share Link Generation/Decoding to Your Website</a>
             </details>
                         
             <details>
@@ -1510,9 +1510,9 @@
                         <p class="toc"><a style="text-decoration:none;" href="#facebook_group">ABC Transcription Tools Group on Facebook and Groups.io</a></p>
                     </div>
 
-                    <button class="accordion" title="Click to expand/collapse this section">Adding Tune Share Link Generation to Your Website</button>
+                    <button class="accordion" title="Click to expand/collapse this section">Adding Tune Share Link Generation/Decoding to Your Website</button>
                     <div class="tocpanel">
-                        <p class="toc"><a style="text-decoration:none;" href="#generate_share_link">Adding Tune Share Link Generation to Your Website</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#generate_share_link">Adding Tune Share Link Generation/Decoding to Your Website</a></p>
                     </div>
                                         
                     <button class="accordion" title="Click to expand/collapse this section">Source Code and Privacy</button>
@@ -6447,7 +6447,7 @@
                 <p>In both cases, if the URL created for the external tool is over 8100 characters, you will be alerted that the link is too long to open.</p>
                 <hr>
                 <p style="text-align: center;"><strong>Information for ABC Software Developers</strong></p>
-                <p>If you are an ABC software developer interested in being able to have this tool send ABC directly to your tool and having your tool added to the list of available external ABC tools, please visit the <a style="text-decoration:none;" href="#generate_share_link">Adding Tune Share Link Generation to Your Website</a> section for a link to sample code available to help facilitate building tool integrations via a common share link structure.</p>
+                <p>If you are an ABC software developer interested in being able to have this tool send ABC directly to your tool and having your tool added to the list of available external ABC tools, please visit the <a style="text-decoration:none;" href="#generate_share_link">Adding Tune Share Link Generation/Decoding to Your Website</a> section for a link to sample code available to help facilitate building tool integrations via a common share link structure.</p>
                 <hr class="hidden-print" id="settings_dialog">
                 <h1 class="page_break_always">ABC Transcription Tools Settings</h1>
 				<a href="#table_of_contents" class="index-pill hidden-print">
@@ -8079,26 +8079,27 @@
                 <p>If the online status changes in the middle of using the tool, the change won't be detected until <strong>abctools-offline.html</strong> is reloaded.</p>
                 <p>Since these local sound resources are huge (about 4 megabytes), even bigger than the entire rest of the tool source, I don't want to burden everyone with having to load them for a case that only would be possible when running the tool from the source code in an offline state, so they are only included in <strong>abctools-offline.html</strong> as well as the offline check code.</p>
                 <hr class="hidden-print" id="generate_share_link">
-                <h1 class="page_break_always">Adding Tune Share Link Generation to Your Website</h1>
+                <h1 class="page_break_always">Adding Tune Share Link Generation/Decoding to Your Website</h1>
                 <a href="#table_of_contents" class="index-pill hidden-print">
                   Table of Contents
                 </a>
-                <p>If you have an existing website written using Javascript and would like to add a feature to allow users to create share links for ABC tunes and open them in my ABC Transcription Tools, I have a couple of example utilties to demonstrate how to integrate share link generation into other applications:</p>
+                <p>If you have an existing website written using Javascript and would like to add a feature to allow users to create share links for ABC tunes and open them in my ABC Transcription Tools, or if you want to be able to decode share links back to the original ABC, here a couple of example utilties and the code they use to demonstrate how to integrate share link generation and decoding into other applications:</p>
                 <hr>
-                <p style="text-align: center;"><a href="https://michaeleskin.com/tools/generate_share_link_minimal_test.html">ABC Transcription Tools Share Link — Minimal Demo<br/>Generates a share link from ABC</a></p>
-                <p style="text-align: center;"><a href="https://github.com/seisiuneer/abctools/blob/main/tools/generate_share_link_minimal_test.html" target="_blank">Source Code</a>
+                <p style="text-align: center;"><a href="https://michaeleskin.com/tools/generate_share_link_demo.html">ABC Transcription Tools Share Link Decode Demo</a></p>
+                <p style="text-align: center;"><a href="https://github.com/seisiuneer/abctools/blob/main/tools/generate_share_link_demo.html" target="_blank">Source Code</a>
                 <hr>
-                <p style="text-align: center;"><a href="https://michaeleskin.com/tools/generate_share_link.html">Generate ABC Transcription Tools Share Link<br/>Full featured, including generation and decoding of share links</a></p>
-                <p style="text-align: center;"><a href="https://github.com/seisiuneer/abctools/blob/main/tools/generate_share_link.html" target="_blank">Source Code</a>
+                <p style="text-align: center;"><strong>Javascript code to generate share links</strong></p>
+                <p style="text-align: center;"><a href="https://github.com/seisiuneer/abctools/blob/main/tools/generate_share_link.html" target="_blank">generate_share_link.html</a>
                 <hr>
-                <p><strong>Minimal Javascript code required to add to your own application to generate share links:</strong></p>
-                <p style="text-align: center;"><a href="https://github.com/seisiuneer/abctools/blob/main/tools/generate_share_link_minimal.html" target="_blank">generate_share_link_minimal.html</a>
+                <p style="text-align: center;"><a href="https://michaeleskin.com/tools/decode_share_link_demo.html">ABC Transcription Tools Share Link Decode Demo</a></p>
+                <p style="text-align: center;"><a href="https://github.com/seisiuneer/abctools/blob/main/tools/decode_share_link_demo.html" target="_blank">Source Code</a>
                 <hr>
-                <p><strong>You will also need to download the required Javascript support libraries:</strong></p>
+                <p style="text-align: center;"><strong>Javascript code to decode share links</strong></p>
+                <p style="text-align: center;"><a href="https://github.com/seisiuneer/abctools/blob/main/tools/decode_share_link.html" target="_blank">decode_share_link.html</a>
+                <hr>
+                <p style="text-align: center;"><strong>Required Javascript support libraries</strong></p>
                 <p style="text-align: center;"><a href="https://github.com/seisiuneer/abctools/blob/main/tools/lz-string.min.js" target="_blank">lz-string.min.js (for LZW compression of the ABC)</a>
                 <p style="text-align: center;"><a href="https://github.com/seisiuneer/abctools/blob/main/tools/pako.min.js" target="_blank">pako.min.js (for Deflate compression of the ABC)</a>
-                <p style="text-align: center;"><a href="https://github.com/seisiuneer/abctools/blob/main/tools/daypilot-modal.min-3.10.1.js" target="_blank">daypilot-modal.min-3.10.1.js<br/>(only required to run the full-featured demo tool, used for dialogs and alerts)</a>
-
                 <hr class="hidden-print" id="privacy">
                 <h1 class="page_break_always">Privacy</h1>
 				<a href="#table_of_contents" class="index-pill hidden-print">
