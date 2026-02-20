@@ -1865,6 +1865,26 @@ $("btnFetch").addEventListener("click", async () => {
       const itemsCount = (result.memberItemsCount != null) ? result.memberItemsCount : result.bookmarkItemsCount;
       const settingsCount = (result.memberSettingsCount != null) ? result.memberSettingsCount : result.bookmarkSettingsCount;
 
+      // Bin the analytics
+      if ((settingsCount > 0) &&  (settingsCount <=50)){
+        sendGoogleAnalytics("action", "user_s_"+label.toLowerCase());
+      }
+      else if (settingsCount <= 100 ){
+        sendGoogleAnalytics("action", "user_m_"+label.toLowerCase());
+      }
+      else if (settingsCount <= 200 ){
+        sendGoogleAnalytics("action", "user_l_"+label.toLowerCase());
+      }
+      else if (settingsCount <= 500 ){
+        sendGoogleAnalytics("action", "user_xl_"+label.toLowerCase());
+      }
+      else if (settingsCount <= 1000 ){
+        sendGoogleAnalytics("action", "user_xxl_"+label.toLowerCase());
+      }
+      else {
+        sendGoogleAnalytics("action", "user_xxxl_"+label.toLowerCase());
+      }
+
       if (result && result.memberSortMode) {
         const sortLabel =
           result.memberSortMode === "orig" ? "Original chronological order" :
