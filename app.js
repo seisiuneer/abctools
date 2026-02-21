@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3176_021926_1900";
+var gVersionNumber = "3177_022126_1100";
 
 var gMIDIInitStillWaiting = false;
 
@@ -27773,13 +27773,13 @@ function processShareLink() {
       // Show update message?
       if (gLocalStorageAvailable){
 
-        var updatePresented = localStorage.sawUpdate_2feb2026a;
+        var updatePresented = localStorage.sawUpdate_21feb2026;
 
         if (updatePresented != "true") {
 
           showWhatsNewScreen();
 
-          localStorage.sawUpdate_2feb2026a = true;
+          localStorage.sawUpdate_21feb2026 = true;
 
         }
 
@@ -55584,7 +55584,7 @@ function initMIDI() {
 }
 
 //
-// Show the Happy New Year-themed What's New screen
+// Show the What's New screen
 //
 function showWhatsNewScreen() {
 
@@ -55595,12 +55595,12 @@ function showWhatsNewScreen() {
   var modal_msg = '';
   modal_msg += '<div style="font-family:helvetica; line-height:16pt;">';
 
-  // Header (New Year banner)
+  // Header
   modal_msg += '<div style="text-align:center; padding:14px 10px; border-radius:12px;';
-  modal_msg += 'background: linear-gradient(135deg, #0b1f4a 0%, #5b2aa8 55%, #d4a62a 100%);';
+  modal_msg += 'background: linear-gradient(135deg, #b00020 0%, #d62828 70%, #fcbf49 100%);';
   modal_msg += 'box-shadow: 0 6px 16px rgba(0,0,0,0.14); color:#fff;">';
   modal_msg += '<div style="font-size:20pt; line-height:24pt; font-weight:bold;">What&apos;s New</div>';
-  modal_msg += '<div style="font-size:11pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 2 February 2026</div>';
+  modal_msg += '<div style="font-size:11pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 21 February 2026</div>';
   modal_msg += '</div>';
 
   // Short intro
@@ -55612,7 +55612,7 @@ function showWhatsNewScreen() {
   modal_msg += '<div style="margin:10px 0 6px 0; padding:12px 12px; border-radius:12px;';
   modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);">';
 
-  modal_msg += '<p style="margin:6px 0; font-size:12pt;">Added <strong>Tuning Tools</strong> to the <strong>☰</strong> dropdown menu.<br/><br/>Brings up a dialog where you can launch the Chromatic Tuner, Real Time Tuning Analysis (RTTA), Real Time Tuning / Volume Analysis (RTTVA), Chromatic Tuner / Tone Generator, and Audio Input Tester utilities.</p>';
+  modal_msg += '<p style="margin:6px 0; font-size:12pt;">Added <strong>thesession.org Tune Scraper</strong> to the <strong>☰</strong> dropdown menu.<br/><br/>Brings up the <strong>thesession.org Tune Settings Scraper</strong> utility in a new browser tab.</p>';
   modal_msg += '</div>';
 
   modal_msg += '<div style="margin:10px 0 6px 0; padding:12px 12px; border-radius:12px;';
@@ -59624,7 +59624,6 @@ function DoVersionCheck() {
   // For testing
   //gUpdateAvailable = true;
 
-
 }
 
 //
@@ -59722,6 +59721,11 @@ function SetupContextMenu(showUpdateItem) {
             name: 'Tuning Tools',
             fn: function(target) {
               TuningTools();
+            }
+          }, {
+            name: 'thesession.org Tune Scraper',
+            fn: function(target) {
+              MustardScraper();
             }
           }, {}, {
             name: 'Launch Standard Editor',
@@ -59900,9 +59904,14 @@ function SetupContextMenu(showUpdateItem) {
           fn: function(target) {
             TuningTools();
           }
-        }, {}, {
-          name: 'Launch Standard Editor',
+        }, {
+          name: 'thesession.org Tune Scraper',
           fn: function(target) {
+            MustardScraper();
+          }
+        }, {}, {
+        name: 'Launch Standard Editor',
+        fn: function(target) {
             LaunchStandardEditor();
           }
         }, {}, {
@@ -60014,6 +60023,11 @@ function SetupContextMenu(showUpdateItem) {
             name: 'Tuning Tools',
             fn: function(target) {
               TuningTools();
+            }
+          }, {
+            name: 'thesession.org Tune Scraper',
+            fn: function(target) {
+              MustardScraper();
             }
           }, {}, {
             name: 'Launch Quick Editor',
@@ -60186,6 +60200,11 @@ function SetupContextMenu(showUpdateItem) {
           fn: function(target) {
             TuningTools();
           }
+        }, {
+          name: 'thesession.org Tune Scraper',
+          fn: function(target) {
+            MustardScraper();
+          }
         }, {}, {
           name: 'Launch Quick Editor',
           fn: function(target) {
@@ -60292,6 +60311,11 @@ function SetupContextMenu(showUpdateItem) {
         name: 'Tuning Tools',
         fn: function(target) {
           TuningTools();
+        }
+      }, {
+        name: 'thesession.org Tune Scraper',
+        fn: function(target) {
+          MustardScraper();
         }
       }, {}, {
         name: 'Launch Standard Editor',
@@ -60400,8 +60424,13 @@ function SetupContextMenu(showUpdateItem) {
         }
       },  {}, {
         name: 'Tuning Tools',
+          fn: function(target) {
+            TuningTools();
+          }
+        }, {
+        name: 'thesession.org Tune Scraper',
         fn: function(target) {
-          TuningTools();
+          MustardScraper();
         }
       }, {}, {
         name: 'Launch Quick Editor',
@@ -62070,13 +62099,13 @@ function DoStartup() {
   // Show update message?
   if (gLocalStorageAvailable && (!isFromShare)){
 
-    var updatePresented = localStorage.sawUpdate_2feb2026a;
+    var updatePresented = localStorage.sawUpdate_21feb2026;
 
     if (updatePresented != "true") {
 
       showWhatsNewScreen();
 
-      localStorage.sawUpdate_2feb2026a = true;
+      localStorage.sawUpdate_21feb2026 = true;
 
     }
 
@@ -63682,6 +63711,14 @@ function openInExternalTool(theABC){
   if (elem) elem.onclick = function(){
     OpenInABCJSQuickEditor(theABC);
   };
+}
+
+// Open thesession.org Tune Scraper in a new browser tab
+function MustardScraper(){
+  sendGoogleAnalytics("action", "MustardScraper");
+
+  var url = "https://michaeleskin.com/tools/mustard_scraper.html";
+  window.open(url, '_blank');
 }
 
 function TuningTools(){
