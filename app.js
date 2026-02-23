@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3177_022126_1100";
+var gVersionNumber = "3178_022326_1100";
 
 var gMIDIInitStillWaiting = false;
 
@@ -21320,7 +21320,7 @@ function RenderDivClickHandler(e) {
 
         gUIHiddenPlayerEnabled = true;
 
-        PlayABC();
+        PlayABC(null);
 
         setTimeout(function() {
 
@@ -27742,7 +27742,7 @@ function processShareLink() {
           // Keep track of share play presentation
           sendGoogleAnalytics("show_trainer", "from_share");
 
-          TuneTrainer(false);
+          TuneTrainer(false,false);
 
         }
       } else {
@@ -27773,13 +27773,13 @@ function processShareLink() {
       // Show update message?
       if (gLocalStorageAvailable){
 
-        var updatePresented = localStorage.sawUpdate_21feb2026;
+        var updatePresented = localStorage.sawUpdate_23feb2026;
 
         if (updatePresented != "true") {
 
           showWhatsNewScreen();
 
-          localStorage.sawUpdate_21feb2026 = true;
+          localStorage.sawUpdate_23feb2026 = true;
 
         }
 
@@ -44285,36 +44285,47 @@ function TuneTrainerLaunchFromPlayer() {
   setTimeout(function() {
 
     // Launch the trainer
-    TuneTrainer(true);
+    TuneTrainer(true,false);
 
   }, 250);
 }
 
-function TuneTrainerTopBar(){
+function TuneTrainerTopBar(e){
         
     // Get the current tune index and tune count
-    gPlayABCTuneIndex = findSelectedTuneIndex();
     gPlayABCTuneCount = CountTunes();
+
+    // Select random tune if user clicks Train with the alt key pressed
+    if (e && e.altKey) {
+
+      gPlayABCTuneIndex = Math.floor(Math.random() * gPlayABCTuneCount);
+
+      TuneTrainer(false,true);
+
+    }
+    else{
+
+      gPlayABCTuneIndex = findSelectedTuneIndex();
+
+      TuneTrainer(false,false);
+    }
 
     //console.log("gPlayABCTuneIndex: "+gPlayABCTuneIndex)
 
-    TuneTrainer(false);
 }
 
-function TuneTrainer(bIsFromPlayer) {
+function TuneTrainer(bIsFromPlayer,bUse_gPlayABCTuneIndex=false) {
 
   if (gAllowCopy) {
-
 
     if (!bIsFromPlayer) {
       // Deactivate Quick Player 
       deactivateQuickPlayer();
-
     }
 
     var theSelectedABC;
 
-    if (bIsFromPlayer) {
+    if (bIsFromPlayer || bUse_gPlayABCTuneIndex) {
       theSelectedABC = getTuneByIndex(gPlayABCTuneIndex);
     } else {
       // Try to find the current tune
@@ -55597,10 +55608,10 @@ function showWhatsNewScreen() {
 
   // Header
   modal_msg += '<div style="text-align:center; padding:14px 10px; border-radius:12px;';
-  modal_msg += 'background: linear-gradient(135deg, #b00020 0%, #d62828 70%, #fcbf49 100%);';
+  modal_msg += 'background: linear-gradient(135deg, #1b5e20 0%, #33691e 50%, #f9a825 100%);';
   modal_msg += 'box-shadow: 0 6px 16px rgba(0,0,0,0.14); color:#fff;">';
   modal_msg += '<div style="font-size:20pt; line-height:24pt; font-weight:bold;">What&apos;s New</div>';
-  modal_msg += '<div style="font-size:11pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 21 February 2026</div>';
+  modal_msg += '<div style="font-size:11pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 23 February 2026</div>';
   modal_msg += '</div>';
 
   // Short intro
@@ -55618,7 +55629,7 @@ function showWhatsNewScreen() {
   modal_msg += '<div style="margin:10px 0 6px 0; padding:12px 12px; border-radius:12px;';
   modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);">';
   
-  modal_msg += '<p style="margin:6px 0; font-size:12pt;">Share links are now created using <b>Deflate</b> as the compression algorithm for the ABC instead of <b>LZW</b>.<br/><br/>Deflate creates share links that can be as much as 50% smaller than LZW.<br/><br/>This is particularly helpful for large tunes in PDF files intended to be opened by Adobe Acrobat which has a relatively small limit for hyperlink length.<br/><br/>The only exception is that LZW is still used for <b>Full Featured Websites</b> that include a dropdown tab/instrument selector since the LZW code is included in the source code for the sites to instrument and tablature change on-the-fly.</p>';
+  modal_msg += '<p style="margin:6px 0; font-size:12pt;">On desktop browsers you can now Alt-click the <strong>Play</strong> or <strong>Train</strong> buttons to pick a random tune from the ABC tunes loaded in the editor and open it in the <strong>Player</strong> or <strong>Tune Trainer</strong>.<br/><br/>This works both in the standard and <strong>Quick Editor</strong> versions of the tool.<br/><br/>Since the <strong>Quick Editor</strong> can work with thousands of tunes, this is a great way to do random tune practice.</p>';
 
   modal_msg += '</div>';
 
@@ -61267,7 +61278,7 @@ function DoStartup() {
     document.getElementById("playbuttonicon").onclick =
       function(e) {
         if (e.shiftKey){
-          TuneTrainer(false);
+          TuneTrainer(false,false);
         }
         else{
           PlayABC(null);
@@ -62099,13 +62110,13 @@ function DoStartup() {
   // Show update message?
   if (gLocalStorageAvailable && (!isFromShare)){
 
-    var updatePresented = localStorage.sawUpdate_21feb2026;
+    var updatePresented = localStorage.sawUpdate_23feb2026;
 
     if (updatePresented != "true") {
 
       showWhatsNewScreen();
 
-      localStorage.sawUpdate_21feb2026 = true;
+      localStorage.sawUpdate_23feb2026 = true;
 
     }
 
