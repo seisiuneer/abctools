@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3179_022426_1100";
+var gVersionNumber = "3180_022426_1100";
 
 var gMIDIInitStillWaiting = false;
 
@@ -27700,13 +27700,13 @@ function processShareLink() {
       // Show update message?
       if (gLocalStorageAvailable){
 
-        var updatePresented = localStorage.sawUpdate_24feb2026;
+        var updatePresented = localStorage.sawUpdate_24feb2026a;
 
         if (updatePresented != "true") {
 
           showWhatsNewScreen();
 
-          localStorage.sawUpdate_24feb2026 = true;
+          localStorage.sawUpdate_24feb2026a = true;
 
         }
 
@@ -55556,7 +55556,7 @@ function showWhatsNewScreen() {
   modal_msg += '<div style="margin:10px 0 6px 0; padding:12px 12px; border-radius:12px;';
   modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);">';
   
-  modal_msg += '<p style="margin:6px 0; font-size:12pt;">On desktop browsers you can now Alt-click the <strong>Play</strong> or <strong>Train</strong> buttons to pick a random tune from the ABC tunes loaded in the editor and open it in the <strong>Player</strong> or <strong>Tune Trainer</strong>.<br/><br/>This works both in the standard and <strong>Quick Editor</strong> versions of the tool.<br/><br/>Since the <strong>Quick Editor</strong> can work with thousands of tunes, this is a great way to do random tune practice.<br/><br/>Along the same lines, also added <strong>Shuffle All Tunes</strong> to the <strong>Sort by Tag</strong> dialog that will shuffle all the tunes into a random order.</p>';
+  modal_msg += '<p style="margin:6px 0; font-size:12pt;">On desktop browsers you can now Alt-click the <strong>Play</strong> or <strong>Train</strong> buttons to pick a random tune from the ABC tunes loaded in the editor and open it in the <strong>Player</strong> or <strong>Tune Trainer</strong>.<br/><br/>This works both in the standard and <strong>Quick Editor</strong> versions of the tool.<br/><br/>Since the <strong>Quick Editor</strong> can work with thousands of tunes, this is a great way to do random tune practice.<br/><br/>Along the same lines, added <strong>Shuffle All Tunes</strong> to the <strong>Sort Tunes by Tag</strong> dialog available from the <strong>☰</strong> dropdown menu that will shuffle all the tunes into a random order.</p>';
 
   modal_msg += '</div>';
 
@@ -62037,13 +62037,13 @@ function DoStartup() {
   // Show update message?
   if (gLocalStorageAvailable && (!isFromShare)){
 
-    var updatePresented = localStorage.sawUpdate_24feb2026;
+    var updatePresented = localStorage.sawUpdate_24feb2026a;
 
     if (updatePresented != "true") {
 
       showWhatsNewScreen();
 
-      localStorage.sawUpdate_24feb2026 = true;
+      localStorage.sawUpdate_24feb2026a = true;
 
     }
 
