@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3180_022426_1100";
+var gVersionNumber = "3181_022426_1200";
 
 var gMIDIInitStillWaiting = false;
 
@@ -4024,8 +4024,6 @@ function DoShuffleTunes() {
 //
 // Sort Dialog
 //
-// Prompts for the sorting key
-//
 var gLastSortOrder = "0";
 
 function SortDialog() {
@@ -4049,43 +4047,22 @@ function SortDialog() {
     });
 
     return;
-
   }
 
   // Keep track of dialogs
   sendGoogleAnalytics("dialog", "SortDialog");
 
-  const sorting_options = [{
-      name: "  Sort by Title (T:)",
-      id: "0"
-    }, {
-      name: "  Sort by Key (K:)",
-      id: "1"
-    }, {
-      name: "  Sort by Meter (M:)",
-      id: "2"
-    }, {
-      name: "  Sort by Rhythm (R:)",
-      id: "3"
-    }, {
-      name: "  Sort by Composer (C:)",
-      id: "4"
-    }, {
-      name: "  Sort by Notes (N:)",
-      id: "5"
-    }, {
-      name: "  Sort by Origin (O:)",
-      id: "6"
-    }, {
-      name: "  Sort by ID (X:)",
-      id: "7"
-    }, {
-      name: "  Renumber all X: Tags",
-      id: "8"
-    }, {
-      name: "  Shuffle All Tunes",
-      id: "9"
-    }
+  const sorting_options = [
+    { name: "  Sort by Title (T:)", id: "0" },
+    { name: "  Sort by Key (K:)", id: "1" },
+    { name: "  Sort by Meter (M:)", id: "2" },
+    { name: "  Sort by Rhythm (R:)", id: "3" },
+    { name: "  Sort by Composer (C:)", id: "4" },
+    { name: "  Sort by Notes (N:)", id: "5" },
+    { name: "  Sort by Origin (O:)", id: "6" },
+    { name: "  Sort by ID (X:)", id: "7" },
+    { name: "  Renumber all X: Tags", id: "8" },
+    { name: "  Shuffle All Tunes", id: "9" }
   ];
 
   // Setup initial values
@@ -4093,28 +4070,116 @@ function SortDialog() {
     configure_sort: gLastSortOrder,
   };
 
-  const form = [{
-    html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-left:15px;">Sort Tunes by Tag&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#sort_dialog" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'
-  }, {
-    html: '<p style="margin-top:36px;margin-bottom:36px;font-size:12pt;line-height:18pt;font-family:helvetica">This will sort the tunes based on the ABC tag you select.<br/><br/>You may also renumber all the X: tags or shuffle all the tunes.</p>'
-  }, {
-    name: "Operation:",
-    id: "configure_sort",
-    type: "select",
-    options: sorting_options,
-    cssClass: "configure_sort_settings_select"
-  }, {
-    html: '<p style="font-size:12pt;font-family:helvetica">&nbsp;</p>'
-  }, ];
+  // Helpers to set the OK button label based on selection
+  function labelForOperation(opId) {
+    if (opId === "8") return "Renumber";
+    if (opId === "9") return "Shuffle";
+    return "Sort";
+  }
 
-  const modal = DayPilot.Modal.form(form, theData, {
+  var theOKButton = null;
+  var theCancelButton = null;
+
+  function setOkButtonText(opId) {
+
+    if (!theOKButton) return;
+
+    // Change the OK label
+    theOKButton.textContent = labelForOperation(opId);
+
+    // If we have Cancel, equalize widths
+    if (theCancelButton) {
+
+      // Let both buttons size naturally first
+      theOKButton.style.setProperty("width", "auto", "important");
+      theCancelButton.style.setProperty("width", "auto", "important");
+
+      // Clear any previous minWidth too
+      theOKButton.style.setProperty("min-width", "", "important");
+      theCancelButton.style.setProperty("min-width", "", "important");
+
+      // Wait a frame so the browser has applied the new text/layout
+      requestAnimationFrame(function () {
+
+        // Use scrollWidth (text-based) + a little padding fudge for safety
+        var okW = theOKButton.scrollWidth;
+        var cancelW = theCancelButton.scrollWidth;
+
+        // Add a small buffer so the text never feels cramped
+        var w = Math.max(okW, cancelW) + 20;
+
+        // Force both to the same explicit width
+        theOKButton.style.setProperty("width", w + "px", "important");
+        theCancelButton.style.setProperty("width", w + "px", "important");
+      });
+    }
+  }
+
+
+  const form = [
+    {
+      html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-left:15px;">Sort Tunes by Tag&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#sort_dialog" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'
+    },
+    {
+      html: '<p style="margin-top:36px;margin-bottom:36px;font-size:12pt;line-height:18pt;font-family:helvetica">This will sort the tunes based on the ABC tag you select.<br/><br/>You may also renumber all the X: tags or shuffle all the tunes.</p>'
+    },
+    {
+      name: "Operation:",
+      id: "configure_sort",
+      type: "select",
+      options: sorting_options,
+      cssClass: "configure_sort_settings_select"
+    },
+    {
+      html: '<p style="font-size:12pt;font-family:helvetica">&nbsp;</p>'
+    },
+  ];
+
+  const modalPromise = DayPilot.Modal.form(form, theData, {
     theme: "modal_flat",
     top: 175,
     width: 500,
     scrollWithPage: (AllowDialogsToScroll()),
-    okText: "Sort",
     autoFocus: false
-  }).then(function(args) {
+  });
+
+  // After the modal is in the DOM, wire up the select -> OK text behavior
+  setTimeout(function () {
+
+    // --- your proven methodology: get the LAST OK and LAST Cancel buttons ---
+    var okButtons = document.getElementsByClassName("modal_flat_ok");
+    theOKButton = null;
+    for (var i = 0; i < okButtons.length; ++i) {
+      theOKButton = okButtons[i];
+    }
+
+    var cancelButtons = document.getElementsByClassName("modal_flat_cancel");
+    theCancelButton = null;
+    for (var j = 0; j < cancelButtons.length; ++j) {
+      theCancelButton = cancelButtons[j];
+    }
+
+    // Find the select (your approach is fine)
+    var selectEl =
+      document.querySelector("select.configure_sort_settings_select") ||
+      document.querySelector(".configure_sort_settings_select select") ||
+      document.querySelector("select[name='configure_sort']") ||
+      document.querySelector("select");
+
+    // Set initial button text/width
+    var initialVal = (selectEl && selectEl.value) ? selectEl.value : gLastSortOrder;
+    setOkButtonText(initialVal);
+
+    // Update on change
+    if (selectEl) {
+      selectEl.addEventListener("change", function () {
+        setOkButtonText(this.value);
+      });
+    }
+
+  }, 0);
+
+  modalPromise.then(function(args) {
 
     // Get the results and store them in the global configuration
     if (!args.canceled) {
@@ -4122,40 +4187,17 @@ function SortDialog() {
       gLastSortOrder = args.result.configure_sort;
 
       switch (args.result.configure_sort) {
-
-        case "0":
-          DoSortTunesByName();
-          break;
-        case "1":
-          DoSortTunesByKey();
-          break;
-        case "2":
-          DoSortTunesByMeter();
-          break;
-        case "3":
-          DoSortTunesByRhythm();
-          break;
-        case "4":
-          DoSortTunesByCTag();
-          break;
-        case "5":
-          DoSortTunesByNTag();
-          break;
-        case "6":
-          DoSortTunesByOTag();
-          break;
-        case "7":
-          DoSortTunesByID();
-          break;
-        case "8":
-          RenumberXTags();
-          break;
-        case "9":
-          DoShuffleTunes();
-          break;
-        default:
-          DoSortTunesByName();
-          break;
+        case "0": DoSortTunesByName(); break;
+        case "1": DoSortTunesByKey(); break;
+        case "2": DoSortTunesByMeter(); break;
+        case "3": DoSortTunesByRhythm(); break;
+        case "4": DoSortTunesByCTag(); break;
+        case "5": DoSortTunesByNTag(); break;
+        case "6": DoSortTunesByOTag(); break;
+        case "7": DoSortTunesByID(); break;
+        case "8": RenumberXTags(); break;
+        case "9": DoShuffleTunes(); break;
+        default:  DoSortTunesByName(); break;
       }
     }
   });
