@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3178_022326_1100";
+var gVersionNumber = "3179_022426_1100";
 
 var gMIDIInitStillWaiting = false;
 
@@ -3389,58 +3389,34 @@ function DoSortTunesByMeter() {
     return;
   }
 
-  var elem = document.getElementById("sortbutton");
-  if (elem) {
-    // Give some feedback
-    elem.value = "Sorting...";
-  }
+  // Sort the tunes by name
+  SortTunes();
 
-  setTimeout(function() {
+  // Sort the tunes
+  SortTunesByTag("M", false);
 
-    // Sort the tunes by name
-    SortTunes();
+  const scrollY = window.scrollY || document.documentElement.scrollTop;
 
-    // Sort the tunes
-    SortTunesByTag("M", false);
+  var thePrompt = "Tunes sorted by Meter!";
 
-    const scrollY = window.scrollY || document.documentElement.scrollTop;
+  // Center the string in the prompt
+  thePrompt = makeCenteredPromptString(thePrompt);
 
-    var thePrompt = "Tunes sorted by Meter!";
+  DayPilot.Modal.alert(thePrompt, {
+    theme: "modal_flat",
+    top: 300,
+    scrollWithPage: (AllowDialogsToScroll())
+  }).then(function(){
 
-    // Center the string in the prompt
-    thePrompt = makeCenteredPromptString(thePrompt);
+    // Redraw
+    RenderAsync(true, null, function() {
 
-    DayPilot.Modal.alert(thePrompt, {
-      theme: "modal_flat",
-      top: 300,
-      scrollWithPage: (AllowDialogsToScroll())
-    }).then(function(){
+      if (AllowDialogsToScroll()) {
+        window.scrollTo(0, scrollY);
+      }
 
-      // Redraw
-      RenderAsync(true, null, function() {
-
-        if (AllowDialogsToScroll()) {
-          window.scrollTo(0, scrollY);
-        }
-
-        var elem = document.getElementById("sortbutton");
-        if (elem) {
-          elem.value = "   Sorted!   ";
-        }
-
-        setTimeout(function() {
-
-          var elem = document.getElementById("sortbutton");
-          if (elem) {
-            elem.value = "Sort by Tag";
-          }
-
-        }, 500);
-
-      });
     });
-
-  }, 250);
+  });
 
 }
 
@@ -3455,59 +3431,34 @@ function DoSortTunesByKey() {
     return;
   }
 
-  // Give some feedback
-  var elem = document.getElementById("sortbutton");
-  if (elem) {
-    // Give some feedback
-    elem.value = "Sorting...";
-  }
+  // Sort the tunes by name first
+  SortTunes();
 
-  setTimeout(function() {
+  // Sort the tunes by key
+  SortTunesByTag("K", false);
 
-    // Sort the tunes by name first
-    SortTunes();
+  const scrollY = window.scrollY || document.documentElement.scrollTop;
 
-    // Sort the tunes by key
-    SortTunesByTag("K", false);
+  var thePrompt = "Tunes sorted by Key!";
 
-    const scrollY = window.scrollY || document.documentElement.scrollTop;
+  // Center the string in the prompt
+  thePrompt = makeCenteredPromptString(thePrompt);
 
-    var thePrompt = "Tunes sorted by Key!";
+  DayPilot.Modal.alert(thePrompt, {
+    theme: "modal_flat",
+    top: 300,
+    scrollWithPage: (AllowDialogsToScroll())
+  }).then(function(){
 
-    // Center the string in the prompt
-    thePrompt = makeCenteredPromptString(thePrompt);
+    // Redraw
+    RenderAsync(true, null, function() {
 
-    DayPilot.Modal.alert(thePrompt, {
-      theme: "modal_flat",
-      top: 300,
-      scrollWithPage: (AllowDialogsToScroll())
-    }).then(function(){
+      if (AllowDialogsToScroll()) {
+        window.scrollTo(0, scrollY);
+      }
 
-      // Redraw
-      RenderAsync(true, null, function() {
-
-        if (AllowDialogsToScroll()) {
-          window.scrollTo(0, scrollY);
-        }
-
-        var elem = document.getElementById("sortbutton");
-        if (elem) {
-          elem.value = "   Sorted!   ";
-        }
-
-        setTimeout(function() {
-
-          var elem = document.getElementById("sortbutton");
-          if (elem) {
-            elem.value = "Sort by Tag";
-          }
-
-        }, 500);
-
-      });
     });
-
-  }, 250);
+  });
 
 }
 
@@ -3650,56 +3601,31 @@ function DoSortTunesByName() {
     return;
   }
 
-  // Give some feedback
-  var elem = document.getElementById("sortbutton");
+  // Sort the tunes
+  SortTunes();
 
-  if (elem) {
-    elem.value = "Sorting...";
-  }
+  const scrollY = window.scrollY || document.documentElement.scrollTop;
 
-  setTimeout(function() {
+  var thePrompt = "Tunes sorted by Title!";
 
-    // Sort the tunes
-    SortTunes();
+  // Center the string in the prompt
+  thePrompt = makeCenteredPromptString(thePrompt);
 
-    const scrollY = window.scrollY || document.documentElement.scrollTop;
+  DayPilot.Modal.alert(thePrompt, {
+    theme: "modal_flat",
+    top: 300,
+    scrollWithPage: (AllowDialogsToScroll())
+  }).then(function(){
 
-    var thePrompt = "Tunes sorted by Title!";
+    // Redraw
+    RenderAsync(true, null, function() {
 
-    // Center the string in the prompt
-    thePrompt = makeCenteredPromptString(thePrompt);
+      if (AllowDialogsToScroll()) {
+        window.scrollTo(0, scrollY);
+      }
 
-    DayPilot.Modal.alert(thePrompt, {
-      theme: "modal_flat",
-      top: 300,
-      scrollWithPage: (AllowDialogsToScroll())
-    }).then(function(){
-
-      // Redraw
-      RenderAsync(true, null, function() {
-
-        if (AllowDialogsToScroll()) {
-          window.scrollTo(0, scrollY);
-        }
-
-        var elem = document.getElementById("sortbutton");
-        if (elem) {
-          elem.value = "   Sorted!   ";
-        }
-
-        setTimeout(function() {
-
-          var elem = document.getElementById("sortbutton");
-          if (elem) {
-            elem.value = "Sort by Tag";
-          }
-
-        }, 500);
-
-      });
     });
-
-  }, 250);
+  });
 
 }
 
@@ -3713,59 +3639,34 @@ function DoSortTunesByRhythm() {
     return;
   }
 
-  // Give some feedback
-  var elem = document.getElementById("sortbutton");
-  if (elem) {
-    // Give some feedback
-    elem.value = "Sorting...";
-  }
+  // Sort the tunes by name first
+  SortTunes();
 
-  setTimeout(function() {
+  // Sort the tunes by rhythm
+  SortTunesByTag("R", true);
 
-    // Sort the tunes by name first
-    SortTunes();
+  const scrollY = window.scrollY || document.documentElement.scrollTop;
 
-    // Sort the tunes by rhythm
-    SortTunesByTag("R", true);
+  var thePrompt = "Tunes sorted by Rhythm!";
 
-    const scrollY = window.scrollY || document.documentElement.scrollTop;
+  // Center the string in the prompt
+  thePrompt = makeCenteredPromptString(thePrompt);
 
-    var thePrompt = "Tunes sorted by Rhythm!";
+  DayPilot.Modal.alert(thePrompt, {
+    theme: "modal_flat",
+    top: 300,
+    scrollWithPage: (AllowDialogsToScroll())
+  }).then(function(){
 
-    // Center the string in the prompt
-    thePrompt = makeCenteredPromptString(thePrompt);
+    // Redraw
+    RenderAsync(true, null, function() {
 
-    DayPilot.Modal.alert(thePrompt, {
-      theme: "modal_flat",
-      top: 300,
-      scrollWithPage: (AllowDialogsToScroll())
-    }).then(function(){
+      if (AllowDialogsToScroll()) {
+        window.scrollTo(0, scrollY);
+      }
 
-      // Redraw
-      RenderAsync(true, null, function() {
-
-        if (AllowDialogsToScroll()) {
-          window.scrollTo(0, scrollY);
-        }
-
-        var elem = document.getElementById("sortbutton");
-        if (elem) {
-          elem.value = "   Sorted!   ";
-        }
-
-        setTimeout(function() {
-
-          var elem = document.getElementById("sortbutton");
-          if (elem) {
-            elem.value = "Sort by Tag";
-          }
-
-        }, 500);
-
-      });
     });
-
-  }, 250);
+  });
 
 }
 
@@ -3779,59 +3680,34 @@ function DoSortTunesByCTag() {
     return;
   }
 
-  // Give some feedback
-  var elem = document.getElementById("sortbutton");
-  if (elem) {
-    // Give some feedback
-    elem.value = "Sorting...";
-  }
+  // Sort the tunes by name first
+  SortTunes();
 
-  setTimeout(function() {
+  // Sort the tunes by C tag
+  SortTunesByTag("C", true);
 
-    // Sort the tunes by name first
-    SortTunes();
+  const scrollY = window.scrollY || document.documentElement.scrollTop;
 
-    // Sort the tunes by C tag
-    SortTunesByTag("C", true);
+  var thePrompt = "Tunes sorted by Composer!";
 
-    const scrollY = window.scrollY || document.documentElement.scrollTop;
+  // Center the string in the prompt
+  thePrompt = makeCenteredPromptString(thePrompt);
 
-    var thePrompt = "Tunes sorted by Composer!";
+  DayPilot.Modal.alert(thePrompt, {
+    theme: "modal_flat",
+    top: 300,
+    scrollWithPage: (AllowDialogsToScroll())
+  }).then(function(){
 
-    // Center the string in the prompt
-    thePrompt = makeCenteredPromptString(thePrompt);
+    // Redraw
+    RenderAsync(true, null, function() {
 
-    DayPilot.Modal.alert(thePrompt, {
-      theme: "modal_flat",
-      top: 300,
-      scrollWithPage: (AllowDialogsToScroll())
-    }).then(function(){
+      if (AllowDialogsToScroll()) {
+        window.scrollTo(0, scrollY);
+      }
 
-      // Redraw
-      RenderAsync(true, null, function() {
-
-        if (AllowDialogsToScroll()) {
-          window.scrollTo(0, scrollY);
-        }
-
-        var elem = document.getElementById("sortbutton");
-        if (elem) {
-          elem.value = "   Sorted!   ";
-        }
-
-        setTimeout(function() {
-
-          var elem = document.getElementById("sortbutton");
-          if (elem) {
-            elem.value = "Sort by Tag";
-          }
-
-        }, 500);
-
-      });
     });
-
-  }, 250);
+  });
 
 }
 
@@ -3845,59 +3721,34 @@ function DoSortTunesByNTag() {
     return;
   }
 
-  // Give some feedback
-  var elem = document.getElementById("sortbutton");
-  if (elem) {
-    // Give some feedback
-    elem.value = "Sorting...";
-  }
+  // Sort the tunes by name first
+  SortTunes();
 
-  setTimeout(function() {
+  // Sort the tunes by N tag
+  SortTunesByTag("N", true);
 
-    // Sort the tunes by name first
-    SortTunes();
+  const scrollY = window.scrollY || document.documentElement.scrollTop;
 
-    // Sort the tunes by N tag
-    SortTunesByTag("N", true);
+  var thePrompt = "Tunes sorted by Notes!";
 
-    const scrollY = window.scrollY || document.documentElement.scrollTop;
+  // Center the string in the prompt
+  thePrompt = makeCenteredPromptString(thePrompt);
 
-    var thePrompt = "Tunes sorted by Notes!";
+  DayPilot.Modal.alert(thePrompt, {
+    theme: "modal_flat",
+    top: 300,
+    scrollWithPage: (AllowDialogsToScroll())
+  }).then(function(){
 
-    // Center the string in the prompt
-    thePrompt = makeCenteredPromptString(thePrompt);
+    // Redraw
+    RenderAsync(true, null, function() {
 
-    DayPilot.Modal.alert(thePrompt, {
-      theme: "modal_flat",
-      top: 300,
-      scrollWithPage: (AllowDialogsToScroll())
-    }).then(function(){
+      if (AllowDialogsToScroll()) {
+        window.scrollTo(0, scrollY);
+      }
 
-      // Redraw
-      RenderAsync(true, null, function() {
-
-        if (AllowDialogsToScroll()) {
-          window.scrollTo(0, scrollY);
-        }
-
-        var elem = document.getElementById("sortbutton");
-        if (elem) {
-          elem.value = "   Sorted!   ";
-        }
-
-        setTimeout(function() {
-
-          var elem = document.getElementById("sortbutton");
-          if (elem) {
-            elem.value = "Sort by Tag";
-          }
-
-        }, 500);
-
-      });
     });
-
-  }, 250);
+  });
 
 }
 
@@ -3911,60 +3762,35 @@ function DoSortTunesByOTag() {
     return;
   }
 
-  // Give some feedback
-  var elem = document.getElementById("sortbutton");
-  if (elem) {
-    // Give some feedback
-    elem.value = "Sorting...";
-  }
+  // Sort the tunes by name first
+  SortTunes();
 
-  setTimeout(function() {
+  // Sort the tunes by O tag
+  SortTunesByTag("O", true);
 
-    // Sort the tunes by name first
-    SortTunes();
+  const scrollY = window.scrollY || document.documentElement.scrollTop;
 
-    // Sort the tunes by O tag
-    SortTunesByTag("O", true);
+  var thePrompt = "Tunes sorted by Origin!";
 
-    const scrollY = window.scrollY || document.documentElement.scrollTop;
+  // Center the string in the prompt
+  thePrompt = makeCenteredPromptString(thePrompt);
 
-    var thePrompt = "Tunes sorted by Origin!";
+  DayPilot.Modal.alert(thePrompt, {
+    theme: "modal_flat",
+    top: 300,
+    scrollWithPage: (AllowDialogsToScroll())
+  }).then(function(){
 
-    // Center the string in the prompt
-    thePrompt = makeCenteredPromptString(thePrompt);
+    // Redraw
+    RenderAsync(true, null, function() {
 
-    DayPilot.Modal.alert(thePrompt, {
-      theme: "modal_flat",
-      top: 300,
-      scrollWithPage: (AllowDialogsToScroll())
-    }).then(function(){
-
-      // Redraw
-      RenderAsync(true, null, function() {
-
-        if (AllowDialogsToScroll()) {
-          window.scrollTo(0, scrollY);
-        }
-
-        var elem = document.getElementById("sortbutton");
-        if (elem) {
-          elem.value = "   Sorted!   ";
-        }
-
-        setTimeout(function() {
-
-          var elem = document.getElementById("sortbutton");
-          if (elem) {
-            elem.value = "Sort by Tag";
-          }
-
-        }, 500);
-
-      });
+      if (AllowDialogsToScroll()) {
+        window.scrollTo(0, scrollY);
+      }
 
     });
 
-  }, 250);
+  });
 
 }
 
@@ -3978,59 +3804,34 @@ function DoSortTunesByID() {
     return;
   }
 
-  // Give some feedback
-  var elem = document.getElementById("sortbutton");
-  if (elem) {
-    // Give some feedback
-    elem.value = "Sorting...";
-  }
+  // Sort the tunes by name first
+  SortTunes();
 
-  setTimeout(function() {
+  // Sort the tunes by key
+  SortTunesByTag("X", false);
 
-    // Sort the tunes by name first
-    SortTunes();
+  const scrollY = window.scrollY || document.documentElement.scrollTop;
 
-    // Sort the tunes by key
-    SortTunesByTag("X", false);
+  var thePrompt = "Tunes sorted by ID!";
 
-    const scrollY = window.scrollY || document.documentElement.scrollTop;
+  // Center the string in the prompt
+  thePrompt = makeCenteredPromptString(thePrompt);
 
-    var thePrompt = "Tunes sorted by ID!";
+  DayPilot.Modal.alert(thePrompt, {
+    theme: "modal_flat",
+    top: 300,
+    scrollWithPage: (AllowDialogsToScroll())
+  }).then(function(){
 
-    // Center the string in the prompt
-    thePrompt = makeCenteredPromptString(thePrompt);
+    // Redraw
+    RenderAsync(true, null, function() {
 
-    DayPilot.Modal.alert(thePrompt, {
-      theme: "modal_flat",
-      top: 300,
-      scrollWithPage: (AllowDialogsToScroll())
-    }).then(function(){
+      if (AllowDialogsToScroll()) {
+        window.scrollTo(0, scrollY);
+      }
 
-      // Redraw
-      RenderAsync(true, null, function() {
-
-        if (AllowDialogsToScroll()) {
-          window.scrollTo(0, scrollY);
-        }
-
-        var elem = document.getElementById("sortbutton");
-        if (elem) {
-          elem.value = "   Sorted!   ";
-        }
-
-        setTimeout(function() {
-
-          var elem = document.getElementById("sortbutton");
-          if (elem) {
-            elem.value = "Sort by Tag";
-          }
-
-        }, 500);
-
-      });
     });
-
-  }, 250);
+  });
 
 }
 
@@ -4100,6 +3901,127 @@ function RenumberXTags() {
 }
 
 //
+// DoShuffleTunes command
+//
+function DoShuffleTunes() {
+
+  // If currently rendering PDF, exit immediately
+  if (gRenderingPDF) {
+    return;
+  }
+
+  //
+  // Shuffles the tunes in the ABC text area
+  //
+  function ShuffleTunes() {
+
+    // Get all the tunes
+    var theNotes = getABCEditorText();
+
+    var theTunes = theNotes.split(/(^X:.*$)/gm);
+
+    var nTunes = (theTunes.length - 1) / 2;
+
+    if (nTunes < 2) {
+      return;
+    }
+
+    var thePrefixABC = theTunes[0];
+
+    // Collect tunes
+    var tunesToProcess = [];
+    var nProcessed = 0;
+
+    for (var i = 0; i < nTunes; ++i) {
+
+      if (theTunes[(i * 2) + 1] != undefined) {
+
+        tunesToProcess.push({
+          idx: nProcessed, // optional (can help debugging)
+          tune: theTunes[(i * 2) + 1] + theTunes[(i * 2) + 2]
+        });
+
+        nProcessed++;
+      }
+    }
+
+    if (nProcessed < 2) {
+      return;
+    }
+
+    // Fisher–Yates shuffle
+    for (var j = nProcessed - 1; j > 0; --j) {
+      var k = Math.floor(Math.random() * (j + 1));
+      var tmp = tunesToProcess[j];
+      tunesToProcess[j] = tunesToProcess[k];
+      tunesToProcess[k] = tmp;
+    }
+
+    // Re-assemble
+    theNotes = "";
+    theNotes += thePrefixABC;
+
+    for (var t = 0; t < nProcessed; ++t) {
+
+      var thisTune = tunesToProcess[t].tune;
+
+      // Ensure there is a blank line between tunes
+      thisTune = thisTune.replace(/\n*$/, '') + '\n\n';
+
+      theNotes += thisTune;
+    }
+
+    theNotes = theNotes.replace(/\n*$/, '') + '\n';
+
+    // Put them back in the ABC area
+    setABCEditorText(theNotes);
+
+    // Set dirty
+    gIsDirty = true;
+
+    // Reset the selection
+    if (gEnableSyntax) {
+      gTheCM.selectionStart = 0;
+      gTheCM.selectionEnd = 0;
+    }
+    else {
+      gTheABC.selectionStart = 0;
+      gTheABC.selectionEnd = 0;
+    }
+
+    // Focus after operation
+    FocusAfterOperation();
+  }
+
+  // Shuffle the tunes
+  ShuffleTunes();
+
+  const scrollY = window.scrollY || document.documentElement.scrollTop;
+
+  var thePrompt = "All tunes shuffled!";
+
+  // Center the string in the prompt
+  thePrompt = makeCenteredPromptString(thePrompt);
+
+  DayPilot.Modal.alert(thePrompt, {
+    theme: "modal_flat",
+    top: 300,
+    scrollWithPage: (AllowDialogsToScroll())
+  }).then(function() {
+
+    // Redraw
+    RenderAsync(true, null, function() {
+
+      if (AllowDialogsToScroll()) {
+        window.scrollTo(0, scrollY);
+      }
+
+    });
+  });
+
+}
+
+//
 // Sort Dialog
 //
 // Prompts for the sorting key
@@ -4160,8 +4082,10 @@ function SortDialog() {
     }, {
       name: "  Renumber all X: Tags",
       id: "8"
-    },
-
+    }, {
+      name: "  Shuffle All Tunes",
+      id: "9"
+    }
   ];
 
   // Setup initial values
@@ -4170,11 +4094,11 @@ function SortDialog() {
   };
 
   const form = [{
-    html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-left:15px;">Sort by Specific Tag&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#sort_dialog" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'
+    html: '<p style="text-align:center;margin-bottom:20px;font-size:16pt;font-family:helvetica;margin-left:15px;">Sort Tunes&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#sort_dialog" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'
   }, {
-    html: '<p style="margin-top:36px;margin-bottom:36px;font-size:12pt;line-height:18pt;font-family:helvetica">This will sort the tunes based on the ABC tag you select:</p>'
+    html: '<p style="margin-top:36px;margin-bottom:36px;font-size:12pt;line-height:18pt;font-family:helvetica">This will sort the tunes based on the ABC tag you select.<br/><br/>You may also renumber all the X: tags or shuffle all the tunes.</p>'
   }, {
-    name: "Tag to sort by:",
+    name: "Operation:",
     id: "configure_sort",
     type: "select",
     options: sorting_options,
@@ -4225,6 +4149,9 @@ function SortDialog() {
           break;
         case "8":
           RenumberXTags();
+          break;
+        case "9":
+          DoShuffleTunes();
           break;
         default:
           DoSortTunesByName();
@@ -27773,13 +27700,13 @@ function processShareLink() {
       // Show update message?
       if (gLocalStorageAvailable){
 
-        var updatePresented = localStorage.sawUpdate_23feb2026;
+        var updatePresented = localStorage.sawUpdate_24feb2026;
 
         if (updatePresented != "true") {
 
           showWhatsNewScreen();
 
-          localStorage.sawUpdate_23feb2026 = true;
+          localStorage.sawUpdate_24feb2026 = true;
 
         }
 
@@ -55611,7 +55538,7 @@ function showWhatsNewScreen() {
   modal_msg += 'background: linear-gradient(135deg, #1b5e20 0%, #33691e 50%, #f9a825 100%);';
   modal_msg += 'box-shadow: 0 6px 16px rgba(0,0,0,0.14); color:#fff;">';
   modal_msg += '<div style="font-size:20pt; line-height:24pt; font-weight:bold;">What&apos;s New</div>';
-  modal_msg += '<div style="font-size:11pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 23 February 2026</div>';
+  modal_msg += '<div style="font-size:11pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 24 February 2026</div>';
   modal_msg += '</div>';
 
   // Short intro
@@ -55629,7 +55556,7 @@ function showWhatsNewScreen() {
   modal_msg += '<div style="margin:10px 0 6px 0; padding:12px 12px; border-radius:12px;';
   modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);">';
   
-  modal_msg += '<p style="margin:6px 0; font-size:12pt;">On desktop browsers you can now Alt-click the <strong>Play</strong> or <strong>Train</strong> buttons to pick a random tune from the ABC tunes loaded in the editor and open it in the <strong>Player</strong> or <strong>Tune Trainer</strong>.<br/><br/>This works both in the standard and <strong>Quick Editor</strong> versions of the tool.<br/><br/>Since the <strong>Quick Editor</strong> can work with thousands of tunes, this is a great way to do random tune practice.</p>';
+  modal_msg += '<p style="margin:6px 0; font-size:12pt;">On desktop browsers you can now Alt-click the <strong>Play</strong> or <strong>Train</strong> buttons to pick a random tune from the ABC tunes loaded in the editor and open it in the <strong>Player</strong> or <strong>Tune Trainer</strong>.<br/><br/>This works both in the standard and <strong>Quick Editor</strong> versions of the tool.<br/><br/>Since the <strong>Quick Editor</strong> can work with thousands of tunes, this is a great way to do random tune practice.<br/><br/>Along the same lines, also added <strong>Shuffle All Tunes</strong> to the <strong>Sort by Tag</strong> dialog that will shuffle all the tunes into a random order.</p>';
 
   modal_msg += '</div>';
 
@@ -62110,13 +62037,13 @@ function DoStartup() {
   // Show update message?
   if (gLocalStorageAvailable && (!isFromShare)){
 
-    var updatePresented = localStorage.sawUpdate_23feb2026;
+    var updatePresented = localStorage.sawUpdate_24feb2026;
 
     if (updatePresented != "true") {
 
       showWhatsNewScreen();
 
-      localStorage.sawUpdate_23feb2026 = true;
+      localStorage.sawUpdate_24feb2026 = true;
 
     }
 
