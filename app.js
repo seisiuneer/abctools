@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3184_022526_1300";
+var gVersionNumber = "3185_022526_1400";
 
 var gMIDIInitStillWaiting = false;
 
@@ -58351,8 +58351,6 @@ function FindAndReplace() {
 
     gSR_searchInput = document.getElementById("searchText");
 
-    gSR_searchInput.focus();
-
     gSR_replaceInput = document.getElementById("replacementText");
     gSR_caseSensitive = document.getElementById("searchCaseSensitive");
     gSR_regex = document.getElementById("searchRegex");
@@ -58375,10 +58373,11 @@ function FindAndReplace() {
       gSR_lastReplace = gSR_replaceInput.value;
     });
 
+    gSR_searchInput.focus();
+
   },10);
 
 }
-
 
 //
 // Split long tags and/or text
