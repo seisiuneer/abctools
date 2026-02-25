@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3181_022426_1200";
+var gVersionNumber = "3182_022526_1000";
 
 var gMIDIInitStillWaiting = false;
 
@@ -18205,7 +18205,8 @@ function ChangeTuneOrderMobile() {
     top: 25,
     width: 650,
     scrollWithPage: false,
-    autoFocus: false
+    autoFocus: false,
+    okText:"Reorder"
   }).then(function(args) {
 
     if (!args.canceled) {
@@ -18368,7 +18369,8 @@ function ChangeTuneOrder() {
     top: 25,
     width: 650,
     scrollWithPage: false,
-    autoFocus: false
+    autoFocus: false,
+    okText:"Reorder"
   }).then(function(args) {
 
     if (!args.canceled) {
@@ -63271,7 +63273,8 @@ function PhraseBuilder(theTrainerTune,callback){
     top: 51,
     width: 600,
     scrollWithPage: (AllowDialogsToScroll()),
-    autoFocus: true
+    autoFocus: true,
+    okText:"Build"
   }).then(function(args) {
 
     // If canceled from the Tune Trainer, just return the original 
