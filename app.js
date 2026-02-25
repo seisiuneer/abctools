@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3183_022526_1100";
+var gVersionNumber = "3184_022526_1300";
 
 var gMIDIInitStillWaiting = false;
 
@@ -58311,66 +58311,71 @@ function FindAndReplace() {
 
   });
 
-  //
-  // Setup the file import control
-  //
-  document.getElementById("load_find_replace_fs").onchange = () => {
+  // Event handlers after dialog is shown
+  setTimeout(function () {
 
-    let fileElement = document.getElementById("load_find_replace_fs");
+    //
+    // Setup the file import control
+    //
+    document.getElementById("load_find_replace_fs").onchange = () => {
 
-    // check if user had selected a file
-    if (fileElement.files.length === 0) {
+      let fileElement = document.getElementById("load_find_replace_fs");
 
-      var thePrompt = "Please select a Find and Replace settings file";
+      // check if user had selected a file
+      if (fileElement.files.length === 0) {
 
-      // Center the string in the prompt
-      thePrompt = makeCenteredPromptString(thePrompt);
+        var thePrompt = "Please select a Find and Replace settings file";
 
-      DayPilot.Modal.alert(thePrompt, {
-        theme: "modal_flat",
-        top: 200,
-        scrollWithPage: false
-      });
+        // Center the string in the prompt
+        thePrompt = makeCenteredPromptString(thePrompt);
 
-      return;
+        DayPilot.Modal.alert(thePrompt, {
+          theme: "modal_flat",
+          top: 200,
+          scrollWithPage: false
+        });
+
+        return;
+
+      }
+
+      let file = fileElement.files[0];
+
+      // Read the file and stuff it into the Find and Replace fields
+      SR_LoadFindAndReplace(file);
+
+      // Reset file selectors
+      fileElement.value = "";
 
     }
 
-    let file = fileElement.files[0];
+    gSR_searchInput = document.getElementById("searchText");
 
-    // Read the file and stuff it into the Find and Replace fields
-    SR_LoadFindAndReplace(file);
+    gSR_searchInput.focus();
 
-    // Reset file selectors
-    fileElement.value = "";
+    gSR_replaceInput = document.getElementById("replacementText");
+    gSR_caseSensitive = document.getElementById("searchCaseSensitive");
+    gSR_regex = document.getElementById("searchRegex");
 
-  }
+    gSR_searchInput.value = gSR_lastSearch;
+    gSR_replaceInput.value = gSR_lastReplace;
+    gSR_caseSensitive.checked = gSR_lastCaseSensitive;
+    gSR_regex.checked = gSR_lastRegex;
 
-  gSR_searchInput = document.getElementById("searchText");
+    if (gSR_lastSearch != "") {
+      SR_findMatches();
+    }
 
-  gSR_searchInput.focus();
+    gSR_searchInput.addEventListener("input", function(event) {
+      gSR_lastSearch = gSR_searchInput.value;;
+      SR_findMatches();
+    });
 
-  gSR_replaceInput = document.getElementById("replacementText");
-  gSR_caseSensitive = document.getElementById("searchCaseSensitive");
-  gSR_regex = document.getElementById("searchRegex");
+    gSR_replaceInput.addEventListener("input", function(event) {
+      gSR_lastReplace = gSR_replaceInput.value;
+    });
 
-  gSR_searchInput.value = gSR_lastSearch;
-  gSR_replaceInput.value = gSR_lastReplace;
-  gSR_caseSensitive.checked = gSR_lastCaseSensitive;
-  gSR_regex.checked = gSR_lastRegex;
-
-  if (gSR_lastSearch != "") {
-    SR_findMatches();
-  }
-
-  gSR_searchInput.addEventListener("input", function(event) {
-    gSR_lastSearch = gSR_searchInput.value;;
-    SR_findMatches();
-  });
-
-  gSR_replaceInput.addEventListener("input", function(event) {
-    gSR_lastReplace = gSR_replaceInput.value;
-  });
+  },10);
 
 }
 
