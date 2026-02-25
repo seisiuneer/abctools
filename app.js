@@ -58297,7 +58297,8 @@ function FindAndReplace() {
     theme: "modal_flat",
     top: 25,
     width: 700,
-    scrollWithPage: false
+    scrollWithPage: false,
+    okText:"Exit"
   }).then(function() {
   	if (!isPureDesktopBrowser()){
   		if (gEnableSyntax){
