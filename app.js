@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3182_022526_1000";
+var gVersionNumber = "3183_022526_1100";
 
 var gMIDIInitStillWaiting = false;
 
@@ -17908,7 +17908,8 @@ function AddFromSearch(e, callback) {
     theme: "modal_flat",
     top: 25,
     width: theWidth,
-    scrollWithPage: (AllowDialogsToScroll())
+    scrollWithPage: (AllowDialogsToScroll()),
+    okText:"Exit"
   }).then(function() {
     if (callback) {
       callback();
@@ -19467,42 +19468,57 @@ function BuildTuneSet() {
     top: 25,
     width: 700,
     scrollWithPage: (AllowDialogsToScroll()),
-    autoFocus: false
+    autoFocus: false,
+    okText:"Exit",
+    cancelText: null,
   }).then(function(args) {
 
-    if (!args.canceled) {
+    var bRepeat = args.result.repeat_enable;
+    BuildTuneSetRepeat = bRepeat;
 
-      var bRepeat = args.result.repeat_enable;
-      BuildTuneSetRepeat = bRepeat;
+    var bIsVerbose = args.result.is_verbose;
+    BuildTuneSetVerbose = bIsVerbose;
 
-      var bIsVerbose = args.result.is_verbose;
-      BuildTuneSetVerbose = bIsVerbose;
+    var nRepeat = args.result.repeat_count;
 
-      var nRepeat = args.result.repeat_count;
+    nRepeat = parseInt(nRepeat);
 
-      nRepeat = parseInt(nRepeat);
-
-      if (isNaN(nRepeat)) {
-        nRepeat = 1;
-      }
-
-      if (nRepeat < 1) {
-        nRepeat = 1;
-      }
-
-      BuildTuneSetRepeatCount = nRepeat;
-
-      //console.log("bRepeat "+bRepeat+" nRepeat "+nRepeat);
-
-      // Save the settings for next time
-      SaveConfigurationSettings();
-
-      return;
-
+    if (isNaN(nRepeat)) {
+      nRepeat = 1;
     }
 
+    if (nRepeat < 1) {
+      nRepeat = 1;
+    }
+
+    BuildTuneSetRepeatCount = nRepeat;
+
+    //console.log("bRepeat "+bRepeat+" nRepeat "+nRepeat);
+
+    // Save the settings for next time
+    SaveConfigurationSettings();
 
   });
+
+  // Find the button that says "Cancel" to use to close the dialog when changing UI settings
+  setTimeout(function(){
+
+    var theCancelButtons = document.getElementsByClassName("modal_flat_cancel");
+
+    for (var i = 0; i < theCancelButtons.length; ++i) {
+
+      theCancelButton = theCancelButtons[i];
+
+      if (theCancelButton.innerText == "Cancel") {
+
+        theCancelButton.style.display = "none";
+
+        break;
+
+      }
+    }
+
+  },10);
 }
 
 //
