@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3185_022526_1400";
+var gVersionNumber = "3186_022626_1600";
 
 var gMIDIInitStillWaiting = false;
 
@@ -56081,7 +56081,11 @@ function CheckFacebook_iOS() {
           var modal_msg = '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-top:60px;">Facebook iOS App Browser Issue</p>';
           modal_msg += '<p style="font-size:12pt;line-height:30pt;font-family:helvetica;">The Facebook iOS app browser does not support running the ABC Tools.</p>';
 
-          modal_msg += '<p style="font-size:12pt;line-height:20pt;font-family:helvetica">Open the ABC Transcription Tools in Safari by clicking the button below:</p>';
+          modal_msg += '<p style="font-size:12pt;line-height:20pt;font-family:helvetica">Try opening the ABC Transcription Tools in Safari by clicking the button below.</p>';
+
+          modal_msg += '<p style="font-size:12pt;line-height:18pt;font-family:helvetica;">If that doesn\'t work:</p>';
+          modal_msg += '<p style="font-size:12pt;line-height:20pt;font-family:helvetica">1) Click the&nbsp;&nbsp;<strong><span style="font-size:18pt">...</span></strong>&nbsp;&nbsp;at the top-right of the screen</p>';
+          modal_msg += '<p style="font-size:12pt;line-height:12pt;font-family:helvetica">2) Click <strong>Open in external browser</strong></p>';
 
           modal_msg += '<p style="text-align:center"><a style="display: inline-block; padding: 10px 20px; margin-top:40px; font-size: 18px; color: white; background-color: #007BFF; text-align: center; text-decoration: none; border-radius: 5px; transition: background-color 0.3s ease;" href=' + the_href + '>Click here to open in Safari</a></p>';
         }
