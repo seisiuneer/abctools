@@ -748,6 +748,21 @@
 /* ============================================================
    Utilities
    ============================================================ */
+
+// Are we on iOS?
+//
+function isIOS() {
+  if (/iPad|iPhone|iPod/.test(navigator.platform)) {
+    return true;
+  } else {
+    return navigator.maxTouchPoints &&
+      navigator.maxTouchPoints > 2 &&
+      /MacIntel/.test(navigator.platform);
+  }
+}
+
+const gIsIOS = isIOS();
+
 const $ = (id) => document.getElementById(id);
 
 function setStatus(msg, isError=false) {
@@ -1699,6 +1714,8 @@ function wireUp() {
     setOneTunePerPagePrint(onePerPage);
   };
 
+
+
   $("generateBtn").addEventListener("click", () => {
     applyPrintSettings();
     generateCharts();
@@ -1720,7 +1737,30 @@ function wireUp() {
     setStatus("Ready.");
   });
 
+  function makeCenteredPromptString(thePrompt) {
+    return '<p style="font-size:12pt;line-height:18pt;font-family:helvetica;text-align:center">' + thePrompt + '</p>';
+  }
+
   $("printBtn").addEventListener("click", () => {
+
+    if (gIsIOS){
+
+      var thePrompt = "Printing is not supported on iOS";
+
+      // Center the string in the prompt
+      thePrompt = makeCenteredPromptString(thePrompt);
+
+      // Nope, exit
+      DayPilot.Modal.alert(thePrompt, {
+        theme: "modal_flat",
+        top: 100,
+        scrollWithPage: false
+      });
+
+      return;
+
+    }
+
     applyPrintSettings();
 
     const paperSize = $("paperSize").value;
@@ -1846,6 +1886,11 @@ function wireUp() {
   applyPrintSettings();
   setStatus("Ready.");
   tryDecodeShareLinkIntoEditor();
+
+  if (gIsIOS){
+    document.getElementById("fileIn").removeAttribute("accept");
+
+  }
 }
 
 function WaitForReady(fn) {
