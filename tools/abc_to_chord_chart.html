@@ -773,6 +773,51 @@ function setStatus(msg, isError=false) {
 }
 
 /* ============================================================
+   Default tune with chords
+   ============================================================ */
+const DEFAULT_ABC = `%
+% Example ABC tunes with chords
+%
+X: 1
+T: The Kesh
+C: Traditional
+R: Jig
+M: 6/8
+L: 1/8
+Q: 3/8=120
+K: Gmaj
+|:"G"GAG GAB|"D"ABA ABd|"G"edd gdd|"C"edB "D"dBA|
+"G"GAG GAB|"D"ABA ABd|"G"edd gdB|"D"AGF "G"G3:|
+|:"G"BAB dBd|"C"ege "D"dBA|"G"BAB dBG|"D"ABA AGA|
+"G"BAB dBd|"C"ege "G"dBd|"C"gfg "D"aga|"G"bgf g3:|
+
+X: 1
+T: Cooley's
+C: Traditional
+R: Reel
+M: 4/4
+L: 1/8
+Q: 1/2=90
+K: Edor
+|:"Em"EBBA B2 EB|B2 AB dBAG|"D"F/E/D AD BDAD|F/E/D AD BAGF|
+"Em"EBBA B2 EB|B2 AB defg|"D"afge dBAF|1 DEFD "Em"E3D:|2 DEFD "Em"E2gf||
+|:"Em"eB (3BBB eBgf|eBB2 gedB|"D"A/A/A FA DAFA|A/A/A FA defg|
+"Em"eB (3BBB eBgf|eBBB defg|"D"afge dBAF|1 DEFD "Em"E2gf:|2 DEFD "Em"E4|]
+
+X: 3
+T: Alexander's
+C: Traditional
+R: Hornpipe
+M: 4/4
+L: 1/8
+Q: 1/2=80
+K: Dmaj
+|:"D"dAFA DFAd|fdcd Adef|"G"g2 ge "D"fdcd|"A"(3efe (3dcB A2 (3gfe|
+"D"dAFA DFAd|fdcd Adef|"G"g2 ge "D"fdcd|1 "A"(3efe dc"D"d2 (3gfe:|2 "A"(3efe dc"D"d2 AG||
+|:"D"FAdA FAdA|"G"GBdB GBdB|"A"Acec Acec|"D"dfaf "A"(3gfe (3dAG|
+"D"FAdA FAdA|"G"GBdB GBdB|"A"Acef gecd|1 (3efe dc"D"d2AG:|2 (3efe dc"D"d4|]`;
+
+/* ============================================================
    Save chord chart state
    ============================================================ */
 let gLoadedFileName = "";
@@ -901,41 +946,32 @@ function parseMusicLineToBarsAndChords(line, extraSpace = 0) {
   const contents = [];
 
   const extra = Math.max(0, Math.min(40, parseInt(extraSpace, 10) || 0));
-  const intraChordSep = " ".repeat(1 + extra); // <-- adds space BETWEEN chords in same measure
+  const intraChordSep = " ".repeat(1 + extra);
 
   function extractChordText(segment) {
-
-    segment = String(segment || "").replace(/![^!\n]*!/g, "");
-
     const out = [];
     const re = /"([^"]*)"/g;
     let m;
-
     while ((m = re.exec(segment)) !== null) {
-      const raw = (m[1] ?? "");
-      const chord = raw.trim();
+      let chord = (m[1] || "").trim();
 
+      // Filter out quoted ABC annotations that look like chords but are not.
+      // Ignore if first non-space char is one of: ^ _ < > @
       if (!chord) continue;
-
-      // 2) Filter out quoted annotations that are NOT chords
-      //    (^ _ < > @ at beginning)
-      const first = chord.charAt(0);
-      if (first === "^" || first === "_" || first === "<" || first === ">" || first === "@") {
-        continue;
-      }
+      if (/^[\^_<>@]/.test(chord)) continue;
 
       out.push(chord);
     }
-
     return out.join(intraChordSep);
   }
 
-  function readEndingAfterBar(i) {
-    const a = s[i] || "";
-    const b = s[i + 1] || "";
-    if (a === "1" || a === "2") return { ending: a, newI: i + 1 };
-    if (a === "[" && (b === "1" || b === "2")) return { ending: "[" + b, newI: i + 2 };
-    return { ending: "", newI: i };
+  // Return the ending marker string (including optional leading '[') and its length in source
+  function readEndingAt(idx) {
+    const a = s[idx] || "";
+    const b = s[idx + 1] || "";
+    if (a === "1" || a === "2") return { suffix: a, len: 1 };
+    if (a === "[" && (b === "1" || b === "2")) return { suffix: "[" + b, len: 2 };
+    return { suffix: "", len: 0 };
   }
 
   const tokens = [];
@@ -944,52 +980,55 @@ function parseMusicLineToBarsAndChords(line, extraSpace = 0) {
   while (i < s.length) {
     const ch = s[i];
 
+    // [1 or [2 (standalone)
     if (ch === "[" && (s[i + 1] === "1" || s[i + 1] === "2")) {
-      tokens.push({ token: "[" + s[i + 1], pos: i });
+      tokens.push({ token: "[" + s[i + 1], pos: i, srcLen: 2 });
       i += 2;
       continue;
     }
 
     if (ch === "|") {
-      if (s[i + 1] === "]") { tokens.push({ token: "|]", pos: i }); i += 2; continue; }
-      if (s[i + 1] === ":") { tokens.push({ token: "|:", pos: i }); i += 2; continue; }
-      if (s[i + 1] === "|") { tokens.push({ token: "||", pos: i }); i += 2; continue; }
+      // multi-char tokens
+      if (s[i + 1] === "]") { tokens.push({ token: "|]", pos: i, srcLen: 2 }); i += 2; continue; }
+      if (s[i + 1] === ":") { tokens.push({ token: "|:", pos: i, srcLen: 2 }); i += 2; continue; }
+      if (s[i + 1] === "|") { tokens.push({ token: "||", pos: i, srcLen: 2 }); i += 2; continue; }
 
-      // plain |
+      // plain '|' possibly with endings like |1, |2, |[1, |[2
+      const end = readEndingAt(i + 1);
       let tok = "|";
-      const ending = readEndingAfterBar(i + 1);
-      if (ending.ending === "1" || ending.ending === "2") {
-        tok = "|" + ending.ending;
-        i = ending.newI;
-      } else if (ending.ending === "[1" || ending.ending === "[2") {
-        tok = "|" + ending.ending.slice(1);
-        i = ending.newI;
+      let srcLen = 1;
+
+      if (end.suffix) {
+        // normalize token text: |1 or |2 (strip optional '[')
+        tok = "|" + end.suffix.replace("[", "");
+        srcLen = 1 + end.len; // 2 for |1, 3 for |[1
       }
 
-      tokens.push({ token: tok, pos: i });
-      i += 1;
+      tokens.push({ token: tok, pos: i, srcLen });
+      i += srcLen;
       continue;
     }
 
     if (ch === ":" && s[i + 1] === "|") {
+      // :| possibly with endings like :|1, :|2, :|[1, :|[2
+      const end = readEndingAt(i + 2);
       let tok = ":|";
-      const ending = readEndingAfterBar(i + 2);
-      if (ending.ending === "1" || ending.ending === "2") {
-        tok = ":|" + ending.ending;
-        i = ending.newI;
-      } else if (ending.ending === "[1" || ending.ending === "[2") {
-        tok = ":|" + ending.ending.slice(1);
-        i = ending.newI;
+      let srcLen = 2;
+
+      if (end.suffix) {
+        tok = ":|" + end.suffix.replace("[", "");
+        srcLen = 2 + end.len; // 3 for :|1, 4 for :|[1
       }
 
-      tokens.push({ token: tok, pos: i });
-      i += 2;
+      tokens.push({ token: tok, pos: i, srcLen });
+      i += srcLen;
       continue;
     }
 
     i += 1;
   }
 
+  // No bar tokens: just extract chords
   if (!tokens.length) {
     const c = extractChordText(s);
     if (c) {
@@ -1001,31 +1040,28 @@ function parseMusicLineToBarsAndChords(line, extraSpace = 0) {
     return { boundaries: [], contents: [] };
   }
 
-  const firstTok = tokens[0];
+  // Build measures by slicing between token positions
   let cursor = 0;
+  const firstTok = tokens[0];
 
-  // Leading boundary always
   if (firstTok.pos === 0) {
     boundaries.push(firstTok.token);
-    cursor = firstTok.pos + firstTok.token.length;
+    cursor = firstTok.pos + firstTok.srcLen;
   } else {
     boundaries.push("|");
-    const seg = s.slice(0, firstTok.pos);
-    contents.push(extractChordText(seg));
+    contents.push(extractChordText(s.slice(0, firstTok.pos)));
     boundaries.push(firstTok.token);
-    cursor = firstTok.pos + firstTok.token.length;
+    cursor = firstTok.pos + firstTok.srcLen;
   }
 
   for (let t = 1; t < tokens.length; t++) {
     const cur = tokens[t];
-    const seg = s.slice(cursor, cur.pos);
-    contents.push(extractChordText(seg));
+    contents.push(extractChordText(s.slice(cursor, cur.pos)));
     boundaries.push(cur.token);
-    cursor = cur.pos + cur.token.length;
+    cursor = cur.pos + cur.srcLen;
   }
 
-  const tail = s.slice(cursor);
-  const tailChords = extractChordText(tail);
+  const tailChords = extractChordText(s.slice(cursor));
   if (tailChords) {
     contents.push(tailChords);
     boundaries.push("");
@@ -1642,8 +1678,16 @@ function generateCharts() {
 
   for (const block of tunes) {
     let title = getHeaderValue(block, "T") || "Untitled";
-    const rhythm = getHeaderValue(block, "R");
-    if (appendRhythm && rhythm) title += ` (${rhythm})`;
+    let rhythm = getHeaderValue(block, "R");
+
+    if (appendRhythm && rhythm) {
+      rhythm = rhythm.trim().toLowerCase();
+
+      // Capitalize first letter only
+      rhythm = rhythm.charAt(0).toUpperCase() + rhythm.slice(1);
+
+      title += ` (${rhythm})`;
+    }
 
     const meter = getHeaderValue(block, "M") || "";
     const body = getTuneBody(block);
@@ -1728,8 +1772,6 @@ function wireUp() {
     const onePerPage = $("oneTunePerPage") ? ($("oneTunePerPage").value === "1") : true;
     setOneTunePerPagePrint(onePerPage);
   };
-
-
 
   $("generateBtn").addEventListener("click", () => {
     applyPrintSettings();
@@ -1903,7 +1945,14 @@ function wireUp() {
 
   applyPrintSettings();
   setStatus("Ready.");
-  tryDecodeShareLinkIntoEditor();
+
+  // Try loading share link first
+  const loadedFromLink = tryDecodeShareLinkIntoEditor();
+
+  // If nothing loaded and editor is empty, load default example
+  if (!loadedFromLink && !$("abcIn").value.trim()) {
+    $("abcIn").value = DEFAULT_ABC;
+  }
 
   if (gIsIOS){
     document.getElementById("fileIn").removeAttribute("accept");
