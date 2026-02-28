@@ -989,6 +989,9 @@ function parseMusicLineToBarsAndChords(line, extraSpace = 0) {
   const extra = Math.max(0, Math.min(40, parseInt(extraSpace, 10) || 0));
   const intraChordSep = " ".repeat(1 + extra);
 
+  // Track whether we found any "real" chord on this line
+  let foundAnyChord = false;
+
   function extractChordText(segment) {
     const out = [];
     const re = /"([^"]*)"/g;
@@ -1001,6 +1004,7 @@ function parseMusicLineToBarsAndChords(line, extraSpace = 0) {
       if (!chord) continue;
       if (/^[\^_<>@]/.test(chord)) continue;
 
+      foundAnyChord = true;
       out.push(chord);
     }
     return out.join(intraChordSep);
@@ -1106,6 +1110,11 @@ function parseMusicLineToBarsAndChords(line, extraSpace = 0) {
   if (tailChords) {
     contents.push(tailChords);
     boundaries.push("");
+  }
+
+  // If we never found any real chords on this line, suppress "barlines-only" output.
+  if (!foundAnyChord) {
+    return { boundaries: [], contents: [] };
   }
 
   return { boundaries, contents };
@@ -1696,9 +1705,47 @@ function printViaIframe({
 
   document.body.appendChild(iframe);
 }
-/* ============================================================
-   Generate charts (UPDATED to use the new renderer)
-   ============================================================ */
+
+function hasRealChordQuotes(abcBody) {
+  const lines = String(abcBody || "").split(/\r?\n/);
+  let inBeginTextBlock = false;
+
+  for (const rawLine of lines) {
+    const line = String(rawLine || "");
+
+    if (/^\s*%%begintext\b/i.test(line)) { 
+      inBeginTextBlock = true; 
+      continue; 
+    }
+    if (/^\s*%%endtext\b/i.test(line)) { 
+      inBeginTextBlock = false; 
+      continue; 
+    }
+    if (inBeginTextBlock) continue;
+
+    if (!line.trim()) continue;
+    if (/^\s*%/.test(line)) continue;           // full-line comment
+    if (/^[A-Za-z]:/.test(line.trim())) continue; // header line
+    if (/^\s*w:/.test(line)) continue;          // lyrics
+
+    const hasBar = /[|:]/.test(line);
+    const hasQuote = line.indexOf('"') !== -1;
+
+    if (!hasBar && !hasQuote) continue;
+
+    const re = /"([^"]*)"/g;
+    let m;
+    while ((m = re.exec(line)) !== null) {
+      const chord = (m[1] || "").trim();
+      if (!chord) continue;
+      if (/^[\^_<>@]/.test(chord)) continue; // annotation filter
+      return true;
+    }
+  }
+
+  return false;
+}
+
 function generateCharts() {
   setStatus("Working…");
 
@@ -1733,8 +1780,8 @@ function generateCharts() {
     const meter = getHeaderValue(block, "M") || "";
     const body = getTuneBody(block);
 
-    // Only render tunes that actually contain chords
-    if (body.indexOf('"') === -1) continue;
+    // Only render tunes that actually contain at least one "real" chord
+    if (!hasRealChordQuotes(body)) continue;
 
     const txt = renderAlignedText(meter, body, {
       rightPadSpaces: 2,
@@ -1760,12 +1807,11 @@ function generateCharts() {
   }
 
   if (renderedCount === 0) {
-    setStatus('No chorded tunes found. Make sure chords are in quotes, e.g. "D".', true);
+    setStatus('No tunes with chords found.', true);
   } else {
-    setStatus(`Done. Generated ${renderedCount} chart(s).`);
+    setStatus(`Done. Generated ${renderedCount} chord chart(s).`);
   }
 }
-
 /* ---------------------------------
    File open
 ---------------------------------- */
@@ -1773,11 +1819,19 @@ function handleFileOpen(file) {
   if (!file) return;
 
   const nameLower = (file.name || "").toLowerCase();
-  const ok = nameLower.endsWith(".abc") || nameLower.endsWith(".txt") || (file.type && file.type.startsWith("text/"));
+  const ok =
+    nameLower.endsWith(".abc") ||
+    nameLower.endsWith(".txt") ||
+    (file.type && file.type.startsWith("text/"));
+
   if (!ok) {
     setStatus("Please choose a .abc or .txt file.", true);
     return;
   }
+
+  // Clear previous output immediately when a new file is selected
+  $("out").innerHTML = "";
+  gSavedChordFileName = "";
 
   const reader = new FileReader();
 
@@ -1787,15 +1841,19 @@ function handleFileOpen(file) {
 
     const shownName = file.name || "file";
     const isNew = (shownName && shownName !== gLoadedFileName);
+
     gLoadedFileName = shownName;
-    if (isNew) gSavedChordFileName = "";
 
     const tunes = splitAbcIntoTunes(text);
     const nTunes = tunes.length;
 
-    if (nTunes === 0) setStatus(`Loaded "${shownName}". No tunes found.`, true);
-    else if (nTunes === 1) setStatus(`Loaded "${shownName}". Found 1 tune.`);
-    else setStatus(`Loaded "${shownName}". Found ${nTunes} tunes.`);
+    if (nTunes === 0) {
+      setStatus(`Loaded "${shownName}". No tunes found.`, true);
+    } else if (nTunes === 1) {
+      setStatus(`Loaded "${shownName}". Found 1 tune.`);
+    } else {
+      setStatus(`Loaded "${shownName}". Found ${nTunes} tunes.`);
+    }
   };
 
   reader.onerror = () => setStatus("Unable to read file.", true);
@@ -1805,59 +1863,109 @@ function handleFileOpen(file) {
 /* ---------------------------------
    Wire up UI
 ---------------------------------- */
+
 function wireUp() {
-  const applyPrintSettings = () => {
+
+  function applyPrintSettings() {
     setPageStyle($("paperSize").value, $("orientation").value);
     setPrintFontSize($("printFontSize").value, $("printTitleSize").value);
 
-    const onePerPage = $("oneTunePerPage") ? ($("oneTunePerPage").value === "1") : true;
+    const onePerPage = $("oneTunePerPage")
+      ? ($("oneTunePerPage").value === "1")
+      : true;
+
     setOneTunePerPagePrint(onePerPage);
-  };
-
-  $("generateBtn").addEventListener("click", () => {
-    applyPrintSettings();
-    generateCharts();
-    if ($("out").children.length) $("out").scrollIntoView({ block:"start", behavior:"smooth" });
-  });
-
-  $("saveBtn").addEventListener("click", async () => {
-    applyPrintSettings();
-    try { await saveChordChart(); }
-    catch (e) { setStatus("Save failed: " + (e && e.message ? e.message : String(e)), true); }
-  });
-
-  $("clearBtn").addEventListener("click", () => {
-    $("abcIn").value = "";
-    $("out").innerHTML = "";
-    $("fileIn").value = "";
-    gLoadedFileName = "";
-    gSavedChordFileName = "";
-    setStatus("Ready.");
-  });
-
-  function makeCenteredPromptString(thePrompt) {
-    return '<p style="font-size:12pt;line-height:18pt;font-family:helvetica;text-align:center">' + thePrompt + '</p>';
   }
 
-  $("printBtn").addEventListener("click", () => {
+  // ------------------------------------------------------------
+  // Force-reset UI state (Firefox form restore fix)
+  // but preserve sample/share-link logic
+  // ------------------------------------------------------------
+  function initializePageState() {
 
-    if (gIsIOS){
+    // Clear output + file input
+    $("out").innerHTML = "";
+    $("fileIn").value = "";
+
+    // Reset controls to defaults
+    $("slotWidth").value = "1";
+    if ($("appendRhythm")) $("appendRhythm").value = "1";
+
+    $("paperSize").value = "letter";
+    $("orientation").value = "portrait";
+    $("printTitleSize").value = "24";
+    $("printFontSize").value = "20";
+    if ($("oneTunePerPage")) $("oneTunePerPage").value = "0";
+
+    // Reset internal state
+    gLoadedFileName = "";
+    gSavedChordFileName = "";
+    gRequestedPrintPt = 20;
+
+    // Try loading share link
+    const loadedFromLink = tryDecodeShareLinkIntoEditor();
+
+    // Otherwise load default example
+    if (!loadedFromLink) {
+      $("abcIn").value = DEFAULT_ABC;
+      setStatus("Ready.");
+    }
+
+    applyPrintSettings();
+
+    if (gIsIOS) {
+      document.getElementById("fileIn").removeAttribute("accept");
+    }
+  }
+
+  // Initial reset on load
+  initializePageState();
+
+  // Handle Firefox/Safari BFCache restores
+  window.addEventListener("pageshow", function () {
+    initializePageState();
+  });
+
+  // ------------------------------------------------------------
+  // Button wiring
+  // ------------------------------------------------------------
+
+  $("generateBtn").addEventListener("click", function () {
+    applyPrintSettings();
+    generateCharts();
+    if ($("out").children.length) {
+      $("out").scrollIntoView({ block: "start", behavior: "smooth" });
+    }
+  });
+
+  $("saveBtn").addEventListener("click", async function () {
+    applyPrintSettings();
+    try {
+      await saveChordChart();
+    } catch (e) {
+      setStatus("Save failed: " + (e && e.message ? e.message : String(e)), true);
+    }
+  });
+
+  $("clearBtn").addEventListener("click", function () {
+    initializePageState();
+  });
+
+  $("printBtn").addEventListener("click", function () {
+
+    if (gIsIOS) {
 
       var thePrompt = "Printing is not supported on iOS";
+      thePrompt = '<p style="font-size:12pt;line-height:18pt;font-family:helvetica;text-align:center">' + thePrompt + '</p>';
 
-      // Center the string in the prompt
-      thePrompt = makeCenteredPromptString(thePrompt);
-
-      // Nope, exit
       DayPilot.Modal.alert(thePrompt, {
         theme: "modal_flat",
         top: 100,
         scrollWithPage: false,
-        width:500
+        width: 500
       });
 
       return;
-
     }
 
     applyPrintSettings();
@@ -1866,35 +1974,54 @@ function wireUp() {
     const orientation = $("orientation").value;
     const requestedPt = parseInt($("printFontSize").value, 10) || 20;
     const requestedTitlePt = parseInt($("printTitleSize").value, 10) || 24;
-    const oneTunePerPage = $("oneTunePerPage") ? ($("oneTunePerPage").value === "1") : true;
+    const oneTunePerPage = $("oneTunePerPage")
+      ? ($("oneTunePerPage").value === "1")
+      : true;
 
-    printViaIframe({ paperSize, orientation, requestedPt, requestedTitlePt, oneTunePerPage });
+    printViaIframe({
+      paperSize,
+      orientation,
+      requestedPt,
+      requestedTitlePt,
+      oneTunePerPage
+    });
   });
+
+  // ------------------------------------------------------------
+  // Live control changes
+  // ------------------------------------------------------------
 
   $("paperSize").addEventListener("change", applyPrintSettings);
   $("orientation").addEventListener("change", applyPrintSettings);
   $("printFontSize").addEventListener("change", applyPrintSettings);
   $("printTitleSize").addEventListener("change", applyPrintSettings);
 
-  $("slotWidth").addEventListener("change", () => { if ($("out").children.length) generateCharts(); });
+  $("slotWidth").addEventListener("change", function () {
+    if ($("out").children.length) generateCharts();
+  });
 
-  if ($("oneTunePerPage")) $("oneTunePerPage").addEventListener("change", applyPrintSettings);
-  if ($("appendRhythm")) $("appendRhythm").addEventListener("change", () => { if ($("out").children.length) generateCharts(); });
+  if ($("oneTunePerPage")) {
+    $("oneTunePerPage").addEventListener("change", applyPrintSettings);
+  }
 
-  $("fileIn").addEventListener("change", (e) => {
-    const input = e.target;
+  if ($("appendRhythm")) {
+    $("appendRhythm").addEventListener("change", function () {
+      if ($("out").children.length) generateCharts();
+    });
+  }
 
+  // File input
+  $("fileIn").addEventListener("change", function (e) {
     handleFileOpen(e.target.files && e.target.files[0]);
   });
 
-  $("btnHelp").addEventListener("click", () => {
+  // Help modal (unchanged content)
+  $("btnHelp").addEventListener("click", function () {
+
     if (!window.DayPilot || !DayPilot.Modal || typeof DayPilot.Modal.alert !== "function") {
-      alert("DayPilot.Modal is not loaded. Make sure daypilot-modal.min-3.10.1.js is available.");
+      alert("DayPilot.Modal is not loaded.");
       return;
     }
-
-    // UPDATED to match current functionality.
-    // Tip jar + GitHub sections left as-is below.
 
     const content =
       '  <div style="margin-bottom:14px;">' +
@@ -1910,7 +2037,8 @@ function wireUp() {
       '  <div style="margin-bottom:14px;">' +
       '    <b>2) Generate chord charts</b><br/>' +
       '    Click <b>Generate Charts</b>.<br/>' +
-      '    The chord charts will appear in the <b>Chord Charts</b> output area.' +
+      '    The chord charts will appear in the <b>Chord Charts</b> output area.<br/>' +
+      '    Only tunes that actually contain chords will have chord charts generated.' +
       '  </div>' +
 
       '  <div style="margin-bottom:14px;">' +
@@ -1983,22 +2111,6 @@ function wireUp() {
       scrollWithPage: false
     });
   });
-
-  applyPrintSettings();
-  setStatus("Ready.");
-
-  // Try loading share link first
-  const loadedFromLink = tryDecodeShareLinkIntoEditor();
-
-  // If nothing loaded and editor is empty, load default example
-  if (!loadedFromLink && !$("abcIn").value.trim()) {
-    $("abcIn").value = DEFAULT_ABC;
-  }
-
-  if (gIsIOS){
-    document.getElementById("fileIn").removeAttribute("accept");
-
-  }
 }
 
 function WaitForReady(fn) {
