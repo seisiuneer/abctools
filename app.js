@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3186_022626_1600";
+var gVersionNumber = "3187_022826_0900";
 
 var gMIDIInitStillWaiting = false;
 
@@ -27760,13 +27760,13 @@ function processShareLink() {
       // Show update message?
       if (gLocalStorageAvailable){
 
-        var updatePresented = localStorage.sawUpdate_24feb2026a;
+        var updatePresented = localStorage.sawUpdate_28feb2026;
 
         if (updatePresented != "true") {
 
           showWhatsNewScreen();
 
-          localStorage.sawUpdate_24feb2026a = true;
+          localStorage.sawUpdate_28feb2026 = true;
 
         }
 
@@ -55598,7 +55598,7 @@ function showWhatsNewScreen() {
   modal_msg += 'background: linear-gradient(135deg, #1b5e20 0%, #33691e 50%, #f9a825 100%);';
   modal_msg += 'box-shadow: 0 6px 16px rgba(0,0,0,0.14); color:#fff;">';
   modal_msg += '<div style="font-size:20pt; line-height:24pt; font-weight:bold;">What&apos;s New</div>';
-  modal_msg += '<div style="font-size:11pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 24 February 2026</div>';
+  modal_msg += '<div style="font-size:11pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 28 February 2026</div>';
   modal_msg += '</div>';
 
   // Short intro
@@ -55610,7 +55610,7 @@ function showWhatsNewScreen() {
   modal_msg += '<div style="margin:10px 0 6px 0; padding:12px 12px; border-radius:12px;';
   modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);">';
 
-  modal_msg += '<p style="margin:6px 0; font-size:12pt;">Added <strong>thesession.org Tune Scraper</strong> to the <strong>☰</strong> dropdown menu.<br/><br/>Brings up the <strong>thesession.org Tune Settings Scraper</strong> utility in a new browser tab.</p>';
+  modal_msg += '<p style="margin:6px 0; font-size:12pt;">Added the <strong>ABC Chord Chart Generator</strong> tool as a new option on the <strong>Open ABC in External Tool</strong> dialog.</p>';
   modal_msg += '</div>';
 
   modal_msg += '<div style="margin:10px 0 6px 0; padding:12px 12px; border-radius:12px;';
@@ -62106,13 +62106,13 @@ function DoStartup() {
   // Show update message?
   if (gLocalStorageAvailable && (!isFromShare)){
 
-    var updatePresented = localStorage.sawUpdate_24feb2026a;
+    var updatePresented = localStorage.sawUpdate_28feb2026;
 
     if (updatePresented != "true") {
 
       showWhatsNewScreen();
 
-      localStorage.sawUpdate_24feb2026a = true;
+      localStorage.sawUpdate_28feb2026 = true;
 
     }
 
@@ -63670,6 +63670,35 @@ function OpenInABCJSQuickEditor(abcText){
     }
 }
 
+//
+// Open in the ABC Chord Chart Generator
+//
+function OpenInABCChordChartGenerator(abcText){
+
+    sendGoogleAnalytics("action", "OpenInABCChordChartGenerator");
+
+    var encoder = new TextEncoder();
+    var utf8Bytes = encoder.encode(abcText);
+    var deflated = pako.deflate(utf8Bytes, { level: 6 });
+    var theDef = def_bytesToBase64URL(deflated);
+
+    var theURL = "https://michaeleskin.com/tools/abc_to_chord_chart.html?def="+theDef;
+
+    if (theURL.length < 8100)
+    {
+      var w = window.open(theURL);
+    }
+    else{
+
+      DayPilot.Modal.alert('<p style="text-align:center;font-family:helvetica;font-size:12pt;">Share URL is too long to open in the ABC Chord Chart Generator.</p>', {
+        theme: "modal_flat",
+        top: 230,
+        scrollWithPage: (AllowDialogsToScroll())
+      });
+
+    }
+}
+
 function openInExternalTool(theABC){
 
   var modal_msg =
@@ -63701,6 +63730,16 @@ function openInExternalTool(theABC){
       '</span>' +
 
     '</p>' +
+    '<p style="text-align:center;">' +
+
+      '<span class="external-tool" style="display:inline-block;margin-bottom:12px; text-align:center;">' +
+        '<img id="external_chord_chart" src="img/abc_to_chord_chart.jpg" ' +
+             'title="Open the ABC in the ABC Chord Chart Generator" alt="ABC Chord Chart Generator" style="cursor:pointer;">' +
+        '<br>' +
+        '<span style="font-size:1.2em;">ABC Chord Chart Generator</span>' +
+      '</span>' +
+
+    '</p>' +
     '</div>';
 
   DayPilot.Modal.alert(modal_msg, {
@@ -63719,6 +63758,12 @@ function openInExternalTool(theABC){
   if (elem) elem.onclick = function(){
     OpenInABCJSQuickEditor(theABC);
   };
+
+  elem = document.getElementById("external_chord_chart");
+  if (elem) elem.onclick = function(){
+    OpenInABCChordChartGenerator(theABC);
+  };
+
 }
 
 // Open thesession.org Tune Scraper in a new browser tab

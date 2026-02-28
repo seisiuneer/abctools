@@ -6,23 +6,7 @@
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
-// Updated 26 Feb 2026 1600
-//
-//
-//
-//
-//
-//
-//
-//
+// Updated 28 Feb 2026 0900
 //
 //
 //
@@ -30,7 +14,7 @@
 //
 //
 
-const cacheName = 'abctoolscache-3186';
+const cacheName = 'abctoolscache-3187';
 
 const contentToCache = [
     'abctools.html',
@@ -93,6 +77,7 @@ const contentToCache = [
     'img/settings.png',
     'img/pureocarinas.png',
     'img/abcjs_logo.png',
+    'img/abc_to_chord_chart.jpg',
     'img/external_share.png',
     'img/tool_tuner_1.jpg',
     'img/tool_rtta_1.jpg',
