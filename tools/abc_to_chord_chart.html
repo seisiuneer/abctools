@@ -1,0 +1,1864 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <link rel="profile" href="http://gmpg.org/xfn/11">
+  <title>ABC Chord Chart Generator</title>
+  <link rel='dns-prefetch' href='//fonts.googleapis.com' />
+  <link rel='dns-prefetch' href='//s.w.org' />
+  <link rel='preconnect' href='https://secureservercdn.net' crossorigin />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="ABC Chord Chart Generator" />
+  <meta property="og:description" content="ABC Chord Chart Generator" />
+  <meta property="og:url" content="https://michaeleskin.com/tools/abc_to_chord_chart.html" />
+  <meta property="og:site_name" content="ABC Chord Chart Generator" />
+  <meta property="og:image" content="https://michaeleskin.com/abctools/img/abc-icon.png"/>
+
+  <meta name="msapplication-TileColor" content="#ffffff">
+  <meta name="msapplication-TileImage" content="https://michaeleskin.com/abctools/img/abc-ms-icon-144x144.png">
+  <link rel="apple-touch-icon" sizes="57x57" href="https://michaeleskin.com/abctools/img/abc-apple-icon-57x57.png">
+  <link rel="apple-touch-icon" sizes="60x60" href="https://michaeleskin.com/abctools/img/abc-apple-icon-60x60.png">
+  <link rel="apple-touch-icon" sizes="72x72" href="https://michaeleskin.com/abctools/img/abc-apple-icon-72x72.png">
+  <link rel="apple-touch-icon" sizes="76x76" href="https://michaeleskin.com/abctools/img/abc-apple-icon-76x76.png">
+  <link rel="apple-touch-icon" sizes="114x114" href="https://michaeleskin.com/abctools/img/abc-apple-icon-114x114.png">
+  <link rel="apple-touch-icon" sizes="120x120" href="https://michaeleskin.com/abctools/img/abc-apple-icon-120x120.png">
+  <link rel="apple-touch-icon" sizes="144x144" href="https://michaeleskin.com/abctools/img/abc-apple-icon-144x144.png">
+  <link rel="apple-touch-icon" sizes="152x152" href="https://michaeleskin.com/abctools/img/abc-apple-icon-152x152.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="https://michaeleskin.com/abctools/img/abc-apple-icon-180x180.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="https://michaeleskin.com/abctools/img/abc-android-icon-192x192.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="https://michaeleskin.com/abctools/img/abc-favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="96x96" href="https://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
+  <link rel="manifest" href="https://michaeleskin.com/abctools/img/abc-manifest.json">
+
+  <style>
+    :root{
+      color-scheme: light;
+
+      --fs-base: clamp(15px, 1.05vw + 12px, 17px);
+      --fs-small: clamp(15px, 1.05vw + 12px, 17px);
+      --fs-h2: clamp(20px, 1.2vw + 16px, 24px);
+      --fs-h3: clamp(17px, 1.05vw + 14px, 20px);
+
+      --page-pad: 32px;
+
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+
+      --bd: 1px solid rgba(127,127,127,.35);
+      --bg-soft: rgba(127,127,127,.06);
+      --btn-bg: rgba(127,127,127,.12);
+
+      --helpbar-pad-y: 12px;
+      --helpbar-est-height: 64px;
+    }
+
+    html, body{ height:100%; margin:0; }
+    *, *::before, *::after{ box-sizing:border-box; }
+
+    body{
+      font-family: system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+      padding:
+        calc(var(--page-pad) + env(safe-area-inset-top))
+        calc(var(--page-pad) + env(safe-area-inset-right))
+        calc(var(--page-pad) + env(safe-area-inset-bottom))
+        calc(var(--page-pad) + env(safe-area-inset-left));
+      font-size: var(--fs-base);
+      line-height: 1.35;
+      -webkit-text-size-adjust: 100%;
+      overflow:hidden;
+      color:#000;
+    }
+
+    .app, .main, .left, .right, .card, .taWrap, .chartsWrap{ min-width:0; }
+
+    .app{
+      height: calc(100vh - (2 * var(--page-pad)));
+      display:flex;
+      flex-direction:column;
+      gap:14px;
+      overflow:hidden;
+      min-height:0;
+
+      /* Reserve space for the fixed Instructions bar */
+      padding-bottom: calc(var(--helpbar-est-height) + env(safe-area-inset-bottom));
+    }
+
+    @supports (height: 100dvh){
+      .app{
+        height: calc(
+          100dvh
+          - (2 * var(--page-pad))
+          - env(safe-area-inset-top)
+          - env(safe-area-inset-bottom)
+        );
+      }
+    }
+
+    h2{ margin:0 0 8px 0; font-size: var(--fs-h2); }
+    h3{ margin:0 0 0 0; font-size: var(--fs-h3); }
+    .card_label{ margin:0 0 12px 0; font-size: var(--fs-h3); }
+
+    p{ margin:0; }
+
+    .muted{ opacity:0.75; line-height:2.0; }
+    .small{ font-size: var(--fs-small); }
+
+    code{
+      background: rgba(127,127,127,.15);
+      padding:2px 5px;
+      border-radius:4px;
+      font-size:0.95em;
+    }
+
+    .main{
+      flex:1;
+      display:flex;
+      gap:14px;
+      overflow:hidden;
+      min-height:0;
+      min-width:0;
+    }
+
+    .left, .right{
+      flex:1;
+      display:flex;
+      flex-direction:column;
+      gap:14px;
+      min-height:0;
+      min-width:0;
+    }
+
+    .left  { flex: 2 1 0; }
+    .right { flex: 3 1 0; }
+
+    /* ============================================================
+       CRITICAL FIX FOR "SHORT BUT WIDE" SCREENS:
+       - Let LEFT column scroll instead of flex-shrinking cards to 0px
+       - Prevent non-input cards from shrinking/collapsing
+       ============================================================ */
+    .left{
+      overflow:auto;
+      -webkit-overflow-scrolling: touch;
+
+      /* extra cushion so bottom cards aren't trapped behind fixed help bar */
+      padding-bottom: calc(var(--helpbar-est-height) + 16px);
+    }
+
+    /* Default flex items can shrink (collapse) inside a column.
+       Stop that for all left-column cards... */
+    .left > .card{
+      flex: 0 0 auto;
+    }
+
+    /* ...but allow the ABC input card to be the one flexible/tall area */
+    #cardInput{
+      flex: 1 1 auto !important;
+      min-height: 260px;       /* keeps it from disappearing */
+      overflow:hidden;         /* keep rounded corners clean */
+      display:flex;
+      flex-direction:column;
+      min-height: 260px !important;
+    }
+
+    /* Ensure the textarea area actually gets space even when tight */
+    #cardInput .taWrap{
+      flex: 1 1 auto;
+      min-height: 160px;
+    }
+
+    /* Right side: keep your existing behavior (scroll inside chartsWrap),
+       but prevent accidental collapsing if more cards are ever added later. */
+    .right{ overflow:hidden; }
+    .right > .card{ min-height:0; }
+
+    .chartsWrap{ overflow-x: auto; }
+    .chart pre{ overflow-x: auto; padding-bottom: 6px; }
+    .chart{ overflow: hidden; }
+
+    .card{
+      border: var(--bd);
+      border-radius:12px;
+      padding:14px;
+      overflow:hidden;
+      min-width:0;
+      background: transparent;
+    }
+
+    .row{
+      display:flex;
+      gap:12px;
+      flex-wrap:wrap;
+      align-items:center;
+      min-width:0;
+    }
+
+    input, textarea, button, select{
+      font:inherit;
+      color:inherit;
+      max-width:100%;
+    }
+
+    input[type="text"], input[type="number"], select{
+      -webkit-appearance:none;
+      appearance:none;
+      border: var(--bd);
+      background: #fff;
+      color:#000;
+      border-radius:10px;
+      padding:10px 12px;
+      line-height:1.2;
+      min-width:0;
+    }
+
+    select{
+      padding:10px 52px 10px 12px;
+      cursor:pointer;
+      background-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2024%2024%27%3E%3Cpolygon%20points%3D%276%2C9%2018%2C9%2012%2C17%27%20fill%3D%27%23000%27%2F%3E%3C%2Fsvg%3E");
+      background-repeat:no-repeat;
+      background-position:right 16px center;
+      background-size:22px 22px;
+    }
+
+    button{
+      -webkit-appearance:none;
+      appearance:none;
+      border: var(--bd);
+      background: var(--btn-bg);
+      color:inherit;
+      border-radius:12px;
+      padding:10px 14px;
+      line-height:1.15;
+      font-weight:600;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      cursor:pointer;
+      user-select:none;
+      -webkit-tap-highlight-color:transparent;
+      max-width:100%;
+      min-width:0;
+    }
+
+    button:active{ transform: translateY(0.5px); }
+    button:disabled{ opacity:0.4; cursor:default; transform:none; }
+
+    .row button{
+      white-space:normal;
+      text-align:center;
+      flex: 1 1 180px;
+    }
+
+    .primary{
+      background:#111;
+      color:#fff;
+      border-color:#111;
+    }
+
+    .taWrap{
+      flex:1;
+      min-height:0;
+      border-radius:10px;
+      overflow:hidden;
+      border: var(--bd);
+      background: Canvas;
+      min-width:0;
+      display:flex;
+      padding:1px;
+    }
+
+    textarea{
+      flex:1 1 auto;
+      min-height:0;
+      width:auto;
+      height:auto;
+      padding:12px;
+      border:0;
+      border-radius:0;
+      background:transparent;
+      resize:none;
+      overflow:auto;
+      font-family: var(--mono);
+      font-size:0.98em;
+      line-height:1.35;
+      overflow-wrap:anywhere;
+      -webkit-overflow-scrolling: touch;
+      display:block;
+    }
+
+    .chartsWrap{
+      flex:1;
+      min-height:0;
+      border-radius:10px;
+      overflow:auto;
+      border: var(--bd);
+      background: Canvas;
+      padding: 12px;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .chart{
+      border: var(--bd);
+      border-radius: 12px;
+      padding: 14px;
+      background: #fff;
+      margin: 0 0 12px 0;
+    }
+
+    .chart:last-child{ margin-bottom:0; }
+
+    .chart h3{
+      margin:0 0 10px 0;
+      font-size: clamp(18px, 1vw + 16px, 22px);
+    }
+
+    .chart pre{
+      margin:0;
+      font-family: var(--mono);
+      white-space: pre;
+      tab-size: 2;
+      font-size: 18px;
+      line-height: 1.35;
+    }
+
+    .status{
+      white-space:pre-wrap;
+      font-family: var(--mono);
+      overflow:auto;
+      max-height:240px;
+      font-size:0.95em;
+      line-height:1.45;
+      overflow-wrap:anywhere;
+      word-break:break-word;
+      -webkit-overflow-scrolling: touch;
+      opacity:0.85;
+    }
+
+    .errorText{ color:#b00020; opacity:1; }
+
+    #fileIn{
+      flex: 1 1 600px;
+      min-width: 350px;
+    }
+
+    #cardHelp{
+      position:fixed;
+      left:0;
+      right:0;
+      bottom:0;
+      z-index:1000;
+      margin:0;
+      border-radius:0;
+      border-left:none;
+      border-right:none;
+      border-bottom:none;
+      background: Canvas;
+      padding:
+        var(--helpbar-pad-y)
+        calc(var(--page-pad) + env(safe-area-inset-right))
+        calc(var(--helpbar-pad-y) + env(safe-area-inset-bottom))
+        calc(var(--page-pad) + env(safe-area-inset-left));
+    }
+
+    .modal_flat_background{ background-color:#000; opacity:0.4; }
+    .modal_flat_main{ border:1px solid #333; box-shadow:0 0 15px -2px rgba(0,0,0,0.75); }
+    .modal_flat_main, .modal_flat_main input, .modal_flat_main button{ font-size:16px; }
+    .modal_flat_main input, .modal_flat_main button{ padding:6px; box-sizing:border-box; }
+    .modal_flat_inner{ padding:16px; background:#fff; color:#000; }
+    .modal_flat_content{ font-family: Helvetica, Arial, sans-serif; margin:20px 0; }
+    .modal_flat_input{ margin:20px 0; }
+    .modal_flat_buttons{ text-align:center; margin-top:40px; }
+    .modal_flat_main button{
+      background-color:#ccc; color:#000; padding:10px 20px; border:0;
+      cursor:pointer; outline:none; width:100px; border-radius:10px;
+    }
+    .modal_flat_cancel{ margin-left:6px; }
+
+    .exampleLink{
+      color: inherit;
+      text-decoration: underline;
+      cursor: pointer;
+      word-break: break-all;
+    }
+
+    #btnHelp{ width:100%; }
+
+    input[type="file"]::file-selector-button {
+      padding: 10px 16px;
+      border-radius: 12px;
+      border: var(--bd);
+      background: var(--btn-bg);
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    /* ============================================================
+       NARROW SCREENS (stacked layout)
+       ============================================================ */
+    @media (max-width: 980px){
+      body{
+        overflow:auto;
+        -webkit-overflow-scrolling: touch;
+        padding-bottom: calc(var(--page-pad) + env(safe-area-inset-bottom) + 12px);
+      }
+
+      .app{
+        height:auto;
+        overflow:visible;
+        min-height:0;
+        padding-bottom: calc(var(--helpbar-est-height) + env(safe-area-inset-bottom));
+      }
+
+      .main{
+        flex-direction:column;
+        overflow:visible;
+        min-height:auto;
+      }
+
+      /* In stacked mode, let the page scroll normally */
+      .left, .right{
+        overflow:visible;
+        min-height:auto;
+        padding-bottom: 0;
+      }
+
+      /* Keep your existing tall areas on mobile */
+      .taWrap{ height: 48vh; min-height: 320px; }
+      .chartsWrap{ height: 55vh; min-height: 320px; }
+
+      #instructions_div{
+        margin-bottom: calc(env(safe-area-inset-bottom) + var(--page-pad));
+      }
+
+      /* Also prevent weird shrink in stacked mode */
+      .left > .card{ flex: 0 0 auto; }
+      #cardInput{ flex: 0 0 auto !important; min-height: auto !important; }
+    }
+
+    @media (max-width: 720px){
+      .row{ gap:10px; }
+      .row button{ flex-basis:100%; }
+      .taWrap{ height: 52vh; min-height: 300px; }
+      .chartsWrap{ height: 60vh; min-height: 300px; }
+
+      #instructions_div{
+        margin-bottom: calc(env(safe-area-inset-bottom) + var(--page-pad));
+      }
+
+      .modal_flat_main{
+        width: calc(100vw - 24px) !important;
+        max-width: calc(100vw - 24px) !important;
+        max-height: calc(100dvh - 24px) !important;
+        overflow: hidden !important;
+      }
+
+      .modal_flat_inner{
+        max-height: calc(100dvh - 24px) !important;
+        overflow: auto !important;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      .modal_flat_buttons{
+        margin-top: 16px !important;
+        position: sticky;
+        bottom: 0;
+        background: #fff;
+        padding: 12px 0 6px 0;
+      }
+    }
+
+    /* Keep the ABC Input title + file chooser visible inside its card (works nicely once .left scrolls) */
+    #cardInput > .row{
+      position: sticky;
+      top: 0;
+      z-index: 5;
+      background: Canvas;
+      padding-top: 4px;
+      padding-bottom: 10px;
+      margin-left: 0 !important; /* override your inline margin-left:16px */
+      padding-left: 16px;
+      padding-right: 16px;
+    }
+
+    /* Optional: keep the sticky header from looking “cut off” */
+    #cardInput .taWrap{
+      margin-top: 0 !important;  /* override your inline margin-top:10px */
+    }
+
+    /* ============================================================
+       PRINT
+       ============================================================ */
+    @media print{
+      body{
+        margin:0;
+        padding:0;
+        overflow:visible !important;
+      }
+
+      .app{
+        height:auto;
+        overflow:visible !important;
+        padding-bottom:0 !important;
+      }
+
+      .main{
+        display:block !important;
+      }
+
+      .noprint,
+      #cardControls,
+      #cardInput,
+      #cardStatus,
+      #cardHelp{
+        display:none !important;
+      }
+
+      .left{
+        display:none !important;
+      }
+
+      .right{
+        width:100% !important;
+        display:block !important;
+      }
+
+      .right > .card{
+        border:none !important;
+        padding:0 !important;
+        background:transparent !important;
+        overflow:visible !important;
+      }
+
+      .right > .card > .row{
+        display:none !important;
+      }
+
+      /* Container cleanup */
+      #out.chartsWrap,
+      .chartsWrap{
+        border:none !important;
+        padding:0 !important;
+        margin:0 !important;
+        overflow:visible !important;
+        background:transparent !important;
+      }
+
+      /* IMPORTANT FIX:
+         Do NOT zero out .chart margin here,
+         or you kill between-tune spacing. */
+      .chart{
+        border:none !important;
+        padding:0 !important;
+        background:transparent !important;
+        overflow:visible !important;
+
+        break-inside: avoid;
+        page-break-inside: avoid;
+      }
+
+      /* Keep pre tight */
+      .chart pre{
+        border:none !important;
+        padding:0 !important;
+        margin:0 !important;
+        overflow:visible !important;
+        background:transparent !important;
+      }
+
+      *::-webkit-scrollbar{
+        width:0 !important;
+        height:0 !important;
+      }
+
+      /* CONTINUOUS MODE (spacing between tunes) */
+      body:not(.oneTunePerPagePrint) .chart{
+        margin:0 0 30pt 0 !important;
+      }
+
+      body:not(.oneTunePerPagePrint) .chart:last-child{
+        margin-bottom:0 !important;
+      }
+
+      /* ONE TUNE PER PAGE MODE */
+      body.oneTunePerPagePrint .chart{
+        margin:0 !important;
+        break-after:page;
+        page-break-after:always;
+      }
+
+      body.oneTunePerPagePrint .chart:last-child{
+        break-after:auto;
+        page-break-after:auto;
+      }
+
+      .chart h3{
+        font-size:24pt;
+        margin:0 0 12pt;
+      }
+    }
+
+    @media (min-width: 721px){
+      .modal_flat_main{
+        width: min(740px, calc(100vw - 80px)) !important;
+        max-width: min(740px, calc(100vw - 80px)) !important;
+      }
+    }
+  </style>
+
+  <style id="pageStyle">@page { size: letter portrait; margin: 0.5in; }</style>
+  
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-VM0N9HL3MK"></script>
+  <script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-VM0N9HL3MK');
+  </script>
+
+</head>
+
+<body>
+<div class="app">
+
+  <div class="noprint">
+    <h2>ABC Chord Chart Generator</h2>
+    <p class="muted small" style="margin-top:6px">
+      This tool can generate, save, and print chord charts for one or more ABC tunes.<br/>
+      Enter some ABC or open an ABC file, then click <strong>Generate Charts</strong>.
+    </p>
+  </div>
+
+  <div class="main">
+
+    <div class="left noprint">
+
+      <div id="cardInput" class="card" style="flex:1; display:flex; flex-direction:column; min-height:0;">
+        <div class="row" style="gap:50px; align-items:center; justify-content:flex-start; flex-wrap:nowrap; margin-left:16px;">
+          <h3>ABC Input</h3>
+
+          <div class="row" style="gap:10px; align-items:center; justify-content:flex-start; flex-wrap:nowrap;">
+            <span class="muted small" style="white-space:nowrap;">Open an ABC (.abc) or Text (.txt) file:</span>
+            <input id="fileIn" type="file" accept=".abc,.txt,text/plain" />
+          </div>
+        </div>
+
+        <div class="taWrap" style="margin-top:10px;">
+          <textarea id="abcIn" spellcheck="false" placeholder="Type or paste ABC tunes here..."></textarea>
+        </div>
+      </div>
+
+      <div id="cardControls" class="card">
+        <div class="row">
+          <button id="generateBtn" class="primary" title="Generate chord charts from the ABC in the editor">Generate Charts</button>
+          <button id="saveBtn" title="Save the generated chord chart text to a file">Save Charts</button>
+          <button id="printBtn" title="Print the generated charts">Print</button>
+          <button id="clearBtn" title="Clear input and output">Clear</button>
+        </div>
+      </div>
+
+      <div id="cardStatus" class="card">
+        <h3 class="card_label">Status</h3>
+        <div id="status" class="status muted" style="margin-top:8px">Ready.</div>
+      </div>
+
+      <!-- Layout (UPDATED: no Bars/line; charts always match original ABC barlines/line breaks) -->
+      <div class="card">
+        
+        <h3 class="card_label">Chord Chart Settings</h3>
+
+        <div class="row" style="margin-top:10px;">
+          <label for="slotWidth"><strong>Extra spacing (chars)</strong></label>
+          <input id="slotWidth" type="number" min="0" max="8" value="1"
+                 title="Extra spaces after barlines and chords" style="width:100px;" />
+        </div>
+
+        <div class="row" style="margin-top:10px;">
+          <label for="appendRhythm"><strong>Append tune style (R:) to titles</strong></label>
+          <select id="appendRhythm" title="Append the R: tag in parentheses after the tune title">
+            <option value="1" selected>Yes</option>
+            <option value="0">No</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3 class="card_label">Print Settings</h3>
+
+        <div class="row">
+          <label for="paperSize"><strong>Paper size</strong></label>
+          <select id="paperSize" title="Paper size">
+            <option value="letter">Letter</option>
+            <option value="a4">A4</option>
+            <option value="legal">Legal</option>
+            <option value="tabloid">Tabloid</option>
+          </select>
+
+          <label for="orientation" style="margin-left:6px;"><strong>Orientation</strong></label>
+          <select id="orientation" title="Orientation">
+            <option value="portrait">Portrait</option>
+            <option value="landscape">Landscape</option>
+          </select>
+        </div>
+
+        <div class="row" style="margin-top:10px;">
+          <label for="printTitleSize"><strong>Tune title font size</strong></label>
+          <input id="printTitleSize"
+                 type="number"
+                 min="12"
+                 max="72"
+                 value="24"
+                 title="Printed tune title font size"
+                 style="width:100px;" />
+
+          <label for="printFontSize"><strong>Tune chords font size</strong></label>
+          <input id="printFontSize" type="number" min="12" max="72" value="20" title="Printed tune chords font size" style="width:100px;" />
+
+        </div>
+
+        <div class="row" style="margin-top:10px;">
+          <label for="oneTunePerPage"><strong>Print one tune/page</strong></label>
+          <select id="oneTunePerPage" title="Force each tune to start on a new printed page">
+            <option value="0" selected>No</option>
+            <option value="1" >Yes</option>
+          </select>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="right">
+      <div class="card" style="flex:1; display:flex; flex-direction:column; min-height:0;">
+        <div class="row noprint" style="justify-content:space-between;">
+          <h3>Chord Charts</h3>
+        </div>
+        <div id="out" class="chartsWrap" style="margin-top:10px;"></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div id="cardHelp" class="card noprint">
+  <button id="btnHelp" title="Show instructions">Instructions</button>
+</div>
+
+<script>
+/* ============================================================
+   Utilities
+   ============================================================ */
+const $ = (id) => document.getElementById(id);
+
+function setStatus(msg, isError=false) {
+  const el = $("status");
+  if (!el) return;
+  el.textContent = String(msg || "");
+  el.classList.toggle("errorText", !!isError);
+  el.scrollTop = el.scrollHeight;
+}
+
+/* ============================================================
+   Save chord chart state
+   ============================================================ */
+let gLoadedFileName = "";
+let gSavedChordFileName = "";
+
+/* ============================================================
+   Print auto-fit state
+   ============================================================ */
+let gRequestedPrintPt = 20;
+
+/* ---------------------------------
+   Filename helpers
+---------------------------------- */
+function stripExt(name) {
+  const s = String(name || "").trim();
+  const idx = s.lastIndexOf(".");
+  return (idx > 0) ? s.slice(0, idx) : s;
+}
+function ensureTxtExt(name) {
+  const s = String(name || "").trim();
+  if (!s) return s;
+  return /\.[A-Za-z0-9]{1,8}$/.test(s) ? s : (s + ".txt");
+}
+function sanitizeForDownloadName(s) {
+  return String(s || "")
+    .replace(/[\u0000-\u001F\u007F]/g, "")
+    .replace(/[\\\/:*?"<>|]/g, "_")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+function validateFileName(name) {
+  const s = sanitizeForDownloadName(name);
+  if (!s) return { ok:false, msg:"Please enter a file name." };
+  if (s === "." || s === "..") return { ok:false, msg:"Please enter a valid file name." };
+  if (s.length > 120) return { ok:false, msg:"File name is too long. Please use 120 characters or fewer." };
+  return { ok:true, value:s };
+}
+function computeDefaultChordFileName() {
+  if (gSavedChordFileName) return gSavedChordFileName;
+  if (gLoadedFileName) {
+    const base = stripExt(gLoadedFileName);
+    return `${base}_chords.txt`;
+  }
+  return "chords.txt";
+}
+function buildRawChordTextForSave() {
+  const out = $("out");
+  if (!out) return "";
+  const sections = Array.from(out.querySelectorAll("section.chart"));
+  if (!sections.length) return "";
+
+  const parts = [];
+  for (const sec of sections) {
+    const h3 = sec.querySelector("h3");
+    const pre = sec.querySelector("pre");
+    const title = h3 ? h3.textContent : "";
+    const text  = pre ? pre.textContent : "";
+    if (title) parts.push(title);
+    if (text)  parts.push(text);
+    parts.push("");
+  }
+  return parts.join("\n").replace(/\s+$/g, "") + "\n";
+}
+function downloadTextFile(filename, text) {
+  const blob = new Blob([text], { type: "text/plain;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+/* ---------------------------------
+   Split ABC into tunes (by X:)
+---------------------------------- */
+function splitAbcIntoTunes(abcText) {
+  const s = (abcText || "").replace(/\r\n?/g, "\n");
+  const starts = [];
+  const re = /^X:.*$/gm;
+  let m;
+  while ((m = re.exec(s)) !== null) starts.push(m.index);
+  if (starts.length === 0) return [];
+  const tunes = [];
+  for (let i = 0; i < starts.length; i++) {
+    const a = starts[i];
+    const b = (i + 1 < starts.length) ? starts[i + 1] : s.length;
+    const block = s.slice(a, b).trim();
+    if (block) tunes.push(block);
+  }
+  return tunes;
+}
+function getHeaderValue(block, tag) {
+  const re = new RegExp("^" + tag.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + ":(.*)$", "m");
+  const m = block.match(re);
+  return m ? m[1].trim() : "";
+}
+function getTuneBody(block) {
+  const lines = block.replace(/\r\n?/g, "\n").split("\n");
+  let kIndex = -1;
+
+  for (let i = 0; i < lines.length; i++) {
+    if (/^K:/.test(lines[i])) { kIndex = i; break; }
+  }
+
+  if (kIndex === -1) {
+    return lines
+      .filter(l => l.trim() !== "")
+      .filter(l => !/^[A-Za-z+]:/.test(l))
+      .filter(l => !/^\s*w:/.test(l))
+      .join("\n");
+  }
+
+  // IMPORTANT: Do NOT strip % comments here.
+  // renderAlignedText() will handle skipping % lines and removing inline % comments
+  // without creating blank output rows.
+  return lines.slice(kIndex + 1).join("\n");
+}
+
+function parseMusicLineToBarsAndChords(line, extraSpace = 0) {
+  const s = String(line || "");
+
+  const boundaries = [];
+  const contents = [];
+
+  const extra = Math.max(0, Math.min(40, parseInt(extraSpace, 10) || 0));
+  const intraChordSep = " ".repeat(1 + extra); // <-- adds space BETWEEN chords in same measure
+
+  function extractChordText(segment) {
+    const out = [];
+    const re = /"([^"]*)"/g;
+    let m;
+    while ((m = re.exec(segment)) !== null) {
+      const chord = (m[1] || "").trim();
+      if (chord) out.push(chord);
+    }
+    return out.join(intraChordSep);
+  }
+
+  function readEndingAfterBar(i) {
+    const a = s[i] || "";
+    const b = s[i + 1] || "";
+    if (a === "1" || a === "2") return { ending: a, newI: i + 1 };
+    if (a === "[" && (b === "1" || b === "2")) return { ending: "[" + b, newI: i + 2 };
+    return { ending: "", newI: i };
+  }
+
+  const tokens = [];
+  let i = 0;
+
+  while (i < s.length) {
+    const ch = s[i];
+
+    if (ch === "[" && (s[i + 1] === "1" || s[i + 1] === "2")) {
+      tokens.push({ token: "[" + s[i + 1], pos: i });
+      i += 2;
+      continue;
+    }
+
+    if (ch === "|") {
+      if (s[i + 1] === "]") { tokens.push({ token: "|]", pos: i }); i += 2; continue; }
+      if (s[i + 1] === ":") { tokens.push({ token: "|:", pos: i }); i += 2; continue; }
+      if (s[i + 1] === "|") { tokens.push({ token: "||", pos: i }); i += 2; continue; }
+
+      // plain |
+      let tok = "|";
+      const ending = readEndingAfterBar(i + 1);
+      if (ending.ending === "1" || ending.ending === "2") {
+        tok = "|" + ending.ending;
+        i = ending.newI;
+      } else if (ending.ending === "[1" || ending.ending === "[2") {
+        tok = "|" + ending.ending.slice(1);
+        i = ending.newI;
+      }
+
+      tokens.push({ token: tok, pos: i });
+      i += 1;
+      continue;
+    }
+
+    if (ch === ":" && s[i + 1] === "|") {
+      let tok = ":|";
+      const ending = readEndingAfterBar(i + 2);
+      if (ending.ending === "1" || ending.ending === "2") {
+        tok = ":|" + ending.ending;
+        i = ending.newI;
+      } else if (ending.ending === "[1" || ending.ending === "[2") {
+        tok = ":|" + ending.ending.slice(1);
+        i = ending.newI;
+      }
+
+      tokens.push({ token: tok, pos: i });
+      i += 2;
+      continue;
+    }
+
+    i += 1;
+  }
+
+  if (!tokens.length) {
+    const c = extractChordText(s);
+    if (c) {
+      boundaries.push("|");
+      contents.push(c);
+      boundaries.push("");
+      return { boundaries, contents };
+    }
+    return { boundaries: [], contents: [] };
+  }
+
+  const firstTok = tokens[0];
+  let cursor = 0;
+
+  // Leading boundary always
+  if (firstTok.pos === 0) {
+    boundaries.push(firstTok.token);
+    cursor = firstTok.pos + firstTok.token.length;
+  } else {
+    boundaries.push("|");
+    const seg = s.slice(0, firstTok.pos);
+    contents.push(extractChordText(seg));
+    boundaries.push(firstTok.token);
+    cursor = firstTok.pos + firstTok.token.length;
+  }
+
+  for (let t = 1; t < tokens.length; t++) {
+    const cur = tokens[t];
+    const seg = s.slice(cursor, cur.pos);
+    contents.push(extractChordText(seg));
+    boundaries.push(cur.token);
+    cursor = cur.pos + cur.token.length;
+  }
+
+  const tail = s.slice(cursor);
+  const tailChords = extractChordText(tail);
+  if (tailChords) {
+    contents.push(tailChords);
+    boundaries.push("");
+  }
+
+  return { boundaries, contents };
+}
+
+function renderAlignedText(meter, abcBody, { rightPadSpaces = 2, extraSpace = 0 } = {}) {
+  const srcLines = String(abcBody || "").split(/\r?\n/);
+  const parsedLines = [];
+
+  let inBeginTextBlock = false;
+
+  for (const srcLine of srcLines) {
+    const rawLine = String(srcLine || "");
+
+    if (/^\s*%%begintext\b/i.test(rawLine)) { inBeginTextBlock = true; continue; }
+    if (/^\s*%%endtext\b/i.test(rawLine))   { inBeginTextBlock = false; continue; }
+    if (inBeginTextBlock) continue;
+
+    if (!rawLine.trim()) {
+      parsedLines.push({ isBlank: true, boundaries: [], contents: [] });
+      continue;
+    }
+
+    if (/^\s*%/.test(rawLine)) continue;
+
+    const line = rawLine.replace(/%.*$/, "");
+    const trimmed = line.trim();
+    if (!trimmed) continue;
+
+    if (/^[A-Za-z]:/.test(trimmed)) continue;
+    if (/^\s*w:/.test(line)) continue;
+
+    const hasBar = /[|:]/.test(line);
+    const hasQuote = line.indexOf('"') !== -1;
+    if (!hasBar && !hasQuote) continue;
+
+    // IMPORTANT: pass extraSpace down so chords inside a measure get spaced out too
+    const { boundaries, contents } = parseMusicLineToBarsAndChords(line, extraSpace);
+    if (!boundaries.length && !contents.length) continue;
+
+    parsedLines.push({ isBlank: false, boundaries, contents });
+  }
+
+  if (!parsedLines.length) return "";
+
+  let maxMeasures = 0;
+  let maxBoundaries = 0;
+
+  for (const pl of parsedLines) {
+    if (pl.isBlank) continue;
+    maxMeasures = Math.max(maxMeasures, pl.contents.length);
+    maxBoundaries = Math.max(maxBoundaries, pl.boundaries.length);
+  }
+
+  const boundaryWidth = new Array(Math.max(1, maxBoundaries)).fill(0);
+  const contentWidth  = new Array(Math.max(1, maxMeasures)).fill(0);
+
+  const padEnd = (s, w) => String(s ?? "").padEnd(w, " ");
+  const normTok = (t) => String(t ?? "");
+
+  const extra = Math.max(0, Math.min(40, parseInt(extraSpace, 10) || 0));
+  const endPad = " ".repeat(Math.max(0, parseInt(rightPadSpaces, 10) || 0));
+
+  for (const pl of parsedLines) {
+    if (pl.isBlank) continue;
+
+    for (let k = 0; k < pl.boundaries.length; k++) {
+      const tok = normTok(pl.boundaries[k]);
+      boundaryWidth[k] = Math.max(boundaryWidth[k], tok.length);
+    }
+    for (let j = 0; j < pl.contents.length; j++) {
+      const c = String(pl.contents[j] ?? "");
+      contentWidth[j] = Math.max(contentWidth[j], c.length);
+    }
+  }
+
+  const lastBoundaryHasAnyToken = (() => {
+    const last = maxMeasures;
+    for (const pl of parsedLines) {
+      if (pl.isBlank) continue;
+      if ((pl.boundaries[last] || "").trim().length) return true;
+    }
+    return false;
+  })();
+
+  for (let k = 0; k < boundaryWidth.length; k++) {
+    const isLast = (k === maxMeasures);
+    if (!isLast) boundaryWidth[k] += extra;
+    else if (lastBoundaryHasAnyToken) boundaryWidth[k] += extra;
+  }
+  for (let j = 0; j < contentWidth.length; j++) {
+    contentWidth[j] += extra;
+  }
+
+  const outLines = [];
+
+  for (const pl of parsedLines) {
+    if (pl.isBlank) { outLines.push(""); continue; }
+
+    const b = pl.boundaries.slice();
+    const c = pl.contents.slice();
+
+    while (b.length < (c.length + 1)) b.push("");
+    while (c.length < maxMeasures) c.push("");
+    while (b.length < (maxMeasures + 1)) b.push("");
+
+    let lineOut = "";
+    lineOut += padEnd(normTok(b[0]), boundaryWidth[0] || 0);
+
+    for (let j = 0; j < maxMeasures; j++) {
+      const cw = contentWidth[j] || 0;
+      lineOut += " " + padEnd(c[j], cw) + " ";
+      const bw = boundaryWidth[j + 1] || 0;
+      lineOut += padEnd(normTok(b[j + 1]), bw);
+    }
+
+    outLines.push(lineOut.replace(/\s+$/g, "") + endPad);
+  }
+
+  return outLines.join("\n");
+}
+/* ---------------------------------
+   Print settings (page size/orientation + 1/page toggle)
+---------------------------------- */
+function setPageStyle(paperSize, orientation) {
+  $("pageStyle").textContent =
+    `@page { size: ${paperSize} ${orientation}; margin: 0.5in; }`;
+}
+
+function setPrintFontSize(bodyPt, titlePt) {
+  gRequestedPrintPt = parseInt(bodyPt, 10) || 20;
+
+  const safeBody  = Math.max(12, Math.min(40, parseInt(bodyPt, 10) || 20));
+  const safeTitle = Math.max(16, Math.min(60, parseInt(titlePt, 10) || 24));
+
+  let el = document.getElementById("printFontOverride");
+  if (!el) {
+    el = document.createElement("style");
+    el.id = "printFontOverride";
+    document.head.appendChild(el);
+  }
+
+  el.textContent = `
+    @media print{
+      .chart h3 { font-size: ${safeTitle}pt !important; }
+      .chart pre{ font-size: ${safeBody}pt !important; }
+    }
+  `;
+}
+
+function setOneTunePerPagePrint(enabled) {
+  document.body.classList.toggle("oneTunePerPagePrint", !!enabled);
+}
+
+/* ============================================================
+   Share-link decode (LZW or Deflate)
+   ============================================================ */
+function base64UrlToUint8Array(b64url) {
+  let s = String(b64url || "").replace(/-/g, "+").replace(/_/g, "/");
+  const pad = s.length % 4;
+  if (pad) s += "=".repeat(4 - pad);
+  const bin = atob(s);
+  const bytes = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+  return bytes;
+}
+
+function tryDecodeShareLinkIntoEditor() {
+  const params = new URLSearchParams(location.search);
+  const lzw = params.get("lzw");
+  const def = params.get("def");
+
+  if (!lzw && !def) return false;
+
+  try {
+    if (lzw) {
+      if (!window.LZString || !LZString.decompressFromEncodedURIComponent) {
+        setStatus("Share link has lzw=..., but LZString isn't loaded.", true);
+        return false;
+      }
+      const abc = LZString.decompressFromEncodedURIComponent(lzw);
+      if (!abc) {
+        setStatus("Unable to decode lzw= share link.", true);
+        return false;
+      }
+      $("abcIn").value = abc;
+      setStatus("Loaded ABC from the share link.");
+      return true;
+    }
+
+    if (def) {
+      if (!window.pako) {
+        setStatus("Share link has def=..., but pako isn't loaded.", true);
+        return false;
+      }
+      const bytes = base64UrlToUint8Array(def);
+      const inflated = pako.inflate(bytes);
+      const abc = new TextDecoder("utf-8").decode(inflated);
+      if (!abc) {
+        setStatus("Unable to decode share link.", true);
+        return false;
+      }
+      $("abcIn").value = abc;
+      setStatus("Loaded ABC from the share link.");
+      return true;
+    }
+  } catch (e) {
+    setStatus("Error decoding share link: " + (e && e.message ? e.message : String(e)), true);
+  }
+
+  return false;
+}
+
+/* ============================================================
+   Save Chord Chart (DayPilot prompt)
+   ============================================================ */
+async function promptForSaveFileName(defaultName) {
+  if (!window.DayPilot || !DayPilot.Modal || typeof DayPilot.Modal.prompt !== "function") {
+    const v = window.prompt("Save chord chart as:", defaultName || "");
+    return (v === null) ? null : String(v);
+  }
+
+  if (typeof DayPilot.Modal.prompt === "function") {
+    const res = await DayPilot.Modal.prompt("Save chord chart as:", defaultName || "", {
+      theme: "modal_flat",
+      top: 80,
+      scrollWithPage: false
+    });
+    if (!res || res.canceled) return null;
+    return String(res.result || "");
+  }
+
+  const form = [{ name: "File name", id: "name", type: "text", value: defaultName || "" }];
+  const res2 = await DayPilot.Modal.form(form, { name: defaultName || "" }, {
+    theme: "modal_flat",
+    top: 80,
+    scrollWithPage: false
+  });
+  if (!res2 || res2.canceled) return null;
+  return String(res2.result && res2.result.name ? res2.result.name : "");
+}
+
+async function saveChordChart() {
+  if (!$("out").children.length) {
+    generateCharts();
+  }
+  if (!$("out").children.length) {
+    setStatus("Nothing to save. Generate chord charts first.", true);
+    return;
+  }
+
+  const raw = buildRawChordTextForSave();
+  if (!raw.trim()) {
+    setStatus("Nothing to save. Generate chord charts first.", true);
+    return;
+  }
+
+  const suggested = computeDefaultChordFileName();
+  let name = await promptForSaveFileName(suggested);
+  if (name === null) return;
+
+  name = sanitizeForDownloadName(name);
+  name = ensureTxtExt(name);
+
+  const v = validateFileName(name);
+  if (!v.ok) {
+    DayPilot.Modal.alert(v.msg, { theme:"modal_flat", top: 120, scrollWithPage:false });
+    return;
+  }
+
+  const finalName = v.value;
+  downloadTextFile(finalName, raw);
+  gSavedChordFileName = finalName;
+  setStatus(`Saved "${finalName}".`);
+}
+
+function buildPrintHtml({ paperSize, orientation, requestedPt, requestedTitlePt, oneTunePerPage }) {
+  const safeSize   = String(paperSize || "letter");
+  const safeOrient = String(orientation || "portrait");
+  const safePt     = Math.max(10, Math.min(72, parseInt(requestedPt, 10) || 20));
+  const safeTitle  = Math.max(12, Math.min(72, parseInt(requestedTitlePt, 10) || 24));
+
+  return `<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Print</title>
+<style>
+  @page { size: ${safeSize} ${safeOrient}; }
+
+  html, body { margin:0; padding:0; }
+  body { color:#000; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+
+  /* One tune per page */
+  body.oneTunePerPage .chart { margin:0; break-after: page; page-break-after: always; }
+  body.oneTunePerPage .chart:last-child { break-after: auto; page-break-after: auto; }
+
+  /* Continuous mode spacing */
+  body:not(.oneTunePerPage) .chart { margin: 0 0 30pt 0; }
+  body:not(.oneTunePerPage) .chart:last-child { margin-bottom: 0; }
+
+  .chart { break-inside: avoid; page-break-inside: avoid; }
+
+  h3{
+    font: 700 ${safeTitle}pt system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+    margin: 0 0 12pt 0;
+  }
+
+  pre{
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    font-size: ${safePt}pt; /* starting point; JS will fit PER-PRE */
+    line-height: 1.35;
+    margin: 0;
+    white-space: pre;
+  }
+
+  /* Print-width probe (must have non-zero size) */
+  #probeWrap{
+    position: relative;
+    width: 100%;
+    height: 1px;
+    overflow: hidden;
+    visibility: hidden;
+  }
+  #probe{
+    width: 100%;
+    height: 1px;
+    display: block;
+  }
+
+  /* Offscreen measurer */
+  #measurer{
+    position: fixed;
+    left: -100000px;
+    top: -100000px;
+    white-space: pre;
+    visibility: hidden;
+    pointer-events: none;
+  }
+
+  /* Diagnostics overlay */
+  body.showDiag #diag{ display:block; }
+  #diag{
+    display:none;
+    position: fixed;
+    left: 8px;
+    bottom: 8px;
+    z-index: 999999;
+    background: rgba(255,255,200,0.95);
+    color: #000;
+    border: 1px solid rgba(0,0,0,0.35);
+    border-radius: 8px;
+    padding: 10px 12px;
+    font: 12px/1.35 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    max-width: min(92vw, 760px);
+    white-space: pre-wrap;
+  }
+
+  * { overflow: visible !important; }
+</style>
+</head>
+
+<body class="${oneTunePerPage ? "oneTunePerPage" : ""}">
+  <div id="probeWrap"><div id="probe"></div></div>
+  <div id="printRoot"></div>
+  <div id="measurer"></div>
+  <div id="diag"></div>
+
+<script>
+(function(){
+  const DIAG_DEFAULT_ON = false;
+  let _requestedPt = ${safePt};
+
+  function diag(msg){
+    try{
+      const el = document.getElementById("diag");
+      if (el) el.textContent = String(msg || "");
+      console.log("[PRINT_DIAG]", msg);
+    }catch(e){}
+  }
+
+  function rtrimLine(s){ return String(s || "").replace(/[ \\t]+$/g, ""); }
+
+  function trimAllPreTrailingSpaces(){
+    document.querySelectorAll("pre").forEach(pre => {
+      const lines = (pre.textContent || "").split("\\n").map(rtrimLine);
+      pre.textContent = lines.join("\\n");
+    });
+  }
+
+  function measureUsableWidthPx(){
+    const probe = document.getElementById("probe");
+    if (probe){
+      const r = probe.getBoundingClientRect();
+      if (r && r.width && r.width > 1){
+        return Math.max(0, Math.floor(r.width - 24)); // small safety
+      }
+    }
+    const cw = document.documentElement ? document.documentElement.clientWidth : 0;
+    return Math.max(0, Math.floor(cw - 24));
+  }
+
+  function getMaxLineTextTrimmed(text){
+    const lines = String(text || "").split("\\n");
+    let max = "";
+    for (const line of lines){
+      const t = rtrimLine(line);
+      if (t.length > max.length) max = t;
+    }
+    return max;
+  }
+
+  function measureLineWidthPx(pre, line){
+    const meas = document.getElementById("measurer");
+    if (!meas) return 0;
+
+    const cs = getComputedStyle(pre);
+    meas.style.fontFamily = cs.fontFamily;
+    meas.style.fontSize = cs.fontSize;
+    meas.style.fontWeight = cs.fontWeight;
+    meas.style.fontStyle = cs.fontStyle;
+    meas.style.letterSpacing = cs.letterSpacing;
+    meas.style.fontVariant = cs.fontVariant;
+
+    meas.textContent = line || "";
+    return meas.getBoundingClientRect().width || 0;
+  }
+
+  function setPreFontSizePt(pre, pt){
+    pre.style.fontSize = pt + "pt";
+  }
+
+  function fitEachPreIndependently(){
+    const usableW = measureUsableWidthPx();
+    const pres = Array.from(document.querySelectorAll("pre"));
+    const startPt = Math.max(6, Math.min(48, parseInt(_requestedPt, 10) || ${safePt}));
+    const MIN_PT = 10;
+    const SAFETY = 0.985;
+
+    let worst = { w: 0, title: "", startW: 0, startChars: 0, fitPt: startPt };
+    let minApplied = Infinity;
+    let maxApplied = 0;
+
+    pres.forEach(pre => setPreFontSizePt(pre, startPt));
+
+    pres.forEach(pre => {
+      const maxLine = getMaxLineTextTrimmed(pre.textContent || "");
+      if (!maxLine) return;
+
+      const startWpx = measureLineWidthPx(pre, maxLine);
+      const chars = maxLine.length;
+
+      let fitPt = startPt;
+
+      if (usableW > 0 && startWpx > 0 && startWpx > usableW){
+        const ratio = usableW / startWpx;
+        fitPt = Math.floor((startPt * ratio * SAFETY) * 100) / 100;
+        fitPt = Math.max(MIN_PT, Math.min(startPt, fitPt));
+        setPreFontSizePt(pre, fitPt);
+      } else {
+        setPreFontSizePt(pre, startPt);
+      }
+
+      minApplied = Math.min(minApplied, fitPt);
+      maxApplied = Math.max(maxApplied, fitPt);
+
+      if (startWpx > worst.startW){
+        const chart = pre.closest(".chart");
+        const h3 = chart ? chart.querySelector("h3") : null;
+        worst = {
+          startW: startWpx,
+          title: h3 ? h3.textContent : "(unknown)",
+          startChars: chars,
+          fitPt
+        };
+      }
+    });
+
+    if (!isFinite(minApplied)) minApplied = startPt;
+
+    // diag(
+    //   "PRINT DIAGNOSTICS (per-tune fit)\\n" +
+    //   "media:               " + (window.matchMedia && window.matchMedia("print").matches ? "print" : "screen/unknown") + "\\n" +
+    //   "doc.clientWidth:     " + (document.documentElement ? document.documentElement.clientWidth : 0) + "\\n" +
+    //   "usableW(px):         " + usableW + "\\n" +
+    //   "requestedPt:         " + startPt + "\\n" +
+    //   "appliedPt(min..max): " + minApplied.toFixed(2) + " .. " + maxApplied.toFixed(2) + "\\n" +
+    //   "\\nWORST (forces smallest)\\n" +
+    //   "title:               " + worst.title + "\\n" +
+    //   "maxChars(line):      " + worst.startChars + "\\n" +
+    //   "maxLinePx@reqPt:     " + Math.round(worst.startW) + "\\n" +
+    //   "fitPt(worst):        " + worst.fitPt.toFixed(2) + "\\n" +
+    //   "pre.count:           " + pres.length + "\\n"
+    // );
+  }
+
+  window.addEventListener("beforeprint", () => {
+    try{
+      trimAllPreTrailingSpaces();
+      fitEachPreIndependently();
+    }catch(e){
+      diag("beforeprint error: " + (e && e.message ? e.message : e));
+    }
+  });
+
+  window.__PRINT_API__ = {
+    setHtml(html){
+      document.getElementById("printRoot").innerHTML = html || "";
+    },
+    setOneTunePerPage(enabled){
+      document.body.classList.toggle("oneTunePerPage", !!enabled);
+    },
+    setDiagnostics(enabled){
+      document.body.classList.toggle("showDiag", !!enabled);
+    },
+    trimAllPreTrailingSpaces,
+
+    fitAndPrint(requestedPt){
+      _requestedPt = requestedPt;
+      this.setDiagnostics(DIAG_DEFAULT_ON);
+      document.querySelectorAll("pre").forEach(pre => pre.style.fontSize = (parseInt(_requestedPt,10)||${safePt}) + "pt");
+      requestAnimationFrame(() => requestAnimationFrame(() => window.print()));
+    }
+  };
+})();
+<\/script>
+</body>
+</html>`;
+}
+
+function printViaIframe({
+  paperSize,
+  orientation,
+  requestedPt = 20,
+  requestedTitlePt = 24,
+  oneTunePerPage = true
+} = {}) {
+
+  const out = document.getElementById("out");
+  if (!out) return;
+
+  if (!out.children.length && typeof generateCharts === "function") {
+    generateCharts();
+  }
+  if (!out.children.length) return;
+
+  const sections = Array.from(out.querySelectorAll("section.chart"));
+  const esc = (s) => String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+
+  const html = sections.map(sec => {
+    const h3 = sec.querySelector("h3");
+    const pre = sec.querySelector("pre");
+    const title = h3 ? h3.textContent : "";
+    const text  = pre ? pre.textContent : "";
+    return `<section class="chart"><h3>${esc(title)}</h3><pre>${esc(text)}</pre></section>`;
+  }).join("");
+
+  const iframe = document.createElement("iframe");
+  iframe.style.position = "fixed";
+  iframe.style.left = "-10000px";
+  iframe.style.top = "0";
+  iframe.style.width = "1000px";
+  iframe.style.height = "1000px";
+  iframe.style.border = "0";
+  iframe.style.opacity = "0";
+  iframe.style.pointerEvents = "none";
+
+  iframe.srcdoc = buildPrintHtml({
+    paperSize,
+    orientation,
+    requestedPt,
+    requestedTitlePt,
+    oneTunePerPage
+  });
+
+  const cleanup = () => { try { iframe.remove(); } catch {} };
+
+  iframe.onload = () => {
+    const w = iframe.contentWindow;
+    if (!w || !w.__PRINT_API__) { cleanup(); return; }
+    w.__PRINT_API__.setHtml(html);
+    w.__PRINT_API__.setOneTunePerPage(oneTunePerPage);
+    w.__PRINT_API__.trimAllPreTrailingSpaces();
+    w.onafterprint = cleanup;
+    w.__PRINT_API__.fitAndPrint(requestedPt);
+  };
+
+  document.body.appendChild(iframe);
+}
+/* ============================================================
+   Generate charts (UPDATED to use the new renderer)
+   ============================================================ */
+function generateCharts() {
+  setStatus("Working…");
+
+  const abcText = $("abcIn").value || "";
+  const out = $("out");
+  out.innerHTML = "";
+
+  const tunes = splitAbcIntoTunes(abcText);
+  if (tunes.length === 0) {
+    setStatus("No tunes found.", true);
+    return;
+  }
+
+  const extraSpace = parseInt($("slotWidth").value, 10) || 0;
+  const appendRhythm = $("appendRhythm") ? ($("appendRhythm").value === "1") : true;
+
+  let renderedCount = 0;
+
+  for (const block of tunes) {
+    let title = getHeaderValue(block, "T") || "Untitled";
+    const rhythm = getHeaderValue(block, "R");
+    if (appendRhythm && rhythm) title += ` (${rhythm})`;
+
+    const meter = getHeaderValue(block, "M") || "";
+    const body = getTuneBody(block);
+
+    // Only render tunes that actually contain chords
+    if (body.indexOf('"') === -1) continue;
+
+    const txt = renderAlignedText(meter, body, {
+      rightPadSpaces: 2,
+      extraSpace
+    });
+
+    // If result is empty (e.g., chords exist only in weird places), skip
+    if (!txt.trim()) continue;
+
+    const section = document.createElement("section");
+    section.className = "chart";
+
+    const h3 = document.createElement("h3");
+    h3.textContent = title;
+    section.appendChild(h3);
+
+    const pre = document.createElement("pre");
+    pre.textContent = txt;
+    section.appendChild(pre);
+
+    out.appendChild(section);
+    renderedCount++;
+  }
+
+  if (renderedCount === 0) {
+    setStatus('No chorded tunes found. Make sure chords are in quotes, e.g. "D".', true);
+  } else {
+    setStatus(`Done. Generated ${renderedCount} chart(s).`);
+  }
+}
+
+/* ---------------------------------
+   File open
+---------------------------------- */
+function handleFileOpen(file) {
+  if (!file) return;
+
+  const nameLower = (file.name || "").toLowerCase();
+  const ok = nameLower.endsWith(".abc") || nameLower.endsWith(".txt") || (file.type && file.type.startsWith("text/"));
+  if (!ok) {
+    setStatus("Please choose a .abc or .txt file.", true);
+    return;
+  }
+
+  const reader = new FileReader();
+
+  reader.onload = () => {
+    const text = String(reader.result || "");
+    $("abcIn").value = text;
+
+    const shownName = file.name || "file";
+    const isNew = (shownName && shownName !== gLoadedFileName);
+    gLoadedFileName = shownName;
+    if (isNew) gSavedChordFileName = "";
+
+    const tunes = splitAbcIntoTunes(text);
+    const nTunes = tunes.length;
+
+    if (nTunes === 0) setStatus(`Loaded "${shownName}". No tunes found.`, true);
+    else if (nTunes === 1) setStatus(`Loaded "${shownName}". Found 1 tune.`);
+    else setStatus(`Loaded "${shownName}". Found ${nTunes} tunes.`);
+  };
+
+  reader.onerror = () => setStatus("Unable to read file.", true);
+  reader.readAsText(file);
+}
+
+/* ---------------------------------
+   Wire up UI
+---------------------------------- */
+function wireUp() {
+  const applyPrintSettings = () => {
+    setPageStyle($("paperSize").value, $("orientation").value);
+    setPrintFontSize($("printFontSize").value, $("printTitleSize").value);
+
+    const onePerPage = $("oneTunePerPage") ? ($("oneTunePerPage").value === "1") : true;
+    setOneTunePerPagePrint(onePerPage);
+  };
+
+  $("generateBtn").addEventListener("click", () => {
+    applyPrintSettings();
+    generateCharts();
+    if ($("out").children.length) $("out").scrollIntoView({ block:"start", behavior:"smooth" });
+  });
+
+  $("saveBtn").addEventListener("click", async () => {
+    applyPrintSettings();
+    try { await saveChordChart(); }
+    catch (e) { setStatus("Save failed: " + (e && e.message ? e.message : String(e)), true); }
+  });
+
+  $("clearBtn").addEventListener("click", () => {
+    $("abcIn").value = "";
+    $("out").innerHTML = "";
+    $("fileIn").value = "";
+    gLoadedFileName = "";
+    gSavedChordFileName = "";
+    setStatus("Ready.");
+  });
+
+  $("printBtn").addEventListener("click", () => {
+    applyPrintSettings();
+
+    const paperSize = $("paperSize").value;
+    const orientation = $("orientation").value;
+    const requestedPt = parseInt($("printFontSize").value, 10) || 20;
+    const requestedTitlePt = parseInt($("printTitleSize").value, 10) || 24;
+    const oneTunePerPage = $("oneTunePerPage") ? ($("oneTunePerPage").value === "1") : true;
+
+    printViaIframe({ paperSize, orientation, requestedPt, requestedTitlePt, oneTunePerPage });
+  });
+
+  $("paperSize").addEventListener("change", applyPrintSettings);
+  $("orientation").addEventListener("change", applyPrintSettings);
+  $("printFontSize").addEventListener("change", applyPrintSettings);
+  $("printTitleSize").addEventListener("change", applyPrintSettings);
+
+  $("slotWidth").addEventListener("change", () => { if ($("out").children.length) generateCharts(); });
+
+  if ($("oneTunePerPage")) $("oneTunePerPage").addEventListener("change", applyPrintSettings);
+  if ($("appendRhythm")) $("appendRhythm").addEventListener("change", () => { if ($("out").children.length) generateCharts(); });
+
+  $("fileIn").addEventListener("change", (e) => {
+    handleFileOpen(e.target.files && e.target.files[0]);
+  });
+
+  $("btnHelp").addEventListener("click", () => {
+    if (!window.DayPilot || !DayPilot.Modal || typeof DayPilot.Modal.alert !== "function") {
+      alert("DayPilot.Modal is not loaded. Make sure daypilot-modal.min-3.10.1.js is available.");
+      return;
+    }
+
+    // UPDATED to match current functionality.
+    // Tip jar + GitHub sections left as-is below.
+
+    const content =
+      '  <div style="margin-bottom:14px;">' +
+      '    This utility extracts the chords from ABC tunes and generates clean, printable chord charts.' +
+      '    The printed barlines and line breaks match the original ABC exactly.' +
+      '  </div>' +
+
+      '  <div style="margin-bottom:14px;">' +
+      '    <b>1) Add some ABC tunes</b><br/>' +
+      '    Paste one or more ABC tunes into the editor, or open a <code>.abc</code>/<code>.txt</code> file.<br/>' +
+      '  </div>' +
+
+      '  <div style="margin-bottom:14px;">' +
+      '    <b>2) Generate chord charts</b><br/>' +
+      '    Click <b>Generate Charts</b>. Only tunes that actually contain quoted chords will be output.' +
+      '  </div>' +
+
+      '  <div style="margin-bottom:14px;">' +
+      '    <b>3) Save chord charts</b><br/>' +
+      '    Click <b>Save Charts</b>. to save the chord charts to a text file.' +
+      '  </div>' +
+
+      '  <div style="margin-bottom:14px;">' +
+      '    <b>4) Print chord charts</b><br/>' +
+      '    Click <b>Print</b>. to print the chord charts from the browser.<br/>' +
+      '    You may also save a PDF using the browser\'s native <b>Print-to-PDF</b> feature.' +
+      '  </div>' +
+
+      '  <hr style="border:0; border-top:1px solid #ccc; margin:18px 0;">' +
+      '  <div style="margin-bottom:14px;">' +
+      '    <b>Chord Chart Settings</b><br/>' +
+      '    <b>Extra spacing</b><br/>' +
+      '    Adds extra spacing to make charts easier to read while keeping all barlines aligned.' +
+      '    (This increases spacing after barlines/chord cells, and also increases spacing between multiple chords that occur in the same measure.)<br/>' +
+      '    <b>Append tune style (R:) to titles</b><br/>' +
+      '    Optionally appends the tune rhythm/style tag in parentheses after the tune title.' +
+      '  </div>' +
+
+      '  <hr style="border:0; border-top:1px solid #ccc; margin:18px 0;">' +
+      '  <div style="margin-bottom:14px;">' +
+      '    <b>Print Settings</b><br/>' +
+      '    Set the paper size/orientation and the title/body font sizes, then click <b>Print</b>.<br/>' +
+      '    The print view auto-shrinks the chord text only if needed to avoid clipping.<br/>' +
+      '    You may export a PDF file by using the browser\'s native <b>Print-to-PDF</b> feature.' +
+      '  </div>' +
+
+      '  <hr style="border:0; border-top:1px solid #ccc; margin:18px 0;">' +
+      '  <div style="text-align:center; font-size:15pt; font-weight:700; margin-bottom:10px;">Tip Jars</div>' +
+      '  <div style="text-align:center; margin-bottom:12px;">' +
+      '    If you find this tool useful, please consider buying me a beer<br/>' +
+      '    by tossing a few bucks into one of my virtual tip jars:' +
+      '  </div>' +
+
+      '  <div style="text-align:center; margin-bottom:10px;">' +
+      '    <div style="font-weight:700;">PayPal</div>' +
+      '    <div><a href="https://paypal.me/MichaelEskin" target="_blank" rel="noopener noreferrer">https://paypal.me/MichaelEskin</a></div>' +
+      '  </div>' +
+
+      '  <div style="text-align:center; margin-bottom:16px;">' +
+      '    <div style="font-weight:700;">Venmo</div>' +
+      '    <div>@MichaelEskin</div>' +
+      '  </div>' +
+
+      '  <hr style="border:0; border-top:1px solid #ccc; margin:18px 0;">' +
+
+      // ----- Leave GitHub content alone -----
+      '  <div style="margin-bottom:6px; text-align:center;"><b>The source code for this tool is available on GitHub:</b></div>' +
+      '  <div style="margin-bottom:6px; text-align:center;">' +
+      '    <a href="https://github.com/seisiuneer/abctools/blob/main/tools/abc_to_chord_chart.html" target="_blank" rel="noopener noreferrer">' +
+      '      abc_to_chord_chart.html' +
+      '    </a>' +
+      '  </div>';
+
+    const html =
+      '<div id="instructions_div" style="font-family:Helvetica, Arial, sans-serif; font-size:12.5pt; line-height:1.6;">' +
+      '  <div style="text-align:center; font-size:16pt; font-weight:700; margin-bottom:14px;">Instructions</div>' +
+      '  <div style="width:100%; max-height:min(60vh, 520px); overflow:auto; -webkit-overflow-scrolling:touch; padding:0 12px 2px 30px; box-sizing:border-box;">' +
+      content +
+      '  </div>' +
+      '</div>';
+
+    DayPilot.Modal.alert(html, {
+      theme: "modal_flat",
+      top: 50,
+      scrollWithPage: false
+    });
+  });
+
+  applyPrintSettings();
+  setStatus("Ready.");
+  tryDecodeShareLinkIntoEditor();
+}
+
+function WaitForReady(fn) {
+  if (document.readyState !== 'loading') { fn(); return; }
+  document.addEventListener('DOMContentLoaded', fn);
+}
+
+WaitForReady(wireUp);
+
+</script>
+
+<script type="text/javascript" src="lz-string.min.js"></script>
+<script type="text/javascript" src="pako.min.js"></script>
+<script type="text/javascript" src="daypilot-modal.min-3.10.1.js"></script>
+
+</body>
+</html>
