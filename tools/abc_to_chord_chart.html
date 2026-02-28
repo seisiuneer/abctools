@@ -811,6 +811,15 @@ function isIOS() {
 
 const gIsIOS = isIOS();
 
+//
+// Is local storage available
+//
+let gLocalStorageAvailable = false;
+
+if (window.localStorage) {
+  gLocalStorageAvailable = true;
+}
+
 const $ = (id) => document.getElementById(id);
 
 function setStatus(msg, isError=false) {
@@ -819,6 +828,46 @@ function setStatus(msg, isError=false) {
   el.textContent = String(msg || "");
   el.classList.toggle("errorText", !!isError);
   el.scrollTop = el.scrollHeight;
+}
+
+//
+// Send gtag analytics
+//
+function sendGoogleAnalytics(theCategory, theAction, theLabel) {
+
+  //console.log("sendGoogleAnalytics category: "+theCategory+" action: "+theAction+" label: "+theLabel);
+
+  // Don't send analytics if offline
+  if (!navigator.onLine) {
+    //console.log("sendGoogleAnalytics - Offline: Not sending info ")
+    return;
+  }
+
+  // Don't send analytics on iOS Safari
+  if (gIsIOS) {
+    return;
+  }
+
+  // Don't send analytics if local storage not available
+  if (!gLocalStorageAvailable) {
+    return;
+  }
+
+  if (typeof gtag !== "undefined") {
+
+    if ((gtag) && (gtag instanceof Function)) {
+
+      if (!theLabel) {
+        theLabel = "none";
+      }
+
+      gtag('event', 'chords_' + theCategory + "_" + theAction, {
+          event_category: theCategory,
+          event_action: theAction,
+          event_label: theLabel
+        });
+    }
+  }
 }
 
 /* ============================================================
@@ -2028,6 +2077,9 @@ function wireUp() {
   // ------------------------------------------------------------
 
   $("generateBtn").addEventListener("click", function () {
+
+    sendGoogleAnalytics("action", "generate");
+
     applyPrintSettings();
     generateCharts();
     if ($("out").children.length) {
@@ -2036,6 +2088,9 @@ function wireUp() {
   });
 
   $("saveBtn").addEventListener("click", async function () {
+
+    sendGoogleAnalytics("action", "save");
+
     applyPrintSettings();
     try {
       await saveChordChart();
@@ -2063,6 +2118,8 @@ function wireUp() {
 
       return;
     }
+
+    sendGoogleAnalytics("action", "print");
 
     applyPrintSettings();
 
@@ -2107,6 +2164,9 @@ function wireUp() {
   }
 
   $("fileIn").addEventListener("change", function (e) {
+
+    sendGoogleAnalytics("action", "loadfile");
+
     handleFileOpen(e.target.files && e.target.files[0]);
   });
 
@@ -2117,6 +2177,8 @@ function wireUp() {
       alert("DayPilot.Modal is not loaded. Instructions are not available.");
       return;
     }
+
+    sendGoogleAnalytics("action", "instructions");
 
     const content =
       '  <div style="margin-bottom:14px;">' +
