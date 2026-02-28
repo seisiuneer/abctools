@@ -160,8 +160,7 @@
     /* ...but allow the ABC input card to be the one flexible/tall area */
     #cardInput{
       flex: 1 1 auto !important;
-      min-height: 260px;       /* keeps it from disappearing */
-      overflow:hidden;         /* keep rounded corners clean */
+      overflow:hidden;         
       display:flex;
       flex-direction:column;
       min-height: 260px !important;
@@ -340,11 +339,6 @@
     }
 
     .errorText{ color:#b00020; opacity:1; }
-
-    #fileIn{
-      flex: 1 1 600px;
-      min-width: 350px;
-    }
 
     #cardHelp{
       position:fixed;
@@ -678,7 +672,7 @@
 
     <div class="left noprint">
 
-      <div id="cardInput" class="card" style="flex:1; display:flex; flex-direction:column; min-height:0;">
+      <div id="cardInput" class="card">
         <div class="row" style="gap:40px; align-items:center; justify-content:flex-start; flex-wrap:nowrap; margin-left:16px;">
           <h3>ABC Input</h3>
 
@@ -836,7 +830,7 @@ K: Gmaj
 |:"G"BAB dBd|"C"ege "D"dBA|"G"BAB dBG|"D"ABA AGA|
 "G"BAB dBd|"C"ege "G"dBd|"C"gfg "D"aga|"G"bgf g3:|
 
-X: 1
+X: 2
 T: Cooley's
 C: Traditional
 R: Reel
@@ -1124,7 +1118,7 @@ function parseMusicLineToBarsAndChords(line, extraSpace = 0) {
   return { boundaries, contents };
 }
 
-function renderAlignedText(meter, abcBody, { rightPadSpaces = 2, extraSpace = 0 } = {}) {
+function renderAlignedText(abcBody, { rightPadSpaces = 2, extraSpace = 0 } = {}) {
   const srcLines = String(abcBody || "").split(/\r?\n/);
   const parsedLines = [];
 
@@ -1385,6 +1379,12 @@ async function saveChordChart() {
 
   const v = validateFileName(name);
   if (!v.ok) {
+
+    if (!window.DayPilot || !DayPilot.Modal || typeof DayPilot.Modal.alert !== "function") {
+      alert(v.msg);
+      return;
+    }
+
     DayPilot.Modal.alert(v.msg, { theme:"modal_flat", top: 120, scrollWithPage:false });
     return;
   }
@@ -1781,13 +1781,12 @@ function generateCharts() {
       title += ` (${rhythm})`;
     }
 
-    const meter = getHeaderValue(block, "M") || "";
     const body = getTuneBody(block);
 
     // Only render tunes that actually contain at least one "real" chord
     if (!hasRealChordQuotes(body)) continue;
 
-    const txt = renderAlignedText(meter, body, {
+    const txt = renderAlignedText(body, {
       rightPadSpaces: 2,
       extraSpace
     });
@@ -1844,7 +1843,6 @@ function handleFileOpen(file) {
     $("abcIn").value = text;
 
     const shownName = file.name || "file";
-    const isNew = (shownName && shownName !== gLoadedFileName);
 
     gLoadedFileName = shownName;
 
