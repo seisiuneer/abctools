@@ -1287,6 +1287,19 @@ function tryDecodeShareLinkIntoEditor() {
 
   if (!lzw && !def) return false;
 
+  function setLoadedStatus(sourceLabel, abcText) {
+    const tunes = splitAbcIntoTunes(abcText);
+    const nTunes = tunes.length;
+
+    if (nTunes === 0) {
+      setStatus(`Loaded ${sourceLabel}. No tunes found.`, true);
+    } else if (nTunes === 1) {
+      setStatus(`Loaded ${sourceLabel}. Found 1 tune.`);
+    } else {
+      setStatus(`Loaded ${sourceLabel}. Found ${nTunes} tunes.`);
+    }
+  }
+
   try {
     if (lzw) {
       if (!window.LZString || !LZString.decompressFromEncodedURIComponent) {
@@ -1299,7 +1312,7 @@ function tryDecodeShareLinkIntoEditor() {
         return false;
       }
       $("abcIn").value = abc;
-      setStatus("Loaded ABC from the share link.");
+      setLoadedStatus("ABC from the share link", abc);
       return true;
     }
 
@@ -1316,7 +1329,7 @@ function tryDecodeShareLinkIntoEditor() {
         return false;
       }
       $("abcIn").value = abc;
-      setStatus("Loaded ABC from the share link.");
+      setLoadedStatus("ABC from the share link", abc);
       return true;
     }
   } catch (e) {
