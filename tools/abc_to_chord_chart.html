@@ -260,7 +260,6 @@
     .taWrap{
       flex:1;
       min-height:0;
-      border-radius:10px;
       overflow:hidden;
       border: var(--bd);
       background: Canvas;
@@ -905,13 +904,29 @@ function parseMusicLineToBarsAndChords(line, extraSpace = 0) {
   const intraChordSep = " ".repeat(1 + extra); // <-- adds space BETWEEN chords in same measure
 
   function extractChordText(segment) {
+
+    segment = String(segment || "").replace(/![^!\n]*!/g, "");
+
     const out = [];
     const re = /"([^"]*)"/g;
     let m;
+
     while ((m = re.exec(segment)) !== null) {
-      const chord = (m[1] || "").trim();
-      if (chord) out.push(chord);
+      const raw = (m[1] ?? "");
+      const chord = raw.trim();
+
+      if (!chord) continue;
+
+      // 2) Filter out quoted annotations that are NOT chords
+      //    (^ _ < > @ at beginning)
+      const first = chord.charAt(0);
+      if (first === "^" || first === "_" || first === "<" || first === ">" || first === "@") {
+        continue;
+      }
+
+      out.push(chord);
     }
+
     return out.join(intraChordSep);
   }
 
@@ -1783,7 +1798,10 @@ function wireUp() {
   if ($("appendRhythm")) $("appendRhythm").addEventListener("change", () => { if ($("out").children.length) generateCharts(); });
 
   $("fileIn").addEventListener("change", (e) => {
+    const input = e.target;
+
     handleFileOpen(e.target.files && e.target.files[0]);
+    input.value = "";
   });
 
   $("btnHelp").addEventListener("click", () => {
