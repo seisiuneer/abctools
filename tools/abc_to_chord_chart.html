@@ -718,6 +718,16 @@
             <option value="0">No</option>
           </select>
         </div>
+
+        <div class="row" style="margin-top:10px;">
+          <label for="emptyMeasurePlaceholder"><strong>Empty measure placeholder</strong></label>
+          <select id="emptyMeasurePlaceholder"
+                  title="Character to insert when a measure has no chord">
+            <option value="">None</option>
+            <option value="/" selected>/</option>
+            <option value="%">%</option>
+          </select>
+        </div>
       </div>
 
       <div class="card">
@@ -972,13 +982,14 @@ function getTuneBody(block) {
       .join("\n");
   }
 
-  // IMPORTANT: Do NOT strip % comments here.
-  // renderAlignedText() will handle skipping % lines and removing inline % comments
-  // without creating blank output rows.
   return lines.slice(kIndex + 1).join("\n");
 }
 
-function parseMusicLineToBarsAndChords(line, extraSpace = 0) {
+function parseMusicLineToBarsAndChords(
+  line,
+  extraSpace = 0,
+  emptyPlaceholder = "/"
+) {
   const s = String(line || "");
 
   const boundaries = [];
@@ -987,13 +998,14 @@ function parseMusicLineToBarsAndChords(line, extraSpace = 0) {
   const extra = Math.max(0, Math.min(40, parseInt(extraSpace, 10) || 0));
   const intraChordSep = " ".repeat(1 + extra);
 
-  // Track whether we found any "real" chord on this line
-  let foundAnyChord = false;
-
+  // Extract chord text from a segment between bar tokens.
+  // If the segment has no chords, return the configured placeholder
+  // ("/", "%", or "" for None).
   function extractChordText(segment) {
     const out = [];
     const re = /"([^"]*)"/g;
     let m;
+
     while ((m = re.exec(segment)) !== null) {
       let chord = (m[1] || "").trim();
 
@@ -1002,9 +1014,14 @@ function parseMusicLineToBarsAndChords(line, extraSpace = 0) {
       if (!chord) continue;
       if (/^[\^_<>@]/.test(chord)) continue;
 
-      foundAnyChord = true;
       out.push(chord);
     }
+
+    // No chords in this segment -> placeholder (or "" for None)
+    if (out.length === 0) {
+      return (emptyPlaceholder ?? "");
+    }
+
     return out.join(intraChordSep);
   }
 
@@ -1017,6 +1034,7 @@ function parseMusicLineToBarsAndChords(line, extraSpace = 0) {
     return { suffix: "", len: 0 };
   }
 
+  // Tokenize barlines and repeat markers with positions
   const tokens = [];
   let i = 0;
 
@@ -1071,16 +1089,20 @@ function parseMusicLineToBarsAndChords(line, extraSpace = 0) {
     i += 1;
   }
 
-  // No bar tokens: just extract chords
+  // No bar tokens:
+  // - If there are chords, emit a single "measure" between an implicit leading and trailing boundary.
+  // - If there are no chords, return empty (we don't want non-bar, non-chord lines).
   if (!tokens.length) {
     const c = extractChordText(s);
-    if (c) {
-      boundaries.push("|");
-      contents.push(c);
-      boundaries.push("");
-      return { boundaries, contents };
-    }
-    return { boundaries: [], contents: [] };
+
+    // If placeholder is "" and there were no chords, this would be empty,
+    // so suppress the line in that case.
+    if (!c) return { boundaries: [], contents: [] };
+
+    boundaries.push("|");
+    contents.push(c);
+    boundaries.push("");
+    return { boundaries, contents };
   }
 
   // Build measures by slicing between token positions
@@ -1091,6 +1113,7 @@ function parseMusicLineToBarsAndChords(line, extraSpace = 0) {
     boundaries.push(firstTok.token);
     cursor = firstTok.pos + firstTok.srcLen;
   } else {
+    // segment before first bar token becomes a content cell
     boundaries.push("|");
     contents.push(extractChordText(s.slice(0, firstTok.pos)));
     boundaries.push(firstTok.token);
@@ -1104,28 +1127,33 @@ function parseMusicLineToBarsAndChords(line, extraSpace = 0) {
     cursor = cur.pos + cur.srcLen;
   }
 
-  const tailChords = extractChordText(s.slice(cursor));
-  if (tailChords) {
-    contents.push(tailChords);
+  // Tail segment after the last bar token:
+  // Only add it if there's actually something there besides whitespace
+  // (prevents stray placeholder after a final :| or |]).
+  const tailSeg = s.slice(cursor);
+  if (tailSeg.trim().length > 0) {
+    contents.push(extractChordText(tailSeg));
     boundaries.push("");
-  }
-
-  // If we never found any real chords on this line, suppress "barlines-only" output.
-  if (!foundAnyChord) {
-    return { boundaries: [], contents: [] };
   }
 
   return { boundaries, contents };
 }
 
-function renderAlignedText(abcBody, { rightPadSpaces = 2, extraSpace = 0 } = {}) {
+function renderAlignedText(
+  abcBody,
+  {
+    rightPadSpaces = 2,
+    extraSpace = 0,
+    emptyPlaceholder = "/"
+  } = {}
+) {
   const srcLines = String(abcBody || "").split(/\r?\n/);
   const parsedLines = [];
 
   let inBeginTextBlock = false;
 
   for (const srcLine of srcLines) {
-    const rawLine = String(srcLine || "");
+    let rawLine = String(srcLine || "");
 
     if (/^\s*%%begintext\b/i.test(rawLine)) { inBeginTextBlock = true; continue; }
     if (/^\s*%%endtext\b/i.test(rawLine))   { inBeginTextBlock = false; continue; }
@@ -1136,21 +1164,29 @@ function renderAlignedText(abcBody, { rightPadSpaces = 2, extraSpace = 0 } = {})
       continue;
     }
 
+    // Full-line comment
     if (/^\s*%/.test(rawLine)) continue;
 
+    // Strip trailing ABC continuation "\" OR "$"
+    // Do NOT join lines — treat each independently
+    rawLine = rawLine.replace(/\s*[\\$]\s*$/, "");
+
+    // Remove inline comments
     const line = rawLine.replace(/%.*$/, "");
+
     const trimmed = line.trim();
     if (!trimmed) continue;
 
-    if (/^[A-Za-z+]:/.test(trimmed)) continue;
-    if (/^\s*w:/.test(line)) continue;
+    // Skip header fields (T:, M:, W:, etc.)
+    if (/^[A-Za-z]:/.test(trimmed)) continue;
 
     const hasBar = /[|:]/.test(line);
     const hasQuote = line.indexOf('"') !== -1;
     if (!hasBar && !hasQuote) continue;
 
-    // IMPORTANT: pass extraSpace down so chords inside a measure get spaced out too
-    const { boundaries, contents } = parseMusicLineToBarsAndChords(line, extraSpace);
+    const { boundaries, contents } =
+      parseMusicLineToBarsAndChords(line, extraSpace, emptyPlaceholder);
+
     if (!boundaries.length && !contents.length) continue;
 
     parsedLines.push({ isBlank: false, boundaries, contents });
@@ -1234,6 +1270,7 @@ function renderAlignedText(abcBody, { rightPadSpaces = 2, extraSpace = 0 } = {})
 
   return outLines.join("\n");
 }
+
 /* ---------------------------------
    Print settings (page size/orientation + 1/page toggle)
 ---------------------------------- */
@@ -1727,8 +1764,8 @@ function hasRealChordQuotes(abcBody) {
   const lines = String(abcBody || "").split(/\r?\n/);
   let inBeginTextBlock = false;
 
-  for (const rawLine of lines) {
-    const line = String(rawLine || "");
+  for (let rawLine of lines) {
+    let line = String(rawLine || "");
 
     if (/^\s*%%begintext\b/i.test(line)) { 
       inBeginTextBlock = true; 
@@ -1741,13 +1778,18 @@ function hasRealChordQuotes(abcBody) {
     if (inBeginTextBlock) continue;
 
     if (!line.trim()) continue;
-    if (/^\s*%/.test(line)) continue;           // full-line comment
-    if (/^[A-Za-z+]:/.test(line.trim())) continue; // header line
-    if (/^\s*w:/.test(line)) continue;          // lyrics
+    if (/^\s*%/.test(line)) continue;
+
+    const trimmed = line.trim();
+    if (/^[A-Za-z]:/.test(trimmed)) continue;
+
+    // Strip trailing "\" or "$"
+    line = line.replace(/\s*[\\$]\s*$/, "");
+
+    if (!line.trim()) continue;
 
     const hasBar = /[|:]/.test(line);
     const hasQuote = line.indexOf('"') !== -1;
-
     if (!hasBar && !hasQuote) continue;
 
     const re = /"([^"]*)"/g;
@@ -1755,7 +1797,7 @@ function hasRealChordQuotes(abcBody) {
     while ((m = re.exec(line)) !== null) {
       const chord = (m[1] || "").trim();
       if (!chord) continue;
-      if (/^[\^_<>@]/.test(chord)) continue; // annotation filter
+      if (/^[\^_<>@]/.test(chord)) continue;
       return true;
     }
   }
@@ -1779,11 +1821,17 @@ function generateCharts() {
   const extraSpace = parseInt($("slotWidth").value, 10) || 0;
   const appendRhythm = $("appendRhythm") ? ($("appendRhythm").value === "1") : true;
 
+  // Empty-measure placeholder: "/", "%", or "" (None)
+  const placeholder =
+    $("emptyMeasurePlaceholder")
+      ? $("emptyMeasurePlaceholder").value
+      : "/";
+
   let renderedCount = 0;
 
-  // Skip buckets (so you can present a clean summary)
-  let skippedNoChords = 0;   // no "real" chord quotes found
-  let skippedEmptyOut = 0;   // had chords but produced empty output (edge cases)
+  // Skip buckets
+  let skippedNoChords = 0;   // no "real" chord quotes anywhere in the tune
+  let skippedEmptyOut = 0;   // had chords, but produced empty output (edge cases)
 
   for (const block of tunes) {
     let title = getHeaderValue(block, "T") || "Untitled";
@@ -1797,7 +1845,8 @@ function generateCharts() {
 
     const body = getTuneBody(block);
 
-    // Only render tunes that actually contain at least one "real" chord
+    // IMPORTANT: skip tunes that don't have ANY chords at all
+    // (but within chorded tunes, lines without chords still get placeholders)
     if (!hasRealChordQuotes(body)) {
       skippedNoChords++;
       continue;
@@ -1805,10 +1854,10 @@ function generateCharts() {
 
     const txt = renderAlignedText(body, {
       rightPadSpaces: 2,
-      extraSpace
+      extraSpace,
+      emptyPlaceholder: placeholder
     });
 
-    // If result is empty (e.g., chords exist only in weird places), skip
     if (!txt.trim()) {
       skippedEmptyOut++;
       continue;
@@ -1830,11 +1879,15 @@ function generateCharts() {
   }
 
   if (renderedCount === 0) {
-    setStatus("Done. No tunes with chords found.", true);
+    const skippedTotal = skippedNoChords + skippedEmptyOut;
+    if (skippedTotal > 0) {
+      setStatus(`No chord charts generated. Skipped ${skippedTotal} tune(s).`, true);
+    } else {
+      setStatus("No chord charts generated.", true);
+    }
     return;
   }
 
-  // If some were skipped, show it
   const skippedTotal = skippedNoChords + skippedEmptyOut;
 
   if (skippedTotal > 0) {
@@ -2059,10 +2112,12 @@ function wireUp() {
 
   // Help modal (unchanged)
   $("btnHelp").addEventListener("click", function () {
+
     if (!window.DayPilot || !DayPilot.Modal || typeof DayPilot.Modal.alert !== "function") {
-      alert("DayPilot.Modal is not loaded.");
+      alert("DayPilot.Modal is not loaded. Instructions are not available.");
       return;
     }
+
     const content =
       '  <div style="margin-bottom:14px;">' +
       '    This utility extracts the chords from ABC tunes and generates clean, printable chord charts.' +
@@ -2078,7 +2133,8 @@ function wireUp() {
       '    <b>2) Generate chord charts</b><br/>' +
       '    Click <b>Generate Charts</b>.<br/>' +
       '    The chord charts will appear in the <b>Chord Charts</b> output area.<br/>' +
-      '    Only tunes that actually contain chords will have chord charts generated.' +
+      '    Only tunes that actually contain chords will have chord charts generated.<br/>' +
+      '    Pickup measures without chords will show as empty measures.' +
       '  </div>' +
 
       '  <div style="margin-bottom:14px;">' +
@@ -2093,24 +2149,31 @@ function wireUp() {
       '  </div>' +
 
       '  <hr style="border:0; border-top:1px solid #ccc; margin:18px 0;">' +
+
+      // ---- Chord Chart Settings (more spacing under header) ----
       '  <div style="margin-bottom:14px;">' +
-      '    <b>Chord Chart Settings</b><br/>' +
+      '    <div style="font-weight:700; font-size:14pt; margin-bottom:10px;">Chord Chart Settings</div>' +
       '    <b>Extra spacing</b><br/>' +
       '    Adds extra spacing to make charts easier to read while keeping all barlines aligned.' +
-      '    (This increases spacing after barlines/chord cells, and also increases spacing between multiple chords that occur in the same measure.)<br/>' +
+      '    (This increases spacing after barlines/chord cells, and also increases spacing between multiple chords that occur in the same measure.)<br/><br/>' +
       '    <b>Append tune style (R:) to titles</b><br/>' +
-      '    Optionally appends the tune rhythm/style tag in parentheses after the tune title.' +
+      '    Optionally appends the tune rhythm/style tag in parentheses after the tune title.<br/><br/>' +
+      '    <b>Empty measure placeholder</b><br/>' +
+      '    Character (or none) to show in measures without chords. Default is: /' +
       '  </div>' +
 
       '  <hr style="border:0; border-top:1px solid #ccc; margin:18px 0;">' +
+
+      // ---- Print Settings (more spacing under header) ----
       '  <div style="margin-bottom:14px;">' +
-      '    <b>Print Settings</b><br/>' +
+      '    <div style="font-weight:700; font-size:14pt; margin-bottom:10px;">Print Settings</div>' +
       '    Set the paper size/orientation and the title/body font sizes, then click <b>Print</b>.<br/>' +
       '    The print view auto-shrinks the chord text only if needed to avoid clipping.<br/>' +
       '    You may export a PDF file by using the browser\'s native <b>Print-to-PDF</b> feature.' +
       '  </div>' +
 
       '  <hr style="border:0; border-top:1px solid #ccc; margin:18px 0;">' +
+
       '  <div style="text-align:center; font-size:15pt; font-weight:700; margin-bottom:10px;">Tip Jars</div>' +
       '  <div style="text-align:center; margin-bottom:12px;">' +
       '    If you find this tool useful, please consider buying me a beer<br/>' +
