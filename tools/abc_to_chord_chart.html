@@ -1781,23 +1781,27 @@ function generateCharts() {
 
   let renderedCount = 0;
 
+  // Skip buckets (so you can present a clean summary)
+  let skippedNoChords = 0;   // no "real" chord quotes found
+  let skippedEmptyOut = 0;   // had chords but produced empty output (edge cases)
+
   for (const block of tunes) {
     let title = getHeaderValue(block, "T") || "Untitled";
     let rhythm = getHeaderValue(block, "R");
 
     if (appendRhythm && rhythm) {
       rhythm = rhythm.trim().toLowerCase();
-
-      // Capitalize first letter only
       rhythm = rhythm.charAt(0).toUpperCase() + rhythm.slice(1);
-
       title += ` (${rhythm})`;
     }
 
     const body = getTuneBody(block);
 
     // Only render tunes that actually contain at least one "real" chord
-    if (!hasRealChordQuotes(body)) continue;
+    if (!hasRealChordQuotes(body)) {
+      skippedNoChords++;
+      continue;
+    }
 
     const txt = renderAlignedText(body, {
       rightPadSpaces: 2,
@@ -1805,7 +1809,10 @@ function generateCharts() {
     });
 
     // If result is empty (e.g., chords exist only in weird places), skip
-    if (!txt.trim()) continue;
+    if (!txt.trim()) {
+      skippedEmptyOut++;
+      continue;
+    }
 
     const section = document.createElement("section");
     section.className = "chart";
@@ -1823,11 +1830,20 @@ function generateCharts() {
   }
 
   if (renderedCount === 0) {
-    setStatus('No tunes with chords found.', true);
+    setStatus("Done. No tunes with chords found.", true);
+    return;
+  }
+
+  // If some were skipped, show it
+  const skippedTotal = skippedNoChords + skippedEmptyOut;
+
+  if (skippedTotal > 0) {
+    setStatus(`Done. Generated ${renderedCount} chord chart(s). Skipped ${skippedTotal} tune(s) without chords.`);
   } else {
     setStatus(`Done. Generated ${renderedCount} chord chart(s).`);
   }
 }
+
 /* ---------------------------------
    File open
 ---------------------------------- */
