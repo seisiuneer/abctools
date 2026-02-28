@@ -4,6 +4,10 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta http-equiv="Cache-Control" content="no-cache, must-revalidate" />
+  <meta http-equiv="Pragma" content="no-cache" />
+  <meta http-equiv="Expires" content="0" />
+
   <link rel="profile" href="http://gmpg.org/xfn/11">
   <title>ABC Chord Chart Generator</title>
   <link rel='dns-prefetch' href='//fonts.googleapis.com' />
@@ -691,7 +695,7 @@
 
       <div id="cardControls" class="card">
         <div class="row">
-          <button id="generateBtn" class="primary" title="Generate chord charts from the ABC in the editor">Generate Charts</button>
+          <button id="generateBtn" class="primary" title="Generate chord charts from the ABC Input text">Generate Charts</button>
           <button id="saveBtn" title="Save the generated chord chart text to a file">Save Charts</button>
           <button id="printBtn" title="Print the generated charts">Print</button>
           <button id="clearBtn" title="Clear input and output">Clear</button>
@@ -703,7 +707,6 @@
         <div id="status" class="status muted" style="margin-top:8px">Ready.</div>
       </div>
 
-      <!-- Layout (UPDATED: no Bars/line; charts always match original ABC barlines/line breaks) -->
       <div class="card">
         
         <h3 class="card_label">Chord Chart Settings</h3>
@@ -785,6 +788,7 @@
 </div>
 
 <script>
+
 /* ============================================================
    Utilities
    ============================================================ */
@@ -1878,8 +1882,7 @@ function wireUp() {
   }
 
   // ------------------------------------------------------------
-  // Force-reset UI state (Firefox form restore fix)
-  // but preserve sample/share-link logic
+  // Full page initialization (used ONLY on load/pageshow)
   // ------------------------------------------------------------
   function initializePageState() {
 
@@ -1887,7 +1890,7 @@ function wireUp() {
     $("out").innerHTML = "";
     $("fileIn").value = "";
 
-    // Reset controls to defaults
+    // Reset controls
     $("slotWidth").value = "1";
     if ($("appendRhythm")) $("appendRhythm").value = "1";
 
@@ -1902,10 +1905,8 @@ function wireUp() {
     gSavedChordFileName = "";
     gRequestedPrintPt = 20;
 
-    // Try loading share link
+    // Load share link OR default sample
     const loadedFromLink = tryDecodeShareLinkIntoEditor();
-
-    // Otherwise load default example
     if (!loadedFromLink) {
       $("abcIn").value = DEFAULT_ABC;
       setStatus("Ready.");
@@ -1918,10 +1919,24 @@ function wireUp() {
     }
   }
 
-  // Initial reset on load
+  // ------------------------------------------------------------
+  // Hard clear (used ONLY by Clear button)
+  // ------------------------------------------------------------
+  function clearAll() {
+    $("abcIn").value = "";
+    $("out").innerHTML = "";
+    $("fileIn").value = "";
+
+    gLoadedFileName = "";
+    gSavedChordFileName = "";
+
+    setStatus("Ready.");
+  }
+
+  // Initial load reset
   initializePageState();
 
-  // Handle Firefox/Safari BFCache restores
+  // Firefox/Safari BFCache restore protection
   window.addEventListener("pageshow", function () {
     initializePageState();
   });
@@ -1948,7 +1963,7 @@ function wireUp() {
   });
 
   $("clearBtn").addEventListener("click", function () {
-    initializePageState();
+    clearAll();
   });
 
   $("printBtn").addEventListener("click", function () {
@@ -2010,19 +2025,16 @@ function wireUp() {
     });
   }
 
-  // File input
   $("fileIn").addEventListener("change", function (e) {
     handleFileOpen(e.target.files && e.target.files[0]);
   });
 
-  // Help modal (unchanged content)
+  // Help modal (unchanged)
   $("btnHelp").addEventListener("click", function () {
-
     if (!window.DayPilot || !DayPilot.Modal || typeof DayPilot.Modal.alert !== "function") {
       alert("DayPilot.Modal is not loaded.");
       return;
     }
-
     const content =
       '  <div style="margin-bottom:14px;">' +
       '    This utility extracts the chords from ABC tunes and generates clean, printable chord charts.' +
@@ -2089,7 +2101,6 @@ function wireUp() {
 
       '  <hr style="border:0; border-top:1px solid #ccc; margin:18px 0;">' +
 
-      // ----- Leave GitHub content alone -----
       '  <div style="margin-bottom:6px; text-align:center;"><b>The source code for this tool is available on GitHub:</b></div>' +
       '  <div style="margin-bottom:6px; text-align:center;">' +
       '    <a href="https://github.com/seisiuneer/abctools/blob/main/tools/abc_to_chord_chart.html" target="_blank" rel="noopener noreferrer">' +
@@ -2097,14 +2108,14 @@ function wireUp() {
       '    </a>' +
       '  </div>';
 
-    const html =
+      const html =
       '<div id="instructions_div" style="font-family:Helvetica, Arial, sans-serif; font-size:12.5pt; line-height:1.6;">' +
       '  <div style="text-align:center; font-size:16pt; font-weight:700; margin-bottom:14px;">Instructions</div>' +
       '  <div style="width:100%; max-height:min(60vh, 520px); overflow:auto; -webkit-overflow-scrolling:touch; padding:0 12px 2px 30px; box-sizing:border-box;">' +
       content +
       '  </div>' +
       '</div>';
-
+      
     DayPilot.Modal.alert(html, {
       theme: "modal_flat",
       top: 50,
