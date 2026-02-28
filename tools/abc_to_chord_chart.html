@@ -1148,7 +1148,7 @@ function renderAlignedText(meter, abcBody, { rightPadSpaces = 2, extraSpace = 0 
     const trimmed = line.trim();
     if (!trimmed) continue;
 
-    if (/^[A-Za-z]:/.test(trimmed)) continue;
+    if (/^[A-Za-z+]:/.test(trimmed)) continue;
     if (/^\s*w:/.test(line)) continue;
 
     const hasBar = /[|:]/.test(line);
@@ -1729,7 +1729,7 @@ function hasRealChordQuotes(abcBody) {
 
     if (!line.trim()) continue;
     if (/^\s*%/.test(line)) continue;           // full-line comment
-    if (/^[A-Za-z]:/.test(line.trim())) continue; // header line
+    if (/^[A-Za-z+]:/.test(line.trim())) continue; // header line
     if (/^\s*w:/.test(line)) continue;          // lyrics
 
     const hasBar = /[|:]/.test(line);
@@ -1937,8 +1937,10 @@ function wireUp() {
   initializePageState();
 
   // Firefox/Safari BFCache restore protection
-  window.addEventListener("pageshow", function () {
-    initializePageState();
+  window.addEventListener("pageshow", function (e) {
+    if (e && e.persisted) {
+      initializePageState();
+    }
   });
 
   // ------------------------------------------------------------
@@ -1973,12 +1975,11 @@ function wireUp() {
       var thePrompt = "Printing is not supported on iOS";
       thePrompt = '<p style="font-size:12pt;line-height:18pt;font-family:helvetica;text-align:center">' + thePrompt + '</p>';
 
-      DayPilot.Modal.alert(thePrompt, {
-        theme: "modal_flat",
-        top: 100,
-        scrollWithPage: false,
-        width: 500
-      });
+      if (window.DayPilot && DayPilot.Modal && typeof DayPilot.Modal.alert === "function") {
+        DayPilot.Modal.alert(thePrompt, { theme:"modal_flat", top:100, scrollWithPage:false, width:500 });
+      } else {
+        alert("Printing is not supported on iOS");
+      }
 
       return;
     }
