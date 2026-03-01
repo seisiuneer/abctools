@@ -1935,7 +1935,7 @@ function generateCharts() {
   if (renderedCount === 0) {
     const skippedTotal = skippedNoChords + skippedEmptyOut;
     if (skippedTotal > 0) {
-      setStatus(`No chord charts generated. Skipped ${skippedTotal} tune(s).`, true);
+      setStatus(`No chord charts generated. Skipped ${skippedTotal} tune(s) without chords.`, true);
     } else {
       setStatus("No chord charts generated.", true);
     }
