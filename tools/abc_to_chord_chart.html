@@ -850,13 +850,155 @@ function isIOS() {
 
 const gIsIOS = isIOS();
 
-//
-// Is local storage available
-//
-let gLocalStorageAvailable = false;
+//console.log("gIsIOS: "+gIsIOS);
 
-if (window.localStorage) {
-  gLocalStorageAvailable = true;
+//
+// Is local storage available?
+//
+let gLocalStorageAvailable = localStorageIsUsable();
+
+//console.log("gLocalStorageAvailable: "+gLocalStorageAvailable);
+
+/* ============================================================
+   Settings persistence (localStorage) — SETTINGS ONLY (no ABC text)
+   Add this whole block anywhere after your "$" helper is defined.
+   Then add the small wire-up calls noted at the bottom of this block.
+   ============================================================ */
+
+const LS_KEY = "abcChordChartGenerator_settings_v1";
+
+function localStorageIsUsable() {
+  try {
+    if (!window.localStorage) return false;
+    const k = "__ls_test__" + String(Date.now());
+    localStorage.setItem(k, "1");
+    localStorage.removeItem(k);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+function getUIStateForSave_SettingsOnly() {
+  // IMPORTANT: do NOT include abcIn value or file input (cannot be restored anyway)
+  return {
+    v: 1,
+
+    // Chord Chart Settings
+    slotWidth: $("slotWidth") ? $("slotWidth").value : "1",
+    appendRhythm: $("appendRhythm") ? $("appendRhythm").value : "1",
+    emptyMeasurePlaceholder: $("emptyMeasurePlaceholder") ? $("emptyMeasurePlaceholder").value : "/",
+    suppressPickup: $("suppressPickup") ? $("suppressPickup").value : "1",
+    pickupMaxNotes: $("pickupMaxNotes") ? $("pickupMaxNotes").value : "3",
+
+    // Print Settings
+    paperSize: $("paperSize") ? $("paperSize").value : "letter",
+    orientation: $("orientation") ? $("orientation").value : "portrait",
+    printTitleSize: $("printTitleSize") ? $("printTitleSize").value : "24",
+    printFontSize: $("printFontSize") ? $("printFontSize").value : "20",
+    oneTunePerPage: $("oneTunePerPage") ? $("oneTunePerPage").value : "0",
+
+  };
+}
+
+function applyUIStateFromObj_SettingsOnly(st) {
+  if (!st || typeof st !== "object") return;
+
+  // Chord Chart Settings
+  if ($("slotWidth") && st.slotWidth != null) $("slotWidth").value = String(st.slotWidth);
+  if ($("appendRhythm") && st.appendRhythm != null) $("appendRhythm").value = String(st.appendRhythm);
+  if ($("emptyMeasurePlaceholder") && st.emptyMeasurePlaceholder != null) $("emptyMeasurePlaceholder").value = String(st.emptyMeasurePlaceholder);
+  if ($("suppressPickup") && st.suppressPickup != null) $("suppressPickup").value = String(st.suppressPickup);
+  if ($("pickupMaxNotes") && st.pickupMaxNotes != null) $("pickupMaxNotes").value = String(st.pickupMaxNotes);
+
+  // Print Settings
+  if ($("paperSize") && st.paperSize != null) $("paperSize").value = String(st.paperSize);
+  if ($("orientation") && st.orientation != null) $("orientation").value = String(st.orientation);
+  if ($("printTitleSize") && st.printTitleSize != null) $("printTitleSize").value = String(st.printTitleSize);
+  if ($("printFontSize") && st.printFontSize != null) $("printFontSize").value = String(st.printFontSize);
+  if ($("oneTunePerPage") && st.oneTunePerPage != null) $("oneTunePerPage").value = String(st.oneTunePerPage);
+
+}
+
+function saveUIStateToLocalStorage_SettingsOnly() {
+  if (!localStorageIsUsable()) return;
+  try {
+    const st = getUIStateForSave_SettingsOnly();
+    localStorage.setItem(LS_KEY, JSON.stringify(st));
+  } catch {
+    // ignore
+  }
+}
+
+function loadUIStateFromLocalStorage_SettingsOnly() {
+  if (!localStorageIsUsable()) return false;
+  try {
+    const raw = localStorage.getItem(LS_KEY);
+    if (!raw) return false;
+    const st = JSON.parse(raw);
+    if (!st || typeof st !== "object") return false;
+    applyUIStateFromObj_SettingsOnly(st);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+function clearSavedUIStateFromLocalStorage_SettingsOnly() {
+  if (!localStorageIsUsable()) return;
+  try {
+    localStorage.removeItem(LS_KEY);
+  } catch {
+    // ignore
+  }
+}
+
+// Debounced saver so multiple changes don't spam localStorage
+let _saveTimer_SettingsOnly = null;
+function saveStateSoon_SettingsOnly() {
+  if (!localStorageIsUsable()) return;
+  if (_saveTimer_SettingsOnly) clearTimeout(_saveTimer_SettingsOnly);
+  _saveTimer_SettingsOnly = setTimeout(() => {
+    _saveTimer_SettingsOnly = null;
+    saveUIStateToLocalStorage_SettingsOnly();
+  }, 250);
+}
+
+/* ============================================================
+   Wire-up helpers
+   Call these from inside wireUp()
+   ============================================================ */
+
+// Call once during init (after you set your default control values)
+function restoreSavedSettingsIntoUI_SettingsOnly() {
+  // Returns true if something was restored
+  return loadUIStateFromLocalStorage_SettingsOnly();
+}
+
+// Call once after all event listeners are registered
+function enableAutoSaveForSettings_SettingsOnly() {
+  // Save when any SETTING changes. (Do NOT bind to abcIn.)
+  const ids = [
+    "slotWidth",
+    "appendRhythm",
+    "emptyMeasurePlaceholder",
+    "suppressPickup",
+    "pickupMaxNotes",
+    "paperSize",
+    "orientation",
+    "printTitleSize",
+    "printFontSize",
+    "oneTunePerPage"
+  ];
+
+  ids.forEach(id => {
+    const el = $(id);
+    if (!el) return;
+    el.addEventListener("change", saveStateSoon_SettingsOnly);
+    // Inputs like number fields can also be saved on input for responsiveness:
+    if (el.tagName === "INPUT") el.addEventListener("input", saveStateSoon_SettingsOnly);
+  });
+
 }
 
 const $ = (id) => document.getElementById(id);
@@ -2318,6 +2460,8 @@ function wireUp() {
     gSavedChordFileName = "";
     gRequestedPrintPt = 20;
 
+    restoreSavedSettingsIntoUI_SettingsOnly();
+
     // Load share link OR default sample
     const loadedFromLink = tryDecodeShareLinkIntoEditor();
     if (!loadedFromLink) {
@@ -2620,6 +2764,9 @@ function wireUp() {
       scrollWithPage: false
     });
   });
+
+  enableAutoSaveForSettings_SettingsOnly();
+
 }
 
 function WaitForReady(fn) {
