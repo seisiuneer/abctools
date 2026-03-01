@@ -39,54 +39,69 @@
   <link rel="manifest" href="https://michaeleskin.com/abctools/img/abc-manifest.json">
 
   <style>
+    /* ============================================================
+       Theme + base tokens
+       ============================================================ */
     :root{
       color-scheme: light;
 
+      /* Typography */
       --fs-base: clamp(15px, 1.05vw + 12px, 17px);
-      --fs-small: clamp(15px, 1.05vw + 12px, 17px);
+      --fs-small: var(--fs-base);
       --fs-h2: clamp(20px, 1.2vw + 16px, 24px);
       --fs-h3: clamp(17px, 1.05vw + 14px, 20px);
 
+      /* Layout */
       --page-pad: 32px;
+      --gap: 14px;
 
+      /* Visual */
       --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-
       --bd: 1px solid rgba(127,127,127,.35);
-      --bg-soft: rgba(127,127,127,.06);
       --btn-bg: rgba(127,127,127,.12);
 
+      /* Fixed help bar */
       --helpbar-pad-y: 12px;
       --helpbar-est-height: 64px;
+
+      /* Card padding (keep in sync with .card padding below) */
+      --card-pad: 14px;
     }
 
     html, body{ height:100%; margin:0; }
     *, *::before, *::after{ box-sizing:border-box; }
 
+    /* ============================================================
+       Page shell
+       ============================================================ */
     body{
       font-family: system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+      font-size: var(--fs-base);
+      line-height: 1.35;
+      color:#000;
+      -webkit-text-size-adjust: 100%;
+
       padding:
         calc(var(--page-pad) + env(safe-area-inset-top))
         calc(var(--page-pad) + env(safe-area-inset-right))
         calc(var(--page-pad) + env(safe-area-inset-bottom))
         calc(var(--page-pad) + env(safe-area-inset-left));
-      font-size: var(--fs-base);
-      line-height: 1.35;
-      -webkit-text-size-adjust: 100%;
+
       overflow:hidden;
-      color:#000;
     }
 
+    /* Common “can shrink” fix for flex children */
     .app, .main, .left, .right, .card, .taWrap, .chartsWrap{ min-width:0; }
 
     .app{
       height: calc(100vh - (2 * var(--page-pad)));
       display:flex;
       flex-direction:column;
-      gap:14px;
+      gap: var(--gap);
       overflow:hidden;
       min-height:0;
 
-      /* Reserve space for the fixed Instructions bar */
+      /* Reserve space for fixed Instructions bar */
       padding-bottom: calc(var(--helpbar-est-height) + env(safe-area-inset-bottom));
     }
 
@@ -101,12 +116,14 @@
       }
     }
 
-    h2{ margin:0 0 8px 0; font-size: var(--fs-h2); }
-    h3{ margin:0 0 0 0; font-size: var(--fs-h3); }
-    .card_label{ margin:0 0 12px 0; font-size: var(--fs-h3); }
+    /* ============================================================
+       Typography helpers
+       ============================================================ */
+    h2{ margin:0 0 8px; font-size: var(--fs-h2); }
+    h3{ margin:0; font-size: var(--fs-h3); }
+    .card_label{ margin:0 0 12px; font-size: var(--fs-h3); }
 
     p{ margin:0; }
-
     .muted{ opacity:0.75; line-height:2.0; }
     .small{ font-size: var(--fs-small); }
 
@@ -117,10 +134,13 @@
       font-size:0.95em;
     }
 
+    /* ============================================================
+       Main 2-column layout
+       ============================================================ */
     .main{
       flex:1;
       display:flex;
-      gap:14px;
+      gap: var(--gap);
       overflow:hidden;
       min-height:0;
       min-width:0;
@@ -130,7 +150,7 @@
       flex:1;
       display:flex;
       flex-direction:column;
-      gap:14px;
+      gap: var(--gap);
       min-height:0;
       min-width:0;
     }
@@ -138,56 +158,28 @@
     .left  { flex: 2 1 0; }
     .right { flex: 3 1 0; }
 
-    /* ============================================================
-       CRITICAL FIX FOR "SHORT BUT WIDE" SCREENS:
-       - Let LEFT column scroll instead of flex-shrinking cards to 0px
-       - Prevent non-input cards from shrinking/collapsing
-       ============================================================ */
+    /* Short-but-wide screens: left column scrolls; cards don't collapse */
     .left{
       overflow:auto;
       -webkit-overflow-scrolling: touch;
-
-      /* extra cushion so bottom cards aren't trapped behind fixed help bar */
       padding-bottom: calc(var(--helpbar-est-height) + 16px);
     }
+    .left > .card{ flex: 0 0 auto; }
 
-    /* Default flex items can shrink (collapse) inside a column.
-       Stop that for all left-column cards... */
-    .left > .card{
-      flex: 0 0 auto;
-    }
-
-    /* ...but allow the ABC input card to be the one flexible/tall area */
-    #cardInput{
-      flex: 1 1 auto !important;
-      overflow:hidden;         
-      display:flex;
-      flex-direction:column;
-      min-height: 260px !important;
-    }
-
-    /* Ensure the textarea area actually gets space even when tight */
-    #cardInput .taWrap{
-      flex: 1 1 auto;
-      min-height: 160px;
-    }
-
-    /* Right side: keep your existing behavior (scroll inside chartsWrap),
-       but prevent accidental collapsing if more cards are ever added later. */
+    /* Right side: output scrolls inside .chartsWrap */
     .right{ overflow:hidden; }
     .right > .card{ min-height:0; }
 
-    .chartsWrap{ overflow-x: auto; }
-    .chart pre{ overflow-x: auto; padding-bottom: 6px; }
-    .chart{ overflow: hidden; }
-
+    /* ============================================================
+       Cards + rows
+       ============================================================ */
     .card{
       border: var(--bd);
       border-radius:12px;
-      padding:14px;
+      padding: var(--card-pad);
       overflow:hidden;
-      min-width:0;
       background: transparent;
+      min-width:0;
     }
 
     .row{
@@ -198,6 +190,9 @@
       min-width:0;
     }
 
+    /* ============================================================
+       Controls
+       ============================================================ */
     input, textarea, button, select{
       font:inherit;
       color:inherit;
@@ -208,7 +203,7 @@
       -webkit-appearance:none;
       appearance:none;
       border: var(--bd);
-      background: #fff;
+      background:#fff;
       color:#000;
       border-radius:10px;
       padding:10px 12px;
@@ -230,7 +225,6 @@
       appearance:none;
       border: var(--bd);
       background: var(--btn-bg);
-      color:inherit;
       border-radius:12px;
       padding:10px 14px;
       line-height:1.15;
@@ -241,10 +235,8 @@
       cursor:pointer;
       user-select:none;
       -webkit-tap-highlight-color:transparent;
-      max-width:100%;
       min-width:0;
     }
-
     button:active{ transform: translateY(0.5px); }
     button:disabled{ opacity:0.4; cursor:default; transform:none; }
 
@@ -260,13 +252,86 @@
       border-color:#111;
     }
 
+    input[type="file"]::file-selector-button{
+      padding: 10px 16px;
+      border-radius: 12px;
+      border: var(--bd);
+      background: var(--btn-bg);
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    /* ============================================================
+       ABC Input card: only this card flexes tall
+       ============================================================ */
+    #cardInput{
+      flex: 1 1 auto !important;
+      overflow:hidden;
+      display:flex;
+      flex-direction:column;
+      min-height: 260px !important;
+    }
+
+    #cardInput .taWrap{
+      flex: 1 1 auto;
+      min-height: 160px;
+    }
+
+    /* Sticky header inside cardInput (no extra horizontal padding) */
+    #cardInput > .row{
+      flex-wrap: nowrap;
+      gap: 18px !important; /* override inline */
+      position: sticky;
+      top: 0;
+      z-index: 5;
+      background: Canvas;
+      padding: 4px 0 10px;
+      margin-left: 0 !important; /* override inline */
+    }
+
+    #cardInput > .row h3{
+      white-space: nowrap;
+      flex: 0 0 auto;
+      min-width: 9ch;
+    }
+
+    #cardInput > .row > .row{
+      display:flex;
+      flex: 1 1 auto;
+      min-width:0;
+      overflow:hidden;
+      align-items:center;
+      gap: 10px !important; /* override inline */
+      justify-content:flex-start;
+    }
+
+    #cardInput > .row > .row .muted.small{
+      flex: 0 1 auto; /* do not grow */
+      min-width:0;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      white-space:nowrap;
+      margin-right:0;
+    }
+
+    #fileIn{
+      flex: 0 0 auto !important;
+      min-width: 260px;
+      max-width: 100%;
+    }
+
+    /* If your HTML still has inline margin-top on .taWrap, this neutralizes it */
+    #cardInput .taWrap{ margin-top: 0 !important; }
+
+    /* ============================================================
+       Text areas + output
+       ============================================================ */
     .taWrap{
       flex:1;
       min-height:0;
       overflow:hidden;
       border: var(--bd);
       background: Canvas;
-      min-width:0;
       display:flex;
       padding:1px;
     }
@@ -274,11 +339,8 @@
     textarea{
       flex:1 1 auto;
       min-height:0;
-      width:auto;
-      height:auto;
       padding:12px;
       border:0;
-      border-radius:0;
       background:transparent;
       resize:none;
       overflow:auto;
@@ -297,22 +359,22 @@
       overflow:auto;
       border: var(--bd);
       background: Canvas;
-      padding: 12px;
+      padding:12px;
       -webkit-overflow-scrolling: touch;
     }
 
     .chart{
       border: var(--bd);
-      border-radius: 12px;
-      padding: 14px;
-      background: #fff;
-      margin: 0 0 12px 0;
+      border-radius:12px;
+      padding:14px;
+      background:#fff;
+      margin:0 0 12px;
+      overflow:hidden;
     }
-
     .chart:last-child{ margin-bottom:0; }
 
     .chart h3{
-      margin:0 0 10px 0;
+      margin:0 0 10px;
       font-size: clamp(18px, 1vw + 16px, 22px);
     }
 
@@ -323,6 +385,8 @@
       tab-size: 2;
       font-size: 18px;
       line-height: 1.35;
+      overflow-x:auto;
+      padding-bottom:6px;
     }
 
     .status{
@@ -340,6 +404,9 @@
 
     .errorText{ color:#b00020; opacity:1; }
 
+    /* ============================================================
+       Fixed bottom help bar
+       ============================================================ */
     #cardHelp{
       position:fixed;
       left:0;
@@ -352,6 +419,7 @@
       border-right:none;
       border-bottom:none;
       background: Canvas;
+
       padding:
         var(--helpbar-pad-y)
         calc(var(--page-pad) + env(safe-area-inset-right))
@@ -359,6 +427,18 @@
         calc(var(--page-pad) + env(safe-area-inset-left));
     }
 
+    #btnHelp{ width:100%; }
+
+    .exampleLink{
+      color: inherit;
+      text-decoration: underline;
+      cursor: pointer;
+      word-break: break-all;
+    }
+
+    /* ============================================================
+       DayPilot modal theme
+       ============================================================ */
     .modal_flat_background{ background-color:#000; opacity:0.4; }
     .modal_flat_main{ border:1px solid #333; box-shadow:0 0 15px -2px rgba(0,0,0,0.75); }
     .modal_flat_main, .modal_flat_main input, .modal_flat_main button{ font-size:16px; }
@@ -368,72 +448,27 @@
     .modal_flat_input{ margin:20px 0; }
     .modal_flat_buttons{ text-align:center; margin-top:40px; }
     .modal_flat_main button{
-      background-color:#ccc; color:#000; padding:10px 20px; border:0;
-      cursor:pointer; outline:none; width:100px; border-radius:10px;
+      background-color:#ccc;
+      color:#000;
+      padding:10px 20px;
+      border:0;
+      cursor:pointer;
+      outline:none;
+      width:100px;
+      border-radius:10px;
     }
     .modal_flat_cancel{ margin-left:6px; }
 
-    .exampleLink{
-      color: inherit;
-      text-decoration: underline;
-      cursor: pointer;
-      word-break: break-all;
-    }
-
-    #btnHelp{ width:100%; }
-
-    input[type="file"]::file-selector-button {
-      padding: 10px 16px;
-      border-radius: 12px;
-      border: var(--bd);
-      background: var(--btn-bg);
-      font-weight: 600;
-      cursor: pointer;
-    }
-
-    /* Header row: keep label stable, but allow the controls area to shrink */
-    #cardInput > .row{
-      flex-wrap: nowrap;
-      gap: 18px !important;          /* overrides your inline gap:50px */
-    }
-
-    /* Never wrap/shrink the "ABC Input" label */
-    #cardInput > .row h3{
-      white-space: nowrap;
-      flex: 0 0 auto;
-      min-width: 9ch;
-    }
-
-    /* The inner row that contains the text + file input */
-    #cardInput > .row > .row{
-      display: flex;
-      flex: 1 1 auto;
-      min-width: 0;
-      overflow: hidden;
-      align-items: center;
-      gap: 10px !important;
-      justify-content: flex-start;
-    }
-
-    /* Do NOT let the descriptive text grow (this was pushing the button away) */
-    #cardInput > .row > .row .muted.small{
-      flex: 0 1 auto;          /* <-- key change: no growth */
-      min-width: 0;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      margin-right: 0;
-    }
-
-    /* Keep the file chooser visible and next to the text */
-    #fileIn{
-      flex: 0 0 auto !important;
-      min-width: 260px;
-      max-width: 100%;
+    /* Modal width on desktop */
+    @media (min-width: 721px){
+      .modal_flat_main{
+        width: min(740px, calc(100vw - 80px)) !important;
+        max-width: min(740px, calc(100vw - 80px)) !important;
+      }
     }
 
     /* ============================================================
-       NARROW SCREENS (stacked layout)
+       Responsive (stacked layout)
        ============================================================ */
     @media (max-width: 980px){
       body{
@@ -445,7 +480,6 @@
       .app{
         height:auto;
         overflow:visible;
-        min-height:0;
         padding-bottom: calc(var(--helpbar-est-height) + env(safe-area-inset-bottom));
       }
 
@@ -455,14 +489,12 @@
         min-height:auto;
       }
 
-      /* In stacked mode, let the page scroll normally */
       .left, .right{
         overflow:visible;
         min-height:auto;
-        padding-bottom: 0;
+        padding-bottom:0;
       }
 
-      /* Keep your existing tall areas on mobile */
       .taWrap{ height: 48vh; min-height: 320px; }
       .chartsWrap{ height: 55vh; min-height: 320px; }
 
@@ -470,7 +502,6 @@
         margin-bottom: calc(env(safe-area-inset-bottom) + var(--page-pad));
       }
 
-      /* Also prevent weird shrink in stacked mode */
       .left > .card{ flex: 0 0 auto; }
       #cardInput{ flex: 0 0 auto !important; min-height: auto !important; }
     }
@@ -478,6 +509,7 @@
     @media (max-width: 720px){
       .row{ gap:10px; }
       .row button{ flex-basis:100%; }
+
       .taWrap{ height: 52vh; min-height: 300px; }
       .chartsWrap{ height: 60vh; min-height: 300px; }
 
@@ -503,48 +535,25 @@
         position: sticky;
         bottom: 0;
         background: #fff;
-        padding: 12px 0 6px 0;
-      }
-    }
-
-    /* Keep the ABC Input title + file chooser visible inside its card (works nicely once .left scrolls) */
-    #cardInput > .row{
-      position: sticky;
-      top: 0;
-      z-index: 5;
-      background: Canvas;
-      padding-top: 4px;
-      padding-bottom: 10px;
-      margin-left: 0 !important; /* override your inline margin-left:16px */
-    }
-
-    /* Optional: keep the sticky header from looking “cut off” */
-    #cardInput .taWrap{
-      margin-top: 0 !important;  /* override your inline margin-top:10px */
-    }
-
-    /* Make ABC input card taller on large/tall screens */
-    @media (min-width: 1100px) and (min-height: 800px){
-      #cardInput{
-        min-height: 340px !important;   
-      }
-      #cardInput .taWrap{
-        min-height: 240px;            
-      }
-    }
-
-    /* Extra boost for very tall displays */
-    @media (min-width: 1100px) and (min-height: 950px){
-      #cardInput{
-        min-height: 400px !important;
-      }
-      #cardInput .taWrap{
-        min-height: 300px;
+        padding: 12px 0 6px;
       }
     }
 
     /* ============================================================
-       PRINT
+       Large/tall screens: taller ABC input area
+       ============================================================ */
+    @media (min-width: 1100px) and (min-height: 800px){
+      #cardInput{ min-height: 340px !important; }
+      #cardInput .taWrap{ min-height: 240px; }
+    }
+
+    @media (min-width: 1100px) and (min-height: 950px){
+      #cardInput{ min-height: 400px !important; }
+      #cardInput .taWrap{ min-height: 300px; }
+    }
+
+    /* ============================================================
+       Print
        ============================================================ */
     @media print{
       body{
@@ -559,9 +568,7 @@
         padding-bottom:0 !important;
       }
 
-      .main{
-        display:block !important;
-      }
+      .main{ display:block !important; }
 
       .noprint,
       #cardControls,
@@ -571,9 +578,7 @@
         display:none !important;
       }
 
-      .left{
-        display:none !important;
-      }
+      .left{ display:none !important; }
 
       .right{
         width:100% !important;
@@ -587,11 +592,8 @@
         overflow:visible !important;
       }
 
-      .right > .card > .row{
-        display:none !important;
-      }
+      .right > .card > .row{ display:none !important; }
 
-      /* Container cleanup */
       #out.chartsWrap,
       .chartsWrap{
         border:none !important;
@@ -601,20 +603,15 @@
         background:transparent !important;
       }
 
-      /* IMPORTANT FIX:
-         Do NOT zero out .chart margin here,
-         or you kill between-tune spacing. */
       .chart{
         border:none !important;
         padding:0 !important;
         background:transparent !important;
         overflow:visible !important;
-
         break-inside: avoid;
         page-break-inside: avoid;
       }
 
-      /* Keep pre tight */
       .chart pre{
         border:none !important;
         padding:0 !important;
@@ -623,21 +620,11 @@
         background:transparent !important;
       }
 
-      *::-webkit-scrollbar{
-        width:0 !important;
-        height:0 !important;
-      }
+      *::-webkit-scrollbar{ width:0 !important; height:0 !important; }
 
-      /* CONTINUOUS MODE (spacing between tunes) */
-      body:not(.oneTunePerPagePrint) .chart{
-        margin:0 0 30pt 0 !important;
-      }
+      body:not(.oneTunePerPagePrint) .chart{ margin:0 0 30pt 0 !important; }
+      body:not(.oneTunePerPagePrint) .chart:last-child{ margin-bottom:0 !important; }
 
-      body:not(.oneTunePerPagePrint) .chart:last-child{
-        margin-bottom:0 !important;
-      }
-
-      /* ONE TUNE PER PAGE MODE */
       body.oneTunePerPagePrint .chart{
         margin:0 !important;
         break-after:page;
@@ -651,16 +638,41 @@
 
       .chart h3{
         font-size:24pt;
-        margin:0 0 12pt;
+        margin:0 0 12pt 0;
       }
     }
 
-    @media (min-width: 721px){
-      .modal_flat_main{
-        width: min(740px, calc(100vw - 80px)) !important;
-        max-width: min(740px, calc(100vw - 80px)) !important;
+    @media (min-width: 981px) and (max-width: 1099px){
+      #cardInput{ min-height: 340px !important; }
+      #cardInput .taWrap{ min-height: 240px; }
+    }
+
+    @media (max-width: 980px){
+      /* keep input roughly consistent instead of 48vh */
+      .taWrap{
+        height: clamp(220px, 28vh, 300px);
+        min-height: 220px;
+      }
+
+      /* charts can still be bigger than input, but not huge */
+      .chartsWrap{
+        height: clamp(320px, 45vh, 520px);
+        min-height: 320px;
       }
     }
+
+    @media (max-width: 720px){
+      .taWrap{
+        height: clamp(220px, 30vh, 300px);
+        min-height: 220px;
+      }
+
+      .chartsWrap{
+        height: clamp(340px, 50vh, 560px);
+        min-height: 340px;
+      }
+    }
+
   </style>
 
   <style id="pageStyle">@page { size: letter portrait; margin: 0.5in; }</style>
