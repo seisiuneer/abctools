@@ -2449,6 +2449,12 @@ function wireUp() {
     });
   }
 
+  if ($("emptyMeasurePlaceholder")) {
+    $("emptyMeasurePlaceholder").addEventListener("change", function () {
+      if ($("out").children.length) generateCharts();
+    });
+  }
+
   $("fileIn").addEventListener("change", function (e) {
 
     sendGoogleAnalytics("action", "loadfile");
