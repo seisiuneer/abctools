@@ -525,6 +525,26 @@
       margin-top: 0 !important;  /* override your inline margin-top:10px */
     }
 
+    /* Make ABC input card taller on large/tall screens */
+    @media (min-width: 1100px) and (min-height: 800px){
+      #cardInput{
+        min-height: 340px !important;   
+      }
+      #cardInput .taWrap{
+        min-height: 240px;            
+      }
+    }
+
+    /* Extra boost for very tall displays */
+    @media (min-width: 1100px) and (min-height: 950px){
+      #cardInput{
+        min-height: 400px !important;
+      }
+      #cardInput .taWrap{
+        min-height: 300px;
+      }
+    }
+
     /* ============================================================
        PRINT
        ============================================================ */
