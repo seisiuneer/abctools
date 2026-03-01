@@ -440,6 +440,17 @@
       word-break: break-all;
     }
 
+    #rowPageNumbers{
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    #rowPageNumbers label{
+      white-space: nowrap;
+    }
+    #rowPageNumbers select{
+      min-width: 160px;
+}
+
     /* ============================================================
        DayPilot modal theme
        ============================================================ */
@@ -848,6 +859,25 @@
                  title="Vertical space between tunes when printing multiple tunes per page"
                  style="width:100px;" />
         </div>
+
+        <div id="rowPageNumbers" class="row" style="margin-top:10px;">
+          <label for="showPageNumbers"><strong>Add page numbers</strong></label>
+          <select id="showPageNumbers" title="Add page numbers">
+            <option value="0" selected>No</option>
+            <option value="1">Yes</option>
+          </select>
+
+          <label for="pageNumberPos" style="margin-left:6px;"><strong>Location</strong></label>
+          <select id="pageNumberPos" title="Page number location">
+            <option value="tl">Top left</option>
+            <option value="tc">Top center</option>
+            <option value="tr">Top right</option>
+            <option value="bl">Bottom left</option>
+            <option value="bc" selected>Bottom center</option>
+            <option value="br">Bottom right</option>
+          </select>
+        </div>   
+
       </div>
 
       <div class="card">
@@ -904,13 +934,26 @@ const gIsIOS = isIOS();
 
 //console.log("gIsIOS: "+gIsIOS);
 
+function isChromiumBased() {
+  const ua = navigator.userAgent || "";
+
+  // Exclude Firefox and legacy Edge
+  if (/Firefox|FxiOS|Trident|MSIE/.test(ua)) return false;
+
+  // Exclude Safari (including iOS)
+  if (/Safari/.test(ua) && !/Chrome|CriOS|Edg|OPR/.test(ua)) return false;
+
+  // Include Chromium family
+  return /Chrome|CriOS|Edg|OPR/.test(ua);
+}
+
 /* ============================================================
    Settings persistence (localStorage) — SETTINGS ONLY (no ABC text)
    Add this whole block anywhere after your "$" helper is defined.
    Then add the small wire-up calls noted at the bottom of this block.
    ============================================================ */
 
-const LS_KEY = "abcChordChartGenerator_settings_v5";
+const LS_KEY = "abcChordChartGenerator_settings_v6";
 
 function localStorageIsUsable() {
   try {
@@ -933,7 +976,7 @@ let gLocalStorageAvailable = localStorageIsUsable();
 
 function getUIStateForSave_SettingsOnly() {
   return {
-    v: 5,
+    v: 6, // bumped because we added page-number settings
 
     // Chord Chart Settings
     slotWidth: $("slotWidth") ? $("slotWidth").value : "1",
@@ -950,6 +993,8 @@ function getUIStateForSave_SettingsOnly() {
     printFontSize: $("printFontSize") ? $("printFontSize").value : "12",
     oneTunePerPage: $("oneTunePerPage") ? $("oneTunePerPage").value : "0",
     printTuneGap: $("printTuneGap") ? $("printTuneGap").value : "30",
+    showPageNumbers: $("showPageNumbers") ? $("showPageNumbers").value : "0",
+    pageNumberPos: $("pageNumberPos") ? $("pageNumberPos").value : "bc"
   };
 }
 
@@ -971,6 +1016,9 @@ function applyUIStateFromObj_SettingsOnly(st) {
   if ($("printFontSize") && st.printFontSize != null) $("printFontSize").value = String(st.printFontSize);
   if ($("oneTunePerPage") && st.oneTunePerPage != null) $("oneTunePerPage").value = String(st.oneTunePerPage);
   if ($("printTuneGap") && st.printTuneGap != null) $("printTuneGap").value = String(st.printTuneGap);
+
+  if ($("showPageNumbers") && st.showPageNumbers != null) $("showPageNumbers").value = String(st.showPageNumbers);
+  if ($("pageNumberPos") && st.pageNumberPos != null) $("pageNumberPos").value = String(st.pageNumberPos);
 }
 
 function saveUIStateToLocalStorage_SettingsOnly() {
@@ -1022,6 +1070,43 @@ function saveStateSoon_SettingsOnly() {
    Call these from inside wireUp()
    ============================================================ */
 
+function syncPageNumberControlAvailability() {
+
+  const showSel = $("showPageNumbers");
+  const posSel  = $("pageNumberPos");
+
+  // Combined row that contains BOTH controls (per your new HTML)
+  const rowAll = $("rowPageNumbers");
+
+  if (!showSel || !posSel) return;
+
+  // Page margin boxes are (reliably) supported only on Chromium desktop
+  const supported = isChromiumBased() && !gIsIOS;
+
+  if (!supported) {
+
+    // Hide the entire row
+    if (rowAll) rowAll.style.display = "none";
+
+    // Force off and disable both controls
+    showSel.value = "0";
+    showSel.disabled = true;
+
+    posSel.value = "bc";
+    posSel.disabled = true;
+
+    return;
+  }
+
+  // Supported: show the row and enable the main toggle
+  if (rowAll) rowAll.style.display = "";
+
+  showSel.disabled = false;
+
+  // Position enabled only if page numbers are enabled
+  posSel.disabled = (showSel.value !== "1");
+}
+
 // Call once during init (after you set your default control values)
 function restoreSavedSettingsIntoUI_SettingsOnly() {
   // Returns true if something was restored
@@ -1043,14 +1128,15 @@ function enableAutoSaveForSettings_SettingsOnly() {
     "printTitleSize",
     "printFontSize",
     "oneTunePerPage",
-    "printTuneGap"
+    "printTuneGap",
+    "showPageNumbers",
+    "pageNumberPos"
   ];
 
   ids.forEach(id => {
     const el = $(id);
     if (!el) return;
     el.addEventListener("change", saveStateSoon_SettingsOnly);
-    // Inputs like number fields can also be saved on input for responsiveness:
     if (el.tagName === "INPUT") el.addEventListener("input", saveStateSoon_SettingsOnly);
   });
 }
@@ -1951,6 +2037,41 @@ async function saveChordChart() {
   setStatus(`Saved "${finalName}".`);
 }
 
+/* ============================================================
+   PRINT HTML: Page numbers (CSS @page margin boxes)
+   ADDED FUNCTIONS:
+     - pageNumberMarginBoxCSS(show, pos)
+   MODIFIED FUNCTIONS:
+     - buildPrintHtml(...)
+     - printViaIframe(...)
+   ============================================================ */
+
+function pageNumberMarginBoxCSS(show, pos) {
+  if (!show) return "";
+
+  const map = {
+    tl: "@top-left",
+    tc: "@top-center",
+    tr: "@top-right",
+    bl: "@bottom-left",
+    bc: "@bottom-center",
+    br: "@bottom-right"
+  };
+
+  const box = map[String(pos || "bc")] || "@bottom-center";
+
+  // Note: counter(pages) support is inconsistent; keep it to counter(page).
+  // Also: some browsers may ignore margin boxes entirely; this is a best-effort feature.
+  return `
+    @page{
+      ${box}{
+        content: counter(page);
+        font: 10pt ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      }
+    }
+  `;
+}
+
 function buildPrintHtml({
   paperSize,
   orientation,
@@ -1958,18 +2079,22 @@ function buildPrintHtml({
   requestedTitlePt,
   oneTunePerPage,
   chartMonoFont = "system",
-  tuneGapPt = 30
+  tuneGapPt = 30,
+  showPageNumbers = false,
+  pageNumberPos = "bc"
 }) {
   const safeSize   = String(paperSize || "letter");
   const safeOrient = String(orientation || "portrait");
-  const safePt     = Math.max(8, Math.min(120, parseInt(requestedPt, 10) || 16));
-  const safeTitle  = Math.max(8, Math.min(120, parseInt(requestedTitlePt, 10) || 12));
+  const safePt     = Math.max(8, Math.min(120, parseInt(requestedPt, 10) || 12));
+  const safeTitle  = Math.max(8, Math.min(120, parseInt(requestedTitlePt, 10) || 16));
   const safeGap    = Math.max(1, Math.min(300, parseInt(tuneGapPt, 10) || 30));
 
   const printMonoStack  = getChartMonoFontStack(chartMonoFont);
   const isBoldChoice    = String(chartMonoFont).endsWith("-bold");
   const printPreWeight  = isBoldChoice ? "700" : "400";
   const printTitleWeight = "700"; // keep titles bold
+
+  const pageNumsCSS = pageNumberMarginBoxCSS(!!showPageNumbers, pageNumberPos);
 
   return `<!doctype html>
 <html>
@@ -1978,7 +2103,10 @@ function buildPrintHtml({
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Print</title>
 <style>
-  @page { size: ${safeSize} ${safeOrient}; }
+  /* IMPORTANT: include margin so margin-box page numbers have room */
+  @page { size: ${safeSize} ${safeOrient}; margin: 0.5in; }
+
+  ${pageNumsCSS}
 
   html, body { margin:0; padding:0; }
   body { color:#000; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
@@ -2196,7 +2324,9 @@ function printViaIframe({
   requestedTitlePt = 16,
   oneTunePerPage = true,
   chartMonoFont = "system",
-  tuneGapPt = 30
+  tuneGapPt = 30,
+  showPageNumbers = false,
+  pageNumberPos = "bc"
 } = {}) {
 
   const out = document.getElementById("out");
@@ -2235,7 +2365,9 @@ function printViaIframe({
     requestedTitlePt,
     oneTunePerPage,
     chartMonoFont,
-    tuneGapPt
+    tuneGapPt,
+    showPageNumbers,
+    pageNumberPos
   });
 
   const cleanup = () => { try { iframe.remove(); } catch {} };
@@ -2503,6 +2635,8 @@ function resetAllSettingsToDefaults_Persisted() {
   if ($("printFontSize")) $("printFontSize").value = "12";
   if ($("oneTunePerPage")) $("oneTunePerPage").value = "0";
   if ($("printTuneGap")) $("printTuneGap").value = "30";
+  if ($("showPageNumbers")) $("showPageNumbers").value = "0";
+  if ($("pageNumberPos")) $("pageNumberPos").value = "bc";
 
   // Apply dependent styles (print + chart font)
   applyChartMonoFontFromUI();
@@ -2577,8 +2711,13 @@ function wireUp() {
     if ($("oneTunePerPage")) $("oneTunePerPage").value = "0";
     $("printTuneGap").value = "30";
 
+    if ($("showPageNumbers")) $("showPageNumbers").value = "0";
+    if ($("pageNumberPos")) $("pageNumberPos").value = "bc";
+
     if ($("suppressPickup")) $("suppressPickup").value = "1";
     if ($("pickupMaxNotes")) $("pickupMaxNotes").value = "3";
+
+    if ($("emptyMeasurePlaceholder")) $("emptyMeasurePlaceholder").value = "/";
 
     // Reset internal state
     gLoadedFileName = "";
@@ -2586,6 +2725,9 @@ function wireUp() {
 
     // Restore saved settings (may override defaults)
     restoreSavedSettingsIntoUI_SettingsOnly();
+
+    // Enable page number controls on Chromium browsers
+    syncPageNumberControlAvailability();
 
     // Apply chart font after restoring saved value
     applyChartMonoFontFromUI();
@@ -2626,6 +2768,9 @@ function wireUp() {
 
   // Initial load reset
   initializePageState();
+
+  // Enable/disable page number control
+  syncPageNumberControlAvailability();
 
   // Firefox/Safari BFCache restore protection
   window.addEventListener("pageshow", function (e) {
@@ -2709,6 +2854,16 @@ function wireUp() {
     const chartMonoFont = $("chartMonoFont") ? $("chartMonoFont").value : "system";
     const tuneGapPt = $("printTuneGap") ? parseInt($("printTuneGap").value, 10) || 30 : 30;
 
+    const showPageNumbers =
+      isChromiumBased() &&
+      !gIsIOS &&
+      $("showPageNumbers") &&
+      $("showPageNumbers").value === "1";
+      
+    const pageNumberPos = $("pageNumberPos")
+          ? $("pageNumberPos").value
+          : "bc";
+
     printViaIframe({
       paperSize,
       orientation,
@@ -2716,7 +2871,9 @@ function wireUp() {
       requestedTitlePt,
       oneTunePerPage,
       chartMonoFont,
-      tuneGapPt
+      tuneGapPt,
+      showPageNumbers,
+      pageNumberPos
     });
 
   });
@@ -2730,6 +2887,15 @@ function wireUp() {
   $("printFontSize").addEventListener("change", applyPrintSettings);
   $("printTitleSize").addEventListener("change", applyPrintSettings);
   $("printTuneGap").addEventListener("change", applyPrintSettings);
+
+  if ($("showPageNumbers")) {
+    $("showPageNumbers").addEventListener("change", function() {
+      applyPrintSettings();
+      syncPageNumberControlAvailability();
+    });
+  }
+
+  if ($("pageNumberPos")) $("pageNumberPos").addEventListener("change", applyPrintSettings);
 
   $("slotWidth").addEventListener("change", function () {
     if ($("out").children.length) generateCharts();
@@ -2883,7 +3049,7 @@ function wireUp() {
 
       '  <hr style="border:0; border-top:1px solid #ccc; margin:18px 0;">' +
 
-      '  <div style="margin-bottom:14px;">' +
+       '  <div style="margin-bottom:14px;">' +
       '    <div style="font-weight:700; font-size:14pt; margin-bottom:10px;">Print Settings</div>' +
 
       '    <b>Paper size</b><br/>' +
@@ -2902,7 +3068,6 @@ function wireUp() {
       '    Sets the starting font size for the printed chord chart text.<br/>' +
       '    The print view will automatically shrink the chord text only if needed to prevent clipping.<br/><br/>' +
 
-
       '    <b>Print one tune/page</b><br/>' +
       '    When enabled, each tune starts on a new printed page.<br/>' +
       '    When disabled, multiple tunes may print on the same page using the selected gap spacing.<br/><br/>' +
@@ -2911,7 +3076,14 @@ function wireUp() {
       '    Controls the vertical space between multiple tunes when printing more than one tune per page.<br/>' +
       '    Smaller values fit more tunes on a page; larger values add separation for readability.<br/><br/>' +
 
-      '    You may export a PDF file using your browser\'s native <b>Print-to-PDF</b> feature.' +
+      '    <b>Add page numbers</b><br/>' +
+      '    When enabled, page numbers will be added to the printed output.<br/>' +
+      '    <b>Note:</b> This feature is only available on Chromium-based browsers (e.g., Chrome, Edge, Brave).<br/><br/>' +
+
+      '    <b>Page number location</b><br/>' +
+      '    Select where the page number appears on each printed page (top or bottom, left, center, or right).<br/>' +
+      '    This setting is only used when page numbers are enabled.<br/>' +
+      '    <b>Note:</b> This feature is only available on Chromium-based browsers (e.g., Chrome, Edge, Brave).<br/><br/>' +
       '  </div>' +
 
       '  <hr style="border:0; border-top:1px solid #ccc; margin:18px 0;">' +
