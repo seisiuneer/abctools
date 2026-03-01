@@ -20,6 +20,7 @@
   <meta property="og:url" content="https://michaeleskin.com/tools/abc_to_chord_chart.html" />
   <meta property="og:site_name" content="ABC Chord Chart Generator" />
   <meta property="og:image" content="https://michaeleskin.com/abctools/img/abc-icon.png"/>
+  <meta name="description" content="Generate, copy, save, and print chord charts from one or more ABC tunes." />
 
   <meta name="msapplication-TileColor" content="#ffffff">
   <meta name="msapplication-TileImage" content="https://michaeleskin.com/abctools/img/abc-ms-icon-144x144.png">
@@ -625,7 +626,7 @@
 
       *::-webkit-scrollbar{ width:0 !important; height:0 !important; }
 
-      body:not(.oneTunePerPagePrint) .chart{ margin:0 0 30pt 0 !important; }
+      body:not(.oneTunePerPagePrint) .chart{ margin:0 0 var(--print-tune-gap, 30pt) 0 !important; }
       body:not(.oneTunePerPagePrint) .chart:last-child{ margin-bottom:0 !important; }
 
       body.oneTunePerPagePrint .chart{
@@ -817,7 +818,7 @@
         </div>
 
         <div class="row" style="margin-top:10px;">
-          <label for="printTitleSize"><strong>Tune title font size</strong></label>
+          <label for="printTitleSize"><strong>Tune title font size (pt)</strong></label>
           <input id="printTitleSize"
                  type="number"
                  min="8"
@@ -826,7 +827,7 @@
                  title="Printed tune title font size"
                  style="width:100px;" />
 
-          <label for="printFontSize"><strong>Tune chords font size</strong></label>
+          <label for="printFontSize"><strong>Tune chords font size (pt)</strong></label>
           <input id="printFontSize" type="number" min="8" max="120" value="12" title="Printed tune chords font size" style="width:100px;" />
 
         </div>
@@ -837,6 +838,25 @@
             <option value="0" selected>No</option>
             <option value="1" >Yes</option>
           </select>
+          <label for="printTuneGap"><strong>Gap between tunes (pt)</strong></label>
+          <input id="printTuneGap"
+                 type="number"
+                 min="1"
+                 max="300"
+                 value="30"
+                 title="Vertical space between tunes when printing multiple tunes per page"
+                 style="width:100px;" />
+        </div>
+      </div>
+
+      <div class="card">
+        <h3 class="card_label">Settings</h3>
+
+        <div class="row" style="margin-top:10px;">
+          <button id="resetSettingsBtn"
+                  title="Reset all settings to their default values">
+            Reset All Settings to Defaults
+          </button>
         </div>
       </div>
 
@@ -889,7 +909,7 @@ const gIsIOS = isIOS();
    Then add the small wire-up calls noted at the bottom of this block.
    ============================================================ */
 
-const LS_KEY = "abcChordChartGenerator_settings_v3";
+const LS_KEY = "abcChordChartGenerator_settings_v5";
 
 function localStorageIsUsable() {
   try {
@@ -912,7 +932,7 @@ let gLocalStorageAvailable = localStorageIsUsable();
 
 function getUIStateForSave_SettingsOnly() {
   return {
-    v: 3,
+    v: 5,
 
     // Chord Chart Settings
     slotWidth: $("slotWidth") ? $("slotWidth").value : "1",
@@ -928,6 +948,7 @@ function getUIStateForSave_SettingsOnly() {
     printTitleSize: $("printTitleSize") ? $("printTitleSize").value : "16",
     printFontSize: $("printFontSize") ? $("printFontSize").value : "12",
     oneTunePerPage: $("oneTunePerPage") ? $("oneTunePerPage").value : "0",
+    printTuneGap: $("printTuneGap") ? $("printTuneGap").value : "30",
   };
 }
 
@@ -948,6 +969,7 @@ function applyUIStateFromObj_SettingsOnly(st) {
   if ($("printTitleSize") && st.printTitleSize != null) $("printTitleSize").value = String(st.printTitleSize);
   if ($("printFontSize") && st.printFontSize != null) $("printFontSize").value = String(st.printFontSize);
   if ($("oneTunePerPage") && st.oneTunePerPage != null) $("oneTunePerPage").value = String(st.oneTunePerPage);
+  if ($("printTuneGap") && st.printTuneGap != null) $("printTuneGap").value = String(st.printTuneGap);
 }
 
 function saveUIStateToLocalStorage_SettingsOnly() {
@@ -1019,7 +1041,8 @@ function enableAutoSaveForSettings_SettingsOnly() {
     "orientation",
     "printTitleSize",
     "printFontSize",
-    "oneTunePerPage"
+    "oneTunePerPage",
+    "printTuneGap"
   ];
 
   ids.forEach(id => {
@@ -1438,7 +1461,7 @@ function parseMusicLineToBarsAndChords(
   // Track whether we suppressed a pickup on THIS line
   let pickupWasSuppressed = false;
 
-  // NEW: if we suppress a pickup on a line that is ONLY "|:pickup|",
+  // If we suppress a pickup on a line that is ONLY "|:pickup|",
   // carry the |: forward to the next real line.
   let carryStartRepeat = false;
 
@@ -1580,7 +1603,7 @@ function renderAlignedText(
   // "Tune start" here means: we haven't emitted any real (non-blank) parsed line yet.
   let atTuneStart = true;
 
-  // NEW: if we suppressed a pickup on a line that was only "|:pickup|",
+  // If we suppressed a pickup on a line that was only "|:pickup|",
   // carry the |: forward to the next real line.
   let pendingStartRepeat = false;
 
@@ -1756,6 +1779,32 @@ function setPrintFontSize(bodyPt, titlePt) {
   `;
 }
 
+function setPrintTuneGapPt(gapPt) {
+  const safeGap = Math.max(1, Math.min(300, parseInt(gapPt, 10) || 30));
+
+  // Apply as a CSS custom property used by @media print fallback (main page)
+  document.documentElement.style.setProperty("--print-tune-gap", safeGap + "pt");
+
+  // Also keep a dedicated style override for safety (main page print)
+  let el = document.getElementById("printGapOverride");
+  if (!el) {
+    el = document.createElement("style");
+    el.id = "printGapOverride";
+    document.head.appendChild(el);
+  }
+
+  el.textContent = `
+    @media print{
+      body:not(.oneTunePerPagePrint) .chart{
+        margin: 0 0 ${safeGap}pt 0 !important;
+      }
+      body:not(.oneTunePerPagePrint) .chart:last-child{
+        margin-bottom: 0 !important;
+      }
+    }
+  `;
+}
+
 function setOneTunePerPagePrint(enabled) {
   document.body.classList.toggle("oneTunePerPagePrint", !!enabled);
 }
@@ -1907,12 +1956,14 @@ function buildPrintHtml({
   requestedPt,
   requestedTitlePt,
   oneTunePerPage,
-  chartMonoFont = "system"
+  chartMonoFont = "system",
+  tuneGapPt = 30
 }) {
   const safeSize   = String(paperSize || "letter");
   const safeOrient = String(orientation || "portrait");
   const safePt     = Math.max(8, Math.min(120, parseInt(requestedPt, 10) || 16));
   const safeTitle  = Math.max(8, Math.min(120, parseInt(requestedTitlePt, 10) || 12));
+  const safeGap    = Math.max(1, Math.min(300, parseInt(tuneGapPt, 10) || 30));
 
   const printMonoStack  = getChartMonoFontStack(chartMonoFont);
   const isBoldChoice    = String(chartMonoFont).endsWith("-bold");
@@ -1936,7 +1987,7 @@ function buildPrintHtml({
   body.oneTunePerPage .chart:last-child { break-after: auto; page-break-after: auto; }
 
   /* Continuous mode spacing */
-  body:not(.oneTunePerPage) .chart { margin: 0 0 30pt 0; }
+  body:not(.oneTunePerPage) .chart { margin: 0 0 ${safeGap}pt 0; }
   body:not(.oneTunePerPage) .chart:last-child { margin-bottom: 0; }
 
   .chart { break-inside: avoid; page-break-inside: avoid; }
@@ -2140,10 +2191,11 @@ function buildPrintHtml({
 function printViaIframe({
   paperSize,
   orientation,
-  requestedPt = 20,
-  requestedTitlePt = 24,
+  requestedPt = 12,
+  requestedTitlePt = 16,
   oneTunePerPage = true,
-  chartMonoFont = "system"
+  chartMonoFont = "system",
+  tuneGapPt = 30
 } = {}) {
 
   const out = document.getElementById("out");
@@ -2181,7 +2233,8 @@ function printViaIframe({
     requestedPt,
     requestedTitlePt,
     oneTunePerPage,
-    chartMonoFont
+    chartMonoFont,
+    tuneGapPt
   });
 
   const cleanup = () => { try { iframe.remove(); } catch {} };
@@ -2432,6 +2485,42 @@ function handleFileOpen(file) {
   reader.readAsText(file);
 }
 
+function resetAllSettingsToDefaults_Persisted() {
+
+  // Chord Chart Settings defaults
+  if ($("slotWidth")) $("slotWidth").value = "1";
+  if ($("appendRhythm")) $("appendRhythm").value = "1";
+  if ($("emptyMeasurePlaceholder")) $("emptyMeasurePlaceholder").value = "/";
+  if ($("suppressPickup")) $("suppressPickup").value = "1";
+  if ($("pickupMaxNotes")) $("pickupMaxNotes").value = "3";
+  if ($("chartMonoFont")) $("chartMonoFont").value = "system";
+
+  // Print Settings defaults
+  if ($("paperSize")) $("paperSize").value = "letter";
+  if ($("orientation")) $("orientation").value = "portrait";
+  if ($("printTitleSize")) $("printTitleSize").value = "16";
+  if ($("printFontSize")) $("printFontSize").value = "12";
+  if ($("oneTunePerPage")) $("oneTunePerPage").value = "0";
+  if ($("printTuneGap")) $("printTuneGap").value = "30";
+
+  // Apply dependent styles (print + chart font)
+  applyChartMonoFontFromUI();
+  setPageStyle($("paperSize").value, $("orientation").value);
+  setPrintFontSize($("printFontSize").value, $("printTitleSize").value);
+  setOneTunePerPagePrint($("oneTunePerPage") && $("oneTunePerPage").value === "1");
+  setPrintTuneGapPt($("printTuneGap") ? $("printTuneGap").value : "30");
+
+  // IMPORTANT: Persist defaults (overwrite localStorage with default state)
+  saveUIStateToLocalStorage_SettingsOnly();
+
+  // If charts are already rendered, regenerate to reflect defaults
+  if ($("out") && $("out").children.length) {
+    generateCharts();
+  }
+
+  setStatus("Settings reset to defaults.");
+}
+
 /* ---------------------------------
    Wire up UI
 ---------------------------------- */
@@ -2460,14 +2549,14 @@ function wireUp() {
 
     const onePerPage = $("oneTunePerPage")
       ? ($("oneTunePerPage").value === "1")
-      : true;
+      : false;
 
     setOneTunePerPagePrint(onePerPage);
+
+    const gap = $("printTuneGap") ? $("printTuneGap").value : "30";
+    setPrintTuneGapPt(gap);
   }
 
-  // ------------------------------------------------------------
-  // Full page initialization (used ONLY on load/pageshow)
-  // ------------------------------------------------------------
   function initializePageState() {
 
     // Clear output + file input
@@ -2478,7 +2567,6 @@ function wireUp() {
     $("slotWidth").value = "1";
     if ($("appendRhythm")) $("appendRhythm").value = "1";
 
-    // NEW: default chart font (only charts)
     if ($("chartMonoFont")) $("chartMonoFont").value = "system";
 
     $("paperSize").value = "letter";
@@ -2486,6 +2574,7 @@ function wireUp() {
     $("printTitleSize").value = "16";
     $("printFontSize").value = "12";
     if ($("oneTunePerPage")) $("oneTunePerPage").value = "0";
+    $("printTuneGap").value = "30";
 
     if ($("suppressPickup")) $("suppressPickup").value = "1";
     if ($("pickupMaxNotes")) $("pickupMaxNotes").value = "3";
@@ -2497,7 +2586,7 @@ function wireUp() {
     // Restore saved settings (may override defaults)
     restoreSavedSettingsIntoUI_SettingsOnly();
 
-    // NEW: apply chart font after restoring saved value
+    // Apply chart font after restoring saved value
     applyChartMonoFontFromUI();
 
     // Load share link OR default sample
@@ -2594,10 +2683,10 @@ function wireUp() {
     if (gIsIOS) {
 
       var thePrompt = "Printing is not supported on iOS";
-      thePrompt = '<p style="font-size:12pt;line-height:18pt;font-family:helvetica;text-align:center">' + thePrompt + '</p>';
+      thePrompt = '<p style="font-size:14pt;line-height:18pt;font-family:helvetica;text-align:center">' + thePrompt + '</p>';
 
       if (window.DayPilot && DayPilot.Modal && typeof DayPilot.Modal.alert === "function") {
-        DayPilot.Modal.alert(thePrompt, { theme:"modal_flat", top:100, scrollWithPage:false, width:500 });
+        DayPilot.Modal.alert(thePrompt, { theme:"modal_flat", top:200, scrollWithPage:false, width:400 });
       } else {
         alert("Printing is not supported on iOS");
       }
@@ -2611,12 +2700,13 @@ function wireUp() {
 
     const paperSize = $("paperSize").value;
     const orientation = $("orientation").value;
-    const requestedPt = parseInt($("printFontSize").value, 10) || 20;
-    const requestedTitlePt = parseInt($("printTitleSize").value, 10) || 24;
+    const requestedPt = parseInt($("printFontSize").value, 10) || 12;
+    const requestedTitlePt = parseInt($("printTitleSize").value, 10) || 16;
     const oneTunePerPage = $("oneTunePerPage")
       ? ($("oneTunePerPage").value === "1")
       : true;
     const chartMonoFont = $("chartMonoFont") ? $("chartMonoFont").value : "system";
+    const tuneGapPt = $("printTuneGap") ? parseInt($("printTuneGap").value, 10) || 30 : 30;
 
     printViaIframe({
       paperSize,
@@ -2624,7 +2714,8 @@ function wireUp() {
       requestedPt,
       requestedTitlePt,
       oneTunePerPage,
-      chartMonoFont
+      chartMonoFont,
+      tuneGapPt
     });
 
   });
@@ -2637,6 +2728,7 @@ function wireUp() {
   $("orientation").addEventListener("change", applyPrintSettings);
   $("printFontSize").addEventListener("change", applyPrintSettings);
   $("printTitleSize").addEventListener("change", applyPrintSettings);
+  $("printTuneGap").addEventListener("change", applyPrintSettings);
 
   $("slotWidth").addEventListener("change", function () {
     if ($("out").children.length) generateCharts();
@@ -2661,7 +2753,6 @@ function wireUp() {
   if ($("chartMonoFont")) {
     $("chartMonoFont").addEventListener("change", function () {
       applyChartMonoFontFromUI();
-      saveStateSoon_SettingsOnly();
     });
   }
 
@@ -2681,6 +2772,32 @@ function wireUp() {
   if ($("pickupMaxNotes")) {
     $("pickupMaxNotes").addEventListener("change", function () {
       if ($("out").children.length) generateCharts();
+    });
+  }
+
+  if ($("resetSettingsBtn")) {
+    $("resetSettingsBtn").addEventListener("click", function () {
+
+      if (!window.DayPilot || !DayPilot.Modal || typeof DayPilot.Modal.confirm !== "function") {
+        if (confirm("Reset all Chord Chart and Print settings to their default values?")) {
+          resetAllSettingsToDefaults_Persisted();
+        }
+        return;
+      }
+
+      var thePrompt = "Reset all Chord Chart and Print settings to their default values?";
+      thePrompt = '<p style="font-size:14pt;line-height:18pt;font-family:helvetica;text-align:center">' + thePrompt + '</p>';
+
+      DayPilot.Modal.confirm(thePrompt, {
+        top: 200,
+        theme: "modal_flat",
+        width:400,
+        scrollWithPage: false
+      }).then(function(args) {
+        if (!args.canceled) {
+          resetAllSettingsToDefaults_Persisted();
+        }
+      });
     });
   }
 
@@ -2767,9 +2884,41 @@ function wireUp() {
 
       '  <div style="margin-bottom:14px;">' +
       '    <div style="font-weight:700; font-size:14pt; margin-bottom:10px;">Print Settings</div>' +
-      '    Set the paper size/orientation and the title/body font sizes, then click <b>Print</b>.<br/>' +
-      '    The print view auto-shrinks the chord text only if needed to avoid clipping.<br/>' +
-      '    You may export a PDF file by using the browser\'s native <b>Print-to-PDF</b> feature.' +
+
+      '    <b>Paper size</b><br/>' +
+      '    Select the target paper size for printing (Letter, A4, Legal, or Tabloid).<br/>' +
+      '    This controls the page dimensions used by the browser when printing or exporting to PDF.<br/><br/>' +
+
+      '    <b>Orientation</b><br/>' +
+      '    Choose Portrait or Landscape layout.<br/>' +
+      '    Landscape can be helpful for wider chord charts.<br/><br/>' +
+
+      '    <b>Tune title font size (pt)</b><br/>' +
+      '    Sets the printed font size of each tune title.<br/>' +
+      '    This does not affect the on-screen display — print only.<br/><br/>' +
+
+      '    <b>Tune chords font size (pt)</b><br/>' +
+      '    Sets the starting font size for the printed chord chart text.<br/>' +
+      '    The print view will automatically shrink the chord text only if needed to prevent clipping.<br/><br/>' +
+
+
+      '    <b>Print one tune/page</b><br/>' +
+      '    When enabled, each tune starts on a new printed page.<br/>' +
+      '    When disabled, multiple tunes may print on the same page using the selected gap spacing.<br/><br/>' +
+
+      '    <b>Gap between tunes (pt)</b><br/>' +
+      '    Controls the vertical space between multiple tunes when printing more than one tune per page.<br/>' +
+      '    Smaller values fit more tunes on a page; larger values add separation for readability.<br/><br/>' +
+
+      '    You may export a PDF file using your browser\'s native <b>Print-to-PDF</b> feature.' +
+      '  </div>' +
+
+      '  <hr style="border:0; border-top:1px solid #ccc; margin:18px 0;">' +
+
+      '  <div style="margin-bottom:14px;">' +
+      '    <div style="font-weight:700; font-size:14pt; margin-bottom:10px;">Settings</div>' +
+      '    <b>Reset All Settings to Defaults</b><br/>' +
+      '    Restores all chord chart and print settings to their original default values and saves those defaults for future visits.' +
       '  </div>' +
 
       '  <hr style="border:0; border-top:1px solid #ccc; margin:18px 0;">' +
