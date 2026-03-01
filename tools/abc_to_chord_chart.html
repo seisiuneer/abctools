@@ -690,7 +690,8 @@
       <div id="cardControls" class="card">
         <div class="row">
           <button id="generateBtn" class="primary" title="Generate chord charts from the ABC Input text">Generate Charts</button>
-          <button id="saveBtn" title="Save the generated chord chart text to a file">Save Charts</button>
+          <button id="copyBtn" title="Copy the generated chord charts to the clipboard">Copy</button>
+          <button id="saveBtn" title="Save the generated chord charts to a file">Save</button>
           <button id="printBtn" title="Print the generated charts">Print</button>
           <button id="clearBtn" title="Clear input and output">Clear</button>
         </div>
@@ -1946,6 +1947,77 @@ function generateCharts() {
   }
 }
 
+//
+// Copy chord charts to the clpboard
+//
+async function copyChordChartsToClipboard() {
+  const btn = $("copyBtn");
+  const originalLabel = btn ? btn.textContent : "";
+
+  function showCopiedFeedback() {
+    if (!btn) return;
+    btn.textContent = "Copied!";
+    btn.disabled = true;
+
+    setTimeout(() => {
+      btn.textContent = originalLabel;
+      btn.disabled = false;
+    }, 1200);
+  }
+
+  // If nothing rendered yet, generate first
+  if (!$("out").children.length) {
+    generateCharts();
+  }
+  if (!$("out").children.length) {
+    setStatus("Nothing to copy. Generate chord charts first.", true);
+    return;
+  }
+
+  const text = buildRawChordTextForSave();
+  if (!text.trim()) {
+    setStatus("Nothing to copy. Generate chord charts first.", true);
+    return;
+  }
+
+  // Modern Clipboard API
+  try {
+    if (navigator.clipboard && typeof navigator.clipboard.writeText === "function") {
+      await navigator.clipboard.writeText(text);
+      setStatus("Copied chord charts to clipboard.");
+      showCopiedFeedback();
+      return;
+    }
+  } catch (e) {
+    // fall through to legacy method
+  }
+
+  // Legacy fallback
+  try {
+    const ta = document.createElement("textarea");
+    ta.value = text;
+    ta.setAttribute("readonly", "");
+    ta.style.position = "fixed";
+    ta.style.left = "-9999px";
+    ta.style.top = "0";
+    document.body.appendChild(ta);
+    ta.select();
+    ta.setSelectionRange(0, ta.value.length);
+
+    const ok = document.execCommand("copy");
+    ta.remove();
+
+    if (ok) {
+      setStatus("Copied chord charts to clipboard.");
+      showCopiedFeedback();
+    } else {
+      setStatus("Copy failed. Your browser blocked clipboard access.", true);
+    }
+  } catch (e2) {
+    setStatus("Copy failed: " + (e2 && e2.message ? e2.message : String(e2)), true);
+  }
+}
+
 /* ---------------------------------
    File open
 ---------------------------------- */
@@ -2087,6 +2159,20 @@ function wireUp() {
     }
   });
 
+  $("copyBtn").addEventListener("click", async function () {
+
+    sendGoogleAnalytics("action", "copy");
+
+    applyPrintSettings();
+    
+    try {
+      await copyChordChartsToClipboard();
+    } catch (e) {
+      setStatus("Copy failed: " + (e && e.message ? e.message : String(e)), true);
+    }
+
+  });
+
   $("saveBtn").addEventListener("click", async function () {
 
     sendGoogleAnalytics("action", "save");
@@ -2187,32 +2273,39 @@ function wireUp() {
       '  </div>' +
 
       '  <div style="margin-bottom:14px;">' +
-      '    <b>1) Add some ABC tunes</b><br/>' +
-      '    Paste one or more ABC tunes into the editor, or open a <code>.abc</code> or <code>.txt</code> file.<br/>' +
+      '    <b>First: Load some ABC tunes</b><br/>' +
+      '    Paste one or more ABC tunes into the editor, or open a <code>.abc</code> / <code>.txt</code> file.<br/>' +
+      '    <span class="muted">Tip: Chord charts are generated from chord symbols in quotes<br/>(for example: <code>"G"</code>, <code>"Am"</code>).</span>' +
       '  </div>' +
 
       '  <div style="margin-bottom:14px;">' +
-      '    <b>2) Generate chord charts</b><br/>' +
-      '    Click <b>Generate Charts</b>.<br/>' +
-      '    The chord charts will appear in the <b>Chord Charts</b> output area.<br/>' +
-      '    Only tunes that actually contain chords will have chord charts generated.<br/>' +
-      '    Pickup measures without chords will show as empty measures.' +
+      '    <b>Next: Generate the chord charts</b><br/>' +
+      '    Click <b>Generate Charts</b>. The charts will appear in the <b>Chord Charts</b> area on the right.<br/>' +
+      '    Tunes with no chords are skipped.<br/>Measures with no chords are shown as empty (or with your selected placeholder).' +
       '  </div>' +
 
       '  <div style="margin-bottom:14px;">' +
-      '    <b>3) Save chord charts</b><br/>' +
-      '    Click <b>Save Charts</b> to save the generated chord charts to a text file.' +
+      '    <b>Once the chord charts have been generated, you can do the following:</b>' +
       '  </div>' +
 
       '  <div style="margin-bottom:14px;">' +
-      '    <b>4) Print chord charts</b><br/>' +
+      '    <b>1) Copy chord charts to the clipboard</b><br/>' +
+      '    Click <b>Copy</b> to copy the generated chord charts to the system clipboard.' +
+      '  </div>' +
+
+      '  <div style="margin-bottom:14px;">' +
+      '    <b>2) Save the chord charts to a text file</b><br/>' +
+      '    Click <b>Save</b> to save the generated chord charts to a text file.' +
+      '  </div>' +
+
+      '  <div style="margin-bottom:14px;">' +
+      '    <b>3) Print chord charts or generate a PDF</b><br/>' +
       '    Click <b>Print</b> to print the generated chord charts from the browser.<br/>' +
       '    You may also save a PDF of the charts using the browser\'s native <b>Print-to-PDF</b> feature.' +
       '  </div>' +
 
       '  <hr style="border:0; border-top:1px solid #ccc; margin:18px 0;">' +
 
-      // ---- Chord Chart Settings (more spacing under header) ----
       '  <div style="margin-bottom:14px;">' +
       '    <div style="font-weight:700; font-size:14pt; margin-bottom:10px;">Chord Chart Settings</div>' +
       '    <b>Extra spacing</b><br/>' +
@@ -2226,7 +2319,6 @@ function wireUp() {
 
       '  <hr style="border:0; border-top:1px solid #ccc; margin:18px 0;">' +
 
-      // ---- Print Settings (more spacing under header) ----
       '  <div style="margin-bottom:14px;">' +
       '    <div style="font-weight:700; font-size:14pt; margin-bottom:10px;">Print Settings</div>' +
       '    Set the paper size/orientation and the title/body font sizes, then click <b>Print</b>.<br/>' +
