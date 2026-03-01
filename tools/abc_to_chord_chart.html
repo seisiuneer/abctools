@@ -1992,7 +1992,7 @@ async function copyChordChartsToClipboard() {
   try {
     if (navigator.clipboard && typeof navigator.clipboard.writeText === "function") {
       await navigator.clipboard.writeText(text);
-      setStatus("Copied chord charts to clipboard.");
+      setStatus("Copied chord charts to the clipboard.");
       showCopiedFeedback();
       return;
     }
@@ -2016,7 +2016,7 @@ async function copyChordChartsToClipboard() {
     ta.remove();
 
     if (ok) {
-      setStatus("Copied chord charts to clipboard.");
+      setStatus("Copied chord charts to the clipboard.");
       showCopiedFeedback();
     } else {
       setStatus("Copy failed. Your browser blocked clipboard access.", true);
