@@ -729,6 +729,24 @@
             <option value="%">%</option>
           </select>
         </div>
+
+        <div class="row" style="margin-top:10px;">
+          <label for="suppressPickup"><strong>Suppress pickups</strong></label>
+          <select id="suppressPickup" title="If enabled, suppress leading pickup notes before the first barline (when no chords are present in the pickup)">
+            <option value="0">No</option>
+            <option value="1" selected>Yes</option>
+          </select>
+
+          <label for="pickupMaxNotes" style="margin-left:6px;"><strong>Max pickup notes</strong></label>
+          <select id="pickupMaxNotes" title="If pickup suppression is enabled, treat the selected number of note-events or fewer before the first barline as a pickup">
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3" selected>3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+          </select>
+        </div>
+
       </div>
 
       <div class="card">
@@ -1011,11 +1029,13 @@ function splitAbcIntoTunes(abcText) {
   }
   return tunes;
 }
+
 function getHeaderValue(block, tag) {
   const re = new RegExp("^" + tag.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + ":(.*)$", "m");
   const m = block.match(re);
   return m ? m[1].trim() : "";
 }
+
 function getTuneBody(block) {
   const lines = block.replace(/\r\n?/g, "\n").split("\n");
   let kIndex = -1;
@@ -1035,10 +1055,49 @@ function getTuneBody(block) {
   return lines.slice(kIndex + 1).join("\n");
 }
 
+function segmentHasRealChordQuotes(segment) {
+  const s = String(segment || "");
+
+  const re = /"([^"]*)"/g;
+  let m;
+  while ((m = re.exec(s)) !== null) {
+    const chord = (m[1] || "").trim();
+    if (!chord) continue;
+    if (/^[\^_<>@]/.test(chord)) continue;
+    return true;
+  }
+  return false;
+}
+
+function countNoteEventsInAbcFragment(fragment) {
+  let s = String(fragment || "");
+
+  // Remove chord quotes
+  s = s.replace(/"[^"]*"/g, "");
+
+  // Remove grace notes { ... }
+  s = s.replace(/\{[^}]*\}/g, "");
+
+  // Remove !decorations!
+  s = s.replace(/![^!]*!/g, "");
+
+  // Remove bracket groups [..] conservatively (often note-chords)
+  // If you WANT to count notes inside [CEG], delete this line.
+  s = s.replace(/\[[^\]]*\]/g, " ");
+
+  // Count note/rest tokens (A-G a-g, rests z/x)
+  const re = /(?:\^+|_+|=+)?([A-Ga-gzZxX])/g;
+
+  let count = 0;
+  while (re.exec(s) !== null) count++;
+  return count;
+}
+
 function parseMusicLineToBarsAndChords(
   line,
   extraSpace = 0,
-  emptyPlaceholder = "/"
+  emptyPlaceholder = "/",
+  pickupHeuristic = null
 ) {
   const s = String(line || "");
 
@@ -1048,9 +1107,6 @@ function parseMusicLineToBarsAndChords(
   const extra = Math.max(0, Math.min(40, parseInt(extraSpace, 10) || 0));
   const intraChordSep = " ".repeat(1 + extra);
 
-  // Extract chord text from a segment between bar tokens.
-  // If the segment has no chords, return the configured placeholder
-  // ("/", "%", or "" for None).
   function extractChordText(segment) {
     const out = [];
     const re = /"([^"]*)"/g;
@@ -1058,24 +1114,15 @@ function parseMusicLineToBarsAndChords(
 
     while ((m = re.exec(segment)) !== null) {
       let chord = (m[1] || "").trim();
-
-      // Filter out quoted ABC annotations that look like chords but are not.
-      // Ignore if first non-space char is one of: ^ _ < > @
       if (!chord) continue;
       if (/^[\^_<>@]/.test(chord)) continue;
-
       out.push(chord);
     }
 
-    // No chords in this segment -> placeholder (or "" for None)
-    if (out.length === 0) {
-      return (emptyPlaceholder ?? "");
-    }
-
+    if (out.length === 0) return (emptyPlaceholder ?? "");
     return out.join(intraChordSep);
   }
 
-  // Return the ending marker string (including optional leading '[') and its length in source
   function readEndingAt(idx) {
     const a = s[idx] || "";
     const b = s[idx + 1] || "";
@@ -1091,7 +1138,6 @@ function parseMusicLineToBarsAndChords(
   while (i < s.length) {
     const ch = s[i];
 
-    // [1 or [2 (standalone)
     if (ch === "[" && (s[i + 1] === "1" || s[i + 1] === "2")) {
       tokens.push({ token: "[" + s[i + 1], pos: i, srcLen: 2 });
       i += 2;
@@ -1099,20 +1145,17 @@ function parseMusicLineToBarsAndChords(
     }
 
     if (ch === "|") {
-      // multi-char tokens
       if (s[i + 1] === "]") { tokens.push({ token: "|]", pos: i, srcLen: 2 }); i += 2; continue; }
       if (s[i + 1] === ":") { tokens.push({ token: "|:", pos: i, srcLen: 2 }); i += 2; continue; }
       if (s[i + 1] === "|") { tokens.push({ token: "||", pos: i, srcLen: 2 }); i += 2; continue; }
 
-      // plain '|' possibly with endings like |1, |2, |[1, |[2
       const end = readEndingAt(i + 1);
       let tok = "|";
       let srcLen = 1;
 
       if (end.suffix) {
-        // normalize token text: |1 or |2 (strip optional '[')
         tok = "|" + end.suffix.replace("[", "");
-        srcLen = 1 + end.len; // 2 for |1, 3 for |[1
+        srcLen = 1 + end.len;
       }
 
       tokens.push({ token: tok, pos: i, srcLen });
@@ -1121,14 +1164,13 @@ function parseMusicLineToBarsAndChords(
     }
 
     if (ch === ":" && s[i + 1] === "|") {
-      // :| possibly with endings like :|1, :|2, :|[1, :|[2
       const end = readEndingAt(i + 2);
       let tok = ":|";
       let srcLen = 2;
 
       if (end.suffix) {
         tok = ":|" + end.suffix.replace("[", "");
-        srcLen = 2 + end.len; // 3 for :|1, 4 for :|[1
+        srcLen = 2 + end.len;
       }
 
       tokens.push({ token: tok, pos: i, srcLen });
@@ -1139,35 +1181,115 @@ function parseMusicLineToBarsAndChords(
     i += 1;
   }
 
+  // Track whether we suppressed a pickup on THIS line
+  let pickupWasSuppressed = false;
+
+  // NEW: if we suppress a pickup on a line that is ONLY "|:pickup|",
+  // carry the |: forward to the next real line.
+  let carryStartRepeat = false;
+
   // No bar tokens:
-  // - If there are chords, emit a single "measure" between an implicit leading and trailing boundary.
-  // - If there are no chords, return empty (we don't want non-bar, non-chord lines).
   if (!tokens.length) {
     const c = extractChordText(s);
-
-    // If placeholder is "" and there were no chords, this would be empty,
-    // so suppress the line in that case.
-    if (!c) return { boundaries: [], contents: [] };
+    if (!c) return { boundaries: [], contents: [], pickupWasSuppressed, carryStartRepeat };
 
     boundaries.push("|");
     contents.push(c);
     boundaries.push("");
-    return { boundaries, contents };
+    return { boundaries, contents, pickupWasSuppressed, carryStartRepeat };
   }
 
   // Build measures by slicing between token positions
   let cursor = 0;
   const firstTok = tokens[0];
 
+  // If line starts with a start-repeat (|:), allow pickup suppression
+  // on the segment *after* the |: and before the next barline.
   if (firstTok.pos === 0) {
     boundaries.push(firstTok.token);
     cursor = firstTok.pos + firstTok.srcLen;
+
+    if (
+      pickupHeuristic &&
+      pickupHeuristic.enabled &&
+      firstTok.token === "|:" &&
+      tokens.length >= 2
+    ) {
+      const nextTok = tokens[1];
+      const pickupSeg = s.slice(cursor, nextTok.pos);
+
+      const maxNotes = Math.max(1, Math.min(4, parseInt(pickupHeuristic.maxNotes, 10) || 3));
+      const hasChord = segmentHasRealChordQuotes(pickupSeg);
+      const nNotes = countNoteEventsInAbcFragment(pickupSeg);
+
+      if (!hasChord && nNotes > 0 && nNotes <= maxNotes) {
+        pickupWasSuppressed = true;
+
+        // If line is just "|:pickup|" (no real content after that barline),
+        // carry the |: forward and skip this line entirely.
+        const tailAfterPickupBar = s.slice(nextTok.pos + nextTok.srcLen);
+        if (/^[\s\\$]*$/.test(tailAfterPickupBar)) {
+          carryStartRepeat = true;
+          return { boundaries: [], contents: [], pickupWasSuppressed, carryStartRepeat };
+        }
+
+        // Otherwise: drop the pickup segment AND drop the barline that ended the pickup.
+        // Start consuming measures after that barline.
+        cursor = nextTok.pos + nextTok.srcLen;
+
+        for (let t = 2; t < tokens.length; t++) {
+          const cur = tokens[t];
+          contents.push(extractChordText(s.slice(cursor, cur.pos)));
+          boundaries.push(cur.token);
+          cursor = cur.pos + cur.srcLen;
+        }
+
+        const tailSeg = s.slice(cursor);
+        if (tailSeg.trim().length > 0) {
+          contents.push(extractChordText(tailSeg));
+          boundaries.push("");
+        }
+
+        return { boundaries, contents, pickupWasSuppressed, carryStartRepeat };
+      }
+    }
   } else {
-    // segment before first bar token becomes a content cell
-    boundaries.push("|");
-    contents.push(extractChordText(s.slice(0, firstTok.pos)));
-    boundaries.push(firstTok.token);
-    cursor = firstTok.pos + firstTok.srcLen;
+    const leadingSeg = s.slice(0, firstTok.pos);
+
+    // Optional: suppress pickup if:
+    // - enabled
+    // - pickup has NO real chord quotes
+    // - note-events <= maxNotes
+    let suppressPickup = false;
+
+    if (pickupHeuristic && pickupHeuristic.enabled) {
+      const maxNotes = Math.max(1, Math.min(4, parseInt(pickupHeuristic.maxNotes, 10) || 3));
+      const hasChord = segmentHasRealChordQuotes(leadingSeg);
+      const nNotes = countNoteEventsInAbcFragment(leadingSeg);
+
+      if (!hasChord && nNotes > 0 && nNotes <= maxNotes) {
+        suppressPickup = true;
+      }
+    }
+
+    if (suppressPickup) {
+      pickupWasSuppressed = true;
+
+      // If this line is just "pickup |" (i.e., no real content after the barline),
+      // skip the entire line so it doesn't become an empty measure in the chart.
+      const tail = s.slice(firstTok.pos + firstTok.srcLen);
+      if (/^[\s\\$]*$/.test(tail)) {
+        return { boundaries: [], contents: [], pickupWasSuppressed, carryStartRepeat };
+      }
+
+      boundaries.push(firstTok.token);
+      cursor = firstTok.pos + firstTok.srcLen;
+    } else {
+      boundaries.push("|");
+      contents.push(extractChordText(leadingSeg));
+      boundaries.push(firstTok.token);
+      cursor = firstTok.pos + firstTok.srcLen;
+    }
   }
 
   for (let t = 1; t < tokens.length; t++) {
@@ -1177,16 +1299,13 @@ function parseMusicLineToBarsAndChords(
     cursor = cur.pos + cur.srcLen;
   }
 
-  // Tail segment after the last bar token:
-  // Only add it if there's actually something there besides whitespace
-  // (prevents stray placeholder after a final :| or |]).
   const tailSeg = s.slice(cursor);
   if (tailSeg.trim().length > 0) {
     contents.push(extractChordText(tailSeg));
     boundaries.push("");
   }
 
-  return { boundaries, contents };
+  return { boundaries, contents, pickupWasSuppressed, carryStartRepeat };
 }
 
 function renderAlignedText(
@@ -1194,13 +1313,22 @@ function renderAlignedText(
   {
     rightPadSpaces = 2,
     extraSpace = 0,
-    emptyPlaceholder = "/"
+    emptyPlaceholder = "/",
+    pickupHeuristic = null,
+    pickupOnlyAtTuneStart = false
   } = {}
 ) {
   const srcLines = String(abcBody || "").split(/\r?\n/);
   const parsedLines = [];
 
   let inBeginTextBlock = false;
+
+  // "Tune start" here means: we haven't emitted any real (non-blank) parsed line yet.
+  let atTuneStart = true;
+
+  // NEW: if we suppressed a pickup on a line that was only "|:pickup|",
+  // carry the |: forward to the next real line.
+  let pendingStartRepeat = false;
 
   for (const srcLine of srcLines) {
     let rawLine = String(srcLine || "");
@@ -1214,32 +1342,57 @@ function renderAlignedText(
       continue;
     }
 
-    // Full-line comment
     if (/^\s*%/.test(rawLine)) continue;
 
-    // Strip trailing ABC continuation "\" OR "$"
-    // Do NOT join lines — treat each independently
     rawLine = rawLine.replace(/\s*[\\$]\s*$/, "");
-
-    // Remove inline comments
     const line = rawLine.replace(/%.*$/, "");
-
     const trimmed = line.trim();
     if (!trimmed) continue;
 
-    // Skip header fields (T:, M:, W:, etc.)
     if (/^[A-Za-z]:/.test(trimmed)) continue;
 
     const hasBar = /[|:]/.test(line);
     const hasQuote = line.indexOf('"') !== -1;
     if (!hasBar && !hasQuote) continue;
 
-    const { boundaries, contents } =
-      parseMusicLineToBarsAndChords(line, extraSpace, emptyPlaceholder);
+    const startsWithStartRepeat = /^\s*\|:/.test(trimmed);
+
+    // If pickupOnlyAtTuneStart is true:
+    // - allow pickup suppression at tune start, AND also after a start-repeat "|:"
+    //   (this is what fixes your "|:gf|" case).
+    // If pickupOnlyAtTuneStart is false:
+    // - allow anywhere (legacy/alternate behavior).
+    const allowPickup =
+      pickupHeuristic &&
+      pickupHeuristic.enabled &&
+      (pickupOnlyAtTuneStart ? (atTuneStart || startsWithStartRepeat) : true);
+
+    const { boundaries, contents, pickupWasSuppressed, carryStartRepeat } =
+      parseMusicLineToBarsAndChords(
+        line,
+        extraSpace,
+        emptyPlaceholder,
+        allowPickup ? pickupHeuristic : null
+      );
+
+    // If we suppressed a "|:pickup|" line, carry |: to the next real line
+    if (carryStartRepeat) {
+      pendingStartRepeat = true;
+    }
 
     if (!boundaries.length && !contents.length) continue;
 
+    // Apply pending |: to the next real line we emit
+    if (pendingStartRepeat && boundaries && boundaries.length) {
+      if (String(boundaries[0] || "") === "|") boundaries[0] = "|:";
+      else if (String(boundaries[0] || "") === "") boundaries[0] = "|:";
+      pendingStartRepeat = false;
+    }
+
     parsedLines.push({ isBlank: false, boundaries, contents });
+
+    // Once we emit the first real line of content, we're no longer at tune start
+    atTuneStart = false;
   }
 
   if (!parsedLines.length) return "";
@@ -1875,17 +2028,22 @@ function generateCharts() {
   const extraSpace = parseInt($("slotWidth").value, 10) || 0;
   const appendRhythm = $("appendRhythm") ? ($("appendRhythm").value === "1") : true;
 
-  // Empty-measure placeholder: "/", "%", or "" (None)
   const placeholder =
     $("emptyMeasurePlaceholder")
       ? $("emptyMeasurePlaceholder").value
       : "/";
 
-  let renderedCount = 0;
+  const suppressPickup = $("suppressPickup") ? ($("suppressPickup").value === "1") : false;
+  const pickupMaxNotes = $("pickupMaxNotes") ? (parseInt($("pickupMaxNotes").value, 10) || 3) : 3;
 
-  // Skip buckets
-  let skippedNoChords = 0;   // no "real" chord quotes anywhere in the tune
-  let skippedEmptyOut = 0;   // had chords, but produced empty output (edge cases)
+  const pickupHeuristic = {
+    enabled: !!suppressPickup,
+    maxNotes: Math.max(1, Math.min(4, pickupMaxNotes))
+  };
+
+  let renderedCount = 0;
+  let skippedNoChords = 0;
+  let skippedEmptyOut = 0;
 
   for (const block of tunes) {
     let title = getHeaderValue(block, "T") || "Untitled";
@@ -1899,8 +2057,6 @@ function generateCharts() {
 
     const body = getTuneBody(block);
 
-    // IMPORTANT: skip tunes that don't have ANY chords at all
-    // (but within chorded tunes, lines without chords still get placeholders)
     if (!hasRealChordQuotes(body)) {
       skippedNoChords++;
       continue;
@@ -1909,7 +2065,9 @@ function generateCharts() {
     const txt = renderAlignedText(body, {
       rightPadSpaces: 2,
       extraSpace,
-      emptyPlaceholder: placeholder
+      emptyPlaceholder: placeholder,
+      pickupHeuristic,
+      pickupOnlyAtTuneStart: true
     });
 
     if (!txt.trim()) {
@@ -1951,7 +2109,6 @@ function generateCharts() {
     setStatus(`Done. Generated ${renderedCount} chord chart(s).`);
   }
 
-  // Enable Copy/Save/Print now that we have output
   syncActionButtons();
 }
 
@@ -2133,6 +2290,9 @@ function wireUp() {
     $("printFontSize").value = "20";
     if ($("oneTunePerPage")) $("oneTunePerPage").value = "0";
 
+    if ($("suppressPickup")) $("suppressPickup").value = "1";
+    if ($("pickupMaxNotes")) $("pickupMaxNotes").value = "3";
+
     // Reset internal state
     gLoadedFileName = "";
     gSavedChordFileName = "";
@@ -2296,6 +2456,18 @@ function wireUp() {
     handleFileOpen(e.target.files && e.target.files[0]);
   });
 
+  if ($("suppressPickup")) {
+    $("suppressPickup").addEventListener("change", function () {
+      if ($("out").children.length) generateCharts();
+    });
+  }
+
+  if ($("pickupMaxNotes")) {
+    $("pickupMaxNotes").addEventListener("change", function () {
+      if ($("out").children.length) generateCharts();
+    });
+  }
+
   // Help modal (unchanged)
   $("btnHelp").addEventListener("click", function () {
 
@@ -2348,13 +2520,27 @@ function wireUp() {
 
       '  <div style="margin-bottom:14px;">' +
       '    <div style="font-weight:700; font-size:14pt; margin-bottom:10px;">Chord Chart Settings</div>' +
+
       '    <b>Extra spacing</b><br/>' +
       '    Adds extra spacing to make charts easier to read while keeping all barlines aligned.' +
       '    (This increases spacing after barlines/chord cells, and also increases spacing between multiple chords that occur in the same measure.)<br/><br/>' +
+
       '    <b>Append tune style (R:) to titles</b><br/>' +
       '    Optionally appends the tune rhythm/style tag in parentheses after the tune title.<br/><br/>' +
+
       '    <b>Empty measure placeholder</b><br/>' +
-      '    Character (or none) to show in measures without chords. Default is: /' +
+      '    Character (or none) to show in measures without chords. Default is: /. ' +
+      '    This does not affect tunes that contain no chords at all (those are skipped).<br/><br/>' +
+
+      '    <b>Suppress pickups</b><br/>' +
+      '    When enabled, short pickup notes before the first barline (that contain no chord symbols) ' +
+      '    will not be shown as a separate measure in the chord chart. ' +
+      '    This can make charts look more natural for session-style tunes.<br/><br/>' +
+
+      '    <b>Max pickup notes</b><br/>' +
+      '    When pickup suppression is enabled, treat 1–5 leading note-events before the first barline ' +
+      '    as a pickup.<br/>' +
+      '    Default is 3. Increase this value if a tune begins with a slightly longer pickup.' +
       '  </div>' +
 
       '  <hr style="border:0; border-top:1px solid #ccc; margin:18px 0;">' +
