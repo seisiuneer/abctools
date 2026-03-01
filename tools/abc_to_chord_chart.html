@@ -690,9 +690,9 @@
       <div id="cardControls" class="card">
         <div class="row">
           <button id="generateBtn" class="primary" title="Generate chord charts from the ABC Input text">Generate Charts</button>
-          <button id="copyBtn" title="Copy the generated chord charts to the clipboard">Copy</button>
-          <button id="saveBtn" title="Save the generated chord charts to a file">Save</button>
-          <button id="printBtn" title="Print the generated charts">Print</button>
+          <button id="copyBtn" title="Copy the generated chord charts to the clipboard" disabled>Copy</button>
+          <button id="saveBtn" title="Save the generated chord charts to a file" disabled>Save</button>
+          <button id="printBtn" title="Print the generated charts" disabled>Print</button>
           <button id="clearBtn" title="Clear input and output">Clear</button>
         </div>
       </div>
@@ -1862,9 +1862,13 @@ function generateCharts() {
   const out = $("out");
   out.innerHTML = "";
 
+  // Disable Copy/Save/Print until we know we have output
+  syncActionButtons();
+
   const tunes = splitAbcIntoTunes(abcText);
   if (tunes.length === 0) {
     setStatus("No tunes found.", true);
+    syncActionButtons();
     return;
   }
 
@@ -1935,6 +1939,7 @@ function generateCharts() {
     } else {
       setStatus("No chord charts generated.", true);
     }
+    syncActionButtons();
     return;
   }
 
@@ -1945,6 +1950,9 @@ function generateCharts() {
   } else {
     setStatus(`Done. Generated ${renderedCount} chord chart(s).`);
   }
+
+  // Enable Copy/Save/Print now that we have output
+  syncActionButtons();
 }
 
 //
@@ -1961,7 +1969,7 @@ async function copyChordChartsToClipboard() {
 
     setTimeout(() => {
       btn.textContent = originalLabel;
-      btn.disabled = false;
+      syncActionButtons();
     }, 1200);
   }
 
@@ -2038,6 +2046,7 @@ function handleFileOpen(file) {
   // Clear previous output immediately when a new file is selected
   $("out").innerHTML = "";
   gSavedChordFileName = "";
+  syncActionButtons(); // <-- disable Copy/Save/Print
 
   const reader = new FileReader();
 
@@ -2059,15 +2068,38 @@ function handleFileOpen(file) {
     } else {
       setStatus(`Loaded "${shownName}". Found ${nTunes} tunes.`);
     }
+
+    // Still disabled until user generates charts
+    syncActionButtons();
   };
 
-  reader.onerror = () => setStatus("Unable to read file.", true);
+  reader.onerror = () => {
+    setStatus("Unable to read file.", true);
+    syncActionButtons();
+  };
+
   reader.readAsText(file);
 }
 
 /* ---------------------------------
    Wire up UI
 ---------------------------------- */
+
+function hasChartsRendered() {
+  const out = $("out");
+  if (!out) return false;
+  return !!out.querySelector("section.chart");
+}
+
+function syncActionButtons() {
+  const enabled = hasChartsRendered();
+
+  const ids = ["copyBtn", "saveBtn", "printBtn"];
+  for (const id of ids) {
+    const b = $(id);
+    if (b) b.disabled = !enabled;
+  }
+}
 
 function wireUp() {
 
@@ -2118,6 +2150,10 @@ function wireUp() {
     if (gIsIOS) {
       document.getElementById("fileIn").removeAttribute("accept");
     }
+
+    // No charts yet => disable Copy/Save/Print
+    syncActionButtons();
+
   }
 
   // ------------------------------------------------------------
@@ -2132,6 +2168,10 @@ function wireUp() {
     gSavedChordFileName = "";
 
     setStatus("Ready.");
+
+    // Cleared output => disable Copy/Save/Print
+    syncActionButtons();
+
   }
 
   // Initial load reset
