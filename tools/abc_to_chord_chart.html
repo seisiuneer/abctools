@@ -87,7 +87,7 @@
         calc(var(--page-pad) + env(safe-area-inset-bottom))
         calc(var(--page-pad) + env(safe-area-inset-left));
 
-      overflow:hidden;
+      overflow:auto;
     }
 
     /* Common “can shrink” fix for flex children */
@@ -376,11 +376,14 @@
     .chart h3{
       margin:0 0 10px;
       font-size: clamp(18px, 1vw + 16px, 22px);
+      font-family: var(--chart-mono, var(--mono));
+      font-weight: var(--chart-title-weight, 700);
     }
 
     .chart pre{
       margin:0;
-      font-family: var(--mono);
+      font-family: var(--chart-mono, var(--mono));
+      font-weight: var(--chart-mono-weight, 400);
       white-space: pre;
       tab-size: 2;
       font-size: 18px;
@@ -637,7 +640,6 @@
       }
 
       .chart h3{
-        font-size:24pt;
         margin:0 0 12pt 0;
       }
     }
@@ -737,6 +739,22 @@
         <h3 class="card_label">Chord Chart Settings</h3>
 
         <div class="row" style="margin-top:10px;">
+          <label for="chartMonoFont"><strong>Chord chart font</strong></label>
+            <select id="chartMonoFont" title="Font used for rendered chord charts">
+              <option value="system" selected>System Mono</option>
+              <option value="courier">Courier New</option>
+              <option value="courier-bold">Courier New (Bold)</option>
+              <option value="consolas">Consolas</option>
+              <option value="consolas-bold">Consolas (Bold)</option>
+              <option value="menlo">Menlo</option>
+              <option value="menlo-bold">Menlo (Bold)</option>
+              <option value="monaco">Monaco</option>
+              <option value="lucida">Lucida Console</option>
+              <option value="lucida-bold">Lucida Console (Bold)</option>
+            </select>
+        </div>
+
+        <div class="row" style="margin-top:10px;">
           <label for="slotWidth"><strong>Extra spacing (chars)</strong></label>
           <input id="slotWidth" type="number" min="0" max="8" value="1"
                  title="Extra spaces after barlines and chords" style="width:100px;" />
@@ -802,14 +820,14 @@
           <label for="printTitleSize"><strong>Tune title font size</strong></label>
           <input id="printTitleSize"
                  type="number"
-                 min="12"
-                 max="72"
-                 value="24"
+                 min="8"
+                 max="120"
+                 value="16"
                  title="Printed tune title font size"
                  style="width:100px;" />
 
           <label for="printFontSize"><strong>Tune chords font size</strong></label>
-          <input id="printFontSize" type="number" min="12" max="72" value="20" title="Printed tune chords font size" style="width:100px;" />
+          <input id="printFontSize" type="number" min="8" max="120" value="12" title="Printed tune chords font size" style="width:100px;" />
 
         </div>
 
@@ -846,6 +864,9 @@
    Utilities
    ============================================================ */
 
+// Helper for getting elements by ID
+const $ = (id) => document.getElementById(id);
+
 // Are we on iOS?
 //
 function isIOS() {
@@ -862,20 +883,13 @@ const gIsIOS = isIOS();
 
 //console.log("gIsIOS: "+gIsIOS);
 
-//
-// Is local storage available?
-//
-let gLocalStorageAvailable = localStorageIsUsable();
-
-//console.log("gLocalStorageAvailable: "+gLocalStorageAvailable);
-
 /* ============================================================
    Settings persistence (localStorage) — SETTINGS ONLY (no ABC text)
    Add this whole block anywhere after your "$" helper is defined.
    Then add the small wire-up calls noted at the bottom of this block.
    ============================================================ */
 
-const LS_KEY = "abcChordChartGenerator_settings_v1";
+const LS_KEY = "abcChordChartGenerator_settings_v3";
 
 function localStorageIsUsable() {
   try {
@@ -889,10 +903,16 @@ function localStorageIsUsable() {
   }
 }
 
+//
+// Is local storage available?
+//
+let gLocalStorageAvailable = localStorageIsUsable();
+
+//console.log("gLocalStorageAvailable: "+gLocalStorageAvailable);
+
 function getUIStateForSave_SettingsOnly() {
-  // IMPORTANT: do NOT include abcIn value or file input (cannot be restored anyway)
   return {
-    v: 1,
+    v: 3,
 
     // Chord Chart Settings
     slotWidth: $("slotWidth") ? $("slotWidth").value : "1",
@@ -900,14 +920,14 @@ function getUIStateForSave_SettingsOnly() {
     emptyMeasurePlaceholder: $("emptyMeasurePlaceholder") ? $("emptyMeasurePlaceholder").value : "/",
     suppressPickup: $("suppressPickup") ? $("suppressPickup").value : "1",
     pickupMaxNotes: $("pickupMaxNotes") ? $("pickupMaxNotes").value : "3",
+    chartMonoFont: $("chartMonoFont") ? $("chartMonoFont").value : "system",
 
     // Print Settings
     paperSize: $("paperSize") ? $("paperSize").value : "letter",
     orientation: $("orientation") ? $("orientation").value : "portrait",
-    printTitleSize: $("printTitleSize") ? $("printTitleSize").value : "24",
-    printFontSize: $("printFontSize") ? $("printFontSize").value : "20",
+    printTitleSize: $("printTitleSize") ? $("printTitleSize").value : "16",
+    printFontSize: $("printFontSize") ? $("printFontSize").value : "12",
     oneTunePerPage: $("oneTunePerPage") ? $("oneTunePerPage").value : "0",
-
   };
 }
 
@@ -920,6 +940,7 @@ function applyUIStateFromObj_SettingsOnly(st) {
   if ($("emptyMeasurePlaceholder") && st.emptyMeasurePlaceholder != null) $("emptyMeasurePlaceholder").value = String(st.emptyMeasurePlaceholder);
   if ($("suppressPickup") && st.suppressPickup != null) $("suppressPickup").value = String(st.suppressPickup);
   if ($("pickupMaxNotes") && st.pickupMaxNotes != null) $("pickupMaxNotes").value = String(st.pickupMaxNotes);
+  if ($("chartMonoFont") && st.chartMonoFont != null) $("chartMonoFont").value = String(st.chartMonoFont);
 
   // Print Settings
   if ($("paperSize") && st.paperSize != null) $("paperSize").value = String(st.paperSize);
@@ -927,7 +948,6 @@ function applyUIStateFromObj_SettingsOnly(st) {
   if ($("printTitleSize") && st.printTitleSize != null) $("printTitleSize").value = String(st.printTitleSize);
   if ($("printFontSize") && st.printFontSize != null) $("printFontSize").value = String(st.printFontSize);
   if ($("oneTunePerPage") && st.oneTunePerPage != null) $("oneTunePerPage").value = String(st.oneTunePerPage);
-
 }
 
 function saveUIStateToLocalStorage_SettingsOnly() {
@@ -994,6 +1014,7 @@ function enableAutoSaveForSettings_SettingsOnly() {
     "emptyMeasurePlaceholder",
     "suppressPickup",
     "pickupMaxNotes",
+    "chartMonoFont",
     "paperSize",
     "orientation",
     "printTitleSize",
@@ -1008,10 +1029,63 @@ function enableAutoSaveForSettings_SettingsOnly() {
     // Inputs like number fields can also be saved on input for responsiveness:
     if (el.tagName === "INPUT") el.addEventListener("input", saveStateSoon_SettingsOnly);
   });
-
 }
 
-const $ = (id) => document.getElementById(id);
+/* ============================================================
+   Rendered chart font selector (Charts + Titles)
+   ============================================================ */
+
+function getChartMonoFontStack(value) {
+  switch (String(value || "system")) {
+
+    case "courier":
+    case "courier-bold":
+      return `"Courier New", Courier, monospace`;
+
+    case "consolas":
+    case "consolas-bold":
+      return `Consolas, "Liberation Mono", "Courier New", monospace`;
+
+    case "menlo":
+    case "menlo-bold":
+      return `Menlo, Monaco, "Liberation Mono", "Courier New", monospace`;
+
+    case "monaco":
+      return `Monaco, Menlo, "Liberation Mono", "Courier New", monospace`;
+
+    case "lucida":
+    case "lucida-bold":
+    return `"Lucida Console", Monaco, monospace`;
+
+    case "system":
+    default:
+      return `ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace`;
+  }
+}
+
+function applyChartMonoFontFromUI() {
+  const sel = $("chartMonoFont");
+  const choice = sel ? sel.value : "system";
+
+  // Font family for BOTH tune titles and chart text
+  document.documentElement.style.setProperty(
+    "--chart-mono",
+    getChartMonoFontStack(choice)
+  );
+
+  // Weight for chart text (pre)
+  const isBold = String(choice).endsWith("-bold");
+  document.documentElement.style.setProperty(
+    "--chart-mono-weight",
+    isBold ? "700" : "400"
+  );
+
+  // Weight for tune titles (h3) — always bold for readability
+  document.documentElement.style.setProperty(
+    "--chart-title-weight",
+    "700"
+  );
+}
 
 function setStatus(msg, isError=false) {
   const el = $("status");
@@ -1111,11 +1185,6 @@ K: Dmaj
    ============================================================ */
 let gLoadedFileName = "";
 let gSavedChordFileName = "";
-
-/* ============================================================
-   Print auto-fit state
-   ============================================================ */
-let gRequestedPrintPt = 20;
 
 /* ---------------------------------
    Filename helpers
@@ -1225,6 +1294,19 @@ function getTuneBody(block) {
   }
 
   return lines.slice(kIndex + 1).join("\n");
+}
+
+function hasRealChordQuotes(abcBody) {
+  const s = String(abcBody || "");
+  // Fast path: if there are no quotes at all, no chords.
+  if (s.indexOf('"') === -1) return false;
+
+  // Check line-by-line (so pickup logic / comments don’t confuse it)
+  const lines = s.split(/\r?\n/);
+  for (const line of lines) {
+    if (segmentHasRealChordQuotes(line)) return true;
+  }
+  return false;
 }
 
 function segmentHasRealChordQuotes(segment) {
@@ -1655,10 +1737,9 @@ function setPageStyle(paperSize, orientation) {
 }
 
 function setPrintFontSize(bodyPt, titlePt) {
-  gRequestedPrintPt = parseInt(bodyPt, 10) || 20;
 
-  const safeBody  = Math.max(12, Math.min(40, parseInt(bodyPt, 10) || 20));
-  const safeTitle = Math.max(16, Math.min(60, parseInt(titlePt, 10) || 24));
+  const safeBody  = Math.max(8, Math.min(120, parseInt(bodyPt, 10)  || 12));
+  const safeTitle = Math.max(8, Math.min(120, parseInt(titlePt, 10) || 16));
 
   let el = document.getElementById("printFontOverride");
   if (!el) {
@@ -1820,11 +1901,23 @@ async function saveChordChart() {
   setStatus(`Saved "${finalName}".`);
 }
 
-function buildPrintHtml({ paperSize, orientation, requestedPt, requestedTitlePt, oneTunePerPage }) {
+function buildPrintHtml({
+  paperSize,
+  orientation,
+  requestedPt,
+  requestedTitlePt,
+  oneTunePerPage,
+  chartMonoFont = "system"
+}) {
   const safeSize   = String(paperSize || "letter");
   const safeOrient = String(orientation || "portrait");
-  const safePt     = Math.max(10, Math.min(72, parseInt(requestedPt, 10) || 20));
-  const safeTitle  = Math.max(12, Math.min(72, parseInt(requestedTitlePt, 10) || 24));
+  const safePt     = Math.max(8, Math.min(120, parseInt(requestedPt, 10) || 16));
+  const safeTitle  = Math.max(8, Math.min(120, parseInt(requestedTitlePt, 10) || 12));
+
+  const printMonoStack  = getChartMonoFontStack(chartMonoFont);
+  const isBoldChoice    = String(chartMonoFont).endsWith("-bold");
+  const printPreWeight  = isBoldChoice ? "700" : "400";
+  const printTitleWeight = "700"; // keep titles bold
 
   return `<!doctype html>
 <html>
@@ -1848,13 +1941,18 @@ function buildPrintHtml({ paperSize, orientation, requestedPt, requestedTitlePt,
 
   .chart { break-inside: avoid; page-break-inside: avoid; }
 
+  /* TITLE uses SAME mono font as chart text */
   h3{
-    font: 700 ${safeTitle}pt system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+    font-family: ${printMonoStack};
+    font-weight: ${printTitleWeight};
+    font-size: ${safeTitle}pt;
     margin: 0 0 12pt 0;
   }
 
+  /* CHART uses SAME mono font as display */
   pre{
-    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    font-family: ${printMonoStack};
+    font-weight: ${printPreWeight};
     font-size: ${safePt}pt; /* starting point; JS will fit PER-PRE */
     line-height: 1.35;
     margin: 0;
@@ -1980,13 +2078,9 @@ function buildPrintHtml({ paperSize, orientation, requestedPt, requestedTitlePt,
   function fitEachPreIndependently(){
     const usableW = measureUsableWidthPx();
     const pres = Array.from(document.querySelectorAll("pre"));
-    const startPt = Math.max(6, Math.min(48, parseInt(_requestedPt, 10) || ${safePt}));
-    const MIN_PT = 10;
+    const startPt = Math.max(8, Math.min(120, parseInt(_requestedPt, 10) || ${safePt}));
+    const MIN_PT = 8;
     const SAFETY = 0.985;
-
-    let worst = { w: 0, title: "", startW: 0, startChars: 0, fitPt: startPt };
-    let minApplied = Infinity;
-    let maxApplied = 0;
 
     pres.forEach(pre => setPreFontSizePt(pre, startPt));
 
@@ -1995,7 +2089,6 @@ function buildPrintHtml({ paperSize, orientation, requestedPt, requestedTitlePt,
       if (!maxLine) return;
 
       const startWpx = measureLineWidthPx(pre, maxLine);
-      const chars = maxLine.length;
 
       let fitPt = startPt;
 
@@ -2007,38 +2100,7 @@ function buildPrintHtml({ paperSize, orientation, requestedPt, requestedTitlePt,
       } else {
         setPreFontSizePt(pre, startPt);
       }
-
-      minApplied = Math.min(minApplied, fitPt);
-      maxApplied = Math.max(maxApplied, fitPt);
-
-      if (startWpx > worst.startW){
-        const chart = pre.closest(".chart");
-        const h3 = chart ? chart.querySelector("h3") : null;
-        worst = {
-          startW: startWpx,
-          title: h3 ? h3.textContent : "(unknown)",
-          startChars: chars,
-          fitPt
-        };
-      }
     });
-
-    if (!isFinite(minApplied)) minApplied = startPt;
-
-    // diag(
-    //   "PRINT DIAGNOSTICS (per-tune fit)\\n" +
-    //   "media:               " + (window.matchMedia && window.matchMedia("print").matches ? "print" : "screen/unknown") + "\\n" +
-    //   "doc.clientWidth:     " + (document.documentElement ? document.documentElement.clientWidth : 0) + "\\n" +
-    //   "usableW(px):         " + usableW + "\\n" +
-    //   "requestedPt:         " + startPt + "\\n" +
-    //   "appliedPt(min..max): " + minApplied.toFixed(2) + " .. " + maxApplied.toFixed(2) + "\\n" +
-    //   "\\nWORST (forces smallest)\\n" +
-    //   "title:               " + worst.title + "\\n" +
-    //   "maxChars(line):      " + worst.startChars + "\\n" +
-    //   "maxLinePx@reqPt:     " + Math.round(worst.startW) + "\\n" +
-    //   "fitPt(worst):        " + worst.fitPt.toFixed(2) + "\\n" +
-    //   "pre.count:           " + pres.length + "\\n"
-    // );
   }
 
   window.addEventListener("beforeprint", () => {
@@ -2080,7 +2142,8 @@ function printViaIframe({
   orientation,
   requestedPt = 20,
   requestedTitlePt = 24,
-  oneTunePerPage = true
+  oneTunePerPage = true,
+  chartMonoFont = "system"
 } = {}) {
 
   const out = document.getElementById("out");
@@ -2117,7 +2180,8 @@ function printViaIframe({
     orientation,
     requestedPt,
     requestedTitlePt,
-    oneTunePerPage
+    oneTunePerPage,
+    chartMonoFont
   });
 
   const cleanup = () => { try { iframe.remove(); } catch {} };
@@ -2135,53 +2199,11 @@ function printViaIframe({
   document.body.appendChild(iframe);
 }
 
-function hasRealChordQuotes(abcBody) {
-  const lines = String(abcBody || "").split(/\r?\n/);
-  let inBeginTextBlock = false;
-
-  for (let rawLine of lines) {
-    let line = String(rawLine || "");
-
-    if (/^\s*%%begintext\b/i.test(line)) { 
-      inBeginTextBlock = true; 
-      continue; 
-    }
-    if (/^\s*%%endtext\b/i.test(line)) { 
-      inBeginTextBlock = false; 
-      continue; 
-    }
-    if (inBeginTextBlock) continue;
-
-    if (!line.trim()) continue;
-    if (/^\s*%/.test(line)) continue;
-
-    const trimmed = line.trim();
-    if (/^[A-Za-z]:/.test(trimmed)) continue;
-
-    // Strip trailing "\" or "$"
-    line = line.replace(/\s*[\\$]\s*$/, "");
-
-    if (!line.trim()) continue;
-
-    const hasBar = /[|:]/.test(line);
-    const hasQuote = line.indexOf('"') !== -1;
-    if (!hasBar && !hasQuote) continue;
-
-    const re = /"([^"]*)"/g;
-    let m;
-    while ((m = re.exec(line)) !== null) {
-      const chord = (m[1] || "").trim();
-      if (!chord) continue;
-      if (/^[\^_<>@]/.test(chord)) continue;
-      return true;
-    }
-  }
-
-  return false;
-}
-
 function generateCharts() {
   setStatus("Working…");
+
+  // Ensure display font vars are set before building DOM
+  applyChartMonoFontFromUI();
 
   const abcText = $("abcIn").value || "";
   const out = $("out");
@@ -2456,10 +2478,13 @@ function wireUp() {
     $("slotWidth").value = "1";
     if ($("appendRhythm")) $("appendRhythm").value = "1";
 
+    // NEW: default chart font (only charts)
+    if ($("chartMonoFont")) $("chartMonoFont").value = "system";
+
     $("paperSize").value = "letter";
     $("orientation").value = "portrait";
-    $("printTitleSize").value = "24";
-    $("printFontSize").value = "20";
+    $("printTitleSize").value = "16";
+    $("printFontSize").value = "12";
     if ($("oneTunePerPage")) $("oneTunePerPage").value = "0";
 
     if ($("suppressPickup")) $("suppressPickup").value = "1";
@@ -2468,9 +2493,12 @@ function wireUp() {
     // Reset internal state
     gLoadedFileName = "";
     gSavedChordFileName = "";
-    gRequestedPrintPt = 20;
 
+    // Restore saved settings (may override defaults)
     restoreSavedSettingsIntoUI_SettingsOnly();
+
+    // NEW: apply chart font after restoring saved value
+    applyChartMonoFontFromUI();
 
     // Load share link OR default sample
     const loadedFromLink = tryDecodeShareLinkIntoEditor();
@@ -2487,7 +2515,6 @@ function wireUp() {
 
     // No charts yet => disable Copy/Save/Print
     syncActionButtons();
-
   }
 
   // ------------------------------------------------------------
@@ -2505,7 +2532,6 @@ function wireUp() {
 
     // Cleared output => disable Copy/Save/Print
     syncActionButtons();
-
   }
 
   // Initial load reset
@@ -2538,7 +2564,7 @@ function wireUp() {
     sendGoogleAnalytics("action", "copy");
 
     applyPrintSettings();
-    
+
     try {
       await copyChordChartsToClipboard();
     } catch (e) {
@@ -2590,14 +2616,17 @@ function wireUp() {
     const oneTunePerPage = $("oneTunePerPage")
       ? ($("oneTunePerPage").value === "1")
       : true;
+    const chartMonoFont = $("chartMonoFont") ? $("chartMonoFont").value : "system";
 
     printViaIframe({
       paperSize,
       orientation,
       requestedPt,
       requestedTitlePt,
-      oneTunePerPage
+      oneTunePerPage,
+      chartMonoFont
     });
+
   });
 
   // ------------------------------------------------------------
@@ -2626,6 +2655,13 @@ function wireUp() {
   if ($("emptyMeasurePlaceholder")) {
     $("emptyMeasurePlaceholder").addEventListener("change", function () {
       if ($("out").children.length) generateCharts();
+    });
+  }
+
+  if ($("chartMonoFont")) {
+    $("chartMonoFont").addEventListener("change", function () {
+      applyChartMonoFontFromUI();
+      saveStateSoon_SettingsOnly();
     });
   }
 
@@ -2701,6 +2737,9 @@ function wireUp() {
       '  <div style="margin-bottom:14px;">' +
       '    <div style="font-weight:700; font-size:14pt; margin-bottom:10px;">Chord Chart Settings</div>' +
 
+      '    <b>Chord chart font</b><br/>' +
+      '    Selects the monospaced font to use for the chord charts.<br/><br/>' +
+
       '    <b>Extra spacing</b><br/>' +
       '    Adds extra spacing to make charts easier to read while keeping all barlines aligned.' +
       '    (This increases spacing after barlines/chord cells, and also increases spacing between multiple chords that occur in the same measure.)<br/><br/>' +
@@ -2767,7 +2806,7 @@ function wireUp() {
       content +
       '  </div>' +
       '</div>';
-      
+
     DayPilot.Modal.alert(html, {
       theme: "modal_flat",
       top: 50,
@@ -2776,7 +2815,6 @@ function wireUp() {
   });
 
   enableAutoSaveForSettings_SettingsOnly();
-
 }
 
 function WaitForReady(fn) {
