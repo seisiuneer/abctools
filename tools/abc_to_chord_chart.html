@@ -381,6 +381,15 @@
       font-weight: var(--chart-title-weight, 700);
     }
 
+    /* Title links should look like normal text */
+    .chart h3 a,
+    .chart h3 a:visited,
+    .chart h3 a:hover,
+    .chart h3 a:active,
+    .chart h3 a:focus {
+      color: inherit;
+      text-decoration: none;
+    }
     .chart pre{
       margin:0;
       font-family: var(--chart-mono, var(--mono));
@@ -449,7 +458,7 @@
     }
     #rowPageNumbers select{
       min-width: 160px;
-}
+    }
 
     /* ============================================================
        DayPilot modal theme
@@ -808,6 +817,14 @@
           </select>
         </div>
 
+        <div class="row" style="margin-top:10px;">
+          <label for="linkTitles"><strong>Add ABC Transcription Tools play links to titles</strong></label>
+          <select id="linkTitles" title="If enabled, adds ABC Transcription Tools play links to the title of each tune.&nbsp;&nbsp;If you export a PDF file with the play links enabled, you can click the title of any tune to open it in the ABC Transcription Tools player.">
+            <option value="0" selected>No</option>
+            <option value="1">Yes</option>
+          </select>
+        </div>
+
       </div>
 
       <div class="card">
@@ -953,7 +970,7 @@ function isChromiumBased() {
    Then add the small wire-up calls noted at the bottom of this block.
    ============================================================ */
 
-const LS_KEY = "abcChordChartGenerator_settings_v6";
+const LS_KEY = "abcChordChartGenerator_settings_v7";
 
 function localStorageIsUsable() {
   try {
@@ -976,7 +993,7 @@ let gLocalStorageAvailable = localStorageIsUsable();
 
 function getUIStateForSave_SettingsOnly() {
   return {
-    v: 6, // bumped because we added page-number settings
+    v: 7, // bumped because we added linkTitles persistence
 
     // Chord Chart Settings
     slotWidth: $("slotWidth") ? $("slotWidth").value : "1",
@@ -994,7 +1011,8 @@ function getUIStateForSave_SettingsOnly() {
     oneTunePerPage: $("oneTunePerPage") ? $("oneTunePerPage").value : "0",
     printTuneGap: $("printTuneGap") ? $("printTuneGap").value : "30",
     showPageNumbers: $("showPageNumbers") ? $("showPageNumbers").value : "0",
-    pageNumberPos: $("pageNumberPos") ? $("pageNumberPos").value : "bc"
+    pageNumberPos: $("pageNumberPos") ? $("pageNumberPos").value : "bc",
+    linkTitles: $("linkTitles") ? $("linkTitles").value : "0"
   };
 }
 
@@ -1016,13 +1034,13 @@ function applyUIStateFromObj_SettingsOnly(st) {
   if ($("printFontSize") && st.printFontSize != null) $("printFontSize").value = String(st.printFontSize);
   if ($("oneTunePerPage") && st.oneTunePerPage != null) $("oneTunePerPage").value = String(st.oneTunePerPage);
   if ($("printTuneGap") && st.printTuneGap != null) $("printTuneGap").value = String(st.printTuneGap);
-
   if ($("showPageNumbers") && st.showPageNumbers != null) $("showPageNumbers").value = String(st.showPageNumbers);
   if ($("pageNumberPos") && st.pageNumberPos != null) $("pageNumberPos").value = String(st.pageNumberPos);
+  if ($("linkTitles") && st.linkTitles != null) $("linkTitles").value = String(st.linkTitles);
 }
 
 function saveUIStateToLocalStorage_SettingsOnly() {
-  if (!localStorageIsUsable()) return;
+  if (!gLocalStorageAvailable) return;
   try {
     const st = getUIStateForSave_SettingsOnly();
     localStorage.setItem(LS_KEY, JSON.stringify(st));
@@ -1032,7 +1050,7 @@ function saveUIStateToLocalStorage_SettingsOnly() {
 }
 
 function loadUIStateFromLocalStorage_SettingsOnly() {
-  if (!localStorageIsUsable()) return false;
+  if (!gLocalStorageAvailable) return false;
   try {
     const raw = localStorage.getItem(LS_KEY);
     if (!raw) return false;
@@ -1046,7 +1064,7 @@ function loadUIStateFromLocalStorage_SettingsOnly() {
 }
 
 function clearSavedUIStateFromLocalStorage_SettingsOnly() {
-  if (!localStorageIsUsable()) return;
+  if (!gLocalStorageAvailable) return;
   try {
     localStorage.removeItem(LS_KEY);
   } catch {
@@ -1057,12 +1075,57 @@ function clearSavedUIStateFromLocalStorage_SettingsOnly() {
 // Debounced saver so multiple changes don't spam localStorage
 let _saveTimer_SettingsOnly = null;
 function saveStateSoon_SettingsOnly() {
-  if (!localStorageIsUsable()) return;
+  if (!gLocalStorageAvailable) return;
   if (_saveTimer_SettingsOnly) clearTimeout(_saveTimer_SettingsOnly);
   _saveTimer_SettingsOnly = setTimeout(() => {
     _saveTimer_SettingsOnly = null;
     saveUIStateToLocalStorage_SettingsOnly();
   }, 250);
+}
+
+function uint8ArrayToBase64Url(bytes) {
+  let bin = "";
+  for (let i = 0; i < bytes.length; i++) {
+    bin += String.fromCharCode(bytes[i]);
+  }
+  const b64 = btoa(bin);
+  return b64.replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/g, "");
+}
+
+function buildAbcToolsShareLinkForTune(abcTuneBlock) {
+
+  if (!window.pako) return "";
+
+  if (!window.TextEncoder) return "";
+
+  const raw = String(abcTuneBlock || "")
+    .replace(/\r\n?/g, "\n")
+    .trim();
+
+  if (!raw) return "";
+
+  const bytes = new TextEncoder().encode(raw);
+  const deflated = pako.deflate(bytes, { level: 6 });
+  const def = uint8ArrayToBase64Url(deflated);
+
+  const title = getHeaderValue(raw, "T") || "Tune";
+  const safeName = encodeURIComponent(
+    String(title).trim().replace(/\s+/g, "_")
+  );
+
+  const base = "https://michaeleskin.com/abctools/abctools.html";
+
+  const url =
+    `${base}?def=${def}` +
+    `&format=noten` +
+    `&ssp=10` +
+    `&play=1` +
+    `&name=${safeName}`;
+
+  // Optional safety limit
+  if (url.length > 8100) return "";
+
+  return url;
 }
 
 /* ============================================================
@@ -1113,7 +1176,6 @@ function restoreSavedSettingsIntoUI_SettingsOnly() {
   return loadUIStateFromLocalStorage_SettingsOnly();
 }
 
-// Call once after all event listeners are registered
 function enableAutoSaveForSettings_SettingsOnly() {
   // Save when any SETTING changes. (Do NOT bind to abcIn.)
   const ids = [
@@ -1130,7 +1192,8 @@ function enableAutoSaveForSettings_SettingsOnly() {
     "oneTunePerPage",
     "printTuneGap",
     "showPageNumbers",
-    "pageNumberPos"
+    "pageNumberPos",
+    "linkTitles"
   ];
 
   ids.forEach(id => {
@@ -2150,6 +2213,16 @@ function buildPrintHtml({
     margin: 0 0 12pt 0;
   }
 
+  /* Title links look like normal text in print */
+  h3 a,
+  h3 a:visited,
+  h3 a:hover,
+  h3 a:active,
+  h3 a:focus {
+    color: #000;
+    text-decoration: none;
+  }
+
   /* CHART uses SAME mono font as display */
   pre{
     font-family: ${printMonoStack};
@@ -2338,48 +2411,56 @@ function buildPrintHtml({
 </html>`;
 }
 
+/* ============================================================
+   PRINT via hidden iframe
+   REQUIRED because wireUp() calls printViaIframe(...)
+   ============================================================ */
+
+function getPrintableChartsHtmlFromDom() {
+  const out = $("out");
+  if (!out) return "";
+
+  const sections = Array.from(out.querySelectorAll("section.chart"));
+  if (!sections.length) return "";
+
+  // Clone to avoid touching the live DOM
+  const frag = document.createDocumentFragment();
+
+  for (const sec of sections) {
+    const clone = sec.cloneNode(true);
+
+    // Defensive: ensure it's class "chart" (your build uses <section class="chart">)
+    if (!clone.classList.contains("chart")) clone.classList.add("chart");
+
+    frag.appendChild(clone);
+  }
+
+  const tmp = document.createElement("div");
+  tmp.appendChild(frag);
+  return tmp.innerHTML;
+}
+
 function printViaIframe({
   paperSize,
   orientation,
-  requestedPt = 12,
-  requestedTitlePt = 16,
-  oneTunePerPage = true,
-  chartMonoFont = "system",
-  tuneGapPt = 30,
-  showPageNumbers = false,
-  pageNumberPos = "bc"
-} = {}) {
-
-  const out = document.getElementById("out");
-  if (!out) return;
-
-  if (!out.children.length && typeof generateCharts === "function") {
+  requestedPt,
+  requestedTitlePt,
+  oneTunePerPage,
+  chartMonoFont,
+  tuneGapPt,
+  showPageNumbers,
+  pageNumberPos
+}) {
+  // Must have generated output
+  if (!$("out") || !$("out").children.length) {
     generateCharts();
   }
-  if (!out.children.length) return;
+  if (!$("out") || !$("out").children.length) {
+    setStatus("Nothing to print. Generate chord charts first.", true);
+    return;
+  }
 
-  const sections = Array.from(out.querySelectorAll("section.chart"));
-  const esc = (s) => String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
-
-  const html = sections.map(sec => {
-    const h3 = sec.querySelector("h3");
-    const pre = sec.querySelector("pre");
-    const title = h3 ? h3.textContent : "";
-    const text  = pre ? pre.textContent : "";
-    return `<section class="chart"><h3>${esc(title)}</h3><pre>${esc(text)}</pre></section>`;
-  }).join("");
-
-  const iframe = document.createElement("iframe");
-  iframe.style.position = "fixed";
-  iframe.style.left = "-10000px";
-  iframe.style.top = "0";
-  iframe.style.width = "1000px";
-  iframe.style.height = "1000px";
-  iframe.style.border = "0";
-  iframe.style.opacity = "0";
-  iframe.style.pointerEvents = "none";
-
-  iframe.srcdoc = buildPrintHtml({
+  const html = buildPrintHtml({
     paperSize,
     orientation,
     requestedPt,
@@ -2391,19 +2472,74 @@ function printViaIframe({
     pageNumberPos
   });
 
-  const cleanup = () => { try { iframe.remove(); } catch {} };
+  const chartsHtml = getPrintableChartsHtmlFromDom();
+  if (!chartsHtml.trim()) {
+    setStatus("Nothing to print. Generate chord charts first.", true);
+    return;
+  }
 
+  // Reuse one hidden iframe if it already exists
+  let iframe = document.getElementById("printFrame");
+  if (!iframe) {
+    iframe = document.createElement("iframe");
+    iframe.id = "printFrame";
+    iframe.style.position = "fixed";
+    iframe.style.right = "0";
+    iframe.style.bottom = "0";
+    iframe.style.width = "0";
+    iframe.style.height = "0";
+    iframe.style.border = "0";
+    iframe.style.visibility = "hidden";
+    iframe.style.pointerEvents = "none";
+    document.body.appendChild(iframe);
+  }
+
+  // Assign srcdoc and wait for load
   iframe.onload = () => {
-    const w = iframe.contentWindow;
-    if (!w || !w.__PRINT_API__) { cleanup(); return; }
-    w.__PRINT_API__.setHtml(html);
-    w.__PRINT_API__.setOneTunePerPage(oneTunePerPage);
-    w.__PRINT_API__.trimAllPreTrailingSpaces();
-    w.onafterprint = cleanup;
-    w.__PRINT_API__.fitAndPrint(requestedPt);
+    try {
+      const win = iframe.contentWindow;
+      if (!win) throw new Error("Print iframe has no contentWindow.");
+
+      // Inject the charts into the print document
+      const api = win.__PRINT_API__;
+      if (!api || typeof api.setHtml !== "function" || typeof api.fitAndPrint !== "function") {
+        throw new Error("Print API not available in iframe.");
+      }
+
+      api.setHtml(chartsHtml);
+      api.setOneTunePerPage(!!oneTunePerPage);
+
+      // Important: we pass the *requested* pt; iframe JS will fit each <pre> if needed.
+      api.fitAndPrint(parseInt(requestedPt, 10) || 12);
+
+      // Cleanup handler so next print doesn't stack listeners
+      // (We keep the iframe for reuse; just clear onload.)
+      iframe.onload = null;
+
+      setStatus("Printing…");
+    } catch (e) {
+      iframe.onload = null;
+      setStatus("Print failed: " + (e && e.message ? e.message : String(e)), true);
+    }
   };
 
-  document.body.appendChild(iframe);
+  // Set the print document HTML
+  // Using srcdoc is simplest and avoids popup blockers.
+  try {
+    iframe.srcdoc = html;
+  } catch (e) {
+    // Fallback for older browsers: write via document
+    try {
+      const doc = iframe.contentDocument || (iframe.contentWindow && iframe.contentWindow.document);
+      if (!doc) throw e;
+      doc.open();
+      doc.write(html);
+      doc.close();
+    } catch (e2) {
+      iframe.onload = null;
+      setStatus("Print failed: " + (e2 && e2.message ? e2.message : String(e2)), true);
+    }
+  }
 }
 
 function generateCharts() {
@@ -2442,6 +2578,9 @@ function generateCharts() {
     maxNotes: Math.max(1, Math.min(4, pickupMaxNotes))
   };
 
+  const linkTitles =
+    $("linkTitles") && $("linkTitles").value === "1";
+
   let renderedCount = 0;
   let skippedNoChords = 0;
   let skippedEmptyOut = 0;
@@ -2479,8 +2618,22 @@ function generateCharts() {
     const section = document.createElement("section");
     section.className = "chart";
 
+    const shareUrl = linkTitles
+      ? buildAbcToolsShareLinkForTune(block)
+      : "";
+
     const h3 = document.createElement("h3");
-    h3.textContent = title;
+    if (shareUrl) {
+      const a = document.createElement("a");
+      a.href = shareUrl;
+      a.target = "_blank";
+      a.rel = "noopener noreferrer";
+      a.textContent = title;
+      a.title = "Open this tune in ABC Transcription Tools";
+      h3.appendChild(a);
+    } else {
+      h3.textContent = title;
+    }
     section.appendChild(h3);
 
     const pre = document.createElement("pre");
@@ -2648,6 +2801,7 @@ function resetAllSettingsToDefaults_Persisted() {
   if ($("suppressPickup")) $("suppressPickup").value = "1";
   if ($("pickupMaxNotes")) $("pickupMaxNotes").value = "3";
   if ($("chartMonoFont")) $("chartMonoFont").value = "system";
+  if ($("linkTitles")) $("linkTitles").value = "0";
 
   // Print Settings defaults
   if ($("paperSize")) $("paperSize").value = "letter";
@@ -2665,6 +2819,9 @@ function resetAllSettingsToDefaults_Persisted() {
   setPrintFontSize($("printFontSize").value, $("printTitleSize").value);
   setOneTunePerPagePrint($("oneTunePerPage") && $("oneTunePerPage").value === "1");
   setPrintTuneGapPt($("printTuneGap") ? $("printTuneGap").value : "30");
+
+  // After setting values:
+  syncPageNumberControlAvailability();
 
   // IMPORTANT: Persist defaults (overwrite localStorage with default state)
   saveUIStateToLocalStorage_SettingsOnly();
@@ -2719,10 +2876,9 @@ function wireUp() {
     $("out").innerHTML = "";
     $("fileIn").value = "";
 
-    // Reset controls
+    // Reset controls (defaults)
     $("slotWidth").value = "1";
     if ($("appendRhythm")) $("appendRhythm").value = "1";
-
     if ($("chartMonoFont")) $("chartMonoFont").value = "system";
 
     $("paperSize").value = "letter";
@@ -2739,6 +2895,8 @@ function wireUp() {
     if ($("pickupMaxNotes")) $("pickupMaxNotes").value = "3";
 
     if ($("emptyMeasurePlaceholder")) $("emptyMeasurePlaceholder").value = "/";
+
+    if ($("linkTitles")) $("linkTitles").value = "0";
 
     // Reset internal state
     gLoadedFileName = "";
@@ -2849,13 +3007,13 @@ function wireUp() {
 
     if (gIsIOS) {
 
-      var thePrompt = "Printing is not supported on iOS";
+      var thePrompt = "Printing from this tool isn’t supported on iOS Safari.";
       thePrompt = '<p style="font-size:14pt;line-height:18pt;font-family:helvetica;text-align:center">' + thePrompt + '</p>';
 
       if (window.DayPilot && DayPilot.Modal && typeof DayPilot.Modal.alert === "function") {
         DayPilot.Modal.alert(thePrompt, { theme:"modal_flat", top:200, scrollWithPage:false, width:400 });
       } else {
-        alert("Printing is not supported on iOS");
+        alert("Printing from this tool isn’t supported on iOS Safari.");
       }
 
       return;
@@ -2880,10 +3038,10 @@ function wireUp() {
       !gIsIOS &&
       $("showPageNumbers") &&
       $("showPageNumbers").value === "1";
-      
+
     const pageNumberPos = $("pageNumberPos")
-          ? $("pageNumberPos").value
-          : "bc";
+      ? $("pageNumberPos").value
+      : "bc";
 
     printViaIframe({
       paperSize,
@@ -2915,7 +3073,6 @@ function wireUp() {
       syncPageNumberControlAvailability();
     });
   }
-
   if ($("pageNumberPos")) $("pageNumberPos").addEventListener("change", applyPrintSettings);
 
   $("slotWidth").addEventListener("change", function () {
@@ -2940,7 +3097,14 @@ function wireUp() {
 
   if ($("chartMonoFont")) {
     $("chartMonoFont").addEventListener("change", function () {
+      // This re-renders already-generated charts via CSS variables (no regen needed)
       applyChartMonoFontFromUI();
+    });
+  }
+
+  if ($("linkTitles")) {
+    $("linkTitles").addEventListener("change", function () {
+      if ($("out").children.length) generateCharts();
     });
   }
 
@@ -3065,12 +3229,17 @@ function wireUp() {
       '    <b>Max pickup notes</b><br/>' +
       '    When pickup suppression is enabled, treat 1–5 leading note-events or fewer before the first barline as a pickup.<br/>' +
       '    Default is: 3<br/>' +
-      '    Increase this value if a tune begins with a slightly longer pickup.' +
+      '    Increase this value if a tune begins with a slightly longer pickup.<br/><br/>' +
+
+      '    <b>Add ABC Transcription Tools play links to titles</b><br/>' +
+      '    When enabled, adds ABC Transcription Tools play links to the title of each tune in the chord charts.<br/>' +
+      '    If you create a PDF file from the chord charts using the brower\'s <b>Print-to-PDF</b> feature, you can click on the title of any tune to open it in the ABC Transcription Tools player.' +
+
       '  </div>' +
 
       '  <hr style="border:0; border-top:1px solid #ccc; margin:18px 0;">' +
 
-       '  <div style="margin-bottom:14px;">' +
+      '  <div style="margin-bottom:14px;">' +
       '    <div style="font-weight:700; font-size:14pt; margin-bottom:10px;">Print Settings</div>' +
 
       '    <b>Paper size</b><br/>' +
