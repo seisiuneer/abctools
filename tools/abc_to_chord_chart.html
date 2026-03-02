@@ -3311,13 +3311,13 @@ function wireUp() {
     $("resetSettingsBtn").addEventListener("click", function () {
 
       if (!window.DayPilot || !DayPilot.Modal || typeof DayPilot.Modal.confirm !== "function") {
-        if (confirm("Reset all Chord Chart, Print, and Advanced Settings to their default values?")) {
+        if (confirm("Reset all settings to their default values?")) {
           resetAllSettingsToDefaults_Persisted();
         }
         return;
       }
 
-      var thePrompt = "Reset all Chord Chart, Print, and Advanced Settings to their default values?";
+      var thePrompt = "Reset all settings to their default values?";
       thePrompt = '<p style="font-size:14pt;line-height:18pt;font-family:helvetica;text-align:center">' + thePrompt + '</p>';
 
       DayPilot.Modal.confirm(thePrompt, {
