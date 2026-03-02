@@ -1666,7 +1666,7 @@ function parseMusicLineToBarsAndChords(
       const nextTok = tokens[1];
       const pickupSeg = s.slice(cursor, nextTok.pos);
 
-      const maxNotes = Math.max(1, Math.min(4, parseInt(pickupHeuristic.maxNotes, 10) || 3));
+      const maxNotes = Math.max(1, Math.min(5, parseInt(pickupHeuristic.maxNotes, 10) || 3));
       const hasChord = segmentHasRealChordQuotes(pickupSeg);
       const nNotes = countNoteEventsInAbcFragment(pickupSeg);
 
@@ -1711,7 +1711,7 @@ function parseMusicLineToBarsAndChords(
     let suppressPickup = false;
 
     if (pickupHeuristic && pickupHeuristic.enabled) {
-      const maxNotes = Math.max(1, Math.min(4, parseInt(pickupHeuristic.maxNotes, 10) || 3));
+      const maxNotes = Math.max(1, Math.min(5, parseInt(pickupHeuristic.maxNotes, 10) || 3));
       const hasChord = segmentHasRealChordQuotes(leadingSeg);
       const nNotes = countNoteEventsInAbcFragment(leadingSeg);
 
@@ -2575,7 +2575,7 @@ function generateCharts() {
 
   const pickupHeuristic = {
     enabled: !!suppressPickup,
-    maxNotes: Math.max(1, Math.min(4, pickupMaxNotes))
+    maxNotes: Math.max(1, Math.min(5, pickupMaxNotes))
   };
 
   const linkTitles =
