@@ -1076,7 +1076,7 @@ async function saveSettingsToJsonFile() {
   downloadFile(finalName, pretty, "application/json;charset=utf-8");
 
   gSavedSettingsFileName = finalName;
-  setStatus(`Saved settings to "${finalName}".`);
+  setStatus(`Saved settings to "${finalName}"`);
 }
 
 function isLikelySettingsObject(st) {
@@ -1125,7 +1125,7 @@ function loadSettingsFromJsonText(jsonText, sourceLabel) {
   // Apply side-effects + persist + refresh output
   applyAllSettingsSideEffects_AfterLoad();
 
-  setStatus(`Loaded settings from ${sourceLabel || "file"}.`);
+  setStatus(`Loaded settings from ${sourceLabel || "file"}`);
   return true;
 }
 
@@ -2298,7 +2298,7 @@ async function saveChordChart() {
   const finalName = v.value;
   downloadTextFile(finalName, raw);
   gSavedChordFileName = finalName;
-  setStatus(`Saved "${finalName}".`);
+  setStatus(`Saved "${finalName}"`);
 }
 
 /* ============================================================
