@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3187_022826_0900";
+var gVersionNumber = "3188_030226_1500";
 
 var gMIDIInitStillWaiting = false;
 
@@ -27760,13 +27760,13 @@ function processShareLink() {
       // Show update message?
       if (gLocalStorageAvailable){
 
-        var updatePresented = localStorage.sawUpdate_28feb2026;
+        var updatePresented = localStorage.sawUpdate_2mar2026;
 
         if (updatePresented != "true") {
 
           showWhatsNewScreen();
 
-          localStorage.sawUpdate_28feb2026 = true;
+          localStorage.sawUpdate_2mar2026 = true;
 
         }
 
@@ -55598,11 +55598,11 @@ function showWhatsNewScreen() {
   modal_msg += 'background: linear-gradient(135deg, #1b5e20 0%, #33691e 50%, #f9a825 100%);';
   modal_msg += 'box-shadow: 0 6px 16px rgba(0,0,0,0.14); color:#fff;">';
   modal_msg += '<div style="font-size:20pt; line-height:24pt; font-weight:bold;">What&apos;s New</div>';
-  modal_msg += '<div style="font-size:11pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 28 February 2026</div>';
+  modal_msg += '<div style="font-size:11pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 2 March 2026</div>';
   modal_msg += '</div>';
 
   // Short intro
-  modal_msg += '<p style="margin:14px 4px 10px 4px; font-size:12pt;">';
+  modal_msg += '<p style="margin:24px 4px 10px 4px; font-size:12pt;">';
   modal_msg += 'Here’s what’s new in the ABC Transcription Tools:';
   modal_msg += '</p>';
 
@@ -55610,13 +55610,16 @@ function showWhatsNewScreen() {
   modal_msg += '<div style="margin:10px 0 6px 0; padding:12px 12px; border-radius:12px;';
   modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);">';
 
-  modal_msg += '<p style="margin:6px 0; font-size:12pt;">Added the <strong>ABC Chord Chart Generator</strong> tool as a new option on the <strong>Open ABC in External Tool</strong> dialog.</p>';
-  modal_msg += '</div>';
+  modal_msg += '<p style="margin:6px 0; font-size:12pt;">Added a new <strong>Other ABC Tools</strong> option on the <strong>☰</strong> dropdown menu.</p>';
+  modal_msg += '<p style="margin:6px 0; font-size:12pt;">When clicked, opens up a dialog with direct links to other ABC tools I\'ve developed.</p>';
+  modal_msg += '<p style="margin:6px 0; font-size:12pt;">The tools initially available are the <strong>thesession.org Tune Settings Scraper</strong> and the <strong>ABC Chord Chart Generator</strong>.</p>';
+   modal_msg += '</div>';
 
+  // Feature card
   modal_msg += '<div style="margin:10px 0 6px 0; padding:12px 12px; border-radius:12px;';
   modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);">';
   
-  modal_msg += '<p style="margin:6px 0; font-size:12pt;">On desktop browsers you can now Alt-click the <strong>Play</strong> or <strong>Train</strong> buttons to pick a random tune from the ABC tunes loaded in the editor and open it in the <strong>Player</strong> or <strong>Tune Trainer</strong>.<br/><br/>This works both in the standard and <strong>Quick Editor</strong> versions of the tool.<br/><br/>Since the <strong>Quick Editor</strong> can work with thousands of tunes, this is a great way to do random tune practice.<br/><br/>Along the same lines, added <strong>Shuffle All Tunes</strong> to the <strong>Sort Tunes by Tag</strong> dialog available from the <strong>☰</strong> dropdown menu that will shuffle all the tunes into a random order.</p>';
+  modal_msg += '<p style="margin:6px 0; font-size:12pt;">Added the <strong>ABC Chord Chart Generator</strong> tool as a new option on the <strong>Open ABC in External Tool</strong> dialog.</p>';
 
   modal_msg += '</div>';
 
@@ -59590,6 +59593,24 @@ function LaunchAudioTester(){
   window.open(url, '_blank');
 }
 
+// Open thesession.org scraper
+function LaunchTheSessionScraper(){
+  
+  sendGoogleAnalytics("action", "LaunchTheSessionScraper");
+
+  var url = "https://michaeleskin.com/tools/mustard_scraper.html";
+  window.open(url, '_blank');
+}
+
+// Open the chord chart generatior
+function LaunchChordChartGenerator(){
+  
+  sendGoogleAnalytics("action", "LaunchChordChartGenerator");
+
+  var url = "https://michaeleskin.com/tools/abc_to_chord_chart.html";
+  window.open(url, '_blank');
+}
+
 //
 // Check if an update is available
 // 
@@ -59730,9 +59751,9 @@ function SetupContextMenu(showUpdateItem) {
               TuningTools();
             }
           }, {
-            name: 'thesession.org Tune Scraper',
+            name: 'Other ABC Tools',
             fn: function(target) {
-              MustardScraper();
+              OtherABCTools();
             }
           }, {}, {
             name: 'Launch Standard Editor',
@@ -59912,9 +59933,9 @@ function SetupContextMenu(showUpdateItem) {
             TuningTools();
           }
         }, {
-          name: 'thesession.org Tune Scraper',
+          name: 'Other ABC Tools',
           fn: function(target) {
-            MustardScraper();
+            OtherABCTools();
           }
         }, {}, {
         name: 'Launch Standard Editor',
@@ -60032,9 +60053,9 @@ function SetupContextMenu(showUpdateItem) {
               TuningTools();
             }
           }, {
-            name: 'thesession.org Tune Scraper',
+            name: 'Other ABC Tools',
             fn: function(target) {
-              MustardScraper();
+              OtherABCTools();
             }
           }, {}, {
             name: 'Launch Quick Editor',
@@ -60208,9 +60229,9 @@ function SetupContextMenu(showUpdateItem) {
             TuningTools();
           }
         }, {
-          name: 'thesession.org Tune Scraper',
+          name: 'Other ABC Tools',
           fn: function(target) {
-            MustardScraper();
+            OtherABCTools();
           }
         }, {}, {
           name: 'Launch Quick Editor',
@@ -60320,9 +60341,9 @@ function SetupContextMenu(showUpdateItem) {
           TuningTools();
         }
       }, {
-        name: 'thesession.org Tune Scraper',
+        name: 'Other ABC Tools',
         fn: function(target) {
-          MustardScraper();
+          OtherABCTools();
         }
       }, {}, {
         name: 'Launch Standard Editor',
@@ -60431,13 +60452,13 @@ function SetupContextMenu(showUpdateItem) {
         }
       },  {}, {
         name: 'Tuning Tools',
-          fn: function(target) {
+        fn: function(target) {
             TuningTools();
           }
         }, {
-        name: 'thesession.org Tune Scraper',
+        name: 'Other ABC Tools',
         fn: function(target) {
-          MustardScraper();
+          OtherABCTools();
         }
       }, {}, {
         name: 'Launch Quick Editor',
@@ -62106,13 +62127,13 @@ function DoStartup() {
   // Show update message?
   if (gLocalStorageAvailable && (!isFromShare)){
 
-    var updatePresented = localStorage.sawUpdate_28feb2026;
+    var updatePresented = localStorage.sawUpdate_2mar2026;
 
     if (updatePresented != "true") {
 
       showWhatsNewScreen();
 
-      localStorage.sawUpdate_28feb2026 = true;
+      localStorage.sawUpdate_2mar2026 = true;
 
     }
 
@@ -63766,14 +63787,6 @@ function openInExternalTool(theABC){
 
 }
 
-// Open thesession.org Tune Scraper in a new browser tab
-function MustardScraper(){
-  sendGoogleAnalytics("action", "MustardScraper");
-
-  var url = "https://michaeleskin.com/tools/mustard_scraper.html";
-  window.open(url, '_blank');
-}
-
 function TuningTools(){
 
   // Keep track of dialogs
@@ -63788,7 +63801,7 @@ function TuningTools(){
   + '    </span>' 
   + '  </p>'
   + '  <p style="text-align:center;margin-bottom:18px;font-size:12pt;line-height:18pt;font-family:helvetica;">' 
-  + 'These are several useful web-based tools I\'ve built in collaboration with AI<br/>to help tune and characterize the overall tuning of instruments.' 
+  + 'These are several useful web-based tools I\'ve built to help tune<br/>and characterize the overall tuning of instruments.' 
   + '  </p>'
 
   // Outer layout: two explicit rows
@@ -63835,6 +63848,7 @@ function TuningTools(){
   + '    </div>'
 
   + '  </div>'
+
   + '</div>';
 
   DayPilot.Modal.alert(modal_msg, {
@@ -63858,8 +63872,64 @@ function TuningTools(){
 
   elem = document.getElementById("tuning_tools_tester");
   if (elem) elem.onclick = function(){ LaunchAudioTester(); };
+
 }
 
+function OtherABCTools(){
+
+  // Keep track of dialogs
+  sendGoogleAnalytics("dialog", "OtherABCTools");
+
+  var modal_msg =
+    '<div id="otherabctoolsanchor">'
+  + '  <p style="text-align:center;margin-bottom:18px;font-size:16pt;font-family:helvetica;"> Other ABC Tools&nbsp;&nbsp;' 
+  + '    <span style="font-size:24pt;" title="View documentation in new tab">'
+  + '    <a href="https://michaeleskin.com/abctools/userguide.html#hamburger_other_abc_tools" target="_blank" ' 
+  + '    style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a>' 
+  + '    </span>' 
+  + '  </p>'
+  + '  <p style="text-align:center;margin-bottom:18px;font-size:12pt;line-height:18pt;font-family:helvetica;">' 
+  + 'These are additional useful web-based ABC tools I\'ve built:<br/>' 
+  + '  </p>'
+
+  // Outer layout: two explicit rows
+  + '  <div style="display:flex; flex-direction:column; align-items:center; gap:22px; padding:0 15px 0px 15px;">'
+
+  // Row 1 (2 items)
+  + '    <div style="display:flex; justify-content:center; gap:24px; width:100%;">'
+
+  + '      <div class="tuning-tool" style="text-align:center; width:180px;">'
+  + '        <img id="tuning_tools_scraper" src="img/tool_scraper_1.jpg" title="thesession.org Tune Settings Scraper" alt="thesession.org Tune Settings Scraper"'
+  + '             style="width:150px;height:auto;cursor:pointer;">'
+  + '        <div style="font-size:1.0em; margin-top:6px; height:3.2em; display:flex; align-items:center; justify-content:center; line-height:1.2em;">thesession.org Tune Settings Scraper</div>'
+  + '      </div>'
+
+  + '      <div class="tuning-tool" style="text-align:center; width:180px;">'
+  + '        <img id="tuning_tools_chordchart" src="img/tool_chordchart_1.jpg" title="ABC Chord Chart Generator" alt="ABC Chord Chart Generator"'
+  + '             style="width:150px;height:auto;cursor:pointer;">'
+  + '        <div style="font-size:1.0em; margin-top:6px; height:3.2em; display:flex; align-items:center; justify-content:center; line-height:1.2em;">ABC Chord Chart Generator</div>'
+  + '      </div>'
+
+  + '    </div>'
+
+  + '  </div>'
+
+  + '</div>';
+
+  DayPilot.Modal.alert(modal_msg, {
+    theme: "modal_flat",
+    top: 50,
+    width: 700,
+    scrollWithPage: (AllowDialogsToScroll())
+  });
+
+  elem = document.getElementById("tuning_tools_scraper");
+  if (elem) elem.onclick = function(){ LaunchTheSessionScraper(); };
+
+  elem = document.getElementById("tuning_tools_chordchart");
+  if (elem) elem.onclick = function(){ LaunchChordChartGenerator(); };
+
+}
 
 // abcjs Custom CSS Generator
 // Returns %%begincss{...%%endcss} with ONLY non-black rules, defaults all black, reset to black.
