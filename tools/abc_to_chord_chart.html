@@ -801,23 +801,6 @@
         </div>
 
         <div class="row" style="margin-top:10px;">
-          <label for="suppressPickup"><strong>Suppress pickups</strong></label>
-          <select id="suppressPickup" title="If enabled, suppress leading pickup notes before the first barline (when no chords are present in the pickup)">
-            <option value="0">No</option>
-            <option value="1" selected>Yes</option>
-          </select>
-
-          <label for="pickupMaxNotes" style="margin-left:6px;"><strong>Max pickup notes</strong></label>
-          <select id="pickupMaxNotes" title="If pickup suppression is enabled, treat the selected number of note-events or fewer before the first barline as a pickup">
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3" selected>3</option>
-            <option value="4">4</option>
-            <option value="5">5</option>
-          </select>
-        </div>
-
-        <div class="row" style="margin-top:10px;">
           <label for="linkTitles"><strong>Add ABC Transcription Tools play links to titles</strong></label>
           <select id="linkTitles" title="If enabled, adds ABC Transcription Tools play links to the title of each tune.&nbsp;&nbsp;If you export a PDF file with the play links enabled, you can click the title of any tune to open it in the ABC Transcription Tools player.">
             <option value="0" selected>No</option>
@@ -898,8 +881,28 @@
       </div>
 
       <div class="card">
-        <h3 class="card_label">Settings</h3>
+        <h3 class="card_label">Advanced Settings</h3>
+        <p class="small muted">Probably best to leave these at the default values.</p>
+        <div class="row" style="margin-top:10px;">
+          <label for="suppressPickup"><strong>Suppress pickups</strong></label>
+          <select id="suppressPickup" title="If enabled, suppress leading pickup notes before the first barline (when no chords are present in the pickup)">
+            <option value="0">No</option>
+            <option value="1" selected>Yes</option>
+          </select>
 
+          <label for="pickupMaxNotes" style="margin-left:6px;"><strong>Max pickup notes</strong></label>
+          <select id="pickupMaxNotes" title="If pickup suppression is enabled, treat the selected number of note-events or fewer before the first barline as a pickup">
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3" selected>3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3 class="card_label">Reset All Settings</h3>
         <div class="row" style="margin-top:10px;">
           <button id="resetSettingsBtn"
                   title="Reset all settings to their default values">
@@ -3222,16 +3225,6 @@ function wireUp() {
       '    Default is: /<br/>' +
       '    This does not affect tunes that contain no chords at all (those are skipped).<br/><br/>' +
 
-      '    <b>Suppress pickups</b><br/>' +
-      '    When enabled, short partial measure pickup notes before the first barline or after a repeat (that contain no chord symbols) ' +
-      '    will not be shown as a separate measure in the chord chart.<br/>' +
-      '    This can make the chord charts look more natural.<br/><br/>' +
-
-      '    <b>Max pickup notes</b><br/>' +
-      '    When pickup suppression is enabled, treat 1–5 leading note-events or fewer before the first barline as a pickup.<br/>' +
-      '    Default is: 3<br/>' +
-      '    Increase this value if a tune begins with a slightly longer pickup.<br/><br/>' +
-
       '    <b>Add ABC Transcription Tools play links to titles</b><br/>' +
       '    When enabled, adds ABC Transcription Tools play links to the title of each tune in the chord charts.<br/>' +
       '    If you create a PDF file from the chord charts using the brower\'s <b>Print-to-PDF</b> feature, you can click on the title of any tune to open it in the ABC Transcription Tools player.' +
@@ -3274,15 +3267,31 @@ function wireUp() {
       '    <b>Page number location</b><br/>' +
       '    Select where the page number appears on each printed page (top or bottom, left, center, or right).<br/>' +
       '    This setting is only used when page numbers are enabled.<br/>' +
-      '    <b>Note:</b> This feature is only available on Chromium-based browsers (e.g., Chrome, Edge, Brave).<br/><br/>' +
+      '    <b>Note:</b> This feature is only available on Chromium-based browsers (e.g., Chrome, Edge, Brave).' +
       '  </div>' +
 
       '  <hr style="border:0; border-top:1px solid #ccc; margin:18px 0;">' +
 
       '  <div style="margin-bottom:14px;">' +
-      '    <div style="font-weight:700; font-size:14pt; margin-bottom:10px;">Settings</div>' +
+      '    <div style="font-weight:700; font-size:14pt; margin-bottom:10px;">Advanced Settings</div>' +
+      '    Probably best to leave these at their default values.<br/><br/>' +
+      '    <b>Suppress pickups</b><br/>' +
+      '    When enabled, short partial measure pickup notes before the first barline or after a repeat (that contain no chord symbols) ' +
+      '    will not be shown as a separate measure in the chord chart.<br/>' +
+      '    This can make the chord charts look more natural.<br/><br/>' +
+
+      '    <b>Max pickup notes</b><br/>' +
+      '    When pickup suppression is enabled, treat 1–5 leading note-events or fewer before the first barline as a pickup.<br/>' +
+      '    Default is: 3<br/>' +
+      '    Increase this value if a tune begins with a slightly longer pickup.' +
+      '  </div>' +
+
+      '  <hr style="border:0; border-top:1px solid #ccc; margin:18px 0;">' +
+
+      '  <div style="margin-bottom:14px;">' +
+      '    <div style="font-weight:700; font-size:14pt; margin-bottom:10px;">Reset All Settings</div>' +
       '    <b>Reset All Settings to Defaults</b><br/>' +
-      '    Restores all chord chart and print settings to their original default values and saves those defaults for future visits.' +
+      '    Resets all chord chart, print, and advanced settings to their original default values and saves those defaults for future visits.' +
       '  </div>' +
 
       '  <hr style="border:0; border-top:1px solid #ccc; margin:18px 0;">' +
