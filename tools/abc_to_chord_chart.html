@@ -3007,13 +3007,13 @@ function wireUp() {
 
     if (gIsIOS) {
 
-      var thePrompt = "Printing from this tool isn’t supported on iOS Safari.";
+      var thePrompt = "Printing from this tool is not supported on iOS Safari.";
       thePrompt = '<p style="font-size:14pt;line-height:18pt;font-family:helvetica;text-align:center">' + thePrompt + '</p>';
 
       if (window.DayPilot && DayPilot.Modal && typeof DayPilot.Modal.alert === "function") {
         DayPilot.Modal.alert(thePrompt, { theme:"modal_flat", top:200, scrollWithPage:false, width:400 });
       } else {
-        alert("Printing from this tool isn’t supported on iOS Safari.");
+        alert("Printing from this tool is not supported on iOS Safari.");
       }
 
       return;
