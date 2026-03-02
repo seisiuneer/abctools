@@ -1407,15 +1407,36 @@ function getTuneBody(block) {
 }
 
 function hasRealChordQuotes(abcBody) {
-  const s = String(abcBody || "");
-  // Fast path: if there are no quotes at all, no chords.
-  if (s.indexOf('"') === -1) return false;
+  const srcLines = String(abcBody || "").split(/\r?\n/);
 
-  // Check line-by-line (so pickup logic / comments don’t confuse it)
-  const lines = s.split(/\r?\n/);
-  for (const line of lines) {
+  let inBeginTextBlock = false;
+
+  for (let rawLine of srcLines) {
+    rawLine = String(rawLine || "");
+
+    // Skip %%begintext blocks entirely
+    if (/^\s*%%begintext\b/i.test(rawLine)) { inBeginTextBlock = true; continue; }
+    if (/^\s*%%endtext\b/i.test(rawLine))   { inBeginTextBlock = false; continue; }
+    if (inBeginTextBlock) continue;
+
+    if (!rawLine.trim()) continue;
+
+    // Skip comments + all %% directives (both start with %)
+    if (/^\s*%/.test(rawLine)) continue;
+
+    // Match renderAlignedText cleanup
+    rawLine = rawLine.replace(/\s*[\\$]\s*$/, "");
+    const line = rawLine.replace(/%.*$/, "");
+    const trimmed = line.trim();
+    if (!trimmed) continue;
+
+    // Skip tag-like lines (defensive; renderAlignedText does this too)
+    if (/^[A-Za-z]:/.test(trimmed)) continue;
+
+    // Now check only “real” music line content for chord quotes
     if (segmentHasRealChordQuotes(line)) return true;
   }
+
   return false;
 }
 
