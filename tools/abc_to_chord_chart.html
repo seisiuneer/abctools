@@ -717,7 +717,7 @@
     <h2>ABC Chord Chart Generator</h2>
     <p class="muted small" style="margin-top:6px">
       This tool can generate, copy, save, and print chord charts for one or more ABC tunes.<br/>
-      Type or paste some ABC tunes, or click <strong>Browse...</strong> to open an ABC file, then click <strong>Generate Charts</strong>.
+      Type or paste some ABC tunes, or open an ABC file, then click <strong>Generate Charts</strong>.
     </p>
   </div>
 
@@ -902,13 +902,31 @@
       </div>
 
       <div class="card">
-        <h3 class="card_label">Reset All Settings</h3>
+        <h3 class="card_label">Settings</h3>
+
+        <div class="row" style="margin-top:10px;">
+          <button id="saveSettingsBtn"
+                  title="Saves all Chord Chart, Print, and Advanced Settings to a JSON file">
+            Save All Settings
+          </button>
+
+          <button id="loadSettingsBtn"
+                  title="Loads all Chord Chart, Print, and Advanced Settings from a JSON file">
+            Load All Settings
+          </button>
+
+          <input id="settingsFileIn"
+                 type="file"
+                 accept=".json,application/json"
+                 style="display:none" />
+        </div>
         <div class="row" style="margin-top:10px;">
           <button id="resetSettingsBtn"
                   title="Reset all settings to their default values">
             Reset All Settings to Defaults
           </button>
         </div>
+
       </div>
 
     </div>
@@ -965,6 +983,150 @@ function isChromiumBased() {
 
   // Include Chromium family
   return /Chrome|CriOS|Edg|OPR/.test(ua);
+}
+
+/* ============================================================
+   Settings Import/Export (.json file)
+   ============================================================ */
+
+function downloadFile(filename, text, mimeType) {
+  const blob = new Blob([text], { type: mimeType || "application/octet-stream" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+function applyAllSettingsSideEffects_AfterLoad() {
+  // Keep page-number feature gating correct
+  syncPageNumberControlAvailability();
+
+  // Apply chart font variables from loaded UI value
+  applyChartMonoFontFromUI();
+
+  // Apply print-related styles from loaded UI values
+  if ($("paperSize") && $("orientation")) {
+    setPageStyle($("paperSize").value, $("orientation").value);
+  }
+  if ($("printFontSize") && $("printTitleSize")) {
+    setPrintFontSize($("printFontSize").value, $("printTitleSize").value);
+  }
+  if ($("oneTunePerPage")) {
+    setOneTunePerPagePrint($("oneTunePerPage").value === "1");
+  }
+  if ($("printTuneGap")) {
+    setPrintTuneGapPt($("printTuneGap").value);
+  }
+
+  // Persist what we just loaded into localStorage (so refresh keeps it)
+  saveUIStateToLocalStorage_SettingsOnly();
+
+  // If charts are already present, regenerate so output reflects new settings
+  if ($("out") && $("out").children.length) {
+    generateCharts();
+  }
+
+  // Enable/disable Copy/Save/Print based on whether charts exist
+  syncActionButtons();
+}
+
+async function promptForSettingsSaveFileName(defaultName) {
+  if (!window.DayPilot || !DayPilot.Modal || typeof DayPilot.Modal.prompt !== "function") {
+    const v = window.prompt("Save settings as:", defaultName || "");
+    return (v === null) ? null : String(v);
+  }
+
+  const res = await DayPilot.Modal.prompt("Save settings as:", defaultName || "", {
+    theme: "modal_flat",
+    top: 80,
+    scrollWithPage: false
+  });
+
+  if (!res || res.canceled) return null;
+  return String(res.result || "");
+}
+
+async function saveSettingsToJsonFile() {
+  const st = getUIStateForSave_SettingsOnly();
+  const suggested = computeDefaultSettingsFileName();
+
+  let name = await promptForSettingsSaveFileName(suggested);
+  if (name === null) return;
+
+  name = sanitizeForDownloadName(name);
+  name = ensureJsonExt(name);
+
+  const v = validateFileName(name);
+  if (!v.ok) {
+    if (!window.DayPilot || !DayPilot.Modal || typeof DayPilot.Modal.alert !== "function") {
+      alert(v.msg);
+      return;
+    }
+    DayPilot.Modal.alert(v.msg, { theme: "modal_flat", top: 120, scrollWithPage: false });
+    return;
+  }
+
+  const finalName = v.value;
+  const pretty = JSON.stringify(st, null, 2) + "\n";
+
+  downloadFile(finalName, pretty, "application/json;charset=utf-8");
+
+  gSavedSettingsFileName = finalName;
+  setStatus(`Saved settings to "${finalName}".`);
+}
+
+function isLikelySettingsObject(st) {
+  if (!st || typeof st !== "object") return false;
+
+  // Must have some core keys we expect
+  const requiredKeys = [
+    "slotWidth",
+    "appendRhythm",
+    "emptyMeasurePlaceholder",
+    "suppressPickup",
+    "pickupMaxNotes",
+    "chartMonoFont",
+    "paperSize",
+    "orientation",
+    "printTitleSize",
+    "printFontSize",
+    "oneTunePerPage",
+    "printTuneGap",
+    "showPageNumbers",
+    "pageNumberPos",
+    "linkTitles"
+  ];
+
+  return requiredKeys.every(k => Object.prototype.hasOwnProperty.call(st, k));
+}
+
+function loadSettingsFromJsonText(jsonText, sourceLabel) {
+  let st = null;
+
+  try {
+    st = JSON.parse(String(jsonText || ""));
+  } catch (e) {
+    setStatus("Load settings failed: invalid JSON.", true);
+    return false;
+  }
+
+  if (!isLikelySettingsObject(st)) {
+    setStatus("Load settings failed: JSON file does not look like a settings export from this tool.", true);
+    return false;
+  }
+
+  // Apply UI values
+  applyUIStateFromObj_SettingsOnly(st);
+
+  // Apply side-effects + persist + refresh output
+  applyAllSettingsSideEffects_AfterLoad();
+
+  setStatus(`Loaded settings from ${sourceLabel || "file"}.`);
+  return true;
 }
 
 /* ============================================================
@@ -1361,6 +1523,7 @@ K: Dmaj
    ============================================================ */
 let gLoadedFileName = "";
 let gSavedChordFileName = "";
+let gSavedSettingsFileName = "";
 
 /* ---------------------------------
    Filename helpers
@@ -1397,6 +1560,20 @@ function computeDefaultChordFileName() {
   }
   return "chords.txt";
 }
+
+function ensureJsonExt(name) {
+  const s = String(name || "").trim();
+  if (!s) return s;
+  return /\.[A-Za-z0-9]{1,8}$/.test(s) ? s : (s + ".json");
+}
+
+function computeDefaultSettingsFileName() {
+
+  if (gSavedSettingsFileName) return gSavedSettingsFileName;
+
+  return "abc_chord_chart_settings.json";
+}
+
 function buildRawChordTextForSave() {
   const out = $("out");
   if (!out) return "";
@@ -3134,13 +3311,13 @@ function wireUp() {
     $("resetSettingsBtn").addEventListener("click", function () {
 
       if (!window.DayPilot || !DayPilot.Modal || typeof DayPilot.Modal.confirm !== "function") {
-        if (confirm("Reset all Chord Chart and Print settings to their default values?")) {
+        if (confirm("Reset all Chord Chart, Print, and Advanced Settings to their default values?")) {
           resetAllSettingsToDefaults_Persisted();
         }
         return;
       }
 
-      var thePrompt = "Reset all Chord Chart and Print settings to their default values?";
+      var thePrompt = "Reset all Chord Chart, Print, and Advanced Settings to their default values?";
       thePrompt = '<p style="font-size:14pt;line-height:18pt;font-family:helvetica;text-align:center">' + thePrompt + '</p>';
 
       DayPilot.Modal.confirm(thePrompt, {
@@ -3156,7 +3333,55 @@ function wireUp() {
     });
   }
 
-  // Help modal (unchanged)
+  // ------------------------------------------------------------
+  // Settings import/export buttons
+  // ------------------------------------------------------------
+
+  if ($("saveSettingsBtn")) {
+    $("saveSettingsBtn").addEventListener("click", async function () {
+      sendGoogleAnalytics("action", "save_settings");
+      await saveSettingsToJsonFile();
+    });
+  }
+
+  if ($("loadSettingsBtn")) {
+    $("loadSettingsBtn").addEventListener("click", function () {
+      sendGoogleAnalytics("action", "load_settings");
+      const fi = $("settingsFileIn");
+      if (fi) fi.click();
+    });
+  }
+
+  if ($("settingsFileIn")) {
+    $("settingsFileIn").addEventListener("change", function (e) {
+      const file = e.target.files && e.target.files[0];
+      if (!file) return;
+
+      const nameLower = String(file.name || "").toLowerCase();
+      if (!nameLower.endsWith(".json")) {
+        setStatus("Please choose a .json settings file.", true);
+        e.target.value = ""; // allow re-choosing same file later
+        return;
+      }
+
+      const reader = new FileReader();
+
+      reader.onload = () => {
+        const text = String(reader.result || "");
+        loadSettingsFromJsonText(text, `"${file.name || "settings.json"}"`);
+        e.target.value = ""; // allow re-loading the same file
+      };
+
+      reader.onerror = () => {
+        setStatus("Unable to read settings file.", true);
+        e.target.value = "";
+      };
+
+      reader.readAsText(file);
+    });
+  }
+
+  // Help modal
   $("btnHelp").addEventListener("click", function () {
 
     if (!window.DayPilot || !DayPilot.Modal || typeof DayPilot.Modal.alert !== "function") {
@@ -3289,9 +3514,13 @@ function wireUp() {
       '  <hr style="border:0; border-top:1px solid #ccc; margin:18px 0;">' +
 
       '  <div style="margin-bottom:14px;">' +
-      '    <div style="font-weight:700; font-size:14pt; margin-bottom:10px;">Reset All Settings</div>' +
+      '    <div style="font-weight:700; font-size:14pt; margin-bottom:10px;">Settings</div>' +
+      '    <b>Save All Settings</b><br/>' +
+      '    Saves all Chord Chart, Print, and Advanced Settings to a JSON file.<br/><br/>' +
+      '    <b>Load All Settings</b><br/>' +
+      '    Loads all Chord Chart, Print, and Advanced Settings from a JSON file and saves those values for future visits.<br/><br/>' +
       '    <b>Reset All Settings to Defaults</b><br/>' +
-      '    Resets all chord chart, print, and advanced settings to their original default values and saves those defaults for future visits.' +
+      '    Resets all Chord Chart, Print, and Advanced Settings to their default values and saves those defaults for future visits.' +
       '  </div>' +
 
       '  <hr style="border:0; border-top:1px solid #ccc; margin:18px 0;">' +
