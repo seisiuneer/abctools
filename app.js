@@ -63889,7 +63889,7 @@ function OtherABCTools(){
   + '    </span>' 
   + '  </p>'
   + '  <p style="text-align:center;margin-bottom:18px;font-size:12pt;line-height:18pt;font-family:helvetica;">' 
-  + 'These are additional useful web-based ABC tools I\'ve built:<br/>' 
+  + 'These are additional useful web-based ABC tools I\'ve built.<br/>' 
   + '  </p>'
 
   // Outer layout: two explicit rows
