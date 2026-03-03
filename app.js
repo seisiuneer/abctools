@@ -63901,7 +63901,7 @@ function OtherABCTools(){
   + '      <div class="tuning-tool" style="text-align:center; width:180px;">'
   + '        <img id="tuning_tools_scraper" src="img/tool_scraper_1.jpg" title="thesession.org Tune Settings Scraper" alt="thesession.org Tune Settings Scraper"'
   + '             style="width:150px;height:auto;cursor:pointer;">'
-  + '        <div style="font-size:1.0em; margin-top:6px; height:3.2em; display:flex; align-items:center; justify-content:center; line-height:1.2em;">thesession.org Tune Settings Scraper</div>'
+  + '        <div style="font-size:1.0em; margin-top:6px; height:3.2em; display:flex; align-items:center; justify-content:center; line-height:1.2em;">thesession.org<br/>Tune Settings Scraper</div>'
   + '      </div>'
 
   + '      <div class="tuning-tool" style="text-align:center; width:180px;">'
