@@ -27760,13 +27760,13 @@ function processShareLink() {
       // Show update message?
       if (gLocalStorageAvailable){
 
-        var updatePresented = localStorage.sawUpdate_2mar2026;
+        var updatePresented = localStorage.sawUpdate_3mar2026;
 
         if (updatePresented != "true") {
 
           showWhatsNewScreen();
 
-          localStorage.sawUpdate_2mar2026 = true;
+          localStorage.sawUpdate_3mar2026 = true;
 
         }
 
@@ -55592,10 +55592,10 @@ function showWhatsNewScreen() {
 
   // Header
   modal_msg += '<div style="text-align:center; padding:14px 10px; border-radius:12px;';
-  modal_msg += 'background: linear-gradient(135deg, #1b5e20 0%, #33691e 50%, #f9a825 100%);';
+  modal_msg += 'background: linear-gradient(135deg, #0d47a1 0%, #1565c0 50%, #42a5f5 100%);';
   modal_msg += 'box-shadow: 0 6px 16px rgba(0,0,0,0.14); color:#fff;">';
   modal_msg += '<div style="font-size:20pt; line-height:24pt; font-weight:bold;">What&apos;s New</div>';
-  modal_msg += '<div style="font-size:11pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 2 March 2026</div>';
+  modal_msg += '<div style="font-size:11pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 3 March 2026</div>';
   modal_msg += '</div>';
 
   // Short intro
@@ -55609,7 +55609,7 @@ function showWhatsNewScreen() {
 
   modal_msg += '<p style="margin:6px 0; font-size:12pt;">Added a new <strong>Other ABC Tools</strong> option on the <strong>☰</strong> dropdown menu.</p>';
   modal_msg += '<p style="margin:6px 0; font-size:12pt;">When clicked, opens up a dialog with direct links to other ABC tools I\'ve developed.</p>';
-  modal_msg += '<p style="margin:6px 0; font-size:12pt;">The tools initially available are the <strong>thesession.org Tune Settings Scraper</strong> and the <strong>ABC Chord Chart Generator</strong>.</p>';
+  modal_msg += '<p style="margin:6px 0; font-size:12pt;">The tools initially available are the <strong>thesession.org Tune Settings Scraper</strong>, <strong>ABC Chord Chart Generator</strong>, and <strong>ABC Tags to CSV Extractor Utilities</strong>.</p>';
    modal_msg += '</div>';
 
   // Feature card
@@ -62124,13 +62124,13 @@ function DoStartup() {
   // Show update message?
   if (gLocalStorageAvailable && (!isFromShare)){
 
-    var updatePresented = localStorage.sawUpdate_2mar2026;
+    var updatePresented = localStorage.sawUpdate_3mar2026;
 
     if (updatePresented != "true") {
 
       showWhatsNewScreen();
 
-      localStorage.sawUpdate_2mar2026 = true;
+      localStorage.sawUpdate_3mar2026 = true;
 
     }
 
