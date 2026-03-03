@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3188_030226_1500";
+var gVersionNumber = "3189_030326_0900";
 
 var gMIDIInitStillWaiting = false;
 
@@ -33565,9 +33565,6 @@ function ExportAll() {
   modal_msg += '        <input id="exportall_csvbutton" class="exportall_csvbutton btn btn-allcsvdownload" onclick="BatchCSVExport();" type="button" value="Export all Share URLs as CSV" title="Saves the Share URLs for all the tunes as a CSV file">';
   modal_msg += '      </p>';
   modal_msg += '      <p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:24px;">';
-  modal_msg += '        <input id="launchcsvextractor" class="launchcsvextractor btn btn-launchcsvextractor" onclick="LaunchCSVTagExtractor();" type="button" value="Launch the ABC Tags to CSV Extractor Utility" title="Extract all ABC tags from one or more ABC files to a CSV file">';
-  modal_msg += '      </p>';
-  modal_msg += '      <p style="text-align:center;font-size:14pt;font-family:helvetica;margin-top:24px;">';
   modal_msg += '        <input id="export_smartdrawbutton" class="export_smartdrawbutton btn btn-smartdraw" onclick="SmartDrawExport();" type="button" value="SmartDraw Set List Builder" title="Build a SmartDraw set list using drag and drop">';
   modal_msg += '      </p>';
   modal_msg += '    </div>';
@@ -63882,14 +63879,14 @@ function OtherABCTools(){
 
   var modal_msg =
     '<div id="otherabctoolsanchor">'
-  + '  <p style="text-align:center;margin-bottom:18px;font-size:16pt;font-family:helvetica;"> Other ABC Tools&nbsp;&nbsp;' 
+  + '  <p style="text-align:center;margin-bottom:18px;font-size:16pt;font-family:helvetica;">Other ABC Tools&nbsp;&nbsp;' 
   + '    <span style="font-size:24pt;" title="View documentation in new tab">'
   + '    <a href="https://michaeleskin.com/abctools/userguide.html#hamburger_other_abc_tools" target="_blank" ' 
   + '    style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a>' 
   + '    </span>' 
   + '  </p>'
   + '  <p style="text-align:center;margin-bottom:18px;font-size:12pt;line-height:18pt;font-family:helvetica;">' 
-  + 'These are additional useful web-based ABC tools I\'ve built.<br/>' 
+  + 'These are additional useful standalone web-based ABC tools I\'ve built.<br/>' 
   + '  </p>'
 
   // Outer layout: two explicit rows
@@ -63899,18 +63896,28 @@ function OtherABCTools(){
   + '    <div style="display:flex; justify-content:center; gap:24px; width:100%;">'
 
   + '      <div class="tuning-tool" style="text-align:center; width:180px;">'
-  + '        <img id="tuning_tools_scraper" src="img/tool_scraper_1.jpg" title="thesession.org Tune Settings Scraper" alt="thesession.org Tune Settings Scraper"'
+  + '        <img id="other_tools_scraper" src="img/tool_scraper_1.jpg" title="thesession.org Tune Settings Scraper" alt="thesession.org Tune Settings Scraper"'
   + '             style="width:150px;height:auto;cursor:pointer;">'
   + '        <div style="font-size:1.0em; margin-top:6px; height:3.2em; display:flex; align-items:center; justify-content:center; line-height:1.2em;">thesession.org<br/>Tune Settings Scraper</div>'
   + '      </div>'
 
   + '      <div class="tuning-tool" style="text-align:center; width:180px;">'
-  + '        <img id="tuning_tools_chordchart" src="img/tool_chordchart_1.jpg" title="ABC Chord Chart Generator" alt="ABC Chord Chart Generator"'
+  + '        <img id="other_tools_chordchart" src="img/tool_chordchart_1.jpg" title="ABC Chord Chart Generator" alt="ABC Chord Chart Generator"'
   + '             style="width:150px;height:auto;cursor:pointer;">'
   + '        <div style="font-size:1.0em; margin-top:6px; height:3.2em; display:flex; align-items:center; justify-content:center; line-height:1.2em;">ABC Chord Chart Generator</div>'
   + '      </div>'
 
   + '    </div>'
+    // Row 2 (1 items)
+  + '    <div style="display:flex; justify-content:center; gap:24px; width:100%;">'
+
+  + '      <div class="tuning-tool" style="text-align:center; width:180px;">'
+  + '        <img id="other_tools_abc2csv" src="img/tool_scraper_1.jpg" title="ABC Tags to CSV Extractor Utilities" alt="ABC Tags to CSV Extractor Utilities"'
+  + '             style="width:150px;height:auto;cursor:pointer;">'
+  + '        <div style="font-size:1.0em; margin-top:6px; height:3.2em; display:flex; align-items:center; justify-content:center; line-height:1.2em;">ABC Tags to CSV Extractor Utilities</div>'
+  + '      </div>'
+  + '    </div>'
+
 
   + '  </div>'
 
@@ -63923,11 +63930,14 @@ function OtherABCTools(){
     scrollWithPage: (AllowDialogsToScroll())
   });
 
-  elem = document.getElementById("tuning_tools_scraper");
+  elem = document.getElementById("other_tools_scraper");
   if (elem) elem.onclick = function(){ LaunchTheSessionScraper(); };
 
-  elem = document.getElementById("tuning_tools_chordchart");
+  elem = document.getElementById("other_tools_chordchart");
   if (elem) elem.onclick = function(){ LaunchChordChartGenerator(); };
+
+  elem = document.getElementById("other_tools_abc2csv");
+  if (elem) elem.onclick = function(){ LaunchCSVTagExtractor(); };
 
 }
 
