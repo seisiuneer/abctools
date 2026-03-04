@@ -6,30 +6,7 @@
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-// Updated 4 Mar 2026 0900
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
+// Updated 4 Mar 2026 1300
 //
 //
 //
@@ -37,7 +14,7 @@
 //
 //
 
-const cacheName = 'abctoolscache-3191';
+const cacheName = 'abctoolscache-3192';
 
 const contentToCache = [
     'abctools.html',
@@ -102,11 +79,11 @@ const contentToCache = [
     'img/abcjs_logo.png',
     'img/abc_to_chord_chart.jpg',
     'img/external_share.png',
-    'img/tool_tuner_1.jpg',
-    'img/tool_rtta_1.jpg',
-    'img/tool_rttva_1.jpg',
-    'img/tool_tonegen_1.jpg',
-    'img/tool_audiotester_1.jpg',
+    'img/tool_tuner_2.jpg',
+    'img/tool_rtta_2.jpg',
+    'img/tool_rttva_2.jpg',
+    'img/tool_tonegen_2.jpg',
+    'img/tool_audiotester_2.jpg',
     'img/tool_scraper_2.jpg',
     'img/tool_chordchart_2.jpg',
     'img/tool_abc2csv_2.jpg',

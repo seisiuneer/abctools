@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3191_030426_0900";
+var gVersionNumber = "3192_030426_1300";
 
 var gMIDIInitStillWaiting = false;
 
@@ -63807,19 +63807,19 @@ function TuningTools(){
   + '    <div style="display:flex; justify-content:center; gap:24px; width:100%;">'
 
   + '      <div class="tuning-tool" style="text-align:center; width:180px;">'
-  + '        <img id="tuning_tools_tuner" src="img/tool_tuner_1.jpg" title="Simple chromatic instrument tuner. Needle and strobe views. Adjustable temperament (ET, Just Intonation, Pythagorean, Fiddle Sweetened), A4 reference, and input boost." alt="Chromatic Tuner"'
+  + '        <img id="tuning_tools_tuner" src="img/tool_tuner_2.jpg" title="Simple chromatic instrument tuner. Needle and strobe views. Adjustable temperament (ET, Just Intonation, Pythagorean, Fiddle Sweetened), A4 reference, and input boost." alt="Chromatic Tuner"'
   + '             style="width:150px;height:auto;cursor:pointer;">'
   + '        <div style="font-size:1.0em; margin-top:6px; height:3.2em; display:flex; align-items:center; justify-content:center; line-height:1.2em;">Chromatic Tuner</div>'
   + '      </div>'
 
   + '      <div class="tuning-tool" style="text-align:center; width:180px;">'
-  + '        <img id="tuning_tools_rtta" src="img/tool_rtta_1.jpg" title="Real-time tuning analysis (box-plot style) from live mic input. Adjustable temperament (ET, Just Intonation, Pythagorean, Fiddle Sweetened), A4 reference, and input boost." alt="Real Time Tuning Analysis (RTTA)"'
+  + '        <img id="tuning_tools_rtta" src="img/tool_rtta_2.jpg" title="Real-time tuning analysis (box-plot style) from live mic input. Adjustable temperament (ET, Just Intonation, Pythagorean, Fiddle Sweetened), A4 reference, and input boost." alt="Real Time Tuning Analysis (RTTA)"'
   + '             style="width:150px;height:auto;cursor:pointer;">'
   + '        <div style="font-size:1.0em; margin-top:6px; height:3.2em; display:flex; align-items:center; justify-content:center; line-height:1.2em;">Real Time Tuning Analysis (RTTA)</div>'
   + '      </div>'
 
   + '      <div class="tuning-tool" style="text-align:center; width:180px;">'
-  + '        <img id="tuning_tools_rttva" src="img/tool_rttva_1.jpg" title="Real-time tuning and volume analysis (box-plot style) from live mic input. Adjustable temperament (ET, Just Intonation, Pythagorean, Fiddle Sweetened), A4 reference, and input boost." alt="Real Time Tuning / Volume Analysis (RTTVA)"'
+  + '        <img id="tuning_tools_rttva" src="img/tool_rttva_2.jpg" title="Real-time tuning and volume analysis (box-plot style) from live mic input. Adjustable temperament (ET, Just Intonation, Pythagorean, Fiddle Sweetened), A4 reference, and input boost." alt="Real Time Tuning / Volume Analysis (RTTVA)"'
   + '             style="width:150px;height:auto;cursor:pointer;">'
   + '        <div style="font-size:1.0em; margin-top:6px; height:3.2em; display:flex; align-items:center; justify-content:center; line-height:1.2em;">Real Time Tuning / Volume Analysis (RTTVA)</div>'
   + '      </div>'
@@ -63830,13 +63830,13 @@ function TuningTools(){
   + '    <div style="display:flex; justify-content:center; gap:24px; width:100%;">'
 
   + '      <div class="tuning-tool" style="text-align:center; width:180px;">'
-  + '        <img id="tuning_tools_tonegen" src="img/tool_tonegen_1.jpg" title="Simple chromatic instrument tuner with tone generator. Needle and strobe views. Adjustable temperament (ET, Just Intonation, Pythagorean, Fiddle Sweetened), A4 reference, and input boost." alt="Chromatic Tuner / Tone Generator"'
+  + '        <img id="tuning_tools_tonegen" src="img/tool_tonegen_2.jpg" title="Simple chromatic instrument tuner with tone generator. Needle and strobe views. Adjustable temperament (ET, Just Intonation, Pythagorean, Fiddle Sweetened), A4 reference, and input boost." alt="Chromatic Tuner / Tone Generator"'
   + '             style="width:150px;height:auto;cursor:pointer;">'
-  + '        <div style="font-size:1.0em; margin-top:6px; height:3.2em; display:flex; align-items:center; justify-content:center; line-height:1.2em;">Chromatic Tuner / Tone Generator</div>'
+  + '        <div style="font-size:1.0em; margin-top:6px; height:3.2em; display:flex; align-items:center; justify-content:center; line-height:1.2em;">Chromatic Tuner /<br/>Tone Generator</div>'
   + '      </div>'
 
   + '      <div class="tuning-tool" style="text-align:center; width:180px;">'
-  + '        <img id="tuning_tools_tester" src="img/tool_audiotester_1.jpg" title="3-step audio input tester for the Chromatic Tuner and RTTA utilities: background noise, level range, and continuous tone test." alt="Audio Input Tester"'
+  + '        <img id="tuning_tools_tester" src="img/tool_audiotester_2.jpg" title="3-step audio input tester for the Chromatic Tuner and RTTA utilities: background noise, level range, and continuous tone test." alt="Audio Input Tester"'
   + '             style="width:150px;height:auto;cursor:pointer;">'
   + '        <div style="font-size:1.0em; margin-top:6px; height:3.2em; display:flex; align-items:center; justify-content:center; line-height:1.2em;">Audio Input Tester</div>'
   + '      </div>'
