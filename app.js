@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3192_030426_1300";
+var gVersionNumber = "3193_030426_1300";
 
 var gMIDIInitStillWaiting = false;
 
@@ -63750,7 +63750,7 @@ function openInExternalTool(theABC){
     '<p style="text-align:center;">' +
 
       '<span class="external-tool" style="display:inline-block;margin-bottom:12px; text-align:center;">' +
-        '<img id="external_chord_chart" src="img/abc_to_chord_chart.jpg" ' +
+        '<img id="external_chord_chart" src="img/tool_chordchart_other_1.jpg" ' +
              'title="Open the ABC in the ABC Chord Chart Generator" alt="ABC Chord Chart Generator" style="cursor:pointer;">' +
         '<br>' +
         '<span style="font-size:1.2em;">ABC Chord Chart Generator</span>' +
@@ -63761,7 +63761,7 @@ function openInExternalTool(theABC){
 
   DayPilot.Modal.alert(modal_msg, {
     theme: "modal_flat",
-    top: 150,
+    top: 75,
     width: 650,
     scrollWithPage: (AllowDialogsToScroll())
   });
