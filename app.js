@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3190_030326_1000";
+var gVersionNumber = "3191_030426_0900";
 
 var gMIDIInitStillWaiting = false;
 
@@ -63849,7 +63849,7 @@ function TuningTools(){
 
   DayPilot.Modal.alert(modal_msg, {
     theme: "modal_flat",
-    top: 50,
+    top: 25,
     width: 700,
     scrollWithPage: (AllowDialogsToScroll())
   });
@@ -63894,15 +63894,15 @@ function OtherABCTools(){
   // Row 1 (2 items)
   + '    <div style="display:flex; justify-content:center; gap:24px; width:100%;">'
 
-  + '      <div class="tuning-tool" style="text-align:center; width:180px;">'
-  + '        <img id="other_tools_scraper" src="img/tool_scraper_1.jpg" title="thesession.org Tune Settings Scraper" alt="thesession.org Tune Settings Scraper"'
-  + '             style="width:150px;height:auto;cursor:pointer;">'
+  + '      <div class="tuning-tool" style="text-align:center; width:170px;">'
+  + '        <img id="other_tools_scraper" src="img/tool_scraper_2.jpg" title="thesession.org Tune Settings Scraper" alt="thesession.org Tune Settings Scraper"'
+  + '             style="width:170px;height:auto;cursor:pointer;">'
   + '        <div style="font-size:1.0em; margin-top:6px; height:3.2em; display:flex; align-items:center; justify-content:center; line-height:1.2em;">thesession.org<br/>Tune Settings Scraper</div>'
   + '      </div>'
 
-  + '      <div class="tuning-tool" style="text-align:center; width:180px;">'
-  + '        <img id="other_tools_chordchart" src="img/tool_chordchart_1.jpg" title="ABC Chord Chart Generator" alt="ABC Chord Chart Generator"'
-  + '             style="width:150px;height:auto;cursor:pointer;">'
+  + '      <div class="tuning-tool" style="text-align:center; width:170px;">'
+  + '        <img id="other_tools_chordchart" src="img/tool_chordchart_2.jpg" title="ABC Chord Chart Generator" alt="ABC Chord Chart Generator"'
+  + '             style="width:170px;height:auto;cursor:pointer;">'
   + '        <div style="font-size:1.0em; margin-top:6px; height:3.2em; display:flex; align-items:center; justify-content:center; line-height:1.2em;">ABC Chord Chart Generator</div>'
   + '      </div>'
 
@@ -63910,15 +63910,15 @@ function OtherABCTools(){
     // Row 2 (2 items)
   + '    <div style="display:flex; justify-content:center; gap:24px; width:100%;">'
 
-  + '      <div class="tuning-tool" style="text-align:center; width:180px;">'
-  + '        <img id="other_tools_abc2csv" src="img/tool_scraper_1.jpg" title="ABC Tags to CSV Extractor Utilities" alt="ABC Tags to CSV Extractor Utilities"'
-  + '             style="width:150px;height:auto;cursor:pointer;">'
+  + '      <div class="tuning-tool" style="text-align:center; width:170px;">'
+  + '        <img id="other_tools_abc2csv" src="img/tool_abc2csv_2.jpg" title="ABC Tags to CSV Extractor Utilities" alt="ABC Tags to CSV Extractor Utilities"'
+  + '             style="width:170px;height:auto;cursor:pointer;">'
   + '        <div style="font-size:1.0em; margin-top:6px; height:3.2em; display:flex; align-items:center; justify-content:center; line-height:1.2em;">ABC Tags to CSV Extractor Utilities</div>'
   + '      </div>'
  
-  + '      <div class="tuning-tool" style="text-align:center; width:180px;">'
-  + '        <img id="other_tools_custominstrument" src="img/tool_custominstrument_1.jpg" title="Custom Instrument Builder" alt="Custom Instrument Builder"'
-  + '             style="width:150px;height:auto;cursor:pointer;">'
+  + '      <div class="tuning-tool" style="text-align:center; width:170px;">'
+  + '        <img id="other_tools_custominstrument" src="img/tool_custominstrument_2.jpg" title="Custom Instrument Builder" alt="Custom Instrument Builder"'
+  + '             style="width:170px;height:auto;cursor:pointer;">'
   + '        <div style="font-size:1.0em; margin-top:6px; height:3.2em; display:flex; align-items:center; justify-content:center; line-height:1.2em;">Custom Instrument Builder</div>'
   + '      </div>'
   + '    </div>'
@@ -63930,8 +63930,8 @@ function OtherABCTools(){
 
   DayPilot.Modal.alert(modal_msg, {
     theme: "modal_flat",
-    top: 50,
-    width: 700,
+    top: 25,
+    width: 650,
     scrollWithPage: (AllowDialogsToScroll())
   });
 
