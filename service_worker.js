@@ -11,6 +11,10 @@
 //
 //
 //
+//
+//
+//
+//
 // Updated 6 Mar 2026 0830
 //
 //
@@ -22,8 +26,12 @@
 //
 //
 //
+//
+//
+//
+//
 
-const cacheName = 'abctoolscache-3196';
+const cacheName = 'abctoolscache-3197';
 
 const contentToCache = [
     'abctools.html',
@@ -88,6 +96,7 @@ const contentToCache = [
     'img/abcjs_logo.png',
     'img/abc_to_chord_chart.jpg',
     'img/external_share.png',
+    'img/abcencoderlogo.jpg',
     'img/tool_tuner_2.jpg',
     'img/tool_rtta_2.jpg',
     'img/tool_rttva_2.jpg',

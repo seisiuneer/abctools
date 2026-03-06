@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3196_030626_0830";
+var gVersionNumber = "3197_030626_0930";
 
 var gMIDIInitStillWaiting = false;
 
@@ -27763,13 +27763,13 @@ function processShareLink() {
       // Show update message?
       if (gLocalStorageAvailable){
 
-        var updatePresented = localStorage.sawUpdate_5mar2026;
+        var updatePresented = localStorage.sawUpdate_6mar2026;
 
         if (updatePresented != "true") {
 
           showWhatsNewScreen();
 
-          localStorage.sawUpdate_5mar2026 = true;
+          localStorage.sawUpdate_6mar2026 = true;
 
         }
 
@@ -55619,13 +55619,22 @@ function showWhatsNewScreen() {
   modal_msg += 'background: linear-gradient(135deg, #1b5e20 0%, #2e7d32 50%, #66bb6a 100%);';
   modal_msg += 'box-shadow: 0 6px 16px rgba(0,0,0,0.14); color:#fff;">';
   modal_msg += '<div style="font-size:20pt; line-height:24pt; font-weight:bold;">What&apos;s New</div>';
-  modal_msg += '<div style="font-size:11pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 5 March 2026</div>';
+  modal_msg += '<div style="font-size:11pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 6 March 2026</div>';
   modal_msg += '</div>';
 
   // Short intro
   modal_msg += '<p style="margin:24px 4px 10px 4px; font-size:12pt;">';
   modal_msg += 'Here’s what’s new in the ABC Transcription Tools:';
   modal_msg += '</p>';
+
+  // Feature card
+  modal_msg += '<div style="margin:10px 0 6px 0; padding:12px 12px; border-radius:12px;';
+  modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);">';
+  
+  modal_msg += '<p style="margin:6px 0; font-size:12pt;">Added Anton Zille\'s <strong>N.S.S.S. ABC Encoder</strong> to <strong>Open ABC in External Tool</strong>.</p>';
+  modal_msg += '<p style="margin:6px 0; font-size:12pt;">Exports the tunes to Anton Zille\'s ABC Encoder for auto-formatting headers and sorting sets of tunes or ABC collections.</p>';
+
+  modal_msg += '</div>';
 
   // Feature card
   modal_msg += '<div style="margin:10px 0 6px 0; padding:12px 12px; border-radius:12px;';
@@ -62156,13 +62165,13 @@ function DoStartup() {
   // Show update message?
   if (gLocalStorageAvailable && (!isFromShare)){
 
-    var updatePresented = localStorage.sawUpdate_5mar2026;
+    var updatePresented = localStorage.sawUpdate_6mar2026;
 
     if (updatePresented != "true") {
 
       showWhatsNewScreen();
 
-      localStorage.sawUpdate_5mar2026 = true;
+      localStorage.sawUpdate_6mar2026 = true;
 
     }
 
@@ -63752,6 +63761,35 @@ function OpenInABCChordChartGenerator(abcText){
     }
 }
 
+//
+// Open in Anton Zille's N.S.S.S. ABC Encoder tool
+//
+function OpenInABCEncoder(abcText){
+
+    sendGoogleAnalytics("action", "OpenInABCEncoder");
+
+    var encoder = new TextEncoder();
+    var utf8Bytes = encoder.encode(abcText);
+    var deflated = pako.deflate(utf8Bytes, { level: 6 });
+    var theDef = def_bytesToBase64URL(deflated);
+
+    var theURL = "https://ns.tunebook.app/abc-encoder.html?def="+theDef;
+
+    if (theURL.length < 8100)
+    {
+      var w = window.open(theURL);
+    }
+    else{
+
+      DayPilot.Modal.alert('<p style="text-align:center;font-family:helvetica;font-size:12pt;">Share URL is too long to open in the ABC Encoder.</p>', {
+        theme: "modal_flat",
+        top: 230,
+        scrollWithPage: (AllowDialogsToScroll())
+      });
+
+    }
+}
+
 function openInExternalTool(theABC){
 
   var modal_msg =
@@ -63785,11 +63823,18 @@ function openInExternalTool(theABC){
     '</p>' +
     '<p style="text-align:center;">' +
 
-      '<span class="external-tool" style="display:inline-block;margin-bottom:12px; text-align:center;">' +
-        '<img id="external_chord_chart" src="img/tool_chordchart_other_1.jpg" ' +
+      '<span class="external-tool" style="display:inline-block;margin-right:48px;margin-bottom:12px;text-align:center;">' +
+        '<img style="height:128px;width:auto;" id="external_chord_chart" src="img/tool_chordchart_other_1.jpg" ' +
              'title="Open the ABC in the ABC Chord Chart Generator" alt="ABC Chord Chart Generator" style="cursor:pointer;">' +
         '<br>' +
         '<span style="font-size:1.2em;">ABC Chord Chart Generator</span>' +
+      '</span>' +
+
+      '<span class="external-tool" style="display:inline-block;margin-bottom:12px; text-align:center;">' +
+        '<img style="height:120px;width:auto;" id="external_abc_encoder" src="img/abcencoderlogo.jpg" ' +
+             'title="Export the tunes to Anton Zille\'s ABC Encoder for auto-formatting headers and sorting sets of tunes or ABC collections" alt="N.S.S.S. ABC Encoder" style="cursor:pointer;">' +
+        '<br>' +
+        '<span style="font-size:1.2em;">N.S.S.S. ABC Encoder</span>' +
       '</span>' +
 
     '</p>' +
@@ -63815,6 +63860,11 @@ function openInExternalTool(theABC){
   elem = document.getElementById("external_chord_chart");
   if (elem) elem.onclick = function(){
     OpenInABCChordChartGenerator(theABC);
+  };
+
+  elem = document.getElementById("external_abc_encoder");
+  if (elem) elem.onclick = function(){
+    OpenInABCEncoder(theABC);
   };
 
 }
