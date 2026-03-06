@@ -6406,3 +6406,12 @@ body.flat-buttons .tuning-tool:hover {
   border-color: #b9d7ee !important;
   box-shadow: none !important;
 }
+
+body.flat-buttons .btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  box-shadow: none !important;
+  background-image: none !important;
+}
