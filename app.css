@@ -6411,7 +6411,7 @@ body.flat-buttons .btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-
+  line-height: 1.1 !important;
   box-shadow: none !important;
   background-image: none !important;
 }
