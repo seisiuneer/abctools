@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3193_030426_1300";
+var gVersionNumber = "3194_030526_2100";
 
 var gMIDIInitStillWaiting = false;
 
@@ -496,6 +496,9 @@ var gEnableSyntaxMessageDelivered = false;
 
 // Always flatten playbackparts
 var gAlwaysFlattenParts = false;
+
+// Flat look UI?
+var gUseFlatButtons = true;
 
 // Global reference to the ABC editor
 var gTheABC = document.getElementById("abc");
@@ -27760,13 +27763,13 @@ function processShareLink() {
       // Show update message?
       if (gLocalStorageAvailable){
 
-        var updatePresented = localStorage.sawUpdate_3mar2026a;
+        var updatePresented = localStorage.sawUpdate_5mar2026;
 
         if (updatePresented != "true") {
 
           showWhatsNewScreen();
 
-          localStorage.sawUpdate_3mar2026a = true;
+          localStorage.sawUpdate_5mar2026 = true;
 
         }
 
@@ -47156,6 +47159,13 @@ function GetInitialConfigurationSettings() {
   // Apply custom theme
   ensureInitialAbcThemeApplied();
 
+  // Flat mode buttons?
+  gUseFlatButtons = true;
+  val = localStorage.UseFlatButtons
+  if (val) {
+    gUseFlatButtons = (val == "true");
+  }
+
   // Save the settings, in case they were initialized
   SaveConfigurationSettings();
 
@@ -47468,6 +47478,9 @@ function SaveConfigurationSettings() {
 
     // Show external tools icon on Player
     localStorage.PlayerShowExternalToolsIcon = gPlayerShowExternalToolsIcon;
+
+    // Flat mode buttons
+    localStorage.UseFlatButtons = gUseFlatButtons;
 
   }
 }
@@ -50196,8 +50209,8 @@ function AdvancedControlsDialog() {
   modal_msg += '</p>';
 
   modal_msg += '<p style="text-align:center;margin-top:24px;">';
-  modal_msg += '<input id="injectheaderstring" style="margin-right:20px;" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectHeaderString()" type="button" value="Inject ABC Header Text">';
-  modal_msg += '<input id="injectcustomstringedtab" style="margin-right:20px;" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectCustomStringedInstrumentTab()" type="button" value="Inject Custom Stringed Instrument Tab">';
+  modal_msg += '<input id="injectheaderstring" style="margin-right:14px;" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectHeaderString()" type="button" value="Inject ABC Header Text">';
+  modal_msg += '<input id="injectcustomstringedtab" style="margin-right:14px;" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectCustomStringedInstrumentTab()" type="button" value="Inject Custom Stringed Instrument Tab">';
   modal_msg += '<input id="ceoltastransform" class="advancedcontrols btn btn-injectcontrols-headers" onclick="DoCeoltasTransformDialog()" type="button" value="Comhaltas Transform" title="Brings up a dialog where you can transform the ABC to/from Comhaltas format">';
   modal_msg += '</p>';
   modal_msg += '<p style="text-align:center;margin-top:24px;">';
@@ -52108,6 +52121,7 @@ function ConfigureToolSettings() {
     configure_player_scaling: gPlayerScaling,
     configure_syntax_highlighting: gEnableSyntax,
     configure_syntax_highlighting_dark: gSyntaxDarkMode,
+    configure_flat_buttons: gUseFlatButtons
   };
 
   var form = [];
@@ -52199,6 +52213,13 @@ function ConfigureToolSettings() {
       cssClass: "configure_settings_form_text_checkbox"
     });
   }
+
+  form.push({
+    name: "          Use Flat Buttons? (Glossy if unchecked)",
+    id: "configure_flat_buttons",
+    type: "checkbox",
+    cssClass: "configure_settings_form_text_checkbox"
+  });
 
   form.push({
     name: "          Use Dark Mode for the editor when syntax highlighting is enabled",
@@ -52448,6 +52469,10 @@ function ConfigureToolSettings() {
       // Syntax highlighting
       gEnableSyntax = args.result.configure_syntax_highlighting;
       gSyntaxDarkMode = args.result.configure_syntax_highlighting_dark;
+
+      // Flat buttons?
+      gUseFlatButtons = args.result.configure_flat_buttons;
+      setFlatButtons(gUseFlatButtons);
 
       var isEnableSyntaxChanged = (gEnableSyntax != oldEnableSyntax);
 
@@ -52896,9 +52921,9 @@ function MoveConfigureSettingsFieldsToTabs() {
     return false;
   }
 
-
   // ---- Editor tab ----
   if (gIsIPad) moveByName("configure_ipad_two_column", "tab_editor_fields");
+  moveByName("configure_flat_buttons","tab_editor_fields");
   if (isDesktopBrowser()) moveByName("configure_editor_fontsize", "tab_editor_fields");
   moveByName("configure_syntax_highlighting", "tab_editor_fields");
   moveByName("configure_syntax_highlighting_dark", "tab_editor_fields");
@@ -55591,10 +55616,10 @@ function showWhatsNewScreen() {
 
   // Header
   modal_msg += '<div style="text-align:center; padding:14px 10px; border-radius:12px;';
-  modal_msg += 'background: linear-gradient(135deg, #0d47a1 0%, #1565c0 50%, #42a5f5 100%);';
+  modal_msg += 'background: linear-gradient(135deg, #1b5e20 0%, #2e7d32 50%, #66bb6a 100%);';
   modal_msg += 'box-shadow: 0 6px 16px rgba(0,0,0,0.14); color:#fff;">';
   modal_msg += '<div style="font-size:20pt; line-height:24pt; font-weight:bold;">What&apos;s New</div>';
-  modal_msg += '<div style="font-size:11pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 3 March 2026</div>';
+  modal_msg += '<div style="font-size:11pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 5 March 2026</div>';
   modal_msg += '</div>';
 
   // Short intro
@@ -55605,19 +55630,21 @@ function showWhatsNewScreen() {
   // Feature card
   modal_msg += '<div style="margin:10px 0 6px 0; padding:12px 12px; border-radius:12px;';
   modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);">';
+  
+  modal_msg += '<p style="margin:6px 0; font-size:12pt;"><strong>New flat button styling as the default.</strong></p>';
+  modal_msg += '<p style="margin:6px 0; font-size:12pt;">You can switch back to the legacy glossy buttons by unchecking <strong>Use Flat Buttons? (Glossy if unchecked)</strong> on the <strong>Editor</strong> pane in the <strong>Settings</strong> dialog.</p>';
+
+  modal_msg += '</div>';
+
+  // Feature card
+  modal_msg += '<div style="margin:10px 0 6px 0; padding:12px 12px; border-radius:12px;';
+  modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);">';
 
   modal_msg += '<p style="margin:6px 0; font-size:12pt;">Added a new <strong>Other ABC Tools</strong> option on the <strong>☰</strong> dropdown menu.</p>';
   modal_msg += '<p style="margin:6px 0; font-size:12pt;">When clicked, opens up a dialog with direct links to other ABC tools I\'ve developed.</p>';
   modal_msg += '<p style="margin:6px 0; font-size:12pt;">The tools initially available are the <strong>thesession.org Tune Settings Scraper</strong>, <strong>ABC Chord Chart Generator</strong>, <strong>ABC Tags to CSV Extractor Utilities</strong>, and the <strong>Custom Instrument Builder</strong>.</p>';
    modal_msg += '</div>';
 
-  // Feature card
-  modal_msg += '<div style="margin:10px 0 6px 0; padding:12px 12px; border-radius:12px;';
-  modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);">';
-  
-  modal_msg += '<p style="margin:6px 0; font-size:12pt;">Added the <strong>ABC Chord Chart Generator</strong> tool as a new option on the <strong>Open ABC in External Tool</strong> dialog.</p>';
-
-  modal_msg += '</div>';
 
   modal_msg += '</div>'; // wrapper
 
@@ -60559,6 +60586,12 @@ function SetTopButtonMargins() {
 
 }
 
+
+// Set the flat looks
+function setFlatButtons(enable){
+  document.body.classList.toggle("flat-buttons", enable);
+}
+
 function DoStartup() {
 
   // Init global state
@@ -62123,17 +62156,20 @@ function DoStartup() {
   // Show update message?
   if (gLocalStorageAvailable && (!isFromShare)){
 
-    var updatePresented = localStorage.sawUpdate_3mar2026a;
+    var updatePresented = localStorage.sawUpdate_5mar2026;
 
     if (updatePresented != "true") {
 
       showWhatsNewScreen();
 
-      localStorage.sawUpdate_3mar2026a = true;
+      localStorage.sawUpdate_5mar2026 = true;
 
     }
 
   }
+
+  // Select the UI mode
+  setFlatButtons(gUseFlatButtons);
 
 }
 

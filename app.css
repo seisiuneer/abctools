@@ -78,15 +78,154 @@ margin-right:16px;
 background: #c0df81;
 color: black;
 user-select: none;
-
 }
 
 @media (hover: hover) {
-	input:hover + label,
-	input:focus + label {
-	background: palegreen;
-	user-select: none;
-	}
+  .toggle-buttons input:hover + label,
+  .toggle-buttons input:focus + label {
+    background: palegreen;
+    user-select: none;
+  }
+}
+
+/* =========================================================
+   Button hover system (replaces hundreds of per-button rules)
+   ========================================================= */
+
+@media (hover: hover) {
+  body:not(.flat-buttons) .btn:hover,
+  body:not(.flat-buttons) .playbutton:hover,
+  body:not(.flat-buttons) .trainerbutton:hover,
+  body:not(.flat-buttons) .toggleallcontrols:hover,
+  body:not(.flat-buttons) .toggleadvancedcontrols:hover,
+  body:not(.flat-buttons) .togglesharecontrols:hover,
+  body:not(.flat-buttons) .configuresettings:hover,
+  body:not(.flat-buttons) .urlcontrols:hover,
+  body:not(.flat-buttons) .urlcontrolslast:hover,
+  body:not(.flat-buttons) .snapshotbutton:hover,
+  body:not(.flat-buttons) .restorebutton:hover,
+  body:not(.flat-buttons) .saveaspdf:hover,
+  body:not(.flat-buttons) .saveaswebsite:hover,
+  body:not(.flat-buttons) .saveabcfile:hover,
+  body:not(.flat-buttons) .rawmodebutton:hover,
+  body:not(.flat-buttons) .newabcfile:hover,
+  body:not(.flat-buttons) .toggletopbar:hover,
+  body:not(.flat-buttons) .cancelpdf:hover {
+    background: palegreen;
+  }
+
+  body:not(.flat-buttons) .clearbutton:hover {
+    background: tomato;
+  }
+}
+
+/* Flat Buttons mode: remove gradients/shadows and use grey outlines */
+body.flat-buttons .btn,
+body.flat-buttons .playbutton,
+body.flat-buttons .trainerbutton,
+body.flat-buttons .toggleallcontrols,
+body.flat-buttons .toggleadvancedcontrols,
+body.flat-buttons .togglesharecontrols,
+body.flat-buttons .configuresettings,
+body.flat-buttons .urlcontrols,
+body.flat-buttons .urlcontrolslast,
+body.flat-buttons .snapshotbutton,
+body.flat-buttons .restorebutton,
+body.flat-buttons .clearbutton,
+body.flat-buttons .saveaspdf,
+body.flat-buttons .saveaswebsite,
+body.flat-buttons .saveabcfile,
+body.flat-buttons .rawmodebutton,
+body.flat-buttons .newabcfile,
+body.flat-buttons .toggletopbar,
+body.flat-buttons .cancelpdf,
+body.flat-buttons #sortbutton,
+body.flat-buttons #transposetokey,
+body.flat-buttons #incipitsbuilder,
+body.flat-buttons #dialogrestorebutton,
+body.flat-buttons #dialogrestoreautobutton,
+body.flat-buttons #abcplayer_previousbutton,
+body.flat-buttons #abcplayer_nextbutton,
+body.flat-buttons #abcplayer_exportbutton,
+body.flat-buttons #abcplayer_settingsbutton,
+body.flat-buttons #abcplayer_settingsbutton_d,
+body.flat-buttons #abcplayer_updatebutton_d,
+body.flat-buttons #abcplayer_trainer,
+body.flat-buttons #abcplayer_zoom_in,
+body.flat-buttons #abcplayer_zoom_out,
+body.flat-buttons #abcplayer_wavbutton,
+body.flat-buttons #abcplayer_wavreverbbutton,
+body.flat-buttons #abcplayer_mp3reverbbutton,
+body.flat-buttons #abcplayer_mp3button,
+body.flat-buttons #abcplayer_midibutton,
+body.flat-buttons #abcplayer_jpgbutton,
+body.flat-buttons #abcplayer_pngbutton,
+body.flat-buttons #abcplayer_svgbutton,
+body.flat-buttons #abcplayer_pdfbutton,
+body.flat-buttons #abcplayer_metronomebutton,
+body.flat-buttons #abcplayer_wideplayerbutton,
+body.flat-buttons #abcplayer_widetrainerbutton,
+body.flat-buttons #abcplayer_export,
+body.flat-buttons #exportall_mp3button,
+body.flat-buttons #exportall_midibutton,
+body.flat-buttons #exportall_jpegbutton,
+body.flat-buttons #exportall_pngbutton,
+body.flat-buttons #exportall_svgbutton,
+body.flat-buttons #exportall_jsonbutton,
+body.flat-buttons #exportall_csvbutton,
+body.flat-buttons #exportall_musicxmlbutton,
+body.flat-buttons #exportall_abcbutton,
+body.flat-buttons #export_tunetitlesbutton,
+body.flat-buttons #export_smartdrawbutton,
+body.flat-buttons #launchcsvextractor,
+body.flat-buttons #export_websitebutton {
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  appearance: none !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  filter: none !important;
+  border: 1px solid #9a9a9a !important;
+  border-radius: 12px !important;
+}
+
+/* Flat-mode selected tablature buttons:
+   keep original green selected color, but flat */
+body.flat-buttons .toggle-buttons input:checked + label {
+  background: #bddb77 !important;
+  border: 1px solid #9aac6d !important;
+  color: black !important;
+  box-shadow: none !important;
+  filter: none !important;
+}
+
+body.flat-buttons .toggle-buttons input:hover + label,
+body.flat-buttons .toggle-buttons input:focus + label {
+  background: #d3ec9f !important;
+  border: 1px solid #9aac6d !important;
+  box-shadow: none !important;
+}
+
+/* Prevent global hover styling from affecting DayPilot modal buttons (Firefox-safe) */
+@media (hover: hover) {
+  body:not(.flat-buttons) .modal_flat_buttons button:hover,
+  body:not(.flat-buttons) .modal_flat_buttons button:focus,
+  body:not(.flat-buttons) .modal_flat_buttons button:active,
+  body:not(.flat-buttons) .modal_flat_buttons input[type="button"]:hover,
+  body:not(.flat-buttons) .modal_flat_buttons input[type="submit"]:hover {
+    background: #ccc !important;        /* match your normal modal button bg */
+    background-image: none !important;
+  }
+
+  /* If you use the wide modal variant too */
+  body:not(.flat-buttons) .modal_flat_wide_buttons button:hover,
+  body:not(.flat-buttons) .modal_flat_wide_buttons button:focus,
+  body:not(.flat-buttons) .modal_flat_wide_buttons button:active,
+  body:not(.flat-buttons) .modal_flat_wide_buttons input[type="button"]:hover,
+  body:not(.flat-buttons) .modal_flat_wide_buttons input[type="submit"]:hover {
+    background: #ccc !important;
+    background-image: none !important;
+  }
 }
 
 #notation-holder {
@@ -116,21 +255,9 @@ margin-right:24px;
 margin-left:0px;
 }
 
-@media (hover: hover) {
-	.transposeup:hover{
-	background: palegreen;
-	}
-}
-
 .transposedown {
 margin-right:20px;
 margin-left:0px;
-}
-
-@media (hover: hover) {
-	.transposedown:hover{
-	background: palegreen;
-	}
 }
 
 .saveaspdf {
@@ -142,12 +269,6 @@ margin-left:0px;
 opacity: 0.4;
 }
 
-@media (hover: hover) {
-	.saveaspdf:hover{
-	background: palegreen;
-	}
-}
-
 .saveaswebsite {
 margin-left:0px;
 }
@@ -157,32 +278,14 @@ margin-left:0px;
 opacity: 0.4;
 }
 
-@media (hover: hover) {
-	.saveaswebsite:hover{
-	background: palegreen;
-	}
-}
-
 .toggleadvancedcontrols{
 margin-left:0px;
 margin-right:22px;
 }
 
-@media (hover: hover) {
-	.toggleadvancedcontrols:hover{
-	background: palegreen;
-	}
-}
-
 .togglesharecontrols{
 margin-left:0px;
 margin-right:21px;
-}
-
-@media (hover: hover) {
-	.togglesharecontrols:hover{
-	background: palegreen;
-	}
 }
 
 .advancedcontrols{
@@ -192,20 +295,8 @@ margin-right:21px;
 opacity:0.4;
 }
 
-@media (hover: hover) {
-	.advancedcontrols:hover{
-	background: palegreen;
-	}
-}
-
 .configuresettings{
 margin-right:12px;
-}
-
-@media (hover: hover) {
-	.configuresettings:hover{
-	background: palegreen;
-	}
 }
 
 .urlcontrols{
@@ -222,12 +313,6 @@ padding:12px !important;
 }
 
 
-@media (hover: hover) {
-	.urlcontrols:hover{
-	background: palegreen;
-	}
-}
-
 .urlcontrolsdisabled{
 margin-right:21px;
 margin-left:0px;
@@ -241,22 +326,10 @@ padding:12px;}
 	margin-right: 24px;
 }
 
-@media (hover: hover) {
-	.sortbutton:hover{
-	background: palegreen;
-	}
-}
-
 #transposetokey{
 	height:42px;
 	padding:12px;
 	margin-right:24px;
-}
-
-@media (hover: hover) {
-	.transposetokey:hover{
-	background: palegreen;
-	}
 }
 
 #incipitsbuilder{
@@ -265,32 +338,14 @@ padding:12px;}
 	margin-right:0px;
 }
 
-@media (hover: hover) {
-	.incipitsbuilder:hover{
-	background: palegreen;
-	}
-}
-
 .snapshotbutton{
 margin-left: 0px;
 margin-right: 22px;
 }
 
-@media (hover: hover) {
-	.snapshotbutton:hover{
-	background: palegreen;
-	}
-}
-
 .restorebutton{
 margin-left: 0px;
 margin-right: 22px;
-}
-
-@media (hover: hover) {
-	.restorebutton:hover{
-	background: palegreen;
-	}
 }
 
 #dialogrestorebutton{
@@ -299,33 +354,15 @@ margin-right: 22px;
 	margin-left:24px;
 }
 
-@media (hover: hover) {
-	.dialogrestorebutton:hover{
-	background: palegreen;
-	}
-}
-
 #dialogrestoreautobutton{
 	height:42px;
 	padding:12px;
 	margin-left:24px;
 }
 
-@media (hover: hover) {
-	.dialogrestoreautobutton:hover{
-	background: palegreen;
-	}
-}
-
 .clearbutton{
 margin-left: 0px;
 margin-right: 0px;
-}
-
-@media (hover: hover) {
-	.clearbutton:hover{
-	background: tomato;
-	}
 }
 
 #selectabcfile{
@@ -744,22 +781,10 @@ padding:10px;
 margin-right:30px;
 }
 
-@media (hover: hover) {
-	.abcplayer_previousbutton:hover{
-	background: palegreen;
-	}
-}
-
 #abcplayer_nextbutton{
 height:38px;
 padding:10px;
 margin-left:30px;
-}
-
-@media (hover: hover) {
-	.abcplayer_nextbutton:hover{
-	background: palegreen;
-	}
 }
 
 #abcplayer_exportbutton{
@@ -768,22 +793,10 @@ padding:12px;
 margin-left:20px;
 }
 
-@media (hover: hover) {
-	.abcplayer_exportbutton:hover{
-	background: palegreen;
-	}
-}
-
 #abcplayer_settingsbutton{
 height:42px;
 padding:12px;
 margin-left:20px;
-}
-
-@media (hover: hover) {
-	.abcplayer_settingsbutton:hover{
-	background: palegreen;
-	}
 }
 
 #abcplayer_settingsbutton_d{
@@ -792,22 +805,10 @@ padding:12px;
 margin-top:10px;
 }
 
-@media (hover: hover) {
-	.abcplayer_settingsbutton_d:hover{
-	background: palegreen;
-	}
-}
-
 #abcplayer_updatebutton_d{
 height:42px;
 padding:12px;
 margin-top:10px;
-}
-
-@media (hover: hover) {
-	.abcplayer_updatebutton_d:hover{
-	background: palegreen;
-	}
 }
 
 #abcplayer_trainer{
@@ -817,23 +818,11 @@ margin-top:10px;
 	margin-right:20px;
 }
 
-@media (hover: hover) {
-	.abcplayer_trainer:hover{
-	background: palegreen;
-	}
-}
-
 #abcplayer_zoom_in{
 margin-top: 9px;
 padding:12px;
 height:42px;
 margin-left:20px;
-}
-
-@media (hover: hover) {
-	.abcplayer_zoom_in:hover{
-	background: palegreen;
-	}
 }
 
 #abcplayer_zoom_out{
@@ -843,23 +832,10 @@ padding:12px;
 margin-right:20px;
 }
 
-@media (hover: hover) {
-	.abcplayer_zoom_out:hover{
-	background: palegreen;
-	}
-}
-
-
 #abcplayer_wavbutton{
 height:42px;
 padding:12px;
 margin-right:30px;
-}
-
-@media (hover: hover) {
-	.abcplayer_wavbutton:hover{
-	background: palegreen;
-	}
 }
 
 #abcplayer_wavreverbbutton{
@@ -868,22 +844,10 @@ padding:12px;
 margin-right:30px;
 }
 
-@media (hover: hover) {
-	.abcplayer_wavreverbbutton:hover{
-	background: palegreen;
-	}
-}
-
 #abcplayer_mp3reverbbutton{
 height:42px;
 padding:12px;
 margin-right:0px;
-}
-
-@media (hover: hover) {
-	.abcplayer_mp3reverbbutton:hover{
-	background: palegreen;
-	}
 }
 
 #abcplayer_mp3button{
@@ -892,33 +856,15 @@ padding:12px;
 margin-right:30px;
 }
 
-@media (hover: hover) {
-	.abcplayer_mp3button:hover{
-	background: palegreen;
-	}
-}
-
 #abcplayer_midibutton{
 height:42px;
 padding:12px;
-}
-
-@media (hover: hover) {
-	.abcplayer_midibutton:hover{
-	background: palegreen;
-	}
 }
 
 #abcplayer_jpgbutton{
 height:42px;
 padding:12px;
 margin-right:30px;
-}
-
-@media (hover: hover) {
-	.abcplayer_jpgbutton:hover{
-	background: palegreen;
-	}
 }
 
 #abcplayer svg {
@@ -941,21 +887,9 @@ padding:12px;
 margin-right:30px;
 }
 
-@media (hover: hover) {
-	.exportall_mp3button:hover{
-	background: palegreen;
-	}
-}
-
 #exportall_midibutton{
 height:42px;
 padding:12px;
-}
-
-@media (hover: hover) {
-	.exportall_midibutton:hover{
-	background: palegreen;
-	}
 }
 
 #exportall_jpegbutton{
@@ -964,33 +898,15 @@ padding:12px;
 margin-right:30px;
 }
 
-@media (hover: hover) {
-	.exportall_jpegbutton:hover{
-	background: palegreen;
-	}
-}
-
 #exportall_pngbutton{
 height:42px;
 padding:12px;
 margin-right:30px;
 }
 
-@media (hover: hover) {
-	.exportall_pngbutton:hover{
-	background: palegreen;
-	}
-}
-
 #exportall_svgbutton{
 height:42px;
 padding:12px;
-}
-
-@media (hover: hover) {
-	.exportall_svgbutton:hover{
-	background: palegreen;
-	}
 }
 
 #exportall_jsonbutton{
@@ -999,32 +915,14 @@ padding:12px;
 margin-right:30px;
 }
 
-@media (hover: hover) {
-	.exportall_jsonbutton:hover{
-	background: palegreen;
-	}
-}
-
 #exportall_csvbutton{
 height:42px;
 padding:12px;
 }
 
-@media (hover: hover) {
-	.exportall_csvbutton:hover{
-	background: palegreen;
-	}
-}
-
 #exportall_musicxmlbutton{
 height:42px;
 padding:12px;
-}
-
-@media (hover: hover) {
-	.exportall_musicxmlbutton:hover{
-	background: palegreen;
-	}
 }
 
 #exportall_abcbutton{
@@ -1033,21 +931,9 @@ padding:12px;
 margin-right:30px;
 }
 
-@media (hover: hover) {
-	.exportall_abcbutton:hover{
-	background: palegreen;
-	}
-}
-
 #export_tunetitlesbutton{
 height:42px;
 padding:12px;
-}
-
-@media (hover: hover) {
-	.export_tunetitlesbutton:hover{
-	background: palegreen;
-	}
 }
 
 #export_smartdrawbutton{
@@ -1055,33 +941,14 @@ height:42px;
 padding:12px;
 }
 
-@media (hover: hover) {
-	.export_smartdrawbutton:hover{
-	background: palegreen;
-	}
-}
-
 #launchcsvextractor{
 height:42px;
 padding:12px;
 }
 
-@media (hover: hover) {
-	.launchcsvextractor:hover{
-	background: palegreen;
-	}
-}
-
-
 #export_websitebutton{
 height:42px;
 padding:12px;
-}
-
-@media (hover: hover) {
-	.export_websitebutton:hover{
-	background: palegreen;
-	}
 }
 
 .export_all_text{
@@ -1122,32 +989,14 @@ padding:12px;
 margin-right:30px;
 }
 
-@media (hover: hover) {
-	.abcplayer_pngbutton:hover{
-	background: palegreen;
-	}
-}
-
 #abcplayer_svgbutton{
 height:42px;
 padding:12px;
 }
 
-@media (hover: hover) {
-	.abcplayer_svgbutton:hover{
-	background: palegreen;
-	}
-}
-
 #abcplayer_pdfbutton{
 height:42px;
 padding:12px;
-}
-
-@media (hover: hover) {
-	.abcplayer_pdfbutton:hover{
-	background: palegreen;
-	}
 }
 
 #exportaudioimage_help{
@@ -1169,22 +1018,10 @@ height:42px;
 padding:12px;
 }
 
-@media (hover: hover) {
-	.abcplayer_metronomebutton:hover{
-	background: palegreen;
-	}
-}
-
 #abcplayer_wideplayerbutton{
 height:42px;
 padding:12px;
 margin-left:24px;
-}
-
-@media (hover: hover) {
-	.abcplayer_wideplayerbutton:hover{
-	background: palegreen;
-	}
 }
 
 #abcplayer_widetrainerbutton{
@@ -1195,23 +1032,10 @@ margin-right:0px;
 width:auto !important;
 }
 
-@media (hover: hover) {
-	.abcplayer_widetrainerbutton:hover{
-	background: palegreen;
-	}
-}
-
 #abcplayer_export{
 height:42px;
 padding:12px;
 }
-
-@media (hover: hover) {
-	.abcplayer_export:hover{
-	background: palegreen;
-	}
-}
-
 
 #abcplayer_help{
 font-size:24pt;
@@ -1227,12 +1051,6 @@ width:auto;
 margin-left:0px;
 }
 
-@media (hover: hover) {
-	.swingexplorerinject:hover{
-	background: palegreen;
-	}
-}
-
 #notationspacingexplorerinject{
 height:42px;
 padding:12px;
@@ -1240,23 +1058,11 @@ width:auto;
 margin-left:0px;
 }
 
-@media (hover: hover) {
-	.notationspacingexplorerinject:hover{
-	background: palegreen;
-	}
-}
-
 #notationspacingexplorertest{
 height:42px;
 padding:12px;
 width:auto;
 margin-left:0px;
-}
-
-@media (hover: hover) {
-	.notationspacingexplorertest:hover{
-	background: palegreen;
-	}
 }
 
 #notationspacingexplorer_help{
@@ -1288,12 +1094,6 @@ width:auto;
 margin-left:0px;
 }
 
-@media (hover: hover) {
-	.graceexplorerinject:hover{
-	background: palegreen;
-	}
-}
-
 #graceexplorertest{
 height:42px;
 padding:12px;
@@ -1319,12 +1119,6 @@ margin-right:20px;
 margin-right:20px;
 }
 
-@media (hover: hover) {
-	.rollexplorerinject:hover{
-	background: palegreen;
-	}
-}
-
 #rollexplorertransform{
 height:42px;
 padding:12px;
@@ -1333,23 +1127,11 @@ margin-left:0px;
 margin-right:20px;
 }
 
-@media (hover: hover) {
-	.rollexplorertransform:hover{
-	background: palegreen;
-	}
-}
-
 #rollexplorertransform2{
 height:42px;
 padding:12px;
 width:auto;
 margin-left:0px;
-}
-
-@media (hover: hover) {
-	.rollexplorertransform2:hover{
-	background: palegreen;
-	}
 }
 
 #rollexplorertest{
@@ -1378,12 +1160,6 @@ margin-right:18px;
 height:42px;
 padding:12px;
 width:auto;
-}
-
-@media (hover: hover) {
-	.trainer_phrase_builder:hover{
-	background: palegreen;
-	}
 }
 
 #looperhelp{
@@ -1428,12 +1204,6 @@ margin-right:18px;
 width: auto;
 }
 
-@media (hover: hover) {
-	.looper_metronomebutton:hover{
-	background: palegreen;
-	}
-}
-
 .looper-modal {
 display: none;
 position: fixed;
@@ -1466,12 +1236,6 @@ padding:12px;
 margin-right:24px;
 }
 
-@media (hover: hover) {
-	.configure_instrument_explorer:hover{
-	background: palegreen;
-	}
-}
-
 #instrumentexplorertest{
 height:42px;
 padding:12px;
@@ -1484,12 +1248,6 @@ opacity: 0.4;
 height:42px;
 padding:12px;
 width:auto;
-}
-
-@media (hover: hover) {
-	.instrumentexplorerinject:hover{
-	background: palegreen;
-	}
 }
 
 #instrumentexplorerhelp{
@@ -1506,11 +1264,6 @@ width:auto;
 margin-right:20px;
 }
 
-.reset_roll_parameters:hover{
-	background: palegreen;
-}
-
-
 .customthemeeditor {
 	display: inline-block;
 }
@@ -1522,10 +1275,6 @@ width:auto;
 margin-right:20px;
 }
 
-.loadimpulsebutton:hover{
-	background: palegreen;
-}
-
 .loadimpulsebutton {
 	display: inline-block;
 }
@@ -1535,10 +1284,6 @@ height:42px;
 padding:12px;
 width:auto;
 margin-right:0px;
-}
-
-.loadimpulsebutton:hover{
-	background: palegreen;
 }
 
 .resetsettings {
@@ -1553,18 +1298,10 @@ margin-right:0px;
 margin-left:20px;
 }
 
-.resetsettings:hover{
-	background: palegreen;
-}
-
 #loadinstrumentbutton{
 height:42px;
 padding:12px;
 width:auto;
-}
-
-.loadinstrumentbutton:hover{
-	background: palegreen;
 }
 
 label.btn.loadinstrumentbutton {
@@ -1592,10 +1329,6 @@ width:auto;
 margin-top:10px;
 }
 
-.managedatabases:hover{
-	background: palegreen;
-}
-
 .managedownloadall {
 	display: inline-block;
 }
@@ -1607,11 +1340,6 @@ width:auto;
 margin-right:0px;
 }
 
-.managedownloadall:hover{
-	background: palegreen;
-}
-
-
 .managesamples {
 	display: inline-block;
 }
@@ -1621,10 +1349,6 @@ height:42px;
 padding:12px;
 width:auto;
 margin-right:20px;
-}
-
-.managesamples:hover{
-	background: palegreen;
 }
 
 .managenotes {
@@ -1639,11 +1363,6 @@ width:auto;
 margin-right:20px;
 }
 
-.managenotes:hover{
-	background: palegreen;
-}
-
-
 .managereverb {
 	display: inline-block;
 }
@@ -1653,10 +1372,6 @@ height:42px;
 padding:12px;
 width:auto;
 margin-right:20px;
-}
-
-.managereverb:hover{
-	background: palegreen;
 }
 
 .managesearch {
@@ -1670,22 +1385,12 @@ width:auto;
 margin-right:0px;
 }
 
-.managesearch:hover{
-	background: palegreen;
-}
-
 #reset_roll_explorer_2{
 height:32px;
 padding:8px;
 width:auto;
 margin-left:18px;
 margin-right:0px;
-}
-
-@media (hover: hover) {
-	.reset_roll_explorer_2:hover{
-	background: palegreen;
-	}
 }
 
 #reset_roll_explorer_3{
@@ -1696,12 +1401,6 @@ margin-left:18px;
 margin-right:0px;
 }
 
-@media (hover: hover) {
-	.reset_roll_explorer_3:hover{
-	background: palegreen;
-	}
-}
-
 #default_roll_explorer_2{
 height:32px;
 padding:8px;
@@ -1710,24 +1409,12 @@ margin-left:18px;
 margin-right:0px;
 }
 
-@media (hover: hover) {
-	.default_roll_explorer_2:hover{
-	background: palegreen;
-	}
-}
-
 #default_roll_explorer_3{
 height:32px;
 padding:8px;
 width:auto;
 margin-left:18px;
 margin-right:0px;
-}
-
-@media (hover: hover) {
-	.default_roll_explorer_3:hover{
-	background: palegreen;
-	}
 }
 
 #shareurlcaption{
@@ -1756,12 +1443,6 @@ margin-right:12px;
 opacity:0.4;
 }
 
-@media (hover: hover) {
-	.toggleallcontrols:hover{
-	background: palegreen;
-	}
-}
-
 .trainerbutton{
 margin-left:0px;
 margin-right:12px;
@@ -1774,12 +1455,6 @@ margin-right:12px;
 opacity:0.4;
 }
 
-@media (hover: hover) {
-	.trainerbutton:hover{
-	background: palegreen;
-	}
-}
-
 .rawmodebutton{
 margin-left:0px;
 opacity:1.0;
@@ -1788,12 +1463,6 @@ opacity:1.0;
 .rawmodebuttondisabled{
 margin-left:0px;
 opacity:0.4;
-}
-
-@media (hover: hover) {
-	.rawmodebutton:hover{
-	background: palegreen;
-	}
 }
 
 .playbutton{
@@ -1806,23 +1475,11 @@ margin-left:0px;
 opacity:0.4;
 }
 
-@media (hover: hover) {
-	.playbutton:hover{
-	background: palegreen;
-	}
-}
-
 .newabcfile{
 margin-left:0px;
 opacity:1.0;
 padding:0.7rem 0.85rem !important;
 padding-top:0.8rem !important;
-}
-
-@media (hover: hover) {
-	.newabcfile:hover{
-	background: palegreen;
-	}
 }
 
 .toggletopbar{
@@ -1831,21 +1488,9 @@ margin-right:0px;
 opacity:1.0;
 }
 
-@media (hover: hover) {
-	.toggletopbar:hover{
-	background: palegreen;
-	}
-}
-
 #fileoperations{
 text-align:center;
 margin-top:12px;
-}
-
-@media (hover: hover) {
-	.saveabcfile:hover{
-	background: palegreen;
-	}
 }
 
 #start-search,#add-search-results{
@@ -1862,54 +1507,6 @@ opacity:1.0;
 opacity:.25;
 }
 
-
-@media (hover: hover) {
-	.start-search:hover{
-	background: palegreen;
-	}
-}
-
-@media (hover: hover) {
-	.add-search-results:hover{
-	background: palegreen;
-	}
-}
-
-@media (hover: hover) {
-	.search-previous:hover{
-	background: palegreen;
-	}
-}
-
-@media (hover: hover) {
-	.search-next:hover{
-	background: palegreen;
-	}
-}
-
-@media (hover: hover) {
-	.search-replace:hover{
-	background: palegreen;
-	}
-}
-
-@media (hover: hover) {
-	.search-replace-all:hover{
-	background: palegreen;
-	}
-}
-
-@media (hover: hover) {
-	.search-load:hover{
-	background: palegreen;
-	}
-}
-
-@media (hover: hover) {
-	.search-save:hover{
-	background: palegreen;
-	}
-}
 
 .noscroller{
 background-color: #FAFAFF;
@@ -2171,19 +1768,6 @@ margin-bottom: 12px;
 #fontholder{
 position:absolute; 
 left:-5000px;
-}
-
-@media (hover: hover) {
-	.cancelpdf:hover{
-	background: palegreen;
-	}
-}
-
-
-@media (hover: hover) {
-	.toggletabnames:hover{
-	background: palegreen;
-	}
 }
 
 @media (hover: hover) {
@@ -3441,12 +3025,6 @@ margin-top:-7px;
 
 }
 
-@media (hover: hover) {
-	.configure_box:hover{
-	background: palegreen;
-	}
-}
-
 .configure_swingexplorer_text{
 	font-size:13pt;
 	font-family:helvetica;
@@ -3590,7 +3168,7 @@ margin-top:-7px;
     user-select: none;
 }
 
-.configure_layout_text, .configure_layout_text{
+.configure_layout_text{
 	font-size:12pt;
 	font-family:helvetica;
 	margin-top:0px;
@@ -3611,12 +3189,6 @@ margin-top:-7px;
 	margin-left:20px;
 }
 
-@media (hover: hover) {
-	.configure_musicxml_import:hover{
-	background: palegreen;
-	}
-}
-
 #configure_developer_settings{
 	height:42px;
 	margin-top: 9px;
@@ -3624,22 +3196,10 @@ margin-top:-7px;
 	margin-left:20px;
 }
 
-@media (hover: hover) {
-	.configure_developer_settings:hover{
-	background: palegreen;
-	}
-}
-
 #configure_fonts{
 	height:42px;
 	margin-top: 9px;
 	padding:12px;
-}
-
-@media (hover: hover) {
-	.configure_fonts:hover{
-	background: palegreen;
-	}
 }
 
 .configure_font_settings_form_text_wide{
@@ -3672,21 +3232,9 @@ margin-top:-7px;
 	padding:12px;
 }
 
-@media (hover: hover) {
-	.configure_box_advanced:hover{
-	background: palegreen;
-	}
-}
-
 #injectcustomtab{
 	height:42px;
 	padding:12px;
-}
-
-@media (hover: hover) {
-	.injectcustomtab:hover{
-	background: palegreen;
-	}
 }
 
 #configure_batch_mp3_export{
@@ -3695,33 +3243,15 @@ margin-top:-7px;
 	margin-left:24px;
 }
 
-@media (hover: hover) {
-	.configure_batch_mp3_export:hover{
-	background: palegreen;
-	}
-}
-
 #configure_swing_explorer{
 	height:42px;
 	padding:12px;
 	margin-right:24px;
 }
 
-@media (hover: hover) {
-	.configure_swing_explorer:hover{
-	background: palegreen;
-	}
-}
-
 #configure_grace_explorer{
 	height:42px;
 	padding:12px;
-}
-
-@media (hover: hover) {
-	.configure_grace_explorer:hover{
-	background: palegreen;
-	}
 }
 
 #configure_roll_explorer{
@@ -3730,22 +3260,10 @@ margin-top:-7px;
 	margin-right:24px;
 }
 
-@media (hover: hover) {
-	.configure_roll_explorer:hover{
-	background: palegreen;
-	}
-}
-
 #configure_reverb_explorer{
 	height:42px;
 	padding:12px;
 	margin-right:24px;
-}
-
-@media (hover: hover) {
-	.configure_reverb_explorer:hover{
-	background: palegreen;
-	}
 }
 
 #configure_anglo_fingerings{
@@ -3754,22 +3272,10 @@ margin-top:-7px;
 	padding:12px;
 }
 
-@media (hover: hover) {
-	.configure_anglo_fingerings:hover{
-	background: palegreen;
-	}
-}
-
 #configure_anglo_fonts{
 	height:42px;
 	margin-top: 12px;
 	padding:12px;
-}
-
-@media (hover: hover) {
-	.configure_anglo_fonts:hover{
-	background: palegreen;
-	}
 }
 
 #default_anglo_fingerings{
@@ -3778,34 +3284,16 @@ margin-top:-7px;
 	padding:12px;
 }
 
-@media (hover: hover) {
-	.default_anglo_fingerings:hover{
-	background: palegreen;
-	}
-}
-
 #inject_tablature_colors{
 	height:42px;
 	margin-top: 12px;
 	padding:12px;
 }
 
-@media (hover: hover) {
-	.inject_tablature_colors:hover{
-	background: palegreen;
-	}
-}
-
 #load_custom_harmonica_tuning{
 	height:42px;
 	margin-top: 9px;
 	padding:12px;
-}
-
-@media (hover: hover) {
-	.load_custom_harmonica_tuning:hover{
-	background: palegreen;
-	}
 }
 
 #save_custom_harmonica_tuning{
@@ -3815,22 +3303,10 @@ margin-top:-7px;
 	margin-right:24px;
 }
 
-@media (hover: hover) {
-	.save_custom_harmonica_tuning:hover{
-	background: palegreen;
-	}
-}
-
 #load_custom_anglo_names{
 	height:42px;
 	margin-top: 9px;
 	padding:12px;
-}
-
-@media (hover: hover) {
-	.load_custom_anglo_names:hover{
-	background: palegreen;
-	}
 }
 
 #save_custom_anglo_names{
@@ -3840,34 +3316,16 @@ margin-top:-7px;
 	margin-right:24px;
 }
 
-@media (hover: hover) {
-	.save_custom_anglo_names:hover{
-	background: palegreen;
-	}
-}
-
 #configure_harmonica_custom{
 	height:42px;
 	margin-top: 0px;
 	padding:12px;
 }
 
-@media (hover: hover) {
-	.configure_harmonica_custom:hover{
-	background: palegreen;
-	}
-}
-
 #load_custom_tab{
 	height:42px;
 	margin-top: 9px;
 	padding:12px;
-}
-
-@media (hover: hover) {
-	.load_custom_tab:hover{
-	background: palegreen;
-	}
 }
 
 #save_custom_tab{
@@ -3877,22 +3335,10 @@ margin-top:-7px;
 	margin-right:24px;
 }
 
-@media (hover: hover) {
-	.save_custom_tab:hover{
-	background: palegreen;
-	}
-}
-
 #configure_custom_tab{
 	height:42px;
 	margin-top:15px;
 	padding:12px;
-}
-
-@media (hover: hover) {
-	.configure_custom_tab:hover{
-	background: palegreen;
-	}
 }
 
 #import_website_local{
@@ -3902,28 +3348,10 @@ margin-top:-7px;
 	margin-right:18px;
 }
 
-@media (hover: hover) {
-	.import_website_local:hover{
-	background: palegreen;
-	}
-}
-
 #import_website_remote{
 	height:42px;
 	margin-top: 9px;
 	padding:12px;
-}
-
-@media (hover: hover) {
-	.import_website_remote:hover{
-	background: palegreen;
-	}
-}
-
-@media (hover: hover) {
-	.import_website:hover{
-	background: palegreen;
-	}
 }
 
 #import_pdf{
@@ -3932,34 +3360,16 @@ margin-top:-7px;
 	padding:12px;
 }
 
-@media (hover: hover) {
-	.import_pdf:hover{
-	background: palegreen;
-	}
-}
-
 #import_csv{
 	height:42px;
 	margin-top: 9px;
 	padding:12px;
 }
 
-@media (hover: hover) {
-	.import_csv:hover{
-	background: palegreen;
-	}
-}
-
 #default_musicxml_settings{
 	height:42px;
 	margin-top: 9px;
 	padding:12px;
-}
-
-@media (hover: hover) {
-	.default_musicxml_settings:hover{
-	background: palegreen;
-	}
 }
 
 #load_rendering_fonts{
@@ -3969,12 +3379,6 @@ margin-top:-7px;
 	margin-right:24px;
 }
 
-@media (hover: hover) {
-	.load_rendering_fonts:hover{
-	background: palegreen;
-	}
-}
-
 #save_rendering_fonts{
 	height:42px;
 	margin-top: 9px;
@@ -3982,22 +3386,10 @@ margin-top:-7px;
 	margin-right:24px;
 }
 
-@media (hover: hover) {
-	.save_rendering_fonts:hover{
-	background: palegreen;
-	}
-}
-
 #default_rendering_fonts{
 	height:42px;
 	margin-top: 9px;
 	padding:12px;
-}
-
-@media (hover: hover) {
-	.default_rendering_fonts:hover{
-	background: palegreen;
-	}
 }
 
 .configure_transpose_settings_select{
@@ -4729,20 +4121,8 @@ padding-left:10px;
 	margin-right:12px;
 }
 
-@media (hover: hover) {
-	.abcupload:hover{
-	background: palegreen;
-	}
-}
-
 .abcuploaddialog {
 	display: inline-block;
-}
-
-@media (hover: hover) {
-	.abcuploaddialog:hover{
-	background: palegreen;
-	}
 }
 
 .draggable_tune {
@@ -5011,12 +4391,6 @@ width:auto;
 margin-left:0px;
 }
 
-@media (hover: hover) {
-	.reverbexplorerinject:hover{
-	background: palegreen;
-	}
-}
-
 #reverbexplorerhelp{
 font-size:24pt;
 position:absolute;
@@ -5028,12 +4402,6 @@ top:20px;
 	height:42px;
 	padding:12px !important;
 	width:auto;
-}
-
-@media (hover: hover) {
-	.configuresettingsfromhelp:hover{
-	background: palegreen;
-	}
 }
 
 #noteLoadProgress {
@@ -6177,7 +5545,6 @@ body.dp-tabs-building .modal_flat_main {
 .btn {
   --color: #000000;
   --background-color: #d8d8d8;
-  --border-color: darken(#d8d8d8, 7.5%);
   color: var(--color);
   font-family: helvetica !important;
   font-size: 11pt !important;
@@ -6631,17 +5998,7 @@ body.dp-tabs-building .modal_flat_main {
   --background-color: #E5CAF2;
 }
 
-.btn-wide-player{
-  --color: black;
-  --background-color: #E5CAF2;
-}
-
 .btn-playerprevious{
-  --color: black;
-  --background-color: #E6E6E6;
-}
-
-.btn-playernext{
   --color: black;
   --background-color: #E6E6E6;
 }
@@ -6803,7 +6160,7 @@ body.dp-tabs-building .modal_flat_main {
 
 .btn-browser-pdf-export{
   --color: black;
-  --background-color: #F0F0F0;;
+  --background-color: #F0F0F0;
 }
 
 .btn-tuneset-inject{
@@ -6976,15 +6333,76 @@ body.dp-tabs-building .modal_flat_main {
 	  transition: transform .1s ease-in-out 0s; 
 	}
 
-	.moresettingsbutton:hover{
-		background: palegreen;
-	}
-
-	.moresettingsbutton:hover {
+.moresettingsbutton:hover {
 	    transform: matrix(1.06, 0, 0, 1.06, 0, 0); 
 	}
 }
 
+/* =========================================================
+   Flat mode cleanup overrides
+   Put near end of file
+   ========================================================= */
 
+body.flat-buttons .btn {
+  box-shadow: none !important;
+}
 
+body.flat-buttons .btn:after {
+  content: none !important;
+  display: none !important;
+}
 
+@media (hover: hover) {
+  body.flat-buttons .btn:hover,
+  body.flat-buttons .playbutton:hover,
+  body.flat-buttons .trainerbutton:hover,
+  body.flat-buttons .toggleallcontrols:hover,
+  body.flat-buttons .toggleadvancedcontrols:hover,
+  body.flat-buttons .togglesharecontrols:hover,
+  body.flat-buttons .configuresettings:hover,
+  body.flat-buttons .urlcontrols:hover,
+  body.flat-buttons .urlcontrolslast:hover,
+  body.flat-buttons .snapshotbutton:hover,
+  body.flat-buttons .restorebutton:hover,
+  body.flat-buttons .saveaspdf:hover,
+  body.flat-buttons .saveaswebsite:hover,
+  body.flat-buttons .saveabcfile:hover,
+  body.flat-buttons .rawmodebutton:hover,
+  body.flat-buttons .newabcfile:hover,
+  body.flat-buttons .toggletopbar:hover,
+  body.flat-buttons .cancelpdf:hover {
+    background: palegreen !important;
+    background-image: none !important;
+    box-shadow: none !important;
+    filter: none !important;
+  }
+
+  body.flat-buttons .clearbutton:hover {
+    background: tomato !important;
+    background-image: none !important;
+    box-shadow: none !important;
+    filter: none !important;
+  }
+
+  body.flat-buttons .toggle-buttons input:hover + label,
+  body.flat-buttons .toggle-buttons input:focus + label {
+    background: palegreen !important;
+    border: 1px solid #9a9a9a !important;
+    box-shadow: none !important;
+  }
+}
+
+/* Hover color for Tuning Tools / Other ABC Tools cards */
+.external-tool:hover,
+.tuning-tool:hover {
+  background: #eef6fc;
+  border-color: #b9d7ee;
+  box-shadow: none;
+}
+
+body.flat-buttons .external-tool:hover,
+body.flat-buttons .tuning-tool:hover {
+  background: #eef6fc !important;
+  border-color: #b9d7ee !important;
+  box-shadow: none !important;
+}
