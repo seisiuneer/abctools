@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3197_030626_0930";
+var gVersionNumber = "3198_030726_0830";
 
 var gMIDIInitStillWaiting = false;
 
@@ -63767,6 +63767,8 @@ function OpenInABCChordChartGenerator(abcText){
 function OpenInABCEncoder(abcText){
 
     sendGoogleAnalytics("action", "OpenInABCEncoder");
+
+    abcText = abcText.replace(/^[\s\S]*?(?=^X:)/m, "");
 
     var encoder = new TextEncoder();
     var utf8Bytes = encoder.encode(abcText);
