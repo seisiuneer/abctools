@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3198_030726_0830";
+var gVersionNumber = "3199_030826_0830";
 
 var gMIDIInitStillWaiting = false;
 
@@ -55619,7 +55619,7 @@ function showWhatsNewScreen() {
   modal_msg += 'background: linear-gradient(135deg, #1b5e20 0%, #2e7d32 50%, #66bb6a 100%);';
   modal_msg += 'box-shadow: 0 6px 16px rgba(0,0,0,0.14); color:#fff;">';
   modal_msg += '<div style="font-size:20pt; line-height:24pt; font-weight:bold;">What&apos;s New</div>';
-  modal_msg += '<div style="font-size:11pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 7 March 2026</div>';
+  modal_msg += '<div style="font-size:11pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 8 March 2026</div>';
   modal_msg += '</div>';
 
   // Short intro
@@ -63768,7 +63768,8 @@ function OpenInABCEncoder(abcText){
 
     sendGoogleAnalytics("action", "OpenInABCEncoder");
 
-    abcText = abcText.replace(/^[\s\S]*?(?=^X:)/m, "");
+    // Remove everything before the first X: tag
+    //abcText = abcText.replace(/^[\s\S]*?(?=^X:)/m, "");
 
     var encoder = new TextEncoder();
     var utf8Bytes = encoder.encode(abcText);
