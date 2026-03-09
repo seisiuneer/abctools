@@ -1120,10 +1120,14 @@ function buildSingleSetCombinedABC(setTitle, setEntries) {
         .replace(/^X:\s*.*\r?\n/i, "")
         .replace(/^R:\s*.*\r?\n/gim, "");
 
-      // Insert %%text before the tune title
+      const midiChordDirective = abcBodyHasChords(setEntries[i].bodyNormalized)
+        ? "%%MIDI gchordon"
+        : "%%MIDI gchordoff";
+
+      // Insert %%text and MIDI chord state before the tune title
       chunk = chunk.replace(
         /^T:\s*/m,
-        "%%text\nT:"
+        `%%text\n${midiChordDirective}\nT:`
       );
 
       chunks.push(chunk.trim());
