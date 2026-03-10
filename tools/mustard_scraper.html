@@ -606,6 +606,10 @@
         text-align:left;
       }
 
+      .findRow{
+        grid-template-columns: 1fr;
+      }
+
     }
 
     /* Navigation / open pages */
@@ -837,6 +841,22 @@
       color:#000;
       background:#fff;
     }
+
+    .findRow{
+      display:grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap:12px;
+      align-items:center;
+      margin-top:0px;
+      margin-bottom:14px;
+    }
+
+    .findRow button{
+      width:100%;
+      min-width:0;
+      flex:none;
+      white-space:nowrap;
+    }
   
   </style>
 
@@ -856,7 +876,7 @@
       <h2>thesession.org Tune Settings Scraper</h2>
       <p class="muted small instructions" style="margin-top:6px">
         This tool downloads ABC tune settings from thesession.org and combines them into a single ABC result that can be copied, saved, or opened in the ABC Transcription Tools.<br/>
-        Enter a thesession.org Tune URL like:<br/>
+        Enter a thesession.org tune URL like:<br/>
         <a title="Click to load the example tune URL into thesession.org URL field" href="https://thesession.org/tunes/1" class="exampleLink" data-fill-url="https://thesession.org/tunes/1">https://thesession.org/tunes/1</a>
         <br/>
         or a member URL like (will fetch one of the member result types selected below):
@@ -876,15 +896,16 @@
         </div>
 
         <div class="card">
+
+          <div class="row findRow">
+            <button class="btn-neutral" title="Search for a tune on thesession.org and populate the URL field" id="btnFindTune">Find Tune…</button>
+            <button class="btn-neutral" title="Search for a member on thesession.org and populate the URL field" id="btnFindMember">Find Member…</button>
+          </div>
+
           <div class="row">
             <label for="tuneUrl"><strong>thesession.org URL:</strong></label>
             <input title="Enter a thesession.org tune or member page URL" id="tuneUrl" type="text" value="https://thesession.org/tunes/1" />
             <button class="btn-fetch" title="Fetches either all the specified tune settings or the member results selected below for member URLs" id="btnFetch">Fetch</button>
-          </div>
-
-          <div class="row" style="margin-top:10px">
-            <button class="btn-neutral" title="Search for a tune on thesession.org and populate the URL field" id="btnFindTune">Find Tune…</button>
-            <button class="btn-neutral" title="Search for a member on thesession.org and populate the URL field" id="btnFindMember">Find Member…</button>
           </div>
           
           <div class="checkRow">
@@ -3745,14 +3766,14 @@ const content =
   '  <div style="margin-bottom:16px;">' +
   '    <div style="font-weight:700; margin-bottom:6px;">For member URLs, choose what to fetch</div>' +
   '    <div>' +
-  '      Use the <b>For member URLs, fetch</b> selector to choose whether member URLs fetch the member\'s <b>Tunebook (First Setting Only)</b>, <b>Tunebook (All Settings)</b>, <b>Submitted Tune Settings</b>, <b>Bookmarked Tune Settings</b>, or <b>Tune Sets</b>.' +
+  '      Use the <b>For member URLs, fetch</b> selector to choose whether to fetch the member\'s <b>Tunebook (First Setting Only)</b>, <b>Tunebook (All Settings)</b>, <b>Submitted Tune Settings</b>, <b>Bookmarked Tune Settings</b>, or <b>Tune Sets</b>.' +
   '    </div>' +
   '    <div style="margin-top:10px;">' +
   '      <ul style="margin:10px 0 0 10px;">' +
   '        <li><b>Tunebook (First Setting Only)</b>: all tunes in the member\'s tunebook, including only the first available setting for each tune</li>' +
   '        <li><b>Tunebook (All Settings)</b>: all tunes in the member\'s tunebook along with all available settings for those tunes</li>' +
-  '        <li><b>Submitted Tune Settings</b> (default)</li>' +
-  '        <li><b>Bookmarked Tune Settings</b></li>' +
+  '        <li><b>Submitted Tune Settings</b>: all the tune settings the member has submitted (default)</li>' +
+  '        <li><b>Bookmarked Tune Settings</b>: all tune settings the user has bookmarked</li>' +
   '        <li><b>Tune Sets</b>: all tune sets for the member; each set is built by fetching the settings used in the set and combining them into a single ABC result</li>' +
   '      </ul>' +
   '    </div>' +
