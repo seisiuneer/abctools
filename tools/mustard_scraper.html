@@ -1089,6 +1089,7 @@ function buildSingleSetCombinedABC(setTitle, setEntries) {
     .join(" / ");
 
   const chunks = [];
+  const hasMultipleTunes = setEntries.length > 1;
 
   for (let i = 0; i < setEntries.length; i++) {
 
@@ -1099,11 +1100,13 @@ function buildSingleSetCombinedABC(setTitle, setEntries) {
 
     if (i === 0) {
 
-      // Add normalized set title before the first tune title
-      chunk = chunk.replace(
-        /^T:\s*(.*)$/m,
-        `T:${normalizedSetTitle}\nT:$1`
-      );
+      if (hasMultipleTunes) {
+        // Add normalized set title before the first tune title
+        chunk = chunk.replace(
+          /^T:\s*(.*)$/m,
+          `T:${normalizedSetTitle}\nT:$1`
+        );
+      }
 
       // Insert hide labels after first K:
       chunk = chunk.replace(
