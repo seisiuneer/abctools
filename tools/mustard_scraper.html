@@ -33,587 +33,811 @@
   <link rel="manifest" href="https://michaeleskin.com/abctools/img/abc-manifest.json">
 
   <style>
-  :root{
-    color-scheme: light;
+    :root{
+      color-scheme: light;
 
-    --fs-base: clamp(15px, 1.05vw + 12px, 17px);
-    --fs-small: clamp(13px, 0.7vw + 11px, 14.5px);
-    --fs-h2: clamp(20px, 1.2vw + 16px, 24px);
-    --page-pad: 32px;
-  }
-
-  html, body{
-    height:100%;
-    margin:0;
-  }
-
-  *, *::before, *::after{ box-sizing:border-box; }
-
-  body{
-    font-family: system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
-    padding:
-      calc(var(--page-pad) + env(safe-area-inset-top))
-      calc(var(--page-pad) + env(safe-area-inset-right))
-      calc(var(--page-pad) + env(safe-area-inset-bottom))
-      calc(var(--page-pad) + env(safe-area-inset-left));
-    box-sizing:border-box;
-    overflow:hidden;
-    font-size:var(--fs-base);
-    line-height:1.35;
-    -webkit-text-size-adjust:100%;
-  }
-
-  .app, .main, .left, .right, .card, .taWrap{ min-width:0; }
-
-  .app{
-    height: calc(100vh - (2 * var(--page-pad)));
-    display:flex;
-    flex-direction:column;
-    gap:14px;
-    overflow:hidden;
-    min-height:0;
-  }
-
-  @supports (height: 100dvh){
-    .app{
-      height: calc(
-        100dvh
-        - (2 * var(--page-pad))
-        - env(safe-area-inset-top)
-        - env(safe-area-inset-bottom)
-      );
+      --fs-base: clamp(15px, 1.05vw + 12px, 17px);
+      --fs-small: clamp(13px, 0.7vw + 11px, 14.5px);
+      --fs-h2: clamp(20px, 1.2vw + 16px, 24px);
+      --page-pad: 32px;
     }
-  }
 
-  h2{
-    margin:0 0 8px 0;
-    font-size:var(--fs-h2);
-  }
-
-  p{ margin:0; }
-
-  .row{
-    display:flex;
-    gap:12px;
-    flex-wrap:wrap;
-    align-items:center;
-    min-width:0;
-  }
-
-  input, textarea, button{
-    font:inherit;
-    color:inherit;
-    max-width:100%;
-  }
-
-  input[type="text"]{
-    -webkit-appearance:none;
-    appearance:none;
-    border:1px solid rgba(127,127,127,.35);
-    background: rgba(127,127,127,.06);
-    color:inherit;
-    border-radius:10px;
-    padding:10px 12px;
-    line-height:1.2;
-    flex: 3 1 360px;
-    min-width: 0;
-    width:auto;
-  }
-
-  button{
-    -webkit-appearance:none;
-    appearance:none;
-    border:1px solid rgba(127,127,127,.35);
-    background: rgba(127,127,127,.12);
-    color:inherit;
-    border-radius:12px;
-    padding:10px 14px;
-    line-height:1.15;
-    font-weight:600;
-    display:inline-flex;
-    align-items:center;
-    justify-content:center;
-    cursor:pointer;
-    user-select:none;
-    -webkit-tap-highlight-color:transparent;
-    max-width:100%;
-    min-width:0;
-  }
-
-  button:active{ transform: translateY(0.5px); }
-
-  button:disabled{
-    opacity:0.4;
-    cursor:default;
-    transform:none;
-  }
-
-  .row button{
-    white-space:normal;
-    text-align:center;
-    flex: 1 1 180px;
-  }
-
-  #btnFetch{
-    flex: 0 0 180px;
-    padding-left: 12px;
-    padding-right: 12px;
-  }
-
-  #btnOpenInTools{ flex-basis: 100%; }
-
-  .muted{
-    opacity:0.75;
-    line-height:2.0;
-  }
-
-  .small{ font-size:var(--fs-small); }
-
-  .card{
-    border:1px solid rgba(127,127,127,.35);
-    border-radius:12px;
-    padding:14px;
-    overflow:hidden;
-    min-width:0;
-  }
-
-  .status{
-    white-space:pre-wrap;
-    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
-    overflow:auto;
-    max-height:300px;
-    font-size:0.95em;
-    line-height:1.45;
-    overflow-wrap:anywhere;
-    word-break:break-word;
-    -webkit-overflow-scrolling: touch;
-  }
-
-  .main{
-    flex:1;
-    display:flex;
-    gap:14px;
-    overflow-y:auto;
-    overflow-x:hidden;
-    min-height:0;
-    min-width:0;
-    -webkit-overflow-scrolling: touch;
-  }
-
-  .left, .right{
-    flex:1;
-    display:flex;
-    flex-direction:column;
-    gap:14px;
-    overflow:visible;
-    min-height:0;
-    min-width:0;
-  }
-
-  .left > .card,
-  .right > .card,
-  #instructions_div{
-    flex: 0 0 auto;
-  }
-
-  .taWrap{
-    flex:1;
-    min-height:0;
-    border-radius:10px;
-    overflow:hidden;
-    border:1px solid rgba(127,127,127,.35);
-    background:Canvas;
-    min-width:0;
-    display:flex;
-    padding: 1px;
-  }
-
-  textarea{
-    flex: 1 1 auto;
-    min-height: 0;
-    width: auto;
-    height: auto;
-    padding:12px;
-    border:0;
-    border-radius:0;
-    background:transparent;
-    resize:none;
-    overflow:auto;
-    font-size:0.98em;
-    line-height:1.35;
-    overflow-wrap:anywhere;
-    -webkit-overflow-scrolling: touch;
-    box-sizing:border-box;
-    display:block;
-  }
-
-  .rightHeader{
-    display:flex;
-    gap:10px;
-    align-items:center;
-    flex-wrap:wrap;
-    margin-bottom:8px;
-    min-width:0;
-  }
-
-  code{
-    background: rgba(127,127,127,.15);
-    padding:2px 5px;
-    border-radius:4px;
-    font-size:0.95em;
-  }
-
-  .checkRow{
-    display:flex;
-    align-items:center;
-    gap:10px;
-    margin-top:10px;
-    flex-wrap:wrap;
-  }
-
-  .checkRow label{
-    display:inline-flex;
-    align-items:center;
-    gap:10px;
-    cursor:pointer;
-    user-select:none;
-  }
-
-  .checkRow input[type="checkbox"]{
-    width: 18px;
-    height: 18px;
-    accent-color: auto;
-  }
-
-  .checkRow.sortRow{
-    width:100%;
-  }
-
-  .checkRow.sortRow label{
-    width:100%;
-    display:grid;
-    grid-template-columns: minmax(220px, 1fr) minmax(240px, 1.2fr) auto;
-    gap:10px;
-    align-items:center;
-  }
-
-  .checkRow.sortRow label > span{
-    min-width:0;
-  }
-
-  .checkRow.sourceRow{
-    width:100%;
-  }
-
-  .checkRow.sourceRow label{
-    width:100%;
-    display:grid;
-    grid-template-columns: minmax(220px, 1fr) minmax(260px, 1.2fr);
-    gap:10px;
-    align-items:center;
-  }
-
-  .checkRow.sourceRow label > span{
-    min-width:0;
-  }
-
-  #memberSourceMode{
-    width:100%;
-    min-width:0;
-  }
-
-  @media (max-width: 1250px){
-    .checkRow.sourceRow label{
-      grid-template-columns: 1fr;
-      align-items:stretch;
+    html, body{
+      height:100%;
+      margin:0;
     }
-  }
 
-  #memberSort{
-    width:100%;
-    min-width:0;
-  }
+    *, *::before, *::after{ box-sizing:border-box; }
 
-  #btnResort{
-    white-space:nowrap;
-    min-width: 96px;
-  }
-
-  @media (max-width: 1250px){
-    .checkRow.sortRow label{
-      grid-template-columns: 1fr;
-      align-items:stretch;
-    }
-    #btnResort{
-      width:100%;
-    }
-  }
-
-  .modal_flat_background{
-    background-color:#000;
-    opacity:0.4;
-  }
-
-  .modal_flat_main{
-    border:1px solid #333;
-    box-shadow:0 0 15px -2px rgba(0,0,0,0.75);
-  }
-
-  .modal_flat_main,
-  .modal_flat_main input,
-  .modal_flat_main button{
-    font-size:16px;
-  }
-
-  .modal_flat_main input,
-  .modal_flat_main button{
-    padding:6px;
-    box-sizing:border-box;
-  }
-
-  .modal_flat_inner{
-    padding:16px;
-    background:#fff;
-    color:#000;
-  }
-
-  .modal_flat_content{
-    font-family: Helvetica, Arial, sans-serif;
-    margin:20px 0;
-  }
-
-  .modal_flat_input{ margin:20px 0; }
-
-  .modal_flat_buttons{
-    text-align:center;
-    margin-top:40px;
-    padding-bottom:20px;
-  }
-
-  .modal_flat_main button{
-    background-color:#ccc;
-    color:#000;
-    padding:10px 20px;
-    border:0;
-    cursor:pointer;
-    outline:none;
-    width:100px;
-    border-radius:10px;
-  }
-
-  .modal_flat_cancel{ margin-left:6px; }
-
-  .exampleLink{
-    color: inherit;
-    text-decoration: underline;
-    cursor: pointer;
-    word-break: break-all;
-  }
-
-  .instructions{
-    font-size: clamp(14.5px, 0.9vw + 13px, 16.5px);
-    line-height: 2.0;
-  }
-
-  .instructions a.exampleLink{
-    font-weight: 500;
-  }
-
-  #btnHelp{
-    width: 100%;
-  }
-
-  select{
-    -webkit-appearance:none;
-    appearance:none;
-    font:inherit;
-    color:#000;
-    background:#fff;
-    border:1px solid rgba(127,127,127,.35);
-    border-radius:10px;
-    padding:10px 52px 10px 12px;
-    line-height:1.2;
-    cursor:pointer;
-    background-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2024%2024%27%3E%3Cpolygon%20points%3D%276%2C9%2018%2C9%2012%2C17%27%20fill%3D%27%23000%27%2F%3E%3C%2Fsvg%3E");
-    background-repeat:no-repeat;
-    background-position:right 16px center;
-    background-size:22px 22px;
-  }
-
-  select:disabled{
-    cursor:not-allowed;
-    opacity:0.45;
-  }
-
-  @media (max-width: 980px){
     body{
-      overflow:auto;
-      -webkit-overflow-scrolling: touch;
-      padding-bottom: calc(var(--page-pad) + env(safe-area-inset-bottom) + 12px);
+      font-family: system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+      padding:
+        calc(var(--page-pad) + env(safe-area-inset-top))
+        calc(var(--page-pad) + env(safe-area-inset-right))
+        calc(var(--page-pad) + env(safe-area-inset-bottom))
+        calc(var(--page-pad) + env(safe-area-inset-left));
+      box-sizing:border-box;
+      overflow:hidden;
+      font-size:var(--fs-base);
+      line-height:1.35;
+      -webkit-text-size-adjust:100%;
     }
 
+    .app, .main, .left, .right, .card, .taWrap{ min-width:0; }
+
     .app{
-      height:auto;
-      overflow:visible;
+      height: calc(100vh - (2 * var(--page-pad)));
+      display:flex;
+      flex-direction:column;
+      gap:14px;
+      overflow:hidden;
       min-height:0;
     }
 
-    .main{
-      flex-direction:column;
-      overflow:visible;
-      min-height:auto;
+    @supports (height: 100dvh){
+      .app{
+        height: calc(
+          100dvh
+          - (2 * var(--page-pad))
+          - env(safe-area-inset-top)
+          - env(safe-area-inset-bottom)
+        );
+      }
     }
 
-    .left, .right{
-      overflow:visible;
-      min-height:auto;
+    h2{
+      margin:0 0 8px 0;
+      font-size:var(--fs-h2);
     }
 
-    .taWrap{
-      height: 55vh;
-      min-height: 320px;
+    p{ margin:0; }
+
+    .row{
+      display:flex;
+      gap:12px;
+      flex-wrap:wrap;
+      align-items:center;
+      min-width:0;
+    }
+
+    input, textarea, button{
+      font:inherit;
+      color:inherit;
+      max-width:100%;
+    }
+
+    input[type="text"]{
+      -webkit-appearance:none;
+      appearance:none;
+      border:1px solid rgba(127,127,127,.35);
+      background: rgba(127,127,127,.06);
+      color:inherit;
+      border-radius:10px;
+      padding:10px 12px;
+      line-height:1.2;
+      flex: 3 1 360px;
+      min-width: 0;
+      width:auto;
+    }
+
+    button{
+      -webkit-appearance:none;
+      appearance:none;
+      border:1px solid rgba(127,127,127,.35);
+      background: rgba(127,127,127,.12);
+      color:inherit;
+      border-radius:12px;
+      padding:10px 14px;
+      line-height:1.15;
+      font-weight:600;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      cursor:pointer;
+      user-select:none;
+      -webkit-tap-highlight-color:transparent;
+      max-width:100%;
+      min-width:0;
+    }
+
+    button:active{ transform: translateY(0.5px); }
+
+    button:disabled{
+      opacity:0.4;
+      cursor:default;
+      transform:none;
+    }
+
+    .row button{
+      white-space:normal;
+      text-align:center;
+      flex: 1 1 180px;
     }
 
     #btnFetch{
-      flex: 1 0 100% !important;
-      width: 100% !important;
+      flex: 0 0 180px;
+      padding-left: 12px;
+      padding-right: 12px;
     }
 
-    #instructions_div{
-      margin-bottom: calc(env(safe-area-inset-bottom) + var(--page-pad));
-    }
-  }
+    #btnOpenInTools{ flex-basis: 100%; }
 
-  @media (max-width: 720px){
-    .row{ gap:10px; }
-    .row button{ flex-basis:100%; }
-    input[type="text"]{ flex-basis:100%; }
-    .taWrap{ height: 60vh; min-height: 300px; }
-
-    #btnFetch{
-      flex: 1 0 100% !important;
-      width: 100% !important;
+    .muted{
+      opacity:0.75;
+      line-height:2.0;
     }
 
-    .instructions a.exampleLink{
-      font-size: 0.92em;
+    .small{ font-size:var(--fs-small); }
+
+    .card{
+      border:1px solid rgba(127,127,127,.35);
+      border-radius:12px;
+      padding:14px;
+      overflow:hidden;
+      min-width:0;
     }
 
-    #instructions_div{
-      margin-bottom: calc(env(safe-area-inset-bottom) + var(--page-pad));
-    }
-
-    .modal_flat_main{
-      width: calc(100vw - 24px) !important;
-      max-width: calc(100vw - 24px) !important;
-      max-height: calc(100dvh - 24px) !important;
-      overflow: hidden !important;
-    }
-
-    .modal_flat_inner{
-      max-height: calc(100dvh - 24px) !important;
-      overflow: auto !important;
+    .status{
+      white-space:pre-wrap;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      overflow:auto;
+      max-height:300px;
+      font-size:0.95em;
+      line-height:1.45;
+      overflow-wrap:anywhere;
+      word-break:break-word;
       -webkit-overflow-scrolling: touch;
     }
 
+    .main{
+      flex:1;
+      display:flex;
+      gap:14px;
+      overflow-y:auto;
+      overflow-x:hidden;
+      min-height:0;
+      min-width:0;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .left, .right{
+      flex:1;
+      display:flex;
+      flex-direction:column;
+      gap:14px;
+      overflow:visible;
+      min-height:0;
+      min-width:0;
+    }
+
+    .left > .card,
+    .right > .card,
+    #instructions_div{
+      flex: 0 0 auto;
+    }
+
+    .taWrap{
+      flex:1;
+      min-height:0;
+      border-radius:10px;
+      overflow:hidden;
+      border:1px solid rgba(127,127,127,.35);
+      background:Canvas;
+      min-width:0;
+      display:flex;
+      padding: 1px;
+    }
+
+    textarea{
+      flex: 1 1 auto;
+      min-height: 0;
+      width: auto;
+      height: auto;
+      padding:12px;
+      border:0;
+      border-radius:0;
+      background:transparent;
+      resize:none;
+      overflow:auto;
+      font-size:0.98em;
+      line-height:1.35;
+      overflow-wrap:anywhere;
+      -webkit-overflow-scrolling: touch;
+      box-sizing:border-box;
+      display:block;
+    }
+
+    .rightHeader{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      flex-wrap:wrap;
+      margin-bottom:8px;
+      min-width:0;
+    }
+
+    code{
+      background: rgba(127,127,127,.15);
+      padding:2px 5px;
+      border-radius:4px;
+      font-size:0.95em;
+    }
+
+    .checkRow{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      margin-top:10px;
+      flex-wrap:wrap;
+    }
+
+    .checkRow label{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      cursor:pointer;
+      user-select:none;
+    }
+
+    .checkRow input[type="checkbox"]{
+      width: 18px;
+      height: 18px;
+      accent-color: auto;
+    }
+
+    .checkRow.sortRow{
+      width:100%;
+    }
+
+    .checkRow.sortRow label{
+      width:100%;
+      display:grid;
+      grid-template-columns: minmax(220px, 1fr) minmax(240px, 1.2fr) auto;
+      gap:10px;
+      align-items:center;
+    }
+
+    .checkRow.sortRow label > span{
+      min-width:0;
+    }
+
+    .checkRow.sourceRow{
+      width:100%;
+    }
+
+    .checkRow.sourceRow label{
+      width:100%;
+      display:grid;
+      grid-template-columns: minmax(220px, 1fr) minmax(260px, 1.2fr);
+      gap:10px;
+      align-items:center;
+    }
+
+    .checkRow.sourceRow label > span{
+      min-width:0;
+    }
+
+    #memberSourceMode{
+      width:100%;
+      min-width:0;
+    }
+
+    @media (max-width: 1250px){
+      .checkRow.sourceRow label{
+        grid-template-columns: 1fr;
+        align-items:stretch;
+      }
+    }
+
+    #memberSort{
+      width:100%;
+      min-width:0;
+    }
+
+    #btnResort{
+      white-space:nowrap;
+      min-width: 96px;
+    }
+
+    @media (max-width: 1250px){
+      .checkRow.sortRow label{
+        grid-template-columns: 1fr;
+        align-items:stretch;
+      }
+      #btnResort{
+        width:100%;
+      }
+    }
+
+    .modal_flat_background{
+      background-color:#000;
+      opacity:0.4;
+    }
+
+    .modal_flat_main{
+      border:1px solid #333;
+      box-shadow:0 0 15px -2px rgba(0,0,0,0.75);
+      width:min(860px, calc(100vw - 80px)) !important;
+      max-width:min(860px, calc(100vw - 80px)) !important;
+      height:min(92dvh, 980px) !important;
+      max-height:min(92dvh, 980px) !important;
+      overflow:hidden !important;
+    }
+
+    .modal_flat_main,
+    .modal_flat_main input,
+    .modal_flat_main button{
+      font-size:16px;
+    }
+
+    .modal_flat_main input{
+      padding:6px;
+      box-sizing:border-box;
+    }
+
+    .modal_flat_inner{
+      padding:16px;
+      background:#fff;
+      color:#000;
+      height:100%;
+      display:flex;
+      flex-direction:column;
+      min-height:0;
+    }
+
+    .modal_flat_content{
+      font-family: Helvetica, Arial, sans-serif;
+      margin:14px 0 8px 0;
+      flex:1 1 auto;
+      min-height:0;
+      overflow:auto !important;
+      -webkit-overflow-scrolling:touch;
+    }
+
+    .modal_flat_input{
+      margin:20px 0;
+    }
+
+
     .modal_flat_buttons{
       text-align:center;
-      margin-top:40px;
-      padding-bottom:20px;
+      margin-top:14px;
+      padding:10px 0 12px 0;
+      flex:0 0 auto;
     }
 
-  }
-
-  @media (min-width: 721px){
-    .modal_flat_main{
-      width: min(740px, calc(100vw - 80px)) !important;
-      max-width: min(740px, calc(100vw - 80px)) !important;
+    .modal_flat_main button{
+      background:#f0f3f8;
+      color:#000;
+      border:1px solid #d3dbe7;
+      padding:10px 20px;
+      cursor:pointer;
+      outline:none;
+      width:100px;
+      border-radius:10px;
+      font-weight:600;
+      transition:
+        filter 0.12s ease,
+        transform 0.08s ease,
+        box-shadow 0.12s ease;
     }
-  }
 
-  /* Navigation / open pages */
-  .btn-import {
-    background:#eef7f1;
-    border:1px solid #c9ded1;
-  }
+    .modal_flat_main button:hover{
+      filter: brightness(0.97);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.18);
+    }
 
-  /* PRIMARY ACTION */
-  .btn-fetch {
-    background:#e8f1ff;
-    border:1px solid #9dbaf2;
-    font-weight:600;
-  }
+    .modal_flat_main button:active{
+      transform: translateY(1px);
+      box-shadow: 0 0 1px rgba(0,0,0,0.15);
+    }
 
-  /* Editing / results operations */
-  .btn-edit {
-    background:#f0f3f8;
-    border:1px solid #d3dbe7;
-  }
+    .modal_flat_buttons .modal_flat_ok{
+      background:#e8f1ff !important;
+      border-color:#9dbaf2 !important;
+    }
 
-  /* Restore */
-  .btn-restore {
-    background:#f3eef8;
-    border:1px solid #d7cdea;
-  }
+    .modal_flat_buttons .modal_flat_cancel{
+      background:#f3f3f3 !important;
+      border-color:#d4d4d4 !important;
+    }
 
-  /* Neutral buttons */
-  .btn-neutral {
-    background:#f3f3f3;
-    border:1px solid #d4d4d4;
-  }
+    .modal_flat_cancel{
+      margin-left:6px;
+    }
 
-  /* Re-sort / processing */
-  .btn-resort {
-    background:#fff4e6;
-    border:1px solid #e6c89c;
-  }
+    .exampleLink{
+      color: inherit;
+      text-decoration: underline;
+      cursor: pointer;
+      word-break: break-all;
+    }
 
-  button {
-    transition: 
-      filter 0.12s ease,
-      transform 0.08s ease,
-      box-shadow 0.12s ease;
-  }
+    .instructions{
+      font-size: clamp(14.5px, 0.9vw + 13px, 16.5px);
+      line-height: 2.0;
+    }
 
-  button:hover {
-    filter: brightness(0.97);
-    box-shadow: 0 1px 3px rgba(0,0,0,0.18);
-  }
+    .instructions a.exampleLink{
+      font-weight: 500;
+    }
 
-  button:active {
-    transform: translateY(1px);
-    box-shadow: 0 0px 1px rgba(0,0,0,0.15);
-  }
+    #btnHelp{
+      width: 100%;
+    }
 
-  .selectorRow{
-    display:grid;
-    grid-template-columns: 220px minmax(0, 1fr) auto;
-    gap:12px;
-    align-items:center;
-    width:100%;
-  }
+    select{
+      -webkit-appearance:none;
+      appearance:none;
+      font:inherit;
+      color:#000;
+      background:#fff;
+      border:1px solid rgba(127,127,127,.35);
+      border-radius:10px;
+      padding:10px 52px 10px 12px;
+      line-height:1.2;
+      cursor:pointer;
+      background-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2024%2024%27%3E%3Cpolygon%20points%3D%276%2C9%2018%2C9%2012%2C17%27%20fill%3D%27%23000%27%2F%3E%3C%2Fsvg%3E");
+      background-repeat:no-repeat;
+      background-position:right 16px center;
+      background-size:22px 22px;
+    }
 
-  .selectorRow.selectorRowNoButton{
-    grid-template-columns: 220px minmax(0, 1fr);
-  }
+    select:disabled{
+      cursor:not-allowed;
+      opacity:0.45;
+    }
 
-  .selectorLabel{
-    font-weight:600;
-    min-width:0;
-  }
+    @media (max-width: 980px){
+      body{
+        overflow:auto;
+        -webkit-overflow-scrolling: touch;
+        padding-bottom: calc(var(--page-pad) + env(safe-area-inset-bottom) + 12px);
+      }
 
-  .selectorRow select{
-    width:100%;
-    min-width:0;
-  }
+      .app{
+        height:auto;
+        overflow:visible;
+        min-height:0;
+      }
 
-  @media (max-width: 900px){
-    .selectorRow,
+      .main{
+        flex-direction:column;
+        overflow:visible;
+        min-height:auto;
+      }
+
+      .left, .right{
+        overflow:visible;
+        min-height:auto;
+      }
+
+      .taWrap{
+        height: 55vh;
+        min-height: 320px;
+      }
+
+      #btnFetch{
+        flex: 1 0 100% !important;
+        width: 100% !important;
+      }
+
+      #instructions_div{
+        margin-bottom: calc(env(safe-area-inset-bottom) + var(--page-pad));
+      }
+    }
+
+    @media (max-width: 720px){
+      .row{ gap:10px; }
+      .row button{ flex-basis:100%; }
+      input[type="text"]{ flex-basis:100%; }
+      .taWrap{ height: 60vh; min-height: 300px; }
+
+      #btnFetch{
+        flex: 1 0 100% !important;
+        width: 100% !important;
+      }
+
+      .instructions a.exampleLink{
+        font-size: 0.92em;
+      }
+
+      #instructions_div{
+        margin-bottom: calc(env(safe-area-inset-bottom) + var(--page-pad));
+      }
+
+      .modal_flat_main{
+        width: calc(100vw - 24px) !important;
+        max-width: calc(100vw - 24px) !important;
+        max-height: 82dvh !important;
+        height: auto !important;
+        overflow: hidden !important;
+
+        display: flex !important;
+        flex-direction: column !important;
+      }
+
+      .modal_flat_inner{
+        flex: 1 1 auto;
+        min-height: 0;
+        overflow: auto !important;
+        -webkit-overflow-scrolling: touch;
+        padding-bottom: 8px;
+      }
+
+      .modal_flat_buttons{
+        flex: 0 0 auto;
+        margin-top: 8px;
+        padding: 10px 0 10px 0;
+      }
+
+      .modal_flat_main button{
+        width: 100px;
+      }
+
+      .sessionSearchWrap{
+        display:flex;
+        flex-direction:column;
+        height:100%;
+        min-height:0;
+      }
+
+      .sessionSearchTop{
+        grid-template-columns:1fr;
+      }
+
+      .sessionSearchTop button{
+        width:100% !important;
+      }
+
+      .sessionSearchResults{
+        flex:1 1 auto;
+        min-height:320px;
+        max-height:none !important;
+        overflow:auto;
+        -webkit-overflow-scrolling:touch;
+      }
+
+      .sessionSearchFilters{
+        grid-template-columns: 1fr;
+      }
+
+      .sessionSearchFilters label{
+        text-align:left;
+      }
+
+    }
+
+    /* Navigation / open pages */
+    .btn-import {
+      background:#eef7f1;
+      border:1px solid #c9ded1;
+    }
+
+    /* PRIMARY ACTION */
+    .btn-fetch {
+      background:#e8f1ff;
+      border:1px solid #9dbaf2;
+      font-weight:600;
+    }
+
+    /* Editing / results operations */
+    .btn-edit {
+      background:#f0f3f8;
+      border:1px solid #d3dbe7;
+    }
+
+    /* Restore */
+    .btn-restore {
+      background:#f3eef8;
+      border:1px solid #d7cdea;
+    }
+
+    /* Neutral buttons */
+    .btn-neutral {
+      background:#f3f3f3;
+      border:1px solid #d4d4d4;
+    }
+
+    /* Re-sort / processing */
+    .btn-resort {
+      background:#fff4e6;
+      border:1px solid #e6c89c;
+    }
+
+    button {
+      transition: 
+        filter 0.12s ease,
+        transform 0.08s ease,
+        box-shadow 0.12s ease;
+    }
+
+    button:hover {
+      filter: brightness(0.97);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.18);
+    }
+
+    button:active {
+      transform: translateY(1px);
+      box-shadow: 0 0px 1px rgba(0,0,0,0.15);
+    }
+
+    .selectorRow{
+      display:grid;
+      grid-template-columns: 220px minmax(0, 1fr) auto;
+      gap:12px;
+      align-items:center;
+      width:100%;
+    }
+
     .selectorRow.selectorRowNoButton{
-      grid-template-columns: 1fr;
+      grid-template-columns: 220px minmax(0, 1fr);
     }
-  }
 
+    .selectorLabel{
+      font-weight:600;
+      min-width:0;
+    }
+
+    .selectorRow select{
+      width:100%;
+      min-width:0;
+    }
+
+    @media (max-width: 900px){
+      .selectorRow,
+      .selectorRow.selectorRowNoButton{
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .sessionSearchWrap{
+      width:100%;
+      min-width:0;
+      height:100%;
+      min-height:0;
+      display:flex;
+      flex-direction:column;
+    }
+
+    .sessionSearchTop{
+      display:grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap:12px;
+      align-items:center;
+    }
+
+    .sessionSearchTop input[type="text"]{
+      width:100%;
+      min-width:0;
+      max-width:100%;
+
+      border:1px solid rgba(127,127,127,.35);
+      border-radius:7px;
+      padding:10px 12px 10px 16px;
+
+      background:#fff;
+      color:#000;
+
+      -webkit-appearance:none;
+      appearance:none;
+      box-sizing:border-box;
+      background-clip:padding-box;
+    }
+
+    .sessionSearchTop button{
+      width:auto !important;
+      min-width:170px;
+      padding:10px 18px;
+      white-space:nowrap;
+      justify-self:start;
+      flex:none;
+    }
+
+    .sessionSearchTop input[type="text"]::-moz-focus-inner{
+      border:0;
+      padding:0;
+    }
+
+    .sessionSearchTop input[type="text"]:-moz-focusring{
+      outline:none;
+    }
+
+    .sessionSearchTop input[type="text"]:focus{
+      outline:none;
+    }
+
+    .sessionSearchHint{
+      font-size:0.95em;
+      opacity:0.8;
+      margin:8px 0 6px 4px;
+      line-height:1.45;
+    }
+
+    .sessionSearchResults{
+      border:1px solid rgba(127,127,127,.35);
+      border-radius:10px;
+      background:#fff;
+      min-height:320px;
+      flex:1 1 auto;
+      overflow:auto;
+      -webkit-overflow-scrolling:touch;
+    }
+
+    .sessionSearchEmpty{
+      padding:14px;
+      color:#666;
+      line-height:1.5;
+    }
+
+    .sessionSearchItem{
+      width:100% !important;
+      border:0 !important;
+      border-bottom:1px solid rgba(127,127,127,.18) !important;
+      border-radius:0 !important;
+      background:#fff !important;
+      color:#000 !important;
+      padding:12px 14px !important;
+      text-align:left !important;
+      display:block !important;
+      cursor:pointer;
+      box-shadow:none !important;
+    }
+
+    .sessionSearchItem:last-child{
+      border-bottom:0 !important;
+    }
+
+    .sessionSearchItem:hover{
+      background:#f7f9fc !important;
+      filter:none !important;
+      box-shadow:none !important;
+    }
+
+    .sessionSearchItem.selected{
+      background:#e8f1ff !important;
+      outline:2px solid #9dbaf2;
+      outline-offset:-2px;
+    }
+
+    .sessionSearchPrimary{
+      font-weight:700;
+      line-height:1.35;
+      margin-bottom:4px;
+    }
+
+    .sessionSearchSecondary{
+      font-size:0.94em;
+      opacity:0.82;
+      line-height:1.35;
+    }
+
+    .sessionSearchLoading{
+      padding:14px;
+      color:#444;
+      line-height:1.5;
+    }
+
+    .sessionSearchFilters{
+      display:grid;
+      grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+      gap:10px;
+      align-items:center;
+      margin-bottom:10px;
+    }
+
+    .sessionSearchFilters label{
+      font-weight:600;
+      white-space:nowrap;
+    }
+
+    .sessionSearchFilters select{
+      width:100%;
+      min-width:0;
+      color:#000;
+      background:#fff;
+    }
+  
   </style>
 
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-VM0N9HL3MK"></script>
@@ -623,6 +847,7 @@
   gtag('js', new Date());
   gtag('config', 'G-VM0N9HL3MK');
   </script>
+
 </head>
 
 <body>
@@ -657,6 +882,11 @@
             <button class="btn-fetch" title="Fetches either all the specified tune settings or the member results selected below for member URLs" id="btnFetch">Fetch</button>
           </div>
 
+          <div class="row" style="margin-top:10px">
+            <button class="btn-neutral" title="Search for a tune on thesession.org and populate the URL field" id="btnFindTune">Find Tune…</button>
+            <button class="btn-neutral" title="Search for a member on thesession.org and populate the URL field" id="btnFindMember">Find Member…</button>
+          </div>
+          
           <div class="checkRow">
             <label for="onlyChords">
               <input title="When checked, only include tune settings with chords (not applied to Tune Sets)" id="onlyChords" type="checkbox" />
@@ -910,6 +1140,523 @@ async function confirmTunebookAllDownload() {
 }
 
 /* ============================================================
+   Tune/member search dialog helpers
+   ============================================================ */
+
+function escapeHtml(s) {
+  return String(s == null ? "" : s)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+function normalizeSearchTermForDisplay(term) {
+  return String(term || "").trim().replace(/\s+/g, " ");
+}
+
+function makeSessionSearchUrl(kind, searchTerm, pageNum, tuneType, tuneMode) {
+  const term = normalizeSearchTermForDisplay(searchTerm);
+
+  let url;
+  if (kind === "tune") {
+    url = new URL("https://thesession.org/tunes/search");
+    url.searchParams.set("type", String(tuneType || ""));
+    url.searchParams.set("mode", String(tuneMode || ""));
+    url.searchParams.set("q", term);
+    url.searchParams.set("format", "json");
+    url.searchParams.set("perpage", "50");
+    url.searchParams.set("page", String(pageNum || 1));
+    return url.toString();
+  }
+
+  url = new URL("https://thesession.org/members/search");
+  url.searchParams.set("q", term);
+  url.searchParams.set("format", "json");
+  url.searchParams.set("page", String(pageNum || 1));
+  return url.toString();
+}
+
+async function fetchAllSessionSearchResults(kind, searchTerm, tuneType, tuneMode) {
+  const term = normalizeSearchTermForDisplay(searchTerm);
+  if (!term) {
+    return {
+      total: 0,
+      items: [],
+      hitMaxPages: false,
+      maxPages: 0,
+      fetchedPages: 0,
+      availablePages: 0
+    };
+  }
+
+  const items = [];
+  let totalPages = 1;
+  const MAX_PAGES = 25;
+  let fetchedPages = 0;
+  let hitMaxPages = false;
+
+  for (let page = 1; page <= totalPages && page <= MAX_PAGES; page++) {
+    const url = makeSessionSearchUrl(kind, term, page, tuneType, tuneMode);
+
+    const res = await fetch(url, { method: "GET", mode: "cors", cache: "no-store" });
+
+    if (!res.ok) {
+      throw new Error(`Search failed: HTTP ${res.status}`);
+    }
+
+    const data = await res.json();
+    fetchedPages = page;
+
+    if (data && typeof data.pages === "number" && isFinite(data.pages) && data.pages > 0) {
+      totalPages = data.pages;
+    }
+
+    const pageItems =
+      kind === "tune"
+        ? ((data && Array.isArray(data.tunes)) ? data.tunes : [])
+        : ((data && Array.isArray(data.members)) ? data.members : []);
+
+    for (const item of pageItems) {
+      items.push(item);
+    }
+  }
+
+  if (totalPages > MAX_PAGES && fetchedPages >= MAX_PAGES) {
+    hitMaxPages = true;
+    clearStatus(
+      `Reached maximum ${kind === "tune" ? "tune" : "member"} search limit. Additional results may exist.`
+    );
+  }
+
+  return {
+    total: items.length,
+    items,
+    hitMaxPages,
+    maxPages: MAX_PAGES,
+    fetchedPages,
+    availablePages: totalPages
+  };
+}
+
+function sessionSearchSortResults(kind, items, term) {
+  const needle = normalizeSearchTermForDisplay(term).toLowerCase();
+
+  function rankTune(it) {
+    const name = String((it && it.name) || "").toLowerCase();
+    const alias = String((it && it.alias) || "").toLowerCase();
+
+    if (name === needle) return 0;
+    if (alias === needle) return 1;
+    if (name.startsWith(needle)) return 2;
+    if (alias.startsWith(needle)) return 3;
+    if (name.includes(needle)) return 4;
+    if (alias.includes(needle)) return 5;
+    return 6;
+  }
+
+  function rankMember(it) {
+    const name = String((it && it.name) || "").toLowerCase();
+
+    if (name === needle) return 0;
+    if (name.startsWith(needle)) return 1;
+    if (name.includes(needle)) return 2;
+    return 3;
+  }
+
+  return stableSort(items.slice(), (a, b) => {
+    const ra = kind === "tune" ? rankTune(a) : rankMember(a);
+    const rb = kind === "tune" ? rankTune(b) : rankMember(b);
+    if (ra !== rb) return ra - rb;
+
+    const an = String((a && a.name) || "");
+    const bn = String((b && b.name) || "");
+    const c = an.localeCompare(bn, undefined, { sensitivity: "base" });
+    if (c !== 0) return c;
+
+    const ai = Number((a && a.id) || 0);
+    const bi = Number((b && b.id) || 0);
+    return ai - bi;
+  });
+}
+
+function buildTuneSearchRowHtml(item) {
+  const name = escapeHtml(item && item.name ? item.name : "(untitled)");
+  const alias = escapeHtml(item && item.alias ? item.alias : "");
+  const type = escapeHtml(item && item.type ? item.type : "unknown type");
+  const id = escapeHtml(item && item.id != null ? item.id : "");
+  const url = escapeHtml(item && item.url ? item.url : "");
+
+  let secondary = `${type} — tune #${id}`;
+  if (alias) {
+    secondary += ` — alias: ${alias}`;
+  }
+
+  return (
+    `<div class="sessionSearchPrimary">${name}</div>` +
+    `<div class="sessionSearchSecondary">${secondary}</div>` +
+    `<div class="sessionSearchSecondary" style="margin-top:4px; opacity:0.7;">${url}</div>`
+  );
+}
+
+function buildMemberSearchRowHtml(item) {
+  const name = escapeHtml(item && item.name ? item.name : "(unnamed member)");
+  const id = escapeHtml(item && item.id != null ? item.id : "");
+  const url = escapeHtml(item && item.url ? item.url : "");
+  const bio = String((item && item.bio) || "").replace(/\s+/g, " ").trim();
+  const bioShort = bio ? escapeHtml(bio.slice(0, 140) + (bio.length > 140 ? "…" : "")) : "";
+
+  let secondary = `member #${id}`;
+  if (bioShort) {
+    secondary += ` — ${bioShort}`;
+  }
+
+  return (
+    `<div class="sessionSearchPrimary">${name}</div>` +
+    `<div class="sessionSearchSecondary">${secondary}</div>` +
+    `<div class="sessionSearchSecondary" style="margin-top:4px; opacity:0.7;">${url}</div>`
+  );
+}
+
+function renderSessionSearchResults(container, kind, items, selectedId) {
+  if (!container) return;
+
+  if (!items || !items.length) {
+    container.innerHTML = `<div class="sessionSearchEmpty">No results found.</div>`;
+    return;
+  }
+
+  container.innerHTML = items.map((item, index) => {
+    const id = String((item && item.id != null) ? item.id : index);
+    const inner = kind === "tune"
+      ? buildTuneSearchRowHtml(item)
+      : buildMemberSearchRowHtml(item);
+
+    const selectedClass = String(selectedId) === id ? " selected" : "";
+
+    return (
+      `<button type="button" class="sessionSearchItem${selectedClass}" data-result-id="${escapeHtml(id)}">` +
+      inner +
+      `</button>`
+    );
+  }).join("");
+}
+
+function getLastModalRoot() {
+  const modals = document.querySelectorAll(".modal_flat_main");
+  return modals.length ? modals[modals.length - 1] : null;
+}
+
+function setDialogOkEnabled(modalRoot, enabled) {
+  if (!modalRoot) return;
+  const buttons = modalRoot.querySelectorAll(".modal_flat_buttons button");
+  if (!buttons || !buttons.length) return;
+  buttons[0].disabled = !enabled;
+}
+
+async function openSessionSearchDialog(kind) {
+  const isTune = kind === "tune";
+  const title = isTune ? "Find Tune" : "Find Member";
+  const inputPlaceholder = isTune ? "Enter tune name" : "Enter member name";
+  const searchButtonLabel = isTune ? "Search Tunes" : "Search Members";
+  const hintText = isTune
+    ? "Enter a tune name, optionally choose a tune style and key/mode, click Search Tunes, then select one result and click OK to populate the URL field."
+    : "Enter a member name, click Search Members, then select one result and click OK to populate the URL field.";
+
+  const uid = "sessionSearch_" + Date.now() + "_" + Math.floor(Math.random() * 100000);
+
+  const tuneFiltersHtml = isTune
+    ? (
+        `<div class="sessionSearchFilters">` +
+          `<select id="${uid}_type" name="type" title="Filter tune search by tune style">` +
+            `<option value="">All Tunes</option>` +
+            `<option value="jig">Jigs</option>` +
+            `<option value="reel">Reels</option>` +
+            `<option value="slip jig">Slip Jigs</option>` +
+            `<option value="hornpipe">Hornpipes</option>` +
+            `<option value="polka">Polkas</option>` +
+            `<option value="slide">Slides</option>` +
+            `<option value="waltz">Waltzes</option>` +
+            `<option value="barndance">Barndances</option>` +
+            `<option value="strathspey">Strathspeys</option>` +
+            `<option value="three-two">Three-Twos</option>` +
+            `<option value="mazurka">Mazurkas</option>` +
+            `<option value="march">Marches</option>` +
+          `</select>` +
+          `<label for="${uid}_mode">in</label>` +
+          `<select id="${uid}_mode" name="mode" title="Filter tune search by key/mode">` +
+            `<option value="">All Keys/Modes</option>` +
+            `<option value="Amajor">A Major</option>` +
+            `<option value="Amixolydian">A Mixolydian</option>` +
+            `<option value="Adorian">A Dorian</option>` +
+            `<option value="Aminor">A Minor</option>` +
+            `<option value="Bmixolydian">B Mixolydian</option>` +
+            `<option value="Bdorian">B Dorian</option>` +
+            `<option value="Bminor">B Minor</option>` +
+            `<option value="Cmajor">C Major</option>` +
+            `<option value="Cdorian">C Dorian</option>` +
+            `<option value="Dmajor">D Major</option>` +
+            `<option value="Dmixolydian">D Mixolydian</option>` +
+            `<option value="Ddorian">D Dorian</option>` +
+            `<option value="Dminor">D Minor</option>` +
+            `<option value="Emajor">E Major</option>` +
+            `<option value="Emixolydian">E Mixolydian</option>` +
+            `<option value="Edorian">E Dorian</option>` +
+            `<option value="Eminor">E Minor</option>` +
+            `<option value="Fmajor">F Major</option>` +
+            `<option value="Fdorian">F Dorian</option>` +
+            `<option value="Gmajor">G Major</option>` +
+            `<option value="Gmixolydian">G Mixolydian</option>` +
+            `<option value="Gdorian">G Dorian</option>` +
+            `<option value="Gminor">G Minor</option>` +
+          `</select>` +
+        `</div>`
+      )
+    : "";
+
+  const html =
+    `<div class="sessionSearchWrap" style="font-family:Helvetica, Arial, sans-serif; display:flex; flex-direction:column; height:100%; min-height:0;">` +
+      `<div style="text-align:center; font-size:16pt; font-weight:700; margin-bottom:12px;">${escapeHtml(title)}</div>` +
+      `<div class="sessionSearchHint">${escapeHtml(hintText)}</div>` +
+      tuneFiltersHtml +
+      `<div class="sessionSearchTop">` +
+        `<input id="${uid}_input" type="text" value="" placeholder="${escapeHtml(inputPlaceholder)}" />` +
+        `<button id="${uid}_searchBtn" type="button">${escapeHtml(searchButtonLabel)}</button>` +
+      `</div>` +
+      `<div id="${uid}_summary" class="sessionSearchHint"></div>` +
+      `<div id="${uid}_results" class="sessionSearchResults">` +
+        `<div class="sessionSearchEmpty">Enter a search term and click ${escapeHtml(searchButtonLabel)}.</div>` +
+      `</div>` +
+    `</div>`;
+
+  const promise = DayPilot.Modal.confirm(html, {
+    theme: "modal_flat",
+    top: 50,
+    scrollWithPage: false
+  });
+
+  await new Promise(resolve => setTimeout(resolve, 0));
+
+  const modalRoot = getLastModalRoot();
+  const inputEl = document.getElementById(uid + "_input");
+  const searchBtnEl = document.getElementById(uid + "_searchBtn");
+  const summaryEl = document.getElementById(uid + "_summary");
+  const resultsEl = document.getElementById(uid + "_results");
+  const tuneTypeEl = document.getElementById(uid + "_type");
+  const tuneModeEl = document.getElementById(uid + "_mode");
+
+  let dialogClosed = false;
+  let currentItems = [];
+  let selectedItem = null;
+  let searchBusy = false;
+
+  setDialogOkEnabled(modalRoot, false);
+
+  function setBusy(busy) {
+    searchBusy = !!busy;
+    if (inputEl) inputEl.disabled = searchBusy;
+    if (searchBtnEl) searchBtnEl.disabled = searchBusy;
+    if (tuneTypeEl) tuneTypeEl.disabled = searchBusy;
+    if (tuneModeEl) tuneModeEl.disabled = searchBusy;
+    if (resultsEl && searchBusy) {
+      resultsEl.innerHTML = `<div class="sessionSearchLoading">Searching…</div>`;
+    }
+  }
+
+  function selectItemById(id) {
+    const wanted = String(id);
+    selectedItem = currentItems.find(it => String((it && it.id != null) ? it.id : "") === wanted) || null;
+    renderSessionSearchResults(resultsEl, kind, currentItems, selectedItem ? selectedItem.id : "");
+    setDialogOkEnabled(modalRoot, !!selectedItem);
+
+    const rowButtons = resultsEl.querySelectorAll(".sessionSearchItem");
+    rowButtons.forEach(btn => {
+      btn.addEventListener("click", () => {
+        selectItemById(btn.getAttribute("data-result-id"));
+      });
+
+      btn.addEventListener("dblclick", () => {
+        selectItemById(btn.getAttribute("data-result-id"));
+        if (modalRoot) {
+          const buttons = modalRoot.querySelectorAll(".modal_flat_buttons button");
+          if (buttons && buttons.length && !buttons[0].disabled) {
+            buttons[0].click();
+          }
+        }
+      });
+    });
+  }
+
+  async function doSearch() {
+    if (searchBusy || dialogClosed) return;
+
+    const term = inputEl ? inputEl.value.trim() : "";
+    const tuneType = tuneTypeEl ? tuneTypeEl.value : "";
+    const tuneMode = tuneModeEl ? tuneModeEl.value : "";
+
+    selectedItem = null;
+    setDialogOkEnabled(modalRoot, false);
+
+    if (!term) {
+      if (summaryEl) summaryEl.textContent = "Please enter a search term.";
+      if (resultsEl) {
+        resultsEl.innerHTML = `<div class="sessionSearchEmpty">Please enter a search term.</div>`;
+      }
+      return;
+    }
+
+    try {
+      setBusy(true);
+      if (summaryEl) summaryEl.textContent = "";
+
+      let statusMsg;
+
+      if (kind === "tune") {
+
+        const typeText =
+          (tuneTypeEl && tuneTypeEl.value)
+            ? tuneTypeEl.options[tuneTypeEl.selectedIndex].text
+            : "";
+
+        const modeText =
+          (tuneModeEl && tuneModeEl.value)
+            ? tuneModeEl.options[tuneModeEl.selectedIndex].text
+            : "";
+
+        statusMsg = `Searching tunes for "${term}"`;
+
+        if (typeText) {
+          statusMsg += `, ${typeText}`;
+        }
+
+        if (modeText) {
+          statusMsg += ` in ${modeText}`;
+        }
+
+      } else {
+        statusMsg = `Searching members for "${term}"`;
+      }
+
+      clearStatus(statusMsg);
+      const result = await fetchAllSessionSearchResults(kind, term, tuneType, tuneMode);
+      currentItems = sessionSearchSortResults(kind, result.items, term);
+
+      if (summaryEl) {
+        let summary = `${currentItems.length} result${currentItems.length === 1 ? "" : "s"} found.`;
+
+        if (result.hitMaxPages) {
+          summary += ` (search limit reached; more results may exist)`;
+        }
+
+        if (kind === "tune") {
+
+          const filters = [];
+
+          if (tuneTypeEl && tuneTypeEl.value) {
+            const typeText = tuneTypeEl.options[tuneTypeEl.selectedIndex].text;
+            filters.push(typeText);
+          }
+
+          if (tuneModeEl && tuneModeEl.value) {
+            const modeText = tuneModeEl.options[tuneModeEl.selectedIndex].text;
+            filters.push(`in ${modeText}`);
+          }
+
+          if (filters.length) {
+            summary += `  Filtered by ${filters.join(" ")}.`;
+          }
+        }
+
+        summaryEl.textContent = summary;
+      }
+
+      renderSessionSearchResults(resultsEl, kind, currentItems, "");
+
+      if (currentItems.length === 1) {
+        selectItemById(currentItems[0].id);
+      } else {
+        const rowButtons = resultsEl.querySelectorAll(".sessionSearchItem");
+        rowButtons.forEach(btn => {
+          btn.addEventListener("click", () => {
+            selectItemById(btn.getAttribute("data-result-id"));
+          });
+
+          btn.addEventListener("dblclick", () => {
+            selectItemById(btn.getAttribute("data-result-id"));
+            if (modalRoot) {
+              const buttons = modalRoot.querySelectorAll(".modal_flat_buttons button");
+              if (buttons && buttons.length && !buttons[0].disabled) {
+                buttons[0].click();
+              }
+            }
+          });
+        });
+      }
+    } catch (e) {
+      currentItems = [];
+      selectedItem = null;
+      setDialogOkEnabled(modalRoot, false);
+
+      if (summaryEl) summaryEl.textContent = "Search failed.";
+      if (resultsEl) {
+        resultsEl.innerHTML =
+          `<div class="sessionSearchEmpty">` +
+          `${escapeHtml(e && e.message ? e.message : String(e))}` +
+          `</div>`;
+      }
+    } finally {
+      setBusy(false);
+      if (inputEl) inputEl.focus();
+    }
+  }
+
+  if (searchBtnEl) {
+    searchBtnEl.addEventListener("click", doSearch);
+  }
+
+  if (inputEl) {
+    inputEl.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        doSearch();
+      }
+    });
+
+    inputEl.focus();
+    inputEl.select();
+  }
+
+  const result = await promise;
+  dialogClosed = true;
+
+  if (result && result.result && selectedItem && selectedItem.url) {
+    tuneUrlInput.value = selectedItem.url;
+    tuneUrlInput.focus();
+    tuneUrlInput.select();
+
+    const selectedName =
+      (selectedItem && typeof selectedItem.name === "string")
+        ? selectedItem.name.trim()
+        : "";
+
+    if (kind === "tune") {
+      if (selectedName) {
+        appendStatus(`Selected tune: ${selectedName}`);
+      }
+      appendStatus(`Selected tune URL: ${selectedItem.url}`);
+      sendGoogleAnalytics("action", "find_tune_select");
+    } else {
+      if (selectedName) {
+        appendStatus(`Selected member: ${selectedName}`);
+      }
+      appendStatus(`Selected member URL: ${selectedItem.url}`);
+      sendGoogleAnalytics("action", "find_member_select");
+    }
+  }
+}
+
+/* ============================================================
    Title/key/rhythm sorting
    ============================================================ */
 
@@ -1052,31 +1799,12 @@ function buildSingleSettingABCFromIncludedItem(it, xNum) {
   return header + it.bodyNormalized + "\n";
 }
 
-function stripLeadingXTag(abc) {
-  return String(abc || "").replace(/^X:\s*.*\r?\n/i, "");
-}
-
 function renumberLeadingXTag(abc, xNum) {
   const s = String(abc || "");
   if (/^X:\s*.*\r?\n/i.test(s)) {
     return s.replace(/^X:\s*.*$/im, `X:${xNum}`);
   }
   return `X:${xNum}\n` + s;
-}
-
-function stripLeadingXTagAndRepeatedHeaderTags(abc) {
-  let s = String(abc || "");
-
-  // Remove leading X: from appended tunes in a set
-  s = s.replace(/^X:\s*.*\r?\n/i, "");
-
-  // Remove repeated header tags from appended tunes in a set
-  s = s.replace(/^R:\s*.*\r?\n/gim, "");
-  s = s.replace(/^Q:\s*.*\r?\n/gim, "");
-  s = s.replace(/^L:\s*.*\r?\n/gim, "");
-  s = s.replace(/^Z:\s*.*\r?\n/gim, "");
-
-  return s.trim();
 }
 
 function buildSingleSetCombinedABC(setTitle, setEntries) {
@@ -2534,6 +3262,8 @@ function setFetchBusy(busy) {
   fetchInProgress = !!busy;
 
   $("btnFetch").disabled = fetchInProgress;
+  $("btnFindTune").disabled = fetchInProgress;
+  $("btnFindMember").disabled = fetchInProgress;
   $("tuneUrl").disabled = fetchInProgress;
   $("onlyChords").disabled = fetchInProgress;
   $("memberSourceMode").disabled = fetchInProgress;
@@ -2658,7 +3388,7 @@ $("btnFetch").addEventListener("click", async () => {
       operationDescription + "\n" +
       result.combined;
 
-    clearStatus("Success!\n");
+    clearStatus("Success!");
 
     if (!isSessionTuneUrl(url)) {
       const memberLine = (result && result.memberName) ? result.memberName : "";
@@ -2889,6 +3619,16 @@ $("btnOpenInTools").addEventListener("click", () => {
   }
 });
 
+$("btnFindTune").addEventListener("click", async () => {
+  sendGoogleAnalytics("action", "find_tune_open");
+  await openSessionSearchDialog("tune");
+});
+
+$("btnFindMember").addEventListener("click", async () => {
+  sendGoogleAnalytics("action", "find_member_open");
+  await openSessionSearchDialog("member");
+});
+
 /* ============================================================
    Base64 helpers
    ============================================================ */
@@ -2970,133 +3710,158 @@ tuneUrlInput.addEventListener("keydown", (e) => {
 $("btnHelp").addEventListener("click", () => {
   sendGoogleAnalytics("action", "instructions");
 
-  const content =
-    '  <div style="margin-bottom:16px;">' +
-    '    You can open the thesession.org Tunes or Members search pages in a new browser tab by clicking the <b>Open Tunes Search Page</b> or <b>Open Members Search Page</b> buttons.' +
-    '  </div>' +
-    '  <div style="margin-bottom:16px;">' +
-    '    Click the <b>ABC Transcription Tools</b> button to launch the tools in a new browser tab.' +
-    '  </div>' +
-    '  <div style="margin-bottom:16px;">' +
-    '    Enter either a thesession.org <b>tune URL</b> or a <b>member URL</b> into the <b>thesession.org URL</b> field, then click <b>Fetch</b>.' +
-    '  </div>' +
-    '  <div style="margin-bottom:16px;">' +
-    '    You can copy the fetched ABC tune settings to the clipboard, save them to a .abc file, or if the generated ShareURL is under 8100 characters, open the tune settings directly in the <a href="https://michaeleskin.com/abctools/abctools.html" target="_blank" rel="noopener noreferrer">ABC Transcription Tools.</a>' +
-    '  </div>' +
-    '  <div style="margin-bottom:16px;">' +
-    '    For <b>member URLs</b>, the tool can fetch:' +
-    '    <ul style="margin:10px 0 0 10px;">' +
-    '       <li><b>Tunebook (First Setting Only)</b>: all tunes in the member\'s tunebook, including only the first available setting for each tune</li>' +
-    '       <li><b>Tunebook (All Settings)</b>: all tunes in the member\'s tunebook along with all available settings for those tunes</li>' +
-    '       <li><b>Submitted Tune Settings</b> (default)</li>' +
-    '       <li><b>Bookmarked Tune Settings</b></li>' +
-    '       <li><b>Tune Sets</b>: all tune sets for the member; each set is built by fetching the settings used in the set and combining them into a single ABC result</li>' +
-    '    </ul>' +
-    '    <div style="opacity:0.8; margin-top:6px;">' +
-    '      <b>Note:</b> Some members\' tunebooks contain many tunes, each with multiple settings.<br/>' +
-    '      When using <b>Tunebook (All Settings)</b>, the tool will display a confirmation dialog before downloading what may be a large amount of data.' +
-    '    </div>' +
-    '  </div>' +
-    '  <div style="margin-bottom:16px;">' +
-    '    <div style="font-weight:700; margin-bottom:6px;">Examples (click to fill the thesession.org URL field):</div>' +
-    '    <div style="margin-bottom:6px;">' +
-    '      <a href="https://thesession.org/tunes/1" class="exampleLink" data-fill-url="https://thesession.org/tunes/1">https://thesession.org/tunes/1</a>' +
-    '    </div>' +
-    '    <div style="margin-bottom:6px;">' +
-    '      <a href="https://thesession.org/members/12799" class="exampleLink" data-fill-url="https://thesession.org/members/12799">https://thesession.org/members/12799</a>' +
-    '    </div>' +
-    '  </div>' +
-    '  <div style="margin-bottom:16px;">' +
-    '    <div style="font-weight:700; margin-bottom:6px;">Guitar chords filter</div>' +
-    '    <div>' +
-    '      If <b>“Only include settings with chords (except Tune Sets)”</b> is checked, the tool will include only settings that contain guitar-style chord annotations in the ABC' +
-    '      (for example, <code>"Em"</code>, <code>"D"</code>, <code>"G/B"</code>, etc.).' +
-    '    </div>' +
-    '    <div style="opacity:0.8; margin-top:6px;">' +
-    '      This is useful for quickly collecting settings with chords while skipping melody-only versions.<br/>' +
-    '      Tune Sets always include all settings and are not filtered for chords.' +    
-    '    </div>' +
-    '  </div>' +
-    '  <div style="margin-bottom:16px;">' +
-    '    <div style="font-weight:700; margin-bottom:6px;">Member URL source option</div>' +
-    '    <div>' +
-    '      Use the <b>For member URLs, fetch</b> selector to choose whether member URLs fetch the member\'s <b>Tunebook (First Setting Only)</b>, <b>Tunebook (All Settings)</b>, <b>Submitted Tune Settings</b>, <b>Bookmarked Tune Settings</b>, or <b>Tune Sets</b>.' +
-    '    </div>' +
-    '  </div>' +
-    '  <div style="margin-bottom:16px;">' +
-    '    <div style="font-weight:700; margin-bottom:6px;">Sorting member results</div>' +
-    '    <div>' +
-    '      For <b>member URLs</b>, choose how the fetched results should be sorted using the <b>Sort member results</b> options.' +
-    '    </div>' +
-    '    <div style="margin-top:10px;">' +
-    '      <ul style="margin:10px 0 0 10px;">' +
-    '        <li><b>Original order</b>: Preserve the original order returned by thesession.org for the selected member source</li>' +
-    '        <li><b>Sorted by title (T:)</b>: Sorted alphabetically by tune title, or by set title for <b>Tune Sets</b></li>' +
-    '        <li><b>Sorted by key (K:)</b>: Grouped by key in alphabetical key order, or by the first tune key for <b>Tune Sets</b></li>' +
-    '        <li><b>Sorted by rhythm (R:)</b>: Grouped by rhythm (reel, jig, etc.), or by the first tune rhythm for <b>Tune Sets</b></li>' +
-    '      </ul>' +
-    '    </div>' +
-    '  </div>' +
-    '  <div style="margin-bottom:16px;">' +
-    '     <div style="margin-top:10px;">' +
-    '       After results have been fetched, you can change the sort option and click the <b>Re-sort</b> button to re-order the existing results instantly without re-fetching the data again from thesession.org.' +
-    '     </div>' +
-    '  </div>' +
-    '  <div style="margin-bottom:16px;">' +
-    '    <div style="font-weight:700; margin-bottom:6px;">Title sorting rules</div>' +
-    '    <div>' +
-    '      When sorting by title (and when sub-sorting titles within a key or rhythm), common leading articles are ignored by moving them to the end.' +
-    '      For example:' +
-    '      <ul style="margin:10px 0 0 10px;">' +
-    '        <li><b>The</b> Silver Spear → Silver Spear, The</li>' +
-    '        <li><b>An</b> Bhean Udaí Thall → Bhean Udaí Thall, An</li>' +
-    '        <li><b>A</b> Fig for a Kiss → Fig for a Kiss, A</li>' +
-    '      </ul>' +
-    '      The tune title shown in the ABC (<code>T:</code>) is <b>not changed</b>; this only affects sorting.' +
-    '    </div>' +
-    '  </div>' +
-    '  <div style="margin-bottom:16px;">' +
-    '    <div style="font-weight:700; margin-bottom:6px;">Rhythm sort order</div>' +
-    '    <div>' +
-    '      When sorting by rhythm, rhythms are ordered using a standard session-friendly list. Items with unknown or uncommon rhythms are placed after the known types.' +
-    '    </div>' +
-    '    <div style="margin-top:10px;">' +
-    '      <div style="opacity:0.95;">Rhythm sorting order:</div>' +
-    '      <div style="margin-top:6px; padding-left:10px; line-height:1.8;">' +
-    '        Reel, Hornpipe, Barndance, Strathspey, March, Jig, Slip Jig, Hop Jig, Slide, Polka, Waltz, Mazurka, Three-Two' +
-    '      </div>' +
-    '    </div>' +
-    '  </div>' +
-    '  <hr style="border:0; border-top:1px solid #ccc; margin:18px 0;">' +
-    '  <div style="text-align:center; font-size:15pt; font-weight:700; margin-bottom:10px;">Tip Jars</div>' +
-    '  <div style="text-align:center; margin-bottom:12px;">' +
-    '    If you find this tool useful, please consider buying me a beer<br/>' +
-    '    by tossing a few bucks into one of my virtual tip jars:' +
-    '  </div>' +
-    '  <div style="text-align:center; margin-bottom:10px;">' +
-    '    <div style="font-weight:700;">PayPal</div>' +
-    '    <div><a href="https://paypal.me/MichaelEskin" target="_blank" rel="noopener noreferrer">https://paypal.me/MichaelEskin</a></div>' +
-    '  </div>' +
-    '  <div style="text-align:center; margin-bottom:16px;">' +
-    '    <div style="font-weight:700;">Venmo</div>' +
-    '    <div>@MichaelEskin</div>' +
-    '  </div>' +
-    '  <hr style="border:0; border-top:1px solid #ccc; margin:18px 0;">' +
-    '  <div style="margin-bottom:6px; text-align:center;"><b>The source code for this tool is available on GitHub:</b></div>' +
-    '  <div style="margin-bottom:6px; text-align:center;">' +
-    '    <a href="https://github.com/seisiuneer/abctools/blob/main/tools/mustard_scraper.html" target="_blank" rel="noopener noreferrer">' +
-    '      mustard_scraper.html' +
-    '    </a>' +
-    '  </div>';
+const content =
+  '  <div style="margin-bottom:16px;">' +
+  '    This tool fetches ABC tune settings from <b>thesession.org</b> using either a <b>tune URL</b> or a <b>member URL</b>, then combines the results into a single ABC output that you can copy, save, or open in the ABC Transcription Tools.' +
+  '  </div>' +
+
+  '  <div style="margin-bottom:16px;">' +
+  '    <div style="font-weight:700; margin-bottom:6px;">Find Tune / Find Member</div>' +
+  '    <div>' +
+  '      You can search The Session directly from within the tool by clicking <b>Find Tune…</b> or <b>Find Member…</b>' +
+  '    </div>' +
+  '    <div style="opacity:0.8; margin-top:6px;">' +
+  '      Enter a search term, then click <b>Search Tunes</b> or <b>Search Members</b>.<br/>For tune searches, you can also optionally filter by <b>tune style</b> and <b>key/mode</b>.<br/>Select one of the matching results and click <b>OK</b> to populate the <b>thesession.org URL</b> field automatically.<br/>Double-clicking a result will also select it and accept it immediately.' +
+  '    </div>' +
+  '  </div>' +
+
+  '  <div style="margin-bottom:16px;">' +
+  '    <div style="font-weight:700; margin-bottom:6px;">Enter or populate a thesession.org URL</div>' +
+  '    <div>' +
+  '      You can either use <b>Find Tune…</b> / <b>Find Member…</b> to populate the <b>thesession.org URL</b> field automatically, or manually paste a thesession.org <b>tune URL</b> or <b>member URL</b> into the field and click <b>Fetch</b>.' +
+  '    </div>' +
+  '  </div>' +
+
+  '  <div style="margin-bottom:16px;">' +
+  '    <div style="font-weight:700; margin-bottom:6px;">Examples (click to fill the thesession.org URL field)</div>' +
+  '    <div style="margin-bottom:6px;">' +
+  '      <a href="https://thesession.org/tunes/1" class="exampleLink" data-fill-url="https://thesession.org/tunes/1">https://thesession.org/tunes/1</a>' +
+  '    </div>' +
+  '    <div style="margin-bottom:6px;">' +
+  '      <a href="https://thesession.org/members/12799" class="exampleLink" data-fill-url="https://thesession.org/members/12799">https://thesession.org/members/12799</a>' +
+  '    </div>' +
+  '  </div>' +
+
+  '  <div style="margin-bottom:16px;">' +
+  '    <div style="font-weight:700; margin-bottom:6px;">For member URLs, choose what to fetch</div>' +
+  '    <div>' +
+  '      Use the <b>For member URLs, fetch</b> selector to choose whether member URLs fetch the member\'s <b>Tunebook (First Setting Only)</b>, <b>Tunebook (All Settings)</b>, <b>Submitted Tune Settings</b>, <b>Bookmarked Tune Settings</b>, or <b>Tune Sets</b>.' +
+  '    </div>' +
+  '    <div style="margin-top:10px;">' +
+  '      <ul style="margin:10px 0 0 10px;">' +
+  '        <li><b>Tunebook (First Setting Only)</b>: all tunes in the member\'s tunebook, including only the first available setting for each tune</li>' +
+  '        <li><b>Tunebook (All Settings)</b>: all tunes in the member\'s tunebook along with all available settings for those tunes</li>' +
+  '        <li><b>Submitted Tune Settings</b> (default)</li>' +
+  '        <li><b>Bookmarked Tune Settings</b></li>' +
+  '        <li><b>Tune Sets</b>: all tune sets for the member; each set is built by fetching the settings used in the set and combining them into a single ABC result</li>' +
+  '      </ul>' +
+  '    </div>' +
+  '    <div style="opacity:0.8; margin-top:6px;">' +
+  '      <b>Note:</b> Some members\' tunebooks contain many tunes, each with multiple settings.<br/>' +
+  '      When using <b>Tunebook (All Settings)</b>, the tool will display a confirmation dialog before downloading what may be a large amount of data.' +
+  '    </div>' +
+  '  </div>' +
+
+  '  <div style="margin-bottom:16px;">' +
+  '    <div style="font-weight:700; margin-bottom:6px;">Optional guitar chords filter</div>' +
+  '    <div>' +
+  '      If <b>“Only include settings with chords (except Tune Sets)”</b> is checked, the tool will include only settings that contain guitar-style chord annotations in the ABC (for example, <code>"Em"</code>, <code>"D"</code>, <code>"G/B"</code>, etc.).' +
+  '    </div>' +
+  '    <div style="opacity:0.8; margin-top:6px;">' +
+  '      This is useful for quickly collecting settings with chords while skipping melody-only versions.<br/>' +
+  '      Tune Sets always include all settings and are not filtered for chords.' +
+  '    </div>' +
+  '  </div>' +
+
+  '  <div style="margin-bottom:16px;">' +
+  '    <div style="font-weight:700; margin-bottom:6px;">Sorting member results</div>' +
+  '    <div>' +
+  '      For <b>member URLs</b>, choose how the fetched results should be sorted using the <b>Sort member results</b> options.' +
+  '    </div>' +
+  '    <div style="margin-top:10px;">' +
+  '      <ul style="margin:10px 0 0 10px;">' +
+  '        <li><b>Original order</b>: Preserve the original order returned by thesession.org for the selected member source</li>' +
+  '        <li><b>Sorted by title (T:)</b>: Sorted alphabetically by tune title, or by set title for <b>Tune Sets</b></li>' +
+  '        <li><b>Sorted by key (K:)</b>: Grouped by key in alphabetical key order, or by the first tune key for <b>Tune Sets</b></li>' +
+  '        <li><b>Sorted by rhythm (R:)</b>: Grouped by rhythm (reel, jig, etc.), or by the first tune rhythm for <b>Tune Sets</b></li>' +
+  '      </ul>' +
+  '    </div>' +
+  '    <div style="margin-top:10px;">' +
+  '      After results have been fetched, you can change the sort option and click the <b>Re-sort</b> button to re-order the existing results instantly without re-fetching the data again from thesession.org.' +
+  '    </div>' +
+  '  </div>' +
+
+  '  <div style="margin-bottom:16px;">' +
+  '    <div style="font-weight:700; margin-bottom:6px;">After clicking Fetch</div>' +
+  '    <div>' +
+  '      You can copy the fetched ABC tune settings to the clipboard, save them to a .abc file, or, if the generated ShareURL is under 8100 characters, open the tune settings directly in the <a href="https://michaeleskin.com/abctools/abctools.html" target="_blank" rel="noopener noreferrer">ABC Transcription Tools</a>.' +
+  '    </div>' +
+  '  </div>' +
+
+  '  <div style="margin-bottom:16px;">' +
+  '    <div style="font-weight:700; margin-bottom:6px;">Open related sites in a new tab</div>' +
+  '    <div>' +
+  '      You can open the thesession.org Tunes or Members search pages in a new browser tab by clicking the <b>Open Tunes Search Page</b> or <b>Open Members Search Page</b> buttons.' +
+  '    </div>' +
+  '    <div style="margin-top:6px;">' +
+  '      Click the <b>ABC Transcription Tools</b> button to launch the tools in a new browser tab.' +
+  '    </div>' +
+  '  </div>' +
+
+  '  <div style="margin-bottom:16px;">' +
+  '    <div style="font-weight:700; margin-bottom:6px;">Title sorting rules</div>' +
+  '    <div>' +
+  '      When sorting by title (and when sub-sorting titles within a key or rhythm), common leading articles are ignored by moving them to the end. For example:' +
+  '      <ul style="margin:10px 0 0 10px;">' +
+  '        <li><b>The</b> Silver Spear → Silver Spear, The</li>' +
+  '        <li><b>An</b> Bhean Udaí Thall → Bhean Udaí Thall, An</li>' +
+  '        <li><b>A</b> Fig for a Kiss → Fig for a Kiss, A</li>' +
+  '      </ul>' +
+  '      The tune title shown in the ABC (<code>T:</code>) is <b>not changed</b>; this only affects sorting.' +
+  '    </div>' +
+  '  </div>' +
+
+  '  <div style="margin-bottom:16px;">' +
+  '    <div style="font-weight:700; margin-bottom:6px;">Rhythm sort order</div>' +
+  '    <div>' +
+  '      When sorting by rhythm, rhythms are ordered using a standard session-friendly list. Items with unknown or uncommon rhythms are placed after the known types.' +
+  '    </div>' +
+  '    <div style="margin-top:10px;">' +
+  '      <div style="opacity:0.95;">Rhythm sorting order:</div>' +
+  '      <div style="margin-top:6px; padding-left:10px; line-height:1.8;">' +
+  '        Reel, Hornpipe, Barndance, Strathspey, March, Jig, Slip Jig, Hop Jig, Slide, Polka, Waltz, Mazurka, Three-Two' +
+  '      </div>' +
+  '    </div>' +
+  '  </div>' +
+
+  '  <hr style="border:0; border-top:1px solid #ccc; margin:18px 0;">' +
+  '  <div style="text-align:center; font-size:15pt; font-weight:700; margin-bottom:10px;">Tip Jars</div>' +
+  '  <div style="text-align:center; margin-bottom:12px;">' +
+  '    If you find this tool useful, please consider buying me a beer<br/>' +
+  '    by tossing a few bucks into one of my virtual tip jars:' +
+  '  </div>' +
+  '  <div style="text-align:center; margin-bottom:10px;">' +
+  '    <div style="font-weight:700;">PayPal</div>' +
+  '    <div><a href="https://paypal.me/MichaelEskin" target="_blank" rel="noopener noreferrer">https://paypal.me/MichaelEskin</a></div>' +
+  '  </div>' +
+  '  <div style="text-align:center; margin-bottom:16px;">' +
+  '    <div style="font-weight:700;">Venmo</div>' +
+  '    <div>@MichaelEskin</div>' +
+  '  </div>' +
+
+  '  <hr style="border:0; border-top:1px solid #ccc; margin:18px 0;">' +
+  '  <div style="margin-bottom:6px; text-align:center;"><b>The source code for this tool is available on GitHub:</b></div>' +
+  '  <div style="margin-bottom:6px; text-align:center;">' +
+  '    <a href="https://github.com/seisiuneer/abctools/blob/main/tools/mustard_scraper.html" target="_blank" rel="noopener noreferrer">' +
+  '      mustard_scraper.html' +
+  '    </a>' +
+  '  </div>';
 
   const html =
     '<div style="font-family:Helvetica, Arial, sans-serif; font-size:12.5pt; line-height:1.6;">' +
     '  <div style="text-align:center; font-size:16pt; font-weight:700; margin-bottom:14px;">Instructions</div>' +
-    '<div style="' +
+    '  <div style="' +
       'width:100%;' +
-      'max-height:min(60vh, 520px);' +
-      'overflow:auto;' +
-      '-webkit-overflow-scrolling:touch;' +
       'padding:0 12px 2px 12px;' +
       'padding-left:30px;' +
       'box-sizing:border-box;' +
@@ -3107,7 +3872,7 @@ $("btnHelp").addEventListener("click", () => {
 
   DayPilot.Modal.alert(html, {
     theme: "modal_flat",
-    top: 50,
+    top: 25,
     scrollWithPage: false
   });
 });
@@ -3139,6 +3904,9 @@ function resetUIToDefaults() {
   $("memberSort").disabled = false;
 
   if ($("btnResort")) $("btnResort").disabled = true;
+
+  $("btnFindTune").disabled = false;
+  $("btnFindMember").disabled = false;
 }
 
 document.addEventListener("DOMContentLoaded", () => {
