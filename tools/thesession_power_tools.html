@@ -1742,13 +1742,11 @@ async function openSessionSearchDialog(kind) {
         appendStatus(`Selected tune: ${selectedName}`);
       }
       appendStatus(`Selected tune URL: ${selectedItem.url}`);
-      sendGoogleAnalytics("action", "find_tune_select");
     } else {
       if (selectedName) {
         appendStatus(`Selected member: ${selectedName}`);
       }
       appendStatus(`Selected member URL: ${selectedItem.url}`);
-      sendGoogleAnalytics("action", "find_member_select");
     }
   }
 }
@@ -3546,8 +3544,6 @@ $("btnFetch").addEventListener("click", async () => {
     } else {
       const sourceMode = result && result.memberSourceMode ? result.memberSourceMode : "submitted";
       const analyticsToken = getMemberSourceAnalyticsToken(sourceMode);
-
-      sendGoogleAnalytics("action", "user_" + analyticsToken);
 
       const itemsCount = result.memberItemsCount;
       const settingsCount = result.memberSettingsCount;
