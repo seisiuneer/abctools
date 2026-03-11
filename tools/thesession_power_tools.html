@@ -482,6 +482,10 @@
       padding:10px 0 12px 0;
     }
 
+    .modal_compact_buttons button{
+      margin: 0 8px;
+    }
+    
     .modal_compact_main button{
       background:#f0f3f8;
       color:#000;
@@ -673,6 +677,11 @@
     /* Navigation / open pages */
     .btn-import {
       background:#eef7f1;
+      border:1px solid #c9ded1;
+    }
+
+    .btn-thesession {
+      background:#f6e3ac;
       border:1px solid #c9ded1;
     }
 
@@ -945,13 +954,6 @@
 
     <div class="main">
       <div class="left">
-        <div class="card">
-          <div class="row">
-            <button class="btn-import" title="Opens the thesession.org tune search page in a new browser tab" id="btnTune">Open Tunes Search Page</button>
-            <button class="btn-import" title="Opens the thesession.org members search page in a new browser tab" id="btnMembers">Open Members Search Page</button>
-            <button class="btn-import" title="Launches the ABC Transcription Tools in a new browser tab" id="btnABCTools">ABC Transcription Tools</button>
-          </div>
-        </div>
 
         <div class="card">
 
@@ -1008,6 +1010,14 @@
             <button class="btn-edit" title="Copies the ABC tune settings to the clipboard" id="btnCopy" disabled>Copy ABC</button>
             <button class="btn-edit" title="Saves the ABC tune settings to a file" id="btnDownload" disabled>Download .abc File</button>
             <button class="btn-edit" title="Opens the ABC tune settings in the ABC Transcription Tools" id="btnOpenInTools" disabled>Open Results in the ABC Transcription Tools</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="row">
+            <button class="btn-thesession" title="Opens the thesession.org tune search page in a new browser tab" id="btnTune">Open Tunes Search Page</button>
+            <button class="btn-thesession" title="Opens the thesession.org members search page in a new browser tab" id="btnMembers">Open Members Search Page</button>
+            <button class="btn-import" title="Launches the ABC Transcription Tools in a new browser tab" id="btnABCTools">ABC Transcription Tools</button>
           </div>
         </div>
 
@@ -1396,7 +1406,7 @@ function buildMemberSearchRowHtml(item) {
   const bio = String((item && item.bio) || "").replace(/\s+/g, " ").trim();
   const bioShort = bio ? escapeHtml(bio.slice(0, 140) + (bio.length > 140 ? "…" : "")) : "";
 
-  let secondary = `member #${id}`;
+  let secondary = `Member #${id}`;
   if (bioShort) {
     secondary += ` — ${bioShort}`;
   }
@@ -3889,16 +3899,6 @@ const content =
   '  </div>' +
 
   '  <div style="margin-bottom:16px;">' +
-  '    <div style="font-weight:700; margin-bottom:6px;">Open related sites in a new tab</div>' +
-  '    <div>' +
-  '      You can open the thesession.org Tunes or Members search pages in a new browser tab by clicking the <b>Open Tunes Search Page</b> or <b>Open Members Search Page</b> buttons.' +
-  '    </div>' +
-  '    <div style="margin-top:6px;">' +
-  '      Click the <b>ABC Transcription Tools</b> button to launch the tools in a new browser tab.' +
-  '    </div>' +
-  '  </div>' +
-
-  '  <div style="margin-bottom:16px;">' +
   '    <div style="font-weight:700; margin-bottom:6px;">Title sorting rules</div>' +
   '    <div>' +
   '      When sorting by title (and when sub-sorting titles within a key or rhythm), common leading articles are ignored by moving them to the end. For example:' +
@@ -3921,6 +3921,16 @@ const content =
   '      <div style="margin-top:6px; padding-left:10px; line-height:1.8;">' +
   '        Reel, Hornpipe, Barndance, Strathspey, March, Jig, Slip Jig, Hop Jig, Slide, Polka, Waltz, Mazurka, Three-Two' +
   '      </div>' +
+  '    </div>' +
+  '  </div>' +
+  
+  '  <div style="margin-bottom:16px;">' +
+  '    <div style="font-weight:700; margin-bottom:6px;">Open related sites in a new tab</div>' +
+  '    <div>' +
+  '      You can open the thesession.org Tunes or Members search pages in a new browser tab by clicking the <b>Open Tunes Search Page</b> or <b>Open Members Search Page</b> buttons.' +
+  '    </div>' +
+  '    <div style="margin-top:6px;">' +
+  '      Click the <b>ABC Transcription Tools</b> button to launch the tools in a new browser tab.' +
   '    </div>' +
   '  </div>' +
 
