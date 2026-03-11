@@ -39,770 +39,837 @@
   <link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
   <link rel="manifest" href="https://michaeleskin.com/abctools/img/abc-manifest.json">
 
-<style>
-  /* ============================================================
-     Theme + base tokens
-     ============================================================ */
-  :root{
-    color-scheme: light;
+  <style>
+    /* ============================================================
+       Theme + base tokens
+       ============================================================ */
+    :root{
+      color-scheme: light;
 
-    /* Typography */
-    --fs-base: clamp(15px, 1.05vw + 12px, 17px);
-    --fs-small: var(--fs-base);
-    --fs-h2: clamp(20px, 1.2vw + 16px, 24px);
-    --fs-h3: clamp(17px, 1.05vw + 14px, 20px);
+      /* Typography */
+      --fs-base: clamp(15px, 1.05vw + 12px, 17px);
+      --fs-small: var(--fs-base);
+      --fs-h2: clamp(20px, 1.2vw + 16px, 24px);
+      --fs-h3: clamp(17px, 1.05vw + 14px, 20px);
 
-    /* Layout */
-    --page-pad: 32px;
-    --gap: 14px;
+      /* Layout */
+      --page-pad: 32px;
+      --gap: 14px;
 
-    /* Visual */
-    --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-    --bd: 1px solid rgba(127,127,127,.35);
-    --btn-bg: rgba(127,127,127,.12);
+      /* Visual */
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --bd: 1px solid rgba(127,127,127,.35);
+      --btn-bg: rgba(127,127,127,.12);
 
-    /* Fixed help bar */
-    --helpbar-pad-y: 12px;
-    --helpbar-est-height: 64px;
+      /* Fixed help bar */
+      --helpbar-pad-y: 12px;
+      --helpbar-est-height: 64px;
 
-    /* Card padding (keep in sync with .card padding below) */
-    --card-pad: 14px;
-  }
-
-  html, body{ height:100%; margin:0; }
-  *, *::before, *::after{ box-sizing:border-box; }
-
-  /* ============================================================
-     Page shell
-     ============================================================ */
-  body{
-    font-family: system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
-    font-size: var(--fs-base);
-    line-height: 1.35;
-    color:#000;
-    -webkit-text-size-adjust: 100%;
-
-    padding:
-      calc(var(--page-pad) + env(safe-area-inset-top))
-      calc(var(--page-pad) + env(safe-area-inset-right))
-      calc(var(--page-pad) + env(safe-area-inset-bottom))
-      calc(var(--page-pad) + env(safe-area-inset-left));
-
-    overflow:auto;
-  }
-
-  /* Common “can shrink” fix for flex children */
-  .app, .main, .left, .right, .card, .taWrap, .chartsWrap{ min-width:0; }
-
-  .app{
-    height: calc(100vh - (2 * var(--page-pad)));
-    display:flex;
-    flex-direction:column;
-    gap: var(--gap);
-    overflow:hidden;
-    min-height:0;
-
-    /* Reserve space for fixed Instructions bar */
-    padding-bottom: calc(var(--helpbar-est-height) + env(safe-area-inset-bottom));
-  }
-
-  @supports (height: 100dvh){
-    .app{
-      height: calc(
-        100dvh
-        - (2 * var(--page-pad))
-        - env(safe-area-inset-top)
-        - env(safe-area-inset-bottom)
-      );
+      /* Card padding (keep in sync with .card padding below) */
+      --card-pad: 14px;
     }
-  }
 
-  /* ============================================================
-     Typography helpers
-     ============================================================ */
-  h2{ margin:0 0 8px; font-size: var(--fs-h2); }
-  h3{ margin:0; font-size: var(--fs-h3); }
-  .card_label{ margin:0 0 12px; font-size: var(--fs-h3); }
+    html, body{ height:100%; margin:0; }
+    *, *::before, *::after{ box-sizing:border-box; }
 
-  p{ margin:0; }
-  .muted{ opacity:0.75; line-height:2.0; }
-  .small{ font-size: var(--fs-small); }
-
-  code{
-    background: rgba(127,127,127,.15);
-    padding:2px 5px;
-    border-radius:4px;
-    font-size:0.95em;
-  }
-
-  /* ============================================================
-     Main 2-column layout
-     ============================================================ */
-  .main{
-    flex:1;
-    display:flex;
-    gap: var(--gap);
-    overflow:hidden;
-    min-height:0;
-    min-width:0;
-  }
-
-  .left, .right{
-    flex:1;
-    display:flex;
-    flex-direction:column;
-    gap: var(--gap);
-    min-height:0;
-    min-width:0;
-  }
-
-  .left  { flex: 2 1 0; }
-  .right { flex: 3 1 0; }
-
-  /* Short-but-wide screens: left column scrolls; cards don't collapse */
-  .left{
-    overflow:auto;
-    -webkit-overflow-scrolling: touch;
-    padding-bottom: calc(var(--helpbar-est-height) + 16px);
-  }
-  .left > .card{ flex: 0 0 auto; }
-
-  /* Right side: output scrolls inside .chartsWrap */
-  .right{ overflow:hidden; }
-  .right > .card{ min-height:0; }
-
-  /* ============================================================
-     Cards + rows
-     ============================================================ */
-  .card{
-    border: var(--bd);
-    border-radius:12px;
-    padding: var(--card-pad);
-    overflow:hidden;
-    background: transparent;
-    min-width:0;
-  }
-
-  .row{
-    display:flex;
-    gap:12px;
-    flex-wrap:wrap;
-    align-items:center;
-    min-width:0;
-  }
-
-  /* ============================================================
-     Controls
-     ============================================================ */
-  input, textarea, button, select{
-    font:inherit;
-    color:inherit;
-    max-width:100%;
-  }
-
-  input[type="text"], input[type="number"], select{
-    -webkit-appearance:none;
-    appearance:none;
-    border: var(--bd);
-    background:#fff;
-    color:#000;
-    border-radius:10px;
-    padding:10px 12px;
-    line-height:1.2;
-    min-width:0;
-  }
-
-  select{
-    padding:10px 52px 10px 12px;
-    cursor:pointer;
-    background-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2024%2024%27%3E%3Cpolygon%20points%3D%276%2C9%2018%2C9%2012%2C17%27%20fill%3D%27%23000%27%2F%3E%3C%2Fsvg%3E");
-    background-repeat:no-repeat;
-    background-position:right 16px center;
-    background-size:22px 22px;
-  }
-
-  button{
-    -webkit-appearance:none;
-    appearance:none;
-    border:1px solid rgba(127,127,127,.35);
-    background: rgba(127,127,127,.12);
-    color:#000;
-    border-radius:12px;
-    padding:10px 14px;
-    line-height:1.15;
-    font-weight:600;
-    display:inline-flex;
-    align-items:center;
-    justify-content:center;
-    cursor:pointer;
-    user-select:none;
-    -webkit-tap-highlight-color:transparent;
-    min-width:0;
-    transition:
-      filter 0.12s ease,
-      transform 0.08s ease,
-      box-shadow 0.12s ease;
-  }
-
-  button:hover{
-    filter: brightness(0.97);
-    box-shadow: 0 1px 3px rgba(0,0,0,0.18);
-  }
-
-  button:active{
-    transform: translateY(1px);
-    box-shadow: 0 0 1px rgba(0,0,0,0.15);
-  }
-
-  button:disabled{
-    opacity:0.4;
-    cursor:default;
-    transform:none;
-    box-shadow:none;
-    filter:none;
-  }
-
-  .row button{
-    white-space:normal;
-    text-align:center;
-    flex: 1 1 180px;
-  }
-
-  /* Primary action */
-  .primary,
-  #generateBtn{
-    background:#e8f1ff;
-    border-color:#9dbaf2;
-    color:#000;
-  }
-
-  /* Copy / Save / Print */
-  #copyBtn,
-  #saveBtn,
-  #printBtn{
-    background:#f0f3f8;
-    border-color:#d3dbe7;
-    color:#000;
-  }
-
-  /* Clear */
-  #clearBtn{
-    background:#f3f3f3;
-    border-color:#d4d4d4;
-    color:#000;
-  }
-
-  /* Settings save/load/reset */
-  #saveSettingsBtn{
-    background:#eef7f1;
-    border-color:#c9ded1;
-    color:#000;
-  }
-
-  #loadSettingsBtn{
-    background:#e8f1ff;
-    border-color:#9dbaf2;
-    color:#000;
-  }
-
-  #resetSettingsBtn{
-    background:#f3eef8;
-    border-color:#d7cdea;
-    color:#000;
-  }
-
-  #btnHelp{
-    width:100%;
-    background:#f0f3f8;
-    border-color:#d3dbe7;
-    color:#000;
-  }
-
-  input[type="file"]::file-selector-button{
-    padding:10px 16px;
-    border-radius:12px;
-    border:1px solid rgba(127,127,127,.35);
-    background:#eef7f1;
-    color:#000;
-    font-weight:600;
-    cursor:pointer;
-    transition:
-      filter 0.12s ease,
-      transform 0.08s ease,
-      box-shadow 0.12s ease;
-  }
-
-  input[type="file"]::file-selector-button:hover{
-    filter: brightness(0.97);
-    box-shadow: 0 1px 3px rgba(0,0,0,0.18);
-  }
-
-  input[type="file"]::file-selector-button:active{
-    transform: translateY(1px);
-    box-shadow: 0 0 1px rgba(0,0,0,0.15);
-  }
-
-  /* ============================================================
-     ABC Input card: only this card flexes tall
-     ============================================================ */
-  #cardInput{
-    flex: 1 1 auto !important;
-    overflow:hidden;
-    display:flex;
-    flex-direction:column;
-    min-height: 260px !important;
-  }
-
-  #cardInput .taWrap{
-    flex: 1 1 auto;
-    min-height: 160px;
-  }
-
-  /* Sticky header inside cardInput (no extra horizontal padding) */
-  #cardInput > .row{
-    flex-wrap: nowrap;
-    gap: 18px !important; /* override inline */
-    position: sticky;
-    top: 0;
-    z-index: 5;
-    background: Canvas;
-    padding: 4px 0 10px;
-    margin-left: 0 !important; /* override inline */
-  }
-
-  #cardInput > .row h3{
-    white-space: nowrap;
-    flex: 0 0 auto;
-    min-width: 9ch;
-  }
-
-  #cardInput > .row > .row{
-    display:flex;
-    flex: 1 1 auto;
-    min-width:0;
-    overflow:hidden;
-    align-items:center;
-    gap: 10px !important; /* override inline */
-    justify-content:flex-start;
-  }
-
-  #cardInput > .row > .row .muted.small{
-    flex: 0 1 auto; /* do not grow */
-    min-width:0;
-    overflow:hidden;
-    text-overflow:ellipsis;
-    white-space:nowrap;
-    margin-right:0;
-  }
-
-  #fileIn{
-    flex: 0 0 auto !important;
-    min-width: 260px;
-    max-width: 100%;
-  }
-
-  /* If your HTML still has inline margin-top on .taWrap, this neutralizes it */
-  #cardInput .taWrap{ margin-top: 0 !important; }
-
-  /* ============================================================
-     Text areas + output
-     ============================================================ */
-  .taWrap{
-    flex:1;
-    min-height:0;
-    overflow:hidden;
-    border: var(--bd);
-    background: Canvas;
-    display:flex;
-    padding:1px;
-  }
-
-  textarea{
-    flex:1 1 auto;
-    min-height:0;
-    padding:12px;
-    border:0;
-    background:transparent;
-    resize:none;
-    overflow:auto;
-    font-family: var(--mono);
-    font-size:0.98em;
-    line-height:1.35;
-    overflow-wrap:anywhere;
-    -webkit-overflow-scrolling: touch;
-    display:block;
-  }
-
-  .chartsWrap{
-    flex:1;
-    min-height:0;
-    border-radius:10px;
-    overflow:auto;
-    border: var(--bd);
-    background: Canvas;
-    padding:12px;
-    -webkit-overflow-scrolling: touch;
-  }
-
-  .chart{
-    border: var(--bd);
-    border-radius:12px;
-    padding:14px;
-    background:#fff;
-    margin:0 0 12px;
-    overflow:hidden;
-  }
-  .chart:last-child{ margin-bottom:0; }
-
-  .chart h3{
-    margin:0 0 10px;
-    font-size: clamp(18px, 1vw + 16px, 22px);
-    font-family: var(--chart-mono, var(--mono));
-    font-weight: var(--chart-title-weight, 700);
-  }
-
-  /* Title links should look like normal text */
-  .chart h3 a,
-  .chart h3 a:visited,
-  .chart h3 a:hover,
-  .chart h3 a:active,
-  .chart h3 a:focus {
-    color: inherit;
-    text-decoration: none;
-  }
-  .chart pre{
-    margin:0;
-    font-family: var(--chart-mono, var(--mono));
-    font-weight: var(--chart-mono-weight, 400);
-    white-space: pre;
-    tab-size: 2;
-    font-size: 18px;
-    line-height: 1.35;
-    overflow-x:auto;
-    padding-bottom:6px;
-  }
-
-  .status{
-    white-space:pre-wrap;
-    font-family: var(--mono);
-    overflow:auto;
-    max-height:240px;
-    font-size:0.95em;
-    line-height:1.45;
-    overflow-wrap:anywhere;
-    word-break:break-word;
-    -webkit-overflow-scrolling: touch;
-    opacity:0.85;
-  }
-
-  .errorText{ color:#b00020; opacity:1; }
-
-  /* ============================================================
-     Fixed bottom help bar
-     ============================================================ */
-  #cardHelp{
-    position:fixed;
-    left:0;
-    right:0;
-    bottom:0;
-    z-index:1000;
-    margin:0;
-    border-radius:0;
-    border-left:none;
-    border-right:none;
-    border-bottom:none;
-    background: Canvas;
-
-    padding:
-      var(--helpbar-pad-y)
-      calc(var(--page-pad) + env(safe-area-inset-right))
-      calc(var(--helpbar-pad-y) + env(safe-area-inset-bottom))
-      calc(var(--page-pad) + env(safe-area-inset-left));
-  }
-
-  .exampleLink{
-    color: inherit;
-    text-decoration: underline;
-    cursor: pointer;
-    word-break: break-all;
-  }
-
-  #rowPageNumbers{
-    flex-wrap: wrap;
-    gap: 10px;
-  }
-  #rowPageNumbers label{
-    white-space: nowrap;
-  }
-  #rowPageNumbers select{
-    min-width: 160px;
-  }
-
-  /* ============================================================
-     DayPilot modal theme
-     ============================================================ */
-  .modal_flat_background{ background-color:#000; opacity:0.4; }
-  .modal_flat_main{ border:1px solid #333; box-shadow:0 0 15px -2px rgba(0,0,0,0.75); }
-  .modal_flat_main, .modal_flat_main input, .modal_flat_main button{ font-size:16px; }
-  .modal_flat_main input, .modal_flat_main button{ padding:6px; box-sizing:border-box; }
-  .modal_flat_inner{ padding:16px; background:#fff; color:#000; }
-  .modal_flat_content{ font-family: Helvetica, Arial, sans-serif; margin:20px 0; }
-  .modal_flat_input{ margin:20px 0; }
-  .modal_flat_buttons{
-    text-align:center;
-    margin-top:40px;
-    padding-bottom:20px;
-  }
-
-  .modal_flat_main button{
-    background:#f0f3f8;
-    color:#000;
-    border:1px solid #d3dbe7;
-    padding:10px 20px;
-    cursor:pointer;
-    outline:none;
-    width:100px;
-    border-radius:10px;
-    font-weight:600;
-    transition:
-      filter 0.12s ease,
-      transform 0.08s ease,
-      box-shadow 0.12s ease;
-  }
-
-  .modal_flat_main button:hover{
-    filter: brightness(0.97);
-    box-shadow: 0 1px 3px rgba(0,0,0,0.18);
-  }
-
-  .modal_flat_main button:active{
-    transform: translateY(1px);
-    box-shadow: 0 0 1px rgba(0,0,0,0.15);
-  }
-
-  .modal_flat_buttons .modal_flat_ok{
-    background:#e8f1ff !important;
-    border-color:#9dbaf2 !important;
-  }
-
-  .modal_flat_buttons .modal_flat_cancel{
-    background:#f3f3f3 !important;
-    border-color:#d4d4d4 !important;
-  }
-
-  .modal_flat_cancel{ margin-left:6px; }
-
-  /* Modal width on desktop */
-  @media (min-width: 721px){
-    .modal_flat_main{
-      width: min(740px, calc(100vw - 80px)) !important;
-      max-width: min(740px, calc(100vw - 80px)) !important;
-    }
-  }
-
-  /* ============================================================
-     Responsive (stacked layout)
-     ============================================================ */
-  @media (max-width: 980px){
+    /* ============================================================
+       Page shell
+       ============================================================ */
     body{
+      font-family: system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+      font-size: var(--fs-base);
+      line-height: 1.35;
+      color:#000;
+      -webkit-text-size-adjust: 100%;
+
+      padding:
+        calc(var(--page-pad) + env(safe-area-inset-top))
+        calc(var(--page-pad) + env(safe-area-inset-right))
+        calc(var(--page-pad) + env(safe-area-inset-bottom))
+        calc(var(--page-pad) + env(safe-area-inset-left));
+
       overflow:auto;
-      -webkit-overflow-scrolling: touch;
-      padding-bottom: calc(var(--page-pad) + env(safe-area-inset-bottom) + 12px);
     }
 
+    /* Common “can shrink” fix for flex children */
+    .app, .main, .left, .right, .card, .taWrap, .chartsWrap{ min-width:0; }
+
     .app{
-      height:auto;
-      overflow:visible;
+      height: calc(100vh - (2 * var(--page-pad)));
+      display:flex;
+      flex-direction:column;
+      gap: var(--gap);
+      overflow:hidden;
+      min-height:0;
+
+      /* Reserve space for fixed Instructions bar */
       padding-bottom: calc(var(--helpbar-est-height) + env(safe-area-inset-bottom));
     }
 
+    @supports (height: 100dvh){
+      .app{
+        height: calc(
+          100dvh
+          - (2 * var(--page-pad))
+          - env(safe-area-inset-top)
+          - env(safe-area-inset-bottom)
+        );
+      }
+    }
+
+    /* ============================================================
+       Typography helpers
+       ============================================================ */
+    h2{ margin:0 0 8px; font-size: var(--fs-h2); }
+    h3{ margin:0; font-size: var(--fs-h3); }
+    .card_label{ margin:0 0 12px; font-size: var(--fs-h3); }
+
+    p{ margin:0; }
+    .muted{ opacity:0.75; line-height:2.0; }
+    .small{ font-size: var(--fs-small); }
+
+    code{
+      background: rgba(127,127,127,.15);
+      padding:2px 5px;
+      border-radius:4px;
+      font-size:0.95em;
+    }
+
+    /* ============================================================
+       Main 2-column layout
+       ============================================================ */
     .main{
-      flex-direction:column;
-      overflow:visible;
-      min-height:auto;
+      flex:1;
+      display:flex;
+      gap: var(--gap);
+      overflow:hidden;
+      min-height:0;
+      min-width:0;
     }
 
     .left, .right{
-      overflow:visible;
-      min-height:auto;
-      padding-bottom:0;
+      flex:1;
+      display:flex;
+      flex-direction:column;
+      gap: var(--gap);
+      min-height:0;
+      min-width:0;
     }
 
-    .taWrap{ height: 48vh; min-height: 320px; }
-    .chartsWrap{ height: 55vh; min-height: 320px; }
+    .left  { flex: 2 1 0; }
+    .right { flex: 3 1 0; }
 
-    #instructions_div{
-      margin-bottom: calc(env(safe-area-inset-bottom) + var(--page-pad));
+    /* Short-but-wide screens: left column scrolls; cards don't collapse */
+    .left{
+      overflow:auto;
+      -webkit-overflow-scrolling: touch;
+      padding-bottom: calc(var(--helpbar-est-height) + 16px);
     }
-
     .left > .card{ flex: 0 0 auto; }
-    #cardInput{ flex: 0 0 auto !important; min-height: auto !important; }
-  }
 
-  @media (max-width: 720px){
-    .row{ gap:10px; }
-    .row button{ flex-basis:100%; }
+    /* Right side: output scrolls inside .chartsWrap */
+    .right{ overflow:hidden; }
+    .right > .card{ min-height:0; }
 
-    .taWrap{ height: 52vh; min-height: 300px; }
-    .chartsWrap{ height: 60vh; min-height: 300px; }
-
-    #instructions_div{
-      margin-bottom: calc(env(safe-area-inset-bottom) + var(--page-pad));
+    /* ============================================================
+       Cards + rows
+       ============================================================ */
+    .card{
+      border: var(--bd);
+      border-radius:12px;
+      padding: var(--card-pad);
+      overflow:hidden;
+      background: transparent;
+      min-width:0;
     }
 
-    .modal_flat_main{
-      width: calc(100vw - 24px) !important;
-      max-width: calc(100vw - 24px) !important;
-      max-height: calc(100dvh - 24px) !important;
-      overflow: hidden !important;
+    .row{
+      display:flex;
+      gap:12px;
+      flex-wrap:wrap;
+      align-items:center;
+      min-width:0;
     }
 
-    .modal_flat_inner{
-      max-height: calc(100dvh - 24px) !important;
-      overflow: auto !important;
+    /* ============================================================
+       Controls
+       ============================================================ */
+    input, textarea, button, select{
+      font:inherit;
+      color:inherit;
+      max-width:100%;
+    }
+
+    input[type="text"], input[type="number"], select{
+      -webkit-appearance:none;
+      appearance:none;
+      border: var(--bd);
+      background:#fff;
+      color:#000;
+      border-radius:10px;
+      padding:10px 12px;
+      line-height:1.2;
+      min-width:0;
+    }
+
+    select{
+      padding:10px 52px 10px 12px;
+      cursor:pointer;
+      background-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2024%2024%27%3E%3Cpolygon%20points%3D%276%2C9%2018%2C9%2012%2C17%27%20fill%3D%27%23000%27%2F%3E%3C%2Fsvg%3E");
+      background-repeat:no-repeat;
+      background-position:right 16px center;
+      background-size:22px 22px;
+    }
+
+    button{
+      -webkit-appearance:none;
+      appearance:none;
+      border:1px solid rgba(127,127,127,.35);
+      background: rgba(127,127,127,.12);
+      color:#000;
+      border-radius:12px;
+      padding:10px 14px;
+      line-height:1.15;
+      font-weight:600;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      cursor:pointer;
+      user-select:none;
+      -webkit-tap-highlight-color:transparent;
+      min-width:0;
+      transition:
+        filter 0.12s ease,
+        transform 0.08s ease,
+        box-shadow 0.12s ease;
+    }
+
+    button:hover{
+      filter: brightness(0.97);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.18);
+    }
+
+    button:active{
+      transform: translateY(1px);
+      box-shadow: 0 0 1px rgba(0,0,0,0.15);
+    }
+
+    button:disabled{
+      opacity:0.4;
+      cursor:default;
+      transform:none;
+      box-shadow:none;
+      filter:none;
+    }
+
+    .row button{
+      white-space:normal;
+      text-align:center;
+      flex: 1 1 180px;
+    }
+
+    /* Primary action */
+    .primary,
+    #generateBtn{
+      background:#e8f1ff;
+      border-color:#9dbaf2;
+      color:#000;
+    }
+
+    /* Copy / Save / Print */
+    #copyBtn,
+    #saveBtn,
+    #printBtn{
+      background:#f0f3f8;
+      border-color:#d3dbe7;
+      color:#000;
+    }
+
+    /* Clear */
+    #clearBtn{
+      background:#f3f3f3;
+      border-color:#d4d4d4;
+      color:#000;
+    }
+
+    /* Settings save/load/reset */
+    #saveSettingsBtn{
+      background:#eef7f1;
+      border-color:#c9ded1;
+      color:#000;
+    }
+
+    #loadSettingsBtn{
+      background:#e8f1ff;
+      border-color:#9dbaf2;
+      color:#000;
+    }
+
+    #resetSettingsBtn{
+      background:#f3eef8;
+      border-color:#d7cdea;
+      color:#000;
+    }
+
+    #btnHelp{
+      width:100%;
+      background:#f0f3f8;
+      border-color:#d3dbe7;
+      color:#000;
+    }
+
+    input[type="file"]::file-selector-button{
+      padding:10px 16px;
+      border-radius:12px;
+      border:1px solid rgba(127,127,127,.35);
+      background:#eef7f1;
+      color:#000;
+      font-weight:600;
+      cursor:pointer;
+      transition:
+        filter 0.12s ease,
+        transform 0.08s ease,
+        box-shadow 0.12s ease;
+    }
+
+    input[type="file"]::file-selector-button:hover{
+      filter: brightness(0.97);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.18);
+    }
+
+    input[type="file"]::file-selector-button:active{
+      transform: translateY(1px);
+      box-shadow: 0 0 1px rgba(0,0,0,0.15);
+    }
+
+    /* ============================================================
+       ABC Input card: only this card flexes tall
+       ============================================================ */
+    #cardInput{
+      flex: 1 1 auto !important;
+      overflow:hidden;
+      display:flex;
+      flex-direction:column;
+      min-height: 260px !important;
+    }
+
+    #cardInput .taWrap{
+      flex: 1 1 auto;
+      min-height: 160px;
+    }
+
+    /* Sticky header inside cardInput (no extra horizontal padding) */
+    #cardInput > .row{
+      flex-wrap: nowrap;
+      gap: 18px !important; /* override inline */
+      position: sticky;
+      top: 0;
+      z-index: 5;
+      background: Canvas;
+      padding: 4px 0 10px;
+      margin-left: 0 !important; /* override inline */
+    }
+
+    #cardInput > .row h3{
+      white-space: nowrap;
+      flex: 0 0 auto;
+      min-width: 9ch;
+    }
+
+    #cardInput > .row > .row{
+      display:flex;
+      flex: 1 1 auto;
+      min-width:0;
+      overflow:hidden;
+      align-items:center;
+      gap: 10px !important; /* override inline */
+      justify-content:flex-start;
+    }
+
+    #cardInput > .row > .row .muted.small{
+      flex: 0 1 auto; /* do not grow */
+      min-width:0;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      white-space:nowrap;
+      margin-right:0;
+    }
+
+    #fileIn{
+      flex: 0 0 auto !important;
+      min-width: 260px;
+      max-width: 100%;
+    }
+
+    /* If your HTML still has inline margin-top on .taWrap, this neutralizes it */
+    #cardInput .taWrap{ margin-top: 0 !important; }
+
+    /* ============================================================
+       Text areas + output
+       ============================================================ */
+    .taWrap{
+      flex:1;
+      min-height:0;
+      overflow:hidden;
+      border: var(--bd);
+      background: Canvas;
+      display:flex;
+      padding:1px;
+    }
+
+    textarea{
+      flex:1 1 auto;
+      min-height:0;
+      padding:12px;
+      border:0;
+      background:transparent;
+      resize:none;
+      overflow:auto;
+      font-family: var(--mono);
+      font-size:0.98em;
+      line-height:1.35;
+      overflow-wrap:anywhere;
+      -webkit-overflow-scrolling: touch;
+      display:block;
+    }
+
+    .chartsWrap{
+      flex:1;
+      min-height:0;
+      border-radius:10px;
+      overflow:auto;
+      border: var(--bd);
+      background: Canvas;
+      padding:12px;
       -webkit-overflow-scrolling: touch;
     }
 
+    .chart{
+      border: var(--bd);
+      border-radius:12px;
+      padding:14px;
+      background:#fff;
+      margin:0 0 12px;
+      overflow:hidden;
+    }
+    .chart:last-child{ margin-bottom:0; }
+
+    .chart h3{
+      margin:0 0 10px;
+      font-size: clamp(18px, 1vw + 16px, 22px);
+      font-family: var(--chart-mono, var(--mono));
+      font-weight: var(--chart-title-weight, 700);
+    }
+
+    /* Title links should look like normal text */
+    .chart h3 a,
+    .chart h3 a:visited,
+    .chart h3 a:hover,
+    .chart h3 a:active,
+    .chart h3 a:focus {
+      color: inherit;
+      text-decoration: none;
+    }
+    .chart pre{
+      margin:0;
+      font-family: var(--chart-mono, var(--mono));
+      font-weight: var(--chart-mono-weight, 400);
+      white-space: pre;
+      tab-size: 2;
+      font-size: 18px;
+      line-height: 1.35;
+      overflow-x:auto;
+      padding-bottom:6px;
+    }
+
+    .status{
+      white-space:pre-wrap;
+      font-family: var(--mono);
+      overflow:auto;
+      max-height:240px;
+      font-size:0.95em;
+      line-height:1.45;
+      overflow-wrap:anywhere;
+      word-break:break-word;
+      -webkit-overflow-scrolling: touch;
+      opacity:0.85;
+    }
+
+    .errorText{ color:#b00020; opacity:1; }
+
+    /* ============================================================
+       Fixed bottom help bar
+       ============================================================ */
+    #cardHelp{
+      position:fixed;
+      left:0;
+      right:0;
+      bottom:0;
+      z-index:1000;
+      margin:0;
+      border-radius:0;
+      border-left:none;
+      border-right:none;
+      border-bottom:none;
+      background: Canvas;
+
+      padding:
+        var(--helpbar-pad-y)
+        calc(var(--page-pad) + env(safe-area-inset-right))
+        calc(var(--helpbar-pad-y) + env(safe-area-inset-bottom))
+        calc(var(--page-pad) + env(safe-area-inset-left));
+    }
+
+    .exampleLink{
+      color: inherit;
+      text-decoration: underline;
+      cursor: pointer;
+      word-break: break-all;
+    }
+
+    #rowPageNumbers{
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    #rowPageNumbers label{
+      white-space: nowrap;
+    }
+    #rowPageNumbers select{
+      min-width: 160px;
+    }
+
+    /* ============================================================
+       DayPilot modal theme
+       ============================================================ */
+    .modal_flat_background{ background-color:#000; opacity:0.4; }
+    .modal_flat_main{ border:1px solid #333; box-shadow:0 0 15px -2px rgba(0,0,0,0.75); }
+    .modal_flat_main, .modal_flat_main input, .modal_flat_main button{ font-size:16px; }
+    .modal_flat_main input, .modal_flat_main button{ padding:6px; box-sizing:border-box; }
+    .modal_flat_inner{ padding:16px; background:#fff; color:#000; }
+    .modal_flat_content{ font-family: Helvetica, Arial, sans-serif; margin:20px 0; }
+    .modal_flat_input{ margin:20px 0; }
     .modal_flat_buttons{
       text-align:center;
       margin-top:40px;
       padding-bottom:20px;
     }
-  }
 
-  /* ============================================================
-     Large/tall screens: taller ABC input area
-     ============================================================ */
-  @media (min-width: 1100px) and (min-height: 800px){
-    #cardInput{ min-height: 340px !important; }
-    #cardInput .taWrap{ min-height: 240px; }
-  }
-
-  @media (min-width: 1100px) and (min-height: 950px){
-    #cardInput{ min-height: 400px !important; }
-    #cardInput .taWrap{ min-height: 300px; }
-  }
-
-  /* ============================================================
-     Print
-     ============================================================ */
-  @media print{
-    body{
-      margin:0;
-      padding:0;
-      overflow:visible !important;
+    .modal_flat_main button{
+      background:#f0f3f8;
+      color:#000;
+      border:1px solid #d3dbe7;
+      padding:10px 20px;
+      cursor:pointer;
+      outline:none;
+      width:100px;
+      border-radius:10px;
+      font-weight:600;
+      transition:
+        filter 0.12s ease,
+        transform 0.08s ease,
+        box-shadow 0.12s ease;
     }
 
-    .app{
-      height:auto;
-      overflow:visible !important;
-      padding-bottom:0 !important;
+    .modal_flat_main button:hover{
+      filter: brightness(0.97);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.18);
     }
 
-    .main{ display:block !important; }
-
-    .noprint,
-    #cardControls,
-    #cardInput,
-    #cardStatus,
-    #cardHelp{
-      display:none !important;
+    .modal_flat_main button:active{
+      transform: translateY(1px);
+      box-shadow: 0 0 1px rgba(0,0,0,0.15);
     }
 
-    .left{ display:none !important; }
-
-    .right{
-      width:100% !important;
-      display:block !important;
+    .modal_flat_buttons .modal_flat_ok{
+      background:#e8f1ff !important;
+      border-color:#9dbaf2 !important;
     }
 
-    .right > .card{
-      border:none !important;
-      padding:0 !important;
-      background:transparent !important;
-      overflow:visible !important;
+    .modal_flat_buttons .modal_flat_cancel{
+      background:#f3f3f3 !important;
+      border-color:#d4d4d4 !important;
     }
 
-    .right > .card > .row{ display:none !important; }
+    .modal_flat_cancel{ margin-left:6px; }
 
-    #out.chartsWrap,
-    .chartsWrap{
-      border:none !important;
-      padding:0 !important;
-      margin:0 !important;
-      overflow:visible !important;
-      background:transparent !important;
+    /* Modal width on desktop */
+    @media (min-width: 721px){
+      .modal_flat_main{
+        width: min(740px, calc(100vw - 80px)) !important;
+        max-width: min(740px, calc(100vw - 80px)) !important;
+      }
     }
 
-    .chart{
-      border:none !important;
-      padding:0 !important;
-      background:transparent !important;
-      overflow:visible !important;
-      break-inside: avoid;
-      page-break-inside: avoid;
+    /* ============================================================
+       Responsive (stacked layout)
+       ============================================================ */
+    @media (max-width: 980px){
+      body{
+        overflow:auto;
+        -webkit-overflow-scrolling: touch;
+        padding-bottom: calc(var(--page-pad) + env(safe-area-inset-bottom) + 12px);
+      }
+
+      .app{
+        height:auto;
+        overflow:visible;
+        padding-bottom: calc(var(--helpbar-est-height) + env(safe-area-inset-bottom));
+      }
+
+      .main{
+        flex-direction:column;
+        overflow:visible;
+        min-height:auto;
+      }
+
+      .left, .right{
+        overflow:visible;
+        min-height:auto;
+        padding-bottom:0;
+      }
+
+      .taWrap{ height: 48vh; min-height: 320px; }
+      .chartsWrap{ height: 55vh; min-height: 320px; }
+
+      #instructions_div{
+        margin-bottom: calc(env(safe-area-inset-bottom) + var(--page-pad));
+      }
+
+      .left > .card{ flex: 0 0 auto; }
+      #cardInput{ flex: 0 0 auto !important; min-height: auto !important; }
     }
 
-    .chart pre{
-      border:none !important;
-      padding:0 !important;
-      margin:0 !important;
-      overflow:visible !important;
-      background:transparent !important;
+    @media (max-width: 720px){
+      .row{ gap:10px; }
+      .row button{ flex-basis:100%; }
+
+      .taWrap{ height: 52vh; min-height: 300px; }
+      .chartsWrap{ height: 60vh; min-height: 300px; }
+
+      #instructions_div{
+        margin-bottom: calc(env(safe-area-inset-bottom) + var(--page-pad));
+      }
+
+      .modal_flat_main{
+        width: calc(100vw - 24px) !important;
+        max-width: calc(100vw - 24px) !important;
+        max-height: calc(100dvh - 24px) !important;
+        overflow: hidden !important;
+      }
+
+      .modal_flat_inner{
+        max-height: calc(100dvh - 24px) !important;
+        overflow: auto !important;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      .modal_flat_buttons{
+        text-align:center;
+        margin-top:40px;
+        padding-bottom:20px;
+      }
     }
 
-    *::-webkit-scrollbar{ width:0 !important; height:0 !important; }
-
-    body:not(.oneTunePerPagePrint) .chart{ margin:0 0 var(--print-tune-gap, 30pt) 0 !important; }
-    body:not(.oneTunePerPagePrint) .chart:last-child{ margin-bottom:0 !important; }
-
-    body.oneTunePerPagePrint .chart{
-      margin:0 !important;
-      break-after:page;
-      page-break-after:always;
+    /* ============================================================
+       Large/tall screens: taller ABC input area
+       ============================================================ */
+    @media (min-width: 1100px) and (min-height: 800px){
+      #cardInput{ min-height: 340px !important; }
+      #cardInput .taWrap{ min-height: 240px; }
     }
 
-    body.oneTunePerPagePrint .chart:last-child{
-      break-after:auto;
-      page-break-after:auto;
+    @media (min-width: 1100px) and (min-height: 950px){
+      #cardInput{ min-height: 400px !important; }
+      #cardInput .taWrap{ min-height: 300px; }
     }
 
-    .chart h3{
-      margin:0 0 12pt 0;
-    }
-  }
+    /* ============================================================
+       Print
+       ============================================================ */
+    @media print{
+      body{
+        margin:0;
+        padding:0;
+        overflow:visible !important;
+      }
 
-  @media (min-width: 981px) and (max-width: 1099px){
-    #cardInput{ min-height: 340px !important; }
-    #cardInput .taWrap{ min-height: 240px; }
-  }
+      .app{
+        height:auto;
+        overflow:visible !important;
+        padding-bottom:0 !important;
+      }
 
-  @media (max-width: 980px){
-    /* keep input roughly consistent instead of 48vh */
-    .taWrap{
-      height: clamp(220px, 28vh, 300px);
-      min-height: 220px;
+      .main{ display:block !important; }
+
+      .noprint,
+      #cardControls,
+      #cardInput,
+      #cardStatus,
+      #cardHelp{
+        display:none !important;
+      }
+
+      .left{ display:none !important; }
+
+      .right{
+        width:100% !important;
+        display:block !important;
+      }
+
+      .right > .card{
+        border:none !important;
+        padding:0 !important;
+        background:transparent !important;
+        overflow:visible !important;
+      }
+
+      .right > .card > .row{ display:none !important; }
+
+      #out.chartsWrap,
+      .chartsWrap{
+        border:none !important;
+        padding:0 !important;
+        margin:0 !important;
+        overflow:visible !important;
+        background:transparent !important;
+      }
+
+      .chart{
+        border:none !important;
+        padding:0 !important;
+        background:transparent !important;
+        overflow:visible !important;
+        break-inside: avoid;
+        page-break-inside: avoid;
+      }
+
+      .chart pre{
+        border:none !important;
+        padding:0 !important;
+        margin:0 !important;
+        overflow:visible !important;
+        background:transparent !important;
+      }
+
+      *::-webkit-scrollbar{ width:0 !important; height:0 !important; }
+
+      body:not(.oneTunePerPagePrint) .chart{ margin:0 0 var(--print-tune-gap, 30pt) 0 !important; }
+      body:not(.oneTunePerPagePrint) .chart:last-child{ margin-bottom:0 !important; }
+
+      body.oneTunePerPagePrint .chart{
+        margin:0 !important;
+        break-after:page;
+        page-break-after:always;
+      }
+
+      body.oneTunePerPagePrint .chart:last-child{
+        break-after:auto;
+        page-break-after:auto;
+      }
+
+      .chart h3{
+        margin:0 0 12pt 0;
+      }
     }
 
-    /* charts can still be bigger than input, but not huge */
-    .chartsWrap{
-      height: clamp(320px, 45vh, 520px);
-      min-height: 320px;
-    }
-  }
-
-  @media (max-width: 720px){
-    .taWrap{
-      height: clamp(220px, 30vh, 300px);
-      min-height: 220px;
+    @media (min-width: 981px) and (max-width: 1099px){
+      #cardInput{ min-height: 340px !important; }
+      #cardInput .taWrap{ min-height: 240px; }
     }
 
-    .chartsWrap{
-      height: clamp(340px, 50vh, 560px);
-      min-height: 340px;
+    @media (max-width: 980px){
+      /* keep input roughly consistent instead of 48vh */
+      .taWrap{
+        height: clamp(220px, 28vh, 300px);
+        min-height: 220px;
+      }
+
+      /* charts can still be bigger than input, but not huge */
+      .chartsWrap{
+        height: clamp(320px, 45vh, 520px);
+        min-height: 320px;
+      }
     }
-  }
-</style>
+
+    @media (max-width: 720px){
+      .taWrap{
+        height: clamp(220px, 30vh, 300px);
+        min-height: 220px;
+      }
+
+      .chartsWrap{
+        height: clamp(340px, 50vh, 560px);
+        min-height: 340px;
+      }
+    }
+
+    .heroCard{
+      position: relative;
+      border: 1px solid rgba(127,127,127,.22);
+      border-radius: 18px;
+      padding: 18px 20px 16px 20px;
+      background:
+        linear-gradient(180deg, rgba(244,248,255,0.95) 0%, rgba(252,252,252,0.98) 100%);
+      overflow: hidden;
+    }
+
+    .heroTop{
+      margin-bottom: 14px;
+    }
+
+    .heroBadge{
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 5px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: #4a5563;
+      background: rgba(255,255,255,0.75);
+      border: 1px solid rgba(127,127,127,.18);
+      margin-bottom: 10px;
+    }
+
+    .heroTitle{
+      margin: 0;
+      font-size: clamp(24px, 1.4vw + 18px, 32px);
+      line-height: 1.12;
+      letter-spacing: -0.02em;
+    }
+
+    .heroText{
+      margin: 10px 0 0 0;
+      max-width: 72ch;
+      color: rgba(0,0,0,0.74);
+      line-height: 1.55;
+      font-size: clamp(14.5px, 0.5vw + 13px, 16.5px);
+    }
+
+    @media (max-width: 900px){
+      .heroExamples{
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 720px){
+      .heroCard{
+        padding: 16px 14px 14px 14px;
+        border-radius: 16px;
+      }
+
+      .heroTitle{
+        font-size: clamp(22px, 5vw, 28px);
+      }
+
+      .heroText{
+        max-width: none;
+      }
+    }
+
+  </style>
 
   <style id="pageStyle">@page { size: letter portrait; margin: 0.5in; }</style>
   
@@ -819,12 +886,14 @@
 <body>
 <div class="app">
 
-  <div class="noprint">
-    <h2>ABC Chord Chart Generator</h2>
-    <p class="muted small" style="margin-top:6px">
-      This tool can generate, copy, save, and print chord charts for one or more ABC tunes.<br/>
-      Type or paste some ABC tunes, or open an ABC file, then click <strong>Generate Charts</strong>.
-    </p>
+  <div class="noprint heroCard">
+    <div class="heroTop">
+      <h2 class="heroTitle">ABC Chord Chart Generator</h2>
+      <p class="heroText">
+        This tool can generate, copy, save, and print chord charts for one or more ABC tunes.<br/>
+        Type or paste some ABC tunes, or open an ABC file, then click <strong>Generate Charts</strong>.      
+      </p>
+    </div>
   </div>
 
   <div class="main">

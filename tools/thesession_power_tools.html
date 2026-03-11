@@ -925,6 +925,124 @@
       white-space:nowrap;
     }
   
+    .heroCard{
+      position: relative;
+      border: 1px solid rgba(127,127,127,.22);
+      border-radius: 18px;
+      padding: 18px 20px 16px 20px;
+      background:
+        linear-gradient(180deg, rgba(244,248,255,0.95) 0%, rgba(252,252,252,0.98) 100%);
+      overflow: hidden;
+    }
+
+    .heroTop{
+      margin-bottom: 14px;
+    }
+
+    .heroBadge{
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 5px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: #4a5563;
+      background: rgba(255,255,255,0.75);
+      border: 1px solid rgba(127,127,127,.18);
+      margin-bottom: 10px;
+    }
+
+    .heroTitle{
+      margin: 0;
+      font-size: clamp(24px, 1.4vw + 18px, 32px);
+      line-height: 1.12;
+      letter-spacing: -0.02em;
+    }
+
+    .heroText{
+      margin: 10px 0 0 0;
+      max-width: 72ch;
+      color: rgba(0,0,0,0.74);
+      line-height: 1.55;
+      font-size: clamp(14.5px, 0.5vw + 13px, 16.5px);
+    }
+
+    .heroExamples{
+      margin-top:14px;
+    }
+
+    .heroExampleBlock{
+      padding:14px 16px;
+      border-radius:14px;
+      background:rgba(255,255,255,0.72);
+      border:1px solid rgba(127,127,127,.16);
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+    }
+
+    .heroExampleRow{
+      display:flex;
+      align-items:center;
+      flex-wrap:wrap;
+      gap:10px;
+    }
+
+    .heroExampleLabel{
+      font-size:13px;
+      font-weight:700;
+      color:rgba(0,0,0,0.65);
+      min-width:120px;
+    }
+
+    .exampleChip{
+      display:inline-flex;
+      align-items:center;
+      padding:8px 12px;
+      border-radius:12px;
+      text-decoration:none;
+      color:#1f3557;
+      background:#ffffff;
+      border:1px solid rgba(157,186,242,.7);
+      font-weight:500;
+      font-size:14px;
+      transition:all .12s ease;
+    }
+
+    .exampleChip:hover{
+      background:#f7fbff;
+      box-shadow:0 2px 5px rgba(0,0,0,.08);
+      transform:translateY(-1px);
+    }
+
+    .exampleChip:active{
+      transform: translateY(0);
+    }
+
+    @media (max-width: 900px){
+      .heroExamples{
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 720px){
+      .heroCard{
+        padding: 16px 14px 14px 14px;
+        border-radius: 16px;
+      }
+
+      .heroTitle{
+        font-size: clamp(22px, 5vw, 28px);
+      }
+
+      .heroText{
+        max-width: none;
+      }
+    }
+
   </style>
 
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-VM0N9HL3MK"></script>
@@ -939,17 +1057,45 @@
 
 <body>
   <div class="app">
-    <div>
-      <h2>thesession.org Power Tools</h2>
-      <p class="muted small instructions" style="margin-top:6px">
-        This tool downloads ABC tune settings from thesession.org and combines them into a single ABC result that can be copied, saved, or opened in the ABC Transcription Tools.<br/>
-        Enter a thesession.org tune URL like:<br/>
-        <a title="Click to load the example tune URL into thesession.org URL field" href="https://thesession.org/tunes/1" class="exampleLink" data-fill-url="https://thesession.org/tunes/1">https://thesession.org/tunes/1</a>
-        <br/>
-        or a member URL like (will fetch one of the member result types selected below):
-        <br/>
-        <a title="Click to load the example member's URL into thesession.org URL field" href="https://thesession.org/members/12799" class="exampleLink" data-fill-url="https://thesession.org/members/12799">https://thesession.org/members/12799</a>
-      </p>
+
+    <div class="heroCard">
+      <div class="heroTop">
+        <h2 class="heroTitle">thesession.org Power Tools</h2>
+        <p class="heroText">
+          Download ABC tune settings from thesession.org and combine them into a single ABC result
+          that can be copied, saved, or opened in the ABC Transcription Tools.
+        </p>
+      </div>
+
+      <div class="heroExamples">
+        <div class="heroExampleBlock">
+
+          <div class="heroExampleRow">
+            <div class="heroExampleLabel">Try a tune URL</div>
+            <a
+              href="https://thesession.org/tunes/1"
+              class="exampleChip"
+              data-fill-url="https://thesession.org/tunes/1"
+              title="Click to load the example tune URL into thesession.org URL field">
+              https://thesession.org/tunes/1
+            </a>
+          </div>
+
+          <div class="heroExampleRow">
+            <div class="heroExampleLabel">Or a member URL</div>
+            <a
+              href="https://thesession.org/members/12799"
+              class="exampleChip"
+              data-fill-url="https://thesession.org/members/12799"
+              title="Click to load the example member URL into thesession.org URL field">
+              https://thesession.org/members/12799
+            </a>
+          </div>
+
+        </div>
+
+      </div>
+      
     </div>
 
     <div class="main">
@@ -1149,7 +1295,7 @@ function stableSort(arr, compareFn) {
    ============================================================ */
 
 document.addEventListener("click", (e) => {
-  const a = e.target.closest("a.exampleLink");
+  const a = e.target.closest("a.exampleLink, a.exampleChip");
   if (!a) return;
 
   e.preventDefault();
