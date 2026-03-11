@@ -1421,7 +1421,7 @@ async function fetchAllSessionSearchResults(kind, searchTerm, tuneType, tuneMode
   let totalPages = 1;
 
   // Limit tune fetch to 1000 items
-  var MAX_PAGES = 20;
+  let MAX_PAGES = 20;
   
   // Looks like paging on members is limited to 10 per call
   // Limit member fetch to 100 items
@@ -1516,14 +1516,22 @@ function sessionSearchSortResults(kind, items, term) {
   });
 }
 
+function titleCaseWords(str) {
+  if (!str) return str;
+  return str
+    .toLowerCase()
+    .replace(/\b\w/g, c => c.toUpperCase());
+}
+
 function buildTuneSearchRowHtml(item) {
   const name = escapeHtml(item && item.name ? item.name : "(untitled)");
   const alias = escapeHtml(item && item.alias ? item.alias : "");
-  const type = escapeHtml(item && item.type ? item.type : "unknown type");
+  const rawType = item && item.type ? item.type : "unknown type";
+  const type = escapeHtml(titleCaseWords(rawType));
   const id = escapeHtml(item && item.id != null ? item.id : "");
   const url = escapeHtml(item && item.url ? item.url : "");
 
-  let secondary = `${type} — tune #${id}`;
+  let secondary = `${type} — Tune #${id}`;
   if (alias) {
     secondary += ` — alias: ${alias}`;
   }
@@ -3868,7 +3876,7 @@ $("btnDownload").addEventListener("click", () => {
   const a = document.createElement("a");
   a.href = URL.createObjectURL(blob);
 
-  var fname = `${safeFilename(baseName)}` +
+  let fname = `${safeFilename(baseName)}` +
     (lastResult.tuneId ? `_${lastResult.tuneId}` : "") +
     `.abc`;
 
@@ -3916,9 +3924,9 @@ $("btnFindMember").addEventListener("click", async () => {
    ============================================================ */
 
 function def_bytesToBase64(bytes) {
-  var binary = "";
-  var len = bytes.length;
-  for (var i = 0; i < len; i++) binary += String.fromCharCode(bytes[i]);
+  let binary = "";
+  let len = bytes.length;
+  for (let i = 0; i < len; i++) binary += String.fromCharCode(bytes[i]);
   return btoa(binary);
 }
 
@@ -3937,7 +3945,7 @@ function buildShareName(theABC, memberName, downloadType, chordsOnly) {
 
   // Member downloads
   if (memberName) {
-    var name = memberName;
+    let name = memberName;
 
     if (downloadType) {
       name += "'s " + downloadType;
@@ -3956,11 +3964,11 @@ function buildShareName(theABC, memberName, downloadType, chordsOnly) {
   }
 
   // Tune downloads
-  var m = String(theABC).match(/^\s*T\s*:\s*(.+)\s*$/m);
-  var tuneTitle = (m && m[1]) ? m[1].trim() : "tune";
+  let m = String(theABC).match(/^\s*T\s*:\s*(.+)\s*$/m);
+  let tuneTitle = (m && m[1]) ? m[1].trim() : "tune";
 
   // Detect "(1 of N)" pattern and convert to "All tune settings"
-  var multiMatch = tuneTitle.match(/^(.*)\(\s*1\s+of\s+\d+\s*\)$/i);
+  let multiMatch = tuneTitle.match(/^(.*)\(\s*1\s+of\s+\d+\s*\)$/i);
 
   if (multiMatch) {
     tuneTitle = multiMatch[1].trim() + " (All tune settings)";
@@ -3979,14 +3987,14 @@ function buildShareName(theABC, memberName, downloadType, chordsOnly) {
 
 function testOpenInAbcTools(theABC, memberName, downloadType, chordsOnly) {
 
-  var shareName = buildShareName(theABC, memberName, downloadType, chordsOnly);
+  let shareName = buildShareName(theABC, memberName, downloadType, chordsOnly);
 
-  var encoder = new TextEncoder();
-  var utf8Bytes = encoder.encode(theABC);
-  var deflated = pako.deflate(utf8Bytes, { level: 6 });
-  var abc_compressed = def_bytesToBase64URL(deflated);
+  let encoder = new TextEncoder();
+  let utf8Bytes = encoder.encode(theABC);
+  let deflated = pako.deflate(utf8Bytes, { level: 6 });
+  let abc_compressed = def_bytesToBase64URL(deflated);
 
-  var url =
+  let url =
     "https://michaeleskin.com/abctools/abctools.html?def=" + abc_compressed +
     "&format=noten&ssp=0" +
     "&name=" + shareName +
@@ -3997,14 +4005,14 @@ function testOpenInAbcTools(theABC, memberName, downloadType, chordsOnly) {
 
 function openInAbcTools(theABC, memberName, downloadType, chordsOnly) {
 
-  var shareName = buildShareName(theABC, memberName, downloadType, chordsOnly);
+  let shareName = buildShareName(theABC, memberName, downloadType, chordsOnly);
 
-  var encoder = new TextEncoder();
-  var utf8Bytes = encoder.encode(theABC);
-  var deflated = pako.deflate(utf8Bytes, { level: 6 });
-  var abc_compressed = def_bytesToBase64URL(deflated);
+  let encoder = new TextEncoder();
+  let utf8Bytes = encoder.encode(theABC);
+  let deflated = pako.deflate(utf8Bytes, { level: 6 });
+  let abc_compressed = def_bytesToBase64URL(deflated);
 
-  var url =
+  let url =
     "https://michaeleskin.com/abctools/abctools.html?def=" + abc_compressed +
     "&format=noten&ssp=0" +
     "&name=" + shareName +
