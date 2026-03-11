@@ -956,21 +956,18 @@
 
     .heroExamples{
       display:grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap:12px;
+      grid-template-columns: repeat(2, fit-content(100%));
+      gap:16px 20px;
       margin-top: 2px;
-      align-items:stretch;
+      align-items:start;
+      justify-content:start;
     }
 
-    .heroExampleBlock{
+    .heroExampleItem{
       display:flex;
       flex-direction:column;
-      gap:6px;
-      padding:10px 14px;
-      border:1px solid rgba(127,127,127,.22);
-      border-radius:16px;
-      background: rgba(255,255,255,0.55);
-      min-width:0;
+      gap:8px;
+      min-width: min(320px, 100%);
     }
 
     .heroExampleLabel{
@@ -994,6 +991,7 @@
       transition:all .12s ease;
       overflow-wrap:anywhere;
       word-break:break-word;
+      cursor:pointer;
     }
 
     .exampleChip:hover{
@@ -1009,6 +1007,15 @@
     @media (max-width: 900px){
       .heroExamples{
         grid-template-columns: 1fr;
+        gap:12px;
+      }
+
+      .heroExampleItem{
+        width:100%;
+      }
+
+      .exampleChip{
+        width:100%;
       }
     }
 
@@ -1024,11 +1031,6 @@
 
       .heroText{
         max-width: none;
-      }
-
-      .heroExampleBlock{
-        padding:9px 12px;
-        border-radius:14px;
       }
 
       .exampleChip{
@@ -1061,7 +1063,7 @@
       </div>
 
       <div class="heroExamples">
-        <div class="heroExampleBlock">
+        <div class="heroExampleItem">
           <div class="heroExampleLabel">Try a tune URL</div>
           <a
             href="https://thesession.org/tunes/1"
@@ -1072,8 +1074,8 @@
           </a>
         </div>
 
-        <div class="heroExampleBlock">
-          <div class="heroExampleLabel">Or a member URL</div>
+        <div class="heroExampleItem">
+          <div class="heroExampleLabel">Try a member URL</div>
           <a
             href="https://thesession.org/members/12799"
             class="exampleChip"
