@@ -39,7 +39,7 @@
       --fs-base: clamp(15px, 1.05vw + 12px, 17px);
       --fs-small: clamp(13px, 0.7vw + 11px, 14.5px);
       --fs-h2: clamp(20px, 1.2vw + 16px, 24px);
-      --page-pad: 32px;
+      --page-pad: 24px;
     }
 
     html, body{
@@ -939,27 +939,10 @@
       margin-bottom: 14px;
     }
 
-    .heroBadge{
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 5px 10px;
-      border-radius: 999px;
-      font-size: 12px;
-      font-weight: 700;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-      color: #4a5563;
-      background: rgba(255,255,255,0.75);
-      border: 1px solid rgba(127,127,127,.18);
-      margin-bottom: 10px;
-    }
-
     .heroTitle{
       margin: 0;
       font-size: clamp(24px, 1.4vw + 18px, 32px);
       line-height: 1.12;
-      letter-spacing: -0.02em;
     }
 
     .heroText{
@@ -971,36 +954,34 @@
     }
 
     .heroExamples{
-      margin-top:14px;
+      display:grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap:12px;
+      margin-top: 2px;
+      align-items:stretch;
     }
 
     .heroExampleBlock{
-      padding:14px 16px;
-      border-radius:14px;
-      background:rgba(255,255,255,0.72);
-      border:1px solid rgba(127,127,127,.16);
       display:flex;
       flex-direction:column;
-      gap:12px;
-    }
-
-    .heroExampleRow{
-      display:flex;
-      align-items:center;
-      flex-wrap:wrap;
-      gap:10px;
+      gap:6px;
+      padding:10px 14px;
+      border:1px solid rgba(127,127,127,.22);
+      border-radius:16px;
+      background: rgba(255,255,255,0.55);
+      min-width:0;
     }
 
     .heroExampleLabel{
-      font-size:13px;
+      font-size:0.95em;
       font-weight:700;
-      color:rgba(0,0,0,0.65);
-      min-width:120px;
+      color: rgba(0,0,0,0.66);
     }
 
     .exampleChip{
       display:inline-flex;
       align-items:center;
+      max-width:100%;
       padding:8px 12px;
       border-radius:12px;
       text-decoration:none;
@@ -1010,6 +991,8 @@
       font-weight:500;
       font-size:14px;
       transition:all .12s ease;
+      overflow-wrap:anywhere;
+      word-break:break-word;
     }
 
     .exampleChip:hover{
@@ -1041,6 +1024,15 @@
       .heroText{
         max-width: none;
       }
+
+      .heroExampleBlock{
+        padding:9px 12px;
+        border-radius:14px;
+      }
+
+      .exampleChip{
+        width:100%;
+      }
     }
 
   </style>
@@ -1069,33 +1061,28 @@
 
       <div class="heroExamples">
         <div class="heroExampleBlock">
-
-          <div class="heroExampleRow">
-            <div class="heroExampleLabel">Try a tune URL</div>
-            <a
-              href="https://thesession.org/tunes/1"
-              class="exampleChip"
-              data-fill-url="https://thesession.org/tunes/1"
-              title="Click to load the example tune URL into thesession.org URL field">
-              https://thesession.org/tunes/1
-            </a>
-          </div>
-
-          <div class="heroExampleRow">
-            <div class="heroExampleLabel">Or a member URL</div>
-            <a
-              href="https://thesession.org/members/12799"
-              class="exampleChip"
-              data-fill-url="https://thesession.org/members/12799"
-              title="Click to load the example member URL into thesession.org URL field">
-              https://thesession.org/members/12799
-            </a>
-          </div>
-
+          <div class="heroExampleLabel">Try a tune URL</div>
+          <a
+            href="https://thesession.org/tunes/1"
+            class="exampleChip"
+            data-fill-url="https://thesession.org/tunes/1"
+            title="Click to load the example tune URL into thesession.org URL field">
+            https://thesession.org/tunes/1
+          </a>
         </div>
 
+        <div class="heroExampleBlock">
+          <div class="heroExampleLabel">Or a member URL</div>
+          <a
+            href="https://thesession.org/members/12799"
+            class="exampleChip"
+            data-fill-url="https://thesession.org/members/12799"
+            title="Click to load the example member URL into thesession.org URL field">
+            https://thesession.org/members/12799
+          </a>
+        </div>
       </div>
-      
+            
     </div>
 
     <div class="main">
