@@ -446,6 +446,64 @@
       margin-left:6px;
     }
 
+    .modal_compact_background{
+      background-color:#000;
+      opacity:0.4;
+    }
+
+    .modal_compact_main{
+      border:1px solid #333;
+      box-shadow:0 0 15px -2px rgba(0,0,0,0.75);
+      width:min(520px, calc(100vw - 80px)) !important;
+      max-width:min(520px, calc(100vw - 80px)) !important;
+
+      height:auto !important;
+      max-height:260px !important;
+      overflow:hidden !important;
+    }
+
+    .modal_compact_inner{
+      padding:16px;
+      background:#fff;
+      color:#000;
+      display:flex;
+      flex-direction:column;
+    }
+
+    .modal_compact_content{
+      margin:14px 0 8px 0;
+      overflow:auto !important;
+      -webkit-overflow-scrolling:touch;
+    }
+
+    .modal_compact_buttons{
+      text-align:center;
+      margin-top:14px;
+      padding:10px 0 12px 0;
+    }
+
+    .modal_compact_main button{
+      background:#f0f3f8;
+      color:#000;
+      border:1px solid #d3dbe7;
+      padding:10px 20px;
+      cursor:pointer;
+      outline:none;
+      width:100px;
+      border-radius:10px;
+      font-weight:600;
+    }
+
+    .modal_compact_buttons .modal_compact_ok{
+      background:#e8f1ff !important;
+      border-color:#9dbaf2 !important;
+    }
+
+    .modal_compact_buttons .modal_compact_cancel{
+      background:#f3f3f3 !important;
+      border-color:#d4d4d4 !important;
+    }
+
     .exampleLink{
       color: inherit;
       text-decoration: underline;
@@ -1152,7 +1210,7 @@ async function confirmTunebookAllDownload() {
     `<br/><br/>Do you want to continue?</div>`;
 
   const result = await DayPilot.Modal.confirm(msg, {
-    theme: "modal_flat",
+    theme: "modal_compact",
     top: 120,
     scrollWithPage: false
   });
@@ -3718,7 +3776,7 @@ function openInAbcTools(theABC) {
   } else {
     DayPilot.Modal.alert(
       '<p style="text-align:center;font-family:helvetica;font-size:12pt;">The Share URL is too long to open in ABC Transcription Tools.<br/><br/>Instead, copy and paste the ABC or save it to an ABC file and load it from the tools.</p>',
-      { theme: "modal_flat", top: 230, scrollWithPage: false }
+      { theme: "modal_compact", top: 230, scrollWithPage: false }
     );
   }
 }
