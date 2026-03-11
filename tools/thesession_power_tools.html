@@ -5,16 +5,16 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <link rel="profile" href="http://gmpg.org/xfn/11">
-  <title>thesession.org Tune Settings Scraper</title>
+  <title>thesession.org Power Tools</title>
   <link rel='dns-prefetch' href='//fonts.googleapis.com' />
   <link rel='dns-prefetch' href='//s.w.org' />
   <link rel='preconnect' href='https://secureservercdn.net' crossorigin />
   <meta property="og:type" content="website" />
-  <meta property="og:title" content="thesession.org Tune Settings Scraper" />
-  <meta property="og:description" content="thesession.org Tune Settings Scraper" />
-  <meta property="og:url" content="https://michaeleskin.com/tools/mustard_scraper.html" />
-  <meta property="og:site_name" content="thesession.org Tune Settings Scraper" />
-  <meta property="og:image" content="https://michaeleskin.com/tools/img/tool_scraper.jpg"/>
+  <meta property="og:title" content="thesession.org Power Tools" />
+  <meta property="og:description" content="thesession.org Power Tools" />
+  <meta property="og:url" content="https://michaeleskin.com/tools/thesession_power_tools.html" />
+  <meta property="og:site_name" content="thesession.org Power Tools" />
+  <meta property="og:image" content="https://michaeleskin.com/tools/img/tool_tspt.jpg"/>
   <meta name="msapplication-TileColor" content="#ffffff">
   <meta name="msapplication-TileImage" content="https://michaeleskin.com/abctools/img/abc-ms-icon-144x144.png">
   <link rel="apple-touch-icon" sizes="57x57" href="https://michaeleskin.com/abctools/img/abc-apple-icon-57x57.png">
@@ -873,7 +873,7 @@
 <body>
   <div class="app">
     <div>
-      <h2>thesession.org Tune Settings Scraper</h2>
+      <h2>thesession.org Power Tools</h2>
       <p class="muted small instructions" style="margin-top:6px">
         This tool downloads ABC tune settings from thesession.org and combines them into a single ABC result that can be copied, saved, or opened in the ABC Transcription Tools.<br/>
         Enter a thesession.org tune URL like:<br/>
@@ -3334,7 +3334,7 @@ function buildOperationDescription(result, originalUrl, onlyChordsEnabled) {
 
   const chordSuffix = onlyChordsEnabled ? " (only settings with chords)" : "";
 
-  const accum = "%\n% Created by Michael Eskin's thesession.org Tune Settings Scraper\n%\n% https://michaeleskin.com/tools/mustard_scraper.html\n%\n\n%\n";
+  const accum = "%\n% Created by Michael Eskin's thesession.org Power Tools\n%\n% https://michaeleskin.com/tools/thesession_power_tools.html\n%\n\n%\n";
   const postfix = "\n%\n\n%\n% Make S: tag hyperlinks in the rendered ABC notation clickable\n%\n%enable_hyperlinks\n%\n";
 
   if (isTune) {
@@ -3882,8 +3882,8 @@ const content =
   '  <hr style="border:0; border-top:1px solid #ccc; margin:18px 0;">' +
   '  <div style="margin-bottom:6px; text-align:center;"><b>The source code for this tool is available on GitHub:</b></div>' +
   '  <div style="margin-bottom:6px; text-align:center;">' +
-  '    <a href="https://github.com/seisiuneer/abctools/blob/main/tools/mustard_scraper.html" target="_blank" rel="noopener noreferrer">' +
-  '      mustard_scraper.html' +
+  '    <a href="https://github.com/seisiuneer/abctools/blob/main/tools/thesession_power_tools.html" target="_blank" rel="noopener noreferrer">' +
+  '      thesession_power_tools.html' +
   '    </a>' +
   '  </div>';
 
@@ -3972,7 +3972,7 @@ function sendGoogleAnalytics(theCategory, theAction, theLabel) {
         theLabel = "none";
       }
 
-      gtag('event', 'must_' + theCategory + "_" + theAction, {
+      gtag('event', 'tspt_' + theCategory + "_" + theAction, {
         event_category: theCategory,
         event_action: theAction,
         event_label: theLabel
