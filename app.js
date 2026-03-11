@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3200_030926_1400";
+var gVersionNumber = "3201_031126_0800";
 
 var gMIDIInitStillWaiting = false;
 
@@ -27763,13 +27763,13 @@ function processShareLink() {
       // Show update message?
       if (gLocalStorageAvailable){
 
-        var updatePresented = localStorage.sawUpdate_6mar2026;
+        var updatePresented = localStorage.sawUpdate_11mar2026;
 
         if (updatePresented != "true") {
 
           showWhatsNewScreen();
 
-          localStorage.sawUpdate_6mar2026 = true;
+          localStorage.sawUpdate_11mar2026 = true;
 
         }
 
@@ -55619,7 +55619,7 @@ function showWhatsNewScreen() {
   modal_msg += 'background: linear-gradient(135deg, #1b5e20 0%, #2e7d32 50%, #66bb6a 100%);';
   modal_msg += 'box-shadow: 0 6px 16px rgba(0,0,0,0.14); color:#fff;">';
   modal_msg += '<div style="font-size:20pt; line-height:24pt; font-weight:bold;">What&apos;s New</div>';
-  modal_msg += '<div style="font-size:11pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 9 March 2026</div>';
+  modal_msg += '<div style="font-size:11pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 11 March 2026</div>';
   modal_msg += '</div>';
 
   // Short intro
@@ -55651,7 +55651,7 @@ function showWhatsNewScreen() {
 
   modal_msg += '<p style="margin:6px 0; font-size:12pt;">Added a new <strong>Other ABC Tools</strong> option on the <strong>☰</strong> dropdown menu.</p>';
   modal_msg += '<p style="margin:6px 0; font-size:12pt;">When clicked, opens up a dialog with direct links to other ABC tools I\'ve developed.</p>';
-  modal_msg += '<p style="margin:6px 0; font-size:12pt;">The tools initially available are the <strong>thesession.org Tune Settings Scraper</strong>, <strong>ABC Chord Chart Generator</strong>, <strong>ABC Tags to CSV Extractor Utilities</strong>, and the <strong>Custom Instrument Builder</strong>.</p>';
+  modal_msg += '<p style="margin:6px 0; font-size:12pt;">The tools initially available are the <strong>thesession.org Power Tools</strong>, <strong>ABC Chord Chart Generator</strong>, <strong>ABC Tags to CSV Extractor Utilities</strong>, and the <strong>Custom Instrument Builder</strong>.</p>';
    modal_msg += '</div>';
 
 
@@ -59625,12 +59625,12 @@ function LaunchAudioTester(){
   window.open(url, '_blank');
 }
 
-// Open thesession.org scraper
-function LaunchTheSessionScraper(){
+// Open thesession.org power tools
+function LaunchTheSessionPowerTools(){
   
-  sendGoogleAnalytics("action", "LaunchTheSessionScraper");
+  sendGoogleAnalytics("action", "LaunchTheSessionPowerTools");
 
-  var url = "https://michaeleskin.com/tools/mustard_scraper.html";
+  var url = "https://michaeleskin.com/tools/thesession_power_tools.html";
   window.open(url, '_blank');
 }
 
@@ -62165,13 +62165,13 @@ function DoStartup() {
   // Show update message?
   if (gLocalStorageAvailable && (!isFromShare)){
 
-    var updatePresented = localStorage.sawUpdate_6mar2026;
+    var updatePresented = localStorage.sawUpdate_11mar2026;
 
     if (updatePresented != "true") {
 
       showWhatsNewScreen();
 
-      localStorage.sawUpdate_6mar2026 = true;
+      localStorage.sawUpdate_11mar2026 = true;
 
     }
 
@@ -63984,7 +63984,7 @@ function OtherABCTools(){
   + '    <div style="display:flex; justify-content:center; gap:24px; width:100%;">'
 
   + '      <div class="tuning-tool" style="text-align:center; width:170px;">'
-  + '        <img id="other_tools_scraper" src="img/tool_scraper_2.jpg" title="thesession.org Tune Settings Scraper" alt="thesession.org Tune Settings Scraper"'
+  + '        <img id="other_tools_tspt" src="img/tool_scraper_2.jpg" title="thesession.org Power Tools" alt="thesession.org Power Tools"'
   + '             style="width:170px;height:auto;cursor:pointer;">'
   + '        <div style="font-size:1.0em; margin-top:6px; height:3.2em; display:flex; align-items:center; justify-content:center; line-height:1.2em;">thesession.org<br/>Tune Settings Scraper</div>'
   + '      </div>'
@@ -64024,8 +64024,8 @@ function OtherABCTools(){
     scrollWithPage: (AllowDialogsToScroll())
   });
 
-  elem = document.getElementById("other_tools_scraper");
-  if (elem) elem.onclick = function(){ LaunchTheSessionScraper(); };
+  elem = document.getElementById("other_tools_tspt");
+  if (elem) elem.onclick = function(){ LaunchTheSessionPowerTools(); };
 
   elem = document.getElementById("other_tools_chordchart");
   if (elem) elem.onclick = function(){ LaunchChordChartGenerator(); };
