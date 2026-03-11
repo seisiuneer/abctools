@@ -1274,11 +1274,13 @@ async function fetchAllSessionSearchResults(kind, searchTerm, tuneType, tuneMode
   const items = [];
   let totalPages = 1;
 
-  var MAX_PAGES = 5;
+  // Limit tune fetch to 1000 items
+  var MAX_PAGES = 20;
   
   // Looks like paging on members is limited to 10 per call
+  // Limit member fetch to 100 items
   if (kind === "member"){
-    MAX_PAGES = 25;
+    MAX_PAGES = 10;
   }
   
   let fetchedPages = 0;
@@ -3809,7 +3811,7 @@ const content =
   '      Enter a search term, then click <b>Search Tunes</b> or <b>Search Members</b>.<br/>For tune searches, you can also optionally filter by <b>tune style</b> and <b>key/mode</b>.<br/>Select one of the matching results and click <b>OK</b> to populate the <b>thesession.org URL</b> field automatically.<br/>Double-clicking a result will also select it and accept it immediately.' +
   '    </div>' +
   '    <div style="opacity:0.8; margin-top:6px;">' +
-  '      <b>Note:</b> Results are limited to 250 items.<br/>The search methods use the same API as the native search on thesession.org and should produce results identical to those you would get searching on the site itself.<br/>If you believe you are seeing incorrect results, please try the same search on thesession.org before reporting an issue.' +
+  '      <b>Note:</b> Tune search results are limited to 1000 items and member search results to 100 items.<br/>The search methods use the same API as the native search on thesession.org and should produce results identical to those you would get searching on the site itself.<br/>If you believe you are seeing incorrect results, please try the same search on thesession.org before reporting an issue.' +
   '    </div>' +
   '  </div>' +
 
