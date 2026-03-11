@@ -63986,7 +63986,7 @@ function OtherABCTools(){
   + '      <div class="tuning-tool" style="text-align:center; width:170px;">'
   + '        <img id="other_tools_tspt" src="img/tool_scraper_2.jpg" title="thesession.org Power Tools" alt="thesession.org Power Tools"'
   + '             style="width:170px;height:auto;cursor:pointer;">'
-  + '        <div style="font-size:1.0em; margin-top:6px; height:3.2em; display:flex; align-items:center; justify-content:center; line-height:1.2em;">thesession.org<br/>Tune Settings Scraper</div>'
+  + '        <div style="font-size:1.0em; margin-top:6px; height:3.2em; display:flex; align-items:center; justify-content:center; line-height:1.2em;">thesession.org<br/>Power Tools</div>'
   + '      </div>'
 
   + '      <div class="tuning-tool" style="text-align:center; width:170px;">'
