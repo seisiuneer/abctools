@@ -760,7 +760,7 @@
 
     .sessionSearchResults{
       border:1px solid rgba(127,127,127,.35);
-      border-radius:10px;
+      border-radius:4px;
       background:#fff;
       min-height:320px;
       flex:1 1 auto;
@@ -1201,7 +1201,8 @@ function makeSessionSearchUrl(kind, searchTerm, pageNum, tuneType, tuneMode) {
 
 async function fetchAllSessionSearchResults(kind, searchTerm, tuneType, tuneMode) {
   const term = normalizeSearchTermForDisplay(searchTerm);
-  if (!term) {
+
+  if (kind !== "tune" && !term) {
     return {
       total: 0,
       items: [],
@@ -1214,7 +1215,14 @@ async function fetchAllSessionSearchResults(kind, searchTerm, tuneType, tuneMode
 
   const items = [];
   let totalPages = 1;
-  const MAX_PAGES = 25;
+
+  var MAX_PAGES = 5;
+  
+  // Looks like paging on members is limited to 10 per call
+  if (kind === "member"){
+    MAX_PAGES = 25;
+  }
+  
   let fetchedPages = 0;
   let hitMaxPages = false;
 
@@ -1246,7 +1254,7 @@ async function fetchAllSessionSearchResults(kind, searchTerm, tuneType, tuneMode
 
   if (totalPages > MAX_PAGES && fetchedPages >= MAX_PAGES) {
     hitMaxPages = true;
-    clearStatus(
+    appendStatus(
       `Reached maximum ${kind === "tune" ? "tune" : "member"} search limit. Additional results may exist.`
     );
   }
@@ -1519,7 +1527,7 @@ async function openSessionSearchDialog(kind) {
     selectedItem = null;
     setDialogOkEnabled(modalRoot, false);
 
-    if (!term) {
+    if (!term && kind !== "tune") {
       if (summaryEl) summaryEl.textContent = "Please enter a search term.";
       if (resultsEl) {
         resultsEl.innerHTML = `<div class="sessionSearchEmpty">Please enter a search term.</div>`;
@@ -1534,7 +1542,6 @@ async function openSessionSearchDialog(kind) {
       let statusMsg;
 
       if (kind === "tune") {
-
         const typeText =
           (tuneTypeEl && tuneTypeEl.value)
             ? tuneTypeEl.options[tuneTypeEl.selectedIndex].text
@@ -1545,7 +1552,7 @@ async function openSessionSearchDialog(kind) {
             ? tuneModeEl.options[tuneModeEl.selectedIndex].text
             : "";
 
-        statusMsg = `Searching tunes for "${term}"`;
+        statusMsg = term ? `Searching tunes for "${term}"` : `Searching tunes`;
 
         if (typeText) {
           statusMsg += `, ${typeText}`;
@@ -1554,12 +1561,12 @@ async function openSessionSearchDialog(kind) {
         if (modeText) {
           statusMsg += ` in ${modeText}`;
         }
-
       } else {
         statusMsg = `Searching members for "${term}"`;
       }
 
       clearStatus(statusMsg);
+
       const result = await fetchAllSessionSearchResults(kind, term, tuneType, tuneMode);
       currentItems = sessionSearchSortResults(kind, result.items, term);
 
@@ -1571,7 +1578,6 @@ async function openSessionSearchDialog(kind) {
         }
 
         if (kind === "tune") {
-
           const filters = [];
 
           if (tuneTypeEl && tuneTypeEl.value) {
@@ -3745,7 +3751,7 @@ const content =
   '      Enter a search term, then click <b>Search Tunes</b> or <b>Search Members</b>.<br/>For tune searches, you can also optionally filter by <b>tune style</b> and <b>key/mode</b>.<br/>Select one of the matching results and click <b>OK</b> to populate the <b>thesession.org URL</b> field automatically.<br/>Double-clicking a result will also select it and accept it immediately.' +
   '    </div>' +
   '    <div style="opacity:0.8; margin-top:6px;">' +
-  '      <b>Note:</b> The search methods use the same API as the native search on thesession.org and should produce results identical to those you would get searching on the site itself.<br/>If you believe you are seeing incorrect results, please try the same search on thesession.org before reporting an issue.' +
+  '      <b>Note:</b> Results are limited to 250 items.<br/>The search methods use the same API as the native search on thesession.org and should produce results identical to those you would get searching on the site itself.<br/>If you believe you are seeing incorrect results, please try the same search on thesession.org before reporting an issue.' +
   '    </div>' +
   '  </div>' +
 
