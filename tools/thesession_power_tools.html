@@ -3355,6 +3355,19 @@ function normalizeMembersUrl(inputUrl, memberSourceMode) {
 let lastResult = null;
 let fetchInProgress = false;
 
+/* Allow pressing Enter in the URL field to trigger Fetch */
+if (tuneUrlInput) {
+  tuneUrlInput.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      const btnFetch = $("btnFetch");
+      if (btnFetch) {
+        btnFetch.click();
+      }
+    }
+  });
+}
+
 function setFetchBusy(busy) {
   fetchInProgress = !!busy;
 
@@ -3433,6 +3446,39 @@ function buildOperationDescription(result, originalUrl, onlyChordsEnabled) {
   }
 
   return accum + `% All submitted tune settings by ${memberName}${chordSuffix}` + memberLine + postfix;
+}
+
+function getMemberDownloadTypeLabel(sourceMode) {
+  const mode = String(sourceMode || "submitted");
+
+  if (mode === "tunebook_first") return "Tunebook (First Setting Only)";
+  if (mode === "tunebook_all") return "Tunebook (All Settings)";
+  if (mode === "bookmarked") return "Bookmarked Tune Settings";
+  if (mode === "sets") return "Tune Sets";
+
+  return "Submitted Tune Settings";
+}
+
+function getShareUrlContext(result, originalUrl) {
+  const isTune = isSessionTuneUrl(originalUrl);
+  const chordsOnly =
+    !!$("onlyChords") &&
+    $("onlyChords").checked &&
+    (!result || result.memberSourceMode !== "sets");
+
+  if (isTune) {
+    return {
+      memberName: "",
+      downloadType: "",
+      chordsOnly
+    };
+  }
+
+  return {
+    memberName: (result && result.memberName) ? result.memberName : "",
+    downloadType: getMemberDownloadTypeLabel(result && result.memberSourceMode),
+    chordsOnly
+  };
 }
 
 $("btnTune").addEventListener("click", async () => {
@@ -3564,7 +3610,9 @@ $("btnFetch").addEventListener("click", async () => {
     appendStatus(`- Final # of settings added to results: ${result.settingsCount}`);
     appendStatus("");
 
-    if (testOpenInAbcTools(outEl.value)) {
+    const shareCtx = getShareUrlContext(result, url);
+
+    if (testOpenInAbcTools(outEl.value, shareCtx.memberName, shareCtx.downloadType, shareCtx.chordsOnly)) {
       enableActions(true);
       appendStatus("You can now copy or download the ABC tune settings or open them in the ABC Transcription Tools.");
     } else {
@@ -3635,7 +3683,9 @@ $("btnResort").addEventListener("click", () => {
   appendStatus(`- Final # of settings added to results: ${lastResult.settingsCount}`);
   appendStatus("");
 
-  if (testOpenInAbcTools(outEl.value)) {
+  const shareCtx = getShareUrlContext(lastResult, $("tuneUrl").value.trim());
+
+  if (testOpenInAbcTools(outEl.value, shareCtx.memberName, shareCtx.downloadType, shareCtx.chordsOnly)) {
     enableActions(true);
   } else {
     enableActions(true);
@@ -3708,7 +3758,10 @@ $("btnOpenInTools").addEventListener("click", () => {
 
   try {
     if (!lastResult) return;
-    openInAbcTools(outEl.value);
+
+    const shareCtx = getShareUrlContext(lastResult, $("tuneUrl").value.trim());
+
+    openInAbcTools(outEl.value, shareCtx.memberName, shareCtx.downloadType, shareCtx.chordsOnly);
     appendStatus("ABC tune settings opened in the ABC Transcription Tools.");
   } catch (e) {
     console.error(e);
@@ -3748,10 +3801,53 @@ function def_bytesToBase64URL(bytes) {
    Open in ABC Transcription Tools
    ============================================================ */
 
-function testOpenInAbcTools(theABC) {
+function buildShareName(theABC, memberName, downloadType, chordsOnly) {
+
+  // Member downloads
+  if (memberName) {
+    var name = memberName;
+
+    if (downloadType) {
+      name += "'s " + downloadType;
+    }
+
+    if (chordsOnly) {
+      name += " (Chords only)";
+    }
+
+    name = name
+      .replace(/\s+/g, " ")
+      .trim()
+      .replace(/\s+/g, "_");
+
+    return encodeURIComponent(name);
+  }
+
+  // Tune downloads
   var m = String(theABC).match(/^\s*T\s*:\s*(.+)\s*$/m);
   var tuneTitle = (m && m[1]) ? m[1].trim() : "tune";
-  tuneTitle = encodeURIComponent(tuneTitle.replace(/\s+/g, "_"));
+
+  // Detect "(1 of N)" pattern and convert to "All tune settings"
+  var multiMatch = tuneTitle.match(/^(.*)\(\s*1\s+of\s+\d+\s*\)$/i);
+
+  if (multiMatch) {
+    tuneTitle = multiMatch[1].trim() + " (All tune settings)";
+  }
+
+  if (chordsOnly) {
+    if (/\(All tune settings\)$/i.test(tuneTitle)) {
+      tuneTitle = tuneTitle.replace(/\(All tune settings\)$/i, "(All tune settings, Chords only)");
+    } else {
+      tuneTitle += " (Chords only)";
+    }
+  }
+
+  return encodeURIComponent(tuneTitle.replace(/\s+/g, "_"));
+}
+
+function testOpenInAbcTools(theABC, memberName, downloadType, chordsOnly) {
+
+  var shareName = buildShareName(theABC, memberName, downloadType, chordsOnly);
 
   var encoder = new TextEncoder();
   var utf8Bytes = encoder.encode(theABC);
@@ -3761,16 +3857,15 @@ function testOpenInAbcTools(theABC) {
   var url =
     "https://michaeleskin.com/abctools/abctools.html?def=" + abc_compressed +
     "&format=noten&ssp=0" +
-    "&name=" + tuneTitle +
+    "&name=" + shareName +
     "&editor=1";
 
   return url.length < 8100;
 }
 
-function openInAbcTools(theABC) {
-  var m = String(theABC).match(/^\s*T\s*:\s*(.+)\s*$/m);
-  var tuneTitle = (m && m[1]) ? m[1].trim() : "tune";
-  tuneTitle = encodeURIComponent(tuneTitle.replace(/\s+/g, "_"));
+function openInAbcTools(theABC, memberName, downloadType, chordsOnly) {
+
+  var shareName = buildShareName(theABC, memberName, downloadType, chordsOnly);
 
   var encoder = new TextEncoder();
   var utf8Bytes = encoder.encode(theABC);
@@ -3780,7 +3875,7 @@ function openInAbcTools(theABC) {
   var url =
     "https://michaeleskin.com/abctools/abctools.html?def=" + abc_compressed +
     "&format=noten&ssp=0" +
-    "&name=" + tuneTitle +
+    "&name=" + shareName +
     "&editor=1";
 
   if (url.length < 8100) {
@@ -3792,13 +3887,6 @@ function openInAbcTools(theABC) {
     );
   }
 }
-
-tuneUrlInput.addEventListener("keydown", (e) => {
-  if (e.key === "Enter") {
-    e.preventDefault();
-    $("btnFetch").click();
-  }
-});
 
 /* ============================================================
    Instructions modal
