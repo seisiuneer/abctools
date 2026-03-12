@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3202_031226_1300";
+var gVersionNumber = "3203_031226_1330";
 
 var gMIDIInitStillWaiting = false;
 
@@ -19707,6 +19707,12 @@ function AddABC() {
 
   var modal_msg = '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:15px;margin-bottom:10px;">Add ABC Tunes, Templates, and PDF Features<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#add_templates_dialog" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>';
   modal_msg += '<div id="add-new-tune-dialog">';
+
+  modal_msg += '<p style="text-align:center;font-size:18px;">Search and Add Tunes (Over 65,000 Tunes Available)</p>';
+  modal_msg += '<p style="text-align:center;margin-top:16px;margin-bottom:24px;">';
+  modal_msg += '<input id="searchandaddtunes" class="advancedcontrols btn btn-injectcontrols-addabc" onclick="AddFromSearch(null,AddABCCallback);" type="button" value="Tune Search Engine" title="Search for tunes to add to your tunebook.&nbsp;&nbsp;Over 65,000 tunes available.">';
+  modal_msg += '</p>';  
+
   modal_msg += '<p style="text-align:center;font-size:18px;">Add Your Own Tunes from ABC, MusicXML, BWW, or MIDI Files</p>';
   modal_msg += '<p style="text-align:center;margin-top:24px;">';
   modal_msg += '<label class="abcuploaddialog btn btn-top" for="addabcfilebutton" title="Adds tunes from an existing ABC, MusicXML, BWW, or MIDI file to the end of the ABC">Choose Files to Add <input type="file" id="addabcfilebutton" accept=".abc,.txt,.ABC,.TXT,.xml,.XML,.musicxml,.mxl,.MXL,.mid,.MID,.midi,.MIDI,.bww,.BWW" hidden multiple/></label>';
@@ -19772,10 +19778,6 @@ function AddABC() {
 
   modal_msg += '<p style="font-size:2pt;">&nbsp;</p>';
   modal_msg += '</div></div>';
-
-  modal_msg += '<p style="text-align:center;font-size:18px;margin-top:26px;">Search and Add Tunes (Over 65,000 Tunes Available)</p>';
-  modal_msg += '<p style="text-align:center;margin-top:16px;">';
-  modal_msg += '<input id="searchandaddtunes" class="advancedcontrols btn btn-injectcontrols-addabc" onclick="AddFromSearch(null,AddABCCallback);" type="button" value="Tune Search Engine" title="Search for tunes to add to your tunebook.&nbsp;&nbsp;Over 65,000 tunes available.">';
 
   modal_msg += '<p style="text-align:center;font-size:18px;margin-top:24px;">Change the Order or Delete Tunes</p>';
   modal_msg += '<p style="text-align:center;margin-top:16px;">';
@@ -27763,13 +27765,13 @@ function processShareLink() {
       // Show update message?
       if (gLocalStorageAvailable){
 
-        var updatePresented = localStorage.sawUpdate_11mar2026;
+        var updatePresented = localStorage.sawUpdate_12mar2026;
 
         if (updatePresented != "true") {
 
           showWhatsNewScreen();
 
-          localStorage.sawUpdate_11mar2026 = true;
+          localStorage.sawUpdate_12mar2026 = true;
 
         }
 
@@ -55631,8 +55633,8 @@ function showWhatsNewScreen() {
   modal_msg += '<div style="margin:10px 0 6px 0; padding:12px 12px; border-radius:12px;';
   modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);">';
   
-  modal_msg += '<p style="margin:6px 0; font-size:12pt;">Added Anton Zille\'s <strong>N.S.S.S. ABC Encoder</strong> to <strong>Open ABC in External Tool</strong>.</p>';
-  modal_msg += '<p style="margin:6px 0; font-size:12pt;">Exports the tunes to Anton Zille\'s ABC Encoder for auto-formatting headers and sorting sets of tunes or ABC collections.</p>';
+  modal_msg += '<p style="margin:6px 0; font-size:12pt;">Renamed <b>FolkFriend</b> database to <b>thesession.org</b> (since it is the original source).</p>';
+  modal_msg += '<p style="margin:6px 0; font-size:12pt;">Moved the tune search engine button to the top of the <b>Add ABC Tunes, Templates, and PDF Features</b> dialog.</p>';
 
   modal_msg += '</div>';
 
@@ -62165,13 +62167,13 @@ function DoStartup() {
   // Show update message?
   if (gLocalStorageAvailable && (!isFromShare)){
 
-    var updatePresented = localStorage.sawUpdate_11mar2026;
+    var updatePresented = localStorage.sawUpdate_12mar2026;
 
     if (updatePresented != "true") {
 
       showWhatsNewScreen();
 
-      localStorage.sawUpdate_11mar2026 = true;
+      localStorage.sawUpdate_12mar2026 = true;
 
     }
 

@@ -539,6 +539,7 @@
             <summary><h3>Opening and Adding ABC Files and Tunes</h3></summary>
             <a style="text-decoration:none;" href="#open_dialog">Open ABC, MusicXML, BWW, or MIDI Files</a>
             <a style="text-decoration:none;" href="#add_templates_dialog">Adding Your Own Tunes to Your Tunebook</a>
+            <a style="text-decoration:none;" href="#tune_search_engine">Tune Search Engine</a>
             <a style="text-decoration:none;" href="#add_choose">Choose Files to Add</a>
             <a style="text-decoration:none;" href="#add_restore">Restore from Snapshot</a>
             <a style="text-decoration:none;" href="#add_restore_auto">Restore from Auto-Snapshot</a>
@@ -549,7 +550,6 @@
             <a style="text-decoration:none;" href="#add_all_pdf_features">Inject All PDF Tunebook Features</a>
             <a style="text-decoration:none;" href="#add_pdf_play_only_features_templates">Example PDF Only Play Features Template</a>
             <a style="text-decoration:none;" href="#add_pdf_tunebook_features_templates">Example PDF All Features Template</a>
-            <a style="text-decoration:none;" href="#tune_search_engine">Tune Search Engine</a>
             <a style="text-decoration:none;" href="#change_tune_order">Change the Order of the Tunes</a>
             <a style="text-decoration:none;" href="#delete_selected_tunes">Delete Tunes from the Tunebook</a>
             </details>
@@ -1068,6 +1068,7 @@
                     <div class="tocpanel">
                         <p class="toc"><a style="text-decoration:none;" href="#open_dialog">Open ABC, MusicXML, BWW, or MIDI Files</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#add_templates_dialog">Adding Your Own Tunes to Your Tunebook</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#tune_search_engine">Tune Search Engine</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#add_choose">Choose Files to Add</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#add_restore">Restore from Snapshot</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#add_restore_auto">Restore from Auto-Snapshot</a></p>
@@ -1078,7 +1079,6 @@
                         <p class="toc"><a style="text-decoration:none;" href="#add_all_pdf_features">Inject All PDF Tunebook Features</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#add_pdf_play_only_features_templates">Example PDF Only Play Features Template</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#add_pdf_tunebook_features_templates">Example PDF All Features Template</a></p>
-                        <p class="toc"><a style="text-decoration:none;" href="#tune_search_engine">Tune Search Engine</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#change_tune_order">Change the Order of the Tunes</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#delete_selected_tunes">Delete Tunes from the Tunebook</a></p>
                     </div>
@@ -1929,8 +1929,37 @@
                 <p><strong>Add:</strong></p>
                 <p>Brings up a dialog where you can add your own ABC, MusicXML, BWW, or MIDI tunes, restore from previously saved Snapshots, re-order the tunes, delete tunes, add example ABC tunes, add useful ABC templates, or inject the commands for PDF tunebook features:</p>
                 <div class="image_holder_p">
-                    <img class="image" loading="lazy" src="img/add_example_template_40.jpg"/>
+                    <img class="image" loading="lazy" src="img/add_example_template_41.jpg"/>
                 </div>
+                <hr class="hidden-print" id="tune_search_engine">
+                <h1 class="page_break_always">Tune Search Engine</h1>
+                <a href="#table_of_contents" class="index-pill hidden-print">
+                  Table of Contents
+                </a>
+                <p>Brings up a dialog where you search either Gavin Heneghan's tune collection (over 20,000 tune settings) or the thesession.org tune collection (over 45,000 tune settings) by tune name and style and then optionally add them to your tunebook:</p>
+                <div class="image_holder_p">
+                    <img class="image" loading="lazy" src="img/tune_search_15.jpg"/>
+                </div>
+                <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/9HgEBIPXHCU" title="Tune search overview" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
+                <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/i7BKHTzkdjQ" title="Add selected tunes demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
+                <p>When first entering this dialog or changing the search collection, the tool will need to load the tune collection.</p>
+                <p>The status will read "Ready to search" when the tune collection has been loaded.</p>
+                <p>Once loaded the tune collection is stored for future use and will load much quicker.</p>
+                <p>Enter some text to search for in the title of the tunes and click <strong>Search</strong> or press the Enter key.</p>
+                <p>By default, the search will return only the first variation of a tune found.</p>
+                <p>If you want all the variations for a tune, uncheck <strong>Only return first variation found?</strong></p>
+                <p>If you want to match the search text only at the start of the tune name, check <strong>Match start of title?</strong></p>
+                <p>If you want to only match tunes that also have chords, check <strong>Only return tunes with chords?</strong></p>
+                <p>Select the tune style you want from the <strong>Tune style</strong> dropdown.</p>
+                <p>If you want to filter the results by key/mode, select the key/mode from the <strong>Key</strong> dropdown.</p>
+                <p>Select the maximum number of search results you want from the <strong>Maximum number of results</strong> dropdown.</p>
+                <p>Click <strong>Add Results to Tunebook</strong> to append the search results at the end of the ABC editor.</p>
+                <p>If you have made a text selection, only the text selected will be added.</p>
+                <p>On desktop browsers, triple-click or Alt-click on any tune in the results to select it in its entirety.</p>
+                <p>On mobile browsers, click on any tune in the results to select it in its entirety.</p>
+                <p>If there is no text selection, all the tunes in the search results will be added.</p>
+                <p>You can also copy and paste the results you want from the search results back into the ABC editor.</p>
+                <p>You can also get to this dialog by clicking the <strong>Search for Tunes</strong> link at the top of the tool.</p>
                 <hr class="hidden-print" id="add_choose">
                 <h1 class="page_break_always">Choose Files to Add</h1>
 				<a href="#table_of_contents" class="index-pill hidden-print">
@@ -2063,35 +2092,6 @@
                 <p>Page header</p>
                 <p>Page footer</p>
                 <p>Play links on the tunes</p>
-                <hr class="hidden-print" id="tune_search_engine">
-                <h1 class="page_break_always">Tune Search Engine</h1>
-				<a href="#table_of_contents" class="index-pill hidden-print">
-				  Table of Contents
-				</a>
-                <p>Brings up a dialog where you search either Gavin Heneghan's tune collection (over 20,000 tune settings) or the thesession.org tune collection (over 45,000 tune settings) by tune name and style and then optionally add them to your tunebook:</p>
-                <div class="image_holder_p">
-                    <img class="image" loading="lazy" src="img/tune_search_15.jpg"/>
-                </div>
-                <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/9HgEBIPXHCU" title="Tune search overview" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
-                <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/i7BKHTzkdjQ" title="Add selected tunes demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
-                <p>When first entering this dialog or changing the search collection, the tool will need to load the tune collection.</p>
-                <p>The status will read "Ready to search" when the tune collection has been loaded.</p>
-                <p>Once loaded the tune collection is stored for future use and will load much quicker.</p>
-                <p>Enter some text to search for in the title of the tunes and click <strong>Search</strong> or press the Enter key.</p>
-                <p>By default, the search will return only the first variation of a tune found.</p>
-                <p>If you want all the variations for a tune, uncheck <strong>Only return first variation found?</strong></p>
-                <p>If you want to match the search text only at the start of the tune name, check <strong>Match start of title?</strong></p>
-                <p>If you want to only match tunes that also have chords, check <strong>Only return tunes with chords?</strong></p>
-                <p>Select the tune style you want from the <strong>Tune style</strong> dropdown.</p>
-                <p>If you want to filter the results by key/mode, select the key/mode from the <strong>Key</strong> dropdown.</p>
-                <p>Select the maximum number of search results you want from the <strong>Maximum number of results</strong> dropdown.</p>
-                <p>Click <strong>Add Results to Tunebook</strong> to append the search results at the end of the ABC editor.</p>
-                <p>If you have made a text selection, only the text selected will be added.</p>
-                <p>On desktop browsers, triple-click or Alt-click on any tune in the results to select it in its entirety.</p>
-                <p>On mobile browsers, click on any tune in the results to select it in its entirety.</p>
-                <p>If there is no text selection, all the tunes in the search results will be added.</p>
-                <p>You can also copy and paste the results you want from the search results back into the ABC editor.</p>
-                <p>You can also get to this dialog by clicking the <strong>Search for Tunes</strong> link at the top of the tool.</p>
                 <hr class="hidden-print" id="change_tune_order">
                 <h1 class="page_break_always">Change the Order of the Tunes</h1>
 				<a href="#table_of_contents" class="index-pill hidden-print">
