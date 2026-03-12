@@ -3563,38 +3563,38 @@ function wireUp() {
     sendGoogleAnalytics("action", "instructions");
 
     const content =
-      '  <div style="margin-bottom:14px;">' +
+      '  <div style="margin-bottom:16px;">' +
       '    This utility extracts the chords from ABC tunes and generates clean, printable chord charts.' +
       '    The printed barlines and line breaks match the original ABC exactly.' +
       '  </div>' +
-      '  <p style="text-align:center;margin-bottom:14px;"><a href="https://youtu.be/Y0W-djyMk_c" target="_blank">Complete Walkthrough Video</a></p>' +
-      '  <div style="margin-bottom:14px;">' +
+      '  <p style="text-align:center;margin-bottom:16px;"><a href="https://youtu.be/Y0W-djyMk_c" target="_blank">Complete Walkthrough Video</a></p>' +
+      '  <div style="margin-bottom:16px;">' +
       '    <b>First: Load some ABC tunes</b><br/>' +
       '    Paste one or more ABC tunes into the editor, or open a <code>.abc</code> / <code>.txt</code> file.<br/>' +
       '    <span class="muted">Tip: Chord charts are generated from chord symbols in quotes<br/>(for example: <code>"G"</code>, <code>"Am"</code>).</span>' +
       '  </div>' +
 
-      '  <div style="margin-bottom:14px;">' +
+      '  <div style="margin-bottom:16px;">' +
       '    <b>Next: Generate the chord charts</b><br/>' +
       '    Click <b>Generate Charts</b>. The charts will appear in the <b>Chord Charts</b> area on the right.<br/>' +
       '    Tunes with no chords are skipped.<br/>Measures with no chords are shown as empty (or with your selected placeholder).' +
       '  </div>' +
 
-      '  <div style="margin-bottom:14px;">' +
+      '  <div style="margin-bottom:16px;">' +
       '    <b>Once the chord charts have been generated, you can do the following:</b>' +
       '  </div>' +
 
-      '  <div style="margin-bottom:14px;">' +
+      '  <div style="margin-bottom:16px;">' +
       '    <b>1) Copy chord charts to the clipboard</b><br/>' +
       '    Click <b>Copy</b> to copy the generated chord charts to the system clipboard.' +
       '  </div>' +
 
-      '  <div style="margin-bottom:14px;">' +
+      '  <div style="margin-bottom:16px;">' +
       '    <b>2) Save the chord charts to a text file</b><br/>' +
       '    Click <b>Save</b> to save the generated chord charts to a text file.' +
       '  </div>' +
 
-      '  <div style="margin-bottom:14px;">' +
+      '  <div style="margin-bottom:16px;">' +
       '    <b>3) Print chord charts or generate a PDF</b><br/>' +
       '    Click <b>Print</b> to print the generated chord charts from the browser.<br/>' +
       '    The chord chart text may be scaled as required to fit on the page without clipping.' +
@@ -3603,7 +3603,7 @@ function wireUp() {
 
       '  <hr style="border:0; border-top:1px solid #ccc; margin:18px 0;">' +
 
-      '  <div style="margin-bottom:14px;">' +
+      '  <div style="margin-bottom:16px;">' +
       '    <div style="font-weight:700; font-size:14pt; margin-bottom:10px;">Chord Chart Settings</div>' +
 
       '    <b>Chord chart font</b><br/>' +
@@ -3629,7 +3629,7 @@ function wireUp() {
 
       '  <hr style="border:0; border-top:1px solid #ccc; margin:18px 0;">' +
 
-      '  <div style="margin-bottom:14px;">' +
+      '  <div style="margin-bottom:16px;">' +
       '    <div style="font-weight:700; font-size:14pt; margin-bottom:10px;">Print Settings</div>' +
 
       '    <b>Paper size</b><br/>' +
@@ -3668,7 +3668,7 @@ function wireUp() {
 
       '  <hr style="border:0; border-top:1px solid #ccc; margin:18px 0;">' +
 
-      '  <div style="margin-bottom:14px;">' +
+      '  <div style="margin-bottom:16px;">' +
       '    <div style="font-weight:700; font-size:14pt; margin-bottom:10px;">Advanced Settings</div>' +
       '    Probably best to leave these at their default values.<br/><br/>' +
       '    <b>Suppress pickups</b><br/>' +
@@ -3684,7 +3684,7 @@ function wireUp() {
 
       '  <hr style="border:0; border-top:1px solid #ccc; margin:18px 0;">' +
 
-      '  <div style="margin-bottom:14px;">' +
+      '  <div style="margin-bottom:16px;">' +
       '    <div style="font-weight:700; font-size:14pt; margin-bottom:10px;">Settings</div>' +
       '    <b>Save All Settings</b><br/>' +
       '    Saves all settings to a JSON file.<br/><br/>' +
@@ -3723,15 +3723,15 @@ function wireUp() {
 
       const html =
       '<div id="instructions_div" style="font-family:Helvetica, Arial, sans-serif; font-size:12.5pt; line-height:1.6;">' +
-      '  <div style="text-align:center; font-size:16pt; font-weight:700; margin-bottom:14px;">Instructions</div>' +
-      '  <div style="width:100%; max-height:min(60vh, 520px); overflow:auto; -webkit-overflow-scrolling:touch; padding:0 12px 2px 30px; box-sizing:border-box;">' +
+      '  <div style="text-align:center; font-size:16pt; font-weight:700; margin-bottom:16px;">Instructions</div>' +
+      '  <div style="width:100%; max-height:min(60vh, 620px); overflow:auto; -webkit-overflow-scrolling:touch; padding:0 12px 2px 30px; box-sizing:border-box;">' +
       content +
       '  </div>' +
       '</div>';
 
     DayPilot.Modal.alert(html, {
       theme: "modal_flat",
-      top: 50,
+      top: 25,
       scrollWithPage: false
     });
   });
