@@ -1453,7 +1453,7 @@ function LoadSearchCollection(index){
         var thePrompt = "Gavin Heneghan tune search library successfully saved!";
 
 		if (index == 1){
-			thePrompt = "FolkFriend tune search library successfully saved!";
+			thePrompt = "thesession.org tune search library successfully saved!";
 		}
 		
 		// Center the string in the prompt
@@ -1501,7 +1501,7 @@ function ManageSearchCollectionsDialog(){
 	modal_msg+='<p style="margin-top:24px;margin-bottom:12px;font-size:12pt;line-height:18pt;font-family:helvetica;text-align:center">Save a tune search library for offline use by clicking the buttons below:</p>',
 	modal_msg+='<p style="margin-top:24px;text-align:center">';
 	modal_msg+='<input id="managereverb" class="btn btn-managereverb managereverb" onclick="LoadSearchCollection(0)" type="button" value="Gavin Heneghan (20,000+ Tunes)" title="Load and save the Gavin Heneghan tune search collection">'
-	modal_msg+='<input id="managereverb" class="btn btn-managereverb managereverb" onclick="LoadSearchCollection(1)" type="button" value="FolkFriend (45,000+ Tunes)" title="Load and save the FolkFriend tune search collection">'
+	modal_msg+='<input id="managereverb" class="btn btn-managereverb managereverb" onclick="LoadSearchCollection(1)" type="button" value="thesession.org (45,000+ Tunes)" title="Load and save the thesession.org tune search collection">'
 
 	modal_msg+='</p>';
 
