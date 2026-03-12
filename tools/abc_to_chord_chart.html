@@ -54,6 +54,7 @@
 
       /* Layout */
       --page-pad: 24px;
+      --page-pad-top: 18px;
       --gap: 14px;
 
       /* Visual */
@@ -83,7 +84,7 @@
       -webkit-text-size-adjust: 100%;
 
       padding:
-        calc(var(--page-pad) + env(safe-area-inset-top))
+        calc(var(--page-pad-top) + env(safe-area-inset-top))
         calc(var(--page-pad) + env(safe-area-inset-right))
         calc(var(--page-pad) + env(safe-area-inset-bottom))
         calc(var(--page-pad) + env(safe-area-inset-left));
@@ -637,6 +638,10 @@
 
       .left > .card{ flex: 0 0 auto; }
       #cardInput{ flex: 0 0 auto !important; min-height: auto !important; }
+
+      .right{
+        padding-bottom: 12px;
+      }
     }
 
     @media (max-width: 720px){
@@ -667,6 +672,10 @@
         text-align:center;
         margin-top:40px;
         padding-bottom:20px;
+      }
+
+      .right{
+        padding-bottom: 12px;
       }
     }
 

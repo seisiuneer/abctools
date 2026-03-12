@@ -40,9 +40,10 @@
       --fs-small: clamp(13px, 0.7vw + 11px, 14.5px);
       --fs-h2: clamp(20px, 1.2vw + 16px, 24px);
       --page-pad: 24px;
+      --page-pad-top: 18px;
 
       --helpbar-pad-y: 12px;
-      --helpbar-est-height: 72px;
+      --helpbar-est-height: 62px;
     }
 
     html, body{
@@ -55,7 +56,7 @@
     body{
       font-family: system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
       padding:
-        calc(var(--page-pad) + env(safe-area-inset-top))
+        calc(var(--page-pad-top) + env(safe-area-inset-top))
         calc(var(--page-pad) + env(safe-area-inset-right))
         calc(var(--page-pad) + env(safe-area-inset-bottom))
         calc(var(--page-pad) + env(safe-area-inset-left));
@@ -625,6 +626,10 @@
         flex: 1 0 100% !important;
         width: 100% !important;
       }
+
+      .right{
+        padding-bottom: 12px;
+      }
     }
 
     @media (max-width: 720px){
@@ -705,6 +710,11 @@
       .findRow{
         grid-template-columns: 1fr;
       }
+
+      .right{
+        padding-bottom: 12px;
+      }
+
     }
 
     /* Navigation / open pages */
