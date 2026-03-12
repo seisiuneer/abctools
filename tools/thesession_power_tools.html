@@ -40,6 +40,9 @@
       --fs-small: clamp(13px, 0.7vw + 11px, 14.5px);
       --fs-h2: clamp(20px, 1.2vw + 16px, 24px);
       --page-pad: 24px;
+
+      --helpbar-pad-y: 12px;
+      --helpbar-est-height: 72px;
     }
 
     html, body{
@@ -72,6 +75,8 @@
       gap:14px;
       overflow:hidden;
       min-height:0;
+
+      padding-bottom: calc(var(--helpbar-est-height) + env(safe-area-inset-bottom));
     }
 
     @supports (height: 100dvh){
@@ -175,6 +180,7 @@
       padding:14px;
       overflow:hidden;
       min-width:0;
+      background: Canvas;
     }
 
     .status{
@@ -200,7 +206,20 @@
       -webkit-overflow-scrolling: touch;
     }
 
-    .left, .right{
+    .left{
+      flex:1;
+      display:flex;
+      flex-direction:column;
+      gap:14px;
+      overflow:auto;
+      min-height:0;
+      min-width:0;
+      -webkit-overflow-scrolling: touch;
+
+      padding-bottom: calc(var(--helpbar-est-height) + 16px);
+    }
+
+    .right{
       flex:1;
       display:flex;
       flex-direction:column;
@@ -398,7 +417,6 @@
       margin:20px 0;
     }
 
-
     .modal_flat_buttons{
       text-align:center;
       margin-top:14px;
@@ -485,7 +503,7 @@
     .modal_compact_buttons button{
       margin: 0 8px;
     }
-    
+
     .modal_compact_main button{
       background:#f0f3f8;
       color:#000;
@@ -522,6 +540,28 @@
 
     .instructions a.exampleLink{
       font-weight: 500;
+    }
+
+    #instructions_div{
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 1000;
+      margin: 0;
+
+      border-radius: 0;
+      border-left: none;
+      border-right: none;
+      border-bottom: none;
+
+      background: Canvas;
+
+      padding:
+        var(--helpbar-pad-y)
+        calc(var(--page-pad) + env(safe-area-inset-right))
+        calc(var(--helpbar-pad-y) + env(safe-area-inset-bottom))
+        calc(var(--page-pad) + env(safe-area-inset-left));
     }
 
     #btnHelp{
@@ -561,6 +601,7 @@
         height:auto;
         overflow:visible;
         min-height:0;
+        padding-bottom: calc(var(--helpbar-est-height) + env(safe-area-inset-bottom));
       }
 
       .main{
@@ -572,6 +613,7 @@
       .left, .right{
         overflow:visible;
         min-height:auto;
+        padding-bottom:0;
       }
 
       .taWrap{
@@ -582,10 +624,6 @@
       #btnFetch{
         flex: 1 0 100% !important;
         width: 100% !important;
-      }
-
-      #instructions_div{
-        margin-bottom: calc(env(safe-area-inset-bottom) + var(--page-pad));
       }
     }
 
@@ -602,10 +640,6 @@
 
       .instructions a.exampleLink{
         font-size: 0.92em;
-      }
-
-      #instructions_div{
-        margin-bottom: calc(env(safe-area-inset-bottom) + var(--page-pad));
       }
 
       .modal_flat_main{
@@ -671,7 +705,6 @@
       .findRow{
         grid-template-columns: 1fr;
       }
-
     }
 
     /* Navigation / open pages */
@@ -717,7 +750,7 @@
     }
 
     button {
-      transition: 
+      transition:
         filter 0.12s ease,
         transform 0.08s ease,
         box-shadow 0.12s ease;
@@ -924,7 +957,7 @@
       flex:none;
       white-space:nowrap;
     }
-  
+
     .heroCard{
       position: relative;
       border: 1px solid rgba(127,127,127,.22);
