@@ -1563,7 +1563,7 @@ function generateAndSaveWebsiteFull() {
         theme: "modal_flat",
         top: 200,
         autoFocus: false
-    }).then(function(args) {
+    }).then(async function(args) {
 
         clearGetTuneByIndexCache();
 
@@ -1597,26 +1597,7 @@ function generateAndSaveWebsiteFull() {
             localStorage.WebsiteFilename = gWebsiteFilename;
         }
 
-        var a = document.createElement("a");
-
-        document.body.appendChild(a);
-
-        a.style = "display: none";
-
-        var blob = new Blob([theData], {
-                    type: "text/html"
-                }),
- 
-        url = window.URL.createObjectURL(blob);
-        a.href = url;
-        a.download = fname;
-        a.click();
-
-        document.body.removeChild(a);
-
-        setTimeout(function() {
-            window.URL.revokeObjectURL(url);
-        }, 1000);
+        await shareOrDownloadFile(theData, fname, "text/html");
 
     });
 
@@ -1957,7 +1938,7 @@ function generateAndSaveWebsiteSimple() {
         theme: "modal_flat",
         top: 200,
         autoFocus: false
-    }).then(function(args) {
+    }).then(async function(args) {
 
         clearGetTuneByIndexCache();
 
@@ -1991,26 +1972,7 @@ function generateAndSaveWebsiteSimple() {
             localStorage.WebsiteFilename = gWebsiteFilename;
         }
 
-        var a = document.createElement("a");
-
-        document.body.appendChild(a);
-
-        a.style = "display: none";
-
-        var blob = new Blob([theData], {
-                    type: "text/html"
-                }),
- 
-        url = window.URL.createObjectURL(blob);
-        a.href = url;
-        a.download = fname;
-        a.click();
-
-        document.body.removeChild(a);
-
-        setTimeout(function() {
-            window.URL.revokeObjectURL(url);
-        }, 1000);
+        await shareOrDownloadFile(theData, fname, "text/html");
 
     });
 
@@ -2498,7 +2460,7 @@ function generateAndSaveWebsiteImageGallery() {
         theme: "modal_flat",
         top: 200,
         autoFocus: false
-    }).then(function(args) {
+    }).then(async function(args) {
 
         clearGetTuneByIndexCache();
 
@@ -2510,7 +2472,7 @@ function generateAndSaveWebsiteImageGallery() {
             return null;
         }
 
-        DoBatchImageExport("SVG",function(cancelRequested){
+        DoBatchImageExport("SVG",async function(cancelRequested){
 
             if (!cancelRequested){
 
@@ -2546,26 +2508,7 @@ function generateAndSaveWebsiteImageGallery() {
                     localStorage.WebsiteFilename = gWebsiteFilename;
                 }
 
-                var a = document.createElement("a");
-
-                document.body.appendChild(a);
-
-                a.style = "display: none";
-
-                var blob = new Blob([theData], {
-                            type: "text/html"
-                        }),
-         
-                url = window.URL.createObjectURL(blob);
-                a.href = url;
-                a.download = fname;
-                a.click();
-
-                document.body.removeChild(a);
-
-                setTimeout(function() {
-                    window.URL.revokeObjectURL(url);
-                }, 1000);
+                await shareOrDownloadFile(theData, fname, "text/html");
 
             }
 
@@ -3410,7 +3353,7 @@ function generateAndSaveWebsiteLightbox() {
         theme: "modal_flat",
         top: 200,
         autoFocus: false
-    }).then(function(args) {
+    }).then(async function(args) {
 
         clearGetTuneByIndexCache();
 
@@ -3421,7 +3364,7 @@ function generateAndSaveWebsiteLightbox() {
             return null;
         }
 
-        DoBatchImageExport("SVG",function(cancelRequested){
+        DoBatchImageExport("SVG",async function(cancelRequested){
 
             if (!cancelRequested){
 
@@ -3455,26 +3398,7 @@ function generateAndSaveWebsiteLightbox() {
                     localStorage.WebsiteFilename = gWebsiteFilename;
                 }
 
-                var a = document.createElement("a");
-
-                document.body.appendChild(a);
-
-                a.style = "display: none";
-
-                var blob = new Blob([theData], {
-                            type: "text/html"
-                        }),
-         
-                url = window.URL.createObjectURL(blob);
-                a.href = url;
-                a.download = fname;
-                a.click();
-
-                document.body.removeChild(a);
-
-                setTimeout(function() {
-                    window.URL.revokeObjectURL(url);
-                }, 1000);
+                await shareOrDownloadFile(theData, fname, "text/html");
             }
 
         });

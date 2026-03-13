@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3203_031226_1330";
+var gVersionNumber = "3204_031326_1430";
 
 var gMIDIInitStillWaiting = false;
 
@@ -11634,36 +11634,24 @@ function ExportTextIncipitsPDF(title, bDoFullTunes, bDoCCETransform, bDoQRCodes)
             document.getElementById("statuspdfname").innerHTML = "Saving <font color=\"blue\">" + title + "</font>";
 
             // Save the status up for a bit before saving
-            setTimeout(function() {
+            setTimeout(async function() {
 
               // Start the PDF save
-              // On mobile, have to use a different save strategy otherwise the PDF loads in the same tab
-              if (isMobileBrowser()) {
+              if (gIsIOS) {
 
                 var theBlob = pdf.output('blob', {
                   filename: (title)
                 });
 
-                var newBlob = new Blob([theBlob], {
-                  type: 'application/octet-stream'
+                await shareOrDownloadFile(theBlob, title, "application/pdf");
+
+              } else if (isMobileBrowser()) {
+
+                var theBlob = pdf.output('blob', {
+                  filename: (title)
                 });
 
-                var a = document.createElement("a");
-
-                document.body.appendChild(a);
-
-                a.style = "display: none";
-
-                var url = window.URL.createObjectURL(newBlob);
-                a.href = url;
-                a.download = (title);
-                a.click();
-
-                document.body.removeChild(a);
-
-                setTimeout(function() {
-                  window.URL.revokeObjectURL(url);
-                }, 1000);
+                await shareOrDownloadFile(theBlob, title, "application/pdf");
 
               } else {
 
@@ -12467,35 +12455,23 @@ function ExportNotationPDF(title) {
                 } else {
 
                   // Start the normal PDF save
-                  setTimeout(function() {
+                  setTimeout(async function() {
 
-                    // On mobile, have to use a different save strategy otherwise the PDF loads in the same tab
-                    if (isMobileBrowser()) {
+                    if (gIsIOS) {
 
                       var theBlob = pdf.output('blob', {
                         filename: (title)
                       });
 
-                      var newBlob = new Blob([theBlob], {
-                        type: 'application/octet-stream'
+                      await shareOrDownloadFile(theBlob, title, "application/pdf");
+
+                    } else if (isMobileBrowser()) {
+
+                      var theBlob = pdf.output('blob', {
+                        filename: (title)
                       });
 
-                      var a = document.createElement("a");
-
-                      document.body.appendChild(a);
-
-                      a.style = "display: none";
-
-                      var url = window.URL.createObjectURL(newBlob);
-                      a.href = url;
-                      a.download = (title);
-                      a.click();
-
-                      document.body.removeChild(a);
-
-                      setTimeout(function() {
-                        window.URL.revokeObjectURL(url);
-                      }, 1000);
+                      await shareOrDownloadFile(theBlob, title, "application/pdf");
 
                     } else {
 
@@ -12833,7 +12809,7 @@ async function createSplitPDFs(thePDF, pageMap, totalPages, TOCDelta, thePostSav
 
     gSplitPDFIndex = 0;
 
-    function saveSplitPDF(pdfBytes, fname, callback) {
+    async function saveSplitPDF(pdfBytes, fname, callback) {
 
       //debugger;
       document.getElementById("statustunecount").innerHTML = "Saving tune <font color=\"red\">" + (gSplitPDFIndex + 1) + "</font> of <font color=\"red\">" + gNSplitPDF + "</font>"
@@ -12843,23 +12819,7 @@ async function createSplitPDFs(thePDF, pageMap, totalPages, TOCDelta, thePostSav
         type: 'application/pdf'
       });
 
-      const link = document.createElement('a');
-
-      var href = URL.createObjectURL(blob);
-
-      link.href = href;
-
-      link.download = `${fname}.pdf`;
-
-      document.body.appendChild(link);
-
-      link.click();
-
-      document.body.removeChild(link);
-
-      setTimeout(function() {
-        window.URL.revokeObjectURL(href);
-      }, 1000);
+      await shareOrDownloadFile(blob, `${fname}.pdf`, "application/pdf");
 
       callback()
 
@@ -22089,10 +22049,83 @@ function RoundTripMusicXML() {
   }
 }
 
+
+//
+// Save a file, using the iOS share sheet when available
+//
+async function shareOrDownloadFile(data, filename, mimeType) {
+
+  async function normalizeToBlob(data, mimeType) {
+
+    if (data instanceof Blob) {
+      return data;
+    }
+
+    if (data instanceof ArrayBuffer) {
+      return new Blob([data], {
+        type: mimeType || "application/octet-stream"
+      });
+    }
+
+    if (ArrayBuffer.isView(data)) {
+      return new Blob([data], {
+        type: mimeType || "application/octet-stream"
+      });
+    }
+
+    if ((typeof data === "string") && (data.indexOf("blob:") === 0 || data.indexOf("data:") === 0)) {
+      const response = await fetch(data);
+      return await response.blob();
+    }
+
+    return new Blob([data], {
+      type: mimeType || "text/plain"
+    });
+  }
+
+  const blob = await normalizeToBlob(data, mimeType);
+  const fileType = mimeType || blob.type || "application/octet-stream";
+
+  if (gIsIOS && navigator.share && navigator.canShare && (typeof File !== "undefined")) {
+    try {
+      const file = new File([blob], filename, {
+        type: fileType
+      });
+
+      if (navigator.canShare({ files: [file] })) {
+        await navigator.share({ files: [file] });
+        return true;
+      }
+
+    } catch (err) {
+      //console.log("shareOrDownloadFile share cancelled or failed:", err);
+      return false;
+    }
+  }
+
+  const url = window.URL.createObjectURL(blob);
+  const a = document.createElement("a");
+
+  document.body.appendChild(a);
+
+  a.style = "display: none";
+  a.href = url;
+  a.download = filename;
+  a.click();
+
+  document.body.removeChild(a);
+
+  setTimeout(function() {
+    window.URL.revokeObjectURL(url);
+  }, 1000);
+
+  return false;
+}
+
 //
 // Save the ABC file converted to XML
 //
-function SaveABCAsMusicXML(theTune, fname) {
+async function SaveABCAsMusicXML(theTune, fname) {
 
   //debugger;
 
@@ -22113,79 +22146,54 @@ function SaveABCAsMusicXML(theTune, fname) {
     return;
   }
 
-  fetch(`https://seisiuneer.pythonanywhere.com/abc2xml`, {
+  try {
+
+    const response = await fetch(`https://seisiuneer.pythonanywhere.com/abc2xml`, {
       method: 'POST',
       body: theTune
-    })
-    .then(response => {
+    });
 
-      return response.text();
+    const data = await response.text();
 
-    })
-    .then(data => {
-      ;
+    await shareOrDownloadFile(data, fname, "application/xml");
 
-      var a = document.createElement("a");
+    // Update the displayed name
+    gDisplayedName = fname;
 
-      document.body.appendChild(a);
+    // Mark ABC as from a file
+    gABCFromFile = true;
 
-      a.style = "display: none";
+    // Update the displayed filename
+    var fileSelected = document.getElementById('abc-selected');
+    fileSelected.innerText = fname;
 
-      var blob = new Blob([data], {
-          type: "text/plain"
-        });
+    document.title = fname;
 
-      var url = window.URL.createObjectURL(blob);
-      a.href = url;
-      a.download = fname;
-      a.click();
+    // Clear the dirty count
+    gIsDirty = false;
 
-      document.body.removeChild(a);
+  } catch (error) {
 
-      setTimeout(function() {
-        window.URL.revokeObjectURL(url);
-      }, 1000);
+    var thePrompt = "There was an issue converting the ABC to MusicXML.";
 
-      // Update the displayed name
-      gDisplayedName = fname;
+    // Center the string in the prompt
+    thePrompt = makeCenteredPromptString(thePrompt);
 
-      // Mark ABC as from a file
-      gABCFromFile = true;
+    DayPilot.Modal.alert(thePrompt, {
+      theme: "modal_flat",
+      top: 200,
+      scrollWithPage: (AllowDialogsToScroll())
+    });
 
-      // Update the displayed filename
-      var fileSelected = document.getElementById('abc-selected');
-      fileSelected.innerText = fname;
+    return;
 
-      document.title = fname;
-
-      // Clear the dirty count
-      gIsDirty = false;
-
-    })
-    .catch(
-      error => {
-
-        var thePrompt = "There was an issue converting the ABC to MusicXML.";
-
-        // Center the string in the prompt
-        thePrompt = makeCenteredPromptString(thePrompt);
-
-        DayPilot.Modal.alert(thePrompt, {
-          theme: "modal_flat",
-          top: 200,
-          scrollWithPage: (AllowDialogsToScroll())
-        });
-
-        return;
-
-
-      });
+  }
 }
 
 //
 // Save the ABC file
 //
-function doSaveABCFile(fname, theData) {
+async function doSaveABCFile(fname, theData) {
 
   // Keep this around
   if ((fname.endsWith(".xml")) || (fname.endsWith(".XML"))) {
@@ -22205,7 +22213,7 @@ function doSaveABCFile(fname, theData) {
   sendGoogleAnalytics("export", "SaveABC");
 
   // Give it a good extension
-  if (isPureDesktopBrowser()) {
+  if (isPureDesktopBrowser() || gIsIOS) {
 
     if ((!fname.endsWith(".abc")) && (!fname.endsWith(".txt")) && (!fname.endsWith(".ABC")) && (!fname.endsWith(".TXT"))) {
 
@@ -22215,33 +22223,14 @@ function doSaveABCFile(fname, theData) {
 
     }
   } else {
-    // iOS and Android have odd rules about text file saving
+    // Android has odd rules about text file saving
     // Give it a good extension
     fname = fname.replace(/\..+$/, '');
     fname = fname + ".txt";
 
   }
 
-  var a = document.createElement("a");
-
-  document.body.appendChild(a);
-
-  a.style = "display: none";
-
-  var blob = new Blob([theData], {
-      type: "text/plain"
-    });
-
-  var url = window.URL.createObjectURL(blob);
-  a.href = url;
-  a.download = fname;
-  a.click();
-
-  document.body.removeChild(a);
-
-  setTimeout(function() {
-    window.URL.revokeObjectURL(url);
-  }, 1000);
+  await shareOrDownloadFile(theData, fname, "text/plain");
 
   // Update the displayed name
   gDisplayedName = fname;
@@ -22266,7 +22255,7 @@ function saveABCFile(thePrompt, thePlaceholder, theData) {
     top: 200,
     autoFocus: false,
     scrollWithPage: (AllowDialogsToScroll())
-  }).then(function(args) {
+  }).then(async function(args) {
 
     var fname = args.result;
 
@@ -22283,7 +22272,7 @@ function saveABCFile(thePrompt, thePlaceholder, theData) {
     }
 
     // Do the save
-    doSaveABCFile(fname, theData);
+    await doSaveABCFile(fname, theData);
 
   });
 }
@@ -22298,7 +22287,7 @@ function saveTextFile(thePrompt, thePlaceholder, theData) {
     top: 200,
     autoFocus: false,
     scrollWithPage: (AllowDialogsToScroll())
-  }).then(function(args) {
+  }).then(async function(args) {
 
     var fname = args.result;
 
@@ -22331,26 +22320,7 @@ function saveTextFile(thePrompt, thePlaceholder, theData) {
       fname = fname + ".txt";
     }
 
-    var a = document.createElement("a");
-
-    document.body.appendChild(a);
-
-    a.style = "display: none";
-
-    var blob = new Blob([theData], {
-        type: "text/plain"
-      });
-
-    var url = window.URL.createObjectURL(blob);
-    a.href = url;
-    a.download = fname;
-    a.click();
-
-    document.body.removeChild(a);
-
-    setTimeout(function() {
-      window.URL.revokeObjectURL(url);
-    }, 1000);
+    await shareOrDownloadFile(theData, fname, "text/plain");
 
   });
 
@@ -22366,7 +22336,7 @@ function saveTextFileDeveloper(thePrompt, thePlaceholder, theData) {
     top: 200,
     autoFocus: false,
     scrollWithPage: (AllowDialogsToScroll())
-  }).then(function(args) {
+  }).then(async function(args) {
 
     var fname = args.result;
 
@@ -22391,26 +22361,7 @@ function saveTextFileDeveloper(thePrompt, thePlaceholder, theData) {
       fname = fname + ".txt";
     }
 
-    var a = document.createElement("a");
-
-    document.body.appendChild(a);
-
-    a.style = "display: none";
-
-    var blob = new Blob([theData], {
-        type: "text/plain"
-      });
-
-    var url = window.URL.createObjectURL(blob);
-    a.href = url;
-    a.download = fname;
-    a.click();
-
-    document.body.removeChild(a);
-
-    setTimeout(function() {
-      window.URL.revokeObjectURL(url);
-    }, 1000);
+    await shareOrDownloadFile(theData, fname, "text/plain");
 
   });
 
@@ -22426,7 +22377,7 @@ function saveCSVFile(thePrompt, thePlaceholder, theData) {
     top: 200,
     autoFocus: false,
     scrollWithPage: (AllowDialogsToScroll())
-  }).then(function(args) {
+  }).then(async function(args) {
 
     var fname = args.result;
 
@@ -22446,26 +22397,7 @@ function saveCSVFile(thePrompt, thePlaceholder, theData) {
     fname = fname.replace(/\..+$/, '');
     fname = fname + ".csv";
 
-    var a = document.createElement("a");
-
-    document.body.appendChild(a);
-
-    a.style = "display: none";
-
-    var blob = new Blob([theData], {
-        type: "text/csv"
-      });
-
-    var url = window.URL.createObjectURL(blob);
-    a.href = url;
-    a.download = fname;
-    a.click();
-
-    document.body.removeChild(a);
-
-    setTimeout(function() {
-      window.URL.revokeObjectURL(url);
-    }, 1000);
+    await shareOrDownloadFile(theData, fname, "text/csv");
 
   });
 
@@ -27765,13 +27697,13 @@ function processShareLink() {
       // Show update message?
       if (gLocalStorageAvailable){
 
-        var updatePresented = localStorage.sawUpdate_12mar2026;
+        var updatePresented = localStorage.sawUpdate_13mar2026;
 
         if (updatePresented != "true") {
 
           showWhatsNewScreen();
 
-          localStorage.sawUpdate_12mar2026 = true;
+          localStorage.sawUpdate_13mar2026 = true;
 
         }
 
@@ -32909,7 +32841,7 @@ function dataURLtoBlob(dataurl) {
 //
 var gInDownloadSVG = false;
 
-function DownloadSVG(callback, val) {
+async function DownloadSVG(callback, val) {
 
   // Avoid re-entry
   if (gInDownloadSVG) {
@@ -33019,17 +32951,8 @@ function DownloadSVG(callback, val) {
   var svgBlob = new Blob([preface, svgData], {
     type: "image/svg+xml;charset=utf-8"
   });
-  var svgUrl = URL.createObjectURL(svgBlob);
 
-  var downloadLink = document.createElement("a");
-  downloadLink.href = svgUrl;
-  downloadLink.download = GetTuneAudioDownloadName(gPlayerABC, ".svg");
-  document.body.appendChild(downloadLink);
-  downloadLink.click();
-
-  window.URL.revokeObjectURL(svgUrl);
-
-  document.body.removeChild(downloadLink);
+  await shareOrDownloadFile(svgBlob, GetTuneAudioDownloadName(gPlayerABC, ".svg"), "image/svg+xml");
 
   PostProcessSVGImageAfterDownload();
 
@@ -33055,7 +32978,7 @@ function DownloadSVG(callback, val) {
 //
 var gInDownloadJPEG = false;
 
-function DownloadJPEG(callback, val) {
+async function DownloadJPEG(callback, val) {
 
   // Avoid re-entry
   if (gInDownloadJPEG) {
@@ -33182,49 +33105,13 @@ function DownloadJPEG(callback, val) {
 
   img.setAttribute("src", "data:image/svg+xml;base64," + btoa(unescape(encodeURIComponent(svgData))));
 
-  img.onload = function() {
+  img.onload = async function() {
 
     ctx.drawImage(img, 0, 0);
 
     var canvasdata = canvas.toDataURL("image/jpeg", 0.75);
 
-    if (isPureDesktopBrowser()) {
-
-      var downloadLink = document.createElement("a");
-
-      downloadLink.download = GetTuneAudioDownloadName(gPlayerABC, ".jpg");
-
-      downloadLink.href = canvasdata;
-
-      document.body.appendChild(downloadLink);
-
-      downloadLink.click();
-
-      window.URL.revokeObjectURL(canvasdata);
-
-      document.body.removeChild(downloadLink);
-
-    } else {
-
-      var imageBlob = dataURLtoBlob(canvasdata);
-
-      var imageUrl = URL.createObjectURL(imageBlob);
-
-      var downloadLink = document.createElement("a");
-
-      downloadLink.href = imageUrl;
-
-      downloadLink.download = GetTuneAudioDownloadName(gPlayerABC, ".jpg");
-
-      document.body.appendChild(downloadLink);
-
-      downloadLink.click();
-
-      window.URL.revokeObjectURL(imageUrl);
-
-      document.body.removeChild(downloadLink);
-
-    }
+    await shareOrDownloadFile(canvasdata, GetTuneAudioDownloadName(gPlayerABC, ".jpg"), "image/jpeg");
 
     PostProcessSVGImageAfterDownload();
 
@@ -33251,7 +33138,7 @@ function DownloadJPEG(callback, val) {
 //
 var gInDownloadPNG = false;
 
-function DownloadPNG(callback, val) {
+async function DownloadPNG(callback, val) {
 
   // Avoid re-entry
   if (gInDownloadPNG) {
@@ -33345,49 +33232,13 @@ function DownloadPNG(callback, val) {
 
   img.setAttribute("src", "data:image/svg+xml;base64," + btoa(unescape(encodeURIComponent(svgData))));
 
-  img.onload = function() {
+  img.onload = async function() {
 
     ctx.drawImage(img, 0, 0);
 
     var canvasdata = canvas.toDataURL("image/png", 1);
 
-    if (isPureDesktopBrowser()) {
-
-      var downloadLink = document.createElement("a");
-
-      downloadLink.download = GetTuneAudioDownloadName(gPlayerABC, ".png");
-
-      downloadLink.href = canvasdata;
-
-      document.body.appendChild(downloadLink);
-
-      downloadLink.click();
-
-      window.URL.revokeObjectURL(canvasdata);
-
-      document.body.removeChild(downloadLink);
-
-    } else {
-
-      var imageBlob = dataURLtoBlob(canvasdata);
-
-      var imageUrl = URL.createObjectURL(imageBlob);
-
-      var downloadLink = document.createElement("a");
-
-      downloadLink.href = imageUrl;
-
-      downloadLink.download = GetTuneAudioDownloadName(gPlayerABC, ".png");
-
-      document.body.appendChild(downloadLink);
-
-      downloadLink.click();
-
-      window.URL.revokeObjectURL(imageUrl);
-
-      document.body.removeChild(downloadLink);
-
-    }
+    await shareOrDownloadFile(canvasdata, GetTuneAudioDownloadName(gPlayerABC, ".png"), "image/png");
 
     PostProcessSVGImageAfterDownload();
 
@@ -34425,30 +34276,11 @@ function BatchABCExport() {
 // 
 // Convert and export one tune to ABC
 //
-function ExportOneABCTune(theABC, fname, callback, errorCallback) {
+async function ExportOneABCTune(theABC, fname, callback, errorCallback) {
 
   //console.log("ExportOneABCTune success!")
 
-  var a = document.createElement("a");
-
-  document.body.appendChild(a);
-
-  a.style = "display: none";
-
-  var blob = new Blob([theABC], {
-      type: "text/plain"
-    });
-
-  var url = window.URL.createObjectURL(blob);
-  a.href = url;
-  a.download = fname;
-  a.click();
-
-  document.body.removeChild(a);
-
-  setTimeout(function() {
-    window.URL.revokeObjectURL(url);
-  }, 1000);
+  await shareOrDownloadFile(theABC, fname, "text/plain");
 
   callback();
 
@@ -34594,57 +34426,34 @@ function BatchMusicXMLExport() {
 // 
 // Convert and export one tune to MusicXML
 //
-function ExportMusicXML(theABC, fname, callback, errorCallback) {
+async function ExportMusicXML(theABC, fname, callback, errorCallback) {
 
-  fetch(`https://seisiuneer.pythonanywhere.com/abc2xml`, {
+  try {
+
+    const response = await fetch(`https://seisiuneer.pythonanywhere.com/abc2xml`, {
       method: 'POST',
       body: theABC
-    })
-    .then(response => {
+    });
 
-      return response.text();
+    const data = await response.text();
 
-    })
-    .then(data => {
+    //console.log("ExportMusicXML success!")
 
-      //console.log("ExportMusicXML success!")
+    await shareOrDownloadFile(data, fname, "application/xml");
 
-      var a = document.createElement("a");
+    callback();
 
-      document.body.appendChild(a);
+  } catch (error) {
 
-      a.style = "display: none";
+    console.log("ExportMusicXML - MusicXML conversion failed on " + fname);
 
-      var blob = new Blob([data], {
-          type: "text/plain"
-        });
-
-      var url = window.URL.createObjectURL(blob);
-      a.href = url;
-      a.download = fname;
-      a.click();
-
-      document.body.removeChild(a);
-
-      setTimeout(function() {
-        window.URL.revokeObjectURL(url);
-      }, 1000);
-
+    if (errorCallback) {
+      errorCallback();
+    } else {
       callback();
+    }
 
-    })
-    .catch(
-      error => {
-
-        console.log("ExportMusicXML - MusicXML conversion failed on " + fname);
-
-        if (errorCallback) {
-          errorCallback();
-        } else {
-          callback();
-        }
-
-      });
+  }
 
 }
 
@@ -34948,9 +34757,10 @@ function isJigWithNoTiming(tuneABC, millisecondsPerMeasure) {
 //
 // Generate and download the .wav file for the current tune
 //
-function DownloadWave() {
+async function DownloadWave() {
 
   var originalMS;
+  var wavData = null;
 
   // Keep track of export
   sendGoogleAnalytics("export", "DownloadWave");
@@ -34970,29 +34780,15 @@ function DownloadWave() {
 
   gMIDIbuffer.fadeLength = theFade;
 
-  gMIDIbuffer.prime().then((function(t) {
+  try {
 
-    var wavData = gMIDIbuffer.download();
+    await gMIDIbuffer.prime();
 
-    gMIDIbuffer.millisecondsPerMeasure = originalMS;
+    wavData = gMIDIbuffer.download();
 
-    var link = document.createElement("a");
+    await shareOrDownloadFile(wavData, GetTuneAudioDownloadName(gPlayerABC, ".wav"), "audio/wav");
 
-    document.body.appendChild(link);
-
-    link.setAttribute("style", "display: none;");
-
-    link.href = wavData;
-
-    link.download = GetTuneAudioDownloadName(gPlayerABC, ".wav");
-
-    link.click();
-
-    window.URL.revokeObjectURL(wavData);
-
-    document.body.removeChild(link);
-
-  })).catch((function(e) {
+  } catch (e) {
 
     //console.warn("Problem exporting .wav:", e)
     // Nope, exit
@@ -35007,7 +34803,15 @@ function DownloadWave() {
       scrollWithPage: (AllowDialogsToScroll())
     });
 
-  }));
+  } finally {
+
+    gMIDIbuffer.millisecondsPerMeasure = originalMS;
+
+    if (wavData) {
+      window.URL.revokeObjectURL(wavData);
+    }
+
+  }
 
 }
 
@@ -35577,7 +35381,7 @@ function DoBatchMP3Export(repeatCount, doClickTrack, doInjectSilence, doIncludeR
 //
 var gInDownloadMP3 = false;
 
-function DownloadMP3(callback, val) {
+async function DownloadMP3(callback, val) {
 
   // Avoid re-entry
   if (gInDownloadMP3) {
@@ -35690,7 +35494,17 @@ function DownloadMP3(callback, val) {
 
   gMIDIbuffer.fadeLength = theFade;
 
-  gMIDIbuffer.prime().then(function(t) {
+  function delay(ms) {
+    return new Promise(function(resolve) {
+      setTimeout(resolve, ms);
+    });
+  }
+
+  var wavDataURL = null;
+
+  try {
+
+    await gMIDIbuffer.prime();
 
     if (!callback) {
 
@@ -35704,69 +35518,26 @@ function DownloadMP3(callback, val) {
     }
 
     // Give the UI a chance to update
-    setTimeout(async function() {
+    await delay(gSpinnerDelay);
 
-      var wavDataURL = gMIDIbuffer.download();
+    wavDataURL = gMIDIbuffer.download();
 
-      var wavData = await fetch(wavDataURL).then(r => r.blob());
+    var wavData = await fetch(wavDataURL).then(r => r.blob());
+    var buffer = await wavData.arrayBuffer();
 
-      // Restore the buffer timing
-      gMIDIbuffer.millisecondsPerMeasure = originalMS;
+    var mp3Data = convertToMp3(buffer);
 
-      var fileReader = new FileReader();
+    var blob = new Blob(mp3Data, {
+      type: 'audio/mpeg'
+    });
 
-      fileReader.onload = function(event) {
+    await shareOrDownloadFile(blob, GetTuneAudioDownloadName(gPlayerABC, ".mp3"), "audio/mpeg");
 
-        var buffer = event.target.result;
+    if (callback) {
+      callback(val);
+    }
 
-        var mp3Data = convertToMp3(buffer);
-
-        var blob = new Blob(mp3Data, {
-          type: 'audio/mp3'
-        });
-
-        var url = window.URL.createObjectURL(blob);
-
-        var link = document.createElement("a");
-
-        document.body.appendChild(link);
-
-        link.setAttribute("style", "display: none;");
-
-        link.href = url;
-
-        link.download = GetTuneAudioDownloadName(gPlayerABC, ".mp3");
-
-        link.click();
-
-        window.URL.revokeObjectURL(url);
-
-        document.body.removeChild(link);
-
-        if (!callback) {
-
-          var elem = document.getElementById("abcplayer_mp3button");
-
-          if (elem) {
-            elem.value = "Save as .MP3";
-          }
-
-          hideTheSpinner();
-
-        }
-
-        gInDownloadMP3 = false;
-
-        if (callback) {
-          callback(val);
-        }
-
-      };
-
-      fileReader.readAsArrayBuffer(wavData);
-
-    }, gSpinnerDelay);
-  }).catch((function(e) {
+  } catch (e) {
 
     var thePrompt = "A problem occured when exporting the .mp3 file.";
 
@@ -35778,6 +35549,14 @@ function DownloadMP3(callback, val) {
       top: 200,
       scrollWithPage: (AllowDialogsToScroll())
     });
+
+  } finally {
+
+    if (wavDataURL) {
+      window.URL.revokeObjectURL(wavDataURL);
+    }
+
+    gMIDIbuffer.millisecondsPerMeasure = originalMS;
 
     if (!callback) {
 
@@ -35791,18 +35570,16 @@ function DownloadMP3(callback, val) {
 
     }
 
-
     gInDownloadMP3 = false;
 
-
-  }));
+  }
 
 }
 
 //
 // Generate and download the MIDI file for the current tune
 //
-function DownloadMIDI(callback, val) {
+async function DownloadMIDI(callback, val) {
 
   // Keep track of export
   if (!callback) {
@@ -35818,26 +35595,47 @@ function DownloadMIDI(callback, val) {
   thisMIDI = thisMIDI.replace('<a download', '<a id="downloadmidilink" download');
 
   var link = document.createElement("div");
-
   link.innerHTML = thisMIDI;
-
-  link.setAttribute("style", "display: none;");
+  link.style.display = "none";
 
   document.body.appendChild(link);
 
-  var theMIDILink = document.getElementById("downloadmidilink");
+  try {
 
-  theMIDILink.click();
+    var theMIDILink = document.getElementById("downloadmidilink");
 
-  document.body.removeChild(link);
+    if (!theMIDILink || !theMIDILink.href) {
+      throw new Error("Unable to create MIDI download link.");
+    }
 
-  if (callback) {
-    callback(val);
+    await shareOrDownloadFile(
+      theMIDILink.href,
+      theMIDILink.download || GetTuneAudioDownloadName(gPlayerABC, ".mid"),
+      "audio/midi"
+    );
+
+    if (callback) {
+      callback(val);
+    }
+
+  } catch (e) {
+
+    var thePrompt = "A problem occured when exporting the .mid file.";
+
+    thePrompt = makeCenteredPromptString(thePrompt);
+
+    DayPilot.Modal.alert(thePrompt, {
+      theme: "modal_flat",
+      top: 200,
+      scrollWithPage: (AllowDialogsToScroll())
+    });
+
+  } finally {
+
+    document.body.removeChild(link);
+
   }
-
-
 }
-
 //
 // Export the tune in various audio or image formats
 //
@@ -55621,13 +55419,22 @@ function showWhatsNewScreen() {
   modal_msg += 'background: linear-gradient(135deg, #1b5e20 0%, #2e7d32 50%, #66bb6a 100%);';
   modal_msg += 'box-shadow: 0 6px 16px rgba(0,0,0,0.14); color:#fff;">';
   modal_msg += '<div style="font-size:20pt; line-height:24pt; font-weight:bold;">What&apos;s New</div>';
-  modal_msg += '<div style="font-size:11pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 12 March 2026</div>';
+  modal_msg += '<div style="font-size:11pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 13 March 2026</div>';
   modal_msg += '</div>';
 
   // Short intro
   modal_msg += '<p style="margin:24px 4px 10px 4px; font-size:12pt;">';
   modal_msg += 'Here’s what’s new in the ABC Transcription Tools:';
   modal_msg += '</p>';
+
+  // Feature card
+  modal_msg += '<div style="margin:10px 0 6px 0; padding:12px 12px; border-radius:12px;';
+  modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);">';
+  
+  modal_msg += '<p style="margin:6px 0; font-size:12pt;"><strong>When possible, all file saves and exports from the tool use the native iOS file sharing dialog.</strong></p>';
+  modal_msg += '<p style="margin:6px 0; font-size:12pt;">This allows you to easily save exported files to the Files area on the device, share them with other iOS apps, or send them to another device via AirDrop.</p>';
+
+  modal_msg += '</div>';
 
   // Feature card
   modal_msg += '<div style="margin:10px 0 6px 0; padding:12px 12px; border-radius:12px;';
@@ -55646,15 +55453,6 @@ function showWhatsNewScreen() {
   modal_msg += '<p style="margin:6px 0; font-size:12pt;">You can switch back to the legacy glossy buttons by unchecking <strong>Use Flat Buttons? (Glossy if unchecked)</strong> on the <strong>Editor</strong> pane in the <strong>Settings</strong> dialog.</p>';
 
   modal_msg += '</div>';
-
-  // Feature card
-  modal_msg += '<div style="margin:10px 0 6px 0; padding:12px 12px; border-radius:12px;';
-  modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);">';
-
-  modal_msg += '<p style="margin:6px 0; font-size:12pt;">Added a new <strong>Other ABC Tools</strong> option on the <strong>☰</strong> dropdown menu.</p>';
-  modal_msg += '<p style="margin:6px 0; font-size:12pt;">When clicked, opens up a dialog with direct links to other ABC tools I\'ve developed.</p>';
-  modal_msg += '<p style="margin:6px 0; font-size:12pt;">The tools initially available are the <strong>thesession.org Power Tools</strong>, <strong>ABC Chord Chart Generator</strong>, <strong>ABC Tags to CSV Extractor Utilities</strong>, and the <strong>Custom Instrument Builder</strong>.</p>';
-   modal_msg += '</div>';
 
 
   modal_msg += '</div>'; // wrapper
@@ -62167,13 +61965,13 @@ function DoStartup() {
   // Show update message?
   if (gLocalStorageAvailable && (!isFromShare)){
 
-    var updatePresented = localStorage.sawUpdate_12mar2026;
+    var updatePresented = localStorage.sawUpdate_13mar2026;
 
     if (updatePresented != "true") {
 
       showWhatsNewScreen();
 
-      localStorage.sawUpdate_12mar2026 = true;
+      localStorage.sawUpdate_13mar2026 = true;
 
     }
 
