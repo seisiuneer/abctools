@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <link rel="profile" href="http://gmpg.org/xfn/11">
+  <link rel="profile" href="https://gmpg.org/xfn/11">
   <title>thesession.org Power Tools</title>
   <link rel='dns-prefetch' href='//fonts.googleapis.com' />
   <link rel='dns-prefetch' href='//s.w.org' />
@@ -1292,6 +1292,87 @@ function isIOS() {
 }
 
 const gIsIOS = isIOS();
+
+//
+// Are we on Android?
+//
+function isAndroid() {
+  if (/Android/i.test(navigator.userAgent)) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+const gIsAndroid = isAndroid();
+
+async function shareOrDownloadFile(data, filename, mimeType) {
+
+  async function normalizeToBlob(data, mimeType) {
+
+    if (data instanceof Blob) {
+      return data;
+    }
+
+    if (data instanceof ArrayBuffer) {
+      return new Blob([data], {
+        type: mimeType || "application/octet-stream"
+      });
+    }
+
+    if (ArrayBuffer.isView(data)) {
+      return new Blob([data], {
+        type: mimeType || "application/octet-stream"
+      });
+    }
+
+    if ((typeof data === "string") && (data.indexOf("blob:") === 0 || data.indexOf("data:") === 0)) {
+      const response = await fetch(data);
+      return await response.blob();
+    }
+
+    return new Blob([data], {
+      type: mimeType || "text/plain"
+    });
+  }
+
+  const blob = await normalizeToBlob(data, mimeType);
+  const fileType = mimeType || blob.type || "application/octet-stream";
+
+  if (gIsIOS && navigator.share && navigator.canShare && (typeof File !== "undefined")) {
+    try {
+      const file = new File([blob], filename, {
+        type: fileType
+      });
+
+      if (navigator.canShare({ files: [file] })) {
+        await navigator.share({ files: [file] });
+        return true;
+      }
+    } catch (err) {
+      console.log("shareOrDownloadFile share cancelled or failed:", err);
+      return false;
+    }
+  }
+
+  const url = window.URL.createObjectURL(blob);
+  const a = document.createElement("a");
+
+  document.body.appendChild(a);
+
+  a.style = "display: none";
+  a.href = url;
+  a.download = filename;
+  a.click();
+
+  document.body.removeChild(a);
+
+  setTimeout(function() {
+    window.URL.revokeObjectURL(url);
+  }, 1000);
+
+  return false;
+}
 
 let gLocalStorageAvailable = false;
 try {
@@ -3941,7 +4022,7 @@ $("btnCopy").addEventListener("click", async () => {
   }
 });
 
-$("btnDownload").addEventListener("click", () => {
+$("btnDownload").addEventListener("click", async () => {
   sendGoogleAnalytics("action", "download");
   if (!lastResult) return;
 
@@ -3966,25 +4047,22 @@ $("btnDownload").addEventListener("click", () => {
     baseName = "thesession";
   }
 
-  const blob = new Blob([outEl.value], { type: "text/plain;charset=utf-8" });
-  const a = document.createElement("a");
-  a.href = URL.createObjectURL(blob);
+  let postfix = ".abc";
+
+  if (gIsIOS || gIsAndroid){
+    postfix = ".txt";
+  }
 
   let fname = `${safeFilename(baseName)}` +
     (lastResult.tuneId ? `_${lastResult.tuneId}` : "") +
-    `.abc`;
+    postfix;
 
-  a.download = fname;
-
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-
-  setTimeout(function(){
-    URL.revokeObjectURL(a.href);
-  }, 1000);
-
-  appendStatus("ABC tune settings saved to " + fname);
+  try {
+    await shareOrDownloadFile(outEl.value, fname, "text/plain;charset=utf-8");
+    appendStatus("ABC tune settings saved to " + fname);
+  } catch (e) {
+    appendStatus("ABC tune settings save failed.");
+  }
 });
 
 $("btnOpenInTools").addEventListener("click", () => {
@@ -4213,7 +4291,7 @@ const content =
   '      You can search The Session directly from within the tool by clicking <b>Find Tune…</b> or <b>Find Member…</b>' +
   '    </div>' +
   '    <div style="opacity:0.8; margin-top:6px;">' +
-  '      Enter a search term, then click <b>Search Tunes</b> or <b>Search Members</b>.<br/>For tune searches, you can also optionally filter by <b>tune style</b> and <b>key/mode</b>.<br/>Select one of the matching results and click <b>OK</b> to populate the <b>thesession.org URL</b> field automatically.<br/>Double-clicking a result will also select it and accept it immediately.' +
+  '      Enter a search term, then click <b>Search Tunes</b> or <b>Search Members</b>.<br/>For tune searches, you can also optionally filter by <b>tune style</b> and <b>key/mode</b>.<br/>Select one of the matching results and click <b>OK</b> to populate the <b>thesession.org URL</b> field automatically.' +
   '    </div>' +
   '    <div style="opacity:0.8; margin-top:6px;">' +
   '      <b>Note:</b> Tune search results are limited to 1000 items and member search results to 100 items.<br/>The search methods use the same API as the native search on thesession.org and should produce results identical to those you would get searching on the site itself.<br/>If you believe you are seeing incorrect results, please try the same search on thesession.org before reporting an issue.' +
@@ -4299,7 +4377,7 @@ const content =
   '  <div style="margin-bottom:16px;">' +
   '    <div style="font-weight:700; margin-bottom:6px;">After clicking Fetch</div>' +
   '    <div>' +
-  '      You can copy the fetched ABC tune settings to the clipboard, save them to a .abc file, or, if the generated ShareURL is under 8100 characters, open the tune settings directly in the <a href="https://michaeleskin.com/abctools/abctools.html" target="_blank" rel="noopener noreferrer">ABC Transcription Tools</a>.' +
+  '      You can copy the fetched ABC tune settings to the clipboard, save them to a .abc file (opens the sharing dialog on iOS), or, if the generated ShareURL is under 8100 characters, open the tune settings directly in the <a href="https://michaeleskin.com/abctools/abctools.html" target="_blank" rel="noopener noreferrer">ABC Transcription Tools</a>.' +
   '    </div>' +
   '  </div>' +
 

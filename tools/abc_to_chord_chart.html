@@ -8,7 +8,7 @@
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
 
-  <link rel="profile" href="http://gmpg.org/xfn/11">
+  <link rel="profile" href="https://gmpg.org/xfn/11">
   <title>ABC Chord Chart Generator</title>
   <link rel='dns-prefetch' href='//fonts.googleapis.com' />
   <link rel='dns-prefetch' href='//s.w.org' />
@@ -1221,16 +1221,76 @@ function isChromiumBased() {
    Settings Import/Export (.json file)
    ============================================================ */
 
-function downloadFile(filename, text, mimeType) {
-  const blob = new Blob([text], { type: mimeType || "application/octet-stream" });
-  const url = URL.createObjectURL(blob);
+async function shareOrDownloadFile(data, filename, mimeType) {
+
+  async function normalizeToBlob(data, mimeType) {
+
+    if (data instanceof Blob) {
+      return data;
+    }
+
+    if (data instanceof ArrayBuffer) {
+      return new Blob([data], {
+        type: mimeType || "application/octet-stream"
+      });
+    }
+
+    if (ArrayBuffer.isView(data)) {
+      return new Blob([data], {
+        type: mimeType || "application/octet-stream"
+      });
+    }
+
+    if ((typeof data === "string") && (data.indexOf("blob:") === 0 || data.indexOf("data:") === 0)) {
+      const response = await fetch(data);
+      return await response.blob();
+    }
+
+    return new Blob([data], {
+      type: mimeType || "text/plain"
+    });
+  }
+
+  const blob = await normalizeToBlob(data, mimeType);
+  const fileType = mimeType || blob.type || "application/octet-stream";
+
+  if (gIsIOS && navigator.share && navigator.canShare && (typeof File !== "undefined")) {
+    try {
+      const file = new File([blob], filename, {
+        type: fileType
+      });
+
+      if (navigator.canShare({ files: [file] })) {
+        await navigator.share({ files: [file] });
+        return true;
+      }
+    } catch (err) {
+      console.log("shareOrDownloadFile share cancelled or failed:", err);
+      return false;
+    }
+  }
+
+  const url = window.URL.createObjectURL(blob);
   const a = document.createElement("a");
+
+  document.body.appendChild(a);
+
+  a.style = "display: none";
   a.href = url;
   a.download = filename;
-  document.body.appendChild(a);
   a.click();
-  a.remove();
-  setTimeout(() => URL.revokeObjectURL(url), 1000);
+
+  document.body.removeChild(a);
+
+  setTimeout(function() {
+    window.URL.revokeObjectURL(url);
+  }, 1000);
+
+  return false;
+}
+
+async function downloadFile(filename, text, mimeType) {
+  return await shareOrDownloadFile(text, filename, mimeType || "application/octet-stream");
 }
 
 function applyAllSettingsSideEffects_AfterLoad() {
@@ -1305,7 +1365,7 @@ async function saveSettingsToJsonFile() {
   const finalName = v.value;
   const pretty = JSON.stringify(st, null, 2) + "\n";
 
-  downloadFile(finalName, pretty, "application/json;charset=utf-8");
+  await downloadFile(finalName, pretty, "application/json;charset=utf-8");
 
   gSavedSettingsFileName = finalName;
   setStatus(`Saved settings to "${finalName}"`);
@@ -1824,16 +1884,8 @@ function buildRawChordTextForSave() {
   }
   return parts.join("\n").replace(/\s+$/g, "") + "\n";
 }
-function downloadTextFile(filename, text) {
-  const blob = new Blob([text], { type: "text/plain;charset=utf-8" });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = filename;
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-  setTimeout(() => URL.revokeObjectURL(url), 1000);
+async function downloadTextFile(filename, text) {
+  return await shareOrDownloadFile(text, filename, "text/plain;charset=utf-8");
 }
 
 /* ---------------------------------
@@ -2528,7 +2580,7 @@ async function saveChordChart() {
   }
 
   const finalName = v.value;
-  downloadTextFile(finalName, raw);
+  await downloadTextFile(finalName, raw);
   gSavedChordFileName = finalName;
   setStatus(`Saved "${finalName}"`);
 }
@@ -3724,7 +3776,7 @@ function wireUp() {
 
       '  <div style="margin-bottom:16px;">' +
       '    <b>2) Save the chord charts to a text file</b><br/>' +
-      '    Click <b>Save</b> to save the generated chord charts to a text file.' +
+      '    Click <b>Save</b> to save the generated chord charts to a text file (opens the sharing dialog on iOS).'
       '  </div>' +
 
       '  <div style="margin-bottom:16px;">' +
