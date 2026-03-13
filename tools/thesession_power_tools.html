@@ -527,6 +527,58 @@
       border-color:#d4d4d4 !important;
     }
 
+    .modal_tipjar_background{
+      background-color:#000;
+      opacity:0.4;
+    }
+
+    .modal_tipjar_main{
+      border:1px solid #333;
+      box-shadow:0 0 15px -2px rgba(0,0,0,0.75);
+      width:min(560px, calc(100vw - 80px)) !important;
+      max-width:min(560px, calc(100vw - 80px)) !important;
+
+      height:auto !important;
+      max-height:min(520px, 88dvh) !important;
+      overflow:hidden !important;
+    }
+
+    .modal_tipjar_inner{
+      padding:16px;
+      background:#fff;
+      color:#000;
+      display:flex;
+      flex-direction:column;
+    }
+
+    .modal_tipjar_content{
+      margin:14px 0 8px 0;
+      overflow:auto !important;
+      -webkit-overflow-scrolling:touch;
+    }
+
+    .modal_tipjar_buttons{
+      text-align:center;
+      margin-top:14px;
+      padding:10px 0 12px 0;
+    }
+
+    .modal_tipjar_buttons button{
+      margin:0 8px;
+    }
+
+    .modal_tipjar_main button{
+      background:#e8f1ff;
+      color:#000;
+      border:1px solid #9dbaf2;
+      padding:10px 20px;
+      cursor:pointer;
+      outline:none;
+      width:100px;
+      border-radius:10px;
+      font-weight:600;
+    }
+
     .exampleLink{
       color: inherit;
       text-decoration: underline;
@@ -4071,6 +4123,73 @@ function openInAbcTools(theABC, memberName, downloadType, chordsOnly) {
 }
 
 /* ============================================================
+   Tip jar visit reminder
+   ============================================================ */
+
+function incrementPageVisitCount() {
+
+  if (!gLocalStorageAvailable) {
+    return;
+  }
+
+  let count = 0;
+
+  try {
+    count = parseInt(localStorage.getItem("tspt_visit_count") || "0", 10);
+  } catch {
+    count = 0;
+  }
+
+  count++;
+
+  localStorage.setItem("tspt_visit_count", count);
+
+  checkTipReminder(count);
+}
+
+function checkTipReminder(count) {
+
+  let show = false;
+
+  if (count === 10) show = true;
+  else if (count === 50) show = true;
+  else if (count === 100) show = true;
+  else if (count > 100 && count % 100 === 0) show = true;
+
+  if (!show) return;
+
+  const html =
+    `<div style="text-align:center;font-family:helvetica,arial,sans-serif;font-size:14pt;line-height:1.5;margin-top:10px">` +
+
+    `<b>Enjoying the thesession.org Power Tools?</b><br/><br/>` +
+    `If this utility has been helpful, please consider` +
+    `<br/>buying the developer a beer by tossing a few` +
+    `<br/>bucks into one of the tip jars.<br/>` +
+
+    `<div style="margin-top:10px;">` +
+    `<b>PayPal</b><br/>` +
+    `<a href="https://paypal.me/MichaelEskin" target="_blank">paypal.me/MichaelEskin</a>` +
+    `</div>` +
+
+    `<div style="margin-top:10px;">` +
+    `<b>Venmo</b><br/>` +
+    `@MichaelEskin` +
+    `</div>` +
+
+    `<div style="margin-top:14px;font-size:0.9em;opacity:0.8;">` +
+    `Thank you for supporting development!` +
+    `</div>` +
+
+    `</div>`;
+
+  DayPilot.Modal.alert(html, {
+    theme: "modal_tipjar",
+    top: 50,
+    scrollWithPage: false
+  });
+}
+
+/* ============================================================
    Instructions modal
    ============================================================ */
 
@@ -4305,6 +4424,9 @@ function resetUIToDefaults() {
 
 document.addEventListener("DOMContentLoaded", () => {
   resetUIToDefaults();
+  setTimeout(() => {
+    incrementPageVisitCount();
+  }, 1200);
 });
 
 window.addEventListener("pageshow", (e) => {
