@@ -734,6 +734,58 @@
       #plot-buttons{ display:none !important; }
       #mode-toggle-btn{ display:none !important; }
     }
+
+    .modal_tipjar_background{
+      background-color:#000;
+      opacity:0.4;
+    }
+
+    .modal_tipjar_main{
+      border:1px solid #333;
+      box-shadow:0 0 15px -2px rgba(0,0,0,0.75);
+      width:min(560px, calc(100vw - 80px)) !important;
+      max-width:min(560px, calc(100vw - 80px)) !important;
+
+      height:auto !important;
+      max-height:min(520px, 88dvh) !important;
+      overflow:hidden !important;
+    }
+
+    .modal_tipjar_inner{
+      padding:16px;
+      background:#fff;
+      color:#000;
+      display:flex;
+      flex-direction:column;
+    }
+
+    .modal_tipjar_content{
+      margin:14px 0 8px 0;
+      overflow:auto !important;
+      -webkit-overflow-scrolling:touch;
+    }
+
+    .modal_tipjar_buttons{
+      text-align:center;
+      margin-top:14px;
+      padding:10px 0 12px 0;
+    }
+
+    .modal_tipjar_buttons button{
+      margin:0 8px;
+    }
+
+    .modal_tipjar_main button{
+      background:#e8f1ff;
+      color:#000;
+      border:1px solid #9dbaf2;
+      padding:10px 20px;
+      cursor:pointer;
+      outline:none;
+      width:100px;
+      border-radius:10px;
+      font-weight:600;
+    }
   </style>
 </head>
 
@@ -2742,6 +2794,105 @@
   // Show instructions on first run
   setTimeout(maybeShowInstructionsOnFirstUse, 500);
 
+    let gLocalStorageAvailable = null;
+
+  function localStorageAvailable() {
+
+    if (gLocalStorageAvailable !== null) {
+      return gLocalStorageAvailable;
+    }
+
+    try {
+      const testKey = "__ls_test__";
+      localStorage.setItem(testKey, "1");
+      localStorage.removeItem(testKey);
+      gLocalStorageAvailable = true;
+    }
+    catch {
+      gLocalStorageAvailable = false;
+    }
+
+    return gLocalStorageAvailable;
+  }
+
+  function checkTipReminder(count) {
+
+    let show = false;
+
+    if (count === 10) show = true;
+    else if (count === 50) show = true;
+    else if (count === 100) show = true;
+    else if (count > 100 && count % 100 === 0) show = true;
+
+    if (!show) return;
+
+    const html =
+      `<div style="text-align:center;font-family:helvetica,arial,sans-serif;font-size:14pt;line-height:1.5;margin-top:10px">` +
+
+      `<b>Enjoying the Real Time Tuning / Volume Analysis tool?</b><br/><br/>` +
+      `If this utility has been helpful, please consider` +
+      `<br/>buying the developer a beer by tossing a few` +
+      `<br/>bucks into one of the tip jars.<br/>` +
+
+      `<div style="margin-top:10px;">` +
+      `<b>PayPal</b><br/>` +
+      `<a href="https://paypal.me/MichaelEskin"target="_blank"rel="noopener noreferrer"style="color:#1a73e8; text-decoration:underline;"> paypal.me/MichaelEskin </a>` + 
+      `</div>` +
+
+      `<div style="margin-top:10px;">` +
+      `<b>Venmo</b><br/>` +
+      `@MichaelEskin` +
+      `</div>` +
+
+      `<div style="margin-top:14px;font-size:0.9em;opacity:0.8;">` +
+      `Thank you for supporting development!` +
+      `</div>` +
+
+      `</div>`;
+
+    DayPilot.Modal.alert(html, {
+      theme: "modal_tipjar",
+      top: 125,
+      scrollWithPage: false
+    });
+  }
+
+  function incrementPageVisitCount() {
+
+    if (!localStorageAvailable()) {
+      return;
+    }
+
+    let count = 0;
+
+    try {
+      count = parseInt(localStorage.getItem("rttva_visit_count") || "0", 10);
+    }
+    catch {
+      count = 0;
+    }
+
+    count++;
+
+    try {
+      localStorage.setItem("rttva_visit_count", count);
+    }
+    catch {
+      return;
+    }
+
+    checkTipReminder(count);
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    setTimeout(() => {
+      incrementPageVisitCount();
+    }, 1200);
+  });
+
 </script>
+
+<script type="text/javascript" src="daypilot-modal.min-3.10.1.js?v=1"></script>
+
 </body>
 </html>
