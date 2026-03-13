@@ -55431,7 +55431,7 @@ function showWhatsNewScreen() {
   modal_msg += '<div style="margin:10px 0 6px 0; padding:12px 12px; border-radius:12px;';
   modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);">';
   
-  modal_msg += '<p style="margin:6px 0; font-size:12pt;"><strong>When possible, all file saves and exports from the tool use the native iOS file sharing dialog.</strong></p>';
+  modal_msg += '<p style="margin:6px 0; font-size:12pt;"><strong>On iOS, when possible, all file saves and exports from the tool now use the native iOS file sharing dialog.</strong></p>';
   modal_msg += '<p style="margin:6px 0; font-size:12pt;">This allows you to easily save exported files to the Files area on the device, share them with other iOS apps, or send them to another device via AirDrop.</p>';
 
   modal_msg += '</div>';
