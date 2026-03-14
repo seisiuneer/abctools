@@ -1133,6 +1133,104 @@
       }
     }
 
+    .modal_filename_background{
+      background-color:#000;
+      opacity:0.4;
+    }
+
+    .modal_filename_main{
+      border:1px solid #333;
+      box-shadow:0 0 15px -2px rgba(0,0,0,0.75);
+      width:min(620px, calc(100vw - 48px)) !important;
+      max-width:min(620px, calc(100vw - 48px)) !important;
+      height:auto !important;
+      max-height:260px !important;
+      overflow:hidden !important;
+    }
+
+    .modal_filename_inner{
+      padding:20px 22px 18px 22px;
+      background:#fff;
+      color:#000;
+      display:flex;
+      flex-direction:column;
+    }
+
+    .modal_filename_content{
+      margin:8px 0 10px 0;
+      overflow:auto !important;
+      -webkit-overflow-scrolling:touch;
+    }
+
+    .modal_filename_main,
+    .modal_filename_main input,
+    .modal_filename_main button{
+      font-size:16px;
+    }
+
+    .modal_filename_main label{
+      display:block;
+      margin-bottom:8px;
+      font-size:18px;
+      font-weight:600;
+      line-height:1.3;
+    }
+
+    .modal_filename_main input{
+      width:100%;
+      box-sizing:border-box;
+      padding:10px 12px;
+      border:1px solid rgba(127,127,127,.35);
+      border-radius:10px;
+      background:#fff;
+      color:#000;
+    }
+
+    .modal_filename_buttons{
+      text-align:center;
+      margin-top:14px;
+      padding:10px 0 12px 0;
+    }
+
+    .modal_filename_buttons button{
+      margin:0 3px;
+    }
+
+    .modal_filename_main button{
+      background:#f0f3f8;
+      color:#000;
+      border:1px solid #d3dbe7;
+      padding:10px 20px;
+      cursor:pointer;
+      outline:none;
+      width:100px;
+      border-radius:10px;
+      font-weight:600;
+      transition:
+        filter 0.12s ease,
+        transform 0.08s ease,
+        box-shadow 0.12s ease;
+    }
+
+    .modal_filename_main button:hover{
+      filter: brightness(0.97);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.18);
+    }
+
+    .modal_filename_main button:active{
+      transform: translateY(1px);
+      box-shadow: 0 0 1px rgba(0,0,0,0.15);
+    }
+
+    .modal_filename_buttons .modal_filename_ok{
+      background:#e8f1ff !important;
+      border-color:#9dbaf2 !important;
+    }
+
+    .modal_filename_buttons .modal_filename_cancel{
+      background:#f3f3f3 !important;
+      border-color:#d4d4d4 !important;
+    }
   </style>
 
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-VM0N9HL3MK"></script>
@@ -1381,6 +1479,76 @@ try {
   }
 } catch (e) {
   gLocalStorageAvailable = false;
+}
+
+function sanitizeForDownloadName(s) {
+  return String(s || "")
+    .replace(/[\u0000-\u001F\u007F]/g, "")
+    .replace(/[\\\/:*?"<>|]/g, "_")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function validateFileName(name) {
+  const s = sanitizeForDownloadName(name);
+  if (!s) return { ok: false, msg: "Please enter a file name." };
+  if (s === "." || s === "..") return { ok: false, msg: "Please enter a valid file name." };
+  if (s.length > 160) return { ok: false, msg: "File name is too long. Please use 160 characters or fewer." };
+  return { ok: true, value: s };
+}
+
+function ensureFileExt(name, ext) {
+
+  let s = String(name || "").trim();
+  if (!s) return s;
+
+  const lower = s.toLowerCase();
+
+  // Mobile: force .txt always
+  if (gIsIOS || gIsAndroid) {
+    s = s.replace(/\.[a-z0-9]{1,8}$/i, "");
+    return s + ".txt";
+  }
+
+  // Desktop: allow .abc or .txt
+  if (lower.endsWith(".abc") || lower.endsWith(".txt")) {
+    return s;
+  }
+
+  // Otherwise replace any extension with .txt
+  s = s.replace(/\.[a-z0-9]{1,8}$/i, "");
+  return s + ".txt";
+}
+
+async function promptForDownloadFileName(defaultName) {
+  if (!window.DayPilot || !DayPilot.Modal) {
+    const v = window.prompt("Save ABC file as:", defaultName || "");
+    return (v === null) ? null : String(v);
+  }
+
+  if (typeof DayPilot.Modal.prompt === "function") {
+    const res = await DayPilot.Modal.prompt("Save ABC file as:", defaultName || "", {
+      theme: "modal_filename",
+      top: 80,
+      scrollWithPage: false
+    });
+
+    if (!res || res.canceled) return null;
+    return String(res.result || "");
+  }
+
+  const form = [
+    { name: "File name", id: "name", type: "text", value: defaultName || "" }
+  ];
+
+  const res2 = await DayPilot.Modal.form(form, { name: defaultName || "" }, {
+    theme: "modal_flat",
+    top: 80,
+    scrollWithPage: false
+  });
+
+  if (!res2 || res2.canceled) return null;
+  return String(res2.result && res2.result.name ? res2.result.name : "");
 }
 
 /* ============================================================
@@ -4047,19 +4215,38 @@ $("btnDownload").addEventListener("click", async () => {
     baseName = "thesession";
   }
 
-  let postfix = ".abc";
+  const postfix = (gIsIOS || gIsAndroid) ? ".txt" : ".abc";
 
-  if (gIsIOS || gIsAndroid){
-    postfix = ".txt";
-  }
-
-  let fname = `${safeFilename(baseName)}` +
+  let suggestedName =
+    `${safeFilename(baseName)}` +
     (lastResult.tuneId ? `_${lastResult.tuneId}` : "") +
     postfix;
 
   try {
-    await shareOrDownloadFile(outEl.value, fname, "text/plain;charset=utf-8");
-    appendStatus("ABC tune settings saved to " + fname);
+    let fname = await promptForDownloadFileName(suggestedName);
+    if (fname === null) return;
+
+    fname = sanitizeForDownloadName(fname);
+    fname = ensureFileExt(fname, postfix);
+
+    const v = validateFileName(fname);
+    if (!v.ok) {
+      if (!window.DayPilot || !DayPilot.Modal || typeof DayPilot.Modal.alert !== "function") {
+        alert(v.msg);
+      } else {
+        DayPilot.Modal.alert(v.msg, {
+          theme: "modal_compact",
+          top: 120,
+          scrollWithPage: false
+        });
+      }
+      return;
+    }
+
+    const finalName = v.value;
+
+    await shareOrDownloadFile(outEl.value, finalName, "text/plain;charset=utf-8");
+    appendStatus("ABC tune settings saved to " + finalName);
   } catch (e) {
     appendStatus("ABC tune settings save failed.");
   }
