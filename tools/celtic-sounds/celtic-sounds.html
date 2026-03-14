@@ -1,0 +1,2146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <link rel="profile" href="https://gmpg.org/xfn/11">
+  <title>Celtic Sounds</title>
+  <link rel='dns-prefetch' href='//fonts.googleapis.com' />
+  <link rel='dns-prefetch' href='//s.w.org' />
+  <link rel='preconnect' href='https://secureservercdn.net' crossorigin />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Celtic Sounds" />
+  <meta property="og:description" content="Web-based version of the Celtic Sounds iOS App" />
+  <meta property="og:url" content="https://michaeleskin.com/celtic-sounds/celtic-sounds.html" />
+  <meta property="og:site_name" content="Celtic Sounds" />
+  <meta property="og:image" content="https://michaeleskin.com/celtic-sounds/img/celtic-sounds.jpg"/>
+  <meta name="msapplication-TileColor" content="#ffffff">
+  <meta name="msapplication-TileImage" content="https://michaeleskin.com/abctools/img/abc-ms-icon-144x144.png">
+  <link rel="apple-touch-icon" sizes="57x57" href="https://michaeleskin.com/abctools/img/abc-apple-icon-57x57.png">
+  <link rel="apple-touch-icon" sizes="60x60" href="https://michaeleskin.com/abctools/img/abc-apple-icon-60x60.png">
+  <link rel="apple-touch-icon" sizes="72x72" href="https://michaeleskin.com/abctools/img/abc-apple-icon-72x72.png">
+  <link rel="apple-touch-icon" sizes="76x76" href="https://michaeleskin.com/abctools/img/abc-apple-icon-76x76.png">
+  <link rel="apple-touch-icon" sizes="114x114" href="https://michaeleskin.com/abctools/img/abc-apple-icon-114x114.png">
+  <link rel="apple-touch-icon" sizes="120x120" href="https://michaeleskin.com/abctools/img/abc-apple-icon-120x120.png">
+  <link rel="apple-touch-icon" sizes="144x144" href="https://michaeleskin.com/abctools/img/abc-apple-icon-144x144.png">
+  <link rel="apple-touch-icon" sizes="152x152" href="https://michaeleskin.com/abctools/img/abc-apple-icon-152x152.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="https://michaeleskin.com/abctools/img/abc-apple-icon-180x180.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="https://michaeleskin.com/abctools/img/abc-android-icon-192x192.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="https://michaeleskin.com/abctools/img/abc-favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="96x96" href="https://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
+  <link rel="manifest" href="https://michaeleskin.com/abctools/img/abc-manifest.json">
+
+  <style>
+    :root {
+      --bg: #0f172a;
+      --panel: #111827;
+      --panel-2: #1f2937;
+      --text: #e5e7eb;
+      --muted: #94a3b8;
+      --accent: #60a5fa;
+      --accent-2: #22c55e;
+      --border: #334155;
+      --danger: #ef4444;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      min-height: 100%;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: linear-gradient(180deg, #020617, #0f172a);
+      color: var(--text);
+      padding: 24px;
+    }
+
+    .app {
+      max-width: 1180px;
+      margin: 0 auto;
+      display: grid;
+      gap: 18px;
+    }
+
+    .card {
+      background: rgba(17, 24, 39, 0.94);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 18px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.28);
+    }
+
+    .hero-card {
+      background:
+        linear-gradient(180deg, rgba(10, 32, 20, 0.94), rgba(14, 40, 26, 0.92));
+      border: 1px solid rgba(74, 124, 89, 0.45);
+      box-shadow:
+        0 10px 30px rgba(0, 0, 0, 0.28),
+        inset 0 1px 0 rgba(255, 255, 255, 0.03);
+      position: relative;
+    }
+
+    .hero-help{
+      position: absolute;
+      top: 14px;
+      right: 16px;
+
+      width: 40px;
+      height: 40px;
+
+      font-size: 22px;
+      font-weight: 700;
+
+      color: white;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.18);
+
+      border-radius: 10px;
+      cursor: pointer;
+
+      display:flex;
+      align-items:center;
+      justify-content:center;
+
+      transition: background 0.15s ease, transform 0.12s ease;
+    }
+
+    .hero-help:hover{
+      background: rgba(255,255,255,0.16);
+      transform: translateY(-1px);
+    }
+
+    h1, h2, h3 {
+      margin: 0 0 10px 0;
+      line-height: 1.15;
+    }
+
+    h1 { font-size: 1.8rem; }
+    h2 { font-size: 1.15rem; }
+    h3 { font-size: 1rem; }
+
+    p, label, small, button, input, select {
+      font-size: 0.96rem;
+    }
+
+    .muted { color: var(--muted); }
+
+    .grid {
+      display: grid;
+      gap: 14px;
+    }
+
+    .controls {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      column-gap: 20px;
+      row-gap: 18px;
+      align-items: end;
+    }
+
+    .field {
+      display: grid;
+      gap: 6px;
+    }
+
+    .row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+    }
+
+    label {
+      color: #cbd5e1;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      padding: 0;
+      border: none;
+      background: transparent;
+      border-radius: 0;
+      margin: 0;
+    }
+
+    input:not([type="range"]), select, button {
+      background: var(--panel-2);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 10px 12px;
+    }
+
+    button {
+      cursor: pointer;
+      transition:
+        transform 0.12s ease,
+        border-color 0.12s ease,
+        background 0.12s ease,
+        box-shadow 0.12s ease,
+        filter 0.12s ease;
+    }
+
+    button:hover {
+      border-color: var(--accent);
+      transform: translateY(-1px);
+    }
+
+    button.primary {
+      background: linear-gradient(135deg, #1d4ed8, #2563eb);
+      border-color: #3b82f6;
+    }
+
+    button.primary:hover {
+      background: linear-gradient(135deg, #2563eb, #3b82f6);
+      border-color: #60a5fa;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.35), 0 0 8px rgba(59,130,246,0.5);
+    }
+
+    button.good {
+      background: linear-gradient(135deg, #15803d, #16a34a);
+      border-color: #22c55e;
+    }
+
+    button.good:hover {
+      background: linear-gradient(135deg, #16a34a, #22c55e);
+      border-color: #4ade80;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.35), 0 0 8px rgba(34,197,94,0.5);
+    }
+
+    button.warn {
+      background: linear-gradient(135deg, #991b1b, #dc2626);
+      border-color: #ef4444;
+    }
+
+    button.warn:hover {
+      background: linear-gradient(135deg, #b91c1c, #ef4444);
+      border-color: #f87171;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.35), 0 0 8px rgba(239,68,68,0.5);
+    }
+
+    button.reset {
+      background: linear-gradient(135deg, #0b5f58, #0fa897);
+      border-color: #2dd4bf;
+    }
+
+    button.reset:hover {
+      background: linear-gradient(135deg, #0f766e, #14b8a6);
+      border-color: #5eead4;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.35), 0 0 8px rgba(45,212,191,0.5);
+    }
+
+    .status {
+      display: grid;
+      gap: 8px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 0.9rem;
+      background: rgba(2, 6, 23, 0.6);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+    }
+
+    .tiny {
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    .split {
+      display: grid;
+      gap: 14px;
+      grid-template-columns: 1.15fr 0.85fr;
+    }
+
+    .midi-log-wrap {
+      display: grid;
+      gap: 10px;
+      align-content: start;
+    }
+
+    .midi-log-controls {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px 14px;
+    }
+
+    .midi-log-controls label {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      color: #cbd5e1;
+    }
+
+    .midi-log-controls input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      margin: 0;
+      accent-color: #3b82f6;
+    }
+
+    .midi-log {
+      height: 220px;
+      overflow-y: auto;
+      overflow-x: hidden;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 0.85rem;
+      line-height: 1.35;
+      background: rgba(2, 6, 23, 0.7);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 12px;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+      flex-shrink: 0;
+    }
+
+    .live-status-card {
+      align-content: start;
+      align-items: start;
+    }
+
+    .live-status-card .status {
+      align-self: start;
+    }
+
+    .two-up {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .instructions-overlay{
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 9999;
+      padding: 16px;
+      box-sizing: border-box;
+      overflow-y: auto;
+    }
+
+    .instructions-modal{
+      max-width: 860px;
+      width: min(860px, calc(100vw - 32px));
+      margin: 0 auto;
+      background: var(--panel);
+      border: 1px solid #333;
+      border-radius: 16px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.7);
+      padding: 18px;
+      box-sizing: border-box;
+      position: relative;
+      top: 25px;
+      text-align: left;
+
+      display: flex;
+      flex-direction: column;
+
+      max-height: calc(100vh - 60px);
+      height: min(980px, calc(100vh - 60px));
+    }
+
+    .instructions-title{
+      font-size:1.25rem;
+      font-weight:900;
+      margin:0 0 15px 0;
+      color:#e0e0e0;
+      text-align:center;
+      flex:0 0 auto;
+    }
+
+    .instructions-scroll{
+      flex:1 1 auto;
+      overflow:auto;
+      -webkit-overflow-scrolling:touch;
+      border:1px solid #2a2a2a;
+      border-radius:12px;
+      padding:12px;
+      background:#0b0b0b;
+      box-shadow:inset 0 0 0 1px rgba(255,255,255,0.02);
+    }
+
+    .instructions-body{
+      font-size:1rem;
+      line-height:1.7;
+      color:#e0e0e0;
+      margin:0;
+      padding-top:6px;
+    }
+
+    .instructions-close{
+      width:100%;
+      margin-top:12px;
+      margin-bottom:-7px;
+      padding:14px 18px;
+      border:1px solid #333;
+      border-radius:12px;
+      font-weight:900;
+      cursor:pointer;
+      font-size:1.05rem;
+      background:#111;
+      color:#f5f5f5;
+      flex:0 0 auto;
+    }
+
+    .instructions-close:hover{
+      border-color:var(--accent);
+      transform:none;
+    }
+
+    .instructions-subtitle{
+      font-weight: 900;
+      font-size: 1.08rem;
+      margin: 0 0 12px 0;
+      color: #f0f0f0;
+      line-height: 1.35;
+    }
+
+    .instructions-subbody{
+      margin: 0 0 18px 0;
+      color: #e6e6e6;
+      line-height: 1.8;
+    }
+
+    .instructions-body a,
+    .instructions-body a:link{
+      color:#7CFFDC !important;
+      text-decoration:underline !important;
+      font-weight:600 !important;
+    }
+
+    .instructions-body a:visited{
+      color:#A5B4FF !important;
+    }
+
+    .instructions-body a:hover,
+    .instructions-body a:focus{
+      color:#B8FFF0 !important;
+      text-decoration:underline !important;
+    }
+
+    .instructions-divider{
+      border:0;
+      border-top:1px solid #2a2a2a;
+      margin:14px 0;
+    }
+
+    .setup-row{
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 18px;
+      width: 100%;
+    }
+
+    .instructions-button{
+      margin-left: auto !important;
+      background: linear-gradient(135deg, #1d4ed8, #2563eb);
+      border: 1px solid #3b82f6;
+      color: #ffffff;
+    }
+
+    .instructions-button:hover{
+      border-color: #60a5fa;
+    }
+
+    @media (max-width: 700px){
+      .setup-row{
+        justify-content: flex-start;
+      }
+
+      .instructions-button{
+        margin-left: 0 !important;
+      }
+    }
+
+    @media (max-width: 600px){
+      .instructions-close{
+        font-size:1.12rem;
+        padding:16px 18px;
+        border-radius:14px;
+      }
+    }
+
+    @media (max-width: 920px) {
+      .split {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 680px) {
+      .two-up {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+
+</head>
+
+<body>
+
+  <div class="app">
+    <div class="card hero-card">
+      <button id="btnInstructions" class="hero-help">?</button>
+
+      <h1>Celtic Sounds</h1>
+      <p class="muted">WebMIDI-Based Sound Module for the WARBL by Michael Eskin</p>
+    </div>
+
+    <div class="card grid">
+      <h2>Setup</h2>
+      <div class="row setup-row">
+        <button id="btnConnectMidi" class="good">Connect MIDI</button>
+        <button id="btnResetDefaults" class="reset">Reset Defaults</button>
+        <button id="btnAllNotesOff" class="warn">All Notes Off</button>
+      </div>
+    </div>
+
+    <div class="split">
+      <div class="card grid">
+        <h2>Controls</h2>
+
+        <div class="controls">
+          <div class="field">
+            <label for="midiInputSelect">MIDI Input</label>
+            <select id="midiInputSelect"></select>
+          </div>
+
+          <div class="field">
+            <label for="midiChannelSelect">Input Channel</label>
+            <select id="midiChannelSelect"></select>
+          </div>
+
+          <div class="field">
+            <label for="instrumentSelect">Instrument</label>
+            <select id="instrumentSelect"></select>
+          </div>
+
+          <div class="field">
+            <label for="expressionModeSelect">Expression Source</label>
+            <select id="expressionModeSelect">
+              <option value="cc7" selected>Volume (CC7)</option>
+              <option value="cc2">Breath (CC2)</option>
+              <option value="cc11">Expression (CC11)</option>
+              <option value="velocity">Note Velocity</option>
+              <option value="max">Fixed Full Volume</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="masterVolume">
+              Volume <span id="masterVolumeValue">1.00</span>
+            </label>
+            <input id="masterVolume" type="range" min="0" max="2.0" step="0.01" value="1.0" />
+          </div>
+
+          <div class="field" style="grid-column: span 2;">
+            <div class="two-up">
+              <div class="field">
+                <label for="attackMs">
+                  Attack ms <span id="attackMsValue">4</span>
+                </label>
+                <input id="attackMs" type="range" min="0" max="150" step="1" value="4" />
+              </div>
+
+              <div class="field">
+                <label for="releaseMs">
+                  Release ms <span id="releaseMsValue">120</span>
+                </label>
+                <input id="releaseMs" type="range" min="10" max="1500" step="1" value="120" />
+              </div>
+            </div>
+          </div>
+
+          <div class="field" style="grid-column: span 2;">
+            <div class="two-up">
+              <div class="field">
+                <label for="pitchBendUpMultiplier">
+                  Pitch Bend Up Scale <span id="pitchBendUpMultiplierValue">1.00</span>
+                </label>
+                <input id="pitchBendUpMultiplier" type="range" min="0" max="4" step="0.01" value="1" />
+              </div>
+
+              <div class="field">
+                <label for="pitchBendDownMultiplier">
+                  Pitch Bend Down Scale <span id="pitchBendDownMultiplierValue">1.00</span>
+                </label>
+                <input id="pitchBendDownMultiplier" type="range" min="0" max="4" step="0.01" value="1" />
+              </div>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="reverbSelect">Reverb Style</label>
+            <select id="reverbSelect"></select>
+          </div>
+
+          <div class="field" style="grid-column: span 2;">
+            <div class="two-up">
+              <div class="field">
+                <label for="reverbWet">
+                  Reverb Wet <span id="reverbWetValue">0.18</span>
+                </label>
+                <input id="reverbWet" type="range" min="0" max="1" step="0.01" value="0.18" />
+              </div>
+
+              <div class="field">
+                <label for="reverbDry">
+                  Reverb Dry <span id="reverbDryValue">1.00</span>
+                </label>
+                <input id="reverbDry" type="range" min="0" max="1.5" step="0.01" value="1.00" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="controls">
+          <div class="field">
+            <label for="reverbPreDelay">
+              Pre-delay ms <span id="reverbPreDelayValue">0</span>
+            </label>
+            <input id="reverbPreDelay" type="range" min="0" max="250" step="1" value="0" />
+          </div>
+
+          <div class="field">
+            <label for="transposeSemis">
+              Transpose <span id="transposeSemisValue">0</span>
+            </label>
+            <input id="transposeSemis" type="range" min="-24" max="24" step="1" value="0" />
+          </div>
+        </div>
+      </div>
+
+      <div class="card grid live-status-card">
+        <h2>Live Status</h2>
+        <div class="status" id="liveStatus">Waiting...</div>
+
+        <div class="midi-log-wrap">
+          <h3>MIDI Message Stream</h3>
+          <div class="midi-log-controls">
+            <label for="showMidiLog">
+              <input type="checkbox" id="showMidiLog" />
+              Show MIDI message stream
+            </label>
+            <label for="freezeMidiLog">
+              <input type="checkbox" id="freezeMidiLog" />
+              Freeze
+            </label>
+            <button id="btnClearMidiLog" type="button">Clear MIDI Log</button>
+          </div>
+          <div class="midi-log" id="midiLog" hidden>MIDI stream disabled.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="instructionsOverlay" class="instructions-overlay" aria-hidden="true">
+    <div id="instructionsModal" class="instructions-modal" role="dialog" aria-modal="true" aria-label="Instructions">
+      <div class="instructions-title">Instructions</div>
+
+      <div id="instructionsScroll" class="instructions-scroll">
+        <div class="instructions-body">
+          <div class="instructions-subtitle">Getting started</div>
+          <div class="instructions-subbody">
+            1) Click <b>Connect MIDI</b> and if requested, allow browser MIDI access.<br/><br/>
+            2) Choose your <b>MIDI Input</b> and <b>Input Channel</b>.<br/><br/>
+            3) Select an <b>Instrument</b> and the <b>Expression Source</b> you want the sound module to follow.<br/><br/>
+            4) Adjust volume, attack, release, pitch bend scaling, reverb, and transpose as needed.<br/><br/>
+            5) Play your controller and watch the <b>Live Status</b> and optional <b>MIDI Message Stream</b>.
+          </div>
+
+          <hr class="instructions-divider"/>
+
+          <div class="instructions-subtitle">Expression source</div>
+          <div class="instructions-subbody">
+            <b>Volume (CC7)</b> follows MIDI CC7.<br/>
+            <b>Breath (CC2)</b> follows MIDI CC2.<br/>
+            <b>Expression (CC11)</b> follows MIDI CC11.<br/>
+            <b>Note Velocity</b> uses incoming note-on velocity.<br/>
+            <b>Fixed Full Volume</b> ignores expression and always plays at full level.
+          </div>
+
+          <hr class="instructions-divider"/>
+
+          <div class="instructions-subtitle">Pitch bend scaling</div>
+          <div class="instructions-subbody">
+            The <b>Pitch Bend Up Scale</b> and <b>Pitch Bend Down Scale</b> let you independently control how strongly pitch bend messages affect upward and downward bends.
+          </div>
+
+          <hr class="instructions-divider"/>
+
+          <div class="instructions-subtitle">Reverb</div>
+          <div class="instructions-subbody">
+            Choose a reverb style, then adjust:
+            <br/><br/>
+            <b>Wet</b> = effected signal level<br/>
+            <b>Dry</b> = direct signal level<br/>
+            <b>Pre-delay</b> = delay before reverb begins
+          </div>
+
+          <hr class="instructions-divider"/>
+
+          <div class="instructions-subtitle">Troubleshooting</div>
+          <div class="instructions-subbody">
+            If you do not hear sound:
+            <br/><br/>
+            • Make sure MIDI access was granted.<br/>
+            • Verify the correct MIDI device is selected.<br/>
+            • Check that the correct input channel is selected.<br/>
+            • Confirm your samples and impulse response files are present at the expected paths.<br/>
+            • Try clicking <b>All Notes Off</b> if a note gets stuck.
+          </div>
+
+          <hr class="instructions-divider"/>
+
+          <div class="instructions-subtitle">Browser compatibility</div>
+          <div class="instructions-subbody">
+            This tool requires a browser that supports the <b>Web MIDI API</b>.<br/>
+            If your browser does not support WebMIDI, MIDI devices will not appear and the tool will not function.
+
+            <div style="margin-top:12px;">
+              <b>Recommended browsers:</b><br/>
+              • <b>Google Chrome</b> (Windows, macOS, Linux)<br/>
+              • <b>Microsoft Edge</b> (Windows, macOS)<br/>
+              • <b>Opera</b> (desktop versions)<br/>
+              • <b>Chromium-based browsers</b> that support WebMIDI
+            </div>
+
+            <div style="margin-top:12px;">
+              <b>Not currently supported:</b><br/>
+              • Safari (macOS and iOS)<br/>
+              • Most mobile browsers
+            </div>
+          </div>
+
+          <hr class="instructions-divider"/>
+
+          <div class="instructions-subtitle">Tip jars</div>
+          <div class="instructions-subbody">
+            This tool was created by <a href="https://michaeleskin.com" target="_blank" rel="noopener noreferrer">Michael Eskin</a>.<br/>
+            If you find it useful, please consider supporting it here:
+            <br/><br/>
+            <div style="text-align:center;">
+              <a href="https://michaeleskin.com/abctools/tipjars.html" target="_blank" rel="noopener noreferrer">Michael Eskin's Tip Jars</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <button id="btnCloseInstructions" class="instructions-close" type="button">CLOSE</button>
+    </div>
+
+  </div>
+
+  <script>
+    const APP_CONFIG = {
+      instruments: {
+        tinWhistle: {
+          label: "Tin Whistle",
+          folder: "samples/tin_whistle",
+          minNote: 60,
+          maxNote: 96
+        },
+        irishFlute: {
+          label: "Irish Flute",
+          folder: "samples/irish_flute",
+          minNote: 48,
+          maxNote: 96
+        },
+        uilleannPipes: {
+          label: "Uilleann Pipes",
+          folder: "samples/uilleann_pipes",
+          minNote: 55,
+          maxNote: 98
+        },
+        angloConcertina: {
+          label: "Anglo Concertina",
+          folder: "samples/anglo_concertina",
+          minNote: 48,
+          maxNote: 96
+        },
+        accordion: {
+          label: "Accordion",
+          folder: "samples/accordion",
+          minNote: 41,
+          maxNote: 96
+        }
+      },
+
+      impulseResponses: {
+        dry: null,
+        room1: "impulses/room1.wav",
+        room2: "impulses/room2.wav",
+        room3: "impulses/room3.wav",
+        chamber1: "impulses/chamber1.wav",
+        chamber2: "impulses/chamber2.wav",
+        chamber3: "impulses/chamber3.wav",
+        hall1: "impulses/hall1.wav",
+        hall2: "impulses/hall2.wav",
+        hall3: "impulses/hall3.wav",
+        church: "impulses/church1.wav"
+      },
+
+      synth: {
+        defaultInstrumentKey: "tinWhistle",
+        defaultReverbKey: "chamber1",
+        maxGain: 1.0
+      }
+    };
+
+    const DEFAULTS = {
+      selectedMidiChannel: 1,
+      selectedInstrumentKey: APP_CONFIG.synth.defaultInstrumentKey,
+      selectedReverbKey: APP_CONFIG.synth.defaultReverbKey,
+      expressionMode: "cc7",
+      masterVolume: 1.0,
+      attackMs: 4,
+      releaseMs: 120,
+      pitchBendUpMultiplier: 1,
+      pitchBendDownMultiplier: 1,
+      reverbWet: 0.18,
+      reverbDry: 1.00,
+      reverbPreDelayMs: 0,
+      transposeSemis: 0,
+      midiLogEnabled: false,
+      freezeMidiLog: false
+    };
+
+    const IMPULSE_RESPONSE_LABELS = {
+      dry: "Dry",
+      room1: "Room 1",
+      room2: "Room 2",
+      room3: "Room 3",
+      chamber1: "Chamber 1",
+      chamber2: "Chamber 2",
+      chamber3: "Chamber 3",
+      hall1: "Hall 1",
+      hall2: "Hall 2",
+      hall3: "Hall 3",
+      church: "Church"
+    };
+
+    const SAMPLE_OCTAVE_OFFSET = 0;
+    const SETTINGS_STORAGE_KEY = "celtic_sounds_settings_v1";
+
+    let gLocalStorageAvailable = false;
+
+    const state = {
+      audioContext: null,
+      midiAccess: null,
+      midiInputs: [],
+      selectedMidiInputId: "",
+      selectedMidiChannel: 1,
+      selectedInstrumentKey: APP_CONFIG.synth.defaultInstrumentKey,
+      selectedReverbKey: APP_CONFIG.synth.defaultReverbKey,
+      sampleCache: new Map(),
+      irCache: new Map(),
+      expressionMode: "cc7",
+      latestExpression: 127,
+      masterVolume: 1.0,
+      attackMs: 4,
+      releaseMs: 120,
+      pitchBendValue: 0,
+      pitchBendUpMultiplier: 1,
+      pitchBendDownMultiplier: 1,
+      basePitchBendCents: 100,
+      reverbWet: 0.18,
+      reverbDry: 1.00,
+      reverbPreDelayMs: 0,
+      transposeSemis: 0,
+      outputChain: null,
+      activeVoice: null,
+      heldNotes: new Set(),
+      currentNote: null,
+      midiLogEnabled: false,
+      freezeMidiLog: false,
+      midiLogLines: [],
+      maxMidiLogLines: 120
+    };
+
+    const $ = (id) => document.getElementById(id);
+
+    function syncInstructionsHeight() {
+      const controlsCard = document.querySelector(".split .card.grid");
+      const modal = $("instructionsModal");
+      if (!controlsCard || !modal) return;
+
+      const r = controlsCard.getBoundingClientRect();
+      const cardH = Math.max(0, Math.round(r.height));
+
+      const viewportH = window.innerHeight;
+      const maxH = viewportH - 80;
+      const preferred = Math.max(cardH + 120, 700);
+      const finalH = Math.max(420, Math.min(preferred, maxH));
+
+      modal.style.height = finalH + "px";
+      modal.style.top = "25px";
+    }
+
+    function openInstructions() {
+      const overlay = $("instructionsOverlay");
+      if (!overlay) return;
+
+      overlay.style.display = "block";
+      overlay.setAttribute("aria-hidden", "false");
+
+      syncInstructionsHeight();
+      requestAnimationFrame(syncInstructionsHeight);
+    }
+
+    function closeInstructions() {
+      const overlay = $("instructionsOverlay");
+      if (!overlay) return;
+
+      overlay.style.display = "none";
+      overlay.setAttribute("aria-hidden", "true");
+    }
+
+    function checkLocalStorageAvailable() {
+      try {
+        const testKey = "__celtic_sounds_test__";
+        localStorage.setItem(testKey, "1");
+        localStorage.removeItem(testKey);
+        gLocalStorageAvailable = true;
+      } catch (err) {
+        gLocalStorageAvailable = false;
+      }
+    }
+
+    function getPersistedSettingsObject() {
+      return {
+        selectedMidiChannel: state.selectedMidiChannel,
+        selectedInstrumentKey: state.selectedInstrumentKey,
+        selectedReverbKey: state.selectedReverbKey,
+        expressionMode: state.expressionMode,
+        masterVolume: state.masterVolume,
+        attackMs: state.attackMs,
+        releaseMs: state.releaseMs,
+        pitchBendUpMultiplier: state.pitchBendUpMultiplier,
+        pitchBendDownMultiplier: state.pitchBendDownMultiplier,
+        reverbWet: state.reverbWet,
+        reverbDry: state.reverbDry,
+        reverbPreDelayMs: state.reverbPreDelayMs,
+        transposeSemis: state.transposeSemis,
+        midiLogEnabled: state.midiLogEnabled,
+        freezeMidiLog: state.freezeMidiLog
+      };
+    }
+
+    function saveSettingsToLocalStorage() {
+      if (!gLocalStorageAvailable) return;
+      try {
+        localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(getPersistedSettingsObject()));
+      } catch (err) {
+        // ignore storage failures
+      }
+    }
+
+    function applyLoadedSettings(data) {
+      if (!data || typeof data !== "object") return;
+
+      if (typeof data.selectedMidiChannel === "number") {
+        state.selectedMidiChannel = clamp(Math.round(data.selectedMidiChannel), 1, 16);
+      }
+
+      if (typeof data.selectedInstrumentKey === "string" &&
+          APP_CONFIG.instruments[data.selectedInstrumentKey]) {
+        state.selectedInstrumentKey = data.selectedInstrumentKey;
+      }
+
+      if (typeof data.selectedReverbKey === "string" &&
+          Object.prototype.hasOwnProperty.call(APP_CONFIG.impulseResponses, data.selectedReverbKey)) {
+        state.selectedReverbKey = data.selectedReverbKey;
+      }
+
+      if (typeof data.expressionMode === "string") {
+        const allowedModes = ["cc7", "cc2", "cc11", "velocity", "max"];
+        if (allowedModes.includes(data.expressionMode)) {
+          state.expressionMode = data.expressionMode;
+        }
+      }
+
+      if (typeof data.masterVolume === "number") {
+        state.masterVolume = clamp(data.masterVolume, 0, 2.0);
+      }
+
+      if (typeof data.attackMs === "number") {
+        state.attackMs = clamp(Math.round(data.attackMs), 0, 150);
+      }
+
+      if (typeof data.releaseMs === "number") {
+        state.releaseMs = clamp(Math.round(data.releaseMs), 10, 1500);
+      }
+
+      if (typeof data.pitchBendUpMultiplier === "number") {
+        state.pitchBendUpMultiplier = clamp(data.pitchBendUpMultiplier, 0, 4);
+      }
+
+      if (typeof data.pitchBendDownMultiplier === "number") {
+        state.pitchBendDownMultiplier = clamp(data.pitchBendDownMultiplier, 0, 4);
+      }
+
+      if (typeof data.reverbWet === "number") {
+        state.reverbWet = clamp(data.reverbWet, 0, 1);
+      }
+
+      if (typeof data.reverbDry === "number") {
+        state.reverbDry = clamp(data.reverbDry, 0, 1.5);
+      }
+
+      if (typeof data.reverbPreDelayMs === "number") {
+        state.reverbPreDelayMs = clamp(Math.round(data.reverbPreDelayMs), 0, 250);
+      }
+
+      if (typeof data.transposeSemis === "number") {
+        state.transposeSemis = clamp(Math.round(data.transposeSemis), -24, 24);
+      }
+
+      if (typeof data.midiLogEnabled === "boolean") {
+        state.midiLogEnabled = data.midiLogEnabled;
+      }
+
+      if (typeof data.freezeMidiLog === "boolean") {
+        state.freezeMidiLog = data.freezeMidiLog;
+      }
+    }
+
+    function loadSettingsFromLocalStorage() {
+      if (!gLocalStorageAvailable) return;
+      try {
+        const raw = localStorage.getItem(SETTINGS_STORAGE_KEY);
+        if (!raw) return;
+        applyLoadedSettings(JSON.parse(raw));
+      } catch (err) {
+        // ignore malformed storage
+      }
+    }
+
+    function midiToName(midi) {
+      const names = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
+      const octave = Math.floor(midi / 12) - 1;
+      return names[midi % 12] + octave;
+    }
+
+    function midiToFlatSampleName(midi) {
+      const names = ["C", "Db", "D", "Eb", "E", "F", "Gb", "G", "Ab", "A", "Bb", "B"];
+      const octave = Math.floor(midi / 12) - 1 + SAMPLE_OCTAVE_OFFSET;
+      return names[midi % 12] + octave;
+    }
+
+    function clamp(value, min, max) {
+      return Math.max(min, Math.min(max, value));
+    }
+
+    function countInstrumentCache(instrumentKey) {
+      let count = 0;
+      for (const key of state.sampleCache.keys()) {
+        if (key.startsWith(instrumentKey + ":")) count++;
+      }
+      return count;
+    }
+
+    function centsToPlaybackRate(cents) {
+      return Math.pow(2, cents / 1200);
+    }
+
+    function applyPitchBendToActiveVoice() {
+      if (!state.activeVoice || !state.audioContext) return;
+
+      const cents = getEffectivePitchBendCents();
+      const rate = centsToPlaybackRate(cents);
+
+      const now = state.audioContext.currentTime;
+      const param = state.activeVoice.source.playbackRate;
+
+      param.cancelScheduledValues(now);
+      param.setTargetAtTime(rate, now, 0.01);
+    }
+
+    function getEffectivePitchBendCents() {
+      const normalized = state.pitchBendValue / 8192;
+      const base = state.basePitchBendCents;
+
+      if (normalized >= 0) {
+        return normalized * base * state.pitchBendUpMultiplier;
+      }
+
+      return normalized * base * state.pitchBendDownMultiplier;
+    }
+
+    function getExpressionModeLabel() {
+      const select = $("expressionModeSelect");
+      if (!select) return state.expressionMode;
+
+      const option = select.options[select.selectedIndex];
+      return option ? option.text : state.expressionMode;
+    }
+
+    function logLiveStatus(extra = {}) {
+      const currentNoteText =
+        state.currentNote == null
+          ? " "
+          : midiToName(state.currentNote);
+
+      const bendCents = getEffectivePitchBendCents();
+
+      const lines = [
+        "Input channel: " + state.selectedMidiChannel,
+        "Current note: " + currentNoteText,
+        "Expression mode: " + getExpressionModeLabel(),
+        "Expression value: " + state.latestExpression,
+        "Pitch bend cents: " + bendCents.toFixed(1)
+      ];
+
+      $("liveStatus").textContent = lines.join("\n");
+    }
+
+    function formatMidiMessage(msg) {
+      const hexStatus = "0x" + msg.status.toString(16).padStart(2, "0");
+      const channelText = "ch " + (msg.channel + 1);
+
+      if (msg.type === 0x90 && msg.data2 > 0) {
+        return "NOTE ON   | " + channelText +
+          " | note " + msg.data1 + " (" + midiToName(msg.data1) + ")" +
+          " | vel " + msg.data2 +
+          " | " + hexStatus;
+      }
+
+      if (msg.type === 0x80 || (msg.type === 0x90 && msg.data2 === 0)) {
+        return "NOTE OFF  | " + channelText +
+          " | note " + msg.data1 + " (" + midiToName(msg.data1) + ")" +
+          " | vel " + msg.data2 +
+          " | " + hexStatus;
+      }
+
+      if (msg.type === 0xB0) {
+        return "CONTROL   | " + channelText +
+          " | cc " + msg.data1 +
+          " | value " + msg.data2 +
+          " | " + hexStatus;
+      }
+
+      if (msg.type === 0xE0) {
+        const bend = ((msg.data2 << 7) | msg.data1) - 8192;
+        return "PITCH     | " + channelText +
+          " | bend " + bend +
+          " | " + hexStatus;
+      }
+
+      if (msg.type === 0xC0) {
+        return "PROGRAM   | " + channelText +
+          " | program " + msg.data1 +
+          " | " + hexStatus;
+      }
+
+      if (msg.type === 0xD0) {
+        return "CHAN PRESS| " + channelText +
+          " | value " + msg.data1 +
+          " | " + hexStatus;
+      }
+
+      if (msg.type === 0xA0) {
+        return "POLY PRESS| " + channelText +
+          " | note " + msg.data1 + " (" + midiToName(msg.data1) + ")" +
+          " | value " + msg.data2 +
+          " | " + hexStatus;
+      }
+
+      return "MIDI      | " + channelText +
+        " | data1 " + msg.data1 +
+        " | data2 " + msg.data2 +
+        " | " + hexStatus;
+    }
+
+    function renderMidiLog() {
+      const logEl = $("midiLog");
+      const showCheckbox = $("showMidiLog");
+      const freezeCheckbox = $("freezeMidiLog");
+      if (!logEl || !showCheckbox || !freezeCheckbox) return;
+
+      logEl.hidden = !state.midiLogEnabled;
+      showCheckbox.checked = state.midiLogEnabled;
+      freezeCheckbox.checked = state.freezeMidiLog;
+
+      if (!state.midiLogEnabled) {
+        logEl.textContent = "MIDI stream disabled.";
+        return;
+      }
+
+      if (state.midiLogLines.length === 0) {
+        logEl.textContent = state.freezeMidiLog
+          ? "MIDI stream frozen."
+          : "Waiting for MIDI messages on channel " + state.selectedMidiChannel + "...";
+        return;
+      }
+
+      logEl.textContent = state.midiLogLines.join("\n");
+
+      if (!state.freezeMidiLog) {
+        logEl.scrollTop = logEl.scrollHeight;
+      }
+    }
+
+    function clearMidiLog() {
+      state.midiLogLines = [];
+      renderMidiLog();
+    }
+
+    function pushMidiLogLine(text) {
+      if (!state.midiLogEnabled || state.freezeMidiLog) return;
+
+      const now = new Date();
+      const timestamp =
+        now.getHours().toString().padStart(2, "0") + ":" +
+        now.getMinutes().toString().padStart(2, "0") + ":" +
+        now.getSeconds().toString().padStart(2, "0") + "." +
+        now.getMilliseconds().toString().padStart(3, "0");
+
+      state.midiLogLines.push("[" + timestamp + "] " + text);
+
+      if (state.midiLogLines.length > state.maxMidiLogLines) {
+        state.midiLogLines.splice(0, state.midiLogLines.length - state.maxMidiLogLines);
+      }
+
+      renderMidiLog();
+    }
+
+    function buildOutputChain() {
+      if (!state.audioContext || state.outputChain) return;
+
+      const ctx = state.audioContext;
+      const inputGain = ctx.createGain();
+      const dryGain = ctx.createGain();
+      const wetGain = ctx.createGain();
+      const convolver = ctx.createConvolver();
+      const preDelay = ctx.createDelay(1.0);
+      const masterGain = ctx.createGain();
+
+      inputGain.connect(dryGain);
+      inputGain.connect(preDelay);
+      preDelay.connect(convolver);
+      convolver.connect(wetGain);
+      dryGain.connect(masterGain);
+      wetGain.connect(masterGain);
+      masterGain.connect(ctx.destination);
+
+      state.outputChain = {
+        inputGain,
+        dryGain,
+        wetGain,
+        convolver,
+        preDelay,
+        masterGain
+      };
+
+      applyMixerSettings();
+    }
+
+    function applyMixerSettings() {
+      if (!state.outputChain || !state.audioContext) return;
+
+      const now = state.audioContext.currentTime;
+      const dryGain = state.outputChain.dryGain;
+      const wetGain = state.outputChain.wetGain;
+      const preDelay = state.outputChain.preDelay;
+      const masterGain = state.outputChain.masterGain;
+
+      dryGain.gain.setTargetAtTime(state.reverbDry, now, 0.01);
+      wetGain.gain.setTargetAtTime(state.selectedReverbKey === "dry" ? 0 : state.reverbWet, now, 0.01);
+      preDelay.delayTime.setTargetAtTime(state.reverbPreDelayMs / 1000, now, 0.01);
+      masterGain.gain.setTargetAtTime(state.masterVolume, now, 0.01);
+    }
+
+    async function fetchAudioBuffer(url) {
+      if (!url || typeof url !== "string") {
+        throw new Error("fetchAudioBuffer() received an invalid URL: " + String(url));
+      }
+
+      const response = await fetch(url, { cache: "no-store" });
+      if (!response.ok) {
+        throw new Error("Failed to load " + url + " (" + response.status + " " + response.statusText + ")");
+      }
+
+      const contentType = (response.headers.get("content-type") || "").toLowerCase();
+      const arrayBuffer = await response.arrayBuffer();
+
+      if (!arrayBuffer || arrayBuffer.byteLength === 0) {
+        throw new Error("Loaded empty file for " + url);
+      }
+
+      if (contentType.includes("text/html")) {
+        throw new Error(
+          "Expected audio but got HTML for " + url + ". This usually means the file path is wrong or the server returned a page instead of the sample file."
+        );
+      }
+
+      if (
+        !contentType.includes("audio/") &&
+        !contentType.includes("application/octet-stream") &&
+        contentType !== ""
+      ) {
+        console.warn("Unexpected content-type for " + url + ": " + contentType);
+      }
+
+      try {
+        return await state.audioContext.decodeAudioData(arrayBuffer.slice(0));
+      } catch (err) {
+        throw new Error(
+          "Unable to decode audio data for " +
+            url +
+            (contentType ? " (content-type: " + contentType + ")" : "") +
+            ". The file may be invalid, mislabeled, unsupported by this browser, or the server may not be returning the actual audio data."
+        );
+      }
+    }
+
+    async function loadFirstExistingAudio(urls) {
+      let lastError = null;
+
+      for (const url of urls) {
+        try {
+          return await fetchAudioBuffer(url);
+        } catch (err) {
+          lastError = err;
+        }
+      }
+
+      throw lastError || new Error("No matching audio file found.");
+    }
+
+    function getSampleUrls(instrumentKey, midiNote) {
+      const instrument = APP_CONFIG.instruments[instrumentKey];
+      if (!instrument) {
+        throw new Error("Unknown instrument key: " + instrumentKey);
+      }
+
+      const sampleName = midiToFlatSampleName(midiNote);
+      const url = instrument.folder + "/" + sampleName + ".mp3";
+      return [url];
+    }
+
+    function getLikelyStartupSampleUrls(instrumentKey) {
+      const instrument = APP_CONFIG.instruments[instrumentKey];
+      if (!instrument) return [];
+
+      const probeNotes = [60, 62, 64, 67, 69, 71, 72].filter(
+        (note) => note >= instrument.minNote && note <= instrument.maxNote
+      );
+
+      return probeNotes.flatMap((note) => getSampleUrls(instrumentKey, note));
+    }
+
+    async function preloadSample(instrumentKey, midiNote) {
+      const cacheKey = instrumentKey + ":" + midiNote;
+      if (state.sampleCache.has(cacheKey)) {
+        return state.sampleCache.get(cacheKey);
+      }
+
+      const urls = getSampleUrls(instrumentKey, midiNote);
+      const buffer = await loadFirstExistingAudio(urls);
+      state.sampleCache.set(cacheKey, buffer);
+      return buffer;
+    }
+
+    async function preloadInstrument(instrumentKey) {
+      if (!state.audioContext) return;
+
+      const instrument = APP_CONFIG.instruments[instrumentKey];
+      if (!instrument) {
+        throw new Error("Unknown instrument key: " + instrumentKey);
+      }
+
+      const startupUrls = getLikelyStartupSampleUrls(instrumentKey);
+      let loadedAtLeastOne = false;
+
+      for (const url of startupUrls) {
+        try {
+          await fetchAudioBuffer(url);
+          loadedAtLeastOne = true;
+          break;
+        } catch (err) {
+          console.warn("Startup probe failed for", url, err);
+        }
+      }
+
+      if (!loadedAtLeastOne) {
+        throw new Error(
+          "Could not load any startup samples for " +
+            instrument.label +
+            ". Check folder paths, filenames, octave numbering, and make sure the server is returning real MP3 files."
+        );
+      }
+
+      const promises = [];
+      for (let midi = instrument.minNote; midi <= instrument.maxNote; midi++) {
+        promises.push(preloadSample(instrumentKey, midi).catch(() => null));
+      }
+
+      await Promise.all(promises);
+      logLiveStatus({ instrumentCacheCount: countInstrumentCache(instrumentKey) });
+    }
+
+    async function preloadImpulseResponse(reverbKey) {
+      if (!state.outputChain) return;
+
+      if (!reverbKey || reverbKey === "dry") {
+        state.outputChain.convolver.buffer = null;
+        applyMixerSettings();
+        return;
+      }
+
+      if (!Object.prototype.hasOwnProperty.call(APP_CONFIG.impulseResponses, reverbKey)) {
+        throw new Error("Unknown reverb key: " + reverbKey);
+      }
+
+      const url = APP_CONFIG.impulseResponses[reverbKey];
+      if (!url) {
+        state.outputChain.convolver.buffer = null;
+        applyMixerSettings();
+        return;
+      }
+
+      if (state.irCache.has(reverbKey)) {
+        state.outputChain.convolver.buffer = state.irCache.get(reverbKey);
+        applyMixerSettings();
+        return;
+      }
+
+      const buffer = await fetchAudioBuffer(url);
+      state.irCache.set(reverbKey, buffer);
+      state.outputChain.convolver.buffer = buffer;
+      applyMixerSettings();
+    }
+
+    function ensureAudioContextExists() {
+      if (!state.audioContext) {
+        const AudioContextCtor = window.AudioContext || window.webkitAudioContext;
+        if (!AudioContextCtor) {
+          throw new Error("Web Audio API is not supported in this browser.");
+        }
+        state.audioContext = new AudioContextCtor();
+      }
+
+      if (!state.outputChain) {
+        buildOutputChain();
+      }
+    }
+
+    async function tryResumeAudioContext() {
+      ensureAudioContextExists();
+
+      if (state.audioContext.state === "suspended") {
+        try {
+          await state.audioContext.resume();
+        } catch (err) {
+          console.warn("Audio resume was blocked until user gesture.", err);
+        }
+      }
+    }
+
+    async function initAudioIfPossible() {
+      try {
+        await initAudio();
+      } catch (err) {
+        console.warn("Deferred audio initialization:", err);
+      }
+    }
+
+    async function initAudio() {
+      ensureAudioContextExists();
+
+      if (state.audioContext.state === "suspended") {
+        await state.audioContext.resume();
+      }
+
+      if (!state.selectedReverbKey) {
+        state.selectedReverbKey = "dry";
+      }
+
+      await preloadInstrument(state.selectedInstrumentKey);
+
+      if (state.selectedReverbKey !== "dry") {
+        try {
+          await preloadImpulseResponse(state.selectedReverbKey);
+        } catch (err) {
+          console.warn("Reverb load failed, continuing dry:", err);
+          state.selectedReverbKey = "dry";
+          if ($("reverbSelect")) $("reverbSelect").value = "dry";
+          await preloadImpulseResponse("dry");
+        }
+      } else {
+        await preloadImpulseResponse("dry");
+      }
+
+      if ($("reverbSelect")) {
+        $("reverbSelect").value = state.selectedReverbKey;
+      }
+
+      if ($("expressionModeSelect")) {
+        $("expressionModeSelect").value = state.expressionMode;
+      }
+
+      if ($("midiChannelSelect")) {
+        $("midiChannelSelect").value = String(state.selectedMidiChannel);
+      }
+
+      logLiveStatus();
+      renderMidiLog();
+    }
+
+    function computeExpressionGain(inputValue) {
+      const normalized = clamp(inputValue / 127, 0, 1);
+      const curved = Math.pow(normalized, 1.8);
+      return clamp(curved * APP_CONFIG.synth.maxGain, 0, 1.2);
+    }
+
+    function resolveCurrentExpressionGain(noteVelocity = 127) {
+      switch (state.expressionMode) {
+        case "velocity":
+          return computeExpressionGain(noteVelocity);
+        case "max":
+          return 1.0;
+        case "cc7":
+        case "cc11":
+        case "cc2":
+        default:
+          return computeExpressionGain(state.latestExpression);
+      }
+    }
+
+    function stopActiveVoice(immediate = false) {
+      if (!state.activeVoice || !state.audioContext) return;
+
+      const gainNode = state.activeVoice.gainNode;
+      const source = state.activeVoice.source;
+      const now = state.audioContext.currentTime;
+
+      gainNode.gain.cancelScheduledValues(now);
+
+      if (immediate) {
+        gainNode.gain.setValueAtTime(0, now);
+      } else {
+        const releaseSec = Math.max(0.005, state.releaseMs / 1000);
+        const current = Math.max(gainNode.gain.value, 0.0001);
+        gainNode.gain.setValueAtTime(current, now);
+        gainNode.gain.exponentialRampToValueAtTime(0.0001, now + releaseSec);
+      }
+
+      try {
+        source.stop(now + (immediate ? 0 : Math.max(0.02, state.releaseMs / 1000 + 0.02)));
+      } catch (_) {
+        // ignore
+      }
+
+      state.activeVoice = null;
+    }
+
+    async function playNote(midiNote, velocity = 127) {
+      if (!state.audioContext || !state.outputChain) return;
+
+      const transposed = clamp(midiNote + state.transposeSemis, 0, 127);
+      const instrument = APP_CONFIG.instruments[state.selectedInstrumentKey];
+
+      if (transposed < instrument.minNote || transposed > instrument.maxNote) {
+        console.warn("Note " + transposed + " is outside sample range for " + instrument.label);
+        state.currentNote = midiNote;
+        logLiveStatus();
+        return;
+      }
+
+      const buffer = await preloadSample(state.selectedInstrumentKey, transposed);
+      const ctx = state.audioContext;
+      const now = ctx.currentTime;
+
+      stopActiveVoice(false);
+
+      const source = ctx.createBufferSource();
+      source.buffer = buffer;
+      source.playbackRate.value = centsToPlaybackRate(getEffectivePitchBendCents());
+
+      const gainNode = ctx.createGain();
+      gainNode.gain.value = 0.0001;
+
+      source.connect(gainNode);
+      gainNode.connect(state.outputChain.inputGain);
+
+      const expressionGain = resolveCurrentExpressionGain(velocity);
+      const attackSec = Math.max(0.001, state.attackMs / 1000);
+
+      gainNode.gain.setValueAtTime(0.0001, now);
+      gainNode.gain.exponentialRampToValueAtTime(Math.max(expressionGain, 0.0001), now + attackSec);
+
+      source.start(now);
+
+      source.onended = () => {
+        if (state.activeVoice && state.activeVoice.source === source) {
+          state.activeVoice = null;
+        }
+      };
+
+      state.activeVoice = {
+        source,
+        gainNode,
+        sourceMidiNote: midiNote,
+        soundingMidiNote: transposed
+      };
+
+      state.currentNote = midiNote;
+      logLiveStatus();
+    }
+
+    function updateActiveVoiceGain() {
+      if (!state.activeVoice || !state.audioContext) return;
+
+      const now = state.audioContext.currentTime;
+      const target = Math.max(resolveCurrentExpressionGain(), 0.0001);
+      const gainParam = state.activeVoice.gainNode.gain;
+
+      gainParam.cancelScheduledValues(now);
+      gainParam.setTargetAtTime(target, now, 0.015);
+    }
+
+    async function noteOn(note, velocity) {
+      state.heldNotes.add(note);
+      await playNote(note, velocity);
+    }
+
+    function noteOff(note) {
+      state.heldNotes.delete(note);
+
+      if (state.activeVoice && state.activeVoice.sourceMidiNote === note) {
+        stopActiveVoice(false);
+        state.currentNote = null;
+
+        const remaining = [...state.heldNotes].sort((a, b) => b - a);
+        if (remaining.length > 0) {
+          void playNote(remaining[0], 127);
+          return;
+        }
+      }
+
+      logLiveStatus();
+    }
+
+    function allNotesOff() {
+      state.heldNotes.clear();
+      state.currentNote = null;
+      stopActiveVoice(true);
+      logLiveStatus();
+    }
+
+    function parseMidiMessage(data) {
+      const status = data[0];
+      const type = status & 0xf0;
+      const channel = status & 0x0f;
+      const data1 = data[1] ?? 0;
+      const data2 = data[2] ?? 0;
+      return { status, type, channel, data1, data2 };
+    }
+
+    async function handleMidiMessage(event) {
+      const msg = parseMidiMessage(event.data);
+
+      if ((msg.channel + 1) !== state.selectedMidiChannel) {
+        return;
+      }
+
+      pushMidiLogLine(formatMidiMessage(msg));
+
+      if (msg.type === 0xE0) {
+        state.pitchBendValue = ((msg.data2 << 7) | msg.data1) - 8192;
+        applyPitchBendToActiveVoice();
+        logLiveStatus();
+        return;
+      }
+
+      if (msg.type === 0x90 && msg.data2 > 0) {
+        await noteOn(msg.data1, msg.data2);
+        return;
+      }
+
+      if (msg.type === 0x80 || (msg.type === 0x90 && msg.data2 === 0)) {
+        noteOff(msg.data1);
+        return;
+      }
+
+      if (msg.type === 0xB0) {
+        const cc = msg.data1;
+        const value = msg.data2;
+
+        if (state.expressionMode === "cc7" && cc === 7) {
+          state.latestExpression = value;
+          updateActiveVoiceGain();
+          logLiveStatus();
+          return;
+        }
+
+        if (state.expressionMode === "cc2" && cc === 2) {
+          state.latestExpression = value;
+          updateActiveVoiceGain();
+          logLiveStatus();
+          return;
+        }
+
+        if (state.expressionMode === "cc11" && cc === 11) {
+          state.latestExpression = value;
+          updateActiveVoiceGain();
+          logLiveStatus();
+          return;
+        }
+
+        if (cc === 123 || cc === 120) {
+          allNotesOff();
+        }
+      }
+    }
+
+    function detachMidiListeners() {
+      state.midiInputs.forEach((input) => {
+        input.onmidimessage = null;
+      });
+    }
+
+    function attachSelectedMidiInput() {
+      detachMidiListeners();
+
+      const input = state.midiInputs.find((item) => item.id === state.selectedMidiInputId);
+      if (input) {
+        input.onmidimessage = handleMidiMessage;
+      }
+    }
+
+    function refreshMidiInputList() {
+      if (!state.midiAccess) return;
+
+      state.midiInputs = [...state.midiAccess.inputs.values()];
+      const select = $("midiInputSelect");
+      select.innerHTML = "";
+
+      if (state.midiInputs.length === 0) {
+        const opt = document.createElement("option");
+        opt.value = "";
+        opt.textContent = "No MIDI inputs found";
+        select.appendChild(opt);
+        state.selectedMidiInputId = "";
+        return;
+      }
+
+      for (const input of state.midiInputs) {
+        const opt = document.createElement("option");
+        opt.value = input.id;
+        opt.textContent = (input.name || "Unknown input");
+        select.appendChild(opt);
+      }
+
+      if (
+        !state.selectedMidiInputId ||
+        !state.midiInputs.some((i) => i.id === state.selectedMidiInputId)
+      ) {
+        const warbl = state.midiInputs.find((i) => /warbl/i.test(i.name || ""));
+        state.selectedMidiInputId = (warbl || state.midiInputs[0]).id;
+      }
+
+      select.value = state.selectedMidiInputId;
+      attachSelectedMidiInput();
+    }
+
+    async function connectMidi() {
+      if (!navigator.requestMIDIAccess) {
+        throw new Error("Web MIDI is not supported in this browser.");
+      }
+
+      state.midiAccess = await navigator.requestMIDIAccess({ sysex: false });
+      state.midiAccess.onstatechange = () => {
+        refreshMidiInputList();
+      };
+
+      refreshMidiInputList();
+    }
+
+    function populateInstrumentSelect() {
+      const select = $("instrumentSelect");
+      select.innerHTML = "";
+
+      for (const [key, value] of Object.entries(APP_CONFIG.instruments)) {
+        const opt = document.createElement("option");
+        opt.value = key;
+        opt.textContent = value.label;
+        select.appendChild(opt);
+      }
+
+      select.value = state.selectedInstrumentKey;
+    }
+
+    function populateMidiChannelSelect() {
+      const select = $("midiChannelSelect");
+      select.innerHTML = "";
+
+      for (let ch = 1; ch <= 16; ch++) {
+        const opt = document.createElement("option");
+        opt.value = String(ch);
+        opt.textContent = "Channel " + ch;
+        select.appendChild(opt);
+      }
+
+      select.value = String(state.selectedMidiChannel);
+    }
+
+    function populateReverbSelect() {
+      const select = $("reverbSelect");
+      select.innerHTML = "";
+
+      const reverbKeys = Object.keys(APP_CONFIG.impulseResponses);
+
+      for (const key of reverbKeys) {
+        const opt = document.createElement("option");
+        opt.value = key;
+        opt.textContent = IMPULSE_RESPONSE_LABELS[key] || key;
+        select.appendChild(opt);
+      }
+
+      if (!reverbKeys.includes(state.selectedReverbKey)) {
+        state.selectedReverbKey = "dry";
+      }
+
+      select.value = state.selectedReverbKey;
+    }
+
+    async function resetDefaults() {
+      state.selectedMidiChannel = DEFAULTS.selectedMidiChannel;
+      state.selectedInstrumentKey = DEFAULTS.selectedInstrumentKey;
+      state.selectedReverbKey = DEFAULTS.selectedReverbKey;
+      state.expressionMode = DEFAULTS.expressionMode;
+      state.masterVolume = DEFAULTS.masterVolume;
+      state.attackMs = DEFAULTS.attackMs;
+      state.releaseMs = DEFAULTS.releaseMs;
+      state.pitchBendUpMultiplier = DEFAULTS.pitchBendUpMultiplier;
+      state.pitchBendDownMultiplier = DEFAULTS.pitchBendDownMultiplier;
+      state.reverbWet = DEFAULTS.reverbWet;
+      state.reverbDry = DEFAULTS.reverbDry;
+      state.reverbPreDelayMs = DEFAULTS.reverbPreDelayMs;
+      state.transposeSemis = DEFAULTS.transposeSemis;
+      state.midiLogEnabled = DEFAULTS.midiLogEnabled;
+      state.freezeMidiLog = DEFAULTS.freezeMidiLog;
+      state.pitchBendValue = 0;
+
+      syncUiFromState();
+      applyMixerSettings();
+      applyPitchBendToActiveVoice();
+      clearMidiLog();
+      logLiveStatus();
+
+      if (state.audioContext) {
+        try {
+          await preloadInstrument(state.selectedInstrumentKey);
+          await preloadImpulseResponse(state.selectedReverbKey);
+          logLiveStatus();
+        } catch (err) {
+          console.error(err);
+          alert(err.message);
+        }
+      }
+
+      saveSettingsToLocalStorage();
+    }
+
+    function syncUiFromState() {
+      if ($("midiChannelSelect")) {
+        $("midiChannelSelect").value = String(state.selectedMidiChannel);
+      }
+
+      if ($("instrumentSelect")) {
+        $("instrumentSelect").value = state.selectedInstrumentKey;
+      }
+
+      if ($("expressionModeSelect")) {
+        $("expressionModeSelect").value = state.expressionMode;
+      }
+
+      if ($("reverbSelect")) {
+        $("reverbSelect").value = state.selectedReverbKey;
+      }
+
+      if ($("masterVolume")) {
+        $("masterVolume").value = String(state.masterVolume);
+        $("masterVolumeValue").textContent = state.masterVolume.toFixed(2);
+      }
+
+      if ($("attackMs")) {
+        $("attackMs").value = String(state.attackMs);
+        $("attackMsValue").textContent = String(state.attackMs);
+      }
+
+      if ($("releaseMs")) {
+        $("releaseMs").value = String(state.releaseMs);
+        $("releaseMsValue").textContent = String(state.releaseMs);
+      }
+
+      if ($("pitchBendUpMultiplier")) {
+        $("pitchBendUpMultiplier").value = String(state.pitchBendUpMultiplier);
+        $("pitchBendUpMultiplierValue").textContent = state.pitchBendUpMultiplier.toFixed(2);
+      }
+
+      if ($("pitchBendDownMultiplier")) {
+        $("pitchBendDownMultiplier").value = String(state.pitchBendDownMultiplier);
+        $("pitchBendDownMultiplierValue").textContent = state.pitchBendDownMultiplier.toFixed(2);
+      }
+
+      if ($("reverbWet")) {
+        $("reverbWet").value = String(state.reverbWet);
+        $("reverbWetValue").textContent = state.reverbWet.toFixed(2);
+      }
+
+      if ($("reverbDry")) {
+        $("reverbDry").value = String(state.reverbDry);
+        $("reverbDryValue").textContent = state.reverbDry.toFixed(2);
+      }
+
+      if ($("reverbPreDelay")) {
+        $("reverbPreDelay").value = String(state.reverbPreDelayMs);
+        $("reverbPreDelayValue").textContent = String(state.reverbPreDelayMs);
+      }
+
+      if ($("transposeSemis")) {
+        $("transposeSemis").value = String(state.transposeSemis);
+        $("transposeSemisValue").textContent = String(state.transposeSemis);
+      }
+
+      if ($("showMidiLog")) {
+        $("showMidiLog").checked = state.midiLogEnabled;
+      }
+
+      if ($("freezeMidiLog")) {
+        $("freezeMidiLog").checked = state.freezeMidiLog;
+      }
+    }
+
+    function bindRange(inputId, labelId, formatter, onChange) {
+      const input = $(inputId);
+      const label = $(labelId);
+
+      const apply = (fireChange) => {
+        const value = Number(input.value);
+        label.textContent = formatter(value);
+        if (fireChange) {
+          onChange(value);
+        }
+      };
+
+      input.addEventListener("input", () => apply(true));
+      apply(false);
+    }
+
+    function wireUi() {
+
+      $("btnConnectMidi").addEventListener("click", async () => {
+        try {
+          await connectMidi();
+        } catch (err) {
+          console.error(err);
+          alert(err.message);
+        }
+      });
+
+      $("btnAllNotesOff").addEventListener("click", () => allNotesOff());
+
+      $("showMidiLog").addEventListener("change", (e) => {
+        state.midiLogEnabled = e.target.checked;
+        renderMidiLog();
+        saveSettingsToLocalStorage();
+      });
+
+      $("freezeMidiLog").addEventListener("change", (e) => {
+        state.freezeMidiLog = e.target.checked;
+        renderMidiLog();
+        saveSettingsToLocalStorage();
+      });
+
+      $("btnClearMidiLog").addEventListener("click", () => {
+        clearMidiLog();
+      });
+
+      $("midiInputSelect").addEventListener("change", (e) => {
+        state.selectedMidiInputId = e.target.value;
+        attachSelectedMidiInput();
+      });
+
+      $("midiChannelSelect").addEventListener("change", (e) => {
+        state.selectedMidiChannel = Number(e.target.value) || 1;
+        state.freezeMidiLog = false;
+        clearMidiLog();
+        logLiveStatus();
+        saveSettingsToLocalStorage();
+      });
+
+      $("instrumentSelect").addEventListener("change", async (e) => {
+        state.selectedInstrumentKey = e.target.value;
+        saveSettingsToLocalStorage();
+        try {
+          if (state.audioContext) {
+            await preloadInstrument(state.selectedInstrumentKey);
+          }
+        } catch (err) {
+          console.error(err);
+          alert(err.message);
+        }
+      });
+
+      $("expressionModeSelect").addEventListener("change", (e) => {
+        state.expressionMode = e.target.value;
+        updateActiveVoiceGain();
+        logLiveStatus();
+        saveSettingsToLocalStorage();
+      });
+
+      $("reverbSelect").addEventListener("change", async (e) => {
+        state.selectedReverbKey = e.target.value;
+        saveSettingsToLocalStorage();
+
+        try {
+          if (state.audioContext) {
+            await preloadImpulseResponse(state.selectedReverbKey);
+          }
+          logLiveStatus();
+        } catch (err) {
+          console.error(err);
+          alert(err.message);
+        }
+      });
+
+      $("btnResetDefaults").addEventListener("click", async () => {
+        await resetDefaults();
+      });
+
+      $("btnInstructions").addEventListener("click", () => {
+        openInstructions();
+      });
+
+      $("btnCloseInstructions").addEventListener("click", () => {
+        closeInstructions();
+      });
+
+      $("instructionsOverlay").addEventListener("click", (e) => {
+        if (e.target === $("instructionsOverlay")) {
+          closeInstructions();
+        }
+      });
+
+      bindRange("masterVolume", "masterVolumeValue", (v) => v.toFixed(2), (v) => {
+        state.masterVolume = v;
+        applyMixerSettings();
+        saveSettingsToLocalStorage();
+      });
+
+      bindRange("attackMs", "attackMsValue", (v) => String(v), (v) => {
+        state.attackMs = v;
+        saveSettingsToLocalStorage();
+      });
+
+      bindRange("releaseMs", "releaseMsValue", (v) => String(v), (v) => {
+        state.releaseMs = v;
+        saveSettingsToLocalStorage();
+      });
+
+      bindRange("pitchBendUpMultiplier", "pitchBendUpMultiplierValue", (v) => v.toFixed(2), (v) => {
+        state.pitchBendUpMultiplier = v;
+        applyPitchBendToActiveVoice();
+        logLiveStatus();
+        saveSettingsToLocalStorage();
+      });
+
+      bindRange("pitchBendDownMultiplier", "pitchBendDownMultiplierValue", (v) => v.toFixed(2), (v) => {
+        state.pitchBendDownMultiplier = v;
+        applyPitchBendToActiveVoice();
+        logLiveStatus();
+        saveSettingsToLocalStorage();
+      });
+
+      bindRange("reverbWet", "reverbWetValue", (v) => v.toFixed(2), (v) => {
+        state.reverbWet = v;
+        applyMixerSettings();
+        saveSettingsToLocalStorage();
+      });
+
+      bindRange("reverbDry", "reverbDryValue", (v) => v.toFixed(2), (v) => {
+        state.reverbDry = v;
+        applyMixerSettings();
+        saveSettingsToLocalStorage();
+      });
+
+      bindRange("reverbPreDelay", "reverbPreDelayValue", (v) => String(v), (v) => {
+        state.reverbPreDelayMs = v;
+        applyMixerSettings();
+        saveSettingsToLocalStorage();
+      });
+
+      bindRange("transposeSemis", "transposeSemisValue", (v) => String(v), (v) => {
+        state.transposeSemis = v;
+        saveSettingsToLocalStorage();
+      });
+    }
+
+    function setupAutomaticAudioInit() {
+      const tryInitFromGesture = async () => {
+        try {
+          await initAudioIfPossible();
+        } finally {
+          window.removeEventListener("pointerdown", tryInitFromGesture);
+          window.removeEventListener("touchstart", tryInitFromGesture);
+          window.removeEventListener("keydown", tryInitFromGesture);
+        }
+      };
+
+      try {
+        ensureAudioContextExists();
+        void tryResumeAudioContext();
+        void initAudioIfPossible();
+      } catch (err) {
+        console.warn("Initial automatic audio setup failed:", err);
+      }
+
+      window.addEventListener("pointerdown", tryInitFromGesture, { once: true });
+      window.addEventListener("touchstart", tryInitFromGesture, { once: true });
+      window.addEventListener("keydown", tryInitFromGesture, { once: true });
+    }
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") {
+        closeInstructions();
+      }
+    });
+
+    window.addEventListener("resize", () => {
+      if ($("instructionsOverlay") && $("instructionsOverlay").style.display === "block") {
+        syncInstructionsHeight();
+      }
+    });
+
+    function bootstrap() {
+      checkLocalStorageAvailable();
+      loadSettingsFromLocalStorage();
+
+      populateInstrumentSelect();
+      populateMidiChannelSelect();
+      populateReverbSelect();
+      syncUiFromState();
+      wireUi();
+      logLiveStatus();
+      renderMidiLog();
+      setupAutomaticAudioInit();
+    }
+
+    bootstrap();
+
+  </script>
+</body>
+</html>
