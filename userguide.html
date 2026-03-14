@@ -540,6 +540,7 @@
             <a style="text-decoration:none;" href="#open_dialog">Open ABC, MusicXML, BWW, or MIDI Files</a>
             <a style="text-decoration:none;" href="#add_templates_dialog">Adding Your Own Tunes to Your Tunebook</a>
             <a style="text-decoration:none;" href="#tune_search_engine">Tune Search Engine</a>
+            <a style="text-decoration:none;" href="#add_tspt">thesession.org Power Tools</a>
             <a style="text-decoration:none;" href="#add_choose">Choose Files to Add</a>
             <a style="text-decoration:none;" href="#add_restore">Restore from Snapshot</a>
             <a style="text-decoration:none;" href="#add_restore_auto">Restore from Auto-Snapshot</a>
@@ -1070,6 +1071,7 @@
                         <p class="toc"><a style="text-decoration:none;" href="#open_dialog">Open ABC, MusicXML, BWW, or MIDI Files</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#add_templates_dialog">Adding Your Own Tunes to Your Tunebook</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#tune_search_engine">Tune Search Engine</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#add_tspt">thesession.org Power Tools</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#add_choose">Choose Files to Add</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#add_restore">Restore from Snapshot</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#add_restore_auto">Restore from Auto-Snapshot</a></p>
@@ -1646,13 +1648,13 @@
                 <p>Exports the entire tunebook as a high quality PDF file.</p>
                 <p>The saved PDF file will be in your browser's <strong>Downloads</strong> directory.</p>
                 <p>Full details below in the <a style="text-decoration:none;" href="#export_pdf_tunebook">Export PDF Tunebook</a> section below.</p>
-                <p>On iOS the downloaded files will be found in the "Downloads" dropdown on the iOS Safari app toolbar.</p>
+                <p>On iOS the native iOS sharing dialog can be used to save the PDF to the Files area or share it to another app.</p>
                 <hr id="top_bar_export_website">
                 <p><strong>Export Website:</strong></p>
                 <p>Exports the entire tunebook as an HTML/CSS/Javascript website.</p>
                 <p>Simple hyperlinked tune list, tune image gallery, tune image lightbox, and fully featured player websites with tablature and instrument selection are available as exported website options.</p>
                 <p>The saved .html file (and .svg tune images for the tune image gallery websites) will be saved in your browser's <strong>Downloads</strong> directory.</p>
-                <p>On iOS the downloaded files will be found in the "Downloads" dropdown on the iOS Safari app toolbar.</p>
+                <p>On iOS the native iOS sharing dialog can be used to save the files to the Files area or to share them to another app.</p>
                 <p>Full details below in the <a style="text-decoration:none;" href="#generate_website">Export Website</a> section below.</p>
                 <hr id="top_bar_play">
                 <p><strong>Play:</strong></p>
@@ -1931,7 +1933,7 @@
                 <p><strong>Add:</strong></p>
                 <p>Brings up a dialog where you can add your own ABC, MusicXML, BWW, or MIDI tunes, restore from previously saved Snapshots, re-order the tunes, delete tunes, add example ABC tunes, add useful ABC templates, or inject the commands for PDF tunebook features:</p>
                 <div class="image_holder_p">
-                    <img class="image" loading="lazy" src="img/add_example_template_41.jpg"/>
+                    <img class="image" loading="lazy" src="img/add_example_template_42.jpg"/>
                 </div>
                 <hr class="hidden-print" id="tune_search_engine">
                 <h1 class="page_break_always">Tune Search Engine</h1>
@@ -1962,6 +1964,16 @@
                 <p>If there is no text selection, all the tunes in the search results will be added.</p>
                 <p>You can also copy and paste the results you want from the search results back into the ABC editor.</p>
                 <p>You can also get to this dialog by clicking the <strong>Search for Tunes</strong> link at the top of the tool.</p>
+                <hr class="hidden-print" id="add_tspt">
+                <h1 class="page_break_always">thesession.org Power Tools</h1>
+                <a href="#table_of_contents" class="index-pill hidden-print">
+                  Table of Contents
+                </a>
+                <p>Opens the <strong><a href="https://michaeleskin.com/tools/thesession_power_tools.html" target="_blank">thesession.org Power Tools</a></strong> utility in a new browser tab.</p> 
+                <p>Given the link to a tune page on thesession.org, downloads all the ABC tune settings.</p> 
+                <p>You can also get all of a member's tunebook tunes, tune sets, or all the tune settings they've submitted or bookmarked.</p> 
+                <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/zIE86i-Caws" title="thesession.org Power Tools Demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
+                <p>Once the tune settings are downloaded, you can save them to a file, copy them to the clipboard, or if all the tunes will fit in a share link, open them directly in the ABC Transcription Tools.</p>
                 <hr class="hidden-print" id="add_choose">
                 <h1 class="page_break_always">Choose Files to Add</h1>
 				<a href="#table_of_contents" class="index-pill hidden-print">
@@ -3866,6 +3878,7 @@
 				</a>
                 <p>If you click <strong>Export Audio, Image, or PDF</strong> in the Player, a dialog will appear where you can export the the currently selected tune in the Player to an audio file in either .WAV or .MP3 format, the note playback events as a MIDI file, the tune image as .JPG, .PNG, or .SVG files, or all the tunes loaded in the Player as a PDF file.</p>
                 <p>The exported audio files will include any speed changes you have entered in the Player speed percentage control on the far right of the control bar.</p>
+                <p>On iOS the native iOS sharing dialog can be used to save the files to the Files area or to share them to another app.</p>
                 <div class="image_holder_p">
                     <img class="image" loading="lazy" src="img/export_audio_image_8.jpg"/>
                 </div>
@@ -6309,7 +6322,7 @@
                 <p><strong>Copy Share URL</strong> - Copies the Share URL to the system clipboard so you can easily paste it into social media posts, emails, or other tools.</p>
                 <p><strong>Save Share URL</strong> - Saves the Share URL to a text file.</p>
                 <p>The saved file will be in your browser's Downloads directory.</p>
-                <p>On iOS the downloaded files will be found in the "Downloads" dropdown on the iOS Safari app toolbar.</p>
+                <p>On iOS the native iOS sharing dialog can be used to save the file to the Files area or to share it to another app.</p>
                 <p><strong>Shorten URL</strong> - Shortens the Share URL using TinyURL automatically if possible, or if not, assists with the URL shortening process.</p>
                 <p>If you hold down the Shift and Alt keys while clicking this button, a %hyperlink annotation will be added to each of the tunes with the shortened URL.</p>
                 <p>When exporting a PDF, the %hyperlink annotation on any tune, when the tune title is clicked, overrides all other injected hyperlinks requested at the PDF tunebook level, for example, play links.</p>

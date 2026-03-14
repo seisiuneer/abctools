@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3204_031326_1430";
+var gVersionNumber = "3205_031426_1000";
 
 var gMIDIInitStillWaiting = false;
 
@@ -19668,9 +19668,10 @@ function AddABC() {
   var modal_msg = '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:15px;margin-bottom:10px;">Add ABC Tunes, Templates, and PDF Features<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#add_templates_dialog" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>';
   modal_msg += '<div id="add-new-tune-dialog">';
 
-  modal_msg += '<p style="text-align:center;font-size:18px;">Search and Add Tunes (Over 65,000 Tunes Available)</p>';
+  modal_msg += '<p style="text-align:center;font-size:18px;">Search and Add Tunes</p>';
   modal_msg += '<p style="text-align:center;margin-top:16px;margin-bottom:24px;">';
   modal_msg += '<input id="searchandaddtunes" class="advancedcontrols btn btn-injectcontrols-addabc" onclick="AddFromSearch(null,AddABCCallback);" type="button" value="Tune Search Engine" title="Search for tunes to add to your tunebook.&nbsp;&nbsp;Over 65,000 tunes available.">';
+  modal_msg += '<input id="launchtspt" class="advancedcontrols btn btn-injectcontrols-addabc" onclick="LaunchTheSessionPowerTools();AddABCCallback();" type="button" value="thesession.org Power Tools" title="Download tune settings and member tune settings from thesession.org.">';
   modal_msg += '</p>';  
 
   modal_msg += '<p style="text-align:center;font-size:18px;">Add Your Own Tunes from ABC, MusicXML, BWW, or MIDI Files</p>';
@@ -27697,13 +27698,13 @@ function processShareLink() {
       // Show update message?
       if (gLocalStorageAvailable){
 
-        var updatePresented = localStorage.sawUpdate_13mar2026;
+        var updatePresented = localStorage.sawUpdate_14mar2026;
 
         if (updatePresented != "true") {
 
           showWhatsNewScreen();
 
-          localStorage.sawUpdate_13mar2026 = true;
+          localStorage.sawUpdate_14mar2026 = true;
 
         }
 
@@ -55416,10 +55417,10 @@ function showWhatsNewScreen() {
 
   // Header
   modal_msg += '<div style="text-align:center; padding:14px 10px; border-radius:12px;';
-  modal_msg += 'background: linear-gradient(135deg, #1b5e20 0%, #2e7d32 50%, #66bb6a 100%);';
+  modal_msg += 'background: linear-gradient(135deg, #0d47a1 0%, #1565c0 50%, #64b5f6 100%);';
   modal_msg += 'box-shadow: 0 6px 16px rgba(0,0,0,0.14); color:#fff;">';
   modal_msg += '<div style="font-size:20pt; line-height:24pt; font-weight:bold;">What&apos;s New</div>';
-  modal_msg += '<div style="font-size:11pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 13 March 2026</div>';
+  modal_msg += '<div style="font-size:11pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 14 March 2026</div>';
   modal_msg += '</div>';
 
   // Short intro
@@ -55431,29 +55432,21 @@ function showWhatsNewScreen() {
   modal_msg += '<div style="margin:10px 0 6px 0; padding:12px 12px; border-radius:12px;';
   modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);">';
   
+  modal_msg += '<p style="margin:6px 0; font-size:12pt;">Added <strong>thesession.org Power Tools</strong> to the <strong>Add ABC Tunes, Templates, and PDF Features</strong> dialog.</p>';
+  modal_msg += '<p style="margin:6px 0; font-size:12pt;">Given the link to a tune page on thesession.org, downloads all the ABC tune settings.</p>'; 
+  modal_msg += '<p style="margin:6px 0; font-size:12pt;">You can also get all of a member\'s tunebook tunes, tune sets, or all the tune settings they\'ve submitted or bookmarked.</p>'; 
+  modal_msg += '<p style="margin:6px 0; font-size:12pt;">Once the tune settings are downloaded, you can save them to a file, copy them to the clipboard, or if all the tunes will fit in a share link, open them directly in the ABC Transcription Tools.</p>';
+
+  modal_msg += '</div>';
+
+  // Feature card
+  modal_msg += '<div style="margin:10px 0 6px 0; padding:12px 12px; border-radius:12px;';
+  modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);">';
+  
   modal_msg += '<p style="margin:6px 0; font-size:12pt;"><strong>On iOS, when possible, all file saves and exports from the tool now use the native iOS file sharing dialog.</strong></p>';
   modal_msg += '<p style="margin:6px 0; font-size:12pt;">This allows you to easily save exported files to the Files area on the device, share them with other iOS apps, or send them to another device via AirDrop.</p>';
 
   modal_msg += '</div>';
-
-  // Feature card
-  modal_msg += '<div style="margin:10px 0 6px 0; padding:12px 12px; border-radius:12px;';
-  modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);">';
-  
-  modal_msg += '<p style="margin:6px 0; font-size:12pt;">Renamed <b>FolkFriend</b> database to <b>thesession.org</b> (since it is the original source).</p>';
-  modal_msg += '<p style="margin:6px 0; font-size:12pt;">Moved the tune search engine button to the top of the <b>Add ABC Tunes, Templates, and PDF Features</b> dialog.</p>';
-
-  modal_msg += '</div>';
-
-  // Feature card
-  modal_msg += '<div style="margin:10px 0 6px 0; padding:12px 12px; border-radius:12px;';
-  modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);">';
-  
-  modal_msg += '<p style="margin:6px 0; font-size:12pt;"><strong>New flat button styling as the default.</strong></p>';
-  modal_msg += '<p style="margin:6px 0; font-size:12pt;">You can switch back to the legacy glossy buttons by unchecking <strong>Use Flat Buttons? (Glossy if unchecked)</strong> on the <strong>Editor</strong> pane in the <strong>Settings</strong> dialog.</p>';
-
-  modal_msg += '</div>';
-
 
   modal_msg += '</div>'; // wrapper
 
@@ -61965,13 +61958,13 @@ function DoStartup() {
   // Show update message?
   if (gLocalStorageAvailable && (!isFromShare)){
 
-    var updatePresented = localStorage.sawUpdate_13mar2026;
+    var updatePresented = localStorage.sawUpdate_14mar2026;
 
     if (updatePresented != "true") {
 
       showWhatsNewScreen();
 
-      localStorage.sawUpdate_13mar2026 = true;
+      localStorage.sawUpdate_14mar2026 = true;
 
     }
 
