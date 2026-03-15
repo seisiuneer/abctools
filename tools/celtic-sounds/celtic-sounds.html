@@ -104,7 +104,7 @@
       0 0 6px rgba(34, 197, 94, 0.45),
       0 0 14px rgba(34, 197, 94, 0.40),
       0 0 28px rgba(34, 197, 94, 0.28);
-      margin-bottom: 12px;
+    margin-bottom: 12px;
   }
 
   .hero-card p {
@@ -267,14 +267,17 @@
   }
 
   button.reset {
-    background: linear-gradient(135deg, #0b5f58, #0fa897);
-    border-color: #2dd4bf;
+    background: linear-gradient(135deg, #162f6a, #1e3a8a);
+    border-color: #1e40af;
+    color: #ffffff;
   }
 
   button.reset:hover {
-    background: linear-gradient(135deg, #0f766e, #14b8a6);
-    border-color: #5eead4;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.35), 0 0 8px rgba(45,212,191,0.5);
+    background: linear-gradient(135deg, #1e3a8a, #2563eb);
+    border-color: #3b82f6;
+    box-shadow:
+      0 4px 12px rgba(0,0,0,0.35),
+      0 0 10px rgba(37,99,235,0.6);
   }
 
   .status {
@@ -425,7 +428,7 @@
 
   .instructions-body{
     font-size:1rem;
-    line-height:1.7;
+    line-height:1.75;
     color:#e0e0e0;
     margin:0;
     padding-top:6px;
@@ -492,7 +495,8 @@
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: 18px;
+    justify-content: flex-start;
+    gap: 20px;
     width: 100%;
   }
 
@@ -566,11 +570,29 @@
     margin-top: 14px;
   }
 
-  @media (max-width: 700px){
-    .setup-row{
-      justify-content: flex-start;
-    }
+  .card-header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+  }
 
+  .header-button{
+    padding:6px 12px;
+    font-size:0.85rem;
+    border-radius:10px;
+  }
+
+  .connect-midi {
+    margin-left: 4px;
+  }
+
+  .all-notes-off {
+    margin-left: auto;
+    margin-right: 4px;
+  }
+
+  @media (max-width: 700px){
     .instructions-button{
       margin-left: 0 !important;
     }
@@ -620,18 +642,18 @@
     </div>
 
     <div class="card grid">
-      <h2>Setup</h2>
       <div class="row setup-row">
-        <button id="btnConnectMidi" class="good">Connect MIDI</button>
-        <button id="btnResetDefaults" class="reset">Reset Defaults</button>
-        <button id="btnAllNotesOff" class="warn">All Notes Off</button>
+        <button id="btnConnectMidi" class="good connect-midi">Connect MIDI</button>
+        <button id="btnAllNotesOff" class="warn all-notes-off">All Notes Off</button>      
       </div>
     </div>
 
     <div class="split">
       <div class="card grid">
-        <h2>Controls</h2>
-
+        <div class="card-header">
+          <h2>Controls</h2>
+          <button id="btnResetDefaults" class="reset header-button">Reset Defaults</button>
+        </div>
         <div class="controls">
           <div class="field">
             <label for="midiInputSelect">MIDI Input</label>
@@ -651,10 +673,10 @@
           <div class="field">
             <label for="expressionModeSelect">Expression Source</label>
             <select id="expressionModeSelect">
-              <option value="cc7" selected>Volume (CC7)</option>
+              <option value="cc7">Volume (CC7)</option>
               <option value="cc2">Breath (CC2)</option>
               <option value="cc11">Expression (CC11)</option>
-              <option value="velocity">Note Velocity</option>
+              <option value="velocity" selected>Note Velocity</option>
               <option value="max">Fixed Full Volume</option>
             </select>
           </div>
@@ -810,6 +832,17 @@
 
           <hr class="instructions-divider"/>
 
+          <div class="instructions-subtitle">Pitch Bend and Fixed-Pitch Instruments</div>
+          <div class="instructions-subbody">
+            <b>Anglo Concertina</b> and <b>Accordion</b> do <b>not</b> respond to MIDI pitch bend.<br/>
+            Any incoming pitch bend messages are ignored for these two instruments, so they always play at their normal sampled pitch.
+            <br/><br/>
+            <b>Tin Whistle</b>, <b>Irish Flute</b>, and the <b>Uilleann Pipes melody voice</b> do respond to pitch bend, subject to the selected
+            <b>Pitch Bend Up Scale</b> and <b>Pitch Bend Down Scale</b>.
+          </div>
+
+          <hr class="instructions-divider"/>
+
           <div class="instructions-subtitle">Reverb</div>
           <div class="instructions-subbody">
             Choose a reverb style, then adjust:
@@ -912,31 +945,36 @@
           label: "Tin Whistle",
           folder: "samples/tin_whistle",
           minNote: 55,
-          maxNote: 96
+          maxNote: 96,
+          defaultGain: 1.5
         },
         irishFlute: {
           label: "Irish Flute",
           folder: "samples/irish_flute",
           minNote: 48,
-          maxNote: 96
+          maxNote: 96,
+          defaultGain: 1.5
         },
         uilleannPipes: {
           label: "Uilleann Pipes",
           folder: "samples/uilleann_pipes",
           minNote: 33,
-          maxNote: 98
+          maxNote: 98,
+          defaultGain: 1.5
         },
         angloConcertina: {
           label: "Anglo Concertina",
           folder: "samples/anglo_concertina",
           minNote: 48,
-          maxNote: 96
+          maxNote: 96,
+          defaultGain: 1.5
         },
         accordion: {
           label: "Accordion",
           folder: "samples/accordion",
           minNote: 41,
-          maxNote: 96
+          maxNote: 96,
+          defaultGain: 1.5
         }
       },
 
@@ -965,7 +1003,7 @@
       selectedMidiChannel: 1,
       selectedInstrumentKey: APP_CONFIG.synth.defaultInstrumentKey,
       selectedReverbKey: APP_CONFIG.synth.defaultReverbKey,
-      expressionMode: "cc7",
+      expressionMode: "velocity",
       masterVolume: 1.0,
       attackMs: 4,
       releaseMs: 120,
@@ -995,7 +1033,7 @@
     };
 
     const SAMPLE_OCTAVE_OFFSET = 0;
-    const SETTINGS_STORAGE_KEY = "celtic_sounds_settings_v2";
+    const SETTINGS_STORAGE_KEY = "celtic_sounds_settings_v4";
 
     let gLocalStorageAvailable = false;
     let webMidiAvailable = false;
@@ -1010,7 +1048,7 @@
       selectedReverbKey: APP_CONFIG.synth.defaultReverbKey,
       sampleCache: new Map(),
       irCache: new Map(),
-      expressionMode: "cc7",
+      expressionMode: "velocity",
       latestExpression: 127,
       masterVolume: 1.0,
       attackMs: 4,
@@ -1271,7 +1309,9 @@
           ? " "
           : midiToName(state.currentNote);
 
-      const bendCents = getEffectivePitchBendCents();
+      const bendCents = isPitchBendDisabledInstrument()
+        ? 0
+        : getEffectivePitchBendCents();
 
       const lines = [
         "Input channel: " + state.selectedMidiChannel,
@@ -1734,6 +1774,13 @@
       return midiNote < 62 && !isDroneLatchNote(midiNote);
     }
 
+    function isPitchBendDisabledInstrument() {
+      return (
+        state.selectedInstrumentKey === "angloConcertina" ||
+        state.selectedInstrumentKey === "accordion"
+      );
+    }
+
     function stopManagedVoice(slotName, immediate = false) {
       if (!state.audioContext || !state[slotName]) return;
 
@@ -1788,6 +1835,8 @@
         return;
       }
 
+      const instrumentGain = instrument.defaultGain || 1.0;
+
       const buffer = await preloadSample(state.selectedInstrumentKey, transposed);
 
       if (requestId !== state[requestIdKey]) {
@@ -1841,9 +1890,12 @@
       source.connect(gainNode);
       gainNode.connect(state.outputChain.inputGain);
 
-      const targetGain = useExpression
+      let targetGain = useExpression
         ? resolveCurrentExpressionGain(velocity)
         : computeExpressionGain(velocity);
+
+      targetGain *= instrumentGain;
+      targetGain = clamp(targetGain, 0.0001, 4.0);
 
       const attackSec = Math.max(0.001, state.attackMs / 1000);
 
@@ -1881,7 +1933,7 @@
         logLiveStatus();
       }
     }
-    
+
     async function playNote(midiNote, velocity = 127) {
       await playManagedVoice({
         slotName: "activeVoice",
@@ -1889,7 +1941,7 @@
         midiNote,
         velocity,
         useExpression: true,
-        usePitchBend: true,
+        usePitchBend: !isPitchBendDisabledInstrument(),
         updateCurrentNote: true
       });
     }
@@ -1929,13 +1981,19 @@
     function applyPitchBendToActiveVoice() {
       if (!state.activeVoice || !state.audioContext) return;
 
-      const cents = getEffectivePitchBendCents();
-      const rate = centsToPlaybackRate(cents);
-
       const now = state.audioContext.currentTime;
       const param = state.activeVoice.source.playbackRate;
 
       param.cancelScheduledValues(now);
+
+      if (isPitchBendDisabledInstrument()) {
+        param.setTargetAtTime(1.0, now, 0.01);
+        return;
+      }
+
+      const cents = getEffectivePitchBendCents();
+      const rate = centsToPlaybackRate(cents);
+
       param.setTargetAtTime(rate, now, 0.01);
     }
 
@@ -1943,7 +2001,17 @@
       if (!state.activeVoice || !state.audioContext) return;
 
       const now = state.audioContext.currentTime;
-      const target = Math.max(resolveCurrentExpressionGain(), 0.0001);
+      const instrument = APP_CONFIG.instruments[state.selectedInstrumentKey];
+      const instrumentGain = instrument?.defaultGain || 1.0;
+
+      let target = Math.max(
+        resolveCurrentExpressionGain(state.activeVoice.noteVelocity || 127),
+        0.0001
+      );
+
+      target *= instrumentGain;
+      target = clamp(target, 0.0001, 4.0);
+
       const gainParam = state.activeVoice.gainNode.gain;
 
       gainParam.cancelScheduledValues(now);
@@ -1958,13 +2026,17 @@
         }
 
         if (isLowSecondaryNote(note)) {
+          state.lowHeldNotes.delete(note);
           state.lowHeldNotes.add(note);
+
           await playLowVoice(note, velocity);
           return;
         }
       }
 
+      state.heldNotes.delete(note);
       state.heldNotes.add(note);
+
       await playNote(note, velocity);
     }
 
@@ -1975,14 +2047,22 @@
         }
 
         if (isLowSecondaryNote(note)) {
+          const wasCurrentLowVoice =
+            state.lowVoice && state.lowVoice.sourceMidiNote === note;
+
+          const releasedVelocity = wasCurrentLowVoice
+            ? (state.lowVoice.noteVelocity || 127)
+            : 127;
+
           state.lowHeldNotes.delete(note);
 
-          if (state.lowVoice && state.lowVoice.sourceMidiNote === note) {
+          if (wasCurrentLowVoice) {
             stopManagedVoice("lowVoice", false);
 
-            const remainingLow = [...state.lowHeldNotes].sort((a, b) => b - a);
+            const remainingLow = [...state.lowHeldNotes];
             if (remainingLow.length > 0) {
-              void playLowVoice(remainingLow[0], 127);
+              const fallbackNote = remainingLow[remainingLow.length - 1];
+              void playLowVoice(fallbackNote, releasedVelocity);
             }
           }
 
@@ -1990,15 +2070,23 @@
         }
       }
 
+      const wasCurrentActiveVoice =
+        state.activeVoice && state.activeVoice.sourceMidiNote === note;
+
+      const releasedVelocity = wasCurrentActiveVoice
+        ? (state.activeVoice.noteVelocity || 127)
+        : 127;
+
       state.heldNotes.delete(note);
 
-      if (state.activeVoice && state.activeVoice.sourceMidiNote === note) {
+      if (wasCurrentActiveVoice) {
         stopManagedVoice("activeVoice", false);
         state.currentNote = null;
 
-        const remaining = [...state.heldNotes].sort((a, b) => b - a);
+        const remaining = [...state.heldNotes];
         if (remaining.length > 0) {
-          void playNote(remaining[0], 127);
+          const fallbackNote = remaining[remaining.length - 1];
+          void playNote(fallbackNote, releasedVelocity);
           return;
         }
       }
