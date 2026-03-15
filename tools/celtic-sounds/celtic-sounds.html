@@ -31,7 +31,7 @@
   <link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
   <link rel="manifest" href="https://michaeleskin.com/abctools/img/abc-manifest.json">
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-VM0N9HL3MK"></script>
-  
+
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
@@ -41,7 +41,7 @@
 
   <title>Celtic Sounds</title>
 
-<style>
+  <style>
   :root {
     --bg: #0f172a;
     --panel: #111827;
@@ -85,12 +85,30 @@
 
   .hero-card {
     background:
-      linear-gradient(180deg, rgba(10, 32, 20, 0.94), rgba(14, 40, 26, 0.92));
+      linear-gradient(135deg, rgba(10, 48, 24, 0.96) 0%, rgba(8, 38, 20, 0.95) 58%, rgba(3, 20, 10, 0.98) 100%);
     border: 1px solid rgba(74, 124, 89, 0.45);
     box-shadow:
-      0 10px 30px rgba(0, 0, 0, 0.28),
+      0 10px 30px rgba(0, 0, 0, 0.35),
       inset 0 1px 0 rgba(255, 255, 255, 0.03);
     position: relative;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .hero-card h1 {
+    text-shadow:
+      0 0 6px rgba(34, 197, 94, 0.45),
+      0 0 14px rgba(34, 197, 94, 0.40),
+      0 0 28px rgba(34, 197, 94, 0.28);
+      margin-bottom: 12px;
+  }
+
+  .hero-card p {
+    margin: 0;
   }
 
   .hero-help{
@@ -116,11 +134,27 @@
     justify-content:center;
 
     transition: background 0.15s ease, transform 0.12s ease;
+
+    text-shadow:
+    0 0 6px rgba(34, 197, 94, 0.55),
+    0 0 14px rgba(34, 197, 94, 0.35);
+
   }
 
   .hero-help:hover{
     background: rgba(255,255,255,0.16);
     transform: translateY(-1px);
+
+    text-shadow:
+      0 0 8px rgba(34, 197, 94, 0.75),
+      0 0 20px rgba(34, 197, 94, 0.45);
+
+    box-shadow:
+      0 0 12px rgba(34,197,94,0.35);
+  }
+
+  .hero-card .muted {
+    color: rgba(220, 235, 230, 0.85);
   }
 
   h1, h2, h3 {
@@ -128,7 +162,7 @@
     line-height: 1.15;
   }
 
-  h1 { font-size: 1.8rem; }
+  h1 { font-size: 1.9rem; }
   h2 { font-size: 1.15rem; }
   h3 { font-size: 1rem; }
 
@@ -288,7 +322,7 @@
     padding: 12px;
     white-space: pre;
   }
-    
+
   .midi-log-controls {
     display: flex;
     flex-wrap: wrap;
@@ -353,28 +387,20 @@
     max-width: 860px;
     width: min(860px, calc(100vw - 32px));
     margin: 0 auto;
-
-    /* same gradient style as hero card */
     background:
       linear-gradient(180deg, rgba(10, 32, 20, 0.94), rgba(14, 40, 26, 0.92));
-
     border: 1px solid rgba(74, 124, 89, 0.45);
     border-radius: 16px;
-
     box-shadow:
       0 20px 50px rgba(0,0,0,0.7),
       inset 0 1px 0 rgba(255,255,255,0.04);
-
     padding: 18px;
     box-sizing: border-box;
     position: relative;
     top: 25px;
     text-align: left;
-
     display: flex;
     flex-direction: column;
-
-    /* taller dialog */
     max-height: calc(100vh - 40px);
     height: min(1100px, calc(100vh - 40px));
   }
@@ -393,7 +419,7 @@
     overflow:auto;
     border:1px solid rgba(255,255,255,0.08);
     border-radius:12px;
-    padding:14px;
+    padding:20px 22px;
     background: rgba(0,0,0,0.55);
   }
 
@@ -491,7 +517,6 @@
     box-shadow:0 0 15px -2px rgba(0,0,0,0.75);
     width:min(560px, calc(100vw - 80px)) !important;
     max-width:min(560px, calc(100vw - 80px)) !important;
-
     height:auto !important;
     max-height:min(520px, 88dvh) !important;
     overflow:hidden !important;
@@ -533,6 +558,14 @@
     font-weight:600;
   }
 
+  .status.status-hidden {
+    display: none;
+  }
+
+  .status.status-hidden + .midi-log-wrap {
+    margin-top: 14px;
+  }
+
   @media (max-width: 700px){
     .setup-row{
       justify-content: flex-start;
@@ -563,7 +596,6 @@
     }
   }
 
-  /* iPad / medium tablet controls layout */
   @media (min-width: 768px) and (max-width: 1100px) {
     .controls {
       grid-template-columns: 1fr 1fr;
@@ -575,7 +607,6 @@
     }
   }
 </style>
-
 </head>
 
 <body>
@@ -656,18 +687,19 @@
           <div class="field" style="grid-column: span 2;">
             <div class="two-up">
               <div class="field">
+                <label for="pitchBendDownMultiplier">
+                  Pitch Bend Down Scale <span id="pitchBendDownMultiplierValue">1.00</span>
+                </label>
+                <input id="pitchBendDownMultiplier" type="range" min="0" max="4" step="0.01" value="1" />
+              </div>
+
+              <div class="field">
                 <label for="pitchBendUpMultiplier">
                   Pitch Bend Up Scale <span id="pitchBendUpMultiplierValue">1.00</span>
                 </label>
                 <input id="pitchBendUpMultiplier" type="range" min="0" max="4" step="0.01" value="1" />
               </div>
 
-              <div class="field">
-                <label for="pitchBendDownMultiplier">
-                  Pitch Bend Down Scale <span id="pitchBendDownMultiplierValue">1.00</span>
-                </label>
-                <input id="pitchBendDownMultiplier" type="range" min="0" max="4" step="0.01" value="1" />
-              </div>
             </div>
           </div>
 
@@ -714,6 +746,14 @@
 
       <div class="card grid live-status-card">
         <h2>Live Status</h2>
+
+        <div class="midi-log-controls">
+          <label for="showLiveStatus">
+            <input type="checkbox" id="showLiveStatus" />
+            Show live status
+          </label>
+        </div>
+
         <div class="status" id="liveStatus">Waiting...</div>
 
         <div class="midi-log-wrap">
@@ -781,6 +821,33 @@
 
           <hr class="instructions-divider"/>
 
+          <div class="instructions-subtitle">Using the Uilleann Pipes Sounds</div>
+          <div class="instructions-subbody">
+            When <b>Uilleann Pipes</b> is selected, incoming notes are split into separate playback behaviors:
+            <br/><br/>
+
+            <b>Melody notes</b><br/>
+            MIDI notes <b>62 and above</b> are treated as melody notes.<br/>These respond normally to the selected
+            <b>Expression Source</b> and to <b>Pitch Bend</b>.
+            <br/><br/>
+
+            <b>Latching drone notes</b><br/>
+            MIDI notes <b>50</b> and <b>51</b> are treated as dedicated drone notes.<br/>These notes are
+            <b>latching</b>: sending a note-on starts the drone, and sending another note-on for the same note
+            toggles that drone back off.<br/>MIDI note-off messages do not affect these latching drone notes.
+            <br/><br/>
+            Their playback level is taken from the <b>velocity</b> of the note-on message that starts them, and they
+            ignore both <b>expression</b> and <b>pitch bend</b>.
+            <br/><br/>
+
+            <b>Regulators notes</b><br/>
+            All other notes below <b>MIDI note 62</b>, which include all the regulators sounds, are played on a separate voice.<br/>These behave normally with
+            note-on and note-off, but like the drone voice they ignore <b>expression</b> and <b>pitch bend</b>, and
+            use the incoming <b>note-on velocity</b> as their initial volume.
+          </div>
+
+          <hr class="instructions-divider"/>
+
           <div class="instructions-subtitle">Troubleshooting</div>
           <div class="instructions-subbody">
             If you do not hear sound:
@@ -836,7 +903,6 @@
 
       <button id="btnCloseInstructions" class="instructions-close" type="button">CLOSE</button>
     </div>
-
   </div>
 
   <script>
@@ -910,7 +976,8 @@
       reverbPreDelayMs: 0,
       transposeSemis: 0,
       midiLogEnabled: false,
-      freezeMidiLog: false
+      freezeMidiLog: false,
+      liveStatusHidden: false
     };
 
     const IMPULSE_RESPONSE_LABELS = {
@@ -928,10 +995,9 @@
     };
 
     const SAMPLE_OCTAVE_OFFSET = 0;
-    const SETTINGS_STORAGE_KEY = "celtic_sounds_settings_v1";
+    const SETTINGS_STORAGE_KEY = "celtic_sounds_settings_v2";
 
     let gLocalStorageAvailable = false;
-
     let webMidiAvailable = false;
 
     const state = {
@@ -958,17 +1024,37 @@
       reverbPreDelayMs: 0,
       transposeSemis: 0,
       outputChain: null,
+
       activeVoice: null,
+      droneVoice: null,
+      lowVoice: null,
+
       heldNotes: new Set(),
+      lowHeldNotes: new Set(),
+
       currentNote: null,
       midiLogEnabled: false,
       freezeMidiLog: false,
       midiLogLines: [],
       maxMidiLogLines: 120,
-      playRequestId: 0
+
+      playRequestId: 0,
+      lowPlayRequestId: 0,
+      dronePlayRequestId: 0,
+
+      liveStatusHidden: false
     };
 
     const $ = (id) => document.getElementById(id);
+
+    function renderLiveStatusVisibility() {
+      const statusEl = $("liveStatus");
+      const checkbox = $("showLiveStatus");
+      if (!statusEl || !checkbox) return;
+
+      statusEl.classList.toggle("status-hidden", state.liveStatusHidden);
+      checkbox.checked = !state.liveStatusHidden;
+    }
 
     function syncInstructionsHeight() {
       const controlsCard = document.querySelector(".split .card.grid");
@@ -999,7 +1085,7 @@
       const closeBtn = $("btnCloseInstructions");
       if (closeBtn) {
         closeBtn.focus();
-      }    
+      }
     }
 
     function closeInstructions() {
@@ -1008,7 +1094,6 @@
 
       if (!overlay) return;
 
-      // Move focus out of the dialog first
       if (helpBtn) helpBtn.focus();
 
       overlay.style.display = "none";
@@ -1042,7 +1127,8 @@
         reverbPreDelayMs: state.reverbPreDelayMs,
         transposeSemis: state.transposeSemis,
         midiLogEnabled: state.midiLogEnabled,
-        freezeMidiLog: state.freezeMidiLog
+        freezeMidiLog: state.freezeMidiLog,
+        liveStatusHidden: state.liveStatusHidden
       };
     }
 
@@ -1122,6 +1208,11 @@
       if (typeof data.freezeMidiLog === "boolean") {
         state.freezeMidiLog = data.freezeMidiLog;
       }
+
+      if (typeof data.liveStatusHidden === "boolean") {
+        state.liveStatusHidden = data.liveStatusHidden;
+      }
+
     }
 
     function loadSettingsFromLocalStorage() {
@@ -1151,29 +1242,8 @@
       return Math.max(min, Math.min(max, value));
     }
 
-    function countInstrumentCache(instrumentKey) {
-      let count = 0;
-      for (const key of state.sampleCache.keys()) {
-        if (key.startsWith(instrumentKey + ":")) count++;
-      }
-      return count;
-    }
-
     function centsToPlaybackRate(cents) {
       return Math.pow(2, cents / 1200);
-    }
-
-    function applyPitchBendToActiveVoice() {
-      if (!state.activeVoice || !state.audioContext) return;
-
-      const cents = getEffectivePitchBendCents();
-      const rate = centsToPlaybackRate(cents);
-
-      const now = state.audioContext.currentTime;
-      const param = state.activeVoice.source.playbackRate;
-
-      param.cancelScheduledValues(now);
-      param.setTargetAtTime(rate, now, 0.01);
     }
 
     function getEffectivePitchBendCents() {
@@ -1652,63 +1722,82 @@
       }
     }
 
-    function stopActiveVoice(immediate = false) {
-      if (!state.activeVoice || !state.audioContext) return;
+    function isUilleannPipesInstrument() {
+      return state.selectedInstrumentKey === "uilleannPipes";
+    }
 
-      const voice = state.activeVoice;
-      const gainNode = voice.gainNode;
-      const source = voice.source;
+    function isDroneLatchNote(midiNote) {
+      return midiNote === 50 || midiNote === 51;
+    }
+
+    function isLowSecondaryNote(midiNote) {
+      return midiNote < 62 && !isDroneLatchNote(midiNote);
+    }
+
+    function stopManagedVoice(slotName, immediate = false) {
+      if (!state.audioContext || !state[slotName]) return;
+
+      const voice = state[slotName];
       const now = state.audioContext.currentTime;
 
       voice.stopRequested = true;
-
-      gainNode.gain.cancelScheduledValues(now);
+      voice.gainNode.gain.cancelScheduledValues(now);
 
       if (immediate) {
-        gainNode.gain.setValueAtTime(0, now);
+        voice.gainNode.gain.setValueAtTime(0, now);
       } else {
         const releaseSec = Math.max(0.005, state.releaseMs / 1000);
-        const current = Math.max(gainNode.gain.value, 0.0001);
-        gainNode.gain.setValueAtTime(current, now);
-        gainNode.gain.exponentialRampToValueAtTime(0.0001, now + releaseSec);
+        const current = Math.max(voice.gainNode.gain.value, 0.0001);
+        voice.gainNode.gain.setValueAtTime(current, now);
+        voice.gainNode.gain.exponentialRampToValueAtTime(0.0001, now + releaseSec);
       }
 
       try {
-        source.stop(now + (immediate ? 0 : Math.max(0.02, state.releaseMs / 1000 + 0.02)));
+        voice.source.stop(now + (immediate ? 0 : Math.max(0.02, state.releaseMs / 1000 + 0.02)));
       } catch (_) {
         // ignore
       }
 
-      if (state.activeVoice === voice) {
-        state.activeVoice = null;
+      if (state[slotName] === voice) {
+        state[slotName] = null;
       }
     }
 
-    async function playNote(midiNote, velocity = 127) {
+    async function playManagedVoice({
+      slotName,
+      requestIdKey,
+      midiNote,
+      velocity = 127,
+      useExpression = true,
+      usePitchBend = true,
+      updateCurrentNote = false
+    }) {
       if (!state.audioContext || !state.outputChain) return;
 
-      const requestId = ++state.playRequestId;
+      const requestId = ++state[requestIdKey];
 
       const transposed = clamp(midiNote + state.transposeSemis, 0, 127);
       const instrument = APP_CONFIG.instruments[state.selectedInstrumentKey];
 
       if (transposed < instrument.minNote || transposed > instrument.maxNote) {
         console.warn("Note " + transposed + " is outside sample range for " + instrument.label);
-        state.currentNote = midiNote;
-        logLiveStatus();
+        if (updateCurrentNote) {
+          state.currentNote = midiNote;
+          logLiveStatus();
+        }
         return;
       }
 
       const buffer = await preloadSample(state.selectedInstrumentKey, transposed);
 
-      if (requestId !== state.playRequestId) {
+      if (requestId !== state[requestIdKey]) {
         return;
       }
 
       const ctx = state.audioContext;
       const now = ctx.currentTime;
 
-      const priorVoice = state.activeVoice;
+      const priorVoice = state[slotName];
       if (priorVoice) {
         priorVoice.stopRequested = true;
 
@@ -1729,12 +1818,22 @@
 
       const source = ctx.createBufferSource();
       source.buffer = buffer;
-      source.playbackRate.value = centsToPlaybackRate(getEffectivePitchBendCents());
+      source.playbackRate.value = usePitchBend ? centsToPlaybackRate(getEffectivePitchBendCents()) : 1.0;
       source.loop = true;
 
-      const loopSafety = Math.min(0.005, Math.max(0, buffer.duration * 0.002));
-      source.loopStart = 0;
-      source.loopEnd = Math.max(0.01, buffer.duration - loopSafety);
+      const isUilleannDroneLoop =
+        state.selectedInstrumentKey === "uilleannPipes" &&
+        slotName === "droneVoice" &&
+        (midiNote === 50 || midiNote === 51);
+
+      if (isUilleannDroneLoop) {
+        source.loopStart = 0;
+        source.loopEnd = buffer.duration;
+      } else {
+        const loopSafety = Math.min(0.005, Math.max(0, buffer.duration * 0.002));
+        source.loopStart = 0;
+        source.loopEnd = Math.max(0.01, buffer.duration - loopSafety);
+      }
 
       const gainNode = ctx.createGain();
       gainNode.gain.value = 0.0001;
@@ -1742,11 +1841,14 @@
       source.connect(gainNode);
       gainNode.connect(state.outputChain.inputGain);
 
-      const expressionGain = resolveCurrentExpressionGain(velocity);
+      const targetGain = useExpression
+        ? resolveCurrentExpressionGain(velocity)
+        : computeExpressionGain(velocity);
+
       const attackSec = Math.max(0.001, state.attackMs / 1000);
 
       gainNode.gain.setValueAtTime(0.0001, now);
-      gainNode.gain.exponentialRampToValueAtTime(Math.max(expressionGain, 0.0001), now + attackSec);
+      gainNode.gain.exponentialRampToValueAtTime(Math.max(targetGain, 0.0001), now + attackSec);
 
       const voice = {
         source,
@@ -1758,21 +1860,83 @@
       };
 
       source.onended = () => {
-        if (state.activeVoice === voice) {
-          state.activeVoice = null;
+        if (state[slotName] === voice) {
+          state[slotName] = null;
 
-          if (!state.heldNotes.has(voice.sourceMidiNote)) {
-            state.currentNote = null;
-            logLiveStatus();
+          if (slotName === "activeVoice") {
+            if (!state.heldNotes.has(voice.sourceMidiNote)) {
+              state.currentNote = null;
+              logLiveStatus();
+            }
           }
         }
       };
 
       source.start(now);
 
-      state.activeVoice = voice;
-      state.currentNote = midiNote;
-      logLiveStatus();
+      state[slotName] = voice;
+
+      if (updateCurrentNote) {
+        state.currentNote = midiNote;
+        logLiveStatus();
+      }
+    }
+    
+    async function playNote(midiNote, velocity = 127) {
+      await playManagedVoice({
+        slotName: "activeVoice",
+        requestIdKey: "playRequestId",
+        midiNote,
+        velocity,
+        useExpression: true,
+        usePitchBend: true,
+        updateCurrentNote: true
+      });
+    }
+
+    async function playLowVoice(midiNote, velocity = 127) {
+      await playManagedVoice({
+        slotName: "lowVoice",
+        requestIdKey: "lowPlayRequestId",
+        midiNote,
+        velocity,
+        useExpression: false,
+        usePitchBend: false,
+        updateCurrentNote: false
+      });
+    }
+
+    async function toggleDroneLatchVoice(midiNote, velocity = 127) {
+      if (!isUilleannPipesInstrument()) return;
+
+      if (state.droneVoice && state.droneVoice.sourceMidiNote === midiNote) {
+        state.dronePlayRequestId++;
+        stopManagedVoice("droneVoice", false);
+        return;
+      }
+
+      await playManagedVoice({
+        slotName: "droneVoice",
+        requestIdKey: "dronePlayRequestId",
+        midiNote,
+        velocity,
+        useExpression: false,
+        usePitchBend: false,
+        updateCurrentNote: false
+      });
+    }
+
+    function applyPitchBendToActiveVoice() {
+      if (!state.activeVoice || !state.audioContext) return;
+
+      const cents = getEffectivePitchBendCents();
+      const rate = centsToPlaybackRate(cents);
+
+      const now = state.audioContext.currentTime;
+      const param = state.activeVoice.source.playbackRate;
+
+      param.cancelScheduledValues(now);
+      param.setTargetAtTime(rate, now, 0.01);
     }
 
     function updateActiveVoiceGain() {
@@ -1787,15 +1951,49 @@
     }
 
     async function noteOn(note, velocity) {
+      if (isUilleannPipesInstrument()) {
+        if (isDroneLatchNote(note)) {
+          await toggleDroneLatchVoice(note, velocity);
+          return;
+        }
+
+        if (isLowSecondaryNote(note)) {
+          state.lowHeldNotes.add(note);
+          await playLowVoice(note, velocity);
+          return;
+        }
+      }
+
       state.heldNotes.add(note);
       await playNote(note, velocity);
     }
 
     function noteOff(note) {
+      if (isUilleannPipesInstrument()) {
+        if (isDroneLatchNote(note)) {
+          return;
+        }
+
+        if (isLowSecondaryNote(note)) {
+          state.lowHeldNotes.delete(note);
+
+          if (state.lowVoice && state.lowVoice.sourceMidiNote === note) {
+            stopManagedVoice("lowVoice", false);
+
+            const remainingLow = [...state.lowHeldNotes].sort((a, b) => b - a);
+            if (remainingLow.length > 0) {
+              void playLowVoice(remainingLow[0], 127);
+            }
+          }
+
+          return;
+        }
+      }
+
       state.heldNotes.delete(note);
 
       if (state.activeVoice && state.activeVoice.sourceMidiNote === note) {
-        stopActiveVoice(false);
+        stopManagedVoice("activeVoice", false);
         state.currentNote = null;
 
         const remaining = [...state.heldNotes].sort((a, b) => b - a);
@@ -1810,8 +2008,17 @@
 
     function allNotesOff() {
       state.heldNotes.clear();
+      state.lowHeldNotes.clear();
       state.currentNote = null;
-      stopActiveVoice(true);
+
+      state.playRequestId++;
+      state.lowPlayRequestId++;
+      state.dronePlayRequestId++;
+
+      stopManagedVoice("activeVoice", true);
+      stopManagedVoice("lowVoice", true);
+      stopManagedVoice("droneVoice", true);
+
       logLiveStatus();
     }
 
@@ -2009,11 +2216,13 @@
       state.midiLogEnabled = DEFAULTS.midiLogEnabled;
       state.freezeMidiLog = DEFAULTS.freezeMidiLog;
       state.pitchBendValue = 0;
+      state.liveStatusHidden = DEFAULTS.liveStatusHidden;
 
       syncUiFromState();
       applyMixerSettings();
       applyPitchBendToActiveVoice();
       clearMidiLog();
+      allNotesOff();
       logLiveStatus();
 
       if (state.audioContext) {
@@ -2099,6 +2308,8 @@
       if ($("freezeMidiLog")) {
         $("freezeMidiLog").checked = state.freezeMidiLog;
       }
+
+      renderLiveStatusVisibility();
     }
 
     function bindRange(inputId, labelId, formatter, onChange) {
@@ -2118,7 +2329,6 @@
     }
 
     function wireUi() {
-
       $("btnConnectMidi").addEventListener("click", async () => {
         try {
           await connectMidi();
@@ -2161,6 +2371,7 @@
 
       $("instrumentSelect").addEventListener("change", async (e) => {
         state.selectedInstrumentKey = e.target.value;
+        allNotesOff();
         saveSettingsToLocalStorage();
         try {
           if (state.audioContext) {
@@ -2210,6 +2421,12 @@
         if (e.target === $("instructionsOverlay")) {
           closeInstructions();
         }
+      });
+
+      $("showLiveStatus").addEventListener("change", (e) => {
+        state.liveStatusHidden = !e.target.checked;
+        renderLiveStatusVisibility();
+        saveSettingsToLocalStorage();
       });
 
       bindRange("masterVolume", "masterVolumeValue", (v) => v.toFixed(2), (v) => {
@@ -2307,7 +2524,6 @@
     });
 
     function checkTipReminder(count) {
-
       let show = false;
 
       if (count === 10) show = true;
@@ -2319,26 +2535,21 @@
 
       const html =
         `<div style="text-align:center;font-family:helvetica,arial,sans-serif;font-size:14pt;line-height:1.5;margin-top:10px">` +
-
         `<b>Enjoying the Celtic Sounds?</b><br/><br/>` +
         `If this utility has been helpful, please consider` +
         `<br/>buying the developer a beer by tossing a few` +
         `<br/>bucks into one of the tip jars.<br/>` +
-
         `<div style="margin-top:10px;">` +
         `<b>PayPal</b><br/>` +
-        `<a href="https://paypal.me/MichaelEskin" target="_blank" rel="noopener noreferrer" style="color:#1a73e8; text-decoration:underline;">https://paypal.me/MichaelEskin</a>` + 
+        `<a href="https://paypal.me/MichaelEskin" target="_blank" rel="noopener noreferrer" style="color:#1a73e8; text-decoration:underline;">https://paypal.me/MichaelEskin</a>` +
         `</div>` +
-
         `<div style="margin-top:10px;">` +
         `<b>Venmo</b><br/>` +
         `@MichaelEskin` +
         `</div>` +
-
         `<div style="margin-top:14px;font-size:0.9em;opacity:0.8;">` +
         `Thank you for supporting development!` +
         `</div>` +
-
         `</div>`;
 
       DayPilot.Modal.alert(html, {
@@ -2349,7 +2560,6 @@
     }
 
     function incrementPageVisitCount() {
-
       if (!gLocalStorageAvailable) {
         return;
       }
@@ -2358,8 +2568,7 @@
 
       try {
         count = parseInt(localStorage.getItem("celtic_sounds_visit_count") || "0", 10);
-      }
-      catch {
+      } catch {
         count = 0;
       }
 
@@ -2367,8 +2576,7 @@
 
       try {
         localStorage.setItem("celtic_sounds_visit_count", count);
-      }
-      catch {
+      } catch {
         return;
       }
 
@@ -2426,6 +2634,7 @@
       populateReverbSelect();
       syncUiFromState();
       wireUi();
+      renderLiveStatusVisibility();
       logLiveStatus();
       renderMidiLog();
 
@@ -2436,14 +2645,15 @@
 
     document.addEventListener("DOMContentLoaded", () => {
       bootstrap();
-      if (webMidiAvailable){
+      if (webMidiAvailable) {
         setTimeout(() => {
           incrementPageVisitCount();
         }, 1200);
       }
     });
-
   </script>
+
   <script type="text/javascript" src="js/daypilot-modal.min-3.10.1.js?v=1"></script>
+
 </body>
 </html>
