@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <link rel="profile" href="https://gmpg.org/xfn/11">
-  <title>Celtic Sounds</title>
   <link rel='dns-prefetch' href='//fonts.googleapis.com' />
   <link rel='dns-prefetch' href='//s.w.org' />
   <link rel='preconnect' href='https://secureservercdn.net' crossorigin />
@@ -31,6 +30,16 @@
   <link rel="icon" type="image/png" sizes="96x96" href="https://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
   <link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
   <link rel="manifest" href="https://michaeleskin.com/abctools/img/abc-manifest.json">
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-VM0N9HL3MK"></script>
+  
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-VM0N9HL3MK');
+  </script>
+
+  <title>Celtic Sounds</title>
 
   <style>
     :root {
@@ -256,19 +265,44 @@
       display: grid;
       gap: 14px;
       grid-template-columns: 1.15fr 0.85fr;
+      align-items: stretch;
     }
 
-    .midi-log-wrap {
-      display: grid;
-      gap: 10px;
-      align-content: start;
+    .split > .card {
+      min-height: 0;
+      height: 100%;
     }
 
+    .midi-log {
+      flex: 1 1 auto;
+      min-height: 120px;
+      height: 0;
+      overflow-y: auto;
+      overflow-x: hidden;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 0.85rem;
+      line-height: 1.35;
+      background: rgba(2,6,23,0.7);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 12px;
+      white-space: pre;
+    }
+      
     .midi-log-controls {
       display: flex;
       flex-wrap: wrap;
       align-items: center;
       gap: 10px 14px;
+      flex: 0 0 auto;
+    }
+
+    .midi-log-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      flex: 1 1 auto;
+      min-height: 0;
     }
 
     .midi-log-controls label {
@@ -286,29 +320,16 @@
       accent-color: #3b82f6;
     }
 
-    .midi-log {
-      height: 220px;
-      overflow-y: auto;
-      overflow-x: hidden;
-      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-      font-size: 0.85rem;
-      line-height: 1.35;
-      background: rgba(2, 6, 23, 0.7);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 12px;
-      white-space: pre-wrap;
-      overflow-wrap: anywhere;
-      flex-shrink: 0;
-    }
-
     .live-status-card {
-      align-content: start;
-      align-items: start;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+      height: 100%;
     }
 
     .live-status-card .status {
-      align-self: start;
+      flex: 0 0 auto;
+      align-self: stretch;
     }
 
     .two-up {
@@ -453,6 +474,58 @@
       border-color: #60a5fa;
     }
 
+    .modal_compact_background{
+      background-color:#000;
+      opacity:0.4;
+    }
+
+    .modal_compact_main{
+      border:1px solid #333;
+      box-shadow:0 0 15px -2px rgba(0,0,0,0.75);
+      width:min(560px, calc(100vw - 80px)) !important;
+      max-width:min(560px, calc(100vw - 80px)) !important;
+
+      height:auto !important;
+      max-height:min(520px, 88dvh) !important;
+      overflow:hidden !important;
+    }
+
+    .modal_compact_inner{
+      padding:16px;
+      background:#fff;
+      color:#000;
+      display:flex;
+      flex-direction:column;
+    }
+
+    .modal_compact_content{
+      margin:14px 0 8px 0;
+      overflow:auto !important;
+      -webkit-overflow-scrolling:touch;
+    }
+
+    .modal_compact_buttons{
+      text-align:center;
+      margin-top:14px;
+      padding:10px 0 12px 0;
+    }
+
+    .modal_compact_buttons button{
+      margin:0 8px;
+    }
+
+    .modal_compact_main button{
+      background:#e8f1ff;
+      color:#000;
+      border:1px solid #9dbaf2;
+      padding:10px 20px;
+      cursor:pointer;
+      outline:none;
+      width:100px;
+      border-radius:10px;
+      font-weight:600;
+    }
+
     @media (max-width: 700px){
       .setup-row{
         justify-content: flex-start;
@@ -493,7 +566,7 @@
       <button id="btnInstructions" class="hero-help">?</button>
 
       <h1>Celtic Sounds</h1>
-      <p class="muted">WebMIDI-Based Sound Module for the WARBL by Michael Eskin</p>
+      <p class="muted">WebMIDI-Based MIDI Sound Module for the WARBL by Michael Eskin</p>
     </div>
 
     <div class="card grid">
@@ -834,6 +907,8 @@
 
     let gLocalStorageAvailable = false;
 
+    let webMidiAvailable = false;
+
     const state = {
       audioContext: null,
       midiAccess: null,
@@ -1105,60 +1180,86 @@
     }
 
     function formatMidiMessage(msg) {
-      const hexStatus = "0x" + msg.status.toString(16).padStart(2, "0");
-      const channelText = "ch " + (msg.channel + 1);
+      const hex = (v) => "0x" + v.toString(16).toUpperCase().padStart(2, "0");
+      const channelText = "ch" + (msg.channel + 1);
+
+      const statusHex = hex(msg.status);
+      const data1Hex = hex(msg.data1);
+      const data2Hex = hex(msg.data2);
 
       if (msg.type === 0x90 && msg.data2 > 0) {
-        return "NOTE ON   | " + channelText +
-          " | note " + msg.data1 + " (" + midiToName(msg.data1) + ")" +
-          " | vel " + msg.data2 +
-          " | " + hexStatus;
+        return "ON   " +
+          channelText.padEnd(4, " ") + " " +
+          statusHex + " " + data1Hex + " " + data2Hex + "  " +
+          midiToName(msg.data1) + " vel= " + msg.data2;
       }
 
       if (msg.type === 0x80 || (msg.type === 0x90 && msg.data2 === 0)) {
-        return "NOTE OFF  | " + channelText +
-          " | note " + msg.data1 + " (" + midiToName(msg.data1) + ")" +
-          " | vel " + msg.data2 +
-          " | " + hexStatus;
+        return "OFF  " +
+          channelText.padEnd(4, " ") + " " +
+          statusHex + " " + data1Hex + " " + data2Hex + "  " +
+          midiToName(msg.data1);
       }
 
       if (msg.type === 0xB0) {
-        return "CONTROL   | " + channelText +
-          " | cc " + msg.data1 +
-          " | value " + msg.data2 +
-          " | " + hexStatus;
+        let label = "CC";
+        let decoded = String(msg.data2);
+
+        if (msg.data1 === 7) {
+          label = "CC7 ";
+          decoded = "vol= " + msg.data2;
+        } else if (msg.data1 === 11) {
+          label = "CC11";
+          decoded = "expr= " + msg.data2;
+        } else if (msg.data1 === 2) {
+          label = "CC2 ";
+          decoded = "breath= " + msg.data2;
+        } else if (msg.data1 === 1) {
+          label = "MOD ";
+          decoded = "mod= " + msg.data2;
+        } else {
+          label = ("CC" + msg.data1).padEnd(4, " ");
+          decoded = String(msg.data2);
+        }
+
+        return label + " " +
+          channelText.padEnd(4, " ") + " " +
+          statusHex + " " + data1Hex + " " + data2Hex + "  " +
+          decoded;
       }
 
       if (msg.type === 0xE0) {
         const bend = ((msg.data2 << 7) | msg.data1) - 8192;
-        return "PITCH     | " + channelText +
-          " | bend " + bend +
-          " | " + hexStatus;
+        return "PB   " +
+          channelText.padEnd(4, " ") + " " +
+          statusHex + " " + data1Hex + " " + data2Hex + "  " +
+          "bend= " + bend;
       }
 
       if (msg.type === 0xC0) {
-        return "PROGRAM   | " + channelText +
-          " | program " + msg.data1 +
-          " | " + hexStatus;
+        return "PROG " +
+          channelText.padEnd(4, " ") + " " +
+          statusHex + " " + data1Hex + "       " +
+          "pgm= " + msg.data1;
       }
 
       if (msg.type === 0xD0) {
-        return "CHAN PRESS| " + channelText +
-          " | value " + msg.data1 +
-          " | " + hexStatus;
+        return "CPRS " +
+          channelText.padEnd(4, " ") + " " +
+          statusHex + " " + data1Hex + "       " +
+          "val= " + msg.data1;
       }
 
       if (msg.type === 0xA0) {
-        return "POLY PRESS| " + channelText +
-          " | note " + msg.data1 + " (" + midiToName(msg.data1) + ")" +
-          " | value " + msg.data2 +
-          " | " + hexStatus;
+        return "PPRS " +
+          channelText.padEnd(4, " ") + " " +
+          statusHex + " " + data1Hex + " " + data2Hex + "  " +
+          midiToName(msg.data1) + " p= " + msg.data2;
       }
 
-      return "MIDI      | " + channelText +
-        " | data1 " + msg.data1 +
-        " | data2 " + msg.data2 +
-        " | " + hexStatus;
+      return "MIDI " +
+        channelText.padEnd(4, " ") + " " +
+        statusHex + " " + data1Hex + " " + data2Hex;
     }
 
     function renderMidiLog() {
@@ -1200,7 +1301,6 @@
 
       const now = new Date();
       const timestamp =
-        now.getHours().toString().padStart(2, "0") + ":" +
         now.getMinutes().toString().padStart(2, "0") + ":" +
         now.getSeconds().toString().padStart(2, "0") + "." +
         now.getMilliseconds().toString().padStart(3, "0");
@@ -1520,9 +1620,17 @@
     function stopActiveVoice(immediate = false) {
       if (!state.activeVoice || !state.audioContext) return;
 
-      const gainNode = state.activeVoice.gainNode;
-      const source = state.activeVoice.source;
+      const voice = state.activeVoice;
+      const gainNode = voice.gainNode;
+      const source = voice.source;
       const now = state.audioContext.currentTime;
+
+      voice.stopRequested = true;
+
+      if (voice.restartTimer) {
+        clearTimeout(voice.restartTimer);
+        voice.restartTimer = null;
+      }
 
       gainNode.gain.cancelScheduledValues(now);
 
@@ -1544,7 +1652,7 @@
       state.activeVoice = null;
     }
 
-    async function playNote(midiNote, velocity = 127) {
+    async function playNote(midiNote, velocity = 127, isRetrigger = false) {
       if (!state.audioContext || !state.outputChain) return;
 
       const transposed = clamp(midiNote + state.transposeSemis, 0, 127);
@@ -1561,7 +1669,43 @@
       const ctx = state.audioContext;
       const now = ctx.currentTime;
 
-      stopActiveVoice(false);
+      const priorVoice = state.activeVoice;
+
+      if (priorVoice) {
+        priorVoice.stopRequested = true;
+
+        if (priorVoice.restartTimer) {
+          clearTimeout(priorVoice.restartTimer);
+          priorVoice.restartTimer = null;
+        }
+
+        const oldGain = priorVoice.gainNode.gain;
+        oldGain.cancelScheduledValues(now);
+
+        if (isRetrigger) {
+          // Very short fade to avoid chirp at repeat point
+          const current = Math.max(oldGain.value, 0.0001);
+          oldGain.setValueAtTime(current, now);
+          oldGain.exponentialRampToValueAtTime(0.0001, now + 0.012);
+
+          try {
+            priorVoice.source.stop(now + 0.016);
+          } catch (_) {
+            // ignore
+          }
+        } else {
+          const releaseSec = Math.max(0.005, state.releaseMs / 1000);
+          const current = Math.max(oldGain.value, 0.0001);
+          oldGain.setValueAtTime(current, now);
+          oldGain.exponentialRampToValueAtTime(0.0001, now + releaseSec);
+
+          try {
+            priorVoice.source.stop(now + Math.max(0.02, releaseSec + 0.02));
+          } catch (_) {
+            // ignore
+          }
+        }
+      }
 
       const source = ctx.createBufferSource();
       source.buffer = buffer;
@@ -1574,28 +1718,63 @@
       gainNode.connect(state.outputChain.inputGain);
 
       const expressionGain = resolveCurrentExpressionGain(velocity);
-      const attackSec = Math.max(0.001, state.attackMs / 1000);
+
+      // On retrigger, use a nearly-instant attack to avoid a blip
+      const attackSec = isRetrigger
+        ? 0.003
+        : Math.max(0.001, state.attackMs / 1000);
 
       gainNode.gain.setValueAtTime(0.0001, now);
       gainNode.gain.exponentialRampToValueAtTime(Math.max(expressionGain, 0.0001), now + attackSec);
 
-      source.start(now);
-
-      source.onended = () => {
-        if (state.activeVoice && state.activeVoice.source === source) {
-          state.activeVoice = null;
-        }
-      };
-
-      state.activeVoice = {
+      const voice = {
         source,
         gainNode,
         sourceMidiNote: midiNote,
-        soundingMidiNote: transposed
+        soundingMidiNote: transposed,
+        noteVelocity: velocity,
+        stopRequested: false,
+        restartTimer: null
       };
 
+      source.onended = () => {
+        if (voice.restartTimer) {
+          clearTimeout(voice.restartTimer);
+          voice.restartTimer = null;
+        }
+
+        if (state.activeVoice === voice) {
+          state.activeVoice = null;
+
+          if (!state.heldNotes.has(voice.sourceMidiNote)) {
+            state.currentNote = null;
+            logLiveStatus();
+          }
+        }
+      };
+
+      source.start(now);
+
+      state.activeVoice = voice;
       state.currentNote = midiNote;
       logLiveStatus();
+
+      const playbackRate = Math.max(source.playbackRate.value, 0.0001);
+      const durationSec = buffer.duration / playbackRate;
+
+      // Restart a little early, but not too early
+      const earlyRestartMs = 20;
+      const restartDelayMs = Math.max(30, durationSec * 1000 - earlyRestartMs);
+
+      voice.restartTimer = setTimeout(() => {
+        if (
+          state.activeVoice === voice &&
+          !voice.stopRequested &&
+          state.heldNotes.has(voice.sourceMidiNote)
+        ) {
+          void playNote(voice.sourceMidiNote, voice.noteVelocity, true);
+        }
+      }, restartDelayMs);
     }
 
     function updateActiveVoiceGain() {
@@ -2125,9 +2304,120 @@
       }
     });
 
+    function checkTipReminder(count) {
+
+      let show = false;
+
+      if (count === 10) show = true;
+      else if (count === 50) show = true;
+      else if (count === 100) show = true;
+      else if (count > 100 && count % 100 === 0) show = true;
+
+      if (!show) return;
+
+      const html =
+        `<div style="text-align:center;font-family:helvetica,arial,sans-serif;font-size:14pt;line-height:1.5;margin-top:10px">` +
+
+        `<b>Enjoying the Celtic Sounds?</b><br/><br/>` +
+        `If this utility has been helpful, please consider` +
+        `<br/>buying the developer a beer by tossing a few` +
+        `<br/>bucks into one of the tip jars.<br/>` +
+
+        `<div style="margin-top:10px;">` +
+        `<b>PayPal</b><br/>` +
+        `<a href="https://paypal.me/MichaelEskin"target="_blank"rel="noopener noreferrer"style="color:#1a73e8; text-decoration:underline;"> paypal.me/MichaelEskin </a>` + 
+        `</div>` +
+
+        `<div style="margin-top:10px;">` +
+        `<b>Venmo</b><br/>` +
+        `@MichaelEskin` +
+        `</div>` +
+
+        `<div style="margin-top:14px;font-size:0.9em;opacity:0.8;">` +
+        `Thank you for supporting development!` +
+        `</div>` +
+
+        `</div>`;
+
+      DayPilot.Modal.alert(html, {
+        theme: "modal_compact",
+        top: 100,
+        scrollWithPage: false
+      });
+    }
+
+    function incrementPageVisitCount() {
+
+      if (!gLocalStorageAvailable) {
+        return;
+      }
+
+      let count = 0;
+
+      try {
+        count = parseInt(localStorage.getItem("celtic_sounds_visit_count") || "0", 10);
+      }
+      catch {
+        count = 0;
+      }
+
+      count++;
+
+      try {
+        localStorage.setItem("celtic_sounds_visit_count", count);
+      }
+      catch {
+        return;
+      }
+
+      checkTipReminder(count);
+    }
+
+    function checkWebMidiAvailabilityAtStartup() {
+      const available = typeof navigator.requestMIDIAccess === "function";
+
+      if (!available) {
+        const btn = $("btnConnectMidi");
+        if (btn) {
+          btn.disabled = true;
+          btn.title = "WebMIDI is not available in this browser";
+          btn.style.opacity = "0.6";
+          btn.style.cursor = "not-allowed";
+        }
+
+        const message =
+          "<div style='text-align:left; line-height:1.5;'>" +
+            "<p style='margin:0 0 14px 0;text-align:center;font-size: 1.3rem;'><b>WebMIDI is not available in this browser.</b></p>" +
+            "<p style='margin:0 0 12px 0;'>Celtic Sounds requires a WebMIDI-enabled desktop browser such as:</p>" +
+            "<p style='margin:0 0 12px 18px;'>" +
+              "• Google Chrome<br/>" +
+              "• Microsoft Edge<br/>" +
+              "• Opera<br/>" +
+              "• Another Chromium-based browser with WebMIDI support" +
+            "</p>" +
+            "<p style='margin:0 0 12px 0;'>Safari and most mobile browsers do not currently support this tool.</p>" +
+            "<p style='margin:0;'>Please open Celtic Sounds in a compatible desktop browser and try again.</p>" +
+          "</div>";
+
+        setTimeout(() => {
+          DayPilot.Modal.alert(message, {
+            theme: "modal_compact",
+            top: 100,
+            width: 600,
+            autoFocus: false,
+            scrollWithPage: true
+          });
+        }, 100);
+      }
+
+      return available;
+    }
+
     function bootstrap() {
       checkLocalStorageAvailable();
       loadSettingsFromLocalStorage();
+
+      webMidiAvailable = checkWebMidiAvailabilityAtStartup();
 
       populateInstrumentSelect();
       populateMidiChannelSelect();
@@ -2136,11 +2426,22 @@
       wireUi();
       logLiveStatus();
       renderMidiLog();
-      setupAutomaticAudioInit();
+
+      if (webMidiAvailable) {
+        setupAutomaticAudioInit();
+      }
     }
 
-    bootstrap();
+    document.addEventListener("DOMContentLoaded", () => {
+      bootstrap();
+      if (webMidiAvailable){
+        setTimeout(() => {
+          incrementPageVisitCount();
+        }, 1200);
+      }
+    });
 
   </script>
+  <script type="text/javascript" src="js/daypilot-modal.min-3.10.1.js?v=1"></script>
 </body>
 </html>
