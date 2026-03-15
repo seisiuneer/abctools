@@ -729,7 +729,7 @@
 
       <div id="instructionsScroll" class="instructions-scroll">
         <div class="instructions-body">
-          <div class="instructions-subtitle">Getting started</div>
+          <div class="instructions-subtitle">Getting Started</div>
           <div class="instructions-subbody">
             1) Click <b>Connect MIDI</b> and if requested, allow browser MIDI access.<br/><br/>
             2) Choose your <b>MIDI Input</b> and <b>Input Channel</b>.<br/><br/>
@@ -740,7 +740,7 @@
 
           <hr class="instructions-divider"/>
 
-          <div class="instructions-subtitle">Expression source</div>
+          <div class="instructions-subtitle">Expression Source</div>
           <div class="instructions-subbody">
             <b>Volume (CC7)</b> follows MIDI CC7.<br/>
             <b>Breath (CC2)</b> follows MIDI CC2.<br/>
@@ -751,7 +751,7 @@
 
           <hr class="instructions-divider"/>
 
-          <div class="instructions-subtitle">Pitch bend scaling</div>
+          <div class="instructions-subtitle">Pitch Bend Scaling</div>
           <div class="instructions-subbody">
             The <b>Pitch Bend Up Scale</b> and <b>Pitch Bend Down Scale</b> let you independently control how strongly pitch bend messages affect upward and downward bends.
           </div>
@@ -782,7 +782,7 @@
 
           <hr class="instructions-divider"/>
 
-          <div class="instructions-subtitle">Browser compatibility</div>
+          <div class="instructions-subtitle">Browser Compatibility</div>
           <div class="instructions-subbody">
             This tool requires a browser that supports the <b>Web MIDI API</b>.<br/>
             If your browser does not support WebMIDI, MIDI devices will not appear and the tool will not function.
@@ -986,7 +986,12 @@
 
     function closeInstructions() {
       const overlay = $("instructionsOverlay");
+      const helpBtn = $("btnInstructions");
+
       if (!overlay) return;
+
+      // Move focus out of the dialog first
+      if (helpBtn) helpBtn.focus();
 
       overlay.style.display = "none";
       overlay.setAttribute("aria-hidden", "true");
