@@ -1861,6 +1861,36 @@
       }
     }
 
+	function getPlayableNotesForInstrument(instrumentKey) {
+	  const instrument = APP_CONFIG.instruments[instrumentKey];
+	  if (!instrument) return [];
+
+	  const explicitNotes = INSTRUMENT_PRELOAD_NOTES[instrumentKey];
+	  if (Array.isArray(explicitNotes) && explicitNotes.length > 0) {
+	    return explicitNotes.filter((note) => note >= instrument.minNote && note <= instrument.maxNote);
+	  }
+
+	  return Array.from(
+	    { length: instrument.maxNote - instrument.minNote + 1 },
+	    (_, i) => instrument.minNote + i
+	  );
+	}
+
+	const INSTRUMENT_PLAYABLE_NOTE_SETS = Object.create(null);
+
+	function getPlayableNoteSetForInstrument(instrumentKey) {
+	  if (!INSTRUMENT_PLAYABLE_NOTE_SETS[instrumentKey]) {
+	    INSTRUMENT_PLAYABLE_NOTE_SETS[instrumentKey] = new Set(
+	      getPlayableNotesForInstrument(instrumentKey)
+	    );
+	  }
+	  return INSTRUMENT_PLAYABLE_NOTE_SETS[instrumentKey];
+	}
+
+	function isPlayableNoteForInstrument(instrumentKey, midiNote) {
+	  return getPlayableNoteSetForInstrument(instrumentKey).has(midiNote);
+	}
+
     function stopManagedVoice(slotName, immediate = false) {
       if (!state.audioContext || !state[slotName]) return;
 
@@ -1906,7 +1936,7 @@
       const transposed = clamp(midiNote + state.transposeSemis, 0, 127);
       const instrument = APP_CONFIG.instruments[state.selectedInstrumentKey];
 
-      if (transposed < instrument.minNote || transposed > instrument.maxNote) {
+	  if (!isPlayableNoteForInstrument(state.selectedInstrumentKey, transposed)) {
         if (updateCurrentNote) {
           state.currentNote = midiNote;
           logLiveStatus();
@@ -2111,40 +2141,50 @@
       gainParam.setTargetAtTime(target, now, 0.015);
     }
 
-    async function noteOn(note, velocity) {
-      try {
-        if (isUilleannPipesInstrument()) {
-          if (isDroneLatchNote(note)) {
-            await toggleDroneLatchVoice(note, velocity);
-            return;
-          }
+	async function noteOn(note, velocity) {
+	  try {
+	    const transposedNote = clamp(note + state.transposeSemis, 0, 127);
+	    const playable = isPlayableNoteForInstrument(
+	      state.selectedInstrumentKey,
+	      transposedNote
+	    );
 
-          if (isLowSecondaryNote(note)) {
-            state.lowHeldNotes.delete(note);
-            state.lowHeldNotes.add(note);
-            state.lowHeldNoteVelocities.set(note, velocity);
+	    if (isUilleannPipesInstrument()) {
+	      if (isDroneLatchNote(note)) {
+	        await toggleDroneLatchVoice(note, velocity);
+	        return;
+	      }
 
-            await playLowVoice(note, velocity);
-            return;
-          }
-        }
+	      if (isLowSecondaryNote(note)) {
+	        if (!playable) return;
 
-        if (isSingleDronePipeInstrument()) {
-          if (note === 51) {
-            await toggleDroneLatchVoice(note, velocity);
-            return;
-          }
-        }
+	        state.lowHeldNotes.delete(note);
+	        state.lowHeldNotes.add(note);
+	        state.lowHeldNoteVelocities.set(note, velocity);
 
-        state.heldNotes.delete(note);
-        state.heldNotes.add(note);
-        state.heldNoteVelocities.set(note, velocity);
+	        await playLowVoice(note, velocity);
+	        return;
+	      }
+	    }
 
-        await playNote(note, velocity);
-      } catch (_) {
-        // fail silently for missing/bad samples during live MIDI input
-      }
-    }
+	    if (isSingleDronePipeInstrument() && note === 51) {
+	      await toggleDroneLatchVoice(note, velocity);
+	      return;
+	    }
+
+	    if (!playable) {
+	      return;
+	    }
+
+	    state.heldNotes.delete(note);
+	    state.heldNotes.add(note);
+	    state.heldNoteVelocities.set(note, velocity);
+
+	    await playNote(note, velocity);
+	  } catch (_) {
+	    // fail silently for missing/bad samples during live MIDI input
+	  }
+	}
 
     function noteOff(note) {
       if (isDroneLatchNote(note)) {
@@ -2676,10 +2716,21 @@
         saveSettingsToLocalStorage();
       });
 
-      bindRange("transposeSemis", "transposeSemisValue", (v) => String(v), (v) => {
-        state.transposeSemis = v;
-        saveSettingsToLocalStorage();
-      });
+	  bindRange("transposeSemis", "transposeSemisValue", (v) => String(v), (v) => {
+	    const newTranspose = Math.round(v);
+	    const oldTranspose = state.transposeSemis;
+
+	    if (newTranspose !== oldTranspose) {
+	      allNotesOff();
+	      state.transposeSemis = newTranspose;
+	      saveSettingsToLocalStorage();
+	      return;
+	    }
+
+	    state.transposeSemis = newTranspose;
+	    saveSettingsToLocalStorage();
+	  });
+
     }
 
     function setupAutomaticAudioInit() {
