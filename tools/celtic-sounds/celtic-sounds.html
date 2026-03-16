@@ -833,7 +833,7 @@
 
           <div class="instructions-subtitle">Pitch Bend and Fixed-Pitch Instruments</div>
           <div class="instructions-subbody">
-            <b>Anglo Concertina</b>, <b>Accordion</b>, <b>Great Highland Bagpipes</b>, and <b>Smallpipes</b> do <b>not</b> respond to MIDI pitch bend.<br/><br/>
+            <b>Anglo Concertina</b>, <b>Accordion</b>, <b>Great Highland Bagpipe</b>, and <b>Smallpipes</b> do <b>not</b> respond to MIDI pitch bend.<br/><br/>
             Any incoming pitch bend messages are ignored for these instruments, so they always play at their normal sampled pitch.
             <br/><br/>
             <b>Tin Whistle</b>, <b>Irish Flute</b>, and the <b>Uilleann Pipes melody voice</b> do respond to pitch bend, subject to the selected
@@ -859,12 +859,12 @@
             <br/><br/>
 
             <b>Melody notes</b><br/>
-            MIDI notes <b>62 and above</b> are treated as melody notes.<br/>These respond normally to the selected
+            MIDI notes <b>62 and above</b> are treated as melody notes.<br/><br/>These respond normally to the selected
             <b>Expression Source</b> and to <b>Pitch Bend</b>.
             <br/><br/>
 
             <b>Latching drone notes</b><br/>
-            MIDI notes <b>50</b> and <b>51</b> are treated as dedicated drone notes.<br/>These notes are
+            MIDI notes <b>50</b> and <b>51</b> are treated as dedicated drone notes.<br/><br/>These notes are
             <b>latching</b>: sending a note-on starts the drone, and sending another note-on for the same note
             toggles that drone back off.<br/><br/>MIDI note-off messages do not affect these latching drone notes.
             <br/><br/>
@@ -878,25 +878,25 @@
             use the incoming <b>note-on velocity</b> as their initial volume.<br/><br/>
             <b>WARBL Fingering Pattern to Use</b><br/>
             The Uilleann instrument is designed to be used with the WARBL Tin Whistle/Flute or Uilleann Pipes fingering pattern selected with no transpose.
-            Lowest MIDI note for the chanter is D4 (62).
+            <br/><br/>Lowest MIDI note for the chanter is D4 (62).
 
           </div>
 
           <hr class="instructions-divider"/>
 
-          <div class="instructions-subtitle">Using the Bagpipes and Smallpipes Sounds</div>
+          <div class="instructions-subtitle">Using the Great Highland Bagpipe and Smallpipes Sounds</div>
           <div class="instructions-subbody">
-            When <b>Great Highland Bagpipes</b> or <b>Smallpipes</b> is selected, MIDI note <b>51</b> is treated as a dedicated
+            When <b>Great Highland Bagpipe</b> or <b>Smallpipes</b> is selected, MIDI note <b>51</b> is treated as a dedicated
             <b>latching drone</b> note.<br/><br/>
             Sending a note-on for MIDI note 51 starts the drone, and sending another note-on for MIDI note 51 toggles that drone back off.<br/><br/>
             MIDI note-off messages do not affect this latching drone.
             <br/><br/>
             The drone uses the incoming <b>note-on velocity</b> as its playback level and ignores both <b>expression</b> and <b>pitch bend</b>.
             <br/><br/>
-            <b>All other notes</b> for these two instruments are treated as melody notes.<br/>
+            <b>All other notes</b> for these two instruments are treated as melody notes.<br/><br/>
             They play normally, but <b>pitch bend is ignored</b>.<br/><br/>
             <b>WARBL Fingering Pattern to Use</b><br/>
-            These two instruments are designed to be used with the WARBL GHB/Scottish Smallpipes fingering pattern selected with no transpose.<br/>
+            These two instruments are designed to be used with the WARBL GHB/Scottish Smallpipes fingering pattern selected with no transpose.<br/><br/>
             Lowest MIDI note for the chanter is G#4 (68).
 
           </div>
