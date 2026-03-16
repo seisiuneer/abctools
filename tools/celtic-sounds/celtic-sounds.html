@@ -386,8 +386,8 @@
   }
 
   .instructions-modal{
-    max-width: 860px;
-    width: min(860px, calc(100vw - 32px));
+    max-width: 800px;
+    width: min(800px, calc(100vw - 32px));
     margin: 0 auto;
     background:
       linear-gradient(180deg, rgba(10, 32, 20, 0.94), rgba(14, 40, 26, 0.92));
@@ -833,8 +833,8 @@
 
           <div class="instructions-subtitle">Pitch Bend and Fixed-Pitch Instruments</div>
           <div class="instructions-subbody">
-            <b>Anglo Concertina</b> and <b>Accordion</b> do <b>not</b> respond to MIDI pitch bend.<br/>
-            Any incoming pitch bend messages are ignored for these two instruments, so they always play at their normal sampled pitch.
+            <b>Anglo Concertina</b>, <b>Accordion</b>, <b>Great Highland Bagpipes</b>, and <b>Smallpipes</b> do <b>not</b> respond to MIDI pitch bend.<br/>
+            Any incoming pitch bend messages are ignored for these instruments, so they always play at their normal sampled pitch.
             <br/><br/>
             <b>Tin Whistle</b>, <b>Irish Flute</b>, and the <b>Uilleann Pipes melody voice</b> do respond to pitch bend, subject to the selected
             <b>Pitch Bend Up Scale</b> and <b>Pitch Bend Down Scale</b>.
@@ -876,6 +876,21 @@
             All other notes below <b>MIDI note 62</b>, which include all the regulators sounds, are played on a separate voice.<br/>These behave normally with
             note-on and note-off, but like the drone voice they ignore <b>expression</b> and <b>pitch bend</b>, and
             use the incoming <b>note-on velocity</b> as their initial volume.
+          </div>
+
+          <hr class="instructions-divider"/>
+
+          <div class="instructions-subtitle">Using the Bagpipes and Smallpipes Sounds</div>
+          <div class="instructions-subbody">
+            When <b>Great Highland Bagpipes</b> or <b>Smallpipes</b> is selected, MIDI note <b>51</b> is treated as a dedicated
+            <b>latching drone</b> note.<br/>
+            Sending a note-on for MIDI note 51 starts the drone, and sending another note-on for MIDI note 51 toggles that drone back off.<br/>
+            MIDI note-off messages do not affect this latching drone.
+            <br/><br/>
+            The drone uses the incoming <b>note-on velocity</b> as its playback level and ignores both <b>expression</b> and <b>pitch bend</b>.
+            <br/><br/>
+            <b>All other notes</b> for these two instruments are treated as melody notes.<br/>
+            They play normally, but <b>pitch bend is ignored</b>.
           </div>
 
           <hr class="instructions-divider"/>
@@ -966,7 +981,7 @@
           folder: "samples/anglo_concertina",
           minNote: 48,
           maxNote: 96,
-          defaultGain: 1.5
+          defaultGain: 1.75
         },
         accordion: {
           label: "Accordion",
@@ -974,6 +989,20 @@
           minNote: 41,
           maxNote: 96,
           defaultGain: 1.5
+        },
+        bagpipes: {
+          label: "Great Highland Bagpipe",
+          folder: "samples/bagpipes",
+          minNote: 51,
+          maxNote: 82,
+          defaultGain: 0.28
+        },
+        smallpipes: {
+          label: "Smallpipes",
+          folder: "samples/smallpipes",
+          minNote: 51,
+          maxNote: 82,
+          defaultGain: 0.28
         }
       },
 
@@ -1032,7 +1061,7 @@
     };
 
     const SAMPLE_OCTAVE_OFFSET = 0;
-    const SETTINGS_STORAGE_KEY = "celtic_sounds_settings_v4";
+    const SETTINGS_STORAGE_KEY = "celtic_sounds_settings_v5";
 
     let gLocalStorageAvailable = false;
     let webMidiAvailable = false;
@@ -1068,6 +1097,8 @@
 
       heldNotes: new Set(),
       lowHeldNotes: new Set(),
+      heldNoteVelocities: new Map(),
+      lowHeldNoteVelocities: new Map(),
 
       currentNote: null,
       midiLogEnabled: false,
@@ -1079,7 +1110,7 @@
       lowPlayRequestId: 0,
       dronePlayRequestId: 0,
 
-      liveStatusHidden: false
+      liveStatusHidden: false,
     };
 
     const $ = (id) => document.getElementById(id);
@@ -1249,7 +1280,6 @@
       if (typeof data.liveStatusHidden === "boolean") {
         state.liveStatusHidden = data.liveStatusHidden;
       }
-
     }
 
     function loadSettingsFromLocalStorage() {
@@ -1302,11 +1332,47 @@
       return option ? option.text : state.expressionMode;
     }
 
+    function isUilleannPipesInstrument() {
+      return state.selectedInstrumentKey === "uilleannPipes";
+    }
+
+    function isSingleDronePipeInstrument() {
+      return (
+        state.selectedInstrumentKey === "bagpipes" ||
+        state.selectedInstrumentKey === "smallpipes"
+      );
+    }
+
+    function isDroneLatchNote(midiNote) {
+      if (isUilleannPipesInstrument()) {
+        return midiNote === 50 || midiNote === 51;
+      }
+
+      if (isSingleDronePipeInstrument()) {
+        return midiNote === 51;
+      }
+
+      return false;
+    }
+
+    function isLowSecondaryNote(midiNote) {
+      return isUilleannPipesInstrument() && midiNote < 62 && !isDroneLatchNote(midiNote);
+    }
+
+    function isPitchBendDisabledInstrument() {
+      return (
+        state.selectedInstrumentKey === "angloConcertina" ||
+        state.selectedInstrumentKey === "accordion" ||
+        state.selectedInstrumentKey === "bagpipes" ||
+        state.selectedInstrumentKey === "smallpipes"
+      );
+    }
+
     function logLiveStatus() {
       const currentNoteText =
         state.currentNote == null
           ? " "
-          : midiToName(state.currentNote);
+          : `${midiToName(state.currentNote)} (${state.currentNote})`;
 
       const bendCents = isPitchBendDisabledInstrument()
         ? 0
@@ -1532,7 +1598,7 @@
         !contentType.includes("application/octet-stream") &&
         contentType !== ""
       ) {
-        console.warn("Unexpected content-type for " + url + ": " + contentType);
+        //console.warn("Unexpected content-type for " + url + ": " + contentType);
       }
 
       try {
@@ -1612,7 +1678,7 @@
           loadedAtLeastOne = true;
           break;
         } catch (err) {
-          console.warn("Startup probe failed for", url, err);
+          //console.warn("Startup probe failed for", url, err);
         }
       }
 
@@ -1761,25 +1827,6 @@
       }
     }
 
-    function isUilleannPipesInstrument() {
-      return state.selectedInstrumentKey === "uilleannPipes";
-    }
-
-    function isDroneLatchNote(midiNote) {
-      return midiNote === 50 || midiNote === 51;
-    }
-
-    function isLowSecondaryNote(midiNote) {
-      return midiNote < 62 && !isDroneLatchNote(midiNote);
-    }
-
-    function isPitchBendDisabledInstrument() {
-      return (
-        state.selectedInstrumentKey === "angloConcertina" ||
-        state.selectedInstrumentKey === "accordion"
-      );
-    }
-
     function stopManagedVoice(slotName, immediate = false) {
       if (!state.audioContext || !state[slotName]) return;
 
@@ -1826,7 +1873,6 @@
       const instrument = APP_CONFIG.instruments[state.selectedInstrumentKey];
 
       if (transposed < instrument.minNote || transposed > instrument.maxNote) {
-        console.warn("Note " + transposed + " is outside sample range for " + instrument.label);
         if (updateCurrentNote) {
           state.currentNote = midiNote;
           logLiveStatus();
@@ -1836,7 +1882,16 @@
 
       const instrumentGain = instrument.defaultGain || 1.0;
 
-      const buffer = await preloadSample(state.selectedInstrumentKey, transposed);
+      let buffer;
+      try {
+        buffer = await preloadSample(state.selectedInstrumentKey, transposed);
+      } catch (err) {
+        if (updateCurrentNote) {
+          state.currentNote = midiNote;
+          logLiveStatus();
+        }
+        return;
+      }
 
       if (requestId !== state[requestIdKey]) {
         return;
@@ -1874,7 +1929,12 @@
         slotName === "droneVoice" &&
         (midiNote === 50 || midiNote === 51);
 
-      if (isUilleannDroneLoop) {
+      const isSingleDroneLoop =
+        isSingleDronePipeInstrument() &&
+        slotName === "droneVoice" &&
+        midiNote === 51;
+
+      if (isUilleannDroneLoop || isSingleDroneLoop) {
         source.loopStart = 0;
         source.loopEnd = buffer.duration;
       } else {
@@ -1958,7 +2018,7 @@
     }
 
     async function toggleDroneLatchVoice(midiNote, velocity = 127) {
-      if (!isUilleannPipesInstrument()) return;
+      if (!isUilleannPipesInstrument() && !isSingleDronePipeInstrument()) return;
 
       if (state.droneVoice && state.droneVoice.sourceMidiNote === midiNote) {
         state.dronePlayRequestId++;
@@ -2018,65 +2078,71 @@
     }
 
     async function noteOn(note, velocity) {
-      if (isUilleannPipesInstrument()) {
-        if (isDroneLatchNote(note)) {
-          await toggleDroneLatchVoice(note, velocity);
-          return;
+      try {
+        if (isUilleannPipesInstrument()) {
+          if (isDroneLatchNote(note)) {
+            await toggleDroneLatchVoice(note, velocity);
+            return;
+          }
+
+          if (isLowSecondaryNote(note)) {
+            state.lowHeldNotes.delete(note);
+            state.lowHeldNotes.add(note);
+            state.lowHeldNoteVelocities.set(note, velocity);
+
+            await playLowVoice(note, velocity);
+            return;
+          }
         }
 
-        if (isLowSecondaryNote(note)) {
-          state.lowHeldNotes.delete(note);
-          state.lowHeldNotes.add(note);
-
-          await playLowVoice(note, velocity);
-          return;
+        if (isSingleDronePipeInstrument()) {
+          if (note === 51) {
+            await toggleDroneLatchVoice(note, velocity);
+            return;
+          }
         }
+
+        state.heldNotes.delete(note);
+        state.heldNotes.add(note);
+        state.heldNoteVelocities.set(note, velocity);
+
+        await playNote(note, velocity);
+      } catch (_) {
+        // fail silently for missing/bad samples during live MIDI input
       }
-
-      state.heldNotes.delete(note);
-      state.heldNotes.add(note);
-
-      await playNote(note, velocity);
     }
 
     function noteOff(note) {
-      if (isUilleannPipesInstrument()) {
-        if (isDroneLatchNote(note)) {
-          return;
-        }
+      if (isDroneLatchNote(note)) {
+        return;
+      }
 
-        if (isLowSecondaryNote(note)) {
-          const wasCurrentLowVoice =
-            state.lowVoice && state.lowVoice.sourceMidiNote === note;
+      if (isLowSecondaryNote(note)) {
+        const wasCurrentLowVoice =
+          state.lowVoice && state.lowVoice.sourceMidiNote === note;
 
-          const releasedVelocity = wasCurrentLowVoice
-            ? (state.lowVoice.noteVelocity || 127)
-            : 127;
+        state.lowHeldNotes.delete(note);
+        state.lowHeldNoteVelocities.delete(note);
 
-          state.lowHeldNotes.delete(note);
+        if (wasCurrentLowVoice) {
+          stopManagedVoice("lowVoice", false);
 
-          if (wasCurrentLowVoice) {
-            stopManagedVoice("lowVoice", false);
-
-            const remainingLow = [...state.lowHeldNotes];
-            if (remainingLow.length > 0) {
-              const fallbackNote = remainingLow[remainingLow.length - 1];
-              void playLowVoice(fallbackNote, releasedVelocity);
-            }
+          const remainingLow = [...state.lowHeldNotes];
+          if (remainingLow.length > 0) {
+            const fallbackNote = remainingLow[remainingLow.length - 1];
+            const fallbackVelocity = state.lowHeldNoteVelocities.get(fallbackNote) || 127;
+            void playLowVoice(fallbackNote, fallbackVelocity);
           }
-
-          return;
         }
+
+        return;
       }
 
       const wasCurrentActiveVoice =
         state.activeVoice && state.activeVoice.sourceMidiNote === note;
 
-      const releasedVelocity = wasCurrentActiveVoice
-        ? (state.activeVoice.noteVelocity || 127)
-        : 127;
-
       state.heldNotes.delete(note);
+      state.heldNoteVelocities.delete(note);
 
       if (wasCurrentActiveVoice) {
         stopManagedVoice("activeVoice", false);
@@ -2085,7 +2151,8 @@
         const remaining = [...state.heldNotes];
         if (remaining.length > 0) {
           const fallbackNote = remaining[remaining.length - 1];
-          void playNote(fallbackNote, releasedVelocity);
+          const fallbackVelocity = state.heldNoteVelocities.get(fallbackNote) || 127;
+          void playNote(fallbackNote, fallbackVelocity);
           return;
         }
       }
@@ -2096,6 +2163,8 @@
     function allNotesOff() {
       state.heldNotes.clear();
       state.lowHeldNotes.clear();
+      state.heldNoteVelocities.clear();
+      state.lowHeldNoteVelocities.clear();
       state.currentNote = null;
 
       state.playRequestId++;
@@ -2119,59 +2188,63 @@
     }
 
     async function handleMidiMessage(event) {
-      const msg = parseMidiMessage(event.data);
+      try {
+        const msg = parseMidiMessage(event.data);
 
-      if ((msg.channel + 1) !== state.selectedMidiChannel) {
-        return;
-      }
+        if ((msg.channel + 1) !== state.selectedMidiChannel) {
+          return;
+        }
 
-      pushMidiLogLine(formatMidiMessage(msg));
+        pushMidiLogLine(formatMidiMessage(msg));
 
-      if (msg.type === 0xE0) {
-        state.pitchBendValue = ((msg.data2 << 7) | msg.data1) - 8192;
-        applyPitchBendToActiveVoice();
-        logLiveStatus();
-        return;
-      }
-
-      if (msg.type === 0x90 && msg.data2 > 0) {
-        await noteOn(msg.data1, msg.data2);
-        return;
-      }
-
-      if (msg.type === 0x80 || (msg.type === 0x90 && msg.data2 === 0)) {
-        noteOff(msg.data1);
-        return;
-      }
-
-      if (msg.type === 0xB0) {
-        const cc = msg.data1;
-        const value = msg.data2;
-
-        if (state.expressionMode === "cc7" && cc === 7) {
-          state.latestExpression = value;
-          updateActiveVoiceGain();
+        if (msg.type === 0xE0) {
+          state.pitchBendValue = ((msg.data2 << 7) | msg.data1) - 8192;
+          applyPitchBendToActiveVoice();
           logLiveStatus();
           return;
         }
 
-        if (state.expressionMode === "cc2" && cc === 2) {
-          state.latestExpression = value;
-          updateActiveVoiceGain();
-          logLiveStatus();
+        if (msg.type === 0x90 && msg.data2 > 0) {
+          await noteOn(msg.data1, msg.data2);
           return;
         }
 
-        if (state.expressionMode === "cc11" && cc === 11) {
-          state.latestExpression = value;
-          updateActiveVoiceGain();
-          logLiveStatus();
+        if (msg.type === 0x80 || (msg.type === 0x90 && msg.data2 === 0)) {
+          noteOff(msg.data1);
           return;
         }
 
-        if (cc === 123 || cc === 120) {
-          allNotesOff();
+        if (msg.type === 0xB0) {
+          const cc = msg.data1;
+          const value = msg.data2;
+
+          if (state.expressionMode === "cc7" && cc === 7) {
+            state.latestExpression = value;
+            updateActiveVoiceGain();
+            logLiveStatus();
+            return;
+          }
+
+          if (state.expressionMode === "cc2" && cc === 2) {
+            state.latestExpression = value;
+            updateActiveVoiceGain();
+            logLiveStatus();
+            return;
+          }
+
+          if (state.expressionMode === "cc11" && cc === 11) {
+            state.latestExpression = value;
+            updateActiveVoiceGain();
+            logLiveStatus();
+            return;
+          }
+
+          if (cc === 123 || cc === 120) {
+            allNotesOff();
+          }
         }
+      } catch (_) {
+        // fail silently for live MIDI processing errors
       }
     }
 
@@ -2304,6 +2377,11 @@
       state.freezeMidiLog = DEFAULTS.freezeMidiLog;
       state.pitchBendValue = 0;
       state.liveStatusHidden = DEFAULTS.liveStatusHidden;
+
+      state.heldNotes.clear();
+      state.lowHeldNotes.clear();
+      state.heldNoteVelocities.clear();
+      state.lowHeldNoteVelocities.clear();
 
       syncUiFromState();
       applyMixerSettings();
