@@ -55423,7 +55423,7 @@ function showWhatsNewScreen() {
   modal_msg += 'background: linear-gradient(135deg, #0d47a1 0%, #1565c0 50%, #64b5f6 100%);';
   modal_msg += 'box-shadow: 0 6px 16px rgba(0,0,0,0.14); color:#fff;">';
   modal_msg += '<div style="font-size:20pt; line-height:24pt; font-weight:bold;">What&apos;s New</div>';
-  modal_msg += '<div style="font-size:11pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 14 March 2026</div>';
+  modal_msg += '<div style="font-size:11pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 16 March 2026</div>';
   modal_msg += '</div>';
 
   // Short intro
