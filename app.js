@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3205_031426_1000";
+var gVersionNumber = "3206_031626_1030";
 
 var gMIDIInitStillWaiting = false;
 
@@ -45866,7 +45866,7 @@ function GetInitialConfigurationSettings() {
     resetAngloButtonNames();
   }
 
-  var theMusicXMLImportSettings = localStorage.musicXMLImportOptionsV6;
+  var theMusicXMLImportSettings = localStorage.musicXMLImportOptionsV7;
 
   if (theMusicXMLImportSettings) {
     gMusicXMLImportOptions = JSON.parse(theMusicXMLImportSettings);
@@ -47024,7 +47024,7 @@ function SaveConfigurationSettings() {
     localStorage.angloButtonNames2 = JSON.stringify(gAngloButtonNames);
 
     // MusicXML import options
-    localStorage.musicXMLImportOptionsV6 = JSON.stringify(gMusicXMLImportOptions);
+    localStorage.musicXMLImportOptionsV7 = JSON.stringify(gMusicXMLImportOptions);
 
     // Large player control player options
     localStorage.LargePlayerControls = gLargePlayerControls;
@@ -47314,7 +47314,8 @@ function resetMusicXMLImportOptions() {
     m: 1,
     addq: 1,
     q: 100,
-    addstavenum: 0
+    addstavenum: 0,
+    rehparts:0
   };
 }
 
@@ -47342,6 +47343,7 @@ function setMusicXMLOptions() {
   gMusicXMLImportOptions.mnum = parseInt($('#musicxml_mnum').val() || -1);
   gMusicXMLImportOptions.addq = $('#musicxml_addq').prop('checked') ? 1 : 0;
   gMusicXMLImportOptions.q = parseInt($('#musicxml_q').val() || 100);
+  gMusicXMLImportOptions.rehparts = $('#musicxml_rehparts').prop('checked') ? 1 : 0;
 
 }
 
@@ -47366,6 +47368,7 @@ function idleXMLImport() {
   $('#musicxml_addq').prop('checked', (gMusicXMLImportOptions.addq == 1));
   $('#musicxml_q').val(gMusicXMLImportOptions.q);
   $('#musicxml_addstavenum').prop('checked', (gMusicXMLImportOptions.addstavenum == 1));
+  $('#musicxml_rehparts').prop('checked', (gMusicXMLImportOptions.rehparts == 1));
 
 };
 
@@ -47411,26 +47414,26 @@ function ConfigureMusicXMLImport() {
 
   var modal_msg = '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:15px;">MusicXML/MIDI Import Settings&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#musicxml" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></p>';
 
-  modal_msg += '<div style="margin-bottom:12px;"><label style="font-size:12pt;font-family:helvetica;">Bars-per-line:&nbsp;&nbsp;</label><input onchange="setMusicXMLOptions()" style="width:60px;" id="musicxml_bpl" type="text" pattern="\d+" title="Default: 3"/></div>\n';
-  modal_msg += '<div style="margin-bottom:12px;"><label style="font-size:12pt;font-family:helvetica;">Characters-per-line:&nbsp;&nbsp;</label><input onchange="setMusicXMLOptions()" style="width:60px;" id="musicxml_cpl" type="text" pattern="\d+" title="Default: 0 - ignore"/></div>\n';
-  modal_msg += '<div style="margin-bottom:12px;"><label style="font-size:12pt;font-family:helvetica;">Measure numbers:&nbsp;&nbsp;</label><input onchange="setMusicXMLOptions()" style="width:60px;" id="musicxml_mnum" type="text" pattern="\d+" title="-1: No measure numbers, 1..n: Number every n-th measure, 0: Number every system"/></div>\n';
-  modal_msg += '<div style="margin-bottom:12px;"><label style="font-size:12pt;font-family:helvetica;">Include measure numbers at end of staves:&nbsp;&nbsp;</label><input onchange="setMusicXMLOptions()" id="musicxml_addstavenum" type="checkbox"/></div>\n';
-  modal_msg += '<div style="margin-bottom:12px;"><label style="font-size:12pt;font-family:helvetica;">Unfold repeats:&nbsp;&nbsp;</label><input onchange="setMusicXMLOptions()" id="musicxml_unfld" type="checkbox"/></div>\n';
-  modal_msg += '<div style="margin-bottom:12px;"><label style="font-size:12pt;font-family:helvetica;">Credit text filter (level 0-6):&nbsp;&nbsp;</label><input onchange="setMusicXMLOptions()" style="width:60px;" id="musicxml_crf" type="text" pattern="[0123456]" title="0 (Default), 1, 2, 3, 4, 5, 6"/></div>\n';
-  modal_msg += '<div style="margin-bottom:12px;"><label style="font-size:12pt;font-family:helvetica;">Denominator unit length for L: tags:&nbsp;&nbsp;</label><input onchange="setMusicXMLOptions()" style="width:60px;" id="musicxml_den" type="text" pattern="\d\d?" title="0 (Automatic), 1, 2, 4, 8, 16, or 32"/></div>\n';
-  modal_msg += '<div style="margin-bottom:12px;"><label style="font-size:12pt;font-family:helvetica;">%%MIDI options:&nbsp;&nbsp;</label><input onchange="setMusicXMLOptions()" style="width:60px;" id="musicxml_midi" type="text" pattern="[012]" title="0: No MIDI, 1: Only program, 2: All MIDI"/></div>\n';
-  modal_msg += '<div style="margin-bottom:12px;"><label style="font-size:12pt;font-family:helvetica;">No score line breaks:&nbsp;&nbsp;</label><input onchange="setMusicXMLOptions()" id="musicxml_nlb" type="checkbox"/></div>\n';
-  modal_msg += '<div style="margin-bottom:12px;"><label style="font-size:12pt;font-family:helvetica;">No pedal directions:&nbsp;&nbsp;</label><input onchange="setMusicXMLOptions()" id="musicxml_noped" type="checkbox"/></div>\n';
-  modal_msg += '<div style="margin-bottom:12px;"><label style="font-size:12pt;font-family:helvetica;">All directions to first voice:&nbsp;&nbsp;</label><input onchange="setMusicXMLOptions()" id="musicxml_v1" type="checkbox"/></div>\n';
-  modal_msg += '<div style="margin-bottom:12px;"><label style="font-size:12pt;font-family:helvetica;">Translate stem directions:&nbsp;&nbsp;</label><input onchange="setMusicXMLOptions()" id="musicxml_stems" type="checkbox"/></div>\n';
-  modal_msg += '<div style="margin-bottom:12px;"><label style="font-size:12pt;font-family:helvetica;">Inject Q: tag if not present:&nbsp;&nbsp;</label><input onchange="setMusicXMLOptions()" id="musicxml_addq" type="checkbox"/></div>\n';
-  modal_msg += '<div style="margin-bottom:12px;"><label style="font-size:12pt;font-family:helvetica;">Q: tag value to inject:&nbsp;&nbsp;</label><input onchange="setMusicXMLOptions()" style="width:60px;" id="musicxml_q" type="text" pattern="\d+" title="Default: 100"/></div>\n';
-  modal_msg += '<p style="text-align:center;margin-top:22px;"><input id="default_musicxml_settings" class="btn btn-clearbutton default_musicxml_settings" onclick="defaultMusicXMLSettings()" type="button" value="Reset to Default" title="Reset the MusicXML/MIDI import settings to their default values"></p>\n';
+  modal_msg += '<div style="margin-bottom:10px;"><label style="font-size:12pt;font-family:helvetica;">Bars-per-line:&nbsp;&nbsp;</label><input onchange="setMusicXMLOptions()" style="width:60px;" id="musicxml_bpl" type="text" pattern="\d+" title="Default: 3"/></div>\n';
+  modal_msg += '<div style="margin-bottom:10px;"><label style="font-size:12pt;font-family:helvetica;">Characters-per-line:&nbsp;&nbsp;</label><input onchange="setMusicXMLOptions()" style="width:60px;" id="musicxml_cpl" type="text" pattern="\d+" title="Default: 0 - ignore"/></div>\n';
+  modal_msg += '<div style="margin-bottom:10px;"><label style="font-size:12pt;font-family:helvetica;">Measure numbers:&nbsp;&nbsp;</label><input onchange="setMusicXMLOptions()" style="width:60px;" id="musicxml_mnum" type="text" pattern="\d+" title="-1: No measure numbers, 1..n: Number every n-th measure, 0: Number every system"/></div>\n';
+  modal_msg += '<div style="margin-bottom:10px;"><label style="font-size:12pt;font-family:helvetica;">Include measure numbers at end of staves:&nbsp;&nbsp;</label><input onchange="setMusicXMLOptions()" id="musicxml_addstavenum" type="checkbox"/></div>\n';
+  modal_msg += '<div style="margin-bottom:10px;"><label style="font-size:12pt;font-family:helvetica;">Unfold repeats:&nbsp;&nbsp;</label><input onchange="setMusicXMLOptions()" id="musicxml_unfld" type="checkbox"/></div>\n';
+  modal_msg += '<div style="margin-bottom:10px;"><label style="font-size:12pt;font-family:helvetica;">Credit text filter (level 0-6):&nbsp;&nbsp;</label><input onchange="setMusicXMLOptions()" style="width:60px;" id="musicxml_crf" type="text" pattern="[0123456]" title="0 (Default), 1, 2, 3, 4, 5, 6"/></div>\n';
+  modal_msg += '<div style="margin-bottom:10px;"><label style="font-size:12pt;font-family:helvetica;">Denominator unit length for L: tags:&nbsp;&nbsp;</label><input onchange="setMusicXMLOptions()" style="width:60px;" id="musicxml_den" type="text" pattern="\d\d?" title="0 (Automatic), 1, 2, 4, 8, 16, or 32"/></div>\n';
+  modal_msg += '<div style="margin-bottom:10px;"><label style="font-size:12pt;font-family:helvetica;">%%MIDI options:&nbsp;&nbsp;</label><input onchange="setMusicXMLOptions()" style="width:60px;" id="musicxml_midi" type="text" pattern="[012]" title="0: No MIDI, 1: Only program, 2: All MIDI"/></div>\n';
+  modal_msg += '<div style="margin-bottom:10px;"><label style="font-size:12pt;font-family:helvetica;">No score line breaks:&nbsp;&nbsp;</label><input onchange="setMusicXMLOptions()" id="musicxml_nlb" type="checkbox"/></div>\n';
+  modal_msg += '<div style="margin-bottom:10px;"><label style="font-size:12pt;font-family:helvetica;">No pedal directions:&nbsp;&nbsp;</label><input onchange="setMusicXMLOptions()" id="musicxml_noped" type="checkbox"/></div>\n';
+  modal_msg += '<div style="margin-bottom:10px;"><label style="font-size:12pt;font-family:helvetica;">All directions to first voice:&nbsp;&nbsp;</label><input onchange="setMusicXMLOptions()" id="musicxml_v1" type="checkbox"/></div>\n';
+  modal_msg += '<div style="margin-bottom:10px;"><label style="font-size:12pt;font-family:helvetica;">Translate stem directions:&nbsp;&nbsp;</label><input onchange="setMusicXMLOptions()" id="musicxml_stems" type="checkbox"/></div>\n';
+  modal_msg += '<div style="margin-bottom:10px;"><label style="font-size:12pt;font-family:helvetica;">Inject Q: tag if not present:&nbsp;&nbsp;</label><input onchange="setMusicXMLOptions()" id="musicxml_addq" type="checkbox"/></div>\n';
+  modal_msg += '<div style="margin-bottom:10px;"><label style="font-size:12pt;font-family:helvetica;">Q: tag value to inject:&nbsp;&nbsp;</label><input onchange="setMusicXMLOptions()" style="width:60px;" id="musicxml_q" type="text" pattern="\d+" title="Default: 100"/></div>\n';
+  modal_msg += '<div style="margin-bottom:10px;"><label style="font-size:12pt;font-family:helvetica;">Inject P: tags for rehearsal marks (default is text annotation):&nbsp;&nbsp;</label><input onchange="setMusicXMLOptions()" id="musicxml_rehparts" type="checkbox"/></div>\n';
+  modal_msg += '<p style="text-align:center;margin-top:20px;"><input id="default_musicxml_settings" class="btn btn-clearbutton default_musicxml_settings" onclick="defaultMusicXMLSettings()" type="button" value="Reset to Default" title="Reset the MusicXML/MIDI import settings to their default values"></p>\n';
 
   const form = [{
     html: modal_msg
   }];
-
 
   setTimeout(function() {
 
@@ -47438,11 +47441,10 @@ function ConfigureMusicXMLImport() {
 
   }, 150);
 
-
   const modal = DayPilot.Modal.form(form, theData, {
     theme: "modal_flat",
-    top: 50,
-    width: 500,
+    top: 10,
+    width: 600,
     scrollWithPage: (AllowDialogsToScroll()),
     autoFocus: false
   }).then(function(args) {
@@ -47453,7 +47455,7 @@ function ConfigureMusicXMLImport() {
       // Save the MusicXML settings
       if (gLocalStorageAvailable) {
 
-        localStorage.musicXMLImportOptionsV6 = JSON.stringify(gMusicXMLImportOptions);
+        localStorage.musicXMLImportOptionsV7 = JSON.stringify(gMusicXMLImportOptions);
 
       }
     } else {
@@ -53183,7 +53185,8 @@ function importMusicXML(theXML, fileName) {
   //                 v1:0, noped:0,  // all directions to first voice of staff (1), no pedal directions (1)
   //                 stm:0,          // translate stem elements (stem direction)
   //                 p:'', s:0,   // page format: scale (1.0), width, left- and right margin in cm, shift note heads in tablature (1)
-  //                 addstavenum:1 };  // Add stave numbers at the end of the staves
+  //                 addstavenum:1,  // Add stave numbers at the end of the staves
+  //                 rehparts:0 };  // Convert rehearsal marks to P: tags
 
   // Suppress stave measure numbers if doing linebreaks
   var replacedStaveNum = false;

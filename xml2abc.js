@@ -1121,6 +1121,9 @@ function Parser (options) {
         '__D,^^B,__E,__F,^^D,__G,^^E,__A,_/A,__B,__C,^^A'.split (',') ];
     this.step_map = {'C':0,'D':2,'E':4,'F':5,'G':7,'A':9,'B':11};
 
+    // MAE 16 Mar 2026 - Added for rehearsal marks
+    this.rehparts = options.rehparts; // emit rehearsal marks as P: fields instead of annotations
+
 }
 Parser.prototype.matchSlur = function (type2, n, v2, note2, grace, stopgrace) { // match slur number n in voice v2, add abc code to before/after
     if (['start', 'stop'].indexOf (type2) == -1) return;    // slur type continue has no abc equivalent
@@ -1788,6 +1791,9 @@ Parser.prototype.findVoice = function (i, $es) {
     }
     return { sn:stfnum, v:v1, v1:v1 };      // no note found, fall back to v1
 }
+//
+// MAE 16 Mar 2026 - Changed rehearsal marks into ABC P: tags
+//
 Parser.prototype.doDirection = function ($e, i, $es) {  // parse a musicXML direction tag
     var plcmnt, t, tempo, dirtyp, vs, type, x, plc, key, val, minst, prg, chn, v, parm, inst, allwrds, stf, v1, r;
     function addDirection (dit, x, vs, tijd, stfnum) {
@@ -1879,8 +1885,8 @@ Parser.prototype.doDirection = function ($e, i, $es) {  // parse a musicXML dire
         }
         t = dirtyp.find ('wedge');
         if (t.length) startStop (this, 'wedge', vs);
+
         allwrds = dirtyp.find ('words');
-        if (allwrds.length == 0) allwrds = dirtyp.find ('rehearsal');   // treat rehearsal mark as text annotation
         for (var j = 0; j < allwrds.length; ++j) {
             if (jmp) { // ignore the words when a jump sound element is present in this direction
                 this.msc.appendElem (vs, format ('!%s!', [jmp]) , 1)    // to voice
@@ -1889,8 +1895,28 @@ Parser.prototype.doDirection = function ($e, i, $es) {  // parse a musicXML dire
             plc = plcmnt == 'below' ? '_' : '^' ;
             var wrds = $(allwrds [j]);
             if (parseFloat (wrds.attr ('default-y') || '0') < 0) plc = '_'
-            wrdstxt += wrds.text().replace (/"/g,'\\"').replace (/\n/g, '\\n');
+            wrdstxt += wrds.text ().replace (/"/g,'\\"').replace (/\n/g, '\\n');
         }
+
+        var rehearsals = dirtyp.find ('rehearsal');
+        for (var j = 0; j < rehearsals.length; ++j) {
+            var reh = $(rehearsals [j]);
+            var rehearsalText = reh.text ()
+                .replace (/"/g,'\\"')
+                .replace (/\n/g, '\\n')
+                .trim ();
+
+            if (!rehearsalText) continue;
+
+            if (this.rehparts) {
+                this.msc.appendElem (vs, '\nP:' + rehearsalText + '\n', 1);
+            } else {
+                plc = plcmnt == 'below' ? '_' : '^';
+                if (parseFloat (reh.attr ('default-y') || '0') < 0) plc = '_';
+                wrdstxt += rehearsalText;
+            }
+        }
+
         wrdstxt = wrdstxt.trim ();
         for (key in dynamics_map) {
             val = dynamics_map [key];
@@ -2283,13 +2309,17 @@ vertaal = function (xmltree, options_parm) {   // publish in the global name spa
     gGotMicrotonalAccidental = false;
 
     var fnm = '', pad = '', X = 0;  // fnm, pad are not used anywhere ...
+
+    // MAE Added rehparts 16 Mar 2026
     var options = { u:0, b:0, n:0,  // unfold repeats (1), bars per line, chars per line
                     c:0, v:0, d:0,  // credit text filter level (0-6), no volta on higher voice numbers (1), denominator unit length (L:)
                     m:0, x:0, t:0,  // no midi, minimal midi, all midi output (0,1,2), no line breaks (1), perc, tab staff -> voicemap (1)
                     v1:0, noped:0,  // all directions to first voice of staff (1), no pedal directions (1)
                     stm:0, mnum:-1, // translate stem elements (stem direction), number every mnum measures
-                    p:'f', s:0, // page format: scale (1.0), width, left- and right margin in cm, shift note heads in tablature (1)
-                    addstavenum:1 };  // Add measure numbers at the end of the staves
+                    p:'f', s:0,     // page format: scale (1.0), width, left- and right margin in cm, shift note heads in tablature (1)
+                    addstavenum:1,  // Add measure numbers at the end of the staves
+                    rehparts:0 };   // 0 = emit rehearsal as annotation, 1 = emit as P:(...)
+
     for (var opt in options_parm) options [opt] = options_parm [opt];
     options.p = options.p ? options.p.split (',') : []          // [] | [string]
     abcOut = new ABCoutput (fnm + '.abc', pad, X, options); // create global ABC output object
