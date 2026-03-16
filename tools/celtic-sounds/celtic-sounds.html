@@ -833,7 +833,7 @@
 
           <div class="instructions-subtitle">Pitch Bend and Fixed-Pitch Instruments</div>
           <div class="instructions-subbody">
-            <b>Anglo Concertina</b>, <b>Accordion</b>, <b>Great Highland Bagpipes</b>, and <b>Smallpipes</b> do <b>not</b> respond to MIDI pitch bend.<br/>
+            <b>Anglo Concertina</b>, <b>Accordion</b>, <b>Great Highland Bagpipes</b>, and <b>Smallpipes</b> do <b>not</b> respond to MIDI pitch bend.<br/><br/>
             Any incoming pitch bend messages are ignored for these instruments, so they always play at their normal sampled pitch.
             <br/><br/>
             <b>Tin Whistle</b>, <b>Irish Flute</b>, and the <b>Uilleann Pipes melody voice</b> do respond to pitch bend, subject to the selected
@@ -866,14 +866,14 @@
             <b>Latching drone notes</b><br/>
             MIDI notes <b>50</b> and <b>51</b> are treated as dedicated drone notes.<br/>These notes are
             <b>latching</b>: sending a note-on starts the drone, and sending another note-on for the same note
-            toggles that drone back off.<br/>MIDI note-off messages do not affect these latching drone notes.
+            toggles that drone back off.<br/><br/>MIDI note-off messages do not affect these latching drone notes.
             <br/><br/>
             Their playback level is taken from the <b>velocity</b> of the note-on message that starts them, and they
             ignore both <b>expression</b> and <b>pitch bend</b>.
             <br/><br/>
 
             <b>Regulators notes</b><br/>
-            All other notes below <b>MIDI note 62</b>, which include all the regulators sounds, are played on a separate voice.<br/>These behave normally with
+            All other notes below <b>MIDI note 62</b>, which include all the regulators sounds, are played on a separate voice.<br/><br/>These behave normally with
             note-on and note-off, but like the drone voice they ignore <b>expression</b> and <b>pitch bend</b>, and
             use the incoming <b>note-on velocity</b> as their initial volume.<br/><br/>
             <b>WARBL Fingering Pattern to Use</b><br/>
@@ -887,8 +887,8 @@
           <div class="instructions-subtitle">Using the Bagpipes and Smallpipes Sounds</div>
           <div class="instructions-subbody">
             When <b>Great Highland Bagpipes</b> or <b>Smallpipes</b> is selected, MIDI note <b>51</b> is treated as a dedicated
-            <b>latching drone</b> note.<br/>
-            Sending a note-on for MIDI note 51 starts the drone, and sending another note-on for MIDI note 51 toggles that drone back off.<br/>
+            <b>latching drone</b> note.<br/><br/>
+            Sending a note-on for MIDI note 51 starts the drone, and sending another note-on for MIDI note 51 toggles that drone back off.<br/><br/>
             MIDI note-off messages do not affect this latching drone.
             <br/><br/>
             The drone uses the incoming <b>note-on velocity</b> as its playback level and ignores both <b>expression</b> and <b>pitch bend</b>.
@@ -918,10 +918,10 @@
 
           <div class="instructions-subtitle">Browser Compatibility</div>
           <div class="instructions-subbody">
-            This tool requires a browser that supports the <b>Web MIDI API</b>.<br/>
+            This tool requires a browser that supports the <b>Web MIDI API</b>.<br/><br/>
             If your browser does not support WebMIDI, MIDI devices will not appear and the tool will not function.
 
-            <div style="margin-top:12px;">
+            <div style="margin-top:18px;">
               <b>Recommended browsers:</b><br/>
               • <b>Google Chrome</b> (Windows, macOS, Linux)<br/>
               • <b>Microsoft Edge</b> (Windows, macOS)<br/>
@@ -929,7 +929,7 @@
               • <b>Chromium-based browsers</b> that support WebMIDI
             </div>
 
-            <div style="margin-top:12px;">
+            <div style="margin-top:18px;">
               <b>Not currently supported:</b><br/>
               • Safari (macOS and iOS)<br/>
               • Most mobile browsers
