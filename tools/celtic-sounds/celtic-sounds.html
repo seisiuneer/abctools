@@ -402,19 +402,18 @@
     width: min(750px, calc(100vw - 32px));
     margin: 0 auto;
 
-    background:
-      linear-gradient(180deg, rgba(10, 32, 20, 0.94), rgba(14, 40, 26, 0.92));
-    border: 1px solid rgba(74, 124, 89, 0.45);
+    background: #ffffff;
+    border: 1px solid #d0d0d0;
     border-radius: 16px;
+
     box-shadow:
-      0 20px 50px rgba(0,0,0,0.7),
-      inset 0 1px 0 rgba(255,255,255,0.04);
+      0 20px 50px rgba(0,0,0,0.45);
 
     padding: 18px;
     box-sizing: border-box;
     position: relative;
 
-    top: 10px;   /* moved higher on screen */
+    top: 10px;
 
     text-align: left;
     display: flex;
@@ -424,27 +423,26 @@
   }
 
   .instructions-title{
-    font-size:1.25rem;
-    font-weight:900;
-    margin:0 0 15px 0;
-    color:#e0e0e0;
-    text-align:center;
-    flex:0 0 auto;
+    font-size: 1.6rem;
+    font-weight: 800;
+    text-align: center;
+    margin-bottom: 15px;
+    color: #000;  
   }
 
   .instructions-scroll{
     flex:1 1 auto;
     overflow:auto;
-    border:1px solid rgba(255,255,255,0.08);
+    border:1px solid #dcdcdc;
     border-radius:12px;
     padding:20px 22px;
-    background: rgba(0,0,0,0.55);
+    background: #ffffff;
   }
 
   .instructions-body{
     font-size:1rem;
-    line-height:1.75;
-    color:#e0e0e0;
+    line-height:1.25;
+    color:#000000;
     margin:0;
     padding-top:6px;
   }
@@ -473,37 +471,43 @@
     font-weight: 900;
     font-size: 1.08rem;
     margin: 0 0 12px 0;
-    color: #f0f0f0;
+    color: #000000;
     line-height: 1.35;
   }
 
   .instructions-subbody{
     margin: 0 0 18px 0;
-    color: #e6e6e6;
+    color: #000000;
     line-height: 1.8;
   }
 
-  .instructions-body a,
-  .instructions-body a:link{
-    color:#7CFFDC !important;
-    text-decoration:underline !important;
-    font-weight:600 !important;
+  .instructions-body a{
+    color: #1a73e8;
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 2px;
+    transition: color 0.15s ease, background 0.15s ease, text-decoration-thickness 0.15s ease;
   }
 
   .instructions-body a:visited{
-    color:#A5B4FF !important;
+    color: #1a73e8;
   }
 
-  .instructions-body a:hover,
-  .instructions-body a:focus{
-    color:#B8FFF0 !important;
-    text-decoration:underline !important;
+  .instructions-body a:hover{
+    color: #0b57d0;
+    text-decoration-thickness: 2px;
+    background: rgba(26,115,232,0.10);
+    border-radius: 4px;
   }
 
   .instructions-divider{
     border:0;
-    border-top:1px solid #2a2a2a;
+    border-top:1px solid #d6d6d6;
     margin:14px 0;
+  }
+
+  .instructions-gap{
+    height: 0.35em;
   }
 
   .setup-row{
@@ -642,6 +646,58 @@
     box-shadow: 0 3px 10px rgba(0,0,0,0.28);
   }
 
+  .hero-image-button{
+    position: absolute;
+    top: 14px;
+
+    width: 46px;
+    height: 46px;
+
+    padding: 0;
+    border: none !important;
+    background: transparent !important;
+    border-radius: 10px;
+    cursor: pointer;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    box-shadow: none !important;
+    transition:
+      transform 0.12s ease,
+      background 0.15s ease,
+      box-shadow 0.15s ease,
+      filter 0.15s ease;
+  }
+
+  .hero-image-button img{
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    border-radius: 10px;
+    pointer-events: none;
+  }
+
+  .hero-image-button:hover{
+    transform: translateY(-1px);
+    background: rgba(255,255,255,0.10) !important;
+    box-shadow:
+      0 0 0 1px rgba(255,255,255,0.14),
+      0 0 12px rgba(96,165,250,0.28);
+    filter: brightness(1.08);
+  }
+
+  .hero-image-button:focus-visible{
+    outline: 2px solid #60a5fa;
+    outline-offset: 2px;
+  }
+
+  .hero-warbl-button{
+    left: 16px;
+  }
+
   @media (max-width: 700px){
     .instructions-button{
       margin-left: 0 !important;
@@ -685,7 +741,17 @@
 
   <div class="app">
     <div class="card hero-card">
-      <button id="btnInstructions" class="hero-help" title="Click for instructions">?</button>
+      <button
+        id="btnWarblConfig"
+        class="hero-image-button hero-warbl-button"
+        title="Open WARBL Configuration Tool"
+        aria-label="Open WARBL Configuration Tool"
+        type="button"
+      >
+      <img src="img/warbl.png" alt="WARBL Configuration Tool" />
+    </button>
+
+    <button id="btnInstructions" class="hero-help" title="Click for instructions">?</button>
 
       <h1>Celtic Sounds</h1>
       <p class="muted">WebMIDI-Based MIDI Sound Module for the WARBL by Michael Eskin</p>
@@ -870,10 +936,14 @@
         <div class="instructions-body">
           <div class="instructions-subtitle">Getting Started</div>
           <div class="instructions-subbody">
-            1) Click <b>Connect MIDI</b> and if requested, allow browser MIDI access.<br/><br/>
-            2) Choose your <b>MIDI Input</b> and <b>Input Channel</b>.<br/><br/>
-            3) Select an <b>Instrument</b> and the <b>Expression Source</b> you want the sound module to follow.<br/><br/>
-            4) Adjust volume, master tuning, attack, release, pitch bend scaling, reverb, and transpose as needed.<br/><br/>
+            1) Click <b>Connect MIDI</b> and if requested, allow browser MIDI access.
+            <div class="instructions-gap"></div>
+            2) Choose your <b>MIDI Input</b> and <b>Input Channel</b>.
+            <div class="instructions-gap"></div>
+            3) Select an <b>Instrument</b> and the <b>Expression Source</b> you want the sound module to follow.
+            <div class="instructions-gap"></div>
+            4) Adjust volume, master tuning, attack, release, pitch bend scaling, reverb, and transpose as needed.
+            <div class="instructions-gap"></div>
             5) Play your MIDI controller and watch the <b>Live Status</b> and optional <b>MIDI Message Stream</b>.
           </div>
 
@@ -892,15 +962,21 @@
 
           <div class="instructions-subtitle">Pitch Bend Scaling</div>
           <div class="instructions-subbody">
-            The <b>Pitch Bend Up Scale</b> and <b>Pitch Bend Down Scale</b> let you independently control how strongly pitch bend messages affect upward and downward bends.
-          </div>
+            The <b>Pitch Bend Up Scale</b> and <b>Pitch Bend Down Scale</b> controls let you independently adjust how strongly incoming MIDI pitch bend messages affect upward and downward bends.
+            <div class="instructions-gap"></div>
 
+            The base pitch bend range is <b>±2 semitones (±200 cents)</b>.
+            <div class="instructions-gap"></div>
+            The scaling controls multiply the base bend range, allowing subtle bends, wide bends, or different ranges for upward and downward pitch bends.
+          </div>
           <hr class="instructions-divider"/>
 
           <div class="instructions-subtitle">Master Tuning</div>
           <div class="instructions-subbody">
-            <b>Master Tune</b> lets you shift the overall tuning of the instrument by up to <b>±50 cents</b>.<br/><br/>
-            This is useful for matching recordings, other players, or instruments that are a little sharp or flat.<br/><br/>
+            <b>Master Tune</b> lets you shift the overall tuning of the instrument by up to <b>±50 cents</b>.
+            <div class="instructions-gap"></div>
+            This is useful for matching recordings, other players, or instruments that are a little sharp or flat.
+            <div class="instructions-gap"></div>
             Unlike <b>Transpose</b>, this control changes pitch in fine increments rather than semitone steps.
           </div>
 
@@ -908,10 +984,14 @@
 
           <div class="instructions-subtitle">Transpose</div>
           <div class="instructions-subbody">
-            <b>Transpose</b> shifts the playback pitch of the instrument in <b>semitone steps</b>.<br/><br/>
-            This lets you raise or lower the sounding pitch without changing the incoming MIDI note numbers used to trigger the samples.<br/><br/>
-            In other words, your controller still sends the same MIDI notes, but the sound is played back higher or lower in pitch.<br/><br/>
-            This is useful for matching instruments in different keys or quickly shifting the overall pitch by up to <b>±12 semitones</b>.<br/><br/>
+            <b>Transpose</b> shifts the playback pitch of the instrument in <b>semitone steps</b>.
+            <div class="instructions-gap"></div>
+            This lets you raise or lower the sounding pitch without changing the incoming MIDI note numbers used to trigger the samples.
+            <div class="instructions-gap"></div>
+            In other words, your controller still sends the same MIDI notes, but the sound is played back higher or lower in pitch.
+            <div class="instructions-gap"></div>
+            This is useful for matching instruments in different keys or quickly shifting the overall pitch by up to <b>±12 semitones</b>.
+            <div class="instructions-gap"></div>
             <b>Transpose</b> is applied in addition to <b>Master Tune</b>, and for instruments that support it, also in addition to <b>Pitch Bend</b>.
           </div>
 
@@ -919,11 +999,11 @@
 
           <div class="instructions-subtitle">Pitch Bend and Fixed-Pitch Instruments</div>
           <div class="instructions-subbody">
-            <b>Anglo Concertina</b>, <b>Accordion</b>, <b>Great Highland Bagpipe</b>, and <b>Smallpipes</b> do <b>not</b> respond to MIDI pitch bend.<br/><br/>
+            <b>Anglo Concertina</b>, <b>Accordion</b>, <b>Great Highland Bagpipe</b>, and <b>Smallpipes</b> do <b>not</b> respond to MIDI pitch bend.
+            <div class="instructions-gap"></div>
             Any incoming pitch bend messages are ignored for these instruments, so they always play at their normal sampled pitch, aside from any <b>Transpose</b> or <b>Master Tune</b> adjustment.
-            <br/><br/>
-            <b>Tin Whistle</b>, <b>Irish Flute</b>, and the <b>Uilleann Pipes melody voice</b> do respond to pitch bend, subject to the selected
-            <b>Pitch Bend Up Scale</b> and <b>Pitch Bend Down Scale</b>.
+            <div class="instructions-gap"></div>
+            <b>Tin Whistle</b>, <b>Irish Flute</b>, and the <b>Uilleann Pipes melody voice</b> do respond to pitch bend, subject to the selected <b>Pitch Bend Up Scale</b> and <b>Pitch Bend Down Scale</b>.
           </div>
 
           <hr class="instructions-divider"/>
@@ -931,7 +1011,7 @@
           <div class="instructions-subtitle">Reverb</div>
           <div class="instructions-subbody">
             Choose a reverb style, then adjust:
-            <br/><br/>
+            <div class="instructions-gap"></div>
             <b>Wet</b> = effected signal level<br/>
             <b>Dry</b> = direct signal level<br/>
             <b>Pre-delay</b> = delay before reverb begins
@@ -942,29 +1022,38 @@
           <div class="instructions-subtitle">Using the Uilleann Pipes Sounds</div>
           <div class="instructions-subbody">
             When <b>Uilleann Pipes</b> is selected, incoming notes are split into separate playback behaviors:
-            <br/><br/>
+            <div class="instructions-gap"></div>
 
             <b>Melody notes</b><br/>
-            MIDI notes <b>62 and above</b> are treated as melody notes.<br/><br/>These respond normally to the selected
-            <b>Expression Source</b> and to <b>Pitch Bend</b>.
-            <br/><br/>
+            MIDI notes <b>62 and above</b> are treated as melody notes.
+            <div class="instructions-gap"></div>
+            These respond normally to the selected <b>Expression Source</b> and also respond to <b>Pitch Bend</b>.
+            <div class="instructions-gap"></div>
 
             <b>Latching drone notes</b><br/>
-            MIDI notes <b>50</b> and <b>51</b> are treated as dedicated drone notes.<br/><br/>These notes are
+            MIDI notes <b>50</b> and <b>51</b> are treated as dedicated drone notes.
+            <div class="instructions-gap"></div>
+            These notes are
             <b>latching</b>: sending a note-on starts the drone, and sending another note-on for the same note
-            toggles that drone back off.<br/><br/>MIDI note-off messages do not affect these latching drone notes.
-            <br/><br/>
+            toggles that drone back off.
+            <div class="instructions-gap"></div>
+            MIDI note-off messages do not affect these latching drone notes.
+            <div class="instructions-gap"></div>
             Their playback level is taken from the <b>velocity</b> of the note-on message that starts them, and they
             ignore both <b>expression</b> and <b>pitch bend</b>.
-            <br/><br/>
+            <div class="instructions-gap"></div>
 
             <b>Regulators notes</b><br/>
-            All other notes below <b>MIDI note 62</b>, which include all the regulators sounds, are played on a separate voice.<br/><br/>These behave normally with
+            All other notes below <b>MIDI note 62</b>, which include all the regulators sounds, are played on a separate voice.
+            <div class="instructions-gap"></div>
+            These behave normally with
             note-on and note-off, but like the drone voice they ignore <b>expression</b> and <b>pitch bend</b>, and
-            use the incoming <b>note-on velocity</b> as their initial volume.<br/><br/>
+            use the incoming <b>note-on velocity</b> as their initial volume.
+            <div class="instructions-gap"></div>
             <b>WARBL Fingering Pattern to Use</b><br/>
-            The Uilleann instrument is designed to be used with the WARBL Tin Whistle/Flute or Uilleann Pipes fingering pattern selected with no WARBL controller transpose.
-            <br/><br/>Lowest MIDI note for the chanter is D4 (62).
+            The Uilleann instrument is designed to be used with the WARBL Tin Whistle/Flute or Uilleann Pipes fingering pattern selected with no transpose set on the WARBL controller.
+            <div class="instructions-gap"></div>
+            Lowest MIDI note for the chanter is D4 (62).
           </div>
 
           <hr class="instructions-divider"/>
@@ -972,17 +1061,39 @@
           <div class="instructions-subtitle">Using the Great Highland Bagpipe and Smallpipes Sounds</div>
           <div class="instructions-subbody">
             When <b>Great Highland Bagpipe</b> or <b>Smallpipes</b> is selected, MIDI note <b>51</b> is treated as a dedicated
-            <b>latching drone</b> note.<br/><br/>
-            Sending a note-on for MIDI note 51 starts the drone, and sending another note-on for MIDI note 51 toggles that drone back off.<br/><br/>
+            <b>latching drone</b> note.
+            <div class="instructions-gap"></div>
+            Sending a note-on for MIDI note 51 starts the drone, and sending another note-on for MIDI note 51 toggles that drone back off.
+            <div class="instructions-gap"></div>
             MIDI note-off messages do not affect this latching drone.
-            <br/><br/>
+            <div class="instructions-gap"></div>
             The drone uses the incoming <b>note-on velocity</b> as its playback level and ignores both <b>expression</b> and <b>pitch bend</b>.
-            <br/><br/>
-            <b>All other notes</b> for these two instruments are treated as melody notes.<br/><br/>
-            They play normally, but <b>pitch bend is ignored</b>.<br/><br/>
+            <div class="instructions-gap"></div>
+            <b>All other notes</b> for these two instruments are treated as melody notes.
+            <div class="instructions-gap"></div>
+            They play normally, but <b>pitch bend is ignored</b>.
+            <div class="instructions-gap"></div>
             <b>WARBL Fingering Pattern to Use</b><br/>
-            These two instruments are designed to be used with the WARBL GHB/Scottish Smallpipes fingering pattern selected with no WARBL controller transpose.<br/><br/>
+            These two instruments are designed to be used with the WARBL GHB/Scottish Smallpipes fingering pattern selected with no transpose set on the WARBL controller.
+            <div class="instructions-gap"></div>
             Lowest MIDI note for the chanter is G#4 (68).
+          </div>
+
+          <hr class="instructions-divider"/>
+
+          <div class="instructions-subtitle">WARBL Configuration Tool</div>
+          <div class="instructions-subbody">
+            The <b>WARBL Configuration Tool</b> button in the upper-left corner of the page opens the official
+            <b>WARBL Configuration Tool</b> in a new browser tab.
+            <div class="instructions-gap"></div>
+
+            This allows you to adjust settings on your WARBL controller such as fingering patterns,
+            pressure sensitivity, MIDI output behavior, and other controller options while using
+            <b>Celtic Sounds</b>.
+            <div class="instructions-gap"></div>
+
+            The <b>WARBL Configuration Tool</b> runs separately from <b>Celtic Sounds</b>, so you can switch between the two
+            browser tabs as needed when adjusting WARBL settings.
           </div>
 
           <hr class="instructions-divider"/>
@@ -990,7 +1101,7 @@
           <div class="instructions-subtitle">Troubleshooting</div>
           <div class="instructions-subbody">
             If you do not hear sound:
-            <br/><br/>
+            <div class="instructions-gap"></div>
             • Make sure MIDI access was granted.<br/>
             • Verify the correct MIDI device is selected.<br/>
             • Check that the correct input channel is selected.<br/>
@@ -1002,7 +1113,8 @@
 
           <div class="instructions-subtitle">Browser Compatibility</div>
           <div class="instructions-subbody">
-            This tool requires a browser that supports the <b>Web MIDI API</b>.<br/><br/>
+            This tool requires a browser that supports the <b>Web MIDI API</b>.
+            <div class="instructions-gap"></div>
             If your browser does not support WebMIDI, MIDI devices will not appear and the tool will not function.
 
             <div style="margin-top:18px;">
@@ -1179,7 +1291,7 @@
       pitchBendValue: 0,
       pitchBendUpMultiplier: 1,
       pitchBendDownMultiplier: 1,
-      basePitchBendCents: 100,
+      basePitchBendCents: 200,
       reverbWet: 0.18,
       reverbDry: 1.00,
       reverbPreDelayMs: 0,
@@ -2786,6 +2898,10 @@
         applyTuningToAllVoices();
         logLiveStatus();
         saveSettingsToLocalStorage();
+      });
+
+      $("btnWarblConfig").addEventListener("click", () => {
+        window.open("https://warbl.xyz/configure.html", "_blank", "noopener,noreferrer");
       });
 
       bindRange("masterVolume", "masterVolumeValue", (v) => v.toFixed(2), (v) => {
