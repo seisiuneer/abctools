@@ -518,6 +518,11 @@
     border-radius:4px;
   }
 
+  .instructions-steps{
+    margin:0;
+    padding-left:20px;
+  }
+
   .setup-row{
     display: flex;
     flex-wrap: wrap;
@@ -944,15 +949,13 @@
         <div class="instructions-body">
           <div class="instructions-subtitle">Getting Started</div>
           <div class="instructions-subbody">
-            1) Click <b>Connect MIDI</b> and if requested, allow browser MIDI access.
-            <div class="instructions-gap"></div>
-            2) Choose your <b>MIDI Input</b> and <b>Input Channel</b>.
-            <div class="instructions-gap"></div>
-            3) Select an <b>Instrument</b> and the <b>Expression Source</b> you want the sound module to follow.
-            <div class="instructions-gap"></div>
-            4) Adjust volume, master tuning, attack, release, pitch bend scaling, reverb, and transpose as needed.
-            <div class="instructions-gap"></div>
-            5) Play your MIDI controller and watch the <b>Live Status</b> and optional <b>MIDI Message Stream</b>.
+            <ol class="instructions-steps">
+              <li>Click <b>Connect MIDI</b> and allow browser MIDI access if requested.</li>
+              <li>Choose your <b>MIDI Input</b> and <b>Input Channel</b>.</li>
+              <li>Select an <b>Instrument</b> and the <b>Expression Source</b> you want the sound module to follow.</li>
+              <li>Adjust volume, master tuning, attack, release, pitch bend scaling, reverb, and transpose as needed.</li>
+              <li>Play your MIDI controller and watch the <b>Live Status</b> and optional <b>MIDI Message Stream</b>.</li>
+            </ol>
           </div>
 
           <hr class="instructions-divider"/>
