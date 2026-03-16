@@ -398,9 +398,10 @@
   }
 
   .instructions-modal{
-    max-width: 800px;
-    width: min(800px, calc(100vw - 32px));
+    max-width: 750px;
+    width: min(750px, calc(100vw - 32px));
     margin: 0 auto;
+
     background:
       linear-gradient(180deg, rgba(10, 32, 20, 0.94), rgba(14, 40, 26, 0.92));
     border: 1px solid rgba(74, 124, 89, 0.45);
@@ -408,15 +409,18 @@
     box-shadow:
       0 20px 50px rgba(0,0,0,0.7),
       inset 0 1px 0 rgba(255,255,255,0.04);
+
     padding: 18px;
     box-sizing: border-box;
     position: relative;
-    top: 25px;
+
+    top: 10px;   /* moved higher on screen */
+
     text-align: left;
     display: flex;
     flex-direction: column;
-    max-height: calc(100vh - 40px);
-    height: min(1100px, calc(100vh - 40px));
+    max-height: calc(100vh - 20px);
+    height: min(1100px, calc(100vh - 20px));
   }
 
   .instructions-title{
@@ -603,6 +607,41 @@
     margin-right: 4px;
   }
 
+  .slider-label-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    margin-bottom:2px;
+  }
+
+  .slider-label-row label{
+    margin:0;
+    flex:1 1 auto;
+    min-width:0;
+  }
+
+  .mini-reset-button{
+    flex:0 0 auto;
+    padding:4px 10px;
+    min-width:auto;
+    width:auto;
+    font-size:0.78rem;
+    line-height:1.1;
+    border-radius:8px;
+    border: 1px solid #3b82f6;
+    white-space:nowrap;
+    background: linear-gradient(135deg, #162f6a, #1e3a8a);
+    border-color: #1e40af;
+    color: #ffffff;
+  }
+
+  .mini-reset-button:hover{
+    background: linear-gradient(135deg, #2563eb, #3b82f6);
+    border-color:#60a5fa;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.28);
+  }
+
   @media (max-width: 700px){
     .instructions-button{
       margin-left: 0 !important;
@@ -663,7 +702,7 @@
       <div class="card grid">
         <div class="card-header">
           <h2>Controls</h2>
-          <button id="btnResetDefaults" class="reset header-button">Reset Defaults</button>
+          <button id="btnResetDefaults" class="reset header-button">Reset All to Defaults</button>
         </div>
         <div class="controls">
           <div class="field">
@@ -702,12 +741,17 @@
               </div>
 
               <div class="field">
-                <label for="masterTuneCents">
-                  Master Tune <span id="masterTuneCentsValue">0</span> cents
-                </label>
+                <div class="slider-label-row">
+                  <label for="masterTuneCents">
+                    Master Tune <span id="masterTuneCentsValue">0</span> cents
+                  </label>
+                  <button id="btnResetMasterTune" type="button" class="mini-reset-button" aria-label="Reset master tuning to zero">
+                    Reset
+                  </button>
+                </div>
                 <input id="masterTuneCents" type="range" min="-50" max="50" step="1" value="0" />
-              </div>
-            </div>
+              </div>   
+            </div>       
           </div>
 
           <div class="field" style="grid-column: span 2;">
@@ -780,9 +824,9 @@
 
           <div class="field field-transpose">
             <label for="transposeSemis">
-              Transpose <span id="transposeSemisValue">0</span>
+              Transpose (semitones) <span id="transposeSemisValue">0</span>            
             </label>
-            <input id="transposeSemis" type="range" min="-24" max="24" step="1" value="0" />
+            <input id="transposeSemis" type="range" min="-12" max="12" step="1" value="0" />
           </div>
         </div>
       </div>
@@ -862,10 +906,21 @@
 
           <hr class="instructions-divider"/>
 
+          <div class="instructions-subtitle">Transpose</div>
+          <div class="instructions-subbody">
+            <b>Transpose</b> shifts the playback pitch of the instrument in <b>semitone steps</b>.<br/><br/>
+            This lets you raise or lower the sounding pitch without changing the incoming MIDI note numbers used to trigger the samples.<br/><br/>
+            In other words, your controller still sends the same MIDI notes, but the sound is played back higher or lower in pitch.<br/><br/>
+            This is useful for matching instruments in different keys or quickly shifting the overall pitch by up to <b>±12 semitones</b>.<br/><br/>
+            <b>Transpose</b> is applied in addition to <b>Master Tune</b>, and for instruments that support it, also in addition to <b>Pitch Bend</b>.
+          </div>
+
+          <hr class="instructions-divider"/>
+
           <div class="instructions-subtitle">Pitch Bend and Fixed-Pitch Instruments</div>
           <div class="instructions-subbody">
             <b>Anglo Concertina</b>, <b>Accordion</b>, <b>Great Highland Bagpipe</b>, and <b>Smallpipes</b> do <b>not</b> respond to MIDI pitch bend.<br/><br/>
-            Any incoming pitch bend messages are ignored for these instruments, so they always play at their normal sampled pitch, aside from any <b>Master Tune</b> adjustment.
+            Any incoming pitch bend messages are ignored for these instruments, so they always play at their normal sampled pitch, aside from any <b>Transpose</b> or <b>Master Tune</b> adjustment.
             <br/><br/>
             <b>Tin Whistle</b>, <b>Irish Flute</b>, and the <b>Uilleann Pipes melody voice</b> do respond to pitch bend, subject to the selected
             <b>Pitch Bend Up Scale</b> and <b>Pitch Bend Down Scale</b>.
@@ -908,7 +963,7 @@
             note-on and note-off, but like the drone voice they ignore <b>expression</b> and <b>pitch bend</b>, and
             use the incoming <b>note-on velocity</b> as their initial volume.<br/><br/>
             <b>WARBL Fingering Pattern to Use</b><br/>
-            The Uilleann instrument is designed to be used with the WARBL Tin Whistle/Flute or Uilleann Pipes fingering pattern selected with no transpose.
+            The Uilleann instrument is designed to be used with the WARBL Tin Whistle/Flute or Uilleann Pipes fingering pattern selected with no WARBL controller transpose.
             <br/><br/>Lowest MIDI note for the chanter is D4 (62).
           </div>
 
@@ -926,7 +981,7 @@
             <b>All other notes</b> for these two instruments are treated as melody notes.<br/><br/>
             They play normally, but <b>pitch bend is ignored</b>.<br/><br/>
             <b>WARBL Fingering Pattern to Use</b><br/>
-            These two instruments are designed to be used with the WARBL GHB/Scottish Smallpipes fingering pattern selected with no transpose.<br/><br/>
+            These two instruments are designed to be used with the WARBL GHB/Scottish Smallpipes fingering pattern selected with no WARBL controller transpose.<br/><br/>
             Lowest MIDI note for the chanter is G#4 (68).
           </div>
 
@@ -955,7 +1010,8 @@
               • <b>Google Chrome</b> (Windows, macOS, Linux)<br/>
               • <b>Microsoft Edge</b> (Windows, macOS)<br/>
               • <b>Opera</b> (desktop versions)<br/>
-              • <b>Chromium-based browsers</b> that support WebMIDI
+              • <b>Chromium-based browsers</b> that support WebMIDI<br/>
+              • <b>Firefox</b> (desktop versions, will prompt for a WebMIDI plug-in install, then restart Firefox)              
             </div>
 
             <div style="margin-top:18px;">
@@ -1099,7 +1155,7 @@
     };
 
     const SAMPLE_OCTAVE_OFFSET = 0;
-    const SETTINGS_STORAGE_KEY = "celtic_sounds_settings_v7";
+    const SETTINGS_STORAGE_KEY = "celtic_sounds_settings_v8";
 
     let gLocalStorageAvailable = false;
     let webMidiAvailable = false;
@@ -1188,7 +1244,7 @@
       const finalH = Math.max(520, Math.min(preferred, maxH));
 
       modal.style.height = finalH + "px";
-      modal.style.top = "30px";
+      modal.style.top = "10px";
     }
 
     function openInstructions() {
@@ -1321,7 +1377,7 @@
       }
 
       if (typeof data.transposeSemis === "number") {
-        state.transposeSemis = clamp(Math.round(data.transposeSemis), -24, 24);
+        state.transposeSemis = clamp(Math.round(data.transposeSemis), -12, 12);
       }
 
       if (typeof data.midiLogEnabled === "boolean") {
@@ -1380,7 +1436,7 @@
     }
 
     function getCombinedTuningCents(usePitchBend) {
-      let cents = state.masterTuneCents;
+      let cents = state.masterTuneCents + (state.transposeSemis * 100);
 
       if (usePitchBend && !isPitchBendDisabledInstrument()) {
         cents += getEffectivePitchBendCents();
@@ -1470,6 +1526,7 @@
         "Expression mode: " + getExpressionModeLabel(),
         "Expression value: " + state.latestExpression,
         "Master tune cents: " + state.masterTuneCents,
+        "Transpose semitones: " + state.transposeSemis,
         "Pitch bend cents: " + bendCents.toFixed(1)
       ];
 
@@ -1991,10 +2048,10 @@
       if (!state.audioContext || !state.outputChain) return;
 
       const requestId = ++state[requestIdKey];
-      const transposed = clamp(midiNote + state.transposeSemis, 0, 127);
+      const sampleNote = clamp(midiNote, 0, 127);
       const instrument = APP_CONFIG.instruments[state.selectedInstrumentKey];
 
-      if (!isPlayableNoteForInstrument(state.selectedInstrumentKey, transposed)) {
+      if (!isPlayableNoteForInstrument(state.selectedInstrumentKey, sampleNote)) {
         if (updateCurrentNote) {
           state.currentNote = midiNote;
           logLiveStatus();
@@ -2006,7 +2063,7 @@
 
       let buffer;
       try {
-        buffer = await preloadSample(state.selectedInstrumentKey, transposed);
+        buffer = await preloadSample(state.selectedInstrumentKey, sampleNote);
       } catch (err) {
         if (updateCurrentNote) {
           state.currentNote = midiNote;
@@ -2087,7 +2144,7 @@
         source,
         gainNode,
         sourceMidiNote: midiNote,
-        soundingMidiNote: transposed,
+        soundingMidiNote: sampleNote,
         noteVelocity: velocity,
         usePitchBend,
         stopRequested: false
@@ -2186,10 +2243,9 @@
 
     async function noteOn(note, velocity) {
       try {
-        const transposedNote = clamp(note + state.transposeSemis, 0, 127);
         const playable = isPlayableNoteForInstrument(
           state.selectedInstrumentKey,
-          transposedNote
+          note
         );
 
         if (isUilleannPipesInstrument()) {
@@ -2717,6 +2773,21 @@
         saveSettingsToLocalStorage();
       });
 
+      $("btnResetMasterTune").addEventListener("click", () => {
+        state.masterTuneCents = 0;
+
+        if ($("masterTuneCents")) {
+          $("masterTuneCents").value = "0";
+        }
+        if ($("masterTuneCentsValue")) {
+          $("masterTuneCentsValue").textContent = "0";
+        }
+
+        applyTuningToAllVoices();
+        logLiveStatus();
+        saveSettingsToLocalStorage();
+      });
+
       bindRange("masterVolume", "masterVolumeValue", (v) => v.toFixed(2), (v) => {
         state.masterVolume = v;
         applyMixerSettings();
@@ -2772,18 +2843,10 @@
         saveSettingsToLocalStorage();
       });
 
-      bindRange("transposeSemis", "transposeSemisValue", (v) => String(v), (v) => {
-        const newTranspose = Math.round(v);
-        const oldTranspose = state.transposeSemis;
-
-        if (newTranspose !== oldTranspose) {
-          allNotesOff();
-          state.transposeSemis = newTranspose;
-          saveSettingsToLocalStorage();
-          return;
-        }
-
-        state.transposeSemis = newTranspose;
+      bindRange("transposeSemis", "transposeSemisValue", (v) => String(Math.round(v)), (v) => {
+        state.transposeSemis = clamp(Math.round(v), -12, 12);
+        applyTuningToAllVoices();
+        logLiveStatus();
         saveSettingsToLocalStorage();
       });
     }
