@@ -967,35 +967,35 @@
           label: "Tin Whistle",
           folder: "samples/tin_whistle",
           minNote: 55,
-          maxNote: 96,
+          maxNote: 86,
           defaultGain: 1.5
         },
         irishFlute: {
           label: "Irish Flute",
           folder: "samples/irish_flute",
-          minNote: 48,
-          maxNote: 96,
+          minNote: 55,
+          maxNote: 86,
           defaultGain: 1.5
         },
         uilleannPipes: {
           label: "Uilleann Pipes",
           folder: "samples/uilleann_pipes",
-          minNote: 33,
-          maxNote: 98,
+          minNote: 31,
+          maxNote: 86,
           defaultGain: 1.5
         },
         angloConcertina: {
           label: "Anglo Concertina",
           folder: "samples/anglo_concertina",
-          minNote: 48,
-          maxNote: 96,
+          minNote: 24,
+          maxNote: 93,
           defaultGain: 1.75
         },
         accordion: {
           label: "Accordion",
           folder: "samples/accordion",
-          minNote: 41,
-          maxNote: 96,
+          minNote: 24,
+          maxNote: 95,
           defaultGain: 1.5
         },
         bagpipes: {
@@ -1120,6 +1120,17 @@
 
       liveStatusHidden: false,
     };
+
+	const INSTRUMENT_PRELOAD_NOTES = {
+	  bagpipes: [51, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82],
+	  smallpipes: [51, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82],
+	  uilleannPipes: [
+	    31,33,35,36,38,42,43,45,47,48,50,51,52,
+	    55,56,57,58,59,60,61,62,63,64,65,66,67,
+	    68,69,70,71,72,73,74,75,76,77,78,79,80,
+	    81,82,83,84,85,86
+	  ]
+	};
 
     const $ = (id) => document.getElementById(id);
 
@@ -1646,16 +1657,23 @@
       return [url];
     }
 
-    function getLikelyStartupSampleUrls(instrumentKey) {
-      const instrument = APP_CONFIG.instruments[instrumentKey];
-      if (!instrument) return [];
+	function getLikelyStartupSampleUrls(instrumentKey) {
+	  const instrument = APP_CONFIG.instruments[instrumentKey];
+	  if (!instrument) return [];
 
-      const probeNotes = [60, 62, 64, 67, 69, 71, 72].filter(
-        (note) => note >= instrument.minNote && note <= instrument.maxNote
-      );
+	  const explicitNotes = INSTRUMENT_PRELOAD_NOTES[instrumentKey];
+	  if (Array.isArray(explicitNotes) && explicitNotes.length > 0) {
+	    return explicitNotes
+	      .filter((note) => note >= instrument.minNote && note <= instrument.maxNote)
+	      .flatMap((note) => getSampleUrls(instrumentKey, note));
+	  }
 
-      return probeNotes.flatMap((note) => getSampleUrls(instrumentKey, note));
-    }
+	  const probeNotes = [60, 62, 64, 67, 69, 71, 72].filter(
+	    (note) => note >= instrument.minNote && note <= instrument.maxNote
+	  );
+
+	  return probeNotes.flatMap((note) => getSampleUrls(instrumentKey, note));
+	}
 
     async function preloadSample(instrumentKey, midiNote) {
       const cacheKey = instrumentKey + ":" + midiNote;
@@ -1669,43 +1687,51 @@
       return buffer;
     }
 
-    async function preloadInstrument(instrumentKey) {
-      if (!state.audioContext) return;
+	async function preloadInstrument(instrumentKey) {
+	  if (!state.audioContext) return;
 
-      const instrument = APP_CONFIG.instruments[instrumentKey];
-      if (!instrument) {
-        throw new Error("Unknown instrument key: " + instrumentKey);
-      }
+	  const instrument = APP_CONFIG.instruments[instrumentKey];
+	  if (!instrument) {
+	    throw new Error("Unknown instrument key: " + instrumentKey);
+	  }
 
-      const startupUrls = getLikelyStartupSampleUrls(instrumentKey);
-      let loadedAtLeastOne = false;
+	  const startupUrls = getLikelyStartupSampleUrls(instrumentKey);
+	  let loadedAtLeastOne = false;
 
-      for (const url of startupUrls) {
-        try {
-          await fetchAudioBuffer(url);
-          loadedAtLeastOne = true;
-          break;
-        } catch (err) {
-          //console.warn("Startup probe failed for", url, err);
-        }
-      }
+	  for (const url of startupUrls) {
+	    try {
+	      await fetchAudioBuffer(url);
+	      loadedAtLeastOne = true;
+	      break;
+	    } catch (err) {
+	      // fail silently
+	    }
+	  }
 
-      if (!loadedAtLeastOne) {
-        throw new Error(
-          "Could not load any startup samples for " +
-            instrument.label +
-            ". Check folder paths, filenames, octave numbering, and make sure the server is returning real MP3 files."
-        );
-      }
+	  if (!loadedAtLeastOne) {
+	    throw new Error(
+	      "Could not load any startup samples for " +
+	        instrument.label +
+	        ". Check folder paths, filenames, octave numbering, and make sure the server is returning real MP3 files."
+	    );
+	  }
 
-      const promises = [];
-      for (let midi = instrument.minNote; midi <= instrument.maxNote; midi++) {
-        promises.push(preloadSample(instrumentKey, midi).catch(() => null));
-      }
+	  const explicitNotes = INSTRUMENT_PRELOAD_NOTES[instrumentKey];
+	  const notesToPreload = Array.isArray(explicitNotes) && explicitNotes.length > 0
+	    ? explicitNotes.filter((midi) => midi >= instrument.minNote && midi <= instrument.maxNote)
+	    : Array.from(
+	        { length: instrument.maxNote - instrument.minNote + 1 },
+	        (_, i) => instrument.minNote + i
+	      );
 
-      await Promise.all(promises);
-      logLiveStatus();
-    }
+	  const promises = [];
+	  for (const midi of notesToPreload) {
+	    promises.push(preloadSample(instrumentKey, midi).catch(() => null));
+	  }
+
+	  await Promise.all(promises);
+	  logLiveStatus();
+	}
 
     async function preloadImpulseResponse(reverbKey) {
       if (!state.outputChain) return;
