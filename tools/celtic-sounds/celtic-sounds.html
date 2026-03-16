@@ -551,31 +551,40 @@
   .modal_compact_main{
     border:1px solid #333;
     box-shadow:0 0 15px -2px rgba(0,0,0,0.75);
+
     width:min(560px, calc(100vw - 80px)) !important;
     max-width:min(560px, calc(100vw - 80px)) !important;
+
     height:auto !important;
     max-height:min(520px, 88dvh) !important;
+
     overflow:hidden !important;
   }
 
   .modal_compact_inner{
-    padding:16px;
+    padding:18px 18px 28px 18px;   /* more bottom breathing room */
     background:#fff;
     color:#000;
+
     display:flex;
     flex-direction:column;
   }
 
   .modal_compact_content{
-    margin:14px 0 8px 0;
+    margin:16px 0 10px 0;
+
     overflow:auto !important;
     -webkit-overflow-scrolling:touch;
+
+    flex:1 1 auto;  /* allows content to expand naturally */
   }
 
   .modal_compact_buttons{
     text-align:center;
-    margin-top:14px;
-    padding:10px 0 12px 0;
+
+    margin-top:18px;
+
+    padding:12px 0 26px 0;   /* adds space under OK button */
   }
 
   .modal_compact_buttons button{
@@ -585,13 +594,26 @@
   .modal_compact_main button{
     background:#e8f1ff;
     color:#000;
+
     border:1px solid #9dbaf2;
+
     padding:10px 20px;
+
     cursor:pointer;
     outline:none;
+
     width:100px;
+
     border-radius:10px;
+
     font-weight:600;
+
+    transition:background 0.15s ease, box-shadow 0.15s ease;
+  }
+
+  .modal_compact_main button:hover{
+    background:#dbe8ff;
+    box-shadow:0 0 6px rgba(80,120,220,0.35);
   }
 
   .status.status-hidden {
@@ -1177,7 +1199,7 @@
           <div class="instructions-subbody" style="text-align: center;">
             This tool was created by <a href="https://michaeleskin.com" target="_blank" rel="noopener noreferrer">Michael Eskin</a>.<br/>
             <div style="margin-top:10px;">
-              If you find it useful, please consider buying the<br/>developer a beer by tossing a few bucks into one of the tip jars.
+              If you find it useful, please consider buying me a beer<br/>by tossing a few bucks into one of my online tip jars.
             </div>
             <div style="margin-top:10px;">
               <b>PayPal</b><br/>
@@ -3050,17 +3072,16 @@
 
       if (count === 10) show = true;
       else if (count === 50) show = true;
-      else if (count === 100) show = true;
-      else if (count > 100 && count % 100 === 0) show = true;
+      else if (count > 50 && count % 50 === 0) show = true;
 
       if (!show) return;
 
       const html =
         `<div style="text-align:center;font-family:helvetica,arial,sans-serif;font-size:14pt;line-height:1.5;margin-top:10px">` +
         `<b>Enjoying Celtic Sounds?</b><br/><br/>` +
-        `If this utility has been helpful, please consider` +
-        `<br/>buying the developer a beer by tossing a few` +
-        `<br/>bucks into one of the tip jars.<br/>` +
+        `If this utility has been useful, please consider` +
+        `<br/>buying me a beer by tossing a few bucks` +
+        `<br/>into one of my online tip jars.<br/>` +
         `<div style="margin-top:10px;">` +
         `<b>PayPal</b><br/>` +
         `<a href="https://paypal.me/MichaelEskin" target="_blank" rel="noopener noreferrer" style="color:#1a73e8; text-decoration:underline;">https://paypal.me/MichaelEskin</a>` +
@@ -3069,7 +3090,8 @@
         `<b>Venmo</b><br/>` +
         `@MichaelEskin` +
         `</div>` +
-        `<div style="margin-top:14px;font-size:0.9em;opacity:0.8;">` +
+        `<div style="margin-top:18px;font-size:0.9em;opacity:0.8;">` +
+        `You can also find all my tip jar links at the bottom of the<br/><b>Instructions</b> (click the <b>?</b> at the upper right of the tool).<br/>` +
         `Thank you for supporting development!` +
         `</div>` +
         `</div>`;
@@ -3118,17 +3140,31 @@
         }
 
         const message =
-          "<div style='text-align:left; line-height:1.5;'>" +
-            "<p style='margin:0 0 14px 0;text-align:center;font-size: 1.3rem;'><b>WebMIDI is not available in this browser.</b></p>" +
-            "<p style='margin:0 0 12px 0;'>Celtic Sounds requires a WebMIDI-enabled desktop browser such as:</p>" +
-            "<p style='margin:0 0 12px 18px;'>" +
-              "• Google Chrome<br/>" +
-              "• Microsoft Edge<br/>" +
-              "• Opera<br/>" +
-              "• Another Chromium-based browser with WebMIDI support" +
-            "</p>" +
-            "<p style='margin:0 0 12px 0;'>Safari and most mobile browsers do not currently support this tool.</p>" +
-            "<p style='margin:0;'>Please open Celtic Sounds in a compatible desktop browser and try again.</p>" +
+          "<div style='text-align:left;font-family:helvetica,arial,sans-serif;font-size:14pt;line-height:1.45;padding:0 18px;'>" +
+
+            "<div style='text-align:center;font-size:1.25em;font-weight:700;margin:0 0 12px 0;'>" +
+              "WebMIDI is not available in this browser" +
+            "</div>" +
+
+            "<div style='margin:0 0 10px 0;'>" +
+              "<b>Celtic Sounds</b> requires a WebMIDI-enabled desktop browser such as:" +
+            "</div>" +
+
+            "<ul style='margin:0 0 10px 20px;padding:0;'>" +
+              "<li>Google Chrome</li>" +
+              "<li>Microsoft Edge</li>" +
+              "<li>Opera</li>" +
+              "<li>Another Chromium-based browser with WebMIDI support</li>" +
+            "</ul>" +
+
+            "<div style='margin:0 0 10px 0;'>" +
+              "Safari and most mobile browsers do not currently support this tool." +
+            "</div>" +
+
+            "<div style='margin:0;'>" +
+              "Please open <b>Celtic Sounds</b> in a compatible desktop browser and try again." +
+            "</div>" +
+
           "</div>";
 
         setTimeout(() => {
@@ -3159,7 +3195,6 @@
       renderLiveStatusVisibility();
       logLiveStatus();
       renderMidiLog();
-
       if (webMidiAvailable) {
         setupAutomaticAudioInit();
       }
@@ -3167,6 +3202,7 @@
 
     document.addEventListener("DOMContentLoaded", () => {
       bootstrap();
+
       if (webMidiAvailable) {
         setTimeout(() => {
           incrementPageVisitCount();
