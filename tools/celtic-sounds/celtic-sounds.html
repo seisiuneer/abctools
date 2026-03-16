@@ -29,6 +29,7 @@
   <link rel="icon" type="image/png" sizes="32x32" href="https://michaeleskin.com/celtic-sounds/img/32.png">
   <link rel="icon" type="image/png" sizes="96x96" href="https://michaeleskin.com/celtic-sounds/img/96.png">
   <link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/celtic-sounds/img/16.png">
+  <link href="https://fonts.googleapis.com/css2?family=Uncial+Antiqua&display=swap" rel="stylesheet">
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-VM0N9HL3MK"></script>
 
   <script>
@@ -99,14 +100,25 @@
   }
 
   .hero-card h1 {
+    font-family: "Uncial Antiqua", serif;
+    font-size: 2.3rem;
+    letter-spacing: 2px;
+    font-weight: normal;
+
+    color: #d4ffe8;
+
     text-shadow:
-      0 0 6px rgba(34, 197, 94, 0.45),
-      0 0 14px rgba(34, 197, 94, 0.40),
-      0 0 28px rgba(34, 197, 94, 0.28);
-    margin-bottom: 12px;
+      0 0 4px rgba(34,197,94,0.55),
+      0 0 12px rgba(34,197,94,0.45),
+      0 0 24px rgba(34,197,94,0.30),
+      0 0 40px rgba(34,197,94,0.18);
+
+    margin-bottom: 14px;
   }
 
   .hero-card p {
+    font-family: system-ui, sans-serif;
+    letter-spacing: 0.3px;
     margin: 0;
   }
 
@@ -680,11 +692,22 @@
             </select>
           </div>
 
-          <div class="field">
-            <label for="masterVolume">
-              Volume <span id="masterVolumeValue">1.00</span>
-            </label>
-            <input id="masterVolume" type="range" min="0" max="2.0" step="0.01" value="1.0" />
+          <div class="field" style="grid-column: span 2;">
+            <div class="two-up">
+              <div class="field">
+                <label for="masterVolume">
+                  Volume <span id="masterVolumeValue">1.00</span>
+                </label>
+                <input id="masterVolume" type="range" min="0" max="2.0" step="0.01" value="1.0" />
+              </div>
+
+              <div class="field">
+                <label for="masterTuneCents">
+                  Master Tune <span id="masterTuneCentsValue">0</span> cents
+                </label>
+                <input id="masterTuneCents" type="range" min="-50" max="50" step="1" value="0" />
+              </div>
+            </div>
           </div>
 
           <div class="field" style="grid-column: span 2;">
@@ -720,7 +743,6 @@
                 </label>
                 <input id="pitchBendUpMultiplier" type="range" min="0" max="4" step="0.01" value="1" />
               </div>
-
             </div>
           </div>
 
@@ -807,7 +829,7 @@
             1) Click <b>Connect MIDI</b> and if requested, allow browser MIDI access.<br/><br/>
             2) Choose your <b>MIDI Input</b> and <b>Input Channel</b>.<br/><br/>
             3) Select an <b>Instrument</b> and the <b>Expression Source</b> you want the sound module to follow.<br/><br/>
-            4) Adjust volume, attack, release, pitch bend scaling, reverb, and transpose as needed.<br/><br/>
+            4) Adjust volume, master tuning, attack, release, pitch bend scaling, reverb, and transpose as needed.<br/><br/>
             5) Play your MIDI controller and watch the <b>Live Status</b> and optional <b>MIDI Message Stream</b>.
           </div>
 
@@ -831,10 +853,19 @@
 
           <hr class="instructions-divider"/>
 
+          <div class="instructions-subtitle">Master Tuning</div>
+          <div class="instructions-subbody">
+            <b>Master Tune</b> lets you shift the overall tuning of the instrument by up to <b>±50 cents</b>.<br/><br/>
+            This is useful for matching recordings, other players, or instruments that are a little sharp or flat.<br/><br/>
+            Unlike <b>Transpose</b>, this control changes pitch in fine increments rather than semitone steps.
+          </div>
+
+          <hr class="instructions-divider"/>
+
           <div class="instructions-subtitle">Pitch Bend and Fixed-Pitch Instruments</div>
           <div class="instructions-subbody">
             <b>Anglo Concertina</b>, <b>Accordion</b>, <b>Great Highland Bagpipe</b>, and <b>Smallpipes</b> do <b>not</b> respond to MIDI pitch bend.<br/><br/>
-            Any incoming pitch bend messages are ignored for these instruments, so they always play at their normal sampled pitch.
+            Any incoming pitch bend messages are ignored for these instruments, so they always play at their normal sampled pitch, aside from any <b>Master Tune</b> adjustment.
             <br/><br/>
             <b>Tin Whistle</b>, <b>Irish Flute</b>, and the <b>Uilleann Pipes melody voice</b> do respond to pitch bend, subject to the selected
             <b>Pitch Bend Up Scale</b> and <b>Pitch Bend Down Scale</b>.
@@ -879,7 +910,6 @@
             <b>WARBL Fingering Pattern to Use</b><br/>
             The Uilleann instrument is designed to be used with the WARBL Tin Whistle/Flute or Uilleann Pipes fingering pattern selected with no transpose.
             <br/><br/>Lowest MIDI note for the chanter is D4 (62).
-
           </div>
 
           <hr class="instructions-divider"/>
@@ -898,7 +928,6 @@
             <b>WARBL Fingering Pattern to Use</b><br/>
             These two instruments are designed to be used with the WARBL GHB/Scottish Smallpipes fingering pattern selected with no transpose.<br/><br/>
             Lowest MIDI note for the chanter is G#4 (68).
-
           </div>
 
           <hr class="instructions-divider"/>
@@ -939,7 +968,7 @@
           <hr class="instructions-divider"/>
 
           <div class="instructions-subtitle" style="text-align: center;">Tip Jars</div>
-          <div class="instructions-subbody"  style="text-align: center;">
+          <div class="instructions-subbody" style="text-align: center;">
             This tool was created by <a href="https://michaeleskin.com" target="_blank" rel="noopener noreferrer">Michael Eskin</a>.<br/>
             <div style="margin-top:10px;">
               If you find it useful, please consider buying the<br/>developer a beer by tossing a few bucks into one of the tip jars.
@@ -1041,6 +1070,7 @@
       selectedReverbKey: APP_CONFIG.synth.defaultReverbKey,
       expressionMode: "velocity",
       masterVolume: 1.0,
+      masterTuneCents: 0,
       attackMs: 4,
       releaseMs: 120,
       pitchBendUpMultiplier: 1,
@@ -1069,7 +1099,7 @@
     };
 
     const SAMPLE_OCTAVE_OFFSET = 0;
-    const SETTINGS_STORAGE_KEY = "celtic_sounds_settings_v5";
+    const SETTINGS_STORAGE_KEY = "celtic_sounds_settings_v7";
 
     let gLocalStorageAvailable = false;
     let webMidiAvailable = false;
@@ -1087,6 +1117,7 @@
       expressionMode: "velocity",
       latestExpression: 127,
       masterVolume: 1.0,
+      masterTuneCents: 0,
       attackMs: 4,
       releaseMs: 120,
       pitchBendValue: 0,
@@ -1121,16 +1152,16 @@
       liveStatusHidden: false,
     };
 
-	const INSTRUMENT_PRELOAD_NOTES = {
-	  bagpipes: [51, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82],
-	  smallpipes: [51, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82],
-	  uilleannPipes: [
-	    31,33,35,36,38,42,43,45,47,48,50,51,52,
-	    55,56,57,58,59,60,61,62,63,64,65,66,67,
-	    68,69,70,71,72,73,74,75,76,77,78,79,80,
-	    81,82,83,84,85,86
-	  ]
-	};
+    const INSTRUMENT_PRELOAD_NOTES = {
+      bagpipes: [51, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82],
+      smallpipes: [51, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82],
+      uilleannPipes: [
+        31,33,35,36,38,42,43,45,47,48,50,51,52,
+        55,56,57,58,59,60,61,62,63,64,65,66,67,
+        68,69,70,71,72,73,74,75,76,77,78,79,80,
+        81,82,83,84,85,86
+      ]
+    };
 
     const $ = (id) => document.getElementById(id);
 
@@ -1205,6 +1236,7 @@
         selectedReverbKey: state.selectedReverbKey,
         expressionMode: state.expressionMode,
         masterVolume: state.masterVolume,
+        masterTuneCents: state.masterTuneCents,
         attackMs: state.attackMs,
         releaseMs: state.releaseMs,
         pitchBendUpMultiplier: state.pitchBendUpMultiplier,
@@ -1254,6 +1286,10 @@
 
       if (typeof data.masterVolume === "number") {
         state.masterVolume = clamp(data.masterVolume, 0, 2.0);
+      }
+
+      if (typeof data.masterTuneCents === "number") {
+        state.masterTuneCents = clamp(Math.round(data.masterTuneCents), -50, 50);
       }
 
       if (typeof data.attackMs === "number") {
@@ -1343,6 +1379,37 @@
       return normalized * base * state.pitchBendDownMultiplier;
     }
 
+    function getCombinedTuningCents(usePitchBend) {
+      let cents = state.masterTuneCents;
+
+      if (usePitchBend && !isPitchBendDisabledInstrument()) {
+        cents += getEffectivePitchBendCents();
+      }
+
+      return cents;
+    }
+
+    function getPlaybackRateForVoice(usePitchBend) {
+      return centsToPlaybackRate(getCombinedTuningCents(usePitchBend));
+    }
+
+    function applyTuningToVoice(voice) {
+      if (!voice || !voice.source || !state.audioContext) return;
+
+      const now = state.audioContext.currentTime;
+      const param = voice.source.playbackRate;
+      const rate = getPlaybackRateForVoice(!!voice.usePitchBend);
+
+      param.cancelScheduledValues(now);
+      param.setTargetAtTime(rate, now, 0.01);
+    }
+
+    function applyTuningToAllVoices() {
+      applyTuningToVoice(state.activeVoice);
+      applyTuningToVoice(state.lowVoice);
+      applyTuningToVoice(state.droneVoice);
+    }
+
     function getExpressionModeLabel() {
       const select = $("expressionModeSelect");
       if (!select) return state.expressionMode;
@@ -1402,6 +1469,7 @@
         "Current note: " + currentNoteText,
         "Expression mode: " + getExpressionModeLabel(),
         "Expression value: " + state.latestExpression,
+        "Master tune cents: " + state.masterTuneCents,
         "Pitch bend cents: " + bendCents.toFixed(1)
       ];
 
@@ -1612,14 +1680,6 @@
         );
       }
 
-      if (
-        !contentType.includes("audio/") &&
-        !contentType.includes("application/octet-stream") &&
-        contentType !== ""
-      ) {
-        //console.warn("Unexpected content-type for " + url + ": " + contentType);
-      }
-
       try {
         return await state.audioContext.decodeAudioData(arrayBuffer.slice(0));
       } catch (err) {
@@ -1653,27 +1713,26 @@
       }
 
       const sampleName = midiToFlatSampleName(midiNote);
-      const url = instrument.folder + "/" + sampleName + ".mp3";
-      return [url];
+      return [instrument.folder + "/" + sampleName + ".mp3"];
     }
 
-	function getLikelyStartupSampleUrls(instrumentKey) {
-	  const instrument = APP_CONFIG.instruments[instrumentKey];
-	  if (!instrument) return [];
+    function getLikelyStartupSampleUrls(instrumentKey) {
+      const instrument = APP_CONFIG.instruments[instrumentKey];
+      if (!instrument) return [];
 
-	  const explicitNotes = INSTRUMENT_PRELOAD_NOTES[instrumentKey];
-	  if (Array.isArray(explicitNotes) && explicitNotes.length > 0) {
-	    return explicitNotes
-	      .filter((note) => note >= instrument.minNote && note <= instrument.maxNote)
-	      .flatMap((note) => getSampleUrls(instrumentKey, note));
-	  }
+      const explicitNotes = INSTRUMENT_PRELOAD_NOTES[instrumentKey];
+      if (Array.isArray(explicitNotes) && explicitNotes.length > 0) {
+        return explicitNotes
+          .filter((note) => note >= instrument.minNote && note <= instrument.maxNote)
+          .flatMap((note) => getSampleUrls(instrumentKey, note));
+      }
 
-	  const probeNotes = [60, 62, 64, 67, 69, 71, 72].filter(
-	    (note) => note >= instrument.minNote && note <= instrument.maxNote
-	  );
+      const probeNotes = [60, 62, 64, 67, 69, 71, 72].filter(
+        (note) => note >= instrument.minNote && note <= instrument.maxNote
+      );
 
-	  return probeNotes.flatMap((note) => getSampleUrls(instrumentKey, note));
-	}
+      return probeNotes.flatMap((note) => getSampleUrls(instrumentKey, note));
+    }
 
     async function preloadSample(instrumentKey, midiNote) {
       const cacheKey = instrumentKey + ":" + midiNote;
@@ -1687,51 +1746,51 @@
       return buffer;
     }
 
-	async function preloadInstrument(instrumentKey) {
-	  if (!state.audioContext) return;
+    async function preloadInstrument(instrumentKey) {
+      if (!state.audioContext) return;
 
-	  const instrument = APP_CONFIG.instruments[instrumentKey];
-	  if (!instrument) {
-	    throw new Error("Unknown instrument key: " + instrumentKey);
-	  }
+      const instrument = APP_CONFIG.instruments[instrumentKey];
+      if (!instrument) {
+        throw new Error("Unknown instrument key: " + instrumentKey);
+      }
 
-	  const startupUrls = getLikelyStartupSampleUrls(instrumentKey);
-	  let loadedAtLeastOne = false;
+      const startupUrls = getLikelyStartupSampleUrls(instrumentKey);
+      let loadedAtLeastOne = false;
 
-	  for (const url of startupUrls) {
-	    try {
-	      await fetchAudioBuffer(url);
-	      loadedAtLeastOne = true;
-	      break;
-	    } catch (err) {
-	      // fail silently
-	    }
-	  }
+      for (const url of startupUrls) {
+        try {
+          await fetchAudioBuffer(url);
+          loadedAtLeastOne = true;
+          break;
+        } catch (err) {
+          // fail silently
+        }
+      }
 
-	  if (!loadedAtLeastOne) {
-	    throw new Error(
-	      "Could not load any startup samples for " +
-	        instrument.label +
-	        ". Check folder paths, filenames, octave numbering, and make sure the server is returning real MP3 files."
-	    );
-	  }
+      if (!loadedAtLeastOne) {
+        throw new Error(
+          "Could not load any startup samples for " +
+            instrument.label +
+            ". Check folder paths, filenames, octave numbering, and make sure the server is returning real MP3 files."
+        );
+      }
 
-	  const explicitNotes = INSTRUMENT_PRELOAD_NOTES[instrumentKey];
-	  const notesToPreload = Array.isArray(explicitNotes) && explicitNotes.length > 0
-	    ? explicitNotes.filter((midi) => midi >= instrument.minNote && midi <= instrument.maxNote)
-	    : Array.from(
-	        { length: instrument.maxNote - instrument.minNote + 1 },
-	        (_, i) => instrument.minNote + i
-	      );
+      const explicitNotes = INSTRUMENT_PRELOAD_NOTES[instrumentKey];
+      const notesToPreload = Array.isArray(explicitNotes) && explicitNotes.length > 0
+        ? explicitNotes.filter((midi) => midi >= instrument.minNote && midi <= instrument.maxNote)
+        : Array.from(
+            { length: instrument.maxNote - instrument.minNote + 1 },
+            (_, i) => instrument.minNote + i
+          );
 
-	  const promises = [];
-	  for (const midi of notesToPreload) {
-	    promises.push(preloadSample(instrumentKey, midi).catch(() => null));
-	  }
+      const promises = [];
+      for (const midi of notesToPreload) {
+        promises.push(preloadSample(instrumentKey, midi).catch(() => null));
+      }
 
-	  await Promise.all(promises);
-	  logLiveStatus();
-	}
+      await Promise.all(promises);
+      logLiveStatus();
+    }
 
     async function preloadImpulseResponse(reverbKey) {
       if (!state.outputChain) return;
@@ -1861,35 +1920,35 @@
       }
     }
 
-	function getPlayableNotesForInstrument(instrumentKey) {
-	  const instrument = APP_CONFIG.instruments[instrumentKey];
-	  if (!instrument) return [];
+    function getPlayableNotesForInstrument(instrumentKey) {
+      const instrument = APP_CONFIG.instruments[instrumentKey];
+      if (!instrument) return [];
 
-	  const explicitNotes = INSTRUMENT_PRELOAD_NOTES[instrumentKey];
-	  if (Array.isArray(explicitNotes) && explicitNotes.length > 0) {
-	    return explicitNotes.filter((note) => note >= instrument.minNote && note <= instrument.maxNote);
-	  }
+      const explicitNotes = INSTRUMENT_PRELOAD_NOTES[instrumentKey];
+      if (Array.isArray(explicitNotes) && explicitNotes.length > 0) {
+        return explicitNotes.filter((note) => note >= instrument.minNote && note <= instrument.maxNote);
+      }
 
-	  return Array.from(
-	    { length: instrument.maxNote - instrument.minNote + 1 },
-	    (_, i) => instrument.minNote + i
-	  );
-	}
+      return Array.from(
+        { length: instrument.maxNote - instrument.minNote + 1 },
+        (_, i) => instrument.minNote + i
+      );
+    }
 
-	const INSTRUMENT_PLAYABLE_NOTE_SETS = Object.create(null);
+    const INSTRUMENT_PLAYABLE_NOTE_SETS = Object.create(null);
 
-	function getPlayableNoteSetForInstrument(instrumentKey) {
-	  if (!INSTRUMENT_PLAYABLE_NOTE_SETS[instrumentKey]) {
-	    INSTRUMENT_PLAYABLE_NOTE_SETS[instrumentKey] = new Set(
-	      getPlayableNotesForInstrument(instrumentKey)
-	    );
-	  }
-	  return INSTRUMENT_PLAYABLE_NOTE_SETS[instrumentKey];
-	}
+    function getPlayableNoteSetForInstrument(instrumentKey) {
+      if (!INSTRUMENT_PLAYABLE_NOTE_SETS[instrumentKey]) {
+        INSTRUMENT_PLAYABLE_NOTE_SETS[instrumentKey] = new Set(
+          getPlayableNotesForInstrument(instrumentKey)
+        );
+      }
+      return INSTRUMENT_PLAYABLE_NOTE_SETS[instrumentKey];
+    }
 
-	function isPlayableNoteForInstrument(instrumentKey, midiNote) {
-	  return getPlayableNoteSetForInstrument(instrumentKey).has(midiNote);
-	}
+    function isPlayableNoteForInstrument(instrumentKey, midiNote) {
+      return getPlayableNoteSetForInstrument(instrumentKey).has(midiNote);
+    }
 
     function stopManagedVoice(slotName, immediate = false) {
       if (!state.audioContext || !state[slotName]) return;
@@ -1932,11 +1991,10 @@
       if (!state.audioContext || !state.outputChain) return;
 
       const requestId = ++state[requestIdKey];
-
       const transposed = clamp(midiNote + state.transposeSemis, 0, 127);
       const instrument = APP_CONFIG.instruments[state.selectedInstrumentKey];
 
-	  if (!isPlayableNoteForInstrument(state.selectedInstrumentKey, transposed)) {
+      if (!isPlayableNoteForInstrument(state.selectedInstrumentKey, transposed)) {
         if (updateCurrentNote) {
           state.currentNote = midiNote;
           logLiveStatus();
@@ -1985,7 +2043,7 @@
 
       const source = ctx.createBufferSource();
       source.buffer = buffer;
-      source.playbackRate.value = usePitchBend ? centsToPlaybackRate(getEffectivePitchBendCents()) : 1.0;
+      source.playbackRate.value = getPlaybackRateForVoice(usePitchBend);
       source.loop = true;
 
       const isUilleannDroneLoop =
@@ -2031,6 +2089,7 @@
         sourceMidiNote: midiNote,
         soundingMidiNote: transposed,
         noteVelocity: velocity,
+        usePitchBend,
         stopRequested: false
       };
 
@@ -2048,7 +2107,6 @@
       };
 
       source.start(now);
-
       state[slotName] = voice;
 
       if (updateCurrentNote) {
@@ -2103,21 +2161,7 @@
 
     function applyPitchBendToActiveVoice() {
       if (!state.activeVoice || !state.audioContext) return;
-
-      const now = state.audioContext.currentTime;
-      const param = state.activeVoice.source.playbackRate;
-
-      param.cancelScheduledValues(now);
-
-      if (isPitchBendDisabledInstrument()) {
-        param.setTargetAtTime(1.0, now, 0.01);
-        return;
-      }
-
-      const cents = getEffectivePitchBendCents();
-      const rate = centsToPlaybackRate(cents);
-
-      param.setTargetAtTime(rate, now, 0.01);
+      applyTuningToVoice(state.activeVoice);
     }
 
     function updateActiveVoiceGain() {
@@ -2136,55 +2180,54 @@
       target = clamp(target, 0.0001, 4.0);
 
       const gainParam = state.activeVoice.gainNode.gain;
-
       gainParam.cancelScheduledValues(now);
       gainParam.setTargetAtTime(target, now, 0.015);
     }
 
-	async function noteOn(note, velocity) {
-	  try {
-	    const transposedNote = clamp(note + state.transposeSemis, 0, 127);
-	    const playable = isPlayableNoteForInstrument(
-	      state.selectedInstrumentKey,
-	      transposedNote
-	    );
+    async function noteOn(note, velocity) {
+      try {
+        const transposedNote = clamp(note + state.transposeSemis, 0, 127);
+        const playable = isPlayableNoteForInstrument(
+          state.selectedInstrumentKey,
+          transposedNote
+        );
 
-	    if (isUilleannPipesInstrument()) {
-	      if (isDroneLatchNote(note)) {
-	        await toggleDroneLatchVoice(note, velocity);
-	        return;
-	      }
+        if (isUilleannPipesInstrument()) {
+          if (isDroneLatchNote(note)) {
+            await toggleDroneLatchVoice(note, velocity);
+            return;
+          }
 
-	      if (isLowSecondaryNote(note)) {
-	        if (!playable) return;
+          if (isLowSecondaryNote(note)) {
+            if (!playable) return;
 
-	        state.lowHeldNotes.delete(note);
-	        state.lowHeldNotes.add(note);
-	        state.lowHeldNoteVelocities.set(note, velocity);
+            state.lowHeldNotes.delete(note);
+            state.lowHeldNotes.add(note);
+            state.lowHeldNoteVelocities.set(note, velocity);
 
-	        await playLowVoice(note, velocity);
-	        return;
-	      }
-	    }
+            await playLowVoice(note, velocity);
+            return;
+          }
+        }
 
-	    if (isSingleDronePipeInstrument() && note === 51) {
-	      await toggleDroneLatchVoice(note, velocity);
-	      return;
-	    }
+        if (isSingleDronePipeInstrument() && note === 51) {
+          await toggleDroneLatchVoice(note, velocity);
+          return;
+        }
 
-	    if (!playable) {
-	      return;
-	    }
+        if (!playable) {
+          return;
+        }
 
-	    state.heldNotes.delete(note);
-	    state.heldNotes.add(note);
-	    state.heldNoteVelocities.set(note, velocity);
+        state.heldNotes.delete(note);
+        state.heldNotes.add(note);
+        state.heldNoteVelocities.set(note, velocity);
 
-	    await playNote(note, velocity);
-	  } catch (_) {
-	    // fail silently for missing/bad samples during live MIDI input
-	  }
-	}
+        await playNote(note, velocity);
+      } catch (_) {
+        // fail silently for missing/bad samples during live MIDI input
+      }
+    }
 
     function noteOff(note) {
       if (isDroneLatchNote(note)) {
@@ -2439,6 +2482,7 @@
       state.selectedReverbKey = DEFAULTS.selectedReverbKey;
       state.expressionMode = DEFAULTS.expressionMode;
       state.masterVolume = DEFAULTS.masterVolume;
+      state.masterTuneCents = DEFAULTS.masterTuneCents;
       state.attackMs = DEFAULTS.attackMs;
       state.releaseMs = DEFAULTS.releaseMs;
       state.pitchBendUpMultiplier = DEFAULTS.pitchBendUpMultiplier;
@@ -2459,7 +2503,7 @@
 
       syncUiFromState();
       applyMixerSettings();
-      applyPitchBendToActiveVoice();
+      applyTuningToAllVoices();
       clearMidiLog();
       allNotesOff();
       logLiveStatus();
@@ -2498,6 +2542,11 @@
       if ($("masterVolume")) {
         $("masterVolume").value = String(state.masterVolume);
         $("masterVolumeValue").textContent = state.masterVolume.toFixed(2);
+      }
+
+      if ($("masterTuneCents")) {
+        $("masterTuneCents").value = String(state.masterTuneCents);
+        $("masterTuneCentsValue").textContent = String(state.masterTuneCents);
       }
 
       if ($("attackMs")) {
@@ -2674,6 +2723,13 @@
         saveSettingsToLocalStorage();
       });
 
+      bindRange("masterTuneCents", "masterTuneCentsValue", (v) => String(Math.round(v)), (v) => {
+        state.masterTuneCents = clamp(Math.round(v), -50, 50);
+        applyTuningToAllVoices();
+        logLiveStatus();
+        saveSettingsToLocalStorage();
+      });
+
       bindRange("attackMs", "attackMsValue", (v) => String(v), (v) => {
         state.attackMs = v;
         saveSettingsToLocalStorage();
@@ -2716,21 +2772,20 @@
         saveSettingsToLocalStorage();
       });
 
-	  bindRange("transposeSemis", "transposeSemisValue", (v) => String(v), (v) => {
-	    const newTranspose = Math.round(v);
-	    const oldTranspose = state.transposeSemis;
+      bindRange("transposeSemis", "transposeSemisValue", (v) => String(v), (v) => {
+        const newTranspose = Math.round(v);
+        const oldTranspose = state.transposeSemis;
 
-	    if (newTranspose !== oldTranspose) {
-	      allNotesOff();
-	      state.transposeSemis = newTranspose;
-	      saveSettingsToLocalStorage();
-	      return;
-	    }
+        if (newTranspose !== oldTranspose) {
+          allNotesOff();
+          state.transposeSemis = newTranspose;
+          saveSettingsToLocalStorage();
+          return;
+        }
 
-	    state.transposeSemis = newTranspose;
-	    saveSettingsToLocalStorage();
-	  });
-
+        state.transposeSemis = newTranspose;
+        saveSettingsToLocalStorage();
+      });
     }
 
     function setupAutomaticAudioInit() {
