@@ -1217,6 +1217,8 @@
     </div>
   </div>
 
+  <script type="text/javascript" src="js/daypilot-modal.min-3.10.1.js?v=1"></script>
+
   <script>
     const APP_CONFIG = {
       instruments: {
@@ -1532,6 +1534,38 @@
       });
 
       return true;
+    }
+
+    function showErrorDialog(message, title = "Error") {
+      const safeMessage = String(message || "An unexpected error occurred.");
+
+      const html =
+        "<div style='text-align:left;font-family:helvetica,arial,sans-serif;font-size:14pt;line-height:1.45;padding:0 18px;'>" +
+
+          "<div style='text-align:center;font-size:1.25em;font-weight:700;margin:0 0 12px 0;'>" +
+            title +
+          "</div>" +
+
+          "<div style='margin:0; white-space:pre-wrap; word-break:break-word;'>" +
+            safeMessage
+              .replace(/&/g, "&amp;")
+              .replace(/</g, "&lt;")
+              .replace(/>/g, "&gt;") +
+          "</div>" +
+
+        "</div>";
+
+      if (window.DayPilot && DayPilot.Modal && DayPilot.Modal.alert) {
+        DayPilot.Modal.alert(html, {
+          theme: "modal_compact",
+          top: 100,
+          width: 620,
+          autoFocus: false,
+          scrollWithPage: true
+        });
+      } else {
+        alert(title + "\n\n" + safeMessage);
+      }
     }
 
     function getPersistedSettingsObject() {
@@ -2601,7 +2635,8 @@
     }
 
     function parseMidiMessage(data) {
-      const status = data[0];
+      if (!data || data.length === 0) return null;
+      const status = data[0] ?? 0;
       const type = status & 0xf0;
       const channel = status & 0x0f;
       const data1 = data[1] ?? 0;
@@ -2611,7 +2646,9 @@
 
     async function handleMidiMessage(event) {
       try {
+
         const msg = parseMidiMessage(event.data);
+        if (!msg) return;
 
         if ((msg.channel + 1) !== state.selectedMidiChannel) {
           return;
@@ -2670,6 +2707,49 @@
       }
     }
 
+    function showNoMidiInputsDialog() {
+      const html =
+        "<div style='text-align:left;font-family:helvetica,arial,sans-serif;font-size:14pt;line-height:1.45;padding:0 18px;'>" +
+
+          "<div style='text-align:center;font-size:1.25em;font-weight:700;margin:0 0 12px 0;'>" +
+            "No MIDI input devices found" +
+          "</div>" +
+
+          "<div style='margin:0 0 10px 0;'>" +
+            "MIDI access was granted, but no MIDI input devices were detected." +
+          "</div>" +
+
+          "<div style='margin:0 0 10px 0;'>" +
+            "Make sure your <b>WARBL</b> is:" +
+          "</div>" +
+
+          "<ul style='margin:0 0 10px 20px;padding:0;'>" +
+            "<li>Connected and powered on</li>" +
+            "<li>Not already in use by another app or browser tab</li>" +
+          "</ul>" +
+
+          "<div style='margin:0;'>" +
+            "Connect and power on your device, then select it from the MIDI Input list if it appears." +
+          "</div>" +
+
+        "</div>";
+
+      if (window.DayPilot && DayPilot.Modal && DayPilot.Modal.alert) {
+        DayPilot.Modal.alert(html, {
+          theme: "modal_compact",
+          top: 100,
+          width: 600,
+          autoFocus: false,
+          scrollWithPage: true
+        });
+      } else {
+        alert(
+          "No MIDI input devices found.\n\n" +
+          "Make sure your WARBL is connected, powered on, and not in use by another app."
+        );
+      }
+    }
+
     function detachMidiListeners() {
       state.midiInputs.forEach((input) => {
         input.onmidimessage = null;
@@ -2688,8 +2768,17 @@
     function refreshMidiInputList() {
       if (!state.midiAccess) return;
 
-      state.midiInputs = [...state.midiAccess.inputs.values()];
+      state.midiInputs = [...state.midiAccess.inputs.values()].filter((input) => {
+        if (!input) return false;
+        if (typeof input.state === "string" && input.state.toLowerCase() === "disconnected") {
+          return false;
+        }
+        return true;
+      });
+
       const select = $("midiInputSelect");
+      if (!select) return;
+
       select.innerHTML = "";
 
       if (state.midiInputs.length === 0) {
@@ -2698,13 +2787,14 @@
         opt.textContent = "No MIDI inputs found";
         select.appendChild(opt);
         state.selectedMidiInputId = "";
+        detachMidiListeners();
         return;
       }
 
       for (const input of state.midiInputs) {
         const opt = document.createElement("option");
         opt.value = input.id;
-        opt.textContent = (input.name || "Unknown input");
+        opt.textContent = input.name || "Unknown input";
         select.appendChild(opt);
       }
 
@@ -2718,6 +2808,17 @@
 
       select.value = state.selectedMidiInputId;
       attachSelectedMidiInput();
+
+      // console.log(
+      //   "Visible MIDI inputs:",
+      //   state.midiInputs.map((i) => ({
+      //     id: i.id,
+      //     name: i.name,
+      //     manufacturer: i.manufacturer,
+      //     state: i.state,
+      //     connection: i.connection
+      //   }))
+      // );
     }
 
     async function connectMidi() {
@@ -2725,12 +2826,22 @@
         throw new Error("Web MIDI is not supported in this browser.");
       }
 
-      state.midiAccess = await navigator.requestMIDIAccess({ sysex: false });
-      state.midiAccess.onstatechange = () => {
-        refreshMidiInputList();
-      };
+      if (!state.midiAccess) {
+        state.midiAccess = await navigator.requestMIDIAccess({ sysex: false });
+
+        state.midiAccess.onstatechange = () => {
+          refreshMidiInputList();
+        };
+      }
 
       refreshMidiInputList();
+
+      if (state.midiInputs.length === 0) {
+        showNoMidiInputsDialog();
+        return false;
+      }
+
+      return true;
     }
 
     function populateInstrumentSelect() {
@@ -2820,7 +2931,7 @@
           logLiveStatus();
         } catch (err) {
           console.error(err);
-          alert(err.message);
+          showErrorDialog(err.message, "Reset Failed");
         }
       }
 
@@ -2922,12 +3033,14 @@
     }
 
     function wireUi() {
+
       $("btnConnectMidi").addEventListener("click", async () => {
         try {
-          await connectMidi();
+          const ok = await connectMidi();
+          if (!ok) return;
         } catch (err) {
           console.error(err);
-          alert(err.message);
+          showErrorDialog(err.message, "MIDI Connection Error");
         }
       });
 
@@ -2972,7 +3085,7 @@
           }
         } catch (err) {
           console.error(err);
-          alert(err.message);
+          showErrorDialog(err.message, "Instrument Load Error");
         }
       });
 
@@ -2994,7 +3107,7 @@
           logLiveStatus();
         } catch (err) {
           console.error(err);
-          alert(err.message);
+          showErrorDialog(err.message, "Reverb Load Error");
         }
       });
 
@@ -3235,29 +3348,38 @@
             "</ul>" +
 
             "<div style='margin:0 0 10px 0;'>" +
-              "Safari, Firefox, and most mobile browsers do not currently support this tool." +
+              "Safari and most mobile browsers do not currently support this tool." +
             "</div>" +
 
             "<div style='margin:0;'>" +
-              "Please open <b>Celtic Sounds</b> in a compatible desktop browser and try again." +
+              "Firefox support may be limited or inconsistent depending on configuration." +
             "</div>" +
 
           "</div>";
 
         setTimeout(() => {
-          DayPilot.Modal.alert(message, {
-            theme: "modal_compact",
-            top: 100,
-            width: 600,
-            autoFocus: false,
-            scrollWithPage: true
-          });
+          if (window.DayPilot && DayPilot.Modal && DayPilot.Modal.alert) {
+            DayPilot.Modal.alert(message, {
+              theme: "modal_compact",
+              top: 100,
+              width: 600,
+              autoFocus: false,
+              scrollWithPage: true
+            });
+          } else {
+            alert(
+              "WebMIDI is not available in this browser.\n\n" +
+              "Celtic Sounds requires a WebMIDI-enabled desktop browser such as Chrome, Edge, or Opera.\n\n" +
+              "Safari and most mobile browsers do not currently support this tool.\n" +
+              "Firefox support may be limited or inconsistent depending on configuration."
+            );
+          }
         }, 100);
       }
 
       return available;
     }
-
+    
     async function bootstrap() {
       checkLocalStorageAvailable();
 
@@ -3292,8 +3414,6 @@
       }
     });
   </script>
-
-  <script type="text/javascript" src="js/daypilot-modal.min-3.10.1.js?v=1"></script>
 
 </body>
 </html>
