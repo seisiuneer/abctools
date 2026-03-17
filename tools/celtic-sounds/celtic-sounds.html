@@ -190,7 +190,7 @@
 
   .controls {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    grid-template-columns: 1fr 1fr;
     column-gap: 20px;
     row-gap: 18px;
     align-items: end;
@@ -199,6 +199,10 @@
   .field {
     display: grid;
     gap: 6px;
+  }
+
+  .field-hidden{
+    display:none !important;
   }
 
   .row {
@@ -532,17 +536,6 @@
     width: 100%;
   }
 
-  .instructions-button{
-    margin-left: auto !important;
-    background: linear-gradient(135deg, #1d4ed8, #2563eb);
-    border: 1px solid #3b82f6;
-    color: #ffffff;
-  }
-
-  .instructions-button:hover{
-    border-color: #60a5fa;
-  }
-
   .modal_compact_background{
     background-color:#000;
     opacity:0.4;
@@ -731,42 +724,65 @@
     left: 16px;
   }
 
-  @media (max-width: 700px){
-    .instructions-button{
-      margin-left: 0 !important;
-    }
-  }
-
-  @media (max-width: 600px){
-    .instructions-close{
-      font-size:1.12rem;
-      padding:16px 18px;
-      border-radius:14px;
-    }
-  }
-
-  @media (max-width: 920px) {
+  @media (max-width: 900px){
     .split {
       grid-template-columns: 1fr;
     }
   }
 
-  @media (max-width: 680px) {
+  @media (max-width: 680px){
+    body{
+      padding: 16px;
+    }
+
+    .card{
+      padding: 16px;
+      border-radius: 16px;
+    }
+
+    .controls {
+      grid-template-columns: 1fr;
+      column-gap: 16px;
+      row-gap: 16px;
+    }
+
+    .controls > .field[style*="grid-column: span 2"] {
+      grid-column: auto !important;
+    }
+
     .two-up {
       grid-template-columns: 1fr;
+      gap: 12px;
+    }
+
+    .card-header{
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    .header-button{
+      align-self: flex-start;
+    }
+
+    .setup-row{
+      gap: 12px;
+    }
+
+    .connect-midi,
+    .all-notes-off{
+      margin-left: 0;
+      margin-right: 0;
     }
   }
 
-  @media (min-width: 768px) and (max-width: 1100px) {
-    .controls {
-      grid-template-columns: 1fr 1fr;
-    }
-
-    .field-reverb-style,
-    .field-transpose {
-      grid-column: 1 / -1;
+  @media (max-width: 600px){
+    .instructions-close{
+      font-size: 1.12rem;
+      padding: 16px 18px;
+      border-radius: 14px;
     }
   }
+
 </style>
 </head>
 
@@ -781,10 +797,10 @@
         aria-label="Open WARBL Configuration Tool"
         type="button"
       >
-      <img src="img/warbl.png" alt="WARBL Configuration Tool" />
-    </button>
+        <img src="img/warbl.png" alt="WARBL Configuration Tool" />
+      </button>
 
-    <button id="btnInstructions" class="hero-help" title="Click for instructions">?</button>
+      <button id="btnInstructions" class="hero-help" title="Click for instructions">?</button>
 
       <h1>Celtic Sounds</h1>
       <p class="muted">WebMIDI-Based MIDI Sound Module for the WARBL by Michael Eskin</p>
@@ -793,16 +809,19 @@
     <div class="card grid">
       <div class="row setup-row">
         <button id="btnConnectMidi" class="good connect-midi">Connect MIDI</button>
-        <button id="btnAllNotesOff" class="warn all-notes-off">All Notes Off</button>      
+        <button id="btnAllNotesOff" class="warn all-notes-off">All Notes Off</button>
       </div>
     </div>
 
     <div class="split">
+
+      <!-- LEFT: CONTROLS -->
       <div class="card grid">
         <div class="card-header">
           <h2>Controls</h2>
           <button id="btnResetDefaults" class="reset header-button">Reset All to Defaults</button>
         </div>
+
         <div class="controls">
           <div class="field">
             <label for="midiInputSelect">MIDI Input</label>
@@ -829,16 +848,9 @@
               <option value="max">Fixed Full Volume</option>
             </select>
           </div>
-
+          
           <div class="field" style="grid-column: span 2;">
             <div class="two-up">
-              <div class="field">
-                <label for="masterVolume">
-                  Volume <span id="masterVolumeValue">1.00</span>
-                </label>
-                <input id="masterVolume" type="range" min="0" max="2.0" step="0.01" value="1.0" />
-              </div>
-
               <div class="field">
                 <div class="slider-label-row">
                   <label for="masterTuneCents">
@@ -849,8 +861,52 @@
                   </button>
                 </div>
                 <input id="masterTuneCents" type="range" min="-50" max="50" step="1" value="0" />
-              </div>   
-            </div>       
+              </div>
+
+              <div class="field field-transpose">
+                <label for="transposeSemis">
+                  Transpose (semitones) <span id="transposeSemisValue">0</span>
+                </label>
+                <input id="transposeSemis" type="range" min="-12" max="12" step="1" value="0" />
+              </div>
+
+            </div>
+          </div>
+          
+          <div class="field" style="grid-column: span 2;">
+            <div class="two-up">
+              <div class="field">
+                <label for="pitchBendDownMultiplier">
+                  Pitch Bend Down Scale <span id="pitchBendDownMultiplierValue">1.00</span>
+                </label>
+                <input id="pitchBendDownMultiplier" type="range" min="0" max="4" step="0.01" value="1" />
+              </div>
+
+              <div class="field">
+                <label for="pitchBendUpMultiplier">
+                  Pitch Bend Up Scale <span id="pitchBendUpMultiplierValue">1.00</span>
+                </label>
+                <input id="pitchBendUpMultiplier" type="range" min="0" max="4" step="0.01" value="1" />
+              </div>
+            </div>
+          </div>
+
+          <div class="field" style="grid-column: span 2;">
+            <div class="two-up">
+              <div class="field">
+                <label for="masterVolume">
+                  Volume <span id="masterVolumeValue">1.00</span>
+                </label>
+                <input id="masterVolume" type="range" min="0" max="2.0" step="0.01" value="1.0" />
+              </div>
+
+              <div id="droneVolumeField" class="field field-hidden">
+                <label for="droneVolume">
+                  Drone Volume <span id="droneVolumeValue">1.00</span>
+                </label>
+                <input id="droneVolume" type="range" min="0" max="2.0" step="0.01" value="1.0" />
+              </div>
+            </div>
           </div>
 
           <div class="field" style="grid-column: span 2;">
@@ -874,24 +930,16 @@
           <div class="field" style="grid-column: span 2;">
             <div class="two-up">
               <div class="field">
-                <label for="pitchBendDownMultiplier">
-                  Pitch Bend Down Scale <span id="pitchBendDownMultiplierValue">1.00</span>
-                </label>
-                <input id="pitchBendDownMultiplier" type="range" min="0" max="4" step="0.01" value="1" />
+                <label for="reverbSelect">Reverb Style</label>
+                <select id="reverbSelect"></select>
               </div>
-
               <div class="field">
-                <label for="pitchBendUpMultiplier">
-                  Pitch Bend Up Scale <span id="pitchBendUpMultiplierValue">1.00</span>
+                <label for="reverbPreDelay">
+                  Pre-delay ms <span id="reverbPreDelayValue">0</span>
                 </label>
-                <input id="pitchBendUpMultiplier" type="range" min="0" max="4" step="0.01" value="1" />
+                <input id="reverbPreDelay" type="range" min="0" max="250" step="1" value="0" />
               </div>
             </div>
-          </div>
-
-          <div class="field field-reverb-style">
-            <label for="reverbSelect">Reverb Style</label>
-            <select id="reverbSelect"></select>
           </div>
 
           <div class="field" style="grid-column: span 2;">
@@ -913,23 +961,9 @@
           </div>
         </div>
 
-        <div class="controls">
-          <div class="field">
-            <label for="reverbPreDelay">
-              Pre-delay ms <span id="reverbPreDelayValue">0</span>
-            </label>
-            <input id="reverbPreDelay" type="range" min="0" max="250" step="1" value="0" />
-          </div>
-
-          <div class="field field-transpose">
-            <label for="transposeSemis">
-              Transpose (semitones) <span id="transposeSemisValue">0</span>            
-            </label>
-            <input id="transposeSemis" type="range" min="-12" max="12" step="1" value="0" />
-          </div>
-        </div>
       </div>
 
+      <!-- RIGHT: LIVE STATUS -->
       <div class="card grid live-status-card">
         <h2>Live Status</h2>
 
@@ -958,6 +992,7 @@
           <div class="midi-log" id="midiLog" hidden>MIDI stream disabled.</div>
         </div>
       </div>
+
     </div>
   </div>
 
@@ -967,13 +1002,14 @@
 
       <div id="instructionsScroll" class="instructions-scroll">
         <div class="instructions-body">
+
           <div class="instructions-subtitle">Getting Started</div>
           <div class="instructions-subbody">
             <ol class="instructions-steps">
               <li>Click <b>Connect MIDI</b> and allow browser MIDI access if requested.</li>
               <li>Choose your <b>MIDI Input</b> and <b>Input Channel</b>.</li>
               <li>Select an <b>Instrument</b> and the <b>Expression Source</b> you want the sound module to follow.</li>
-              <li>Adjust volume, master tuning, attack, release, pitch bend scaling, reverb, and transpose as needed.</li>
+              <li>Adjust volume, drone volume (when available), master tuning, attack, release, pitch bend scaling, reverb, and transpose as needed.</li>
               <li>Play your MIDI controller and watch the <b>Live Status</b> and optional <b>MIDI Message Stream</b>.</li>
             </ol>
           </div>
@@ -1021,7 +1057,21 @@
             <div class="instructions-gap"></div>
 
             This can be useful for fine control of expression when playing
-            the <b>Tin whistle</b>, <b>Irish Flute</b>, or the <b>Uilleann Pipes</b> instruments.
+            the <b>Tin Whistle</b>, <b>Irish Flute</b>, or <b>Uilleann Pipes</b>.
+          </div>
+
+          <hr class="instructions-divider"/>
+
+          <div class="instructions-subtitle">Drone Volume</div>
+          <div class="instructions-subbody">
+            <b>Drone Volume</b> is available only for instruments that use dedicated drone voices:
+            <b>Uilleann Pipes</b>, <b>Great Highland Bagpipe</b>, and <b>Smallpipes</b>.
+            <div class="instructions-gap"></div>
+            This control adjusts the playback level of the drone voice independently of the main
+            <b>Volume</b> control.
+            <div class="instructions-gap"></div>
+            It is especially useful when you want to keep the melody or chanter strong while making
+            the drone softer or louder in the overall mix.
           </div>
 
           <hr class="instructions-divider"/>
@@ -1102,11 +1152,11 @@
             All other notes below <b>MIDI note 62</b>, which include all the regulators sounds, are played on a separate voice.
             <div class="instructions-gap"></div>
             These behave normally with
-            note-on and note-off, but like the drone voice they ignore <b>expression</b> and <b>pitch bend</b>, and
+            note-on and note-off messages, but like the drone voice, they ignore <b>expression</b> and <b>pitch bend</b> and
             use the incoming <b>note-on velocity</b> as their initial volume.
             <div class="instructions-gap"></div>
             <b>WARBL Fingering Pattern to Use</b><br/>
-            The Uilleann instrument is designed to be used with the WARBL Tin Whistle/Flute or Uilleann Pipes fingering pattern selected with no transpose set on the WARBL controller.
+            The Uilleann instrument is designed to be used with the WARBL Tin Whistle/Flute or Uilleann Pipes fingering pattern selected, with no transpose set on the WARBL controller.
             <div class="instructions-gap"></div>
             Lowest MIDI note for the chanter is D4 (62).
           </div>
@@ -1129,7 +1179,7 @@
             They play normally, but <b>pitch bend is ignored</b>.
             <div class="instructions-gap"></div>
             <b>WARBL Fingering Pattern to Use</b><br/>
-            These two instruments are designed to be used with the WARBL GHB/Scottish Smallpipes fingering pattern selected with no transpose set on the WARBL controller.
+            These two instruments are designed to be used with the WARBL GHB/Scottish Smallpipes fingering pattern selected, with no transpose set on the WARBL controller.
             <div class="instructions-gap"></div>
             Lowest MIDI note for the chanter is G#4 (68).
           </div>
@@ -1173,7 +1223,7 @@
           <div class="instructions-subbody">
             This tool requires a browser that supports the <b>Web MIDI API</b>.
             <div class="instructions-gap"></div>
-            If your browser does not support WebMIDI, MIDI devices will not appear and the tool will not function.
+            If your browser does not support WebMIDI, MIDI devices will not appear, and the tool will not function.
 
             <div style="margin-top:18px;">
               <b>Recommended browsers:</b><br/>
@@ -1186,7 +1236,7 @@
             <div style="margin-top:18px;">
               <b>Not currently supported:</b><br/>
               • <b>Safari</b> (macOS and iOS)<br/>
-              • <b>Firefox</b> (sometimes prompts for a WebMIDI plug-in, may or may not work)<br/>              
+              • <b>Firefox</b> (sometimes prompts for a WebMIDI plug-in, may or may not work)<br/>
               • <b>Most mobile browsers</b>
             </div>
           </div>
@@ -1208,6 +1258,7 @@
               @MichaelEskin
             </div>
           </div>
+
         </div>
       </div>
 
@@ -1298,6 +1349,7 @@
       selectedReverbKey: APP_CONFIG.synth.defaultReverbKey,
       expressionMode: "velocity",
       masterVolume: 1.0,
+      droneVolume: 1.0,
       masterTuneCents: 0,
       attackMs: 4,
       releaseMs: 120,
@@ -1309,7 +1361,7 @@
       transposeSemis: 0,
       midiLogEnabled: false,
       freezeMidiLog: false,
-      liveStatusHidden: false
+      liveStatusHidden: false,
     };
 
     const IMPULSE_RESPONSE_LABELS = {
@@ -1327,7 +1379,7 @@
     };
 
     const SAMPLE_OCTAVE_OFFSET = 0;
-    const SETTINGS_STORAGE_KEY = "celtic_sounds_settings_v8";
+    const SETTINGS_STORAGE_KEY = "celtic_sounds_settings_v9";
     const FIREFOX_WARNING_STORAGE_KEY = "celtic_sounds_firefox_warning_shown_v1";
 
     let gLocalStorageAvailable = false;
@@ -1346,6 +1398,7 @@
       expressionMode: "velocity",
       latestExpression: 127,
       masterVolume: 1.0,
+      droneVolume: 1.0,
       masterTuneCents: 0,
       attackMs: 4,
       releaseMs: 120,
@@ -1566,6 +1619,21 @@
       }
     }
 
+    function supportsDroneVolumeControl() {
+      return (
+        state.selectedInstrumentKey === "uilleannPipes" ||
+        state.selectedInstrumentKey === "bagpipes" ||
+        state.selectedInstrumentKey === "smallpipes"
+      );
+    }
+
+    function renderDroneVolumeVisibility() {
+      const field = $("droneVolumeField");
+      if (!field) return;
+
+      field.classList.toggle("field-hidden", !supportsDroneVolumeControl());
+    }
+
     function getPersistedSettingsObject() {
       return {
         selectedMidiChannel: state.selectedMidiChannel,
@@ -1573,6 +1641,7 @@
         selectedReverbKey: state.selectedReverbKey,
         expressionMode: state.expressionMode,
         masterVolume: state.masterVolume,
+        droneVolume: state.droneVolume,
         masterTuneCents: state.masterTuneCents,
         attackMs: state.attackMs,
         releaseMs: state.releaseMs,
@@ -1623,6 +1692,10 @@
 
       if (typeof data.masterVolume === "number") {
         state.masterVolume = clamp(data.masterVolume, 0, 2.0);
+      }
+
+      if (typeof data.droneVolume === "number") {
+        state.droneVolume = clamp(data.droneVolume, 0, 2.0);
       }
 
       if (typeof data.masterTuneCents === "number") {
@@ -1806,10 +1879,18 @@
         "Current note: " + currentNoteText,
         "Expression mode: " + getExpressionModeLabel(),
         "Expression value: " + state.latestExpression,
+        "Master volume: " + state.masterVolume.toFixed(2)
+      ];
+
+      if (supportsDroneVolumeControl()) {
+        lines.push("Drone volume: " + state.droneVolume.toFixed(2));
+      }
+
+      lines.push(
         "Master tune cents: " + state.masterTuneCents,
         "Transpose semitones: " + state.transposeSemis,
         "Pitch bend cents: " + bendCents.toFixed(1)
-      ];
+      );
 
       $("liveStatus").textContent = lines.join("\n");
     }
@@ -2324,8 +2405,10 @@
       velocity = 127,
       useExpression = true,
       usePitchBend = true,
-      updateCurrentNote = false
+      updateCurrentNote = false,
+      volumeMultiplier = 1.0
     }) {
+
       if (!state.audioContext || !state.outputChain) return;
 
       const requestId = ++state[requestIdKey];
@@ -2413,7 +2496,7 @@
         ? resolveCurrentExpressionGain(velocity)
         : computeExpressionGain(velocity);
 
-      targetGain *= instrumentGain;
+      targetGain *= instrumentGain * volumeMultiplier;
       targetGain = clamp(targetGain, 0.0001, 4.0);
 
       const attackSec = Math.max(0.001, state.attackMs / 1000);
@@ -2477,6 +2560,22 @@
       });
     }
 
+    function updateDroneVoiceGain() {
+      if (!state.droneVoice || !state.audioContext) return;
+
+      const now = state.audioContext.currentTime;
+      const instrument = APP_CONFIG.instruments[state.selectedInstrumentKey];
+      const instrumentGain = instrument?.defaultGain || 1.0;
+
+      let target = computeExpressionGain(state.droneVoice.noteVelocity || 127);
+      target *= instrumentGain * state.droneVolume;
+      target = clamp(target, 0.0001, 4.0);
+
+      const gainParam = state.droneVoice.gainNode.gain;
+      gainParam.cancelScheduledValues(now);
+      gainParam.setTargetAtTime(target, now, 0.015);
+    }
+
     async function toggleDroneLatchVoice(midiNote, velocity = 127) {
       if (!isUilleannPipesInstrument() && !isSingleDronePipeInstrument()) return;
 
@@ -2493,7 +2592,8 @@
         velocity,
         useExpression: false,
         usePitchBend: false,
-        updateCurrentNote: false
+        updateCurrentNote: false,
+        volumeMultiplier: state.droneVolume
       });
     }
 
@@ -2899,6 +2999,7 @@
       state.selectedReverbKey = DEFAULTS.selectedReverbKey;
       state.expressionMode = DEFAULTS.expressionMode;
       state.masterVolume = DEFAULTS.masterVolume;
+      state.droneVolume = DEFAULTS.droneVolume;
       state.masterTuneCents = DEFAULTS.masterTuneCents;
       state.attackMs = DEFAULTS.attackMs;
       state.releaseMs = DEFAULTS.releaseMs;
@@ -2961,6 +3062,11 @@
         $("masterVolumeValue").textContent = state.masterVolume.toFixed(2);
       }
 
+      if ($("droneVolume")) {
+        $("droneVolume").value = String(state.droneVolume);
+        $("droneVolumeValue").textContent = state.droneVolume.toFixed(2);
+      }
+
       if ($("masterTuneCents")) {
         $("masterTuneCents").value = String(state.masterTuneCents);
         $("masterTuneCentsValue").textContent = String(state.masterTuneCents);
@@ -3015,6 +3121,8 @@
       }
 
       renderLiveStatusVisibility();
+
+      renderDroneVolumeVisibility();
     }
 
     function bindRange(inputId, labelId, formatter, onChange) {
@@ -3079,6 +3187,7 @@
       $("instrumentSelect").addEventListener("change", async (e) => {
         state.selectedInstrumentKey = e.target.value;
         allNotesOff();
+        renderDroneVolumeVisibility();
         saveSettingsToLocalStorage();
         try {
           if (state.audioContext) {
@@ -3158,6 +3267,12 @@
       bindRange("masterVolume", "masterVolumeValue", (v) => v.toFixed(2), (v) => {
         state.masterVolume = v;
         applyMixerSettings();
+        saveSettingsToLocalStorage();
+      });
+
+      bindRange("droneVolume", "droneVolumeValue", (v) => v.toFixed(2), (v) => {
+        state.droneVolume = v;
+        updateDroneVoiceGain();
         saveSettingsToLocalStorage();
       });
 
