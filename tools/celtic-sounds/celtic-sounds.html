@@ -583,8 +583,6 @@
     text-align:center;
 
     margin-top:18px;
-
-    padding:12px 0 26px 0;   /* adds space under OK button */
   }
 
   .modal_compact_buttons button{
@@ -1491,7 +1489,7 @@
       if (!window.DayPilot || !DayPilot.Modal || !DayPilot.Modal.alert) return false;
 
       const message =
-        "<div style='text-align:left;font-family:helvetica,arial,sans-serif;font-size:14pt;line-height:1.45;padding:0 18px;'>" +
+        "<div style='text-align:left;font-family:helvetica,arial,sans-serif;font-size:13pt;line-height:1.45;padding:0 18px;'>" +
 
           "<div style='text-align:center;font-size:1.2em;font-weight:700;margin:0 0 12px 0;'>" +
             "Firefox is Not Officially Supported" +
@@ -1540,7 +1538,7 @@
       const safeMessage = String(message || "An unexpected error occurred.");
 
       const html =
-        "<div style='text-align:left;font-family:helvetica,arial,sans-serif;font-size:14pt;line-height:1.45;padding:0 18px;'>" +
+        "<div style='text-align:left;font-family:helvetica,arial,sans-serif;font-size:13pt;line-height:1.45;padding:0 18px;'>" +
 
           "<div style='text-align:center;font-size:1.25em;font-weight:700;margin:0 0 12px 0;'>" +
             title +
@@ -2709,7 +2707,7 @@
 
     function showNoMidiInputsDialog() {
       const html =
-        "<div style='text-align:left;font-family:helvetica,arial,sans-serif;font-size:14pt;line-height:1.45;padding:0 18px;'>" +
+        "<div style='text-align:left;font-family:helvetica,arial,sans-serif;font-size:13pt;line-height:1.45;padding:0 18px;'>" +
 
           "<div style='text-align:center;font-size:1.25em;font-weight:700;margin:0 0 12px 0;'>" +
             "No MIDI input devices found" +
@@ -2720,16 +2718,11 @@
           "</div>" +
 
           "<div style='margin:0 0 10px 0;'>" +
-            "Make sure your <b>WARBL</b> is:" +
+            "Make sure your <b>WARBL</b> is connected." +
           "</div>" +
 
-          "<ul style='margin:0 0 10px 20px;padding:0;'>" +
-            "<li>Connected and powered on</li>" +
-            "<li>Not already in use by another app or browser tab</li>" +
-          "</ul>" +
-
           "<div style='margin:0;'>" +
-            "Connect and power on your device, then select it from the MIDI Input list if it appears." +
+            "Power on and connect your device, then select it from the MIDI Input list if it appears." +
           "</div>" +
 
         "</div>";
@@ -2745,18 +2738,19 @@
       } else {
         alert(
           "No MIDI input devices found.\n\n" +
-          "Make sure your WARBL is connected, powered on, and not in use by another app."
+          "Make sure your WARBL is connected."
         );
       }
     }
 
     function detachMidiListeners() {
       state.midiInputs.forEach((input) => {
-        input.onmidimessage = null;
+        if (input) input.onmidimessage = null;
       });
     }
 
     function attachSelectedMidiInput() {
+
       detachMidiListeners();
 
       const input = state.midiInputs.find((item) => item.id === state.selectedMidiInputId);
@@ -2766,15 +2760,33 @@
     }
 
     function refreshMidiInputList() {
-      if (!state.midiAccess) return;
+      if (!state.midiAccess || !state.midiAccess.inputs) return;
 
-      state.midiInputs = [...state.midiAccess.inputs.values()].filter((input) => {
-        if (!input) return false;
-        if (typeof input.state === "string" && input.state.toLowerCase() === "disconnected") {
-          return false;
+      const inputs = [];
+      const midiInputs = state.midiAccess.inputs;
+
+      if (typeof midiInputs.forEach === "function") {
+        midiInputs.forEach((input) => {
+          if (!input) return;
+          if (typeof input.state === "string" && input.state.toLowerCase() === "disconnected") {
+            return;
+          }
+          inputs.push(input);
+        });
+      } else if (typeof midiInputs.values === "function") {
+        const iterator = midiInputs.values();
+        let next = iterator.next();
+
+        while (!next.done) {
+          const input = next.value;
+          if (input && !(typeof input.state === "string" && input.state.toLowerCase() === "disconnected")) {
+            inputs.push(input);
+          }
+          next = iterator.next();
         }
-        return true;
-      });
+      }
+
+      state.midiInputs = inputs;
 
       const select = $("midiInputSelect");
       if (!select) return;
@@ -2808,17 +2820,6 @@
 
       select.value = state.selectedMidiInputId;
       attachSelectedMidiInput();
-
-      // console.log(
-      //   "Visible MIDI inputs:",
-      //   state.midiInputs.map((i) => ({
-      //     id: i.id,
-      //     name: i.name,
-      //     manufacturer: i.manufacturer,
-      //     state: i.state,
-      //     connection: i.connection
-      //   }))
-      // );
     }
 
     async function connectMidi() {
@@ -3280,7 +3281,7 @@
         `<b>Venmo</b><br/>` +
         `@MichaelEskin` +
         `</div>` +
-        `<div style="margin-top:18px;font-size:0.9em;opacity:0.8;">` +
+        `<div style="margin-top:18px;opacity:0.9;">` +
         `You can also find all my tip jar links at the bottom of the<br/><b>Instructions</b> (click the <b>?</b> at the upper right of the tool).<br/>` +
         `Thank you for supporting development!` +
         `</div>` +
@@ -3330,7 +3331,7 @@
         }
 
         const message =
-          "<div style='text-align:left;font-family:helvetica,arial,sans-serif;font-size:14pt;line-height:1.45;padding:0 18px;'>" +
+          "<div style='text-align:left;font-family:helvetica,arial,sans-serif;font-size:13pt;line-height:1.45;padding:0 18px;'>" +
 
             "<div style='text-align:center;font-size:1.25em;font-weight:700;margin:0 0 12px 0;'>" +
               "WebMIDI is not available in this browser" +
