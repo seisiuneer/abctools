@@ -1188,7 +1188,7 @@
             <div style="margin-top:18px;">
               <b>Not currently supported:</b><br/>
               • <b>Safari</b> (macOS and iOS)<br/>
-              • <b>Firefox</b> (prompts for a WebMIDI plug-in, may or may not work)<br/>              
+              • <b>Firefox</b> (sometimes prompts for a WebMIDI plug-in, may or may not work)<br/>              
               • <b>Most mobile browsers</b>
             </div>
           </div>
@@ -1328,6 +1328,7 @@
 
     const SAMPLE_OCTAVE_OFFSET = 0;
     const SETTINGS_STORAGE_KEY = "celtic_sounds_settings_v8";
+    const FIREFOX_WARNING_STORAGE_KEY = "celtic_sounds_firefox_warning_shown_v1";
 
     let gLocalStorageAvailable = false;
     let webMidiAvailable = false;
@@ -1455,6 +1456,82 @@
       } catch (err) {
         gLocalStorageAvailable = false;
       }
+    }
+
+    function isFirefoxBrowser() {
+      const ua = navigator.userAgent || "";
+      return /Firefox\/\d+/i.test(ua) && !/Seamonkey/i.test(ua);
+    }
+
+    function hasShownFirefoxWarning() {
+      if (!gLocalStorageAvailable) return false;
+
+      try {
+        return localStorage.getItem(FIREFOX_WARNING_STORAGE_KEY) === "1";
+      } catch (err) {
+        return false;
+      }
+    }
+
+    function markFirefoxWarningShown() {
+      if (!gLocalStorageAvailable) return;
+
+      try {
+        localStorage.setItem(FIREFOX_WARNING_STORAGE_KEY, "1");
+      } catch (err) {
+        // ignore storage failures
+      }
+    }
+
+    async function showFirefoxWarningIfNeeded() {
+      if (!isFirefoxBrowser()) return false;
+      if (hasShownFirefoxWarning()) return false;
+      if (!window.DayPilot || !DayPilot.Modal || !DayPilot.Modal.alert) return false;
+
+      const message =
+        "<div style='text-align:left;font-family:helvetica,arial,sans-serif;font-size:14pt;line-height:1.45;padding:0 18px;'>" +
+
+          "<div style='text-align:center;font-size:1.2em;font-weight:700;margin:0 0 12px 0;'>" +
+            "Firefox is Not Officially Supported" +
+          "</div>" +
+
+          "<div style='margin:0 0 10px 0;'>" +
+            "You appear to be using <b>Firefox</b>." +
+          "</div>" +
+
+          "<div style='margin:0 0 10px 0;'>" +
+            "<b>Celtic Sounds</b> may work in Firefox, but it is <b>not officially supported</b>." +
+          "</div>" +
+
+          "<div style='margin:0 0 10px 0;'>" +
+            "WebMIDI behavior in Firefox can be inconsistent, and some features may not work as expected." +
+          "</div>" +
+
+          "<div style='margin:0 0 10px 0;'>" +
+            "If you continue in Firefox, some behavior may be unreliable." +
+          "</div>" +
+
+          "<div style='margin:0 0 10px 0;'>" +
+            "For the best experience, use <b>Chrome</b>, <b>Edge</b>, or another Chromium-based browser with WebMIDI support." +
+          "</div>" +
+
+          "<div style='margin:0;'>" +
+            "You will only be shown this warning this one time." +
+          "</div>" +
+
+        "</div>";
+
+      markFirefoxWarningShown();
+
+      await DayPilot.Modal.alert(message, {
+        theme: "modal_compact",
+        top: 100,
+        width: 620,
+        autoFocus: false,
+        scrollWithPage: true
+      });
+
+      return true;
     }
 
     function getPersistedSettingsObject() {
@@ -3181,8 +3258,11 @@
       return available;
     }
 
-    function bootstrap() {
+    async function bootstrap() {
       checkLocalStorageAvailable();
+
+      await showFirefoxWarningIfNeeded();
+
       loadSettingsFromLocalStorage();
 
       webMidiAvailable = checkWebMidiAvailabilityAtStartup();
@@ -3195,13 +3275,15 @@
       renderLiveStatusVisibility();
       logLiveStatus();
       renderMidiLog();
+
       if (webMidiAvailable) {
         setupAutomaticAudioInit();
       }
     }
 
-    document.addEventListener("DOMContentLoaded", () => {
-      bootstrap();
+    document.addEventListener("DOMContentLoaded", async () => {
+
+      await bootstrap();
 
       if (webMidiAvailable) {
         setTimeout(() => {
