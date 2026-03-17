@@ -800,7 +800,7 @@
         <img src="img/warbl.png" alt="WARBL Configuration Tool" />
       </button>
 
-      <button id="btnInstructions" class="hero-help" title="Click for instructions">?</button>
+      <button id="btnInstructions" class="hero-help" title="Click for instructions" type="button">?</button>
 
       <h1>Celtic Sounds</h1>
       <p class="muted">WebMIDI-Based MIDI Sound Module for the WARBL by Michael Eskin</p>
@@ -1237,6 +1237,7 @@
               <b>Not currently supported:</b><br/>
               • <b>Safari</b> (macOS and iOS)<br/>
               • <b>Firefox</b> (sometimes prompts for a WebMIDI plug-in, may or may not work)<br/>
+              • <b>Web MIDI browser for iOS</b><br/>
               • <b>Most mobile browsers</b>
             </div>
           </div>
@@ -1583,6 +1584,64 @@
         autoFocus: false,
         scrollWithPage: true
       });
+
+      return true;
+    }
+
+    function checkForWebMIDIBrowser() {
+      const ua = navigator.userAgent || "";
+      const isWebMIDIBrowser = ua.includes("WebMIDIBrowser");
+
+      if (!isWebMIDIBrowser) {
+        return false;
+      }
+
+      const btn = $("btnConnectMidi");
+      if (btn) {
+        btn.disabled = true;
+        btn.title = "Not supported in Web MIDI Browser";
+        btn.style.opacity = "0.6";
+        btn.style.cursor = "not-allowed";
+      }
+
+      const message =
+        "<div style='text-align:left;font-family:helvetica,arial,sans-serif;font-size:13pt;line-height:1.45;padding:0 18px;'>" +
+
+          "<div style='text-align:center;font-size:1.25em;font-weight:700;margin:0 0 12px 0;'>" +
+            "Unsupported Browser" +
+          "</div>" +
+
+          "<div style='margin:0 0 10px 0;'>" +
+            "This browser (<b>Web MIDI Browser</b>) is not supported by <b>Celtic Sounds</b>." +
+          "</div>" +
+
+          "<div style='margin:0 0 10px 0;'>" +
+            "Instead, please use the <b>Celtic Sounds</b> app available on the iOS App Store." +
+          "</div>" +
+
+          "<div style='margin:0;'>" +
+            "This web version requires a desktop browser with WebMIDI support such as Chrome, Edge, or Opera." +
+          "</div>" +
+
+        "</div>";
+
+      setTimeout(() => {
+        if (window.DayPilot && DayPilot.Modal && DayPilot.Modal.alert) {
+          DayPilot.Modal.alert(message, {
+            theme: "modal_compact",
+            top: 100,
+            width: 600,
+            autoFocus: false,
+            scrollWithPage: true
+          });
+        } else {
+          alert(
+            "This browser (Web MIDI Browser) is not supported.\n\n" +
+            "Please use the Celtic Sounds iOS app available on the App Store.\n\n" +
+            "This web version requires a desktop browser with WebMIDI support such as Chrome, Edge, or Opera."
+          );
+        }
+      }, 100);
 
       return true;
     }
@@ -3503,7 +3562,11 @@
 
       loadSettingsFromLocalStorage();
 
-      webMidiAvailable = checkWebMidiAvailabilityAtStartup();
+      const isWebMIDIBrowser = checkForWebMIDIBrowser();
+
+      webMidiAvailable = isWebMIDIBrowser
+        ? false
+        : checkWebMidiAvailabilityAtStartup();
 
       populateInstrumentSelect();
       populateMidiChannelSelect();
