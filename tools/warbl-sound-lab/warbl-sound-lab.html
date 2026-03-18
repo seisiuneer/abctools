@@ -167,6 +167,7 @@
       background: linear-gradient(135deg, #15803d, #16a34a);
       border-color: #22c55e;
       color: #fff;
+      font-weight: 400 !important;
     }
 
     #btnConnect:hover {
@@ -180,6 +181,7 @@
       border-color: #ef4444;
       color: #fff;
       box-shadow: none;
+      font-weight: 400 !important;
     }
 
     button.secondary:hover {
@@ -346,6 +348,7 @@
     #btnResetCurrentPreset,
     #btnResetAllPresets {
       color: #fff;
+      font-weight: 400 !important;
     }
 
     /* DARKER BLUE */
@@ -456,6 +459,13 @@
       margin: 0;
       accent-color: #3b82f6;
     }
+
+    #btnClearMidiLog {
+      padding: 7px 12px;
+      border-radius: 10px;
+      font-weight: 400 !important;
+    }
+
     .meter {
       height: 10px;
       background: rgba(2, 6, 23, 0.6);
@@ -883,9 +893,9 @@
           <label for="midiInputSelect">MIDI Input</label>
           <select id="midiInputSelect" title="Choose which connected WebMIDI device this synth listens to."><option value="">No MIDI inputs yet</option></select>
         </div>
-        <div class="field" title="Listen to all incoming MIDI channels or just one specific channel.">
+        <div class="field" title="MIDI channel to receive on.">
           <label for="midiChannelSelect">Input Channel</label>
-          <select id="midiChannelSelect" title="Listen to all incoming MIDI channels or just one specific channel."></select>
+          <select id="midiChannelSelect" title="MIDI channel to receive on."></select>
         </div>
         <div class="field" title="Choose which incoming MIDI value controls expression level.">
           <label for="expressionModeSelect">Expression Source</label>
@@ -997,6 +1007,7 @@
           <input type="checkbox" id="showMidiLog" />
           Enable MIDI stream
         </label>
+        <button id="btnClearMidiLog" type="button" title="Clear the MIDI stream log">Clear MIDI Log</button>
       </div>
       <div id="midiLog" class="log" hidden>MIDI stream disabled.</div>    
     </div>
@@ -1051,6 +1062,15 @@
           <b>Bend Up Scale</b> and <b>Bend Down Scale</b> let you make upward and downward bends feel different without changing the WARBL itself.
           <div class="instructions-gap"></div>
           When <b>Enable Portamento</b> is turned on, the synth glides from one note to the next over the selected <b>Portamento Time</b>. It is off by default for all patches.
+        </div>
+
+        <hr class="instructions-divider"/>
+
+        <div class="instructions-subtitle">Reset Buttons</div>
+        <div class="instructions-subbody">
+          <b>Reset Current Preset to Defaults</b> restores only the currently selected voice to its default settings.
+          <div class="instructions-gap"></div>
+          <b>Reset All Presets to Defaults</b> clears saved changes for all voices and restores the current voice to its default settings.
         </div>
 
         <hr class="instructions-divider"/>
@@ -1197,7 +1217,7 @@
     meterValue:0,
     cc2:0, cc7:100, cc11:127,
     presetOverrides:{},
-    midiChannel:'0',
+    midiChannel:1,
     midiInputId:'',
     midiLogEnabled:false,
     midiLogLines: []
@@ -1271,8 +1291,8 @@
 
   async function confirmResetDialog(title, message) {
     const html =
-      "<div style='text-align:left;font-family:helvetica,arial,sans-serif;font-size:13pt;line-height:1.45;padding:0 18px;'>" +
-        "<div style='text-align:center;font-size:1.2em;font-weight:700;margin:0 0 12px 0;'>" +
+      "<div style='text-align:center;font-family:helvetica,arial,sans-serif;font-size:13pt;line-height:1.45;padding:0 18px;'>" +
+        "<div style='font-size:1.2em;font-weight:700;margin:0 0 12px 0;'>" +
           title +
         "</div>" +
         "<div style='margin:0;'>" +
@@ -1729,84 +1749,168 @@
     if (state.voice) state.voice.gateOff(state);
   }
 
-  function renderMidiLog() {
-    const el = $('midiLog');
-    const checkbox = $('showMidiLog');
-    if (!el || !checkbox) return;
+  function formatMidiMessage(msg) {
+    const hex = (v) => "0x" + (v ?? 0).toString(16).toUpperCase().padStart(2, "0");
+ 
+    const statusHex = hex(msg.status);
+    const data1Hex = hex(msg.data1);
+    const data2Hex = hex(msg.data2);
 
-    checkbox.checked = !!state.midiLogEnabled;
-    el.hidden = !state.midiLogEnabled;
+    if (msg.type === 0x90 && msg.data2 > 0) {
+      return "ON   " +
+        statusHex + " " + data1Hex + " " + data2Hex + "  " +
+        midiNoteToName(msg.data1) + " vel= " + msg.data2;
+    }
+
+    if (msg.type === 0x80 || (msg.type === 0x90 && msg.data2 === 0)) {
+      return "OFF  " +
+        statusHex + " " + data1Hex + " " + data2Hex + "  " +
+        midiNoteToName(msg.data1);
+    }
+
+    if (msg.type === 0xB0) {
+      let label = "CC";
+      let decoded = String(msg.data2);
+
+      if (msg.data1 === 7) {
+        label = "CC7 ";
+        decoded = "vol= " + msg.data2;
+      } else if (msg.data1 === 11) {
+        label = "CC11";
+        decoded = "expr= " + msg.data2;
+      } else if (msg.data1 === 2) {
+        label = "CC2 ";
+        decoded = "breath= " + msg.data2;
+      } else if (msg.data1 === 1) {
+        label = "MOD ";
+        decoded = "mod= " + msg.data2;
+      } else {
+        label = ("CC" + msg.data1).padEnd(4, " ");
+        decoded = String(msg.data2);
+      }
+
+      return label + " " +
+        statusHex + " " + data1Hex + " " + data2Hex + "  " +
+        decoded;
+    }
+
+    if (msg.type === 0xE0) {
+      const bend = ((msg.data2 << 7) | msg.data1) - 8192;
+      return "PB   " +
+        statusHex + " " + data1Hex + " " + data2Hex + "  " +
+        "bend= " + bend;
+    }
+
+    if (msg.type === 0xC0) {
+      return "PROG " +
+        statusHex + " " + data1Hex + "       " +
+        "pgm= " + msg.data1;
+    }
+
+    if (msg.type === 0xD0) {
+      return "CPRS " +
+        statusHex + " " + data1Hex + "       " +
+        "val= " + msg.data1;
+    }
+
+    if (msg.type === 0xA0) {
+      return "PPRS " +
+        statusHex + " " + data1Hex + " " + data2Hex + "  " +
+        midiNoteToName(msg.data1) + " p= " + msg.data2;
+    }
+
+    return "MIDI " +
+      statusHex + " " + data1Hex + " " + data2Hex;
+  }
+
+  function renderMidiLog() {
+    const logEl = $('midiLog');
+    const showCheckbox = $('showMidiLog');
+    if (!logEl || !showCheckbox) return;
+
+    logEl.hidden = !state.midiLogEnabled;
+    showCheckbox.checked = !!state.midiLogEnabled;
 
     if (!state.midiLogEnabled) {
-      el.textContent = 'MIDI stream disabled.';
+      logEl.textContent = 'MIDI stream disabled.';
       return;
     }
 
     if (!state.midiLogLines || state.midiLogLines.length === 0) {
-      el.textContent = 'Waiting for MIDI messages...';
+      const channelValue = (state.midiChannel >= 1 && state.midiChannel <= 16) ? state.midiChannel : 1;
+      const channelText = 'channel ' + channelValue;
+      logEl.textContent = 'Waiting for MIDI messages on ' + channelText + '...';
       return;
     }
 
-    el.textContent = state.midiLogLines.join('\n');
-    el.scrollTop = 0;
+    logEl.textContent = state.midiLogLines.join('\n');
+    logEl.scrollTop = logEl.scrollHeight;
+  }
+
+  function clearMidiLog() {
+    state.midiLogLines = [];
+    renderMidiLog();
   }
 
   function logMidi(text) {
-    if (!state.midiLogLines) state.midiLogLines = [];
     if (!state.midiLogEnabled) return;
 
     const now = new Date();
-    const line = `${now.toLocaleTimeString()}  ${text}`;
-    state.midiLogLines.unshift(line);
+    const timestamp =
+      now.getMinutes().toString().padStart(2, "0") + ":" +
+      now.getSeconds().toString().padStart(2, "0") + "." +
+      now.getMilliseconds().toString().padStart(3, "0");
 
-    while (state.midiLogLines.length > 120) {
-      state.midiLogLines.pop();
+    state.midiLogLines.push("[" + timestamp + "] " + text);
+
+    const maxLines = 120;
+    if (state.midiLogLines.length > maxLines) {
+      state.midiLogLines.splice(0, state.midiLogLines.length - maxLines);
     }
 
     renderMidiLog();
   }
 
   function handleMidiMessage(event){
-    const [status, data1, data2] = event.data;
+    const [status = 0, data1 = 0, data2 = 0] = event.data || [];
     const type = status & 0xF0;
-    const channel = (status & 0x0F) + 1;
-    const selectedChannel = +$('midiChannelSelect').value;
-    if (selectedChannel !== 0 && channel !== selectedChannel) return;
+    const channel = (status & 0x0F) + 1;   // MIDI channels 1-16
+    const selectedChannel = Number(state.midiChannel || 1);
+
+    if (channel !== selectedChannel) {
+      return;
+    }
+
+    const msg = { status, data1, data2, type };
+
+    logMidi(formatMidiMessage(msg));
 
     switch(type){
       case 0x90:
-        if (data2 === 0) {
-          noteOff(data1);
-          logMidi(`Note Off ${data1}`);
-        } else {
-          noteOn(data1, data2);
-          logMidi(`Note On ${data1} vel ${data2}`);
-        }
+        if (data2 === 0) noteOff(data1);
+        else noteOn(data1, data2);
         break;
+
       case 0x80:
         noteOff(data1);
-        logMidi(`Note Off ${data1}`);
         break;
+
       case 0xB0:
         if (data1 === 2) state.cc2 = data2;
         if (data1 === 7) state.cc7 = data2;
         if (data1 === 11) state.cc11 = data2;
-        if ([2,7,11].includes(data1)) {
-          updateVoice();
-          logMidi(`CC${data1} ${data2}`);
-        }
+        if ([2,7,11].includes(data1)) updateVoice();
         if (data1 === 123) allNotesOff();
         break;
+
       case 0xE0: {
         const raw = ((data2 << 7) | data1) - 8192;
         state.pitchBend = raw / 8192;
         updateVoice();
-        logMidi(`Pitch Bend ${(state.pitchBend).toFixed(3)}`);
         break;
       }
     }
   }
-
   async function connectMidi(){
     if (!navigator.requestMIDIAccess){
       $('midiStatus').textContent = 'WebMIDI unsupported';
@@ -1838,7 +1942,6 @@
         ? (state.midiInput.name || 'Connected')
         : 'Disconnected';
 
-      logMidi('MIDI access granted.');
       return true;
     } catch (err) {
       console.error(err);
@@ -1921,10 +2024,16 @@
     const el = $(id), out = $(id + 'Value');
     const update = () => {
       state[id] = +el.value;
-      if(out) out.textContent = formatter(+el.value);
-      if (id.startsWith('reverb')) updateReverb();
-      else if (id === 'masterVolume') updateOutputLevels();
-      else updateVoice();
+      if (out) out.textContent = formatter(+el.value);
+
+      if (id === 'reverbPreDelay' || id === 'reverbTone') {
+        updateReverb();
+      } else if (id === 'reverbWet' || id === 'reverbDry' || id === 'masterVolume') {
+        updateOutputLevels();
+      } else {
+        updateVoice();
+      }
+
       saveState();
     };
     el.addEventListener('input', update);
@@ -1934,12 +2043,14 @@
   function bindSelect(id){
     const el = $(id);
     const update = () => {
-      state[id.replace('Select','')] = el.value;
       if (id === 'reverbStyleSelect') state.reverbStyle = el.value;
-      if (id === 'expressionModeSelect') state.expressionMode = el.value;
-      if (id === 'priorityMode') state.priorityMode = el.value;
-      if (id === 'midiInputSelect') attachSelectedMidiInput();
-      if (id === 'reverbStyleSelect') updateReverb(); else updateVoice();
+      else if (id === 'expressionModeSelect') state.expressionMode = el.value;
+      else if (id === 'priorityMode') state.priorityMode = el.value;
+      else if (id === 'midiInputSelect') attachSelectedMidiInput();
+
+      if (id === 'reverbStyleSelect') updateReverb();
+      else if (id !== 'midiInputSelect') updateVoice();
+
       saveState();
     };
     el.addEventListener('change', update);
@@ -1948,10 +2059,13 @@
   function populateChannels(){
     const select = $('midiChannelSelect');
     select.innerHTML = '';
-    [['0','All Channels'], ...Array.from({length:16}, (_,i)=>[String(i+1),`Channel ${i+1}`])].forEach(([v,t]) => {
-      const o = document.createElement('option'); o.value = v; o.textContent = t; select.appendChild(o);
+    Array.from({length:16}, (_,i)=>[String(i+1), `Channel ${i+1}`]).forEach(([v,t]) => {
+      const o = document.createElement('option');
+      o.value = v;
+      o.textContent = t;
+      select.appendChild(o);
     });
-    select.value = '0';
+    select.value = '1';
   }
 
   function clonePresetDefaults(name){
@@ -2004,7 +2118,7 @@
   function saveState(){
     try{
       captureCurrentPresetOverrides();
-      localStorage.setItem('warblSoundLabState_v2', JSON.stringify({
+      localStorage.setItem('warblSoundLabState_v3', JSON.stringify({
         patch: state.patch,
         midiChannel: $('midiChannelSelect').value,
         midiInputId: $('midiInputSelect') ? $('midiInputSelect').value : '',
@@ -2016,7 +2130,7 @@
 
   function loadState(){
     try{
-      const raw = localStorage.getItem('warblSoundLabState_v2');
+      const raw = localStorage.getItem('warblSoundLabState_v3');
       if (!raw) {
         Object.assign(state, clonePresetDefaults(state.patch || 'whistle'));
         return;
@@ -2025,7 +2139,8 @@
       state.patch = PRESETS[saved.patch] ? saved.patch : 'whistle';
       state.presetOverrides = saved.presetOverrides && typeof saved.presetOverrides === 'object' ? saved.presetOverrides : {};
       Object.assign(state, getEffectivePresetSettings(state.patch));
-      state.midiChannel = saved.midiChannel || '0';
+      const loadedMidiChannel = Number(saved.midiChannel ?? 1);
+      state.midiChannel = (loadedMidiChannel >= 1 && loadedMidiChannel <= 16) ? loadedMidiChannel : 1;
       state.midiInputId = saved.midiInputId || '';
       state.midiLogEnabled = !!saved.midiLogEnabled;
     } catch(e){
@@ -2038,7 +2153,9 @@
     $('expressionModeSelect').value = state.expressionMode;
     $('priorityMode').value = state.priorityMode;
     $('reverbStyleSelect').value = state.reverbStyle;
-    $('midiChannelSelect').value = String(state.midiChannel || '0');
+    $('midiChannelSelect').value = String(
+      (state.midiChannel >= 1 && state.midiChannel <= 16) ? state.midiChannel : 1
+    );
     $('portamentoEnabled').checked = !!state.portamentoEnabled;
     updatePresetButtons();
   }
@@ -2099,13 +2216,12 @@
     }
 
     saveState();
-    logMidi(`Reset preset "${presetName}" to defaults.`);
   }
 
   async function resetAllPresetsToDefaults(){
     const confirmed = await confirmResetDialog(
       "Reset All Presets",
-      "Reset <b>all presets</b> and current settings back to their default values?"
+      "Reset <b>all presets</b> to their default settings?"
     );
 
     if (!confirmed) return;
@@ -2125,7 +2241,6 @@
     }
 
     saveState();
-    logMidi('Reset all presets to defaults.');
   }
 
   function refreshValueLabels(){
@@ -2186,7 +2301,12 @@
     bindSelect('expressionModeSelect');
     bindSelect('priorityMode');
     bindSelect('reverbStyleSelect');
-    $('midiChannelSelect').addEventListener('change', () => { state.midiChannel = $('midiChannelSelect').value; saveState(); });
+    $('midiChannelSelect').addEventListener('change', () => {
+      state.midiChannel = Number($('midiChannelSelect').value);
+      allNotesOff();
+      clearMidiLog();
+      saveState();
+    });
     $('portamentoEnabled').addEventListener('change', () => { state.portamentoEnabled = $('portamentoEnabled').checked; saveState(); });
     $('btnConnect').addEventListener('click', connectMidi);
     $('btnAllNotesOff').addEventListener('click', allNotesOff);
@@ -2198,6 +2318,7 @@
       saveState();
       renderMidiLog();
     });
+    $('btnClearMidiLog').addEventListener('click', clearMidiLog);
 
     const btnInstructions = $('btnInstructions');
     const btnCloseInstructions = $('btnCloseInstructions');
@@ -2224,7 +2345,8 @@
 
     if (!PRESETS[state.patch]) state.patch = 'whistle';
     updatePresetButtons();
-    logMidi('Ready.');
+
+    renderMidiLog();
   }
 
   init();
