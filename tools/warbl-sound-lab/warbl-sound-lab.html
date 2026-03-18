@@ -1195,7 +1195,7 @@
     clarinet:{patch:'clarinet', tone:0.54, brightness:0.42, texture:0.10, body:0.62, attack:0.012, release:0.12, vibratoRate:5.1, vibratoDepth:6, brightnessFollow:0.48, breathCurve:1.25, reverbStyle:'room', reverbWet:0.12, masterVolume:0.75, portamentoEnabled:false, portamentoMs:70},
     brass:{patch:'brass', tone:0.66, brightness:0.64, texture:0.18, body:0.56, attack:0.018, release:0.16, vibratoRate:4.8, vibratoDepth:5, brightnessFollow:0.52, breathCurve:1.15, reverbStyle:'plate', reverbWet:0.13, masterVolume:0.4, portamentoEnabled:false, portamentoMs:70},
     strings:{patch:'strings', tone:0.52, brightness:0.38, texture:0.22, body:0.70, attack:0.045, release:0.35, vibratoRate:5.2, vibratoDepth:10, brightnessFollow:0.35, breathCurve:1.0, reverbStyle:'hall', reverbWet:0.22, masterVolume:1.0, portamentoEnabled:false, portamentoMs:70},
-    lead:{patch:'lead', tone:0.62, brightness:0.70, texture:0.06, body:0.46, attack:0.005, release:0.12, vibratoRate:5.0, vibratoDepth:9, brightnessFollow:0.45, breathCurve:1.0, reverbStyle:'ambient', reverbWet:0.17, masterVolume:0.5, portamentoEnabled:false, portamentoMs:70}
+    lead:{patch:'lead', tone:0.62, brightness:0.70, texture:0.06, body:0.46, attack:0.005, release:0.12, vibratoRate:5.0, vibratoDepth:9, brightnessFollow:0.45, breathCurve:1.0, reverbStyle:'ambient', reverbWet:0.17, masterVolume:1.0, portamentoEnabled:false, portamentoMs:70}
   };
 
   const PRESET_SETTING_KEYS = [
@@ -1332,7 +1332,7 @@
       clarinet:{osc1:'square', osc2:'sine', osc3:'sine', ratios:[1,3,5], gains:[0.11,0.024,0.014], sub:0.02, noiseColor:'bandpass', noiseQ:2.2, baseCutoff:1200, cutoffSpan:1700, q:1.4, formantFreq:1150, formantGain:7.5, formantQ:2.2, drive:1.05, chorusMix:0.0, chorusDepth:0.00003, chorusRate:0.18},
       brass:{osc1:'sawtooth', osc2:'square', osc3:'sawtooth', ratios:[1,0.997,2], gains:[0.095,0.038,0.022], sub:0.03, noiseColor:'highpass', noiseQ:0.9, baseCutoff:900, cutoffSpan:5200, q:1.0, formantFreq:820, formantGain:6.5, formantQ:1.0, drive:1.7, chorusMix:0.04, chorusDepth:0.00015, chorusRate:0.28},
       strings:{osc1:'sawtooth', osc2:'sawtooth', osc3:'triangle', ratios:[1,1.008,2], gains:[0.09,0.075,0.02], sub:0.0, noiseColor:'lowpass', noiseQ:0.35, baseCutoff:900, cutoffSpan:2200, q:0.55, formantFreq:520, formantGain:2.4, formantQ:0.7, drive:0.95, chorusMix:0.38, chorusDepth:0.0028, chorusRate:0.24},
-      lead:{osc1:'sawtooth', osc2:'square', osc3:'triangle', ratios:[1,2,0.5], gains:[0.095,0.030,0.020], sub:0.045, noiseColor:'highpass', noiseQ:0.8, baseCutoff:1500, cutoffSpan:5500, q:1.6, formantFreq:1650, formantGain:4.0, formantQ:1.0, drive:1.45, chorusMix:0.08, chorusDepth:0.0002, chorusRate:0.42}
+      lead:{osc1:'sawtooth', osc2:'square', osc3:'triangle', ratios:[1,2,0.5], gains:[0.035,0.012,0.008], sub:0.045, noiseColor:'highpass', noiseQ:0.8, baseCutoff:1500, cutoffSpan:5500, q:1.6, formantFreq:1650, formantGain:4.0, formantQ:1.0, drive:1.45, chorusMix:0.08, chorusDepth:0.0002, chorusRate:0.42}    
     };
     return profiles[name] || profiles.whistle;
   }
@@ -2031,9 +2031,16 @@
     try {
       const access = await navigator.requestMIDIAccess({sysex:false});
       state.midiAccess = access;
-      access.onstatechange = refreshMidiInputs;
 
-      refreshMidiInputs();
+      access.onstatechange = async () => {
+        try {
+          await refreshMidiInputs();
+        } catch (err) {
+          console.error('MIDI state change refresh failed:', err);
+        }
+      };
+
+      await refreshMidiInputs();
 
       const inputs = access && access.inputs
         ? [...access.inputs.values()].filter(input =>
@@ -2045,8 +2052,6 @@
         showNoMidiInputsDialog();
         return false;
       }
-
-      await ensureAudio();
 
       $('midiStatus').textContent = state.midiInput
         ? (state.midiInput.name || 'Connected')
@@ -2061,7 +2066,7 @@
     }
   }
 
-  function refreshMidiInputs(){
+  async function refreshMidiInputs(){
     const select = $('midiInputSelect');
     const previous = state.midiInputId || select.value;
 
@@ -2094,13 +2099,21 @@
       const hasPrevious = inputs.some(input => input.id === previous);
       select.value = hasPrevious ? previous : inputs[0].id;
       state.midiInputId = select.value;
+
+      attachSelectedMidiInput();
+
+      if (!state.audioCtx || state.audioCtx.state !== 'running') {
+        try {
+          await ensureAudio();
+        } catch (err) {
+          console.error('Unable to start audio after MIDI device became available:', err);
+        }
+      }
     } else {
       state.midiInput = null;
       state.midiInputId = '';
       $('midiStatus').textContent = 'Disconnected';
     }
-
-    attachSelectedMidiInput();
   }
 
   function attachSelectedMidiInput(){
@@ -2228,7 +2241,7 @@
   function saveState(){
     try{
       captureCurrentPresetOverrides();
-      localStorage.setItem('warblSoundLabState_v5', JSON.stringify({
+      localStorage.setItem('warblSoundLabState_v6', JSON.stringify({
         patch: state.patch,
         midiChannel: $('midiChannelSelect').value,
         midiInputId: $('midiInputSelect') ? $('midiInputSelect').value : '',
@@ -2240,7 +2253,7 @@
 
   function loadState(){
     try{
-      const raw = localStorage.getItem('warblSoundLabState_v5');
+      const raw = localStorage.getItem('warblSoundLabState_v6');
       if (!raw) {
         Object.assign(state, clonePresetDefaults(state.patch || 'whistle'));
         return;
@@ -2388,8 +2401,6 @@
       if (btnConnect) {
         btnConnect.disabled = true;
         btnConnect.title = 'WebMIDI is not available in this browser';
-        btnConnect.style.opacity = '0.55';
-        btnConnect.style.cursor = 'not-allowed';
       }
 
       $('midiStatus').textContent = 'WebMIDI unsupported';
