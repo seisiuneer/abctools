@@ -10,7 +10,7 @@
   <link rel='preconnect' href='https://secureservercdn.net' crossorigin />
   <meta property="og:type" content="website" />
   <meta property="og:title" content="WARBL Sound Lab" />
-  <meta property="og:description" content="WebMIDI MIDI Sound Module for the WARBL by Michael Eskin" />
+  <meta property="og:description" content="WebMIDI Sound Module for the WARBL by Michael Eskin" />
   <meta property="og:url" content="https://michaeleskin.com/warbl-sound-lab/warbl-sound-lab.html" />
   <meta property="og:site_name" content="WARBL Sound Lab" />
   <meta property="og:image" content="https://michaeleskin.com/warbl-sound-lab/img/warbl-sound-lab.png"/>
@@ -366,6 +366,7 @@
       background: linear-gradient(135deg, #6b1414, #991b1b) !important;
       border-color: #ef4444;
       color: #fff;
+      margin-left: auto;
     }
 
     #btnResetAllPresets:hover {
@@ -820,7 +821,7 @@
     <button id="btnInstructions" class="hero-help" title="Open operating instructions" aria-label="Open operating instructions" type="button">?</button>
     <div class="hero-text">
       <h1>WARBL Sound Lab</h1>
-      <div class="hero-subtitle">WebMIDI MIDI Sound Module for the WARBL by Michael Eskin</div>
+      <div class="hero-subtitle">WebMIDI Sound Module for the WARBL by Michael Eskin</div>
     </div>  
   </div>
 
@@ -1268,6 +1269,35 @@
     }
   }
 
+  async function confirmResetDialog(title, message) {
+    const html =
+      "<div style='text-align:left;font-family:helvetica,arial,sans-serif;font-size:13pt;line-height:1.45;padding:0 18px;'>" +
+        "<div style='text-align:center;font-size:1.2em;font-weight:700;margin:0 0 12px 0;'>" +
+          title +
+        "</div>" +
+        "<div style='margin:0;'>" +
+          message +
+        "</div>" +
+      "</div>";
+
+    if (window.DayPilot && DayPilot.Modal && DayPilot.Modal.confirm) {
+      const result = await DayPilot.Modal.confirm(html, {
+        theme: "modal_compact",
+        top: 100,
+        width: 600,
+        autoFocus: false,
+        scrollWithPage: true,
+        okText: "Reset",
+        cancelText: "Cancel"
+      });
+      return !!(result && result.canceled !== true);
+    }
+
+    return window.confirm(
+      title.replace(/<[^>]*>/g, '') + "\n\n" + message.replace(/<[^>]*>/g, '')
+    );
+  }
+  
   function getPatchProfile(name){
     const profiles = {
       whistle:{osc1:'sine', osc2:'triangle', osc3:'sine', ratios:[1,2.01,3.0], gains:[0.16,0.022,0.010], sub:0.0, noiseColor:'bandpass', noiseQ:1.2, baseCutoff:3200, cutoffSpan:4200, q:0.6, formantFreq:2400, formantGain:3.0, formantQ:1.4, drive:0.92, chorusMix:0.0, chorusDepth:0.00003, chorusRate:0.18},
@@ -2033,38 +2063,67 @@
     saveState();
   }
 
-  function resetCurrentPresetToDefaults(){
+  function getPresetDisplayName(name) {
+    return ({
+      whistle: 'Air',
+      clarinet: 'Reed',
+      brass: 'Brass',
+      strings: 'Pad',
+      lead: 'Lead'
+    })[name] || name;
+  }
+
+  async function resetCurrentPresetToDefaults(){
     const presetName = state.patch;
     if (!PRESETS[presetName]) return;
+
+    const confirmed = await confirmResetDialog(
+      "Reset Current Preset",
+      `Reset the current preset <b>${getPresetDisplayName(presetName)}</b> to its default settings?`
+    );
+
+    if (!confirmed) return;
+
     const store = getPresetOverridesStore();
     delete store[presetName];
     Object.assign(state, clonePresetDefaults(presetName));
     state.patch = presetName;
     applyStateToUi();
     refreshValueLabels();
+
     if (state.audioCtx) {
       if (state.currentNote != null && state.voice) state.voice.configurePatch(state);
       updateReverb();
       updateOutputLevels();
       updateVoice();
     }
+
     saveState();
     logMidi(`Reset preset "${presetName}" to defaults.`);
   }
 
-  function resetAllPresetsToDefaults(){
+  async function resetAllPresetsToDefaults(){
+    const confirmed = await confirmResetDialog(
+      "Reset All Presets",
+      "Reset <b>all presets</b> and current settings back to their default values?"
+    );
+
+    if (!confirmed) return;
+
     state.presetOverrides = {};
     const currentPreset = PRESETS[state.patch] ? state.patch : 'whistle';
     Object.assign(state, clonePresetDefaults(currentPreset));
     state.patch = currentPreset;
     applyStateToUi();
     refreshValueLabels();
+
     if (state.audioCtx) {
       if (state.currentNote != null && state.voice) state.voice.configurePatch(state);
       updateReverb();
       updateOutputLevels();
       updateVoice();
     }
+
     saveState();
     logMidi('Reset all presets to defaults.');
   }
