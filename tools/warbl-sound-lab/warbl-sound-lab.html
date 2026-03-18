@@ -452,21 +452,6 @@
       flex: 0 0 auto;
     }
 
-    .midi-log-controls label {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      cursor: pointer;
-      color: #cbd5e1;
-    }
-
-    .midi-log-controls input[type="checkbox"] {
-      width: 16px;
-      height: 16px;
-      margin: 0;
-      accent-color: #3b82f6;
-    }
-
     #btnClearMidiLog {
       padding: 7px 12px;
       border-radius: 10px;
@@ -485,6 +470,36 @@
       height: 100%;
       width: 0%;
       background: linear-gradient(90deg, #22c55e, #60a5fa);
+    }
+
+    .meter-controls {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px 14px;
+      margin-top: 10px;
+      margin-bottom: 12px;  
+      flex: 0 0 auto;
+    }
+
+    .meter-controls label,
+    .midi-log-controls label {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      color: #cbd5e1;
+      font-size: 0.95rem;
+      font-weight: 400;
+      line-height: 1.2;
+    }
+
+    .meter-controls input[type="checkbox"],
+    .midi-log-controls input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      margin: 0;
+      accent-color: #3b82f6;
     }
 
     .checkbox-row {
@@ -1005,9 +1020,17 @@
         <div class="stat"><div class="k">Current Note</div><div class="v" id="currentNote">—</div></div>
         <div class="stat"><div class="k">Expression</div><div class="v" id="expressionReadout">0%</div></div>
       </div>
-      <div style="margin-top:14px">
-        <div class="tiny" style="margin-bottom:6px">Output Level</div>
-        <div class="meter"><div id="outputMeter"></div></div>
+      <h2 class="section-title" style="margin-top:18px">Output Level</h2>
+      <div style="margin-bottom:18px">
+        <div class="meter-controls">
+          <label for="showOutputMeter">
+            <input type="checkbox" id="showOutputMeter" />
+            Enable output level meter
+          </label>
+        </div>
+        <div id="outputMeterBarWrapper" class="meter">
+          <div id="outputMeter"></div>
+        </div>       
       </div>
       <h2 class="section-title" style="margin-top:18px">MIDI Stream</h2>
       <div class="midi-log-controls">
@@ -1228,6 +1251,7 @@
     midiChannel:1,
     midiInputId:'',
     midiLogEnabled:false,
+    meterEnabled:false,
     midiLogLines: []
   };
 
@@ -1619,10 +1643,6 @@
     state.comp.attack.value = 0.003;
     state.comp.release.value = 0.2;
 
-    state.analyser = ctx.createAnalyser();
-    state.analyser.fftSize = 512;
-    state.meterBuf = new Float32Array(state.analyser.fftSize);
-
     state.voice.output.connect(state.dryGain);
     state.voice.output.connect(state.preDelay);
     state.preDelay.connect(state.wetGain);
@@ -1630,9 +1650,8 @@
     state.dryGain.connect(state.masterGain);
     state.wetGain.connect(state.masterGain);
     state.masterGain.connect(state.comp);
-    state.comp.connect(state.analyser);
-    state.analyser.connect(ctx.destination);
 
+    updateMeterRouting();
     updateReverb();
     updateOutputLevels();
     startMeter();
@@ -2241,11 +2260,12 @@
   function saveState(){
     try{
       captureCurrentPresetOverrides();
-      localStorage.setItem('warblSoundLabState_v7', JSON.stringify({
+      localStorage.setItem('warblSoundLabState_v9', JSON.stringify({
         patch: state.patch,
         midiChannel: $('midiChannelSelect').value,
         midiInputId: $('midiInputSelect') ? $('midiInputSelect').value : '',
         midiLogEnabled: !!state.midiLogEnabled,
+        meterEnabled: !!state.meterEnabled,
         presetOverrides: state.presetOverrides || {}
       }));
     } catch(e){}
@@ -2253,7 +2273,7 @@
 
   function loadState(){
     try{
-      const raw = localStorage.getItem('warblSoundLabState_v7');
+      const raw = localStorage.getItem('warblSoundLabState_v9');
       if (!raw) {
         Object.assign(state, clonePresetDefaults(state.patch || 'whistle'));
         return;
@@ -2266,6 +2286,7 @@
       state.midiChannel = (loadedMidiChannel >= 1 && loadedMidiChannel <= 16) ? loadedMidiChannel : 1;
       state.midiInputId = saved.midiInputId || '';
       state.midiLogEnabled = !!saved.midiLogEnabled;
+      state.meterEnabled = !!saved.meterEnabled;
     } catch(e){
       Object.assign(state, clonePresetDefaults('whistle'));
     }
@@ -2280,6 +2301,15 @@
       (state.midiChannel >= 1 && state.midiChannel <= 16) ? state.midiChannel : 1
     );
     $('portamentoEnabled').checked = !!state.portamentoEnabled;
+
+    $('showOutputMeter').checked = !!state.meterEnabled;
+    renderOutputMeterUi();
+
+    if (state.audioCtx) {
+      updateMeterRouting();
+      startMeter();
+    }
+
     updatePresetButtons();
   }
 
@@ -2379,18 +2409,92 @@
     Object.keys(formatters).forEach(id => { const out = $(id + 'Value'); if(out) out.textContent = formatters[id](+$(id).value); });
   }
 
-  function startMeter(){
-    const draw = () => {
-      if (state.analyser){
-        state.analyser.getFloatTimeDomainData(state.meterBuf);
-        let peak = 0;
-        for (let i = 0; i < state.meterBuf.length; i++) peak = Math.max(peak, Math.abs(state.meterBuf[i]));
-        state.meterValue += (peak - state.meterValue) * 0.22;
-        $('outputMeter').style.width = `${Math.min(100, state.meterValue * 170)}%`;
+  function updateMeterRouting() {
+    const ctx = state.audioCtx;
+    if (!ctx || !state.comp) return;
+
+    try {
+      state.comp.disconnect();
+    } catch (e) {}
+
+    if (state.analyser) {
+      try {
+        state.analyser.disconnect();
+      } catch (e) {}
+    }
+
+    if (state.meterEnabled) {
+      if (!state.analyser) {
+        state.analyser = ctx.createAnalyser();
+        state.analyser.fftSize = 512;
       }
-      requestAnimationFrame(draw);
+
+      state.meterBuf = new Float32Array(state.analyser.fftSize);
+
+      state.comp.connect(state.analyser);
+      state.analyser.connect(ctx.destination);
+    } else {
+      state.analyser = null;
+      state.meterBuf = null;
+      state.meterValue = 0;
+
+      const meterEl = $('outputMeter');
+      if (meterEl) meterEl.style.width = '0%';
+
+      state.comp.connect(ctx.destination);
+    }
+  }
+
+  function renderOutputMeterUi() {
+    const meter = $('outputMeterBarWrapper');
+    const bar = $('outputMeter');
+    if (!meter) return;
+
+    meter.style.display = state.meterEnabled ? '' : 'none';
+
+    if (!state.meterEnabled && bar) {
+      bar.style.width = '0%';
+    }
+  }
+
+  function startMeter(){
+    if (state.meterAnimationFrame) {
+      cancelAnimationFrame(state.meterAnimationFrame);
+      state.meterAnimationFrame = null;
+    }
+
+    const meterEl = $('outputMeter');
+
+    if (!state.meterEnabled || !state.analyser || !state.meterBuf) {
+      state.meterValue = 0;
+      if (meterEl) meterEl.style.width = '0%';
+      return;
+    }
+
+    const draw = () => {
+      const meterEl = $('outputMeter');
+
+      if (!state.meterEnabled || !state.analyser || !state.meterBuf) {
+        state.meterValue = 0;
+        if (meterEl) meterEl.style.width = '0%';
+        state.meterAnimationFrame = null;
+        return;
+      }
+
+      state.analyser.getFloatTimeDomainData(state.meterBuf);
+      let peak = 0;
+      for (let i = 0; i < state.meterBuf.length; i++) {
+        peak = Math.max(peak, Math.abs(state.meterBuf[i]));
+      }
+      state.meterValue += (peak - state.meterValue) * 0.22;
+      if (meterEl) {
+        meterEl.style.width = `${Math.min(100, state.meterValue * 170)}%`;
+      }
+
+      state.meterAnimationFrame = requestAnimationFrame(draw);
     };
-    requestAnimationFrame(draw);
+
+    state.meterAnimationFrame = requestAnimationFrame(draw);
   }
 
   function updateWebMidiAvailabilityUi() {
@@ -2508,6 +2612,15 @@
     instructionsOverlay.addEventListener('click', (e) => { if (e.target === instructionsOverlay) closeInstructions(); });
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && instructionsOverlay.style.display === 'block') closeInstructions(); });
     $('btnWarblConfig').addEventListener('click', () => window.open('https://warbl.xyz/configure.html', '_blank', 'noopener,noreferrer'));
+
+    $('showOutputMeter').addEventListener('change', () => {
+      state.meterEnabled = $('showOutputMeter').checked;
+
+      updateMeterRouting();  
+      renderOutputMeterUi();
+      saveState();
+      startMeter();
+    });
 
     if (!PRESETS[state.patch]) state.patch = 'whistle';
     updatePresetButtons();
