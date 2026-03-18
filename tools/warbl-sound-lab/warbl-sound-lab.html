@@ -964,10 +964,6 @@
             <option value="church">Church</option>
           </select>
         </div>
-        <div class="control" title="Sets final output level before the safety compressor.">
-          <label for="masterVolume">Master Volume <span class="value" id="masterVolumeValue"></span></label>
-          <input id="masterVolume" title="Sets final output level before the safety compressor." type="range" min="0" max="2" step="0.01" value="0.75">
-        </div>
         <div class="control" title="Sets how much reverberated signal is mixed in.">
           <label for="reverbWet">Reverb Wet <span class="value" id="reverbWetValue"></span></label>
           <input id="reverbWet" title="Sets how much reverberated signal is mixed in." type="range" min="0" max="1" step="0.01" value="0.16">
@@ -983,6 +979,10 @@
         <div class="control" title="Tilts the reverb darker or brighter.">
           <label for="reverbTone">Reverb Tone <span class="value" id="reverbToneValue"></span></label>
           <input id="reverbTone" title="Tilts the reverb darker or brighter." type="range" min="0.05" max="0.95" step="0.01" value="0.48">
+        </div>
+        <div class="control" title="Sets final output level before the safety compressor.">
+          <label for="masterVolume">Master Volume <span class="value" id="masterVolumeValue"></span></label>
+          <input id="masterVolume" title="Sets final output level." type="range" min="0" max="2" step="0.01" value="0.75">
         </div>
       </div>
 
@@ -2241,7 +2241,7 @@
   function saveState(){
     try{
       captureCurrentPresetOverrides();
-      localStorage.setItem('warblSoundLabState_v6', JSON.stringify({
+      localStorage.setItem('warblSoundLabState_v7', JSON.stringify({
         patch: state.patch,
         midiChannel: $('midiChannelSelect').value,
         midiInputId: $('midiInputSelect') ? $('midiInputSelect').value : '',
@@ -2253,7 +2253,7 @@
 
   function loadState(){
     try{
-      const raw = localStorage.getItem('warblSoundLabState_v6');
+      const raw = localStorage.getItem('warblSoundLabState_v7');
       if (!raw) {
         Object.assign(state, clonePresetDefaults(state.patch || 'whistle'));
         return;
