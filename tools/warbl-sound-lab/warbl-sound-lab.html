@@ -1016,10 +1016,19 @@
       <h2 class="section-title">Live Status</h2>
       <div class="stats">
         <div class="stat"><div class="k">Audio</div><div class="v" id="audioStatus">Suspended</div></div>
-        <div class="stat"><div class="k">MIDI</div><div class="v" id="midiStatus">Disconnected</div></div>
+        <div class="stat"><div class="k">MIDI</div><div class="v" id="midiStatus">Not connected</div></div>
         <div class="stat"><div class="k">Current Note</div><div class="v" id="currentNote">—</div></div>
         <div class="stat"><div class="k">Expression</div><div class="v" id="expressionReadout">0%</div></div>
       </div>
+      <div style="margin-bottom:18px">
+        <div class="meter-controls" style="margin-top:0; margin-bottom:0;" title="Turn this on if you hear glitches, crackles, or delayed response.">
+          <label for="lowCpuMode">
+            <input type="checkbox" id="lowCpuMode" title="Turn this on if you hear glitches, crackles, or delayed response." />
+            Enable lower CPU use mode
+          </label>
+        </div>
+      </div>
+
       <h2 class="section-title" style="margin-top:18px">Output Level</h2>
       <div style="margin-bottom:18px">
         <div class="meter-controls">
@@ -1129,6 +1138,17 @@
 
         <hr class="instructions-divider"/>
 
+        <div class="instructions-subtitle">Lower CPU Use Mode</div>
+        <div class="instructions-subbody">
+          <b>Lower CPU use mode</b> reduces processor usage by simplifying parts of the internal synth voice while leaving the current reverb system in place.
+          <div class="instructions-gap"></div>
+          This can help on slower computers, when running many browser tabs, or if you hear glitches, crackles, or delayed response.
+          <div class="instructions-gap"></div>
+          When enabled, some patches may sound a little less rich or animated, especially the more layered sounds such as <b>Pad</b>, but the tool should remain more efficient overall.
+        </div>
+
+        <hr class="instructions-divider"/>
+
         <div class="instructions-subtitle">Troubleshooting</div>
         <div class="instructions-subbody">
           If you do not hear sound:
@@ -1137,6 +1157,10 @@
           • Verify the correct MIDI device is selected.<br/>
           • Check that the correct input channel is selected.<br/>
           • Try clicking <b>All Notes Off</b> if a note gets stuck.
+          <div class="instructions-gap"></div>
+          If you hear pops or other glitches:
+          <div class="instructions-gap"></div>
+          • Try turning on <b>Lower CPU use mode</b>.<br/>
         </div>
 
         <hr class="instructions-divider"/>
@@ -1252,6 +1276,7 @@
     midiInputId:'',
     midiLogEnabled:false,
     meterEnabled:false,
+    lowCpuMode:false,
     midiLogLines: []
   };
 
@@ -1361,6 +1386,33 @@
     return profiles[name] || profiles.whistle;
   }
 
+  function getEffectivePatchProfile(settings){
+    const base = getPatchProfile(settings.patch);
+
+    if (!state.lowCpuMode) {
+      return base;
+    }
+
+    return {
+      ...base,
+      gains: [
+        base.gains[0],
+        base.gains[1] * 0.90,
+        base.gains[2]
+      ],
+      sub: base.sub * 0.65,
+      noiseQ: Math.max(0.5, base.noiseQ * 0.82),
+      q: Math.max(0.45, base.q * 0.82),
+      formantGain: base.formantGain * 0.65,
+      formantQ: Math.max(0.6, base.formantQ * 0.75),
+      drive: Math.max(0.9, base.drive * 0.9),
+      chorusMix: settings.patch === 'strings'
+        ? Math.min(0.12, base.chorusMix * 0.30)
+        : Math.min(0.03, base.chorusMix * 0.35),
+      chorusDepth: base.chorusDepth * 0.25
+    };
+  }
+
   class SimpleVoice {
     constructor(ctx){
       this.ctx = ctx;
@@ -1374,6 +1426,7 @@
       this.osc2 = ctx.createOscillator();
       this.osc3 = ctx.createOscillator();
       this.subOsc = ctx.createOscillator();
+
       this.osc1Gain = ctx.createGain();
       this.osc2Gain = ctx.createGain();
       this.osc3Gain = ctx.createGain();
@@ -1401,7 +1454,7 @@
       this.formant.gain.value = 3;
 
       this.saturator = ctx.createWaveShaper();
-      this.saturator.oversample = '2x';
+      this.saturator.oversample = state.lowCpuMode ? 'none' : '2x';
       this.saturator.curve = this.makeDriveCurve(1.1);
 
       this.vibrato = ctx.createOscillator();
@@ -1409,20 +1462,24 @@
       this.vibratoGain = ctx.createGain();
       this.vibratoGain.gain.value = 0;
       this.vibrato.connect(this.vibratoGain);
+
+      this.osc3VibratoConnected = false;
+
       this.vibratoGain.connect(this.osc1.frequency);
       this.vibratoGain.connect(this.osc2.frequency);
-      this.vibratoGain.connect(this.osc3.frequency);
       this.vibratoGain.connect(this.subOsc.frequency);
 
       this.osc1.connect(this.osc1Gain);
       this.osc2.connect(this.osc2Gain);
-      this.osc3.connect(this.osc3Gain);
       this.subOsc.connect(this.subGain);
 
       this.osc1Gain.connect(this.toneFilter);
       this.osc2Gain.connect(this.toneFilter);
-      this.osc3Gain.connect(this.toneFilter);
       this.subGain.connect(this.toneFilter);
+
+      this.osc3Connected = false;
+      this.setOsc3Bypass(!state.lowCpuMode);
+      this.setOsc3VibratoRouting(!state.lowCpuMode);
 
       this.noiseSource.connect(this.noiseFilter);
       this.noiseFilter.connect(this.noiseGain);
@@ -1464,12 +1521,42 @@
       this.currentPatch = '';
       this.noteGlideTime = 0;
       this.noteGlideUntil = 0;
+      this.releaseEndTime = 0;
+      this.currentLowCpuMode = state.lowCpuMode;
+      this.lastPulseFlag = false;
+      this.lastBendSemis = 0;
+    }
+
+    setOsc3Bypass(enabled){
+      if (enabled && !this.osc3Connected) {
+        this.osc3.connect(this.osc3Gain);
+        this.osc3Gain.connect(this.toneFilter);
+        this.osc3Connected = true;
+      } else if (!enabled && this.osc3Connected) {
+        try { this.osc3.disconnect(this.osc3Gain); } catch (e) {}
+        try { this.osc3Gain.disconnect(this.toneFilter); } catch (e) {}
+        this.osc3Connected = false;
+        this.osc3Gain.gain.cancelScheduledValues(this.ctx.currentTime);
+        this.osc3Gain.gain.setValueAtTime(0, this.ctx.currentTime);
+      }
+    }
+
+    setOsc3VibratoRouting(enabled){
+      if (enabled && !this.osc3VibratoConnected) {
+        this.vibratoGain.connect(this.osc3.frequency);
+        this.osc3VibratoConnected = true;
+      } else if (!enabled && this.osc3VibratoConnected) {
+        try { this.vibratoGain.disconnect(this.osc3.frequency); } catch (e) {}
+        this.osc3VibratoConnected = false;
+      }
     }
 
     createNoiseSource(){
       const buffer = this.ctx.createBuffer(1, this.ctx.sampleRate * 2, this.ctx.sampleRate);
       const data = buffer.getChannelData(0);
-      for(let i = 0; i < data.length; i++) data[i] = (Math.random() * 2 - 1) * 0.45;
+      for(let i = 0; i < data.length; i++) {
+        data[i] = (Math.random() * 2 - 1) * 0.45;
+      }
       const source = this.ctx.createBufferSource();
       source.buffer = buffer;
       source.loop = true;
@@ -1487,15 +1574,30 @@
     }
 
     configurePatch(settings){
-      const profile = getPatchProfile(settings.patch);
-      if (this.currentPatch === settings.patch && this.lastPulseFlag === (profile.osc2 === 'pulse')) return profile;
+      const profile = getEffectivePatchProfile(settings);
+      const wantOsc3 = !state.lowCpuMode;
+
+      if (
+        this.currentPatch === settings.patch &&
+        this.lastPulseFlag === (profile.osc2 === 'pulse') &&
+        this.currentLowCpuMode === state.lowCpuMode
+      ) {
+        return profile;
+      }
+
       this.currentPatch = settings.patch;
+      this.currentLowCpuMode = state.lowCpuMode;
       this.lastPulseFlag = profile.osc2 === 'pulse';
+
+      this.setOsc3Bypass(wantOsc3);
+      this.setOsc3VibratoRouting(wantOsc3);
+
       this.osc1.type = profile.osc1 === 'pulse' ? 'square' : profile.osc1;
       this.osc2.type = profile.osc2 === 'pulse' ? 'square' : profile.osc2;
       this.osc3.type = profile.osc3 === 'pulse' ? 'square' : profile.osc3;
       this.subOsc.type = 'sine';
       this.noiseFilter.type = profile.noiseColor;
+
       return profile;
     }
 
@@ -1506,15 +1608,24 @@
       const glideSec = Math.max(0, glideMs / 1000);
       this.noteGlideTime = glideSec;
       this.noteGlideUntil = glideSec > 0 ? (t + glideSec + 0.02) : 0;
+
       const setFreq = (param, value) => {
         param.cancelScheduledValues(t);
         param.setValueAtTime(param.value, t);
-        if (glideSec > 0) param.linearRampToValueAtTime(value, t + glideSec);
-        else param.setValueAtTime(value, t);
+        if (glideSec > 0) {
+          param.linearRampToValueAtTime(value, t + glideSec);
+        } else {
+          param.setValueAtTime(value, t);
+        }
       };
+
       setFreq(this.osc1.frequency, Math.max(20, freq * profile.ratios[0]));
       setFreq(this.osc2.frequency, Math.max(20, freq * profile.ratios[1]));
-      setFreq(this.osc3.frequency, Math.max(20, freq * profile.ratios[2]));
+
+      if (this.osc3Connected) {
+        setFreq(this.osc3.frequency, Math.max(20, freq * profile.ratios[2]));
+      }
+
       setFreq(this.subOsc.frequency, Math.max(20, freq * 0.5));
     }
 
@@ -1553,7 +1664,9 @@
       if (!glideActive) {
         this.osc1.frequency.setTargetAtTime(Math.max(20, targetFreq * profile.ratios[0]), t, 0.01);
         this.osc2.frequency.setTargetAtTime(Math.max(20, targetFreq * profile.ratios[1]), t, 0.01);
-        this.osc3.frequency.setTargetAtTime(Math.max(20, targetFreq * profile.ratios[2]), t, 0.01);
+        if (this.osc3Connected) {
+          this.osc3.frequency.setTargetAtTime(Math.max(20, targetFreq * profile.ratios[2]), t, 0.01);
+        }
         this.subOsc.frequency.setTargetAtTime(Math.max(20, targetFreq * 0.5), t, 0.01);
       } else if (bendChanged) {
         const remaining = Math.max(0.004, this.noteGlideUntil - t);
@@ -1564,7 +1677,9 @@
         };
         ramp(this.osc1.frequency, Math.max(20, targetFreq * profile.ratios[0]));
         ramp(this.osc2.frequency, Math.max(20, targetFreq * profile.ratios[1]));
-        ramp(this.osc3.frequency, Math.max(20, targetFreq * profile.ratios[2]));
+        if (this.osc3Connected) {
+          ramp(this.osc3.frequency, Math.max(20, targetFreq * profile.ratios[2]));
+        }
         ramp(this.subOsc.frequency, Math.max(20, targetFreq * 0.5));
       }
       this.lastBendSemis = bendSemis;
@@ -1576,24 +1691,55 @@
 
       this.osc1Gain.gain.setTargetAtTime(profile.gains[0] * (0.8 + tone * 0.5 + exprShaped * 0.25), t, 0.02);
       this.osc2Gain.gain.setTargetAtTime(profile.gains[1] * (0.6 + bright * 0.9), t, 0.02);
-      this.osc3Gain.gain.setTargetAtTime(profile.gains[2] * (0.5 + bright * 0.7 + tone * 0.2), t, 0.02);
+
+      if (this.osc3Connected) {
+        this.osc3Gain.gain.setTargetAtTime(profile.gains[2] * (0.5 + bright * 0.7 + tone * 0.2), t, 0.02);
+      } else {
+        this.osc3Gain.gain.cancelScheduledValues(t);
+        this.osc3Gain.gain.setValueAtTime(0, t);
+      }
+
       this.subGain.gain.setTargetAtTime(profile.sub * (0.6 + body * 0.8), t, 0.03);
 
-      const noiseBase = settings.patch === 'whistle' ? 0.015 : settings.patch === 'clarinet' ? 0.012 : settings.patch === 'brass' ? 0.04 : settings.patch === 'strings' ? 0.028 : 0.01;
-      const noiseScale = settings.patch === 'strings' ? 0.04 : settings.patch === 'brass' ? 0.065 : 0.05;
-      this.noiseGain.gain.setTargetAtTime((noiseBase + texture * noiseScale) * (0.10 + exprShaped * 0.90), t, 0.03);
+      const noiseBase =
+        settings.patch === 'whistle' ? 0.015 :
+        settings.patch === 'clarinet' ? 0.012 :
+        settings.patch === 'brass' ? 0.04 :
+        settings.patch === 'strings' ? 0.028 : 0.01;
+
+      const noiseScale =
+        settings.patch === 'strings' ? 0.04 :
+        settings.patch === 'brass' ? 0.065 : 0.05;
+
+      const lowCpuNoiseScale = state.lowCpuMode ? 0.8 : 1.0;
+
+      this.noiseGain.gain.setTargetAtTime(
+        (noiseBase + texture * noiseScale) * (0.10 + exprShaped * 0.90) * lowCpuNoiseScale,
+        t,
+        0.03
+      );
+
       this.noiseFilter.frequency.setTargetAtTime(
         settings.patch === 'whistle' ? 3600 + bright * 2600 :
         settings.patch === 'clarinet' ? 1050 + body * 500 :
         settings.patch === 'brass' ? 2400 + bright * 2200 :
         settings.patch === 'strings' ? 650 + bright * 750 :
         3000 + bright * 2400,
-        t, 0.03
+        t,
+        0.03
       );
       this.noiseFilter.Q.setTargetAtTime(profile.noiseQ, t, 0.03);
 
-      const cutoffBoost = settings.patch === 'brass' ? exprShaped * 3200 : settings.patch === 'lead' ? exprShaped * 1800 : settings.patch === 'whistle' ? exprShaped * 1200 : 0;
-      this.toneFilter.frequency.setTargetAtTime(profile.baseCutoff + bright * profile.cutoffSpan + brightnessBoost * 2200 + tone * 450 + cutoffBoost, t, 0.03);
+      const cutoffBoost =
+        settings.patch === 'brass' ? exprShaped * 3200 :
+        settings.patch === 'lead' ? exprShaped * 1800 :
+        settings.patch === 'whistle' ? exprShaped * 1200 : 0;
+
+      this.toneFilter.frequency.setTargetAtTime(
+        profile.baseCutoff + bright * profile.cutoffSpan + brightnessBoost * 2200 + tone * 450 + cutoffBoost,
+        t,
+        0.03
+      );
       this.toneFilter.Q.setTargetAtTime(profile.q + bright * (settings.patch === 'lead' ? 1.0 : 0.45), t, 0.03);
       this.formant.frequency.setTargetAtTime(profile.formantFreq + tone * 320 + body * 220 + brightnessBoost * 350, t, 0.03);
       this.formant.Q.setTargetAtTime(profile.formantQ + body * 0.35, t, 0.03);
@@ -1601,18 +1747,31 @@
 
       this.dryGain.gain.setTargetAtTime(1 - profile.chorusMix, t, 0.03);
       this.chorusGain.gain.setTargetAtTime(profile.chorusMix, t, 0.03);
-      this.chorusDelay.delayTime.setTargetAtTime(settings.patch === 'strings' ? 0.010 : settings.patch === 'lead' ? 0.007 : 0.0055, t, 0.03);
+      this.chorusDelay.delayTime.setTargetAtTime(
+        settings.patch === 'strings' ? 0.010 :
+        settings.patch === 'lead' ? 0.007 : 0.0055,
+        t,
+        0.03
+      );
       this.chorusLfo.frequency.setTargetAtTime(profile.chorusRate + settings.vibratoRate * 0.02, t, 0.03);
       this.chorusDepth.gain.setTargetAtTime(profile.chorusDepth * (0.7 + body * 0.6), t, 0.03);
 
       this.vibrato.frequency.setTargetAtTime(settings.vibratoRate, t, 0.03);
-      const vibScale = settings.patch === 'strings' ? 0.014 : settings.patch === 'brass' ? 0.005 : settings.patch === 'whistle' ? 0.006 : 0.008;
+      const vibScale =
+        settings.patch === 'strings' ? 0.014 :
+        settings.patch === 'brass' ? 0.005 :
+        settings.patch === 'whistle' ? 0.006 : 0.008;
+
       this.vibratoGain.gain.setTargetAtTime((settings.vibratoDepth / 100) * targetFreq * vibScale, t, 0.03);
       this.voiceGain.gain.setTargetAtTime(
         settings.patch === 'strings' ? 0.75 + exprShaped * 0.25 : 0.6 + exprShaped * 0.22,
-        t, 0.03
+        t,
+        0.03
       );
-      this.saturator.curve = this.makeDriveCurve(profile.drive + bright * (settings.patch === 'brass' ? 0.8 : 0.35) + texture * 0.25);
+
+      this.saturator.curve = this.makeDriveCurve(
+        profile.drive + bright * (settings.patch === 'brass' ? 0.8 : 0.35) + texture * 0.25
+      );
     }
   }
 
@@ -1629,6 +1788,8 @@
   function buildAudioGraph(){
     const ctx = state.audioCtx;
     state.voice = new SimpleVoice(ctx);
+    
+    applyLowCpuModeToAudioGraph();
 
     state.preDelay = ctx.createDelay(0.4);
     state.preDelay.delayTime.value = state.reverbPreDelay / 1000;
@@ -1655,6 +1816,11 @@
     updateReverb();
     updateOutputLevels();
     startMeter();
+  }
+
+  function applyLowCpuModeToAudioGraph(){
+    if (!state.voice || !state.voice.saturator) return;
+    state.voice.saturator.oversample = state.lowCpuMode ? 'none' : '2x';
   }
 
   async function updateReverb(){
@@ -2072,9 +2238,11 @@
         return false;
       }
 
+      await ensureAudio();
+
       $('midiStatus').textContent = state.midiInput
         ? (state.midiInput.name || 'Connected')
-        : 'Disconnected';
+        : 'No input selected';
 
       return true;
     } catch (err) {
@@ -2135,22 +2303,46 @@
     }
   }
 
-  function attachSelectedMidiInput(){
-    if (state.midiInput) state.midiInput.onmidimessage = null;
+  function attachSelectedMidiInput() {
+    if (state.midiInput) {
+      state.midiInput.onmidimessage = null;
+    }
 
     const id = $('midiInputSelect').value;
     state.midiInputId = id || '';
 
-    if (!id || !state.midiAccess) {
+    if (!state.midiAccess) {
       state.midiInput = null;
+      state.midiInputId = '';
       $('midiStatus').textContent = 'Disconnected';
       saveState();
       return;
     }
 
-    const input = state.midiAccess.inputs.get(id);
-    if (!input) {
+    const inputs = [...state.midiAccess.inputs.values()].filter(input =>
+      input && !(typeof input.state === 'string' && input.state.toLowerCase() === 'disconnected')
+    );
+
+    if (!inputs.length) {
       state.midiInput = null;
+      state.midiInputId = '';
+      $('midiStatus').textContent = 'Disconnected';
+      saveState();
+      return;
+    }
+
+    if (!id) {
+      state.midiInput = null;
+      $('midiStatus').textContent = 'No input selected';
+      saveState();
+      return;
+    }
+
+    const input = state.midiAccess.inputs.get(id);
+
+    if (!input || (typeof input.state === 'string' && input.state.toLowerCase() === 'disconnected')) {
+      state.midiInput = null;
+      state.midiInputId = ''; // ← FIX: clear stale device id
       $('midiStatus').textContent = 'Disconnected';
       saveState();
       return;
@@ -2260,12 +2452,13 @@
   function saveState(){
     try{
       captureCurrentPresetOverrides();
-      localStorage.setItem('warblSoundLabState_v9', JSON.stringify({
+      localStorage.setItem('warblSoundLabState_v11', JSON.stringify({
         patch: state.patch,
         midiChannel: $('midiChannelSelect').value,
         midiInputId: $('midiInputSelect') ? $('midiInputSelect').value : '',
         midiLogEnabled: !!state.midiLogEnabled,
         meterEnabled: !!state.meterEnabled,
+        lowCpuMode: !!state.lowCpuMode,
         presetOverrides: state.presetOverrides || {}
       }));
     } catch(e){}
@@ -2273,7 +2466,7 @@
 
   function loadState(){
     try{
-      const raw = localStorage.getItem('warblSoundLabState_v9');
+      const raw = localStorage.getItem('warblSoundLabState_v11');
       if (!raw) {
         Object.assign(state, clonePresetDefaults(state.patch || 'whistle'));
         return;
@@ -2287,6 +2480,7 @@
       state.midiInputId = saved.midiInputId || '';
       state.midiLogEnabled = !!saved.midiLogEnabled;
       state.meterEnabled = !!saved.meterEnabled;
+      state.lowCpuMode = !!saved.lowCpuMode;
     } catch(e){
       Object.assign(state, clonePresetDefaults('whistle'));
     }
@@ -2301,6 +2495,8 @@
       (state.midiChannel >= 1 && state.midiChannel <= 16) ? state.midiChannel : 1
     );
     $('portamentoEnabled').checked = !!state.portamentoEnabled;
+
+    $('lowCpuMode').checked = !!state.lowCpuMode;
 
     $('showOutputMeter').checked = !!state.meterEnabled;
     renderOutputMeterUi();
@@ -2429,7 +2625,9 @@
         state.analyser.fftSize = 512;
       }
 
-      state.meterBuf = new Float32Array(state.analyser.fftSize);
+      if (!state.meterBuf || state.meterBuf.length !== state.analyser.fftSize) {
+        state.meterBuf = new Float32Array(state.analyser.fftSize);
+      }
 
       state.comp.connect(state.analyser);
       state.analyser.connect(ctx.destination);
@@ -2620,6 +2818,22 @@
       renderOutputMeterUi();
       saveState();
       startMeter();
+    });
+
+    $('lowCpuMode').addEventListener('change', () => {
+      state.lowCpuMode = $('lowCpuMode').checked;
+
+      if (state.audioCtx) {
+        applyLowCpuModeToAudioGraph();
+
+        if (state.voice) {
+          state.voice.configurePatch(state);
+        }
+
+        updateVoice();
+      }
+
+      saveState();
     });
 
     if (!PRESETS[state.patch]) state.patch = 'whistle';
