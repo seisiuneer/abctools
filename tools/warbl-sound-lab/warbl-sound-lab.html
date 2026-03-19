@@ -3008,7 +3008,7 @@
   function saveState(){
     try{
       captureCurrentPresetOverrides();
-      localStorage.setItem('warblSoundLabState_v22', JSON.stringify({
+      localStorage.setItem('warblSoundLabState_v23', JSON.stringify({
         patch: state.patch,
         midiChannel: state.midiChannel,
         midiInputId: state.midiInputId || '',
@@ -3024,7 +3024,7 @@
 
   function loadState(){
     try{
-      const raw = localStorage.getItem('warblSoundLabState_v22');
+      const raw = localStorage.getItem('warblSoundLabState_v23');
       if (!raw) {
         Object.assign(state, clonePresetDefaults(state.patch || 'whistle'));
         state.pitchBendRange = 2;
