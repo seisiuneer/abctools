@@ -78,13 +78,41 @@
       border: 1px solid rgba(74, 124, 89, 0.45);
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.03);
       border-radius: var(--radius);
-      padding: 14px 72px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 76px;
+      padding: 20px 88px 78px 88px;
+      min-height: 150px;
       margin-bottom: 10px;
       text-align: center;
+
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .hero-top {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      transform: none;
+    }
+
+    .hero-bottom {
+      position: absolute;
+      left: 16px;
+      right: 16px;
+      bottom: 14px;
+      width: auto;
+      display: block;
+      margin-top: 0;
+    }
+
+    .hero-bottom .setup-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      width: 100%;
     }
 
     h1 {
@@ -107,11 +135,6 @@
       padding: 12px;
     }
 
-    .setup-card {
-      margin-bottom: 10px;
-      padding: 10px 12px;
-    }
-
     .setup-row {
       display: flex;
       flex-wrap: wrap;
@@ -121,13 +144,9 @@
       width: 100%;
     }
 
-    .connect-midi {
-      margin-left: 5px;
-    }
-
+    .connect-midi,
     .all-notes-off {
-      margin-left: auto;
-      margin-right: 5px;
+      margin: 0;
     }
 
     .toolbar {
@@ -816,8 +835,8 @@
       }
 
       .hero {
-        padding-left: 64px;
-        padding-right: 56px;
+        padding: 18px 56px 86px 56px;
+        min-height: 168px;
       }
 
       .compact-4,
@@ -841,6 +860,21 @@
     }
 
     @media (max-width: 560px) {
+      .hero {
+        padding: 18px 16px 108px 16px;
+        min-height: 190px;
+      }
+
+      .hero-bottom .setup-row {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+      }
+
+      .hero-bottom .setup-row button {
+        width: 100%;
+      }
+
       .compact-4,
       .compact-3,
       .stats,
@@ -855,21 +889,22 @@
 
 <div class="page">
   <div class="hero card">
+    <div class="hero-top">
+      <h1 class="hero-title">WARBL Sound Lab</h1>
+      <div class="hero-subtitle">WebMIDI Sound Module for the WARBL by Michael Eskin</div>
+    </div>  
+    <div class="hero-bottom">
+      <div class="setup-row">
+        <button id="btnConnect" class="connect-midi" title="Request MIDI access and refresh the input device list">Connect MIDI</button>
+        <button id="btnAllNotesOff" class="secondary all-notes-off" title="Send note-off style cleanup and silence any stuck notes">All Notes Off</button>
+      </div>
+    </div>
+
     <button id="btnWarblConfig" class="hero-image-button" title="Open WARBL Configuration Tool" aria-label="Open WARBL Configuration Tool" type="button">
       <img src="img/warbl.png" alt="WARBL Configuration Tool" />
     </button>
     <button id="btnInstructions" class="hero-help" title="Open operating instructions" aria-label="Open operating instructions" type="button">?</button>
-    <div class="hero-text">
-      <h1 class="hero-title">WARBL Sound Lab</h1>
-      <div class="hero-subtitle">WebMIDI Sound Module for the WARBL by Michael Eskin</div>
-    </div>  
-  </div>
 
-  <div class="card setup-card">
-    <div class="setup-row">
-      <button id="btnConnect" class="connect-midi" title="Request MIDI access and refresh the input device list">Connect MIDI</button>
-      <button id="btnAllNotesOff" class="secondary all-notes-off" title="Send note-off style cleanup and silence any stuck notes">All Notes Off</button>
-    </div>
   </div>
 
   <div class="layout">
@@ -893,7 +928,7 @@
         </div>
         <div class="control" title="Adds breath, reed, bow, or edge depending on the patch.">
           <label for="texture">Texture / Noise <span class="value" id="textureValue"></span></label>
-          <input id="texture" title="Adds breath, reed, bow, or edge depending on the patch." type="range" min="0" max="1" step="0.01" value="0.15">
+          <input id="texture" title="Adds breath, reed, bow, or edge depending on the patch." type="range" min="0" max="1" step="0.01" value="0.0">
         </div>
         <div class="control" title="Moves the resonant character of the instrument body.">
           <label for="body">Body / Resonance <span class="value" id="bodyValue"></span></label>
@@ -945,17 +980,14 @@
             <option value="low">Lowest Note</option>
           </select>
         </div>
-        <div class="control" title="Shapes how strongly breath or expression changes affect loudness.">
-          <label for="breathCurve">Breath Sensitivity <span class="value" id="breathCurveValue"></span></label>
-          <input id="breathCurve" title="Shapes how strongly breath or expression changes affect loudness." type="range" min="0.3" max="2.5" step="0.01" value="1.2">
-        </div>
         <div class="control" title="Makes stronger expression also brighten the tone.">
           <label for="brightnessFollow">Expression → Brightness <span class="value" id="brightnessFollowValue"></span></label>
           <input id="brightnessFollow" title="Makes stronger expression also brighten the tone." type="range" min="0" max="1" step="0.01" value="0.4">
         </div>
+
         <div class="control" title="Sets the total pitch bend span in semitones. Default is 2 semitones.">
           <label for="pitchBendRange">Pitch Bend Range <span class="value" id="pitchBendRangeValue"></span></label>
-          <input id="pitchBendRange" title="Sets the total pitch bend span in semitones. Default is 2 semitones." type="range" min="0" max="12" step="0.1" value="2.0">
+          <input id="pitchBendRange" title="Sets the total pitch bend span in semitones. Default is 2 semitones." type="range" min="0" max="12" step="1" value="2">
         </div>
         <div class="control" title="Scales upward incoming pitch bend.">
           <label for="bendUp">Bend Up Scale <span class="value" id="bendUpValue"></span></label>
@@ -1005,7 +1037,7 @@
         </div>
         <div class="control" title="Sets final output level before the safety compressor.">
           <label for="masterVolume">Master Volume <span class="value" id="masterVolumeValue"></span></label>
-          <input id="masterVolume" title="Sets final output level." type="range" min="0" max="2" step="0.01" value="0.75">
+          <input id="masterVolume" title="Sets final output level." type="range" min="0" max="2" step="0.01" value="1.0">
         </div>
       </div>
 
@@ -1074,8 +1106,8 @@
             <li>Click <b>Connect MIDI</b> and allow browser MIDI access if requested.</li>
             <li>Choose your <b>MIDI Input</b> and <b>Input Channel</b>.</li>
             <li>Select one of the five instrument voices: <b>Air</b>, <b>Reed</b>, <b>Brass</b>, <b>Pad</b>, or <b>Lead</b>.</li>
-            <li>Choose the <b>Expression Source</b> that matches your WARBL setup. Most players will start with <b>Breath (CC2)</b>.</li>
-            <li>Adjust tone, brightness, attack, release, reverb, and bend scaling to taste, then play your WARBL and watch the live status and MIDI log.</li>
+            <li>Choose the <b>Expression Source</b> that matches your WARBL setup. This is a <b>global setting</b> for the entire tool and defaults to <b>Note Velocity</b>. You can switch it to <b>Breath (CC2)</b>, <b>Expression (CC11)</b>, or <b>Volume (CC7)</b> if preferred.</li>
+            <li>Adjust tone, brightness, attack, release, reverb, noise/texture, and bend scaling to taste, then play your WARBL and watch the live status and MIDI log.</li>
           </ol>
         </div>
 
@@ -1094,10 +1126,12 @@
 
         <div class="instructions-subtitle">Expression Source</div>
         <div class="instructions-subbody">
-          <b>Breath (CC2)</b> follows MIDI CC2.<br/>
-          <b>Expression (CC11)</b> follows MIDI CC11.<br/>
-          <b>Volume (CC7)</b> follows MIDI CC7.<br/>
-          <b>Note Velocity</b> uses note-on velocity as the playing level.<br/>
+          <b>Expression Source</b> is a global setting for the entire tool and is not stored separately for each patch.
+          <div class="instructions-gap"></div>
+          <b>Breath (CC2)</b> follows MIDI CC2 and controls playback level.<br/>
+          <b>Expression (CC11)</b> follows MIDI CC11 and controls playback level.<br/>
+          <b>Volume (CC7)</b> follows MIDI CC7 and controls playback level.<br/>
+          <b>Note Velocity</b> uses note-on velocity as the playback level.<br/>
           <b>Fixed Full Volume</b> ignores incoming expression and plays at a constant level.
         </div>
 
@@ -1105,7 +1139,9 @@
 
         <div class="instructions-subtitle">Pitch Bend and Portamento</div>
         <div class="instructions-subbody">
-          The default <b>Pitch Bend Range</b> is <b>±2 semitones</b>, which is the most common WARBL setup.
+          <b>Pitch Bend Range</b> is a global setting for the entire tool, like the MIDI input channel.
+          <div class="instructions-gap"></div>
+          The default is <b>±2 semitones</b>, which is the most common default WARBL setup.
           <div class="instructions-gap"></div>
           <b>Bend Up Scale</b> and <b>Bend Down Scale</b> let you make upward and downward bends feel different without changing the WARBL itself.
           <div class="instructions-gap"></div>
@@ -1116,9 +1152,9 @@
 
         <div class="instructions-subtitle">Reset Buttons</div>
         <div class="instructions-subbody">
-          <b>Reset Current Preset to Defaults</b> restores only the currently selected voice to its default settings.
+          <b>Reset Current Preset to Defaults</b> restores only the currently selected voice to its default settings. Global settings such as <b>Expression Source</b>, <b>MIDI Input</b>, <b>Input Channel</b>, and <b>Pitch Bend Range</b> are not changed.
           <div class="instructions-gap"></div>
-          <b>Reset All Presets to Defaults</b> clears saved changes for all voices and restores the current voice to its default settings.
+          <b>Reset All Presets to Defaults</b> clears saved changes for all voices and restores the current voice to its default settings. Global settings such as <b>Expression Source</b>, <b>MIDI Input</b>, <b>Input Channel</b>, and <b>Pitch Bend Range</b> are not changed.
         </div>
 
         <hr class="instructions-divider"/>
@@ -1139,7 +1175,7 @@
 
         <div class="instructions-subtitle">Recommended Starting Setup</div>
         <div class="instructions-subbody">
-          For initial testing, try <b>Air</b> with <b>Breath (CC2)</b>, bend range at <b>2 semitones</b>, both bend scales at <b>1.00</b>, and portamento turned <b>off</b>.
+          For initial testing, try <b>Air</b> with <b>Note Velocity</b>, bend range at <b>2 semitones</b>, both bend scales at <b>1.00</b>, and portamento turned <b>off</b>.
           <div class="instructions-gap"></div>
           Once the basic note response feels right, add brightness-follow, reverb, and optional portamento.
         </div>
@@ -1154,7 +1190,7 @@
           <div class="instructions-gap"></div>
           When enabled, some patches may sound a little less rich or animated, especially the more layered sounds such as <b>Pad</b>, but the tool should remain more efficient overall.
           <div class="instructions-gap"></div>
-          You can further reduce the CPU usage by disabling the output level meter and the MIDI stream logging.
+          You can further reduce CPU usage by disabling the output level meter and the MIDI stream logging.
         </div>
 
         <hr class="instructions-divider"/>
@@ -1172,6 +1208,7 @@
           <div class="instructions-gap"></div>
           • Turn on <b>Lower CPU use mode</b>.<br/>
           • Disable the output level meter and the MIDI stream logging.<br/>
+          • Close other browser tabs or programs that may be using CPU resources.<br/>
         </div>
 
         <hr class="instructions-divider"/>
@@ -1193,8 +1230,8 @@
           <div style="margin-top:18px;">
             <b>Not currently supported:</b><br/>
             • <b>Safari</b> (macOS and iOS)<br/>
-            • <b>Firefox</b> (sometimes prompts for a WebMIDI plug-in, may or may not work)<br/>
-            • <b>Web MIDI browser for iOS</b><br/>
+            • <b>Firefox</b> (not officially supported; may work inconsistently)<br/>
+            • <b>Web MIDI Browser</b> app for iOS<br/>
             • <b>Most mobile browsers</b>
           </div>
         </div>
@@ -1235,13 +1272,41 @@
     return names[n % 12] + (Math.floor(n / 12) - 1);
   };
 
+  const EXPRESSION_CURVE_POWER = 1.8;
+
+  function computeExpressionGain(inputValue) {
+    const normalized = clamp(inputValue / 127, 0, 1);
+    return Math.pow(normalized, EXPRESSION_CURVE_POWER);
+  }
+
+  function resolveCurrentExpressionGain(noteVelocity = 127) {
+    switch (state.expressionMode) {
+      case 'velocity':
+        return computeExpressionGain(noteVelocity);
+
+      case 'fixed':
+        return 1.0;
+
+      case 'cc7':
+        return computeExpressionGain(state.cc7 ?? 0);
+
+      case 'cc11':
+        return computeExpressionGain(state.cc11 ?? 0);
+
+      case 'cc2':
+      default:
+        return computeExpressionGain(state.cc2 ?? 0);
+    }
+  }
+
   const DEFAULTS = {
     patch:'whistle',
-    tone:0.5, brightness:0.5, texture:0.15, body:0.5,
+    tone:0.5, brightness:0.5, texture:0.0, body:0.5,
     attack:0.01, release:0.09,
     vibratoRate:5.0, vibratoDepth:8,
-    expressionMode:'cc2', breathCurve:1.2, brightnessFollow:0.4,
-    pitchBendRange:2.0, bendUp:1.0, bendDown:1.0,
+    expressionMode:'velocity', brightnessFollow:0.4,
+    bendUp:1.0, bendDown:1.0,
+    pitchBendRange: 2,
     portamentoEnabled:false, portamentoMs:70,
     priorityMode:'last',
     reverbStyle:'room', reverbWet:0.16, reverbDry:1.0, reverbPreDelay:12, reverbTone:0.48,
@@ -1249,19 +1314,59 @@
   };
 
   const PRESETS = {
-    whistle:{patch:'whistle', tone:0.46, brightness:0.58, texture:0.08, body:0.58, attack:0.006, release:0.12, vibratoRate:5.6, vibratoDepth:7, brightnessFollow:0.55, breathCurve:1.35, reverbStyle:'room', reverbWet:0.14, masterVolume:1.0, portamentoEnabled:false, portamentoMs:70},
-    clarinet:{patch:'clarinet', tone:0.54, brightness:0.42, texture:0.10, body:0.62, attack:0.012, release:0.12, vibratoRate:5.1, vibratoDepth:6, brightnessFollow:0.48, breathCurve:1.25, reverbStyle:'room', reverbWet:0.12, masterVolume:0.75, portamentoEnabled:false, portamentoMs:70},
-    brass:{patch:'brass', tone:0.66, brightness:0.64, texture:0.18, body:0.56, attack:0.018, release:0.16, vibratoRate:4.8, vibratoDepth:5, brightnessFollow:0.52, breathCurve:1.15, reverbStyle:'plate', reverbWet:0.13, masterVolume:0.4, portamentoEnabled:false, portamentoMs:70},
-    strings:{patch:'strings', tone:0.52, brightness:0.38, texture:0.22, body:0.70, attack:0.045, release:0.35, vibratoRate:5.2, vibratoDepth:10, brightnessFollow:0.35, breathCurve:1.0, reverbStyle:'hall', reverbWet:0.22, masterVolume:1.0, portamentoEnabled:false, portamentoMs:70},
-    lead:{patch:'lead', tone:0.62, brightness:0.70, texture:0.06, body:0.46, attack:0.005, release:0.12, vibratoRate:5.0, vibratoDepth:9, brightnessFollow:0.45, breathCurve:1.0, reverbStyle:'ambient', reverbWet:0.17, masterVolume:1.0, portamentoEnabled:false, portamentoMs:70}
+    whistle:{
+      patch:'whistle',
+      tone:0.46, brightness:0.58, texture:0.0, body:0.58,
+      attack:0.006, release:0.12,
+      vibratoRate:5.6, vibratoDepth:7,
+      brightnessFollow:0.55,
+      reverbStyle:'room', reverbWet:0.14, masterVolume:1.0,
+      portamentoEnabled:false, portamentoMs:70
+    },
+    clarinet:{
+      patch:'clarinet',
+      tone:0.54, brightness:0.42, texture:0.0, body:0.62,
+      attack:0.012, release:0.12,
+      vibratoRate:5.1, vibratoDepth:6,
+      brightnessFollow:0.48,
+      reverbStyle:'room', reverbWet:0.12, masterVolume:0.75,
+      portamentoEnabled:false, portamentoMs:70
+    },
+    brass:{
+      patch:'brass',
+      tone:0.66, brightness:0.64, texture:0.0, body:0.56,
+      attack:0.018, release:0.16,
+      vibratoRate:4.8, vibratoDepth:5,
+      brightnessFollow:0.52,
+      reverbStyle:'plate', reverbWet:0.13, masterVolume:0.4,
+      portamentoEnabled:false, portamentoMs:70
+    },
+    strings:{
+      patch:'strings',
+      tone:0.52, brightness:0.38, texture:0.0, body:0.70,
+      attack:0.045, release:0.35,
+      vibratoRate:5.2, vibratoDepth:10,
+      brightnessFollow:0.35, 
+      reverbStyle:'hall', reverbWet:0.22, masterVolume:1.0,
+      portamentoEnabled:false, portamentoMs:70
+    },
+    lead:{
+      patch:'lead',
+      tone:0.62, brightness:0.70, texture:0.0, body:0.46,
+      attack:0.005, release:0.12,
+      vibratoRate:5.0, vibratoDepth:9,
+      brightnessFollow:0.45, 
+      reverbStyle:'ambient', reverbWet:0.17, masterVolume:1.0,
+      portamentoEnabled:false, portamentoMs:70
+    }
   };
 
   const PRESET_SETTING_KEYS = [
     'tone', 'brightness', 'texture', 'body',
     'attack', 'release',
     'vibratoRate', 'vibratoDepth',
-    'expressionMode', 'breathCurve', 'brightnessFollow',
-    'pitchBendRange', 'bendUp', 'bendDown',
+    'brightnessFollow',
+    'bendUp', 'bendDown',
     'portamentoEnabled', 'portamentoMs',
     'priorityMode',
     'reverbStyle', 'reverbWet', 'reverbDry', 'reverbPreDelay', 'reverbTone',
@@ -1389,7 +1494,7 @@
   function getPatchProfile(name){
     const profiles = {
       whistle:{osc1:'sine', osc2:'triangle', osc3:'sine', ratios:[1,2.01,3.0], gains:[0.16,0.022,0.010], sub:0.0, noiseColor:'bandpass', noiseQ:1.2, baseCutoff:3200, cutoffSpan:4200, q:0.6, formantFreq:2400, formantGain:3.0, formantQ:1.4, drive:0.92, chorusMix:0.0, chorusDepth:0.00003, chorusRate:0.18},
-      clarinet:{osc1:'square', osc2:'sine', osc3:'sine', ratios:[1,3,5], gains:[0.11,0.024,0.014], sub:0.02, noiseColor:'bandpass', noiseQ:2.2, baseCutoff:1200, cutoffSpan:1700, q:1.4, formantFreq:1150, formantGain:7.5, formantQ:2.2, drive:1.05, chorusMix:0.0, chorusDepth:0.00003, chorusRate:0.18},
+      clarinet:{osc1:'square', osc2:'sine', osc3:'sine', ratios:[1,3,5], gains:[0.11,0.024,0.014], sub:0.02, noiseColor:'bandpass', noiseQ:1.2, baseCutoff:1200, cutoffSpan:1700, q:1.4, formantFreq:1150, formantGain:7.5, formantQ:2.2, drive:1.05, chorusMix:0.0, chorusDepth:0.00003, chorusRate:0.18}, 
       brass:{osc1:'sawtooth', osc2:'square', osc3:'sawtooth', ratios:[1,0.997,2], gains:[0.095,0.038,0.022], sub:0.03, noiseColor:'highpass', noiseQ:0.9, baseCutoff:900, cutoffSpan:5200, q:1.0, formantFreq:820, formantGain:6.5, formantQ:1.0, drive:1.7, chorusMix:0.04, chorusDepth:0.00015, chorusRate:0.28},
       strings:{osc1:'sawtooth', osc2:'sawtooth', osc3:'triangle', ratios:[1,1.008,2], gains:[0.09,0.075,0.02], sub:0.0, noiseColor:'lowpass', noiseQ:0.35, baseCutoff:900, cutoffSpan:2200, q:0.55, formantFreq:520, formantGain:2.4, formantQ:0.7, drive:0.95, chorusMix:0.38, chorusDepth:0.0028, chorusRate:0.24},
       lead:{osc1:'sawtooth', osc2:'square', osc3:'triangle', ratios:[1,2,0.5], gains:[0.035,0.012,0.008], sub:0.045, noiseColor:'highpass', noiseQ:0.8, baseCutoff:1500, cutoffSpan:5500, q:1.6, formantFreq:1650, formantGain:4.0, formantQ:1.0, drive:1.45, chorusMix:0.08, chorusDepth:0.0002, chorusRate:0.42}    
@@ -1666,8 +1771,13 @@
     update(settings, expr, bendSemis){
       const t = this.ctx.currentTime;
       const profile = this.configurePatch(settings);
-      const exprShaped = Math.pow(clamp(expr, 0, 1), settings.breathCurve);
-      const brightnessBoost = exprShaped * settings.brightnessFollow;
+
+      // expr is now already a Celtic Sounds-style computed gain
+      const exprGain = clamp(expr, 0, 1);
+      const exprNorm = exprGain;
+
+      const brightnessBoost = exprNorm * settings.brightnessFollow;
+
       const targetFreq = this.baseFreq * Math.pow(2, bendSemis / 12);
       const glideActive = this.noteGlideTime > 0 && t < this.noteGlideUntil;
       const bendChanged = Math.abs((this.lastBendSemis ?? 0) - bendSemis) > 0.0001;
@@ -1700,7 +1810,8 @@
       const texture = settings.texture;
       const body = settings.body;
 
-      this.osc1Gain.gain.setTargetAtTime(profile.gains[0] * (0.8 + tone * 0.5 + exprShaped * 0.25), t, 0.02);
+      // Timbre stays patch-driven, not expression-driven
+      this.osc1Gain.gain.setTargetAtTime(profile.gains[0] * (0.8 + tone * 0.5), t, 0.02);
       this.osc2Gain.gain.setTargetAtTime(profile.gains[1] * (0.6 + bright * 0.9), t, 0.02);
 
       if (this.osc3Connected) {
@@ -1712,27 +1823,26 @@
 
       this.subGain.gain.setTargetAtTime(profile.sub * (0.6 + body * 0.8), t, 0.03);
 
-      const noiseBase =
-        settings.patch === 'whistle' ? 0.015 :
-        settings.patch === 'clarinet' ? 0.012 :
-        settings.patch === 'brass' ? 0.04 :
-        settings.patch === 'strings' ? 0.028 : 0.01;
-
+      // Noise is controlled only by the Texture / Noise slider.
+      // Zero means absolutely no added noise for every patch.
       const noiseScale =
+        settings.patch === 'whistle' ? 0.05 :
+        settings.patch === 'clarinet' ? 0.20 :
+        settings.patch === 'brass' ? 0.065 :
         settings.patch === 'strings' ? 0.04 :
-        settings.patch === 'brass' ? 0.065 : 0.05;
+        0.05;
 
       const lowCpuNoiseScale = state.lowCpuMode ? 0.8 : 1.0;
 
       this.noiseGain.gain.setTargetAtTime(
-        (noiseBase + texture * noiseScale) * (0.10 + exprShaped * 0.90) * lowCpuNoiseScale,
+        texture * noiseScale * lowCpuNoiseScale,
         t,
         0.03
       );
 
       this.noiseFilter.frequency.setTargetAtTime(
         settings.patch === 'whistle' ? 3600 + bright * 2600 :
-        settings.patch === 'clarinet' ? 1050 + body * 500 :
+        settings.patch === 'clarinet' ? 1400 + body * 900 :
         settings.patch === 'brass' ? 2400 + bright * 2200 :
         settings.patch === 'strings' ? 650 + bright * 750 :
         3000 + bright * 2400,
@@ -1742,9 +1852,9 @@
       this.noiseFilter.Q.setTargetAtTime(profile.noiseQ, t, 0.03);
 
       const cutoffBoost =
-        settings.patch === 'brass' ? exprShaped * 3200 :
-        settings.patch === 'lead' ? exprShaped * 1800 :
-        settings.patch === 'whistle' ? exprShaped * 1200 : 0;
+        settings.patch === 'brass' ? exprNorm * 3200 :
+        settings.patch === 'lead' ? exprNorm * 1800 :
+        settings.patch === 'whistle' ? exprNorm * 1200 : 0;
 
       this.toneFilter.frequency.setTargetAtTime(
         profile.baseCutoff + bright * profile.cutoffSpan + brightnessBoost * 2200 + tone * 450 + cutoffBoost,
@@ -1774,10 +1884,20 @@
         settings.patch === 'whistle' ? 0.006 : 0.008;
 
       this.vibratoGain.gain.setTargetAtTime((settings.vibratoDepth / 100) * targetFreq * vibScale, t, 0.03);
+
+      // Expression controls output level using Celtic Sounds style curve
+      const baseVoiceLevel =
+        settings.patch === 'strings' ? 0.75 : 0.6;
+
+      const dynamicVoiceLevel =
+        settings.patch === 'strings'
+          ? (0.08 + exprGain * 0.92)
+          : (0.04 + exprGain * 0.96);
+
       this.voiceGain.gain.setTargetAtTime(
-        settings.patch === 'strings' ? 0.75 + exprShaped * 0.25 : 0.6 + exprShaped * 0.22,
+        baseVoiceLevel * dynamicVoiceLevel,
         t,
-        0.03
+        0.02
       );
 
       this.saturator.curve = this.makeDriveCurve(
@@ -1972,20 +2092,13 @@
     state.masterGain.gain.setTargetAtTime(state.masterVolume, state.audioCtx.currentTime, 0.02);
   }
 
-  function getExpressionFromState(){
-    let raw;
-    switch(state.expressionMode){
-      case 'cc7': raw = state.cc7 ?? 0; break;
-      case 'cc11': raw = state.cc11 ?? 0; break;
-      case 'velocity': raw = state.currentVelocity ?? 127; break;
-      case 'fixed': raw = 127; break;
-      case 'cc2':
-      default: raw = state.cc2 ?? 0; break;
-    }
-    const norm = clamp(raw / 127, 0, 1);
-    state.expressionValue = norm;
-    $('expressionReadout').textContent = `${Math.round(norm * 100)}%`;
-    return norm;
+  function getExpressionFromState() {
+    const gain = resolveCurrentExpressionGain(state.currentVelocity ?? 127);
+
+    state.expressionValue = gain;
+    $('expressionReadout').textContent = `${Math.round(clamp(gain, 0, 1) * 100)}%`;
+
+    return gain;
   }
 
   function getScaledBendSemis(){
@@ -2205,7 +2318,10 @@
         if (data1 === 2) state.cc2 = data2;
         if (data1 === 7) state.cc7 = data2;
         if (data1 === 11) state.cc11 = data2;
-        if ([2,7,11].includes(data1)) updateVoice();
+        if ([2,7,11].includes(data1)) {
+          getExpressionFromState();
+          updateVoice();
+        }
         if (data1 === 123) allNotesOff();
         break;
 
@@ -2295,8 +2411,23 @@
 
     if (inputs.length) {
       const hasPrevious = inputs.some(input => input.id === previous);
-      select.value = hasPrevious ? previous : inputs[0].id;
-      state.midiInputId = select.value;
+
+      const warblDevice = inputs.find(input =>
+        /warbl/i.test(`${input.name || ''} ${input.manufacturer || ''}`)
+      );
+
+      let selectedId;
+
+      if (hasPrevious) {
+        selectedId = previous;
+      } else if (warblDevice) {
+        selectedId = warblDevice.id;
+      } else {
+        selectedId = inputs[0].id;
+      }
+
+      select.value = selectedId;
+      state.midiInputId = selectedId;
 
       attachSelectedMidiInput();
 
@@ -2367,9 +2498,18 @@
 
   function bindRange(id, formatter){
     const el = $(id), out = $(id + 'Value');
+
     const update = () => {
-      state[id] = +el.value;
-      if (out) out.textContent = formatter(+el.value);
+      let value = Number(el.value);
+
+      if (id === 'pitchBendRange') {
+        value = Math.max(0, Math.min(12, Math.round(value)));
+        el.value = value;
+      }
+
+      state[id] = value;
+
+      if (out) out.textContent = formatter(value);
 
       if (id === 'reverbPreDelay' || id === 'reverbTone') {
         updateReverb();
@@ -2381,6 +2521,7 @@
 
       saveState();
     };
+
     el.addEventListener('input', update);
     update();
   }
@@ -2389,7 +2530,10 @@
     const el = $(id);
     const update = () => {
       if (id === 'reverbStyleSelect') state.reverbStyle = el.value;
-      else if (id === 'expressionModeSelect') state.expressionMode = el.value;
+      else if (id === 'expressionModeSelect') {
+        state.expressionMode = el.value;
+        getExpressionFromState();
+      }
       else if (id === 'priorityMode') state.priorityMode = el.value;
       else if (id === 'midiInputSelect') attachSelectedMidiInput();
 
@@ -2414,8 +2558,14 @@
   }
 
   function clonePresetDefaults(name){
+    const {
+      pitchBendRange,
+      expressionMode,
+      ...presetScopedDefaults
+    } = DEFAULTS;
+
     return {
-      ...DEFAULTS,
+      ...presetScopedDefaults,
       ...PRESETS[name],
       patch: name
     };
@@ -2463,13 +2613,15 @@
   function saveState(){
     try{
       captureCurrentPresetOverrides();
-      localStorage.setItem('warblSoundLabState_v11', JSON.stringify({
+      localStorage.setItem('warblSoundLabState_v20', JSON.stringify({
         patch: state.patch,
         midiChannel: $('midiChannelSelect').value,
         midiInputId: $('midiInputSelect') ? $('midiInputSelect').value : '',
         midiLogEnabled: !!state.midiLogEnabled,
         meterEnabled: !!state.meterEnabled,
         lowCpuMode: !!state.lowCpuMode,
+        pitchBendRange: state.pitchBendRange,
+        expressionMode: state.expressionMode,
         presetOverrides: state.presetOverrides || {}
       }));
     } catch(e){}
@@ -2477,9 +2629,11 @@
 
   function loadState(){
     try{
-      const raw = localStorage.getItem('warblSoundLabState_v11');
+      const raw = localStorage.getItem('warblSoundLabState_v20');
       if (!raw) {
         Object.assign(state, clonePresetDefaults(state.patch || 'whistle'));
+        state.pitchBendRange = 2;
+        state.expressionMode = 'velocity';
         return;
       }
       const saved = JSON.parse(raw);
@@ -2492,13 +2646,17 @@
       state.midiLogEnabled = !!saved.midiLogEnabled;
       state.meterEnabled = !!saved.meterEnabled;
       state.lowCpuMode = !!saved.lowCpuMode;
+      state.pitchBendRange = Math.max(0, Math.min(12, Math.round(Number(saved.pitchBendRange ?? 2))));
+      state.expressionMode = saved.expressionMode || 'velocity';
     } catch(e){
       Object.assign(state, clonePresetDefaults('whistle'));
+      state.pitchBendRange = 2;
+      state.expressionMode = 'velocity';
     }
   }
 
   function applyStateToUi(){
-    ['tone','brightness','texture','body','attack','release','vibratoRate','vibratoDepth','breathCurve','brightnessFollow','pitchBendRange','bendUp','bendDown','portamentoMs','reverbWet','reverbDry','reverbPreDelay','reverbTone','masterVolume'].forEach(id => { if($(id) && state[id] != null) $(id).value = state[id]; });
+    ['tone','brightness','texture','body','attack','release','vibratoRate','vibratoDepth','brightnessFollow','pitchBendRange','bendUp','bendDown','portamentoMs','reverbWet','reverbDry','reverbPreDelay','reverbTone','masterVolume'].forEach(id => { if($(id) && state[id] != null) $(id).value = state[id]; });
     $('expressionModeSelect').value = state.expressionMode;
     $('priorityMode').value = state.priorityMode;
     $('reverbStyleSelect').value = state.reverbStyle;
@@ -2510,6 +2668,7 @@
     $('lowCpuMode').checked = !!state.lowCpuMode;
 
     $('showOutputMeter').checked = !!state.meterEnabled;
+
     renderOutputMeterUi();
 
     if (state.audioCtx) {
@@ -2608,8 +2767,7 @@
       tone:v=>v.toFixed(2), brightness:v=>v.toFixed(2), texture:v=>v.toFixed(2), body:v=>v.toFixed(2),
       attack:v=>`${Math.round(v*1000)} ms`, release:v=>`${Math.round(v*1000)} ms`,
       vibratoRate:v=>`${v.toFixed(1)} Hz`, vibratoDepth:v=>`${Math.round(v)} ct`,
-      breathCurve:v=>v.toFixed(2), brightnessFollow:v=>v.toFixed(2),
-      pitchBendRange:v=>`${v.toFixed(1)} st`, bendUp:v=>v.toFixed(2), bendDown:v=>v.toFixed(2),
+      pitchBendRange:v=>`${Math.round(v)} semitones`, bendUp:v=>v.toFixed(2), bendDown:v=>v.toFixed(2),
       portamentoMs:v=>`${Math.round(v)} ms`, reverbWet:v=>v.toFixed(2), reverbDry:v=>v.toFixed(2),
       reverbPreDelay:v=>`${Math.round(v)} ms`, reverbTone:v=>v.toFixed(2), masterVolume:v=>v.toFixed(2)
     };
@@ -2764,9 +2922,8 @@
     bindRange('release', v=>`${Math.round(v*1000)} ms`);
     bindRange('vibratoRate', v=>`${v.toFixed(1)} Hz`);
     bindRange('vibratoDepth', v=>`${Math.round(v)} ct`);
-    bindRange('breathCurve', v=>v.toFixed(2));
     bindRange('brightnessFollow', v=>v.toFixed(2));
-    bindRange('pitchBendRange', v=>`${v.toFixed(1)} st`);
+    bindRange('pitchBendRange', v => `${Math.round(v)} semitones`);
     bindRange('bendUp', v=>v.toFixed(2));
     bindRange('bendDown', v=>v.toFixed(2));
     bindRange('portamentoMs', v=>`${Math.round(v)} ms`);
@@ -2810,7 +2967,7 @@
       btnCloseInstructions.focus();
     };
     const closeInstructions = () => {
-      btnInstructions.focus();
+      if (btnInstructions) btnInstructions.focus();
       instructionsOverlay.style.display = 'none';
       instructionsOverlay.setAttribute('aria-hidden', 'true');
       document.body.style.overflow = '';
