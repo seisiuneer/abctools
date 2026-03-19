@@ -1393,7 +1393,8 @@
     midiLogEnabled:false,
     meterEnabled:false,
     lowCpuMode:false,
-    midiLogLines: []
+    pendingVoiceUpdate:false,
+    midiLogLines: [],
   };
 
   function showWebMidiUnavailableDialog() {
@@ -1530,6 +1531,7 @@
   }
 
   class SimpleVoice {
+
     constructor(ctx){
       this.ctx = ctx;
       this.output = ctx.createGain();
@@ -1641,6 +1643,7 @@
       this.currentLowCpuMode = state.lowCpuMode;
       this.lastPulseFlag = false;
       this.lastBendSemis = 0;
+      this.lastDriveAmount = null;
     }
 
     setOsc3Bypass(enabled){
@@ -1772,7 +1775,6 @@
       const t = this.ctx.currentTime;
       const profile = this.configurePatch(settings);
 
-      // expr is now already a Celtic Sounds-style computed gain
       const exprGain = clamp(expr, 0, 1);
       const exprNorm = exprGain;
 
@@ -1810,7 +1812,6 @@
       const texture = settings.texture;
       const body = settings.body;
 
-      // Timbre stays patch-driven, not expression-driven
       this.osc1Gain.gain.setTargetAtTime(profile.gains[0] * (0.8 + tone * 0.5), t, 0.02);
       this.osc2Gain.gain.setTargetAtTime(profile.gains[1] * (0.6 + bright * 0.9), t, 0.02);
 
@@ -1823,8 +1824,6 @@
 
       this.subGain.gain.setTargetAtTime(profile.sub * (0.6 + body * 0.8), t, 0.03);
 
-      // Noise is controlled only by the Texture / Noise slider.
-      // Zero means absolutely no added noise for every patch.
       const noiseScale =
         settings.patch === 'whistle' ? 0.05 :
         settings.patch === 'clarinet' ? 0.20 :
@@ -1885,7 +1884,6 @@
 
       this.vibratoGain.gain.setTargetAtTime((settings.vibratoDepth / 100) * targetFreq * vibScale, t, 0.03);
 
-      // Expression controls output level using Celtic Sounds style curve
       const baseVoiceLevel =
         settings.patch === 'strings' ? 0.75 : 0.6;
 
@@ -1897,9 +1895,15 @@
         0.02
       );
 
-      this.saturator.curve = this.makeDriveCurve(
-        profile.drive + bright * (settings.patch === 'brass' ? 0.8 : 0.35) + texture * 0.25
-      );
+      const driveAmount =
+        profile.drive +
+        bright * (settings.patch === 'brass' ? 0.8 : 0.35) +
+        texture * 0.25;
+
+      if (this.lastDriveAmount == null || Math.abs(driveAmount - this.lastDriveAmount) > 0.03) {
+        this.saturator.curve = this.makeDriveCurve(driveAmount);
+        this.lastDriveAmount = driveAmount;
+      }
     }
   }
 
@@ -2109,6 +2113,17 @@
     state.voice.update(state, getExpressionFromState(), getScaledBendSemis());
   }
 
+  function requestVoiceUpdate(){
+    if (state.pendingVoiceUpdate) return;
+
+    state.pendingVoiceUpdate = true;
+
+    requestAnimationFrame(() => {
+      state.pendingVoiceUpdate = false;
+      updateVoice();
+    });
+  }
+
   function choosePriorityNote(){
     const notes = [...state.heldNotes.keys()];
     if (!notes.length) return null;
@@ -2290,7 +2305,7 @@
   function handleMidiMessage(event){
     const [status = 0, data1 = 0, data2 = 0] = event.data || [];
     const type = status & 0xF0;
-    const channel = (status & 0x0F) + 1;   // MIDI channels 1-16
+    const channel = (status & 0x0F) + 1;
     const selectedChannel = Number(state.midiChannel || 1);
 
     if (channel !== selectedChannel) {
@@ -2315,21 +2330,24 @@
         if (data1 === 2) state.cc2 = data2;
         if (data1 === 7) state.cc7 = data2;
         if (data1 === 11) state.cc11 = data2;
+
         if ([2,7,11].includes(data1)) {
           getExpressionFromState();
-          updateVoice();
+          requestVoiceUpdate();
         }
+
         if (data1 === 123) allNotesOff();
         break;
 
       case 0xE0: {
         const raw = ((data2 << 7) | data1) - 8192;
         state.pitchBend = raw / 8192;
-        updateVoice();
+        requestVoiceUpdate();
         break;
       }
     }
   }
+
   async function connectMidi(){
     if (!navigator.requestMIDIAccess){
       $('midiStatus').textContent = 'WebMIDI unsupported';
@@ -2513,7 +2531,7 @@
       } else if (id === 'reverbWet' || id === 'reverbDry' || id === 'masterVolume') {
         updateOutputLevels();
       } else {
-        updateVoice();
+        requestVoiceUpdate();
       }
 
       saveState();
@@ -2526,16 +2544,22 @@
   function bindSelect(id){
     const el = $(id);
     const update = () => {
-      if (id === 'reverbStyleSelect') state.reverbStyle = el.value;
-      else if (id === 'expressionModeSelect') {
+      if (id === 'reverbStyleSelect') {
+        state.reverbStyle = el.value;
+      } else if (id === 'expressionModeSelect') {
         state.expressionMode = el.value;
         getExpressionFromState();
+      } else if (id === 'priorityMode') {
+        state.priorityMode = el.value;
+      } else if (id === 'midiInputSelect') {
+        attachSelectedMidiInput();
       }
-      else if (id === 'priorityMode') state.priorityMode = el.value;
-      else if (id === 'midiInputSelect') attachSelectedMidiInput();
 
-      if (id === 'reverbStyleSelect') updateReverb();
-      else if (id !== 'midiInputSelect') updateVoice();
+      if (id === 'reverbStyleSelect') {
+        updateReverb();
+      } else if (id !== 'midiInputSelect') {
+        requestVoiceUpdate();
+      }
 
       saveState();
     };
@@ -2995,7 +3019,7 @@
           state.voice.configurePatch(state);
         }
 
-        updateVoice();
+        requestVoiceUpdate();
       }
 
       saveState();
