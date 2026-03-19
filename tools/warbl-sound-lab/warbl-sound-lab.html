@@ -340,8 +340,8 @@
 
     .preset-row {
       display: grid;
-      grid-template-columns: repeat(5, minmax(0, 1fr));
-      gap: 7px;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: 12px;
     }
 
     .preset-btn {
@@ -967,6 +967,7 @@
       <div class="preset-row" style="margin-bottom:14px">
         <button class="preset-btn" data-preset="whistle" title="Clean, whistle-like lead with a light airy edge">Air</button>
         <button class="preset-btn" data-preset="clarinet" title="Odd-harmonic reed tone with a woodwind-style body">Reed</button>
+        <button class="preset-btn" data-preset="voice" title="Expressive, smooth solo sound with a sax-like character">Solo</button>
         <button class="preset-btn" data-preset="brass" title="Buzzier brass voice with more bite and projection">Brass</button>
         <button class="preset-btn" data-preset="strings" title="Detuned ensemble-like pad with softer attack">Pad</button>
         <button class="preset-btn" data-preset="lead" title="Bright electronic lead voice with a little edge">Lead</button>
@@ -1177,7 +1178,7 @@
           <ol class="instructions-steps">
             <li>Click <b>Connect MIDI</b> and allow browser MIDI access if requested.</li>
             <li>Choose your <b>MIDI Input</b> and <b>Input Channel</b>.</li>
-            <li>Select one of the five instrument voices: <b>Air</b>, <b>Reed</b>, <b>Brass</b>, <b>Pad</b>, or <b>Lead</b>.</li>
+            <li>Select one of the six instrument voices: <b>Air</b>, <b>Reed</b>, <b>Solo</b>, <b>Brass</b>, <b>Pad</b>, or <b>Lead</b>.</li>
             <li>Choose the <b>Expression Source</b> that matches your WARBL setup. This is a <b>global setting</b> for the entire tool and defaults to <b>Note Velocity</b>. You can switch it to <b>Breath (CC2)</b>, <b>Expression (CC11)</b>, or <b>Volume (CC7)</b> if preferred.</li>
             <li>Adjust tone, brightness, attack, release, reverb, noise/texture, and bend scaling to taste, then play your WARBL and watch the live status and MIDI log.</li>
           </ol>
@@ -1189,6 +1190,7 @@
         <div class="instructions-subbody">
           <b>Air</b> is the cleanest and usually the best starting point for checking pitch response.<br/>
           <b>Reed</b> emphasizes odd harmonics for a reed-like tone.<br/>
+          <b>Solo</b> is a smooth, expressive solo sound with a sax-like character and works especially well for legato playing.<br/>
           <b>Brass</b> adds stronger buzz and bite.<br/>
           <b>Pad</b> uses a softer, chorused pad-like tone.<br/>
           <b>Lead</b> is a brighter, more electronic monophonic lead.
@@ -1218,6 +1220,8 @@
           <b>Bend Up Scale</b> and <b>Bend Down Scale</b> let you make upward and downward bends feel different without changing the WARBL itself.
           <div class="instructions-gap"></div>
           When <b>Enable Portamento</b> is turned on, the synth glides from one note to the next over the selected <b>Portamento Time</b>. It is off by default for all patches.
+          <div class="instructions-gap"></div>
+          The new <b>Solo</b> patch is especially effective with a little portamento and expression control if you want a more lyrical, connected sound.
         </div>
 
         <hr class="instructions-divider"/>
@@ -1285,6 +1289,8 @@
         <div class="instructions-subbody">
           For initial testing, try <b>Air</b> with <b>Note Velocity</b>, bend range at <b>2 semitones</b>, both bend scales at <b>1.00</b>, and portamento turned <b>off</b>.
           <div class="instructions-gap"></div>
+          If you want a smoother, more expressive solo tone, try <b>Solo</b> with breath or expression control and a small amount of portamento.
+          <div class="instructions-gap"></div>
           Once the basic note response feels right, add brightness-follow, reverb, and optional portamento.
         </div>
 
@@ -1346,6 +1352,17 @@
 
         <hr class="instructions-divider"/>
 
+        <div class="instructions-subtitle">Other WARBL WebMIDI Sound Modules</div>
+        <div class="instructions-subbody">
+          <b>Celtic Sounds</b> is my other WebMIDI sound module for the WARBL.
+          <div class="instructions-gap"></div>
+          While <b>WARBL Sound Lab</b> focuses on a smaller set of flexible synth-style voices that you can shape in real time, <b>Celtic Sounds</b> is designed around a broader collection of per-note sampled acoustic instrument sounds for playing traditional Irish and Scottish music.
+          <div class="instructions-gap"></div>
+          <div style="text-align:center;"><a href="https://michaeleskin.com/celtic-sounds/celtic-sounds.html" target="_blank" rel="noopener noreferrer">Launch Celtic Sounds</a></div>
+        </div>
+
+        <hr class="instructions-divider"/>
+
         <div class="instructions-subtitle" style="text-align: center;">Tip Jars</div>
         <div class="instructions-subbody" style="text-align: center;">
           This tool was created by <a href="https://michaeleskin.com" target="_blank" rel="noopener noreferrer">Michael Eskin</a>.<br/>
@@ -1384,8 +1401,8 @@
 
   const SETTINGS_FILE_MAGIC = 'WARBL_SOUND_LAB_SETTINGS';
   const SETTINGS_FILE_VERSION = 1;
-  const DEFAULT_SETTINGS_FILENAME = 'warbl-sound-tools-settings.json';
-  const LAST_SETTINGS_FILENAME_KEY = 'warblSoundLabLastSettingsFilename_v1';
+  const DEFAULT_SETTINGS_FILENAME = 'warbl-sound-lab-settings.json';
+  const LAST_SETTINGS_FILENAME_KEY = 'warblSoundLabLastSettingsFilename_v2';
 
   const DEFAULTS = {
     patch:'whistle',
@@ -1419,6 +1436,15 @@
       brightnessFollow:0.48,
       reverbStyle:'room', reverbWet:0.12, masterVolume:0.75,
       portamentoEnabled:false, portamentoMs:70
+    },
+    voice:{
+      patch:'voice',
+      tone:0.58, brightness:0.56, texture:0.08, body:0.60,
+      attack:0.014, release:0.18,
+      vibratoRate:5.0, vibratoDepth:11,
+      brightnessFollow:0.58,
+      reverbStyle:'hall', reverbWet:0.16, masterVolume:0.82,
+      portamentoEnabled:false, portamentoMs:85
     },
     brass:{
       patch:'brass',
@@ -1673,10 +1699,11 @@
   function getPatchProfile(name){
     const profiles = {
       whistle:{osc1:'sine', osc2:'triangle', osc3:'sine', ratios:[1,2.01,3.0], gains:[0.16,0.022,0.010], sub:0.0, noiseColor:'bandpass', noiseQ:1.2, baseCutoff:3200, cutoffSpan:4200, q:0.6, formantFreq:2400, formantGain:3.0, formantQ:1.4, drive:0.92, chorusMix:0.0, chorusDepth:0.00003, chorusRate:0.18},
-      clarinet:{osc1:'square', osc2:'sine', osc3:'sine', ratios:[1,3,5], gains:[0.11,0.024,0.014], sub:0.02, noiseColor:'bandpass', noiseQ:1.2, baseCutoff:1200, cutoffSpan:1700, q:1.4, formantFreq:1150, formantGain:7.5, formantQ:2.2, drive:1.05, chorusMix:0.0, chorusDepth:0.00003, chorusRate:0.18}, 
+      clarinet:{osc1:'square', osc2:'sine', osc3:'sine', ratios:[1,3,5], gains:[0.11,0.024,0.014], sub:0.02, noiseColor:'bandpass', noiseQ:1.2, baseCutoff:1200, cutoffSpan:1700, q:1.4, formantFreq:1150, formantGain:7.5, formantQ:2.2, drive:1.05, chorusMix:0.0, chorusDepth:0.00003, chorusRate:0.18},
+      voice:{osc1:'sawtooth', osc2:'triangle', osc3:'sine', ratios:[1,1.01,2], gains:[0.085,0.035,0.015], sub:0.02, noiseColor:'bandpass', noiseQ:1.4, baseCutoff:1400, cutoffSpan:3200, q:1.2, formantFreq:1100, formantGain:6.0, formantQ:1.6, drive:1.05, chorusMix:0.12, chorusDepth:0.0006, chorusRate:0.32},
       brass:{osc1:'sawtooth', osc2:'square', osc3:'sawtooth', ratios:[1,0.997,2], gains:[0.095,0.038,0.022], sub:0.03, noiseColor:'highpass', noiseQ:0.9, baseCutoff:900, cutoffSpan:5200, q:1.0, formantFreq:820, formantGain:6.5, formantQ:1.0, drive:1.7, chorusMix:0.04, chorusDepth:0.00015, chorusRate:0.28},
       strings:{osc1:'sawtooth', osc2:'sawtooth', osc3:'triangle', ratios:[1,1.008,2], gains:[0.09,0.075,0.02], sub:0.0, noiseColor:'lowpass', noiseQ:0.35, baseCutoff:900, cutoffSpan:2200, q:0.55, formantFreq:520, formantGain:2.4, formantQ:0.7, drive:0.95, chorusMix:0.38, chorusDepth:0.0028, chorusRate:0.24},
-      lead:{osc1:'sawtooth', osc2:'square', osc3:'triangle', ratios:[1,2,0.5], gains:[0.035,0.012,0.008], sub:0.045, noiseColor:'highpass', noiseQ:0.8, baseCutoff:1500, cutoffSpan:5500, q:1.6, formantFreq:1650, formantGain:4.0, formantQ:1.0, drive:1.45, chorusMix:0.08, chorusDepth:0.0002, chorusRate:0.42}    
+      lead:{osc1:'sawtooth', osc2:'square', osc3:'triangle', ratios:[1,2,0.5], gains:[0.035,0.012,0.008], sub:0.045, noiseColor:'highpass', noiseQ:0.8, baseCutoff:1500, cutoffSpan:5500, q:1.6, formantFreq:1650, formantGain:4.0, formantQ:1.0, drive:1.45, chorusMix:0.08, chorusDepth:0.0002, chorusRate:0.42}
     };
     return profiles[name] || profiles.whistle;
   }
@@ -2005,6 +2032,7 @@
       const noiseScale =
         settings.patch === 'whistle' ? 0.05 :
         settings.patch === 'clarinet' ? 0.20 :
+        settings.patch === 'voice' ? 0.10 :
         settings.patch === 'brass' ? 0.065 :
         settings.patch === 'strings' ? 0.04 :
         0.05;
@@ -2020,6 +2048,7 @@
       this.noiseFilter.frequency.setTargetAtTime(
         settings.patch === 'whistle' ? 3600 + bright * 2600 :
         settings.patch === 'clarinet' ? 1400 + body * 900 :
+        settings.patch === 'voice' ? 1100 + bright * 1800 + body * 500 :
         settings.patch === 'brass' ? 2400 + bright * 2200 :
         settings.patch === 'strings' ? 650 + bright * 750 :
         3000 + bright * 2400,
@@ -2030,6 +2059,7 @@
 
       const cutoffBoost =
         settings.patch === 'brass' ? exprNorm * 3200 :
+        settings.patch === 'voice' ? exprNorm * 1600 :
         settings.patch === 'lead' ? exprNorm * 1800 :
         settings.patch === 'whistle' ? exprNorm * 1200 : 0;
 
@@ -2038,7 +2068,15 @@
         t,
         0.03
       );
-      this.toneFilter.Q.setTargetAtTime(profile.q + bright * (settings.patch === 'lead' ? 1.0 : 0.45), t, 0.03);
+      this.toneFilter.Q.setTargetAtTime(
+        profile.q + bright * (
+          settings.patch === 'lead' ? 1.0 :
+          settings.patch === 'voice' ? 0.7 :
+          0.45
+        ),
+        t,
+        0.03
+      );
       this.formant.frequency.setTargetAtTime(profile.formantFreq + tone * 320 + body * 220 + brightnessBoost * 350, t, 0.03);
       this.formant.Q.setTargetAtTime(profile.formantQ + body * 0.35, t, 0.03);
       this.formant.gain.setTargetAtTime(profile.formantGain + tone * 1.2 + texture * 0.8, t, 0.03);
@@ -2047,7 +2085,9 @@
       this.chorusGain.gain.setTargetAtTime(profile.chorusMix, t, 0.03);
       this.chorusDelay.delayTime.setTargetAtTime(
         settings.patch === 'strings' ? 0.010 :
-        settings.patch === 'lead' ? 0.007 : 0.0055,
+        settings.patch === 'voice' ? 0.008 :
+        settings.patch === 'lead' ? 0.007 :
+        0.0055,
         t,
         0.03
       );
@@ -2057,13 +2097,17 @@
       this.vibrato.frequency.setTargetAtTime(settings.vibratoRate, t, 0.03);
       const vibScale =
         settings.patch === 'strings' ? 0.014 :
+        settings.patch === 'voice' ? 0.010 :
         settings.patch === 'brass' ? 0.005 :
-        settings.patch === 'whistle' ? 0.006 : 0.008;
+        settings.patch === 'whistle' ? 0.006 :
+        0.008;
 
       this.vibratoGain.gain.setTargetAtTime((settings.vibratoDepth / 100) * targetFreq * vibScale, t, 0.03);
 
       const baseVoiceLevel =
-        settings.patch === 'strings' ? 0.75 : 0.6;
+        settings.patch === 'strings' ? 0.75 :
+        settings.patch === 'voice' ? 0.68 :
+        0.6;
 
       const dynamicVoiceLevel = exprGain;
 
@@ -2075,7 +2119,11 @@
 
       const driveAmount =
         profile.drive +
-        bright * (settings.patch === 'brass' ? 0.8 : 0.35) +
+        bright * (
+          settings.patch === 'brass' ? 0.8 :
+          settings.patch === 'voice' ? 0.45 :
+          0.35
+        ) +
         texture * 0.25;
 
       if (this.lastDriveAmount == null || Math.abs(driveAmount - this.lastDriveAmount) > 0.03) {
@@ -3008,7 +3056,7 @@
   function saveState(){
     try{
       captureCurrentPresetOverrides();
-      localStorage.setItem('warblSoundLabState_v23', JSON.stringify({
+      localStorage.setItem('warblSoundLabState_v24', JSON.stringify({
         patch: state.patch,
         midiChannel: state.midiChannel,
         midiInputId: state.midiInputId || '',
@@ -3024,7 +3072,7 @@
 
   function loadState(){
     try{
-      const raw = localStorage.getItem('warblSoundLabState_v23');
+      const raw = localStorage.getItem('warblSoundLabState_v24');
       if (!raw) {
         Object.assign(state, clonePresetDefaults(state.patch || 'whistle'));
         state.pitchBendRange = 2;
@@ -3098,6 +3146,7 @@
     return ({
       whistle: 'Air',
       clarinet: 'Reed',
+      voice: 'Solo',
       brass: 'Brass',
       strings: 'Pad',
       lead: 'Lead'
