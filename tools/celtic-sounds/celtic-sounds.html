@@ -97,6 +97,7 @@
     align-items: center;
     justify-content: center;
     text-align: center;
+    gap: 0px;
   }
 
   .hero-card h1 {
@@ -120,6 +121,24 @@
     font-family: system-ui, sans-serif;
     letter-spacing: 0.3px;
     margin: 0;
+  }
+
+  .hero-top {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transform: translateY(24px);
+  }
+
+  .hero-bottom {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+  }
+
+  .hero-bottom .setup-row {
+    justify-content: center;
   }
 
   .hero-help{
@@ -790,7 +809,22 @@
 
   <div class="app">
     <div class="card hero-card">
-      <button
+
+      <!-- Top section -->
+      <div class="hero-top">
+        <h1>Celtic Sounds</h1>
+        <p class="muted">WebMIDI Sound Module for the WARBL by Michael Eskin</p>
+      </div>
+
+      <!-- Bottom section (NEW) -->
+      <div class="hero-bottom">
+        <div class="setup-row">
+          <button id="btnConnectMidi" class="primary connect-midi">Connect MIDI</button>
+          <button id="btnAllNotesOff" class="warn all-notes-off">All Notes Off</button>
+        </div>
+      </div>
+
+     <button
         id="btnWarblConfig"
         class="hero-image-button hero-warbl-button"
         title="Open WARBL Configuration Tool"
@@ -802,15 +836,6 @@
 
       <button id="btnInstructions" class="hero-help" title="Click for instructions" type="button">?</button>
 
-      <h1>Celtic Sounds</h1>
-      <p class="muted">WebMIDI Sound Module for the WARBL by Michael Eskin</p>
-    </div>
-
-    <div class="card grid">
-      <div class="row setup-row">
-        <button id="btnConnectMidi" class="good connect-midi">Connect MIDI</button>
-        <button id="btnAllNotesOff" class="warn all-notes-off">All Notes Off</button>
-      </div>
     </div>
 
     <div class="split">
@@ -872,7 +897,16 @@
 
             </div>
           </div>
-          
+
+          <div class="field">
+            <label for="pitchBendRangeSemitones">
+              Pitch Bend Range <span id="pitchBendRangeSemitonesValue">2</span> semitones
+            </label>
+            <input id="pitchBendRangeSemitones" type="range" min="0" max="12" step="1" value="2" />
+          </div>
+
+          <div class="field" aria-hidden="true"></div>
+
           <div class="field" style="grid-column: span 2;">
             <div class="two-up">
               <div class="field">
@@ -1009,7 +1043,7 @@
               <li>Click <b>Connect MIDI</b> and allow browser MIDI access if requested.</li>
               <li>Choose your <b>MIDI Input</b> and <b>Input Channel</b>.</li>
               <li>Select an <b>Instrument</b> and the <b>Expression Source</b> you want the sound module to follow.</li>
-              <li>Adjust volume, drone volume (when available), master tuning, attack, release, pitch bend scaling, reverb, and transpose as needed.</li>
+              <li>Adjust volume, drone volume (when available), master tuning, pitch bend range, pitch bend scaling, attack, release, reverb, and transpose as needed.</li>
               <li>Play your MIDI controller and watch the <b>Live Status</b> and optional <b>MIDI Message Stream</b>.</li>
             </ol>
           </div>
@@ -1029,19 +1063,20 @@
 
           <div class="instructions-subtitle">Pitch Bend Range</div>
           <div class="instructions-subbody">
-            The overall <b>pitch bend range</b> is set by your MIDI controller.
+            Your MIDI controller sends pitch bend messages, and <b>Celtic Sounds</b> interprets those messages using its current <b>Pitch Bend Range</b> setting.
             <div class="instructions-gap"></div>
 
-            For example, when using a <b>WARBL</b> controller, the bend range is configured in the
-            <b>WARBL Configuration Tool</b>.
+            For example, when using a <b>WARBL</b> controller, the bend behavior originates from the
+            <b>WARBL Configuration Tool</b> instrument setting.
             <div class="instructions-gap"></div>
 
-            <b>Celtic Sounds</b> does not change this range. It simply responds to the pitch bend
-            messages sent by your controller.
+            In <b>Celtic Sounds</b>, the <b>Pitch Bend Range</b> slider sets the global bend range used by the tool, allowing you to choose how many semitones of pitch change full bend up or down will produce.
             <div class="instructions-gap"></div>
 
-            Most controllers are set to a default bend range of <b>±2 semitones (±200 cents)</b>,
-            but the exact range depends on your controller’s settings.
+            The default setting is <b>±2 semitones (±200 cents)</b>, but you can adjust it from <b>0 to 12 semitones</b>.
+
+            <div class="instructions-gap"></div>
+            The final bend amount is also affected by the <b>Pitch Bend Up Scale</b> and <b>Pitch Bend Down Scale</b> controls.
           </div>
 
           <hr class="instructions-divider"/>
@@ -1267,8 +1302,8 @@
             <div style="margin-top:18px;">
               <b>Not currently supported:</b><br/>
               • <b>Safari</b> (macOS and iOS)<br/>
-              • <b>Firefox</b> (sometimes prompts for a WebMIDI plug-in, may or may not work)<br/>
-              • <b>Web MIDI browser for iOS</b><br/>
+              • <b>Firefox</b> (not officially supported; may work inconsistently)<br/>
+              • <b>Web MIDI Browser</b> app for iOS<br/>
               • <b>Most mobile browsers</b>
             </div>
           </div>
@@ -1385,6 +1420,7 @@
       masterTuneCents: 0,
       attackMs: 4,
       releaseMs: 120,
+      pitchBendRangeSemitones: 2,
       pitchBendUpMultiplier: 1,
       pitchBendDownMultiplier: 1,
       reverbWet: 0.18,
@@ -1411,7 +1447,7 @@
     };
 
     const SAMPLE_OCTAVE_OFFSET = 0;
-    const SETTINGS_STORAGE_KEY = "celtic_sounds_settings_v9";
+    const SETTINGS_STORAGE_KEY = "celtic_sounds_settings_v10";
     const FIREFOX_WARNING_STORAGE_KEY = "celtic_sounds_firefox_warning_shown_v1";
 
     let gLocalStorageAvailable = false;
@@ -1437,6 +1473,7 @@
       pitchBendValue: 0,
       pitchBendUpMultiplier: 1,
       pitchBendDownMultiplier: 1,
+      pitchBendRangeSemitones: 2,
       basePitchBendCents: 200,
       reverbWet: 0.18,
       reverbDry: 1.00,
@@ -1735,6 +1772,7 @@
         masterTuneCents: state.masterTuneCents,
         attackMs: state.attackMs,
         releaseMs: state.releaseMs,
+        pitchBendRangeSemitones: state.pitchBendRangeSemitones,
         pitchBendUpMultiplier: state.pitchBendUpMultiplier,
         pitchBendDownMultiplier: state.pitchBendDownMultiplier,
         reverbWet: state.reverbWet,
@@ -1798,6 +1836,11 @@
 
       if (typeof data.releaseMs === "number") {
         state.releaseMs = clamp(Math.round(data.releaseMs), 10, 1500);
+      }
+
+      if (typeof data.pitchBendRangeSemitones === "number") {
+        state.pitchBendRangeSemitones = clamp(Math.round(data.pitchBendRangeSemitones), 0, 12);
+        state.basePitchBendCents = state.pitchBendRangeSemitones * 100;
       }
 
       if (typeof data.pitchBendUpMultiplier === "number") {
@@ -1979,6 +2022,7 @@
       lines.push(
         "Master tune cents: " + state.masterTuneCents,
         "Transpose semitones: " + state.transposeSemis,
+        "Pitch bend range semitones: " + state.pitchBendRangeSemitones,
         "Pitch bend cents: " + bendCents.toFixed(1)
       );
 
@@ -3104,6 +3148,9 @@
       state.pitchBendValue = 0;
       state.liveStatusHidden = DEFAULTS.liveStatusHidden;
 
+      state.pitchBendRangeSemitones = DEFAULTS.pitchBendRangeSemitones;
+      state.basePitchBendCents = state.pitchBendRangeSemitones * 100;
+
       state.heldNotes.clear();
       state.lowHeldNotes.clear();
       state.heldNoteVelocities.clear();
@@ -3208,6 +3255,11 @@
 
       if ($("freezeMidiLog")) {
         $("freezeMidiLog").checked = state.freezeMidiLog;
+      }
+
+      if ($("pitchBendRangeSemitones")) {
+        $("pitchBendRangeSemitones").value = String(state.pitchBendRangeSemitones);
+        $("pitchBendRangeSemitonesValue").textContent = String(state.pitchBendRangeSemitones);
       }
 
       renderLiveStatusVisibility();
@@ -3421,6 +3473,15 @@
         logLiveStatus();
         saveSettingsToLocalStorage();
       });
+
+      bindRange("pitchBendRangeSemitones", "pitchBendRangeSemitonesValue", (v) => String(Math.round(v)), (v) => {
+        state.pitchBendRangeSemitones = clamp(Math.round(v), 0, 12);
+        state.basePitchBendCents = state.pitchBendRangeSemitones * 100;
+        applyPitchBendToActiveVoice();
+        logLiveStatus();
+        saveSettingsToLocalStorage();
+      });
+
     }
 
     function setupAutomaticAudioInit() {
