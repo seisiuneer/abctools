@@ -267,23 +267,12 @@
     transform: translateY(-1px);
   }
 
-  button.primary {
-    background: linear-gradient(135deg, #1d4ed8, #2563eb);
-    border-color: #3b82f6;
-  }
-
-  button.primary:hover {
-    background: linear-gradient(135deg, #2563eb, #3b82f6);
-    border-color: #60a5fa;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.35), 0 0 8px rgba(59,130,246,0.5);
-  }
-
-  button.good {
+  button.connect {
     background: linear-gradient(135deg, #15803d, #16a34a);
     border-color: #22c55e;
   }
 
-  button.good:hover {
+  button.connect:hover {
     background: linear-gradient(135deg, #16a34a, #22c55e);
     border-color: #4ade80;
     box-shadow: 0 4px 12px rgba(0,0,0,0.35), 0 0 8px rgba(34,197,94,0.5);
@@ -300,20 +289,43 @@
     box-shadow: 0 4px 12px rgba(0,0,0,0.35), 0 0 8px rgba(239,68,68,0.5);
   }
 
+  .btn-reset,
   button.reset {
-    background: linear-gradient(135deg, #162f6a, #1e3a8a);
-    border-color: #1e40af;
-    color: #ffffff;
+    background: linear-gradient(135deg, #8b1d1d 0%, #c92a2a 100%);
+    border: 1px solid #ff4d4d;
+    color: #fff;
+    box-shadow: 0 4px 14px rgba(201, 42, 42, 0.35);
   }
 
-  button.reset:hover {
-    background: linear-gradient(135deg, #1e3a8a, #2563eb);
-    border-color: #3b82f6;
-    box-shadow:
-      0 4px 12px rgba(0,0,0,0.35),
-      0 0 10px rgba(37,99,235,0.6);
+  .btn-export,
+  button.good {
+    background: linear-gradient(135deg, #4c1d95 0%, #7c3aed 100%);
+    border: 1px solid #8b5cf6;
+    color: #fff;
+    box-shadow: 0 4px 14px rgba(124, 58, 237, 0.35);
   }
 
+  .btn-import,
+  button.primary {
+    background: linear-gradient(135deg, #0c4a6e 0%, #0284c7 100%);
+    border: 1px solid #38bdf8;
+    color: #fff;
+    box-shadow: 0 4px 14px rgba(2, 132, 199, 0.35);
+  }
+
+  button.reset:hover,
+  button.good:hover,
+  button.primary:hover {
+    filter: brightness(1.1);
+    transform: translateY(-1px);
+  }
+
+  button.reset:active,
+  button.good:active,
+  button.primary:active {
+    transform: translateY(0);
+    filter: brightness(0.95);
+  }
   .status {
     display: grid;
     gap: 8px;
@@ -626,6 +638,24 @@
     box-shadow:0 0 6px rgba(80,120,220,0.35);
   }
 
+  /* Prompt text */
+  .modal_compact_main .modal_default_promptdescription {
+    font-size: 20px !important;
+    line-height: 1.5 !important;
+  }
+
+  /* Force override ALL prompt inputs inside DayPilot modal */
+  .modal_compact_main .modal_default_prompt,
+  .modal_compact_main input,
+  .modal_compact_main .modal_default_prompt input {
+    font-size: 18px !important;
+    padding: 8px 9px !important;
+    height: auto !important;
+    background-color:white !important;
+    border-radius: 10px;
+    color:black;
+  }
+
   .status.status-hidden {
     display: none;
   }
@@ -634,11 +664,29 @@
     margin-top: 14px;
   }
 
-  .card-header{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:10px;
+  .card-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 4px;
+  }
+
+  .card-header h2 {
+    margin: 0;
+  }
+
+  /* Reset button near title */
+  .header-reset {
+    margin-left: 20px;
+  }
+
+  /* Push Export/Import to the right */
+  .header-actions {
+    margin-right: 28px;
+    margin-left: auto;
+    display: flex;
+    gap: 14px;
+    align-items: center;
   }
 
   .header-button{
@@ -775,12 +823,8 @@
     }
 
     .card-header{
-      flex-direction: column;
-      align-items: stretch;
-    }
-
-    .header-button{
-      align-self: flex-start;
+      align-items: flex-start;
+      gap: 10px 12px;
     }
 
     .setup-row{
@@ -802,6 +846,32 @@
     }
   }
 
+  @media (max-width: 560px){
+    .card-header{
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    .card-header h2{
+      margin-bottom: 2px;
+    }
+
+    .header-reset{
+      width: 100%;
+    }
+
+    .header-actions{
+      width: 100%;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+
+    .header-actions .header-button{
+      width: 100%;
+    }
+  }
+
 </style>
 </head>
 
@@ -816,15 +886,29 @@
         <p class="muted">WebMIDI Sound Module for the WARBL by Michael Eskin</p>
       </div>
 
-      <!-- Bottom section (NEW) -->
+      <!-- Bottom section -->
       <div class="hero-bottom">
         <div class="setup-row">
-          <button id="btnConnectMidi" class="primary connect-midi">Connect MIDI</button>
-          <button id="btnAllNotesOff" class="warn all-notes-off">All Notes Off</button>
+          <button
+            id="btnConnectMidi"
+            class="connect connect-midi"
+            title="Connect to available MIDI input devices"
+            type="button"
+          >
+            Connect MIDI
+          </button>
+          <button
+            id="btnAllNotesOff"
+            class="warn all-notes-off"
+            title="Immediately stop all sounding notes and drones"
+            type="button"
+          >
+            All Notes Off
+          </button>
         </div>
       </div>
 
-     <button
+      <button
         id="btnWarblConfig"
         class="hero-image-button hero-warbl-button"
         title="Open WARBL Configuration Tool"
@@ -834,7 +918,14 @@
         <img src="img/warbl.png" alt="WARBL Configuration Tool" />
       </button>
 
-      <button id="btnInstructions" class="hero-help" title="Click for instructions" type="button">?</button>
+      <button
+        id="btnInstructions"
+        class="hero-help"
+        title="Open instructions"
+        type="button"
+      >
+        ?
+      </button>
 
     </div>
 
@@ -842,30 +933,71 @@
 
       <!-- LEFT: CONTROLS -->
       <div class="card grid">
+
         <div class="card-header">
+
           <h2>Controls</h2>
-          <button id="btnResetDefaults" class="reset header-button">Reset All to Defaults</button>
+
+          <!-- Reset sits near the title -->
+          <button
+            id="btnResetDefaults"
+            class="reset header-button header-reset"
+            title="Reset the currently selected instrument to its default settings"
+            type="button"
+          >
+            Reset Instrument to Defaults
+          </button>
+
+          <!-- Right-aligned group -->
+          <div class="header-actions">
+            <button
+              id="btnExportSettings"
+              class="good header-button"
+              title="Export all saved settings to a JSON file"
+              type="button"
+            >
+              Export Settings
+            </button>
+
+            <button
+              id="btnImportSettings"
+              class="primary header-button"
+              title="Import saved settings from a JSON file"
+              type="button"
+            >
+              Import Settings
+            </button>
+
+            <input
+              id="fileImportSettings"
+              type="file"
+              accept=".json"
+              style="display:none;"
+              title="Choose a JSON settings file to import"
+            />
+          </div>
+
         </div>
 
         <div class="controls">
           <div class="field">
             <label for="midiInputSelect">MIDI Input</label>
-            <select id="midiInputSelect"></select>
+            <select id="midiInputSelect" title="Choose the MIDI input device to use"></select>
           </div>
 
           <div class="field">
             <label for="midiChannelSelect">Input Channel</label>
-            <select id="midiChannelSelect"></select>
+            <select id="midiChannelSelect" title="Choose which MIDI channel Celtic Sounds listens to"></select>
           </div>
 
           <div class="field">
             <label for="instrumentSelect">Instrument</label>
-            <select id="instrumentSelect"></select>
+            <select id="instrumentSelect" title="Choose the current instrument sound"></select>
           </div>
 
           <div class="field">
             <label for="expressionModeSelect">Expression Source</label>
-            <select id="expressionModeSelect">
+            <select id="expressionModeSelect" title="Choose which MIDI source controls expression and loudness">
               <option value="cc7">Volume (CC7)</option>
               <option value="cc2">Breath (CC2)</option>
               <option value="cc11">Expression (CC11)</option>
@@ -881,18 +1013,40 @@
                   <label for="masterTuneCents">
                     Master Tune <span id="masterTuneCentsValue">0</span> cents
                   </label>
-                  <button id="btnResetMasterTune" type="button" class="mini-reset-button" aria-label="Reset master tuning to zero">
+                  <button
+                    id="btnResetMasterTune"
+                    type="button"
+                    class="mini-reset-button"
+                    aria-label="Reset master tuning to zero"
+                    title="Reset master tuning to 0 cents"
+                  >
                     Reset
                   </button>
                 </div>
-                <input id="masterTuneCents" type="range" min="-50" max="50" step="1" value="0" />
+                <input
+                  id="masterTuneCents"
+                  type="range"
+                  min="-50"
+                  max="50"
+                  step="1"
+                  value="0"
+                  title="Adjust master tuning in cents"
+                />
               </div>
 
               <div class="field field-transpose">
                 <label for="transposeSemis">
                   Transpose (semitones) <span id="transposeSemisValue">0</span>
                 </label>
-                <input id="transposeSemis" type="range" min="-12" max="12" step="1" value="0" />
+                <input
+                  id="transposeSemis"
+                  type="range"
+                  min="-12"
+                  max="12"
+                  step="1"
+                  value="0"
+                  title="Transpose playback up or down in semitone steps"
+                />
               </div>
 
             </div>
@@ -902,7 +1056,15 @@
             <label for="pitchBendRangeSemitones">
               Pitch Bend Range <span id="pitchBendRangeSemitonesValue">2</span> semitones
             </label>
-            <input id="pitchBendRangeSemitones" type="range" min="0" max="12" step="1" value="2" />
+            <input
+              id="pitchBendRangeSemitones"
+              type="range"
+              min="0"
+              max="12"
+              step="1"
+              value="2"
+              title="Set the global pitch bend range in semitones"
+            />
           </div>
 
           <div class="field" aria-hidden="true"></div>
@@ -913,14 +1075,30 @@
                 <label for="pitchBendDownMultiplier">
                   Pitch Bend Down Scale <span id="pitchBendDownMultiplierValue">1.00</span>
                 </label>
-                <input id="pitchBendDownMultiplier" type="range" min="0" max="4" step="0.01" value="1" />
+                <input
+                  id="pitchBendDownMultiplier"
+                  type="range"
+                  min="0"
+                  max="4"
+                  step="0.01"
+                  value="1"
+                  title="Scale how strongly downward pitch bend is applied"
+                />
               </div>
 
               <div class="field">
                 <label for="pitchBendUpMultiplier">
                   Pitch Bend Up Scale <span id="pitchBendUpMultiplierValue">1.00</span>
                 </label>
-                <input id="pitchBendUpMultiplier" type="range" min="0" max="4" step="0.01" value="1" />
+                <input
+                  id="pitchBendUpMultiplier"
+                  type="range"
+                  min="0"
+                  max="4"
+                  step="0.01"
+                  value="1"
+                  title="Scale how strongly upward pitch bend is applied"
+                />
               </div>
             </div>
           </div>
@@ -931,14 +1109,30 @@
                 <label for="masterVolume">
                   Volume <span id="masterVolumeValue">1.00</span>
                 </label>
-                <input id="masterVolume" type="range" min="0" max="2.0" step="0.01" value="1.0" />
+                <input
+                  id="masterVolume"
+                  type="range"
+                  min="0"
+                  max="2.0"
+                  step="0.01"
+                  value="1.0"
+                  title="Adjust the main output volume for the current instrument"
+                />
               </div>
 
               <div id="droneVolumeField" class="field field-hidden">
                 <label for="droneVolume">
                   Drone Volume <span id="droneVolumeValue">1.00</span>
                 </label>
-                <input id="droneVolume" type="range" min="0" max="2.0" step="0.01" value="1.0" />
+                <input
+                  id="droneVolume"
+                  type="range"
+                  min="0"
+                  max="2.0"
+                  step="0.01"
+                  value="1.0"
+                  title="Adjust the drone volume for instruments that support drones"
+                />
               </div>
             </div>
           </div>
@@ -949,14 +1143,30 @@
                 <label for="attackMs">
                   Attack ms <span id="attackMsValue">4</span>
                 </label>
-                <input id="attackMs" type="range" min="0" max="150" step="1" value="4" />
+                <input
+                  id="attackMs"
+                  type="range"
+                  min="0"
+                  max="150"
+                  step="1"
+                  value="4"
+                  title="Adjust how quickly notes reach full volume"
+                />
               </div>
 
               <div class="field">
                 <label for="releaseMs">
                   Release ms <span id="releaseMsValue">120</span>
                 </label>
-                <input id="releaseMs" type="range" min="10" max="1500" step="1" value="120" />
+                <input
+                  id="releaseMs"
+                  type="range"
+                  min="10"
+                  max="1500"
+                  step="1"
+                  value="120"
+                  title="Adjust how quickly notes fade out after release"
+                />
               </div>
             </div>
           </div>
@@ -965,13 +1175,21 @@
             <div class="two-up">
               <div class="field">
                 <label for="reverbSelect">Reverb Style</label>
-                <select id="reverbSelect"></select>
+                <select id="reverbSelect" title="Choose the global reverb style"></select>
               </div>
               <div class="field">
                 <label for="reverbPreDelay">
                   Pre-delay ms <span id="reverbPreDelayValue">0</span>
                 </label>
-                <input id="reverbPreDelay" type="range" min="0" max="250" step="1" value="0" />
+                <input
+                  id="reverbPreDelay"
+                  type="range"
+                  min="0"
+                  max="250"
+                  step="1"
+                  value="0"
+                  title="Set the delay before the reverb begins"
+                />
               </div>
             </div>
           </div>
@@ -982,14 +1200,30 @@
                 <label for="reverbWet">
                   Reverb Wet <span id="reverbWetValue">0.18</span>
                 </label>
-                <input id="reverbWet" type="range" min="0" max="1" step="0.01" value="0.18" />
+                <input
+                  id="reverbWet"
+                  type="range"
+                  min="0"
+                  max="1"
+                  step="0.01"
+                  value="0.18"
+                  title="Adjust the amount of reverberated signal in the mix"
+                />
               </div>
 
               <div class="field">
                 <label for="reverbDry">
                   Reverb Dry <span id="reverbDryValue">1.00</span>
                 </label>
-                <input id="reverbDry" type="range" min="0" max="1.5" step="0.01" value="1.00" />
+                <input
+                  id="reverbDry"
+                  type="range"
+                  min="0"
+                  max="1.5"
+                  step="0.01"
+                  value="1.00"
+                  title="Adjust the amount of direct unprocessed signal in the mix"
+                />
               </div>
             </div>
           </div>
@@ -1002,32 +1236,58 @@
         <h2>Live Status</h2>
 
         <div class="midi-log-controls">
-          <label for="showLiveStatus">
-            <input type="checkbox" id="showLiveStatus" />
+          <label for="showLiveStatus" title="Show or hide the live status display">
+            <input
+              type="checkbox"
+              id="showLiveStatus"
+              title="Show or hide the live status display"
+            />
             Show live status
           </label>
         </div>
 
-        <div class="status" id="liveStatus">Waiting...</div>
+        <div class="status" id="liveStatus" title="Current status of the selected instrument and MIDI input">Waiting...</div>
 
         <div class="midi-log-wrap">
           <h3>MIDI Message Stream</h3>
           <div class="midi-log-controls">
-            <label for="showMidiLog">
-              <input type="checkbox" id="showMidiLog" />
+            <label for="showMidiLog" title="Show or hide the incoming MIDI message stream">
+              <input
+                type="checkbox"
+                id="showMidiLog"
+                title="Show or hide the incoming MIDI message stream"
+              />
               Show MIDI message stream
             </label>
-            <label for="freezeMidiLog">
-              <input type="checkbox" id="freezeMidiLog" />
+            <label for="freezeMidiLog" title="Freeze the MIDI message display without stopping MIDI input">
+              <input
+                type="checkbox"
+                id="freezeMidiLog"
+                title="Freeze the MIDI message display without stopping MIDI input"
+              />
               Freeze
             </label>
-            <button id="btnClearMidiLog" type="button">Clear MIDI Log</button>
+            <button
+              id="btnClearMidiLog"
+              type="button"
+              title="Clear the MIDI message log display"
+            >
+              Clear MIDI Log
+            </button>
           </div>
-          <div class="midi-log" id="midiLog" hidden>MIDI stream disabled.</div>
+          <div
+            class="midi-log"
+            id="midiLog"
+            hidden
+            title="Incoming MIDI messages received on the selected channel"
+          >
+            MIDI stream disabled.
+          </div>
         </div>
       </div>
 
     </div>
+
   </div>
 
   <div id="instructionsOverlay" class="instructions-overlay" aria-hidden="true">
@@ -1218,7 +1478,62 @@
             <div class="instructions-gap"></div>
             Lowest MIDI note for the chanter is G#4 (68).
           </div>
+          
+          <hr class="instructions-divider"/>
 
+          <div class="instructions-subtitle">Reset Instrument to Defaults</div>
+          <div class="instructions-subbody">
+            The <b>Reset Instrument to Defaults</b> button resets only the currently selected instrument.
+            <div class="instructions-gap"></div>
+            This restores that instrument’s sound settings such as:
+            <div class="instructions-gap"></div>
+            • <b>Expression Source</b><br/>
+            • <b>Volume</b><br/>
+            • <b>Drone Volume</b> (when applicable)<br/>
+            • <b>Master Tune</b><br/>
+            • <b>Transpose</b><br/>
+            • <b>Pitch Bend Up/Down Scale</b><br/>
+            • <b>Attack</b><br/>
+            • <b>Release</b><br/>
+            • <b>Reverb Wet</b><br/>
+            • <b>Reverb Dry</b><br/>
+            • <b>Reverb Pre-delay</b>
+            <div class="instructions-gap"></div>
+            It does <b>not</b> reset your other instruments.
+          </div>
+
+          <hr class="instructions-divider"/>
+
+          <div class="instructions-subtitle">Export Settings</div>
+          <div class="instructions-subbody">
+            Click <b>Export Settings</b> to save all of your current <b>Celtic Sounds</b> settings to a JSON file.
+            <div class="instructions-gap"></div>
+            The exported file includes:
+            <div class="instructions-gap"></div>
+            • the currently selected instrument<br/>
+            • the selected MIDI input channel<br/>
+            • the selected reverb style<br/>
+            • the global pitch bend range<br/>
+            • live status / MIDI log display settings<br/>
+            • the saved settings for <b>all instruments</b>
+            <div class="instructions-gap"></div>
+            When exporting, you will be prompted for a filename.
+            <div class="instructions-gap"></div>
+            The default filename is <b>celtic-sounds-settings.json</b>, and if you enter a different filename, that name will be suggested the next time you export.
+            <div class="instructions-gap"></div>
+            The saved file will always use the <b>.json</b> extension.
+          </div>
+
+          <hr class="instructions-divider"/>
+
+          <div class="instructions-subtitle">Import Settings</div>
+          <div class="instructions-subbody">
+            Click <b>Import Settings</b> to load a previously exported <b>Celtic Sounds</b> JSON settings file.
+            <div class="instructions-gap"></div>
+            Importing restores the saved global settings and the saved settings for <b>all instruments</b>.
+            <div class="instructions-gap"></div>
+            This makes it easy to back up your preferred setup, move settings to another computer, or switch between different saved configurations.
+          </div>
           <hr class="instructions-divider"/>
 
           <div class="instructions-subtitle">
@@ -1447,8 +1762,11 @@
     };
 
     const SAMPLE_OCTAVE_OFFSET = 0;
-    const SETTINGS_STORAGE_KEY = "celtic_sounds_settings_v10";
+    const SETTINGS_STORAGE_KEY = "celtic_sounds_settings_v12";
     const FIREFOX_WARNING_STORAGE_KEY = "celtic_sounds_firefox_warning_shown_v1";
+
+    const DEFAULT_SETTINGS_FILENAME = "celtic-sounds-settings.json";
+    const LAST_SETTINGS_FILENAME_KEY = "celticSoundsLastSettingsFilename_v1";
 
     let gLocalStorageAvailable = false;
     let webMidiAvailable = false;
@@ -1501,6 +1819,7 @@
       dronePlayRequestId: 0,
 
       liveStatusHidden: false,
+      instrumentSettingsByInstrument: createDefaultAllInstrumentSettings(),
     };
 
     const INSTRUMENT_PRELOAD_NOTES = {
@@ -1746,6 +2065,44 @@
       }
     }
 
+    function showConfirmDialog(message, title = "Please Confirm", okText = "OK", cancelText = "Cancel") {
+      const safeMessage = String(message || "Are you sure?");
+      const safeTitle = String(title || "Please Confirm");
+
+      const html =
+        "<div style='text-align:left;font-family:helvetica,arial,sans-serif;font-size:13pt;line-height:1.45;padding:0 18px;'>" +
+
+          "<div style='text-align:center;font-size:1.2em;font-weight:700;margin:0 0 24px 0;'>" +
+            safeTitle
+              .replace(/&/g, "&amp;")
+              .replace(/</g, "&lt;")
+              .replace(/>/g, "&gt;") +
+          "</div>" +
+
+          "<div style='margin:0; white-space:pre-wrap; word-break:break-word; text-align:center;'>" +
+            safeMessage
+              .replace(/&/g, "&amp;")
+              .replace(/</g, "&lt;")
+              .replace(/>/g, "&gt;") +
+          "</div>" +
+
+        "</div>";
+
+      if (window.DayPilot && DayPilot.Modal && DayPilot.Modal.confirm) {
+        return DayPilot.Modal.confirm(html, {
+          theme: "modal_compact",
+          top: 130,
+          width: 620,
+          autoFocus: false,
+          scrollWithPage: true,
+          okText,
+          cancelText
+        }).then(result => !!(result && !result.canceled));
+      }
+
+      return Promise.resolve(window.confirm(safeTitle + "\n\n" + safeMessage));
+    }
+
     function supportsDroneVolumeControl() {
       return (
         state.selectedInstrumentKey === "uilleannPipes" ||
@@ -1761,27 +2118,38 @@
       field.classList.toggle("field-hidden", !supportsDroneVolumeControl());
     }
 
+    function buildSettingsFilePayload() {
+      saveCurrentInstrumentSettingsToStateStore();
+
+      return {
+        version: 12,
+        app: "celtic_sounds",
+        timestamp: new Date().toISOString(),
+        selectedMidiChannel: state.selectedMidiChannel,
+        selectedInstrumentKey: state.selectedInstrumentKey,
+        selectedReverbKey: state.selectedReverbKey,
+        pitchBendRangeSemitones: state.pitchBendRangeSemitones,
+        midiLogEnabled: state.midiLogEnabled,
+        freezeMidiLog: state.freezeMidiLog,
+        liveStatusHidden: state.liveStatusHidden,
+        instrumentSettingsByInstrument: sanitizeAllInstrumentSettings(
+          state.instrumentSettingsByInstrument
+        )
+      };
+    }
+
     function getPersistedSettingsObject() {
+      saveCurrentInstrumentSettingsToStateStore();
+
       return {
         selectedMidiChannel: state.selectedMidiChannel,
         selectedInstrumentKey: state.selectedInstrumentKey,
         selectedReverbKey: state.selectedReverbKey,
-        expressionMode: state.expressionMode,
-        masterVolume: state.masterVolume,
-        droneVolume: state.droneVolume,
-        masterTuneCents: state.masterTuneCents,
-        attackMs: state.attackMs,
-        releaseMs: state.releaseMs,
         pitchBendRangeSemitones: state.pitchBendRangeSemitones,
-        pitchBendUpMultiplier: state.pitchBendUpMultiplier,
-        pitchBendDownMultiplier: state.pitchBendDownMultiplier,
-        reverbWet: state.reverbWet,
-        reverbDry: state.reverbDry,
-        reverbPreDelayMs: state.reverbPreDelayMs,
-        transposeSemis: state.transposeSemis,
         midiLogEnabled: state.midiLogEnabled,
         freezeMidiLog: state.freezeMidiLog,
-        liveStatusHidden: state.liveStatusHidden
+        liveStatusHidden: state.liveStatusHidden,
+        instrumentSettingsByInstrument: sanitizeAllInstrumentSettings(state.instrumentSettingsByInstrument)
       };
     }
 
@@ -1811,61 +2179,13 @@
         state.selectedReverbKey = data.selectedReverbKey;
       }
 
-      if (typeof data.expressionMode === "string") {
-        const allowedModes = ["cc7", "cc2", "cc11", "velocity", "max"];
-        if (allowedModes.includes(data.expressionMode)) {
-          state.expressionMode = data.expressionMode;
-        }
-      }
-
-      if (typeof data.masterVolume === "number") {
-        state.masterVolume = clamp(data.masterVolume, 0, 2.0);
-      }
-
-      if (typeof data.droneVolume === "number") {
-        state.droneVolume = clamp(data.droneVolume, 0, 2.0);
-      }
-
-      if (typeof data.masterTuneCents === "number") {
-        state.masterTuneCents = clamp(Math.round(data.masterTuneCents), -50, 50);
-      }
-
-      if (typeof data.attackMs === "number") {
-        state.attackMs = clamp(Math.round(data.attackMs), 0, 150);
-      }
-
-      if (typeof data.releaseMs === "number") {
-        state.releaseMs = clamp(Math.round(data.releaseMs), 10, 1500);
-      }
-
       if (typeof data.pitchBendRangeSemitones === "number") {
         state.pitchBendRangeSemitones = clamp(Math.round(data.pitchBendRangeSemitones), 0, 12);
-        state.basePitchBendCents = state.pitchBendRangeSemitones * 100;
+      } else {
+        state.pitchBendRangeSemitones = DEFAULTS.pitchBendRangeSemitones;
       }
 
-      if (typeof data.pitchBendUpMultiplier === "number") {
-        state.pitchBendUpMultiplier = clamp(data.pitchBendUpMultiplier, 0, 4);
-      }
-
-      if (typeof data.pitchBendDownMultiplier === "number") {
-        state.pitchBendDownMultiplier = clamp(data.pitchBendDownMultiplier, 0, 4);
-      }
-
-      if (typeof data.reverbWet === "number") {
-        state.reverbWet = clamp(data.reverbWet, 0, 1);
-      }
-
-      if (typeof data.reverbDry === "number") {
-        state.reverbDry = clamp(data.reverbDry, 0, 1.5);
-      }
-
-      if (typeof data.reverbPreDelayMs === "number") {
-        state.reverbPreDelayMs = clamp(Math.round(data.reverbPreDelayMs), 0, 250);
-      }
-
-      if (typeof data.transposeSemis === "number") {
-        state.transposeSemis = clamp(Math.round(data.transposeSemis), -12, 12);
-      }
+      state.basePitchBendCents = state.pitchBendRangeSemitones * 100;
 
       if (typeof data.midiLogEnabled === "boolean") {
         state.midiLogEnabled = data.midiLogEnabled;
@@ -1878,6 +2198,12 @@
       if (typeof data.liveStatusHidden === "boolean") {
         state.liveStatusHidden = data.liveStatusHidden;
       }
+
+      state.instrumentSettingsByInstrument = sanitizeAllInstrumentSettings(
+        data.instrumentSettingsByInstrument
+      );
+
+      loadInstrumentSettingsIntoState(state.selectedInstrumentKey);
     }
 
     function loadSettingsFromLocalStorage() {
@@ -1888,6 +2214,84 @@
         applyLoadedSettings(JSON.parse(raw));
       } catch (err) {
         // ignore malformed storage
+      }
+    }
+
+    function downloadTextFile(filename, text) {
+      const blob = new Blob([text], { type: "application/json;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    }
+
+    async function exportSettingsToFile() {
+      try {
+        const payload = buildSettingsFilePayload();
+        const text = JSON.stringify(payload, null, 2);
+
+        const suggestedFilename = getLastSettingsFilename();
+        const enteredFilename = await promptForSettingsFilename(suggestedFilename);
+
+        if (enteredFilename == null) {
+          return;
+        }
+
+        const filename = normalizeSettingsFilename(enteredFilename);
+
+        saveLastSettingsFilename(filename);
+        downloadTextFile(filename, text);
+      } catch (err) {
+        console.error(err);
+        showErrorDialog("Unable to export settings.", "Export Failed");
+      }
+    }
+
+    async function importSettingsFromFile(file) {
+      if (!file) return;
+
+      try {
+        const text = await file.text();
+        const payload = JSON.parse(text);
+
+        if (!payload || payload.app !== "celtic_sounds") {
+          throw new Error("Invalid settings file.");
+        }
+
+        allNotesOff();
+        applyLoadedSettings(payload);
+
+        syncUiFromState();
+        applyMixerSettings();
+        applyTuningToAllVoices();
+        renderMidiLog();
+        logLiveStatus();
+        saveSettingsToLocalStorage();
+
+        if (state.audioContext) {
+          try {
+            await preloadInstrument(state.selectedInstrumentKey);
+            await preloadImpulseResponse(state.selectedReverbKey);
+          } catch (err) {
+            console.warn("Post-import preload warning:", err);
+          }
+        }
+        if (window.DayPilot && DayPilot.Modal && DayPilot.Modal.alert) {
+          DayPilot.Modal.alert('<div style="text-align:center">Settings imported successfully.</div>', {
+            theme: "modal_compact",
+            top: 130
+          });
+        }
+      } catch (err) {
+        console.error(err);
+        showErrorDialog(err.message || "Unable to import settings.", "Import Failed");
       }
     }
 
@@ -3128,45 +3532,20 @@
     }
 
     async function resetDefaults() {
-      state.selectedMidiChannel = DEFAULTS.selectedMidiChannel;
-      state.selectedInstrumentKey = DEFAULTS.selectedInstrumentKey;
-      state.selectedReverbKey = DEFAULTS.selectedReverbKey;
-      state.expressionMode = DEFAULTS.expressionMode;
-      state.masterVolume = DEFAULTS.masterVolume;
-      state.droneVolume = DEFAULTS.droneVolume;
-      state.masterTuneCents = DEFAULTS.masterTuneCents;
-      state.attackMs = DEFAULTS.attackMs;
-      state.releaseMs = DEFAULTS.releaseMs;
-      state.pitchBendUpMultiplier = DEFAULTS.pitchBendUpMultiplier;
-      state.pitchBendDownMultiplier = DEFAULTS.pitchBendDownMultiplier;
-      state.reverbWet = DEFAULTS.reverbWet;
-      state.reverbDry = DEFAULTS.reverbDry;
-      state.reverbPreDelayMs = DEFAULTS.reverbPreDelayMs;
-      state.transposeSemis = DEFAULTS.transposeSemis;
-      state.midiLogEnabled = DEFAULTS.midiLogEnabled;
-      state.freezeMidiLog = DEFAULTS.freezeMidiLog;
+      state.instrumentSettingsByInstrument[state.selectedInstrumentKey] = createDefaultInstrumentSettings();
+      loadInstrumentSettingsIntoState(state.selectedInstrumentKey);
+
       state.pitchBendValue = 0;
-      state.liveStatusHidden = DEFAULTS.liveStatusHidden;
-
-      state.pitchBendRangeSemitones = DEFAULTS.pitchBendRangeSemitones;
-      state.basePitchBendCents = state.pitchBendRangeSemitones * 100;
-
-      state.heldNotes.clear();
-      state.lowHeldNotes.clear();
-      state.heldNoteVelocities.clear();
-      state.lowHeldNoteVelocities.clear();
 
       syncUiFromState();
       applyMixerSettings();
       applyTuningToAllVoices();
-      clearMidiLog();
       allNotesOff();
       logLiveStatus();
 
       if (state.audioContext) {
         try {
           await preloadInstrument(state.selectedInstrumentKey);
-          await preloadImpulseResponse(state.selectedReverbKey);
           logLiveStatus();
         } catch (err) {
           console.error(err);
@@ -3327,10 +3706,21 @@
       });
 
       $("instrumentSelect").addEventListener("change", async (e) => {
-        state.selectedInstrumentKey = e.target.value;
+        const nextInstrumentKey = e.target.value;
+
+        saveCurrentInstrumentSettingsToStateStore();
+
+        state.selectedInstrumentKey = nextInstrumentKey;
+
         allNotesOff();
+        loadInstrumentSettingsIntoState(nextInstrumentKey);
+        syncUiFromState();
         renderDroneVolumeVisibility();
+        applyMixerSettings();
+        applyTuningToAllVoices();
+        logLiveStatus();
         saveSettingsToLocalStorage();
+
         try {
           if (state.audioContext) {
             await preloadInstrument(state.selectedInstrumentKey);
@@ -3345,6 +3735,7 @@
         state.expressionMode = e.target.value;
         updateActiveVoiceGain();
         logLiveStatus();
+        saveCurrentInstrumentSettingsToStateStore();
         saveSettingsToLocalStorage();
       });
 
@@ -3364,6 +3755,20 @@
       });
 
       $("btnResetDefaults").addEventListener("click", async () => {
+        const instrumentLabel =
+          APP_CONFIG.instruments[state.selectedInstrumentKey]?.label || "this instrument";
+
+        const confirmed = await showConfirmDialog(
+          "Reset all settings for " + instrumentLabel + " to their defaults?\n\nThis only affects the currently selected instrument.",
+          "Reset Instrument to Defaults",
+          "Reset",
+          "Cancel"
+        );
+
+        if (!confirmed) {
+          return;
+        }
+
         await resetDefaults();
       });
 
@@ -3399,6 +3804,7 @@
 
         applyTuningToAllVoices();
         logLiveStatus();
+        saveCurrentInstrumentSettingsToStateStore();
         saveSettingsToLocalStorage();
       });
 
@@ -3406,15 +3812,31 @@
         window.open("https://warbl.xyz/configure.html", "_blank", "noopener,noreferrer");
       });
 
+      $("btnExportSettings").addEventListener("click", () => {
+        exportSettingsToFile();
+      });
+
+      $("btnImportSettings").addEventListener("click", () => {
+        $("fileImportSettings").click();
+      });
+
+      $("fileImportSettings").addEventListener("change", (e) => {
+        const file = e.target.files && e.target.files[0];
+        importSettingsFromFile(file);
+        e.target.value = "";
+      });
+
       bindRange("masterVolume", "masterVolumeValue", (v) => v.toFixed(2), (v) => {
         state.masterVolume = v;
         applyMixerSettings();
+        saveCurrentInstrumentSettingsToStateStore();
         saveSettingsToLocalStorage();
       });
 
       bindRange("droneVolume", "droneVolumeValue", (v) => v.toFixed(2), (v) => {
         state.droneVolume = v;
         updateDroneVoiceGain();
+        saveCurrentInstrumentSettingsToStateStore();
         saveSettingsToLocalStorage();
       });
 
@@ -3422,16 +3844,19 @@
         state.masterTuneCents = clamp(Math.round(v), -50, 50);
         applyTuningToAllVoices();
         logLiveStatus();
+        saveCurrentInstrumentSettingsToStateStore();
         saveSettingsToLocalStorage();
       });
 
       bindRange("attackMs", "attackMsValue", (v) => String(v), (v) => {
         state.attackMs = v;
+        saveCurrentInstrumentSettingsToStateStore();
         saveSettingsToLocalStorage();
       });
 
       bindRange("releaseMs", "releaseMsValue", (v) => String(v), (v) => {
         state.releaseMs = v;
+        saveCurrentInstrumentSettingsToStateStore();
         saveSettingsToLocalStorage();
       });
 
@@ -3439,6 +3864,7 @@
         state.pitchBendUpMultiplier = v;
         applyPitchBendToActiveVoice();
         logLiveStatus();
+        saveCurrentInstrumentSettingsToStateStore();
         saveSettingsToLocalStorage();
       });
 
@@ -3446,24 +3872,28 @@
         state.pitchBendDownMultiplier = v;
         applyPitchBendToActiveVoice();
         logLiveStatus();
+        saveCurrentInstrumentSettingsToStateStore();
         saveSettingsToLocalStorage();
       });
 
       bindRange("reverbWet", "reverbWetValue", (v) => v.toFixed(2), (v) => {
         state.reverbWet = v;
         applyMixerSettings();
+        saveCurrentInstrumentSettingsToStateStore();
         saveSettingsToLocalStorage();
       });
 
       bindRange("reverbDry", "reverbDryValue", (v) => v.toFixed(2), (v) => {
         state.reverbDry = v;
         applyMixerSettings();
+        saveCurrentInstrumentSettingsToStateStore();
         saveSettingsToLocalStorage();
       });
 
       bindRange("reverbPreDelay", "reverbPreDelayValue", (v) => String(v), (v) => {
         state.reverbPreDelayMs = v;
         applyMixerSettings();
+        saveCurrentInstrumentSettingsToStateStore();
         saveSettingsToLocalStorage();
       });
 
@@ -3471,6 +3901,7 @@
         state.transposeSemis = clamp(Math.round(v), -12, 12);
         applyTuningToAllVoices();
         logLiveStatus();
+        saveCurrentInstrumentSettingsToStateStore();
         saveSettingsToLocalStorage();
       });
 
@@ -3553,11 +3984,21 @@
         `</div>` +
         `</div>`;
 
-      DayPilot.Modal.alert(html, {
-        theme: "modal_compact",
-        top: 100,
-        scrollWithPage: false
-      });
+      if (window.DayPilot && DayPilot.Modal && DayPilot.Modal.alert) {
+        DayPilot.Modal.alert(html, {
+          theme: "modal_compact",
+          top: 100,
+          scrollWithPage: false
+        });
+      } else {
+        alert(
+          "Enjoying Celtic Sounds?\n\n" +
+          "If this utility has been useful, please consider buying me a beer by tossing a few bucks into one of my online tip jars.\n\n" +
+          "PayPal: https://paypal.me/MichaelEskin\n" +
+          "Venmo: @MichaelEskin\n\n" +
+          "You can also find all my tip jar links at the bottom of the Instructions."
+        );
+      }
     }
 
     function incrementPageVisitCount() {
@@ -3646,7 +4087,230 @@
 
       return available;
     }
-    
+
+    function getInstrumentKeys() {
+      return Object.keys(APP_CONFIG.instruments);
+    }
+
+    function createDefaultInstrumentSettings() {
+      return {
+        expressionMode: DEFAULTS.expressionMode,
+        masterVolume: DEFAULTS.masterVolume,
+        droneVolume: DEFAULTS.droneVolume,
+        masterTuneCents: DEFAULTS.masterTuneCents,
+        attackMs: DEFAULTS.attackMs,
+        releaseMs: DEFAULTS.releaseMs,
+        pitchBendUpMultiplier: DEFAULTS.pitchBendUpMultiplier,
+        pitchBendDownMultiplier: DEFAULTS.pitchBendDownMultiplier,
+        reverbWet: DEFAULTS.reverbWet,
+        reverbDry: DEFAULTS.reverbDry,
+        reverbPreDelayMs: DEFAULTS.reverbPreDelayMs,
+        transposeSemis: DEFAULTS.transposeSemis
+      };
+    }
+
+    function createDefaultAllInstrumentSettings() {
+      const all = {};
+      for (const key of getInstrumentKeys()) {
+        all[key] = createDefaultInstrumentSettings();
+      }
+      return all;
+    }
+
+    function sanitizeInstrumentSettings(data) {
+      const defaults = createDefaultInstrumentSettings();
+      const out = { ...defaults };
+
+      if (!data || typeof data !== "object") return out;
+
+      const allowedModes = ["cc7", "cc2", "cc11", "velocity", "max"];
+
+      if (typeof data.expressionMode === "string" && allowedModes.includes(data.expressionMode)) {
+        out.expressionMode = data.expressionMode;
+      }
+
+      if (typeof data.masterVolume === "number") {
+        out.masterVolume = clamp(data.masterVolume, 0, 2.0);
+      }
+
+      if (typeof data.droneVolume === "number") {
+        out.droneVolume = clamp(data.droneVolume, 0, 2.0);
+      }
+
+      if (typeof data.masterTuneCents === "number") {
+        out.masterTuneCents = clamp(Math.round(data.masterTuneCents), -50, 50);
+      }
+
+      if (typeof data.attackMs === "number") {
+        out.attackMs = clamp(Math.round(data.attackMs), 0, 150);
+      }
+
+      if (typeof data.releaseMs === "number") {
+        out.releaseMs = clamp(Math.round(data.releaseMs), 10, 1500);
+      }
+
+      if (typeof data.pitchBendUpMultiplier === "number") {
+        out.pitchBendUpMultiplier = clamp(data.pitchBendUpMultiplier, 0, 4);
+      }
+
+      if (typeof data.pitchBendDownMultiplier === "number") {
+        out.pitchBendDownMultiplier = clamp(data.pitchBendDownMultiplier, 0, 4);
+      }
+
+      if (typeof data.reverbWet === "number") {
+        out.reverbWet = clamp(data.reverbWet, 0, 1);
+      }
+
+      if (typeof data.reverbDry === "number") {
+        out.reverbDry = clamp(data.reverbDry, 0, 1.5);
+      }
+
+      if (typeof data.reverbPreDelayMs === "number") {
+        out.reverbPreDelayMs = clamp(Math.round(data.reverbPreDelayMs), 0, 250);
+      }
+
+      if (typeof data.transposeSemis === "number") {
+        out.transposeSemis = clamp(Math.round(data.transposeSemis), -12, 12);
+      }
+
+      return out;
+    }
+
+    function sanitizeAllInstrumentSettings(data) {
+      const out = createDefaultAllInstrumentSettings();
+
+      if (!data || typeof data !== "object") {
+        return out;
+      }
+
+      for (const key of getInstrumentKeys()) {
+        out[key] = sanitizeInstrumentSettings(data[key]);
+      }
+
+      return out;
+    }
+
+    function getCurrentInstrumentSettingsObject() {
+      return sanitizeInstrumentSettings({
+        expressionMode: state.expressionMode,
+        masterVolume: state.masterVolume,
+        droneVolume: state.droneVolume,
+        masterTuneCents: state.masterTuneCents,
+        attackMs: state.attackMs,
+        releaseMs: state.releaseMs,
+        pitchBendUpMultiplier: state.pitchBendUpMultiplier,
+        pitchBendDownMultiplier: state.pitchBendDownMultiplier,
+        reverbWet: state.reverbWet,
+        reverbDry: state.reverbDry,
+        reverbPreDelayMs: state.reverbPreDelayMs,
+        transposeSemis: state.transposeSemis
+      });
+    }
+
+    function saveCurrentInstrumentSettingsToStateStore() {
+      const key = state.selectedInstrumentKey;
+      if (!key) return;
+
+      if (!state.instrumentSettingsByInstrument) {
+        state.instrumentSettingsByInstrument = createDefaultAllInstrumentSettings();
+      }
+
+      state.instrumentSettingsByInstrument[key] = getCurrentInstrumentSettingsObject();
+    }
+
+    function loadInstrumentSettingsIntoState(instrumentKey) {
+      if (!state.instrumentSettingsByInstrument) {
+        state.instrumentSettingsByInstrument = createDefaultAllInstrumentSettings();
+      }
+
+      const s = sanitizeInstrumentSettings(state.instrumentSettingsByInstrument[instrumentKey]);
+
+      state.expressionMode = s.expressionMode;
+      state.masterVolume = s.masterVolume;
+      state.droneVolume = s.droneVolume;
+      state.masterTuneCents = s.masterTuneCents;
+      state.attackMs = s.attackMs;
+      state.releaseMs = s.releaseMs;
+      state.pitchBendUpMultiplier = s.pitchBendUpMultiplier;
+      state.pitchBendDownMultiplier = s.pitchBendDownMultiplier;
+      state.reverbWet = s.reverbWet;
+      state.reverbDry = s.reverbDry;
+      state.reverbPreDelayMs = s.reverbPreDelayMs;
+      state.transposeSemis = s.transposeSemis;
+
+      state.basePitchBendCents = state.pitchBendRangeSemitones * 100;
+    }
+
+    function normalizeSettingsFilename(filename) {
+      let value = String(filename || "").trim();
+
+      if (!value) {
+        value = DEFAULT_SETTINGS_FILENAME;
+      }
+
+      if (!value.toLowerCase().endsWith(".json")) {
+        value = value.replace(/\.[^.]+$/, "");
+        value += ".json";
+      }
+
+      return value;
+    }
+
+    function getLastSettingsFilename() {
+      if (!gLocalStorageAvailable) {
+        return DEFAULT_SETTINGS_FILENAME;
+      }
+
+      try {
+        const saved = localStorage.getItem(LAST_SETTINGS_FILENAME_KEY);
+        return normalizeSettingsFilename(saved || DEFAULT_SETTINGS_FILENAME);
+      } catch (err) {
+        return DEFAULT_SETTINGS_FILENAME;
+      }
+    }
+
+    function saveLastSettingsFilename(filename) {
+      if (!gLocalStorageAvailable) return;
+
+      try {
+        localStorage.setItem(
+          LAST_SETTINGS_FILENAME_KEY,
+          normalizeSettingsFilename(filename)
+        );
+      } catch (err) {
+        // ignore storage failures
+      }
+    }
+
+    async function promptForSettingsFilename(defaultValue) {
+      if (window.DayPilot && DayPilot.Modal && DayPilot.Modal.prompt) {
+        const result = await DayPilot.Modal.prompt(
+          "<div style='font-size:18px; line-height:1.45; font-weight:600; margin-bottom:8px;'>Enter a filename for the exported settings file:</div>",
+          defaultValue,
+          {
+            theme: "modal_compact",
+            top: 130,
+            width: 720,
+            autoFocus: false,
+            scrollWithPage: true,
+            okText: "Save",
+            cancelText: "Cancel"
+          }
+        );
+
+        if (!result || result.canceled) return null;
+        return String(result.result || "").trim();
+      }
+
+      const value = window.prompt(
+        "Enter a filename for the exported settings file:",
+        defaultValue
+      );
+
+      if (value == null) return null;
+      return String(value).trim();
+    }
+
     async function bootstrap() {
       checkLocalStorageAvailable();
 
