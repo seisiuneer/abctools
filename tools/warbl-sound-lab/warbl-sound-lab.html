@@ -1889,10 +1889,7 @@
       const baseVoiceLevel =
         settings.patch === 'strings' ? 0.75 : 0.6;
 
-      const dynamicVoiceLevel =
-        settings.patch === 'strings'
-          ? (0.08 + exprGain * 0.92)
-          : (0.04 + exprGain * 0.96);
+      const dynamicVoiceLevel = exprGain;
 
       this.voiceGain.gain.setTargetAtTime(
         baseVoiceLevel * dynamicVoiceLevel,
@@ -2613,7 +2610,7 @@
   function saveState(){
     try{
       captureCurrentPresetOverrides();
-      localStorage.setItem('warblSoundLabState_v20', JSON.stringify({
+      localStorage.setItem('warblSoundLabState_v21', JSON.stringify({
         patch: state.patch,
         midiChannel: $('midiChannelSelect').value,
         midiInputId: $('midiInputSelect') ? $('midiInputSelect').value : '',
@@ -2629,7 +2626,7 @@
 
   function loadState(){
     try{
-      const raw = localStorage.getItem('warblSoundLabState_v20');
+      const raw = localStorage.getItem('warblSoundLabState_v21');
       if (!raw) {
         Object.assign(state, clonePresetDefaults(state.patch || 'whistle'));
         state.pitchBendRange = 2;
