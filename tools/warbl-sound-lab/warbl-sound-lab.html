@@ -373,8 +373,27 @@
       box-shadow: 0 0 0 1px rgba(96,165,250,0.3), 0 0 14px rgba(96,165,250,0.22);
     }
 
+    .preset-reset-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 18px;
+      margin-top: 14px;
+      flex-wrap: wrap;
+    }
+
+    .preset-reset-left,
+    .preset-reset-right {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
     #btnResetCurrentPreset,
-    #btnResetAllPresets {
+    #btnResetAllPresets,
+    #btnSaveSettingsFile,
+    #btnLoadSettingsFile {
       color: #fff;
       font-weight: 400 !important;
     }
@@ -397,7 +416,7 @@
       background: linear-gradient(135deg, #6b1414, #991b1b) !important;
       border-color: #ef4444;
       color: #fff;
-      margin-left: auto;
+      margin-left: 0 !important;
     }
 
     #btnResetAllPresets:hover {
@@ -406,17 +425,33 @@
       box-shadow: 0 4px 12px rgba(0,0,0,0.45), 0 0 8px rgba(239,68,68,0.25);
     }
 
+    #btnSaveSettingsFile {
+      background: linear-gradient(135deg, #3b0764, #6d28d9);
+      border-color: #7c3aed;
+      color: #fff;
+    }
+
+    #btnSaveSettingsFile:hover {
+      background: linear-gradient(135deg, #5b21b6, #8b5cf6);
+      border-color: #a78bfa;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.40), 0 0 8px rgba(139,92,246,0.30);
+    }
+
+    #btnLoadSettingsFile {
+      background: linear-gradient(135deg, #0f172a, #075985);
+      border-color: #0284c7;
+      color: #fff;
+    }
+
+    #btnLoadSettingsFile:hover {
+      background: linear-gradient(135deg, #075985, #0ea5e9);
+      border-color: #38bdf8;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.40), 0 0 8px rgba(14,165,233,0.25);
+    }
+
     .tiny {
       font-size: 0.8rem;
       color: var(--muted);
-    }
-
-    .preset-reset-row {
-      display: flex;
-      justify-content: flex-start;
-      gap: 18px;
-      margin-top: 14px;
-      flex-wrap: wrap;
     }
 
     /* Right panel fix */
@@ -739,6 +774,10 @@
       padding-left: 20px;
     }
 
+    .instructions-steps li {
+      margin-bottom: 10px;
+    }
+
     .modal_compact_background{
       background-color:#000;
       opacity:0.4;
@@ -808,6 +847,21 @@
     .modal_compact_main button:hover{
       background:#dbe8ff;
       box-shadow:0 0 6px rgba(80,120,220,0.35);
+    }
+
+    /* Prompt text */
+    .modal_compact_main .modal_default_promptdescription {
+      font-size: 20px !important;
+      line-height: 1.5 !important;
+    }
+
+    /* Force override ALL prompt inputs inside DayPilot modal */
+    .modal_compact_main .modal_default_prompt,
+    .modal_compact_main input,
+    .modal_compact_main .modal_default_prompt input {
+      font-size: 18px !important;
+      padding: 8px 9px !important;
+      height: auto !important;
     }
 
     @media (max-width: 1360px) {
@@ -1042,13 +1096,31 @@
       </div>
 
       <div class="preset-reset-row">
-        <button id="btnResetCurrentPreset" type="button" title="Reset only the currently selected preset back to its default settings">
-          Reset Current Preset to Defaults
-        </button>
-        <button id="btnResetAllPresets" type="button" title="Reset all presets and current settings back to their default values">
-          Reset All Presets to Defaults
-        </button>
+        <div class="preset-reset-left">
+          <button id="btnResetCurrentPreset" type="button" title="Reset only the currently selected preset back to its default settings">
+            Reset Current Preset to Defaults
+          </button>
+          <button id="btnResetAllPresets" type="button" title="Reset all presets and current settings back to their default values">
+            Reset All Presets to Defaults
+          </button>
+        </div>
+
+        <div class="preset-reset-right">
+          <button id="btnSaveSettingsFile" type="button" title="Exports all patch and global settings to a file">
+            Export Settings
+          </button>
+          <button id="btnLoadSettingsFile" type="button" title="Imports patch and global settings from a file">
+            Import Settings
+          </button>
+        </div>
       </div>
+
+      <input
+        id="settingsFileInput"
+        type="file"
+        accept=".json,application/json"
+        style="display:none"
+      />
 
     </div>
 
@@ -1155,6 +1227,42 @@
           <b>Reset Current Preset to Defaults</b> restores only the currently selected voice to its default settings. Global settings such as <b>Expression Source</b>, <b>MIDI Input</b>, <b>Input Channel</b>, and <b>Pitch Bend Range</b> are not changed.
           <div class="instructions-gap"></div>
           <b>Reset All Presets to Defaults</b> clears saved changes for all voices and restores the current voice to its default settings. Global settings such as <b>Expression Source</b>, <b>MIDI Input</b>, <b>Input Channel</b>, and <b>Pitch Bend Range</b> are not changed.
+        </div>
+
+        <hr class="instructions-divider"/>
+
+        <div class="instructions-subtitle">Saving and Loading Settings Files</div>
+
+        <div class="instructions-subbody">
+          WARBL Sound Lab lets you save your complete setup—including all preset settings, per-preset adjustments, and global options—to a file, then load it later or share it with others.
+
+          <div class="instructions-gap"></div>
+
+          <ul class="instructions-steps">
+            <li>
+              <strong>Export Settings:</strong><br>
+              Click <b>Export Settings</b> to download a file containing all preset settings, per-preset adjustments, and global configuration.
+            </li>
+
+            <li>
+              <strong>Import Settings:</strong><br>
+              Click <b>Import Settings</b> and select a previously saved file to restore your sounds and configuration.
+            </li>
+
+            <li>
+              <strong>What gets saved in the file:</strong><br>
+              • All preset parameters (tone, brightness, texture, vibrato, portamento, reverb, etc.)<br>
+              • Preset-specific adjustments and overrides<br>
+              • Expression mode and pitch bend range<br>
+              • MIDI logging, meter, and performance options
+            </li>
+
+            <li>
+              <strong>What does not get saved in the file:</strong><br>
+              • The selected MIDI input device<br>
+              • Browser- or hardware-specific connection state
+            </li>
+          </ul>
         </div>
 
         <hr class="instructions-divider"/>
@@ -1274,30 +1382,10 @@
 
   const EXPRESSION_CURVE_POWER = 1.8;
 
-  function computeExpressionGain(inputValue) {
-    const normalized = clamp(inputValue / 127, 0, 1);
-    return Math.pow(normalized, EXPRESSION_CURVE_POWER);
-  }
-
-  function resolveCurrentExpressionGain(noteVelocity = 127) {
-    switch (state.expressionMode) {
-      case 'velocity':
-        return computeExpressionGain(noteVelocity);
-
-      case 'fixed':
-        return 1.0;
-
-      case 'cc7':
-        return computeExpressionGain(state.cc7 ?? 0);
-
-      case 'cc11':
-        return computeExpressionGain(state.cc11 ?? 0);
-
-      case 'cc2':
-      default:
-        return computeExpressionGain(state.cc2 ?? 0);
-    }
-  }
+  const SETTINGS_FILE_MAGIC = 'WARBL_SOUND_LAB_SETTINGS';
+  const SETTINGS_FILE_VERSION = 1;
+  const DEFAULT_SETTINGS_FILENAME = 'warbl-sound-tools-settings.json';
+  const LAST_SETTINGS_FILENAME_KEY = 'warblSoundLabLastSettingsFilename_v1';
 
   const DEFAULTS = {
     patch:'whistle',
@@ -1490,6 +1578,96 @@
     return window.confirm(
       title.replace(/<[^>]*>/g, '') + "\n\n" + message.replace(/<[^>]*>/g, '')
     );
+  }
+
+  async function showMessageDialog(title, message) {
+    const html =
+      "<div style='text-align:center;font-family:helvetica,arial,sans-serif;font-size:13pt;line-height:1.45;padding:0 18px;'>" +
+        "<div style='font-size:1.2em;font-weight:700;margin:0 0 12px 0;'>" +
+          title +
+        "</div>" +
+        "<div style='margin:0;'>" +
+          message +
+        "</div>" +
+      "</div>";
+
+    if (window.DayPilot && DayPilot.Modal && DayPilot.Modal.alert) {
+      await DayPilot.Modal.alert(html, {
+        theme: "modal_compact",
+        top: 130,
+        width: 600,
+        autoFocus: false,
+        scrollWithPage: true
+      });
+      return;
+    }
+
+    alert(title.replace(/<[^>]*>/g, '') + "\n\n" + message.replace(/<[^>]*>/g, ''));
+  }
+
+  function normalizeSettingsFilename(filename) {
+    let value = String(filename || '').trim();
+
+    if (!value) {
+      value = DEFAULT_SETTINGS_FILENAME;
+    }
+
+    if (!value.toLowerCase().endsWith('.json')) {
+      value = value.replace(/\.[^.]+$/, '');
+      value += '.json';
+    }
+
+    return value;
+  }
+
+  async function promptForFilename(defaultValue) {
+    if (window.DayPilot && DayPilot.Modal && DayPilot.Modal.prompt) {
+      const result = await DayPilot.Modal.prompt(
+        "<div style='font-size:18px; line-height:1.45; font-weight:600; margin-bottom:8px;'>Enter a filename for the exported settings file:</div>",
+        defaultValue,
+        {
+          theme: "modal_compact",
+          top: 130,
+          width: 720,
+          autoFocus: false,
+          scrollWithPage: true,
+          okText: "Save",
+          cancelText: "Cancel"
+        }
+      );
+
+      if (!result || result.canceled) return null;
+      return String(result.result || '').trim();
+    }
+
+    const value = window.prompt("Enter a filename for the exported settings file:", defaultValue);
+    if (value == null) return null;
+    return String(value).trim();
+  }
+
+  function computeExpressionGain(inputValue) {
+    const normalized = clamp(inputValue / 127, 0, 1);
+    return Math.pow(normalized, EXPRESSION_CURVE_POWER);
+  }
+
+  function resolveCurrentExpressionGain(noteVelocity = 127) {
+    switch (state.expressionMode) {
+      case 'velocity':
+        return computeExpressionGain(noteVelocity);
+
+      case 'fixed':
+        return 1.0;
+
+      case 'cc7':
+        return computeExpressionGain(state.cc7 ?? 0);
+
+      case 'cc11':
+        return computeExpressionGain(state.cc11 ?? 0);
+
+      case 'cc2':
+      default:
+        return computeExpressionGain(state.cc2 ?? 0);
+    }
   }
   
   function getPatchProfile(name){
@@ -2499,7 +2677,7 @@
 
     if (!input || (typeof input.state === 'string' && input.state.toLowerCase() === 'disconnected')) {
       state.midiInput = null;
-      state.midiInputId = ''; // ← FIX: clear stale device id
+      state.midiInputId = ''; 
       $('midiStatus').textContent = 'Disconnected';
       saveState();
       return;
@@ -2608,6 +2786,202 @@
     };
   }
 
+  function buildPresetSettingsFromCurrentState(presetName) {
+    if (presetName !== state.patch) {
+      return getEffectivePresetSettings(presetName);
+    }
+
+    const result = { patch: presetName };
+
+    PRESET_SETTING_KEYS.forEach((key) => {
+      result[key] = state[key];
+    });
+
+    return result;
+  }
+
+  function buildAllEffectivePresetSettings() {
+    const all = {};
+    Object.keys(PRESETS).forEach((presetName) => {
+      if (presetName === state.patch) {
+        all[presetName] = buildPresetSettingsFromCurrentState(presetName);
+      } else {
+        all[presetName] = getEffectivePresetSettings(presetName);
+      }
+    });
+    return all;
+  }
+
+  function buildSettingsFilePayload() {
+    captureCurrentPresetOverrides();
+
+    return {
+      fileType: SETTINGS_FILE_MAGIC,
+      version: SETTINGS_FILE_VERSION,
+      exportedAt: new Date().toISOString(),
+      currentPatch: state.patch,
+      globals: {
+        expressionMode: state.expressionMode,
+        pitchBendRange: state.pitchBendRange,
+        midiChannel: state.midiChannel,
+        midiLogEnabled: !!state.midiLogEnabled,
+        meterEnabled: !!state.meterEnabled,
+        lowCpuMode: !!state.lowCpuMode
+      },
+      presets: buildAllEffectivePresetSettings()
+    };
+  }
+
+  function buildOverridesFromImportedPresets(importedPresets) {
+    const overrides = {};
+    const validPriorityModes = new Set(['last', 'high', 'low']);
+
+    Object.keys(PRESETS).forEach((presetName) => {
+      const imported = importedPresets && importedPresets[presetName]
+        ? importedPresets[presetName]
+        : clonePresetDefaults(presetName);
+
+      const defaults = clonePresetDefaults(presetName);
+      const presetOverrides = {};
+
+      PRESET_SETTING_KEYS.forEach((key) => {
+        if (!Object.prototype.hasOwnProperty.call(imported, key)) return;
+
+        let importedValue = imported[key];
+
+        if (key === 'priorityMode') {
+          importedValue = validPriorityModes.has(importedValue) ? importedValue : defaults[key];
+        }
+
+        if (importedValue !== defaults[key]) {
+          presetOverrides[key] = importedValue;
+        }
+      });
+
+      if (Object.keys(presetOverrides).length) {
+        overrides[presetName] = presetOverrides;
+      }
+    });
+
+    return overrides;
+  }
+
+  function applyLoadedSettingsPayload(payload) {
+    if (!payload || payload.fileType !== SETTINGS_FILE_MAGIC) {
+      throw new Error("This is not a WARBL Sound Lab settings file.");
+    }
+
+    if (payload.version !== SETTINGS_FILE_VERSION) {
+      throw new Error(
+        "This settings file version is not supported by this version of WARBL Sound Lab."
+      );
+    }
+
+    const importedPresets = payload.presets || {};
+    const importedGlobals = payload.globals || {};
+    const importedPatch = PRESETS[payload.currentPatch] ? payload.currentPatch : 'whistle';
+
+    const validExpressionModes = new Set(['cc2', 'cc11', 'cc7', 'velocity', 'fixed']);
+
+    state.presetOverrides = buildOverridesFromImportedPresets(importedPresets);
+    state.patch = importedPatch;
+
+    Object.assign(state, getEffectivePresetSettings(importedPatch));
+
+    state.expressionMode = validExpressionModes.has(importedGlobals.expressionMode)
+      ? importedGlobals.expressionMode
+      : DEFAULTS.expressionMode;
+
+    state.pitchBendRange = Math.max(
+      0,
+      Math.min(12, Math.round(Number(importedGlobals.pitchBendRange ?? DEFAULTS.pitchBendRange)))
+    );
+
+    const importedMidiChannel = Number(importedGlobals.midiChannel ?? 1);
+    state.midiChannel = (importedMidiChannel >= 1 && importedMidiChannel <= 16)
+      ? importedMidiChannel
+      : 1;
+
+    state.midiLogEnabled = !!importedGlobals.midiLogEnabled;
+    state.meterEnabled = !!importedGlobals.meterEnabled;
+    state.lowCpuMode = !!importedGlobals.lowCpuMode;
+
+    allNotesOff();
+    applyStateToUi();
+    refreshValueLabels();
+    renderMidiLog();
+    getExpressionFromState();
+
+    if (state.audioCtx) {
+      applyLowCpuModeToAudioGraph();
+
+      if (state.voice) {
+        state.voice.configurePatch(state);
+      }
+
+      updateReverb();
+      updateOutputLevels();
+      requestVoiceUpdate();
+    }
+
+    saveState();
+  }
+
+  function downloadTextFile(filename, text) {
+    const blob = new Blob([text], { type: 'application/json;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }
+
+  async function saveSettingsToFile() {
+    try {
+      let suggested = DEFAULT_SETTINGS_FILENAME;
+
+      try {
+        const savedName = localStorage.getItem(LAST_SETTINGS_FILENAME_KEY);
+        if (savedName && savedName.trim()) {
+          suggested = savedName.trim();
+        }
+      } catch (e) {}
+
+      let filename = await promptForFilename(suggested);
+      if (!filename) return;
+
+      filename = normalizeSettingsFilename(filename);
+
+      try {
+        localStorage.setItem(LAST_SETTINGS_FILENAME_KEY, filename);
+      } catch (e) {}
+
+      const payload = buildSettingsFilePayload();
+      const text = JSON.stringify(payload, null, 2);
+      downloadTextFile(filename, text);
+    } catch (err) {
+      console.error(err);
+      await showMessageDialog("Save Failed", "Unable to save the settings file.");
+    }
+  }
+
+  async function loadSettingsFromFile(file) {
+    if (!file) return;
+
+    try {
+      const text = await file.text();
+      const payload = JSON.parse(text);
+      applyLoadedSettingsPayload(payload);
+      await showMessageDialog("Settings Loaded", "The settings file was loaded successfully.");
+    } catch (err) {
+      console.error(err);
+      await showMessageDialog("Load Failed", err && err.message ? err.message : "Unable to load that settings file.");
+    }
+  }
+
   function captureCurrentPresetOverrides(){
     const presetName = state.patch;
     if (!PRESETS[presetName]) return;
@@ -2634,10 +3008,10 @@
   function saveState(){
     try{
       captureCurrentPresetOverrides();
-      localStorage.setItem('warblSoundLabState_v21', JSON.stringify({
+      localStorage.setItem('warblSoundLabState_v22', JSON.stringify({
         patch: state.patch,
-        midiChannel: $('midiChannelSelect').value,
-        midiInputId: $('midiInputSelect') ? $('midiInputSelect').value : '',
+        midiChannel: state.midiChannel,
+        midiInputId: state.midiInputId || '',
         midiLogEnabled: !!state.midiLogEnabled,
         meterEnabled: !!state.meterEnabled,
         lowCpuMode: !!state.lowCpuMode,
@@ -2650,7 +3024,7 @@
 
   function loadState(){
     try{
-      const raw = localStorage.getItem('warblSoundLabState_v21');
+      const raw = localStorage.getItem('warblSoundLabState_v22');
       if (!raw) {
         Object.assign(state, clonePresetDefaults(state.patch || 'whistle'));
         state.pitchBendRange = 2;
@@ -3023,6 +3397,21 @@
       }
 
       saveState();
+    });
+
+    $('btnSaveSettingsFile').addEventListener('click', saveSettingsToFile);
+
+    $('btnLoadSettingsFile').addEventListener('click', () => {
+      const input = $('settingsFileInput');
+      if (!input) return;
+      input.value = '';
+      input.click();
+    });
+
+    $('settingsFileInput').addEventListener('change', async (e) => {
+      const file = e.target && e.target.files ? e.target.files[0] : null;
+      await loadSettingsFromFile(file);
+      e.target.value = '';
     });
 
     if (!PRESETS[state.patch]) state.patch = 'whistle';
