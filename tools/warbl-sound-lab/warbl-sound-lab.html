@@ -116,6 +116,13 @@
       width: 100%;
     }
 
+    .hero-fullscreen {
+      right: 16px !important;
+      font-size: 20px;
+      line-height: 1;
+      font-weight: 500;
+    }
+
     h1 {
       margin: 0;
       font-size: clamp(28px, 2.6vw, 40px);
@@ -578,7 +585,7 @@
     .hero-help {
       position: absolute;
       top: 14px;
-      right: 16px;
+      right: 64px;
       width: 40px;
       height: 40px;
       font-size: 22px;
@@ -914,6 +921,12 @@
       }
     }
 
+    @media (max-width: 680px) {
+      .hero-subtitle{
+        display:none;
+      }
+    }
+
     @media (max-width: 560px) {
       .hero {
         padding: 18px 16px 108px 16px;
@@ -958,7 +971,26 @@
     <button id="btnWarblConfig" class="hero-image-button" title="Open WARBL Configuration Tool" aria-label="Open WARBL Configuration Tool" type="button">
       <img src="img/warbl.png" alt="WARBL Configuration Tool" />
     </button>
-    <button id="btnInstructions" class="hero-help" title="Open operating instructions" aria-label="Open operating instructions" type="button">?</button>
+    <button
+      id="btnFullscreen"
+      class="hero-help hero-fullscreen"
+      title="Toggle fullscreen mode"
+      aria-label="Toggle fullscreen mode"
+      type="button"
+    >
+      ⛶
+    </button>
+
+    <button
+      id="btnInstructions"
+      class="hero-help"
+      title="Open operating instructions"
+      aria-label="Open operating instructions"
+      type="button"
+    >
+      ?
+    </button>
+
 
   </div>
 
@@ -1317,6 +1349,17 @@
           When enabled, some patches may sound a little less rich or animated, especially the more layered sounds such as <b>Pad</b>, but the tool should remain more efficient overall.
           <div class="instructions-gap"></div>
           You can further reduce CPU usage by disabling the output level meter and the MIDI stream logging.
+        </div>
+
+        <hr class="instructions-divider"/>
+
+        <div class="instructions-subtitle">Fullscreen Mode</div>
+        <div class="instructions-subbody">
+          The <b>fullscreen</b> button (<b>⛶</b>) in the upper-right corner of the page toggles fullscreen mode on and off.
+          <div class="instructions-gap"></div>
+          Using fullscreen mode can help keep <b>WARBL Sound Lab</b> more visible while you play and reduce distractions from other browser interface elements.
+          <div class="instructions-gap"></div>
+          In most browsers, you can also press <b>Esc</b> to exit fullscreen mode.
         </div>
 
         <hr class="instructions-divider"/>
@@ -3470,6 +3513,103 @@
     return document.visibilityState !== 'visible';
   }
 
+  function getFullscreenElement() {
+    return (
+      document.fullscreenElement ||
+      document.webkitFullscreenElement ||
+      document.msFullscreenElement ||
+      null
+    );
+  }
+
+  async function enterFullscreen() {
+    const el = document.documentElement;
+
+    try {
+      if (el.requestFullscreen) {
+        await el.requestFullscreen();
+        return true;
+      }
+      if (el.webkitRequestFullscreen) {
+        el.webkitRequestFullscreen();
+        return true;
+      }
+      if (el.msRequestFullscreen) {
+        el.msRequestFullscreen();
+        return true;
+      }
+    } catch (err) {
+      console.warn('Unable to enter fullscreen:', err);
+    }
+
+    return false;
+  }
+
+  async function exitFullscreen() {
+    try {
+      if (document.exitFullscreen) {
+        await document.exitFullscreen();
+        return true;
+      }
+      if (document.webkitExitFullscreen) {
+        document.webkitExitFullscreen();
+        return true;
+      }
+      if (document.msExitFullscreen) {
+        document.msExitFullscreen();
+        return true;
+      }
+    } catch (err) {
+      console.warn('Unable to exit fullscreen:', err);
+    }
+
+    return false;
+  }
+
+  function updateFullscreenButton() {
+    const btn = $('btnFullscreen');
+    if (!btn) return;
+
+    const isFs = !!getFullscreenElement();
+
+    btn.textContent = '⛶';
+    btn.title = isFs ? 'Exit fullscreen' : 'Enter fullscreen';
+    btn.setAttribute('aria-label', btn.title);
+  }
+
+  async function showErrorDialog(message, title = 'Error') {
+    const safeMessage = String(message || 'An unexpected error occurred.');
+    const safeTitle = String(title || 'Error');
+
+    const html =
+      "<div style='text-align:left;font-family:helvetica,arial,sans-serif;font-size:13pt;line-height:1.45;padding:0 18px;'>" +
+        "<div style='text-align:center;font-size:1.2em;font-weight:700;margin:0 0 12px 0;'>" +
+          safeTitle
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;') +
+        "</div>" +
+        "<div style='margin:0; white-space:pre-wrap; word-break:break-word;'>" +
+          safeMessage
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;') +
+        "</div>" +
+      "</div>";
+
+    if (window.DayPilot && DayPilot.Modal && DayPilot.Modal.alert) {
+      await DayPilot.Modal.alert(html, {
+        theme: 'modal_compact',
+        top: 130,
+        width: 620,
+        autoFocus: false,
+        scrollWithPage: true
+      });
+    } else {
+      alert(safeTitle + "\n\n" + safeMessage);
+    }
+  }
+
   function init(){
     populateChannels();
     loadState();
@@ -3531,6 +3671,8 @@
     const btnCloseInstructions = $('btnCloseInstructions');
 
     const instructionsOverlay = $('instructionsOverlay');
+    const btnFullscreen = $('btnFullscreen');
+
     const openInstructions = () => {
       instructionsOverlay.style.display = 'block';
       instructionsOverlay.setAttribute('aria-hidden', 'false');
@@ -3590,6 +3732,24 @@
       e.target.value = '';
     });
 
+    if (btnFullscreen) {
+      btnFullscreen.addEventListener('click', async () => {
+        const isFs = !!getFullscreenElement();
+
+        if (isFs) {
+          await exitFullscreen();
+        } else {
+          const ok = await enterFullscreen();
+          if (!ok) {
+            await showErrorDialog(
+              'Fullscreen mode is not available in this browser or was blocked.',
+              'Fullscreen Unavailable'
+            );
+          }
+        }
+      });
+    }
+
     if (typeof document.visibilityState !== 'undefined') {
       document.addEventListener('visibilitychange', () => {
         if (document.visibilityState !== 'visible') {
@@ -3597,12 +3757,18 @@
         }
       });
     }
-    
+
     if (!PRESETS[state.patch]) state.patch = 'whistle';
     updatePresetButtons();
 
     renderMidiLog();
+
+    updateFullscreenButton();
   }
+  
+  document.addEventListener('fullscreenchange', updateFullscreenButton);
+  document.addEventListener('webkitfullscreenchange', updateFullscreenButton);
+  document.addEventListener('msfullscreenchange', updateFullscreenButton);
 
   init();
 })();

@@ -146,7 +146,7 @@
   .hero-help{
     position: absolute;
     top: 14px;
-    right: 16px;
+    right: 64px;
 
     width: 40px;
     height: 40px;
@@ -184,6 +184,12 @@
     box-shadow:
       0 0 12px rgba(34,197,94,0.35);
   }
+
+	.hero-fullscreen{
+	  right: 16px; 
+	  font-size: 20px;
+	  line-height: 1;
+	}
 
   .hero-card .muted {
     color: rgba(220, 235, 230, 0.85);
@@ -858,6 +864,10 @@
       padding: 16px 18px;
       border-radius: 14px;
     }
+
+    .hero-card h1 {
+      margin-top:20px;
+    }
   }
 
   @media (max-width: 560px){
@@ -888,6 +898,7 @@
     .header-reset{
       margin-left:0px !important;
     }
+
   }
 
 </style>
@@ -935,16 +946,24 @@
       >
         <img src="img/warbl.png" alt="WARBL Configuration Tool" />
       </button>
+			<button
+			  id="btnInstructions"
+			  class="hero-help"
+			  title="Open instructions"
+			  type="button"
+			>
+			  ?
+			</button>
 
-      <button
-        id="btnInstructions"
-        class="hero-help"
-        title="Open instructions"
-        type="button"
-      >
-        ?
-      </button>
-
+			<button
+			  id="btnFullscreen"
+			  class="hero-help hero-fullscreen"
+			  title="Toggle fullscreen mode"
+			  aria-label="Toggle fullscreen mode"
+			  type="button"
+			>
+			  ⛶
+			</button>
     </div>
 
     <div class="split">
@@ -1603,6 +1622,17 @@
             • Great Highland Bagpipe<br/>
             • Smallpipes
           </div>
+
+          <hr class="instructions-divider"/>
+
+					<div class="instructions-subtitle">Fullscreen Mode</div>
+					<div class="instructions-subbody">
+					  The <b>fullscreen</b> button (<b>⛶</b>) next to the <b>?</b> button in the upper-right corner of the page toggles fullscreen mode on and off.
+					  <div class="instructions-gap"></div>
+					  Using fullscreen mode can help keep <b>Celtic Sounds</b> more visible while you play and reduce distractions from other browser interface elements.
+					  <div class="instructions-gap"></div>
+					  In most browsers, you can also press <b>Esc</b> to exit fullscreen mode.
+					</div>
 
           <hr class="instructions-divider"/>
 
@@ -3891,6 +3921,22 @@
         e.target.value = "";
       });
 
+			$("btnFullscreen").addEventListener("click", async () => {
+			  const isFs = !!getFullscreenElement();
+
+			  if (isFs) {
+			    await exitFullscreen();
+			  } else {
+			    const ok = await enterFullscreen();
+			    if (!ok) {
+			      showErrorDialog(
+			        "Fullscreen mode is not available in this browser or was blocked.",
+			        "Fullscreen Unavailable"
+			      );
+			    }
+			  }
+			});
+
       bindRange("masterVolume", "masterVolumeValue", (v) => v.toFixed(2), (v) => {
         state.masterVolume = v;
         applyMixerSettings();
@@ -4347,6 +4393,70 @@
       }
     }
 
+		function getFullscreenElement() {
+		  return (
+		    document.fullscreenElement ||
+		    document.webkitFullscreenElement ||
+		    document.msFullscreenElement ||
+		    null
+		  );
+		}
+
+		async function enterFullscreen() {
+		  const el = document.documentElement;
+
+		  try {
+		    if (el.requestFullscreen) {
+		      await el.requestFullscreen();
+		      return true;
+		    }
+		    if (el.webkitRequestFullscreen) {
+		      el.webkitRequestFullscreen();
+		      return true;
+		    }
+		    if (el.msRequestFullscreen) {
+		      el.msRequestFullscreen();
+		      return true;
+		    }
+		  } catch (err) {
+		    console.warn("Unable to enter fullscreen:", err);
+		  }
+
+		  return false;
+		}
+
+		async function exitFullscreen() {
+		  try {
+		    if (document.exitFullscreen) {
+		      await document.exitFullscreen();
+		      return true;
+		    }
+		    if (document.webkitExitFullscreen) {
+		      document.webkitExitFullscreen();
+		      return true;
+		    }
+		    if (document.msExitFullscreen) {
+		      document.msExitFullscreen();
+		      return true;
+		    }
+		  } catch (err) {
+		    console.warn("Unable to exit fullscreen:", err);
+		  }
+
+		  return false;
+		}
+
+		function updateFullscreenButton() {
+		  const btn = $("btnFullscreen");
+		  if (!btn) return;
+
+		  const isFs = !!getFullscreenElement();
+
+		  btn.textContent = "⛶";
+		  btn.title = isFs ? "Exit fullscreen" : "Enter fullscreen";
+		  btn.setAttribute("aria-label", btn.title);
+		}
+
     async function promptForSettingsFilename(defaultValue) {
       if (window.DayPilot && DayPilot.Modal && DayPilot.Modal.prompt) {
         const result = await DayPilot.Modal.prompt(
@@ -4397,11 +4507,16 @@
       renderLiveStatusVisibility();
       logLiveStatus();
       renderMidiLog();
+      updateFullscreenButton();
 
       if (webMidiAvailable) {
         setupAutomaticAudioInit();
       }
     }
+
+		document.addEventListener("fullscreenchange", updateFullscreenButton);
+		document.addEventListener("webkitfullscreenchange", updateFullscreenButton);
+		document.addEventListener("msfullscreenchange", updateFullscreenButton);
 
     document.addEventListener("DOMContentLoaded", async () => {
 
