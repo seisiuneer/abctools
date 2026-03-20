@@ -1309,26 +1309,32 @@
 
         <hr class="instructions-divider"/>
 
-        <div class="instructions-subtitle">⚠️ Keep This Tab Active While Playing</div>
+        <div class="instructions-subtitle">⚠️ Keep This Tab or Window Visible While Playing</div>
         <div class="instructions-subbody">
-          WARBL Sound Lab must be kept in the active (frontmost) browser tab while you are playing.
+          WARBL Sound Lab must remain visible on screen while you are playing.
           <div class="instructions-gap"></div>
-          All modern browsers (Chrome, Safari, Firefox, etc.) automatically reduce performance for background tabs to conserve CPU and battery. This is not something the tool can override.
+          All modern browsers (Chrome, Safari, Firefox, etc.) automatically reduce performance for content that is not visible to conserve CPU and battery. This includes:
+          <ul style="margin-top:6px;">
+            <li>Tabs that are not currently active</li>
+            <li>Windows that are fully covered by other windows</li>
+          </ul>
           <div class="instructions-gap"></div>
-          When the tab is not active, incoming MIDI data from the WARBL (breath, expression, pitch bend, etc.) will not be processed smoothly.
+          This behavior cannot be disabled by the tool.
+          <div class="instructions-gap"></div>
+          When WARBL Sound Lab is not visible, incoming MIDI data from the WARBL (breath, expression, pitch bend, etc.) will not be processed smoothly.
           <div class="instructions-gap"></div>
           This will cause:
           <ul style="margin-top:6px;">
             <li>Reduced responsiveness</li>
-            <li>Disabled, stepped, or uneven dynamics and pitch</li>
+            <li>Stepped or uneven dynamics and pitch</li>
             <li>Audio glitches, clicks, or pops</li>
           </ul>
           <div class="instructions-gap"></div>
-          As soon as you return to this tab, normal performance will resume.
+          As soon as the tab or window becomes visible again, normal performance will resume.
           <div class="instructions-gap"></div>
-          <b>Important:</b> This behavior affects all web-based audio tools and cannot be disabled.
+          <b>Important:</b> This limitation affects all web-based audio tools.
           <div class="instructions-gap"></div>
-          <b>Best experience:</b> Keep WARBL Sound Lab visible while playing, or open it in its own window.
+          <b>Best experience:</b> Keep WARBL Sound Lab in the foreground, or if using a separate window, make sure some portion of it remains visible at all times.
         </div>
 
         <hr class="instructions-divider"/>
