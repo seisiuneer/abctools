@@ -1367,7 +1367,7 @@
         <div class="instructions-subbody" style="text-align: center;">
           This tool was created by <a href="https://michaeleskin.com" target="_blank" rel="noopener noreferrer">Michael Eskin</a>.<br/>
           <div style="margin-top:10px;">
-            If you find it useful, please consider buying me a beer<br/>by tossing a few bucks into one of my online tip jars.
+            If this tool has been useful to you, please consider supporting ongoing<br/>development by tossing a few bucks into one of my online tip jars.
           </div>
           <div style="margin-top:10px;">
             <b>PayPal</b><br/>
@@ -1403,6 +1403,7 @@
   const SETTINGS_FILE_VERSION = 1;
   const DEFAULT_SETTINGS_FILENAME = 'warbl-sound-lab-settings.json';
   const LAST_SETTINGS_FILENAME_KEY = 'warblSoundLabLastSettingsFilename_v2';
+  const TIP_REMINDER_VISIT_COUNT_KEY = 'warblSoundLabVisitCount_v1';
 
   const DEFAULTS = {
     patch:'whistle',
@@ -3349,6 +3350,72 @@
     return supported;
   }
 
+  function checkTipReminder(count) {
+    let show = false;
+
+    if (count === 10) show = true;
+    else if (count === 50) show = true;
+    else if (count > 50 && count % 50 === 0) show = true;
+
+    if (!show) return;
+
+    const html =
+      `<div style="text-align:center;font-family:helvetica,arial,sans-serif;font-size:14pt;line-height:1.5;margin-top:10px">` +
+      `<b>Enjoying WARBL Sound Lab?</b><br/><br/>` +
+      `If this tool has been useful to you, please consider` +
+      `<br/>supporting ongoing development by tossing a few` +
+      `<br/>bucks into one of my online tip jars.<br/>` +
+      `<div style="margin-top:10px;">` +
+      `<b>PayPal</b><br/>` +
+      `<a href="https://paypal.me/MichaelEskin" target="_blank" rel="noopener noreferrer" style="color:#1a73e8; text-decoration:underline;">https://paypal.me/MichaelEskin</a>` +
+      `</div>` +
+      `<div style="margin-top:10px;">` +
+      `<b>Venmo</b><br/>` +
+      `@MichaelEskin` +
+      `</div>` +
+      `<div style="margin-top:18px;opacity:0.9;">` +
+      `You can also find all my tip jar links at the bottom of the<br/><b>Instructions</b> (click the <b>?</b> at the upper right of the tool).<br/>` +
+      `&nbsp;` +
+      `</div>` +
+      `</div>`;
+
+    if (window.DayPilot && DayPilot.Modal && DayPilot.Modal.alert) {
+      DayPilot.Modal.alert(html, {
+        theme: "modal_compact",
+        top: 100,
+        scrollWithPage: false
+      });
+    } else {
+      alert(
+        "Enjoying WARBL Sound Lab?\n\n" +
+        "If this tool has been useful to you, please consider supporting ongoing development by tossing a few bucks into one of my online tip jars.\n\n" +
+        "PayPal: https://paypal.me/MichaelEskin\n" +
+        "Venmo: @MichaelEskin\n\n" +
+        "You can also find all my tip jar links at the bottom of the Instructions."
+      );
+    }
+  }
+
+  function incrementPageVisitCount() {
+    let count = 0;
+
+    try {
+      count = parseInt(localStorage.getItem(TIP_REMINDER_VISIT_COUNT_KEY) || '0', 10);
+    } catch (e) {
+      return;
+    }
+
+    count++;
+
+    try {
+      localStorage.setItem(TIP_REMINDER_VISIT_COUNT_KEY, String(count));
+    } catch (e) {
+      return;
+    }
+
+    checkTipReminder(count);
+  }
+
   function init(){
     populateChannels();
     loadState();
@@ -3356,7 +3423,13 @@
     renderMidiLog();
     refreshValueLabels();
 
-    updateWebMidiAvailabilityUi();
+    const webMidiAvailable = updateWebMidiAvailabilityUi();
+
+    if (webMidiAvailable) {
+      setTimeout(() => {
+        incrementPageVisitCount();
+      }, 1200);
+    }
 
     bindRange('tone', v=>v.toFixed(2));
     bindRange('brightness', v=>v.toFixed(2));
