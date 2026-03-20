@@ -2371,6 +2371,11 @@
   }
 
   function requestVoiceUpdate(){
+    if (shouldBypassRafForMidiUpdates()) {
+      updateVoice();
+      return;
+    }
+
     if (state.pendingVoiceUpdate) return;
 
     state.pendingVoiceUpdate = true;
@@ -3446,6 +3451,13 @@
     checkTipReminder(count);
   }
 
+  function shouldBypassRafForMidiUpdates() {
+    if (typeof document.visibilityState === 'undefined') {
+      return false;
+    }
+    return document.visibilityState !== 'visible';
+  }
+
   function init(){
     populateChannels();
     loadState();
@@ -3566,6 +3578,14 @@
       e.target.value = '';
     });
 
+    if (typeof document.visibilityState !== 'undefined') {
+      document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState !== 'visible') {
+          state.pendingVoiceUpdate = false;
+        }
+      });
+    }
+    
     if (!PRESETS[state.patch]) state.patch = 'whistle';
     updatePresetButtons();
 
