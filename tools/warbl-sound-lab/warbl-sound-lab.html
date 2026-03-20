@@ -1226,6 +1226,17 @@
 
         <hr class="instructions-divider"/>
 
+        <div class="instructions-subtitle">Reverb</div>
+        <div class="instructions-subbody">
+          Choose a reverb style, then adjust:
+          <div class="instructions-gap"></div>
+          <b>Wet</b> = reverb signal level<br/>
+          <b>Dry</b> = direct signal level<br/>
+          <b>Pre-delay</b> = delay before reverb begins
+        </div>
+
+        <hr class="instructions-divider"/>
+
         <div class="instructions-subtitle">Reset Buttons</div>
         <div class="instructions-subbody">
           <b>Reset Current Preset to Defaults</b> restores only the currently selected voice to its default settings. Global settings such as <b>Expression Source</b>, <b>MIDI Input</b>, <b>Input Channel</b>, and <b>Pitch Bend Range</b> are not changed.
@@ -3452,7 +3463,7 @@
   }
 
   function shouldBypassRafForMidiUpdates() {
-    if (typeof document.visibilityState === 'undefined') {
+    if (typeof document === 'undefined' || typeof document.visibilityState === 'undefined') {
       return false;
     }
     return document.visibilityState !== 'visible';

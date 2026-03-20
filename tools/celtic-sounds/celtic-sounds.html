@@ -998,10 +998,10 @@
           <div class="field">
             <label for="expressionModeSelect">Expression Source</label>
             <select id="expressionModeSelect" title="Choose which MIDI source controls expression and loudness">
-              <option value="cc7">Volume (CC7)</option>
               <option value="cc2">Breath (CC2)</option>
               <option value="cc11">Expression (CC11)</option>
-              <option value="velocity" selected>Note Velocity</option>
+              <option value="cc7">Volume (CC7)</option>
+              <option value="velocity">Note Velocity</option>
               <option value="max">Fixed Full Volume</option>
             </select>
           </div>
@@ -1312,9 +1312,9 @@
 
           <div class="instructions-subtitle">Expression Source</div>
           <div class="instructions-subbody">
-            <b>Volume (CC7)</b> follows MIDI CC7.<br/>
             <b>Breath (CC2)</b> follows MIDI CC2.<br/>
             <b>Expression (CC11)</b> follows MIDI CC11.<br/>
+            <b>Volume (CC7)</b> follows MIDI CC7.<br/>
             <b>Note Velocity</b> uses incoming note-on velocity.<br/>
             <b>Fixed Full Volume</b> ignores expression and always plays at full level.
           </div>
@@ -1412,7 +1412,7 @@
           <div class="instructions-subbody">
             Choose a reverb style, then adjust:
             <div class="instructions-gap"></div>
-            <b>Wet</b> = effected signal level<br/>
+            <b>Wet</b> = reverb signal level<br/>
             <b>Dry</b> = direct signal level<br/>
             <b>Pre-delay</b> = delay before reverb begins
           </div>
