@@ -982,7 +982,7 @@
           <button
             id="btnConnectMidi"
             class="connect connect-midi"
-            title="Connect to available MIDI input devices"
+            title="Connect to available MIDI input devices."
             type="button"
           >
             Connect MIDI
@@ -990,7 +990,7 @@
           <button
             id="btnAllNotesOff"
             class="warn all-notes-off"
-            title="Immediately stop all sounding notes and drones"
+            title="Immediately stop all sounding notes and drones."
             type="button"
           >
             All Notes Off
@@ -1001,8 +1001,8 @@
       <button
         id="btnWarblConfig"
         class="hero-image-button hero-warbl-button"
-        title="Open WARBL Configuration Tool"
-        aria-label="Open WARBL Configuration Tool"
+        title="Open WARBL Configuration Tool."
+        aria-label="Open WARBL Configuration Tool."
         type="button"
       >
         <img src="img/warbl.png" alt="WARBL Configuration Tool" />
@@ -1010,7 +1010,7 @@
 			<button
 			  id="btnInstructions"
 			  class="hero-help"
-			  title="Open instructions"
+			  title="Open instructions."
 			  type="button"
 			>
 			  ?
@@ -1019,8 +1019,8 @@
 			<button
 			  id="btnFullscreen"
 			  class="hero-help hero-fullscreen"
-			  title="Toggle fullscreen mode"
-			  aria-label="Toggle fullscreen mode"
+			  title="Toggle fullscreen mode."
+			  aria-label="Toggle fullscreen mode."
 			  type="button"
 			>
 			  ⛶
@@ -1040,7 +1040,7 @@
           <button
             id="btnResetDefaults"
             class="reset header-button header-reset"
-            title="Reset the currently selected instrument to its default settings"
+            title="Reset the currently selected instrument to its default settings."
             type="button"
           >
             Reset Instrument to Defaults
@@ -1051,7 +1051,7 @@
             <button
               id="btnExportSettings"
               class="good header-button"
-              title="Export all saved settings to a JSON file"
+              title="Export all saved settings to a JSON file."
               type="button"
             >
               Export Settings
@@ -1060,7 +1060,7 @@
             <button
               id="btnImportSettings"
               class="primary header-button"
-              title="Import saved settings from a JSON file"
+              title="Import saved settings from a JSON file."
               type="button"
             >
               Import Settings
@@ -1071,7 +1071,7 @@
               type="file"
               accept=".json"
               style="display:none;"
-              title="Choose a JSON settings file to import"
+              title="Choose a JSON settings file to import."
             />
           </div>
 
@@ -1080,22 +1080,22 @@
         <div class="controls">
           <div class="field">
             <label for="midiInputSelect">MIDI Input</label>
-            <select id="midiInputSelect" title="Choose the MIDI input device to use"></select>
+            <select id="midiInputSelect" title="Choose the MIDI input device to use. This is a global setting for the tool, not instrument-specific."></select>
           </div>
 
           <div class="field">
             <label for="midiChannelSelect">Input Channel</label>
-            <select id="midiChannelSelect" title="Choose which MIDI channel Celtic Sounds listens to"></select>
+            <select id="midiChannelSelect" title="Choose which MIDI channel Celtic Sounds listens to. This is a global setting for the tool, not instrument-specific."></select>
           </div>
 
           <div class="field">
             <label for="instrumentSelect">Instrument</label>
-            <select id="instrumentSelect" title="Choose the current instrument sound"></select>
+            <select id="instrumentSelect" title="Choose the current instrument sound."></select>
           </div>
 
           <div class="field">
             <label for="expressionModeSelect">Expression Source</label>
-            <select id="expressionModeSelect" title="Choose which MIDI source controls expression and loudness">
+            <select id="expressionModeSelect" title="Choose which MIDI source controls expression and loudness for the current instrument.">
               <option value="cc2">Breath (CC2)</option>
               <option value="cc11">Expression (CC11)</option>
               <option value="cc7">Volume (CC7)</option>
@@ -1115,8 +1115,8 @@
                     id="btnResetMasterTune"
                     type="button"
                     class="mini-reset-button"
-                    aria-label="Reset master tuning to zero"
-                    title="Reset master tuning to 0 cents"
+                    aria-label="Reset master tuning for the current instrument to zero."
+                    title="Reset master tuning for the current instrument to 0 cents."
                   >
                     Reset
                   </button>
@@ -1128,7 +1128,7 @@
                   max="50"
                   step="1"
                   value="0"
-                  title="Adjust master tuning in cents"
+                  title="Adjust master tuning in cents for the current instrument."
                 />
               </div>
 
@@ -1143,7 +1143,7 @@
                   max="12"
                   step="1"
                   value="0"
-                  title="Transpose playback up or down in semitone steps"
+                  title="Transpose playback for the current instrument up or down in semitone steps."
                 />
               </div>
 
@@ -1161,7 +1161,7 @@
               max="12"
               step="1"
               value="2"
-              title="Set the global pitch bend range in semitones"
+              title="Set the global pitch bend range in semitones. This is a global setting for the tool, not instrument-specific."
             />
           </div>
 
@@ -1180,7 +1180,7 @@
                   max="4"
                   step="0.01"
                   value="1"
-                  title="Scale how strongly downward pitch bend is applied"
+                  title="Scale how strongly downward pitch bend is applied."
                 />
               </div>
 
@@ -1195,7 +1195,7 @@
                   max="4"
                   step="0.01"
                   value="1"
-                  title="Scale how strongly upward pitch bend is applied"
+                  title="Scale how strongly upward pitch bend is applied."
                 />
               </div>
             </div>
@@ -1214,7 +1214,7 @@
                   max="2.0"
                   step="0.01"
                   value="1.0"
-                  title="Adjust the main output volume for the current instrument"
+                  title="Adjust the main output volume for the current instrument."
                 />
               </div>
 
@@ -1229,7 +1229,7 @@
                   max="2.0"
                   step="0.01"
                   value="1.0"
-                  title="Adjust the drone volume for instruments that support drones"
+                  title="Adjust the drone volume for instruments that support drones."
                 />
               </div>
             </div>
@@ -1248,7 +1248,7 @@
                   max="150"
                   step="1"
                   value="4"
-                  title="Adjust how quickly notes reach full volume"
+                  title="Adjust how quickly notes reach full volume."
                 />
               </div>
 
@@ -1263,7 +1263,7 @@
                   max="1500"
                   step="1"
                   value="120"
-                  title="Adjust how quickly notes fade out after release"
+                  title="Adjust how quickly notes fade out after release."
                 />
               </div>
             </div>
@@ -1273,7 +1273,7 @@
             <div class="two-up">
               <div class="field">
                 <label for="reverbSelect">Reverb Style</label>
-                <select id="reverbSelect" title="Choose the global reverb style"></select>
+                <select id="reverbSelect" title="Choose the reverb style used for all instruments. This is a global setting for the tool, not instrument-specific."></select>
               </div>
               <div class="field">
                 <label for="reverbPreDelay">
@@ -1286,7 +1286,7 @@
                   max="250"
                   step="1"
                   value="0"
-                  title="Set the delay before the reverb begins"
+                  title="Set the delay before the reverb begins."
                 />
               </div>
             </div>
@@ -1305,7 +1305,7 @@
                   max="1"
                   step="0.01"
                   value="0.18"
-                  title="Adjust the amount of reverberated signal in the mix"
+                  title="Adjust the amount of reverberated signal in the mix."
                 />
               </div>
 
@@ -1320,7 +1320,7 @@
                   max="1.5"
                   step="0.01"
                   value="1.00"
-                  title="Adjust the amount of direct unprocessed signal in the mix"
+                  title="Adjust the amount of direct unprocessed signal in the mix."
                 />
               </div>
             </div>
@@ -1334,41 +1334,41 @@
         <h2>Live Status</h2>
 
         <div class="midi-log-controls">
-          <label for="showLiveStatus" title="Show or hide the live status display">
+          <label for="showLiveStatus" title="Show or hide the live status display.">
             <input
               type="checkbox"
               id="showLiveStatus"
-              title="Show or hide the live status display"
+              title="Show or hide the live status display. This is a global setting for the tool, not instrument-specific."
             />
             Show live status
           </label>
         </div>
 
-        <div class="status" id="liveStatus" title="Current status of the selected instrument and MIDI input">Waiting...</div>
+        <div class="status" id="liveStatus" title="Current status of the selected instrument and MIDI input.">Waiting...</div>
 
         <div class="midi-log-wrap">
           <h3>MIDI Message Stream</h3>
           <div class="midi-log-controls">
-            <label for="showMidiLog" title="Show or hide the incoming MIDI message stream">
+            <label for="showMidiLog" title="Show or hide the incoming MIDI message stream.">
               <input
                 type="checkbox"
                 id="showMidiLog"
-                title="Show or hide the incoming MIDI message stream"
+                title="Show or hide the incoming MIDI message stream. This is a global setting for the tool, not instrument-specific."
               />
               Show MIDI message stream
             </label>
-            <label for="freezeMidiLog" title="Freeze the MIDI message display without stopping MIDI input">
+            <label for="freezeMidiLog" title="Freeze the MIDI message display without stopping MIDI input.">
               <input
                 type="checkbox"
                 id="freezeMidiLog"
-                title="Freeze the MIDI message display without stopping MIDI input"
+                title="Freeze the MIDI message display without stopping MIDI input."
               />
               Freeze
             </label>
             <button
               id="btnClearMidiLog"
               type="button"
-              title="Clear the MIDI message log display"
+              title="Clear the MIDI message log display."
             >
               Clear MIDI Log
             </button>
@@ -1377,7 +1377,7 @@
             class="midi-log"
             id="midiLog"
             hidden
-            title="Incoming MIDI messages received on the selected channel"
+            title="Incoming MIDI messages received on the selected channel."
           >
             MIDI stream disabled.
           </div>
@@ -1485,7 +1485,7 @@
 
           <div class="instructions-subtitle">Transpose</div>
           <div class="instructions-subbody">
-            <b>Transpose</b> shifts the playback pitch of the instrument in <b>semitone steps</b>.
+            <b>Transpose</b> shifts the playback pitch of the instrument up or down in <b>semitone steps</b>.
             <div class="instructions-gap"></div>
             This lets you raise or lower the sounding pitch without changing the incoming MIDI note numbers used to trigger the samples.
             <div class="instructions-gap"></div>
@@ -2153,7 +2153,7 @@
       const btn = $("btnConnectMidi");
       if (btn) {
         btn.disabled = true;
-        btn.title = "Not supported in Web MIDI Browser";
+        btn.title = "Not supported in Web MIDI Browser.";
         btn.style.opacity = "0.6";
         btn.style.cursor = "not-allowed";
       }
@@ -4205,7 +4205,7 @@
         const btn = $("btnConnectMidi");
         if (btn) {
           btn.disabled = true;
-          btn.title = "WebMIDI is not available in this browser";
+          btn.title = "WebMIDI is not available in this browser.";
           btn.style.opacity = "0.6";
           btn.style.cursor = "not-allowed";
         }
@@ -4532,7 +4532,7 @@
 
       const isFs = !!getFullscreenElement();
       btn.textContent = "⛶";
-      btn.title = isFs ? "Exit fullscreen" : "Enter fullscreen";
+      btn.title = isFs ? "Exit fullscreen." : "Enter fullscreen.";
       btn.setAttribute("aria-label", btn.title);
     }
 

@@ -1075,19 +1075,19 @@
     </div>  
     <div class="hero-bottom">
       <div class="setup-row">
-        <button id="btnConnect" class="connect-midi" title="Request MIDI access and refresh the input device list">Connect MIDI</button>
-        <button id="btnAllNotesOff" class="secondary all-notes-off" title="Send note-off style cleanup and silence any stuck notes">All Notes Off</button>
+        <button id="btnConnect" class="connect-midi" title="Request MIDI access and refresh the input device list.">Connect MIDI</button>
+        <button id="btnAllNotesOff" class="secondary all-notes-off" title="Send note-off style cleanup and silence any stuck notes.">All Notes Off</button>
       </div>
     </div>
 
-    <button id="btnWarblConfig" class="hero-image-button" title="Open WARBL Configuration Tool" aria-label="Open WARBL Configuration Tool" type="button">
+    <button id="btnWarblConfig" class="hero-image-button" title="Open WARBL Configuration Tool." aria-label="Open WARBL Configuration Tool." type="button">
       <img src="img/warbl.png" alt="WARBL Configuration Tool" />
     </button>
     <button
       id="btnFullscreen"
       class="hero-help hero-fullscreen"
-      title="Toggle fullscreen mode"
-      aria-label="Toggle fullscreen mode"
+      title="Toggle fullscreen mode."
+      aria-label="Toggle fullscreen mode."
       type="button"
     >
       ⛶
@@ -1096,8 +1096,8 @@
     <button
       id="btnInstructions"
       class="hero-help"
-      title="Open operating instructions"
-      aria-label="Open operating instructions"
+      title="Open operating instructions."
+      aria-label="Open operating instructions."
       type="button"
     >
       ?
@@ -1110,12 +1110,12 @@
     <div class="card main-card">
       <h2 class="section-title">Instrument</h2>
       <div class="preset-row" style="margin-bottom:14px">
-        <button class="preset-btn" data-preset="whistle" title="Clean, whistle-like lead with a light airy edge">Air</button>
-        <button class="preset-btn" data-preset="clarinet" title="Odd-harmonic reed tone with a woodwind-style body">Reed</button>
-        <button class="preset-btn" data-preset="voice" title="Expressive, smooth solo sound with a sax-like character">Solo</button>
-        <button class="preset-btn" data-preset="brass" title="Buzzier brass voice with more bite and projection">Brass</button>
-        <button class="preset-btn" data-preset="strings" title="Detuned ensemble-like pad with softer attack">Pad</button>
-        <button class="preset-btn" data-preset="lead" title="Bright electronic lead voice with a little edge">Lead</button>
+        <button class="preset-btn" data-preset="whistle" title="Clean, whistle-like lead with a light airy edge.">Air</button>
+        <button class="preset-btn" data-preset="clarinet" title="Odd-harmonic reed tone with a woodwind-style body.">Reed</button>
+        <button class="preset-btn" data-preset="voice" title="Expressive, smooth solo sound with a sax-like character.">Solo</button>
+        <button class="preset-btn" data-preset="brass" title="Buzzier brass voice with more bite and projection.">Brass</button>
+        <button class="preset-btn" data-preset="strings" title="Detuned ensemble-like pad with softer attack.">Pad</button>
+        <button class="preset-btn" data-preset="lead" title="Bright electronic lead voice with a little edge.">Lead</button>
       </div>
       <div class="controls compact-4">
         <div class="control" title="Shifts the patch from rounder to more focused and forward.">
@@ -1254,8 +1254,8 @@
               id="btnResetMasterTune"
               type="button"
               class="mini-reset-button"
-              title="Reset master tuning to zero cents"
-              aria-label="Reset master tuning to zero cents"
+              title="Reset master tuning to zero cents."
+              aria-label="Reset master tuning to zero cents."
             >
               Reset
             </button>
@@ -1266,19 +1266,19 @@
 
       <div class="preset-reset-row">
         <div class="preset-reset-left">
-          <button id="btnResetCurrentPreset" type="button" title="Reset only the currently selected preset back to its default settings">
+          <button id="btnResetCurrentPreset" type="button" title="Reset only the currently selected preset back to its default settings.">
             Reset Current Preset to Defaults
           </button>
-          <button id="btnResetAllPresets" type="button" title="Reset all presets and current settings back to their default values">
+          <button id="btnResetAllPresets" type="button" title="Reset all presets and current settings back to their default values.">
             Reset All Presets to Defaults
           </button>
         </div>
 
         <div class="preset-reset-right">
-          <button id="btnSaveSettingsFile" type="button" title="Exports all patch and global settings to a file">
+          <button id="btnSaveSettingsFile" type="button" title="Exports all patch and global settings to a file.">
             Export Settings
           </button>
-          <button id="btnLoadSettingsFile" type="button" title="Imports patch and global settings from a file">
+          <button id="btnLoadSettingsFile" type="button" title="Imports patch and global settings from a file.">
             Import Settings
           </button>
         </div>
@@ -1328,7 +1328,7 @@
           <input type="checkbox" id="showMidiLog" title="Show or hide the live MIDI stream display. This is a global setting for the entire tool." />
           Enable MIDI stream
         </label>
-        <button id="btnClearMidiLog" type="button" title="Clear the MIDI stream log">Clear MIDI Log</button>
+        <button id="btnClearMidiLog" type="button" title="Clear the MIDI stream log.">Clear MIDI Log</button>
       </div>
       <div id="midiLog" class="log" hidden>MIDI stream disabled.</div>    
     </div>
@@ -1383,7 +1383,7 @@
         <div class="instructions-subbody">
           <b>Transpose</b> shifts the sounding pitch in <b>semitone steps</b> from <b>-12 to +12</b>.
           <div class="instructions-gap"></div>
-          This lets you move the overall pitch up or down without changing the incoming MIDI note numbers from the WARBL.
+          This shifts the sounding pitch up or down without changing your WARBL fingering or MIDI input.
           <div class="instructions-gap"></div>
           <b>Transpose</b> is applied in addition to <b>Master Tuning</b> and <b>Pitch Bend</b>.
         </div>
@@ -3644,7 +3644,7 @@
     if (!supported) {
       if (btnConnect) {
         btnConnect.disabled = true;
-        btnConnect.title = 'WebMIDI is not available in this browser';
+        btnConnect.title = 'WebMIDI is not available in this browser.';
       }
 
       $('midiStatus').textContent = 'WebMIDI unsupported';
@@ -3819,14 +3819,14 @@
 
     if (!fullscreenSupported()) {
       btn.textContent = "⛶";
-      btn.title = "Fullscreen is not available in this browser";
+      btn.title = "Fullscreen is not available in this browser.";
       btn.setAttribute("aria-label", btn.title);
       return;
     }
 
     const isFs = !!getFullscreenElement();
     btn.textContent = "⛶";
-    btn.title = isFs ? "Exit fullscreen" : "Enter fullscreen";
+    btn.title = isFs ? "Exit fullscreen." : "Enter fullscreen.";
     btn.setAttribute("aria-label", btn.title);
   }
 
@@ -4010,7 +4010,7 @@
 
     if (btnFullscreen && !fullscreenSupported()) {
       btnFullscreen.disabled = true;
-      btnFullscreen.title = 'Fullscreen is not available in this browser';
+      btnFullscreen.title = 'Fullscreen is not available in this browser.';
       btnFullscreen.setAttribute('aria-label', btnFullscreen.title);
     }
 
