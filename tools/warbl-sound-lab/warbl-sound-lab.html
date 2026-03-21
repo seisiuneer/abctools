@@ -1136,11 +1136,11 @@
         </div>
         <div class="control" title="Sets how quickly the sound reaches full level after note-on.">
           <label for="attack">Attack <span class="value" id="attackValue"></span></label>
-          <input id="attack" title="Sets how quickly the sound reaches full level after note-on." type="range" min="0.001" max="0.35" step="0.001" value="0.01">
+          <input id="attack" title="Sets how quickly the sound reaches full level after note-on." type="range" min="0.000" max="0.15" step="0.001" value="0.01">
         </div>
         <div class="control" title="Sets how long the note fades after release.">
           <label for="release">Release <span class="value" id="releaseValue"></span></label>
-          <input id="release" title="Sets how long the note fades after release." type="range" min="0.01" max="1.2" step="0.005" value="0.09">
+          <input id="release" title="Sets how long the note fades after release." type="range" min="0.01" max="1.5" step="0.005" value="0.09">
         </div>
         <div class="control" title="Sets vibrato speed.">
           <label for="vibratoRate">Vibrato Rate <span class="value" id="vibratoRateValue"></span></label>
@@ -1192,13 +1192,13 @@
           <label for="pitchBendRange">Pitch Bend Range <span class="value" id="pitchBendRangeValue"></span></label>
           <input id="pitchBendRange" title="Sets the total pitch bend span in semitones. Default is 2 semitones. This is a global setting for the entire tool and is not stored separately for each patch." type="range" min="0" max="12" step="1" value="2">
         </div>
-        <div class="control" title="Scales upward incoming pitch bend.">
-          <label for="bendUp">Bend Up Scale <span class="value" id="bendUpValue"></span></label>
-          <input id="bendUp" title="Scales upward incoming pitch bend." type="range" min="0" max="1.5" step="0.01" value="1.0">
-        </div>
         <div class="control" title="Scales downward incoming pitch bend.">
-          <label for="bendDown">Bend Down Scale <span class="value" id="bendDownValue"></span></label>
-          <input id="bendDown" title="Scales downward incoming pitch bend." type="range" min="0" max="1.5" step="0.01" value="1.0">
+          <label for="bendDown">Pitch Bend Down Scale <span class="value" id="bendDownValue"></span></label>
+          <input id="bendDown" title="Scales downward incoming pitch bend." type="range" min="0" max="4.0" step="0.01" value="1.0">
+        </div>
+        <div class="control" title="Scales upward incoming pitch bend.">
+          <label for="bendUp">Pitch Bend Up Scale <span class="value" id="bendUpValue"></span></label>
+          <input id="bendUp" title="Scales upward incoming pitch bend." type="range" min="0" max="4.0" step="0.01" value="1.0">
         </div>
         <div class="control checkbox-row" title="When enabled, notes glide from the previous pitch to the next one.">
           <input id="portamentoEnabled" title="When enabled, notes glide from the previous pitch to the next one." type="checkbox">
@@ -1396,7 +1396,7 @@
           <div class="instructions-gap"></div>
           The default is <b>±2 semitones</b>, which is the most common default WARBL setup.
           <div class="instructions-gap"></div>
-          <b>Bend Up Scale</b> and <b>Bend Down Scale</b> let you make upward and downward bends feel different without changing the WARBL itself.
+          <b>Pitch Bend Up Scale</b> and <b>Pitch Bend Down Scale</b> let you make upward and downward bends feel different without changing the WARBL itself.
           <div class="instructions-gap"></div>
           When <b>Enable Portamento</b> is turned on, the synth glides from one note to the next over the selected <b>Portamento Time</b>. It is off by default for all patches.
           <div class="instructions-gap"></div>
@@ -2207,7 +2207,7 @@
       this.releaseEndTime = 0;
       this.output.gain.cancelScheduledValues(t);
       this.output.gain.setValueAtTime(this.output.gain.value, t);
-      this.output.gain.linearRampToValueAtTime(level, t + Math.max(0.002, settings.attack));
+      this.output.gain.linearRampToValueAtTime(level, t + Math.max(0.0005, settings.attack));
     }
 
     gateOff(settings){
