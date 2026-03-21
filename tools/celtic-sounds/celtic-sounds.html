@@ -436,8 +436,10 @@
     inset: 0;
     background: rgba(0,0,0,0.5);
     z-index: 9999;
-    padding: 16px;
     box-sizing: border-box;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 24px;
     overflow-y: auto;
   }
 
@@ -445,25 +447,17 @@
     max-width: 750px;
     width: min(750px, calc(100vw - 32px));
     margin: 0 auto;
-
     background: #ffffff;
     border: 1px solid #d0d0d0;
     border-radius: 16px;
-
-    box-shadow:
-      0 20px 50px rgba(0,0,0,0.45);
-
+    box-shadow: 0 20px 50px rgba(0,0,0,0.45);
     padding: 18px;
     box-sizing: border-box;
     position: relative;
-
-    top: 10px;
-
     text-align: left;
     display: flex;
     flex-direction: column;
-    max-height: calc(100vh - 20px);
-    height: min(1100px, calc(100vh - 20px));
+    overflow: hidden;
   }
 
   .instructions-title{
@@ -471,44 +465,45 @@
     font-weight: 800;
     text-align: center;
     margin-bottom: 15px;
-    color: #000;  
+    color: #000;
   }
 
   .instructions-scroll{
-    flex:1 1 auto;
-    overflow:auto;
-    border:1px solid #dcdcdc;
-    border-radius:12px;
-    padding:20px 22px;
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: auto;
+    border: 1px solid #dcdcdc;
+    border-radius: 12px;
+    padding: 20px 22px;
     background: #ffffff;
   }
 
   .instructions-body{
-    font-size:1rem;
-    line-height:1.25;
-    color:#000000;
-    margin:0;
-    padding-top:6px;
+    font-size: 1rem;
+    line-height: 1.25;
+    color: #000000;
+    margin: 0;
+    padding-top: 6px;
   }
 
   .instructions-close{
-    width:100%;
-    margin-top:12px;
-    margin-bottom:-7px;
-    padding:14px 18px;
-    border:1px solid #333;
-    border-radius:12px;
-    font-weight:900;
-    cursor:pointer;
-    font-size:1.05rem;
-    background:#111;
-    color:#f5f5f5;
-    flex:0 0 auto;
+    width: 100%;
+    margin-top: 12px;
+    margin-bottom: -7px;
+    padding: 14px 18px;
+    border: 1px solid #333;
+    border-radius: 12px;
+    font-weight: 900;
+    cursor: pointer;
+    font-size: 1.05rem;
+    background: #111;
+    color: #f5f5f5;
+    flex: 0 0 auto;
   }
 
   .instructions-close:hover{
-    border-color:var(--accent);
-    transform:none;
+    border-color: var(--accent);
+    transform: none;
   }
 
   .instructions-subtitle{
@@ -900,6 +895,71 @@
       margin-left:0px !important;
     }
 
+  }
+
+  /* Fullscreen layout using document.documentElement */
+  html:fullscreen,
+  html:-webkit-full-screen,
+  html:-moz-full-screen,
+  html:-ms-fullscreen {
+    background: linear-gradient(180deg, #020617, #0f172a);
+  }
+
+  body.fullscreen-mode {
+    min-height: 100vh;
+    overflow: auto;
+    padding: 0;
+    margin-top: 0;
+  }
+
+  /* Default fullscreen behavior: pin to top, centered horizontally */
+  body.fullscreen-mode .app {
+    width: min(1516px, calc(100vw - 40px));
+    max-width: none;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    margin-top: 20px !important;
+    margin-bottom: 20px !important;
+  }
+
+  /* Only when it fits: center vertically and raise slightly */
+  body.fullscreen-mode.fullscreen-centered {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  body.fullscreen-mode.fullscreen-centered .app {
+    margin: 0 !important;
+    transform: translateY(-3vh);
+  }
+
+  /* When fullscreen but too tall: top pin */
+  body.fullscreen-mode.fullscreen-top {
+    display: block;
+  }
+
+  body.fullscreen-mode.fullscreen-top .app {
+    transform: none !important;
+  }
+
+  body.fullscreen-centered #instructionsOverlay {
+    align-items: center;
+    padding-top: 40px;
+    padding-bottom: 40px;
+  }
+
+  body.fullscreen-top #instructionsOverlay {
+    align-items: flex-start;
+  }
+
+  body:not(.fullscreen-mode) .instructions-modal{
+    max-height: min(80vh, 830px);
+  }
+
+  body.fullscreen-mode .instructions-modal{
+    max-height: calc(100vh - 80px);
   }
 
 </style>
@@ -1940,36 +2000,19 @@
       checkbox.checked = !state.liveStatusHidden;
     }
 
-    function syncInstructionsHeight() {
-      const controlsCard = document.querySelector(".split .card.grid");
-      const modal = $("instructionsModal");
-      if (!controlsCard || !modal) return;
-
-      const r = controlsCard.getBoundingClientRect();
-      const cardH = Math.max(0, Math.round(r.height));
-      const viewportH = window.innerHeight;
-
-      const maxH = viewportH - 30;
-      const preferred = Math.max(cardH + 220, 820);
-      const finalH = Math.max(520, Math.min(preferred, maxH));
-
-      modal.style.height = finalH + "px";
-      modal.style.top = "10px";
-    }
-
     function openInstructions() {
       const overlay = $("instructionsOverlay");
       if (!overlay) return;
 
-      overlay.style.display = "block";
+      overlay.style.display = "flex";
       overlay.setAttribute("aria-hidden", "false");
 
-      syncInstructionsHeight();
-      requestAnimationFrame(syncInstructionsHeight);
       const closeBtn = $("btnCloseInstructions");
       if (closeBtn) {
         closeBtn.focus();
       }
+
+      updateFullscreenLayoutMode();
     }
 
     function closeInstructions() {
@@ -1982,6 +2025,7 @@
 
       overlay.style.display = "none";
       overlay.setAttribute("aria-hidden", "true");
+      updateFullscreenLayoutMode();
     }
 
     function checkLocalStorageAvailable() {
@@ -4052,18 +4096,13 @@
     }
 
     document.addEventListener("keydown", (e) => {
+      const overlay = $("instructionsOverlay");
       if (
         e.key === "Escape" &&
-        $("instructionsOverlay") &&
-        $("instructionsOverlay").style.display === "block"
+        overlay &&
+        overlay.getAttribute("aria-hidden") === "false"
       ) {
         closeInstructions();
-      }
-    });
-
-    window.addEventListener("resize", () => {
-      if ($("instructionsOverlay") && $("instructionsOverlay").style.display === "block") {
-        syncInstructionsHeight();
       }
     });
 
@@ -4394,69 +4433,106 @@
       }
     }
 
-		function getFullscreenElement() {
-		  return (
-		    document.fullscreenElement ||
-		    document.webkitFullscreenElement ||
-		    document.msFullscreenElement ||
-		    null
-		  );
-		}
+    function getFullscreenElement() {
+      return (
+        document.fullscreenElement ||
+        document.webkitFullscreenElement ||
+        document.mozFullScreenElement ||
+        document.msFullscreenElement ||
+        null
+      );
+    }
 
-		async function enterFullscreen() {
-		  const el = document.documentElement;
+    async function enterFullscreen() {
+      const el = document.documentElement;
 
-		  try {
-		    if (el.requestFullscreen) {
-		      await el.requestFullscreen();
-		      return true;
-		    }
-		    if (el.webkitRequestFullscreen) {
-		      el.webkitRequestFullscreen();
-		      return true;
-		    }
-		    if (el.msRequestFullscreen) {
-		      el.msRequestFullscreen();
-		      return true;
-		    }
-		  } catch (err) {
-		    console.warn("Unable to enter fullscreen:", err);
-		  }
+      try {
+        if (el.requestFullscreen) {
+          await el.requestFullscreen();
+          return true;
+        }
+        if (el.webkitRequestFullscreen) {
+          el.webkitRequestFullscreen();
+          return true;
+        }
+        if (el.mozRequestFullScreen) {
+          el.mozRequestFullScreen();
+          return true;
+        }
+        if (el.msRequestFullscreen) {
+          el.msRequestFullscreen();
+          return true;
+        }
+      } catch (err) {
+        console.warn("Unable to enter fullscreen:", err);
+      }
 
-		  return false;
-		}
+      return false;
+    }
 
-		async function exitFullscreen() {
-		  try {
-		    if (document.exitFullscreen) {
-		      await document.exitFullscreen();
-		      return true;
-		    }
-		    if (document.webkitExitFullscreen) {
-		      document.webkitExitFullscreen();
-		      return true;
-		    }
-		    if (document.msExitFullscreen) {
-		      document.msExitFullscreen();
-		      return true;
-		    }
-		  } catch (err) {
-		    console.warn("Unable to exit fullscreen:", err);
-		  }
+    async function exitFullscreen() {
+      try {
+        if (document.exitFullscreen) {
+          await document.exitFullscreen();
+          return true;
+        }
+        if (document.webkitExitFullscreen) {
+          document.webkitExitFullscreen();
+          return true;
+        }
+        if (document.mozCancelFullScreen) {
+          document.mozCancelFullScreen();
+          return true;
+        }
+        if (document.msExitFullscreen) {
+          document.msExitFullscreen();
+          return true;
+        }
+      } catch (err) {
+        console.warn("Unable to exit fullscreen:", err);
+      }
 
-		  return false;
-		}
+      return false;
+    }
 
-		function updateFullscreenButton() {
-		  const btn = $("btnFullscreen");
-		  if (!btn) return;
+    function updateFullscreenButton() {
+      const btn = $("btnFullscreen");
+      if (!btn) return;
 
-		  const isFs = !!getFullscreenElement();
+      const isFs = !!getFullscreenElement();
+      btn.textContent = "⛶";
+      btn.title = isFs ? "Exit fullscreen" : "Enter fullscreen";
+      btn.setAttribute("aria-label", btn.title);
+    }
 
-		  btn.textContent = "⛶";
-		  btn.title = isFs ? "Exit fullscreen" : "Enter fullscreen";
-		  btn.setAttribute("aria-label", btn.title);
-		}
+    function updateFullscreenLayoutMode() {
+      const isFs = !!getFullscreenElement();
+      const body = document.body;
+      const page = document.querySelector(".app");
+
+      if (!body || !page) return;
+
+      body.classList.remove("fullscreen-mode", "fullscreen-centered", "fullscreen-top");
+
+      if (!isFs) return;
+
+      body.classList.add("fullscreen-mode");
+
+      const availableHeight = window.innerHeight - 40;
+      const pageHeight = page.scrollHeight;
+
+      if (pageHeight <= availableHeight) {
+        body.classList.add("fullscreen-centered");
+      } else {
+        body.classList.add("fullscreen-top");
+      }
+    }
+
+    function handleFullscreenStateChange() {
+      updateFullscreenButton();
+      updateFullscreenLayoutMode();
+      setTimeout(updateFullscreenLayoutMode, 50);
+    }
 
     async function promptForSettingsFilename(defaultValue) {
       if (window.DayPilot && DayPilot.Modal && DayPilot.Modal.prompt) {
@@ -4509,15 +4585,19 @@
       logLiveStatus();
       renderMidiLog();
       updateFullscreenButton();
+      updateFullscreenLayoutMode();
 
       if (webMidiAvailable) {
         setupAutomaticAudioInit();
       }
     }
 
-		document.addEventListener("fullscreenchange", updateFullscreenButton);
-		document.addEventListener("webkitfullscreenchange", updateFullscreenButton);
-		document.addEventListener("msfullscreenchange", updateFullscreenButton);
+    document.addEventListener("fullscreenchange", handleFullscreenStateChange);
+    document.addEventListener("webkitfullscreenchange", handleFullscreenStateChange);
+    document.addEventListener("mozfullscreenchange", handleFullscreenStateChange);
+    document.addEventListener("msfullscreenchange", handleFullscreenStateChange);
+
+    window.addEventListener("resize", updateFullscreenLayoutMode);
 
     document.addEventListener("DOMContentLoaded", async () => {
 

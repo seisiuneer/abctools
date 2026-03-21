@@ -665,14 +665,16 @@
       opacity: 0.95;
     }
 
-    .instructions-overlay {
+    #instructionsOverlay {
       display: none;
       position: fixed;
       inset: 0;
       background: rgba(0,0,0,0.5);
       z-index: 9999;
-      padding: 16px;
       box-sizing: border-box;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 24px;
       overflow-y: auto;
     }
 
@@ -687,12 +689,9 @@
       padding: 18px;
       box-sizing: border-box;
       position: relative;
-      top: 10px;
       text-align: left;
       display: flex;
       flex-direction: column;
-      max-height: 90vh;
-      height: min(1100px, calc(100vh - 20px));
     }
 
     .instructions-title {
@@ -934,6 +933,10 @@
         min-height: 190px;
       }
 
+      .hero-title{
+        margin-top:40px;
+      }
+
       .hero-bottom .setup-row {
         flex-direction: column;
         align-items: stretch;
@@ -951,6 +954,81 @@
         grid-template-columns: 1fr;
       }
     }
+
+
+    /* Fullscreen layout using document.documentElement */
+    html:fullscreen,
+    html:-webkit-full-screen,
+    html:-moz-full-screen,
+    html:-ms-fullscreen {
+      background: linear-gradient(180deg, #020617, #0f172a);
+    }
+
+    body.fullscreen-mode {
+      min-height: 100vh;
+      overflow: auto;
+      padding: 0;
+      margin-top: 0;
+    }
+
+    /* Default fullscreen behavior: pin to top, centered horizontally */
+    body.fullscreen-mode .page {
+      width: min(1516px, calc(100vw - 40px));
+      max-width: none;
+      margin-left: auto !important;
+      margin-right: auto !important;
+      margin-top: 20px !important;
+      margin-bottom: 20px !important;
+    }
+
+    /* Only when it fits: center vertically and raise slightly */
+    body.fullscreen-mode.fullscreen-centered {
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    body.fullscreen-mode.fullscreen-centered .page {
+      margin: 0 !important;
+      transform: translateY(-3vh);
+    }
+
+    /* When fullscreen but too tall: top pin */
+    body.fullscreen-mode.fullscreen-top {
+      display: block;
+    }
+
+    body.fullscreen-mode.fullscreen-top .page {
+      transform: none !important;
+    }
+
+    body.fullscreen-centered #instructionsOverlay {
+      align-items: center;
+      padding-top: 40px;
+      padding-bottom: 40px;
+    }
+
+    body.fullscreen-top #instructionsOverlay {
+      align-items: flex-start;
+    }
+
+    body:not(.fullscreen-mode) .instructions-modal{
+      max-height: min(80vh, 830px);
+    }
+
+    body.fullscreen-mode .instructions-modal{
+      max-height: calc(100vh - 80px);
+    }
+
+    .instructions-modal{
+      overflow: hidden;
+    }
+
+    .instructions-scroll {
+      min-height: 0;
+    }
+
   </style>
 </head>
 
@@ -3518,6 +3596,7 @@
     return (
       document.fullscreenElement ||
       document.webkitFullscreenElement ||
+      document.mozFullScreenElement ||
       document.msFullscreenElement ||
       null
     );
@@ -3535,12 +3614,16 @@
         el.webkitRequestFullscreen();
         return true;
       }
+      if (el.mozRequestFullScreen) {
+        el.mozRequestFullScreen();
+        return true;
+      }
       if (el.msRequestFullscreen) {
         el.msRequestFullscreen();
         return true;
       }
     } catch (err) {
-      console.warn('Unable to enter fullscreen:', err);
+      console.warn("Unable to enter fullscreen:", err);
     }
 
     return false;
@@ -3556,26 +3639,82 @@
         document.webkitExitFullscreen();
         return true;
       }
+      if (document.mozCancelFullScreen) {
+        document.mozCancelFullScreen();
+        return true;
+      }
       if (document.msExitFullscreen) {
         document.msExitFullscreen();
         return true;
       }
     } catch (err) {
-      console.warn('Unable to exit fullscreen:', err);
+      console.warn("Unable to exit fullscreen:", err);
     }
 
     return false;
   }
 
   function updateFullscreenButton() {
-    const btn = $('btnFullscreen');
+    const btn = $("btnFullscreen");
     if (!btn) return;
 
-    const isFs = !!getFullscreenElement();
+    if (!fullscreenSupported()) {
+      btn.textContent = "⛶";
+      btn.title = "Fullscreen is not available in this browser";
+      btn.setAttribute("aria-label", btn.title);
+      return;
+    }
 
-    btn.textContent = '⛶';
-    btn.title = isFs ? 'Exit fullscreen' : 'Enter fullscreen';
-    btn.setAttribute('aria-label', btn.title);
+    const isFs = !!getFullscreenElement();
+    btn.textContent = "⛶";
+    btn.title = isFs ? "Exit fullscreen" : "Enter fullscreen";
+    btn.setAttribute("aria-label", btn.title);
+  }
+
+  function updateFullscreenLayoutMode() {
+    const isFs = !!getFullscreenElement();
+    const body = document.body;
+    const page = document.querySelector(".page");
+
+    if (!body || !page) return;
+
+    body.classList.remove("fullscreen-mode", "fullscreen-centered", "fullscreen-top");
+
+    if (!isFs) return;
+
+    body.classList.add("fullscreen-mode");
+
+    const availableHeight = window.innerHeight - 40;
+    const pageHeight = Math.ceil(page.getBoundingClientRect().height);
+
+    if (pageHeight <= availableHeight) {
+      body.classList.add("fullscreen-centered");
+    } else {
+      body.classList.add("fullscreen-top");
+    }
+  }
+
+  function handleFullscreenStateChange() {
+    updateFullscreenButton();
+    updateFullscreenLayoutMode();
+
+    requestAnimationFrame(() => {
+      updateFullscreenLayoutMode();
+    });
+
+    setTimeout(() => {
+      updateFullscreenLayoutMode();
+    }, 50);
+  }
+
+  function fullscreenSupported() {
+    const el = document.documentElement;
+    return !!(
+      el.requestFullscreen ||
+      el.webkitRequestFullscreen ||
+      el.mozRequestFullScreen ||
+      el.msRequestFullscreen
+    );
   }
 
   async function showErrorDialog(message, title = 'Error') {
@@ -3649,54 +3788,86 @@
     bindSelect('expressionModeSelect');
     bindSelect('priorityMode');
     bindSelect('reverbStyleSelect');
+
     $('midiChannelSelect').addEventListener('change', () => {
       state.midiChannel = Number($('midiChannelSelect').value);
       allNotesOff();
       clearMidiLog();
       saveState();
     });
-    $('portamentoEnabled').addEventListener('change', () => { state.portamentoEnabled = $('portamentoEnabled').checked; saveState(); });
+
+    $('portamentoEnabled').addEventListener('change', () => {
+      state.portamentoEnabled = $('portamentoEnabled').checked;
+      saveState();
+    });
+
     $('btnConnect').addEventListener('click', connectMidi);
     $('btnAllNotesOff').addEventListener('click', allNotesOff);
     $('btnResetCurrentPreset').addEventListener('click', resetCurrentPresetToDefaults);
     $('btnResetAllPresets').addEventListener('click', resetAllPresetsToDefaults);
-    document.querySelectorAll('[data-preset]').forEach(btn => btn.addEventListener('click', () => applyPreset(btn.dataset.preset)));
+
+    document.querySelectorAll('[data-preset]').forEach(btn =>
+      btn.addEventListener('click', () => applyPreset(btn.dataset.preset))
+    );
+
     $('showMidiLog').addEventListener('change', () => {
       state.midiLogEnabled = $('showMidiLog').checked;
       saveState();
       renderMidiLog();
     });
+
     $('btnClearMidiLog').addEventListener('click', clearMidiLog);
 
     const btnInstructions = $('btnInstructions');
     const btnCloseInstructions = $('btnCloseInstructions');
-
     const instructionsOverlay = $('instructionsOverlay');
     const btnFullscreen = $('btnFullscreen');
 
+    let previousBodyOverflow = '';
+
     const openInstructions = () => {
-      instructionsOverlay.style.display = 'block';
+      previousBodyOverflow = document.body.style.overflow;
+      instructionsOverlay.style.display = 'flex';
       instructionsOverlay.setAttribute('aria-hidden', 'false');
       document.body.style.overflow = 'hidden';
       btnCloseInstructions.focus();
+      updateFullscreenLayoutMode();
     };
+
     const closeInstructions = () => {
       if (btnInstructions) btnInstructions.focus();
       instructionsOverlay.style.display = 'none';
       instructionsOverlay.setAttribute('aria-hidden', 'true');
-      document.body.style.overflow = '';
+      document.body.style.overflow = previousBodyOverflow;
+      updateFullscreenLayoutMode();
     };
+
+    if (btnFullscreen && !fullscreenSupported()) {
+      btnFullscreen.disabled = true;
+      btnFullscreen.title = 'Fullscreen is not available in this browser';
+      btnFullscreen.setAttribute('aria-label', btnFullscreen.title);
+    }
 
     $('btnInstructions').addEventListener('click', openInstructions);
     $('btnCloseInstructions').addEventListener('click', closeInstructions);
-    instructionsOverlay.addEventListener('click', (e) => { if (e.target === instructionsOverlay) closeInstructions(); });
-    document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && instructionsOverlay.style.display === 'block') closeInstructions(); });
-    $('btnWarblConfig').addEventListener('click', () => window.open('https://warbl.xyz/configure.html', '_blank', 'noopener,noreferrer'));
+
+    instructionsOverlay.addEventListener('click', (e) => {
+      if (e.target === instructionsOverlay) closeInstructions();
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && instructionsOverlay.getAttribute('aria-hidden') === 'false') {
+        closeInstructions();
+      }
+    });
+
+    $('btnWarblConfig').addEventListener('click', () =>
+      window.open('https://warbl.xyz/configure.html', '_blank', 'noopener,noreferrer')
+    );
 
     $('showOutputMeter').addEventListener('change', () => {
       state.meterEnabled = $('showOutputMeter').checked;
-
-      updateMeterRouting();  
+      updateMeterRouting();
       renderOutputMeterUi();
       saveState();
       startMeter();
@@ -3765,11 +3936,15 @@
     renderMidiLog();
 
     updateFullscreenButton();
+    updateFullscreenLayoutMode();
   }
   
-  document.addEventListener('fullscreenchange', updateFullscreenButton);
-  document.addEventListener('webkitfullscreenchange', updateFullscreenButton);
-  document.addEventListener('msfullscreenchange', updateFullscreenButton);
+  document.addEventListener("fullscreenchange", handleFullscreenStateChange);
+  document.addEventListener("webkitfullscreenchange", handleFullscreenStateChange);
+  document.addEventListener("mozfullscreenchange", handleFullscreenStateChange);
+  document.addEventListener("msfullscreenchange", handleFullscreenStateChange);
+
+  window.addEventListener("resize", updateFullscreenLayoutMode);
 
   init();
 })();
