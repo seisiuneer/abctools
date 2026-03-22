@@ -1570,29 +1570,33 @@
 
           <hr class="instructions-divider"/>
 
-					<div class="instructions-subtitle">Using the Great Highland Bagpipe, Smallpipes, and Säckpipa Sounds</div>
-					<div class="instructions-subbody">
-					  When <b>Great Highland Bagpipe</b>, <b>Smallpipes</b>, or <b>Säckpipa</b> is selected, MIDI note <b>51 (D#3 / Eb3)</b> is treated as a dedicated
-					  <b>latching drone</b> note.
-					  <div class="instructions-gap"></div>
-					  Sending a note-on for MIDI note <b>51 (D#3 / Eb3)</b> starts the drone, and sending another note-on for MIDI note <b>51 (D#3 / Eb3)</b> toggles that drone back off.
-					  <div class="instructions-gap"></div>
-					  MIDI note-off messages do not affect this latching drone.
-					  <div class="instructions-gap"></div>
-					  The drone uses the incoming <b>note-on velocity</b> as its playback level and ignores both <b>expression</b> and <b>pitch bend</b>.
-					  <div class="instructions-gap"></div>
-					  <b>All other notes</b> for these three instruments are treated as melody notes.
-					  <div class="instructions-gap"></div>
-					  <b>Great Highland Bagpipe</b> and <b>Smallpipes</b> have pitch bend available, but their default
-					  <b>Pitch Bend Up Scale</b> and <b>Pitch Bend Down Scale</b> are set to <b>0</b>.
-					  <div class="instructions-gap"></div>
-					  <b>Säckpipa</b> responds to pitch bend normally by default.
-					  <div class="instructions-gap"></div>
-					  <b>WARBL Fingering Pattern to Use</b><br/>
-					  These three instruments are designed to be used with the WARBL GHB/Scottish Smallpipes fingering pattern selected, with no transpose set on the WARBL controller.
-					  <div class="instructions-gap"></div>
-					  Lowest MIDI note for the chanter is <b>68 (G#4 / Ab4)</b>.
-					</div>
+          <div class="instructions-subtitle">Using the Great Highland Bagpipe, Smallpipes, and Säckpipa Sounds</div>
+          <div class="instructions-subbody">
+            When <b>Great Highland Bagpipe</b>, <b>Smallpipes</b>, or <b>Säckpipa</b> is selected, MIDI note <b>51 (D#3 / Eb3)</b> is treated as a dedicated
+            <b>latching drone</b> note.
+            <div class="instructions-gap"></div>
+            Sending a note-on for MIDI note <b>51 (D#3 / Eb3)</b> starts the drone, and sending another note-on for MIDI note <b>51 (D#3 / Eb3)</b> toggles that drone back off.
+            <div class="instructions-gap"></div>
+            MIDI note-off messages do not affect this latching drone.
+            <div class="instructions-gap"></div>
+            The drone uses the incoming <b>note-on velocity</b> as its playback level and ignores both <b>expression</b> and <b>pitch bend</b>.
+            <div class="instructions-gap"></div>
+            <b>All other notes</b> for these three instruments are treated as melody notes.
+            <div class="instructions-gap"></div>
+            <b>Great Highland Bagpipe</b> and <b>Smallpipes</b> have pitch bend available, but their default
+            <b>Pitch Bend Up Scale</b> and <b>Pitch Bend Down Scale</b> are set to <b>0</b>.
+            <div class="instructions-gap"></div>
+            <b>Säckpipa</b> responds to pitch bend normally by default.
+            <div class="instructions-gap"></div>
+            <b>WARBL Fingering Pattern to Use</b><br/>
+            <b>Great Highland Bagpipe</b> and <b>Smallpipes</b> are designed to be used with the WARBL <b>GHB / Scottish Smallpipes</b> fingering pattern selected, with no transpose set on the WARBL controller.
+            <div class="instructions-gap"></div>
+            Lowest MIDI note for the <b>Great Highland Bagpipe</b> and <b>Smallpipes</b> chanter is <b>68 (G#4 / Ab4)</b>.
+            <div class="instructions-gap"></div>
+            <b>Säckpipa</b> is designed to be used with the WARBL <b>Säckpipa</b> major or minor fingering pattern selected, with no transpose set on the WARBL controller.
+            <div class="instructions-gap"></div>
+            Lowest MIDI note for the <b>Säckpipa</b> chanter is <b>62 (D4)</b>.
+          </div>
           
           <hr class="instructions-divider"/>
 
@@ -1698,7 +1702,9 @@
 
             Use the <b>GHB / Smallpipes</b> fingering pattern for:<br/>
             • Great Highland Bagpipe<br/>
-            • Smallpipes<br/>
+            • Smallpipes
+            <div class="instructions-gap"></div>
+            Use the <b>Säckpipa</b> major or minor fingering pattern for:<br/>
             • Säckpipa
           </div>
 
@@ -1878,9 +1884,9 @@
         },
         sackpipa: {
           label: "Säckpipa",
-          folder: "samples/sackpipa",
+          folder: "samples/sackpipa_d",
           minNote: 51,
-          maxNote: 82,
+          maxNote: 76,
           defaultGain: 0.19
         }
       },
@@ -2006,7 +2012,7 @@
     const INSTRUMENT_PRELOAD_NOTES = {
       bagpipes: [51, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82],
       smallpipes: [51, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82],
-      sackpipa: [51, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80, 81, 82],
+      sackpipa: [51, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76],
       uilleannPipes: [
         31,33,35,36,38,42,43,45,47,48,50,51,52,
         55,56,57,58,59,60,61,62,63,64,65,66,67,
