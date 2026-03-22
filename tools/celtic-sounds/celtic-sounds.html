@@ -1277,7 +1277,7 @@
               </div>
               <div class="field">
                 <label for="reverbPreDelay">
-                  Pre-delay ms <span id="reverbPreDelayValue">0</span>
+                  Reverb Pre-delay ms <span id="reverbPreDelayValue">0</span>
                 </label>
                 <input
                   id="reverbPreDelay"
@@ -1295,21 +1295,6 @@
           <div class="field" style="grid-column: span 2;">
             <div class="two-up">
               <div class="field">
-                <label for="reverbWet">
-                  Reverb Wet <span id="reverbWetValue">0.18</span>
-                </label>
-                <input
-                  id="reverbWet"
-                  type="range"
-                  min="0"
-                  max="1"
-                  step="0.01"
-                  value="0.18"
-                  title="Adjust the amount of reverberated signal in the mix."
-                />
-              </div>
-
-              <div class="field">
                 <label for="reverbDry">
                   Reverb Dry <span id="reverbDryValue">1.00</span>
                 </label>
@@ -1321,6 +1306,20 @@
                   step="0.01"
                   value="1.00"
                   title="Adjust the amount of direct unprocessed signal in the mix."
+                />
+              </div>
+              <div class="field">
+                <label for="reverbWet">
+                  Reverb Wet <span id="reverbWetValue">0.18</span>
+                </label>
+                <input
+                  id="reverbWet"
+                  type="range"
+                  min="0"
+                  max="1"
+                  step="0.01"
+                  value="0.18"
+                  title="Adjust the amount of reverberated signal in the mix."
                 />
               </div>
             </div>
@@ -1525,9 +1524,9 @@
           <div class="instructions-subbody">
             Choose a reverb style, then adjust:
             <div class="instructions-gap"></div>
-            <b>Wet</b> = reverb signal level<br/>
-            <b>Dry</b> = direct signal level<br/>
-            <b>Pre-delay</b> = delay before reverb begins
+            <b>Pre-delay</b> = Delay before reverb begins<br/>
+            <b>Dry</b> = Direct signal level<br/>
+            <b>Wet</b> = Reverb signal level
           </div>
 
           <hr class="instructions-divider"/>
@@ -1611,9 +1610,9 @@
             • <b>Pitch Bend Up/Down Scale</b><br/>
             • <b>Attack</b><br/>
             • <b>Release</b><br/>
-            • <b>Reverb Wet</b><br/>
+            • <b>Reverb Pre-delay</b><br/>
             • <b>Reverb Dry</b><br/>
-            • <b>Reverb Pre-delay</b>
+            • <b>Reverb Wet</b>
             <div class="instructions-gap"></div>
             It does <b>not</b> reset your other instruments.
           </div>
