@@ -42,6 +42,7 @@
   </script>
 
   <title>WARBL Sound Lab</title>
+
   <style>
     :root {
       --bg: #0f172a;
@@ -240,13 +241,67 @@
 
     .main-card,
     .live-card {
-      height: auto;
       min-height: 0;
+    }
+
+    .main-card{
+      display:flex;
+      flex-direction:column;
+      justify-content:flex-start;
+
+      position: sticky;
+      top: 10px;
+
+      height: min(730px, calc(100vh - 40px));
+      max-height: min(730px, calc(100vh - 40px));
+
+      overflow: hidden;
+    }
+
+    .live-card {
+      display: flex;
+      flex-direction: column;
+
+      position: sticky;
+      top: 10px;
+
+      height: min(730px, calc(100vh - 40px));
+      max-height: min(730px, calc(100vh - 40px));
+
+      overflow: hidden;
     }
 
     .section-title {
       margin: 0 0 8px 0;
       font-size: 1rem;
+    }
+
+    .main-tab-panel .section-title {
+      margin-bottom: 18px;
+    }
+
+    .main-tab-panels{
+      flex: 1 1 auto;
+      min-height: 0;
+      overflow: auto;
+      padding-bottom: 10px;
+    }
+
+    .main-card-footer{
+      flex: 0 0 auto;
+      margin-top: auto;
+      border-top: 1px solid rgba(148,163,184,0.18);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.02);
+      background: linear-gradient(180deg, rgba(17,24,39,0), rgba(17,24,39,0.35));
+    }
+
+    .preset-reset-row{
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 18px;
+      margin-top: 0;
+      flex-wrap: wrap;
     }
 
     .controls {
@@ -282,6 +337,10 @@
       font-weight: 600;
     }
 
+    .control input[type="range"]{
+      margin-top: 12px;
+    }
+    
     .field select,
     select {
       width: 100%;
@@ -348,6 +407,19 @@
       gap: 12px;
     }
 
+    .control-header{
+      flex: 0 0 auto;
+      margin-bottom: 14px;
+    }
+
+    .preset-row-top{
+      flex: 0 0 auto;
+      margin-bottom: 14px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid rgba(148,163,184,0.16);
+      box-shadow: inset 0 -1px 0 rgba(255,255,255,0.02);
+    }
+
     .preset-btn {
       padding: 9px 6px;
       min-height: 0;
@@ -377,6 +449,81 @@
       box-shadow: 0 0 0 1px rgba(96,165,250,0.3), 0 0 14px rgba(96,165,250,0.22);
     }
 
+    .main-tabs{
+      display:flex;
+      flex-wrap:wrap;
+      gap:5px; 
+      margin-bottom:0;
+      padding:0 0 0 4px;
+      border-bottom:1px solid rgba(148,163,184,0.28);
+      flex:0 0 auto;
+    }
+
+    .main-tab-btn{
+      appearance:none;
+      -webkit-appearance:none;
+
+      background: linear-gradient(180deg, #273244, #202938);
+      border: 1px solid rgba(148,163,184,0.24);
+      border-bottom: none;
+
+      border-top-left-radius: 8px;
+      border-top-right-radius: 8px;
+      border-bottom-left-radius: 0;
+      border-bottom-right-radius: 0;
+
+      color:#9aa4b2;
+      opacity:0.8;
+      box-shadow:none;
+      font-weight:600;
+
+      /* more horizontal padding */
+      padding:10px 22px 9px 22px;
+
+      min-height:42px;
+
+      position:relative;
+      top:1px;
+    }
+
+    .main-tab-btn:hover{
+      background: linear-gradient(180deg, #3a4a62, #2f3c52); /* brighter */
+      border-color: rgba(148,163,184,0.5);
+      color:#f1f5f9; /* brighter text */
+      opacity:1; /* remove dimming on hover */
+
+      /* subtle glow instead of lift */
+      box-shadow: 0 0 0 1px rgba(148,163,184,0.15),
+                  0 2px 6px rgba(0,0,0,0.25);
+    }
+
+    .main-tab-btn.active{
+      background: rgba(17, 24, 39, 0.96);
+      border-color: rgba(148,163,184,0.34);
+      color:#ffffff;
+      opacity:1.0;
+      z-index:2;
+    }
+
+    /* prevent button lift behavior */
+    .main-tab-btn:hover,
+    .main-tab-btn.active{
+      transform:none !important;
+    }
+
+    .main-tab-panels{
+      flex:1 1 auto;
+      min-height:0;
+    }
+
+    .main-tab-panel{
+      display:block;
+    }
+
+    .main-tab-panel[hidden]{
+      display:none !important;
+    }
+
     .preset-reset-row {
       display: flex;
       justify-content: space-between;
@@ -402,7 +549,6 @@
       font-weight: 400 !important;
     }
 
-    /* DARKER BLUE */
     #btnResetCurrentPreset {
       background: linear-gradient(135deg, #1e2f6b, #1e40af) !important;
       border-color: #3b82f6;
@@ -415,7 +561,6 @@
       box-shadow: 0 4px 12px rgba(0,0,0,0.45), 0 0 8px rgba(59,130,246,0.25);
     }
 
-    /* DARKER RED */
     #btnResetAllPresets {
       background: linear-gradient(135deg, #6b1414, #991b1b) !important;
       border-color: #ef4444;
@@ -486,14 +631,6 @@
       background: linear-gradient(135deg, #2563eb, #3b82f6);
       border-color:#60a5fa;
       box-shadow:0 3px 10px rgba(0,0,0,0.28);
-    }
-
-    /* Right panel fix */
-    .live-card {
-      display: flex;
-      flex-direction: column;
-      min-height: 0;
-      overflow: hidden;
     }
 
     .live-card > .section-title:first-child {
@@ -823,7 +960,7 @@
     }
 
     .modal_compact_inner{
-      padding:18px 18px 28px 18px;   /* more bottom breathing room */
+      padding:18px 18px 28px 18px;
       background:#fff;
       color:#000;
 
@@ -837,7 +974,7 @@
       overflow:auto !important;
       -webkit-overflow-scrolling:touch;
 
-      flex:1 1 auto;  /* allows content to expand naturally */
+      flex:1 1 auto;
     }
 
     .modal_compact_buttons{
@@ -875,13 +1012,11 @@
       box-shadow:0 0 6px rgba(80,120,220,0.35);
     }
 
-    /* Prompt text */
     .modal_compact_main .modal_default_promptdescription {
       font-size: 20px !important;
       line-height: 1.5 !important;
     }
 
-    /* Force override ALL prompt inputs inside DayPilot modal */
     .modal_compact_main .modal_default_prompt,
     .modal_compact_main input,
     .modal_compact_main .modal_default_prompt input {
@@ -896,6 +1031,9 @@
       }
 
       .live-card {
+        position: static;
+        top: auto;
+        max-height: none;
         height: auto;
       }
 
@@ -928,6 +1066,11 @@
 
       .preset-row {
         grid-template-columns: 1fr;
+      }
+
+      .main-tab-btn{
+        flex:1 1 calc(50% - 8px);
+        text-align:center;
       }
 
       #midiLog {
@@ -968,6 +1111,10 @@
       .preset-row {
         grid-template-columns: 1fr;
       }
+
+      .main-tab-btn{
+        flex:1 1 100%;
+      }
     }
 
     html:fullscreen,
@@ -984,7 +1131,6 @@
       margin-top: 0;
     }
 
-    /* Default fullscreen behavior: pin to top, centered horizontally */
     body.fullscreen-mode .page {
       width: min(1516px, calc(100vw - 40px));
       max-width: none;
@@ -994,7 +1140,6 @@
       margin-bottom: 20px !important;
     }
 
-    /* Only when it fits: center vertically and raise slightly */
     body.fullscreen-mode.fullscreen-centered {
       min-height: 100vh;
       display: flex;
@@ -1007,7 +1152,6 @@
       transform: translateY(-3vh);
     }
 
-    /* When fullscreen but too tall: top pin */
     body.fullscreen-mode.fullscreen-top {
       display: block;
     }
@@ -1041,8 +1185,8 @@
     .instructions-scroll {
       min-height: 0;
     }
-
   </style>
+
 </head>
 
 <body>
@@ -1088,196 +1232,293 @@
 
   <div class="layout">
     <div class="card main-card">
-      <h2 class="section-title">Instrument</h2>
-      <div class="preset-row" style="margin-bottom:14px">
-        <button class="preset-btn" data-preset="whistle" title="Clean, whistle-like lead with a light airy edge.">Air</button>
-        <button class="preset-btn" data-preset="clarinet" title="Odd-harmonic reed tone with a woodwind-style body.">Reed</button>
-        <button class="preset-btn" data-preset="voice" title="Expressive, smooth solo sound with a sax-like character.">Solo</button>
-        <button class="preset-btn" data-preset="brass" title="Buzzier brass voice with more bite and projection.">Brass</button>
-        <button class="preset-btn" data-preset="strings" title="Detuned ensemble-like pad with softer attack.">Pad</button>
-        <button class="preset-btn" data-preset="lead" title="Bright electronic lead voice with a little edge.">Lead</button>
+      <div class="control-header">
+        <div class="preset-row preset-row-top">
+          <button class="preset-btn" data-preset="whistle" title="Clean, whistle-like lead with a light airy edge.">Air</button>
+          <button class="preset-btn" data-preset="clarinet" title="Odd-harmonic reed tone with a woodwind-style body.">Reed</button>
+          <button class="preset-btn" data-preset="voice" title="Expressive, smooth solo sound with a sax-like character.">Solo</button>
+          <button class="preset-btn" data-preset="brass" title="Buzzier brass voice with more bite and projection.">Brass</button>
+          <button class="preset-btn" data-preset="strings" title="Detuned ensemble-like pad with softer attack.">Pad</button>
+          <button class="preset-btn" data-preset="lead" title="Bright electronic lead voice with a little edge.">Lead</button>
+        </div>
+
+        <div class="main-tabs" role="tablist" aria-label="Main controls">
+          <button
+            type="button"
+            class="main-tab-btn active"
+            data-tab="tab-global"
+            role="tab"
+            aria-selected="true"
+            aria-controls="tab-global"
+            id="tabBtnGlobal"
+          >
+            Global
+          </button>
+          <button
+            type="button"
+            class="main-tab-btn"
+            data-tab="tab-instrument"
+            role="tab"
+            aria-selected="false"
+            aria-controls="tab-instrument"
+            id="tabBtnInstrument"
+          >
+            Instrument
+          </button>
+          <button
+            type="button"
+            class="main-tab-btn"
+            data-tab="tab-controller"
+            role="tab"
+            aria-selected="false"
+            aria-controls="tab-controller"
+            id="tabBtnController"
+          >
+            Controller
+          </button>
+          <button
+            type="button"
+            class="main-tab-btn"
+            data-tab="tab-space"
+            role="tab"
+            aria-selected="false"
+            aria-controls="tab-space"
+            id="tabBtnSpace"
+          >
+            Reverb / Volume
+          </button>
+        </div>
+      </div>      
+
+      <div class="main-tab-panels">
+        <section
+          id="tab-global"
+          class="main-tab-panel active"
+          role="tabpanel"
+          aria-labelledby="tabBtnGlobal"
+        >
+          <h2 class="section-title">Global</h2>
+          <div class="controls compact-4">
+            <div class="field" title="Choose which connected WebMIDI device this synth listens to. This is a global setting for the entire tool and is not stored separately for each patch.">
+              <label for="midiInputSelect">MIDI Input</label>
+              <select id="midiInputSelect" title="Choose which connected WebMIDI device this synth listens to. This is a global setting for the entire tool and is not stored separately for each patch.">
+                <option value="">No MIDI inputs yet</option>
+              </select>
+            </div>
+
+            <div class="field" title="Choose the MIDI channel this synth receives on. This is a global setting for the entire tool and is not stored separately for each patch.">
+              <label for="midiChannelSelect">Input Channel</label>
+              <select id="midiChannelSelect" title="Choose the MIDI channel this synth receives on. This is a global setting for the entire tool and is not stored separately for each patch."></select>
+            </div>
+
+            <div class="field" title="Choose which incoming MIDI value controls expression level. This is a global setting for the entire tool and is not stored separately for each patch.">
+              <label for="expressionModeSelect">Expression Source</label>
+              <select id="expressionModeSelect" title="Choose which incoming MIDI value controls expression level. This is a global setting for the entire tool and is not stored separately for each patch.">
+                <option value="cc2">Breath (CC2)</option>
+                <option value="cc11">Expression (CC11)</option>
+                <option value="cc7">Volume (CC7)</option>
+                <option value="velocity">Note Velocity</option>
+                <option value="fixed">Fixed Full Volume</option>
+              </select>
+            </div>
+
+            <div class="control" title="Sets the total pitch bend span in semitones. Default is 2 semitones. This is a global setting for the entire tool and is not stored separately for each patch.">              
+              <label for="pitchBendRange">Pitch Bend Range <span class="value" id="pitchBendRangeValue"></span></label>
+              <input id="pitchBendRange" title="Sets the total pitch bend span in semitones. Default is 2 semitones. This is a global setting for the entire tool and is not stored separately for each patch." type="range" min="0" max="12" step="1" value="2">
+            </div>
+          </div>
+        </section>
+
+        <section
+          id="tab-instrument"
+          class="main-tab-panel"
+          role="tabpanel"
+          aria-labelledby="tabBtnInstrument"
+          hidden
+        >
+          <h2 class="section-title">Instrument</h2>
+          <div class="controls compact-4">
+            <div class="control" title="Shifts the patch from rounder to more focused and forward.">
+              <label for="tone">Tone <span class="value" id="toneValue"></span></label>
+              <input id="tone" title="Shifts the patch from rounder to more focused and forward." type="range" min="0" max="1" step="0.01" value="0.5">
+            </div>
+            <div class="control" title="Controls upper harmonics and filter openness.">
+              <label for="brightness">Brightness <span class="value" id="brightnessValue"></span></label>
+              <input id="brightness" title="Controls upper harmonics and filter openness." type="range" min="0" max="1" step="0.01" value="0.5">
+            </div>
+            <div class="control" title="Adds breath, reed, bow, or edge depending on the patch.">
+              <label for="texture">Texture / Noise <span class="value" id="textureValue"></span></label>
+              <input id="texture" title="Adds breath, reed, bow, or edge depending on the patch." type="range" min="0" max="1" step="0.01" value="0.0">
+            </div>
+            <div class="control" title="Moves the resonant character of the instrument body.">
+              <label for="body">Body / Resonance <span class="value" id="bodyValue"></span></label>
+              <input id="body" title="Moves the resonant character of the instrument body." type="range" min="0" max="1" step="0.01" value="0.5">
+            </div>
+            <div class="control" title="Sets how quickly the sound reaches full level after note-on.">
+              <label for="attack">Attack <span class="value" id="attackValue"></span></label>
+              <input id="attack" title="Sets how quickly the sound reaches full level after note-on." type="range" min="0.000" max="0.15" step="0.001" value="0.01">
+            </div>
+            <div class="control" title="Sets how long the note fades after release.">
+              <label for="release">Release <span class="value" id="releaseValue"></span></label>
+              <input id="release" title="Sets how long the note fades after release." type="range" min="0.01" max="1.5" step="0.005" value="0.09">
+            </div>
+            <div class="control" title="Sets vibrato speed.">
+              <label for="vibratoRate">Vibrato Rate <span class="value" id="vibratoRateValue"></span></label>
+              <input id="vibratoRate" title="Sets vibrato speed." type="range" min="0.1" max="10" step="0.1" value="5.0">
+            </div>
+            <div class="control" title="Sets vibrato depth in cents.">
+              <label for="vibratoDepth">Vibrato Depth <span class="value" id="vibratoDepthValue"></span></label>
+              <input id="vibratoDepth" title="Sets vibrato depth in cents." type="range" min="0" max="80" step="1" value="8">
+            </div>
+            <div class="control" title="Adjust the overall tuning in cents to match recordings or other instruments.">
+              <div class="slider-label-row">
+                <label for="masterTuneCents">Master Tuning <span class="value" id="masterTuneCentsValue"></span></label>
+                <button
+                  id="btnResetMasterTune"
+                  type="button"
+                  class="mini-reset-button"
+                  title="Reset master tuning to zero cents."
+                  aria-label="Reset master tuning to zero cents."
+                >
+                  Reset
+                </button>
+              </div>
+              <input id="masterTuneCents" title="Adjust the overall tuning in cents to match recordings or other instruments." type="range" min="-50" max="50" step="1" value="0">
+            </div>
+          </div>
+        </section>
+
+        <section
+          id="tab-controller"
+          class="main-tab-panel"
+          role="tabpanel"
+          aria-labelledby="tabBtnController"
+          hidden
+        >
+          <h2 class="section-title">Controller Response</h2>
+          <div class="controls compact-4">
+            <div class="field" title="Choose how the synth decides which note wins when notes overlap.">
+              <label for="priorityMode">Mono Priority</label>
+              <select id="priorityMode" title="Choose how the synth decides which note wins when notes overlap.">
+                <option value="last">Last Note</option>
+                <option value="high">Highest Note</option>
+                <option value="low">Lowest Note</option>
+              </select>
+            </div>
+
+            <div class="control" title="Transpose playback up or down in semitone steps.">
+              <label for="transposeSemis">Transpose <span class="value" id="transposeSemisValue"></span></label>
+              <input id="transposeSemis" title="Transpose playback up or down in semitone steps." type="range" min="-12" max="12" step="1" value="0">
+            </div>
+
+            <div class="control" title="Scales downward incoming pitch bend.">
+              <label for="bendDown">Pitch Bend Down Scale <span class="value" id="bendDownValue"></span></label>
+              <input id="bendDown" title="Scales downward incoming pitch bend." type="range" min="0" max="4.0" step="0.01" value="1.0">
+            </div>
+
+            <div class="control" title="Scales upward incoming pitch bend.">
+              <label for="bendUp">Pitch Bend Up Scale <span class="value" id="bendUpValue"></span></label>
+              <input id="bendUp" title="Scales upward incoming pitch bend." type="range" min="0" max="4.0" step="0.01" value="1.0">
+            </div>
+
+            <div class="control checkbox-row" title="When enabled, notes glide from the previous pitch to the next one.">
+              <input id="portamentoEnabled" title="When enabled, notes glide from the previous pitch to the next one." type="checkbox">
+              <label for="portamentoEnabled" style="margin:0">Enable Portamento</label>
+            </div>
+
+            <div class="control" title="Sets how long the pitch glide takes between notes when portamento is enabled.">
+              <label for="portamentoMs">Portamento Time <span class="value" id="portamentoMsValue"></span></label>
+              <input id="portamentoMs" title="Sets how long the pitch glide takes between notes when portamento is enabled." type="range" min="0" max="400" step="1" value="70">
+            </div>
+
+            <div class="control" title="Makes stronger expression also brighten the tone.">
+              <label for="brightnessFollow">Expression → Brightness <span class="value" id="brightnessFollowValue"></span></label>
+              <input id="brightnessFollow" title="Makes stronger expression also brighten the tone." type="range" min="0" max="1" step="0.01" value="0.4">
+            </div>
+
+            <div class="field" title="Select which pitch the drone voice will play when toggled on. Available range: C2 to D5. The trigger to turn the drone on or off is always incoming MIDI note 51. This setting is stored per patch.">
+              <label for="droneNoteSelect">Drone Note</label>
+              <select id="droneNoteSelect" title="Select which pitch the drone voice will play when toggled on. Available range: C2 to D5. The trigger to turn the drone on or off is always incoming MIDI note 51. This setting is stored per patch.">
+              </select>
+            </div>
+          </div>
+        </section>
+
+        <section
+          id="tab-space"
+          class="main-tab-panel"
+          role="tabpanel"
+          aria-labelledby="tabBtnSpace"
+          hidden
+        >
+          <h2 class="section-title">Reverb / Volume</h2>
+          <div class="controls compact-4">
+            <div class="field" title="Choose the overall reverb character.">
+              <label for="reverbStyleSelect">Reverb Style</label>
+              <select id="reverbStyleSelect" title="Choose the overall reverb character.">
+                <option value="room">Room</option>
+                <option value="hall">Hall</option>
+                <option value="plate">Plate</option>
+                <option value="ambient">Ambient</option>
+                <option value="church">Church</option>
+              </select>
+            </div>
+            <div class="control" title="Sets how much dry signal remains in the mix.">
+              <label for="reverbDry">Reverb Dry <span class="value" id="reverbDryValue"></span></label>
+              <input id="reverbDry" title="Sets how much dry signal remains in the mix." type="range" min="0" max="1.5" step="0.01" value="1.0">
+            </div>
+            <div class="control" title="Sets how much reverberated signal is mixed in.">
+              <label for="reverbWet">Reverb Wet <span class="value" id="reverbWetValue"></span></label>
+              <input id="reverbWet" title="Sets how much reverberated signal is mixed in." type="range" min="0" max="1" step="0.01" value="0.16">
+            </div>
+            <div class="control" title="Adds a short delay before the reverb begins.">
+              <label for="reverbPreDelay">Reverb Pre-delay <span class="value" id="reverbPreDelayValue"></span></label>
+              <input id="reverbPreDelay" title="Adds a short delay before the reverb begins." type="range" min="0" max="250" step="1" value="12">
+            </div>
+            <div class="control" title="Tilts the reverb darker or brighter.">
+              <label for="reverbTone">Reverb Tone <span class="value" id="reverbToneValue"></span></label>
+              <input id="reverbTone" title="Tilts the reverb darker or brighter." type="range" min="0.05" max="0.95" step="0.01" value="0.48">
+            </div>
+            <div class="control" title="Scales the drone voice level before it joins the shared mix. Master Volume still controls the final overall output of both the main and drone voices. This setting is stored per patch.">
+              <label for="droneVolume">Drone Volume <span class="value" id="droneVolumeValue"></span></label>
+              <input id="droneVolume" title="Scales the drone voice level before it joins the shared mix. Master Volume still controls the final overall output of both the main and drone voices. This setting is stored per patch." type="range" min="0" max="4" step="0.01" value="1.0">
+            </div>
+            <div class="control" title="Sets final output level.">
+              <label for="masterVolume">Master Volume <span class="value" id="masterVolumeValue"></span></label>
+              <input id="masterVolume" title="Sets final output level." type="range" min="0" max="2" step="0.01" value="1.0">
+            </div>
+          </div>
+        </section>
       </div>
-      <div class="controls compact-4">
-        <div class="control" title="Shifts the patch from rounder to more focused and forward.">
-          <label for="tone">Tone <span class="value" id="toneValue"></span></label>
-          <input id="tone" title="Shifts the patch from rounder to more focused and forward." type="range" min="0" max="1" step="0.01" value="0.5">
-        </div>
-        <div class="control" title="Controls upper harmonics and filter openness.">
-          <label for="brightness">Brightness <span class="value" id="brightnessValue"></span></label>
-          <input id="brightness" title="Controls upper harmonics and filter openness." type="range" min="0" max="1" step="0.01" value="0.5">
-        </div>
-        <div class="control" title="Adds breath, reed, bow, or edge depending on the patch.">
-          <label for="texture">Texture / Noise <span class="value" id="textureValue"></span></label>
-          <input id="texture" title="Adds breath, reed, bow, or edge depending on the patch." type="range" min="0" max="1" step="0.01" value="0.0">
-        </div>
-        <div class="control" title="Moves the resonant character of the instrument body.">
-          <label for="body">Body / Resonance <span class="value" id="bodyValue"></span></label>
-          <input id="body" title="Moves the resonant character of the instrument body." type="range" min="0" max="1" step="0.01" value="0.5">
-        </div>
-        <div class="control" title="Sets how quickly the sound reaches full level after note-on.">
-          <label for="attack">Attack <span class="value" id="attackValue"></span></label>
-          <input id="attack" title="Sets how quickly the sound reaches full level after note-on." type="range" min="0.000" max="0.15" step="0.001" value="0.01">
-        </div>
-        <div class="control" title="Sets how long the note fades after release.">
-          <label for="release">Release <span class="value" id="releaseValue"></span></label>
-          <input id="release" title="Sets how long the note fades after release." type="range" min="0.01" max="1.5" step="0.005" value="0.09">
-        </div>
-        <div class="control" title="Sets vibrato speed.">
-          <label for="vibratoRate">Vibrato Rate <span class="value" id="vibratoRateValue"></span></label>
-          <input id="vibratoRate" title="Sets vibrato speed." type="range" min="0.1" max="10" step="0.1" value="5.0">
-        </div>
-        <div class="control" title="Sets vibrato depth in cents.">
-          <label for="vibratoDepth">Vibrato Depth <span class="value" id="vibratoDepthValue"></span></label>
-          <input id="vibratoDepth" title="Sets vibrato depth in cents." type="range" min="0" max="80" step="1" value="8">
-        </div>
-      </div>
 
-      <h2 class="section-title" style="margin-top:14px">Controller Response</h2>
-      <div class="controls compact-4">
-        <div class="field" title="Choose which connected WebMIDI device this synth listens to. This is a global setting for the entire tool and is not stored separately for each patch.">
-          <label for="midiInputSelect">MIDI Input</label>
-          <select id="midiInputSelect" title="Choose which connected WebMIDI device this synth listens to. This is a global setting for the entire tool and is not stored separately for each patch.">
-            <option value="">No MIDI inputs yet</option>
-          </select>
-        </div>
-
-        <div class="field" title="Choose the MIDI channel this synth receives on. This is a global setting for the entire tool and is not stored separately for each patch.">
-          <label for="midiChannelSelect">Input Channel</label>
-          <select id="midiChannelSelect" title="Choose the MIDI channel this synth receives on. This is a global setting for the entire tool and is not stored separately for each patch."></select>
-        </div>
-        <div class="field" title="Choose which incoming MIDI value controls expression level. This is a global setting for the entire tool and is not stored separately for each patch.">
-          <label for="expressionModeSelect">Expression Source</label>
-          <select id="expressionModeSelect" title="Choose which incoming MIDI value controls expression level. This is a global setting for the entire tool and is not stored separately for each patch.">
-            <option value="cc2">Breath (CC2)</option>
-            <option value="cc11">Expression (CC11)</option>
-            <option value="cc7">Volume (CC7)</option>
-            <option value="velocity">Note Velocity</option>
-            <option value="fixed">Fixed Full Volume</option>
-          </select>
-        </div>
-        <div class="field" title="Choose how the synth decides which note wins when notes overlap.">
-          <label for="priorityMode">Mono Priority</label>
-          <select id="priorityMode" title="Choose how the synth decides which note wins when notes overlap.">
-            <option value="last">Last Note</option>
-            <option value="high">Highest Note</option>
-            <option value="low">Lowest Note</option>
-          </select>
-        </div>
-
-        <div class="control" title="Transpose playback up or down in semitone steps.">
-          <label for="transposeSemis">Transpose <span class="value" id="transposeSemisValue"></span></label>
-          <input id="transposeSemis" title="Transpose playback up or down in semitone steps." type="range" min="-12" max="12" step="1" value="0">
-        </div>
-        <div class="control" title="Sets the total pitch bend span in semitones. Default is 2 semitones. This is a global setting for the entire tool and is not stored separately for each patch.">
-          <label for="pitchBendRange">Pitch Bend Range <span class="value" id="pitchBendRangeValue"></span></label>
-          <input id="pitchBendRange" title="Sets the total pitch bend span in semitones. Default is 2 semitones. This is a global setting for the entire tool and is not stored separately for each patch." type="range" min="0" max="12" step="1" value="2">
-        </div>
-        <div class="control" title="Scales downward incoming pitch bend.">
-          <label for="bendDown">Pitch Bend Down Scale <span class="value" id="bendDownValue"></span></label>
-          <input id="bendDown" title="Scales downward incoming pitch bend." type="range" min="0" max="4.0" step="0.01" value="1.0">
-        </div>
-        <div class="control" title="Scales upward incoming pitch bend.">
-          <label for="bendUp">Pitch Bend Up Scale <span class="value" id="bendUpValue"></span></label>
-          <input id="bendUp" title="Scales upward incoming pitch bend." type="range" min="0" max="4.0" step="0.01" value="1.0">
-        </div>
-        <div class="control checkbox-row" title="When enabled, notes glide from the previous pitch to the next one.">
-          <input id="portamentoEnabled" title="When enabled, notes glide from the previous pitch to the next one." type="checkbox">
-          <label for="portamentoEnabled" style="margin:0">Enable Portamento</label>
-        </div>
-        <div class="control" title="Sets how long the pitch glide takes between notes when portamento is enabled.">
-          <label for="portamentoMs">Portamento Time <span class="value" id="portamentoMsValue"></span></label>
-          <input id="portamentoMs" title="Sets how long the pitch glide takes between notes when portamento is enabled." type="range" min="0" max="400" step="1" value="70">
-        </div>
-        <div class="control" title="Makes stronger expression also brighten the tone.">
-          <label for="brightnessFollow">Expression → Brightness <span class="value" id="brightnessFollowValue"></span></label>
-          <input id="brightnessFollow" title="Makes stronger expression also brighten the tone." type="range" min="0" max="1" step="0.01" value="0.4">
-        </div>
-        <div class="field" title="Select which pitch the drone voice will play when toggled on. Available range: C2 to D5. The trigger to turn the drone on or off is always incoming MIDI note 51. This setting is stored per patch.">
-          <label for="droneNoteSelect">Drone Note</label>
-          <select id="droneNoteSelect" title="Select which pitch the drone voice will play when toggled on. Available range: C2 to D5. The trigger to turn the drone on or off is always incoming MIDI note 51. This setting is stored per patch.">
-          </select>
-        </div>
-      </div>
-
-      <h2 class="section-title" style="margin-top:14px">Space / Output</h2>
-      <div class="controls compact-4">
-        <div class="field" title="Choose the overall reverb character.">
-          <label for="reverbStyleSelect">Reverb Style</label>
-          <select id="reverbStyleSelect" title="Choose the overall reverb character.">
-            <option value="room">Room</option>
-            <option value="hall">Hall</option>
-            <option value="plate">Plate</option>
-            <option value="ambient">Ambient</option>
-            <option value="church">Church</option>
-          </select>
-        </div>
-        <div class="control" title="Sets how much dry signal remains in the mix.">
-          <label for="reverbDry">Reverb Dry <span class="value" id="reverbDryValue"></span></label>
-          <input id="reverbDry" title="Sets how much dry signal remains in the mix." type="range" min="0" max="1.5" step="0.01" value="1.0">
-        </div>
-        <div class="control" title="Sets how much reverberated signal is mixed in.">
-          <label for="reverbWet">Reverb Wet <span class="value" id="reverbWetValue"></span></label>
-          <input id="reverbWet" title="Sets how much reverberated signal is mixed in." type="range" min="0" max="1" step="0.01" value="0.16">
-        </div>
-        <div class="control" title="Adds a short delay before the reverb begins.">
-          <label for="reverbPreDelay">Reverb Pre-delay <span class="value" id="reverbPreDelayValue"></span></label>
-          <input id="reverbPreDelay" title="Adds a short delay before the reverb begins." type="range" min="0" max="250" step="1" value="12">
-        </div>
-        <div class="control" title="Tilts the reverb darker or brighter.">
-          <label for="reverbTone">Reverb Tone <span class="value" id="reverbToneValue"></span></label>
-          <input id="reverbTone" title="Tilts the reverb darker or brighter." type="range" min="0.05" max="0.95" step="0.01" value="0.48">
-        </div>
-        <div class="control" title="Sets final output level.">
-          <label for="masterVolume">Master Volume <span class="value" id="masterVolumeValue"></span></label>
-          <input id="masterVolume" title="Sets final output level." type="range" min="0" max="2" step="0.01" value="1.0">
-        </div>
-        <div class="control" title="Scales the drone voice level before it joins the shared mix. Master Volume still controls the final overall output of both the main and drone voices. This setting is stored per patch.">
-          <label for="droneVolume">Drone Volume <span class="value" id="droneVolumeValue"></span></label>
-          <input id="droneVolume" title="Scales the drone voice level before it joins the shared mix. Master Volume still controls the final overall output of both the main and drone voices. This setting is stored per patch." type="range" min="0" max="4" step="0.01" value="1.0">
-        </div>
-        <div class="control" title="Adjust the overall tuning in cents to match recordings or other instruments.">
-          <div class="slider-label-row">
-            <label for="masterTuneCents">Master Tuning <span class="value" id="masterTuneCentsValue"></span></label>
-            <button
-              id="btnResetMasterTune"
-              type="button"
-              class="mini-reset-button"
-              title="Reset master tuning to zero cents."
-              aria-label="Reset master tuning to zero cents."
-            >
-              Reset
+      <div class="main-card-footer">
+        <div class="preset-reset-row">
+          <div class="preset-reset-left">
+            <button id="btnResetCurrentPreset" type="button" title="Reset only the currently selected preset back to its default settings.">
+              Reset Current Preset to Defaults
+            </button>
+            <button id="btnResetAllPresets" type="button" title="Reset all presets and current settings back to their default values.">
+              Reset All Presets to Defaults
             </button>
           </div>
-          <input id="masterTuneCents" title="Adjust the overall tuning in cents to match recordings or other instruments." type="range" min="-50" max="50" step="1" value="0">
+
+          <div class="preset-reset-right">
+            <button id="btnSaveSettingsFile" type="button" title="Exports all patch and global settings to a file.">
+              Export Settings
+            </button>
+            <button id="btnLoadSettingsFile" type="button" title="Imports patch and global settings from a file.">
+              Import Settings
+            </button>
+          </div>
         </div>
+
+        <input
+          id="settingsFileInput"
+          type="file"
+          accept=".json,application/json"
+          style="display:none"
+        />
       </div>
-
-      <div class="preset-reset-row">
-        <div class="preset-reset-left">
-          <button id="btnResetCurrentPreset" type="button" title="Reset only the currently selected preset back to its default settings.">
-            Reset Current Preset to Defaults
-          </button>
-          <button id="btnResetAllPresets" type="button" title="Reset all presets and current settings back to their default values.">
-            Reset All Presets to Defaults
-          </button>
-        </div>
-
-        <div class="preset-reset-right">
-          <button id="btnSaveSettingsFile" type="button" title="Exports all patch and global settings to a file.">
-            Export Settings
-          </button>
-          <button id="btnLoadSettingsFile" type="button" title="Imports patch and global settings from a file.">
-            Import Settings
-          </button>
-        </div>
-      </div>
-
-      <input
-        id="settingsFileInput"
-        type="file"
-        accept=".json,application/json"
-        style="display:none"
-      />
 
     </div>
 
@@ -1333,132 +1574,158 @@
         <div class="instructions-subbody">
           <ol class="instructions-steps">
             <li>Click <b>Connect MIDI</b> and allow browser MIDI access if requested.</li>
-            <li>Choose your <b>MIDI Input</b> and <b>Input Channel</b>.</li>
-            <li>Select one of the six instrument voices: <b>Air</b>, <b>Reed</b>, <b>Solo</b>, <b>Brass</b>, <b>Pad</b>, or <b>Lead</b>.</li>
-            <li>Choose the <b>Expression Source</b> that matches your WARBL setup. This is a <b>global setting</b> for the entire tool and defaults to <b>Note Velocity</b>. You can switch it to <b>Breath (CC2)</b>, <b>Expression (CC11)</b>, or <b>Volume (CC7)</b> if preferred.</li>
-            <li>Adjust tone, brightness, attack, release, reverb, noise/texture, transpose, master tuning, and bend scaling to taste, then play your WARBL and watch the live status and MIDI log.</li>
+            <li>The tool will automatically switch to the <b>Global</b> tab where you can choose your <b>MIDI Input</b> and <b>Input Channel</b>.</li>
+            <li>Select one of the six instrument presets at the top: <b>Air</b>, <b>Reed</b>, <b>Solo</b>, <b>Brass</b>, <b>Pad</b>, or <b>Lead</b>.</li>
+            <li>Choose the <b>Expression Source</b> that matches your WARBL setup.</li>
+            <li>Adjust controls across the tabs, then play your WARBL and watch the <b>Live Status</b> panel.</li>
+            <li>If the <b>Audio</b> status still shows <b>Suspended</b>, click or play again after connecting MIDI so the browser can start audio.</li>
           </ol>
         </div>
 
         <hr class="instructions-divider"/>
 
-        <div class="instructions-subtitle">Instrument Voices</div>
+        <div class="instructions-subtitle">Global Tab</div>
         <div class="instructions-subbody">
-          <b>Air</b> is the cleanest and usually the best starting point for checking pitch response.<br/>
-          <b>Reed</b> emphasizes odd harmonics for a reed-like tone.<br/>
-          <b>Solo</b> is a smooth, expressive solo sound with a sax-like character and works especially well for legato playing.<br/>
-          <b>Brass</b> adds stronger buzz and bite.<br/>
-          <b>Pad</b> uses a softer, chorused pad-like tone.<br/>
-          <b>Lead</b> is a brighter, more electronic monophonic lead.
+          The <b>Global</b> tab contains settings that apply to the entire tool (not per preset).
+          <div class="instructions-gap"></div>
+
+          <b>MIDI Input</b> – Select your WARBL or other MIDI device.<br/>
+          <b>Input Channel</b> – Choose which MIDI channel to listen on.<br/>
+          <b>Expression Source</b> – Controls how dynamics are driven:
+          <ul style="margin-top:6px;">
+            <li><b>Breath (CC2)</b></li>
+            <li><b>Expression (CC11)</b></li>
+            <li><b>Volume (CC7)</b></li>
+            <li><b>Note Velocity</b></li>
+            <li><b>Fixed Full Volume</b></li>
+          </ul>
+
+          <b>Pitch Bend Range</b> – Sets the overall bend range in semitones (default ±2).<br/> 
+          The <b>Pitch Bend Up Scale / Pitch Bend Down Scale</b> controls on the <b>Controller</b> tab can then scale pitch bends upward and downward independently.
         </div>
 
         <hr class="instructions-divider"/>
 
-        <div class="instructions-subtitle">Expression Source</div>
+        <div class="instructions-subtitle">Instrument Tab</div>
         <div class="instructions-subbody">
-          <b>Expression Source</b> is a global setting for the entire tool and is not stored separately for each patch.
+          The <b>Instrument</b> tab shapes the core sound of each preset.
           <div class="instructions-gap"></div>
-          <b>Breath (CC2)</b> follows MIDI CC2 and controls playback level.<br/>
-          <b>Expression (CC11)</b> follows MIDI CC11 and controls playback level.<br/>
-          <b>Volume (CC7)</b> follows MIDI CC7 and controls playback level.<br/>
-          <b>Note Velocity</b> uses note-on velocity as the playback level.<br/>
-          <b>Fixed Full Volume</b> ignores incoming expression and plays at a constant level.
+
+          <b>Tone</b> – Moves between warm/round and focused/forward.<br/>
+          <b>Brightness</b> – Controls upper harmonics and filter openness.<br/>
+          <b>Texture / Noise</b> – Adds breath, reed, or edge.<br/>
+          <b>Body / Resonance</b> – Shapes the instrument character.<br/>
+          <div class="instructions-gap"></div>
+
+          <b>Attack</b> – How quickly notes start.<br/>
+          <b>Release</b> – How long notes fade after release.<br/>
+          <div class="instructions-gap"></div>
+
+          <b>Vibrato Rate / Depth</b> – Controls vibrato speed and intensity.<br/>
+          <div class="instructions-gap"></div>
+
+          <b>Master Tuning</b> – Fine-tunes pitch ±50 cents.<br/>
+          Use the <b>Reset</b> button to return to 0 cents.
+        </div>
+
+        <hr class="instructions-divider"/>
+
+        <div class="instructions-subtitle">Controller Tab</div>
+        <div class="instructions-subbody">
+          The <b>Controller</b> tab defines how incoming MIDI affects playback.
+          <div class="instructions-gap"></div>
+
+          <b>Mono Priority</b> – Chooses which note plays when overlapping:
+          <ul style="margin-top:6px;">
+            <li>Last Note</li>
+            <li>Highest Note</li>
+            <li>Lowest Note</li>
+          </ul>
+
+          <b>Transpose</b> – Shifts pitch in semitone steps (−12 to +12).<br/>
+          <b>Pitch Bend Up / Down Scale</b> – Adjust bend sensitivity independently.<br/>
+          <div class="instructions-gap"></div>
+
+          <b>Enable Portamento</b> – Enables pitch glide between notes.<br/>
+          <b>Portamento Time</b> – Controls glide speed.<br/>
+          <div class="instructions-gap"></div>
+
+          <b>Expression → Brightness</b> – Makes louder playing brighter.<br/>
+          <div class="instructions-gap"></div>
+
+          <b>Drone Note</b> – Selects the pitch of the drone (C2–D5).
+        </div>
+
+        <hr class="instructions-divider"/>
+
+        <div class="instructions-subtitle">Reverb / Volume Tab</div>
+        <div class="instructions-subbody">
+          Controls spatial effects and output level.
+          <div class="instructions-gap"></div>
+
+          <b>Reverb Style</b> – Room, Hall, Plate, Ambient, or Church.<br/>
+          <b>Reverb Dry</b> – Direct signal level.<br/>
+          <b>Reverb Wet</b> – Reverb level.<br/>
+          <b>Reverb Pre-delay</b> – Delay before reverb starts.<br/>
+          <b>Reverb Tone</b> – Bright/dark reverb balance.<br/>
+          <div class="instructions-gap"></div>
+
+          <b>Drone Volume</b> – Level of the drone voice.<br/>
+          <b>Master Volume</b> – Overall output level.
+        </div>
+
+        <hr class="instructions-divider"/>
+
+        <div class="instructions-subtitle">Instrument Presets</div>
+        <div class="instructions-subbody">
+          <b>Air</b> – Clean whistle-like tone (best starting point).<br/>
+          <b>Reed</b> – Clarinet-style sound with strong odd harmonics.<br/>
+          <b>Solo</b> – Smooth expressive lead, great with portamento.<br/>
+          <b>Brass</b> – Bright, buzzy tone with bite.<br/>
+          <b>Pad</b> – Soft ensemble-style sound.<br/>
+          <b>Lead</b> – Bright electronic lead.
         </div>
 
         <hr class="instructions-divider"/>
 
         <div class="instructions-subtitle">Drone Feature</div>
         <div class="instructions-subbody">
-          WARBL Sound Lab includes a built-in drone that can be used to add a sustained backing note while you play.
+          The drone adds a continuous backing note.
           <div class="instructions-gap"></div>
 
-          When enabled, the drone plays continuously underneath your main notes, creating a fuller and more immersive sound.
-          <div class="instructions-gap"></div>
-
-          The drone uses the same patch as the main voice, with a slightly fuller chorused character.
-          <div class="instructions-gap"></div>
-
-          You can select the drone pitch from <b>C2</b> up to <b>D5</b> using the <b>Drone Note</b> control.
-          <div class="instructions-gap"></div>
-
-          <b>How to control the drone:</b>
+          <b>How to use:</b>
           <ul style="margin-top:6px;">
-            <li>Send MIDI <b>note 51</b> to toggle the drone on and off</li>
-            <li>The <b>velocity</b> of the note sets the initial drone volume</li>
-            <li>The drone will continue playing until toggled off</li>
+            <li>Send a MIDI <b>note 51 (D#3 / Eb3)</b> Note On message to toggle the drone on or off</li>
+            <li>Velocity controls the initial level of the drone when triggered</li>
           </ul>
 
           <div class="instructions-gap"></div>
 
-          The drone does <b>not</b> use vibrato, even if vibrato is enabled for the main voice.
-          <div class="instructions-gap"></div>
-
-          With the drone enabled, any patch can create a bagpipe-like effect, adding a steady sustained tone underneath your melody.
-          <div class="instructions-gap"></div>
-
-          The drone pitch follows the <b>Transpose</b> and <b>Master Tuning</b> controls, but it does <b>not</b> follow live <b>Pitch Bend</b>.
-          <div class="instructions-gap"></div>
-
-          Changing to a different patch automatically turns the drone off.
-          <div class="instructions-gap"></div>
-
-          You can use the drone to:
+          The drone:
           <ul style="margin-top:6px;">
-            <li>Create traditional-style sustained backing tones</li>
-            <li>Simulate bagpipe-like playing</li>
-            <li>Add depth and fullness to solo performances</li>
+            <li>Uses the same patch as the main voice</li>
+            <li>Uses a faster attack for a more stable, pipe-like response</li>
+            <li>Follows <b>Transpose</b> and <b>Master Tuning</b></li>
+            <li>Does <b>not</b> follow pitch bend</li>
+            <li>Disables automatically when changing presets</li>
           </ul>
         </div>
 
         <hr class="instructions-divider"/>
 
-        <div class="instructions-subtitle">Transpose</div>
+        <div class="instructions-subtitle">Performance Tips</div>
         <div class="instructions-subbody">
-          <b>Transpose</b> shifts the sounding pitch in <b>semitone steps</b> from <b>-12 to +12</b>.
-          <div class="instructions-gap"></div>
-          This shifts the sounding pitch up or down without changing your WARBL fingering or MIDI input.
-          <div class="instructions-gap"></div>
-          <b>Transpose</b> is applied in addition to <b>Master Tuning</b>, while <b>Pitch Bend</b> affects only the main voice.
-        </div>
+          <b>Best starting setup:</b><br/>
+          Air preset, Note Velocity expression, ±2 bend, portamento off.
 
-        <hr class="instructions-divider"/>
+          <div class="instructions-gap"></div>
 
-        <div class="instructions-subtitle">Pitch Bend and Portamento</div>
-        <div class="instructions-subbody">
-          <b>Pitch Bend Range</b> is a global setting for the entire tool, like the MIDI input channel.
-          <div class="instructions-gap"></div>
-          The default is <b>±2 semitones</b>, which is the most common default WARBL setup.
-          <div class="instructions-gap"></div>
-          <b>Pitch Bend Up Scale</b> and <b>Pitch Bend Down Scale</b> let you make upward and downward bends feel different without changing the WARBL itself.
-          <div class="instructions-gap"></div>
-          When <b>Enable Portamento</b> is turned on, the synth glides from one note to the next over the selected <b>Portamento Time</b>. It is off by default for all patches.
-          <div class="instructions-gap"></div>
-          The new <b>Solo</b> patch is especially effective with a little portamento and expression control if you want a more lyrical, connected sound.
-        </div>
-
-        <hr class="instructions-divider"/>
-
-        <div class="instructions-subtitle">Reverb</div>
-        <div class="instructions-subbody">
-          Choose a reverb style, then adjust:
-          <div class="instructions-gap"></div>
-          <b>Dry</b> = Direct signal level<br/>
-          <b>Wet</b> = Reverb signal level<br/>
-          <b>Pre-delay</b> = Delay before reverb begins<br/>
-          <b>Tone</b> = Tilts the reverb darker or brighter
-        </div>
-
-        <hr class="instructions-divider"/>
-
-        <div class="instructions-subtitle">Master Tuning</div>
-        <div class="instructions-subbody">
-          <b>Master Tuning</b> lets you shift the overall tuning by up to <b>±50 cents</b>.
-          <div class="instructions-gap"></div>
-          This is useful for matching recordings, other instruments, or players who are slightly sharp or flat.
-          <div class="instructions-gap"></div>
-          Unlike <b>Transpose</b>, this control changes pitch in fine increments rather than semitone steps.
-          <div class="instructions-gap"></div>
-          The <b>Reset</b> button next to the control returns it instantly to <b>0 cents</b>.
+          <b>If you hear glitches:</b>
+          <ul style="margin-top:6px;">
+            <li>Turn on <b>Enable lower CPU use mode</b></li>
+            <li>Turn off <b>Enable output level meter</b> and <b>Enable MIDI stream</b></li>
+            <li>Close other tabs</li>
+          </ul>
         </div>
 
         <hr class="instructions-divider"/>
@@ -1508,35 +1775,9 @@
 
         <hr class="instructions-divider"/>
 
-        <div class="instructions-subtitle">
-          <img src="img/warbl.png" class="instructions-warbl-icon" alt="WARBL"/>
-          WARBL Configuration Tool
-        </div>
-        <div class="instructions-subbody">
-          The <b>WARBL Configuration Tool</b> button in the upper-left corner of the page opens the official <b>WARBL Configuration Tool</b> in a new browser tab.
-          <div class="instructions-gap"></div>
-          This allows you to adjust fingering patterns, pressure sensitivity, MIDI output behavior, and pitch bend settings while using <b>WARBL Sound Lab</b>.
-          <div class="instructions-gap"></div>            
-          You can find a PDF of all of the WARBL fingering pattern charts here:<br/>
-          <div style="text-align: center;margin-top:12px;margin-bottom:4px;"><a href="https://warbl.xyz/WARBL%20Fingering%20Charts.pdf" target="_blank" rel="noopener noreferrer" style="color:#1a73e8; text-decoration:underline;">WARBL Fingering Pattern Charts</a></div>
-        </div>
-
-        <hr class="instructions-divider"/>
-
-        <div class="instructions-subtitle">Recommended Starting Setup</div>
-        <div class="instructions-subbody">
-          For initial testing, try <b>Air</b> with <b>Note Velocity</b>, bend range at <b>2 semitones</b>, both bend scales at <b>1.00</b>, and portamento turned <b>off</b>.
-          <div class="instructions-gap"></div>
-          If you want a smoother, more expressive solo tone, try <b>Solo</b> with breath or expression control and a small amount of portamento.
-          <div class="instructions-gap"></div>
-          Once the basic note response feels right, add brightness-follow, reverb, and optional portamento.
-        </div>
-
-        <hr class="instructions-divider"/>
-
         <div class="instructions-subtitle">Lower CPU Use Mode</div>
         <div class="instructions-subbody">
-          <b>Lower CPU use mode</b> reduces processor usage by simplifying parts of the internal synth voice while leaving the current reverb system in place.
+          <b>Enable lower CPU use mode</b> reduces processor usage by simplifying parts of the internal synth voice while leaving the current reverb system in place.
           <div class="instructions-gap"></div>
           This can help on slower computers, when running many browser tabs, or if you hear glitches, crackles, or delayed response.
           <div class="instructions-gap"></div>
@@ -1637,12 +1878,13 @@
           • Make sure MIDI access was granted.<br/>
           • Verify the correct MIDI device is selected.<br/>
           • Check that the correct input channel is selected.<br/>
-          • Try clicking <b>All Notes Off</b> if a note gets stuck.
+          • Try clicking <b>All Notes Off</b> if a note gets stuck.<br/>
+          • If <b>Audio</b> still shows <b>Suspended</b>, click or play again to let the browser start audio.
           <div class="instructions-gap"></div>
           If you hear pops or other glitches:
           <div class="instructions-gap"></div>
-          • Turn on <b>Lower CPU use mode</b>.<br/>
-          • Disable the output level meter and the MIDI stream logging.<br/>
+          • Turn on <b>Enable lower CPU use mode</b>.<br/>
+          • Disable <b>Enable output level meter</b> and <b>Enable MIDI stream</b>.<br/>
           • Close other browser tabs or programs that may be using CPU resources.<br/>
         </div>
 
@@ -1669,6 +1911,21 @@
             • <b>Web MIDI Browser</b> app for iOS<br/>
             • <b>Most mobile browsers</b>
           </div>
+        </div>
+
+        <hr class="instructions-divider"/>
+
+        <div class="instructions-subtitle">
+          <img src="img/warbl.png" class="instructions-warbl-icon" alt="WARBL"/>
+          WARBL Configuration Tool
+        </div>
+        <div class="instructions-subbody">
+          The <b>WARBL Configuration Tool</b> button in the upper-left corner of the page opens the official <b>WARBL Configuration Tool</b> in a new browser tab.
+          <div class="instructions-gap"></div>
+          This allows you to adjust fingering patterns, pressure sensitivity, MIDI output behavior, and pitch bend settings while using <b>WARBL Sound Lab</b>.
+          <div class="instructions-gap"></div>            
+          You can find a PDF of all of the WARBL fingering pattern charts here:<br/>
+          <div style="text-align: center;margin-top:12px;margin-bottom:4px;"><a href="https://warbl.xyz/WARBL%20Fingering%20Charts.pdf" target="_blank" rel="noopener noreferrer" style="color:#1a73e8; text-decoration:underline;">WARBL Fingering Pattern Charts</a></div>
         </div>
 
         <hr class="instructions-divider"/>
@@ -3058,6 +3315,9 @@
       return false;
     }
 
+    // Switch to Global tab immediately
+    showMainTab("tab-global");
+
     try {
       const access = await navigator.requestMIDIAccess({sysex:false});
       state.midiAccess = access;
@@ -4323,11 +4583,67 @@
     }
   }
 
+  function showMainTab(tabId) {
+    const buttons = document.querySelectorAll('.main-tab-btn');
+    const panels = document.querySelectorAll('.main-tab-panel');
+
+    buttons.forEach((btn) => {
+      const isActive = btn.dataset.tab === tabId;
+      btn.classList.toggle('active', isActive);
+      btn.setAttribute('aria-selected', isActive ? 'true' : 'false');
+      btn.tabIndex = isActive ? 0 : -1;
+    });
+
+    panels.forEach((panel) => {
+      const isActive = panel.id === tabId;
+      panel.hidden = !isActive;
+      panel.classList.toggle('active', isActive);
+    });
+  }
+
+  function initMainTabs() {
+    const buttons = Array.from(document.querySelectorAll('.main-tab-btn'));
+    if (!buttons.length) return;
+
+    buttons.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        showMainTab(btn.dataset.tab);
+      });
+
+      btn.addEventListener('keydown', (e) => {
+        const index = buttons.indexOf(btn);
+        if (index < 0) return;
+
+        let nextIndex = -1;
+
+        if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+          nextIndex = (index + 1) % buttons.length;
+        } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+          nextIndex = (index - 1 + buttons.length) % buttons.length;
+        } else if (e.key === 'Home') {
+          nextIndex = 0;
+        } else if (e.key === 'End') {
+          nextIndex = buttons.length - 1;
+        }
+
+        if (nextIndex >= 0) {
+          e.preventDefault();
+          const nextBtn = buttons[nextIndex];
+          showMainTab(nextBtn.dataset.tab);
+          nextBtn.focus();
+        }
+      });
+    });
+
+    showMainTab('tab-global');
+  }
+
   function init(){
     populateChannels();
     populateDroneNoteSelect();
     loadState();
     applyStateToUi();
+    initMainTabs();
     renderMidiLog();
     refreshValueLabels();
 
