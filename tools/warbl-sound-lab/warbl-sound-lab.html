@@ -252,8 +252,8 @@
       position: sticky;
       top: 10px;
 
-      height: min(730px, calc(100vh - 40px));
-      max-height: min(730px, calc(100vh - 40px));
+      height: min(710px, calc(100vh - 40px));
+      max-height: min(710px, calc(100vh - 40px));
 
       overflow: hidden;
     }
@@ -265,8 +265,8 @@
       position: sticky;
       top: 10px;
 
-      height: min(730px, calc(100vh - 40px));
-      max-height: min(730px, calc(100vh - 40px));
+      height: min(710px, calc(100vh - 40px));
+      max-height: min(710px, calc(100vh - 40px));
 
       overflow: hidden;
     }
@@ -502,11 +502,6 @@
       transform:none !important;
     }
 
-    .main-tab-panels{
-      flex:1 1 auto;
-      min-height:0;
-    }
-
     .main-tab-panel{
       display:block;
     }
@@ -647,15 +642,13 @@
     }
 
     .live-card > .log {
-      flex: 1 1 auto;
-      min-height: 0;
-      height: 0;
+      min-height: 180px;
     }
 
     #midiLog {
-      flex: 1 1 auto;
-      min-height: 0;
-      height: 0;
+      flex: 1 1 180px;
+      min-height: 180px;
+      height: auto;
       max-height: none;
       overflow-y: auto;
       overflow-x: hidden;
@@ -1017,19 +1010,28 @@
     }
 
     @media (max-width: 1360px) {
+
       .layout {
         grid-template-columns: minmax(0, 1fr);
-      }
+        align-items: start; 
+      }   
 
+      .main-card,
       .live-card {
         position: static;
         top: auto;
-        max-height: none;
         height: auto;
+        max-height: none;
       }
 
       .compact-4{
         grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      #midiLog {
+        min-height: 180px;
+        height: 180px;
+        flex: 0 0 180px;
       }
     }
 
@@ -1064,11 +1066,6 @@
         text-align:center;
       }
 
-      #midiLog {
-        height: 180px;
-        min-height: 180px;
-        max-height: 180px;
-      }
     }
 
     @media (max-width: 680px) {
