@@ -1756,7 +1756,66 @@
             <div class="instructions-gap"></div>
             <b>Best experience:</b> Keep Celtic Sounds in the foreground, or if using a separate window, make sure some portion of it remains visible at all times.
           </div>
-          
+
+          <hr class="instructions-divider"/>
+
+          <div class="instructions-subtitle">Audio Processing Chain</div>
+          <div class="instructions-subbody">
+
+            Celtic Sounds converts incoming MIDI into audio by playing back sampled instrument recordings and processing them through a gain-based signal chain.
+
+            <div class="instructions-gap"></div>
+
+            The diagram below shows how melody, low notes, and optional drone voices are processed and combined before reaching the final output.
+
+            <div class="instructions-gap"></div>
+
+            <div style="text-align:center;margin-top:10px;">
+              <a href="img/celtic_sounds_signal_flow.jpg" target="_blank" rel="noopener noreferrer">
+                <img
+                  src="img/celtic_sounds_signal_flow.jpg"
+                  alt="Celtic Sounds Signal Flow Diagram"
+                  style="max-width:100%; border-radius:8px; box-shadow:0 4px 16px rgba(0,0,0,0.35); cursor:pointer;"
+                />
+              </a>
+            </div>
+
+            <div class="instructions-gap"></div>
+
+            <div style="text-align:center;margin-bottom:10px;">
+              <a href="img/celtic_sounds_signal_flow.jpg" target="_blank" rel="noopener noreferrer">
+                Open full-size diagram in a new tab
+              </a>
+            </div>
+
+            <div class="instructions-gap"></div>
+
+            <b>How the signal flows:</b>
+            <ul style="margin-top:6px;">
+              <li>MIDI input provides note, velocity, expression, and pitch bend data</li>
+              <li>Each note triggers a sampled audio buffer from the selected instrument</li>
+              <li>Playback rate applies master tuning, transpose, and (for melody) pitch bend</li>
+              <li>An envelope stage applies attack and release shaping</li>
+              <li>A gain stage sets loudness based on expression (CC, velocity, or fixed)</li>
+              <li>An additional instrument gain applies per-instrument level scaling</li>
+              <li>All voices feed into a shared output chain</li>
+              <li>The signal splits into a dry path and a parallel reverb (wet) path</li>
+              <li>Dry and wet signals are mixed, pass through the master volume, and go to the audio output</li>
+            </ul>
+
+            <div class="instructions-gap"></div>
+
+            <b>Voice behavior:</b>
+            <ul style="margin-top:6px;">
+              <li><b>Melody voice:</b> Uses pitch bend and continuously responds to the selected expression source (CC, velocity, or fixed)</li>
+              <li><b>Low voice (Uilleann pipes only):</b> Triggered for lower notes, ignores pitch bend, and uses note-on velocity instead of live expression</li>
+              <li><b>Drone voice:</b> Latched notes that ignore pitch bend and live expression, and include a separate drone volume control</li>
+              <li>All voices share the same envelope and gain-based processing stages</li>
+              <li>All voices run in parallel and are mixed together before the shared reverb and output stages</li>
+            </ul>
+
+          </div>      
+
           <hr class="instructions-divider"/>
 
           <div class="instructions-subtitle">Troubleshooting</div>
