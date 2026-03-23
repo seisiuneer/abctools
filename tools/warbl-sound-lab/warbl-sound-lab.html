@@ -295,15 +295,6 @@
       background: linear-gradient(180deg, rgba(17,24,39,0), rgba(17,24,39,0.35));
     }
 
-    .preset-reset-row{
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 18px;
-      margin-top: 0;
-      flex-wrap: wrap;
-    }
-
     .controls {
       display: grid;
       gap: 10px;
@@ -1370,6 +1361,15 @@
               <label for="vibratoDepth">Vibrato Depth <span class="value" id="vibratoDepthValue"></span></label>
               <input id="vibratoDepth" title="Sets vibrato depth in cents." type="range" min="0" max="80" step="1" value="8">
             </div>
+            <div class="field" title="Select which pitch the drone voice will play when toggled on. Available range: C2 to D5. The trigger to turn the drone on or off is always incoming MIDI note 51. This setting is stored per patch.">
+              <label for="droneNoteSelect">Drone Note</label>
+              <select id="droneNoteSelect" title="Select which pitch the drone voice will play when toggled on. Available range: C2 to D5. The trigger to turn the drone on or off is always incoming MIDI note 51. This setting is stored per patch.">
+              </select>
+            </div>
+            <div class="control" title="Transpose playback up or down in semitone steps.">
+              <label for="transposeSemis">Transpose <span class="value" id="transposeSemisValue"></span></label>
+              <input id="transposeSemis" title="Transpose playback up or down in semitone steps." type="range" min="-12" max="12" step="1" value="0">
+            </div>
             <div class="control" title="Adjust the overall tuning in cents to match recordings or other instruments.">
               <div class="slider-label-row">
                 <label for="masterTuneCents">Master Tuning <span class="value" id="masterTuneCentsValue"></span></label>
@@ -1406,11 +1406,6 @@
               </select>
             </div>
 
-            <div class="control" title="Transpose playback up or down in semitone steps.">
-              <label for="transposeSemis">Transpose <span class="value" id="transposeSemisValue"></span></label>
-              <input id="transposeSemis" title="Transpose playback up or down in semitone steps." type="range" min="-12" max="12" step="1" value="0">
-            </div>
-
             <div class="control" title="Scales downward incoming pitch bend.">
               <label for="bendDown">Pitch Bend Down Scale <span class="value" id="bendDownValue"></span></label>
               <input id="bendDown" title="Scales downward incoming pitch bend." type="range" min="0" max="4.0" step="0.01" value="1.0">
@@ -1419,6 +1414,11 @@
             <div class="control" title="Scales upward incoming pitch bend.">
               <label for="bendUp">Pitch Bend Up Scale <span class="value" id="bendUpValue"></span></label>
               <input id="bendUp" title="Scales upward incoming pitch bend." type="range" min="0" max="4.0" step="0.01" value="1.0">
+            </div>
+
+            <div class="control" title="Makes stronger expression also brighten the tone.">
+              <label for="brightnessFollow">Expression → Brightness <span class="value" id="brightnessFollowValue"></span></label>
+              <input id="brightnessFollow" title="Makes stronger expression also brighten the tone." type="range" min="0" max="1" step="0.01" value="0.4">
             </div>
 
             <div class="control checkbox-row" title="When enabled, notes glide from the previous pitch to the next one.">
@@ -1431,16 +1431,6 @@
               <input id="portamentoMs" title="Sets how long the pitch glide takes between notes when portamento is enabled." type="range" min="0" max="400" step="1" value="70">
             </div>
 
-            <div class="control" title="Makes stronger expression also brighten the tone.">
-              <label for="brightnessFollow">Expression → Brightness <span class="value" id="brightnessFollowValue"></span></label>
-              <input id="brightnessFollow" title="Makes stronger expression also brighten the tone." type="range" min="0" max="1" step="0.01" value="0.4">
-            </div>
-
-            <div class="field" title="Select which pitch the drone voice will play when toggled on. Available range: C2 to D5. The trigger to turn the drone on or off is always incoming MIDI note 51. This setting is stored per patch.">
-              <label for="droneNoteSelect">Drone Note</label>
-              <select id="droneNoteSelect" title="Select which pitch the drone voice will play when toggled on. Available range: C2 to D5. The trigger to turn the drone on or off is always incoming MIDI note 51. This setting is stored per patch.">
-              </select>
-            </div>
           </div>
         </section>
 
@@ -1601,7 +1591,7 @@
           </ul>
 
           <b>Pitch Bend Range</b> – Sets the overall bend range in semitones (default ±2).<br/> 
-          The <b>Pitch Bend Up Scale / Pitch Bend Down Scale</b> controls on the <b>Controller</b> tab can then scale pitch bends upward and downward independently.
+          Additional <b>Pitch Bend Down / Pitch Bend Up</b> scaling controls are available on the Controller tab.
         </div>
 
         <hr class="instructions-divider"/>
@@ -1624,6 +1614,12 @@
           <b>Vibrato Rate / Depth</b> – Controls vibrato speed and intensity.<br/>
           <div class="instructions-gap"></div>
 
+          <b>Drone Note</b> – Selects the pitch of the drone (C2–D5).
+          <div class="instructions-gap"></div>
+
+          <b>Transpose</b> – Shifts pitch in semitone steps (−12 to +12).<br/>
+          <div class="instructions-gap"></div>
+
           <b>Master Tuning</b> – Fine-tunes pitch ±50 cents.<br/>
           Use the <b>Reset</b> button to return to 0 cents.
         </div>
@@ -1642,18 +1638,15 @@
             <li>Lowest Note</li>
           </ul>
 
-          <b>Transpose</b> – Shifts pitch in semitone steps (−12 to +12).<br/>
-          <b>Pitch Bend Up / Down Scale</b> – Adjust bend sensitivity independently.<br/>
-          <div class="instructions-gap"></div>
-
-          <b>Enable Portamento</b> – Enables pitch glide between notes.<br/>
-          <b>Portamento Time</b> – Controls glide speed.<br/>
+          <b>Pitch Bend Down / Up Scale</b> – Adjust bend sensitivity independently.<br/>
           <div class="instructions-gap"></div>
 
           <b>Expression → Brightness</b> – Makes louder playing brighter.<br/>
           <div class="instructions-gap"></div>
 
-          <b>Drone Note</b> – Selects the pitch of the drone (C2–D5).
+          <b>Enable Portamento</b> – Enables pitch glide between notes.<br/>
+          <b>Portamento Time</b> – Controls glide speed.<br/>
+
         </div>
 
         <hr class="instructions-divider"/>
@@ -1662,14 +1655,11 @@
         <div class="instructions-subbody">
           Controls spatial effects and output level.
           <div class="instructions-gap"></div>
-
           <b>Reverb Style</b> – Room, Hall, Plate, Ambient, or Church.<br/>
           <b>Reverb Dry</b> – Direct signal level.<br/>
           <b>Reverb Wet</b> – Reverb level.<br/>
           <b>Reverb Pre-delay</b> – Delay before reverb starts.<br/>
           <b>Reverb Tone</b> – Bright/dark reverb balance.<br/>
-          <div class="instructions-gap"></div>
-
           <b>Drone Volume</b> – Level of the drone voice.<br/>
           <b>Master Volume</b> – Overall output level.
         </div>
@@ -1703,10 +1693,10 @@
 
           The drone:
           <ul style="margin-top:6px;">
-            <li>Uses the same patch as the main voice</li>
+            <li>Uses the same basic preset processing chain as the main flow (oscillators, filters, drive, chorus, and reverb), with a faster attack and a few drone-specific adjustments</li>
             <li>Uses a faster attack for a more stable, pipe-like response</li>
             <li>Follows <b>Transpose</b> and <b>Master Tuning</b></li>
-            <li>Does <b>not</b> follow pitch bend</li>
+            <li>Does <b>not</b> respond to pitch bend (remains fixed in pitch)</li>
             <li>Disables automatically when changing presets</li>
           </ul>
         </div>
@@ -1832,11 +1822,11 @@
         <div class="instructions-subtitle">Signal Flow Diagram</div>
         <div class="instructions-subbody">
 
-          WARBL Sound Lab uses a real-time audio signal chain that combines oscillators, filtering, modulation, and spatial effects for both the main voice and optional drone.
+          WARBL Sound Lab uses a real-time audio signal chain that converts incoming MIDI into a synthesized audio signal using oscillators, filtering, modulation, and spatial effects.
 
           <div class="instructions-gap"></div>
 
-          The diagram below shows how audio flows through the system from MIDI input to final output.
+          The diagram below shows how audio flows from MIDI input through the main voice and optional drone to the final output.
 
           <div class="instructions-gap"></div>
 
@@ -1860,12 +1850,25 @@
 
           <div class="instructions-gap"></div>
 
-          This diagram can be helpful for understanding how:
+          <b>How the signal flows:</b>
           <ul style="margin-top:6px;">
-            <li>The main voice and drone share the same processing chain</li>
-            <li>Expression and pitch bend affect the signal</li>
-            <li>Filters, drive, and chorus shape the tone</li>
-            <li>Reverb and master output are applied at the final stage</li>
+            <li>MIDI input provides note, velocity, expression, and pitch bend data</li>
+            <li>The main voice generates sound using oscillators and noise sources shaped by the current preset</li>
+            <li>A filter stage (tone/brightness) and drive stage shape the harmonic content</li>
+            <li>Modulation (vibrato, optional expression → brightness) adds movement</li>
+            <li>Chorus widens and thickens the sound</li>
+            <li>Dry signal and reverb are mixed together before the final output</li>
+          </ul>
+
+          <div class="instructions-gap"></div>
+
+          <b>Main vs Drone behavior:</b>
+          <ul style="margin-top:6px;">
+            <li>The drone uses the same basic preset processing chain as the main flow (oscillators, filters, drive, chorus, and reverb), with a faster attack and a few drone-specific adjustments</li>
+            <li>The drone has a faster attack and a fixed expression level set at trigger time</li>
+            <li>The main voice responds continuously to expression and pitch bend</li>
+            <li>The drone does not respond to pitch bend or live expression changes</li>
+            <li>Main and drone voices run in parallel and are mixed together before reverb and final output</li>
           </ul>
 
         </div>
