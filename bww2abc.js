@@ -426,11 +426,16 @@ function parseBWWTextLine(line) {
 function convert_bww_to_abc_single(theBWW) {
 
 	var i, j, l, low, t, n, key, tie, acc, beam, fermata, o = '',
-		lastWasGrace = false, gotFooter = false, theFooter = '', footerSpacer = 12;
+		lastWasGrace = false, gotFooter = false, theFooter = '', footerSpacer = 12, accum ='';
 
 	var p = theBWW.split('\n');
 
-	accum = "X:1\n% Converted to ABC using bww2abc 1.0\n%%MIDI program 109\n%%staffsep 70\n";
+	if (gBWWUseCustomInstrument){
+		accum = "X:1\n% Converted to ABC using bww2abc 1.0\n%%MIDI program custom1\n%%staffsep 70\n";
+	}
+	else{
+		accum = "X:1\n% Converted to ABC using bww2abc 1.0\n%%MIDI program 109\n%%staffsep 70\n";		
+	}
 
 	var theMeterDenom = 4;
 
@@ -580,8 +585,13 @@ function convert_bww_to_abc_single(theBWW) {
 		break;
 	}
 
-	accum = accum + ('L:1/8\nK:Hp exp ' + key + " transpose=1") + "\n";
-	accum = accum + "%voice_tuning_cents 48 148\n";
+	if (gBWWUseCustomInstrument){
+		accum = accum + ('L:1/8\nK:Hp exp ' + key) + "\n";
+	}
+	else{
+		accum = accum + ('L:1/8\nK:Hp exp ' + key + " transpose=1") + "\n";
+		accum = accum + "%voice_tuning_cents 48 148\n";
+	}
 
 	//debugger;
 

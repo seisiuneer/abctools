@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3208_032426_0830";
+var gVersionNumber = "3209_032426_1000";
 
 var gMIDIInitStillWaiting = false;
 
@@ -499,6 +499,9 @@ var gAlwaysFlattenParts = false;
 
 // Flat look UI?
 var gUseFlatButtons = true;
+
+// BWW uses custom instrument
+var gBWWUseCustomInstrument = false;
 
 // Global reference to the ABC editor
 var gTheABC = document.getElementById("abc");
@@ -27698,13 +27701,13 @@ function processShareLink() {
       // Show update message?
       if (gLocalStorageAvailable){
 
-        var updatePresented = localStorage.sawUpdate_14mar2026;
+        var updatePresented = localStorage.sawUpdate_24mar2026;
 
         if (updatePresented != "true") {
 
           showWhatsNewScreen();
 
-          localStorage.sawUpdate_14mar2026 = true;
+          localStorage.sawUpdate_24mar2026 = true;
 
         }
 
@@ -46967,6 +46970,13 @@ function GetInitialConfigurationSettings() {
     gUseFlatButtons = (val == "true");
   }
 
+  // BWW uses custom1?
+  gBWWUseCustomInstrument = false;
+  val = localStorage.BWWUseCustomInstrument
+  if (val) {
+    gBWWUseCustomInstrument = (val == "true");
+  }
+
   // Save the settings, in case they were initialized
   SaveConfigurationSettings();
 
@@ -47282,6 +47292,9 @@ function SaveConfigurationSettings() {
 
     // Flat mode buttons
     localStorage.UseFlatButtons = gUseFlatButtons;
+
+    // BWW uses custom1
+    localStorage.BWWUseCustomInstrument = gBWWUseCustomInstrument;
 
   }
 }
@@ -50891,13 +50904,12 @@ function AdvancedSettings() {
     configure_jumptotune_autoscroll: gJumpToTuneAutoscroll,
     configure_force_android: gForceAndroid,
     configure_disable_android: gDisableAndroid,
-    configure_looper_add_measure_count: gLooperAddMeasureCount
+    configure_looper_add_measure_count: gLooperAddMeasureCount,
+    configure_BWWUseCustomInstrument: gBWWUseCustomInstrument
   };
 
   var form = [{
-    html: '<p style="text-align:center;font-size:16pt;font-family:helvetica;margin-bottom:24px;margin-left:15px;">Advanced Settings&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#advanced_settings" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'
-  }, {
-    html: '<p style="font-size:12pt;line-height:12px;font-family:helvetica;"><strong>Only change these values if you know what you are doing!</strong></p>'
+    html: '<p style="text-align:center;font-size:16pt;font-family:helvetica;margin-bottom:12px;">Advanced Settings&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#advanced_settings" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'
   }];
 
   // --- Tabs scaffold (panels empty; we'll move rows in after render) ---
@@ -50927,6 +50939,7 @@ function AdvancedSettings() {
     { name: "          Show tune rendering progress in Javascript console", id: "configure_show_render_progress", type: "checkbox", cssClass: "advanced_settings2_form_text_checkbox" },
     { name: "    Disable abcjs notation rendering", id: "configure_DisableRendering", type: "checkbox", cssClass: "advanced_settings2_form_text_checkbox" },
     { name: "    Jump to Tune always scrolls to the last selected tune", id: "configure_jumptotune_autoscroll", type: "checkbox", cssClass: "advanced_settings2_form_text_checkbox" },
+    { name: "    BWW import uses %%MIDI program custom1 (No GHB transpose or tuning)", id: "configure_BWWUseCustomInstrument", type: "checkbox", cssClass: "advanced_settings2_form_text_checkbox" },    
     { name: "    Autoscroll player when playing", id: "configure_autoscrollplayer", type: "checkbox", cssClass: "advanced_settings2_form_text_checkbox" },
     { name: "    Smooth autoscroll when playing (when Autoscroll player is enabled)", id: "configure_autoscrollsmooth", type: "checkbox", cssClass: "advanced_settings2_form_text_checkbox" },
     { name: "    Player autoscroll vertical position target percentage (default is 66):", id: "configure_autoscrolltarget", type: "text", cssClass: "advanced_settings2_form_text" },
@@ -51003,6 +51016,7 @@ function AdvancedSettings() {
         MoveModalFieldRowByName(modalRoot, "configure_show_render_progress", "adv_tab_general_fields");
         MoveModalFieldRowByName(modalRoot, "configure_DisableRendering", "adv_tab_general_fields");
         MoveModalFieldRowByName(modalRoot, "configure_jumptotune_autoscroll", "adv_tab_general_fields");
+        MoveModalFieldRowByName(modalRoot, "configure_BWWUseCustomInstrument", "adv_tab_general_fields");
 
         // Player
         MoveModalFieldRowByName(modalRoot, "configure_autoscrollplayer", "adv_tab_player_fields");
@@ -51048,6 +51062,8 @@ function AdvancedSettings() {
 
     // Get the results and store them in the global configuration
     if (!args.canceled) {
+
+      gBWWUseCustomInstrument = args.result.configure_BWWUseCustomInstrument;
 
       gJumpToTuneAutoscroll = args.result.configure_jumptotune_autoscroll;
 
@@ -55423,7 +55439,7 @@ function showWhatsNewScreen() {
   modal_msg += 'background: linear-gradient(135deg, #0d47a1 0%, #1565c0 50%, #64b5f6 100%);';
   modal_msg += 'box-shadow: 0 6px 16px rgba(0,0,0,0.14); color:#fff;">';
   modal_msg += '<div style="font-size:20pt; line-height:24pt; font-weight:bold;">What&apos;s New</div>';
-  modal_msg += '<div style="font-size:11pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 16 March 2026</div>';
+  modal_msg += '<div style="font-size:11pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 24 March 2026</div>';
   modal_msg += '</div>';
 
   // Short intro
@@ -55435,20 +55451,12 @@ function showWhatsNewScreen() {
   modal_msg += '<div style="margin:10px 0 6px 0; padding:12px 12px; border-radius:12px;';
   modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);">';
   
-  modal_msg += '<p style="margin:6px 0; font-size:12pt;">Added <strong>thesession.org Power Tools</strong> to the <strong>Add ABC Tunes, Templates, and PDF Features</strong> dialog.</p>';
-  modal_msg += '<p style="margin:6px 0; font-size:12pt;">Given the link to a tune page on thesession.org, downloads all the ABC tune settings.</p>'; 
-  modal_msg += '<p style="margin:6px 0; font-size:12pt;">You can also get all of a member\'s tunebook tunes, tune sets, or all the tune settings they\'ve submitted or bookmarked.</p>'; 
-  modal_msg += '<p style="margin:6px 0; font-size:12pt;">Once the tune settings are downloaded, you can save them to a file, copy them to the clipboard, or if all the tunes will fit in a share link, open them directly in the ABC Transcription Tools.</p>';
-
-  modal_msg += '</div>';
-
-  // Feature card
-  modal_msg += '<div style="margin:10px 0 6px 0; padding:12px 12px; border-radius:12px;';
-  modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);">';
-  
-  modal_msg += '<p style="margin:6px 0; font-size:12pt;"><strong>On iOS, when possible, all file saves and exports from the tool now use the native iOS file sharing dialog.</strong></p>';
-  modal_msg += '<p style="margin:6px 0; font-size:12pt;">This allows you to easily save exported files to the Files area on the device, share them with other iOS apps, or send them to another device via AirDrop.</p>';
-
+  modal_msg += '<p style="margin:6px 0; font-size:12pt;margin-bottom:12px;"><strong>New Setting on the Advanced Settings Dialog:</strong></p>';
+  modal_msg += '<p style="margin:6px 0; font-size:12pt;margin-bottom:12px;">BWW import uses %%MIDI program custom1 (No GHB transpose or tuning)</p>';
+  modal_msg += '<p style="margin:6px 0; font-size:12pt;margin-bottom:12px;">Check this if you intend to use:</p>';
+  modal_msg += '<p style="margin:6px 0; font-size:12pt;margin-bottom:12px;"><strong>%%MIDI program custom1</strong></p>';
+  modal_msg += '<p style="margin:6px 0; font-size:12pt;">as the instrument when playing tunes imported from BWW files instead of the built-in Great Highland Bagpipes instrument (%%MIDI program 109).</p>';
+  modal_msg += '<p style="margin:6px 0; font-size:12pt;">Checking this box disables the injection of ABC transposition and retuning annotations normally done for the Great Highland Bagpipes instrument.</p>';
   modal_msg += '</div>';
 
   modal_msg += '</div>'; // wrapper
@@ -61961,13 +61969,13 @@ function DoStartup() {
   // Show update message?
   if (gLocalStorageAvailable && (!isFromShare)){
 
-    var updatePresented = localStorage.sawUpdate_14mar2026;
+    var updatePresented = localStorage.sawUpdate_24mar2026;
 
     if (updatePresented != "true") {
 
       showWhatsNewScreen();
 
-      localStorage.sawUpdate_14mar2026 = true;
+      localStorage.sawUpdate_24mar2026 = true;
 
     }
 
