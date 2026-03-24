@@ -2016,7 +2016,7 @@
     };
 
     const SAMPLE_OCTAVE_OFFSET = 0;
-    const SETTINGS_STORAGE_KEY = "celtic_sounds_settings_v14";
+    const SETTINGS_STORAGE_KEY = "celtic_sounds_settings_v15";
     const FIREFOX_WARNING_STORAGE_KEY = "celtic_sounds_firefox_warning_shown_v1";
 
     const DEFAULT_SETTINGS_FILENAME = "celtic-sounds-settings.json";
@@ -2403,58 +2403,35 @@
     }
 
     function applyLoadedSettings(data) {
-      if (!data || typeof data !== "object") return;
+      const safe = sanitizeLoadedSettingsPayload(data);
 
       state.pitchBendValue = 0;
       state.latestExpression = 127;
 
-      if (typeof data.selectedMidiChannel === "number") {
-        state.selectedMidiChannel = clamp(Math.round(data.selectedMidiChannel), 1, 16);
-      }
-
-      if (typeof data.selectedInstrumentKey === "string" &&
-          APP_CONFIG.instruments[data.selectedInstrumentKey]) {
-        state.selectedInstrumentKey = data.selectedInstrumentKey;
-      }
-
-      if (typeof data.selectedReverbKey === "string" &&
-          Object.prototype.hasOwnProperty.call(APP_CONFIG.impulseResponses, data.selectedReverbKey)) {
-        state.selectedReverbKey = data.selectedReverbKey;
-      }
-
-      if (typeof data.pitchBendRangeSemitones === "number") {
-        state.pitchBendRangeSemitones = clamp(Math.round(data.pitchBendRangeSemitones), 0, 12);
-      } else {
-        state.pitchBendRangeSemitones = DEFAULTS.pitchBendRangeSemitones;
-      }
-
+      state.selectedMidiChannel = safe.selectedMidiChannel;
+      state.selectedInstrumentKey = safe.selectedInstrumentKey;
+      state.selectedReverbKey = safe.selectedReverbKey;
+      state.pitchBendRangeSemitones = safe.pitchBendRangeSemitones;
       state.basePitchBendCents = state.pitchBendRangeSemitones * 100;
 
-      if (typeof data.midiLogEnabled === "boolean") {
-        state.midiLogEnabled = data.midiLogEnabled;
-      }
+      state.midiLogEnabled = safe.midiLogEnabled;
+      state.freezeMidiLog = safe.freezeMidiLog;
+      state.liveStatusHidden = safe.liveStatusHidden;
 
-      if (typeof data.freezeMidiLog === "boolean") {
-        state.freezeMidiLog = data.freezeMidiLog;
-      }
-
-      if (typeof data.liveStatusHidden === "boolean") {
-        state.liveStatusHidden = data.liveStatusHidden;
-      }
-
-      state.instrumentSettingsByInstrument = sanitizeAllInstrumentSettings(
-        data.instrumentSettingsByInstrument
-      );
+      state.instrumentSettingsByInstrument = safe.instrumentSettingsByInstrument;
 
       loadInstrumentSettingsIntoState(state.selectedInstrumentKey);
     }
 
     function loadSettingsFromLocalStorage() {
       if (!gLocalStorageAvailable) return;
+
       try {
         const raw = localStorage.getItem(SETTINGS_STORAGE_KEY);
         if (!raw) return;
-        applyLoadedSettings(JSON.parse(raw));
+
+        const parsed = JSON.parse(raw);
+        applyLoadedSettings(parsed);
       } catch (err) {
         // ignore malformed storage
       }
@@ -2504,7 +2481,7 @@
         const text = await file.text();
         const payload = JSON.parse(text);
 
-        if (!payload || payload.app !== "celtic_sounds") {
+        if (!isPlainObject(payload) || payload.app !== "celtic_sounds") {
           throw new Error("Invalid settings file.");
         }
 
@@ -2526,6 +2503,7 @@
             console.warn("Post-import preload warning:", err);
           }
         }
+
         if (window.DayPilot && DayPilot.Modal && DayPilot.Modal.alert) {
           DayPilot.Modal.alert('<div style="text-align:center">Settings imported successfully.</div>', {
             theme: "modal_compact",
@@ -2552,6 +2530,46 @@
 
     function clamp(value, min, max) {
       return Math.max(min, Math.min(max, value));
+    }
+
+    function isPlainObject(value) {
+      return !!value && typeof value === "object" && !Array.isArray(value);
+    }
+
+    function toFiniteNumberOrDefault(value, defaultValue) {
+      return (typeof value === "number" && Number.isFinite(value)) ? value : defaultValue;
+    }
+
+    function toClampedNumberOrDefault(value, min, max, defaultValue) {
+      const safe = toFiniteNumberOrDefault(value, defaultValue);
+      return clamp(safe, min, max);
+    }
+
+    function toRoundedClampedIntOrDefault(value, min, max, defaultValue) {
+      const safe = toFiniteNumberOrDefault(value, defaultValue);
+      return clamp(Math.round(safe), min, max);
+    }
+
+    function toBooleanOrDefault(value, defaultValue) {
+      return (typeof value === "boolean") ? value : defaultValue;
+    }
+
+    function toAllowedStringOrDefault(value, allowedValues, defaultValue) {
+      return (typeof value === "string" && allowedValues.includes(value)) ? value : defaultValue;
+    }
+
+    function toKnownInstrumentKeyOrDefault(value, defaultValue) {
+      return (
+        typeof value === "string" &&
+        Object.prototype.hasOwnProperty.call(APP_CONFIG.instruments, value)
+      ) ? value : defaultValue;
+    }
+
+    function toKnownReverbKeyOrDefault(value, defaultValue) {
+      return (
+        typeof value === "string" &&
+        Object.prototype.hasOwnProperty.call(APP_CONFIG.impulseResponses, value)
+      ) ? value : defaultValue;
     }
 
     function centsToPlaybackRate(cents) {
@@ -3899,6 +3917,8 @@
 
       $("btnConnectMidi").addEventListener("click", async () => {
         try {
+          await initAudioIfPossible();
+
           const ok = await connectMidi();
           if (!ok) return;
         } catch (err) {
@@ -3926,11 +3946,14 @@
       });
 
       $("midiInputSelect").addEventListener("change", (e) => {
+        allNotesOff();
         state.selectedMidiInputId = e.target.value;
         attachSelectedMidiInput();
+        logLiveStatus();
       });
 
       $("midiChannelSelect").addEventListener("change", (e) => {
+        allNotesOff();
         state.selectedMidiChannel = Number(e.target.value) || 1;
         state.freezeMidiLog = false;
         clearMidiLog();
@@ -4176,14 +4199,6 @@
         }
       };
 
-      try {
-        ensureAudioContextExists();
-        void tryResumeAudioContext();
-        void initAudioIfPossible();
-      } catch (err) {
-        console.warn("Initial automatic audio setup failed:", err);
-      }
-
       window.addEventListener("pointerdown", tryInitFromGesture, { once: true });
       window.addEventListener("touchstart", tryInitFromGesture, { once: true });
       window.addEventListener("keydown", tryInitFromGesture, { once: true });
@@ -4254,7 +4269,9 @@
       let count = 0;
 
       try {
-        count = parseInt(localStorage.getItem("celtic_sounds_visit_count") || "0", 10);
+        const raw = localStorage.getItem("celtic_sounds_visit_count");
+        const parsed = Number.parseInt(raw ?? "0", 10);
+        count = Number.isFinite(parsed) ? parsed : 0;
       } catch {
         count = 0;
       }
@@ -4262,7 +4279,7 @@
       count++;
 
       try {
-        localStorage.setItem("celtic_sounds_visit_count", count);
+        localStorage.setItem("celtic_sounds_visit_count", String(count));
       } catch {
         return;
       }
@@ -4368,78 +4385,163 @@
 		  return all;
 		}
 
-		function sanitizeInstrumentSettings(data, instrumentKey = "") {
-		  const defaults = createDefaultInstrumentSettings(instrumentKey);
-		  const out = { ...defaults };
+    function sanitizeInstrumentSettings(data, instrumentKey = "") {
+      const defaults = createDefaultInstrumentSettings(instrumentKey);
 
-		  if (!data || typeof data !== "object") return out;
+      if (!isPlainObject(data)) {
+        return { ...defaults };
+      }
 
-		  const allowedModes = ["cc7", "cc2", "cc11", "velocity", "max"];
+      return {
+        expressionMode: toAllowedStringOrDefault(
+          data.expressionMode,
+          ["cc7", "cc2", "cc11", "velocity", "max"],
+          defaults.expressionMode
+        ),
 
-		  if (typeof data.expressionMode === "string" && allowedModes.includes(data.expressionMode)) {
-		    out.expressionMode = data.expressionMode;
-		  }
+        masterVolume: toClampedNumberOrDefault(
+          data.masterVolume,
+          0,
+          2.0,
+          defaults.masterVolume
+        ),
 
-		  if (typeof data.masterVolume === "number") {
-		    out.masterVolume = clamp(data.masterVolume, 0, 2.0);
-		  }
+        droneVolume: toClampedNumberOrDefault(
+          data.droneVolume,
+          0,
+          2.0,
+          defaults.droneVolume
+        ),
 
-		  if (typeof data.droneVolume === "number") {
-		    out.droneVolume = clamp(data.droneVolume, 0, 2.0);
-		  }
+        masterTuneCents: toRoundedClampedIntOrDefault(
+          data.masterTuneCents,
+          -50,
+          50,
+          defaults.masterTuneCents
+        ),
 
-		  if (typeof data.masterTuneCents === "number") {
-		    out.masterTuneCents = clamp(Math.round(data.masterTuneCents), -50, 50);
-		  }
+        attackMs: toRoundedClampedIntOrDefault(
+          data.attackMs,
+          0,
+          150,
+          defaults.attackMs
+        ),
 
-		  if (typeof data.attackMs === "number") {
-		    out.attackMs = clamp(Math.round(data.attackMs), 0, 150);
-		  }
+        releaseMs: toRoundedClampedIntOrDefault(
+          data.releaseMs,
+          10,
+          1500,
+          defaults.releaseMs
+        ),
 
-		  if (typeof data.releaseMs === "number") {
-		    out.releaseMs = clamp(Math.round(data.releaseMs), 10, 1500);
-		  }
+        pitchBendUpMultiplier: toClampedNumberOrDefault(
+          data.pitchBendUpMultiplier,
+          0,
+          4,
+          defaults.pitchBendUpMultiplier
+        ),
 
-		  if (typeof data.pitchBendUpMultiplier === "number") {
-		    out.pitchBendUpMultiplier = clamp(data.pitchBendUpMultiplier, 0, 4);
-		  }
+        pitchBendDownMultiplier: toClampedNumberOrDefault(
+          data.pitchBendDownMultiplier,
+          0,
+          4,
+          defaults.pitchBendDownMultiplier
+        ),
 
-		  if (typeof data.pitchBendDownMultiplier === "number") {
-		    out.pitchBendDownMultiplier = clamp(data.pitchBendDownMultiplier, 0, 4);
-		  }
+        reverbWet: toClampedNumberOrDefault(
+          data.reverbWet,
+          0,
+          1,
+          defaults.reverbWet
+        ),
 
-		  if (typeof data.reverbWet === "number") {
-		    out.reverbWet = clamp(data.reverbWet, 0, 1);
-		  }
+        reverbDry: toClampedNumberOrDefault(
+          data.reverbDry,
+          0,
+          1.5,
+          defaults.reverbDry
+        ),
 
-		  if (typeof data.reverbDry === "number") {
-		    out.reverbDry = clamp(data.reverbDry, 0, 1.5);
-		  }
+        reverbPreDelayMs: toRoundedClampedIntOrDefault(
+          data.reverbPreDelayMs,
+          0,
+          250,
+          defaults.reverbPreDelayMs
+        ),
 
-		  if (typeof data.reverbPreDelayMs === "number") {
-		    out.reverbPreDelayMs = clamp(Math.round(data.reverbPreDelayMs), 0, 250);
-		  }
+        transposeSemis: toRoundedClampedIntOrDefault(
+          data.transposeSemis,
+          -12,
+          12,
+          defaults.transposeSemis
+        )
+      };
+    }
 
-		  if (typeof data.transposeSemis === "number") {
-		    out.transposeSemis = clamp(Math.round(data.transposeSemis), -12, 12);
-		  }
+    function sanitizeAllInstrumentSettings(data) {
+      const out = createDefaultAllInstrumentSettings();
 
-		  return out;
-		}
+      if (!isPlainObject(data)) {
+        return out;
+      }
 
-		function sanitizeAllInstrumentSettings(data) {
-		  const out = createDefaultAllInstrumentSettings();
+      for (const key of getInstrumentKeys()) {
+        out[key] = sanitizeInstrumentSettings(data[key], key);
+      }
 
-		  if (!data || typeof data !== "object") {
-		    return out;
-		  }
+      return out;
+    }
 
-		  for (const key of getInstrumentKeys()) {
-		    out[key] = sanitizeInstrumentSettings(data[key], key);
-		  }
+    function sanitizeLoadedSettingsPayload(data) {
+      const safeRoot = isPlainObject(data) ? data : {};
 
-		  return out;
-		}
+      const selectedInstrumentKey = toKnownInstrumentKeyOrDefault(
+        safeRoot.selectedInstrumentKey,
+        DEFAULTS.selectedInstrumentKey
+      );
+
+      return {
+        selectedMidiChannel: toRoundedClampedIntOrDefault(
+          safeRoot.selectedMidiChannel,
+          1,
+          16,
+          DEFAULTS.selectedMidiChannel
+        ),
+
+        selectedInstrumentKey,
+
+        selectedReverbKey: toKnownReverbKeyOrDefault(
+          safeRoot.selectedReverbKey,
+          DEFAULTS.selectedReverbKey
+        ),
+
+        pitchBendRangeSemitones: toRoundedClampedIntOrDefault(
+          safeRoot.pitchBendRangeSemitones,
+          0,
+          12,
+          DEFAULTS.pitchBendRangeSemitones
+        ),
+
+        midiLogEnabled: toBooleanOrDefault(
+          safeRoot.midiLogEnabled,
+          DEFAULTS.midiLogEnabled
+        ),
+
+        freezeMidiLog: toBooleanOrDefault(
+          safeRoot.freezeMidiLog,
+          DEFAULTS.freezeMidiLog
+        ),
+
+        liveStatusHidden: toBooleanOrDefault(
+          safeRoot.liveStatusHidden,
+          DEFAULTS.liveStatusHidden
+        ),
+
+        instrumentSettingsByInstrument: sanitizeAllInstrumentSettings(
+          safeRoot.instrumentSettingsByInstrument
+        )
+      };
+    }
 
 		function getCurrentInstrumentSettingsObject() {
 		  return sanitizeInstrumentSettings({
