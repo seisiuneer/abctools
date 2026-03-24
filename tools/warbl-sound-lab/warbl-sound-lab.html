@@ -227,6 +227,19 @@
       box-shadow: 0 4px 12px rgba(0,0,0,0.35), 0 0 8px rgba(239,68,68,0.5);
     }
 
+    .field input[type="text"] {
+      width: 100%;
+      padding: 8px 9px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: var(--panel-2);
+      color: var(--text);
+    }
+
+    .field input[type="text"]::placeholder {
+      color: var(--muted);
+    }
+
     .layout {
       display: grid;
       grid-template-columns: minmax(0, 1.72fr) 360px;
@@ -804,6 +817,32 @@
       opacity: 0.95;
     }
 
+    .patch-name-row-grid{
+      margin-top: 10px;
+    }
+
+    .patch-name-field{
+      grid-column: 1 / 2;
+    }
+
+    .patch-name-row{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      flex-wrap:wrap;
+    }
+
+    .patch-name-display{
+      width: 100%;
+      padding: 8px 9px;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-weight: 600;
+      line-height: 1.3;
+    }
+
     #instructionsOverlay {
       display: none;
       position: fixed;
@@ -1256,6 +1295,17 @@
           <button
             type="button"
             class="main-tab-btn"
+            data-tab="tab-advanced"
+            role="tab"
+            aria-selected="false"
+            aria-controls="tab-advanced"
+            id="tabBtnAdvanced"
+          >
+            Synthesis
+          </button>          
+          <button
+            type="button"
+            class="main-tab-btn"
             data-tab="tab-controller"
             role="tab"
             aria-selected="false"
@@ -1317,6 +1367,7 @@
           </div>
         </section>
 
+
         <section
           id="tab-instrument"
           class="main-tab-panel"
@@ -1325,11 +1376,12 @@
           hidden
         >
           <h2 class="section-title">Instrument</h2>
+
           <div class="controls compact-4">
             <div class="control" title="Shifts the patch from rounder to more focused and forward.">
               <label for="tone">Tone <span class="value" id="toneValue"></span></label>
               <input id="tone" title="Shifts the patch from rounder to more focused and forward." type="range" min="0" max="1" step="0.01" value="0.5">
-            </div>
+            </div>  
             <div class="control" title="Controls upper harmonics and filter openness.">
               <label for="brightness">Brightness <span class="value" id="brightnessValue"></span></label>
               <input id="brightness" title="Controls upper harmonics and filter openness." type="range" min="0" max="1" step="0.01" value="0.5">
@@ -1382,6 +1434,125 @@
               </div>
               <input id="masterTuneCents" title="Adjust the overall tuning in cents to match recordings or other instruments." type="range" min="-50" max="50" step="1" value="0">
             </div>
+          </div>
+          <div class="controls compact-4 patch-name-row-grid">
+            <div class="field patch-name-field" title="Set the display name shown on the preset button for this patch. This does not change the internal preset name.">
+              <label>Patch Name</label>
+              <div class="patch-name-row">
+                <div
+                  id="patchDisplayNameValue"
+                  class="patch-name-display"
+                  role="textbox"
+                  aria-readonly="true"
+                  tabindex="-1"
+                  title="Current display name for this patch."
+                ></div>
+                <button id="btnRenamePatch" type="button" class="mini-reset-button">Rename...</button>
+                <button id="btnResetPatchName" type="button" class="mini-reset-button">Reset</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section
+          id="tab-advanced"
+          class="main-tab-panel"
+          role="tabpanel"
+          aria-labelledby="tabBtnAdvanced"
+          hidden
+        >
+          <h2 class="section-title">Synthesis</h2>
+          <div class="controls compact-4">
+
+           <div class="field" title="Waveform for oscillator 1.">
+              <label for="osc1WaveSelect">Oscillator 1 Wave</label>
+              <select id="osc1WaveSelect">
+                <option value="sine">Sine</option>
+                <option value="triangle">Triangle</option>
+                <option value="sawtooth">Sawtooth</option>
+                <option value="square">Square</option>
+              </select>
+            </div>
+
+            <div class="control" title="Changes oscillator 1's pitch relationship relative to its preset default.">
+              <label for="osc1Ratio">Oscillator 1 Ratio <span class="value" id="osc1RatioValue"></span></label>
+              <input id="osc1Ratio" type="range" min="0.125" max="8" step="0.125" value="1.0">
+            </div>
+
+            <div class="field" title="Waveform for oscillator 2.">
+              <label for="osc2WaveSelect">Oscillator 2 Wave</label>
+              <select id="osc2WaveSelect">
+                <option value="sine">Sine</option>
+                <option value="triangle">Triangle</option>
+                <option value="sawtooth">Sawtooth</option>
+                <option value="square">Square</option>
+              </select>
+            </div>
+
+            <div class="control" title="Changes oscillator 2's pitch relationship relative to its preset default.">
+              <label for="osc2Ratio">Oscillator 2 Ratio <span class="value" id="osc2RatioValue"></span></label>
+              <input id="osc2Ratio" type="range" min="0.125" max="8" step="0.125" value="1.0">
+            </div>
+
+            <div class="field" title="Waveform for oscillator 3.">
+              <label for="osc3WaveSelect">Oscillator 3 Wave</label>
+              <select id="osc3WaveSelect">
+                <option value="sine">Sine</option>
+                <option value="triangle">Triangle</option>
+                <option value="sawtooth">Sawtooth</option>
+                <option value="square">Square</option>
+              </select>
+            </div>
+
+            <div class="control" title="Changes oscillator 3's pitch relationship relative to its preset default.">
+              <label for="osc3Ratio">Oscillator 3 Ratio <span class="value" id="osc3RatioValue"></span></label>
+              <input id="osc3Ratio" type="range" min="0.125" max="8" step="0.125" value="1.0">
+            </div>
+
+            <div class="control" title="Global multiplier for the main tone filter resonance.">
+              <label for="filterQ">Filter Q Scale <span class="value" id="filterQValue"></span></label>
+              <input id="filterQ" type="range" min="0.2" max="4" step="0.01" value="1.0">
+            </div>
+
+            <div class="field" title="Select the response curve used by the drive stage.">
+              <label for="driveCurveShape">Drive Curve</label>
+              <select id="driveCurveShape">
+                <option value="tanh">Soft Saturation</option>
+                <option value="asym">Asymmetric (Reed/Brass)</option>
+                <option value="hard">Hard Clip</option>
+              </select>
+            </div>
+            
+            <div class="control" title="Shapes how quickly the attack envelope rises. 1.0 is neutral.">
+              <label for="attackCurve">Attack Curve <span class="value" id="attackCurveValue"></span></label>
+              <input id="attackCurve" type="range" min="0.2" max="3" step="0.05" value="1.0">
+            </div>
+
+            <div class="control" title="Shapes how the release envelope falls. 1.0 is neutral.">
+              <label for="releaseCurve">Release Curve <span class="value" id="releaseCurveValue"></span></label>
+              <input id="releaseCurve" type="range" min="0.2" max="3" step="0.05" value="1.0">
+            </div>
+
+            <div class="control" title="Adjust how quickly expression opens up. Higher values give more low-end control and a slower rise to full output.">
+              <label for="expressionCurve">Expression Curve <span class="value" id="expressionCurveValue"></span></label>
+              <input id="expressionCurve" type="range" min="0.5" max="3" step="0.05" value="1.8">
+            </div>
+
+            <div class="control" title="Delay before vibrato begins after a note starts.">
+              <label for="vibratoDelay">Vibrato Delay <span class="value" id="vibratoDelayValue"></span></label>
+              <input id="vibratoDelay" type="range" min="0" max="500" step="5" value="0">
+            </div>
+
+            <div class="control" title="Makes higher expression add more vibrato depth.">
+              <label for="vibratoFollow">Expression → Vibrato <span class="value" id="vibratoFollowValue"></span></label>
+              <input id="vibratoFollow" type="range" min="0" max="1" step="0.01" value="0">
+            </div>
+
+            <div class="control" title="Extra chorus intensity on top of the preset default.">
+              <label for="chorusBoost">Chorus Boost <span class="value" id="chorusBoostValue"></span></label>
+              <input id="chorusBoost" type="range" min="0" max="2" step="0.01" value="1.0">
+            </div>
+
           </div>
         </section>
 
@@ -1476,6 +1647,7 @@
             </div>
           </div>
         </section>
+
       </div>
 
       <div class="main-card-footer">
@@ -1595,30 +1767,84 @@
 
         <div class="instructions-subtitle">Instrument Tab</div>
         <div class="instructions-subbody">
-          The <b>Instrument</b> tab shapes the core sound of each preset.
+          The <b>Instrument</b> tab contains the main per-preset sound controls.
+
           <div class="instructions-gap"></div>
 
-          <b>Tone</b> – Moves between warm/round and focused/forward.<br/>
-          <b>Brightness</b> – Controls upper harmonics and filter openness.<br/>
-          <b>Texture / Noise</b> – Adds breath, reed, or edge.<br/>
-          <b>Body / Resonance</b> – Shapes the instrument character.<br/>
+          The controls appear in this order:
+
           <div class="instructions-gap"></div>
 
-          <b>Attack</b> – How quickly notes start.<br/>
-          <b>Release</b> – How long notes fade after release.<br/>
+          <b>Tone</b> – Moves the sound from warmer/rounder to more focused and forward.<br/>
+          <b>Brightness</b> – Adjusts upper harmonics and filter openness.<br/>
+          <b>Texture / Noise</b> – Adds breath, reed, bow, or edge depending on the preset.<br/>
+          <b>Body / Resonance</b> – Shapes the resonant character of the instrument body.<br/>
+
           <div class="instructions-gap"></div>
 
-          <b>Vibrato Rate / Depth</b> – Controls vibrato speed and intensity.<br/>
+          <b>Attack</b> – Sets how quickly the sound reaches full level after note-on.<br/>
+          <b>Release</b> – Sets how long the note fades after release.<br/>
+          <b>Vibrato Rate</b> – Sets vibrato speed.<br/>
+          <b>Vibrato Depth</b> – Sets vibrato depth in cents.<br/>
+
           <div class="instructions-gap"></div>
 
-          <b>Drone Note</b> – Selects the pitch of the drone (C2–D5).
+          <b>Drone Note</b> – Selects which pitch the drone voice will play when toggled on.<br/>
+          <b>Transpose</b> – Shifts playback up or down in semitone steps.<br/>
+          <b>Master Tuning</b> – Fine-tunes the overall pitch by cents; the <b>Reset</b> button returns it to 0 cents.<br/>
+
           <div class="instructions-gap"></div>
 
-          <b>Transpose</b> – Shifts pitch in semitone steps (−12 to +12).<br/>
+          <b>Patch Name</b> – Lets you rename the label shown on the selected preset button.<br/>
+          The <b>Rename...</b> button sets a custom display name, and <b>Reset</b> restores the default preset name.<br/>
+          Custom patch names are saved with your settings and restored when you reload the tool or import a settings file.
+        </div>
+
+        <hr class="instructions-divider"/>
+
+        <div class="instructions-subtitle">Synthesis Tab</div>
+        <div class="instructions-subbody">
+          The <b>Synthesis</b> tab gives deeper control over oscillator setup, filtering, drive, envelope shape, and modulation response.
+
           <div class="instructions-gap"></div>
 
-          <b>Master Tuning</b> – Fine-tunes pitch ±50 cents.<br/>
-          Use the <b>Reset</b> button to return to 0 cents.
+          The controls appear in this order:
+
+          <div class="instructions-gap"></div>
+
+          <b>Oscillator 1 Wave</b> – Chooses the waveform for oscillator 1 and changes the tone color of that layer.<br/>
+          <b>Oscillator 1 Ratio</b> – Changes oscillator 1’s pitch relationship relative to its preset default.<br/>
+
+          <div class="instructions-gap"></div>
+
+          <b>Oscillator 2 Wave</b> – Chooses the waveform for oscillator 2 and changes the tone color of that layer.<br/>
+          <b>Oscillator 2 Ratio</b> – Changes oscillator 2’s pitch relationship relative to its preset default.<br/>
+
+          <div class="instructions-gap"></div>
+
+          <b>Oscillator 3 Wave</b> – Chooses the waveform for oscillator 3 and changes the tone color of that layer.<br/>
+          <b>Oscillator 3 Ratio</b> – Changes oscillator 3’s pitch relationship relative to its preset default.<br/>
+
+          <div class="instructions-gap"></div>
+
+          <b>Filter Q Scale</b> – Changes the resonance strength of the main tone filter.<br/>
+          <b>Drive Curve</b> – Changes the character of the saturation stage from softer to more aggressive.<br/>
+
+          <div class="instructions-gap"></div>
+
+          <b>Attack Curve</b> – Changes the shape of the note attack, not just the attack time.<br/>
+          <b>Release Curve</b> – Changes the shape of the note release, not just the release time.<br/>
+          <b>Expression Curve</b> – Changes how quickly the sound opens up as expression increases.<br/>
+
+          <div class="instructions-gap"></div>
+
+          <b>Vibrato Delay</b> – Delays the start of vibrato after note-on.<br/>
+          <b>Expression → Vibrato</b> – Makes stronger expression add more vibrato depth.<br/>
+          <b>Chorus Boost</b> – Adds extra chorus intensity on top of the preset default.<br/>
+
+          <div class="instructions-gap"></div>
+
+          For the most natural results, start with small changes to oscillator ratios, filter Q, and drive shape.
         </div>
 
         <hr class="instructions-divider"/>
@@ -1975,12 +2201,10 @@
     return names[n % 12] + (Math.floor(n / 12) - 1);
   };
 
-  const EXPRESSION_CURVE_POWER = 1.8;
-
   const SETTINGS_FILE_MAGIC = 'WARBL_SOUND_LAB_SETTINGS';
-  const SETTINGS_FILE_VERSION = 3;
+  const SETTINGS_FILE_VERSION = 4;
   const DEFAULT_SETTINGS_FILENAME = 'warbl-sound-lab-settings.json';
-  const LAST_SETTINGS_FILENAME_KEY = 'warblSoundLabLastSettingsFilename_v3';
+  const LAST_SETTINGS_FILENAME_KEY = 'warblSoundLabLastSettingsFilename_v4';
   const TIP_REMINDER_VISIT_COUNT_KEY = 'warblSoundLabVisitCount_v1';
 
   const DEFAULTS = {
@@ -1998,7 +2222,32 @@
     masterVolume:1.0,
     droneVolume:1.0,
     droneNote:50,
-    masterTuneCents:0
+    masterTuneCents:0,
+
+    expressionCurve:1.8,
+    vibratoDelay:0,
+    vibratoFollow:0.0,
+    attackCurve:1.0,
+    releaseCurve:1.0,
+    chorusBoost:1.0,
+
+    osc1Wave:'sine',
+    osc2Wave:'triangle',
+    osc3Wave:'sine',
+    osc1Ratio:1.0,
+    osc2Ratio:1.0,
+    osc3Ratio:1.0,
+    filterQ:1.0,
+    driveCurveShape:'tanh',
+  };
+
+  const DEFAULT_PATCH_DISPLAY_NAMES = {
+    whistle: 'Air',
+    clarinet: 'Reed',
+    voice: 'Solo',
+    brass: 'Brass',
+    strings: 'Pad',
+    lead: 'Lead'
   };
 
   const PRESETS = {
@@ -2009,7 +2258,23 @@
       vibratoRate:5.6, vibratoDepth:7,
       brightnessFollow:0.55,
       reverbStyle:'room', reverbWet:0.14, masterVolume:1.0,
-      portamentoEnabled:false, portamentoMs:70
+      portamentoEnabled:false, portamentoMs:70,
+
+      expressionCurve:1.8,
+      vibratoDelay:0,
+      vibratoFollow:0.0,
+      attackCurve:1.0,
+      releaseCurve:1.0,
+      chorusBoost:1.0,
+
+      osc1Wave:'sine',
+      osc2Wave:'triangle',
+      osc3Wave:'sine',
+      osc1Ratio:1.0,
+      osc2Ratio:1.0,
+      osc3Ratio:1.0,
+      filterQ:1.0,
+      driveCurveShape:'tanh',
     },
     clarinet:{
       patch:'clarinet',
@@ -2018,7 +2283,23 @@
       vibratoRate:5.1, vibratoDepth:6,
       brightnessFollow:0.48,
       reverbStyle:'room', reverbWet:0.12, masterVolume:0.75,
-      portamentoEnabled:false, portamentoMs:70
+      portamentoEnabled:false, portamentoMs:70,
+
+      expressionCurve:1.9,
+      vibratoDelay:20,
+      vibratoFollow:0.0,
+      attackCurve:1.15,
+      releaseCurve:1.0,
+      chorusBoost:1.0,
+
+      osc1Wave:'square',
+      osc2Wave:'sine',
+      osc3Wave:'sine',
+      osc1Ratio:1.0,
+      osc2Ratio:1.0,
+      osc3Ratio:1.0,
+      filterQ:1.0,
+      driveCurveShape:'asym',
     },
     voice:{
       patch:'voice',
@@ -2027,7 +2308,23 @@
       vibratoRate:5.0, vibratoDepth:11,
       brightnessFollow:0.58,
       reverbStyle:'hall', reverbWet:0.16, masterVolume:0.82,
-      portamentoEnabled:false, portamentoMs:85
+      portamentoEnabled:false, portamentoMs:85,
+
+      expressionCurve:1.8,
+      vibratoDelay:70,
+      vibratoFollow:0.18,
+      attackCurve:1.1,
+      releaseCurve:1.15,
+      chorusBoost:1.0,
+
+      osc1Wave:'sawtooth',
+      osc2Wave:'triangle',
+      osc3Wave:'sine',
+      osc1Ratio:1.0,
+      osc2Ratio:1.0,
+      osc3Ratio:1.0,
+      filterQ:1.0,
+      driveCurveShape:'tanh',
     },
     brass:{
       patch:'brass',
@@ -2036,7 +2333,23 @@
       vibratoRate:4.8, vibratoDepth:5,
       brightnessFollow:0.52,
       reverbStyle:'plate', reverbWet:0.13, masterVolume:0.4,
-      portamentoEnabled:false, portamentoMs:70
+      portamentoEnabled:false, portamentoMs:70,
+
+      expressionCurve:1.7,
+      vibratoDelay:40,
+      vibratoFollow:0.06,
+      attackCurve:1.15,
+      releaseCurve:1.0,
+      chorusBoost:1.0,
+
+      osc1Wave:'sawtooth',
+      osc2Wave:'square',
+      osc3Wave:'sawtooth',
+      osc1Ratio:1.0,
+      osc2Ratio:1.0,
+      osc3Ratio:1.0,
+      filterQ:1.0,
+      driveCurveShape:'asym',
     },
     strings:{
       patch:'strings',
@@ -2045,7 +2358,23 @@
       vibratoRate:5.2, vibratoDepth:10,
       brightnessFollow:0.35, 
       reverbStyle:'hall', reverbWet:0.22, masterVolume:1.0,
-      portamentoEnabled:false, portamentoMs:70
+      portamentoEnabled:false, portamentoMs:70,
+
+      expressionCurve:1.9,
+      vibratoDelay:120,
+      vibratoFollow:0.10,
+      attackCurve:1.3,
+      releaseCurve:1.25,
+      chorusBoost:1.0,
+
+      osc1Wave:'sawtooth',
+      osc2Wave:'sawtooth',
+      osc3Wave:'triangle',
+      osc1Ratio:1.0,
+      osc2Ratio:1.0,
+      osc3Ratio:1.0,
+      filterQ:1.0,
+      driveCurveShape:'tanh',
     },
     lead:{
       patch:'lead',
@@ -2054,7 +2383,23 @@
       vibratoRate:5.0, vibratoDepth:9,
       brightnessFollow:0.45, 
       reverbStyle:'ambient', reverbWet:0.17, masterVolume:1.0,
-      portamentoEnabled:false, portamentoMs:70
+      portamentoEnabled:false, portamentoMs:70,
+
+      expressionCurve:1.7,
+      vibratoDelay:0,
+      vibratoFollow:0.08,
+      attackCurve:0.9,
+      releaseCurve:1.0,
+      chorusBoost:1.0,
+
+      osc1Wave:'sawtooth',
+      osc2Wave:'square',
+      osc3Wave:'triangle',
+      osc1Ratio:1.0,
+      osc2Ratio:1.0,
+      osc3Ratio:1.0,
+      filterQ:1.0,
+      driveCurveShape:'hard',
     }
   };
 
@@ -2068,7 +2413,23 @@
     'portamentoEnabled', 'portamentoMs',
     'priorityMode',
     'reverbStyle', 'reverbWet', 'reverbDry', 'reverbPreDelay', 'reverbTone',
-    'masterVolume', 'droneVolume', 'droneNote', 'masterTuneCents'
+    'masterVolume', 'droneVolume', 'droneNote', 'masterTuneCents',
+
+    'expressionCurve',
+    'vibratoDelay',
+    'vibratoFollow',
+    'attackCurve',
+    'releaseCurve',
+    'chorusBoost',
+
+    'osc1Wave',
+    'osc2Wave',
+    'osc3Wave',
+    'osc1Ratio',
+    'osc2Ratio',
+    'osc3Ratio',
+    'filterQ',
+    'driveCurveShape'
   ];
 
   const state = {
@@ -2089,6 +2450,7 @@
     meterValue:0,
     cc2:0, cc7:100, cc11:127,
     presetOverrides:{},
+    patchDisplayNames: { ...DEFAULT_PATCH_DISPLAY_NAMES },
     midiChannel:1,
     midiInputId:'',
     midiLogEnabled:false,
@@ -2104,6 +2466,8 @@
   const VALID_EXPRESSION_MODES = new Set(['cc2', 'cc11', 'cc7', 'velocity', 'fixed']);
   const VALID_PRIORITY_MODES = new Set(['last', 'high', 'low']);
   const VALID_REVERB_STYLES = new Set(['room', 'hall', 'plate', 'ambient', 'church']);
+  const VALID_OSC_WAVES = new Set(['sine', 'triangle', 'sawtooth', 'square']);
+  const VALID_DRIVE_CURVES = new Set(['tanh','asym','hard']);
 
   function toFiniteNumber(value, fallback) {
     const n = Number(value);
@@ -2141,6 +2505,7 @@
       case 'texture':
       case 'body':
       case 'brightnessFollow':
+      case 'vibratoFollow':
         return clamp(toFiniteNumber(value, fallback), 0, 1);
 
       case 'attack':
@@ -2197,6 +2562,35 @@
 
       case 'masterTuneCents':
         return clamp(toRoundedInt(value, fallback), -50, 50);
+
+      case 'expressionCurve':
+        return clamp(toFiniteNumber(value, fallback), 0.5, 3.0);
+
+      case 'vibratoDelay':
+        return clamp(toRoundedInt(value, fallback), 0, 500);
+
+      case 'attackCurve':
+      case 'releaseCurve':
+        return clamp(toFiniteNumber(value, fallback), 0.2, 3.0);
+
+      case 'driveCurveShape':
+        return sanitizeEnum(value, VALID_DRIVE_CURVES, fallback);
+
+      case 'chorusBoost':
+        return clamp(toFiniteNumber(value, fallback), 0, 2.0);
+
+      case 'osc1Wave':
+      case 'osc2Wave':
+      case 'osc3Wave':
+        return sanitizeEnum(value, VALID_OSC_WAVES, fallback);
+
+      case 'osc1Ratio':
+      case 'osc2Ratio':
+      case 'osc3Ratio':
+        return clamp(toFiniteNumber(value, fallback), 0.125, 8.0);
+
+      case 'filterQ':
+        return clamp(toFiniteNumber(value, fallback), 0.2, 4.0);
 
       case 'patch':
         return sanitizePatchName(value, fallback);
@@ -2279,6 +2673,30 @@
       meterEnabled: toBoolean(source.meterEnabled, false),
       lowCpuMode: toBoolean(source.lowCpuMode, false)
     };
+  }
+
+  function sanitizePatchDisplayName(value, fallback) {
+    const s = String(value ?? '')
+      .replace(/\s+/g, ' ')
+      .trim();
+
+    if (!s) return fallback;
+
+    return s.slice(0, 16);
+  }
+
+  function sanitizePatchDisplayNamesObject(rawNames) {
+    const source = rawNames && typeof rawNames === 'object' ? rawNames : {};
+    const result = {};
+
+    Object.keys(PRESETS).forEach((presetName) => {
+      result[presetName] = sanitizePatchDisplayName(
+        source[presetName],
+        DEFAULT_PATCH_DISPLAY_NAMES[presetName]
+      );
+    });
+
+    return result;
   }
 
   function showWebMidiUnavailableDialog() {
@@ -2441,9 +2859,38 @@
     return String(value).trim();
   }
 
+  async function promptForPatchName(defaultValue, presetName) {
+    const safePresetName = escapeHtml(DEFAULT_PATCH_DISPLAY_NAMES[presetName] || presetName);
+
+    if (window.DayPilot && DayPilot.Modal && DayPilot.Modal.prompt) {
+      const result = await DayPilot.Modal.prompt(
+        `<div style="font-size:18px; line-height:1.45; font-weight:600; margin-bottom:8px;">Enter a new display name for this patch: (16 character limit)</div>
+         <div style="font-size:14px; line-height:1.45; color:#333;">Default preset name: <b>${safePresetName}</b></div>`,
+        defaultValue,
+        {
+          theme: "modal_compact",
+          top: 130,
+          width: 720,
+          autoFocus: false,
+          scrollWithPage: true,
+          okText: "Rename",
+          cancelText: "Cancel"
+        }
+      );
+
+      if (!result || result.canceled) return null;
+      return String(result.result || '');
+    }
+
+    const value = window.prompt("Enter a new display name for this patch:", defaultValue);
+    if (value == null) return null;
+    return String(value);
+  }
+
   function computeExpressionGain(inputValue) {
     const normalized = clamp(inputValue / 127, 0, 1);
-    return Math.pow(normalized, EXPRESSION_CURVE_POWER);
+    const curve = clamp(Number(state.expressionCurve || DEFAULTS.expressionCurve), 0.5, 3.0);
+    return Math.pow(normalized, curve);
   }
 
   function resolveCurrentExpressionGain(noteVelocity = 127) {
@@ -2481,27 +2928,48 @@
   function getEffectivePatchProfile(settings){
     const base = getPatchProfile(settings.patch);
 
+    const ratio1 = clamp(Number(settings.osc1Ratio ?? 1), 0.125, 8);
+    const ratio2 = clamp(Number(settings.osc2Ratio ?? 1), 0.125, 8);
+    const ratio3 = clamp(Number(settings.osc3Ratio ?? 1), 0.125, 8);
+
+    const resolveWave = (settingValue, fallbackValue) => {
+      return VALID_OSC_WAVES.has(settingValue) ? settingValue : fallbackValue;
+    };
+
+    const custom = {
+      ...base,
+      osc1: resolveWave(settings.osc1Wave, base.osc1),
+      osc2: resolveWave(settings.osc2Wave, base.osc2),
+      osc3: resolveWave(settings.osc3Wave, base.osc3),
+      ratios: [
+        base.ratios[0] * ratio1,
+        base.ratios[1] * ratio2,
+        base.ratios[2] * ratio3
+      ],
+      q: clamp(base.q * clamp(Number(settings.filterQ ?? 1), 0.2, 4), 0.2, 20)
+    };
+
     if (!state.lowCpuMode) {
-      return base;
+      return custom;
     }
 
     return {
-      ...base,
+      ...custom,
       gains: [
-        base.gains[0],
-        base.gains[1] * 0.90,
-        base.gains[2]
+        custom.gains[0],
+        custom.gains[1] * 0.90,
+        custom.gains[2]
       ],
-      sub: base.sub * 0.65,
-      noiseQ: Math.max(0.5, base.noiseQ * 0.82),
-      q: Math.max(0.45, base.q * 0.82),
-      formantGain: base.formantGain * 0.65,
-      formantQ: Math.max(0.6, base.formantQ * 0.75),
-      drive: Math.max(0.9, base.drive * 0.9),
+      sub: custom.sub * 0.65,
+      noiseQ: Math.max(0.5, custom.noiseQ * 0.82),
+      q: Math.max(0.45, custom.q * 0.82),
+      formantGain: custom.formantGain * 0.65,
+      formantQ: Math.max(0.6, custom.formantQ * 0.75),
+      drive: Math.max(0.9, custom.drive * 0.9),
       chorusMix: settings.patch === 'strings'
-        ? Math.min(0.12, base.chorusMix * 0.30)
-        : Math.min(0.03, base.chorusMix * 0.35),
-      chorusDepth: base.chorusDepth * 0.25
+        ? Math.min(0.12, custom.chorusMix * 0.30)
+        : Math.min(0.03, custom.chorusMix * 0.35),
+      chorusDepth: custom.chorusDepth * 0.25
     };
   }
 
@@ -2619,6 +3087,7 @@
       this.lastPulseFlag = false;
       this.lastBendSemis = 0;
       this.lastDriveAmount = null;
+      this.lastDriveShape = null;
     }
 
     setOsc3Bypass(enabled){
@@ -2657,13 +3126,27 @@
       return source;
     }
 
-    makeDriveCurve(amount){
+    makeDriveCurve(amount, shape = 'tanh'){
       const samples = 2048;
       const curve = new Float32Array(samples);
+
       for(let i = 0; i < samples; i++){
         const x = (i / (samples - 1)) * 2 - 1;
-        curve[i] = Math.tanh(x * amount);
+
+        let y;
+        if (shape === 'hard') {
+          y = clamp(x * amount, -0.75, 0.75);
+        } else if (shape === 'asym') {
+          const pos = Math.tanh(x * amount * 1.2);
+          const neg = Math.tanh(x * amount * 0.75);
+          y = x >= 0 ? pos : neg;
+        } else {
+          y = Math.tanh(x * amount);
+        }
+
+        curve[i] = y;
       }
+
       return curve;
     }
 
@@ -2671,24 +3154,32 @@
       const profile = getEffectivePatchProfile(settings);
       const wantOsc3 = !state.lowCpuMode;
 
+      const osc1Type = profile.osc1 === 'pulse' ? 'square' : profile.osc1;
+      const osc2Type = profile.osc2 === 'pulse' ? 'square' : profile.osc2;
+      const osc3Type = profile.osc3 === 'pulse' ? 'square' : profile.osc3;
+
       if (
         this.currentPatch === settings.patch &&
-        this.lastPulseFlag === (profile.osc2 === 'pulse') &&
-        this.currentLowCpuMode === state.lowCpuMode
+        this.currentLowCpuMode === state.lowCpuMode &&
+        this.lastOsc1Type === osc1Type &&
+        this.lastOsc2Type === osc2Type &&
+        this.lastOsc3Type === osc3Type
       ) {
         return profile;
       }
 
       this.currentPatch = settings.patch;
       this.currentLowCpuMode = state.lowCpuMode;
-      this.lastPulseFlag = profile.osc2 === 'pulse';
+      this.lastOsc1Type = osc1Type;
+      this.lastOsc2Type = osc2Type;
+      this.lastOsc3Type = osc3Type;
 
       this.setOsc3Bypass(wantOsc3);
       this.setOsc3VibratoRouting(wantOsc3);
 
-      this.osc1.type = profile.osc1 === 'pulse' ? 'square' : profile.osc1;
-      this.osc2.type = profile.osc2 === 'pulse' ? 'square' : profile.osc2;
-      this.osc3.type = profile.osc3 === 'pulse' ? 'square' : profile.osc3;
+      this.osc1.type = osc1Type;
+      this.osc2.type = osc2Type;
+      this.osc3.type = osc3Type;
       this.subOsc.type = 'sine';
       this.noiseFilter.type = profile.noiseColor;
 
@@ -2727,19 +3218,33 @@
       const t = this.ctx.currentTime;
       this.isOn = true;
       this.releaseEndTime = 0;
+
+      const attackTime = Math.max(0.0005, settings.attack);
+      const attackCurve = clamp(Number(settings.attackCurve ?? 1), 0.2, 3);
+
       this.output.gain.cancelScheduledValues(t);
-      this.output.gain.setValueAtTime(this.output.gain.value, t);
-      this.output.gain.linearRampToValueAtTime(level, t + Math.max(0.0005, settings.attack));
+      this.output.gain.setValueAtTime(Math.max(0.000001, this.output.gain.value), t);
+
+      if (attackCurve === 1) {
+        this.output.gain.linearRampToValueAtTime(level, t + attackTime);
+      } else {
+        const shapedTarget = Math.max(0.000001, level);
+        const shapedTime = t + attackTime * attackCurve;
+        this.output.gain.exponentialRampToValueAtTime(shapedTarget, shapedTime);
+      }
     }
 
     gateOff(settings){
       const t = this.ctx.currentTime;
       const releaseTime = Math.max(0.01, settings.release);
+      const releaseCurve = clamp(Number(settings.releaseCurve ?? 1), 0.2, 3);
+
       this.isOn = false;
-      this.releaseEndTime = t + releaseTime;
+      this.releaseEndTime = t + releaseTime * releaseCurve;
+
       this.output.gain.cancelScheduledValues(t);
-      this.output.gain.setValueAtTime(this.output.gain.value, t);
-      this.output.gain.linearRampToValueAtTime(0, this.releaseEndTime);
+      this.output.gain.setValueAtTime(Math.max(0.000001, this.output.gain.value), t);
+      this.output.gain.exponentialRampToValueAtTime(0.000001, this.releaseEndTime);
     }
 
     hasAudibleTail(){
@@ -2876,7 +3381,17 @@
         settings.patch === 'whistle' ? 0.006 :
         0.008;
 
-      this.vibratoGain.gain.setTargetAtTime((settings.vibratoDepth / 100) * targetFreq * vibScale, t, 0.03);
+      const vibratoDelayMs = Math.max(0, Number(settings.vibratoDelay ?? 0));
+      const vibratoFollow = clamp(Number(settings.vibratoFollow ?? 0), 0, 1);
+      const vibratoDepthCents = Number(settings.vibratoDepth ?? 0) + (exprNorm * vibratoFollow * 40);
+      const vibratoTarget = (vibratoDepthCents / 100) * targetFreq * vibScale;
+
+      this.vibratoGain.gain.cancelScheduledValues(t);
+      this.vibratoGain.gain.setValueAtTime(0, t);
+      this.vibratoGain.gain.linearRampToValueAtTime(
+        vibratoTarget,
+        t + (vibratoDelayMs / 1000) + 0.03
+      );
 
       const baseVoiceLevel =
         settings.patch === 'strings' ? 0.75 :
@@ -2900,9 +3415,16 @@
         ) +
         texture * 0.25;
 
-      if (this.lastDriveAmount == null || Math.abs(driveAmount - this.lastDriveAmount) > 0.03) {
-        this.saturator.curve = this.makeDriveCurve(driveAmount);
+      const driveShape = settings.driveCurveShape || 'tanh';
+
+      if (
+        this.lastDriveAmount == null ||
+        Math.abs(driveAmount - this.lastDriveAmount) > 0.03 ||
+        this.lastDriveShape !== driveShape
+      ) {
+        this.saturator.curve = this.makeDriveCurve(driveAmount, driveShape);
         this.lastDriveAmount = driveAmount;
+        this.lastDriveShape = driveShape;
       }
     }
   }
@@ -3181,6 +3703,13 @@
   }
 
   function getExpressionFromState() {
+
+    if (state.currentNote == null) {
+      state.expressionValue = 0;
+      $('expressionReadout').textContent = '0%';
+      return 0;
+    }
+
     const gain = resolveCurrentExpressionGain(state.currentVelocity ?? 127);
 
     state.expressionValue = gain;
@@ -3250,7 +3779,8 @@
 
   function currentGlideMs(wasPlaying){
     if (!state.portamentoEnabled) return 0;
-    return wasPlaying ? state.portamentoMs : 0;
+    if (!wasPlaying) return 0;
+    return state.portamentoMs;
   }
 
   function noteOn(note, velocity){
@@ -3279,7 +3809,9 @@
     state.currentNote = chosen;
 
     if (chosen == null){
+      state.currentVelocity = 0;
       updateCurrentNoteReadout(null);
+      getExpressionFromState();
       if (state.voice) state.voice.gateOff(state);
       return;
     }
@@ -3837,28 +4369,97 @@
 
   function bindSelect(id){
     const el = $(id);
+    if (!el) return;
+
     const update = () => {
       if (id === 'reverbStyleSelect') {
-        state.reverbStyle = el.value;
+        state.reverbStyle = sanitizePresetSettingValue(
+          'reverbStyle',
+          el.value,
+          DEFAULTS.reverbStyle
+        );
+        updateReverb();
+        updateDroneVoice();
+
       } else if (id === 'expressionModeSelect') {
-        state.expressionMode = el.value;
+        state.expressionMode = sanitizeEnum(
+          el.value,
+          VALID_EXPRESSION_MODES,
+          DEFAULTS.expressionMode
+        );
         getExpressionFromState();
-      } else if (id === 'priorityMode') {
-        state.priorityMode = el.value;
-      } else if (id === 'midiInputSelect') {
-        attachSelectedMidiInput();
-      } else if (id === 'droneNoteSelect') {
-        state.droneNote = clamp(Math.round(Number(el.value)), 36, 74);
+        requestVoiceUpdate();
+
+    } else if (id === 'priorityMode') {
+      state.priorityMode = sanitizePresetSettingValue(
+        'priorityMode',
+        el.value,
+        DEFAULTS.priorityMode
+      );
+
+      const chosen = choosePriorityNote();
+      state.currentNote = chosen;
+      updateCurrentNoteReadout(chosen);
+
+      if (state.voice) {
+        if (chosen != null) {
+          const soundingNote = getTransposedMidiNote(chosen);
+          state.voice.setNote(midiNoteToFreq(soundingNote), 0, state);
+        } else {
+          state.voice.gateOff(state);
+        }
       }
 
-      if (id === 'reverbStyleSelect') {
-        updateReverb();
-      } else if (id !== 'midiInputSelect') {
+      requestVoiceUpdate();
+
+      } else if (id === 'midiInputSelect') {
+        attachSelectedMidiInput();
+
+      } else if (id === 'droneNoteSelect') {
+        state.droneNote = clamp(Math.round(Number(el.value)), 36, 74);
         requestVoiceUpdate();
+        updateDroneVoice();
+
+      } else if (id === 'osc1WaveSelect') {
+        state.osc1Wave = sanitizePresetSettingValue(
+          'osc1Wave',
+          el.value,
+          DEFAULTS.osc1Wave
+        );
+        requestVoiceUpdate();
+        updateDroneVoice();
+
+      } else if (id === 'osc2WaveSelect') {
+        state.osc2Wave = sanitizePresetSettingValue(
+          'osc2Wave',
+          el.value,
+          DEFAULTS.osc2Wave
+        );
+        requestVoiceUpdate();
+        updateDroneVoice();
+
+      } else if (id === 'osc3WaveSelect') {
+        state.osc3Wave = sanitizePresetSettingValue(
+          'osc3Wave',
+          el.value,
+          DEFAULTS.osc3Wave
+        );
+        requestVoiceUpdate();
+        updateDroneVoice();
+
+      } else if (id === 'driveCurveShape') {
+        state.driveCurveShape = sanitizePresetSettingValue(
+          'driveCurveShape',
+          el.value,
+          DEFAULTS.driveCurveShape
+        );
+        requestVoiceUpdate();
+        updateDroneVoice();
       }
 
       saveState();
     };
+
     el.addEventListener('change', update);
   }
 
@@ -3943,6 +4544,7 @@
         meterEnabled: !!state.meterEnabled,
         lowCpuMode: !!state.lowCpuMode
       },
+      patchDisplayNames: { ...state.patchDisplayNames },
       presets: buildAllEffectivePresetSettings()
     };
   }
@@ -3988,6 +4590,7 @@
     const importedPatch = sanitizePatchName(payload.currentPatch, 'whistle');
 
     state.presetOverrides = buildOverridesFromImportedPresets(importedPresets);
+    state.patchDisplayNames = sanitizePatchDisplayNamesObject(payload.patchDisplayNames);
     state.patch = importedPatch;
 
     Object.assign(state, getEffectivePresetSettings(importedPatch));
@@ -4103,7 +4706,7 @@
   function saveState(){
     try{
       captureCurrentPresetOverrides();
-      localStorage.setItem('warblSoundLabState_v28', JSON.stringify({
+      localStorage.setItem('warblSoundLabState_v30', JSON.stringify({
         patch: state.patch,
         midiChannel: state.midiChannel,
         midiInputId: state.midiInputId || '',
@@ -4112,6 +4715,7 @@
         lowCpuMode: !!state.lowCpuMode,
         pitchBendRange: state.pitchBendRange,
         expressionMode: state.expressionMode,
+        patchDisplayNames: state.patchDisplayNames || { ...DEFAULT_PATCH_DISPLAY_NAMES },
         presetOverrides: state.presetOverrides || {}
       }));
     } catch(e){}
@@ -4119,7 +4723,7 @@
 
   function loadState(){
     try{
-      const raw = localStorage.getItem('warblSoundLabState_v28');
+      const raw = localStorage.getItem('warblSoundLabState_v30');
 
       if (!raw) {
         Object.assign(state, clonePresetDefaults(DEFAULTS.patch));
@@ -4134,6 +4738,7 @@
         state.droneVolume = DEFAULTS.droneVolume;
         state.droneNote = DEFAULTS.droneNote;
         state.presetOverrides = {};
+        state.patchDisplayNames = { ...DEFAULT_PATCH_DISPLAY_NAMES };
         return;
       }
 
@@ -4142,6 +4747,7 @@
 
       state.patch = sanitizePatchName(savedObj.patch, 'whistle');
       state.presetOverrides = sanitizePresetOverridesObject(savedObj.presetOverrides);
+      state.patchDisplayNames = sanitizePatchDisplayNamesObject(savedObj.patchDisplayNames);
 
       Object.assign(state, getEffectivePresetSettings(state.patch));
 
@@ -4184,6 +4790,7 @@
       state.droneVolume = DEFAULTS.droneVolume;
       state.droneNote = DEFAULTS.droneNote;
       state.presetOverrides = {};
+      state.patchDisplayNames = { ...DEFAULT_PATCH_DISPLAY_NAMES };
     }
   }
 
@@ -4193,9 +4800,15 @@
       'vibratoRate','vibratoDepth','brightnessFollow',
       'transposeSemis','pitchBendRange','bendUp','bendDown',
       'portamentoMs','reverbWet','reverbDry','reverbPreDelay',
-      'reverbTone','masterVolume','droneVolume','masterTuneCents'
+      'reverbTone','masterVolume','droneVolume','masterTuneCents',
+      'expressionCurve','vibratoDelay','vibratoFollow',
+      'attackCurve','releaseCurve','chorusBoost',
+      'osc1Ratio','osc2Ratio','osc3Ratio',
+      'filterQ'
     ].forEach(id => {
-      if ($(id) && state[id] != null) $(id).value = state[id];
+      if ($(id) && state[id] != null) {
+        $(id).value = state[id];
+      }
     });
 
     $('expressionModeSelect').value = state.expressionMode;
@@ -4207,10 +4820,21 @@
     $('midiChannelSelect').value = String(
       (state.midiChannel >= 1 && state.midiChannel <= 16) ? state.midiChannel : 1
     );
+
+    $('osc1WaveSelect').value = state.osc1Wave || getPatchProfile(state.patch).osc1;
+    $('osc2WaveSelect').value = state.osc2Wave || getPatchProfile(state.patch).osc2;
+    $('osc3WaveSelect').value = state.osc3Wave || getPatchProfile(state.patch).osc3;
+
+    $('driveCurveShape').value = state.driveCurveShape || 'tanh';
+
     $('portamentoEnabled').checked = !!state.portamentoEnabled;
     $('lowCpuMode').checked = !!state.lowCpuMode;
     $('showOutputMeter').checked = !!state.meterEnabled;
     $('showMidiLog').checked = !!state.midiLogEnabled;
+
+    if ($('patchDisplayNameValue')) {
+      $('patchDisplayNameValue').textContent = getPresetDisplayName(state.patch);
+    }
 
     renderOutputMeterUi();
 
@@ -4223,7 +4847,13 @@
   }
 
   function updatePresetButtons(){
-    document.querySelectorAll('[data-preset]').forEach(btn => btn.classList.toggle('active', btn.dataset.preset === state.patch));
+    document.querySelectorAll('[data-preset]').forEach(btn => {
+      const presetName = btn.dataset.preset;
+      btn.classList.toggle('active', presetName === state.patch);
+      btn.textContent = (state.patchDisplayNames && state.patchDisplayNames[presetName])
+        ? state.patchDisplayNames[presetName]
+        : DEFAULT_PATCH_DISPLAY_NAMES[presetName] || presetName;
+    });
   }
 
   function applyPreset(name){
@@ -4251,14 +4881,9 @@
   }
 
   function getPresetDisplayName(name) {
-    return ({
-      whistle: 'Air',
-      clarinet: 'Reed',
-      voice: 'Solo',
-      brass: 'Brass',
-      strings: 'Pad',
-      lead: 'Lead'
-    })[name] || name;
+    return (state.patchDisplayNames && state.patchDisplayNames[name])
+      ? state.patchDisplayNames[name]
+      : DEFAULT_PATCH_DISPLAY_NAMES[name] || name;
   }
 
   async function resetCurrentPresetToDefaults(){
@@ -4267,7 +4892,7 @@
 
     const confirmed = await confirmResetDialog(
       "Reset Current Preset",
-      `Reset the current preset <b>${getPresetDisplayName(presetName)}</b> to its default settings?`
+      `Reset the current preset <b>${escapeHtml(getPresetDisplayName(presetName))}</b> to its default settings?`
     );
 
     if (!confirmed) return;
@@ -4277,8 +4902,12 @@
 
     const store = getPresetOverridesStore();
     delete store[presetName];
+
+    state.patchDisplayNames[presetName] = DEFAULT_PATCH_DISPLAY_NAMES[presetName];
+
     Object.assign(state, clonePresetDefaults(presetName));
     state.patch = presetName;
+
     applyStateToUi();
     refreshValueLabels();
 
@@ -4295,20 +4924,31 @@
   }
 
   async function resetAllPresetsToDefaults(){
-    const confirmed = await confirmResetDialog(
-      "Reset All Presets",
-      "Reset <b>all presets</b> to their default settings?"
+
+    const firstConfirm = await confirmResetDialog(
+      "Reset All Presets?",
+      "This will reset ALL presets back to their default settings.<br/>Any saved changes will be lost."
     );
 
-    if (!confirmed) return;
+    if (!firstConfirm) return;
+
+    const secondConfirm = await confirmResetDialog(
+      "Are you absolutely sure?",
+      "This action cannot be undone.<br/>All preset customizations will be permanently erased."
+    );
+
+    if (!secondConfirm) return;
 
     stopDrone();
     state.pitchBend = 0;
 
     state.presetOverrides = {};
+    state.patchDisplayNames = { ...DEFAULT_PATCH_DISPLAY_NAMES };
+
     const currentPreset = PRESETS[state.patch] ? state.patch : 'whistle';
     Object.assign(state, clonePresetDefaults(currentPreset));
     state.patch = currentPreset;
+
     applyStateToUi();
     refreshValueLabels();
 
@@ -4351,7 +4991,18 @@
       reverbTone:v=>v.toFixed(2),
       masterVolume:v=>v.toFixed(2),
       droneVolume:v=>v.toFixed(2),
-      masterTuneCents:v=>`${signedInt(v)} cents`
+      masterTuneCents:v=>`${signedInt(v)} cents`,
+
+      expressionCurve:v=>v.toFixed(2),
+      vibratoDelay:v=>`${Math.round(v)} ms`,
+      vibratoFollow:v=>v.toFixed(2),
+      attackCurve:v=>v.toFixed(2),
+      releaseCurve:v=>v.toFixed(2),
+      chorusBoost:v=>v.toFixed(2),
+      osc1Ratio:v=>v.toFixed(3),
+      osc2Ratio:v=>v.toFixed(3),
+      osc3Ratio:v=>v.toFixed(3),
+      filterQ:v=>v.toFixed(2),
     };
 
     Object.keys(formatters).forEach(id => {
@@ -4461,31 +5112,7 @@
       }
 
       $('midiStatus').textContent = 'WebMIDI unsupported';
-
-      const html =
-        "<div style='text-align:center;font-family:helvetica,arial,sans-serif;font-size:13pt;line-height:1.45;padding:0 18px;'>" +
-          "<div style='font-size:1.2em;font-weight:700;margin:0 0 12px 0;'>" +
-            "WebMIDI is not available" +
-          "</div>" +
-          "<div>" +
-            "This browser does not support the Web MIDI API,<br/>so MIDI devices cannot be used with this tool." +
-          "</div>" +
-          "<div style='margin-top:10px;'>" +
-            "Try <b>Google Chrome</b>, <b>Microsoft Edge</b>,<br/>or another Chromium-based browser." +
-          "</div>" +
-        "</div>";
-
-      if (window.DayPilot && DayPilot.Modal && DayPilot.Modal.alert) {
-        DayPilot.Modal.alert(html, {
-          theme: "modal_compact",
-          top: 100,
-          width: 600,
-          autoFocus: false,
-          scrollWithPage: true
-        });
-      } else {
-        alert("WebMIDI is not available in this browser.");
-      }
+      showWebMidiUnavailableDialog();
     }
 
     return supported;
@@ -4690,6 +5317,15 @@
     );
   }
 
+  function escapeHtml(value) {
+  return String(value ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+  }
+
   async function showErrorDialog(message, title = 'Error') {
     const safeMessage = String(message || 'An unexpected error occurred.');
     const safeTitle = String(title || 'Error');
@@ -4822,12 +5458,26 @@
       const n = Math.round(v);
       return `${n > 0 ? '+' : ''}${n} cents`;
     });
+    bindRange('expressionCurve', v=>v.toFixed(2));
+    bindRange('vibratoDelay', v=>`${Math.round(v)} ms`);
+    bindRange('vibratoFollow', v=>v.toFixed(2));
+    bindRange('attackCurve', v=>v.toFixed(2));
+    bindRange('releaseCurve', v=>v.toFixed(2));
+    bindRange('chorusBoost', v=>v.toFixed(2));
+    bindRange('osc1Ratio', v=>v.toFixed(3));
+    bindRange('osc2Ratio', v=>v.toFixed(3));
+    bindRange('osc3Ratio', v=>v.toFixed(3));
+    bindRange('filterQ', v=>v.toFixed(2));
 
     bindSelect('midiInputSelect');
     bindSelect('expressionModeSelect');
     bindSelect('priorityMode');
     bindSelect('reverbStyleSelect');
     bindSelect('droneNoteSelect');
+    bindSelect('osc1WaveSelect');
+    bindSelect('osc2WaveSelect');
+    bindSelect('osc3WaveSelect');
+    bindSelect('driveCurveShape');
 
     $('midiChannelSelect').addEventListener('change', () => {
       state.midiChannel = Number($('midiChannelSelect').value);
@@ -4955,6 +5605,35 @@
       saveState();
     });
 
+    $('btnRenamePatch').addEventListener('click', async () => {
+      const presetName = state.patch;
+      if (!PRESETS[presetName]) return;
+
+      const currentName = getPresetDisplayName(presetName);
+      const rawValue = await promptForPatchName(currentName, presetName);
+      if (rawValue == null) return;
+
+      const value = sanitizePatchDisplayName(
+        rawValue,
+        DEFAULT_PATCH_DISPLAY_NAMES[presetName]
+      );
+
+      state.patchDisplayNames[presetName] = value;
+      applyStateToUi();
+      updatePresetButtons();
+      saveState();
+    });
+
+    $('btnResetPatchName').addEventListener('click', () => {
+      const presetName = state.patch;
+      if (!PRESETS[presetName]) return;
+
+      state.patchDisplayNames[presetName] = DEFAULT_PATCH_DISPLAY_NAMES[presetName];
+      applyStateToUi();
+      updatePresetButtons();
+      saveState();
+    });
+
     if (btnFullscreen) {
       btnFullscreen.addEventListener('click', async () => {
         const isFs = !!getFullscreenElement();
@@ -4982,9 +5661,6 @@
     }
 
     if (!PRESETS[state.patch]) state.patch = 'whistle';
-    updatePresetButtons();
-
-    renderMidiLog();
 
     updateFullscreenButton();
     updateFullscreenLayoutMode();
