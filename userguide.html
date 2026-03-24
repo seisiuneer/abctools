@@ -1882,7 +1882,7 @@
                 <p><strong>Custom Instrument Builder</strong></p>
                 <p>Opens the <strong><a href="https://michaeleskin.com/tools/custom_instrument_builder.html" target="_blank">Custom Instrument Builder</a></strong> in a new browser tab.</p> 
                 <p>This tool is used to create custom instruments for the ABC Transcription Tools.</p>
-                <p>Full details in the <a href="#custom_instrument_builder">Custom Instrument Builder</a> section below.
+                <p>Full details in the <a href="#custom_instrument_builder">Custom Instrument Builder</a> section below.</p>
                 <hr id="hamburger_quick_editor">
                 <p><strong>Launch Quick Editor</strong></p>
                 <p>Launches the "Quick Editor" version of the tool in a new tab.</p>
@@ -6887,6 +6887,10 @@
                 <p class="code">%%MIDI program custom1</p>
                 <p>as the instrument when playing tunes imported from BWW files instead of the built-in Great Highland Bagpipe (program 109).</p>
                 <p>Checking this box disables the injection of ABC transposition and retuning annotations normally done for the Great Highland Bagpipe instrument.</p>
+                <p>If instead, you want to play the tune using one of the standard MIDI instruments, after importing the BWW file, simply replace custom1 with your preferred instrument number.</p>
+                <p>For example:</p>
+                <p class="code">% Play the GHB tune using a Tin Whistle sound<br/>%%MIDI program 78</p>
+                <p>If importing many GHB tunes, use the <strong>Find and Replace</strong> feature to replace all of the custom1 values at once.</p>
                 <hr class="hidden-print" id="player_adv_settings_tab">
                 <h1 class="page_break_always">Player Advanced Settings</h1>
 				<a href="#table_of_contents" class="index-pill hidden-print">
@@ -8162,20 +8166,20 @@
                 <p>If you have an existing website written using Javascript and would like to add a feature to allow users to create share links for ABC tunes and open them in my ABC Transcription Tools, or if you want to be able to decode share links back to the original ABC for use in your own tools, here a couple of example utilties and the code they use that demonstrates how to integrate share link generation and decoding into other applications:</p>
                 <hr>
                 <p style="text-align: center;"><a href="https://michaeleskin.com/tools/generate_share_link_demo.html" target="_blank">ABC Transcription Tools Share Link Generation Demo</a></p>
-                <p style="text-align: center;"><a href="https://github.com/seisiuneer/abctools/blob/main/tools/generate_share_link_demo.html" target="_blank">Source Code</a>
+                <p style="text-align: center;"><a href="https://github.com/seisiuneer/abctools/blob/main/tools/generate_share_link_demo.html" target="_blank">Source Code</a></p>
                 <hr>
                 <p style="text-align: center;"><strong>Javascript code to generate share links</strong></p>
-                <p style="text-align: center;"><a href="https://github.com/seisiuneer/abctools/blob/main/tools/generate_share_link.html" target="_blank">generate_share_link.html</a>
+                <p style="text-align: center;"><a href="https://github.com/seisiuneer/abctools/blob/main/tools/generate_share_link.html" target="_blank">generate_share_link.html</a></p>
                 <hr>
                 <p style="text-align: center;"><a href="https://michaeleskin.com/tools/decode_share_link_demo.html" target="_blank">ABC Transcription Tools Share Link Decoding Demo</a></p>
-                <p style="text-align: center;"><a href="https://github.com/seisiuneer/abctools/blob/main/tools/decode_share_link_demo.html" target="_blank">Source Code</a>
+                <p style="text-align: center;"><a href="https://github.com/seisiuneer/abctools/blob/main/tools/decode_share_link_demo.html" target="_blank">Source Code</a></p>
                 <hr>
                 <p style="text-align: center;"><strong>Javascript code to decode share links</strong></p>
-                <p style="text-align: center;"><a href="https://github.com/seisiuneer/abctools/blob/main/tools/decode_share_link.html" target="_blank">decode_share_link.html</a>
+                <p style="text-align: center;"><a href="https://github.com/seisiuneer/abctools/blob/main/tools/decode_share_link.html" target="_blank">decode_share_link.html</a></p>
                 <hr>
                 <p style="text-align: center;"><strong>Required Javascript support libraries</strong></p>
-                <p style="text-align: center;"><a href="https://github.com/seisiuneer/abctools/blob/main/tools/lz-string.min.js" target="_blank">lz-string.min.js (for LZW compression of the ABC)</a>
-                <p style="text-align: center;"><a href="https://github.com/seisiuneer/abctools/blob/main/tools/pako.min.js" target="_blank">pako.min.js (for Deflate compression of the ABC)</a>
+                <p style="text-align: center;"><a href="https://github.com/seisiuneer/abctools/blob/main/tools/lz-string.min.js" target="_blank">lz-string.min.js (for LZW compression of the ABC)</a></p>
+                <p style="text-align: center;"><a href="https://github.com/seisiuneer/abctools/blob/main/tools/pako.min.js" target="_blank">pako.min.js (for Deflate compression of the ABC)</a></p>
                 <hr class="hidden-print" id="privacy">
                 <h1 class="page_break_always">Privacy</h1>
 				<a href="#table_of_contents" class="index-pill hidden-print">
