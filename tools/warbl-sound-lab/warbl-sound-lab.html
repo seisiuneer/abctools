@@ -1462,10 +1462,11 @@
           hidden
         >
           <h2 class="section-title">Synthesis</h2>
-          <div class="controls compact-4">
 
-           <div class="field" title="Waveform for oscillator 1.">
-              <label for="osc1WaveSelect">Oscillator 1 Wave</label>
+          <!-- OSC 1 -->
+          <div class="controls compact-4">
+            <div class="field" title="Waveform for oscillator 1.">
+              <label for="osc1WaveSelect">Oscillator 1 Waveform</label>
               <select id="osc1WaveSelect">
                 <option value="sine">Sine</option>
                 <option value="triangle">Triangle</option>
@@ -1475,12 +1476,22 @@
             </div>
 
             <div class="control" title="Changes oscillator 1's pitch relationship relative to its preset default.">
-              <label for="osc1Ratio">Oscillator 1 Ratio <span class="value" id="osc1RatioValue"></span></label>
+              <label for="osc1Ratio">Oscillator 1 Pitch Ratio <span class="value" id="osc1RatioValue"></span></label>
               <input id="osc1Ratio" type="range" min="0.125" max="8" step="0.125" value="1.0">
             </div>
 
+            <div class="control" title="Sets the relative level of oscillator 1 within the patch mix.">
+              <label for="osc1Level">Oscillator 1 Level <span class="value" id="osc1LevelValue"></span></label>
+              <input id="osc1Level" type="range" min="0" max="0.5" step="0.01" value="0.16">
+            </div>
+
+            <div></div>
+          </div>
+
+          <!-- OSC 2 -->
+          <div class="controls compact-4">
             <div class="field" title="Waveform for oscillator 2.">
-              <label for="osc2WaveSelect">Oscillator 2 Wave</label>
+              <label for="osc2WaveSelect">Oscillator 2 Waveform</label>
               <select id="osc2WaveSelect">
                 <option value="sine">Sine</option>
                 <option value="triangle">Triangle</option>
@@ -1490,12 +1501,22 @@
             </div>
 
             <div class="control" title="Changes oscillator 2's pitch relationship relative to its preset default.">
-              <label for="osc2Ratio">Oscillator 2 Ratio <span class="value" id="osc2RatioValue"></span></label>
+              <label for="osc2Ratio">Oscillator 2 Pitch Ratio <span class="value" id="osc2RatioValue"></span></label>
               <input id="osc2Ratio" type="range" min="0.125" max="8" step="0.125" value="1.0">
             </div>
 
+            <div class="control" title="Sets the relative level of oscillator 2 within the patch mix.">
+              <label for="osc2Level">Oscillator 2 Level <span class="value" id="osc2LevelValue"></span></label>
+              <input id="osc2Level" type="range" min="0" max="0.5" step="0.01" value="0.022">
+            </div>
+
+            <div></div>
+          </div>
+
+          <!-- OSC 3 -->
+          <div class="controls compact-4">
             <div class="field" title="Waveform for oscillator 3.">
-              <label for="osc3WaveSelect">Oscillator 3 Wave</label>
+              <label for="osc3WaveSelect">Oscillator 3 Waveform</label>
               <select id="osc3WaveSelect">
                 <option value="sine">Sine</option>
                 <option value="triangle">Triangle</option>
@@ -1505,9 +1526,20 @@
             </div>
 
             <div class="control" title="Changes oscillator 3's pitch relationship relative to its preset default.">
-              <label for="osc3Ratio">Oscillator 3 Ratio <span class="value" id="osc3RatioValue"></span></label>
+              <label for="osc3Ratio">Oscillator 3 Pitch Ratio <span class="value" id="osc3RatioValue"></span></label>
               <input id="osc3Ratio" type="range" min="0.125" max="8" step="0.125" value="1.0">
             </div>
+
+            <div class="control" title="Sets the relative level of oscillator 3 within the patch mix.">
+              <label for="osc3Level">Oscillator 3 Level <span class="value" id="osc3LevelValue"></span></label>
+              <input id="osc3Level" type="range" min="0" max="0.5" step="0.01" value="0.010">
+            </div>
+
+            <div></div>
+          </div>
+
+          <!-- REST OF CONTROLS -->
+          <div class="controls compact-4">
 
             <div class="control" title="Global multiplier for the main tone filter resonance.">
               <label for="filterQ">Filter Q Scale <span class="value" id="filterQValue"></span></label>
@@ -1812,18 +1844,21 @@
 
           <div class="instructions-gap"></div>
 
-          <b>Oscillator 1 Wave</b> – Chooses the waveform for oscillator 1 and changes the tone color of that layer.<br/>
-          <b>Oscillator 1 Ratio</b> – Changes oscillator 1’s pitch relationship relative to its preset default.<br/>
+          <b>Oscillator 1 Waveform</b> – Chooses the waveform for oscillator 1 and changes the tone color of that layer.<br/>
+          <b>Oscillator 1 Pitch Ratio</b> – Changes oscillator 1’s pitch relationship relative to its preset default.<br/>
+          <b>Oscillator 1 Level</b> – Sets the relative level of oscillator 1 within the patch mix.<br/>
 
           <div class="instructions-gap"></div>
 
-          <b>Oscillator 2 Wave</b> – Chooses the waveform for oscillator 2 and changes the tone color of that layer.<br/>
-          <b>Oscillator 2 Ratio</b> – Changes oscillator 2’s pitch relationship relative to its preset default.<br/>
+          <b>Oscillator 2 Waveform</b> – Chooses the waveform for oscillator 2 and changes the tone color of that layer.<br/>
+          <b>Oscillator 2 Pitch Ratio</b> – Changes oscillator 2’s pitch relationship relative to its preset default.<br/>
+          <b>Oscillator 2 Level</b> – Sets the relative level of oscillator 2 within the patch mix.<br/>
 
           <div class="instructions-gap"></div>
 
-          <b>Oscillator 3 Wave</b> – Chooses the waveform for oscillator 3 and changes the tone color of that layer.<br/>
-          <b>Oscillator 3 Ratio</b> – Changes oscillator 3’s pitch relationship relative to its preset default.<br/>
+          <b>Oscillator 3 Waveform</b> – Chooses the waveform for oscillator 3 and changes the tone color of that layer.<br/>
+          <b>Oscillator 3 Pitch Ratio</b> – Changes oscillator 3’s pitch relationship relative to its preset default.<br/>
+          <b>Oscillator 3 Level</b> – Sets the relative level of oscillator 3 within the patch mix.<br/>
 
           <div class="instructions-gap"></div>
 
@@ -1844,7 +1879,7 @@
 
           <div class="instructions-gap"></div>
 
-          For the most natural results, start with small changes to oscillator ratios, filter Q, and drive shape.
+          For the most natural results, start with small changes to oscillator ratios, oscillator levels, filter Q, and drive shape.
         </div>
 
         <hr class="instructions-divider"/>
@@ -2237,6 +2272,9 @@
     osc1Ratio:1.0,
     osc2Ratio:1.0,
     osc3Ratio:1.0,
+    osc1Level:0.16,
+    osc2Level:0.022,
+    osc3Level:0.010,
     filterQ:1.0,
     driveCurveShape:'tanh',
   };
@@ -2273,9 +2311,13 @@
       osc1Ratio:1.0,
       osc2Ratio:1.0,
       osc3Ratio:1.0,
+      osc1Level:0.16,
+      osc2Level:0.022,
+      osc3Level:0.010,
       filterQ:1.0,
       driveCurveShape:'tanh',
     },
+
     clarinet:{
       patch:'clarinet',
       tone:0.54, brightness:0.42, texture:0.0, body:0.62,
@@ -2298,9 +2340,13 @@
       osc1Ratio:1.0,
       osc2Ratio:1.0,
       osc3Ratio:1.0,
+      osc1Level:0.11,
+      osc2Level:0.024,
+      osc3Level:0.014,
       filterQ:1.0,
       driveCurveShape:'asym',
     },
+
     voice:{
       patch:'voice',
       tone:0.58, brightness:0.56, texture:0.08, body:0.60,
@@ -2323,9 +2369,13 @@
       osc1Ratio:1.0,
       osc2Ratio:1.0,
       osc3Ratio:1.0,
+      osc1Level:0.085,
+      osc2Level:0.035,
+      osc3Level:0.015,
       filterQ:1.0,
       driveCurveShape:'tanh',
     },
+
     brass:{
       patch:'brass',
       tone:0.66, brightness:0.64, texture:0.0, body:0.56,
@@ -2348,9 +2398,13 @@
       osc1Ratio:1.0,
       osc2Ratio:1.0,
       osc3Ratio:1.0,
+      osc1Level:0.095,
+      osc2Level:0.038,
+      osc3Level:0.022,
       filterQ:1.0,
       driveCurveShape:'asym',
     },
+
     strings:{
       patch:'strings',
       tone:0.52, brightness:0.38, texture:0.0, body:0.70,
@@ -2373,9 +2427,13 @@
       osc1Ratio:1.0,
       osc2Ratio:1.0,
       osc3Ratio:1.0,
+      osc1Level:0.09,
+      osc2Level:0.075,
+      osc3Level:0.02,
       filterQ:1.0,
       driveCurveShape:'tanh',
     },
+
     lead:{
       patch:'lead',
       tone:0.62, brightness:0.70, texture:0.0, body:0.46,
@@ -2398,6 +2456,9 @@
       osc1Ratio:1.0,
       osc2Ratio:1.0,
       osc3Ratio:1.0,
+      osc1Level:0.035,
+      osc2Level:0.012,
+      osc3Level:0.008,
       filterQ:1.0,
       driveCurveShape:'hard',
     }
@@ -2425,6 +2486,9 @@
     'osc1Wave',
     'osc2Wave',
     'osc3Wave',
+    'osc1Level',
+    'osc2Level',
+    'osc3Level',
     'osc1Ratio',
     'osc2Ratio',
     'osc3Ratio',
@@ -2588,6 +2652,11 @@
       case 'osc2Ratio':
       case 'osc3Ratio':
         return clamp(toFiniteNumber(value, fallback), 0.125, 8.0);
+
+      case 'osc1Level':
+      case 'osc2Level':
+      case 'osc3Level':
+        return clamp(toFiniteNumber(value, fallback), 0, 0.5);
 
       case 'filterQ':
         return clamp(toFiniteNumber(value, fallback), 0.2, 4.0);
@@ -2932,6 +3001,10 @@
     const ratio2 = clamp(Number(settings.osc2Ratio ?? 1), 0.125, 8);
     const ratio3 = clamp(Number(settings.osc3Ratio ?? 1), 0.125, 8);
 
+    const level1 = clamp(Number(settings.osc1Level ?? base.gains[0]), 0, 0.5);
+    const level2 = clamp(Number(settings.osc2Level ?? base.gains[1]), 0, 0.5);
+    const level3 = clamp(Number(settings.osc3Level ?? base.gains[2]), 0, 0.5);
+
     const resolveWave = (settingValue, fallbackValue) => {
       return VALID_OSC_WAVES.has(settingValue) ? settingValue : fallbackValue;
     };
@@ -2946,6 +3019,11 @@
         base.ratios[1] * ratio2,
         base.ratios[2] * ratio3
       ],
+      gains: [
+        level1,
+        level2,
+        level3
+      ],
       q: clamp(base.q * clamp(Number(settings.filterQ ?? 1), 0.2, 4), 0.2, 20)
     };
 
@@ -2955,11 +3033,7 @@
 
     return {
       ...custom,
-      gains: [
-        custom.gains[0],
-        custom.gains[1] * 0.90,
-        custom.gains[2]
-      ],
+      gains: custom.gains,
       sub: custom.sub * 0.65,
       noiseQ: Math.max(0.5, custom.noiseQ * 0.82),
       q: Math.max(0.45, custom.q * 0.82),
@@ -4213,6 +4287,11 @@
         el.value = value;
       }
 
+      if (id === 'osc1Level' || id === 'osc2Level' || id === 'osc3Level') {
+        value = clamp(value, 0, 0.5);
+        el.value = value;
+      }
+
       state[id] = value;
 
       if (out) out.textContent = formatter(value);
@@ -4804,6 +4883,7 @@
       'expressionCurve','vibratoDelay','vibratoFollow',
       'attackCurve','releaseCurve','chorusBoost',
       'osc1Ratio','osc2Ratio','osc3Ratio',
+      'osc1Level','osc2Level','osc3Level',
       'filterQ'
     ].forEach(id => {
       if ($(id) && state[id] != null) {
@@ -5002,6 +5082,9 @@
       osc1Ratio:v=>v.toFixed(3),
       osc2Ratio:v=>v.toFixed(3),
       osc3Ratio:v=>v.toFixed(3),
+      osc1Level:v=>v.toFixed(2),
+      osc2Level:v=>v.toFixed(2),
+      osc3Level:v=>v.toFixed(2),
       filterQ:v=>v.toFixed(2),
     };
 
@@ -5467,6 +5550,9 @@
     bindRange('osc1Ratio', v=>v.toFixed(3));
     bindRange('osc2Ratio', v=>v.toFixed(3));
     bindRange('osc3Ratio', v=>v.toFixed(3));
+    bindRange('osc1Level', v=>v.toFixed(2));
+    bindRange('osc2Level', v=>v.toFixed(2));
+    bindRange('osc3Level', v=>v.toFixed(2));
     bindRange('filterQ', v=>v.toFixed(2));
 
     bindSelect('midiInputSelect');
