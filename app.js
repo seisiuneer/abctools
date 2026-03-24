@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3209_032426_1000";
+var gVersionNumber = "3210_032426_1130";
 
 var gMIDIInitStillWaiting = false;
 
@@ -50991,7 +50991,7 @@ function AdvancedSettings() {
 
   const modal = DayPilot.Modal.form(form, theData, {
     theme: "modal_flat",
-    top: 30,
+    top: 42,
     width: 790,
     scrollWithPage: (AllowDialogsToScroll()),
     autoFocus: false
