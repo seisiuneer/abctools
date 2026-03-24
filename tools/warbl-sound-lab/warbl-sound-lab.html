@@ -1484,7 +1484,7 @@
             <button id="btnResetCurrentPreset" type="button" title="Reset only the currently selected preset back to its default settings.">
               Reset Current Preset to Defaults
             </button>
-            <button id="btnResetAllPresets" type="button" title="Reset all presets and current settings back to their default values.">
+            <button id="btnResetAllPresets" type="button" title="Reset all presets back to their default settings. Global settings are not changed.">
               Reset All Presets to Defaults
             </button>
           </div>
@@ -1748,8 +1748,8 @@
               <strong>What gets saved in the file:</strong><br>
               • All preset parameters (tone, brightness, texture, vibrato, portamento, transpose, master tuning, reverb, etc.)<br>
               • Preset-specific adjustments and overrides<br>
-              • Expression mode and pitch bend range<br>
-              • MIDI logging, meter, and performance options
+              • Expression mode, pitch bend range, and MIDI input channel<br>
+              • Performance and UI options, including MIDI logging, output meter, and Lower CPU use mode
             </li>
 
             <li>
@@ -2099,6 +2099,187 @@
     droneDestroyTimer: null,
     droneLevelGain: null,
   };
+
+  const VALID_PATCHES = new Set(Object.keys(PRESETS));
+  const VALID_EXPRESSION_MODES = new Set(['cc2', 'cc11', 'cc7', 'velocity', 'fixed']);
+  const VALID_PRIORITY_MODES = new Set(['last', 'high', 'low']);
+  const VALID_REVERB_STYLES = new Set(['room', 'hall', 'plate', 'ambient', 'church']);
+
+  function toFiniteNumber(value, fallback) {
+    const n = Number(value);
+    return Number.isFinite(n) ? n : fallback;
+  }
+
+  function toRoundedInt(value, fallback) {
+    return Math.round(toFiniteNumber(value, fallback));
+  }
+
+  function toBoolean(value, fallback = false) {
+    if (typeof value === 'boolean') return value;
+    if (typeof value === 'string') {
+      const s = value.trim().toLowerCase();
+      if (s === 'true' || s === '1') return true;
+      if (s === 'false' || s === '0') return false;
+    }
+    if (value === 1) return true;
+    if (value === 0) return false;
+    return fallback;
+  }
+
+  function sanitizeEnum(value, validSet, fallback) {
+    return validSet.has(value) ? value : fallback;
+  }
+
+  function sanitizePatchName(value, fallback = DEFAULTS.patch) {
+    return sanitizeEnum(value, VALID_PATCHES, fallback);
+  }
+
+  function sanitizePresetSettingValue(key, value, fallback) {
+    switch (key) {
+      case 'tone':
+      case 'brightness':
+      case 'texture':
+      case 'body':
+      case 'brightnessFollow':
+        return clamp(toFiniteNumber(value, fallback), 0, 1);
+
+      case 'attack':
+        return clamp(toFiniteNumber(value, fallback), 0, 0.15);
+
+      case 'release':
+        return clamp(toFiniteNumber(value, fallback), 0.01, 1.5);
+
+      case 'vibratoRate':
+        return clamp(toFiniteNumber(value, fallback), 0.1, 10);
+
+      case 'vibratoDepth':
+        return clamp(toRoundedInt(value, fallback), 0, 80);
+
+      case 'transposeSemis':
+        return clamp(toRoundedInt(value, fallback), -12, 12);
+
+      case 'bendUp':
+      case 'bendDown':
+        return clamp(toFiniteNumber(value, fallback), 0, 4);
+
+      case 'portamentoEnabled':
+        return toBoolean(value, fallback);
+
+      case 'portamentoMs':
+        return clamp(toRoundedInt(value, fallback), 0, 400);
+
+      case 'priorityMode':
+        return sanitizeEnum(value, VALID_PRIORITY_MODES, fallback);
+
+      case 'reverbStyle':
+        return sanitizeEnum(value, VALID_REVERB_STYLES, fallback);
+
+      case 'reverbWet':
+        return clamp(toFiniteNumber(value, fallback), 0, 1);
+
+      case 'reverbDry':
+        return clamp(toFiniteNumber(value, fallback), 0, 1.5);
+
+      case 'reverbPreDelay':
+        return clamp(toRoundedInt(value, fallback), 0, 250);
+
+      case 'reverbTone':
+        return clamp(toFiniteNumber(value, fallback), 0.05, 0.95);
+
+      case 'masterVolume':
+        return clamp(toFiniteNumber(value, fallback), 0, 2);
+
+      case 'droneVolume':
+        return clamp(toFiniteNumber(value, fallback), 0, 4);
+
+      case 'droneNote':
+        return clamp(toRoundedInt(value, fallback), 36, 74);
+
+      case 'masterTuneCents':
+        return clamp(toRoundedInt(value, fallback), -50, 50);
+
+      case 'patch':
+        return sanitizePatchName(value, fallback);
+
+      default:
+        return fallback;
+    }
+  }
+
+  function sanitizePresetSettingsObject(presetName, rawSettings) {
+    const patchName = sanitizePatchName(presetName, DEFAULTS.patch);
+    const defaults = clonePresetDefaults(patchName);
+    const source = rawSettings && typeof rawSettings === 'object' ? rawSettings : {};
+    const result = { patch: patchName };
+
+    PRESET_SETTING_KEYS.forEach((key) => {
+      result[key] = sanitizePresetSettingValue(key, source[key], defaults[key]);
+    });
+
+    return result;
+  }
+
+  function sanitizePresetOverridesObject(rawOverrides) {
+    const result = {};
+    const source = rawOverrides && typeof rawOverrides === 'object' ? rawOverrides : {};
+
+    Object.keys(PRESETS).forEach((presetName) => {
+      const defaults = clonePresetDefaults(presetName);
+      const rawPresetOverrides =
+        source[presetName] && typeof source[presetName] === 'object'
+          ? source[presetName]
+          : null;
+
+      if (!rawPresetOverrides) return;
+
+      const cleanOverrides = {};
+
+      PRESET_SETTING_KEYS.forEach((key) => {
+        if (!Object.prototype.hasOwnProperty.call(rawPresetOverrides, key)) return;
+
+        const sanitized = sanitizePresetSettingValue(
+          key,
+          rawPresetOverrides[key],
+          defaults[key]
+        );
+
+        if (sanitized !== defaults[key]) {
+          cleanOverrides[key] = sanitized;
+        }
+      });
+
+      if (Object.keys(cleanOverrides).length) {
+        result[presetName] = cleanOverrides;
+      }
+    });
+
+    return result;
+  }
+
+  function sanitizeImportedGlobals(rawGlobals) {
+    const source = rawGlobals && typeof rawGlobals === 'object' ? rawGlobals : {};
+
+    return {
+      expressionMode: sanitizeEnum(
+        source.expressionMode,
+        VALID_EXPRESSION_MODES,
+        DEFAULTS.expressionMode
+      ),
+      pitchBendRange: clamp(
+        toRoundedInt(source.pitchBendRange, DEFAULTS.pitchBendRange),
+        0,
+        12
+      ),
+      midiChannel: clamp(
+        toRoundedInt(source.midiChannel, 1),
+        1,
+        16
+      ),
+      midiLogEnabled: toBoolean(source.midiLogEnabled, false),
+      meterEnabled: toBoolean(source.meterEnabled, false),
+      lowCpuMode: toBoolean(source.lowCpuMode, false)
+    };
+  }
 
   function showWebMidiUnavailableDialog() {
     const html =
@@ -3694,6 +3875,8 @@
   }
 
   function clonePresetDefaults(name){
+    const patchName = sanitizePatchName(name, DEFAULTS.patch);
+
     const {
       pitchBendRange,
       expressionMode,
@@ -3702,8 +3885,8 @@
 
     return {
       ...presetScopedDefaults,
-      ...PRESETS[name],
-      patch: name
+      ...PRESETS[patchName],
+      patch: patchName
     };
   }
 
@@ -3715,12 +3898,13 @@
   }
 
   function getEffectivePresetSettings(name){
-    const overrides = getPresetOverridesStore()[name] || {};
-    return {
-      ...clonePresetDefaults(name),
+    const patchName = sanitizePatchName(name, DEFAULTS.patch);
+    const overrides = getPresetOverridesStore()[patchName] || {};
+    return sanitizePresetSettingsObject(patchName, {
+      ...clonePresetDefaults(patchName),
       ...overrides,
-      patch: name
-    };
+      patch: patchName
+    });
   }
 
   function buildPresetSettingsFromCurrentState(presetName) {
@@ -3728,13 +3912,7 @@
       return getEffectivePresetSettings(presetName);
     }
 
-    const result = { patch: presetName };
-
-    PRESET_SETTING_KEYS.forEach((key) => {
-      result[key] = state[key];
-    });
-
-    return result;
+    return sanitizePresetSettingsObject(presetName, state);
   }
 
   function buildAllEffectivePresetSettings() {
@@ -3771,43 +3949,16 @@
 
   function buildOverridesFromImportedPresets(importedPresets) {
     const overrides = {};
-    const validPriorityModes = new Set(['last', 'high', 'low']);
+    const source = importedPresets && typeof importedPresets === 'object' ? importedPresets : {};
 
     Object.keys(PRESETS).forEach((presetName) => {
-      const imported = importedPresets && importedPresets[presetName]
-        ? importedPresets[presetName]
-        : clonePresetDefaults(presetName);
-
+      const sanitized = sanitizePresetSettingsObject(presetName, source[presetName]);
       const defaults = clonePresetDefaults(presetName);
       const presetOverrides = {};
 
       PRESET_SETTING_KEYS.forEach((key) => {
-        if (!Object.prototype.hasOwnProperty.call(imported, key)) return;
-
-        let importedValue = imported[key];
-
-        if (key === 'priorityMode') {
-          importedValue = validPriorityModes.has(importedValue) ? importedValue : defaults[key];
-        }
-
-        if (key === 'droneNote') {
-          importedValue = clamp(
-            Math.round(Number(importedValue ?? defaults[key])),
-            36,
-            74
-          );
-        }
-
-        if (key === 'droneVolume') {
-          importedValue = clamp(
-            Number(importedValue ?? defaults[key]),
-            0,
-            4
-          );
-        }
-
-        if (importedValue !== defaults[key]) {
-          presetOverrides[key] = importedValue;
+        if (sanitized[key] !== defaults[key]) {
+          presetOverrides[key] = sanitized[key];
         }
       });
 
@@ -3820,7 +3971,7 @@
   }
 
   function applyLoadedSettingsPayload(payload) {
-    if (!payload || payload.fileType !== SETTINGS_FILE_MAGIC) {
+    if (!payload || typeof payload !== 'object' || payload.fileType !== SETTINGS_FILE_MAGIC) {
       throw new Error("This is not a WARBL Sound Lab settings file.");
     }
 
@@ -3830,46 +3981,23 @@
       );
     }
 
-    const importedPresets = payload.presets || {};
-    const importedGlobals = payload.globals || {};
-    const importedPatch = PRESETS[payload.currentPatch] ? payload.currentPatch : 'whistle';
+    const importedPresets =
+      payload.presets && typeof payload.presets === 'object' ? payload.presets : {};
 
-    const validExpressionModes = new Set(['cc2', 'cc11', 'cc7', 'velocity', 'fixed']);
+    const globals = sanitizeImportedGlobals(payload.globals);
+    const importedPatch = sanitizePatchName(payload.currentPatch, 'whistle');
 
     state.presetOverrides = buildOverridesFromImportedPresets(importedPresets);
     state.patch = importedPatch;
 
     Object.assign(state, getEffectivePresetSettings(importedPatch));
 
-    state.droneNote = clamp(
-      Math.round(Number(state.droneNote ?? DEFAULTS.droneNote)),
-      36,
-      74
-    );
-
-    state.droneVolume = clamp(
-      Number(state.droneVolume ?? DEFAULTS.droneVolume),
-      0,
-      4
-    );
-
-    state.expressionMode = validExpressionModes.has(importedGlobals.expressionMode)
-      ? importedGlobals.expressionMode
-      : DEFAULTS.expressionMode;
-
-    state.pitchBendRange = Math.max(
-      0,
-      Math.min(12, Math.round(Number(importedGlobals.pitchBendRange ?? DEFAULTS.pitchBendRange)))
-    );
-
-    const importedMidiChannel = Number(importedGlobals.midiChannel ?? 1);
-    state.midiChannel = (importedMidiChannel >= 1 && importedMidiChannel <= 16)
-      ? importedMidiChannel
-      : 1;
-
-    state.midiLogEnabled = !!importedGlobals.midiLogEnabled;
-    state.meterEnabled = !!importedGlobals.meterEnabled;
-    state.lowCpuMode = !!importedGlobals.lowCpuMode;
+    state.expressionMode = globals.expressionMode;
+    state.pitchBendRange = globals.pitchBendRange;
+    state.midiChannel = globals.midiChannel;
+    state.midiLogEnabled = globals.midiLogEnabled;
+    state.meterEnabled = globals.meterEnabled;
+    state.lowCpuMode = globals.lowCpuMode;
 
     allNotesOff();
     applyStateToUi();
@@ -3951,17 +4079,16 @@
   }
 
   function captureCurrentPresetOverrides(){
-    const presetName = state.patch;
+    const presetName = sanitizePatchName(state.patch, DEFAULTS.patch);
     if (!PRESETS[presetName]) return;
 
     const defaults = clonePresetDefaults(presetName);
+    const current = sanitizePresetSettingsObject(presetName, state);
     const overrides = {};
 
     PRESET_SETTING_KEYS.forEach((key) => {
-      const currentValue = state[key];
-      const defaultValue = defaults[key];
-      if (currentValue !== defaultValue) {
-        overrides[key] = currentValue;
+      if (current[key] !== defaults[key]) {
+        overrides[key] = current[key];
       }
     });
 
@@ -3976,7 +4103,7 @@
   function saveState(){
     try{
       captureCurrentPresetOverrides();
-      localStorage.setItem('warblSoundLabState_v27', JSON.stringify({
+      localStorage.setItem('warblSoundLabState_v28', JSON.stringify({
         patch: state.patch,
         midiChannel: state.midiChannel,
         midiInputId: state.midiInputId || '',
@@ -3992,60 +4119,71 @@
 
   function loadState(){
     try{
-      const raw = localStorage.getItem('warblSoundLabState_v27');
+      const raw = localStorage.getItem('warblSoundLabState_v28');
 
       if (!raw) {
-        Object.assign(state, clonePresetDefaults(state.patch || 'whistle'));
-        state.pitchBendRange = 2;
-        state.expressionMode = 'velocity';
+        Object.assign(state, clonePresetDefaults(DEFAULTS.patch));
+        state.patch = DEFAULTS.patch;
+        state.pitchBendRange = DEFAULTS.pitchBendRange;
+        state.expressionMode = DEFAULTS.expressionMode;
+        state.midiChannel = 1;
+        state.midiInputId = '';
+        state.midiLogEnabled = false;
+        state.meterEnabled = false;
+        state.lowCpuMode = false;
         state.droneVolume = DEFAULTS.droneVolume;
         state.droneNote = DEFAULTS.droneNote;
+        state.presetOverrides = {};
         return;
       }
 
       const saved = JSON.parse(raw);
+      const savedObj = saved && typeof saved === 'object' ? saved : {};
 
-      state.patch = PRESETS[saved.patch] ? saved.patch : 'whistle';
-      state.presetOverrides =
-        saved.presetOverrides && typeof saved.presetOverrides === 'object'
-          ? saved.presetOverrides
-          : {};
+      state.patch = sanitizePatchName(savedObj.patch, 'whistle');
+      state.presetOverrides = sanitizePresetOverridesObject(savedObj.presetOverrides);
 
       Object.assign(state, getEffectivePresetSettings(state.patch));
 
-      state.droneNote = clamp(
-        Math.round(Number(state.droneNote ?? DEFAULTS.droneNote)),
-        36,
-        74
+      state.expressionMode = sanitizeEnum(
+        savedObj.expressionMode,
+        VALID_EXPRESSION_MODES,
+        DEFAULTS.expressionMode
       );
 
-      state.droneVolume = clamp(
-        Number(state.droneVolume ?? DEFAULTS.droneVolume),
+      state.pitchBendRange = clamp(
+        toRoundedInt(savedObj.pitchBendRange, DEFAULTS.pitchBendRange),
         0,
-        4
+        12
       );
 
-      const loadedMidiChannel = Number(saved.midiChannel ?? 1);
-      state.midiChannel =
-        (loadedMidiChannel >= 1 && loadedMidiChannel <= 16)
-          ? loadedMidiChannel
-          : 1;
-
-      state.midiInputId = saved.midiInputId || '';
-      state.midiLogEnabled = !!saved.midiLogEnabled;
-      state.meterEnabled = !!saved.meterEnabled;
-      state.lowCpuMode = !!saved.lowCpuMode;
-      state.pitchBendRange = Math.max(
-        0,
-        Math.min(12, Math.round(Number(saved.pitchBendRange ?? 2)))
+      state.midiChannel = clamp(
+        toRoundedInt(savedObj.midiChannel, 1),
+        1,
+        16
       );
-      state.expressionMode = saved.expressionMode || 'velocity';
+
+      state.midiInputId = typeof savedObj.midiInputId === 'string' ? savedObj.midiInputId : '';
+      state.midiLogEnabled = toBoolean(savedObj.midiLogEnabled, false);
+      state.meterEnabled = toBoolean(savedObj.meterEnabled, false);
+      state.lowCpuMode = toBoolean(savedObj.lowCpuMode, false);
+
+      state.droneNote = sanitizePresetSettingValue('droneNote', state.droneNote, DEFAULTS.droneNote);
+      state.droneVolume = sanitizePresetSettingValue('droneVolume', state.droneVolume, DEFAULTS.droneVolume);
+
     } catch(e){
       Object.assign(state, clonePresetDefaults('whistle'));
-      state.pitchBendRange = 2;
-      state.expressionMode = 'velocity';
+      state.patch = 'whistle';
+      state.pitchBendRange = DEFAULTS.pitchBendRange;
+      state.expressionMode = DEFAULTS.expressionMode;
+      state.midiChannel = 1;
+      state.midiInputId = '';
+      state.midiLogEnabled = false;
+      state.meterEnabled = false;
+      state.lowCpuMode = false;
       state.droneVolume = DEFAULTS.droneVolume;
       state.droneNote = DEFAULTS.droneNote;
+      state.presetOverrides = {};
     }
   }
 
@@ -4072,6 +4210,7 @@
     $('portamentoEnabled').checked = !!state.portamentoEnabled;
     $('lowCpuMode').checked = !!state.lowCpuMode;
     $('showOutputMeter').checked = !!state.meterEnabled;
+    $('showMidiLog').checked = !!state.midiLogEnabled;
 
     renderOutputMeterUi();
 
@@ -4403,6 +4542,7 @@
 
     try {
       count = parseInt(localStorage.getItem(TIP_REMINDER_VISIT_COUNT_KEY) || '0', 10);
+      if (!Number.isFinite(count) || count < 0) count = 0;
     } catch (e) {
       return;
     }
