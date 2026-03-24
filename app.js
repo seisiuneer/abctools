@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3207_032426_0830";
+var gVersionNumber = "3208_032426_0830";
 
 var gMIDIInitStillWaiting = false;
 
@@ -60391,45 +60391,13 @@ function SetTopButtonMargins() {
 
 }
 
+
 // Set the flat looks
 function setFlatButtons(enable){
   document.body.classList.toggle("flat-buttons", enable);
 }
 
-// Load any custom instruments
-async function initCustomInstrumentsFromDB() {
-  if (!USE_CUSTOM_INSTRUMENT_DB) {
-    return;
-  }
-
-  try {
-    await CustomInstrumentsDB.init();
-
-    const slots = await CustomInstrumentsDB.loadSlots();
-
-    if (!Array.isArray(slots) || !slots.some(Boolean)) return;
-
-    gCustomInstrumentSlots = slots.map(d =>
-      d ? { name: d.name, zipBytes: d.zipBytes } : null
-    );
-
-    gCustomInstrumentState = {
-      slots: gCustomInstrumentSlots.map(d =>
-        d ? { name: d.name, zipBytes: d.zipBytes } : null
-      ),
-      pool: [],
-      selectedPoolIndex: null
-    };
-
-    // If this is async, use: await processCustomInstruments(true);
-    processCustomInstruments(true);
-
-  } catch (err) {
-    console.warn("Custom instrument DB init failed:", err);
-  }
-}
-
-async function DoStartup() {
+function DoStartup() {
 
   // Init global state
   gShowAdvancedControls = false;
@@ -61219,9 +61187,6 @@ async function DoStartup() {
   // Save if we need to force a text box recalc after minimize
   gForceInitialTextBoxRecalc = false;
 
-  // Load any custom instruments
-  await initCustomInstrumentsFromDB();
-
   // Check for and process URL share link
   var isFromShare = processShareLink();
 
@@ -61922,6 +61887,42 @@ async function DoStartup() {
 
   // Init the samples database
   initSamplesDB();
+
+  // ===== Startup: restore instruments from DB and suppress initial modal =====
+  (async function initCustomInstrumentsFromDB() {
+
+    if (!USE_CUSTOM_INSTRUMENT_DB) {
+      // Skipping instrument DB init (e.g., Firefox or persistence disabled).
+      return;
+    }
+
+    try {
+      await CustomInstrumentsDB.init(); // ensure DB & store exist
+
+      // Load descriptors: [{ name: string, zipBytes: ArrayBuffer } | null] x 8
+      const slots = await CustomInstrumentsDB.loadSlots();
+
+      // Nothing stored yet
+      if (!Array.isArray(slots) || !slots.some(Boolean)) return;
+
+      // Restore globals with descriptors only (no File objects)
+      gCustomInstrumentSlots = slots.map(d => d ? { name: d.name, zipBytes: d.zipBytes } : null);
+
+      gCustomInstrumentState = {
+        // Use fresh objects to avoid accidental external mutation
+        slots: gCustomInstrumentSlots.map(d => d ? { name: d.name, zipBytes: d.zipBytes } : null),
+        pool: [],
+        selectedPoolIndex: null
+      };
+
+      // Process silently on startup
+      processCustomInstruments(/* suppressStatus */ true);
+
+    } catch (err) {
+      console.warn("Custom instrument DB init failed:", err);
+    }
+  })();
+
 
   // Listen for online state changes
   window.addEventListener('online', doOnlineCheck);
