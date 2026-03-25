@@ -1399,11 +1399,11 @@
           <div class="controls compact-4">
             <div class="control" title="Shifts the patch from rounder to more focused and forward.">
               <label for="tone">Tone <span class="value" id="toneValue"></span></label>
-              <input id="tone" title="Shifts the patch from rounder to more focused and forward." type="range" min="0" max="1" step="0.01" value="0.5">
+              <input id="tone" title="Shifts the patch from rounder to more focused and forward." type="range" min="0" max="4" step="0.01" value="0.5">
             </div>  
             <div class="control" title="Controls upper harmonics and filter openness.">
               <label for="brightness">Brightness <span class="value" id="brightnessValue"></span></label>
-              <input id="brightness" title="Controls upper harmonics and filter openness." type="range" min="0" max="1" step="0.01" value="0.5">
+              <input id="brightness" title="Controls upper harmonics and filter openness." type="range" min="0" max="4" step="0.01" value="0.5">
             </div>
             <div class="control" title="Adds breath, reed, bow, or edge depending on the patch.">
               <label for="texture">Texture / Noise <span class="value" id="textureValue"></span></label>
@@ -2580,13 +2580,15 @@
 
   function sanitizePresetSettingValue(key, value, fallback) {
     switch (key) {
-      case 'tone':
-      case 'brightness':
       case 'texture':
       case 'body':
       case 'brightnessFollow':
       case 'vibratoFollow':
         return clamp(toFiniteNumber(value, fallback), 0, 1);
+
+      case 'tone':
+      case 'brightness':
+        return clamp(toFiniteNumber(value, fallback), 0, 4);
 
       case 'attack':
         return clamp(toFiniteNumber(value, fallback), 0, 0.15);
