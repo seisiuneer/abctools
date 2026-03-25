@@ -317,22 +317,6 @@
       grid-template-columns: repeat(4, minmax(0, 1fr));
     }
 
-    .synth-osc-row {
-      grid-template-columns: repeat(6, minmax(0, 1fr));
-    }
-
-    .synth-osc-row .osc-wave {
-      grid-column: span 2;
-    }
-
-    .synth-osc-row .osc-ratio {
-      grid-column: span 2;
-    }
-
-    .synth-osc-row .osc-level {
-      grid-column: span 2;
-    }
-
     .control,
     .field {
       padding: 8px 9px;
@@ -849,6 +833,37 @@
       flex:0 0 auto;
     }
 
+    .synth-osc-row {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .synth-osc-row .osc-wave,
+    .synth-osc-row .osc-ratio-coarse,
+    .synth-osc-row .osc-ratio-fine,
+    .synth-osc-row .osc-level {
+      grid-column: span 1;
+    }
+
+    .ratio-fine-reset {
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .ratio-fine-reset:hover {
+      color: #ffffff;
+      text-shadow: 0 0 6px rgba(255,255,255,0.6);
+    }
+
+    .ratio-fine-reset:active {
+      opacity: 0.7;
+    }
+
+    .ratio-fine-reset:focus {
+      outline: 1px solid #60a5fa;
+      outline-offset: 2px;
+      border-radius: 4px;
+    }
+
     #instructionsOverlay {
       display: none;
       position: fixed;
@@ -1061,7 +1076,8 @@
       }
 
       .synth-osc-row .osc-wave,
-      .synth-osc-row .osc-ratio,
+      .synth-osc-row .osc-ratio-coarse,
+      .synth-osc-row .osc-ratio-fine,
       .synth-osc-row .osc-level {
         grid-column: span 1;
       }
@@ -1121,6 +1137,10 @@
         text-align:center;
       }
 
+      .synth-osc-row {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
     }
 
     @media (max-width: 680px) {
@@ -1157,6 +1177,10 @@
 
       .main-tab-btn{
         flex:1 1 100%;
+      }
+
+      .synth-osc-row {
+        grid-template-columns: 1fr;
       }
     }
 
@@ -1477,9 +1501,24 @@
               </select>
             </div>
 
-            <div class="control osc-ratio" title="Changes oscillator 1’s tuning ratio relative to the played note. Use the keyboard left and right arrow keys for precise value changes.">
-              <label for="osc1Ratio">Oscillator 1 Pitch Ratio <span class="value" id="osc1RatioValue"></span></label>
-              <input id="osc1Ratio" type="range" min="0.125" max="8" step="0.001" value="1.0">
+            <div class="control osc-ratio-coarse" title="Sets the coarse integer part of oscillator 1’s pitch ratio from 0 to 8.">
+              <label for="osc1RatioCoarse">Oscillator 1 Ratio Coarse <span class="value" id="osc1RatioCoarseValue"></span></label>
+              <input id="osc1RatioCoarse" type="range" min="0" max="8" step="1" value="1">
+            </div>
+
+            <div class="control osc-ratio-fine" title="Adds a fine offset from -0.500 to +0.500 to oscillator 1’s coarse pitch ratio. Use the keyboard left and right arrow keys for precise value changes. Click the value display to reset to zero.">
+              <label for="osc1RatioFine">
+                Oscillator 1 Ratio Fine
+                <span
+                  class="value ratio-fine-reset"
+                  id="osc1RatioFineValue"
+                  role="button"
+                  tabindex="0"
+                  title="Click to reset oscillator 1 ratio fine adjustment to 0.000"
+                  aria-label="Reset oscillator 1 ratio fine adjustment to zero"
+                ></span>
+              </label>
+              <input id="osc1RatioFine" type="range" min="-0.5" max="0.5" step="0.001" value="0.000">
             </div>
 
             <div class="control osc-level" title="Sets the relative mix amount of oscillator 1 within the patch mix. Use the keyboard left and right arrow keys for precise value changes.">
@@ -1500,9 +1539,24 @@
               </select>
             </div>
 
-            <div class="control osc-ratio" title="Changes oscillator 2’s tuning ratio relative to the played note. Use the keyboard left and right arrow keys for precise value changes.">
-              <label for="osc2Ratio">Oscillator 2 Pitch Ratio <span class="value" id="osc2RatioValue"></span></label>
-              <input id="osc2Ratio" type="range" min="0.125" max="8" step="0.001" value="2.01">
+            <div class="control osc-ratio-coarse" title="Sets the coarse integer part of oscillator 2’s pitch ratio from 0 to 8.">
+              <label for="osc2RatioCoarse">Oscillator 2 Ratio Coarse <span class="value" id="osc2RatioCoarseValue"></span></label>
+              <input id="osc2RatioCoarse" type="range" min="0" max="8" step="1" value="2">
+            </div>
+
+            <div class="control osc-ratio-fine" title="Adds a fine offset from -0.500 to +0.500 to oscillator 2’s coarse pitch ratio. Use the keyboard left and right arrow keys for precise value changes. Click the value display to reset to zero.">
+              <label for="osc2RatioFine">
+                Oscillator 2 Ratio Fine
+                <span
+                  class="value ratio-fine-reset"
+                  id="osc2RatioFineValue"
+                  role="button"
+                  tabindex="0"
+                  title="Click to reset oscillator 2 ratio fine adjustment to 0.000"
+                  aria-label="Reset oscillator 2 ratio fine adjustment to zero"
+                ></span>
+              </label>
+              <input id="osc2RatioFine" type="range" min="-0.5" max="0.5" step="0.001" value="0.000">
             </div>
 
             <div class="control osc-level" title="Sets the relative mix amount of oscillator 2 within the patch mix. Use the keyboard left and right arrow keys for precise value changes.">
@@ -1523,9 +1577,24 @@
               </select>
             </div>
 
-            <div class="control osc-ratio" title="Changes oscillator 3’s tuning ratio relative to the played note. Use the keyboard left and right arrow keys for precise value changes.">
-              <label for="osc3Ratio">Oscillator 3 Pitch Ratio <span class="value" id="osc3RatioValue"></span></label>
-              <input id="osc3Ratio" type="range" min="0.125" max="8" step="0.001" value="3.0">
+            <div class="control osc-ratio-coarse" title="Sets the coarse integer part of oscillator 3’s pitch ratio from 0 to 8.">
+              <label for="osc3RatioCoarse">Oscillator 3 Ratio Coarse <span class="value" id="osc3RatioCoarseValue"></span></label>
+              <input id="osc3RatioCoarse" type="range" min="0" max="8" step="1" value="3">
+            </div>
+
+            <div class="control osc-ratio-fine" title="Adds a fine offset from -0.500 to +0.500 to oscillator 3’s coarse pitch ratio. Use the keyboard left and right arrow keys for precise value changes. Click the value display to reset to zero.">
+              <label for="osc3RatioFine">
+                Oscillator 3 Ratio Fine
+                <span
+                  class="value ratio-fine-reset"
+                  id="osc3RatioFineValue"
+                  role="button"
+                  tabindex="0"
+                  title="Click to reset oscillator 3 ratio fine adjustment to 0.000"
+                  aria-label="Reset oscillator 3 ratio fine adjustment to zero"
+                ></span>
+              </label>
+              <input id="osc3RatioFine" type="range" min="-0.5" max="0.5" step="0.001" value="0.000">
             </div>
 
             <div class="control osc-level" title="Sets the relative mix amount of oscillator 3 within the patch mix. Use the keyboard left and right arrow keys for precise value changes.">
@@ -1848,21 +1917,27 @@
           <div class="instructions-gap"></div>
 
           <b>Oscillator 1 Waveform</b> – Chooses the waveform for oscillator 1 and controls the tone color of that layer.<br/>
-          <b>Oscillator 1 Pitch Ratio</b> – Changes oscillator 1’s tuning ratio relative to the played note.<br/>
-          <b>Oscillator 1 Level</b> – Sets the relative mix amount of oscillator 1 within the patch mix.<br/>
+          <b>Oscillator 1 Pitch Ratio Coarse</b> – Sets the main pitch ratio as an integer multiple of the played note (0–8). The final ratio is limited to 0.125–8.5 when combined with the ratio fine adjustment.<br/>
+          <b>Oscillator 1 Pitch Ratio Fine</b> – Applies a small offset (±0.5) for detuning, beating, or subtle harmonic shifts. Click the displayed value to reset to zero.<br/>
+          <b>Oscillator 1 Level</b> – Sets the relative mix amount of oscillator 1 within the patch mix.
 
           <div class="instructions-gap"></div>
 
           <b>Oscillator 2 Waveform</b> – Chooses the waveform for oscillator 2 and controls the tone color of that layer.<br/>
-          <b>Oscillator 2 Pitch Ratio</b> – Changes oscillator 2’s tuning ratio relative to the played note.<br/>
-          <b>Oscillator 2 Level</b> – Sets the relative mix amount of oscillator 2 within the patch mix.<br/>
+          <b>Oscillator 2 Pitch Ratio Coarse</b> – Sets the main pitch ratio as an integer multiple of the played note (0–8). The final ratio is limited to 0.125–8.5 when combined with the ratio fine adjustment.<br/>
+          <b>Oscillator 2 Pitch Ratio Fine</b> – Applies a small offset (±0.5) for detuning, beating, or subtle harmonic shifts. Click the displayed value to reset to zero.<br/>
+          <b>Oscillator 2 Level</b> – Sets the relative mix amount of oscillator 2 within the patch mix.
 
           <div class="instructions-gap"></div>
 
           <b>Oscillator 3 Waveform</b> – Chooses the waveform for oscillator 3 and controls the tone color of that layer.<br/>
-          <b>Oscillator 3 Pitch Ratio</b> – Changes oscillator 3’s tuning ratio relative to the played note.<br/>
-          <b>Oscillator 3 Level</b> – Sets the relative mix amount of oscillator 3 within the patch mix.<br/>
+          <b>Oscillator 3 Pitch Ratio Coarse</b> – Sets the main pitch ratio as an integer multiple of the played note (0–8).  The final ratio is limited to 0.125–8.5 when combined with the ratio fine adjustment.<br/>
+          <b>Oscillator 3 Pitch Ratio Fine</b> – Applies a small offset (±0.5) for detuning, beating, or subtle harmonic shifts. Click the displayed value to reset to zero.<br/>
+          <b>Oscillator 3 Level</b> – Sets the relative mix amount of oscillator 3 within the patch mix.
 
+          <div class="instructions-gap"></div>
+
+          Each oscillator uses a coarse + fine pitch ratio. Click the fine value display to reset the fine adjustment to zero.
 
           <div class="instructions-gap"></div>
 
@@ -2669,7 +2744,7 @@
       case 'osc1Ratio':
       case 'osc2Ratio':
       case 'osc3Ratio':
-        return clamp(toFiniteNumber(value, fallback), 0.125, 8.0);
+        return clamp(toFiniteNumber(value, fallback), 0.125, 8.5);
 
       case 'osc1Level':
       case 'osc2Level':
@@ -3019,9 +3094,9 @@
   function getEffectivePatchProfile(settings){
     const base = getPatchProfile(settings.patch);
 
-    const ratio1 = clamp(Number(settings.osc1Ratio ?? base.ratios[0]), 0.125, 8);
-    const ratio2 = clamp(Number(settings.osc2Ratio ?? base.ratios[1]), 0.125, 8);
-    const ratio3 = clamp(Number(settings.osc3Ratio ?? base.ratios[2]), 0.125, 8);
+    const ratio1 = clamp(Number(settings.osc1Ratio ?? base.ratios[0]), 0.125, 8.5);
+    const ratio2 = clamp(Number(settings.osc2Ratio ?? base.ratios[1]), 0.125, 8.5);
+    const ratio3 = clamp(Number(settings.osc3Ratio ?? base.ratios[2]), 0.125, 8.5);
 
     const level1 = clamp(Number(settings.osc1Level ?? base.gains[0]), 0, OSC_LEVEL_INTERNAL_MAX);
     const level2 = clamp(Number(settings.osc2Level ?? base.gains[1]), 0, OSC_LEVEL_INTERNAL_MAX);
@@ -4283,38 +4358,246 @@
     saveState();
   }
 
+  function syncRatioPairFromState(baseId) {
+    const coarseEl = $(`${baseId}Coarse`);
+    const fineEl = $(`${baseId}Fine`);
+    if (!coarseEl || !fineEl) return;
+
+    const parts = splitRatioForUi(state[baseId]);
+    coarseEl.value = String(parts.coarse);
+    fineEl.value = parts.fine.toFixed(3);
+  }
+
+  function refreshRatioPairLabels(baseId) {
+    const coarseEl = $(`${baseId}Coarse`);
+    const fineEl = $(`${baseId}Fine`);
+    const coarseOut = $(`${baseId}CoarseValue`);
+    const fineOut = $(`${baseId}FineValue`);
+    if (!coarseEl || !fineEl) return;
+
+    const coarse = Math.round(Number(coarseEl.value));
+    const fine = Number(fineEl.value);
+    const combined = combineRatioFromUi(coarse, fine);
+
+    if (coarseOut) coarseOut.textContent = String(coarse);
+    if (fineOut) {
+      const fineText = `${fine > 0 ? '+' : ''}${fine.toFixed(3)}`;
+      fineOut.textContent = `${fineText}`;
+    }
+  }
+
+  function bindRatioPair(baseId) {
+    const coarseEl = $(`${baseId}Coarse`);
+    const fineEl = $(`${baseId}Fine`);
+    if (!coarseEl || !fineEl) return;
+
+    const update = (source) => {
+      let coarse = Math.round(Number(coarseEl.value));
+      let fine = Number(fineEl.value);
+
+      coarse = clamp(coarse, 0, 8);
+      fine = clamp(fine, -0.5, 0.5);
+
+      let combined = +(coarse + fine).toFixed(3);
+      combined = clamp(combined, 0.125, 8.5);
+
+      if (source === 'fine') {
+        // Preserve the user’s chosen coarse/fine pair while dragging fine,
+        // unless the combined value had to be clamped at the hard limits.
+        if (combined !== +(coarse + fine).toFixed(3)) {
+          const split = splitRatioForUi(combined);
+          coarse = split.coarse;
+          fine = split.fine;
+        }
+      } else {
+        // When coarse changes, normalize the pair so the UI stays consistent.
+        const split = splitRatioForUi(combined);
+        coarse = split.coarse;
+        fine = split.fine;
+      }
+
+      coarseEl.value = String(coarse);
+      fineEl.value = fine.toFixed(3);
+
+      state[baseId] = combined;
+
+      refreshRatioPairLabels(baseId);
+      requestVoiceUpdate();
+      updateDroneVoice();
+      saveState();
+    };
+
+    coarseEl.addEventListener('input', () => update('coarse'));
+    fineEl.addEventListener('input', () => update('fine'));
+
+    const initial = splitRatioForUi(state[baseId]);
+    coarseEl.value = String(initial.coarse);
+    fineEl.value = initial.fine.toFixed(3);
+    refreshRatioPairLabels(baseId);
+  }
+
+  function isOscRatioId(id) {
+    return id === 'osc1Ratio' || id === 'osc2Ratio' || id === 'osc3Ratio';
+  }
+
+  function getRatioUiIds(baseId) {
+    return {
+      coarse: baseId + 'Coarse',
+      fine: baseId + 'Fine'
+    };
+  }
+
+  function splitRatioForUi(value) {
+    const v = clamp(Number(value), 0.125, 8.5);
+
+    let coarse;
+    let fine;
+
+    // Special low-end handling: below 0.5, keep coarse at 0
+    // because coarse cannot go negative.
+    if (v < 0.5) {
+      coarse = 0;
+      fine = v;
+    } else {
+      coarse = Math.round(v);
+      coarse = clamp(coarse, 0, 8);
+
+      fine = +(v - coarse).toFixed(3);
+
+      // Keep fine inside the allowed UI range.
+      if (fine < -0.5) {
+        coarse -= 1;
+        fine = +(v - coarse).toFixed(3);
+      } else if (fine > 0.5) {
+        coarse += 1;
+        fine = +(v - coarse).toFixed(3);
+      }
+
+      coarse = clamp(coarse, 0, 8);
+      fine = clamp(fine, -0.5, 0.5);
+    }
+
+    return {
+      coarse,
+      fine: +fine.toFixed(3)
+    };
+  }
+
+  function combineRatioFromUi(coarseValue, fineValue) {
+    let coarse = Math.round(Number(coarseValue));
+    let fine = Number(fineValue);
+
+    coarse = clamp(coarse, 0, 8);
+    fine = clamp(fine, -0.5, 0.5);
+
+    let combined = coarse + fine;
+
+    // If coarse is 0, we cannot represent negative totals,
+    // so clamp the final ratio to the supported minimum.
+    combined = clamp(combined, 0.125, 8.5);
+
+    return +combined.toFixed(3);
+  }
+
+  function setRatioUiFromState(baseId, ratioValue) {
+    const ids = getRatioUiIds(baseId);
+    const coarseEl = $(ids.coarse);
+    const fineEl = $(ids.fine);
+
+    if (!coarseEl || !fineEl) return;
+
+    const parts = splitRatioForUi(ratioValue);
+
+    coarseEl.value = String(parts.coarse);
+    fineEl.value = parts.fine.toFixed(3);
+  }
+
+  function getRatioValueFromUi(baseId) {
+    const ids = getRatioUiIds(baseId);
+    const coarseEl = $(ids.coarse);
+    const fineEl = $(ids.fine);
+
+    if (!coarseEl || !fineEl) return 1;
+
+    return combineRatioFromUi(coarseEl.value, fineEl.value);
+  }
+
+  function initRatioFineReset(baseId) {
+    const fineValueEl = $(`${baseId}FineValue`);
+    const fineSliderEl = $(`${baseId}Fine`);
+    const coarseSliderEl = $(`${baseId}Coarse`);
+
+    if (!fineValueEl || !fineSliderEl || !coarseSliderEl) return;
+
+    const resetFine = () => {
+      fineSliderEl.value = '0.000';
+
+      let coarse = Math.round(Number(coarseSliderEl.value));
+      coarse = clamp(coarse, 0, 8);
+
+      let combined = clamp(coarse, 0.125, 8.5);
+      state[baseId] = combined;
+
+      const split = splitRatioForUi(combined);
+      coarseSliderEl.value = String(split.coarse);
+      fineSliderEl.value = split.fine.toFixed(3);
+
+      refreshRatioPairLabels(baseId);
+      requestVoiceUpdate();
+      updateDroneVoice();
+      saveState();
+    };
+
+    fineValueEl.addEventListener('click', resetFine);
+
+    fineValueEl.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        resetFine();
+      }
+    });
+  }
+
   function bindRange(id, formatter){
-    const el = $(id), out = $(id + 'Value');
+    const el = $(id);
+    const out = $(id + 'Value');
 
     const update = () => {
-      let value = Number(el.value);
+      let value;
 
-      if (id === 'pitchBendRange') {
-        value = Math.max(0, Math.min(12, Math.round(value)));
-        el.value = value;
-      }
-
-      if (id === 'transposeSemis') {
-        value = Math.round(value);
-        el.value = value;
-      }
-
-      if (id === 'masterTuneCents') {
-        value = Math.round(value);
-        el.value = value;
-      }
-
-      if (id === 'droneVolume') {
-        value = clamp(value, 0, 4);
-        el.value = value;
-      }
-
-      if (isOscLevelId(id)) {
-        value = clamp(value, 0, 1);
-        el.value = value;
-        state[id] = oscLevelDisplayToInternal(value);
-      } else {
+      if (isOscRatioId(id)) {
+        value = getRatioValueFromUi(id);
         state[id] = value;
+      } else {
+        value = Number(el.value);
+
+        if (id === 'pitchBendRange') {
+          value = Math.max(0, Math.min(12, Math.round(value)));
+          el.value = value;
+        }
+
+        if (id === 'transposeSemis') {
+          value = Math.round(value);
+          el.value = value;
+        }
+
+        if (id === 'masterTuneCents') {
+          value = Math.round(value);
+          el.value = value;
+        }
+
+        if (id === 'droneVolume') {
+          value = clamp(value, 0, 4);
+          el.value = value;
+        }
+
+        if (isOscLevelId(id)) {
+          value = clamp(value, 0, 1);
+          el.value = value;
+          state[id] = oscLevelDisplayToInternal(value);
+        } else {
+          state[id] = value;
+        }
       }
 
       if (out) out.textContent = formatter(value);
@@ -4335,12 +4618,25 @@
         updateDroneVoice();
       } else {
         requestVoiceUpdate();
+        if (isOscRatioId(id)) {
+          updateDroneVoice();
+        }
       }
 
       saveState();
     };
 
-    el.addEventListener('input', update);
+    if (isOscRatioId(id)) {
+      const ids = getRatioUiIds(id);
+      const coarseEl = $(ids.coarse);
+      const fineEl = $(ids.fine);
+
+      if (coarseEl) coarseEl.addEventListener('input', update);
+      if (fineEl) fineEl.addEventListener('input', update);
+    } else {
+      el.addEventListener('input', update);
+    }
+
     update();
   }
 
@@ -4905,7 +5201,6 @@
       'reverbTone','masterVolume','droneVolume','masterTuneCents',
       'expressionCurve','vibratoDelay','vibratoFollow',
       'attackCurve','releaseCurve','chorusBoost',
-      'osc1Ratio','osc2Ratio','osc3Ratio',
       'osc1Level','osc2Level','osc3Level',
       'filterQ'
     ].forEach(id => {
@@ -4915,6 +5210,10 @@
           : state[id];
       }
     });
+
+    syncRatioPairFromState('osc1Ratio');
+    syncRatioPairFromState('osc2Ratio');
+    syncRatioPairFromState('osc3Ratio');
 
     $('expressionModeSelect').value = state.expressionMode;
     $('priorityMode').value = state.priorityMode;
@@ -5093,16 +5392,12 @@
       masterVolume:v=>v.toFixed(2),
       droneVolume:v=>v.toFixed(2),
       masterTuneCents:v=>`${signedInt(v)} cents`,
-
       expressionCurve:v=>v.toFixed(2),
       vibratoDelay:v=>`${Math.round(v)} ms`,
       vibratoFollow:v=>v.toFixed(2),
       attackCurve:v=>v.toFixed(2),
       releaseCurve:v=>v.toFixed(2),
       chorusBoost:v=>v.toFixed(2),
-      osc1Ratio:v=>v.toFixed(3),
-      osc2Ratio:v=>v.toFixed(3),
-      osc3Ratio:v=>v.toFixed(3),
       osc1Level:v=>v.toFixed(3),
       osc2Level:v=>v.toFixed(3),
       osc3Level:v=>v.toFixed(3),
@@ -5113,6 +5408,10 @@
       const out = $(id + 'Value');
       if (out && $(id)) out.textContent = formatters[id](+$(id).value);
     });
+
+    refreshRatioPairLabels('osc1Ratio');
+    refreshRatioPairLabels('osc2Ratio');
+    refreshRatioPairLabels('osc3Ratio');
   }
 
   function updateMeterRouting() {
@@ -5568,13 +5867,18 @@
     bindRange('attackCurve', v=>v.toFixed(2));
     bindRange('releaseCurve', v=>v.toFixed(2));
     bindRange('chorusBoost', v=>v.toFixed(2));
-    bindRange('osc1Ratio', v=>v.toFixed(3));
-    bindRange('osc2Ratio', v=>v.toFixed(3));
-    bindRange('osc3Ratio', v=>v.toFixed(3));
+
     bindRange('osc1Level', v=>v.toFixed(3));
     bindRange('osc2Level', v=>v.toFixed(3));
     bindRange('osc3Level', v=>v.toFixed(3));
     bindRange('filterQ', v=>v.toFixed(2));
+
+    bindRatioPair('osc1Ratio');
+    bindRatioPair('osc2Ratio');
+    bindRatioPair('osc3Ratio');
+    initRatioFineReset('osc1Ratio');
+    initRatioFineReset('osc2Ratio');
+    initRatioFineReset('osc3Ratio');
 
     bindSelect('midiInputSelect');
     bindSelect('expressionModeSelect');
