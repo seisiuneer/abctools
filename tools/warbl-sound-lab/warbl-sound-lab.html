@@ -1477,12 +1477,12 @@
 
             <div class="control" title="Changes oscillator 1's pitch relationship relative to its preset default.">
               <label for="osc1Ratio">Oscillator 1 Pitch Ratio <span class="value" id="osc1RatioValue"></span></label>
-              <input id="osc1Ratio" type="range" min="0.125" max="8" step="0.125" value="1.0">
+              <input id="osc1Ratio" type="range" min="0.125" max="4" step="0.125" value="1.0">
             </div>
 
             <div class="control" title="Sets the relative level of oscillator 1 within the patch mix.">
               <label for="osc1Level">Oscillator 1 Level <span class="value" id="osc1LevelValue"></span></label>
-              <input id="osc1Level" type="range" min="0" max="0.5" step="0.01" value="0.16">
+              <input id="osc1Level" type="range" min="0" max="1.0" step="0.001" value="0.64">
             </div>
 
             <div></div>
@@ -1502,12 +1502,12 @@
 
             <div class="control" title="Changes oscillator 2's pitch relationship relative to its preset default.">
               <label for="osc2Ratio">Oscillator 2 Pitch Ratio <span class="value" id="osc2RatioValue"></span></label>
-              <input id="osc2Ratio" type="range" min="0.125" max="8" step="0.125" value="1.0">
+              <input id="osc2Ratio" type="range" min="0.125" max="4" step="0.125" value="1.0">
             </div>
 
             <div class="control" title="Sets the relative level of oscillator 2 within the patch mix.">
               <label for="osc2Level">Oscillator 2 Level <span class="value" id="osc2LevelValue"></span></label>
-              <input id="osc2Level" type="range" min="0" max="0.5" step="0.01" value="0.022">
+              <input id="osc2Level" type="range" min="0" max="1.0" step="0.001" value="0.088">
             </div>
 
             <div></div>
@@ -1527,12 +1527,12 @@
 
             <div class="control" title="Changes oscillator 3's pitch relationship relative to its preset default.">
               <label for="osc3Ratio">Oscillator 3 Pitch Ratio <span class="value" id="osc3RatioValue"></span></label>
-              <input id="osc3Ratio" type="range" min="0.125" max="8" step="0.125" value="1.0">
+              <input id="osc3Ratio" type="range" min="0.125" max="4" step="0.125" value="1.0">
             </div>
 
             <div class="control" title="Sets the relative level of oscillator 3 within the patch mix.">
               <label for="osc3Level">Oscillator 3 Level <span class="value" id="osc3LevelValue"></span></label>
-              <input id="osc3Level" type="range" min="0" max="0.5" step="0.01" value="0.010">
+              <input id="osc3Level" type="range" min="0" max="1.0" step="0.001" value="0.040">
             </div>
 
             <div></div>
@@ -2237,7 +2237,7 @@
   };
 
   const SETTINGS_FILE_MAGIC = 'WARBL_SOUND_LAB_SETTINGS';
-  const SETTINGS_FILE_VERSION = 4;
+  const SETTINGS_FILE_VERSION = 5;
   const DEFAULT_SETTINGS_FILENAME = 'warbl-sound-lab-settings.json';
   const LAST_SETTINGS_FILENAME_KEY = 'warblSoundLabLastSettingsFilename_v4';
   const TIP_REMINDER_VISIT_COUNT_KEY = 'warblSoundLabVisitCount_v1';
@@ -2533,6 +2533,23 @@
   const VALID_OSC_WAVES = new Set(['sine', 'triangle', 'sawtooth', 'square']);
   const VALID_DRIVE_CURVES = new Set(['tanh','asym','hard']);
 
+  const OSC_LEVEL_INTERNAL_MAX = 0.25;
+  const OSC_LEVEL_DISPLAY_MAX = 1.0;
+
+  function oscLevelDisplayToInternal(displayValue) {
+    const v = clamp(Number(displayValue), 0, OSC_LEVEL_DISPLAY_MAX);
+    return (v / OSC_LEVEL_DISPLAY_MAX) * OSC_LEVEL_INTERNAL_MAX;
+  }
+
+  function oscLevelInternalToDisplay(internalValue) {
+    const v = clamp(Number(internalValue), 0, OSC_LEVEL_INTERNAL_MAX);
+    return (v / OSC_LEVEL_INTERNAL_MAX) * OSC_LEVEL_DISPLAY_MAX;
+  }
+
+  function isOscLevelId(id) {
+    return id === 'osc1Level' || id === 'osc2Level' || id === 'osc3Level';
+  }
+
   function toFiniteNumber(value, fallback) {
     const n = Number(value);
     return Number.isFinite(n) ? n : fallback;
@@ -2651,12 +2668,12 @@
       case 'osc1Ratio':
       case 'osc2Ratio':
       case 'osc3Ratio':
-        return clamp(toFiniteNumber(value, fallback), 0.125, 8.0);
+        return clamp(toFiniteNumber(value, fallback), 0.125, 4.0);
 
       case 'osc1Level':
       case 'osc2Level':
       case 'osc3Level':
-        return clamp(toFiniteNumber(value, fallback), 0, 0.5);
+        return clamp(toFiniteNumber(value, fallback), 0, OSC_LEVEL_INTERNAL_MAX);
 
       case 'filterQ':
         return clamp(toFiniteNumber(value, fallback), 0.2, 4.0);
@@ -2997,13 +3014,13 @@
   function getEffectivePatchProfile(settings){
     const base = getPatchProfile(settings.patch);
 
-    const ratio1 = clamp(Number(settings.osc1Ratio ?? 1), 0.125, 8);
-    const ratio2 = clamp(Number(settings.osc2Ratio ?? 1), 0.125, 8);
-    const ratio3 = clamp(Number(settings.osc3Ratio ?? 1), 0.125, 8);
+    const ratio1 = clamp(Number(settings.osc1Ratio ?? 1), 0.125, 4);
+    const ratio2 = clamp(Number(settings.osc2Ratio ?? 1), 0.125, 4);
+    const ratio3 = clamp(Number(settings.osc3Ratio ?? 1), 0.125, 4);
 
-    const level1 = clamp(Number(settings.osc1Level ?? base.gains[0]), 0, 0.5);
-    const level2 = clamp(Number(settings.osc2Level ?? base.gains[1]), 0, 0.5);
-    const level3 = clamp(Number(settings.osc3Level ?? base.gains[2]), 0, 0.5);
+    const level1 = clamp(Number(settings.osc1Level ?? base.gains[0]), 0, OSC_LEVEL_INTERNAL_MAX);
+    const level2 = clamp(Number(settings.osc2Level ?? base.gains[1]), 0, OSC_LEVEL_INTERNAL_MAX);
+    const level3 = clamp(Number(settings.osc3Level ?? base.gains[2]), 0, OSC_LEVEL_INTERNAL_MAX);
 
     const resolveWave = (settingValue, fallbackValue) => {
       return VALID_OSC_WAVES.has(settingValue) ? settingValue : fallbackValue;
@@ -4287,12 +4304,13 @@
         el.value = value;
       }
 
-      if (id === 'osc1Level' || id === 'osc2Level' || id === 'osc3Level') {
-        value = clamp(value, 0, 0.5);
+      if (isOscLevelId(id)) {
+        value = clamp(value, 0, 1);
         el.value = value;
+        state[id] = oscLevelDisplayToInternal(value);
+      } else {
+        state[id] = value;
       }
-
-      state[id] = value;
 
       if (out) out.textContent = formatter(value);
 
@@ -4785,7 +4803,7 @@
   function saveState(){
     try{
       captureCurrentPresetOverrides();
-      localStorage.setItem('warblSoundLabState_v30', JSON.stringify({
+      localStorage.setItem('warblSoundLabState_v31', JSON.stringify({
         patch: state.patch,
         midiChannel: state.midiChannel,
         midiInputId: state.midiInputId || '',
@@ -4802,7 +4820,7 @@
 
   function loadState(){
     try{
-      const raw = localStorage.getItem('warblSoundLabState_v30');
+      const raw = localStorage.getItem('warblSoundLabState_v31');
 
       if (!raw) {
         Object.assign(state, clonePresetDefaults(DEFAULTS.patch));
@@ -4887,7 +4905,9 @@
       'filterQ'
     ].forEach(id => {
       if ($(id) && state[id] != null) {
-        $(id).value = state[id];
+        $(id).value = isOscLevelId(id)
+          ? oscLevelInternalToDisplay(state[id])
+          : state[id];
       }
     });
 
@@ -5082,9 +5102,9 @@
       osc1Ratio:v=>v.toFixed(3),
       osc2Ratio:v=>v.toFixed(3),
       osc3Ratio:v=>v.toFixed(3),
-      osc1Level:v=>v.toFixed(2),
-      osc2Level:v=>v.toFixed(2),
-      osc3Level:v=>v.toFixed(2),
+      osc1Level:v=>v.toFixed(3),
+      osc2Level:v=>v.toFixed(3),
+      osc3Level:v=>v.toFixed(3),
       filterQ:v=>v.toFixed(2),
     };
 
@@ -5550,9 +5570,9 @@
     bindRange('osc1Ratio', v=>v.toFixed(3));
     bindRange('osc2Ratio', v=>v.toFixed(3));
     bindRange('osc3Ratio', v=>v.toFixed(3));
-    bindRange('osc1Level', v=>v.toFixed(2));
-    bindRange('osc2Level', v=>v.toFixed(2));
-    bindRange('osc3Level', v=>v.toFixed(2));
+    bindRange('osc1Level', v=>v.toFixed(3));
+    bindRange('osc2Level', v=>v.toFixed(3));
+    bindRange('osc3Level', v=>v.toFixed(3));
     bindRange('filterQ', v=>v.toFixed(2));
 
     bindSelect('midiInputSelect');
