@@ -1425,13 +1425,13 @@
               <label for="tone">Tone <span class="value" id="toneValue"></span></label>
               <input id="tone" title="Shifts the patch from rounder to more focused and forward." type="range" min="0" max="4" step="0.01" value="0.5">
             </div>  
+            <div class="control" title="Sets the base filter cutoff frequency for the patch before Brightness, Tone, and expression-based brightening.">
+              <label for="baseCutoff">Filter Base <span class="value" id="baseCutoffValue"></span></label>
+              <input id="baseCutoff" title="Sets the base filter cutoff frequency for the patch before Brightness, Tone, and expression-based brightening." type="range" min="10" max="4000" step="1" value="3200">
+            </div>
             <div class="control" title="Controls upper harmonics and filter openness.">
               <label for="brightness">Brightness <span class="value" id="brightnessValue"></span></label>
               <input id="brightness" title="Controls upper harmonics and filter openness." type="range" min="0" max="4" step="0.01" value="0.5">
-            </div>
-            <div class="control" title="Adds breath, reed, bow, or edge depending on the patch.">
-              <label for="texture">Texture / Noise <span class="value" id="textureValue"></span></label>
-              <input id="texture" title="Adds breath, reed, bow, or edge depending on the patch." type="range" min="0" max="1" step="0.01" value="0.0">
             </div>
             <div class="control" title="Moves the resonant character of the instrument body.">
               <label for="body">Body / Resonance <span class="value" id="bodyValue"></span></label>
@@ -1492,7 +1492,7 @@
           <!-- OSC 1 -->
           <div class="controls synth-osc-row">
             <div class="field osc-wave" title="Waveform for oscillator 1.">
-              <label for="osc1WaveSelect">Oscillator 1 Waveform</label>
+              <label for="osc1WaveSelect">Osc 1 Waveform</label>
               <select id="osc1WaveSelect">
                 <option value="sine">Sine</option>
                 <option value="triangle">Triangle</option>
@@ -1502,13 +1502,13 @@
             </div>
 
             <div class="control osc-ratio-coarse" title="Sets the coarse integer part of oscillator 1’s pitch ratio from 0 to 8.">
-              <label for="osc1RatioCoarse">Oscillator 1 Ratio Coarse <span class="value" id="osc1RatioCoarseValue"></span></label>
+              <label for="osc1RatioCoarse">Osc 1 Pitch Ratio Coarse <span class="value" id="osc1RatioCoarseValue"></span></label>
               <input id="osc1RatioCoarse" type="range" min="0" max="8" step="1" value="1">
             </div>
 
             <div class="control osc-ratio-fine" title="Adds a fine offset from -0.500 to +0.500 to oscillator 1’s coarse pitch ratio. Use the keyboard left and right arrow keys for precise value changes. Click the value display to reset to zero.">
               <label for="osc1RatioFine">
-                Oscillator 1 Ratio Fine
+                Osc 1 Pitch Ratio Fine
                 <span
                   class="value ratio-fine-reset"
                   id="osc1RatioFineValue"
@@ -1522,7 +1522,7 @@
             </div>
 
             <div class="control osc-level" title="Sets the relative mix amount of oscillator 1 within the patch mix. Use the keyboard left and right arrow keys for precise value changes.">
-              <label for="osc1Level">Oscillator 1 Level <span class="value" id="osc1LevelValue"></span></label>
+              <label for="osc1Level">Osc 1 Level <span class="value" id="osc1LevelValue"></span></label>
               <input id="osc1Level" type="range" min="0" max="1.0" step="0.001" value="0.64">
             </div>
           </div>
@@ -1530,7 +1530,7 @@
           <!-- OSC 2 -->
           <div class="controls synth-osc-row">
             <div class="field osc-wave" title="Waveform for oscillator 2.">
-              <label for="osc2WaveSelect">Oscillator 2 Waveform</label>
+              <label for="osc2WaveSelect">Osc 2 Waveform</label>
               <select id="osc2WaveSelect">
                 <option value="sine">Sine</option>
                 <option value="triangle">Triangle</option>
@@ -1540,13 +1540,13 @@
             </div>
 
             <div class="control osc-ratio-coarse" title="Sets the coarse integer part of oscillator 2’s pitch ratio from 0 to 8.">
-              <label for="osc2RatioCoarse">Oscillator 2 Ratio Coarse <span class="value" id="osc2RatioCoarseValue"></span></label>
+              <label for="osc2RatioCoarse">Osc 2 Pitch Ratio Coarse <span class="value" id="osc2RatioCoarseValue"></span></label>
               <input id="osc2RatioCoarse" type="range" min="0" max="8" step="1" value="2">
             </div>
 
             <div class="control osc-ratio-fine" title="Adds a fine offset from -0.500 to +0.500 to oscillator 2’s coarse pitch ratio. Use the keyboard left and right arrow keys for precise value changes. Click the value display to reset to zero.">
               <label for="osc2RatioFine">
-                Oscillator 2 Ratio Fine
+                Osc 2 Pitch Ratio Fine
                 <span
                   class="value ratio-fine-reset"
                   id="osc2RatioFineValue"
@@ -1560,7 +1560,7 @@
             </div>
 
             <div class="control osc-level" title="Sets the relative mix amount of oscillator 2 within the patch mix. Use the keyboard left and right arrow keys for precise value changes.">
-              <label for="osc2Level">Oscillator 2 Level <span class="value" id="osc2LevelValue"></span></label>
+              <label for="osc2Level">Osc 2 Level <span class="value" id="osc2LevelValue"></span></label>
               <input id="osc2Level" type="range" min="0" max="1.0" step="0.001" value="0.088">
             </div>
           </div>
@@ -1568,7 +1568,7 @@
           <!-- OSC 3 -->
           <div class="controls synth-osc-row">
             <div class="field osc-wave" title="Waveform for oscillator 3.">
-              <label for="osc3WaveSelect">Oscillator 3 Waveform</label>
+              <label for="osc3WaveSelect">Osc 3 Waveform</label>
               <select id="osc3WaveSelect">
                 <option value="sine">Sine</option>
                 <option value="triangle">Triangle</option>
@@ -1578,13 +1578,13 @@
             </div>
 
             <div class="control osc-ratio-coarse" title="Sets the coarse integer part of oscillator 3’s pitch ratio from 0 to 8.">
-              <label for="osc3RatioCoarse">Oscillator 3 Ratio Coarse <span class="value" id="osc3RatioCoarseValue"></span></label>
+              <label for="osc3RatioCoarse">Osc 3 Pitch Ratio Coarse <span class="value" id="osc3RatioCoarseValue"></span></label>
               <input id="osc3RatioCoarse" type="range" min="0" max="8" step="1" value="3">
             </div>
 
             <div class="control osc-ratio-fine" title="Adds a fine offset from -0.500 to +0.500 to oscillator 3’s coarse pitch ratio. Use the keyboard left and right arrow keys for precise value changes. Click the value display to reset to zero.">
               <label for="osc3RatioFine">
-                Oscillator 3 Ratio Fine
+                Osc 3 Pitch Ratio Fine
                 <span
                   class="value ratio-fine-reset"
                   id="osc3RatioFineValue"
@@ -1598,7 +1598,7 @@
             </div>
 
             <div class="control osc-level" title="Sets the relative mix amount of oscillator 3 within the patch mix. Use the keyboard left and right arrow keys for precise value changes.">
-              <label for="osc3Level">Oscillator 3 Level <span class="value" id="osc3LevelValue"></span></label>
+              <label for="osc3Level">Osc 3 Level <span class="value" id="osc3LevelValue"></span></label>
               <input id="osc3Level" type="range" min="0" max="1.0" step="0.001" value="0.040">
             </div>
           </div>
@@ -1606,18 +1606,14 @@
           <!-- REST OF CONTROLS -->
           <div class="controls compact-4">
 
-            <div class="control" title="Global multiplier for the main tone filter resonance.">
-              <label for="filterQ">Filter Q Scale <span class="value" id="filterQValue"></span></label>
-              <input id="filterQ" type="range" min="0.2" max="4" step="0.01" value="1.0">
+            <div class="control" title="Controls the level of the sub oscillator, which adds a lower octave or reinforcing tone beneath the main oscillators.">
+              <label for="subOscLevel">Sub Osc Level <span class="value" id="subOscLevelValue"></span></label>
+              <input id="subOscLevel" type="range" min="0" max="1.0" step="0.001" value="0">
             </div>
 
-            <div class="field" title="Select the response curve used by the drive stage.">
-              <label for="driveCurveShape">Drive Curve</label>
-              <select id="driveCurveShape">
-                <option value="tanh">Soft Saturation</option>
-                <option value="asym">Asymmetric (Reed/Brass)</option>
-                <option value="hard">Hard Clip</option>
-              </select>
+            <div class="control" title="Adds breath, reed, bow, or edge depending on the patch.">
+              <label for="texture">Texture / Noise <span class="value" id="textureValue"></span></label>
+              <input id="texture" title="Adds breath, reed, bow, or edge depending on the patch." type="range" min="0" max="1" step="0.01" value="0.0">
             </div>
             
             <div class="control" title="Shapes how quickly the attack envelope rises. 1.0 is neutral.">
@@ -1635,6 +1631,11 @@
               <input id="expressionCurve" type="range" min="0.5" max="3" step="0.05" value="1.8">
             </div>
 
+            <div class="control" title="Extra chorus intensity on top of the preset default.">
+              <label for="chorusBoost">Chorus Boost <span class="value" id="chorusBoostValue"></span></label>
+              <input id="chorusBoost" type="range" min="0" max="2" step="0.01" value="1.0">
+            </div>
+
             <div class="control" title="Delay before vibrato begins after a note starts.">
               <label for="vibratoDelay">Vibrato Delay <span class="value" id="vibratoDelayValue"></span></label>
               <input id="vibratoDelay" type="range" min="0" max="500" step="5" value="0">
@@ -1645,9 +1646,18 @@
               <input id="vibratoFollow" type="range" min="0" max="1" step="0.01" value="0">
             </div>
 
-            <div class="control" title="Extra chorus intensity on top of the preset default.">
-              <label for="chorusBoost">Chorus Boost <span class="value" id="chorusBoostValue"></span></label>
-              <input id="chorusBoost" type="range" min="0" max="2" step="0.01" value="1.0">
+            <div class="field" title="Select the response curve used by the drive stage.">
+              <label for="driveCurveShape">Drive Curve</label>
+              <select id="driveCurveShape">
+                <option value="tanh">Soft Saturation</option>
+                <option value="asym">Asymmetric (Reed/Brass)</option>
+                <option value="hard">Hard Clip</option>
+              </select>
+            </div>
+
+            <div class="control" title="Global multiplier for the main tone filter resonance.">
+              <label for="filterQ">Filter Q Scale <span class="value" id="filterQValue"></span></label>
+              <input id="filterQ" type="range" min="0.2" max="4" step="0.01" value="1.0">
             </div>
 
           </div>
@@ -1857,7 +1867,7 @@
           </ul>
 
           <b>Pitch Bend Range</b> – Sets the overall bend range in semitones (default ±2).<br/> 
-          Additional <b>Pitch Bend Down / Pitch Bend Up</b> scaling controls are available on the Controller tab.
+          Additional <b>Pitch Bend Down Scale</b> and <b>Pitch Bend Up Scale</b> controls are available on the Controller tab.
         </div>
 
         <hr class="instructions-divider"/>
@@ -1881,16 +1891,17 @@
           <div class="instructions-gap"></div>
 
           <b>Tone</b> – Moves the sound from warmer/rounder to more focused and forward.<br/>
+          <b>Filter Base</b> – Sets the patch’s starting filter cutoff in Hz.<br/>
+          Lower values make the sound darker and more closed. Higher values make it brighter and more open.<br/>
           <b>Brightness</b> – Adjusts upper harmonics and filter openness.<br/>
-          <b>Texture / Noise</b> – Adds breath, reed, bow, or edge depending on the preset.<br/>
-          <b>Body / Resonance</b> – Shapes the resonant character of the instrument body.<br/>
+          <b>Body / Resonance</b> – Shapes the resonant character of the instrument body.
 
           <div class="instructions-gap"></div>
 
           <b>Attack</b> – Sets how quickly the sound reaches full level after note-on.<br/>
           <b>Release</b> – Sets how long the note fades after release.<br/>
           <b>Vibrato Rate</b> – Sets vibrato speed.<br/>
-          <b>Vibrato Depth</b> – Sets vibrato depth in cents.<br/>
+          <b>Vibrato Depth</b> – Sets vibrato depth in cents.
 
           <div class="instructions-gap"></div>
 
@@ -1916,24 +1927,24 @@
 
           <div class="instructions-gap"></div>
 
-          <b>Oscillator 1 Waveform</b> – Chooses the waveform for oscillator 1 and controls the tone color of that layer.<br/>
-          <b>Oscillator 1 Pitch Ratio Coarse</b> – Sets the main pitch ratio as an integer multiple of the played note (0–8). The final ratio is limited to 0.125–8.5 when combined with the ratio fine adjustment.<br/>
-          <b>Oscillator 1 Pitch Ratio Fine</b> – Applies a small offset (±0.5) for detuning, beating, or subtle harmonic shifts. Click the displayed value to reset to zero.<br/>
-          <b>Oscillator 1 Level</b> – Sets the relative mix amount of oscillator 1 within the patch mix.
+          <b>Osc 1 Waveform</b> – Chooses the waveform for oscillator 1 and controls the tone color of that layer.<br/>
+          <b>Osc 1 Pitch Ratio Coarse</b> – Sets the main pitch ratio as an integer multiple of the played note (0–8). The final ratio is limited to 0.125–8.5 when combined with the ratio fine adjustment.<br/>
+          <b>Osc 1 Pitch Ratio Fine</b> – Applies a small offset (±0.5) for detuning, beating, or subtle harmonic shifts. Click the displayed value to reset to zero.<br/>
+          <b>Osc 1 Level</b> – Sets the relative mix amount of oscillator 1 within the patch mix.
 
           <div class="instructions-gap"></div>
 
-          <b>Oscillator 2 Waveform</b> – Chooses the waveform for oscillator 2 and controls the tone color of that layer.<br/>
-          <b>Oscillator 2 Pitch Ratio Coarse</b> – Sets the main pitch ratio as an integer multiple of the played note (0–8). The final ratio is limited to 0.125–8.5 when combined with the ratio fine adjustment.<br/>
-          <b>Oscillator 2 Pitch Ratio Fine</b> – Applies a small offset (±0.5) for detuning, beating, or subtle harmonic shifts. Click the displayed value to reset to zero.<br/>
-          <b>Oscillator 2 Level</b> – Sets the relative mix amount of oscillator 2 within the patch mix.
+          <b>Osc 2 Waveform</b> – Chooses the waveform for oscillator 2 and controls the tone color of that layer.<br/>
+          <b>Osc 2 Pitch Ratio Coarse</b> – Sets the main pitch ratio as an integer multiple of the played note (0–8). The final ratio is limited to 0.125–8.5 when combined with the ratio fine adjustment.<br/>
+          <b>Osc 2 Pitch Ratio Fine</b> – Applies a small offset (±0.5) for detuning, beating, or subtle harmonic shifts. Click the displayed value to reset to zero.<br/>
+          <b>Osc 2 Level</b> – Sets the relative mix amount of oscillator 2 within the patch mix.
 
           <div class="instructions-gap"></div>
 
-          <b>Oscillator 3 Waveform</b> – Chooses the waveform for oscillator 3 and controls the tone color of that layer.<br/>
-          <b>Oscillator 3 Pitch Ratio Coarse</b> – Sets the main pitch ratio as an integer multiple of the played note (0–8).  The final ratio is limited to 0.125–8.5 when combined with the ratio fine adjustment.<br/>
-          <b>Oscillator 3 Pitch Ratio Fine</b> – Applies a small offset (±0.5) for detuning, beating, or subtle harmonic shifts. Click the displayed value to reset to zero.<br/>
-          <b>Oscillator 3 Level</b> – Sets the relative mix amount of oscillator 3 within the patch mix.
+          <b>Osc 3 Waveform</b> – Chooses the waveform for oscillator 3 and controls the tone color of that layer.<br/>
+          <b>Osc 3 Pitch Ratio Coarse</b> – Sets the main pitch ratio as an integer multiple of the played note (0–8). The final ratio is limited to 0.125–8.5 when combined with the ratio fine adjustment.<br/>
+          <b>Osc 3 Pitch Ratio Fine</b> – Applies a small offset (±0.5) for detuning, beating, or subtle harmonic shifts. Click the displayed value to reset to zero.<br/>
+          <b>Osc 3 Level</b> – Sets the relative mix amount of oscillator 3 within the patch mix.
 
           <div class="instructions-gap"></div>
 
@@ -1941,20 +1952,38 @@
 
           <div class="instructions-gap"></div>
 
-          <b>Filter Q Scale</b> – Controls the resonance strength of the main tone filter.<br/>
-          <b>Drive Curve</b> – Controls the character of the saturation stage from softer to more aggressive.<br/>
+          <b>Sub Osc Level</b> – Controls the level of the sub oscillator, which adds a lower octave or reinforcing tone beneath the main oscillators.<br/>
+          Set this lower for a cleaner sound, or increase it to add weight and depth.
+
+          <div class="instructions-gap"></div>
+
+          <b>Texture / Noise</b> – Adds breath, reed, bow, or edge depending on the preset.<br/>
 
           <div class="instructions-gap"></div>
 
           <b>Attack Curve</b> – Controls the shape of the note attack, not just the attack time.<br/>
           <b>Release Curve</b> – Controls the shape of the note release, not just the release time.<br/>
+
+          <div class="instructions-gap"></div>
+
           <b>Expression Curve</b> – Controls how quickly the sound opens up as expression increases.<br/>
+
+          <div class="instructions-gap"></div>
+
+          <b>Chorus Boost</b> – Adds additional chorus intensity on top of the preset default.<br/>
 
           <div class="instructions-gap"></div>
 
           <b>Vibrato Delay</b> – Delays the start of vibrato after note-on.<br/>
           <b>Expression → Vibrato</b> – Makes stronger expression add more vibrato depth.<br/>
-          <b>Chorus Boost</b> – Adds additional chorus intensity on top of the preset default.<br/>
+
+          <div class="instructions-gap"></div>
+
+          <b>Drive Curve</b> – Controls the character of the saturation stage from softer to more aggressive.<br/>
+
+          <div class="instructions-gap"></div>
+
+          <b>Filter Q Scale</b> – Controls the resonance strength of the main tone filter.<br/>
 
           <div class="instructions-gap"></div>
 
@@ -1975,7 +2004,7 @@
             <li>Lowest Note</li>
           </ul>
 
-          <b>Pitch Bend Down / Up Scale</b> – Adjust bend sensitivity independently.<br/>
+          <b>Pitch Bend Down Scale</b> / <b>Pitch Bend Up Scale</b> – Adjust bend sensitivity independently.<br/>
           <div class="instructions-gap"></div>
 
           <b>Expression → Brightness</b> – Makes louder playing brighter.<br/>
@@ -2084,7 +2113,7 @@
 
             <li>
               <strong>What gets saved in the file:</strong><br>
-              • All preset parameters (tone, brightness, texture, vibrato, portamento, transpose, master tuning, reverb, etc.)<br>
+              • All preset parameters (tone, filter base, brightness, texture, vibrato, portamento, transpose, master tuning, reverb, etc.)<br>
               • Preset-specific adjustments and overrides<br>
               • Expression mode, pitch bend range, and MIDI input channel<br>
               • Performance and UI options, including MIDI logging, output meter, and Lower CPU use mode
@@ -2187,7 +2216,7 @@
           <ul style="margin-top:6px;">
             <li>MIDI input provides note, velocity, expression, and pitch bend data</li>
             <li>The main voice generates sound using oscillators and noise sources shaped by the current preset</li>
-            <li>A filter stage (tone/brightness) and drive stage shape the harmonic content</li>
+            <li>A filter stage shaped by <b>Filter Base</b>, <b>Brightness</b>, <b>Tone</b>, and optional expression-based brightening shapes the harmonic content before the drive stage</li>
             <li>Modulation (vibrato, optional expression → brightness) adds movement</li>
             <li>Chorus widens and thickens the sound</li>
             <li>Dry signal and reverb are mixed together before the final output</li>
@@ -2311,14 +2340,15 @@
   };
 
   const SETTINGS_FILE_MAGIC = 'WARBL_SOUND_LAB_SETTINGS';
-  const SETTINGS_FILE_VERSION = 6;
+  const SETTINGS_FILE_VERSION = 10;
   const DEFAULT_SETTINGS_FILENAME = 'warbl-sound-lab-settings.json';
-  const LAST_SETTINGS_FILENAME_KEY = 'warblSoundLabLastSettingsFilename_v6';
+  const LAST_SETTINGS_FILENAME_KEY = 'warblSoundLabLastSettingsFilename_v10';
   const TIP_REMINDER_VISIT_COUNT_KEY = 'warblSoundLabVisitCount_v1';
 
   const DEFAULTS = {
     patch:'whistle',
     tone:0.5, brightness:0.5, texture:0.0, body:0.5,
+    baseCutoff:3200,
     attack:0.01, release:0.09,
     vibratoRate:5.0, vibratoDepth:8,
     expressionMode:'velocity', brightnessFollow:0.4,
@@ -2349,6 +2379,7 @@
     osc1Level:0.16,
     osc2Level:0.022,
     osc3Level:0.010,
+    subOscLevel: 0.0,
     filterQ:1.0,
     driveCurveShape:'tanh',
   };
@@ -2366,6 +2397,7 @@
     whistle:{
       patch:'whistle',
       tone:0.46, brightness:0.58, texture:0.0, body:0.58,
+      baseCutoff:3200,
       attack:0.006, release:0.12,
       vibratoRate:5.6, vibratoDepth:7,
       brightnessFollow:0.55,
@@ -2390,11 +2422,13 @@
       osc3Level:0.010,
       filterQ:1.0,
       driveCurveShape:'tanh',
+      subOscLevel:0.00,
     },
 
     clarinet:{
       patch:'clarinet',
       tone:0.54, brightness:0.42, texture:0.0, body:0.62,
+      baseCutoff:1200,
       attack:0.012, release:0.12,
       vibratoRate:5.1, vibratoDepth:6,
       brightnessFollow:0.48,
@@ -2419,11 +2453,13 @@
       osc3Level:0.014,
       filterQ:1.0,
       driveCurveShape:'asym',
+      subOscLevel:0.02,
     },
 
     voice:{
       patch:'voice',
       tone:0.58, brightness:0.56, texture:0.08, body:0.60,
+      baseCutoff:1400,
       attack:0.014, release:0.18,
       vibratoRate:5.0, vibratoDepth:11,
       brightnessFollow:0.58,
@@ -2448,11 +2484,13 @@
       osc3Level:0.015,
       filterQ:1.0,
       driveCurveShape:'tanh',
+      subOscLevel:0.02
     },
 
     brass:{
       patch:'brass',
       tone:0.66, brightness:0.64, texture:0.0, body:0.56,
+      baseCutoff:900,
       attack:0.018, release:0.16,
       vibratoRate:4.8, vibratoDepth:5,
       brightnessFollow:0.52,
@@ -2477,11 +2515,13 @@
       osc3Level:0.022,
       filterQ:1.0,
       driveCurveShape:'asym',
+      subOscLevel:0.03
     },
 
     strings:{
       patch:'strings',
       tone:0.52, brightness:0.38, texture:0.0, body:0.70,
+      baseCutoff:900,
       attack:0.045, release:0.35,
       vibratoRate:5.2, vibratoDepth:10,
       brightnessFollow:0.35, 
@@ -2506,11 +2546,13 @@
       osc3Level:0.02,
       filterQ:1.0,
       driveCurveShape:'tanh',
+      subOscLevel:0.00,
     },
 
     lead:{
       patch:'lead',
       tone:0.62, brightness:0.70, texture:0.0, body:0.46,
+      baseCutoff:1500,
       attack:0.005, release:0.12,
       vibratoRate:5.0, vibratoDepth:9,
       brightnessFollow:0.45, 
@@ -2535,11 +2577,13 @@
       osc3Level:0.008,
       filterQ:1.0,
       driveCurveShape:'hard',
+      subOscLevel:0.045,
     }
   };
 
   const PRESET_SETTING_KEYS = [
     'tone', 'brightness', 'texture', 'body',
+    'baseCutoff',
     'attack', 'release',
     'vibratoRate', 'vibratoDepth',
     'brightnessFollow',
@@ -2563,6 +2607,7 @@
     'osc1Level',
     'osc2Level',
     'osc3Level',
+    'subOscLevel',
     'osc1Ratio',
     'osc2Ratio',
     'osc3Ratio',
@@ -2621,7 +2666,10 @@
   }
 
   function isOscLevelId(id) {
-    return id === 'osc1Level' || id === 'osc2Level' || id === 'osc3Level';
+    return id === 'osc1Level' ||
+           id === 'osc2Level' ||
+           id === 'osc3Level' ||
+           id === 'subOscLevel';
   }
 
   function toFiniteNumber(value, fallback) {
@@ -2655,15 +2703,18 @@
 
   function sanitizePresetSettingValue(key, value, fallback) {
     switch (key) {
+      case 'tone':
+      case 'brightness':
       case 'texture':
       case 'body':
+        return clamp(toFiniteNumber(value, fallback), 0, 4);
+
       case 'brightnessFollow':
       case 'vibratoFollow':
         return clamp(toFiniteNumber(value, fallback), 0, 1);
 
-      case 'tone':
-      case 'brightness':
-        return clamp(toFiniteNumber(value, fallback), 0, 4);
+      case 'baseCutoff':
+        return clamp(toRoundedInt(value, fallback), 10, 4000);
 
       case 'attack':
         return clamp(toFiniteNumber(value, fallback), 0, 0.15);
@@ -2749,6 +2800,7 @@
       case 'osc1Level':
       case 'osc2Level':
       case 'osc3Level':
+      case 'subOscLevel':
         return clamp(toFiniteNumber(value, fallback), 0, OSC_LEVEL_INTERNAL_MAX);
 
       case 'filterQ':
@@ -3101,6 +3153,11 @@
     const level1 = clamp(Number(settings.osc1Level ?? base.gains[0]), 0, OSC_LEVEL_INTERNAL_MAX);
     const level2 = clamp(Number(settings.osc2Level ?? base.gains[1]), 0, OSC_LEVEL_INTERNAL_MAX);
     const level3 = clamp(Number(settings.osc3Level ?? base.gains[2]), 0, OSC_LEVEL_INTERNAL_MAX);
+    const subLevel = clamp(
+      Number(settings.subOscLevel ?? base.sub ?? 0),
+      0,
+      OSC_LEVEL_INTERNAL_MAX
+    );
 
     const resolveWave = (settingValue, fallbackValue) => {
       return VALID_OSC_WAVES.has(settingValue) ? settingValue : fallbackValue;
@@ -3121,6 +3178,12 @@
         level2,
         level3
       ],
+      sub: subLevel,
+      baseCutoff: clamp(
+        Number(settings.baseCutoff ?? base.baseCutoff),
+        10,
+        4000
+      ),
       q: clamp(base.q * clamp(Number(settings.filterQ ?? 1), 0.2, 4), 0.2, 20)
     };
 
@@ -3473,7 +3536,11 @@
         this.osc3Gain.gain.setValueAtTime(0, t);
       }
 
-      this.subGain.gain.setTargetAtTime(profile.sub * (0.6 + body * 0.8), t, 0.03);
+      this.subGain.gain.setTargetAtTime(
+        profile.sub * (0.6 + body * 0.8),
+        t,
+        0.03
+      );
 
       const noiseScale =
         settings.patch === 'whistle' ? 0.05 :
@@ -4358,16 +4425,6 @@
     saveState();
   }
 
-  function syncRatioPairFromState(baseId) {
-    const coarseEl = $(`${baseId}Coarse`);
-    const fineEl = $(`${baseId}Fine`);
-    if (!coarseEl || !fineEl) return;
-
-    const parts = splitRatioForUi(state[baseId]);
-    coarseEl.value = String(parts.coarse);
-    fineEl.value = parts.fine.toFixed(3);
-  }
-
   function refreshRatioPairLabels(baseId) {
     const coarseEl = $(`${baseId}Coarse`);
     const fineEl = $(`${baseId}Fine`);
@@ -4377,7 +4434,6 @@
 
     const coarse = Math.round(Number(coarseEl.value));
     const fine = Number(fineEl.value);
-    const combined = combineRatioFromUi(coarse, fine);
 
     if (coarseOut) coarseOut.textContent = String(coarse);
     if (fineOut) {
@@ -4434,10 +4490,6 @@
     coarseEl.value = String(initial.coarse);
     fineEl.value = initial.fine.toFixed(3);
     refreshRatioPairLabels(baseId);
-  }
-
-  function isOscRatioId(id) {
-    return id === 'osc1Ratio' || id === 'osc2Ratio' || id === 'osc3Ratio';
   }
 
   function getRatioUiIds(baseId) {
@@ -4561,50 +4613,49 @@
   function bindRange(id, formatter){
     const el = $(id);
     const out = $(id + 'Value');
+    if (!el) return;
 
     const update = () => {
-      let value;
+      let value = Number(el.value);
 
-      if (isOscRatioId(id)) {
-        value = getRatioValueFromUi(id);
-        state[id] = value;
+      if (id === 'pitchBendRange') {
+        value = Math.max(0, Math.min(12, Math.round(value)));
+        el.value = value;
+      }
+
+      if (id === 'transposeSemis') {
+        value = Math.round(value);
+        el.value = value;
+      }
+
+      if (id === 'masterTuneCents') {
+        value = Math.round(value);
+        el.value = value;
+      }
+
+      if (id === 'droneVolume') {
+        value = clamp(value, 0, 4);
+        el.value = value;
+      }
+
+      if (isOscLevelId(id)) {
+        value = clamp(value, 0, 1);
+        el.value = value;
+        state[id] = oscLevelDisplayToInternal(value);
       } else {
-        value = Number(el.value);
-
-        if (id === 'pitchBendRange') {
-          value = Math.max(0, Math.min(12, Math.round(value)));
-          el.value = value;
-        }
-
-        if (id === 'transposeSemis') {
-          value = Math.round(value);
-          el.value = value;
-        }
-
-        if (id === 'masterTuneCents') {
-          value = Math.round(value);
-          el.value = value;
-        }
-
-        if (id === 'droneVolume') {
-          value = clamp(value, 0, 4);
-          el.value = value;
-        }
-
-        if (isOscLevelId(id)) {
-          value = clamp(value, 0, 1);
-          el.value = value;
-          state[id] = oscLevelDisplayToInternal(value);
-        } else {
-          state[id] = value;
-        }
+        state[id] = value;
       }
 
       if (out) out.textContent = formatter(value);
 
       if (id === 'reverbPreDelay' || id === 'reverbTone') {
         updateReverb();
-      } else if (id === 'reverbWet' || id === 'reverbDry' || id === 'masterVolume' || id === 'droneVolume') {
+      } else if (
+        id === 'reverbWet' ||
+        id === 'reverbDry' ||
+        id === 'masterVolume' ||
+        id === 'droneVolume'
+      ) {
         updateOutputLevels();
       } else if (id === 'transposeSemis') {
         updateCurrentNoteReadout(state.currentNote);
@@ -4618,25 +4669,12 @@
         updateDroneVoice();
       } else {
         requestVoiceUpdate();
-        if (isOscRatioId(id)) {
-          updateDroneVoice();
-        }
       }
 
       saveState();
     };
 
-    if (isOscRatioId(id)) {
-      const ids = getRatioUiIds(id);
-      const coarseEl = $(ids.coarse);
-      const fineEl = $(ids.fine);
-
-      if (coarseEl) coarseEl.addEventListener('input', update);
-      if (fineEl) fineEl.addEventListener('input', update);
-    } else {
-      el.addEventListener('input', update);
-    }
-
+    el.addEventListener('input', update);
     update();
   }
 
@@ -4788,27 +4826,27 @@
         getExpressionFromState();
         requestVoiceUpdate();
 
-    } else if (id === 'priorityMode') {
-      state.priorityMode = sanitizePresetSettingValue(
-        'priorityMode',
-        el.value,
-        DEFAULTS.priorityMode
-      );
+      } else if (id === 'priorityMode') {
+        state.priorityMode = sanitizePresetSettingValue(
+          'priorityMode',
+          el.value,
+          DEFAULTS.priorityMode
+        );
 
-      const chosen = choosePriorityNote();
-      state.currentNote = chosen;
-      updateCurrentNoteReadout(chosen);
+        const chosen = choosePriorityNote();
+        state.currentNote = chosen;
+        updateCurrentNoteReadout(chosen);
 
-      if (state.voice) {
-        if (chosen != null) {
-          const soundingNote = getTransposedMidiNote(chosen);
-          state.voice.setNote(midiNoteToFreq(soundingNote), 0, state);
-        } else {
-          state.voice.gateOff(state);
+        if (state.voice) {
+          if (chosen != null) {
+            const soundingNote = getTransposedMidiNote(chosen);
+            state.voice.setNote(midiNoteToFreq(soundingNote), 0, state);
+          } else {
+            state.voice.gateOff(state);
+          }
         }
-      }
 
-      requestVoiceUpdate();
+        requestVoiceUpdate();
 
       } else if (id === 'midiInputSelect') {
         attachSelectedMidiInput();
@@ -5104,7 +5142,7 @@
   function saveState(){
     try{
       captureCurrentPresetOverrides();
-      localStorage.setItem('warblSoundLabState_v33', JSON.stringify({
+      localStorage.setItem('warblSoundLabState_v36', JSON.stringify({
         patch: state.patch,
         midiChannel: state.midiChannel,
         midiInputId: state.midiInputId || '',
@@ -5121,7 +5159,7 @@
 
   function loadState(){
     try{
-      const raw = localStorage.getItem('warblSoundLabState_v33');
+      const raw = localStorage.getItem('warblSoundLabState_v36');
 
       if (!raw) {
         Object.assign(state, clonePresetDefaults(DEFAULTS.patch));
@@ -5135,6 +5173,7 @@
         state.lowCpuMode = false;
         state.droneVolume = DEFAULTS.droneVolume;
         state.droneNote = DEFAULTS.droneNote;
+        state.subOscLevel = DEFAULTS.subOscLevel;
         state.presetOverrides = {};
         state.patchDisplayNames = { ...DEFAULT_PATCH_DISPLAY_NAMES };
         return;
@@ -5174,6 +5213,7 @@
 
       state.droneNote = sanitizePresetSettingValue('droneNote', state.droneNote, DEFAULTS.droneNote);
       state.droneVolume = sanitizePresetSettingValue('droneVolume', state.droneVolume, DEFAULTS.droneVolume);
+      state.subOscLevel = sanitizePresetSettingValue('subOscLevel', state.subOscLevel, DEFAULTS.subOscLevel);
 
     } catch(e){
       Object.assign(state, clonePresetDefaults('whistle'));
@@ -5187,6 +5227,7 @@
       state.lowCpuMode = false;
       state.droneVolume = DEFAULTS.droneVolume;
       state.droneNote = DEFAULTS.droneNote;
+      state.subOscLevel = DEFAULTS.subOscLevel;
       state.presetOverrides = {};
       state.patchDisplayNames = { ...DEFAULT_PATCH_DISPLAY_NAMES };
     }
@@ -5194,7 +5235,7 @@
 
   function applyStateToUi(){
     [
-      'tone','brightness','texture','body','attack','release',
+      'tone','brightness','texture','body','baseCutoff','attack','release',
       'vibratoRate','vibratoDepth','brightnessFollow',
       'transposeSemis','pitchBendRange','bendUp','bendDown',
       'portamentoMs','reverbWet','reverbDry','reverbPreDelay',
@@ -5202,7 +5243,7 @@
       'expressionCurve','vibratoDelay','vibratoFollow',
       'attackCurve','releaseCurve','chorusBoost',
       'osc1Level','osc2Level','osc3Level',
-      'filterQ'
+      'filterQ','subOscLevel'
     ].forEach(id => {
       if ($(id) && state[id] != null) {
         $(id).value = isOscLevelId(id)
@@ -5211,9 +5252,9 @@
       }
     });
 
-    syncRatioPairFromState('osc1Ratio');
-    syncRatioPairFromState('osc2Ratio');
-    syncRatioPairFromState('osc3Ratio');
+    setRatioUiFromState('osc1Ratio', state.osc1Ratio);
+    setRatioUiFromState('osc2Ratio', state.osc2Ratio);
+    setRatioUiFromState('osc3Ratio', state.osc3Ratio);
 
     $('expressionModeSelect').value = state.expressionMode;
     $('priorityMode').value = state.priorityMode;
@@ -5375,6 +5416,7 @@
       brightness:v=>v.toFixed(2),
       texture:v=>v.toFixed(2),
       body:v=>v.toFixed(2),
+      baseCutoff:v=>`${Math.round(v)} Hz`,
       attack:v=>`${Math.round(v*1000)} ms`,
       release:v=>`${Math.round(v*1000)} ms`,
       vibratoRate:v=>`${v.toFixed(1)} Hz`,
@@ -5392,6 +5434,8 @@
       masterVolume:v=>v.toFixed(2),
       droneVolume:v=>v.toFixed(2),
       masterTuneCents:v=>`${signedInt(v)} cents`,
+      subOscLevel:v=>v.toFixed(2),
+
       expressionCurve:v=>v.toFixed(2),
       vibratoDelay:v=>`${Math.round(v)} ms`,
       vibratoFollow:v=>v.toFixed(2),
@@ -5835,6 +5879,7 @@
     }
 
     bindRange('tone', v=>v.toFixed(2));
+    bindRange('baseCutoff', v=>`${Math.round(v)} Hz`);
     bindRange('brightness', v=>v.toFixed(2));
     bindRange('texture', v=>v.toFixed(2));
     bindRange('body', v=>v.toFixed(2));
@@ -5861,6 +5906,7 @@
       const n = Math.round(v);
       return `${n > 0 ? '+' : ''}${n} cents`;
     });
+    bindRange('subOscLevel', v=>v.toFixed(2));
     bindRange('expressionCurve', v=>v.toFixed(2));
     bindRange('vibratoDelay', v=>`${Math.round(v)} ms`);
     bindRange('vibratoFollow', v=>v.toFixed(2));
@@ -5876,6 +5922,7 @@
     bindRatioPair('osc1Ratio');
     bindRatioPair('osc2Ratio');
     bindRatioPair('osc3Ratio');
+
     initRatioFineReset('osc1Ratio');
     initRatioFineReset('osc2Ratio');
     initRatioFineReset('osc3Ratio');
