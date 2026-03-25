@@ -833,30 +833,20 @@
       opacity: 0.95;
     }
 
-    .patch-name-row-grid{
-      margin-top: 10px;
-    }
-
-    .patch-name-field{
-      grid-column: 1 / 2;
-    }
-
-    .patch-name-row{
+    .section-title-row{
       display:flex;
       align-items:center;
-      gap:8px;
-      flex-wrap:wrap;
+      justify-content:space-between;
+      gap:12px;
+      margin:0 0 18px 0;
     }
 
-    .patch-name-display{
-      width: 100%;
-      padding: 8px 9px;
-      border-radius: 12px;
-      background: rgba(255,255,255,0.06);
-      border: 1px solid var(--border);
-      color: var(--text);
-      font-weight: 600;
-      line-height: 1.3;
+    .section-title-row .section-title{
+      margin:0;
+    }
+
+    .section-title-button{
+      flex:0 0 auto;
     }
 
     #instructionsOverlay {
@@ -1401,7 +1391,10 @@
           aria-labelledby="tabBtnInstrument"
           hidden
         >
-          <h2 class="section-title">Instrument</h2>
+          <div class="section-title-row">
+            <h2 class="section-title">Instrument</h2>
+            <button id="btnRenamePatch" type="button" class="mini-reset-button section-title-button">Rename…</button>
+          </div>
 
           <div class="controls compact-4">
             <div class="control" title="Shifts the patch from rounder to more focused and forward.">
@@ -1459,23 +1452,6 @@
                 </button>
               </div>
               <input id="masterTuneCents" title="Adjust the overall tuning in cents to match recordings or other instruments." type="range" min="-50" max="50" step="1" value="0">
-            </div>
-          </div>
-          <div class="controls compact-4 patch-name-row-grid">
-            <div class="field patch-name-field" title="Set the display name shown on the preset button for this patch.">
-              <label>Patch Name</label>
-              <div class="patch-name-row">
-                <div
-                  id="patchDisplayNameValue"
-                  class="patch-name-display"
-                  role="textbox"
-                  aria-readonly="true"
-                  tabindex="-1"
-                  title="Current name for this patch."
-                ></div>
-                <button id="btnRenamePatch" type="button" class="mini-reset-button">Rename...</button>
-                <button id="btnResetPatchName" type="button" class="mini-reset-button">Reset</button>
-              </div>
             </div>
           </div>
         </section>
@@ -1823,6 +1799,10 @@
 
           <div class="instructions-gap"></div>
 
+          Click <b>Rename</b> to change the patch name.
+
+          <div class="instructions-gap"></div>
+
           On any of the slider controls, use the keyboard left and right arrow keys for precise value changes.
 
           <div class="instructions-gap"></div>
@@ -1849,11 +1829,6 @@
           <b>Transpose</b> – Shifts playback up or down in semitone steps.<br/>
           <b>Master Tuning</b> – Fine-tunes the overall pitch by cents; the <b>Reset</b> button returns it to 0 cents.<br/>
 
-          <div class="instructions-gap"></div>
-
-          <b>Patch Name</b> – Lets you rename the label shown on the selected preset button.<br/>
-          The <b>Rename...</b> button sets a custom display name, and <b>Reset</b> restores the default preset name.<br/>
-          Custom patch names are saved with your settings and restored when you reload the tool or import a settings file.
         </div>
 
         <hr class="instructions-divider"/>
@@ -2975,7 +2950,8 @@
     if (window.DayPilot && DayPilot.Modal && DayPilot.Modal.prompt) {
       const result = await DayPilot.Modal.prompt(
         `<div style="font-size:18px; line-height:1.45; font-weight:600; margin-bottom:8px;">Enter a new display name for this patch: (16 character limit)</div>
-         <div style="font-size:14px; line-height:1.45; color:#333;">Default preset name: <b>${safePresetName}</b></div>`,
+         <div style="font-size:14px; line-height:1.45; color:#333; margin-bottom:10px;">Default preset name: <b>${safePresetName}</b></div>
+         <div style="font-size:13px; line-height:1.45; color:#555;">To restore the default preset name, leave the field blank and click Rename.</div>`,
         defaultValue,
         {
           theme: "modal_compact",
@@ -2992,7 +2968,10 @@
       return String(result.result || '');
     }
 
-    const value = window.prompt("Enter a new display name for this patch:", defaultValue);
+    const value = window.prompt(
+      `Enter a new display name for this patch.\n\nLeave blank to restore the default name:\n${DEFAULT_PATCH_DISPLAY_NAMES[presetName] || presetName}`,
+      defaultValue
+    );
     if (value == null) return null;
     return String(value);
   }
@@ -4956,10 +4935,6 @@
     $('showOutputMeter').checked = !!state.meterEnabled;
     $('showMidiLog').checked = !!state.midiLogEnabled;
 
-    if ($('patchDisplayNameValue')) {
-      $('patchDisplayNameValue').textContent = getPresetDisplayName(state.patch);
-    }
-
     renderOutputMeterUi();
 
     if (state.audioCtx) {
@@ -5749,16 +5724,6 @@
       );
 
       state.patchDisplayNames[presetName] = value;
-      applyStateToUi();
-      updatePresetButtons();
-      saveState();
-    });
-
-    $('btnResetPatchName').addEventListener('click', () => {
-      const presetName = state.patch;
-      if (!PRESETS[presetName]) return;
-
-      state.patchDisplayNames[presetName] = DEFAULT_PATCH_DISPLAY_NAMES[presetName];
       applyStateToUi();
       updatePresetButtons();
       saveState();
