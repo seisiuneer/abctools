@@ -1475,9 +1475,9 @@
               </select>
             </div>
 
-            <div class="control" title="Changes oscillator 1's pitch relationship relative to its preset default.">
+            <div class="control" title="Changes oscillator 1's pitch frequency ratio.">
               <label for="osc1Ratio">Oscillator 1 Pitch Ratio <span class="value" id="osc1RatioValue"></span></label>
-              <input id="osc1Ratio" type="range" min="0.125" max="4" step="0.125" value="1.0">
+              <input id="osc1Ratio" type="range" min="0.125" max="8" step="0.001" value="1.0">
             </div>
 
             <div class="control" title="Sets the relative level of oscillator 1 within the patch mix.">
@@ -1500,9 +1500,9 @@
               </select>
             </div>
 
-            <div class="control" title="Changes oscillator 2's pitch relationship relative to its preset default.">
+            <div class="control" title="Changes oscillator 2's pitch frequency ratio.">
               <label for="osc2Ratio">Oscillator 2 Pitch Ratio <span class="value" id="osc2RatioValue"></span></label>
-              <input id="osc2Ratio" type="range" min="0.125" max="4" step="0.125" value="1.0">
+              <input id="osc2Ratio" type="range" min="0.125" max="8" step="0.001" value="2.01">
             </div>
 
             <div class="control" title="Sets the relative level of oscillator 2 within the patch mix.">
@@ -1525,9 +1525,9 @@
               </select>
             </div>
 
-            <div class="control" title="Changes oscillator 3's pitch relationship relative to its preset default.">
+            <div class="control" title="Changes oscillator 3's pitch frequency ratio.">
               <label for="osc3Ratio">Oscillator 3 Pitch Ratio <span class="value" id="osc3RatioValue"></span></label>
-              <input id="osc3Ratio" type="range" min="0.125" max="4" step="0.125" value="1.0">
+              <input id="osc3Ratio" type="range" min="0.125" max="8" step="0.001" value="3.0">
             </div>
 
             <div class="control" title="Sets the relative level of oscillator 3 within the patch mix.">
@@ -1845,19 +1845,19 @@
           <div class="instructions-gap"></div>
 
           <b>Oscillator 1 Waveform</b> – Chooses the waveform for oscillator 1 and changes the tone color of that layer.<br/>
-          <b>Oscillator 1 Pitch Ratio</b> – Changes oscillator 1’s pitch relationship relative to its preset default.<br/>
+          <b>Oscillator 1 Pitch Ratio</b> – Changes oscillator 1’s pitch frequency ratio.<br/>
           <b>Oscillator 1 Level</b> – Sets the relative level of oscillator 1 within the patch mix.<br/>
 
           <div class="instructions-gap"></div>
 
           <b>Oscillator 2 Waveform</b> – Chooses the waveform for oscillator 2 and changes the tone color of that layer.<br/>
-          <b>Oscillator 2 Pitch Ratio</b> – Changes oscillator 2’s pitch relationship relative to its preset default.<br/>
+          <b>Oscillator 2 Pitch Ratio</b> – Changes oscillator 2’s pitch frequency ratio.<br/>
           <b>Oscillator 2 Level</b> – Sets the relative level of oscillator 2 within the patch mix.<br/>
 
           <div class="instructions-gap"></div>
 
           <b>Oscillator 3 Waveform</b> – Chooses the waveform for oscillator 3 and changes the tone color of that layer.<br/>
-          <b>Oscillator 3 Pitch Ratio</b> – Changes oscillator 3’s pitch relationship relative to its preset default.<br/>
+          <b>Oscillator 3 Pitch Ratio</b> – Changes oscillator 3’s pitch frequency ratio.<br/>
           <b>Oscillator 3 Level</b> – Sets the relative level of oscillator 3 within the patch mix.<br/>
 
           <div class="instructions-gap"></div>
@@ -2237,9 +2237,9 @@
   };
 
   const SETTINGS_FILE_MAGIC = 'WARBL_SOUND_LAB_SETTINGS';
-  const SETTINGS_FILE_VERSION = 5;
+  const SETTINGS_FILE_VERSION = 6;
   const DEFAULT_SETTINGS_FILENAME = 'warbl-sound-lab-settings.json';
-  const LAST_SETTINGS_FILENAME_KEY = 'warblSoundLabLastSettingsFilename_v4';
+  const LAST_SETTINGS_FILENAME_KEY = 'warblSoundLabLastSettingsFilename_v6';
   const TIP_REMINDER_VISIT_COUNT_KEY = 'warblSoundLabVisitCount_v1';
 
   const DEFAULTS = {
@@ -2309,8 +2309,8 @@
       osc2Wave:'triangle',
       osc3Wave:'sine',
       osc1Ratio:1.0,
-      osc2Ratio:1.0,
-      osc3Ratio:1.0,
+      osc2Ratio:2.01,
+      osc3Ratio:3.0,
       osc1Level:0.16,
       osc2Level:0.022,
       osc3Level:0.010,
@@ -2338,8 +2338,8 @@
       osc2Wave:'sine',
       osc3Wave:'sine',
       osc1Ratio:1.0,
-      osc2Ratio:1.0,
-      osc3Ratio:1.0,
+      osc2Ratio:3.0,
+      osc3Ratio:5.0,
       osc1Level:0.11,
       osc2Level:0.024,
       osc3Level:0.014,
@@ -2367,8 +2367,8 @@
       osc2Wave:'triangle',
       osc3Wave:'sine',
       osc1Ratio:1.0,
-      osc2Ratio:1.0,
-      osc3Ratio:1.0,
+      osc2Ratio:1.01,
+      osc3Ratio:2.0,
       osc1Level:0.085,
       osc2Level:0.035,
       osc3Level:0.015,
@@ -2396,8 +2396,8 @@
       osc2Wave:'square',
       osc3Wave:'sawtooth',
       osc1Ratio:1.0,
-      osc2Ratio:1.0,
-      osc3Ratio:1.0,
+      osc2Ratio:0.997,
+      osc3Ratio:2.0,
       osc1Level:0.095,
       osc2Level:0.038,
       osc3Level:0.022,
@@ -2425,8 +2425,8 @@
       osc2Wave:'sawtooth',
       osc3Wave:'triangle',
       osc1Ratio:1.0,
-      osc2Ratio:1.0,
-      osc3Ratio:1.0,
+      osc2Ratio:1.008,
+      osc3Ratio:2.0,
       osc1Level:0.09,
       osc2Level:0.075,
       osc3Level:0.02,
@@ -2454,8 +2454,8 @@
       osc2Wave:'square',
       osc3Wave:'triangle',
       osc1Ratio:1.0,
-      osc2Ratio:1.0,
-      osc3Ratio:1.0,
+      osc2Ratio:2.0,
+      osc3Ratio:0.5,
       osc1Level:0.035,
       osc2Level:0.012,
       osc3Level:0.008,
@@ -2668,7 +2668,7 @@
       case 'osc1Ratio':
       case 'osc2Ratio':
       case 'osc3Ratio':
-        return clamp(toFiniteNumber(value, fallback), 0.125, 4.0);
+        return clamp(toFiniteNumber(value, fallback), 0.125, 8.0);
 
       case 'osc1Level':
       case 'osc2Level':
@@ -3014,9 +3014,9 @@
   function getEffectivePatchProfile(settings){
     const base = getPatchProfile(settings.patch);
 
-    const ratio1 = clamp(Number(settings.osc1Ratio ?? 1), 0.125, 4);
-    const ratio2 = clamp(Number(settings.osc2Ratio ?? 1), 0.125, 4);
-    const ratio3 = clamp(Number(settings.osc3Ratio ?? 1), 0.125, 4);
+    const ratio1 = clamp(Number(settings.osc1Ratio ?? base.ratios[0]), 0.125, 8);
+    const ratio2 = clamp(Number(settings.osc2Ratio ?? base.ratios[1]), 0.125, 8);
+    const ratio3 = clamp(Number(settings.osc3Ratio ?? base.ratios[2]), 0.125, 8);
 
     const level1 = clamp(Number(settings.osc1Level ?? base.gains[0]), 0, OSC_LEVEL_INTERNAL_MAX);
     const level2 = clamp(Number(settings.osc2Level ?? base.gains[1]), 0, OSC_LEVEL_INTERNAL_MAX);
@@ -3032,9 +3032,9 @@
       osc2: resolveWave(settings.osc2Wave, base.osc2),
       osc3: resolveWave(settings.osc3Wave, base.osc3),
       ratios: [
-        base.ratios[0] * ratio1,
-        base.ratios[1] * ratio2,
-        base.ratios[2] * ratio3
+        ratio1,
+        ratio2,
+        ratio3
       ],
       gains: [
         level1,
@@ -4803,7 +4803,7 @@
   function saveState(){
     try{
       captureCurrentPresetOverrides();
-      localStorage.setItem('warblSoundLabState_v31', JSON.stringify({
+      localStorage.setItem('warblSoundLabState_v33', JSON.stringify({
         patch: state.patch,
         midiChannel: state.midiChannel,
         midiInputId: state.midiInputId || '',
@@ -4820,7 +4820,7 @@
 
   function loadState(){
     try{
-      const raw = localStorage.getItem('warblSoundLabState_v31');
+      const raw = localStorage.getItem('warblSoundLabState_v33');
 
       if (!raw) {
         Object.assign(state, clonePresetDefaults(DEFAULTS.patch));
