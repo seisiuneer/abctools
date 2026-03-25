@@ -317,6 +317,22 @@
       grid-template-columns: repeat(4, minmax(0, 1fr));
     }
 
+    .synth-osc-row {
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+    }
+
+    .synth-osc-row .osc-wave {
+      grid-column: span 2;
+    }
+
+    .synth-osc-row .osc-ratio {
+      grid-column: span 2;
+    }
+
+    .synth-osc-row .osc-level {
+      grid-column: span 2;
+    }
+
     .control,
     .field {
       padding: 8px 9px;
@@ -944,7 +960,7 @@
     }
 
     .instructions-gap {
-      height: 0.35em;
+      height: .75em;
     }
 
     .instructions-warbl-icon {
@@ -1049,6 +1065,16 @@
     }
 
     @media (max-width: 1360px) {
+
+      .synth-osc-row {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .synth-osc-row .osc-wave,
+      .synth-osc-row .osc-ratio,
+      .synth-osc-row .osc-level {
+        grid-column: span 1;
+      }
 
       .layout {
         grid-template-columns: minmax(0, 1fr);
@@ -1436,7 +1462,7 @@
             </div>
           </div>
           <div class="controls compact-4 patch-name-row-grid">
-            <div class="field patch-name-field" title="Set the display name shown on the preset button for this patch. This does not change the internal preset name.">
+            <div class="field patch-name-field" title="Set the display name shown on the preset button for this patch.">
               <label>Patch Name</label>
               <div class="patch-name-row">
                 <div
@@ -1445,7 +1471,7 @@
                   role="textbox"
                   aria-readonly="true"
                   tabindex="-1"
-                  title="Current display name for this patch."
+                  title="Current name for this patch."
                 ></div>
                 <button id="btnRenamePatch" type="button" class="mini-reset-button">Rename...</button>
                 <button id="btnResetPatchName" type="button" class="mini-reset-button">Reset</button>
@@ -1464,8 +1490,8 @@
           <h2 class="section-title">Synthesis</h2>
 
           <!-- OSC 1 -->
-          <div class="controls compact-4">
-            <div class="field" title="Waveform for oscillator 1.">
+          <div class="controls synth-osc-row">
+            <div class="field osc-wave" title="Waveform for oscillator 1.">
               <label for="osc1WaveSelect">Oscillator 1 Waveform</label>
               <select id="osc1WaveSelect">
                 <option value="sine">Sine</option>
@@ -1475,22 +1501,20 @@
               </select>
             </div>
 
-            <div class="control" title="Changes oscillator 1's pitch frequency ratio.">
+            <div class="control osc-ratio" title="Changes oscillator 1’s tuning ratio relative to the played note. Use the keyboard left and right arrow keys for precise value changes.">
               <label for="osc1Ratio">Oscillator 1 Pitch Ratio <span class="value" id="osc1RatioValue"></span></label>
               <input id="osc1Ratio" type="range" min="0.125" max="8" step="0.001" value="1.0">
             </div>
 
-            <div class="control" title="Sets the relative level of oscillator 1 within the patch mix.">
+            <div class="control osc-level" title="Sets the relative mix amount of oscillator 1 within the patch mix. Use the keyboard left and right arrow keys for precise value changes.">
               <label for="osc1Level">Oscillator 1 Level <span class="value" id="osc1LevelValue"></span></label>
               <input id="osc1Level" type="range" min="0" max="1.0" step="0.001" value="0.64">
             </div>
-
-            <div></div>
           </div>
 
           <!-- OSC 2 -->
-          <div class="controls compact-4">
-            <div class="field" title="Waveform for oscillator 2.">
+          <div class="controls synth-osc-row">
+            <div class="field osc-wave" title="Waveform for oscillator 2.">
               <label for="osc2WaveSelect">Oscillator 2 Waveform</label>
               <select id="osc2WaveSelect">
                 <option value="sine">Sine</option>
@@ -1500,22 +1524,20 @@
               </select>
             </div>
 
-            <div class="control" title="Changes oscillator 2's pitch frequency ratio.">
+            <div class="control osc-ratio" title="Changes oscillator 2’s tuning ratio relative to the played note. Use the keyboard left and right arrow keys for precise value changes.">
               <label for="osc2Ratio">Oscillator 2 Pitch Ratio <span class="value" id="osc2RatioValue"></span></label>
               <input id="osc2Ratio" type="range" min="0.125" max="8" step="0.001" value="2.01">
             </div>
 
-            <div class="control" title="Sets the relative level of oscillator 2 within the patch mix.">
+            <div class="control osc-level" title="Sets the relative mix amount of oscillator 2 within the patch mix. Use the keyboard left and right arrow keys for precise value changes.">
               <label for="osc2Level">Oscillator 2 Level <span class="value" id="osc2LevelValue"></span></label>
               <input id="osc2Level" type="range" min="0" max="1.0" step="0.001" value="0.088">
             </div>
-
-            <div></div>
           </div>
 
           <!-- OSC 3 -->
-          <div class="controls compact-4">
-            <div class="field" title="Waveform for oscillator 3.">
+          <div class="controls synth-osc-row">
+            <div class="field osc-wave" title="Waveform for oscillator 3.">
               <label for="osc3WaveSelect">Oscillator 3 Waveform</label>
               <select id="osc3WaveSelect">
                 <option value="sine">Sine</option>
@@ -1525,17 +1547,15 @@
               </select>
             </div>
 
-            <div class="control" title="Changes oscillator 3's pitch frequency ratio.">
+            <div class="control osc-ratio" title="Changes oscillator 3’s tuning ratio relative to the played note. Use the keyboard left and right arrow keys for precise value changes.">
               <label for="osc3Ratio">Oscillator 3 Pitch Ratio <span class="value" id="osc3RatioValue"></span></label>
               <input id="osc3Ratio" type="range" min="0.125" max="8" step="0.001" value="3.0">
             </div>
 
-            <div class="control" title="Sets the relative level of oscillator 3 within the patch mix.">
+            <div class="control osc-level" title="Sets the relative mix amount of oscillator 3 within the patch mix. Use the keyboard left and right arrow keys for precise value changes.">
               <label for="osc3Level">Oscillator 3 Level <span class="value" id="osc3LevelValue"></span></label>
               <input id="osc3Level" type="range" min="0" max="1.0" step="0.001" value="0.040">
             </div>
-
-            <div></div>
           </div>
 
           <!-- REST OF CONTROLS -->
@@ -1803,6 +1823,10 @@
 
           <div class="instructions-gap"></div>
 
+          On any of the slider controls, use the keyboard left and right arrow keys for precise value changes.
+
+          <div class="instructions-gap"></div>
+
           The controls appear in this order:
 
           <div class="instructions-gap"></div>
@@ -1840,42 +1864,47 @@
 
           <div class="instructions-gap"></div>
 
+          On any of the slider controls, use the keyboard left and right arrow keys for precise value changes.
+
+          <div class="instructions-gap"></div>
+
           The controls appear in this order:
 
           <div class="instructions-gap"></div>
 
-          <b>Oscillator 1 Waveform</b> – Chooses the waveform for oscillator 1 and changes the tone color of that layer.<br/>
-          <b>Oscillator 1 Pitch Ratio</b> – Changes oscillator 1’s pitch frequency ratio.<br/>
-          <b>Oscillator 1 Level</b> – Sets the relative level of oscillator 1 within the patch mix.<br/>
+          <b>Oscillator 1 Waveform</b> – Chooses the waveform for oscillator 1 and controls the tone color of that layer.<br/>
+          <b>Oscillator 1 Pitch Ratio</b> – Changes oscillator 1’s tuning ratio relative to the played note.<br/>
+          <b>Oscillator 1 Level</b> – Sets the relative mix amount of oscillator 1 within the patch mix.<br/>
 
           <div class="instructions-gap"></div>
 
-          <b>Oscillator 2 Waveform</b> – Chooses the waveform for oscillator 2 and changes the tone color of that layer.<br/>
-          <b>Oscillator 2 Pitch Ratio</b> – Changes oscillator 2’s pitch frequency ratio.<br/>
-          <b>Oscillator 2 Level</b> – Sets the relative level of oscillator 2 within the patch mix.<br/>
+          <b>Oscillator 2 Waveform</b> – Chooses the waveform for oscillator 2 and controls the tone color of that layer.<br/>
+          <b>Oscillator 2 Pitch Ratio</b> – Changes oscillator 2’s tuning ratio relative to the played note.<br/>
+          <b>Oscillator 2 Level</b> – Sets the relative mix amount of oscillator 2 within the patch mix.<br/>
 
           <div class="instructions-gap"></div>
 
-          <b>Oscillator 3 Waveform</b> – Chooses the waveform for oscillator 3 and changes the tone color of that layer.<br/>
-          <b>Oscillator 3 Pitch Ratio</b> – Changes oscillator 3’s pitch frequency ratio.<br/>
-          <b>Oscillator 3 Level</b> – Sets the relative level of oscillator 3 within the patch mix.<br/>
+          <b>Oscillator 3 Waveform</b> – Chooses the waveform for oscillator 3 and controls the tone color of that layer.<br/>
+          <b>Oscillator 3 Pitch Ratio</b> – Changes oscillator 3’s tuning ratio relative to the played note.<br/>
+          <b>Oscillator 3 Level</b> – Sets the relative mix amount of oscillator 3 within the patch mix.<br/>
+
 
           <div class="instructions-gap"></div>
 
-          <b>Filter Q Scale</b> – Changes the resonance strength of the main tone filter.<br/>
-          <b>Drive Curve</b> – Changes the character of the saturation stage from softer to more aggressive.<br/>
+          <b>Filter Q Scale</b> – Controls the resonance strength of the main tone filter.<br/>
+          <b>Drive Curve</b> – Controls the character of the saturation stage from softer to more aggressive.<br/>
 
           <div class="instructions-gap"></div>
 
-          <b>Attack Curve</b> – Changes the shape of the note attack, not just the attack time.<br/>
-          <b>Release Curve</b> – Changes the shape of the note release, not just the release time.<br/>
-          <b>Expression Curve</b> – Changes how quickly the sound opens up as expression increases.<br/>
+          <b>Attack Curve</b> – Controls the shape of the note attack, not just the attack time.<br/>
+          <b>Release Curve</b> – Controls the shape of the note release, not just the release time.<br/>
+          <b>Expression Curve</b> – Controls how quickly the sound opens up as expression increases.<br/>
 
           <div class="instructions-gap"></div>
 
           <b>Vibrato Delay</b> – Delays the start of vibrato after note-on.<br/>
           <b>Expression → Vibrato</b> – Makes stronger expression add more vibrato depth.<br/>
-          <b>Chorus Boost</b> – Adds extra chorus intensity on top of the preset default.<br/>
+          <b>Chorus Boost</b> – Adds additional chorus intensity on top of the preset default.<br/>
 
           <div class="instructions-gap"></div>
 
@@ -1947,11 +1976,9 @@
             <li>Velocity controls the initial level of the drone when triggered</li>
           </ul>
 
-          <div class="instructions-gap"></div>
-
           The drone:
           <ul style="margin-top:6px;">
-            <li>Uses the same basic preset processing chain as the main flow (oscillators, filters, drive, chorus, and reverb), with a faster attack and a few drone-specific adjustments</li>
+            <li>Uses the same basic preset processing chain as the main flow (oscillators, filters, drive, chorus, and reverb), with a few drone-specific adjustments</li>
             <li>Uses a faster attack for a more stable, pipe-like response</li>
             <li>Follows <b>Transpose</b> and <b>Master Tuning</b></li>
             <li>Does <b>not</b> respond to pitch bend (remains fixed in pitch)</li>
@@ -2056,7 +2083,6 @@
             <li>Tabs that are not currently active</li>
             <li>Windows that are fully covered by other windows</li>
           </ul>
-          <div class="instructions-gap"></div>
           This behavior cannot be disabled by the tool.
           <div class="instructions-gap"></div>
           When WARBL Sound Lab is not visible, incoming MIDI data from the WARBL (breath, expression, pitch bend, etc.) may not be processed smoothly.
@@ -2067,7 +2093,6 @@
             <li>Stepped or uneven dynamics and pitch</li>
             <li>Audio glitches, clicks, or pops</li>
           </ul>
-          <div class="instructions-gap"></div>
           As soon as the tab or window becomes visible again, normal performance will resume.
           <div class="instructions-gap"></div>
           <b>Important:</b> This limitation affects all web-based audio tools.
@@ -2118,8 +2143,6 @@
             <li>Dry signal and reverb are mixed together before the final output</li>
           </ul>
 
-          <div class="instructions-gap"></div>
-
           <b>Main vs Drone behavior:</b>
           <ul style="margin-top:6px;">
             <li>The drone uses the same basic preset processing chain as the main flow (oscillators, filters, drive, chorus, and reverb), with a faster attack and a few drone-specific adjustments</li>
@@ -2130,6 +2153,7 @@
           </ul>
 
         </div>
+
         <hr class="instructions-divider"/>
 
         <div class="instructions-subtitle">Troubleshooting</div>
@@ -5421,12 +5445,12 @@
   }
 
   function escapeHtml(value) {
-  return String(value ?? '')
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
+    return String(value ?? '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
   }
 
   async function showErrorDialog(message, title = 'Error') {
