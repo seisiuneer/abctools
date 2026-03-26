@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3212_032526_2130";
+var gVersionNumber = "3213_032626_0600";
 
 var gMIDIInitStillWaiting = false;
 
@@ -27310,7 +27310,10 @@ function decompressABC_Deflate(encoded) {
 // 
 // Check for a share link and process it
 //
-function processShareLink() {
+async function processShareLink() {
+  if (!gCustomInstrumentsInitComplete && gCustomInstrumentsInitPromise) {
+    await gCustomInstrumentsInitPromise;
+  }
 
   var doRender = false;
 
@@ -27647,21 +27650,8 @@ function processShareLink() {
           // Pre-process the ABC to inject any requested programs or volumes
           var theProcessedABC = PreProcessPlayABC(theABCToPlay);
 
-          // 
-          // MAE 25 Mar 2026 - Delay hack to deal with playing if there are custom instrument references in shared tunes
-          //
-          if (hasCustomInstrumentProgram(theProcessedABC)){
-             //console.log("Got custom instrument in shared ABC")
-             setTimeout(function(){
-                // Play back locally in-tool  
-                PlayABCDialog(theProcessedABC, null, null, gPlayMetronome);
-             },250);
-          }
-          else{
-            //console.log("No custom instrument in shared ABC")
-            // Play back locally in-tool  
-            PlayABCDialog(theProcessedABC, null, null, gPlayMetronome);
-          }
+          // Play back locally in-tool  
+          PlayABCDialog(theProcessedABC, null, null, gPlayMetronome);
 
         } else {
 
@@ -37966,13 +37956,6 @@ function flattenABCParts(abcString) {
 // @param {Array<any>} gCustomInstrumentSamples - Array of 8 entries; each may be null or an array.
 // @returns {number[]} - 0-based indices where the sample entry is null or an empty array.
 //
-
-function hasCustomInstrumentProgram(abc) {
-  if (!abc) return false;
-
-  return /%%MIDI\s+(program|bassprog|chordprog)\s+(custom[1-8]|15[0-7])\b/im.test(abc);
-}
-
 function findMissingCustomInstrumentIndices(abc) {
 
   if (!abc || !gCustomInstrumentSamples) return [];
@@ -50163,71 +50146,82 @@ function displayZipName(desc){
 var gCustomInstrumentSlots = [null, null, null, null, null, null, null, null]; // (ZipDescriptor|null)
 var gCustomInstrumentState = null; // { slots: (ZipDescriptor|null)[], pool: ZipDescriptor[], selectedPoolIndex: number|null }
 
-function processCustomInstruments(suppressStatus /* boolean */){
+function processCustomInstruments(suppressStatus /* boolean */) {
+  return new Promise((resolve) => {
 
-  // Reset defaults
-  gCustomInstrumentVolumeScaleOriginal = [1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0];
-  gCustomInstrumentFadeOriginal        = [100,100,100,100,100,100,100,100];
+    // Reset defaults
+    gCustomInstrumentVolumeScaleOriginal = [1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0];
+    gCustomInstrumentFadeOriginal        = [100,100,100,100,100,100,100,100];
 
-  var totalFiles = 0;
-  let index = 0;
+    var totalFiles = 0;
+    let index = 0;
 
-  function next() {
-    if (index >= gCustomInstrumentState.slots.length) {
+    function finish() {
+      resolve();
+    }
 
-      if (totalFiles == 0){
-        var thePrompt = "No Custom Instruments Loaded";
-        thePrompt = makeCenteredPromptString(thePrompt);
-        DayPilot.Modal.alert(thePrompt, {
-          theme: "modal_flat",
-          top: 300,
-          scrollWithPage: (AllowDialogsToScroll())
-        });
+    function next() {
+      if (index >= gCustomInstrumentState.slots.length) {
+
+        if (totalFiles == 0){
+          var thePrompt = "No Custom Instruments Loaded";
+          thePrompt = makeCenteredPromptString(thePrompt);
+          DayPilot.Modal.alert(thePrompt, {
+            theme: "modal_flat",
+            top: 300,
+            scrollWithPage: (AllowDialogsToScroll())
+          });
+
+          finish();
+          return;
+        }
+
+        if (gCustomInstrumentShowStatus && !suppressStatus){
+          var quant = (totalFiles > 1) ? "Instruments" : "Instrument";
+          var modal_msg = '<p style="text-align:center;font-size:16pt;font-family:helvetica;margin-bottom:24px;margin-left:15px;">'
+            + totalFiles + ' Custom ' + quant + ' Loaded&nbsp;&nbsp;'
+            + '<span style="font-size:24pt;" title="View documentation in new tab">'
+            + '<a href="https://michaeleskin.com/abctools/userguide.html#custom_midi_instrument" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'
+            + '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">In the following, replace (n) with 1-8 for the custom instrument number.</p>'
+            + '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">To play the custom instrument, add the following to your ABC tunes:</p>'
+            + '<p style="font-size:12pt;line-height:18pt;font-family:helvetica"><strong>%%MIDI program custom(n)</strong></p>'
+            + '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">Example:<br/>%%MIDI program custom1</p>'
+            + '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">Custom instruments have default volume scale and fade values built-in.</p>'
+            + '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">To make the instrument volume louder or softer than the default,<br/>add the following to your ABC tunes:</p>'
+            + '<p style="font-size:12pt;line-height:18pt;font-family:helvetica"><strong>%custom_instrument_(n)_volume_scale (scale_multiplier_float)</strong></p>'
+            + '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">Example:<br/>%custom_instrument_1_volume_scale 2.0</p>'
+            + '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">To change the note release fade time from the default,<br/>add the following to your ABC tunes:</p>'
+            + '<p style="font-size:12pt;line-height:18pt;font-family:helvetica"><strong>%custom_instrument_(n)_fade (fade_time_in_ms)</strong></p>'
+            + '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">Example:<br/>%custom_instrument_1_fade 1000</p>';
+
+          DayPilot.Modal.alert(modal_msg, {
+            theme: "modal_flat",
+            top: 50,
+            scrollWithPage: (AllowDialogsToScroll())
+          });
+        }
+
+        finish();
         return;
       }
 
-      if (gCustomInstrumentShowStatus && !suppressStatus){
-        var quant = (totalFiles > 1) ? "Instruments" : "Instrument";
-        var modal_msg = '<p style="text-align:center;font-size:16pt;font-family:helvetica;margin-bottom:24px;margin-left:15px;">'
-          + totalFiles + ' Custom ' + quant + ' Loaded&nbsp;&nbsp;'
-          + '<span style="font-size:24pt;" title="View documentation in new tab">'
-          + '<a href="https://michaeleskin.com/abctools/userguide.html#custom_midi_instrument" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'
-          + '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">In the following, replace (n) with 1-8 for the custom instrument number.</p>'
-          + '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">To play the custom instrument, add the following to your ABC tunes:</p>'
-          + '<p style="font-size:12pt;line-height:18pt;font-family:helvetica"><strong>%%MIDI program custom(n)</strong></p>'
-          + '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">Example:<br/>%%MIDI program custom1</p>'
-          + '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">Custom instruments have default volume scale and fade values built-in.</p>'
-          + '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">To make the instrument volume louder or softer than the default,<br/>add the following to your ABC tunes:</p>'
-          + '<p style="font-size:12pt;line-height:18pt;font-family:helvetica"><strong>%custom_instrument_(n)_volume_scale (scale_multiplier_float)</strong></p>'
-          + '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">Example:<br/>%custom_instrument_1_volume_scale 2.0</p>'
-          + '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">To change the note release fade time from the default,<br/>add the following to your ABC tunes:</p>'
-          + '<p style="font-size:12pt;line-height:18pt;font-family:helvetica"><strong>%custom_instrument_(n)_fade (fade_time_in_ms)</strong></p>'
-          + '<p style="font-size:12pt;line-height:18pt;font-family:helvetica">Example:<br/>%custom_instrument_1_fade 1000</p>';
+      const entry = gCustomInstrumentState.slots[index];
+      index++;
 
-        DayPilot.Modal.alert(modal_msg, {
-          theme: "modal_flat",
-          top: 50,
-          scrollWithPage: (AllowDialogsToScroll())
+      if (entry) {
+        totalFiles++;
+        doCustomInstrumentImport(entry, index, function () {
+          next();
         });
+      } else {
+        gCustomInstrumentSamples[index] = [];
+        gSoundsCacheABCJS["custom" + index] = {};
+        next();
       }
-      return;
     }
 
-    const entry = gCustomInstrumentState.slots[index];
-    index++;
-
-    if (entry) {
-      totalFiles++;
-      // entry is a descriptor, not a File
-      doCustomInstrumentImport(entry, index, function () { next(); });
-    } else {
-      gCustomInstrumentSamples[index] = [];
-      gSoundsCacheABCJS["custom"+index]= {};
-      next();
-    }
-  }
-
-  next();
+    next();
+  });
 }
 
 // ===== manageCustomInstrumentSlots (no File usage after import) =====
@@ -55438,7 +55432,7 @@ function showWhatsNewScreen() {
   modal_msg += 'background: linear-gradient(135deg, #0d47a1 0%, #1565c0 50%, #64b5f6 100%);';
   modal_msg += 'box-shadow: 0 6px 16px rgba(0,0,0,0.14); color:#fff;">';
   modal_msg += '<div style="font-size:20pt; line-height:24pt; font-weight:bold;">What&apos;s New</div>';
-  modal_msg += '<div style="font-size:11pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 25 March 2026</div>';
+  modal_msg += '<div style="font-size:11pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 26 March 2026</div>';
   modal_msg += '</div>';
 
   // Short intro
@@ -60398,13 +60392,53 @@ function SetTopButtonMargins() {
 
 }
 
-
 // Set the flat looks
 function setFlatButtons(enable){
   document.body.classList.toggle("flat-buttons", enable);
 }
 
-function DoStartup() {
+//
+// For startup sequencing with custom instruments from share links
+//
+var gCustomInstrumentsInitComplete = false;
+var gCustomInstrumentsInitPromise = null;
+var gResolveCustomInstrumentsInit = null;
+
+async function initCustomInstrumentsFromDB() {
+  try {
+    if (!USE_CUSTOM_INSTRUMENT_DB) return;
+
+    await CustomInstrumentsDB.init();
+
+    const slots = await CustomInstrumentsDB.loadSlots();
+    if (!Array.isArray(slots) || !slots.some(Boolean)) return;
+
+    gCustomInstrumentSlots = slots.map(d =>
+      d ? { name: d.name, zipBytes: d.zipBytes } : null
+    );
+
+    gCustomInstrumentState = {
+      slots: gCustomInstrumentSlots.map(d =>
+        d ? { name: d.name, zipBytes: d.zipBytes } : null
+      ),
+      pool: [],
+      selectedPoolIndex: null
+    };
+
+    await processCustomInstruments(true);
+
+  } catch (err) {
+    console.warn("Custom instrument DB init failed:", err);
+  } finally {
+    gCustomInstrumentsInitComplete = true;
+    if (gResolveCustomInstrumentsInit) {
+      gResolveCustomInstrumentsInit();
+      gResolveCustomInstrumentsInit = null;
+    }
+  }
+}
+
+async function DoStartup() {
 
   // Init global state
   gShowAdvancedControls = false;
@@ -60458,6 +60492,13 @@ function DoStartup() {
   gForceAndroid = false;
   gDisableAndroid = false;
 
+  //
+  // For startup sequencing with custom instruments from share links
+  //
+  gCustomInstrumentsInitComplete = false;
+  gCustomInstrumentsInitPromise = new Promise((resolve) => {
+    gResolveCustomInstrumentsInit = resolve;
+  });
 
   // Is browser storage available?
   if (window.localStorage) {
@@ -61194,8 +61235,11 @@ function DoStartup() {
   // Save if we need to force a text box recalc after minimize
   gForceInitialTextBoxRecalc = false;
 
+  // Kick off loading any custom instruments
+  initCustomInstrumentsFromDB();
+  
   // Check for and process URL share link
-  var isFromShare = processShareLink();
+  var isFromShare = await processShareLink();
 
   // Save global is from share
   gIsFromShare = isFromShare;
@@ -61894,42 +61938,6 @@ function DoStartup() {
 
   // Init the samples database
   initSamplesDB();
-
-  // ===== Startup: restore instruments from DB and suppress initial modal =====
-  (async function initCustomInstrumentsFromDB() {
-
-    if (!USE_CUSTOM_INSTRUMENT_DB) {
-      // Skipping instrument DB init (e.g., Firefox or persistence disabled).
-      return;
-    }
-
-    try {
-      await CustomInstrumentsDB.init(); // ensure DB & store exist
-
-      // Load descriptors: [{ name: string, zipBytes: ArrayBuffer } | null] x 8
-      const slots = await CustomInstrumentsDB.loadSlots();
-
-      // Nothing stored yet
-      if (!Array.isArray(slots) || !slots.some(Boolean)) return;
-
-      // Restore globals with descriptors only (no File objects)
-      gCustomInstrumentSlots = slots.map(d => d ? { name: d.name, zipBytes: d.zipBytes } : null);
-
-      gCustomInstrumentState = {
-        // Use fresh objects to avoid accidental external mutation
-        slots: gCustomInstrumentSlots.map(d => d ? { name: d.name, zipBytes: d.zipBytes } : null),
-        pool: [],
-        selectedPoolIndex: null
-      };
-
-      // Process silently on startup
-      processCustomInstruments(/* suppressStatus */ true);
-
-    } catch (err) {
-      console.warn("Custom instrument DB init failed:", err);
-    }
-  })();
-
 
   // Listen for online state changes
   window.addEventListener('online', doOnlineCheck);
