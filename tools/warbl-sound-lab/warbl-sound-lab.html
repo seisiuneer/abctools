@@ -265,8 +265,8 @@
       position: sticky;
       top: 10px;
 
-      height: min(710px, calc(100vh - 40px));
-      max-height: min(710px, calc(100vh - 40px));
+      height: min(730px, calc(100vh - 40px));
+      max-height: min(730px, calc(100vh - 40px));
 
       overflow: hidden;
     }
@@ -278,8 +278,8 @@
       position: sticky;
       top: 10px;
 
-      height: min(710px, calc(100vh - 40px));
-      max-height: min(710px, calc(100vh - 40px));
+      height: min(730px, calc(100vh - 40px));
+      max-height: min(730px, calc(100vh - 40px));
 
       overflow: hidden;
     }
@@ -1294,7 +1294,6 @@
       ?
     </button>
 
-
   </div>
 
   <div class="layout">
@@ -1385,7 +1384,7 @@
             </div>
 
             <div class="field" title="Choose the MIDI channel this synth receives on. This is a global setting for the entire tool and is not stored separately for each patch.">
-              <label for="midiChannelSelect">Input Channel</label>
+              <label for="midiChannelSelect">MIDI Input Channel</label>
               <select id="midiChannelSelect" title="Choose the MIDI channel this synth receives on. This is a global setting for the entire tool and is not stored separately for each patch."></select>
             </div>
 
@@ -1404,9 +1403,45 @@
               <label for="pitchBendRange">Pitch Bend Range <span class="value" id="pitchBendRangeValue"></span></label>
               <input id="pitchBendRange" title="Sets the total pitch bend span in semitones. Default is 2 semitones. This is a global setting for the entire tool and is not stored separately for each patch." type="range" min="0" max="12" step="1" value="2">
             </div>
+
+            <div class="field" title="Choose the MIDI continuous controller source used for Controller 1. This is a global setting for the entire tool and is not stored separately for each patch.">
+              <label for="controller1SourceSelect">Controller 1</label>
+              <select id="controller1SourceSelect" title="Choose the MIDI continuous controller source used for Controller 1. This is a global setting for the entire tool and is not stored separately for each patch.">
+                <option value="off">Off</option>
+                <option value="cc1">Mod Wheel (CC1)</option>
+                <option value="cc2">Breath (CC2)</option>
+                <option value="cc7">Volume (CC7)</option>
+                <option value="cc10">Pan (CC10)</option>
+                <option value="cc11">Expression (CC11)</option>
+              </select>
+            </div>
+
+            <div class="field" title="Choose the MIDI continuous controller source used for Controller 2. This is a global setting for the entire tool and is not stored separately for each patch.">
+              <label for="controller2SourceSelect">Controller 2</label>
+              <select id="controller2SourceSelect" title="Choose the MIDI continuous controller source used for Controller 2. This is a global setting for the entire tool and is not stored separately for each patch.">
+                <option value="off">Off</option>
+                <option value="cc1">Mod Wheel (CC1)</option>
+                <option value="cc2">Breath (CC2)</option>
+                <option value="cc7">Volume (CC7)</option>
+                <option value="cc10">Pan (CC10)</option>
+                <option value="cc11">Expression (CC11)</option>
+              </select>
+            </div>
+
+            <div class="field" title="Choose the MIDI continuous controller source used for Controller 3. This is a global setting for the entire tool and is not stored separately for each patch.">
+              <label for="controller3SourceSelect">Controller 3</label>
+              <select id="controller3SourceSelect" title="Choose the MIDI continuous controller source used for Controller 3. This is a global setting for the entire tool and is not stored separately for each patch.">
+                <option value="off">Off</option>
+                <option value="cc1">Mod Wheel (CC1)</option>
+                <option value="cc2">Breath (CC2)</option>
+                <option value="cc7">Volume (CC7)</option>
+                <option value="cc10">Pan (CC10)</option>
+                <option value="cc11">Expression (CC11)</option>
+              </select>
+            </div>
+
           </div>
         </section>
-
 
         <section
           id="tab-instrument"
@@ -1433,9 +1468,9 @@
               <label for="brightness">Brightness <span class="value" id="brightnessValue"></span></label>
               <input id="brightness" title="Controls upper harmonics and filter openness." type="range" min="0" max="4" step="0.01" value="0.5">
             </div>
-            <div class="control" title="Moves the resonant character of the instrument body.">
-              <label for="body">Body / Resonance <span class="value" id="bodyValue"></span></label>
-              <input id="body" title="Moves the resonant character of the instrument body." type="range" min="0" max="1" step="0.01" value="0.5">
+            <div class="control" title="Adjusts the resonant character of the instrument.">
+              <label for="body">Resonance <span class="value" id="bodyValue"></span></label>
+              <input id="body" title="Adjusts the resonant character of the instrument." type="range" min="0" max="1" step="0.01" value="0.5">
             </div>
             <div class="control" title="Sets how quickly the sound reaches full level after note-on.">
               <label for="attack">Attack <span class="value" id="attackValue"></span></label>
@@ -1453,6 +1488,67 @@
               <label for="vibratoDepth">Vibrato Depth <span class="value" id="vibratoDepthValue"></span></label>
               <input id="vibratoDepth" title="Sets vibrato depth in cents." type="range" min="0" max="80" step="1" value="8">
             </div>
+
+            <div class="control" title="Scales how much Controller 1 adds to expression for this patch.">
+              <label for="controller1Expression">Controller 1 → Expression <span class="value" id="controller1ExpressionValue"></span></label>
+              <input id="controller1Expression" title="Scales how much Controller 1 adds to expression for this patch." type="range" min="0" max="1" step="0.01" value="0.00">
+            </div>
+
+            <div class="control" title="Scales how much Controller 1 shifts the tone for this patch.">
+              <label for="controller1Tone">Controller 1 → Tone <span class="value" id="controller1ToneValue"></span></label>
+              <input id="controller1Tone" title="Scales how much Controller 1 shifts the tone for this patch." type="range" min="0" max="1" step="0.01" value="0.00">
+            </div>
+
+            <div class="control" title="Scales how much Controller 1 brightens the sound for this patch.">
+              <label for="controller1Brightness">Controller 1 → Brightness <span class="value" id="controller1BrightnessValue"></span></label>
+              <input id="controller1Brightness" title="Scales how much Controller 1 brightens the sound for this patch." type="range" min="0" max="1" step="0.01" value="0.00">
+            </div>
+
+            <div class="control" title="Scales how much Controller 1 adds resonance for this patch.">
+              <label for="controller1Resonance">Controller 1 → Resonance <span class="value" id="controller1ResonanceValue"></span></label>
+              <input id="controller1Resonance" title="Scales how much Controller 1 adds resonance for this patch." type="range" min="0" max="1" step="0.01" value="0.00">
+            </div>
+
+            <div class="control" title="Scales how much Controller 2 adds to expression for this patch.">
+              <label for="controller2Expression">Controller 2 → Expression <span class="value" id="controller2ExpressionValue"></span></label>
+              <input id="controller2Expression" title="Scales how much Controller 2 adds to expression for this patch." type="range" min="0" max="1" step="0.01" value="0.00">
+            </div>
+
+            <div class="control" title="Scales how much Controller 2 shifts the tone for this patch.">
+              <label for="controller2Tone">Controller 2 → Tone <span class="value" id="controller2ToneValue"></span></label>
+              <input id="controller2Tone" title="Scales how much Controller 2 shifts the tone for this patch." type="range" min="0" max="1" step="0.01" value="0.00">
+            </div>
+
+            <div class="control" title="Scales how much Controller 2 brightens the sound for this patch.">
+              <label for="controller2Brightness">Controller 2 → Brightness <span class="value" id="controller2BrightnessValue"></span></label>
+              <input id="controller2Brightness" title="Scales how much Controller 2 brightens the sound for this patch." type="range" min="0" max="1" step="0.01" value="0.00">
+            </div>
+
+            <div class="control" title="Scales how much Controller 2 adds resonance for this patch.">
+              <label for="controller2Resonance">Controller 2 → Resonance <span class="value" id="controller2ResonanceValue"></span></label>
+              <input id="controller2Resonance" title="Scales how much Controller 2 adds resonance for this patch." type="range" min="0" max="1" step="0.01" value="0.00">
+            </div>
+
+            <div class="control" title="Scales how much Controller 3 adds to expression for this patch.">
+              <label for="controller3Expression">Controller 3 → Expression <span class="value" id="controller3ExpressionValue"></span></label>
+              <input id="controller3Expression" title="Scales how much Controller 3 adds to expression for this patch." type="range" min="0" max="1" step="0.01" value="0.00">
+            </div>
+
+            <div class="control" title="Scales how much Controller 3 shifts the tone for this patch.">
+              <label for="controller3Tone">Controller 3 → Tone <span class="value" id="controller3ToneValue"></span></label>
+              <input id="controller3Tone" title="Scales how much Controller 3 shifts the tone for this patch." type="range" min="0" max="1" step="0.01" value="0.00">
+            </div>
+
+            <div class="control" title="Scales how much Controller 3 brightens the sound for this patch.">
+              <label for="controller3Brightness">Controller 3 → Brightness <span class="value" id="controller3BrightnessValue"></span></label>
+              <input id="controller3Brightness" title="Scales how much Controller 3 brightens the sound for this patch." type="range" min="0" max="1" step="0.01" value="0.00">
+            </div>
+
+            <div class="control" title="Scales how much Controller 3 adds resonance for this patch.">
+              <label for="controller3Resonance">Controller 3 → Resonance <span class="value" id="controller3ResonanceValue"></span></label>
+              <input id="controller3Resonance" title="Scales how much Controller 3 adds resonance for this patch." type="range" min="0" max="1" step="0.01" value="0.00">
+            </div>
+
             <div class="field" title="Select which pitch the drone voice will play when toggled on. Available range: C2 to D5. The trigger to turn the drone on or off is always incoming MIDI note 51. This setting is stored per patch.">
               <label for="droneNoteSelect">Drone Note</label>
               <select id="droneNoteSelect" title="Select which pitch the drone voice will play when toggled on. Available range: C2 to D5. The trigger to turn the drone on or off is always incoming MIDI note 51. This setting is stored per patch.">
@@ -1840,9 +1936,9 @@
         <div class="instructions-subbody">
           <ol class="instructions-steps">
             <li>Click <b>Connect MIDI</b> and allow browser MIDI access if requested.</li>
-            <li>The tool will automatically switch to the <b>Global</b> tab where you can choose your <b>MIDI Input</b> and <b>Input Channel</b>.</li>
+            <li>The tool will automatically switch to the <b>Global</b> tab where you can choose your <b>MIDI Input</b> and <b>MIDI Input Channel</b>.</li>
             <li>Select one of the six instrument presets at the top: <b>Air</b>, <b>Reed</b>, <b>Solo</b>, <b>Brass</b>, <b>Pad</b>, or <b>Lead</b>.</li>
-            <li>Choose the <b>Expression Source</b> that matches your WARBL setup.</li>
+            <li>Choose the <b>Expression Source</b> plus the <b>Controller 1</b>, <b>Controller 2</b>, and <b>Controller 3</b> source controls that match your WARBL setup.</li>      
             <li>Adjust controls across the tabs, then play your WARBL and watch the <b>Live Status</b> panel.</li>
             <li>If the <b>Audio</b> status still shows <b>Suspended</b>, click or play again after connecting MIDI so the browser can start audio.</li>
           </ol>
@@ -1856,7 +1952,7 @@
           <div class="instructions-gap"></div>
 
           <b>MIDI Input</b> – Select your WARBL or other MIDI device.<br/>
-          <b>Input Channel</b> – Choose which MIDI channel to listen on.<br/>
+          <b>MIDI Input Channel</b> – Choose which MIDI channel to listen on.<br/>
           <b>Expression Source</b> – Controls how dynamics are driven:
           <ul style="margin-top:6px;">
             <li><b>Breath (CC2)</b></li>
@@ -1868,6 +1964,26 @@
 
           <b>Pitch Bend Range</b> – Sets the overall bend range in semitones (default ±2).<br/> 
           Additional <b>Pitch Bend Down Scale</b> and <b>Pitch Bend Up Scale</b> controls are available on the Controller tab.
+          <div class="instructions-gap"></div>
+
+          <b>Controller 1</b> – Selects the incoming MIDI continuous controller used for the first extra modulation stream.<br/>
+          <b>Controller 2</b> – Selects the incoming MIDI continuous controller used for the second extra modulation stream.<br/>
+          <b>Controller 3</b> – Selects the incoming MIDI continuous controller used for the third extra modulation stream.<br/>
+
+          Each controller can be set to:
+          <ul style="margin-top:6px;">
+            <li><b>Off</b></li>
+            <li><b>Mod Wheel (CC1)</b></li>
+            <li><b>Breath (CC2)</b></li>
+            <li><b>Volume (CC7)</b></li>
+            <li><b>Pan (CC10)</b></li>
+            <li><b>Expression (CC11)</b></li>
+          </ul>
+
+          <div class="instructions-gap"></div>
+
+          These controller-source selections are <b>global settings</b> for the entire tool and are not stored separately for each patch.
+
         </div>
 
         <hr class="instructions-divider"/>
@@ -1894,7 +2010,7 @@
           <b>Filter Base</b> – Sets the patch’s starting filter cutoff in Hz.<br/>
           Lower values make the sound darker and more closed. Higher values make it brighter and more open.<br/>
           <b>Brightness</b> – Adjusts upper harmonics and filter openness.<br/>
-          <b>Body / Resonance</b> – Shapes the resonant character of the instrument body.
+          <b>Resonance</b> – Adjusts the resonant character of the instrument.
 
           <div class="instructions-gap"></div>
 
@@ -1902,6 +2018,46 @@
           <b>Release</b> – Sets how long the note fades after release.<br/>
           <b>Vibrato Rate</b> – Sets vibrato speed.<br/>
           <b>Vibrato Depth</b> – Sets vibrato depth in cents.
+
+          <div class="instructions-gap"></div>
+
+          The Instrument tab also includes twelve per-patch controller scaling controls:
+
+          <div class="instructions-gap"></div>
+
+          <b>Controller 1 → Expression</b> – Scales how much Controller 1 adds to expression level for this patch.<br/>
+          <b>Controller 1 → Tone</b> – Scales how much Controller 1 shifts the tone for this patch.<br/>
+          <b>Controller 1 → Brightness</b> – Scales how much Controller 1 brightens the sound for this patch.<br/>
+          <b>Controller 1 → Resonance</b> – Scales how much Controller 1 adds resonance for this patch.<br/>
+
+          <div class="instructions-gap"></div>
+
+          <b>Controller 2 → Expression</b> – Scales how much Controller 2 adds to expression level for this patch.<br/>
+          <b>Controller 2 → Tone</b> – Scales how much Controller 2 shifts the tone for this patch.<br/>
+          <b>Controller 2 → Brightness</b> – Scales how much Controller 2 brightens the sound for this patch.<br/>
+          <b>Controller 2 → Resonance</b> – Scales how much Controller 2 adds resonance for this patch.<br/>
+
+          <div class="instructions-gap"></div>
+
+          <b>Controller 3 → Expression</b> – Scales how much Controller 3 adds to expression level for this patch.<br/>
+          <b>Controller 3 → Tone</b> – Scales how much Controller 3 shifts the tone for this patch.<br/>
+          <b>Controller 3 → Brightness</b> – Scales how much Controller 3 brightens the sound for this patch.<br/>
+          <b>Controller 3 → Resonance</b> – Scales how much Controller 3 adds resonance for this patch.<br/>
+
+          <div class="instructions-gap"></div>
+
+          These twelve scaling controls are stored <b>per patch</b>. A setting of <b>0.00</b> disables that routing for the current patch.
+
+          <div class="instructions-gap"></div>
+
+          <b>Controller Response Varies by Patch</b><br/>
+
+          Controller-based modulation is applied within each patch’s synthesis model.<br/>
+          Because patches use different filter ranges, harmonic content, and processing, the same controller movement may have a strong effect on one patch and a subtle or nearly inaudible effect on another.
+
+          <div class="instructions-gap"></div>
+          
+          This is expected behavior.
 
           <div class="instructions-gap"></div>
 
@@ -2052,7 +2208,7 @@
           <b>How to use:</b>
           <ul style="margin-top:6px;">
             <li>Send a MIDI <b>note 51 (D#3 / Eb3)</b> Note On message to toggle the drone on or off</li>
-            <li>Velocity controls the initial level of the drone when triggered</li>
+            <li>Velocity controls the initial level of the drone when it is turned on</li>
           </ul>
 
           The drone:
@@ -2062,6 +2218,7 @@
             <li>Follows <b>Transpose</b> and <b>Master Tuning</b></li>
             <li>Does <b>not</b> respond to pitch bend (remains fixed in pitch)</li>
             <li>Disables automatically when changing presets</li>
+            <li>The drone does <b>not</b> respond to live Controller 1 / Controller 2 / Controller 3 expression, tone, brightness, or resonance modulation</li>
           </ul>
         </div>
 
@@ -2086,9 +2243,9 @@
 
         <div class="instructions-subtitle">Reset Buttons</div>
         <div class="instructions-subbody">
-          <b>Reset Current Preset to Defaults</b> restores only the currently selected voice to its default settings, including <b>Transpose</b> and <b>Master Tuning</b>. Global settings such as <b>Expression Source</b>, <b>MIDI Input</b>, <b>Input Channel</b>, and <b>Pitch Bend Range</b> are not changed.
+          <b>Reset Current Preset to Defaults</b> restores only the currently selected voice to its default settings, including <b>Transpose</b> and <b>Master Tuning</b>. Global settings such as <b>Expression Source</b>, <b>MIDI Input</b>, <b>MIDI Input Channel</b>, and <b>Pitch Bend Range</b> are not changed.
           <div class="instructions-gap"></div>
-          <b>Reset All Presets to Defaults</b> clears saved changes for all voices and restores the current voice to its default settings, including <b>Transpose</b> and <b>Master Tuning</b>. Global settings such as <b>Expression Source</b>, <b>MIDI Input</b>, <b>Input Channel</b>, and <b>Pitch Bend Range</b> are not changed.
+          <b>Reset All Presets to Defaults</b> clears saved changes for all voices and restores the current voice to its default settings, including <b>Transpose</b> and <b>Master Tuning</b>. Global settings such as <b>Expression Source</b>, <b>MIDI Input</b>, <b>MIDI Input Channel</b>, and <b>Pitch Bend Range</b> are not changed.
         </div>
 
         <hr class="instructions-divider"/>
@@ -2113,9 +2270,10 @@
 
             <li>
               <strong>What gets saved in the file:</strong><br>
-              • All preset parameters (tone, filter base, brightness, texture, vibrato, portamento, transpose, master tuning, reverb, etc.)<br>
+              • All preset parameters (tone, filter base, brightness, texture, vibrato, portamento, transpose, master tuning, reverb, controller scaling, etc.)<br>
               • Preset-specific adjustments and overrides<br>
-              • Expression mode, pitch bend range, and MIDI input channel<br>
+              • Global controller settings, including <b>Expression Source</b>, <b>Pitch Bend Range</b>, <b>MIDI Input Channel</b>, <b>Controller 1</b>, <b>Controller 2</b>, and <b>Controller 3</b><br>
+              • Per-patch Controller 1 / Controller 2 / Controller 3 scaling amounts for expression, brightness, tone, and resonance<br>
               • Performance and UI options, including MIDI logging, output meter, and Lower CPU use mode
             </li>
 
@@ -2217,7 +2375,7 @@
             <li>MIDI input provides note, velocity, expression, and pitch bend data</li>
             <li>The main voice generates sound using oscillators and noise sources shaped by the current preset</li>
             <li>A filter stage shaped by <b>Filter Base</b>, <b>Brightness</b>, <b>Tone</b>, and optional expression-based brightening shapes the harmonic content before the drive stage</li>
-            <li>Modulation (vibrato, optional expression → brightness) adds movement</li>
+            <li>Modulation and controller routing (expression shaping, tone, brightness, resonance, and vibrato) add movement</li>
             <li>Chorus widens and thickens the sound</li>
             <li>Dry signal and reverb are mixed together before the final output</li>
           </ul>
@@ -2228,6 +2386,7 @@
             <li>The drone has a faster attack and a fixed expression level set at trigger time</li>
             <li>The main voice responds continuously to expression and pitch bend</li>
             <li>The drone does not respond to pitch bend or live expression changes</li>
+            <li>The drone does not respond to live Controller 1 / Controller 2 / Controller 3 expression, tone, brightness, or resonance modulation</li>
             <li>Main and drone voices run in parallel and are mixed together before reverb and final output</li>
           </ul>
 
@@ -2241,7 +2400,7 @@
           <div class="instructions-gap"></div>
           • Make sure MIDI access was granted.<br/>
           • Verify the correct MIDI device is selected.<br/>
-          • Check that the correct input channel is selected.<br/>
+          • Check that the correct <b>MIDI Input Channel</b> is selected.<br/>
           • Try clicking <b>All Notes Off</b> if a note gets stuck.<br/>
           • If <b>Audio</b> still shows <b>Suspended</b>, click or play again to let the browser start audio.
           <div class="instructions-gap"></div>
@@ -2340,10 +2499,20 @@
   };
 
   const SETTINGS_FILE_MAGIC = 'WARBL_SOUND_LAB_SETTINGS';
-  const SETTINGS_FILE_VERSION = 10;
+  const SETTINGS_FILE_VERSION = 11;
   const DEFAULT_SETTINGS_FILENAME = 'warbl-sound-lab-settings.json';
-  const LAST_SETTINGS_FILENAME_KEY = 'warblSoundLabLastSettingsFilename_v10';
+  const LAST_SETTINGS_FILENAME_KEY = 'warblSoundLabLastSettingsFilename_v11';
   const TIP_REMINDER_VISIT_COUNT_KEY = 'warblSoundLabVisitCount_v1';
+
+  function createDefaultCcValues() {
+    const values = Array.from({ length: 128 }, () => 0);
+    values[1] = 0;
+    values[2] = 0;
+    values[7] = 100;
+    values[10] = 64;
+    values[11] = 127;
+    return values;
+  }
 
   const DEFAULTS = {
     patch:'whistle',
@@ -2382,6 +2551,23 @@
     subOscLevel: 0.0,
     filterQ:1.0,
     driveCurveShape:'tanh',
+
+    controller1Source:'cc11',
+    controller2Source:'cc10',
+    controller3Source:'cc2',
+
+    controller1Expression:0.00,
+    controller1Brightness:0.00,
+    controller1Tone:0.00,
+    controller1Resonance:0.00,
+    controller2Expression:0.00,
+    controller2Brightness:0.00,
+    controller2Tone:0.00,
+    controller2Resonance:0.00,
+    controller3Expression:0.00,
+    controller3Brightness:0.00,
+    controller3Tone:0.00,
+    controller3Resonance:0.00
   };
 
   const DEFAULT_PATCH_DISPLAY_NAMES = {
@@ -2612,7 +2798,20 @@
     'osc2Ratio',
     'osc3Ratio',
     'filterQ',
-    'driveCurveShape'
+    'driveCurveShape',
+
+    'controller1Expression',
+    'controller1Brightness',
+    'controller1Tone',
+    'controller1Resonance',
+    'controller2Expression',
+    'controller2Brightness',
+    'controller2Tone',
+    'controller2Resonance',
+    'controller3Expression',
+    'controller3Brightness',
+    'controller3Tone',
+    'controller3Resonance'
   ];
 
   const state = {
@@ -2631,7 +2830,7 @@
     droneExpressionGain:0,
     reverbBuffers:new Map(),
     meterValue:0,
-    cc2:0, cc7:100, cc11:127,
+    ccValues:createDefaultCcValues(),
     presetOverrides:{},
     patchDisplayNames: { ...DEFAULT_PATCH_DISPLAY_NAMES },
     midiChannel:1,
@@ -2651,7 +2850,7 @@
   const VALID_REVERB_STYLES = new Set(['room', 'hall', 'plate', 'ambient', 'church']);
   const VALID_OSC_WAVES = new Set(['sine', 'triangle', 'sawtooth', 'square']);
   const VALID_DRIVE_CURVES = new Set(['tanh','asym','hard']);
-
+  const VALID_CONTROLLER_SOURCES = new Set(['off', 'cc1', 'cc2', 'cc7', 'cc10', 'cc11']);
   const OSC_LEVEL_INTERNAL_MAX = 0.25;
   const OSC_LEVEL_DISPLAY_MAX = 1.0;
 
@@ -2701,16 +2900,79 @@
     return sanitizeEnum(value, VALID_PATCHES, fallback);
   }
 
+  function sanitizeControllerSource(value, fallback) {
+    return sanitizeEnum(value, VALID_CONTROLLER_SOURCES, fallback);
+  }
+
+  function getControllerSourceCcNumber(source) {
+    switch (source) {
+      case 'cc1': return 1;
+      case 'cc2': return 2;
+      case 'cc7': return 7;
+      case 'cc10': return 10;
+      case 'cc11': return 11;
+      case 'off':
+      default:
+        return null;
+    }
+  }
+
+  function getControllerSourceNormalizedValue(source) {
+    const ccNumber = getControllerSourceCcNumber(source);
+    if (ccNumber == null) return 0;
+    return clamp((state.ccValues[ccNumber] || 0) / 127, 0, 1);
+  }
+
+  function getController1NormalizedValue() {
+    return getControllerSourceNormalizedValue(state.controller1Source);
+  }
+
+  function getController2NormalizedValue() {
+    return getControllerSourceNormalizedValue(state.controller2Source);
+  }
+
+  function getController3NormalizedValue() {
+    return getControllerSourceNormalizedValue(state.controller3Source);
+  }
+  
+  function getConfiguredControllerCcNumbers() {
+    const result = new Set();
+
+    const cc1 = getControllerSourceCcNumber(state.controller1Source);
+    const cc2 = getControllerSourceCcNumber(state.controller2Source);
+    const cc3 = getControllerSourceCcNumber(state.controller3Source);
+
+    if (cc1 != null) result.add(cc1);
+    if (cc2 != null) result.add(cc2);
+    if (cc3 != null) result.add(cc3);
+
+    return [...result];
+  }
+
   function sanitizePresetSettingValue(key, value, fallback) {
     switch (key) {
       case 'tone':
       case 'brightness':
+        return clamp(toFiniteNumber(value, fallback), 0, 4);
+
       case 'texture':
       case 'body':
-        return clamp(toFiniteNumber(value, fallback), 0, 4);
+        return clamp(toFiniteNumber(value, fallback), 0, 1);
 
       case 'brightnessFollow':
       case 'vibratoFollow':
+      case 'controller1Expression':
+      case 'controller1Brightness':
+      case 'controller1Tone':
+      case 'controller1Resonance':
+      case 'controller2Expression':
+      case 'controller2Brightness':
+      case 'controller2Tone':
+      case 'controller2Resonance':
+      case 'controller3Expression':
+      case 'controller3Brightness':
+      case 'controller3Tone':
+      case 'controller3Resonance':
         return clamp(toFiniteNumber(value, fallback), 0, 1);
 
       case 'baseCutoff':
@@ -2885,7 +3147,20 @@
       ),
       midiLogEnabled: toBoolean(source.midiLogEnabled, false),
       meterEnabled: toBoolean(source.meterEnabled, false),
-      lowCpuMode: toBoolean(source.lowCpuMode, false)
+      lowCpuMode: toBoolean(source.lowCpuMode, false),
+
+      controller1Source: sanitizeControllerSource(
+        source.controller1Source,
+        DEFAULTS.controller1Source
+      ),
+      controller2Source: sanitizeControllerSource(
+        source.controller2Source,
+        DEFAULTS.controller2Source
+      ),
+      controller3Source: sanitizeControllerSource(
+        source.controller3Source,
+        DEFAULTS.controller3Source
+      )
     };
   }
 
@@ -3120,14 +3395,14 @@
         return 1.0;
 
       case 'cc7':
-        return computeExpressionGain(state.cc7 ?? 0);
+        return computeExpressionGain(state.ccValues[7] ?? 0);
 
       case 'cc11':
-        return computeExpressionGain(state.cc11 ?? 0);
+        return computeExpressionGain(state.ccValues[11] ?? 0);
 
       case 'cc2':
       default:
-        return computeExpressionGain(state.cc2 ?? 0);
+        return computeExpressionGain(state.ccValues[2] ?? 0);
     }
   }
   
@@ -3492,7 +3767,46 @@
       const exprGain = clamp(expr, 0, 1);
       const exprNorm = exprGain;
 
-      const brightnessBoost = exprNorm * settings.brightnessFollow;
+      const controller1Norm = getController1NormalizedValue();
+      const controller2Norm = getController2NormalizedValue();
+      const controller3Norm = getController3NormalizedValue();
+
+      const controllerBrightnessAdd =
+        controller1Norm * (settings.controller1Brightness || 0) +
+        controller2Norm * (settings.controller2Brightness || 0) +
+        controller3Norm * (settings.controller3Brightness || 0);
+
+      const controllerToneAdd =
+        controller1Norm * (settings.controller1Tone || 0) +
+        controller2Norm * (settings.controller2Tone || 0) +
+        controller3Norm * (settings.controller3Tone || 0);
+
+      const controllerResonanceAdd =
+        controller1Norm * (settings.controller1Resonance || 0) +
+        controller2Norm * (settings.controller2Resonance || 0) +
+        controller3Norm * (settings.controller3Resonance || 0);
+
+      const effectiveBrightness = clamp(
+        Number(settings.brightness || 0) + controllerBrightnessAdd * 3.0,
+        0,
+        4
+      );
+
+      const effectiveTone = clamp(
+        Number(settings.tone || 0) + controllerToneAdd * 4.0,
+        0,
+        4
+      );
+
+      const effectiveBody = clamp(
+        Number(settings.body || 0) + controllerResonanceAdd * 2,
+        0,
+        1
+      );
+
+      const brightnessBoost =
+        exprNorm * (settings.brightnessFollow || 0) +
+        controllerBrightnessAdd;
 
       const targetFreq = this.baseFreq * Math.pow(2, bendSemis / 12);
       const glideActive = this.noteGlideTime > 0 && t < this.noteGlideUntil;
@@ -3521,10 +3835,10 @@
       }
       this.lastBendSemis = bendSemis;
 
-      const tone = settings.tone;
-      const bright = settings.brightness;
+      const tone = effectiveTone;
+      const bright = effectiveBrightness;
       const texture = settings.texture;
-      const body = settings.body;
+      const body = effectiveBody;
 
       this.osc1Gain.gain.setTargetAtTime(profile.gains[0] * (0.8 + tone * 0.5), t, 0.02);
       this.osc2Gain.gain.setTargetAtTime(profile.gains[1] * (0.6 + bright * 0.9), t, 0.02);
@@ -3537,7 +3851,7 @@
       }
 
       this.subGain.gain.setTargetAtTime(
-        profile.sub * (0.6 + body * 0.8),
+        profile.sub * (0.55 + body * 1.15),
         t,
         0.03
       );
@@ -3576,11 +3890,24 @@
         settings.patch === 'lead' ? exprNorm * 1800 :
         settings.patch === 'whistle' ? exprNorm * 1200 : 0;
 
+      const maxFilterFreq = Math.max(10, (this.ctx.sampleRate * 0.5) - 1);
+
+      const targetCutoff = clamp(
+        profile.baseCutoff +
+          bright * profile.cutoffSpan +
+          brightnessBoost * 2200 +
+          tone * 750 +
+          cutoffBoost,
+        10,
+        maxFilterFreq
+      );
+
       this.toneFilter.frequency.setTargetAtTime(
-        profile.baseCutoff + bright * profile.cutoffSpan + brightnessBoost * 2200 + tone * 450 + cutoffBoost,
+        targetCutoff,
         t,
         0.03
       );
+
       this.toneFilter.Q.setTargetAtTime(
         profile.q + bright * (
           settings.patch === 'lead' ? 1.0 :
@@ -3590,9 +3917,10 @@
         t,
         0.03
       );
-      this.formant.frequency.setTargetAtTime(profile.formantFreq + tone * 320 + body * 220 + brightnessBoost * 350, t, 0.03);
-      this.formant.Q.setTargetAtTime(profile.formantQ + body * 0.35, t, 0.03);
-      this.formant.gain.setTargetAtTime(profile.formantGain + tone * 1.2 + texture * 0.8, t, 0.03);
+
+      this.formant.frequency.setTargetAtTime(profile.formantFreq + tone * 360 + body * 320 + brightnessBoost * 350, t, 0.03);
+      this.formant.Q.setTargetAtTime(profile.formantQ + body * 0.7, t, 0.03);
+      this.formant.gain.setTargetAtTime(profile.formantGain + tone * 1.4 + body * 1.2 + texture * 0.8, t, 0.03);
 
       const chorusBoost = Math.max(0, Number(settings.chorusBoost ?? 1));
       const chorusMix = clamp(profile.chorusMix * chorusBoost, 0, 0.75);
@@ -3621,7 +3949,11 @@
 
       const vibratoDelayMs = Math.max(0, Number(settings.vibratoDelay ?? 0));
       const vibratoFollow = clamp(Number(settings.vibratoFollow ?? 0), 0, 1);
-      const vibratoDepthCents = Number(settings.vibratoDepth ?? 0) + (exprNorm * vibratoFollow * 40);
+
+      const vibratoDepthCents =
+        Number(settings.vibratoDepth ?? 0) +
+        (exprNorm * vibratoFollow * 40);
+
       const vibratoTarget = (vibratoDepthCents / 100) * targetFreq * vibScale;
 
       this.vibratoGain.gain.cancelScheduledValues(t);
@@ -3941,17 +4273,23 @@
   }
 
   function getExpressionFromState() {
-
     if (state.currentNote == null) {
       state.expressionValue = 0;
       $('expressionReadout').textContent = '0%';
       return 0;
     }
 
-    const gain = resolveCurrentExpressionGain(state.currentVelocity ?? 127);
+    const baseGain = resolveCurrentExpressionGain(state.currentVelocity ?? 127);
+
+    const controllerExpressionAdd =
+      getController1NormalizedValue() * (state.controller1Expression || 0) +
+      getController2NormalizedValue() * (state.controller2Expression || 0) +
+      getController3NormalizedValue() * (state.controller3Expression || 0);
+
+    const gain = clamp(baseGain + controllerExpressionAdd, 0, 1);
 
     state.expressionValue = gain;
-    $('expressionReadout').textContent = `${Math.round(clamp(gain, 0, 1) * 100)}%`;
+    $('expressionReadout').textContent = `${Math.round(gain * 100)}%`;
 
     return gain;
   }
@@ -4083,7 +4421,7 @@
 
   function formatMidiMessage(msg) {
     const hex = (v) => "0x" + (v ?? 0).toString(16).toUpperCase().padStart(2, "0");
- 
+
     const statusHex = hex(msg.status);
     const data1Hex = hex(msg.data1);
     const data2Hex = hex(msg.data2);
@@ -4107,6 +4445,9 @@
       if (msg.data1 === 7) {
         label = "CC7 ";
         decoded = "vol= " + msg.data2;
+      } else if (msg.data1 === 10) {
+        label = "CC10";
+        decoded = "pan= " + msg.data2;
       } else if (msg.data1 === 11) {
         label = "CC11";
         decoded = "expr= " + msg.data2;
@@ -4237,18 +4578,26 @@
         noteOff(data1);
         break;
 
-      case 0xB0:
-        if (data1 === 2) state.cc2 = data2;
-        if (data1 === 7) state.cc7 = data2;
-        if (data1 === 11) state.cc11 = data2;
+      case 0xB0: {
+        state.ccValues[data1] = data2;
 
-        if ([2,7,11].includes(data1)) {
+        if (data1 === 123) {
+          allNotesOff();
+          break;
+        }
+
+        const watchedCcs = new Set([
+          2, 7, 10, 11,
+          ...getConfiguredControllerCcNumbers()
+        ]);
+
+        if (watchedCcs.has(data1)) {
           getExpressionFromState();
           requestVoiceUpdate();
         }
 
-        if (data1 === 123) allNotesOff();
         break;
+      }
 
       case 0xE0: {
         const raw = ((data2 << 7) | data1) - 8192;
@@ -4752,7 +5101,20 @@
       ...state,
       attack: Math.min(state.attack || 0.01, 0.015),
       vibratoDepth: 0,
-      chorusBoost: 1.1
+      chorusBoost: 1.1,
+
+      controller1Expression: 0,
+      controller1Brightness: 0,
+      controller1Tone: 0,
+      controller1Resonance: 0,
+      controller2Expression: 0,
+      controller2Brightness: 0,
+      controller2Tone: 0,
+      controller2Resonance: 0,
+      controller3Expression: 0,
+      controller3Brightness: 0,
+      controller3Tone: 0,
+      controller3Resonance: 0
     };
 
     state.droneVoice.setNote(midiNoteToFreq(soundingNote), 0, droneSettings);
@@ -4790,7 +5152,20 @@
       ...state,
       attack: Math.min(state.attack || 0.01, 0.015),
       vibratoDepth: 0,
-      chorusBoost: 1.1
+      chorusBoost: 1.1,
+
+      controller1Expression: 0,
+      controller1Brightness: 0,
+      controller1Tone: 0,
+      controller1Resonance: 0,
+      controller2Expression: 0,
+      controller2Brightness: 0,
+      controller2Tone: 0,
+      controller2Resonance: 0,
+      controller3Expression: 0,
+      controller3Brightness: 0,
+      controller3Tone: 0,
+      controller3Resonance: 0
     };
 
     state.droneVoice.setNote(midiNoteToFreq(soundingNote), 0, droneSettings);
@@ -4822,6 +5197,30 @@
           el.value,
           VALID_EXPRESSION_MODES,
           DEFAULTS.expressionMode
+        );
+        getExpressionFromState();
+        requestVoiceUpdate();
+
+      } else if (id === 'controller1SourceSelect') {
+        state.controller1Source = sanitizeControllerSource(
+          el.value,
+          DEFAULTS.controller1Source
+        );
+        getExpressionFromState();
+        requestVoiceUpdate();
+
+      } else if (id === 'controller2SourceSelect') {
+        state.controller2Source = sanitizeControllerSource(
+          el.value,
+          DEFAULTS.controller2Source
+        );
+        getExpressionFromState();
+        requestVoiceUpdate();
+
+      } else if (id === 'controller3SourceSelect') {
+        state.controller3Source = sanitizeControllerSource(
+          el.value,
+          DEFAULTS.controller3Source
         );
         getExpressionFromState();
         requestVoiceUpdate();
@@ -4917,6 +5316,9 @@
     const {
       pitchBendRange,
       expressionMode,
+      controller1Source,
+      controller2Source,
+      controller3Source,
       ...presetScopedDefaults
     } = DEFAULTS;
 
@@ -4978,7 +5380,11 @@
         midiChannel: state.midiChannel,
         midiLogEnabled: !!state.midiLogEnabled,
         meterEnabled: !!state.meterEnabled,
-        lowCpuMode: !!state.lowCpuMode
+        lowCpuMode: !!state.lowCpuMode,
+
+        controller1Source: state.controller1Source,
+        controller2Source: state.controller2Source,
+        controller3Source: state.controller3Source,
       },
       patchDisplayNames: { ...state.patchDisplayNames },
       presets: buildAllEffectivePresetSettings()
@@ -5037,6 +5443,12 @@
     state.midiLogEnabled = globals.midiLogEnabled;
     state.meterEnabled = globals.meterEnabled;
     state.lowCpuMode = globals.lowCpuMode;
+
+    state.controller1Source = globals.controller1Source;
+    state.controller2Source = globals.controller2Source;
+    state.controller3Source = globals.controller3Source;
+
+    state.ccValues = createDefaultCcValues();
 
     allNotesOff();
     applyStateToUi();
@@ -5142,7 +5554,7 @@
   function saveState(){
     try{
       captureCurrentPresetOverrides();
-      localStorage.setItem('warblSoundLabState_v36', JSON.stringify({
+      localStorage.setItem('warblSoundLabState_v37', JSON.stringify({
         patch: state.patch,
         midiChannel: state.midiChannel,
         midiInputId: state.midiInputId || '',
@@ -5151,6 +5563,11 @@
         lowCpuMode: !!state.lowCpuMode,
         pitchBendRange: state.pitchBendRange,
         expressionMode: state.expressionMode,
+
+        controller1Source: state.controller1Source,
+        controller2Source: state.controller2Source,
+        controller3Source: state.controller3Source,
+
         patchDisplayNames: state.patchDisplayNames || { ...DEFAULT_PATCH_DISPLAY_NAMES },
         presetOverrides: state.presetOverrides || {}
       }));
@@ -5159,7 +5576,9 @@
 
   function loadState(){
     try{
-      const raw = localStorage.getItem('warblSoundLabState_v36');
+      const raw = localStorage.getItem('warblSoundLabState_v37');
+
+      state.ccValues = createDefaultCcValues();
 
       if (!raw) {
         Object.assign(state, clonePresetDefaults(DEFAULTS.patch));
@@ -5171,6 +5590,11 @@
         state.midiLogEnabled = false;
         state.meterEnabled = false;
         state.lowCpuMode = false;
+
+        state.controller1Source = DEFAULTS.controller1Source;
+        state.controller2Source = DEFAULTS.controller2Source;
+        state.controller3Source = DEFAULTS.controller3Source;
+
         state.droneVolume = DEFAULTS.droneVolume;
         state.droneNote = DEFAULTS.droneNote;
         state.subOscLevel = DEFAULTS.subOscLevel;
@@ -5211,11 +5635,26 @@
       state.meterEnabled = toBoolean(savedObj.meterEnabled, false);
       state.lowCpuMode = toBoolean(savedObj.lowCpuMode, false);
 
+      state.controller1Source = sanitizeControllerSource(
+        savedObj.controller1Source,
+        DEFAULTS.controller1Source
+      );
+      state.controller2Source = sanitizeControllerSource(
+        savedObj.controller2Source,
+        DEFAULTS.controller2Source
+      );
+      state.controller3Source = sanitizeControllerSource(
+        savedObj.controller3Source,
+        DEFAULTS.controller3Source
+      );
+
       state.droneNote = sanitizePresetSettingValue('droneNote', state.droneNote, DEFAULTS.droneNote);
       state.droneVolume = sanitizePresetSettingValue('droneVolume', state.droneVolume, DEFAULTS.droneVolume);
       state.subOscLevel = sanitizePresetSettingValue('subOscLevel', state.subOscLevel, DEFAULTS.subOscLevel);
 
     } catch(e){
+      state.ccValues = createDefaultCcValues();
+
       Object.assign(state, clonePresetDefaults('whistle'));
       state.patch = 'whistle';
       state.pitchBendRange = DEFAULTS.pitchBendRange;
@@ -5225,6 +5664,11 @@
       state.midiLogEnabled = false;
       state.meterEnabled = false;
       state.lowCpuMode = false;
+
+      state.controller1Source = DEFAULTS.controller1Source;
+      state.controller2Source = DEFAULTS.controller2Source;
+      state.controller3Source = DEFAULTS.controller3Source;
+
       state.droneVolume = DEFAULTS.droneVolume;
       state.droneNote = DEFAULTS.droneNote;
       state.subOscLevel = DEFAULTS.subOscLevel;
@@ -5243,7 +5687,13 @@
       'expressionCurve','vibratoDelay','vibratoFollow',
       'attackCurve','releaseCurve','chorusBoost',
       'osc1Level','osc2Level','osc3Level',
-      'filterQ','subOscLevel'
+      'filterQ','subOscLevel',
+      'controller1Expression','controller1Brightness',
+      'controller1Tone','controller1Resonance',
+      'controller2Expression','controller2Brightness',
+      'controller2Tone','controller2Resonance',
+      'controller3Expression','controller3Brightness',
+      'controller3Tone','controller3Resonance'
     ].forEach(id => {
       if ($(id) && state[id] != null) {
         $(id).value = isOscLevelId(id)
@@ -5265,6 +5715,10 @@
     $('midiChannelSelect').value = String(
       (state.midiChannel >= 1 && state.midiChannel <= 16) ? state.midiChannel : 1
     );
+
+    $('controller1SourceSelect').value = state.controller1Source || DEFAULTS.controller1Source;
+    $('controller2SourceSelect').value = state.controller2Source || DEFAULTS.controller2Source;
+    $('controller3SourceSelect').value = state.controller3Source || DEFAULTS.controller3Source;
 
     $('osc1WaveSelect').value = state.osc1Wave || getPatchProfile(state.patch).osc1;
     $('osc2WaveSelect').value = state.osc2Wave || getPatchProfile(state.patch).osc2;
@@ -5446,6 +5900,19 @@
       osc2Level:v=>v.toFixed(3),
       osc3Level:v=>v.toFixed(3),
       filterQ:v=>v.toFixed(2),
+
+      controller1Expression:v=>v.toFixed(2),
+      controller1Brightness:v=>v.toFixed(2),
+      controller1Tone:v=>v.toFixed(2),
+      controller1Resonance:v=>v.toFixed(2),
+      controller2Expression:v=>v.toFixed(2),
+      controller2Brightness:v=>v.toFixed(2),
+      controller2Tone:v=>v.toFixed(2),
+      controller2Resonance:v=>v.toFixed(2),
+      controller3Expression:v=>v.toFixed(2),
+      controller3Brightness:v=>v.toFixed(2),
+      controller3Tone:v=>v.toFixed(2),
+      controller3Resonance:v=>v.toFixed(2),
     };
 
     Object.keys(formatters).forEach(id => {
@@ -5919,6 +6386,19 @@
     bindRange('osc3Level', v=>v.toFixed(3));
     bindRange('filterQ', v=>v.toFixed(2));
 
+    bindRange('controller1Expression', v=>v.toFixed(2));
+    bindRange('controller1Brightness', v=>v.toFixed(2));
+    bindRange('controller1Tone', v=>v.toFixed(2));
+    bindRange('controller1Resonance', v=>v.toFixed(2));
+    bindRange('controller2Expression', v=>v.toFixed(2));
+    bindRange('controller2Brightness', v=>v.toFixed(2));
+    bindRange('controller2Tone', v=>v.toFixed(2));
+    bindRange('controller2Resonance', v=>v.toFixed(2));
+    bindRange('controller3Expression', v=>v.toFixed(2));
+    bindRange('controller3Brightness', v=>v.toFixed(2));
+    bindRange('controller3Tone', v=>v.toFixed(2));
+    bindRange('controller3Resonance', v=>v.toFixed(2));
+
     bindRatioPair('osc1Ratio');
     bindRatioPair('osc2Ratio');
     bindRatioPair('osc3Ratio');
@@ -5929,6 +6409,9 @@
 
     bindSelect('midiInputSelect');
     bindSelect('expressionModeSelect');
+    bindSelect('controller1SourceSelect');
+    bindSelect('controller2SourceSelect');
+    bindSelect('controller3SourceSelect');
     bindSelect('priorityMode');
     bindSelect('reverbStyleSelect');
     bindSelect('droneNoteSelect');
