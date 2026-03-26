@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3211_032526_2030";
+var gVersionNumber = "3212_032526_2130";
 
 var gMIDIInitStillWaiting = false;
 
@@ -27647,8 +27647,21 @@ function processShareLink() {
           // Pre-process the ABC to inject any requested programs or volumes
           var theProcessedABC = PreProcessPlayABC(theABCToPlay);
 
-          // Play back locally in-tool  
-          PlayABCDialog(theProcessedABC, null, null, gPlayMetronome);
+          // 
+          // MAE 25 Mar 2026 - Delay hack to deal with playing if there are custom instrument references in shared tunes
+          //
+          if (hasCustomInstrumentProgram(theProcessedABC)){
+             //console.log("Got custom instrument in shared ABC")
+             setTimeout(function(){
+                // Play back locally in-tool  
+                PlayABCDialog(theProcessedABC, null, null, gPlayMetronome);
+             },250);
+          }
+          else{
+            //console.log("No custom instrument in shared ABC")
+            // Play back locally in-tool  
+            PlayABCDialog(theProcessedABC, null, null, gPlayMetronome);
+          }
 
         } else {
 
@@ -37953,6 +37966,13 @@ function flattenABCParts(abcString) {
 // @param {Array<any>} gCustomInstrumentSamples - Array of 8 entries; each may be null or an array.
 // @returns {number[]} - 0-based indices where the sample entry is null or an empty array.
 //
+
+function hasCustomInstrumentProgram(abc) {
+  if (!abc) return false;
+
+  return /%%MIDI\s+(program|bassprog|chordprog)\s+(custom[1-8]|15[0-7])\b/im.test(abc);
+}
+
 function findMissingCustomInstrumentIndices(abc) {
 
   if (!abc || !gCustomInstrumentSamples) return [];
@@ -55418,7 +55438,7 @@ function showWhatsNewScreen() {
   modal_msg += 'background: linear-gradient(135deg, #0d47a1 0%, #1565c0 50%, #64b5f6 100%);';
   modal_msg += 'box-shadow: 0 6px 16px rgba(0,0,0,0.14); color:#fff;">';
   modal_msg += '<div style="font-size:20pt; line-height:24pt; font-weight:bold;">What&apos;s New</div>';
-  modal_msg += '<div style="font-size:11pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 24 March 2026</div>';
+  modal_msg += '<div style="font-size:11pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 25 March 2026</div>';
   modal_msg += '</div>';
 
   // Short intro
