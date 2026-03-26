@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3210_032426_1130";
+var gVersionNumber = "3211_032526_2030";
 
 var gMIDIInitStillWaiting = false;
 
@@ -16081,13 +16081,6 @@ function PDFTunebookBuilder() {
     id: "fluidhq"
   }];
 
-  for (var i = 0; i <= MIDI_PATCH_COUNT; ++i) {
-    midi_program_list.push({
-      name: "  " + generalMIDISoundNames[i],
-      id: i
-    });
-  }
-
   var form = [{
     html: '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:15px;margin-bottom:18px">Inject All PDF Tunebook Features&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#inject_pdf_tunebook_features" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'
   }, {
@@ -16568,13 +16561,6 @@ function PDFTunebookBuilderPlayOnly() {
     name: "  FluidHQ",
     id: "fluidhq"
   }];
-
-  for (var i = 0; i <= MIDI_PATCH_COUNT; ++i) {
-    midi_program_list.push({
-      name: "  " + generalMIDISoundNames[i],
-      id: i
-    });
-  }
 
   var form = [{
     html: '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:15px;margin-bottom:18px">Inject Only PDF Tunebook Play Features&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#inject_pdf_tunebook_features_play" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'
@@ -49671,13 +49657,6 @@ function Do_Browser_PDF_Export() {
     name: "  FluidHQ",
     id: "fluidhq"
   }];
-
-  for (var i = 0; i <= MIDI_PATCH_COUNT; ++i) {
-    midi_program_list.push({
-      name: "  " + generalMIDISoundNames[i],
-      id: i
-    });
-  }
 
   var form = [{
     html: '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:15px;margin-bottom:36px">Browser Native Print-to-PDF with Play Links&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#browser_print_to_pdf" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>'
