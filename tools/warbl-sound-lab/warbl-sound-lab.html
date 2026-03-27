@@ -284,9 +284,22 @@
       overflow: hidden;
     }
 
+    .live-card > .card-title-row.live-status-header,
+    .live-card > div[style*="margin-top:8px"][style*="margin-bottom:14px"],
+    .live-card > h2.section-title,
+    .live-card > div[style*="margin-bottom:18px"] > .meter-controls,
+    .live-card > .midi-log-controls {
+      margin-left: 6px;
+    }
+
     .section-title {
       margin: 0 0 8px 0;
       font-size: 1rem;
+    }
+
+    .card .section-title {
+      margin-left: 10px !important;
+      margin-top: 5px !important;
     }
 
     .main-tab-panel .section-title {
@@ -630,11 +643,7 @@
       background: linear-gradient(135deg, #2563eb, #3b82f6);
       border-color:#60a5fa;
       box-shadow:0 3px 10px rgba(0,0,0,0.28);
-    }
-
-    .live-card > .stats {
-      margin-bottom: 14px;
-      flex: 0 0 auto;
+      transform: none !important;
     }
 
     .live-card > div[style*="margin-top:14px"] {
@@ -660,15 +669,31 @@
       display: flex;
       flex-wrap: wrap;
       align-items: center;
-      gap: 10px 14px;
-      margin-bottom: 10px;
+      gap: 10px 72px;
+      margin-bottom: 12px;
       flex: 0 0 auto;
     }
 
-    #btnClearMidiLog {
-      padding: 7px 12px;
-      border-radius: 10px;
-      font-weight: 400 !important;
+    #btnClearMidiLog{
+      flex:0 0 auto;
+      padding:4px 10px;
+      min-width:auto;
+      width:auto;
+      font-size:0.78rem;
+      line-height:1.1;
+      border-radius:8px;
+      border:1px solid #1e40af;
+      white-space:nowrap;
+      background: linear-gradient(135deg, #162f6a, #1e3a8a);
+      color:#fff;
+      box-shadow:none;
+    }
+
+    #btnClearMidiLog:hover{
+      background: linear-gradient(135deg, #2563eb, #3b82f6);
+      border-color:#60a5fa;
+      box-shadow:0 3px 10px rgba(0,0,0,0.28);
+      transform: none !important;
     }
 
     .meter {
@@ -916,14 +941,15 @@
     .live-status-toggle {
       margin-top: 6px;
       margin-bottom: 12px;
+      margin-right:10px;
     }
 
     .checkbox-inline {
       display: flex;
       align-items: center;
       gap: 6px;
-      font-size: 13px;
-      color: var(--muted);
+      font-size: .95rem;
+      color: #cbd5e1;
       user-select: none;
     }
 
@@ -960,25 +986,6 @@
       min-width: 0;
     }
 
-    .perf-label {
-      font-size: 0.68rem;
-      line-height: 1.15;
-      font-weight: 700;
-      color: var(--muted);
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-      margin-bottom: 4px;
-    }
-
-    .perf-value {
-      font-size: 0.95rem;
-      line-height: 1.05;
-      font-weight: 800;
-      color: var(--text);
-      overflow-wrap: anywhere;
-      word-break: normal;
-    }
-
     #currentNote{
       font-size: 1rem;
     }
@@ -1008,6 +1015,44 @@
       color: var(--muted);
       text-align: right;
       min-height: 0.9em;
+    }
+
+    .perf-label {
+      font-size: 12px;
+      line-height: 1.15;
+      font-weight: 700;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 4px;
+      position: relative;
+      display: flex;
+      justify-content: flex-start;
+      font-weight: 600;
+    }
+
+    .perf-value {
+      font-size: 0.95rem;
+      line-height: 1.05;
+      font-weight: 800;
+      color: var(--text);
+      overflow-wrap: anywhere;
+      word-break: normal;
+    }
+
+    /* left text (CTRL 1) */
+    .perf-label-left {
+      pointer-events: none;
+    }
+
+    /* CC text floats right over meter */
+    .perf-label-cc {
+      position: absolute;
+      right: 4px;
+      top: 0;
+      font-size: 11px;
+      font-weight: 500;
+      opacity: 0.85;
     }
 
     #instructionsOverlay {
@@ -1426,7 +1471,7 @@
     <div class="hero-bottom">
       <div class="setup-row">
         <button id="btnConnect" class="connect-midi" title="Request MIDI access and refresh the input device list.">Connect MIDI</button>
-        <button id="btnAllNotesOff" class="secondary all-notes-off" title="Send note-off style cleanup and silence any stuck notes.">All Notes Off</button>
+        <button id="btnAllNotesOff" class="secondary all-notes-off" title="Silence any stuck notes.">All Notes Off</button>
       </div>
     </div>
 
@@ -2056,6 +2101,15 @@
         </div>
       </div>
 
+      <div style="margin-top:8px;margin-bottom:14px;">
+        <div class="meter-controls" style="margin-top:0px; margin-bottom:0px;" title="Turn this on if you hear glitches, crackles, or delayed response. This is a global setting for the entire tool.">
+          <label for="lowCpuMode">
+            <input type="checkbox" id="lowCpuMode" title="Turn this on if you hear glitches, crackles, or delayed response. This is a global setting for the entire tool." />
+            Enable lower CPU use mode
+          </label>
+        </div>
+      </div>
+
       <div class="card-title-row live-status-header">
         <h2 class="section-title">Live Status</h2>
         <div class="live-status-toggle">
@@ -2075,42 +2129,50 @@
             </div>
 
             <div class="perf-box">
-              <div class="perf-label">EXPRESSION</div>
+              <div class="perf-label">DRONE</div>
+              <div class="perf-value" id="droneStatus">OFF</div>
+            </div>
+            
+            <div class="perf-box">
+              <div class="perf-label" id="expressionLabel">
+                <span class="perf-label-left">EXPRESSION</span>
+                <span class="perf-label-cc" id="expressionLabelCC"></span>
+              </div>
               <div class="live-mini-meter" aria-label="Expression level">
                 <div class="live-mini-meter-fill" id="expressionReadout"></div>
               </div>
             </div>
 
             <div class="perf-box">
-              <div class="perf-label">CTRL 1</div>
+              <div class="perf-label" id="controller1Label">
+                <span class="perf-label-left">CTRL 1</span>
+                <span class="perf-label-cc" id="controller1LabelCC"></span>
+              </div>
               <div class="live-mini-meter" aria-label="Controller 1 level">
                 <div class="live-mini-meter-fill" id="controller1Readout"></div>
               </div>
             </div>
 
             <div class="perf-box">
-              <div class="perf-label">CTRL 2</div>
+              <div class="perf-label" id="controller2Label">
+                <span class="perf-label-left">CTRL 2</span>
+                <span class="perf-label-cc" id="controller2LabelCC"></span>
+              </div>
               <div class="live-mini-meter" aria-label="Controller 2 level">
                 <div class="live-mini-meter-fill" id="controller2Readout"></div>
               </div>
             </div>
 
             <div class="perf-box">
-              <div class="perf-label">CTRL 3</div>
+              <div class="perf-label" id="controller3Label">
+                <span class="perf-label-left">CTRL 3</span>
+                <span class="perf-label-cc" id="controller3LabelCC"></span>
+              </div>
               <div class="live-mini-meter" aria-label="Controller 3 level">
                 <div class="live-mini-meter-fill" id="controller3Readout"></div>
               </div>
             </div>
           </div>
-        </div>
-      </div>
-
-      <div style="margin-top:2px;margin-bottom:14px;">
-        <div class="meter-controls" style="margin-top:0px; margin-bottom:0px;" title="Turn this on if you hear glitches, crackles, or delayed response. This is a global setting for the entire tool.">
-          <label for="lowCpuMode">
-            <input type="checkbox" id="lowCpuMode" title="Turn this on if you hear glitches, crackles, or delayed response. This is a global setting for the entire tool." />
-            Enable lower CPU use mode
-          </label>
         </div>
       </div>
 
@@ -2133,7 +2195,7 @@
           <input type="checkbox" id="showMidiLog" title="Show or hide the live MIDI stream display. This is a global setting for the entire tool." />
           Enable MIDI stream
         </label>
-        <button id="btnClearMidiLog" type="button" title="Clear the MIDI stream log.">Clear MIDI Log</button>
+        <button id="btnClearMidiLog" type="button" title="Clear the MIDI stream log.">Clear Log</button>
       </div>
       <div id="midiLog" class="log" hidden>MIDI stream disabled.</div>
     </div>
@@ -2411,6 +2473,10 @@
 
           <div class="instructions-gap"></div>
 
+          <b>Drone</b> – Shows if the drone is on or off.
+
+          <div class="instructions-gap"></div>
+
           <b>Expression</b> – Shows the raw incoming level from the currently selected <b>Expression Source</b> on the <b>Global</b> tab.
           <ul style="margin-top:6px;">
             <li>If <b>Expression Source</b> is set to <b>Breath (CC2)</b>, the meter shows incoming CC2 values</li>
@@ -2421,7 +2487,9 @@
           </ul>
 
           <b>CTRL 1</b>, <b>CTRL 2</b>, and <b>CTRL 3</b> – Show the raw incoming levels for the controller sources selected on the <b>Global</b> tab.
+
           <div class="instructions-gap"></div>
+          
           These meters do <b>not</b> show the final audible result of controller routing. They only show the incoming controller amount before any per-patch scaling is applied.
 
           <div class="instructions-gap"></div>
@@ -3096,6 +3164,7 @@
     droneDestroyTimer: null,
     droneLevelGain: null,
     liveStatusEnabled:true,
+    meterLastRenderedPercent: -1,
   };
 
   const VALID_PATCHES = new Set(Object.keys(PRESETS));
@@ -3261,6 +3330,17 @@
     return [...result];
   }
 
+  function updateDroneStatusReadout() {
+    const el = $('droneStatus');
+    if (!el) return;
+
+    const isOn = !!state.droneEnabled;
+
+    el.textContent = isOn ? 'ON' : 'OFF';
+    el.classList.toggle('drone-on', isOn);
+    el.classList.toggle('drone-off', !isOn);
+  }
+
   function renderLiveStatusUi() {
     const contentEl = $('liveStatusContent');
     const checkbox = $('enableLiveStatus');
@@ -3273,6 +3353,8 @@
     if (containerEl) {
       containerEl.style.display = state.liveStatusEnabled ? '' : 'none';
     }
+
+    updateDroneStatusReadout();
   }
 
   function sanitizePresetSettingValue(key, value, fallback) {
@@ -3680,9 +3762,9 @@
 
     if (window.DayPilot && DayPilot.Modal && DayPilot.Modal.prompt) {
       const result = await DayPilot.Modal.prompt(
-        `<div style="font-size:18px; line-height:1.45; font-weight:600; margin-bottom:8px;">Enter a new display name for this patch: (16 character limit)</div>
-         <div style="font-size:14px; line-height:1.45; color:#333; margin-bottom:10px;">Default preset name: <b>${safePresetName}</b></div>
-         <div style="font-size:13px; line-height:1.45; color:#555;">To restore the default preset name, leave the field blank and click Rename.</div>`,
+        `<div style="font-size:18px; line-height:1.45; font-weight:600; margin-bottom:12px;">Enter a new display name for this patch: (16 character limit)</div>
+         <div style="font-size:15px; line-height:1.45; color:#333; margin-bottom:10px;">Default preset name: <b>${safePresetName}</b></div>
+         <div style="font-size:15px; line-height:1.45; color:#555;margin-bottom:10px;">To restore the default preset name, leave the field blank and click Rename.</div>`,
         defaultValue,
         {
           theme: "modal_compact",
@@ -4825,10 +4907,17 @@
   function renderMidiLog() {
     const logEl = $('midiLog');
     const showCheckbox = $('showMidiLog');
+    const clearBtn = $('btnClearMidiLog');
+
     if (!logEl || !showCheckbox) return;
 
     logEl.hidden = !state.midiLogEnabled;
     showCheckbox.checked = !!state.midiLogEnabled;
+
+    if (clearBtn) {
+      clearBtn.style.visibility = state.midiLogEnabled ? 'visible' : 'hidden';
+      clearBtn.style.pointerEvents = state.midiLogEnabled ? 'auto' : 'none';
+    }
 
     if (!state.midiLogEnabled) {
       logEl.textContent = 'MIDI stream disabled.';
@@ -4862,12 +4951,50 @@
 
     state.midiLogLines.push("[" + timestamp + "] " + text);
 
-    const maxLines = 120;
+    const maxLines = 160;
     if (state.midiLogLines.length > maxLines) {
       state.midiLogLines.splice(0, state.midiLogLines.length - maxLines);
     }
 
     renderMidiLog();
+  }
+
+  function updateControllerStatusLabels() {
+    const setController = (ccId, source) => {
+      const el = $(ccId);
+      if (!el) return;
+
+      const cc = getControllerSourceCcNumber(source);
+      el.textContent = cc == null ? '' : `(CC${cc})`;
+    };
+
+    const expressionEl = $('expressionLabelCC');
+    if (expressionEl) {
+      switch (state.expressionMode) {
+        case 'cc2':
+          expressionEl.textContent = '(CC2)';
+          break;
+        case 'cc7':
+          expressionEl.textContent = '(CC7)';
+          break;
+        case 'cc11':
+          expressionEl.textContent = '(CC11)';
+          break;
+        case 'velocity':
+          expressionEl.textContent = '(Vel)';
+          break;
+        case 'fixed':
+          expressionEl.textContent = '(Fix)';
+          break;
+        default:
+          expressionEl.textContent = '';
+          break;
+      }
+    }
+
+    setController('controller1LabelCC', state.controller1Source);
+    setController('controller2LabelCC', state.controller2Source);
+    setController('controller3LabelCC', state.controller3Source);
   }
 
   function handleMidiMessage(event){
@@ -4996,6 +5123,8 @@
     select.appendChild(optAuto);
 
     if (!state.midiAccess) {
+      allNotesOff();
+      resetControllerState();
       state.midiInput = null;
       state.midiInputId = '';
       $('midiStatus').textContent = 'Disconnected';
@@ -5034,7 +5163,6 @@
       state.midiInputId = selectedId;
 
       attachSelectedMidiInput();
-      resetControllerState();
 
       if (!state.audioCtx || state.audioCtx.state !== 'running') {
         try {
@@ -5044,6 +5172,8 @@
         }
       }
     } else {
+      allNotesOff();
+      resetControllerState();
       state.midiInput = null;
       state.midiInputId = '';
       $('midiStatus').textContent = 'Disconnected';
@@ -5051,6 +5181,9 @@
   }
 
   function attachSelectedMidiInput() {
+    const previousInput = state.midiInput;
+    const previousId = previousInput ? previousInput.id : '';
+
     if (state.midiInput) {
       state.midiInput.onmidimessage = null;
     }
@@ -5061,6 +5194,8 @@
     if (!state.midiAccess) {
       state.midiInput = null;
       state.midiInputId = '';
+      allNotesOff();
+      resetControllerState();
       $('midiStatus').textContent = 'Disconnected';
       saveState();
       return;
@@ -5073,6 +5208,8 @@
     if (!inputs.length) {
       state.midiInput = null;
       state.midiInputId = '';
+      allNotesOff();
+      resetControllerState();
       $('midiStatus').textContent = 'Disconnected';
       saveState();
       return;
@@ -5080,6 +5217,8 @@
 
     if (!id) {
       state.midiInput = null;
+      allNotesOff();
+      resetControllerState();
       $('midiStatus').textContent = 'No input selected';
       saveState();
       return;
@@ -5089,7 +5228,9 @@
 
     if (!input || (typeof input.state === 'string' && input.state.toLowerCase() === 'disconnected')) {
       state.midiInput = null;
-      state.midiInputId = ''; 
+      state.midiInputId = '';
+      allNotesOff();
+      resetControllerState();
       $('midiStatus').textContent = 'Disconnected';
       saveState();
       return;
@@ -5097,6 +5238,12 @@
 
     state.midiInput = input;
     input.onmidimessage = handleMidiMessage;
+
+    if (previousId !== input.id) {
+      allNotesOff();
+      resetControllerState();
+    }
+
     $('midiStatus').textContent = input.name || 'Connected';
     saveState();
   }
@@ -5292,40 +5439,44 @@
     if (!el) return;
 
     const update = () => {
-      let value = Number(el.value);
+      let displayValue = Number(el.value);
+      let stateValue;
 
       if (id === 'pitchBendRange') {
-        value = Math.max(0, Math.min(12, Math.round(value)));
-        el.value = value;
-      }
+        stateValue = clamp(Math.round(displayValue), 0, 12);
+        el.value = String(stateValue);
+        displayValue = stateValue;
+      } else if (isOscLevelId(id)) {
+        displayValue = clamp(displayValue, 0, OSC_LEVEL_DISPLAY_MAX);
+        el.value = String(displayValue);
 
-      if (id === 'transposeSemis') {
-        value = Math.round(value);
-        el.value = value;
-      }
+        stateValue = sanitizePresetSettingValue(
+          id,
+          oscLevelDisplayToInternal(displayValue),
+          DEFAULTS[id]
+        );
+      } else if (id in DEFAULTS) {
+        stateValue = sanitizePresetSettingValue(id, displayValue, DEFAULTS[id]);
 
-      if (id === 'masterTuneCents') {
-        value = Math.round(value);
-        el.value = value;
-      }
-
-      if (id === 'droneVolume') {
-        value = clamp(value, 0, 4);
-        el.value = value;
-      }
-
-      if (isOscLevelId(id)) {
-        value = clamp(value, 0, 1);
-        el.value = value;
-        state[id] = oscLevelDisplayToInternal(value);
+        if (typeof stateValue === 'number') {
+          el.value = String(stateValue);
+          displayValue = stateValue;
+        } else {
+          stateValue = displayValue;
+        }
       } else {
-        state[id] = value;
+        stateValue = displayValue;
       }
 
-      if (out) out.textContent = formatter(value);
+      state[id] = stateValue;
+
+      if (out) {
+        out.textContent = formatter(displayValue);
+      }
 
       if (id === 'reverbPreDelay' || id === 'reverbTone') {
         updateReverb();
+        updateDroneVoice();
       } else if (
         id === 'reverbWet' ||
         id === 'reverbDry' ||
@@ -5333,7 +5484,8 @@
         id === 'droneVolume'
       ) {
         updateOutputLevels();
-      } else if (id === 'transposeSemis') {
+        updateDroneVoice();
+      } else if (id === 'transposeSemis' || id === 'masterTuneCents') {
         updateCurrentNoteReadout(state.currentNote);
 
         if (state.voice && state.currentNote != null) {
@@ -5345,6 +5497,7 @@
         updateDroneVoice();
       } else {
         requestVoiceUpdate();
+        updateDroneVoice();
       }
 
       saveState();
@@ -5398,6 +5551,7 @@
   function stopDrone(){
     state.droneEnabled = false;
     state.droneExpressionGain = 0;
+    updateDroneStatusReadout();
 
     if (state.droneDestroyTimer) {
       clearTimeout(state.droneDestroyTimer);
@@ -5473,6 +5627,7 @@
 
     state.droneEnabled = true;
     state.droneExpressionGain = computeExpressionGain(triggerVelocity ?? 127);
+    updateDroneStatusReadout();
 
     const soundingNote = getDroneSoundingMidiNote();
     const droneSettings = {
@@ -5525,6 +5680,7 @@
           VALID_EXPRESSION_MODES,
           DEFAULTS.expressionMode
         );
+        updateControllerStatusLabels();
         getExpressionFromState();
         updateControllerReadouts();
         requestVoiceUpdate();
@@ -5534,6 +5690,7 @@
           el.value,
           DEFAULTS.controller1Source
         );
+        updateControllerStatusLabels();
         getExpressionFromState();
         updateControllerReadouts();
         requestVoiceUpdate();
@@ -5543,6 +5700,7 @@
           el.value,
           DEFAULTS.controller2Source
         );
+        updateControllerStatusLabels();
         getExpressionFromState();
         updateControllerReadouts();
         requestVoiceUpdate();
@@ -5552,6 +5710,7 @@
           el.value,
           DEFAULTS.controller3Source
         );
+        updateControllerStatusLabels();
         getExpressionFromState();
         updateControllerReadouts();
         requestVoiceUpdate();
@@ -6079,8 +6238,10 @@
       updateMeterRouting();
       startMeter();
     }
+    updateControllerStatusLabels();
     updateControllerReadouts();
     updatePresetButtons();
+    updateDroneStatusReadout();
   }
 
   function updatePresetButtons(){
@@ -6282,10 +6443,12 @@
     }
 
     if (state.meterEnabled) {
+
       if (!state.analyser) {
         state.analyser = ctx.createAnalyser();
-        state.analyser.fftSize = 512;
       }
+      state.analyser.fftSize = 256;
+      state.analyser.smoothingTimeConstant = 0.65;
 
       if (!state.meterBuf || state.meterBuf.length !== state.analyser.fftSize) {
         state.meterBuf = new Float32Array(state.analyser.fftSize);
@@ -6297,6 +6460,7 @@
       state.analyser = null;
       state.meterBuf = null;
       state.meterValue = 0;
+      state.meterLastRenderedPercent = -1;
 
       const meterEl = $('outputMeter');
       if (meterEl) meterEl.style.width = '0%';
@@ -6313,42 +6477,59 @@
     meter.style.display = state.meterEnabled ? '' : 'none';
 
     if (!state.meterEnabled && bar) {
+      state.meterLastRenderedPercent = -1;
       bar.style.width = '0%';
     }
   }
 
-  function startMeter(){
+  function startMeter() {
     if (state.meterAnimationFrame) {
       cancelAnimationFrame(state.meterAnimationFrame);
       state.meterAnimationFrame = null;
     }
 
     const meterEl = $('outputMeter');
+    const TARGET_INTERVAL_MS = 33; // ~30 FPS
+    let lastUpdateTime = 0;
 
     if (!state.meterEnabled || !state.analyser || !state.meterBuf) {
       state.meterValue = 0;
+      state.meterLastRenderedPercent = -1;
       if (meterEl) meterEl.style.width = '0%';
       return;
     }
 
-    const draw = () => {
-      const meterEl = $('outputMeter');
-
+    const draw = (ts) => {
       if (!state.meterEnabled || !state.analyser || !state.meterBuf) {
         state.meterValue = 0;
+        state.meterLastRenderedPercent = -1;
         if (meterEl) meterEl.style.width = '0%';
         state.meterAnimationFrame = null;
         return;
       }
 
-      state.analyser.getFloatTimeDomainData(state.meterBuf);
-      let peak = 0;
-      for (let i = 0; i < state.meterBuf.length; i++) {
-        peak = Math.max(peak, Math.abs(state.meterBuf[i]));
-      }
-      state.meterValue += (peak - state.meterValue) * 0.22;
-      if (meterEl) {
-        meterEl.style.width = `${Math.min(100, state.meterValue * 170)}%`;
+      if (!lastUpdateTime || (ts - lastUpdateTime) >= TARGET_INTERVAL_MS) {
+        lastUpdateTime = ts;
+
+        state.analyser.getFloatTimeDomainData(state.meterBuf);
+
+        let peak = 0;
+        const buf = state.meterBuf;
+        for (let i = 0; i < buf.length; i++) {
+          const sample = Math.abs(buf[i]);
+          if (sample > peak) peak = sample;
+        }
+
+        state.meterValue += (peak - state.meterValue) * 0.22;
+
+        const percent = Math.min(100, Math.round(state.meterValue * 170));
+
+        if (percent !== state.meterLastRenderedPercent) {
+          state.meterLastRenderedPercent = percent;
+          if (meterEl) {
+            meterEl.style.width = `${percent}%`;
+          }
+        }
       }
 
       state.meterAnimationFrame = requestAnimationFrame(draw);
