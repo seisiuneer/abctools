@@ -2679,6 +2679,11 @@
     }
 
     function logLiveStatus() {
+      if (state.liveStatusHidden) return;
+
+      const liveStatusEl = $("liveStatus");
+      if (!liveStatusEl) return;
+
       const currentNoteText =
         state.currentNote == null
           ? " "
@@ -2689,7 +2694,7 @@
       let droneStatusText = "N/A";
       if (supportsDroneVolumeControl()) {
         if (state.droneVoice) {
-          droneStatusText = `ON`;
+          droneStatusText = "ON";
         } else {
           droneStatusText = "OFF";
         }
@@ -2697,24 +2702,24 @@
 
       const lines = [
         "Input channel: " + state.selectedMidiChannel,
-        "Current note: " + currentNoteText,
-        "Expression mode: " + getExpressionModeLabel(),
-        "Expression value: " + state.latestExpression,
-        "Master volume: " + state.masterVolume.toFixed(2)
+        "Current note: " + currentNoteText
       ];
 
       if (supportsDroneVolumeControl()) {
-        lines.push("Drone status: " + droneStatusText);
+        lines.push("Drone: " + droneStatusText);
       }
 
       lines.push(
+        "Expression mode: " + getExpressionModeLabel(),
+        "Expression value: " + state.latestExpression,
+        "Master volume: " + state.masterVolume.toFixed(2),
         "Master tune cents: " + state.masterTuneCents,
         "Transpose semitones: " + state.transposeSemis,
         "Pitch bend range semitones: " + state.pitchBendRangeSemitones,
         "Pitch bend cents: " + bendCents.toFixed(1)
       );
 
-      $("liveStatus").textContent = lines.join("\n");
+      liveStatusEl.textContent = lines.join("\n");
     }
 
     function formatMidiMessage(msg) {
@@ -3592,7 +3597,9 @@
           return;
         }
 
-        pushMidiLogLine(formatMidiMessage(msg));
+        if (state.midiLogEnabled && !state.freezeMidiLog) {
+          pushMidiLogLine(formatMidiMessage(msg));
+        }
 
         if (msg.type === 0xE0) {
           state.pitchBendValue = ((msg.data2 << 7) | msg.data1) - 8192;
@@ -4012,32 +4019,32 @@
         saveSettingsToLocalStorage();
       });
 
-			$("instrumentSelect").addEventListener("change", async (e) => {
-			  const nextInstrumentKey = e.target.value;
+      $("instrumentSelect").addEventListener("change", async (e) => {
+        const nextInstrumentKey = e.target.value;
 
-			  saveCurrentInstrumentSettingsToStateStore();
+        saveCurrentInstrumentSettingsToStateStore();
 
-			  state.selectedInstrumentKey = nextInstrumentKey;
-			  state.pitchBendValue = 0;
+        state.selectedInstrumentKey = nextInstrumentKey;
+        state.pitchBendValue = 0;
 
-			  allNotesOff();
-			  loadInstrumentSettingsIntoState(nextInstrumentKey);
-			  syncUiFromState();
-			  renderDroneVolumeVisibility();
-			  applyMixerSettings();
-			  applyTuningToAllVoices();
-			  logLiveStatus();
-			  saveSettingsToLocalStorage();
+        allNotesOff();
+        loadInstrumentSettingsIntoState(nextInstrumentKey);
+        syncUiFromState();
+        renderDroneVolumeVisibility();
+        applyMixerSettings();
+        applyTuningToAllVoices();
+        logLiveStatus();
+        saveSettingsToLocalStorage();
 
-			  try {
-			    if (state.audioContext) {
-			      await preloadInstrument(state.selectedInstrumentKey);
-			    }
-			  } catch (err) {
-			    console.error(err);
-			    showErrorDialog(err.message, "Instrument Load Error");
-			  }
-			});
+        try {
+          if (state.audioContext) {
+            await preloadInstrument(state.selectedInstrumentKey);
+          }
+        } catch (err) {
+          console.error(err);
+          showErrorDialog(err.message, "Instrument Load Error");
+        }
+      });
 
       $("expressionModeSelect").addEventListener("change", (e) => {
         state.expressionMode = e.target.value;
@@ -4097,6 +4104,9 @@
       $("showLiveStatus").addEventListener("change", (e) => {
         state.liveStatusHidden = !e.target.checked;
         renderLiveStatusVisibility();
+        if (!state.liveStatusHidden) {
+          logLiveStatus();
+        }
         saveSettingsToLocalStorage();
       });
 
@@ -4134,21 +4144,21 @@
         e.target.value = "";
       });
 
-			$("btnFullscreen").addEventListener("click", async () => {
-			  const isFs = !!getFullscreenElement();
+      $("btnFullscreen").addEventListener("click", async () => {
+        const isFs = !!getFullscreenElement();
 
-			  if (isFs) {
-			    await exitFullscreen();
-			  } else {
-			    const ok = await enterFullscreen();
-			    if (!ok) {
-			      showErrorDialog(
-			        "Fullscreen mode is not available in this browser or was blocked.",
-			        "Fullscreen Unavailable"
-			      );
-			    }
-			  }
-			});
+        if (isFs) {
+          await exitFullscreen();
+        } else {
+          const ok = await enterFullscreen();
+          if (!ok) {
+            showErrorDialog(
+              "Fullscreen mode is not available in this browser or was blocked.",
+              "Fullscreen Unavailable"
+            );
+          }
+        }
+      });
 
       bindRange("masterVolume", "masterVolumeValue", (v) => v.toFixed(2), (v) => {
         state.masterVolume = v;
