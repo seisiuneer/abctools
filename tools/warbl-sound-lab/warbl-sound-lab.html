@@ -1598,6 +1598,7 @@
                 <option value="cc2">Breath (CC2)</option>
                 <option value="cc11">Expression (CC11)</option>
                 <option value="cc7">Volume (CC7)</option>
+                <option value="cc74">Timbre (CC74)</option>
                 <option value="velocity">Note Velocity</option>
                 <option value="fixed">Fixed Full Volume</option>
               </select>
@@ -1617,6 +1618,7 @@
                 <option value="cc7">Volume (CC7)</option>
                 <option value="cc10">Pan (CC10)</option>
                 <option value="cc11">Expression (CC11)</option>
+                <option value="cc74">Timbre (CC74)</option>
               </select>
             </div>
 
@@ -1629,6 +1631,7 @@
                 <option value="cc7">Volume (CC7)</option>
                 <option value="cc10">Pan (CC10)</option>
                 <option value="cc11">Expression (CC11)</option>
+                <option value="cc74">Timbre (CC74)</option>
               </select>
             </div>
 
@@ -1641,6 +1644,7 @@
                 <option value="cc7">Volume (CC7)</option>
                 <option value="cc10">Pan (CC10)</option>
                 <option value="cc11">Expression (CC11)</option>
+                <option value="cc74">Timbre (CC74)</option>
               </select>
             </div>
 
@@ -2233,6 +2237,7 @@
             <li><b>Breath (CC2)</b></li>
             <li><b>Expression (CC11)</b></li>
             <li><b>Volume (CC7)</b></li>
+            <li><b>Timbre (CC74)</b></li>
             <li><b>Note Velocity</b></li>
             <li><b>Fixed Full Volume</b></li>
           </ul>
@@ -2253,6 +2258,7 @@
             <li><b>Volume (CC7)</b></li>
             <li><b>Pan (CC10)</b></li>
             <li><b>Expression (CC11)</b></li>
+            <li><b>Timbre (CC74)</b></li>
           </ul>
 
           <div class="instructions-gap"></div>
@@ -2482,6 +2488,7 @@
             <li>If <b>Expression Source</b> is set to <b>Breath (CC2)</b>, the meter shows incoming CC2 values</li>
             <li>If set to <b>Expression (CC11)</b>, it shows incoming CC11 values</li>
             <li>If set to <b>Volume (CC7)</b>, it shows incoming CC7 values</li>
+            <li>If set to <b>Timbre (CC74)</b>, it shows incoming CC74 values</li>
             <li>If set to <b>Note Velocity</b>, it shows the note-on velocity of the currently sounding note</li>
             <li>If set to <b>Fixed Full Volume</b>, it stays full</li>
           </ul>
@@ -3168,12 +3175,12 @@
   };
 
   const VALID_PATCHES = new Set(Object.keys(PRESETS));
-  const VALID_EXPRESSION_MODES = new Set(['cc2', 'cc11', 'cc7', 'velocity', 'fixed']);
+  const VALID_EXPRESSION_MODES = new Set(['cc2', 'cc11', 'cc7', 'cc74', 'velocity', 'fixed']);
   const VALID_PRIORITY_MODES = new Set(['last', 'high', 'low']);
   const VALID_REVERB_STYLES = new Set(['room', 'hall', 'plate', 'ambient', 'church']);
   const VALID_OSC_WAVES = new Set(['sine', 'triangle', 'sawtooth', 'square']);
   const VALID_DRIVE_CURVES = new Set(['tanh','asym','hard']);
-  const VALID_CONTROLLER_SOURCES = new Set(['off', 'cc1', 'cc2', 'cc7', 'cc10', 'cc11']);
+  const VALID_CONTROLLER_SOURCES = new Set(['off', 'cc1', 'cc2', 'cc7', 'cc10', 'cc11', 'cc74']);
   const OSC_LEVEL_INTERNAL_MAX = 0.25;
   const OSC_LEVEL_DISPLAY_MAX = 1.0;
 
@@ -3234,6 +3241,7 @@
       case 'cc7': return 7;
       case 'cc10': return 10;
       case 'cc11': return 11;
+      case 'cc74': return 74;
       case 'off':
       default:
         return null;
@@ -3271,6 +3279,9 @@
 
       case 'cc11':
         return clamp((state.ccValues[11] ?? 0) / 127, 0, 1);
+
+      case 'cc74':
+        return clamp((state.ccValues[74] ?? 0) / 127, 0, 1);
 
       case 'cc2':
       default:
@@ -3808,6 +3819,9 @@
 
       case 'cc11':
         return computeExpressionGain(state.ccValues[11] ?? 0);
+
+      case 'cc74':
+        return computeExpressionGain(state.ccValues[74] ?? 0);
 
       case 'cc2':
       default:
@@ -4865,6 +4879,9 @@
       } else if (msg.data1 === 1) {
         label = "MOD ";
         decoded = "mod= " + msg.data2;
+      } else if (msg.data1 === 74) {
+        label = "TIMB ";
+        decoded = "timbre= " + msg.data2;
       } else {
         label = ("CC" + msg.data1).padEnd(4, " ");
         decoded = String(msg.data2);
@@ -4980,6 +4997,9 @@
         case 'cc11':
           expressionEl.textContent = '(CC11)';
           break;
+        case 'cc74':
+          expressionEl.textContent = '(CC74)';
+          break;
         case 'velocity':
           expressionEl.textContent = '(Vel)';
           break;
@@ -5040,7 +5060,7 @@
         }
 
         const watchedCcs = new Set([
-          2, 7, 10, 11,
+          2, 7, 10, 11, 74,
           ...getConfiguredControllerCcNumbers()
         ]);
 
