@@ -632,11 +632,6 @@
       box-shadow:0 3px 10px rgba(0,0,0,0.28);
     }
 
-    .live-card > .section-title:first-child {
-      margin-bottom: 8px;
-      flex: 0 0 auto;
-    }
-
     .live-card > .stats {
       margin-bottom: 14px;
       flex: 0 0 auto;
@@ -645,12 +640,6 @@
     .live-card > div[style*="margin-top:14px"] {
       margin-top: 0 !important;
       margin-bottom: 18px;
-      flex: 0 0 auto;
-    }
-
-    .live-card > .section-title[style*="margin-top:18px"] {
-      margin-top: 0 !important;
-      margin-bottom: 8px;
       flex: 0 0 auto;
     }
 
@@ -862,6 +851,163 @@
       outline: 1px solid #60a5fa;
       outline-offset: 2px;
       border-radius: 4px;
+    }
+
+    .performance-status {
+      margin-top: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      width: 100%;
+    }
+
+    .performance-top {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+      align-items: start;
+    }
+
+    .performance-note-block,
+    .performance-expression-block,
+    .performance-controller-item {
+      min-width: 0;
+    }
+
+    .performance-sublabel {
+      font-size: 12px;
+      line-height: 1.2;
+      font-weight: 700;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 6px;
+    }
+
+    .performance-controllers-row {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      padding-top: 12px;
+      border-top: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .performance-controller-value {
+      font-size: 20px;
+      line-height: 1.1;
+      font-weight: 800;
+      color: var(--text);
+    }
+
+    .performance-card {
+      padding: 0;
+      border: none;
+      border-radius: 0;
+      background: transparent;
+    }
+
+    .card-title-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .live-status-toggle {
+      margin-top: 6px;
+      margin-bottom: 12px;
+    }
+
+    .checkbox-inline {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      color: var(--muted);
+      user-select: none;
+    }
+
+    .checkbox-inline input {
+      transform: scale(1.05);
+    }
+
+    .live-status-header {
+      margin: 0;
+      flex: 0 0 auto;
+    }
+
+    .live-card > .stats {
+      margin-bottom: 8px;
+      flex: 0 0 auto;
+    }
+
+    .stat-performance {
+      margin-bottom: 14px;
+      padding: 8px;
+    }
+
+    .performance-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .perf-box {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 12px;
+      padding: 8px 10px;
+      min-width: 0;
+    }
+
+    .perf-label {
+      font-size: 0.68rem;
+      line-height: 1.15;
+      font-weight: 700;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 4px;
+    }
+
+    .perf-value {
+      font-size: 0.95rem;
+      line-height: 1.05;
+      font-weight: 800;
+      color: var(--text);
+      overflow-wrap: anywhere;
+      word-break: normal;
+    }
+
+    #currentNote{
+      font-size: 1rem;
+    }
+
+    .live-mini-meter {
+      height: 10px;
+      margin-top: 6px;
+      background: rgba(2, 6, 23, 0.6);
+      border-radius: 999px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+
+    .live-mini-meter-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #22c55e, #60a5fa);
+      border-radius: 999px;
+      transition: none;
+    }
+
+    .perf-bar-readout {
+      margin-top: 6px;
+      font-size: 0.78rem;
+      line-height: 1;
+      font-weight: 700;
+      color: var(--muted);
+      text-align: right;
+      min-height: 0.9em;
     }
 
     #instructionsOverlay {
@@ -1141,6 +1287,15 @@
         grid-template-columns: repeat(2, minmax(0, 1fr));
       }
 
+      .performance-top {
+        grid-template-columns: 1fr;
+        gap: 14px;
+      }
+
+      .performance-controllers-row {
+        grid-template-columns: 1fr;
+      }
+
     }
 
     @media (max-width: 680px) {
@@ -1180,6 +1335,10 @@
       }
 
       .synth-osc-row {
+        grid-template-columns: 1fr;
+      }
+
+      .performance-grid {
         grid-template-columns: 1fr;
       }
     }
@@ -1885,23 +2044,77 @@
     </div>
 
     <div class="card live-card">
-      <h2 class="section-title">Live Status</h2>
       <div class="stats">
-        <div class="stat"><div class="k">Audio</div><div class="v" id="audioStatus">Suspended</div></div>
-        <div class="stat"><div class="k">MIDI</div><div class="v" id="midiStatus">Not connected</div></div>
-        <div class="stat"><div class="k">Current Note</div><div class="v" id="currentNote">—</div></div>
-        <div class="stat"><div class="k">Expression</div><div class="v" id="expressionReadout">0%</div></div>
+        <div class="stat">
+          <div class="k">Audio</div>
+          <div class="v" id="audioStatus">Suspended</div>
+        </div>
+
+        <div class="stat">
+          <div class="k">MIDI</div>
+          <div class="v" id="midiStatus">Not connected</div>
+        </div>
       </div>
-      <div style="margin-bottom:18px;margin-top:8px;">
-        <div class="meter-controls" style="margin-top:0; margin-bottom:0;" title="Turn this on if you hear glitches, crackles, or delayed response. This is a global setting for the entire tool.">
-          <label for="lowCpuMode">
-            <input type="checkbox" id="lowCpuMode" title="Turn this on if you hear glitches, crackles, or delayed response. This is a global setting for the entire tool." />
-              Enable lower CPU use mode
+
+      <div class="card-title-row live-status-header">
+        <h2 class="section-title">Live Status</h2>
+        <div class="live-status-toggle">
+          <label class="checkbox-inline">
+            <input type="checkbox" id="enableLiveStatus" checked />
+            Enable live status
           </label>
         </div>
       </div>
 
-      <h2 class="section-title" style="margin-top:18px">Output Level</h2>
+      <div class="stat stat-performance">
+        <div id="liveStatusContent" class="performance-status">
+          <div class="performance-grid">
+            <div class="perf-box">
+              <div class="perf-label">CURRENT NOTE</div>
+              <div class="perf-value" id="currentNote">—</div>
+            </div>
+
+            <div class="perf-box">
+              <div class="perf-label">EXPRESSION</div>
+              <div class="live-mini-meter" aria-label="Expression level">
+                <div class="live-mini-meter-fill" id="expressionReadout"></div>
+              </div>
+            </div>
+
+            <div class="perf-box">
+              <div class="perf-label">CTRL 1</div>
+              <div class="live-mini-meter" aria-label="Controller 1 level">
+                <div class="live-mini-meter-fill" id="controller1Readout"></div>
+              </div>
+            </div>
+
+            <div class="perf-box">
+              <div class="perf-label">CTRL 2</div>
+              <div class="live-mini-meter" aria-label="Controller 2 level">
+                <div class="live-mini-meter-fill" id="controller2Readout"></div>
+              </div>
+            </div>
+
+            <div class="perf-box">
+              <div class="perf-label">CTRL 3</div>
+              <div class="live-mini-meter" aria-label="Controller 3 level">
+                <div class="live-mini-meter-fill" id="controller3Readout"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top:2px;margin-bottom:14px;">
+        <div class="meter-controls" style="margin-top:0px; margin-bottom:0px;" title="Turn this on if you hear glitches, crackles, or delayed response. This is a global setting for the entire tool.">
+          <label for="lowCpuMode">
+            <input type="checkbox" id="lowCpuMode" title="Turn this on if you hear glitches, crackles, or delayed response. This is a global setting for the entire tool." />
+            Enable lower CPU use mode
+          </label>
+        </div>
+      </div>
+
+      <h2 class="section-title">Output Level</h2>
       <div style="margin-bottom:18px">
         <div class="meter-controls">
           <label for="showOutputMeter" title="Show or hide the output level meter. This is a global setting for the entire tool.">
@@ -1911,9 +2124,10 @@
         </div>
         <div id="outputMeterBarWrapper" class="meter">
           <div id="outputMeter"></div>
-        </div>       
+        </div>
       </div>
-      <h2 class="section-title" style="margin-top:18px">MIDI Stream</h2>
+
+      <h2 class="section-title">MIDI Stream</h2>
       <div class="midi-log-controls">
         <label for="showMidiLog" title="Show or hide the live MIDI stream display. This is a global setting for the entire tool.">
           <input type="checkbox" id="showMidiLog" title="Show or hide the live MIDI stream display. This is a global setting for the entire tool." />
@@ -1921,10 +2135,9 @@
         </label>
         <button id="btnClearMidiLog" type="button" title="Clear the MIDI stream log.">Clear MIDI Log</button>
       </div>
-      <div id="midiLog" class="log" hidden>MIDI stream disabled.</div>    
+      <div id="midiLog" class="log" hidden>MIDI stream disabled.</div>
     </div>
   </div>
-
 </div>
 
 <div id="instructionsOverlay" class="instructions-overlay" aria-hidden="true">
@@ -2186,6 +2399,52 @@
           <b>Master Volume</b> – Overall output level.
         </div>
 
+        <hr class="instructions-divider"/>
+
+        <div class="instructions-subtitle">Live Status Meters</div>
+        <div class="instructions-subbody">
+          The <b>Live Status</b> panel shows the current incoming performance values from your WARBL setup in real time.
+
+          <div class="instructions-gap"></div>
+
+          <b>Current Note</b> – Shows the note currently being played after any <b>Transpose</b> setting is applied.
+
+          <div class="instructions-gap"></div>
+
+          <b>Expression</b> – Shows the raw incoming level from the currently selected <b>Expression Source</b> on the <b>Global</b> tab.
+          <ul style="margin-top:6px;">
+            <li>If <b>Expression Source</b> is set to <b>Breath (CC2)</b>, the meter shows incoming CC2 values</li>
+            <li>If set to <b>Expression (CC11)</b>, it shows incoming CC11 values</li>
+            <li>If set to <b>Volume (CC7)</b>, it shows incoming CC7 values</li>
+            <li>If set to <b>Note Velocity</b>, it shows the note-on velocity of the currently sounding note</li>
+            <li>If set to <b>Fixed Full Volume</b>, it stays full</li>
+          </ul>
+
+          <b>CTRL 1</b>, <b>CTRL 2</b>, and <b>CTRL 3</b> – Show the raw incoming levels for the controller sources selected on the <b>Global</b> tab.
+          <div class="instructions-gap"></div>
+          These meters do <b>not</b> show the final audible result of controller routing. They only show the incoming controller amount before any per-patch scaling is applied.
+
+          <div class="instructions-gap"></div>
+
+          For example, if <b>Controller 1</b> is assigned to <b>Mod Wheel (CC1)</b>, the <b>CTRL 1</b> meter shows the incoming CC1 level. The actual effect on sound still depends on the current patch settings such as:
+          <ul style="margin-top:6px;">
+            <li><b>Controller 1 → Expression</b></li>
+            <li><b>Controller 1 → Tone</b></li>
+            <li><b>Controller 1 → Brightness</b></li>
+            <li><b>Controller 1 → Resonance</b></li>
+          </ul>
+
+          The same applies to <b>CTRL 2</b> and <b>CTRL 3</b>.
+
+          <div class="instructions-gap"></div>
+
+          <b>Enable live status</b> – Shows or hides the live status panel. When disabled, the live status display is hidden and its meter graphics are not updated.
+
+          <div class="instructions-gap"></div>
+
+          These meters are intended as a quick visual check that your WARBL and controller assignments are sending the values you expect.
+        </div>
+        
         <hr class="instructions-divider"/>
 
         <div class="instructions-subtitle">Instrument Presets</div>
@@ -2505,13 +2764,7 @@
   const TIP_REMINDER_VISIT_COUNT_KEY = 'warblSoundLabVisitCount_v1';
 
   function createDefaultCcValues() {
-    const values = Array.from({ length: 128 }, () => 0);
-    values[1] = 0;
-    values[2] = 0;
-    values[7] = 100;
-    values[10] = 64;
-    values[11] = 127;
-    return values;
+    return Array.from({ length: 128 }, () => 0);
   }
 
   const DEFAULTS = {
@@ -2842,6 +3095,7 @@
     midiLogLines: [],
     droneDestroyTimer: null,
     droneLevelGain: null,
+    liveStatusEnabled:true,
   };
 
   const VALID_PATCHES = new Set(Object.keys(PRESETS));
@@ -2934,6 +3188,64 @@
   function getController3NormalizedValue() {
     return getControllerSourceNormalizedValue(state.controller3Source);
   }
+
+  function getRawExpressionNormalized() {
+    switch (state.expressionMode) {
+      case 'velocity':
+        return clamp((state.currentVelocity ?? 0) / 127, 0, 1);
+
+      case 'fixed':
+        return 1;
+
+      case 'cc7':
+        return clamp((state.ccValues[7] ?? 0) / 127, 0, 1);
+
+      case 'cc11':
+        return clamp((state.ccValues[11] ?? 0) / 127, 0, 1);
+
+      case 'cc2':
+      default:
+        return clamp((state.ccValues[2] ?? 0) / 127, 0, 1);
+    }
+  }
+
+  const setControllerLiveBar = (fillEl, normalizedValue) => {
+    if (!fillEl) return;
+
+    const value = Math.max(0, Math.min(1, normalizedValue || 0));
+    const percent = Math.round(value * 100);
+
+    fillEl.style.width = `${percent}%`;
+  };  
+
+  function updateControllerReadouts() {
+
+    const expressionEl = $('expressionReadout');
+    const controller1El = $('controller1Readout');
+    const controller2El = $('controller2Readout');
+    const controller3El = $('controller3Readout');
+
+    if (!state.liveStatusEnabled) {
+      setControllerLiveBar(expressionEl, 0);
+      setControllerLiveBar(controller1El, 0);
+      setControllerLiveBar(controller2El, 0);
+      setControllerLiveBar(controller3El, 0);
+      return;
+    }
+
+    setControllerLiveBar(expressionEl, getRawExpressionNormalized());
+    setControllerLiveBar(controller1El, getController1NormalizedValue());
+    setControllerLiveBar(controller2El, getController2NormalizedValue());
+    setControllerLiveBar(controller3El, getController3NormalizedValue());
+  }
+
+  function resetControllerState() {
+    state.ccValues = createDefaultCcValues();
+    state.expressionValue = 0;
+
+    updateControllerReadouts();
+    requestVoiceUpdate();
+  }
   
   function getConfiguredControllerCcNumbers() {
     const result = new Set();
@@ -2947,6 +3259,20 @@
     if (cc3 != null) result.add(cc3);
 
     return [...result];
+  }
+
+  function renderLiveStatusUi() {
+    const contentEl = $('liveStatusContent');
+    const checkbox = $('enableLiveStatus');
+    const containerEl = contentEl ? contentEl.closest('.stat-performance') : null;
+
+    if (checkbox) {
+      checkbox.checked = !!state.liveStatusEnabled;
+    }
+
+    if (containerEl) {
+      containerEl.style.display = state.liveStatusEnabled ? '' : 'none';
+    }
   }
 
   function sanitizePresetSettingValue(key, value, fallback) {
@@ -3148,6 +3474,7 @@
       midiLogEnabled: toBoolean(source.midiLogEnabled, false),
       meterEnabled: toBoolean(source.meterEnabled, false),
       lowCpuMode: toBoolean(source.lowCpuMode, false),
+      liveStatusEnabled: toBoolean(source.liveStatusEnabled, true),
 
       controller1Source: sanitizeControllerSource(
         source.controller1Source,
@@ -3593,7 +3920,6 @@
       this.noteGlideUntil = 0;
       this.releaseEndTime = 0;
       this.currentLowCpuMode = state.lowCpuMode;
-      this.lastPulseFlag = false;
       this.lastBendSemis = 0;
       this.lastDriveAmount = null;
       this.lastDriveShape = null;
@@ -4275,7 +4601,7 @@
   function getExpressionFromState() {
     if (state.currentNote == null) {
       state.expressionValue = 0;
-      $('expressionReadout').textContent = '0%';
+      updateControllerReadouts();
       return 0;
     }
 
@@ -4289,7 +4615,7 @@
     const gain = clamp(baseGain + controllerExpressionAdd, 0, 1);
 
     state.expressionValue = gain;
-    $('expressionReadout').textContent = `${Math.round(gain * 100)}%`;
+    updateControllerReadouts();
 
     return gain;
   }
@@ -4708,6 +5034,7 @@
       state.midiInputId = selectedId;
 
       attachSelectedMidiInput();
+      resetControllerState();
 
       if (!state.audioCtx || state.audioCtx.state !== 'running') {
         try {
@@ -5199,6 +5526,7 @@
           DEFAULTS.expressionMode
         );
         getExpressionFromState();
+        updateControllerReadouts();
         requestVoiceUpdate();
 
       } else if (id === 'controller1SourceSelect') {
@@ -5207,6 +5535,7 @@
           DEFAULTS.controller1Source
         );
         getExpressionFromState();
+        updateControllerReadouts();
         requestVoiceUpdate();
 
       } else if (id === 'controller2SourceSelect') {
@@ -5215,6 +5544,7 @@
           DEFAULTS.controller2Source
         );
         getExpressionFromState();
+        updateControllerReadouts();
         requestVoiceUpdate();
 
       } else if (id === 'controller3SourceSelect') {
@@ -5223,6 +5553,7 @@
           DEFAULTS.controller3Source
         );
         getExpressionFromState();
+        updateControllerReadouts();
         requestVoiceUpdate();
 
       } else if (id === 'priorityMode') {
@@ -5249,6 +5580,7 @@
 
       } else if (id === 'midiInputSelect') {
         attachSelectedMidiInput();
+        resetControllerState();
 
       } else if (id === 'droneNoteSelect') {
         state.droneNote = clamp(Math.round(Number(el.value)), 36, 74);
@@ -5381,6 +5713,7 @@
         midiLogEnabled: !!state.midiLogEnabled,
         meterEnabled: !!state.meterEnabled,
         lowCpuMode: !!state.lowCpuMode,
+        liveStatusEnabled: !!state.liveStatusEnabled,
 
         controller1Source: state.controller1Source,
         controller2Source: state.controller2Source,
@@ -5443,6 +5776,7 @@
     state.midiLogEnabled = globals.midiLogEnabled;
     state.meterEnabled = globals.meterEnabled;
     state.lowCpuMode = globals.lowCpuMode;
+    state.liveStatusEnabled = globals.liveStatusEnabled;
 
     state.controller1Source = globals.controller1Source;
     state.controller2Source = globals.controller2Source;
@@ -5561,6 +5895,7 @@
         midiLogEnabled: !!state.midiLogEnabled,
         meterEnabled: !!state.meterEnabled,
         lowCpuMode: !!state.lowCpuMode,
+        liveStatusEnabled: !!state.liveStatusEnabled,
         pitchBendRange: state.pitchBendRange,
         expressionMode: state.expressionMode,
 
@@ -5590,6 +5925,7 @@
         state.midiLogEnabled = false;
         state.meterEnabled = false;
         state.lowCpuMode = false;
+        state.liveStatusEnabled = true;
 
         state.controller1Source = DEFAULTS.controller1Source;
         state.controller2Source = DEFAULTS.controller2Source;
@@ -5634,6 +5970,7 @@
       state.midiLogEnabled = toBoolean(savedObj.midiLogEnabled, false);
       state.meterEnabled = toBoolean(savedObj.meterEnabled, false);
       state.lowCpuMode = toBoolean(savedObj.lowCpuMode, false);
+      state.liveStatusEnabled = toBoolean(savedObj.liveStatusEnabled, true);
 
       state.controller1Source = sanitizeControllerSource(
         savedObj.controller1Source,
@@ -5664,6 +6001,7 @@
       state.midiLogEnabled = false;
       state.meterEnabled = false;
       state.lowCpuMode = false;
+      state.liveStatusEnabled = true;
 
       state.controller1Source = DEFAULTS.controller1Source;
       state.controller2Source = DEFAULTS.controller2Source;
@@ -5730,14 +6068,18 @@
     $('lowCpuMode').checked = !!state.lowCpuMode;
     $('showOutputMeter').checked = !!state.meterEnabled;
     $('showMidiLog').checked = !!state.midiLogEnabled;
+    if ($('enableLiveStatus')) {
+      $('enableLiveStatus').checked = !!state.liveStatusEnabled;
+    }
 
     renderOutputMeterUi();
+    renderLiveStatusUi();
 
     if (state.audioCtx) {
       updateMeterRouting();
       startMeter();
     }
-
+    updateControllerReadouts();
     updatePresetButtons();
   }
 
@@ -6432,6 +6774,17 @@
       saveState();
     });
 
+    if ($('enableLiveStatus')) {
+      $('enableLiveStatus').addEventListener('change', () => {
+        state.liveStatusEnabled = $('enableLiveStatus').checked;
+        renderLiveStatusUi();
+        if (state.liveStatusEnabled) {
+          updateControllerReadouts();
+        }
+        saveState();
+      });
+    }
+
     $('btnConnect').addEventListener('click', connectMidi);
     $('btnAllNotesOff').addEventListener('click', allNotesOff);
     $('btnResetCurrentPreset').addEventListener('click', resetCurrentPresetToDefaults);
@@ -6543,6 +6896,7 @@
       $('masterTuneCents').value = 0;
       refreshValueLabels();
       requestVoiceUpdate();
+      updateDroneVoice();
       saveState();
     });
 
@@ -6593,6 +6947,8 @@
 
     if (!PRESETS[state.patch]) state.patch = 'whistle';
 
+    renderLiveStatusUi();
+    updateControllerReadouts();
     updateFullscreenButton();
     updateFullscreenLayoutMode();
   }
