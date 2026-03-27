@@ -395,6 +395,7 @@
     gap: 10px;
     flex: 1 1 auto;
     min-height: 0;
+    margin-top:10px;
   }
 
   .midi-log-controls label {
@@ -793,6 +794,28 @@
 
   .hero-warbl-button{
     left: 16px;
+  }
+
+  button.clear-log:hover {
+    background: linear-gradient(135deg, #111111 0%, #262626 100%);
+    border-color: #666666;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.55);
+    filter: none;
+    transform: translateY(-1px);
+  }
+
+  button.clear-log:active {
+    transform: translateY(0);
+    filter: brightness(0.95);
+  }
+
+  .btn-clear-log,
+  button.clear-log {
+    background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%);
+    border: 1px solid #444444;
+    color: #ffffff;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45);
+    margin-left: auto;
   }
 
   @media (max-width: 900px){
@@ -1346,7 +1369,7 @@
         <div class="status" id="liveStatus" title="Current status of the selected instrument and MIDI input.">Waiting...</div>
 
         <div class="midi-log-wrap">
-          <h3>MIDI Message Stream</h3>
+          <h3>MIDI Stream</h3>
           <div class="midi-log-controls">
             <label for="showMidiLog" title="Show or hide the incoming MIDI message stream.">
               <input
@@ -1354,7 +1377,7 @@
                 id="showMidiLog"
                 title="Show or hide the incoming MIDI message stream. This is a global setting for the tool, not instrument-specific."
               />
-              Show MIDI message stream
+              Enable MIDI stream
             </label>
             <label for="freezeMidiLog" title="Freeze the MIDI message display without stopping MIDI input.">
               <input
@@ -1366,10 +1389,11 @@
             </label>
             <button
               id="btnClearMidiLog"
+              class="clear-log header-button"
               type="button"
               title="Clear the MIDI message log display."
             >
-              Clear MIDI Log
+              Clear Log
             </button>
           </div>
           <div
@@ -2660,7 +2684,16 @@
           ? " "
           : `${midiToName(state.currentNote)} (${state.currentNote})`;
 
-			const bendCents = getEffectivePitchBendCents();
+      const bendCents = getEffectivePitchBendCents();
+
+      let droneStatusText = "N/A";
+      if (supportsDroneVolumeControl()) {
+        if (state.droneVoice) {
+          droneStatusText = `ON`;
+        } else {
+          droneStatusText = "OFF";
+        }
+      }
 
       const lines = [
         "Input channel: " + state.selectedMidiChannel,
@@ -2671,7 +2704,7 @@
       ];
 
       if (supportsDroneVolumeControl()) {
-        lines.push("Drone volume: " + state.droneVolume.toFixed(2));
+        lines.push("Drone status: " + droneStatusText);
       }
 
       lines.push(
@@ -2771,11 +2804,26 @@
       const logEl = $("midiLog");
       const showCheckbox = $("showMidiLog");
       const freezeCheckbox = $("freezeMidiLog");
-      if (!logEl || !showCheckbox || !freezeCheckbox) return;
+      const clearButton = $("btnClearMidiLog");
 
-      logEl.hidden = !state.midiLogEnabled;
+      if (!logEl || !showCheckbox || !freezeCheckbox || !clearButton) return;
+
+      const freezeLabel = freezeCheckbox.closest("label");
+
       showCheckbox.checked = state.midiLogEnabled;
       freezeCheckbox.checked = state.freezeMidiLog;
+
+      logEl.hidden = !state.midiLogEnabled;
+
+      const showExtraControls = state.midiLogEnabled;
+
+      if (freezeLabel) {
+        freezeLabel.style.visibility = showExtraControls ? "visible" : "hidden";
+        freezeLabel.style.pointerEvents = showExtraControls ? "auto" : "none";
+      }
+
+      clearButton.style.visibility = showExtraControls ? "visible" : "hidden";
+      clearButton.style.pointerEvents = showExtraControls ? "auto" : "none";
 
       if (!state.midiLogEnabled) {
         logEl.textContent = "MIDI stream disabled.";
@@ -3371,6 +3419,7 @@
       if (state.droneVoice && state.droneVoice.sourceMidiNote === midiNote) {
         state.dronePlayRequestId++;
         stopManagedVoice("droneVoice", false);
+        logLiveStatus();
         return;
       }
 
@@ -3384,6 +3433,8 @@
         updateCurrentNote: false,
         volumeMultiplier: state.droneVolume
       });
+
+      logLiveStatus();
     }
 
     function applyPitchBendToActiveVoice() {
