@@ -1122,6 +1122,7 @@
               <option value="cc2">Breath (CC2)</option>
               <option value="cc11">Expression (CC11)</option>
               <option value="cc7">Volume (CC7)</option>
+              <option value="cc74">Timbre (CC74)</option>
               <option value="velocity">Note Velocity</option>
               <option value="max">Fixed Full Volume</option>
             </select>
@@ -1436,6 +1437,7 @@
             <b>Breath (CC2)</b> follows MIDI CC2.<br/>
             <b>Expression (CC11)</b> follows MIDI CC11.<br/>
             <b>Volume (CC7)</b> follows MIDI CC7.<br/>
+            <b>Timbre (CC74)</b> follows MIDI CC74.<br/>
             <b>Note Velocity</b> uses incoming note-on velocity.<br/>
             <b>Fixed Full Volume</b> ignores expression and always plays at full level.
           </div>
@@ -2760,6 +2762,9 @@
         } else if (msg.data1 === 1) {
           label = "MOD ";
           decoded = "mod= " + msg.data2;
+        } else if (msg.data1 === 74) {
+          label = "TIMB ";
+          decoded = "timbre= " + msg.data2;
         } else {
           label = ("CC" + msg.data1).padEnd(4, " ");
           decoded = String(msg.data2);
@@ -3176,6 +3181,7 @@
         case "cc7":
         case "cc11":
         case "cc2":
+        case "cc74":
         default:
           return computeExpressionGain(state.latestExpression);
       }
@@ -3637,6 +3643,13 @@
           }
 
           if (state.expressionMode === "cc11" && cc === 11) {
+            state.latestExpression = value;
+            updateActiveVoiceGain();
+            logLiveStatus();
+            return;
+          }
+
+          if (state.expressionMode === "cc74" && cc === 74) {
             state.latestExpression = value;
             updateActiveVoiceGain();
             logLiveStatus();
@@ -4456,7 +4469,7 @@
       return {
         expressionMode: toAllowedStringOrDefault(
           data.expressionMode,
-          ["cc7", "cc2", "cc11", "velocity", "max"],
+          ["cc7", "cc2", "cc11", "cc74", "velocity", "max"],
           defaults.expressionMode
         ),
 
