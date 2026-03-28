@@ -2071,7 +2071,7 @@
             <button id="btnResetCurrentPreset" type="button" title="Reset only the currently selected preset back to its default settings.">
               Reset Current Preset to Defaults
             </button>
-            <button id="btnResetAllPresets" type="button" title="Reset all presets back to their default settings. Global settings are not changed.">
+            <button id="btnResetAllPresets" type="button" title="Reset all presets back to their default settings. Global settings are not changed. Shift-click to clear all browser saved data and reset the tool to a brand-new freshly installed state.">
               Reset All Presets to Defaults
             </button>
           </div>
@@ -2591,6 +2591,11 @@
 
           <b>Reset All Presets to Defaults</b> clears saved changes for all voices and restores the current voice to its default settings, including <b>Transpose</b> and <b>Master Tuning</b>.<br/>
           Global settings such as <b>Expression Source</b>, <b>MIDI Input</b>, <b>MIDI Input Channel</b>, <b>Pitch Bend Range</b>, <b>Controller 1</b>, <b>Controller 2</b>, <b>Controller 3</b>, and global display/performance options are not changed.
+
+          <div class="instructions-gap"></div>
+
+          If you hold down the <b>Shift</b> key while clicking the <b>Reset All Presets to Defaults</b>, after a confirmation, you can clear all browser saved data and reset the tool to a brand-new freshly installed state.
+
         </div>
 
         <hr class="instructions-divider"/>
@@ -6435,6 +6440,77 @@
     saveState();
   }
 
+  async function factoryResetToFirstRun() {
+    const confirmed = await confirmResetDialog(
+      "Factory Reset",
+      "Replace the saved local settings with a first-run state?<br/>This will erase all saved presets, display names, global settings, and remembered UI options."
+    );
+
+    if (!confirmed) return;
+
+    try {
+      localStorage.removeItem('warblSoundLabState_v37');
+    } catch (e) {}
+
+    try {
+      localStorage.removeItem(LAST_SETTINGS_FILENAME_KEY);
+    } catch (e) {}
+
+    stopDrone();
+    state.pitchBend = 0;
+
+    state.ccValues = createDefaultCcValues();
+    state.channelPressure = 0;
+    state.midiLogLines = [];
+    state.midiInputId = '';
+    state.midiInput = null;
+    state.midiAccess = null;
+    state.meterValue = 0;
+    state.meterLastRenderedPercent = -1;
+    state.liveStatusEnabled = true;
+    state.midiLogEnabled = false;
+    state.meterEnabled = false;
+    state.lowCpuMode = false;
+    state.pendingVoiceUpdate = false;
+
+    state.presetOverrides = {};
+    state.patchDisplayNames = { ...DEFAULT_PATCH_DISPLAY_NAMES };
+
+    Object.assign(state, clonePresetDefaults(DEFAULTS.patch));
+    state.patch = DEFAULTS.patch;
+    state.pitchBendRange = DEFAULTS.pitchBendRange;
+    state.expressionMode = DEFAULTS.expressionMode;
+    state.midiChannel = 1;
+
+    state.controller1Source = DEFAULTS.controller1Source;
+    state.controller2Source = DEFAULTS.controller2Source;
+    state.controller3Source = DEFAULTS.controller3Source;
+
+    allNotesOff();
+    clearMidiLog();
+    applyStateToUi();
+    refreshValueLabels();
+    renderMidiLog();
+    getExpressionFromState();
+
+    if (state.audioCtx) {
+      applyLowCpuModeToAudioGraph();
+
+      if (state.voice) {
+        state.voice.configurePatch(state);
+      }
+      if (state.droneVoice) {
+        state.droneVoice.configurePatch(state);
+      }
+
+      updateReverb();
+      updateOutputLevels();
+      requestVoiceUpdate();
+    }
+
+    saveState();
+  }
+
   function refreshValueLabels(){
     const signedInt = v => {
       const n = Math.round(v);
@@ -7043,7 +7119,14 @@
     $('btnConnect').addEventListener('click', connectMidi);
     $('btnAllNotesOff').addEventListener('click', allNotesOff);
     $('btnResetCurrentPreset').addEventListener('click', resetCurrentPresetToDefaults);
-    $('btnResetAllPresets').addEventListener('click', resetAllPresetsToDefaults);
+
+    $('btnResetAllPresets').addEventListener('click', async (e) => {
+      if (e.shiftKey) {
+        await factoryResetToFirstRun();
+      } else {
+        await resetAllPresetsToDefaults();
+      }
+    });
 
     document.querySelectorAll('[data-preset]').forEach(btn =>
       btn.addEventListener('click', () => applyPreset(btn.dataset.preset))
