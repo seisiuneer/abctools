@@ -1118,16 +1118,17 @@
 
           <div class="field">
             <label for="expressionModeSelect">Expression Source</label>
-            <select id="expressionModeSelect" title="Choose which MIDI source controls expression and loudness for the current instrument.">
-              <option value="cc2">Breath (CC2)</option>
-              <option value="cc11">Expression (CC11)</option>
-              <option value="cc7">Volume (CC7)</option>
-              <option value="cc74">Timbre (CC74)</option>
-              <option value="velocity">Note Velocity</option>
-              <option value="max">Fixed Full Volume</option>
-            </select>
+  					<select id="expressionModeSelect" title="Choose which MIDI source controls expression and loudness for the current instrument.">
+  					  <option value="cc2">Breath (CC2)</option>
+  					  <option value="cc11">Expression (CC11)</option>
+  					  <option value="cc7">Volume (CC7)</option>
+  					  <option value="cc74">Timbre (CC74)</option>
+  					  <option value="aftertouch">Channel Pressure</option>
+  					  <option value="velocity">Note Velocity</option>
+  					  <option value="max">Fixed Full Volume</option>
+  					</select>
           </div>
-          
+
           <div class="field" style="grid-column: span 2;">
             <div class="two-up">
               <div class="field">
@@ -1433,14 +1434,15 @@
           <hr class="instructions-divider"/>
 
           <div class="instructions-subtitle">Expression Source</div>
-          <div class="instructions-subbody">
-            <b>Breath (CC2)</b> follows MIDI CC2.<br/>
-            <b>Expression (CC11)</b> follows MIDI CC11.<br/>
-            <b>Volume (CC7)</b> follows MIDI CC7.<br/>
-            <b>Timbre (CC74)</b> follows MIDI CC74.<br/>
-            <b>Note Velocity</b> uses incoming note-on velocity.<br/>
-            <b>Fixed Full Volume</b> ignores expression and always plays at full level.
-          </div>
+					<div class="instructions-subbody">
+					  <b>Breath (CC2)</b> follows MIDI CC2.<br/>
+					  <b>Expression (CC11)</b> follows MIDI CC11.<br/>
+					  <b>Volume (CC7)</b> follows MIDI CC7.<br/>
+					  <b>Timbre (CC74)</b> follows MIDI CC74.<br/>
+					  <b>Channel Pressure</b> follows MIDI channel pressure (aftertouch).<br/>
+					  <b>Note Velocity</b> uses incoming note-on velocity.<br/>
+					  <b>Fixed Full Volume</b> ignores expression and always plays at full level.
+					</div>
 
           <hr class="instructions-divider"/>
 
@@ -1822,7 +1824,7 @@
               <li>Each note triggers a sampled audio buffer from the selected instrument</li>
               <li>Playback rate applies master tuning, transpose, and (for melody) pitch bend</li>
               <li>An envelope stage applies attack and release shaping</li>
-              <li>A gain stage sets loudness based on expression (CC, velocity, or fixed)</li>
+              <li>A gain stage sets loudness based on expression (CC, channel pressure, velocity, or fixed)</li>
               <li>An additional instrument gain applies per-instrument level scaling</li>
               <li>All voices feed into a shared output chain</li>
               <li>The signal splits into a dry path and a parallel reverb (wet) path</li>
@@ -1833,7 +1835,7 @@
 
             <b>Voice behavior:</b>
             <ul style="margin-top:6px;">
-              <li><b>Melody voice:</b> Uses pitch bend and continuously responds to the selected expression source (CC, velocity, or fixed)</li>
+              <li><b>Melody voice:</b> Uses pitch bend and continuously responds to the selected expression source (CC, channel pressure, velocity, or fixed)</li>
               <li><b>Low voice (Uilleann pipes only):</b> Triggered for lower notes, ignores pitch bend, and uses note-on velocity instead of live expression</li>
               <li><b>Drone voice:</b> Latched notes that ignore pitch bend and live expression, and include a separate drone volume control</li>
               <li>All voices share the same envelope and gain-based processing stages</li>
@@ -2388,7 +2390,7 @@
       saveCurrentInstrumentSettingsToStateStore();
 
       return {
-        version: 14,
+        version: 15,
         app: "celtic_sounds",
         timestamp: new Date().toISOString(),
         selectedMidiChannel: state.selectedMidiChannel,
@@ -2724,91 +2726,91 @@
       liveStatusEl.textContent = lines.join("\n");
     }
 
-    function formatMidiMessage(msg) {
-      const hex = (v) => "0x" + v.toString(16).toUpperCase().padStart(2, "0");
-      const channelText = "ch" + (msg.channel + 1);
+		function formatMidiMessage(msg) {
+		  const hex = (v) => "0x" + v.toString(16).toUpperCase().padStart(2, "0");
+		  const channelText = "ch" + (msg.channel + 1);
 
-      const statusHex = hex(msg.status);
-      const data1Hex = hex(msg.data1);
-      const data2Hex = hex(msg.data2);
+		  const statusHex = hex(msg.status);
+		  const data1Hex = hex(msg.data1);
+		  const data2Hex = hex(msg.data2);
 
-      if (msg.type === 0x90 && msg.data2 > 0) {
-        return "ON   " +
-          channelText.padEnd(4, " ") + " " +
-          statusHex + " " + data1Hex + " " + data2Hex + "  " +
-          midiToName(msg.data1) + " vel= " + msg.data2;
-      }
+		  if (msg.type === 0x90 && msg.data2 > 0) {
+		    return "ON   " +
+		      channelText.padEnd(4, " ") + " " +
+		      statusHex + " " + data1Hex + " " + data2Hex + "  " +
+		      midiToName(msg.data1) + " vel= " + msg.data2;
+		  }
 
-      if (msg.type === 0x80 || (msg.type === 0x90 && msg.data2 === 0)) {
-        return "OFF  " +
-          channelText.padEnd(4, " ") + " " +
-          statusHex + " " + data1Hex + " " + data2Hex + "  " +
-          midiToName(msg.data1);
-      }
+		  if (msg.type === 0x80 || (msg.type === 0x90 && msg.data2 === 0)) {
+		    return "OFF  " +
+		      channelText.padEnd(4, " ") + " " +
+		      statusHex + " " + data1Hex + " " + data2Hex + "  " +
+		      midiToName(msg.data1);
+		  }
 
-      if (msg.type === 0xB0) {
-        let label = "CC";
-        let decoded = String(msg.data2);
+		  if (msg.type === 0xB0) {
+		    let label = "CC";
+		    let decoded = String(msg.data2);
 
-        if (msg.data1 === 7) {
-          label = "CC7 ";
-          decoded = "vol= " + msg.data2;
-        } else if (msg.data1 === 11) {
-          label = "CC11";
-          decoded = "expr= " + msg.data2;
-        } else if (msg.data1 === 2) {
-          label = "CC2 ";
-          decoded = "breath= " + msg.data2;
-        } else if (msg.data1 === 1) {
-          label = "MOD ";
-          decoded = "mod= " + msg.data2;
-        } else if (msg.data1 === 74) {
-          label = "TIMB ";
-          decoded = "timbre= " + msg.data2;
-        } else {
-          label = ("CC" + msg.data1).padEnd(4, " ");
-          decoded = String(msg.data2);
-        }
+		    if (msg.data1 === 7) {
+		      label = "CC7 ";
+		      decoded = "vol= " + msg.data2;
+		    } else if (msg.data1 === 11) {
+		      label = "CC11";
+		      decoded = "expr= " + msg.data2;
+		    } else if (msg.data1 === 2) {
+		      label = "CC2 ";
+		      decoded = "breath= " + msg.data2;
+		    } else if (msg.data1 === 1) {
+		      label = "MOD ";
+		      decoded = "mod= " + msg.data2;
+		    } else if (msg.data1 === 74) {
+		      label = "TIMB ";
+		      decoded = "timbre= " + msg.data2;
+		    } else {
+		      label = ("CC" + msg.data1).padEnd(4, " ");
+		      decoded = String(msg.data2);
+		    }
 
-        return label + " " +
-          channelText.padEnd(4, " ") + " " +
-          statusHex + " " + data1Hex + " " + data2Hex + "  " +
-          decoded;
-      }
+		    return label + " " +
+		      channelText.padEnd(4, " ") + " " +
+		      statusHex + " " + data1Hex + " " + data2Hex + "  " +
+		      decoded;
+		  }
 
-      if (msg.type === 0xE0) {
-        const bend = ((msg.data2 << 7) | msg.data1) - 8192;
-        return "PB   " +
-          channelText.padEnd(4, " ") + " " +
-          statusHex + " " + data1Hex + " " + data2Hex + "  " +
-          "bend= " + bend;
-      }
+		  if (msg.type === 0xE0) {
+		    const bend = ((msg.data2 << 7) | msg.data1) - 8192;
+		    return "PB   " +
+		      channelText.padEnd(4, " ") + " " +
+		      statusHex + " " + data1Hex + " " + data2Hex + "  " +
+		      "bend= " + bend;
+		  }
 
-      if (msg.type === 0xC0) {
-        return "PROG " +
-          channelText.padEnd(4, " ") + " " +
-          statusHex + " " + data1Hex + "       " +
-          "pgm= " + msg.data1;
-      }
+		  if (msg.type === 0xC0) {
+		    return "PROG " +
+		      channelText.padEnd(4, " ") + " " +
+		      statusHex + " " + data1Hex + "       " +
+		      "pgm= " + msg.data1;
+		  }
 
-      if (msg.type === 0xD0) {
-        return "CPRS " +
-          channelText.padEnd(4, " ") + " " +
-          statusHex + " " + data1Hex + "       " +
-          "val= " + msg.data1;
-      }
+		  if (msg.type === 0xD0) {
+		    return "CP   " +
+		      channelText.padEnd(4, " ") + " " +
+		      statusHex + " " + data1Hex + "       " +
+		      "pressure= " + msg.data1;
+		  }
 
-      if (msg.type === 0xA0) {
-        return "PPRS " +
-          channelText.padEnd(4, " ") + " " +
-          statusHex + " " + data1Hex + " " + data2Hex + "  " +
-          midiToName(msg.data1) + " p= " + msg.data2;
-      }
+		  if (msg.type === 0xA0) {
+		    return "PPRS " +
+		      channelText.padEnd(4, " ") + " " +
+		      statusHex + " " + data1Hex + " " + data2Hex + "  " +
+		      midiToName(msg.data1) + " p= " + msg.data2;
+		  }
 
-      return "MIDI " +
-        channelText.padEnd(4, " ") + " " +
-        statusHex + " " + data1Hex + " " + data2Hex;
-    }
+		  return "MIDI " +
+		    channelText.padEnd(4, " ") + " " +
+		    statusHex + " " + data1Hex + " " + data2Hex;
+}
 
     function renderMidiLog() {
       const logEl = $("midiLog");
@@ -3104,18 +3106,6 @@
       }
     }
 
-    async function tryResumeAudioContext() {
-      ensureAudioContextExists();
-
-      if (state.audioContext.state === "suspended") {
-        try {
-          await state.audioContext.resume();
-        } catch (err) {
-          console.warn("Audio resume was blocked until user gesture.", err);
-        }
-      }
-    }
-
     async function initAudioIfPossible() {
       try {
         await initAudio();
@@ -3172,20 +3162,21 @@
       return clamp(curved * APP_CONFIG.synth.maxGain, 0, 1.2);
     }
 
-    function resolveCurrentExpressionGain(noteVelocity = 127) {
-      switch (state.expressionMode) {
-        case "velocity":
-          return computeExpressionGain(noteVelocity);
-        case "max":
-          return 1.0;
-        case "cc7":
-        case "cc11":
-        case "cc2":
-        case "cc74":
-        default:
-          return computeExpressionGain(state.latestExpression);
-      }
-    }
+		function resolveCurrentExpressionGain(noteVelocity = 127) {
+		  switch (state.expressionMode) {
+		    case "velocity":
+		      return computeExpressionGain(noteVelocity);
+		    case "max":
+		      return 1.0;
+		    case "cc7":
+		    case "cc11":
+		    case "cc2":
+		    case "cc74":
+		    case "aftertouch":
+		    default:
+		      return computeExpressionGain(state.latestExpression);
+		  }
+		}
 
     function getPlayableNotesForInstrument(instrumentKey) {
       const instrument = APP_CONFIG.instruments[instrumentKey];
@@ -3593,77 +3584,86 @@
       return { status, type, channel, data1, data2 };
     }
 
-    async function handleMidiMessage(event) {
-      try {
+		async function handleMidiMessage(event) {
+		  try {
 
-        const msg = parseMidiMessage(event.data);
-        if (!msg) return;
+		    const msg = parseMidiMessage(event.data);
+		    if (!msg) return;
 
-        if ((msg.channel + 1) !== state.selectedMidiChannel) {
-          return;
-        }
+		    if ((msg.channel + 1) !== state.selectedMidiChannel) {
+		      return;
+		    }
 
-        if (state.midiLogEnabled && !state.freezeMidiLog) {
-          pushMidiLogLine(formatMidiMessage(msg));
-        }
+		    if (state.midiLogEnabled && !state.freezeMidiLog) {
+		      pushMidiLogLine(formatMidiMessage(msg));
+		    }
 
-        if (msg.type === 0xE0) {
-          state.pitchBendValue = ((msg.data2 << 7) | msg.data1) - 8192;
-          applyPitchBendToActiveVoice();
-          logLiveStatus();
-          return;
-        }
+		    if (msg.type === 0xE0) {
+		      state.pitchBendValue = ((msg.data2 << 7) | msg.data1) - 8192;
+		      applyPitchBendToActiveVoice();
+		      logLiveStatus();
+		      return;
+		    }
 
-        if (msg.type === 0x90 && msg.data2 > 0) {
-          await noteOn(msg.data1, msg.data2);
-          return;
-        }
+		    if (msg.type === 0xD0) {
+		      if (state.expressionMode === "aftertouch") {
+		        state.latestExpression = msg.data1;
+		        updateActiveVoiceGain();
+		        logLiveStatus();
+		      }
+		      return;
+		    }
 
-        if (msg.type === 0x80 || (msg.type === 0x90 && msg.data2 === 0)) {
-          noteOff(msg.data1);
-          return;
-        }
+		    if (msg.type === 0x90 && msg.data2 > 0) {
+		      await noteOn(msg.data1, msg.data2);
+		      return;
+		    }
 
-        if (msg.type === 0xB0) {
-          const cc = msg.data1;
-          const value = msg.data2;
+		    if (msg.type === 0x80 || (msg.type === 0x90 && msg.data2 === 0)) {
+		      noteOff(msg.data1);
+		      return;
+		    }
 
-          if (state.expressionMode === "cc7" && cc === 7) {
-            state.latestExpression = value;
-            updateActiveVoiceGain();
-            logLiveStatus();
-            return;
-          }
+		    if (msg.type === 0xB0) {
+		      const cc = msg.data1;
+		      const value = msg.data2;
 
-          if (state.expressionMode === "cc2" && cc === 2) {
-            state.latestExpression = value;
-            updateActiveVoiceGain();
-            logLiveStatus();
-            return;
-          }
+		      if (state.expressionMode === "cc7" && cc === 7) {
+		        state.latestExpression = value;
+		        updateActiveVoiceGain();
+		        logLiveStatus();
+		        return;
+		      }
 
-          if (state.expressionMode === "cc11" && cc === 11) {
-            state.latestExpression = value;
-            updateActiveVoiceGain();
-            logLiveStatus();
-            return;
-          }
+		      if (state.expressionMode === "cc2" && cc === 2) {
+		        state.latestExpression = value;
+		        updateActiveVoiceGain();
+		        logLiveStatus();
+		        return;
+		      }
 
-          if (state.expressionMode === "cc74" && cc === 74) {
-            state.latestExpression = value;
-            updateActiveVoiceGain();
-            logLiveStatus();
-            return;
-          }
+		      if (state.expressionMode === "cc11" && cc === 11) {
+		        state.latestExpression = value;
+		        updateActiveVoiceGain();
+		        logLiveStatus();
+		        return;
+		      }
 
-          if (cc === 123 || cc === 120) {
-            allNotesOff();
-          }
-        }
-      } catch (_) {
-        // fail silently for live MIDI processing errors
-      }
-    }
+		      if (state.expressionMode === "cc74" && cc === 74) {
+		        state.latestExpression = value;
+		        updateActiveVoiceGain();
+		        logLiveStatus();
+		        return;
+		      }
+
+		      if (cc === 123 || cc === 120) {
+		        allNotesOff();
+		      }
+		    }
+		  } catch (_) {
+		    // fail silently for live MIDI processing errors
+		  }
+		}
 
     function showNoMidiInputsDialog() {
       const html =
@@ -4459,98 +4459,98 @@
 		  return all;
 		}
 
-    function sanitizeInstrumentSettings(data, instrumentKey = "") {
-      const defaults = createDefaultInstrumentSettings(instrumentKey);
+		function sanitizeInstrumentSettings(data, instrumentKey = "") {
+		  const defaults = createDefaultInstrumentSettings(instrumentKey);
 
-      if (!isPlainObject(data)) {
-        return { ...defaults };
-      }
+		  if (!isPlainObject(data)) {
+		    return { ...defaults };
+		  }
 
-      return {
-        expressionMode: toAllowedStringOrDefault(
-          data.expressionMode,
-          ["cc7", "cc2", "cc11", "cc74", "velocity", "max"],
-          defaults.expressionMode
-        ),
+		  return {
+		    expressionMode: toAllowedStringOrDefault(
+		      data.expressionMode,
+		      ["cc7", "cc2", "cc11", "cc74", "aftertouch", "velocity", "max"],
+		      defaults.expressionMode
+		    ),
 
-        masterVolume: toClampedNumberOrDefault(
-          data.masterVolume,
-          0,
-          2.0,
-          defaults.masterVolume
-        ),
+		    masterVolume: toClampedNumberOrDefault(
+		      data.masterVolume,
+		      0,
+		      2.0,
+		      defaults.masterVolume
+		    ),
 
-        droneVolume: toClampedNumberOrDefault(
-          data.droneVolume,
-          0,
-          2.0,
-          defaults.droneVolume
-        ),
+		    droneVolume: toClampedNumberOrDefault(
+		      data.droneVolume,
+		      0,
+		      2.0,
+		      defaults.droneVolume
+		    ),
 
-        masterTuneCents: toRoundedClampedIntOrDefault(
-          data.masterTuneCents,
-          -50,
-          50,
-          defaults.masterTuneCents
-        ),
+		    masterTuneCents: toRoundedClampedIntOrDefault(
+		      data.masterTuneCents,
+		      -50,
+		      50,
+		      defaults.masterTuneCents
+		    ),
 
-        attackMs: toRoundedClampedIntOrDefault(
-          data.attackMs,
-          0,
-          150,
-          defaults.attackMs
-        ),
+		    attackMs: toRoundedClampedIntOrDefault(
+		      data.attackMs,
+		      0,
+		      150,
+		      defaults.attackMs
+		    ),
 
-        releaseMs: toRoundedClampedIntOrDefault(
-          data.releaseMs,
-          10,
-          1500,
-          defaults.releaseMs
-        ),
+		    releaseMs: toRoundedClampedIntOrDefault(
+		      data.releaseMs,
+		      10,
+		      1500,
+		      defaults.releaseMs
+		    ),
 
-        pitchBendUpMultiplier: toClampedNumberOrDefault(
-          data.pitchBendUpMultiplier,
-          0,
-          4,
-          defaults.pitchBendUpMultiplier
-        ),
+		    pitchBendUpMultiplier: toClampedNumberOrDefault(
+		      data.pitchBendUpMultiplier,
+		      0,
+		      4,
+		      defaults.pitchBendUpMultiplier
+		    ),
 
-        pitchBendDownMultiplier: toClampedNumberOrDefault(
-          data.pitchBendDownMultiplier,
-          0,
-          4,
-          defaults.pitchBendDownMultiplier
-        ),
+		    pitchBendDownMultiplier: toClampedNumberOrDefault(
+		      data.pitchBendDownMultiplier,
+		      0,
+		      4,
+		      defaults.pitchBendDownMultiplier
+		    ),
 
-        reverbWet: toClampedNumberOrDefault(
-          data.reverbWet,
-          0,
-          1,
-          defaults.reverbWet
-        ),
+		    reverbWet: toClampedNumberOrDefault(
+		      data.reverbWet,
+		      0,
+		      1,
+		      defaults.reverbWet
+		    ),
 
-        reverbDry: toClampedNumberOrDefault(
-          data.reverbDry,
-          0,
-          1.5,
-          defaults.reverbDry
-        ),
+		    reverbDry: toClampedNumberOrDefault(
+		      data.reverbDry,
+		      0,
+		      1.5,
+		      defaults.reverbDry
+		    ),
 
-        reverbPreDelayMs: toRoundedClampedIntOrDefault(
-          data.reverbPreDelayMs,
-          0,
-          250,
-          defaults.reverbPreDelayMs
-        ),
+		    reverbPreDelayMs: toRoundedClampedIntOrDefault(
+		      data.reverbPreDelayMs,
+		      0,
+		      250,
+		      defaults.reverbPreDelayMs
+		    ),
 
-        transposeSemis: toRoundedClampedIntOrDefault(
-          data.transposeSemis,
-          -12,
-          12,
-          defaults.transposeSemis
-        )
-      };
-    }
+		    transposeSemis: toRoundedClampedIntOrDefault(
+		      data.transposeSemis,
+		      -12,
+		      12,
+		      defaults.transposeSemis
+		    )
+		  };
+		}
 
     function sanitizeAllInstrumentSettings(data) {
       const out = createDefaultAllInstrumentSettings();
