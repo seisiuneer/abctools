@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3213_032626_0600";
+var gVersionNumber = "3214_032826_0930";
 
 var gMIDIInitStillWaiting = false;
 
@@ -51010,6 +51010,7 @@ function AdvancedSettings() {
         MoveModalFieldRowByName(modalRoot, "configure_DisableRendering", "adv_tab_general_fields");
         MoveModalFieldRowByName(modalRoot, "configure_jumptotune_autoscroll", "adv_tab_general_fields");
         MoveModalFieldRowByName(modalRoot, "configure_BWWUseCustomInstrument", "adv_tab_general_fields");
+        MoveModalFieldRowByName(modalRoot, "configure_fullscreen_scaling", "adv_tab_general_fields");
 
         // Player
         MoveModalFieldRowByName(modalRoot, "configure_autoscrollplayer", "adv_tab_player_fields");
@@ -51021,7 +51022,6 @@ function AdvancedSettings() {
         MoveModalFieldRowByName(modalRoot, "configure_player_status_on_left", "adv_tab_player_fields");
         MoveModalFieldRowByName(modalRoot, "configure_trainer_touch_controls", "adv_tab_player_fields");
         MoveModalFieldRowByName(modalRoot, "configure_looper_add_measure_count", "adv_tab_player_fields");
-        MoveModalFieldRowByName(modalRoot, "configure_fullscreen_scaling", "adv_tab_player_fields");
         MoveModalFieldRowByName(modalRoot, "configure_reverb", "adv_tab_player_fields");
 
         // Export
@@ -55432,7 +55432,7 @@ function showWhatsNewScreen() {
   modal_msg += 'background: linear-gradient(135deg, #0d47a1 0%, #1565c0 50%, #64b5f6 100%);';
   modal_msg += 'box-shadow: 0 6px 16px rgba(0,0,0,0.14); color:#fff;">';
   modal_msg += '<div style="font-size:20pt; line-height:24pt; font-weight:bold;">What&apos;s New</div>';
-  modal_msg += '<div style="font-size:11pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 26 March 2026</div>';
+  modal_msg += '<div style="font-size:11pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 28 March 2026</div>';
   modal_msg += '</div>';
 
   // Short intro
