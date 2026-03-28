@@ -1599,6 +1599,7 @@
                 <option value="cc11">Expression (CC11)</option>
                 <option value="cc7">Volume (CC7)</option>
                 <option value="cc74">Timbre (CC74)</option>
+                <option value="pressure">Channel Pressure</option>
                 <option value="velocity">Note Velocity</option>
                 <option value="fixed">Fixed Full Volume</option>
               </select>
@@ -1619,6 +1620,7 @@
                 <option value="cc10">Pan (CC10)</option>
                 <option value="cc11">Expression (CC11)</option>
                 <option value="cc74">Timbre (CC74)</option>
+                <option value="pressure">Channel Pressure</option>
               </select>
             </div>
 
@@ -1632,6 +1634,7 @@
                 <option value="cc10">Pan (CC10)</option>
                 <option value="cc11">Expression (CC11)</option>
                 <option value="cc74">Timbre (CC74)</option>
+                <option value="pressure">Channel Pressure</option>
               </select>
             </div>
 
@@ -1645,6 +1648,7 @@
                 <option value="cc10">Pan (CC10)</option>
                 <option value="cc11">Expression (CC11)</option>
                 <option value="cc74">Timbre (CC74)</option>
+                <option value="pressure">Channel Pressure</option>
               </select>
             </div>
 
@@ -2238,6 +2242,7 @@
             <li><b>Expression (CC11)</b></li>
             <li><b>Volume (CC7)</b></li>
             <li><b>Timbre (CC74)</b></li>
+            <li><b>Channel Pressure</b></li>
             <li><b>Note Velocity</b></li>
             <li><b>Fixed Full Volume</b></li>
           </ul>
@@ -2259,6 +2264,7 @@
             <li><b>Pan (CC10)</b></li>
             <li><b>Expression (CC11)</b></li>
             <li><b>Timbre (CC74)</b></li>
+            <li><b>Channel Pressure</b></li>
           </ul>
 
           <div class="instructions-gap"></div>
@@ -2489,6 +2495,7 @@
             <li>If set to <b>Expression (CC11)</b>, it shows incoming CC11 values</li>
             <li>If set to <b>Volume (CC7)</b>, it shows incoming CC7 values</li>
             <li>If set to <b>Timbre (CC74)</b>, it shows incoming CC74 values</li>
+            <li>If set to <b>Channel Pressure</b>, it shows incoming Channel Pressure values</li>
             <li>If set to <b>Note Velocity</b>, it shows the note-on velocity of the currently sounding note</li>
             <li>If set to <b>Fixed Full Volume</b>, it stays full</li>
           </ul>
@@ -2577,9 +2584,13 @@
 
         <div class="instructions-subtitle">Reset Buttons</div>
         <div class="instructions-subbody">
-          <b>Reset Current Preset to Defaults</b> restores only the currently selected voice to its default settings, including <b>Transpose</b> and <b>Master Tuning</b>. Global settings such as <b>Expression Source</b>, <b>MIDI Input</b>, <b>MIDI Input Channel</b>, and <b>Pitch Bend Range</b> are not changed.
+          <b>Reset Current Preset to Defaults</b> restores only the currently selected voice to its default settings, including <b>Transpose</b> and <b>Master Tuning</b>.<br/>
+          Global settings such as <b>Expression Source</b>, <b>MIDI Input</b>, <b>MIDI Input Channel</b>, <b>Pitch Bend Range</b>, <b>Controller 1</b>, <b>Controller 2</b>, <b>Controller 3</b>, and global display/performance options are not changed.
+
           <div class="instructions-gap"></div>
-          <b>Reset All Presets to Defaults</b> clears saved changes for all voices and restores the current voice to its default settings, including <b>Transpose</b> and <b>Master Tuning</b>. Global settings such as <b>Expression Source</b>, <b>MIDI Input</b>, <b>MIDI Input Channel</b>, and <b>Pitch Bend Range</b> are not changed.
+
+          <b>Reset All Presets to Defaults</b> clears saved changes for all voices and restores the current voice to its default settings, including <b>Transpose</b> and <b>Master Tuning</b>.<br/>
+          Global settings such as <b>Expression Source</b>, <b>MIDI Input</b>, <b>MIDI Input Channel</b>, <b>Pitch Bend Range</b>, <b>Controller 1</b>, <b>Controller 2</b>, <b>Controller 3</b>, and global display/performance options are not changed.
         </div>
 
         <hr class="instructions-divider"/>
@@ -2608,13 +2619,13 @@
               • Preset-specific adjustments and overrides<br>
               • Global controller settings, including <b>Expression Source</b>, <b>Pitch Bend Range</b>, <b>MIDI Input Channel</b>, <b>Controller 1</b>, <b>Controller 2</b>, and <b>Controller 3</b><br>
               • Per-patch Controller 1 / Controller 2 / Controller 3 scaling amounts for expression, brightness, tone, and resonance<br>
-              • Performance and UI options, including MIDI logging, output meter, and Lower CPU use mode
+              • Performance and UI options, including MIDI logging, output meter, live status visibility, and Lower CPU use mode
             </li>
 
             <li>
               <strong>What does not get saved in the file:</strong><br>
               • The selected MIDI input device<br>
-              • Browser- or hardware-specific connection state
+              • Browser or hardware-specific connection state
             </li>
           </ul>
         </div>
@@ -2656,7 +2667,7 @@
           </ul>
           This behavior cannot be disabled by the tool.
           <div class="instructions-gap"></div>
-          When WARBL Sound Lab is not visible, incoming MIDI data from the WARBL (breath, expression, pitch bend, etc.) may not be processed smoothly.
+          When WARBL Sound Lab is not visible, incoming MIDI data from the WARBL (breath, expression, channel pressure, pitch bend, etc.) may not be processed smoothly.
           <div class="instructions-gap"></div>
           This will cause:
           <ul style="margin-top:6px;">
@@ -3172,15 +3183,16 @@
     droneLevelGain: null,
     liveStatusEnabled:true,
     meterLastRenderedPercent: -1,
+    channelPressure:0,
   };
 
   const VALID_PATCHES = new Set(Object.keys(PRESETS));
-  const VALID_EXPRESSION_MODES = new Set(['cc2', 'cc11', 'cc7', 'cc74', 'velocity', 'fixed']);
+  const VALID_EXPRESSION_MODES = new Set(['cc2', 'cc11', 'cc7', 'cc74', 'pressure', 'velocity', 'fixed']);
   const VALID_PRIORITY_MODES = new Set(['last', 'high', 'low']);
   const VALID_REVERB_STYLES = new Set(['room', 'hall', 'plate', 'ambient', 'church']);
   const VALID_OSC_WAVES = new Set(['sine', 'triangle', 'sawtooth', 'square']);
   const VALID_DRIVE_CURVES = new Set(['tanh','asym','hard']);
-  const VALID_CONTROLLER_SOURCES = new Set(['off', 'cc1', 'cc2', 'cc7', 'cc10', 'cc11', 'cc74']);
+  const VALID_CONTROLLER_SOURCES = new Set(['off', 'cc1', 'cc2', 'cc7', 'cc10', 'cc11', 'cc74', 'pressure']);
   const OSC_LEVEL_INTERNAL_MAX = 0.25;
   const OSC_LEVEL_DISPLAY_MAX = 1.0;
 
@@ -3242,6 +3254,7 @@
       case 'cc10': return 10;
       case 'cc11': return 11;
       case 'cc74': return 74;
+      case 'pressure':
       case 'off':
       default:
         return null;
@@ -3249,8 +3262,13 @@
   }
 
   function getControllerSourceNormalizedValue(source) {
+    if (source === 'pressure') {
+      return clamp((state.channelPressure ?? 0) / 127, 0, 1);
+    }
+
     const ccNumber = getControllerSourceCcNumber(source);
     if (ccNumber == null) return 0;
+
     return clamp((state.ccValues[ccNumber] || 0) / 127, 0, 1);
   }
 
@@ -3273,6 +3291,9 @@
 
       case 'fixed':
         return 1;
+
+      case 'pressure':
+        return clamp((state.channelPressure ?? 0) / 127, 0, 1);
 
       case 'cc7':
         return clamp((state.ccValues[7] ?? 0) / 127, 0, 1);
@@ -3321,12 +3342,13 @@
 
   function resetControllerState() {
     state.ccValues = createDefaultCcValues();
+    state.channelPressure = 0;
     state.expressionValue = 0;
 
     updateControllerReadouts();
     requestVoiceUpdate();
   }
-  
+
   function getConfiguredControllerCcNumbers() {
     const result = new Set();
 
@@ -3813,6 +3835,9 @@
 
       case 'fixed':
         return 1.0;
+
+      case 'pressure':
+        return computeExpressionGain(state.channelPressure ?? 0);
 
       case 'cc7':
         return computeExpressionGain(state.ccValues[7] ?? 0);
@@ -4906,9 +4931,9 @@
     }
 
     if (msg.type === 0xD0) {
-      return "CPRS " +
+      return "CP   " +
         statusHex + " " + data1Hex + "       " +
-        "val= " + msg.data1;
+        "cpress= " + msg.data1;
     }
 
     if (msg.type === 0xA0) {
@@ -4981,6 +5006,11 @@
       const el = $(ccId);
       if (!el) return;
 
+      if (source === 'pressure') {
+        el.textContent = '(CP)';
+        return;
+      }
+
       const cc = getControllerSourceCcNumber(source);
       el.textContent = cc == null ? '' : `(CC${cc})`;
     };
@@ -4999,6 +5029,9 @@
           break;
         case 'cc74':
           expressionEl.textContent = '(CC74)';
+          break;
+        case 'pressure':
+          expressionEl.textContent = '(CP)';
           break;
         case 'velocity':
           expressionEl.textContent = '(Vel)';
@@ -5065,6 +5098,23 @@
         ]);
 
         if (watchedCcs.has(data1)) {
+          getExpressionFromState();
+          requestVoiceUpdate();
+        }
+
+        break;
+      }
+
+      case 0xD0: {
+        state.channelPressure = data1;
+
+        const pressureInUse =
+          state.expressionMode === 'pressure' ||
+          state.controller1Source === 'pressure' ||
+          state.controller2Source === 'pressure' ||
+          state.controller3Source === 'pressure';
+
+        if (pressureInUse) {
           getExpressionFromState();
           requestVoiceUpdate();
         }
@@ -5962,6 +6012,7 @@
     state.controller3Source = globals.controller3Source;
 
     state.ccValues = createDefaultCcValues();
+    state.channelPressure = 0;
 
     allNotesOff();
     applyStateToUi();
@@ -6093,6 +6144,7 @@
       const raw = localStorage.getItem('warblSoundLabState_v37');
 
       state.ccValues = createDefaultCcValues();
+      state.channelPressure = 0;
 
       if (!raw) {
         Object.assign(state, clonePresetDefaults(DEFAULTS.patch));
@@ -6170,6 +6222,7 @@
 
     } catch(e){
       state.ccValues = createDefaultCcValues();
+      state.channelPressure = 0;
 
       Object.assign(state, clonePresetDefaults('whistle'));
       state.patch = 'whistle';
@@ -6966,6 +7019,7 @@
     $('midiChannelSelect').addEventListener('change', () => {
       state.midiChannel = Number($('midiChannelSelect').value);
       allNotesOff();
+      resetControllerState();
       clearMidiLog();
       saveState();
     });
