@@ -1063,7 +1063,7 @@
           <button
             id="btnResetDefaults"
             class="reset header-button header-reset"
-            title="Reset the currently selected instrument to its default settings."
+            title="Reset the currently selected instrument to its default settings. Shift-click to reset all saved settings to factory defaults."
             type="button"
           >
             Reset Instrument to Defaults
@@ -1630,7 +1630,7 @@
 
           <div class="instructions-subtitle">Reset Instrument to Defaults</div>
           <div class="instructions-subbody">
-            The <b>Reset Instrument to Defaults</b> button resets only the currently selected instrument.
+            The <b>Reset Instrument to Defaults</b> button normally resets only the currently selected instrument.
             <div class="instructions-gap"></div>
             This restores that instrument’s sound settings such as:
             <div class="instructions-gap"></div>
@@ -1647,6 +1647,10 @@
             • <b>Reverb Wet</b>
             <div class="instructions-gap"></div>
             It does <b>not</b> reset your other instruments.
+            <div class="instructions-gap"></div>
+            <b>Tip:</b> <b>Shift-click</b> this button to reset <b>all saved settings</b> back to the factory defaults. After confirmation, <b>Celtic Sounds</b> will behave as if it were being run for the first time.
+            <div class="instructions-gap"></div>
+            This full reset restores the default selected instrument, default MIDI channel, default reverb, pitch bend range, live status and MIDI stream display settings, and the saved settings for <b>all instruments</b>.
           </div>
 
           <hr class="instructions-divider"/>
@@ -2541,6 +2545,65 @@
       } catch (err) {
         console.error(err);
         showErrorDialog(err.message || "Unable to import settings.", "Import Failed");
+      }
+    }
+
+    async function resetAllSettingsToFirstRunDefaults() {
+      allNotesOff();
+
+      state.pitchBendValue = 0;
+      state.latestExpression = 127;
+
+      state.selectedMidiChannel = DEFAULTS.selectedMidiChannel;
+      state.selectedInstrumentKey = DEFAULTS.selectedInstrumentKey;
+      state.selectedReverbKey = DEFAULTS.selectedReverbKey;
+      state.pitchBendRangeSemitones = DEFAULTS.pitchBendRangeSemitones;
+      state.basePitchBendCents = state.pitchBendRangeSemitones * 100;
+
+      state.midiLogEnabled = DEFAULTS.midiLogEnabled;
+      state.freezeMidiLog = DEFAULTS.freezeMidiLog;
+      state.liveStatusHidden = DEFAULTS.liveStatusHidden;
+
+      state.instrumentSettingsByInstrument = createDefaultAllInstrumentSettings();
+      loadInstrumentSettingsIntoState(state.selectedInstrumentKey);
+
+      state.midiLogLines = [];
+      renderMidiLog();
+
+      syncUiFromState();
+      applyMixerSettings();
+      applyTuningToAllVoices();
+      logLiveStatus();
+
+      if (gLocalStorageAvailable) {
+        try {
+          localStorage.setItem(
+            SETTINGS_STORAGE_KEY,
+            JSON.stringify({
+              selectedMidiChannel: DEFAULTS.selectedMidiChannel,
+              selectedInstrumentKey: DEFAULTS.selectedInstrumentKey,
+              selectedReverbKey: DEFAULTS.selectedReverbKey,
+              pitchBendRangeSemitones: DEFAULTS.pitchBendRangeSemitones,
+              midiLogEnabled: DEFAULTS.midiLogEnabled,
+              freezeMidiLog: DEFAULTS.freezeMidiLog,
+              liveStatusHidden: DEFAULTS.liveStatusHidden,
+              instrumentSettingsByInstrument: createDefaultAllInstrumentSettings()
+            })
+          );
+        } catch (err) {
+          // ignore storage failures
+        }
+      }
+
+      if (state.audioContext) {
+        try {
+          await preloadInstrument(state.selectedInstrumentKey);
+          await preloadImpulseResponse(state.selectedReverbKey);
+          logLiveStatus();
+        } catch (err) {
+          console.error(err);
+          showErrorDialog(err.message, "Reset Failed");
+        }
       }
     }
 
@@ -4082,7 +4145,24 @@
         }
       });
 
-      $("btnResetDefaults").addEventListener("click", async () => {
+      $("btnResetDefaults").addEventListener("click", async (e) => {
+
+        if (e.shiftKey) {
+          const confirmed = await showConfirmDialog(
+            "Reset all saved settings to factory defaults?\n\nThis will replace the saved local settings with default values as if the tool were being run for the first time.",
+            "Reset All Saved Settings to Defaults",
+            "Reset",
+            "Cancel"
+          );
+
+          if (!confirmed) {
+            return;
+          }
+
+          await resetAllSettingsToFirstRunDefaults();
+          return;
+        }
+
         const instrumentLabel =
           APP_CONFIG.instruments[state.selectedInstrumentKey]?.label || "this instrument";
 
