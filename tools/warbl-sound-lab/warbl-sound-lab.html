@@ -158,13 +158,6 @@
       margin: 0;
     }
 
-    .toolbar {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      align-items: center;
-    }
-
     button, select, input[type="range"] {
       font: inherit;
     }
@@ -274,22 +267,31 @@
     .live-card {
       display: flex;
       flex-direction: column;
-
       position: sticky;
       top: 10px;
-
       height: min(730px, calc(100vh - 40px));
       max-height: min(730px, calc(100vh - 40px));
-
+      min-height: 0;
       overflow: hidden;
     }
 
-    .live-card > .card-title-row.live-status-header,
-    .live-card > div[style*="margin-top:8px"][style*="margin-bottom:14px"],
-    .live-card > h2.section-title,
-    .live-card > div[style*="margin-bottom:18px"] > .meter-controls,
+    .live-card > * {
+      min-width: 0;
+    }
+
+    .live-card > .live-status-header,
+    .live-card > .stat-performance,
     .live-card > .midi-log-controls {
-      margin-left: 6px;
+      flex: 0 0 auto;
+    }
+
+    #midiLog {
+      flex: 1 1 auto;
+      min-height: 0;
+      height: auto;
+      max-height: none;
+      overflow-y: auto;
+      overflow-x: hidden;
     }
 
     .section-title {
@@ -646,25 +648,6 @@
       transform: none !important;
     }
 
-    .live-card > div[style*="margin-top:14px"] {
-      margin-top: 0 !important;
-      margin-bottom: 18px;
-      flex: 0 0 auto;
-    }
-
-    .live-card > .log {
-      min-height: 180px;
-    }
-
-    #midiLog {
-      flex: 1 1 180px;
-      min-height: 180px;
-      height: auto;
-      max-height: none;
-      overflow-y: auto;
-      overflow-x: hidden;
-    }
-
     .midi-log-controls {
       display: flex;
       flex-wrap: wrap;
@@ -886,51 +869,6 @@
       width: 100%;
     }
 
-    .performance-top {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 18px;
-      align-items: start;
-    }
-
-    .performance-note-block,
-    .performance-expression-block,
-    .performance-controller-item {
-      min-width: 0;
-    }
-
-    .performance-sublabel {
-      font-size: 12px;
-      line-height: 1.2;
-      font-weight: 700;
-      color: var(--muted);
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-      margin-bottom: 6px;
-    }
-
-    .performance-controllers-row {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 12px;
-      padding-top: 12px;
-      border-top: 1px solid rgba(255,255,255,0.08);
-    }
-
-    .performance-controller-value {
-      font-size: 20px;
-      line-height: 1.1;
-      font-weight: 800;
-      color: var(--text);
-    }
-
-    .performance-card {
-      padding: 0;
-      border: none;
-      border-radius: 0;
-      background: transparent;
-    }
-
     .card-title-row {
       display: flex;
       align-items: center;
@@ -1007,16 +945,6 @@
       transition: none;
     }
 
-    .perf-bar-readout {
-      margin-top: 6px;
-      font-size: 0.78rem;
-      line-height: 1;
-      font-weight: 700;
-      color: var(--muted);
-      text-align: right;
-      min-height: 0.9em;
-    }
-
     .perf-label {
       font-size: 12px;
       line-height: 1.15;
@@ -1053,6 +981,17 @@
       font-size: 11px;
       font-weight: 500;
       opacity: 0.85;
+    }
+
+    .spatial-select-row {
+      grid-column: 1 / -1;
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .spatial-select-row > * {
+      grid-column: span 1;
     }
 
     #instructionsOverlay {
@@ -1290,10 +1229,13 @@
         grid-template-columns: repeat(3, minmax(0, 1fr));
       }
 
-      #midiLog {
+       #midiLog {
+        flex: 0 0 180px;
         min-height: 180px;
         height: 180px;
-        flex: 0 0 180px;
+        max-height: 180px;
+        overflow-y: auto;
+        overflow-x: hidden;
       }
     }
 
@@ -1332,15 +1274,17 @@
         grid-template-columns: repeat(2, minmax(0, 1fr));
       }
 
-      .performance-top {
-        grid-template-columns: 1fr;
-        gap: 14px;
-      }
-
       .performance-controllers-row {
         grid-template-columns: 1fr;
       }
 
+      .spatial-select-row {
+        grid-template-columns: 1fr;
+      }
+
+      .spatial-select-row > * {
+        grid-column: 1 / -1;
+      }
     }
 
     @media (max-width: 680px) {
@@ -1504,12 +1448,12 @@
     <div class="card main-card">
       <div class="control-header">
         <div class="preset-row preset-row-top">
-          <button class="preset-btn" data-preset="whistle" title="Clean, whistle-like lead with a light airy edge.">Air</button>
-          <button class="preset-btn" data-preset="clarinet" title="Odd-harmonic reed tone with a woodwind-style body.">Reed</button>
-          <button class="preset-btn" data-preset="voice" title="Expressive, smooth solo sound with a sax-like character.">Solo</button>
-          <button class="preset-btn" data-preset="brass" title="Buzzier brass voice with more bite and projection.">Brass</button>
-          <button class="preset-btn" data-preset="strings" title="Detuned ensemble-like pad with softer attack.">Pad</button>
-          <button class="preset-btn" data-preset="lead" title="Bright electronic lead voice with a little edge.">Lead</button>
+          <button type="button" class="preset-btn" data-preset="whistle" title="Clean, whistle-like lead with a light airy edge.">Air</button>
+          <button type="button" class="preset-btn" data-preset="clarinet" title="Odd-harmonic reed tone with a woodwind-style body.">Reed</button>
+          <button type="button" class="preset-btn" data-preset="voice" title="Expressive, smooth solo sound with a sax-like character.">Solo</button>
+          <button type="button" class="preset-btn" data-preset="brass" title="Buzzier brass voice with more bite and projection.">Brass</button>
+          <button type="button" class="preset-btn" data-preset="strings" title="Detuned ensemble-like pad with softer attack.">Pad</button>
+          <button type="button" class="preset-btn" data-preset="lead" title="Bright electronic lead voice with a little edge.">Lead</button>
         </div>
 
         <div class="main-tabs" role="tablist" aria-label="Main controls">
@@ -1534,6 +1478,17 @@
             id="tabBtnInstrument"
           >
             Instrument
+          </button>
+          <button
+            type="button"
+            class="main-tab-btn"
+            data-tab="tab-spatial"
+            role="tab"
+            aria-selected="false"
+            aria-controls="tab-spatial"
+            id="tabBtnSpatial"
+          >
+            Spatializer
           </button>
           <button
             type="button"
@@ -1602,6 +1557,7 @@
                 <option value="pressure">Channel Pressure</option>
                 <option value="velocity">Note Velocity</option>
                 <option value="fixed">Fixed Full Volume</option>
+                <option value="custom">Edit Custom CC…</option>
               </select>
             </div>
 
@@ -1621,6 +1577,7 @@
                 <option value="cc11">Expression (CC11)</option>
                 <option value="cc74">Timbre (CC74)</option>
                 <option value="pressure">Channel Pressure</option>
+                <option value="custom">Edit Custom CC…</option>
               </select>
             </div>
 
@@ -1635,6 +1592,7 @@
                 <option value="cc11">Expression (CC11)</option>
                 <option value="cc74">Timbre (CC74)</option>
                 <option value="pressure">Channel Pressure</option>
+                <option value="custom">Edit Custom CC…</option>
               </select>
             </div>
 
@@ -1649,9 +1607,44 @@
                 <option value="cc11">Expression (CC11)</option>
                 <option value="cc74">Timbre (CC74)</option>
                 <option value="pressure">Channel Pressure</option>
+                <option value="custom">Edit Custom CC…</option>
               </select>
             </div>
+            <div class="spatial-select-row">
+              <div class="field" title="Choose the MIDI continuous controller source used for Spatial Controller 1. This is a global setting for the entire tool and is not stored separately for each patch.">
+                <label for="spatialController1SourceSelect">
+                  Spatial Controller 1
+                </label>
+                <select id="spatialController1SourceSelect">
+                  <option value="off">Off</option>
+                  <option value="cc1">Mod Wheel (CC1)</option>
+                  <option value="cc2">Breath (CC2)</option>
+                  <option value="cc7">Volume (CC7)</option>
+                  <option value="cc10">Pan (CC10)</option>
+                  <option value="cc11">Expression (CC11)</option>
+                  <option value="cc74">Timbre (CC74)</option>
+                  <option value="pressure">Channel Pressure</option>
+                  <option value="custom">Edit Custom CC…</option>
+                </select>
+              </div>
 
+              <div class="field" title="Choose the MIDI continuous controller source used for Spatial Controller 2. This is a global setting for the entire tool and is not stored separately for each patch.">
+                <label for="spatialController2SourceSelect">
+                  Spatial Controller 2
+                </label>
+                <select id="spatialController2SourceSelect">
+                  <option value="off">Off</option>
+                  <option value="cc1">Mod Wheel (CC1)</option>
+                  <option value="cc2">Breath (CC2)</option>
+                  <option value="cc7">Volume (CC7)</option>
+                  <option value="cc10">Pan (CC10)</option>
+                  <option value="cc11">Expression (CC11)</option>
+                  <option value="cc74">Timbre (CC74)</option>
+                  <option value="pressure">Channel Pressure</option>
+                  <option value="custom">Edit Custom CC…</option>
+                </select>
+              </div>
+            </div>
           </div>
         </section>
 
@@ -1787,7 +1780,37 @@
             </div>
           </div>
         </section>
+        <section
+          id="tab-spatial"
+          class="main-tab-panel"
+          role="tabpanel"
+          aria-labelledby="tabBtnSpatial"
+          hidden
+        >
+          <h2 class="section-title">Spatializer</h2>
 
+          <div class="controls compact-4">
+            <div class="control" title="Scales how much Spatial Controller 1 moves the main voice from left to right. This affects only the main voice, not the drone. Stored per patch.">
+              <label for="spatialController1LeftRight">Spatial Controller 1 → Left / Right <span class="value" id="spatialController1LeftRightValue"></span></label>
+              <input id="spatialController1LeftRight" type="range" min="0" max="1" step="0.01" value="0.00">
+            </div>
+
+            <div class="control" title="Scales how much Spatial Controller 1 moves the main voice from far to close. This affects only the main voice, not the drone. Stored per patch.">
+              <label for="spatialController1CloseFar">Spatial Controller 1 → Far / Close <span class="value" id="spatialController1CloseFarValue"></span></label>
+              <input id="spatialController1CloseFar" type="range" min="0" max="1" step="0.01" value="0.00">
+            </div>
+
+            <div class="control" title="Scales how much Spatial Controller 2 moves the main voice from left to right. This affects only the main voice, not the drone. Stored per patch.">
+              <label for="spatialController2LeftRight">Spatial Controller 2 → Left / Right <span class="value" id="spatialController2LeftRightValue"></span></label>
+              <input id="spatialController2LeftRight" type="range" min="0" max="1" step="0.01" value="0.00">
+            </div>
+
+            <div class="control" title="Scales how much Spatial Controller 2 moves the main voice from far to close. This affects only the main voice, not the drone. Stored per patch.">
+              <label for="spatialController2CloseFar">Spatial Controller 2 → Far / Close <span class="value" id="spatialController2CloseFarValue"></span></label>
+              <input id="spatialController2CloseFar" type="range" min="0" max="1" step="0.01" value="0.00">
+            </div>
+          </div>
+        </section>
         <section
           id="tab-advanced"
           class="main-tab-panel"
@@ -1970,7 +1993,6 @@
 
           </div>
         </section>
-
         <section
           id="tab-controller"
           class="main-tab-panel"
@@ -2131,6 +2153,7 @@
       <div class="stat stat-performance">
         <div id="liveStatusContent" class="performance-status">
           <div class="performance-grid">
+
             <div class="perf-box">
               <div class="perf-label">CURRENT NOTE</div>
               <div class="perf-value" id="currentNote">—</div>
@@ -2151,7 +2174,7 @@
               </div>
             </div>
 
-            <div class="perf-box">
+            <div class="perf-box" id="controller1LiveBox">
               <div class="perf-label" id="controller1Label">
                 <span class="perf-label-left">CTRL 1</span>
                 <span class="perf-label-cc" id="controller1LabelCC"></span>
@@ -2161,7 +2184,7 @@
               </div>
             </div>
 
-            <div class="perf-box">
+            <div class="perf-box" id="controller2LiveBox">
               <div class="perf-label" id="controller2Label">
                 <span class="perf-label-left">CTRL 2</span>
                 <span class="perf-label-cc" id="controller2LabelCC"></span>
@@ -2171,13 +2194,33 @@
               </div>
             </div>
 
-            <div class="perf-box">
+            <div class="perf-box" id="controller3LiveBox">
               <div class="perf-label" id="controller3Label">
                 <span class="perf-label-left">CTRL 3</span>
                 <span class="perf-label-cc" id="controller3LabelCC"></span>
               </div>
               <div class="live-mini-meter" aria-label="Controller 3 level">
                 <div class="live-mini-meter-fill" id="controller3Readout"></div>
+              </div>
+            </div>
+
+            <div class="perf-box" id="spatialController1LiveBox">
+              <div class="perf-label" id="spatialController1Label">
+                <span class="perf-label-left">SPATIAL 1</span>
+                <span class="perf-label-cc" id="spatialController1LiveLabelCC"></span>
+              </div>
+              <div class="live-mini-meter" aria-label="Spatial Controller 1 level">
+                <div class="live-mini-meter-fill" id="spatialController1Readout"></div>
+              </div>
+            </div>
+
+            <div class="perf-box" id="spatialController2LiveBox">
+              <div class="perf-label" id="spatialController2Label">
+                <span class="perf-label-left">SPATIAL 2</span>
+                <span class="perf-label-cc" id="spatialController2LiveLabelCC"></span>
+              </div>
+              <div class="live-mini-meter" aria-label="Spatial Controller 2 level">
+                <div class="live-mini-meter-fill" id="spatialController2Readout"></div>
               </div>
             </div>
           </div>
@@ -2221,7 +2264,7 @@
             <li>Click <b>Connect MIDI</b> and allow browser MIDI access if requested.</li>
             <li>The tool will automatically switch to the <b>Global</b> tab where you can choose your <b>MIDI Input</b> and <b>MIDI Input Channel</b>.</li>
             <li>Select one of the six instrument presets at the top: <b>Air</b>, <b>Reed</b>, <b>Solo</b>, <b>Brass</b>, <b>Pad</b>, or <b>Lead</b>.</li>
-            <li>Choose the <b>Expression Source</b> plus the <b>Controller 1</b>, <b>Controller 2</b>, and <b>Controller 3</b> source controls that match your WARBL setup.</li>      
+            <li>Choose the <b>Expression Source</b>, <b>Controller 1</b>, <b>Controller 2</b>, <b>Controller 3</b>, and any <b>Spatial Controller 1</b> / <b>Spatial Controller 2</b> sources.</li>     
             <li>Adjust controls across the tabs, then play your WARBL and watch the <b>Live Status</b> panel.</li>
             <li>If the <b>Audio</b> status still shows <b>Suspended</b>, click or play again after connecting MIDI so the browser can start audio.</li>
           </ol>
@@ -2231,12 +2274,16 @@
 
         <div class="instructions-subtitle">Global Tab</div>
         <div class="instructions-subbody">
-          The <b>Global</b> tab contains settings that apply to the entire tool (not per preset).
+          The <b>Global</b> tab contains settings that apply to the entire tool and are not stored separately for each preset.
+
           <div class="instructions-gap"></div>
 
-          <b>MIDI Input</b> – Select your WARBL or other MIDI device.<br/>
-          <b>MIDI Input Channel</b> – Choose which MIDI channel to listen on.<br/>
-          <b>Expression Source</b> – Controls how dynamics are driven:
+          <b>MIDI Input</b> – Select the connected WARBL or other MIDI device this tool listens to.<br/>
+          <b>MIDI Input Channel</b> – Choose which MIDI channel the synth receives on.<br/>
+
+          <div class="instructions-gap"></div>
+
+          <b>Expression Source</b> – Select which incoming MIDI value drives the main expression level:
           <ul style="margin-top:6px;">
             <li><b>Breath (CC2)</b></li>
             <li><b>Expression (CC11)</b></li>
@@ -2245,17 +2292,28 @@
             <li><b>Channel Pressure</b></li>
             <li><b>Note Velocity</b></li>
             <li><b>Fixed Full Volume</b></li>
+            <li><b>Edit Custom CC…</b></li>
           </ul>
 
-          <b>Pitch Bend Range</b> – Sets the overall bend range in semitones (default ±2).<br/> 
-          Additional <b>Pitch Bend Down Scale</b> and <b>Pitch Bend Up Scale</b> controls are available on the Controller tab.
+          <b>Edit Custom CC…</b> – Prompts you to enter a specific MIDI Control Change number from <b>0 to 127</b>.<br/>
+          Use this when your controller sends a CC that is not listed in the menu. The selected CC is then used exactly like the built-in controller choices, and the assigned CC number will appear in the <b>Live Status</b> display.
+
           <div class="instructions-gap"></div>
 
-          <b>Controller 1</b> – Selects the incoming MIDI continuous controller used for the first extra modulation stream.<br/>
-          <b>Controller 2</b> – Selects the incoming MIDI continuous controller used for the second extra modulation stream.<br/>
-          <b>Controller 3</b> – Selects the incoming MIDI continuous controller used for the third extra modulation stream.<br/>
+          <b>Pitch Bend Range</b> – Sets the overall pitch bend range in semitones. The default is ±2 semitones.<br/>
+          Additional <b>Pitch Bend Down Scale</b> and <b>Pitch Bend Up Scale</b> controls are available on the <b>Controller</b> tab.
 
-          Each controller can be set to:
+          <div class="instructions-gap"></div>
+
+          <b>Controller 1</b>, <b>Controller 2</b>, and <b>Controller 3</b> assign the three main extra controller streams used for per-patch modulation on the <b>Instrument</b> tab, such as expression, tone, brightness, and resonance routing.
+
+          <div class="instructions-gap"></div>
+
+          <b>Spatial Controller 1</b> and <b>Spatial Controller 2</b> are separate dedicated controller assignments used only by the <b>Spatializer</b> tab for panning and distance modulation.
+
+          <div class="instructions-gap"></div>
+
+          Each controller selector can be set to:
           <ul style="margin-top:6px;">
             <li><b>Off</b></li>
             <li><b>Mod Wheel (CC1)</b></li>
@@ -2265,12 +2323,12 @@
             <li><b>Expression (CC11)</b></li>
             <li><b>Timbre (CC74)</b></li>
             <li><b>Channel Pressure</b></li>
+            <li><b>Edit Custom CC…</b></li>
           </ul>
 
           <div class="instructions-gap"></div>
 
-          These controller-source selections are <b>global settings</b> for the entire tool and are not stored separately for each patch.
-
+          The normal controller assignments and the two spatial controller assignments are all <b>global settings</b>. They apply to the whole tool and are not saved separately for each patch.
         </div>
 
         <hr class="instructions-divider"/>
@@ -2351,6 +2409,58 @@
           <b>Drone Note</b> – Selects which pitch the drone voice will play when toggled on.<br/>
           <b>Transpose</b> – Shifts playback up or down in semitone steps.<br/>
           <b>Master Tuning</b> – Fine-tunes the overall pitch by cents; the <b>Reset</b> button returns it to 0 cents.<br/>
+
+        </div>
+
+        <hr class="instructions-divider"/>
+
+        <div class="instructions-subtitle">Spatializer Tab</div>
+        <div class="instructions-subbody">
+          The <b>Spatializer</b> tab adds psychoacoustic positioning to the <b>main voice only</b>. The drone does <b>not</b> use the Spatializer.
+
+          <div class="instructions-gap"></div>
+
+          Spatial movement is controlled by the two dedicated global assignments on the <b>Global</b> tab:
+          <b>Spatial Controller 1</b> and <b>Spatial Controller 2</b>.
+
+          <div class="instructions-gap"></div>
+
+          The Spatializer tab contains per-patch depth controls that determine how strongly those two spatial controller streams affect the current preset.
+
+          <div class="instructions-gap"></div>
+
+          <b>Spatial Controller 1 → Left / Right</b> – Sets how strongly Spatial Controller 1 moves the main voice across the stereo image.<br/>
+          <b>Spatial Controller 1 → Far / Close</b> – Sets how strongly Spatial Controller 1 moves the main voice farther away or closer.<br/>
+
+          <div class="instructions-gap"></div>
+
+          <b>Spatial Controller 2 → Left / Right</b> – Sets how strongly Spatial Controller 2 moves the main voice across the stereo image.<br/>
+          <b>Spatial Controller 2 → Far / Close</b> – Sets how strongly Spatial Controller 2 moves the main voice farther away or closer.<br/>
+
+          <div class="instructions-gap"></div>
+
+          <b>Left / Right</b> uses stereo level, small timing differences, and crossfeed cues to position the main voice from left to right.<br/>
+          <b>Far / Close</b> uses level and spectral darkening cues to move the main voice farther back or closer.
+
+          <div class="instructions-gap"></div>
+
+          Controller direction is interpreted like this:
+          <ul style="margin-top:6px;">
+            <li><b>Left / Right:</b> minimum = left, maximum = right</li>
+            <li><b>Far / Close:</b> minimum = far, maximum = close</li>
+          </ul>
+
+          <div class="instructions-gap"></div>
+
+          These routing amounts are stored <b>per patch</b>, so each preset can respond differently to the same two spatial controller assignments.
+
+          <div class="instructions-gap"></div>
+
+          If <b>Spatial Controller 1</b> or <b>Spatial Controller 2</b> is set to <b>Off</b>, that controller will not affect spatial movement even if the per-patch routing amounts are greater than zero.
+
+          <div class="instructions-gap"></div>
+
+          Spatialization is applied to the already mixed <b>main voice output</b> before the shared reverb path. The drone stays in the normal centered signal path.
 
         </div>
 
@@ -2462,7 +2572,7 @@
 
         <div class="instructions-subtitle">Reverb / Volume Tab</div>
         <div class="instructions-subbody">
-          Controls spatial effects and output level.
+          Controls reverb effects and output level.
           <div class="instructions-gap"></div>
           <b>Reverb Style</b> – Room, Hall, Plate, Ambient, or Church.<br/>
           <b>Reverb Dry</b> – Direct signal level.<br/>
@@ -2477,38 +2587,40 @@
 
         <div class="instructions-subtitle">Live Status Meters</div>
         <div class="instructions-subbody">
-          The <b>Live Status</b> panel shows the current incoming performance values from your WARBL setup in real time.
+          The <b>Live Status</b> panel displays incoming performance data from your WARBL in real time.
 
           <div class="instructions-gap"></div>
 
-          <b>Current Note</b> – Shows the note currently being played after any <b>Transpose</b> setting is applied.
+          <b>Current Note</b> – Shows the note currently sounding after any <b>Transpose</b> setting is applied.
 
           <div class="instructions-gap"></div>
 
-          <b>Drone</b> – Shows if the drone is on or off.
+          <b>Drone</b> – Indicates whether the drone is currently on or off.
 
           <div class="instructions-gap"></div>
 
-          <b>Expression</b> – Shows the raw incoming level from the currently selected <b>Expression Source</b> on the <b>Global</b> tab.
+          <b>Expression</b> – Shows the raw incoming value from the selected <b>Expression Source</b> on the <b>Global</b> tab:
           <ul style="margin-top:6px;">
-            <li>If <b>Expression Source</b> is set to <b>Breath (CC2)</b>, the meter shows incoming CC2 values</li>
-            <li>If set to <b>Expression (CC11)</b>, it shows incoming CC11 values</li>
-            <li>If set to <b>Volume (CC7)</b>, it shows incoming CC7 values</li>
-            <li>If set to <b>Timbre (CC74)</b>, it shows incoming CC74 values</li>
-            <li>If set to <b>Channel Pressure</b>, it shows incoming Channel Pressure values</li>
-            <li>If set to <b>Note Velocity</b>, it shows the note-on velocity of the currently sounding note</li>
-            <li>If set to <b>Fixed Full Volume</b>, it stays full</li>
+            <li><b>Breath (CC2)</b>, <b>Expression (CC11)</b>, <b>Volume (CC7)</b>, or <b>Timbre (CC74)</b> → shows that CC value</li>
+            <li><b>Channel Pressure</b> → shows channel pressure</li>
+            <li><b>Note Velocity</b> → shows the velocity of the currently sounding note</li>
+            <li><b>Fixed Full Volume</b> → remains at maximum</li>
+            <li><b>Custom CC</b> → shows the incoming value for the selected CC number</li>
           </ul>
 
-          <b>CTRL 1</b>, <b>CTRL 2</b>, and <b>CTRL 3</b> – Show the raw incoming levels for the controller sources selected on the <b>Global</b> tab.
-
-          <div class="instructions-gap"></div>
-          
-          These meters do <b>not</b> show the final audible result of controller routing. They only show the incoming controller amount before any per-patch scaling is applied.
+          <b>CTRL 1</b>, <b>CTRL 2</b>, <b>CTRL 3</b>, <b>SPATIAL 1</b>, and <b>SPATIAL 2</b> – Show the raw incoming values for the controller sources selected on the <b>Global</b> tab.
 
           <div class="instructions-gap"></div>
 
-          For example, if <b>Controller 1</b> is assigned to <b>Mod Wheel (CC1)</b>, the <b>CTRL 1</b> meter shows the incoming CC1 level. The actual effect on sound still depends on the current patch settings such as:
+          Controller and spatial meters are shown only when their corresponding <b>Controller Source</b> (on the <b>Global</b> tab) is enabled. If a controller is set to <b>Off</b>, its meter is hidden from the display.
+
+          <div class="instructions-gap"></div>
+
+          These meters show <b>input values only</b>. They do not reflect how those values are used or scaled by the current patch.
+
+          <div class="instructions-gap"></div>
+
+          For example, if <b>Controller 1</b> is assigned to <b>Mod Wheel (CC1)</b>, the <b>CTRL 1</b> meter shows incoming CC1 data. How that affects the sound depends on the patch settings, such as:
           <ul style="margin-top:6px;">
             <li><b>Controller 1 → Expression</b></li>
             <li><b>Controller 1 → Tone</b></li>
@@ -2516,15 +2628,15 @@
             <li><b>Controller 1 → Resonance</b></li>
           </ul>
 
-          The same applies to <b>CTRL 2</b> and <b>CTRL 3</b>.
+          The same applies to <b>CTRL 2</b>, <b>CTRL 3</b>, and the <b>Spatial Controllers</b>.
 
           <div class="instructions-gap"></div>
 
-          <b>Enable live status</b> – Shows or hides the live status panel. When disabled, the live status display is hidden and its meter graphics are not updated.
+          <b>Enable live status</b> – Shows or hides the panel. When disabled, the display is hidden and meter updates are suspended.
 
           <div class="instructions-gap"></div>
 
-          These meters are intended as a quick visual check that your WARBL and controller assignments are sending the values you expect.
+          These meters are intended as a quick visual check that your WARBL and controller assignments are sending the expected values.
         </div>
         
         <hr class="instructions-divider"/>
@@ -2622,8 +2734,9 @@
               <strong>What gets saved in the file:</strong><br>
               • All preset parameters (tone, filter base, brightness, texture, vibrato, portamento, transpose, master tuning, reverb, controller scaling, etc.)<br>
               • Preset-specific adjustments and overrides<br>
-              • Global controller settings, including <b>Expression Source</b>, <b>Pitch Bend Range</b>, <b>MIDI Input Channel</b>, <b>Controller 1</b>, <b>Controller 2</b>, and <b>Controller 3</b><br>
+              • Global controller settings, including <b>Expression Source</b>, <b>Pitch Bend Range</b>, <b>MIDI Input Channel</b>, <b>Controller 1</b>, <b>Controller 2</b>, <b>Controller 3</b>, <b>Spatial Controller 1</b>, and <b>Spatial Controller 2</b><br>
               • Per-patch Controller 1 / Controller 2 / Controller 3 scaling amounts for expression, brightness, tone, and resonance<br>
+              • Per-patch Spatial Controller 1 / Spatial Controller 2 scaling amounts for panning and distance<br>
               • Performance and UI options, including MIDI logging, output meter, live status visibility, and Lower CPU use mode
             </li>
 
@@ -2854,6 +2967,8 @@
   const LAST_SETTINGS_FILENAME_KEY = 'warblSoundLabLastSettingsFilename_v11';
   const TIP_REMINDER_VISIT_COUNT_KEY = 'warblSoundLabVisitCount_v1';
 
+  const CUSTOM_EDIT_VALUE = 'custom_edit';
+
   function createDefaultCcValues() {
     return Array.from({ length: 128 }, () => 0);
   }
@@ -2900,6 +3015,16 @@
     controller2Source:'cc10',
     controller3Source:'cc2',
 
+    spatialController1Source:'off',
+    spatialController2Source:'off',
+
+    expressionCustomCc:2,
+    controller1CustomCc:11,
+    controller2CustomCc:10,
+    controller3CustomCc:2,
+    spatialController1CustomCc:11,
+    spatialController2CustomCc:10,
+
     controller1Expression:0.00,
     controller1Brightness:0.00,
     controller1Tone:0.00,
@@ -2911,7 +3036,12 @@
     controller3Expression:0.00,
     controller3Brightness:0.00,
     controller3Tone:0.00,
-    controller3Resonance:0.00
+    controller3Resonance:0.00,
+
+    spatialController1LeftRight:0.00,
+    spatialController1CloseFar:0.00,
+    spatialController2LeftRight:0.00,
+    spatialController2CloseFar:0.00,
   };
 
   const DEFAULT_PATCH_DISPLAY_NAMES = {
@@ -3155,7 +3285,12 @@
     'controller3Expression',
     'controller3Brightness',
     'controller3Tone',
-    'controller3Resonance'
+    'controller3Resonance',
+
+    'spatialController1LeftRight',
+    'spatialController1CloseFar',
+    'spatialController2LeftRight',
+    'spatialController2CloseFar',
   ];
 
   const state = {
@@ -3169,6 +3304,7 @@
     currentVelocity:0,
     audioCtx:null,
     voice:null,
+    voiceSpatial:null,
     droneVoice:null,
     droneEnabled:false,
     droneExpressionGain:0,
@@ -3189,15 +3325,16 @@
     liveStatusEnabled:true,
     meterLastRenderedPercent: -1,
     channelPressure:0,
+    spatialNeutralOverride: null,
   };
 
   const VALID_PATCHES = new Set(Object.keys(PRESETS));
-  const VALID_EXPRESSION_MODES = new Set(['cc2', 'cc11', 'cc7', 'cc74', 'pressure', 'velocity', 'fixed']);
+  const VALID_EXPRESSION_MODES = new Set(['cc2', 'cc11', 'cc7', 'cc74', 'custom', 'pressure', 'velocity', 'fixed']);
   const VALID_PRIORITY_MODES = new Set(['last', 'high', 'low']);
   const VALID_REVERB_STYLES = new Set(['room', 'hall', 'plate', 'ambient', 'church']);
   const VALID_OSC_WAVES = new Set(['sine', 'triangle', 'sawtooth', 'square']);
   const VALID_DRIVE_CURVES = new Set(['tanh','asym','hard']);
-  const VALID_CONTROLLER_SOURCES = new Set(['off', 'cc1', 'cc2', 'cc7', 'cc10', 'cc11', 'cc74', 'pressure']);
+  const VALID_CONTROLLER_SOURCES = new Set(['off', 'cc1', 'cc2', 'cc7', 'cc10', 'cc11', 'cc74', 'custom', 'pressure']);
   const OSC_LEVEL_INTERNAL_MAX = 0.25;
   const OSC_LEVEL_DISPLAY_MAX = 1.0;
 
@@ -3251,7 +3388,7 @@
     return sanitizeEnum(value, VALID_CONTROLLER_SOURCES, fallback);
   }
 
-  function getControllerSourceCcNumber(source) {
+  function getControllerSourceCcNumber(source, customCcNumber = null) {
     switch (source) {
       case 'cc1': return 1;
       case 'cc2': return 2;
@@ -3259,6 +3396,7 @@
       case 'cc10': return 10;
       case 'cc11': return 11;
       case 'cc74': return 74;
+      case 'custom': return sanitizeCcNumber(customCcNumber, 0);
       case 'pressure':
       case 'off':
       default:
@@ -3266,27 +3404,168 @@
     }
   }
 
-  function getControllerSourceNormalizedValue(source) {
+  function sanitizeCcNumber(value, fallback = 0) {
+    return clamp(toRoundedInt(value, fallback), 0, 127);
+  }
+
+  function getCustomCcStateKeyForSelectId(selectId) {
+    switch (selectId) {
+      case 'expressionModeSelect': return 'expressionCustomCc';
+      case 'controller1SourceSelect': return 'controller1CustomCc';
+      case 'controller2SourceSelect': return 'controller2CustomCc';
+      case 'controller3SourceSelect': return 'controller3CustomCc';
+      case 'spatialController1SourceSelect': return 'spatialController1CustomCc';
+      case 'spatialController2SourceSelect': return 'spatialController2CustomCc';
+      default: return '';
+    }
+  }
+
+  function getCustomCcForSelectId(selectId) {
+    const key = getCustomCcStateKeyForSelectId(selectId);
+    return key ? sanitizeCcNumber(state[key], 0) : 0;
+  }
+
+  function ensureCustomOptionsForSelect(selectId) {
+    const el = $(selectId);
+    if (!el) return;
+
+    let customOption = el.querySelector('option[value="custom"]');
+    if (!customOption) {
+      customOption = document.createElement('option');
+      customOption.value = 'custom';
+    }
+
+    customOption.textContent = `Custom (CC${getCustomCcForSelectId(selectId)})`;
+
+    let editOption = el.querySelector(`option[value="${CUSTOM_EDIT_VALUE}"]`);
+    if (!editOption) {
+      editOption = document.createElement('option');
+      editOption.value = CUSTOM_EDIT_VALUE;
+      editOption.textContent = 'Edit Custom CC…';
+    }
+
+    if (customOption.parentNode === el) el.removeChild(customOption);
+    if (editOption.parentNode === el) el.removeChild(editOption);
+
+    el.appendChild(customOption);
+    el.appendChild(editOption);
+  }
+
+  function updateAllCustomSelectOptions() {
+    [
+      'expressionModeSelect',
+      'controller1SourceSelect',
+      'controller2SourceSelect',
+      'controller3SourceSelect',
+      'spatialController1SourceSelect',
+      'spatialController2SourceSelect'
+    ].forEach(ensureCustomOptionsForSelect);
+  }
+
+  async function promptForCustomCc(label, currentValue) {
+    const initialValue = String(sanitizeCcNumber(currentValue, 0));
+
+    if (window.DayPilot && DayPilot.Modal && DayPilot.Modal.prompt) {
+      const result = await DayPilot.Modal.prompt(
+        `<div style="font-size:18px; line-height:1.45; font-weight:600; margin-bottom:10px;">Enter a custom CC number for ${escapeHtml(label)}</div>
+         <div style="font-size:15px; line-height:1.45; color:#555;">Valid range: 0 to 127</div>`,
+        initialValue,
+        {
+          theme: "modal_compact",
+          top: 130,
+          width: 720,
+          autoFocus: false,
+          scrollWithPage: true,
+          okText: "Use CC",
+          cancelText: "Cancel"
+        }
+      );
+
+      if (!result || result.canceled) return null;
+
+      const raw = String(result.result || '').trim();
+      if (!/^\d+$/.test(raw)) {
+        await showMessageDialog("Invalid CC Number", "Please enter a whole number from 0 to 127.");
+        return null;
+      }
+
+      const cc = Number(raw);
+      if (!Number.isInteger(cc) || cc < 0 || cc > 127) {
+        await showMessageDialog("Invalid CC Number", "Please enter a whole number from 0 to 127.");
+        return null;
+      }
+
+      return cc;
+    }
+
+    const raw = window.prompt(`Enter a custom CC number for ${label} (0-127):`, initialValue);
+    if (raw == null) return null;
+
+    const value = String(raw).trim();
+    if (!/^\d+$/.test(value)) {
+      alert("Please enter a whole number from 0 to 127.");
+      return null;
+    }
+
+    const cc = Number(value);
+    if (!Number.isInteger(cc) || cc < 0 || cc > 127) {
+      alert("Please enter a whole number from 0 to 127.");
+      return null;
+    }
+
+    return cc;
+  }
+
+  async function resolveCustomCcSelection(selectId, label) {
+    const key = getCustomCcStateKeyForSelectId(selectId);
+    if (!key) return null;
+    return await promptForCustomCc(label, state[key]);
+  }
+
+  function getControllerSourceNormalizedValue(source, customCcNumber = null) {
     if (source === 'pressure') {
       return clamp((state.channelPressure ?? 0) / 127, 0, 1);
     }
 
-    const ccNumber = getControllerSourceCcNumber(source);
+    const ccNumber = getControllerSourceCcNumber(source, customCcNumber);
     if (ccNumber == null) return 0;
 
     return clamp((state.ccValues[ccNumber] || 0) / 127, 0, 1);
   }
 
-  function getController1NormalizedValue() {
-    return getControllerSourceNormalizedValue(state.controller1Source);
+  function getController1NormalizedValue(settings = state) {
+    return getControllerSourceNormalizedValue(
+      settings.controller1Source,
+      settings.controller1CustomCc
+    );
   }
 
-  function getController2NormalizedValue() {
-    return getControllerSourceNormalizedValue(state.controller2Source);
+  function getController2NormalizedValue(settings = state) {
+    return getControllerSourceNormalizedValue(
+      settings.controller2Source,
+      settings.controller2CustomCc
+    );
   }
 
-  function getController3NormalizedValue() {
-    return getControllerSourceNormalizedValue(state.controller3Source);
+  function getController3NormalizedValue(settings = state) {
+    return getControllerSourceNormalizedValue(
+      settings.controller3Source,
+      settings.controller3CustomCc
+    );
+  }
+      
+  function getSpatialController1NormalizedValue(settings = state) {
+    return getControllerSourceNormalizedValue(
+      settings.spatialController1Source,
+      settings.spatialController1CustomCc
+    );
+  }
+
+  function getSpatialController2NormalizedValue(settings = state) {
+    return getControllerSourceNormalizedValue(
+      settings.spatialController2Source,
+      settings.spatialController2CustomCc
+    );
   }
 
   function getRawExpressionNormalized() {
@@ -3309,6 +3588,11 @@
       case 'cc74':
         return clamp((state.ccValues[74] ?? 0) / 127, 0, 1);
 
+      case 'custom': {
+        const cc = sanitizeCcNumber(state.expressionCustomCc, DEFAULTS.expressionCustomCc);
+        return clamp((state.ccValues[cc] ?? 0) / 127, 0, 1);
+      }
+
       case 'cc2':
       default:
         return clamp((state.ccValues[2] ?? 0) / 127, 0, 1);
@@ -3330,12 +3614,16 @@
     const controller1El = $('controller1Readout');
     const controller2El = $('controller2Readout');
     const controller3El = $('controller3Readout');
+    const spatialController1El = $('spatialController1Readout');
+    const spatialController2El = $('spatialController2Readout');
 
     if (!state.liveStatusEnabled) {
       setControllerLiveBar(expressionEl, 0);
       setControllerLiveBar(controller1El, 0);
       setControllerLiveBar(controller2El, 0);
       setControllerLiveBar(controller3El, 0);
+      setControllerLiveBar(spatialController1El, 0);
+      setControllerLiveBar(spatialController2El, 0);
       return;
     }
 
@@ -3343,6 +3631,22 @@
     setControllerLiveBar(controller1El, getController1NormalizedValue());
     setControllerLiveBar(controller2El, getController2NormalizedValue());
     setControllerLiveBar(controller3El, getController3NormalizedValue());
+    setControllerLiveBar(spatialController1El, getSpatialController1NormalizedValue());
+    setControllerLiveBar(spatialController2El, getSpatialController2NormalizedValue());
+  }
+
+  function updateLiveControllerVisibility() {
+    const setVisible = (id, isVisible) => {
+      const el = $(id);
+      if (!el) return;
+      el.style.display = isVisible ? '' : 'none';
+    };
+
+    setVisible('controller1LiveBox', state.controller1Source !== 'off');
+    setVisible('controller2LiveBox', state.controller2Source !== 'off');
+    setVisible('controller3LiveBox', state.controller3Source !== 'off');
+    setVisible('spatialController1LiveBox', state.spatialController1Source !== 'off');
+    setVisible('spatialController2LiveBox', state.spatialController2Source !== 'off');
   }
 
   function resetControllerState() {
@@ -3357,15 +3661,130 @@
   function getConfiguredControllerCcNumbers() {
     const result = new Set();
 
-    const cc1 = getControllerSourceCcNumber(state.controller1Source);
-    const cc2 = getControllerSourceCcNumber(state.controller2Source);
-    const cc3 = getControllerSourceCcNumber(state.controller3Source);
+    const cc1 = getControllerSourceCcNumber(state.controller1Source, state.controller1CustomCc);
+    const cc2 = getControllerSourceCcNumber(state.controller2Source, state.controller2CustomCc);
+    const cc3 = getControllerSourceCcNumber(state.controller3Source, state.controller3CustomCc);
+    const scc1 = getControllerSourceCcNumber(state.spatialController1Source, state.spatialController1CustomCc);
+    const scc2 = getControllerSourceCcNumber(state.spatialController2Source, state.spatialController2CustomCc);
 
     if (cc1 != null) result.add(cc1);
     if (cc2 != null) result.add(cc2);
     if (cc3 != null) result.add(cc3);
+    if (scc1 != null) result.add(scc1);
+    if (scc2 != null) result.add(scc2);
+
+    if (state.expressionMode === 'custom') {
+      result.add(sanitizeCcNumber(state.expressionCustomCc, DEFAULTS.expressionCustomCc));
+    }
 
     return [...result];
+  }
+
+  function setSpatialNeutralOverride() {
+    state.spatialNeutralOverride = {
+      leftRight: 0.5,
+      closeFar: 1
+    };
+  }
+
+  function clearSpatialNeutralOverrideForSource(source) {
+    if (!state.spatialNeutralOverride) return;
+
+    const spatial1Matches = state.spatialController1Source === source;
+    const spatial2Matches = state.spatialController2Source === source;
+
+    if (spatial1Matches || spatial2Matches) {
+      state.spatialNeutralOverride = null;
+    }
+  }
+
+  function clearSpatialNeutralOverrideForCc(ccNumber) {
+    if (!state.spatialNeutralOverride) return;
+
+    const s1cc = getControllerSourceCcNumber(state.spatialController1Source, state.spatialController1CustomCc);
+    const s2cc = getControllerSourceCcNumber(state.spatialController2Source, state.spatialController2CustomCc);
+
+    if (ccNumber === s1cc || ccNumber === s2cc) {
+      state.spatialNeutralOverride = null;
+    }
+  }
+
+  function getSpatialAxes(settings = state) {
+    if (state.spatialNeutralOverride) {
+      return {
+        leftRight: state.spatialNeutralOverride.leftRight,
+        closeFar: state.spatialNeutralOverride.closeFar
+      };
+    }
+
+    const s1 = getSpatialController1NormalizedValue(settings);
+    const s2 = getSpatialController2NormalizedValue(settings);
+
+    const lrDepth1 = clamp(Number(settings.spatialController1LeftRight || 0), 0, 1);
+    const lrDepth2 = clamp(Number(settings.spatialController2LeftRight || 0), 0, 1);
+
+    const cfDepth1 = clamp(Number(settings.spatialController1CloseFar || 0), 0, 1);
+    const cfDepth2 = clamp(Number(settings.spatialController2CloseFar || 0), 0, 1);
+
+    const s1Bipolar = (s1 - 0.5) * 2;
+    const s2Bipolar = (s2 - 0.5) * 2;
+
+    const leftRightOffset =
+      (s1Bipolar * lrDepth1) +
+      (s2Bipolar * lrDepth2);
+
+    const leftRight = clamp(0.5 + (leftRightOffset * 0.5), 0, 1);
+
+    const closeFarOffset =
+      (s1Bipolar * cfDepth1) +
+      (s2Bipolar * cfDepth2);
+
+    const closeFar = clamp(0.5 + (closeFarOffset * 0.5), 0, 1);
+
+    return { leftRight, closeFar };
+  }
+
+  function hasActiveSpatialRouting(settings = state) {
+    const spatialController1Active =
+      settings.spatialController1Source !== 'off' &&
+      (
+        (settings.spatialController1LeftRight || 0) > 0 ||
+        (settings.spatialController1CloseFar || 0) > 0
+      );
+
+    const spatialController2Active =
+      settings.spatialController2Source !== 'off' &&
+      (
+        (settings.spatialController2LeftRight || 0) > 0 ||
+        (settings.spatialController2CloseFar || 0) > 0
+      );
+
+    return spatialController1Active || spatialController2Active;
+  }
+
+  function updateVoiceSpatialization() {
+    if (!state.voiceSpatial) return;
+
+    if (!hasActiveSpatialRouting(state)) {
+      state.voiceSpatial.setActive(false);
+      return;
+    }
+
+    const axes = getSpatialAxes(state);
+    state.voiceSpatial.setActive(true);
+    state.voiceSpatial.update(axes);
+  }
+
+  function resetSpatializerToNeutral() {
+    setSpatialNeutralOverride();
+
+    if (!state.voiceSpatial) return;
+
+    state.voiceSpatial.setActive(true);
+    state.voiceSpatial.update({
+      leftRight: 0.5,
+      closeFar: 1
+    });
   }
 
   function updateDroneStatusReadout() {
@@ -3419,6 +3838,10 @@
       case 'controller3Brightness':
       case 'controller3Tone':
       case 'controller3Resonance':
+      case 'spatialController1LeftRight':
+      case 'spatialController1CloseFar':
+      case 'spatialController2LeftRight':
+      case 'spatialController2CloseFar':
         return clamp(toFiniteNumber(value, fallback), 0, 1);
 
       case 'baseCutoff':
@@ -3520,8 +3943,7 @@
       default:
         return fallback;
     }
-  }
-
+}
   function sanitizePresetSettingsObject(presetName, rawSettings) {
     const patchName = sanitizePatchName(presetName, DEFAULTS.patch);
     const defaults = clonePresetDefaults(patchName);
@@ -3581,6 +4003,11 @@
         VALID_EXPRESSION_MODES,
         DEFAULTS.expressionMode
       ),
+      expressionCustomCc: sanitizeCcNumber(
+        source.expressionCustomCc,
+        DEFAULTS.expressionCustomCc
+      ),
+
       pitchBendRange: clamp(
         toRoundedInt(source.pitchBendRange, DEFAULTS.pitchBendRange),
         0,
@@ -3600,17 +4027,48 @@
         source.controller1Source,
         DEFAULTS.controller1Source
       ),
+      controller1CustomCc: sanitizeCcNumber(
+        source.controller1CustomCc,
+        DEFAULTS.controller1CustomCc
+      ),
+
       controller2Source: sanitizeControllerSource(
         source.controller2Source,
         DEFAULTS.controller2Source
       ),
+      controller2CustomCc: sanitizeCcNumber(
+        source.controller2CustomCc,
+        DEFAULTS.controller2CustomCc
+      ),
+
       controller3Source: sanitizeControllerSource(
         source.controller3Source,
         DEFAULTS.controller3Source
+      ),
+      controller3CustomCc: sanitizeCcNumber(
+        source.controller3CustomCc,
+        DEFAULTS.controller3CustomCc
+      ),
+
+      spatialController1Source: sanitizeControllerSource(
+        source.spatialController1Source,
+        DEFAULTS.spatialController1Source
+      ),
+      spatialController1CustomCc: sanitizeCcNumber(
+        source.spatialController1CustomCc,
+        DEFAULTS.spatialController1CustomCc
+      ),
+
+      spatialController2Source: sanitizeControllerSource(
+        source.spatialController2Source,
+        DEFAULTS.spatialController2Source
+      ),
+      spatialController2CustomCc: sanitizeCcNumber(
+        source.spatialController2CustomCc,
+        DEFAULTS.spatialController2CustomCc
       )
     };
   }
-
   function sanitizePatchDisplayName(value, fallback) {
     const s = String(value ?? '')
       .replace(/\s+/g, ' ')
@@ -3852,6 +4310,11 @@
 
       case 'cc74':
         return computeExpressionGain(state.ccValues[74] ?? 0);
+
+      case 'custom': {
+        const cc = sanitizeCcNumber(state.expressionCustomCc, DEFAULTS.expressionCustomCc);
+        return computeExpressionGain(state.ccValues[cc] ?? 0);
+      }
 
       case 'cc2':
       default:
@@ -4219,9 +4682,9 @@
       const exprGain = clamp(expr, 0, 1);
       const exprNorm = exprGain;
 
-      const controller1Norm = getController1NormalizedValue();
-      const controller2Norm = getController2NormalizedValue();
-      const controller3Norm = getController3NormalizedValue();
+      const controller1Norm = getController1NormalizedValue(settings);
+      const controller2Norm = getController2NormalizedValue(settings);
+      const controller3Norm = getController3NormalizedValue(settings);
 
       const controllerBrightnessAdd =
         controller1Norm * (settings.controller1Brightness || 0) +
@@ -4451,6 +4914,123 @@
     }
   }
 
+  function lerp(a, b, x) {
+    return a + (b - a) * x;
+  }
+
+  class VoiceSpatializer {
+    constructor(ctx) {
+      this.ctx = ctx;
+
+      this.input = ctx.createGain();
+      this.output = ctx.createGain();
+
+      // Inactive bypass path
+      this.bypassGain = ctx.createGain();
+
+      // Active transparent path
+      this.directGain = ctx.createGain();
+
+      // Active distance-colored path
+      this.distancePathGain = ctx.createGain();
+
+      this.coreLowpass = ctx.createBiquadFilter();
+      this.coreLowpass.type = 'lowpass';
+      this.coreLowpass.frequency.value = (ctx.sampleRate * 0.5) - 100;
+      this.coreLowpass.Q.value = 0.0001;
+
+      this.coreHighShelf = ctx.createBiquadFilter();
+      this.coreHighShelf.type = 'highshelf';
+      this.coreHighShelf.frequency.value = 4200;
+      this.coreHighShelf.gain.value = 0;
+
+      this.panner = ctx.createStereoPanner();
+
+      // Inactive bypass
+      this.bypassGain.connect(this.output);
+
+      // Active transparent path
+      this.directGain.connect(this.panner);
+
+      // Active filtered path
+      this.distancePathGain.connect(this.coreLowpass);
+      this.coreLowpass.connect(this.coreHighShelf);
+      this.coreHighShelf.connect(this.panner);
+
+      this.panner.connect(this.output);
+
+      this.bypassGain.gain.value = 1;
+      this.directGain.gain.value = 0;
+      this.distancePathGain.gain.value = 0;
+
+      this.active = null;
+      this.setActive(false);
+    }
+
+    connect(dest) {
+      this.output.connect(dest);
+    }
+
+    disconnect() {
+      try { this.output.disconnect(); } catch (e) {}
+    }
+
+    setActive(active) {
+      active = !!active;
+      if (this.active === active) return;
+
+      try { this.input.disconnect(); } catch (e) {}
+
+      this.active = active;
+      const t = this.ctx.currentTime;
+
+      if (active) {
+        this.bypassGain.gain.setValueAtTime(0, t);
+        this.directGain.gain.setValueAtTime(1, t);
+        this.distancePathGain.gain.setValueAtTime(0, t);
+
+        this.input.connect(this.directGain);
+        this.input.connect(this.distancePathGain);
+      } else {
+        this.bypassGain.gain.setValueAtTime(1, t);
+        this.directGain.gain.setValueAtTime(0, t);
+        this.distancePathGain.gain.setValueAtTime(0, t);
+
+        this.input.connect(this.bypassGain);
+      }
+    }
+
+    update({ leftRight = 0.5, closeFar = 1 } = {}) {
+      if (!this.active) return;
+
+      const t = this.ctx.currentTime;
+
+      const pan = clamp(leftRight, 0, 1);
+      const farAmount = clamp(1 - closeFar, 0, 1);
+
+      // -1..+1 for StereoPanner
+      const panValue = (pan * 2) - 1;
+
+      // Distance coloration only
+      const distanceLowpass = lerp((this.ctx.sampleRate * 0.5) - 100, 2600, farAmount);
+      const distanceShelf = lerp(0, -8, farAmount);
+
+      // Keep pan-only transparent:
+      // near = all direct path
+      // far  = fade in filtered path
+      const directAmount = 1 - farAmount;
+      const filteredAmount = farAmount * lerp(1.0, 0.65, farAmount);
+
+      this.panner.pan.setTargetAtTime(panValue, t, 0.02);
+
+      this.directGain.gain.setTargetAtTime(directAmount, t, 0.03);
+      this.distancePathGain.gain.setTargetAtTime(filteredAmount, t, 0.03);
+
+      this.coreLowpass.frequency.setTargetAtTime(distanceLowpass, t, 0.03);
+      this.coreHighShelf.gain.setTargetAtTime(distanceShelf, t, 0.03);
+    }
+  }
+
   async function ensureAudio(){
     if (!state.audioCtx){
       const ctx = new (window.AudioContext || window.webkitAudioContext)();
@@ -4465,6 +5045,7 @@
     const ctx = state.audioCtx;
 
     state.voice = new SimpleVoice(ctx);
+    state.voiceSpatial = new VoiceSpatializer(ctx);
     state.droneVoice = null;
 
     applyLowCpuModeToAudioGraph();
@@ -4485,9 +5066,10 @@
     state.comp.attack.value = 0.003;
     state.comp.release.value = 0.2;
 
-    // Main voice into shared reverb/mix
-    state.voice.output.connect(state.reverbDryGain);
-    state.voice.output.connect(state.preDelay);
+    // Main voice -> spatial block -> shared dry/reverb mix
+    state.voice.output.connect(state.voiceSpatial.input);
+    state.voiceSpatial.connect(state.reverbDryGain);
+    state.voiceSpatial.connect(state.preDelay);
 
     state.reverbDryGain.connect(state.reverbSumGain);
     state.wetGain.connect(state.reverbSumGain);
@@ -4498,6 +5080,7 @@
     updateMeterRouting();
     updateReverb();
     updateOutputLevels();
+    updateVoiceSpatialization();
     startMeter();
   }
 
@@ -4771,8 +5354,10 @@
   }
 
   function updateVoice(){
-    if (!state.voice || state.currentNote == null) return;
-    state.voice.update(state, getExpressionFromState(), getTotalPitchOffsetSemis());
+    if (state.voice && state.currentNote != null) {
+      state.voice.update(state, getExpressionFromState(), getTotalPitchOffsetSemis());
+    }
+    updateVoiceSpatialization();
   }
 
   function requestVoiceUpdate(){
@@ -4827,6 +5412,7 @@
 
     state.voice.setNote(midiNoteToFreq(soundingNote), currentGlideMs(wasPlaying), state);
     state.voice.update(state, expr, getTotalPitchOffsetSemis());
+    updateVoiceSpatialization();
 
     if (!state.voice.isOn) state.voice.gateOn(1, state);
   }
@@ -4841,6 +5427,7 @@
       updateCurrentNoteReadout(null);
       getExpressionFromState();
       if (state.voice) state.voice.gateOff(state);
+      updateVoiceSpatialization();
       return;
     }
 
@@ -4853,6 +5440,8 @@
       state.voice.setNote(midiNoteToFreq(soundingNote), currentGlideMs(true), state);
       state.voice.update(state, getExpressionFromState(), getTotalPitchOffsetSemis());
     }
+
+    updateVoiceSpatialization();
   }
 
   function allNotesOff() {
@@ -4868,6 +5457,7 @@
       state.voice.gateOff(state);
     }
 
+    updateVoiceSpatialization();
     stopDrone();
   }
 
@@ -5007,7 +5597,7 @@
   }
 
   function updateControllerStatusLabels() {
-    const setController = (ccId, source) => {
+    const setController = (ccId, source, customCc) => {
       const el = $(ccId);
       if (!el) return;
 
@@ -5016,7 +5606,7 @@
         return;
       }
 
-      const cc = getControllerSourceCcNumber(source);
+      const cc = getControllerSourceCcNumber(source, customCc);
       el.textContent = cc == null ? '' : `(CC${cc})`;
     };
 
@@ -5035,6 +5625,9 @@
         case 'cc74':
           expressionEl.textContent = '(CC74)';
           break;
+        case 'custom':
+          expressionEl.textContent = `(CC${sanitizeCcNumber(state.expressionCustomCc, DEFAULTS.expressionCustomCc)})`;
+          break;
         case 'pressure':
           expressionEl.textContent = '(CP)';
           break;
@@ -5050,9 +5643,14 @@
       }
     }
 
-    setController('controller1LabelCC', state.controller1Source);
-    setController('controller2LabelCC', state.controller2Source);
-    setController('controller3LabelCC', state.controller3Source);
+    setController('controller1LabelCC', state.controller1Source, state.controller1CustomCc);
+    setController('controller2LabelCC', state.controller2Source, state.controller2CustomCc);
+    setController('controller3LabelCC', state.controller3Source, state.controller3CustomCc);
+
+    setController('spatialController1LiveLabelCC', state.spatialController1Source, state.spatialController1CustomCc);
+    setController('spatialController2LiveLabelCC', state.spatialController2Source, state.spatialController2CustomCc);
+
+    updateLiveControllerVisibility();
   }
 
   function handleMidiMessage(event){
@@ -5091,18 +5689,26 @@
 
       case 0xB0: {
         state.ccValues[data1] = data2;
+        clearSpatialNeutralOverrideForCc(data1);
 
         if (data1 === 123) {
           allNotesOff();
           break;
         }
 
-        const watchedCcs = new Set([
-          2, 7, 10, 11, 74,
-          ...getConfiguredControllerCcNumbers()
-        ]);
+        const configuredCcs = getConfiguredControllerCcNumbers();
+        const builtInExpressionCcs =
+          state.expressionMode === 'cc2'  ? [2]  :
+          state.expressionMode === 'cc7'  ? [7]  :
+          state.expressionMode === 'cc11' ? [11] :
+          state.expressionMode === 'cc74' ? [74] :
+          [];
 
-        if (watchedCcs.has(data1)) {
+        const isWatchedCc =
+          builtInExpressionCcs.includes(data1) ||
+          configuredCcs.includes(data1);
+
+        if (isWatchedCc) {
           getExpressionFromState();
           requestVoiceUpdate();
         }
@@ -5112,12 +5718,15 @@
 
       case 0xD0: {
         state.channelPressure = data1;
+        clearSpatialNeutralOverrideForSource('pressure');
 
         const pressureInUse =
           state.expressionMode === 'pressure' ||
           state.controller1Source === 'pressure' ||
           state.controller2Source === 'pressure' ||
-          state.controller3Source === 'pressure';
+          state.controller3Source === 'pressure' ||
+          state.spatialController1Source === 'pressure' ||
+          state.spatialController2Source === 'pressure';
 
         if (pressureInUse) {
           getExpressionFromState();
@@ -5521,6 +6130,7 @@
         stateValue = clamp(Math.round(displayValue), 0, 12);
         el.value = String(stateValue);
         displayValue = stateValue;
+
       } else if (isOscLevelId(id)) {
         displayValue = clamp(displayValue, 0, OSC_LEVEL_DISPLAY_MAX);
         el.value = String(displayValue);
@@ -5530,6 +6140,7 @@
           oscLevelDisplayToInternal(displayValue),
           DEFAULTS[id]
         );
+
       } else if (id in DEFAULTS) {
         stateValue = sanitizePresetSettingValue(id, displayValue, DEFAULTS[id]);
 
@@ -5539,6 +6150,7 @@
         } else {
           stateValue = displayValue;
         }
+
       } else {
         stateValue = displayValue;
       }
@@ -5552,6 +6164,7 @@
       if (id === 'reverbPreDelay' || id === 'reverbTone') {
         updateReverb();
         updateDroneVoice();
+
       } else if (
         id === 'reverbWet' ||
         id === 'reverbDry' ||
@@ -5560,6 +6173,7 @@
       ) {
         updateOutputLevels();
         updateDroneVoice();
+
       } else if (id === 'transposeSemis' || id === 'masterTuneCents') {
         updateCurrentNoteReadout(state.currentNote);
 
@@ -5569,7 +6183,9 @@
           state.voice.update(state, getExpressionFromState(), getTotalPitchOffsetSemis());
         }
 
+        updateVoiceSpatialization();
         updateDroneVoice();
+
       } else {
         requestVoiceUpdate();
         updateDroneVoice();
@@ -5739,7 +6355,7 @@
     const el = $(id);
     if (!el) return;
 
-    const update = () => {
+    const update = async () => {
       if (id === 'reverbStyleSelect') {
         state.reverbStyle = sanitizePresetSettingValue(
           'reverbStyle',
@@ -5748,49 +6364,11 @@
         );
         updateReverb();
         updateDroneVoice();
+        saveState();
+        return;
+      }
 
-      } else if (id === 'expressionModeSelect') {
-        state.expressionMode = sanitizeEnum(
-          el.value,
-          VALID_EXPRESSION_MODES,
-          DEFAULTS.expressionMode
-        );
-        updateControllerStatusLabels();
-        getExpressionFromState();
-        updateControllerReadouts();
-        requestVoiceUpdate();
-
-      } else if (id === 'controller1SourceSelect') {
-        state.controller1Source = sanitizeControllerSource(
-          el.value,
-          DEFAULTS.controller1Source
-        );
-        updateControllerStatusLabels();
-        getExpressionFromState();
-        updateControllerReadouts();
-        requestVoiceUpdate();
-
-      } else if (id === 'controller2SourceSelect') {
-        state.controller2Source = sanitizeControllerSource(
-          el.value,
-          DEFAULTS.controller2Source
-        );
-        updateControllerStatusLabels();
-        getExpressionFromState();
-        updateControllerReadouts();
-        requestVoiceUpdate();
-
-      } else if (id === 'controller3SourceSelect') {
-        state.controller3Source = sanitizeControllerSource(
-          el.value,
-          DEFAULTS.controller3Source
-        );
-        updateControllerStatusLabels();
-        getExpressionFromState();
-        updateControllerReadouts();
-        requestVoiceUpdate();
-
-      } else if (id === 'priorityMode') {
+      if (id === 'priorityMode') {
         state.priorityMode = sanitizePresetSettingValue(
           'priorityMode',
           el.value,
@@ -5811,44 +6389,49 @@
         }
 
         requestVoiceUpdate();
+        saveState();
+        return;
+      }
 
-      } else if (id === 'midiInputSelect') {
+      if (id === 'midiInputSelect') {
         attachSelectedMidiInput();
         resetControllerState();
+        return;
+      }
 
-      } else if (id === 'droneNoteSelect') {
+      if (id === 'droneNoteSelect') {
         state.droneNote = clamp(Math.round(Number(el.value)), 36, 74);
         requestVoiceUpdate();
         updateDroneVoice();
+        saveState();
+        return;
+      }
 
-      } else if (id === 'osc1WaveSelect') {
-        state.osc1Wave = sanitizePresetSettingValue(
-          'osc1Wave',
-          el.value,
-          DEFAULTS.osc1Wave
-        );
+      if (id === 'osc1WaveSelect') {
+        state.osc1Wave = sanitizePresetSettingValue('osc1Wave', el.value, DEFAULTS.osc1Wave);
         requestVoiceUpdate();
         updateDroneVoice();
+        saveState();
+        return;
+      }
 
-      } else if (id === 'osc2WaveSelect') {
-        state.osc2Wave = sanitizePresetSettingValue(
-          'osc2Wave',
-          el.value,
-          DEFAULTS.osc2Wave
-        );
+      if (id === 'osc2WaveSelect') {
+        state.osc2Wave = sanitizePresetSettingValue('osc2Wave', el.value, DEFAULTS.osc2Wave);
         requestVoiceUpdate();
         updateDroneVoice();
+        saveState();
+        return;
+      }
 
-      } else if (id === 'osc3WaveSelect') {
-        state.osc3Wave = sanitizePresetSettingValue(
-          'osc3Wave',
-          el.value,
-          DEFAULTS.osc3Wave
-        );
+      if (id === 'osc3WaveSelect') {
+        state.osc3Wave = sanitizePresetSettingValue('osc3Wave', el.value, DEFAULTS.osc3Wave);
         requestVoiceUpdate();
         updateDroneVoice();
+        saveState();
+        return;
+      }
 
-      } else if (id === 'driveCurveShape') {
+      if (id === 'driveCurveShape') {
         state.driveCurveShape = sanitizePresetSettingValue(
           'driveCurveShape',
           el.value,
@@ -5856,9 +6439,76 @@
         );
         requestVoiceUpdate();
         updateDroneVoice();
+        saveState();
+        return;
       }
 
-      saveState();
+      const isExpressionSelect = id === 'expressionModeSelect';
+      const isControllerSelect =
+        id === 'controller1SourceSelect' ||
+        id === 'controller2SourceSelect' ||
+        id === 'controller3SourceSelect' ||
+        id === 'spatialController1SourceSelect' ||
+        id === 'spatialController2SourceSelect';
+
+      if (isExpressionSelect || isControllerSelect) {
+        const previousValue = isExpressionSelect
+          ? state.expressionMode
+          : id === 'controller1SourceSelect' ? state.controller1Source
+          : id === 'controller2SourceSelect' ? state.controller2Source
+          : id === 'controller3SourceSelect' ? state.controller3Source
+          : id === 'spatialController1SourceSelect' ? state.spatialController1Source
+          : state.spatialController2Source;
+
+        const wantsCustomPrompt = el.value === CUSTOM_EDIT_VALUE;
+
+        if (wantsCustomPrompt) {
+          const labelMap = {
+            expressionModeSelect: 'Expression Source',
+            controller1SourceSelect: 'Controller 1',
+            controller2SourceSelect: 'Controller 2',
+            controller3SourceSelect: 'Controller 3',
+            spatialController1SourceSelect: 'Spatial Controller 1',
+            spatialController2SourceSelect: 'Spatial Controller 2'
+          };
+
+          const customCc = await resolveCustomCcSelection(id, labelMap[id] || 'Custom CC');
+
+          if (customCc == null) {
+            el.value = previousValue;
+            updateAllCustomSelectOptions();
+            return;
+          }
+
+          const customKey = getCustomCcStateKeyForSelectId(id);
+          state[customKey] = customCc;
+          el.value = 'custom';
+        }
+
+        if (id === 'expressionModeSelect') {
+          state.expressionMode = sanitizeEnum(el.value, VALID_EXPRESSION_MODES, DEFAULTS.expressionMode);
+        } else if (id === 'controller1SourceSelect') {
+          state.controller1Source = sanitizeControllerSource(el.value, DEFAULTS.controller1Source);
+        } else if (id === 'controller2SourceSelect') {
+          state.controller2Source = sanitizeControllerSource(el.value, DEFAULTS.controller2Source);
+        } else if (id === 'controller3SourceSelect') {
+          state.controller3Source = sanitizeControllerSource(el.value, DEFAULTS.controller3Source);
+        } else if (id === 'spatialController1SourceSelect') {
+          state.spatialController1Source = sanitizeControllerSource(el.value, DEFAULTS.spatialController1Source);
+          resetSpatializerToNeutral();
+        } else if (id === 'spatialController2SourceSelect') {
+          state.spatialController2Source = sanitizeControllerSource(el.value, DEFAULTS.spatialController2Source);
+          resetSpatializerToNeutral();
+        }
+
+        updateAllCustomSelectOptions();
+        updateControllerStatusLabels();
+        getExpressionFromState();
+        updateControllerReadouts();
+        requestVoiceUpdate();
+        saveState();
+        return;
+      }
     };
 
     el.addEventListener('change', update);
@@ -5882,9 +6532,17 @@
     const {
       pitchBendRange,
       expressionMode,
+      expressionCustomCc,
       controller1Source,
+      controller1CustomCc,
       controller2Source,
+      controller2CustomCc,
       controller3Source,
+      controller3CustomCc,
+      spatialController1Source,
+      spatialController1CustomCc,
+      spatialController2Source,
+      spatialController2CustomCc,
       ...presetScopedDefaults
     } = DEFAULTS;
 
@@ -5942,6 +6600,7 @@
       currentPatch: state.patch,
       globals: {
         expressionMode: state.expressionMode,
+        expressionCustomCc: state.expressionCustomCc,
         pitchBendRange: state.pitchBendRange,
         midiChannel: state.midiChannel,
         midiLogEnabled: !!state.midiLogEnabled,
@@ -5950,8 +6609,15 @@
         liveStatusEnabled: !!state.liveStatusEnabled,
 
         controller1Source: state.controller1Source,
+        controller1CustomCc: state.controller1CustomCc,
         controller2Source: state.controller2Source,
+        controller2CustomCc: state.controller2CustomCc,
         controller3Source: state.controller3Source,
+        controller3CustomCc: state.controller3CustomCc,
+        spatialController1Source: state.spatialController1Source,
+        spatialController1CustomCc: state.spatialController1CustomCc,
+        spatialController2Source: state.spatialController2Source,
+        spatialController2CustomCc: state.spatialController2CustomCc,
       },
       patchDisplayNames: { ...state.patchDisplayNames },
       presets: buildAllEffectivePresetSettings()
@@ -6005,6 +6671,7 @@
     Object.assign(state, getEffectivePresetSettings(importedPatch));
 
     state.expressionMode = globals.expressionMode;
+    state.expressionCustomCc = globals.expressionCustomCc;
     state.pitchBendRange = globals.pitchBendRange;
     state.midiChannel = globals.midiChannel;
     state.midiLogEnabled = globals.midiLogEnabled;
@@ -6013,8 +6680,19 @@
     state.liveStatusEnabled = globals.liveStatusEnabled;
 
     state.controller1Source = globals.controller1Source;
+    state.controller1CustomCc = globals.controller1CustomCc;
+
     state.controller2Source = globals.controller2Source;
+    state.controller2CustomCc = globals.controller2CustomCc;
+
     state.controller3Source = globals.controller3Source;
+    state.controller3CustomCc = globals.controller3CustomCc;
+
+    state.spatialController1Source = globals.spatialController1Source;
+    state.spatialController1CustomCc = globals.spatialController1CustomCc;
+
+    state.spatialController2Source = globals.spatialController2Source;
+    state.spatialController2CustomCc = globals.spatialController2CustomCc;
 
     state.ccValues = createDefaultCcValues();
     state.channelPressure = 0;
@@ -6133,10 +6811,18 @@
         liveStatusEnabled: !!state.liveStatusEnabled,
         pitchBendRange: state.pitchBendRange,
         expressionMode: state.expressionMode,
+        expressionCustomCc: state.expressionCustomCc,
 
         controller1Source: state.controller1Source,
+        controller1CustomCc: state.controller1CustomCc,
         controller2Source: state.controller2Source,
+        controller2CustomCc: state.controller2CustomCc,
         controller3Source: state.controller3Source,
+        controller3CustomCc: state.controller3CustomCc,
+        spatialController1Source: state.spatialController1Source,
+        spatialController1CustomCc: state.spatialController1CustomCc,
+        spatialController2Source: state.spatialController2Source,
+        spatialController2CustomCc: state.spatialController2CustomCc,
 
         patchDisplayNames: state.patchDisplayNames || { ...DEFAULT_PATCH_DISPLAY_NAMES },
         presetOverrides: state.presetOverrides || {}
@@ -6156,6 +6842,7 @@
         state.patch = DEFAULTS.patch;
         state.pitchBendRange = DEFAULTS.pitchBendRange;
         state.expressionMode = DEFAULTS.expressionMode;
+        state.expressionCustomCc = DEFAULTS.expressionCustomCc;
         state.midiChannel = 1;
         state.midiInputId = '';
         state.midiLogEnabled = false;
@@ -6164,8 +6851,15 @@
         state.liveStatusEnabled = true;
 
         state.controller1Source = DEFAULTS.controller1Source;
+        state.controller1CustomCc = DEFAULTS.controller1CustomCc;
         state.controller2Source = DEFAULTS.controller2Source;
+        state.controller2CustomCc = DEFAULTS.controller2CustomCc;
         state.controller3Source = DEFAULTS.controller3Source;
+        state.controller3CustomCc = DEFAULTS.controller3CustomCc;
+        state.spatialController1Source = DEFAULTS.spatialController1Source;
+        state.spatialController1CustomCc = DEFAULTS.spatialController1CustomCc;
+        state.spatialController2Source = DEFAULTS.spatialController2Source;
+        state.spatialController2CustomCc = DEFAULTS.spatialController2CustomCc;
 
         state.droneVolume = DEFAULTS.droneVolume;
         state.droneNote = DEFAULTS.droneNote;
@@ -6190,6 +6884,11 @@
         DEFAULTS.expressionMode
       );
 
+      state.expressionCustomCc = sanitizeCcNumber(
+        savedObj.expressionCustomCc,
+        DEFAULTS.expressionCustomCc
+      );
+
       state.pitchBendRange = clamp(
         toRoundedInt(savedObj.pitchBendRange, DEFAULTS.pitchBendRange),
         0,
@@ -6212,13 +6911,45 @@
         savedObj.controller1Source,
         DEFAULTS.controller1Source
       );
+      state.controller1CustomCc = sanitizeCcNumber(
+        savedObj.controller1CustomCc,
+        DEFAULTS.controller1CustomCc
+      );
+
       state.controller2Source = sanitizeControllerSource(
         savedObj.controller2Source,
         DEFAULTS.controller2Source
       );
+      state.controller2CustomCc = sanitizeCcNumber(
+        savedObj.controller2CustomCc,
+        DEFAULTS.controller2CustomCc
+      );
+
       state.controller3Source = sanitizeControllerSource(
         savedObj.controller3Source,
         DEFAULTS.controller3Source
+      );
+      state.controller3CustomCc = sanitizeCcNumber(
+        savedObj.controller3CustomCc,
+        DEFAULTS.controller3CustomCc
+      );
+
+      state.spatialController1Source = sanitizeControllerSource(
+        savedObj.spatialController1Source,
+        DEFAULTS.spatialController1Source
+      );
+      state.spatialController1CustomCc = sanitizeCcNumber(
+        savedObj.spatialController1CustomCc,
+        DEFAULTS.spatialController1CustomCc
+      );
+
+      state.spatialController2Source = sanitizeControllerSource(
+        savedObj.spatialController2Source,
+        DEFAULTS.spatialController2Source
+      );
+      state.spatialController2CustomCc = sanitizeCcNumber(
+        savedObj.spatialController2CustomCc,
+        DEFAULTS.spatialController2CustomCc
       );
 
       state.droneNote = sanitizePresetSettingValue('droneNote', state.droneNote, DEFAULTS.droneNote);
@@ -6233,6 +6964,7 @@
       state.patch = 'whistle';
       state.pitchBendRange = DEFAULTS.pitchBendRange;
       state.expressionMode = DEFAULTS.expressionMode;
+      state.expressionCustomCc = DEFAULTS.expressionCustomCc;
       state.midiChannel = 1;
       state.midiInputId = '';
       state.midiLogEnabled = false;
@@ -6241,8 +6973,15 @@
       state.liveStatusEnabled = true;
 
       state.controller1Source = DEFAULTS.controller1Source;
+      state.controller1CustomCc = DEFAULTS.controller1CustomCc;
       state.controller2Source = DEFAULTS.controller2Source;
+      state.controller2CustomCc = DEFAULTS.controller2CustomCc;
       state.controller3Source = DEFAULTS.controller3Source;
+      state.controller3CustomCc = DEFAULTS.controller3CustomCc;
+      state.spatialController1Source = DEFAULTS.spatialController1Source;
+      state.spatialController1CustomCc = DEFAULTS.spatialController1CustomCc;
+      state.spatialController2Source = DEFAULTS.spatialController2Source;
+      state.spatialController2CustomCc = DEFAULTS.spatialController2CustomCc;
 
       state.droneVolume = DEFAULTS.droneVolume;
       state.droneNote = DEFAULTS.droneNote;
@@ -6268,7 +7007,9 @@
       'controller2Expression','controller2Brightness',
       'controller2Tone','controller2Resonance',
       'controller3Expression','controller3Brightness',
-      'controller3Tone','controller3Resonance'
+      'controller3Tone','controller3Resonance',
+      'spatialController1LeftRight','spatialController1CloseFar',
+      'spatialController2LeftRight','spatialController2CloseFar',
     ].forEach(id => {
       if ($(id) && state[id] != null) {
         $(id).value = isOscLevelId(id)
@@ -6280,6 +7021,8 @@
     setRatioUiFromState('osc1Ratio', state.osc1Ratio);
     setRatioUiFromState('osc2Ratio', state.osc2Ratio);
     setRatioUiFromState('osc3Ratio', state.osc3Ratio);
+
+    updateAllCustomSelectOptions();
 
     $('expressionModeSelect').value = state.expressionMode;
     $('priorityMode').value = state.priorityMode;
@@ -6294,6 +7037,8 @@
     $('controller1SourceSelect').value = state.controller1Source || DEFAULTS.controller1Source;
     $('controller2SourceSelect').value = state.controller2Source || DEFAULTS.controller2Source;
     $('controller3SourceSelect').value = state.controller3Source || DEFAULTS.controller3Source;
+    $('spatialController1SourceSelect').value = state.spatialController1Source || DEFAULTS.spatialController1Source;
+    $('spatialController2SourceSelect').value = state.spatialController2Source || DEFAULTS.spatialController2Source;
 
     $('osc1WaveSelect').value = state.osc1Wave || getPatchProfile(state.patch).osc1;
     $('osc2WaveSelect').value = state.osc2Wave || getPatchProfile(state.patch).osc2;
@@ -6315,7 +7060,9 @@
     if (state.audioCtx) {
       updateMeterRouting();
       startMeter();
+      updateVoiceSpatialization();
     }
+
     updateControllerStatusLabels();
     updateControllerReadouts();
     updatePresetButtons();
@@ -6480,11 +7227,19 @@
     state.patch = DEFAULTS.patch;
     state.pitchBendRange = DEFAULTS.pitchBendRange;
     state.expressionMode = DEFAULTS.expressionMode;
+    state.expressionCustomCc = DEFAULTS.expressionCustomCc;
     state.midiChannel = 1;
 
     state.controller1Source = DEFAULTS.controller1Source;
+    state.controller1CustomCc = DEFAULTS.controller1CustomCc;
     state.controller2Source = DEFAULTS.controller2Source;
+    state.controller2CustomCc = DEFAULTS.controller2CustomCc;
     state.controller3Source = DEFAULTS.controller3Source;
+    state.controller3CustomCc = DEFAULTS.controller3CustomCc;
+    state.spatialController1Source = DEFAULTS.spatialController1Source;
+    state.spatialController1CustomCc = DEFAULTS.spatialController1CustomCc;
+    state.spatialController2Source = DEFAULTS.spatialController2Source;
+    state.spatialController2CustomCc = DEFAULTS.spatialController2CustomCc;
 
     allNotesOff();
     clearMidiLog();
@@ -6565,6 +7320,11 @@
       controller3Brightness:v=>v.toFixed(2),
       controller3Tone:v=>v.toFixed(2),
       controller3Resonance:v=>v.toFixed(2),
+
+      spatialController1LeftRight:v=>v.toFixed(2),
+      spatialController1CloseFar:v=>v.toFixed(2),
+      spatialController2LeftRight:v=>v.toFixed(2),
+      spatialController2CloseFar:v=>v.toFixed(2),
     };
 
     Object.keys(formatters).forEach(id => {
@@ -7009,6 +7769,8 @@
     renderMidiLog();
     refreshValueLabels();
 
+    updateAllCustomSelectOptions();
+
     const webMidiAvailable = updateWebMidiAvailabilityUi();
 
     if (webMidiAvailable) {
@@ -7071,6 +7833,11 @@
     bindRange('controller3Tone', v=>v.toFixed(2));
     bindRange('controller3Resonance', v=>v.toFixed(2));
 
+    bindRange('spatialController1LeftRight', v=>v.toFixed(2));
+    bindRange('spatialController1CloseFar', v=>v.toFixed(2));
+    bindRange('spatialController2LeftRight', v=>v.toFixed(2));
+    bindRange('spatialController2CloseFar', v=>v.toFixed(2));
+
     bindRatioPair('osc1Ratio');
     bindRatioPair('osc2Ratio');
     bindRatioPair('osc3Ratio');
@@ -7084,6 +7851,8 @@
     bindSelect('controller1SourceSelect');
     bindSelect('controller2SourceSelect');
     bindSelect('controller3SourceSelect');
+    bindSelect('spatialController1SourceSelect');
+    bindSelect('spatialController2SourceSelect');
     bindSelect('priorityMode');
     bindSelect('reverbStyleSelect');
     bindSelect('droneNoteSelect');
@@ -7208,6 +7977,7 @@
           state.droneVoice.configurePatch(state);
         }
 
+        updateVoiceSpatialization();
         requestVoiceUpdate();
       }
 
@@ -7286,7 +8056,9 @@
     if (!PRESETS[state.patch]) state.patch = 'whistle';
 
     renderLiveStatusUi();
+    updateAllCustomSelectOptions();
     updateControllerReadouts();
+    updateControllerStatusLabels();
     updateFullscreenButton();
     updateFullscreenLayoutMode();
   }
