@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3214_032826_0930";
+var gVersionNumber = "3215_032926_0930";
 
 var gMIDIInitStillWaiting = false;
 
@@ -23162,6 +23162,7 @@ function GetABCFileHeader() {
     /^%%titlecaps.*$/,
     /^%%visualtranspose.*$/,
     /^%%maxstaves.*$/,
+    /^%%partsbox.*$/, 
     /^%hide_first_title_on_play.*$/,
     /^%hide_vskip_on_play.*$/,
     /^%left_justify_titles.*$/,
@@ -55432,7 +55433,7 @@ function showWhatsNewScreen() {
   modal_msg += 'background: linear-gradient(135deg, #0d47a1 0%, #1565c0 50%, #64b5f6 100%);';
   modal_msg += 'box-shadow: 0 6px 16px rgba(0,0,0,0.14); color:#fff;">';
   modal_msg += '<div style="font-size:20pt; line-height:24pt; font-weight:bold;">What&apos;s New</div>';
-  modal_msg += '<div style="font-size:11pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 28 March 2026</div>';
+  modal_msg += '<div style="font-size:11pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 29 March 2026</div>';
   modal_msg += '</div>';
 
   // Short intro
