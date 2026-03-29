@@ -1661,14 +1661,14 @@
           </div>
 
           <div class="controls compact-4">
-            <div class="control" title="Shifts the patch from rounder to more focused and forward.">
-              <label for="tone">Tone <span class="value" id="toneValue"></span></label>
-              <input id="tone" title="Shifts the patch from rounder to more focused and forward." type="range" min="0" max="4" step="0.01" value="0.5">
-            </div>  
             <div class="control" title="Sets the base filter cutoff frequency for the patch before Brightness, Tone, and expression-based brightening.">
               <label for="baseCutoff">Filter Base <span class="value" id="baseCutoffValue"></span></label>
               <input id="baseCutoff" title="Sets the base filter cutoff frequency for the patch before Brightness, Tone, and expression-based brightening." type="range" min="10" max="4000" step="1" value="3200">
             </div>
+            <div class="control" title="Shifts the patch from rounder to more focused and forward.">
+              <label for="tone">Tone <span class="value" id="toneValue"></span></label>
+              <input id="tone" title="Shifts the patch from rounder to more focused and forward." type="range" min="0" max="4" step="0.01" value="0.5">
+            </div>  
             <div class="control" title="Controls upper harmonics and filter openness.">
               <label for="brightness">Brightness <span class="value" id="brightnessValue"></span></label>
               <input id="brightness" title="Controls upper harmonics and filter openness." type="range" min="0" max="4" step="0.01" value="0.5">
@@ -1676,22 +1676,6 @@
             <div class="control" title="Adjusts the resonant character of the instrument.">
               <label for="body">Resonance <span class="value" id="bodyValue"></span></label>
               <input id="body" title="Adjusts the resonant character of the instrument." type="range" min="0" max="1" step="0.01" value="0.5">
-            </div>
-            <div class="control" title="Sets how quickly the sound reaches full level after note-on.">
-              <label for="attack">Attack <span class="value" id="attackValue"></span></label>
-              <input id="attack" title="Sets how quickly the sound reaches full level after note-on." type="range" min="0.000" max="0.15" step="0.001" value="0.01">
-            </div>
-            <div class="control" title="Sets how long the note fades after release.">
-              <label for="release">Release <span class="value" id="releaseValue"></span></label>
-              <input id="release" title="Sets how long the note fades after release." type="range" min="0.01" max="1.5" step="0.005" value="0.09">
-            </div>
-            <div class="control" title="Sets vibrato speed.">
-              <label for="vibratoRate">Vibrato Rate <span class="value" id="vibratoRateValue"></span></label>
-              <input id="vibratoRate" title="Sets vibrato speed." type="range" min="0.1" max="10" step="0.1" value="5.0">
-            </div>
-            <div class="control" title="Sets vibrato depth in cents.">
-              <label for="vibratoDepth">Vibrato Depth <span class="value" id="vibratoDepthValue"></span></label>
-              <input id="vibratoDepth" title="Sets vibrato depth in cents." type="range" min="0" max="80" step="1" value="8">
             </div>
 
             <div class="control" title="Scales how much Controller 1 adds to expression for this patch.">
@@ -1752,6 +1736,23 @@
             <div class="control" title="Scales how much Controller 3 adds resonance for this patch.">
               <label for="controller3Resonance">Controller 3 → Resonance <span class="value" id="controller3ResonanceValue"></span></label>
               <input id="controller3Resonance" title="Scales how much Controller 3 adds resonance for this patch." type="range" min="0" max="1" step="0.01" value="0.00">
+            </div>
+
+            <div class="control" title="Sets how quickly the sound reaches full level after note-on.">
+              <label for="attack">Attack <span class="value" id="attackValue"></span></label>
+              <input id="attack" title="Sets how quickly the sound reaches full level after note-on." type="range" min="0.000" max="0.15" step="0.001" value="0.01">
+            </div>
+            <div class="control" title="Sets how long the note fades after release.">
+              <label for="release">Release <span class="value" id="releaseValue"></span></label>
+              <input id="release" title="Sets how long the note fades after release." type="range" min="0.01" max="1.5" step="0.005" value="0.09">
+            </div>
+            <div class="control" title="Sets vibrato speed.">
+              <label for="vibratoRate">Vibrato Rate <span class="value" id="vibratoRateValue"></span></label>
+              <input id="vibratoRate" title="Sets vibrato speed." type="range" min="0.1" max="10" step="0.1" value="5.0">
+            </div>
+            <div class="control" title="Sets vibrato depth in cents.">
+              <label for="vibratoDepth">Vibrato Depth <span class="value" id="vibratoDepthValue"></span></label>
+              <input id="vibratoDepth" title="Sets vibrato depth in cents." type="range" min="0" max="80" step="1" value="8">
             </div>
 
             <div class="field" title="Select which pitch the drone voice will play when toggled on. Available range: C2 to D5. The trigger to turn the drone on or off is always incoming MIDI note 51. This setting is stored per patch.">
@@ -2351,18 +2352,11 @@
 
           <div class="instructions-gap"></div>
 
-          <b>Tone</b> – Moves the sound from warmer/rounder to more focused and forward.<br/>
           <b>Filter Base</b> – Sets the patch’s starting filter cutoff in Hz.<br/>
           Lower values make the sound darker and more closed. Higher values make it brighter and more open.<br/>
+          <b>Tone</b> – Moves the sound from warmer/rounder to more focused and forward.<br/>
           <b>Brightness</b> – Adjusts upper harmonics and filter openness.<br/>
           <b>Resonance</b> – Adjusts the resonant character of the instrument.
-
-          <div class="instructions-gap"></div>
-
-          <b>Attack</b> – Sets how quickly the sound reaches full level after note-on.<br/>
-          <b>Release</b> – Sets how long the note fades after release.<br/>
-          <b>Vibrato Rate</b> – Sets vibrato speed.<br/>
-          <b>Vibrato Depth</b> – Sets vibrato depth in cents.
 
           <div class="instructions-gap"></div>
 
@@ -2403,6 +2397,13 @@
           <div class="instructions-gap"></div>
           
           This is expected behavior.
+          
+          <div class="instructions-gap"></div>
+
+          <b>Attack</b> – Sets how quickly the sound reaches full level after note-on.<br/>
+          <b>Release</b> – Sets how long the note fades after release.<br/>
+          <b>Vibrato Rate</b> – Sets vibrato speed.<br/>
+          <b>Vibrato Depth</b> – Sets vibrato depth in cents.
 
           <div class="instructions-gap"></div>
 
