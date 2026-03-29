@@ -428,7 +428,7 @@
   .two-up {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 12px;
+    gap: 18px;
   }
 
   .instructions-overlay{
@@ -1179,45 +1179,49 @@
             </div>
           </div>
 
-          <div class="field">
-            <label for="pitchBendRangeSemitones">
-              Pitch Bend Range <span id="pitchBendRangeSemitonesValue">2</span> semitones
-            </label>
-            <input
-              id="pitchBendRangeSemitones"
-              type="range"
-              min="0"
-              max="12"
-              step="1"
-              value="2"
-              title="Set the global pitch bend range in semitones. This is a global setting for the tool, not instrument-specific."
-            />
-          </div>
+          <div class="field" style="grid-column: span 2;">
+            <div class="two-up">
+              <div class="field">
+                <label for="pitchBendRangeSemitones">
+                  Pitch Bend Range <span id="pitchBendRangeSemitonesValue">2</span> semitones
+                </label>
+                <input
+                  id="pitchBendRangeSemitones"
+                  type="range"
+                  min="0"
+                  max="12"
+                  step="1"
+                  value="2"
+                  title="Set the global pitch bend range in semitones. This is a global setting for the tool, not instrument-specific."
+                />
+              </div>
 
-          <div class="field">
-            <div class="slider-label-row">
-              <label for="brightness">
-                Brightness <span id="brightnessValue">0.0</span>
-              </label>
-              <button
-                id="btnResetBrightness"
-                type="button"
-                class="mini-reset-button"
-                aria-label="Reset brightness for the current instrument to 0."
-                title="Reset brightness for the current instrument to 0."
-              >
-                Reset
-              </button>
+              <div class="field">
+                <div class="slider-label-row">
+                  <label for="brightness">
+                    Brightness <span id="brightnessValue">0.0</span>
+                  </label>
+                  <button
+                    id="btnResetBrightness"
+                    type="button"
+                    class="mini-reset-button"
+                    aria-label="Reset brightness for the current instrument to 0."
+                    title="Reset brightness for the current instrument to 0."
+                  >
+                    Reset
+                  </button>
+                </div>
+                <input
+                  id="brightness"
+                  type="range"
+                  min="-1"
+                  max="1"
+                  step="0.01"
+                  value="0.0"
+                  title="Adjust the tonal brightness of the current instrument. Negative values make the sound warmer, positive values make it brighter, and 0 is natural."
+                />
+              </div>
             </div>
-            <input
-              id="brightness"
-              type="range"
-              min="-1"
-              max="1"
-              step="0.01"
-              value="0.0"
-              title="Adjust the tonal brightness of the current instrument. Negative values make the sound warmer, positive values make it brighter, and 0 is natural."
-            />
           </div>
 
           <div class="field" style="grid-column: span 2;">
