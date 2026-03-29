@@ -818,6 +818,10 @@
     margin-left: auto;
   }
 
+  label span {
+    margin-left: 0.35em;
+  }
+
   @media (max-width: 900px){
     .split {
       grid-template-columns: 1fr;
@@ -1190,7 +1194,31 @@
             />
           </div>
 
-          <div class="field" aria-hidden="true"></div>
+          <div class="field">
+            <div class="slider-label-row">
+              <label for="brightness">
+                Brightness <span id="brightnessValue">0.0</span>
+              </label>
+              <button
+                id="btnResetBrightness"
+                type="button"
+                class="mini-reset-button"
+                aria-label="Reset brightness for the current instrument to 0."
+                title="Reset brightness for the current instrument to 0."
+              >
+                Reset
+              </button>
+            </div>
+            <input
+              id="brightness"
+              type="range"
+              min="-1"
+              max="1"
+              step="0.01"
+              value="0.0"
+              title="Adjust the tonal brightness of the current instrument. Negative values make the sound warmer, positive values make it brighter, and 0 is natural."
+            />
+          </div>
 
           <div class="field" style="grid-column: span 2;">
             <div class="two-up">
@@ -1426,7 +1454,7 @@
               <li>Click <b>Connect MIDI</b> and allow browser MIDI access if requested.</li>
               <li>Choose your <b>MIDI Input</b> and <b>Input Channel</b>.</li>
               <li>Select an <b>Instrument</b> and the <b>Expression Source</b> you want the sound module to follow.</li>
-              <li>Adjust volume, drone volume (when available), master tuning, pitch bend range, pitch bend scaling, attack, release, reverb, and transpose as needed.</li>
+              <li>Adjust volume, drone volume (when available), master tuning, pitch bend range, pitch bend scaling, brightness, attack, release, reverb, and transpose as needed.</li>
               <li>Play your MIDI controller and watch the <b>Live Status</b> and optional <b>MIDI Message Stream</b>.</li>
             </ol>
           </div>
@@ -1482,6 +1510,21 @@
 					  This can be useful for fine control of expression when playing
 					  the <b>Tin Whistle</b>, <b>Irish Flute</b>, <b>Säckpipa</b>, or <b>Uilleann Pipes</b>, and it also lets you optionally enable pitch bend for instruments such as <b>Anglo Concertina</b>, <b>Accordion</b>, <b>Great Highland Bagpipe</b>, and <b>Smallpipes</b>.
 					</div>
+
+          <hr class="instructions-divider"/>
+
+          <div class="instructions-subtitle">Brightness</div>
+          <div class="instructions-subbody">
+            <b>Brightness</b> adjusts the tonal color of the current instrument with a single musical control.
+            <div class="instructions-gap"></div>
+            At <b>0</b>, the sound is unmodified.
+            <div class="instructions-gap"></div>
+            Moving the slider left makes the instrument warmer and softer, while moving it right makes the sound brighter and more present.
+            <div class="instructions-gap"></div>
+            Use the <b>Reset</b> button next to the slider to quickly return the sound to <b>0</b>.
+            <div class="instructions-gap"></div>
+            This control is saved separately for each instrument, so every instrument can keep its own preferred tonal balance.
+          </div>
 
           <hr class="instructions-divider"/>
 
@@ -1640,11 +1683,13 @@
             • <b>Master Tune</b><br/>
             • <b>Transpose</b><br/>
             • <b>Pitch Bend Up/Down Scale</b><br/>
+            • <b>Brightness</b><br/>
             • <b>Attack</b><br/>
             • <b>Release</b><br/>
             • <b>Reverb Pre-delay</b><br/>
             • <b>Reverb Dry</b><br/>
             • <b>Reverb Wet</b>
+
             <div class="instructions-gap"></div>
             It does <b>not</b> reset your other instruments.
             <div class="instructions-gap"></div>
@@ -2024,6 +2069,7 @@
       pitchBendRangeSemitones: 2,
       pitchBendUpMultiplier: 1,
       pitchBendDownMultiplier: 1,
+      brightness: 0,
       reverbWet: 0.18,
       reverbDry: 1.00,
       reverbPreDelayMs: 0,
@@ -2079,6 +2125,7 @@
       pitchBendDownMultiplier: 1,
       pitchBendRangeSemitones: 2,
       basePitchBendCents: 200,
+      brightness: 0,
       reverbWet: 0.18,
       reverbDry: 1.00,
       reverbPreDelayMs: 0,
@@ -2121,6 +2168,22 @@
     };
 
     const $ = (id) => document.getElementById(id);
+
+    function applyBrightnessSettings() {
+      if (!state.outputChain || !state.audioContext) return;
+
+      const now = state.audioContext.currentTime;
+      const lowShelf = state.outputChain.lowShelf;
+      const highShelf = state.outputChain.highShelf;
+
+      if (!lowShelf || !highShelf) return;
+
+      const amount = clamp(state.brightness, -1, 1);
+      const gainDb = amount * 12;
+
+      lowShelf.gain.setTargetAtTime(-gainDb, now, 0.01);
+      highShelf.gain.setTargetAtTime(gainDb, now, 0.01);
+    }
 
     function renderLiveStatusVisibility() {
       const statusEl = $("liveStatus");
@@ -2519,8 +2582,9 @@
 
         allNotesOff();
         applyLoadedSettings(payload);
-
+        
         syncUiFromState();
+        applyBrightnessSettings();
         applyMixerSettings();
         applyTuningToAllVoices();
         renderMidiLog();
@@ -2571,6 +2635,7 @@
       renderMidiLog();
 
       syncUiFromState();
+      applyBrightnessSettings();
       applyMixerSettings();
       applyTuningToAllVoices();
       logLiveStatus();
@@ -2767,6 +2832,8 @@
         }
       }
 
+      const brightnessText = formatBrightnessLabel(state.brightness);
+
       const lines = [
         "Input channel: " + state.selectedMidiChannel,
         "Current note: " + currentNoteText
@@ -2782,11 +2849,17 @@
         "Master volume: " + state.masterVolume.toFixed(2),
         "Master tune cents: " + state.masterTuneCents,
         "Transpose semitones: " + state.transposeSemis,
+        "Brightness: " + brightnessText,
         "Pitch bend range semitones: " + state.pitchBendRangeSemitones,
         "Pitch bend cents: " + bendCents.toFixed(1)
       );
 
       liveStatusEl.textContent = lines.join("\n");
+    }
+
+    function formatBrightnessLabel(value) {
+      const v = clamp(Number(value) || 0, -1, 1);
+      return v.toFixed(2);
     }
 
 		function formatMidiMessage(msg) {
@@ -2947,14 +3020,27 @@
 
       const ctx = state.audioContext;
       const inputGain = ctx.createGain();
+      const lowShelf = ctx.createBiquadFilter();
+      const highShelf = ctx.createBiquadFilter();
       const dryGain = ctx.createGain();
       const wetGain = ctx.createGain();
       const convolver = ctx.createConvolver();
       const preDelay = ctx.createDelay(1.0);
       const masterGain = ctx.createGain();
 
-      inputGain.connect(dryGain);
-      inputGain.connect(preDelay);
+      lowShelf.type = "lowshelf";
+      lowShelf.frequency.value = 220;
+      lowShelf.gain.value = 0;
+
+      highShelf.type = "highshelf";
+      highShelf.frequency.value = 3200;
+      highShelf.gain.value = 0;
+
+      inputGain.connect(lowShelf);
+      lowShelf.connect(highShelf);
+
+      highShelf.connect(dryGain);
+      highShelf.connect(preDelay);
       preDelay.connect(convolver);
       convolver.connect(wetGain);
       dryGain.connect(masterGain);
@@ -2963,6 +3049,8 @@
 
       state.outputChain = {
         inputGain,
+        lowShelf,
+        highShelf,
         dryGain,
         wetGain,
         convolver,
@@ -2970,6 +3058,7 @@
         masterGain
       };
 
+      applyBrightnessSettings();
       applyMixerSettings();
     }
 
@@ -3923,6 +4012,7 @@
       state.pitchBendValue = 0;
 
       syncUiFromState();
+      applyBrightnessSettings();
       applyMixerSettings();
       applyTuningToAllVoices();
       allNotesOff();
@@ -3971,6 +4061,11 @@
       if ($("masterTuneCents")) {
         $("masterTuneCents").value = String(state.masterTuneCents);
         $("masterTuneCentsValue").textContent = String(state.masterTuneCents);
+      }
+
+      if ($("brightness")) {
+        $("brightness").value = String(state.brightness);
+        $("brightnessValue").textContent = formatBrightnessLabel(state.brightness);
       }
 
       if ($("attackMs")) {
@@ -4027,7 +4122,6 @@
       }
 
       renderLiveStatusVisibility();
-
       renderDroneVolumeVisibility();
     }
 
@@ -4107,6 +4201,7 @@
         loadInstrumentSettingsIntoState(nextInstrumentKey);
         syncUiFromState();
         renderDroneVolumeVisibility();
+        applyBrightnessSettings();
         applyMixerSettings();
         applyTuningToAllVoices();
         logLiveStatus();
@@ -4219,6 +4314,22 @@
         saveSettingsToLocalStorage();
       });
 
+      $("btnResetBrightness").addEventListener("click", () => {
+        state.brightness = 0;
+
+        if ($("brightness")) {
+          $("brightness").value = "0";
+        }
+        if ($("brightnessValue")) {
+          $("brightnessValue").textContent = "0";
+        }
+
+        applyBrightnessSettings();
+        logLiveStatus();
+        saveCurrentInstrumentSettingsToStateStore();
+        saveSettingsToLocalStorage();
+      });
+
       $("btnWarblConfig").addEventListener("click", () => {
         window.open("https://warbl.xyz/configure.html", "_blank", "noopener,noreferrer");
       });
@@ -4270,6 +4381,14 @@
       bindRange("masterTuneCents", "masterTuneCentsValue", (v) => String(Math.round(v)), (v) => {
         state.masterTuneCents = clamp(Math.round(v), -50, 50);
         applyTuningToAllVoices();
+        logLiveStatus();
+        saveCurrentInstrumentSettingsToStateStore();
+        saveSettingsToLocalStorage();
+      });
+
+      bindRange("brightness", "brightnessValue", formatBrightnessLabel, (v) => {
+        state.brightness = clamp(v, -1, 1);
+        applyBrightnessSettings();
         logLiveStatus();
         saveCurrentInstrumentSettingsToStateStore();
         saveSettingsToLocalStorage();
@@ -4339,7 +4458,6 @@
         logLiveStatus();
         saveSettingsToLocalStorage();
       });
-
     }
 
     function setupAutomaticAudioInit() {
@@ -4508,28 +4626,29 @@
       return Object.keys(APP_CONFIG.instruments);
     }
 
-		function createDefaultInstrumentSettings(instrumentKey = "") {
-		  const bendDisabledByDefault =
-		    instrumentKey === "angloConcertina" ||
-		    instrumentKey === "accordion" ||
-		    instrumentKey === "bagpipes" ||
-		    instrumentKey === "smallpipes";
+    function createDefaultInstrumentSettings(instrumentKey = "") {
+      const bendDisabledByDefault =
+        instrumentKey === "angloConcertina" ||
+        instrumentKey === "accordion" ||
+        instrumentKey === "bagpipes" ||
+        instrumentKey === "smallpipes";
 
-		  return {
-		    expressionMode: DEFAULTS.expressionMode,
-		    masterVolume: DEFAULTS.masterVolume,
-		    droneVolume: DEFAULTS.droneVolume,
-		    masterTuneCents: DEFAULTS.masterTuneCents,
-		    attackMs: DEFAULTS.attackMs,
-		    releaseMs: DEFAULTS.releaseMs,
-		    pitchBendUpMultiplier: bendDisabledByDefault ? 0 : DEFAULTS.pitchBendUpMultiplier,
-		    pitchBendDownMultiplier: bendDisabledByDefault ? 0 : DEFAULTS.pitchBendDownMultiplier,
-		    reverbWet: DEFAULTS.reverbWet,
-		    reverbDry: DEFAULTS.reverbDry,
-		    reverbPreDelayMs: DEFAULTS.reverbPreDelayMs,
-		    transposeSemis: DEFAULTS.transposeSemis
-		  };
-		}
+      return {
+        expressionMode: DEFAULTS.expressionMode,
+        masterVolume: DEFAULTS.masterVolume,
+        droneVolume: DEFAULTS.droneVolume,
+        masterTuneCents: DEFAULTS.masterTuneCents,
+        attackMs: DEFAULTS.attackMs,
+        releaseMs: DEFAULTS.releaseMs,
+        pitchBendUpMultiplier: bendDisabledByDefault ? 0 : DEFAULTS.pitchBendUpMultiplier,
+        pitchBendDownMultiplier: bendDisabledByDefault ? 0 : DEFAULTS.pitchBendDownMultiplier,
+        brightness: DEFAULTS.brightness,
+        reverbWet: DEFAULTS.reverbWet,
+        reverbDry: DEFAULTS.reverbDry,
+        reverbPreDelayMs: DEFAULTS.reverbPreDelayMs,
+        transposeSemis: DEFAULTS.transposeSemis
+      };
+    }
 
 		function createDefaultAllInstrumentSettings() {
 		  const all = {};
@@ -4539,98 +4658,105 @@
 		  return all;
 		}
 
-		function sanitizeInstrumentSettings(data, instrumentKey = "") {
-		  const defaults = createDefaultInstrumentSettings(instrumentKey);
+    function sanitizeInstrumentSettings(data, instrumentKey = "") {
+      const defaults = createDefaultInstrumentSettings(instrumentKey);
 
-		  if (!isPlainObject(data)) {
-		    return { ...defaults };
-		  }
+      if (!isPlainObject(data)) {
+        return { ...defaults };
+      }
 
-		  return {
-		    expressionMode: toAllowedStringOrDefault(
-		      data.expressionMode,
-		      ["cc7", "cc2", "cc11", "cc74", "aftertouch", "velocity", "max"],
-		      defaults.expressionMode
-		    ),
+      return {
+        expressionMode: toAllowedStringOrDefault(
+          data.expressionMode,
+          ["cc7", "cc2", "cc11", "cc74", "aftertouch", "velocity", "max"],
+          defaults.expressionMode
+        ),
 
-		    masterVolume: toClampedNumberOrDefault(
-		      data.masterVolume,
-		      0,
-		      2.0,
-		      defaults.masterVolume
-		    ),
+        masterVolume: toClampedNumberOrDefault(
+          data.masterVolume,
+          0,
+          2.0,
+          defaults.masterVolume
+        ),
 
-		    droneVolume: toClampedNumberOrDefault(
-		      data.droneVolume,
-		      0,
-		      2.0,
-		      defaults.droneVolume
-		    ),
+        droneVolume: toClampedNumberOrDefault(
+          data.droneVolume,
+          0,
+          2.0,
+          defaults.droneVolume
+        ),
 
-		    masterTuneCents: toRoundedClampedIntOrDefault(
-		      data.masterTuneCents,
-		      -50,
-		      50,
-		      defaults.masterTuneCents
-		    ),
+        masterTuneCents: toRoundedClampedIntOrDefault(
+          data.masterTuneCents,
+          -50,
+          50,
+          defaults.masterTuneCents
+        ),
 
-		    attackMs: toRoundedClampedIntOrDefault(
-		      data.attackMs,
-		      0,
-		      150,
-		      defaults.attackMs
-		    ),
+        brightness: toClampedNumberOrDefault(
+          data.brightness,
+          -1,
+          1,
+          defaults.brightness
+        ),
 
-		    releaseMs: toRoundedClampedIntOrDefault(
-		      data.releaseMs,
-		      10,
-		      1500,
-		      defaults.releaseMs
-		    ),
+        attackMs: toRoundedClampedIntOrDefault(
+          data.attackMs,
+          0,
+          150,
+          defaults.attackMs
+        ),
 
-		    pitchBendUpMultiplier: toClampedNumberOrDefault(
-		      data.pitchBendUpMultiplier,
-		      0,
-		      4,
-		      defaults.pitchBendUpMultiplier
-		    ),
+        releaseMs: toRoundedClampedIntOrDefault(
+          data.releaseMs,
+          10,
+          1500,
+          defaults.releaseMs
+        ),
 
-		    pitchBendDownMultiplier: toClampedNumberOrDefault(
-		      data.pitchBendDownMultiplier,
-		      0,
-		      4,
-		      defaults.pitchBendDownMultiplier
-		    ),
+        pitchBendUpMultiplier: toClampedNumberOrDefault(
+          data.pitchBendUpMultiplier,
+          0,
+          4,
+          defaults.pitchBendUpMultiplier
+        ),
 
-		    reverbWet: toClampedNumberOrDefault(
-		      data.reverbWet,
-		      0,
-		      1,
-		      defaults.reverbWet
-		    ),
+        pitchBendDownMultiplier: toClampedNumberOrDefault(
+          data.pitchBendDownMultiplier,
+          0,
+          4,
+          defaults.pitchBendDownMultiplier
+        ),
 
-		    reverbDry: toClampedNumberOrDefault(
-		      data.reverbDry,
-		      0,
-		      1.5,
-		      defaults.reverbDry
-		    ),
+        reverbWet: toClampedNumberOrDefault(
+          data.reverbWet,
+          0,
+          1,
+          defaults.reverbWet
+        ),
 
-		    reverbPreDelayMs: toRoundedClampedIntOrDefault(
-		      data.reverbPreDelayMs,
-		      0,
-		      250,
-		      defaults.reverbPreDelayMs
-		    ),
+        reverbDry: toClampedNumberOrDefault(
+          data.reverbDry,
+          0,
+          1.5,
+          defaults.reverbDry
+        ),
 
-		    transposeSemis: toRoundedClampedIntOrDefault(
-		      data.transposeSemis,
-		      -12,
-		      12,
-		      defaults.transposeSemis
-		    )
-		  };
-		}
+        reverbPreDelayMs: toRoundedClampedIntOrDefault(
+          data.reverbPreDelayMs,
+          0,
+          250,
+          defaults.reverbPreDelayMs
+        ),
+
+        transposeSemis: toRoundedClampedIntOrDefault(
+          data.transposeSemis,
+          -12,
+          12,
+          defaults.transposeSemis
+        )
+      };
+    }
 
     function sanitizeAllInstrumentSettings(data) {
       const out = createDefaultAllInstrumentSettings();
@@ -4697,22 +4823,23 @@
       };
     }
 
-		function getCurrentInstrumentSettingsObject() {
-		  return sanitizeInstrumentSettings({
-		    expressionMode: state.expressionMode,
-		    masterVolume: state.masterVolume,
-		    droneVolume: state.droneVolume,
-		    masterTuneCents: state.masterTuneCents,
-		    attackMs: state.attackMs,
-		    releaseMs: state.releaseMs,
-		    pitchBendUpMultiplier: state.pitchBendUpMultiplier,
-		    pitchBendDownMultiplier: state.pitchBendDownMultiplier,
-		    reverbWet: state.reverbWet,
-		    reverbDry: state.reverbDry,
-		    reverbPreDelayMs: state.reverbPreDelayMs,
-		    transposeSemis: state.transposeSemis
-		  }, state.selectedInstrumentKey);
-		}
+    function getCurrentInstrumentSettingsObject() {
+      return sanitizeInstrumentSettings({
+        expressionMode: state.expressionMode,
+        masterVolume: state.masterVolume,
+        droneVolume: state.droneVolume,
+        masterTuneCents: state.masterTuneCents,
+        attackMs: state.attackMs,
+        releaseMs: state.releaseMs,
+        pitchBendUpMultiplier: state.pitchBendUpMultiplier,
+        pitchBendDownMultiplier: state.pitchBendDownMultiplier,
+        brightness: state.brightness,
+        reverbWet: state.reverbWet,
+        reverbDry: state.reverbDry,
+        reverbPreDelayMs: state.reverbPreDelayMs,
+        transposeSemis: state.transposeSemis
+      }, state.selectedInstrumentKey);
+    }
 
     function saveCurrentInstrumentSettingsToStateStore() {
       const key = state.selectedInstrumentKey;
@@ -4725,31 +4852,32 @@
       state.instrumentSettingsByInstrument[key] = getCurrentInstrumentSettingsObject();
     }
 
-		function loadInstrumentSettingsIntoState(instrumentKey) {
-		  if (!state.instrumentSettingsByInstrument) {
-		    state.instrumentSettingsByInstrument = createDefaultAllInstrumentSettings();
-		  }
+    function loadInstrumentSettingsIntoState(instrumentKey) {
+      if (!state.instrumentSettingsByInstrument) {
+        state.instrumentSettingsByInstrument = createDefaultAllInstrumentSettings();
+      }
 
-		  const s = sanitizeInstrumentSettings(
-		    state.instrumentSettingsByInstrument[instrumentKey],
-		    instrumentKey
-		  );
+      const s = sanitizeInstrumentSettings(
+        state.instrumentSettingsByInstrument[instrumentKey],
+        instrumentKey
+      );
 
-		  state.expressionMode = s.expressionMode;
-		  state.masterVolume = s.masterVolume;
-		  state.droneVolume = s.droneVolume;
-		  state.masterTuneCents = s.masterTuneCents;
-		  state.attackMs = s.attackMs;
-		  state.releaseMs = s.releaseMs;
-		  state.pitchBendUpMultiplier = s.pitchBendUpMultiplier;
-		  state.pitchBendDownMultiplier = s.pitchBendDownMultiplier;
-		  state.reverbWet = s.reverbWet;
-		  state.reverbDry = s.reverbDry;
-		  state.reverbPreDelayMs = s.reverbPreDelayMs;
-		  state.transposeSemis = s.transposeSemis;
+      state.expressionMode = s.expressionMode;
+      state.masterVolume = s.masterVolume;
+      state.droneVolume = s.droneVolume;
+      state.masterTuneCents = s.masterTuneCents;
+      state.attackMs = s.attackMs;
+      state.releaseMs = s.releaseMs;
+      state.pitchBendUpMultiplier = s.pitchBendUpMultiplier;
+      state.pitchBendDownMultiplier = s.pitchBendDownMultiplier;
+      state.brightness = s.brightness;
+      state.reverbWet = s.reverbWet;
+      state.reverbDry = s.reverbDry;
+      state.reverbPreDelayMs = s.reverbPreDelayMs;
+      state.transposeSemis = s.transposeSemis;
 
-		  state.basePitchBendCents = state.pitchBendRangeSemitones * 100;
-		}
+      state.basePitchBendCents = state.pitchBendRangeSemitones * 100;
+    }
 
     function normalizeSettingsFilename(filename) {
       let value = String(filename || "").trim();
