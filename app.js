@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3215_032926_0930";
+var gVersionNumber = "3216_033026_0930";
 
 var gMIDIInitStillWaiting = false;
 
@@ -46171,7 +46171,7 @@ function GetInitialConfigurationSettings() {
     gUseCustomGMSounds = true;
   }
 
-  val = localStorage.TipJarCount;
+  val = localStorage.TipJarCountV2;
   if (val) {
     gTipJarCount = val;
   } else {
@@ -47094,7 +47094,7 @@ function SaveConfigurationSettings() {
     localStorage.UseCustomGMSounds = gUseCustomGMSounds;
 
     // Save the tip jar count 
-    localStorage.TipJarCount = gTipJarCount;
+    localStorage.TipJarCountV2 = gTipJarCount;
 
     // Save the save editor state flag
     localStorage.SaveLastAutoSnapShot = gSaveLastAutoSnapShot;
@@ -55433,7 +55433,7 @@ function showWhatsNewScreen() {
   modal_msg += 'background: linear-gradient(135deg, #0d47a1 0%, #1565c0 50%, #64b5f6 100%);';
   modal_msg += 'box-shadow: 0 6px 16px rgba(0,0,0,0.14); color:#fff;">';
   modal_msg += '<div style="font-size:20pt; line-height:24pt; font-weight:bold;">What&apos;s New</div>';
-  modal_msg += '<div style="font-size:11pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 29 March 2026</div>';
+  modal_msg += '<div style="font-size:11pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 30 March 2026</div>';
   modal_msg += '</div>';
 
   // Short intro
@@ -61893,15 +61893,21 @@ async function DoStartup() {
     gTipJarCount++;
 
     if (gLocalStorageAvailable) {
-      localStorage.TipJarCount = gTipJarCount;
+      localStorage.TipJarCountV2 = gTipJarCount;
     }
 
-  }
+    let show = false;
 
-  // Occasional reminder
-  if ((gTipJarCount == 25) || (gTipJarCount == 75) || (gTipJarCount == 150) || (gTipJarCount == 300)) {
+    if (gTipJarCount === 10) show = true;
+    else if (gTipJarCount === 50) show = true;
+    else if (gTipJarCount > 50 && gTipJarCount % 50 === 0) show = true;
 
-    TipJarReminderDialog();
+    // Occasional reminder
+    if (show) {
+
+      TipJarReminderDialog();
+
+    }
 
   }
 
