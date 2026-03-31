@@ -2409,8 +2409,12 @@
       };
     }
 
-    function removeCustomInstrumentFromConfig() {
+    function removeCustomInstrumentFromConfig(options = {}) {
+      const preserveSettings = options.preserveSettings === true;
+      const preserveSelection = options.preserveSelection === true;
+
       delete APP_CONFIG.instruments[CUSTOM_INSTRUMENT_KEY];
+
       if (state?.sampleCache) {
         for (const key of Array.from(state.sampleCache.keys())) {
           if (String(key).startsWith(CUSTOM_INSTRUMENT_KEY + ":")) {
@@ -2418,13 +2422,17 @@
           }
         }
       }
+
       delete INSTRUMENT_PLAYABLE_NOTE_SETS[CUSTOM_INSTRUMENT_KEY];
+
       if (state) {
         state.customInstrument = null;
-        if (state.instrumentSettingsByInstrument && state.instrumentSettingsByInstrument[CUSTOM_INSTRUMENT_KEY]) {
+
+        if (!preserveSettings && state.instrumentSettingsByInstrument && state.instrumentSettingsByInstrument[CUSTOM_INSTRUMENT_KEY]) {
           delete state.instrumentSettingsByInstrument[CUSTOM_INSTRUMENT_KEY];
         }
-        if (state.selectedInstrumentKey === CUSTOM_INSTRUMENT_KEY) {
+
+        if (!preserveSelection && state.selectedInstrumentKey === CUSTOM_INSTRUMENT_KEY) {
           state.selectedInstrumentKey = DEFAULTS.selectedInstrumentKey;
         }
       }
@@ -2435,7 +2443,17 @@
         throw new Error("Custom instrument definition is missing note buffers.");
       }
 
-      removeCustomInstrumentFromConfig();
+      const previousCustomSettings =
+        state?.instrumentSettingsByInstrument?.[CUSTOM_INSTRUMENT_KEY]
+          ? { ...state.instrumentSettingsByInstrument[CUSTOM_INSTRUMENT_KEY] }
+          : null;
+
+      const wasSelected = state?.selectedInstrumentKey === CUSTOM_INSTRUMENT_KEY;
+
+      removeCustomInstrumentFromConfig({
+        preserveSettings: true,
+        preserveSelection: true
+      });
 
       const metadata = normalizeCustomInstrumentMetadata(definition.metadata);
       const instrument = {
@@ -2452,6 +2470,7 @@
 
       APP_CONFIG.instruments[CUSTOM_INSTRUMENT_KEY] = instrument;
       delete INSTRUMENT_PLAYABLE_NOTE_SETS[CUSTOM_INSTRUMENT_KEY];
+
       state.customInstrument = {
         filename: definition.filename,
         metadata,
@@ -2473,9 +2492,13 @@
       }
 
       state.instrumentSettingsByInstrument[CUSTOM_INSTRUMENT_KEY] = sanitizeInstrumentSettings(
-        state.instrumentSettingsByInstrument[CUSTOM_INSTRUMENT_KEY],
+        previousCustomSettings || state.instrumentSettingsByInstrument[CUSTOM_INSTRUMENT_KEY],
         CUSTOM_INSTRUMENT_KEY
       );
+
+      if (wasSelected) {
+        state.selectedInstrumentKey = CUSTOM_INSTRUMENT_KEY;
+      }
     }
 
     function openCustomInstrumentPicker() {
@@ -2755,7 +2778,10 @@
             // ignore cleanup failure
           }
 
-          removeCustomInstrumentFromConfig();
+          removeCustomInstrumentFromConfig({
+            preserveSettings: false,
+            preserveSelection: false
+          });
 
           if (state.instrumentSettingsByInstrument) {
             delete state.instrumentSettingsByInstrument[CUSTOM_INSTRUMENT_KEY];
@@ -2777,20 +2803,25 @@
 
         await installCustomInstrumentDefinition(definition, {
           persist: false,
-          selectInstrument: shouldReselectCustomInstrument
+          selectInstrument: false
         });
 
         if (shouldReselectCustomInstrument) {
           state.selectedInstrumentKey = CUSTOM_INSTRUMENT_KEY;
           loadInstrumentSettingsIntoState(CUSTOM_INSTRUMENT_KEY);
-          syncUiFromState();
-          renderDroneVolumeVisibility();
-          applyBrightnessSettings();
-          applyMixerSettings();
-          applyTuningToAllVoices();
-          logLiveStatus();
-          saveSettingsToLocalStorage();
+        } else if (!APP_CONFIG.instruments[state.selectedInstrumentKey]) {
+          state.selectedInstrumentKey = DEFAULTS.selectedInstrumentKey;
+          loadInstrumentSettingsIntoState(state.selectedInstrumentKey);
         }
+
+        populateInstrumentSelect();
+        syncUiFromState();
+        renderDroneVolumeVisibility();
+        applyBrightnessSettings();
+        applyMixerSettings();
+        applyTuningToAllVoices();
+        logLiveStatus();
+        saveSettingsToLocalStorage();
 
         return true;
       } catch (err) {
@@ -2802,7 +2833,10 @@
           // ignore cleanup failure
         }
 
-        removeCustomInstrumentFromConfig();
+        removeCustomInstrumentFromConfig({
+          preserveSettings: false,
+          preserveSelection: false
+        });
 
         if (state.instrumentSettingsByInstrument) {
           delete state.instrumentSettingsByInstrument[CUSTOM_INSTRUMENT_KEY];
@@ -3210,13 +3244,19 @@
 
       state.instrumentSettingsByInstrument = safe.instrumentSettingsByInstrument;
 
+      // If the saved selection is the custom instrument, do not apply its settings
+      // until the custom instrument has actually been restored into APP_CONFIG.
       if (
-        state.selectedInstrumentKey === CUSTOM_INSTRUMENT_KEY ||
-        APP_CONFIG.instruments[state.selectedInstrumentKey]
+        state.selectedInstrumentKey === CUSTOM_INSTRUMENT_KEY &&
+        !APP_CONFIG.instruments[CUSTOM_INSTRUMENT_KEY]
       ) {
+        return;
+      }
+
+      if (APP_CONFIG.instruments[state.selectedInstrumentKey]) {
         loadInstrumentSettingsIntoState(state.selectedInstrumentKey);
       } else {
-        state.selectedInstrumentKey = DEFAULT_INSTRUMENT_KEY;
+        state.selectedInstrumentKey = DEFAULTS.selectedInstrumentKey;
         loadInstrumentSettingsIntoState(state.selectedInstrumentKey);
       }
     }
@@ -5570,9 +5610,16 @@
         out[key] = sanitizeInstrumentSettings(data[key], key);
       }
 
+      if (Object.prototype.hasOwnProperty.call(data, CUSTOM_INSTRUMENT_KEY)) {
+        out[CUSTOM_INSTRUMENT_KEY] = sanitizeInstrumentSettings(
+          data[CUSTOM_INSTRUMENT_KEY],
+          CUSTOM_INSTRUMENT_KEY
+        );
+      }
+
       return out;
     }
-
+    
     function sanitizeLoadedSettingsPayload(data) {
       const safeRoot = isPlainObject(data) ? data : {};
 
