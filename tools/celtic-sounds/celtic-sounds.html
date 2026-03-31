@@ -227,6 +227,7 @@
   .field {
     display: grid;
     gap: 6px;
+    min-width: 0;
   }
 
   .field-hidden{
@@ -259,6 +260,12 @@
     border: 1px solid var(--border);
     border-radius: 12px;
     padding: 10px 12px;
+  }
+
+  select {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
   }
 
   button {
@@ -1100,6 +1107,14 @@
               style="display:none;"
               title="Choose a JSON settings file to import."
             />
+
+            <input
+              id="fileCustomInstrument"
+              type="file"
+              accept=".zip"
+              style="display:none;"
+              title="Choose a ZIP file containing a custom instrument."
+            />
           </div>
 
         </div>
@@ -1735,6 +1750,101 @@
             <div class="instructions-gap"></div>
             This makes it easy to back up your preferred setup, move settings to another computer, or switch between different saved configurations.
           </div>
+
+          <hr class="instructions-divider"/>
+
+          <div class="instructions-subtitle">Custom Instruments</div>
+          <div class="instructions-subbody">
+            <b>Custom Instruments</b> allow you to load your own <b>ABC Transcription Tools</b> custom instruments into <b>Celtic Sounds</b>.
+            <div class="instructions-gap"></div>
+
+            A custom instrument is provided as a <b>.zip file</b> containing:
+            <div class="instructions-gap"></div>
+            • Individual note samples (in <b>.mp3</b> or <b>.wav</b> format)<br/>
+            • A required <b>.json metadata file</b> describing how the instrument should behave
+            <div class="instructions-gap"></div>
+
+            To load a custom instrument:
+            <div class="instructions-gap"></div>
+            • Select <b>Load Custom Instrument…</b> from the <b>Instrument</b> dropdown<br/>
+            • Choose a valid custom instrument <b>.zip</b> file<br/>
+            • The instrument will be added to the selector using a shortened version of the filename
+            <div class="instructions-gap"></div>
+
+            Once loaded:
+            <div class="instructions-gap"></div>
+            • All samples are preloaded for smooth real-time playback<br/>
+            • The <b>Release</b> control is automatically set from the custom instrument metadata<br/>
+            • The instrument behaves like any built-in instrument, including all controls and expression options
+            <div class="instructions-gap"></div>
+
+            <b>Persistence between runs</b><br/>
+            The most recently loaded custom instrument is saved locally in your browser.
+            <div class="instructions-gap"></div>
+            When you reopen <b>Celtic Sounds</b>:
+            <div class="instructions-gap"></div>
+            • The custom instrument will be automatically restored<br/>
+            • If it was the last selected instrument, it will be selected again<br/>
+            • All samples will be preloaded and ready to play
+            <div class="instructions-gap"></div>
+
+            Only <b>one custom instrument</b> is stored at a time. Loading a new one replaces the previous one.
+            <div class="instructions-gap"></div>
+
+            <b>Factory Reset behavior</b><br/>
+            A full factory reset (Shift-click <b>Reset Instrument to Defaults</b>) removes the saved custom instrument and returns the tool to its original state.
+            <div class="instructions-gap"></div>
+
+            <b>Export and Import</b><br/>
+            When you export settings:
+            <div class="instructions-gap"></div>
+            • The currently loaded custom instrument is included in the exported file<br/>
+            • Importing settings restores the custom instrument automatically<br/>
+            • The instrument selector will reflect the imported custom instrument as if it had been loaded manually
+          </div>
+
+          <hr class="instructions-divider"/>
+
+          <div class="instructions-subtitle">ABC Transcription Tools Custom Instruments</div>
+          <div class="instructions-subbody">
+            Custom instruments used in <b>Celtic Sounds</b> are fully compatible with those created for my
+            <div style="text-align:center; margin-top:6px; margin-bottom:6px;">
+              <a href="https://michaeleskin.com/abctools/abctools.html" target="_blank" rel="noopener noreferrer">
+                  <b>ABC Transcription Tools</b>
+              </a>
+            </div>
+            <div class="instructions-gap"></div>
+
+            This allows you to:
+            <div class="instructions-gap"></div>
+            • Use the same instrument samples across both tools<br/>
+            • Create instruments once and reuse them for notation, playback, and practice<br/>
+            • Share instruments with others using a common format
+            <div class="instructions-gap"></div>
+
+            Custom instruments are built using the
+            <div style="text-align:center; margin-top:6px; margin-bottom:6px;">
+              <a href="https://michaeleskin.com/tools/custom_instrument_builder.html" target="_blank" rel="noopener noreferrer">
+                <b>ABC Transcription Tools – Custom Instrument Builder</b>
+              </a>
+            </div>
+
+            <div class="instructions-gap"></div>
+
+            Full instructions for creating custom instruments are available directly within the <b>Custom Instrument Builder</b> tool itself.
+
+            <div class="instructions-gap"></div>
+
+            You can find several demo videos walking step-by-step how to use the <b>Custom Instrument Builder</b> in the <b>ABC Transcription Tools User Guide</b>:
+
+            <div style="text-align:center; margin-top:6px; margin-bottom:6px;">
+              <a href="https://michaeleskin.com/abctools/userguide.html#custom_instrument_builder" target="_blank" rel="noopener noreferrer">
+                ABC Transcription Tools User Guide – Custom Instrument Builder Demo Videos
+              </a>
+            </div>
+            
+          </div>
+
           <hr class="instructions-divider"/>
 
           <div class="instructions-subtitle">
@@ -1978,6 +2088,7 @@
   </div>
 
   <script type="text/javascript" src="js/daypilot-modal.min-3.10.1.js?v=1"></script>
+  <script type="text/javascript" src="js/jszip.min.js"></script>
 
   <script>
     const APP_CONFIG = {
@@ -2099,8 +2210,14 @@
     };
 
     const SAMPLE_OCTAVE_OFFSET = 0;
-    const SETTINGS_STORAGE_KEY = "celtic_sounds_settings_v15";
+    const CUSTOM_INSTRUMENT_KEY = "customInstrument";
+    const CUSTOM_INSTRUMENT_DEFAULT_GAIN_SCALE = 0.9;
+    const LOAD_CUSTOM_INSTRUMENT_OPTION_VALUE = "__load_custom_instrument__";
+    const SETTINGS_STORAGE_KEY = "celtic_sounds_settings_v16";
     const FIREFOX_WARNING_STORAGE_KEY = "celtic_sounds_firefox_warning_shown_v1";
+    const CUSTOM_INSTRUMENT_DB_NAME = "celticSoundsCustomInstrumentDB";
+    const CUSTOM_INSTRUMENT_STORE_NAME = "customInstrumentStore";
+    const CUSTOM_INSTRUMENT_RECORD_KEY = "lastCustomInstrument";
 
     const DEFAULT_SETTINGS_FILENAME = "celtic-sounds-settings.json";
     const LAST_SETTINGS_FILENAME_KEY = "celticSoundsLastSettingsFilename_v1";
@@ -2158,6 +2275,7 @@
 
       liveStatusHidden: false,
       instrumentSettingsByInstrument: createDefaultAllInstrumentSettings(),
+      customInstrument: null,
     };
 
     const INSTRUMENT_PRELOAD_NOTES = {
@@ -2173,6 +2291,577 @@
     };
 
     const $ = (id) => document.getElementById(id);
+
+    function escapeHtml(value) {
+      return String(value == null ? "" : value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+    }
+
+    function getCustomInstrumentOptionLabel() {
+      return "Load Custom Instrument...";
+    }
+
+    function isCustomInstrumentKey(value) {
+      return value === CUSTOM_INSTRUMENT_KEY;
+    }
+
+    function findMetadataFile(zip) {
+      let metadataFileName = null;
+
+      zip.forEach((relativePath, zipEntry) => {
+        if (zipEntry.dir) return;
+
+        const normalizedPath = String(relativePath || "").replace(/\\/g, "/");
+        const baseName = normalizedPath.split("/").pop() || "";
+
+        if (!/\.json$/i.test(baseName)) return;
+        if (normalizedPath.startsWith("__MACOSX/")) return;
+        if (baseName.startsWith("._")) return;
+
+        if (!metadataFileName) {
+          metadataFileName = relativePath;
+        }
+      });
+
+      return metadataFileName;
+    }
+
+    function truncateCustomInstrumentLabel(filename) {
+      const raw = String(filename || "Custom Instrument").trim() || "Custom Instrument";
+      const withoutZip = raw.replace(/\.zip$/i, "");
+      const maxLen = 34;
+      if (withoutZip.length <= maxLen) {
+        return withoutZip;
+      }
+      return withoutZip.slice(0, maxLen - 1).trimEnd() + "…";
+    }
+
+    function baseName(path) {
+      return String(path || "").split("/").pop() || "";
+    }
+
+    function guessMimeTypeFromName(name) {
+      const lower = String(name || "").toLowerCase();
+      if (lower.endsWith(".wav")) return "audio/wav";
+      if (lower.endsWith(".mp3")) return "audio/mpeg";
+      if (lower.endsWith(".json")) return "application/json";
+      if (lower.endsWith(".zip")) return "application/zip";
+      return "application/octet-stream";
+    }
+
+    function audioBufferToSerializable(buffer) {
+      return {
+        sampleRate: buffer.sampleRate,
+        length: buffer.length,
+        numberOfChannels: buffer.numberOfChannels,
+        channels: Array.from({ length: buffer.numberOfChannels }, (_, i) => Array.from(buffer.getChannelData(i)))
+      };
+    }
+
+    function serializableToAudioBuffer(serialized) {
+      if (!state.audioContext) {
+        throw new Error("Audio context is not initialized.");
+      }
+
+      const numberOfChannels = Math.max(1, Number(serialized?.numberOfChannels) || 1);
+      const length = Math.max(1, Number(serialized?.length) || 1);
+      const sampleRate = Math.max(8000, Number(serialized?.sampleRate) || 44100);
+      const out = state.audioContext.createBuffer(numberOfChannels, length, sampleRate);
+
+      for (let channel = 0; channel < numberOfChannels; channel++) {
+        const src = Array.isArray(serialized?.channels?.[channel]) ? serialized.channels[channel] : [];
+        out.copyToChannel(Float32Array.from(src), channel, 0);
+      }
+
+      return out;
+    }
+
+    function arrayBufferToBase64(arrayBuffer) {
+      const bytes = new Uint8Array(arrayBuffer);
+      const chunkSize = 0x8000;
+      let binary = "";
+      for (let i = 0; i < bytes.length; i += chunkSize) {
+        const chunk = bytes.subarray(i, i + chunkSize);
+        binary += String.fromCharCode(...chunk);
+      }
+      return btoa(binary);
+    }
+
+    function base64ToArrayBuffer(base64) {
+      const binary = atob(String(base64 || ""));
+      const bytes = new Uint8Array(binary.length);
+      for (let i = 0; i < binary.length; i++) {
+        bytes[i] = binary.charCodeAt(i);
+      }
+      return bytes.buffer;
+    }
+
+    function normalizeCustomInstrumentMetadata(metadata) {
+      const safe = isPlainObject(metadata) ? metadata : {};
+
+      return {
+        volumeScale: toClampedNumberOrDefault(safe.volumeScale, 0, 8, 1.0),
+        fadeTimeMs: toRoundedClampedIntOrDefault(safe.fadeTimeMs, 0, 500, 100)
+      };
+    }
+
+    function removeCustomInstrumentFromConfig() {
+      delete APP_CONFIG.instruments[CUSTOM_INSTRUMENT_KEY];
+      if (state?.sampleCache) {
+        for (const key of Array.from(state.sampleCache.keys())) {
+          if (String(key).startsWith(CUSTOM_INSTRUMENT_KEY + ":")) {
+            state.sampleCache.delete(key);
+          }
+        }
+      }
+      delete INSTRUMENT_PLAYABLE_NOTE_SETS[CUSTOM_INSTRUMENT_KEY];
+      if (state) {
+        state.customInstrument = null;
+        if (state.instrumentSettingsByInstrument && state.instrumentSettingsByInstrument[CUSTOM_INSTRUMENT_KEY]) {
+          delete state.instrumentSettingsByInstrument[CUSTOM_INSTRUMENT_KEY];
+        }
+        if (state.selectedInstrumentKey === CUSTOM_INSTRUMENT_KEY) {
+          state.selectedInstrumentKey = DEFAULTS.selectedInstrumentKey;
+        }
+      }
+    }
+
+    function registerCustomInstrumentDefinition(definition) {
+      if (!definition || !definition.noteBuffers || !(definition.noteBuffers instanceof Map) || definition.noteBuffers.size === 0) {
+        throw new Error("Custom instrument definition is missing note buffers.");
+      }
+
+      removeCustomInstrumentFromConfig();
+
+      const metadata = normalizeCustomInstrumentMetadata(definition.metadata);
+      const instrument = {
+        label: truncateCustomInstrumentLabel(definition.filename),
+        folder: "",
+        minNote: definition.minNote,
+        maxNote: definition.maxNote,
+        defaultGain: metadata.volumeScale * CUSTOM_INSTRUMENT_DEFAULT_GAIN_SCALE,
+        isCustom: true,
+        customMetadata: metadata,
+        customFilename: definition.filename,
+        customNoteEntries: definition.noteEntries || []
+      };
+
+      APP_CONFIG.instruments[CUSTOM_INSTRUMENT_KEY] = instrument;
+      delete INSTRUMENT_PLAYABLE_NOTE_SETS[CUSTOM_INSTRUMENT_KEY];
+      state.customInstrument = {
+        filename: definition.filename,
+        metadata,
+        minNote: definition.minNote,
+        maxNote: definition.maxNote,
+        noteBuffers: definition.noteBuffers,
+        noteEntries: definition.noteEntries || [],
+        archiveBase64: definition.archiveBase64 || null,
+        archiveByteLength: Number(definition.archiveByteLength) || null,
+        exportedAt: definition.exportedAt || null
+      };
+
+      for (const [midi, buffer] of definition.noteBuffers.entries()) {
+        state.sampleCache.set(CUSTOM_INSTRUMENT_KEY + ":" + midi, buffer);
+      }
+
+      if (!state.instrumentSettingsByInstrument) {
+        state.instrumentSettingsByInstrument = createDefaultAllInstrumentSettings();
+      }
+
+      state.instrumentSettingsByInstrument[CUSTOM_INSTRUMENT_KEY] = sanitizeInstrumentSettings(
+        state.instrumentSettingsByInstrument[CUSTOM_INSTRUMENT_KEY],
+        CUSTOM_INSTRUMENT_KEY
+      );
+    }
+
+    function openCustomInstrumentPicker() {
+      const input = $("fileCustomInstrument");
+      if (!input) return;
+      input.value = "";
+      input.click();
+    }
+
+    function openCustomInstrumentDatabase() {
+      return new Promise((resolve, reject) => {
+        if (!window.indexedDB) {
+          reject(new Error("IndexedDB is not available in this browser."));
+          return;
+        }
+
+        const request = indexedDB.open(CUSTOM_INSTRUMENT_DB_NAME, 1);
+        request.onupgradeneeded = () => {
+          const db = request.result;
+          if (!db.objectStoreNames.contains(CUSTOM_INSTRUMENT_STORE_NAME)) {
+            db.createObjectStore(CUSTOM_INSTRUMENT_STORE_NAME);
+          }
+        };
+        request.onsuccess = () => resolve(request.result);
+        request.onerror = () => reject(request.error || new Error("Unable to open IndexedDB."));
+      });
+    }
+
+    async function saveCustomInstrumentRecordToIndexedDb(record) {
+      const db = await openCustomInstrumentDatabase();
+      try {
+        await new Promise((resolve, reject) => {
+          const tx = db.transaction(CUSTOM_INSTRUMENT_STORE_NAME, "readwrite");
+          tx.oncomplete = () => resolve();
+          tx.onerror = () => reject(tx.error || new Error("Unable to save the custom instrument."));
+          tx.objectStore(CUSTOM_INSTRUMENT_STORE_NAME).put(record, CUSTOM_INSTRUMENT_RECORD_KEY);
+        });
+      } finally {
+        db.close();
+      }
+    }
+
+    async function readCustomInstrumentRecordFromIndexedDb() {
+      const db = await openCustomInstrumentDatabase();
+      try {
+        return await new Promise((resolve, reject) => {
+          const tx = db.transaction(CUSTOM_INSTRUMENT_STORE_NAME, "readonly");
+          const req = tx.objectStore(CUSTOM_INSTRUMENT_STORE_NAME).get(CUSTOM_INSTRUMENT_RECORD_KEY);
+          req.onsuccess = () => resolve(req.result || null);
+          req.onerror = () => reject(req.error || new Error("Unable to read the custom instrument."));
+        });
+      } finally {
+        db.close();
+      }
+    }
+
+    async function deleteCustomInstrumentRecordFromIndexedDb() {
+      const db = await openCustomInstrumentDatabase();
+      try {
+        await new Promise((resolve, reject) => {
+          const tx = db.transaction(CUSTOM_INSTRUMENT_STORE_NAME, "readwrite");
+          tx.oncomplete = () => resolve();
+          tx.onerror = () => reject(tx.error || new Error("Unable to delete the custom instrument."));
+          tx.objectStore(CUSTOM_INSTRUMENT_STORE_NAME).delete(CUSTOM_INSTRUMENT_RECORD_KEY);
+        });
+      } finally {
+        db.close();
+      }
+    }
+
+    function sampleNameToMidi(sampleName) {
+      const match = String(sampleName || "").trim().match(/^([A-Ga-g])([b#]?)(-?\d+)$/);
+      if (!match) return null;
+
+      const letter = match[1].toUpperCase();
+      const accidental = match[2] || "";
+      const octave = Number(match[3]);
+      const baseMap = {
+        C: 0,
+        D: 2,
+        E: 4,
+        F: 5,
+        G: 7,
+        A: 9,
+        B: 11
+      };
+
+      let semitone = baseMap[letter];
+      if (accidental === "b") semitone -= 1;
+      if (accidental === "#") semitone += 1;
+      semitone = (semitone + 12) % 12;
+
+      const midi = ((octave - SAMPLE_OCTAVE_OFFSET) + 1) * 12 + semitone;
+      if (!Number.isFinite(midi) || midi < 0 || midi > 127) {
+        return null;
+      }
+      return midi;
+    }
+
+    function forceMonoAudioBuffer(buffer) {
+      if (!buffer || buffer.numberOfChannels === 1) return buffer;
+
+      const out = state.audioContext.createBuffer(1, buffer.length, buffer.sampleRate);
+      const mono = out.getChannelData(0);
+
+      for (let channel = 0; channel < buffer.numberOfChannels; channel++) {
+        const data = buffer.getChannelData(channel);
+        for (let i = 0; i < data.length; i++) {
+          mono[i] += data[i] / buffer.numberOfChannels;
+        }
+      }
+
+      return out;
+    }
+
+    async function decodeCustomAudioArrayBuffer(arrayBuffer, fileName, metadata) {
+      if (!state.audioContext) {
+        throw new Error("Audio context is not initialized.");
+      }
+
+      let buffer = await state.audioContext.decodeAudioData(arrayBuffer.slice(0));
+
+      // Celtic Sounds stores custom samples in mono format after import.
+      // Ignore all builder-only metadata such as trimLeadingSilence and forceMonoWav.
+      buffer = forceMonoAudioBuffer(buffer);
+
+      return buffer;
+    }
+
+    async function parseCustomInstrumentArchiveArrayBuffer(arrayBuffer, filename) {
+      if (!window.JSZip) {
+        throw new Error("jszip.min.js was not loaded.");
+      }
+
+      ensureAudioContextExists();
+
+      const zip = await JSZip.loadAsync(arrayBuffer);
+
+      let metadata = {
+        volumeScale: 1.0,
+        fadeTimeMs: 100,
+      };
+
+      const metadataFileName = findMetadataFile(zip);
+      if (metadataFileName) {
+        try {
+          const metadataText = await zip.file(metadataFileName).async("text");
+          metadata = normalizeCustomInstrumentMetadata(JSON.parse(metadataText));
+        } catch (err) {
+          metadata = {
+            volumeScale: 1.0,
+            fadeTimeMs: 100,
+          };
+        }
+      }
+
+      const noteEntries = [];
+      for (const entry of Object.values(zip.files)) {
+        if (entry.dir) continue;
+
+        const normalizedPath = String(entry.name || "").replace(/\\/g, "/");
+        const base = baseName(normalizedPath);
+
+        if (normalizedPath.startsWith("__MACOSX/")) continue;
+        if (base.startsWith("._")) continue;
+        if (!/\.(mp3|wav)$/i.test(base)) continue;
+
+        const midi = sampleNameToMidi(base.replace(/\.(mp3|wav)$/i, ""));
+        if (midi == null) continue;
+
+        noteEntries.push({ entry, midi, fileName: base });
+      }
+
+      if (noteEntries.length === 0) {
+        showErrorDialog(
+          "\nThe ZIP file does not contain any valid note samples (named like C5.wav or Bb4.mp3).\n\nPlease try loading a valid ABC Transcription Tools custom instrument.",
+          "Invalid Custom Instrument File"
+        );
+        return null;
+      }
+
+      noteEntries.sort((a, b) => a.midi - b.midi);
+
+      const noteBuffers = new Map();
+
+      await Promise.all(noteEntries.map(async ({ entry, midi, fileName }) => {
+        const audioArrayBuffer = await entry.async("arraybuffer");
+        const buffer = await decodeCustomAudioArrayBuffer(audioArrayBuffer, fileName, metadata);
+        noteBuffers.set(midi, buffer);
+      }));
+
+      const archiveBase64 = arrayBufferToBase64(arrayBuffer);
+
+      return {
+        filename: filename || "custom-instrument.zip",
+        metadata,
+        minNote: noteEntries[0].midi,
+        maxNote: noteEntries[noteEntries.length - 1].midi,
+        noteEntries: noteEntries.map(({ midi, fileName }) => ({ midi, fileName })),
+        noteBuffers,
+        archiveBase64,
+        archiveByteLength: arrayBuffer.byteLength
+      };
+    }
+
+    async function installCustomInstrumentDefinition(definition, options = {}) {
+      if (!definition) return false;
+
+      const persist = options.persist !== false;
+      const selectInstrument = options.selectInstrument !== false;
+
+      saveCurrentInstrumentSettingsToStateStore();
+      registerCustomInstrumentDefinition(definition);
+
+      if (persist) {
+        await saveCustomInstrumentRecordToIndexedDb({
+          version: 1,
+          filename: definition.filename,
+          archiveBase64: definition.archiveBase64,
+          timestamp: new Date().toISOString()
+        });
+      }
+
+      populateInstrumentSelect();
+
+      if (selectInstrument || state.selectedInstrumentKey === CUSTOM_INSTRUMENT_KEY) {
+        state.selectedInstrumentKey = CUSTOM_INSTRUMENT_KEY;
+        loadInstrumentSettingsIntoState(CUSTOM_INSTRUMENT_KEY);
+      }
+
+      syncUiFromState();
+      renderDroneVolumeVisibility();
+      applyBrightnessSettings();
+      applyMixerSettings();
+      applyTuningToAllVoices();
+      logLiveStatus();
+      saveSettingsToLocalStorage();
+      return true;
+    }
+
+    async function loadCustomInstrumentFromZipFile(file, options = {}) {
+      if (!file) return false;
+
+      const definition = await parseCustomInstrumentArchiveArrayBuffer(
+        await file.arrayBuffer(),
+        file.name
+      );
+
+      if (!definition) {
+        return false;
+      }
+
+      allNotesOff();
+      await installCustomInstrumentDefinition(definition, options);
+      return true;
+    }
+
+    async function restorePersistedCustomInstrumentIfAvailable() {
+      try {
+        const record = await readCustomInstrumentRecordFromIndexedDb();
+        if (!record || !record.archiveBase64) {
+          return false;
+        }
+
+        const shouldReselectCustomInstrument =
+          state.selectedInstrumentKey === CUSTOM_INSTRUMENT_KEY;
+
+        const definition = await parseCustomInstrumentArchiveArrayBuffer(
+          base64ToArrayBuffer(record.archiveBase64),
+          record.filename || "custom-instrument.zip"
+        );
+
+        if (!definition) {
+          try {
+            await deleteCustomInstrumentRecordFromIndexedDb();
+          } catch (_) {
+            // ignore cleanup failure
+          }
+
+          removeCustomInstrumentFromConfig();
+
+          if (state.instrumentSettingsByInstrument) {
+            delete state.instrumentSettingsByInstrument[CUSTOM_INSTRUMENT_KEY];
+          }
+          state.customInstrument = null;
+
+          if (state.selectedInstrumentKey === CUSTOM_INSTRUMENT_KEY) {
+            state.selectedInstrumentKey = DEFAULTS.selectedInstrumentKey;
+            loadInstrumentSettingsIntoState(state.selectedInstrumentKey);
+            saveSettingsToLocalStorage();
+          }
+
+          populateInstrumentSelect();
+          syncUiFromState();
+          return false;
+        }
+
+        definition.exportedAt = record.timestamp || null;
+
+        await installCustomInstrumentDefinition(definition, {
+          persist: false,
+          selectInstrument: shouldReselectCustomInstrument
+        });
+
+        if (shouldReselectCustomInstrument) {
+          state.selectedInstrumentKey = CUSTOM_INSTRUMENT_KEY;
+          loadInstrumentSettingsIntoState(CUSTOM_INSTRUMENT_KEY);
+          syncUiFromState();
+          renderDroneVolumeVisibility();
+          applyBrightnessSettings();
+          applyMixerSettings();
+          applyTuningToAllVoices();
+          logLiveStatus();
+          saveSettingsToLocalStorage();
+        }
+
+        return true;
+      } catch (err) {
+        console.warn("Unable to restore custom instrument:", err);
+
+        try {
+          await deleteCustomInstrumentRecordFromIndexedDb();
+        } catch (_) {
+          // ignore cleanup failure
+        }
+
+        removeCustomInstrumentFromConfig();
+
+        if (state.instrumentSettingsByInstrument) {
+          delete state.instrumentSettingsByInstrument[CUSTOM_INSTRUMENT_KEY];
+        }
+        state.customInstrument = null;
+
+        if (state.selectedInstrumentKey === CUSTOM_INSTRUMENT_KEY) {
+          state.selectedInstrumentKey = DEFAULTS.selectedInstrumentKey;
+          loadInstrumentSettingsIntoState(state.selectedInstrumentKey);
+          saveSettingsToLocalStorage();
+        }
+
+        populateInstrumentSelect();
+        syncUiFromState();
+        return false;
+      }
+    }
+
+    async function clearPersistedCustomInstrument() {
+      try {
+        await deleteCustomInstrumentRecordFromIndexedDb();
+      } catch (_) {
+        // ignore cleanup failure
+      }
+
+      removeCustomInstrumentFromConfig();
+
+      if (state.instrumentSettingsByInstrument) {
+        delete state.instrumentSettingsByInstrument[CUSTOM_INSTRUMENT_KEY];
+      }
+      state.customInstrument = null;
+
+      if (state.selectedInstrumentKey === CUSTOM_INSTRUMENT_KEY) {
+        state.selectedInstrumentKey = DEFAULTS.selectedInstrumentKey;
+        loadInstrumentSettingsIntoState(state.selectedInstrumentKey);
+      }
+
+      populateInstrumentSelect();
+      syncUiFromState();
+      renderDroneVolumeVisibility();
+      applyBrightnessSettings();
+      applyMixerSettings();
+      applyTuningToAllVoices();
+      logLiveStatus();
+      saveSettingsToLocalStorage();
+    }
+
+    function getExportableCustomInstrumentPayload() {
+      if (!state.customInstrument?.archiveBase64) {
+        return null;
+      }
+      return {
+        version: 1,
+        filename: state.customInstrument.filename,
+        archiveBase64: state.customInstrument.archiveBase64,
+        archiveByteLength: state.customInstrument.archiveByteLength || null,
+        metadata: state.customInstrument.metadata || null
+      };
+    }
 
     function applyBrightnessSettings() {
       if (!state.outputChain || !state.audioContext) return;
@@ -2458,11 +3147,11 @@
       field.classList.toggle("field-hidden", !supportsDroneVolumeControl());
     }
 
-    function buildSettingsFilePayload() {
+    async function buildSettingsFilePayload() {
       saveCurrentInstrumentSettingsToStateStore();
 
       return {
-        version: 15,
+        version: 16,
         app: "celtic_sounds",
         timestamp: new Date().toISOString(),
         selectedMidiChannel: state.selectedMidiChannel,
@@ -2474,7 +3163,8 @@
         liveStatusHidden: state.liveStatusHidden,
         instrumentSettingsByInstrument: sanitizeAllInstrumentSettings(
           state.instrumentSettingsByInstrument
-        )
+        ),
+        customInstrument: getExportableCustomInstrumentPayload()
       };
     }
 
@@ -2520,7 +3210,15 @@
 
       state.instrumentSettingsByInstrument = safe.instrumentSettingsByInstrument;
 
-      loadInstrumentSettingsIntoState(state.selectedInstrumentKey);
+      if (
+        state.selectedInstrumentKey === CUSTOM_INSTRUMENT_KEY ||
+        APP_CONFIG.instruments[state.selectedInstrumentKey]
+      ) {
+        loadInstrumentSettingsIntoState(state.selectedInstrumentKey);
+      } else {
+        state.selectedInstrumentKey = DEFAULT_INSTRUMENT_KEY;
+        loadInstrumentSettingsIntoState(state.selectedInstrumentKey);
+      }
     }
 
     function loadSettingsFromLocalStorage() {
@@ -2554,7 +3252,7 @@
 
     async function exportSettingsToFile() {
       try {
-        const payload = buildSettingsFilePayload();
+        const payload = await buildSettingsFilePayload();
         const text = JSON.stringify(payload, null, 2);
 
         const suggestedFilename = getLastSettingsFilename();
@@ -2585,9 +3283,21 @@
           throw new Error("Invalid settings file.");
         }
 
+        if (payload.customInstrument?.archiveBase64) {
+          if (!state.audioContext) {
+            await initAudioIfPossible();
+          }
+          const definition = await parseCustomInstrumentArchiveArrayBuffer(
+            base64ToArrayBuffer(payload.customInstrument.archiveBase64),
+            payload.customInstrument.filename || "custom-instrument.zip"
+          );
+          await installCustomInstrumentDefinition(definition, { persist: true, selectInstrument: false });
+        }
+
         allNotesOff();
         applyLoadedSettings(payload);
-        
+
+        populateInstrumentSelect();
         syncUiFromState();
         applyBrightnessSettings();
         applyMixerSettings();
@@ -2620,61 +3330,45 @@
     async function resetAllSettingsToFirstRunDefaults() {
       allNotesOff();
 
-      state.pitchBendValue = 0;
-      state.latestExpression = 127;
+      if (gLocalStorageAvailable) {
+        try {
+          localStorage.removeItem(SETTINGS_STORAGE_KEY);
+        } catch (_) {
+          // ignore storage cleanup failure
+        }
+      }
 
+      await clearPersistedCustomInstrument();
+
+      state.selectedMidiInputId = "";
       state.selectedMidiChannel = DEFAULTS.selectedMidiChannel;
       state.selectedInstrumentKey = DEFAULTS.selectedInstrumentKey;
       state.selectedReverbKey = DEFAULTS.selectedReverbKey;
       state.pitchBendRangeSemitones = DEFAULTS.pitchBendRangeSemitones;
       state.basePitchBendCents = state.pitchBendRangeSemitones * 100;
+      state.pitchBendValue = 0;
+      state.latestExpression = 127;
+      state.midiLogEnabled = false;
+      state.freezeMidiLog = false;
+      state.liveStatusHidden = false;
+      state.instrumentSettingsByInstrument = {};
+      state.customInstrument = null;
 
-      state.midiLogEnabled = DEFAULTS.midiLogEnabled;
-      state.freezeMidiLog = DEFAULTS.freezeMidiLog;
-      state.liveStatusHidden = DEFAULTS.liveStatusHidden;
+      loadInstrumentSettingsIntoState(DEFAULTS.selectedInstrumentKey);
 
-      state.instrumentSettingsByInstrument = createDefaultAllInstrumentSettings();
-      loadInstrumentSettingsIntoState(state.selectedInstrumentKey);
-
-      state.midiLogLines = [];
-      renderMidiLog();
+      populateInstrumentSelect();
+      populateMidiChannelSelect();
+      populateReverbSelect();
 
       syncUiFromState();
+      renderDroneVolumeVisibility();
+      renderMidiLog();
+      renderLiveStatusVisibility();
       applyBrightnessSettings();
       applyMixerSettings();
       applyTuningToAllVoices();
       logLiveStatus();
-
-      if (gLocalStorageAvailable) {
-        try {
-          localStorage.setItem(
-            SETTINGS_STORAGE_KEY,
-            JSON.stringify({
-              selectedMidiChannel: DEFAULTS.selectedMidiChannel,
-              selectedInstrumentKey: DEFAULTS.selectedInstrumentKey,
-              selectedReverbKey: DEFAULTS.selectedReverbKey,
-              pitchBendRangeSemitones: DEFAULTS.pitchBendRangeSemitones,
-              midiLogEnabled: DEFAULTS.midiLogEnabled,
-              freezeMidiLog: DEFAULTS.freezeMidiLog,
-              liveStatusHidden: DEFAULTS.liveStatusHidden,
-              instrumentSettingsByInstrument: createDefaultAllInstrumentSettings()
-            })
-          );
-        } catch (err) {
-          // ignore storage failures
-        }
-      }
-
-      if (state.audioContext) {
-        try {
-          await preloadInstrument(state.selectedInstrumentKey);
-          await preloadImpulseResponse(state.selectedReverbKey);
-          logLiveStatus();
-        } catch (err) {
-          console.error(err);
-          showErrorDialog(err.message, "Reset Failed");
-        }
-      }
+      saveSettingsToLocalStorage();
     }
 
     function midiToName(midi) {
@@ -2722,7 +3416,10 @@
     function toKnownInstrumentKeyOrDefault(value, defaultValue) {
       return (
         typeof value === "string" &&
-        Object.prototype.hasOwnProperty.call(APP_CONFIG.instruments, value)
+        (
+          value === CUSTOM_INSTRUMENT_KEY ||
+          Object.prototype.hasOwnProperty.call(APP_CONFIG.instruments, value)
+        )
       ) ? value : defaultValue;
     }
 
@@ -3137,8 +3834,15 @@
         throw new Error("Unknown instrument key: " + instrumentKey);
       }
 
+      if (instrument.isCustom) {
+        return [];
+      }
+
       const sampleName = midiToFlatSampleName(midiNote);
-      return [instrument.folder + "/" + sampleName + ".mp3"];
+      return [
+        instrument.folder + "/" + sampleName + ".mp3",
+        instrument.folder + "/" + sampleName + ".wav"
+      ];
     }
 
     function getLikelyStartupSampleUrls(instrumentKey) {
@@ -3165,6 +3869,16 @@
         return state.sampleCache.get(cacheKey);
       }
 
+      const instrument = APP_CONFIG.instruments[instrumentKey];
+      if (instrument?.isCustom) {
+        const buffer = state.customInstrument?.noteBuffers?.get(midiNote) || null;
+        if (!buffer) {
+          throw new Error("Missing custom sample for MIDI note " + midiNote + ".");
+        }
+        state.sampleCache.set(cacheKey, buffer);
+        return buffer;
+      }
+
       const urls = getSampleUrls(instrumentKey, midiNote);
       const buffer = await loadFirstExistingAudio(urls);
       state.sampleCache.set(cacheKey, buffer);
@@ -3177,6 +3891,18 @@
       const instrument = APP_CONFIG.instruments[instrumentKey];
       if (!instrument) {
         throw new Error("Unknown instrument key: " + instrumentKey);
+      }
+
+      if (instrument.isCustom) {
+        const noteBuffers = state.customInstrument?.noteBuffers;
+        if (!(noteBuffers instanceof Map) || noteBuffers.size === 0) {
+          throw new Error("The custom instrument is missing preloaded note buffers.");
+        }
+        for (const [midi, buffer] of noteBuffers.entries()) {
+          state.sampleCache.set(instrumentKey + ":" + midi, buffer);
+        }
+        logLiveStatus();
+        return;
       }
 
       const startupUrls = getLikelyStartupSampleUrls(instrumentKey);
@@ -3196,7 +3922,7 @@
         throw new Error(
           "Could not load any startup samples for " +
             instrument.label +
-            ". Check folder paths, filenames, octave numbering, and make sure the server is returning real MP3 files."
+            ". Check folder paths, filenames, octave numbering, and make sure the server is returning real MP3 or WAV files."
         );
       }
 
@@ -3338,6 +4064,12 @@
     function getPlayableNotesForInstrument(instrumentKey) {
       const instrument = APP_CONFIG.instruments[instrumentKey];
       if (!instrument) return [];
+
+      if (instrument.isCustom) {
+        return Array.isArray(state.customInstrument?.noteEntries)
+          ? state.customInstrument.noteEntries.map((entry) => entry.midi).filter((midi) => Number.isFinite(midi))
+          : [];
+      }
 
       const explicitNotes = INSTRUMENT_PRELOAD_NOTES[instrumentKey];
       if (Array.isArray(explicitNotes) && explicitNotes.length > 0) {
@@ -3967,10 +4699,22 @@
       select.innerHTML = "";
 
       for (const [key, value] of Object.entries(APP_CONFIG.instruments)) {
+        if (key === CUSTOM_INSTRUMENT_KEY && !state.customInstrument) {
+          continue;
+        }
         const opt = document.createElement("option");
         opt.value = key;
         opt.textContent = value.label;
         select.appendChild(opt);
+      }
+
+      const loadOpt = document.createElement("option");
+      loadOpt.value = LOAD_CUSTOM_INSTRUMENT_OPTION_VALUE;
+      loadOpt.textContent = getCustomInstrumentOptionLabel();
+      select.appendChild(loadOpt);
+
+      if (!APP_CONFIG.instruments[state.selectedInstrumentKey]) {
+        state.selectedInstrumentKey = DEFAULTS.selectedInstrumentKey;
       }
 
       select.value = state.selectedInstrumentKey;
@@ -4042,7 +4786,7 @@
       }
 
       if ($("instrumentSelect")) {
-        $("instrumentSelect").value = state.selectedInstrumentKey;
+        $("instrumentSelect").value = APP_CONFIG.instruments[state.selectedInstrumentKey] ? state.selectedInstrumentKey : DEFAULTS.selectedInstrumentKey;
       }
 
       if ($("expressionModeSelect")) {
@@ -4197,6 +4941,18 @@
       $("instrumentSelect").addEventListener("change", async (e) => {
         const nextInstrumentKey = e.target.value;
 
+        if (nextInstrumentKey === LOAD_CUSTOM_INSTRUMENT_OPTION_VALUE) {
+          syncUiFromState();
+          try {
+            await initAudioIfPossible();
+            openCustomInstrumentPicker();
+          } catch (err) {
+            console.error(err);
+            showErrorDialog(err.message || "Unable to open the custom instrument ZIP file.", "Custom Instrument Error");
+          }
+          return;
+        }
+
         saveCurrentInstrumentSettingsToStateStore();
 
         state.selectedInstrumentKey = nextInstrumentKey;
@@ -4347,10 +5103,43 @@
         $("fileImportSettings").click();
       });
 
-      $("fileImportSettings").addEventListener("change", (e) => {
+      $("fileImportSettings").addEventListener("change", async (e) => {
         const file = e.target.files && e.target.files[0];
-        importSettingsFromFile(file);
+        if (!file) return;
+        await importSettingsFromFile(file);
         e.target.value = "";
+      });
+
+      $("fileCustomInstrument").addEventListener("change", async (e) => {
+        const file = e.target.files && e.target.files[0];
+        if (!file) {
+          syncUiFromState();
+          return;
+        }
+
+        try {
+          await initAudioIfPossible();
+
+          const loaded = await loadCustomInstrumentFromZipFile(file, {
+            persist: true,
+            selectInstrument: true
+          });
+
+          if (!loaded) {
+            syncUiFromState();
+            return;
+          }
+
+          if (state.audioContext) {
+            await preloadInstrument(CUSTOM_INSTRUMENT_KEY);
+          }
+        } catch (err) {
+          console.error(err);
+          showErrorDialog(err.message || "Unable to load the custom instrument ZIP file.", "Custom Instrument Load Error");
+          syncUiFromState();
+        } finally {
+          e.target.value = "";
+        }
       });
 
       $("btnFullscreen").addEventListener("click", async () => {
@@ -4638,13 +5427,20 @@
         instrumentKey === "bagpipes" ||
         instrumentKey === "smallpipes";
 
+      const customMetadata =
+        instrumentKey === CUSTOM_INSTRUMENT_KEY
+          ? normalizeCustomInstrumentMetadata(
+              state?.customInstrument?.metadata || APP_CONFIG.instruments?.[CUSTOM_INSTRUMENT_KEY]?.customMetadata
+            )
+          : null;
+
       return {
         expressionMode: DEFAULTS.expressionMode,
         masterVolume: DEFAULTS.masterVolume,
         droneVolume: DEFAULTS.droneVolume,
         masterTuneCents: DEFAULTS.masterTuneCents,
         attackMs: DEFAULTS.attackMs,
-        releaseMs: DEFAULTS.releaseMs,
+        releaseMs: customMetadata ? customMetadata.fadeTimeMs : DEFAULTS.releaseMs,
         pitchBendUpMultiplier: bendDisabledByDefault ? 0 : DEFAULTS.pitchBendUpMultiplier,
         pitchBendDownMultiplier: bendDisabledByDefault ? 0 : DEFAULTS.pitchBendDownMultiplier,
         brightness: DEFAULTS.brightness,
@@ -5059,9 +5855,9 @@
       checkLocalStorageAvailable();
 
       await showFirefoxWarningIfNeeded();
-
       loadSettingsFromLocalStorage();
 
+      const wantsCustomInstrumentOnStartup = state.selectedInstrumentKey === CUSTOM_INSTRUMENT_KEY;
       const isWebMIDIBrowser = checkForWebMIDIBrowser();
 
       webMidiAvailable = isWebMIDIBrowser
@@ -5082,6 +5878,26 @@
       if (webMidiAvailable) {
         setupAutomaticAudioInit();
       }
+
+      void (async () => {
+        const restored = await restorePersistedCustomInstrumentIfAvailable();
+        if (!restored) {
+          return;
+        }
+
+        if (wantsCustomInstrumentOnStartup) {
+          state.selectedInstrumentKey = CUSTOM_INSTRUMENT_KEY;
+          loadInstrumentSettingsIntoState(CUSTOM_INSTRUMENT_KEY);
+        }
+
+        populateInstrumentSelect();
+        syncUiFromState();
+        renderDroneVolumeVisibility();
+        applyBrightnessSettings();
+        applyMixerSettings();
+        applyTuningToAllVoices();
+        logLiveStatus();
+      })();
     }
 
     document.addEventListener("fullscreenchange", handleFullscreenStateChange);
