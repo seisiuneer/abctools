@@ -1753,7 +1753,7 @@
 
           <hr class="instructions-divider"/>
 
-          <div class="instructions-subtitle">Custom Instruments</div>
+          <div class="instructions-subtitle">Using Custom Instruments</div>
           <div class="instructions-subbody">
             <b>Custom Instruments</b> allow you to load your own <b>ABC Transcription Tools</b> custom instruments into <b>Celtic Sounds</b>.
             <div class="instructions-gap"></div>
@@ -1805,7 +1805,7 @@
 
           <hr class="instructions-divider"/>
 
-          <div class="instructions-subtitle">ABC Transcription Tools Custom Instruments</div>
+          <div class="instructions-subtitle">Creating Your Own Custom Instruments</div>
           <div class="instructions-subbody">
             Custom instruments used in <b>Celtic Sounds</b> are fully compatible with those created for my
             <div style="text-align:center; margin-top:6px; margin-bottom:6px;">
@@ -2404,8 +2404,8 @@
       const safe = isPlainObject(metadata) ? metadata : {};
 
       return {
-        volumeScale: toClampedNumberOrDefault(safe.volumeScale, 0, 8, 1.0),
-        fadeTimeMs: toRoundedClampedIntOrDefault(safe.fadeTimeMs, 0, 500, 100)
+        volumeScale: toClampedNumberOrDefault(safe.volumeScale, 0, 16, 1.0),
+        fadeTimeMs: toRoundedClampedIntOrDefault(safe.fadeTimeMs, 0, 1500, 100)
       };
     }
 
