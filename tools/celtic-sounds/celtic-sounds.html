@@ -2438,13 +2438,15 @@
       }
     }
 
-    function registerCustomInstrumentDefinition(definition) {
+    function registerCustomInstrumentDefinition(definition, options = {}) {
       if (!definition || !definition.noteBuffers || !(definition.noteBuffers instanceof Map) || definition.noteBuffers.size === 0) {
         throw new Error("Custom instrument definition is missing note buffers.");
       }
 
+      const preserveExistingCustomSettings = options.preserveExistingCustomSettings === true;
+
       const previousCustomSettings =
-        state?.instrumentSettingsByInstrument?.[CUSTOM_INSTRUMENT_KEY]
+        preserveExistingCustomSettings && state?.instrumentSettingsByInstrument?.[CUSTOM_INSTRUMENT_KEY]
           ? { ...state.instrumentSettingsByInstrument[CUSTOM_INSTRUMENT_KEY] }
           : null;
 
@@ -2491,10 +2493,16 @@
         state.instrumentSettingsByInstrument = createDefaultAllInstrumentSettings();
       }
 
-      state.instrumentSettingsByInstrument[CUSTOM_INSTRUMENT_KEY] = sanitizeInstrumentSettings(
-        previousCustomSettings || state.instrumentSettingsByInstrument[CUSTOM_INSTRUMENT_KEY],
-        CUSTOM_INSTRUMENT_KEY
-      );
+      const baseSettings = previousCustomSettings || createDefaultInstrumentSettings(CUSTOM_INSTRUMENT_KEY);
+      const sanitized = sanitizeInstrumentSettings(baseSettings, CUSTOM_INSTRUMENT_KEY);
+
+      // Only force the release from metadata when loading a new custom instrument.
+      // During restore of the same saved custom instrument, preserve the user’s saved value.
+      if (!preserveExistingCustomSettings) {
+        sanitized.releaseMs = metadata.fadeTimeMs;
+      }
+
+      state.instrumentSettingsByInstrument[CUSTOM_INSTRUMENT_KEY] = sanitized;
 
       if (wasSelected) {
         state.selectedInstrumentKey = CUSTOM_INSTRUMENT_KEY;
@@ -2709,9 +2717,13 @@
 
       const persist = options.persist !== false;
       const selectInstrument = options.selectInstrument !== false;
+      const preserveExistingCustomSettings = options.preserveExistingCustomSettings === true;
 
       saveCurrentInstrumentSettingsToStateStore();
-      registerCustomInstrumentDefinition(definition);
+
+      registerCustomInstrumentDefinition(definition, {
+        preserveExistingCustomSettings
+      });
 
       if (persist) {
         await saveCustomInstrumentRecordToIndexedDb({
@@ -2752,7 +2764,12 @@
       }
 
       allNotesOff();
-      await installCustomInstrumentDefinition(definition, options);
+
+      await installCustomInstrumentDefinition(definition, {
+        ...options,
+        preserveExistingCustomSettings: false
+      });
+
       return true;
     }
 
@@ -2803,7 +2820,8 @@
 
         await installCustomInstrumentDefinition(definition, {
           persist: false,
-          selectInstrument: false
+          selectInstrument: false,
+          preserveExistingCustomSettings: true
         });
 
         if (shouldReselectCustomInstrument) {
