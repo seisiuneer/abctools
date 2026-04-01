@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ABC MIDI Program Injector</title>
+  <style>
+    :root {
+      --bg: #f6f8fb;
+      --panel: #ffffff;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --border: #d1d5db;
+      --accent: #2563eb;
+      --accent-hover: #1d4ed8;
+      --shadow: 0 10px 30px rgba(0,0,0,0.08);
+      --radius: 14px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.45;
+    }
+
+    .wrap {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .hero {
+      padding: 22px 24px 10px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: clamp(1.5rem, 2.5vw, 2rem);
+    }
+
+    .sub {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      padding: 20px 24px 24px;
+    }
+
+    .panel h2 {
+      margin: 0 0 10px;
+      font-size: 1rem;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 460px;
+      resize: vertical;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px;
+      font: 14px/1.45 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      background: #fff;
+      color: var(--text);
+    }
+
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      padding: 0 24px 24px;
+      align-items: center;
+    }
+
+    button {
+      appearance: none;
+      border: 1px solid var(--border);
+      background: #fff;
+      color: var(--text);
+      padding: 10px 14px;
+      border-radius: 10px;
+      font: inherit;
+      cursor: pointer;
+      transition: background 0.12s ease, border-color 0.12s ease, transform 0.12s ease;
+    }
+
+    button:hover {
+      border-color: #9ca3af;
+      background: #f9fafb;
+    }
+
+    button.primary {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: white;
+    }
+
+    button.primary:hover {
+      background: var(--accent-hover);
+      border-color: var(--accent-hover);
+    }
+
+    button:active {
+      transform: translateY(1px);
+    }
+
+    .status {
+      margin-left: auto;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .notes {
+      padding: 0 24px 24px;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    code {
+      background: #eef2ff;
+      padding: 1px 5px;
+      border-radius: 6px;
+    }
+
+    @media (max-width: 900px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      textarea {
+        min-height: 300px;
+      }
+
+      .status {
+        width: 100%;
+        margin-left: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <div class="hero">
+        <h1>ABC MIDI Program Injector</h1>
+        <p class="sub">
+          Injects <code>[I:MIDI=program custom1]</code> before runs of notes longer than an eighth note,
+          and <code>[I:MIDI=program 141]</code> before runs of eighth notes.
+        </p>
+      </div>
+
+      <div class="grid">
+        <div class="panel">
+          <h2>Input ABC</h2>
+          <textarea id="input" spellcheck="false">X:1
+T:Example
+M:4/4
+L:1/8
+K:D
+DEFG A2 Bc | d2 cB A4 |</textarea>
+        </div>
+        <div class="panel">
+          <h2>Output ABC</h2>
+          <textarea id="output" spellcheck="false" readonly></textarea>
+        </div>
+      </div>
+
+      <div class="toolbar">
+        <button class="primary" id="convertBtn">Convert</button>
+        <button id="copyBtn">Copy Output</button>
+        <button id="swapBtn">Copy Output Back to Input</button>
+        <button id="clearBtn">Clear</button>
+        <div class="status" id="status">Ready.</div>
+      </div>
+
+      <div class="notes">
+        This utility assumes the note-length comparison is based on the tune's effective unit note length,
+        taken from the most recent <code>L:</code> field. A note is treated as an eighth note when its duration
+        equals the current unit length. Anything longer than that is treated as a long note.
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      const inputEl = document.getElementById('input');
+      const outputEl = document.getElementById('output');
+      const statusEl = document.getElementById('status');
+
+      const PROGRAM_EIGHTH = '[I:MIDI=program 141]';
+      const PROGRAM_LONG = '[I:MIDI=program custom1]';
+
+      function setStatus(message) {
+        statusEl.textContent = message;
+      }
+
+      function gcd(a, b) {
+        a = Math.abs(a);
+        b = Math.abs(b);
+        while (b) {
+          const t = b;
+          b = a % b;
+          a = t;
+        }
+        return a || 1;
+      }
+
+      function makeFraction(num, den) {
+        if (den === 0) {
+          return { num: 0, den: 1 };
+        }
+        const sign = den < 0 ? -1 : 1;
+        num *= sign;
+        den *= sign;
+        const g = gcd(num, den);
+        return { num: num / g, den: den / g };
+      }
+
+      function multiplyFractions(a, b) {
+        return makeFraction(a.num * b.num, a.den * b.den);
+      }
+
+      function parseFraction(text, fallback) {
+        const value = (text || '').trim();
+        if (!value) return fallback;
+
+        if (/^\d+\/\d+$/.test(value)) {
+          const [n, d] = value.split('/').map(Number);
+          if (d !== 0) return makeFraction(n, d);
+        }
+
+        if (/^\d+$/.test(value)) {
+          return makeFraction(Number(value), 1);
+        }
+
+        if (/^\/\d+$/.test(value)) {
+          return makeFraction(1, Number(value.slice(1)));
+        }
+
+        if (value === '/') {
+          return makeFraction(1, 2);
+        }
+
+        return fallback;
+      }
+
+      function fractionEquals(a, b) {
+        return a.num === b.num && a.den === b.den;
+      }
+
+      function isLongerThan(a, b) {
+        return a.num * b.den > b.num * a.den;
+      }
+
+      function getLengthFraction(lengthToken) {
+        if (!lengthToken) {
+          return makeFraction(1, 1);
+        }
+
+        if (/^\d+$/.test(lengthToken)) {
+          return makeFraction(Number(lengthToken), 1);
+        }
+
+        if (lengthToken === '/') {
+          return makeFraction(1, 2);
+        }
+
+        if (/^\/+$/i.test(lengthToken)) {
+          return makeFraction(1, Math.pow(2, lengthToken.length));
+        }
+
+        if (/^\d+\/\d+$/.test(lengthToken)) {
+          const [n, d] = lengthToken.split('/').map(Number);
+          return makeFraction(n, d);
+        }
+
+        if (/^\d+\/$/.test(lengthToken)) {
+          return makeFraction(Number(lengthToken.slice(0, -1)), 2);
+        }
+
+        if (/^\/\d+$/.test(lengthToken)) {
+          return makeFraction(1, Number(lengthToken.slice(1)));
+        }
+
+        return makeFraction(1, 1);
+      }
+
+      function detectHeadersAndConvert(abcText) {
+        const lines = abcText.replace(/\r\n?/g, '\n').split('\n');
+        let currentUnitLength = makeFraction(1, 8);
+        const outLines = [];
+        let totalInjected = 0;
+
+        for (const line of lines) {
+          if (/^\s*L\s*:/.test(line)) {
+            const raw = line.replace(/^\s*L\s*:\s*/, '');
+            currentUnitLength = parseFraction(raw, currentUnitLength);
+            outLines.push(line);
+            continue;
+          }
+
+          if (/^\s*[A-Za-z+]\s*:/.test(line) || /^\s*%/.test(line) || /^\s*$/.test(line)) {
+            outLines.push(line);
+            continue;
+          }
+
+          const result = processMusicLine(line, currentUnitLength);
+          totalInjected += result.injectedCount;
+          outLines.push(result.text);
+        }
+
+        return {
+          text: outLines.join('\n'),
+          injectedCount: totalInjected
+        };
+      }
+
+      function processMusicLine(line, unitLength) {
+        let i = 0;
+        let out = '';
+        let currentRunType = null;
+        let injectedCount = 0;
+
+        while (i < line.length) {
+          const ch = line[i];
+
+          if (ch === '%') {
+            out += line.slice(i);
+            break;
+          }
+
+          if (ch === '"') {
+            const end = findClosingQuote(line, i + 1);
+            out += line.slice(i, end + 1);
+            i = end + 1;
+            continue;
+          }
+
+          if (ch === '[') {
+            if (line.startsWith('[I:', i) || line.startsWith('[V:', i) || line.startsWith('[K:', i) || line.startsWith('[M:', i) || line.startsWith('[L:', i) || line.startsWith('[Q:', i) || line.startsWith('[P:', i)) {
+              const end = line.indexOf(']', i);
+              if (end === -1) {
+                out += line.slice(i);
+                break;
+              }
+              out += line.slice(i, end + 1);
+              currentRunType = null;
+              i = end + 1;
+              continue;
+            }
+
+            const chord = parseChord(line, i);
+            if (chord) {
+              const noteType = classifyDuration(chord.duration, unitLength);
+              if (noteType) {
+                if (noteType !== currentRunType) {
+                  out += noteType === 'long' ? PROGRAM_LONG : PROGRAM_EIGHTH;
+                  currentRunType = noteType;
+                  injectedCount++;
+                }
+              } else {
+                currentRunType = null;
+              }
+              out += chord.token;
+              i = chord.nextIndex;
+              continue;
+            }
+          }
+
+          const note = parseSingleNote(line, i);
+          if (note) {
+            const noteType = classifyDuration(note.duration, unitLength);
+            if (noteType) {
+              if (noteType !== currentRunType) {
+                out += noteType === 'long' ? PROGRAM_LONG : PROGRAM_EIGHTH;
+                currentRunType = noteType;
+                injectedCount++;
+              }
+            } else {
+              currentRunType = null;
+            }
+            out += note.token;
+            i = note.nextIndex;
+            continue;
+          }
+
+          if (!isWhitespaceOrDecoration(ch)) {
+            currentRunType = null;
+          }
+
+          out += ch;
+          i++;
+        }
+
+        return { text: out, injectedCount };
+      }
+
+      function findClosingQuote(text, start) {
+        for (let i = start; i < text.length; i++) {
+          if (text[i] === '"') return i;
+        }
+        return text.length - 1;
+      }
+
+      function isWhitespaceOrDecoration(ch) {
+        return /[\s<>(){}\-|:\\/~.,!\[\]]/.test(ch);
+      }
+
+      function parseChord(line, start) {
+        if (line[start] !== '[') return null;
+        let i = start + 1;
+        let sawNote = false;
+
+        while (i < line.length && line[i] !== ']') {
+          const note = parseSingleNote(line, i, true);
+          if (note) {
+            sawNote = true;
+            i = note.nextIndex;
+            continue;
+          }
+          i++;
+        }
+
+        if (!sawNote || i >= line.length || line[i] !== ']') {
+          return null;
+        }
+
+        i++;
+        const lenMatch = line.slice(i).match(/^(\d+\/\d+|\d+\/|\/\d+|\/+|\d+)/);
+        const lenToken = lenMatch ? lenMatch[0] : '';
+        if (lenToken) i += lenToken.length;
+
+        return {
+          token: line.slice(start, i),
+          duration: getLengthFraction(lenToken),
+          nextIndex: i
+        };
+      }
+
+      function parseSingleNote(line, start, inChord = false) {
+        let i = start;
+
+        while (i < line.length && /[\^_=]/.test(line[i])) {
+          i++;
+        }
+
+        if (i >= line.length) return null;
+
+        const ch = line[i];
+        const isPitch = /[A-Ga-gxzXZ]/.test(ch);
+        if (!isPitch) return null;
+        i++;
+
+        while (i < line.length && /[',]/.test(line[i])) {
+          i++;
+        }
+
+        if (!inChord && i < line.length && line[i] === '-') {
+          // Keep tie marker with the note token.
+          i++;
+        }
+
+        const lenMatch = line.slice(i).match(/^(\d+\/\d+|\d+\/|\/\d+|\/+|\d+)/);
+        const lenToken = lenMatch ? lenMatch[0] : '';
+        if (lenToken) i += lenToken.length;
+
+        return {
+          token: line.slice(start, i),
+          duration: getLengthFraction(lenToken),
+          nextIndex: i
+        };
+      }
+
+      function classifyDuration(noteLengthFactor, unitLength) {
+        const actual = multiplyFractions(unitLength, noteLengthFactor);
+        if (fractionEquals(actual, unitLength)) return 'eighth';
+        if (isLongerThan(actual, unitLength)) return 'long';
+        return null;
+      }
+
+      function convertAbc() {
+        try {
+          const input = inputEl.value || '';
+          const result = detectHeadersAndConvert(input);
+          outputEl.value = result.text;
+          setStatus(`Done. Inserted ${result.injectedCount} MIDI program marker${result.injectedCount === 1 ? '' : 's'}.`);
+        } catch (err) {
+          console.error(err);
+          setStatus('Error while converting ABC.');
+        }
+      }
+
+      document.getElementById('convertBtn').addEventListener('click', convertAbc);
+
+      document.getElementById('copyBtn').addEventListener('click', async () => {
+        try {
+          await navigator.clipboard.writeText(outputEl.value || '');
+          setStatus('Output copied to clipboard.');
+        } catch {
+          outputEl.select();
+          document.execCommand('copy');
+          setStatus('Output copied to clipboard.');
+        }
+      });
+
+      document.getElementById('swapBtn').addEventListener('click', () => {
+        inputEl.value = outputEl.value || '';
+        setStatus('Output copied back to input.');
+      });
+
+      document.getElementById('clearBtn').addEventListener('click', () => {
+        inputEl.value = '';
+        outputEl.value = '';
+        setStatus('Cleared.');
+      });
+
+      convertAbc();
+    })();
+  </script>
+</body>
+</html>
