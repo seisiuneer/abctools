@@ -7,7 +7,7 @@
   <title>ABC Transcription Tools - Custom Instrument Builder</title>
   <meta property="og:type" content="website" />
   <meta property="og:title" content="ABC Transcription Tools - Custom Instrument Builder" />
-  <meta property="og:description" content="Utility for creating custom instruments for the ABC Transcription Tools." />
+  <meta property="og:description" content="Utility for creating custom instruments for the ABC Transcription Tools and Celtic Sounds." />
   <meta property="og:url" content="https://michaeleskin.com/tools/custom_instrument_builder.html" />
   <meta property="og:site_name" content="ABC Transcription Tools - Custom Instrument Builder" />
   <meta property="og:image" content="https://michaeleskin.com/tools/img/tool_custominstrument.jpg" />
@@ -28,9 +28,9 @@
   <link rel="icon" type="image/png" sizes="96x96" href="https://michaeleskin.com/abctools/img/abc-favicon-96x96.png">
   <link rel="icon" type="image/png" sizes="16x16" href="https://michaeleskin.com/abctools/img/abc-favicon-16x16.png">
 
-  <script type="text/javascript" src="jszip-min.js?v=21"></script>
-  <script type="text/javascript" src="filesaver-min.js?v=21"></script>
-  <script type="text/javascript" src="daypilot-modal.min-3.10.1.js?v=21"></script>
+  <script type="text/javascript" src="jszip-min.js?v=22"></script>
+  <script type="text/javascript" src="filesaver-min.js?v=22"></script>
+  <script type="text/javascript" src="daypilot-modal.min-3.10.1.js?v=22"></script>
   
   <style>
     body {
@@ -364,6 +364,35 @@
       cursor: default;
     }
 
+    .remote-fetch-panel {
+      margin-top: 12px;
+      padding: 12px;
+      background: #f5f9ff;
+      border: 1px solid #d9e7fb;
+      border-radius: 6px;
+    }
+
+    .remote-fetch-panel p {
+      margin: 0 0 8px 0;
+      color: #333;
+    }
+
+    .fetch-btn {
+      margin-top: 1.5em;
+      background: #6a1b9a;
+    }
+
+    .fetch-btn:hover {
+      background: #4a148c;
+    }
+
+    #remoteFetchStatus {
+      margin-top: 8px;
+      min-height: 1.2em;
+      font-size: 0.95em;
+      color: #333;
+    }
+
   </style>
     
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-VM0N9HL3MK"></script>
@@ -390,6 +419,28 @@
         Disable .sf2-style MIDI-number pitch name detection
       </label>
     </label>
+
+    <div class="remote-fetch-panel">
+      <p><strong>Or fetch notes from a specific ABC Transcription Tools Soundfont and MIDI instrument:</strong></p>
+      <div class="form-row">
+        <label>Soundfont:
+          <select id="remoteSoundfont"></select>
+        </label>
+        <label>Instrument:
+          <select id="remoteInstrument"></select>
+        </label>
+        <label>Fetch range:
+          <select id="remoteRange">
+            <option value="compact">Compact (C4–C6)</option>
+            <option value="standard" selected>Standard (C3–C7)</option>
+            <option value="extended">Extended (C2–C7)</option>
+            <option value="full">Full (C0–C7)</option>
+          </select>
+        </label>
+      </div>
+      <button id="fetchRemoteBtn" class="fetch-btn" type="button" title="Fetch notes in the selected range from the selected soundfont and instrument">Fetch Soundfont Instrument Notes</button>
+      <div id="remoteFetchStatus" role="status" aria-live="polite"></div>
+    </div>
 
     <div class="form-row">
       <label>Default instrument volume scale:
@@ -563,6 +614,166 @@
     <input type="file" id="importZipInput" accept=".zip" style="display:none;">
 
     <script>
+
+      var instrumentIndexToName = ["acoustic_grand_piano-mp3", "bright_acoustic_piano-mp3", "electric_grand_piano-mp3", "honkytonk_piano-mp3", "electric_piano_1-mp3", "electric_piano_2-mp3", "harpsichord-mp3", "clavinet-mp3", "celesta-mp3", "glockenspiel-mp3", "music_box-mp3", "vibraphone-mp3", "marimba-mp3", "xylophone-mp3", "tubular_bells-mp3", "dulcimer-mp3", "drawbar_organ-mp3", "percussive_organ-mp3", "rock_organ-mp3", "church_organ-mp3", "reed_organ-mp3", "accordion-mp3", "harmonica-mp3", "tango_accordion-mp3", "acoustic_guitar_nylon-mp3", "acoustic_guitar_steel-mp3", "electric_guitar_jazz-mp3", "electric_guitar_clean-mp3", "electric_guitar_muted-mp3", "overdriven_guitar-mp3", "distortion_guitar-mp3", "guitar_harmonics-mp3", "acoustic_bass-mp3", "electric_bass_finger-mp3", "electric_bass_pick-mp3", "fretless_bass-mp3", "slap_bass_1-mp3", "slap_bass_2-mp3", "synth_bass_1-mp3", "synth_bass_2-mp3", "violin-mp3", "viola-mp3", "cello-mp3", "contrabass-mp3", "tremolo_strings-mp3", "pizzicato_strings-mp3", "orchestral_harp-mp3", "timpani-mp3", "string_ensemble_1-mp3", "string_ensemble_2-mp3", "synth_strings_1-mp3", "synth_strings_2-mp3", "choir_aahs-mp3", "voice_oohs-mp3", "synth_choir-mp3", "orchestra_hit-mp3", "trumpet-mp3", "trombone-mp3", "tuba-mp3", "muted_trumpet-mp3", "french_horn-mp3", "brass_section-mp3", "synth_brass_1-mp3", "synth_brass_2-mp3", "soprano_sax-mp3", "alto_sax-mp3", "tenor_sax-mp3", "baritone_sax-mp3", "oboe-mp3", "english_horn-mp3", "bassoon-mp3", "clarinet-mp3", "piccolo-mp3", "flute-mp3", "recorder-mp3", "pan_flute-mp3", "blown_bottle-mp3", "shakuhachi-mp3", "whistle-mp3", "ocarina-mp3", "lead_1_square-mp3", "lead_2_sawtooth-mp3", "lead_3_calliope-mp3", "lead_4_chiff-mp3", "lead_5_charang-mp3", "lead_6_voice-mp3", "lead_7_fifths-mp3", "lead_8_bass_lead-mp3", "pad_1_new_age-mp3", "pad_2_warm-mp3", "pad_3_polysynth-mp3", "pad_4_choir-mp3", "pad_5_bowed-mp3", "pad_6_metallic-mp3", "pad_7_halo-mp3", "pad_8_sweep-mp3", "fx_1_rain-mp3", "fx_2_soundtrack-mp3", "fx_3_crystal-mp3", "fx_4_atmosphere-mp3", "fx_5_brightness-mp3", "fx_6_goblins-mp3", "fx_7_echoes-mp3", "fx_8_scifi-mp3", "sitar-mp3", "banjo-mp3", "shamisen-mp3", "koto-mp3", "kalimba-mp3", "bagpipe-mp3", "fiddle-mp3", "shanai-mp3", "tinkle_bell-mp3", "agogo-mp3", "steel_drums-mp3", "woodblock-mp3", "taiko_drum-mp3", "melodic_tom-mp3", "synth_drum-mp3", "reverse_cymbal-mp3", "guitar_fret_noise-mp3", "breath_noise-mp3", "seashore-mp3", "bird_tweet-mp3", "telephone_ring-mp3", "helicopter-mp3", "applause-mp3", "gunshot-mp3"];
+
+      const generalMIDISoundNames = [
+        "Acoustic Grand Piano",
+        "Bright Acoustic Piano",
+        "Electric Grand Piano",
+        "Honky-tonk Piano",
+        "Electric Piano 1",
+        "Electric Piano 2",
+        "Harpsichord",
+        "Clavi",
+        "Celesta",
+        "Glockenspiel",
+        "Music Box",
+        "Vibraphone",
+        "Marimba",
+        "Xylophone",
+        "Tubular Bells",
+        "Dulcimer",
+        "Drawbar Organ",
+        "Percussive Organ",
+        "Rock Organ",
+        "Church Organ",
+        "Reed Organ",
+        "Accordion",
+        "Harmonica",
+        "Tango Accordion",
+        "Acoustic Guitar (nylon)",
+        "Acoustic Guitar (steel)",
+        "Electric Guitar (jazz)",
+        "Electric Guitar (clean)",
+        "Electric Guitar (muted)",
+        "Overdriven Guitar",
+        "Distortion Guitar",
+        "Guitar Harmonics",
+        "Acoustic Bass",
+        "Electric Bass (finger)",
+        "Electric Bass (pick)",
+        "Fretless Bass",
+        "Slap Bass 1",
+        "Slap Bass 2",
+        "Synth Bass 1",
+        "Synth Bass 2",
+        "Violin",
+        "Viola",
+        "Cello",
+        "Contrabass",
+        "Tremolo Strings",
+        "Pizzicato Strings",
+        "Orchestral Harp",
+        "Timpani",
+        "String Ensemble 1",
+        "String Ensemble 2",
+        "SynthStrings 1",
+        "SynthStrings 2",
+        "Choir Aahs",
+        "Voice Oohs",
+        "Synth Voice",
+        "Orchestra Hit",
+        "Trumpet",
+        "Trombone",
+        "Tuba",
+        "Muted Trumpet",
+        "French Horn",
+        "Brass Section",
+        "SynthBrass 1",
+        "SynthBrass 2",
+        "Soprano Sax",
+        "Alto Sax",
+        "Tenor Sax",
+        "Baritone Sax",
+        "Oboe",
+        "English Horn",
+        "Bassoon",
+        "Clarinet",
+        "Piccolo",
+        "Flute",
+        "Recorder",
+        "Pan Flute",
+        "Blown Bottle",
+        "Shakuhachi",
+        "Tin Whistle",
+        "Ocarina",
+        "Lead 1 (square)",
+        "Lead 2 (sawtooth)",
+        "Lead 3 (calliope)",
+        "Lead 4 (chiff)",
+        "Lead 5 (charang)",
+        "Lead 6 (voice)",
+        "Lead 7 (fifths)",
+        "Lead 8 (bass + lead)",
+        "Pad 1 (new age)",
+        "Pad 2 (warm)",
+        "Pad 3 (polysynth)",
+        "Pad 4 (choir)",
+        "Pad 5 (bowed)",
+        "Pad 6 (metallic)",
+        "Pad 7 (halo)",
+        "Pad 8 (sweep)",
+        "FX 1 (rain)",
+        "FX 2 (soundtrack)",
+        "FX 3 (crystal)",
+        "FX 4 (atmosphere)",
+        "FX 5 (brightness)",
+        "FX 6 (goblins)",
+        "FX 7 (echoes)",
+        "FX 8 (sci-fi)",
+        "Sitar",
+        "Banjo",
+        "Shamisen",
+        "Koto",
+        "Kalimba",
+        "Bagpipe",
+        "Fiddle",
+        "Shanai",
+        "Tinkle Bell",
+        "Agogo",
+        "Steel Drums",
+        "Woodblock",
+        "Taiko Drum",
+        "Bodhran",
+        "Synth Drum",
+        "Reverse Cymbal",
+        "Guitar Fret Noise",
+        "Breath Noise",
+        "Seashore",
+        "Bird Tweet",
+        "Telephone Ring",
+        "Helicopter",
+        "Applause",
+        "Gunshot"
+      ];
+
+      const soundfontNames = [
+        "FatBoy",
+        "https://michaeleskin.com/abctools/soundfonts/fatboy_4/",
+        "Canvas",
+        "https://michaeleskin.com/abctools/soundfonts/canvas/",
+        "MScore",
+        "https://michaeleskin.com/abctools/soundfonts/mscore_2/",
+        "Arachno",
+        "https://michaeleskin.com/abctools/soundfonts/arachno_3/",
+        "FluidHQ",
+        "https://michaeleskin.com/abctools/soundfonts/fluidhq_1/"
+      ];
+
+      const soundfontScaling = [
+        "FatBoy",
+        "3.25",
+        "Canvas",
+        "2.0",
+        "MScore",
+        "2.5",
+        "Arachno",
+        "2.0",
+        "FluidHQ",
+        "2.0"
+      ];    
+
       function DoStartup() {
 
         // For mobile adaptation testing, set true to force mobile test
@@ -598,6 +809,12 @@
 
         const disableMidiDetectCheckbox = document.getElementById('disableMidiDetect');
 
+        const remoteSoundfontSelect = document.getElementById('remoteSoundfont');
+        const remoteInstrumentSelect = document.getElementById('remoteInstrument');
+        const remoteRangeSelect = document.getElementById('remoteRange');
+        const fetchRemoteBtn = document.getElementById('fetchRemoteBtn');
+        const remoteFetchStatus = document.getElementById('remoteFetchStatus');
+
         // Range Expander UI
         const rangeExpanderRow = document.getElementById('rangeExpanderRow');
         const rangeExpanderCheckbox = document.getElementById('rangeExpander');
@@ -610,6 +827,242 @@
         const exportStatusEl = document.getElementById('exportStatus');
         function setExportStatus(msg){ if (exportStatusEl) exportStatusEl.textContent = msg; }
         function clearExportStatus(){ if (exportStatusEl) exportStatusEl.textContent = ''; }
+        function setRemoteFetchStatus(msg){ if (remoteFetchStatus) remoteFetchStatus.textContent = msg || ''; }
+
+        function buildSoundfontPairs() {
+          const pairs = [];
+          if (!Array.isArray(soundfontNames)) return pairs;
+          for (let i = 0; i < soundfontNames.length - 1; i += 2) {
+            pairs.push({ name: soundfontNames[i], url: soundfontNames[i + 1] });
+          }
+          return pairs;
+        }
+
+        function normalizeBaseUrl(url) {
+          return String(url || '').replace(/\/+$/, '') + '/';
+        }
+
+        function joinUrl(base, part) {
+          return normalizeBaseUrl(base) + String(part || '').replace(/^\/+/, '') + '/';
+        }
+
+        function populateRemoteSelectors() {
+          const soundfonts = buildSoundfontPairs();
+
+          remoteSoundfontSelect.innerHTML = '';
+          soundfonts.forEach((sf, index) => {
+            const opt = document.createElement('option');
+            opt.value = String(index);
+            opt.textContent = sf.name;
+            opt.dataset.url = sf.url;
+            remoteSoundfontSelect.appendChild(opt);
+          });
+
+          remoteInstrumentSelect.innerHTML = '';
+          if (Array.isArray(generalMIDISoundNames)) {
+            generalMIDISoundNames.forEach((name, index) => {
+              const opt = document.createElement('option');
+              opt.value = String(index);
+              opt.textContent = name;
+              remoteInstrumentSelect.appendChild(opt);
+            });
+          }
+        }
+
+        function buildSoundfontScalingMap() {
+          const map = new Map();
+          if (!Array.isArray(soundfontScaling)) return map;
+          for (let i = 0; i < soundfontScaling.length - 1; i += 2) {
+            map.set(String(soundfontScaling[i]), String(soundfontScaling[i + 1]));
+          }
+          return map;
+        }
+
+        const soundfontScalingMap = buildSoundfontScalingMap();
+
+        function applySelectedSoundfontDefaultScale() {
+          const info = getSelectedRemoteInstrumentInfo();
+          if (!info) return;
+          const scale = soundfontScalingMap.get(info.soundfontName);
+          if (scale != null) {
+            volumeScaleInput.value = String(scale);
+          }
+        }
+
+        function clearCurrentlyLoadedSamples() {
+          stopPreviewIfPlaying();
+          files = [];
+          originalFiles = [];
+          if (typeof gHasHashedNames !== 'undefined') {
+            gHasHashedNames = false;
+          }
+          if (typeof gTempSuppressed !== 'undefined') {
+            gTempSuppressed = new WeakSet();
+          }
+          if (fileInput) fileInput.value = '';
+          clearExportStatus();
+          safeRenderList();
+          updateDragInteractivity();
+          clearSelection();
+        }
+
+        function getSelectedRemoteInstrumentInfo() {
+          const soundfonts = buildSoundfontPairs();
+          const sfIndex = Math.max(0, parseInt(remoteSoundfontSelect.value, 10) || 0);
+          const instrIndex = Math.max(0, parseInt(remoteInstrumentSelect.value, 10) || 0);
+
+          const soundfont = soundfonts[sfIndex] || soundfonts[0] || null;
+          const instrumentLabel = (Array.isArray(generalMIDISoundNames) && generalMIDISoundNames[instrIndex]) ? generalMIDISoundNames[instrIndex] : '';
+          const instrumentDir = (Array.isArray(instrumentIndexToName) && instrumentIndexToName[instrIndex]) ? instrumentIndexToName[instrIndex] : '';
+
+          if (!soundfont || !instrumentDir) return null;
+
+          return {
+            soundfontName: soundfont.name,
+            soundfontUrl: soundfont.url,
+            instrumentIndex: instrIndex,
+            instrumentLabel,
+            instrumentDir,
+            baseUrl: joinUrl(soundfont.url, instrumentDir)
+          };
+        }
+
+        async function processLoadedFiles(newFiles, options = {}) {
+          originalFiles = Array.isArray(newFiles) ? [...newFiles] : [];
+          files = [...originalFiles];
+
+          if (options.zipName) {
+            gFileSaveName = options.zipName;
+          }
+
+          gHasHashedNames = hasHashedFilenames(files);
+          if (gHasHashedNames){
+            applyHashedModeUIState();
+            DayPilot.Modal.alert('<p style="text-align:center;font-size:1.1em;"><strong>Hash-based Filenames Detected</strong><br/><br/>Auto-sort and note range detect initially disabled.</p>', { theme:"modal_flat", top:200 });
+          } else {
+            clearHashedModeUIState();
+          }
+
+          sortFilesIfNeeded();
+
+          if ((autoSortCheckbox.checked || rangeExpanderCheckbox.checked) && !gHasHashedNames) {
+            detectAndApplyLowestPitch();
+          }
+
+          if (autoSortCheckbox.checked) {
+            const built = buildContinuousRange();
+            if (built && isFinite(built.effMin) && isFinite(built.effMax)) {
+              const loOct = Math.floor(built.effMin/12), loNote = built.effMin%12;
+              const hiOct = Math.floor(built.effMax/12), hiNote = built.effMax%12;
+              lowOct.value = String(loOct); lowNote.value = String(loNote);
+              highOct.value = String(hiOct); highNote.value = String(hiNote);
+            }
+          }
+
+          safeRenderList();
+          updateDragInteractivity();
+          clearSelection();
+        }
+
+        async function fetchRemoteInstrumentSamples() {
+          const info = getSelectedRemoteInstrumentInfo();
+          if (!info) {
+            DayPilot.Modal.alert('<p style="text-align:center">Unable to determine the selected soundfont or instrument.</p>', { theme:"modal_flat", top:200 });
+            return;
+          }
+
+          let octaveMin = 3;
+          let octaveMax = 7;
+
+          switch (remoteRangeSelect.value) {
+            case "compact":
+              octaveMin = 4;
+              octaveMax = 6;
+              break;
+            case "standard":
+              octaveMin = 3;
+              octaveMax = 7;
+              break;
+            case "extended":
+              octaveMin = 2;
+              octaveMax = 7;
+              break;
+            case "full":
+              octaveMin = 0;
+              octaveMax = 7;
+              break;
+          }
+
+          const noteNames = ["C", "Db", "D", "Eb", "E", "F", "Gb", "G", "Ab", "A", "Bb", "B"];
+          const fetchedFiles = [];
+          let attempts = 0;
+          let found = 0;
+          const totalAttempts = (octaveMax - octaveMin + 1) * noteNames.length;
+
+          fetchRemoteBtn.disabled = true;
+          clearCurrentlyLoadedSamples();
+          setRemoteFetchStatus(`Fetching ${info.instrumentLabel} from ${info.soundfontName} (C${octaveMin}–B${octaveMax})...`);
+
+          try {
+            for (let octave = octaveMin; octave <= octaveMax; octave++) {
+              for (const noteName of noteNames) {
+                attempts++;
+                const fileName = `${noteName}${octave}.mp3`;
+                const url = info.baseUrl + fileName;
+
+                setRemoteFetchStatus(`Fetching ${fileName} (${attempts}/${totalAttempts})...`);
+
+                try {
+                  const response = await fetch(url, { cache: 'no-store' });
+                  if (!response.ok) {
+                    continue;
+                  }
+
+                  const blob = await response.blob();
+                  if (!blob || !blob.size) {
+                    continue;
+                  }
+
+                  const fetchedFile = new File([blob], fileName, {
+                    type: blob.type || 'audio/mpeg',
+                    lastModified: Date.now()
+                  });
+
+                  fetchedFiles.push(fetchedFile);
+                  found++;
+                } catch (err) {
+                  console.warn('Fetch failed for', url, err);
+                }
+              }
+            }
+
+            if (!found) {
+              DayPilot.Modal.alert(
+                `<p style="text-align:center">No notes were found for <strong>${info.instrumentLabel}</strong> in <strong>${info.soundfontName}</strong>.</p>`,
+                { theme:"modal_flat", top:200 }
+              );
+              setRemoteFetchStatus('No notes found.');
+              return;
+            }
+
+            const zipNameBase = `${info.soundfontName}_${info.instrumentLabel}`
+              .replace(/[^a-z0-9]+/gi, '_')
+              .replace(/^_+|_+$/g, '');
+
+            await processLoadedFiles(fetchedFiles, {
+              zipName: `${zipNameBase || 'custom_instrument'}.zip`
+            });
+
+            setRemoteFetchStatus(`Fetched ${found} note${found === 1 ? '' : 's'} from ${info.soundfontName} / ${info.instrumentLabel} (C${octaveMin}–B${octaveMax}).`);
+          } catch (err) {
+            console.error('Remote soundfont fetch failed:', err);
+            DayPilot.Modal.alert('<p style="text-align:center">Failed to fetch remote soundfont notes.</p>', { theme:"modal_flat", top:200 });
+            setRemoteFetchStatus('Fetch failed.');
+          } finally {
+            fetchRemoteBtn.disabled = false;
+          }
+        }
+
 
         const tick = () => new Promise(r => setTimeout(r, 0));
 
@@ -660,7 +1113,7 @@
         let selectedRef = null; // { kind: 'real'|'placeholder', fileRef: File|null, renderIdx: number }
 
         // Track samples temporarily suppressed (treated as placeholders)
-        const gTempSuppressed = new WeakSet();
+        let gTempSuppressed = new WeakSet();
 
         // Convert an absolute pitch index to a "NoteOctave" label, e.g., "Db4"
         function piToNoteOctave(absPI) {
@@ -2575,35 +3028,20 @@
 
         // ===== UI wiring =====
 
+        populateRemoteSelectors();
+        applySelectedSoundfontDefaultScale();
+
         fileInput.addEventListener('change',(e)=>{
-          originalFiles=Array.from(e.target.files);
-          files=[...originalFiles];
+          processLoadedFiles(Array.from(e.target.files));
+        });
 
-          gHasHashedNames=hasHashedFilenames(files);
-          if (gHasHashedNames){
-            applyHashedModeUIState();
-            DayPilot.Modal.alert('<p style="text-align:center;font-size:1.1em;"><strong>Hash-based Filenames Detected</strong><br/><br/>Auto-sort and note range detect initially disabled.</p>', { theme:"modal_flat", top:200 });
-          } else { clearHashedModeUIState(); }
+        remoteSoundfontSelect.addEventListener('change', () => {
+          applySelectedSoundfontDefaultScale();
+        });
 
-          sortFilesIfNeeded();
-
-          if ((autoSortCheckbox.checked || rangeExpanderCheckbox.checked) && !gHasHashedNames) {
-            detectAndApplyLowestPitch();
-          }
-
-          if (autoSortCheckbox.checked) {
-            const built = buildContinuousRange();
-            if (built && isFinite(built.effMin) && isFinite(built.effMax)) {
-              const loOct = Math.floor(built.effMin/12), loNote = built.effMin%12;
-              const hiOct = Math.floor(built.effMax/12), hiNote = built.effMax%12;
-              lowOct.value = String(loOct); lowNote.value = String(loNote);
-              highOct.value = String(hiOct); highNote.value = String(hiNote);
-            }
-          }
-
-          safeRenderList();
-          updateDragInteractivity();
-          clearSelection();
+        fetchRemoteBtn.addEventListener('click', async ()=>{
+          if (gPrevSource) stopCurrentPreview();
+          await fetchRemoteInstrumentSamples();
         });
 
         function handleStartingControlsChange() {
@@ -2840,11 +3278,21 @@
               <p>Both note name (e.g., C4.wav) or patchname-(MIDI note number) filenames (e.g., Piano-60.wav), which are common in .sf2-extracted .wav files, are supported.</p>
               <p>Note name detection is done first, and if it fails, MIDI-number pitch name detection is attempted.</p>
               <p>If both note name pitch detections fail, the files will be loaded into the list with no pitch mapping.</p>
+              <p>For remote soundfont loading, choose a soundfont, instrument, and fetch range, then tap <strong>Fetch Soundfont Instrument Notes</strong>.</p>
+              <p>The available fetch ranges are:</p>
+              <p style="margin-left:18px;">
+                <strong>Compact (C4–C6)</strong><br>
+                <strong>Standard (C3–C7)</strong> &ndash; recommended default<br>
+                <strong>Extended (C2–C7)</strong><br>
+                <strong>Full (C0–C7)</strong>
+              </p>
+              <p>When you fetch remote soundfont samples, the tool clears any currently loaded samples, sets the default volume scale from the selected soundfont, then attempts to load every note in the selected range using the standard soundfont note filenames and replaces the sample list with any notes it finds.</p>
               <p>If you want to specifically disable the .sf2 MIDI-number pitch name detection, check <strong>Disable .sf2-style MIDI-number pitch name detection</strong>.</p>
               <p>You can also import an existing custom instrument by tapping <strong>Import Custom Instrument (.zip)</strong>.</p>
               <p>If you re-import a previously exported custom instrument .zip, your saved volume scale and fade settings will also be restored automatically.</p>
               <p>The custom instrument note output filename for each audio sample is displayed to the right of each note.</p>
               <p><strong>2)</strong> Select the default volume scale and fade time for the instrument.</p>
+              <p>When you choose a remote soundfont, the tool automatically applies its recommended default volume scale. You can still adjust it manually.</p>
               <p>These values will be applied to the instrument when used in the <strong>ABC Transcription Tools</strong>.</p>
               <p><strong>3)</strong> Choose the starting scale note for the instrument notes.</p>
               <p><strong>4)</strong> Choose the starting octave number for the instrument notes.</p>
@@ -2907,11 +3355,21 @@
               <p>Both note name (e.g., C4.wav) or patchname-(MIDI note number) filenames (e.g., Piano-60.wav), which are common in .sf2-extracted .wav files, are supported.</p>
               <p>Note name detection is done first, and if it fails, MIDI-number pitch name detection is attempted.</p>
               <p>If both note name pitch detections fail, the files will be loaded into the list with no pitch mapping.</p>
+              <p>For remote soundfont loading, choose a soundfont, instrument, and fetch range, then click <strong>Fetch Soundfont Instrument Notes</strong>.</p>
+              <p>The available fetch ranges are:</p>
+              <p style="margin-left:18px;">
+                <strong>Compact (C4–C6)</strong><br>
+                <strong>Standard (C3–C7)</strong> &ndash; recommended default<br>
+                <strong>Extended (C2–C7)</strong><br>
+                <strong>Full (C0–C7)</strong>
+              </p>
+              <p>When you fetch remote soundfont samples, the tool clears any currently loaded samples, sets the default volume scale from the selected soundfont, then attempts to load every note in the selected range using the standard soundfont note filenames and replaces the sample list with any notes it finds.</p>
               <p>If you want to specifically disable the .sf2 MIDI-number pitch name detection, check <strong>Disable .sf2-style MIDI-number pitch name detection</strong>.</p>
               <p>You can also import an existing custom instrument by clicking <strong>Import Custom Instrument (.zip)</strong>.</p>
               <p>If you re-import a previously exported custom instrument .zip, your saved volume scale and fade settings will also be restored automatically.</p>
               <p>The custom instrument note output filename for each audio sample is displayed to the right of each note.</p>
               <p><strong>2)</strong> Select the default volume scale and fade time for the instrument.</p>
+              <p>When you choose a remote soundfont, the tool automatically applies its recommended default volume scale. You can still adjust it manually.</p>
               <p>These values will be applied to the instrument when used in the <strong>ABC Transcription Tools</strong>.</p>
               <p><strong>3)</strong> Choose the starting scale note for the instrument notes.</p>
               <p><strong>4)</strong> Choose the starting octave number for the instrument notes.</p>
