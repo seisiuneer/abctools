@@ -393,6 +393,17 @@
       color: #333;
     }
 
+    select {
+      background-image: url("data:image/svg+xml;utf8,\
+    <svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'>\
+    <path d='M1 1l4 4 4-4' stroke='%23333' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/>\
+    </svg>");
+      background-repeat: no-repeat;
+      background-position: right 0.6em center;
+      background-size: 10px 6px;
+      padding-right: 2em;
+    }
+
   </style>
     
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-VM0N9HL3MK"></script>
@@ -421,7 +432,7 @@
     </label>
 
     <div class="remote-fetch-panel">
-      <p><strong>Or fetch notes from a specific ABC Transcription Tools Soundfont and MIDI instrument:</strong></p>
+      <p><strong>Or import notes from a specific ABC Transcription Tools Soundfont and MIDI instrument:</strong></p>
       <div class="form-row">
         <label>Soundfont:
           <select id="remoteSoundfont"></select>
@@ -429,7 +440,7 @@
         <label>Instrument:
           <select id="remoteInstrument"></select>
         </label>
-        <label>Fetch range:
+        <label>Imported note range:
           <select id="remoteRange">
             <option value="compact">Compact (C4–C6)</option>
             <option value="standard" selected>Standard (C3–C7)</option>
@@ -438,7 +449,7 @@
           </select>
         </label>
       </div>
-      <button id="fetchRemoteBtn" class="fetch-btn" type="button" title="Fetch notes in the selected range from the selected soundfont and instrument">Fetch Soundfont Instrument Notes</button>
+      <button id="fetchRemoteBtn" class="fetch-btn" type="button" title="Imports notes in the selected range from the selected remote soundfont and instrument">Import Soundfont Instrument Notes</button>
       <div id="remoteFetchStatus" role="status" aria-live="polite"></div>
     </div>
 
@@ -3274,21 +3285,21 @@
               <p>Both note name (e.g., C4.wav) or patchname-(MIDI note number) filenames (e.g., Piano-60.wav), which are common in .sf2-extracted .wav files, are supported.</p>
               <p>Note name detection is done first, and if it fails, MIDI-number pitch name detection is attempted.</p>
               <p>If both note name pitch detections fail, the files will be loaded into the list with no pitch mapping.</p>
-              <p>For remote soundfont loading, choose a soundfont, instrument, and fetch range, then tap <strong>Fetch Soundfont Instrument Notes</strong>.</p>
-              <p>The available fetch ranges are:</p>
+              <p>For remote soundfont instrument note import, choose a soundfont, MIDI instrument, and imported note range, then tap <strong>Import Soundfont Instrument Notes</strong>.</p>
+              <p>The available imported note ranges are:</p>
               <p style="margin-left:18px;">
                 <strong>Compact (C4–C6)</strong><br>
                 <strong>Standard (C3–C7)</strong> &ndash; recommended default<br>
                 <strong>Extended (C2–C7)</strong><br>
                 <strong>Full (C0–C7)</strong>
               </p>
-              <p>When you fetch remote soundfont samples, the tool clears any currently loaded samples, then attempts to load every note in the selected range using the standard soundfont note filenames and replaces the sample list with any notes it finds.</p>
+              <p>When you import remote soundfont samples, the tool clears any currently loaded samples, then attempts to load every note in the selected range using the standard soundfont note filenames and replaces the sample list with any notes it finds.</p>
               <p>If you want to specifically disable the .sf2 MIDI-number pitch name detection, check <strong>Disable .sf2-style MIDI-number pitch name detection</strong>.</p>
               <p>You can also import an existing custom instrument by tapping <strong>Import Custom Instrument (.zip)</strong>.</p>
               <p>If you re-import a previously exported custom instrument .zip, your saved volume scale and fade settings will also be restored automatically.</p>
               <p>The custom instrument note output filename for each audio sample is displayed to the right of each note.</p>
               <p><strong>2)</strong> Select the default volume scale and fade time for the instrument.</p>
-              <p>When you fetch a remote soundfont, the tool automatically applies its recommended default volume scale. You can still adjust it manually.</p>
+              <p>When you import a remote soundfont, the tool automatically applies its recommended default volume scale. You can still adjust it manually.</p>
               <p>These values will be applied to the instrument when used in the <strong>ABC Transcription Tools</strong>.</p>
               <p><strong>3)</strong> Choose the starting scale note for the instrument notes.</p>
               <p><strong>4)</strong> Choose the starting octave number for the instrument notes.</p>
@@ -3351,21 +3362,21 @@
               <p>Both note name (e.g., C4.wav) or patchname-(MIDI note number) filenames (e.g., Piano-60.wav), which are common in .sf2-extracted .wav files, are supported.</p>
               <p>Note name detection is done first, and if it fails, MIDI-number pitch name detection is attempted.</p>
               <p>If both note name pitch detections fail, the files will be loaded into the list with no pitch mapping.</p>
-              <p>For remote soundfont loading, choose a soundfont, instrument, and fetch range, then click <strong>Fetch Soundfont Instrument Notes</strong>.</p>
-              <p>The available fetch ranges are:</p>
+              <p>For remote soundfont instrument note import, choose a soundfont, MIDI instrument, and imported note range, then click <strong>Import Soundfont Instrument Notes</strong>.</p>
+              <p>The available imported note ranges are:</p>
               <p style="margin-left:18px;">
                 <strong>Compact (C4–C6)</strong><br>
                 <strong>Standard (C3–C7)</strong> &ndash; recommended default<br>
                 <strong>Extended (C2–C7)</strong><br>
                 <strong>Full (C0–C7)</strong>
               </p>
-              <p>When you fetch remote soundfont samples, the tool clears any currently loaded samples, then attempts to load every note in the selected range using the standard soundfont note filenames and replaces the sample list with any notes it finds.</p>
+              <p>When you import remote soundfont samples, the tool clears any currently loaded samples, then attempts to load every note in the selected range using the standard soundfont note filenames and replaces the sample list with any notes it finds.</p>
               <p>If you want to specifically disable the .sf2 MIDI-number pitch name detection, check <strong>Disable .sf2-style MIDI-number pitch name detection</strong>.</p>
               <p>You can also import an existing custom instrument by clicking <strong>Import Custom Instrument (.zip)</strong>.</p>
               <p>If you re-import a previously exported custom instrument .zip, your saved volume scale and fade settings will also be restored automatically.</p>
               <p>The custom instrument note output filename for each audio sample is displayed to the right of each note.</p>
               <p><strong>2)</strong> Select the default volume scale and fade time for the instrument.</p>
-              <p>When you fetch a remote soundfont, the tool automatically applies its recommended default volume scale. You can still adjust it manually.</p>
+              <p>When you import a remote soundfont, the tool automatically applies its recommended default volume scale. You can still adjust it manually.</p>
               <p>These values will be applied to the instrument when used in the <strong>ABC Transcription Tools</strong>.</p>
               <p><strong>3)</strong> Choose the starting scale note for the instrument notes.</p>
               <p><strong>4)</strong> Choose the starting octave number for the instrument notes.</p>
