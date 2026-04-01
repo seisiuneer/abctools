@@ -971,6 +971,8 @@
             return;
           }
 
+          applySelectedSoundfontDefaultScale();
+
           let octaveMin = 3;
           let octaveMax = 7;
 
@@ -1062,7 +1064,6 @@
             fetchRemoteBtn.disabled = false;
           }
         }
-
 
         const tick = () => new Promise(r => setTimeout(r, 0));
 
@@ -3029,14 +3030,9 @@
         // ===== UI wiring =====
 
         populateRemoteSelectors();
-        applySelectedSoundfontDefaultScale();
-
+        
         fileInput.addEventListener('change',(e)=>{
           processLoadedFiles(Array.from(e.target.files));
-        });
-
-        remoteSoundfontSelect.addEventListener('change', () => {
-          applySelectedSoundfontDefaultScale();
         });
 
         fetchRemoteBtn.addEventListener('click', async ()=>{
@@ -3286,13 +3282,13 @@
                 <strong>Extended (C2–C7)</strong><br>
                 <strong>Full (C0–C7)</strong>
               </p>
-              <p>When you fetch remote soundfont samples, the tool clears any currently loaded samples, sets the default volume scale from the selected soundfont, then attempts to load every note in the selected range using the standard soundfont note filenames and replaces the sample list with any notes it finds.</p>
+              <p>When you fetch remote soundfont samples, the tool clears any currently loaded samples, then attempts to load every note in the selected range using the standard soundfont note filenames and replaces the sample list with any notes it finds.</p>
               <p>If you want to specifically disable the .sf2 MIDI-number pitch name detection, check <strong>Disable .sf2-style MIDI-number pitch name detection</strong>.</p>
               <p>You can also import an existing custom instrument by tapping <strong>Import Custom Instrument (.zip)</strong>.</p>
               <p>If you re-import a previously exported custom instrument .zip, your saved volume scale and fade settings will also be restored automatically.</p>
               <p>The custom instrument note output filename for each audio sample is displayed to the right of each note.</p>
               <p><strong>2)</strong> Select the default volume scale and fade time for the instrument.</p>
-              <p>When you choose a remote soundfont, the tool automatically applies its recommended default volume scale. You can still adjust it manually.</p>
+              <p>When you fetch a remote soundfont, the tool automatically applies its recommended default volume scale. You can still adjust it manually.</p>
               <p>These values will be applied to the instrument when used in the <strong>ABC Transcription Tools</strong>.</p>
               <p><strong>3)</strong> Choose the starting scale note for the instrument notes.</p>
               <p><strong>4)</strong> Choose the starting octave number for the instrument notes.</p>
@@ -3363,13 +3359,13 @@
                 <strong>Extended (C2–C7)</strong><br>
                 <strong>Full (C0–C7)</strong>
               </p>
-              <p>When you fetch remote soundfont samples, the tool clears any currently loaded samples, sets the default volume scale from the selected soundfont, then attempts to load every note in the selected range using the standard soundfont note filenames and replaces the sample list with any notes it finds.</p>
+              <p>When you fetch remote soundfont samples, the tool clears any currently loaded samples, then attempts to load every note in the selected range using the standard soundfont note filenames and replaces the sample list with any notes it finds.</p>
               <p>If you want to specifically disable the .sf2 MIDI-number pitch name detection, check <strong>Disable .sf2-style MIDI-number pitch name detection</strong>.</p>
               <p>You can also import an existing custom instrument by clicking <strong>Import Custom Instrument (.zip)</strong>.</p>
               <p>If you re-import a previously exported custom instrument .zip, your saved volume scale and fade settings will also be restored automatically.</p>
               <p>The custom instrument note output filename for each audio sample is displayed to the right of each note.</p>
               <p><strong>2)</strong> Select the default volume scale and fade time for the instrument.</p>
-              <p>When you choose a remote soundfont, the tool automatically applies its recommended default volume scale. You can still adjust it manually.</p>
+              <p>When you fetch a remote soundfont, the tool automatically applies its recommended default volume scale. You can still adjust it manually.</p>
               <p>These values will be applied to the instrument when used in the <strong>ABC Transcription Tools</strong>.</p>
               <p><strong>3)</strong> Choose the starting scale note for the instrument notes.</p>
               <p><strong>4)</strong> Choose the starting octave number for the instrument notes.</p>
