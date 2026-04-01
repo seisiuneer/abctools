@@ -359,15 +359,30 @@
     .control input[type="range"]{
       margin-top: 12px;
     }
-    
+
     .field select,
     select {
       width: 100%;
-      padding: 8px 9px;
-      border-radius: 12px;
-      border: 1px solid var(--border);
-      background: var(--panel-2);
-      color: var(--text);
+      min-width: 0;
+      max-width: 100%;
+
+      appearance: none;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+
+      padding: 10px 2.2em 10px 12px; /* ← key change: extra right padding */
+
+      background-image: url("data:image/svg+xml;utf8,\
+    <svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'>\
+    <path d='M1 1l4 4 4-4' stroke='%23cbd5e1' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/>\
+    </svg>");
+      background-repeat: no-repeat;
+
+      /* Better vertical alignment */
+      background-position: right 0.9em center;
+
+      /* Slightly larger for retina clarity */
+      background-size: 10px 6px;
     }
 
     input[type="range"] {
