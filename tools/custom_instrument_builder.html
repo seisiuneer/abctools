@@ -412,6 +412,158 @@
       padding-right: 2em;
     }
 
+
+    .walkthrough-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.18);
+      z-index: 2500;
+      pointer-events: auto;
+    }
+
+    .walkthrough-card {
+      position: fixed;
+      z-index: 2504;
+      width: min(440px, calc(100vw - 24px));
+      max-width: calc(100vw - 24px);
+      background: #f5ffff;
+      border: 1px solid #bfcfcf;
+      border-radius: 10px;
+      box-shadow: 0 10px 26px rgba(0,0,0,.25);
+      padding: 16px;
+      box-sizing: border-box;
+    }
+
+    .walkthrough-card h2 {
+      margin-top: 0;
+      margin-bottom: 10px;
+      font-size: 1.45em;
+      text-align: left;
+    }
+
+    .walkthrough-card p {
+      margin: 0 0 10px 0;
+    }
+
+    .walkthrough-card-footer {
+      margin-top: 14px;
+      padding-top: 12px;
+      border-top: 1px solid #d8e3e3;
+    }
+
+    .walkthrough-card .walkthrough-step-count {
+      text-align: center;
+      font-size: 0.95em;
+      color: #333;
+      margin-bottom: 12px;
+    }
+
+    .walkthrough-card .walkthrough-buttons {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .walkthrough-card .walkthrough-buttons button {
+      margin-top: 0 !important;
+      min-width: 96px;
+    }
+
+    .walkthrough-arrow-layer {
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 2503;
+      pointer-events: none;
+      overflow: visible;
+    }
+
+    .walkthrough-arrow-path {
+      stroke: #005aad;
+      stroke-width: 3;
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      filter: drop-shadow(0 1px 2px rgba(0,0,0,.2));
+    }
+
+    .walkthrough-target-highlight {
+      position: relative;
+      z-index: 2502 !important;
+      box-shadow: 0 0 0 4px rgba(0, 90, 173, 0.30), 0 0 0 9999px rgba(255,255,255,0.06);
+      border-radius: 8px;
+      transition: box-shadow 160ms ease;
+    }
+
+    .walkthrough-choice-row {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 12px;
+      margin: 14px 0 18px 0;
+    }
+
+    .walkthrough-choice-row .walkthrough-choice-btn,
+    .modal_flat_main .walkthrough-choice-row .walkthrough-choice-btn,
+    .custom-html-modal .walkthrough-choice-row .walkthrough-choice-btn {
+      display: inline-flex !important;
+      align-items: center;
+      justify-content: center;
+      flex: 0 1 auto;
+      width: auto !important;
+      min-width: 180px !important;
+      max-width: 260px !important;
+      min-height: 58px !important;
+      margin-top: 0 !important;
+      padding: 12px 18px !important;
+      line-height: 1.2 !important;
+      text-align: center !important;
+      white-space: normal !important;
+      word-break: keep-all !important;
+      overflow-wrap: normal !important;
+      hyphens: none !important;
+      background: #d9d9d9 !important;
+      color: #000 !important;
+      border: 1px solid #bdbdbd !important;
+      border-radius: 10px !important;
+      font-weight: 700 !important;
+      font-size: 1.0em !important;
+      box-sizing: border-box !important;
+      cursor: pointer;
+    }
+
+    .walkthrough-choice-row .walkthrough-choice-btn:hover,
+    .modal_flat_main .walkthrough-choice-row .walkthrough-choice-btn:hover,
+    .custom-html-modal .walkthrough-choice-row .walkthrough-choice-btn:hover {
+      background: #cfcfcf !important;
+    }
+
+    .custom-html-modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.30);
+      z-index: 2600;
+    }
+
+    .custom-html-modal {
+      position: fixed;
+      z-index: 2601;
+      left: 50%;
+      top: 12vh;
+      transform: translateX(-50%);
+      width: min(var(--dialog-width, 860px), calc(100vw - 32px));
+      max-height: calc(100vh - 48px);
+      overflow: auto;
+      background: #fff;
+      border: 1px solid #333;
+      box-shadow: 0px 0px 15.5px -2px rgba(0, 0, 0, 0.75);
+      padding: 20px;
+      box-sizing: border-box;
+    }
+
+
   </style>
     
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-VM0N9HL3MK"></script>
@@ -847,6 +999,387 @@
         function setExportStatus(msg){ if (exportStatusEl) exportStatusEl.textContent = msg; }
         function clearExportStatus(){ if (exportStatusEl) exportStatusEl.textContent = ''; }
         function setRemoteFetchStatus(msg){ if (remoteFetchStatus) remoteFetchStatus.textContent = msg || ''; }
+
+        const WALKTHROUGH_SEEN_KEY = 'customInstrumentBuilderWalkthroughSeen_v1';
+
+        let gWalkthroughOverlay = null;
+        let gWalkthroughCard = null;
+        let gWalkthroughArrowLayer = null;
+        let gWalkthroughHighlightedEl = null;
+        let gCustomHtmlModalOverlay = null;
+        let gCustomHtmlModal = null;
+        let gCustomHtmlModalResolve = null;
+
+        function clearCustomHtmlModal() {
+          if (gCustomHtmlModal) {
+            gCustomHtmlModal.remove();
+            gCustomHtmlModal = null;
+          }
+          if (gCustomHtmlModalOverlay) {
+            gCustomHtmlModalOverlay.remove();
+            gCustomHtmlModalOverlay = null;
+          }
+          gCustomHtmlModalResolve = null;
+        }
+
+        window.closeModalWithAction = function(action, value = '') {
+          window.__cibModalAction = action;
+          window.__cibModalValue = value;
+          if (gCustomHtmlModalResolve) {
+            const resolve = gCustomHtmlModalResolve;
+            clearCustomHtmlModal();
+            resolve(action || 'close');
+            return;
+          }
+          DayPilot.Modal.close();
+        };
+
+        function showCustomHtmlModal(html, options = {}) {
+          return new Promise((resolve) => {
+            clearCustomHtmlModal();
+            window.__cibModalAction = '';
+            window.__cibModalValue = '';
+
+            const overlay = document.createElement('div');
+            overlay.className = 'custom-html-modal-overlay';
+
+            const modal = document.createElement('div');
+            modal.className = 'custom-html-modal';
+            modal.style.setProperty('--dialog-width', `${options.width || 860}px`);
+            modal.innerHTML = html;
+
+            overlay.addEventListener('click', () => {
+              clearCustomHtmlModal();
+              resolve('close');
+            }, { once: true });
+            modal.addEventListener('click', (e) => e.stopPropagation());
+
+            document.body.appendChild(overlay);
+            document.body.appendChild(modal);
+            gCustomHtmlModalOverlay = overlay;
+            gCustomHtmlModal = modal;
+            gCustomHtmlModalResolve = resolve;
+          });
+        }
+
+        function clearWalkthroughUI() {
+          if (gWalkthroughHighlightedEl) {
+            gWalkthroughHighlightedEl.classList.remove('walkthrough-target-highlight');
+            gWalkthroughHighlightedEl = null;
+          }
+          if (gWalkthroughArrowLayer) {
+            gWalkthroughArrowLayer.remove();
+            gWalkthroughArrowLayer = null;
+          }
+          if (gWalkthroughCard) {
+            gWalkthroughCard.remove();
+            gWalkthroughCard = null;
+          }
+          if (gWalkthroughOverlay) {
+            gWalkthroughOverlay.remove();
+            gWalkthroughOverlay = null;
+          }
+        }
+
+        function waitMs(ms) {
+          return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        async function scrollWalkthroughTarget(selector) {
+          if (!selector) return null;
+          const el = document.querySelector(selector);
+          if (!el) return null;
+          try {
+            el.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'nearest' });
+            await waitMs(240);
+          } catch (err) {
+            el.scrollIntoView();
+          }
+          return el;
+        }
+
+        function getWalkthroughSteps(mode) {
+          if (mode === 'remote') {
+            return [
+              {
+                title: 'Walkthrough: Soundfont Instrument Import',
+                body: `<p>This walkthrough shows how to create a custom instrument by importing notes from one of the ABC Transcription Tools soundfonts.</p>
+                       <p>You can relaunch this walkthrough at any time from <strong>Show Instructions</strong>.</p>`
+              },
+              {
+                title: 'Step 1: Choose a Soundfont',
+                selector: '#remoteSoundfont',
+                body: `<p>In the remote import section, choose the <strong>Soundfont</strong> you want to import from.</p>
+                       <p>This selects the source collection of instrument samples.</p>`
+              },
+              {
+                title: 'Step 2: Choose an Instrument',
+                selector: '#remoteInstrument',
+                body: `<p>Choose the <strong>Instrument</strong> you want to import.</p>
+                       <p>This selects which MIDI instrument folder will be used within the chosen soundfont.</p>`
+              },
+              {
+                title: 'Step 3: Choose the Imported Note Range',
+                selector: '#remoteRange',
+                body: `<p>Choose the <strong>Imported note range</strong>.</p>
+                       <p><strong>Standard (C3–C7)</strong> is the default and is a good starting point for most instruments.</p>`
+              },
+              {
+                title: 'Step 4: Import the Notes',
+                selector: '#fetchRemoteBtn',
+                body: `<p>Click <strong>Import Soundfont Instrument Notes</strong>.</p>
+                       <p>The tool clears any currently loaded samples, imports the notes it finds in the selected range, and applies the recommended default volume scale for that soundfont.</p>`
+              },
+              {
+                title: 'Step 5: Review and Adjust',
+                selector: '#fileList',
+                body: `<p>Review the imported note list, then adjust <strong>Default instrument volume scale</strong>, <strong>release fade time</strong>, sorting, range expansion, gap handling, silence trimming, or mono export options as needed.</p>`
+              },
+              {
+                title: 'Step 6: Export the Instrument',
+                selector: '#exportZip',
+                body: `<p>When you are happy with the result, click <strong>Export Custom Instrument</strong>.</p>
+                       <p>This saves the final custom instrument as a .zip file for use in the ABC Transcription Tools or Celtic Sounds.</p>`
+              }
+            ];
+          }
+
+          return [
+            {
+              title: 'Walkthrough: Local Sample Import',
+              body: `<p>This walkthrough shows how to create a custom instrument from your own local audio sample files.</p>
+                     <p>You can relaunch this walkthrough at any time from <strong>Show Instructions</strong>.</p>`
+            },
+            {
+              title: 'Step 1: Import Your Audio Samples',
+              selector: '#fileInput',
+              body: `<p>Click <strong>Choose Files</strong> and select your .wav or .mp3 sample files.</p>
+                     <p>The tool will try to determine the note name and octave for each sample automatically.</p>`
+            },
+            {
+              title: 'Step 2: Set Instrument Defaults',
+              selector: '#volumeScale',
+              body: `<p>Set the <strong>Default instrument volume scale</strong> and <strong>Default instrument release fade time</strong>.</p>
+                     <p>These become the starting playback settings for the exported instrument.</p>`
+            },
+            {
+              title: 'Step 3: Set Note Mapping Options',
+              selector: '#startNote',
+              body: `<p>Choose the <strong>Starting scale note</strong> and <strong>Starting octave number</strong>.</p>
+                     <p>You can also use auto sort, range expansion, and missing note handling to shape the final exported note layout.</p>`
+            },
+            {
+              title: 'Step 4: Review the Note List',
+              selector: '#fileList',
+              body: `<p>Review the loaded samples in the note list.</p>
+                     <p>You can audition notes, reorder them, add placeholders, trim silence, or force mono .wav export before exporting.</p>`
+            },
+            {
+              title: 'Step 5: Export the Instrument',
+              selector: '#exportZip',
+              body: `<p>When everything looks right, click <strong>Export Custom Instrument</strong>.</p>
+                     <p>This saves the final custom instrument as a .zip file.</p>`
+            }
+          ];
+        }
+
+        function chooseWalkthroughCardPlacement(targetEl) {
+          const gap = 18;
+          const vw = window.innerWidth;
+          const vh = window.innerHeight;
+          const cardWidth = Math.min(440, vw - 24);
+          const cardHeightEstimate = 250;
+          if (!targetEl) {
+            return {
+              left: Math.max(12, Math.min(vw - cardWidth - 12, vw * .5 - cardWidth / 2)),
+              top: 25,
+              side: 'none',
+              width: cardWidth
+            };
+          }
+          const rect = targetEl.getBoundingClientRect();
+          const leftSpace = rect.left;
+          const rightSpace = vw - rect.right;
+          const topSpace = rect.top;
+          const bottomSpace = vh - rect.bottom;
+
+          let left = Math.max(12, vw - cardWidth - 18);
+          let top = 18;
+          let side = 'right';
+
+          if (rightSpace >= cardWidth + gap) {
+            left = Math.min(vw - cardWidth - 12, rect.right + gap);
+            top = Math.min(Math.max(12, rect.top), vh - cardHeightEstimate - 12);
+            side = 'right';
+          } else if (leftSpace >= cardWidth + gap) {
+            left = Math.max(12, rect.left - cardWidth - gap);
+            top = Math.min(Math.max(12, rect.top), vh - cardHeightEstimate - 12);
+            side = 'left';
+          } else if (bottomSpace >= cardHeightEstimate + gap) {
+            left = Math.min(Math.max(12, rect.left), vw - cardWidth - 12);
+            top = Math.min(vh - cardHeightEstimate - 12, rect.bottom + gap);
+            side = 'bottom';
+          } else {
+            left = Math.min(Math.max(12, rect.left), vw - cardWidth - 12);
+            top = Math.max(12, rect.top - cardHeightEstimate - gap);
+            side = 'top';
+          }
+
+          return { left, top, side, width: cardWidth };
+        }
+
+        function drawWalkthroughArrow(cardEl, targetEl) {
+          if (!cardEl || !targetEl) return;
+          const cardRect = cardEl.getBoundingClientRect();
+          const targetRect = targetEl.getBoundingClientRect();
+          const startX = cardRect.left + cardRect.width / 2;
+          const startY = cardRect.top + cardRect.height / 2;
+          const endX = targetRect.left + targetRect.width / 2;
+          const endY = targetRect.top + targetRect.height / 2;
+          const midX = (startX + endX) / 2;
+          const path = `M ${startX} ${startY} Q ${midX} ${startY}, ${endX} ${endY}`;
+
+          const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+          svg.setAttribute('class', 'walkthrough-arrow-layer');
+          svg.setAttribute('viewBox', `0 0 ${window.innerWidth} ${window.innerHeight}`);
+          svg.setAttribute('preserveAspectRatio', 'none');
+
+          const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
+          const marker = document.createElementNS('http://www.w3.org/2000/svg', 'marker');
+          marker.setAttribute('id', 'walkthroughArrowHead');
+          marker.setAttribute('markerWidth', '10');
+          marker.setAttribute('markerHeight', '10');
+          marker.setAttribute('refX', '8');
+          marker.setAttribute('refY', '3');
+          marker.setAttribute('orient', 'auto');
+          const arrowHead = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+          arrowHead.setAttribute('d', 'M0,0 L0,6 L9,3 z');
+          arrowHead.setAttribute('fill', '#005aad');
+          marker.appendChild(arrowHead);
+          defs.appendChild(marker);
+          svg.appendChild(defs);
+
+          const arrow = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+          arrow.setAttribute('class', 'walkthrough-arrow-path');
+          arrow.setAttribute('d', path);
+          arrow.setAttribute('marker-end', 'url(#walkthroughArrowHead)');
+          svg.appendChild(arrow);
+
+          document.body.appendChild(svg);
+          gWalkthroughArrowLayer = svg;
+        }
+
+        function showWalkthroughStepCard(step, index, total) {
+          return new Promise(async (resolve) => {
+            clearWalkthroughUI();
+            const targetEl = await scrollWalkthroughTarget(step.selector);
+            if (targetEl) {
+              targetEl.classList.add('walkthrough-target-highlight');
+              gWalkthroughHighlightedEl = targetEl;
+            }
+
+            const overlay = document.createElement('div');
+            overlay.className = 'walkthrough-overlay';
+            document.body.appendChild(overlay);
+            gWalkthroughOverlay = overlay;
+
+            const card = document.createElement('div');
+            card.className = 'walkthrough-card';
+            const isFirst = index === 0;
+            const isLast = index === total - 1;
+            card.innerHTML = `
+              <h2>${step.title}</h2>
+              ${step.body}
+              <div class="walkthrough-card-footer">
+                <div class="walkthrough-step-count">Step ${index + 1} of ${total}</div>
+                <div class="walkthrough-buttons">
+                  ${isFirst ? '' : '<button type="button" data-action="back">Back</button>'}
+                  <button type="button" data-action="exit">Close</button>
+                  <button type="button" data-action="${isLast ? 'done' : 'next'}">${isLast ? 'Done' : 'Next'}</button>
+                </div>
+              </div>
+            `;
+            document.body.appendChild(card);
+            gWalkthroughCard = card;
+
+            const placement = chooseWalkthroughCardPlacement(targetEl);
+            card.style.left = `${placement.left}px`;
+            card.style.top = `${placement.top}px`;
+            card.style.width = `${placement.width}px`;
+
+            drawWalkthroughArrow(card, targetEl);
+
+            card.querySelectorAll('button[data-action]').forEach(btn => {
+              btn.addEventListener('click', () => {
+                const action = btn.getAttribute('data-action') || 'exit';
+                clearWalkthroughUI();
+                resolve(action);
+              });
+            });
+
+            overlay.addEventListener('click', () => {
+              clearWalkthroughUI();
+              resolve('exit');
+            }, { once: true });
+          });
+        }
+
+        async function runGuidedWalkthrough(mode) {
+          const steps = getWalkthroughSteps(mode);
+          let index = 0;
+
+          while (index >= 0 && index < steps.length) {
+            const action = await showWalkthroughStepCard(steps[index], index, steps.length);
+            if (action === 'back') index--;
+            else if (action === 'next') index++;
+            else break;
+          }
+          clearWalkthroughUI();
+        }
+
+        async function showWalkthroughChooser(autoLaunch = false) {
+          const html = `
+            <div class="instr-modal">
+              <h2>Guided Walkthrough</h2>
+              <p>This tool can create a custom instrument for the <b>ABC Transcription Tools</b> or <b>Celtic Sounds</b> in two ways:</p>
+              <p style="text-align:center;"><b>Importing local per-note audio samples</b><br/>
+              or<br/>
+              <b>Import notes from an ABC Transcription Tools<br/>Soundfont and MIDI instrument.</b>
+              <p style="text-align:center;margin-top:18px;">How would you like to begin?</p>
+              <div class="walkthrough-choice-row">
+                <button type="button" class="walkthrough-choice-btn" onclick="closeModalWithAction('local')">Importing Local Audio Samples</button>
+                <button type="button" class="walkthrough-choice-btn" onclick="closeModalWithAction('remote')">Import Soundfont and Instrument</button>
+                <button type="button" class="walkthrough-choice-btn" onclick="closeModalWithAction('skip')">Skip</button>
+              </div>
+              ${autoLaunch ? `<p style="text-align:center;margin-top:16px;">This walkthrough appears automatically the first time you open the tool.</p>` : ''}
+            </div>
+          `;
+
+          const action = await showCustomHtmlModal(html, { width: 650 });
+
+          try {
+            localStorage.setItem(WALKTHROUGH_SEEN_KEY, '1');
+          } catch (err) {}
+
+          if (action === 'local' || action === 'remote') {
+            await runGuidedWalkthrough(action);
+          }
+        }
+
+        function scheduleFirstUseWalkthrough() {
+
+          let seen = false;
+          try {
+            seen = localStorage.getItem(WALKTHROUGH_SEEN_KEY) === '1';
+          } catch (err) {}
+
+          if (!seen) {
+            setTimeout(() => {
+              showWalkthroughChooser(true);
+            }, 350);
+          }
+        }
+
 
         function buildSoundfontPairs() {
           const pairs = [];
@@ -3286,6 +3819,10 @@
             html = `
             <div class="instr-modal">
              <h2>Instructions</h2>
+              <div class="walkthrough-choice-row">
+                <button type="button" class="walkthrough-choice-btn" onclick="closeModalWithAction('walkthroughLocal')">Walkthrough: Local Audio Samples</button>
+                <button type="button" class="walkthrough-choice-btn" onclick="closeModalWithAction('walkthroughRemote')">Walkthrough: Soundfont and Instrument</button>
+              </div>
               <p>This tool is used to create an ABC Transcription Tools custom instrument from a directory of per-note instrument audio sample files.</p>
               <p>The files should be in .wav or .mp3 format. The samples must all be in the same directory.</p>
               <p><strong>1)</strong> Tap <strong>Choose Files</strong> (<strong>Browse...</strong> on Firefox) to import your audio sample files.</p>
@@ -3363,6 +3900,10 @@
             html = `
             <div class="instr-modal">
              <h2>Instructions</h2>
+              <div class="walkthrough-choice-row">
+                <button type="button" class="walkthrough-choice-btn" onclick="closeModalWithAction('walkthroughLocal')">Walkthrough: Local Audio Samples</button>
+                <button type="button" class="walkthrough-choice-btn" onclick="closeModalWithAction('walkthroughRemote')">Walkthrough: Soundfont and Instrument</button>
+              </div>
               <p>This tool is used to create an ABC Transcription Tools custom instrument from a directory of per-note instrument audio sample files.</p>
               <p>The files should be in .wav or .mp3 format. The samples must all be in the same directory.</p>
               <p><strong>1)</strong> Click <strong>Choose Files</strong> (<strong>Browse...</strong> on Firefox) to import your audio sample files.</p>
@@ -3435,7 +3976,18 @@
               <p style="text-align:center;margin-top:12px;"><a href="https://michaeleskin.com/abctools/tipjars.html" target="_blank">Tip Jars</a></p>
             </div>
           `;          }
+          window.__cibModalAction = '';
           await DayPilot.Modal.alert(html, { theme: "modal_flat", top: 25, width: 780 });
+
+          if (window.__cibModalAction === 'walkthroughChooser') {
+            await showWalkthroughChooser(false);
+          }
+          else if (window.__cibModalAction === 'walkthroughLocal') {
+            await runGuidedWalkthrough('local');
+          }
+          else if (window.__cibModalAction === 'walkthroughRemote') {
+            await runGuidedWalkthrough('remote');
+          }
         });
 
         // Range defaults
@@ -3443,6 +3995,7 @@
         highOct.value = "6"; highNote.value = "0";   // C6
 
         updateDragInteractivity();
+        scheduleFirstUseWalkthrough();
       }
 
       function guessMimeByExt(name){
