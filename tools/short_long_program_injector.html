@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ABC MIDI Short/Long Note Program Injector</title>
+  <style>
+    :root {
+      --bg: #f6f8fb;
+      --panel: #ffffff;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --border: #d1d5db;
+      --accent: #2563eb;
+      --accent-hover: #1d4ed8;
+      --shadow: 0 10px 30px rgba(0,0,0,0.08);
+      --radius: 14px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.45;
+    }
+
+    .wrap {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .hero {
+      padding: 22px 24px 10px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: clamp(1.5rem, 2.5vw, 2rem);
+    }
+
+    .sub {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .controls {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+      padding: 20px 24px 0;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .field label {
+      font-size: 0.92rem;
+      font-weight: 600;
+    }
+
+    .field input {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 12px;
+      font: inherit;
+      background: #fff;
+      color: var(--text);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      padding: 20px 24px 24px;
+    }
+
+    .panel h2 {
+      margin: 0 0 10px;
+      font-size: 1rem;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 460px;
+      resize: vertical;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px;
+      font: 14px/1.45 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      background: #fff;
+      color: var(--text);
+    }
+
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      padding: 0 24px 24px;
+      align-items: center;
+    }
+
+    button {
+      appearance: none;
+      border: 1px solid var(--border);
+      background: #fff;
+      color: var(--text);
+      padding: 10px 14px;
+      border-radius: 10px;
+      font: inherit;
+      cursor: pointer;
+      transition: background 0.12s ease, border-color 0.12s ease, transform 0.12s ease;
+    }
+
+    button:hover {
+      border-color: #9ca3af;
+      background: #f9fafb;
+    }
+
+    button.primary {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: white;
+    }
+
+    button.primary:hover {
+      background: var(--accent-hover);
+      border-color: var(--accent-hover);
+    }
+
+    button:active {
+      transform: translateY(1px);
+    }
+
+    .status {
+      margin-left: auto;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .notes {
+      padding: 0 24px 24px;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    code {
+      background: #eef2ff;
+      padding: 1px 5px;
+      border-radius: 6px;
+    }
+
+    @media (max-width: 980px) {
+      .controls {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      textarea {
+        min-height: 300px;
+      }
+
+      .status {
+        width: 100%;
+        margin-left: 0;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .controls {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <div class="hero">
+        <h1>ABC MIDI Short/Long Note Program Injector</h1>
+        <p class="sub">
+          Injects a configurable long-note MIDI program and a configurable short-note MIDI program
+          based on note length and short-note run length.
+        </p>
+      </div>
+
+      <div class="controls">
+        <div class="field">
+          <label for="longProgram">Long note MIDI program</label>
+          <input id="longProgram" type="text" value="custom1" />
+        </div>
+        <div class="field">
+          <label for="shortProgram">Short note MIDI program</label>
+          <input id="shortProgram" type="text" value="141" />
+        </div>
+        <div class="field">
+          <label for="shortLength">Short note length</label>
+          <input id="shortLength" type="text" value="1/8" />
+        </div>
+        <div class="field">
+          <label for="shortRunCount">Short notes in a row to switch</label>
+          <input id="shortRunCount" type="number" min="1" step="1" value="2" />
+        </div>
+      </div>
+
+      <div class="grid">
+        <div class="panel">
+          <h2>Input ABC</h2>
+          <textarea id="input" spellcheck="false">X:1
+T:Si Bheag Si Mhor
+R:waltz
+M:3/4
+L:1/8
+Q:1/4=110
+K:D
+de|:"D"f2 fe d2|d2 de d2|"G"B4 "A"A2|"D"F4 A2|
+"G"BA Bc d2|"A"e4 de|"D"f2 f2 e2|"Bm"d4 f2|
+"G"B4 e2|"D"A4 d2|F4 "A"E2|"D"D4 f2|
+"G"B4 e2|"A7"A4 dc|"D"d3 edc|d4 de:|
+|:"D"f2 fe d2|"A"ed ef a2|"G"b4 a2|"D"f4 ed|
+"A"e4 a2|"D"f4 e2|"G"d4 B2|B4 A2|
+"D"F4 "A"E2|"D"D4 f2|"G"B4 e2|"A"A4 a2|
+"G"ba gf ed|"A"e4 dc|"D"d3 edc|1 "D"d4 de:|2 "D"d6|]
+          </textarea>
+        </div>
+        <div class="panel">
+          <h2>Output ABC</h2>
+          <textarea id="output" spellcheck="false" readonly></textarea>
+        </div>
+      </div>
+
+      <div class="toolbar">
+        <button class="primary" id="convertBtn">Convert</button>
+        <button id="copyBtn">Copy Output</button>
+        <button id="openAbcToolsBtn">Open in ABC Transcription Tools</button>
+        <button id="clearBtn">Clear</button>
+        <div class="status" id="status">Ready.</div>
+      </div>
+
+      <div class="notes">
+        <div>
+          <strong>How it works:</strong> A note is considered <em>short</em> when its actual duration equals the configured short-note length.
+          Any note longer than that is treated as <em>long</em>. Short runs only switch to the short-note program once they reach the configured
+          number of consecutive short notes. Until then, they stay under the current long-note phrase.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="lz-string.min.js"></script>
+  <script src="pako.min.js"></script>
+
+  <script>
+    (function () {
+      const ABC_TOOLS_BASE_URL = "https://michaeleskin.com/abctools/abctools.html";
+      const SHARE_LINK_MAX_LEN = 8100;
+
+      const inputEl = document.getElementById('input');
+      const outputEl = document.getElementById('output');
+      const statusEl = document.getElementById('status');
+
+      const longProgramEl = document.getElementById('longProgram');
+      const shortProgramEl = document.getElementById('shortProgram');
+      const shortLengthEl = document.getElementById('shortLength');
+      const shortRunCountEl = document.getElementById('shortRunCount');
+
+      inputEl.value = `X:1
+T:Si Bheag Si Mhor
+R:waltz
+M:3/4
+L:1/8
+Q:1/4=110
+K:D
+de|:"D"f2 fe d2|d2 de d2|"G"B4 "A"A2|"D"F4 A2|
+"G"BA Bc d2|"A"e4 de|"D"f2 f2 e2|"Bm"d4 f2|
+"G"B4 e2|"D"A4 d2|F4 "A"E2|"D"D4 f2|
+"G"B4 e2|"A7"A4 dc|"D"d3 edc|d4 de:|
+|:"D"f2 fe d2|"A"ed ef a2|"G"b4 a2|"D"f4 ed|
+"A"e4 a2|"D"f4 e2|"G"d4 B2|B4 A2|
+"D"F4 "A"E2|"D"D4 f2|"G"B4 e2|"A"A4 a2|
+"G"ba gf ed|"A"e4 dc|"D"d3 edc|1 "D"d4 de:|2 "D"d6|]`;
+
+      function setStatus(message) {
+        statusEl.textContent = message;
+      }
+
+      function gcd(a, b) {
+        a = Math.abs(a);
+        b = Math.abs(b);
+        while (b) {
+          const t = b;
+          b = a % b;
+          a = t;
+        }
+        return a || 1;
+      }
+
+      function makeFraction(num, den) {
+        if (den === 0) return { num: 0, den: 1 };
+        const sign = den < 0 ? -1 : 1;
+        num *= sign;
+        den *= sign;
+        const g = gcd(num, den);
+        return { num: num / g, den: den / g };
+      }
+
+      function multiplyFractions(a, b) {
+        return makeFraction(a.num * b.num, a.den * b.den);
+      }
+
+      function parseFraction(text, fallback) {
+        const value = (text || '').trim();
+        if (!value) return fallback;
+
+        if (/^\d+\/\d+$/.test(value)) {
+          const [n, d] = value.split('/').map(Number);
+          if (d !== 0) return makeFraction(n, d);
+        }
+
+        if (/^\d+$/.test(value)) {
+          return makeFraction(Number(value), 1);
+        }
+
+        if (/^\/\d+$/.test(value)) {
+          return makeFraction(1, Number(value.slice(1)));
+        }
+
+        if (value === '/') {
+          return makeFraction(1, 2);
+        }
+
+        return fallback;
+      }
+
+      function fractionEquals(a, b) {
+        return a.num === b.num && a.den === b.den;
+      }
+
+      function isLongerThan(a, b) {
+        return a.num * b.den > b.num * a.den;
+      }
+
+      function getLengthFraction(lengthToken) {
+        if (!lengthToken) return makeFraction(1, 1);
+
+        if (/^\d+$/.test(lengthToken)) {
+          return makeFraction(Number(lengthToken), 1);
+        }
+
+        if (lengthToken === '/') {
+          return makeFraction(1, 2);
+        }
+
+        if (/^\/+$/.test(lengthToken)) {
+          return makeFraction(1, Math.pow(2, lengthToken.length));
+        }
+
+        if (/^\d+\/\d+$/.test(lengthToken)) {
+          const [n, d] = lengthToken.split('/').map(Number);
+          return makeFraction(n, d);
+        }
+
+        if (/^\d+\/$/.test(lengthToken)) {
+          return makeFraction(Number(lengthToken.slice(0, -1)), 2);
+        }
+
+        if (/^\/\d+$/.test(lengthToken)) {
+          return makeFraction(1, Number(lengthToken.slice(1)));
+        }
+
+        return makeFraction(1, 1);
+      }
+
+      function buildProgramTag(programValue) {
+        return `[I:MIDI=program ${String(programValue).trim()}]`;
+      }
+
+      function detectHeadersAndConvert(abcText, config) {
+        const lines = abcText.replace(/\r\n?/g, '\n').split('\n');
+        let currentUnitLength = makeFraction(1, 8);
+        const outLines = [];
+        let totalInjected = 0;
+
+        for (const line of lines) {
+          if (/^\s*L\s*:/.test(line)) {
+            const raw = line.replace(/^\s*L\s*:\s*/, '');
+            currentUnitLength = parseFraction(raw, currentUnitLength);
+            outLines.push(line);
+            continue;
+          }
+
+          if (/^\s*[A-Za-z+]\s*:/.test(line) || /^\s*%/.test(line) || /^\s*$/.test(line)) {
+            outLines.push(line);
+            continue;
+          }
+
+          const result = processMusicLine(line, currentUnitLength, config);
+          totalInjected += result.injectedCount;
+          outLines.push(result.text);
+        }
+
+        return {
+          text: outLines.join('\n'),
+          injectedCount: totalInjected
+        };
+      }
+
+      function processMusicLine(line, unitLength, config) {
+        let i = 0;
+        let out = '';
+        let injectedCount = 0;
+
+        let activeProgram = null;
+        let pendingShortTokens = [];
+        let pendingShortCount = 0;
+        let pendingChordSymbols = '';
+
+        function flushPendingShorts() {
+          if (pendingShortTokens.length) {
+            out += pendingShortTokens.join('');
+            pendingShortTokens = [];
+            pendingShortCount = 0;
+          }
+        }
+
+        function flushPendingChordSymbols() {
+          if (pendingChordSymbols) {
+            out += pendingChordSymbols;
+            pendingChordSymbols = '';
+          }
+        }
+
+        function injectProgram(type) {
+          const desired = type === 'long' ? config.longProgramTag : config.shortProgramTag;
+          if (activeProgram !== type) {
+            out += desired;
+            activeProgram = type;
+            injectedCount++;
+          }
+        }
+
+        function handleMusicToken(token, noteType) {
+          const fullToken = pendingChordSymbols + token;
+          pendingChordSymbols = '';
+
+          if (noteType === 'long') {
+            flushPendingShorts();
+            injectProgram('long');
+            out += fullToken;
+            return;
+          }
+
+          if (noteType === 'short') {
+            pendingShortTokens.push(fullToken);
+            pendingShortCount++;
+
+            if (pendingShortCount >= config.shortRunCount) {
+              if (activeProgram !== 'short') {
+                out += config.shortProgramTag;
+                activeProgram = 'short';
+                injectedCount++;
+              }
+              out += pendingShortTokens.join('');
+              pendingShortTokens = [];
+              pendingShortCount = 0;
+            }
+            return;
+          }
+
+          flushPendingShorts();
+          activeProgram = null;
+          out += fullToken;
+        }
+
+        while (i < line.length) {
+          const ch = line[i];
+
+          if (ch === '%') {
+            flushPendingShorts();
+            flushPendingChordSymbols();
+            out += line.slice(i);
+            break;
+          }
+
+          if (ch === '"') {
+            const chordSymbol = parseQuotedChordSymbol(line, i);
+            if (chordSymbol) {
+              pendingChordSymbols += chordSymbol.token;
+              i = chordSymbol.nextIndex;
+              continue;
+            }
+
+            flushPendingShorts();
+            flushPendingChordSymbols();
+            const end = findClosingQuote(line, i + 1);
+            out += line.slice(i, end + 1);
+            i = end + 1;
+            continue;
+          }
+
+          if (ch === '[') {
+            if (
+              line.startsWith('[I:', i) ||
+              line.startsWith('[V:', i) ||
+              line.startsWith('[K:', i) ||
+              line.startsWith('[M:', i) ||
+              line.startsWith('[L:', i) ||
+              line.startsWith('[Q:', i) ||
+              line.startsWith('[P:', i)
+            ) {
+              flushPendingShorts();
+              flushPendingChordSymbols();
+              const end = line.indexOf(']', i);
+              if (end === -1) {
+                out += line.slice(i);
+                break;
+              }
+              out += line.slice(i, end + 1);
+              activeProgram = null;
+              i = end + 1;
+              continue;
+            }
+
+            const chord = parseChord(line, i);
+            if (chord) {
+              const noteType = classifyDuration(chord.duration, unitLength, config.shortLengthActual);
+              handleMusicToken(chord.token, noteType);
+              i = chord.nextIndex;
+              continue;
+            }
+          }
+
+          const note = parseSingleNote(line, i);
+          if (note) {
+            const noteType = classifyDuration(note.duration, unitLength, config.shortLengthActual);
+            handleMusicToken(note.token, noteType);
+            i = note.nextIndex;
+            continue;
+          }
+
+          if (ch === '|' || ch === ':') {
+            flushPendingShorts();
+            flushPendingChordSymbols();
+            activeProgram = null;
+            out += ch;
+            i++;
+            continue;
+          }
+
+          if (!isWhitespaceOrDecoration(ch)) {
+            flushPendingShorts();
+            flushPendingChordSymbols();
+            activeProgram = null;
+          } else if (pendingChordSymbols) {
+            pendingChordSymbols += ch;
+            i++;
+            continue;
+          }
+
+          out += ch;
+          i++;
+        }
+
+        flushPendingShorts();
+        flushPendingChordSymbols();
+
+        return { text: out, injectedCount };
+      }
+
+      function parseQuotedChordSymbol(line, start) {
+        if (line[start] !== '"') return null;
+        const end = findClosingQuote(line, start + 1);
+        if (end <= start) return null;
+        return {
+          token: line.slice(start, end + 1),
+          nextIndex: end + 1
+        };
+      }
+
+      function findClosingQuote(text, start) {
+        for (let i = start; i < text.length; i++) {
+          if (text[i] === '"') return i;
+        }
+        return text.length - 1;
+      }
+
+      function isWhitespaceOrDecoration(ch) {
+        return /[\s<>(){}\-|:\\/~.,!\[\]]/.test(ch);
+      }
+
+      function parseChord(line, start) {
+        if (line[start] !== '[') return null;
+        let i = start + 1;
+        let sawNote = false;
+
+        while (i < line.length && line[i] !== ']') {
+          const note = parseSingleNote(line, i, true);
+          if (note) {
+            sawNote = true;
+            i = note.nextIndex;
+            continue;
+          }
+          i++;
+        }
+
+        if (!sawNote || i >= line.length || line[i] !== ']') {
+          return null;
+        }
+
+        i++;
+        const lenMatch = line.slice(i).match(/^(\d+\/\d+|\d+\/|\/\d+|\/+|\d+)/);
+        const lenToken = lenMatch ? lenMatch[0] : '';
+        if (lenToken) i += lenToken.length;
+
+        return {
+          token: line.slice(start, i),
+          duration: getLengthFraction(lenToken),
+          nextIndex: i
+        };
+      }
+
+      function parseSingleNote(line, start, inChord = false) {
+        let i = start;
+
+        while (i < line.length && /[\^_=]/.test(line[i])) {
+          i++;
+        }
+
+        if (i >= line.length) return null;
+
+        const ch = line[i];
+        const isPitch = /[A-Ga-gxzXZ]/.test(ch);
+        if (!isPitch) return null;
+        i++;
+
+        while (i < line.length && /[',]/.test(line[i])) {
+          i++;
+        }
+
+        if (!inChord && i < line.length && line[i] === '-') {
+          i++;
+        }
+
+        const lenMatch = line.slice(i).match(/^(\d+\/\d+|\d+\/|\/\d+|\/+|\d+)/);
+        const lenToken = lenMatch ? lenMatch[0] : '';
+        if (lenToken) i += lenToken.length;
+
+        return {
+          token: line.slice(start, i),
+          duration: getLengthFraction(lenToken),
+          nextIndex: i
+        };
+      }
+
+      function classifyDuration(noteLengthFactor, unitLength, shortLengthActual) {
+        const actual = multiplyFractions(unitLength, noteLengthFactor);
+        if (fractionEquals(actual, shortLengthActual)) return 'short';
+        if (isLongerThan(actual, shortLengthActual)) return 'long';
+        return null;
+      }
+
+      function getConfig() {
+        const longProgram = (longProgramEl.value || '').trim() || 'custom1';
+        const shortProgram = (shortProgramEl.value || '').trim() || '141';
+        const shortLength = parseFraction((shortLengthEl.value || '').trim(), makeFraction(1, 8));
+        const shortRunCount = Math.max(1, parseInt(shortRunCountEl.value, 10) || 1);
+
+        return {
+          longProgramTag: buildProgramTag(longProgram),
+          shortProgramTag: buildProgramTag(shortProgram),
+          shortLengthActual: shortLength,
+          shortRunCount
+        };
+      }
+
+      function getAbcTitle(abcText) {
+        const match = abcText.match(/^\s*T\s*:\s*(.+)\s*$/m);
+        return match ? match[1].trim() : "MIDI_Program_Injected_Tune";
+      }
+
+      function sanitizeShareName(name) {
+        return (name || "MIDI_Program_Injected_Tune").replace(/\s+/g, "_");
+      }
+
+      function bytesToBase64(bytes) {
+        let binary = "";
+        const chunkSize = 0x8000;
+
+        for (let i = 0; i < bytes.length; i += chunkSize) {
+          const chunk = bytes.subarray(i, i + chunkSize);
+          binary += String.fromCharCode.apply(null, chunk);
+        }
+
+        return btoa(binary);
+      }
+
+      function bytesToBase64URL(bytes) {
+        return bytesToBase64(bytes)
+          .replace(/\+/g, "-")
+          .replace(/\//g, "_")
+          .replace(/=+$/, "");
+      }
+
+      function compressABC_Deflate(abcText) {
+        if (typeof pako === "undefined") {
+          throw new Error("pako is not loaded.");
+        }
+        if (typeof TextEncoder === "undefined") {
+          throw new Error("TextEncoder is not available.");
+        }
+
+        const utf8Bytes = new TextEncoder().encode(abcText);
+        const deflatedBytes = pako.deflate(utf8Bytes, { level: 6 });
+        return bytesToBase64URL(deflatedBytes);
+      }
+
+      function generateShareLink(abcText) {
+        const payloadParamValue = compressABC_Deflate(abcText);
+        const shareName = sanitizeShareName(getAbcTitle(abcText));
+
+        const params = new URLSearchParams();
+        params.set("def", payloadParamValue);
+        params.set("format", "noten");
+        params.set("ssp", "0");
+        params.set("name", shareName);
+        params.set("editor", "1");
+
+        const url = `${ABC_TOOLS_BASE_URL}?${params.toString()}`;
+        return url.length > SHARE_LINK_MAX_LEN ? null : url;
+      }
+
+      function ShareToABCTools(theABC) {
+        const abcText = (theABC || "").trim();
+
+        if (!abcText) {
+          setStatus("No output to send.");
+          return;
+        }
+
+        try {
+          const shareLink = generateShareLink(abcText);
+
+          if (!shareLink) {
+            setStatus("Share link is too long for ABC Transcription Tools.");
+            return;
+          }
+
+          window.open(shareLink, "_blank", "noopener,noreferrer");
+          setStatus("Opened in ABC Transcription Tools.");
+        } catch (err) {
+          console.error(err);
+          setStatus("Unable to generate ABC Tools share link.");
+        }
+      }
+
+      function convertAbc() {
+        try {
+          const input = inputEl.value || '';
+          const config = getConfig();
+          const result = detectHeadersAndConvert(input, config);
+          outputEl.value = result.text;
+          setStatus(`Done. Inserted ${result.injectedCount} MIDI program marker${result.injectedCount === 1 ? '' : 's'}.`);
+        } catch (err) {
+          console.error(err);
+          setStatus('Error while converting ABC.');
+        }
+      }
+
+      document.getElementById('convertBtn').addEventListener('click', convertAbc);
+
+      document.getElementById('copyBtn').addEventListener('click', async () => {
+        try {
+          await navigator.clipboard.writeText(outputEl.value || '');
+          setStatus('Output copied to clipboard.');
+        } catch {
+          outputEl.select();
+          document.execCommand('copy');
+          setStatus('Output copied to clipboard.');
+        }
+      });
+
+      document.getElementById('openAbcToolsBtn').addEventListener('click', () => {
+        const abc = outputEl.value || '';
+        ShareToABCTools(abc);
+      });
+
+      document.getElementById('clearBtn').addEventListener('click', () => {
+        inputEl.value = '';
+        outputEl.value = '';
+        setStatus('Cleared.');
+      });
+
+      longProgramEl.addEventListener('input', convertAbc);
+      shortProgramEl.addEventListener('input', convertAbc);
+      shortLengthEl.addEventListener('input', convertAbc);
+      shortRunCountEl.addEventListener('input', convertAbc);
+
+      convertAbc();
+    })();
+  </script>
+</body>
+</html>
