@@ -481,7 +481,7 @@
     }
 
     .walkthrough-arrow-path {
-      stroke: #005aad;
+      stroke: #d32f2f;
       stroke-width: 3;
       fill: none;
       stroke-linecap: round;
@@ -1225,6 +1225,9 @@
             side = 'top';
           }
 
+          const bottomSafeZone = 60;
+          top = Math.min(top, vh - cardHeightEstimate - bottomSafeZone);
+
           return { left, top, side, width: cardWidth };
         }
 
@@ -1254,7 +1257,7 @@
           marker.setAttribute('orient', 'auto');
           const arrowHead = document.createElementNS('http://www.w3.org/2000/svg', 'path');
           arrowHead.setAttribute('d', 'M0,0 L0,6 L9,3 z');
-          arrowHead.setAttribute('fill', '#005aad');
+          arrowHead.setAttribute('fill', '#d32f2f');
           marker.appendChild(arrowHead);
           defs.appendChild(marker);
           svg.appendChild(defs);
