@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3216_033026_0930";
+var gVersionNumber = "3217_040226_1630";
 
 var gMIDIInitStillWaiting = false;
 
@@ -45859,7 +45859,7 @@ function GetInitialConfigurationSettings() {
     resetAngloButtonNames();
   }
 
-  var theMusicXMLImportSettings = localStorage.musicXMLImportOptionsV7;
+  var theMusicXMLImportSettings = localStorage.musicXMLImportOptionsV8;
 
   if (theMusicXMLImportSettings) {
     gMusicXMLImportOptions = JSON.parse(theMusicXMLImportSettings);
@@ -47024,7 +47024,7 @@ function SaveConfigurationSettings() {
     localStorage.angloButtonNames2 = JSON.stringify(gAngloButtonNames);
 
     // MusicXML import options
-    localStorage.musicXMLImportOptionsV7 = JSON.stringify(gMusicXMLImportOptions);
+    localStorage.musicXMLImportOptionsV8 = JSON.stringify(gMusicXMLImportOptions);
 
     // Large player control player options
     localStorage.LargePlayerControls = gLargePlayerControls;
@@ -47302,7 +47302,7 @@ function resetMusicXMLImportOptions() {
     n: 0,
     c: 0,
     v: 0,
-    d: 4,
+    d: 8,
     x: 0,
     noped: 0,
     p: '',
@@ -47338,7 +47338,7 @@ function setMusicXMLOptions() {
   gMusicXMLImportOptions.b = parseInt($('#musicxml_bpl').val() || 4);
   gMusicXMLImportOptions.n = parseInt($('#musicxml_cpl').val() || 0);
   gMusicXMLImportOptions.c = parseInt($('#musicxml_crf').val() || 0);
-  gMusicXMLImportOptions.d = parseInt($('#musicxml_den').val() || 4);
+  gMusicXMLImportOptions.d = parseInt($('#musicxml_den').val() || 8);
   gMusicXMLImportOptions.m = parseInt($('#musicxml_midi').val() || 0);
   gMusicXMLImportOptions.noped = $('#musicxml_noped').prop('checked') ? 1 : 0;
   gMusicXMLImportOptions.v1 = $('#musicxml_v1').prop('checked') ? 1 : 0;
@@ -47458,7 +47458,7 @@ function ConfigureMusicXMLImport() {
       // Save the MusicXML settings
       if (gLocalStorageAvailable) {
 
-        localStorage.musicXMLImportOptionsV7 = JSON.stringify(gMusicXMLImportOptions);
+        localStorage.musicXMLImportOptionsV8 = JSON.stringify(gMusicXMLImportOptions);
 
       }
     } else {
@@ -55433,7 +55433,7 @@ function showWhatsNewScreen() {
   modal_msg += 'background: linear-gradient(135deg, #0d47a1 0%, #1565c0 50%, #64b5f6 100%);';
   modal_msg += 'box-shadow: 0 6px 16px rgba(0,0,0,0.14); color:#fff;">';
   modal_msg += '<div style="font-size:20pt; line-height:24pt; font-weight:bold;">What&apos;s New</div>';
-  modal_msg += '<div style="font-size:11pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 30 March 2026</div>';
+  modal_msg += '<div style="font-size:11pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 2 April 2026</div>';
   modal_msg += '</div>';
 
   // Short intro
