@@ -1555,7 +1555,7 @@
             <div class="field" title="Choose which connected WebMIDI device this synth listens to. This is a global setting for the entire tool and is not stored separately for each patch.">
               <label for="midiInputSelect">MIDI Input</label>
               <select id="midiInputSelect" title="Choose which connected WebMIDI device this synth listens to. This is a global setting for the entire tool and is not stored separately for each patch.">
-                <option value="">No MIDI inputs yet</option>
+                <option value="">Click "Connect MIDI"</option>
               </select>
             </div>
 
@@ -5838,11 +5838,6 @@
 
     select.innerHTML = '';
 
-    const optAuto = document.createElement('option');
-    optAuto.value = '';
-    optAuto.textContent = 'Select MIDI input';
-    select.appendChild(optAuto);
-
     if (!state.midiAccess) {
       allNotesOff();
       resetControllerState();
@@ -5893,6 +5888,13 @@
         }
       }
     } else {
+      const optNone = document.createElement('option');
+      optNone.value = '';
+      optNone.textContent = 'No MIDI inputs found';
+      optNone.disabled = true;
+      optNone.selected = true;
+      select.appendChild(optNone);
+
       allNotesOff();
       resetControllerState();
       state.midiInput = null;
