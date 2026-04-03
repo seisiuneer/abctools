@@ -665,9 +665,9 @@
 
     .midi-log-controls {
       display: flex;
-      flex-wrap: wrap;
+      flex-wrap: nowrap;   
       align-items: center;
-      gap: 10px 72px;
+      gap: 14px;               
       margin-bottom: 12px;
       flex: 0 0 auto;
     }
@@ -685,6 +685,8 @@
       background: linear-gradient(135deg, #162f6a, #1e3a8a);
       color:#fff;
       box-shadow:none;
+      margin-left:auto;
+      margin-right:12px;
     }
 
     #btnClearMidiLog:hover{
@@ -2262,7 +2264,11 @@
           <input type="checkbox" id="showMidiLog" title="Show or hide the live MIDI stream display. This is a global setting for the entire tool." />
           Enable MIDI stream
         </label>
-        <button id="btnClearMidiLog" type="button" title="Clear the MIDI stream log.">Clear Log</button>
+        <label for="freezeMidiLog" id="freezeMidiLogLabel" title="Freeze the MIDI stream log so new incoming MIDI data is not added while you examine the current log." hidden>
+          <input type="checkbox" id="freezeMidiLog" title="Freeze the MIDI stream log so new incoming MIDI data is not added while you examine the current log." />
+          Freeze
+        </label>
+        <button id="btnClearMidiLog" type="button" title="Clear the MIDI stream log.">Clear</button>
       </div>
       <div id="midiLog" class="log" hidden>MIDI stream disabled.</div>
     </div>
@@ -3332,6 +3338,7 @@
     midiChannel:1,
     midiInputId:'',
     midiLogEnabled:false,
+    midiLogFrozen:false,
     meterEnabled:false,
     lowCpuMode:false,
     pendingVoiceUpdate:false,
@@ -4035,6 +4042,7 @@
         16
       ),
       midiLogEnabled: toBoolean(source.midiLogEnabled, false),
+      midiLogFrozen: toBoolean(source.midiLogFrozen, false),
       meterEnabled: toBoolean(source.meterEnabled, false),
       lowCpuMode: toBoolean(source.lowCpuMode, false),
       liveStatusEnabled: toBoolean(source.liveStatusEnabled, true),
@@ -5560,12 +5568,25 @@
   function renderMidiLog() {
     const logEl = $('midiLog');
     const showCheckbox = $('showMidiLog');
+    const freezeCheckbox = $('freezeMidiLog');
+    const freezeLabel = $('freezeMidiLogLabel');
     const clearBtn = $('btnClearMidiLog');
 
     if (!logEl || !showCheckbox) return;
 
     logEl.hidden = !state.midiLogEnabled;
     showCheckbox.checked = !!state.midiLogEnabled;
+
+    if (freezeCheckbox) {
+      freezeCheckbox.checked = !!state.midiLogFrozen;
+      freezeCheckbox.disabled = !state.midiLogEnabled;
+    }
+
+    if (freezeLabel) {
+      freezeLabel.hidden = !state.midiLogEnabled;
+      freezeLabel.style.visibility = state.midiLogEnabled ? 'visible' : 'hidden';
+      freezeLabel.style.pointerEvents = state.midiLogEnabled ? 'auto' : 'none';
+    }
 
     if (clearBtn) {
       clearBtn.style.visibility = state.midiLogEnabled ? 'visible' : 'hidden';
@@ -5594,7 +5615,7 @@
   }
 
   function logMidi(text) {
-    if (!state.midiLogEnabled) return;
+    if (!state.midiLogEnabled || state.midiLogFrozen) return;
 
     const now = new Date();
     const timestamp =
@@ -6620,6 +6641,7 @@
         pitchBendRange: state.pitchBendRange,
         midiChannel: state.midiChannel,
         midiLogEnabled: !!state.midiLogEnabled,
+        midiLogFrozen: !!state.midiLogFrozen,
         meterEnabled: !!state.meterEnabled,
         lowCpuMode: !!state.lowCpuMode,
         liveStatusEnabled: !!state.liveStatusEnabled,
@@ -6691,6 +6713,7 @@
     state.pitchBendRange = globals.pitchBendRange;
     state.midiChannel = globals.midiChannel;
     state.midiLogEnabled = globals.midiLogEnabled;
+    state.midiLogFrozen = globals.midiLogFrozen;
     state.meterEnabled = globals.meterEnabled;
     state.lowCpuMode = globals.lowCpuMode;
     state.liveStatusEnabled = globals.liveStatusEnabled;
@@ -6822,6 +6845,7 @@
         midiChannel: state.midiChannel,
         midiInputId: state.midiInputId || '',
         midiLogEnabled: !!state.midiLogEnabled,
+        midiLogFrozen: !!state.midiLogFrozen,
         meterEnabled: !!state.meterEnabled,
         lowCpuMode: !!state.lowCpuMode,
         liveStatusEnabled: !!state.liveStatusEnabled,
@@ -6862,6 +6886,7 @@
         state.midiChannel = 1;
         state.midiInputId = '';
         state.midiLogEnabled = false;
+        state.midiLogFrozen = false;
         state.meterEnabled = false;
         state.lowCpuMode = false;
         state.liveStatusEnabled = true;
@@ -6919,6 +6944,7 @@
 
       state.midiInputId = typeof savedObj.midiInputId === 'string' ? savedObj.midiInputId : '';
       state.midiLogEnabled = toBoolean(savedObj.midiLogEnabled, false);
+      state.midiLogFrozen = toBoolean(savedObj.midiLogFrozen, false);
       state.meterEnabled = toBoolean(savedObj.meterEnabled, false);
       state.lowCpuMode = toBoolean(savedObj.lowCpuMode, false);
       state.liveStatusEnabled = toBoolean(savedObj.liveStatusEnabled, true);
@@ -6984,6 +7010,7 @@
       state.midiChannel = 1;
       state.midiInputId = '';
       state.midiLogEnabled = false;
+      state.midiLogFrozen = false;
       state.meterEnabled = false;
       state.lowCpuMode = false;
       state.liveStatusEnabled = true;
@@ -7066,6 +7093,9 @@
     $('lowCpuMode').checked = !!state.lowCpuMode;
     $('showOutputMeter').checked = !!state.meterEnabled;
     $('showMidiLog').checked = !!state.midiLogEnabled;
+    if ($('freezeMidiLog')) {
+      $('freezeMidiLog').checked = !!state.midiLogFrozen;
+    }
     if ($('enableLiveStatus')) {
       $('enableLiveStatus').checked = !!state.liveStatusEnabled;
     }
@@ -7232,6 +7262,7 @@
     state.meterLastRenderedPercent = -1;
     state.liveStatusEnabled = true;
     state.midiLogEnabled = false;
+    state.midiLogFrozen = false;
     state.meterEnabled = false;
     state.lowCpuMode = false;
     state.pendingVoiceUpdate = false;
@@ -7919,6 +7950,15 @@
 
     $('showMidiLog').addEventListener('change', () => {
       state.midiLogEnabled = $('showMidiLog').checked;
+      if (!state.midiLogEnabled) {
+        state.midiLogFrozen = false;
+      }
+      saveState();
+      renderMidiLog();
+    });
+
+    $('freezeMidiLog').addEventListener('change', () => {
+      state.midiLogFrozen = !!$('freezeMidiLog').checked && !!state.midiLogEnabled;
       saveState();
       renderMidiLog();
     });
