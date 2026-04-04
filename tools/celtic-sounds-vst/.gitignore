@@ -1,0 +1,4 @@
+build/
+samples/*.mp3
+scripts/__pycache__/
+*.pyc
