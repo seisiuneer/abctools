@@ -412,7 +412,6 @@
       padding-right: 2em;
     }
 
-
     .walkthrough-overlay {
       position: fixed;
       inset: 0;
@@ -1102,9 +1101,9 @@
           if (mode === 'remote') {
             return [
               {
-                title: 'Walkthrough: Soundfont Instrument Import',
-                body: `<p>This walkthrough shows how to create a custom instrument by importing notes from one of the ABC Transcription Tools MIDI soundfont instruments.</p>
-                       <p>You can relaunch this walkthrough at any time from <strong>Show Instructions</strong>.</p>`
+                title: 'Guided Tour: Import MIDI Soundfont Instrument',
+                body: `<p>This guided tour shows how to create a custom instrument by importing notes from one of the ABC Transcription Tools MIDI soundfont instruments.</p>
+                       <p>You can relaunch this tour at any time from <strong>Show Instructions</strong>.</p>`
               },
               {
                 title: 'Step 1: Choose a Soundfont',
@@ -1146,9 +1145,9 @@
 
           return [
             {
-              title: 'Walkthrough: Local Sample Import',
-              body: `<p>This walkthrough shows how to create a custom instrument from your own local audio sample files.</p>
-                     <p>You can relaunch this walkthrough at any time from <strong>Show Instructions</strong>.</p>`
+              title: 'Guided Tour: Importing Local Audio Samples',
+              body: `<p>This guided tour shows how to create a custom instrument from your own local audio sample files.</p>
+                     <p>You can relaunch this tour at any time from <strong>Show Instructions</strong>.</p>`
             },
             {
               title: 'Step 1: Import Your Audio Samples',
@@ -1343,18 +1342,18 @@
         async function showWalkthroughChooser(autoLaunch = false) {
           const html = `
             <div class="instr-modal">
-              <h2>Guided Walkthrough</h2>
+              <h2>Getting Started</h2>
               <p>This tool can create a custom instrument for the <b>ABC Transcription Tools</b> or <b>Celtic Sounds</b> in two ways:</p>
               <p style="text-align:center;"><b>Importing local per-note audio samples</b><br/>
               or<br/>
               <b>Importing notes from an ABC Transcription Tools<br/>MIDI soundfont instrument.</b>
               <p style="text-align:center;margin-top:18px;">How would you like to begin?</p>
               <div class="walkthrough-choice-row">
-                <button type="button" class="walkthrough-choice-btn" onclick="closeModalWithAction('local')">Importing Local Audio Samples</button>
-                <button type="button" class="walkthrough-choice-btn" onclick="closeModalWithAction('remote')">Import MIDI Soundfont Instrument</button>
+                <button type="button" class="walkthrough-choice-btn" onclick="closeModalWithAction('local')">Guided Tour: Importing Local Audio Samples</button>
+                <button type="button" class="walkthrough-choice-btn" onclick="closeModalWithAction('remote')">Guided Tour: Import MIDI Soundfont Instrument</button>
                 <button type="button" class="walkthrough-choice-btn" onclick="closeModalWithAction('skip')">Skip</button>
               </div>
-              ${autoLaunch ? `<p style="text-align:center;margin-top:16px;">This walkthrough appears automatically the first time you open the tool.</p>` : ''}
+              ${autoLaunch ? `<p style="text-align:center;margin-top:16px;">This Getting Started dialog appears automatically the first time you open the tool.</p>` : ''}
             </div>
           `;
 
@@ -3823,8 +3822,8 @@
             <div class="instr-modal">
              <h2>Instructions</h2>
               <div class="walkthrough-choice-row">
-                <button type="button" class="walkthrough-choice-btn" onclick="closeModalWithAction('walkthroughLocal')">Walkthrough: Local Audio Samples</button>
-                <button type="button" class="walkthrough-choice-btn" onclick="closeModalWithAction('walkthroughRemote')">Walkthrough: MIDI Soundfont Instrument</button>
+                <button type="button" class="walkthrough-choice-btn" onclick="closeModalWithAction('walkthroughLocal')">Guided Tour: Importing Local Audio Samples</button>
+                <button type="button" class="walkthrough-choice-btn" onclick="closeModalWithAction('walkthroughRemote')">Guided Tour: Import MIDI Soundfont Instrument</button>
               </div>
               <p>This tool is used to create an ABC Transcription Tools custom instrument from a directory of per-note instrument audio sample files.</p>
               <p>The files should be in .wav or .mp3 format. The samples must all be in the same directory.</p>
@@ -3911,8 +3910,8 @@
             <div class="instr-modal">
              <h2>Instructions</h2>
               <div class="walkthrough-choice-row">
-                <button type="button" class="walkthrough-choice-btn" onclick="closeModalWithAction('walkthroughLocal')">Walkthrough: Local Audio Samples</button>
-                <button type="button" class="walkthrough-choice-btn" onclick="closeModalWithAction('walkthroughRemote')">Walkthrough: MIDI Soundfont Instrument</button>
+                <button type="button" class="walkthrough-choice-btn" onclick="closeModalWithAction('walkthroughLocal')">Guided Tour: Importing Local Audio Samples</button>
+                <button type="button" class="walkthrough-choice-btn" onclick="closeModalWithAction('walkthroughRemote')">Guided Tour: Import MIDI Soundfont Instrument</button>
               </div>
               <p>This tool is used to create an ABC Transcription Tools custom instrument from a directory of per-note instrument audio sample files.</p>
               <p>The files should be in .wav or .mp3 format. The samples must all be in the same directory.</p>
