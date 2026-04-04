@@ -787,6 +787,139 @@
       font-weight:600;
     }
     
+
+    .walkthrough-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.18);
+      z-index: 2500;
+      pointer-events: auto;
+    }
+
+    .walkthrough-card {
+      position: fixed;
+      z-index: 2504;
+      width: min(440px, calc(100vw - 24px));
+      max-width: calc(100vw - 24px);
+      background: #f5ffff;
+      color: #000;
+      border: 1px solid #bfcfcf;
+      border-radius: 10px;
+      box-shadow: 0 10px 26px rgba(0,0,0,.25);
+      padding: 16px;
+      box-sizing: border-box;
+    }
+
+    .walkthrough-card h2 {
+      margin-top: 0;
+      margin-bottom: 10px;
+      font-size: 1.45em;
+      text-align: left;
+      color: #000;
+    }
+
+    .walkthrough-card p {
+      margin: 0 0 10px 0;
+      color: #111;
+      line-height: 1.45;
+    }
+
+    .walkthrough-card-footer {
+      margin-top: 14px;
+      padding-top: 12px;
+      border-top: 1px solid #d8e3e3;
+    }
+
+    .walkthrough-card .walkthrough-step-count {
+      text-align: center;
+      font-size: 0.95em;
+      color: #333;
+      margin-bottom: 12px;
+    }
+
+    .walkthrough-card .walkthrough-buttons {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .walkthrough-card .walkthrough-buttons button {
+      margin-top: 0 !important;
+      min-width: 96px;
+      font-size: 1rem;
+      padding: 10px 16px;
+      border-radius: 8px;
+      border: 1px solid #bdbdbd;
+      background: #d9d9d9;
+      color: #000;
+      font-weight: 700;
+      filter: none !important;
+    }
+
+    .walkthrough-card .walkthrough-buttons button:hover {
+      background: #cfcfcf;
+      filter: none !important;
+    }
+
+    .walkthrough-arrow-layer {
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 2503;
+      pointer-events: none;
+      overflow: visible;
+    }
+
+    .walkthrough-arrow-path {
+      stroke: #d32f2f;
+      stroke-width: 3;
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      filter: drop-shadow(0 1px 2px rgba(0,0,0,.2));
+    }
+
+    .walkthrough-target-highlight {
+      position: relative;
+      z-index: 2502 !important;
+      box-shadow: 0 0 0 4px rgba(0, 90, 173, 0.30), 0 0 0 9999px rgba(255,255,255,0.06);
+      border-radius: 8px;
+      transition: box-shadow 160ms ease;
+    }
+
+    .walkthrough-run-row {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin: 0 0 16px 0;
+    }
+
+    .walkthrough-run-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 220px;
+      padding: 12px 16px;
+      border-radius: 10px;
+      border: 1px solid #333;
+      background: #d9d9d9;
+      color: #000;
+      font-weight: 800;
+      font-size: 1rem;
+      cursor: pointer;
+      box-sizing: border-box;
+      filter: none !important;
+    }
+
+    .walkthrough-run-btn:hover {
+      background: #cfcfcf;
+      filter: none !important;
+    }
+
+
   </style>
 </head>
 
@@ -803,6 +936,14 @@
         <div id="troubleshoot-title">Instructions</div>
         <div id="troubleshoot-scroll">
           <div id="troubleshoot-body">
+
+            <div class="walkthrough-run-row">
+              <button id="run-walkthrough-btn" class="walkthrough-run-btn" type="button">
+                Run Guided Tour
+              </button>
+            </div>
+
+            <hr style="border:0; border-top:1px solid #2a2a2a; margin: 14px 0 14px 0;"/>
 
             <div class="instr-title">Original RTTA Tool</div>
             <div class="instr-body">This tool was inspired by Terry McGee's original Tartini-R Polygraph RTTA tool at:<br/><br/>
@@ -1129,6 +1270,7 @@
   const LS_KEY_INTONATION = "abctools_rt_tuning_intonation_v1";
   const LS_KEY_ROOTNOTE   = "abctools_rt_tuning_rootnote_v1";
   const LS_KEY_INSTRUCTIONS_SHOWN = "abctools_rt_instructions_shown_v1";
+  const LS_KEY_WALKTHROUGH_SHOWN = "rtta_walkthrough_shown_v1";
 
   // Firefox centering tweak for large text metrics
   const IS_FIREFOX = /firefox/i.test(navigator.userAgent || "");
@@ -1259,6 +1401,148 @@
       syncTroubleshootHeight();
     }
   });
+
+
+  const runWalkthroughBtn = document.getElementById("run-walkthrough-btn");
+  const resetWalkthroughBtn = document.getElementById("reset-walkthrough-btn");
+
+  let gWalkthroughOverlay = null;
+  let gWalkthroughCard = null;
+  let gWalkthroughArrowLayer = null;
+  let gWalkthroughHighlightedEl = null;
+
+  function clearWalkthroughUI() {
+    if (gWalkthroughHighlightedEl) {
+      gWalkthroughHighlightedEl.classList.remove("walkthrough-target-highlight");
+      gWalkthroughHighlightedEl = null;
+    }
+    if (gWalkthroughArrowLayer) {
+      gWalkthroughArrowLayer.remove();
+      gWalkthroughArrowLayer = null;
+    }
+    if (gWalkthroughCard) {
+      gWalkthroughCard.remove();
+      gWalkthroughCard = null;
+    }
+    if (gWalkthroughOverlay) {
+      gWalkthroughOverlay.remove();
+      gWalkthroughOverlay = null;
+    }
+  }
+
+  function waitMs(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
+  async function scrollWalkthroughTarget(selector) {
+    if (!selector) return null;
+    const el = document.querySelector(selector);
+    if (!el) return null;
+
+    try {
+      el.scrollIntoView({ behavior: "smooth", block: "center", inline: "nearest" });
+      await waitMs(240);
+    } catch (err) {
+      el.scrollIntoView();
+    }
+
+    return el;
+  }
+
+  function chooseWalkthroughCardPlacement(targetEl) {
+    const gap = 18;
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+    const cardWidth = Math.min(440, vw - 24);
+    const cardHeightEstimate = 250;
+
+    if (!targetEl) {
+      return {
+        left: Math.max(12, Math.min(vw - cardWidth - 12, vw * 0.5 - cardWidth / 2)),
+        top: 25,
+        side: "none",
+        width: cardWidth
+      };
+    }
+
+    const rect = targetEl.getBoundingClientRect();
+    const leftSpace = rect.left;
+    const rightSpace = vw - rect.right;
+    const bottomSpace = vh - rect.bottom;
+
+    let left = Math.max(12, vw - cardWidth - 18);
+    let top = 18;
+    let side = "right";
+
+    if (rightSpace >= cardWidth + gap) {
+      left = Math.min(vw - cardWidth - 12, rect.right + gap);
+      top = Math.min(Math.max(12, rect.top), vh - cardHeightEstimate - 12);
+      side = "right";
+    } else if (leftSpace >= cardWidth + gap) {
+      left = Math.max(12, rect.left - cardWidth - gap);
+      top = Math.min(Math.max(12, rect.top), vh - cardHeightEstimate - 12);
+      side = "left";
+    } else if (bottomSpace >= cardHeightEstimate + gap) {
+      left = Math.min(Math.max(12, rect.left), vw - cardWidth - 12);
+      top = Math.min(vh - cardHeightEstimate - 12, rect.bottom + gap);
+      side = "bottom";
+    } else {
+      left = Math.min(Math.max(12, rect.left), vw - cardWidth - 12);
+      top = Math.max(12, rect.top - cardHeightEstimate - gap);
+      side = "top";
+    }
+
+    const bottomSafeZone = 60;
+    top = Math.min(top, vh - cardHeightEstimate - bottomSafeZone);
+
+    return { left, top, side, width: cardWidth };
+  }
+
+  function drawWalkthroughArrow(cardEl, targetEl) {
+    if (!cardEl || !targetEl) return;
+
+    const cardRect = cardEl.getBoundingClientRect();
+    const targetRect = targetEl.getBoundingClientRect();
+
+    const startX = cardRect.left + cardRect.width / 2;
+    const startY = cardRect.top + cardRect.height / 2;
+    const endX = targetRect.left + targetRect.width / 2;
+    const endY = targetRect.top + targetRect.height / 2;
+    const midX = (startX + endX) / 2;
+    const path = `M ${startX} ${startY} Q ${midX} ${startY}, ${endX} ${endY}`;
+
+    const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    svg.setAttribute("class", "walkthrough-arrow-layer");
+    svg.setAttribute("viewBox", `0 0 ${window.innerWidth} ${window.innerHeight}`);
+    svg.setAttribute("preserveAspectRatio", "none");
+
+    const defs = document.createElementNS("http://www.w3.org/2000/svg", "defs");
+    const marker = document.createElementNS("http://www.w3.org/2000/svg", "marker");
+    marker.setAttribute("id", "walkthroughArrowHead");
+    marker.setAttribute("markerWidth", "10");
+    marker.setAttribute("markerHeight", "10");
+    marker.setAttribute("refX", "8");
+    marker.setAttribute("refY", "3");
+    marker.setAttribute("orient", "auto");
+
+    const arrowHead = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    arrowHead.setAttribute("d", "M0,0 L0,6 L9,3 z");
+    arrowHead.setAttribute("fill", "#d32f2f");
+
+    marker.appendChild(arrowHead);
+    defs.appendChild(marker);
+    svg.appendChild(defs);
+
+    const arrow = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    arrow.setAttribute("class", "walkthrough-arrow-path");
+    arrow.setAttribute("d", path);
+    arrow.setAttribute("marker-end", "url(#walkthroughArrowHead)");
+
+    svg.appendChild(arrow);
+    document.body.appendChild(svg);
+    gWalkthroughArrowLayer = svg;
+  }
+
 
   const micErrorEl = document.getElementById('mic-error');
   function escapeHTML(s){
@@ -2486,17 +2770,193 @@
     requestAnimationFrame(tick);
   }
 
-  function maybeShowInstructionsOnFirstUse(){
+
+  function getRTTAWalkthroughSteps() {
+    return [
+      {
+        title: "RTTA Guided Tour",
+        body: `<p>This guided tour explains the functionality of each of the RTTA controls.</p>
+               <p>You can run it again any time from the button at the top of the Instructions panel.</p>`
+      },
+      {
+        title: "Step 1: Instructions Button",
+        selector: "#help-btn",
+        body: `<p>Click the <strong>?</strong> button any time to open the Instructions panel.</p>
+               <p>That panel also includes a button to run this tour again later.</p>`
+      },
+      {
+        title: "Step 2: Input Level Meter",
+        selector: "#level-meter",
+        body: `<p>This bar at the top right of the tool shows the incoming microphone signal level.</p>
+               <p>If it stays very low, the tool may not hear your instrument well. If it is pinned too high, the signal may be too hot.</p>`
+      },
+      {
+        title: "Step 3: A4 Reference Frequency",
+        selector: "#a4ref",
+        body: `<p>Choose the <strong>A4 reference frequency</strong> here.</p>
+               <p>This changes the tuning reference used by the tool, including standard concert pitch and alternate references.</p>`
+      },
+      {
+        title: "Step 4: Input Level Adjustment",
+        selector: "#inputboost",
+        body: `<p>Use <strong>Input level adjustment</strong> to reduce or boost the incoming microphone signal.</p>
+               <p>This is useful if your instrument is not being detected reliably.</p>`
+      },
+      {
+        title: "Step 5: Cents Range Display",
+        selector: "#yrange",
+        body: `<p>This sets the vertical <strong>cents range</strong> shown in the graph.</p>
+               <p>A smaller range gives a more zoomed-in view. A larger range shows more spread.</p>`
+      },
+      {
+        title: "Step 6: Temperament",
+        selector: "#intonation",
+        body: `<p>Choose the <strong>temperament</strong> you want to measure against.</p>
+               <p>You can use Equal Temperament, Just Intonation, Pythagorean, or one of the Fiddle Sweetened presets.</p>`
+      },
+      {
+        title: "Step 7: Root Note",
+        selector: "#rootnote",
+        body: `<p>This <strong>Root note</strong> setting is used with <strong>Just Intonation</strong> and <strong>Pythagorean</strong>.</p>
+               <p>It is not used for Equal Temperament or the Fiddle Sweetened presets, so the control is disabled in those modes.</p>`
+      },
+      {
+        title: "Step 8: Live Note Readout",
+        selector: "#live-pair",
+        body: `<p>This shows the currently detected note and its <strong>cents offset</strong>.</p>
+               <p>When the reading is near 0.0 cents, the note is close to the selected tuning reference.</p>`
+      },
+      {
+        title: "Step 9: Start Analysis",
+        selector: "#start-btn",
+        body: `<p>Click <strong>START</strong> and play your instrument to begin live pitch analysis.</p>
+               <p>Your browser may ask for permission to use the microphone. You must allow microphone access for the tool to work.</p>`
+      },
+      {
+        title: "Step 10: Pitch Distribution Graph",
+        selector: "#plot-wrap",
+        body: `<p>This graph builds a <strong>pitch distribution</strong> for each note you play.</p>
+               <p>Each yellow box plot shows the spread of measurements for that note, making it easier to see your typical tuning tendency.</p>`
+      },
+      {
+        title: "Step 11: Export JPEG",
+        selector: "#export-plot-btn",
+        body: `<p>Click <strong>JPEG</strong> to export the graph as an image file.</p>
+               <p>On phones and tablets, landscape orientation usually gives the best result.</p>`
+      },
+      {
+        title: "Step 12: Export CSV",
+        selector: "#export-csv-btn",
+        body: `<p>Click <strong>CSV</strong> to export the median cents values for the notes in the graph.</p>
+               <p>This is useful if you want to save or compare measurements outside the tool.</p>`
+      }
+     ];
+  }
+
+  function showWalkthroughStepCard(step, index, total) {
+    return new Promise(async (resolve) => {
+      clearWalkthroughUI();
+
+      const targetEl = await scrollWalkthroughTarget(step.selector);
+      if (targetEl) {
+        targetEl.classList.add("walkthrough-target-highlight");
+        gWalkthroughHighlightedEl = targetEl;
+      }
+
+      const overlay = document.createElement("div");
+      overlay.className = "walkthrough-overlay";
+      document.body.appendChild(overlay);
+      gWalkthroughOverlay = overlay;
+
+      const card = document.createElement("div");
+      card.className = "walkthrough-card";
+
+      const isFirst = index === 0;
+      const isLast = index === total - 1;
+
+      card.innerHTML = `
+        <h2>${step.title}</h2>
+        ${step.body}
+        <div class="walkthrough-card-footer">
+          <div class="walkthrough-step-count">Step ${index + 1} of ${total}</div>
+          <div class="walkthrough-buttons">
+            ${isFirst ? "" : '<button type="button" data-action="back">Back</button>'}
+            <button type="button" data-action="exit">Close</button>
+            <button type="button" data-action="${isLast ? "done" : "next"}">${isLast ? "Done" : "Next"}</button>
+          </div>
+        </div>
+      `;
+
+      document.body.appendChild(card);
+      gWalkthroughCard = card;
+
+      const placement = chooseWalkthroughCardPlacement(targetEl);
+      card.style.left = `${placement.left}px`;
+      card.style.top = `${placement.top}px`;
+      card.style.width = `${placement.width}px`;
+
+      drawWalkthroughArrow(card, targetEl);
+
+      card.querySelectorAll("button[data-action]").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const action = btn.getAttribute("data-action") || "exit";
+          clearWalkthroughUI();
+          resolve(action);
+        });
+      });
+
+      overlay.addEventListener("click", () => {
+        clearWalkthroughUI();
+        resolve("exit");
+      }, { once: true });
+    });
+  }
+
+  async function runRTTAWalkthrough() {
+    closeTroubleshooting();
+
+    const steps = getRTTAWalkthroughSteps();
+    let index = 0;
+
+    while (index >= 0 && index < steps.length) {
+      const action = await showWalkthroughStepCard(steps[index], index, steps.length);
+      if (action === "back") index--;
+      else if (action === "next") index++;
+      else break;
+    }
+
+    clearWalkthroughUI();
+  }
+
+  function maybeShowWalkthroughOnFirstUse() {
     try {
-      const seen = localStorage.getItem(LS_KEY_INSTRUCTIONS_SHOWN);
+      const seen = localStorage.getItem(LS_KEY_WALKTHROUGH_SHOWN) === "1";
       if (!seen) {
-        openTroubleshooting(); // your existing function
-        localStorage.setItem(LS_KEY_INSTRUCTIONS_SHOWN, "1");
+        localStorage.setItem(LS_KEY_WALKTHROUGH_SHOWN, "1");
+        runRTTAWalkthrough();
       }
     } catch (e) {
-      // If storage is unavailable, fail silently
+      // Fail silently if storage is unavailable
     }
   }
+
+
+
+  if (runWalkthroughBtn) {
+    runWalkthroughBtn.addEventListener("click", () => {
+      runRTTAWalkthrough();
+    });
+  }
+
+  if (resetWalkthroughBtn) {
+    resetWalkthroughBtn.addEventListener("click", () => {
+      try {
+        localStorage.removeItem(LS_KEY_WALKTHROUGH_SHOWN);
+      } catch (e) {}
+      runRTTAWalkthrough();
+    });
+  }
+
 
   // Controls
   const startBtn = document.getElementById("start-btn");
@@ -2640,7 +3100,7 @@
   drawPlot();
 
   // Show instructions on first run
-  setTimeout(maybeShowInstructionsOnFirstUse, 500);
+  setTimeout(maybeShowWalkthroughOnFirstUse, 500);
 
   let gLocalStorageAvailable = null;
 
