@@ -2278,7 +2278,7 @@
       sampleCache: new Map(),
       irCache: new Map(),
       expressionMode: "velocity",
-      latestExpression: 127,
+      latestExpression: 0,
       masterVolume: 1.0,
       droneVolume: 1.0,
       masterTuneCents: 0,
@@ -2345,6 +2345,10 @@
 
     function getCustomInstrumentOptionLabel() {
       return "Load Custom Instrument...";
+    }
+
+    function getInitialExpressionValueForMode(mode) {
+      return mode === "max" ? 127 : 0;
     }
 
     function isCustomInstrumentKey(value) {
@@ -3290,7 +3294,7 @@
       const safe = sanitizeLoadedSettingsPayload(data);
 
       state.pitchBendValue = 0;
-      state.latestExpression = 127;
+      state.latestExpression = 0;
 
       state.selectedMidiChannel = safe.selectedMidiChannel;
       state.selectedInstrumentKey = safe.selectedInstrumentKey;
@@ -3447,7 +3451,7 @@
       state.pitchBendRangeSemitones = DEFAULTS.pitchBendRangeSemitones;
       state.basePitchBendCents = state.pitchBendRangeSemitones * 100;
       state.pitchBendValue = 0;
-      state.latestExpression = 127;
+      state.latestExpression = 0;
       state.midiLogEnabled = false;
       state.freezeMidiLog = false;
       state.liveStatusHidden = false;
@@ -4573,87 +4577,90 @@
       return { status, type, channel, data1, data2 };
     }
 
-		async function handleMidiMessage(event) {
-		  try {
+    async function handleMidiMessage(event) {
+      try {
 
-		    const msg = parseMidiMessage(event.data);
-		    if (!msg) return;
+        const msg = parseMidiMessage(event.data);
+        if (!msg) return;
 
-		    if ((msg.channel + 1) !== state.selectedMidiChannel) {
-		      return;
-		    }
+        if ((msg.channel + 1) !== state.selectedMidiChannel) {
+          return;
+        }
 
-		    if (state.midiLogEnabled && !state.freezeMidiLog) {
-		      pushMidiLogLine(formatMidiMessage(msg));
-		    }
+        if (state.midiLogEnabled && !state.freezeMidiLog) {
+          pushMidiLogLine(formatMidiMessage(msg));
+        }
 
-		    if (msg.type === 0xE0) {
-		      state.pitchBendValue = ((msg.data2 << 7) | msg.data1) - 8192;
-		      applyPitchBendToActiveVoice();
-		      logLiveStatus();
-		      return;
-		    }
+        if (msg.type === 0xE0) {
+          state.pitchBendValue = ((msg.data2 << 7) | msg.data1) - 8192;
+          applyPitchBendToActiveVoice();
+          logLiveStatus();
+          return;
+        }
 
-		    if (msg.type === 0xD0) {
-		      if (state.expressionMode === "aftertouch") {
-		        state.latestExpression = msg.data1;
-		        updateActiveVoiceGain();
-		        logLiveStatus();
-		      }
-		      return;
-		    }
+        if (msg.type === 0xD0) {
+          if (state.expressionMode === "aftertouch") {
+            state.latestExpression = msg.data1;
+            updateActiveVoiceGain();
+            logLiveStatus();
+          }
+          return;
+        }
 
-		    if (msg.type === 0x90 && msg.data2 > 0) {
-		      await noteOn(msg.data1, msg.data2);
-		      return;
-		    }
+        if (msg.type === 0x90 && msg.data2 > 0) {
+          if (state.expressionMode === "velocity") {
+            state.latestExpression = msg.data2;
+          }
+          await noteOn(msg.data1, msg.data2);
+          logLiveStatus();
+          return;
+        }
 
-		    if (msg.type === 0x80 || (msg.type === 0x90 && msg.data2 === 0)) {
-		      noteOff(msg.data1);
-		      return;
-		    }
+        if (msg.type === 0x80 || (msg.type === 0x90 && msg.data2 === 0)) {
+          noteOff(msg.data1);
+          return;
+        }
 
-		    if (msg.type === 0xB0) {
-		      const cc = msg.data1;
-		      const value = msg.data2;
+        if (msg.type === 0xB0) {
+          const cc = msg.data1;
+          const value = msg.data2;
 
-		      if (state.expressionMode === "cc7" && cc === 7) {
-		        state.latestExpression = value;
-		        updateActiveVoiceGain();
-		        logLiveStatus();
-		        return;
-		      }
+          if (state.expressionMode === "cc7" && cc === 7) {
+            state.latestExpression = value;
+            updateActiveVoiceGain();
+            logLiveStatus();
+            return;
+          }
 
-		      if (state.expressionMode === "cc2" && cc === 2) {
-		        state.latestExpression = value;
-		        updateActiveVoiceGain();
-		        logLiveStatus();
-		        return;
-		      }
+          if (state.expressionMode === "cc2" && cc === 2) {
+            state.latestExpression = value;
+            updateActiveVoiceGain();
+            logLiveStatus();
+            return;
+          }
 
-		      if (state.expressionMode === "cc11" && cc === 11) {
-		        state.latestExpression = value;
-		        updateActiveVoiceGain();
-		        logLiveStatus();
-		        return;
-		      }
+          if (state.expressionMode === "cc11" && cc === 11) {
+            state.latestExpression = value;
+            updateActiveVoiceGain();
+            logLiveStatus();
+            return;
+          }
 
-		      if (state.expressionMode === "cc74" && cc === 74) {
-		        state.latestExpression = value;
-		        updateActiveVoiceGain();
-		        logLiveStatus();
-		        return;
-		      }
+          if (state.expressionMode === "cc74" && cc === 74) {
+            state.latestExpression = value;
+            updateActiveVoiceGain();
+            logLiveStatus();
+            return;
+          }
 
-		      if (cc === 123 || cc === 120) {
-		        allNotesOff();
-		      }
-		    }
-		  } catch (_) {
-		    // fail silently for live MIDI processing errors
-		  }
-		}
-
+          if (cc === 123 || cc === 120) {
+            allNotesOff();
+          }
+        }
+      } catch (_) {
+        // fail silently for live MIDI processing errors
+      }
+    }
     function showNoMidiInputsDialog() {
       const html =
         "<div style='text-align:left;font-family:helvetica,arial,sans-serif;font-size:13pt;line-height:1.45;padding:0 18px;'>" +
@@ -5080,6 +5087,7 @@
 
       $("expressionModeSelect").addEventListener("change", (e) => {
         state.expressionMode = e.target.value;
+        state.latestExpression = getInitialExpressionValueForMode(state.expressionMode);
         updateActiveVoiceGain();
         logLiveStatus();
         saveCurrentInstrumentSettingsToStateStore();
@@ -5771,6 +5779,7 @@
       );
 
       state.expressionMode = s.expressionMode;
+      state.latestExpression = getInitialExpressionValueForMode(state.expressionMode);
       state.masterVolume = s.masterVolume;
       state.droneVolume = s.droneVolume;
       state.masterTuneCents = s.masterTuneCents;
