@@ -1,0 +1,1522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta property="og:type" content="website" />
+<meta property="og:title" content="Northumbrian Pipes Custom Instrument Factory" />
+<meta property="og:description" content="This tool generates a Northumbrian Pipes custom instrument for Celtic Sounds using parametric sound modeling." />
+<meta property="og:url" content="https://michaeleskin.com/tools/nsp-factory.html" />
+<meta property="og:site_name" content="Northumbrian Pipes Custom Instrument Factory" />
+<meta property="og:image" content="https://michaeleskin.com/tools/img/nsp-factory-2.jpg"/>
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-VM0N9HL3MK"></script>
+
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-VM0N9HL3MK');
+</script>
+
+<title>Northumbrian Pipes Custom Instrument Factory</title>
+<style>
+  :root {
+    --bg: #111315;
+    --panel: #1b1f24;
+    --panel2: #232932;
+    --text: #e9eef4;
+    --muted: #b9c3cf;
+    --border: #39414d;
+    --accent: #89b4ff;
+    --accent2: #89b4ff;
+    --accent3: #7ee0b0;
+    --danger: #ff8b8b;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.35;
+  }
+  .wrap {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  h1 {
+    margin: 0 0 6px 0;
+    font-size: 28px;
+    text-align: center;
+  }
+  .info-bubble {
+    background: #141920;
+    border: 1px solid var(--accent);
+    border-radius: 12px;
+    padding: 14px 16px;
+    margin: 14px 0 18px 0;
+    position: relative;
+    line-height: 1.7;
+    box-shadow: 0 0 0 1px rgba(137,180,255,0.15), 0 6px 18px rgba(0,0,0,0.25);
+  }
+
+  .info-bubble strong {
+    color: var(--text);
+  }
+
+  .info-bubble .highlight {
+    color: var(--accent2);
+    font-weight: bold;
+  }
+  .sub {
+    color: var(--muted);
+    margin-bottom: 18px;
+  }
+  .panel {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+  }
+  .panel h2 {
+    margin: 0 0 12px 0;
+    font-size: 18px;
+  }
+  label {
+    display: block;
+    font-size: 14px;
+    margin-bottom: 12px;
+  }
+  label span {
+    display: block;
+    margin-bottom: 6px;
+    color: var(--muted);
+  }
+  input[type="text"], input[type="number"] {
+    width: 100%;
+    padding: 9px 10px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: #0e1115;
+    color: var(--text);
+    font-size: 14px;
+  }
+  input[type="range"] {
+    width: 100%;
+  }
+  .slider-line {
+    display: grid;
+    grid-template-columns: 1fr 44px;
+    gap: 6px;
+    align-items: center;
+  }
+  .mini {
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .btn-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+  }
+  button {
+    appearance: none;
+    border: 1px solid var(--border);
+    background: var(--panel2);
+    color: var(--text);
+    padding: 10px 14px;
+    border-radius: 9px;
+    cursor: pointer;
+    font-size: 14px;
+  }
+  button:hover { filter: brightness(1.08); }
+  button.primary {
+    background: #29446a;
+    border-color: #486ea4;
+  }
+  button.good {
+    background: #23473b;
+    border-color: #3a7a63;
+  }
+  button.stop {
+    background: #5a2a2a;
+    border-color: #9a5252;
+  }
+  .status {
+    margin-top: 10px;
+    min-height: 20px;
+    color: var(--accent2);
+    font-size: 14px;
+    transition: color 160ms ease, opacity 160ms ease;
+  }
+  .status.busy {
+    color: #bdd6ff;
+  }
+  .status.success-flash {
+    color: #c9ffd5;
+  }
+  .warn {
+    color: #ffcf7a;
+  }
+  .keyboard-wrap {
+    margin-bottom: 14px;
+    border: 1px solid var(--border);
+    background: #141920;
+    border-radius: 10px;
+    padding: 10px;
+  }
+  .keyboard-row, .drone-toggle-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+  .keyboard-row {
+    max-height: 180px;
+    overflow: auto;
+    padding-right: 4px;
+  }
+  .key-btn {
+    min-width: 60px;
+    padding: 8px 10px;
+    font-size: 13px;
+  }
+  .key-btn.active, .drone-toggle.active {
+    background: #5a2a2a;
+    border-color: #9a5252;
+  }
+  .fixed-range-label {
+    display: block;
+    color: var(--muted);
+    font-size: 12px;
+    margin-bottom: 4px;
+  }
+  .fixed-range-value {
+    font-weight: bold;
+    font-size: 15px;
+  }
+  .note-name {
+    font-weight: bold;
+    font-size: 15px;
+  }
+  .note-meta {
+    color: var(--muted);
+    font-size: 12px;
+  }
+  .footer-note {
+    margin-top: 10px;
+    color: var(--muted);
+    font-size: 13px;
+  }
+  .last-generated {
+    margin-top: 8px;
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .spinner {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    margin-right: 7px;
+    border-radius: 50%;
+    border: 2px solid rgba(255,255,255,0.22);
+    border-top-color: #bdd6ff;
+    vertical-align: -2px;
+    animation: spin 0.9s linear infinite;
+  }
+  @keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+  @media (max-width: 920px) {
+    .grid { grid-template-columns: 1fr; }
+    .note-item { grid-template-columns: 1fr auto auto; }
+    .note-meta { grid-column: 1 / -1; }
+  }
+
+  .container, .wrap, .main, body > div {
+    max-width: 1100px !important;
+    width: 1100px !important;
+    margin: 0 auto !important;
+  }
+
+  .panel, .controls, .box {
+    width: 100% !important;
+  }
+
+  .grid, .row, .flex, .layout {
+    display: block !important;
+  }
+
+
+  .controls-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0 14px;
+    align-items: start;
+  }
+  .controls-grid .btn-row,
+  .controls-grid .status,
+  .controls-grid .last-generated {
+    grid-column: 1 / -1;
+  }
+  .preview-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+  .preview-header h2 {
+    margin: 0;
+  }
+
+  .modal_compact_background{
+    position: fixed !important;
+    inset: 0 !important;
+    background: rgba(0,0,0,0.4) !important;
+  }
+
+  .modal_compact_main{
+    position: fixed !important;
+    left: 50% !important;
+    top: 100px !important;
+    transform: translateX(-50%) !important;
+    margin: 0 !important;
+
+    border:1px solid #333;
+    box-shadow:0 0 15px -2px rgba(0,0,0,0.75);
+
+    width:min(560px, calc(100vw - 80px)) !important;
+    max-width:min(560px, calc(100vw - 80px)) !important;
+
+    height:auto !important;
+    max-height:min(520px, calc(100dvh - 120px)) !important;
+
+    overflow:hidden !important;
+  }
+
+  .modal_compact_inner{
+    padding:18px 18px 28px 18px;   /* more bottom breathing room */
+    background:#fff;
+    color:#000;
+
+    display:flex;
+    flex-direction:column;
+  }
+
+  .modal_compact_content{
+    margin:16px 0 10px 0;
+
+    overflow:auto !important;
+    -webkit-overflow-scrolling:touch;
+
+    flex:1 1 auto;  /* allows content to expand naturally */
+  }
+
+  .modal_compact_buttons{
+    text-align:center;
+
+    margin-top:18px;
+  }
+
+  .modal_compact_buttons button{
+    margin:0 8px;
+  }
+
+  .modal_compact_main button{
+    background:#e8f1ff;
+    color:#000;
+
+    border:1px solid #9dbaf2;
+
+    padding:10px 20px;
+
+    cursor:pointer;
+    outline:none;
+
+    width:100px;
+
+    border-radius:10px;
+
+    font-weight:600;
+
+    transition:background 0.15s ease, box-shadow 0.15s ease;
+  }
+
+  .modal_compact_main button:hover{
+    background:#dbe8ff;
+    box-shadow:0 0 6px rgba(80,120,220,0.35);
+  }
+
+  /* Prompt text */
+  .modal_compact_main .modal_default_promptdescription {
+    font-size: 20px !important;
+    line-height: 1.5 !important;
+  }
+
+  /* Force override ALL prompt inputs inside DayPilot modal */
+  .modal_compact_main .modal_default_prompt,
+  .modal_compact_main input,
+  .modal_compact_main .modal_default_prompt input {
+    font-size: 18px !important;
+    padding: 8px 9px !important;
+    height: auto !important;
+    background-color:white !important;
+    border-radius: 10px;
+    color:black;
+  }
+</style>
+
+<script type="text/javascript" src="daypilot-modal.min-3.10.1.js?v=1"></script>
+<script type="text/javascript" src="jszip-min.js?v=1"></script>
+
+</head>
+<body>
+<div class="wrap">
+  <h1>Northumbrian Pipes Custom Instrument Factory</h1>
+  <div class="info-bubble" style="text-align: center;">
+    This tool generates a <span class="highlight">Northumbrian Pipes</span> custom instrument for <span class="highlight">Celtic Sounds</span> using parametric sound modeling.
+  </div>
+
+  <div class="controls-grid">
+    <label title="Length of each generated note sample. Longer values allow sustained playback, but increase note file size.">
+      <span>Generated Chanter Note Length (seconds)</span>
+      <div class="slider-line">
+        <input id="chanterSeconds" type="range" min="1" max="15" step="1" value="7" />
+        <div class="mini" id="chanterSecondsVal">7</div>
+      </div>
+    </label>
+
+    <label title="Controls tonal purity. Higher values reduce harmonic complexity, producing a sweeter, cleaner flute-like tone.">
+      <span>Purer / Sweeter</span>
+      <div class="slider-line">
+        <input id="pure" type="range" min="0" max="1" step="0.01" value="0.60" />
+        <div class="mini" id="pureVal">0.60</div>
+      </div>
+    </label>
+
+    <label title="Adds reed noise and edge. Higher values increase chiff, buzz, and harmonic richness typical of reed instruments.">
+      <span>Chiffier / Reedier</span>
+      <div class="slider-line">
+        <input id="reed" type="range" min="0" max="4" step="0.01" value="2.0" />
+        <div class="mini" id="reedVal">2.0</div>
+      </div>
+    </label>
+
+    <label title="Softens the tone by reducing brightness and high harmonics. Higher values produce a more muted, mellow sound.">
+      <span>Tone Dampening</span>
+      <div class="slider-line">
+        <input id="soft" type="range" min="0" max="1" step="0.01" value="0.24" />
+        <div class="mini" id="softVal">0.24</div>
+      </div>
+    </label>
+
+    <label title="Shapes the overall Northumbrian character—more closed, focused, and steady tone versus open pipe brightness.">
+      <span>Northumbrian Pipes Sound Character</span>
+      <div class="slider-line">
+        <input id="north" type="range" min="0" max="1" step="0.01" value="0.77" />
+        <div class="mini" id="northVal">0.77</div>
+      </div>
+    </label>
+
+    <label title="Controls how soft or sharp the start of each note is. Higher values reduce attack sharpness and make note onset smoother.">
+      <span>Chanter Attack Transient Softness</span>
+      <div class="slider-line">
+        <input id="attackSoft" type="range" min="0" max="1" step="0.01" value="0.48" />
+        <div class="mini" id="attackSoftVal">0.48</div>
+      </div>
+    </label>
+
+    <label title="Reduces unwanted clicks at note onset. Higher values smooth out initial transients and remove harsh attack artifacts.">
+      <span>Attack Click Reduction</span>
+      <div class="slider-line">
+        <input id="clickReduce" type="range" min="0" max="1" step="0.01" value="0.86" />
+        <div class="mini" id="clickReduceVal">0.86</div>
+      </div>
+    </label>
+
+    <label title="Adjusts how the tone changes across the scale. Higher values emphasize differences between low and high notes.">
+      <span>Per-Note Spectral Shaping</span>
+      <div class="slider-line">
+        <input id="noteSpectral" type="range" min="0" max="1" step="0.01" value="0.62" />
+        <div class="mini" id="noteSpectralVal">0.62</div>
+      </div>
+    </label>
+
+    <label title="Adds a nasal, reedy resonance. Higher values emphasize formants and give a more pronounced pipe-like edge.">
+      <span style="display:block; margin-bottom:12px;">Nasal Edge</span>
+      <div class="slider-line">
+        <input id="nasalEdge" type="range" min="0" max="0.5" step="0.01" value="0.1" />
+        <div class="mini" id="nasalEdgeVal">0.1</div>
+      </div>
+    </label>
+
+    <label title="Controls playback volume for preview only. Does not affect exported sample volume.">
+      <span>Preview Volume</span>
+      <div class="slider-line">
+        <input id="previewVolume" type="range" min="0" max="1" step="0.01" value="0.5" />
+        <div class="mini" id="previewVolumeVal">0.5</div>
+      </div>
+    </label>
+
+    <div class="btn-row">
+      <button id="generateBtn" class="primary">Generate / Regenerate Samples</button>
+      <button id="downloadBtn" class="good">Download Celtic Sounds Custom Instrument</button>
+    </div>
+    <div id="status" class="status"></div>
+    <div id="lastGenerated" class="last-generated" style="margin-bottom:10px;">No samples generated yet in this session.</div>
+  </div>
+
+  <div class="panel">
+    <div class="preview-header">
+      <h2>Sample Preview</h2>
+      <button id="stopBtn" class="stop">Stop All Previews</button>
+    </div>
+    <div id="previewArea" class="keyboard-wrap">
+      <div class="mini" style="margin-bottom:8px;">Click the buttons to preview the individual samples. Drones will loop until stopped.</div>
+      <div id="droneToggleRow" class="drone-toggle-row"></div>
+      <div id="keyboardRow" class="keyboard-row"></div>
+    </div>
+  </div>
+
+  <div class="info-bubble">
+    <b>Notes:</b><br/>
+
+    The custom instrument is natively in the key of <span class="highlight">F</span>.<br/>
+
+    It is designed to be played using <span class="highlight">Tin Whistle/Flute</span> or <span class="highlight">Uilleann Pipes</span> fingering patterns on the WARBL.<br/>
+
+    Supported MIDI note range: <span class="highlight">A3 (57) → D6 (86)</span>.<br/>
+
+    This corresponds to sounding pitches from <span class="highlight">C4</span> up to <span class="highlight">F6</span> (two octaves above).<br/>
+
+    The lowest chanter note that matches the drones is <span class="highlight">D4</span> (MIDI note 62).<br/>
+
+    The drones play on <span class="highlight">MIDI note 51</span> (F3 / C4 / F4).<br/>
+
+    The custom instrument can be transposed to any key using the <span class="highlight">Transpose (semitones)</span> in <span class="highlight">Celtic Sounds</span>
+  </div>
+</div>
+
+<script>
+(() => {
+  const SAMPLE_RATE = 44100;
+  const DRONE_DURATION_SECONDS = 10;
+  const CHANTER_START_NOTE = 'D4';
+  const CHANTER_END_NOTE = 'F6';
+  const NOTE_NAMES = ['C','Db','D','Eb','E','F','Gb','G','Ab','A','Bb','B'];
+  const SEMITONES_FROM_C = { C:0, Db:1, D:2, Eb:3, E:4, F:5, Gb:6, G:7, Ab:8, A:9, Bb:10, B:11 };
+  const JUST_F_RATIOS = {
+    // 5-limit just intonation in the key of F.
+    // Ratios are relative to F in the SAME written octave.
+    // So notes C..E are placed below F, not above it.
+    'C': 3/4,
+    'Db': 4/5,
+    'D': 5/6,
+    'Eb': 9/10,
+    'E': 15/16,
+    'F': 1/1,
+    'Gb': 16/15,
+    'G': 9/8,
+    'Ab': 6/5,
+    'A': 5/4,
+    'Bb': 4/3,
+    'B': 45/32
+  };
+
+  const els = {
+    pure: document.getElementById('pure'),
+    reed: document.getElementById('reed'),
+    soft: document.getElementById('soft'),
+    north: document.getElementById('north'),
+    attackSoft: document.getElementById('attackSoft'),
+    clickReduce: document.getElementById('clickReduce'),
+    noteSpectral: document.getElementById('noteSpectral'),
+    nasalEdge: document.getElementById('nasalEdge'),
+    nasalEdgeVal: document.getElementById('nasalEdgeVal'),
+    chanterSeconds: document.getElementById('chanterSeconds'),
+    pureVal: document.getElementById('pureVal'),
+    reedVal: document.getElementById('reedVal'),
+    softVal: document.getElementById('softVal'),
+    northVal: document.getElementById('northVal'),
+    attackSoftVal: document.getElementById('attackSoftVal'),
+    clickReduceVal: document.getElementById('clickReduceVal'),
+    noteSpectralVal: document.getElementById('noteSpectralVal'),
+    chanterSecondsVal: document.getElementById('chanterSecondsVal'),
+    generateBtn: document.getElementById('generateBtn'),
+    downloadBtn: document.getElementById('downloadBtn'),
+    stopBtn: document.getElementById('stopBtn'),
+    status: document.getElementById('status'),
+    lastGenerated: document.getElementById('lastGenerated'),
+    previewArea: document.getElementById('previewArea'),
+    keyboardRow: document.getElementById('keyboardRow'),
+    droneToggleRow: document.getElementById('droneToggleRow'),
+    previewVolume: document.getElementById('previewVolume'),
+    previewVolumeVal: document.getElementById('previewVolumeVal')
+  };
+
+  let generated = new Map();
+  let audioCtx = null;
+  let masterGain = null;
+  let chanterSource = null;
+  let chanterGain = null;
+  let currentChanterName = null;
+  let droneSource = null;
+  let droneGain = null;
+  let currentDroneName = null;
+
+  const DEFAULT_CUSTOM_INSTRUMENT_FILENAME = 'northumbrian_pipes_custom_instrument.zip';
+  const CUSTOM_INSTRUMENT_FILENAME_STORAGE_KEY = 'northumbrian_pipes_custom_instrument_filename';
+
+  function sanitizeZipFilename(name) {
+    let out = String(name || '').trim();
+
+    if (!out) {
+      out = DEFAULT_CUSTOM_INSTRUMENT_FILENAME;
+    }
+
+    // Remove characters that are invalid or troublesome in filenames
+    out = out.replace(/[\\/:*?"<>|]/g, '_');
+
+    // Prevent hidden/blank-ish names
+    out = out.replace(/^\.+/, '').trim();
+
+    if (!out) {
+      out = DEFAULT_CUSTOM_INSTRUMENT_FILENAME;
+    }
+
+    if (!/\.zip$/i.test(out)) {
+      out += '.zip';
+    }
+
+    return out;
+  }
+
+  let _localStorageAvailable = null;
+
+  function isLocalStorageAvailable() {
+    if (_localStorageAvailable !== null) return _localStorageAvailable;
+
+    try {
+      if (typeof localStorage === 'undefined') {
+        _localStorageAvailable = false;
+        return false;
+      }
+
+      const testKey = '__northumbrian_pipes_ls_test__';
+      localStorage.setItem(testKey, '1');
+      localStorage.removeItem(testKey);
+
+      _localStorageAvailable = true;
+      return true;
+    } catch (e) {
+      _localStorageAvailable = false;
+      return false;
+    }
+  }
+
+  function getSuggestedCustomInstrumentFilename() {
+    if (!isLocalStorageAvailable()) {
+      return DEFAULT_CUSTOM_INSTRUMENT_FILENAME;
+    }
+
+    try {
+      const saved = localStorage.getItem(CUSTOM_INSTRUMENT_FILENAME_STORAGE_KEY);
+
+      if (typeof saved !== 'string' || !saved.trim()) {
+        return DEFAULT_CUSTOM_INSTRUMENT_FILENAME;
+      }
+
+      return sanitizeZipFilename(saved);
+    } catch (err) {
+      return DEFAULT_CUSTOM_INSTRUMENT_FILENAME;
+    }
+  }
+
+  function setSuggestedCustomInstrumentFilename(name) {
+    if (!isLocalStorageAvailable()) return;
+
+    try {
+      localStorage.setItem(
+        CUSTOM_INSTRUMENT_FILENAME_STORAGE_KEY,
+        sanitizeZipFilename(name)
+      );
+    } catch (e) {
+      // silently ignore
+    }
+  }
+
+  async function promptForCustomInstrumentFilename() {
+    const suggested = getSuggestedCustomInstrumentFilename();
+
+    const modal = await DayPilot.Modal.prompt(
+      'Enter a filename for the custom instrument ZIP:',
+      suggested,
+      {
+        theme: 'modal_compact',
+        autoFocus: true,
+        okText: 'Save',
+        cancelText: 'Cancel'
+      }
+    );
+
+    if (modal.canceled) {
+      return null;
+    }
+
+    const filename = sanitizeZipFilename(modal.result);
+
+    setSuggestedCustomInstrumentFilename(filename);
+
+    return filename;
+  }
+
+  function setStatus(msg, isWarn = false, isBusy = false) {
+    els.status.innerHTML = isBusy ? `<span class="spinner"></span>${msg}` : msg;
+    els.status.className = 'status' + (isWarn ? ' warn' : '') + (isBusy ? ' busy' : '');
+  }
+
+  function flashRegenerated(entriesCount) {
+    const now = new Date();
+    const stamp = now.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit', second: '2-digit' });
+    els.lastGenerated.textContent = `Last regenerated: ${stamp} • ${entriesCount} samples`;
+    els.status.classList.remove('success-flash');
+    void els.previewArea.offsetWidth;
+    els.status.classList.add('success-flash');
+    setTimeout(() => {
+      els.status.classList.remove('success-flash');
+    }, 900);
+  }
+
+  function updateSliderLabels() {
+    els.pureVal.textContent = Number(els.pure.value).toFixed(2);
+    els.reedVal.textContent = Number(els.reed.value).toFixed(2);
+    els.softVal.textContent = Number(els.soft.value).toFixed(2);
+    els.northVal.textContent = Number(els.north.value).toFixed(2);
+    els.attackSoftVal.textContent = Number(els.attackSoft.value).toFixed(2);
+    els.clickReduceVal.textContent = Number(els.clickReduce.value).toFixed(2);
+    els.noteSpectralVal.textContent = Number(els.noteSpectral.value).toFixed(2);
+    if (els.nasalEdgeVal) els.nasalEdgeVal.textContent = Number(els.nasalEdge.value).toFixed(2);
+    if (els.previewVolumeVal) els.previewVolumeVal.textContent = Number(els.previewVolume.value).toFixed(2);
+    els.chanterSecondsVal.textContent = String(Math.round(Number(els.chanterSeconds.value) || 7));
+  }
+
+  function clamp(v, lo, hi) {
+    return Math.max(lo, Math.min(hi, v));
+  }
+
+  function parseNote(note) {
+    const m = /^([A-G])([b]?)(-?\d+)$/.exec(String(note).trim());
+    if (!m) return null;
+    return { name: m[1] + (m[2] || ''), octave: Number(m[3]) };
+  }
+
+  function midiFromNote(note) {
+    const n = parseNote(note);
+    if (!n || !(n.name in SEMITONES_FROM_C)) return null;
+    return (n.octave + 1) * 12 + SEMITONES_FROM_C[n.name];
+  }
+
+  function noteFromMidi(midi) {
+    const octave = Math.floor(midi / 12) - 1;
+    const name = NOTE_NAMES[((midi % 12) + 12) % 12];
+    return name + octave;
+  }
+
+    function transposeNoteBySemitones(note, semitones) {
+    const midi = midiFromNote(note);
+    if (midi === null) return note;
+    return noteFromMidi(midi + semitones);
+  }
+
+function noteRange(start, end) {
+    const s = midiFromNote(start);
+    const e = midiFromNote(end);
+    if (s === null || e === null || e < s) return null;
+    const out = [];
+    for (let i = s; i <= e; i++) out.push(noteFromMidi(i));
+    return out;
+  }
+
+  function ratioForFJust(noteName) {
+    const simple = parseNote(noteName)?.name;
+    if (!simple || !(simple in JUST_F_RATIOS)) return null;
+    return JUST_F_RATIOS[simple];
+  }
+
+  function noteToFreqJustF(note) {
+    const n = parseNote(note);
+    const ratio = ratioForFJust(note);
+    const f4 = 440 * Math.pow(2, (midiFromNote('F4') - midiFromNote('A4')) / 12);
+    return f4 * ratio * Math.pow(2, n.octave - 4);
+  }
+
+  function makeNoise(seed) {
+    let x = seed >>> 0;
+    return function() {
+      x = (1664525 * x + 1013904223) >>> 0;
+      return (x / 4294967295) * 2 - 1;
+    };
+  }
+
+  function onePoleLowpass(input, cutoff) {
+    const out = new Float32Array(input.length);
+    const a = Math.exp(-2 * Math.PI * cutoff / SAMPLE_RATE);
+    let y = 0;
+    for (let i = 0; i < input.length; i++) {
+      y = (1 - a) * input[i] + a * y;
+      out[i] = y;
+    }
+    return out;
+  }
+
+  function formantMix(x, y, z, north, soft) {
+    const a = 0.62 + north * 0.18 - soft * 0.10;
+    const b = 0.24 + north * 0.12 + soft * 0.06;
+    const c = 0.10 + north * 0.08;
+    return x * a + y * b + z * c;
+  }
+
+  function normalizePeak(data, targetPeak = 0.92) {
+    let peak = 0;
+    for (let i = 0; i < data.length; i++) {
+      const a = Math.abs(data[i]);
+      if (a > peak) peak = a;
+    }
+    if (!peak) return data;
+    const gain = targetPeak / peak;
+    for (let i = 0; i < data.length; i++) data[i] *= gain;
+    return data;
+  }
+
+  function floatToWavBuffer(samples, gainScale = 1) {
+    const bytesPerSample = 2;
+    const buffer = new ArrayBuffer(44 + samples.length * bytesPerSample);
+    const view = new DataView(buffer);
+
+    function writeString(offset, s) {
+      for (let i = 0; i < s.length; i++) view.setUint8(offset + i, s.charCodeAt(i));
+    }
+
+    writeString(0, 'RIFF');
+    view.setUint32(4, 36 + samples.length * bytesPerSample, true);
+    writeString(8, 'WAVE');
+    writeString(12, 'fmt ');
+    view.setUint32(16, 16, true);
+    view.setUint16(20, 1, true);
+    view.setUint16(22, 1, true);
+    view.setUint32(24, SAMPLE_RATE, true);
+    view.setUint32(28, SAMPLE_RATE * bytesPerSample, true);
+    view.setUint16(32, bytesPerSample, true);
+    view.setUint16(34, 16, true);
+    writeString(36, 'data');
+    view.setUint32(40, samples.length * bytesPerSample, true);
+
+    let offset = 44;
+    const exportGain = clamp(Number(gainScale) || 1, 0, 1);
+    for (let i = 0; i < samples.length; i++) {
+      let s = clamp(samples[i] * exportGain, -1, 1);
+      view.setInt16(offset, s < 0 ? s * 32768 : s * 32767, true);
+      offset += 2;
+    }
+    return buffer;
+  }
+
+  function getParams() {
+    const releaseMs = 25;
+    return {
+      pure: Number(els.pure.value),
+      reed: Number(els.reed.value),
+      soft: Number(els.soft.value),
+      north: Number(els.north.value),
+      attackSoft: Number(els.attackSoft.value),
+      clickReduce: Number(els.clickReduce.value),
+      noteSpectral: Number(els.noteSpectral.value),
+      nasalEdge: Number(els.nasalEdge ? els.nasalEdge.value : 0),
+      releaseMs,
+      chanterSeconds: clamp(Math.round(Number(els.chanterSeconds.value) || 7), 1, 15)
+    };
+  }
+
+  function smoothstep01(x) {
+    const t = clamp(x, 0, 1);
+    return t * t * (3 - 2 * t);
+  }
+
+  function equalPowerFadeIn(x) {
+    return Math.sin(clamp(x, 0, 1) * Math.PI * 0.5);
+  }
+
+  function notePosition01(noteName) {
+    const startMidi = midiFromNote(CHANTER_START_NOTE);
+    const endMidi = midiFromNote(CHANTER_END_NOTE);
+    const noteMidi = midiFromNote(noteName);
+    if (startMidi === null || endMidi === null || noteMidi === null || endMidi <= startMidi) return 0.5;
+    return clamp((noteMidi - startMidi) / (endMidi - startMidi), 0, 1);
+  }
+
+  function applyNasalFormant(sample, t, freq, params) {
+    const edge = Math.max(0, params.nasalEdge || 0);
+    if (edge <= 0) return sample;
+
+    const form1 = 980 + Math.min(560, freq * 0.64);
+    const form2 = form1 * 1.72;
+    const form3 = form1 * 2.28;
+
+    const ring1 = Math.sin(2 * Math.PI * form1 * t) * (0.13 + edge * 0.24);
+    const ring2 = Math.sin(2 * Math.PI * form2 * t) * (0.06 + edge * 0.12);
+    const ring3 = Math.sin(2 * Math.PI * form3 * t) * (0.025 + edge * 0.07);
+
+    const drive = 0.95 + edge * 3.0;
+    const follow = 0.42 + 0.80 * Math.tanh(sample * drive);
+    const bodyTrim = 1 - Math.min(0.36, edge * 0.17);
+
+    const nasal = (ring1 + ring2 + ring3) * follow;
+    const mixed = sample * bodyTrim + nasal * (0.36 + edge * 0.18);
+
+    return Math.tanh(mixed * (1 + edge * 0.22));
+  }
+
+  function synthesizeChanter(noteName, freq, params) {
+    const length = Math.floor(SAMPLE_RATE * params.chanterSeconds);
+    const data = new Float32Array(length);
+    const seed = midiFromNote(noteName) * 2654435761;
+    const rand = makeNoise(seed >>> 0);
+
+    const airyNoise = new Float32Array(length);
+    for (let i = 0; i < length; i++) airyNoise[i] = rand();
+    const lowNoise = onePoleLowpass(airyNoise, 1900 + params.reed * 2200 - params.clickReduce * 450);
+
+    const attackMs = 5 + (1 - params.soft) * 2.2 + params.reed * 1.7 + params.attackSoft * 7.5 + params.clickReduce * 2.0;
+    const attackSamples = Math.max(16, Math.floor(SAMPLE_RATE * attackMs / 1000));
+    const chiffDelaySamples = Math.floor(SAMPLE_RATE * (0.001 + params.clickReduce * 0.0035));
+    const chiffSamples = Math.floor(SAMPLE_RATE * (0.007 + params.reed * 0.013 + (1 - params.attackSoft) * 0.006 + (1 - params.clickReduce) * 0.006));
+    const releaseSamples = Math.max(1, Math.floor(SAMPLE_RATE * params.releaseMs / 1000));
+    const deClickSamples = Math.max(48, Math.floor(SAMPLE_RATE * (0.0012 + params.attackSoft * 0.004 + params.clickReduce * 0.007)));
+    const postStartSmoothSamples = Math.max(deClickSamples + 1, Math.floor(SAMPLE_RATE * (0.005 + params.clickReduce * 0.009 + params.attackSoft * 0.004)));
+
+    const notePos = notePosition01(noteName);
+    const spectralDepth = params.noteSpectral;
+    const lowWarm = (1 - notePos) * spectralDepth;
+    const highFocus = notePos * spectralDepth;
+    const octaveContour = Math.sin(notePos * Math.PI);
+
+    const baseBrightness = 0.72 - params.soft * 0.18 + params.reed * 0.22 - params.clickReduce * 0.08 + highFocus * 0.20 - lowWarm * 0.04;
+    const northFocus = 0.80 + params.north * 0.28 + octaveContour * 0.10 * spectralDepth;
+    const pureFactor = 0.70 + params.pure * 0.34 + lowWarm * 0.04 - highFocus * 0.02;
+    const harmonicTilt = 1 + highFocus * 0.64 - lowWarm * 0.18;
+    const lowerBodyWeight = 1 + lowWarm * 0.18;
+    const upperBodyWeight = 1 + highFocus * 0.44;
+
+    let phase1 = 0, phase2 = 0, phase3 = 0, phase4 = 0, phase5 = 0, phase6 = 0, phase7 = 0, phase8 = 0;
+    let smoothed = 0;
+    let prevBody = 0;
+
+    for (let i = 0; i < length; i++) {
+      const t = i / SAMPLE_RATE;
+      const verySlowDrift = Math.sin(2 * Math.PI * (0.11 + (seed % 7) * 0.01) * t) * (0.0007 + params.north * 0.0005);
+      const microDrift = Math.sin(2 * Math.PI * (4.8 + (seed % 5) * 0.3) * t) * (0.00012 + params.north * 0.00008);
+      const instFreq = freq * (1 + verySlowDrift + microDrift);
+
+      phase1 += 2 * Math.PI * instFreq / SAMPLE_RATE;
+      phase2 += 2 * Math.PI * instFreq * 2 / SAMPLE_RATE;
+      phase3 += 2 * Math.PI * instFreq * 3 / SAMPLE_RATE;
+      phase4 += 2 * Math.PI * instFreq * 4 / SAMPLE_RATE;
+      phase5 += 2 * Math.PI * instFreq * 5 / SAMPLE_RATE;
+      phase6 += 2 * Math.PI * instFreq * 6 / SAMPLE_RATE;
+      phase7 += 2 * Math.PI * instFreq * 7 / SAMPLE_RATE;
+      phase8 += 2 * Math.PI * instFreq * 8 / SAMPLE_RATE;
+
+      const s1 = Math.sin(phase1);
+      const s2 = Math.sin(phase2 + 0.08);
+      const s3 = Math.sin(phase3 + 0.15);
+      const s4 = Math.sin(phase4 + 0.22);
+      const s5 = Math.sin(phase5 + 0.31);
+      const s6 = Math.sin(phase6 + 0.40);
+      const s7 = Math.sin(phase7 + 0.52);
+      const s8 = Math.sin(phase8 + 0.63);
+
+      const edgeBoost = 0.10 + params.reed * 0.10 + params.north * 0.05;
+
+      const bodyA =
+        s1 * (0.92 * pureFactor * lowerBodyWeight) +
+        s2 * (0.28 * baseBrightness) +
+        s3 * ((0.18 + edgeBoost * 0.40) * harmonicTilt) +
+        s4 * ((0.08 + edgeBoost * 0.32) * upperBodyWeight) +
+        s5 * ((0.035 + edgeBoost * 0.18) * upperBodyWeight);
+
+      const bodyB =
+        s1 * (0.70 + lowWarm * 0.06) +
+        s2 * (0.22 + octaveContour * 0.04) +
+        s3 * (0.28 * northFocus) +
+        s5 * ((0.08 + edgeBoost * 0.22) * upperBodyWeight) +
+        s6 * ((0.03 + edgeBoost * 0.12) * upperBodyWeight);
+
+      const bodyC =
+        s1 * (0.56 + lowWarm * 0.04) +
+        s2 * (0.18 + highFocus * 0.02) +
+        s4 * (0.14 + highFocus * 0.06) +
+        s6 * ((0.06 + edgeBoost * 0.16) * (1 + highFocus * 0.26)) +
+        s7 * ((0.025 + edgeBoost * 0.08) * (1 + highFocus * 0.20)) +
+        s8 * ((0.012 + edgeBoost * 0.05));
+
+      let body = formantMix(bodyA, bodyB, bodyC, params.north, params.soft);
+      const perNoteFormant = 1 + (notePos - 0.5) * 0.24 * spectralDepth;
+      body *= perNoteFormant;
+
+      const sawEdge =
+        s2 * 0.10 +
+        s3 * 0.09 +
+        s4 * 0.07 +
+        s5 * 0.045 +
+        s6 * 0.028;
+
+      body += sawEdge * (0.18 + params.reed * 0.22 + params.north * 0.08 - params.soft * 0.06);
+
+      body = Math.tanh(body * (1.28 + params.reed * 0.78 + params.north * 0.16 - params.soft * 0.12));
+
+      let attackEnv = 1;
+      if (i < attackSamples) {
+        attackEnv = smoothstep01(i / attackSamples);
+      }
+
+      let releaseEnv = 1;
+      if (i > length - releaseSamples) {
+        const x = (length - i) / releaseSamples;
+        releaseEnv = clamp(x, 0, 1);
+      }
+
+      let startGate = 1;
+      if (i < deClickSamples) {
+        startGate = equalPowerFadeIn(i / deClickSamples);
+      }
+
+      const onsetBlend = i < postStartSmoothSamples ? smoothstep01(i / postStartSmoothSamples) : 1;
+      const noiseAttackFactor = i < chiffDelaySamples ? 0 : 1;
+      const chiffProgress = i < chiffDelaySamples ? 0 : (i - chiffDelaySamples) / Math.max(1, chiffSamples);
+      const chiffEnv = chiffProgress >= 1 ? 0 : Math.pow(1 - clamp(chiffProgress, 0, 1), 1.55 + (1 - params.attackSoft) * 0.8 + params.clickReduce * 0.45);
+      const chiffAmount = Math.max(0, 0.012 + params.reed * 0.14 - params.pure * 0.02 + (1 - params.attackSoft) * 0.045 - params.clickReduce * 0.08);
+      const chiff = lowNoise[i] * chiffAmount * chiffEnv * noiseAttackFactor;
+      const air = lowNoise[i] * (0.008 + params.reed * 0.013 + params.north * 0.007) * (0.45 + 0.55 * onsetBlend);
+
+      const snapBase = i > 0 ? (body - prevBody) : 0;
+      prevBody = body;
+      const snapAmount = (0.007 + params.reed * 0.012 + (1 - params.attackSoft) * 0.010 + params.north * 0.003) * Math.pow(1 - params.clickReduce, 2.8);
+      const snap = snapBase * snapAmount * chiffEnv;
+
+      const raw = (body * attackEnv + chiff + air + snap) * startGate;
+      const smoothing = i < postStartSmoothSamples ? (0.70 - onsetBlend * 0.52 + params.clickReduce * 0.05) : 0.09;
+      smoothed += (raw - smoothed) * (1 - clamp(smoothing, 0.01, 0.94));
+
+      let sample = smoothed * releaseEnv;
+      sample = applyNasalFormant(sample, t, freq, params);
+      data[i] = sample;
+    }
+
+    normalizePeak(data, 0.90 - params.soft * 0.08);
+    return data;
+  }
+
+  function synthesizeDrone(label, freqs, params) {
+    const length = Math.floor(SAMPLE_RATE * DRONE_DURATION_SECONDS);
+    const data = new Float32Array(length);
+    const seed = label.length * 1234567;
+    const rand = makeNoise(seed);
+
+    const periodicNoise = new Float32Array(length);
+    for (let i = 0; i < length; i++) periodicNoise[i] = rand();
+    const noiseLP = onePoleLowpass(periodicNoise, 1500 + params.reed * 950 + params.north * 320);
+
+    const mod1Cycles = 1;
+    const mod2Cycles = 3;
+    const mod3Cycles = 7;
+
+    for (let i = 0; i < length; i++) {
+      const phaseT = i / length;
+      const motion = 1
+        + Math.sin(2 * Math.PI * mod1Cycles * phaseT) * (0.008 + params.north * 0.005)
+        + Math.sin(2 * Math.PI * mod2Cycles * phaseT + 0.6) * 0.0035
+        + Math.sin(2 * Math.PI * mod3Cycles * phaseT + 1.1) * 0.0015;
+
+      let v = 0;
+      for (let j = 0; j < freqs.length; j++) {
+        const base = freqs[j];
+        const loopFreq = Math.round(base * DRONE_DURATION_SECONDS) / DRONE_DURATION_SECONDS;
+        const p1 = 2 * Math.PI * Math.round(loopFreq * DRONE_DURATION_SECONDS) * i / length;
+        const p2 = 2 * Math.PI * Math.round(loopFreq * 2 * DRONE_DURATION_SECONDS) * i / length;
+        const p3 = 2 * Math.PI * Math.round(loopFreq * 3 * DRONE_DURATION_SECONDS) * i / length;
+        const p4 = 2 * Math.PI * Math.round(loopFreq * 4 * DRONE_DURATION_SECONDS) * i / length;
+        const p5 = 2 * Math.PI * Math.round(loopFreq * 5 * DRONE_DURATION_SECONDS) * i / length;
+        const p6 = 2 * Math.PI * Math.round(loopFreq * 6 * DRONE_DURATION_SECONDS) * i / length;
+
+        const core = Math.sin(p1) * 0.86;
+        const h2 = Math.sin(p2 + 0.05) * 0.25;
+        const h3 = Math.sin(p3 + 0.11) * (0.17 + params.reed * 0.07);
+        const h4 = Math.sin(p4 + 0.18) * (0.07 + params.reed * 0.05);
+        const h5 = Math.sin(p5 + 0.23) * (0.035 + params.reed * 0.035 + params.north * 0.02);
+        const h6 = Math.sin(p6 + 0.29) * (0.018 + params.reed * 0.02);
+
+        let partials = core + h2 + h3 + h4 + h5 + h6;
+
+        const edge = Math.sin(p2) * 0.04 + Math.sin(p3) * 0.04 + Math.sin(p4) * 0.03;
+        partials += edge * (0.6 + params.reed * 0.7 + params.north * 0.2);
+
+        v += Math.tanh(partials * (1.10 + params.reed * 0.42 + params.north * 0.06 - params.soft * 0.06));
+      }
+
+      const breath = noiseLP[i] * (0.008 + params.north * 0.008 + params.reed * 0.007);
+      data[i] = ((v / freqs.length) + breath) * motion;
+    }
+
+    normalizePeak(data, 0.84);
+    return data;
+  }
+
+  function yieldToUI() {
+    return new Promise(resolve => setTimeout(resolve, 0));
+  }
+
+  async function buildEntries(params) {
+    const noteNames = noteRange(CHANTER_START_NOTE, CHANTER_END_NOTE);
+    if (!noteNames || !noteNames.length) throw new Error('Invalid chanter range.');
+
+    const droneRoot = 'F3'.trim();
+    if (midiFromNote(droneRoot) === null) throw new Error('Invalid drone root.');
+
+    const entries = [];
+    const totalSteps = noteNames.length + 1;
+    let step = 0;
+
+    for (const note of noteNames) {
+      step++;
+      setStatus(`Generating chanter ${step} of ${totalSteps}: ${note}...`, false, true);
+      await yieldToUI();
+      const freq = noteToFreqJustF(note);
+      const pcm = synthesizeChanter(note, freq, params);
+      entries.push({
+        filename: `${transposeNoteBySemitones(note, -3)}.wav`,
+        label: note,
+        type: 'chanter',
+        freq,
+        pcm,
+        buffer: floatToWavBuffer(pcm, 0.25)
+      });
+    }
+
+    const rootFreq = noteToFreqJustF(droneRoot);
+    const fifthFreq = rootFreq * (3 / 2);
+    const octaveFreq = rootFreq * 2;
+
+    const droneSets = [
+      {
+        label: `${droneRoot}_${noteFromMidi(midiFromNote(droneRoot) + 7)}_${noteFromMidi(midiFromNote(droneRoot) + 12)}`,
+        filename: `Eb3.wav`,
+        freqs: [rootFreq, fifthFreq, octaveFreq]
+      }
+    ];
+
+    for (const d of droneSets) {
+      step++;
+      setStatus(`Generating drone ${step} of ${totalSteps}: ${d.label}...`, false, true);
+      await yieldToUI();
+
+      const pcm = synthesizeDrone(d.label, d.freqs, params);
+
+      // Apply 1.2x drone gain to the generated audio itself
+      for (let i = 0; i < pcm.length; i++) {
+        pcm[i] = clamp(pcm[i] * 1.2, -1, 1);
+      }
+
+      entries.push({
+        filename: d.filename,
+        label: d.label,
+        type: 'drone',
+        freq: d.freqs[0],
+        pcm,
+        buffer: floatToWavBuffer(pcm, 0.5)
+      });
+    }
+
+    return entries;
+  }
+
+  function ensureAudio() {
+    if (!audioCtx) {
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: SAMPLE_RATE });
+      masterGain = audioCtx.createGain();
+
+      // SCALE TO 0 → 0.25
+      const sliderVal = clamp(Number(els.previewVolume?.value) || 0.5, 0, 1);
+      masterGain.gain.value = sliderVal * 0.25;
+
+      masterGain.connect(audioCtx.destination);
+    }
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+  }
+
+  function pcmToAudioBuffer(pcm) {
+    ensureAudio();
+    const buffer = audioCtx.createBuffer(1, pcm.length, SAMPLE_RATE);
+    buffer.copyToChannel(pcm, 0, 0);
+    return buffer;
+  }
+
+  function stopChanterPreview(fadeMs = 25) {
+    if (!chanterSource) {
+      currentChanterName = null;
+      refreshPlayButtons();
+      return;
+    }
+
+    const source = chanterSource;
+    const gain = chanterGain;
+    chanterSource = null;
+    chanterGain = null;
+    currentChanterName = null;
+    refreshPlayButtons();
+
+    try {
+      if (gain && audioCtx) {
+        const now = audioCtx.currentTime;
+        const fadeSeconds = Math.max(0.005, fadeMs / 1000);
+        const current = Math.max(0.0001, gain.gain.value || 1);
+        gain.gain.cancelScheduledValues(now);
+        gain.gain.setValueAtTime(current, now);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + fadeSeconds);
+        source.stop(now + fadeSeconds + 0.005);
+      } else {
+        source.stop();
+      }
+    } catch (e) {}
+
+    source.onended = () => {
+      try { source.disconnect(); } catch (e) {}
+      try { if (gain) gain.disconnect(); } catch (e) {}
+    };
+  }
+
+  function stopDronePreview() {
+    if (!droneSource) {
+      currentDroneName = null;
+      refreshPlayButtons();
+      return;
+    }
+    const source = droneSource;
+    const gain = droneGain;
+    droneSource = null;
+    droneGain = null;
+    currentDroneName = null;
+    refreshPlayButtons();
+
+    try {
+      if (gain && audioCtx) {
+        const now = audioCtx.currentTime;
+        gain.gain.cancelScheduledValues(now);
+        gain.gain.setValueAtTime(Math.max(0.0001, gain.gain.value || 0.95), now);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.03);
+        source.stop(now + 0.04);
+      } else {
+        source.stop();
+      }
+    } catch (e) {}
+
+    source.onended = () => {
+      try { source.disconnect(); } catch (e) {}
+      try { if (gain) gain.disconnect(); } catch (e) {}
+    };
+  }
+
+  function stopAllPreview() {
+    stopChanterPreview();
+    stopDronePreview();
+    setStatus('All preview playback stopped.');
+  }
+
+  function refreshPlayButtons() {
+    const buttons = document.querySelectorAll('button[data-key-preview], button[data-drone-toggle]');
+    buttons.forEach(btn => {
+      const name = btn.getAttribute('data-preview') || btn.getAttribute('data-key-preview') || btn.getAttribute('data-drone-toggle');
+      const type = btn.getAttribute('data-type');
+      const label = btn.getAttribute('data-label') || name;
+      if (type === 'drone') {
+        const active = currentDroneName === name;
+        btn.textContent = active ? 'Stop ' + label.replace(/\.wav$/,'') : label.replace(/\.wav$/,'');
+        btn.classList.toggle('active', active);
+        btn.classList.toggle('stop', false);
+      } else {
+        const active = currentChanterName === name;
+        if (btn.hasAttribute('data-key-preview')) {
+          btn.textContent = label.replace(/\.wav$/,'');
+          btn.classList.toggle('active', active);
+        } else {
+          btn.textContent = active ? 'Stop' : 'Preview';
+          btn.className = active ? 'stop' : '';
+        }
+      }
+    });
+  }
+
+  function playEntry(filename) {
+    if (!generated.has(filename)) return;
+    const entry = generated.get(filename);
+    ensureAudio();
+
+    if (entry.type === 'drone') {
+      if (currentDroneName === filename) {
+        stopDronePreview();
+        return;
+      }
+      stopDronePreview();
+      const source = audioCtx.createBufferSource();
+      const audioBuffer = pcmToAudioBuffer(entry.pcm);
+      source.buffer = audioBuffer;
+      source.loop = true;
+      const gain = audioCtx.createGain();
+      gain.gain.setValueAtTime(0.0001, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.95, audioCtx.currentTime + 0.03);
+      source.connect(gain).connect(masterGain);
+      droneSource = source;
+      droneGain = gain;
+      currentDroneName = filename;
+      refreshPlayButtons();
+      source.start();
+      source.onended = () => {
+        if (droneSource === source) {
+          droneSource = null;
+          if (droneGain === gain) droneGain = null;
+          currentDroneName = null;
+          refreshPlayButtons();
+        }
+        try { source.disconnect(); } catch (e) {}
+        try { gain.disconnect(); } catch (e) {}
+      };
+      return;
+    }
+
+    if (currentChanterName === filename) {
+      stopChanterPreview();
+      return;
+    }
+    stopChanterPreview();
+    const source = audioCtx.createBufferSource();
+    source.buffer = pcmToAudioBuffer(entry.pcm);
+    const gain = audioCtx.createGain();
+    gain.gain.setValueAtTime(1, audioCtx.currentTime);
+    source.connect(gain).connect(masterGain);
+    chanterSource = source;
+    chanterGain = gain;
+    currentChanterName = filename;
+    refreshPlayButtons();
+    source.start();
+    source.onended = () => {
+      if (chanterSource === source) {
+        chanterSource = null;
+        chanterGain = null;
+        currentChanterName = null;
+        refreshPlayButtons();
+      }
+      try { source.disconnect(); } catch (e) {}
+      try { gain.disconnect(); } catch (e) {}
+    };
+  }
+
+  function renderKeyboard() {
+    els.keyboardRow.innerHTML = '';
+    els.droneToggleRow.innerHTML = '';
+    const frag = document.createDocumentFragment();
+    const chanterEntries = [...generated.values()].filter(e => e.type === 'chanter');
+    chanterEntries.forEach(entry => {
+      const btn = document.createElement('button');
+      btn.className = 'key-btn';
+      btn.textContent = entry.label;
+      btn.setAttribute('data-key-preview', entry.filename);
+      btn.setAttribute('data-label', entry.label || entry.filename);
+      btn.setAttribute('data-type', 'chanter');
+      btn.addEventListener('click', () => playEntry(entry.filename));
+      frag.appendChild(btn);
+    });
+    els.keyboardRow.appendChild(frag);
+
+    const droneFrag = document.createDocumentFragment();
+    const droneEntries = [...generated.values()].filter(e => e.type === 'drone');
+    droneEntries.forEach(entry => {
+      const btn = document.createElement('button');
+      btn.className = 'drone-toggle';
+
+      // Always label as "Drones"
+      btn.textContent = 'Drones';
+
+      btn.setAttribute('data-drone-toggle', entry.filename);
+      btn.setAttribute('data-label', 'Drones');
+      btn.setAttribute('data-type', 'drone');
+
+      btn.addEventListener('click', () => playEntry(entry.filename));
+      droneFrag.appendChild(btn);
+    });
+    els.droneToggleRow.appendChild(droneFrag);
+    refreshPlayButtons();
+  }
+
+  function renderPreviewArea() {
+    renderKeyboard();
+    refreshPlayButtons();
+  }
+
+  let regenerateTimer = null;
+  let isGenerating = false;
+  let pendingAutoRegenerate = false;
+
+  function updatePreviewVolumeRealtime() {
+    updateSliderLabels();
+
+    if (masterGain && audioCtx) {
+      const now = audioCtx.currentTime;
+
+      // SCALE TO 0 → 0.25
+      const sliderVal = clamp(Number(els.previewVolume.value) || 0.5, 0, 1);
+      const value = sliderVal * 0.25;
+
+      masterGain.gain.cancelScheduledValues(now);
+      masterGain.gain.setValueAtTime(value, now);
+    }
+  }
+
+  function scheduleAutoRegenerate() {
+    updateSliderLabels();
+    if (regenerateTimer) clearTimeout(regenerateTimer);
+    regenerateTimer = setTimeout(() => {
+      regenerateTimer = null;
+      if (isGenerating) {
+        pendingAutoRegenerate = true;
+        return;
+      }
+      generateAll(true);
+    }, 180);
+  }
+
+  async function generateAll(isAuto = false) {
+    if (isGenerating) {
+      pendingAutoRegenerate = true;
+      return;
+    }
+
+    isGenerating = true;
+    pendingAutoRegenerate = false;
+
+    stopAllPreview();
+    updateSliderLabels();
+    els.generateBtn.disabled = true;
+    els.generateBtn.textContent = 'Regenerating...';
+    setStatus(isAuto ? 'Regenerating samples from slider change...' : 'Preparing sample regeneration...', false, true);
+    try {
+      const params = getParams();
+      const entries = await buildEntries(params);
+      generated = new Map(entries.map(e => [e.filename, e]));
+      renderPreviewArea();
+      setStatus(`Generated ${entries.length} samples.`);
+      flashRegenerated(entries.length);
+    } catch (err) {
+      generated = new Map();
+      renderPreviewArea();
+      setStatus(err.message || 'Generation failed.', true);
+    } finally {
+      els.generateBtn.disabled = false;
+      els.generateBtn.textContent = 'Generate / Regenerate Samples';
+      isGenerating = false;
+      if (pendingAutoRegenerate) {
+        pendingAutoRegenerate = false;
+        scheduleAutoRegenerate();
+      }
+    }
+  }
+
+  async function saveZipBlob(blob, filename) {
+    const url = URL.createObjectURL(blob);
+    try {
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      a.rel = 'noopener';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      return 'downloaded';
+    } finally {
+      setTimeout(() => URL.revokeObjectURL(url), 4000);
+    }
+  }
+
+  async function downloadZip() {
+    if (!generated.size) {
+      setStatus('Generate samples first.', true);
+      alert('Please generate the samples before downloading the ZIP.');
+      return;
+    }
+
+    if (typeof JSZip === 'undefined') {
+      setStatus('JSZip library is missing.', true);
+      alert('The ZIP library did not load, so the ZIP file could not be created. Please check your network connection and reload the page.');
+      return;
+    }
+
+    if (!window.DayPilot || !DayPilot.Modal || typeof DayPilot.Modal.prompt !== 'function') {
+      setStatus('DayPilot.Modal is missing.', true);
+      alert('DayPilot.Modal is not available. Please make sure the DayPilot Modal include is loaded.');
+      return;
+    }
+
+    const filename = await promptForCustomInstrumentFilename();
+    if (!filename) {
+      setStatus('Custom instrument save canceled.');
+      return;
+    }
+
+    stopAllPreview();
+    setStatus('Building ZIP...', false, true);
+
+    try {
+      const zip = new JSZip();
+      [...generated.values()].forEach(entry => zip.file(entry.filename, entry.buffer));
+
+      zip.file('abctools.json', JSON.stringify({
+        volumeScale: 0.25,
+        fadeTimeMs: 25,
+        trimLeadingSilence: false,
+        silenceThresholdDb: -40,
+        forceMonoWav: false,
+        droneNotes: [51],
+        droneVolumeScale: 1.0,
+        hasDrone: true
+      }, null, 2));
+
+      const blob = await zip.generateAsync({ type: 'blob' });
+      await saveZipBlob(blob, filename);
+
+      setStatus(`ZIP download started: ${filename}`);
+    } catch (err) {
+      const msg = 'ZIP creation failed: ' + ((err && err.message) ? err.message : 'Unknown error');
+      setStatus(msg, true);
+      alert(msg);
+    }
+  }
+
+  [els.pure, els.reed, els.soft, els.north, els.attackSoft, els.clickReduce, els.noteSpectral, els.chanterSeconds, els.nasalEdge]
+    .forEach(el => el.addEventListener('input', scheduleAutoRegenerate));
+
+  els.previewVolume.addEventListener('input', updatePreviewVolumeRealtime);
+
+  els.generateBtn.addEventListener('click', () => generateAll(false));
+  els.downloadBtn.addEventListener('click', downloadZip);
+  els.stopBtn.addEventListener('click', stopAllPreview);
+
+  updateSliderLabels();
+  generateAll();
+})();
+</script>
+</body>
+</html>
