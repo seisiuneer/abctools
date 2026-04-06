@@ -1555,7 +1555,7 @@
 					  <div class="instructions-gap"></div>
 
 					  This can be useful for fine control of expression when playing
-					  the <b>Tin Whistle</b>, <b>Irish Flute</b>, <b>Säckpipa</b>, or <b>Uilleann Pipes</b>, and it also lets you optionally enable pitch bend for instruments such as <b>Anglo Concertina</b>, <b>Accordion</b>, <b>Great Highland Bagpipe</b>, and <b>Smallpipes</b>.
+					  the <b>Tin Whistle</b>, <b>Irish Flute</b>, <b>Säckpipa</b>, or <b>Uilleann Pipes</b>, and it also lets you optionally enable pitch bend for instruments such as <b>Anglo Concertina</b>, <b>Accordion</b>, <b>Great Highland Bagpipe</b>, <b>Smallpipes</b> or <b>Northumbrian Pipes</b>.
 					</div>
 
           <hr class="instructions-divider"/>
@@ -1578,7 +1578,7 @@
           <div class="instructions-subtitle">Drone Volume</div>
           <div class="instructions-subbody">
             <b>Drone Volume</b> is available only for instruments that use dedicated drone voices:
-            <b>Uilleann Pipes</b>, <b>Great Highland Bagpipe</b>, <b>Smallpipes</b>, and <b>Säckpipa</b>.
+            <b>Uilleann Pipes</b>, <b>Great Highland Bagpipe</b>, <b>Smallpipes</b>, <b>Northumbrian Pipes</b>, and <b>Säckpipa</b>.
             <div class="instructions-gap"></div>
             This control adjusts the playback level of the drone voice independently of the main
             <b>Volume</b> control.
@@ -1621,11 +1621,11 @@
 					  <b>Pitch Bend Range</b>, <b>Pitch Bend Up Scale</b>, and <b>Pitch Bend Down Scale</b>.
 					  <div class="instructions-gap"></div>
 
-					  <b>Tin Whistle</b>, <b>Irish Flute</b>, <b>Säckpipa</b>, and the <b>Uilleann Pipes melody voice</b>
+					  <b>Tin Whistle</b>, <b>Irish Flute</b>, <b>Säckpipa</b>, <b>Uilleann Pipes melody voice</b>
 					  use normal pitch bend behavior by default.
 					  <div class="instructions-gap"></div>
 
-					  <b>Anglo Concertina</b>, <b>Accordion</b>, <b>Great Highland Bagpipe</b>, and <b>Smallpipes</b>
+					  <b>Anglo Concertina</b>, <b>Accordion</b>, <b>Great Highland Bagpipe</b>, <b>Smallpipes</b>, and <b>Northumbrian Pipes</b>
 					  also support pitch bend, but their default <b>Pitch Bend Up Scale</b> and <b>Pitch Bend Down Scale</b>
 					  are initially set to <b>0</b>.
 					  <div class="instructions-gap"></div>
@@ -1688,9 +1688,9 @@
 
           <hr class="instructions-divider"/>
 
-          <div class="instructions-subtitle">Using the Great Highland Bagpipe, Smallpipes, and Säckpipa Sounds</div>
+          <div class="instructions-subtitle">Using the Great Highland Bagpipe, Smallpipes, Northumbrian Pipes, and Säckpipa Sounds</div>
           <div class="instructions-subbody">
-            When <b>Great Highland Bagpipe</b>, <b>Smallpipes</b>, or <b>Säckpipa</b> is selected, MIDI note <b>51 (D#3 / Eb3)</b> is treated as a dedicated
+            When <b>Great Highland Bagpipe</b>, <b>Smallpipes</b>, <b>Northumbrian Pipes</b>, or <b>Säckpipa</b> is selected, MIDI note <b>51 (D#3 / Eb3)</b> is treated as a dedicated
             <b>latching drone</b> note.
             <div class="instructions-gap"></div>
             Sending a note-on for MIDI note <b>51 (D#3 / Eb3)</b> starts the drone, and sending another note-on for MIDI note <b>51 (D#3 / Eb3)</b> toggles that drone back off.
@@ -1699,23 +1699,27 @@
             <div class="instructions-gap"></div>
             The drone uses the incoming <b>note-on velocity</b> as its playback level and ignores both <b>expression</b> and <b>pitch bend</b>.
             <div class="instructions-gap"></div>
-            <b>All other notes</b> for these three instruments are treated as melody notes.
+            <b>All other notes</b> for these four instruments are treated as melody notes.
             <div class="instructions-gap"></div>
-            <b>Great Highland Bagpipe</b> and <b>Smallpipes</b> have pitch bend available, but their default
+            <b>Great Highland Bagpipe</b>, <b>Smallpipes</b>, and <b>Northumbrian Pipes</b> have pitch bend available, but their default
             <b>Pitch Bend Up Scale</b> and <b>Pitch Bend Down Scale</b> are set to <b>0</b>.
             <div class="instructions-gap"></div>
             <b>Säckpipa</b> responds to pitch bend normally by default.
             <div class="instructions-gap"></div>
             <b>WARBL Fingering Pattern to Use</b><br/>
             <b>Great Highland Bagpipe</b> and <b>Smallpipes</b> are designed to be used with the WARBL <b>GHB / Scottish Smallpipes</b> fingering pattern selected, with no transpose set on the WARBL controller.
-            <div class="instructions-gap"></div>
-            Lowest MIDI note for the <b>Great Highland Bagpipe</b> and <b>Smallpipes</b> chanter is <b>68 (G#4 / Ab4)</b>.
+             <div class="instructions-gap"></div>
+            <b>Northumbrian Pipes</b> is designed to be used with the WARBL <b>Tin Whistle/Flute</b> fingering pattern selected, with no transpose set on the WARBL controller.
             <div class="instructions-gap"></div>
             <b>Säckpipa</b> is designed to be used with the WARBL <b>Säckpipa</b> major or minor fingering pattern selected, with no transpose set on the WARBL controller.
             <div class="instructions-gap"></div>
+            Lowest MIDI note for the <b>Great Highland Bagpipe</b> and <b>Smallpipes</b> chanter is <b>68 (G#4 / Ab4)</b>.
+            <div class="instructions-gap"></div>
+            Lowest MIDI note for the <b>Northumbrian Pipes</b> chanter is <b>59 (B3)</b> and the highest note is <b>86 (D6)</b>.
+            <div class="instructions-gap"></div>
             Lowest MIDI note for the <b>Säckpipa</b> chanter is <b>62 (D4)</b>.
           </div>
-          
+
           <hr class="instructions-divider"/>
 
           <div class="instructions-subtitle">Reset Instrument to Defaults</div>
@@ -1801,7 +1805,8 @@
             Once loaded:
             <div class="instructions-gap"></div>
             • All samples are preloaded for smooth real-time playback<br/>
-            • The <b>Release</b> control is automatically set from the custom instrument metadata<br/>
+            • The <b>Release</b> control is initialized from the custom instrument metadata, except custom instruments with drones default to 25 ms.<br/>
+            • Custom instruments with drones also default <b>Pitch Bend Up Scale</b> and <b>Pitch Bend Down Scale</b> to 0.<br/>
             • The instrument behaves like any built-in instrument, including all controls and expression options
             <div class="instructions-gap"></div>
 
@@ -1863,7 +1868,6 @@
             <div class="instructions-gap"></div>
 
             Full instructions for creating custom instruments are available directly within the <b>Custom Instrument Builder</b> tool itself.
-
 
             <div class="instructions-gap"></div>
 
@@ -1939,7 +1943,9 @@
             • Irish Flute<br/>
             • Uilleann Pipes (alternatively, use one of the Uilleann Pipes fingering patterns)<br/>
             • Anglo Concertina<br/>
-            • Accordion
+            • Accordion<br/>
+            • Northumbrian Pipes
+
             <div class="instructions-gap"></div>
 
             Use the <b>GHB / Smallpipes</b> fingering pattern for:<br/>
@@ -2130,7 +2136,7 @@
   </div>
 
   <script type="text/javascript" src="js/daypilot-modal.min-3.10.1.js?v=1"></script>
-  <script type="text/javascript" src="js/jszip.min.js"></script>
+  <script type="text/javascript" src="js/jszip.min.js?v=1"></script>
 
   <script>
     const APP_CONFIG = {
@@ -2190,6 +2196,13 @@
           minNote: 51,
           maxNote: 76,
           defaultGain: 0.19
+        },
+        northumbrianPipes: {
+          label: "Northumbrian Pipes",
+          folder: "samples/nsp",
+          minNote: 51,
+          maxNote: 86,
+          defaultGain: 0.25
         }
       },
 
@@ -2255,7 +2268,7 @@
     const CUSTOM_INSTRUMENT_KEY = "customInstrument";
     const CUSTOM_INSTRUMENT_DEFAULT_GAIN_SCALE = 1.0;
     const LOAD_CUSTOM_INSTRUMENT_OPTION_VALUE = "__load_custom_instrument__";
-    const SETTINGS_STORAGE_KEY = "celtic_sounds_settings_v16";
+    const SETTINGS_STORAGE_KEY = "celtic_sounds_settings_v17";
     const FIREFOX_WARNING_STORAGE_KEY = "celtic_sounds_firefox_warning_shown_v1";
     const CUSTOM_INSTRUMENT_DB_NAME = "celticSoundsCustomInstrumentDB";
     const CUSTOM_INSTRUMENT_STORE_NAME = "customInstrumentStore";
@@ -2329,7 +2342,13 @@
         55,56,57,58,59,60,61,62,63,64,65,66,67,
         68,69,70,71,72,73,74,75,76,77,78,79,80,
         81,82,83,84,85,86
-      ]
+      ],
+      sackpipa: [51, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76],
+      northumbrianPipes: [
+        51,59,60,61,62,63,64,65,66,67,
+        68,69,70,71,72,73,74,75,76,77,78,79,80,
+        81,82,83,84,85,86
+      ],
     };
 
     const $ = (id) => document.getElementById(id);
@@ -2446,12 +2465,70 @@
       return bytes.buffer;
     }
 
+    function getSelectedInstrumentConfig() {
+      return APP_CONFIG.instruments[state.selectedInstrumentKey] || null;
+    }
+
+    function getSelectedInstrumentCustomMetadata() {
+      const instrument = getSelectedInstrumentConfig();
+      return instrument?.isCustom ? (instrument.customMetadata || null) : null;
+    }
+
+    function isCustomDroneInstrument() {
+      const metadata = getSelectedInstrumentCustomMetadata();
+      return !!(
+        metadata &&
+        metadata.hasDrone === true &&
+        Array.isArray(metadata.droneNotes) &&
+        metadata.droneNotes.length > 0
+      );
+    }
+
+    function isCustomDroneLatchNote(note) {
+      if (!isCustomDroneInstrument()) {
+        return false;
+      }
+
+      const metadata = getSelectedInstrumentCustomMetadata();
+      return metadata.droneNotes.includes(note);
+    }
+
+    function isDroneCapableInstrument() {
+      return (
+        isUilleannPipesInstrument() ||
+        isSingleDronePipeInstrument() ||
+        isCustomDroneInstrument()
+      );
+    }
+
+    function getCustomDroneVolumeScale() {
+      if (!isCustomDroneInstrument()) {
+        return 1.0;
+      }
+
+      const metadata = getSelectedInstrumentCustomMetadata();
+      return toClampedNumberOrDefault(metadata?.droneVolumeScale, 0, 16, 1.0);
+    }
+
     function normalizeCustomInstrumentMetadata(metadata) {
       const safe = isPlainObject(metadata) ? metadata : {};
 
+      const normalizedDroneNotes = Array.isArray(safe.droneNotes)
+        ? Array.from(
+            new Set(
+              safe.droneNotes
+                .map((n) => Number(n))
+                .filter((n) => Number.isInteger(n) && n >= 0 && n <= 127)
+            )
+          ).sort((a, b) => a - b)
+        : [];
+
       return {
         volumeScale: toClampedNumberOrDefault(safe.volumeScale, 0, 16, 1.0),
-        fadeTimeMs: toRoundedClampedIntOrDefault(safe.fadeTimeMs, 0, 1500, 100)
+        fadeTimeMs: toRoundedClampedIntOrDefault(safe.fadeTimeMs, 0, 1500, 100),
+        hasDrone: safe.hasDrone === true || safe.hasDrones === true,
+        droneNotes: normalizedDroneNotes,
+        droneVolumeScale: toClampedNumberOrDefault(safe.droneVolumeScale, 0, 16, 1.0)
       };
     }
 
@@ -2542,10 +2619,16 @@
       const baseSettings = previousCustomSettings || createDefaultInstrumentSettings(CUSTOM_INSTRUMENT_KEY);
       const sanitized = sanitizeInstrumentSettings(baseSettings, CUSTOM_INSTRUMENT_KEY);
 
-      // Only force the release from metadata when loading a new custom instrument.
-      // During restore of the same saved custom instrument, preserve the user’s saved value.
       if (!preserveExistingCustomSettings) {
-        sanitized.releaseMs = metadata.fadeTimeMs;
+        const isCustomDroneInstrument =
+          metadata &&
+          metadata.hasDrone === true &&
+          Array.isArray(metadata.droneNotes) &&
+          metadata.droneNotes.length > 0;
+
+        sanitized.releaseMs = isCustomDroneInstrument ? 25 : metadata.fadeTimeMs;
+        sanitized.pitchBendUpMultiplier = isCustomDroneInstrument ? 0 : sanitized.pitchBendUpMultiplier;
+        sanitized.pitchBendDownMultiplier = isCustomDroneInstrument ? 0 : sanitized.pitchBendDownMultiplier;
       }
 
       state.instrumentSettingsByInstrument[CUSTOM_INSTRUMENT_KEY] = sanitized;
@@ -3242,7 +3325,7 @@
       const field = $("droneVolumeField");
       if (!field) return;
 
-      field.classList.toggle("field-hidden", !supportsDroneVolumeControl());
+      field.classList.toggle("field-hidden", !isDroneCapableInstrument());
     }
 
     async function buildSettingsFilePayload() {
@@ -3596,7 +3679,8 @@
       return (
         state.selectedInstrumentKey === "bagpipes" ||
         state.selectedInstrumentKey === "smallpipes" ||
-        state.selectedInstrumentKey === "sackpipa"
+        state.selectedInstrumentKey === "sackpipa" ||
+        state.selectedInstrumentKey === "northumbrianPipes"
       );
     }
 
@@ -4240,12 +4324,12 @@
       updateCurrentNote = false,
       volumeMultiplier = 1.0
     }) {
-
       if (!state.audioContext || !state.outputChain) return;
 
+      const ctx = state.audioContext;
+      const now = ctx.currentTime;
       const requestId = ++state[requestIdKey];
-      const sampleNote = clamp(midiNote, 0, 127);
-      const instrument = APP_CONFIG.instruments[state.selectedInstrumentKey];
+      const sampleNote = clamp(midiNote + state.transposeSemis, 0, 127);
 
       if (!isPlayableNoteForInstrument(state.selectedInstrumentKey, sampleNote)) {
         if (updateCurrentNote) {
@@ -4255,12 +4339,13 @@
         return;
       }
 
-      const instrumentGain = instrument.defaultGain || 1.0;
+      const instrument = APP_CONFIG.instruments[state.selectedInstrumentKey];
+      const instrumentGain = instrument?.defaultGain || 1.0;
 
       let buffer;
       try {
         buffer = await preloadSample(state.selectedInstrumentKey, sampleNote);
-      } catch (err) {
+      } catch (_) {
         if (updateCurrentNote) {
           state.currentNote = midiNote;
           logLiveStatus();
@@ -4272,20 +4357,14 @@
         return;
       }
 
-      const ctx = state.audioContext;
-      const now = ctx.currentTime;
-
       const priorVoice = state[slotName];
       if (priorVoice) {
+        const releaseSec = Math.max(0.01, state.releaseMs / 1000);
+        const gainParam = priorVoice.gainNode.gain;
+
         priorVoice.stopRequested = true;
-
-        const oldGain = priorVoice.gainNode.gain;
-        oldGain.cancelScheduledValues(now);
-
-        const releaseSec = Math.max(0.005, state.releaseMs / 1000);
-        const current = Math.max(oldGain.value, 0.0001);
-        oldGain.setValueAtTime(current, now);
-        oldGain.exponentialRampToValueAtTime(0.0001, now + releaseSec);
+        gainParam.cancelScheduledValues(now);
+        gainParam.setTargetAtTime(0.0001, now, Math.max(0.005, releaseSec / 3));
 
         try {
           priorVoice.source.stop(now + Math.max(0.02, releaseSec + 0.02));
@@ -4309,7 +4388,12 @@
         slotName === "droneVoice" &&
         midiNote === 51;
 
-      if (isUilleannDroneLoop || isSingleDroneLoop) {
+      const isCustomDroneLoop =
+        isCustomDroneInstrument() &&
+        slotName === "droneVoice" &&
+        isCustomDroneLatchNote(midiNote);
+
+      if (isUilleannDroneLoop || isSingleDroneLoop || isCustomDroneLoop) {
         source.loopStart = 0;
         source.loopEnd = buffer.duration;
       } else {
@@ -4399,8 +4483,13 @@
       const instrument = APP_CONFIG.instruments[state.selectedInstrumentKey];
       const instrumentGain = instrument?.defaultGain || 1.0;
 
+      let effectiveDroneVolume = state.droneVolume;
+      if (isCustomDroneInstrument()) {
+        effectiveDroneVolume *= getCustomDroneVolumeScale();
+      }
+
       let target = computeExpressionGain(state.droneVoice.noteVelocity || 127);
-      target *= instrumentGain * state.droneVolume;
+      target *= instrumentGain * effectiveDroneVolume;
       target = clamp(target, 0.0001, 4.0);
 
       const gainParam = state.droneVoice.gainNode.gain;
@@ -4409,13 +4498,19 @@
     }
 
     async function toggleDroneLatchVoice(midiNote, velocity = 127) {
-      if (!isUilleannPipesInstrument() && !isSingleDronePipeInstrument()) return;
+      if (!isDroneCapableInstrument()) return;
 
       if (state.droneVoice && state.droneVoice.sourceMidiNote === midiNote) {
         state.dronePlayRequestId++;
         stopManagedVoice("droneVoice", false);
         logLiveStatus();
         return;
+      }
+
+      let effectiveDroneVolume = state.droneVolume;
+
+      if (isCustomDroneInstrument()) {
+        effectiveDroneVolume *= getCustomDroneVolumeScale();
       }
 
       await playManagedVoice({
@@ -4426,7 +4521,7 @@
         useExpression: false,
         usePitchBend: false,
         updateCurrentNote: false,
-        volumeMultiplier: state.droneVolume
+        volumeMultiplier: effectiveDroneVolume
       });
 
       logLiveStatus();
@@ -4487,6 +4582,11 @@
           return;
         }
 
+        if (isCustomDroneLatchNote(note)) {
+          await toggleDroneLatchVoice(note, velocity);
+          return;
+        }
+
         if (!playable) {
           return;
         }
@@ -4502,7 +4602,15 @@
     }
 
     function noteOff(note) {
-      if (isDroneLatchNote(note)) {
+      if (isUilleannPipesInstrument() && isDroneLatchNote(note)) {
+        return;
+      }
+
+      if (isSingleDronePipeInstrument() && note === 51) {
+        return;
+      }
+
+      if (isCustomDroneLatchNote(note)) {
         return;
       }
 
@@ -5529,12 +5637,6 @@
     }
 
     function createDefaultInstrumentSettings(instrumentKey = "") {
-      const bendDisabledByDefault =
-        instrumentKey === "angloConcertina" ||
-        instrumentKey === "accordion" ||
-        instrumentKey === "bagpipes" ||
-        instrumentKey === "smallpipes";
-
       const customMetadata =
         instrumentKey === CUSTOM_INSTRUMENT_KEY
           ? normalizeCustomInstrumentMetadata(
@@ -5542,13 +5644,41 @@
             )
           : null;
 
+      const isCustomDroneInstrument =
+        instrumentKey === CUSTOM_INSTRUMENT_KEY &&
+        customMetadata &&
+        customMetadata.hasDrone === true &&
+        Array.isArray(customMetadata.droneNotes) &&
+        customMetadata.droneNotes.length > 0;
+
+      const bendDisabledByDefault =
+        instrumentKey === "angloConcertina" ||
+        instrumentKey === "accordion" ||
+        instrumentKey === "bagpipes" ||
+        instrumentKey === "smallpipes" ||
+        instrumentKey === "northumbrianPipes" ||
+        isCustomDroneInstrument;
+
+      const releaseMs =
+        isCustomDroneInstrument
+          ? 25
+          : customMetadata
+              ? customMetadata.fadeTimeMs
+              : (
+                  instrumentKey === "bagpipes" ||
+                  instrumentKey === "smallpipes" ||
+                  instrumentKey === "northumbrianPipes"
+                )
+                  ? 25
+                  : DEFAULTS.releaseMs;
+
       return {
         expressionMode: DEFAULTS.expressionMode,
         masterVolume: DEFAULTS.masterVolume,
         droneVolume: DEFAULTS.droneVolume,
         masterTuneCents: DEFAULTS.masterTuneCents,
         attackMs: DEFAULTS.attackMs,
-        releaseMs: customMetadata ? customMetadata.fadeTimeMs : DEFAULTS.releaseMs,
+        releaseMs,
         pitchBendUpMultiplier: bendDisabledByDefault ? 0 : DEFAULTS.pitchBendUpMultiplier,
         pitchBendDownMultiplier: bendDisabledByDefault ? 0 : DEFAULTS.pitchBendDownMultiplier,
         brightness: DEFAULTS.brightness,
