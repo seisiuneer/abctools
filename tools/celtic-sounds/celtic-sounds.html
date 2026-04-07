@@ -4329,7 +4329,13 @@
       const ctx = state.audioContext;
       const now = ctx.currentTime;
       const requestId = ++state[requestIdKey];
-      const sampleNote = clamp(midiNote + state.transposeSemis, 0, 127);
+
+      // Important:
+      // Sample selection should be based on the actual incoming MIDI note,
+      // not the transposed note. Transpose is already applied later via
+      // playback rate / tuning, and applying it here causes double-transpose
+      // and breaks drone startup.
+      const sampleNote = clamp(midiNote, 0, 127);
 
       if (!isPlayableNoteForInstrument(state.selectedInstrumentKey, sampleNote)) {
         if (updateCurrentNote) {
