@@ -1,0 +1,2838 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta property="og:type" content="website" />
+<meta property="og:title" content="Bagpipe Custom Instrument Factory" />
+<meta property="og:description" content="Generate custom bagpipe instruments for Celtic Sounds using configurable chanter, drone, tuning, and synthesis models." />
+<meta property="og:url" content="https://michaeleskin.com/tools/bagpipe-custom-instrument-factory.html" />
+<meta property="og:site_name" content="Bagpipe Custom Instrument Factory" />
+<title>Bagpipe Custom Instrument Factory</title>
+<style>
+  :root {
+    --bg: #111315;
+    --panel: #1b1f24;
+    --panel2: #232932;
+    --panel3: #171b21;
+    --text: #e9eef4;
+    --muted: #b9c3cf;
+    --border: #39414d;
+    --accent: #89b4ff;
+    --accent2: #7ee0b0;
+    --warn: #ffcf7a;
+    --danger: #ff8b8b;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.35;
+  }
+
+  .wrap {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 18px;
+    position: relative;
+  }
+
+  h1 {
+    margin: 0 0 4px 0;
+    font-size: 30px;
+    text-align: center;
+  }
+
+  .sub {
+    color: var(--muted);
+    margin: 0 auto 14px auto;
+    text-align: center;
+    max-width: 1000px;
+    line-height: 1.3;
+  }
+
+  .info-bubble {
+    background: #141920;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px 14px;
+    margin: 10px 0 14px 0;
+    position: relative;
+    line-height: 1.55;
+    box-shadow: 0 0 0 1px rgba(137,180,255,0.15), 0 6px 18px rgba(0,0,0,0.25);
+  }
+
+  .info-bubble .highlight {
+    color: var(--accent);
+    font-weight: bold;
+  }
+
+  .info-bubble strong {
+    color: var(--text);
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: 1.12fr 1fr;
+    gap: 14px;
+    align-items: start;
+  }
+
+  .stack {
+    display: grid;
+    gap: 14px;
+  }
+
+  .panel {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px;
+  }
+
+  .panel h2 {
+    margin: 0 0 10px 0;
+    font-size: 18px;
+  }
+
+  .panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 10px;
+  }
+
+  .panel-header h2 {
+    margin: 0;
+  }
+
+  .export-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 10px;
+  }
+
+  .export-header h2 {
+    margin: 0;
+  }
+
+  .export-status {
+    min-height: 18px;
+    font-size: 13px;
+    color: var(--muted);
+    text-align: right;
+    max-width: 62%;
+    line-height: 1.25;
+  }
+
+  .export-status.busy {
+    color: #bdd6ff;
+  }
+
+  .export-status.success-flash {
+    color: #c9ffd5;
+  }
+
+  .export-status.warn {
+    color: var(--warn);
+  }
+
+  .export-status.danger {
+    color: var(--danger);
+  }
+
+  .section-title {
+    margin: 0 0 8px 0;
+    font-size: 16px;
+  }
+
+  .controls-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0 14px;
+    align-items: start;
+  }
+
+  .controls-grid .wide,
+  .controls-grid .btn-row,
+  .controls-grid .status,
+  .controls-grid .last-generated,
+  .controls-grid .subgrid-span {
+    grid-column: 1 / -1;
+  }
+
+  label {
+    display: block;
+    font-size: 14px;
+    margin: 0;
+  }
+
+  label > span:first-child,
+  .label-title {
+    display: block;
+    margin-bottom: 4px;
+    color: var(--muted);
+  }
+
+  input[type="text"],
+  input[type="number"],
+  select {
+    width: 100%;
+    padding: 7px 9px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: #0e1115;
+    color: var(--text);
+    font-size: 14px;
+  }
+
+  input[type="checkbox"] {
+    transform: translateY(1px);
+  }
+
+  .checkbox-line {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+    color: var(--text);
+    font-size: 14px;
+  }
+
+  input[type="range"] {
+    width: 100%;
+  }
+
+  .slider-line {
+    display: grid;
+    grid-template-columns: 1fr 42px;
+    gap: 4px;
+    align-items: center;
+  }
+
+  .mini {
+    font-size: 12px;
+    color: var(--muted);
+    margin-left:7px;
+  }
+
+  .btn-row {
+    display: flex;
+    justify-content: center;   /* center horizontally */
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 18px;                 /* more space between buttons */
+    margin-top: 10px;
+    margin-bottom: 8px;
+  }
+
+  button {
+    appearance: none;
+    border: 1px solid var(--border);
+    background: var(--panel2);
+    color: var(--text);
+    padding: 9px 13px;
+    border-radius: 9px;
+    cursor: pointer;
+    font-size: 14px;
+  }
+
+  button:hover {
+    filter: brightness(1.08);
+  }
+
+  button.primary {
+    background: #29446a;
+    border-color: #486ea4;
+  }
+
+  button.good {
+    background: #23473b;
+    border-color: #3a7a63;
+  }
+
+  button.stop {
+    background: #5a2a2a;
+    border-color: #9a5252;
+  }
+
+  button.soft {
+    background: var(--panel3);
+  }
+
+  .status {
+    min-height: 18px;
+    color: var(--accent);
+    font-size: 14px;
+    transition: color 160ms ease, opacity 160ms ease;
+  }
+
+  .status.busy {
+    color: #bdd6ff;
+  }
+
+  .status.success-flash {
+    color: #c9ffd5;
+  }
+
+  .warn {
+    color: var(--warn);
+  }
+
+  .danger {
+    color: var(--danger);
+  }
+
+  .last-generated {
+    margin-top: 4px;
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  .spinner {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    margin-right: 7px;
+    border-radius: 50%;
+    border: 2px solid rgba(255,255,255,0.22);
+    border-top-color: #bdd6ff;
+    vertical-align: -2px;
+    animation: spin 0.9s linear infinite;
+  }
+
+  @keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+
+  .preview-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 10px;
+  }
+
+  .preview-header h2 {
+    margin: 0;
+  }
+
+  .preview-title-wrap {
+    display: flex;
+    align-items: flex-start;
+    gap: 56px;
+    flex-wrap: wrap;
+    min-width: 0;
+  }
+
+  .preview-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    min-width: 0;
+  }
+
+  .preview-meta .status,
+  .preview-meta .last-generated {
+    margin-top: 0;
+    min-height: 0;
+    line-height: 1.25;
+  }
+
+  .keyboard-wrap {
+    margin-bottom: 10px;
+    border: 1px solid var(--border);
+    background: #141920;
+    border-radius: 10px;
+    padding: 10px;
+  }
+
+  .keyboard-row,
+  .drone-toggle-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+
+  .keyboard-row {
+    max-height: 220px;
+    overflow: auto;
+    padding-right: 4px;
+  }
+
+  .key-btn {
+    min-width: 64px;
+    padding: 8px 10px;
+    font-size: 13px;
+  }
+
+  .key-btn.active,
+  .drone-toggle.active {
+    background: #5a2a2a;
+    border-color: #9a5252;
+  }
+
+  .summary-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px 12px;
+  }
+
+  .summary-item {
+    background: var(--panel3);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 12px;
+  }
+
+  .summary-item .summary-label {
+    display: block;
+    color: var(--muted);
+    font-size: 12px;
+    margin-bottom: 5px;
+  }
+
+  .summary-item .summary-value {
+    font-size: 15px;
+    font-weight: bold;
+  }
+
+  .footer-note {
+    margin-top: 8px;
+    color: var(--muted);
+    font-size: 13px;
+  }
+
+  .code-note {
+    white-space: pre-wrap;
+    background: #0d1117;
+    border: 1px solid var(--border);
+    padding: 10px 12px;
+    border-radius: 10px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 12px;
+    line-height: 1.45;
+  }
+
+  .reedpanel{
+    padding-bottom:20px;
+    margin-bottom:10px;
+  }
+
+  button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    filter: none;
+  }
+
+  /* Shared 6-column form grid */
+  .panel-form-grid {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    column-gap: 14px;
+    align-items: start;
+  }
+
+  .panel-form-grid > .span-6 {
+    grid-column: 1 / -1;
+  }
+
+  .panel-form-grid > .span-3 {
+    grid-column: span 3;
+  }
+
+  .panel-form-grid > .span-2 {
+    grid-column: span 2;
+  }
+
+  .panel-form-grid input[type="text"],
+  .panel-form-grid input[type="number"],
+  .panel-form-grid select {
+    min-height: 42px;
+  }
+
+  /* Left panel: align wrapped labels cleanly */
+  .instrument-design-grid {
+    row-gap: 10px;
+  }
+
+  .instrument-design-grid label > span:first-child,
+  .instrument-design-grid .label-title {
+    min-height: 2.1em;
+    display: flex;
+    align-items: flex-end;
+    line-height: 1.18;
+    margin-bottom: 4px;
+  }
+
+  .instrument-design-grid .slider-line {
+    min-height: 42px;
+    align-items: center;
+  }
+
+  /* Right panel: much tighter, no forced tall rows */
+  .tone-controls-grid {
+    row-gap: 8px;
+  }
+
+  .tone-controls-grid label > span:first-child,
+  .tone-controls-grid .label-title {
+    min-height: 0;
+    line-height: 1.16;
+    margin-bottom: 3px;
+  }
+
+  .tone-controls-grid .slider-line {
+    min-height: 28px;
+    align-items: center;
+  }
+
+  .tone-controls-grid .span-2 label > span:first-child,
+  .tone-controls-grid > label.span-2 > span:first-child {
+    min-height: 2.1em;
+    display: flex;
+    align-items: flex-end;
+    margin-bottom: 4px;
+  }
+
+  .tone-controls-grid input[type="text"],
+  .tone-controls-grid input[type="number"],
+  .tone-controls-grid select {
+    min-height: 40px;
+  }
+
+  @media (max-width: 1080px) {
+    .grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 840px) {
+    .controls-grid,
+    .summary-grid,
+    .panel-form-grid,
+    .instrument-design-grid,
+    .tone-controls-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .panel-form-grid > .span-6,
+    .panel-form-grid > .span-3,
+    .panel-form-grid > .span-2 {
+      grid-column: 1;
+    }
+
+    .instrument-design-grid label > span:first-child,
+    .instrument-design-grid .label-title,
+    .tone-controls-grid label > span:first-child,
+    .tone-controls-grid .label-title,
+    .tone-controls-grid .span-2 label > span:first-child,
+    .tone-controls-grid > label.span-2 > span:first-child {
+      min-height: 0;
+    }
+
+    .export-header {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .export-status {
+      max-width: 100%;
+      text-align: left;
+    }
+  }
+
+  .modal_compact_background {
+    position: fixed !important;
+    inset: 0 !important;
+    background: rgba(0,0,0,0.4) !important;
+  }
+
+  .modal_compact_main {
+    position: fixed !important;
+    left: 50% !important;
+    top: 100px !important;
+    transform: translateX(-50%) !important;
+    margin: 0 !important;
+    border: 1px solid #333;
+    box-shadow: 0 0 15px -2px rgba(0,0,0,0.75);
+    width: min(560px, calc(100vw - 80px)) !important;
+    max-width: min(560px, calc(100vw - 80px)) !important;
+    height: auto !important;
+    max-height: min(520px, calc(100dvh - 120px)) !important;
+    overflow: hidden !important;
+  }
+
+  .modal_compact_inner {
+    padding: 18px 18px 28px 18px;
+    background: #fff;
+    color: #000;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .modal_compact_content {
+    margin: 16px 0 10px 0;
+    overflow: auto !important;
+    -webkit-overflow-scrolling: touch;
+    flex: 1 1 auto;
+  }
+
+  .modal_compact_buttons {
+    text-align: center;
+    margin-top: 18px;
+  }
+
+  .modal_compact_buttons button {
+    margin: 0 8px;
+  }
+
+  .modal_compact_main button {
+    background: #e8f1ff;
+    color: #000;
+    border: 1px solid #9dbaf2;
+    padding: 10px 20px;
+    cursor: pointer;
+    outline: none;
+    width: 100px;
+    border-radius: 10px;
+    font-weight: 600;
+  }
+
+  .modal_compact_main .modal_default_promptdescription {
+    font-size: 20px !important;
+    line-height: 1.5 !important;
+  }
+
+  .modal_compact_main .modal_default_prompt,
+  .modal_compact_main input,
+  .modal_compact_main .modal_default_prompt input {
+    font-size: 18px !important;
+    padding: 8px 9px !important;
+    height: auto !important;
+    background-color: white !important;
+    border-radius: 10px;
+    color: black;
+  }
+
+  .help-btn {
+    position: absolute;
+    top: 18px;              /* aligns with wrap padding */
+    right: 18px;            /* aligns with right column edge */
+    
+    font-size: 20px;
+    font-weight: 700;
+    padding: 6px 10px;      /* reduced padding */
+    
+    border-radius: 10px;
+    background: #35598a;
+    border-color: #5e88c7;
+
+    width: 44px;            /* square-ish button */
+    height: 44px;
+    
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .help-btn:hover {
+    filter: brightness(1.1);
+  }
+
+  @media (max-width: 840px) {
+    .titlebar {
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .help-btn {
+      font-size: 16px;
+      padding: 10px 16px;
+    }
+  }
+
+  .modal_instructions_background {
+    position: fixed !important;
+    inset: 0 !important;
+    background: rgba(0,0,0,0.45) !important;
+  }
+
+  .modal_instructions_main {
+    position: fixed !important;
+    left: 50% !important;
+    top: 50px !important;
+    transform: translate(-50%, 0%) !important;
+    margin: 0 !important;
+    border: 1px solid #333;
+    box-shadow: 0 0 18px -2px rgba(0,0,0,0.75);
+    width: min(800px, calc(100vw - 60px)) !important;
+    max-width: min(800px, calc(100vw - 60px)) !important;
+    height: auto !important;
+    max-height: 80dvh !important;
+    overflow: hidden !important;
+  }
+
+  .modal_instructions_inner {
+    padding: 28px 28px 32px 28px;
+    background: #fff;
+    color: #000;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    max-height: 80dvh;
+  }
+
+  .modal_instructions_content {
+    margin: 14px 0 10px 0;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    -webkit-overflow-scrolling: touch;
+    flex: 1 1 auto;
+    min-height: 0;
+    line-height: 1.5;
+    font-size: 16px;
+    padding-right: 10px;
+  }
+
+  .modal_instructions_content h3 {
+    margin: 0 0 8px 0;
+    font-size: 20px;
+  }
+
+  .modal_instructions_content h4 {
+    margin: 18px 0 6px 0;
+    font-size: 17px;
+  }
+
+  .modal_instructions_content p {
+    margin: 0 0 10px 0;
+  }
+
+  .modal_instructions_content ul {
+    margin: 0 0 12px 18px;
+    padding: 0;
+  }
+
+  .modal_instructions_content li {
+    margin: 0 0 8px 0;
+  }
+
+  .modal_instructions_buttons {
+    text-align: center;
+    margin-top: 16px;
+    flex: 0 0 auto;
+  }
+
+  .modal_instructions_buttons button {
+    margin: 0 8px;
+  }
+
+  .modal_instructions_main button {
+    background: #e8f1ff;
+    color: #000;
+    border: 1px solid #9dbaf2;
+    padding: 10px 20px;
+    cursor: pointer;
+    outline: none;
+    border-radius: 10px;
+    font-weight: 600;
+  }
+</style>
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-VM0N9HL3MK"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-VM0N9HL3MK');
+</script>
+
+<script type="text/javascript" src="daypilot-modal.min-3.10.1.js?v=1"></script>
+<script type="text/javascript" src="jszip-min.js?v=1"></script>
+</head>
+<body>
+<div class="wrap">
+  <h1>Bagpipe Custom Instrument Factory</h1>
+  <button
+    id="instructionsBtn"
+    class="help-btn"
+    title="Open detailed instructions for using the Bagpipe Custom Instrument Factory."
+  >
+    ?
+  </button>
+  <p class="sub">
+  Generate Celtic Sounds custom instruments from a generalized bagpipe acoustic modeling engine.
+  </p>
+  <div class="grid">
+    <div class="stack">
+      <div class="panel">
+        <div class="panel-header">
+          <h2 title="Choose the instrument family, pitch layout, range, tuning, and drone structure for the generated custom instrument.">Instrument Design</h2>
+          <button
+            id="applyPresetBtn"
+            class="soft"
+            title="Re-apply the current preset's default settings and overwrite any manual changes in the controls."
+          >Re-apply Preset Defaults</button>
+        </div>
+        <div class="controls-grid panel-form-grid instrument-design-grid">
+          <label class="span-3" title="Select a preset family to load a starting set of bagpipe design parameters.">
+            <span title="Select a preset family to load a starting set of bagpipe design parameters.">Instrument Family Preset</span>
+            <select
+              id="presetSelect"
+              title="Select a preset family to load a starting set of bagpipe design parameters."
+            ></select>
+          </label>
+
+          <label class="span-3" title="Base name used when suggesting the ZIP filename for the exported custom instrument.">
+            <span title="Base name used when suggesting the ZIP filename for the exported custom instrument.">Output ZIP Base Name</span>
+            <input
+              id="instrumentName"
+              type="text"
+              value="bagpipe_custom_instrument"
+              title="Base name used when suggesting the ZIP filename for the exported custom instrument."
+            />
+          </label>
+
+          <label class="span-3" title="Controls the acoustic model used to synthesize the chanter notes.">
+            <span title="Controls the acoustic model used to synthesize the chanter notes.">Chanter Acoustic Model</span>
+            <select
+              id="chanterModel"
+              title="Controls the acoustic model used to synthesize the chanter notes."
+            ></select>
+          </label>
+
+          <label class="span-3" title="Controls the acoustic model used to synthesize the drone sound.">
+            <span title="Controls the acoustic model used to synthesize the drone sound.">Drone Acoustic Model</span>
+            <select
+              id="droneModel"
+              title="Controls the acoustic model used to synthesize the drone sound."
+            ></select>
+          </label>
+
+          <label class="span-3" title="Select whether note relationships are tuned in just intonation relative to the root key or in equal temperament.">
+            <span title="Select whether note relationships are tuned in just intonation relative to the root key or in equal temperament.">Tuning System</span>
+            <select
+              id="tuningSystem"
+              title="Select whether note relationships are tuned in just intonation relative to the root key or in equal temperament."
+            ></select>
+          </label>
+
+          <label class="span-3" title="Sets the logical root note used for tuning and drone construction before any sounding transpose is applied.">
+            <span title="Sets the logical root note used for tuning and drone construction before any sounding transpose is applied.">Root Key / Drone Root</span>
+            <select
+              id="rootNote"
+              title="Sets the logical root note used for tuning and drone construction before any sounding transpose is applied."
+            ></select>
+          </label>
+
+          <label class="span-2" title="Lowest logical chanter note to generate for preview and export naming.">
+            <span title="Lowest logical chanter note to generate for preview and export naming.">Playable Range Start</span>
+            <select
+              id="rangeStart"
+              title="Lowest logical chanter note to generate for preview and export naming."
+            ></select>
+          </label>
+
+          <label class="span-2" title="Highest logical chanter note to generate for preview and export naming.">
+            <span title="Highest logical chanter note to generate for preview and export naming.">Playable Range End</span>
+            <select
+              id="rangeEnd"
+              title="Highest logical chanter note to generate for preview and export naming."
+            ></select>
+          </label>
+
+          <label class="span-2" title="Shifts the sounding pitch of the chanter and drones without changing the displayed note names or exported chanter filenames.">
+            <span title="Shifts the sounding pitch of the chanter and drones without changing the displayed note names or exported chanter filenames.">Sounding Transpose (semitones)</span>
+            <input
+              id="soundingTranspose"
+              type="number"
+              min="-36"
+              max="36"
+              step="1"
+              value="0"
+              title="Shifts the sounding pitch of the chanter and drones without changing the displayed note names or exported chanter filenames."
+            />
+          </label>
+
+          <label class="span-3" title="Choose a preset drone interval layout or use custom intervals.">
+            <span title="Choose a preset drone interval layout or use custom intervals.">Drone Template</span>
+            <select
+              id="droneTemplate"
+              title="Choose a preset drone interval layout or use custom intervals."
+            ></select>
+          </label>
+
+          <label class="span-3" title="Comma-separated semitone offsets for the drone stack when using a custom drone template.">
+            <span title="Comma-separated semitone offsets for the drone stack when using a custom drone template.">Custom Drone Intervals (semitones, comma separated)</span>
+            <input
+              id="customDroneIntervals"
+              type="text"
+              value="0,7,12"
+              title="Comma-separated semitone offsets for the drone stack when using a custom drone template."
+            />
+          </label>
+
+          <label class="span-2" title="Comma-separated MIDI note numbers that will trigger the drone preview playback.">
+            <span title="Comma-separated MIDI note numbers that will trigger the drone preview playback.">Drone Trigger MIDI Notes</span>
+            <input
+              id="droneTriggerNotes"
+              type="text"
+              value="51"
+              title="Comma-separated MIDI note numbers that will trigger the drone preview playback."
+            />
+          </label>
+
+          <label class="span-2" title="Length of the generated drone sample in seconds before it loops.">
+            <span title="Length of the generated drone sample in seconds before it loops.">Drone Duration (seconds, loopable)</span>
+            <input
+              id="droneSeconds"
+              type="number"
+              min="2"
+              max="30"
+              step="1"
+              value="10"
+              title="Length of the generated drone sample in seconds before it loops."
+            />
+          </label>
+
+          <label class="span-2" title="Length of each generated chanter note sample in seconds. Longer notes allow more sustain in the exported sample.">
+            <span title="Length of each generated chanter note sample in seconds. Longer notes allow more sustain in the exported sample.">Generated Chanter Note Length (seconds)</span>
+            <div class="slider-line" title="Length of each generated chanter note sample in seconds. Longer notes allow more sustain in the exported sample.">
+              <input
+                id="chanterSeconds"
+                type="range"
+                min="1"
+                max="15"
+                step="1"
+                value="7"
+                title="Length of each generated chanter note sample in seconds. Longer notes allow more sustain in the exported sample."
+              />
+              <div
+                class="mini"
+                id="chanterSecondsVal"
+                title="Current chanter note sample length in seconds."
+              >7</div>
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <div class="info-bubble">
+        <div class="btn-row" style="margin-top:0; margin-bottom:0;">
+          <button
+            id="generateBtn"
+            class="primary"
+            title="Generate or regenerate all chanter and drone samples using the current settings."
+          >Generate / Regenerate Samples</button>
+          <button
+            id="downloadBtn"
+            class="good"
+            title="Download the generated samples as a Celtic Sounds custom instrument ZIP."
+          >Download Celtic Sounds Custom Instrument</button>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="preview-header">
+          <div class="preview-title-wrap">
+            <h2 title="Preview the generated chanter notes and drone stack before exporting.">Sample Preview</h2>
+            <div class="preview-meta">
+              <div id="status" class="status" title="Current generation and preview status."></div>
+              <div
+                id="lastGenerated"
+                class="last-generated"
+                title="Shows when the samples were last generated in this session."
+              >No samples generated yet in this session.</div>
+            </div>
+          </div>
+          <button
+            id="stopBtn"
+            class="stop"
+            title="Stop all currently playing preview notes and drones."
+          >Stop All Previews</button>
+        </div>
+        <div
+          id="previewArea"
+          class="keyboard-wrap"
+          title="Preview area for chanter notes and drones. Click a note to hear it. Drones loop until stopped."
+        >
+          <div
+            class="mini"
+            style="margin-bottom:8px;"
+            title="Click a note to preview. Drone previews loop continuously until stopped."
+          >
+            Click a note to preview. Drones loop continuously until stopped.
+          </div>
+          <div
+            id="droneToggleRow"
+            class="drone-toggle-row"
+            title="Drone preview buttons appear here after sample generation."
+          ></div>
+          <div
+            id="keyboardRow"
+            class="keyboard-row"
+            title="Generated chanter preview note buttons appear here after sample generation."
+          ></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="stack">
+      <div class="panel reedpanel">
+        <h2 title="Fine-tune the reed response, bore character, tone color, and export levels of the synthesized instrument.">Reed, Bore, and Tone Controls</h2>
+        <div class="controls-grid panel-form-grid tone-controls-grid">
+          <label class="span-3" title="Controls how resistant and firm the virtual reed feels. Higher values generally sound firmer and more focused.">
+            <span title="Controls how resistant and firm the virtual reed feels. Higher values generally sound firmer and more focused.">Reed Stiffness</span>
+            <div class="slider-line" title="Controls how resistant and firm the virtual reed feels. Higher values generally sound firmer and more focused.">
+              <input
+                id="reedStiffness"
+                type="range"
+                min="0"
+                max="1"
+                step="0.01"
+                value="0.58"
+                title="Controls how resistant and firm the virtual reed feels. Higher values generally sound firmer and more focused."
+              />
+              <div class="mini" id="reedStiffnessVal" title="Current reed stiffness value.">0.58</div>
+            </div>
+          </label>
+
+          <label class="span-3" title="Adds breath, hiss, and air movement to the sound. Higher values make the tone noisier and more airy.">
+            <span title="Adds breath, hiss, and air movement to the sound. Higher values make the tone noisier and more airy.">Air / Noise Content</span>
+            <div class="slider-line" title="Adds breath, hiss, and air movement to the sound. Higher values make the tone noisier and more airy.">
+              <input
+                id="airNoise"
+                type="range"
+                min="0"
+                max="1"
+                step="0.01"
+                value="0.20"
+                title="Adds breath, hiss, and air movement to the sound. Higher values make the tone noisier and more airy."
+              />
+              <div class="mini" id="airNoiseVal" title="Current air/noise content value.">0.20</div>
+            </div>
+          </label>
+
+          <label class="span-3" title="Controls how strong the initial attack burst is when a note begins.">
+            <span title="Controls how strong the initial attack burst is when a note begins.">Attack Transient Strength</span>
+            <div class="slider-line" title="Controls how strong the initial attack burst is when a note begins.">
+              <input
+                id="attackStrength"
+                type="range"
+                min="0"
+                max="1"
+                step="0.01"
+                value="0.42"
+                title="Controls how strong the initial attack burst is when a note begins."
+              />
+              <div class="mini" id="attackStrengthVal" title="Current attack transient strength value.">0.42</div>
+            </div>
+          </label>
+
+          <label class="span-3" title="Controls how gently or abruptly notes speak at the start. Higher values soften the onset.">
+            <span title="Controls how gently or abruptly notes speak at the start. Higher values soften the onset.">Attack Softness</span>
+            <div class="slider-line" title="Controls how gently or abruptly notes speak at the start. Higher values soften the onset.">
+              <input
+                id="attackSoft"
+                type="range"
+                min="0"
+                max="1"
+                step="0.01"
+                value="0.48"
+                title="Controls how gently or abruptly notes speak at the start. Higher values soften the onset."
+              />
+              <div class="mini" id="attackSoftVal" title="Current attack softness value.">0.48</div>
+            </div>
+          </label>
+
+          <label class="span-3" title="Controls how bright and open the bore character sounds. Higher values emphasize brilliance.">
+            <span title="Controls how bright and open the bore character sounds. Higher values emphasize brilliance.">Bore Brightness</span>
+            <div class="slider-line" title="Controls how bright and open the bore character sounds. Higher values emphasize brilliance.">
+              <input
+                id="boreBrightness"
+                type="range"
+                min="0"
+                max="1"
+                step="0.01"
+                value="0.44"
+                title="Controls how bright and open the bore character sounds. Higher values emphasize brilliance."
+              />
+              <div class="mini" id="boreBrightnessVal" title="Current bore brightness value.">0.44</div>
+            </div>
+          </label>
+
+          <label class="span-3" title="Emphasizes resonant tone centers and vocal-like shaping in the sound.">
+            <span title="Emphasizes resonant tone centers and vocal-like shaping in the sound.">Formant Emphasis</span>
+            <div class="slider-line" title="Emphasizes resonant tone centers and vocal-like shaping in the sound.">
+              <input
+                id="formantEmphasis"
+                type="range"
+                min="0"
+                max="1"
+                step="0.01"
+                value="0.45"
+                title="Emphasizes resonant tone centers and vocal-like shaping in the sound."
+              />
+              <div class="mini" id="formantEmphasisVal" title="Current formant emphasis value.">0.45</div>
+            </div>
+          </label>
+
+          <label class="span-3" title="Controls how much edge and bite remain in the sustained part of the note after the attack.">
+            <span title="Controls how much edge and bite remain in the sustained part of the note after the attack.">Steady-State Edge</span>
+            <div class="slider-line" title="Controls how much edge and bite remain in the sustained part of the note after the attack.">
+              <input
+                id="steadyEdge"
+                type="range"
+                min="0"
+                max="1"
+                step="0.01"
+                value="0.40"
+                title="Controls how much edge and bite remain in the sustained part of the note after the attack."
+              />
+              <div class="mini" id="steadyEdgeVal" title="Current steady-state edge value.">0.40</div>
+            </div>
+          </label>
+
+          <label class="span-3" title="Controls how stable and even the simulated air pressure feels over the note duration.">
+            <span title="Controls how stable and even the simulated air pressure feels over the note duration.">Pressure Stability</span>
+            <div class="slider-line" title="Controls how stable and even the simulated air pressure feels over the note duration.">
+              <input
+                id="pressureStability"
+                type="range"
+                min="0"
+                max="1"
+                step="0.01"
+                value="0.72"
+                title="Controls how stable and even the simulated air pressure feels over the note duration."
+              />
+              <div class="mini" id="pressureStabilityVal" title="Current pressure stability value.">0.72</div>
+            </div>
+          </label>
+
+          <label class="span-3" title="Moves the sound toward a purer, sweeter, cleaner tone.">
+            <span title="Moves the sound toward a purer, sweeter, cleaner tone.">Purer / Sweeter</span>
+            <div class="slider-line" title="Moves the sound toward a purer, sweeter, cleaner tone.">
+              <input
+                id="pure"
+                type="range"
+                min="0"
+                max="1"
+                step="0.01"
+                value="0.60"
+                title="Moves the sound toward a purer, sweeter, cleaner tone."
+              />
+              <div class="mini" id="pureVal" title="Current purer/sweeter value.">0.60</div>
+            </div>
+          </label>
+
+          <label class="span-3" title="Moves the sound toward a chiffy, buzzy, reed-dominant tone.">
+            <span title="Moves the sound toward a chiffy, buzzy, reed-dominant tone.">Chiffier / Reedier</span>
+            <div class="slider-line" title="Moves the sound toward a chiffy, buzzy, reed-dominant tone.">
+              <input
+                id="reed"
+                type="range"
+                min="0"
+                max="4"
+                step="0.01"
+                value="2.0"
+                title="Moves the sound toward a chiffy, buzzy, reed-dominant tone."
+              />
+              <div class="mini" id="reedVal" title="Current chiffier/reedier value.">2.00</div>
+            </div>
+          </label>
+
+          <label class="span-3" title="Softens and damps the tone, reducing sharpness and brightness.">
+            <span title="Softens and damps the tone, reducing sharpness and brightness.">Tone Dampening</span>
+            <div class="slider-line" title="Softens and damps the tone, reducing sharpness and brightness.">
+              <input
+                id="soft"
+                type="range"
+                min="0"
+                max="1"
+                step="0.01"
+                value="0.24"
+                title="Softens and damps the tone, reducing sharpness and brightness."
+              />
+              <div class="mini" id="softVal" title="Current tone dampening value.">0.24</div>
+            </div>
+          </label>
+
+          <label class="span-3" title="Adds a nasal, reedy emphasis to the tone color.">
+            <span title="Adds a nasal, reedy emphasis to the tone color.">Nasal Edge</span>
+            <div class="slider-line" title="Adds a nasal, reedy emphasis to the tone color.">
+              <input
+                id="nasalEdge"
+                type="range"
+                min="0"
+                max="0.8"
+                step="0.01"
+                value="0.10"
+                title="Adds a nasal, reedy emphasis to the tone color."
+              />
+              <div class="mini" id="nasalEdgeVal" title="Current nasal edge value.">0.10</div>
+            </div>
+          </label>
+
+          <label class="span-3" title="Controls how much the spectral balance changes from note to note across the range.">
+            <span title="Controls how much the spectral balance changes from note to note across the range.">Per-Note Spectral Shaping</span>
+            <div class="slider-line" title="Controls how much the spectral balance changes from note to note across the range.">
+              <input
+                id="noteSpectral"
+                type="range"
+                min="0"
+                max="1"
+                step="0.01"
+                value="0.62"
+                title="Controls how much the spectral balance changes from note to note across the range."
+              />
+              <div class="mini" id="noteSpectralVal" title="Current per-note spectral shaping value.">0.62</div>
+            </div>
+          </label>
+
+          <label class="span-3" title="Controls harmonic richness and complexity in the drone sound.">
+            <span title="Controls harmonic richness and complexity in the drone sound.">Drone Richness</span>
+            <div class="slider-line" title="Controls harmonic richness and complexity in the drone sound.">
+              <input
+                id="droneRichness"
+                type="range"
+                min="0"
+                max="1"
+                step="0.01"
+                value="0.55"
+                title="Controls harmonic richness and complexity in the drone sound."
+              />
+              <div class="mini" id="droneRichnessVal" title="Current drone richness value.">0.55</div>
+            </div>
+          </label>
+
+          <label class="span-3" title="Controls how strongly the drone components are blended together in the final drone sound.">
+            <span title="Controls how strongly the drone components are blended together in the final drone sound.">Drone Blend Level</span>
+            <div class="slider-line" title="Controls how strongly the drone components are blended together in the final drone sound.">
+              <input
+                id="droneBlend"
+                type="range"
+                min="0"
+                max="2"
+                step="0.01"
+                value="1.00"
+                title="Controls how strongly the drone components are blended together in the final drone sound."
+              />
+              <div class="mini" id="droneBlendVal" title="Current drone blend level value.">1.00</div>
+            </div>
+          </label>
+
+          <label class="span-3" title="Controls playback volume for preview only. It does not change exported file levels.">
+            <span title="Controls playback volume for preview only. It does not change exported file levels.">Preview Volume</span>
+            <div class="slider-line" title="Controls playback volume for preview only. It does not change exported file levels.">
+              <input
+                id="previewVolume"
+                type="range"
+                min="0"
+                max="1"
+                step="0.01"
+                value="0.50"
+                title="Controls playback volume for preview only. It does not change exported file levels."
+              />
+              <div class="mini" id="previewVolumeVal" title="Current preview volume value.">0.50</div>
+            </div>
+          </label>
+
+          <label class="span-2" title="Applies a level scale to exported chanter note files only.">
+            <span title="Applies a level scale to exported chanter note files only.">Chanter Export Volume Scale</span>
+            <input
+              id="chanterExportGain"
+              type="number"
+              min="0.01"
+              max="1"
+              step="0.01"
+              value="0.25"
+              title="Applies a level scale to exported chanter note files only."
+            />
+          </label>
+
+          <label class="span-2" title="Applies a level scale to the exported drone file only.">
+            <span title="Applies a level scale to the exported drone file only.">Drone Export Volume Scale</span>
+            <input
+              id="droneExportGain"
+              type="number"
+              min="0.01"
+              max="1"
+              step="0.01"
+              value="0.50"
+              title="Applies a level scale to the exported drone file only."
+            />
+          </label>
+
+          <label class="span-2" title="Controls the fade-out time at note release in the exported custom instrument metadata.">
+            <span title="Controls the fade-out time at note release in the exported custom instrument metadata.">Release Fade Time (ms)</span>
+            <input
+              id="releaseMs"
+              type="number"
+              min="1"
+              max="2000"
+              step="1"
+              value="25"
+              title="Controls the fade-out time at note release in the exported custom instrument metadata."
+            />
+          </label>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="export-header">
+          <h2 title="Notes and status for exported custom instrument content.">Export Notes</h2>
+          <div
+            id="exportStatus"
+            class="export-status"
+            title="Shows export-related status messages, download progress, and export errors."
+          ></div>
+        </div>
+        <div
+          id="exportNotes"
+          class="code-note"
+          title="Shows export notes and summary information for the generated custom instrument."
+        ></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+(() => {
+  const SAMPLE_RATE = 44100;
+  const NOTE_NAMES = ['C','Db','D','Eb','E','F','Gb','G','Ab','A','Bb','B'];
+  const SEMITONES_FROM_C = { C:0, Db:1, D:2, Eb:3, E:4, F:5, Gb:6, G:7, Ab:8, A:9, Bb:10, B:11 };
+  const STORAGE_KEY = 'bagpipe_factory_settings';
+  const STORAGE_VERSION = 2;
+  const DEFAULT_CUSTOM_INSTRUMENT_FILENAME = 'bagpipe_custom_instrument.zip';
+
+  const TUNING_PRESETS = {
+    just_root: { label: 'Just Intonation in Root Key' },
+    equal: { label: 'Equal Temperament' }
+  };
+
+  const DRONE_TEMPLATES = {
+    single: { label: 'Single Root Note', intervals: [0] },
+    root_fifth: { label: 'Root + Fifth', intervals: [0, 7] },
+    root_octave: { label: 'Root + Octave', intervals: [0, 12] },
+    root_fifth_octave: { label: 'Root + Fifth + Octave', intervals: [0, 7, 12] },
+    three_octaves: { label: 'Three Octave Stack', intervals: [0, 12, 24] },
+    root_fifth_two_octaves: { label: 'Root + Fifth + Two Octaves', intervals: [0, 7, 12, 24] },
+    custom: { label: 'Custom intervals', intervals: [0, 7, 12] }
+  };
+
+  const CHANTER_MODELS = {
+    closed_cylindrical: 'Closed Cylindrical',
+    open_cylindrical: 'Open Cylindrical',
+    conical_open: 'Conical Open',
+    conical_quasi_closed: 'Conical Quasi-closed Reed'
+  };
+
+  const DRONE_MODELS = {
+    closed_drone: 'Closed Drone',
+    steady_open_drone: 'Steady Open Drone',
+    bright_reed_drone: 'Bright Reed Drone'
+  };
+
+  const ROOT_NOTE_OPTIONS = ['C2','Db2','D2','Eb2','E2','F2','Gb2','G2','Ab2','A2','Bb2','B2','C3','Db3','D3','Eb3','E3','F3','Gb3','G3','Ab3','A3','Bb3','B3','C4','Db4','D4','Eb4','E4','F4','Gb4','G4','Ab4','A4','Bb4','B4'];
+
+  const INSTRUMENT_PRESETS = {
+    highland: {
+      label: 'Great Highland Bagpipe',
+      notes: 'Louder, brighter, more reed-driven defaults with strong attacks and a lively drone body.',
+      instrumentName: 'great_highland_pipes_custom',
+      chanterModel: 'conical_open',
+      droneModel: 'bright_reed_drone',
+      tuningSystem: 'just_root',
+      rootNote: 'Bb2',
+      rangeStart: 'Ab4',
+      rangeEnd: 'Bb5',
+      soundingTranspose: 0,
+      droneTemplate: 'three_octaves',
+      customDroneIntervals: '0,12,24',
+      droneTriggerNotes: '51',
+      droneSeconds: 10,
+      chanterSeconds: 5,
+      pure: 0.28,
+      reed: 3.30,
+      soft: 0.10,
+      attackSoft: 0.16,
+      noteSpectral: 0.70,
+      nasalEdge: 0.24,
+      reedStiffness: 0.86,
+      airNoise: 0.24,
+      attackStrength: 0.74,
+      boreBrightness: 0.76,
+      formantEmphasis: 0.64,
+      steadyEdge: 0.68,
+      pressureStability: 0.62,
+      droneRichness: 0.72,
+      droneBlend: 1.12,
+      chanterExportGain: 0.24,
+      droneExportGain: 0.75,
+      releaseMs: 25
+    },
+    border: {
+      label: 'Border Pipes',
+      notes: 'More open, assertive chanter than smallpipes, with stronger attacks and brighter drones.',
+      instrumentName: 'border_pipes_custom',
+      chanterModel: 'open_cylindrical',
+      droneModel: 'bright_reed_drone',
+      tuningSystem: 'just_root',
+      rootNote: 'Bb2',
+      rangeStart: 'Ab4',
+      rangeEnd: 'Bb5',
+      soundingTranspose: 0,
+      droneTemplate: 'three_octaves',
+      customDroneIntervals: '0,12,24',
+      droneTriggerNotes: '51',
+      droneSeconds: 10,
+      chanterSeconds: 6,
+      pure: 0.46,
+      reed: 2.35,
+      soft: 0.18,
+      attackSoft: 0.30,
+      noteSpectral: 0.58,
+      nasalEdge: 0.18,
+      reedStiffness: 0.64,
+      airNoise: 0.18,
+      attackStrength: 0.58,
+      boreBrightness: 0.64,
+      formantEmphasis: 0.50,
+      steadyEdge: 0.50,
+      pressureStability: 0.72,
+      droneRichness: 0.62,
+      droneBlend: 1.05,
+      chanterExportGain: 0.24,
+      droneExportGain: 0.75,
+      releaseMs: 25
+    },
+    smallpipes: {
+      label: 'Scottish Smallpipes',
+      notes: 'Sweeter open-pipe profile with gentler attacks, stable steady drones, and an octave-rich drone stack suited to smallpipes-style voicing.',
+      instrumentName: 'scottish_smallpipes_custom',
+      chanterModel: 'closed_cylindrical',
+      droneModel: 'closed_drone',
+      tuningSystem: 'just_root',
+      rootNote: 'Bb2',
+      rangeStart: 'Ab4',
+      rangeEnd: 'Bb5',
+      soundingTranspose: -8,
+      droneTemplate: 'three_octaves',
+      customDroneIntervals: '0,12,24',
+      droneTriggerNotes: '51',
+      droneSeconds: 10,
+      chanterSeconds: 7,
+      pure: 0.50,
+      reed: 2.00,
+      soft: 0.18,
+      attackSoft: 0.40,
+      noteSpectral: 0.50,
+      nasalEdge: 0.10,
+      reedStiffness: 0.55,
+      airNoise: 0.15,
+      attackStrength: 0.45,
+      boreBrightness: 0.45,
+      formantEmphasis: 0.45,
+      steadyEdge: 0.40,
+      pressureStability: 0.75,
+      droneRichness: 0.55,
+      droneBlend: 1.00,
+      chanterExportGain: 0.25,
+      droneExportGain:0.75,
+      releaseMs: 25
+    },
+    northumbrian: {
+      label: 'Northumbrian Pipes',
+      notes: 'Closed chanter emphasis, focused closed-pipe tone, root + fifth + octave drone stack, just intonation in the root key, and defaults close to the original Northumbrian-specific factory.',
+      instrumentName: 'northumbrian_pipes_custom',
+      chanterModel: 'closed_cylindrical',
+      droneModel: 'closed_drone',
+      tuningSystem: 'just_root',
+      rootNote: 'D3',
+      rangeStart: 'B3',
+      rangeEnd: 'B5',
+      soundingTranspose: 3,
+      droneTemplate: 'root_fifth_octave',
+      customDroneIntervals: '0,7,12',
+      droneTriggerNotes: '51',
+      droneSeconds: 10,
+      chanterSeconds: 7,
+      pure: 0.60,
+      reed: 2.0,
+      soft: 0.24,
+      attackSoft: 0.48,
+      noteSpectral: 0.62,
+      nasalEdge: 0.10,
+      reedStiffness: 0.58,
+      airNoise: 0.16,
+      attackStrength: 0.38,
+      boreBrightness: 0.36,
+      formantEmphasis: 0.52,
+      steadyEdge: 0.34,
+      pressureStability: 0.82,
+      droneRichness: 0.55,
+      droneBlend: 1.00,
+      chanterExportGain: 0.25,
+      droneExportGain: 0.75,
+      releaseMs: 25
+    },
+    uilleann: {
+      label: 'Uilleann Pipes',
+      notes: 'Conical quasi-closed chanter with a more reed-forward profile, expressive attacks, and a broader tonal body.',
+      instrumentName: 'uilleann_pipes_custom',
+      chanterModel: 'conical_quasi_closed',
+      droneModel: 'steady_open_drone',
+      tuningSystem: 'just_root',
+      rootNote: 'D2',
+      rangeStart: 'D4',
+      rangeEnd: 'D6',
+      soundingTranspose: 0,
+      droneTemplate: 'three_octaves',
+      customDroneIntervals: '0,12,24',
+      droneTriggerNotes: '51',
+      droneSeconds: 10,
+      chanterSeconds: 7,
+      pure: 0.44,
+      reed: 2.55,
+      soft: 0.20,
+      attackSoft: 0.34,
+      noteSpectral: 0.66,
+      nasalEdge: 0.22,
+      reedStiffness: 0.72,
+      airNoise: 0.18,
+      attackStrength: 0.55,
+      boreBrightness: 0.58,
+      formantEmphasis: 0.66,
+      steadyEdge: 0.54,
+      pressureStability: 0.70,
+      droneRichness: 0.56,
+      droneBlend: 1.02,
+      chanterExportGain: 0.24,
+      droneExportGain: 0.75,
+      releaseMs: 25
+    },
+    musette: {
+      label: 'Musette-Style Pipes',
+      notes: 'Sweeter conical/open profile with slightly lighter drone body and a smoother, more blended top end.',
+      instrumentName: 'musette_style_pipes_custom',
+      chanterModel: 'conical_open',
+      droneModel: 'steady_open_drone',
+      tuningSystem: 'just_root',
+      rootNote: 'D3',
+      rangeStart: 'C4',
+      rangeEnd: 'D6',
+      soundingTranspose: 0,
+      droneTemplate: 'root_fifth_octave',
+      customDroneIntervals: '0,7,12',
+      droneTriggerNotes: '51',
+      droneSeconds: 10,
+      chanterSeconds: 7,
+      pure: 0.64,
+      reed: 1.55,
+      soft: 0.16,
+      attackSoft: 0.56,
+      noteSpectral: 0.48,
+      nasalEdge: 0.08,
+      reedStiffness: 0.48,
+      airNoise: 0.10,
+      attackStrength: 0.30,
+      boreBrightness: 0.50,
+      formantEmphasis: 0.42,
+      steadyEdge: 0.28,
+      pressureStability: 0.78,
+      droneRichness: 0.44,
+      droneBlend: 0.94,
+      chanterExportGain: 0.24,
+      droneExportGain: 0.75,
+      releaseMs: 25
+    },
+    generic: {
+      label: 'Generic Custom Bagpipes',
+      notes: 'Neutral starting point intended for experimentation. Choose models, range, tuning, root key, and drone structure manually.',
+      instrumentName: 'bagpipe_custom_instrument',
+      chanterModel: 'closed_cylindrical',
+      droneModel: 'closed_drone',
+      tuningSystem: 'just_root',
+      rootNote: 'D3',
+      rangeStart: 'C4',
+      rangeEnd: 'D6',
+      soundingTranspose: 0,
+      droneTemplate: 'root_fifth_octave',
+      customDroneIntervals: '0,7,12',
+      droneTriggerNotes: '51',
+      droneSeconds: 10,
+      chanterSeconds: 7,
+      pure: 0.50,
+      reed: 2.00,
+      soft: 0.18,
+      attackSoft: 0.40,
+      noteSpectral: 0.50,
+      nasalEdge: 0.10,
+      reedStiffness: 0.55,
+      airNoise: 0.15,
+      attackStrength: 0.45,
+      boreBrightness: 0.45,
+      formantEmphasis: 0.45,
+      steadyEdge: 0.40,
+      pressureStability: 0.75,
+      droneRichness: 0.55,
+      droneBlend: 1.00,
+      chanterExportGain: 0.25,
+      droneExportGain:0.75,
+      releaseMs: 25
+    }
+  };
+
+  const RANGE_OPTIONS = buildRangeOptions('E3', 'B6');
+
+  const els = {
+    presetSelect: document.getElementById('presetSelect'),
+    instrumentName: document.getElementById('instrumentName'),
+    chanterModel: document.getElementById('chanterModel'),
+    droneModel: document.getElementById('droneModel'),
+    tuningSystem: document.getElementById('tuningSystem'),
+    rootNote: document.getElementById('rootNote'),
+    rangeStart: document.getElementById('rangeStart'),
+    rangeEnd: document.getElementById('rangeEnd'),
+    soundingTranspose: document.getElementById('soundingTranspose'),
+    droneTemplate: document.getElementById('droneTemplate'),
+    customDroneIntervals: document.getElementById('customDroneIntervals'),
+    droneTriggerNotes: document.getElementById('droneTriggerNotes'),
+    droneSeconds: document.getElementById('droneSeconds'),
+    chanterSeconds: document.getElementById('chanterSeconds'),
+    chanterSecondsVal: document.getElementById('chanterSecondsVal'),
+    pure: document.getElementById('pure'),
+    pureVal: document.getElementById('pureVal'),
+    reed: document.getElementById('reed'),
+    reedVal: document.getElementById('reedVal'),
+    soft: document.getElementById('soft'),
+    softVal: document.getElementById('softVal'),
+    attackSoft: document.getElementById('attackSoft'),
+    attackSoftVal: document.getElementById('attackSoftVal'),
+    noteSpectral: document.getElementById('noteSpectral'),
+    noteSpectralVal: document.getElementById('noteSpectralVal'),
+    nasalEdge: document.getElementById('nasalEdge'),
+    nasalEdgeVal: document.getElementById('nasalEdgeVal'),
+    reedStiffness: document.getElementById('reedStiffness'),
+    reedStiffnessVal: document.getElementById('reedStiffnessVal'),
+    airNoise: document.getElementById('airNoise'),
+    airNoiseVal: document.getElementById('airNoiseVal'),
+    attackStrength: document.getElementById('attackStrength'),
+    attackStrengthVal: document.getElementById('attackStrengthVal'),
+    boreBrightness: document.getElementById('boreBrightness'),
+    boreBrightnessVal: document.getElementById('boreBrightnessVal'),
+    formantEmphasis: document.getElementById('formantEmphasis'),
+    formantEmphasisVal: document.getElementById('formantEmphasisVal'),
+    steadyEdge: document.getElementById('steadyEdge'),
+    steadyEdgeVal: document.getElementById('steadyEdgeVal'),
+    pressureStability: document.getElementById('pressureStability'),
+    pressureStabilityVal: document.getElementById('pressureStabilityVal'),
+    droneRichness: document.getElementById('droneRichness'),
+    droneRichnessVal: document.getElementById('droneRichnessVal'),
+    droneBlend: document.getElementById('droneBlend'),
+    droneBlendVal: document.getElementById('droneBlendVal'),
+    previewVolume: document.getElementById('previewVolume'),
+    previewVolumeVal: document.getElementById('previewVolumeVal'),
+    chanterExportGain: document.getElementById('chanterExportGain'),
+    droneExportGain: document.getElementById('droneExportGain'),
+    releaseMs: document.getElementById('releaseMs'),
+    applyPresetBtn: document.getElementById('applyPresetBtn'),
+    generateBtn: document.getElementById('generateBtn'),
+    downloadBtn: document.getElementById('downloadBtn'),
+    stopBtn: document.getElementById('stopBtn'),
+    status: document.getElementById('status'),
+    lastGenerated: document.getElementById('lastGenerated'),
+    keyboardRow: document.getElementById('keyboardRow'),
+    droneToggleRow: document.getElementById('droneToggleRow'),
+    previewArea: document.getElementById('previewArea'),
+    exportNotes: document.getElementById('exportNotes'),
+    exportStatus: document.getElementById('exportStatus'),
+    instructionsBtn: document.getElementById('instructionsBtn')
+  };
+
+  let generated = new Map();
+  let latestMetadata = null;
+  let audioCtx = null;
+  let masterGain = null;
+  let chanterSource = null;
+  let chanterGain = null;
+  let currentChanterName = null;
+  let droneSource = null;
+  let droneGain = null;
+  let currentDroneName = null;
+  let regenTimer = null;
+
+  function isLocalStorageAvailable() {
+    try {
+      if (typeof localStorage === 'undefined') return false;
+      localStorage.setItem('__bagpipe_factory_test__', '1');
+      localStorage.removeItem('__bagpipe_factory_test__');
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  function getSettingsState() {
+    return {
+      presetSelect: els.presetSelect.value,
+      instrumentName: els.instrumentName.value,
+      chanterModel: els.chanterModel.value,
+      droneModel: els.droneModel.value,
+      tuningSystem: els.tuningSystem.value,
+      rootNote: els.rootNote.value,
+      rangeStart: els.rangeStart.value,
+      rangeEnd: els.rangeEnd.value,
+      soundingTranspose: els.soundingTranspose.value,
+      droneTemplate: els.droneTemplate.value,
+      customDroneIntervals: els.customDroneIntervals.value,
+      droneTriggerNotes: els.droneTriggerNotes.value,
+      droneSeconds: els.droneSeconds.value,
+      chanterSeconds: els.chanterSeconds.value,
+      pure: els.pure.value,
+      reed: els.reed.value,
+      soft: els.soft.value,
+      attackSoft: els.attackSoft.value,
+      noteSpectral: els.noteSpectral.value,
+      nasalEdge: els.nasalEdge.value,
+      reedStiffness: els.reedStiffness.value,
+      airNoise: els.airNoise.value,
+      attackStrength: els.attackStrength.value,
+      boreBrightness: els.boreBrightness.value,
+      formantEmphasis: els.formantEmphasis.value,
+      steadyEdge: els.steadyEdge.value,
+      pressureStability: els.pressureStability.value,
+      droneRichness: els.droneRichness.value,
+      droneBlend: els.droneBlend.value,
+      previewVolume: els.previewVolume.value,
+      chanterExportGain: els.chanterExportGain.value,
+      droneExportGain: els.droneExportGain.value,
+      releaseMs: els.releaseMs.value
+    };
+  }
+
+  function persistControls(extra = {}) {
+    if (!isLocalStorageAvailable()) return;
+    try {
+      const existing = readStoredState();
+      const payload = {
+        version: STORAGE_VERSION,
+        zipFilename: extra.zipFilename !== undefined ? extra.zipFilename : (existing && existing.zipFilename ? existing.zipFilename : null),
+        settings: getSettingsState()
+      };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+    } catch (e) {}
+  }
+
+  function readStoredState() {
+    if (!isLocalStorageAvailable()) return null;
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return null;
+      const parsed = JSON.parse(raw);
+      if (!parsed || parsed.version !== STORAGE_VERSION || !parsed.settings || typeof parsed.settings !== 'object') {
+        return null;
+      }
+      return parsed;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function restoreControls() {
+    const stored = readStoredState();
+    if (!stored) return false;
+    const settings = stored.settings;
+    Object.keys(settings).forEach(id => {
+      const el = els[id];
+      if (el && settings[id] !== null && settings[id] !== undefined && settings[id] !== '') {
+        el.value = String(settings[id]);
+      }
+    });
+    if (![...els.tuningSystem.options].some(opt => opt.value === els.tuningSystem.value)) {
+      els.tuningSystem.value = 'just_root';
+    }
+    return true;
+  }
+
+  function getStoredZipFilename() {
+    const stored = readStoredState();
+    return stored && stored.zipFilename ? sanitizeZipFilename(stored.zipFilename) : null;
+  }
+
+  function buildRangeOptions(start, end) {
+    return noteRange(start, end) || [];
+  }
+
+  function populateSelect(select, items, mapper) {
+    select.innerHTML = '';
+    Object.keys(items).forEach(key => {
+      const option = document.createElement('option');
+      option.value = key;
+      option.textContent = mapper ? mapper(key, items[key]) : String(items[key]);
+      select.appendChild(option);
+    });
+  }
+
+  function populateValueList(select, values) {
+    select.innerHTML = '';
+    values.forEach(value => {
+      const option = document.createElement('option');
+      option.value = value;
+      option.textContent = value;
+      select.appendChild(option);
+    });
+  }
+
+  function setStatus(msg, isWarn = false, isBusy = false) {
+    els.status.innerHTML = isBusy ? `<span class="spinner"></span>${msg}` : msg;
+    els.status.className = 'status' + (isWarn ? ' warn' : '') + (isBusy ? ' busy' : '');
+  }
+
+  function setExportStatus(msg, level = '', isBusy = false) {
+    if (!els.exportStatus) return;
+    const levelClass = level ? ` ${level}` : '';
+    const busyClass = isBusy ? ' busy' : '';
+    els.exportStatus.innerHTML = isBusy ? `<span class="spinner"></span>${msg}` : msg;
+    els.exportStatus.className = 'export-status' + levelClass + busyClass;
+  }
+
+  function clearExportStatus() {
+    if (!els.exportStatus) return;
+    els.exportStatus.textContent = '';
+    els.exportStatus.className = 'export-status';
+  }
+
+  function flashExportStatusSuccess() {
+    if (!els.exportStatus) return;
+    els.exportStatus.classList.remove('success-flash');
+    void els.exportStatus.offsetWidth;
+    els.exportStatus.classList.add('success-flash');
+    setTimeout(() => els.exportStatus.classList.remove('success-flash'), 900);
+  }
+
+  function flashRegenerated(entriesCount) {
+    const now = new Date();
+    const stamp = now.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit', second: '2-digit' });
+    els.lastGenerated.textContent = `Last regenerated: ${stamp} • ${entriesCount} samples`;
+    els.status.classList.remove('success-flash');
+    void els.previewArea.offsetWidth;
+    els.status.classList.add('success-flash');
+    setTimeout(() => els.status.classList.remove('success-flash'), 900);
+  }
+
+  function clamp(v, lo, hi) {
+    return Math.max(lo, Math.min(hi, v));
+  }
+
+  function parseNote(note) {
+    const m = /^([A-G])([b]?)(-?\d+)$/.exec(String(note).trim());
+    if (!m) return null;
+    return { name: m[1] + (m[2] || ''), octave: Number(m[3]) };
+  }
+
+  function midiFromNote(note) {
+    const n = parseNote(note);
+    if (!n || !(n.name in SEMITONES_FROM_C)) return null;
+    return (n.octave + 1) * 12 + SEMITONES_FROM_C[n.name];
+  }
+
+  function noteFromMidi(midi) {
+    const octave = Math.floor(midi / 12) - 1;
+    const name = NOTE_NAMES[((midi % 12) + 12) % 12];
+    return name + octave;
+  }
+
+  function transposeNoteBySemitones(note, semitones) {
+    const midi = midiFromNote(note);
+    if (midi === null) return note;
+    return noteFromMidi(midi + semitones);
+  }
+
+  function noteRange(start, end) {
+    const s = midiFromNote(start);
+    const e = midiFromNote(end);
+    if (s === null || e === null || e < s) return null;
+    const out = [];
+    for (let i = s; i <= e; i++) out.push(noteFromMidi(i));
+    return out;
+  }
+
+  function sanitizeZipFilename(name) {
+    let out = String(name || '').trim();
+    if (!out) out = DEFAULT_CUSTOM_INSTRUMENT_FILENAME;
+    out = out.replace(/[\\/:*?"<>|]/g, '_');
+    out = out.replace(/^\.+/, '').trim();
+    if (!out) out = DEFAULT_CUSTOM_INSTRUMENT_FILENAME;
+    if (!/\.zip$/i.test(out)) out += '.zip';
+    return out;
+  }
+
+  async function promptForCustomInstrumentFilename() {
+    const saved = getStoredZipFilename();
+    const suggested = sanitizeZipFilename(saved || `${els.instrumentName.value || 'bagpipe_custom_instrument'}.zip`);
+
+    if (window.DayPilot && DayPilot.Modal && typeof DayPilot.Modal.prompt === 'function') {
+      const modal = await DayPilot.Modal.prompt(
+        'Enter a filename for the custom instrument ZIP:',
+        suggested,
+        { theme: 'modal_compact', autoFocus: true, okText: 'Save', cancelText: 'Cancel' }
+      );
+      if (modal.canceled) return null;
+      const filename = sanitizeZipFilename(modal.result);
+      persistControls({ zipFilename: filename });
+      return filename;
+    }
+
+    const fallback = window.prompt('Enter a filename for the custom instrument ZIP:', suggested);
+    if (fallback === null) return null;
+    const filename = sanitizeZipFilename(fallback);
+    persistControls({ zipFilename: filename });
+    return filename;
+  }
+
+  function parseNumberList(text, fallback = []) {
+    const raw = String(text || '').trim();
+    if (!raw) return fallback.slice();
+    const values = raw.split(',').map(part => Number(String(part).trim())).filter(v => Number.isFinite(v));
+    return values.length ? values : fallback.slice();
+  }
+
+  function gcdInteger(a, b) {
+    a = Math.abs(Math.round(a));
+    b = Math.abs(Math.round(b));
+    while (b) {
+      const t = b;
+      b = a % b;
+      a = t;
+    }
+    return a || 1;
+  }
+
+  function buildJustRatiosForRoot(rootName) {
+    const offsets = {
+      0: [1,1], 1: [16,15], 2: [9,8], 3: [6,5], 4: [5,4], 5: [4,3], 6: [45,32], 7: [3,2], 8: [8,5], 9: [5,3], 10: [9,5], 11: [15,8]
+    };
+    const rootSemis = SEMITONES_FROM_C[rootName];
+    const map = {};
+    NOTE_NAMES.forEach(name => {
+      const diff = (SEMITONES_FROM_C[name] - rootSemis + 12) % 12;
+      const pair = offsets[diff] || [1,1];
+      map[name] = pair[0] / pair[1];
+    });
+    return map;
+  }
+
+  function getTuningRatio(noteName, rootName, tuningSystem) {
+    if (tuningSystem === 'equal') {
+      return Math.pow(2, ((SEMITONES_FROM_C[noteName] - SEMITONES_FROM_C[rootName] + 12) % 12) / 12);
+    }
+    const justMap = buildJustRatiosForRoot(rootName);
+    return justMap[noteName] || 1;
+  }
+
+  function noteToFrequency(note, rootNote, tuningSystem) {
+    const parsed = parseNote(note);
+    const rootParsed = parseNote(rootNote);
+    if (!parsed || !rootParsed) return 440;
+    const octaveDiff = parsed.octave - rootParsed.octave;
+    let semitoneOffset = SEMITONES_FROM_C[parsed.name] - SEMITONES_FROM_C[rootParsed.name];
+    if (semitoneOffset < 0) semitoneOffset += 12;
+    let octaves = octaveDiff;
+    if (SEMITONES_FROM_C[parsed.name] < SEMITONES_FROM_C[rootParsed.name]) {
+      octaves -= 1;
+    }
+    const rootFreq = 440 * Math.pow(2, (midiFromNote(rootNote) - midiFromNote('A4')) / 12);
+    const ratio = getTuningRatio(parsed.name, rootParsed.name, tuningSystem);
+    return rootFreq * ratio * Math.pow(2, octaves);
+  }
+
+  function makeNoise(seed) {
+    let x = seed >>> 0;
+    return function() {
+      x = (1664525 * x + 1013904223) >>> 0;
+      return (x / 4294967295) * 2 - 1;
+    };
+  }
+
+  function onePoleLowpass(input, cutoff) {
+    const out = new Float32Array(input.length);
+    const a = Math.exp(-2 * Math.PI * cutoff / SAMPLE_RATE);
+    let y = 0;
+    for (let i = 0; i < input.length; i++) {
+      y = (1 - a) * input[i] + a * y;
+      out[i] = y;
+    }
+    return out;
+  }
+
+  function normalizePeak(data, targetPeak = 0.92) {
+    let peak = 0;
+    for (let i = 0; i < data.length; i++) {
+      const a = Math.abs(data[i]);
+      if (a > peak) peak = a;
+    }
+    if (!peak) return data;
+    const gain = targetPeak / peak;
+    for (let i = 0; i < data.length; i++) data[i] *= gain;
+    return data;
+  }
+
+  function floatToWavBuffer(samples, gainScale = 1) {
+    const bytesPerSample = 2;
+    const buffer = new ArrayBuffer(44 + samples.length * bytesPerSample);
+    const view = new DataView(buffer);
+
+    function writeString(offset, s) {
+      for (let i = 0; i < s.length; i++) view.setUint8(offset + i, s.charCodeAt(i));
+    }
+
+    writeString(0, 'RIFF');
+    view.setUint32(4, 36 + samples.length * bytesPerSample, true);
+    writeString(8, 'WAVE');
+    writeString(12, 'fmt ');
+    view.setUint32(16, 16, true);
+    view.setUint16(20, 1, true);
+    view.setUint16(22, 1, true);
+    view.setUint32(24, SAMPLE_RATE, true);
+    view.setUint32(28, SAMPLE_RATE * bytesPerSample, true);
+    view.setUint16(32, bytesPerSample, true);
+    view.setUint16(34, 16, true);
+    writeString(36, 'data');
+    view.setUint32(40, samples.length * bytesPerSample, true);
+
+    let offset = 44;
+    const exportGain = clamp(Number(gainScale) || 1, 0, 1);
+    for (let i = 0; i < samples.length; i++) {
+      const s = clamp(samples[i] * exportGain, -1, 1);
+      view.setInt16(offset, s < 0 ? s * 32768 : s * 32767, true);
+      offset += 2;
+    }
+    return buffer;
+  }
+
+  function smoothstep01(x) {
+    const t = clamp(x, 0, 1);
+    return t * t * (3 - 2 * t);
+  }
+
+  function equalPowerFadeIn(x) {
+    return Math.sin(clamp(x, 0, 1) * Math.PI * 0.5);
+  }
+
+  function notePosition01(noteName, startNote, endNote) {
+    const startMidi = midiFromNote(startNote);
+    const endMidi = midiFromNote(endNote);
+    const noteMidi = midiFromNote(noteName);
+    if (startMidi === null || endMidi === null || noteMidi === null || endMidi <= startMidi) return 0.5;
+    return clamp((noteMidi - startMidi) / (endMidi - startMidi), 0, 1);
+  }
+
+  function formantMix(x, y, z, formantEmphasis, soft) {
+    const a = 0.58 + formantEmphasis * 0.16 - soft * 0.10;
+    const b = 0.24 + formantEmphasis * 0.16 + soft * 0.05;
+    const c = 0.12 + formantEmphasis * 0.10;
+    return x * a + y * b + z * c;
+  }
+
+  function applyNasalFormant(sample, t, freq, params) {
+    const edge = Math.max(0, params.nasalEdge || 0);
+    if (edge <= 0) return sample;
+    const form1 = 900 + Math.min(700, freq * 0.68);
+    const form2 = form1 * 1.7;
+    const form3 = form1 * 2.25;
+
+    const ring1 = Math.sin(2 * Math.PI * form1 * t) * (0.13 + edge * 0.24);
+    const ring2 = Math.sin(2 * Math.PI * form2 * t) * (0.06 + edge * 0.12);
+    const ring3 = Math.sin(2 * Math.PI * form3 * t) * (0.025 + edge * 0.07);
+
+    const drive = 0.95 + edge * 3.0;
+    const follow = 0.42 + 0.80 * Math.tanh(sample * drive);
+    const bodyTrim = 1 - Math.min(0.36, edge * 0.17);
+
+    const nasal = (ring1 + ring2 + ring3) * follow;
+    const mixed = sample * bodyTrim + nasal * (0.36 + edge * 0.18);
+    return Math.tanh(mixed * (1 + edge * 0.22));
+  }
+
+  function getChanterModelCoefficients(model) {
+    switch (model) {
+      case 'open_cylindrical':
+        return { fundamental: 0.86, second: 0.42, third: 0.30, fourth: 0.18, fifth: 0.10, sixth: 0.06, oddBoost: 0.0, evenBoost: 0.16, conical: 0.04 };
+      case 'conical_open':
+        return { fundamental: 0.74, second: 0.38, third: 0.32, fourth: 0.22, fifth: 0.14, sixth: 0.10, oddBoost: 0.04, evenBoost: 0.12, conical: 0.20 };
+      case 'conical_quasi_closed':
+        return { fundamental: 0.84, second: 0.22, third: 0.40, fourth: 0.12, fifth: 0.20, sixth: 0.06, oddBoost: 0.20, evenBoost: 0.04, conical: 0.24 };
+      case 'closed_cylindrical':
+      default:
+        return { fundamental: 0.92, second: 0.12, third: 0.34, fourth: 0.06, fifth: 0.18, sixth: 0.03, oddBoost: 0.24, evenBoost: -0.02, conical: 0.0 };
+    }
+  }
+
+  function getDroneModelCoefficients(model) {
+    switch (model) {
+      case 'steady_open_drone':
+        return { fundamental: 0.90, second: 0.28, third: 0.16, fourth: 0.08, fifth: 0.04, noise: 0.008, growl: 0.03 };
+      case 'bright_reed_drone':
+        return { fundamental: 0.80, second: 0.34, third: 0.24, fourth: 0.13, fifth: 0.07, noise: 0.014, growl: 0.06 };
+      case 'closed_drone':
+      default:
+        return { fundamental: 0.92, second: 0.14, third: 0.24, fourth: 0.05, fifth: 0.03, noise: 0.006, growl: 0.02 };
+    }
+  }
+
+  function synthesizeChanter(noteName, freq, params) {
+    const length = Math.floor(SAMPLE_RATE * params.chanterSeconds);
+    const data = new Float32Array(length);
+    const seed = (midiFromNote(noteName) || 60) * 2654435761;
+    const rand = makeNoise(seed >>> 0);
+    const airyNoise = new Float32Array(length);
+    for (let i = 0; i < length; i++) airyNoise[i] = rand();
+    const noiseLP = onePoleLowpass(airyNoise, 1500 + params.boreBrightness * 2600 + params.reed * 320 + params.airNoise * 700);
+
+    const attackMs = 4 + params.attackStrength * 10 + params.reedStiffness * 4 + (1 - params.attackSoft) * 3;
+    const attackSamples = Math.max(24, Math.floor(SAMPLE_RATE * attackMs / 1000));
+    const releaseSamples = Math.max(1, Math.floor(SAMPLE_RATE * params.releaseMs / 1000));
+    const clickReductionSamples = Math.max(48, Math.floor(SAMPLE_RATE * (0.001 + params.attackSoft * 0.006)));
+    const notePos = notePosition01(noteName, params.rangeStart, params.rangeEnd);
+    const model = getChanterModelCoefficients(params.chanterModel);
+
+    let phase1 = 0, phase2 = 0, phase3 = 0, phase4 = 0, phase5 = 0, phase6 = 0;
+    let smoothed = 0;
+    let prevBody = 0;
+
+    for (let i = 0; i < length; i++) {
+      const t = i / SAMPLE_RATE;
+      const stabilityAmount = (1 - params.pressureStability) * 0.0014;
+      const slowDrift = Math.sin(2 * Math.PI * (0.09 + (seed % 9) * 0.01) * t) * stabilityAmount;
+      const microDrift = Math.sin(2 * Math.PI * (4.2 + (seed % 7) * 0.22) * t) * stabilityAmount * 0.25;
+      const instFreq = freq * (1 + slowDrift + microDrift);
+
+      phase1 += 2 * Math.PI * instFreq / SAMPLE_RATE;
+      phase2 += 2 * Math.PI * instFreq * 2 / SAMPLE_RATE;
+      phase3 += 2 * Math.PI * instFreq * 3 / SAMPLE_RATE;
+      phase4 += 2 * Math.PI * instFreq * 4 / SAMPLE_RATE;
+      phase5 += 2 * Math.PI * instFreq * 5 / SAMPLE_RATE;
+      phase6 += 2 * Math.PI * instFreq * 6 / SAMPLE_RATE;
+
+      const s1 = Math.sin(phase1);
+      const s2 = Math.sin(phase2 + 0.06);
+      const s3 = Math.sin(phase3 + 0.15);
+      const s4 = Math.sin(phase4 + 0.21);
+      const s5 = Math.sin(phase5 + 0.31);
+      const s6 = Math.sin(phase6 + 0.43);
+
+      const lowWarm = (1 - notePos) * params.noteSpectral;
+      const highFocus = notePos * params.noteSpectral;
+      const pureFactor = 0.72 + params.pure * 0.30 - params.reed * 0.03;
+      const brightness = 0.56 + params.boreBrightness * 0.46 + highFocus * 0.18 - params.soft * 0.22;
+      const conicalLift = model.conical * (0.4 + params.formantEmphasis * 0.8);
+
+      const bodyA =
+        s1 * (model.fundamental * pureFactor) +
+        s2 * (model.second * (1 + model.evenBoost + brightness * 0.2)) +
+        s3 * (model.third * (1 + model.oddBoost + params.reedStiffness * 0.3)) +
+        s4 * (model.fourth * (1 + brightness * 0.25 + conicalLift)) +
+        s5 * (model.fifth * (1 + params.steadyEdge * 0.4 + conicalLift));
+
+      const bodyB =
+        s1 * (0.70 + lowWarm * 0.08) +
+        s2 * (0.16 + brightness * 0.10) +
+        s3 * (0.22 + params.formantEmphasis * 0.12) +
+        s5 * (0.07 + params.steadyEdge * 0.12 + conicalLift) +
+        s6 * (0.03 + conicalLift * 0.5);
+
+      const bodyC =
+        s1 * (0.54 + lowWarm * 0.05) +
+        s2 * (0.12 + brightness * 0.08) +
+        s4 * (0.10 + highFocus * 0.12 + conicalLift * 0.5) +
+        s5 * (0.08 + params.reedStiffness * 0.10) +
+        s6 * (0.05 + params.steadyEdge * 0.08 + conicalLift);
+
+      let body = formantMix(bodyA, bodyB, bodyC, params.formantEmphasis, params.soft);
+      const sawEdge = s2 * 0.09 + s3 * 0.08 + s4 * 0.06 + s5 * 0.04;
+      body += sawEdge * (0.10 + params.steadyEdge * 0.24 + params.reed * 0.05);
+      body = Math.tanh(body * (1.1 + params.reedStiffness * 0.7 + params.reed * 0.12));
+
+      let attackEnv = 1;
+      if (i < attackSamples) attackEnv = smoothstep01(i / attackSamples);
+      let releaseEnv = 1;
+      if (i > length - releaseSamples) releaseEnv = clamp((length - i) / releaseSamples, 0, 1);
+      let startGate = 1;
+      if (i < clickReductionSamples) startGate = equalPowerFadeIn(i / clickReductionSamples);
+
+      const attackNoiseEnv = i < attackSamples * 2 ? Math.pow(1 - clamp(i / (attackSamples * 2), 0, 1), 1.4) : 0;
+      const air = noiseLP[i] * (0.006 + params.airNoise * 0.035 + params.reed * 0.002) * (0.55 + 0.45 * attackEnv);
+      const chiff = noiseLP[i] * (0.010 + params.attackStrength * 0.035 + params.reedStiffness * 0.018) * attackNoiseEnv;
+      const snapBase = i > 0 ? (body - prevBody) : 0;
+      prevBody = body;
+      const snap = snapBase * (0.004 + params.attackStrength * 0.012) * attackNoiseEnv;
+
+      const raw = (body * attackEnv + air + chiff + snap) * startGate;
+      const smoothing = i < attackSamples ? (0.60 - attackEnv * 0.42 + params.attackSoft * 0.04) : 0.08;
+      smoothed += (raw - smoothed) * (1 - clamp(smoothing, 0.01, 0.94));
+
+      let sample = smoothed * releaseEnv;
+      sample = applyNasalFormant(sample, t, freq, params);
+      data[i] = sample;
+    }
+
+    normalizePeak(data, 0.90 - params.soft * 0.08);
+    return data;
+  }
+
+  function synthesizeDrone(label, freqs, params) {
+    const length = Math.floor(SAMPLE_RATE * params.droneSeconds);
+    const data = new Float32Array(length);
+    const seed = label.length * 1234567;
+    const rand = makeNoise(seed);
+    const noise = new Float32Array(length);
+    for (let i = 0; i < length; i++) noise[i] = rand();
+    const noiseLP = onePoleLowpass(noise, 1200 + params.droneRichness * 1600 + params.reed * 100);
+    const model = getDroneModelCoefficients(params.droneModel);
+
+    for (let i = 0; i < length; i++) {
+      const phaseT = i / length;
+      const motion = 1
+        + Math.sin(2 * Math.PI * phaseT) * (0.006 + (1 - params.pressureStability) * 0.01)
+        + Math.sin(2 * Math.PI * phaseT * 3 + 0.6) * 0.003
+        + Math.sin(2 * Math.PI * phaseT * 7 + 1.1) * 0.0014;
+
+      let v = 0;
+      for (let j = 0; j < freqs.length; j++) {
+        const base = freqs[j];
+        const loopFreq = Math.round(base * params.droneSeconds) / params.droneSeconds;
+        const p1 = 2 * Math.PI * Math.round(loopFreq * params.droneSeconds) * i / length;
+        const p2 = 2 * Math.PI * Math.round(loopFreq * 2 * params.droneSeconds) * i / length;
+        const p3 = 2 * Math.PI * Math.round(loopFreq * 3 * params.droneSeconds) * i / length;
+        const p4 = 2 * Math.PI * Math.round(loopFreq * 4 * params.droneSeconds) * i / length;
+        const p5 = 2 * Math.PI * Math.round(loopFreq * 5 * params.droneSeconds) * i / length;
+
+        const partials =
+          Math.sin(p1) * model.fundamental +
+          Math.sin(p2 + 0.03) * model.second * (1 + params.droneRichness * 0.4) +
+          Math.sin(p3 + 0.09) * model.third * (1 + params.reedStiffness * 0.2) +
+          Math.sin(p4 + 0.16) * model.fourth * (1 + params.boreBrightness * 0.2) +
+          Math.sin(p5 + 0.23) * model.fifth * (1 + params.steadyEdge * 0.3);
+
+        const growl = (Math.sin(p2) * 0.04 + Math.sin(p3) * 0.03 + Math.sin(p4) * 0.02) * (model.growl + params.droneRichness * 0.05);
+        v += Math.tanh((partials + growl) * (1.0 + params.reed * 0.08 + params.droneRichness * 0.2));
+      }
+
+      const breath = noiseLP[i] * (model.noise + params.airNoise * 0.02 + (1 - params.pressureStability) * 0.01);
+      data[i] = ((v / freqs.length) + breath) * motion * params.droneBlend;
+    }
+
+    normalizePeak(data, 0.84);
+    return data;
+  }
+
+  function ensureAudio() {
+    if (!audioCtx) {
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: SAMPLE_RATE });
+      masterGain = audioCtx.createGain();
+      masterGain.gain.value = clamp(Number(els.previewVolume.value) || 0.5, 0, 1) * 0.25;
+      masterGain.connect(audioCtx.destination);
+    }
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+  }
+
+  function pcmToAudioBuffer(pcm) {
+    ensureAudio();
+    const buffer = audioCtx.createBuffer(1, pcm.length, SAMPLE_RATE);
+    buffer.copyToChannel(pcm, 0, 0);
+    return buffer;
+  }
+
+  function stopChanterPreview(fadeMs = 25) {
+    if (!chanterSource) {
+      currentChanterName = null;
+      refreshPlayButtons();
+      return;
+    }
+    const source = chanterSource;
+    const gain = chanterGain;
+    chanterSource = null;
+    chanterGain = null;
+    currentChanterName = null;
+    refreshPlayButtons();
+
+    try {
+      if (gain && audioCtx) {
+        const now = audioCtx.currentTime;
+        const fadeSeconds = Math.max(0.005, fadeMs / 1000);
+        const current = Math.max(0.0001, gain.gain.value || 1);
+        gain.gain.cancelScheduledValues(now);
+        gain.gain.setValueAtTime(current, now);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + fadeSeconds);
+        source.stop(now + fadeSeconds + 0.005);
+      } else {
+        source.stop();
+      }
+    } catch (e) {}
+
+    source.onended = () => {
+      try { source.disconnect(); } catch (e) {}
+      try { if (gain) gain.disconnect(); } catch (e) {}
+    };
+  }
+
+  function stopDronePreview() {
+    if (!droneSource) {
+      currentDroneName = null;
+      refreshPlayButtons();
+      return;
+    }
+    const source = droneSource;
+    const gain = droneGain;
+    droneSource = null;
+    droneGain = null;
+    currentDroneName = null;
+    refreshPlayButtons();
+
+    try {
+      if (gain && audioCtx) {
+        const now = audioCtx.currentTime;
+        gain.gain.cancelScheduledValues(now);
+        gain.gain.setValueAtTime(Math.max(0.0001, gain.gain.value || 0.95), now);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.04);
+        source.stop(now + 0.05);
+      } else {
+        source.stop();
+      }
+    } catch (e) {}
+
+    source.onended = () => {
+      try { source.disconnect(); } catch (e) {}
+      try { if (gain) gain.disconnect(); } catch (e) {}
+    };
+  }
+
+  function stopAllPreview() {
+    stopChanterPreview();
+    stopDronePreview();
+    setStatus('All preview playback stopped.');
+  }
+
+  function refreshPlayButtons() {
+    document.querySelectorAll('button[data-key-preview], button[data-drone-toggle]').forEach(btn => {
+      const name = btn.getAttribute('data-preview') || btn.getAttribute('data-key-preview') || btn.getAttribute('data-drone-toggle');
+      const type = btn.getAttribute('data-type');
+      const active = (type === 'chanter' && currentChanterName === name) || (type === 'drone' && currentDroneName === name);
+      btn.classList.toggle('active', active);
+    });
+  }
+
+  function playEntry(entry) {
+    ensureAudio();
+    if (entry.type === 'chanter') {
+      if (currentChanterName === entry.label) {
+        stopChanterPreview();
+        return;
+      }
+      stopChanterPreview();
+      const source = audioCtx.createBufferSource();
+      const gain = audioCtx.createGain();
+      source.buffer = pcmToAudioBuffer(entry.pcm);
+      source.connect(gain);
+      gain.connect(masterGain);
+      gain.gain.value = 0.95;
+      source.start();
+      chanterSource = source;
+      chanterGain = gain;
+      currentChanterName = entry.label;
+      refreshPlayButtons();
+      source.onended = () => {
+        if (chanterSource === source) {
+          chanterSource = null;
+          chanterGain = null;
+          currentChanterName = null;
+          refreshPlayButtons();
+        }
+        try { source.disconnect(); } catch (e) {}
+        try { gain.disconnect(); } catch (e) {}
+      };
+      return;
+    }
+
+    if (currentDroneName === entry.label) {
+      stopDronePreview();
+      return;
+    }
+    stopDronePreview();
+    const source = audioCtx.createBufferSource();
+    const gain = audioCtx.createGain();
+    source.buffer = pcmToAudioBuffer(entry.pcm);
+    source.loop = true;
+    source.connect(gain);
+    gain.connect(masterGain);
+    gain.gain.value = 0.95;
+    source.start();
+    droneSource = source;
+    droneGain = gain;
+    currentDroneName = entry.label;
+    refreshPlayButtons();
+  }
+
+  function renderPreviewButtons(entries) {
+    els.keyboardRow.innerHTML = '';
+    els.droneToggleRow.innerHTML = '';
+
+    const chanterEntries = entries.filter(entry => entry.type === 'chanter');
+    const droneEntries = entries.filter(entry => entry.type === 'drone');
+
+    chanterEntries.forEach(entry => {
+      const btn = document.createElement('button');
+      btn.className = 'key-btn';
+      btn.textContent = entry.exportName;
+      btn.setAttribute('data-key-preview', entry.label);
+      btn.setAttribute('data-preview', entry.label);
+      btn.setAttribute('data-type', 'chanter');
+      btn.addEventListener('click', () => playEntry(entry));
+      els.keyboardRow.appendChild(btn);
+    });
+
+    droneEntries.forEach(entry => {
+      const btn = document.createElement('button');
+      btn.className = 'drone-toggle';
+      btn.textContent = entry.exportName;
+      btn.setAttribute('data-drone-toggle', entry.label);
+      btn.setAttribute('data-preview', entry.label);
+      btn.setAttribute('data-type', 'drone');
+      btn.addEventListener('click', () => playEntry(entry));
+      els.droneToggleRow.appendChild(btn);
+    });
+
+    refreshPlayButtons();
+  }
+
+  function updatePreviewVolumeRealtime() {
+    const sliderVal = clamp(Number(els.previewVolume.value) || 0.5, 0, 1);
+    els.previewVolumeVal.textContent = sliderVal.toFixed(2);
+    if (masterGain) masterGain.gain.value = sliderVal * 0.25;
+    persistControls();
+  }
+
+  function updateSliderLabels() {
+    [
+      ['pure','pureVal'], ['reed','reedVal'], ['soft','softVal'], ['attackSoft','attackSoftVal'],
+      ['noteSpectral','noteSpectralVal'], ['nasalEdge','nasalEdgeVal'], ['reedStiffness','reedStiffnessVal'],
+      ['airNoise','airNoiseVal'], ['attackStrength','attackStrengthVal'], ['boreBrightness','boreBrightnessVal'],
+      ['formantEmphasis','formantEmphasisVal'], ['steadyEdge','steadyEdgeVal'], ['pressureStability','pressureStabilityVal'],
+      ['droneRichness','droneRichnessVal'], ['droneBlend','droneBlendVal'], ['previewVolume','previewVolumeVal']
+    ].forEach(([a,b]) => {
+      if (els[a] && els[b]) els[b].textContent = Number(els[a].value).toFixed(2);
+    });
+    els.chanterSecondsVal.textContent = String(Math.round(Number(els.chanterSeconds.value) || 7));
+  }
+
+  function buildSummaryItem(label, value) {
+    const wrap = document.createElement('div');
+    wrap.className = 'summary-item';
+    const l = document.createElement('span');
+    l.className = 'summary-label';
+    l.textContent = label;
+    const v = document.createElement('div');
+    v.className = 'summary-value';
+    v.textContent = value;
+    wrap.appendChild(l);
+    wrap.appendChild(v);
+    return wrap;
+  }
+
+  function parseCurrentConfig() {
+    const rootParsed = parseNote(els.rootNote.value);
+    const rangeStartMidi = midiFromNote(els.rangeStart.value);
+    const rangeEndMidi = midiFromNote(els.rangeEnd.value);
+    const soundingTranspose = clamp(Number(els.soundingTranspose.value) || 0, -36, 36);
+    const droneTemplate = els.droneTemplate.value;
+    const droneIntervals = droneTemplate === 'custom'
+      ? parseNumberList(els.customDroneIntervals.value, [0,7,12])
+      : DRONE_TEMPLATES[droneTemplate].intervals.slice();
+
+    const droneTriggerNotes = parseNumberList(els.droneTriggerNotes.value, [51]);
+
+    return {
+      preset: els.presetSelect.value,
+      instrumentName: String(els.instrumentName.value || 'bagpipe_custom_instrument').trim(),
+      chanterModel: els.chanterModel.value,
+      droneModel: els.droneModel.value,
+      tuningSystem: els.tuningSystem.value,
+      rootNote: els.rootNote.value,
+      rootName: rootParsed ? rootParsed.name : 'D',
+      rangeStart: els.rangeStart.value,
+      rangeEnd: els.rangeEnd.value,
+      rangeStartMidi,
+      rangeEndMidi,
+      soundingTranspose,
+      droneTemplate,
+      droneIntervals,
+      droneTriggerNotes,
+      droneSeconds: clamp(Math.round(Number(els.droneSeconds.value) || 10), 2, 30),
+      chanterSeconds: clamp(Math.round(Number(els.chanterSeconds.value) || 7), 1, 15),
+      pure: Number(els.pure.value),
+      reed: Number(els.reed.value),
+      soft: Number(els.soft.value),
+      attackSoft: Number(els.attackSoft.value),
+      noteSpectral: Number(els.noteSpectral.value),
+      nasalEdge: Number(els.nasalEdge.value),
+      reedStiffness: Number(els.reedStiffness.value),
+      airNoise: Number(els.airNoise.value),
+      attackStrength: Number(els.attackStrength.value),
+      boreBrightness: Number(els.boreBrightness.value),
+      formantEmphasis: Number(els.formantEmphasis.value),
+      steadyEdge: Number(els.steadyEdge.value),
+      pressureStability: Number(els.pressureStability.value),
+      droneRichness: Number(els.droneRichness.value),
+      droneBlend: Number(els.droneBlend.value),
+      previewVolume: Number(els.previewVolume.value),
+      chanterExportGain: clamp(Number(els.chanterExportGain.value) || 0.25, 0.01, 1),
+      droneExportGain: clamp(Number(els.droneExportGain.value) || 0.5, 0.01, 1),
+      releaseMs: clamp(Math.round(Number(els.releaseMs.value) || 25), 1, 2000)
+    };
+  }
+
+  function validateConfig(config) {
+    if (config.rangeStartMidi === null || config.rangeEndMidi === null || config.rangeEndMidi < config.rangeStartMidi) {
+      throw new Error('Playable range is invalid.');
+    }
+    if (!config.droneIntervals.length) {
+      throw new Error('Drone intervals are empty.');
+    }
+    if (!config.instrumentName) {
+      config.instrumentName = 'bagpipe_custom_instrument';
+    }
+  }
+
+  function updateSummary(config, entries = []) {
+
+    els.exportNotes.textContent =
+      `Celtic Sounds Instrument Metadata:
+` +
+      `  volumeScale: ${config.chanterExportGain}
+` +
+      `  fadeTimeMs: ${config.releaseMs}
+` +
+      `  droneNotes: [${config.droneTriggerNotes.join(', ')}]
+` +
+      `  droneVolumeScale: ${config.droneExportGain}
+` +
+      `  hasDrone: ${config.droneIntervals.length ? 'true' : 'false'}`;
+  }
+
+  function yieldToUI() {
+    return new Promise(resolve => setTimeout(resolve, 0));
+  }
+
+  async function buildEntries(config) {
+    validateConfig(config);
+    const notes = noteRange(config.rangeStart, config.rangeEnd) || [];
+    const entries = [];
+    const totalSteps = notes.length + Math.max(1, config.droneIntervals.length);
+
+    for (let i = 0; i < notes.length; i++) {
+      const note = notes[i];
+      setStatus(`Generating chanter ${i + 1} of ${totalSteps}: ${note}...`, false, true);
+      await yieldToUI();
+
+      const soundingRootNote = transposeNoteBySemitones(config.rootNote, config.soundingTranspose);
+      const soundingNote = transposeNoteBySemitones(note, config.soundingTranspose);
+      const freq = noteToFrequency(soundingNote, soundingRootNote, config.tuningSystem);
+      const pcm = synthesizeChanter(note, freq, config);
+      const exportName = note;
+      entries.push({
+        filename: `${note}.wav`,
+        exportName,
+        label: note,
+        type: 'chanter',
+        freq,
+        pcm,
+        buffer: floatToWavBuffer(pcm, config.chanterExportGain)
+      });
+    }
+
+    if (config.droneIntervals.length) {
+      const soundingRootNote = transposeNoteBySemitones(config.rootNote, config.soundingTranspose);
+      const soundingRootMidi = midiFromNote(soundingRootNote) || 48;
+      setStatus(`Generating drone stack ${notes.length + 1} of ${totalSteps}...`, false, true);
+      await yieldToUI();
+
+      const droneFreqs = config.droneIntervals.map(interval => {
+        const soundingDroneNote = noteFromMidi(soundingRootMidi + interval);
+        return noteToFrequency(soundingDroneNote, soundingRootNote, config.tuningSystem);
+      });
+      const label = config.droneIntervals.map(interval => noteFromMidi(soundingRootMidi + interval)).join('_');
+      const exportName = "Drones: " + config.droneIntervals.map(interval => noteFromMidi(soundingRootMidi + interval)).join('+');
+      const pcm = synthesizeDrone(label, droneFreqs, config);
+      entries.push({
+        filename: `Eb3.wav`,
+        exportName,
+        label,
+        type: 'drone',
+        freq: droneFreqs[0],
+        pcm,
+        buffer: floatToWavBuffer(pcm, config.droneExportGain)
+      });
+    }
+
+    return entries;
+  }
+
+  async function generateAll(isAuto = false) {
+    stopAllPreview();
+    updateSliderLabels();
+    const config = parseCurrentConfig();
+
+    els.generateBtn.disabled = true;
+    els.downloadBtn.disabled = true;
+
+    try {
+      validateConfig(config);
+      const entries = await buildEntries(config);
+      generated = new Map(entries.map(entry => [entry.filename + '|' + entry.type, entry]));
+      latestMetadata = config;
+      renderPreviewButtons(entries);
+      updateSummary(config, entries);
+      setStatus(isAuto ? 'Samples regenerated.' : 'Samples generated.');
+      flashRegenerated(entries.length);
+    } catch (err) {
+      const msg = 'Generation failed: ' + ((err && err.message) ? err.message : 'Unknown error');
+      setStatus(msg, true);
+      setExportStatus(msg, 'danger');
+      alert(msg);
+    } finally {
+      els.generateBtn.disabled = false;
+      els.downloadBtn.disabled = false;
+    }
+  }
+
+  function scheduleAutoRegenerate() {
+    updateSliderLabels();
+    persistControls();
+    if (regenTimer) clearTimeout(regenTimer);
+    regenTimer = setTimeout(() => generateAll(true), 240);
+  }
+
+  function applyPreset(presetKey, persist = true) {
+    const preset = INSTRUMENT_PRESETS[presetKey];
+    if (!preset) return;
+
+    els.presetSelect.value = presetKey;
+
+    Object.keys(preset).forEach(key => {
+      if (key === 'label' || key === 'notes') return;
+      if (els[key]) els[key].value = String(preset[key]);
+    });
+
+    if (persist) {
+      persistControls({ zipFilename: null });
+    }
+
+    updateSliderLabels();
+    updateSummary(parseCurrentConfig(), [...generated.values()]);
+  }
+
+  async function downloadZip() {
+    if (!generated.size || !latestMetadata) {
+      setExportStatus('Generate samples first.', 'danger');
+      alert('Please generate the samples before downloading the ZIP.');
+      return;
+    }
+    if (typeof JSZip === 'undefined') {
+      setExportStatus('JSZip library is missing.', 'danger');
+      alert('The ZIP library did not load, so the ZIP file could not be created.');
+      return;
+    }
+
+    const filename = await promptForCustomInstrumentFilename();
+    if (!filename) {
+      setExportStatus('Custom instrument save canceled.');
+      return;
+    }
+
+    stopAllPreview();
+    setExportStatus('Building ZIP...', '', true);
+
+    try {
+      const zip = new JSZip();
+      [...generated.values()].forEach(entry => zip.file(entry.filename, entry.buffer));
+
+      zip.file('abctools.json', JSON.stringify({
+        volumeScale: latestMetadata.chanterExportGain,
+        fadeTimeMs: latestMetadata.releaseMs,
+        trimLeadingSilence: false,
+        silenceThresholdDb: -40,
+        forceMonoWav: false,
+        droneNotes: latestMetadata.droneTriggerNotes,
+        droneVolumeScale: latestMetadata.droneExportGain,
+        hasDrone: latestMetadata.droneIntervals.length > 0
+      }, null, 2));
+
+      const blob = await zip.generateAsync({ type: 'blob' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1500);
+
+      setExportStatus(`ZIP download started: ${filename}`);
+      flashExportStatusSuccess();
+    } catch (err) {
+      const msg = 'ZIP creation failed: ' + ((err && err.message) ? err.message : 'Unknown error');
+      setExportStatus(msg, 'danger');
+      alert(msg);
+    }
+  }
+
+  async function showInstructionsModal() {
+    const html = `
+      <div class="modal_instructions_content">
+        <div>
+          <h2 style="text-align:center;margin-top:0px;">Bagpipe Custom Instrument Factory Instructions</h2>
+
+          <p>
+            This tool generates a <strong>Celtic Sounds</strong> custom instrument .zip file containing
+            synthesized chanter and drone samples plus the metadata needed for playback.
+          </p>
+
+          <h4>1) Choose an instrument design</h4>
+          <ul>
+            <li><strong>Instrument Family Preset</strong> loads a useful starting point such as Highland, Northumbrian, Uilleann, Smallpipes, Musette-style, or a generic bagpipe setup.</li>
+            <li><strong>Output ZIP Base Name</strong> is used as the default filename suggestion when you download the generated custom instrument.</li>
+            <li><strong>Chanter Acoustic Model</strong> selects the synthesis model used for the melody notes.</li>
+            <li><strong>Drone Acoustic Model</strong> selects the synthesis model used for the drone stack.</li>
+            <li><strong>Tuning System</strong> chooses just intonation in the root key or equal temperament.</li>
+            <li><strong>Root Key / Drone Root</strong> sets the logical root used for tuning and drone construction.</li>
+            <li><strong>Playable Range Start / End</strong> define the logical chanter note range that will be generated.</li>
+            <li><strong>Sounding Transpose</strong> changes the sounding pitch without changing the logical chanter note names or exported chanter filenames.</li>
+          </ul>
+
+          <h4>2) Configure the drones</h4>
+          <ul>
+            <li><strong>Drone Template</strong> chooses a preset interval layout for the drone stack.</li>
+            <li><strong>Custom Drone Intervals</strong> lets you supply comma-separated semitone offsets when the custom drone template is selected.</li>
+            <li><strong>Drone Trigger MIDI Notes</strong> defines the MIDI note numbers used to trigger drone playback in compatible systems.</li>
+            <li><strong>Drone Duration</strong> controls the generated drone sample length before looping.</li>
+          </ul>
+
+          <h4>3) Configure sample duration and tone</h4>
+          <ul>
+            <li><strong>Generated Chanter Note Length</strong> sets the exported duration of each chanter note sample.</li>
+            <li><strong>The Reed, Bore, and Tone Controls</strong> section lets you shape reed firmness, air/noise, attack behavior, brightness, formants, steady-state edge, pressure stability, drone complexity, and preview loudness.</li>
+            <li><strong>Preview Volume</strong> affects preview playback only. It does not change exported file levels.</li>
+            <li><strong>Chanter Export Volume Scale</strong> and <strong>Drone Export Volume Scale</strong> control the audio level written into exported files.</li>
+            <li><strong>Release Fade Time</strong> sets the fade-out metadata used by the custom instrument.</li>
+          </ul>
+
+          <h4>4) Generate and preview</h4>
+          <ul>
+            <li>The note samples are automatically regenerated whenever you change a settings value.</li>
+            <li>You can force a regeneration by clicking <strong>Generate / Regenerate Samples</strong>.</li>
+            <li>After generation, use the <strong>Sample Preview</strong> section to audition chanter notes and drone sounds.</li>
+            <li>Use <strong>Stop All Previews</strong> to stop any looping drones or currently playing notes.</li>
+          </ul>
+
+          <h4>5) Download the custom instrument</h4>
+          <ul>
+            <li>Click <strong>Download Celtic Sounds Custom Instrument</strong> to create and download the custom instrument .zip file.</li>
+            <li>The tool will prompt you for a filename and then download a .zip file containing the generated WAV files and instrument metadata.</li>
+            <li>The <strong>Export Notes</strong> section shows export-related notes and status messages.</li>
+          </ul>
+
+          <h4>Tips</h4>
+          <ul>
+            <li>Use a family preset first, then fine-tune the sound controls.</li>
+            <li>If you want the instrument to sound in a different key while keeping the same logical note names, use <strong>Sounding Transpose</strong>.</li>
+          </ul>
+        </div>
+      </div>
+    `;
+
+    if (window.DayPilot && DayPilot.Modal && typeof DayPilot.Modal.alert === 'function') {
+      await DayPilot.Modal.alert(html, {
+        theme: 'modal_instructions',
+        scrollWithPage: false,
+        okText: 'Close'
+      });
+      return;
+    }
+
+    alert(
+      'Bagpipe Custom Instrument Factory\\n\\n' +
+      'Choose a preset, set the range, tuning, drones, and tone controls, then click Generate / Regenerate Samples. ' +
+      'Preview the notes and drones, then download the Celtic Sounds custom instrument .zip file.'
+    );
+  }
+
+  function initializeUi() {
+    populateSelect(els.presetSelect, INSTRUMENT_PRESETS, (key, item) => item.label);
+    populateSelect(els.chanterModel, CHANTER_MODELS, (key, label) => label);
+    populateSelect(els.droneModel, DRONE_MODELS, (key, label) => label);
+    populateSelect(els.tuningSystem, TUNING_PRESETS, (key, item) => item.label);
+    populateSelect(els.droneTemplate, DRONE_TEMPLATES, (key, item) => item.label);
+    populateValueList(els.rootNote, ROOT_NOTE_OPTIONS);
+    populateValueList(els.rangeStart, RANGE_OPTIONS);
+    populateValueList(els.rangeEnd, RANGE_OPTIONS);
+
+    applyPreset('highland', false);
+    const restored = restoreControls();
+    if (!restored) {
+      persistControls();
+    }
+    updateSliderLabels();
+    updateSummary(parseCurrentConfig(), []);
+    clearExportStatus();
+
+    els.presetSelect.addEventListener('change', () => {
+      applyPreset(els.presetSelect.value, true);
+      scheduleAutoRegenerate();
+    });
+
+    els.applyPresetBtn.addEventListener('click', () => {
+      applyPreset(els.presetSelect.value, true);
+      generateAll(false);
+    });
+
+    [
+      els.instrumentName, els.chanterModel, els.droneModel, els.tuningSystem, els.rootNote, els.rangeStart, els.rangeEnd,
+      els.soundingTranspose, els.droneTemplate, els.customDroneIntervals, els.droneTriggerNotes, els.droneSeconds,
+      els.chanterSeconds, els.pure, els.reed, els.soft, els.attackSoft, els.noteSpectral,
+      els.nasalEdge, els.reedStiffness, els.airNoise, els.attackStrength, els.boreBrightness, els.formantEmphasis,
+      els.steadyEdge, els.pressureStability, els.droneRichness, els.droneBlend, els.chanterExportGain, els.droneExportGain,
+      els.releaseMs
+    ].forEach(el => {
+      el.addEventListener('input', scheduleAutoRegenerate);
+      el.addEventListener('change', scheduleAutoRegenerate);
+    });
+
+    els.previewVolume.addEventListener('input', updatePreviewVolumeRealtime);
+    els.previewVolume.addEventListener('change', () => persistControls());
+
+    els.instructionsBtn.addEventListener('click', showInstructionsModal);
+    els.generateBtn.addEventListener('click', () => generateAll(false));
+    els.downloadBtn.addEventListener('click', downloadZip);
+    els.stopBtn.addEventListener('click', stopAllPreview);
+  }
+
+  initializeUi();
+  generateAll(false);
+})();
+</script>
+</body>
+</html>
