@@ -7,8 +7,9 @@
 <meta property="og:type" content="website" />
 <meta property="og:title" content="Bagpipe Custom Instrument Factory" />
 <meta property="og:description" content="Generate custom bagpipe instruments for Celtic Sounds using configurable chanter, drone, tuning, and synthesis models." />
-<meta property="og:url" content="https://michaeleskin.com/tools/bagpipe-custom-instrument-factory.html" />
+<meta property="og:url" content="https://michaeleskin.com/tools/bagpipe-factory.html" />
 <meta property="og:site_name" content="Bagpipe Custom Instrument Factory" />
+<meta property="og:image" content="https://michaeleskin.com/tools/img/bagpipe-factory.jpg"/>
 <title>Bagpipe Custom Instrument Factory</title>
 <style>
   :root {
@@ -219,7 +220,7 @@
   }
 
   .mini {
-    font-size: 12px;
+    font-size: 14px;
     color: var(--muted);
     margin-left:7px;
   }
@@ -650,18 +651,6 @@
     filter: brightness(1.1);
   }
 
-  @media (max-width: 840px) {
-    .titlebar {
-      justify-content: center;
-      gap: 10px;
-    }
-
-    .help-btn {
-      font-size: 16px;
-      padding: 10px 16px;
-    }
-  }
-
   .modal_instructions_background {
     position: fixed !important;
     inset: 0 !important;
@@ -679,7 +668,7 @@
     width: min(800px, calc(100vw - 60px)) !important;
     max-width: min(800px, calc(100vw - 60px)) !important;
     height: auto !important;
-    max-height: 80dvh !important;
+    max-height: 66dvh !important;
     overflow: hidden !important;
   }
 
@@ -690,7 +679,7 @@
     display: flex;
     flex-direction: column;
     height: 100%;
-    max-height: 80dvh;
+    max-height: 66dvh;
   }
 
   .modal_instructions_content {
@@ -747,6 +736,24 @@
     outline: none;
     border-radius: 10px;
     font-weight: 600;
+  }
+
+  select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+
+    padding-right: 40px;
+
+    background-color: #0e1115;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 20 20'><path fill='%23b9c3cf' d='M5.5 7.5 10 12l4.5-4.5 1.4 1.4-5.9 5.9-5.9-5.9z'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 8px center;
+    background-size: 14px 14px;
+  }
+
+  select::-ms-expand {
+    display: none;
   }
 </style>
 
@@ -893,8 +900,8 @@
             />
           </label>
 
-          <label class="span-2" title="Length of the generated drone sample in seconds before it loops.">
-            <span title="Length of the generated drone sample in seconds before it loops.">Drone Duration (seconds, loopable)</span>
+          <label class="span-2" title="Duration of the generated drone sample in seconds before it loops (seamlessly).">
+            <span title="Duration of the generated drone sample in seconds before it loops (seamlessly).">Drone Sample Duration (seconds)</span>
             <input
               id="droneSeconds"
               type="number"
@@ -902,13 +909,13 @@
               max="30"
               step="1"
               value="10"
-              title="Length of the generated drone sample in seconds before it loops."
+              title="Duration of the generated drone sample in seconds before it loops (seamlessly)."
             />
           </label>
 
-          <label class="span-2" title="Length of each generated chanter note sample in seconds. Longer notes allow more sustain in the exported sample.">
-            <span title="Length of each generated chanter note sample in seconds. Longer notes allow more sustain in the exported sample.">Generated Chanter Note Length (seconds)</span>
-            <div class="slider-line" title="Length of each generated chanter note sample in seconds. Longer notes allow more sustain in the exported sample.">
+          <label class="span-2" title="Duration of each generated chanter note sample in seconds. Longer notes allow more sustain in the exported sample.">
+            <span title="Duration of each generated chanter note sample in seconds. Longer notes allow more sustain in the exported sample.">Chanter Note Duration (seconds)</span>
+            <div class="slider-line" title="Duration of each generated chanter note sample in seconds. Longer notes allow more sustain in the exported sample.">
               <input
                 id="chanterSeconds"
                 type="range"
@@ -916,7 +923,7 @@
                 max="15"
                 step="1"
                 value="7"
-                title="Length of each generated chanter note sample in seconds. Longer notes allow more sustain in the exported sample."
+                title="Duration of each generated chanter note sample in seconds. Longer notes allow more sustain in the exported sample."
               />
               <div
                 class="mini"
@@ -1522,7 +1529,7 @@
       droneBlend: 1.02,
       chanterExportGain: 0.24,
       droneExportGain: 0.75,
-      releaseMs: 25
+      releaseMs: 120
     },
     musette: {
       label: 'Musette-Style Pipes',
@@ -2520,7 +2527,7 @@
   function updateSummary(config, entries = []) {
 
     els.exportNotes.textContent =
-      `Celtic Sounds Instrument Metadata:
+      `Celtic Sounds Custom Instrument Metadata:
 ` +
       `  volumeScale: ${config.chanterExportGain}
 ` +
@@ -2704,7 +2711,7 @@
     const html = `
       <div class="modal_instructions_content">
         <div>
-          <h2 style="text-align:center;margin-top:0px;">Bagpipe Custom Instrument Factory Instructions</h2>
+          <h2 style="text-align:center;margin-top:0px;">Instructions</h2>
 
           <p>
             This tool generates a <strong>Celtic Sounds</strong> custom instrument .zip file containing
