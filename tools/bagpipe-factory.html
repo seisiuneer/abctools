@@ -990,14 +990,14 @@
         <div
           id="previewArea"
           class="keyboard-wrap"
-          title="Preview area for chanter notes and drones. Click a note to hear it. Drones loop until stopped."
+          title="Preview area for chanter notes and drones. Click a note to hear it. Notes loop until stopped."
         >
           <div
             class="mini"
             style="margin-bottom:8px;"
-            title="Click a note to preview. Drone previews loop continuously until stopped."
+            title="Click a note to preview. Notes loop continuously until stopped."
           >
-            Click a note to preview. Drones loop continuously until stopped.
+            Click a note to preview. Notes loop continuously until stopped.
           </div>
           <div
             id="droneToggleRow"
@@ -1741,6 +1741,8 @@
   let droneGain = null;
   let currentDroneName = null;
   let regenTimer = null;
+  let previewRegenTimer = null;
+  let previewRegenCounter = 0;
   let presetSettingsStore = {};
   let activePresetKey = 'highland';
   let persistTimer = null;
@@ -2432,7 +2434,8 @@
     if (!audioCtx) {
       audioCtx = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: SAMPLE_RATE });
       masterGain = audioCtx.createGain();
-      masterGain.gain.value = clamp(Number(els.previewVolume.value) || 0.5, 0, 1) * 0.25;
+      const rawPreviewVolume = Number(els.previewVolume.value);
+      masterGain.gain.value = clamp(Number.isFinite(rawPreviewVolume) ? rawPreviewVolume : 0.5, 0, 1) * 0.25;
       masterGain.connect(audioCtx.destination);
     }
     if (audioCtx.state === 'suspended') audioCtx.resume();
@@ -2535,6 +2538,7 @@
       const source = audioCtx.createBufferSource();
       const gain = audioCtx.createGain();
       source.buffer = pcmToAudioBuffer(entry.pcm);
+      source.loop = true;
       source.connect(gain);
       gain.connect(masterGain);
       gain.gain.value = 0.95;
@@ -2573,6 +2577,182 @@
     droneGain = gain;
     currentDroneName = entry.label;
     refreshPlayButtons();
+  }
+
+  function stopScheduledActivePreviewRegeneration() {
+    if (previewRegenTimer) {
+      clearTimeout(previewRegenTimer);
+      previewRegenTimer = null;
+    }
+  }
+
+  function isNoteWithinCurrentRange(noteName, config) {
+    const noteMidi = midiFromNote(noteName);
+    return noteMidi !== null && noteMidi >= config.rangeStartMidi && noteMidi <= config.rangeEndMidi;
+  }
+
+  function buildActiveChanterPreviewEntry(noteName, config) {
+    if (!noteName || !isNoteWithinCurrentRange(noteName, config)) {
+      return null;
+    }
+
+    const soundingRootNote = transposeNoteBySemitones(config.rootNote, config.soundingTranspose);
+    const soundingNote = transposeNoteBySemitones(noteName, config.soundingTranspose);
+    const freq = noteToFrequency(soundingNote, soundingRootNote, config.tuningSystem);
+    const pcm = synthesizeChanter(noteName, freq, config);
+
+    return {
+      filename: `${noteName}.wav`,
+      exportName: noteName,
+      label: noteName,
+      type: 'chanter',
+      freq,
+      pcm,
+      buffer: floatToWavBuffer(pcm, config.chanterExportGain)
+    };
+  }
+
+  function buildActiveDronePreviewEntry(config) {
+    if (!config.droneIntervals.length) {
+      return null;
+    }
+
+    const soundingRootNote = transposeNoteBySemitones(config.rootNote, config.soundingTranspose);
+    const soundingRootMidi = midiFromNote(soundingRootNote) || 48;
+    const droneFreqs = config.droneIntervals.map(interval => {
+      const soundingDroneNote = noteFromMidi(soundingRootMidi + interval);
+      return noteToFrequency(soundingDroneNote, soundingRootNote, config.tuningSystem);
+    });
+    const label = config.droneIntervals.map(interval => noteFromMidi(soundingRootMidi + interval)).join('_');
+    const exportName = 'Drones: ' + config.droneIntervals.map(interval => noteFromMidi(soundingRootMidi + interval)).join('+');
+    const pcm = synthesizeDrone(label, droneFreqs, config);
+
+    return {
+      filename: 'Eb3.wav',
+      exportName,
+      label,
+      type: 'drone',
+      freq: droneFreqs[0],
+      pcm,
+      buffer: floatToWavBuffer(pcm, config.droneExportGain)
+    };
+  }
+
+  function restartChanterPreviewWithEntry(entry) {
+    if (!entry) {
+      stopChanterPreview();
+      return;
+    }
+
+    stopChanterPreview();
+    ensureAudio();
+
+    const source = audioCtx.createBufferSource();
+    const gain = audioCtx.createGain();
+    source.buffer = pcmToAudioBuffer(entry.pcm);
+    source.loop = true;
+    source.connect(gain);
+    gain.connect(masterGain);
+    gain.gain.value = 0.95;
+    source.start();
+
+    chanterSource = source;
+    chanterGain = gain;
+    currentChanterName = entry.label;
+    refreshPlayButtons();
+
+    source.onended = () => {
+      if (chanterSource === source) {
+        chanterSource = null;
+        chanterGain = null;
+        currentChanterName = null;
+        refreshPlayButtons();
+      }
+      try { source.disconnect(); } catch (e) {}
+      try { gain.disconnect(); } catch (e) {}
+    };
+  }
+
+  function restartDronePreviewWithEntry(entry) {
+    if (!entry) {
+      stopDronePreview();
+      return;
+    }
+
+    stopDronePreview();
+    ensureAudio();
+
+    const source = audioCtx.createBufferSource();
+    const gain = audioCtx.createGain();
+    source.buffer = pcmToAudioBuffer(entry.pcm);
+    source.loop = true;
+    source.connect(gain);
+    gain.connect(masterGain);
+    gain.gain.value = 0.95;
+    source.start();
+    droneSource = source;
+    droneGain = gain;
+    currentDroneName = entry.label;
+    refreshPlayButtons();
+
+    source.onended = () => {
+      if (droneSource === source) {
+        droneSource = null;
+        droneGain = null;
+        currentDroneName = null;
+        refreshPlayButtons();
+      }
+      try { source.disconnect(); } catch (e) {}
+      try { gain.disconnect(); } catch (e) {}
+    };
+  }
+
+  async function regenerateActivePreviewNow() {
+    const hasActiveChanter = !!currentChanterName;
+    const hasActiveDrone = !!currentDroneName;
+
+    if (!hasActiveChanter && !hasActiveDrone) {
+      return;
+    }
+
+    const requestId = ++previewRegenCounter;
+    const config = parseCurrentConfig();
+
+    try {
+      validateConfig(config);
+    } catch (err) {
+      stopChanterPreview();
+      stopDronePreview();
+      return;
+    }
+
+    if (hasActiveChanter) {
+      const chanterName = currentChanterName;
+      const chanterEntry = buildActiveChanterPreviewEntry(chanterName, config);
+      if (requestId !== previewRegenCounter) return;
+      if (chanterName === currentChanterName || currentChanterName === null) {
+        restartChanterPreviewWithEntry(chanterEntry);
+      }
+    }
+
+    if (hasActiveDrone) {
+      const droneEntry = buildActiveDronePreviewEntry(config);
+      if (requestId !== previewRegenCounter) return;
+      restartDronePreviewWithEntry(droneEntry);
+    }
+  }
+
+  function scheduleActivePreviewRegenerate(delay = 70) {
+    stopScheduledActivePreviewRegeneration();
+
+    if (!currentChanterName && !currentDroneName) {
+      return;
+    }
+
+    previewRegenTimer = setTimeout(async () => {
+      previewRegenTimer = null;
+      await regenerateActivePreviewNow();
+    }, delay);
   }
 
   function renderPreviewButtons(entries) {
@@ -2791,6 +2971,11 @@
   }
 
   async function generateAll(isAuto = false) {
+    stopScheduledActivePreviewRegeneration();
+
+    const resumeChanterName = currentChanterName;
+    const resumeDroneName = currentDroneName;
+
     stopAllPreview();
     updateSliderLabels();
     const config = parseCurrentConfig();
@@ -2805,6 +2990,21 @@
       latestMetadata = config;
       renderPreviewButtons(entries);
       updateSummary(config, entries);
+
+      if (resumeChanterName) {
+        const chanterEntry = entries.find(entry => entry.type === 'chanter' && entry.label === resumeChanterName);
+        if (chanterEntry) {
+          restartChanterPreviewWithEntry(chanterEntry);
+        }
+      }
+
+      if (resumeDroneName) {
+        const droneEntry = entries.find(entry => entry.type === 'drone');
+        if (droneEntry) {
+          restartDronePreviewWithEntry(droneEntry);
+        }
+      }
+
       setStatus(isAuto ? 'Samples regenerated.' : 'Samples generated.');
       flashRegenerated(entries.length);
     } catch (err) {
@@ -3078,9 +3278,10 @@
 
           <h4>4) Generate and preview</h4>
           <ul>
-            <li>The note samples are automatically regenerated whenever you change a settings value.</li>
+            <li>Any active preview notes update their sound immediately while making settings changes while the full set of notes is automatically regenerated after setting changes.</li>
             <li>You can force a regeneration by clicking <strong>Generate / Regenerate Samples</strong>.</li>
             <li>After generation, use the <strong>Sample Preview</strong> section to audition chanter notes and drone sounds.</li>
+            <li>Once started, notes will play continuously until stopped.</li>
             <li>Use <strong>Stop All Previews</strong> to stop any looping drones or currently playing notes.</li>
           </ul>
 
@@ -3176,6 +3377,18 @@
     scheduleAutoRegenerate();
   }
 
+  const ACTIVE_PREVIEW_REGEN_CONTROL_IDS = new Set([
+    'chanterModel', 'droneModel', 'tuningSystem', 'rootNote', 'rangeStart', 'rangeEnd',
+    'soundingTranspose', 'droneTemplate', 'customDroneIntervals', 'droneSeconds', 'chanterSeconds',
+    'pure', 'reed', 'soft', 'attackSoft', 'noteSpectral', 'nasalEdge', 'reedStiffness', 'airNoise',
+    'attackStrength', 'boreBrightness', 'formantEmphasis', 'steadyEdge', 'pressureStability',
+    'droneRichness', 'droneBlend'
+  ]);
+
+  function controlAffectsActivePreview(el) {
+    return !!(el && el.id && ACTIVE_PREVIEW_REGEN_CONTROL_IDS.has(el.id));
+  }
+
   function initializeUi() {
     populateSelect(els.presetSelect, INSTRUMENT_PRESETS, (key, item) => item.label);
     populateSelect(els.chanterModel, CHANTER_MODELS, (key, label) => label);
@@ -3187,13 +3400,13 @@
     populateValueList(els.rangeEnd, RANGE_OPTIONS);
 
     ensurePresetSettingsStore();
-    activePresetKey = 'highland';
-    applyPreset('highland', false);
 
     const restored = restoreControls();
     if (!restored) {
+      activePresetKey = 'highland';
+      applyPreset('highland', false);
       ensurePresetSettingsStore();
-      persistControls();
+      persistControls({ currentPreset: 'highland' });
     }
 
     updateSliderLabels();
@@ -3202,6 +3415,8 @@
     clearExportStatus();
 
     els.presetSelect.addEventListener('change', () => {
+      stopAllPreview();
+
       const nextPresetKey = els.presetSelect.value;
       const previousPresetKey = activePresetKey;
 
@@ -3211,11 +3426,11 @@
     });
 
     els.applyPresetBtn.addEventListener('click', () => {
-      const presetKey = els.presetSelect.value;
+      stopAllPreview();
 
-      flushPresetPersist(presetKey);
+      const presetKey = els.presetSelect.value;
       applyPreset(presetKey, true, true);
-      generateAll(false);
+      scheduleAutoRegenerate();
     });
 
     [
@@ -3240,9 +3455,15 @@
 
           if (isPreviewVolume) {
             updatePreviewVolumeRealtime();
+          } else if (controlAffectsActivePreview(el)) {
+            scheduleActivePreviewRegenerate();
           }
 
           return;
+        }
+
+        if (controlAffectsActivePreview(el)) {
+          scheduleActivePreviewRegenerate();
         }
 
         scheduleAutoRegenerate();
@@ -3259,6 +3480,12 @@
             updatePreviewVolumeRealtime();
             return;
           }
+
+          if (controlAffectsActivePreview(el)) {
+            scheduleActivePreviewRegenerate(20);
+          }
+        } else if (controlAffectsActivePreview(el)) {
+          scheduleActivePreviewRegenerate(20);
         }
 
         scheduleAutoRegenerate();
