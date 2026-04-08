@@ -953,6 +953,8 @@
         let files = [];
         let originalFiles = [];
 
+        let gImportedInstrumentMetaExtras = null;
+
         const fileInput = document.getElementById('fileInput');
         const startNumber = document.getElementById('startNumber');
         const startNote = document.getElementById('startNote');
@@ -1447,6 +1449,8 @@
           stopPreviewIfPlaying();
           files = [];
           originalFiles = [];
+          gImportedInstrumentMetaExtras = null;
+          gapMode.value = 'synth';
           if (typeof gHasHashedNames !== 'undefined') {
             gHasHashedNames = false;
           }
@@ -1482,6 +1486,9 @@
         }
 
         async function processLoadedFiles(newFiles, options = {}) {
+          gImportedInstrumentMetaExtras = null;
+          gapMode.value = 'synth';
+
           originalFiles = Array.isArray(newFiles) ? [...newFiles] : [];
           files = [...originalFiles];
 
@@ -1517,7 +1524,7 @@
           updateDragInteractivity();
           clearSelection();
         }
-
+        
         async function fetchRemoteInstrumentSamples() {
           const info = getSelectedRemoteInstrumentInfo();
           if (!info) {
@@ -3242,6 +3249,21 @@
                 highNote: parseInt(highNote.value,10)
               } : null
             };
+
+            if (gImportedInstrumentMetaExtras && gImportedInstrumentMetaExtras.hasDrone === true) {
+              meta.hasDrone = true;
+
+              if (Array.isArray(gImportedInstrumentMetaExtras.droneNotes)) {
+                meta.droneNotes = gImportedInstrumentMetaExtras.droneNotes.slice();
+              }
+
+              if (typeof gImportedInstrumentMetaExtras.droneVolumeScale === "number" &&
+                  isFinite(gImportedInstrumentMetaExtras.droneVolumeScale) &&
+                  gImportedInstrumentMetaExtras.droneVolumeScale >= 0) {
+                meta.droneVolumeScale = gImportedInstrumentMetaExtras.droneVolumeScale;
+              }
+            }
+
             zip.file("abctools.json", JSON.stringify(meta,null,2));
 
             let processedCount = 0;
@@ -3304,7 +3326,6 @@
                   await tick();
                 }
               } else {
-                // ---- Modified synthesis prep: ONLY real, unsuppressed samples are sources ----
                 const haveAtIndex = new Map();
                 full.forEach((slot, i) => {
                   if (slot.file && !(gTempSuppressed && gTempSuppressed.has(slot.file))) {
@@ -3337,7 +3358,6 @@
                   const slot = full[i];
 
                   if (slot.file && !(gTempSuppressed && gTempSuppressed.has(slot.file))) {
-                    // real, unsuppressed file → write it (with any processing)
                     const ext      = slot.ext;
                     const proposed = getProposedNameForIndex(i, ext);
                     const outBlob  = await fileToProcessedBlob(slot.file);
@@ -3346,7 +3366,6 @@
                     await tick();
 
                   } else if (slot.file && gTempSuppressed && gTempSuppressed.has(slot.file)) {
-                    // this slot is temporarily a placeholder
                     const proposed = getProposedNameForIndex(i, "wav");
                     if (gapMode.value === 'silent'){
                       zip.file(proposed, generateSilentWav(1));
@@ -3373,7 +3392,6 @@
                     }
 
                   } else {
-                    // slot has no file (true gap/placeholder from auto-range)
                     const proposed = getProposedNameForIndex(i, "wav");
                     if (gapMode.value === 'silent'){
                       zip.file(proposed, generateSilentWav(1));
@@ -3460,7 +3478,6 @@
           .finally(()=>{ exportZipBtn.disabled = false; });
         });
 
-
         // ===================== Import Existing Instrument (.zip) =====================
         importZipBtn.addEventListener('click', () => {
           importZipInput.value = "";
@@ -3492,13 +3509,34 @@
 
             let importedVolumeScale = null;
             let importedFadeTimeMs = null;
+            let importedMetaExtras = null;
+
             const metaEntry = Object.keys(zip.files).find(n => n.toLowerCase() === "abctools.json");
             if (metaEntry) {
               try {
                 const metaText = await zip.file(metaEntry).async("string");
                 const meta = JSON.parse(metaText);
-                if (meta && typeof meta.volumeScale === "number" && meta.volumeScale >= 0) importedVolumeScale = meta.volumeScale;
-                if (meta && typeof meta.fadeTimeMs === "number" && meta.fadeTimeMs >= 0) importedFadeTimeMs = meta.fadeTimeMs;
+
+                if (meta && typeof meta.volumeScale === "number" && meta.volumeScale >= 0) {
+                  importedVolumeScale = meta.volumeScale;
+                }
+                if (meta && typeof meta.fadeTimeMs === "number" && meta.fadeTimeMs >= 0) {
+                  importedFadeTimeMs = meta.fadeTimeMs;
+                }
+
+                if (meta && meta.hasDrone === true) {
+                  importedMetaExtras = {
+                    hasDrone: true
+                  };
+
+                  if (Array.isArray(meta.droneNotes)) {
+                    importedMetaExtras.droneNotes = meta.droneNotes.slice();
+                  }
+
+                  if (typeof meta.droneVolumeScale === "number" && isFinite(meta.droneVolumeScale) && meta.droneVolumeScale >= 0) {
+                    importedMetaExtras.droneVolumeScale = meta.droneVolumeScale;
+                  }
+                }
               } catch {}
             }
 
@@ -3534,6 +3572,12 @@
             thresholdControls.style.display = 'none';
             forceMonoWavCheckbox.checked = false;
             rangeExpanderCheckbox.checked = false;
+
+            gImportedInstrumentMetaExtras = importedMetaExtras;
+
+            if (gImportedInstrumentMetaExtras && gImportedInstrumentMetaExtras.hasDrone === true) {
+              gapMode.value = 'silent';
+            }
 
             if (importedVolumeScale !== null) {
               volumeScaleInput.value = String(importedVolumeScale);
@@ -3579,7 +3623,6 @@
             DayPilot.Modal.alert('<p style="text-align:center">Failed to import .zip</p>', { theme:"modal_flat", top:200 });
           }
         });
-
 
         // ===== UI wiring =====
 
@@ -3844,6 +3887,8 @@
               <p>If you want to specifically disable the .sf2 MIDI-number pitch name detection, check <strong>Disable .sf2-style MIDI-number pitch name detection</strong>.</p>
               <p>You can also import an existing custom instrument by tapping <strong>Import Custom Instrument (.zip)</strong>.</p>
               <p>If you re-import a previously exported custom instrument .zip, your saved volume scale and fade settings will also be restored automatically.</p>
+              <p>If the imported custom instrument .zip was created by the <strong>Bagpipes Custom Instrument Factory</strong>, the tool will automatically switch <strong>Missing note handling</strong> to <strong>Fill gaps with silent WAVs</strong>.</p>
+              <p>When you export that instrument again, the <strong>droneNotes</strong>, <strong>droneVolumeScale</strong>, and <strong>hasDrone</strong> fields from the imported <strong>abctools.json</strong> will be passed through into the exported custom instrument .zip.</p>
               <p>The custom instrument note output filename for each audio sample is displayed to the right of each note.</p>
               <p><strong>2)</strong> Select the default volume scale and fade time for the instrument.</p>
               <p>When you import a remote soundfont, the tool automatically applies its recommended default volume scale. You can still adjust it manually.</p>
@@ -3932,6 +3977,8 @@
               <p>If you want to specifically disable the .sf2 MIDI-number pitch name detection, check <strong>Disable .sf2-style MIDI-number pitch name detection</strong>.</p>
               <p>You can also import an existing custom instrument by clicking <strong>Import Custom Instrument (.zip)</strong>.</p>
               <p>If you re-import a previously exported custom instrument .zip, your saved volume scale and fade settings will also be restored automatically.</p>
+              <p>If the imported custom instrument .zip was created by the <strong>Bagpipes Custom Instrument Factory</strong>, the tool will automatically switch <strong>Missing note handling</strong> to <strong>Fill gaps with silent WAVs</strong>.</p>
+              <p>When you export that instrument again, the <strong>droneNotes</strong>, <strong>droneVolumeScale</strong>, and <strong>hasDrone</strong> fields from the imported <strong>abctools.json</strong> will be passed through into the exported custom instrument .zip.</p>
               <p>The custom instrument note output filename for each audio sample is displayed to the right of each note.</p>
               <p><strong>2)</strong> Select the default volume scale and fade time for the instrument.</p>
               <p>When you import a remote soundfont, the tool automatically applies its recommended default volume scale. You can still adjust it manually.</p>
