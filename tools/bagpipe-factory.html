@@ -512,47 +512,6 @@
     min-height: 40px;
   }
 
-  @media (max-width: 1080px) {
-    .grid {
-      grid-template-columns: 1fr;
-    }
-  }
-
-  @media (max-width: 840px) {
-    .controls-grid,
-    .summary-grid,
-    .panel-form-grid,
-    .instrument-design-grid,
-    .tone-controls-grid {
-      grid-template-columns: 1fr;
-    }
-
-    .panel-form-grid > .span-6,
-    .panel-form-grid > .span-3,
-    .panel-form-grid > .span-2 {
-      grid-column: 1;
-    }
-
-    .instrument-design-grid label > span:first-child,
-    .instrument-design-grid .label-title,
-    .tone-controls-grid label > span:first-child,
-    .tone-controls-grid .label-title,
-    .tone-controls-grid .span-2 label > span:first-child,
-    .tone-controls-grid > label.span-2 > span:first-child {
-      min-height: 0;
-    }
-
-    .export-header {
-      flex-direction: column;
-      align-items: flex-start;
-    }
-
-    .export-status {
-      max-width: 100%;
-      text-align: left;
-    }
-  }
-
   .modal_compact_background {
     position: fixed !important;
     inset: 0 !important;
@@ -755,6 +714,47 @@
   select::-ms-expand {
     display: none;
   }
+
+    @media (max-width: 1080px) {
+    .grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 840px) {
+    .controls-grid,
+    .summary-grid,
+    .panel-form-grid,
+    .instrument-design-grid,
+    .tone-controls-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .panel-form-grid > .span-6,
+    .panel-form-grid > .span-3,
+    .panel-form-grid > .span-2 {
+      grid-column: 1;
+    }
+
+    .instrument-design-grid label > span:first-child,
+    .instrument-design-grid .label-title,
+    .tone-controls-grid label > span:first-child,
+    .tone-controls-grid .label-title,
+    .tone-controls-grid .span-2 label > span:first-child,
+    .tone-controls-grid > label.span-2 > span:first-child {
+      min-height: 0;
+    }
+
+    .export-header {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .export-status {
+      max-width: 100%;
+      text-align: left;
+    }
+  }
 </style>
 
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-VM0N9HL3MK"></script>
@@ -938,15 +938,32 @@
       <div class="info-bubble">
         <div class="btn-row" style="margin-top:0; margin-bottom:0;">
           <button
-            id="generateBtn"
-            class="primary"
-            title="Generate or regenerate all chanter and drone samples using the current settings."
-          >Generate / Regenerate Samples</button>
+            id="exportSettingsBtn"
+            class="soft"
+            title="Export all saved settings for all presets to a JSON file."
+          >Export All Settings</button>
+          <button
+            id="importSettingsBtn"
+            class="soft"
+            title="Import a JSON file containing saved settings for all presets."
+          >Import All Settings</button>
+          <input
+            id="importSettingsInput"
+            type="file"
+            accept=".json,application/json"
+            style="display:none"
+          />          
           <button
             id="downloadBtn"
             class="good"
             title="Download the generated samples as a Celtic Sounds custom instrument ZIP."
           >Download Celtic Sounds Custom Instrument</button>
+          <button
+            id="generateBtn"
+            class="primary"
+            title="Generate or regenerate all chanter and drone samples using the current settings."
+          >Generate / Regenerate Samples</button>
+
         </div>
       </div>
 
@@ -1322,8 +1339,47 @@
   const NOTE_NAMES = ['C','Db','D','Eb','E','F','Gb','G','Ab','A','Bb','B'];
   const SEMITONES_FROM_C = { C:0, Db:1, D:2, Eb:3, E:4, F:5, Gb:6, G:7, Ab:8, A:9, Bb:10, B:11 };
   const STORAGE_KEY = 'bagpipe_factory_settings';
-  const STORAGE_VERSION = 2;
+  const STORAGE_VERSION = 3;
   const DEFAULT_CUSTOM_INSTRUMENT_FILENAME = 'bagpipe_custom_instrument.zip';
+  const SETTINGS_FILE_VERSION = 1;
+
+  const PRESET_SETTING_FIELDS = [
+    'instrumentName',
+    'chanterModel',
+    'droneModel',
+    'tuningSystem',
+    'rootNote',
+    'rangeStart',
+    'rangeEnd',
+    'soundingTranspose',
+    'droneTemplate',
+    'customDroneIntervals',
+    'droneTriggerNotes',
+    'droneSeconds',
+    'chanterSeconds',
+    'pure',
+    'reed',
+    'soft',
+    'attackSoft',
+    'noteSpectral',
+    'nasalEdge',
+    'reedStiffness',
+    'airNoise',
+    'attackStrength',
+    'boreBrightness',
+    'formantEmphasis',
+    'steadyEdge',
+    'pressureStability',
+    'droneRichness',
+    'droneBlend',
+    'chanterExportGain',
+    'droneExportGain',
+    'releaseMs'
+  ];
+
+  const GLOBAL_SETTING_FIELDS = [
+    'previewVolume'
+  ];
 
   const TUNING_PRESETS = {
     just_root: { label: 'Just Intonation in Root Key' },
@@ -1667,7 +1723,10 @@
     previewArea: document.getElementById('previewArea'),
     exportNotes: document.getElementById('exportNotes'),
     exportStatus: document.getElementById('exportStatus'),
-    instructionsBtn: document.getElementById('instructionsBtn')
+    instructionsBtn: document.getElementById('instructionsBtn'),
+    exportSettingsBtn: document.getElementById('exportSettingsBtn'),
+    importSettingsBtn: document.getElementById('importSettingsBtn'),
+    importSettingsInput: document.getElementById('importSettingsInput')
   };
 
   let generated = new Map();
@@ -1681,6 +1740,9 @@
   let droneGain = null;
   let currentDroneName = null;
   let regenTimer = null;
+  let presetSettingsStore = {};
+  let activePresetKey = 'highland';
+  let persistTimer = null;
 
   function isLocalStorageAvailable() {
     try {
@@ -1693,53 +1755,154 @@
     }
   }
 
+  function schedulePresetPersist(presetKey = activePresetKey) {
+    if (persistTimer) {
+      clearTimeout(persistTimer);
+    }
+
+    const keyToPersist = presetKey;
+
+    persistTimer = setTimeout(() => {
+      persistTimer = null;
+      if (keyToPersist && INSTRUMENT_PRESETS[keyToPersist]) {
+        captureCurrentPresetSettings(keyToPersist);
+      }
+      persistControls();
+    }, 150);
+  }
+
+  function flushPresetPersist(presetKey = activePresetKey) {
+    if (persistTimer) {
+      clearTimeout(persistTimer);
+      persistTimer = null;
+    }
+
+    if (presetKey && INSTRUMENT_PRESETS[presetKey]) {
+      captureCurrentPresetSettings(presetKey);
+    }
+
+    persistControls();
+  }
+
   function getSettingsState() {
-    return {
-      presetSelect: els.presetSelect.value,
-      instrumentName: els.instrumentName.value,
-      chanterModel: els.chanterModel.value,
-      droneModel: els.droneModel.value,
-      tuningSystem: els.tuningSystem.value,
-      rootNote: els.rootNote.value,
-      rangeStart: els.rangeStart.value,
-      rangeEnd: els.rangeEnd.value,
-      soundingTranspose: els.soundingTranspose.value,
-      droneTemplate: els.droneTemplate.value,
-      customDroneIntervals: els.customDroneIntervals.value,
-      droneTriggerNotes: els.droneTriggerNotes.value,
-      droneSeconds: els.droneSeconds.value,
-      chanterSeconds: els.chanterSeconds.value,
-      pure: els.pure.value,
-      reed: els.reed.value,
-      soft: els.soft.value,
-      attackSoft: els.attackSoft.value,
-      noteSpectral: els.noteSpectral.value,
-      nasalEdge: els.nasalEdge.value,
-      reedStiffness: els.reedStiffness.value,
-      airNoise: els.airNoise.value,
-      attackStrength: els.attackStrength.value,
-      boreBrightness: els.boreBrightness.value,
-      formantEmphasis: els.formantEmphasis.value,
-      steadyEdge: els.steadyEdge.value,
-      pressureStability: els.pressureStability.value,
-      droneRichness: els.droneRichness.value,
-      droneBlend: els.droneBlend.value,
-      previewVolume: els.previewVolume.value,
-      chanterExportGain: els.chanterExportGain.value,
-      droneExportGain: els.droneExportGain.value,
-      releaseMs: els.releaseMs.value
-    };
+    const out = {};
+    PRESET_SETTING_FIELDS.forEach(id => {
+      out[id] = els[id] ? String(els[id].value) : '';
+    });
+    return out;
+  }
+
+  function getGlobalSettingsState() {
+    const out = {};
+    GLOBAL_SETTING_FIELDS.forEach(id => {
+      out[id] = els[id] ? String(els[id].value) : '';
+    });
+    return out;
+  }
+
+  function cloneDefaultPresetSettings(presetKey) {
+    const preset = INSTRUMENT_PRESETS[presetKey] || {};
+    const out = {};
+    PRESET_SETTING_FIELDS.forEach(id => {
+      if (preset[id] !== undefined && preset[id] !== null) {
+        out[id] = String(preset[id]);
+      } else if (els[id]) {
+        out[id] = String(els[id].value ?? '');
+      } else {
+        out[id] = '';
+      }
+    });
+    return out;
+  }
+
+  function ensurePresetSettingsStore() {
+    if (!presetSettingsStore || typeof presetSettingsStore !== 'object') {
+      presetSettingsStore = {};
+    }
+
+    Object.keys(INSTRUMENT_PRESETS).forEach(presetKey => {
+      if (!presetSettingsStore[presetKey] || typeof presetSettingsStore[presetKey] !== 'object') {
+        presetSettingsStore[presetKey] = cloneDefaultPresetSettings(presetKey);
+        return;
+      }
+
+      const merged = cloneDefaultPresetSettings(presetKey);
+      PRESET_SETTING_FIELDS.forEach(id => {
+        const value = presetSettingsStore[presetKey][id];
+        if (value !== undefined && value !== null && value !== '') {
+          merged[id] = String(value);
+        }
+      });
+      presetSettingsStore[presetKey] = merged;
+    });
+  }
+
+  function captureCurrentPresetSettings(presetKey = activePresetKey) {
+    if (!presetKey || !INSTRUMENT_PRESETS[presetKey]) return;
+    ensurePresetSettingsStore();
+    presetSettingsStore[presetKey] = getSettingsState();
+  }
+
+  function applySettingsState(settings) {
+    if (!settings || typeof settings !== 'object') return;
+
+    PRESET_SETTING_FIELDS.forEach(id => {
+      const value = settings[id];
+      if (!els[id]) return;
+      if (value === undefined || value === null || value === '') return;
+      els[id].value = String(value);
+    });
+  }
+
+  function getSettingsForPreset(presetKey) {
+    ensurePresetSettingsStore();
+    if (!presetSettingsStore[presetKey]) {
+      presetSettingsStore[presetKey] = cloneDefaultPresetSettings(presetKey);
+    }
+    return presetSettingsStore[presetKey];
+  }
+
+  function normalizeImportedPresetSettings(rawPresetSettings) {
+    const normalized = {};
+    Object.keys(INSTRUMENT_PRESETS).forEach(presetKey => {
+      const merged = cloneDefaultPresetSettings(presetKey);
+      const source = rawPresetSettings && typeof rawPresetSettings[presetKey] === 'object'
+        ? rawPresetSettings[presetKey]
+        : null;
+
+      if (source) {
+        PRESET_SETTING_FIELDS.forEach(id => {
+          const value = source[id];
+          if (value !== undefined && value !== null && value !== '') {
+            merged[id] = String(value);
+          }
+        });
+      }
+
+      normalized[presetKey] = merged;
+    });
+    return normalized;
   }
 
   function persistControls(extra = {}) {
     if (!isLocalStorageAvailable()) return;
+
     try {
+      ensurePresetSettingsStore();
+
       const existing = readStoredState();
       const payload = {
         version: STORAGE_VERSION,
-        zipFilename: extra.zipFilename !== undefined ? extra.zipFilename : (existing && existing.zipFilename ? existing.zipFilename : null),
-        settings: getSettingsState()
+        zipFilename: extra.zipFilename !== undefined
+          ? extra.zipFilename
+          : (existing && existing.zipFilename ? existing.zipFilename : null),
+        currentPreset: extra.currentPreset !== undefined
+          ? extra.currentPreset
+          : els.presetSelect.value,
+        globalSettings: getGlobalSettingsState(),
+        presetSettings: presetSettingsStore
       };
+
       localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
     } catch (e) {}
   }
@@ -1750,7 +1913,10 @@
       const raw = localStorage.getItem(STORAGE_KEY);
       if (!raw) return null;
       const parsed = JSON.parse(raw);
-      if (!parsed || parsed.version !== STORAGE_VERSION || !parsed.settings || typeof parsed.settings !== 'object') {
+      if (!parsed || parsed.version !== STORAGE_VERSION) {
+        return null;
+      }
+      if (!parsed.presetSettings || typeof parsed.presetSettings !== 'object') {
         return null;
       }
       return parsed;
@@ -1762,16 +1928,30 @@
   function restoreControls() {
     const stored = readStoredState();
     if (!stored) return false;
-    const settings = stored.settings;
-    Object.keys(settings).forEach(id => {
-      const el = els[id];
-      if (el && settings[id] !== null && settings[id] !== undefined && settings[id] !== '') {
-        el.value = String(settings[id]);
-      }
+
+    presetSettingsStore = normalizeImportedPresetSettings(stored.presetSettings);
+    ensurePresetSettingsStore();
+
+    const presetKey = INSTRUMENT_PRESETS[stored.currentPreset]
+      ? stored.currentPreset
+      : 'highland';
+
+    els.presetSelect.value = presetKey;
+    applySettingsState(getSettingsForPreset(presetKey));
+    activePresetKey = presetKey;
+
+    const globalSettings = stored.globalSettings || {};
+    GLOBAL_SETTING_FIELDS.forEach(id => {
+      const value = globalSettings[id];
+      if (!els[id]) return;
+      if (value === undefined || value === null || value === '') return;
+      els[id].value = String(value);
     });
+
     if (![...els.tuningSystem.options].some(opt => opt.value === els.tuningSystem.value)) {
       els.tuningSystem.value = 'just_root';
     }
+
     return true;
   }
 
@@ -2427,10 +2607,10 @@
   }
 
   function updatePreviewVolumeRealtime() {
-    const sliderVal = clamp(Number(els.previewVolume.value) || 0.5, 0, 1);
+    const raw = Number(els.previewVolume.value);
+    const sliderVal = clamp(Number.isFinite(raw) ? raw : 0.5, 0, 1);
     els.previewVolumeVal.textContent = sliderVal.toFixed(2);
     if (masterGain) masterGain.gain.value = sliderVal * 0.25;
-    persistControls();
   }
 
   function updateSliderLabels() {
@@ -2443,7 +2623,10 @@
     ].forEach(([a,b]) => {
       if (els[a] && els[b]) els[b].textContent = Number(els[a].value).toFixed(2);
     });
-    els.chanterSecondsVal.textContent = String(Math.round(Number(els.chanterSeconds.value) || 7));
+    const chanterSecondsRaw = Number(els.chanterSeconds.value);
+    els.chanterSecondsVal.textContent = String(
+      Math.round(Number.isFinite(chanterSecondsRaw) ? chanterSecondsRaw : 7)
+    );
   }
 
   function buildSummaryItem(label, value) {
@@ -2464,7 +2647,15 @@
     const rootParsed = parseNote(els.rootNote.value);
     const rangeStartMidi = midiFromNote(els.rangeStart.value);
     const rangeEndMidi = midiFromNote(els.rangeEnd.value);
-    const soundingTranspose = clamp(Number(els.soundingTranspose.value) || 0, -36, 36);
+
+    const soundingTransposeRaw = Number(els.soundingTranspose.value);
+    const droneSecondsRaw = Number(els.droneSeconds.value);
+    const chanterSecondsRaw = Number(els.chanterSeconds.value);
+    const chanterExportGainRaw = Number(els.chanterExportGain.value);
+    const droneExportGainRaw = Number(els.droneExportGain.value);
+    const releaseMsRaw = Number(els.releaseMs.value);
+
+    const soundingTranspose = clamp(Number.isFinite(soundingTransposeRaw) ? soundingTransposeRaw : 0, -36, 36);
     const droneTemplate = els.droneTemplate.value;
     const droneIntervals = droneTemplate === 'custom'
       ? parseNumberList(els.customDroneIntervals.value, [0,7,12])
@@ -2488,8 +2679,8 @@
       droneTemplate,
       droneIntervals,
       droneTriggerNotes,
-      droneSeconds: clamp(Math.round(Number(els.droneSeconds.value) || 10), 2, 30),
-      chanterSeconds: clamp(Math.round(Number(els.chanterSeconds.value) || 7), 1, 15),
+      droneSeconds: clamp(Math.round(Number.isFinite(droneSecondsRaw) ? droneSecondsRaw : 10), 2, 30),
+      chanterSeconds: clamp(Math.round(Number.isFinite(chanterSecondsRaw) ? chanterSecondsRaw : 7), 1, 15),
       pure: Number(els.pure.value),
       reed: Number(els.reed.value),
       soft: Number(els.soft.value),
@@ -2506,9 +2697,9 @@
       droneRichness: Number(els.droneRichness.value),
       droneBlend: Number(els.droneBlend.value),
       previewVolume: Number(els.previewVolume.value),
-      chanterExportGain: clamp(Number(els.chanterExportGain.value) || 0.25, 0.01, 1),
-      droneExportGain: clamp(Number(els.droneExportGain.value) || 0.5, 0.01, 1),
-      releaseMs: clamp(Math.round(Number(els.releaseMs.value) || 25), 1, 2000)
+      chanterExportGain: clamp(Number.isFinite(chanterExportGainRaw) ? chanterExportGainRaw : 0.25, 0.01, 1),
+      droneExportGain: clamp(Number.isFinite(droneExportGainRaw) ? droneExportGainRaw : 0.5, 0.01, 1),
+      releaseMs: clamp(Math.round(Number.isFinite(releaseMsRaw) ? releaseMsRaw : 25), 1, 2000)
     };
   }
 
@@ -2633,22 +2824,34 @@
     regenTimer = setTimeout(() => generateAll(true), 240);
   }
 
-  function applyPreset(presetKey, persist = true) {
+  function applyPreset(presetKey, persist = true, useFactoryDefaults = false) {
     const preset = INSTRUMENT_PRESETS[presetKey];
     if (!preset) return;
 
-    els.presetSelect.value = presetKey;
+    ensurePresetSettingsStore();
 
-    Object.keys(preset).forEach(key => {
-      if (key === 'label' || key === 'notes') return;
-      if (els[key]) els[key].value = String(preset[key]);
-    });
+    const settingsToApply = useFactoryDefaults
+      ? cloneDefaultPresetSettings(presetKey)
+      : getSettingsForPreset(presetKey);
+
+    if (useFactoryDefaults) {
+      presetSettingsStore[presetKey] = { ...settingsToApply };
+    }
+
+    els.presetSelect.value = presetKey;
+    applySettingsState(settingsToApply);
+    activePresetKey = presetKey;
 
     if (persist) {
-      persistControls({ zipFilename: null });
+      captureCurrentPresetSettings(presetKey);
+      persistControls({
+        zipFilename: null,
+        currentPreset: presetKey
+      });
     }
 
     updateSliderLabels();
+    updatePreviewVolumeRealtime();
     updateSummary(parseCurrentConfig(), [...generated.values()]);
   }
 
@@ -2707,6 +2910,131 @@
     }
   }
 
+  async function exportAllSettings() {
+    try {
+      flushPresetPersist();
+      ensurePresetSettingsStore();
+
+      const suggested = 'bagpipe_factory_all_settings.json';
+      let filename = suggested;
+
+      if (window.DayPilot && DayPilot.Modal && typeof DayPilot.Modal.prompt === 'function') {
+        const modal = await DayPilot.Modal.prompt(
+          'Save settings file as:',
+          suggested,
+          { theme: 'modal_compact', okText: 'Save', cancelText: 'Cancel' }
+        );
+
+        if (!modal || modal.canceled) {
+          setExportStatus('Settings export canceled.');
+          return;
+        }
+
+        const entered = String(modal.result || '').trim();
+        if (!entered) {
+          setExportStatus('Settings export canceled.');
+          return;
+        }
+
+        filename = entered.toLowerCase().endsWith('.json') ? entered : `${entered}.json`;
+      } else {
+        const entered = window.prompt('Save settings file as:', suggested);
+        if (entered == null) {
+          setExportStatus('Settings export canceled.');
+          return;
+        }
+
+        const trimmed = String(entered).trim();
+        if (!trimmed) {
+          setExportStatus('Settings export canceled.');
+          return;
+        }
+
+        filename = trimmed.toLowerCase().endsWith('.json') ? trimmed : `${trimmed}.json`;
+      }
+
+      const payload = {
+        version: SETTINGS_FILE_VERSION,
+        app: 'Bagpipe Custom Instrument Factory',
+        savedAt: new Date().toISOString(),
+        currentPreset: activePresetKey || els.presetSelect.value,
+        zipFilename: getStoredZipFilename(),
+        globalSettings: getGlobalSettingsState(),
+        presetSettings: presetSettingsStore
+      };
+
+      const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1500);
+
+      setExportStatus(`Settings export started: ${filename}`);
+      flashExportStatusSuccess();
+    } catch (err) {
+      const msg = 'Settings export failed: ' + ((err && err.message) ? err.message : 'Unknown error');
+      setExportStatus(msg, 'danger');
+      alert(msg);
+    }
+  }
+
+  async function importAllSettingsFromFile(file) {
+    if (!file) return;
+
+    try {
+      const text = await file.text();
+      const parsed = JSON.parse(text);
+
+      if (!parsed || parsed.version !== SETTINGS_FILE_VERSION || !parsed.presetSettings || typeof parsed.presetSettings !== 'object') {
+        throw new Error('Invalid settings file format.');
+      }
+
+      presetSettingsStore = normalizeImportedPresetSettings(parsed.presetSettings);
+      ensurePresetSettingsStore();
+
+      const globalSettings = parsed.globalSettings || {};
+      GLOBAL_SETTING_FIELDS.forEach(id => {
+        const value = globalSettings[id];
+        if (!els[id]) return;
+        if (value === undefined || value === null || value === '') return;
+        els[id].value = String(value);
+      });
+
+      const presetKey = INSTRUMENT_PRESETS[parsed.currentPreset]
+        ? parsed.currentPreset
+        : 'highland';
+
+      els.presetSelect.value = presetKey;
+      applySettingsState(getSettingsForPreset(presetKey));
+      activePresetKey = presetKey;
+
+      updateSliderLabels();
+      updatePreviewVolumeRealtime();
+
+      persistControls({
+        zipFilename: parsed.zipFilename !== undefined ? parsed.zipFilename : null,
+        currentPreset: presetKey
+      });
+
+      setExportStatus(`Settings imported: ${file.name}`);
+      flashExportStatusSuccess();
+
+      await generateAll(false);
+    } catch (err) {
+      const msg = 'Settings import failed: ' + ((err && err.message) ? err.message : 'Unknown error');
+      setExportStatus(msg, 'danger');
+      alert(msg);
+    } finally {
+      if (els.importSettingsInput) {
+        els.importSettingsInput.value = '';
+      }
+    }
+  }
+
   async function showInstructionsModal() {
     const html = `
       <div class="modal_instructions_content">
@@ -2762,6 +3090,23 @@
             <li>The <strong>Export Notes</strong> section shows export-related notes and status messages.</li>
           </ul>
 
+          <h4>6) Saving settings in your browser</h4>
+          <ul>
+            <li>The tool automatically saves settings in <strong>localStorage</strong> in your browser.</li>
+            <li>Settings are stored separately for each <strong>Instrument Family Preset</strong>, so when you switch presets, each preset restores its own saved values.</li>
+            <li>The currently selected preset is also restored when you reopen the tool in the same browser.</li>
+            <li>If the browser localStorage is cleared, or if the storage version changes in the code, the saved browser settings will reset to defaults.</li>
+          </ul>
+
+          <h4>7) Exporting and importing all settings</h4>
+          <ul>
+            <li>Click <strong>Export All Settings</strong> to save the current settings for <strong>all presets</strong> to a JSON file.</li>
+            <li>Click <strong>Import All Settings</strong> to load a previously saved JSON settings file back into the tool.</li>
+            <li>When settings are imported, they apply to <strong>all presets</strong>, not just the currently selected one.</li>
+            <li>Importing settings also restores the saved current preset and then regenerates samples using those imported settings.</li>
+            <li>This makes it easy to back up your setup, move it to another browser or computer, or share complete preset collections.</li>
+          </ul>
+
           <h4>WARBL fingering pattern defaults</h4>
           <ul>
             <li>The <strong>Great Highland Bagpipe</strong>, <strong>Border Pipes</strong>, and <strong>Scottish Smallpipes</strong> preset defaults are designed to be used with the WARBL <strong>GHB/Scottish smallpipes</strong> fingering pattern.</li>
@@ -2793,6 +3138,12 @@
     );
   }
 
+  function handlePresetSettingEdited() {
+    captureCurrentPresetSettings(activePresetKey);
+    persistControls();
+    scheduleAutoRegenerate();
+  }
+
   function initializeUi() {
     populateSelect(els.presetSelect, INSTRUMENT_PRESETS, (key, item) => item.label);
     populateSelect(els.chanterModel, CHANTER_MODELS, (key, label) => label);
@@ -2803,22 +3154,35 @@
     populateValueList(els.rangeStart, RANGE_OPTIONS);
     populateValueList(els.rangeEnd, RANGE_OPTIONS);
 
+    ensurePresetSettingsStore();
+    activePresetKey = 'highland';
     applyPreset('highland', false);
+
     const restored = restoreControls();
     if (!restored) {
+      ensurePresetSettingsStore();
       persistControls();
     }
+
     updateSliderLabels();
+    updatePreviewVolumeRealtime();
     updateSummary(parseCurrentConfig(), []);
     clearExportStatus();
 
     els.presetSelect.addEventListener('change', () => {
-      applyPreset(els.presetSelect.value, true);
+      const nextPresetKey = els.presetSelect.value;
+      const previousPresetKey = activePresetKey;
+
+      flushPresetPersist(previousPresetKey);
+      applyPreset(nextPresetKey, true, false);
       scheduleAutoRegenerate();
     });
 
     els.applyPresetBtn.addEventListener('click', () => {
-      applyPreset(els.presetSelect.value, true);
+      const presetKey = els.presetSelect.value;
+
+      flushPresetPersist(presetKey);
+      applyPreset(presetKey, true, true);
       generateAll(false);
     });
 
@@ -2828,18 +3192,64 @@
       els.chanterSeconds, els.pure, els.reed, els.soft, els.attackSoft, els.noteSpectral,
       els.nasalEdge, els.reedStiffness, els.airNoise, els.attackStrength, els.boreBrightness, els.formantEmphasis,
       els.steadyEdge, els.pressureStability, els.droneRichness, els.droneBlend, els.chanterExportGain, els.droneExportGain,
-      els.releaseMs
+      els.releaseMs, els.previewVolume
     ].forEach(el => {
-      el.addEventListener('input', scheduleAutoRegenerate);
-      el.addEventListener('change', scheduleAutoRegenerate);
+      if (!el) return;
+
+      const isRange = el.type === 'range';
+      const isPreviewVolume = el === els.previewVolume;
+
+      el.addEventListener('input', () => {
+        captureCurrentPresetSettings(activePresetKey);
+        schedulePresetPersist(activePresetKey);
+
+        if (isRange) {
+          updateSliderLabels();
+
+          if (isPreviewVolume) {
+            updatePreviewVolumeRealtime();
+          }
+
+          return;
+        }
+
+        scheduleAutoRegenerate();
+      });
+
+      el.addEventListener('change', () => {
+        captureCurrentPresetSettings(activePresetKey);
+        flushPresetPersist(activePresetKey);
+
+        if (isRange) {
+          updateSliderLabels();
+
+          if (isPreviewVolume) {
+            updatePreviewVolumeRealtime();
+            return;
+          }
+        }
+
+        scheduleAutoRegenerate();
+      });
     });
 
-    els.previewVolume.addEventListener('input', updatePreviewVolumeRealtime);
-    els.previewVolume.addEventListener('change', () => persistControls());
+    if (els.instructionsBtn) {
+      els.instructionsBtn.addEventListener('click', showInstructionsModal);
+    }
 
-    els.instructionsBtn.addEventListener('click', showInstructionsModal);
     els.generateBtn.addEventListener('click', () => generateAll(false));
     els.downloadBtn.addEventListener('click', downloadZip);
+    els.exportSettingsBtn.addEventListener('click', exportAllSettings);
+    els.importSettingsBtn.addEventListener('click', () => els.importSettingsInput.click());
+
+    els.importSettingsInput.addEventListener('change', (event) => {
+      const file = event.target.files && event.target.files[0];
+      if (file) {
+        importAllSettingsFromFile(file);
+      }
+      event.target.value = '';
+    });
+
     els.stopBtn.addEventListener('click', stopAllPreview);
   }
 
