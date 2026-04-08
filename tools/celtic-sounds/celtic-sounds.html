@@ -1805,7 +1805,7 @@
             Once loaded:
             <div class="instructions-gap"></div>
             • All samples are preloaded for smooth real-time playback<br/>
-            • The <b>Release</b> control is initialized from the custom instrument metadata, except custom instruments with drones default to 25 ms.<br/>
+            • The <b>Release</b> control is initialized from the custom instrument metadata.<br/>
             • Custom instruments with drones also default <b>Pitch Bend Up Scale</b> and <b>Pitch Bend Down Scale</b> to 0.<br/>
             • The instrument behaves like any built-in instrument, including all controls and expression options
             <div class="instructions-gap"></div>
@@ -2626,7 +2626,7 @@
           Array.isArray(metadata.droneNotes) &&
           metadata.droneNotes.length > 0;
 
-        sanitized.releaseMs = isCustomDroneInstrument ? 25 : metadata.fadeTimeMs;
+        sanitized.releaseMs = metadata.fadeTimeMs;
         sanitized.pitchBendUpMultiplier = isCustomDroneInstrument ? 0 : sanitized.pitchBendUpMultiplier;
         sanitized.pitchBendDownMultiplier = isCustomDroneInstrument ? 0 : sanitized.pitchBendDownMultiplier;
       }
@@ -5666,17 +5666,15 @@
         isCustomDroneInstrument;
 
       const releaseMs =
-        isCustomDroneInstrument
-          ? 25
-          : customMetadata
-              ? customMetadata.fadeTimeMs
-              : (
-                  instrumentKey === "bagpipes" ||
-                  instrumentKey === "smallpipes" ||
-                  instrumentKey === "northumbrianPipes"
-                )
-                  ? 25
-                  : DEFAULTS.releaseMs;
+        customMetadata
+          ? customMetadata.fadeTimeMs
+          : (
+              instrumentKey === "bagpipes" ||
+              instrumentKey === "smallpipes" ||
+              instrumentKey === "northumbrianPipes"
+            )
+              ? 25
+              : DEFAULTS.releaseMs;
 
       return {
         expressionMode: DEFAULTS.expressionMode,
