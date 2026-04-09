@@ -805,7 +805,7 @@
           <button
             id="applyPresetBtn"
             class="soft"
-            title="Reset the current preset's default settings and overwrite any manual changes in the controls."
+            title="Reset the current preset to defaults with confirmation. Shift-click to reset all presets to defaults with double confirmation."
           >Reset Preset Defaults</button>
         </div>
         <div class="controls-grid panel-form-grid instrument-design-grid">
@@ -3324,13 +3324,19 @@
             <li>This makes it easy to back up your setup, move it to another browser or computer, or share complete preset collections.</li>
           </ul>
 
+          <h4>8) Resetting the preset(s) to their default settings</h4>
+          <ul>
+            <li>Click <strong>Reset Preset Defaults</strong> to reset the current preset to its default settings after confirmation.</li>
+            <li>Shift-click <strong>Reset Preset Defaults</strong> to reset all the presets to their default settings after double confirmation.</li>
+          </ul>
+
           <h4>WARBL fingering pattern defaults</h4>
           <ul>
             <li>The <strong>Great Highland Bagpipe</strong>, <strong>Border Pipes</strong>, and <strong>Scottish Smallpipes</strong> preset defaults are designed to be used with the WARBL <strong>GHB/Scottish smallpipes</strong> fingering pattern.</li>
             <li>All the other preset defaults are designed to be used with the WARBL <strong>Tin whistle/flute (or Uilleann pipes)</strong> fingering pattern.</li>
           </ul>
 
-          <h4>Getting the Best Results</h4>
+          <h4>Getting the best results</h4>
           <ul>
             <li>Use a family preset first, then fine-tune the sound controls.</li>
             <li>If you want the instrument to sound in a different key while keeping the same logical note names, use <strong>Sounding Transpose</strong>.</li>
@@ -3404,6 +3410,46 @@
     return !!(el && el.id && ACTIVE_PREVIEW_REGEN_CONTROL_IDS.has(el.id));
   }
 
+  async function confirmAction(message, okText = 'OK', cancelText = 'Cancel') {
+    if (window.DayPilot && DayPilot.Modal && typeof DayPilot.Modal.confirm === 'function') {
+      message = message.replaceAll(".",".<br/><br/>");
+      const html = `
+        <div style="
+          text-align: center;
+          line-height: 1.5;
+          padding: 10px 6px;
+        ">
+          ${message}
+        </div>
+      `;
+
+      const modal = await DayPilot.Modal.confirm(html, {
+        theme: 'modal_compact',
+        okText,
+        cancelText,
+        scrollWithPage: false
+      });
+
+      return !!(modal && !modal.canceled);
+    }
+
+    return window.confirm(message);
+  }
+
+  async function resetAllPresetsToFactoryDefaults() {
+    ensurePresetSettingsStore();
+
+    Object.keys(INSTRUMENT_PRESETS).forEach(presetKey => {
+      presetSettingsStore[presetKey] = cloneDefaultPresetSettings(presetKey);
+    });
+
+    const currentPresetKey = INSTRUMENT_PRESETS[els.presetSelect.value]
+      ? els.presetSelect.value
+      : (activePresetKey && INSTRUMENT_PRESETS[activePresetKey] ? activePresetKey : 'highland');
+
+    applyPreset(currentPresetKey, true, false);
+  }
+
   function initializeUi() {
     populateSelect(els.presetSelect, INSTRUMENT_PRESETS, (key, item) => item.label);
     populateSelect(els.chanterModel, CHANTER_MODELS, (key, label) => label);
@@ -3413,6 +3459,10 @@
     populateValueList(els.rootNote, ROOT_NOTE_OPTIONS);
     populateValueList(els.rangeStart, RANGE_OPTIONS);
     populateValueList(els.rangeEnd, RANGE_OPTIONS);
+
+    if (els.applyPresetBtn) {
+      els.applyPresetBtn.title = 'Reset the current preset to defaults with confirmation. Shift-click to reset all presets to defaults with double confirmation.';
+    }
 
     ensurePresetSettingsStore();
 
@@ -3440,10 +3490,43 @@
       scheduleAutoRegenerate();
     });
 
-    els.applyPresetBtn.addEventListener('click', () => {
-      stopAllPreview();
-
+    els.applyPresetBtn.addEventListener('click', async (event) => {
       const presetKey = els.presetSelect.value;
+      const isResetAll = !!event.shiftKey;
+
+      if (isResetAll) {
+        const confirmedOnce = await confirmAction(
+          'Reset ALL preset families to their factory defaults?',
+          'Reset',
+          'Cancel'
+        );
+        if (!confirmedOnce) return;
+
+        const confirmedTwice = await confirmAction(
+          'This will overwrite the saved settings for every preset.Are you absolutely sure?',
+          'Reset',
+          'Cancel'
+        );
+        if (!confirmedTwice) return;
+
+        stopAllPreview();
+        stopScheduledActivePreviewRegeneration();
+
+        await resetAllPresetsToFactoryDefaults();
+        scheduleAutoRegenerate();
+        return;
+      }
+
+      const confirmed = await confirmAction(
+        `Reset the "${INSTRUMENT_PRESETS[presetKey]?.label || presetKey}" preset to its factory defaults?`,
+        'Reset',
+        'Cancel'
+      );
+      if (!confirmed) return;
+
+      stopAllPreview();
+      stopScheduledActivePreviewRegeneration();
+
       applyPreset(presetKey, true, true);
       scheduleAutoRegenerate();
     });
