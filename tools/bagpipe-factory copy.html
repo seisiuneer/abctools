@@ -1416,16 +1416,13 @@
     closed_cylindrical: 'Closed Cylindrical',
     open_cylindrical: 'Open Cylindrical',
     conical_open: 'Conical Open',
-    conical_quasi_closed: 'Conical Quasi-Closed Reed',
-    narrow_closed_bell: 'Narrow Closed / Bell-Like',
-    wide_open_reedy: 'Wide Open / Reed-Forward'
+    conical_quasi_closed: 'Conical Quasi-Closed Reed'
   };
 
   const DRONE_MODELS = {
     closed_drone: 'Closed Drone',
     steady_open_drone: 'Steady Open Drone',
-    bright_reed_drone: 'Bright Reed Drone',
-    pure_foundation_drone: 'Pure Foundation Drone'
+    bright_reed_drone: 'Bright Reed Drone'
   };
 
   const ROOT_NOTE_OPTIONS = ['C2','Db2','D2','Eb2','E2','F2','Gb2','G2','Ab2','A2','Bb2','B2','C3','Db3','D3','Eb3','E3','F3','Gb3','G3','Ab3','A3','Bb3','B3','C4','Db4','D4','Eb4','E4','F4','Gb4','G4','Ab4','A4','Bb4','B4'];
@@ -1640,41 +1637,6 @@
       chanterExportGain: 0.24,
       droneExportGain: 0.75,
       releaseMs: 25
-    },
-    pastoral_bell: {
-      label: 'Pastoral Pipes',
-      notes: 'Focused bell-like chanter with a smooth, pure drone foundation and a sweeter, more contained overall voice.',
-      instrumentName: 'pastoral_bell_pipes_custom',
-      chanterModel: 'narrow_closed_bell',
-      droneModel: 'pure_foundation_drone',
-      tuningSystem: 'just_root',
-      rootNote: 'D3',
-      rangeStart: 'C4',
-      rangeEnd: 'D6',
-      soundingTranspose: 0,
-      droneTemplate: 'root_fifth_octave',
-      customDroneIntervals: '0,7,12',
-      droneTriggerNotes: '51',
-      droneSeconds: 10,
-      chanterSeconds: 7,
-      pure: 0.72,
-      reed: 1.35,
-      soft: 0.28,
-      attackSoft: 0.62,
-      noteSpectral: 0.44,
-      nasalEdge: 0.08,
-      reedStiffness: 0.46,
-      airNoise: 0.08,
-      attackStrength: 0.26,
-      boreBrightness: 0.28,
-      formantEmphasis: 0.54,
-      steadyEdge: 0.18,
-      pressureStability: 0.84,
-      droneRichness: 0.26,
-      droneBlend: 0.90,
-      chanterExportGain: 0.24,
-      droneExportGain: 0.70,
-      releaseMs: 40
     },
     generic: {
       label: 'Generic Custom Bagpipes',
@@ -2314,132 +2276,26 @@
   function getChanterModelCoefficients(model) {
     switch (model) {
       case 'open_cylindrical':
-        return {
-          fundamental: 0.86,
-          second: 0.42,
-          third: 0.30,
-          fourth: 0.18,
-          fifth: 0.10,
-          sixth: 0.06,
-          oddBoost: 0.0,
-          evenBoost: 0.16,
-          conical: 0.04
-        };
-
+        return { fundamental: 0.86, second: 0.42, third: 0.30, fourth: 0.18, fifth: 0.10, sixth: 0.06, oddBoost: 0.0, evenBoost: 0.16, conical: 0.04 };
       case 'conical_open':
-        return {
-          fundamental: 0.74,
-          second: 0.38,
-          third: 0.32,
-          fourth: 0.22,
-          fifth: 0.14,
-          sixth: 0.10,
-          oddBoost: 0.04,
-          evenBoost: 0.12,
-          conical: 0.20
-        };
-
+        return { fundamental: 0.74, second: 0.38, third: 0.32, fourth: 0.22, fifth: 0.14, sixth: 0.10, oddBoost: 0.04, evenBoost: 0.12, conical: 0.20 };
       case 'conical_quasi_closed':
-        return {
-          fundamental: 0.84,
-          second: 0.22,
-          third: 0.40,
-          fourth: 0.12,
-          fifth: 0.20,
-          sixth: 0.06,
-          oddBoost: 0.20,
-          evenBoost: 0.04,
-          conical: 0.24
-        };
-
-      case 'narrow_closed_bell':
-        return {
-          fundamental: 1.00,
-          second: 0.08,
-          third: 0.26,
-          fourth: 0.04,
-          fifth: 0.11,
-          sixth: 0.02,
-          oddBoost: 0.14,
-          evenBoost: -0.08,
-          conical: 0.00
-        };
-
-      case 'wide_open_reedy':
-        return {
-          fundamental: 0.70,
-          second: 0.48,
-          third: 0.34,
-          fourth: 0.26,
-          fifth: 0.18,
-          sixth: 0.12,
-          oddBoost: 0.08,
-          evenBoost: 0.20,
-          conical: 0.10
-        };
-
+        return { fundamental: 0.84, second: 0.22, third: 0.40, fourth: 0.12, fifth: 0.20, sixth: 0.06, oddBoost: 0.20, evenBoost: 0.04, conical: 0.24 };
       case 'closed_cylindrical':
       default:
-        return {
-          fundamental: 0.92,
-          second: 0.12,
-          third: 0.34,
-          fourth: 0.06,
-          fifth: 0.18,
-          sixth: 0.03,
-          oddBoost: 0.24,
-          evenBoost: -0.02,
-          conical: 0.0
-        };
+        return { fundamental: 0.92, second: 0.12, third: 0.34, fourth: 0.06, fifth: 0.18, sixth: 0.03, oddBoost: 0.24, evenBoost: -0.02, conical: 0.0 };
     }
   }
 
   function getDroneModelCoefficients(model) {
     switch (model) {
       case 'steady_open_drone':
-        return {
-          fundamental: 0.90,
-          second: 0.28,
-          third: 0.16,
-          fourth: 0.08,
-          fifth: 0.04,
-          noise: 0.008,
-          growl: 0.03
-        };
-
+        return { fundamental: 0.90, second: 0.28, third: 0.16, fourth: 0.08, fifth: 0.04, noise: 0.008, growl: 0.03 };
       case 'bright_reed_drone':
-        return {
-          fundamental: 0.80,
-          second: 0.34,
-          third: 0.24,
-          fourth: 0.13,
-          fifth: 0.07,
-          noise: 0.014,
-          growl: 0.06
-        };
-
-      case 'pure_foundation_drone':
-        return {
-          fundamental: 0.98,
-          second: 0.10,
-          third: 0.06,
-          fourth: 0.025,
-          fifth: 0.012,
-          noise: 0.003,
-          growl: 0.008
-        };
-
+        return { fundamental: 0.80, second: 0.34, third: 0.24, fourth: 0.13, fifth: 0.07, noise: 0.014, growl: 0.06 };
       case 'closed_drone':
       default:
-        return {
-          fundamental: 0.92,
-          second: 0.14,
-          third: 0.24,
-          fourth: 0.05,
-          fifth: 0.03,
-          noise: 0.006,
-          growl: 0.02
-        };
+        return { fundamental: 0.92, second: 0.14, third: 0.24, fourth: 0.05, fifth: 0.03, noise: 0.006, growl: 0.02 };
     }
   }
 
@@ -3408,7 +3264,7 @@
 
           <h4>1) Choose an instrument design</h4>
           <ul>
-            <li><strong>Instrument Family Preset</strong> loads a useful starting point such as Highland, Northumbrian, Uilleann, Smallpipes, Musette-style, Pastoral-style, or a generic bagpipe setup.</li>
+            <li><strong>Instrument Family Preset</strong> loads a useful starting point such as Highland, Northumbrian, Uilleann, Smallpipes, Musette-style, or a generic bagpipe setup.</li>
             <li><strong>Output ZIP Base Name</strong> is used as the default filename suggestion when you download the generated custom instrument.</li>
             <li><strong>Chanter Acoustic Model</strong> selects the synthesis model used for the melody notes.</li>
             <li><strong>Drone Acoustic Model</strong> selects the synthesis model used for the drone stack.</li>
