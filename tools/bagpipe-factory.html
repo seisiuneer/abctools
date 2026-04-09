@@ -4,18 +4,22 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel='dns-prefetch' href='//fonts.googleapis.com' />
 <meta property="og:type" content="website" />
 <meta property="og:title" content="Bagpipe Custom Instrument Factory" />
 <meta property="og:description" content="Generate custom bagpipe instruments for Celtic Sounds using configurable chanter, drone, tuning, and synthesis models." />
 <meta property="og:url" content="https://michaeleskin.com/tools/bagpipe-factory.html" />
 <meta property="og:site_name" content="Bagpipe Custom Instrument Factory" />
 <meta property="og:image" content="https://michaeleskin.com/tools/img/bagpipe-factory.jpg"/>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="icon" type="image/png" sizes="32x32" href="https://michaeleskin.com/tools/img/bagpipe-factory-favicon.png">
+<link href="https://fonts.googleapis.com/css2?family=Uncial+Antiqua&display=swap" rel="stylesheet">
 <title>Bagpipe Custom Instrument Factory</title>
 <style>
   :root {
     --bg: #111315;
-    --panel: #1b1f24;
+    --panel: #111827f0;
     --panel2: #232932;
     --panel3: #171b21;
     --text: #e9eef4;
@@ -45,9 +49,20 @@
   }
 
   h1 {
-    margin: 0 0 4px 0;
-    font-size: 30px;
+    font-family: "Uncial Antiqua", serif;
+    font-size: 2rem;
+    letter-spacing: 2px;
+    font-weight: normal;
     text-align: center;
+    margin: 0 0 4px 0;
+
+    color: #d4ffe8;
+
+    text-shadow:
+      0 0 4px rgba(34,197,94,0.55),
+      0 0 12px rgba(34,197,94,0.45),
+      0 0 24px rgba(34,197,94,0.30),
+      0 0 40px rgba(34,197,94,0.18);
   }
 
   .sub {
@@ -191,7 +206,7 @@
     padding: 7px 9px;
     border-radius: 8px;
     border: 1px solid var(--border);
-    background: #0e1115;
+    background: #1f2937;
     color: var(--text);
     font-size: 14px;
   }
@@ -705,7 +720,7 @@
 
     padding-right: 40px;
 
-    background-color: #0e1115;
+    background-color: #1f2937;
     background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 20 20'><path fill='%23b9c3cf' d='M5.5 7.5 10 12l4.5-4.5 1.4 1.4-5.9 5.9-5.9-5.9z'/></svg>");
     background-repeat: no-repeat;
     background-position: right 8px center;
