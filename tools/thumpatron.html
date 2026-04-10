@@ -67,6 +67,7 @@
       padding: 24px;
       box-shadow: 0 18px 50px var(--shadow);
       backdrop-filter: blur(8px);
+      position:relative;
     }
 
     h1 {
@@ -383,6 +384,120 @@
         grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
       }
     }
+
+    .help-btn {
+      position: absolute;
+      top: 18px;              /* aligns with wrap padding */
+      right: 18px;            /* aligns with right column edge */
+      
+      font-size: 20px;
+      font-weight: 700;
+      padding: 6px 10px;      /* reduced padding */
+      
+      border-radius: 10px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.12), rgba(255,255,255,0.06));
+      border: 1px solid rgba(255,255,255,0.18);
+      color: white;
+
+      width: 44px;            /* square-ish button */
+      height: 44px;
+      
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .help-btn:hover {
+      border-color: rgba(255,255,255,0.4);
+      box-shadow: 0px 0px 10px rgba(0,255,0,0.18);
+    }
+
+    .modal_instructions_background {
+      position: fixed !important;
+      inset: 0 !important;
+      background: rgba(0,0,0,0.45) !important;
+    }
+
+    .modal_instructions_main {
+      position: fixed !important;
+      left: 50% !important;
+      top: 50px !important;
+      transform: translate(-50%, 0%) !important;
+      margin: 0 !important;
+      border: 1px solid #333;
+      box-shadow: 0 0 18px -2px rgba(0,0,0,0.75);
+      width: min(800px, calc(100vw - 60px)) !important;
+      max-width: min(800px, calc(100vw - 60px)) !important;
+      height: auto !important;
+      max-height: 66dvh !important;
+      overflow: hidden !important;
+    }
+
+    .modal_instructions_inner {
+      padding: 28px 28px 32px 28px;
+      background: #fff;
+      color: #000;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      max-height: 66dvh;
+    }
+
+    .modal_instructions_content {
+      margin: 14px 0 10px 0;
+      overflow-y: auto !important;
+      overflow-x: hidden !important;
+      -webkit-overflow-scrolling: touch;
+      flex: 1 1 auto;
+      min-height: 0;
+      line-height: 1.5;
+      font-size: 16px;
+      padding-right: 10px;
+    }
+
+    .modal_instructions_content h3 {
+      margin: 0 0 8px 0;
+      font-size: 20px;
+    }
+
+    .modal_instructions_content h4 {
+      margin: 18px 0 6px 0;
+      font-size: 17px;
+    }
+
+    .modal_instructions_content p {
+      margin: 0 0 10px 0;
+    }
+
+    .modal_instructions_content ul {
+      margin: 0 0 12px 18px;
+      padding: 0;
+    }
+
+    .modal_instructions_content li {
+      margin: 0 0 8px 0;
+    }
+
+    .modal_instructions_buttons {
+      text-align: center;
+      margin-top: 16px;
+      flex: 0 0 auto;
+    }
+
+    .modal_instructions_buttons button {
+      margin: 0 8px;
+    }
+
+    .modal_instructions_main button {
+      background: #e8f1ff;
+      color: #000;
+      border: 1px solid #9dbaf2;
+      padding: 10px 20px;
+      cursor: pointer;
+      outline: none;
+      border-radius: 10px;
+      font-weight: 600;
+    }
   </style>
 
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-VM0N9HL3MK"></script>
@@ -393,6 +508,8 @@
     gtag('config', 'G-VM0N9HL3MK');
   </script>
 
+  <script type="text/javascript" src="daypilot-modal.min-3.10.1.js?v=1"></script>
+
 </head>
 
 <body>
@@ -402,12 +519,18 @@
       <div class="legend">
         Bodhrán backing tracks for tune practice
       </div>
-
+      <button
+        id="instructionsBtn"
+        class="help-btn"
+        title="Open detailed instructions for using The Thumpatron."
+      >
+        ?
+      </button>
       <div class="toolbar">
         <div class="volume-wrap">
           <label for="volumeSlider">Volume</label>
-          <input id="volumeSlider" type="range" min="0" max="100" value="80" step="1" />
-          <div id="volumeValue" class="volume-value">80%</div>
+          <input id="volumeSlider" type="range" min="0" max="100" value="75" step="1" />
+          <div id="volumeValue" class="volume-value">75%</div>
         </div>
 
         <button id="stopAllBtn" class="stop-btn" type="button">Stop All Play</button>
@@ -418,7 +541,7 @@
       <div class="grid" id="trackGrid"></div>
 
       <div class="footer-note">
-        Created by <a href="https://michaeleskin.com/abctools/tipjars.html" target="_blank" rel="noopener noreferrer">Michael Eskin</a>
+        Created by <a href="https://michaeleskin.com" target="_blank" rel="noopener noreferrer">Michael Eskin</a>
       </div>
 
     </div>
@@ -440,7 +563,7 @@
           { tempo: 90, file: 'G4.mp3', trimMs: 0 },
           { tempo: 100, file: 'Ab4.mp3', trimMs: 0 },
           { tempo: 110, file: 'A4.mp3', trimMs: 0 },
-          { tempo: 120, file: 'Bb4.mp3' }
+          { tempo: 120, file: 'Bb4.mp3', trimMs: 0 }
         ],
         Jig: [
           { tempo: 50, file: 'C5.mp3', trimMs: 0 },
@@ -453,7 +576,7 @@
           { tempo: 90, file: 'G5.mp3', trimMs: 0 },
           { tempo: 100, file: 'Ab5.mp3', trimMs: 0 },
           { tempo: 110, file: 'A5.mp3', trimMs: 0 },
-          { tempo: 120, file: 'Bb5.mp3' }
+          { tempo: 120, file: 'Bb5.mp3', trimMs: 0 }
         ],
         Polka: [
           { tempo: 70, file: 'C3.mp3', trimMs: 0 },
@@ -475,7 +598,7 @@
         currentTrackId: null,
         currentSource: null,
         currentButton: null,
-        volume: 0.8
+        volume: 0.75
       };
 
       const els = {
@@ -483,7 +606,8 @@
         status: document.getElementById('status'),
         volumeSlider: document.getElementById('volumeSlider'),
         volumeValue: document.getElementById('volumeValue'),
-        stopAllBtn: document.getElementById('stopAllBtn')
+        stopAllBtn: document.getElementById('stopAllBtn'),
+        instructionsBtn: document.getElementById('instructionsBtn')
       };
 
       function getLoopEndTime(track, audioBuffer) {
@@ -740,51 +864,152 @@
         }
       }
 
-      function buildTrackGrid() {
-        const fragment = document.createDocumentFragment();
+    function buildTrackGrid() {
+      const fragment = document.createDocumentFragment();
 
-        Object.entries(TRACKS).forEach(([style, entries]) => {
-          const card = document.createElement('section');
-          card.className = 'card';
+      Object.entries(TRACKS).forEach(([style, entries]) => {
+        const card = document.createElement('section');
+        card.className = 'card';
 
-          const title = document.createElement('h2');
-          title.textContent = style;
-          card.appendChild(title);
+        const title = document.createElement('h2');
+        title.textContent = style;
+        card.appendChild(title);
 
-          const buttonWrap = document.createElement('div');
-          buttonWrap.className = 'buttons';
+        const buttonWrap = document.createElement('div');
+        buttonWrap.className = 'buttons';
 
-          entries.forEach((entry) => {
-            const track = {
-              id: getTrackId(style, entry.tempo),
-              style,
-              tempo: entry.tempo,
-              file: entry.file
-            };
+        entries.forEach((entry) => {
+          const track = {
+            id: getTrackId(style, entry.tempo),
+            style,
+            tempo: entry.tempo,
+            file: entry.file,
+            trimMs: entry.trimMs || 0
+          };
 
-            const button = document.createElement('button');
-            button.type = 'button';
-            button.className = 'track-btn';
-            button.setAttribute('aria-pressed', 'false');
-            button.title = style + ' ' + entry.tempo + ' bpm';
+          const button = document.createElement('button');
+          button.type = 'button';
+          button.className = 'track-btn';
+          button.setAttribute('aria-pressed', 'false');
+          button.title = style + ' ' + entry.tempo + ' bpm';
 
-            const tempo = document.createElement('span');
-            tempo.className = 'tempo';
-            tempo.textContent = entry.tempo + ' bpm';
+          const tempo = document.createElement('span');
+          tempo.className = 'tempo';
+          tempo.textContent = entry.tempo + ' bpm';
 
-            button.appendChild(tempo);
-            button.addEventListener('click', function () {
-              handleTrackButtonClick(track, button);
-            });
-
-            buttonWrap.appendChild(button);
+          button.appendChild(tempo);
+          button.addEventListener('click', function () {
+            handleTrackButtonClick(track, button);
           });
 
-          card.appendChild(buttonWrap);
-          fragment.appendChild(card);
+          buttonWrap.appendChild(button);
         });
 
-        els.grid.appendChild(fragment);
+        card.appendChild(buttonWrap);
+        fragment.appendChild(card);
+      });
+
+      els.grid.appendChild(fragment);
+    }
+
+      async function showInstructionsModal() {
+        const html = `
+          <div class="modal_instructions_content">
+            <div>
+              <h2 style="text-align:center;margin-top:0px;">Instructions</h2>
+
+              <p style="line-height:1">
+                <strong>The Thumpatron</strong> is a simple bodhrán backing track player for tune practice.<br/><br/>
+                It lets you play looping backing tracks for <strong>Reels</strong>, <strong>Jigs</strong>, and <strong>Polkas</strong>
+                at a range of tempos.
+              </p>
+
+              <h4>1) Choose a backing track</h4>
+              <ul>
+                <li>Click any tempo button in the <strong>Reel</strong>, <strong>Jig</strong>, or <strong>Polka</strong> section to start playback.</li>
+                <li>Only one backing track plays at a time.</li>
+                <li>Clicking a different tempo button stops the currently playing track and starts the newly selected one.</li>
+                <li>Clicking the currently playing button stops playback.</li>
+              </ul>
+
+              <h4>2) Adjust the volume</h4>
+              <ul>
+                <li>Use the <strong>Volume</strong> slider at the top of the tool to control playback level.</li>
+               </ul>
+
+              <h4>3) Stop playback</h4>
+              <ul>
+                <li>Click <strong>Stop All Play</strong> to stop any currently playing backing track.</li>
+              </ul>
+
+              <h4>4) Looping behavior</h4>
+              <ul>
+                <li>The backing tracks are configured to loop continuously for practice.</li>
+               </ul>
+
+              <h4>5) Mobile and tablet use</h4>
+              <ul>
+                <li>On iOS devices, make sure the device is <strong>not muted</strong>. If sound is not heard, check that the <strong>mute switch</strong> on the device is off and that <strong>Silent Mode</strong> is also off in <strong>Control Center</strong>.</li>
+                <li>If playback does not start on mobile, tap a track button directly to allow the browser to activate audio.</li>
+              </ul>
+
+              <hr>
+
+              <div style="text-align: center;margin-bottom:20px;">
+                <h4>Original Backing Tracks Source</h4>
+                The bodhrán backing tracks used in the tool are derived<br/>from a set originally created by <a style="color:#1a73e8; text-decoration:underline;" href="https://santigaitero.com" target="_blank" rel="noopener noreferrer">Santiago Molino</a>.<br/><br/>
+                Unfortunately, no additional rhythm styles or tempos are available at this time.
+              </div>
+
+              <hr>
+
+              <h4 style="text-align: center;">Tip Jars</h4>
+              <div style="text-align: center;margin-bottom:20px;">
+                This tool was created by <a style="color:#1a73e8; text-decoration:underline;" href="https://michaeleskin.com" target="_blank" rel="noopener noreferrer">Michael Eskin</a>.<br/>
+                <div style="margin-top:10px;">
+                  If this tool has been useful to you, please consider supporting ongoing<br/>development by tossing a few bucks into one of my online tip jars.
+                </div>
+                <div style="margin-top:10px;">
+                  <b>PayPal</b><br/>
+                  <a href="https://paypal.me/MichaelEskin" target="_blank" rel="noopener noreferrer" style="color:#1a73e8; text-decoration:underline;">https://paypal.me/MichaelEskin</a>
+                </div>
+                <div style="margin-top:10px;">
+                  <b>Venmo</b><br/>
+                  @MichaelEskin
+                </div>
+              </div>
+
+              <hr>
+
+              <h4 style="text-align: center;">Source Code on GitHub</h4>
+              <div style="text-align: center;margin-bottom:20px;">
+                The source code for this tool is available on GitHub<br/>
+                <div style="margin-top:10px;">
+                  <a href="https://github.com/seisiuneer/abctools/tree/main/tools" target="_blank" rel="noopener noreferrer" style="color:#1a73e8; text-decoration:underline;">thumpatron.html on GitHub</a>
+                </div>
+              </div>
+
+              <hr>
+
+            </div>
+          </div>
+        `;
+
+        if (window.DayPilot && DayPilot.Modal && typeof DayPilot.Modal.alert === 'function') {
+          await DayPilot.Modal.alert(html, {
+            theme: 'modal_instructions',
+            scrollWithPage: false,
+            okText: 'Close'
+          });
+          return;
+        }
+
+        alert(
+          'The Thumpatron\\n\\n' +
+          'Click a tempo button in the Reel, Jig, or Polka section to start a looping bodhrán backing track. ' +
+          'Use the Volume slider to adjust the level, and click Stop All Play to stop playback. ' +
+          'On iOS devices, make sure the mute switch and Silent Mode in Control Center are turned off if you do not hear sound.'
+        );
       }
 
       function bindEvents() {
@@ -793,6 +1018,10 @@
           stopCurrentPlayback();
           setStatus('Stopped.');
         });
+
+        if (els.instructionsBtn) {
+          els.instructionsBtn.addEventListener('click', showInstructionsModal);
+        }
 
         document.addEventListener('visibilitychange', function () {
           if (document.hidden && state.audioCtx && state.audioCtx.state === 'running') {
