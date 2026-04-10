@@ -221,6 +221,7 @@
       font-size: 1.15rem;
       font-weight: 800;
       line-height: 1.1;
+      white-space: nowrap;
     }
 
     .track-btn.loading {
@@ -365,6 +366,7 @@
 
       .stop-btn {
         margin-left: 0;
+        margin-top: 8px;
         flex: 0 0 auto;
       }
 
@@ -373,7 +375,12 @@
         margin-left: 0;
         text-align: right;
         white-space: normal;
-        align-self: center;
+        align-self: end;
+        margin-top: 8px;
+      }
+
+      .grid {
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
       }
     }
   </style>
