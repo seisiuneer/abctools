@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Thumpatron</title>
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="The Thumpatron" />
+  <meta property="og:description" content="Bodhrán backing tracks for Reels, Jigs, and Polkas." />
+  <meta property="og:url" content="https://michaeleskin.com/tools/thumpatron.html" />
+  <meta property="og:site_name" content="The Thumpatron" />
+  <meta property="og:image" content="https://michaeleskin.com/tools/img/thumpatron_og2.jpg"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="icon" type="image/png" sizes="32x32" href="https://michaeleskin.com/tools/img/thumpatron-favicon.png">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --green-900: #0b3d20;
+      --green-800: #11552c;
+      --green-700: #18723a;
+      --green-600: #1f8a47;
+      --green-500: #29a35a;
+      --green-400: #4cc777;
+      --green-300: #8ce0a7;
+      --green-200: #c8f2d2;
+      --cream: #f6fff8;
+      --gold: #ffe082;
+      --shadow: rgba(6, 36, 18, 0.25);
+      --danger: #b91c1c;
+      --danger-dark: #991b1b;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      color: var(--cream);
+      background:
+        radial-gradient(circle at top, rgba(255,255,255,0.08), transparent 30%),
+        linear-gradient(180deg, #0b3d20 0%, #082b15 50%, #041a0d 100%);
+      min-height: 100vh;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: linear-gradient(180deg, #051f10 0%, #03160b 60%, #020f07 100%);
+      z-index: -2;
+    }
+
+    .wrap {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    .hero {
+      background: linear-gradient(180deg, rgba(255,255,255,0.14), rgba(255,255,255,0.08));
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 24px;
+      padding: 24px;
+      box-shadow: 0 18px 50px var(--shadow);
+      backdrop-filter: blur(8px);
+    }
+
+    h1 {
+      font-family: "Cinzel", serif;
+      font-size: 3rem;
+      letter-spacing: 2px;
+      font-weight: normal;
+      text-align: center;
+      margin: 0 0 4px 0;
+
+      color: #d4ffe8;
+
+      text-shadow:
+        0 0 4px rgba(34,197,94,0.55),
+        0 0 12px rgba(34,197,94,0.45),
+        0 0 24px rgba(34,197,94,0.30),
+        0 0 40px rgba(34,197,94,0.18);
+    }
+
+    .subtitle {
+      margin: 0;
+      color: var(--green-200);
+      font-size: 1.05rem;
+    }
+
+    .toolbar {
+      margin-top: 20px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      background: rgba(0,0,0,0.15);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 18px;
+      padding: 16px 20px;
+    }
+
+    .volume-wrap {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex: 2;              /* give it MORE space than everything else */
+      min-width: 500px;     /* ensures it doesn't collapse */
+    }
+
+    .volume-wrap label {
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .volume-wrap input[type="range"] {
+      flex: 1;              /* critical */
+      width: 100%;
+      min-width: 300px;     /* makes it noticeably longer */
+    }
+
+    .volume-value {
+      min-width: 48px;       /* smaller */
+      margin-left: 6px;      /* tight to slider */
+      text-align: left;      /* feels closer */
+      color: var(--green-200);
+      font-weight: 700;
+    }
+    
+    .stop-btn {
+      appearance: none;
+      border: none;
+      border-radius: 12px;
+      background: linear-gradient(180deg, #dc2626, var(--danger-dark));
+      color: white;
+      font-weight: 700;
+      padding: 12px 18px;
+      cursor: pointer;
+      box-shadow: 0 10px 24px rgba(0,0,0,0.22);
+      transition: transform 0.14s ease, box-shadow 0.14s ease, filter 0.14s ease;
+      margin-left: 20px;
+      flex: 0 0 auto;       /* don't let it grow */
+    }
+
+    .stop-btn:hover {
+      transform: translateY(-1px);
+      filter: brightness(1.05);
+    }
+
+    .stop-btn:active {
+      transform: translateY(1px);
+    }
+
+    .status {
+      color: var(--green-200);
+      font-size: 0.96rem;
+      min-height: 1.2em;
+      flex: 1 1 240px;
+      text-align: right;
+      margin-left: auto;    /* key line */
+      white-space: nowrap;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 18px;
+      margin-top: 24px;
+    }
+
+    .card {
+      background: linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.04));
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 22px;
+      padding: 18px;
+      box-shadow: 0 14px 36px var(--shadow);
+    }
+
+    .card h2 {
+      margin: 0 0 12px 0;
+      font-size: 1.35rem;
+      color: white;
+    }
+
+    .buttons {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .track-btn {
+      position: relative;
+      appearance: none;
+      border: 1px solid rgba(255,255,255,0.18);
+      border-radius: 16px;
+      min-height: 60px;
+      padding: 12px 10px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.12), rgba(255,255,255,0.06));
+      color: white;
+      cursor: pointer;
+      transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+      overflow: hidden;
+      text-align: center;
+    }
+
+    .track-btn:hover {
+      transform: translateY(-2px);
+      border-color: rgba(255,255,255,0.28);
+      box-shadow: 0 10px 24px rgba(0,0,0,0.18);
+    }
+
+    .track-btn:active {
+      transform: translateY(1px);
+    }
+
+    .track-btn .tempo {
+      display: block;
+      font-size: 1.15rem;
+      font-weight: 800;
+      line-height: 1.1;
+    }
+
+    .track-btn.loading {
+      opacity: 0.8;
+      cursor: progress;
+    }
+
+    .track-btn.loading::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.18), transparent);
+      transform: translateX(-100%);
+      animation: loadingShimmer 1.2s linear infinite;
+    }
+
+    .track-btn.playing {
+      border-color: rgba(255, 224, 130, 0.88);
+      background: linear-gradient(180deg, rgba(76,199,119,0.28), rgba(255,224,130,0.14));
+      box-shadow: 0 0 0 1px rgba(255,224,130,0.2), 0 14px 30px rgba(0,0,0,0.28);
+    }
+
+    .track-btn.playing::before,
+    .track-btn.playing::after {
+      content: '';
+      position: absolute;
+      border-radius: 999px;
+      pointer-events: none;
+      opacity: 0.65;
+    }
+
+    .track-btn.playing::before {
+      width: 130px;
+      height: 130px;
+      left: -18px;
+      top: -24px;
+      background: radial-gradient(circle, rgba(255,224,130,0.45), transparent 65%);
+      animation: pulseGlow 1.5s ease-in-out infinite;
+    }
+
+    .track-btn.playing::after {
+      width: 150px;
+      height: 150px;
+      right: -35px;
+      bottom: -48px;
+      background: radial-gradient(circle, rgba(76,199,119,0.42), transparent 65%);
+      animation: pulseGlow 1.5s ease-in-out 0.4s infinite;
+    }
+
+    .track-btn.playing .tempo {
+      color: var(--gold);
+    }
+
+    .legend {
+      color: var(--green-200);
+      font-size: 1rem;
+      line-height: 1.5;
+      text-align: center;
+    }
+
+    .footer-note {
+      margin-top: 18px;
+      color: var(--green-200);
+      font-size: 0.9rem;
+      text-align: center;
+    }
+
+    /* Base link style */
+    a {
+      color: var(--green-300);
+      text-decoration: none;
+      font-weight: 600;
+      transition: color 0.15s ease, text-shadow 0.15s ease;
+    }
+
+    /* Hover */
+    a:hover {
+      color: var(--gold);
+      text-shadow: 0 0 6px rgba(255, 224, 130, 0.6);
+    }
+
+    /* Active (clicking) */
+    a:active {
+      color: #fff3b0;
+      text-shadow: 0 0 4px rgba(255, 224, 130, 0.8);
+    }
+
+    /* Visited */
+    a:visited {
+      color: #9bd8b2; /* slightly muted green */
+    }
+
+    /* Focus (keyboard accessibility) */
+    a:focus-visible {
+      outline: 2px solid var(--gold);
+      outline-offset: 2px;
+      border-radius: 4px;
+    }
+
+    @keyframes pulseGlow {
+      0%, 100% {
+        transform: scale(0.92);
+        opacity: 0.45;
+      }
+      50% {
+        transform: scale(1.08);
+        opacity: 0.85;
+      }
+    }
+
+    @keyframes loadingShimmer {
+      to {
+        transform: translateX(100%);
+      }
+    }
+
+    @media (max-width: 860px) {
+      .wrap {
+        padding: 14px;
+      }
+
+      .hero {
+        padding: 18px;
+        border-radius: 18px;
+      }
+
+      .toolbar {
+        padding: 14px;
+        flex-wrap: wrap;
+        align-items: stretch;
+        gap: 12px;
+      }
+
+      .volume-wrap {
+        flex: 1 1 100%;
+        min-width: 0;
+      }
+
+      .volume-wrap input[type="range"] {
+        min-width: 0;
+      }
+
+      .stop-btn {
+        margin-left: 0;
+        flex: 0 0 auto;
+      }
+
+      .status {
+        flex: 1 1 auto;
+        margin-left: 0;
+        text-align: right;
+        white-space: normal;
+        align-self: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="hero">
+      <h1>The Thumpatron</h1>
+      <div class="legend">
+        Bodhrán backing tracks for tune practice
+      </div>
+
+      <div class="toolbar">
+        <div class="volume-wrap">
+          <label for="volumeSlider">Volume</label>
+          <input id="volumeSlider" type="range" min="0" max="100" value="80" step="1" />
+          <div id="volumeValue" class="volume-value">80%</div>
+        </div>
+
+        <button id="stopAllBtn" class="stop-btn" type="button">Stop All Play</button>
+
+        <div id="status" class="status">Ready.</div>
+      </div>
+
+      <div class="grid" id="trackGrid"></div>
+
+      <div class="footer-note">
+        Created by <a href="https://michaeleskin.com" target="_blank" rel="noopener noreferrer">Michael Eskin</a>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      const BASE_URL = 'https://michaeleskin.com/abctools/soundfonts/bodhran_backing_1/';
+
+      const TRACKS = {
+        Reel: [
+          { tempo: 50, file: 'C4.mp3', trimMs: 0 },
+          { tempo: 55, file: 'Db4.mp3', trimMs: 0 },
+          { tempo: 60, file: 'D4.mp3', trimMs: 0 },
+          { tempo: 65, file: 'Eb4.mp3', trimMs: 0 },
+          { tempo: 70, file: 'E4.mp3', trimMs: 0 },
+          { tempo: 75, file: 'F4.mp3', trimMs: 0 },
+          { tempo: 80, file: 'Gb4.mp3', trimMs: 0 },
+          { tempo: 90, file: 'G4.mp3', trimMs: 0 },
+          { tempo: 100, file: 'Ab4.mp3', trimMs: 0 },
+          { tempo: 110, file: 'A4.mp3', trimMs: 0 },
+          { tempo: 120, file: 'Bb4.mp3' }
+        ],
+        Jig: [
+          { tempo: 50, file: 'C5.mp3', trimMs: 0 },
+          { tempo: 55, file: 'Db5.mp3', trimMs: 0 },
+          { tempo: 60, file: 'D5.mp3', trimMs: 0 },
+          { tempo: 65, file: 'Eb5.mp3', trimMs: 0 },
+          { tempo: 70, file: 'E5.mp3', trimMs: 0 },
+          { tempo: 75, file: 'F5.mp3', trimMs: 0 },
+          { tempo: 80, file: 'Gb5.mp3', trimMs: 0 },
+          { tempo: 90, file: 'G5.mp3', trimMs: 0 },
+          { tempo: 100, file: 'Ab5.mp3', trimMs: 0 },
+          { tempo: 110, file: 'A5.mp3', trimMs: 0 },
+          { tempo: 120, file: 'Bb5.mp3' }
+        ],
+        Polka: [
+          { tempo: 70, file: 'C3.mp3', trimMs: 0 },
+          { tempo: 80, file: 'Db3.mp3', trimMs: 0 },
+          { tempo: 90, file: 'D3.mp3', trimMs: 0 },
+          { tempo: 100, file: 'Eb3.mp3', trimMs: 0 },
+          { tempo: 110, file: 'E3.mp3', trimMs: 0 },
+          { tempo: 120, file: 'F3.mp3', trimMs: 0 },
+          { tempo: 130, file: 'Gb3.mp3', trimMs: 0 },
+          { tempo: 140, file: 'G3.mp3', trimMs: 0 }
+        ]
+      };
+
+      const state = {
+        audioCtx: null,
+        gainNode: null,
+        bufferCache: new Map(),
+        loadingMap: new Map(),
+        currentTrackId: null,
+        currentSource: null,
+        currentButton: null,
+        volume: 0.8
+      };
+
+      const els = {
+        grid: document.getElementById('trackGrid'),
+        status: document.getElementById('status'),
+        volumeSlider: document.getElementById('volumeSlider'),
+        volumeValue: document.getElementById('volumeValue'),
+        stopAllBtn: document.getElementById('stopAllBtn')
+      };
+
+      function getLoopEndTime(track, audioBuffer) {
+        const duration = audioBuffer.duration;
+        if (!duration || duration <= 0) {
+          return { loopStart: 0, loopEnd: 0 };
+        }
+
+        const beatDuration = 60 / track.tempo;
+        if (!isFinite(beatDuration) || beatDuration <= 0) {
+          return { loopStart: 0, loopEnd: duration };
+        }
+
+        const totalBeats = duration / beatDuration;
+
+        // Largest multiple of 8 beats
+        const groupsOf8 = Math.floor(totalBeats / 8);
+        const beatCount = groupsOf8 * 8;
+
+        if (beatCount < 8) {
+          return { loopStart: 0, loopEnd: duration };
+        }
+
+        let loopEnd = beatCount * beatDuration;
+
+        // Apply trim (milliseconds → seconds)
+        const trimSeconds = (track.trimMs || 0) / 1000;
+        loopEnd = Math.max(0, loopEnd - trimSeconds);
+
+        // Start at beat 8
+        let loopStart = 8 * beatDuration;
+
+        // Safety: don't exceed loopEnd
+        if (loopStart >= loopEnd) {
+          loopStart = 0;
+        }
+ 
+        loopEnd = Math.min(loopEnd, duration);
+
+        return { loopStart, loopEnd };
+      }
+
+      function setStatus(message) {
+        els.status.textContent = message;
+      }
+
+      function getTrackId(style, tempo) {
+        return style + '-' + tempo;
+      }
+
+      function ensureAudioContext() {
+        if (!state.audioCtx) {
+          const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+          if (!AudioContextClass) {
+            throw new Error('Web Audio is not supported in this browser.');
+          }
+          state.audioCtx = new AudioContextClass();
+          state.gainNode = state.audioCtx.createGain();
+          state.gainNode.gain.value = state.volume;
+          state.gainNode.connect(state.audioCtx.destination);
+        }
+        return state.audioCtx;
+      }
+
+      async function resumeAudioContext() {
+        const ctx = ensureAudioContext();
+        if (ctx.state === 'suspended') {
+          await ctx.resume();
+        }
+        return ctx;
+      }
+
+      async function fetchAndDecodeBuffer(file) {
+        if (state.bufferCache.has(file)) {
+          return state.bufferCache.get(file);
+        }
+
+        if (state.loadingMap.has(file)) {
+          return state.loadingMap.get(file);
+        }
+
+        const promise = (async () => {
+          const ctx = ensureAudioContext();
+          const response = await fetch(BASE_URL + file, { cache: 'force-cache' });
+          if (!response.ok) {
+            throw new Error('Failed to fetch ' + file + ' (' + response.status + ')');
+          }
+          const arrayBuffer = await response.arrayBuffer();
+          const audioBuffer = await ctx.decodeAudioData(arrayBuffer.slice(0));
+          state.bufferCache.set(file, audioBuffer);
+          return audioBuffer;
+        })();
+
+        state.loadingMap.set(file, promise);
+
+        try {
+          return await promise;
+        } finally {
+          state.loadingMap.delete(file);
+        }
+      }
+
+      function stopCurrentPlayback() {
+        if (state.currentSource) {
+          const source = state.currentSource;
+          const sourceGain = source._sourceGain || null;
+          const ctx = ensureAudioContext();
+          const fadeTime = 0.02;
+          const stopTime = ctx.currentTime + fadeTime;
+
+          state.currentSource = null;
+          state.currentTrackId = null;
+
+          if (state.currentButton) {
+            state.currentButton.classList.remove('playing');
+            state.currentButton.setAttribute('aria-pressed', 'false');
+            state.currentButton = null;
+          }
+
+          try {
+            source.onended = null;
+
+            if (sourceGain) {
+              sourceGain.gain.cancelScheduledValues(ctx.currentTime);
+              sourceGain.gain.setValueAtTime(sourceGain.gain.value, ctx.currentTime);
+              sourceGain.gain.linearRampToValueAtTime(0, stopTime);
+            }
+
+            source.stop(stopTime);
+
+            window.setTimeout(function () {
+              try {
+                source.disconnect();
+              } catch (err) {
+                // Ignore disconnect errors.
+              }
+
+              if (sourceGain) {
+                try {
+                  sourceGain.disconnect();
+                } catch (err) {
+                  // Ignore disconnect errors.
+                }
+              }
+            }, Math.ceil((fadeTime + 0.02) * 1000));
+          } catch (err) {
+            try {
+              source.stop();
+            } catch (stopErr) {
+              // Ignore stop errors from already-stopped sources.
+            }
+
+            try {
+              source.disconnect();
+            } catch (disconnectErr) {
+              // Ignore disconnect errors.
+            }
+
+            if (sourceGain) {
+              try {
+                sourceGain.disconnect();
+              } catch (disconnectErr) {
+                // Ignore disconnect errors.
+              }
+            }
+          }
+
+          return;
+        }
+
+        state.currentTrackId = null;
+
+        if (state.currentButton) {
+          state.currentButton.classList.remove('playing');
+          state.currentButton.setAttribute('aria-pressed', 'false');
+          state.currentButton = null;
+        }
+      }
+
+      function startLoop(track, button, audioBuffer) {
+        stopCurrentPlayback();
+
+        const ctx = ensureAudioContext();
+        const source = ctx.createBufferSource();
+        const sourceGain = ctx.createGain();
+
+        const { loopStart, loopEnd } = getLoopEndTime(track, audioBuffer);
+
+        source.buffer = audioBuffer;
+        source.loop = true;
+        source.loopStart = loopStart;
+        source.loopEnd = loopEnd;
+
+        sourceGain.gain.setValueAtTime(1, ctx.currentTime);
+
+        source.connect(sourceGain);
+        sourceGain.connect(state.gainNode);
+
+        source._sourceGain = sourceGain;
+
+        source.start(0, loopStart);
+
+        state.currentSource = source;
+        state.currentTrackId = track.id;
+        state.currentButton = button;
+
+        button.classList.add('playing');
+        button.setAttribute('aria-pressed', 'true');
+
+        setStatus(
+          'Playing ' +
+            track.style +
+            ' at ' +
+            track.tempo +
+            ' bpm'
+        );
+      }
+
+      async function handleTrackButtonClick(track, button) {
+        try {
+          await resumeAudioContext();
+
+          if (state.currentTrackId === track.id) {
+            stopCurrentPlayback();
+            setStatus('Stopped.');
+            return;
+          }
+
+          button.classList.add('loading');
+          setStatus('Loading ' + track.style + ' at ' + track.tempo + ' bpm...');
+
+          const audioBuffer = await fetchAndDecodeBuffer(track.file);
+
+          button.classList.remove('loading');
+          startLoop(track, button, audioBuffer);
+        } catch (error) {
+          button.classList.remove('loading');
+          setStatus(error && error.message ? error.message : 'Unable to play sample.');
+          console.error(error);
+        }
+      }
+
+      function updateVolumeFromSlider() {
+        const sliderValue = Number(els.volumeSlider.value) || 0;
+        const gainValue = sliderValue / 100;
+        state.volume = gainValue;
+        els.volumeValue.textContent = sliderValue + '%';
+
+        if (state.gainNode) {
+          const ctx = ensureAudioContext();
+          state.gainNode.gain.cancelScheduledValues(ctx.currentTime);
+          state.gainNode.gain.setValueAtTime(state.gainNode.gain.value, ctx.currentTime);
+          state.gainNode.gain.linearRampToValueAtTime(gainValue, ctx.currentTime + 0.03);
+        }
+      }
+
+      function buildTrackGrid() {
+        const fragment = document.createDocumentFragment();
+
+        Object.entries(TRACKS).forEach(([style, entries]) => {
+          const card = document.createElement('section');
+          card.className = 'card';
+
+          const title = document.createElement('h2');
+          title.textContent = style;
+          card.appendChild(title);
+
+          const buttonWrap = document.createElement('div');
+          buttonWrap.className = 'buttons';
+
+          entries.forEach((entry) => {
+            const track = {
+              id: getTrackId(style, entry.tempo),
+              style,
+              tempo: entry.tempo,
+              file: entry.file
+            };
+
+            const button = document.createElement('button');
+            button.type = 'button';
+            button.className = 'track-btn';
+            button.setAttribute('aria-pressed', 'false');
+            button.title = style + ' ' + entry.tempo + ' bpm';
+
+            const tempo = document.createElement('span');
+            tempo.className = 'tempo';
+            tempo.textContent = entry.tempo + ' bpm';
+
+            button.appendChild(tempo);
+            button.addEventListener('click', function () {
+              handleTrackButtonClick(track, button);
+            });
+
+            buttonWrap.appendChild(button);
+          });
+
+          card.appendChild(buttonWrap);
+          fragment.appendChild(card);
+        });
+
+        els.grid.appendChild(fragment);
+      }
+
+      function bindEvents() {
+        els.volumeSlider.addEventListener('input', updateVolumeFromSlider);
+        els.stopAllBtn.addEventListener('click', function () {
+          stopCurrentPlayback();
+          setStatus('Stopped.');
+        });
+
+        document.addEventListener('visibilitychange', function () {
+          if (document.hidden && state.audioCtx && state.audioCtx.state === 'running') {
+            // Intentionally do nothing so playback continues.
+          }
+        });
+      }
+
+      function init() {
+        buildTrackGrid();
+        bindEvents();
+        updateVolumeFromSlider();
+      }
+
+      init();
+    })();
+  </script>
+</body>
+</html>
