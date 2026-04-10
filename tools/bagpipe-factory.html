@@ -1606,6 +1606,48 @@
       droneExportGain: 0.75,
       releaseMs: 120
     },
+    grand_cornemuse: {
+      label: 'French Grand Cornemuse',
+      notes: 'Rich conical chanter with smooth but present reed character, moderate nasal color, and a blended, stable drone suitable for French grande cornemuse and central France bagpipe styles. Uses two deep drones one and two octaves below the chanter.',
+      instrumentName: 'grand_cornemuse_custom',
+
+      chanterModel: 'conical_open',
+      droneModel: 'closed_drone',
+
+      tuningSystem: 'just_root',
+      rootNote: 'D4',
+      rangeStart: 'D4',
+      rangeEnd: 'A5',
+      soundingTranspose: 5,
+
+      droneTemplate: 'custom',
+      customDroneIntervals: '-12,-24',
+      droneTriggerNotes: '51',
+
+      droneSeconds: 10,
+      chanterSeconds: 7,
+
+      pure: 0.52,
+      reed: 2.10,
+      soft: 0.24,
+      attackSoft: 0.42,
+      noteSpectral: 0.58,
+      nasalEdge: 0.18,
+      reedStiffness: 0.62,
+      airNoise: 0.08,
+      attackStrength: 0.30,
+      boreBrightness: 0.52,
+      formantEmphasis: 0.66,
+      steadyEdge: 0.30,
+      pressureStability: 0.86,
+
+      droneRichness: 0.45,
+      droneBlend: 0.90,
+
+      chanterExportGain: 0.24,
+      droneExportGain: 0.75,
+      releaseMs: 40
+    },
     musette: {
       label: 'Musette-Style Pipes',
       notes: 'Sweeter conical/open profile with slightly lighter drone body and a smoother, more blended top end.',
@@ -1811,6 +1853,22 @@
     }
   }
 
+  function updatePresetSelectTooltip(presetKey = null) {
+    if (!els.presetSelect) return;
+
+    const resolvedPresetKey =
+      presetKey && INSTRUMENT_PRESETS[presetKey]
+        ? presetKey
+        : (INSTRUMENT_PRESETS[els.presetSelect.value] ? els.presetSelect.value : null);
+
+    const preset = resolvedPresetKey ? INSTRUMENT_PRESETS[resolvedPresetKey] : null;
+    const tooltip = (preset && typeof preset.notes === 'string' && preset.notes.trim())
+      ? preset.notes.trim()
+      : 'Select a preset family to load a starting set of bagpipe design parameters.';
+
+    els.presetSelect.title = tooltip;
+  }
+
   function schedulePresetPersist(presetKey = activePresetKey) {
     if (persistTimer) {
       clearTimeout(persistTimer);
@@ -1995,6 +2053,7 @@
     els.presetSelect.value = presetKey;
     applySettingsState(getSettingsForPreset(presetKey));
     activePresetKey = presetKey;
+    updatePresetSelectTooltip(presetKey);
 
     const globalSettings = stored.globalSettings || {};
     GLOBAL_SETTING_FIELDS.forEach(id => {
@@ -3201,6 +3260,7 @@
     els.presetSelect.value = presetKey;
     applySettingsState(settingsToApply);
     activePresetKey = presetKey;
+    updatePresetSelectTooltip(presetKey);
 
     if (persist) {
       captureCurrentPresetSettings(presetKey);
@@ -3371,6 +3431,7 @@
       els.presetSelect.value = presetKey;
       applySettingsState(getSettingsForPreset(presetKey));
       activePresetKey = presetKey;
+      updatePresetSelectTooltip(presetKey);
 
       updateSliderLabels();
       updatePreviewVolumeRealtime();
@@ -3408,7 +3469,7 @@
 
           <h4>1) Choose an instrument design</h4>
           <ul>
-            <li><strong>Instrument Family Preset</strong> loads a useful starting point such as Highland, Northumbrian, Uilleann, Smallpipes, Musette-style, Pastoral-style, or a generic bagpipe setup.</li>
+            <li><strong>Instrument Family Preset</strong> loads a useful starting point such as Highland, Northumbrian, Uilleann, Smallpipes, French Grand Cornemuse, Musette-style, Pastoral-style, or a generic bagpipe setup.</li>
             <li><strong>Output ZIP Base Name</strong> is used as the default filename suggestion when you download the generated custom instrument.</li>
             <li><strong>Chanter Acoustic Model</strong> selects the synthesis model used for the melody notes.</li>
             <li><strong>Drone Acoustic Model</strong> selects the synthesis model used for the drone stack.</li>
@@ -3618,6 +3679,7 @@
       persistControls({ currentPreset: 'highland' });
     }
 
+    updatePresetSelectTooltip(activePresetKey);
     updateSliderLabels();
     updatePreviewVolumeRealtime();
     updateSummary(parseCurrentConfig(), []);
