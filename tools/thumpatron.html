@@ -67,7 +67,7 @@
       padding: 24px;
       box-shadow: 0 18px 50px var(--shadow);
       backdrop-filter: blur(8px);
-      position:relative;
+      position: relative;
     }
 
     h1 {
@@ -77,9 +77,7 @@
       font-weight: normal;
       text-align: center;
       margin: 0 0 4px 0;
-
       color: #d4ffe8;
-
       text-shadow:
         0 0 4px rgba(34,197,94,0.55),
         0 0 12px rgba(34,197,94,0.45),
@@ -108,8 +106,8 @@
       display: flex;
       align-items: center;
       gap: 12px;
-      flex: 2;              /* give it MORE space than everything else */
-      min-width: 500px;     /* ensures it doesn't collapse */
+      flex: 2;
+      min-width: 500px;
     }
 
     .volume-wrap label {
@@ -118,15 +116,15 @@
     }
 
     .volume-wrap input[type="range"] {
-      flex: 1;              /* critical */
+      flex: 1;
       width: 100%;
-      min-width: 300px;     /* makes it noticeably longer */
+      min-width: 300px;
     }
 
     .volume-value {
-      min-width: 48px;       /* smaller */
-      margin-left: 6px;      /* tight to slider */
-      text-align: left;      /* feels closer */
+      min-width: 48px;
+      margin-left: 6px;
+      text-align: left;
       color: var(--green-200);
       font-weight: 700;
     }
@@ -143,7 +141,7 @@
       box-shadow: 0 10px 24px rgba(0,0,0,0.22);
       transition: transform 0.14s ease, box-shadow 0.14s ease, filter 0.14s ease;
       margin-left: 20px;
-      flex: 0 0 auto;       /* don't let it grow */
+      flex: 0 0 auto;
     }
 
     .stop-btn:hover {
@@ -161,7 +159,7 @@
       min-height: 1.2em;
       flex: 1 1 240px;
       text-align: right;
-      margin-left: auto;    /* key line */
+      margin-left: auto;
       white-space: nowrap;
     }
 
@@ -290,7 +288,6 @@
       text-align: center;
     }
 
-    /* Base link style */
     a {
       color: var(--green-300);
       text-decoration: none;
@@ -298,24 +295,20 @@
       transition: color 0.15s ease, text-shadow 0.15s ease;
     }
 
-    /* Hover */
     a:hover {
       color: var(--gold);
       text-shadow: 0 0 6px rgba(255, 224, 130, 0.6);
     }
 
-    /* Active (clicking) */
     a:active {
       color: #fff3b0;
       text-shadow: 0 0 4px rgba(255, 224, 130, 0.8);
     }
 
-    /* Visited */
     a:visited {
-      color: #9bd8b2; /* slightly muted green */
+      color: #9bd8b2;
     }
 
-    /* Focus (keyboard accessibility) */
     a:focus-visible {
       outline: 2px solid var(--gold);
       outline-offset: 2px;
@@ -387,21 +380,17 @@
 
     .help-btn {
       position: absolute;
-      top: 18px;              /* aligns with wrap padding */
-      right: 18px;            /* aligns with right column edge */
-      
+      top: 18px;
+      right: 18px;
       font-size: 20px;
       font-weight: 700;
-      padding: 6px 10px;      /* reduced padding */
-      
+      padding: 6px 10px;
       border-radius: 10px;
       background: linear-gradient(180deg, rgba(255,255,255,0.12), rgba(255,255,255,0.06));
       border: 1px solid rgba(255,255,255,0.18);
       color: white;
-
-      width: 44px;            /* square-ish button */
+      width: 44px;
       height: 44px;
-      
       display: flex;
       align-items: center;
       justify-content: center;
@@ -509,7 +498,6 @@
   </script>
 
   <script type="text/javascript" src="daypilot-modal.min-3.10.1.js?v=1"></script>
-
 </head>
 
 <body>
@@ -560,10 +548,15 @@
           { tempo: 70, file: 'E4.mp3', trimMs: 0 },
           { tempo: 75, file: 'F4.mp3', trimMs: 0 },
           { tempo: 80, file: 'Gb4.mp3', trimMs: 0 },
+          { tempo: 85, file: null, trimMs: 0 },
           { tempo: 90, file: 'G4.mp3', trimMs: 0 },
+          { tempo: 95, file: null, trimMs: 0 },
           { tempo: 100, file: 'Ab4.mp3', trimMs: 0 },
+          { tempo: 105, file: null, trimMs: 0 },
           { tempo: 110, file: 'A4.mp3', trimMs: 0 },
-          { tempo: 120, file: 'Bb4.mp3', trimMs: 0 }
+          { tempo: 115, file: null, trimMs: 0 },
+          { tempo: 120, file: 'Bb4.mp3', trimMs: 0 },
+          { tempo: 125, file: null, trimMs: 0 },
         ],
         Jig: [
           { tempo: 50, file: 'C5.mp3', trimMs: 0 },
@@ -573,20 +566,33 @@
           { tempo: 70, file: 'E5.mp3', trimMs: 0 },
           { tempo: 75, file: 'F5.mp3', trimMs: 0 },
           { tempo: 80, file: 'Gb5.mp3', trimMs: 0 },
+          { tempo: 85, file: null, trimMs: 0 },
           { tempo: 90, file: 'G5.mp3', trimMs: 0 },
+          { tempo: 95, file: null, trimMs: 0 },
           { tempo: 100, file: 'Ab5.mp3', trimMs: 0 },
+          { tempo: 105, file: null, trimMs: 0 },
           { tempo: 110, file: 'A5.mp3', trimMs: 0 },
-          { tempo: 120, file: 'Bb5.mp3', trimMs: 0 }
+          { tempo: 115, file: null, trimMs: 0 },
+          { tempo: 120, file: 'Bb5.mp3', trimMs: 0 },
+          { tempo: 125, file: null, trimMs: 0 },
         ],
         Polka: [
           { tempo: 70, file: 'C3.mp3', trimMs: 0 },
+          { tempo: 75, file: null, trimMs: 0 },
           { tempo: 80, file: 'Db3.mp3', trimMs: 0 },
+          { tempo: 85, file: null, trimMs: 0 },
           { tempo: 90, file: 'D3.mp3', trimMs: 0 },
+          { tempo: 95, file: null, trimMs: 0 },
           { tempo: 100, file: 'Eb3.mp3', trimMs: 0 },
+          { tempo: 105, file: null, trimMs: 0 },
           { tempo: 110, file: 'E3.mp3', trimMs: 0 },
+          { tempo: 115, file: null, trimMs: 0 },
           { tempo: 120, file: 'F3.mp3', trimMs: 0 },
+          { tempo: 125, file: null, trimMs: 0 },
           { tempo: 130, file: 'Gb3.mp3', trimMs: 0 },
-          { tempo: 140, file: 'G3.mp3', trimMs: 0 }
+          { tempo: 135, file: null, trimMs: 0 },
+          { tempo: 140, file: 'G3.mp3', trimMs: 0 },
+          { tempo: 145, file: null, trimMs: 0 }
         ]
       };
 
@@ -622,8 +628,6 @@
         }
 
         const totalBeats = duration / beatDuration;
-
-        // Largest multiple of 8 beats
         const groupsOf8 = Math.floor(totalBeats / 8);
         const beatCount = groupsOf8 * 8;
 
@@ -633,18 +637,15 @@
 
         let loopEnd = beatCount * beatDuration;
 
-        // Apply trim (milliseconds → seconds)
         const trimSeconds = (track.trimMs || 0) / 1000;
         loopEnd = Math.max(0, loopEnd - trimSeconds);
 
-        // Start at beat 8
         let loopStart = 8 * beatDuration;
 
-        // Safety: don't exceed loopEnd
         if (loopStart >= loopEnd) {
           loopStart = 0;
         }
- 
+
         loopEnd = Math.min(loopEnd, duration);
 
         return { loopStart, loopEnd };
@@ -680,13 +681,13 @@
         return ctx;
       }
 
-      async function fetchAndDecodeBuffer(file) {
-        if (state.bufferCache.has(file)) {
-          return state.bufferCache.get(file);
+      async function fetchAndDecodeBuffer(cacheKey, file) {
+        if (state.bufferCache.has(cacheKey)) {
+          return state.bufferCache.get(cacheKey);
         }
 
-        if (state.loadingMap.has(file)) {
-          return state.loadingMap.get(file);
+        if (state.loadingMap.has(cacheKey)) {
+          return state.loadingMap.get(cacheKey);
         }
 
         const promise = (async () => {
@@ -697,16 +698,122 @@
           }
           const arrayBuffer = await response.arrayBuffer();
           const audioBuffer = await ctx.decodeAudioData(arrayBuffer.slice(0));
-          state.bufferCache.set(file, audioBuffer);
+          state.bufferCache.set(cacheKey, audioBuffer);
           return audioBuffer;
         })();
 
-        state.loadingMap.set(file, promise);
+        state.loadingMap.set(cacheKey, promise);
 
         try {
           return await promise;
         } finally {
-          state.loadingMap.delete(file);
+          state.loadingMap.delete(cacheKey);
+        }
+      }
+
+      function getAvailableSourceEntries(style) {
+        return (TRACKS[style] || []).filter(function (entry) {
+          return typeof entry.file === 'string' && entry.file.length > 0;
+        });
+      }
+
+      function chooseBestSourceEntry(style, targetTempo) {
+        const availableEntries = getAvailableSourceEntries(style);
+
+        if (!availableEntries.length) {
+          throw new Error('No source samples are available for ' + style + '.');
+        }
+
+        let bestEntry = availableEntries[0];
+        let bestTempoDistance = Math.abs(targetTempo - bestEntry.tempo);
+
+        for (let i = 1; i < availableEntries.length; i += 1) {
+          const entry = availableEntries[i];
+          const tempoDistance = Math.abs(targetTempo - entry.tempo);
+
+          if (
+            tempoDistance < bestTempoDistance ||
+            (
+              tempoDistance === bestTempoDistance &&
+              Math.abs((targetTempo / entry.tempo) - 1) < Math.abs((targetTempo / bestEntry.tempo) - 1)
+            ) ||
+            (
+              tempoDistance === bestTempoDistance &&
+              Math.abs((targetTempo / entry.tempo) - 1) === Math.abs((targetTempo / bestEntry.tempo) - 1) &&
+              entry.tempo < bestEntry.tempo
+            )
+          ) {
+            bestEntry = entry;
+            bestTempoDistance = tempoDistance;
+          }
+        }
+
+        return bestEntry;
+      }
+
+      async function renderResampledBuffer(sourceBuffer, playbackRate) {
+        if (!(sourceBuffer instanceof AudioBuffer)) {
+          throw new Error('Missing source audio buffer.');
+        }
+
+        if (!isFinite(playbackRate) || playbackRate <= 0) {
+          throw new Error('Invalid playback rate.');
+        }
+
+        const OfflineAudioContextClass = window.OfflineAudioContext || window.webkitOfflineAudioContext;
+        if (!OfflineAudioContextClass) {
+          throw new Error('Offline audio rendering is not supported in this browser.');
+        }
+
+        const sampleRate = sourceBuffer.sampleRate || 44100;
+        const renderedDuration = sourceBuffer.duration / playbackRate;
+        const frameCount = Math.max(1, Math.ceil(renderedDuration * sampleRate));
+
+        const offlineCtx = new OfflineAudioContextClass(
+          sourceBuffer.numberOfChannels,
+          frameCount,
+          sampleRate
+        );
+
+        const source = offlineCtx.createBufferSource();
+        source.buffer = sourceBuffer;
+        source.playbackRate.setValueAtTime(playbackRate, 0);
+        source.connect(offlineCtx.destination);
+        source.start(0);
+
+        return await offlineCtx.startRendering();
+      }
+
+      async function getTrackBuffer(track) {
+        if (track.file) {
+          return await fetchAndDecodeBuffer(track.file, track.file);
+        }
+
+        const derivedCacheKey = 'derived:' + track.style + ':' + track.tempo;
+
+        if (state.bufferCache.has(derivedCacheKey)) {
+          return state.bufferCache.get(derivedCacheKey);
+        }
+
+        if (state.loadingMap.has(derivedCacheKey)) {
+          return await state.loadingMap.get(derivedCacheKey);
+        }
+
+        const promise = (async () => {
+          const sourceEntry = chooseBestSourceEntry(track.style, track.tempo);
+          const sourceBuffer = await fetchAndDecodeBuffer(sourceEntry.file, sourceEntry.file);
+          const playbackRate = track.tempo / sourceEntry.tempo;
+          const renderedBuffer = await renderResampledBuffer(sourceBuffer, playbackRate);
+          state.bufferCache.set(derivedCacheKey, renderedBuffer);
+          return renderedBuffer;
+        })();
+
+        state.loadingMap.set(derivedCacheKey, promise);
+
+        try {
+          return await promise;
+        } finally {
+          state.loadingMap.delete(derivedCacheKey);
         }
       }
 
@@ -817,13 +924,7 @@
         button.classList.add('playing');
         button.setAttribute('aria-pressed', 'true');
 
-        setStatus(
-          'Playing ' +
-            track.style +
-            ' at ' +
-            track.tempo +
-            ' bpm'
-        );
+        setStatus('Playing ' + track.style + ' at ' + track.tempo + ' bpm');
       }
 
       async function handleTrackButtonClick(track, button) {
@@ -837,9 +938,14 @@
           }
 
           button.classList.add('loading');
-          setStatus('Loading ' + track.style + ' at ' + track.tempo + ' bpm...');
 
-          const audioBuffer = await fetchAndDecodeBuffer(track.file);
+          if (track.file) {
+            setStatus('Loading ' + track.style + ' at ' + track.tempo + ' bpm...');
+          } else {
+            setStatus('Loading ' + track.style + ' at ' + track.tempo + ' bpm...');
+          }
+
+          const audioBuffer = await getTrackBuffer(track);
 
           button.classList.remove('loading');
           startLoop(track, button, audioBuffer);
@@ -864,53 +970,59 @@
         }
       }
 
-    function buildTrackGrid() {
-      const fragment = document.createDocumentFragment();
+      function buildTrackGrid() {
+        const fragment = document.createDocumentFragment();
 
-      Object.entries(TRACKS).forEach(([style, entries]) => {
-        const card = document.createElement('section');
-        card.className = 'card';
+        Object.entries(TRACKS).forEach(([style, entries]) => {
+          const card = document.createElement('section');
+          card.className = 'card';
 
-        const title = document.createElement('h2');
-        title.textContent = style;
-        card.appendChild(title);
+          const title = document.createElement('h2');
+          title.textContent = style;
+          card.appendChild(title);
 
-        const buttonWrap = document.createElement('div');
-        buttonWrap.className = 'buttons';
+          const buttonWrap = document.createElement('div');
+          buttonWrap.className = 'buttons';
 
-        entries.forEach((entry) => {
-          const track = {
-            id: getTrackId(style, entry.tempo),
-            style,
-            tempo: entry.tempo,
-            file: entry.file,
-            trimMs: entry.trimMs || 0
-          };
+          entries.forEach((entry) => {
+            const track = {
+              id: getTrackId(style, entry.tempo),
+              style,
+              tempo: entry.tempo,
+              file: entry.file,
+              trimMs: entry.trimMs || 0
+            };
 
-          const button = document.createElement('button');
-          button.type = 'button';
-          button.className = 'track-btn';
-          button.setAttribute('aria-pressed', 'false');
-          button.title = style + ' ' + entry.tempo + ' bpm';
+            const button = document.createElement('button');
+            button.type = 'button';
+            button.className = 'track-btn';
+            button.setAttribute('aria-pressed', 'false');
 
-          const tempo = document.createElement('span');
-          tempo.className = 'tempo';
-          tempo.textContent = entry.tempo + ' bpm';
+            if (track.file) {
+              button.title = style + ' ' + entry.tempo + ' bpm';
+            } else {
+              const sourceEntry = chooseBestSourceEntry(style, entry.tempo);
+              button.title = style + ' ' + entry.tempo + ' bpm';
+            }
 
-          button.appendChild(tempo);
-          button.addEventListener('click', function () {
-            handleTrackButtonClick(track, button);
+            const tempo = document.createElement('span');
+            tempo.className = 'tempo';
+            tempo.textContent = entry.tempo + ' bpm';
+
+            button.appendChild(tempo);
+            button.addEventListener('click', function () {
+              handleTrackButtonClick(track, button);
+            });
+
+            buttonWrap.appendChild(button);
           });
 
-          buttonWrap.appendChild(button);
+          card.appendChild(buttonWrap);
+          fragment.appendChild(card);
         });
 
-        card.appendChild(buttonWrap);
-        fragment.appendChild(card);
-      });
-
-      els.grid.appendChild(fragment);
-    }
+        els.grid.appendChild(fragment);
+      }
 
       async function showInstructionsModal() {
         const html = `
@@ -930,12 +1042,13 @@
                 <li>Only one backing track plays at a time.</li>
                 <li>Clicking a different tempo button stops the currently playing track and starts the newly selected one.</li>
                 <li>Clicking the currently playing button stops playback.</li>
+                <li>Some tempos are generated from nearby recordings and may take a moment to load the first time.</li>
               </ul>
 
               <h4>2) Adjust the volume</h4>
               <ul>
                 <li>Use the <strong>Volume</strong> slider at the top of the tool to control playback level.</li>
-               </ul>
+              </ul>
 
               <h4>3) Stop playback</h4>
               <ul>
@@ -945,7 +1058,7 @@
               <h4>4) Looping behavior</h4>
               <ul>
                 <li>The backing tracks are configured to loop continuously for practice.</li>
-               </ul>
+              </ul>
 
               <h4>5) Mobile and tablet use</h4>
               <ul>
@@ -957,8 +1070,7 @@
 
               <div style="text-align: center;margin-bottom:20px;">
                 <h4>Original Backing Tracks Source</h4>
-                The bodhrán backing tracks used in the tool are derived<br/>from a set originally created by <a style="color:#1a73e8; text-decoration:underline;" href="https://santigaitero.com" target="_blank" rel="noopener noreferrer">Santiago Molino</a>.<br/><br/>
-                Unfortunately, no additional rhythm styles or tempos are available at this time.
+                The bodhrán backing tracks used in the tool are derived<br/>from a set originally created by <a style="color:#1a73e8; text-decoration:underline;" href="https://santigaitero.com" target="_blank" rel="noopener noreferrer">Santiago Molino</a>.
               </div>
 
               <hr>
