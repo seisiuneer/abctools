@@ -420,6 +420,103 @@
       box-shadow: 0px 0px 10px rgba(0,255,0,0.18);
     }
 
+    .settings-btn {
+      position: absolute;
+      top: 18px;
+      left: 18px;
+      font-size: 24px;
+      font-weight: 700;
+      padding: 6px 10px;
+      border-radius: 10px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.12), rgba(255,255,255,0.06));
+      border: 1px solid rgba(255,255,255,0.18);
+      color: white;
+      width: 44px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .settings-btn:hover {
+      border-color: rgba(255,255,255,0.4);
+      box-shadow: 0px 0px 10px rgba(0,255,0,0.18);
+    }
+
+    .modal_compact_background {
+      position: fixed !important;
+      inset: 0 !important;
+      background: rgba(0,0,0,0.4) !important;
+    }
+
+    .modal_compact_main {
+      position: fixed !important;
+      left: 50% !important;
+      top: 100px !important;
+      transform: translateX(-50%) !important;
+      margin: 0 !important;
+      border: 1px solid #333;
+      box-shadow: 0 0 15px -2px rgba(0,0,0,0.75);
+      width: min(560px, calc(100vw - 80px)) !important;
+      max-width: min(560px, calc(100vw - 80px)) !important;
+      height: auto !important;
+      max-height: min(520px, calc(100dvh - 120px)) !important;
+      overflow: hidden !important;
+    }
+
+    .modal_compact_inner {
+      padding: 24px 36px 28px 36px;
+      background: #fff;
+      color: #000;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .modal_compact_content {
+      margin: 16px 0 10px 0;
+      overflow: auto !important;
+      -webkit-overflow-scrolling: touch;
+      flex: 1 1 auto;
+    }
+
+    .modal_compact_buttons {
+      text-align: center;
+      margin-top: 18px;
+    }
+
+    .modal_compact_buttons button {
+      margin: 0 8px;
+    }
+
+    .modal_compact_main button {
+      background: #e8f1ff;
+      color: #000;
+      border: 1px solid #9dbaf2;
+      padding: 10px 20px;
+      cursor: pointer;
+      outline: none;
+      width: 100px;
+      border-radius: 10px;
+      font-weight: 600;
+    }
+
+    .modal_compact_main .modal_default_promptdescription {
+      font-size: 20px !important;
+      line-height: 1.5 !important;
+    }
+
+    .modal_compact_main .modal_default_prompt,
+    .modal_compact_main input,
+    .modal_compact_main .modal_default_prompt input {
+      font-size: 18px !important;
+      padding: 8px 9px !important;
+      height: auto !important;
+      background-color: white !important;
+      border-radius: 10px;
+      color: black;
+    }
+
+
     .modal_instructions_background {
       position: fixed !important;
       inset: 0 !important;
@@ -517,11 +614,20 @@
   </script>
 
   <script type="text/javascript" src="daypilot-modal.min-3.10.1.js?v=1"></script>
+
 </head>
 
 <body>
   <div class="wrap">
     <div class="hero">
+      <button
+        id="settingsBtn"
+        class="settings-btn"
+        title="Open Tempos to Show settings."
+        aria-label="Open Tempos to Show settings."
+      >
+        ⚙
+      </button>
       <h1>The Thumpatron</h1>
       <div class="legend">
         Bodhrán backing tracks for tune practice
@@ -557,6 +663,9 @@
   <script>
     (function () {
       const BASE_URL = 'https://michaeleskin.com/abctools/soundfonts/bodhran_backing_1/';
+      const TEMPO_FILTER_STORAGE_KEY = 'thumpatronTempoFilter';
+      const TEMPO_FILTER_OPTIONS = ['slow', 'medium', 'fast', 'all'];
+
 
       const TRACKS = {
         Reel: [
@@ -635,7 +744,8 @@
         currentTrackId: null,
         currentSource: null,
         currentButton: null,
-        volume: 0.75
+        volume: 0.75,
+        tempoFilter: 'all'
       };
 
       const els = {
@@ -644,8 +754,69 @@
         volumeSlider: document.getElementById('volumeSlider'),
         volumeValue: document.getElementById('volumeValue'),
         stopAllBtn: document.getElementById('stopAllBtn'),
-        instructionsBtn: document.getElementById('instructionsBtn')
+        instructionsBtn: document.getElementById('instructionsBtn'),
+        settingsBtn: document.getElementById('settingsBtn')
       };
+
+
+      function getSafeLocalStorage() {
+        try {
+          return window.localStorage;
+        } catch (err) {
+          return null;
+        }
+      }
+
+      function loadTempoFilterPreference() {
+        const storage = getSafeLocalStorage();
+        if (!storage) {
+          return 'all';
+        }
+
+        try {
+          const saved = storage.getItem(TEMPO_FILTER_STORAGE_KEY);
+          return TEMPO_FILTER_OPTIONS.includes(saved) ? saved : 'all';
+        } catch (err) {
+          return 'all';
+        }
+      }
+
+      function saveTempoFilterPreference(filterMode) {
+        const storage = getSafeLocalStorage();
+        if (!storage) {
+          return;
+        }
+
+        try {
+          storage.setItem(TEMPO_FILTER_STORAGE_KEY, filterMode);
+        } catch (err) {
+          // Ignore storage write errors.
+        }
+      }
+
+      function getVisibleEntriesForStyle(entries, filterMode) {
+        if (!Array.isArray(entries) || !entries.length || filterMode === 'all') {
+          return entries;
+        }
+
+        const total = entries.length;
+        const visibleCount = Math.min(total, Math.max(1, Math.ceil((total * 2) / 3)));
+
+        if (filterMode === 'slow') {
+          return entries.slice(0, visibleCount);
+        }
+
+        if (filterMode === 'fast') {
+          return entries.slice(total - visibleCount);
+        }
+
+        if (filterMode === 'medium') {
+          const start = Math.max(0, Math.floor((total - visibleCount) / 2));
+          return entries.slice(start, start + visibleCount);
+        }
+
+        return entries;
+      }
 
       function getLoopEndTime(track, audioBuffer) {
         const duration = audioBuffer.duration;
@@ -1002,9 +1173,15 @@
       }
 
       function buildTrackGrid() {
+        els.grid.innerHTML = '';
         const fragment = document.createDocumentFragment();
 
         Object.entries(TRACKS).forEach(([style, entries]) => {
+          const visibleEntries = getVisibleEntriesForStyle(entries, state.tempoFilter);
+          if (!visibleEntries.length) {
+            return;
+          }
+
           const card = document.createElement('section');
           card.className = 'card';
 
@@ -1015,7 +1192,7 @@
           const buttonWrap = document.createElement('div');
           buttonWrap.className = 'buttons';
 
-          entries.forEach((entry) => {
+          visibleEntries.forEach((entry) => {
             const track = {
               id: getTrackId(style, entry.tempo),
               style,
@@ -1029,12 +1206,7 @@
             button.className = 'track-btn';
             button.setAttribute('aria-pressed', 'false');
 
-            if (track.file) {
-              button.title = style + ' ' + entry.tempo + ' bpm';
-            } else {
-              const sourceEntry = chooseBestSourceEntry(style, entry.tempo);
-              button.title = style + ' ' + entry.tempo + ' bpm';
-            }
+            button.title = style + ' ' + entry.tempo + ' bpm';
 
             const tempo = document.createElement('span');
             tempo.className = 'tempo';
@@ -1053,6 +1225,125 @@
         });
 
         els.grid.appendChild(fragment);
+      }
+
+      async function showSettingsModal() {
+        const currentValue = state.tempoFilter || 'all';
+
+        return await new Promise(function (resolve) {
+          const overlay = document.createElement('div');
+          overlay.className = 'modal_compact_background';
+
+          const modal = document.createElement('div');
+          modal.className = 'modal_compact_main';
+
+          const inner = document.createElement('div');
+          inner.className = 'modal_compact_inner';
+
+          const content = document.createElement('div');
+          content.className = 'modal_compact_content';
+
+          content.innerHTML = `
+            <div>
+              <h2 style="text-align:center;margin-top:0px;">Tempos to Show</h2>
+
+              <div style="margin-top:12px;">
+                <div style="font-weight:700;margin-bottom:10px;">Show:</div>
+
+                <label style="display:block;margin:0 0 12px 0;">
+                  <input type="radio" name="tempoFilterSetting" value="slow" ${currentValue === 'slow' ? 'checked' : ''}>
+                  Slow tempos
+                </label>
+
+                <label style="display:block;margin:0 0 12px 0;">
+                  <input type="radio" name="tempoFilterSetting" value="medium" ${currentValue === 'medium' ? 'checked' : ''}>
+                  Medium tempos
+                </label>
+
+                <label style="display:block;margin:0 0 12px 0;">
+                  <input type="radio" name="tempoFilterSetting" value="fast" ${currentValue === 'fast' ? 'checked' : ''}>
+                  Fast tempos
+                </label>
+
+                <label style="display:block;margin:0 0 12px 0;">
+                  <input type="radio" name="tempoFilterSetting" value="all" ${currentValue === 'all' ? 'checked' : ''}>
+                  All tempos
+                </label>
+              </div>
+            </div>
+          `;
+
+          const buttons = document.createElement('div');
+          buttons.className = 'modal_compact_buttons';
+
+          const okButton = document.createElement('button');
+          okButton.type = 'button';
+          okButton.textContent = 'OK';
+
+          buttons.appendChild(okButton);
+          inner.appendChild(content);
+          inner.appendChild(buttons);
+          modal.appendChild(inner);
+          overlay.appendChild(modal);
+          document.body.appendChild(overlay);
+
+          function cleanup(value) {
+            document.removeEventListener('keydown', onKeyDown, true);
+            overlay.remove();
+            resolve(value);
+          }
+
+          function onKeyDown(event) {
+            if (event.key === 'Escape') {
+              event.preventDefault();
+              cleanup(null);
+            }
+          }
+
+          okButton.addEventListener('click', function () {
+            const selected = overlay.querySelector('input[name="tempoFilterSetting"]:checked');
+            const value = selected ? selected.value : currentValue;
+            cleanup(value);
+          });
+
+          overlay.addEventListener('click', function (event) {
+            if (event.target === overlay) {
+              cleanup(null);
+            }
+          });
+
+          document.addEventListener('keydown', onKeyDown, true);
+
+          const initiallyChecked = overlay.querySelector('input[name="tempoFilterSetting"]:checked');
+          if (initiallyChecked) {
+            initiallyChecked.focus();
+          } else {
+            okButton.focus();
+          }
+        });
+      }
+
+      async function openSettingsDialog() {
+        const wasPlaying = !!state.currentSource;
+        const previousStatus = wasPlaying ? 'Stopped.' : (els.status.textContent || 'Ready.');
+
+        stopCurrentPlayback();
+        setStatus('Choosing tempos to show.');
+
+        const selectedFilter = await showSettingsModal();
+
+        if (!selectedFilter) {
+          setStatus(previousStatus);
+          return;
+        }
+
+        if (selectedFilter !== state.tempoFilter) {
+          state.tempoFilter = selectedFilter;
+          saveTempoFilterPreference(selectedFilter);
+          buildTrackGrid();
+        }
+
+        setStatus('Showing ' + selectedFilter + ' tempos.');
       }
 
       async function showInstructionsModal() {
@@ -1079,22 +1370,29 @@
                 <li>Some tempos are generated from nearby recordings and may take a moment to load the first time.</li>
               </ul>
 
-              <h4>2) Adjust the volume</h4>
+              <h4>2) Tempo display settings</h4>
+              <ul>
+                <li>Click the <strong>settings button</strong> at the upper left to choose which tempo range is shown.</li>
+                <li>You can show <strong>Slow tempos</strong>, <strong>Medium tempos</strong>, <strong>Fast tempos</strong>, or <strong>All tempos</strong>.</li>
+                <li>Your selection is saved when local storage is available and restored the next time you open the tool.</li>
+              </ul>
+
+              <h4>3) Adjust the volume</h4>
               <ul>
                 <li>Use the <strong>Volume</strong> slider at the top of the tool to control playback level.</li>
               </ul>
 
-              <h4>3) Stop playback</h4>
+              <h4>4) Stop playback</h4>
               <ul>
                 <li>Click <strong>Stop All Play</strong> to stop any currently playing backing track.</li>
               </ul>
 
-              <h4>4) Looping behavior</h4>
+              <h4>5) Looping behavior</h4>
               <ul>
                 <li>The backing tracks are configured to loop continuously for practice.</li>
               </ul>
 
-              <h4>5) Mobile and tablet use</h4>
+              <h4>6) Mobile and tablet use</h4>
               <ul>
                 <li>On iOS devices, make sure the device is <strong>not muted</strong>. If sound is not heard, check that the <strong>mute switch</strong> on the device is off and that <strong>Silent Mode</strong> is also off in <strong>Control Center</strong>.</li>
                 <li>If playback does not start on mobile, tap a track button directly to allow the browser to activate audio.</li>
@@ -1173,6 +1471,10 @@
           els.instructionsBtn.addEventListener('click', showInstructionsModal);
         }
 
+        if (els.settingsBtn) {
+          els.settingsBtn.addEventListener('click', openSettingsDialog);
+        }
+
         document.addEventListener('visibilitychange', function () {
           if (document.hidden && state.audioCtx && state.audioCtx.state === 'running') {
             // Intentionally do nothing so playback continues.
@@ -1181,6 +1483,7 @@
       }
 
       function init() {
+        state.tempoFilter = loadTempoFilterPreference();
         buildTrackGrid();
         bindEvents();
         updateVolumeFromSlider();
