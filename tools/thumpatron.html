@@ -829,16 +829,26 @@
         }
 
         try {
-          const value = Number(storage.getItem(HUMANIZE_LEVEL_STORAGE_KEY));
+          const raw = storage.getItem(HUMANIZE_LEVEL_STORAGE_KEY);
+
+          // If nothing has been saved yet, use default
+          if (raw === null) {
+            return DEFAULT_HUMANIZE_LEVEL;
+          }
+
+          const value = Number(raw);
+
+          // Guard against invalid values
           if (!Number.isFinite(value)) {
             return DEFAULT_HUMANIZE_LEVEL;
           }
+
           return Math.max(0, Math.min(100, Math.round(value)));
         } catch (err) {
           return DEFAULT_HUMANIZE_LEVEL;
         }
       }
-
+      
       function saveHumanizePreferences(enabled, level) {
         const storage = getSafeLocalStorage();
         if (!storage) {
