@@ -677,7 +677,7 @@
       const DEFAULT_HUMANIZE_LEVEL = 30;
       const HUMANIZE_INTERVAL_MS = 140;
       const HUMANIZE_RAMP_TIME = 0.18;
-      const MAX_HUMANIZE_DEPTH = 0.03;
+      const MAX_HUMANIZE_DEPTH = 0.035;
 
       const TRACKS = {
         Reel: [
@@ -848,7 +848,7 @@
           return DEFAULT_HUMANIZE_LEVEL;
         }
       }
-      
+
       function saveHumanizePreferences(enabled, level) {
         const storage = getSafeLocalStorage();
         if (!storage) {
