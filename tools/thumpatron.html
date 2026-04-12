@@ -514,7 +514,7 @@
     }
 
     .modal_compact_main .modal_default_prompt,
-    .modal_compact_main input,
+    .modal_compact_main input:not([type="range"]):not([type="checkbox"]):not([type="radio"]),
     .modal_compact_main .modal_default_prompt input {
       font-size: 18px !important;
       padding: 8px 9px !important;
@@ -630,8 +630,8 @@
       <button
         id="settingsBtn"
         class="settings-btn"
-        title="Open Tempos to Show settings."
-        aria-label="Open Tempos to Show settings."
+        title="Open settings."
+        aria-label="Open settings."
       >
         ☰
       </button>
@@ -672,7 +672,12 @@
       const BASE_URL = 'https://michaeleskin.com/abctools/soundfonts/bodhran_backing_1/';
       const TEMPO_FILTER_STORAGE_KEY = 'thumpatronTempoFilter';
       const TEMPO_FILTER_OPTIONS = ['slow', 'medium', 'fast', 'all'];
-
+      const HUMANIZE_ENABLED_STORAGE_KEY = 'thumpatronHumanizeEnabled';
+      const HUMANIZE_LEVEL_STORAGE_KEY = 'thumpatronHumanizeLevel';
+      const DEFAULT_HUMANIZE_LEVEL = 30;
+      const HUMANIZE_INTERVAL_MS = 140;
+      const HUMANIZE_RAMP_TIME = 0.18;
+      const MAX_HUMANIZE_DEPTH = 0.03;
 
       const TRACKS = {
         Reel: [
@@ -751,8 +756,11 @@
         currentTrackId: null,
         currentSource: null,
         currentButton: null,
+        currentHumanizeTimer: null,
         volume: 0.75,
-        tempoFilter: 'all'
+        tempoFilter: 'all',
+        humanizeEnabled: false,
+        humanizeLevel: DEFAULT_HUMANIZE_LEVEL
       };
 
       const els = {
@@ -799,6 +807,104 @@
         } catch (err) {
           // Ignore storage write errors.
         }
+      }
+
+      function loadHumanizeEnabledPreference() {
+        const storage = getSafeLocalStorage();
+        if (!storage) {
+          return false;
+        }
+
+        try {
+          return storage.getItem(HUMANIZE_ENABLED_STORAGE_KEY) === 'true';
+        } catch (err) {
+          return false;
+        }
+      }
+
+      function loadHumanizeLevelPreference() {
+        const storage = getSafeLocalStorage();
+        if (!storage) {
+          return DEFAULT_HUMANIZE_LEVEL;
+        }
+
+        try {
+          const value = Number(storage.getItem(HUMANIZE_LEVEL_STORAGE_KEY));
+          if (!Number.isFinite(value)) {
+            return DEFAULT_HUMANIZE_LEVEL;
+          }
+          return Math.max(0, Math.min(100, Math.round(value)));
+        } catch (err) {
+          return DEFAULT_HUMANIZE_LEVEL;
+        }
+      }
+
+      function saveHumanizePreferences(enabled, level) {
+        const storage = getSafeLocalStorage();
+        if (!storage) {
+          return;
+        }
+
+        try {
+          storage.setItem(HUMANIZE_ENABLED_STORAGE_KEY, enabled ? 'true' : 'false');
+          storage.setItem(HUMANIZE_LEVEL_STORAGE_KEY, String(Math.max(0, Math.min(100, Math.round(level)))));
+        } catch (err) {
+          // Ignore storage write errors.
+        }
+      }
+
+      function clampNumber(value, min, max) {
+        return Math.max(min, Math.min(max, value));
+      }
+
+      function getHumanizeDepth(level) {
+        return (clampNumber(level, 0, 100) / 100) * MAX_HUMANIZE_DEPTH;
+      }
+
+      function stopHumanizeModulation() {
+        if (state.currentHumanizeTimer) {
+          window.clearInterval(state.currentHumanizeTimer);
+          state.currentHumanizeTimer = null;
+        }
+      }
+
+      function startHumanizeModulation(source) {
+        stopHumanizeModulation();
+
+        if (!source || !state.humanizeEnabled) {
+          return;
+        }
+
+        const ctx = ensureAudioContext();
+        const depth = getHumanizeDepth(state.humanizeLevel);
+
+        if (!depth) {
+          return;
+        }
+
+        let drift = 0;
+        source.playbackRate.cancelScheduledValues(ctx.currentTime);
+        source.playbackRate.setValueAtTime(1, ctx.currentTime);
+
+        state.currentHumanizeTimer = window.setInterval(function () {
+          if (state.currentSource !== source) {
+            stopHumanizeModulation();
+            return;
+          }
+
+          const now = ctx.currentTime;
+          drift = (drift * 0.72) + ((Math.random() * 2 - 1) * depth * 0.45);
+
+          const targetRate = clampNumber(
+            1 + drift + ((Math.random() * 2 - 1) * depth * 0.55),
+            1 - depth,
+            1 + depth
+          );
+
+          source.playbackRate.cancelScheduledValues(now);
+          source.playbackRate.setValueAtTime(source.playbackRate.value, now);
+          source.playbackRate.linearRampToValueAtTime(targetRate, now + HUMANIZE_RAMP_TIME);
+        }, HUMANIZE_INTERVAL_MS);
       }
 
       function getVisibleEntriesForStyle(entries, filterMode) {
@@ -1027,6 +1133,8 @@
       }
 
       function stopCurrentPlayback() {
+        stopHumanizeModulation();
+
         if (state.currentSource) {
           const source = state.currentSource;
           const sourceGain = source._sourceGain || null;
@@ -1133,6 +1241,8 @@
         button.classList.add('playing');
         button.setAttribute('aria-pressed', 'true');
 
+        startHumanizeModulation(source);
+
         setStatus('Playing ' + track.style + ' at ' + track.tempo + ' bpm');
       }
 
@@ -1236,6 +1346,8 @@
 
       async function showSettingsModal() {
         const currentValue = state.tempoFilter || 'all';
+        const currentHumanizeEnabled = state.humanizeEnabled === true;
+        const currentHumanizeLevel = Math.max(0, Math.min(100, Math.round(state.humanizeLevel || 0)));
 
         return await new Promise(function (resolve) {
           const overlay = document.createElement('div');
@@ -1252,7 +1364,7 @@
 
           content.innerHTML = `
             <div>
-              <h2 style="text-align:center;margin-top:0px;">Tempos to Show</h2>
+              <h2 style="text-align:center;margin-top:0px;">Settings</h2>
 
               <div style="margin-top:12px;">
                 <div style="font-weight:700;margin-bottom:10px;">Show:</div>
@@ -1272,10 +1384,29 @@
                   Fast tempos
                 </label>
 
-                <label style="display:block;margin:0 0 12px 0;">
+                <label style="display:block;margin:0 0 18px 0;">
                   <input type="radio" name="tempoFilterSetting" value="all" ${currentValue === 'all' ? 'checked' : ''}>
                   All tempos
                 </label>
+              </div>
+
+              <hr style="margin:14px 0 16px 0;"/>
+
+              <div>
+                <label style="display:flex;align-items:center;gap:10px;font-weight:700;margin:0 0 14px 0;">
+                  <input id="humanizeEnabled" type="checkbox" ${currentHumanizeEnabled ? 'checked' : ''}>
+                  Humanize
+                </label>
+
+                <div style="display:flex;align-items:center;gap:12px;">
+                  <label for="humanizeLevel" style="font-weight:700;white-space:nowrap;">Level</label>
+                  <input id="humanizeLevel" type="range" min="0" max="100" step="1" value="${currentHumanizeLevel}" style="flex:1;" />
+                  <div id="humanizeLevelValue" style="min-width:48px;text-align:left;font-weight:700;">${currentHumanizeLevel}%</div>
+                </div>
+
+                <div style="margin-top:10px;font-size:14px;line-height:1.4;color:#333;">
+                  Adds tiny continuously changing speed variations for a less mechanical feel.
+                </div>
               </div>
             </div>
           `;
@@ -1294,6 +1425,17 @@
           overlay.appendChild(modal);
           document.body.appendChild(overlay);
 
+          const humanizeEnabledEl = overlay.querySelector('#humanizeEnabled');
+          const humanizeLevelEl = overlay.querySelector('#humanizeLevel');
+          const humanizeLevelValueEl = overlay.querySelector('#humanizeLevelValue');
+
+          function updateHumanizeControls() {
+            const level = Math.max(0, Math.min(100, Number(humanizeLevelEl.value) || 0));
+            humanizeLevelValueEl.textContent = level + '%';
+            humanizeLevelEl.disabled = !humanizeEnabledEl.checked;
+            humanizeLevelValueEl.style.opacity = humanizeEnabledEl.checked ? '1' : '0.55';
+          }
+
           function cleanup(value) {
             document.removeEventListener('keydown', onKeyDown, true);
             overlay.remove();
@@ -1307,10 +1449,21 @@
             }
           }
 
+          humanizeEnabledEl.addEventListener('change', updateHumanizeControls);
+          humanizeLevelEl.addEventListener('input', updateHumanizeControls);
+          updateHumanizeControls();
+
           okButton.addEventListener('click', function () {
             const selected = overlay.querySelector('input[name="tempoFilterSetting"]:checked');
-            const value = selected ? selected.value : currentValue;
-            cleanup(value);
+            const tempoFilter = selected ? selected.value : currentValue;
+            const humanizeEnabled = !!humanizeEnabledEl.checked;
+            const humanizeLevel = Math.max(0, Math.min(100, Number(humanizeLevelEl.value) || 0));
+
+            cleanup({
+              tempoFilter,
+              humanizeEnabled,
+              humanizeLevel
+            });
           });
 
           overlay.addEventListener('click', function (event) {
@@ -1335,22 +1488,41 @@
         const previousStatus = wasPlaying ? 'Stopped.' : (els.status.textContent || 'Ready.');
 
         stopCurrentPlayback();
-        setStatus('Choosing tempos to show.');
+        setStatus('Opening settings.');
 
-        const selectedFilter = await showSettingsModal();
+        const selectedSettings = await showSettingsModal();
 
-        if (!selectedFilter) {
+        if (!selectedSettings) {
           setStatus(previousStatus);
           return;
         }
 
-        if (selectedFilter !== state.tempoFilter) {
-          state.tempoFilter = selectedFilter;
-          saveTempoFilterPreference(selectedFilter);
+        const newTempoFilter = selectedSettings.tempoFilter;
+        const newHumanizeEnabled = selectedSettings.humanizeEnabled === true;
+        const newHumanizeLevel = Math.max(0, Math.min(100, Math.round(selectedSettings.humanizeLevel || 0)));
+
+        let didChangeSettings = false;
+
+        if (newTempoFilter !== state.tempoFilter) {
+          state.tempoFilter = newTempoFilter;
+          saveTempoFilterPreference(newTempoFilter);
+          didChangeSettings = true;
+        }
+
+        if (newHumanizeEnabled !== state.humanizeEnabled || newHumanizeLevel !== state.humanizeLevel) {
+          state.humanizeEnabled = newHumanizeEnabled;
+          state.humanizeLevel = newHumanizeLevel;
+          saveHumanizePreferences(newHumanizeEnabled, newHumanizeLevel);
+          didChangeSettings = true;
+        }
+
+        if (didChangeSettings) {
           buildTrackGrid();
         }
 
-        setStatus('Showing ' + selectedFilter + ' tempos.');
+        setStatus(
+          'Ready.'
+        );
       }
 
       async function showInstructionsModal() {
@@ -1377,11 +1549,13 @@
                 <li>Some tempos are generated from nearby recordings and may take a moment to load the first time.</li>
               </ul>
 
-              <h4>2) Tempo display settings</h4>
+              <h4>2) Settings</h4>
               <ul>
-                <li>Click the settings button (<strong>☰</strong>) at the upper left to choose which tempo range is shown.</li>
-                <li>You can show <strong>Slow tempos</strong>, <strong>Medium tempos</strong>, <strong>Fast tempos</strong>, or <strong>All tempos</strong>.</li>
-                <li>Your selection is saved and restored the next time you open the tool.</li>
+                <li>Click the settings button (<strong>☰</strong>) at the upper left to open the settings dialog.</li>
+                <li>You can choose <strong>Slow tempos</strong>, <strong>Medium tempos</strong>, <strong>Fast tempos</strong>, or <strong>All tempos</strong> to control which tempo buttons are displayed.</li>
+                <li>The <strong>Humanize</strong> option adds tiny constantly changing speed variations for a less mechanical feel.</li>
+                <li>Use the <strong>Humanize Level</strong> slider to control how strong the effect is. Higher values create more noticeable speed drift.</li>
+                <li>Your tempo display and humanize settings are saved and restored the next time you open the tool.</li>
               </ul>
 
               <h4>3) Adjust the volume</h4>
@@ -1491,6 +1665,8 @@
 
       function init() {
         state.tempoFilter = loadTempoFilterPreference();
+        state.humanizeEnabled = loadHumanizeEnabledPreference();
+        state.humanizeLevel = loadHumanizeLevelPreference();
         buildTrackGrid();
         bindEvents();
         updateVolumeFromSlider();
