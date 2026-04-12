@@ -391,9 +391,8 @@
         line-height: 1.2rem;
       }
       .legend{
-        margin-top:12px;
         font-size: 0.8rem;
-        line-height: 1;
+        line-height: 1.5;
       }
     }
 
@@ -424,18 +423,26 @@
       position: absolute;
       top: 18px;
       left: 18px;
-      font-size: 24px;
+
+      font-size: 20px;          
+      line-height: 1;
       font-weight: 700;
-      padding: 6px 10px;
+
+      padding: 0;
       border-radius: 10px;
+
       background: linear-gradient(180deg, rgba(255,255,255,0.12), rgba(255,255,255,0.06));
       border: 1px solid rgba(255,255,255,0.18);
       color: white;
+
       width: 44px;
       height: 44px;
+
       display: flex;
       align-items: center;
       justify-content: center;
+
+      -webkit-text-size-adjust: 100%;
     }
 
     .settings-btn:hover {
@@ -515,7 +522,6 @@
       border-radius: 10px;
       color: black;
     }
-
 
     .modal_instructions_background {
       position: fixed !important;
@@ -626,7 +632,7 @@
         title="Open Tempos to Show settings."
         aria-label="Open Tempos to Show settings."
       >
-        ⚙
+        ☰
       </button>
       <h1>The Thumpatron</h1>
       <div class="legend">
