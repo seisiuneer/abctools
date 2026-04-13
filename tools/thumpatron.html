@@ -447,13 +447,7 @@
       top: 18px;
       left: 18px;
 
-      font-family: system-ui, -apple-system, sans-serif;
-      font-size: 27px;          
-      line-height: 1;
-      font-weight: 400;
-
       padding: 0;
-      padding-bottom: 1px;
       border-radius: 10px;
 
       background: linear-gradient(180deg, rgba(255,255,255,0.12), rgba(255,255,255,0.06));
@@ -466,13 +460,21 @@
       display: flex;
       align-items: center;
       justify-content: center;
-
-      -webkit-text-size-adjust: 100%;
     }
 
     .settings-btn:hover {
       border-color: rgba(255,255,255,0.4);
       box-shadow: 0px 0px 10px rgba(0,255,0,0.18);
+    }
+
+    .settings-icon {
+      width: 47%;
+      height: 47%;
+      max-width: 24px;
+      max-height: 24px;
+      fill: currentColor;
+      display: block;
+      transform: translateY(0.5px);
     }
 
     .count-in-pills {
@@ -702,13 +704,15 @@
 <body>
   <div class="wrap">
     <div class="hero">
-      <button
+       <button
         id="settingsBtn"
         class="settings-btn"
         title="Open settings."
         aria-label="Open settings."
       >
-        ⚙︎
+        <svg class="settings-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M19.14,12.94a7.49,7.49,0,0,0,.05-.94,7.49,7.49,0,0,0-.05-.94l2.11-1.65a.5.5,0,0,0,.12-.63l-2-3.46a.5.5,0,0,0-.6-.22l-2.49,1a7.28,7.28,0,0,0-1.63-.94l-.38-2.65A.5.5,0,0,0,13.77,2H10.23a.5.5,0,0,0-.49.42L9.36,5.07a7.28,7.28,0,0,0-1.63.94l-2.49-1a.5.5,0,0,0-.6.22l-2,3.46a.5.5,0,0,0,.12.63L4.86,11.06a7.49,7.49,0,0,0-.05.94,7.49,7.49,0,0,0,.05.94L2.75,14.59a.5.5,0,0,0-.12.63l2,3.46a.5.5,0,0,0,.6.22l2.49-1a7.28,7.28,0,0,0,1.63.94l.38,2.65a.5.5,0,0,0,.49.42h3.54a.5.5,0,0,0,.49-.42l.38-2.65a7.28,7.28,0,0,0,1.63-.94l2.49,1a.5.5,0,0,0,.6-.22l2-3.46a.5.5,0,0,0-.12-.63ZM12,15.5A3.5,3.5,0,1,1,15.5,12,3.5,3.5,0,0,1,12,15.5Z"/>
+        </svg>
       </button>
       <h1>The Thumpatron</h1>
       <div class="legend">
