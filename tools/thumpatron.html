@@ -674,7 +674,9 @@
       const TEMPO_FILTER_OPTIONS = ['slow', 'medium', 'fast', 'all'];
       const HUMANIZE_ENABLED_STORAGE_KEY = 'thumpatronHumanizeEnabled';
       const HUMANIZE_LEVEL_STORAGE_KEY = 'thumpatronHumanizeLevel';
+      const VOLUME_STORAGE_KEY = 'thumpatronVolume';
       const DEFAULT_HUMANIZE_LEVEL = 30;
+      const DEFAULT_VOLUME_LEVEL = 0.75;
       const HUMANIZE_INTERVAL_MS = 140;
       const HUMANIZE_RAMP_TIME = 0.18;
       const MAX_HUMANIZE_DEPTH = 0.035;
@@ -757,7 +759,7 @@
         currentSource: null,
         currentButton: null,
         currentHumanizeTimer: null,
-        volume: 0.75,
+        volume: DEFAULT_VOLUME_LEVEL,
         tempoFilter: 'all',
         humanizeEnabled: false,
         humanizeLevel: DEFAULT_HUMANIZE_LEVEL
@@ -782,6 +784,43 @@
         }
       }
 
+      function loadVolumePreference() {
+        const storage = getSafeLocalStorage();
+        if (!storage) {
+          return DEFAULT_VOLUME_LEVEL;
+        }
+
+        try {
+          const raw = storage.getItem(VOLUME_STORAGE_KEY);
+
+          if (raw === null) {
+            return DEFAULT_VOLUME_LEVEL;
+          }
+
+          const value = Number(raw);
+
+          if (!Number.isFinite(value)) {
+            return DEFAULT_VOLUME_LEVEL;
+          }
+
+          return Math.max(0, Math.min(1, value));
+        } catch (err) {
+          return DEFAULT_VOLUME_LEVEL;
+        }
+      }
+
+      function saveVolumePreference(volume) {
+        const storage = getSafeLocalStorage();
+        if (!storage) {
+          return;
+        }
+
+        try {
+          storage.setItem(VOLUME_STORAGE_KEY, String(Math.max(0, Math.min(1, volume))));
+        } catch (err) {
+          // Ignore storage write errors.
+        }
+      }
       function loadTempoFilterPreference() {
         const storage = getSafeLocalStorage();
         if (!storage) {
@@ -1291,6 +1330,8 @@
         state.volume = gainValue;
         els.volumeValue.textContent = sliderValue + '%';
 
+        saveVolumePreference(gainValue);
+
         if (state.gainNode) {
           const ctx = ensureAudioContext();
           state.gainNode.gain.cancelScheduledValues(ctx.currentTime);
@@ -1675,6 +1716,10 @@
         state.tempoFilter = loadTempoFilterPreference();
         state.humanizeEnabled = loadHumanizeEnabledPreference();
         state.humanizeLevel = loadHumanizeLevelPreference();
+        state.volume = loadVolumePreference();
+
+        els.volumeSlider.value = String(Math.round(state.volume * 100));
+
         buildTrackGrid();
         bindEvents();
         updateVolumeFromSlider();
