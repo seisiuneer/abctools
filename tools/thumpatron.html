@@ -1360,7 +1360,7 @@
         const ctx = ensureAudioContext();
         const beatDuration = 60 / track.tempo;
         const startTime = ctx.currentTime + 0.05;
-        const countInGain = 1.0;
+        const countInGain = 1.5;
         const beats = countInBeats === 8 ? 8 : 4;
         const trackStartTime = startTime + (beats * beatDuration);
 
