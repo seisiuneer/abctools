@@ -293,6 +293,28 @@
       line-height: 1.5;
     }
 
+    .status .count-in-wrap {
+      display: inline-block;
+      white-space: nowrap;
+    }
+
+    .status .count-in-num {
+      display: inline-block;
+      min-width: 0.9em;
+      text-align: center;
+      color: var(--green-200);
+      transition: color 0.08s ease, text-shadow 0.08s ease, transform 0.08s ease;
+    }
+
+    .status .count-in-num.active {
+      color: var(--gold);
+      text-shadow:
+        0 0 4px rgba(255, 224, 130, 0.9),
+        0 0 10px rgba(255, 224, 130, 0.7),
+        0 0 18px rgba(255, 224, 130, 0.45);
+      transform: scale(1.08);
+    }
+
     a {
       color: var(--green-300);
       text-decoration: none;
@@ -451,6 +473,57 @@
       box-shadow: 0px 0px 10px rgba(0,255,0,0.18);
     }
 
+    .count-in-pills {
+      display: flex;
+      width: 100%;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid #9dbaf2;
+      background: #e8f1ff;
+      margin: 0 0 14px 0;
+    }
+
+    .count-in-pills input[type="radio"] {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .count-in-pills label {
+      flex: 1 1 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 0;
+      cursor: pointer;
+      font-weight: 700;
+      color: #000;
+      user-select: none;
+      text-align: center;
+      transition: background 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .count-in-pills label + input + label {
+      border-left: 1px solid #9dbaf2;
+    }
+
+    .count-in-pills input[type="radio"]:checked + label {
+      background: linear-gradient(180deg, #4cc777, #1f8a47);
+      color: #fff;
+      box-shadow: inset 0 0 10px rgba(34,197,94,0.35);
+    }
+
+    .count-in-pills label:hover {
+      background: rgba(76,199,119,0.2);
+    }
+
+    @media (max-width: 600px) {
+      .count-in-pills label {
+        padding: 8px 0;
+        font-size: 14px;
+      }
+    }
+
     .modal_compact_background {
       position: fixed !important;
       inset: 0 !important;
@@ -460,20 +533,20 @@
     .modal_compact_main {
       position: fixed !important;
       left: 50% !important;
-      top: 100px !important;
+      top: 37px !important;
       transform: translateX(-50%) !important;
       margin: 0 !important;
       border: 1px solid #333;
       box-shadow: 0 0 15px -2px rgba(0,0,0,0.75);
-      width: min(560px, calc(100vw - 80px)) !important;
-      max-width: min(560px, calc(100vw - 80px)) !important;
+      width: min(560px, calc(100vw - 60px)) !important;
+      max-width: min(560px, calc(100vw - 60px)) !important;
       height: auto !important;
-      max-height: min(520px, calc(100dvh - 120px)) !important;
+      max-height: min(750px, calc(100dvh - 60px)) !important;
       overflow: hidden !important;
     }
 
     .modal_compact_inner {
-      padding: 24px 36px 28px 36px;
+      padding: 18px 36px 28px 36px;
       background: #fff;
       color: #000;
       display: flex;
@@ -541,12 +614,12 @@
       width: min(800px, calc(100vw - 60px)) !important;
       max-width: min(800px, calc(100vw - 60px)) !important;
       height: auto !important;
-      max-height: 75dvh !important;
+      max-height: 80dvh !important;
       overflow: hidden !important;
     }
 
     .modal_instructions_inner {
-      padding: 28px 28px 32px 28px;
+      padding: 8px 28px 32px 28px;
       background: #fff;
       color: #000;
       display: flex;
@@ -674,12 +747,15 @@
       const TEMPO_FILTER_OPTIONS = ['slow', 'medium', 'fast', 'all'];
       const HUMANIZE_ENABLED_STORAGE_KEY = 'thumpatronHumanizeEnabled';
       const HUMANIZE_LEVEL_STORAGE_KEY = 'thumpatronHumanizeLevel';
+      const COUNT_IN_BEATS_STORAGE_KEY = 'thumpatronCountInBeats';
+      const COUNT_IN_STOPPED_ONLY_STORAGE_KEY = 'thumpatronCountInStoppedOnly';
       const VOLUME_STORAGE_KEY = 'thumpatronVolume';
       const DEFAULT_HUMANIZE_LEVEL = 30;
       const DEFAULT_VOLUME_LEVEL = 0.75;
       const HUMANIZE_INTERVAL_MS = 140;
       const HUMANIZE_RAMP_TIME = 0.18;
       const MAX_HUMANIZE_DEPTH = 0.035;
+      const COUNT_IN_CLICK_FILE = 'Gb6.mp3';
 
       const TRACKS = {
         Reel: [
@@ -759,10 +835,16 @@
         currentSource: null,
         currentButton: null,
         currentHumanizeTimer: null,
+        pendingTrackId: null,
+        pendingButton: null,
+        pendingCountInTimeout: null,
+        countInSources: [],
         volume: DEFAULT_VOLUME_LEVEL,
         tempoFilter: 'all',
         humanizeEnabled: false,
-        humanizeLevel: DEFAULT_HUMANIZE_LEVEL
+        humanizeLevel: DEFAULT_HUMANIZE_LEVEL,
+        countInBeats: 0,
+        countInStoppedOnly: false
       };
 
       const els = {
@@ -902,6 +984,54 @@
         }
       }
 
+      function loadCountInBeatsPreference() {
+        const storage = getSafeLocalStorage();
+        if (!storage) {
+          return 0;
+        }
+
+        try {
+          const raw = storage.getItem(COUNT_IN_BEATS_STORAGE_KEY);
+          const value = Number(raw);
+
+          if (value === 4 || value === 8) {
+            return value;
+          }
+
+          return 0;
+        } catch (err) {
+          return 0;
+        }
+      }
+
+      function loadCountInStoppedOnlyPreference() {
+        const storage = getSafeLocalStorage();
+        if (!storage) {
+          return false;
+        }
+
+        try {
+          return storage.getItem(COUNT_IN_STOPPED_ONLY_STORAGE_KEY) === 'true';
+        } catch (err) {
+          return false;
+        }
+      }
+
+      function saveCountInPreferences(countInBeats, stoppedOnly) {
+        const storage = getSafeLocalStorage();
+        if (!storage) {
+          return;
+        }
+
+        try {
+          const safeBeats = countInBeats === 4 || countInBeats === 8 ? countInBeats : 0;
+          storage.setItem(COUNT_IN_BEATS_STORAGE_KEY, String(safeBeats));
+          storage.setItem(COUNT_IN_STOPPED_ONLY_STORAGE_KEY, stoppedOnly ? 'true' : 'false');
+        } catch (err) {
+          // Ignore storage write errors.
+        }
+      }
+
       function clampNumber(value, min, max) {
         return Math.max(min, Math.min(max, value));
       }
@@ -1015,8 +1145,12 @@
         return { loopStart, loopEnd };
       }
 
-      function setStatus(message) {
-        els.status.textContent = message;
+      function setStatus(message, allowHtml=false) {
+        if (allowHtml) {
+          els.status.innerHTML = message;
+        } else {
+          els.status.textContent = message;
+        }
       }
 
       function getTrackId(style, tempo) {
@@ -1181,8 +1315,164 @@
         }
       }
 
+      function stopPendingCountIn() {
+        if (state.pendingCountInTimeout) {
+          window.clearTimeout(state.pendingCountInTimeout);
+          state.pendingCountInTimeout = null;
+        }
+
+        if (state.countInSources && state.countInSources.length) {
+          state.countInSources.forEach(function (source) {
+            if (!source) {
+              return;
+            }
+
+            try {
+              source.stop();
+            } catch (err) {
+              // Ignore stop errors from already-ended sources.
+            }
+
+            try {
+              source.disconnect();
+            } catch (err) {
+              // Ignore disconnect errors.
+            }
+          });
+        }
+
+        state.countInSources = [];
+        state.pendingTrackId = null;
+
+        if (state.pendingButton) {
+          state.pendingButton.classList.remove('loading');
+          state.pendingButton = null;
+        }
+      }
+
+      async function getCountInClickBuffer() {
+        return await fetchAndDecodeBuffer(COUNT_IN_CLICK_FILE, COUNT_IN_CLICK_FILE);
+      }
+
+      function scheduleCountInAndStart(track, button, audioBuffer, countInBuffer, countInBeats) {
+        stopCurrentPlayback();
+
+        const ctx = ensureAudioContext();
+        const beatDuration = 60 / track.tempo;
+        const startTime = ctx.currentTime + 0.05;
+        const countInGain = 1.0;
+        const beats = countInBeats === 8 ? 8 : 4;
+        const trackStartTime = startTime + (beats * beatDuration);
+
+        const source = ctx.createBufferSource();
+        const sourceGain = ctx.createGain();
+        const loopPoints = getLoopEndTime(track, audioBuffer);
+
+        source.buffer = audioBuffer;
+        source.loop = true;
+        source.loopStart = loopPoints.loopStart;
+        source.loopEnd = loopPoints.loopEnd;
+
+        sourceGain.gain.setValueAtTime(1, ctx.currentTime);
+        source.connect(sourceGain);
+        sourceGain.connect(state.gainNode);
+        source._sourceGain = sourceGain;
+
+        state.pendingTrackId = track.id;
+        state.pendingButton = button;
+        state.countInSources = [];
+        state.currentSource = source;
+        state.currentTrackId = track.id;
+        state.currentButton = button;
+
+        button.classList.add('playing');
+        button.classList.add('loading');
+        button.setAttribute('aria-pressed', 'true');
+
+        for (let i = 0; i < beats; i += 1) {
+          const clickSource = ctx.createBufferSource();
+          const clickGain = ctx.createGain();
+
+          clickSource.buffer = countInBuffer;
+          clickGain.gain.setValueAtTime(countInGain, ctx.currentTime);
+
+          clickSource.connect(clickGain);
+          clickGain.connect(state.gainNode);
+
+          clickSource.onended = function () {
+            try {
+              clickSource.disconnect();
+            } catch (err) {
+              // Ignore disconnect errors.
+            }
+
+            try {
+              clickGain.disconnect();
+            } catch (err) {
+              // Ignore disconnect errors.
+            }
+          };
+
+          clickSource.start(startTime + (i * beatDuration));
+          state.countInSources.push(clickSource);
+        }
+
+        source.start(trackStartTime, loopPoints.loopStart);
+
+        function renderCountInStatus(activeIndex) {
+          const parts = [];
+
+          for (let i = 0; i < beats; i += 1) {
+            const activeClass = i === activeIndex ? ' active' : '';
+            parts.push('<span class="count-in-num' + activeClass + '">' + String(i + 1) + '</span>');
+          }
+
+          setStatus('<span class="count-in-wrap">Count-in: ' + parts.join(' ') + '</span>', true);
+        }
+
+        renderCountInStatus(0);
+
+        for (let i = 1; i < beats; i += 1) {
+          const beatTimer = window.setTimeout(function () {
+            if (state.pendingTrackId !== track.id || state.currentSource !== source) {
+              return;
+            }
+            renderCountInStatus(i);
+          }, Math.max(0, Math.round((i * beatDuration * 1000) + 10)));
+
+          state.countInSources.push({
+            stop: function () {
+              window.clearTimeout(beatTimer);
+            },
+            disconnect: function () {
+              // No-op for timer cleanup compatibility.
+            }
+          });
+        }
+
+        state.pendingCountInTimeout = window.setTimeout(function () {
+          state.pendingCountInTimeout = null;
+
+          if (state.pendingTrackId !== track.id || state.currentSource !== source) {
+            return;
+          }
+
+          state.pendingTrackId = null;
+          state.countInSources = [];
+
+          if (state.pendingButton) {
+            state.pendingButton.classList.remove('loading');
+            state.pendingButton = null;
+          }
+
+          startHumanizeModulation(source);
+          setStatus('Playing ' + track.style + ' at ' + track.tempo + ' bpm');
+        }, Math.ceil(((beats * beatDuration) + 0.12) * 1000));
+      }
+
       function stopCurrentPlayback() {
         stopHumanizeModulation();
+        stopPendingCountIn();
 
         if (state.currentSource) {
           const source = state.currentSource;
@@ -1299,26 +1589,43 @@
         try {
           await resumeAudioContext();
 
-          if (state.currentTrackId === track.id) {
+          if (state.currentTrackId === track.id || state.pendingTrackId === track.id) {
             stopCurrentPlayback();
             setStatus('Stopped.');
             return;
           }
 
+          const wasAlreadyPlaying = !!state.currentSource || !!state.pendingTrackId;
+          const countInBeats = state.countInBeats === 4 || state.countInBeats === 8 ? state.countInBeats : 0;
+          const shouldPlayCountIn = countInBeats > 0 && (!state.countInStoppedOnly || !wasAlreadyPlaying);
+
           button.classList.add('loading');
+          setStatus('Loading ' + track.style + ' at ' + track.tempo + ' bpm...');
 
-          if (track.file) {
-            setStatus('Loading ' + track.style + ' at ' + track.tempo + ' bpm...');
-          } else {
-            setStatus('Loading ' + track.style + ' at ' + track.tempo + ' bpm...');
+          const audioBufferPromise = getTrackBuffer(track);
+          const countInBufferPromise = shouldPlayCountIn ? getCountInClickBuffer() : Promise.resolve(null);
+          const results = await Promise.all([audioBufferPromise, countInBufferPromise]);
+          const audioBuffer = results[0];
+          const countInBuffer = results[1];
+
+          if (shouldPlayCountIn && countInBuffer) {
+            scheduleCountInAndStart(track, button, audioBuffer, countInBuffer, countInBeats);
+            return;
           }
-
-          const audioBuffer = await getTrackBuffer(track);
 
           button.classList.remove('loading');
           startLoop(track, button, audioBuffer);
         } catch (error) {
           button.classList.remove('loading');
+
+          if (state.pendingButton === button) {
+            state.pendingButton = null;
+          }
+
+          if (state.pendingTrackId === track.id) {
+            state.pendingTrackId = null;
+          }
+
           setStatus(error && error.message ? error.message : 'Unable to play sample.');
           console.error(error);
         }
@@ -1399,6 +1706,8 @@
         const currentValue = state.tempoFilter || 'all';
         const currentHumanizeEnabled = state.humanizeEnabled === true;
         const currentHumanizeLevel = Math.max(0, Math.min(100, Math.round(state.humanizeLevel || 0)));
+        const currentCountInBeats = state.countInBeats === 4 || state.countInBeats === 8 ? state.countInBeats : 0;
+        const currentCountInStoppedOnly = state.countInStoppedOnly === true;
 
         return await new Promise(function (resolve) {
           const overlay = document.createElement('div');
@@ -1459,6 +1768,32 @@
                   Adds tiny continuously changing speed variations for a less mechanical feel.
                 </div>
               </div>
+
+              <hr style="margin:14px 0 16px 0;"/>
+
+              <div>
+                <div style="font-weight:700;margin:0 0 12px 0;">Count-in clicks before starting:</div>
+
+                <div class="count-in-pills">
+                  <input type="radio" id="countIn0" name="countInBeatsSetting" value="0" ${currentCountInBeats === 0 ? 'checked' : ''}>
+                  <label for="countIn0">0</label>
+
+                  <input type="radio" id="countIn4" name="countInBeatsSetting" value="4" ${currentCountInBeats === 4 ? 'checked' : ''}>
+                  <label for="countIn4">4</label>
+
+                  <input type="radio" id="countIn8" name="countInBeatsSetting" value="8" ${currentCountInBeats === 8 ? 'checked' : ''}>
+                  <label for="countIn8">8</label>
+                </div>
+
+                <label style="display:flex;align-items:center;gap:10px;font-weight:700;margin:8px 0 10px 0;">
+                  <input id="countInStoppedOnly" type="checkbox" ${currentCountInStoppedOnly ? 'checked' : ''}>
+                  Only count-in from stopped state
+                </label>
+
+                <div style="margin-top:10px;font-size:14px;line-height:1.4;color:#333;">
+                  Choose 0, 4, or 8 count-in clicks before the backing track starts.<br/>The second option limits the count-in to only from a fully stopped state.
+                </div>
+              </div>
             </div>
           `;
 
@@ -1479,6 +1814,7 @@
           const humanizeEnabledEl = overlay.querySelector('#humanizeEnabled');
           const humanizeLevelEl = overlay.querySelector('#humanizeLevel');
           const humanizeLevelValueEl = overlay.querySelector('#humanizeLevelValue');
+          const countInStoppedOnlyEl = overlay.querySelector('#countInStoppedOnly');
 
           function updateHumanizeControls() {
             const level = Math.max(0, Math.min(100, Number(humanizeLevelEl.value) || 0));
@@ -1505,15 +1841,22 @@
           updateHumanizeControls();
 
           okButton.addEventListener('click', function () {
-            const selected = overlay.querySelector('input[name="tempoFilterSetting"]:checked');
-            const tempoFilter = selected ? selected.value : currentValue;
+            const selectedTempoFilter = overlay.querySelector('input[name="tempoFilterSetting"]:checked');
+            const selectedCountInBeats = overlay.querySelector('input[name="countInBeatsSetting"]:checked');
+
+            const tempoFilter = selectedTempoFilter ? selectedTempoFilter.value : currentValue;
             const humanizeEnabled = !!humanizeEnabledEl.checked;
             const humanizeLevel = Math.max(0, Math.min(100, Number(humanizeLevelEl.value) || 0));
+            const countInBeatsRaw = selectedCountInBeats ? Number(selectedCountInBeats.value) : 0;
+            const countInBeats = countInBeatsRaw === 4 || countInBeatsRaw === 8 ? countInBeatsRaw : 0;
+            const countInStoppedOnly = !!countInStoppedOnlyEl.checked;
 
             cleanup({
               tempoFilter,
               humanizeEnabled,
-              humanizeLevel
+              humanizeLevel,
+              countInBeats,
+              countInStoppedOnly
             });
           });
 
@@ -1551,6 +1894,10 @@
         const newTempoFilter = selectedSettings.tempoFilter;
         const newHumanizeEnabled = selectedSettings.humanizeEnabled === true;
         const newHumanizeLevel = Math.max(0, Math.min(100, Math.round(selectedSettings.humanizeLevel || 0)));
+        const newCountInBeats = selectedSettings.countInBeats === 4 || selectedSettings.countInBeats === 8
+          ? selectedSettings.countInBeats
+          : 0;
+        const newCountInStoppedOnly = selectedSettings.countInStoppedOnly === true;
 
         let didChangeSettings = false;
 
@@ -1564,6 +1911,13 @@
           state.humanizeEnabled = newHumanizeEnabled;
           state.humanizeLevel = newHumanizeLevel;
           saveHumanizePreferences(newHumanizeEnabled, newHumanizeLevel);
+          didChangeSettings = true;
+        }
+
+        if (newCountInBeats !== state.countInBeats || newCountInStoppedOnly !== state.countInStoppedOnly) {
+          state.countInBeats = newCountInBeats;
+          state.countInStoppedOnly = newCountInStoppedOnly;
+          saveCountInPreferences(newCountInBeats, newCountInStoppedOnly);
           didChangeSettings = true;
         }
 
@@ -1606,12 +1960,15 @@
                 <li>You can choose <strong>Slow tempos</strong>, <strong>Medium tempos</strong>, <strong>Fast tempos</strong>, or <strong>All tempos</strong> to control which tempo buttons are displayed.</li>
                 <li>The <strong>Humanize</strong> option adds tiny constantly changing speed variations for a less mechanical feel.</li>
                 <li>Use the <strong>Humanize Level</strong> slider to control how strong the effect is. Higher values create more noticeable speed drift.</li>
-                <li>Your tempo display and humanize settings are saved and restored the next time you open the tool.</li>
+                <li>The <strong>Count-in clicks before starting:</strong> options play 0, 4, or 8 clicks before the track starts.</li>
+                <li><strong>Only count-in from stopped state</strong> limits the count-in so it is skipped when switching directly from one playing track to another.</li>
+                <li>Your tempo display, humanize, count-in, and volume settings are saved and restored the next time you open the tool.</li>
               </ul>
 
               <h4>3) Adjust the volume</h4>
               <ul>
                 <li>Use the <strong>Volume</strong> slider at the top of the tool to control playback level.</li>
+                <li>Your volume setting is remembered the next time you open the tool.</li>
               </ul>
 
               <h4>4) Stop playback</h4>
@@ -1716,6 +2073,8 @@
         state.tempoFilter = loadTempoFilterPreference();
         state.humanizeEnabled = loadHumanizeEnabledPreference();
         state.humanizeLevel = loadHumanizeLevelPreference();
+        state.countInBeats = loadCountInBeatsPreference();
+        state.countInStoppedOnly = loadCountInStoppedOnlyPreference();
         state.volume = loadVolumePreference();
 
         els.volumeSlider.value = String(Math.round(state.volume * 100));
