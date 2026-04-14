@@ -286,7 +286,7 @@
       color: var(--green-200);
       font-size: 0.9rem;
       text-align: center;
-      margin-bottom:3px;
+      margin-bottom: 3px;
     }
 
     .instructions-title{
@@ -379,7 +379,7 @@
       .volume-wrap {
         flex: 1 1 100%;
         min-width: 0;
-        margin-top:10px;
+        margin-top: 10px;
       }
 
       .volume-wrap input[type="range"] {
@@ -404,12 +404,11 @@
       .grid {
         grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
       }
-
     }
 
     @media (max-width: 640px) {
       h1 {
-        margin-top:1px;
+        margin-top: 1px;
         font-size: 1.5rem;
         line-height: 1.2rem;
       }
@@ -446,17 +445,13 @@
       position: absolute;
       top: 18px;
       left: 18px;
-
       padding: 0;
       border-radius: 10px;
-
       background: linear-gradient(180deg, rgba(255,255,255,0.12), rgba(255,255,255,0.06));
       border: 1px solid rgba(255,255,255,0.18);
       color: white;
-
       width: 44px;
       height: 44px;
-
       display: flex;
       align-items: center;
       justify-content: center;
@@ -545,28 +540,36 @@
       width: min(560px, calc(100vw - 60px)) !important;
       max-width: min(560px, calc(100vw - 60px)) !important;
       height: auto !important;
-      max-height: min(750px, calc(100dvh - 60px)) !important;
+      max-height: calc(100dvh - 60px) !important;
       overflow: hidden !important;
-    }
-
-    .modal_compact_inner {
-      padding: 18px 36px 28px 36px;
-      background: #fff;
-      color: #000;
       display: flex;
       flex-direction: column;
     }
 
+    .modal_compact_inner {
+      padding: 18px 36px 20px 36px;
+      background: #fff;
+      color: #000;
+      display: flex;
+      flex-direction: column;
+      flex: 1 1 auto;
+      min-height: 0;
+      max-height: calc(100dvh - 60px);
+    }
+
     .modal_compact_content {
       margin: 16px 0 10px 0;
-      overflow: auto !important;
+      overflow-y: auto !important;
+      overflow-x: hidden !important;
       -webkit-overflow-scrolling: touch;
       flex: 1 1 auto;
+      min-height: 0;
     }
 
     .modal_compact_buttons {
       text-align: center;
       margin-top: 18px;
+      flex: 0 0 auto;
     }
 
     .modal_compact_buttons button {
@@ -599,6 +602,22 @@
       background-color: white !important;
       border-radius: 10px;
       color: black;
+    }
+
+    @media (max-height: 700px) {
+      .modal_compact_main {
+        top: 12px !important;
+        max-height: calc(100dvh - 24px) !important;
+      }
+
+      .modal_compact_inner {
+        padding: 14px 18px 16px 18px;
+        max-height: calc(100dvh - 24px);
+      }
+
+      .modal_compact_buttons {
+        margin-top: 12px;
+      }
     }
 
     .modal_instructions_background {
