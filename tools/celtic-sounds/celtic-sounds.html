@@ -6084,6 +6084,15 @@
       setTimeout(updateFullscreenLayoutMode, 50);
     }
 
+    function redirectIfMidiWeb() {
+      try {
+        const ua = (navigator.userAgent || "").toLowerCase();
+        if (ua.includes("midiweb")) {
+          window.location.replace("https://michaeleskin.com/celtic-sounds/celtic-sounds-midiweb.html");
+        }
+      } catch (e) {}
+    }
+
     async function promptForSettingsFilename(defaultValue) {
       if (window.DayPilot && DayPilot.Modal && DayPilot.Modal.prompt) {
         const result = await DayPilot.Modal.prompt(
@@ -6170,6 +6179,8 @@
     window.addEventListener("resize", updateFullscreenLayoutMode);
 
     document.addEventListener("DOMContentLoaded", async () => {
+
+      redirectIfMidiWeb();
 
       await bootstrap();
 
