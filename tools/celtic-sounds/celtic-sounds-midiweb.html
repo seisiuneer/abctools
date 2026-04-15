@@ -3323,55 +3323,52 @@
       }
     }
 
-    async function showFirefoxWarningIfNeeded() {
-      if (!isFirefoxBrowser()) return false;
-      if (hasShownFirefoxWarning()) return false;
-      if (!window.DayPilot || !DayPilot.Modal || !DayPilot.Modal.alert) return false;
+    function checkForMIDIWebBrowser() {
+      const ua = navigator.userAgent || "";
+      const isMIDIWebBrowser = ua.includes("MIDIWeb");
+
+      if (isMIDIWebBrowser) {
+        return true;
+      }
+
+      const btn = $("btnConnectMidi");
+      if (btn) {
+        btn.disabled = true;
+        btn.title = "This version is only for the MIDIWeb browser iOS app.";
+        btn.style.opacity = "0.6";
+        btn.style.cursor = "not-allowed";
+      }
 
       const message =
         "<div style='text-align:left;font-family:helvetica,arial,sans-serif;font-size:13pt;line-height:1.45;padding:0 18px;'>" +
 
           "<div style='text-align:center;font-size:1.2em;font-weight:700;margin:0 0 12px 0;'>" +
-            "Firefox is Not Officially Supported" +
+            "Unsupported Browser" +
           "</div>" +
 
-          "<div style='margin:0 0 10px 0;'>" +
-            "You appear to be using <b>Firefox</b>." +
-          "</div>" +
-
-          "<div style='margin:0 0 10px 0;'>" +
-            "<b>Celtic Sounds</b> may work in Firefox, but it is <b>not officially supported</b>." +
-          "</div>" +
-
-          "<div style='margin:0 0 10px 0;'>" +
-            "WebMIDI behavior in Firefox can be inconsistent, and some features may not work as expected." +
-          "</div>" +
-
-          "<div style='margin:0 0 10px 0;'>" +
-            "If you continue in Firefox, some behavior may be unreliable." +
-          "</div>" +
-
-          "<div style='margin:0 0 10px 0;'>" +
-            "For the best experience, use <b>Chrome</b>, <b>Edge</b>, or another Chromium-based browser with WebMIDI support." +
-          "</div>" +
-
-          "<div style='margin:0;'>" +
-            "You will only be shown this warning this one time." +
+          "<div style='margin:0 0 10px 0;text-align:center;'>" +
+            "This version is only for the MIDIWeb browser iOS app." +
           "</div>" +
 
         "</div>";
 
-      markFirefoxWarningShown();
+      setTimeout(() => {
+        if (window.DayPilot && DayPilot.Modal && DayPilot.Modal.alert) {
+          DayPilot.Modal.alert(message, {
+            theme: "modal_compact",
+            top: 100,
+            width: 600,
+            autoFocus: false,
+            scrollWithPage: true
+          });
+        } else {
+          alert(
+            "This version is only for the MIDIWeb browser iOS app."
+          );
+        }
+      }, 100);
 
-      await DayPilot.Modal.alert(message, {
-        theme: "modal_compact",
-        top: 100,
-        width: 620,
-        autoFocus: false,
-        scrollWithPage: true
-      });
-
-      return true;
+      return false;
     }
 
     function checkForWebMIDIBrowser() {
@@ -6346,15 +6343,25 @@
     async function bootstrap() {
       checkLocalStorageAvailable();
 
-      await showFirefoxWarningIfNeeded();
       loadSettingsFromLocalStorage();
 
       const wantsCustomInstrumentOnStartup = state.selectedInstrumentKey === CUSTOM_INSTRUMENT_KEY;
-      const isWebMIDIBrowser = checkForWebMIDIBrowser();
 
-      webMidiAvailable = isWebMIDIBrowser
-        ? false
-        : checkWebMidiAvailabilityAtStartup();
+      const isWebMIDIBrowser = checkForWebMIDIBrowser();
+      const isMIDIWebBrowser = checkForMIDIWebBrowser();
+
+      if (isWebMIDIBrowser){
+        webMidiAvailable = false;
+      }
+      else{
+        if (!isMIDIWebBrowser){
+          webMidiAvailable = false;
+        }
+      }
+
+      if (webMidiAvailable){
+        checkWebMidiAvailabilityAtStartup();
+      }
 
       populateInstrumentSelect();
       populateMidiChannelSelect();
