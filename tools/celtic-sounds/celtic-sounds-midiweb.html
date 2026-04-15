@@ -726,6 +726,10 @@
     padding:6px 12px;
     font-size:0.85rem;
     border-radius:10px;
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none;
+    touch-action: manipulation;
   }
 
   .connect-midi {
@@ -5615,25 +5619,36 @@
         }
       });
 
-      $("btnResetDefaults").addEventListener("click", async (e) => {
+      const resetBtn = $("btnResetDefaults");
+      let resetLongPressTimer = null;
+      let resetLongPressTriggered = false;
+      const RESET_LONG_PRESS_MS = 700;
 
-        if (e.shiftKey) {
-          const confirmed = await showConfirmDialog(
-            "Reset all saved settings to factory defaults?\n\nThis will replace the saved local settings with default values as if the tool were being run for the first time.",
-            "Reset All Saved Settings to Defaults",
-            "Reset",
-            "Cancel"
-          );
-
-          if (!confirmed) {
-            return;
-          }
-
-          await resetAllSettingsToFirstRunDefaults();
-          return;
+      const clearResetLongPressTimer = () => {
+        if (resetLongPressTimer) {
+          clearTimeout(resetLongPressTimer);
+          resetLongPressTimer = null;
         }
+      };
 
-        const instrumentLabel =
+      const runResetAllDefaults = async () => {
+        const confirmed = await showConfirmDialog(
+          "Reset all saved settings to factory defaults?\n\nThis will replace the saved local settings with default values as if the tool were being run for the first time.",
+          "Reset All Saved Settings to Defaults",
+          "Reset",
+          "Cancel"
+        );
+
+        if (!confirmed) return;
+
+        resetAllSettingsToFactoryDefaults();
+      };
+
+ 
+      const runResetCurrentInstrument = async () => {
+       
+       const instrumentLabel =
+
           APP_CONFIG.instruments[state.selectedInstrumentKey]?.label || "this instrument";
 
         const confirmed = await showConfirmDialog(
@@ -5643,11 +5658,50 @@
           "Cancel"
         );
 
-        if (!confirmed) {
+        if (!confirmed) return;
+
+        resetDefaults();
+
+      };
+
+      const beginResetLongPress = () => {
+        clearResetLongPressTimer();
+        resetLongPressTriggered = false;
+
+        resetLongPressTimer = setTimeout(async () => {
+          resetLongPressTimer = null;
+          resetLongPressTriggered = true;
+          await runResetAllDefaults();
+        }, RESET_LONG_PRESS_MS);
+      };
+
+      const cancelResetLongPress = () => {
+        clearResetLongPressTimer();
+      };
+
+      resetBtn.addEventListener("pointerdown", (e) => {
+        if (e.button !== undefined && e.button !== 0) return;
+        beginResetLongPress();
+      });
+
+      resetBtn.addEventListener("pointerup", cancelResetLongPress);
+      resetBtn.addEventListener("pointerleave", cancelResetLongPress);
+      resetBtn.addEventListener("pointercancel", cancelResetLongPress);
+
+      resetBtn.addEventListener("click", async (e) => {
+        // Keep shift-click as an optional desktop fallback.
+        if (e.shiftKey) {
+          await runResetAllDefaults();
           return;
         }
 
-        await resetDefaults();
+        // If the long press already fired, swallow the click.
+        if (resetLongPressTriggered) {
+          resetLongPressTriggered = false;
+          return;
+        }
+
+        await runResetCurrentInstrument();
       });
 
       $("btnExportSettings").addEventListener("click", async () => {
