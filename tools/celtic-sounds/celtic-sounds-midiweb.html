@@ -1041,7 +1041,7 @@
           <button
             id="btnResetDefaults"
             class="reset header-button header-reset"
-            title="Reset the currently selected instrument to its default settings. Shift-click to reset all saved settings to factory defaults."
+            title="Reset the currently selected instrument to its default settings. Long-press to reset all saved settings to factory defaults."
             type="button"
           >
             Reset Instrument to Defaults
@@ -1791,7 +1791,7 @@
             <div class="instructions-gap"></div>
 
             <b>Factory Reset behavior</b><br/>
-            A full factory reset (Shift-click <b>Reset Instrument to Defaults</b>) removes the saved custom instrument and returns the tool to its original state.
+            A full factory reset (Long-press <b>Reset Instrument to Defaults</b>) removes the saved custom instrument and returns the tool to its original state.
             <div class="instructions-gap"></div>
 
             <b>Export and Import</b><br/>
@@ -5611,10 +5611,9 @@
 
         if (!confirmed) return;
 
-        resetAllSettingsToFactoryDefaults();
+        resetAllSettingsToFirstRunDefaults();
       };
 
- 
       const runResetCurrentInstrument = async () => {
        
        const instrumentLabel =
