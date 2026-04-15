@@ -2332,6 +2332,8 @@
 
     let gLocalStorageAvailable = false;
     let webMidiAvailable = false;
+    let isWebMIDIBrowser = false;
+    let isMIDIWebBrowser = false;
 
     const state = {
       audioContext: null,
@@ -3414,9 +3416,9 @@
 
     function checkForMIDIWebBrowser() {
       const ua = navigator.userAgent || "";
-      const isMIDIWebBrowser = ua.includes("MIDIWeb");
+      const bIsMIDIWebBrowser = ua.includes("MIDIWeb");
 
-      if (isMIDIWebBrowser) {
+      if (bIsMIDIWebBrowser) {
         return true;
       }
 
@@ -3462,9 +3464,9 @@
 
     function checkForWebMIDIBrowser() {
       const ua = navigator.userAgent || "";
-      const isWebMIDIBrowser = ua.includes("WebMIDIBrowser");
+      const bIsWebMIDIBrowser = ua.includes("WebMIDIBrowser");
 
-      if (!isWebMIDIBrowser) {
+      if (!bIsWebMIDIBrowser) {
         return false;
       }
 
@@ -6567,8 +6569,8 @@
 
       const wantsCustomInstrumentOnStartup = state.selectedInstrumentKey === CUSTOM_INSTRUMENT_KEY;
 
-      const isWebMIDIBrowser = checkForWebMIDIBrowser();
-      const isMIDIWebBrowser = checkForMIDIWebBrowser();
+      isWebMIDIBrowser = checkForWebMIDIBrowser();
+      isMIDIWebBrowser = checkForMIDIWebBrowser();
 
       if (isWebMIDIBrowser){
         webMidiAvailable = false;
@@ -6621,9 +6623,13 @@
 
       await bootstrap();
 
-      showFirstTimeWelcome();
+      if (isMIDIWebBrowser){
 
-      incrementPageVisitCount();
+        showFirstTimeWelcome();
+
+        incrementPageVisitCount();
+
+      }
 
     });
   </script>
