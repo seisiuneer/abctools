@@ -5625,27 +5625,34 @@
             "Cancel"
           );
 
-          if (!confirmed) return;
+          if (!confirmed) {
+            return;
+          }
 
-          resetAllSettingsToFactoryDefaults();
+          await resetAllSettingsToFirstRunDefaults();
           return;
         }
 
+        const instrumentLabel =
+          APP_CONFIG.instruments[state.selectedInstrumentKey]?.label || "this instrument";
+
         const confirmed = await showConfirmDialog(
-          "Reset the current instrument to its default settings?",
-          "Reset Instrument",
+          "Reset all settings for " + instrumentLabel + " to their defaults?\n\nThis only affects the currently selected instrument.",
+          "Reset Instrument to Defaults",
           "Reset",
           "Cancel"
         );
 
-        if (!confirmed) return;
+        if (!confirmed) {
+          return;
+        }
 
-        resetCurrentInstrumentToDefaults();
+        await resetDefaults();
       });
 
       $("btnExportSettings").addEventListener("click", async () => {
         try {
-          await exportSettings();
+          await exportSettingsToFile();
         } catch (err) {
           console.error(err);
           showErrorDialog(err.message, "Export Settings Error");
@@ -5711,107 +5718,98 @@
         saveSettingsToLocalStorage();
       });
 
-      bindRange("masterVolume", "masterVolumeValue", (value) => value.toFixed(2), (value) => {
-        state.masterVolume = value;
+     bindRange("masterVolume", "masterVolumeValue", (v) => v.toFixed(2), (v) => {
+        state.masterVolume = v;
         applyMixerSettings();
         saveCurrentInstrumentSettingsToStateStore();
         saveSettingsToLocalStorage();
       });
 
-      bindRange("droneVolume", "droneVolumeValue", (value) => value.toFixed(2), (value) => {
-        state.droneVolume = value;
+      bindRange("droneVolume", "droneVolumeValue", (v) => v.toFixed(2), (v) => {
+        state.droneVolume = v;
         updateDroneVoiceGain();
         saveCurrentInstrumentSettingsToStateStore();
         saveSettingsToLocalStorage();
       });
 
-      bindRange("masterTuneCents", "masterTuneCentsValue", (value) => String(value), (value) => {
-        state.masterTuneCents = value;
+      bindRange("masterTuneCents", "masterTuneCentsValue", (v) => String(Math.round(v)), (v) => {
+        state.masterTuneCents = clamp(Math.round(v), -50, 50);
         applyTuningToAllVoices();
+        logLiveStatus();
         saveCurrentInstrumentSettingsToStateStore();
         saveSettingsToLocalStorage();
       });
 
-      bindRange("transposeSemis", "transposeSemisValue", (value) => String(value), (value) => {
-        state.transposeSemis = value;
-        applyTuningToAllVoices();
-        saveCurrentInstrumentSettingsToStateStore();
-        saveSettingsToLocalStorage();
-      });
-
-      bindRange("pitchBendRangeSemitones", "pitchBendRangeSemitonesValue", (value) => String(value), (value) => {
-        state.pitchBendRangeSemitones = value;
-        applyTuningToAllVoices();
-        saveSettingsToLocalStorage();
-      });
-
-      bindRange("pitchBendDownMultiplier", "pitchBendDownMultiplierValue", (value) => value.toFixed(2), (value) => {
-        state.pitchBendDownMultiplier = value;
-        applyTuningToAllVoices();
-        saveCurrentInstrumentSettingsToStateStore();
-        saveSettingsToLocalStorage();
-      });
-
-      bindRange("pitchBendUpMultiplier", "pitchBendUpMultiplierValue", (value) => value.toFixed(2), (value) => {
-        state.pitchBendUpMultiplier = value;
-        applyTuningToAllVoices();
-        saveCurrentInstrumentSettingsToStateStore();
-        saveSettingsToLocalStorage();
-      });
-
-      bindRange("brightness", "brightnessValue", (value) => formatBrightnessLabel(value), (value) => {
-        state.brightness = value;
+      bindRange("brightness", "brightnessValue", formatBrightnessLabel, (v) => {
+        state.brightness = clamp(v, -1, 1);
         applyBrightnessSettings();
+        logLiveStatus();
         saveCurrentInstrumentSettingsToStateStore();
         saveSettingsToLocalStorage();
       });
 
-      bindRange("attackMs", "attackMsValue", (value) => String(value), (value) => {
-        state.attackMs = value;
+      bindRange("attackMs", "attackMsValue", (v) => String(v), (v) => {
+        state.attackMs = v;
         saveCurrentInstrumentSettingsToStateStore();
         saveSettingsToLocalStorage();
       });
 
-      bindRange("releaseMs", "releaseMsValue", (value) => String(value), (value) => {
-        state.releaseMs = value;
+      bindRange("releaseMs", "releaseMsValue", (v) => String(v), (v) => {
+        state.releaseMs = v;
         saveCurrentInstrumentSettingsToStateStore();
         saveSettingsToLocalStorage();
       });
 
-      bindRange("reverbPreDelay", "reverbPreDelayValue", (value) => String(value), (value) => {
-        state.reverbPreDelayMs = value;
+      bindRange("pitchBendUpMultiplier", "pitchBendUpMultiplierValue", (v) => v.toFixed(2), (v) => {
+        state.pitchBendUpMultiplier = v;
+        applyPitchBendToActiveVoice();
+        logLiveStatus();
+        saveCurrentInstrumentSettingsToStateStore();
+        saveSettingsToLocalStorage();
+      });
+
+      bindRange("pitchBendDownMultiplier", "pitchBendDownMultiplierValue", (v) => v.toFixed(2), (v) => {
+        state.pitchBendDownMultiplier = v;
+        applyPitchBendToActiveVoice();
+        logLiveStatus();
+        saveCurrentInstrumentSettingsToStateStore();
+        saveSettingsToLocalStorage();
+      });
+
+      bindRange("reverbWet", "reverbWetValue", (v) => v.toFixed(2), (v) => {
+        state.reverbWet = v;
         applyMixerSettings();
         saveCurrentInstrumentSettingsToStateStore();
         saveSettingsToLocalStorage();
       });
 
-      bindRange("reverbDry", "reverbDryValue", (value) => value.toFixed(2), (value) => {
-        state.reverbDry = value;
+      bindRange("reverbDry", "reverbDryValue", (v) => v.toFixed(2), (v) => {
+        state.reverbDry = v;
         applyMixerSettings();
         saveCurrentInstrumentSettingsToStateStore();
         saveSettingsToLocalStorage();
       });
 
-      bindRange("reverbWet", "reverbWetValue", (value) => value.toFixed(2), (value) => {
-        state.reverbWet = value;
+      bindRange("reverbPreDelay", "reverbPreDelayValue", (v) => String(v), (v) => {
+        state.reverbPreDelayMs = v;
         applyMixerSettings();
         saveCurrentInstrumentSettingsToStateStore();
         saveSettingsToLocalStorage();
       });
 
-      $("btnResetMasterTune").addEventListener("click", () => {
-        state.masterTuneCents = 0;
-        syncUiFromState();
+      bindRange("transposeSemis", "transposeSemisValue", (v) => String(Math.round(v)), (v) => {
+        state.transposeSemis = clamp(Math.round(v), -12, 12);
         applyTuningToAllVoices();
+        logLiveStatus();
         saveCurrentInstrumentSettingsToStateStore();
         saveSettingsToLocalStorage();
       });
 
-      $("btnResetBrightness").addEventListener("click", () => {
-        state.brightness = 0;
-        syncUiFromState();
-        applyBrightnessSettings();
-        saveCurrentInstrumentSettingsToStateStore();
+      bindRange("pitchBendRangeSemitones", "pitchBendRangeSemitonesValue", (v) => String(Math.round(v)), (v) => {
+        state.pitchBendRangeSemitones = clamp(Math.round(v), 0, 12);
+        state.basePitchBendCents = state.pitchBendRangeSemitones * 100;
+        applyPitchBendToActiveVoice();
+        logLiveStatus();
         saveSettingsToLocalStorage();
       });
     }
