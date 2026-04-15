@@ -304,6 +304,7 @@
   button.connect {
     background: linear-gradient(135deg, #15803d, #16a34a);
     border-color: #22c55e;
+    color: #fff;
   }
 
   button.connect:hover {
@@ -315,6 +316,7 @@
   button.warn {
     background: linear-gradient(135deg, #991b1b, #dc2626);
     border-color: #ef4444;
+    color:#fff;
   }
 
   button.warn:hover {
@@ -360,6 +362,7 @@
     transform: translateY(0);
     filter: brightness(0.95);
   }
+
   .status {
     display: grid;
     gap: 8px;
@@ -612,20 +615,19 @@
     max-width:min(560px, calc(100vw - 80px)) !important;
 
     height:auto !important;
-    max-height:min(520px, 88dvh) !important;
+    max-height:min(700px, 88dvh) !important;
 
     overflow:hidden !important;
   }
 
   .modal_compact_inner{
-    padding:18px 18px 28px 18px;   /* more bottom breathing room */
+    padding:18px 18px 40px 18px;  /* ← increase bottom padding */
     background:#fff;
     color:#000;
 
     display:flex;
     flex-direction:column;
   }
-
   .modal_compact_content{
     margin:16px 0 10px 0;
 
@@ -1023,7 +1025,15 @@
 
     .btn-clear-log,
     button.clear-log {
-      font-size:.9rem !important;
+      font-size:.8rem !important;
+    }
+
+    .midi-log {
+      font-size: 0.65rem;
+    }
+
+    .status {
+      font-size: 0.8rem;
     }
   }
 
@@ -1253,6 +1263,7 @@
                   step="1"
                   value="0"
                   title="Transpose playback for the current instrument up or down in semitone steps."
+                  style="margin-top:15px;"
                 />
               </div>
 
@@ -1276,7 +1287,7 @@
                 />
               </div>
 
-              <div class="field">
+              <div class="field" style="margin-top:-11px;">
                 <div class="slider-label-row">
                   <label for="brightness">
                     Brightness <span id="brightnessValue">0.0</span>
@@ -1533,6 +1544,28 @@
       <div id="instructionsScroll" class="instructions-scroll">
         <div class="instructions-body">
 
+        <div class="instructions-subtitle">About This Web Version</div>
+        
+        <div class="instructions-subbody">
+          This is an <b>experimental web-based version</b> of <b>Celtic Sounds</b> designed to run in the iOS <b>MIDIWeb</b> browser app.
+          <div class="instructions-gap"></div>
+
+          It includes <b>advanced and evolving features</b> that are not always available in the dedicated iOS app, and behavior may vary depending on your iOS device.
+
+          <div class="instructions-gap"></div>
+
+          The dedicated iOS app offers a more <b>stable, streamlined, and predictable experience</b>, supports background play while other apps are running and has simpler setup and consistent performance.
+          <div class="instructions-gap"></div>
+
+          <div style="text-align:center; margin-top:6px; margin-bottom:6px;">
+            <a href="https://apps.apple.com/us/app/celtic-sounds-midi-module/id1403026032" target="_blank" rel="noopener noreferrer">
+              <b>Download the Celtic Sounds App</b>
+            </a>
+          </div>
+
+        </div>
+
+        <hr class="instructions-divider"/>
           <div class="instructions-subtitle">Getting Started</div>
           <div class="instructions-subbody">
             <ol class="instructions-steps">
@@ -2084,7 +2117,8 @@
             • Verify the correct MIDI device is selected.<br/>
             • Check that the correct input channel is selected.<br/>
             • Try clicking <b>All Notes Off</b> if a note gets stuck.<br/>
-            • Close <b>MIDIWeb</b> and relaunch the app.<br/>
+            • Press and hold <b>Reset Instrument to Defaults</b> and when the confirmation dialog appears, restore factory settings by clicking <b>Reset</b>.<br/>
+            • Close <b>MIDIWeb</b> and then relaunch the app.
           </div>
 
           <hr class="instructions-divider"/>
@@ -3798,6 +3832,12 @@
       applyTuningToAllVoices();
       logLiveStatus();
       saveSettingsToLocalStorage();
+
+      // First-time welcome dialog
+      localStorage.removeItem("celticSounds_web_first_run_v1");
+
+      // Tip jar counter (adjust key if needed)
+      localStorage.removeItem("celtic_sounds_visit_count");
     }
 
     function midiToName(midi) {
@@ -5515,438 +5555,50 @@
       input.addEventListener("input", () => apply(true));
       apply(false);
     }
+    
+    function showFirstTimeWelcome() {
+      const key = "celticSounds_web_first_run_v1";
 
-    function wireUi() {
+      if (localStorage.getItem(key)) return;
 
-      $("btnConnectMidi").addEventListener("click", async () => {
-        try {
-          const ok = await connectMidi();
-          if (!ok) return;
+      localStorage.setItem(key, "1");
 
-          await initAudioIfPossible();
-        } catch (err) {
-          console.error(err);
-          showErrorDialog(err.message, "MIDI Connection Error");
-        }
-      });
-
-      $("btnAllNotesOff").addEventListener("click", () => allNotesOff());
-
-      const btnInstructions = $("btnInstructions");
-      if (btnInstructions) {
-        btnInstructions.addEventListener("click", () => {
-          openInstructions();
-        });
+      try {
+        window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+      } catch (e) {
+        window.scrollTo(0, 0);
       }
 
-      const btnCloseInstructions = $("btnCloseInstructions");
-      if (btnCloseInstructions) {
-        btnCloseInstructions.addEventListener("click", () => {
-          closeInstructions();
-        });
-      }
-
-      const instructionsOverlay = $("instructionsOverlay");
-      if (instructionsOverlay) {
-        instructionsOverlay.addEventListener("click", (e) => {
-          if (e.target === instructionsOverlay) {
-            closeInstructions();
-          }
-        });
-      }
-
-      const btnWarblConfig = $("btnWarblConfig");
-      if (btnWarblConfig) {
-         btnWarblConfig.addEventListener("click", () => {
-          const win = window.open("https://warbl.xyz/configure.html", "_blank");
-          if (!win) {
-            // fallback if blocked
-            window.location.href = "https://warbl.xyz/configure.html";
-          }
-        });     
-      }
-
-      $("showMidiLog").addEventListener("change", (e) => {
-        state.midiLogEnabled = e.target.checked;
-        renderMidiLog();
-        saveSettingsToLocalStorage();
-      });
-
-      $("freezeMidiLog").addEventListener("change", (e) => {
-        state.freezeMidiLog = e.target.checked;
-        renderMidiLog();
-        saveSettingsToLocalStorage();
-      });
-
-      $("btnClearMidiLog").addEventListener("click", () => {
-        clearMidiLog();
-      });
-
-      $("midiInputSelect").addEventListener("change", (e) => {
-        allNotesOff();
-        state.selectedMidiInputId = e.target.value;
-        attachSelectedMidiInput();
-        logLiveStatus();
-      });
-
-      $("midiChannelSelect").addEventListener("change", (e) => {
-        allNotesOff();
-        state.selectedMidiChannel = Number(e.target.value) || 1;
-        state.freezeMidiLog = false;
-        clearMidiLog();
-        logLiveStatus();
-        saveSettingsToLocalStorage();
-      });
-
-      const loadBtn = $("btnLoadCustomInstrument");
-      if (loadBtn) {
-        loadBtn.addEventListener("click", async () => {
-          try {
-            await initAudioIfPossible();
-
-            const opened = openCustomInstrumentPicker();
-            if (!opened) {
-              throw new Error("Unable to open the custom instrument ZIP file picker.");
-            }
-          } catch (err) {
-            console.error(err);
-            showErrorDialog(
-              err.message || "Unable to open the custom instrument ZIP file.",
-              "Custom Instrument Error"
-            );
-          }
-        });
-      }
-
-      $("instrumentSelect").addEventListener("change", async (e) => {
-        const nextInstrumentKey = e.target.value;
-
-        saveCurrentInstrumentSettingsToStateStore();
-
-        state.selectedInstrumentKey = nextInstrumentKey;
-        state.pitchBendValue = 0;
-
-        allNotesOff();
-        loadInstrumentSettingsIntoState(nextInstrumentKey);
-        syncUiFromState();
-        renderDroneVolumeVisibility();
-        applyBrightnessSettings();
-        applyMixerSettings();
-        applyTuningToAllVoices();
-        logLiveStatus();
-        saveSettingsToLocalStorage();
-
-        try {
-          if (state.audioContext) {
-            await preloadInstrument(state.selectedInstrumentKey);
-          }
-        } catch (err) {
-          console.error(err);
-          showErrorDialog(err.message, "Instrument Load Error");
-        }
-      });
-
-      $("expressionModeSelect").addEventListener("change", (e) => {
-        state.expressionMode = e.target.value;
-        state.latestExpression = getInitialExpressionValueForMode(state.expressionMode);
-        updateActiveVoiceGain();
-        logLiveStatus();
-        saveCurrentInstrumentSettingsToStateStore();
-        saveSettingsToLocalStorage();
-      });
-
-      $("reverbSelect").addEventListener("change", async (e) => {
-        state.selectedReverbKey = e.target.value;
-        saveSettingsToLocalStorage();
-
-        try {
-          if (state.audioContext) {
-            await preloadImpulseResponse(state.selectedReverbKey);
-          }
-          logLiveStatus();
-        } catch (err) {
-          console.error(err);
-          showErrorDialog(err.message, "Reverb Load Error");
-        }
-      });
-
-      const resetBtn = $("btnResetDefaults");
-      let resetLongPressTimer = null;
-      let resetLongPressTriggered = false;
-      const RESET_LONG_PRESS_MS = 700;
-
-      const clearResetLongPressTimer = () => {
-        if (resetLongPressTimer) {
-          clearTimeout(resetLongPressTimer);
-          resetLongPressTimer = null;
-        }
-      };
-
-      const runResetAllDefaults = async () => {
-        const confirmed = await showConfirmDialog(
-          "Reset all saved settings to factory defaults?\n\nThis will replace the saved local settings with default values as if the tool were being run for the first time.",
-          "Reset All Saved Settings to Defaults",
-          "Reset",
-          "Cancel"
-        );
-
-        if (!confirmed) return;
-
-        resetAllSettingsToFirstRunDefaults();
-      };
-
-      const runResetCurrentInstrument = async () => {
-       
-       const instrumentLabel =
-
-          APP_CONFIG.instruments[state.selectedInstrumentKey]?.label || "this instrument";
-
-        const confirmed = await showConfirmDialog(
-          "Reset all settings for " + instrumentLabel + " to their defaults?\n\nThis only affects the currently selected instrument.",
-          "Reset Instrument to Defaults",
-          "Reset",
-          "Cancel"
-        );
-
-        if (!confirmed) return;
-
-        resetDefaults();
-
-      };
-
-      const beginResetLongPress = () => {
-        clearResetLongPressTimer();
-        resetLongPressTriggered = false;
-
-        resetLongPressTimer = setTimeout(async () => {
-          resetLongPressTimer = null;
-          resetLongPressTriggered = true;
-          await runResetAllDefaults();
-        }, RESET_LONG_PRESS_MS);
-      };
-
-      const cancelResetLongPress = () => {
-        clearResetLongPressTimer();
-      };
-
-      resetBtn.addEventListener("pointerdown", (e) => {
-        if (e.button !== undefined && e.button !== 0) return;
-        beginResetLongPress();
-      });
-
-      resetBtn.addEventListener("pointerup", cancelResetLongPress);
-      resetBtn.addEventListener("pointerleave", cancelResetLongPress);
-      resetBtn.addEventListener("pointercancel", cancelResetLongPress);
-
-      resetBtn.addEventListener("click", async (e) => {
-        // Keep shift-click as an optional desktop fallback.
-        if (e.shiftKey) {
-          await runResetAllDefaults();
-          return;
-        }
-
-        // If the long press already fired, swallow the click.
-        if (resetLongPressTriggered) {
-          resetLongPressTriggered = false;
-          return;
-        }
-
-        await runResetCurrentInstrument();
-      });
-
-      $("btnExportSettings").addEventListener("click", async () => {
-        try {
-          await exportSettingsToFile();
-        } catch (err) {
-          console.error(err);
-          showErrorDialog(err.message, "Export Settings Error");
-        }
-      });
-
-      $("btnImportSettings").addEventListener("click", () => {
-        $("fileImportSettings").click();
-      });
-
-      $("fileImportSettings").addEventListener("change", async (e) => {
-        const file = e.target.files && e.target.files[0];
-        if (!file) return;
-
-        try {
-          await importSettingsFromFile(file);
-        } catch (err) {
-          console.error(err);
-          showErrorDialog(err.message, "Import Settings Error");
-        }
-
-        e.target.value = "";
-      });
-
-      $("fileCustomInstrument").addEventListener("change", async (e) => {
-        const file = e.target.files && e.target.files[0];
-        if (!file) {
-          syncUiFromState();
-          return;
-        }
-
-        try {
-          await initAudioIfPossible();
-
-          const loaded = await loadCustomInstrumentFromZipFile(file, {
-            persist: true,
-            selectInstrument: true
-          });
-
-          if (!loaded) {
-            syncUiFromState();
-            return;
-          }
-
-          if (state.audioContext) {
-            await preloadInstrument(CUSTOM_INSTRUMENT_KEY);
-          }
-        } catch (err) {
-          console.error(err);
-          showErrorDialog(
-            err.message || "Unable to load the custom instrument ZIP file.",
-            "Custom Instrument Load Error"
-          );
-          syncUiFromState();
-        } finally {
-          e.target.value = "";
-        }
-      });
-
-      $("showLiveStatus").addEventListener("change", (e) => {
-        state.liveStatusHidden = !e.target.checked;
-        renderLiveStatusVisibility();
-        saveSettingsToLocalStorage();
-      });
-
-      $("btnResetMasterTune").addEventListener("click", () => {
-        state.masterTuneCents = 0;
-
-        if ($("masterTuneCents")) {
-          $("masterTuneCents").value = "0";
-        }
-        if ($("masterTuneCentsValue")) {
-          $("masterTuneCentsValue").textContent = "0";
-        }
-
-        applyTuningToAllVoices();
-        logLiveStatus();
-        saveCurrentInstrumentSettingsToStateStore();
-        saveSettingsToLocalStorage();
-      });
-
-      $("btnResetBrightness").addEventListener("click", () => {
-        state.brightness = 0;
-
-        if ($("brightness")) {
-          $("brightness").value = "0.00";
-        }
-        if ($("brightnessValue")) {
-          $("brightnessValue").textContent = "0.00";
-        }
-
-        applyBrightnessSettings();
-        logLiveStatus();
-        saveCurrentInstrumentSettingsToStateStore();
-        saveSettingsToLocalStorage();
-      });
-
-      bindRange("masterVolume", "masterVolumeValue", (v) => v.toFixed(2), (v) => {
-        state.masterVolume = v;
-        applyMixerSettings();
-        saveCurrentInstrumentSettingsToStateStore();
-        saveSettingsToLocalStorage();
-      });
-
-      bindRange("droneVolume", "droneVolumeValue", (v) => v.toFixed(2), (v) => {
-        state.droneVolume = v;
-        updateDroneVoiceGain();
-        saveCurrentInstrumentSettingsToStateStore();
-        saveSettingsToLocalStorage();
-      });
-
-      bindRange("masterTuneCents", "masterTuneCentsValue", (v) => String(Math.round(v)), (v) => {
-        state.masterTuneCents = clamp(Math.round(v), -50, 50);
-        applyTuningToAllVoices();
-        logLiveStatus();
-        saveCurrentInstrumentSettingsToStateStore();
-        saveSettingsToLocalStorage();
-      });
-
-      bindRange("brightness", "brightnessValue", formatBrightnessLabel, (v) => {
-        state.brightness = clamp(v, -1, 1);
-        applyBrightnessSettings();
-        logLiveStatus();
-        saveCurrentInstrumentSettingsToStateStore();
-        saveSettingsToLocalStorage();
-      });
-
-      bindRange("attackMs", "attackMsValue", (v) => String(v), (v) => {
-        state.attackMs = v;
-        saveCurrentInstrumentSettingsToStateStore();
-        saveSettingsToLocalStorage();
-      });
-
-      bindRange("releaseMs", "releaseMsValue", (v) => String(v), (v) => {
-        state.releaseMs = v;
-        saveCurrentInstrumentSettingsToStateStore();
-        saveSettingsToLocalStorage();
-      });
-
-      bindRange("pitchBendUpMultiplier", "pitchBendUpMultiplierValue", (v) => v.toFixed(2), (v) => {
-        state.pitchBendUpMultiplier = v;
-        applyPitchBendToActiveVoice();
-        logLiveStatus();
-        saveCurrentInstrumentSettingsToStateStore();
-        saveSettingsToLocalStorage();
-      });
-
-      bindRange("pitchBendDownMultiplier", "pitchBendDownMultiplierValue", (v) => v.toFixed(2), (v) => {
-        state.pitchBendDownMultiplier = v;
-        applyPitchBendToActiveVoice();
-        logLiveStatus();
-        saveCurrentInstrumentSettingsToStateStore();
-        saveSettingsToLocalStorage();
-      });
-
-      bindRange("reverbWet", "reverbWetValue", (v) => v.toFixed(2), (v) => {
-        state.reverbWet = v;
-        applyMixerSettings();
-        saveCurrentInstrumentSettingsToStateStore();
-        saveSettingsToLocalStorage();
-      });
-
-      bindRange("reverbDry", "reverbDryValue", (v) => v.toFixed(2), (v) => {
-        state.reverbDry = v;
-        applyMixerSettings();
-        saveCurrentInstrumentSettingsToStateStore();
-        saveSettingsToLocalStorage();
-      });
-
-      bindRange("reverbPreDelay", "reverbPreDelayValue", (v) => String(v), (v) => {
-        state.reverbPreDelayMs = v;
-        applyMixerSettings();
-        saveCurrentInstrumentSettingsToStateStore();
-        saveSettingsToLocalStorage();
-      });
-
-      bindRange("transposeSemis", "transposeSemisValue", (v) => String(Math.round(v)), (v) => {
-        state.transposeSemis = clamp(Math.round(v), -12, 12);
-        applyTuningToAllVoices();
-        logLiveStatus();
-        saveCurrentInstrumentSettingsToStateStore();
-        saveSettingsToLocalStorage();
-      });
-
-      bindRange("pitchBendRangeSemitones", "pitchBendRangeSemitonesValue", (v) => String(Math.round(v)), (v) => {
-        state.pitchBendRangeSemitones = clamp(Math.round(v), 0, 12);
-        state.basePitchBendCents = state.pitchBendRangeSemitones * 100;
-        applyPitchBendToActiveVoice();
-        logLiveStatus();
-        saveSettingsToLocalStorage();
+      document.body.scrollTop = 0;
+      document.documentElement.scrollTop = 0;
+
+      const html = `
+        <div style="font-size:1rem; line-height:1.5; color:#000;">
+          <h2 style="text-align:center; margin-top:0;">Welcome to Celtic Sounds (MIDIWeb)</h2>
+
+          <p>
+            This is an <b>experimental web-based version</b> of <b>Celtic Sounds</b> designed to run in the iOS <b>MIDIWeb</b> browser app.
+          </p>
+
+          <p>
+            It includes <b>advanced and evolving features</b> that are not always available in the dedicated iOS app, and behavior may vary depending on your iOS device.
+          </p>
+
+          <p>
+            The dedicated iOS app offers a more <b>stable, streamlined, and predictable experience</b> and supports background play while other apps are running.
+          </p>
+
+          <div style="text-align:center; margin:10px 0;">
+            <a href="https://apps.apple.com/us/app/celtic-sounds-midi-module/id1403026032" target="_blank" rel="noopener noreferrer">
+              <b>Download the Celtic Sounds App</b>
+            </a>
+          </div>
+        </div>
+      `;
+
+      DayPilot.Modal.alert(html, {
+        theme: "modal_compact",
+        top: 25
       });
     }
 
@@ -6474,6 +6126,440 @@
       return String(value).trim();
     }
 
+    function wireUi() {
+
+      $("btnConnectMidi").addEventListener("click", async () => {
+        try {
+          const ok = await connectMidi();
+          if (!ok) return;
+
+          await initAudioIfPossible();
+        } catch (err) {
+          console.error(err);
+          showErrorDialog(err.message, "MIDI Connection Error");
+        }
+      });
+
+      $("btnAllNotesOff").addEventListener("click", () => allNotesOff());
+
+      const btnInstructions = $("btnInstructions");
+      if (btnInstructions) {
+        btnInstructions.addEventListener("click", () => {
+          openInstructions();
+        });
+      }
+
+      const btnCloseInstructions = $("btnCloseInstructions");
+      if (btnCloseInstructions) {
+        btnCloseInstructions.addEventListener("click", () => {
+          closeInstructions();
+        });
+      }
+
+      const instructionsOverlay = $("instructionsOverlay");
+      if (instructionsOverlay) {
+        instructionsOverlay.addEventListener("click", (e) => {
+          if (e.target === instructionsOverlay) {
+            closeInstructions();
+          }
+        });
+      }
+
+      const btnWarblConfig = $("btnWarblConfig");
+      if (btnWarblConfig) {
+         btnWarblConfig.addEventListener("click", () => {
+          const win = window.open("https://warbl.xyz/configure.html", "_blank");
+          if (!win) {
+            // fallback if blocked
+            window.location.href = "https://warbl.xyz/configure.html";
+          }
+        });     
+      }
+
+      $("showMidiLog").addEventListener("change", (e) => {
+        state.midiLogEnabled = e.target.checked;
+        renderMidiLog();
+        saveSettingsToLocalStorage();
+      });
+
+      $("freezeMidiLog").addEventListener("change", (e) => {
+        state.freezeMidiLog = e.target.checked;
+        renderMidiLog();
+        saveSettingsToLocalStorage();
+      });
+
+      $("btnClearMidiLog").addEventListener("click", () => {
+        clearMidiLog();
+      });
+
+      $("midiInputSelect").addEventListener("change", (e) => {
+        allNotesOff();
+        state.selectedMidiInputId = e.target.value;
+        attachSelectedMidiInput();
+        logLiveStatus();
+      });
+
+      $("midiChannelSelect").addEventListener("change", (e) => {
+        allNotesOff();
+        state.selectedMidiChannel = Number(e.target.value) || 1;
+        state.freezeMidiLog = false;
+        clearMidiLog();
+        logLiveStatus();
+        saveSettingsToLocalStorage();
+      });
+
+      const loadBtn = $("btnLoadCustomInstrument");
+      if (loadBtn) {
+        loadBtn.addEventListener("click", async () => {
+          try {
+            await initAudioIfPossible();
+
+            const opened = openCustomInstrumentPicker();
+            if (!opened) {
+              throw new Error("Unable to open the custom instrument ZIP file picker.");
+            }
+          } catch (err) {
+            console.error(err);
+            showErrorDialog(
+              err.message || "Unable to open the custom instrument ZIP file.",
+              "Custom Instrument Error"
+            );
+          }
+        });
+      }
+
+      $("instrumentSelect").addEventListener("change", async (e) => {
+        const nextInstrumentKey = e.target.value;
+
+        saveCurrentInstrumentSettingsToStateStore();
+
+        state.selectedInstrumentKey = nextInstrumentKey;
+        state.pitchBendValue = 0;
+
+        allNotesOff();
+        loadInstrumentSettingsIntoState(nextInstrumentKey);
+        syncUiFromState();
+        renderDroneVolumeVisibility();
+        applyBrightnessSettings();
+        applyMixerSettings();
+        applyTuningToAllVoices();
+        logLiveStatus();
+        saveSettingsToLocalStorage();
+
+        try {
+          if (state.audioContext) {
+            await preloadInstrument(state.selectedInstrumentKey);
+          }
+        } catch (err) {
+          console.error(err);
+          showErrorDialog(err.message, "Instrument Load Error");
+        }
+      });
+
+      $("expressionModeSelect").addEventListener("change", (e) => {
+        state.expressionMode = e.target.value;
+        state.latestExpression = getInitialExpressionValueForMode(state.expressionMode);
+        updateActiveVoiceGain();
+        logLiveStatus();
+        saveCurrentInstrumentSettingsToStateStore();
+        saveSettingsToLocalStorage();
+      });
+
+      $("reverbSelect").addEventListener("change", async (e) => {
+        state.selectedReverbKey = e.target.value;
+        saveSettingsToLocalStorage();
+
+        try {
+          if (state.audioContext) {
+            await preloadImpulseResponse(state.selectedReverbKey);
+          }
+          logLiveStatus();
+        } catch (err) {
+          console.error(err);
+          showErrorDialog(err.message, "Reverb Load Error");
+        }
+      });
+
+      const resetBtn = $("btnResetDefaults");
+      let resetLongPressTimer = null;
+      let resetLongPressTriggered = false;
+      const RESET_LONG_PRESS_MS = 700;
+
+      const clearResetLongPressTimer = () => {
+        if (resetLongPressTimer) {
+          clearTimeout(resetLongPressTimer);
+          resetLongPressTimer = null;
+        }
+      };
+
+      const runResetAllDefaults = async () => {
+        const confirmed = await showConfirmDialog(
+          "Reset all saved settings to factory defaults?\n\nThis will replace the saved local settings with default values as if the tool were being run for the first time.",
+          "Reset All Saved Settings to Defaults",
+          "Reset",
+          "Cancel"
+        );
+
+        if (!confirmed) return;
+
+        resetAllSettingsToFirstRunDefaults();
+      };
+
+      const runResetCurrentInstrument = async () => {
+       
+       const instrumentLabel =
+
+          APP_CONFIG.instruments[state.selectedInstrumentKey]?.label || "this instrument";
+
+        const confirmed = await showConfirmDialog(
+          "Reset all settings for " + instrumentLabel + " to their defaults?\n\nThis only affects the currently selected instrument.",
+          "Reset Instrument to Defaults",
+          "Reset",
+          "Cancel"
+        );
+
+        if (!confirmed) return;
+
+        resetDefaults();
+
+      };
+
+      const beginResetLongPress = () => {
+        clearResetLongPressTimer();
+        resetLongPressTriggered = false;
+
+        resetLongPressTimer = setTimeout(async () => {
+          resetLongPressTimer = null;
+          resetLongPressTriggered = true;
+          await runResetAllDefaults();
+        }, RESET_LONG_PRESS_MS);
+      };
+
+      const cancelResetLongPress = () => {
+        clearResetLongPressTimer();
+      };
+
+      resetBtn.addEventListener("pointerdown", (e) => {
+        if (e.button !== undefined && e.button !== 0) return;
+        beginResetLongPress();
+      });
+
+      resetBtn.addEventListener("pointerup", cancelResetLongPress);
+      resetBtn.addEventListener("pointerleave", cancelResetLongPress);
+      resetBtn.addEventListener("pointercancel", cancelResetLongPress);
+
+      resetBtn.addEventListener("click", async (e) => {
+        // Keep shift-click as an optional desktop fallback.
+        if (e.shiftKey) {
+          await runResetAllDefaults();
+          return;
+        }
+
+        // If the long press already fired, swallow the click.
+        if (resetLongPressTriggered) {
+          resetLongPressTriggered = false;
+          return;
+        }
+
+        await runResetCurrentInstrument();
+      });
+
+      $("btnExportSettings").addEventListener("click", async () => {
+        try {
+          await exportSettingsToFile();
+        } catch (err) {
+          console.error(err);
+          showErrorDialog(err.message, "Export Settings Error");
+        }
+      });
+
+      $("btnImportSettings").addEventListener("click", () => {
+        $("fileImportSettings").click();
+      });
+
+      $("fileImportSettings").addEventListener("change", async (e) => {
+        const file = e.target.files && e.target.files[0];
+        if (!file) return;
+
+        try {
+          await importSettingsFromFile(file);
+        } catch (err) {
+          console.error(err);
+          showErrorDialog(err.message, "Import Settings Error");
+        }
+
+        e.target.value = "";
+      });
+
+      $("fileCustomInstrument").addEventListener("change", async (e) => {
+        const file = e.target.files && e.target.files[0];
+        if (!file) {
+          syncUiFromState();
+          return;
+        }
+
+        try {
+          await initAudioIfPossible();
+
+          const loaded = await loadCustomInstrumentFromZipFile(file, {
+            persist: true,
+            selectInstrument: true
+          });
+
+          if (!loaded) {
+            syncUiFromState();
+            return;
+          }
+
+          if (state.audioContext) {
+            await preloadInstrument(CUSTOM_INSTRUMENT_KEY);
+          }
+        } catch (err) {
+          console.error(err);
+          showErrorDialog(
+            err.message || "Unable to load the custom instrument ZIP file.",
+            "Custom Instrument Load Error"
+          );
+          syncUiFromState();
+        } finally {
+          e.target.value = "";
+        }
+      });
+
+      $("showLiveStatus").addEventListener("change", (e) => {
+        state.liveStatusHidden = !e.target.checked;
+        renderLiveStatusVisibility();
+        saveSettingsToLocalStorage();
+      });
+
+      $("btnResetMasterTune").addEventListener("click", () => {
+        state.masterTuneCents = 0;
+
+        if ($("masterTuneCents")) {
+          $("masterTuneCents").value = "0";
+        }
+        if ($("masterTuneCentsValue")) {
+          $("masterTuneCentsValue").textContent = "0";
+        }
+
+        applyTuningToAllVoices();
+        logLiveStatus();
+        saveCurrentInstrumentSettingsToStateStore();
+        saveSettingsToLocalStorage();
+      });
+
+      $("btnResetBrightness").addEventListener("click", () => {
+        state.brightness = 0;
+
+        if ($("brightness")) {
+          $("brightness").value = "0.00";
+        }
+        if ($("brightnessValue")) {
+          $("brightnessValue").textContent = "0.00";
+        }
+
+        applyBrightnessSettings();
+        logLiveStatus();
+        saveCurrentInstrumentSettingsToStateStore();
+        saveSettingsToLocalStorage();
+      });
+
+      bindRange("masterVolume", "masterVolumeValue", (v) => v.toFixed(2), (v) => {
+        state.masterVolume = v;
+        applyMixerSettings();
+        saveCurrentInstrumentSettingsToStateStore();
+        saveSettingsToLocalStorage();
+      });
+
+      bindRange("droneVolume", "droneVolumeValue", (v) => v.toFixed(2), (v) => {
+        state.droneVolume = v;
+        updateDroneVoiceGain();
+        saveCurrentInstrumentSettingsToStateStore();
+        saveSettingsToLocalStorage();
+      });
+
+      bindRange("masterTuneCents", "masterTuneCentsValue", (v) => String(Math.round(v)), (v) => {
+        state.masterTuneCents = clamp(Math.round(v), -50, 50);
+        applyTuningToAllVoices();
+        logLiveStatus();
+        saveCurrentInstrumentSettingsToStateStore();
+        saveSettingsToLocalStorage();
+      });
+
+      bindRange("brightness", "brightnessValue", formatBrightnessLabel, (v) => {
+        state.brightness = clamp(v, -1, 1);
+        applyBrightnessSettings();
+        logLiveStatus();
+        saveCurrentInstrumentSettingsToStateStore();
+        saveSettingsToLocalStorage();
+      });
+
+      bindRange("attackMs", "attackMsValue", (v) => String(v), (v) => {
+        state.attackMs = v;
+        saveCurrentInstrumentSettingsToStateStore();
+        saveSettingsToLocalStorage();
+      });
+
+      bindRange("releaseMs", "releaseMsValue", (v) => String(v), (v) => {
+        state.releaseMs = v;
+        saveCurrentInstrumentSettingsToStateStore();
+        saveSettingsToLocalStorage();
+      });
+
+      bindRange("pitchBendUpMultiplier", "pitchBendUpMultiplierValue", (v) => v.toFixed(2), (v) => {
+        state.pitchBendUpMultiplier = v;
+        applyPitchBendToActiveVoice();
+        logLiveStatus();
+        saveCurrentInstrumentSettingsToStateStore();
+        saveSettingsToLocalStorage();
+      });
+
+      bindRange("pitchBendDownMultiplier", "pitchBendDownMultiplierValue", (v) => v.toFixed(2), (v) => {
+        state.pitchBendDownMultiplier = v;
+        applyPitchBendToActiveVoice();
+        logLiveStatus();
+        saveCurrentInstrumentSettingsToStateStore();
+        saveSettingsToLocalStorage();
+      });
+
+      bindRange("reverbWet", "reverbWetValue", (v) => v.toFixed(2), (v) => {
+        state.reverbWet = v;
+        applyMixerSettings();
+        saveCurrentInstrumentSettingsToStateStore();
+        saveSettingsToLocalStorage();
+      });
+
+      bindRange("reverbDry", "reverbDryValue", (v) => v.toFixed(2), (v) => {
+        state.reverbDry = v;
+        applyMixerSettings();
+        saveCurrentInstrumentSettingsToStateStore();
+        saveSettingsToLocalStorage();
+      });
+
+      bindRange("reverbPreDelay", "reverbPreDelayValue", (v) => String(v), (v) => {
+        state.reverbPreDelayMs = v;
+        applyMixerSettings();
+        saveCurrentInstrumentSettingsToStateStore();
+        saveSettingsToLocalStorage();
+      });
+
+      bindRange("transposeSemis", "transposeSemisValue", (v) => String(Math.round(v)), (v) => {
+        state.transposeSemis = clamp(Math.round(v), -12, 12);
+        applyTuningToAllVoices();
+        logLiveStatus();
+        saveCurrentInstrumentSettingsToStateStore();
+        saveSettingsToLocalStorage();
+      });
+
+      bindRange("pitchBendRangeSemitones", "pitchBendRangeSemitonesValue", (v) => String(Math.round(v)), (v) => {
+        state.pitchBendRangeSemitones = clamp(Math.round(v), 0, 12);
+        state.basePitchBendCents = state.pitchBendRangeSemitones * 100;
+        applyPitchBendToActiveVoice();
+        logLiveStatus();
+        saveSettingsToLocalStorage();
+      });
+    }
+
     async function bootstrap() {
       checkLocalStorageAvailable();
 
@@ -6535,11 +6621,10 @@
 
       await bootstrap();
 
-      if (webMidiAvailable) {
-        setTimeout(() => {
-          incrementPageVisitCount();
-        }, 1200);
-      }
+      showFirstTimeWelcome();
+
+      incrementPageVisitCount();
+
     });
   </script>
 
