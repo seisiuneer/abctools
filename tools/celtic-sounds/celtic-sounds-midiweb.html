@@ -1053,6 +1053,7 @@
 	  white-space: nowrap;
 	}
 
+
 </style>
 </head>
 
@@ -3840,6 +3841,11 @@
 
       // Tip jar counter (adjust key if needed)
       localStorage.removeItem("celtic_sounds_visit_count");
+
+      // Reload the tool
+      window.setTimeout(function(){
+        window.location.reload();
+      },1000);
     }
 
     function midiToName(midi) {
@@ -6296,7 +6302,7 @@
 
       const runResetAllDefaults = async () => {
         const confirmed = await showConfirmDialog(
-          "Reset all saved settings to factory defaults?\n\nThis will replace the saved local settings with default values as if the tool were being run for the first time.",
+          "Reset all saved settings to factory defaults?\n\nThis will replace the saved local settings with default values as if the tool were being run for the first time and reload the tool.",
           "Reset All Saved Settings to Defaults",
           "Reset",
           "Cancel"
