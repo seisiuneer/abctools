@@ -518,12 +518,12 @@
     width: 100%;
     margin-top: 12px;
     margin-bottom: 0;
-    padding: 14px 18px;
+    padding: 12px 16px;
     border: 1px solid #333;
     border-radius: 12px;
     font-weight: 900;
     cursor: pointer;
-    font-size: 1.05rem;
+    font-size: 0.9rem;
     background: #111;
     color: #f5f5f5;
     flex: 0 0 auto;
@@ -953,9 +953,9 @@
 
   @media (max-width: 600px){
     .instructions-close{
-      font-size: 1.12rem;
-      padding: 16px 18px;
-      border-radius: 14px;
+      font-size: .9rem;
+      padding: 12px 16px;
+      border-radius: 12px;
     }
 
     .hero-card h1 {
@@ -2063,7 +2063,16 @@
               <li>All voices run in parallel and are mixed together before the shared reverb and output stages</li>
             </ul>
 
-          </div>      
+          </div>     
+
+          <hr class="instructions-divider"/>
+
+          <div class="instructions-subtitle">Known Limitations</div>
+          <div class="instructions-subbody">
+            Looping drones on <b>MIDIWeb</b> required some creative cross-fading not required in the desktop browser version.
+            <div class="instructions-gap"></div>
+            You may hear some slight but hopefully not objectionable "phasing" sound at the drone loop point.
+          </div>
 
           <hr class="instructions-divider"/>
 
@@ -2074,7 +2083,8 @@
             • Make sure MIDI access was granted.<br/>
             • Verify the correct MIDI device is selected.<br/>
             • Check that the correct input channel is selected.<br/>
-            • Try clicking <b>All Notes Off</b> if a note gets stuck.
+            • Try clicking <b>All Notes Off</b> if a note gets stuck.<br/>
+            • Close <b>MIDIWeb</b> and relaunch the app.<br/>
           </div>
 
           <hr class="instructions-divider"/>
