@@ -2,16 +2,15 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <link rel="profile" href="https://gmpg.org/xfn/11">
   <link rel='dns-prefetch' href='//fonts.googleapis.com' />
   <link rel='dns-prefetch' href='//s.w.org' />
   <link rel='preconnect' href='https://secureservercdn.net' crossorigin />
   <meta property="og:type" content="website" />
   <meta property="og:title" content="Celtic Sounds" />
-  <meta property="og:description" content="Web-based version of the Celtic Sounds iOS App" />
-  <meta property="og:url" content="https://michaeleskin.com/celtic-sounds/celtic-sounds.html" />
+  <meta property="og:description" content="Web-based version of the Celtic Sounds iOS App for the iOS MIDIWeb browser" />
+  <meta property="og:url" content="https://michaeleskin.com/celtic-sounds/celtic-sounds-midiweb.html" />
   <meta property="og:site_name" content="Celtic Sounds" />
   <meta property="og:image" content="https://michaeleskin.com/celtic-sounds/img/celtic-sounds.jpg"/>
   <meta name="msapplication-TileColor" content="#ffffff">
@@ -970,7 +969,7 @@
 
   @media (max-width: 480px) and (pointer: coarse) {
     .hero-card h1 {
-      font-size: clamp(1.8rem, 5vw, 2.0rem);
+      font-size: clamp(1.9rem, 5vw, 2.0rem);
       line-height: 1.2;
       margin-bottom:36px;
     }
@@ -978,23 +977,27 @@
     button,
     select,
     input[type="range"] {
-      min-height: 36px !important;
+      min-height: 42px !important;
     }
 
     .hero-help,
     .hero-image-button {
-      min-width: 36px !important;
-      min-height: 36px !important;
+      min-width: 42px !important;
+      min-height: 42px !important;
     }
 
     .header-button{
-      font-size:1rem;
+      font-size:1.1rem;
     }
 
     .setup-row{
       gap: 100px;
     }
 
+    .btn-clear-log,
+    button.clear-log {
+      font-size:.9rem !important;
+    }
   }
 
 	.instrument-row {
@@ -5941,8 +5944,8 @@
       let show = false;
 
       if (count === 10) show = true;
-      else if (count === 50) show = true;
-      else if (count > 50 && count % 50 === 0) show = true;
+      else if (count === 25) show = true;
+      else if (count > 25 && count % 50 === 0) show = true;
 
       if (!show) return;
 
