@@ -67,7 +67,7 @@
     font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     background: linear-gradient(180deg, #020617, #0f172a);
     color: var(--text);
-    padding: 24px;
+    padding: 12px;
     margin-top:12px;
   }
 
@@ -724,7 +724,7 @@
 
   .header-button{
     padding:6px 12px;
-    font-size:0.85rem;
+    font-size:1rem;
     border-radius:10px;
     -webkit-user-select: none;
     user-select: none;
@@ -760,7 +760,7 @@
     padding:4px 10px;
     min-width:auto;
     width:auto;
-    font-size:0.78rem;
+    font-size:1rem;
     line-height:1.1;
     border-radius:8px;
     border: 1px solid #3b82f6;
@@ -852,6 +852,18 @@
 
   label span {
     margin-left: 0.35em;
+  }
+
+  button,
+  select,
+  input[type="range"] {
+    min-height: 28px !important;
+  }
+
+  .hero-help,
+  .hero-image-button {
+    min-width: 28px !important;
+    min-height: 28px !important;
   }
 
   @media (max-width: 900px){
@@ -952,6 +964,35 @@
 
     .header-reset{
       margin-left:0px !important;
+    }
+
+  }
+
+  @media (max-width: 480px) and (pointer: coarse) {
+    .hero-card h1 {
+      font-size: clamp(1.8rem, 5vw, 2.0rem);
+      line-height: 1.2;
+      margin-bottom:36px;
+    }
+
+    button,
+    select,
+    input[type="range"] {
+      min-height: 36px !important;
+    }
+
+    .hero-help,
+    .hero-image-button {
+      min-width: 36px !important;
+      min-height: 36px !important;
+    }
+
+    .header-button{
+      font-size:1rem;
+    }
+
+    .setup-row{
+      gap: 100px;
     }
 
   }
@@ -5741,7 +5782,39 @@
         saveSettingsToLocalStorage();
       });
 
-     bindRange("masterVolume", "masterVolumeValue", (v) => v.toFixed(2), (v) => {
+      $("btnResetMasterTune").addEventListener("click", () => {
+        state.masterTuneCents = 0;
+
+        if ($("masterTuneCents")) {
+          $("masterTuneCents").value = "0";
+        }
+        if ($("masterTuneCentsValue")) {
+          $("masterTuneCentsValue").textContent = "0";
+        }
+
+        applyTuningToAllVoices();
+        logLiveStatus();
+        saveCurrentInstrumentSettingsToStateStore();
+        saveSettingsToLocalStorage();
+      });
+
+      $("btnResetBrightness").addEventListener("click", () => {
+        state.brightness = 0;
+
+        if ($("brightness")) {
+          $("brightness").value = "0.00";
+        }
+        if ($("brightnessValue")) {
+          $("brightnessValue").textContent = "0.00";
+        }
+
+        applyBrightnessSettings();
+        logLiveStatus();
+        saveCurrentInstrumentSettingsToStateStore();
+        saveSettingsToLocalStorage();
+      });
+
+      bindRange("masterVolume", "masterVolumeValue", (v) => v.toFixed(2), (v) => {
         state.masterVolume = v;
         applyMixerSettings();
         saveCurrentInstrumentSettingsToStateStore();
