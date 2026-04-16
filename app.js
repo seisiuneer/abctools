@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3217_040226_1630";
+var gVersionNumber = "3218_041626_1130";
 
 var gMIDIInitStillWaiting = false;
 
@@ -27691,13 +27691,13 @@ async function processShareLink() {
       // Show update message?
       if (gLocalStorageAvailable){
 
-        var updatePresented = localStorage.sawUpdate_24mar2026;
+        var updatePresented = localStorage.sawUpdate_16apr2026;
 
         if (updatePresented != "true") {
 
           showWhatsNewScreen();
 
-          localStorage.sawUpdate_24mar2026 = true;
+          localStorage.sawUpdate_16apr2026 = true;
 
         }
 
@@ -28511,6 +28511,35 @@ function InjectOneBagpipeDrones(theTune, droneStyle, hideDroneVoice, foldNotes, 
     });
   }
 
+  function replaceNotesNoLastTie(abcLine, toInject) {
+    const noteRegex = /([A-Ga-gzZ][',]?[\d*\/]?[',\/>]?)(\d*)/g;
+    const nextNoteRegex = /([A-Ga-gzZ][',]?[\d*\/]?[',\/>?])(\d*)|([A-Ga-gzZ][',]?)(\d*)/;
+
+    return abcLine.replace(noteRegex, (match, note, duration, offset, string) => {
+
+      var postFix = getNumberInNote(match);
+
+      if (match.indexOf("/") !== -1) {
+        postFix += "/";
+      }
+
+      if (match.indexOf(">") !== -1) {
+        postFix += ">";
+      }
+
+      const restOfLine = string.slice(offset + match.length);
+      const hasAnotherNoteLater = nextNoteRegex.test(restOfLine);
+
+      var retVal = `${toInject}${duration ? duration : ''}${postFix}`;
+
+      if (hasAnotherNoteLater) {
+        retVal += "-";
+      }
+
+      return retVal;
+    });
+  }
+
   var theInjectedTune;
 
   var theDroneNotes;
@@ -28988,7 +29017,29 @@ function InjectOneBagpipeDrones(theTune, droneStyle, hideDroneVoice, foldNotes, 
       }
       break;
 
-  }
+    case 20: // Custom Bagpipe Instrument
+        theDroneNotes = "D,";
+
+        if (droneMatchesTuneKey) {
+
+          theDroneShift = theDroneShift + 700;
+
+          if (theDroneShift > 500) {
+            theDroneShift -= 1200;
+          }
+
+        }
+
+        if (isNotBWW) {
+          postFix = " stems=auto transpose=0\n%%MIDI program custom1\n%voice_tuning_cents 0 " + theDroneShift;
+        } else {
+          theTune = theTune.replaceAll("%%MIDI program 109", "%%MIDI program custom1");
+          theTune = theTune.replaceAll("transpose=1", "transpose=-7");
+          theTune = theTune.replaceAll("%voice_tuning_cents 48 148", "%voice_tuning_cents 0 0");
+        }
+        break;
+
+    }
 
   if (hideDroneVoice) {
     theInjectedTune = InjectStringBelowTuneHeader(theTune, "%\n%%score (1 2)\n%\n%play_highlight_v1_only\n%\nV:1" + postFix);
@@ -29097,6 +29148,14 @@ function InjectOneBagpipeDrones(theTune, droneStyle, hideDroneVoice, foldNotes, 
         }
         theInitialDynamics = "!mp! "
         break;
+      case 20: // Custom Bagpipe Instruement
+        if (hideDroneVoice) {
+          accum += "V:2 stems=down octave=2 transpose=-24\n%%MIDI program custom1\n%%MIDI transpose -24\n%%voicecolor transparent\n";
+        } else {
+          accum += "V:2 stems=down octave=2 transpose=-24\n%%MIDI program custom1\n%%MIDI transpose -24\n";
+        }
+        theInitialDynamics = "!mp! "
+        break;
 
     }
 
@@ -29106,7 +29165,14 @@ function InjectOneBagpipeDrones(theTune, droneStyle, hideDroneVoice, foldNotes, 
 
       var thisLine = theLines[i];
 
-      thisLine = replaceNotes(thisLine, theDroneNotes);
+      if (droneStyle != 20){
+        thisLine = replaceNotes(thisLine, theDroneNotes);
+      }
+      else{
+        //debugger;
+        // Custom instrument drone inject doesn't tie last note
+        thisLine = replaceNotesNoLastTie(thisLine, theDroneNotes);
+      }
 
       // Inject dynamics into the first line with notes
       if (thisLine != "") {
@@ -29208,6 +29274,10 @@ function InjectBagpipeSounds() {
   }, {
     name: "  Uilleann Pipes Flat Set in A (Lynch-style drones)",
     id: 18
+  },
+  {
+    name: "  Custom Bagpipe Instrument (Drones at D,)",
+    id: 20
   }];
 
   // Setup initial values
@@ -55433,7 +55503,7 @@ function showWhatsNewScreen() {
   modal_msg += 'background: linear-gradient(135deg, #0d47a1 0%, #1565c0 50%, #64b5f6 100%);';
   modal_msg += 'box-shadow: 0 6px 16px rgba(0,0,0,0.14); color:#fff;">';
   modal_msg += '<div style="font-size:20pt; line-height:24pt; font-weight:bold;">What&apos;s New</div>';
-  modal_msg += '<div style="font-size:11pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 2 April 2026</div>';
+  modal_msg += '<div style="font-size:11pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 16 April 2026</div>';
   modal_msg += '</div>';
 
   // Short intro
@@ -55445,12 +55515,9 @@ function showWhatsNewScreen() {
   modal_msg += '<div style="margin:10px 0 6px 0; padding:12px 12px; border-radius:12px;';
   modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);">';
   
-  modal_msg += '<p style="margin:6px 0; font-size:12pt;margin-bottom:12px;"><strong>New Setting on the Advanced Settings Dialog:</strong></p>';
-  modal_msg += '<p style="margin:6px 0; font-size:12pt;margin-bottom:12px;">BWW import uses %%MIDI program custom1 (No GHB transpose or tuning)</p>';
-  modal_msg += '<p style="margin:6px 0; font-size:12pt;margin-bottom:12px;">Check this if you intend to use:</p>';
-  modal_msg += '<p style="margin:6px 0; font-size:12pt;margin-bottom:12px;"><strong>%%MIDI program custom1</strong></p>';
-  modal_msg += '<p style="margin:6px 0; font-size:12pt;">as the instrument when playing tunes imported from BWW files instead of the built-in Great Highland Bagpipes instrument (%%MIDI program 109).</p>';
-  modal_msg += '<p style="margin:6px 0; font-size:12pt;">Checking this box disables the injection of ABC transposition and retuning annotations normally done for the Great Highland Bagpipes instrument.</p>';
+  modal_msg += '<p style="margin:6px 0; font-size:12pt;margin-bottom:12px;"><strong>New Drone Injection Option for "Inject Bagpipe Sounds":</strong></p>';
+  modal_msg += '<p style="margin:6px 0; font-size:12pt;margin-bottom:12px;">Custom Bagpipe Instrument (Drones on D,)</p>';
+  modal_msg += '<p style="margin:6px 0; font-size:12pt;">This allows simple injection of drones for bagpipe-style custom instruments created with the <strong><a href="https://michaeleskin.com/tools/bagpipe-factory.html" target="_blank" rel="noopener noreferrer">Bagpipe Custom Instrument Factory</a></strong>.</p>';
   modal_msg += '</div>';
 
   modal_msg += '</div>'; // wrapper
@@ -61983,13 +62050,13 @@ async function DoStartup() {
   // Show update message?
   if (gLocalStorageAvailable && (!isFromShare)){
 
-    var updatePresented = localStorage.sawUpdate_24mar2026;
+    var updatePresented = localStorage.sawUpdate_16apr2026;
 
     if (updatePresented != "true") {
 
       showWhatsNewScreen();
 
-      localStorage.sawUpdate_24mar2026 = true;
+      localStorage.sawUpdate_16apr2026 = true;
 
     }
 
