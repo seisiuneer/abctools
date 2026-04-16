@@ -3302,7 +3302,16 @@
 
     try {
       const zip = new JSZip();
-      [...generated.values()].forEach(entry => zip.file(entry.filename, entry.buffer));
+
+      [...generated.values()].forEach(entry => {
+        if (entry.type === 'drone') {
+          zip.file('E3.wav', entry.buffer);
+          zip.file('Eb3.wav', entry.buffer);
+          zip.file('D3.wav', entry.buffer);
+        } else {
+          zip.file(entry.filename, entry.buffer);
+        }
+      });
 
       zip.file('abctools.json', JSON.stringify({
         volumeScale: latestMetadata.chanterExportGain,
