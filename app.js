@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3218_041626_1130";
+var gVersionNumber = "3219_041626_1800";
 
 var gMIDIInitStillWaiting = false;
 
@@ -28511,35 +28511,6 @@ function InjectOneBagpipeDrones(theTune, droneStyle, hideDroneVoice, foldNotes, 
     });
   }
 
-  function replaceNotesNoLastTie(abcLine, toInject) {
-    const noteRegex = /([A-Ga-gzZ][',]?[\d*\/]?[',\/>]?)(\d*)/g;
-    const nextNoteRegex = /([A-Ga-gzZ][',]?[\d*\/]?[',\/>?])(\d*)|([A-Ga-gzZ][',]?)(\d*)/;
-
-    return abcLine.replace(noteRegex, (match, note, duration, offset, string) => {
-
-      var postFix = getNumberInNote(match);
-
-      if (match.indexOf("/") !== -1) {
-        postFix += "/";
-      }
-
-      if (match.indexOf(">") !== -1) {
-        postFix += ">";
-      }
-
-      const restOfLine = string.slice(offset + match.length);
-      const hasAnotherNoteLater = nextNoteRegex.test(restOfLine);
-
-      var retVal = `${toInject}${duration ? duration : ''}${postFix}`;
-
-      if (hasAnotherNoteLater) {
-        retVal += "-";
-      }
-
-      return retVal;
-    });
-  }
-
   var theInjectedTune;
 
   var theDroneNotes;
@@ -29165,14 +29136,7 @@ function InjectOneBagpipeDrones(theTune, droneStyle, hideDroneVoice, foldNotes, 
 
       var thisLine = theLines[i];
 
-      if (droneStyle != 20){
-        thisLine = replaceNotes(thisLine, theDroneNotes);
-      }
-      else{
-        //debugger;
-        // Custom instrument drone inject doesn't tie last note
-        thisLine = replaceNotesNoLastTie(thisLine, theDroneNotes);
-      }
+      thisLine = replaceNotes(thisLine, theDroneNotes);
 
       // Inject dynamics into the first line with notes
       if (thisLine != "") {

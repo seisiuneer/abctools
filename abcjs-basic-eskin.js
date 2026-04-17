@@ -21485,6 +21485,13 @@ function extendAudioBufferIfRequired(audioContext, sound, response, duration){
         }
       break;
 
+      case "custom1":
+        switch (response.name){
+          case "D3":
+            //console.log("looping custom1 drones");
+            processLoop = true;
+        }
+      break;
   }
 
   // Not a custom drone note, return the original
