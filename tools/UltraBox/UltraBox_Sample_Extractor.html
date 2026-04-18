@@ -1,182 +1,446 @@
 <!DOCTYPE html>
-<html lang="en"><head>
+<html lang="en">
+
+<head>
 
   <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-  <link rel="icon" type="image/x-icon" href="https://michaeleskin.com/tools/UltraBox/favicon.ico">
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#CCCCCC">
+  <meta name="description" content="Extract samples from .sf2 soundfont files, preview them, and export loop-aware WAV files.">
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="UltraBox Sample Extractor" />
+  <meta property="og:description" content="Extract samples from .sf2 soundfont files, preview them, and export loop-aware WAV files." />
+  <meta property="og:url" content="https://michaeleskin.com/tools/UltraBox/UltraBox_Sample_Extractor.html" />
+  <meta property="og:site_name" content="UltraBox Sample Extractor" />
   <meta property="og:image" content="https://michaeleskin.com/tools/UltraBox/icon_maskable_256.png">
-  <meta name="description" content="UltraBox is a mod of BeepBox that aims to combine every other beepmod into one.">
+  <link rel="icon" type="image/png" sizes="32x32" href="https://michaeleskin.com/tools/UltraBox/favicon.png">
   <title>UltraBox Sample Extractor</title>
-  <head>
-    <style>
-      :root {
+  <style>
+    :root {
       --close-symbol: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="-13 -13 26 26"><path fill="gray" d="M -7.07 -5.66 L -5.66 -7.07 L 0 -1.4 L 5.66 -7.07 L 7.07 -5.66 L 1.4 0 L 7.07 5.66 L 5.66 7.07 L 0 1.4 L -5.66 7.07 L -7.07 5.66 L -1.4 0 z"/></svg>');
-      }
-      
-      html {
-      background: black;
-      overflow-x: hidden;
-      font-size: large;
-      font-family: sans-serif;
-      line-height: 1.5;
-      color: white;
-      }
-      
-      body {
-      margin: auto;
-      overflow-x: hidden;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      align-content: center;
-      }
-      
-      main {
-      width: 100%;
-      max-width: 800px;
-      padding-left: 30px;
-      padding-right: 30px;
-      }
-      
-      h1 {
-      font-size: 1.7rem;
-      text-align: center;
-      margin-top: 0.5em;
-      margin-bottom: 0.5em;
-      -webkit-text-stroke-width: 0;
-      }
-      
-      h2 {
-      font-size: 1.5rem;
-      text-align: center;
-      margin-top: 0.5em;
-      margin-bottom: 0.5em;
-      -webkit-text-stroke-width: 0;
-      }
 
-      h3 {
+      --bg: #111315;
+      --panel: #111827f0;
+      --panel2: #232932;
+      --panel3: #171b21;
+      --text: #e9eef4;
+      --muted: #b9c3cf;
+      --border: #39414d;
+      --accent: #89b4ff;
+      --accent2: #7ee0b0;
+      --warn: #ffcf7a;
+      --danger: #ff8b8b;
+    }
+
+    * { box-sizing: border-box; }
+
+    html {
+      background: var(--bg);
+      overflow-x: hidden;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.35;
+      overflow-x: hidden;
+    }
+
+    .wrap {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 18px;
+      position: relative;
+    }
+
+    h1 {
+      font-size: 2rem;
+      letter-spacing: 1px;
+      font-weight: normal;
+      text-align: center;
+      margin: 0 0 4px 0;
+      color: #d4ffe8;
+      text-shadow:
+        0 0 4px rgba(34,197,94,0.55),
+        0 0 12px rgba(34,197,94,0.45),
+        0 0 24px rgba(34,197,94,0.30),
+        0 0 40px rgba(34,197,94,0.18);
+    }
+
+    h2 {
+      margin: 0 0 10px 0;
+      font-size: 18px;
+      color: var(--text);
+      text-align: left;
+    }
+
+    h3 {
       font-size: 1.25em;
       margin-top: .3em;
       margin-bottom: .47em;
       color: #000;
       text-align: center;
-      }
+    }
 
-      .accent-text {
-      color: #FF8EC5;
-      }
-      
-      .accent-text-2 {
-      color: #FF8EC5;
-      margin-top: 0em;
-      }
+    p {
+      margin: 0 0 12px 0;
+    }
 
-      .center {
+    a {
+      color: var(--accent);
+    }
+
+    code {
+      color: #dce9ff;
+    }
+
+    button,
+    input,
+    select {
+      font-family: inherit;
+    }
+
+    .wrap .sub {
+      color: var(--muted);
+      margin: 0 auto 16px auto;
+      text-align: center;
+      max-width: 900px;
+      line-height: 1.5;
+      font-size: 17px;
+    }
+
+    .stack {
+      display: grid;
+      gap: 14px;
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px;
+    }
+
+    .info-bubble {
+      background: #141920;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px 16px;
+      margin: 0;
+      line-height: 1.6;
+      font-size: 16px;  
+      box-shadow: 0 0 0 1px rgba(137,180,255,0.15), 0 6px 18px rgba(0,0,0,0.25);
+      text-align:center;
+    }
+
+    .info-bubble strong {
+      color: var(--text);
+    }
+
+    .center {
       margin-left: auto;
       margin-right: auto;
       text-align: center;
-      }
-      
-      a {
-      color: #98f;
-      }
-      
-      button, input {
-      font-size: large;
-      }
-      
-      .sample-list {
+    }
+
+    .welcome-area,
+    .footer-area {
+      padding: 0;
+    }
+
+    .picker-row {
+      display: flex;
+      justify-content: center;
+      margin-top: 10px;
+    }
+
+    .panel-actions {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin-top: 12px;
+      margin-bottom: 4px;  
+    }
+
+    button {
+      appearance: none;
+      border: 1px solid var(--border);
+      background: var(--panel2);
+      color: var(--text);
+      padding: 10px 15px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 15px;
+    }
+
+    button:hover {
+      filter: brightness(1.08);
+    }
+
+    .play-note {
+      background: #29446a;
+      border-color: #486ea4;
+    }
+
+    .export-as-wav,
+    .export-as-zip {
+      background: #23473b;
+      border-color: #3a7a63;
+    }
+
+    input[type="file"],
+    input[type="number"],
+    select {
       width: 100%;
-      padding: 1em;
-      font-size: large;
-      }
-      
-      .welcome-area, .sample-list-area, .footer-area {
-      padding: 1em;
-      }
-      
-      .sample-list-area .columns .column {
+      padding: 7px 9px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: #1f2937;
+      color: var(--text);
+      font-size: 15px;
+    }
+
+    input[type="checkbox"] {
+      transform: translateY(1px);
+    }
+
+    .sample-list-area .columns {
+      display: grid;
+      grid-template-columns: 1.05fr 1fr;
+      gap: 14px;
+      align-items: stretch;
+    }
+
+    .sample-list-area .columns .column {
       width: 100%;
-      }
-      
-      .sample-list {
-      height: 30em;
-      }
-      
-      .sample-list-collection-filename {
-      word-break: break-all;
-      }
-      
-      .export-option-row {
+      min-width: 0;
       display: flex;
       flex-direction: column;
-      gap: 0.5em;
-      }
-      
-      .output-sample-rate {
-      text-align: center;
-      }
-      
-      aside {
-      font-size: small;
-      }
-      
-      .overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
+    }
+
+    .sample-list {
       width: 100%;
-      height: 100%;
+      flex: 1 1 auto;
+      min-height: 30em;
+      padding: 12px 18px 12px 12px;
+      font-size: 16px;
+      line-height: 1.45;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: #141920;
+      color: var(--text);
+    }
+
+    .sample-list option {
+      padding-top: 3px;
+      padding-bottom: 3px;
+      line-height: 1.45;
+    }
+
+    .export-area {
+      margin-top: 12px;
+      background: #141920;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px;
+      flex: 1 1 auto;
+    }
+    .sample-list-collection-filename {
+      word-break: break-all;
+    }
+
+    .sample-info-container,
+    .output-sample-info-container {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    .sample-info-container,
+    .output-sample-info-container {
+      background: #141920;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px 14px;
+      margin-top: 0;
+    }
+
+    .output-sample-info-container {
+      margin-top: 8px;
+    }
+
+    .sample-info-container li,
+    .output-sample-info-container li {
+      list-style: none;
+      margin: 0;
+      padding: 4px 0;
+      border: none;
+      background: none;
+      font-size: 14px;
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .sample-info-container li strong,
+    .output-sample-info-container li strong {
+      color: var(--muted);
+      font-weight: normal;
+      flex: 0 0 200px;
+    }
+
+    .sample-info-container li span,
+    .output-sample-info-container li span {
+      text-align: right;
+      flex: 1;
+      color: var(--text);
+    }
+
+    .sample-info-container:empty,
+    .output-sample-info-container:empty {
+      display: none;
+    }    
+
+    .export-option-row {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin: 0 0 12px 0;
+    }
+
+    .export-option-row:last-of-type {
+      margin-bottom: 10px;
+    }
+
+    .export-option-row label {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      color: var(--text);
+      font-size: 14px;
+      flex-wrap: wrap;
+    }
+
+    .export-option-row > strong,
+    .export-option-row label strong {
+      color: var(--muted);
+      font-weight: normal;
+    }
+
+    .export-option-row small {
+      color: var(--muted);
+      line-height: 1.4;
+    }
+
+    .output-sample-rate {
+      text-align: center;
+      max-width: 220px;
+      margin: 0 auto;
+    }
+
+    .note-duration {
+      text-align: center;
+      max-width: 140px;
+      margin: 0 auto;
+    }
+
+    .button-row {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin-top: 12px;
+    }
+
+    .preview-volume-row {
+      margin-top: 14px;
+      text-align: center;
+    }
+
+    .preview-volume-label {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .preview-volume {
+      width: 100%;
+      max-width: 260px;
+      margin: 0 auto;
+      display: block;
+    }
+
+    .preview-volume-value {
+      display: inline-block;
+      min-width: 3ch;
+      color: var(--text);
+    }
+
+    aside {
+      font-size: small;
+    }
+
+    .overlay {
+      position: fixed;
+      top:100px;
+      inset: 0;
       background-color: rgba(0, 0, 0, 0.8);
       display: flex;
       justify-content: center;
       align-items: center;
-      z-index: 1;
-      }
-      
-      .prompt {
+      z-index: 1000;
+      padding: 20px;
+    }
+
+    .prompt {
       margin: auto;
+      margin-top:50px;
       text-align: center;
-      background: rgb(0, 0, 0);
+      background: #141920;
+      color: var(--text);
       border-radius: 15px;
-      border: 4px solid rgb(255, 255, 255);
+      border: 1px solid var(--border);
       padding: 20px;
       display: flex;
       flex-direction: column;
       position: relative;
-      box-shadow: 5px 5px 20px 10px rgba(0, 0, 0, 0.5);
-      max-width: 600px;
+      box-shadow: 0 0 0 1px rgba(137,180,255,0.15), 0 10px 26px rgba(0,0,0,0.35);
+      max-width: 700px;
+      width: min(700px, calc(100vw - 40px));
       box-sizing: border-box;
       word-break: break-word;
-      }
-      
-      .prompt .close-button {
-      float: right;
-      width: 26px;
-      height: 26px;
+    }
+
+    .prompt .close-button {
+      width: 32px;
+      height: 32px;
       position: absolute;
-      top: 8px;
-      right: 8px;
+      top: 10px;
+      right: 10px;
       margin: 0;
-      border: none;
-      border-radius: 5px;
-      background: #444;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--panel2);
       color: inherit;
-      font-size: inherit;
-      font-family: inherit;
-      font-weight: inherit;
       cursor: pointer;
-      }
-      
-      .prompt .close-button::before {
+      padding: 0;
+    }
+
+    .prompt .close-button::before {
       content: "";
       position: absolute;
       width: 26px;
       height: 26px;
-      left: 0;
-      top: 0;
+      left: 2px;
+      top: 2px;
       pointer-events: none;
       background: currentColor;
       mask-image: var(--close-symbol);
@@ -185,127 +449,291 @@
       -webkit-mask-image: var(--close-symbol);
       -webkit-mask-repeat: no-repeat;
       -webkit-mask-position: center;
-      }
-      
-      .prompt h2 {
-      font-size: 2em;
-      margin: 0 16px;
+    }
+
+    .prompt h2 {
+      font-size: 1.3rem;
+      margin: 0 30px 10px 0;
       font-weight: normal;
-      }
-      
-      .prompt p {
+      color: var(--text);
       text-align: left;
-      margin: 1em 0;
-      }
-      
-      .prompt ul {
+    }
+
+    .prompt p,
+    .prompt ul {
       text-align: left;
-      }
-      
-      /* wide screen */
-      @media (min-width: 800px) {
-        html {
-        width: 100%;
-        }
-        
-        body {
-        width: 100%;
-        }
-        
-        .sample-list-area .columns {
-        display: flex;
-        flex-direction: row;
-        align-content: center;
-        gap: 25px;
-        margin-bottom: 1em;
-        }
-      }
-      
-      /* narrow screen */
-      @media (max-width: 800px) {
-        body {
-        width: 100%;
-        }
-        
-        p {
-        margin: 1em 0.5em;
-        }
-      }
-    
+      color: var(--text);
+    }
+
+    .prompt ul {
+      margin: 0;
+      padding-left: 20px;
+    }
+
+    .prompt li {
+      margin-bottom: 10px;
+    }
+
     .modal_flat_background { background-color: #000; opacity: 0.4; }
     .modal_flat_main { border: 1px solid #333; box-shadow: 0px 0px 15.5px -2px rgba(0, 0, 0, 0.75); }
     .modal_flat_main, .modal_flat_main input, .modal_flat_main button { font-size: 16.8px; }
     .modal_flat_main input, .modal_flat_main button { padding: 5.25px; box-sizing: border-box; }
-    .modal_flat_inner { padding: 25px; background: #fff; color: #000; }
+    .modal_flat_inner { padding: 25px; padding-bottom:0px; padding-top:0px; background: #fff; color: #000; }
     .modal_flat_content { font-family: "Helvetica"; margin: 21px 0px; }
     .modal_flat_input { margin: 21px 0px; }
     .modal_flat_buttons { text-align: center; margin-top: 20px; margin-bottom: 20px; }
     .modal_flat_main button { background-color: #ccc; color: #000; padding: 10.5px 21px; border: 0px; cursor: pointer; outline: none; width: 105px; }
-
     .modal_flat_cancel { margin-left: 5.25px; }
 
-    .instr-modal { text-align: left; background-color: #f5ffff; max-height: 70vh; overflow: auto; padding: 12px; border: 1px solid #e1e1e1; border-radius: 4px; }
-    .instr-modal p { margin: 0 0 12px 0; }
-
-    .abc-instructions a {
-      color: rgb(0, 0, 238) !important;
+    .modal_instructions_scroller {
+      max-height: 70vh;
+      overflow-y: auto;
+      padding-right: 8px;
     }
 
-    </style>
+    .modal_instructions_content {
+      text-align: left;
+      color: #000;
+    }
 
-    <script type="text/javascript" src="daypilot-modal.min-3.10.1.js?v=1"></script>
+    .modal_instructions_content h2 {
+      margin-top: 0;
+      margin-bottom: 14px;
+      text-align: center;
+      font-size: 1.55rem;
+      color: #000;
+    }
+
+    .modal_instructions_content h3 {
+      margin-top: 18px;
+      margin-bottom: 6px;
+      text-align: left;
+      font-size: 1.15rem;
+      color: #000;
+    }
+
+    .modal_instructions_content p {
+      margin: 0 0 12px 0;
+      color: #000;
+      line-height: 1.45;
+    }
+
+    .modal_instructions_content ul {
+      margin-top: 6px;
+      margin-bottom: 10px;
+      padding-left: 20px;
+      color: #000;
+    }
+
+    .modal_instructions_content li {
+      margin-bottom: 4px;
+      color: #000;
+      line-height: 1.4;
+    }
+
+    .modal_instructions_content hr {
+      border: 0;
+      border-top: 1px solid #bbb;
+      margin: 16px 0;
+    }
+
+    .instr-modal {
+      text-align: left;
+      background-color: #f5ffff;
+      max-height: 70vh;
+      overflow: auto;
+      padding: 12px;
+      border: 1px solid #e1e1e1;
+      border-radius: 4px;
+    }
+
+    .instr-modal p {
+      margin: 0 0 12px 0;
+    }
+
+    .picker-row input[type="file"] {
+      font-size: 16px;
+      padding: 12px 14px;
+      border-radius: 10px;
+      background: #1f2937;
+      border: 1px solid var(--border);
+      color: var(--text);
+    }
+
+    .picker-row input[type="file"]::file-selector-button {
+      font-size: 15px;
+      padding: 10px 14px;
+      margin-right: 12px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--panel2);
+      color: var(--text);
+      cursor: pointer;
+    }
+
+    .picker-row input[type="file"]::file-selector-button:hover {
+      filter: brightness(1.08);
+    }
+
+    #helpButton {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+
+      width: 42px;
+      height: 42px;
+      border-radius: 10px;
+
+      font-size: 20px;
+      font-weight: bold;
+
+      background: #1f2a3a;
+      color: #fff;
+      padding:12px;
+
+      border: 1px solid rgba(255,255,255,0.15);
+      box-shadow: 0 3px 8px rgba(0,0,0,0.35);
+
+      cursor: pointer;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      transition: all 0.2s ease;
+      z-index: 10;
+    }
+
+    #helpButton:hover {
+      background: #2f3d52;
+      transform: scale(1.08);
+    }
+
+    #helpButton:active {
+      transform: scale(0.96);
+    }
+
+    @media (max-width: 840px) {
+      .sample-list-area .columns {
+        grid-template-columns: 1fr;
+      }
+
+      .sample-list {
+        height: 20em;
+      }
+
+      .sample-info-container li strong,
+      .output-sample-info-container li strong {
+        min-width: 0;
+        display: block;
+        margin-bottom: 4px;
+      }
+    }
+
+  </style>
+
+  <script type="text/javascript" src="daypilot-modal.min-3.10.1.js?v=1"></script>
 
   </head>
 
   <body>
-    <main>
-      <div class="welcome-area">
-        <h1 class="accent-text">UltraBox Sample Extractor</h1>
 
-        <p>This utility helps you take sounds from larger files with several sounds inside (such as <a href="https://en.wikipedia.org/wiki/SoundFont">soundfonts</a>, with their well-known <code>.sf2</code> file extension), and save them as individual <a href="https://en.wikipedia.org/wiki/WAV"><code>.wav</code></a> files, for use in your <a href="https://ultraabox.github.io/">UltraBox</a> songs.</p>
-        <!-- Button to open the instructions modal -->
-        <p class="center">
-          <button style="padding:8px 12px;" id="show-abc-instructions">How to use extracted samples with the ABC Transcription Tools Custom Instrument Builder</button>
-        </p>
-        <p>To start, drop a file (in one of the <a class="supported-formats-link" href="#">supported formats</a>) on this page, or use your browser's file picker:</p>
-        <div class="center">
-          <input type="file" multiple="" id="file-picker">
+    <div class="wrap">
+      <h1>UltraBox Sample Extractor</h1>
+      <button id="helpButton" title="Instructions">?</button>
+      <p class="sub">
+        Extract samples from .sf2 soundfont files, preview them, and export loop-aware WAV files.
+      </p>
+
+      <div class="stack">
+        <div class="panel welcome-area">
+          <div class="info-bubble">
+            <p>
+              This utility helps you extract sounds from <code>.sf2</code> soundfont files, and save them as individual
+              <code>.wav</code> files.
+            </p>
+
+            <p style="margin-bottom:16px;">
+              To start, drop a file in one of the <a class="supported-formats-link" href="#">supported formats</a>
+              on this page, or open a file from your system:
+            </p>
+
+            <div class="picker-row">
+              <input type="file" multiple="" id="file-picker">
+            </div>
+          </div>
+        </div>
+
+        <div class="panel sample-list-area" style="display: none;">
+          <h2>
+            Extracting from <code class="sample-list-collection-filename">filename.sf2</code>
+          </h2>
+          <p style="color: var(--muted);">Select one or more samples:</p>
+
+          <div class="columns">
+            <div class="column">
+              <select multiple="multiple" class="sample-list" size="10"></select>
+            </div>
+
+            <div class="column">
+              <ul class="sample-info-container"></ul>
+
+              <div class="export-area" style="display: none;">
+                <p class="export-option-row center">
+                  <strong>Minimum exported note duration (seconds):</strong>
+                  <input class="note-duration" type="number" value="0" min="0" step="0.5">
+                  <small>
+                    Set to 0 to use the original sample length. If a loop exists,
+                    the loop region will repeat as needed and the tail after the loop will be appended at the end.
+                  </small>
+                </p>
+
+                <p class="export-option-row center">
+                  <label>
+                    <strong>Resample:</strong>
+                    <input class="resample-box" type="checkbox">
+                  </label>
+                </p>
+
+                <p class="export-option-row center output-sample-rate-row" style="display: none;">
+                  <strong>Output sample rate:</strong>
+                  <input class="output-sample-rate" type="number" value="44100" step="1">
+                </p>
+
+                <p class="export-option-row center">
+                  <label>
+                    <strong>Export samples with instrument name:</strong>
+                    <input class="instrument-name-box" type="checkbox" checked="checked">
+                  </label>
+                </p>
+
+                <ul class="center output-sample-info-container" style="display: none;"></ul>
+
+                <div class="button-row">
+                  <button class="play-note">Play</button>
+                  <button class="export-as-wav">Export as .wav</button>
+                  <button class="export-as-zip" style="display: none;">Export .wav files as .zip</button>
+                </div>
+                <div class="preview-volume-row">
+                <label class="preview-volume-label" for="preview-volume">
+                  Preview volume: <span class="preview-volume-value">75%</span>
+                </label>
+                <input
+                  id="preview-volume"
+                  class="preview-volume"
+                  type="range"
+                  min="0"
+                  max="100"
+                  step="1"
+                  value="75"
+                >
+              </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-      <div class="sample-list-area" style="display: none;">
-        <h2 class="accent-text-2">Extracting from <code class="sample-list-collection-filename">filename.sf2</code></h2>
-        <p>Select one or more samples:</p>
-        <div class="columns">
-          <div class="column">
-          <select multiple="multiple" class="sample-list" size="10"></select>
-        </div>
-        <div class="column">
-        <ul class="sample-info-container"></ul>
-        <div class="export-area" style="display: none;">
-          <p class="export-option-row center">
-            <label>
-              <strong>Resample:</strong>
-              <input class="resample-box" type="checkbox">
-            </label>
-          </p>
-          <p class="export-option-row center output-sample-rate-row" style="display: none;">
-            <strong>Output sample rate:</strong>
-            <input class="output-sample-rate" type="number" value="44100" step="1">
-          </p>
-          <p class="export-option-row center">
-            <label>
-              <strong>Export samples with instrument name:</strong>
-              <input class="instrument-name-box" type="checkbox" checked="checked">
-            </label>
-          </p>
-        <ul class="center output-sample-info-container" style="display: none;"></ul>
-        <p class="center">
-          <button class="play-note">Play</button>
-          <button class="export-as-wav">Export as .wav</button>
-          <button class="export-as-zip" style="display: none;">Export .wav files as .zip</button>
-        </p>
-      </div>
-    </main>
+    </div>
     <section class="overlay" style="display: none;">
       <div class="prompt">
         <button class="close-button"></button>
@@ -320,25 +748,19 @@
             Should also work with the sample scripts from <a href="https://paandorasbox.github.io/">Pandora's Box</a>
           </li>
           <li>
-            <code>.txt</code>:
-            <a href="https://ultraabox.github.io/archives/thurmbox/pandoras-jummbox-40.html">Pandora's BeepBox</a> sample file<br>
-            You can see the sample list <a href="https://ultraabox.github.io/archives/thurmbox/sample_docs.html">here</a>.<br>
-            <!-- The sample URL format is <code>https://pandoras-box-archive.neptendo.repl.co/get_sample.php?sample_name=SAMPLE_NAME</code>. -->
-          </li>
-          <li>
             <a href="https://en.wikipedia.org/wiki/WAV"><code>.wav</code></a>:
             Loadable for convenience, in case resampling is
             needed. Loop points are also saved/loaded, so they can be consulted
             after exporting.
           </li>
           <li>
-            <a href="https://en.wikipedia.org/wiki/MP3"><code>.mp3</code></a>: Supported via the Web Audio API. Resampled to 44100hz on load. No loop point info.
+            <a href="https://en.wikipedia.org/wiki/MP3"><code>.mp3</code></a>: Resampled to 44100hz on load. No loop point info.
           </li>
           <li>
-            <a href="https://en.wikipedia.org/wiki/Ogg"><code>.ogg</code></a>: Supported via the Web Audio API. Resampled to 44100hz on load. No loop point info.
+            <a href="https://en.wikipedia.org/wiki/Ogg"><code>.ogg</code></a>: Resampled to 44100hz on load. No loop point info.
           </li>
           <li>
-            <a href="https://en.wikipedia.org/wiki/FLAC"><code>.flac</code></a>: Supported via the Web Audio API. Resampled to 44100hz on load. No loop point info.
+            <a href="https://en.wikipedia.org/wiki/FLAC"><code>.flac</code></a>: Resampled to 44100hz on load. No loop point info.
           </li>
         </ul>
       </div>
@@ -350,31 +772,126 @@
     <script>
 
       (function () {
-        const instructionsHTML = `
-            <div class="abc-instructions" style="max-width:600px;margin:0 auto;">
-              <h3 style="text-align:center; margin-top:0; margin-bottom:0.8em; color:black;">
-                Using Extracted Samples in the ABC Transcription Tools
-              </h3>
-              <p>To create a custom instrument for the <a href="https://michaeleskin.com/abctools/abctools.html" target="_blank">ABC Transcription Tools</a> from the extracted samples, first save a .zip of extracted instrument .wav files from the .sf2 file.</p>
-              <p>The <strong>ABC Transcription Tools Custom Instrument Builder</strong> can directly import and pitch-map samples that have the MIDI note number before the file extension (e.g., Piano-60.wav):</p>
-              <p style="text-align: center;"><a href="https://michaeleskin.com/tools/custom_instrument_builder.html" target="_blank">ABC Transcription Tools - Custom Instrument Builder</a></p>
-              <p>Ideally, you'll want to have only a single instrument with no duplicate MIDI pitch numbers in the filenames in the .zip file.</p>
-              <p>If there are no duplicate pitch numbers in the extracted sample filenames, you can directly import the saved .zip file using the <strong>Import Custom Instrument</strong> feature of the <strong>Custom Instrument Builder</strong>.</p>
-              <p>If there are duplicate pitch numbers in the filenames, or you wish to pick and choose the samples to use for a custom instrument, you can unzip the .zip file exported by this tool into a directory and then open the specfic samples you want to use in the <strong>Custom Instrument Builder</strong> from that directory.</p>
-              <p style="font-size: .25rem;">&nbsp;</p>
+         const instructionsHTML = `
+          <div class="modal_instructions_scroller">
+            <div class="modal_instructions_content">
+
+              <h2>Instructions</h2>
+
+              <p>
+                This tool allows you to extract individual audio samples from SoundFont (<strong>.sf2</strong>) files and export them as
+                <strong>.wav</strong> files for use in UltraBox songs or custom instruments in the ABC Transcription Tools.
+              </p>
+
+              <h3>Step 1 – Load a SoundFont</h3>
+              <ul>
+                <li>Click <strong>Choose Files</strong> or drag and drop a <strong>.sf2</strong> file onto the page.</li>
+                <li>The instruments and samples contained in the file will be displayed on the left.</li>
+              </ul>
+
+              <h3>Step 2 – Select a Sample</h3>
+              <ul>
+                <li>Click on a sample from the list to view its details.</li>
+                <li>The right panel will show:
+                  <ul>
+                    <li>Instrument name</li>
+                    <li>Sample name</li>
+                    <li>Sample rate and format</li>
+                    <li>Loop points, if available</li>
+                  </ul>
+                </li>
+              </ul>
+
+              <h3>Step 3 – Configure Export Options</h3>
+              <ul>
+                <li>
+                  <strong>Minimum exported note duration:</strong><br>
+                  Set a duration in seconds for the exported note.
+                  <ul>
+                    <li>If set to <strong>0</strong>, the original sample is exported unchanged.</li>
+                    <li>If the sample has a valid loop, the loop will repeat as many times as needed.</li>
+                    <li>Any remaining audio after the loop will be appended at the end.</li>
+                  </ul>
+                </li>
+                <li>
+                  <strong>Resample:</strong><br>
+                  Optionally convert the sample to a different sample rate if needed.
+                </li>
+                <li>
+                  <strong>Export with instrument name:</strong><br>
+                  Includes the instrument name in the exported filename for better organization.
+                </li>
+              </ul>
+
+              <h3>Step 4 – Preview</h3>
+              <ul>
+                <li>When a single sample is selected, you may preview the sample.</li>
+                <li>Click <strong>Play</strong> to hear exactly how the exported sample will sound.</li>
+                <li>This preview includes loop expansion and duration adjustments.</li>
+                <li>Set the preview volume using the slider below the <strong>Play</strong> button.</li>
+              </ul>
+
+              <h3>Step 5 – Export</h3>
+              <ul>
+                <li>Click <strong>Export as .wav</strong> to download the processed sample(s).</li>
+                <li>If multiple notes are selected, a .zip file containing all the exported .wav files will be saved.</li>
+              </ul>
+
+              <hr>
+
+              <h3>Using with ABC Transcription Tools – Custom Instrument Builder</h3>
+
+              <p>
+                The exported <strong>.wav</strong> files can be used to create custom instruments for use in the <b>ABC Transcription Tools</b> or <b>Celtic Sounds</b>.
+              </p>
+
+              <ul>
+                <li>Open the <strong>Custom Instrument Builder</strong> tool.</li>
+                <li>Import your exported samples.</li>
+                <li>
+                  Ensure filenames follow a note naming convention such as
+                  <strong>C4.wav, D#4.wav, Bb3.wav</strong> so they are mapped correctly.
+                </li>
+                <li>
+                  The builder can:
+                  <ul>
+                    <li>Fill in missing notes</li>
+                    <li>Generate silent placeholders</li>
+                    <li>Pitch-shift nearby samples if needed</li>
+                  </ul>
+                </li>
+                <li>
+                  Export the final instrument as a custom instrument <strong>.zip</strong> file for use in:
+                  <ul>
+                    <li><b>ABC Transcription Tools</b></li>
+                    <li><b>Celtic Sounds</b></li>
+                  </ul>
+                </li>
+              </ul>
+
+              <hr>
+
+              <h3>Tips</h3>
+              <ul>
+                <li>Choose samples with clean loop points for sustained instruments.</li>
+                <li>Use consistent duration settings across notes for best results.</li>
+                <li>Test playback in the target tool after importing.</li>
+              </ul>
+
             </div>
-          `;
+          </div>
+        `;
 
         function showInstructionsModal() {
           DayPilot.Modal.alert(instructionsHTML, {
             theme: "modal_flat",
-            top: 100,
-            width: 640,          // keeps lines tidy on desktop; modal is responsive
+            top: 25,
+            width: 800,          // keeps lines tidy on desktop; modal is responsive
             scrollWithPage: false
           });
         }
 
-        const btn = document.getElementById("show-abc-instructions");
+        const btn = document.getElementById("helpButton");
         if (btn) {
           btn.addEventListener("click", showInstructionsModal);
         }
@@ -5447,17 +5964,17 @@
           this.format = format;
           this.sampleRate = sampleRate;
           this.data = data;
-          this.loopStart = loopStart;
-          this.loopEnd = loopEnd;
-          if (
-            !isWithin(this.loopStart, 0, this.data.length) ||
-            !isWithin(this.loopEnd, 0, this.data.length) ||
-            this.loopEnd <= this.loopStart ||
-            (this.loopEnd - this.loopStart) < 2
-          ) {
-            this.loopStart = 0;
-            this.loopEnd = this.data.length;
-          }
+
+          const hasValidLoop =
+            isWithin(loopStart, 0, this.data.length) &&
+            isWithin(loopEnd, 0, this.data.length) &&
+            loopEnd > loopStart &&
+            (loopEnd - loopStart) >= 2;
+
+          this.hasValidLoop = hasValidLoop;
+          this.loopStart = hasValidLoop ? loopStart : 0;
+          this.loopEnd = hasValidLoop ? loopEnd : this.data.length;
+
           this._cachedAudioBuffer = null;
         }
 
@@ -5501,29 +6018,40 @@
           const sampleRate = Math.max(8000, this.sampleRate);
           const loopStart = this.loopStart;
           const loopEnd = this.loopEnd;
+
           if (this._cachedAudioBuffer == null) {
             const data = this.data;
             const converted = new Float32Array(data.length);
             const converter = this.getConverter(SAMPLE_FORMAT_F32);
+
             for (let i = 0; i < data.length; i++) {
               converted[i] = converter(data[i]);
             }
+
             const buffer = audioContext.createBuffer(1, converted.length, sampleRate);
             const channelData = buffer.getChannelData(0);
             channelData.set(converted);
             this._cachedAudioBuffer = buffer;
           }
+
           const source = audioContext.createBufferSource();
           source.buffer = this._cachedAudioBuffer;
+
           const playbackRate = 1;
           source.playbackRate.value = playbackRate;
-          source.loopStart = loopStart / sampleRate;
-          source.loopEnd = loopEnd / sampleRate;
-          source.loop = true;
+
+          if (this.hasValidLoop) {
+            source.loopStart = loopStart / sampleRate;
+            source.loopEnd = loopEnd / sampleRate;
+            source.loop = true;
+          } else {
+            source.loop = false;
+          }
+
           return source;
         }
       }
-
+      
       class SampleGroup {
         constructor(name) {
           this.name = name;
@@ -5545,6 +6073,10 @@
           this.sampleGroups.push(group);
         }
       }
+
+      const PREVIEW_VOLUME_STORAGE_KEY = "ultrabox_sample_extractor_preview_volume";
+      const LS_MIN_DURATION_KEY = "ultrabox_min_duration";
+      const DEFAULT_PREVIEW_VOLUME_PERCENT = 75;
 
       let loadedCollection = null;
       let selectedSampleGroup = null;
@@ -5575,6 +6107,7 @@
       const instrumentNameBox = document.body.querySelector(".instrument-name-box");
       const outputSampleRateRow = document.body.querySelector(".output-sample-rate-row");
       const outputSampleRateStepper = document.body.querySelector(".output-sample-rate");
+      const noteDurationStepper = document.body.querySelector(".note-duration");
       const outputSampleInfoContainer = document.body.querySelector(".output-sample-info-container");
       const playNoteButton = document.body.querySelector(".play-note");
       const exportAsWavButton = document.body.querySelector(".export-as-wav");
@@ -5582,22 +6115,178 @@
       let generatedWavLink = null;
       let generatedZipLink = null;
 
+      const previewVolumeSlider = document.body.querySelector(".preview-volume");
+      const previewVolumeValue = document.body.querySelector(".preview-volume-value");
+      const previewVolumeRow = document.body.querySelector(".preview-volume-row");
+
+      let previewVolumePercent = DEFAULT_PREVIEW_VOLUME_PERCENT;
+
+      function createWavFile(shouldResample, outputSampleRate, sample) {
+        const requestedDurationSeconds = getRequestedDurationSeconds();
+        const sampleRate = sample.sampleRate;
+        const sampleFormat = sample.format;
+        let loopStart = sample.loopStart;
+        let loopEnd = sample.loopEnd;
+
+        const minimumLengthInSamples = requestedDurationSeconds > 0 ?
+          Math.ceil(requestedDurationSeconds * sampleRate) :
+          0;
+
+        const sampleData = buildExtendedSampleData(
+          sample,
+          minimumLengthInSamples
+        );
+
+        const shouldExportLoopRegion = sample.hasValidLoop;
+
+        let bitDepth = null;
+        switch (sampleFormat) {
+          case SAMPLE_FORMAT_S16:
+            bitDepth = "16";
+            break;
+          case SAMPLE_FORMAT_F32:
+            bitDepth = "32f";
+            break;
+          case SAMPLE_FORMAT_U8:
+            bitDepth = "8";
+            break;
+          case SAMPLE_FORMAT_F64:
+            bitDepth = "64";
+            break;
+          default:
+            throw new Error("Unknown sample format");
+        }
+
+        const outputBitDepth = bitDepth;
+        const channelAmount = 1;
+
+        const wav = new wavefile.WaveFile();
+        wav.fromScratch(channelAmount, sampleRate, bitDepth, Array.from(sampleData));
+
+        if (shouldResample) {
+          wav.toSampleRate(outputSampleRate);
+          loopStart = Math.floor((loopStart / sampleRate) * outputSampleRate);
+          loopEnd = Math.floor((loopEnd / sampleRate) * outputSampleRate);
+        }
+
+        if (outputBitDepth !== bitDepth) {
+          wav.toBitDepth(outputBitDepth);
+        }
+
+        if (shouldExportLoopRegion) {
+          wav.smpl.chunkId = "smpl";
+          wav.smpl.loops = [{
+            dwName: 0,
+            dwType: 0,
+            dwStart: loopStart,
+            dwEnd: loopEnd,
+            dwFraction: 0,
+            dwPlayCount: 0,
+          }];
+          wav.smpl.dwNumSampleLoops = wav.smpl.loops.length;
+        }
+
+        return wav.toBuffer().buffer;
+      }
+      function createPreviewBuffer(audioContext, sample) {
+        const requestedDurationSeconds = getRequestedDurationSeconds();
+        const minimumLengthInSamples = requestedDurationSeconds > 0 ?
+          Math.ceil(requestedDurationSeconds * sample.sampleRate) :
+          0;
+
+        const extendedSampleData = buildExtendedSampleData(
+          sample,
+          minimumLengthInSamples
+        );
+
+        const converted = new Float32Array(extendedSampleData.length);
+        const converter = sample.getConverter(SAMPLE_FORMAT_F32);
+
+        for (let i = 0; i < extendedSampleData.length; i++) {
+          converted[i] = converter(extendedSampleData[i]);
+        }
+
+        const playbackSampleRate = Math.max(8000, sample.sampleRate);
+        const buffer = audioContext.createBuffer(1, converted.length, playbackSampleRate);
+        buffer.getChannelData(0).set(converted);
+        return buffer;
+      }
+
+      function clampPreviewVolumePercent(value) {
+        const n = Number(value);
+        if (!Number.isFinite(n)) return DEFAULT_PREVIEW_VOLUME_PERCENT;
+        return Math.max(0, Math.min(100, Math.round(n)));
+      }
+
+      function loadPreviewVolumePercent() {
+        try {
+          const stored = localStorage.getItem(PREVIEW_VOLUME_STORAGE_KEY);
+          if (stored == null) return DEFAULT_PREVIEW_VOLUME_PERCENT;
+          return clampPreviewVolumePercent(stored);
+        } catch (error) {
+          return DEFAULT_PREVIEW_VOLUME_PERCENT;
+        }
+      }
+
+      function savePreviewVolumePercent(value) {
+        try {
+          localStorage.setItem(PREVIEW_VOLUME_STORAGE_KEY, String(clampPreviewVolumePercent(value)));
+        } catch (error) {
+          // Ignore storage errors.
+        }
+      }
+
+      function refreshPreviewVolumeUI() {
+        if (previewVolumeSlider) {
+          previewVolumeSlider.value = String(previewVolumePercent);
+        }
+        if (previewVolumeValue) {
+          previewVolumeValue.innerText = previewVolumePercent + "%";
+        }
+      }
+
+      function getPreviewVolumeGain() {
+        return previewVolumePercent / 100;
+      }
+
       function playSample(outputSampleRate, group, sample) {
+        stopSample();
+
         playingSample = sample;
-        let source = sample.getBufferSource(audioContext);
+
+        const source = audioContext.createBufferSource();
+        source.buffer = createPreviewBuffer(audioContext, sample);
+        source.loop = false;
+
         playingSource = source;
-        let gain = audioContext.createGain();
+
+        const gain = audioContext.createGain();
         gain.connect(audioContext.destination);
         source.connect(gain);
+
+        const targetGain = getPreviewVolumeGain();
+
         gain.gain.setValueAtTime(0, audioContext.currentTime);
-        gain.gain.linearRampToValueAtTime(1, audioContext.currentTime + 0.01);
+        gain.gain.linearRampToValueAtTime(targetGain, audioContext.currentTime + 0.01);
+
         source.start(audioContext.currentTime);
+
         stopPlayingSample = () => {
           playingSource = null;
           const end = audioContext.currentTime + 0.1;
           gain.gain.setTargetAtTime(0, end, 0.01);
           source.stop(end + 1);
         };
+
+        source.addEventListener("ended", () => {
+          if (playingSource === source) {
+            playingSample = null;
+            stopPlayingSample = null;
+            playingSource = null;
+            refreshPlayNoteButton();
+          }
+        });
+
         refreshPlayNoteButton();
       }
 
@@ -5622,14 +6311,116 @@
         // @TODO: Need to check what browsers generally do here.
         return name.replace(/\//g, "_");
       }
+      function getRequestedDurationSeconds() {
+        const value = +noteDurationStepper.value;
+        if (!Number.isFinite(value) || value <= 0) {
+          return 0;
+        }
+        return value;
+      }
+
+      function cloneSampleData(sampleData) {
+        return new sampleData.constructor(sampleData);
+      }
+
+      function buildExtendedSampleData(sample, minimumLengthInSamples) {
+        const sampleData = sample.data;
+        const originalLength = sampleData.length;
+
+        if (
+          !Number.isFinite(minimumLengthInSamples) ||
+          minimumLengthInSamples <= 0 ||
+          originalLength >= minimumLengthInSamples
+        ) {
+          return cloneSampleData(sampleData);
+        }
+
+        if (!sample.hasValidLoop) {
+          return cloneSampleData(sampleData);
+        }
+
+        const loopStart = Math.max(0, Math.min(originalLength, sample.loopStart | 0));
+        const loopEnd = Math.max(loopStart, Math.min(originalLength, sample.loopEnd | 0));
+        const loopLength = loopEnd - loopStart;
+
+        if (loopLength <= 0) {
+          return cloneSampleData(sampleData);
+        }
+
+        const prefixLength = loopStart;
+        const suffixLength = originalLength - loopEnd;
+
+        const requiredLoopRepeats = Math.max(
+          0,
+          Math.ceil((minimumLengthInSamples - prefixLength - suffixLength) / loopLength)
+        );
+
+        const outputLength = prefixLength + (requiredLoopRepeats * loopLength) + suffixLength;
+        const result = new sampleData.constructor(outputLength);
+
+        let writeIndex = 0;
+
+        if (prefixLength > 0) {
+          result.set(sampleData.subarray(0, loopStart), writeIndex);
+          writeIndex += prefixLength;
+        }
+
+        const loopSlice = sampleData.subarray(loopStart, loopEnd);
+        for (let i = 0; i < requiredLoopRepeats; i++) {
+          result.set(loopSlice, writeIndex);
+          writeIndex += loopLength;
+        }
+
+        if (suffixLength > 0) {
+          result.set(sampleData.subarray(loopEnd), writeIndex);
+        }
+
+        return result;
+      }
+
+      function getExportedSampleLengthInfo(shouldResample, outputSampleRate, sample) {
+        const requestedDurationSeconds = getRequestedDurationSeconds();
+        const sourceMinimumLengthInSamples = requestedDurationSeconds > 0 ?
+          Math.ceil(requestedDurationSeconds * sample.sampleRate) :
+          0;
+
+        const extendedSampleData = buildExtendedSampleData(
+          sample,
+          sourceMinimumLengthInSamples
+        );
+
+        const exportedLengthInSourceSamples = extendedSampleData.length;
+        const exportedLengthInOutputSamples = shouldResample ?
+          Math.ceil((exportedLengthInSourceSamples / sample.sampleRate) * outputSampleRate) :
+          exportedLengthInSourceSamples;
+
+        return {
+          requestedDurationSeconds,
+          exportedLengthInSourceSamples,
+          exportedLengthInOutputSamples,
+          couldExtend: sample.hasValidLoop && extendedSampleData.length > sample.data.length,
+          hasValidLoop: sample.hasValidLoop,
+        };
+      }
 
       function createWavFile(shouldResample, outputSampleRate, sample) {
-        const sampleData = sample.data;
+        const requestedDurationSeconds = getRequestedDurationSeconds();
         const sampleRate = sample.sampleRate;
         const sampleFormat = sample.format;
         let loopStart = sample.loopStart;
         let loopEnd = sample.loopEnd;
-        const shouldExportLoopRegion = loopStart !== 0 || loopEnd !== sampleData.length;
+
+        const minimumLengthInSamples = requestedDurationSeconds > 0 ?
+          Math.ceil(requestedDurationSeconds * sampleRate) :
+          0;
+
+        const sampleData = buildExtendedSampleData(
+          sample,
+          minimumLengthInSamples
+        );
+
+        const shouldExportLoopRegion = sample.hasValidLoop;
+
         let bitDepth = null;
         switch (sampleFormat) {
           case SAMPLE_FORMAT_S16:
@@ -5647,29 +6438,36 @@
           default:
             throw new Error("Unknown sample format");
         }
+
         const outputBitDepth = bitDepth;
         const channelAmount = 1;
 
         const wav = new wavefile.WaveFile();
         wav.fromScratch(channelAmount, sampleRate, bitDepth, Array.from(sampleData));
+
         if (shouldResample) {
           wav.toSampleRate(outputSampleRate);
           loopStart = Math.floor((loopStart / sampleRate) * outputSampleRate);
           loopEnd = Math.floor((loopEnd / sampleRate) * outputSampleRate);
         }
-        if (outputBitDepth !== bitDepth) wav.toBitDepth(outputBitDepth);
+
+        if (outputBitDepth !== bitDepth) {
+          wav.toBitDepth(outputBitDepth);
+        }
+
         if (shouldExportLoopRegion) {
           wav.smpl.chunkId = "smpl";
-          wav.smpl.loops.push({
+          wav.smpl.loops = [{
             dwName: 0,
             dwType: 0,
             dwStart: loopStart,
             dwEnd: loopEnd,
             dwFraction: 0,
             dwPlayCount: 0,
-          });
+          }];
           wav.smpl.dwNumSampleLoops = wav.smpl.loops.length;
         }
+
         return wav.toBuffer().buffer;
       }
 
@@ -5815,6 +6613,7 @@
               stopSample();
               if (selection.length === 1) {
                 playNoteButton.style.display = "";
+                previewVolumeRow.style.display = "";
                 exportAsWavButton.style.display = "";
                 exportAsZipButton.style.display = "none";
 
@@ -5825,6 +6624,7 @@
                 refreshSampleInfo(selectedSampleGroup, selectedSample, hasMultipleSamplesSelected);
               } else {
                 playNoteButton.style.display = "none";
+                previewVolumeRow.style.display = "none";
                 exportAsWavButton.style.display = "none";
                 exportAsZipButton.style.display = "";
 
@@ -6510,14 +7310,18 @@
           if (row == null) continue;
           const [label, value] = row;
           if (value == null) continue;
+
           const rowElement = document.createElement("li");
+
           const labelElement = document.createElement("strong");
           labelElement.innerText = label;
+
           const valueElement = document.createElement("span");
           valueElement.innerText = value;
+
           rowElement.appendChild(labelElement);
-          rowElement.appendChild(document.createTextNode(" "));
           rowElement.appendChild(valueElement);
+
           container.appendChild(rowElement);
         }
       }
@@ -6530,6 +7334,7 @@
         let length = null;
         let loopStart = null;
         let loopEnd = null;
+        let hasValidLoop = null;
 
         if (hasMultipleSamplesSelected) {
           outputSampleInfoContainer.style.display = "none";
@@ -6549,6 +7354,7 @@
             length = sample.data.length;
             loopStart = sample.loopStart;
             loopEnd = sample.loopEnd;
+            hasValidLoop = sample.hasValidLoop ? "Yes" : "No";
           }
 
           renderInfoRows(sampleInfoContainer, [
@@ -6557,8 +7363,9 @@
             ["Format:", format],
             ["Sample Rate:", sampleRate],
             ["Length (in samples):", length],
-            ["Loop start (in samples):", loopStart],
-            ["Loop end (in samples):", loopEnd],
+            ["Has valid loop:", hasValidLoop],
+            ["Loop start (in samples):", sample != null && sample.hasValidLoop ? loopStart : null],
+            ["Loop end (in samples):", sample != null && sample.hasValidLoop ? loopEnd : null],
           ]);
 
           if (sample == null) {
@@ -6566,15 +7373,33 @@
           } else {
             exportArea.style.display = "";
           }
-          if (!shouldResample) {
+
+          if (sample == null) {
             outputSampleInfoContainer.style.display = "none";
           } else {
             outputSampleInfoContainer.style.display = "";
             const newSampleRate = +outputSampleRateStepper.value;
-            renderInfoRows(outputSampleInfoContainer, [
-              ["New loop start:", Math.floor((loopStart / sampleRate) * newSampleRate)],
-              ["New loop end:", Math.floor((loopEnd / sampleRate) * newSampleRate)],
-            ]);
+            const exportInfo = getExportedSampleLengthInfo(shouldResample, newSampleRate, sample);
+
+            const outputRows = [
+              ["Requested minimum duration:", exportInfo.requestedDurationSeconds > 0 ? (exportInfo.requestedDurationSeconds + " seconds") : "Original sample length"],
+              ["Has valid loop:", exportInfo.hasValidLoop ? "Yes" : "No"],
+              ["Extended by looping:", exportInfo.couldExtend ? "Yes" : "No"],
+            ];
+
+            if (shouldResample) {
+              outputRows.push(
+                ["New loop start:", exportInfo.hasValidLoop ? Math.floor((loopStart / sampleRate) * newSampleRate) : null],
+                ["New loop end:", exportInfo.hasValidLoop ? Math.floor((loopEnd / sampleRate) * newSampleRate) : null],
+                ["Estimated exported length (samples):", exportInfo.exportedLengthInOutputSamples]
+              );
+            } else {
+              outputRows.push(
+                ["Exported length (samples):", exportInfo.exportedLengthInSourceSamples]
+              );
+            }
+
+            renderInfoRows(outputSampleInfoContainer, outputRows);
           }
         }
 
@@ -6585,10 +7410,50 @@
         }
       }
 
+      const noteDurationStepperEventHandler = {
+        handleEvent: (event) => {
+          switch (event.type) {
+            case "input": {
+              stopSample();
+              refreshSampleInfo(selectedSampleGroup, selectedSample, hasMultipleSamplesSelected);
+              localStorage.setItem(LS_MIN_DURATION_KEY, sanitizeMinDuration(noteDurationStepper.value));
+              break;
+            }
+          }
+        },
+      };
+
+      const previewVolumeSliderEventHandler = {
+        handleEvent: (event) => {
+          switch (event.type) {
+            case "input": {
+              previewVolumePercent = clampPreviewVolumePercent(previewVolumeSlider.value);
+              refreshPreviewVolumeUI();
+              savePreviewVolumePercent(previewVolumePercent);
+              break;
+            }
+          }
+        },
+      };
+
+      function sanitizeMinDuration(value) {
+        const num = parseFloat(value);
+        if (isNaN(num) || num < 0) return 0;
+        return num;
+      }
+
       function main() {
+
+        const savedMinDuration = localStorage.getItem(LS_MIN_DURATION_KEY);
+        noteDurationStepper.value = savedMinDuration !== null ? savedMinDuration : "0";
+
+        previewVolumePercent = loadPreviewVolumePercent();
+        refreshPreviewVolumeUI();
+        
         audioContext = new AudioContext({
           sampleRate: 44100
         });
+
         sampleLoadingAudioContext = new AudioContext({
           sampleRate: sampleLoadingSampleRate
         });
@@ -6615,6 +7480,11 @@
         sampleList.addEventListener("keydown", sampleListEventHandler);
         resampleBox.addEventListener("input", resampleBoxEventHandler);
         instrumentNameBox.addEventListener("input", instrumentNameBoxHandler);
+        noteDurationStepper.addEventListener("input", noteDurationStepperEventHandler);
+        noteDurationStepper.addEventListener("change", () => {
+          localStorage.setItem(LS_MIN_DURATION_KEY, sanitizeMinDuration(noteDurationStepper.value));
+        });
+        previewVolumeSlider.addEventListener("input", previewVolumeSliderEventHandler);
         outputSampleRateStepper.addEventListener("input", outputSampleRateStepperEventHandler);
         playNoteButton.addEventListener("click", playNoteEventHandler);
         exportAsWavButton.addEventListener("click", exportAsWavEventHandler);
@@ -6622,7 +7492,7 @@
         filePicker.addEventListener("change", filePickerEventHandler);
         window.addEventListener("dragover", windowEventHandler);
         window.addEventListener("drop", windowEventHandler);
-      }
+       }
 
       main();
       
