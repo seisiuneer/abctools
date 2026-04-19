@@ -146,8 +146,7 @@
       text-align: center;
     }
 
-    .welcome-area,
-    .footer-area {
+    .welcome-area{
       padding: 0;
     }
 
@@ -155,16 +154,6 @@
       display: flex;
       justify-content: center;
       margin-top: 10px;
-    }
-
-    .panel-actions {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 14px;
-      margin-top: 12px;
-      margin-bottom: 4px;  
     }
 
     button {
@@ -185,12 +174,14 @@
     .play-note {
       background: #29446a;
       border-color: #486ea4;
+      margin-top:8px;
     }
 
     .export-as-wav,
     .export-as-zip {
       background: #23473b;
       border-color: #3a7a63;
+      margin-top:8px;
     }
 
     input[type="file"],
@@ -384,10 +375,6 @@
       color: var(--text);
     }
 
-    aside {
-      font-size: small;
-    }
-
     .overlay {
       position: fixed;
       top:100px;
@@ -537,20 +524,6 @@
       margin: 16px 0;
     }
 
-    .instr-modal {
-      text-align: left;
-      background-color: #f5ffff;
-      max-height: 70vh;
-      overflow: auto;
-      padding: 12px;
-      border: 1px solid #e1e1e1;
-      border-radius: 4px;
-    }
-
-    .instr-modal p {
-      margin: 0 0 12px 0;
-    }
-
     .picker-row input[type="file"] {
       font-size: 16px;
       padding: 12px 14px;
@@ -679,9 +652,9 @@
               <ul class="sample-info-container"></ul>
 
               <div class="export-area" style="display: none;">
-                <p class="export-option-row center">
-                  <strong>Minimum exported note duration (seconds):</strong>
-                  <input class="note-duration" type="number" value="0" min="0" step="0.5">
+                <p class="export-option-row center" >
+                  <span style="margin-bottom:8px;"><strong>Minimum exported note duration (seconds):</strong></span>
+                  <input class="note-duration" type="number" value="0" min="0" step="0.5" style="margin-bottom:8px;">
                   <small>
                     Set to 0 to use the original sample length. If a loop exists,
                     the loop region will repeat as needed and the tail after the loop will be appended at the end.
@@ -690,24 +663,31 @@
 
                 <p class="export-option-row center">
                   <label>
-                    <strong>Resample:</strong>
+                    <strong>Resample before exporting:</strong>
                     <input class="resample-box" type="checkbox">
                   </label>
                 </p>
 
                 <p class="export-option-row center output-sample-rate-row" style="display: none;">
-                  <strong>Output sample rate:</strong>
-                  <input class="output-sample-rate" type="number" value="44100" step="1">
+                  <span style="margin-bottom:8px;"><strong>Output sample rate:</strong></span>
+                  <input class="output-sample-rate" type="number" min="8000" value="44100" step="100"  style="margin-bottom:8px;">
                 </p>
+
+                <div class="export-option-row center">
+                  <label>
+                    <strong>Use detected pitch as the exported filename (replaces original name):</strong>
+                    <input type="checkbox" id="prefix-pitch-checkbox" checked>
+                  </label>
+                </div>
 
                 <p class="export-option-row center">
                   <label>
-                    <strong>Export samples with instrument name:</strong>
+                    <strong>Prefix exported sample filenames with the instrument name:</strong>
                     <input class="instrument-name-box" type="checkbox" checked="checked">
                   </label>
                 </p>
 
-                <ul class="center output-sample-info-container" style="display: none;"></ul>
+                <ul class="output-sample-info-container" style="display: none;"></ul>
 
                 <div class="button-row">
                   <button class="play-note">Play</button>
@@ -806,7 +786,9 @@
               <ul>
                 <li>
                   <strong>Minimum exported note duration:</strong><br>
-                  Set a duration in seconds for the exported note.
+                  <p style="margin-top:12px;">
+                    Set a duration in seconds for the exported note.
+                  </p>
                   <ul>
                     <li>If set to <strong>0</strong>, the original sample is exported unchanged.</li>
                     <li>If the sample has a valid loop, the loop will repeat as many times as needed.</li>
@@ -814,12 +796,43 @@
                   </ul>
                 </li>
                 <li>
-                  <strong>Resample:</strong><br>
-                  Optionally convert the sample to a different sample rate if needed.
+                  <strong>Resample before exporting:</strong><br>
+                  <p style="margin-top:12px;">
+                    Optionally convert the sample to a different sample rate if needed.
+                  </p>
                 </li>
                 <li>
-                  <strong>Export with instrument name:</strong><br>
-                  Includes the instrument name in the exported filename for better organization.
+                  <strong>Use detected pitch as the exported filename (replaces original name):</strong>
+                  <p style="margin-top:12px;">
+                    When enabled, exported filenames will match the detected pitch,
+                    for example:
+                  </p>
+
+                  <p>
+                    F2.wav, Ab3.wav, D4.wav, Eb5.wav, etc.
+                  </p>
+
+                  <p>
+                    Pitch naming follows the flat-based convention used for <strong>ABC Transcription Tools</strong> and <strong>Celtic Sounds</strong> custom instruments:
+                  </p>
+
+                  <p>
+                    C3 Db3 D3 Eb3 E3 F3 Gb3 G3 Ab3 A3 Bb3 B3 C4 etc.
+                  </p>
+
+                  <p>
+                    If pitch detection cannot determine a reliable note, the original filename will be left unchanged.
+                  </p>
+
+                  <p>
+                    This feature works best with sustained sounds like winds or strings and may struggle to get the octave correct for plucked or percussive instruments.
+                  </p>
+                </li>
+                <li>
+                  <strong>Prefix exported sample filenames with the instrument name:</strong><br>
+                  <p style="margin-top:12px;">
+                    Adds the instrument name as a prefix for the exported filename.
+                  </p>
                 </li>
               </ul>
 
@@ -850,7 +863,7 @@
                 <li>Open the <strong>Custom Instrument Builder</strong> tool.</li>
                 <li>
                   Ensure filenames follow a note naming convention such as
-                  <strong>C4.wav, D#4.wav, Bb3.wav</strong> so they are mapped correctly.
+                  <strong>C4.wav, Eb4.wav, Bb3.wav</strong> so they are mapped correctly.
                 </li>
                 <li>Import your exported .wav samples.</li>
                 <li>
@@ -6106,8 +6119,12 @@
         }
       }
 
-      const PREVIEW_VOLUME_STORAGE_KEY = "ultrabox_sample_extractor_preview_volume";
       const LS_MIN_DURATION_KEY = "ultrabox_min_duration";
+      const LS_PREFIX_PITCH_KEY = "ultrabox_prefix_pitch";
+      const LS_INSTRUMENT_NAME_KEY = "ultrabox_include_instrument_name";
+      const LS_RESAMPLE_KEY = "ultrabox_resample_before_export";
+      const LS_OUTPUT_SAMPLE_RATE_KEY = "ultrabox_output_sample_rate";
+      const LS_PREVIEW_VOLUME_STORAGE_KEY = "ultrabox_preview_volume";
       const DEFAULT_PREVIEW_VOLUME_PERCENT = 75;
 
       let loadedCollection = null;
@@ -6150,6 +6167,8 @@
       const previewVolumeSlider = document.body.querySelector(".preview-volume");
       const previewVolumeValue = document.body.querySelector(".preview-volume-value");
       const previewVolumeRow = document.body.querySelector(".preview-volume-row");
+
+      const replacePitchCheckbox = document.getElementById("prefix-pitch-checkbox");
 
       let previewVolumePercent = DEFAULT_PREVIEW_VOLUME_PERCENT;
 
@@ -6252,7 +6271,7 @@
 
       function loadPreviewVolumePercent() {
         try {
-          const stored = localStorage.getItem(PREVIEW_VOLUME_STORAGE_KEY);
+          const stored = localStorage.getItem(LS_PREVIEW_VOLUME_STORAGE_KEY);
           if (stored == null) return DEFAULT_PREVIEW_VOLUME_PERCENT;
           return clampPreviewVolumePercent(stored);
         } catch (error) {
@@ -6262,7 +6281,7 @@
 
       function savePreviewVolumePercent(value) {
         try {
-          localStorage.setItem(PREVIEW_VOLUME_STORAGE_KEY, String(clampPreviewVolumePercent(value)));
+          localStorage.setItem(LS_PREVIEW_VOLUME_STORAGE_KEY, String(clampPreviewVolumePercent(value)));
         } catch (error) {
           // Ignore storage errors.
         }
@@ -6505,8 +6524,22 @@
 
       function exportAsWav(shouldResample, outputSampleRate, sample, group, useInstrumentName) {
         const prefix = useInstrumentName && group.name != null ? prepareNameForOutput(group.name) + " - " : "";
-        const name = `${prefix}${prepareNameForOutput(sample.name)}.wav`;
+        let name = `${prefix}${prepareNameForOutput(sample.name)}.wav`;
         const wavData = createWavFile(shouldResample, outputSampleRate, sample);
+
+        if (replacePitchCheckbox.checked) {
+          try {
+            const pitchDetectionSampleData = getPitchDetectionSampleData(sample);
+            const freq = detectPitchRobust(pitchDetectionSampleData, sample.sampleRate);
+            const note = frequencyToNoteName(freq);
+            if (note) {
+              name = `${prefix}${note}.wav`;
+            }
+          } catch (e) {
+            // Leave name unchanged if pitch detection fails.
+          }
+        }
+
         generatedWavLink.download = name;
         const url = URL.createObjectURL(new Blob([wavData], {
           type: "audio/wav"
@@ -6527,11 +6560,24 @@
           const prefix = useInstrumentName && group.name != null ? prepareNameForOutput(group.name) + " - " : "";
           let name = `${prefix}${prepareNameForOutput(sample.name)}.wav`;
 
+          if (replacePitchCheckbox.checked) {
+            try {
+              const pitchDetectionSampleData = getPitchDetectionSampleData(sample);
+              const freq = detectPitchRobust(pitchDetectionSampleData, sample.sampleRate);
+              const note = frequencyToNoteName(freq);
+              if (note) {
+                name = `${prefix}${note}.wav`;
+              }
+            } catch (e) {
+              // Leave name unchanged if pitch detection fails.
+            }
+          }
+
           if (dirStructure[name] != null) {
             let uniqueId = 1;
             let attempts = 0;
             do {
-              const newName = `${prefix}${prepareNameForOutput(sample.name)}__${uniqueId}.wav`;
+              const newName = name.replace(/\.wav$/i, `_${uniqueId}.wav`);
               uniqueId++;
               if (dirStructure[newName] == null) {
                 name = newName;
@@ -6542,7 +6588,6 @@
           }
 
           const wavData = createWavFile(shouldResample, outputSampleRate, sample);
-
           dirStructure[name] = new Uint8Array(wavData);
         }
 
@@ -6677,6 +6722,7 @@
           switch (event.type) {
             case "input": {
               shouldResample = resampleBox.checked;
+              localStorage.setItem(LS_RESAMPLE_KEY, String(resampleBox.checked));
               refreshSampleInfo(selectedSampleGroup, selectedSample, hasMultipleSamplesSelected);
               break;
             }
@@ -6688,6 +6734,7 @@
         handleEvent: (event) => {
           switch (event.type) {
             case "input": {
+              localStorage.setItem(LS_OUTPUT_SAMPLE_RATE_KEY, String(outputSampleRateStepper.value));
               refreshSampleInfo(selectedSampleGroup, selectedSample, hasMultipleSamplesSelected);
               break;
             }
@@ -6700,6 +6747,7 @@
           switch (event.type) {
             case "input": {
               shouldExportSamplesWithInstrumentName = instrumentNameBox.checked;
+              localStorage.setItem(LS_INSTRUMENT_NAME_KEY, String(instrumentNameBox.checked));
               break;
             }
           }
@@ -7419,6 +7467,22 @@
               ["Extended by looping:", exportInfo.couldExtend ? "Yes" : "No"],
             ];
 
+            // Show detected pitch for single-sample export info
+            let detectedPitchText = "Not available";
+            if (sample != null) {
+              try {
+                const pitchDetectionSampleData = getPitchDetectionSampleData(sample);
+                const detectedFreq = detectPitchRobust(pitchDetectionSampleData, sample.sampleRate);
+                const detectedPitch = frequencyToNoteName(detectedFreq);
+
+                if (detectedPitch) {
+                  detectedPitchText = detectedPitch;
+                }
+              } catch (e) {
+                // Leave as "Not available"
+              }
+            }
+
             if (shouldResample) {
               outputRows.push(
                 ["New loop start:", exportInfo.hasValidLoop ? Math.floor((loopStart / sampleRate) * newSampleRate) : null],
@@ -7430,6 +7494,8 @@
                 ["Exported length (samples):", exportInfo.exportedLengthInSourceSamples]
               );
             }
+
+            outputRows.push(["Detected pitch:", detectedPitchText]);
 
             renderInfoRows(outputSampleInfoContainer, outputRows);
           }
@@ -7474,14 +7540,248 @@
         return num;
       }
 
+      function getPitchDetectionSampleData(sample) {
+        const sampleData = sample.data;
+
+        if (!sample || !sampleData || sampleData.length === 0) {
+          return sampleData;
+        }
+
+        const sampleRate = sample.sampleRate || 44100;
+
+        // If a valid loop exists, use it for pitch detection.
+        // If it is too short for robust analysis, build a larger analysis buffer
+        // by repeating the loop region as many times as needed.
+        if (sample.hasValidLoop) {
+          const originalLength = sampleData.length;
+          const loopStart = Math.max(0, Math.min(originalLength, sample.loopStart | 0));
+          const loopEnd = Math.max(loopStart, Math.min(originalLength, sample.loopEnd | 0));
+          const loopLength = loopEnd - loopStart;
+
+          const TARGET_LOOP_ANALYSIS_SAMPLES = 8192;
+
+          if (loopLength > 0) {
+            const loopSlice = sampleData.subarray(loopStart, loopEnd);
+
+            if (loopLength >= TARGET_LOOP_ANALYSIS_SAMPLES) {
+              return loopSlice;
+            }
+
+            const repeatCount = Math.ceil(TARGET_LOOP_ANALYSIS_SAMPLES / loopLength);
+            const expanded = new sampleData.constructor(loopLength * repeatCount);
+
+            for (let i = 0; i < repeatCount; i++) {
+              expanded.set(loopSlice, i * loopLength);
+            }
+
+            return expanded;
+          }
+        }
+
+        // No valid loop: use the full sample with the attack transient removed if possible.
+        const ATTACK_SKIP_MS = 100;
+        const attackSkipSamples = Math.floor((ATTACK_SKIP_MS / 1000) * sampleRate);
+
+        if (sampleData.length > attackSkipSamples) {
+          return sampleData.subarray(attackSkipSamples);
+        }
+
+        return sampleData;
+      }
+
+      function detectPitchRobust(buffer, sampleRate) {
+        if (!buffer || buffer.length < 1024) {
+          return null;
+        }
+
+        // For sustained tones, a larger window is better.
+        const WINDOW_SIZE = Math.min(buffer.length, 8192);
+        const HOP_SIZE = Math.max(1024, Math.floor(WINDOW_SIZE / 3));
+        const MAX_WINDOWS = 5;
+
+        const freqs = [];
+
+        for (let start = 0, count = 0; start + WINDOW_SIZE <= buffer.length && count < MAX_WINDOWS; start += HOP_SIZE, count++) {
+          const window = buffer.subarray(start, start + WINDOW_SIZE);
+          const freq = detectPitchYINWindow(window, sampleRate);
+          if (freq != null && isFinite(freq)) {
+            freqs.push(freq);
+          }
+        }
+
+        if (freqs.length === 0) {
+          return null;
+        }
+
+        // Sort and return median for robustness.
+        freqs.sort((a, b) => a - b);
+        const mid = Math.floor(freqs.length / 2);
+
+        if (freqs.length % 2 === 1) {
+          return freqs[mid];
+        }
+
+        return 0.5 * (freqs[mid - 1] + freqs[mid]);
+      }
+
+      function detectPitchYINWindow(buffer, sampleRate) {
+        const size = buffer.length;
+        if (size < 1024) {
+          return null;
+        }
+
+        // Search range focused on musical sustained notes.
+        // About 50 Hz to 2000 Hz.
+        const minFreq = 50;
+        const maxFreq = 2000;
+
+        const minTau = Math.max(2, Math.floor(sampleRate / maxFreq));
+        const maxTau = Math.min(size - 2, Math.floor(sampleRate / minFreq));
+
+        if (maxTau <= minTau) {
+          return null;
+        }
+
+        // Remove DC offset.
+        let mean = 0;
+        for (let i = 0; i < size; i++) {
+          mean += buffer[i];
+        }
+        mean /= size;
+
+        // Apply Hann window and measure RMS.
+        const x = new Float32Array(size);
+        let rms = 0;
+
+        for (let i = 0; i < size; i++) {
+          const w = 0.5 * (1 - Math.cos((2 * Math.PI * i) / (size - 1)));
+          const v = (buffer[i] - mean) * w;
+          x[i] = v;
+          rms += v * v;
+        }
+
+        rms = Math.sqrt(rms / size);
+        if (rms < 1e-5) {
+          return null;
+        }
+
+        const diff = new Float64Array(maxTau + 1);
+        const cmnd = new Float64Array(maxTau + 1);
+
+        diff[0] = 0;
+        cmnd[0] = 1;
+
+        // Difference function.
+        for (let tau = 1; tau <= maxTau; tau++) {
+          let sum = 0;
+          for (let i = 0; i < size - tau; i++) {
+            const d = x[i] - x[i + tau];
+            sum += d * d;
+          }
+          diff[tau] = sum;
+        }
+
+        // Cumulative mean normalized difference.
+        let runningSum = 0;
+        for (let tau = 1; tau <= maxTau; tau++) {
+          runningSum += diff[tau];
+          cmnd[tau] = runningSum > 0 ? (diff[tau] * tau) / runningSum : 1;
+        }
+
+        // Find the first strong dip below threshold.
+        const YIN_THRESHOLD = 0.12;
+        let tauEstimate = -1;
+
+        for (let tau = minTau; tau <= maxTau; tau++) {
+          if (cmnd[tau] < YIN_THRESHOLD) {
+            while (tau + 1 <= maxTau && cmnd[tau + 1] < cmnd[tau]) {
+              tau++;
+            }
+            tauEstimate = tau;
+            break;
+          }
+        }
+
+        // Fallback to best minimum if threshold wasn't crossed.
+        if (tauEstimate < 0) {
+          let bestVal = Infinity;
+          for (let tau = minTau; tau <= maxTau; tau++) {
+            if (cmnd[tau] < bestVal) {
+              bestVal = cmnd[tau];
+              tauEstimate = tau;
+            }
+          }
+
+          // Reject weak guesses.
+          if (bestVal > 0.25) {
+            return null;
+          }
+        }
+
+        if (tauEstimate <= 1 || tauEstimate >= maxTau) {
+          return sampleRate / tauEstimate;
+        }
+
+        // Parabolic interpolation for sub-sample accuracy.
+        const s0 = cmnd[tauEstimate - 1];
+        const s1 = cmnd[tauEstimate];
+        const s2 = cmnd[tauEstimate + 1];
+        const denom = (2 * s1) - s0 - s2;
+
+        let refinedTau = tauEstimate;
+        if (Math.abs(denom) > 1e-12) {
+          refinedTau = tauEstimate + 0.5 * (s0 - s2) / denom;
+        }
+
+        if (!isFinite(refinedTau) || refinedTau <= 0) {
+          return null;
+        }
+
+        return sampleRate / refinedTau;
+      }
+
+      function frequencyToNoteName(freq) {
+        if (!freq || freq <= 0) return null;
+
+        const noteNames = ["C","Db","D","Eb","E","F","Gb","G","Ab","A","Bb","B"];
+
+        const midi = Math.round(69 + 12 * Math.log2(freq / 440));
+        const note = noteNames[midi % 12];
+        const octave = Math.floor(midi / 12) - 1;
+
+        return note + octave;
+      }
+
       function main() {
 
         const savedMinDuration = localStorage.getItem(LS_MIN_DURATION_KEY);
         noteDurationStepper.value = savedMinDuration !== null ? savedMinDuration : "0";
 
+        const savedInstrumentName = localStorage.getItem(LS_INSTRUMENT_NAME_KEY);
+
+        if (savedInstrumentName === null) {
+          // Default ON (first run)
+          instrumentNameBox.checked = true;
+          shouldExportSamplesWithInstrumentName = true;
+        } else {
+          instrumentNameBox.checked = shouldExportSamplesWithInstrumentName = savedInstrumentName === "true";
+        }
+
+        localStorage.setItem(LS_INSTRUMENT_NAME_KEY, String(instrumentNameBox.checked));
+
         previewVolumePercent = loadPreviewVolumePercent();
         refreshPreviewVolumeUI();
+
+        const savedPrefix = localStorage.getItem(LS_PREFIX_PITCH_KEY);
+        if (savedPrefix === null) {
+          // First run = default ON
+          replacePitchCheckbox.checked = true;
+        } else {
+          replacePitchCheckbox.checked = savedPrefix === "true";
+        }
         
+        localStorage.setItem(LS_PREFIX_PITCH_KEY, replacePitchCheckbox.checked);
+
         audioContext = new AudioContext({
           sampleRate: 44100
         });
@@ -7497,8 +7797,24 @@
         generatedZipLink.download = "";
         generatedZipLink.href = "";
 
-        outputSampleRateStepper.value = "44100";
-        resampleBox.checked = shouldResample;
+        const savedResample = localStorage.getItem(LS_RESAMPLE_KEY);
+        if (savedResample === null) {
+          shouldResample = false;
+          resampleBox.checked = false;
+        } else {
+          shouldResample = savedResample === "true";
+          resampleBox.checked = shouldResample;
+        }
+        localStorage.setItem(LS_RESAMPLE_KEY, String(resampleBox.checked));
+
+        const savedOutputSampleRate = localStorage.getItem(LS_OUTPUT_SAMPLE_RATE_KEY);
+        if (savedOutputSampleRate === null) {
+          outputSampleRateStepper.value = "44100";
+        } else {
+          outputSampleRateStepper.value = savedOutputSampleRate;
+        }
+        localStorage.setItem(LS_OUTPUT_SAMPLE_RATE_KEY, String(outputSampleRateStepper.value));
+
         instrumentNameBox.checked = shouldExportSamplesWithInstrumentName;
 
         refreshSampleList(loadedCollection);
@@ -7512,10 +7828,16 @@
         sampleList.addEventListener("keydown", sampleListEventHandler);
         resampleBox.addEventListener("input", resampleBoxEventHandler);
         instrumentNameBox.addEventListener("input", instrumentNameBoxHandler);
+
         noteDurationStepper.addEventListener("input", noteDurationStepperEventHandler);
         noteDurationStepper.addEventListener("change", () => {
           localStorage.setItem(LS_MIN_DURATION_KEY, sanitizeMinDuration(noteDurationStepper.value));
         });
+
+        replacePitchCheckbox.addEventListener("change", () => {
+          localStorage.setItem(LS_PREFIX_PITCH_KEY, replacePitchCheckbox.checked);
+        });
+
         previewVolumeSlider.addEventListener("input", previewVolumeSliderEventHandler);
         outputSampleRateStepper.addEventListener("input", outputSampleRateStepperEventHandler);
         playNoteButton.addEventListener("click", playNoteEventHandler);
