@@ -372,11 +372,47 @@
       cursor: default;
     }
 
-    .remote-fetch-panel {
+    #remoteFetchStatus {
+      margin-top: 8px;
+      min-height: 1.2em;
+      font-size: 0.95em;
+      color: #333;
+    }
+
+    .remote-fetch-disclosure {
       margin-top: 12px;
+    }
+
+    .secondary-toggle-btn {
+      margin-top: 0;
+      width: 100%;
+      background: #f2f2f2;
+      color: #222;
+      border: 1px solid #cfcfcf;
+      border-radius: 6px;
+      font-weight: 600;
+      text-align: center;
+    }
+
+    .secondary-toggle-btn:hover {
+      background: #e8e8e8;
+      color: #000;
+    }
+
+    .secondary-toggle-btn::before {
+      content: "▸ ";
+      font-weight: 700;
+    }
+
+    .secondary-toggle-btn[aria-expanded="true"]::before {
+      content: "▾ ";
+    }
+
+    .remote-fetch-panel {
+      margin-top: 10px;
       padding: 12px;
-      background: #f5f9ff;
-      border: 1px solid #d9e7fb;
+      background: #fafcff;
+      border: 1px solid #dfe7f3;
       border-radius: 6px;
     }
 
@@ -386,19 +422,12 @@
     }
 
     .fetch-btn {
-      margin-top: 1.5em;
+      margin-top: 1.1em;
       background: #6a1b9a;
     }
 
     .fetch-btn:hover {
       background: #4a148c;
-    }
-
-    #remoteFetchStatus {
-      margin-top: 8px;
-      min-height: 1.2em;
-      font-size: 0.95em;
-      color: #333;
     }
 
     select {
@@ -550,7 +579,7 @@
       position: fixed;
       z-index: 2601;
       left: 50%;
-      top: 12vh;
+      top: 4vh;
       transform: translateX(-50%);
       width: min(var(--dialog-width, 860px), calc(100vw - 32px));
       max-height: calc(100vh - 48px);
@@ -590,26 +619,44 @@
       </label>
     </label>
 
-    <div class="remote-fetch-panel">
-      <p><strong>Or import notes from a specific ABC Transcription Tools Soundfont and MIDI instrument:</strong></p>
-      <div class="form-row">
-        <label>Soundfont:
-          <select id="remoteSoundfont"></select>
-        </label>
-        <label>Instrument:
-          <select id="remoteInstrument"></select>
-        </label>
-        <label>Imported note range:
-          <select id="remoteRange">
-            <option value="compact">Compact (C4–C6)</option>
-            <option value="standard" selected>Standard (C3–C7)</option>
-            <option value="extended">Extended (C2–C7)</option>
-            <option value="full">Full (C0–C7)</option>
-          </select>
-        </label>
+    <div class="remote-fetch-disclosure">
+      <button
+        id="toggleRemoteFetchBtn"
+        type="button"
+        class="secondary-toggle-btn"
+        aria-expanded="false"
+        aria-controls="remoteFetchPanel"
+        title="Show or hide the soundfont import tools">
+        Import Instrument from ABC Transcription Tools Soundfont
+      </button>
+
+      <div id="remoteFetchPanel" class="remote-fetch-panel" hidden>
+
+        <p><strong>Import note samples from one of the built-in ABC Transcription Tools MIDI soundfonts:</strong></p>
+
+        <div class="form-row">
+          <label>Soundfont:
+            <select id="remoteSoundfont"></select>
+          </label>
+          <label>Instrument:
+            <select id="remoteInstrument"></select>
+          </label>
+          <label>Imported note range:
+            <select id="remoteRange">
+              <option value="compact">Compact (C4–C6)</option>
+              <option value="standard" selected>Standard (C3–C7)</option>
+              <option value="extended">Extended (C2–C7)</option>
+              <option value="full">Full (C0–C7)</option>
+            </select>
+          </label>
+        </div>
+
+        <button id="fetchRemoteBtn" class="fetch-btn" type="button" title="Imports notes in the selected range from the selected remote soundfont and instrument">
+          Import Soundfont Instrument Notes
+        </button>
+
+        <div id="remoteFetchStatus" role="status" aria-live="polite"></div>
       </div>
-      <button id="fetchRemoteBtn" class="fetch-btn" type="button" title="Imports notes in the selected range from the selected remote soundfont and instrument">Import Soundfont Instrument Notes</button>
-      <div id="remoteFetchStatus" role="status" aria-live="polite"></div>
     </div>
 
     <div class="form-row">
@@ -955,6 +1002,8 @@
 
         let gImportedInstrumentMetaExtras = null;
 
+        let gKeepRemoteFetchPanelOpen = false;
+
         const fileInput = document.getElementById('fileInput');
         const startNumber = document.getElementById('startNumber');
         const startNote = document.getElementById('startNote');
@@ -986,6 +1035,8 @@
         const remoteRangeSelect = document.getElementById('remoteRange');
         const fetchRemoteBtn = document.getElementById('fetchRemoteBtn');
         const remoteFetchStatus = document.getElementById('remoteFetchStatus');
+        const toggleRemoteFetchBtn = document.getElementById('toggleRemoteFetchBtn');
+        const remoteFetchPanel = document.getElementById('remoteFetchPanel');
 
         // Range Expander UI
         const rangeExpanderRow = document.getElementById('rangeExpanderRow');
@@ -1099,6 +1150,21 @@
           return el;
         }
 
+        function setRemoteFetchPanelExpanded(expanded, options = {}) {
+          if (!toggleRemoteFetchBtn || !remoteFetchPanel) return;
+
+          const force = options.force === true;
+          let isExpanded = expanded === true;
+
+          // Only enforce open while walkthrough is active
+          if (gKeepRemoteFetchPanelOpen && !force) {
+            isExpanded = true;
+          }
+
+          toggleRemoteFetchBtn.setAttribute('aria-expanded', isExpanded ? 'true' : 'false');
+          remoteFetchPanel.hidden = !isExpanded;
+        }
+
         function getWalkthroughSteps(mode) {
           if (mode === 'remote') {
             return [
@@ -1108,38 +1174,43 @@
                        <p>You can relaunch this tour at any time from <strong>Show Instructions</strong>.</p>`
               },
               {
-                title: 'Step 1: Choose a Soundfont',
+                title: 'Step 1: Show the Remote Soundfont Import Controls',
+                selector: '#toggleRemoteFetchBtn',
+                body: `<p>This button shows or hides the remote soundfont import controls.</p>`
+              },
+              {
+                title: 'Step 2: Choose a Soundfont',
                 selector: '#remoteSoundfont',
                 body: `<p>In the remote import section, choose the <strong>Soundfont</strong> you want to import from.</p>
                        <p>This selects the source collection of instrument samples.</p>`
               },
               {
-                title: 'Step 2: Choose an Instrument',
+                title: 'Step 3: Choose an Instrument',
                 selector: '#remoteInstrument',
                 body: `<p>Choose the <strong>Instrument</strong> you want to import.</p>
                        <p>This selects which MIDI instrument will be used within the chosen soundfont.</p>`
               },
               {
-                title: 'Step 3: Choose the Imported Note Range',
+                title: 'Step 4: Choose the Imported Note Range',
                 selector: '#remoteRange',
                 body: `<p>Choose the <strong>Imported note range</strong>.</p>
                        <p><strong>Standard (C3–C7)</strong> is the default and is a good starting point for most instruments.</p>`
               },
               {
-                title: 'Step 4: Import the Notes',
+                title: 'Step 5: Import the Notes',
                 selector: '#fetchRemoteBtn',
-                body: `<p>Click <strong>Import Soundfont Instrument Notes</strong>.</p>
+                body: `<p>Click or tap <strong>Import Soundfont Instrument Notes</strong>.</p>
                        <p>The tool clears any currently loaded samples, imports the notes it finds in the selected range, and applies the recommended default volume scale for that soundfont.</p>`
               },
               {
-                title: 'Step 5: Review and Adjust',
+                title: 'Step 6: Review and Adjust',
                 selector: '#fileList',
-                body: `<p>Review the imported note list, then adjust <strong>Default instrument volume scale</strong>, <strong>release fade time</strong>, sorting, range expansion, gap handling, silence trimming, or mono export options as needed.</p>`
+                body: `<p>Review the imported note list, then adjust settings like volume scale, release fade time, sorting, range expansion, gap handling, silence trimming, or mono export as needed.</p>`
               },
               {
-                title: 'Step 6: Export the Instrument',
+                title: 'Step 7: Export the Instrument',
                 selector: '#exportZip',
-                body: `<p>When you are happy with the result, click <strong>Export Custom Instrument</strong>.</p>
+                body: `<p>When you are happy with the result, click or tap <strong>Export Custom Instrument</strong>.</p>
                        <p>This saves the final custom instrument as a .zip file for use in the ABC Transcription Tools or Celtic Sounds.</p>`
               }
             ];
@@ -1154,7 +1225,7 @@
             {
               title: 'Step 1: Import Your Audio Samples',
               selector: '#fileInput',
-              body: `<p>Click <strong>Choose Files</strong> and select your .wav or .mp3 sample files.</p>
+              body: `<p>Click or tap <strong>Choose Files</strong> and select your .wav or .mp3 sample files.</p>
                      <p>The tool will try to determine the note name and octave for each sample automatically.</p>`
             },
             {
@@ -1172,13 +1243,12 @@
             {
               title: 'Step 4: Review the Note List',
               selector: '#fileList',
-              body: `<p>Review the loaded samples in the note list.</p>
-                     <p>You can audition notes, reorder them, add placeholders, trim silence, or force mono .wav export before exporting.</p>`
+              body: `<p>Review the imported note list, then adjust settings like volume scale, release fade time, sorting, range expansion, gap handling, silence trimming, or mono export as needed.</p>`
             },
             {
               title: 'Step 5: Export the Instrument',
               selector: '#exportZip',
-              body: `<p>When everything looks right, click <strong>Export Custom Instrument</strong>.</p>
+              body: `<p>When everything looks right, click or tap <strong>Export Custom Instrument</strong>.</p>
                      <p>This saves the final custom instrument as a .zip file.</p>`
             }
           ];
@@ -1329,33 +1399,50 @@
         }
 
         async function runGuidedWalkthrough(mode) {
+
+          const isRemoteTour = (mode === 'remote');
+
+          // Only lock/open the remote fetch panel during the remote walkthrough
+          gKeepRemoteFetchPanelOpen = isRemoteTour;
+          if (isRemoteTour) {
+            setRemoteFetchPanelExpanded(true);
+          }
+
           const steps = getWalkthroughSteps(mode);
           let index = 0;
 
           while (index >= 0 && index < steps.length) {
             const action = await showWalkthroughStepCard(steps[index], index, steps.length);
-            if (action === 'back') index--;
-            else if (action === 'next') index++;
-            else break;
+
+            if (action === 'back') {
+              index--;
+            }
+            else if (action === 'next') {
+              index++;
+            }
+            else {
+              break;
+            }
           }
+
           clearWalkthroughUI();
+
+          // Always unlock after walkthrough completes
+          gKeepRemoteFetchPanelOpen = false;
         }
 
-        async function showWalkthroughChooser(autoLaunch = false) {
+        async function showWalkthroughChooser() {
           const html = `
             <div class="instr-modal">
               <h2>Getting Started</h2>
-              <p>This tool can create a custom instrument for the <b>ABC Transcription Tools</b> or <b>Celtic Sounds</b> in two ways:</p>
-              <p style="text-align:center;"><b>Importing local per-note audio samples</b><br/>
-              or<br/>
-              <b>Importing notes from an ABC Transcription Tools<br/>MIDI soundfont instrument.</b>
-              <p style="text-align:center;margin-top:18px;">How would you like to begin?</p>
+              <p>This tool allows you to create a custom instrument from your own local audio sample files.</p>
+              <p>You can also import remote note samples from an ABC Transcription Tools MIDI soundfont.</p>
+              <p style="text-align:center;margin-bottom:24px;"><strong>How would you like to begin?</strong></p>
               <div class="walkthrough-choice-row">
                 <button type="button" class="walkthrough-choice-btn" onclick="closeModalWithAction('local')">Guided Tour: Importing Local Audio Samples</button>
                 <button type="button" class="walkthrough-choice-btn" onclick="closeModalWithAction('remote')">Guided Tour: Import MIDI Soundfont Instrument</button>
-                <button type="button" class="walkthrough-choice-btn" onclick="closeModalWithAction('skip')">Skip</button>
+                <button type="button" class="walkthrough-choice-btn" style="margin-top:12px !important;" onclick="closeModalWithAction('skip')">Skip Guided Tours</button>
               </div>
-              ${autoLaunch ? `<p style="text-align:center;margin-top:16px;">This Getting Started dialog appears automatically the first time you open the tool.</p>` : ''}
             </div>
           `;
 
@@ -1379,7 +1466,7 @@
 
           if (!seen) {
             setTimeout(() => {
-              showWalkthroughChooser(true);
+              showWalkthroughChooser();
             }, 350);
           }
         }
@@ -1531,6 +1618,8 @@
             DayPilot.Modal.alert('<p style="text-align:center">Unable to determine the selected soundfont or instrument.</p>', { theme:"modal_flat", top:200 });
             return;
           }
+          
+          setRemoteFetchPanelExpanded(true);
 
           applySelectedSoundfontDefaultScale();
 
@@ -3855,11 +3944,24 @@
           });
         }
 
+        setRemoteFetchPanelExpanded(false);
+
+        if (toggleRemoteFetchBtn) {
+          toggleRemoteFetchBtn.addEventListener('click', () => {
+            if (gKeepRemoteFetchPanelOpen) {
+              setRemoteFetchPanelExpanded(true);
+              return;
+            }
+
+            const expanded = toggleRemoteFetchBtn.getAttribute('aria-expanded') === 'true';
+            setRemoteFetchPanelExpanded(!expanded);
+          });
+        }
+
         // Instructions modal
         instructionsBtn.addEventListener('click', async () => {
 
           var html;
-
           if (isMobile){
             html = `
             <div class="instr-modal">
@@ -3868,22 +3970,14 @@
                 <button type="button" class="walkthrough-choice-btn" onclick="closeModalWithAction('walkthroughLocal')">Guided Tour: Importing Local Audio Samples</button>
                 <button type="button" class="walkthrough-choice-btn" onclick="closeModalWithAction('walkthroughRemote')">Guided Tour: Import MIDI Soundfont Instrument</button>
               </div>
-              <p>This tool is used to create an ABC Transcription Tools custom instrument from a directory of per-note instrument audio sample files.</p>
-              <p>The files should be in .wav or .mp3 format. The samples must all be in the same directory.</p>
+              <p>This tool is used to create an <strong>ABC Transcription Tools</strong> or <strong>Celtic Sounds</strong> custom instrument from a directory of per-note instrument audio sample files.</p>
+              <p>It can also optionally import samples from a remote ABC Transcription Tools soundfont instrument.</p>
+              <p>The files should be in <strong>.wav</strong> or <strong>.mp3</strong> format. The samples must all be in the same directory.</p>
               <p><strong>1)</strong> Tap <strong>Choose Files</strong> (<strong>Browse...</strong> on Firefox) to import your audio sample files.</p>
               <p>The tool will attempt to determine the note name and octave of each of the files.</p>
               <p>Both note name (e.g., C4.wav) or patchname-(MIDI note number) filenames (e.g., Piano-60.wav), which are common in .sf2-extracted .wav files, are supported.</p>
               <p>Note name detection is done first, and if it fails, MIDI-number pitch name detection is attempted.</p>
               <p>If both note name pitch detections fail, the files will be loaded into the list with no pitch mapping.</p>
-              <p>For remote soundfont instrument note import, choose a soundfont, MIDI instrument, and imported note range, then tap <strong>Import Soundfont Instrument Notes</strong>.</p>
-              <p>The available imported note ranges are:</p>
-              <p style="margin-left:18px;">
-                <strong>Compact (C4–C6)</strong><br>
-                <strong>Standard (C3–C7)</strong> &ndash; recommended default<br>
-                <strong>Extended (C2–C7)</strong><br>
-                <strong>Full (C0–C7)</strong>
-              </p>
-              <p>When you import remote soundfont samples, the tool clears any currently loaded samples, then attempts to load every note in the selected range using the standard soundfont note filenames and replaces the sample list with any notes it finds.</p>
               <p>If you want to specifically disable the .sf2 MIDI-number pitch name detection, check <strong>Disable .sf2-style MIDI-number pitch name detection</strong>.</p>
               <p>You can also import an existing custom instrument by tapping <strong>Import Custom Instrument (.zip)</strong>.</p>
               <p>If you re-import a previously exported custom instrument .zip, your saved volume scale and fade settings will also be restored automatically.</p>
@@ -3892,7 +3986,7 @@
               <p>The custom instrument note output filename for each audio sample is displayed to the right of each note.</p>
               <p><strong>2)</strong> Select the default volume scale and fade time for the instrument.</p>
               <p>When you import a remote soundfont, the tool automatically applies its recommended default volume scale. You can still adjust it manually.</p>
-              <p>These values will be applied to the instrument when used in the <strong>ABC Transcription Tools</strong>.</p>
+              <p>These values will be applied to the instrument when used in the <strong>ABC Transcription Tools</strong> or <strong>Celtic Sounds</strong>.</p>
               <p><strong>3)</strong> Choose the starting scale note for the instrument notes.</p>
               <p><strong>4)</strong> Choose the starting octave number for the instrument notes.</p>
               <p>For reference, in ABC notation, middle C on the piano (written as C) corresponds to C4, while the lowest string on a violin (written as G,) corresponds to G3.</p>
@@ -3926,17 +4020,30 @@
               <p><strong>13)</strong> Tap <strong>Export Custom Instrument</strong> to export the final custom instrument.</p>
               <p>The .zip file is saved to your browser’s default <strong>Downloads</strong> folder.</p>
               <hr>
+              <p><strong>Optional: Import instrument from an ABC Transcription Tools Soundfont</strong></p>
+              <p>If you don’t have your own samples, you can import remote instrument note samples from one of the ABC Transcription Tools MIDI soundfonts.</p>
+              <p>Tap <strong>Import Instrument from ABC Transcription Tools Soundfont</strong> to reveal the import controls.</p>
+              <p>Select a soundfont, MIDI instrument, and note range, then tap <strong>Import Soundfont Instrument Notes</strong>.</p>
+              <p>The available imported soundfont note ranges are:</p>
+              <p style="margin-left:18px;">
+                <strong>Compact (C4–C6)</strong><br>
+                <strong>Standard (C3–C7)</strong> &ndash; recommended default<br>
+                <strong>Extended (C2–C7)</strong><br>
+                <strong>Full (C0–C7)</strong>
+              </p>
+              <p>When you import remote soundfont samples, the tool clears any currently loaded samples, then attempts to load every note in the selected range using the standard soundfont note filenames and replaces the sample list with any notes it finds.</p>
+              <hr>
               <h4>Additional Resources</h4>
               <p style="text-align:center;margin-top:12px;">User Guide Information on Custom Instrument Creation</p>
               <p style="text-align:center;margin-top:12px;"><a href="https://michaeleskin.com/abctools/userguide.html#creating_custom_midi_instruments" target="_blank">ABC Transcription Tools User Guide: Custom Instruments</a></p>
               <p style="text-align:center;margin-top:12px;">UltraBox Utility for Extracting Samples from .sf2 Soundfonts</p>
               <p style="text-align:center;margin-top:12px;"><a href="https://michaeleskin.com/tools/UltraBox/UltraBox_Sample_Extractor.html" target="_blank">UltraBox Sample Extractor</a></p>
               <hr>
-              <h4>Demo Video</h4>
+              <h4>Demo Videos</h4>
               <div style="text-align:center; margin-top:6px; margin-bottom:6px;">
-                <a href="https://youtu.be/VU2LHaTQN_c" target="_blank" rel="noopener noreferrer">
-                  <b>Building WARBL Custom Instruments for Celtic Sounds<br/>from ABC Transcription Tools Soundfont Instruments</b>
-                </a>
+                <p style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/VU2LHaTQN_c" title="Building WARBL Custom Instruments for Celtic Sounds from ABC Transcription Tools Soundfont Instruments" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
+                <p style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/UurVJwyRv_A" title="UltraBox Sample Extractor demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
+                <p style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/t8YXGyJ9ZIc" title="UltraBox Sample Extractor demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
               </div>
               <hr>
               <h4>Credits</h4>
@@ -3958,22 +4065,14 @@
                 <button type="button" class="walkthrough-choice-btn" onclick="closeModalWithAction('walkthroughLocal')">Guided Tour: Importing Local Audio Samples</button>
                 <button type="button" class="walkthrough-choice-btn" onclick="closeModalWithAction('walkthroughRemote')">Guided Tour: Import MIDI Soundfont Instrument</button>
               </div>
-              <p>This tool is used to create an ABC Transcription Tools custom instrument from a directory of per-note instrument audio sample files.</p>
-              <p>The files should be in .wav or .mp3 format. The samples must all be in the same directory.</p>
+              <p>This tool is used to create an <strong>ABC Transcription Tools</strong> or <strong>Celtic Sounds</strong> custom instrument from a directory of per-note instrument audio sample files.</p>
+              <p>It can also optionally import samples from a remote ABC Transcription Tools soundfont instrument.</p>
+              <p>The files should be in <strong>.wav</strong> or <strong>.mp3</strong> format. The samples must all be in the same directory.</p>
               <p><strong>1)</strong> Click <strong>Choose Files</strong> (<strong>Browse...</strong> on Firefox) to import your audio sample files.</p>
               <p>The tool will attempt to determine the note name and octave of each of the files.</p>
               <p>Both note name (e.g., C4.wav) or patchname-(MIDI note number) filenames (e.g., Piano-60.wav), which are common in .sf2-extracted .wav files, are supported.</p>
               <p>Note name detection is done first, and if it fails, MIDI-number pitch name detection is attempted.</p>
               <p>If both note name pitch detections fail, the files will be loaded into the list with no pitch mapping.</p>
-              <p>For remote soundfont instrument note import, choose a soundfont, MIDI instrument, and imported note range, then click <strong>Import Soundfont Instrument Notes</strong>.</p>
-              <p>The available imported note ranges are:</p>
-              <p style="margin-left:18px;">
-                <strong>Compact (C4–C6)</strong><br>
-                <strong>Standard (C3–C7)</strong> &ndash; recommended default<br>
-                <strong>Extended (C2–C7)</strong><br>
-                <strong>Full (C0–C7)</strong>
-              </p>
-              <p>When you import remote soundfont samples, the tool clears any currently loaded samples, then attempts to load every note in the selected range using the standard soundfont note filenames and replaces the sample list with any notes it finds.</p>
               <p>If you want to specifically disable the .sf2 MIDI-number pitch name detection, check <strong>Disable .sf2-style MIDI-number pitch name detection</strong>.</p>
               <p>You can also import an existing custom instrument by clicking <strong>Import Custom Instrument (.zip)</strong>.</p>
               <p>If you re-import a previously exported custom instrument .zip, your saved volume scale and fade settings will also be restored automatically.</p>
@@ -3982,7 +4081,7 @@
               <p>The custom instrument note output filename for each audio sample is displayed to the right of each note.</p>
               <p><strong>2)</strong> Select the default volume scale and fade time for the instrument.</p>
               <p>When you import a remote soundfont, the tool automatically applies its recommended default volume scale. You can still adjust it manually.</p>
-              <p>These values will be applied to the instrument when used in the <strong>ABC Transcription Tools</strong>.</p>
+              <p>These values will be applied to the instrument when used in the <strong>ABC Transcription Tools</strong> or <strong>Celtic Sounds</strong>.</p>
               <p><strong>3)</strong> Choose the starting scale note for the instrument notes.</p>
               <p><strong>4)</strong> Choose the starting octave number for the instrument notes.</p>
               <p>For reference, in ABC notation, middle C on the piano (written as C) corresponds to C4, while the lowest string on a violin (written as G,) corresponds to G3.</p>
@@ -4016,6 +4115,19 @@
               <p><strong>13)</strong> Click <strong>Export Custom Instrument</strong> to export the final custom instrument.</p>
               <p>The .zip file is saved to your browser’s default <strong>Downloads</strong> folder.</p>
               <hr>
+              <p><strong>Optional: Import instrument from an ABC Transcription Tools Soundfont</strong></p>
+              <p>If you don’t have your own samples, you can import remote instrument note samples from one of the ABC Transcription Tools MIDI soundfonts.</p>
+              <p>Click <strong>Import Instrument from ABC Transcription Tools Soundfont</strong> to reveal the import controls.</p>
+              <p>Select a soundfont, MIDI instrument, and note range, then click <strong>Import Soundfont Instrument Notes</strong>.</p>
+              <p>The available imported soundfont note ranges are:</p>
+              <p style="margin-left:18px;">
+                <strong>Compact (C4–C6)</strong><br>
+                <strong>Standard (C3–C7)</strong> &ndash; recommended default<br>
+                <strong>Extended (C2–C7)</strong><br>
+                <strong>Full (C0–C7)</strong>
+              </p>
+              <p>When you import remote soundfont samples, the tool clears any currently loaded samples, then attempts to load every note in the selected range using the standard soundfont note filenames and replaces the sample list with any notes it finds.</p>
+              <hr>
               <h4>Additional Resources</h4>
               <p style="text-align:center;margin-top:12px;">User Guide Information on Custom Instrument Creation</p>
               <p style="text-align:center;margin-top:12px;"><a href="https://michaeleskin.com/abctools/userguide.html#creating_custom_midi_instruments" target="_blank">ABC Transcription Tools User Guide: Custom Instruments</a></p>
@@ -4026,6 +4138,7 @@
               <div style="text-align:center; margin-top:6px; margin-bottom:6px;">
                 <p style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/VU2LHaTQN_c" title="Building WARBL Custom Instruments for Celtic Sounds from ABC Transcription Tools Soundfont Instruments" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
                 <p style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/UurVJwyRv_A" title="UltraBox Sample Extractor demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
+                <p style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/t8YXGyJ9ZIc" title="UltraBox Sample Extractor demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
               </div>
               <hr>
               <h4>Credits</h4>
@@ -4037,12 +4150,14 @@
               <p style="text-align:center;">If you find it useful, please consider making a contribution via my online tip jars:</p>
               <p style="text-align:center;margin-top:12px;"><a href="https://michaeleskin.com/abctools/tipjars.html" target="_blank">Tip Jars</a></p>
             </div>
-          `;          }
+          `; 
+          }
+
           window.__cibModalAction = '';
           await DayPilot.Modal.alert(html, { theme: "modal_flat", top: 25, width: 780 });
 
           if (window.__cibModalAction === 'walkthroughChooser') {
-            await showWalkthroughChooser(false);
+            await showWalkthroughChooser();
           }
           else if (window.__cibModalAction === 'walkthroughLocal') {
             await runGuidedWalkthrough('local');
