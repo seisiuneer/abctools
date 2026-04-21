@@ -41,48 +41,78 @@
   </script>
   
   <style>
+    :root {
+      --cib-bg: #0f172a;
+      --cib-bg-top: #020617;
+      --cib-panel: rgba(17, 24, 39, 0.94);
+      --cib-panel-2: #1f2937;
+      --cib-panel-3: #111827;
+      --cib-text: #e5e7eb;
+      --cib-muted: #94a3b8;
+      --cib-border: #334155;
+      --cib-border-strong: #475569;
+      --cib-accent: #60a5fa;
+      --cib-accent-2: #22c55e;
+      --cib-accent-3: #8b5cf6;
+      --cib-danger: #ef4444;
+      --cib-warning-bg: #3a2a0f;
+      --cib-warning-border: #8a6a1f;
+      --cib-warning-text: #fcd34d;
+    }
+
+    html,
     body {
-      background: #fafafa;
-      color: #222;
+      min-height: 100%;
+      background: linear-gradient(180deg, var(--cib-bg-top), var(--cib-bg));
+    }
+
+    body {
+      color: var(--cib-text);
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       max-width: 800px;
-      margin: 12.5px auto;               
-      padding: 0 19px;                   
+      margin: 12.5px auto;
+      padding: 0 19px;
       line-height: 1.47;
-      padding-bottom: 60px;                 
+      padding-bottom: 60px;
+      min-height: 100vh;
     }
 
     h1 {
-      margin-top: 14.5px;                
-      font-size: 1.73em;                 
-      margin-bottom: .47em;              
-      color: #000;
+      margin-top: 14.5px;
+      font-size: 1.73em;
+      margin-bottom: .47em;
       text-align: center;
+      color: #d4ffe8;
+      text-shadow:
+        0 0 6px rgba(34, 197, 94, 0.7),
+        0 0 16px rgba(34, 197, 94, 0.45),
+        0 0 32px rgba(34, 197, 94, 0.25);
     }
 
     h2 {
       font-size: 1.5em;
       margin-top: .3em;
       margin-bottom: .47em;
-      color: #000;
+      color: var(--cib-text);
       text-align: center;
     }
 
     h4 {
-      font-size: 1.15em;                 
+      font-size: 1.15em;
       margin-top: .75em;
       margin-bottom: .47em;
-      color: #000;
+      color: var(--cib-text);
       text-align: center;
     }
 
-    p { font-size: 1.0em; }              
+    p { font-size: 1.0em; color: var(--cib-text); }
 
     label {
-      font-size: 1.0em;                  
+      font-size: 1.0em;
       display: block;
-      margin-top: .6em;                
+      margin-top: .6em;
       font-weight: 600;
+      color: var(--cib-text);
     }
 
     input[type="file"], input[type="number"] {
@@ -93,6 +123,19 @@
       box-sizing: border-box;
     }
 
+    input[type="number"] {
+      background-color: var(--cib-panel-2);
+      color: var(--cib-text);
+      border: 1px solid var(--cib-border);
+      border-radius: 12px;
+    }
+
+    input[type="number"]:focus {
+      border-color: var(--cib-accent);
+      box-shadow: 0 0 0 2px rgba(96,165,250,0.28);
+      outline: none;
+    }
+
     input[type="file"] {
       font-size: 1em;
       padding: 0.3em 0;
@@ -100,6 +143,8 @@
       line-height: 1.2;
       border-radius: 4px;
       box-sizing: border-box;
+      color: var(--cib-text);
+      background: transparent;
     }
 
     input[type="file"]::file-selector-button {
@@ -107,9 +152,9 @@
       appearance: none;
       margin-right: 0.5em;
       padding: 0.3em 0.8em;
-      border-radius: 5px;
-      border: 1px solid #005aad;
-      background: #005aad;
+      border-radius: 10px;
+      border: 1px solid #38bdf8;
+      background: linear-gradient(135deg, #0c4a6e 0%, #0284c7 100%);
       color: #fff;
       font-weight: 600;
       font-size: 0.95em;
@@ -117,27 +162,50 @@
       line-height: 1.2;
     }
 
-    input[type="file"]::file-selector-button:hover { background: #0a6bd1; border-color: #0a6bd1; }
-    input[type="file"]::file-selector-button:active { background: #0a5db6; border-color: #0a5db6; }
+    input[type="file"]::file-selector-button:hover {
+      background: linear-gradient(135deg, #0369a1 0%, #0ea5e9 100%);
+      border-color: #7dd3fc;
+    }
+
+    input[type="file"]::file-selector-button:active {
+      background: linear-gradient(135deg, #075985 0%, #0284c7 100%);
+      border-color: #38bdf8;
+    }
+
     input[type="file"]::file-selector-button:focus,
-    input[type="file"]:focus-visible::file-selector-button { outline: none; box-shadow: 0 0 0 2px rgba(0,90,173,0.25); }
+    input[type="file"]:focus-visible::file-selector-button {
+      outline: none;
+      box-shadow: 0 0 0 2px rgba(96,165,250,0.25);
+    }
 
     input[type="file"]::-webkit-file-upload-button {
       -webkit-appearance: none;
       margin-right: 0.5em;
       padding: 0.3em 0.8em;
-      border-radius: 5px;
-      border: 1px solid #005aad;
-      background: #005aad;
+      border-radius: 10px;
+      border: 1px solid #38bdf8;
+      background: linear-gradient(135deg, #0c4a6e 0%, #0284c7 100%);
       color: #fff;
       font-weight: 600;
       font-size: 0.95em;
       cursor: pointer;
       line-height: 1.2;
     }
-    input[type="file"]::-webkit-file-upload-button:hover { background: #0a6bd1; border-color: #0a6bd1; }
-    input[type="file"]::-webkit-file-upload-button:active { background: #0a5db6; border-color: #0a5db6; }
-    input[type="file"]:focus-visible::-webkit-file-upload-button { outline: none; box-shadow: 0 0 0 2px rgba(0,90,173,0.25); }
+
+    input[type="file"]::-webkit-file-upload-button:hover {
+      background: linear-gradient(135deg, #0369a1 0%, #0ea5e9 100%);
+      border-color: #7dd3fc;
+    }
+
+    input[type="file"]::-webkit-file-upload-button:active {
+      background: linear-gradient(135deg, #075985 0%, #0284c7 100%);
+      border-color: #38bdf8;
+    }
+
+    input[type="file"]:focus-visible::-webkit-file-upload-button {
+      outline: none;
+      box-shadow: 0 0 0 2px rgba(96,165,250,0.25);
+    }
 
     select {
       -webkit-appearance: none;
@@ -149,49 +217,61 @@
       box-sizing: border-box;
       padding-block: 0.4em;
       padding-inline: 0.52em;
-      color: #222;
-      background-color: #fff;
-      border: 1px solid #ccc;
-      border-radius: 4px;
+      color: var(--cib-text);
+      background-color: var(--cib-panel-2);
+      border: 1px solid var(--cib-border);
+      border-radius: 12px;
     }
 
     select:focus {
-      border-color: #005aad;
-      box-shadow: 0 0 0 2px rgba(0,90,173,0.25);
+      border-color: var(--cib-accent);
+      box-shadow: 0 0 0 2px rgba(96,165,250,0.28);
       outline: none;
     }
 
     #fileList {
       margin-top: .47em;
-      background: #fff;
-      border: 1px solid #ddd;
-      border-radius: 4px;
+      background: var(--cib-panel);
+      border: 1px solid var(--cib-border);
+      border-radius: 14px;
       padding: 0.84em;
       max-height: 32vh;
       overflow-y: auto;
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.22);
     }
 
     .file-item {
       padding: 0.1em 0.9em;
       margin-bottom: 0.3em;
-      background: #f5f5f5;
-      border: 1px solid #e1e1e1;
-      border-radius: 3px;
+      background: var(--cib-panel-2);
+      border: 1px solid var(--cib-border);
+      border-radius: 10px;
       display: flex;
       align-items: center;
       gap: 7px;
       font-size: 0.97em;
+      color: var(--cib-text);
     }
 
     .file-item.real { cursor: grab; }
-    .file-item.drag-over { background: #e6f7ff; border-color: #91d5ff; }
+
+    .file-item.drag-over {
+      background: rgba(37, 99, 235, 0.22);
+      border-color: #60a5fa;
+    }
 
     .file-item > span { align-self: center; line-height: 1.24; }
     .file-item > span:first-child { flex: 1 1 auto; }
 
     .file-item:not(.real) { min-height: 1.6em; padding: 0.1em 0.9em; }
 
-    .proposed { color: #555; font-style: italic; margin-left: auto; flex-shrink: 0; align-self: center; }
+    .proposed {
+      color: #cbd5e1;
+      font-style: italic;
+      margin-left: auto;
+      flex-shrink: 0;
+      align-self: center;
+    }
 
     .controls { display: flex; align-items: center; justify-content: flex-end; margin-left: 8.5px; }
 
@@ -205,17 +285,22 @@
       gap: 6.3px;
       line-height: 1.05;
       padding: .37em .74em;
-      border-radius: 6px;
-      border: 1px solid #0d6efd;
-      background: #0d6efd;
+      border-radius: 10px;
+      border: 1px solid #38bdf8;
+      background: linear-gradient(135deg, #0c4a6e 0%, #0284c7 100%);
       color: #fff;
       cursor: pointer;
       font-weight: 700;
       user-select: none;
       transform: translateY(-11.5px);
     }
-    .preview-btn:active { background: #d32f2f; border-color: #b71c1c; }
-    .placeholder-label { color: #888; font-style: italic; }
+
+    .preview-btn:active {
+      background: linear-gradient(135deg, #991b1b 0%, #dc2626 100%);
+      border-color: #ef4444;
+    }
+
+    .placeholder-label { color: var(--cib-muted); font-style: italic; }
 
     .gap-controls { margin-top: 14px; }
 
@@ -225,22 +310,31 @@
       margin-top: 1.68em;
       padding: 0.63em 1.05em;
       font-size: 1.0em;
-      background: #005aad;
+      background: linear-gradient(135deg, #0c4a6e 0%, #0284c7 100%);
       color: #fff;
-      border: none;
-      border-radius: 4px;
+      border: 1px solid #38bdf8;
+      border-radius: 10px;
       cursor: pointer;
       font-weight: 600;
+      box-shadow: 0 4px 14px rgba(2, 132, 199, 0.28);
     }
-    button:hover { background: green; }
+
+    button:hover {
+      background: linear-gradient(135deg, #0369a1 0%, #0ea5e9 100%);
+      border-color: #7dd3fc;
+    }
 
     .preview-btn.is-playing {
-      background: #d32f2f !important;
-      border-color: #b71c1c !important;
+      background: linear-gradient(135deg, #991b1b 0%, #dc2626 100%) !important;
+      border-color: #ef4444 !important;
       color: #fff;
       box-shadow: 0 0 0 2px rgba(211,47,47,.15) inset;
     }
-    .preview-btn:hover:not(.is-playing) { background: #81c784; border-color: #388e3c; }
+
+    .preview-btn:hover:not(.is-playing) {
+      background: linear-gradient(135deg, #15803d 0%, #22c55e 100%);
+      border-color: #4ade80;
+    }
 
     #fileList.drag-disabled { user-select: none; }
     #fileList.drag-disabled .file-item.real { cursor: default; opacity: 0.9; }
@@ -248,31 +342,53 @@
     .accordion {
       font-size: 12.1pt !important;
       font-family: "Helvetica" !important;
-      background-color: #eee;
-      color: #000 !important;
+      background-color: var(--cib-panel) !important;
+      color: var(--cib-text) !important;
       cursor: pointer !important;
       padding: 10px 8.4px !important;
       width: 100% !important;
       text-align: center !important;
-      border: .53px solid #000 !important;
+      border: 1px solid var(--cib-border) !important;
+      border-radius: 12px !important;
       outline: none !important;
       margin-bottom: 7.3px;
       margin-top: 0px;
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.24);
     }
-    .accordion:hover { background: #88FF88; }
+
+    .accordion:hover {
+      background: #1e293b !important;
+      color: #ffffff !important;
+      border-color: var(--cib-accent) !important;
+    }
 
     .form-row { display: flex; gap: 10.5px; align-items: flex-end; flex-wrap: wrap; }
     .form-row > label { flex: 1 1 230px; margin-top: .7em; }
     .form-row > label > select, .form-row > label > input[type="number"] { width: 100%; }
 
-    .active { background-color: #eee; }
+    .active { background-color: #1e293b; }
 
-    .apply-status { margin-left: 8px; font-size: 1em; color: #2e7d32; opacity: 0; transform: translateY(2px); transition: opacity 220ms ease, transform 220ms ease; }
+    .apply-status {
+      margin-left: 8px;
+      font-size: 1em;
+      color: #4ade80;
+      opacity: 0;
+      transform: translateY(2px);
+      transition: opacity 220ms ease, transform 220ms ease;
+    }
+
     .apply-status.show { opacity: 1; transform: translateY(2px); }
 
     .expandall {
-      font-size: 11.55pt !important; font-family:"Helvetica" !important; width:126px !important; height:42px !important;
-      padding:7.3px !important; border-radius:4.2px !important; border:.53px solid #000 !important; color:black !important; background-color: #eee;
+      font-size: 11.55pt !important;
+      font-family: "Helvetica" !important;
+      width:126px !important;
+      height:42px !important;
+      padding:7.3px !important;
+      border-radius:10px !important;
+      border:1px solid var(--cib-border) !important;
+      color: var(--cib-text) !important;
+      background-color: var(--cib-panel) !important;
     }
 
     .modal_flat_background { background-color: #000; opacity: 0.4; }
@@ -283,22 +399,63 @@
     .modal_flat_content { font-family: "Helvetica"; margin: 21px 0px; }
     .modal_flat_input { margin: 21px 0px; }
     .modal_flat_buttons { text-align: center; margin-top: 20px; margin-bottom: 20px; }
-    .modal_flat_main button { background-color: #ccc; color: #000; padding: 10.5px 21px; border: 0px; cursor: pointer; outline: none; width: 105px; }
+    .modal_flat_main button {
+      background-color: #ccc !important;
+      background-image: none !important;
+      color: #000 !important;
+      padding: 10.5px 21px;
+      border: 0 !important;
+      cursor: pointer;
+      outline: none;
+      width: 105px;
+      box-shadow: none !important;
+    }
+
+    .modal_flat_main button:hover {
+      background-color: #bfbfbf !important;
+      background-image: none !important;
+      color: #000 !important;
+      border: 0 !important;
+      box-shadow: none !important;
+    }
 
     .modal_flat_cancel { margin-left: 5.25px; }
 
-    .instr-modal { text-align: left; background-color: #f5ffff; max-height: 70vh; overflow: auto; padding: 12px; border: 1px solid #e1e1e1; border-radius: 4px; }
+    /* Leave instructions / guided-tour look unchanged */
+    .instr-modal {
+      text-align: left;
+      background-color: #f5ffff !important;
+      max-height: 70vh;
+      overflow: auto;
+      padding: 12px;
+      border: 1px solid #e1e1e1 !important;
+      border-radius: 4px;
+    }
+
+    .instr-modal,
+    .instr-modal p,
+    .instr-modal label,
+    .instr-modal strong,
+    .instr-modal span,
+    .instr-modal small,
+    .instr-modal h2,
+    .instr-modal h4 {
+      color: #000 !important;
+    }
+
     .instr-modal p { margin: 0 0 12px 0; }
 
     .range-controls {
       display: none;
       margin-top: 7.3px;
       padding: 8px;
-      padding-top:0px;
-      background: #f8f8ff;
-      border: 1px solid #e1e1f0;
-      border-radius: 4px;
+      padding-top: 0px;
+      background: var(--cib-panel);
+      border: 1px solid var(--cib-border);
+      border-radius: 14px;
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.18);
     }
+
     .range-controls .row {
       display: flex;
       gap: 10px;
@@ -306,45 +463,65 @@
       flex-wrap: wrap;
       margin-top: 6px;
     }
+
     .range-controls label { margin-top: 0.2em; }
 
     .action-row { display: flex; justify-content: center; gap: 10px; }
 
-    #exportZip { margin-left:9px; margin-top:12px; }
-    #importZipBtn { background-color: #471268; border-color: #471268; margin-right:9px; margin-top:12px; }
-    #importZipBtn:hover { background-color: green; border-color: green; }
-
-    .touch-reorder{
-      display:flex;
-      gap:8px;
-      justify-content:center;
-      margin-top:6px;
+    #exportZip {
+      margin-left: 9px;
+      margin-top: 12px;
+      background: linear-gradient(135deg, #0c4a6e 0%, #0284c7 100%) !important;
+      border-color: #38bdf8 !important;
     }
 
-    .file-item.selected{ outline:2px solid #91d5ff; background:#e6f7ff; }
+    #importZipBtn {
+      background: linear-gradient(135deg, #4c1d95 0%, #7c3aed 100%) !important;
+      border-color: #8b5cf6 !important;
+      margin-right: 9px;
+      margin-top: 12px;
+    }
+
+    #importZipBtn:hover {
+      background: linear-gradient(135deg, #5b21b6 0%, #8b5cf6 100%) !important;
+      border-color: #a78bfa !important;
+    }
+
+    .touch-reorder {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      margin-top: 6px;
+    }
+
+    .file-item.selected {
+      outline: 2px solid rgba(96, 165, 250, 0.75);
+      background: rgba(30, 64, 175, 0.28);
+    }
+
     .file-item.temp-suppressed {
-      background: #fff7e6;
-      border-color: #ffd591;
+      background: #2b2112;
+      border-color: #8b6b1f;
     }
+
     .file-item .temp-badge {
       margin-left: 6px;
       padding: 1px 6px;
       border-radius: 10px;
       font-size: 0.8em;
-      background: #faad14;
-      color: #000;
+      background: #f59e0b;
+      color: #111827;
       font-weight: 700;
     }
 
-    /* Add just below your existing .temp-badge / .temp-suppressed styles */
     .temp-meta {
       margin-left: 6px;
       padding: 1px 6px;
       border-radius: 10px;
       font-size: 0.83em;
-      background: #fff1b8;              /* soft amber */
-      color: #5b4a00;                   /* readable on amber */
-      border: 1px solid #ffe58f;
+      background: var(--cib-warning-bg);
+      color: var(--cib-warning-text);
+      border: 1px solid var(--cib-warning-border);
       font-weight: 600;
       white-space: nowrap;
       max-width: 360px;
@@ -352,19 +529,18 @@
       text-overflow: ellipsis;
     }
 
-    /* Updated to include new Delete button */
     #moveUpBtn, #moveDownBtn, #insertAfterBtn, #deleteBtn {
-      background-color: #008a53;  
-      border-color: #008a53;
+      background: linear-gradient(135deg, #166534 0%, #16a34a 100%) !important;
+      border-color: #22c55e !important;
     }
 
-    #moveUpBtn:hover, #moveDownBtn:hover, #insertAfterBtn:hover, #deleteBtn:hover{
-      background-color: #008a53 !important;
-      border-color: #008a53 !important;
+    #moveUpBtn:hover, #moveDownBtn:hover, #insertAfterBtn:hover, #deleteBtn:hover {
+      background: linear-gradient(135deg, #15803d 0%, #22c55e 100%) !important;
+      border-color: #4ade80 !important;
     }
 
-    #moveUpBtn, #moveDownBtn, #insertAfterBtn{
-      margin-right:8px;
+    #moveUpBtn, #moveDownBtn, #insertAfterBtn {
+      margin-right: 8px;
     }
 
     #touchReorderControls button:disabled {
@@ -376,7 +552,7 @@
       margin-top: 8px;
       min-height: 1.2em;
       font-size: 0.95em;
-      color: #333;
+      color: var(--cib-text);
     }
 
     .remote-fetch-disclosure {
@@ -386,17 +562,19 @@
     .secondary-toggle-btn {
       margin-top: 0;
       width: 100%;
-      background: #f2f2f2;
-      color: #222;
-      border: 1px solid #cfcfcf;
-      border-radius: 6px;
+      background: var(--cib-panel);
+      color: var(--cib-text);
+      border: 1px solid var(--cib-border);
+      border-radius: 12px;
       font-weight: 600;
       text-align: center;
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.22);
     }
 
     .secondary-toggle-btn:hover {
-      background: #e8e8e8;
-      color: #000;
+      background: #1e293b;
+      color: #fff;
+      border-color: var(--cib-accent);
     }
 
     .secondary-toggle-btn::before {
@@ -411,36 +589,40 @@
     .remote-fetch-panel {
       margin-top: 10px;
       padding: 12px;
-      background: #fafcff;
-      border: 1px solid #dfe7f3;
-      border-radius: 6px;
+      background: var(--cib-panel);
+      border: 1px solid var(--cib-border);
+      border-radius: 14px;
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.22);
     }
 
     .remote-fetch-panel p {
       margin: 0 0 8px 0;
-      color: #333;
+      color: var(--cib-text);
     }
 
     .fetch-btn {
       margin-top: 1.1em;
-      background: #6a1b9a;
+      background: linear-gradient(135deg, #4c1d95 0%, #7c3aed 100%);
+      border-color: #8b5cf6;
     }
 
     .fetch-btn:hover {
-      background: #4a148c;
+      background: linear-gradient(135deg, #5b21b6 0%, #8b5cf6 100%);
+      border-color: #a78bfa;
     }
 
     select {
       background-image: url("data:image/svg+xml;utf8,\
-    <svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'>\
-    <path d='M1 1l4 4 4-4' stroke='%23333' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/>\
-    </svg>");
+  <svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'>\
+  <path d='M1 1l4 4 4-4' stroke='%23cbd5e1' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/>\
+  </svg>");
       background-repeat: no-repeat;
       background-position: right 0.6em center;
       background-size: 10px 6px;
       padding-right: 2em;
     }
 
+    /* Leave walkthrough / first-run styling unchanged */
     .walkthrough-overlay {
       position: fixed;
       inset: 0;
@@ -467,10 +649,12 @@
       margin-bottom: 10px;
       font-size: 1.45em;
       text-align: left;
+      color: #000 !important;
     }
 
     .walkthrough-card p {
       margin: 0 0 10px 0;
+      color: #000 !important;
     }
 
     .walkthrough-card-footer {
@@ -560,12 +744,15 @@
       font-size: 1.0em !important;
       box-sizing: border-box !important;
       cursor: pointer;
+      box-shadow: none !important;
     }
 
     .walkthrough-choice-row .walkthrough-choice-btn:hover,
     .modal_flat_main .walkthrough-choice-row .walkthrough-choice-btn:hover,
     .custom-html-modal .walkthrough-choice-row .walkthrough-choice-btn:hover {
       background: #cfcfcf !important;
+      color: #000 !important;
+      border-color: #bdbdbd !important;
     }
 
     .custom-html-modal-overlay {
@@ -590,10 +777,8 @@
       padding: 20px;
       box-sizing: border-box;
     }
-
-
   </style>
-    
+
   </head>
 
   <body>
@@ -602,12 +787,14 @@
 
     <button id="instructionsBtn" class="accordion" title="Show Instructions">Show Instructions</button>
 
-    <label>Import audio sample files in .wav or .mp3 format:
-      <input type="file" id="fileInput" accept=".wav,.mp3" multiple>
-      <label for="disableMidiDetect" style="display:flex; align-items:center; gap:6px; margin:0; white-space:nowrap;margin-top:10px !important;">
-        <input type="checkbox" id="disableMidiDetect">
-        Disable .sf2-style MIDI-number pitch name detection
-      </label>
+    <label for="fileInput">Import audio sample files in .wav or .mp3 format:</label>
+
+    <input type="file" id="fileInput" accept=".wav,.mp3" multiple>
+
+    <label for="disableMidiDetect"
+           style="display:flex; align-items:center; gap:6px; margin-top:10px;">
+      <input type="checkbox" id="disableMidiDetect">
+      Disable .sf2-style MIDI-number pitch name detection
     </label>
 
     <div class="remote-fetch-disclosure">
@@ -784,7 +971,7 @@
           </select>
         </label>
       </div>
-      <p style="margin:8px 2px 0;color:#444;font-size:0.95em;">
+      <p style="margin:8px 2px 0;color:#94a3b8;font-size:0.95em;">
         Files are transposed by <strong>Starting scale note/octave</strong> above before expansion. Output is clamped to this range.
       </p>
     </div>
@@ -811,7 +998,7 @@
       <button id="restoreSampleBtn" type="button" aria-label="Restore original sample">Restore Original Sample</button>
     </div>
 
-    <div id="exportStatus" role="status" aria-live="polite" style="margin-top:6px; min-height:1.2em; text-align:center; font-size:0.95em; color:#333;"></div>
+    <div id="exportStatus" role="status" aria-live="polite" style="margin-top:6px; min-height:1.2em; text-align:center; font-size:0.95em; color:#cbd5e1;"></div>
 
     <div class="action-row">
       <button id="importZipBtn" title="Load and edit an ABC Transcription Tools custom instrument (.zip)">Import Custom Instrument (.zip)</button>
@@ -1234,7 +1421,7 @@
             {
               title: 'Step 4: Review the Note List',
               selector: '#fileList',
-              body: `<p>Review the imported note list, then adjust settings like volume scale, release fade time, sorting, range expansion, gap handling, silence trimming, or mono export as needed.</p>`
+              body: `<p>Review the loaded note list, then adjust settings like volume scale, release fade time, sorting, range expansion, gap handling, silence trimming, or mono export as needed.</p>`
             },
             {
               title: 'Step 5: Export the Instrument',
