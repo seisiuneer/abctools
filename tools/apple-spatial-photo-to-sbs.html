@@ -1,0 +1,830 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Apple Spatial Photo to Side-by-Side JPEG Converter</title>
+<meta property="og:type" content="website" />
+<meta property="og:title" content="Apple Spatial Photo to Side-by-Side JPEG Converter" />
+<meta property="og:description" content="Convert Apple Spatial Photo HEIC files into left/right side-by-side JPEG images locally in your browser." />
+<meta property="og:url" content="https://michaeleskin.com/tools/apple-spatial-photo-to-sbs.html" />
+<meta property="og:site_name" content="Apple Spatial Photo to Side-by-Side JPEG Converter" />
+<meta property="og:image" content="https://michaeleskin.com/tools/img/spatial_to_sbs.jpg"/>
+<link rel="icon" type="image/png" sizes="32x32" href="https://michaeleskin.com/tools/img/spatial_to_sbs_favicon.png">
+
+<style>
+  :root {
+    color-scheme: dark;
+    --bg: #11161d;
+    --panel: #19212b;
+    --panel2: #202a36;
+    --text: #f2f6fb;
+    --muted: #aab7c6;
+    --accent: #73d0ff;
+    --accent2: #9ce6b2;
+    --danger: #ff8a8a;
+    --border: rgba(255,255,255,.14);
+    --shadow: 0 18px 45px rgba(0,0,0,.35);
+    --green-200: #c8f2d2;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background:
+      radial-gradient(circle at top left, rgba(115,208,255,.16), transparent 34rem),
+      radial-gradient(circle at bottom right, rgba(156,230,178,.10), transparent 30rem),
+      var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  .wrap {
+    width: min(1040px, calc(100vw - 28px));
+    margin: 0 auto;
+    padding: 28px 0 38px;
+  }
+
+  header {
+    text-align: center;
+    margin-bottom: 22px;
+  }
+
+	h1 {
+	  margin: 0 0 8px;
+	  font-size: clamp(1.45rem, 3vw, 2.25rem);
+	  letter-spacing: .01em;
+	  text-shadow: 0 0 18px rgba(115,208,255,.35);
+	}
+
+  .subhead {
+    margin: 0 auto;
+    max-width: 760px;
+    color: var(--muted);
+    line-height: 1.45;
+  }
+
+  .card {
+    background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.015)), var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    box-shadow: var(--shadow);
+    padding: 18px;
+    margin-bottom: 16px;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  @media (max-width: 760px) {
+    .grid { grid-template-columns: 1fr; }
+  }
+
+  label {
+    display: block;
+    font-weight: 650;
+    margin-bottom: 8px;
+  }
+
+  input[type="file"], select, button {
+    width: 100%;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 11px 12px;
+    background: var(--panel2);
+    color: var(--text);
+    font: inherit;
+  }
+
+	input[type="range"] {
+	  width: auto;
+	  flex: 1 1 auto;
+	  min-width: 0;
+	}
+
+	.row {
+	  display: flex;
+	  gap: 12px;
+	  align-items: center;
+	  flex-wrap: nowrap;
+	}
+
+  .rangeValue {
+    min-width: 6.5rem;
+    padding: 8px 10px;
+    border-radius: 10px;
+    background: rgba(255,255,255,.08);
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .hint {
+    color: var(--muted);
+    font-size: .93rem;
+    line-height: 1.4;
+    margin-top: 8px;
+  }
+
+  button {
+    cursor: pointer;
+    font-weight: 750;
+    background: linear-gradient(180deg, rgba(115,208,255,.26), rgba(115,208,255,.12)), var(--panel2);
+  }
+
+  button:disabled {
+    cursor: not-allowed;
+    opacity: .55;
+  }
+
+  .primary {
+    background: linear-gradient(180deg, rgba(156,230,178,.30), rgba(115,208,255,.14)), var(--panel2);
+  }
+
+	.actions {
+	  display: grid;
+	  grid-template-columns: 1fr;
+	  gap: 12px;
+	  margin-top: 14px;
+	}
+
+  @media (max-width: 560px) {
+    .actions { grid-template-columns: 1fr; }
+  }
+
+  #status {
+    min-height: 1.5em;
+    color: var(--muted);
+    line-height: 1.45;
+    margin-bottom:0px;
+  }
+
+  #status.error { color: var(--danger); }
+  #status.ok { color: var(--accent2); }
+
+	.previewBox {
+	  background: rgba(0,0,0,.22);
+	  border: 1px solid var(--border);
+	  border-radius: 14px;
+	  overflow: hidden;
+
+	  /* Fixed 4096x1536 aspect ratio */
+	  aspect-ratio: 4096 / 1536;
+	  width: 100%;
+
+	  display: grid;
+	  place-items: center;
+	  position: relative;
+	}
+
+	#previewCanvas {
+	  position: absolute;
+	  inset: 0;
+	  margin: auto;
+  	max-width: 100%;
+  	max-height: 100%;
+	}
+
+	#emptyPreview {
+	  position: absolute;
+	  inset: 0;
+	  display: flex;
+	  align-items: center;
+	  justify-content: center;
+	  text-align: center;
+	  padding: 12px;
+	}
+
+  canvas {
+    max-width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  .meta {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    margin-top: 12px;
+    color: var(--muted);
+    font-size: .93rem;
+  }
+
+  @media (max-width: 560px) {
+    .meta { grid-template-columns: 1fr; }
+  }
+
+  .pill {
+    padding: 8px 10px;
+    border-radius: 10px;
+    background: rgba(255,255,255,.07);
+    overflow-wrap: anywhere;
+  }
+
+  a.download {
+    display: none;
+    width: 100%;
+    text-align: center;
+    text-decoration: none;
+    color: #051018;
+    background: linear-gradient(180deg, #aaf0bf, #73d0ff);
+    border-radius: 12px;
+    padding: 12px;
+    font-weight: 800;
+  }
+
+  .small {
+    font-size: .88rem;
+  }
+
+  .footer-note {
+	  margin-top: 18px;
+	  color: var(--green-200);
+	  font-size: 0.9rem;
+	  text-align: center;
+	  margin-bottom: 3px;
+	}
+
+  .modal_compact_background{
+    background-color:#000;
+    opacity:0.4;
+  }
+
+  .modal_compact_main{
+    border:1px solid #333;
+    box-shadow:0 0 15px -2px rgba(0,0,0,0.75);
+
+    width:min(560px, calc(100vw - 80px)) !important;
+    max-width:min(560px, calc(100vw - 80px)) !important;
+
+    height:auto !important;
+    max-height:min(520px, 88dvh) !important;
+
+    overflow:hidden !important;
+  }
+
+  .modal_compact_inner{
+    padding:18px 18px 28px 18px;   /* more bottom breathing room */
+    background:#fff;
+    color:#000;
+
+    display:flex;
+    flex-direction:column;
+  }
+
+  .modal_compact_content{
+    margin:16px 0 10px 0;
+
+    overflow:auto !important;
+    -webkit-overflow-scrolling:touch;
+
+    flex:1 1 auto;  /* allows content to expand naturally */
+  }
+
+  .modal_compact_buttons{
+    text-align:center;
+
+    margin-top:18px;
+  }
+
+  .modal_compact_buttons button{
+    margin:0 8px;
+  }
+
+  .modal_compact_main button{
+    background:#e8f1ff;
+    color:#000;
+
+    border:1px solid #9dbaf2;
+
+    padding:10px 20px;
+
+    cursor:pointer;
+    outline:none;
+
+    width:100px;
+
+    border-radius:10px;
+
+    font-weight:600;
+
+    transition:background 0.15s ease, box-shadow 0.15s ease;
+  }
+
+  .modal_compact_main button:hover{
+    background:#dbe8ff;
+    box-shadow:0 0 6px rgba(80,120,220,0.35);
+  }
+
+  /* Prompt text */
+  .modal_compact_main .modal_default_promptdescription {
+    font-size: 20px !important;
+    line-height: 1.5 !important;
+  }
+
+  /* Force override ALL prompt inputs inside DayPilot modal */
+  .modal_compact_main .modal_default_prompt,
+  .modal_compact_main input,
+  .modal_compact_main .modal_default_prompt input {
+    font-size: 18px !important;
+    padding: 8px 9px !important;
+    height: auto !important;
+    background-color:white !important;
+    border-radius: 10px;
+    color:black;
+  }
+
+</style>
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-VM0N9HL3MK"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-VM0N9HL3MK');
+</script>
+
+</head>
+
+<body>
+
+<div class="wrap">
+  <header>
+    <h1>Apple Spatial Photo → Side-by-Side JPEG</h1>
+    <p class="subhead">Open an Apple Spatial Photo HEIC file, extract the two embedded stereo views, and export a Left/Right Side-by-Side JPEG locally from your browser.</p>
+  </header>
+
+  <section class="card">
+    <div class="grid">
+      <div>
+        <label for="fileInput">Apple Spatial Photo file:</label>
+        <input id="fileInput" type="file" accept=".heic,.heif,image/heic,image/heif">
+        <div class="hint">For best results, use the unmodified original HEIC exported from your iPhone.</div>
+      </div>
+      <div>
+        <label for="eyeOrder">Stereo Order:</label>
+        <select id="eyeOrder">
+          <option value="normal">Image 1 Left / Image 2 Right</option>
+          <option value="swap">Image 2 Left / Image 1 Right</option>
+        </select>
+        <div class="hint">Try <b>Image 2 Left / Image 1 Right</b> if depth appears inverted in your stereo viewer.</div>
+      </div>
+    </div>
+
+    <div style="margin-top:16px;">
+      <label for="widthRange">Output JPEG Width</label>
+      <div class="row">
+        <input id="widthRange" type="range" min="1024" max="8192" step="64" value="4096">
+        <div id="widthValue" class="rangeValue">4096 px</div>
+      </div>
+      <div class="hint">This is the total side-by-side JPEG width. Each eye is rendered at half this width.</div>
+    </div>
+
+    <div style="margin-top:16px;">
+      <label for="qualityRange">JPEG Quality</label>
+      <div class="row">
+        <input id="qualityRange" type="range" min="50" max="100" step="1" value="92">
+        <div id="qualityValue" class="rangeValue">92%</div>
+      </div>
+    </div>
+
+    <div class="actions">
+      <a id="downloadLink" class="download" download="spatial-photo-sbs.jpg">Download Side-by-Side JPEG</a>
+    </div>
+
+    <p id="status">Loading HEIC decoder…</p>
+  </section>
+
+  <section class="card">
+    <div class="previewBox">
+      <canvas id="previewCanvas"></canvas>
+      <div id="emptyPreview" class="hint">Converted preview will appear here.</div>
+    </div>
+    <div class="meta">
+      <div id="fileMeta" class="pill">No file selected.</div>
+      <div id="sourceMeta" class="pill">Stereo images not decoded yet.</div>
+      <div id="outputMeta" class="pill">No JPEG generated yet.</div>
+      <div class="pill small">All processing is local. The selected image is not uploaded.</div>
+    </div>
+  </section>
+
+  <div class="footer-note">
+    Created by <a href="https://michaeleskin.com" target="_blank" rel="noopener noreferrer">Michael Eskin</a>
+  </div>
+
+</div>
+
+<script src="libheif-bundle.js"></script>
+<script type="text/javascript" src="daypilot-modal.min-3.10.1.js"></script>
+<script>
+(() => {
+  "use strict";
+
+  const fileInput = document.getElementById("fileInput");
+  const eyeOrder = document.getElementById("eyeOrder");
+  const widthRange = document.getElementById("widthRange");
+  const widthValue = document.getElementById("widthValue");
+  const qualityRange = document.getElementById("qualityRange");
+  const qualityValue = document.getElementById("qualityValue");
+  const downloadLink = document.getElementById("downloadLink");
+  const statusEl = document.getElementById("status");
+  const canvas = document.getElementById("previewCanvas");
+  const emptyPreview = document.getElementById("emptyPreview");
+  const fileMeta = document.getElementById("fileMeta");
+  const sourceMeta = document.getElementById("sourceMeta");
+  const outputMeta = document.getElementById("outputMeta");
+
+  let libheifReady = false;
+  let heifModule = null;
+  let decodedViews = [];
+  let lastUrl = null;
+  let libheifReadyPromise = null;
+
+  let gFileSaveName = "";
+
+  function escapeHtml(value) {
+	  return String(value)
+	    .replace(/&/g, "&amp;")
+	    .replace(/</g, "&lt;")
+	    .replace(/>/g, "&gt;")
+	    .replace(/"/g, "&quot;")
+	    .replace(/'/g, "&#39;");
+	}
+
+  function sanitizeJpegFilename(name) {
+	  name = (name || "").trim();
+
+	  if (!name) return "";
+
+	  name = name
+	    .replace(/[\/\\:*?"<>|]/g, "_")
+	    .replace(/\s+/g, " ")
+	    .trim();
+
+	  if (!/\.jpe?g$/i.test(name)) {
+	    name += ".jpg";
+	  }
+
+	  return name;
+	}
+
+	function getDefaultSaveName() {
+	  if (gFileSaveName) return gFileSaveName;
+
+	  const outputWidth = Number(widthRange.value);
+	  const baseName = (fileInput.files[0]?.name || "spatial-photo").replace(/\.[^.]+$/, "");
+
+	  return `${baseName}-side-by-side-${outputWidth}.jpg`;
+	}
+
+	function promptForSaveName() {
+	  if (!window.DayPilot || !DayPilot.Modal || !DayPilot.Modal.prompt) {
+	    return Promise.resolve(getDefaultSaveName());
+	  }
+
+	  const thePrompt = "Please enter a filename for your Side-by-Side JPEG:";
+
+	  return DayPilot.Modal.prompt(thePrompt, getDefaultSaveName(), {
+	    theme: "modal_compact",
+	    top: 200,
+	    autoFocus: true
+	  }).then(args => {
+	    if (args.canceled) return null;
+
+	    const cleanName = sanitizeJpegFilename(args.result);
+
+	    if (!cleanName) return null;
+
+	    gFileSaveName = cleanName;
+	    return cleanName;
+	  });
+	}
+
+	function setStatus(message, kind = "") {
+	  statusEl.innerHTML = message;
+	  statusEl.className = kind;
+	}
+
+  function formatBytes(bytes) {
+    const units = ["B", "KB", "MB", "GB"];
+    let value = bytes;
+    let unit = 0;
+    while (value >= 1024 && unit < units.length - 1) {
+      value /= 1024;
+      unit++;
+    }
+    return `${value.toFixed(unit ? 1 : 0)} ${units[unit]}`;
+  }
+
+  function revokeLastUrl() {
+    if (lastUrl) {
+      URL.revokeObjectURL(lastUrl);
+      lastUrl = null;
+    }
+    downloadLink.style.display = "none";
+    downloadLink.removeAttribute("href");
+  }
+
+  function updateControls() {
+    widthValue.textContent = `${Number(widthRange.value).toLocaleString()} px`;
+    qualityValue.textContent = `${qualityRange.value}%`;
+  }
+
+  function loadScript(url) {
+    return new Promise((resolve, reject) => {
+      const s = document.createElement("script");
+      s.src = url;
+      s.onload = resolve;
+      s.onerror = () => reject(new Error(`Could not load ${url}`));
+      document.head.appendChild(s);
+    });
+  }
+
+  async function loadScriptFallback() {
+    if (window.libheif) return;
+
+    const urls = [
+      "https://cdn.jsdelivr.net/npm/libheif-js@1.19.8/libheif-wasm/libheif-bundle.js",
+      "https://unpkg.com/libheif-js@1.19.8/libheif-wasm/libheif-bundle.js",
+      "https://cdn.jsdelivr.net/npm/libheif-js@1.19.8/libheif/libheif.js",
+      "https://unpkg.com/libheif-js@1.19.8/libheif/libheif.js"
+    ];
+
+    let lastError = null;
+    for (const url of urls) {
+      try {
+        await loadScript(url);
+        if (window.libheif) return;
+      } catch (err) {
+        lastError = err;
+      }
+    }
+
+    throw lastError || new Error("Could not load libheif-js from the CDN.");
+  }
+
+  async function resolveLibheifModule() {
+    await loadScriptFallback();
+
+    // libheif-js has shipped as both a plain global module and, in some builds,
+    // a factory that must be called to get the actual module object.
+    const candidates = [];
+    if (window.libheif) candidates.push(window.libheif);
+    if (window.Module) candidates.push(window.Module);
+
+    for (const candidate of candidates) {
+      if (!candidate) continue;
+
+      if (candidate.HeifDecoder) return candidate;
+
+      if (typeof candidate === "function") {
+        try {
+          const result = candidate();
+          const module = result && typeof result.then === "function" ? await result : result;
+          if (module && module.HeifDecoder) return module;
+        } catch (err) {
+          // Try the next shape/fallback below.
+        }
+
+        try {
+          const module = new candidate();
+          if (module && module.HeifDecoder) return module;
+        } catch (err) {
+          // Try the next shape/fallback below.
+        }
+      }
+    }
+
+    throw new Error("The HEIC decoder loaded, but the expected HeifDecoder API was not found. Try reloading the page, or check whether a content blocker is blocking the libheif-js WebAssembly bundle.");
+  }
+
+  async function waitForLibheif() {
+    heifModule = await resolveLibheifModule();
+
+    if (heifModule.ready && typeof heifModule.ready.then === "function") {
+      await heifModule.ready;
+    }
+
+    libheifReady = true;
+    setStatus("HEIC decoder ready. Select an Apple spatial photo HEIC file.");
+  }
+
+  async function decodeHeicFile(file) {
+    revokeLastUrl();
+    decodedViews = [];
+    canvas.width = 0;
+    canvas.height = 0;
+    emptyPreview.style.display = "block";
+    outputMeta.textContent = "No JPEG generated yet.";
+    sourceMeta.textContent = "Decoding stereo images…";
+    setStatus("Reading and decoding HEIC container…");
+
+    const buffer = await file.arrayBuffer();
+    const decoder = new heifModule.HeifDecoder();
+    const images = decoder.decode(new Uint8Array(buffer));
+
+    if (!images || images.length < 2) {
+      throw new Error(`Only ${images ? images.length : 0} image view(s) were found. This does not look like a spatial photo with a stereo pair.`);
+    }
+
+    const rendered = [];
+    for (let i = 0; i < images.length; i++) {
+      const img = images[i];
+      const width = img.get_width();
+      const height = img.get_height();
+      if (!width || !height) continue;
+
+      const imageData = new ImageData(width, height);
+      await new Promise((resolve, reject) => {
+        try {
+          img.display(imageData, data => data ? resolve(data) : reject(new Error(`Image ${i + 1} failed to decode.`)));
+        } catch (err) {
+          reject(err);
+        }
+      }).then(data => {
+        const offscreen = document.createElement("canvas");
+        offscreen.width = width;
+        offscreen.height = height;
+        const ctx = offscreen.getContext("2d", { willReadFrequently: false });
+        ctx.putImageData(data, 0, 0);
+        rendered.push({ index: i, width, height, area: width * height, canvas: offscreen });
+      });
+
+      await new Promise(requestAnimationFrame);
+    }
+
+    if (rendered.length < 2) {
+      throw new Error("The file contained fewer than two decodable image views.");
+    }
+
+    decodedViews = chooseStereoPair(rendered);
+    sourceMeta.textContent = `Decoded ${rendered.length} image view(s). Using ${decodedViews[0].width}×${decodedViews[0].height} and ${decodedViews[1].width}×${decodedViews[1].height}.`;
+    setStatus("Stereo pair decoded. Creating side-by-side JPEG…", "ok");
+  }
+
+  function chooseStereoPair(images) {
+    const sorted = [...images].sort((a, b) => b.area - a.area);
+
+    for (let i = 0; i < sorted.length; i++) {
+      for (let j = i + 1; j < sorted.length; j++) {
+        if (sorted[i].width === sorted[j].width && sorted[i].height === sorted[j].height) {
+          return [sorted[i], sorted[j]].sort((a, b) => a.index - b.index);
+        }
+      }
+    }
+
+    return [sorted[0], sorted[1]].sort((a, b) => a.index - b.index);
+  }
+
+	async function convertToSbs() {
+	  if (decodedViews.length < 2) {
+	    const file = fileInput.files[0];
+	    if (!file) return;
+	    await decodeHeicFile(file);
+	  }
+
+	  revokeLastUrl();
+	  setStatus("Compositing side-by-side JPEG…");
+
+	  let left = decodedViews[0];
+	  let right = decodedViews[1];
+
+	  if (eyeOrder.value === "swap") {
+	    [left, right] = [right, left];
+	  }
+
+	  const outputWidth = Number(widthRange.value);
+	  const eyeWidth = Math.floor(outputWidth / 2);
+	  const aspect = left.height / left.width;
+	  const outputHeight = Math.max(1, Math.round(eyeWidth * aspect));
+
+	  canvas.width = outputWidth;
+	  canvas.height = outputHeight;
+
+	  const ctx = canvas.getContext("2d", { alpha: false });
+	  ctx.imageSmoothingEnabled = true;
+	  ctx.imageSmoothingQuality = "high";
+
+	  ctx.fillStyle = "#000";
+	  ctx.fillRect(0, 0, outputWidth, outputHeight);
+	  ctx.drawImage(left.canvas, 0, 0, eyeWidth, outputHeight);
+	  ctx.drawImage(right.canvas, eyeWidth, 0, outputWidth - eyeWidth, outputHeight);
+
+	  const quality = Number(qualityRange.value) / 100;
+	  const blob = await new Promise(resolve => canvas.toBlob(resolve, "image/jpeg", quality));
+
+	  if (!blob) {
+	    throw new Error("The browser could not create the JPEG output.");
+	  }
+
+	  lastUrl = URL.createObjectURL(blob);
+
+	  const defaultName = getDefaultSaveName();
+
+	  downloadLink.href = lastUrl;
+	  downloadLink.download = gFileSaveName || defaultName;
+	  downloadLink.style.display = "block";
+
+	  emptyPreview.style.display = "none";
+
+	  outputMeta.textContent = `JPEG: ${outputWidth}×${outputHeight}, ${formatBytes(blob.size)}, quality ${qualityRange.value}%.`;
+
+	  setStatus('Side-by-side JPEG ready. Click <b>Download Side-by-Side JPEG</b> to save it.', "ok");
+	}
+
+	fileInput.addEventListener("change", async () => {
+	  const file = fileInput.files[0];
+
+	  revokeLastUrl();
+	  decodedViews = [];
+
+	  if (!file) {
+	    fileMeta.textContent = "No file selected.";
+	    sourceMeta.textContent = "Stereo images not decoded yet.";
+	    outputMeta.textContent = "No JPEG generated yet.";
+	    setStatus(libheifReady ? "Select an Apple spatial photo HEIC file." : "Loading HEIC decoder…");
+	    return;
+	  }
+
+	  fileMeta.textContent = `${file.name} (${formatBytes(file.size)})`;
+	  sourceMeta.textContent = "Stereo images not decoded yet.";
+	  outputMeta.textContent = "No JPEG generated yet.";
+
+	  try {
+	    if (!libheifReady) {
+	      setStatus("Waiting for HEIC decoder to finish loading…");
+	      await libheifReadyPromise;
+	    }
+
+	    await decodeHeicFile(file);
+	    await convertToSbs();
+	  } catch (err) {
+	    console.error(err);
+	    setStatus(err.message || String(err), "error");
+	    sourceMeta.textContent = "Decode failed.";
+	  }
+	});
+
+  eyeOrder.addEventListener("change", () => {
+    if (decodedViews.length >= 2 && downloadLink.href) convertToSbs().catch(err => setStatus(err.message || String(err), "error"));
+  });
+
+  widthRange.addEventListener("input", updateControls);
+
+  qualityRange.addEventListener("input", updateControls);
+
+  widthRange.addEventListener("change", () => {
+    if (decodedViews.length >= 2 && downloadLink.href) convertToSbs().catch(err => setStatus(err.message || String(err), "error"));
+  });
+
+  qualityRange.addEventListener("change", () => {
+    if (decodedViews.length >= 2 && downloadLink.href) convertToSbs().catch(err => setStatus(err.message || String(err), "error"));
+  });
+
+	let gAllowDownloadClick = false;
+
+	downloadLink.addEventListener("click", async event => {
+	  if (gAllowDownloadClick) {
+	    gAllowDownloadClick = false;
+	    return;
+	  }
+
+	  event.preventDefault();
+
+	  if (!downloadLink.href) {
+	    setStatus("No JPEG has been generated yet.", "error");
+	    return;
+	  }
+
+	  const saveName = await promptForSaveName();
+
+	  if (!saveName) {
+	    setStatus("Download cancelled.", "ok");
+	    return;
+	  }
+
+	  gFileSaveName = saveName;
+	  downloadLink.download = saveName;
+
+	  gAllowDownloadClick = true;
+	  downloadLink.click();
+
+	  setStatus(`Saved as <b>${escapeHtml(saveName)}</b>.`, "ok");
+	});
+
+  updateControls();
+
+	libheifReadyPromise = waitForLibheif().catch(err => {
+	  console.error(err);
+	  setStatus(err.message || String(err), "error");
+	  throw err;
+	});
+
+})();
+</script>
+</body>
+</html>
