@@ -819,7 +819,7 @@
 
     decodedViews = chooseStereoPair(rendered);
     sourceMeta.textContent = `Decoded ${rendered.length} image view(s). Using ${decodedViews[0].width}×${decodedViews[0].height} and ${decodedViews[1].width}×${decodedViews[1].height}.`;
-    setStatus("Stereo pair decoded.&nbsp;&nbsp;Creating side-by-side JPEG…", "ok");
+    setStatus("Stereo pair decoded.&nbsp;&nbsp;Creating JPEG…", "ok");
   }
 
   function chooseStereoPair(images) {
