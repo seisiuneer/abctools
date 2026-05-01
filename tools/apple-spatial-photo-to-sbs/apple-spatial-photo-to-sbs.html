@@ -158,10 +158,6 @@
     opacity: .55;
   }
 
-  .primary {
-    background: linear-gradient(180deg, rgba(156,230,178,.30), rgba(115,208,255,.14)), var(--panel2);
-  }
-
 	.actions {
 	  display: grid;
 	  grid-template-columns: 1fr;
@@ -174,6 +170,7 @@
   }
 
   #status {
+    font-size: .93rem;
     min-height: 1.5em;
     color: var(--muted);
     line-height: 1.45;
@@ -355,6 +352,14 @@
     color:black;
   }
 
+  .card.drop-active {
+    border-color: var(--accent);
+    box-shadow:
+      var(--shadow),
+      0 0 0 2px rgba(115,208,255,.35),
+      0 0 24px rgba(115,208,255,.20);
+  }
+
 </style>
 
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-VM0N9HL3MK"></script>
@@ -380,7 +385,8 @@
       <div>
         <label for="fileInput">Apple Spatial Photo file:</label>
         <input id="fileInput" type="file" accept=".heic,.heif,image/heic,image/heif">
-        <div class="hint nowrap-hint">For best results, use the unmodified original HEIC exported from your iPhone.</div>      
+        <div class="hint nowrap-hint">For best results, use the unmodified original spatial HEIC exported from your iPhone.</div>
+        <div class="hint">You can also drag and drop a single spatial HEIC file onto this panel.</div>
       </div>
       <div>
         <label for="eyeOrder">Stereo Order:</label>
@@ -455,12 +461,14 @@
   const fileMeta = document.getElementById("fileMeta");
   const sourceMeta = document.getElementById("sourceMeta");
   const outputMeta = document.getElementById("outputMeta");
+  const toolCard = document.querySelector(".card");
 
   let libheifReady = false;
   let heifModule = null;
   let decodedViews = [];
   let lastUrl = null;
   let libheifReadyPromise = null;
+  let currentFile = null;
 
   function escapeHtml(value) {
 	  return String(value)
@@ -488,18 +496,96 @@
 	  return name;
 	}
 
-	function getDefaultSaveName() {
+  function isIOSDevice() {
+    return /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+      (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+  }
 
-	  const outputWidth = Number(widthRange.value);
-	  const baseName = (fileInput.files[0]?.name || "spatial-photo").replace(/\.[^.]+$/, "");
+  function showIOSUnsupportedDialog() {
+    const message = '<p style="text-align:center">This tool is only supported on desktop browsers.</p>';
+
+    if (window.DayPilot && DayPilot.Modal && DayPilot.Modal.alert) {
+      DayPilot.Modal.alert(message, {
+        theme: "modal_compact",
+        top: 200
+      });
+    } else {
+      alert("This tool is only supported on desktop browsers.");
+    }
+  }
+
+  function disableToolForIOS() {
+    fileInput.disabled = true;
+    eyeOrder.disabled = true;
+    widthRange.disabled = true;
+    qualityRange.disabled = true;
+    downloadLink.style.display = "none";
+    setStatus("This tool is only supported on desktop browsers.", "error");
+  }
+
+  function isLikelyHeicFile(file) {
+    if (!file) return false;
+
+    const name = file.name || "";
+    const type = file.type || "";
+
+    return /\.(heic|heif)$/i.test(name) ||
+      /^image\/hei[cf]$/i.test(type) ||
+      /^image\/heic-sequence$/i.test(type) ||
+      /^image\/heif-sequence$/i.test(type);
+  }
+
+  async function processSpatialPhotoFile(file) {
+    revokeLastUrl();
+    decodedViews = [];
+    currentFile = file || null;
+
+    if (!file) {
+      fileMeta.textContent = "No file selected.";
+      sourceMeta.textContent = "Stereo images not decoded yet.";
+      outputMeta.textContent = "No JPEG generated yet.";
+      setStatus(libheifReady ? "Select or drag-and-drop a single Apple Spatial Photo HEIC file here." : "Loading HEIC decoder…");
+      return;
+    }
+
+    if (!isLikelyHeicFile(file)) {
+      fileMeta.textContent = `${file.name} (${formatBytes(file.size)})`;
+      sourceMeta.textContent = "Unsupported file type.";
+      outputMeta.textContent = "No JPEG generated yet.";
+      setStatus("Please select or drag-and-drop a single Apple Spatial Photo HEIC file here.", "error");
+      return;
+    }
+
+    fileMeta.textContent = `${file.name} (${formatBytes(file.size)})`;
+    sourceMeta.textContent = "Stereo images not decoded yet.";
+    outputMeta.textContent = "No JPEG generated yet.";
+
+    try {
+      if (!libheifReady) {
+        setStatus("Waiting for HEIC decoder to finish loading…");
+        await libheifReadyPromise;
+      }
+
+      await decodeHeicFile(file);
+      await convertToSbs();
+    } catch (err) {
+      console.error(err);
+      setStatus(err.message || String(err), "error");
+      sourceMeta.textContent = "Decode failed.";
+    }
+  }
+
+  function getDefaultSaveName() {
+    const outputWidth = Number(widthRange.value);
+    const baseName = (currentFile?.name || fileInput.files[0]?.name || "spatial-photo").replace(/\.[^.]+$/, "");
 
     let theStyle = "LR";
-    if (eyeOrder.value === "swap"){
+    if (eyeOrder.value === "swap") {
       theStyle = "RL";
     }
 
-	  return `${baseName}-SBS-${theStyle}-${outputWidth}.jpg`;
-	}
+    return `${baseName}-SBS-${theStyle}-${outputWidth}.jpg`;
+  }
 
 	function promptForSaveName() {
 	  if (!window.DayPilot || !DayPilot.Modal || !DayPilot.Modal.prompt) {
@@ -629,7 +715,7 @@
     }
 
     libheifReady = true;
-    setStatus("HEIC decoder ready. Select an Apple spatial photo HEIC file.");
+    setStatus("HEIC decoder ready. Select or drag-and-drop a single Apple Spatial Photo HEIC file here.");
   }
 
   async function decodeHeicFile(file) {
@@ -701,11 +787,12 @@
   }
 
 	async function convertToSbs() {
-	  if (decodedViews.length < 2) {
-	    const file = fileInput.files[0];
-	    if (!file) return;
-	    await decodeHeicFile(file);
-	  }
+
+    if (decodedViews.length < 2) {
+      const file = currentFile || fileInput.files[0];
+      if (!file) return;
+      await decodeHeicFile(file);
+    }
 
 	  revokeLastUrl();
 	  setStatus("Compositing side-by-side JPEG…");
@@ -757,38 +844,61 @@
 	  setStatus('Side-by-side JPEG ready. Click <b>Download Side-by-Side JPEG</b> to save it.', "ok");
 	}
 
-	fileInput.addEventListener("change", async () => {
-	  const file = fileInput.files[0];
+  function registerDragAndDropHandlers() {
+    ["dragenter", "dragover"].forEach(eventName => {
+      toolCard.addEventListener(eventName, event => {
+        event.preventDefault();
+        event.stopPropagation();
+        toolCard.classList.add("drop-active");
+      });
+    });
 
-	  revokeLastUrl();
-	  decodedViews = [];
+    ["dragleave", "drop"].forEach(eventName => {
+      toolCard.addEventListener(eventName, event => {
+        event.preventDefault();
+        event.stopPropagation();
+        toolCard.classList.remove("drop-active");
+      });
+    });
 
-	  if (!file) {
-	    fileMeta.textContent = "No file selected.";
-	    sourceMeta.textContent = "Stereo images not decoded yet.";
-	    outputMeta.textContent = "No JPEG generated yet.";
-	    setStatus(libheifReady ? "Select an Apple spatial photo HEIC file." : "Loading HEIC decoder…");
-	    return;
-	  }
+    toolCard.addEventListener("drop", async event => {
+      const files = Array.from(event.dataTransfer?.files || []);
 
-	  fileMeta.textContent = `${file.name} (${formatBytes(file.size)})`;
-	  sourceMeta.textContent = "Stereo images not decoded yet.";
-	  outputMeta.textContent = "No JPEG generated yet.";
+      if (files.length !== 1) {
+        setStatus("Please drop exactly one Apple Spatial Photo HEIC file.", "error");
+        return;
+      }
 
-	  try {
-	    if (!libheifReady) {
-	      setStatus("Waiting for HEIC decoder to finish loading…");
-	      await libheifReadyPromise;
-	    }
+      const file = files[0];
 
-	    await decodeHeicFile(file);
-	    await convertToSbs();
-	  } catch (err) {
-	    console.error(err);
-	    setStatus(err.message || String(err), "error");
-	    sourceMeta.textContent = "Decode failed.";
-	  }
-	});
+      if (!isLikelyHeicFile(file)) {
+        setStatus("Please drop a single .heic or .heif Apple Spatial Photo file.", "error");
+        return;
+      }
+
+      try {
+        const dt = new DataTransfer();
+        dt.items.add(file);
+        fileInput.files = dt.files;
+      } catch (err) {
+        // Some browsers may not allow programmatically setting fileInput.files.
+        // currentFile still preserves the dropped file for processing and naming.
+      }
+
+      await processSpatialPhotoFile(file);
+    });
+
+    // Prevent the browser from navigating away if a file is dropped outside the tool card.
+    ["dragover", "drop"].forEach(eventName => {
+      document.addEventListener(eventName, event => {
+        event.preventDefault();
+      });
+    });
+  }
+
+  fileInput.addEventListener("change", async () => {
+    await processSpatialPhotoFile(fileInput.files[0] || null);
+  });
 
   eyeOrder.addEventListener("change", () => {
     if (decodedViews.length >= 2 && downloadLink.href) convertToSbs().catch(err => setStatus(err.message || String(err), "error"));
@@ -836,13 +946,22 @@
 	  setStatus(`Saved as <b>${escapeHtml(saveName)}</b>.`, "ok");
 	});
 
-  updateControls();
+  const runningOnIOS = isIOSDevice();
 
-	libheifReadyPromise = waitForLibheif().catch(err => {
-	  console.error(err);
-	  setStatus(err.message || String(err), "error");
-	  throw err;
-	});
+  if (runningOnIOS) {
+    showIOSUnsupportedDialog();
+    disableToolForIOS();
+  } else {
+    registerDragAndDropHandlers();
+
+    libheifReadyPromise = waitForLibheif().catch(err => {
+      console.error(err);
+      setStatus(err.message || String(err), "error");
+      throw err;
+    });
+  }
+
+  updateControls();
 
 })();
 </script>
