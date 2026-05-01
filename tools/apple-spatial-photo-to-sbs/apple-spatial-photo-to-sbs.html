@@ -107,6 +107,14 @@
 	  min-width: 0;
 	}
 
+  input[type="file"]::file-selector-button {
+    margin-right: 14px;
+  }
+
+  input[type="file"]::-webkit-file-upload-button {
+    margin-right: 14px;
+  }
+
 	.row {
 	  display: flex;
 	  gap: 12px;
@@ -128,6 +136,15 @@
     font-size: .93rem;
     line-height: 1.4;
     margin-top: 8px;
+  }
+
+  .nowrap-hint {
+    color: var(--muted);
+    font-size: .93rem;
+    line-height: 1.4;
+    margin-top: 8px;
+    white-space: nowrap;
+    overflow-x: auto;
   }
 
   button {
@@ -363,7 +380,7 @@
       <div>
         <label for="fileInput">Apple Spatial Photo file:</label>
         <input id="fileInput" type="file" accept=".heic,.heif,image/heic,image/heif">
-        <div class="hint">For best results, use the unmodified original HEIC exported from your iPhone.</div>
+        <div class="hint nowrap-hint">For best results, use the unmodified original HEIC exported from your iPhone.</div>      
       </div>
       <div>
         <label for="eyeOrder">Stereo Order:</label>
@@ -407,14 +424,14 @@
       <div id="fileMeta" class="pill">No file selected.</div>
       <div id="sourceMeta" class="pill">Stereo images not decoded yet.</div>
       <div id="outputMeta" class="pill">No JPEG generated yet.</div>
-      <div class="pill small">All processing is local. The selected image is not uploaded.</div>
+      <div class="pill small">All processing is done locally in your browser.</div>
     </div>
   </section>
 
   <div class="footer-note">
     Created by <a href="https://michaeleskin.com" target="_blank" rel="noopener noreferrer">Michael Eskin</a><br/><br/>
     If this utility is useful, please consider buying me a beer: <a href="https://michaeleskin.com/#tipjars" target="_blank" rel="noopener noreferrer">My Virtual Tip Jars</a><br/><br/>
-    Source code available on GitHub at: <a href="https://github.com/seisiuneer/abctools/blob/main/tools/apple-spatial-photo-to-sbs.html" target="_blank" rel="noopener noreferrer">apple-spatial-photo-to-sbs.html</a>
+    Source code available on GitHub at: <a href="https://github.com/seisiuneer/abctools/tree/main/tools/apple-spatial-photo-to-sbs" target="_blank" rel="noopener noreferrer">Apple Spatial Photo → Side-by-Side JPEG</a>
   </div>
 
 </div>
@@ -618,9 +635,10 @@
   async function decodeHeicFile(file) {
     revokeLastUrl();
     decodedViews = [];
+    canvas.style.display = "none";
     canvas.width = 0;
     canvas.height = 0;
-    emptyPreview.style.display = "block";
+    emptyPreview.style.display = "flex";
     outputMeta.textContent = "No JPEG generated yet.";
     sourceMeta.textContent = "Decoding stereo images…";
     setStatus("Reading and decoding HEIC container…");
@@ -731,7 +749,8 @@
 	  downloadLink.download = defaultName;
 	  downloadLink.style.display = "block";
 
-	  emptyPreview.style.display = "none";
+    canvas.style.display = "block";
+    emptyPreview.style.display = "none";
 
 	  outputMeta.textContent = `JPEG: ${outputWidth}×${outputHeight}, ${formatBytes(blob.size)}, quality ${qualityRange.value}%.`;
 
