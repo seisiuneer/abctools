@@ -138,15 +138,6 @@
     margin-top: 8px;
   }
 
-  .nowrap-hint {
-    color: var(--muted);
-    font-size: .93rem;
-    line-height: 1.4;
-    margin-top: 8px;
-    white-space: nowrap;
-    overflow-x: auto;
-  }
-
   button {
     cursor: pointer;
     font-weight: 750;
@@ -385,8 +376,6 @@
       <div>
         <label for="fileInput">Apple Spatial Photo file:</label>
         <input id="fileInput" type="file" accept=".heic,.heif,image/heic,image/heif">
-        <div class="hint nowrap-hint">For best results, use the unmodified original spatial HEIC exported from your iPhone.</div>
-        <div class="hint">You can also drag and drop a single spatial HEIC file onto this panel.</div>
       </div>
       <div>
         <label for="eyeOrder">Stereo Order:</label>
@@ -396,6 +385,9 @@
         </select>
       </div>
     </div>
+
+    <div class="hint">For best results, use the unmodified original spatial HEIC exported from your iPhone.</div>
+    <div class="hint">You can also drag and drop a single spatial HEIC file onto this panel.</div>
 
     <div style="margin-top:16px;">
       <label for="widthRange">Output JPEG Width</label>
@@ -516,10 +508,17 @@
 
   function disableToolForIOS() {
     fileInput.disabled = true;
+    fileInput.style.display = "none";
+
     eyeOrder.disabled = true;
     widthRange.disabled = true;
     qualityRange.disabled = true;
     downloadLink.style.display = "none";
+
+    fileMeta.textContent = "Desktop browser required.";
+    sourceMeta.textContent = "This tool is not supported on iOS or iPadOS.";
+    outputMeta.textContent = "No JPEG generated.";
+
     setStatus("This tool is only supported on desktop browsers.", "error");
   }
 
