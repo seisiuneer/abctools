@@ -368,8 +368,8 @@
       <div>
         <label for="eyeOrder">Stereo Order:</label>
         <select id="eyeOrder">
-          <option value="normal">Image 1 Left / Image 2 Right (Stereoscope card)</option>
-          <option value="swap">Image 2 Left / Image 1 Right (Cross-eye viewing)</option>
+          <option value="normal">Left / Right (Stereoscope card)</option>
+          <option value="swap">Right / Left (Cross-eye viewing)</option>
         </select>
       </div>
     </div>
@@ -476,7 +476,12 @@
 	  const outputWidth = Number(widthRange.value);
 	  const baseName = (fileInput.files[0]?.name || "spatial-photo").replace(/\.[^.]+$/, "");
 
-	  return `${baseName}-SBS-${outputWidth}.jpg`;
+    let theStyle = "LR";
+    if (eyeOrder.value === "swap"){
+      theStyle = "RL";
+    }
+
+	  return `${baseName}-SBS-${theStyle}-${outputWidth}.jpg`;
 	}
 
 	function promptForSaveName() {
