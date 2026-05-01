@@ -153,7 +153,7 @@
 	  display: grid;
 	  grid-template-columns: 1fr;
 	  gap: 12px;
-	  margin-top: 14px;
+	  margin-top: 18px;
 	}
 
   @media (max-width: 560px) {
@@ -390,56 +390,66 @@
   </header>
 
   <section class="card">
-    <div class="grid">
-      <div>
-        <label for="fileInput">Apple Spatial Photo file:</label>
-        <input id="fileInput" type="file" accept=".heic,.heif,image/heic,image/heif">
-      </div>
-      <div>
-        <label for="eyeOrder">Stereo Order:</label>
-        <select id="eyeOrder">
-          <option value="normal">Left / Right - (Stereoscope card for Side-by-Side JPEG)</option>
-          <option value="swap">Right / Left - (Cross-eye viewing for Side-by-Side JPEG)</option>
-        </select>
-      </div>
+    <div>
+      <label for="fileInput">Apple Spatial Photo file:</label>
+      <input id="fileInput" type="file" accept=".heic,.heif,image/heic,image/heif">
     </div>
 
     <div class="hint">You can also drag and drop a single spatial HEIC file onto this panel.</div>
 
-    <div style="margin-top:16px;">
-      <label for="outputFormat">Output Format:</label>
-      <select id="outputFormat">
-        <option value="sbs">Side-by-Side JPEG</option>
-        <option value="anaglyph-red-cyan-dubois">Anaglyph — Red / Cyan, Optimized</option>
-        <option value="anaglyph-red-cyan-gray">Anaglyph — Red / Cyan, Grayscale</option>
-        <option value="anaglyph-red-cyan-color">Anaglyph — Red / Cyan, Color</option>
-        <option value="anaglyph-red-blue">Anaglyph — Red / Blue</option>
-        <option value="anaglyph-red-green">Anaglyph — Red / Green</option>
-        <option value="anaglyph-amber-blue">Anaglyph — Amber / Blue</option>
-      </select>
-      <div class="hint">
-        Side-by-side uses the selected stereo order. Anaglyph modes combine the left and right views into a single full-width image.
+    <div class="grid" style="margin-top:16px;">
+      <div>
+        <label for="outputFormat">Output Format:</label>
+        <select id="outputFormat">
+          <option value="sbs">Side-by-Side JPEG</option>
+          <option value="anaglyph-red-cyan-dubois">Anaglyph — Red / Cyan, Optimized</option>
+          <option value="anaglyph-red-cyan-gray">Anaglyph — Red / Cyan, Grayscale</option>
+          <option value="anaglyph-red-cyan-color">Anaglyph — Red / Cyan, Color</option>
+          <option value="anaglyph-red-blue">Anaglyph — Red / Blue</option>
+          <option value="anaglyph-red-green">Anaglyph — Red / Green</option>
+          <option value="anaglyph-amber-blue">Anaglyph — Amber / Blue</option>
+        </select>
+      </div>
+
+      <div>
+        <label for="eyeOrder">Stereo Order:</label>
+        <select id="eyeOrder">
+          <option value="normal">Left / Right</option>
+          <option value="swap">Right / Left</option>
+        </select>
+      </div>
+
+    </div>
+
+    <div class="hint">
+      For stereograph cards, use <b>Side-by-Side JPEG</b> with <b>Left / Right</b> order.&nbsp;&nbsp;For cross-eye viewing use <b>Side-by-Side JPEG</b> with <b>Right / Left</b> order.
+    </div>
+
+    <div class="hint">
+      For any of the anaglyph output format options, use <b>Left / Right</b> order.
+    </div>
+
+    <div class="grid" style="margin-top:16px;">
+      <div>
+        <label for="widthRange">Output JPEG Width</label>
+        <div class="row">
+          <input id="widthRange" type="range" min="1024" max="8192" step="64" value="4096">
+          <div id="widthValue" class="rangeValue">4096 px</div>
+        </div>
+      </div>
+
+      <div>
+        <label for="qualityRange">JPEG Quality</label>
+        <div class="row">
+          <input id="qualityRange" type="range" min="50" max="100" step="1" value="92">
+          <div id="qualityValue" class="rangeValue">92%</div>
+        </div>
       </div>
     </div>
 
-    <div style="margin-top:16px;">
-      <label for="widthRange">Output JPEG Width</label>
-      <div class="row">
-        <input id="widthRange" type="range" min="1024" max="8192" step="64" value="4096">
-        <div id="widthValue" class="rangeValue">4096 px</div>
-      </div>
-      <div class="hint">
-        For side-by-side output, each eye is rendered at half this width.
-        For anaglyph output, this is the full image width.
-      </div>
-    </div>
-
-    <div style="margin-top:16px;">
-      <label for="qualityRange">JPEG Quality</label>
-      <div class="row">
-        <input id="qualityRange" type="range" min="50" max="100" step="1" value="92">
-        <div id="qualityValue" class="rangeValue">92%</div>
-      </div>
+    <div class="hint">
+      For side-by-side output, each eye is rendered at half the selected output width.&nbsp;&nbsp;
+      For anaglyph output, the selected width is the full image width.
     </div>
 
     <div class="actions">
@@ -755,7 +765,7 @@
     }
 
     libheifReady = true;
-    setStatus("HEIC decoder ready. Select or drag-and-drop a single Apple Spatial Photo HEIC file here.");
+    setStatus("HEIC decoder ready.&nbsp;&nbsp;Select or drag-and-drop a single Apple Spatial Photo HEIC file here.");
   }
 
   async function decodeHeicFile(file) {
@@ -809,7 +819,7 @@
 
     decodedViews = chooseStereoPair(rendered);
     sourceMeta.textContent = `Decoded ${rendered.length} image view(s). Using ${decodedViews[0].width}×${decodedViews[0].height} and ${decodedViews[1].width}×${decodedViews[1].height}.`;
-    setStatus("Stereo pair decoded. Creating side-by-side JPEG…", "ok");
+    setStatus("Stereo pair decoded.&nbsp;&nbsp;Creating side-by-side JPEG…", "ok");
   }
 
   function chooseStereoPair(images) {
@@ -1064,7 +1074,7 @@
         `${modeLabel} JPEG: ${canvas.width}×${canvas.height}, ${formatBytes(blob.size)}, quality ${qualityRange.value}%.`;
     }
 
-    setStatus(`${modeLabel} JPEG ready. Click <b>Download JPEG</b> to save it.`, "ok");
+    setStatus(`${modeLabel} JPEG ready.&nbsp;&nbsp;Click <b>Download JPEG</b> to save it.`, "ok");
   }
 
   function registerDragAndDropHandlers() {
