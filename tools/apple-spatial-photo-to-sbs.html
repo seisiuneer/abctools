@@ -419,7 +419,7 @@
 
 </div>
 
-<script src="libheif-bundle.js"></script>
+<script type="text/javascript" src="libheif-bundle.js"></script>
 <script type="text/javascript" src="daypilot-modal.min-3.10.1.js"></script>
 <script>
 (() => {
@@ -444,8 +444,6 @@
   let decodedViews = [];
   let lastUrl = null;
   let libheifReadyPromise = null;
-
-  let gFileSaveName = "";
 
   function escapeHtml(value) {
 	  return String(value)
@@ -474,12 +472,11 @@
 	}
 
 	function getDefaultSaveName() {
-	  if (gFileSaveName) return gFileSaveName;
 
 	  const outputWidth = Number(widthRange.value);
 	  const baseName = (fileInput.files[0]?.name || "spatial-photo").replace(/\.[^.]+$/, "");
 
-	  return `${baseName}-side-by-side-${outputWidth}.jpg`;
+	  return `${baseName}-SBS-${outputWidth}.jpg`;
 	}
 
 	function promptForSaveName() {
@@ -500,7 +497,6 @@
 
 	    if (!cleanName) return null;
 
-	    gFileSaveName = cleanName;
 	    return cleanName;
 	  });
 	}
@@ -727,7 +723,7 @@
 	  const defaultName = getDefaultSaveName();
 
 	  downloadLink.href = lastUrl;
-	  downloadLink.download = gFileSaveName || defaultName;
+	  downloadLink.download = defaultName;
 	  downloadLink.style.display = "block";
 
 	  emptyPreview.style.display = "none";
@@ -808,7 +804,6 @@
 	    return;
 	  }
 
-	  gFileSaveName = saveName;
 	  downloadLink.download = saveName;
 
 	  gAllowDownloadClick = true;
