@@ -3,12 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Apple Spatial Photo to Side-by-Side JPEG Converter</title>
+<title>Apple Spatial Photo → Side-by-Side or 3D Anaglyph JPEG</title>
 <meta property="og:type" content="website" />
-<meta property="og:title" content="Apple Spatial Photo to Side-by-Side JPEG Converter" />
-<meta property="og:description" content="Convert Apple Spatial Photo HEIC files into Left/Right or Right/Left Side-by-Side JPEG images locally in your browser." />
+<meta property="og:title" content="Apple Spatial Photo → Side-by-Side or 3D Anaglyph JPEG" />
+<meta property="og:description" content="Convert Apple Spatial Photo HEIC files into Side-by-Side or 3D Anaglyph JPEG images locally in your browser." />
 <meta property="og:url" content="https://michaeleskin.com/tools/apple-spatial-photo-to-sbs.html" />
-<meta property="og:site_name" content="Apple Spatial Photo to Side-by-Side JPEG Converter" />
+<meta property="og:site_name" content="Apple Spatial Photo → Side-by-Side or 3D Anaglyph JPEG" />
 <meta property="og:image" content="https://michaeleskin.com/tools/img/spatial_to_sbs.jpg"/>
 <link rel="icon" type="image/png" sizes="32x32" href="https://michaeleskin.com/tools/img/spatial_to_sbs_favicon.png">
 
@@ -54,7 +54,7 @@
 
 	h1 {
 	  margin: 0 0 8px;
-	  font-size: clamp(1.45rem, 3vw, 2.25rem);
+	  font-size: clamp(1.45rem, 3vw, 2rem);
 	  letter-spacing: .01em;
 	  text-shadow: 0 0 18px rgba(115,208,255,.35);
 	}
@@ -177,7 +177,7 @@
 	  border-radius: 14px;
 	  overflow: hidden;
 
-	  /* Fixed 4096x1536 aspect ratio */
+	  /* Initial side-by-side preview aspect ratio; updated dynamically after conversion */
 	  aspect-ratio: 4096 / 1536;
 	  width: 100%;
 
@@ -351,6 +351,24 @@
       0 0 24px rgba(115,208,255,.20);
   }
 
+  select {
+    appearance: none;
+    -webkit-appearance: none;
+
+    padding-right: 42px;
+
+    background-image:
+      linear-gradient(45deg, transparent 50%, var(--muted) 50%),
+      linear-gradient(135deg, var(--muted) 50%, transparent 50%);
+    background-position:
+      calc(100% - 24px) 50%,
+      calc(100% - 17px) 50%;
+    background-size:
+      7px 7px,
+      7px 7px;
+    background-repeat: no-repeat;
+  }
+
 </style>
 
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-VM0N9HL3MK"></script>
@@ -367,8 +385,8 @@
 
 <div class="wrap">
   <header>
-    <h1>Apple Spatial Photo → Side-by-Side JPEG</h1>
-    <p class="subhead">Open an Apple Spatial Photo HEIC file, extract the two embedded stereo views, and export a Left/Right or Right/Left Side-by-Side JPEG image locally from your browser.</p>
+    <h1>Apple Spatial Photo → Side-by-Side or 3D Anaglyph JPEG</h1>
+    <p class="subhead">Open an Apple Spatial Photo HEIC file, extract the two embedded stereo views,<br/>and export a Side-by-Side or 3D Anaglyph JPEG image locally from your browser.</p>
   </header>
 
   <section class="card">
@@ -380,14 +398,29 @@
       <div>
         <label for="eyeOrder">Stereo Order:</label>
         <select id="eyeOrder">
-          <option value="normal">Left / Right (Stereoscope card)</option>
-          <option value="swap">Right / Left (Cross-eye viewing)</option>
+          <option value="normal">Left / Right - (Stereoscope card for Side-by-Side JPEG)</option>
+          <option value="swap">Right / Left - (Cross-eye viewing for Side-by-Side JPEG)</option>
         </select>
       </div>
     </div>
 
-    <div class="hint">For best results, use the unmodified original spatial HEIC exported from your iPhone.</div>
     <div class="hint">You can also drag and drop a single spatial HEIC file onto this panel.</div>
+
+    <div style="margin-top:16px;">
+      <label for="outputFormat">Output Format:</label>
+      <select id="outputFormat">
+        <option value="sbs">Side-by-Side JPEG</option>
+        <option value="anaglyph-red-cyan-dubois">Anaglyph — Red / Cyan, Optimized</option>
+        <option value="anaglyph-red-cyan-gray">Anaglyph — Red / Cyan, Grayscale</option>
+        <option value="anaglyph-red-cyan-color">Anaglyph — Red / Cyan, Color</option>
+        <option value="anaglyph-red-blue">Anaglyph — Red / Blue</option>
+        <option value="anaglyph-red-green">Anaglyph — Red / Green</option>
+        <option value="anaglyph-amber-blue">Anaglyph — Amber / Blue</option>
+      </select>
+      <div class="hint">
+        Side-by-side uses the selected stereo order. Anaglyph modes combine the left and right views into a single full-width image.
+      </div>
+    </div>
 
     <div style="margin-top:16px;">
       <label for="widthRange">Output JPEG Width</label>
@@ -395,7 +428,10 @@
         <input id="widthRange" type="range" min="1024" max="8192" step="64" value="4096">
         <div id="widthValue" class="rangeValue">4096 px</div>
       </div>
-      <div class="hint">This is the total side-by-side JPEG width. Each eye is rendered at half this width.</div>
+      <div class="hint">
+        For side-by-side output, each eye is rendered at half this width.
+        For anaglyph output, this is the full image width.
+      </div>
     </div>
 
     <div style="margin-top:16px;">
@@ -407,7 +443,7 @@
     </div>
 
     <div class="actions">
-      <a id="downloadLink" class="download" download="spatial-photo-sbs.jpg">Download Side-by-Side JPEG</a>
+      <a id="downloadLink" class="download" download="spatial-photo.jpg">Download JPEG</a>
     </div>
 
     <p id="status">Loading HEIC decoder…</p>
@@ -429,7 +465,7 @@
   <div class="footer-note">
     Created by <a href="https://michaeleskin.com" target="_blank" rel="noopener noreferrer">Michael Eskin</a><br/><br/>
     If this utility is useful, please consider buying me a beer: <a href="https://michaeleskin.com/#tipjars" target="_blank" rel="noopener noreferrer">My Virtual Tip Jars</a><br/><br/>
-    Source code available on GitHub at: <a href="https://github.com/seisiuneer/abctools/tree/main/tools/apple-spatial-photo-to-sbs" target="_blank" rel="noopener noreferrer">Apple Spatial Photo → Side-by-Side JPEG</a>
+    Source code available on GitHub at: <a href="https://github.com/seisiuneer/abctools/tree/main/tools/apple-spatial-photo-to-sbs" target="_blank" rel="noopener noreferrer">AApple Spatial Photo → Side-by-Side or 3D Anaglyph JPEG</a>
   </div>
 
 </div>
@@ -454,6 +490,8 @@
   const sourceMeta = document.getElementById("sourceMeta");
   const outputMeta = document.getElementById("outputMeta");
   const toolCard = document.querySelector(".card");
+  const outputFormat = document.getElementById("outputFormat");
+  const previewBox = document.querySelector(".previewBox");
 
   let libheifReady = false;
   let heifModule = null;
@@ -511,6 +549,7 @@
     fileInput.style.display = "none";
 
     eyeOrder.disabled = true;
+    outputFormat.disabled = true;
     widthRange.disabled = true;
     qualityRange.disabled = true;
     downloadLink.style.display = "none";
@@ -583,7 +622,9 @@
       theStyle = "RL";
     }
 
-    return `${baseName}-SBS-${theStyle}-${outputWidth}.jpg`;
+    const formatSuffix = getOutputFormatSuffix();
+
+    return `${baseName}-${formatSuffix}-${theStyle}-${outputWidth}.jpg`;
   }
 
 	function promptForSaveName() {
@@ -591,7 +632,7 @@
 	    return Promise.resolve(getDefaultSaveName());
 	  }
 
-	  const thePrompt = "Please enter a filename for your Side-by-Side JPEG:";
+	  const thePrompt = `Please enter a filename for your ${getOutputFormatLabel()} JPEG:`;
 
 	  return DayPilot.Modal.prompt(thePrompt, getDefaultSaveName(), {
 	    theme: "modal_compact",
@@ -785,63 +826,246 @@
     return [sorted[0], sorted[1]].sort((a, b) => a.index - b.index);
   }
 
-	async function convertToSbs() {
+  function clampByte(value) {
+    return Math.max(0, Math.min(255, Math.round(value)));
+  }
 
+  function luminance(r, g, b) {
+    return 0.299 * r + 0.587 * g + 0.114 * b;
+  }
+
+  function getOutputFormatLabel() {
+    switch (outputFormat.value) {
+      case "sbs":
+        return "Side-by-Side";
+      case "anaglyph-red-cyan-dubois":
+        return "Optimized Red/Cyan Anaglyph";
+      case "anaglyph-red-cyan-gray":
+        return "Grayscale Red/Cyan Anaglyph";
+      case "anaglyph-red-cyan-color":
+        return "Color Red/Cyan Anaglyph";
+      case "anaglyph-red-blue":
+        return "Red/Blue Anaglyph";
+      case "anaglyph-red-green":
+        return "Red/Green Anaglyph";
+      case "anaglyph-amber-blue":
+        return "Amber/Blue Anaglyph";
+      default:
+        return "JPEG";
+    }
+  }
+
+  function getOutputFormatSuffix() {
+    switch (outputFormat.value) {
+      case "sbs":
+        return "SBS";
+      case "anaglyph-red-cyan-dubois":
+        return "Anaglyph-RedCyan-Optimized";
+      case "anaglyph-red-cyan-gray":
+        return "Anaglyph-RedCyan-Gray";
+      case "anaglyph-red-cyan-color":
+        return "Anaglyph-RedCyan-Color";
+      case "anaglyph-red-blue":
+        return "Anaglyph-RedBlue";
+      case "anaglyph-red-green":
+        return "Anaglyph-RedGreen";
+      case "anaglyph-amber-blue":
+        return "Anaglyph-AmberBlue";
+      default:
+        return "JPEG";
+    }
+  }
+
+  function drawScaledToImageData(sourceCanvas, width, height) {
+    const temp = document.createElement("canvas");
+    temp.width = width;
+    temp.height = height;
+
+    const ctx = temp.getContext("2d", { alpha: false, willReadFrequently: true });
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = "high";
+    ctx.drawImage(sourceCanvas, 0, 0, width, height);
+
+    return ctx.getImageData(0, 0, width, height);
+  }
+
+  function buildAnaglyphImageData(ctx, leftCanvas, rightCanvas, width, height, mode) {
+    const leftData = drawScaledToImageData(leftCanvas, width, height);
+    const rightData = drawScaledToImageData(rightCanvas, width, height);
+    const out = ctx.createImageData(width, height);
+
+    const l = leftData.data;
+    const r = rightData.data;
+    const o = out.data;
+
+    for (let i = 0; i < o.length; i += 4) {
+      const lr = l[i];
+      const lg = l[i + 1];
+      const lb = l[i + 2];
+
+      const rr = r[i];
+      const rg = r[i + 1];
+      const rb = r[i + 2];
+
+      const ly = luminance(lr, lg, lb);
+      const ry = luminance(rr, rg, rb);
+
+      let outR = 0;
+      let outG = 0;
+      let outB = 0;
+
+      switch (mode) {
+        case "anaglyph-red-cyan-dubois":
+          // Dubois-style optimized red/cyan matrix.
+          // Better color/luminance balance and usually less ghosting than raw channel packing.
+          outR =
+            0.4561 * lr + 0.500484 * lg + 0.176381 * lb -
+            0.0434706 * rr - 0.0879388 * rg - 0.00155529 * rb;
+
+          outG =
+           -0.0400822 * lr - 0.0378246 * lg - 0.0157589 * lb +
+            0.378476 * rr + 0.73364 * rg - 0.0184503 * rb;
+
+          outB =
+           -0.0152161 * lr - 0.0205971 * lg - 0.00546856 * lb -
+            0.0721527 * rr - 0.112961 * rg + 1.2264 * rb;
+          break;
+
+        case "anaglyph-red-cyan-gray":
+          outR = ly;
+          outG = ry;
+          outB = ry;
+          break;
+
+        case "anaglyph-red-cyan-color":
+          outR = lr;
+          outG = rg;
+          outB = rb;
+          break;
+
+        case "anaglyph-red-blue":
+          outR = ly;
+          outG = 0;
+          outB = ry;
+          break;
+
+        case "anaglyph-red-green":
+          outR = ly;
+          outG = ry;
+          outB = 0;
+          break;
+
+        case "anaglyph-amber-blue":
+          outR = ly;
+          outG = ly * 0.75;
+          outB = ry;
+          break;
+      }
+
+      o[i] = clampByte(outR);
+      o[i + 1] = clampByte(outG);
+      o[i + 2] = clampByte(outB);
+      o[i + 3] = 255;
+    }
+
+    return out;
+  }
+
+  async function convertToSbs() {
     if (decodedViews.length < 2) {
       const file = currentFile || fileInput.files[0];
       if (!file) return;
       await decodeHeicFile(file);
     }
 
-	  revokeLastUrl();
-	  setStatus("Compositing side-by-side JPEG…");
+    revokeLastUrl();
 
-	  let left = decodedViews[1];
-	  let right = decodedViews[0];
+    const mode = outputFormat.value;
+    const modeLabel = getOutputFormatLabel();
 
-	  if (eyeOrder.value === "swap") {
-	    [left, right] = [right, left];
-	  }
+    setStatus(`Compositing ${modeLabel} JPEG…`);
 
-	  const outputWidth = Number(widthRange.value);
-	  const eyeWidth = Math.floor(outputWidth / 2);
-	  const aspect = left.height / left.width;
-	  const outputHeight = Math.max(1, Math.round(eyeWidth * aspect));
+    let left = decodedViews[1];
+    let right = decodedViews[0];
 
-	  canvas.width = outputWidth;
-	  canvas.height = outputHeight;
+    if (eyeOrder.value === "swap") {
+      [left, right] = [right, left];
+    }
 
-	  const ctx = canvas.getContext("2d", { alpha: false });
-	  ctx.imageSmoothingEnabled = true;
-	  ctx.imageSmoothingQuality = "high";
+    const outputWidth = Number(widthRange.value);
+    let ctx;
 
-	  ctx.fillStyle = "#000";
-	  ctx.fillRect(0, 0, outputWidth, outputHeight);
-	  ctx.drawImage(left.canvas, 0, 0, eyeWidth, outputHeight);
-	  ctx.drawImage(right.canvas, eyeWidth, 0, outputWidth - eyeWidth, outputHeight);
+    if (mode === "sbs") {
+      const eyeWidth = Math.floor(outputWidth / 2);
+      const aspect = left.height / left.width;
+      const outputHeight = Math.max(1, Math.round(eyeWidth * aspect));
 
-	  const quality = Number(qualityRange.value) / 100;
-	  const blob = await new Promise(resolve => canvas.toBlob(resolve, "image/jpeg", quality));
+      canvas.width = outputWidth;
+      canvas.height = outputHeight;
 
-	  if (!blob) {
-	    throw new Error("The browser could not create the JPEG output.");
-	  }
+      previewBox.style.aspectRatio = `${outputWidth} / ${outputHeight}`;
 
-	  lastUrl = URL.createObjectURL(blob);
+      ctx = canvas.getContext("2d", { alpha: false });
+      ctx.imageSmoothingEnabled = true;
+      ctx.imageSmoothingQuality = "high";
 
-	  const defaultName = getDefaultSaveName();
+      ctx.fillStyle = "#000";
+      ctx.fillRect(0, 0, outputWidth, outputHeight);
 
-	  downloadLink.href = lastUrl;
-	  downloadLink.download = defaultName;
-	  downloadLink.style.display = "block";
+      ctx.drawImage(left.canvas, 0, 0, eyeWidth, outputHeight);
+      ctx.drawImage(right.canvas, eyeWidth, 0, outputWidth - eyeWidth, outputHeight);
+    } else {
+      const aspect = left.height / left.width;
+      const outputHeight = Math.max(1, Math.round(outputWidth * aspect));
+
+      canvas.width = outputWidth;
+      canvas.height = outputHeight;
+
+      previewBox.style.aspectRatio = `${outputWidth} / ${outputHeight}`;
+
+      ctx = canvas.getContext("2d", { alpha: false, willReadFrequently: true });
+
+      const anaglyphData = buildAnaglyphImageData(
+        ctx,
+        left.canvas,
+        right.canvas,
+        outputWidth,
+        outputHeight,
+        mode
+      );
+
+      ctx.putImageData(anaglyphData, 0, 0);
+    }
+
+    const quality = Number(qualityRange.value) / 100;
+    const blob = await new Promise(resolve => canvas.toBlob(resolve, "image/jpeg", quality));
+
+    if (!blob) {
+      throw new Error("The browser could not create the JPEG output.");
+    }
+
+    lastUrl = URL.createObjectURL(blob);
+
+    const defaultName = getDefaultSaveName();
+
+    downloadLink.href = lastUrl;
+    downloadLink.download = defaultName;
+    downloadLink.style.display = "block";
 
     canvas.style.display = "block";
     emptyPreview.style.display = "none";
 
-	  outputMeta.textContent = `JPEG: ${outputWidth}×${outputHeight}, ${formatBytes(blob.size)}, quality ${qualityRange.value}%.`;
+    if (mode === "sbs") {
+      const eyeWidth = Math.floor(canvas.width / 2);
+      outputMeta.textContent =
+        `${modeLabel} JPEG: ${canvas.width}×${canvas.height}, each eye ${eyeWidth}×${canvas.height}, ${formatBytes(blob.size)}, quality ${qualityRange.value}%.`;
+    } else {
+      outputMeta.textContent =
+        `${modeLabel} JPEG: ${canvas.width}×${canvas.height}, ${formatBytes(blob.size)}, quality ${qualityRange.value}%.`;
+    }
 
-	  setStatus('Side-by-side JPEG ready. Click <b>Download Side-by-Side JPEG</b> to save it.', "ok");
-	}
+    setStatus(`${modeLabel} JPEG ready. Click <b>Download JPEG</b> to save it.`, "ok");
+  }
 
   function registerDragAndDropHandlers() {
     ["dragenter", "dragover"].forEach(eventName => {
@@ -897,6 +1121,12 @@
 
   fileInput.addEventListener("change", async () => {
     await processSpatialPhotoFile(fileInput.files[0] || null);
+  });
+
+  outputFormat.addEventListener("change", () => {
+    if (decodedViews.length >= 2 && downloadLink.href) {
+      convertToSbs().catch(err => setStatus(err.message || String(err), "error"));
+    }
   });
 
   eyeOrder.addEventListener("change", () => {
