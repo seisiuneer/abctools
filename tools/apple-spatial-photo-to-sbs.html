@@ -368,10 +368,9 @@
       <div>
         <label for="eyeOrder">Stereo Order:</label>
         <select id="eyeOrder">
-          <option value="normal">Image 1 Left / Image 2 Right</option>
-          <option value="swap">Image 2 Left / Image 1 Right</option>
+          <option value="normal">Image 1 Left / Image 2 Right (Stereoscope card)</option>
+          <option value="swap">Image 2 Left / Image 1 Right (Cross-eye viewing)</option>
         </select>
-        <div class="hint">Try <b>Image 2 Left / Image 1 Right</b> if depth appears inverted in your stereo viewer.</div>
       </div>
     </div>
 
@@ -688,8 +687,8 @@
 	  revokeLastUrl();
 	  setStatus("Compositing side-by-side JPEG…");
 
-	  let left = decodedViews[0];
-	  let right = decodedViews[1];
+	  let left = decodedViews[1];
+	  let right = decodedViews[0];
 
 	  if (eyeOrder.value === "swap") {
 	    [left, right] = [right, left];
