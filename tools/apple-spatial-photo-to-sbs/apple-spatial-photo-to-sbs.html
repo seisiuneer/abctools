@@ -139,11 +139,32 @@
 	}
 
   input[type="file"]::file-selector-button {
+    appearance: none;
+    -webkit-appearance: none;
+
     margin-right: 14px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 7px 12px;
+
+    background: linear-gradient(180deg, rgba(115,208,255,.22), rgba(115,208,255,.10)), var(--panel2);
+    color: var(--text);
+    font: inherit;
+    font-weight: 650;
   }
 
   input[type="file"]::-webkit-file-upload-button {
+    -webkit-appearance: none;
+
     margin-right: 14px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 7px 12px;
+
+    background: linear-gradient(180deg, rgba(115,208,255,.22), rgba(115,208,255,.10)), var(--panel2);
+    color: var(--text);
+    font: inherit;
+    font-weight: 650;
   }
 
 	.row {
