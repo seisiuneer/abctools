@@ -426,7 +426,7 @@
       <input id="fileInput" type="file" accept=".heic,.heif,image/heic,image/heif">
     </div>
 
-    <div class="hint">You can also drag and drop a single spatial HEIC file onto this panel.</div>
+    <div id="dragdropinfo" class="hint">You can also drag and drop a single spatial HEIC file onto this panel.</div>
 
     <div class="grid" style="margin-top:16px;">
       <div>
@@ -533,6 +533,7 @@
   const toolCard = document.querySelector(".card");
   const outputFormat = document.getElementById("outputFormat");
   const previewBox = document.querySelector(".previewBox");
+  const dragDropInfo = document.getElementById("dragdropinfo");
 
   let libheifReady = false;
   let heifModule = null;
@@ -540,6 +541,8 @@
   let lastUrl = null;
   let libheifReadyPromise = null;
   let currentFile = null;
+  let lastBlob = null;
+  let lastGeneratedFileName = "";
 
   function escapeHtml(value) {
 	  return String(value)
@@ -572,34 +575,10 @@
       (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
   }
 
-  function showIOSUnsupportedDialog() {
-    const message = '<p style="text-align:center">This tool is only supported on desktop browsers.</p>';
-
-    if (window.DayPilot && DayPilot.Modal && DayPilot.Modal.alert) {
-      DayPilot.Modal.alert(message, {
-        theme: "modal_compact",
-        top: 200
-      });
-    } else {
-      alert("This tool is only supported on desktop browsers.");
+  function showIOSWarningDialog() {
+    if (dragDropInfo){
+      dragDropInfo.innerHTML = '<p style="text-align:center">On iOS, you must use the Share feature in the Photos app to save spatial .HEIC files to the Files area to be able to open them in this tool.</p>';
     }
-  }
-
-  function disableToolForIOS() {
-    fileInput.disabled = true;
-    fileInput.style.display = "none";
-
-    eyeOrder.disabled = true;
-    outputFormat.disabled = true;
-    widthRange.disabled = true;
-    qualityRange.disabled = true;
-    downloadLink.style.display = "none";
-
-    fileMeta.textContent = "Desktop browser required.";
-    sourceMeta.textContent = "This tool is not supported on iOS or iPadOS.";
-    outputMeta.textContent = "No JPEG generated.";
-
-    setStatus("This tool is only supported on desktop browsers.", "error");
   }
 
   function isLikelyHeicFile(file) {
@@ -612,6 +591,41 @@
       /^image\/hei[cf]$/i.test(type) ||
       /^image\/heic-sequence$/i.test(type) ||
       /^image\/heif-sequence$/i.test(type);
+  }
+
+  async function shareJpegOnIOS() {
+    if (!lastBlob) {
+      setStatus("No JPEG has been generated yet.", "error");
+      return;
+    }
+
+    const fileName = lastGeneratedFileName || getDefaultSaveName();
+
+    const file = new File([lastBlob], fileName, {
+      type: "image/jpeg"
+    });
+
+    if (!navigator.share || !navigator.canShare || !navigator.canShare({ files: [file] })) {
+      setStatus("The iOS Share Sheet is not available for this JPEG in this browser.", "error");
+      return;
+    }
+
+    try {
+      await navigator.share({
+        files: [file],
+        title: getOutputFormatLabel(),
+        text: "Apple Spatial Photo stereo JPEG"
+      });
+
+      setStatus(`Shared <b>${escapeHtml(fileName)}</b>.`, "ok");
+    } catch (err) {
+      if (err && err.name === "AbortError") {
+        setStatus("Share cancelled.", "ok");
+      } else {
+        console.error(err);
+        setStatus(escapeHtml(err.message || String(err)), "error");
+      }
+    }
   }
 
   async function processSpatialPhotoFile(file) {
@@ -649,7 +663,7 @@
       await convertToSbs();
     } catch (err) {
       console.error(err);
-      setStatus(err.message || String(err), "error");
+      setStatus(escapeHtml(err.message || String(err)), "error");
       sourceMeta.textContent = "Decode failed.";
     }
   }
@@ -711,6 +725,10 @@
       URL.revokeObjectURL(lastUrl);
       lastUrl = null;
     }
+
+    lastBlob = null;
+    lastGeneratedFileName = "";
+
     downloadLink.style.display = "none";
     downloadLink.removeAttribute("href");
   }
@@ -1086,11 +1104,15 @@
     }
 
     lastUrl = URL.createObjectURL(blob);
+    lastBlob = blob;
 
     const defaultName = getDefaultSaveName();
 
+    lastGeneratedFileName = defaultName;
+
     downloadLink.href = lastUrl;
     downloadLink.download = defaultName;
+    downloadLink.textContent = isIOSDevice() ? "Share JPEG" : "Download JPEG";
     downloadLink.style.display = "block";
 
     canvas.style.display = "block";
@@ -1105,7 +1127,7 @@
         `${modeLabel} JPEG: ${canvas.width}×${canvas.height}, ${formatBytes(blob.size)}, quality ${qualityRange.value}%.`;
     }
 
-    setStatus(`${modeLabel} JPEG ready.&nbsp;&nbsp;Click <b>Download JPEG</b> to save it.`, "ok");
+    setStatus(`${modeLabel} JPEG ready.&nbsp;&nbsp;Click <b>${isIOSDevice() ? "Share JPEG" : "Download JPEG"}</b> to save it.`, "ok");
   }
 
   function registerDragAndDropHandlers() {
@@ -1166,12 +1188,12 @@
 
   outputFormat.addEventListener("change", () => {
     if (decodedViews.length >= 2 && downloadLink.href) {
-      convertToSbs().catch(err => setStatus(err.message || String(err), "error"));
+      convertToSbs().catch(err => setStatus(escapeHtml(err.message || String(err)), "error"));
     }
   });
 
   eyeOrder.addEventListener("change", () => {
-    if (decodedViews.length >= 2 && downloadLink.href) convertToSbs().catch(err => setStatus(err.message || String(err), "error"));
+    if (decodedViews.length >= 2 && downloadLink.href) convertToSbs().catch(err => setStatus(escapeHtml(err.message || String(err)), "error"));
   });
 
   widthRange.addEventListener("input", updateControls);
@@ -1179,57 +1201,62 @@
   qualityRange.addEventListener("input", updateControls);
 
   widthRange.addEventListener("change", () => {
-    if (decodedViews.length >= 2 && downloadLink.href) convertToSbs().catch(err => setStatus(err.message || String(err), "error"));
+    if (decodedViews.length >= 2 && downloadLink.href) convertToSbs().catch(err => setStatus(escapeHtml(err.message || String(err)), "error"));
   });
 
   qualityRange.addEventListener("change", () => {
-    if (decodedViews.length >= 2 && downloadLink.href) convertToSbs().catch(err => setStatus(err.message || String(err), "error"));
+    if (decodedViews.length >= 2 && downloadLink.href) convertToSbs().catch(err => setStatus(escapeHtml(err.message || String(err)), "error"));
   });
 
-	let gAllowDownloadClick = false;
+  let gAllowDownloadClick = false;
 
-	downloadLink.addEventListener("click", async event => {
-	  if (gAllowDownloadClick) {
-	    gAllowDownloadClick = false;
-	    return;
-	  }
+  downloadLink.addEventListener("click", async event => {
+    if (isIOSDevice()) {
+      event.preventDefault();
+      await shareJpegOnIOS();
+      return;
+    }
 
-	  event.preventDefault();
+    if (gAllowDownloadClick) {
+      gAllowDownloadClick = false;
+      return;
+    }
 
-	  if (!downloadLink.href) {
-	    setStatus("No JPEG has been generated yet.", "error");
-	    return;
-	  }
+    event.preventDefault();
 
-	  const saveName = await promptForSaveName();
+    if (!downloadLink.href) {
+      setStatus("No JPEG has been generated yet.", "error");
+      return;
+    }
 
-	  if (!saveName) {
-	    setStatus("Download cancelled.", "ok");
-	    return;
-	  }
+    const saveName = await promptForSaveName();
 
-	  downloadLink.download = saveName;
+    if (!saveName) {
+      setStatus("Download cancelled.", "ok");
+      return;
+    }
 
-	  gAllowDownloadClick = true;
-	  downloadLink.click();
+    downloadLink.download = saveName;
 
-	  setStatus(`Saved as <b>${escapeHtml(saveName)}</b>.`, "ok");
-	});
+    gAllowDownloadClick = true;
+    downloadLink.click();
+
+    setStatus(`Saved as <b>${escapeHtml(saveName)}</b>.`, "ok");
+  });
 
   const runningOnIOS = isIOSDevice();
 
   if (runningOnIOS) {
-    showIOSUnsupportedDialog();
-    disableToolForIOS();
+    showIOSWarningDialog();
   } else {
     registerDragAndDropHandlers();
-
-    libheifReadyPromise = waitForLibheif().catch(err => {
-      console.error(err);
-      setStatus(err.message || String(err), "error");
-      throw err;
-    });
   }
+
+  libheifReadyPromise = waitForLibheif().catch(err => {
+    console.error(err);
+    setStatus(escapeHtml(err.message || String(err)), "error");
+    throw err;
+  });
 
   updateControls();
 
