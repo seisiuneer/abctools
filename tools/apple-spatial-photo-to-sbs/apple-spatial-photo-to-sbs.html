@@ -190,6 +190,40 @@
     margin-top: 8px;
   }
 
+  .checkboxLabel {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 43px;
+    margin: 0;
+    padding: 11px 12px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--panel2);
+    color: var(--text);
+    font-weight: 650;
+    cursor: pointer;
+  }
+
+  .checkboxLabel input[type="checkbox"] {
+    width: 1.15rem;
+    height: 1.15rem;
+    flex: 0 0 auto;
+    accent-color: var(--accent2);
+  }
+
+  .controlHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 8px;
+  }
+
+  .controlHeader label {
+    margin-bottom: 0;
+  }
+
   button {
     cursor: pointer;
     font-weight: 750;
@@ -201,11 +235,23 @@
     opacity: .55;
   }
 
+  button.smallResetButton {
+    width: 6.5rem;
+    min-width: 6.5rem;
+    flex: 0 0 6.5rem;
+
+    padding: 8px 10px;
+    border-radius: 10px;
+    font-size: .88rem;
+    line-height: 1.15;
+    white-space: nowrap;
+  }
+  
 	.actions {
 	  display: grid;
 	  grid-template-columns: 1fr;
 	  gap: 12px;
-	  margin-top: 18px;
+	  margin-top: 14px;
 	}
 
   @media (max-width: 560px) {
@@ -443,17 +489,17 @@
 
   <section class="card">
     <div>
-      <label for="fileInput">Apple Spatial Photo file:</label>
+      <label for="fileInput">Apple Spatial Photo HEIC file:</label>
       <input id="fileInput" type="file" accept=".heic,.heif,image/heic,image/heif">
     </div>
 
-    <div id="dragdropinfo" class="hint">You can also drag and drop a single spatial HEIC file onto this panel.</div>
+    <div id="dragdropinfo" class="hint">You can also drag-and-drop a single Apple Spatial Photo HEIC file onto this panel.</div>
 
     <div class="grid" style="margin-top:16px;">
       <div>
         <label for="outputFormat">Output Format:</label>
         <select id="outputFormat">
-          <option value="sbs">Side-by-Side JPEG</option>
+          <option value="sbs">Side-by-Side</option>
           <option value="anaglyph-red-cyan-dubois">Anaglyph — Red / Cyan, Optimized</option>
           <option value="anaglyph-red-cyan-gray">Anaglyph — Red / Cyan, Grayscale</option>
           <option value="anaglyph-red-cyan-color">Anaglyph — Red / Cyan, Color</option>
@@ -463,22 +509,14 @@
         </select>
       </div>
 
-      <div>
+      <div id="eyeOrderControl">
         <label for="eyeOrder">Stereo Order:</label>
         <select id="eyeOrder">
-          <option value="normal">Left / Right</option>
-          <option value="swap">Right / Left</option>
+          <option value="normal">Left / Right (Stereograph card)</option>
+          <option value="swap">Right / Left (Cross-eye viewing)</option>
         </select>
       </div>
 
-    </div>
-
-    <div class="hint">
-      For stereograph cards, use <b>Side-by-Side JPEG</b> with <b>Left / Right</b> order.&nbsp;&nbsp;For cross-eye viewing use <b>Side-by-Side JPEG</b> with <b>Right / Left</b> order.
-    </div>
-
-    <div class="hint">
-      For any of the anaglyph output format options, use <b>Left / Right</b> order.
     </div>
 
     <div class="grid" style="margin-top:16px;">
@@ -500,15 +538,35 @@
     </div>
 
     <div class="hint">
-      For side-by-side output, each eye is rendered at half the selected output width.&nbsp;&nbsp;
-      For anaglyph output, the selected width is the full image width.
+      For Side-by-Side format, each eye is rendered at half the selected output width.&nbsp;&nbsp;
+      For Anaglyph formats, the selected width is the full image width.
     </div>
 
-    <div class="actions">
-      <a id="downloadLink" class="download" download="spatial-photo.jpg">Download JPEG</a>
+    <div class="grid" style="margin-top:16px;">
+      <div>
+        <div class="controlHeader">
+          <label for="stereoDepthRange">Image Shift</label>
+          <button id="resetStereoDepthButton" class="smallResetButton" type="button">Reset</button>
+        </div>
+        <div class="row">
+          <input id="stereoDepthRange" type="range" min="-5" max="5" step="0.1" value="0">
+          <div id="stereoDepthValue" class="rangeValue">0.0%</div>
+        </div>
+      </div>
+
+      <div id="autoCropControl">
+        <label for="autoCropStereoEdges">Image Shift Edge Handling</label>
+        <label class="checkboxLabel" for="autoCropStereoEdges">
+          <input id="autoCropStereoEdges" type="checkbox" checked>
+          Auto-crop shifted edges
+        </label>
+      </div>
     </div>
 
-    <p id="status">Loading HEIC decoder…</p>
+    <div class="hint">
+      Image Shift moves the two views horizontally before compositing.&nbsp;&nbsp;Adjust the value as required to reduce eye strain or anaglyph color ghosting.<br/>In Side-by-Side format, the Auto-crop option crops the images as required to avoid blank areas.&nbsp;&nbsp;Anaglyph formats always auto-crop.
+    </div>
+
   </section>
 
   <section class="card">
@@ -516,12 +574,20 @@
       <canvas id="previewCanvas"></canvas>
       <div id="emptyPreview" class="hint">Converted preview will appear here.</div>
     </div>
+    
+    <p id="status">Loading HEIC decoder…</p>
+
+    <div id="downloadActions" class="actions" style="display:none;">
+      <a id="downloadLink" class="download" download="spatial-photo.jpg">Download JPEG</a>
+    </div>
+
     <div class="meta">
       <div id="fileMeta" class="pill">No file selected.</div>
       <div id="sourceMeta" class="pill">Stereo images not decoded yet.</div>
       <div id="outputMeta" class="pill">No JPEG generated yet.</div>
       <div class="pill small">All processing is done locally in your browser.</div>
     </div>
+
   </section>
 
   <div class="footer-note">
@@ -540,10 +606,16 @@
 
   const fileInput = document.getElementById("fileInput");
   const eyeOrder = document.getElementById("eyeOrder");
+  const eyeOrderControl = document.getElementById("eyeOrderControl");
   const widthRange = document.getElementById("widthRange");
   const widthValue = document.getElementById("widthValue");
   const qualityRange = document.getElementById("qualityRange");
   const qualityValue = document.getElementById("qualityValue");
+  const stereoDepthRange = document.getElementById("stereoDepthRange");
+  const stereoDepthValue = document.getElementById("stereoDepthValue");
+  const resetStereoDepthButton = document.getElementById("resetStereoDepthButton");
+  const autoCropControl = document.getElementById("autoCropControl");
+  const autoCropStereoEdges = document.getElementById("autoCropStereoEdges");
   const downloadLink = document.getElementById("downloadLink");
   const statusEl = document.getElementById("status");
   const canvas = document.getElementById("previewCanvas");
@@ -555,6 +627,7 @@
   const outputFormat = document.getElementById("outputFormat");
   const previewBox = document.querySelector(".previewBox");
   const dragDropInfo = document.getElementById("dragdropinfo");
+  const downloadActions = document.getElementById("downloadActions");
 
   let libheifReady = false;
   let heifModule = null;
@@ -658,7 +731,7 @@
       fileMeta.textContent = "No file selected.";
       sourceMeta.textContent = "Stereo images not decoded yet.";
       outputMeta.textContent = "No JPEG generated yet.";
-      setStatus(libheifReady ? "Select or drag-and-drop a single Apple Spatial Photo HEIC file here." : "Loading HEIC decoder…");
+      setStatus(libheifReady ? "Please select a single Apple Spatial Photo HEIC file." : "Loading HEIC decoder…");
       return;
     }
 
@@ -666,7 +739,7 @@
       fileMeta.textContent = `${file.name} (${formatBytes(file.size)})`;
       sourceMeta.textContent = "Unsupported file type.";
       outputMeta.textContent = "No JPEG generated yet.";
-      setStatus("Please select or drag-and-drop a single Apple Spatial Photo HEIC file here.", "error");
+      setStatus("Please select a single Apple Spatial Photo HEIC file.", "error");
       return;
     }
 
@@ -693,14 +766,24 @@
     const outputWidth = Number(widthRange.value);
     const baseName = (currentFile?.name || fileInput.files[0]?.name || "spatial-photo").replace(/\.[^.]+$/, "");
 
+    const formatSuffix = getOutputFormatSuffix();
+    const separation = Number(stereoDepthRange.value) || 0;
+    const separationText = separation.toFixed(1);
+    const separationSafeText = separationText.replace(".", "p");
+    const separationSuffix = separation
+      ? `-Shift${separation > 0 ? "+" : ""}${separationSafeText}`
+      : "";
+
+    if (!isSideBySideMode()) {
+      return `${baseName}-${formatSuffix}${separationSuffix}-${outputWidth}.jpg`;
+    }
+
     let theStyle = "LR";
     if (eyeOrder.value === "swap") {
       theStyle = "RL";
     }
 
-    const formatSuffix = getOutputFormatSuffix();
-
-    return `${baseName}-${formatSuffix}-${theStyle}-${outputWidth}.jpg`;
+    return `${baseName}-${formatSuffix}-${theStyle}${separationSuffix}-${outputWidth}.jpg`;
   }
 
 	function promptForSaveName() {
@@ -752,11 +835,31 @@
 
     downloadLink.style.display = "none";
     downloadLink.removeAttribute("href");
+    downloadActions.style.display = "none";
   }
 
   function updateControls() {
     widthValue.textContent = `${Number(widthRange.value).toLocaleString()} px`;
     qualityValue.textContent = `${qualityRange.value}%`;
+
+    const separation = Number(stereoDepthRange.value) || 0;
+    stereoDepthValue.textContent = `${separation > 0 ? "+" : ""}${separation.toFixed(1)}%`;
+  }
+
+  function isSideBySideMode() {
+    return outputFormat.value === "sbs";
+  }
+
+  function updateOutputModeControls() {
+    const sbsMode = isSideBySideMode();
+
+    if (eyeOrderControl) {
+      eyeOrderControl.style.display = sbsMode ? "block" : "none";
+    }
+
+    if (autoCropControl) {
+      autoCropControl.style.display = sbsMode ? "block" : "none";
+    }
   }
 
   function loadScript(url) {
@@ -835,7 +938,7 @@
     }
 
     libheifReady = true;
-    setStatus("HEIC decoder ready.&nbsp;&nbsp;Select or drag-and-drop a single Apple Spatial Photo HEIC file here.");
+    setStatus("HEIC decoder ready.&nbsp;&nbsp;Please select a single Apple Spatial Photo HEIC file.");
   }
 
   async function decodeHeicFile(file) {
@@ -969,6 +1072,85 @@
     return ctx.getImageData(0, 0, width, height);
   }
 
+  function createStereoDepthAdjustedCanvas(sourceCanvas, width, height, offsetPx, autoCropEdges) {
+    const out = document.createElement("canvas");
+    out.width = width;
+    out.height = height;
+
+    const ctx = out.getContext("2d", { alpha: false });
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = "high";
+
+    ctx.fillStyle = "#000";
+    ctx.fillRect(0, 0, width, height);
+
+    const shift = Number(offsetPx) || 0;
+
+    if (!shift) {
+      ctx.drawImage(sourceCanvas, 0, 0, width, height);
+      return out;
+    }
+
+    if (!autoCropEdges) {
+      ctx.drawImage(sourceCanvas, shift, 0, width, height);
+      return out;
+    }
+
+    // Auto-crop removes the area that would become blank after shifting.
+    // The important detail is that the crop rectangle keeps the same aspect
+    // ratio as the output canvas, so the image is scaled uniformly instead of
+    // being stretched horizontally. This still crops/zooms slightly, but it
+    // does not distort the original image geometry.
+    const cropPixels = Math.min(Math.abs(shift), Math.max(0, width - 1));
+    const cropSourcePixels = cropPixels * (sourceCanvas.width / width);
+    const outputAspect = width / height;
+
+    let sw = sourceCanvas.width - cropSourcePixels;
+    let sh = sw / outputAspect;
+
+    if (sh > sourceCanvas.height) {
+      sh = sourceCanvas.height;
+      sw = sh * outputAspect;
+    }
+
+    sw = Math.max(1, Math.min(sourceCanvas.width, sw));
+    sh = Math.max(1, Math.min(sourceCanvas.height, sh));
+
+    let sx;
+
+    if (shift < 0) {
+      sx = sourceCanvas.width - sw;
+    } else {
+      sx = 0;
+    }
+
+    const sy = Math.max(0, (sourceCanvas.height - sh) / 2);
+
+    ctx.drawImage(
+      sourceCanvas,
+      sx,
+      sy,
+      sw,
+      sh,
+      0,
+      0,
+      width,
+      height
+    );
+
+    return out;
+  }
+
+  function createAdjustedStereoPair(leftCanvas, rightCanvas, width, height, stereoDepthPx, autoCropEdges) {
+    const depth = Number(stereoDepthPx) || 0;
+    const halfShift = depth / 2;
+
+    return {
+      leftCanvas: createStereoDepthAdjustedCanvas(leftCanvas, width, height, -halfShift, autoCropEdges),
+      rightCanvas: createStereoDepthAdjustedCanvas(rightCanvas, width, height, halfShift, autoCropEdges)
+    };
+  }
+
   function buildAnaglyphImageData(ctx, leftCanvas, rightCanvas, width, height, mode) {
     const leftData = drawScaledToImageData(leftCanvas, width, height);
     const rightData = drawScaledToImageData(rightCanvas, width, height);
@@ -1068,17 +1250,30 @@
     let left = decodedViews[1];
     let right = decodedViews[0];
 
-    if (eyeOrder.value === "swap") {
+    if (isSideBySideMode() && eyeOrder.value === "swap") {
       [left, right] = [right, left];
     }
 
     const outputWidth = Number(widthRange.value);
+    const stereoSeparationPercent = Number(stereoDepthRange.value) || 0;
+    const autoCropEdges = isSideBySideMode() ? !!autoCropStereoEdges.checked : true;
     let ctx;
 
     if (mode === "sbs") {
       const eyeWidth = Math.floor(outputWidth / 2);
       const aspect = left.height / left.width;
       const outputHeight = Math.max(1, Math.round(eyeWidth * aspect));
+
+      const stereoSeparationPx = Math.round(eyeWidth * (stereoSeparationPercent / 100));
+
+      const adjusted = createAdjustedStereoPair(
+        left.canvas,
+        right.canvas,
+        eyeWidth,
+        outputHeight,
+        stereoSeparationPx,
+        autoCropEdges
+      );
 
       canvas.width = outputWidth;
       canvas.height = outputHeight;
@@ -1092,11 +1287,22 @@
       ctx.fillStyle = "#000";
       ctx.fillRect(0, 0, outputWidth, outputHeight);
 
-      ctx.drawImage(left.canvas, 0, 0, eyeWidth, outputHeight);
-      ctx.drawImage(right.canvas, eyeWidth, 0, outputWidth - eyeWidth, outputHeight);
+      ctx.drawImage(adjusted.leftCanvas, 0, 0, eyeWidth, outputHeight);
+      ctx.drawImage(adjusted.rightCanvas, eyeWidth, 0, outputWidth - eyeWidth, outputHeight);
     } else {
       const aspect = left.height / left.width;
       const outputHeight = Math.max(1, Math.round(outputWidth * aspect));
+
+      const stereoSeparationPx = Math.round(outputWidth * (stereoSeparationPercent / 100));
+
+      const adjusted = createAdjustedStereoPair(
+        left.canvas,
+        right.canvas,
+        outputWidth,
+        outputHeight,
+        stereoSeparationPx,
+        autoCropEdges
+      );
 
       canvas.width = outputWidth;
       canvas.height = outputHeight;
@@ -1107,8 +1313,8 @@
 
       const anaglyphData = buildAnaglyphImageData(
         ctx,
-        left.canvas,
-        right.canvas,
+        adjusted.leftCanvas,
+        adjusted.rightCanvas,
         outputWidth,
         outputHeight,
         mode
@@ -1135,17 +1341,22 @@
     downloadLink.download = defaultName;
     downloadLink.textContent = isIOSDevice() ? "Share JPEG" : "Download JPEG";
     downloadLink.style.display = "block";
+    downloadActions.style.display = "grid";
 
     canvas.style.display = "block";
     emptyPreview.style.display = "none";
 
+    const separationNote = stereoSeparationPercent
+      ? `, image shift ${stereoSeparationPercent > 0 ? "+" : ""}${stereoSeparationPercent.toFixed(1)}%${autoCropEdges ? ", auto-cropped" : ", uncropped edges"}`
+      : "";
+
     if (mode === "sbs") {
       const eyeWidth = Math.floor(canvas.width / 2);
       outputMeta.textContent =
-        `${modeLabel} JPEG: ${canvas.width}×${canvas.height}, each eye ${eyeWidth}×${canvas.height}, ${formatBytes(blob.size)}, quality ${qualityRange.value}%.`;
+        `${modeLabel} JPEG: ${canvas.width}×${canvas.height}, each eye ${eyeWidth}×${canvas.height}, ${formatBytes(blob.size)}, quality ${qualityRange.value}%${separationNote}.`;
     } else {
       outputMeta.textContent =
-        `${modeLabel} JPEG: ${canvas.width}×${canvas.height}, ${formatBytes(blob.size)}, quality ${qualityRange.value}%.`;
+        `${modeLabel} JPEG: ${canvas.width}×${canvas.height}, ${formatBytes(blob.size)}, quality ${qualityRange.value}%${separationNote}.`;
     }
 
     setStatus(`${modeLabel} JPEG ready.&nbsp;&nbsp;Click <b>${isIOSDevice() ? "Share JPEG" : "Download JPEG"}</b> to save it.`, "ok");
@@ -1208,6 +1419,8 @@
   });
 
   outputFormat.addEventListener("change", () => {
+    updateOutputModeControls();
+
     if (decodedViews.length >= 2 && downloadLink.href) {
       convertToSbs().catch(err => setStatus(escapeHtml(err.message || String(err)), "error"));
     }
@@ -1221,11 +1434,35 @@
 
   qualityRange.addEventListener("input", updateControls);
 
+  stereoDepthRange.addEventListener("input", updateControls);
+
+  resetStereoDepthButton.addEventListener("click", () => {
+    if (Number(stereoDepthRange.value) === 0) {
+      updateControls();
+      return;
+    }
+
+    stereoDepthRange.value = "0";
+    updateControls();
+
+    if (decodedViews.length >= 2 && downloadLink.href) {
+      convertToSbs().catch(err => setStatus(escapeHtml(err.message || String(err)), "error"));
+    }
+  });
+
   widthRange.addEventListener("change", () => {
     if (decodedViews.length >= 2 && downloadLink.href) convertToSbs().catch(err => setStatus(escapeHtml(err.message || String(err)), "error"));
   });
 
   qualityRange.addEventListener("change", () => {
+    if (decodedViews.length >= 2 && downloadLink.href) convertToSbs().catch(err => setStatus(escapeHtml(err.message || String(err)), "error"));
+  });
+
+  stereoDepthRange.addEventListener("change", () => {
+    if (decodedViews.length >= 2 && downloadLink.href) convertToSbs().catch(err => setStatus(escapeHtml(err.message || String(err)), "error"));
+  });
+
+  autoCropStereoEdges.addEventListener("change", () => {
     if (decodedViews.length >= 2 && downloadLink.href) convertToSbs().catch(err => setStatus(escapeHtml(err.message || String(err)), "error"));
   });
 
@@ -1279,6 +1516,7 @@
     throw err;
   });
 
+  updateOutputModeControls();
   updateControls();
 
 })();
