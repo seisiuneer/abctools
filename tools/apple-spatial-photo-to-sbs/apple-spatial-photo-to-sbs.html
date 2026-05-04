@@ -1257,6 +1257,17 @@
     return out;
   }
 
+
+  function setOutputControlsBusy(isBusy) {
+    outputFormat.disabled = isBusy;
+    eyeOrder.disabled = isBusy;
+    widthRange.disabled = isBusy;
+    qualityRange.disabled = isBusy;
+    stereoDepthRange.disabled = isBusy;
+    resetStereoDepthButton.disabled = isBusy;
+    autoCropStereoEdges.disabled = isBusy;
+  }
+
   async function convertToSbs(options = {}) {
     const previewOnly = !!options.previewOnly;
     const preserveDownloadUi = !previewOnly && (!!options.preserveDownloadUi || interactivePreviewDirty);
@@ -1268,138 +1279,148 @@
     }
 
     if (!previewOnly) {
-      revokeLastUrl({ preserveDownloadUi });
+      setOutputControlsBusy(true);
     }
 
-    const mode = outputFormat.value;
-    const modeLabel = getOutputFormatLabel();
+    try {
+      if (!previewOnly) {
+        revokeLastUrl({ preserveDownloadUi });
+      }
 
-    setStatus(previewOnly
-      ? `Updating interactive ${modeLabel} preview…`
-      : `Compositing ${modeLabel} JPEG…`);
+      const mode = outputFormat.value;
+      const modeLabel = getOutputFormatLabel();
 
-    let left = decodedViews[1];
-    let right = decodedViews[0];
+      setStatus(previewOnly
+        ? `Updating interactive ${modeLabel} preview…`
+        : `Compositing ${modeLabel} JPEG…`);
 
-    if (isSideBySideMode() && eyeOrder.value === "swap") {
-      [left, right] = [right, left];
+      let left = decodedViews[1];
+      let right = decodedViews[0];
+
+      if (isSideBySideMode() && eyeOrder.value === "swap") {
+        [left, right] = [right, left];
+      }
+
+      const selectedOutputWidth = Number(widthRange.value);
+      const outputWidth = previewOnly ? getInteractivePreviewWidth(selectedOutputWidth) : selectedOutputWidth;
+      const stereoSeparationPercent = Number(stereoDepthRange.value) || 0;
+      const autoCropEdges = isSideBySideMode() ? !!autoCropStereoEdges.checked : true;
+      let ctx;
+
+      if (mode === "sbs") {
+        const eyeWidth = Math.floor(outputWidth / 2);
+        const aspect = left.height / left.width;
+        const outputHeight = Math.max(1, Math.round(eyeWidth * aspect));
+
+        const stereoSeparationPx = Math.round(eyeWidth * (stereoSeparationPercent / 100));
+
+        const adjusted = createAdjustedStereoPair(
+          left.canvas,
+          right.canvas,
+          eyeWidth,
+          outputHeight,
+          stereoSeparationPx,
+          autoCropEdges
+        );
+
+        canvas.width = outputWidth;
+        canvas.height = outputHeight;
+
+        previewBox.style.aspectRatio = `${outputWidth} / ${outputHeight}`;
+
+        ctx = canvas.getContext("2d", { alpha: false });
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = "high";
+
+        ctx.fillStyle = "#000";
+        ctx.fillRect(0, 0, outputWidth, outputHeight);
+
+        ctx.drawImage(adjusted.leftCanvas, 0, 0, eyeWidth, outputHeight);
+        ctx.drawImage(adjusted.rightCanvas, eyeWidth, 0, outputWidth - eyeWidth, outputHeight);
+      } else {
+        const aspect = left.height / left.width;
+        const outputHeight = Math.max(1, Math.round(outputWidth * aspect));
+
+        const stereoSeparationPx = Math.round(outputWidth * (stereoSeparationPercent / 100));
+
+        const adjusted = createAdjustedStereoPair(
+          left.canvas,
+          right.canvas,
+          outputWidth,
+          outputHeight,
+          stereoSeparationPx,
+          autoCropEdges
+        );
+
+        canvas.width = outputWidth;
+        canvas.height = outputHeight;
+
+        previewBox.style.aspectRatio = `${outputWidth} / ${outputHeight}`;
+
+        ctx = canvas.getContext("2d", { alpha: false, willReadFrequently: true });
+
+        const anaglyphData = buildAnaglyphImageData(
+          ctx,
+          adjusted.leftCanvas,
+          adjusted.rightCanvas,
+          outputWidth,
+          outputHeight,
+          mode
+        );
+
+        ctx.putImageData(anaglyphData, 0, 0);
+      }
+
+      canvas.style.display = "block";
+      emptyPreview.style.display = "none";
+
+      if (previewOnly) {
+        interactivePreviewDirty = true;
+        setStatus(`Interactive preview updated.&nbsp;&nbsp;Release the Image Shift slider to generate the full-resolution ${modeLabel} JPEG for download.`, "ok");
+        return;
+      }
+
+      const quality = Number(qualityRange.value) / 100;
+      const blob = await new Promise(resolve => canvas.toBlob(resolve, "image/jpeg", quality));
+
+      if (!blob) {
+        throw new Error("The browser could not create the JPEG output.");
+      }
+
+      lastUrl = URL.createObjectURL(blob);
+      lastBlob = blob;
+
+      const defaultName = getDefaultSaveName();
+
+      lastGeneratedFileName = defaultName;
+      interactivePreviewDirty = false;
+
+      downloadLink.href = lastUrl;
+      downloadLink.download = defaultName;
+      downloadLink.classList.remove("busy");
+      downloadLink.textContent = isIOSDevice() ? "Share JPEG" : "Download JPEG";
+      downloadLink.style.display = "block";
+      downloadActions.style.display = "grid";
+
+      const separationNote = stereoSeparationPercent
+        ? `, image shift ${stereoSeparationPercent > 0 ? "+" : ""}${stereoSeparationPercent.toFixed(1)}%${autoCropEdges ? ", auto-cropped" : ", uncropped edges"}`
+        : "";
+
+      if (mode === "sbs") {
+        const eyeWidth = Math.floor(canvas.width / 2);
+        outputMeta.textContent =
+          `${modeLabel} JPEG: ${canvas.width}×${canvas.height}, each eye ${eyeWidth}×${canvas.height}, ${formatBytes(blob.size)}, quality ${qualityRange.value}%${separationNote}.`;
+      } else {
+        outputMeta.textContent =
+          `${modeLabel} JPEG: ${canvas.width}×${canvas.height}, ${formatBytes(blob.size)}, quality ${qualityRange.value}%${separationNote}.`;
+      }
+
+      setStatus(`${modeLabel} JPEG ready.&nbsp;&nbsp;Click <b>${isIOSDevice() ? "Share JPEG" : "Download JPEG"}</b> to save it.`, "ok");
+    } finally {
+      if (!previewOnly) {
+        setOutputControlsBusy(false);
+      }
     }
-
-    const selectedOutputWidth = Number(widthRange.value);
-    const outputWidth = previewOnly ? getInteractivePreviewWidth(selectedOutputWidth) : selectedOutputWidth;
-    const stereoSeparationPercent = Number(stereoDepthRange.value) || 0;
-    const autoCropEdges = isSideBySideMode() ? !!autoCropStereoEdges.checked : true;
-    let ctx;
-
-    if (mode === "sbs") {
-      const eyeWidth = Math.floor(outputWidth / 2);
-      const aspect = left.height / left.width;
-      const outputHeight = Math.max(1, Math.round(eyeWidth * aspect));
-
-      const stereoSeparationPx = Math.round(eyeWidth * (stereoSeparationPercent / 100));
-
-      const adjusted = createAdjustedStereoPair(
-        left.canvas,
-        right.canvas,
-        eyeWidth,
-        outputHeight,
-        stereoSeparationPx,
-        autoCropEdges
-      );
-
-      canvas.width = outputWidth;
-      canvas.height = outputHeight;
-
-      previewBox.style.aspectRatio = `${outputWidth} / ${outputHeight}`;
-
-      ctx = canvas.getContext("2d", { alpha: false });
-      ctx.imageSmoothingEnabled = true;
-      ctx.imageSmoothingQuality = "high";
-
-      ctx.fillStyle = "#000";
-      ctx.fillRect(0, 0, outputWidth, outputHeight);
-
-      ctx.drawImage(adjusted.leftCanvas, 0, 0, eyeWidth, outputHeight);
-      ctx.drawImage(adjusted.rightCanvas, eyeWidth, 0, outputWidth - eyeWidth, outputHeight);
-    } else {
-      const aspect = left.height / left.width;
-      const outputHeight = Math.max(1, Math.round(outputWidth * aspect));
-
-      const stereoSeparationPx = Math.round(outputWidth * (stereoSeparationPercent / 100));
-
-      const adjusted = createAdjustedStereoPair(
-        left.canvas,
-        right.canvas,
-        outputWidth,
-        outputHeight,
-        stereoSeparationPx,
-        autoCropEdges
-      );
-
-      canvas.width = outputWidth;
-      canvas.height = outputHeight;
-
-      previewBox.style.aspectRatio = `${outputWidth} / ${outputHeight}`;
-
-      ctx = canvas.getContext("2d", { alpha: false, willReadFrequently: true });
-
-      const anaglyphData = buildAnaglyphImageData(
-        ctx,
-        adjusted.leftCanvas,
-        adjusted.rightCanvas,
-        outputWidth,
-        outputHeight,
-        mode
-      );
-
-      ctx.putImageData(anaglyphData, 0, 0);
-    }
-
-    canvas.style.display = "block";
-    emptyPreview.style.display = "none";
-
-    if (previewOnly) {
-      interactivePreviewDirty = true;
-      setStatus(`Preview updating.&nbsp;&nbsp;Release the Image Shift slider to generate the full-resolution JPEG for download.`, "ok");
-      return;
-    }
-
-    const quality = Number(qualityRange.value) / 100;
-    const blob = await new Promise(resolve => canvas.toBlob(resolve, "image/jpeg", quality));
-
-    if (!blob) {
-      throw new Error("The browser could not create the JPEG output.");
-    }
-
-    lastUrl = URL.createObjectURL(blob);
-    lastBlob = blob;
-
-    const defaultName = getDefaultSaveName();
-
-    lastGeneratedFileName = defaultName;
-    interactivePreviewDirty = false;
-
-    downloadLink.href = lastUrl;
-    downloadLink.download = defaultName;
-    downloadLink.classList.remove("busy");
-    downloadLink.textContent = isIOSDevice() ? "Share JPEG" : "Download JPEG";
-    downloadLink.style.display = "block";
-    downloadActions.style.display = "grid";
-
-    const separationNote = stereoSeparationPercent
-      ? `, image shift ${stereoSeparationPercent > 0 ? "+" : ""}${stereoSeparationPercent.toFixed(1)}%${autoCropEdges ? ", auto-cropped" : ", uncropped edges"}`
-      : "";
-
-    if (mode === "sbs") {
-      const eyeWidth = Math.floor(canvas.width / 2);
-      outputMeta.textContent =
-        `${modeLabel} JPEG: ${canvas.width}×${canvas.height}, each eye ${eyeWidth}×${canvas.height}, ${formatBytes(blob.size)}, quality ${qualityRange.value}%${separationNote}.`;
-    } else {
-      outputMeta.textContent =
-        `${modeLabel} JPEG: ${canvas.width}×${canvas.height}, ${formatBytes(blob.size)}, quality ${qualityRange.value}%${separationNote}.`;
-    }
-
-    setStatus(`${modeLabel} JPEG ready.&nbsp;&nbsp;Click <b>${isIOSDevice() ? "Share JPEG" : "Download JPEG"}</b> to save it.`, "ok");
   }
 
   function registerDragAndDropHandlers() {
@@ -1515,6 +1536,7 @@
   let gAllowDownloadClick = false;
 
   downloadLink.addEventListener("click", async event => {
+
     if (isIOSDevice()) {
       event.preventDefault();
 
@@ -1534,7 +1556,7 @@
     event.preventDefault();
 
     if (interactivePreviewDirty) {
-      await convertToSbs();
+      await convertToSbs({ preserveDownloadUi: true });
     }
 
     if (!downloadLink.href) {
@@ -1555,6 +1577,7 @@
     downloadLink.click();
 
     setStatus(`Saved as <b>${escapeHtml(saveName)}</b>.`, "ok");
+    
   });
 
   const runningOnIOS = isIOSDevice();
