@@ -340,6 +340,12 @@
     font-weight: 800;
   }
 
+  a.download.busy {
+    opacity: .72;
+    pointer-events: none;
+    cursor: progress;
+  }
+
   .small {
     font-size: .88rem;
   }
@@ -637,6 +643,8 @@
   let currentFile = null;
   let lastBlob = null;
   let lastGeneratedFileName = "";
+  let interactivePreviewDirty = false;
+  const INTERACTIVE_PREVIEW_MAX_WIDTH = 1600;
 
   function escapeHtml(value) {
 	  return String(value)
@@ -754,7 +762,7 @@
       }
 
       await decodeHeicFile(file);
-      await convertToSbs();
+      await convertToSbs({ preserveDownloadUi: true });
     } catch (err) {
       console.error(err);
       setStatus(escapeHtml(err.message || String(err)), "error");
@@ -824,7 +832,9 @@
     return `${value.toFixed(unit ? 1 : 0)} ${units[unit]}`;
   }
 
-  function revokeLastUrl() {
+  function revokeLastUrl(options = {}) {
+    const preserveDownloadUi = !!options.preserveDownloadUi;
+
     if (lastUrl) {
       URL.revokeObjectURL(lastUrl);
       lastUrl = null;
@@ -832,10 +842,20 @@
 
     lastBlob = null;
     lastGeneratedFileName = "";
+    interactivePreviewDirty = false;
 
-    downloadLink.style.display = "none";
-    downloadLink.removeAttribute("href");
-    downloadActions.style.display = "none";
+    if (preserveDownloadUi && downloadActions.style.display !== "none") {
+      downloadLink.removeAttribute("href");
+      downloadLink.classList.add("busy");
+      downloadLink.textContent = "Preparing JPEG…";
+      downloadLink.style.display = "block";
+      downloadActions.style.display = "grid";
+    } else {
+      downloadLink.classList.remove("busy");
+      downloadLink.style.display = "none";
+      downloadLink.removeAttribute("href");
+      downloadActions.style.display = "none";
+    }
   }
 
   function updateControls() {
@@ -860,6 +880,10 @@
     if (autoCropControl) {
       autoCropControl.style.display = sbsMode ? "block" : "none";
     }
+  }
+
+  function getInteractivePreviewWidth(outputWidth) {
+    return Math.min(outputWidth, INTERACTIVE_PREVIEW_MAX_WIDTH);
   }
 
   function loadScript(url) {
@@ -1233,19 +1257,26 @@
     return out;
   }
 
-  async function convertToSbs() {
+  async function convertToSbs(options = {}) {
+    const previewOnly = !!options.previewOnly;
+    const preserveDownloadUi = !previewOnly && (!!options.preserveDownloadUi || interactivePreviewDirty);
+
     if (decodedViews.length < 2) {
       const file = currentFile || fileInput.files[0];
       if (!file) return;
       await decodeHeicFile(file);
     }
 
-    revokeLastUrl();
+    if (!previewOnly) {
+      revokeLastUrl({ preserveDownloadUi });
+    }
 
     const mode = outputFormat.value;
     const modeLabel = getOutputFormatLabel();
 
-    setStatus(`Compositing ${modeLabel} JPEG…`);
+    setStatus(previewOnly
+      ? `Updating interactive ${modeLabel} preview…`
+      : `Compositing ${modeLabel} JPEG…`);
 
     let left = decodedViews[1];
     let right = decodedViews[0];
@@ -1254,7 +1285,8 @@
       [left, right] = [right, left];
     }
 
-    const outputWidth = Number(widthRange.value);
+    const selectedOutputWidth = Number(widthRange.value);
+    const outputWidth = previewOnly ? getInteractivePreviewWidth(selectedOutputWidth) : selectedOutputWidth;
     const stereoSeparationPercent = Number(stereoDepthRange.value) || 0;
     const autoCropEdges = isSideBySideMode() ? !!autoCropStereoEdges.checked : true;
     let ctx;
@@ -1323,6 +1355,15 @@
       ctx.putImageData(anaglyphData, 0, 0);
     }
 
+    canvas.style.display = "block";
+    emptyPreview.style.display = "none";
+
+    if (previewOnly) {
+      interactivePreviewDirty = true;
+      setStatus(`Preview updating.&nbsp;&nbsp;Release the Image Shift slider to generate the full-resolution JPEG for download.`, "ok");
+      return;
+    }
+
     const quality = Number(qualityRange.value) / 100;
     const blob = await new Promise(resolve => canvas.toBlob(resolve, "image/jpeg", quality));
 
@@ -1336,15 +1377,14 @@
     const defaultName = getDefaultSaveName();
 
     lastGeneratedFileName = defaultName;
+    interactivePreviewDirty = false;
 
     downloadLink.href = lastUrl;
     downloadLink.download = defaultName;
+    downloadLink.classList.remove("busy");
     downloadLink.textContent = isIOSDevice() ? "Share JPEG" : "Download JPEG";
     downloadLink.style.display = "block";
     downloadActions.style.display = "grid";
-
-    canvas.style.display = "block";
-    emptyPreview.style.display = "none";
 
     const separationNote = stereoSeparationPercent
       ? `, image shift ${stereoSeparationPercent > 0 ? "+" : ""}${stereoSeparationPercent.toFixed(1)}%${autoCropEdges ? ", auto-cropped" : ", uncropped edges"}`
@@ -1434,7 +1474,13 @@
 
   qualityRange.addEventListener("input", updateControls);
 
-  stereoDepthRange.addEventListener("input", updateControls);
+  stereoDepthRange.addEventListener("input", () => {
+    updateControls();
+
+    if (decodedViews.length >= 2) {
+      convertToSbs({ previewOnly: true }).catch(err => setStatus(escapeHtml(err.message || String(err)), "error"));
+    }
+  });
 
   resetStereoDepthButton.addEventListener("click", () => {
     if (Number(stereoDepthRange.value) === 0) {
@@ -1471,6 +1517,11 @@
   downloadLink.addEventListener("click", async event => {
     if (isIOSDevice()) {
       event.preventDefault();
+
+      if (interactivePreviewDirty) {
+        await convertToSbs({ preserveDownloadUi: true });
+      }
+
       await shareJpegOnIOS();
       return;
     }
@@ -1481,6 +1532,10 @@
     }
 
     event.preventDefault();
+
+    if (interactivePreviewDirty) {
+      await convertToSbs();
+    }
 
     if (!downloadLink.href) {
       setStatus("No JPEG has been generated yet.", "error");
