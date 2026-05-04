@@ -474,6 +474,94 @@
     color:black;
   }
 
+  .modal_instructions_background{
+    background-color:#000;
+    opacity:0.45;
+  }
+
+  .modal_instructions_main{
+    border:1px solid #333;
+    box-shadow:0 0 15px -2px rgba(0,0,0,0.75);
+    width:min(860px, calc(100vw - 48px)) !important;
+    max-width:min(860px, calc(100vw - 48px)) !important;
+    height:min(78dvh, 860px) !important;
+    max-height:min(78dvh, 860px) !important;
+    overflow:hidden !important;
+  }
+
+  .modal_instructions_inner{
+    padding:18px 18px 22px 18px;
+    background:#fff;
+    color:#000;
+    display:flex;
+    flex-direction:column;
+    height:100%;
+  }
+
+  .modal_instructions_content{
+    margin:18px;
+    padding-right:10px;
+    overflow:auto !important;
+    -webkit-overflow-scrolling:touch;
+    flex:1 1 auto;
+    line-height:1.5;
+    font-size:16px;
+  }
+
+  .modal_instructions_content h3{
+    margin:0 0 10px 0;
+    font-size:22px;
+    line-height:1.25;
+  }
+
+  .modal_instructions_content h4{
+    margin:18px 0 8px 0;
+    font-size:17px;
+    line-height:1.3;
+  }
+
+  .modal_instructions_content p,
+  .modal_instructions_content ul,
+  .modal_instructions_content ol{
+    margin:0 0 12px 0;
+  }
+
+  .modal_instructions_content ul,
+  .modal_instructions_content ol{
+    padding-left:22px;
+  }
+
+  .modal_instructions_content li{
+    margin-bottom:8px;
+  }
+
+  .modal_instructions_buttons{
+    text-align:center;
+    margin-top:14px;
+  }
+
+  .modal_instructions_buttons button{
+    margin:0 8px;
+  }
+
+  .modal_instructions_main button{
+    background:#e8f1ff;
+    color:#000;
+    border:1px solid #9dbaf2;
+    padding:10px 20px;
+    cursor:pointer;
+    outline:none;
+    width:110px;
+    border-radius:10px;
+    font-weight:600;
+    transition:background 0.15s ease, box-shadow 0.15s ease;
+  }
+
+  .modal_instructions_main button:hover{
+    background:#dbe8ff;
+    box-shadow:0 0 6px rgba(80,120,220,0.35);
+  }
+
   .card.drop-active {
     border-color: var(--accent);
     box-shadow:
@@ -498,6 +586,25 @@
       7px 7px,
       7px 7px;
     background-repeat: no-repeat;
+  }
+
+  .instructions-body a{
+    color: #1a73e8;
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 2px;
+    transition: color 0.15s ease, background 0.15s ease, text-decoration-thickness 0.15s ease;
+  }
+
+  .instructions-body a:visited{
+    color: #1a73e8;
+  }
+
+  .instructions-body a:hover{
+    color: #0b57d0;
+    text-decoration-thickness: 2px;
+    background: rgba(26,115,232,0.10);
+    border-radius: 4px;
   }
 
 </style>
@@ -629,10 +736,14 @@
 
   </section>
 
+  <div class="card">
+    <button id="showInstructionsButton" type="button">Instructions</button>
+  </div>
+
   <div class="footer-note">
     Created by <a href="https://michaeleskin.com" target="_blank" rel="noopener noreferrer">Michael Eskin</a><br/><br/>
     If this utility is useful, please consider buying me a beer: <a href="https://michaeleskin.com/#tipjars" target="_blank" rel="noopener noreferrer">My Virtual Tip Jars</a><br/><br/>
-    Source code available on GitHub at: <a href="https://github.com/seisiuneer/abctools/tree/main/tools/apple-spatial-photo-to-sbs" target="_blank" rel="noopener noreferrer">Apple Spatial Photo → Side-by-Side or 3D Anaglyph JPEG</a>
+    Source code available on GitHub at: <a href="https://github.com/seisiuneer/abctools/tree/main/tools/apple-spatial-photo-to-sbs" target="_blank" rel="noopener noreferrer">Apple Spatial Photo → Side-by-Side or 3D Anaglyph JPEG on GitHub</a>
   </div>
 
 </div>
@@ -668,6 +779,7 @@
   const previewBox = document.querySelector(".previewBox");
   const dragDropInfo = document.getElementById("dragdropinfo");
   const downloadActions = document.getElementById("downloadActions");
+  const showInstructionsButton = document.getElementById("showInstructionsButton");
 
   let libheifReady = false;
   let heifModule = null;
@@ -1474,6 +1586,103 @@
     }
   }
 
+  function showInstructions() {
+    const html = `
+      <div class="instructions-body">
+        <h3 style="text-align:center;">Apple Spatial Photo → Side-by-Side or 3D Anaglyph JPEG</h3>
+        <p>This tool opens an Apple Spatial Photo HEIC file, extracts the two embedded stereo image views, and exports them locally in your browser as either a Side-by-Side JPEG or a 3D Anaglyph JPEG.</p>
+
+        <h4>Basic workflow</h4>
+        <ol>
+          <li>Select a single Apple Spatial Photo HEIC file using the file chooser. On desktop, you can also drag and drop one HEIC file onto the top control panel.</li>
+          <li>Select an <b>Output Format</b>. Use <b>Side-by-Side</b> for stereo pairs, or one of the <b>Anaglyph</b> formats for viewing with compatible color glasses.</li>
+          <li>Adjust <b>Output JPEG Width</b> and <b>JPEG Quality</b> as required.</li>
+          <li>Optionally adjust <b>Image Shift</b> to change the horizontal separation between the two stereo views.</li>
+          <li>Review the preview. When ready, use <b>Download JPEG</b> on desktop or <b>Share JPEG</b> on iOS.</li>
+        </ol>
+
+        <h4>Controls</h4>
+        <ul>
+          <li><b>Output Format</b>: Chooses between Side-by-Side output and several common anaglyph formats.</li>
+          <li><b>Stereo Order</b>: Only shown for Side-by-Side output. <b>Left / Right</b> is appropriate for standard stereograph card / parallel viewing. <b>Right / Left</b> is appropriate for cross-eye viewing.</li>
+          <li><b>Output JPEG Width</b>: For Side-by-Side output, this is the total image width, so each eye uses half of that width. For Anaglyph output, this is the full image width.</li>
+          <li><b>JPEG Quality</b>: Sets the export JPEG compression quality.</li>
+          <li><b>Image Shift</b>: Shifts the two views horizontally before compositing. This can reduce eye strain, improve fusion, or improve some anaglyph results.</li>
+          <li><b>Image Shift range selector</b>: Switches the Image Shift slider between a normal adjustment range and a wider range for stronger corrections, including close-up or macro anaglyphs.</li>
+          <li><b>Reset</b>: Returns Image Shift to 0.0%.</li>
+          <li><b>Auto-crop shifted edges</b>: Only shown for Side-by-Side output. When enabled, the tool crops shifted edges to avoid blank areas. Anaglyph output always auto-crops internally.</li>
+        </ul>
+
+        <h4>Interactive preview behavior</h4>
+        <p>While you drag the Image Shift slider, the tool renders a reduced-resolution interactive preview for faster feedback. When you release the slider, it regenerates the full-resolution JPEG using the current settings.</p>
+
+        <h4>Side-by-Side output notes</h4>
+        <ul>
+          <li>Use <b>Left / Right</b> for standard side-by-side stereo viewing or stereograph cards.</li>
+          <li>Use <b>Right / Left</b> for cross-eye viewing.</li>
+          <li>If <b>Auto-crop shifted edges</b> is disabled, large Image Shift values can leave blank edge areas in the result.</li>
+        </ul>
+
+        <h4>Anaglyph output notes</h4>
+        <ul>
+          <li>Anaglyph output always uses the standard left/right stereo order internally.</li>
+          <li>Anaglyph output always auto-crops shifted edges internally.</li>
+          <li>Different glasses may work better with different output modes. <b>Optimized Red / Cyan</b> is usually the best general starting point.</li>
+          <li>For some close-up or macro spatial photos, a larger Image Shift range may help produce a more comfortable or more accurate result.</li>
+        </ul>
+
+        <h4>iOS notes</h4>
+        <ul>
+          <li>On iOS, you must first save the original spatial HEIC file from Photos into the Files area in order to open it with this tool.</li>
+          <li>When output is ready, the tool uses the iOS Share Sheet rather than a browser-style file download.</li>
+        </ul>
+
+        <h4>Privacy</h4>
+        <p>All processing is performed locally in your browser. The selected HEIC file is not uploaded to a server by this tool.</p>
+
+        <hr style="margin-top:20px;">
+
+        <h4 style="text-align: center;">Tip Jars</h4>
+        <div style="text-align: center;margin-bottom:20px;">
+          <p class="instructions-title"> This tool was created by</p>
+          <p class="instructions-title"> <a href="https://michaeleskin.com" target="_blank" rel="noopener noreferrer" style="color:#1a73e8; text-decoration:underline;">Michael Eskin</a></p>
+          <div style="margin-top:10px;">
+            If the tool has been useful to you, please consider supporting ongoing<br/>development by tossing a few bucks into one of my online tip jars.
+          </div>
+          <div style="margin-top:10px;">
+            <b>PayPal</b><br/>
+            <a href="https://paypal.me/MichaelEskin" target="_blank" rel="noopener noreferrer" style="color:#1a73e8; text-decoration:underline;">https://paypal.me/MichaelEskin</a>
+          </div>
+          <div style="margin-top:10px;">
+            <b>Venmo</b><br/>
+            @MichaelEskin
+          </div>
+        </div>
+
+        <hr>
+
+        <h4 style="text-align: center;">Source Code on GitHub</h4>
+        <div style="text-align: center;margin-bottom:20px;">
+          The source code for this tool is available on GitHub<br/>
+           <div style="margin-top:10px;">
+            <a href="https://github.com/seisiuneer/abctools/tree/main/tools/apple-spatial-photo-to-sbs" target="_blank" rel="noopener noreferrer">Apple Spatial Photo → Side-by-Side or 3D Anaglyph JPEG on GitHub</a>
+          </div>
+        </div>
+
+        <hr>
+
+      </div>`;
+
+    DayPilot.Modal.alert(html, {
+      theme: "modal_instructions",
+      top: 40,
+      width: 860,
+      scrollWithPage: false,
+      autoFocus: false,
+      okText: "OK"
+    });
+  }
+
   function registerDragAndDropHandlers() {
     ["dragenter", "dragover"].forEach(eventName => {
       toolCard.addEventListener(eventName, event => {
@@ -1525,6 +1734,8 @@
       });
     });
   }
+
+  showInstructionsButton.addEventListener("click", showInstructions);
 
   fileInput.addEventListener("change", async () => {
     await processSpatialPhotoFile(fileInput.files[0] || null);
