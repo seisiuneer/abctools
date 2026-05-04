@@ -83,12 +83,12 @@
     margin-bottom: 22px;
   }
 
-	h1 {
-	  margin: 0 0 8px;
-	  font-size: clamp(1.45rem, 3vw, 2rem);
-	  letter-spacing: .01em;
-	  text-shadow: 0 0 18px rgba(115,208,255,.35);
-	}
+  h1 {
+    margin: 0 0 8px;
+    font-size: clamp(1.45rem, 3vw, 2rem);
+    letter-spacing: .01em;
+    text-shadow: 0 0 18px rgba(115,208,255,.35);
+  }
 
   .subhead {
     margin: 0 auto;
@@ -132,11 +132,11 @@
     font: inherit;
   }
 
-	input[type="range"] {
-	  width: auto;
-	  flex: 1 1 auto;
-	  min-width: 0;
-	}
+  input[type="range"] {
+    width: auto;
+    flex: 1 1 auto;
+    min-width: 0;
+  }
 
   input[type="file"]::file-selector-button {
     appearance: none;
@@ -167,12 +167,12 @@
     font-weight: 650;
   }
 
-	.row {
-	  display: flex;
-	  gap: 12px;
-	  align-items: center;
-	  flex-wrap: nowrap;
-	}
+  .row {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    flex-wrap: nowrap;
+  }
 
   .rangeValue {
     min-width: 6.5rem;
@@ -224,6 +224,33 @@
     margin-bottom: 0;
   }
 
+
+  .controlHeaderActions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 0 0 auto;
+  }
+
+  select.smallRangeSelect {
+    width: 6.5rem;
+    min-width: 6.5rem;
+    flex: 0 0 6.5rem;
+    padding: 8px 30px 8px 10px;
+    border-radius: 10px;
+    font-size: .88rem;
+    line-height: 1.15;
+  }
+
+  select.smallRangeSelect {
+    background-position:
+      calc(100% - 18px) 50%,
+      calc(100% - 12px) 50%;
+    background-size:
+      6px 6px,
+      6px 6px;
+  }
+
   button {
     cursor: pointer;
     font-weight: 750;
@@ -247,12 +274,12 @@
     white-space: nowrap;
   }
   
-	.actions {
-	  display: grid;
-	  grid-template-columns: 1fr;
-	  gap: 12px;
-	  margin-top: 14px;
-	}
+  .actions {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+    margin-top: 14px;
+  }
 
   @media (max-width: 560px) {
     .actions { grid-template-columns: 1fr; }
@@ -269,38 +296,38 @@
   #status.error { color: var(--danger); }
   #status.ok { color: var(--accent2); }
 
-	.previewBox {
-	  background: rgba(0,0,0,.22);
-	  border: 1px solid var(--border);
-	  border-radius: 14px;
-	  overflow: hidden;
+  .previewBox {
+    background: rgba(0,0,0,.22);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
 
-	  /* Initial side-by-side preview aspect ratio; updated dynamically after conversion */
-	  aspect-ratio: 4096 / 1536;
-	  width: 100%;
+    /* Initial side-by-side preview aspect ratio; updated dynamically after conversion */
+    aspect-ratio: 4096 / 1536;
+    width: 100%;
 
-	  display: grid;
-	  place-items: center;
-	  position: relative;
-	}
+    display: grid;
+    place-items: center;
+    position: relative;
+  }
 
-	#previewCanvas {
-	  position: absolute;
-	  inset: 0;
-	  margin: auto;
-  	max-width: 100%;
-  	max-height: 100%;
-	}
+  #previewCanvas {
+    position: absolute;
+    inset: 0;
+    margin: auto;
+    max-width: 100%;
+    max-height: 100%;
+  }
 
-	#emptyPreview {
-	  position: absolute;
-	  inset: 0;
-	  display: flex;
-	  align-items: center;
-	  justify-content: center;
-	  text-align: center;
-	  padding: 12px;
-	}
+  #emptyPreview {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 12px;
+  }
 
   canvas {
     max-width: 100%;
@@ -351,12 +378,12 @@
   }
 
   .footer-note {
-	  margin-top: 18px;
-	  color: var(--green-200);
-	  font-size: 0.9rem;
-	  text-align: center;
-	  margin-bottom: 3px;
-	}
+    margin-top: 18px;
+    color: var(--green-200);
+    font-size: 0.9rem;
+    text-align: center;
+    margin-bottom: 3px;
+  }
 
   .modal_compact_background{
     background-color:#000;
@@ -552,10 +579,16 @@
       <div>
         <div class="controlHeader">
           <label for="stereoDepthRange">Image Shift</label>
-          <button id="resetStereoDepthButton" class="smallResetButton" type="button">Reset</button>
+          <div class="controlHeaderActions">
+            <select id="stereoDepthRangeMode" class="smallRangeSelect" aria-label="Image Shift range">
+              <option value="normal">±10%</option>
+              <option value="wide">±20%</option>
+            </select>
+            <button id="resetStereoDepthButton" class="smallResetButton" type="button">Reset</button>
+          </div>
         </div>
         <div class="row">
-          <input id="stereoDepthRange" type="range" min="-7.5" max="7.5" step="0.1" value="0">
+          <input id="stereoDepthRange" type="range" min="-10" max="10" step="0.1" value="0">
           <div id="stereoDepthValue" class="rangeValue">0.0%</div>
         </div>
       </div>
@@ -570,7 +603,7 @@
     </div>
 
     <div class="hint">
-      Image Shift moves the two views horizontally before compositing.&nbsp;&nbsp;Adjust the value as required to reduce eye strain or anaglyph color ghosting.<br/>In Side-by-Side format, the Auto-crop option crops the images as required to avoid blank areas.&nbsp;&nbsp;Anaglyph formats always auto-crop.
+      Image Shift moves the two views horizontally before compositing.<br/>Use the ±10% range for normal adjustments, or the ±20% range for larger corrections such as close-up/macro anaglyphs.<br/>In Side-by-Side format, the Auto-crop option crops the images as required to avoid blank areas.&nbsp;&nbsp;Anaglyph formats always auto-crop.
     </div>
 
   </section>
@@ -619,6 +652,7 @@
   const qualityValue = document.getElementById("qualityValue");
   const stereoDepthRange = document.getElementById("stereoDepthRange");
   const stereoDepthValue = document.getElementById("stereoDepthValue");
+  const stereoDepthRangeMode = document.getElementById("stereoDepthRangeMode");
   const resetStereoDepthButton = document.getElementById("resetStereoDepthButton");
   const autoCropControl = document.getElementById("autoCropControl");
   const autoCropStereoEdges = document.getElementById("autoCropStereoEdges");
@@ -647,30 +681,30 @@
   const INTERACTIVE_PREVIEW_MAX_WIDTH = 1600;
 
   function escapeHtml(value) {
-	  return String(value)
-	    .replace(/&/g, "&amp;")
-	    .replace(/</g, "&lt;")
-	    .replace(/>/g, "&gt;")
-	    .replace(/"/g, "&quot;")
-	    .replace(/'/g, "&#39;");
-	}
+    return String(value)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#39;");
+  }
 
   function sanitizeJpegFilename(name) {
-	  name = (name || "").trim();
+    name = (name || "").trim();
 
-	  if (!name) return "";
+    if (!name) return "";
 
-	  name = name
-	    .replace(/[\/\\:*?"<>|]/g, "_")
-	    .replace(/\s+/g, " ")
-	    .trim();
+    name = name
+      .replace(/[\/\\:*?"<>|]/g, "_")
+      .replace(/\s+/g, " ")
+      .trim();
 
-	  if (!/\.jpe?g$/i.test(name)) {
-	    name += ".jpg";
-	  }
+    if (!/\.jpe?g$/i.test(name)) {
+      name += ".jpg";
+    }
 
-	  return name;
-	}
+    return name;
+  }
 
   function isIOSDevice() {
     return /iPad|iPhone|iPod/.test(navigator.userAgent) ||
@@ -794,32 +828,32 @@
     return `${baseName}-${formatSuffix}-${theStyle}${separationSuffix}-${outputWidth}.jpg`;
   }
 
-	function promptForSaveName() {
-	  if (!window.DayPilot || !DayPilot.Modal || !DayPilot.Modal.prompt) {
-	    return Promise.resolve(getDefaultSaveName());
-	  }
+  function promptForSaveName() {
+    if (!window.DayPilot || !DayPilot.Modal || !DayPilot.Modal.prompt) {
+      return Promise.resolve(getDefaultSaveName());
+    }
 
-	  const thePrompt = `Please enter a filename for your ${getOutputFormatLabel()} JPEG:`;
+    const thePrompt = `Please enter a filename for your ${getOutputFormatLabel()} JPEG:`;
 
-	  return DayPilot.Modal.prompt(thePrompt, getDefaultSaveName(), {
-	    theme: "modal_compact",
-	    top: 200,
-	    autoFocus: true
-	  }).then(args => {
-	    if (args.canceled) return null;
+    return DayPilot.Modal.prompt(thePrompt, getDefaultSaveName(), {
+      theme: "modal_compact",
+      top: 200,
+      autoFocus: true
+    }).then(args => {
+      if (args.canceled) return null;
 
-	    const cleanName = sanitizeJpegFilename(args.result);
+      const cleanName = sanitizeJpegFilename(args.result);
 
-	    if (!cleanName) return null;
+      if (!cleanName) return null;
 
-	    return cleanName;
-	  });
-	}
+      return cleanName;
+    });
+  }
 
-	function setStatus(message, kind = "") {
-	  statusEl.innerHTML = message;
-	  statusEl.className = kind;
-	}
+  function setStatus(message, kind = "") {
+    statusEl.innerHTML = message;
+    statusEl.className = kind;
+  }
 
   function formatBytes(bytes) {
     const units = ["B", "KB", "MB", "GB"];
@@ -864,6 +898,22 @@
 
     const separation = Number(stereoDepthRange.value) || 0;
     stereoDepthValue.textContent = `${separation > 0 ? "+" : ""}${separation.toFixed(1)}%`;
+  }
+
+
+  function updateStereoDepthRangeMode() {
+    const wideRange = stereoDepthRangeMode.value === "wide";
+    const limit = wideRange ? 20 : 10;
+    let value = Number(stereoDepthRange.value) || 0;
+
+    stereoDepthRange.min = String(-limit);
+    stereoDepthRange.max = String(limit);
+
+    if (value < -limit) value = -limit;
+    if (value > limit) value = limit;
+
+    stereoDepthRange.value = value.toFixed(1);
+    updateControls();
   }
 
   function isSideBySideMode() {
@@ -1264,6 +1314,7 @@
     widthRange.disabled = isBusy;
     qualityRange.disabled = isBusy;
     stereoDepthRange.disabled = isBusy;
+    stereoDepthRangeMode.disabled = isBusy;
     resetStereoDepthButton.disabled = isBusy;
     autoCropStereoEdges.disabled = isBusy;
   }
@@ -1495,6 +1546,14 @@
 
   qualityRange.addEventListener("input", updateControls);
 
+  stereoDepthRangeMode.addEventListener("change", () => {
+    updateStereoDepthRangeMode();
+
+    if (decodedViews.length >= 2 && downloadLink.href) {
+      convertToSbs().catch(err => setStatus(escapeHtml(err.message || String(err)), "error"));
+    }
+  });
+
   stereoDepthRange.addEventListener("input", () => {
     updateControls();
 
@@ -1595,7 +1654,7 @@
   });
 
   updateOutputModeControls();
-  updateControls();
+  updateStereoDepthRangeMode();
 
 })();
 </script>
