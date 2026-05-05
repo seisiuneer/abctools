@@ -623,6 +623,12 @@
     background: rgba(26,115,232,0.10);
     border-radius: 4px;
   }
+  
+  #stereoDepthRange:focus,
+  #stereoDepthRange:focus-visible {
+    outline: none;
+    box-shadow: none;
+  }
 
 </style>
 
@@ -1037,6 +1043,14 @@
 
     stereoDepthRange.value = value.toFixed(1);
     updateControls();
+  }
+
+  function restoreImageShiftFocus() {
+    requestAnimationFrame(() => {
+      if (!stereoDepthRange.disabled) {
+        stereoDepthRange.focus({ preventScroll: true });
+      }
+    });
   }
 
   function isSideBySideMode() {
@@ -1776,6 +1790,18 @@
     }
   });
 
+  stereoDepthRange.addEventListener("change", async () => {
+    if (decodedViews.length >= 2 && downloadLink.href) {
+      try {
+        await convertToSbs();
+      } catch (err) {
+        setStatus(escapeHtml(err.message || String(err)), "error");
+      } finally {
+        restoreImageShiftFocus();
+      }
+    }
+  });
+
   stereoDepthRange.addEventListener("input", () => {
     updateControls();
 
@@ -1803,10 +1829,6 @@
   });
 
   qualityRange.addEventListener("change", () => {
-    if (decodedViews.length >= 2 && downloadLink.href) convertToSbs().catch(err => setStatus(escapeHtml(err.message || String(err)), "error"));
-  });
-
-  stereoDepthRange.addEventListener("change", () => {
     if (decodedViews.length >= 2 && downloadLink.href) convertToSbs().catch(err => setStatus(escapeHtml(err.message || String(err)), "error"));
   });
 
