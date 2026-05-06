@@ -663,9 +663,9 @@
         <label for="outputFormat">Output Format:</label>
         <select id="outputFormat">
           <option value="sbs">Side-by-Side</option>
+          <option value="anaglyph-red-cyan-color">Anaglyph — Red / Cyan, Color</option>
           <option value="anaglyph-red-cyan-dubois">Anaglyph — Red / Cyan, Optimized</option>
           <option value="anaglyph-red-cyan-gray">Anaglyph — Red / Cyan, Grayscale</option>
-          <option value="anaglyph-red-cyan-color">Anaglyph — Red / Cyan, Color</option>
           <option value="anaglyph-red-blue">Anaglyph — Red / Blue</option>
           <option value="anaglyph-red-green">Anaglyph — Red / Green</option>
           <option value="anaglyph-amber-blue">Anaglyph — Amber / Blue</option>
@@ -1655,6 +1655,15 @@
           <li>Different glasses may work better with different output modes. <b>Optimized Red / Cyan</b> is usually the best general starting point.</li>
           <li>For some close-up or macro spatial photos, a larger Image Shift range may help produce a more comfortable or more accurate result.</li>
         </ul>
+
+        <h4>Red / Cyan anaglyph modes</h4>
+        <ul>
+          <li><b>Color Red / Cyan</b>: Keeps more of the original color by taking the red channel from one eye and the green/blue channels from the other eye. This can look more colorful, but it may have more ghosting, color rivalry, and eye strain depending on the image and glasses.</li>
+          <li><b>Optimized Red / Cyan</b>: Uses a Dubois-style color matrix rather than simple channel copying. This usually reduces ghosting and improves stereo readability through red/cyan glasses, but it can shift the overall color balance. A slight green/cyan tint is normal in some images.</li>
+          <li><b>Grayscale Red / Cyan</b>: Converts both views to luminance before building the anaglyph. This usually gives the cleanest stereo separation and avoids most color conflicts, but the result is essentially monochrome.</li>
+        </ul>
+
+<p>For general use, start with <b>Optimized Red / Cyan</b>. If the color cast is distracting, try <b>Grayscale Red / Cyan</b>. If preserving color is more important than minimizing ghosting, try <b>Color Red / Cyan</b>.</p>
 
         <h4>iOS notes</h4>
         <ul>
