@@ -625,7 +625,9 @@
   }
   
   #stereoDepthRange:focus,
-  #stereoDepthRange:focus-visible {
+  #stereoDepthRange:focus-visible,
+  #rotationRange:focus,
+  #rotationRange:focus-visible {
     outline: none;
     box-shadow: none;
   }
@@ -653,7 +655,7 @@
   <section class="card">
     <div>
       <label for="fileInput">Apple Spatial Photo HEIC file:</label>
-      <input id="fileInput" type="file" accept=".heic,.heif,image/heic,image/heif">
+      <input id="fileInput" type="file" accept=".heic,.heif,image/heic,image/heif" title="Select one Apple Spatial Photo HEIC or HEIF file to convert. On iOS, first save the spatial photo from Photos to Files, then open it here.">
     </div>
 
     <div id="dragdropinfo" class="hint">You can also drag-and-drop a single Apple Spatial Photo HEIC file onto this panel.</div>
@@ -661,7 +663,7 @@
     <div class="grid" style="margin-top:16px;">
       <div>
         <label for="outputFormat">Output Format:</label>
-        <select id="outputFormat">
+        <select id="outputFormat" title="Choose the exported JPEG format: Side-by-Side for stereo viewers, or an Anaglyph format for colored 3D glasses.">
           <option value="sbs">Side-by-Side</option>
           <option value="anaglyph-red-cyan-color">Anaglyph — Red / Cyan, Color</option>
           <option value="anaglyph-red-cyan-dubois">Anaglyph — Red / Cyan, Optimized</option>
@@ -674,7 +676,7 @@
 
       <div id="eyeOrderControl">
         <label for="eyeOrder">Stereo Order:</label>
-        <select id="eyeOrder">
+        <select id="eyeOrder" title="Choose the side-by-side eye order. Left / Right is for parallel/stereograph viewing; Right / Left is for cross-eye viewing.">
           <option value="normal">Left / Right (Stereograph card)</option>
           <option value="swap">Right / Left (Cross-eye viewing)</option>
         </select>
@@ -684,25 +686,40 @@
 
     <div class="grid" style="margin-top:16px;">
       <div>
-        <label for="widthRange">Output JPEG Width</label>
+        <div class="controlHeader">
+          <label for="widthRange">Output JPEG Width</label>
+          <div class="controlHeaderActions">
+            <button id="resetWidthButton" class="smallResetButton" type="button" title="Reset the output JPEG width to the default value of 4096 pixels.">Reset</button>
+          </div>
+        </div>
         <div class="row">
-          <input id="widthRange" type="range" min="1024" max="8192" step="64" value="4096">
+          <input id="widthRange" type="range" min="1024" max="8192" step="64" value="4096" title="Set the output JPEG width. Side-by-Side output uses this as total width; each eye is half this width. Anaglyph output uses this as full image width.">
           <div id="widthValue" class="rangeValue">4096 px</div>
         </div>
       </div>
 
       <div>
-        <label for="qualityRange">JPEG Quality</label>
+        <div class="controlHeader">
+          <label for="rotationRange">Image Rotation</label>
+          <div class="controlHeaderActions">
+            <select id="rotationRangeMode" class="smallRangeSelect" aria-label="Image Rotation range" title="Choose the Image Rotation slider range. Use ±5° for normal correction or ±10° for larger roll corrections.">
+              <option value="normal">±5°</option>
+              <option value="wide">±10°</option>
+            </select>
+            <button id="resetRotationButton" class="smallResetButton" type="button" title="Reset Image Rotation to 0.0°.">Reset</button>
+          </div>
+        </div>
         <div class="row">
-          <input id="qualityRange" type="range" min="50" max="100" step="1" value="92">
-          <div id="qualityValue" class="rangeValue">92%</div>
+          <input id="rotationRange" type="range" min="-5" max="5" step="0.05" value="0" title="Apply a small roll correction to both stereo views. The image is cropped as needed to preserve the original aspect ratio.">
+          <div id="rotationValue" class="rangeValue">0.0°</div>
         </div>
       </div>
     </div>
 
     <div class="hint">
       For Side-by-Side format, each eye is rendered at half the selected output width.&nbsp;&nbsp;
-      For Anaglyph formats, the selected width is the full image width.
+      For Anaglyph formats, the selected width is the full image width.<br/>
+      Image Rotation applies a small roll correction and crops as required to preserve the original aspect ratio.
     </div>
 
     <div class="grid" style="margin-top:16px;">
@@ -710,30 +727,30 @@
         <div class="controlHeader">
           <label for="stereoDepthRange">Image Shift</label>
           <div class="controlHeaderActions">
-            <select id="stereoDepthRangeMode" class="smallRangeSelect" aria-label="Image Shift range">
+            <select id="stereoDepthRangeMode" class="smallRangeSelect" aria-label="Image Shift range" title="Choose the Image Shift slider range. Use ±10% for normal adjustments or ±20% for stronger close-up or macro corrections.">
               <option value="normal">±10%</option>
               <option value="wide">±20%</option>
             </select>
-            <button id="resetStereoDepthButton" class="smallResetButton" type="button">Reset</button>
+            <button id="resetStereoDepthButton" class="smallResetButton" type="button" title="Reset Image Shift to 0.0%.">Reset</button>
           </div>
         </div>
         <div class="row">
-          <input id="stereoDepthRange" type="range" min="-10" max="10" step="0.1" value="0">
+          <input id="stereoDepthRange" type="range" min="-10" max="10" step="0.1" value="0" title="Shift the two stereo views horizontally before compositing. This can improve fusion, reduce eye strain, or improve anaglyph alignment.">
           <div id="stereoDepthValue" class="rangeValue">0.0%</div>
         </div>
       </div>
 
       <div id="autoCropControl">
         <label for="autoCropStereoEdges">Image Shift Edge Handling</label>
-        <label class="checkboxLabel" for="autoCropStereoEdges">
-          <input id="autoCropStereoEdges" type="checkbox" checked>
+        <label class="checkboxLabel" for="autoCropStereoEdges" title="When enabled, crop shifted side-by-side images to remove blank edge areas. Anaglyph output always auto-crops.">
+          <input id="autoCropStereoEdges" type="checkbox" checked title="When enabled, crop shifted side-by-side images to remove blank edge areas. Anaglyph output always auto-crops.">
           Auto-crop shifted edges
         </label>
       </div>
     </div>
 
     <div class="hint">
-      Image Shift moves the two views horizontally before compositing.<br/>Use the ±10% range for normal adjustments, or the ±20% range for larger corrections such as close-up/macro anaglyphs.<br/>In Side-by-Side format, the Auto-crop option crops the images as required to avoid blank areas.&nbsp;&nbsp;Anaglyph formats always auto-crop.
+      Image Shift moves the two views horizontally before compositing.<br/>In Side-by-Side format, the Auto-crop option crops the images as required to avoid blank areas.&nbsp;&nbsp;Anaglyph formats always auto-crop.
     </div>
 
   </section>
@@ -747,7 +764,7 @@
     <p id="status">Loading HEIC decoder…</p>
 
     <div id="downloadActions" class="actions" style="display:none;">
-      <a id="downloadLink" class="download" download="spatial-photo.jpg">Download JPEG</a>
+      <a id="downloadLink" class="download" download="spatial-photo.jpg" title="Download the generated JPEG, or open the iOS Share Sheet on iPhone or iPad.">Download JPEG</a>
     </div>
 
     <div class="meta">
@@ -760,7 +777,7 @@
   </section>
 
   <div class="card">
-    <button id="showInstructionsButton" type="button">Instructions</button>
+    <button id="showInstructionsButton" type="button" title="Open detailed instructions for using the tool and choosing output modes.">Instructions</button>
   </div>
 
 </div>
@@ -776,8 +793,11 @@
   const eyeOrderControl = document.getElementById("eyeOrderControl");
   const widthRange = document.getElementById("widthRange");
   const widthValue = document.getElementById("widthValue");
-  const qualityRange = document.getElementById("qualityRange");
-  const qualityValue = document.getElementById("qualityValue");
+  const resetWidthButton = document.getElementById("resetWidthButton");
+  const rotationRange = document.getElementById("rotationRange");
+  const rotationValue = document.getElementById("rotationValue");
+  const rotationRangeMode = document.getElementById("rotationRangeMode");
+  const resetRotationButton = document.getElementById("resetRotationButton");
   const stereoDepthRange = document.getElementById("stereoDepthRange");
   const stereoDepthValue = document.getElementById("stereoDepthValue");
   const stereoDepthRangeMode = document.getElementById("stereoDepthRangeMode");
@@ -945,8 +965,14 @@
       ? `-Shift${separation > 0 ? "+" : ""}${separationSafeText}`
       : "";
 
+    const rotation = Number(rotationRange.value) || 0;
+    const rotationText = rotation.toFixed(1).replace(".", "p");
+    const rotationSuffix = rotation
+      ? `-Rot${rotation > 0 ? "+" : ""}${rotationText}`
+      : "";
+
     if (!isSideBySideMode()) {
-      return `${baseName}-${formatSuffix}${separationSuffix}-${outputWidth}.jpg`;
+      return `${baseName}-${formatSuffix}${separationSuffix}${rotationSuffix}-${outputWidth}.jpg`;
     }
 
     let theStyle = "LR";
@@ -954,7 +980,7 @@
       theStyle = "RL";
     }
 
-    return `${baseName}-${formatSuffix}-${theStyle}${separationSuffix}-${outputWidth}.jpg`;
+    return `${baseName}-${formatSuffix}-${theStyle}${separationSuffix}${rotationSuffix}-${outputWidth}.jpg`;
   }
 
   function promptForSaveName() {
@@ -1023,10 +1049,27 @@
 
   function updateControls() {
     widthValue.textContent = `${Number(widthRange.value).toLocaleString()} px`;
-    qualityValue.textContent = `${qualityRange.value}%`;
+    const rotation = Number(rotationRange.value) || 0;
+    rotationValue.textContent = `${rotation > 0 ? "+" : ""}${rotation.toFixed(1)}°`;
 
     const separation = Number(stereoDepthRange.value) || 0;
     stereoDepthValue.textContent = `${separation > 0 ? "+" : ""}${separation.toFixed(1)}%`;
+  }
+
+
+  function updateRotationRangeMode() {
+    const wideRange = rotationRangeMode.value === "wide";
+    const limit = wideRange ? 10 : 5;
+    let value = Number(rotationRange.value) || 0;
+
+    rotationRange.min = String(-limit);
+    rotationRange.max = String(limit);
+
+    if (value < -limit) value = -limit;
+    if (value > limit) value = limit;
+
+    rotationRange.value = value.toFixed(2);
+    updateControls();
   }
 
 
@@ -1283,6 +1326,61 @@
     return ctx.getImageData(0, 0, width, height);
   }
 
+  function createRotatedCanvas(sourceCanvas, width, height, rotationDegrees) {
+    const rotation = Number(rotationDegrees) || 0;
+
+    if (!rotation) {
+      return sourceCanvas;
+    }
+
+    const out = document.createElement("canvas");
+    out.width = width;
+    out.height = height;
+
+    const ctx = out.getContext("2d", { alpha: false });
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = "high";
+
+    ctx.fillStyle = "#000";
+    ctx.fillRect(0, 0, width, height);
+
+    const angle = rotation * Math.PI / 180;
+    const absCos = Math.abs(Math.cos(angle));
+    const absSin = Math.abs(Math.sin(angle));
+    const aspect = width / height;
+
+    /*
+      Scale the image up just enough that, after rotation, the full output
+      rectangle is covered by visible image content.
+
+      This prevents blank corners. The canvas itself performs the final crop,
+      preserving the original output aspect ratio.
+    */
+    const scaleForWidth = absCos + absSin / aspect;
+    const scaleForHeight = absCos + absSin * aspect;
+    const coverScale = Math.max(scaleForWidth, scaleForHeight);
+
+    const drawWidth = width * coverScale;
+    const drawHeight = height * coverScale;
+
+    ctx.translate(width / 2, height / 2);
+    ctx.rotate(angle);
+
+    ctx.drawImage(
+      sourceCanvas,
+      0,
+      0,
+      sourceCanvas.width,
+      sourceCanvas.height,
+      -drawWidth / 2,
+      -drawHeight / 2,
+      drawWidth,
+      drawHeight
+    );
+
+    return out;
+  }
+
   function createStereoDepthAdjustedCanvas(sourceCanvas, width, height, offsetPx, autoCropEdges) {
     const out = document.createElement("canvas");
     out.width = width;
@@ -1449,7 +1547,10 @@
     outputFormat.disabled = isBusy;
     eyeOrder.disabled = isBusy;
     widthRange.disabled = isBusy;
-    qualityRange.disabled = isBusy;
+    resetWidthButton.disabled = isBusy;
+    rotationRange.disabled = isBusy;
+    rotationRangeMode.disabled = isBusy;
+    resetRotationButton.disabled = isBusy;
     stereoDepthRange.disabled = isBusy;
     stereoDepthRangeMode.disabled = isBusy;
     resetStereoDepthButton.disabled = isBusy;
@@ -1487,6 +1588,19 @@
 
       if (isSideBySideMode() && eyeOrder.value === "swap") {
         [left, right] = [right, left];
+      }
+
+      const imageRotationDegrees = Number(rotationRange.value) || 0;
+
+      if (imageRotationDegrees) {
+        left = {
+          ...left,
+          canvas: createRotatedCanvas(left.canvas, left.width, left.height, imageRotationDegrees)
+        };
+        right = {
+          ...right,
+          canvas: createRotatedCanvas(right.canvas, right.width, right.height, imageRotationDegrees)
+        };
       }
 
       const selectedOutputWidth = Number(widthRange.value);
@@ -1564,11 +1678,11 @@
 
       if (previewOnly) {
         interactivePreviewDirty = true;
-        setStatus(`Interactive preview updated.&nbsp;&nbsp;Release the Image Shift slider to generate the full-resolution ${modeLabel} JPEG for download.`, "ok");
+        setStatus(`Interactive preview updated.&nbsp;&nbsp;Release the slider to generate the full-resolution ${modeLabel} JPEG for download.`, "ok");
         return;
       }
 
-      const quality = Number(qualityRange.value) / 100;
+      const quality = 0.92;
       const blob = await new Promise(resolve => canvas.toBlob(resolve, "image/jpeg", quality));
 
       if (!blob) {
@@ -1590,6 +1704,10 @@
       downloadLink.style.display = "block";
       downloadActions.style.display = "grid";
 
+      const rotationNote = imageRotationDegrees
+        ? `, rotation ${imageRotationDegrees > 0 ? "+" : ""}${imageRotationDegrees.toFixed(1)}°`
+        : "";
+
       const separationNote = stereoSeparationPercent
         ? `, image shift ${stereoSeparationPercent > 0 ? "+" : ""}${stereoSeparationPercent.toFixed(1)}%${autoCropEdges ? ", auto-cropped" : ", uncropped edges"}`
         : "";
@@ -1597,10 +1715,10 @@
       if (mode === "sbs") {
         const eyeWidth = Math.floor(canvas.width / 2);
         outputMeta.textContent =
-          `${modeLabel} JPEG: ${canvas.width}×${canvas.height}, each eye ${eyeWidth}×${canvas.height}, ${formatBytes(blob.size)}, quality ${qualityRange.value}%${separationNote}.`;
+          `${modeLabel} JPEG: ${canvas.width}×${canvas.height}, each eye ${eyeWidth}×${canvas.height}, ${formatBytes(blob.size)}${separationNote}${rotationNote}.`;
       } else {
         outputMeta.textContent =
-          `${modeLabel} JPEG: ${canvas.width}×${canvas.height}, ${formatBytes(blob.size)}, quality ${qualityRange.value}%${separationNote}.`;
+          `${modeLabel} JPEG: ${canvas.width}×${canvas.height}, ${formatBytes(blob.size)}${separationNote}${rotationNote}.`;
       }
 
       setStatus(`${modeLabel} JPEG ready.&nbsp;&nbsp;Click <b>${isIOSDevice() ? "Share JPEG" : "Download JPEG"}</b> to save it.`, "ok");
@@ -1619,27 +1737,27 @@
 
         <h4>Basic workflow</h4>
         <ol>
-          <li>Select a single Apple Spatial Photo HEIC file using the file chooser. On desktop, you can also drag and drop one HEIC file onto the top control panel.</li>
-          <li>Select an <b>Output Format</b>. Use <b>Side-by-Side</b> for stereo pairs, or one of the <b>Anaglyph</b> formats for viewing with compatible color glasses.</li>
-          <li>Adjust <b>Output JPEG Width</b> and <b>JPEG Quality</b> as required.</li>
-          <li>Optionally adjust <b>Image Shift</b> to change the horizontal separation between the two stereo views.</li>
-          <li>Review the preview. When ready, use <b>Download JPEG</b> on desktop or <b>Share JPEG</b> on iOS.</li>
+          <li>Select a single Apple Spatial Photo HEIC file using the file chooser.<br/>On desktop, you can also drag and drop one HEIC file onto the top control panel.</li>
+          <li>Select an <b>Output Format</b>.<br/>Use <b>Side-by-Side</b> for stereo pairs, or one of the <b>Anaglyph</b> formats for viewing with compatible color glasses.</li>
+          <li>Adjust <b>Output JPEG Width</b> as desired. Default is 4096 pixels.</li>
+          <li>Optionally adjust <b>Image Shift</b> and/or <b>Image Rotation</b> as required to optimize the stereo view.</li>
+          <li>Review the preview.&nbsp;&nbsp;When ready, use <b>Download JPEG</b> on desktop or <b>Share JPEG</b> on iOS.<br/>The exported images are saved using high JPEG quality.</li>
         </ol>
 
         <h4>Controls</h4>
         <ul>
           <li><b>Output Format</b>: Chooses between Side-by-Side output and several common anaglyph formats.</li>
-          <li><b>Stereo Order</b>: Only shown for Side-by-Side output. <b>Left / Right</b> is appropriate for standard stereograph card / parallel viewing. <b>Right / Left</b> is appropriate for cross-eye viewing.</li>
-          <li><b>Output JPEG Width</b>: For Side-by-Side output, this is the total image width, so each eye uses half of that width. For Anaglyph output, this is the full image width.</li>
-          <li><b>JPEG Quality</b>: Sets the export JPEG compression quality.</li>
-          <li><b>Image Shift</b>: Shifts the two views horizontally before compositing. This can reduce eye strain, improve fusion, or improve some anaglyph results.</li>
-          <li><b>Image Shift range selector</b>: Switches the Image Shift slider between a normal adjustment range and a wider range for stronger corrections, including close-up or macro anaglyphs.</li>
-          <li><b>Reset</b>: Returns Image Shift to 0.0%.</li>
+          <li><b>Stereo Order</b>: Only shown for Side-by-Side output. <b>Left / Right</b> is appropriate for standard stereograph card / parallel viewing.<br/><b>Right / Left</b> is appropriate for cross-eye viewing.</li>
+          <li><b>Output JPEG Width</b>: For Side-by-Side output, this is the total image width, so each eye uses half of that width. For Anaglyph output, this is the full image width.<br/>The <b>Reset</b> button resets the output width to 4096 pixels.</li>
+          <li><b>Image Rotation</b>: Applies a small roll correction to both stereo views.<br/>The rotated image is cropped as required to preserve the original aspect ratio.</li>
+          <li><b>Image Rotation range selector</b>: Switches the Image Rotation slider between ±5° for normal adjustments and ±10° for larger rotation corrections.<br/>The <b>Reset</b> button resets the image rotation to zero.</li>
+          <li><b>Image Shift</b>: Shifts the two views horizontally before compositing.<br/>This can reduce eye strain, improve fusion, or improve some anaglyph results.<br/>The <b>Reset</b> button resets the image shift to zero.</li>
+          <li><b>Image Shift range selector</b>: Switches the Image Shift slider between a normal ±10% adjustment range and a wider ±20% range for stronger corrections, including close-up or macro anaglyphs.</li>
           <li><b>Auto-crop shifted edges</b>: Only shown for Side-by-Side output. When enabled, the tool crops shifted edges to avoid blank areas. Anaglyph output always auto-crops internally.</li>
         </ul>
 
         <h4>Interactive preview behavior</h4>
-        <p>While you drag the Image Shift slider, the tool renders a reduced-resolution interactive preview for faster feedback. When you release the slider, it regenerates the full-resolution JPEG using the current settings.</p>
+        <p>While you drag the Image Shift or Image Rotation slider, the tool renders a reduced-resolution interactive preview for faster feedback. When you release the slider, it regenerates the full-resolution JPEG using the current settings.</p>
 
         <h4>Side-by-Side output notes</h4>
         <ul>
@@ -1658,12 +1776,12 @@
 
         <h4>Red / Cyan anaglyph modes</h4>
         <ul>
-          <li><b>Color Red / Cyan</b>: Keeps more of the original color by taking the red channel from one eye and the green/blue channels from the other eye. This can look more colorful, but it may have more ghosting, color rivalry, and eye strain depending on the image and glasses.</li>
-          <li><b>Optimized Red / Cyan</b>: Uses a Dubois-style color matrix rather than simple channel copying. This usually reduces ghosting and improves stereo readability through red/cyan glasses, but it can shift the overall color balance. A slight green/cyan tint is normal in some images.</li>
-          <li><b>Grayscale Red / Cyan</b>: Converts both views to luminance before building the anaglyph. This usually gives the cleanest stereo separation and avoids most color conflicts, but the result is essentially monochrome.</li>
+          <li><b>Color Red / Cyan</b>: Keeps more of the original color by taking the red channel from one eye and the green/blue channels from the other eye.<br/>This can look more colorful, but it may have more ghosting, color rivalry, and eye strain depending on the image and glasses.</li>
+          <li><b>Optimized Red / Cyan</b>: Uses a Dubois-style color matrix rather than simple channel copying.<br/>This usually reduces ghosting and improves stereo readability through red/cyan glasses, but it can shift the overall color balance. A slight green/cyan tint is normal in some images.</li>
+          <li><b>Grayscale Red / Cyan</b>: Converts both views to luminance before building the anaglyph.<br/>This usually gives the cleanest stereo separation and avoids most color conflicts, but the result is essentially monochrome.</li>
         </ul>
 
-<p>For general use, start with <b>Optimized Red / Cyan</b>. If the color cast is distracting, try <b>Grayscale Red / Cyan</b>. If preserving color is more important than minimizing ghosting, try <b>Color Red / Cyan</b>.</p>
+        <p>For general use, start with <b>Optimized Red / Cyan</b>.<br/>If the color cast is distracting, try <b>Grayscale Red / Cyan</b>.<br/>If preserving color is more important than minimizing ghosting, try <b>Color Red / Cyan</b>.</p>
 
         <h4>iOS notes</h4>
         <ul>
@@ -1789,7 +1907,53 @@
 
   widthRange.addEventListener("input", updateControls);
 
-  qualityRange.addEventListener("input", updateControls);
+  resetWidthButton.addEventListener("click", () => {
+    if (Number(widthRange.value) === 4096) {
+      updateControls();
+      return;
+    }
+
+    widthRange.value = "4096";
+    updateControls();
+
+    if (decodedViews.length >= 2 && downloadLink.href) {
+      convertToSbs().catch(err => setStatus(escapeHtml(err.message || String(err)), "error"));
+    }
+  });
+
+  rotationRangeMode.addEventListener("change", () => {
+    updateRotationRangeMode();
+
+    if (decodedViews.length >= 2 && downloadLink.href) {
+      convertToSbs().catch(err => setStatus(escapeHtml(err.message || String(err)), "error"));
+    }
+  });
+
+  rotationRange.addEventListener("input", () => {
+    updateControls();
+
+    if (decodedViews.length >= 2) {
+      convertToSbs({ previewOnly: true }).catch(err => setStatus(escapeHtml(err.message || String(err)), "error"));
+    }
+  });
+
+  rotationRange.addEventListener("change", () => {
+    if (decodedViews.length >= 2 && downloadLink.href) convertToSbs().catch(err => setStatus(escapeHtml(err.message || String(err)), "error"));
+  });
+
+  resetRotationButton.addEventListener("click", () => {
+    if (Number(rotationRange.value) === 0) {
+      updateControls();
+      return;
+    }
+
+    rotationRange.value = "0";
+    updateControls();
+
+    if (decodedViews.length >= 2 && downloadLink.href) {
+      convertToSbs().catch(err => setStatus(escapeHtml(err.message || String(err)), "error"));
+    }
+  });
 
   stereoDepthRangeMode.addEventListener("change", () => {
     updateStereoDepthRangeMode();
@@ -1837,9 +2001,6 @@
     if (decodedViews.length >= 2 && downloadLink.href) convertToSbs().catch(err => setStatus(escapeHtml(err.message || String(err)), "error"));
   });
 
-  qualityRange.addEventListener("change", () => {
-    if (decodedViews.length >= 2 && downloadLink.href) convertToSbs().catch(err => setStatus(escapeHtml(err.message || String(err)), "error"));
-  });
 
   autoCropStereoEdges.addEventListener("change", () => {
     if (decodedViews.length >= 2 && downloadLink.href) convertToSbs().catch(err => setStatus(escapeHtml(err.message || String(err)), "error"));
@@ -1907,6 +2068,7 @@
   });
 
   updateOutputModeControls();
+  updateRotationRangeMode();
   updateStereoDepthRangeMode();
 
 })();
