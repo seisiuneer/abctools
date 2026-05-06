@@ -206,6 +206,22 @@
     font-variant-numeric: tabular-nums;
   }
 
+  .editableRangeValue {
+    cursor: pointer;
+    border: 1px solid rgba(255,255,255,.16);
+    user-select: none;
+  }
+
+  .editableRangeValue:hover,
+  .editableRangeValue:focus {
+    background: rgba(255,255,255,.13);
+  }
+
+  .editableRangeValue.disabled {
+    cursor: not-allowed;
+    opacity: .55;
+  }
+
   .hint {
     color: var(--muted);
     font-size: .93rem;
@@ -695,8 +711,8 @@
           </div>
         </div>
         <div class="row">
-          <input id="widthRange" type="range" min="1024" max="8192" step="64" value="4096" title="Set the output JPEG width. Side-by-Side output uses this as total width; each eye is half this width. Anaglyph output uses this as full image width.">
-          <div id="widthValue" class="rangeValue">4096 px</div>
+          <input id="widthRange" type="range" min="1024" max="8192" step="1" value="4096" title="Set the output JPEG width. Side-by-Side output uses this as total width; each eye is half this width. Anaglyph output uses this as full image width. Click the numeric value to enter an exact width.">
+          <div id="widthValue" class="rangeValue editableRangeValue" role="button" tabindex="0" aria-label="Enter output JPEG width" title="Click to enter a specific output JPEG width from 1024 to 8192 pixels.">4096 px</div>
         </div>
       </div>
 
@@ -830,6 +846,9 @@
   let lastGeneratedFileName = "";
   let interactivePreviewDirty = false;
   const INTERACTIVE_PREVIEW_MAX_WIDTH = 1600;
+  const OUTPUT_WIDTH_MIN = 1024;
+  const OUTPUT_WIDTH_MAX = 8192;
+  const OUTPUT_WIDTH_DEFAULT = 4096;
 
   function escapeHtml(value) {
     return String(value)
@@ -1021,6 +1040,81 @@
       unit++;
     }
     return `${value.toFixed(unit ? 1 : 0)} ${units[unit]}`;
+  }
+
+  function clampOutputWidth(value) {
+    const cleaned = String(value ?? "")
+      .replace(/,/g, "")
+      .trim();
+
+    if (!/[0-9]/.test(cleaned)) {
+      return null;
+    }
+
+    let numeric = Number(cleaned.replace(/[^0-9.\-]/g, ""));
+
+    if (!Number.isFinite(numeric)) {
+      return null;
+    }
+
+    numeric = Math.round(numeric);
+
+    if (numeric < OUTPUT_WIDTH_MIN) numeric = OUTPUT_WIDTH_MIN;
+    if (numeric > OUTPUT_WIDTH_MAX) numeric = OUTPUT_WIDTH_MAX;
+
+    return numeric;
+  }
+
+  function regenerateFullOutputIfReady() {
+    if (decodedViews.length >= 2 && downloadLink.href) {
+      convertToSbs().catch(err => setStatus(escapeHtml(err.message || String(err)), "error"));
+    }
+  }
+
+  function applyOutputWidth(value) {
+    const clampedWidth = clampOutputWidth(value);
+
+    if (clampedWidth === null) {
+      updateControls();
+      return;
+    }
+
+    const previousWidth = Number(widthRange.value);
+
+    widthRange.value = String(clampedWidth);
+    updateControls();
+
+    if (clampedWidth !== previousWidth) {
+      regenerateFullOutputIfReady();
+    }
+  }
+
+  async function promptForOutputWidth() {
+    if (widthRange.disabled || widthValue.classList.contains("disabled")) {
+      return;
+    }
+
+    if (!window.DayPilot || !DayPilot.Modal || !DayPilot.Modal.prompt) {
+      const result = window.prompt(`Enter output JPEG width in pixels (${OUTPUT_WIDTH_MIN} to ${OUTPUT_WIDTH_MAX}):`, String(widthRange.value));
+      if (result !== null) applyOutputWidth(result);
+      return;
+    }
+
+    const args = await DayPilot.Modal.prompt(
+      `Enter output JPEG width in pixels (${OUTPUT_WIDTH_MIN} to ${OUTPUT_WIDTH_MAX}):`,
+      String(widthRange.value),
+      {
+        theme: "modal_compact",
+        top: 200,
+        autoFocus: true
+      }
+    );
+
+    if (args.canceled) {
+      return;
+    }
+
+    applyOutputWidth(args.result);
   }
 
   function revokeLastUrl(options = {}) {
@@ -1549,6 +1643,8 @@
     outputFormat.disabled = isBusy;
     eyeOrder.disabled = isBusy;
     widthRange.disabled = isBusy;
+    widthValue.classList.toggle("disabled", isBusy);
+    widthValue.setAttribute("aria-disabled", isBusy ? "true" : "false");
     resetWidthButton.disabled = isBusy;
     rotationRange.disabled = isBusy;
     rotationRangeMode.disabled = isBusy;
@@ -1741,7 +1837,7 @@
         <ol>
           <li>Select a single Apple Spatial Photo HEIC file using the file chooser.<br/>On desktop, you can also drag and drop one HEIC file onto the top control panel.</li>
           <li>Select an <b>Output Format</b>.<br/>Use <b>Side-by-Side</b> for stereo pairs, or one of the <b>Anaglyph</b> formats for viewing with compatible color glasses.</li>
-          <li>Adjust <b>Output JPEG Width</b> as desired. Default is 4096 pixels.</li>
+          <li>Adjust <b>Output JPEG Width</b> as desired. Default is 4096 pixels.<br/>Use the slider, or click the width value display to enter an exact width.</li>
           <li>Optionally adjust <b>Image Shift</b> and/or <b>Image Rotation</b> as required to optimize the stereo view.</li>
           <li>Review the preview.&nbsp;&nbsp;When ready, use <b>Download JPEG</b> on desktop or <b>Share JPEG</b> on iOS.<br/>The exported images are saved in very high JPEG quality.</li>
         </ol>
@@ -1750,16 +1846,16 @@
         <ul>
           <li><b>Output Format</b>: Chooses between Side-by-Side output and several common anaglyph formats.</li>
           <li><b>Stereo Order</b>: Only shown for Side-by-Side output. <b>Left / Right</b> is appropriate for standard stereograph card / parallel viewing.<br/><b>Right / Left</b> is appropriate for cross-eye viewing.</li>
-          <li><b>Output JPEG Width</b>: For Side-by-Side output, this is the total image width, so each eye uses half of that width. For Anaglyph output, this is the full image width.<br/>The <b>Reset</b> button resets the output width to 4096 pixels.</li>
+          <li><b>Output JPEG Width</b>: For Side-by-Side output, this is the total image width, so each eye uses half of that width.<br/>For Anaglyph output, this is the full image width.<br/>Use the slider, or click the numeric width value to enter a specific width.<br/>Entered values are clamped to the supported 1024 to 8192 pixel range.<br/>The <b>Reset</b> button resets the output width to 4096 pixels.</li>
           <li><b>Image Rotation</b>: Applies a small roll correction to both stereo views.<br/>The rotated image is cropped as required to preserve the original aspect ratio.</li>
           <li><b>Image Rotation range selector</b>: Switches the Image Rotation slider between ±5° for normal adjustments and ±10° for larger rotation corrections.<br/>The <b>Reset</b> button resets the image rotation to zero.</li>
           <li><b>Image Shift</b>: Shifts the two views horizontally before compositing.<br/>This can reduce eye strain, improve fusion, or improve some anaglyph results.<br/>The <b>Reset</b> button resets the image shift to zero.</li>
           <li><b>Image Shift range selector</b>: Switches the Image Shift slider between a normal ±10% adjustment range and a wider ±20% range for stronger corrections, including close-up or macro anaglyphs.</li>
-          <li><b>Auto-crop shifted edges</b>: Only shown for Side-by-Side output. When enabled, the tool crops shifted edges to avoid blank areas. Anaglyph output always auto-crops internally.</li>
+          <li><b>Auto-crop shifted edges</b>: Only shown for Side-by-Side output. When enabled, the tool crops shifted edges to avoid blank areas.<br/>Anaglyph output always auto-crops internally.</li>
         </ul>
 
         <h4>Interactive preview behavior</h4>
-        <p>While you drag the Image Shift or Image Rotation slider, the tool renders a reduced-resolution interactive preview for faster feedback. When you release the slider, it regenerates the full-resolution JPEG using the current settings.</p>
+        <p>While you drag the Image Shift or Image Rotation slider, the tool renders a reduced-resolution interactive preview for faster feedback.<br/>When you release the slider, it regenerates the full-resolution JPEG using the current settings.</p>
 
         <h4>Side-by-Side output notes</h4>
         <ul>
@@ -1772,14 +1868,14 @@
         <ul>
           <li>Anaglyph output always uses the standard left/right stereo order internally.</li>
           <li>Anaglyph output always auto-crops shifted edges internally.</li>
-          <li>Different glasses may work better with different output modes. <b>Optimized Red / Cyan</b> is usually the best general starting point.</li>
+          <li>Different glasses may work better with different output modes.<br/><b>Optimized Red / Cyan</b> is usually the best general starting point.</li>
           <li>For some close-up or macro spatial photos, a larger Image Shift range may help produce a more comfortable or more accurate result.</li>
         </ul>
 
         <h4>Red / Cyan anaglyph modes</h4>
         <ul>
           <li><b>Color Red / Cyan</b>: Keeps more of the original color by taking the red channel from one eye and the green/blue channels from the other eye.<br/>This can look more colorful, but it may have more ghosting, color rivalry, and eye strain depending on the image and glasses.</li>
-          <li><b>Optimized Red / Cyan</b>: Uses a Dubois-style color matrix rather than simple channel copying.<br/>This usually reduces ghosting and improves stereo readability through red/cyan glasses, but it can shift the overall color balance. A slight green/cyan tint is normal in some images.</li>
+          <li><b>Optimized Red / Cyan</b>: Uses a Dubois-style color matrix rather than simple channel copying.<br/>This usually reduces ghosting and improves stereo readability through red/cyan glasses, but it can shift the overall color balance.<br/>A slight green/cyan tint is normal in some images.</li>
           <li><b>Grayscale Red / Cyan</b>: Converts both views to luminance before building the anaglyph.<br/>This usually gives the cleanest stereo separation and avoids most color conflicts, but the result is essentially monochrome.</li>
         </ul>
 
@@ -1792,7 +1888,11 @@
         </ul>
 
         <h4>Privacy</h4>
-        <p>All processing is performed locally in your browser. The selected HEIC file is not uploaded to a server by this tool.</p>
+        <ul>
+          <li>All processing is performed locally in your browser.</li>
+          <li>The selected HEIC file is not uploaded to a server by this tool.</li>
+          <li>Google Analytics is used to collect aggregate usage statistics for the tool.</li>
+        </ul>
 
         <hr style="margin-top:20px;">
 
@@ -1910,16 +2010,15 @@
   widthRange.addEventListener("input", updateControls);
 
   resetWidthButton.addEventListener("click", () => {
-    if (Number(widthRange.value) === 4096) {
-      updateControls();
-      return;
-    }
+    applyOutputWidth(OUTPUT_WIDTH_DEFAULT);
+  });
 
-    widthRange.value = "4096";
-    updateControls();
+  widthValue.addEventListener("click", promptForOutputWidth);
 
-    if (decodedViews.length >= 2 && downloadLink.href) {
-      convertToSbs().catch(err => setStatus(escapeHtml(err.message || String(err)), "error"));
+  widthValue.addEventListener("keydown", event => {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      promptForOutputWidth();
     }
   });
 
@@ -1999,9 +2098,7 @@
     }
   });
 
-  widthRange.addEventListener("change", () => {
-    if (decodedViews.length >= 2 && downloadLink.href) convertToSbs().catch(err => setStatus(escapeHtml(err.message || String(err)), "error"));
-  });
+  widthRange.addEventListener("change", regenerateFullOutputIfReady);
 
 
   autoCropStereoEdges.addEventListener("change", () => {
