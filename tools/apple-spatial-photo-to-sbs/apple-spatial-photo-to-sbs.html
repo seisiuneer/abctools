@@ -799,12 +799,10 @@
   </div>
 
 </div>
-
 <script type="text/javascript" src="libheif-bundle.js"></script>
-<script type="text/javascript" src="exif-heic.min.js"></script>
 <script type="text/javascript" src="piexif.min.js"></script>
+<script type="text/javascript" src="exif-reader.min.js"></script>
 <script type="text/javascript" src="daypilot-modal.min-3.10.1.js"></script>
-
 <script>
 (() => {
   "use strict";
@@ -943,15 +941,60 @@
   }
 
   function unwrapExifHeicValue(value) {
-    // exif-heic-js usually returns plain tag values, but this keeps the
-    // conversion tolerant if a future build returns { value, description }.
+    // ExifReader returns tag objects such as:
+    //   { value: ["Apple"], description: "Apple" }
+    //   { value: [1, 55], description: "1/55" }
+    //   { value: [[37,1],[46,1],[1234,100]], description: "37.767..." }
+    // Convert those into the plain values used by the existing EXIF writer.
     if (isPlainObject(value)) {
-      if (Object.prototype.hasOwnProperty.call(value, "value")) return value.value;
-      if (Object.prototype.hasOwnProperty.call(value, "raw")) return value.raw;
-      if (Object.prototype.hasOwnProperty.call(value, "description")) return value.description;
+      if (isExifHeicRational(value)) {
+        return value;
+      }
+
+      if (Object.prototype.hasOwnProperty.call(value, "value")) {
+        const raw = value.value;
+
+        if (Array.isArray(raw)) {
+          if (raw.length === 1 && typeof raw[0] === "string") {
+            return raw[0];
+          }
+
+          return raw;
+        }
+
+        if (raw !== undefined && raw !== null) {
+          return raw;
+        }
+      }
+
+      if (Object.prototype.hasOwnProperty.call(value, "raw")) {
+        return value.raw;
+      }
+
+      if (Object.prototype.hasOwnProperty.call(value, "description")) {
+        return value.description;
+      }
     }
 
     return value;
+  }
+
+  function normalizeExifReaderTags(rawTags) {
+    const normalized = {};
+
+    if (!rawTags || typeof rawTags !== "object") {
+      return normalized;
+    }
+
+    for (const [name, tag] of Object.entries(rawTags)) {
+      if (!name || name === "Thumbnail" || name === "thumbnail") {
+        continue;
+      }
+
+      normalized[name] = unwrapExifHeicValue(tag);
+    }
+
+    return normalized;
   }
 
   function safeInteger(value) {
@@ -1189,6 +1232,16 @@
     if (tagName === "SensingMethod") return normalizeSensingMethod(value);
     if (tagName === "SceneType") return normalizeSceneType(value);
 
+    if (tagName === "LensSpecification") {
+      if (Array.isArray(value)) {
+        const parts = value.map(part => normalizeRational(part)).filter(Boolean);
+        return parts.length ? parts : null;
+      }
+
+      const single = normalizeRational(value);
+      return single ? [single] : null;
+    }
+
     const rationalTagNames = new Set([
       "XResolution",
       "YResolution",
@@ -1308,12 +1361,13 @@
     { sourceNames: ["SensingMethod"], ifd: "Exif", piexifGroup: "ExifIFD", piexifName: "SensingMethod" },
     { sourceNames: ["SceneType"], ifd: "Exif", piexifGroup: "ExifIFD", piexifName: "SceneType" },
     { sourceNames: ["SubjectArea"], ifd: "Exif", piexifGroup: "ExifIFD", piexifName: "SubjectArea" },
-    { sourceNames: ["SubsecTimeOriginal"], ifd: "Exif", piexifGroup: "ExifIFD", piexifName: "SubsecTimeOriginal" },
-    { sourceNames: ["SubsecTimeDigitized"], ifd: "Exif", piexifGroup: "ExifIFD", piexifName: "SubsecTimeDigitized" },
+    { sourceNames: ["SubsecTimeOriginal", "SubSecTimeOriginal"], ifd: "Exif", piexifGroup: "ExifIFD", piexifName: "SubsecTimeOriginal", fallbackTagId: 37521 },
+    { sourceNames: ["SubsecTimeDigitized", "SubSecTimeDigitized"], ifd: "Exif", piexifGroup: "ExifIFD", piexifName: "SubsecTimeDigitized", fallbackTagId: 37522 },
     { sourceNames: ["DigitalZoomRatio", "DigitalZoomRation"], ifd: "Exif", piexifGroup: "ExifIFD", piexifName: "DigitalZoomRatio" },
     { sourceNames: ["FocalLengthIn35mmFilm", "FocalLengthIn35mmFormat"], ifd: "Exif", piexifGroup: "ExifIFD", piexifName: "FocalLengthIn35mmFilm" },
-    { sourceNames: ["LensMake"], ifd: "Exif", piexifGroup: "ExifIFD", piexifName: "LensMake" },
-    { sourceNames: ["LensModel"], ifd: "Exif", piexifGroup: "ExifIFD", piexifName: "LensModel" },
+    { sourceNames: ["LensSpecification", "LensSpec", "LensInfo"], ifd: "Exif", piexifGroup: "ExifIFD", piexifName: "LensSpecification", fallbackTagId: 42034 },
+    { sourceNames: ["LensMake"], ifd: "Exif", piexifGroup: "ExifIFD", piexifName: "LensMake", fallbackTagId: 42035 },
+    { sourceNames: ["LensModel"], ifd: "Exif", piexifGroup: "ExifIFD", piexifName: "LensModel", fallbackTagId: 42036 },
     { sourceNames: ["GPSLatitudeRef"], ifd: "GPS", piexifGroup: "GPSIFD", piexifName: "GPSLatitudeRef" },
     { sourceNames: ["GPSLatitude"], ifd: "GPS", piexifGroup: "GPSIFD", piexifName: "GPSLatitude" },
     { sourceNames: ["GPSLongitudeRef"], ifd: "GPS", piexifGroup: "GPSIFD", piexifName: "GPSLongitudeRef" },
@@ -1526,24 +1580,34 @@
     originalHeicExifTagCount = 0;
     originalHeicExifStatus = "not-read";
 
-    if (!file || typeof window.findEXIFinHEIC !== "function") {
+    if (!file || typeof window.ExifReader === "undefined" || typeof window.ExifReader.load !== "function") {
       originalHeicExifStatus = "unavailable";
-      //console.warn("exif-heic-js is not loaded; exported JPEGs will not include copied HEIC EXIF metadata.");
+      //console.warn("ExifReader is not loaded; exported JPEGs will not include copied HEIC EXIF metadata.");
       return null;
     }
 
     try {
       const buffer = await file.arrayBuffer();
-      const tags = await window.findEXIFinHEIC(buffer);
+      let rawTags;
+
+      try {
+        rawTags = await window.ExifReader.load(buffer, { expanded: false });
+      } catch (expandedErr) {
+        // Some ExifReader builds are more tolerant without options.
+        rawTags = await window.ExifReader.load(buffer);
+      }
+
+      const tags = normalizeExifReaderTags(rawTags);
 
       originalHeicExifTags = tags || {};
       originalHeicExifTagCount = Object.keys(originalHeicExifTags).length;
       originalHeicExifStatus = originalHeicExifTagCount ? "available" : "empty";
 
-      // Debug info for exif extraction:
-      // console.group("exif-heic-js extracted HEIC EXIF tags");
+      // Debug info for EXIF extraction:
+      // console.group("ExifReader extracted HEIC EXIF tags");
       // console.log("File:", file.name, file.size, "bytes");
-      // console.log("Raw tags:", originalHeicExifTags);
+      // console.log("Raw ExifReader tags:", rawTags);
+      // console.log("Normalized tags used for JPEG export:", originalHeicExifTags);
       // console.table(Object.entries(originalHeicExifTags).map(([name, value]) => ({
       //   name,
       //   value: Array.isArray(value) ? JSON.stringify(value) : String(value)
@@ -1553,7 +1617,7 @@
       return originalHeicExifTags;
     } catch (err) {
       originalHeicExifStatus = "error";
-      //console.warn("Could not extract EXIF metadata with exif-heic-js:", err);
+      //console.warn("Could not extract EXIF metadata with ExifReader:", err);
       return null;
     }
   }
