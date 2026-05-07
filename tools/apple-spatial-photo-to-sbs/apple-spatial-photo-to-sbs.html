@@ -855,6 +855,8 @@
   const OUTPUT_WIDTH_MIN = 1024;
   const OUTPUT_WIDTH_MAX = 8192;
   const OUTPUT_WIDTH_DEFAULT = 4096;
+  const PROCESSING_SOFTWARE_EXIF_TEXT =
+    "Michael Eskin's Apple Spatial Photo to Side-by-Side or 3D Anaglyph JPEG Tool";
 
   function escapeHtml(value) {
     return String(value)
@@ -1339,10 +1341,16 @@
 
   function getPiexifTagId(mapping) {
     const group = window.piexif?.[mapping.piexifGroup];
-    if (!group) return null;
 
-    const tagId = group[mapping.piexifName];
-    return tagId == null ? null : tagId;
+    if (group && group[mapping.piexifName] != null) {
+      return group[mapping.piexifName];
+    }
+
+    if (mapping.fallbackTagId != null) {
+      return mapping.fallbackTagId;
+    }
+
+    return null;
   }
 
   function addPiexifTagIfSerializable(exifObj, mapping, sourceName, rawValue, added, skipped) {
@@ -1435,26 +1443,29 @@
 
   function setRequiredOutputDimensionTags(exifObj, outputWidth, outputHeight, added, skipped) {
     const required = [
+      {
+        sourceName: "ProcessingSoftware",
+        rawValue: PROCESSING_SOFTWARE_EXIF_TEXT,
+        ifd: "0th",
+        piexifGroup: "ImageIFD",
+        piexifName: "ProcessingSoftware",
+        fallbackTagId: 11
+      },
       { sourceName: "Orientation", rawValue: 1, ifd: "0th", piexifGroup: "ImageIFD", piexifName: "Orientation" },
       { sourceName: "PixelXDimension", rawValue: outputWidth, ifd: "Exif", piexifGroup: "ExifIFD", piexifName: "PixelXDimension" },
       { sourceName: "PixelYDimension", rawValue: outputHeight, ifd: "Exif", piexifGroup: "ExifIFD", piexifName: "PixelYDimension" }
     ];
 
-    // Some readers show these 0th IFD dimensions; some do not. They are useful
-    // when supported, but the requested authoritative output dimensions are the
-    // ExifIFD PixelXDimension and PixelYDimension tags above.
-    if (window.piexif?.ImageIFD?.ImageWidth != null) {
-      required.push({ sourceName: "ImageWidth", rawValue: outputWidth, ifd: "0th", piexifGroup: "ImageIFD", piexifName: "ImageWidth" });
-    }
-
-    if (window.piexif?.ImageIFD?.ImageLength != null) {
-      required.push({ sourceName: "ImageLength", rawValue: outputHeight, ifd: "0th", piexifGroup: "ImageIFD", piexifName: "ImageLength" });
-    }
-
     for (const item of required) {
       addPiexifTagIfSerializable(
         exifObj,
-        { ifd: item.ifd, piexifGroup: item.piexifGroup, piexifName: item.piexifName, sourceNames: [item.sourceName] },
+        {
+          ifd: item.ifd,
+          piexifGroup: item.piexifGroup,
+          piexifName: item.piexifName,
+          sourceNames: [item.sourceName],
+          fallbackTagId: item.fallbackTagId
+        },
         item.sourceName,
         item.rawValue,
         added,
@@ -1482,7 +1493,7 @@
 
     for (const mapping of SAFE_EXIF_TAG_MAPPINGS) {
       // Pixel dimensions and orientation are intentionally overwritten later.
-      if (mapping.piexifName === "PixelXDimension" || mapping.piexifName === "PixelYDimension" || mapping.piexifName === "Orientation" || mapping.piexifName === "ImageWidth" || mapping.piexifName === "ImageLength") {
+      if (mapping.piexifName === "PixelXDimension" || mapping.piexifName === "PixelYDimension" || mapping.piexifName === "Orientation" ) {
         continue;
       }
 
