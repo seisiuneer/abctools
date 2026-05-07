@@ -782,7 +782,7 @@
     <p id="status">Loading HEIC decoder…</p>
 
     <div id="downloadActions" class="actions" style="display:none;">
-      <a id="downloadLink" class="download" download="spatial-photo.jpg" title="Download the generated JPEG, or open the iOS Share Sheet on iPhone or iPad.">Download JPEG</a>
+      <a id="downloadLink" class="download" download="spatial-photo.jpg" title="Generate the final full-resolution JPEG, then download it or open the iOS Share Sheet.">Generate &amp; Download JPEG</a>
     </div>
 
     <div class="meta">
@@ -802,6 +802,8 @@
 
 <script type="text/javascript" src="libheif-bundle.js"></script>
 <script type="text/javascript" src="daypilot-modal.min-3.10.1.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/gh/exif-heic-js/exif-heic-js/exif-heic.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/piexifjs@1.0.6/piexif.min.js"></script>
 <script>
 (() => {
   "use strict";
@@ -839,12 +841,16 @@
   let libheifReady = false;
   let heifModule = null;
   let decodedViews = [];
-  let lastUrl = null;
   let libheifReadyPromise = null;
   let currentFile = null;
   let lastBlob = null;
   let lastGeneratedFileName = "";
   let interactivePreviewDirty = false;
+  let originalHeicExifTags = null;
+  let originalHeicExifTagCount = 0;
+  let originalHeicExifStatus = "not-read";
+  let lastExifInsertStatus = "none";
+  let lastExifInsertTagCount = 0;
   const INTERACTIVE_PREVIEW_MAX_WIDTH = 1600;
   const OUTPUT_WIDTH_MIN = 1024;
   const OUTPUT_WIDTH_MAX = 8192;
@@ -899,6 +905,698 @@
       /^image\/heif-sequence$/i.test(type);
   }
 
+
+  function dataUrlToBlob(dataUrl) {
+    const comma = dataUrl.indexOf(",");
+    if (comma === -1) {
+      throw new Error("Invalid JPEG data URL.");
+    }
+
+    const header = dataUrl.slice(0, comma);
+    const base64 = dataUrl.slice(comma + 1);
+    const mimeMatch = /^data:([^;]+);base64$/i.exec(header);
+    const mimeType = mimeMatch ? mimeMatch[1] : "image/jpeg";
+    const binary = atob(base64);
+    const bytes = new Uint8Array(binary.length);
+
+    for (let i = 0; i < binary.length; i++) {
+      bytes[i] = binary.charCodeAt(i);
+    }
+
+    return new Blob([bytes], { type: mimeType });
+  }
+
+  function blobToDataUrl(blob) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(String(reader.result || ""));
+      reader.onerror = () => reject(reader.error || new Error("Could not read JPEG blob."));
+      reader.readAsDataURL(blob);
+    });
+  }
+
+  function isPlainObject(value) {
+    return !!value && typeof value === "object" && !Array.isArray(value);
+  }
+
+  function unwrapExifHeicValue(value) {
+    // exif-heic-js usually returns plain tag values, but this keeps the
+    // conversion tolerant if a future build returns { value, description }.
+    if (isPlainObject(value)) {
+      if (Object.prototype.hasOwnProperty.call(value, "value")) return value.value;
+      if (Object.prototype.hasOwnProperty.call(value, "raw")) return value.raw;
+      if (Object.prototype.hasOwnProperty.call(value, "description")) return value.description;
+    }
+
+    return value;
+  }
+
+  function safeInteger(value) {
+    const number = Number(value);
+    if (!Number.isFinite(number)) return null;
+    return Math.round(number);
+  }
+
+  function gcd(a, b) {
+    a = Math.abs(Math.round(a));
+    b = Math.abs(Math.round(b));
+
+    while (b) {
+      const t = b;
+      b = a % b;
+      a = t;
+    }
+
+    return a || 1;
+  }
+
+  function rationalFromNumber(value, maxDenominator = 1000000) {
+    const number = Number(value);
+    if (!Number.isFinite(number)) return null;
+
+    const sign = number < 0 ? -1 : 1;
+    const denominator = maxDenominator;
+    let numerator = Math.round(Math.abs(number) * denominator) * sign;
+    const divisor = gcd(numerator, denominator);
+
+    numerator = Math.round(numerator / divisor);
+    const reducedDenominator = Math.round(denominator / divisor);
+
+    if (!Number.isFinite(numerator) || !Number.isFinite(reducedDenominator) || reducedDenominator === 0) {
+      return null;
+    }
+
+    return [numerator, reducedDenominator];
+  }
+
+  function isExifHeicRational(value) {
+    return value &&
+      typeof value === "object" &&
+      !Array.isArray(value) &&
+      Number.isFinite(Number(value.numerator)) &&
+      Number.isFinite(Number(value.denominator)) &&
+      Number(value.denominator) !== 0;
+  }
+
+  function normalizeRational(value) {
+    value = unwrapExifHeicValue(value);
+
+    if (isExifHeicRational(value)) {
+      return [
+        Math.round(Number(value.numerator)),
+        Math.round(Number(value.denominator))
+      ];
+    }
+
+    if (Array.isArray(value)) {
+      if (value.length === 2 && Number.isFinite(Number(value[0])) && Number.isFinite(Number(value[1])) && Number(value[1]) !== 0) {
+        return [Math.round(Number(value[0])), Math.round(Number(value[1]))];
+      }
+
+      if (value.length === 1) {
+        return rationalFromNumber(value[0]);
+      }
+    }
+
+    return rationalFromNumber(value);
+  }
+
+  function decimalDegreesToDmsRationals(value) {
+    const absolute = Math.abs(Number(value) || 0);
+    const degrees = Math.floor(absolute);
+    const minutesFloat = (absolute - degrees) * 60;
+    const minutes = Math.floor(minutesFloat);
+    const seconds = (minutesFloat - minutes) * 60;
+
+    return [
+      [degrees, 1],
+      [minutes, 1],
+      rationalFromNumber(seconds, 1000000)
+    ];
+  }
+
+  function normalizeGpsCoordinate(value) {
+    value = unwrapExifHeicValue(value);
+
+    if (Array.isArray(value)) {
+      if (value.length === 3) {
+        return value.map(part => normalizeRational(part));
+      }
+
+      if (value.length === 6) {
+        return [
+          [Number(value[0]), Number(value[1]) || 1],
+          [Number(value[2]), Number(value[3]) || 1],
+          [Number(value[4]), Number(value[5]) || 1]
+        ];
+      }
+    }
+
+    return decimalDegreesToDmsRationals(value);
+  }
+
+  function byteStringFromValue(value) {
+    value = unwrapExifHeicValue(value);
+
+    if (value == null) return "";
+
+    if (value instanceof Uint8Array) {
+      let out = "";
+      for (let i = 0; i < value.length; i++) out += String.fromCharCode(value[i]);
+      return out;
+    }
+
+    if (Array.isArray(value)) {
+      let out = "";
+      for (const item of value) {
+        const byte = Math.max(0, Math.min(255, Number(item) || 0));
+        out += String.fromCharCode(byte);
+      }
+      return out;
+    }
+
+    return String(value);
+  }
+
+  function normalizeExposureProgram(value) {
+    value = unwrapExifHeicValue(value);
+    if (typeof value === "number") return safeInteger(value);
+
+    const text = String(value || "").toLowerCase();
+    if (!text) return null;
+
+    if (text.includes("not defined")) return 0;
+    if (text.includes("manual")) return 1;
+    if (text.includes("normal")) return 2;
+    if (text.includes("aperture")) return 3;
+    if (text.includes("shutter")) return 4;
+    if (text.includes("creative")) return 5;
+    if (text.includes("action")) return 6;
+    if (text.includes("portrait")) return 7;
+    if (text.includes("landscape")) return 8;
+
+    return safeInteger(value);
+  }
+
+  function normalizeMeteringMode(value) {
+    value = unwrapExifHeicValue(value);
+    if (typeof value === "number") return safeInteger(value);
+
+    const text = String(value || "").toLowerCase();
+    if (!text) return null;
+
+    if (text.includes("unknown")) return 0;
+    if (text.includes("average") && !text.includes("center")) return 1;
+    if (text.includes("center")) return 2;
+    if (text.includes("spot") && !text.includes("multi")) return 3;
+    if (text.includes("multi")) return 4;
+    if (text.includes("pattern")) return 5;
+    if (text.includes("partial")) return 6;
+    if (text.includes("other")) return 255;
+
+    return safeInteger(value);
+  }
+
+  function normalizeWhiteBalance(value) {
+    value = unwrapExifHeicValue(value);
+    if (typeof value === "number") return safeInteger(value);
+
+    const text = String(value || "").toLowerCase();
+    if (!text) return null;
+
+    if (text.includes("auto")) return 0;
+    if (text.includes("manual")) return 1;
+
+    return safeInteger(value);
+  }
+
+  function normalizeFlash(value) {
+    value = unwrapExifHeicValue(value);
+    if (typeof value === "number") return safeInteger(value);
+
+    const text = String(value || "").toLowerCase();
+    if (!text) return null;
+
+    if (text.includes("did not fire") && text.includes("compulsory")) return 16;
+    if (text.includes("did not fire")) return 0;
+    if (text.includes("fired") && text.includes("red-eye") && text.includes("return") && text.includes("detected")) return 71;
+    if (text.includes("fired") && text.includes("red-eye")) return 65;
+    if (text.includes("fired") && text.includes("compulsory")) return 9;
+    if (text.includes("fired")) return 1;
+
+    return safeInteger(value);
+  }
+
+  function normalizeSensingMethod(value) {
+    value = unwrapExifHeicValue(value);
+    if (typeof value === "number") return safeInteger(value);
+
+    const text = String(value || "").toLowerCase();
+    if (!text || text.includes("not defined")) return 1;
+    if (text.includes("one-chip")) return 2;
+    if (text.includes("two-chip")) return 3;
+    if (text.includes("three-chip")) return 4;
+    if (text.includes("color sequential area")) return 5;
+    if (text.includes("trilinear")) return 7;
+    if (text.includes("color sequential linear")) return 8;
+
+    return safeInteger(value);
+  }
+
+  function normalizeSceneType(value) {
+    value = unwrapExifHeicValue(value);
+    if (typeof value === "number") return String.fromCharCode(Math.max(0, Math.min(255, safeInteger(value) ?? 0)));
+
+    const text = String(value || "").toLowerCase();
+    if (text.includes("directly photographed")) return String.fromCharCode(1);
+
+    const integer = safeInteger(value);
+    return integer === null ? null : String.fromCharCode(Math.max(0, Math.min(255, integer)));
+  }
+
+  function normalizeExifValueForPiexif(ifdName, tagId, tagName, value) {
+    value = unwrapExifHeicValue(value);
+
+    if (value == null) return null;
+
+    if (tagName === "ExposureProgram") return normalizeExposureProgram(value);
+    if (tagName === "MeteringMode") return normalizeMeteringMode(value);
+    if (tagName === "WhiteBalance") return normalizeWhiteBalance(value);
+    if (tagName === "Flash") return normalizeFlash(value);
+    if (tagName === "SensingMethod") return normalizeSensingMethod(value);
+    if (tagName === "SceneType") return normalizeSceneType(value);
+
+    const rationalTagNames = new Set([
+      "XResolution",
+      "YResolution",
+      "ExposureTime",
+      "FNumber",
+      "FocalLength",
+      "ApertureValue",
+      "DigitalZoomRatio",
+      "GPSAltitude",
+      "GPSSpeed",
+      "GPSImgDirection"
+    ]);
+
+    const signedRationalTagNames = new Set([
+      "ShutterSpeedValue",
+      "BrightnessValue",
+      "ExposureBiasValue"
+    ]);
+
+    if (rationalTagNames.has(tagName) || signedRationalTagNames.has(tagName)) {
+      return normalizeRational(value);
+    }
+
+    if (tagName === "GPSLatitude" || tagName === "GPSLongitude") {
+      return normalizeGpsCoordinate(value);
+    }
+
+    if (tagName === "GPSLatitudeRef" || tagName === "GPSLongitudeRef" || tagName === "GPSStatus" || tagName === "GPSMeasureMode" || tagName === "GPSSpeedRef" || tagName === "GPSTrackRef" || tagName === "GPSImgDirectionRef" || tagName === "GPSDestLatitudeRef" || tagName === "GPSDestLongitudeRef" || tagName === "GPSDestBearingRef" || tagName === "GPSDestDistanceRef") {
+      return String(value).trim();
+    }
+
+    if (tagName === "GPSTimeStamp") {
+      if (Array.isArray(value)) return value.map(part => normalizeRational(part));
+      if (typeof value === "string") {
+        const parts = value.split(":").map(Number);
+        if (parts.length >= 3 && parts.every(Number.isFinite)) {
+          return [[parts[0], 1], [parts[1], 1], rationalFromNumber(parts[2], 1000000)];
+        }
+      }
+    }
+
+    const tagInfo = window.piexif?.TAGS?.[ifdName]?.[tagId] || {};
+    const type = Number(tagInfo.type);
+
+    if (type === 2) { // ASCII
+      return String(value);
+    }
+
+    if (type === 5 || type === 10) { // RATIONAL / SRATIONAL
+      if (Array.isArray(value) && value.length && Array.isArray(value[0])) {
+        return value.map(part => normalizeRational(part));
+      }
+      return normalizeRational(value);
+    }
+
+    if (type === 1) { // BYTE
+      if (Array.isArray(value)) {
+        return value.map(item => safeInteger(item)).filter(item => item !== null);
+      }
+      return safeInteger(value);
+    }
+
+    if (type === 3 || type === 4 || type === 9) { // SHORT / LONG / SLONG
+      if (Array.isArray(value)) {
+        return value.map(item => safeInteger(item)).filter(item => item !== null);
+      }
+      return safeInteger(value);
+    }
+
+    if (type === 7) { // UNDEFINED
+      return byteStringFromValue(value);
+    }
+
+    if (Array.isArray(value)) {
+      if (value.every(item => Number.isFinite(Number(item)))) {
+        return value.map(item => Number(item));
+      }
+      return value.map(item => String(item));
+    }
+
+    if (typeof value === "number") return value;
+    if (typeof value === "boolean") return value ? 1 : 0;
+
+    return String(value);
+  }
+
+  const SAFE_EXIF_TAG_MAPPINGS = [
+    // 0th IFD: broadly supported descriptive/camera tags.
+    { sourceNames: ["Make"], ifd: "0th", piexifGroup: "ImageIFD", piexifName: "Make" },
+    { sourceNames: ["Model"], ifd: "0th", piexifGroup: "ImageIFD", piexifName: "Model" },
+    { sourceNames: ["Software"], ifd: "0th", piexifGroup: "ImageIFD", piexifName: "Software" },
+    { sourceNames: ["DateTime", "ModifyDate"], ifd: "0th", piexifGroup: "ImageIFD", piexifName: "DateTime" },
+    { sourceNames: ["XResolution"], ifd: "0th", piexifGroup: "ImageIFD", piexifName: "XResolution" },
+    { sourceNames: ["YResolution"], ifd: "0th", piexifGroup: "ImageIFD", piexifName: "YResolution" },
+    { sourceNames: ["ResolutionUnit"], ifd: "0th", piexifGroup: "ImageIFD", piexifName: "ResolutionUnit" },
+    { sourceNames: ["Artist"], ifd: "0th", piexifGroup: "ImageIFD", piexifName: "Artist" },
+    { sourceNames: ["Copyright"], ifd: "0th", piexifGroup: "ImageIFD", piexifName: "Copyright" },
+    { sourceNames: ["ImageDescription"], ifd: "0th", piexifGroup: "ImageIFD", piexifName: "ImageDescription" },
+
+    // Exif IFD: common capture metadata that piexifjs can usually re-encode safely.
+    { sourceNames: ["DateTimeOriginal"], ifd: "Exif", piexifGroup: "ExifIFD", piexifName: "DateTimeOriginal" },
+    { sourceNames: ["DateTimeDigitized", "CreateDate"], ifd: "Exif", piexifGroup: "ExifIFD", piexifName: "DateTimeDigitized" },
+    { sourceNames: ["ExposureTime"], ifd: "Exif", piexifGroup: "ExifIFD", piexifName: "ExposureTime" },
+    { sourceNames: ["FNumber"], ifd: "Exif", piexifGroup: "ExifIFD", piexifName: "FNumber" },
+    { sourceNames: ["ISOSpeedRatings", "PhotographicSensitivity", "ISO"], ifd: "Exif", piexifGroup: "ExifIFD", piexifName: "ISOSpeedRatings" },
+    { sourceNames: ["FocalLength"], ifd: "Exif", piexifGroup: "ExifIFD", piexifName: "FocalLength" },
+    { sourceNames: ["ExposureBiasValue", "ExposureBias"], ifd: "Exif", piexifGroup: "ExifIFD", piexifName: "ExposureBiasValue" },
+    { sourceNames: ["ShutterSpeedValue"], ifd: "Exif", piexifGroup: "ExifIFD", piexifName: "ShutterSpeedValue" },
+    { sourceNames: ["ApertureValue"], ifd: "Exif", piexifGroup: "ExifIFD", piexifName: "ApertureValue" },
+    { sourceNames: ["BrightnessValue"], ifd: "Exif", piexifGroup: "ExifIFD", piexifName: "BrightnessValue" },
+    { sourceNames: ["MeteringMode"], ifd: "Exif", piexifGroup: "ExifIFD", piexifName: "MeteringMode" },
+    { sourceNames: ["Flash"], ifd: "Exif", piexifGroup: "ExifIFD", piexifName: "Flash" },
+    { sourceNames: ["WhiteBalance"], ifd: "Exif", piexifGroup: "ExifIFD", piexifName: "WhiteBalance" },
+    { sourceNames: ["ExposureProgram"], ifd: "Exif", piexifGroup: "ExifIFD", piexifName: "ExposureProgram" },
+    { sourceNames: ["ExposureMode"], ifd: "Exif", piexifGroup: "ExifIFD", piexifName: "ExposureMode" },
+    { sourceNames: ["ColorSpace"], ifd: "Exif", piexifGroup: "ExifIFD", piexifName: "ColorSpace" },
+    { sourceNames: ["SensingMethod"], ifd: "Exif", piexifGroup: "ExifIFD", piexifName: "SensingMethod" },
+    { sourceNames: ["SceneType"], ifd: "Exif", piexifGroup: "ExifIFD", piexifName: "SceneType" },
+    { sourceNames: ["SubjectArea"], ifd: "Exif", piexifGroup: "ExifIFD", piexifName: "SubjectArea" },
+    { sourceNames: ["SubsecTimeOriginal"], ifd: "Exif", piexifGroup: "ExifIFD", piexifName: "SubsecTimeOriginal" },
+    { sourceNames: ["SubsecTimeDigitized"], ifd: "Exif", piexifGroup: "ExifIFD", piexifName: "SubsecTimeDigitized" },
+    { sourceNames: ["DigitalZoomRatio", "DigitalZoomRation"], ifd: "Exif", piexifGroup: "ExifIFD", piexifName: "DigitalZoomRatio" },
+    { sourceNames: ["FocalLengthIn35mmFilm", "FocalLengthIn35mmFormat"], ifd: "Exif", piexifGroup: "ExifIFD", piexifName: "FocalLengthIn35mmFilm" },
+    { sourceNames: ["LensMake"], ifd: "Exif", piexifGroup: "ExifIFD", piexifName: "LensMake" },
+    { sourceNames: ["LensModel"], ifd: "Exif", piexifGroup: "ExifIFD", piexifName: "LensModel" },
+    { sourceNames: ["GPSLatitudeRef"], ifd: "GPS", piexifGroup: "GPSIFD", piexifName: "GPSLatitudeRef" },
+    { sourceNames: ["GPSLatitude"], ifd: "GPS", piexifGroup: "GPSIFD", piexifName: "GPSLatitude" },
+    { sourceNames: ["GPSLongitudeRef"], ifd: "GPS", piexifGroup: "GPSIFD", piexifName: "GPSLongitudeRef" },
+    { sourceNames: ["GPSLongitude"], ifd: "GPS", piexifGroup: "GPSIFD", piexifName: "GPSLongitude" },
+    { sourceNames: ["GPSAltitudeRef"], ifd: "GPS", piexifGroup: "GPSIFD", piexifName: "GPSAltitudeRef" },
+    { sourceNames: ["GPSAltitude"], ifd: "GPS", piexifGroup: "GPSIFD", piexifName: "GPSAltitude" },
+    { sourceNames: ["GPSDateStamp"], ifd: "GPS", piexifGroup: "GPSIFD", piexifName: "GPSDateStamp" },
+    { sourceNames: ["GPSTimeStamp"], ifd: "GPS", piexifGroup: "GPSIFD", piexifName: "GPSTimeStamp" },
+    { sourceNames: ["GPSSpeedRef"], ifd: "GPS", piexifGroup: "GPSIFD", piexifName: "GPSSpeedRef" },
+    { sourceNames: ["GPSSpeed"], ifd: "GPS", piexifGroup: "GPSIFD", piexifName: "GPSSpeed" },
+    { sourceNames: ["GPSImgDirectionRef"], ifd: "GPS", piexifGroup: "GPSIFD", piexifName: "GPSImgDirectionRef" },
+    { sourceNames: ["GPSImgDirection"], ifd: "GPS", piexifGroup: "GPSIFD", piexifName: "GPSImgDirection" }
+  ];
+
+  function getTagValueByAliases(tags, sourceNames) {
+    if (!tags || !sourceNames) return { found: false, sourceName: "", value: undefined };
+
+    for (const name of sourceNames) {
+      if (Object.prototype.hasOwnProperty.call(tags, name)) {
+        return { found: true, sourceName: name, value: tags[name] };
+      }
+    }
+
+    return { found: false, sourceName: "", value: undefined };
+  }
+
+  function getPiexifTagId(mapping) {
+    const group = window.piexif?.[mapping.piexifGroup];
+    if (!group) return null;
+
+    const tagId = group[mapping.piexifName];
+    return tagId == null ? null : tagId;
+  }
+
+  function addPiexifTagIfSerializable(exifObj, mapping, sourceName, rawValue, added, skipped) {
+    const tagId = getPiexifTagId(mapping);
+
+    if (tagId == null) {
+      skipped.push({ name: sourceName || mapping.sourceNames[0], target: mapping.piexifName, reason: "piexif tag constant not available" });
+      return false;
+    }
+
+    try {
+      const normalized = normalizeExifValueForPiexif(mapping.ifd, tagId, mapping.piexifName, rawValue);
+
+      if (normalized === null || normalized === undefined || (Array.isArray(normalized) && normalized.length === 0)) {
+        skipped.push({ name: sourceName || mapping.sourceNames[0], target: mapping.piexifName, reason: "empty/unsupported value" });
+        return false;
+      }
+
+      const previousHadValue = Object.prototype.hasOwnProperty.call(exifObj[mapping.ifd], tagId);
+      const previousValue = exifObj[mapping.ifd][tagId];
+
+      exifObj[mapping.ifd][tagId] = normalized;
+
+      try {
+        // Validate incrementally. This prevents one unsupported value from causing
+        // the whole copied EXIF set to be discarded.
+        piexif.dump(exifObj);
+        added.push({
+          name: sourceName || mapping.sourceNames[0],
+          target: mapping.piexifName,
+          ifd: mapping.ifd,
+          tagId,
+          value: normalized
+        });
+        return true;
+      } catch (dumpErr) {
+        if (previousHadValue) {
+          exifObj[mapping.ifd][tagId] = previousValue;
+        } else {
+          delete exifObj[mapping.ifd][tagId];
+        }
+
+        skipped.push({
+          name: sourceName || mapping.sourceNames[0],
+          target: mapping.piexifName,
+          reason: `piexif could not serialize value: ${dumpErr.message || String(dumpErr)}`
+        });
+        return false;
+      }
+    } catch (err) {
+      skipped.push({ name: sourceName || mapping.sourceNames[0], target: mapping.piexifName, reason: err.message || String(err) });
+      return false;
+    }
+  }
+
+  function deriveGpsRefsIfNeeded(exifObj, tags, added, skipped) {
+    if (!window.piexif?.GPSIFD) return;
+
+    const gps = exifObj.GPS;
+    const latTag = piexif.GPSIFD.GPSLatitude;
+    const lonTag = piexif.GPSIFD.GPSLongitude;
+    const latRefTag = piexif.GPSIFD.GPSLatitudeRef;
+    const lonRefTag = piexif.GPSIFD.GPSLongitudeRef;
+
+    const latValue = unwrapExifHeicValue(tags?.GPSLatitude);
+    const lonValue = unwrapExifHeicValue(tags?.GPSLongitude);
+
+    if (latTag != null && latRefTag != null && gps[latTag] && !gps[latRefTag] && typeof latValue === "number") {
+      addPiexifTagIfSerializable(
+        exifObj,
+        { ifd: "GPS", piexifGroup: "GPSIFD", piexifName: "GPSLatitudeRef", sourceNames: ["GPSLatitudeRef"] },
+        "GPSLatitudeRef",
+        latValue < 0 ? "S" : "N",
+        added,
+        skipped
+      );
+    }
+
+    if (lonTag != null && lonRefTag != null && gps[lonTag] && !gps[lonRefTag] && typeof lonValue === "number") {
+      addPiexifTagIfSerializable(
+        exifObj,
+        { ifd: "GPS", piexifGroup: "GPSIFD", piexifName: "GPSLongitudeRef", sourceNames: ["GPSLongitudeRef"] },
+        "GPSLongitudeRef",
+        lonValue < 0 ? "W" : "E",
+        added,
+        skipped
+      );
+    }
+  }
+
+  function setRequiredOutputDimensionTags(exifObj, outputWidth, outputHeight, added, skipped) {
+    const required = [
+      { sourceName: "Orientation", rawValue: 1, ifd: "0th", piexifGroup: "ImageIFD", piexifName: "Orientation" },
+      { sourceName: "PixelXDimension", rawValue: outputWidth, ifd: "Exif", piexifGroup: "ExifIFD", piexifName: "PixelXDimension" },
+      { sourceName: "PixelYDimension", rawValue: outputHeight, ifd: "Exif", piexifGroup: "ExifIFD", piexifName: "PixelYDimension" }
+    ];
+
+    // Some readers show these 0th IFD dimensions; some do not. They are useful
+    // when supported, but the requested authoritative output dimensions are the
+    // ExifIFD PixelXDimension and PixelYDimension tags above.
+    if (window.piexif?.ImageIFD?.ImageWidth != null) {
+      required.push({ sourceName: "ImageWidth", rawValue: outputWidth, ifd: "0th", piexifGroup: "ImageIFD", piexifName: "ImageWidth" });
+    }
+
+    if (window.piexif?.ImageIFD?.ImageLength != null) {
+      required.push({ sourceName: "ImageLength", rawValue: outputHeight, ifd: "0th", piexifGroup: "ImageIFD", piexifName: "ImageLength" });
+    }
+
+    for (const item of required) {
+      addPiexifTagIfSerializable(
+        exifObj,
+        { ifd: item.ifd, piexifGroup: item.piexifGroup, piexifName: item.piexifName, sourceNames: [item.sourceName] },
+        item.sourceName,
+        item.rawValue,
+        added,
+        skipped
+      );
+    }
+  }
+
+  function buildPiexifObjectFromHeicTags(tags, outputWidth, outputHeight) {
+    const exifObj = {
+      "0th": {},
+      Exif: {},
+      GPS: {},
+      Interop: {},
+      "1st": {},
+      thumbnail: null
+    };
+
+    const skipped = [];
+    const added = [];
+
+    if (!window.piexif) {
+      return { exifObj, added, skipped: [{ name: "piexif", reason: "piexifjs is not loaded" }] };
+    }
+
+    for (const mapping of SAFE_EXIF_TAG_MAPPINGS) {
+      // Pixel dimensions and orientation are intentionally overwritten later.
+      if (mapping.piexifName === "PixelXDimension" || mapping.piexifName === "PixelYDimension" || mapping.piexifName === "Orientation" || mapping.piexifName === "ImageWidth" || mapping.piexifName === "ImageLength") {
+        continue;
+      }
+
+      const found = getTagValueByAliases(tags, mapping.sourceNames);
+      if (!found.found) continue;
+
+      addPiexifTagIfSerializable(exifObj, mapping, found.sourceName, found.value, added, skipped);
+    }
+
+    deriveGpsRefsIfNeeded(exifObj, tags, added, skipped);
+
+    // The exported JPEG pixels are newly rendered. Make sure dimensional metadata
+    // describes the exported JPEG, not the original HEIC view.
+    setRequiredOutputDimensionTags(exifObj, outputWidth, outputHeight, added, skipped);
+
+    return { exifObj, added, skipped };
+  }
+
+  function dumpPiexifWithFallback(exifObj, added) {
+    try {
+      return { exifStr: piexif.dump(exifObj), retained: [...added], removed: [] };
+    } catch (firstError) {
+      return { exifStr: "", retained: [], removed: [], firstError };
+    }
+  }
+
+  async function extractExifTagsFromHeicFile(file) {
+    originalHeicExifTags = null;
+    originalHeicExifTagCount = 0;
+    originalHeicExifStatus = "not-read";
+
+    if (!file || typeof window.findEXIFinHEIC !== "function") {
+      originalHeicExifStatus = "unavailable";
+      //console.warn("exif-heic-js is not loaded; exported JPEGs will not include copied HEIC EXIF metadata.");
+      return null;
+    }
+
+    try {
+      const buffer = await file.arrayBuffer();
+      const tags = await window.findEXIFinHEIC(buffer);
+
+      originalHeicExifTags = tags || {};
+      originalHeicExifTagCount = Object.keys(originalHeicExifTags).length;
+      originalHeicExifStatus = originalHeicExifTagCount ? "available" : "empty";
+
+      // Debug info for exif extraction:
+      // console.group("exif-heic-js extracted HEIC EXIF tags");
+      // console.log("File:", file.name, file.size, "bytes");
+      // console.log("Raw tags:", originalHeicExifTags);
+      // console.table(Object.entries(originalHeicExifTags).map(([name, value]) => ({
+      //   name,
+      //   value: Array.isArray(value) ? JSON.stringify(value) : String(value)
+      // })));
+      // console.groupEnd();
+
+      return originalHeicExifTags;
+    } catch (err) {
+      originalHeicExifStatus = "error";
+      //console.warn("Could not extract EXIF metadata with exif-heic-js:", err);
+      return null;
+    }
+  }
+
+  async function insertHeicExifIntoJpegBlob(jpegBlob, outputWidth, outputHeight) {
+    lastExifInsertStatus = "none";
+    lastExifInsertTagCount = 0;
+
+    if (!jpegBlob || !window.piexif) {
+      lastExifInsertStatus = "piexif-unavailable";
+      return jpegBlob;
+    }
+
+    if (!originalHeicExifTags || !Object.keys(originalHeicExifTags).length) {
+      lastExifInsertStatus = originalHeicExifStatus || "no-source-exif";
+      return jpegBlob;
+    }
+
+    try {
+      const jpegDataUrl = await blobToDataUrl(jpegBlob);
+      const { exifObj, added, skipped } = buildPiexifObjectFromHeicTags(originalHeicExifTags, outputWidth, outputHeight);
+      const { exifStr, retained, removed, firstError } = dumpPiexifWithFallback(exifObj, added);
+
+      if (!exifStr) {
+        lastExifInsertStatus = "dump-error";
+        //if (firstError) console.warn("Could not serialize safe EXIF subset:", firstError);
+        return jpegBlob;
+      }
+
+      const jpegWithExifDataUrl = piexif.insert(exifStr, jpegDataUrl);
+      const outBlob = dataUrlToBlob(jpegWithExifDataUrl);
+
+      lastExifInsertStatus = "inserted";
+      lastExifInsertTagCount = retained.length;
+
+      // Metadata debug info:
+      // console.group("Inserted HEIC EXIF metadata into exported JPEG");
+      // console.log("Output dimensions:", outputWidth, outputHeight);
+      // console.log("Copied tag count:", retained.length);
+      // console.log("Skipped tag count:", skipped.length);
+      // console.log("Removed during piexif serialization:", removed.length);
+      // if (firstError) console.warn("Initial piexif.dump() error:", firstError);
+      // if (skipped.length) console.table(skipped);
+      // if (removed.length) console.table(removed);
+      // console.log("piexif object:", exifObj);
+      // console.groupEnd();
+
+      return outBlob;
+    } catch (err) {
+      lastExifInsertStatus = "error";
+      //console.warn("Could not insert HEIC EXIF metadata into exported JPEG:", err);
+      return jpegBlob;
+    }
+  }
+
   async function shareJpegOnIOS() {
     if (!lastBlob) {
       setStatus("No JPEG has been generated yet.", "error");
@@ -928,14 +1626,14 @@
       if (err && err.name === "AbortError") {
         setStatus("Share cancelled.", "ok");
       } else {
-        console.error(err);
+        //console.error(err);
         setStatus(escapeHtml(err.message || String(err)), "error");
       }
     }
   }
 
   async function processSpatialPhotoFile(file) {
-    revokeLastUrl();
+    clearGeneratedOutput();
     decodedViews = [];
     currentFile = file || null;
 
@@ -960,15 +1658,17 @@
     outputMeta.textContent = "No JPEG generated yet.";
 
     try {
+      await extractExifTagsFromHeicFile(file);
+
       if (!libheifReady) {
         setStatus("Waiting for HEIC decoder to finish loading…");
         await libheifReadyPromise;
       }
 
       await decodeHeicFile(file);
-      await convertToSbs({ preserveDownloadUi: true });
+      await convertToSbs({ previewOnly: true });
     } catch (err) {
-      console.error(err);
+      //console.error(err);
       setStatus(escapeHtml(err.message || String(err)), "error");
       sourceMeta.textContent = "Decode failed.";
     }
@@ -1065,9 +1765,9 @@
     return numeric;
   }
 
-  function regenerateFullOutputIfReady() {
-    if (decodedViews.length >= 2 && downloadLink.href) {
-      convertToSbs().catch(err => setStatus(escapeHtml(err.message || String(err)), "error"));
+  function regeneratePreviewIfReady() {
+    if (decodedViews.length >= 2) {
+      convertToSbs({ previewOnly: true }).catch(err => setStatus(escapeHtml(err.message || String(err)), "error"));
     }
   }
 
@@ -1085,7 +1785,7 @@
     updateControls();
 
     if (clampedWidth !== previousWidth) {
-      regenerateFullOutputIfReady();
+      regeneratePreviewIfReady();
     }
   }
 
@@ -1117,28 +1817,37 @@
     applyOutputWidth(args.result);
   }
 
-  function revokeLastUrl(options = {}) {
-    const preserveDownloadUi = !!options.preserveDownloadUi;
+  function updateGenerateButtonVisibility() {
+    const hasStereoPair = decodedViews.length >= 2;
 
-    if (lastUrl) {
-      URL.revokeObjectURL(lastUrl);
-      lastUrl = null;
-    }
-
-    lastBlob = null;
-    lastGeneratedFileName = "";
-    interactivePreviewDirty = false;
-
-    if (preserveDownloadUi && downloadActions.style.display !== "none") {
-      downloadLink.removeAttribute("href");
-      downloadLink.classList.add("busy");
-      downloadLink.textContent = "Preparing JPEG…";
-      downloadLink.style.display = "block";
-      downloadActions.style.display = "grid";
-    } else {
+    if (!hasStereoPair) {
       downloadLink.classList.remove("busy");
       downloadLink.style.display = "none";
       downloadLink.removeAttribute("href");
+      downloadActions.style.display = "none";
+      return;
+    }
+
+    downloadLink.classList.remove("busy");
+    downloadLink.removeAttribute("href");
+    downloadLink.textContent = isIOSDevice() ? "Generate & Share JPEG" : "Generate & Download JPEG";
+    downloadLink.style.display = "block";
+    downloadActions.style.display = "grid";
+  }
+
+  function clearGeneratedOutput(options = {}) {
+    const keepGenerateButton = !!options.keepGenerateButton;
+
+    lastBlob = null;
+    lastGeneratedFileName = "";
+
+    downloadLink.classList.remove("busy");
+    downloadLink.removeAttribute("href");
+
+    if (keepGenerateButton && decodedViews.length >= 2) {
+      updateGenerateButtonVisibility();
+    } else {
+      downloadLink.style.display = "none";
       downloadActions.style.display = "none";
     }
   }
@@ -1292,7 +2001,7 @@
   }
 
   async function decodeHeicFile(file) {
-    revokeLastUrl();
+    clearGeneratedOutput();
     decodedViews = [];
     canvas.style.display = "none";
     canvas.width = 0;
@@ -1342,7 +2051,7 @@
 
     decodedViews = chooseStereoPair(rendered);
     sourceMeta.textContent = `Decoded ${rendered.length} image view(s). Using ${decodedViews[0].width}×${decodedViews[0].height} and ${decodedViews[1].width}×${decodedViews[1].height}.`;
-    setStatus("Stereo pair decoded.&nbsp;&nbsp;Creating JPEG…", "ok");
+    setStatus("Stereo pair decoded.&nbsp;&nbsp;Creating preview…", "ok");
   }
 
   function chooseStereoPair(images) {
@@ -1671,7 +2380,11 @@
 
     try {
       if (!previewOnly) {
-        revokeLastUrl({ preserveDownloadUi });
+        clearGeneratedOutput({ keepGenerateButton: true });
+        downloadLink.classList.add("busy");
+        downloadLink.textContent = isIOSDevice() ? "Preparing Share…" : "Preparing JPEG…";
+        downloadLink.style.display = "block";
+        downloadActions.style.display = "grid";
       }
 
       const mode = outputFormat.value;
@@ -1776,18 +2489,25 @@
 
       if (previewOnly) {
         interactivePreviewDirty = true;
-        setStatus(`Interactive preview updated.&nbsp;&nbsp;Release the slider to generate the full-resolution ${modeLabel} JPEG for download.`, "ok");
+        if (lastBlob) {
+          clearGeneratedOutput({ keepGenerateButton: true });
+        } else {
+          updateGenerateButtonVisibility();
+        }
+        outputMeta.textContent = `Preview updated. Click ${isIOSDevice() ? "Generate & Share JPEG" : "Generate & Download JPEG"} to create the full-resolution JPEG.`;
+        setStatus(`Preview updated.&nbsp;&nbsp;Click <b>${isIOSDevice() ? "Generate & Share JPEG" : "Generate & Download JPEG"}</b> to create the full-resolution ${modeLabel} JPEG.`, "ok");
         return;
       }
 
       const quality = 0.92;
-      const blob = await new Promise(resolve => canvas.toBlob(resolve, "image/jpeg", quality));
+      const rawBlob = await new Promise(resolve => canvas.toBlob(resolve, "image/jpeg", quality));
 
-      if (!blob) {
+      if (!rawBlob) {
         throw new Error("The browser could not create the JPEG output.");
       }
 
-      lastUrl = URL.createObjectURL(blob);
+      const blob = await insertHeicExifIntoJpegBlob(rawBlob, canvas.width, canvas.height);
+
       lastBlob = blob;
 
       const defaultName = getDefaultSaveName();
@@ -1795,10 +2515,10 @@
       lastGeneratedFileName = defaultName;
       interactivePreviewDirty = false;
 
-      downloadLink.href = lastUrl;
+      downloadLink.removeAttribute("href");
       downloadLink.download = defaultName;
       downloadLink.classList.remove("busy");
-      downloadLink.textContent = isIOSDevice() ? "Share JPEG" : "Download JPEG";
+      downloadLink.textContent = isIOSDevice() ? "Generate & Share JPEG" : "Generate & Download JPEG";
       downloadLink.style.display = "block";
       downloadActions.style.display = "grid";
 
@@ -1819,7 +2539,7 @@
           `${modeLabel} JPEG: ${canvas.width}×${canvas.height}, ${formatBytes(blob.size)}${separationNote}${rotationNote}.`;
       }
 
-      setStatus(`${modeLabel} JPEG ready.&nbsp;&nbsp;Click <b>${isIOSDevice() ? "Share JPEG" : "Download JPEG"}</b> to save it.`, "ok");
+      setStatus(`${modeLabel} JPEG generated.`, "ok");
     } finally {
       if (!previewOnly) {
         setOutputControlsBusy(false);
@@ -1839,7 +2559,7 @@
           <li>Select an <b>Output Format</b>.<br/>Use <b>Side-by-Side</b> for stereo pairs, or one of the <b>Anaglyph</b> formats for viewing with compatible color glasses.</li>
           <li>Adjust <b>Output JPEG Width</b> as desired. Default is 4096 pixels.<br/>Use the slider, or click the width value display to enter an exact width.</li>
           <li>Optionally adjust <b>Image Shift</b> and/or <b>Image Rotation</b> as required to optimize the stereo view.</li>
-          <li>Review the preview.&nbsp;&nbsp;When ready, use <b>Download JPEG</b> on desktop or <b>Share JPEG</b> on iOS.<br/>The exported images are saved in very high JPEG quality.</li>
+          <li>To save the results, click <b>Generate &amp; Download JPEG</b> on desktop or <b>Generate &amp; Share JPEG</b> on iOS.</li>
         </ol>
 
         <h4>Controls</h4>
@@ -1853,9 +2573,6 @@
           <li><b>Image Shift range selector</b>: Switches the Image Shift slider between a normal ±10% adjustment range and a wider ±20% range for stronger corrections, including close-up or macro anaglyphs.</li>
           <li><b>Auto-crop shifted edges</b>: Only shown for Side-by-Side output. When enabled, the tool crops shifted edges to avoid blank areas.<br/>Anaglyph output always auto-crops internally.</li>
         </ul>
-
-        <h4>Interactive preview behavior</h4>
-        <p>While you drag the Image Shift or Image Rotation slider, the tool renders a reduced-resolution interactive preview for faster feedback.<br/>When you release the slider, it regenerates the full-resolution JPEG using the current settings.</p>
 
         <h4>Side-by-Side output notes</h4>
         <ul>
@@ -1881,16 +2598,23 @@
 
         <p>For general use, start with <b>Optimized Red / Cyan</b>.<br/>If the color cast is distracting, try <b>Grayscale Red / Cyan</b>.<br/>If preserving color is more important than minimizing ghosting, try <b>Color Red / Cyan</b>.</p>
 
+        <h4>Metadata notes</h4>
+        <ul>
+          <li>When EXIF metadata can be read from the original HEIC file, the tool copies a supported subset of EXIF tags into the exported JPEG during final JPEG generation.</li>
+          <li>The exported JPEG's image dimension tags are updated to the final rendered width and height.</li>
+        </ul>
+
         <h4>iOS notes</h4>
         <ul>
           <li>On iOS, you must first save the original spatial HEIC file from Photos into the Files area in order to open it with this tool.</li>
-          <li>When output is ready, the tool uses the iOS Share Sheet rather than a browser-style file download.</li>
+          <li>On iOS, use <b>Generate &amp; Share JPEG</b> to generate the final JPEG and open the iOS Share Sheet.</li>
         </ul>
 
         <h4>Privacy</h4>
         <ul>
           <li>All processing is performed locally in your browser.</li>
           <li>The selected HEIC file is not uploaded to a server by this tool.</li>
+          <li>If the source HEIC contains GPS/location EXIF metadata, the exported JPEG may contain the same location metadata.</li>
           <li>Google Analytics is used to collect aggregate usage statistics for the tool.</li>
         </ul>
 
@@ -1997,15 +2721,10 @@
 
   outputFormat.addEventListener("change", () => {
     updateOutputModeControls();
-
-    if (decodedViews.length >= 2 && downloadLink.href) {
-      convertToSbs().catch(err => setStatus(escapeHtml(err.message || String(err)), "error"));
-    }
+    regeneratePreviewIfReady();
   });
 
-  eyeOrder.addEventListener("change", () => {
-    if (decodedViews.length >= 2 && downloadLink.href) convertToSbs().catch(err => setStatus(escapeHtml(err.message || String(err)), "error"));
-  });
+  eyeOrder.addEventListener("change", regeneratePreviewIfReady);
 
   widthRange.addEventListener("input", updateControls);
 
@@ -2024,10 +2743,7 @@
 
   rotationRangeMode.addEventListener("change", () => {
     updateRotationRangeMode();
-
-    if (decodedViews.length >= 2 && downloadLink.href) {
-      convertToSbs().catch(err => setStatus(escapeHtml(err.message || String(err)), "error"));
-    }
+    regeneratePreviewIfReady();
   });
 
   rotationRange.addEventListener("input", () => {
@@ -2038,9 +2754,7 @@
     }
   });
 
-  rotationRange.addEventListener("change", () => {
-    if (decodedViews.length >= 2 && downloadLink.href) convertToSbs().catch(err => setStatus(escapeHtml(err.message || String(err)), "error"));
-  });
+  rotationRange.addEventListener("change", regeneratePreviewIfReady);
 
   resetRotationButton.addEventListener("click", () => {
     if (Number(rotationRange.value) === 0) {
@@ -2051,28 +2765,21 @@
     rotationRange.value = "0";
     updateControls();
 
-    if (decodedViews.length >= 2 && downloadLink.href) {
-      convertToSbs().catch(err => setStatus(escapeHtml(err.message || String(err)), "error"));
-    }
+    regeneratePreviewIfReady();
   });
 
   stereoDepthRangeMode.addEventListener("change", () => {
     updateStereoDepthRangeMode();
-
-    if (decodedViews.length >= 2 && downloadLink.href) {
-      convertToSbs().catch(err => setStatus(escapeHtml(err.message || String(err)), "error"));
-    }
+    regeneratePreviewIfReady();
   });
 
   stereoDepthRange.addEventListener("change", async () => {
-    if (decodedViews.length >= 2 && downloadLink.href) {
-      try {
-        await convertToSbs();
-      } catch (err) {
-        setStatus(escapeHtml(err.message || String(err)), "error");
-      } finally {
-        restoreImageShiftFocus();
-      }
+    try {
+      await convertToSbs({ previewOnly: true });
+    } catch (err) {
+      setStatus(escapeHtml(err.message || String(err)), "error");
+    } finally {
+      restoreImageShiftFocus();
     }
   });
 
@@ -2093,63 +2800,65 @@
     stereoDepthRange.value = "0";
     updateControls();
 
-    if (decodedViews.length >= 2 && downloadLink.href) {
-      convertToSbs().catch(err => setStatus(escapeHtml(err.message || String(err)), "error"));
-    }
+    regeneratePreviewIfReady();
   });
 
-  widthRange.addEventListener("change", regenerateFullOutputIfReady);
+  widthRange.addEventListener("change", regeneratePreviewIfReady);
 
 
-  autoCropStereoEdges.addEventListener("change", () => {
-    if (decodedViews.length >= 2 && downloadLink.href) convertToSbs().catch(err => setStatus(escapeHtml(err.message || String(err)), "error"));
-  });
+  autoCropStereoEdges.addEventListener("change", regeneratePreviewIfReady);
 
-  let gAllowDownloadClick = false;
+  function downloadBlobWithName(blob, fileName) {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = fileName;
+    a.style.display = "none";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 30000);
+  }
 
   downloadLink.addEventListener("click", async event => {
-
-    if (isIOSDevice()) {
-      event.preventDefault();
-
-      if (interactivePreviewDirty) {
-        await convertToSbs({ preserveDownloadUi: true });
-      }
-
-      await shareJpegOnIOS();
-      return;
-    }
-
-    if (gAllowDownloadClick) {
-      gAllowDownloadClick = false;
-      return;
-    }
-
     event.preventDefault();
 
-    if (interactivePreviewDirty) {
+    if (decodedViews.length < 2) {
+      setStatus("No stereo image has been decoded yet.", "error");
+      return;
+    }
+
+    try {
       await convertToSbs({ preserveDownloadUi: true });
+
+      if (!lastBlob) {
+        setStatus("The JPEG could not be generated.", "error");
+        return;
+      }
+
+      if (isIOSDevice()) {
+        await shareJpegOnIOS();
+        updateGenerateButtonVisibility();
+        return;
+      }
+
+      const saveName = await promptForSaveName();
+
+      if (!saveName) {
+        setStatus("Download cancelled.", "ok");
+        updateGenerateButtonVisibility();
+        return;
+      }
+
+      lastGeneratedFileName = saveName;
+      downloadBlobWithName(lastBlob, saveName);
+      updateGenerateButtonVisibility();
+      setStatus(`Saved as <b>${escapeHtml(saveName)}</b>.`, "ok");
+    } catch (err) {
+      //console.error(err);
+      updateGenerateButtonVisibility();
+      setStatus(escapeHtml(err.message || String(err)), "error");
     }
-
-    if (!downloadLink.href) {
-      setStatus("No JPEG has been generated yet.", "error");
-      return;
-    }
-
-    const saveName = await promptForSaveName();
-
-    if (!saveName) {
-      setStatus("Download cancelled.", "ok");
-      return;
-    }
-
-    downloadLink.download = saveName;
-
-    gAllowDownloadClick = true;
-    downloadLink.click();
-
-    setStatus(`Saved as <b>${escapeHtml(saveName)}</b>.`, "ok");
-    
   });
 
   const runningOnIOS = isIOSDevice();
@@ -2161,7 +2870,7 @@
   }
 
   libheifReadyPromise = waitForLibheif().catch(err => {
-    console.error(err);
+    //console.error(err);
     setStatus(escapeHtml(err.message || String(err)), "error");
     throw err;
   });
