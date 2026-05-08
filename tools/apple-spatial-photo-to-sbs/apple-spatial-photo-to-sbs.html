@@ -251,6 +251,23 @@
     accent-color: var(--accent2);
   }
 
+  .sbsPreviewControls {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    min-width: 0;
+  }
+
+  .sbsPreviewControls > div {
+    min-width: 0;
+  }
+
+  @media (max-width: 760px) {
+    .sbsPreviewControls {
+      grid-template-columns: 1fr;
+    }
+  }
+
   .controlHeader {
     display: flex;
     align-items: center;
@@ -645,7 +662,9 @@
   #stereoDepthRange:focus,
   #stereoDepthRange:focus-visible,
   #rotationRange:focus,
-  #rotationRange:focus-visible {
+  #rotationRange:focus-visible,
+  #previewFlipRateRange:focus,
+  #previewFlipRateRange:focus-visible {
     outline: none;
     box-shadow: none;
   }
@@ -758,17 +777,29 @@
         </div>
       </div>
 
-      <div id="autoCropControl">
-        <label for="autoCropStereoEdges">Image Shift Edge Handling</label>
-        <label class="checkboxLabel" for="autoCropStereoEdges" title="When enabled, crop shifted side-by-side images to remove blank edge areas. Anaglyph output always auto-crops.">
-          <input id="autoCropStereoEdges" type="checkbox" checked title="When enabled, crop shifted side-by-side images to remove blank edge areas. Anaglyph output always auto-crops.">
-          Auto-crop shifted edges
-        </label>
+      <div id="sideBySidePreviewControls" class="sbsPreviewControls">
+        <div id="autoCropControl">
+          <label for="autoCropStereoEdges">Image Shift Edge Handling</label>
+          <label class="checkboxLabel" for="autoCropStereoEdges" title="When enabled, crop shifted side-by-side images to remove blank edge areas. Anaglyph output always auto-crops.">
+            <input id="autoCropStereoEdges" type="checkbox" checked title="When enabled, crop shifted side-by-side images to remove blank edge areas. Anaglyph output always auto-crops.">
+            Auto-crop edges
+          </label>
+        </div>
+
+        <div id="previewFlipControl">
+          <div class="controlHeader">
+            <label for="previewFlipRateRange">Preview L/R Flip</label>
+            <div id="previewFlipRateValue" class="rangeValue editableRangeValue" role="button" tabindex="0" aria-label="Toggle Preview L/R Flip" title="Click to toggle Preview L/R Flip between Off and the last non-zero flip rate.">Off</div>
+          </div>
+          <div class="row">
+            <input id="previewFlipRateRange" type="range" min="0" max="5" step="0.1" value="0" title="Side-by-Side preview only: flip between the adjusted left and right views. At 0 Hz, flipping is off and the full side-by-side preview is shown.">
+          </div>
+        </div>
       </div>
     </div>
 
     <div class="hint">
-      Image Shift moves the two views horizontally before compositing.<br/>In Side-by-Side format, the Auto-crop option crops the images as required to avoid blank areas.&nbsp;&nbsp;Anaglyph formats always auto-crop.
+      Image Shift moves the two views horizontally before compositing.<br/>In Side-by-Side format, Auto-crop removes blank shifted edges.&nbsp;&nbsp;Anaglyph formats always auto-crop.
     </div>
 
   </section>
@@ -821,8 +852,12 @@
   const stereoDepthValue = document.getElementById("stereoDepthValue");
   const stereoDepthRangeMode = document.getElementById("stereoDepthRangeMode");
   const resetStereoDepthButton = document.getElementById("resetStereoDepthButton");
+  const sideBySidePreviewControls = document.getElementById("sideBySidePreviewControls");
   const autoCropControl = document.getElementById("autoCropControl");
   const autoCropStereoEdges = document.getElementById("autoCropStereoEdges");
+  const previewFlipControl = document.getElementById("previewFlipControl");
+  const previewFlipRateRange = document.getElementById("previewFlipRateRange");
+  const previewFlipRateValue = document.getElementById("previewFlipRateValue");
   const downloadLink = document.getElementById("downloadLink");
   const statusEl = document.getElementById("status");
   const canvas = document.getElementById("previewCanvas");
@@ -850,6 +885,11 @@
   let originalHeicExifStatus = "not-read";
   let lastExifInsertStatus = "none";
   let lastExifInsertTagCount = 0;
+  let previewFlipAnimationRequest = 0;
+  let previewFlipAnimationStart = performance.now();
+  let previewFlipLeftCanvas = null;
+  let previewFlipRightCanvas = null;
+  let lastPreviewFlipRate = 1;
   const INTERACTIVE_PREVIEW_MAX_WIDTH = 1600;
   const OUTPUT_WIDTH_MIN = 1024;
   const OUTPUT_WIDTH_MAX = 8192;
@@ -1673,6 +1713,22 @@
     }
   }
 
+
+  function resetPreviewFlipSliderAfterSave() {
+    if (!isSideBySideMode() || !previewFlipRateRange) {
+      return;
+    }
+
+    rememberPreviewFlipRate();
+    previewFlipRateRange.value = "0";
+    updateControls();
+    stopPreviewFlipAnimation();
+
+    if (decodedViews.length >= 2) {
+      convertToSbs({ previewOnly: true });
+    }
+  }
+
   async function shareJpegOnIOS() {
     if (!lastBlob) {
       setStatus("No JPEG has been generated yet.", "error");
@@ -1928,6 +1984,64 @@
     }
   }
 
+  function getPreviewFlipRate() {
+    return Math.max(0, Math.min(5, Number(previewFlipRateRange?.value) || 0));
+  }
+
+  function updatePreviewFlipRateLabel() {
+    const rate = getPreviewFlipRate();
+
+    if (previewFlipRateValue) {
+      previewFlipRateValue.textContent = rate ? `${rate.toFixed(1)} Hz` : "Off";
+      previewFlipRateValue.setAttribute(
+        "aria-label",
+        rate
+          ? `Preview L/R Flip is ${rate.toFixed(1)} Hz. Click to turn it off.`
+          : `Preview L/R Flip is off. Click to restore ${lastPreviewFlipRate.toFixed(1)} Hz.`
+      );
+      previewFlipRateValue.setAttribute(
+        "title",
+        rate
+          ? "Click to turn Preview L/R Flip Off."
+          : `Click to restore Preview L/R Flip to ${lastPreviewFlipRate.toFixed(1)} Hz.`
+      );
+    }
+  }
+
+  function rememberPreviewFlipRate() {
+    const rate = getPreviewFlipRate();
+
+    if (rate > 0) {
+      lastPreviewFlipRate = rate;
+    }
+  }
+
+  function setPreviewFlipRate(rate) {
+    if (!previewFlipRateRange) {
+      return;
+    }
+
+    const clamped = Math.max(0, Math.min(5, Number(rate) || 0));
+    previewFlipRateRange.value = String(clamped);
+    updateControls();
+    regeneratePreviewIfReady();
+  }
+
+  function togglePreviewFlipRate() {
+    if (!isSideBySideMode() || !previewFlipRateRange || previewFlipRateRange.disabled) {
+      return;
+    }
+
+    const rate = getPreviewFlipRate();
+
+    if (rate > 0) {
+      rememberPreviewFlipRate();
+      setPreviewFlipRate(0);
+    } else {
+      setPreviewFlipRate(lastPreviewFlipRate || 1);
+    }
+  }
+
   function updateControls() {
     widthValue.textContent = `${Number(widthRange.value).toLocaleString()} px`;
     const rotation = Number(rotationRange.value) || 0;
@@ -1935,6 +2049,8 @@
 
     const separation = Number(stereoDepthRange.value) || 0;
     stereoDepthValue.textContent = `${separation > 0 ? "+" : ""}${separation.toFixed(1)}%`;
+
+    updatePreviewFlipRateLabel();
   }
 
 
@@ -1977,6 +2093,49 @@
     });
   }
 
+
+  function stopPreviewFlipAnimation() {
+    if (previewFlipAnimationRequest) {
+      cancelAnimationFrame(previewFlipAnimationRequest);
+      previewFlipAnimationRequest = 0;
+    }
+
+    previewFlipLeftCanvas = null;
+    previewFlipRightCanvas = null;
+  }
+
+  function drawPreviewFlipFrame(now = performance.now()) {
+    if (!previewFlipLeftCanvas || !previewFlipRightCanvas || !isSideBySideMode() || getPreviewFlipRate() <= 0) {
+      previewFlipAnimationRequest = 0;
+      return;
+    }
+
+    const ctx = canvas.getContext("2d", { alpha: false });
+    const rate = getPreviewFlipRate();
+    const elapsed = (now - previewFlipAnimationStart) / 1000;
+    const cycle = (elapsed * rate) % 1;
+    const image = cycle >= 0.5 ? previewFlipRightCanvas : previewFlipLeftCanvas;
+
+    ctx.fillStyle = "#000";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+
+    previewFlipAnimationRequest = requestAnimationFrame(drawPreviewFlipFrame);
+  }
+
+  function startPreviewFlipAnimation(leftCanvas, rightCanvas) {
+    stopPreviewFlipAnimation();
+
+    if (!leftCanvas || !rightCanvas || getPreviewFlipRate() <= 0 || !isSideBySideMode()) {
+      return;
+    }
+
+    previewFlipLeftCanvas = leftCanvas;
+    previewFlipRightCanvas = rightCanvas;
+    previewFlipAnimationStart = performance.now();
+    previewFlipAnimationRequest = requestAnimationFrame(drawPreviewFlipFrame);
+  }
+
   function isSideBySideMode() {
     return outputFormat.value === "sbs";
   }
@@ -1988,8 +2147,20 @@
       eyeOrderControl.style.display = sbsMode ? "block" : "none";
     }
 
+    if (sideBySidePreviewControls) {
+      sideBySidePreviewControls.style.display = sbsMode ? "grid" : "none";
+    }
+
     if (autoCropControl) {
       autoCropControl.style.display = sbsMode ? "block" : "none";
+    }
+
+    if (previewFlipControl) {
+      previewFlipControl.style.display = sbsMode ? "block" : "none";
+    }
+
+    if (!sbsMode) {
+      stopPreviewFlipAnimation();
     }
   }
 
@@ -2438,10 +2609,15 @@
     stereoDepthRangeMode.disabled = isBusy;
     resetStereoDepthButton.disabled = isBusy;
     autoCropStereoEdges.disabled = isBusy;
+    if (previewFlipRateRange) {
+      previewFlipRateRange.disabled = isBusy;
+    }
   }
 
   async function convertToSbs(options = {}) {
     const previewOnly = !!options.previewOnly;
+
+    stopPreviewFlipAnimation();
     const preserveDownloadUi = !previewOnly && (!!options.preserveDownloadUi || interactivePreviewDirty);
 
     if (decodedViews.length < 2) {
@@ -2512,20 +2688,39 @@
           autoCropEdges
         );
 
-        canvas.width = outputWidth;
-        canvas.height = outputHeight;
+        const previewFlipRate = previewOnly ? getPreviewFlipRate() : 0;
 
-        previewBox.style.aspectRatio = `${outputWidth} / ${outputHeight}`;
+        if (previewFlipRate > 0) {
+          canvas.width = eyeWidth;
+          canvas.height = outputHeight;
 
-        ctx = canvas.getContext("2d", { alpha: false });
-        ctx.imageSmoothingEnabled = true;
-        ctx.imageSmoothingQuality = "high";
+          previewBox.style.aspectRatio = `${eyeWidth} / ${outputHeight}`;
 
-        ctx.fillStyle = "#000";
-        ctx.fillRect(0, 0, outputWidth, outputHeight);
+          ctx = canvas.getContext("2d", { alpha: false });
+          ctx.imageSmoothingEnabled = true;
+          ctx.imageSmoothingQuality = "high";
 
-        ctx.drawImage(adjusted.leftCanvas, 0, 0, eyeWidth, outputHeight);
-        ctx.drawImage(adjusted.rightCanvas, eyeWidth, 0, outputWidth - eyeWidth, outputHeight);
+          ctx.fillStyle = "#000";
+          ctx.fillRect(0, 0, eyeWidth, outputHeight);
+          ctx.drawImage(adjusted.leftCanvas, 0, 0, eyeWidth, outputHeight);
+
+          startPreviewFlipAnimation(adjusted.leftCanvas, adjusted.rightCanvas);
+        } else {
+          canvas.width = outputWidth;
+          canvas.height = outputHeight;
+
+          previewBox.style.aspectRatio = `${outputWidth} / ${outputHeight}`;
+
+          ctx = canvas.getContext("2d", { alpha: false });
+          ctx.imageSmoothingEnabled = true;
+          ctx.imageSmoothingQuality = "high";
+
+          ctx.fillStyle = "#000";
+          ctx.fillRect(0, 0, outputWidth, outputHeight);
+
+          ctx.drawImage(adjusted.leftCanvas, 0, 0, eyeWidth, outputHeight);
+          ctx.drawImage(adjusted.rightCanvas, eyeWidth, 0, outputWidth - eyeWidth, outputHeight);
+        }
       } else {
         const aspect = left.height / left.width;
         const outputHeight = Math.max(1, Math.round(outputWidth * aspect));
@@ -2648,6 +2843,7 @@
           <li><b>Image Shift</b>: Shifts the two views horizontally before compositing.<br/>This can reduce eye strain, improve fusion, or improve some anaglyph results.<br/>The <b>Reset</b> button resets the image shift to zero.</li>
           <li><b>Image Shift range selector</b>: Switches the Image Shift slider between a normal ±10% adjustment range and a wider ±20% range for stronger corrections, including close-up or macro anaglyphs.</li>
           <li><b>Auto-crop shifted edges</b>: Only shown for Side-by-Side output. When enabled, the tool crops shifted edges to avoid blank areas.<br/>Anaglyph output always auto-crops internally.</li>
+          <li><b>Preview L/R Flip</b>: Only shown for Side-by-Side output. At <b>0 Hz</b>, the preview shows the full side-by-side image. At higher rates, the preview alternates between the adjusted left-eye and right-eye views so you can evaluate alignment, Image Shift, and Image Rotation as a flip/wiggle stereo preview. Click the <b>Off / Hz</b> value box to toggle between Off and the last non-zero flip rate. This affects only the on-screen preview, not the exported JPEG.</li>
         </ul>
 
         <h4>Side-by-Side output notes</h4>
@@ -2655,6 +2851,7 @@
           <li>Use <b>Left / Right</b> for standard side-by-side stereo viewing or stereograph cards.</li>
           <li>Use <b>Right / Left</b> for cross-eye viewing.</li>
           <li>If <b>Auto-crop shifted edges</b> is disabled, large Image Shift values can leave blank edge areas in the result.</li>
+          <li>Use <b>Preview L/R Flip</b> to check the alignment of the shifted and rotated eye views before generating the final JPEG. Set it back to <b>0 Hz</b> to return to the normal full side-by-side preview, or click the <b>Off / Hz</b> value box to quickly toggle between Off and the last non-zero flip rate. After a JPEG is saved or shared, the Preview L/R Flip control is automatically reset to <b>0 Hz</b>.</li>
         </ul>
 
         <h4>Anaglyph output notes</h4>
@@ -2892,6 +3089,27 @@
 
   autoCropStereoEdges.addEventListener("change", regeneratePreviewIfReady);
 
+  previewFlipRateRange.addEventListener("input", () => {
+    rememberPreviewFlipRate();
+    updateControls();
+    regeneratePreviewIfReady();
+  });
+
+  previewFlipRateRange.addEventListener("change", () => {
+    rememberPreviewFlipRate();
+    updateControls();
+    regeneratePreviewIfReady();
+  });
+
+  previewFlipRateValue.addEventListener("click", togglePreviewFlipRate);
+
+  previewFlipRateValue.addEventListener("keydown", event => {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      togglePreviewFlipRate();
+    }
+  });
+
   function downloadBlobWithName(blob, fileName) {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
@@ -2922,6 +3140,7 @@
 
       if (isIOSDevice()) {
         await shareJpegOnIOS();
+        resetPreviewFlipSliderAfterSave();
         updateGenerateButtonVisibility();
         return;
       }
@@ -2936,6 +3155,7 @@
 
       lastGeneratedFileName = saveName;
       downloadBlobWithName(lastBlob, saveName);
+      resetPreviewFlipSliderAfterSave();
       updateGenerateButtonVisibility();
       setStatus(`Saved as <b>${escapeHtml(saveName)}</b>.`, "ok");
     } catch (err) {
