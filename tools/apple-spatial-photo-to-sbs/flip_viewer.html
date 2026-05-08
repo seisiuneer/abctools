@@ -233,12 +233,64 @@
     padding: 20px;
   }
 
-  .viewerControls {
-    margin-top: 14px;
+  select {
+    width: 100%;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 9px 34px 9px 10px;
+    background-color: var(--panel2);
+    color: var(--text);
+    font: inherit;
+    appearance: none;
+    -webkit-appearance: none;
+    background-image:
+      linear-gradient(45deg, transparent 50%, var(--muted) 50%),
+      linear-gradient(135deg, var(--muted) 50%, transparent 50%);
+    background-position:
+      calc(100% - 20px) 50%,
+      calc(100% - 14px) 50%;
+    background-size:
+      6px 6px,
+      6px 6px;
+    background-repeat: no-repeat;
   }
 
-  .viewerControls .row {
+  select:disabled,
+  input:disabled,
+  button:disabled {
+    opacity: .55;
+    cursor: not-allowed;
+  }
+
+  .viewerControlsGrid {
+    margin-top: 14px;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+    align-items: start;
+  }
+
+  .flipControls {
+    min-width: 0;
     width: 100%;
+  }
+
+  .displayControls {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    min-width: 0;
+    width: 100%;
+  }
+
+  .displayControl {
+    min-width: 0;
+  }
+
+  .displayControl label {
+    font-size: .88rem;
+    color: var(--muted);
+    margin-bottom: 6px;
   }
 
   .controlHeaderActions {
@@ -262,7 +314,7 @@
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 8px;
-    margin-top: 12px;
+    margin-top: 18px;
     color: var(--muted);
     font-size: .93rem;
   }
@@ -316,6 +368,11 @@
     }
   }
 
+  @media (max-width: 560px) {
+    .displayControls {
+      grid-template-columns: 1fr;
+    }
+  }
 
   @media (max-width: 480px) {
     .viewerBox {
@@ -471,6 +528,7 @@
     background: rgba(26,115,232,0.10);
     border-radius: 4px;
   }
+  
 </style>
 
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-VM0N9HL3MK"></script>
@@ -505,16 +563,36 @@
       <canvas id="viewerCanvas"></canvas>
       <div id="emptyMessage" class="hint">Stereo flip viewer output will appear here.</div>
     </div>
-    <div class="viewerControls">
-      <div class="controlHeader">
-        <label for="speedRange">Flip Speed</label>
-        <div class="controlHeaderActions">
-          <button id="playPauseButton" class="smallPauseButton" type="button">Pause</button>
-          <span id="speedValue" class="rangeValue">1.2 Hz</span>
+    <div class="viewerControlsGrid">
+      <div class="flipControls">
+        <div class="controlHeader">
+          <label for="speedRange">Flip Speed</label>
+          <div class="controlHeaderActions">
+            <button id="playPauseButton" class="smallPauseButton" type="button">Pause</button>
+            <span id="speedValue" class="rangeValue">1.2 Hz</span>
+          </div>
+        </div>
+        <div class="row">
+          <input id="speedRange" type="range" min="0.1" max="5" step="0.1" value="1.2">
         </div>
       </div>
-      <div class="row">
-        <input id="speedRange" type="range" min="0.1" max="3" step="0.1" value="1.2">
+
+      <div class="displayControls">
+        <div class="displayControl">
+          <label for="displayMode">Display Mode</label>
+          <select id="displayMode" title="Choose whether to view the image as an animated stereo flip or as the original full side-by-side JPEG.">
+            <option value="flip">Flip Stereo View</option>
+            <option value="full">Original Side-by-Side Image</option>
+          </select>
+        </div>
+
+        <div class="displayControl" id="imageOrderControl">
+          <label for="fullImageOrder">Image Order</label>
+          <select id="fullImageOrder" title="Choose the left/right order when displaying the original full side-by-side image. This is only available in Original Side-by-Side Image mode.">
+            <option value="normal">Original</option>
+            <option value="reverse">Swapped</option>
+          </select>
+        </div>
       </div>
     </div>
 
@@ -539,6 +617,9 @@
   const speedRange = document.getElementById("speedRange");
   const speedValue = document.getElementById("speedValue");
   const playPauseButton = document.getElementById("playPauseButton");
+  const displayMode = document.getElementById("displayMode");
+  const fullImageOrder = document.getElementById("fullImageOrder");
+  const imageOrderControl = document.getElementById("imageOrderControl");
   const canvas = document.getElementById("viewerCanvas");
   const ctx = canvas.getContext("2d", { alpha: false });
   const emptyMessage = document.getElementById("emptyMessage");
@@ -549,6 +630,7 @@
 
   let leftCanvas = null;
   let rightCanvas = null;
+  let sourceFullCanvas = null;
   let playing = true;
   let animationStart = performance.now();
   let lastFrameRequest = 0;
@@ -576,6 +658,14 @@
           <li>Click <b>Side-by-Side JPEG Image</b> and choose a JPEG file.</li>
           <li>You can also drag a JPEG directly onto the preview area.</li>
           <li>The image should contain the two stereo views side by side in a single JPEG.</li>
+        </ul>
+
+        <h4>Display modes</h4>
+        <ul>
+          <li><b>Flip Stereo View</b> alternates between the left-eye and right-eye views.</li>
+          <li><b>Original Side-by-Side Image</b> shows the full side-by-side JPEG without flipping.</li>
+          <li>When viewing the original side-by-side image, use <b>Image Order</b> to switch between Original and Swapped display.</li>
+          <li>The Image Order control is hidden in Flip Stereo View mode.</li>
         </ul>
 
         <h4>Image layout</h4>
@@ -673,7 +763,17 @@
   }
 
   function updateControlLabels() {
+    const fullImageMode = displayMode.value === "full";
+
     speedValue.textContent = `${Number(speedRange.value).toFixed(1)} Hz`;
+
+    speedRange.disabled = fullImageMode;
+    playPauseButton.disabled = fullImageMode;
+    fullImageOrder.disabled = !fullImageMode;
+
+    if (imageOrderControl) {
+      imageOrderControl.style.display = fullImageMode ? "" : "none";
+    }
   }
 
   function splitSideBySideImage(img) {
@@ -698,8 +798,16 @@
     lctx.drawImage(img, 0, 0, eyeWidth, eyeHeight, 0, 0, eyeWidth, eyeHeight);
     rctx.drawImage(img, eyeWidth, 0, eyeWidth, eyeHeight, 0, 0, eyeWidth, eyeHeight);
 
+    const full = document.createElement("canvas");
+    full.width = img.naturalWidth;
+    full.height = img.naturalHeight;
+
+    const fullCtx = full.getContext("2d", { alpha: false });
+    fullCtx.drawImage(img, 0, 0);
+
     leftCanvas = l;
     rightCanvas = r;
+    sourceFullCanvas = full;
   }
 
   function resizeCanvasToViewer() {
@@ -746,6 +854,30 @@
     ctx.drawImage(img, rect.x, rect.y, rect.w, rect.h);
   }
 
+  function drawFullSideBySideImage() {
+    if (!sourceFullCanvas || !leftCanvas || !rightCanvas) {
+      return false;
+    }
+
+    const reverse = fullImageOrder.value === "reverse";
+
+    if (!reverse) {
+      const rect = getContainRect(sourceFullCanvas.width, sourceFullCanvas.height, canvas.width, canvas.height);
+      ctx.drawImage(sourceFullCanvas, rect.x, rect.y, rect.w, rect.h);
+      return true;
+    }
+
+    const combinedWidth = leftCanvas.width + rightCanvas.width;
+    const combinedHeight = leftCanvas.height;
+    const rect = getContainRect(combinedWidth, combinedHeight, canvas.width, canvas.height);
+    const eyeWidth = rect.w / 2;
+
+    ctx.drawImage(rightCanvas, rect.x, rect.y, eyeWidth, rect.h);
+    ctx.drawImage(leftCanvas, rect.x + eyeWidth, rect.y, eyeWidth, rect.h);
+
+    return true;
+  }
+
   function render(now = performance.now()) {
     resizeCanvasToViewer();
     clearCanvas();
@@ -757,6 +889,12 @@
     }
 
     emptyMessage.style.display = "none";
+
+    if (displayMode.value === "full") {
+      drawFullSideBySideImage();
+      lastFrameRequest = requestAnimationFrame(render);
+      return;
+    }
 
     const side = getFlipSide(now);
     const eyeImage = side === "right" ? rightCanvas : leftCanvas;
@@ -785,8 +923,13 @@
     if (!file) return;
 
     if (!isJpegFile(file)) {
+      leftCanvas = null;
+      rightCanvas = null;
+      sourceFullCanvas = null;
+      emptyMessage.style.display = "grid";
       fileMeta.textContent = file?.name ? `${file.name} (${formatBytes(file.size)})` : "No file selected.";
       sourceMeta.textContent = "Please choose a JPEG side-by-side image.";
+      requestRender();
       return;
     }
 
@@ -833,6 +976,15 @@
     loadImageFile(file);
   });
 
+  displayMode.addEventListener("change", () => {
+    updateControlLabels();
+    requestRender();
+  });
+
+  fullImageOrder.addEventListener("change", () => {
+    requestRender();
+  });
+
   speedRange.addEventListener("input", () => {
     updateControlLabels();
     requestRender();
@@ -844,6 +996,10 @@
   });
 
   playPauseButton.addEventListener("click", () => {
+    if (displayMode.value === "full") {
+      return;
+    }
+
     playing = !playing;
     playPauseButton.textContent = playing ? "Pause" : "Play";
 
