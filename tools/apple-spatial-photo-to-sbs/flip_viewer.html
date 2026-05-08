@@ -453,6 +453,24 @@
     }
   }
 
+  .instructions-body a{
+    color: #1a73e8;
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 2px;
+    transition: color 0.15s ease, background 0.15s ease, text-decoration-thickness 0.15s ease;
+  }
+
+  .instructions-body a:visited{
+    color: #1a73e8;
+  }
+
+  .instructions-body a:hover{
+    color: #0b57d0;
+    text-decoration-thickness: 2px;
+    background: rgba(26,115,232,0.10);
+    border-radius: 4px;
+  }
 </style>
 
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-VM0N9HL3MK"></script>
@@ -546,6 +564,13 @@
           The effect is often called a <b>flip</b> or <b>wiggle</b> stereo view.
         </p>
 
+        <div style="text-align: center;margin-bottom:20px;">
+          This tool can be used to view the side-by-side JPEG images created with my<br/>
+           <div style="margin-top:10px;">
+            <a href="https://michaeleskin.com/tools/apple-spatial-photo-to-sbs.html" target="_blank" rel="noopener noreferrer">Apple Spatial Photo → Side-by-Side or 3D Anaglyph JPEG Tool</a>
+          </div>
+        </div>
+
         <h4>Opening an image</h4>
         <ul>
           <li>Click <b>Side-by-Side JPEG Image</b> and choose a JPEG file.</li>
@@ -577,6 +602,13 @@
         <ul>
           <li>This viewer does not create a new image file; it is only for viewing and checking side-by-side stereo images.</li>
           <li>The flip effect is a visual approximation of stereo depth. It is not the same as a true stereoscope, VR viewer, or lenticular display.</li>
+        </ul>
+
+        <h4>Privacy</h4>
+        <ul>
+          <li>All processing is performed locally in your browser.</li>
+          <li>The selected JPEG file is not uploaded to a server by this tool.</li>
+          <li>Google Analytics is used to collect aggregate usage statistics for the tool.</li>
         </ul>
 
         <hr style="margin-top:20px;">
