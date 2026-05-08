@@ -2677,35 +2677,53 @@
         const aspect = left.height / left.width;
         const outputHeight = Math.max(1, Math.round(eyeWidth * aspect));
 
-        const stereoSeparationPx = Math.round(eyeWidth * (stereoSeparationPercent / 100));
-
-        const adjusted = createAdjustedStereoPair(
-          left.canvas,
-          right.canvas,
-          eyeWidth,
-          outputHeight,
-          stereoSeparationPx,
-          autoCropEdges
-        );
-
         const previewFlipRate = previewOnly ? getPreviewFlipRate() : 0;
 
         if (previewFlipRate > 0) {
-          canvas.width = eyeWidth;
-          canvas.height = outputHeight;
+          // When flipping the preview, show each eye as a full single-eye image
+          // instead of using the half-width side-by-side canvas. This makes the
+          // flipped left/right views fill the preview area the same way anaglyph
+          // previews do, while still using the current Image Shift and Image
+          // Rotation adjustments.
+          const flipPreviewWidth = outputWidth;
+          const flipPreviewHeight = Math.max(1, Math.round(flipPreviewWidth * aspect));
+          const flipStereoSeparationPx = Math.round(flipPreviewWidth * (stereoSeparationPercent / 100));
 
-          previewBox.style.aspectRatio = `${eyeWidth} / ${outputHeight}`;
+          const adjusted = createAdjustedStereoPair(
+            left.canvas,
+            right.canvas,
+            flipPreviewWidth,
+            flipPreviewHeight,
+            flipStereoSeparationPx,
+            autoCropEdges
+          );
+
+          canvas.width = flipPreviewWidth;
+          canvas.height = flipPreviewHeight;
+
+          previewBox.style.aspectRatio = `${flipPreviewWidth} / ${flipPreviewHeight}`;
 
           ctx = canvas.getContext("2d", { alpha: false });
           ctx.imageSmoothingEnabled = true;
           ctx.imageSmoothingQuality = "high";
 
           ctx.fillStyle = "#000";
-          ctx.fillRect(0, 0, eyeWidth, outputHeight);
-          ctx.drawImage(adjusted.leftCanvas, 0, 0, eyeWidth, outputHeight);
+          ctx.fillRect(0, 0, flipPreviewWidth, flipPreviewHeight);
+          ctx.drawImage(adjusted.leftCanvas, 0, 0, flipPreviewWidth, flipPreviewHeight);
 
           startPreviewFlipAnimation(adjusted.leftCanvas, adjusted.rightCanvas);
         } else {
+          const stereoSeparationPx = Math.round(eyeWidth * (stereoSeparationPercent / 100));
+
+          const adjusted = createAdjustedStereoPair(
+            left.canvas,
+            right.canvas,
+            eyeWidth,
+            outputHeight,
+            stereoSeparationPx,
+            autoCropEdges
+          );
+
           canvas.width = outputWidth;
           canvas.height = outputHeight;
 
@@ -2843,7 +2861,7 @@
           <li><b>Image Shift</b>: Shifts the two views horizontally before compositing.<br/>This can reduce eye strain, improve fusion, or improve some anaglyph results.<br/>The <b>Reset</b> button resets the image shift to zero.</li>
           <li><b>Image Shift range selector</b>: Switches the Image Shift slider between a normal ±10% adjustment range and a wider ±20% range for stronger corrections, including close-up or macro anaglyphs.</li>
           <li><b>Auto-crop shifted edges</b>: Only shown for Side-by-Side output. When enabled, the tool crops shifted edges to avoid blank areas.<br/>Anaglyph output always auto-crops internally.</li>
-          <li><b>Preview L/R Flip</b>: Only shown for Side-by-Side output. At <b>0 Hz</b>, the preview shows the full side-by-side image. At higher rates, the preview alternates between the adjusted left-eye and right-eye views so you can evaluate alignment, Image Shift, and Image Rotation as a flip/wiggle stereo preview. Click the <b>Off / Hz</b> value box to toggle between Off and the last non-zero flip rate. This affects only the on-screen preview, not the exported JPEG.</li>
+          <li><b>Preview L/R Flip</b>: Only shown for Side-by-Side output. At <b>0 Hz</b>, the preview shows the full side-by-side image. At higher rates, the preview alternates between the adjusted left-eye and right-eye views as full-size single-eye previews so you can evaluate alignment, Image Shift, and Image Rotation as a flip/wiggle stereo preview. Click the <b>Off / Hz</b> value box to toggle between Off and the last non-zero flip rate. This affects only the on-screen preview, not the exported JPEG.</li>
         </ul>
 
         <h4>Side-by-Side output notes</h4>
