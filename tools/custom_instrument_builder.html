@@ -1202,8 +1202,9 @@
 
       function DoStartup() {
 
-        // For mobile adaptation testing, set true to force mobile test
-        const gForceMobile = false;
+        // For mobile adaptation testing, set true to force mobile test,
+        // or add &ui=1 to the URL to force the mobile UI.
+        const gForceMobile = new URLSearchParams(window.location.search).get('ui') === '1';
 
         const notes = ["C", "Db", "D", "Eb", "E", "F", "Gb", "G", "Ab", "A", "Bb", "B"];
         let files = [];
@@ -4342,6 +4343,10 @@
               <p style="text-align:center;margin-top:12px;"><a href="https://michaeleskin.com/abctools/userguide.html#creating_custom_midi_instruments" target="_blank">ABC Transcription Tools User Guide: Custom Instruments</a></p>
               <p style="text-align:center;margin-top:12px;">UltraBox Utility for Extracting Samples from .sf2 Soundfonts</p>
               <p style="text-align:center;margin-top:12px;"><a href="https://michaeleskin.com/tools/UltraBox/UltraBox_Sample_Extractor.html" target="_blank">UltraBox Sample Extractor</a></p>
+              <hr>
+              <h4>Forcing the Mobile UI</h4>
+              <p>To force the mobile UI, append <b>?ui=1</b> to the URL.</p>
+              <p>The mobile UI uses buttons for moving the samples instead of drag-and-drop.</p>
               <hr>
               <h4>Demo Videos</h4>
               <div style="text-align:center; margin-top:6px; margin-bottom:6px;">
