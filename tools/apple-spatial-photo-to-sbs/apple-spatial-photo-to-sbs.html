@@ -792,7 +792,7 @@
             <div id="previewFlipRateValue" class="rangeValue editableRangeValue" role="button" tabindex="0" aria-label="Toggle Preview L/R Flip" title="Click to toggle Preview L/R Flip between Off and the last non-zero flip rate.">Off</div>
           </div>
           <div class="row">
-            <input id="previewFlipRateRange" type="range" min="0" max="5" step="0.1" value="0" title="Side-by-Side preview only: flip between the adjusted left and right views. At 0 Hz, flipping is off and the full side-by-side preview is shown.">
+            <input id="previewFlipRateRange" type="range" min="0" max="10" step="0.1" value="0" title="Side-by-Side preview only: flip between the adjusted left and right views. At 0 Hz, flipping is off and the full side-by-side preview is shown.">
           </div>
         </div>
       </div>
@@ -1985,7 +1985,7 @@
   }
 
   function getPreviewFlipRate() {
-    return Math.max(0, Math.min(5, Number(previewFlipRateRange?.value) || 0));
+    return Math.max(0, Math.min(10, Number(previewFlipRateRange?.value) || 0));
   }
 
   function updatePreviewFlipRateLabel() {
@@ -2021,7 +2021,7 @@
       return;
     }
 
-    const clamped = Math.max(0, Math.min(5, Number(rate) || 0));
+    const clamped = Math.max(0, Math.min(10, Number(rate) || 0));
     previewFlipRateRange.value = String(clamped);
     updateControls();
     regeneratePreviewIfReady();

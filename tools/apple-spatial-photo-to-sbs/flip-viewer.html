@@ -107,6 +107,45 @@
 
   header {
     text-align: center;
+    position: relative;
+  }
+
+  button.fullscreenButton {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: auto;
+    min-width: 0;
+    padding: 7px 10px;
+    border-radius: 10px;
+    font-size: .84rem;
+    line-height: 1.15;
+    white-space: nowrap;
+    z-index: 2;
+  }
+
+  .viewerBox:fullscreen {
+    width: 100vw;
+    height: 100vh;
+    max-width: none;
+    max-height: none;
+    aspect-ratio: auto;
+    border: 0;
+    border-radius: 0;
+    margin: 0;
+    background: #000;
+  }
+
+  .viewerBox:-webkit-full-screen {
+    width: 100vw;
+    height: 100vh;
+    max-width: none;
+    max-height: none;
+    aspect-ratio: auto;
+    border: 0;
+    border-radius: 0;
+    margin: 0;
+    background: #000;
   }
 
   h1 {
@@ -176,6 +215,7 @@
     gap: 12px;
     align-items: center;
     flex-wrap: nowrap;
+	margin-top: 12px;
   }
 
   input[type="range"] {
@@ -302,6 +342,17 @@
     flex: 0 0 auto;
   }
 
+  #speedMaxSelect {
+    width: auto;
+    min-width: 5.9rem;
+    flex: 0 0 auto;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    border-radius: 10px;
+    font-size: .88rem;
+    line-height: 1.15;
+  }
+
   button.smallPauseButton {
     width: auto;
     min-width: 7.5rem;
@@ -361,6 +412,13 @@
       font-size: clamp(1.2rem, 6vw, 1.55rem);
     }
 
+    button.fullscreenButton {
+      top: 8px;
+      right: 8px;
+      padding: 6px 8px;
+      font-size: .78rem;
+    }
+
     .subhead {
       font-size: .92rem;
     }
@@ -389,6 +447,13 @@
     button.smallPauseButton {
       min-width: 6.5rem;
       padding: 8px 9px;
+    }
+
+    #speedMaxSelect {
+      min-width: 5.2rem;
+      padding-left: 8px;
+      padding-right: 26px;
+      font-size: .84rem;
     }
 
     .rangeValue {
@@ -547,6 +612,7 @@
     <p class="subhead">
       Open a left/right side-by-side JPEG and view it as a flip stereo image.
     </p>
+    <button id="fullscreenButton" class="fullscreenButton" type="button" title="Show only the viewer image full screen.">Full Screen</button>
   </header>
 
   <section class="card">
@@ -566,8 +632,15 @@
         <div class="controlHeader">
           <label for="speedRange">Flip Speed</label>
           <div class="controlHeaderActions">
-            <button id="playPauseButton" class="smallPauseButton" type="button">Pause</button>
+            <select id="speedMaxSelect" title="Choose the maximum value available on the Flip Speed slider." aria-label="Maximum Flip Speed">
+              <option value="2.5">2.5 Hz Max</option>
+              <option value="5" selected>5 Hz Max</option>
+              <option value="10">10 Hz Max</option>
+              <option value="20">20 Hz Max</option>
+			  <option value="30">30 Hz Max</option>
+            </select>
             <span id="speedValue" class="rangeValue">1.2 Hz</span>
+            <button id="playPauseButton" class="smallPauseButton" type="button">Pause</button>
           </div>
         </div>
         <div class="row">
@@ -614,6 +687,7 @@
   const fileInput = document.getElementById("fileInput");
   const speedRange = document.getElementById("speedRange");
   const speedValue = document.getElementById("speedValue");
+  const speedMaxSelect = document.getElementById("speedMaxSelect");
   const playPauseButton = document.getElementById("playPauseButton");
   const displayMode = document.getElementById("displayMode");
   const fullImageOrder = document.getElementById("fullImageOrder");
@@ -625,6 +699,7 @@
   const fileMeta = document.getElementById("fileMeta");
   const sourceMeta = document.getElementById("sourceMeta");
   const showInstructionsButton = document.getElementById("showInstructionsButton");
+  const fullscreenButton = document.getElementById("fullscreenButton");
 
   let leftCanvas = null;
   let rightCanvas = null;
@@ -632,6 +707,61 @@
   let playing = true;
   let animationStart = performance.now();
   let lastFrameRequest = 0;
+
+
+  function getFullscreenElement() {
+    return document.fullscreenElement || document.webkitFullscreenElement || null;
+  }
+
+  function updateFullscreenButtonLabel() {
+    if (!fullscreenButton) {
+      return;
+    }
+
+    fullscreenButton.textContent = getFullscreenElement() ? "Exit Full Screen" : "Full Screen";
+  }
+
+  function isIPhoneBrowser() {
+    const userAgent = navigator.userAgent || "";
+    const platform = navigator.platform || "";
+
+    return /iPhone|iPod/i.test(userAgent) || /iPhone|iPod/i.test(platform);
+  }
+
+  function fullscreenApiAvailable() {
+    return !!(
+      viewerBox &&
+      (viewerBox.requestFullscreen || viewerBox.webkitRequestFullscreen) &&
+      (document.exitFullscreen || document.webkitExitFullscreen)
+    );
+  }
+
+  function updateFullscreenButtonAvailability() {
+    if (!fullscreenButton) {
+      return;
+    }
+
+    const shouldHide = isIPhoneBrowser() || !fullscreenApiAvailable();
+    fullscreenButton.hidden = shouldHide;
+    fullscreenButton.style.display = shouldHide ? "none" : "";
+  }
+
+  async function toggleFullscreenView() {
+    if (getFullscreenElement()) {
+      if (document.exitFullscreen) {
+        await document.exitFullscreen();
+      } else if (document.webkitExitFullscreen) {
+        document.webkitExitFullscreen();
+      }
+      return;
+    }
+
+    if (viewerBox.requestFullscreen) {
+      await viewerBox.requestFullscreen();
+    } else if (viewerBox.webkitRequestFullscreen) {
+      viewerBox.webkitRequestFullscreen();
+    }
+  }
 
 
   function showInstructions() {
@@ -660,6 +790,8 @@
 
         <h4>Display modes</h4>
         <ul>
+          <li>Click <b>Full Screen</b> to show only the viewer image full screen. Press Escape or use the browser full-screen control to return to the normal tool view.</li>
+          <li>The Full Screen button is hidden on iPhone, but remains available on iPad and desktop browsers that support the Fullscreen API.</li>
           <li><b>Flip Stereo View</b> alternates between the left-eye and right-eye views.</li>
           <li><b>Original Side-by-Side Image</b> shows the full side-by-side JPEG without flipping.</li>
           <li>When viewing the original side-by-side image, use <b>Image Order</b> to switch between Original and Swapped display.</li>
@@ -675,6 +807,8 @@
 
         <h4>Flip Speed</h4>
         <ul>
+          <li>Use <b>Maximum Flip Speed</b> to choose whether the Flip Speed slider tops out at 2.5, 5, 10, 20, or 30 Hz. The default maximum is 5 Hz.</li>
+		  <li>Not all devices/browsers may be able to handle the higher flip speeds.</li>
           <li>Use <b>Flip Speed</b> to control how quickly the viewer alternates between the two eye views.</li>
           <li>Slower speeds can be easier for inspecting alignment.</li>
           <li>Faster speeds can make the stereo depth effect feel more immediate.</li>
@@ -766,6 +900,7 @@
     speedValue.textContent = `${Number(speedRange.value).toFixed(1)} Hz`;
 
     speedRange.disabled = fullImageMode;
+    speedMaxSelect.disabled = fullImageMode;
     playPauseButton.disabled = fullImageMode;
     fullImageOrder.disabled = !fullImageMode;
 
@@ -965,6 +1100,24 @@
   }
 
 
+  if (fullscreenButton) {
+    fullscreenButton.addEventListener("click", () => {
+      toggleFullscreenView().catch(() => {
+        sourceMeta.textContent = "Full-screen view is not available in this browser.";
+      });
+    });
+  }
+
+  document.addEventListener("fullscreenchange", () => {
+    updateFullscreenButtonLabel();
+    requestRender();
+  });
+
+  document.addEventListener("webkitfullscreenchange", () => {
+    updateFullscreenButtonLabel();
+    requestRender();
+  });
+
   if (showInstructionsButton) {
     showInstructionsButton.addEventListener("click", showInstructions);
   }
@@ -980,6 +1133,18 @@
   });
 
   fullImageOrder.addEventListener("change", () => {
+    requestRender();
+  });
+
+  speedMaxSelect.addEventListener("change", () => {
+    const newMax = Number(speedMaxSelect.value);
+    speedRange.max = String(newMax);
+
+    if (Number(speedRange.value) > newMax) {
+      speedRange.value = String(newMax);
+    }
+
+    updateControlLabels();
     requestRender();
   });
 
@@ -1030,6 +1195,8 @@
   });
 
   updateControlLabels();
+  updateFullscreenButtonAvailability();
+  updateFullscreenButtonLabel();
   requestRender();
 })();
 </script>
