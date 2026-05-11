@@ -997,6 +997,7 @@
     "Michael Eskin's Apple Spatial Photo to Side-by-Side or 3D Anaglyph JPEG Tool";
   const PREVIEW_FLIP_MAX_MIN_HZ = 10;
   const PREVIEW_FLIP_MAX_MAX_HZ = 30;
+  const PREVIEW_FLIP_MAX_STORAGE_KEY = "spatialSbsPreviewFlipMaximumHz";
   let previewFlipMaximumHz = PREVIEW_FLIP_MAX_MIN_HZ;
 
   function escapeHtml(value) {
@@ -1032,6 +1033,49 @@
 
   function isIPhoneDevice() {
     return /iPhone|iPod/.test(navigator.userAgent);
+  }
+
+  function localStorageAvailable() {
+    try {
+      const testKey = "__spatial_sbs_storage_test__";
+      window.localStorage.setItem(testKey, "1");
+      window.localStorage.removeItem(testKey);
+      return true;
+    } catch (err) {
+      return false;
+    }
+  }
+
+  function loadPreviewFlipMaximumFromStorage() {
+    if (!localStorageAvailable()) {
+      return PREVIEW_FLIP_MAX_MIN_HZ;
+    }
+
+    try {
+      const storedValue = window.localStorage.getItem(PREVIEW_FLIP_MAX_STORAGE_KEY);
+      const parsedValue = parsePreviewFlipMaximumInput(storedValue);
+      return parsedValue === null ? PREVIEW_FLIP_MAX_MIN_HZ : parsedValue;
+    } catch (err) {
+      return PREVIEW_FLIP_MAX_MIN_HZ;
+    }
+  }
+
+  function savePreviewFlipMaximumToStorage(maximumHz) {
+    if (!localStorageAvailable()) {
+      return;
+    }
+
+    const parsedValue = parsePreviewFlipMaximumInput(maximumHz);
+
+    if (parsedValue === null) {
+      return;
+    }
+
+    try {
+      window.localStorage.setItem(PREVIEW_FLIP_MAX_STORAGE_KEY, String(parsedValue));
+    } catch (err) {
+      // Ignore storage errors. The tool still works without persistence.
+    }
   }
 
   function applyPreviewFlipMaximum(maximumHz) {
@@ -1099,6 +1143,7 @@
       }
 
       applyPreviewFlipMaximum(parsedFallback);
+      savePreviewFlipMaximumToStorage(parsedFallback);
       updateControls();
 
       if (decodedViews.length >= 2) {
@@ -1134,6 +1179,7 @@
     }
 
     applyPreviewFlipMaximum(parsed);
+    savePreviewFlipMaximumToStorage(parsed);
     updateControls();
 
     if (decodedViews.length >= 2) {
@@ -3158,6 +3204,7 @@
           <li>Enter a whole number from <b>10</b> to <b>30</b>, then click <b>OK</b> to apply it.</li>
           <li>Click <b>Cancel</b> to close the dialog without changing the current maximum.</li>
           <li>If the current flip rate is above the new maximum, it is automatically reduced to the new maximum.</li>
+          <li>The selected maximum is saved in browser localStorage when available and restored the next time the tool is opened.</li>
         </ul>
 
         <h4>Side-by-Side output notes</h4>
@@ -3428,8 +3475,7 @@
 
   previewFlipRateRange.addEventListener("change", () => {
     rememberPreviewFlipRate();
-    applyPreviewFlipMaximum(previewFlipMaximumHz);
-  updateControls();
+    updateControls();
     regeneratePreviewIfReady();
   });
 
@@ -3510,6 +3556,10 @@
     setStatus(escapeHtml(err.message || String(err)), "error");
     throw err;
   });
+
+  previewFlipMaximumHz = loadPreviewFlipMaximumFromStorage();
+  applyPreviewFlipMaximum(previewFlipMaximumHz);
+  updateControls();
 
   updateOutputModeControls();
   updateRotationRangeMode();
