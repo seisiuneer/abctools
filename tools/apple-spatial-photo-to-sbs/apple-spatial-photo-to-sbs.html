@@ -2216,9 +2216,7 @@
 
     try {
       await navigator.share({
-        files: [file],
-        title: getOutputFormatLabel(),
-        text: "Apple Spatial Photo stereo JPEG"
+        files: [file]
       });
 
       setStatus(`Shared <b>${escapeHtml(fileName)}</b>.`, "ok");
