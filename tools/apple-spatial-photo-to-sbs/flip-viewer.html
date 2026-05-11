@@ -114,14 +114,29 @@
     position: absolute;
     top: 10px;
     right: 10px;
-    width: auto;
+    width: 42px;
+    height: 42px;
     min-width: 0;
-    padding: 7px 10px;
+    padding: 8px;
     border-radius: 10px;
-    font-size: .84rem;
-    line-height: 1.15;
+    line-height: 1;
     white-space: nowrap;
     z-index: 2;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  button.fullscreenButton svg {
+    width: 22px;
+    height: 22px;
+    display: block;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2.25;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    pointer-events: none;
   }
 
   .viewerBox:fullscreen {
@@ -215,7 +230,7 @@
     gap: 12px;
     align-items: center;
     flex-wrap: nowrap;
-	margin-top: 12px;
+  margin-top: 12px;
   }
 
   input[type="range"] {
@@ -415,8 +430,14 @@
     button.fullscreenButton {
       top: 8px;
       right: 8px;
-      padding: 6px 8px;
-      font-size: .78rem;
+      width: 38px;
+      height: 38px;
+      padding: 7px;
+    }
+
+    button.fullscreenButton svg {
+      width: 20px;
+      height: 20px;
     }
 
     .subhead {
@@ -612,7 +633,14 @@
     <p class="subhead">
       Open a left/right side-by-side JPEG and view it as a flip stereo image.
     </p>
-    <button id="fullscreenButton" class="fullscreenButton" type="button" title="Show only the viewer image full screen.">Full Screen</button>
+    <button id="fullscreenButton" class="fullscreenButton" type="button" title="Show only the viewer image full screen." aria-label="Show viewer image full screen">
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <path d="M4 9V4h5"></path>
+        <path d="M20 9V4h-5"></path>
+        <path d="M4 15v5h5"></path>
+        <path d="M20 15v5h-5"></path>
+      </svg>
+    </button>
   </header>
 
   <section class="card">
@@ -637,7 +665,7 @@
               <option value="5" selected>5 Hz Max</option>
               <option value="10">10 Hz Max</option>
               <option value="20">20 Hz Max</option>
-			  <option value="30">30 Hz Max</option>
+        <option value="30">30 Hz Max</option>
             </select>
             <span id="speedValue" class="rangeValue">1.2 Hz</span>
             <button id="playPauseButton" class="smallPauseButton" type="button">Pause</button>
@@ -718,7 +746,14 @@
       return;
     }
 
-    fullscreenButton.textContent = getFullscreenElement() ? "Exit Full Screen" : "Full Screen";
+    const isFullscreen = !!getFullscreenElement();
+    fullscreenButton.title = isFullscreen
+      ? "Exit full-screen view."
+      : "Show only the viewer image full screen.";
+    fullscreenButton.setAttribute(
+      "aria-label",
+      isFullscreen ? "Exit full-screen view" : "Show viewer image full screen"
+    );
   }
 
   function isIPhoneBrowser() {
@@ -790,12 +825,11 @@
 
         <h4>Display modes</h4>
         <ul>
-          <li>Click <b>Full Screen</b> to show only the viewer image full screen. Press Escape or use the browser full-screen control to return to the normal tool view.</li>
-          <li>The Full Screen button is hidden on iPhone, but remains available on iPad and desktop browsers that support the Fullscreen API.</li>
           <li><b>Flip Stereo View</b> alternates between the left-eye and right-eye views.</li>
           <li><b>Original Side-by-Side Image</b> shows the full side-by-side JPEG without flipping.</li>
           <li>When viewing the original side-by-side image, use <b>Image Order</b> to switch between Original and Swapped display.</li>
           <li>The Image Order control is hidden in Flip Stereo View mode.</li>
+          <li>Click the full screen button at the top right of the tool to show only the preview area full screen. Press Escape or use the browser full-screen control to return to the normal tool view. This button is hidden on iPhone.</li>
         </ul>
 
         <h4>Image layout</h4>
@@ -808,7 +842,7 @@
         <h4>Flip Speed</h4>
         <ul>
           <li>Use <b>Maximum Flip Speed</b> to choose whether the Flip Speed slider tops out at 2.5, 5, 10, 20, or 30 Hz. The default maximum is 5 Hz.</li>
-		  <li>Not all devices/browsers may be able to handle the higher flip speeds.</li>
+          <li>Not all devices/browsers may be able to handle the higher flip speeds.</li>
           <li>Use <b>Flip Speed</b> to control how quickly the viewer alternates between the two eye views.</li>
           <li>Slower speeds can be easier for inspecting alignment.</li>
           <li>Faster speeds can make the stereo depth effect feel more immediate.</li>
