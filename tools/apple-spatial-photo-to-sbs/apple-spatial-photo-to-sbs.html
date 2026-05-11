@@ -160,6 +160,18 @@
     background: #000;
   }
 
+  .previewBox:fullscreen #previewCanvas,
+  .previewBox:-webkit-full-screen #previewCanvas {
+    position: absolute !important;
+    left: 50% !important;
+    top: 50% !important;
+    max-width: none !important;
+    max-height: none !important;
+    margin: 0 !important;
+    display: block !important;
+    transform: translate(-50%, -50%) !important;
+  }
+
   h1 {
     margin: 0 0 8px;
     font-size: clamp(1.45rem, 3vw, 2rem);
@@ -449,9 +461,9 @@
   #previewCanvas {
     position: absolute;
     inset: 0;
-    margin: auto;
-    max-width: 100%;
-    max-height: 100%;
+    width: 100%;
+    height: 100%;
+    display: block;
   }
 
   #emptyPreview {
@@ -465,8 +477,6 @@
   }
 
   canvas {
-    max-width: 100%;
-    height: auto;
     display: block;
   }
 
@@ -1246,6 +1256,75 @@
     return document.fullscreenElement || document.webkitFullscreenElement || null;
   }
 
+  function getPreviewCanvasAspectRatio() {
+    const width = Number(canvas.width) || Number(canvas.clientWidth) || 1;
+    const height = Number(canvas.height) || Number(canvas.clientHeight) || 1;
+    return width / Math.max(1, height);
+  }
+
+  function getFullscreenViewportSize() {
+    return {
+      width: Math.max(1, window.innerWidth || document.documentElement.clientWidth || screen.width || 1),
+      height: Math.max(1, window.innerHeight || document.documentElement.clientHeight || screen.height || 1)
+    };
+  }
+
+  function updateFullscreenPreviewContainSize() {
+    if (!previewBox || !canvas || !getFullscreenElement()) {
+      return;
+    }
+
+    const viewport = getFullscreenViewportSize();
+    const aspect = getPreviewCanvasAspectRatio();
+
+    let displayWidth = viewport.width;
+    let displayHeight = displayWidth / aspect;
+
+    if (displayHeight > viewport.height) {
+      displayHeight = viewport.height;
+      displayWidth = displayHeight * aspect;
+    }
+
+    canvas.style.setProperty("position", "absolute", "important");
+    canvas.style.setProperty("left", "50%", "important");
+    canvas.style.setProperty("top", "50%", "important");
+    canvas.style.setProperty("width", `${Math.round(displayWidth)}px`, "important");
+    canvas.style.setProperty("height", `${Math.round(displayHeight)}px`, "important");
+    canvas.style.setProperty("max-width", "none", "important");
+    canvas.style.setProperty("max-height", "none", "important");
+    canvas.style.setProperty("margin", "0", "important");
+    canvas.style.setProperty("transform", "translate(-50%, -50%)", "important");
+  }
+
+  function clearFullscreenPreviewContainSize() {
+    if (!previewBox || !canvas) {
+      return;
+    }
+
+    canvas.style.removeProperty("position");
+    canvas.style.removeProperty("left");
+    canvas.style.removeProperty("top");
+    canvas.style.removeProperty("width");
+    canvas.style.removeProperty("height");
+    canvas.style.removeProperty("max-width");
+    canvas.style.removeProperty("max-height");
+    canvas.style.removeProperty("margin");
+    canvas.style.removeProperty("transform");
+  }
+
+  function refreshFullscreenPreview() {
+    if (!getFullscreenElement()) {
+      clearFullscreenPreviewContainSize();
+      regeneratePreviewIfReady();
+      return;
+    }
+
+    requestAnimationFrame(() => {
+      regeneratePreviewIfReady();
+      requestAnimationFrame(updateFullscreenPreviewContainSize);
+    });
+  }
+
   function updateFullscreenButtonLabel() {
     if (!fullscreenButton) {
       return;
@@ -1278,6 +1357,8 @@
     } else {
       throw new Error("Full-screen preview is not available in this browser.");
     }
+
+    refreshFullscreenPreview();
   }
 
   function setupFullscreenButton() {
@@ -1298,10 +1379,18 @@
 
     document.addEventListener("fullscreenchange", () => {
       updateFullscreenButtonLabel();
+      refreshFullscreenPreview();
     });
 
     document.addEventListener("webkitfullscreenchange", () => {
       updateFullscreenButtonLabel();
+      refreshFullscreenPreview();
+    });
+
+    window.addEventListener("resize", () => {
+      if (getFullscreenElement()) {
+        refreshFullscreenPreview();
+      }
     });
 
     updateFullscreenButtonLabel();
