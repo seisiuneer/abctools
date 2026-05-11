@@ -334,6 +334,18 @@
     margin-bottom: 0;
   }
 
+  #previewFlipLabel {
+    cursor: pointer;
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+  }
+
+  #previewFlipLabel:hover,
+  #previewFlipLabel:focus {
+    color: var(--accent);
+  }
+
 
   .controlHeaderActions {
     display: flex;
@@ -863,7 +875,7 @@
 
         <div id="previewFlipControl">
           <div class="controlHeader">
-            <label for="previewFlipRateRange">Preview L/R Flip</label>
+            <label id="previewFlipLabel" for="previewFlipRateRange" role="button" tabindex="0" title="Click to set the maximum Preview L/R Flip rate.">Preview L/R Flip</label>
             <div id="previewFlipRateValue" class="rangeValue editableRangeValue" role="button" tabindex="0" aria-label="Toggle Preview L/R Flip" title="Click to toggle Preview L/R Flip between Off and the last non-zero flip rate.">Off</div>
           </div>
           <div class="row">
@@ -931,6 +943,7 @@
   const autoCropControl = document.getElementById("autoCropControl");
   const autoCropStereoEdges = document.getElementById("autoCropStereoEdges");
   const previewFlipControl = document.getElementById("previewFlipControl");
+  const previewFlipLabel = document.getElementById("previewFlipLabel");
   const previewFlipRateRange = document.getElementById("previewFlipRateRange");
   const previewFlipRateValue = document.getElementById("previewFlipRateValue");
   const downloadLink = document.getElementById("downloadLink");
@@ -972,6 +985,9 @@
   const OUTPUT_WIDTH_DEFAULT = 4096;
   const PROCESSING_SOFTWARE_EXIF_TEXT =
     "Michael Eskin's Apple Spatial Photo to Side-by-Side or 3D Anaglyph JPEG Tool";
+  const PREVIEW_FLIP_MAX_MIN_HZ = 10;
+  const PREVIEW_FLIP_MAX_MAX_HZ = 30;
+  let previewFlipMaximumHz = PREVIEW_FLIP_MAX_MIN_HZ;
 
   function escapeHtml(value) {
     return String(value)
@@ -1006,6 +1022,113 @@
 
   function isIPhoneDevice() {
     return /iPhone|iPod/.test(navigator.userAgent);
+  }
+
+  function applyPreviewFlipMaximum(maximumHz) {
+    previewFlipMaximumHz = Math.max(
+      PREVIEW_FLIP_MAX_MIN_HZ,
+      Math.min(PREVIEW_FLIP_MAX_MAX_HZ, Math.round(Number(maximumHz) || PREVIEW_FLIP_MAX_MIN_HZ))
+    );
+
+    if (previewFlipRateRange) {
+      previewFlipRateRange.max = String(previewFlipMaximumHz);
+
+      if (Number(previewFlipRateRange.value) > previewFlipMaximumHz) {
+        previewFlipRateRange.value = String(previewFlipMaximumHz);
+      }
+
+      previewFlipRateRange.title =
+        "Side-by-Side preview only: flip between the adjusted left and right views. " +
+        "At 0 Hz, flipping is off and the full side-by-side preview is shown. " +
+        "Click the Preview L/R Flip label to set the maximum flip rate.";
+    }
+
+    updatePreviewFlipLabel();
+  }
+
+  function updatePreviewFlipLabel() {
+    if (!previewFlipLabel) {
+      return;
+    }
+
+    previewFlipLabel.title = `Click to set the maximum Preview L/R Flip rate. Current maximum: ${getPreviewFlipRateMaximum()} Hz.`;
+  }
+
+  function parsePreviewFlipMaximumInput(value) {
+    const text = String(value ?? "").trim();
+
+    if (!/^\d+$/.test(text)) {
+      return null;
+    }
+
+    const number = Number(text);
+
+    if (!Number.isInteger(number) || number < PREVIEW_FLIP_MAX_MIN_HZ || number > PREVIEW_FLIP_MAX_MAX_HZ) {
+      return null;
+    }
+
+    return number;
+  }
+
+  async function showPreviewFlipMaximumDialog() {
+    if (!window.DayPilot || !DayPilot.Modal || typeof DayPilot.Modal.prompt !== "function") {
+      const fallback = prompt(
+        "Set maximum Preview L/R Flip rate in Hz. Enter an integer from 10 to 30.",
+        String(getPreviewFlipRateMaximum())
+      );
+
+      if (fallback === null) {
+        return;
+      }
+
+      const parsedFallback = parsePreviewFlipMaximumInput(fallback);
+
+      if (parsedFallback === null) {
+        alert("Please enter a whole number from 10 to 30.");
+        return;
+      }
+
+      applyPreviewFlipMaximum(parsedFallback);
+      updateControls();
+
+      if (decodedViews.length >= 2) {
+        convertToSbs({ previewOnly: true });
+      }
+
+      return;
+    }
+
+    const result = await DayPilot.Modal.prompt(
+      "Set maximum Preview L/R Flip rate in Hz. Enter an integer from 10 to 30.",
+      String(getPreviewFlipRateMaximum()),
+      {
+        theme: "modal_compact",
+        top: 100,
+        okText: "OK",
+        cancelText: "Cancel"
+      }
+    );
+
+    if (!result || result.canceled) {
+      return;
+    }
+
+    const parsed = parsePreviewFlipMaximumInput(result.result);
+
+    if (parsed === null) {
+      await DayPilot.Modal.alert("Please enter a whole number from 10 to 30.", {
+        theme: "modal_compact",
+        top: 100
+      });
+      return;
+    }
+
+    applyPreviewFlipMaximum(parsed);
+    updateControls();
+
+    if (decodedViews.length >= 2) {
+      convertToSbs({ previewOnly: true });
+    }
   }
 
   function getFullscreenElement() {
@@ -2129,8 +2252,18 @@
     }
   }
 
+  function getPreviewFlipRateMaximum() {
+    return Math.max(
+      PREVIEW_FLIP_MAX_MIN_HZ,
+      Math.min(PREVIEW_FLIP_MAX_MAX_HZ, Math.round(Number(previewFlipMaximumHz) || PREVIEW_FLIP_MAX_MIN_HZ))
+    );
+  }
+
   function getPreviewFlipRate() {
-    return Math.max(0, Math.min(10, Number(previewFlipRateRange?.value) || 0));
+    return Math.max(
+      0,
+      Math.min(getPreviewFlipRateMaximum(), Number(previewFlipRateRange?.value) || 0)
+    );
   }
 
   function updatePreviewFlipRateLabel() {
@@ -2166,7 +2299,7 @@
       return;
     }
 
-    const clamped = Math.max(0, Math.min(10, Number(rate) || 0));
+    const clamped = Math.max(0, Math.min(getPreviewFlipRateMaximum(), Number(rate) || 0));
     previewFlipRateRange.value = String(clamped);
     updateControls();
     regeneratePreviewIfReady();
@@ -2188,6 +2321,8 @@
   }
 
   function updateControls() {
+    applyPreviewFlipMaximum(previewFlipMaximumHz);
+
     widthValue.textContent = `${Number(widthRange.value).toLocaleString()} px`;
     const rotation = Number(rotationRange.value) || 0;
     rotationValue.textContent = `${rotation > 0 ? "+" : ""}${rotation.toFixed(1)}°`;
@@ -3008,6 +3143,11 @@
           <li><b>Image Shift range selector</b>: Switches the Image Shift slider between a normal ±10% adjustment range and a wider ±20% range for stronger corrections, including close-up or macro anaglyphs.</li>
           <li><b>Auto-crop shifted edges</b>: Only shown for Side-by-Side output. When enabled, the tool crops shifted edges to avoid blank areas.<br/>Anaglyph output always auto-crops internally.</li>
           <li><b>Preview L/R Flip</b>: Only shown for Side-by-Side output. At <b>0 Hz</b>, the preview shows the full side-by-side image. At higher rates, the preview alternates between the adjusted left-eye and right-eye views as full-size single-eye previews so you can evaluate alignment, Image Shift, and Image Rotation as a flip/wiggle stereo preview. Click the <b>Off / Hz</b> value box to toggle between Off and the last non-zero flip rate. This affects only the on-screen preview, not the exported JPEG.</li>
+          <li>Click the <b>Preview L/R Flip</b> label to set the maximum value available on the flip-rate slider.</li>
+          <li>The dialog shows the current maximum flip rate when it opens.</li>
+          <li>Enter a whole number from <b>10</b> to <b>30</b>, then click <b>OK</b> to apply it.</li>
+          <li>Click <b>Cancel</b> to close the dialog without changing the current maximum.</li>
+          <li>If the current flip rate is above the new maximum, it is automatically reduced to the new maximum.</li>
         </ul>
 
         <h4>Side-by-Side output notes</h4>
@@ -3162,6 +3302,21 @@
 
   showInstructionsButton.addEventListener("click", showInstructions);
 
+
+  if (previewFlipLabel) {
+    previewFlipLabel.addEventListener("click", event => {
+      event.preventDefault();
+      showPreviewFlipMaximumDialog();
+    });
+
+    previewFlipLabel.addEventListener("keydown", event => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        showPreviewFlipMaximumDialog();
+      }
+    });
+  }
+
   fileInput.addEventListener("change", async () => {
     await processSpatialPhotoFile(fileInput.files[0] || null);
   });
@@ -3263,7 +3418,8 @@
 
   previewFlipRateRange.addEventListener("change", () => {
     rememberPreviewFlipRate();
-    updateControls();
+    applyPreviewFlipMaximum(previewFlipMaximumHz);
+  updateControls();
     regeneratePreviewIfReady();
   });
 
