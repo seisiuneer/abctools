@@ -736,6 +736,60 @@
   let animationStart = performance.now();
   let lastFrameRequest = 0;
 
+  const SPEED_MAX_STORAGE_KEY = "sbsFlipViewerSpeedMaximumHz";
+
+  function localStorageAvailable() {
+    try {
+      const testKey = "__sbs_flip_viewer_storage_test__";
+      window.localStorage.setItem(testKey, "1");
+      window.localStorage.removeItem(testKey);
+      return true;
+    } catch (err) {
+      return false;
+    }
+  }
+
+  function isValidSpeedMaximum(value) {
+    const allowedValues = Array.from(speedMaxSelect.options).map(option => option.value);
+    return allowedValues.includes(String(value));
+  }
+
+  function loadSpeedMaximumFromStorage() {
+    if (!localStorageAvailable()) {
+      return speedMaxSelect.value;
+    }
+
+    try {
+      const storedValue = window.localStorage.getItem(SPEED_MAX_STORAGE_KEY);
+      return isValidSpeedMaximum(storedValue) ? storedValue : speedMaxSelect.value;
+    } catch (err) {
+      return speedMaxSelect.value;
+    }
+  }
+
+  function saveSpeedMaximumToStorage(value) {
+    if (!localStorageAvailable() || !isValidSpeedMaximum(value)) {
+      return;
+    }
+
+    try {
+      window.localStorage.setItem(SPEED_MAX_STORAGE_KEY, String(value));
+    } catch (err) {
+      // Ignore storage errors. The tool still works without persistence.
+    }
+  }
+
+  function applySpeedMaximum(value) {
+    const newMax = isValidSpeedMaximum(value) ? String(value) : "5";
+
+    speedMaxSelect.value = newMax;
+    speedRange.max = newMax;
+
+    if (Number(speedRange.value) > Number(newMax)) {
+      speedRange.value = newMax;
+    }
+  }
+
 
   function getFullscreenElement() {
     return document.fullscreenElement || document.webkitFullscreenElement || null;
@@ -842,6 +896,7 @@
         <h4>Flip Speed</h4>
         <ul>
           <li>Use <b>Maximum Flip Speed</b> to choose whether the Flip Speed slider tops out at 2.5, 5, 10, 20, or 30 Hz. The default maximum is 5 Hz.</li>
+          <li>The selected maximum is saved in browser localStorage when available and restored the next time the tool is opened.</li>
           <li>Not all devices/browsers may be able to handle the higher flip speeds.</li>
           <li>Use <b>Flip Speed</b> to control how quickly the viewer alternates between the two eye views.</li>
           <li>Slower speeds can be easier for inspecting alignment.</li>
@@ -1171,13 +1226,8 @@
   });
 
   speedMaxSelect.addEventListener("change", () => {
-    const newMax = Number(speedMaxSelect.value);
-    speedRange.max = String(newMax);
-
-    if (Number(speedRange.value) > newMax) {
-      speedRange.value = String(newMax);
-    }
-
+    applySpeedMaximum(speedMaxSelect.value);
+    saveSpeedMaximumToStorage(speedMaxSelect.value);
     updateControlLabels();
     requestRender();
   });
@@ -1228,6 +1278,7 @@
     }
   });
 
+  applySpeedMaximum(loadSpeedMaximumFromStorage());
   updateControlLabels();
   updateFullscreenButtonAvailability();
   updateFullscreenButtonLabel();
