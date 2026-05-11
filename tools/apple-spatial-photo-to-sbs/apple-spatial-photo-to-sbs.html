@@ -827,8 +827,8 @@
           </div>
         </div>
         <div class="row">
-          <input id="widthRange" type="range" min="1024" max="8192" step="1" value="4096" title="Set the output JPEG width. Side-by-Side output uses this as total width; each eye is half this width. Anaglyph output uses this as full image width. Click the numeric value to enter an exact width.">
-          <div id="widthValue" class="rangeValue editableRangeValue" role="button" tabindex="0" aria-label="Enter output JPEG width" title="Click to enter a specific output JPEG width from 1024 to 8192 pixels.">4096 px</div>
+          <input id="widthRange" type="range" min="1024" max="16384" step="1" autocomplete="off" title="Set the output JPEG width. Side-by-Side output uses this as total width; each eye is half this width. Anaglyph output uses this as full image width. Click the numeric value to enter an exact width.">
+          <div id="widthValue" class="rangeValue editableRangeValue" role="button" tabindex="0" aria-label="Enter output JPEG width" title="Click to enter a specific output JPEG width from 1024 to 16384 pixels.">4096 px</div>
         </div>
       </div>
 
@@ -991,10 +991,12 @@
   let lastPreviewFlipRate = 1;
   const INTERACTIVE_PREVIEW_MAX_WIDTH = 1600;
   const OUTPUT_WIDTH_MIN = 1024;
-  const OUTPUT_WIDTH_MAX = 8192;
+  const OUTPUT_WIDTH_MAX = 16384;
   const OUTPUT_WIDTH_DEFAULT = 4096;
+  const OUTPUT_WIDTH_STORAGE_KEY = "spatialSbsOutputWidth";
+  let outputWidthRestoredAtStartup = false;
   const PROCESSING_SOFTWARE_EXIF_TEXT =
-    "Michael Eskin's Apple Spatial Photo to Side-by-Side or 3D Anaglyph JPEG Tool";
+    "Michael Eskin's Apple Spatial Photo to Side-by-Side or 3D Anaglyph Tool";
   const PREVIEW_FLIP_MAX_MIN_HZ = 10;
   const PREVIEW_FLIP_MAX_MAX_HZ = 30;
   const PREVIEW_FLIP_MAX_STORAGE_KEY = "spatialSbsPreviewFlipMaximumHz";
@@ -1044,6 +1046,59 @@
     } catch (err) {
       return false;
     }
+  }
+
+  function clampOutputWidth(value) {
+    const number = Math.round(Number(value));
+
+    if (!Number.isFinite(number)) {
+      return OUTPUT_WIDTH_DEFAULT;
+    }
+
+    return Math.max(OUTPUT_WIDTH_MIN, Math.min(OUTPUT_WIDTH_MAX, number));
+  }
+
+  function loadOutputWidthFromStorage() {
+    if (!localStorageAvailable()) {
+      return OUTPUT_WIDTH_DEFAULT;
+    }
+
+    try {
+      const storedValue = window.localStorage.getItem(OUTPUT_WIDTH_STORAGE_KEY);
+
+      if (storedValue === null || storedValue === "") {
+        return OUTPUT_WIDTH_DEFAULT;
+      }
+
+      return clampOutputWidth(storedValue);
+    } catch (err) {
+      return OUTPUT_WIDTH_DEFAULT;
+    }
+  }
+
+  function saveOutputWidthToStorage(width) {
+    try {
+      window.localStorage.setItem(OUTPUT_WIDTH_STORAGE_KEY, String(clampOutputWidth(width)));
+    } catch (err) {
+      // Ignore storage errors. The tool still works without persistence.
+    }
+  }
+
+  function applyOutputWidth(width) {
+    widthRange.max = String(OUTPUT_WIDTH_MAX);
+    widthRange.value = String(clampOutputWidth(width));
+  }
+
+  function restoreOutputWidthFromStorage() {
+    applyOutputWidth(loadOutputWidthFromStorage());
+    outputWidthRestoredAtStartup = true;
+  }
+
+  function setOutputWidthFromUser(value) {
+    applyOutputWidth(value);
+    saveOutputWidthToStorage(widthRange.value);
+    updateControls();
+    regeneratePreviewIfReady();
   }
 
   function loadPreviewFlipMaximumFromStorage() {
@@ -2252,7 +2307,9 @@
 
     if (!window.DayPilot || !DayPilot.Modal || !DayPilot.Modal.prompt) {
       const result = window.prompt(`Enter output JPEG width in pixels (${OUTPUT_WIDTH_MIN} to ${OUTPUT_WIDTH_MAX}):`, String(widthRange.value));
-      if (result !== null) applyOutputWidth(result);
+      if (result !== null) {
+        setOutputWidthFromUser(result);
+      }
       return;
     }
 
@@ -2270,7 +2327,7 @@
       return;
     }
 
-    applyOutputWidth(args.result);
+    setOutputWidthFromUser(args.result);
   }
 
   function updateGenerateButtonVisibility() {
@@ -2377,7 +2434,7 @@
   }
 
   function updateControls() {
-    applyPreviewFlipMaximum(previewFlipMaximumHz);
+applyPreviewFlipMaximum(previewFlipMaximumHz);
 
     widthValue.textContent = `${Number(widthRange.value).toLocaleString()} px`;
     const rotation = Number(rotationRange.value) || 0;
@@ -3175,7 +3232,7 @@
   function showInstructions() {
     const html = `
       <div class="instructions-body">
-        <h3 style="text-align:center;">Apple Spatial Photo → Side-by-Side or 3D Anaglyph JPEG</h3>
+        <h3 style="text-align:center;">Apple Spatial Photo → Side-by-Side or 3D Anaglyph</h3>
         <p>This tool opens an Apple Spatial Photo HEIC file, extracts the two embedded stereo image views, and exports them locally in your browser as either a Side-by-Side JPEG or a 3D Anaglyph JPEG.</p>
 
         <h4>Basic workflow</h4>
@@ -3183,6 +3240,7 @@
           <li>Select a single Apple Spatial Photo HEIC file using the file chooser.<br/>On desktop, you can also drag and drop one HEIC file onto the top control panel.</li>
           <li>Select an <b>Output Format</b>.<br/>Use <b>Side-by-Side</b> for stereo pairs, or one of the <b>Anaglyph</b> formats for viewing with compatible color glasses.</li>
           <li>Adjust <b>Output JPEG Width</b> as desired. Default is 4096 pixels.<br/>Use the slider, or click the width value display to enter an exact width.</li>
+          <li>The selected output width is saved in browser localStorage when available and restored the next time the tool is opened.</li>
           <li>Optionally adjust <b>Image Shift</b> and/or <b>Image Rotation</b> as required to optimize the stereo view.</li>
           <li>Click the full screen button at the top right of the tool to show only the preview area full screen. Press Escape or use the browser full-screen control to return to the normal tool view. This button is hidden on iPhone.</li>
           <li>To save the results, click <b>Generate &amp; Download JPEG</b> on desktop or <b>Generate &amp; Share JPEG</b> on iOS.</li>
@@ -3192,7 +3250,7 @@
         <ul>
           <li><b>Output Format</b>: Chooses between Side-by-Side output and several common anaglyph formats.</li>
           <li><b>Stereo Order</b>: Only shown for Side-by-Side output. <b>Left / Right</b> is appropriate for standard stereograph card / parallel viewing.<br/><b>Right / Left</b> is appropriate for cross-eye viewing.</li>
-          <li><b>Output JPEG Width</b>: For Side-by-Side output, this is the total image width, so each eye uses half of that width.<br/>For Anaglyph output, this is the full image width.<br/>Use the slider, or click the numeric width value to enter a specific width.<br/>Entered values are clamped to the supported 1024 to 8192 pixel range.<br/>The <b>Reset</b> button resets the output width to 4096 pixels.</li>
+          <li><b>Output JPEG Width</b>: For Side-by-Side output, this is the total image width, so each eye uses half of that width.<br/>For Anaglyph output, this is the full image width.<br/>Use the slider, or click the numeric width value to enter a specific width.<br/>Entered values are clamped to the supported 1024 to 16384 pixel range.<br/>The <b>Reset</b> button resets the output width to 4096 pixels.</li>
           <li><b>Image Rotation</b>: Applies a small roll correction to both stereo views.<br/>The rotated image is cropped as required to preserve the original aspect ratio.</li>
           <li><b>Image Rotation range selector</b>: Switches the Image Rotation slider between ±5° for normal adjustments and ±10° for larger rotation corrections.<br/>The <b>Reset</b> button resets the image rotation to zero.</li>
           <li><b>Image Shift</b>: Shifts the two views horizontally before compositing.<br/>This can reduce eye strain, improve fusion, or improve some anaglyph results.<br/>The <b>Reset</b> button resets the image shift to zero.</li>
@@ -3285,7 +3343,7 @@
         <div style="text-align: center;margin-bottom:20px;">
           The source code for this tool is available on GitHub<br/>
            <div style="margin-top:10px;">
-            <a href="https://github.com/seisiuneer/abctools/tree/main/tools/apple-spatial-photo-to-sbs" target="_blank" rel="noopener noreferrer">Apple Spatial Photo → Side-by-Side or 3D Anaglyph JPEG on GitHub</a>
+            <a href="https://github.com/seisiuneer/abctools/tree/main/tools/apple-spatial-photo-to-sbs" target="_blank" rel="noopener noreferrer">Apple Spatial Photo → Side-by-Side or 3D Anaglyph on GitHub</a>
           </div>
         </div>
 
@@ -3385,10 +3443,15 @@
 
   eyeOrder.addEventListener("change", regeneratePreviewIfReady);
 
-  widthRange.addEventListener("input", updateControls);
+  widthRange.addEventListener("input", () => {
+    setOutputWidthFromUser(widthRange.value);
+  });
 
   resetWidthButton.addEventListener("click", () => {
     applyOutputWidth(OUTPUT_WIDTH_DEFAULT);
+    saveOutputWidthToStorage(OUTPUT_WIDTH_DEFAULT);
+    updateControls();
+    regeneratePreviewIfReady();
   });
 
   widthValue.addEventListener("click", promptForOutputWidth);
@@ -3462,7 +3525,9 @@
     regeneratePreviewIfReady();
   });
 
-  widthRange.addEventListener("change", regeneratePreviewIfReady);
+  widthRange.addEventListener("change", () => {
+    setOutputWidthFromUser(widthRange.value);
+  });
 
 
   autoCropStereoEdges.addEventListener("change", regeneratePreviewIfReady);
@@ -3559,7 +3624,7 @@
 
   previewFlipMaximumHz = loadPreviewFlipMaximumFromStorage();
   applyPreviewFlipMaximum(previewFlipMaximumHz);
-  updateControls();
+  restoreOutputWidthFromStorage();
 
   updateOutputModeControls();
   updateRotationRangeMode();
