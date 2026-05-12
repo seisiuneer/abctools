@@ -1031,6 +1031,9 @@
   const PREVIEW_FLIP_MAX_MAX_HZ = 30;
   const PREVIEW_FLIP_MAX_STORAGE_KEY = "spatialSbsPreviewFlipMaximumHz";
   let previewFlipMaximumHz = PREVIEW_FLIP_MAX_MIN_HZ;
+  let scrollBeforeFullscreenX = 0;
+  let scrollBeforeFullscreenY = 0;
+  let shouldRestoreScrollAfterFullscreen = false;
 
   function escapeHtml(value) {
     return String(value)
@@ -1282,6 +1285,30 @@
     return document.fullscreenElement || document.webkitFullscreenElement || null;
   }
 
+  function rememberScrollPositionBeforeFullscreen() {
+    scrollBeforeFullscreenX = window.scrollX || window.pageXOffset || 0;
+    scrollBeforeFullscreenY = window.scrollY || window.pageYOffset || 0;
+    shouldRestoreScrollAfterFullscreen = true;
+  }
+
+  function restoreScrollPositionAfterFullscreen() {
+    if (!shouldRestoreScrollAfterFullscreen || getFullscreenElement()) {
+      return;
+    }
+
+    shouldRestoreScrollAfterFullscreen = false;
+
+    const restore = () => {
+      window.scrollTo(scrollBeforeFullscreenX, scrollBeforeFullscreenY);
+    };
+
+    requestAnimationFrame(() => {
+      restore();
+      setTimeout(restore, 0);
+      setTimeout(restore, 80);
+    });
+  }
+
   function getPreviewCanvasAspectRatio() {
     const width = Number(canvas.width) || Number(canvas.clientWidth) || 1;
     const height = Number(canvas.height) || Number(canvas.clientHeight) || 1;
@@ -1370,6 +1397,8 @@
       return;
     }
 
+    rememberScrollPositionBeforeFullscreen();
+
     if (previewBox.requestFullscreen) {
       await previewBox.requestFullscreen();
     } else if (previewBox.webkitRequestFullscreen) {
@@ -1421,12 +1450,14 @@
       updateFullscreenButtonAvailability();
       updateFullscreenButtonLabel();
       refreshFullscreenPreview();
+      restoreScrollPositionAfterFullscreen();
     });
 
     document.addEventListener("webkitfullscreenchange", () => {
       updateFullscreenButtonAvailability();
       updateFullscreenButtonLabel();
       refreshFullscreenPreview();
+      restoreScrollPositionAfterFullscreen();
     });
 
     window.addEventListener("resize", () => {

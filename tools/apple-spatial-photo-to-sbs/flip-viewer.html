@@ -756,6 +756,9 @@
   let playing = true;
   let animationStart = performance.now();
   let lastFrameRequest = 0;
+  let scrollBeforeFullscreenX = 0;
+  let scrollBeforeFullscreenY = 0;
+  let shouldRestoreScrollAfterFullscreen = false;
 
   const SPEED_MAX_STORAGE_KEY = "sbsFlipViewerSpeedMaximumHz";
 
@@ -814,6 +817,30 @@
 
   function getFullscreenElement() {
     return document.fullscreenElement || document.webkitFullscreenElement || null;
+  }
+
+  function rememberScrollPositionBeforeFullscreen() {
+    scrollBeforeFullscreenX = window.scrollX || window.pageXOffset || 0;
+    scrollBeforeFullscreenY = window.scrollY || window.pageYOffset || 0;
+    shouldRestoreScrollAfterFullscreen = true;
+  }
+
+  function restoreScrollPositionAfterFullscreen() {
+    if (!shouldRestoreScrollAfterFullscreen || getFullscreenElement()) {
+      return;
+    }
+
+    shouldRestoreScrollAfterFullscreen = false;
+
+    const restore = () => {
+      window.scrollTo(scrollBeforeFullscreenX, scrollBeforeFullscreenY);
+    };
+
+    requestAnimationFrame(() => {
+      restore();
+      setTimeout(restore, 0);
+      setTimeout(restore, 80);
+    });
   }
 
   function updateFullscreenButtonLabel() {
@@ -875,6 +902,8 @@
       }
       return;
     }
+
+    rememberScrollPositionBeforeFullscreen();
 
     if (viewerBox.requestFullscreen) {
       await viewerBox.requestFullscreen();
@@ -1232,12 +1261,14 @@
     updateFullscreenButtonAvailability();
     updateFullscreenButtonLabel();
     requestRender();
+    restoreScrollPositionAfterFullscreen();
   });
 
   document.addEventListener("webkitfullscreenchange", () => {
     updateFullscreenButtonAvailability();
     updateFullscreenButtonLabel();
     requestRender();
+    restoreScrollPositionAfterFullscreen();
   });
 
   if (showInstructionsButton) {
