@@ -118,10 +118,30 @@
     border-radius: 10px;
     line-height: 1;
     white-space: nowrap;
-    z-index: 2;
+    z-index: 5;
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    background: rgba(32, 42, 54, 0.82);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.16s ease-in-out;
+  }
+
+  .previewBox:hover button.fullscreenButton,
+  .previewBox:focus-within button.fullscreenButton,
+  .previewBox.fullscreenButtonAlwaysVisible button.fullscreenButton {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .previewBox:fullscreen button.fullscreenButton,
+  .previewBox:-webkit-full-screen button.fullscreenButton {
+    display: none !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
   }
 
   button.fullscreenButton svg {
@@ -786,14 +806,6 @@
   <header>
     <h1>Apple Spatial Photo → Side-by-Side or 3D Anaglyph</h1>
     <p class="subhead">Open an Apple Spatial Photo HEIC file, extract the two embedded stereo views,<br/>and export a Side-by-Side or 3D Anaglyph JPEG image locally from your browser.</p>
-    <button id="fullscreenButton" class="fullscreenButton" type="button" title="Show only the preview area full screen." aria-label="Show preview full screen">
-      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-        <path d="M4 9V4h5"></path>
-        <path d="M20 9V4h-5"></path>
-        <path d="M4 15v5h5"></path>
-        <path d="M20 15v5h-5"></path>
-      </svg>
-    </button>
   </header>
 
   <section class="card">
@@ -911,6 +923,14 @@
 
   <section class="card">
     <div class="previewBox">
+    <button id="fullscreenButton" class="fullscreenButton" type="button" title="Show the image preview full screen." aria-label="Show image preview full screen">
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <path d="M4 9V4h5"></path>
+        <path d="M20 9V4h-5"></path>
+        <path d="M4 15v5h5"></path>
+        <path d="M20 15v5h-5"></path>
+      </svg>
+    </button>
       <canvas id="previewCanvas"></canvas>
       <div id="emptyPreview" class="hint">Converted preview will appear here.</div>
     </div>
@@ -935,10 +955,12 @@
   </div>
 
 </div>
+
 <script type="text/javascript" src="libheif-bundle.js"></script>
 <script type="text/javascript" src="piexif.min.js"></script>
 <script type="text/javascript" src="exif-reader.min.js"></script>
 <script type="text/javascript" src="daypilot-modal.min-3.10.1.js"></script>
+
 <script>
 (() => {
   "use strict";
@@ -1043,6 +1065,12 @@
 
   function isIPhoneDevice() {
     return /iPhone|iPod/.test(navigator.userAgent);
+  }
+
+  function isIPadDevice() {
+    return /iPad/.test(navigator.userAgent) ||
+      /iPad/.test(navigator.platform || "") ||
+      ((navigator.platform || "") === "MacIntel" && navigator.maxTouchPoints > 1);
   }
 
   function localStorageAvailable() {
@@ -1328,14 +1356,8 @@
       return;
     }
 
-    const isFullscreen = !!getFullscreenElement();
-    fullscreenButton.title = isFullscreen
-      ? "Exit full-screen preview."
-      : "Show only the preview area full screen.";
-    fullscreenButton.setAttribute(
-      "aria-label",
-      isFullscreen ? "Exit full-screen preview" : "Show preview full screen"
-    );
+    fullscreenButton.title = "Show the preview image full screen.";
+    fullscreenButton.setAttribute("aria-label", "Show preview full screen");
   }
 
   async function toggleFullscreenPreview() {
@@ -1359,13 +1381,33 @@
     refreshFullscreenPreview();
   }
 
-  function setupFullscreenButton() {
+  function fullscreenApiAvailable() {
+    return !!(
+      previewBox &&
+      (previewBox.requestFullscreen || previewBox.webkitRequestFullscreen) &&
+      (document.exitFullscreen || document.webkitExitFullscreen)
+    );
+  }
+
+  function updateFullscreenButtonAvailability() {
     if (!fullscreenButton) {
       return;
     }
 
-    if (isIPhoneDevice()) {
-      fullscreenButton.style.display = "none";
+    const isFullscreen = !!getFullscreenElement();
+    const shouldHide = isIPhoneDevice() || !fullscreenApiAvailable() || isFullscreen;
+    const alwaysVisible = !shouldHide && isIPadDevice();
+
+    fullscreenButton.hidden = shouldHide;
+    fullscreenButton.style.display = shouldHide ? "none" : "";
+
+    if (previewBox) {
+      previewBox.classList.toggle("fullscreenButtonAlwaysVisible", alwaysVisible);
+    }
+  }
+
+  function setupFullscreenButton() {
+    if (!fullscreenButton) {
       return;
     }
 
@@ -1376,21 +1418,26 @@
     });
 
     document.addEventListener("fullscreenchange", () => {
+      updateFullscreenButtonAvailability();
       updateFullscreenButtonLabel();
       refreshFullscreenPreview();
     });
 
     document.addEventListener("webkitfullscreenchange", () => {
+      updateFullscreenButtonAvailability();
       updateFullscreenButtonLabel();
       refreshFullscreenPreview();
     });
 
     window.addEventListener("resize", () => {
+      updateFullscreenButtonAvailability();
+
       if (getFullscreenElement()) {
         refreshFullscreenPreview();
       }
     });
 
+    updateFullscreenButtonAvailability();
     updateFullscreenButtonLabel();
   }
 
@@ -3316,7 +3363,7 @@ applyPreviewFlipMaximum(previewFlipMaximumHz);
           <li>Adjust <b>Output JPEG Width</b> as desired. Default is 5376 pixels (2x the typical iPhone spatial single image width).<br/>Use the slider, or click the width value display to enter an exact width.</li>
           <li>The selected output width is saved in browser localStorage when available and restored the next time the tool is opened.</li>
           <li>Optionally adjust <b>Image Shift</b> and/or <b>Image Rotation</b> as required to optimize the stereo view.</li>
-          <li>Click the full screen button at the top right of the tool to show only the preview area full screen. Press Escape or use the browser full-screen control to return to the normal tool view. This button is hidden on iPhone.</li>
+          <li>On desktop browsers, move the mouse over the preview area to reveal the full-screen button at the top right of the preview. On iPad, the button remains visible at the top right. The button is hidden on iPhone and while full-screen mode is active. Press Escape or use the browser full-screen control to return to the normal tool view.</li>
           <li>To save the results, click <b>Generate &amp; Download JPEG</b> on desktop or <b>Generate &amp; Share JPEG</b> on iOS.</li>
         </ol>
 

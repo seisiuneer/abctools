@@ -121,10 +121,30 @@
     border-radius: 10px;
     line-height: 1;
     white-space: nowrap;
-    z-index: 2;
+    z-index: 5;
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    background: rgba(32, 42, 54, 0.82);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.16s ease-in-out;
+  }
+
+  .viewerBox:hover button.fullscreenButton,
+  .viewerBox:focus-within button.fullscreenButton,
+  .viewerBox.fullscreenButtonAlwaysVisible button.fullscreenButton {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .viewerBox:fullscreen button.fullscreenButton,
+  .viewerBox:-webkit-full-screen button.fullscreenButton {
+    display: none !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
   }
 
   button.fullscreenButton svg {
@@ -230,7 +250,7 @@
     gap: 12px;
     align-items: center;
     flex-wrap: nowrap;
-  margin-top: 12px;
+    margin-top: 12px;
   }
 
   input[type="range"] {
@@ -633,14 +653,6 @@
     <p class="subhead">
       Open a left/right side-by-side JPEG and view it as a flip stereo image.
     </p>
-    <button id="fullscreenButton" class="fullscreenButton" type="button" title="Show only the viewer image full screen." aria-label="Show viewer image full screen">
-      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-        <path d="M4 9V4h5"></path>
-        <path d="M20 9V4h-5"></path>
-        <path d="M4 15v5h5"></path>
-        <path d="M20 15v5h-5"></path>
-      </svg>
-    </button>
   </header>
 
   <section class="card">
@@ -652,7 +664,15 @@
 
   <section class="card">
     <div class="viewerBox" id="viewerBox">
-      <canvas id="viewerCanvas"></canvas>
+    <button id="fullscreenButton" class="fullscreenButton" type="button" title="Show the image full screen." aria-label="Show the image full screen">
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <path d="M4 9V4h5"></path>
+        <path d="M20 9V4h-5"></path>
+        <path d="M4 15v5h5"></path>
+        <path d="M20 15v5h-5"></path>
+      </svg>
+    </button>
+        <canvas id="viewerCanvas"></canvas>
       <div id="emptyMessage" class="hint">Stereo flip viewer output will appear here.</div>
     </div>
     <div class="viewerControlsGrid">
@@ -665,7 +685,7 @@
               <option value="5" selected>5 Hz Max</option>
               <option value="10">10 Hz Max</option>
               <option value="20">20 Hz Max</option>
-        <option value="30">30 Hz Max</option>
+              <option value="30">30 Hz Max</option>
             </select>
             <span id="speedValue" class="rangeValue">1.2 Hz</span>
             <button id="playPauseButton" class="smallPauseButton" type="button">Pause</button>
@@ -708,6 +728,7 @@
 </div>
 
 <script type="text/javascript" src="daypilot-modal.min-3.10.1.js"></script>
+
 <script>
 (() => {
   "use strict";
@@ -800,14 +821,8 @@
       return;
     }
 
-    const isFullscreen = !!getFullscreenElement();
-    fullscreenButton.title = isFullscreen
-      ? "Exit full-screen view."
-      : "Show only the viewer image full screen.";
-    fullscreenButton.setAttribute(
-      "aria-label",
-      isFullscreen ? "Exit full-screen view" : "Show viewer image full screen"
-    );
+    fullscreenButton.title = "Show the image full screen.";
+    fullscreenButton.setAttribute("aria-label", "Show the image full screen");
   }
 
   function isIPhoneBrowser() {
@@ -815,6 +830,15 @@
     const platform = navigator.platform || "";
 
     return /iPhone|iPod/i.test(userAgent) || /iPhone|iPod/i.test(platform);
+  }
+
+  function isIPadBrowser() {
+    const userAgent = navigator.userAgent || "";
+    const platform = navigator.platform || "";
+
+    return /iPad/i.test(userAgent) ||
+      /iPad/i.test(platform) ||
+      (platform === "MacIntel" && navigator.maxTouchPoints > 1);
   }
 
   function fullscreenApiAvailable() {
@@ -830,9 +854,16 @@
       return;
     }
 
-    const shouldHide = isIPhoneBrowser() || !fullscreenApiAvailable();
+    const isFullscreen = !!getFullscreenElement();
+    const shouldHide = isIPhoneBrowser() || !fullscreenApiAvailable() || isFullscreen;
+    const alwaysVisible = !shouldHide && isIPadBrowser();
+
     fullscreenButton.hidden = shouldHide;
     fullscreenButton.style.display = shouldHide ? "none" : "";
+
+    if (viewerBox) {
+      viewerBox.classList.toggle("fullscreenButtonAlwaysVisible", alwaysVisible);
+    }
   }
 
   async function toggleFullscreenView() {
@@ -883,7 +914,7 @@
           <li><b>Original Side-by-Side Image</b> shows the full side-by-side JPEG without flipping.</li>
           <li>When viewing the original side-by-side image, use <b>Image Order</b> to switch between Original and Swapped display.</li>
           <li>The Image Order control is hidden in Flip Stereo View mode.</li>
-          <li>Click the full screen button at the top right of the tool to show only the preview area full screen. Press Escape or use the browser full-screen control to return to the normal tool view. This button is hidden on iPhone.</li>
+          <li>On desktop browsers, move the mouse over the preview area to reveal the full-screen button at the top right of the preview. On iPad, the button remains visible at the top right. The button is hidden on iPhone and while full-screen mode is active. Press Escape or use the browser full-screen control to return to the normal tool view.</li>
         </ul>
 
         <h4>Image layout</h4>
@@ -1198,11 +1229,13 @@
   }
 
   document.addEventListener("fullscreenchange", () => {
+    updateFullscreenButtonAvailability();
     updateFullscreenButtonLabel();
     requestRender();
   });
 
   document.addEventListener("webkitfullscreenchange", () => {
+    updateFullscreenButtonAvailability();
     updateFullscreenButtonLabel();
     requestRender();
   });
@@ -1257,7 +1290,10 @@
     requestRender();
   });
 
-  window.addEventListener("resize", requestRender);
+  window.addEventListener("resize", () => {
+    updateFullscreenButtonAvailability();
+    requestRender();
+  });
 
   viewerBox.addEventListener("dragover", event => {
     event.preventDefault();
