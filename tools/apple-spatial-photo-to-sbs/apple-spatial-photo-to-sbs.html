@@ -2203,7 +2203,7 @@
       return;
     }
 
-    const fileName = lastGeneratedFileName || getDefaultSaveName();
+    const fileName = sanitizeJpegFilename(getDefaultSaveName());
 
     const file = new File([lastBlob], fileName, {
       type: "image/jpeg"
