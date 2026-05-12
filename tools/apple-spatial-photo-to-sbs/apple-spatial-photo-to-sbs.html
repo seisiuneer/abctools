@@ -1020,6 +1020,7 @@
   let previewFlipRightCanvas = null;
   let lastPreviewFlipRate = 1;
   const INTERACTIVE_PREVIEW_MAX_WIDTH = 1600;
+  const FULLSCREEN_PREVIEW_MAX_WIDTH = 2688;
   const OUTPUT_WIDTH_MIN = 1024;
   const OUTPUT_WIDTH_MAX = 16384;
   const OUTPUT_WIDTH_DEFAULT = 5376;
@@ -1285,6 +1286,12 @@
     return document.fullscreenElement || document.webkitFullscreenElement || null;
   }
 
+  function getInteractivePreviewMaxWidth() {
+    return getFullscreenElement()
+      ? FULLSCREEN_PREVIEW_MAX_WIDTH
+      : INTERACTIVE_PREVIEW_MAX_WIDTH;
+  }
+
   function rememberScrollPositionBeforeFullscreen() {
     scrollBeforeFullscreenX = window.scrollX || window.pageXOffset || 0;
     scrollBeforeFullscreenY = window.scrollY || window.pageYOffset || 0;
@@ -1374,7 +1381,10 @@
 
     requestAnimationFrame(() => {
       regeneratePreviewIfReady();
-      requestAnimationFrame(updateFullscreenPreviewContainSize);
+      requestAnimationFrame(() => {
+        updateFullscreenPreviewContainSize();
+        requestAnimationFrame(updateFullscreenPreviewContainSize);
+      });
     });
   }
 
@@ -2721,7 +2731,7 @@ applyPreviewFlipMaximum(previewFlipMaximumHz);
   }
 
   function getInteractivePreviewWidth(outputWidth) {
-    return Math.min(outputWidth, INTERACTIVE_PREVIEW_MAX_WIDTH);
+    return Math.min(outputWidth, getInteractivePreviewMaxWidth());
   }
 
   function loadScript(url) {
