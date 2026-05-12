@@ -810,11 +810,9 @@
         <select id="outputFormat" title="Choose the exported JPEG format: Side-by-Side for stereo viewers, or an Anaglyph format for colored 3D glasses.">
           <option value="sbs">Side-by-Side</option>
           <option value="anaglyph-red-cyan-color">Anaglyph — Red / Cyan, Color</option>
+          <option value="anaglyph-red-cyan-half-color">Anaglyph — Red / Cyan, Half-color</option>
           <option value="anaglyph-red-cyan-dubois">Anaglyph — Red / Cyan, Optimized</option>
           <option value="anaglyph-red-cyan-gray">Anaglyph — Red / Cyan, Grayscale</option>
-          <option value="anaglyph-red-blue">Anaglyph — Red / Blue</option>
-          <option value="anaglyph-red-green">Anaglyph — Red / Green</option>
-          <option value="anaglyph-amber-blue">Anaglyph — Amber / Blue</option>
         </select>
       </div>
 
@@ -2813,12 +2811,8 @@ applyPreviewFlipMaximum(previewFlipMaximumHz);
         return "Grayscale Red/Cyan Anaglyph";
       case "anaglyph-red-cyan-color":
         return "Color Red/Cyan Anaglyph";
-      case "anaglyph-red-blue":
-        return "Red/Blue Anaglyph";
-      case "anaglyph-red-green":
-        return "Red/Green Anaglyph";
-      case "anaglyph-amber-blue":
-        return "Amber/Blue Anaglyph";
+      case "anaglyph-red-cyan-half-color":
+        return "Half-color Red/Cyan Anaglyph";
       default:
         return "JPEG";
     }
@@ -2834,12 +2828,8 @@ applyPreviewFlipMaximum(previewFlipMaximumHz);
         return "RedCyan-Gray";
       case "anaglyph-red-cyan-color":
         return "RedCyan-Color";
-      case "anaglyph-red-blue":
-        return "RedBlue";
-      case "anaglyph-red-green":
-        return "RedGreen";
-      case "anaglyph-amber-blue":
-        return "AmberBlue";
+      case "anaglyph-red-cyan-half-color":
+        return "RedCyan-HalfColor";
       default:
         return "JPEG";
     }
@@ -3019,8 +3009,9 @@ applyPreviewFlipMaximum(previewFlipMaximumHz);
 
       switch (mode) {
         case "anaglyph-red-cyan-dubois":
-          // Dubois-style optimized red/cyan matrix.
-          // Better color/luminance balance and usually less ghosting than raw channel packing.
+          // Dubois-style optimized red/cyan matrix with a small white-balance correction.
+          // The matrix usually reduces ghosting and improves stereo readability, while
+          // the post-correction helps neutralize the green/cyan bias it can produce.
           outR =
             0.4561 * lr + 0.500484 * lg + 0.176381 * lb -
             0.0434706 * rr - 0.0879388 * rg - 0.00155529 * rb;
@@ -3032,6 +3023,10 @@ applyPreviewFlipMaximum(previewFlipMaximumHz);
           outB =
            -0.0152161 * lr - 0.0205971 * lg - 0.00546856 * lb -
             0.0721527 * rr - 0.112961 * rg + 1.2264 * rb;
+
+          outR *= 1.06;
+          outG *= 0.94;
+          outB *= 1.02;
           break;
 
         case "anaglyph-red-cyan-gray":
@@ -3046,23 +3041,15 @@ applyPreviewFlipMaximum(previewFlipMaximumHz);
           outB = rb;
           break;
 
-        case "anaglyph-red-blue":
+        case "anaglyph-red-cyan-half-color":
+          // Half-color red/cyan: grayscale/luminance red eye plus color cyan eye.
+          // This often preserves a more natural-looking image than grayscale while
+          // reducing red-channel color rivalry compared with full-color red/cyan.
           outR = ly;
-          outG = 0;
-          outB = ry;
+          outG = rg;
+          outB = rb;
           break;
 
-        case "anaglyph-red-green":
-          outR = ly;
-          outG = ry;
-          outB = 0;
-          break;
-
-        case "anaglyph-amber-blue":
-          outR = ly;
-          outG = ly * 0.75;
-          outB = ry;
-          break;
       }
 
       o[i] = clampByte(outR);
@@ -3325,7 +3312,7 @@ applyPreviewFlipMaximum(previewFlipMaximumHz);
         <h4>Basic workflow</h4>
         <ol>
           <li>Select a single Apple Spatial Photo HEIC file using the file chooser.<br/>On desktop, you can also drag and drop one HEIC file onto the top control panel.</li>
-          <li>Select an <b>Output Format</b>.<br/>Use <b>Side-by-Side</b> for stereo pairs, or one of the <b>Anaglyph</b> formats for viewing with compatible color glasses.</li>
+          <li>Select an <b>Output Format</b>.<br/>Use <b>Side-by-Side</b> for stereo pairs, or one of the <b>Red / Cyan Anaglyph</b> formats for viewing with red/cyan 3D glasses.</li>
           <li>Adjust <b>Output JPEG Width</b> as desired. Default is 5376 pixels (2x the typical iPhone spatial single image width).<br/>Use the slider, or click the width value display to enter an exact width.</li>
           <li>The selected output width is saved in browser localStorage when available and restored the next time the tool is opened.</li>
           <li>Optionally adjust <b>Image Shift</b> and/or <b>Image Rotation</b> as required to optimize the stereo view.</li>
@@ -3364,18 +3351,19 @@ applyPreviewFlipMaximum(previewFlipMaximumHz);
         <ul>
           <li>Anaglyph output always uses the standard left/right stereo order internally.</li>
           <li>Anaglyph output always auto-crops shifted edges internally.</li>
-          <li>Different glasses may work better with different output modes.<br/><b>Optimized Red / Cyan</b> is usually the best general starting point.</li>
+          <li>Use the anaglyph modes with red/cyan 3D glasses.<br/><b>Optimized Red / Cyan</b> is usually the best general starting point. If the optimized mode still looks too processed, try <b>Half-color Red / Cyan</b>.</li>
           <li>For some close-up or macro spatial photos, a larger Image Shift range may help produce a more comfortable or more accurate result.</li>
         </ul>
 
         <h4>Red / Cyan anaglyph modes</h4>
         <ul>
           <li><b>Color Red / Cyan</b>: Keeps more of the original color by taking the red channel from one eye and the green/blue channels from the other eye.<br/>This can look more colorful, but it may have more ghosting, color rivalry, and eye strain depending on the image and glasses.</li>
-          <li><b>Optimized Red / Cyan</b>: Uses a Dubois-style color matrix rather than simple channel copying.<br/>This usually reduces ghosting and improves stereo readability through red/cyan glasses, but it can shift the overall color balance.<br/>A slight green/cyan tint is normal in some images.</li>
+          <li><b>Half-color Red / Cyan</b>: Uses luminance for the red-eye channel and color for the cyan-eye channels.<br/>This is often a good compromise for picture posts because it keeps more natural color than grayscale while reducing red-channel color conflict compared with full-color red/cyan.</li>
+          <li><b>Optimized Red / Cyan</b>: Uses a Dubois-style color matrix with a small white-balance correction rather than simple channel copying.<br/>This usually reduces ghosting and improves stereo readability through red/cyan glasses while helping neutralize the green/cyan bias that the uncorrected optimized matrix can produce.</li>
           <li><b>Grayscale Red / Cyan</b>: Converts both views to luminance before building the anaglyph.<br/>This usually gives the cleanest stereo separation and avoids most color conflicts, but the result is essentially monochrome.</li>
         </ul>
 
-        <p>For general use, start with <b>Optimized Red / Cyan</b>.<br/>If the color cast is distracting, try <b>Grayscale Red / Cyan</b>.<br/>If preserving color is more important than minimizing ghosting, try <b>Color Red / Cyan</b>.</p>
+        <p>For general use, start with <b>Optimized Red / Cyan</b>.<br/>If the optimized result looks too processed or color-shifted for the image, try <b>Half-color Red / Cyan</b>.<br/>If you want the cleanest stereo separation, try <b>Grayscale Red / Cyan</b>.<br/>If preserving the strongest color is more important than minimizing ghosting, try <b>Color Red / Cyan</b>.</p>
 
         <h4>Metadata notes</h4>
         <ul>
