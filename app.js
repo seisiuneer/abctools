@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3220_041626_1800";
+var gVersionNumber = "3221_051326_1000";
 
 var gMIDIInitStillWaiting = false;
 
@@ -8438,13 +8438,15 @@ function formatDate(format) {
     day = '0' + day;
 
   if (format == 0) {
-
     return [month, day, year].join('-');
-
-  } else {
-
+  } else 
+  if (format == 1) {
     return [year, month, day].join('-');
-
+  } else if (format == 2){
+    return [day, month, year].join('-');
+  }
+  else{
+    return [month, day, year].join('-');
   }
 
 }
@@ -10075,6 +10077,7 @@ function ParseCommentCommands(theNotes) {
 // $PAGENUMBER - Current page number
 // $DATEMDY - Current date in M-D-Y format
 // $DATEYMD - Current date in Y-M-D format
+// $DATEDMY - Current date in D-M-Y format
 // $TIME - Current time in HH:MM format
 // $TUNECOUNT - Number of tunes in the ABC
 // $TUNENAMES - All the tune names in the ABC
@@ -10118,10 +10121,14 @@ function ProcessHeaderFooter(str, pageNumber, pageCount) {
 
   var dateFormatMDY = formatDate(0);
   var dateFormatYMD = formatDate(1);
+  var dateFormatDMY = formatDate(2);
 
   workstr = workstr.replace("$DATEMDY", dateFormatMDY);
 
   workstr = workstr.replace("$DATEYMD", dateFormatYMD);
+
+  workstr = workstr.replace("$DATEDMY", dateFormatDMY);
+
 
   var theTime = formatTime();
 
