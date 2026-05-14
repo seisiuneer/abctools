@@ -879,7 +879,7 @@
     </div>
 
     <div class="hint">
-      Side-by-Side output width is initially set to the original source image width. Anaglyph output width is initially set to half the source image width.<br/>
+      Side-by-Side output width is initially set to the original source image width.&nbsp;&nbsp;Anaglyph output width is initially set to half the source image width.<br/>
       Stereo Order affects both Side-by-Side and Anaglyph output, so use Right / Left if the source image is reversed.<br/>
       Image Rotation applies a small roll correction and crops as required to preserve the original aspect ratio.
     </div>
@@ -1095,22 +1095,6 @@
       return false;
     }
   }
-
-  function clampOutputWidth(value) {
-    const number = Math.round(Number(value));
-
-    if (!Number.isFinite(number)) {
-      return OUTPUT_WIDTH_DEFAULT;
-    }
-
-    return Math.max(OUTPUT_WIDTH_MIN, Math.min(OUTPUT_WIDTH_MAX, number));
-  }
-
-  function applyOutputWidth(width) {
-    widthRange.max = String(OUTPUT_WIDTH_MAX);
-    widthRange.value = String(clampOutputWidth(width));
-  }
-
 
   function setOutputWidthFromUser(value) {
     outputWidthManuallyChangedForCurrentFile = true;
@@ -3226,7 +3210,7 @@
   }
 
   function updateControls() {
-applyPreviewFlipMaximum(previewFlipMaximumHz);
+    applyPreviewFlipMaximum(previewFlipMaximumHz);
 
     widthValue.textContent = `${Number(widthRange.value).toLocaleString()} px`;
     const rotation = Number(rotationRange.value) || 0;
@@ -3913,7 +3897,8 @@ applyPreviewFlipMaximum(previewFlipMaximumHz);
           <li>This can be used to reverse the left/right order if you want to create an Anaglyph from a right/left cross-eye view original image.</li>
           <li>TIFF support is intended for standard 8-bit RGB side-by-side TIFF/TIF images, including uncompressed TIFFs and common LZW-compressed TIFFs with horizontal differencing predictor.</li>
           <li>Select an <b>Output Format</b>.<br/>Use <b>Side-by-Side</b> for stereo pairs, or one of the <b>Red / Cyan Anaglyph</b> formats for viewing with red/cyan 3D glasses.</li>
-          <li>When a file is opened, <b>Output JPEG Width</b> is set automatically from the source image: Side-by-Side output uses the full source image width, while Anaglyph output uses half the source image width.</li>
+          <li>For <b>Side-by-Side</b> output, the default output width matches the full width of the imported side-by-side source image.</li>
+          <li>For <b>Anaglyph</b> output, the default output width matches the width of one source eye view. This preserves the original per-eye resolution without automatically upscaling the anaglyph.</li>
           <li>If you switch between Side-by-Side and Anaglyph modes before manually changing the width, the tool automatically switches between those two source-based widths.</li>
           <li>If you manually change <b>Output JPEG Width</b> with the slider or by clicking the width value, that custom width is kept when switching output formats until another image is loaded or <b>Reset</b> is clicked.</li>
           <li>Optionally adjust <b>Image Shift</b> and/or <b>Image Rotation</b> as required to optimize the stereo view.</li>
@@ -3926,7 +3911,7 @@ applyPreviewFlipMaximum(previewFlipMaximumHz);
         <ul>
           <li><b>Output Format</b>: Chooses between Side-by-Side output and several common anaglyph formats.</li>
           <li><b>Stereo Order</b>: Affects both Side-by-Side and Anaglyph output. <b>Left / Right</b> treats the left half of the source image as the left eye and the right half as the right eye.<br/><b>Right / Left</b> swaps the two source halves before generating the preview or exported JPEG.</li>
-          <li><b>Output JPEG Width</b>: For Side-by-Side output, this is the total image width, so each eye uses half of that width.<br/>For Anaglyph output, this is the full image width.<br/>Use the slider, or click the numeric width value to enter a specific width.<br/>Entered values are clamped to the supported 1024 to 16384 pixel range.<br/>The <b>Reset</b> button resets the output width to the automatic value for the current file and output format.</li>
+          <li><b>Output JPEG Width</b>: For Side-by-Side output, this is the total image width, so each eye uses half of that width.<br/>For Anaglyph output, this is the full single-image width.<br/>By default, Side-by-Side output uses the full source image width, while Anaglyph output uses the width of one source eye view to preserve the original per-eye resolution without unnecessary upscaling.<br/>Use the slider, or click the numeric width value to enter a specific width.<br/>Entered values are clamped to the supported 1024 to 16384 pixel range.<br/>The <b>Reset</b> button resets the output width to the automatic value for the current file and output format.</li>
           <li><b>Image Rotation</b>: Applies a small roll correction to both stereo views.<br/>The rotated image is cropped as required to preserve the original aspect ratio.</li>
           <li><b>Image Rotation range selector</b>: Switches the Image Rotation slider between ±5° for normal adjustments and ±10° for larger rotation corrections.<br/>The <b>Reset</b> button resets the image rotation to zero.</li>
           <li><b>Image Shift</b>: Shifts the two views horizontally before compositing.<br/>This can reduce eye strain, improve fusion, or improve some anaglyph results.<br/>The <b>Reset</b> button resets the image shift to zero.</li>
@@ -3951,7 +3936,8 @@ applyPreviewFlipMaximum(previewFlipMaximumHz);
 
         <h4>Anaglyph output notes</h4>
         <ul>
-          <li>Anaglyph output uses the selected Stereo Order. If the source image is reversed, choose <b>Right / Left</b> so the correct eye is used for the red left-eye channel and the cyan right-eye channel.</li>          
+          <li>Anaglyph output uses the selected Stereo Order. If the source image is reversed, choose <b>Right / Left</b> so the correct eye is used for the red left-eye channel and the cyan right-eye channel.</li>
+          <li>The default Anaglyph output width is the width of one source eye view, not the full side-by-side source width. This avoids automatic upscaling while keeping the original per-eye detail.</li>
           <li>Anaglyph output always auto-crops shifted edges internally.</li>
           <li>Use the anaglyph modes with red/cyan 3D glasses.<br/><b>Optimized Red / Cyan</b> is usually the best general starting point. If the optimized mode still looks too processed, try <b>Half-color Red / Cyan</b>.</li>
           <li>For some close-up or macro stereo images, a larger Image Shift range may help produce a more comfortable or more accurate result.</li>
