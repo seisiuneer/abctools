@@ -128,19 +128,50 @@ class ContextMenu {
   // Shows context menu
   show(e) {
 
-    // Keep the context menu from going off the right of the screen
-    if (isMobileBrowser()){
-      this.menu.style.left = `${e.pageX-200}px`;
-      this.menu.style.top = `${e.pageY}px`;
-    }
-    else{
-      this.menu.style.left = `${e.pageX}px`;
-      this.menu.style.top = `${e.pageY}px`;     
-    }
+    // Open first so the browser can calculate the menu size
     this.menu.classList.add('is-open');
+
+    const margin = 8;
+
+    // Start at the click/tap position
+    let left = e.pageX;
+    let top = e.pageY;
+
+    // Measure after opening
+    const menuRect = this.menu.getBoundingClientRect();
+
+    // Viewport bounds in page coordinates
+    const viewportLeft = window.pageXOffset;
+    const viewportTop = window.pageYOffset;
+    const viewportRight = viewportLeft + window.innerWidth;
+    const viewportBottom = viewportTop + window.innerHeight;
+
+    // Keep menu fully onscreen horizontally
+    if (left + menuRect.width + margin > viewportRight) {
+      left = viewportRight - menuRect.width - margin;
+    }
+
+    if (left < viewportLeft + margin) {
+      left = viewportLeft + margin;
+    }
+
+    // Keep menu fully onscreen vertically
+    if (top + menuRect.height + margin > viewportBottom) {
+      top = viewportBottom - menuRect.height - margin;
+    }
+
+    if (top < viewportTop + margin) {
+      top = viewportTop + margin;
+    }
+
+    this.menu.style.left = `${left}px`;
+    this.menu.style.top = `${top}px`;
+
     this.target = e.target;
+
     // Give context menu focus
     this.menu.focus();
+
     // Disable native context menu
     e.preventDefault();
 
