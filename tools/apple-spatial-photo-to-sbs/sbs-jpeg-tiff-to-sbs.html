@@ -199,6 +199,10 @@
     text-shadow: 0 0 18px rgba(115,208,255,.35);
   }
 
+  li{
+    margin-left: 5px;
+  }
+
   .subhead {
     margin: 0 auto;
     max-width: 760px;
@@ -847,12 +851,12 @@
         <div class="controlHeader">
           <label for="widthRange">Output JPEG Width</label>
           <div class="controlHeaderActions">
-            <button id="resetWidthButton" class="smallResetButton" type="button" title="Reset the output JPEG width to the default value of 5376 pixels.">Reset</button>
+            <button id="resetWidthButton" class="smallResetButton" type="button" title="Reset the output JPEG width to the automatic value for the current file and output format.">Reset</button>
           </div>
         </div>
         <div class="row">
-          <input id="widthRange" type="range" min="1024" max="16384" step="1" value="5376" autocomplete="off" title="Set the output JPEG width. Side-by-Side output uses this as total width; each eye is half this width. Anaglyph output uses this as full image width. Click the numeric value to enter an exact width.">
-          <div id="widthValue" class="rangeValue editableRangeValue" role="button" tabindex="0" aria-label="Enter output JPEG width" title="Click to enter a specific output JPEG width from 1024 to 16384 pixels.">5,376 px</div>
+          <input id="widthRange" type="range" min="1024" max="16384" step="1" value="5376" autocomplete="off" title="Set the output JPEG width manually. Side-by-Side output uses this as total width; Anaglyph output uses this as full image width. Click the numeric value to enter an exact width.">
+          <div id="widthValue" class="rangeValue editableRangeValue" role="button" tabindex="0" aria-label="Enter output JPEG width" title="Click to manually enter a specific output JPEG width from 1024 to 16384 pixels.">5,376 px</div>
         </div>
       </div>
 
@@ -875,8 +879,7 @@
     </div>
 
     <div class="hint">
-      For Side-by-Side format, each eye is rendered at half the selected output width.&nbsp;&nbsp;
-      For Anaglyph formats, the selected width is the full image width.<br/>
+      Side-by-Side output width is initially set to the original source image width. Anaglyph output width is initially set to half the source image width.<br/>
       Stereo Order affects both Side-by-Side and Anaglyph output, so use Right / Left if the source image is reversed.<br/>
       Image Rotation applies a small roll correction and crops as required to preserve the original aspect ratio.
     </div>
@@ -1024,13 +1027,13 @@
   let previewFlipLeftCanvas = null;
   let previewFlipRightCanvas = null;
   let lastPreviewFlipRate = 1;
+  let sourceOriginalWidth = 0;
+  let outputWidthManuallyChangedForCurrentFile = false;
   const INTERACTIVE_PREVIEW_MAX_WIDTH = 1600;
   const FULLSCREEN_PREVIEW_MAX_WIDTH = 5120; // Apple Studio Display 5K width
   const OUTPUT_WIDTH_MIN = 1024;
   const OUTPUT_WIDTH_MAX = 16384;
   const OUTPUT_WIDTH_DEFAULT = 5376;
-  const OUTPUT_WIDTH_STORAGE_KEY = "jpegTiffSbsOutputWidth";
-  let outputWidthRestoredAtStartup = false;
   const PROCESSING_SOFTWARE_EXIF_TEXT =
     "Michael Eskin's Side-by-Side JPEG/TIFF to Side-by-Side or 3D Anaglyph Tool";
   const PREVIEW_FLIP_MAX_MIN_HZ = 10;
@@ -1103,45 +1106,15 @@
     return Math.max(OUTPUT_WIDTH_MIN, Math.min(OUTPUT_WIDTH_MAX, number));
   }
 
-  function loadOutputWidthFromStorage() {
-    if (!localStorageAvailable()) {
-      return OUTPUT_WIDTH_DEFAULT;
-    }
-
-    try {
-      const storedValue = window.localStorage.getItem(OUTPUT_WIDTH_STORAGE_KEY);
-
-      if (storedValue === null || storedValue === "") {
-        return OUTPUT_WIDTH_DEFAULT;
-      }
-
-      return clampOutputWidth(storedValue);
-    } catch (err) {
-      return OUTPUT_WIDTH_DEFAULT;
-    }
-  }
-
-  function saveOutputWidthToStorage(width) {
-    try {
-      window.localStorage.setItem(OUTPUT_WIDTH_STORAGE_KEY, String(clampOutputWidth(width)));
-    } catch (err) {
-      // Ignore storage errors. The tool still works without persistence.
-    }
-  }
-
   function applyOutputWidth(width) {
     widthRange.max = String(OUTPUT_WIDTH_MAX);
     widthRange.value = String(clampOutputWidth(width));
   }
 
-  function restoreOutputWidthFromStorage() {
-    applyOutputWidth(loadOutputWidthFromStorage());
-    outputWidthRestoredAtStartup = true;
-  }
 
   function setOutputWidthFromUser(value) {
+    outputWidthManuallyChangedForCurrentFile = true;
     applyOutputWidth(value);
-    saveOutputWidthToStorage(widthRange.value);
     updateControls();
     regeneratePreviewIfReady();
   }
@@ -2907,6 +2880,12 @@
       throw new Error(`The side-by-side ${formatLabel} width must be an even number of pixels so it can be split into equal left and right halves.`);
     }
 
+    sourceOriginalWidth = fullWidth;
+
+    if (!outputWidthManuallyChangedForCurrentFile) {
+      applyAutomaticOutputWidthForCurrentMode();
+    }
+
     const eyeWidth = fullWidth / 2;
     const eyeHeight = fullHeight;
 
@@ -2939,6 +2918,8 @@
     clearGeneratedOutput();
     decodedViews = [];
     currentFile = file || null;
+    sourceOriginalWidth = 0;
+    outputWidthManuallyChangedForCurrentFile = false;
 
     if (!file) {
       fileMeta.textContent = "No file selected.";
@@ -3084,6 +3065,20 @@
     if (clampedWidth !== previousWidth) {
       regeneratePreviewIfReady();
     }
+  }
+
+  function getAutomaticOutputWidthForCurrentMode() {
+    if (!sourceOriginalWidth) {
+      return OUTPUT_WIDTH_DEFAULT;
+    }
+
+    return isSideBySideMode()
+      ? sourceOriginalWidth
+      : Math.round(sourceOriginalWidth / 2);
+  }
+
+  function applyAutomaticOutputWidthForCurrentMode() {
+    applyOutputWidth(getAutomaticOutputWidthForCurrentMode());
   }
 
   async function promptForOutputWidth() {
@@ -3336,7 +3331,7 @@ applyPreviewFlipMaximum(previewFlipMaximumHz);
     const sbsMode = isSideBySideMode();
 
     if (eyeOrderControl) {
-      eyeOrderControl.style.display = sbsMode ? "block" : "none";
+      eyeOrderControl.style.display = "block";
     }
 
     if (sideBySidePreviewControls) {
@@ -3918,8 +3913,9 @@ applyPreviewFlipMaximum(previewFlipMaximumHz);
           <li>This can be used to reverse the left/right order if you want to create an Anaglyph from a right/left cross-eye view original image.</li>
           <li>TIFF support is intended for standard 8-bit RGB side-by-side TIFF/TIF images, including uncompressed TIFFs and common LZW-compressed TIFFs with horizontal differencing predictor.</li>
           <li>Select an <b>Output Format</b>.<br/>Use <b>Side-by-Side</b> for stereo pairs, or one of the <b>Red / Cyan Anaglyph</b> formats for viewing with red/cyan 3D glasses.</li>
-          <li>Adjust <b>Output JPEG Width</b> as desired. Default is 5376 pixels (2x the typical iPhone spatial single image width).<br/>Use the slider, or click the width value display to enter an exact width.</li>
-          <li>The selected output width is saved in browser localStorage when available and restored the next time the tool is opened.</li>
+          <li>When a file is opened, <b>Output JPEG Width</b> is set automatically from the source image: Side-by-Side output uses the full source image width, while Anaglyph output uses half the source image width.</li>
+          <li>If you switch between Side-by-Side and Anaglyph modes before manually changing the width, the tool automatically switches between those two source-based widths.</li>
+          <li>If you manually change <b>Output JPEG Width</b> with the slider or by clicking the width value, that custom width is kept when switching output formats until another image is loaded or <b>Reset</b> is clicked.</li>
           <li>Optionally adjust <b>Image Shift</b> and/or <b>Image Rotation</b> as required to optimize the stereo view.</li>
           <li>On desktop browsers, move the mouse over the preview area to reveal the full-screen button at the top right of the preview. On iPad, the button remains visible at the top right. The button is hidden on iPhone and while full-screen mode is active. Press Escape or use the browser full-screen control to return to the normal tool view.</li>
           <li>The normal on-page preview is optimized for responsiveness, while full-screen preview automatically uses a higher preview resolution when useful for sharper viewing on high-DPI displays.</li>
@@ -3929,8 +3925,8 @@ applyPreviewFlipMaximum(previewFlipMaximumHz);
         <h4>Controls</h4>
         <ul>
           <li><b>Output Format</b>: Chooses between Side-by-Side output and several common anaglyph formats.</li>
-          <li><b>Stereo Order</b>: Only shown for Side-by-Side output. <b>Left / Right</b> is appropriate for standard stereograph card / parallel viewing.<br/><b>Right / Left</b> is appropriate for cross-eye viewing.</li>
-          <li><b>Output JPEG Width</b>: For Side-by-Side output, this is the total image width, so each eye uses half of that width.<br/>For Anaglyph output, this is the full image width.<br/>Use the slider, or click the numeric width value to enter a specific width.<br/>Entered values are clamped to the supported 1024 to 16384 pixel range.<br/>The <b>Reset</b> button resets the output width to 5376 pixels (2x the typical iPhone spatial single image width).</li>
+          <li><b>Stereo Order</b>: Affects both Side-by-Side and Anaglyph output. <b>Left / Right</b> treats the left half of the source image as the left eye and the right half as the right eye.<br/><b>Right / Left</b> swaps the two source halves before generating the preview or exported JPEG.</li>
+          <li><b>Output JPEG Width</b>: For Side-by-Side output, this is the total image width, so each eye uses half of that width.<br/>For Anaglyph output, this is the full image width.<br/>Use the slider, or click the numeric width value to enter a specific width.<br/>Entered values are clamped to the supported 1024 to 16384 pixel range.<br/>The <b>Reset</b> button resets the output width to the automatic value for the current file and output format.</li>
           <li><b>Image Rotation</b>: Applies a small roll correction to both stereo views.<br/>The rotated image is cropped as required to preserve the original aspect ratio.</li>
           <li><b>Image Rotation range selector</b>: Switches the Image Rotation slider between ±5° for normal adjustments and ±10° for larger rotation corrections.<br/>The <b>Reset</b> button resets the image rotation to zero.</li>
           <li><b>Image Shift</b>: Shifts the two views horizontally before compositing.<br/>This can reduce eye strain, improve fusion, or improve some anaglyph results.<br/>The <b>Reset</b> button resets the image shift to zero.</li>
@@ -3955,7 +3951,7 @@ applyPreviewFlipMaximum(previewFlipMaximumHz);
 
         <h4>Anaglyph output notes</h4>
         <ul>
-          <li>Anaglyph output always uses the standard left/right stereo order internally.</li>
+          <li>Anaglyph output uses the selected Stereo Order. If the source image is reversed, choose <b>Right / Left</b> so the correct eye is used for the red left-eye channel and the cyan right-eye channel.</li>          
           <li>Anaglyph output always auto-crops shifted edges internally.</li>
           <li>Use the anaglyph modes with red/cyan 3D glasses.<br/><b>Optimized Red / Cyan</b> is usually the best general starting point. If the optimized mode still looks too processed, try <b>Half-color Red / Cyan</b>.</li>
           <li>For some close-up or macro stereo images, a larger Image Shift range may help produce a more comfortable or more accurate result.</li>
@@ -4128,6 +4124,12 @@ applyPreviewFlipMaximum(previewFlipMaximumHz);
 
   outputFormat.addEventListener("change", () => {
     updateOutputModeControls();
+
+    if (decodedViews.length >= 2 && !outputWidthManuallyChangedForCurrentFile) {
+      applyAutomaticOutputWidthForCurrentMode();
+    }
+
+    updateControls();
     regeneratePreviewIfReady();
   });
 
@@ -4138,8 +4140,8 @@ applyPreviewFlipMaximum(previewFlipMaximumHz);
   });
 
   resetWidthButton.addEventListener("click", () => {
-    applyOutputWidth(OUTPUT_WIDTH_DEFAULT);
-    saveOutputWidthToStorage(OUTPUT_WIDTH_DEFAULT);
+    outputWidthManuallyChangedForCurrentFile = false;
+    applyAutomaticOutputWidthForCurrentMode();
     updateControls();
     regeneratePreviewIfReady();
   });
@@ -4310,7 +4312,7 @@ applyPreviewFlipMaximum(previewFlipMaximumHz);
 
   previewFlipMaximumHz = loadPreviewFlipMaximumFromStorage();
   applyPreviewFlipMaximum(previewFlipMaximumHz);
-  restoreOutputWidthFromStorage();
+  applyOutputWidth(OUTPUT_WIDTH_DEFAULT);
 
   updateOutputModeControls();
   updateRotationRangeMode();
