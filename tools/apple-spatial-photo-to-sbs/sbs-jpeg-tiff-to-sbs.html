@@ -766,6 +766,10 @@
     border-radius: 4px;
   }
   
+  #eyeOrderControl {
+    display: block !important;
+  }
+
   #widthRange:focus,
   #widthRange:focus-visible,
   #stereoDepthRange:focus,
@@ -830,7 +834,7 @@
 
       <div id="eyeOrderControl">
         <label for="eyeOrder">Stereo Order:</label>
-        <select id="eyeOrder" title="Choose the side-by-side eye order. Left / Right is for parallel/stereograph viewing; Right / Left is for cross-eye viewing.">
+        <select id="eyeOrder" title="Choose the input eye order. This affects both Side-by-Side and Anaglyph output. Use Right / Left if the source image is reversed.">
           <option value="normal">Left / Right (Stereograph card)</option>
           <option value="swap">Right / Left (Cross-eye viewing)</option>
         </select>
@@ -873,6 +877,7 @@
     <div class="hint">
       For Side-by-Side format, each eye is rendered at half the selected output width.&nbsp;&nbsp;
       For Anaglyph formats, the selected width is the full image width.<br/>
+      Stereo Order affects both Side-by-Side and Anaglyph output, so use Right / Left if the source image is reversed.<br/>
       Image Rotation applies a small roll correction and crops as required to preserve the original aspect ratio.
     </div>
 
@@ -3214,6 +3219,17 @@
     }
   }
 
+  function keepStereoOrderControlVisible() {
+    if (eyeOrderControl) {
+      eyeOrderControl.hidden = false;
+      eyeOrderControl.style.display = "";
+    }
+
+    if (eyeOrder) {
+      eyeOrder.disabled = false;
+    }
+  }
+
   function updateControls() {
 applyPreviewFlipMaximum(previewFlipMaximumHz);
 
@@ -3225,6 +3241,8 @@ applyPreviewFlipMaximum(previewFlipMaximumHz);
     stereoDepthValue.textContent = `${separation > 0 ? "+" : ""}${separation.toFixed(1)}%`;
 
     updatePreviewFlipRateLabel();
+
+    keepStereoOrderControlVisible();
   }
 
 
@@ -3545,7 +3563,27 @@ applyPreviewFlipMaximum(previewFlipMaximumHz);
     };
   }
 
+  function getOrderedStereoCanvases(leftCanvas, rightCanvas) {
+    if (eyeOrder && eyeOrder.value === "swap") {
+      return {
+        leftCanvas: rightCanvas,
+        rightCanvas: leftCanvas
+      };
+    }
+
+    return {
+      leftCanvas,
+      rightCanvas
+    };
+  }
+
   function buildAnaglyphImageData(ctx, leftCanvas, rightCanvas, width, height, mode) {
+
+    if (eyeOrder && eyeOrder.value === "swap") {
+      const originalLeftCanvas = leftCanvas;
+      leftCanvas = rightCanvas;
+      rightCanvas = originalLeftCanvas;
+    }
     const leftData = drawScaledToImageData(leftCanvas, width, height);
     const rightData = drawScaledToImageData(rightCanvas, width, height);
     const out = ctx.createImageData(width, height);
@@ -3876,6 +3914,8 @@ applyPreviewFlipMaximum(previewFlipMaximumHz);
         <ol>
           <li>Select a single side-by-side JPEG or TIFF file using the file chooser.<br/>On desktop, you can also drag and drop one JPEG or TIFF file onto the top control panel.</li>
           <li>JPEG and TIFF inputs are both split into equal left and right halves before the normal adjustment/export workflow begins.</li>
+          <li><b>Stereo Order</b> affects both Side-by-Side and Anaglyph output. For Anaglyph output, it controls which source half becomes the red left-eye channel and which source half becomes the cyan right-eye channel.</li>
+          <li>This can be used to reverse the left/right order if you want to create an Anaglyph from a right/left cross-eye view original image.</li>
           <li>TIFF support is intended for standard 8-bit RGB side-by-side TIFF/TIF images, including uncompressed TIFFs and common LZW-compressed TIFFs with horizontal differencing predictor.</li>
           <li>Select an <b>Output Format</b>.<br/>Use <b>Side-by-Side</b> for stereo pairs, or one of the <b>Red / Cyan Anaglyph</b> formats for viewing with red/cyan 3D glasses.</li>
           <li>Adjust <b>Output JPEG Width</b> as desired. Default is 5376 pixels (2x the typical iPhone spatial single image width).<br/>Use the slider, or click the width value display to enter an exact width.</li>
