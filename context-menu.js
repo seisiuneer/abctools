@@ -133,6 +133,10 @@ class ContextMenu {
 
     const margin = 8;
 
+    // On mobile, leave more room on the right edge so the menu
+    // does not feel jammed against the side of the screen.
+    const rightMargin = isMobileBrowser() ? 16 : margin;
+
     // Start at the click/tap position
     let left = e.pageX;
     let top = e.pageY;
@@ -146,9 +150,11 @@ class ContextMenu {
     const viewportRight = viewportLeft + window.innerWidth;
     const viewportBottom = viewportTop + window.innerHeight;
 
-    // Keep menu fully onscreen horizontally
-    if (left + menuRect.width + margin > viewportRight) {
-      left = viewportRight - menuRect.width - margin;
+    // Keep menu fully onscreen horizontally.
+    // On mobile, use a larger right margin so the menu is shifted
+    // slightly farther left when it would otherwise hit the right edge.
+    if (left + menuRect.width + rightMargin > viewportRight) {
+      left = viewportRight - menuRect.width - rightMargin;
     }
 
     if (left < viewportLeft + margin) {
@@ -234,7 +240,8 @@ class ContextMenu {
 }
 
 var gInContextMenu = false;
-// Listen for c event to show menu
+
+// Listen for click event to show menu
 document.addEventListener('click', (e) => {
   gCM_instances.forEach((menu) => {
     if (e.target.matches(menu.selector)) {
