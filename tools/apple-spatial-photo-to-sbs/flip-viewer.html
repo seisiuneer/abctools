@@ -937,6 +937,7 @@
           <li>Select a single side-by-side JPEG or TIFF file using the file chooser.</li>
           <li>On desktop browsers, you can also drag a side-by-side JPEG or TIFF directly onto the preview area.</li>
           <li>The image should contain the two stereo views side by side in a single JPEG or TIFF file.</li>
+          <li>TIFF support is intended for standard 8-bit RGB side-by-side TIFF/TIF images, including uncompressed TIFFs and common LZW-compressed TIFFs with horizontal differencing predictor.</li>
         </ul>
 
         <h4>Display modes</h4>
@@ -1225,7 +1226,7 @@
     return isTiffFile(file) ? "TIFF" : "JPEG";
   }
 
-  async function decodeJpegToCanvas(file) {
+  async function decodeRasterImageToCanvas(file, errorLabel) {
     const url = URL.createObjectURL(file);
 
     try {
@@ -1234,7 +1235,7 @@
 
       await new Promise((resolve, reject) => {
         img.onload = resolve;
-        img.onerror = () => reject(new Error("Could not load JPEG image."));
+        img.onerror = () => reject(new Error(`${errorLabel} could not be loaded by this browser.`));
         img.src = url;
       });
 
@@ -1251,26 +1252,436 @@
     }
   }
 
-  async function decodeTiffToCanvas(file) {
-    if (!window.UTIF || typeof UTIF.decode !== "function" || typeof UTIF.toRGBA8 !== "function") {
+  async function decodeJpegToCanvas(file) {
+    return decodeRasterImageToCanvas(file, "JPEG image");
+  }
+
+  function createTiffReader(buffer) {
+    const view = new DataView(buffer);
+    const byteOrder = view.getUint16(0, false);
+    const littleEndian = byteOrder === 0x4949;
+
+    if (byteOrder !== 0x4949 && byteOrder !== 0x4d4d) {
+      throw new Error("This is not a valid TIFF file.");
+    }
+
+    if (view.getUint16(2, littleEndian) !== 42) {
+      throw new Error("Unsupported TIFF header.");
+    }
+
+    return {
+      view,
+      littleEndian,
+      getUint16(offset) {
+        return view.getUint16(offset, littleEndian);
+      },
+      getUint32(offset) {
+        return view.getUint32(offset, littleEndian);
+      }
+    };
+  }
+
+  function getTiffTypeSize(type) {
+    switch (Number(type)) {
+      case 1: // BYTE
+      case 2: // ASCII
+      case 6: // SBYTE
+      case 7: // UNDEFINED
+        return 1;
+      case 3: // SHORT
+      case 8: // SSHORT
+        return 2;
+      case 4: // LONG
+      case 9: // SLONG
+      case 11: // FLOAT
+        return 4;
+      case 5: // RATIONAL
+      case 10: // SRATIONAL
+      case 12: // DOUBLE
+        return 8;
+      default:
+        return 1;
+    }
+  }
+
+  function readTiffTagValues(reader, type, count, valueOffset) {
+    const view = reader.view;
+    const littleEndian = reader.littleEndian;
+    const typeSize = getTiffTypeSize(type);
+    const totalSize = typeSize * count;
+    const dataOffset = totalSize <= 4 ? valueOffset : reader.getUint32(valueOffset);
+    const values = [];
+
+    for (let i = 0; i < count; i++) {
+      const offset = dataOffset + i * typeSize;
+
+      switch (Number(type)) {
+        case 1:
+        case 7:
+          values.push(view.getUint8(offset));
+          break;
+        case 3:
+          values.push(view.getUint16(offset, littleEndian));
+          break;
+        case 4:
+          values.push(view.getUint32(offset, littleEndian));
+          break;
+        case 8:
+          values.push(view.getInt16(offset, littleEndian));
+          break;
+        case 9:
+          values.push(view.getInt32(offset, littleEndian));
+          break;
+        case 5: {
+          const numerator = view.getUint32(offset, littleEndian);
+          const denominator = view.getUint32(offset + 4, littleEndian) || 1;
+          values.push(numerator / denominator);
+          break;
+        }
+        case 10: {
+          const numerator = view.getInt32(offset, littleEndian);
+          const denominator = view.getInt32(offset + 4, littleEndian) || 1;
+          values.push(numerator / denominator);
+          break;
+        }
+        default:
+          values.push(view.getUint8(offset));
+          break;
+      }
+    }
+
+    return values.length === 1 ? values[0] : values;
+  }
+
+  function readFirstTiffIfd(buffer) {
+    const reader = createTiffReader(buffer);
+    const firstIfdOffset = reader.getUint32(4);
+
+    if (!firstIfdOffset || firstIfdOffset >= buffer.byteLength) {
+      throw new Error("The TIFF image directory is invalid.");
+    }
+
+    const entryCount = reader.getUint16(firstIfdOffset);
+    const tags = {};
+
+    for (let i = 0; i < entryCount; i++) {
+      const entryOffset = firstIfdOffset + 2 + i * 12;
+
+      if (entryOffset + 12 > buffer.byteLength) {
+        break;
+      }
+
+      const tag = reader.getUint16(entryOffset);
+      const type = reader.getUint16(entryOffset + 2);
+      const count = reader.getUint32(entryOffset + 4);
+      const valueOffset = entryOffset + 8;
+
+      tags[tag] = readTiffTagValues(reader, type, count, valueOffset);
+    }
+
+    return tags;
+  }
+
+  function asTiffArray(value) {
+    if (Array.isArray(value)) {
+      return value;
+    }
+
+    if (value === undefined || value === null) {
+      return [];
+    }
+
+    return [value];
+  }
+
+  function firstTiffValue(value, fallback = 0) {
+    const values = asTiffArray(value);
+    return values.length ? Number(values[0]) : fallback;
+  }
+
+  function readBitsMsb(data, bitState, count) {
+    let value = 0;
+
+    for (let i = 0; i < count; i++) {
+      if (bitState.bitOffset >= data.length * 8) {
+        bitState.eof = true;
+        return value;
+      }
+
+      const byte = data[bitState.bitOffset >> 3];
+      const bit = (byte >> (7 - (bitState.bitOffset & 7))) & 1;
+
+      value = (value << 1) | bit;
+      bitState.bitOffset++;
+    }
+
+    return value;
+  }
+
+  function concatLzwEntry(previous, firstByte) {
+    const out = new Uint8Array(previous.length + 1);
+    out.set(previous, 0);
+    out[previous.length] = firstByte;
+    return out;
+  }
+
+  function decodeTiffLzwEarlyChange(data, expectedLength) {
+    const dictionary = new Array(4096);
+
+    function resetDictionary() {
+      for (let i = 0; i < 256; i++) {
+        dictionary[i] = Uint8Array.of(i);
+      }
+
+      for (let i = 258; i < dictionary.length; i++) {
+        dictionary[i] = undefined;
+      }
+
+      return {
+        nextCode: 258,
+        codeSize: 9
+      };
+    }
+
+    const output = new Uint8Array(expectedLength);
+    const bitState = { bitOffset: 0, eof: false };
+    let dictState = resetDictionary();
+    let previous = null;
+    let outOffset = 0;
+
+    while (!bitState.eof) {
+      const code = readBitsMsb(data, bitState, dictState.codeSize);
+
+      if (bitState.eof) {
+        break;
+      }
+
+      if (code === 256) {
+        dictState = resetDictionary();
+        previous = null;
+        continue;
+      }
+
+      if (code === 257) {
+        break;
+      }
+
+      let entry = dictionary[code];
+
+      if (!entry && code === dictState.nextCode && previous) {
+        entry = concatLzwEntry(previous, previous[0]);
+      }
+
+      if (!entry) {
+        throw new Error("Unsupported or corrupt TIFF LZW data.");
+      }
+
+      if (outOffset + entry.length > output.length) {
+        output.set(entry.subarray(0, output.length - outOffset), outOffset);
+        outOffset = output.length;
+        break;
+      }
+
+      output.set(entry, outOffset);
+      outOffset += entry.length;
+
+      if (previous && dictState.nextCode < 4096) {
+        dictionary[dictState.nextCode] = concatLzwEntry(previous, entry[0]);
+        dictState.nextCode++;
+
+        // TIFF LZW uses early-change code-size growth.
+        if (dictState.codeSize < 12 && dictState.nextCode === (1 << dictState.codeSize) - 1) {
+          dictState.codeSize++;
+        }
+      }
+
+      previous = entry;
+
+      if (outOffset >= output.length) {
+        break;
+      }
+    }
+
+    if (outOffset < expectedLength) {
+      throw new Error("TIFF LZW data ended before the image was complete.");
+    }
+
+    return output;
+  }
+
+  function applyHorizontalTiffPredictor(data, width, rows, samplesPerPixel) {
+    const stride = width * samplesPerPixel;
+
+    for (let y = 0; y < rows; y++) {
+      const rowStart = y * stride;
+      const rowEnd = rowStart + stride;
+
+      for (let x = rowStart + samplesPerPixel; x < rowEnd; x++) {
+        data[x] = (data[x] + data[x - samplesPerPixel]) & 255;
+      }
+    }
+  }
+
+  function decodeBasicRgbTiffToCanvas(buffer) {
+    const tags = readFirstTiffIfd(buffer);
+    const width = firstTiffValue(tags[256]);
+    const height = firstTiffValue(tags[257]);
+    const bitsPerSample = asTiffArray(tags[258]).map(Number);
+    const compression = firstTiffValue(tags[259], 1);
+    const photometric = firstTiffValue(tags[262], 2);
+    const stripOffsets = asTiffArray(tags[273]).map(Number);
+    const samplesPerPixel = firstTiffValue(tags[277], bitsPerSample.length || 3);
+    const rowsPerStrip = firstTiffValue(tags[278], height);
+    const stripByteCounts = asTiffArray(tags[279]).map(Number);
+    const planarConfiguration = firstTiffValue(tags[284], 1);
+    const predictor = firstTiffValue(tags[317], 1);
+
+    if (!Number.isFinite(width) || !Number.isFinite(height) || width <= 0 || height <= 0) {
+      throw new Error("The TIFF dimensions are invalid.");
+    }
+
+    if (photometric !== 2 || planarConfiguration !== 1 || samplesPerPixel < 3) {
+      throw new Error("Only standard chunky RGB TIFF images are supported.");
+    }
+
+    if (!bitsPerSample.length || bitsPerSample.some(value => Number(value) !== 8)) {
+      throw new Error("Only 8-bit RGB TIFF images are supported.");
+    }
+
+    if (compression !== 1 && compression !== 5) {
+      throw new Error("Only uncompressed and LZW-compressed TIFF images are supported.");
+    }
+
+    if (predictor !== 1 && predictor !== 2) {
+      throw new Error("Unsupported TIFF horizontal predictor.");
+    }
+
+    if (!stripOffsets.length || !stripByteCounts.length) {
+      throw new Error("The TIFF strip data is missing.");
+    }
+
+    const full = document.createElement("canvas");
+    full.width = width;
+    full.height = height;
+
+    const fullCtx = full.getContext("2d", { alpha: false });
+    const imageData = fullCtx.createImageData(width, height);
+    const rgbaOut = imageData.data;
+
+    let outputRow = 0;
+
+    for (let stripIndex = 0; stripIndex < stripOffsets.length && outputRow < height; stripIndex++) {
+      const offset = stripOffsets[stripIndex];
+      const byteCount = stripByteCounts[stripIndex];
+
+      if (!Number.isFinite(offset) || !Number.isFinite(byteCount) || offset < 0 || byteCount <= 0 || offset + byteCount > buffer.byteLength) {
+        throw new Error("The TIFF strip table is invalid.");
+      }
+
+      const rowsInStrip = Math.min(rowsPerStrip, height - outputRow);
+      const decodedLength = width * rowsInStrip * samplesPerPixel;
+      const compressed = new Uint8Array(buffer, offset, byteCount);
+      let decoded;
+
+      if (compression === 1) {
+        if (compressed.length < decodedLength) {
+          throw new Error("The uncompressed TIFF strip is shorter than expected.");
+        }
+
+        decoded = compressed.slice(0, decodedLength);
+      } else {
+        decoded = decodeTiffLzwEarlyChange(compressed, decodedLength);
+      }
+
+      if (predictor === 2) {
+        applyHorizontalTiffPredictor(decoded, width, rowsInStrip, samplesPerPixel);
+      }
+
+      for (let y = 0; y < rowsInStrip; y++) {
+        const sourceRowStart = y * width * samplesPerPixel;
+        const destRowStart = (outputRow + y) * width * 4;
+
+        for (let x = 0; x < width; x++) {
+          const sourceIndex = sourceRowStart + x * samplesPerPixel;
+          const destIndex = destRowStart + x * 4;
+
+          rgbaOut[destIndex] = decoded[sourceIndex];
+          rgbaOut[destIndex + 1] = decoded[sourceIndex + 1];
+          rgbaOut[destIndex + 2] = decoded[sourceIndex + 2];
+          rgbaOut[destIndex + 3] = 255;
+        }
+      }
+
+      outputRow += rowsInStrip;
+    }
+
+    if (outputRow < height) {
+      throw new Error("The TIFF image data ended before all rows were decoded.");
+    }
+
+    fullCtx.putImageData(imageData, 0, 0);
+    return full;
+  }
+
+  function firstUtifValue(value) {
+    if (Array.isArray(value)) {
+      return value.length ? value[0] : undefined;
+    }
+
+    return value;
+  }
+
+  function getUtifTagValue(ifd, tagNumber) {
+    if (!ifd) {
+      return undefined;
+    }
+
+    return firstUtifValue(ifd["t" + tagNumber]);
+  }
+
+  function getUtifImageWidth(ifd) {
+    return Number(ifd?.width ?? getUtifTagValue(ifd, 256));
+  }
+
+  function getUtifImageHeight(ifd) {
+    return Number(ifd?.height ?? getUtifTagValue(ifd, 257));
+  }
+
+  function findFirstDisplayableUtifIfd(ifds) {
+    if (!Array.isArray(ifds)) {
+      return null;
+    }
+
+    return ifds.find(ifd => {
+      const width = getUtifImageWidth(ifd);
+      const height = getUtifImageHeight(ifd);
+
+      return Number.isFinite(width) && width > 0 &&
+        Number.isFinite(height) && height > 0;
+    }) || null;
+  }
+
+  async function decodeTiffWithUtif(buffer) {
+    if (!window.UTIF || typeof UTIF.decode !== "function" || typeof UTIF.decodeImage !== "function" || typeof UTIF.toRGBA8 !== "function") {
       throw new Error("The TIFF decoder is not available.");
     }
 
-    const buffer = await file.arrayBuffer();
     const ifds = UTIF.decode(buffer);
+    const ifd = findFirstDisplayableUtifIfd(ifds);
 
-    if (!ifds || !ifds.length) {
-      throw new Error("Could not decode TIFF image.");
+    if (!ifd) {
+      throw new Error("No displayable TIFF image was found.");
     }
 
-    const ifd = ifds[0];
     UTIF.decodeImage(buffer, ifd);
 
     const rgba = UTIF.toRGBA8(ifd);
-    const width = Number(ifd.width);
-    const height = Number(ifd.height);
+    const width = getUtifImageWidth(ifd);
+    const height = getUtifImageHeight(ifd);
 
-    if (!width || !height || !rgba || rgba.length < width * height * 4) {
+    if (!Number.isFinite(width) || !Number.isFinite(height) ||
+        width <= 0 || height <= 0 ||
+        !rgba || rgba.length < width * height * 4) {
       throw new Error("The TIFF image could not be decoded.");
     }
 
@@ -1280,10 +1691,35 @@
 
     const fullCtx = full.getContext("2d", { alpha: false });
     const imageData = fullCtx.createImageData(width, height);
-    imageData.data.set(rgba);
+    imageData.data.set(rgba.subarray(0, width * height * 4));
     fullCtx.putImageData(imageData, 0, 0);
 
     return full;
+  }
+
+  async function decodeTiffToCanvas(file) {
+    const buffer = await file.arrayBuffer();
+    const errors = [];
+
+    try {
+      return decodeBasicRgbTiffToCanvas(buffer);
+    } catch (basicError) {
+      errors.push(basicError && basicError.message ? basicError.message : String(basicError));
+    }
+
+    try {
+      return await decodeTiffWithUtif(buffer);
+    } catch (utifError) {
+      errors.push(utifError && utifError.message ? utifError.message : String(utifError));
+    }
+
+    try {
+      return await decodeRasterImageToCanvas(file, "TIFF image");
+    } catch (nativeError) {
+      errors.push(nativeError && nativeError.message ? nativeError.message : String(nativeError));
+    }
+
+    throw new Error(`Could not decode TIFF image. ${errors[0] || "Unsupported TIFF format."}`);
   }
 
   async function decodeSourceFileToCanvas(file) {
