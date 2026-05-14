@@ -1,6 +1,6 @@
 <!-- 
  * 
- * sbs-viewer.html - All code for the Side-by-Side Stereo Flip Viewer
+ * flip-viewer.html - All code for the Side-by-Side Stereo Flip Viewer
  *
  * Project repo at: https://github.com/seisiuneer/abctools/tree/main/tools/apple-spatial-photo-to-sbs
  * 
@@ -34,13 +34,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Side-by-Side Stereo Flip Viewer</title>
+<title>Side-by-Side JPEG/TIFF Stereo Flip Viewer</title>
 <meta property="og:type" content="website" />
-<meta property="og:title" content="Side-by-Side Stereo Flip Viewer" />
-<meta property="og:description" content="Flip viewer for side-by-side images created with the Apple Spatial Photo → Side-by-Side or 3D Anaglyph JPEG tool." />
+<meta property="og:title" content="Side-by-Side JPEG/TIFF Stereo Flip Viewer" />
+<meta property="og:description" content="Flip viewer for side-by-side JPEG or TIFF stereo images." />
 <meta property="og:url" content="https://michaeleskin.com/tools/flip-viewer.html" />
-<meta property="og:site_name" content="Side-by-Side Stereo Flip Viewer" />
-<meta property="og:image" content="https://michaeleskin.com/tools/img/flip_viewer_og_2.jpg"/>
+<meta property="og:site_name" content="Side-by-Side JPEG/TIFF Stereo Flip Viewer" />
+<meta property="og:image" content="https://michaeleskin.com/tools/img/flip_viewer_og_3.jpg"/>
 <link rel="icon" type="image/png" sizes="32x32" href="https://michaeleskin.com/tools/img/spatial_to_sbs_favicon.png">
 
 <style>
@@ -649,16 +649,16 @@
 <div class="wrap">
 
   <header>
-    <h1>Side-by-Side Stereo Flip Viewer</h1>
+    <h1>Side-by-Side JPEG/TIFF Stereo Flip Viewer</h1>
     <p class="subhead">
-      Open a left/right side-by-side JPEG and view it as a flip stereo image.
+      Open a left/right side-by-side JPEG or TIFF and view it as a flip stereo image.
     </p>
   </header>
 
   <section class="card">
     <div>
-      <label for="fileInput">Side-by-Side JPEG Image:</label>
-      <input id="fileInput" type="file" accept="image/jpeg">
+      <label for="fileInput">Side-by-Side JPEG or TIFF Image:</label>
+      <input id="fileInput" type="file" accept=".jpg,.jpeg,.tif,.tiff,image/jpeg,image/tiff">
     </div>
   </section>
 
@@ -727,6 +727,7 @@
 
 </div>
 
+<script type="text/javascript" src="UTIF.min.js"></script>
 <script type="text/javascript" src="daypilot-modal.min-3.10.1.js"></script>
 
 <script>
@@ -916,31 +917,32 @@
   function showInstructions() {
     const html = `
       <div class="instructions-body">
-        <h3 style="text-align:center;">Side-by-Side Stereo Flip Viewer</h3>
+        <h3 style="text-align:center;">Side-by-Side JPEG/TIFF Stereo Flip Viewer</h3>
 
         <p>
-          This viewer opens a side-by-side JPEG image and rapidly alternates between the left-eye and right-eye views.
+          This viewer opens a side-by-side JPEG or TIFF image and rapidly alternates between the left-eye and right-eye views.
           The effect is often called a <b>flip</b> or <b>wiggle</b> stereo view.
         </p>
 
         <div style="text-align: center;margin-bottom:20px;">
-          This tool can be used to view the side-by-side JPEG images created with my<br/>
-           <div style="margin-top:10px;">
-            <a href="https://michaeleskin.com/tools/apple-spatial-photo-to-sbs.html" target="_blank" rel="noopener noreferrer">Apple Spatial Photo → Side-by-Side or 3D Anaglyph Tool</a>
+          This tool can be used to view side-by-side JPEG images created<br/>with my stereo image converter tools:<br/>
+          <div style="margin-top:10px;">
+            <a href="https://michaeleskin.com/tools/apple-spatial-photo-to-sbs.html" target="_blank" rel="noopener noreferrer">Apple Spatial Photo → Side-by-Side or 3D Anaglyph Tool</a><br/><br/>      
+            <a href="https://michaeleskin.com/tools/sbs-jpeg-tiff-to-sbs.html" target="_blank" rel="noopener noreferrer">Side-by-Side JPEG/TIFF → Side-by-Side or 3D Anaglyph</a>
           </div>
         </div>
 
         <h4>Opening an image</h4>
         <ul>
-          <li>Click <b>Side-by-Side JPEG Image</b> and choose a JPEG file.</li>
-          <li>You can also drag a JPEG directly onto the preview area.</li>
-          <li>The image should contain the two stereo views side by side in a single JPEG.</li>
+          <li>Select a single side-by-side JPEG or TIFF file using the file chooser.</li>
+          <li>On desktop browsers, you can also drag a side-by-side JPEG or TIFF directly onto the preview area.</li>
+          <li>The image should contain the two stereo views side by side in a single JPEG or TIFF file.</li>
         </ul>
 
         <h4>Display modes</h4>
         <ul>
           <li><b>Flip Stereo View</b> alternates between the left-eye and right-eye views.</li>
-          <li><b>Original Side-by-Side Image</b> shows the full side-by-side JPEG without flipping.</li>
+          <li><b>Original Side-by-Side Image</b> shows the full side-by-side image without flipping.</li>
           <li>When viewing the original side-by-side image, use <b>Image Order</b> to switch between Original and Swapped display.</li>
           <li>The Image Order control is hidden in Flip Stereo View mode.</li>
           <li>On desktop browsers, move the mouse over the preview area to reveal the full-screen button at the top right of the preview. On iPad, the button remains visible at the top right. The button is hidden on iPhone and while full-screen mode is active. Press Escape or use the browser full-screen control to return to the normal tool view.</li>
@@ -948,8 +950,8 @@
 
         <h4>Image layout</h4>
         <ul>
-          <li>The viewer assumes the left half of the JPEG is one eye view and the right half is the other eye view.</li>
-          <li>Images exported from the Apple Spatial Photo to Side-by-Side tool are already in the expected format.</li>
+          <li>The viewer assumes the left half of the JPEG/TIFF is one eye view and the right half is the other eye view.</li>
+          <li>Side-by-side images exported from the Apple Spatial Photo to Side-by-Side tool, or from the Side-by-Side JPEG/TIFF to JPEG tool, are already in the expected format.</li>
           <li>The preview area is fixed at a comfortable 4:3 shape and the image is scaled to fit inside it.</li>
         </ul>
 
@@ -978,7 +980,7 @@
         <h4>Privacy</h4>
         <ul>
           <li>All processing is performed locally in your browser.</li>
-          <li>The selected JPEG file is not uploaded to a server by this tool.</li>
+          <li>The selected JPEG or TIFF file is not uploaded to a server by this tool.</li>
           <li>Google Analytics is used to collect aggregate usage statistics for the tool.</li>
         </ul>
 
@@ -1007,7 +1009,7 @@
         <div style="text-align: center;margin-bottom:20px;">
           The source code for this tool is available on GitHub<br/>
            <div style="margin-top:10px;">
-            <a href="https://github.com/seisiuneer/abctools/tree/main/tools/apple-spatial-photo-to-sbs" target="_blank" rel="noopener noreferrer">Side-by-Side Stereo Flip Viewer on GitHub</a>
+            <a href="https://github.com/seisiuneer/abctools/tree/main/tools/apple-spatial-photo-to-sbs" target="_blank" rel="noopener noreferrer">Side-by-Side JPEG/TIFF Stereo Flip Viewer</a>
           </div>
         </div>
 
@@ -1025,7 +1027,7 @@
 
     alert(
       "Side-by-Side Stereo Flip Viewer\\n\\n" +
-      "Open a side-by-side JPEG image and use Flip Speed to control how quickly the viewer alternates between the two eye views. " +
+      "Open a side-by-side JPEG or TIFF image and use Flip Speed to control how quickly the viewer alternates between the two eye views. " +
       "Click Pause to stop the animation and Play to resume."
     );
   }
@@ -1058,9 +1060,11 @@
     }
   }
 
-  function splitSideBySideImage(img) {
-    const eyeWidth = Math.floor(img.naturalWidth / 2);
-    const eyeHeight = img.naturalHeight;
+  function splitSideBySideCanvas(full) {
+    const sourceWidth = full.width;
+    const sourceHeight = full.height;
+    const eyeWidth = Math.floor(sourceWidth / 2);
+    const eyeHeight = sourceHeight;
 
     if (eyeWidth < 1 || eyeHeight < 1) {
       throw new Error("Image is too small.");
@@ -1077,9 +1081,15 @@
     const lctx = l.getContext("2d", { alpha: false });
     const rctx = r.getContext("2d", { alpha: false });
 
-    lctx.drawImage(img, 0, 0, eyeWidth, eyeHeight, 0, 0, eyeWidth, eyeHeight);
-    rctx.drawImage(img, eyeWidth, 0, eyeWidth, eyeHeight, 0, 0, eyeWidth, eyeHeight);
+    lctx.drawImage(full, 0, 0, eyeWidth, eyeHeight, 0, 0, eyeWidth, eyeHeight);
+    rctx.drawImage(full, eyeWidth, 0, eyeWidth, eyeHeight, 0, 0, eyeWidth, eyeHeight);
 
+    leftCanvas = l;
+    rightCanvas = r;
+    sourceFullCanvas = full;
+  }
+
+  function splitSideBySideImage(img) {
     const full = document.createElement("canvas");
     full.width = img.naturalWidth;
     full.height = img.naturalHeight;
@@ -1087,9 +1097,7 @@
     const fullCtx = full.getContext("2d", { alpha: false });
     fullCtx.drawImage(img, 0, 0);
 
-    leftCanvas = l;
-    rightCanvas = r;
-    sourceFullCanvas = full;
+    splitSideBySideCanvas(full);
   }
 
   function resizeCanvasToViewer() {
@@ -1201,20 +1209,23 @@
       );
   }
 
-  async function loadImageFile(file) {
-    if (!file) return;
+  function isTiffFile(file) {
+    return !!file &&
+      (
+        /^image\/tiff$/i.test(file.type || "") ||
+        /\.tiff?$/i.test(file.name || "")
+      );
+  }
 
-    if (!isJpegFile(file)) {
-      leftCanvas = null;
-      rightCanvas = null;
-      sourceFullCanvas = null;
-      emptyMessage.style.display = "grid";
-      fileMeta.textContent = file?.name ? `${file.name} (${formatBytes(file.size)})` : "No file selected.";
-      sourceMeta.textContent = "Please choose a JPEG side-by-side image.";
-      requestRender();
-      return;
-    }
+  function isSupportedSourceFile(file) {
+    return isJpegFile(file) || isTiffFile(file);
+  }
 
+  function getSourceFileFormatLabel(file) {
+    return isTiffFile(file) ? "TIFF" : "JPEG";
+  }
+
+  async function decodeJpegToCanvas(file) {
     const url = URL.createObjectURL(file);
 
     try {
@@ -1223,28 +1234,105 @@
 
       await new Promise((resolve, reject) => {
         img.onload = resolve;
-        img.onerror = () => reject(new Error("Could not load image."));
+        img.onerror = () => reject(new Error("Could not load JPEG image."));
         img.src = url;
       });
 
-      splitSideBySideImage(img);
+      const full = document.createElement("canvas");
+      full.width = img.naturalWidth;
+      full.height = img.naturalHeight;
 
-      const eyeWidth = Math.floor(img.naturalWidth / 2);
-      const eyeHeight = img.naturalHeight;
+      const fullCtx = full.getContext("2d", { alpha: false });
+      fullCtx.drawImage(img, 0, 0);
+
+      return full;
+    } finally {
+      URL.revokeObjectURL(url);
+    }
+  }
+
+  async function decodeTiffToCanvas(file) {
+    if (!window.UTIF || typeof UTIF.decode !== "function" || typeof UTIF.toRGBA8 !== "function") {
+      throw new Error("The TIFF decoder is not available.");
+    }
+
+    const buffer = await file.arrayBuffer();
+    const ifds = UTIF.decode(buffer);
+
+    if (!ifds || !ifds.length) {
+      throw new Error("Could not decode TIFF image.");
+    }
+
+    const ifd = ifds[0];
+    UTIF.decodeImage(buffer, ifd);
+
+    const rgba = UTIF.toRGBA8(ifd);
+    const width = Number(ifd.width);
+    const height = Number(ifd.height);
+
+    if (!width || !height || !rgba || rgba.length < width * height * 4) {
+      throw new Error("The TIFF image could not be decoded.");
+    }
+
+    const full = document.createElement("canvas");
+    full.width = width;
+    full.height = height;
+
+    const fullCtx = full.getContext("2d", { alpha: false });
+    const imageData = fullCtx.createImageData(width, height);
+    imageData.data.set(rgba);
+    fullCtx.putImageData(imageData, 0, 0);
+
+    return full;
+  }
+
+  async function decodeSourceFileToCanvas(file) {
+    if (isTiffFile(file)) {
+      return decodeTiffToCanvas(file);
+    }
+
+    return decodeJpegToCanvas(file);
+  }
+
+  async function loadImageFile(file) {
+    if (!file) return;
+
+    if (!isSupportedSourceFile(file)) {
+      leftCanvas = null;
+      rightCanvas = null;
+      sourceFullCanvas = null;
+      emptyMessage.style.display = "grid";
+      fileMeta.textContent = file?.name ? `${file.name} (${formatBytes(file.size)})` : "No file selected.";
+      sourceMeta.textContent = "Please choose a JPEG or TIFF side-by-side image.";
+      requestRender();
+      return;
+    }
+
+    try {
+      const full = await decodeSourceFileToCanvas(file);
+
+      splitSideBySideCanvas(full);
+
+      const eyeWidth = Math.floor(full.width / 2);
+      const eyeHeight = full.height;
+      const formatLabel = getSourceFileFormatLabel(file);
 
       // Keep the viewer fixed at 4:3 / 1.333333.
       viewerBox.style.height = "auto";
 
       fileMeta.textContent = `${file.name} (${formatBytes(file.size)})`;
-      sourceMeta.textContent = `Source: ${img.naturalWidth} × ${img.naturalHeight}; each eye: ${eyeWidth} × ${eyeHeight}`;
+      sourceMeta.textContent = `${formatLabel} source: ${full.width} × ${full.height}; each eye: ${eyeWidth} × ${eyeHeight}`;
 
       animationStart = performance.now();
       requestRender();
     } catch (err) {
+      leftCanvas = null;
+      rightCanvas = null;
+      sourceFullCanvas = null;
+      emptyMessage.style.display = "grid";
       fileMeta.textContent = `${file.name} (${formatBytes(file.size)})`;
-      sourceMeta.textContent = "Could not load image.";
-    } finally {
-      URL.revokeObjectURL(url);
+      sourceMeta.textContent = err && err.message ? err.message : "Could not load image.";
+      requestRender();
     }
   }
 
