@@ -849,8 +849,8 @@
           </div>
         </div>
         <div class="row">
-          <input id="heightRange" type="range" min="768" max="12288" step="1" value="2016" autocomplete="off" title="Set the output JPEG height. The output width is calculated automatically from the selected height and the final image aspect ratio. Click the numeric value to enter an exact height.">
-          <div id="heightValue" class="rangeValue editableRangeValue" role="button" tabindex="0" aria-label="Enter output JPEG height" title="Click to enter a specific output JPEG height from 768 to 12288 pixels.">2,016 px</div>
+          <input id="heightRange" type="range" min="768" max="8192" step="1" value="2016" autocomplete="off" title="Set the output JPEG height. The output width is calculated automatically from the selected height and the final image aspect ratio. Click the numeric value to enter an exact height.">
+          <div id="heightValue" class="rangeValue editableRangeValue" role="button" tabindex="0" aria-label="Enter output JPEG height" title="Click to enter a specific output JPEG height from 768 to 8192 pixels.">2,016 px</div>
         </div>
       </div>
 
@@ -1026,7 +1026,7 @@
   const INTERACTIVE_PREVIEW_MAX_WIDTH = 1600;
   const FULLSCREEN_PREVIEW_MAX_WIDTH = 5120; // Apple Studio Display 5K width
   const OUTPUT_HEIGHT_MIN = 768;
-  const OUTPUT_HEIGHT_MAX = 12288;
+  const OUTPUT_HEIGHT_MAX = 8192;
   const OUTPUT_HEIGHT_DEFAULT = 2016;
   let sourceOriginalHeight = OUTPUT_HEIGHT_DEFAULT;
   const PROCESSING_SOFTWARE_EXIF_TEXT =
@@ -3621,7 +3621,7 @@
         <ul>
           <li><b>Output Format</b>: Chooses between Side-by-Side output and several common anaglyph formats.</li>
           <li><b>Stereo Order</b>: Only shown for Side-by-Side output. <b>Left / Right</b> is appropriate for standard stereograph card / parallel viewing.<br/><b>Right / Left</b> is appropriate for cross-eye viewing.</li>
-          <li><b>Output JPEG Height</b>: Sets the final exported JPEG height. The exported JPEG width is calculated automatically from the selected height and the final output aspect ratio.<br/>For Side-by-Side output, the final JPEG uses the selected height and creates a side-by-side image with the two eye views placed left and right. If Side-by-Side Center Crop is applied, the final JPEG scales only the visible cropped eye views to the selected output height and does not include the preview's outside black bars.<br/>For Anaglyph output, the final JPEG uses the selected height and creates a single red/cyan image whose width is calculated from the anaglyph aspect ratio.<br/>Use the slider, or click the numeric height value to enter a specific height.<br/>Entered values are clamped to the supported 768 to 12288 pixel range.<br/>The <b>Reset</b> button resets the output height to the original input height.</li>
+          <li><b>Output JPEG Height</b>: Sets the final exported JPEG height. The exported JPEG width is calculated automatically from the selected height and the final output aspect ratio.<br/>For Side-by-Side output, the final JPEG uses the selected height and creates a side-by-side image with the two eye views placed left and right. If Side-by-Side Center Crop is applied, the final JPEG scales only the visible cropped eye views to the selected output height and does not include the preview's outside black bars.<br/>For Anaglyph output, the final JPEG uses the selected height and creates a single red/cyan image whose width is calculated from the anaglyph aspect ratio.<br/>Use the slider, or click the numeric height value to enter a specific height.<br/>Entered values are clamped to the supported 768 to 8192 pixel range.<br/>The <b>Reset</b> button resets the output height to the original input height.</li>
           <li><b>Image Rotation</b>: Applies a small roll correction to both stereo views.<br/>The rotated image is cropped as required to preserve the original aspect ratio.</li>
           <li><b>Image Rotation range selector</b>: Switches the Image Rotation slider between ±5° for normal adjustments and ±10° for larger rotation corrections.<br/>The <b>Reset</b> button resets the image rotation to zero.</li>
           <li><b>Side-by-Side Center Crop</b>: Only shown for Side-by-Side output. Crops the selected total percentage from each eye view, split evenly between the left and right edges. In the on-screen Side-by-Side preview, the visible left and right views touch at the center seam and black bars appear only on the far outside edges. During final JPEG export, those black bars are omitted and only the visible cropped left and right views are scaled to the selected output height.<br/>The avaiable crop range is from 0% to 50%. The <b>Reset</b> button resets the crop to zero.</li>
