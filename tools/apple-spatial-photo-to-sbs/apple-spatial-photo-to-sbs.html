@@ -339,7 +339,7 @@
 
   .sbsPreviewControls {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: 1fr;
     gap: 12px;
     min-width: 0;
   }
@@ -766,10 +766,12 @@
     border-radius: 4px;
   }
   
-  #widthRange:focus,
-  #widthRange:focus-visible,
+  #heightRange:focus,
+  #heightRange:focus-visible,
   #stereoDepthRange:focus,
   #stereoDepthRange:focus-visible,
+  #sbsCropRange:focus,
+  #sbsCropRange:focus-visible,
   #rotationRange:focus,
   #rotationRange:focus-visible,
   #previewFlipRateRange:focus,
@@ -841,14 +843,14 @@
     <div class="grid" style="margin-top:16px;">
       <div>
         <div class="controlHeader">
-          <label for="widthRange">Output JPEG Width</label>
+          <label for="heightRange">Output JPEG Height</label>
           <div class="controlHeaderActions">
-            <button id="resetWidthButton" class="smallResetButton" type="button" title="Reset the output JPEG width to the default value of 5376 pixels.">Reset</button>
+            <button id="resetHeightButton" class="smallResetButton" type="button" title="Reset the output JPEG height to the original imported image height.">Reset</button>
           </div>
         </div>
         <div class="row">
-          <input id="widthRange" type="range" min="1024" max="16384" step="1" value="5376" autocomplete="off" title="Set the output JPEG width. Side-by-Side output uses this as total width; each eye is half this width. Anaglyph output uses this as full image width. Click the numeric value to enter an exact width.">
-          <div id="widthValue" class="rangeValue editableRangeValue" role="button" tabindex="0" aria-label="Enter output JPEG width" title="Click to enter a specific output JPEG width from 1024 to 16384 pixels.">5,376 px</div>
+          <input id="heightRange" type="range" min="768" max="12288" step="1" value="2016" autocomplete="off" title="Set the output JPEG height. The output width is calculated automatically from the selected height and the final image aspect ratio. Click the numeric value to enter an exact height.">
+          <div id="heightValue" class="rangeValue editableRangeValue" role="button" tabindex="0" aria-label="Enter output JPEG height" title="Click to enter a specific output JPEG height from 768 to 12288 pixels.">2,016 px</div>
         </div>
       </div>
 
@@ -869,15 +871,9 @@
         </div>
       </div>
     </div>
-
-    <div class="hint">
-      For Side-by-Side format, each eye is rendered at half the selected output width.&nbsp;&nbsp;
-      For Anaglyph formats, the selected width is the full image width.<br/>
-      Image Rotation applies a small roll correction and crops as required to preserve the original aspect ratio.
-    </div>
-
+    
     <div class="grid" style="margin-top:16px;">
-      <div>
+      <div id="imageShiftControl">
         <div class="controlHeader">
           <label for="stereoDepthRange">Image Shift</label>
           <div class="controlHeaderActions">
@@ -894,15 +890,20 @@
         </div>
       </div>
 
-      <div id="sideBySidePreviewControls" class="sbsPreviewControls">
-        <div id="autoCropControl">
-          <label for="autoCropStereoEdges">Image Shift Edge Handling</label>
-          <label class="checkboxLabel" for="autoCropStereoEdges" title="When enabled, crop shifted side-by-side images to remove blank edge areas. Anaglyph output always auto-crops.">
-            <input id="autoCropStereoEdges" type="checkbox" checked title="When enabled, crop shifted side-by-side images to remove blank edge areas. Anaglyph output always auto-crops.">
-            Auto-crop edges
-          </label>
+      <div id="sbsCropControl">
+        <div class="controlHeader">
+          <label for="sbsCropRange">Side-by-Side Center Crop</label>
+          <div class="controlHeaderActions">
+            <button id="resetSbsCropButton" class="smallResetButton" type="button" title="Reset Side-by-Side Center Crop to 0.0%.">Reset</button>
+          </div>
         </div>
+        <div class="row">
+          <input id="sbsCropRange" type="range" min="0" max="50" step="0.1" value="0" title="Crops the selected total percentage from the left and right edges of each eye view for ease of image fusion in standard or cross-eye viewing.">
+          <div id="sbsCropValue" class="rangeValue">0.0%</div>
+        </div>
+      </div>
 
+      <div id="sideBySidePreviewControls" class="sbsPreviewControls">
         <div id="previewFlipControl">
           <div class="controlHeader">
             <label id="previewFlipLabel" for="previewFlipRateRange" role="button" tabindex="0" title="Click to set the maximum Preview L/R Flip rate.">Preview L/R Flip</label>
@@ -916,7 +917,7 @@
     </div>
 
     <div class="hint">
-      Image Shift moves the two views horizontally before compositing.<br/>In Side-by-Side format, Auto-crop removes blank shifted edges.&nbsp;&nbsp;Anaglyph formats always auto-crop.
+      In Side-by-Side preview, Side-by-Side Center Crop removes equal amounts from the left and right edges of each eye view.<br/>In Anaglyph formats, Image Shift moves the two views horizontally before compositing.
     </div>
 
   </section>
@@ -938,7 +939,7 @@
     <p id="status">Loading HEIC decoder…</p>
 
     <div id="downloadActions" class="actions" style="display:none;">
-      <a id="downloadLink" class="download" download="spatial-photo.jpg" title="Generate the final full-resolution JPEG, then download it or open the iOS Share Sheet.">Generate &amp; Download JPEG</a>
+      <a id="downloadLink" class="download" download="spatial-photo.jpg" title="Generate the final JPEG at the specified output height, then download it or open the iOS Share Sheet.">Generate &amp; Download JPEG</a>
     </div>
 
     <div class="meta">
@@ -968,20 +969,23 @@
   const fileInput = document.getElementById("fileInput");
   const eyeOrder = document.getElementById("eyeOrder");
   const eyeOrderControl = document.getElementById("eyeOrderControl");
-  const widthRange = document.getElementById("widthRange");
-  const widthValue = document.getElementById("widthValue");
-  const resetWidthButton = document.getElementById("resetWidthButton");
+  const heightRange = document.getElementById("heightRange");
+  const heightValue = document.getElementById("heightValue");
+  const resetHeightButton = document.getElementById("resetHeightButton");
   const rotationRange = document.getElementById("rotationRange");
   const rotationValue = document.getElementById("rotationValue");
   const rotationRangeMode = document.getElementById("rotationRangeMode");
   const resetRotationButton = document.getElementById("resetRotationButton");
+  const imageShiftControl = document.getElementById("imageShiftControl");
   const stereoDepthRange = document.getElementById("stereoDepthRange");
   const stereoDepthValue = document.getElementById("stereoDepthValue");
   const stereoDepthRangeMode = document.getElementById("stereoDepthRangeMode");
   const resetStereoDepthButton = document.getElementById("resetStereoDepthButton");
+  const sbsCropControl = document.getElementById("sbsCropControl");
+  const sbsCropRange = document.getElementById("sbsCropRange");
+  const sbsCropValue = document.getElementById("sbsCropValue");
+  const resetSbsCropButton = document.getElementById("resetSbsCropButton");
   const sideBySidePreviewControls = document.getElementById("sideBySidePreviewControls");
-  const autoCropControl = document.getElementById("autoCropControl");
-  const autoCropStereoEdges = document.getElementById("autoCropStereoEdges");
   const previewFlipControl = document.getElementById("previewFlipControl");
   const previewFlipLabel = document.getElementById("previewFlipLabel");
   const previewFlipRateRange = document.getElementById("previewFlipRateRange");
@@ -1021,11 +1025,10 @@
   let lastPreviewFlipRate = 1;
   const INTERACTIVE_PREVIEW_MAX_WIDTH = 1600;
   const FULLSCREEN_PREVIEW_MAX_WIDTH = 5120; // Apple Studio Display 5K width
-  const OUTPUT_WIDTH_MIN = 1024;
-  const OUTPUT_WIDTH_MAX = 16384;
-  const OUTPUT_WIDTH_DEFAULT = 5376;
-  const OUTPUT_WIDTH_STORAGE_KEY = "spatialSbsOutputWidth_v2";
-  let outputWidthRestoredAtStartup = false;
+  const OUTPUT_HEIGHT_MIN = 768;
+  const OUTPUT_HEIGHT_MAX = 12288;
+  const OUTPUT_HEIGHT_DEFAULT = 2016;
+  let sourceOriginalHeight = OUTPUT_HEIGHT_DEFAULT;
   const PROCESSING_SOFTWARE_EXIF_TEXT =
     "Michael Eskin's Apple Spatial Photo to Side-by-Side or 3D Anaglyph Tool";
   const PREVIEW_FLIP_MAX_MIN_HZ = 10;
@@ -1088,55 +1091,27 @@
     }
   }
 
-  function clampOutputWidth(value) {
+  function clampOutputHeight(value) {
     const number = Math.round(Number(value));
 
     if (!Number.isFinite(number)) {
-      return OUTPUT_WIDTH_DEFAULT;
+      return OUTPUT_HEIGHT_DEFAULT;
     }
 
-    return Math.max(OUTPUT_WIDTH_MIN, Math.min(OUTPUT_WIDTH_MAX, number));
+    return Math.max(OUTPUT_HEIGHT_MIN, Math.min(OUTPUT_HEIGHT_MAX, number));
   }
 
-  function loadOutputWidthFromStorage() {
-    if (!localStorageAvailable()) {
-      return OUTPUT_WIDTH_DEFAULT;
-    }
-
-    try {
-      const storedValue = window.localStorage.getItem(OUTPUT_WIDTH_STORAGE_KEY);
-
-      if (storedValue === null || storedValue === "") {
-        return OUTPUT_WIDTH_DEFAULT;
-      }
-
-      return clampOutputWidth(storedValue);
-    } catch (err) {
-      return OUTPUT_WIDTH_DEFAULT;
-    }
+  function applyOutputHeight(height) {
+    heightRange.max = String(OUTPUT_HEIGHT_MAX);
+    heightRange.value = String(clampOutputHeight(height));
   }
 
-  function saveOutputWidthToStorage(width) {
-    try {
-      window.localStorage.setItem(OUTPUT_WIDTH_STORAGE_KEY, String(clampOutputWidth(width)));
-    } catch (err) {
-      // Ignore storage errors. The tool still works without persistence.
-    }
+  function initializeOutputHeightControl() {
+    applyOutputHeight(sourceOriginalHeight || OUTPUT_HEIGHT_DEFAULT);
   }
 
-  function applyOutputWidth(width) {
-    widthRange.max = String(OUTPUT_WIDTH_MAX);
-    widthRange.value = String(clampOutputWidth(width));
-  }
-
-  function restoreOutputWidthFromStorage() {
-    applyOutputWidth(loadOutputWidthFromStorage());
-    outputWidthRestoredAtStartup = true;
-  }
-
-  function setOutputWidthFromUser(value) {
-    applyOutputWidth(value);
-    saveOutputWidthToStorage(widthRange.value);
+  function setOutputHeightFromUser(value) {
+    applyOutputHeight(value);
     updateControls();
     regeneratePreviewIfReady();
   }
@@ -1307,7 +1282,6 @@
     const neededPixelWidth = Math.ceil(displayWidth * dpr);
 
     return Math.min(
-      Number(widthRange.value) || OUTPUT_WIDTH_DEFAULT,
       FULLSCREEN_PREVIEW_MAX_WIDTH,
       Math.max(INTERACTIVE_PREVIEW_MAX_WIDTH, neededPixelWidth)
     );
@@ -2380,7 +2354,7 @@
   }
 
   function getDefaultSaveName() {
-    const outputWidth = Number(widthRange.value);
+    const outputHeight = Number(heightRange.value);
     const baseName = (currentFile?.name || fileInput.files[0]?.name || "spatial-photo").replace(/\.[^.]+$/, "");
 
     const formatSuffix = getOutputFormatSuffix();
@@ -2391,6 +2365,12 @@
       ? `-Shift${separation > 0 ? "+" : ""}${separationSafeText}`
       : "";
 
+    const sbsCrop = clampSideBySideCropPercent(sbsCropRange?.value || 0);
+    const sbsCropText = sbsCrop.toFixed(1).replace(".", "p");
+    const sbsCropSuffix = sbsCrop
+      ? `-Crop${sbsCropText}`
+      : "";
+
     const rotation = Number(rotationRange.value) || 0;
     const rotationText = rotation.toFixed(1).replace(".", "p");
     const rotationSuffix = rotation
@@ -2398,7 +2378,7 @@
       : "";
 
     if (!isSideBySideMode()) {
-      return `${baseName}-${formatSuffix}${separationSuffix}${rotationSuffix}-${outputWidth}.jpg`;
+      return `${baseName}-${formatSuffix}${separationSuffix}${rotationSuffix}-${outputHeight}h.jpg`;
     }
 
     let theStyle = "LR";
@@ -2406,7 +2386,7 @@
       theStyle = "RL";
     }
 
-    return `${baseName}-${formatSuffix}-${theStyle}${separationSuffix}${rotationSuffix}-${outputWidth}.jpg`;
+    return `${baseName}-${formatSuffix}-${theStyle}${sbsCropSuffix}${rotationSuffix}-${outputHeight}h.jpg`;
   }
 
   function promptForSaveName() {
@@ -2447,7 +2427,7 @@
     return `${value.toFixed(unit ? 1 : 0)} ${units[unit]}`;
   }
 
-  function clampOutputWidth(value) {
+  function parseOutputHeightInput(value) {
     const cleaned = String(value ?? "")
       .replace(/,/g, "")
       .trim();
@@ -2464,8 +2444,8 @@
 
     numeric = Math.round(numeric);
 
-    if (numeric < OUTPUT_WIDTH_MIN) numeric = OUTPUT_WIDTH_MIN;
-    if (numeric > OUTPUT_WIDTH_MAX) numeric = OUTPUT_WIDTH_MAX;
+    if (numeric < OUTPUT_HEIGHT_MIN) numeric = OUTPUT_HEIGHT_MIN;
+    if (numeric > OUTPUT_HEIGHT_MAX) numeric = OUTPUT_HEIGHT_MAX;
 
     return numeric;
   }
@@ -2476,40 +2456,55 @@
     }
   }
 
-  function applyOutputWidth(value) {
-    const clampedWidth = clampOutputWidth(value);
+  async function restoreInteractivePreviewAfterGeneratedOutput(statusMessage, statusClass = "ok") {
+    if (decodedViews.length < 2) {
+      if (statusMessage) {
+        setStatus(statusMessage, statusClass);
+      }
+      return;
+    }
 
-    if (clampedWidth === null) {
+    await convertToSbs({ previewOnly: true });
+
+    if (statusMessage) {
+      setStatus(statusMessage, statusClass);
+    }
+  }
+
+  function applyOutputHeight(value) {
+    const clampedHeight = parseOutputHeightInput(value);
+
+    if (clampedHeight === null) {
       updateControls();
       return;
     }
 
-    const previousWidth = Number(widthRange.value);
+    const previousHeight = Number(heightRange.value);
 
-    widthRange.value = String(clampedWidth);
+    heightRange.value = String(clampedHeight);
     updateControls();
 
-    if (clampedWidth !== previousWidth) {
+    if (clampedHeight !== previousHeight) {
       regeneratePreviewIfReady();
     }
   }
 
-  async function promptForOutputWidth() {
-    if (widthRange.disabled || widthValue.classList.contains("disabled")) {
+  async function promptForOutputHeight() {
+    if (heightRange.disabled || heightValue.classList.contains("disabled")) {
       return;
     }
 
     if (!window.DayPilot || !DayPilot.Modal || !DayPilot.Modal.prompt) {
-      const result = window.prompt(`Enter output JPEG width in pixels (${OUTPUT_WIDTH_MIN} to ${OUTPUT_WIDTH_MAX}):`, String(widthRange.value));
+      const result = window.prompt(`Enter output JPEG height in pixels (${OUTPUT_HEIGHT_MIN} to ${OUTPUT_HEIGHT_MAX}):`, String(heightRange.value));
       if (result !== null) {
-        setOutputWidthFromUser(result);
+        setOutputHeightFromUser(result);
       }
       return;
     }
 
     const args = await DayPilot.Modal.prompt(
-      `Enter output JPEG width in pixels (${OUTPUT_WIDTH_MIN} to ${OUTPUT_WIDTH_MAX}):`,
-      String(widthRange.value),
+      `Enter output JPEG height in pixels (${OUTPUT_HEIGHT_MIN} to ${OUTPUT_HEIGHT_MAX}):`,
+      String(heightRange.value),
       {
         theme: "modal_compact",
         top: 200,
@@ -2521,7 +2516,7 @@
       return;
     }
 
-    setOutputWidthFromUser(args.result);
+    setOutputHeightFromUser(args.result);
   }
 
   function updateGenerateButtonVisibility() {
@@ -2627,15 +2622,38 @@
     }
   }
 
-  function updateControls() {
-applyPreviewFlipMaximum(previewFlipMaximumHz);
+  function resetImageAdjustmentsForNewFile() {
+    if (rotationRange) {
+      rotationRange.value = "0";
+    }
 
-    widthValue.textContent = `${Number(widthRange.value).toLocaleString()} px`;
+    if (stereoDepthRange) {
+      stereoDepthRange.value = "0";
+    }
+
+    if (sbsCropRange) {
+      sbsCropRange.value = "0";
+    }
+
+    updateRotationRangeMode();
+    updateStereoDepthRangeMode();
+    updateControls();
+  }
+
+  function updateControls() {
+    applyPreviewFlipMaximum(previewFlipMaximumHz);
+
+    heightValue.textContent = `${Number(heightRange.value).toLocaleString()} px`;
     const rotation = Number(rotationRange.value) || 0;
     rotationValue.textContent = `${rotation > 0 ? "+" : ""}${rotation.toFixed(1)}°`;
 
     const separation = Number(stereoDepthRange.value) || 0;
     stereoDepthValue.textContent = `${separation > 0 ? "+" : ""}${separation.toFixed(1)}%`;
+
+    if (sbsCropValue) {
+      const crop = Number(sbsCropRange?.value) || 0;
+      sbsCropValue.textContent = `${crop.toFixed(1)}%`;
+    }
 
     updatePreviewFlipRateLabel();
   }
@@ -2734,13 +2752,18 @@ applyPreviewFlipMaximum(previewFlipMaximumHz);
       eyeOrderControl.style.display = sbsMode ? "block" : "none";
     }
 
+    if (imageShiftControl) {
+      imageShiftControl.style.display = sbsMode ? "none" : "block";
+    }
+
+    if (sbsCropControl) {
+      sbsCropControl.style.display = sbsMode ? "block" : "none";
+    }
+
     if (sideBySidePreviewControls) {
       sideBySidePreviewControls.style.display = sbsMode ? "grid" : "none";
     }
 
-    if (autoCropControl) {
-      autoCropControl.style.display = sbsMode ? "block" : "none";
-    }
 
     if (previewFlipControl) {
       previewFlipControl.style.display = sbsMode ? "block" : "none";
@@ -2751,8 +2774,25 @@ applyPreviewFlipMaximum(previewFlipMaximumHz);
     }
   }
 
-  function getInteractivePreviewWidth(outputWidth) {
-    return Math.min(outputWidth, getInteractivePreviewMaxWidth());
+  function getInteractivePreviewDimensions(outputWidth, outputHeight) {
+    outputWidth = Math.max(1, Math.round(Number(outputWidth) || 1));
+    outputHeight = Math.max(1, Math.round(Number(outputHeight) || 1));
+
+    const maxWidth = getInteractivePreviewMaxWidth();
+
+    if (outputWidth <= maxWidth) {
+      return {
+        width: outputWidth,
+        height: outputHeight
+      };
+    }
+
+    const scale = maxWidth / outputWidth;
+
+    return {
+      width: Math.max(1, Math.round(outputWidth * scale)),
+      height: Math.max(1, Math.round(outputHeight * scale))
+    };
   }
 
   function loadScript(url) {
@@ -2836,6 +2876,7 @@ applyPreviewFlipMaximum(previewFlipMaximumHz);
 
   async function decodeHeicFile(file) {
     clearGeneratedOutput();
+    resetImageAdjustmentsForNewFile();
     decodedViews = [];
     canvas.style.display = "none";
     canvas.width = 0;
@@ -2884,6 +2925,8 @@ applyPreviewFlipMaximum(previewFlipMaximumHz);
     }
 
     decodedViews = chooseStereoPair(rendered);
+    sourceOriginalHeight = clampOutputHeight(decodedViews[0].height || OUTPUT_HEIGHT_DEFAULT);
+    applyOutputHeight(sourceOriginalHeight);
     sourceMeta.textContent = `Decoded ${rendered.length} image view(s). Using ${decodedViews[0].width}×${decodedViews[0].height} and ${decodedViews[1].width}×${decodedViews[1].height}.`;
     setStatus("Stereo pair decoded.&nbsp;&nbsp;Creating preview…", "ok");
   }
@@ -3091,6 +3134,107 @@ applyPreviewFlipMaximum(previewFlipMaximumHz);
     };
   }
 
+  function clampSideBySideCropPercent(value) {
+    const number = Number(value) || 0;
+    return Math.max(0, Math.min(50, number));
+  }
+
+  function createSideBySideCenterCroppedCanvas(sourceCanvas, width, height, cropPercent, horizontalAlign = "center") {
+    const out = document.createElement("canvas");
+    out.width = width;
+    out.height = height;
+
+    const ctx = out.getContext("2d", { alpha: false });
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = "high";
+
+    ctx.fillStyle = "#000";
+    ctx.fillRect(0, 0, width, height);
+
+    const crop = clampSideBySideCropPercent(cropPercent) / 100;
+    const cropEachSide = crop / 2;
+
+    const sx = sourceCanvas.width * cropEachSide;
+    const sw = Math.max(1, sourceCanvas.width * (1 - crop));
+    const dw = Math.max(1, width * (1 - crop));
+
+    let dx;
+
+    if (horizontalAlign === "right") {
+      dx = width - dw;
+    } else if (horizontalAlign === "left") {
+      dx = 0;
+    } else {
+      dx = (width - dw) / 2;
+    }
+
+    ctx.drawImage(
+      sourceCanvas,
+      sx,
+      0,
+      sw,
+      sourceCanvas.height,
+      dx,
+      0,
+      dw,
+      height
+    );
+
+    return out;
+  }
+
+  function createSideBySideCenterCroppedPair(leftCanvas, rightCanvas, width, height, cropPercent, touchAtCenter = false) {
+    return {
+      leftCanvas: createSideBySideCenterCroppedCanvas(leftCanvas, width, height, cropPercent, touchAtCenter ? "right" : "center"),
+      rightCanvas: createSideBySideCenterCroppedCanvas(rightCanvas, width, height, cropPercent, touchAtCenter ? "left" : "center")
+    };
+  }
+
+  function createSideBySideVisibleCroppedCanvas(sourceCanvas, width, height, cropPercent) {
+    const out = document.createElement("canvas");
+    out.width = width;
+    out.height = height;
+
+    const ctx = out.getContext("2d", { alpha: false });
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = "high";
+
+    ctx.fillStyle = "#000";
+    ctx.fillRect(0, 0, width, height);
+
+    const crop = clampSideBySideCropPercent(cropPercent) / 100;
+    const cropEachSide = crop / 2;
+    const sx = sourceCanvas.width * cropEachSide;
+    const sw = Math.max(1, sourceCanvas.width * (1 - crop));
+
+    ctx.drawImage(
+      sourceCanvas,
+      sx,
+      0,
+      sw,
+      sourceCanvas.height,
+      0,
+      0,
+      width,
+      height
+    );
+
+    return out;
+  }
+
+  function createSideBySideVisibleCroppedPair(leftCanvas, rightCanvas, leftWidth, rightWidth, height, cropPercent) {
+    return {
+      leftCanvas: createSideBySideVisibleCroppedCanvas(leftCanvas, leftWidth, height, cropPercent),
+      rightCanvas: createSideBySideVisibleCroppedCanvas(rightCanvas, rightWidth, height, cropPercent)
+    };
+  }
+
+  function getSideBySideVisibleCropAspect(sourceCanvas, cropPercent) {
+    const crop = clampSideBySideCropPercent(cropPercent) / 100;
+    const visibleWidth = Math.max(1, sourceCanvas.width * (1 - crop));
+    return sourceCanvas.height / visibleWidth;
+  }
+
   function buildAnaglyphImageData(ctx, leftCanvas, rightCanvas, width, height, mode) {
     const leftData = drawScaledToImageData(leftCanvas, width, height);
     const rightData = drawScaledToImageData(rightCanvas, width, height);
@@ -3174,17 +3318,22 @@ applyPreviewFlipMaximum(previewFlipMaximumHz);
   function setOutputControlsBusy(isBusy) {
     outputFormat.disabled = isBusy;
     eyeOrder.disabled = isBusy;
-    widthRange.disabled = isBusy;
-    widthValue.classList.toggle("disabled", isBusy);
-    widthValue.setAttribute("aria-disabled", isBusy ? "true" : "false");
-    resetWidthButton.disabled = isBusy;
+    heightRange.disabled = isBusy;
+    heightValue.classList.toggle("disabled", isBusy);
+    heightValue.setAttribute("aria-disabled", isBusy ? "true" : "false");
+    resetHeightButton.disabled = isBusy;
     rotationRange.disabled = isBusy;
     rotationRangeMode.disabled = isBusy;
     resetRotationButton.disabled = isBusy;
     stereoDepthRange.disabled = isBusy;
     stereoDepthRangeMode.disabled = isBusy;
     resetStereoDepthButton.disabled = isBusy;
-    autoCropStereoEdges.disabled = isBusy;
+    if (sbsCropRange) {
+      sbsCropRange.disabled = isBusy;
+    }
+    if (resetSbsCropButton) {
+      resetSbsCropButton.disabled = isBusy;
+    }
     if (previewFlipRateRange) {
       previewFlipRateRange.disabled = isBusy;
     }
@@ -3242,36 +3391,35 @@ applyPreviewFlipMaximum(previewFlipMaximumHz);
         };
       }
 
-      const selectedOutputWidth = Number(widthRange.value);
-      const outputWidth = previewOnly ? getInteractivePreviewWidth(selectedOutputWidth) : selectedOutputWidth;
+      const selectedOutputHeight = clampOutputHeight(heightRange.value);
       const stereoSeparationPercent = Number(stereoDepthRange.value) || 0;
-      const autoCropEdges = isSideBySideMode() ? !!autoCropStereoEdges.checked : true;
+      const sbsCenterCropPercent = clampSideBySideCropPercent(sbsCropRange?.value || 0);
+      const autoCropEdges = true;
       let ctx;
 
       if (mode === "sbs") {
-        const eyeWidth = Math.floor(outputWidth / 2);
-        const aspect = left.height / left.width;
-        const outputHeight = Math.max(1, Math.round(eyeWidth * aspect));
-
+        const sourceAspect = left.height / left.width;
+        const visibleCropAspect = getSideBySideVisibleCropAspect(left.canvas, sbsCenterCropPercent);
         const previewFlipRate = previewOnly ? getPreviewFlipRate() : 0;
 
-        if (previewFlipRate > 0) {
+        if (previewOnly && previewFlipRate > 0) {
           // When flipping the preview, show each eye as a full single-eye image
           // instead of using the half-width side-by-side canvas. This makes the
           // flipped left/right views fill the preview area the same way anaglyph
-          // previews do, while still using the current Image Shift and Image
-          // Rotation adjustments.
-          const flipPreviewWidth = outputWidth;
-          const flipPreviewHeight = Math.max(1, Math.round(flipPreviewWidth * aspect));
-          const flipStereoSeparationPx = Math.round(flipPreviewWidth * (stereoSeparationPercent / 100));
+          // previews do, while still using the current Side-by-Side Center Crop
+          // and Image Rotation adjustments.
+          const fullFlipWidth = Math.max(1, Math.round(selectedOutputHeight / sourceAspect));
+          const fullFlipHeight = selectedOutputHeight;
+          const previewDims = getInteractivePreviewDimensions(fullFlipWidth, fullFlipHeight);
+          const flipPreviewWidth = previewDims.width;
+          const flipPreviewHeight = previewDims.height;
 
-          const adjusted = createAdjustedStereoPair(
+          const adjusted = createSideBySideCenterCroppedPair(
             left.canvas,
             right.canvas,
             flipPreviewWidth,
             flipPreviewHeight,
-            flipStereoSeparationPx,
-            autoCropEdges
+            sbsCenterCropPercent
           );
 
           canvas.width = flipPreviewWidth;
@@ -3289,16 +3437,45 @@ applyPreviewFlipMaximum(previewFlipMaximumHz);
 
           startPreviewFlipAnimation(adjusted.leftCanvas, adjusted.rightCanvas);
         } else {
-          const stereoSeparationPx = Math.round(eyeWidth * (stereoSeparationPercent / 100));
+          let outputWidth;
+          let outputHeight;
+          let eyeWidth;
+          let rightEyeWidth;
+          let adjusted;
 
-          const adjusted = createAdjustedStereoPair(
-            left.canvas,
-            right.canvas,
-            eyeWidth,
-            outputHeight,
-            stereoSeparationPx,
-            autoCropEdges
-          );
+          if (previewOnly) {
+            const fullPreviewWidth = Math.max(2, Math.round((selectedOutputHeight / sourceAspect) * 2));
+            const fullPreviewHeight = selectedOutputHeight;
+            const previewDims = getInteractivePreviewDimensions(fullPreviewWidth, fullPreviewHeight);
+
+            outputWidth = previewDims.width;
+            outputHeight = previewDims.height;
+            eyeWidth = Math.floor(outputWidth / 2);
+            rightEyeWidth = outputWidth - eyeWidth;
+
+            adjusted = createSideBySideCenterCroppedPair(
+              left.canvas,
+              right.canvas,
+              eyeWidth,
+              outputHeight,
+              sbsCenterCropPercent,
+              true
+            );
+          } else {
+            outputHeight = selectedOutputHeight;
+            eyeWidth = Math.max(1, Math.round(outputHeight / visibleCropAspect));
+            rightEyeWidth = eyeWidth;
+            outputWidth = eyeWidth + rightEyeWidth;
+
+            adjusted = createSideBySideVisibleCroppedPair(
+              left.canvas,
+              right.canvas,
+              eyeWidth,
+              rightEyeWidth,
+              outputHeight,
+              sbsCenterCropPercent
+            );
+          }
 
           canvas.width = outputWidth;
           canvas.height = outputHeight;
@@ -3313,11 +3490,17 @@ applyPreviewFlipMaximum(previewFlipMaximumHz);
           ctx.fillRect(0, 0, outputWidth, outputHeight);
 
           ctx.drawImage(adjusted.leftCanvas, 0, 0, eyeWidth, outputHeight);
-          ctx.drawImage(adjusted.rightCanvas, eyeWidth, 0, outputWidth - eyeWidth, outputHeight);
+          ctx.drawImage(adjusted.rightCanvas, eyeWidth, 0, rightEyeWidth, outputHeight);
         }
       } else {
         const aspect = left.height / left.width;
-        const outputHeight = Math.max(1, Math.round(outputWidth * aspect));
+        const fullOutputHeight = selectedOutputHeight;
+        const fullOutputWidth = Math.max(1, Math.round(fullOutputHeight / aspect));
+        const previewDims = previewOnly
+          ? getInteractivePreviewDimensions(fullOutputWidth, fullOutputHeight)
+          : { width: fullOutputWidth, height: fullOutputHeight };
+        const outputWidth = previewDims.width;
+        const outputHeight = previewDims.height;
 
         const stereoSeparationPx = Math.round(outputWidth * (stereoSeparationPercent / 100));
 
@@ -3359,8 +3542,8 @@ applyPreviewFlipMaximum(previewFlipMaximumHz);
         } else {
           updateGenerateButtonVisibility();
         }
-        outputMeta.textContent = `Preview updated. Click ${isIOSDevice() ? "Generate & Share JPEG" : "Generate & Download JPEG"} to create the full-resolution JPEG.`;
-        setStatus(`Preview updated.&nbsp;&nbsp;Click <b>${isIOSDevice() ? "Generate & Share JPEG" : "Generate & Download JPEG"}</b> to create the full-resolution ${modeLabel} JPEG.`, "ok");
+        outputMeta.textContent = `Preview updated. Click ${isIOSDevice() ? "Generate & Share JPEG" : "Generate & Download JPEG"} to create the final JPEG.`;
+        setStatus(`Preview updated.&nbsp;&nbsp;Click <b>${isIOSDevice() ? "Generate & Share JPEG" : "Generate & Download JPEG"}</b> to create the final ${modeLabel} JPEG.`, "ok");
         return;
       }
 
@@ -3391,14 +3574,18 @@ applyPreviewFlipMaximum(previewFlipMaximumHz);
         ? `, rotation ${imageRotationDegrees > 0 ? "+" : ""}${imageRotationDegrees.toFixed(1)}°`
         : "";
 
-      const separationNote = stereoSeparationPercent
-        ? `, image shift ${stereoSeparationPercent > 0 ? "+" : ""}${stereoSeparationPercent.toFixed(1)}%${autoCropEdges ? ", auto-cropped" : ", uncropped edges"}`
+      const separationNote = !isSideBySideMode() && stereoSeparationPercent
+        ? `, image shift ${stereoSeparationPercent > 0 ? "+" : ""}${stereoSeparationPercent.toFixed(1)}%, auto-cropped`
+        : "";
+
+      const cropNote = isSideBySideMode() && sbsCenterCropPercent
+        ? `, center crop ${sbsCenterCropPercent.toFixed(1)}%`
         : "";
 
       if (mode === "sbs") {
         const eyeWidth = Math.floor(canvas.width / 2);
         outputMeta.textContent =
-          `${modeLabel} JPEG: ${canvas.width}×${canvas.height}, each eye ${eyeWidth}×${canvas.height}, ${formatBytes(blob.size)}${separationNote}${rotationNote}.`;
+          `${modeLabel} JPEG: ${canvas.width}×${canvas.height}, each eye ${eyeWidth}×${canvas.height}, ${formatBytes(blob.size)}${cropNote}${rotationNote}.`;
       } else {
         outputMeta.textContent =
           `${modeLabel} JPEG: ${canvas.width}×${canvas.height}, ${formatBytes(blob.size)}${separationNote}${rotationNote}.`;
@@ -3422,9 +3609,9 @@ applyPreviewFlipMaximum(previewFlipMaximumHz);
         <ol>
           <li>Select a single Apple Spatial Photo HEIC file using the file chooser.<br/>On desktop, you can also drag and drop one HEIC file onto the top control panel.</li>
           <li>Select an <b>Output Format</b>.<br/>Use <b>Side-by-Side</b> for stereo pairs, or one of the <b>Red / Cyan Anaglyph</b> formats for viewing with red/cyan 3D glasses.</li>
-          <li>Adjust <b>Output JPEG Width</b> as desired. Default is 5376 pixels (2x the typical iPhone spatial single image width).<br/>Use the slider, or click the width value display to enter an exact width.</li>
-          <li>The selected output width is saved in browser localStorage when available and restored the next time the tool is opened.</li>
-          <li>Optionally adjust <b>Image Shift</b> and/or <b>Image Rotation</b> as required to optimize the stereo view.</li>
+          <li>Adjust <b>Output JPEG Height</b> as desired. Initial value is read from the input image.<br/>Use the slider, or click the height value display to enter an exact height.</li>
+          <li>Optionally adjust <b>Side-by-Side Center Crop</b>, <b>Image Shift</b>, and/or <b>Image Rotation</b> as required to optimize the stereo view.</li>
+          <li>These adjustment controls are reset to 0 whenever a new HEIC file is opened.</li>
           <li>On desktop browsers, move the mouse over the preview area to reveal the full-screen button at the top right of the preview. On iPad, the button remains visible at the top right. The button is hidden on iPhone and while full-screen mode is active. Press Escape or use the browser full-screen control to return to the normal tool view.</li>
           <li>The normal on-page preview is optimized for responsiveness, while full-screen preview automatically uses a higher preview resolution when useful for sharper viewing on high-DPI displays.</li>
           <li>To save the results, click <b>Generate &amp; Download JPEG</b> on desktop or <b>Generate &amp; Share JPEG</b> on iOS.</li>
@@ -3434,13 +3621,13 @@ applyPreviewFlipMaximum(previewFlipMaximumHz);
         <ul>
           <li><b>Output Format</b>: Chooses between Side-by-Side output and several common anaglyph formats.</li>
           <li><b>Stereo Order</b>: Only shown for Side-by-Side output. <b>Left / Right</b> is appropriate for standard stereograph card / parallel viewing.<br/><b>Right / Left</b> is appropriate for cross-eye viewing.</li>
-          <li><b>Output JPEG Width</b>: For Side-by-Side output, this is the total image width, so each eye uses half of that width.<br/>For Anaglyph output, this is the full image width.<br/>Use the slider, or click the numeric width value to enter a specific width.<br/>Entered values are clamped to the supported 1024 to 16384 pixel range.<br/>The <b>Reset</b> button resets the output width to 5376 pixels (2x the typical iPhone spatial single image width).</li>
+          <li><b>Output JPEG Height</b>: Sets the final exported JPEG height. The exported JPEG width is calculated automatically from the selected height and the final output aspect ratio.<br/>For Side-by-Side output, the final JPEG uses the selected height and creates a side-by-side image with the two eye views placed left and right. If Side-by-Side Center Crop is applied, the final JPEG scales only the visible cropped eye views to the selected output height and does not include the preview's outside black bars.<br/>For Anaglyph output, the final JPEG uses the selected height and creates a single red/cyan image whose width is calculated from the anaglyph aspect ratio.<br/>Use the slider, or click the numeric height value to enter a specific height.<br/>Entered values are clamped to the supported 768 to 12288 pixel range.<br/>The <b>Reset</b> button resets the output height to the original input height.</li>
           <li><b>Image Rotation</b>: Applies a small roll correction to both stereo views.<br/>The rotated image is cropped as required to preserve the original aspect ratio.</li>
           <li><b>Image Rotation range selector</b>: Switches the Image Rotation slider between ±5° for normal adjustments and ±10° for larger rotation corrections.<br/>The <b>Reset</b> button resets the image rotation to zero.</li>
-          <li><b>Image Shift</b>: Shifts the two views horizontally before compositing.<br/>This can reduce eye strain, improve fusion, or improve some anaglyph results.<br/>The <b>Reset</b> button resets the image shift to zero.</li>
-          <li><b>Image Shift range selector</b>: Switches the Image Shift slider between a normal ±10% adjustment range and a wider ±20% range for stronger corrections, including close-up or macro anaglyphs.</li>
-          <li><b>Auto-crop shifted edges</b>: Only shown for Side-by-Side output. When enabled, the tool crops shifted edges to avoid blank areas.<br/>Anaglyph output always auto-crops internally.</li>
-          <li><b>Preview L/R Flip</b>: Only shown for Side-by-Side output. At <b>0 Hz</b>, the preview shows the full side-by-side image. At higher rates, the preview alternates between the adjusted left-eye and right-eye views as full-size single-eye previews so you can evaluate alignment, Image Shift, and Image Rotation as a flip/wiggle stereo preview. Click the <b>Off / Hz</b> value box to toggle between Off and the last non-zero flip rate. This affects only the on-screen preview, not the exported JPEG.</li>
+          <li><b>Side-by-Side Center Crop</b>: Only shown for Side-by-Side output. Crops the selected total percentage from each eye view, split evenly between the left and right edges. In the on-screen Side-by-Side preview, the visible left and right views touch at the center seam and black bars appear only on the far outside edges. During final JPEG export, those black bars are omitted and only the visible cropped left and right views are scaled to the selected output height.<br/>The avaiable crop range is from 0% to 50%. The <b>Reset</b> button resets the crop to zero.</li>
+          <li><b>Image Shift</b>: Only shown for Anaglyph output. Shifts the two views horizontally before compositing.<br/>This can reduce eye strain, improve fusion, or improve some anaglyph results. Anaglyph output always auto-crops shifted edges.<br/>The <b>Reset</b> button resets the image shift to zero.</li>
+          <li><b>Image Shift range selector</b>: For Anaglyph output, switches the Image Shift slider between a normal ±10% adjustment range and a wider ±20% range for stronger corrections, including close-up or macro anaglyphs.</li>
+          <li><b>Preview L/R Flip</b>: Only shown for Side-by-Side output. At <b>0 Hz</b>, the preview shows the full side-by-side image. At higher rates, the preview alternates between the adjusted left-eye and right-eye views as full-size single-eye previews so you can evaluate Side-by-Side Center Crop and Image Rotation as a flip/wiggle stereo preview. Click the <b>Off / Hz</b> value box to toggle between Off and the last non-zero flip rate. This affects only the on-screen preview, not the exported JPEG.</li>
           <li>Click the <b>Preview L/R Flip</b> label to set the maximum value available on the flip-rate slider.</li>
           <li>The dialog shows the current maximum flip rate when it opens.</li>
           <li>Enter a whole number from <b>10</b> to <b>30</b>, then click <b>OK</b> to apply it.</li>
@@ -3453,8 +3640,8 @@ applyPreviewFlipMaximum(previewFlipMaximumHz);
         <ul>
           <li>Use <b>Left / Right</b> for standard side-by-side stereo viewing or stereograph cards.</li>
           <li>Use <b>Right / Left</b> for cross-eye viewing.</li>
-          <li>If <b>Auto-crop shifted edges</b> is disabled, large Image Shift values can leave blank edge areas in the result.</li>
-          <li>Use <b>Preview L/R Flip</b> to check the alignment of the shifted and rotated eye views before generating the final JPEG. Set it back to <b>0 Hz</b> to return to the normal full side-by-side preview, or click the <b>Off / Hz</b> value box to quickly toggle between Off and the last non-zero flip rate. After a JPEG is saved or shared, the Preview L/R Flip control is automatically reset to <b>0 Hz</b>.</li>
+          <li>For Side-by-Side output, use <b>Side-by-Side Center Crop</b> to trim the outside edges of both eye views equally for ease of fusing the images in normal or cross-eye viewing. The preview may show black bars at the far left and right to show what was cropped, but the final exported JPEG does not include those black bars; it scales only the visible cropped left and right images to the selected output height.</li>
+          <li>Use Preview L/R Flip to check the alignment of the cropped and rotated eye views before generating the final JPEG. Set it back to 0 Hz to return to the normal full side-by-side preview, or click the Off / Hz value box to quickly toggle between Off and the last non-zero flip rate. After a JPEG is saved or shared, the Preview L/R Flip control is automatically reset to 0 Hz.</li>
         </ul>
 
         <h4>Anaglyph output notes</h4>
@@ -3462,7 +3649,7 @@ applyPreviewFlipMaximum(previewFlipMaximumHz);
           <li>Anaglyph output always uses the standard left/right stereo order internally.</li>
           <li>Anaglyph output always auto-crops shifted edges internally.</li>
           <li>Use the anaglyph modes with red/cyan 3D glasses.<br/><b>Optimized Red / Cyan</b> is usually the best general starting point. If the optimized mode still looks too processed, try <b>Half-color Red / Cyan</b>.</li>
-          <li>For some close-up or macro spatial photos, a larger Image Shift range may help produce a more comfortable or more accurate result.</li>
+          <li>For some close-up or macro spatial photos, a larger Anaglyph Image Shift range may help produce a more comfortable or more accurate anaglyph result.</li>
         </ul>
 
         <h4>Red / Cyan anaglyph modes</h4>
@@ -3507,7 +3694,7 @@ applyPreviewFlipMaximum(previewFlipMaximumHz);
           <li>To open the spatial image in the tool, click the <b>Choose File</b> button, then again the <b>Choose File</b> option in the popup menu that appears, and then select the file from wherever you saved it in the <b>Files</b> area.</li>
           <li>On iOS, after you are done editing the spatial image and want to save or share it, tap <b>Generate &amp; Share JPEG</b> to generate the final JPEG and open the iOS Share Sheet.</li>
           <li>You can then save the processed JPEG image to the <b>Photos</b> app, or share it like any other photo on iOS.</li>
-          <li>While it's certain possible to process the spatial photos directly on an iPhone, if you have a Mac, for a better experience (larger screen, no need to transfer images from the <b>Photos</b> app to the <b>Files</b> area), my recommendation is to share the original spatial HEIC images from the <b>Photos</b> app to your computer using <b>AirDrop</b> and then run this tool on a desktop browser.</li>
+          <li>While it's certainly possible to process the spatial photos directly on an iPhone, if you have a Mac, for a better experience (larger screen, no need to transfer images from the <b>Photos</b> app to the <b>Files</b> area), my recommendation is to share the original spatial HEIC images from the <b>Photos</b> app to your computer using <b>AirDrop</b> and then run this tool on a desktop browser.</li>
           <li>On Windows, for a better experience (larger screen, no need to transfer images from the <b>Photos</b> app to the <b>Files</b> area), you'll want to transfer the original spatial HEIC images from the iPhone to your computer via USB using the Windows <b>File Explorer</b> and then run this tool on a desktop browser.</li>
         </ul>
 
@@ -3644,23 +3831,22 @@ applyPreviewFlipMaximum(previewFlipMaximumHz);
 
   eyeOrder.addEventListener("change", regeneratePreviewIfReady);
 
-  widthRange.addEventListener("input", () => {
-    setOutputWidthFromUser(widthRange.value);
+  heightRange.addEventListener("input", () => {
+    setOutputHeightFromUser(heightRange.value);
   });
 
-  resetWidthButton.addEventListener("click", () => {
-    applyOutputWidth(OUTPUT_WIDTH_DEFAULT);
-    saveOutputWidthToStorage(OUTPUT_WIDTH_DEFAULT);
+  resetHeightButton.addEventListener("click", () => {
+    applyOutputHeight(sourceOriginalHeight || OUTPUT_HEIGHT_DEFAULT);
     updateControls();
     regeneratePreviewIfReady();
   });
 
-  widthValue.addEventListener("click", promptForOutputWidth);
+  heightValue.addEventListener("click", promptForOutputHeight);
 
-  widthValue.addEventListener("keydown", event => {
+  heightValue.addEventListener("keydown", event => {
     if (event.key === "Enter" || event.key === " ") {
       event.preventDefault();
-      promptForOutputWidth();
+      promptForOutputHeight();
     }
   });
 
@@ -3726,12 +3912,36 @@ applyPreviewFlipMaximum(previewFlipMaximumHz);
     regeneratePreviewIfReady();
   });
 
-  widthRange.addEventListener("change", () => {
-    setOutputWidthFromUser(widthRange.value);
+  heightRange.addEventListener("change", () => {
+    setOutputHeightFromUser(heightRange.value);
   });
 
 
-  autoCropStereoEdges.addEventListener("change", regeneratePreviewIfReady);
+
+  if (sbsCropRange) {
+    sbsCropRange.addEventListener("input", () => {
+      updateControls();
+
+      if (decodedViews.length >= 2) {
+        convertToSbs({ previewOnly: true }).catch(err => setStatus(escapeHtml(err.message || String(err)), "error"));
+      }
+    });
+
+    sbsCropRange.addEventListener("change", regeneratePreviewIfReady);
+  }
+
+  if (resetSbsCropButton) {
+    resetSbsCropButton.addEventListener("click", () => {
+      if (Number(sbsCropRange.value) === 0) {
+        updateControls();
+        return;
+      }
+
+      sbsCropRange.value = "0";
+      updateControls();
+      regeneratePreviewIfReady();
+    });
+  }
 
   previewFlipRateRange.addEventListener("input", () => {
     rememberPreviewFlipRate();
@@ -3792,7 +4002,7 @@ applyPreviewFlipMaximum(previewFlipMaximumHz);
       const saveName = await promptForSaveName();
 
       if (!saveName) {
-        setStatus("Download cancelled.", "ok");
+        await restoreInteractivePreviewAfterGeneratedOutput("Download cancelled.", "ok");
         updateGenerateButtonVisibility();
         return;
       }
@@ -3825,7 +4035,7 @@ applyPreviewFlipMaximum(previewFlipMaximumHz);
 
   previewFlipMaximumHz = loadPreviewFlipMaximumFromStorage();
   applyPreviewFlipMaximum(previewFlipMaximumHz);
-  restoreOutputWidthFromStorage();
+  initializeOutputHeightControl();
 
   updateOutputModeControls();
   updateRotationRangeMode();
