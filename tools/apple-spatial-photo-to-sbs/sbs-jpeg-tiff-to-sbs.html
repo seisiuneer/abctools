@@ -1,6 +1,6 @@
 <!-- 
  * 
- * sbs-jpeg-tiff-to-sbs.html - All code for the Side-by-Side JPEG/TIFF → Side-by-Side or 3D Anaglyph JPEG tool
+ * sbs-jpeg-tiff-to-sbs.html - All code for the Stereo JPEG/TIFF → Side-by-Side or 3D Anaglyph tool
  *
  * Project repo at: https://github.com/seisiuneer/abctools/tree/main/tools/apple-spatial-photo-to-sbs
  * 
@@ -34,13 +34,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Side-by-Side JPEG/TIFF → Side-by-Side or 3D Anaglyph</title>
+<title>Stereo JPEG/TIFF → Side-by-Side or 3D Anaglyph</title>
 <meta property="og:type" content="website" />
-<meta property="og:title" content="Side-by-Side JPEG/TIFF → Side-by-Side or 3D Anaglyph" />
+<meta property="og:title" content="Stereo JPEG/TIFF → Side-by-Side or 3D Anaglyph" />
 <meta property="og:description" content="Process existing side-by-side JPEG/TIFF stereo images or separate left/right JPEG/TIFF image pairs into Side-by-Side or 3D Anaglyph JPEG images locally in your browser." />
 <meta property="og:url" content="https://michaeleskin.com/tools/sbs-jpeg-tiff-to-sbs.html" />
-<meta property="og:site_name" content="Side-by-Side JPEG/TIFF → Side-by-Side or 3D Anaglyph" />
-<meta property="og:image" content="https://michaeleskin.com/tools/img/jpeg_tiff_to_sbs_or_anaglyph_2.jpg"/>
+<meta property="og:site_name" content="Stereo JPEG/TIFF → Side-by-Side or 3D Anaglyph" />
+<meta property="og:image" content="https://michaeleskin.com/tools/img/jpeg_tiff_to_sbs_or_anaglyph_3.jpg"/>
 <link rel="icon" type="image/png" sizes="32x32" href="https://michaeleskin.com/tools/img/spatial_to_sbs_favicon.png">
 
 <style>
@@ -857,7 +857,7 @@
 
 <div class="wrap">
   <header>
-    <h1>Side-by-Side JPEG/TIFF → Side-by-Side or 3D Anaglyph</h1>
+    <h1>Stereo JPEG/TIFF → Side-by-Side or 3D Anaglyph</h1>
     <p class="subhead">Open an existing side-by-side JPEG/TIFF stereo image file, or a left/right JPEG/TIFF image file pair,<br/>and export an adjusted Side-by-Side or 3D Anaglyph JPEG image locally from your browser.</p>
   </header>
 
@@ -995,7 +995,7 @@
       <div id="emptyPreview" class="hint">Converted preview will appear here.</div>
     </div>
     
-    <p id="status">Please select one side-by-side JPEG/TIFF file, or two same-format, same-dimensions JPEG/TIFF files.</p>
+    <p id="status">Please select one side-by-side JPEG/TIFF file, or two same-format, same-dimensions left/right JPEG/TIFF files.</p>
 
     <div id="downloadActions" class="actions" style="display:none;">
       <a id="downloadLink" class="download" download="side-by-side.jpg" title="Generate the final JPEG at the specified output height, then download it or open the iOS Share Sheet.">Generate &amp; Download JPEG</a>
@@ -1092,7 +1092,7 @@
   const SBS_BORDER_COLOR = "#000000";
   const SBS_PREVIEW_BACKGROUND_COLOR = "#282828";
   const PROCESSING_SOFTWARE_EXIF_TEXT =
-    "Michael Eskin's Side-by-Side JPEG/TIFF to Side-by-Side or 3D Anaglyph Tool";
+    "Michael Eskin's Stereo JPEG/TIFF → Side-by-Side or 3D Anaglyph Tool";
   const PREVIEW_FLIP_MAX_MIN_HZ = 10;
   const PREVIEW_FLIP_MAX_MAX_HZ = 30;
   const PREVIEW_FLIP_MAX_STORAGE_KEY = "jpegTiffSbsPreviewFlipMaximumHz";
@@ -1586,7 +1586,7 @@
     return Promise.resolve();
   }
 
-  function clearLoadedState(statusMessage = "Please select one side-by-side JPEG/TIFF file, or two same-format, same-dimensions JPEG/TIFF files.", statusClass = "") {
+  function clearLoadedState(statusMessage = "Please select one side-by-side JPEG/TIFF file, or two same-format, same-dimensions left/right JPEG/TIFF files.", statusClass = "") {
     stopPreviewFlipAnimation();
 
     decodedViews = [];
@@ -4430,7 +4430,7 @@ function updateOutputModeControls() {
   function showInstructions() {
     const html = `
       <div class="instructions-body">
-        <h3 style="text-align:center;">Side-by-Side JPEG/TIFF → Side-by-Side or 3D Anaglyph</h3>
+        <h3 style="text-align:center;">Stereo JPEG/TIFF → Side-by-Side or 3D Anaglyph</h3>
         <p>This tool opens either an existing side-by-side JPEG/TIFF stereo image file or two separate same-format, same-dimensions JPEG/TIFF image files to be used as the left and right views, then exports the result locally in your browser as either an adjusted Side-by-Side JPEG or a 3D Anaglyph JPEG.</p>
 
         <h4>Basic workflow</h4>
@@ -4534,7 +4534,7 @@ function updateOutputModeControls() {
         <div style="text-align: center;margin-bottom:20px;">
           The source code for this tool is available on GitHub<br/>
            <div style="margin-top:10px;">
-            <a href="https://github.com/seisiuneer/abctools/tree/main/tools/apple-side-by-side-to-sbs" target="_blank" rel="noopener noreferrer">Side-by-Side JPEG/TIFF → Side-by-Side or 3D Anaglyph on GitHub</a>
+            <a href="https://github.com/seisiuneer/abctools/tree/main/tools/apple-side-by-side-to-sbs" target="_blank" rel="noopener noreferrer">Stereo JPEG/TIFF → Side-by-Side or 3D Anaglyph on GitHub</a>
           </div>
         </div>
 
@@ -4850,7 +4850,7 @@ function updateOutputModeControls() {
     registerDragAndDropHandlers();
   }
 
-  setStatus("Please select a single side-by-side JPEG/TIFF image file or left/right JPEG/TIFF image file pair.");
+  setStatus("Please select one side-by-side JPEG/TIFF file, or two same-format, same-dimensions left/right JPEG/TIFF files.");
 
   previewFlipMaximumHz = loadPreviewFlipMaximumFromStorage();
   applyPreviewFlipMaximum(previewFlipMaximumHz);
