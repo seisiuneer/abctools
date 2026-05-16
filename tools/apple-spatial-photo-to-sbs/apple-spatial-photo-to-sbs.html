@@ -609,6 +609,8 @@
     overflow:auto !important;
     -webkit-overflow-scrolling:touch;
 
+    line-height: 2;
+
     flex:1 1 auto;  /* allows content to expand naturally */
   }
 
@@ -868,7 +870,7 @@
       <div>
         <div class="labelInlineControls">
           <label for="outputFormat">Output Format:</label>
-          <select id="sbsBorderThicknessSelect" class="wideRangeSelect" title="Choose the border thickness for the exported image.">
+          <select id="sbsBorderThicknessSelect" class="wideRangeSelect" title="Choose the optional black border thickness for the exported JPEG. None adds no border. Side-by-Side adds an outer border and center seam; Anaglyph adds only an outer border.">
             <option value="0" data-label="None" selected>Border:&nbsp;&nbsp;None</option>
             <option value="0.0025" data-label="Thin">Border:&nbsp;&nbsp;Thin</option>
             <option value="0.005" data-label="Medium">Border:&nbsp;&nbsp;Medium</option>
