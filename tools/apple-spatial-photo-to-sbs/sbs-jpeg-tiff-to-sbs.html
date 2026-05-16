@@ -938,9 +938,10 @@
         <div class="controlHeader">
           <label for="stereoDepthRange">Image Shift</label>
           <div class="controlHeaderActions">
-            <select id="stereoDepthRangeMode" class="smallRangeSelect" aria-label="Image Shift range" title="Choose the Image Shift slider range. Use ±10% for normal adjustments or ±20% for stronger close-up or macro corrections.">
+            <select id="stereoDepthRangeMode" class="smallRangeSelect" aria-label="Image Shift range" title="Choose the Anaglyph Image Shift slider range. Use ±10% for normal adjustments, ±20% for stronger close-up or macro corrections, or ±50% for extreme cases.">
               <option value="normal">±10%</option>
               <option value="wide">±20%</option>
+              <option value="extraWide">±50%</option>
             </select>
             <button id="resetStereoDepthButton" class="smallResetButton" type="button" title="Reset Image Shift to 0.0%.">Reset</button>
           </div>
@@ -3503,8 +3504,8 @@
 
 
   function updateStereoDepthRangeMode() {
-    const wideRange = stereoDepthRangeMode.value === "wide";
-    const limit = wideRange ? 20 : 10;
+    const mode = stereoDepthRangeMode.value;
+    const limit = mode === "extraWide" ? 50 : (mode === "wide" ? 20 : 10);
     let value = Number(stereoDepthRange.value) || 0;
 
     stereoDepthRange.min = String(-limit);
@@ -4461,7 +4462,7 @@ function updateOutputModeControls() {
           <li><b>Image Rotation range selector</b>: Switches the Image Rotation slider between ±5° for normal adjustments and ±10° for larger rotation corrections.<br/>The <b>Reset</b> button resets the image rotation to zero.</li>
           <li><b>Side-by-Side Center Crop</b>: Only shown for Side-by-Side output. Crops the selected total percentage from each eye view, split evenly between the left and right edges.<br/>The available crop range is from 0% to 50%. This setting is preserved when a new JPEG or TIFF file is opened. The <b>Reset</b> button resets the crop to zero.</li>
           <li><b>Image Shift</b>: Only shown for Anaglyph output. Shifts the two views horizontally before compositing.<br/>This can reduce eye strain, improve fusion, or improve some anaglyph results. Anaglyph output always auto-crops shifted edges.<br/>The <b>Reset</b> button resets the image shift to zero.</li>
-          <li><b>Image Shift range selector</b>: For Anaglyph output, switches the <b>Image Shift</b> slider between a normal ±10% adjustment range and a wider ±20% range for stronger corrections, including close-up or macro anaglyphs.</li>
+          <li><b>Image Shift range selector</b>: For Anaglyph output, switches the <b>Image Shift</b> slider between a normal ±10% adjustment range, a wider ±20% range for stronger corrections, and an extra-wide ±50% range for extreme close-up, macro, or difficult anaglyph alignment cases.</li>
           <li><b>Preview L/R Flip</b>: Only shown for Side-by-Side output. At <b>0 Hz</b>, the preview shows the full side-by-side image. At higher rates, the preview alternates between the adjusted left-eye and right-eye views as full-size single-eye previews so you can evaluate <b>Side-by-Side Center Crop</b> and <b>Image Rotation</b> as a flip/wiggle stereo preview. Click the <b>Off / Hz</b> value box to toggle between Off and the last non-zero flip rate.</li>
           <li>Click the <b>Preview L/R Flip</b> label to set the maximum value available on the flip-rate slider.</li>
           <li>The dialog shows the current maximum flip rate when it opens.</li>
