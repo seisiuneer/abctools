@@ -790,6 +790,12 @@
     }
   }
 
+  /* Initial state matches the default Side-by-Side mode before JavaScript runs.
+     JavaScript will override this with inline display values when Output Format changes. */
+  #imageShiftControl {
+    display: none;
+  }
+
 </style>
 
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-VM0N9HL3MK"></script>
@@ -910,7 +916,7 @@
             <div id="previewFlipRateValue" class="rangeValue editableRangeValue" role="button" tabindex="0" aria-label="Toggle Preview L/R Flip" title="Click to toggle Preview L/R Flip between Off and the last non-zero flip rate.">Off</div>
           </div>
           <div class="row">
-            <input id="previewFlipRateRange" type="range" min="0" max="10" step="0.1" value="0" title="Side-by-Side preview only: flip between the adjusted left and right views. At 0 Hz, flipping is off and the full side-by-side preview is shown.">
+            <input id="previewFlipRateRange" type="range" min="0" max="10" step="0.1" value="0" title="Flip between the adjusted left and right views. At 0 Hz, flipping is off and the full side-by-side preview is shown.">
           </div>
         </div>
       </div>
@@ -1162,7 +1168,7 @@
       }
 
       previewFlipRateRange.title =
-        "Side-by-Side preview only: flip between the adjusted left and right views. " +
+        "Flip between the adjusted left and right views. " +
         "At 0 Hz, flipping is off and the full side-by-side preview is shown. " +
         "Click the Preview L/R Flip label to set the maximum flip rate.";
     }
