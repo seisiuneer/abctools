@@ -889,7 +889,7 @@
           </div>
         </div>
         <div class="row">
-          <input id="stereoDepthRange" type="range" min="-10" max="10" step="0.1" value="0" title="Anaglyph output only: shift the two stereo views horizontally before compositing. This can improve fusion, reduce eye strain, or improve anaglyph alignment.">
+          <input id="stereoDepthRange" type="range" min="-10" max="10" step="0.1" value="0" title="Shift the two stereo views horizontally before compositing. This can improve fusion, reduce eye strain, or improve anaglyph alignment.">
           <div id="stereoDepthValue" class="rangeValue">0.0%</div>
         </div>
       </div>
@@ -902,7 +902,7 @@
           </div>
         </div>
         <div class="row">
-          <input id="sbsCropRange" type="range" min="0" max="50" step="0.1" value="0" title="Side-by-Side output only: crop the selected total percentage from the left and right edges of each eye view. The preview shows the cropped views touching at the center with outside black bars; final JPEG export omits those bars and scales only the visible cropped views to the selected output height.">
+          <input id="sbsCropRange" type="range" min="0" max="50" step="0.1" value="0" title="Crop the selected total percentage from the left and right edges of each eye view.">
           <div id="sbsCropValue" class="rangeValue">0.0%</div>
         </div>
       </div>
@@ -913,7 +913,7 @@
           <div id="previewFlipRateValue" class="rangeValue editableRangeValue" role="button" tabindex="0" aria-label="Toggle Preview L/R Flip" title="Click to toggle Preview L/R Flip between Off and the last non-zero flip rate.">Off</div>
         </div>
         <div class="row">
-          <input id="previewFlipRateRange" type="range" min="0" max="10" step="0.1" value="0" title="Side-by-Side preview only: flip between the adjusted left and right views. At 0 Hz, flipping is off and the full side-by-side preview is shown.">
+          <input id="previewFlipRateRange" type="range" min="0" max="10" step="0.1" value="0" title="Flip between the adjusted left and right views. At 0 Hz, flipping is off and the full side-by-side preview is shown.">
         </div>
       </div>
     </div>
@@ -921,7 +921,7 @@
     <div class="hint">
       In Side-by-Side preview, Side-by-Side Center Crop removes equal amounts from the left and right edges of each eye view.<br/>In Anaglyph formats, Image Shift moves the two views horizontally before compositing.
     </div>
-
+    
   </section>
 
   <section class="card">
@@ -3202,10 +3202,6 @@
       stereoDepthRange.value = "0";
     }
 
-    if (sbsCropRange) {
-      sbsCropRange.value = "0";
-    }
-
     updateRotationRangeMode();
     updateStereoDepthRangeMode();
     updateControls();
@@ -4059,7 +4055,7 @@
           <li>Select an <b>Output Format</b>.<br/>Use <b>Side-by-Side</b> for stereo pairs, or one of the <b>Red / Cyan Anaglyph</b> formats for viewing with red/cyan 3D glasses.</li>
           <li>Adjust <b>Output JPEG Height</b> as desired. The initial value is read from the imported source image height.<br/>Use the slider, or click the height value display to enter an exact height.</li>
           <li>Optionally adjust <b>Side-by-Side Center Crop</b>, <b>Image Shift</b>, and/or <b>Image Rotation</b> as required to optimize the stereo view.</li>
-          <li>Side-by-Side Center Crop, Image Shift, and Image Rotation are reset to 0 whenever a new JPEG or TIFF file is opened.</li>
+          <li>Image Shift and Image Rotation are reset to 0 whenever a new JPEG or TIFF file is opened. Side-by-Side Center Crop is preserved so you can apply the same center-crop amount across multiple images until you change it or press its Reset button.</li>
           <li>On desktop browsers, move the mouse over the preview area to reveal the full-screen button at the top right of the preview. On iPad, the button remains visible at the top right. The button is hidden on iPhone and while full-screen mode is active. Press Escape or use the browser full-screen control to return to the normal tool view.</li>
           <li>The normal on-page preview is optimized for responsiveness, while full-screen preview automatically uses a higher preview resolution when useful for sharper viewing on high-DPI displays.</li>
           <li>To save the results, click <b>Generate &amp; Download JPEG</b> on desktop or <b>Generate &amp; Share JPEG</b> on iOS.</li>
@@ -4072,7 +4068,7 @@
           <li><b>Output JPEG Height</b>: Sets the final exported JPEG height. The exported JPEG width is calculated automatically from the selected height and the final output aspect ratio.<br/>For Side-by-Side output, the final JPEG uses the selected height and creates a side-by-side image with the two eye views placed left and right. If Side-by-Side Center Crop is applied, the final JPEG scales only the visible cropped eye views to the selected output height and does not include the preview's outside black bars.<br/>For Anaglyph output, the final JPEG uses the selected height and creates a single red/cyan image whose width is calculated from the anaglyph aspect ratio.<br/>Use the slider, or click the numeric height value to enter a specific height.<br/>Entered values are clamped to the supported 768 to 8192 pixel range.<br/>The <b>Reset</b> button resets the output height to the original input height.</li>
           <li><b>Image Rotation</b>: Applies a small roll correction to both stereo views.<br/>The rotated image is cropped as required to preserve the original aspect ratio.</li>
           <li><b>Image Rotation range selector</b>: Switches the Image Rotation slider between ±5° for normal adjustments and ±10° for larger rotation corrections.<br/>The <b>Reset</b> button resets the image rotation to zero.</li>
-          <li><b>Side-by-Side Center Crop</b>: Only shown for Side-by-Side output. Crops the selected total percentage from each eye view, split evenly between the left and right edges. In the on-screen Side-by-Side preview, the visible left and right views touch at the center seam and black bars appear only on the far outside edges. During final JPEG export, those black bars are omitted and only the visible cropped left and right views are scaled to the selected output height.<br/>The available crop range is from 0% to 50%. The <b>Reset</b> button resets the crop to zero.</li>
+          <li><b>Side-by-Side Center Crop</b>: Only shown for Side-by-Side output. Crops the selected total percentage from each eye view, split evenly between the left and right edges. In the on-screen Side-by-Side preview, the visible left and right views touch at the center seam and black bars appear only on the far outside edges. During final JPEG export, those black bars are omitted and only the visible cropped left and right views are scaled to the selected output height.<br/>The available crop range is from 0% to 50%. This setting is preserved when a new JPEG or TIFF file is opened. The <b>Reset</b> button resets the crop to zero.</li>
           <li><b>Image Shift</b>: Only shown for Anaglyph output. Shifts the two views horizontally before compositing.<br/>This can reduce eye strain, improve fusion, or improve some anaglyph results. Anaglyph output always auto-crops shifted edges.<br/>The <b>Reset</b> button resets the image shift to zero.</li>
           <li><b>Image Shift range selector</b>: For Anaglyph output, switches the Image Shift slider between a normal ±10% adjustment range and a wider ±20% range for stronger corrections, including close-up or macro anaglyphs.</li>
           <li><b>Preview L/R Flip</b>: Only shown for Side-by-Side output. At <b>0 Hz</b>, the preview shows the full side-by-side image. At higher rates, the preview alternates between the adjusted left-eye and right-eye views as full-size single-eye previews so you can evaluate Side-by-Side Center Crop and Image Rotation as a flip/wiggle stereo preview. Click the <b>Off / Hz</b> value box to toggle between Off and the last non-zero flip rate. This affects only the on-screen preview, not the exported JPEG.</li>
