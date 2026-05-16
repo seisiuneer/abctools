@@ -362,6 +362,30 @@
     margin-bottom: 8px;
   }
 
+  .labelInlineControls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 8px;
+  }
+
+  .labelInlineControls label {
+    margin-bottom: 0;
+  }
+
+  .labelInlineControls select.smallRangeSelect {
+    width: 7.25rem;
+    min-width: 7.25rem;
+    flex: 0 0 7.25rem;
+  }
+
+  .labelInlineControls select.wideRangeSelect {
+    width: 11rem;
+    min-width: 11rem;
+    flex: 0 0 11rem;
+  }
+
   .controlHeader label {
     margin-bottom: 0;
   }
@@ -386,7 +410,7 @@
     flex: 0 0 auto;
   }
 
-  select.smallRangeSelect {
+  select.smallRangeSelect{
     width: 6.5rem;
     min-width: 6.5rem;
     flex: 0 0 6.5rem;
@@ -396,7 +420,17 @@
     line-height: 1.15;
   }
 
-  select.smallRangeSelect {
+  select.wideRangeSelect{
+    width: 11rem;
+    min-width: 11rem;
+    flex: 0 0 11rem;
+    padding: 8px 30px 8px 10px;
+    border-radius: 10px;
+    font-size: .88rem;
+    line-height: 1.15;
+  }
+
+  select.smallRangeSelect, select.wideRangeSelect {
     background-position:
       calc(100% - 18px) 50%,
       calc(100% - 12px) 50%;
@@ -464,7 +498,7 @@
   #status.ok { color: var(--accent2); }
 
   .previewBox {
-    background: rgba(0,0,0,.22);
+    background: #242424;
     border: 1px solid var(--border);
     border-radius: 14px;
     overflow: hidden;
@@ -784,16 +818,23 @@
     margin-top:8px;
   }
 
+
+  #imageShiftControl {
+    display: none;
+  }
+      
+  #eyeOrderControl{
+    margin-top: 8px;
+  }
+
+  #eyeOrder{
+    margin-top: 7px;
+  }
+
   @media (max-width: 1060px) {
     #previewFlipRateRange{
       margin-top:12px;
     }
-  }
-
-  /* Initial state matches the default Side-by-Side mode before JavaScript runs.
-     JavaScript will override this with inline display values when Output Format changes. */
-  #imageShiftControl {
-    display: none;
   }
 
 </style>
@@ -826,8 +867,18 @@
 
     <div class="grid" style="margin-top:16px;">
       <div>
-        <label for="outputFormat">Output Format:</label>
-        <select id="outputFormat" title="Choose the exported JPEG format: Side-by-Side for stereo viewers, or an Anaglyph format for colored 3D glasses.">
+        <div class="labelInlineControls">
+          <label for="outputFormat">Output Format:</label>
+          <select id="sbsBorderThicknessSelect" class="wideRangeSelect" title="Choose the border thickness for the exported image.">
+            <option value="0" data-label="None" selected>Border:&nbsp;&nbsp;None</option>
+            <option value="0.0025" data-label="Thin">Border:&nbsp;&nbsp;Thin</option>
+            <option value="0.005" data-label="Medium">Border:&nbsp;&nbsp;Medium</option>
+            <option value="0.008" data-label="Wide">Border:&nbsp;&nbsp;Wide</option>
+            <option value="0.011" data-label="Wider">Border:&nbsp;&nbsp;Wider</option>
+            <option value="0.014" data-label="Extra Wide">Border:&nbsp;&nbsp;Extra Wide</option>
+          </select>
+        </div>
+        <select id="outputFormat" title="Choose the exported JPEG format: Side-by-Side for stereo viewers, or an Anaglyph format for red/cyan 3D glasses.">
           <option value="sbs">Side-by-Side</option>
           <option value="anaglyph-red-cyan-color">Anaglyph — Red / Cyan, Color</option>
           <option value="anaglyph-red-cyan-half-color">Anaglyph — Red / Cyan, Half-color</option>
@@ -1005,6 +1056,7 @@
   const outputMeta = document.getElementById("outputMeta");
   const toolCard = document.querySelector(".card");
   const outputFormat = document.getElementById("outputFormat");
+  const sbsBorderThicknessSelect = document.getElementById("sbsBorderThicknessSelect");
   const previewBox = document.querySelector(".previewBox");
   const dragDropInfo = document.getElementById("dragdropinfo");
   const downloadActions = document.getElementById("downloadActions");
@@ -1034,6 +1086,10 @@
   const OUTPUT_HEIGHT_MIN = 768;
   const OUTPUT_HEIGHT_MAX = 8192;
   const OUTPUT_HEIGHT_DEFAULT = 2016;
+  const SBS_BORDER_THICKNESS_FRACTION_DEFAULT = 0;
+  const SBS_BORDER_THICKNESS_FRACTION_VALUES = new Set(["0", "0.0025", "0.005", "0.008", "0.011", "0.014"]);
+  const SBS_BORDER_COLOR = "#000000";
+  const SBS_PREVIEW_BACKGROUND_COLOR = "#282828";
   let sourceOriginalHeight = OUTPUT_HEIGHT_DEFAULT;
   const PROCESSING_SOFTWARE_EXIF_TEXT =
     "Michael Eskin's Apple Spatial Photo to Side-by-Side or 3D Anaglyph Tool";
@@ -2723,8 +2779,7 @@
     const cycle = (elapsed * rate) % 1;
     const image = cycle >= 0.5 ? previewFlipRightCanvas : previewFlipLeftCanvas;
 
-    ctx.fillStyle = "#000";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    fillCanvasBackground(ctx, canvas.width, canvas.height, true);
     ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
 
     previewFlipAnimationRequest = requestAnimationFrame(drawPreviewFlipFrame);
@@ -2745,6 +2800,25 @@
 
   function isSideBySideMode() {
     return outputFormat.value === "sbs";
+  }
+
+  function isBorderEnabled() {
+    return getSideBySideBorderThicknessFraction() > 0;
+  }
+
+  function isSideBySideBorderMode() {
+    return isSideBySideMode() && isBorderEnabled();
+  }
+
+  function getCanvasBackgroundColor(previewOnly = false) {
+    return previewOnly && isSideBySideMode()
+      ? SBS_PREVIEW_BACKGROUND_COLOR
+      : "#000";
+  }
+
+  function fillCanvasBackground(ctx, width, height, previewOnly = false) {
+    ctx.fillStyle = getCanvasBackgroundColor(previewOnly);
+    ctx.fillRect(0, 0, width, height);
   }
 
   function updateOutputModeControls() {
@@ -2773,6 +2847,10 @@
 
     if (!sbsMode) {
       stopPreviewFlipAnimation();
+    }
+
+    if (sbsBorderThicknessSelect) {
+      sbsBorderThicknessSelect.style.display = "";
     }
   }
 
@@ -3141,7 +3219,7 @@
     return Math.max(0, Math.min(50, number));
   }
 
-  function createSideBySideCenterCroppedCanvas(sourceCanvas, width, height, cropPercent, horizontalAlign = "center") {
+  function createSideBySideCenterCroppedCanvas(sourceCanvas, width, height, cropPercent, horizontalAlign = "center", backgroundColor = "#000") {
     const out = document.createElement("canvas");
     out.width = width;
     out.height = height;
@@ -3150,7 +3228,7 @@
     ctx.imageSmoothingEnabled = true;
     ctx.imageSmoothingQuality = "high";
 
-    ctx.fillStyle = "#000";
+    ctx.fillStyle = backgroundColor;
     ctx.fillRect(0, 0, width, height);
 
     const crop = clampSideBySideCropPercent(cropPercent) / 100;
@@ -3185,10 +3263,10 @@
     return out;
   }
 
-  function createSideBySideCenterCroppedPair(leftCanvas, rightCanvas, width, height, cropPercent, touchAtCenter = false) {
+  function createSideBySideCenterCroppedPair(leftCanvas, rightCanvas, width, height, cropPercent, touchAtCenter = false, backgroundColor = "#000") {
     return {
-      leftCanvas: createSideBySideCenterCroppedCanvas(leftCanvas, width, height, cropPercent, touchAtCenter ? "right" : "center"),
-      rightCanvas: createSideBySideCenterCroppedCanvas(rightCanvas, width, height, cropPercent, touchAtCenter ? "left" : "center")
+      leftCanvas: createSideBySideCenterCroppedCanvas(leftCanvas, width, height, cropPercent, touchAtCenter ? "right" : "center", backgroundColor),
+      rightCanvas: createSideBySideCenterCroppedCanvas(rightCanvas, width, height, cropPercent, touchAtCenter ? "left" : "center", backgroundColor)
     };
   }
 
@@ -3235,6 +3313,113 @@
     const crop = clampSideBySideCropPercent(cropPercent) / 100;
     const visibleWidth = Math.max(1, sourceCanvas.width * (1 - crop));
     return sourceCanvas.height / visibleWidth;
+  }
+
+  function getSideBySideBorderThicknessFraction() {
+    if (!sbsBorderThicknessSelect) {
+      return SBS_BORDER_THICKNESS_FRACTION_DEFAULT;
+    }
+
+    const value = String(sbsBorderThicknessSelect.value || "");
+
+    if (!SBS_BORDER_THICKNESS_FRACTION_VALUES.has(value)) {
+      return SBS_BORDER_THICKNESS_FRACTION_DEFAULT;
+    }
+
+    return Number(value);
+  }
+
+  function getSideBySideBorderThicknessLabel() {
+    if (!sbsBorderThicknessSelect) {
+      return "Normal";
+    }
+
+    const option = sbsBorderThicknessSelect.options[sbsBorderThicknessSelect.selectedIndex];
+
+    return option ? (option.dataset.label || option.text) : "Medium";
+  }
+
+  function getSideBySideBorderThickness(outputWidth) {
+    const fraction = getSideBySideBorderThicknessFraction();
+
+    if (fraction <= 0) {
+      return 0;
+    }
+
+    return Math.max(1, Math.round(Math.max(1, Number(outputWidth) || 1) * fraction));
+  }
+
+  function drawSideBySideBorderOverlay(ctx, outputWidth, outputHeight, contentX = 0, contentWidth = outputWidth, seamX = contentX + contentWidth / 2) {
+    outputWidth = Math.max(1, Math.round(Number(outputWidth) || 1));
+    outputHeight = Math.max(1, Math.round(Number(outputHeight) || 1));
+
+    const rawContentX = Number(contentX) || 0;
+    const rawContentWidth = Math.max(1, Number(contentWidth) || outputWidth);
+    const contentLeft = Math.max(0, Math.floor(rawContentX));
+    const contentRight = Math.min(outputWidth, Math.ceil(rawContentX + rawContentWidth));
+    const safeContentWidth = Math.max(1, contentRight - contentLeft);
+
+    seamX = Math.max(contentLeft, Math.min(contentRight, Number(seamX) || (contentLeft + safeContentWidth / 2)));
+
+    const thickness = Math.min(
+      safeContentWidth,
+      outputHeight,
+      getSideBySideBorderThickness(outputWidth)
+    );
+
+    if (thickness <= 0) {
+      return;
+    }
+
+    const leftBorderX = contentLeft;
+    const rightBorderX = Math.max(contentLeft, contentRight - thickness);
+
+    const seamLeft = Math.max(
+      contentLeft,
+      Math.min(contentRight - thickness, Math.round(seamX - thickness / 2))
+    );
+
+    ctx.save();
+    ctx.fillStyle = SBS_BORDER_COLOR;
+
+    // Outer border around only the visible cropped side-by-side image.
+    // Thickness is based on the uncropped/original side-by-side output width.
+    // All four outer edges and the center seam use exactly the same thickness.
+    ctx.fillRect(contentLeft, 0, safeContentWidth, thickness);
+    ctx.fillRect(contentLeft, Math.max(0, outputHeight - thickness), safeContentWidth, thickness);
+    ctx.fillRect(leftBorderX, 0, thickness, outputHeight);
+    ctx.fillRect(rightBorderX, 0, thickness, outputHeight);
+
+    // Center seam overlay between the visible left and right images.
+    ctx.fillRect(seamLeft, 0, thickness, outputHeight);
+
+    ctx.restore();
+  }
+
+  function drawImageBorderOverlay(ctx, outputWidth, outputHeight) {
+    outputWidth = Math.max(1, Math.round(Number(outputWidth) || 1));
+    outputHeight = Math.max(1, Math.round(Number(outputHeight) || 1));
+
+    const thickness = Math.min(
+      outputWidth,
+      outputHeight,
+      getSideBySideBorderThickness(outputWidth)
+    );
+
+    if (thickness <= 0) {
+      return;
+    }
+
+    ctx.save();
+    ctx.fillStyle = SBS_BORDER_COLOR;
+
+    // Outer border only. Used by Anaglyph output modes; no center seam is drawn.
+    ctx.fillRect(0, 0, outputWidth, thickness);
+    ctx.fillRect(0, Math.max(0, outputHeight - thickness), outputWidth, thickness);
+    ctx.fillRect(0, 0, thickness, outputHeight);
+    ctx.fillRect(Math.max(0, outputWidth - thickness), 0, thickness, outputHeight);
+
+    ctx.restore();
   }
 
   function buildAnaglyphImageData(ctx, leftCanvas, rightCanvas, width, height, mode) {
@@ -3339,6 +3524,10 @@
     if (previewFlipRateRange) {
       previewFlipRateRange.disabled = isBusy;
     }
+
+    if (sbsBorderThicknessSelect) {
+      sbsBorderThicknessSelect.disabled = isBusy;
+    }
   }
 
   async function convertToSbs(options = {}) {
@@ -3399,7 +3588,7 @@
       const autoCropEdges = true;
       let ctx;
 
-      if (mode === "sbs") {
+      if (isSideBySideMode()) {
         const sourceAspect = left.height / left.width;
         const visibleCropAspect = getSideBySideVisibleCropAspect(left.canvas, sbsCenterCropPercent);
         const previewFlipRate = previewOnly ? getPreviewFlipRate() : 0;
@@ -3421,7 +3610,9 @@
             right.canvas,
             flipPreviewWidth,
             flipPreviewHeight,
-            sbsCenterCropPercent
+            sbsCenterCropPercent,
+            false,
+            getCanvasBackgroundColor(true)
           );
 
           canvas.width = flipPreviewWidth;
@@ -3433,8 +3624,7 @@
           ctx.imageSmoothingEnabled = true;
           ctx.imageSmoothingQuality = "high";
 
-          ctx.fillStyle = "#000";
-          ctx.fillRect(0, 0, flipPreviewWidth, flipPreviewHeight);
+          fillCanvasBackground(ctx, flipPreviewWidth, flipPreviewHeight, previewOnly);
           ctx.drawImage(adjusted.leftCanvas, 0, 0, flipPreviewWidth, flipPreviewHeight);
 
           startPreviewFlipAnimation(adjusted.leftCanvas, adjusted.rightCanvas);
@@ -3461,7 +3651,8 @@
               eyeWidth,
               outputHeight,
               sbsCenterCropPercent,
-              true
+              true,
+              getCanvasBackgroundColor(true)
             );
           } else {
             outputHeight = selectedOutputHeight;
@@ -3488,11 +3679,20 @@
           ctx.imageSmoothingEnabled = true;
           ctx.imageSmoothingQuality = "high";
 
-          ctx.fillStyle = "#000";
-          ctx.fillRect(0, 0, outputWidth, outputHeight);
+          fillCanvasBackground(ctx, outputWidth, outputHeight, previewOnly);
 
           ctx.drawImage(adjusted.leftCanvas, 0, 0, eyeWidth, outputHeight);
           ctx.drawImage(adjusted.rightCanvas, eyeWidth, 0, rightEyeWidth, outputHeight);
+
+          if (isSideBySideBorderMode()) {
+            const cropFraction = clampSideBySideCropPercent(sbsCenterCropPercent) / 100;
+            const borderContentX = previewOnly ? Math.floor(eyeWidth * cropFraction) : 0;
+            const borderContentRight = previewOnly
+              ? Math.ceil(eyeWidth + rightEyeWidth * (1 - cropFraction))
+              : outputWidth;
+            const borderContentWidth = Math.max(1, borderContentRight - borderContentX);
+            drawSideBySideBorderOverlay(ctx, outputWidth, outputHeight, borderContentX, borderContentWidth, eyeWidth);
+          }
         }
       } else {
         const aspect = left.height / left.width;
@@ -3532,6 +3732,10 @@
         );
 
         ctx.putImageData(anaglyphData, 0, 0);
+
+        if (isBorderEnabled()) {
+          drawImageBorderOverlay(ctx, outputWidth, outputHeight);
+        }
       }
 
       canvas.style.display = "block";
@@ -3584,13 +3788,17 @@
         ? `, center crop ${sbsCenterCropPercent.toFixed(1)}%`
         : "";
 
-      if (mode === "sbs") {
+      const borderNote = isBorderEnabled()
+        ? `, ${getSideBySideBorderThicknessLabel().toLowerCase()} black ${isSideBySideMode() ? "border/seam" : "border"}`
+        : "";
+
+      if (isSideBySideMode()) {
         const eyeWidth = Math.floor(canvas.width / 2);
         outputMeta.textContent =
-          `${modeLabel} JPEG: ${canvas.width}×${canvas.height}, each eye ${eyeWidth}×${canvas.height}, ${formatBytes(blob.size)}${cropNote}${rotationNote}.`;
+          `${modeLabel} JPEG: ${canvas.width}×${canvas.height}, each eye ${eyeWidth}×${canvas.height}, ${formatBytes(blob.size)}${cropNote}${borderNote}${rotationNote}.`;
       } else {
         outputMeta.textContent =
-          `${modeLabel} JPEG: ${canvas.width}×${canvas.height}, ${formatBytes(blob.size)}${separationNote}${rotationNote}.`;
+          `${modeLabel} JPEG: ${canvas.width}×${canvas.height}, ${formatBytes(blob.size)}${separationNote}${borderNote}${rotationNote}.`;
       }
 
       setStatus(`${modeLabel} JPEG generated.`, "ok");
@@ -3610,7 +3818,7 @@
         <h4>Basic workflow</h4>
         <ol>
           <li>Select a single Apple Spatial Photo HEIC file using the file chooser.<br/>On desktop, you can also drag and drop one HEIC file onto the top control panel.</li>
-          <li>Select an <b>Output Format</b>.<br/>Use <b>Side-by-Side</b> for stereo pairs, or one of the <b>Red / Cyan Anaglyph</b> formats for viewing with red/cyan 3D glasses.</li>
+          <li>Select an <b>Output Format</b>.<br/>Use <b>Side-by-Side</b> for stereo pairs, or one of the <b>Red / Cyan Anaglyph</b> formats for viewing with red/cyan 3D glasses. Use the <b>Border</b> selector to choose no border or to include a black border in the exported JPEG.</li>
           <li>Adjust <b>Output JPEG Height</b> as desired. Initial value is read from the input image.<br/>Use the slider, or click the height value display to enter an exact height.</li>
           <li>Optionally adjust <b>Side-by-Side Center Crop</b>, <b>Image Shift</b>, and/or <b>Image Rotation</b> as required to optimize the stereo view.</li>
           <li>When a new HEIC file is opened, <b>Image Shift</b> and <b>Image Rotation</b> are reset to 0. <b>Side-by-Side Center Crop</b> is preserved so you can process multiple images with the same crop setting.</li>
@@ -3623,11 +3831,12 @@
         <h4>Controls</h4>
         <ul>
           <li><b>Output Format</b>: Chooses between Side-by-Side output and several common anaglyph formats.</li>
+          <li><b>Border</b>: Chooses the optional exported border thickness: None, Thin, Medium, Wide, Wider, or Extra Wide. <b>None</b> exports the normal borderless JPEG. For Side-by-Side output, any non-None border setting draws a black outer border around the visible cropped side-by-side image and a black center seam. For Anaglyph output, any non-None border setting draws only a black outer border around the final image. The border is included in the exported JPEG.</li>
           <li><b>Stereo Order</b>: Only shown for Side-by-Side output. <b>Left / Right</b> is appropriate for standard stereograph card / parallel viewing.<br/><b>Right / Left</b> is appropriate for cross-eye viewing.</li>
-          <li><b>Output JPEG Height</b>: Sets the final exported JPEG height. The exported JPEG width is calculated automatically from the selected height and the final output aspect ratio.<br/>For Side-by-Side output, the final JPEG uses the selected height and creates a side-by-side image with the two eye views placed left and right. If Side-by-Side Center Crop is applied, the final JPEG scales only the visible cropped eye views to the selected output height and does not include the preview's outside black bars.<br/>For Anaglyph output, the final JPEG uses the selected height and creates a single red/cyan image whose width is calculated from the anaglyph aspect ratio.<br/>Use the slider, or click the numeric height value to enter a specific height.<br/>Entered values are clamped to the supported 768 to 8192 pixel range.<br/>The <b>Reset</b> button resets the output height to the original input height, clamped to the supported range.</li>
+          <li><b>Output JPEG Height</b>: Sets the final exported JPEG height. The exported JPEG width is calculated automatically from the selected height and the final output aspect ratio.<br/>For Side-by-Side output, the final JPEG uses the selected height and creates a side-by-side image with the two eye views placed left and right. If Side-by-Side Center Crop is applied, the final JPEG scales only the visible cropped eye views to the selected output height.<br/>For Anaglyph output, the final JPEG uses the selected height and creates a single red/cyan image whose width is calculated from the anaglyph aspect ratio.<br/>Use the slider, or click the numeric height value to enter a specific height.<br/>Entered values are clamped to the supported 768 to 8192 pixel range.<br/>The <b>Reset</b> button resets the output height to the original input height, clamped to the supported range.</li>
           <li><b>Image Rotation</b>: Applies a small roll correction to both stereo views.<br/>The rotated image is cropped as required to preserve the original aspect ratio.</li>
           <li><b>Image Rotation range selector</b>: Switches the Image Rotation slider between ±5° for normal adjustments and ±10° for larger rotation corrections.<br/>The <b>Reset</b> button resets the image rotation to zero.</li>
-          <li><b>Side-by-Side Center Crop</b>: Only shown for Side-by-Side output. Crops the selected total percentage from each eye view, split evenly between the left and right edges. In the on-screen Side-by-Side preview, the visible left and right views touch at the center seam and black bars appear only on the far outside edges. During final JPEG export, those black bars are omitted and only the visible cropped left and right views are scaled to the selected output height.<br/>The available crop range is from 0% to 50%. The crop setting is preserved when a new HEIC file is opened. The <b>Reset</b> button resets the crop to zero.</li>
+          <li><b>Side-by-Side Center Crop</b>: Only shown for Side-by-Side output. Crops the selected total percentage from each eye view, split evenly between the left and right edges. In the on-screen Side-by-Side preview, the visible left and right views touch at the center seam. During final JPEG export, the visible cropped left and right views are scaled to the selected output height.<br/>The available crop range is from 0% to 50%. The crop setting is preserved when a new HEIC file is opened. The <b>Reset</b> button resets the crop to zero.</li>
           <li><b>Image Shift</b>: Only shown for Anaglyph output. Shifts the two views horizontally before compositing.<br/>This can reduce eye strain, improve fusion, or improve some anaglyph results. Anaglyph output always auto-crops shifted edges.<br/>The <b>Reset</b> button resets the image shift to zero.</li>
           <li><b>Image Shift range selector</b>: For Anaglyph output, switches the Image Shift slider between a normal ±10% adjustment range and a wider ±20% range for stronger corrections, including close-up or macro anaglyphs.</li>
           <li><b>Preview L/R Flip</b>: Only shown for Side-by-Side output. At <b>0 Hz</b>, the preview shows the full side-by-side image. At higher rates, the preview alternates between the adjusted left-eye and right-eye views as full-size single-eye previews so you can evaluate Side-by-Side Center Crop and Image Rotation as a flip/wiggle stereo preview. Click the <b>Off / Hz</b> value box to toggle between Off and the last non-zero flip rate. This affects only the on-screen preview, not the exported JPEG.</li>
@@ -3643,7 +3852,8 @@
         <ul>
           <li>Use <b>Left / Right</b> for standard side-by-side stereo viewing or stereograph cards.</li>
           <li>Use <b>Right / Left</b> for cross-eye viewing.</li>
-          <li>For Side-by-Side output, use <b>Side-by-Side Center Crop</b> to trim the outside edges of both eye views equally for ease of fusing the images in normal or cross-eye viewing. The preview may show black bars at the far left and right to show what was cropped, but the final exported JPEG does not include those black bars; it scales only the visible cropped left and right images to the selected output height.</li>
+          <li>For Side-by-Side output, use <b>Side-by-Side Center Crop</b> to trim the outside edges of both eye views equally for ease of fusing the images in normal or cross-eye viewing. The preview may show dark gray preview bars at the far left and right to show what was cropped, but the final exported JPEG does not include those preview bars; it scales only the visible cropped left and right images to the selected output height.</li>
+          <li>For Side-by-Side output, non-None <b>Border</b> settings draw a black outer border around the visible cropped side-by-side image and a black center seam. <b>None</b> exports the normal borderless Side-by-Side JPEG. The Side-by-Side preview background is dark gray to make the border easier to see.</li>
           <li>Use Preview L/R Flip to check the alignment of the cropped and rotated eye views before generating the final JPEG. Set it back to 0 Hz to return to the normal full side-by-side preview, or click the Off / Hz value box to quickly toggle between Off and the last non-zero flip rate. After a JPEG is saved or shared, the Preview L/R Flip control is automatically reset to 0 Hz.</li>
         </ul>
 
@@ -3651,6 +3861,7 @@
         <ul>
           <li>Anaglyph output always uses the standard left/right stereo order internally.</li>
           <li>Anaglyph output always auto-crops shifted edges internally.</li>
+          <li>For Anaglyph output, non-None <b>Border</b> settings draw only a black outer border around the final image. No center seam is drawn for Anaglyph output.</li>
           <li>Use the anaglyph modes with red/cyan 3D glasses.<br/><b>Optimized Red / Cyan</b> is usually the best general starting point. If the optimized mode still looks too processed, try <b>Half-color Red / Cyan</b>.</li>
           <li>For some close-up or macro spatial photos, a larger Anaglyph Image Shift range may help produce a more comfortable or more accurate anaglyph result.</li>
         </ul>
@@ -3831,6 +4042,18 @@
     updateOutputModeControls();
     regeneratePreviewIfReady();
   });
+
+  if (sbsBorderThicknessSelect) {
+    sbsBorderThicknessSelect.addEventListener("change", () => {
+      if (!SBS_BORDER_THICKNESS_FRACTION_VALUES.has(String(sbsBorderThicknessSelect.value))) {
+        sbsBorderThicknessSelect.value = String(SBS_BORDER_THICKNESS_FRACTION_DEFAULT);
+      }
+
+      updateOutputModeControls();
+      regeneratePreviewIfReady();
+    });
+  }
+
 
   eyeOrder.addEventListener("change", regeneratePreviewIfReady);
 
