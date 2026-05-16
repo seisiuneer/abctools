@@ -794,6 +794,12 @@
     }
   }
 
+  /* Initial state matches the default Side-by-Side mode before JavaScript runs.
+     JavaScript will override this with inline display values when Output Format changes. */
+  #imageShiftControl {
+    display: none;
+  }
+
 </style>
 
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-VM0N9HL3MK"></script>
@@ -1145,7 +1151,7 @@
       }
 
       previewFlipRateRange.title =
-        "Side-by-Side preview only: flip between the adjusted left and right views. " +
+        "Flip between the adjusted left and right views. " +
         "At 0 Hz, flipping is off and the full side-by-side preview is shown. " +
         "Click the Preview L/R Flip label to set the maximum flip rate.";
     }
