@@ -809,6 +809,8 @@
   #heightRange:focus-visible,
   #stereoDepthRange:focus,
   #stereoDepthRange:focus-visible,
+  #verticalShiftRange:focus,
+  #verticalShiftRange:focus-visible,
   #sbsCropRange:focus,
   #sbsCropRange:focus-visible,
   #rotationRange:focus,
@@ -829,9 +831,6 @@
     }
   }
 
-  #imageShiftControl {
-    display: none;
-  }
 
   #eyeOrderControl{
     margin-top: 6px;
@@ -858,7 +857,7 @@
 <div class="wrap">
   <header>
     <h1>Stereo JPEG/TIFF → Side-by-Side or 3D Anaglyph</h1>
-    <p class="subhead">Open an existing side-by-side JPEG/TIFF stereo image file, or a left/right JPEG/TIFF image file pair,<br/>and export an adjusted Side-by-Side or 3D Anaglyph JPEG image locally from your browser.</p>
+    <p class="subhead">Open a side-by-side JPEG/TIFF stereo image file, or a left/right JPEG/TIFF image file pair,<br/>and export an adjusted Side-by-Side or 3D Anaglyph JPEG image locally from your browser.</p>
   </header>
 
   <section class="card">
@@ -907,6 +906,26 @@
     </div>
 
     <div class="grid" style="margin-top:12px;">
+      <div id="eyeOrderControl">
+        <label for="eyeOrder">Stereo Order:</label>
+        <select id="eyeOrder" title="Choose the input eye order. This affects both Side-by-Side and Anaglyph output. Use Right / Left if the source image is reversed.">
+          <option value="normal">Left / Right (Stereograph card)</option>
+          <option value="swap">Right / Left (Cross-eye viewing)</option>
+        </select>
+      </div>
+
+      <div id="previewFlipControl">
+        <div class="controlHeader">
+          <label id="previewFlipLabel" for="previewFlipRateRange" role="button" tabindex="0" title="Click to set the maximum Preview L/R Flip rate.">Preview L/R Flip</label>
+          <div id="previewFlipRateValue" class="rangeValue editableRangeValue" role="button" tabindex="0" aria-label="Toggle Preview L/R Flip" title="Click to toggle Preview L/R Flip between Off and the last non-zero flip rate.">Off</div>
+        </div>
+        <div class="row">
+          <input id="previewFlipRateRange" type="range" min="0" max="10" step="0.1" value="0" title="Flip between the adjusted left and right views. At 0 Hz, flipping is off and the full side-by-side preview is shown.">
+        </div>
+      </div>
+    </div>
+
+    <div class="grid" style="margin-top:12px;">
       <div>
         <div class="controlHeader">
           <label for="rotationRange">Image Rotation</label>
@@ -924,34 +943,6 @@
         </div>
       </div>
 
-      <div id="eyeOrderControl">
-        <label for="eyeOrder">Stereo Order:</label>
-        <select id="eyeOrder" title="Choose the input eye order. This affects both Side-by-Side and Anaglyph output. Use Right / Left if the source image is reversed.">
-          <option value="normal">Left / Right (Stereograph card)</option>
-          <option value="swap">Right / Left (Cross-eye viewing)</option>
-        </select>
-      </div>
-    </div>
-
-    <div class="grid" id="adjustmentControlsGrid" style="margin-top:12px;">
-      <div id="imageShiftControl">
-        <div class="controlHeader">
-          <label for="stereoDepthRange">Image Shift</label>
-          <div class="controlHeaderActions">
-            <select id="stereoDepthRangeMode" class="smallRangeSelect" aria-label="Image Shift range" title="Choose the Anaglyph Image Shift slider range. Use ±10% for normal adjustments, ±20% for stronger close-up or macro corrections, or ±50% for extreme cases.">
-              <option value="normal">±10%</option>
-              <option value="wide">±20%</option>
-              <option value="extraWide">±50%</option>
-            </select>
-            <button id="resetStereoDepthButton" class="smallResetButton" type="button" title="Reset Image Shift to 0.0%.">Reset</button>
-          </div>
-        </div>
-        <div class="row">
-          <input id="stereoDepthRange" type="range" min="-10" max="10" step="0.1" value="0" title="Shift the two stereo views horizontally before compositing. This can improve fusion, reduce eye strain, or improve anaglyph alignment.">
-          <div id="stereoDepthValue" class="rangeValue">0.0%</div>
-        </div>
-      </div>
-
       <div id="sbsCropControl">
         <div class="controlHeader">
           <label for="sbsCropRange">Side-by-Side Center Crop</label>
@@ -964,14 +955,42 @@
           <div id="sbsCropValue" class="rangeValue">0.0%</div>
         </div>
       </div>
+    </div>
 
-      <div id="previewFlipControl">
+    <div class="grid" id="adjustmentControlsGrid" style="margin-top:12px;">
+      <div id="imageShiftControl">
         <div class="controlHeader">
-          <label id="previewFlipLabel" for="previewFlipRateRange" role="button" tabindex="0" title="Click to set the maximum Preview L/R Flip rate.">Preview L/R Flip</label>
-          <div id="previewFlipRateValue" class="rangeValue editableRangeValue" role="button" tabindex="0" aria-label="Toggle Preview L/R Flip" title="Click to toggle Preview L/R Flip between Off and the last non-zero flip rate.">Off</div>
+          <label for="stereoDepthRange">Horizontal Shift</label>
+          <div class="controlHeaderActions">
+            <select id="stereoDepthRangeMode" class="smallRangeSelect" aria-label="Horizontal Shift range" title="Choose the Horizontal Shift slider range. Use ±10% for normal adjustments, ±20% for stronger close-up or macro corrections, or ±50% for extreme cases.">
+              <option value="normal">±10%</option>
+              <option value="wide">±20%</option>
+              <option value="extraWide">±50%</option>
+            </select>
+            <button id="resetStereoDepthButton" class="smallResetButton" type="button" title="Reset Horizontal Shift to 0.0%.">Reset</button>
+          </div>
         </div>
         <div class="row">
-          <input id="previewFlipRateRange" type="range" min="0" max="10" step="0.1" value="0" title="Flip between the adjusted left and right views. At 0 Hz, flipping is off and the full side-by-side preview is shown.">
+          <input id="stereoDepthRange" type="range" min="-10" max="10" step="0.1" value="0" title="Shift the two stereo views horizontally before compositing. In Side-by-Side mode, the horizontal shift direction follows the selected Stereo Order. This can improve fusion, reduce eye strain, or improve stereo/anaglyph alignment.">
+          <div id="stereoDepthValue" class="rangeValue">0.0%</div>
+        </div>
+      </div>
+
+      <div id="verticalImageShiftControl">
+        <div class="controlHeader">
+          <label for="verticalShiftRange">Vertical Shift</label>
+          <div class="controlHeaderActions">
+            <select id="verticalShiftRangeMode" class="smallRangeSelect" aria-label="Vertical Shift range" title="Choose the Vertical Shift slider range. Use ±10% for normal adjustments, ±20% for stronger corrections, or ±50% for extreme cases.">
+              <option value="normal">±10%</option>
+              <option value="wide">±20%</option>
+              <option value="extraWide">±50%</option>
+            </select>
+            <button id="resetVerticalShiftButton" class="smallResetButton" type="button" title="Reset Vertical Shift to 0.0%.">Reset</button>
+          </div>
+        </div>
+        <div class="row">
+          <input id="verticalShiftRange" type="range" min="-10" max="10" step="0.1" value="0" title="Shift the two stereo views vertically before compositing.">
+          <div id="verticalShiftValue" class="rangeValue">0.0%</div>
         </div>
       </div>
     </div>
@@ -1037,6 +1056,11 @@
   const stereoDepthValue = document.getElementById("stereoDepthValue");
   const stereoDepthRangeMode = document.getElementById("stereoDepthRangeMode");
   const resetStereoDepthButton = document.getElementById("resetStereoDepthButton");
+  const verticalImageShiftControl = document.getElementById("verticalImageShiftControl");
+  const verticalShiftRange = document.getElementById("verticalShiftRange");
+  const verticalShiftValue = document.getElementById("verticalShiftValue");
+  const verticalShiftRangeMode = document.getElementById("verticalShiftRangeMode");
+  const resetVerticalShiftButton = document.getElementById("resetVerticalShiftButton");
   const adjustmentControlsGrid = document.getElementById("adjustmentControlsGrid");
   const sbsCropControl = document.getElementById("sbsCropControl");
   const sbsCropRange = document.getElementById("sbsCropRange");
@@ -3189,21 +3213,9 @@
       : (currentFile?.name || sourceFilesForName[0]?.name || "side-by-side").replace(/\.[^.]+$/, "");
 
     const formatSuffix = getOutputFormatSuffix();
-    const separation = Number(stereoDepthRange.value) || 0;
-    const separationText = separation.toFixed(1);
-    const separationSafeText = separationText.replace(".", "p");
-    const separationSuffix = (!isSideBySideMode() && separation)
-      ? `-Shift${separation > 0 ? "+" : ""}${separationSafeText}`
-      : "";
-
-    const rotation = Number(rotationRange.value) || 0;
-    const rotationText = rotation.toFixed(1).replace(".", "p");
-    const rotationSuffix = rotation
-      ? `-Rot${rotation > 0 ? "+" : ""}${rotationText}`
-      : "";
 
     if (!isSideBySideMode()) {
-      return `${baseName}-${formatSuffix}${separationSuffix}${rotationSuffix}-${outputHeight}h.jpg`;
+      return `${baseName}-${formatSuffix}-${outputHeight}h.jpg`;
     }
 
     let theStyle = "LR";
@@ -3214,7 +3226,7 @@
     const crop = clampSideBySideCropPercent(sbsCropRange?.value || 0);
     const cropSuffix = crop ? `-Crop${String(crop.toFixed(1)).replace(".", "p")}` : "";
 
-    return `${baseName}-${formatSuffix}-${theStyle}${cropSuffix}${rotationSuffix}-${outputHeight}h.jpg`;
+    return `${baseName}-${formatSuffix}-${theStyle}${cropSuffix}-${outputHeight}h.jpg`;
   }
 
   function promptForSaveName() {
@@ -3457,8 +3469,13 @@
       stereoDepthRange.value = "0";
     }
 
+    if (verticalShiftRange) {
+      verticalShiftRange.value = "0";
+    }
+
     updateRotationRangeMode();
     updateStereoDepthRangeMode();
+    updateVerticalShiftRangeMode();
     updateControls();
   }
 
@@ -3471,6 +3488,11 @@
 
     const separation = Number(stereoDepthRange.value) || 0;
     stereoDepthValue.textContent = `${separation > 0 ? "+" : ""}${separation.toFixed(1)}%`;
+
+    if (verticalShiftValue && verticalShiftRange) {
+      const verticalShift = Number(verticalShiftRange.value) || 0;
+      verticalShiftValue.textContent = `${verticalShift > 0 ? "+" : ""}${verticalShift.toFixed(1)}%`;
+    }
 
     if (sbsCropValue) {
       const crop = Number(sbsCropRange?.value) || 0;
@@ -3511,6 +3533,25 @@
     if (value > limit) value = limit;
 
     stereoDepthRange.value = value.toFixed(1);
+    updateControls();
+  }
+
+  function updateVerticalShiftRangeMode() {
+    if (!verticalShiftRange || !verticalShiftRangeMode) {
+      return;
+    }
+
+    const mode = verticalShiftRangeMode.value;
+    const limit = mode === "extraWide" ? 50 : (mode === "wide" ? 20 : 10);
+    let value = Number(verticalShiftRange.value) || 0;
+
+    verticalShiftRange.min = String(-limit);
+    verticalShiftRange.max = String(limit);
+
+    if (value < -limit) value = -limit;
+    if (value > limit) value = limit;
+
+    verticalShiftRange.value = value.toFixed(1);
     updateControls();
   }
 
@@ -3633,7 +3674,11 @@ function updateOutputModeControls() {
     }
 
     if (imageShiftControl) {
-      imageShiftControl.style.display = sbsMode ? "none" : "block";
+      imageShiftControl.style.display = "block";
+    }
+
+    if (verticalImageShiftControl) {
+      verticalImageShiftControl.style.display = "block";
     }
 
     if (sbsCropControl) {
@@ -3792,7 +3837,7 @@ function updateOutputModeControls() {
     return out;
   }
 
-  function createStereoDepthAdjustedCanvas(sourceCanvas, width, height, offsetPx, autoCropEdges) {
+  function createStereoShiftAdjustedCanvas(sourceCanvas, width, height, offsetXPx, offsetYPx, autoCropEdges) {
     const out = document.createElement("canvas");
     out.width = width;
     out.height = height;
@@ -3804,47 +3849,59 @@ function updateOutputModeControls() {
     ctx.fillStyle = "#000";
     ctx.fillRect(0, 0, width, height);
 
-    const shift = Number(offsetPx) || 0;
+    const shiftX = Number(offsetXPx) || 0;
+    const shiftY = Number(offsetYPx) || 0;
 
-    if (!shift) {
+    if (!shiftX && !shiftY) {
       ctx.drawImage(sourceCanvas, 0, 0, width, height);
       return out;
     }
 
     if (!autoCropEdges) {
-      ctx.drawImage(sourceCanvas, shift, 0, width, height);
+      ctx.drawImage(sourceCanvas, shiftX, shiftY, width, height);
       return out;
     }
 
-    // Auto-crop removes the area that would become blank after shifting.
-    // The important detail is that the crop rectangle keeps the same aspect
-    // ratio as the output canvas, so the image is scaled uniformly instead of
-    // being stretched horizontally. This still crops/zooms slightly, but it
-    // does not distort the original image geometry.
-    const cropPixels = Math.min(Math.abs(shift), Math.max(0, width - 1));
-    const cropSourcePixels = cropPixels * (sourceCanvas.width / width);
-    const outputAspect = width / height;
+    /*
+      Treat horizontal and vertical shift as a single 2D pan inside each eye image.
 
-    let sw = sourceCanvas.width - cropSourcePixels;
-    let sh = sw / outputAspect;
+      The previous implementation cropped independently for X and Y, then corrected
+      the crop rectangle back to the output aspect ratio. That meant a vertical shift
+      could change the effective horizontal crop, and a horizontal shift could change
+      the effective vertical crop.
 
-    if (sh > sourceCanvas.height) {
-      sh = sourceCanvas.height;
-      sw = sh * outputAspect;
+      This version computes one aspect-correct source rectangle centered at the
+      shifted/panned source center. Horizontal and vertical shift therefore work
+      together as a predictable pan around the left and right images.
+    */
+    const sourceWidth = Math.max(1, sourceCanvas.width);
+    const sourceHeight = Math.max(1, sourceCanvas.height);
+    const outputAspect = width / Math.max(1, height);
+
+    const sourceShiftX = shiftX * (sourceWidth / Math.max(1, width));
+    const sourceShiftY = shiftY * (sourceHeight / Math.max(1, height));
+
+    const centerX = Math.max(0, Math.min(sourceWidth, sourceWidth / 2 - sourceShiftX));
+    const centerY = Math.max(0, Math.min(sourceHeight, sourceHeight / 2 - sourceShiftY));
+
+    const maxHalfWidth = Math.max(0.5, Math.min(centerX, sourceWidth - centerX));
+    const maxHalfHeight = Math.max(0.5, Math.min(centerY, sourceHeight - centerY));
+
+    let halfWidth = Math.min(maxHalfWidth, maxHalfHeight * outputAspect);
+    let halfHeight = halfWidth / outputAspect;
+
+    if (!Number.isFinite(halfWidth) || !Number.isFinite(halfHeight) || halfWidth < 0.5 || halfHeight < 0.5) {
+      halfWidth = sourceWidth / 2;
+      halfHeight = sourceHeight / 2;
     }
 
-    sw = Math.max(1, Math.min(sourceCanvas.width, sw));
-    sh = Math.max(1, Math.min(sourceCanvas.height, sh));
+    let sw = Math.max(1, Math.min(sourceWidth, halfWidth * 2));
+    let sh = Math.max(1, Math.min(sourceHeight, halfHeight * 2));
+    let sx = centerX - sw / 2;
+    let sy = centerY - sh / 2;
 
-    let sx;
-
-    if (shift < 0) {
-      sx = sourceCanvas.width - sw;
-    } else {
-      sx = 0;
-    }
-
-    const sy = Math.max(0, (sourceCanvas.height - sh) / 2);
+    sx = Math.max(0, Math.min(sourceWidth - sw, sx));
+    sy = Math.max(0, Math.min(sourceHeight - sh, sy));
 
     ctx.drawImage(
       sourceCanvas,
@@ -3859,6 +3916,10 @@ function updateOutputModeControls() {
     );
 
     return out;
+  }
+
+  function createStereoDepthAdjustedCanvas(sourceCanvas, width, height, offsetPx, autoCropEdges) {
+    return createStereoShiftAdjustedCanvas(sourceCanvas, width, height, offsetPx, 0, autoCropEdges);
   }
 
 
@@ -4018,13 +4079,15 @@ function updateOutputModeControls() {
     ctx.restore();
   }
 
-  function createAdjustedStereoPair(leftCanvas, rightCanvas, width, height, stereoDepthPx, autoCropEdges) {
-    const depth = Number(stereoDepthPx) || 0;
-    const halfShift = depth / 2;
+  function createAdjustedStereoPair(leftCanvas, rightCanvas, width, height, horizontalShiftPx, verticalShiftPx, autoCropEdges) {
+    const horizontalShift = Number(horizontalShiftPx) || 0;
+    const verticalShift = Number(verticalShiftPx) || 0;
+    const halfHorizontalShift = horizontalShift / 2;
+    const halfVerticalShift = verticalShift / 2;
 
     return {
-      leftCanvas: createStereoDepthAdjustedCanvas(leftCanvas, width, height, -halfShift, autoCropEdges),
-      rightCanvas: createStereoDepthAdjustedCanvas(rightCanvas, width, height, halfShift, autoCropEdges)
+      leftCanvas: createStereoShiftAdjustedCanvas(leftCanvas, width, height, -halfHorizontalShift, -halfVerticalShift, autoCropEdges),
+      rightCanvas: createStereoShiftAdjustedCanvas(rightCanvas, width, height, halfHorizontalShift, halfVerticalShift, autoCropEdges)
     };
   }
 
@@ -4141,6 +4204,9 @@ function updateOutputModeControls() {
     stereoDepthRange.disabled = isBusy;
     stereoDepthRangeMode.disabled = isBusy;
     resetStereoDepthButton.disabled = isBusy;
+    if (verticalShiftRange) verticalShiftRange.disabled = isBusy;
+    if (verticalShiftRangeMode) verticalShiftRangeMode.disabled = isBusy;
+    if (resetVerticalShiftButton) resetVerticalShiftButton.disabled = isBusy;
     if (previewFlipRateRange) {
       previewFlipRateRange.disabled = isBusy;
     }
@@ -4203,7 +4269,12 @@ function updateOutputModeControls() {
       }
 
       const selectedOutputHeight = clampOutputHeight(heightRange.value);
-      const stereoSeparationPercent = Number(stereoDepthRange.value) || 0;
+      const horizontalShiftPercent = Number(stereoDepthRange.value) || 0;
+      const verticalShiftPercent = Number(verticalShiftRange?.value) || 0;
+      const sideBySideHorizontalShiftPercent =
+        isSideBySideMode() && eyeOrder.value === "swap"
+          ? -horizontalShiftPercent
+          : horizontalShiftPercent;
       const sbsCenterCropPercent = clampSideBySideCropPercent(sbsCropRange?.value || 0);
       const autoCropEdges = true;
       let ctx;
@@ -4220,9 +4291,19 @@ function updateOutputModeControls() {
           const flipPreviewWidth = previewDims.width;
           const flipPreviewHeight = previewDims.height;
 
-          const adjusted = createSideBySideCenterCroppedPair(
+          const shifted = createAdjustedStereoPair(
             left.canvas,
             right.canvas,
+            flipPreviewWidth,
+            flipPreviewHeight,
+            Math.round(flipPreviewWidth * (sideBySideHorizontalShiftPercent / 100)),
+            Math.round(flipPreviewHeight * (verticalShiftPercent / 100)),
+            autoCropEdges
+          );
+
+          const adjusted = createSideBySideCenterCroppedPair(
+            shifted.leftCanvas,
+            shifted.rightCanvas,
             flipPreviewWidth,
             flipPreviewHeight,
             sbsCenterCropPercent,
@@ -4260,9 +4341,19 @@ function updateOutputModeControls() {
             eyeWidth = Math.floor(outputWidth / 2);
             rightEyeWidth = outputWidth - eyeWidth;
 
-            adjusted = createSideBySideCenterCroppedPair(
+            const shifted = createAdjustedStereoPair(
               left.canvas,
               right.canvas,
+              eyeWidth,
+              outputHeight,
+              Math.round(eyeWidth * (sideBySideHorizontalShiftPercent / 100)),
+              Math.round(outputHeight * (verticalShiftPercent / 100)),
+              autoCropEdges
+            );
+
+            adjusted = createSideBySideCenterCroppedPair(
+              shifted.leftCanvas,
+              shifted.rightCanvas,
               eyeWidth,
               outputHeight,
               sbsCenterCropPercent,
@@ -4275,9 +4366,19 @@ function updateOutputModeControls() {
             rightEyeWidth = eyeWidth;
             outputWidth = eyeWidth + rightEyeWidth;
 
-            adjusted = createSideBySideVisibleCroppedPair(
+            const shifted = createAdjustedStereoPair(
               left.canvas,
               right.canvas,
+              eyeWidth,
+              outputHeight,
+              Math.round(eyeWidth * (sideBySideHorizontalShiftPercent / 100)),
+              Math.round(outputHeight * (verticalShiftPercent / 100)),
+              autoCropEdges
+            );
+
+            adjusted = createSideBySideVisibleCroppedPair(
+              shifted.leftCanvas,
+              shifted.rightCanvas,
               eyeWidth,
               rightEyeWidth,
               outputHeight,
@@ -4319,14 +4420,16 @@ function updateOutputModeControls() {
         const outputWidth = previewDims.width;
         const outputHeight = previewDims.height;
 
-        const stereoSeparationPx = Math.round(outputWidth * (stereoSeparationPercent / 100));
+        const horizontalShiftPx = Math.round(outputWidth * (horizontalShiftPercent / 100));
+        const verticalShiftPx = Math.round(outputHeight * (verticalShiftPercent / 100));
 
         const adjusted = createAdjustedStereoPair(
           left.canvas,
           right.canvas,
           outputWidth,
           outputHeight,
-          stereoSeparationPx,
+          horizontalShiftPx,
+          verticalShiftPx,
           autoCropEdges
         );
 
@@ -4395,8 +4498,16 @@ function updateOutputModeControls() {
         ? `, rotation ${imageRotationDegrees > 0 ? "+" : ""}${imageRotationDegrees.toFixed(1)}°`
         : "";
 
-      const separationNote = !isSideBySideMode() && stereoSeparationPercent
-        ? `, image shift ${stereoSeparationPercent > 0 ? "+" : ""}${stereoSeparationPercent.toFixed(1)}%, auto-cropped`
+      const horizontalShiftNote = horizontalShiftPercent
+        ? `, horizontal shift ${horizontalShiftPercent > 0 ? "+" : ""}${horizontalShiftPercent.toFixed(1)}%`
+        : "";
+
+      const verticalShiftNote = verticalShiftPercent
+        ? `, vertical shift ${verticalShiftPercent > 0 ? "+" : ""}${verticalShiftPercent.toFixed(1)}%`
+        : "";
+
+      const shiftNote = (horizontalShiftNote || verticalShiftNote)
+        ? `${horizontalShiftNote}${verticalShiftNote}`
         : "";
 
       const cropNote = isSideBySideMode() && sbsCenterCropPercent
@@ -4410,10 +4521,10 @@ function updateOutputModeControls() {
       if (mode === "sbs") {
         const eyeWidth = Math.floor(canvas.width / 2);
         outputMeta.textContent =
-          `${modeLabel} JPEG: ${canvas.width}×${canvas.height}, each eye ${eyeWidth}×${canvas.height}, ${formatBytes(blob.size)}${cropNote}${borderNote}${rotationNote}.`;
+          `${modeLabel} JPEG: ${canvas.width}×${canvas.height}, each eye ${eyeWidth}×${canvas.height}, ${formatBytes(blob.size)}${cropNote}${shiftNote}${borderNote}${rotationNote}.`;
       } else {
         outputMeta.textContent =
-          `${modeLabel} JPEG: ${canvas.width}×${canvas.height}, ${formatBytes(blob.size)}${separationNote}${borderNote}${rotationNote}.`;
+          `${modeLabel} JPEG: ${canvas.width}×${canvas.height}, ${formatBytes(blob.size)}${shiftNote}${borderNote}${rotationNote}.`;
       }
 
       setStatus(`${modeLabel} JPEG generated.`, "ok");
@@ -4440,8 +4551,8 @@ function updateOutputModeControls() {
           <li>Two-file left/right imports must contain exactly two files. The files must both be JPEG or both be TIFF, and both images must have exactly the same pixel dimensions. If the formats or dimensions do not match, the tool shows an alert and does not import them.</li>
           <li>Select an <b>Output Format</b>.<br/>Use <b>Side-by-Side</b> for stereo pairs, or one of the <b>Red / Cyan Anaglyph</b> formats for viewing with red/cyan 3D glasses. Use the <b>Border</b> selector to choose no border or to include a black border in the exported JPEG. In Side-by-Side output, the border option also draws the center seam; in Anaglyph output, it draws only the outer border.</li>
           <li>Adjust <b>Output JPEG Height</b> as desired. The initial value is read from the imported source image height; for two-file left/right imports, it is read from the shared height of the two images.<br/>Use the slider, or click the height value display to enter an exact height.</li>
-          <li>Optionally adjust <b>Side-by-Side Center Crop</b>, <b>Image Shift</b>, and/or <b>Image Rotation</b> as required to optimize the stereo view.</li>
-          <li><b>Image Shift</b> and <b>Image Rotation</b> are reset to 0 whenever a new JPEG or TIFF file is opened. <b>Side-by-Side Center Crop</b> is preserved so you can apply the same center-crop amount across multiple images until you change it or press its <b>Reset</b> button.</li>
+          <li>Optionally adjust <b>Side-by-Side Center Crop</b> (side-by-side format only), <b>Horizontal Shift</b>, <b>Vertical Shift</b>, and/or <b>Image Rotation</b> as required to optimize the stereo view.</li>
+          <li><b>Horizontal Shift</b>, <b>Vertical Shift</b>, and <b>Image Rotation</b> are reset to 0 whenever a new JPEG or TIFF file is opened. <b>Side-by-Side Center Crop</b> is preserved so you can apply the same center-crop amount across multiple images until you change it or press its <b>Reset</b> button.</li>
           <li>On desktop browsers, move the mouse over the preview area to reveal the full-screen button at the top right of the preview. On iPad, the button remains visible at the top right. The button is hidden on iPhone and while full-screen mode is active. Press Escape or use the browser full-screen control to return to the normal tool view.</li>
           <li>The normal on-page preview is optimized for responsiveness, while full-screen preview automatically uses a higher preview resolution when useful for sharper viewing on high-DPI displays.</li>
           <li>For side-by-side image viewing, to make the cropped side-by-side preview smaller and help facilitate visually fusing the images while making adjustments, you can either zoom out the browser window or resize the window narrower to make the preview smaller.</li>
@@ -4453,35 +4564,36 @@ function updateOutputModeControls() {
           <li><b>Output Format</b>: Chooses between Side-by-Side output and several common anaglyph formats.</li>
           <li><b>Border</b>: Chooses the optional exported border thickness: None, Thin, Medium, Wide, Wider, or Extra Wide. <b>None</b> exports the normal borderless JPEG. For Side-by-Side output, any non-None border setting draws a black outer border around the visible cropped side-by-side image and a black center seam. For Anaglyph output, any non-None border setting draws only a black outer border around the final image. The overlay is included in the exported JPEG.</li>
           <li><b>Output JPEG Height</b>: Sets the final exported JPEG height. The exported JPEG width is calculated automatically from the selected height and the final output aspect ratio.<br/>For Side-by-Side output, the final JPEG uses the selected height and creates a side-by-side image with the two eye views placed left and right.<br/>If <b>Side-by-Side Center Crop</b> is applied, the final JPEG scales only the visible cropped eye views to the selected output height.<br/>For Anaglyph output, the final JPEG uses the selected height and creates a single red/cyan image whose width is calculated from the anaglyph aspect ratio.<br/>Use the slider, or click the numeric height value to enter a specific height.<br/>Entered values are clamped to the supported 768 to 8192 pixel range.<br/>The <b>Reset</b> button resets the output height to the original input height.</li>
-          <li><b>Image Rotation</b>: Applies a small roll correction to both stereo views.<br/>The rotated image is cropped as required to preserve the original aspect ratio.</li>
-          <li><b>Image Rotation range selector</b>: Switches the Image Rotation slider between ±5° for normal adjustments and ±10° for larger rotation corrections.<br/>The <b>Reset</b> button resets the image rotation to zero.</li>
           <li><b>Stereo Order</b>: Affects both Side-by-Side and Anaglyph output. For single-file side-by-side imports, <b>Left / Right</b> treats the left half of the source image as the left eye and the right half as the right eye. For two-file imports, the first file is treated as the left eye and the second file as the right eye.<br/><b>Right / Left</b> swaps the two views before generating the preview or exported JPEG.</li>
-          <li><b>Side-by-Side Center Crop</b>: Only shown for Side-by-Side output. Crops the selected total percentage from each eye view, split evenly between the left and right edges.<br/>The available crop range is from 0% to 50%. This setting is preserved when a new JPEG or TIFF file is opened. The <b>Reset</b> button resets the crop to zero.</li>
-          <li><b>Image Shift</b>: Only shown for Anaglyph output. Shifts the two views horizontally before compositing.<br/>This can reduce eye strain, improve fusion, or improve some anaglyph results. Anaglyph output always auto-crops shifted edges.<br/>The <b>Reset</b> button resets the image shift to zero.</li>
-          <li><b>Image Shift range selector</b>: For Anaglyph output, switches the <b>Image Shift</b> slider between a normal ±10% adjustment range, a wider ±20% range for stronger corrections, and an extra-wide ±50% range for extreme close-up, macro, or difficult anaglyph alignment cases.</li>
-          <li><b>Preview L/R Flip</b>: Only shown for Side-by-Side output. At <b>0 Hz</b>, the preview shows the full side-by-side image. At higher rates, the preview alternates between the adjusted left-eye and right-eye views as full-size single-eye previews so you can evaluate <b>Side-by-Side Center Crop</b> and <b>Image Rotation</b> as a flip/wiggle stereo preview. Click the <b>Off / Hz</b> value box to toggle between Off and the last non-zero flip rate.</li>
+          <li><b>Preview L/R Flip</b>: Only shown for Side-by-Side output. At <b>0 Hz</b>, the preview shows the full side-by-side image. At non-zero rates, the preview alternates between the adjusted left-eye and right-eye views as full-size single-eye previews so you can evaluate <b>Side-by-Side Center Crop</b>, <b>Horizontal Shift</b>, <b>Vertical Shift</b>, and <b>Image Rotation</b> as a flip/wiggle stereo preview. Click the <b>Off / Hz</b> value box to toggle between Off and the last non-zero flip rate.</li>
           <li>Click the <b>Preview L/R Flip</b> label to set the maximum value available on the flip-rate slider.</li>
           <li>The dialog shows the current maximum flip rate when it opens.</li>
           <li>Enter a whole number from <b>10</b> to <b>30</b>, then click <b>OK</b> to apply it.</li>
           <li>Click <b>Cancel</b> to close the dialog without changing the current maximum.</li>
           <li>If the current flip rate is above the new maximum, it is automatically reduced to the new maximum.</li>
-          <li>The selected maximum is saved in browser localStorage when available and restored the next time the tool is opened.</li>
+          <li>The selected maximum is saved in browser localStorage when available and restored the next time the tool is opened.</li>          
+          <li><b>Image Rotation</b>: Applies a small roll correction to both stereo views.<br/>The rotated image is cropped as required to preserve the original aspect ratio.</li>
+          <li><b>Image Rotation range selector</b>: Switches the Image Rotation slider between ±5° for normal adjustments and ±10° for larger rotation corrections.<br/>The <b>Reset</b> button resets the image rotation to zero.</li>
+          <li><b>Side-by-Side Center Crop</b>: Only shown for Side-by-Side output. Crops the selected total percentage from each eye view, split evenly between the left and right edges.<br/>The available crop range is from 0% to 50%. This setting is preserved when a new JPEG or TIFF file is opened. The <b>Reset</b> button resets the crop to zero.</li>
+          <li><b>Horizontal Shift</b>: Available for both Side-by-Side and Anaglyph output. Shifts the two stereo views horizontally before compositing. In Side-by-Side mode, the horizontal shift direction follows the selected Stereo Order. This can reduce eye strain, improve fusion, or improve stereo/anaglyph alignment. Shifted edges are automatically cropped so no blank edges are exported.<br/>The <b>Reset</b> button resets the horizontal shift to zero.</li>
+          <li><b>Horizontal Shift range selector</b>: Switches the <b>Horizontal Shift</b> slider between a normal ±10% adjustment range, a wider ±20% range for stronger corrections, and an extra-wide ±50% range for extreme close-up, macro, or difficult alignment cases.</li>
+          <li><b>Vertical Shift</b>: Available for both Side-by-Side and Anaglyph output. Shifts the two stereo views vertically before compositing. Horizontal and vertical shifts work together as a two-dimensional pan around the left and right images. Shifted edges are automatically cropped so no blank edges are exported.<br/>The <b>Reset</b> button resets the vertical shift to zero.</li>
+          <li><b>Vertical Shift range selector</b>: Switches the <b>Vertical Shift</b> slider between the same ±10%, ±20%, and ±50% adjustment ranges.</li>
         </ul>
 
         <h4>Side-by-Side output notes</h4>
         <ul>
           <li>Use <b>Left / Right</b> for standard side-by-side stereo viewing or stereograph cards.</li>
           <li>Use <b>Right / Left</b> for cross-eye viewing.</li>
-          <li>For Side-by-Side output, use <b>Side-by-Side Center Crop</b> to trim the outside edges of both eye views equally for ease of fusing the images in normal or cross-eye viewing.</li>
+          <li>For Side-by-Side output, use <b>Side-by-Side Center Crop</b> to trim the outside edges of both eye views equally for ease of fusing the images in normal or cross-eye viewing. <b>Horizontal Shift</b> and <b>Vertical Shift</b> can also be used to adjust stereo alignment before the side-by-side image is assembled.</li>
           <li>For Side-by-Side output, non-None <b>Border</b> settings draw a black outer border around the visible cropped side-by-side image and a black center seam. <b>None</b> exports the normal borderless Side-by-Side JPEG.</li>
-          <li>Use <b>Preview L/R Flip</b> to check the alignment of the cropped and rotated eye views before generating the final JPEG. Set it back to 0 Hz to return to the normal full side-by-side preview, or click the Off / Hz value box to quickly toggle between Off and the last non-zero flip rate. After a JPEG is saved or shared, the <b>Preview L/R Flip</b> control is automatically reset to 0 Hz.</li>
+          <li>Use <b>Preview L/R Flip</b> to check the alignment of the cropped, shifted, and rotated eye views before generating the final JPEG. Set it back to 0 Hz to return to the normal full side-by-side preview, or click the Off / Hz value box to quickly toggle between Off and the last non-zero flip rate. After a JPEG is saved or shared, the <b>Preview L/R Flip</b> control is automatically reset to 0 Hz.</li>
         </ul>
-
 
         <h4>Anaglyph output notes</h4>
         <ul>
           <li>Anaglyph output uses the selected <b>Stereo Order</b>. If the source image is reversed, choose <b>Right / Left</b> so the correct eye is used for the red left-eye channel and the cyan right-eye channel.</li>
-          <li><b>Image Shift</b> is available only for Anaglyph output and shifts the two eye views horizontally before compositing.</li>
+          <li><b>Horizontal Shift</b> and <b>Vertical Shift</b> are available for both Side-by-Side and Anaglyph output and shift the two eye views before compositing.</li>
           <li>Anaglyph output always auto-crops shifted edges.</li>
           <li>For Anaglyph output, non-None <b>Border</b> settings draw only a black outer border around the final image. No center seam is drawn for Anaglyph output.</li>
           <li><b>Red / Cyan, Color</b> keeps more color information but may show more retinal rivalry or ghosting on some images.</li>
@@ -4730,6 +4842,39 @@ function updateOutputModeControls() {
     }
 
     stereoDepthRange.value = "0";
+    updateControls();
+
+    regeneratePreviewIfReady();
+  });
+
+  verticalShiftRangeMode.addEventListener("change", () => {
+    updateVerticalShiftRangeMode();
+    regeneratePreviewIfReady();
+  });
+
+  verticalShiftRange.addEventListener("change", async () => {
+    try {
+      await convertToSbs({ previewOnly: true });
+    } catch (err) {
+      setStatus(escapeHtml(err.message || String(err)), "error");
+    }
+  });
+
+  verticalShiftRange.addEventListener("input", () => {
+    updateControls();
+
+    if (decodedViews.length >= 2) {
+      convertToSbs({ previewOnly: true }).catch(err => setStatus(escapeHtml(err.message || String(err)), "error"));
+    }
+  });
+
+  resetVerticalShiftButton.addEventListener("click", () => {
+    if (Number(verticalShiftRange.value) === 0) {
+      updateControls();
+      return;
+    }
+
+    verticalShiftRange.value = "0";
     updateControls();
 
     regeneratePreviewIfReady();

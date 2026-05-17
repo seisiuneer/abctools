@@ -860,7 +860,7 @@
 
   <section class="card">
     <div>
-      <label for="fileInput">Apple Spatial Photo HEIC file:</label>
+      <label for="fileInput">Open an Apple Spatial Photo HEIC file:</label>
       <input id="fileInput" type="file" accept=".heic,.heif,image/heic,image/heif" title="Select one Apple Spatial Photo HEIC or HEIF file to convert. On iOS, first save the spatial photo from Photos to Files, then open it here.">
     </div>
 
@@ -928,13 +928,13 @@
     <div class="grid" style="margin-top:12px;">
       <div id="imageShiftControl">
         <div class="controlHeader">
-          <label for="stereoDepthRange">Image Shift</label>
+          <label for="stereoDepthRange">Horizontal Shift</label>
           <div class="controlHeaderActions">
-            <select id="stereoDepthRangeMode" class="smallRangeSelect" aria-label="Image Shift range" title="Choose the Image Shift slider range. Use ±10% for normal adjustments or ±20% for stronger close-up or macro corrections.">
+            <select id="stereoDepthRangeMode" class="smallRangeSelect" aria-label="Horizontal Shift range" title="Choose the Horizontal Shift slider range. Use ±10% for normal adjustments or ±20% for stronger close-up or macro corrections.">
               <option value="normal">±10%</option>
               <option value="wide">±20%</option>
             </select>
-            <button id="resetStereoDepthButton" class="smallResetButton" type="button" title="Reset Image Shift to 0.0%.">Reset</button>
+            <button id="resetStereoDepthButton" class="smallResetButton" type="button" title="Reset Horizontal Shift to 0.0%.">Reset</button>
           </div>
         </div>
         <div class="row">
@@ -3778,7 +3778,7 @@
         : "";
 
       const separationNote = !isSideBySideMode() && stereoSeparationPercent
-        ? `, image shift ${stereoSeparationPercent > 0 ? "+" : ""}${stereoSeparationPercent.toFixed(1)}%, auto-cropped`
+        ? `, horizontal shift ${stereoSeparationPercent > 0 ? "+" : ""}${stereoSeparationPercent.toFixed(1)}%`
         : "";
 
       const cropNote = isSideBySideMode() && sbsCenterCropPercent
@@ -3817,8 +3817,8 @@
           <li>Select a single Apple Spatial Photo HEIC file using the file chooser.<br/>On desktop, you can also drag and drop one HEIC file onto the top control panel.</li>
           <li>Select an <b>Output Format</b>.<br/>Use <b>Side-by-Side</b> for stereo pairs, or one of the <b>Red / Cyan Anaglyph</b> formats for viewing with red/cyan 3D glasses. Use the <b>Border</b> selector to choose no border or to include a black border in the exported JPEG.</li>
           <li>Adjust <b>Output JPEG Height</b> as desired. Initial value is read from the input image.<br/>Use the slider, or click the height value display to enter an exact height.</li>
-          <li>Optionally adjust <b>Side-by-Side Center Crop</b>, <b>Image Shift</b>, and/or <b>Image Rotation</b> as required to optimize the stereo view.</li>
-          <li>When a new HEIC file is opened, <b>Image Shift</b> and <b>Image Rotation</b> are reset to 0. <b>Side-by-Side Center Crop</b> is preserved so you can process multiple images with the same crop setting.</li>
+          <li>Optionally adjust <b>Side-by-Side Center Crop</b> (Side-by-Side format only), <b>Horizontal Shift</b> (Anaglyph formats only), and/or <b>Image Rotation</b> as required to optimize the stereo view.</li>
+          <li>When a new HEIC file is opened, <b>Horizontal Shift</b> and <b>Image Rotation</b> are reset to 0. <b>Side-by-Side Center Crop</b> is preserved so you can process multiple images with the same crop setting.</li>
           <li>On desktop browsers, move the mouse over the preview area to reveal the full-screen button at the top right of the preview. On iPad, the button remains visible at the top right. The button is hidden on iPhone and while full-screen mode is active. Press Escape or use the browser full-screen control to return to the normal tool view.</li>
           <li>The normal on-page preview is optimized for responsiveness, while full-screen preview automatically uses a higher preview resolution when useful for sharper viewing on high-DPI displays.</li>
           <li>For side-by-side image viewing, to make the cropped side-by-side preview smaller and help facilitate visually fusing the images while making adjustments, you can either zoom out the browser window or resize the window narrower to make the preview smaller.</li>
@@ -3833,16 +3833,16 @@
           <li><b>Stereo Order</b>: Only shown for Side-by-Side output. <b>Left / Right</b> is appropriate for standard stereograph card / parallel viewing.<br/><b>Right / Left</b> is appropriate for cross-eye viewing.</li>
           <li><b>Preview L/R Flip</b>: Only shown for Side-by-Side output. At <b>0 Hz</b>, the preview shows the full side-by-side image. At higher rates, the preview alternates between the adjusted left-eye and right-eye views as full-size single-eye previews so you can evaluate <b>Side-by-Side Center Crop</b> and <b>Image Rotation</b> as a flip/wiggle stereo preview. Click the <b>Off / Hz</b> value box to toggle between Off and the last non-zero flip rate. This affects only the on-screen preview, not the exported JPEG.</li>
           <li>Click the <b>Preview L/R Flip</b> label to set the maximum value available on the flip-rate slider.</li>
-          <li><b>Image Shift</b>: Only shown for Anaglyph output. Shifts the two views horizontally before compositing.<br/>This can reduce eye strain, improve fusion, or improve some anaglyph results. Anaglyph output always auto-crops shifted edges.<br/>The <b>Reset</b> button resets the image shift to zero.</li>
-          <li><b>Image Shift range selector</b>: For Anaglyph output, switches the <b>Image Shift</b> slider between a normal ±10% adjustment range and a wider ±20% range for stronger corrections, including close-up or macro anaglyphs.</li>
-          <li><b>Side-by-Side Center Crop</b>: Only shown for Side-by-Side output. Crops the selected total percentage from each eye view, split evenly between the left and right edges. In the on-screen Side-by-Side preview, the visible left and right views touch at the center seam. During final JPEG export, the visible cropped left and right views are scaled to the selected output height.<br/>The available crop range is from 0% to 50%. The crop setting is preserved when a new HEIC file is opened. The <b>Reset</b> button resets the crop to zero.</li>
-          <li><b>Image Rotation</b>: Applies a small roll correction to both stereo views.<br/>The rotated image is cropped as required to preserve the original aspect ratio.</li>
-          <li><b>Image Rotation range selector</b>: Switches the Image Rotation slider between ±5° for normal adjustments and ±10° for larger rotation corrections.<br/>The <b>Reset</b> button resets the image rotation to zero.</li>
           <li>The dialog shows the current maximum flip rate when it opens.</li>
           <li>Enter a whole number from <b>10</b> to <b>30</b>, then click <b>OK</b> to apply it.</li>
           <li>Click <b>Cancel</b> to close the dialog without changing the current maximum.</li>
           <li>If the current flip rate is above the new maximum, it is automatically reduced to the new maximum.</li>
           <li>The selected maximum is saved in browser localStorage when available and restored the next time the tool is opened.</li>
+          <li><b>Side-by-Side Center Crop</b>: Only shown for Side-by-Side output. Crops the selected total percentage from each eye view, split evenly between the left and right edges. In the on-screen Side-by-Side preview, the visible left and right views touch at the center seam. During final JPEG export, the visible cropped left and right views are scaled to the selected output height.<br/>The available crop range is from 0% to 50%. The crop setting is preserved when a new HEIC file is opened. The <b>Reset</b> button resets the crop to zero.</li>
+          <li><b>Horizontal Shift</b>: Only shown for Anaglyph output. Shifts the two views horizontally before compositing.<br/>This can reduce eye strain, improve fusion, or improve some anaglyph results. Anaglyph output always auto-crops shifted edges.<br/>The <b>Reset</b> button resets the horizontal shift to zero.</li>
+          <li><b>Horizontal Shift range selector</b>: For Anaglyph output, switches the <b>Horizontal Shift</b> slider between a normal ±10% adjustment range and a wider ±20% range for stronger corrections, including close-up or macro anaglyphs.</li>
+          <li><b>Image Rotation</b>: Applies a small roll correction to both stereo views.<br/>The rotated image is cropped as required to preserve the original aspect ratio.</li>
+          <li><b>Image Rotation range selector</b>: Switches the Image Rotation slider between ±5° for normal adjustments and ±10° for larger rotation corrections.<br/>The <b>Reset</b> button resets the image rotation to zero.</li>
         </ul>
 
         <h4>Side-by-Side output notes</h4>
@@ -3857,11 +3857,11 @@
         <h4>Anaglyph output notes</h4>
         <ul>
           <li>Anaglyph output always uses the standard left/right stereo order internally.</li>
-          <li><b>Image Shift</b> is available only for Anaglyph output and shifts the two eye views horizontally before compositing.</li>
+          <li><b>Horizontal Shift</b> is available only for Anaglyph output and shifts the two eye views horizontally before compositing.</li>
           <li>Anaglyph output always auto-crops shifted edges internally.</li>
           <li>For Anaglyph output, non-None <b>Border</b> settings draw only a black outer border around the final image. No center seam is drawn for Anaglyph output.</li>
           <li>Use the anaglyph modes with red/cyan 3D glasses.<br/><b>Optimized Red / Cyan</b> is usually the best general starting point. If the optimized mode still looks too processed, try <b>Half-color Red / Cyan</b>.</li>
-          <li>For some close-up or macro spatial photos, a larger Anaglyph <b>Image Shift</b> range may help produce a more comfortable or more accurate anaglyph result.</li>
+          <li>For some close-up or macro spatial photos, a larger Anaglyph <b>Horizontal Shift</b> range may help produce a more comfortable or more accurate anaglyph result.</li>
         </ul>
 
         <h4>Red / Cyan anaglyph modes</h4>
@@ -3881,7 +3881,7 @@
         </ul>
 
         <h4>Stereo JPEG/TIFF → Side-by-Side or 3D Anaglyph</h4>
-        This utility can be used to do essentially all the same side-by-side and color anaglyph operations as this tool, but starting with side-by-side or individual right/left JPEG or TIFF images:
+        This utility can be used to do essentially all the same side-by-side and color anaglyph operations as this tool and more, but starting with side-by-side or individual right/left JPEG or TIFF images:
         <div style="text-align: center;">
            <div style="margin-top:10px;">
             <a href="https://michaeleskin.com/tools/sbs-jpeg-tiff-to-sbs.html" target="_blank" rel="noopener noreferrer">Stereo JPEG/TIFF → Side-by-Side or 3D Anaglyph</a>
