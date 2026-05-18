@@ -838,7 +838,8 @@
     }
   }
 
-  body.iosDevice #dragdropinfo,#subtitle {
+  body.iosDevice #dragdropinfo,
+  body.iosDevice #subtitle {
     max-width: 50rem;
     margin-left: auto;
     margin-right: auto;
@@ -960,7 +961,7 @@
         </div>
         <div class="row">
           <input id="sbsCropRange" type="range" min="0" max="50" step="0.1" value="0" title="Crops the selected total percentage from the left and right edges of each eye view for ease of image fusion in parallel or cross-eye viewing. This setting is preserved when a new HEIC file is opened.">
-          <div id="sbsCropValue" class="rangeValue">0.0%</div>
+          <div id="sbsCropValue" class="rangeValue editableRangeValue" role="button" tabindex="0" aria-label="Enter Side-by-Side Center Crop percentage" title="Click to enter a specific Side-by-Side Center Crop value from 0.0% to 50.0%.">0.0%</div>
         </div>
       </div>
 
@@ -1101,6 +1102,8 @@
   const PREVIEW_FLIP_MAX_MIN_HZ = 10;
   const PREVIEW_FLIP_MAX_MAX_HZ = 30;
   const PREVIEW_FLIP_MAX_STORAGE_KEY = "spatialSbsPreviewFlipMaximumHz";
+  const SBS_CROP_STORAGE_KEY = "spatialSbsCenterCropPercent";
+  const SBS_BORDER_STORAGE_KEY = "spatialSbsBorderThicknessFraction";
   let previewFlipMaximumHz = PREVIEW_FLIP_MAX_MIN_HZ;
   let scrollBeforeFullscreenX = 0;
   let scrollBeforeFullscreenY = 0;
@@ -1166,11 +1169,6 @@
     }
 
     return Math.max(OUTPUT_HEIGHT_MIN, Math.min(OUTPUT_HEIGHT_MAX, number));
-  }
-
-  function applyOutputHeight(height) {
-    heightRange.max = String(OUTPUT_HEIGHT_MAX);
-    heightRange.value = String(clampOutputHeight(height));
   }
 
   function initializeOutputHeightControl() {
@@ -2518,6 +2516,97 @@
     return numeric;
   }
 
+  function parseSideBySideCropInput(value) {
+    const cleaned = String(value ?? "")
+      .replace(/,/g, "")
+      .trim();
+
+    if (!/[0-9]/.test(cleaned)) {
+      return null;
+    }
+
+    let numeric = Number(cleaned.replace(/[^0-9.\-]/g, ""));
+
+    if (!Number.isFinite(numeric)) {
+      return null;
+    }
+
+    if (numeric < 0) numeric = 0;
+    if (numeric > 50) numeric = 50;
+
+    return Math.round(numeric * 10) / 10;
+  }
+
+  function loadSideBySideCropFromStorage() {
+    if (!localStorageAvailable()) {
+      return 0;
+    }
+
+    try {
+      const storedValue = window.localStorage.getItem(SBS_CROP_STORAGE_KEY);
+      const parsedValue = parseSideBySideCropInput(storedValue);
+      return parsedValue === null ? 0 : parsedValue;
+    } catch (err) {
+      return 0;
+    }
+  }
+
+  function saveSideBySideCropToStorage(value) {
+    if (!localStorageAvailable()) {
+      return;
+    }
+
+    const parsedValue = parseSideBySideCropInput(value);
+
+    if (parsedValue === null) {
+      return;
+    }
+
+    try {
+      window.localStorage.setItem(SBS_CROP_STORAGE_KEY, parsedValue.toFixed(1));
+    } catch (err) {
+      // Ignore storage errors. The tool still works without persistence.
+    }
+  }
+
+  function applySideBySideCrop(value) {
+    if (!sbsCropRange) {
+      return null;
+    }
+
+    const parsedValue = parseSideBySideCropInput(value);
+
+    if (parsedValue === null) {
+      updateControls();
+      return null;
+    }
+
+    sbsCropRange.value = parsedValue.toFixed(1);
+    updateControls();
+
+    return parsedValue;
+  }
+
+  function initializeSideBySideCropControl() {
+    applySideBySideCrop(loadSideBySideCropFromStorage());
+  }
+
+  function setSideBySideCropFromUser(value) {
+    const previousCrop = Number(sbsCropRange?.value) || 0;
+    const parsedValue = applySideBySideCrop(value);
+
+    if (parsedValue === null) {
+      return;
+    }
+
+    saveSideBySideCropToStorage(parsedValue);
+
+    if (parsedValue !== previousCrop) {
+      regeneratePreviewIfReady();
+    }
+  }
+
+
   function regeneratePreviewIfReady() {
     if (decodedViews.length >= 2) {
       convertToSbs({ previewOnly: true }).catch(err => setStatus(escapeHtml(err.message || String(err)), "error"));
@@ -2586,6 +2675,37 @@
 
     setOutputHeightFromUser(args.result);
   }
+
+  async function promptForSideBySideCrop() {
+    if (!sbsCropRange || !sbsCropValue || sbsCropRange.disabled || sbsCropValue.classList.contains("disabled")) {
+      return;
+    }
+
+    if (!window.DayPilot || !DayPilot.Modal || !DayPilot.Modal.prompt) {
+      const result = window.prompt("Enter Side-by-Side Center Crop percentage (0.0 to 50.0):", String(sbsCropRange.value));
+      if (result !== null) {
+        setSideBySideCropFromUser(result);
+      }
+      return;
+    }
+
+    const args = await DayPilot.Modal.prompt(
+      "Enter Side-by-Side Center Crop percentage (0.0 to 50.0):",
+      String(sbsCropRange.value),
+      {
+        theme: "modal_compact",
+        top: 200,
+        autoFocus: true
+      }
+    );
+
+    if (args.canceled) {
+      return;
+    }
+
+    setSideBySideCropFromUser(args.result);
+  }
+
 
   function updateGenerateButtonVisibility() {
     const hasStereoPair = decodedViews.length >= 2;
@@ -3321,6 +3441,73 @@
     return sourceCanvas.height / visibleWidth;
   }
 
+  function normalizeSideBySideBorderThicknessValue(value) {
+    const normalizedValue = String(value ?? SBS_BORDER_THICKNESS_FRACTION_DEFAULT);
+
+    if (SBS_BORDER_THICKNESS_FRACTION_VALUES.has(normalizedValue)) {
+      return normalizedValue;
+    }
+
+    return String(SBS_BORDER_THICKNESS_FRACTION_DEFAULT);
+  }
+
+  function loadSideBySideBorderThicknessFromStorage() {
+    if (!localStorageAvailable()) {
+      return String(SBS_BORDER_THICKNESS_FRACTION_DEFAULT);
+    }
+
+    try {
+      return normalizeSideBySideBorderThicknessValue(
+        window.localStorage.getItem(SBS_BORDER_STORAGE_KEY)
+      );
+    } catch (err) {
+      return String(SBS_BORDER_THICKNESS_FRACTION_DEFAULT);
+    }
+  }
+
+  function saveSideBySideBorderThicknessToStorage(value) {
+    if (!localStorageAvailable()) {
+      return;
+    }
+
+    try {
+      window.localStorage.setItem(
+        SBS_BORDER_STORAGE_KEY,
+        normalizeSideBySideBorderThicknessValue(value)
+      );
+    } catch (err) {
+      // Ignore storage errors. The tool still works without persistence.
+    }
+  }
+
+  function applySideBySideBorderThickness(value) {
+    if (!sbsBorderThicknessSelect) {
+      return String(SBS_BORDER_THICKNESS_FRACTION_DEFAULT);
+    }
+
+    const normalizedValue = normalizeSideBySideBorderThicknessValue(value);
+    sbsBorderThicknessSelect.value = normalizedValue;
+
+    if (sbsBorderThicknessSelect.value !== normalizedValue) {
+      sbsBorderThicknessSelect.value = String(SBS_BORDER_THICKNESS_FRACTION_DEFAULT);
+      return String(SBS_BORDER_THICKNESS_FRACTION_DEFAULT);
+    }
+
+    return normalizedValue;
+  }
+
+  function initializeSideBySideBorderThicknessControl() {
+    applySideBySideBorderThickness(loadSideBySideBorderThicknessFromStorage());
+  }
+
+  function setSideBySideBorderThicknessFromUser(value) {
+    const normalizedValue = applySideBySideBorderThickness(value);
+
+    saveSideBySideBorderThicknessToStorage(normalizedValue);
+    updateOutputModeControls();
+    regeneratePreviewIfReady();
+  }
+
   function getSideBySideBorderThicknessFraction() {
     if (!sbsBorderThicknessSelect) {
       return SBS_BORDER_THICKNESS_FRACTION_DEFAULT;
@@ -3523,6 +3710,10 @@
     resetStereoDepthButton.disabled = isBusy;
     if (sbsCropRange) {
       sbsCropRange.disabled = isBusy;
+    }
+    if (sbsCropValue) {
+      sbsCropValue.classList.toggle("disabled", isBusy);
+      sbsCropValue.setAttribute("aria-disabled", isBusy ? "true" : "false");
     }
     if (resetSbsCropButton) {
       resetSbsCropButton.disabled = isBusy;
@@ -3826,8 +4017,8 @@
           <li>Select a single Apple Spatial Photo HEIC file using the file chooser.<br/>On desktop, you can also drag and drop one HEIC file onto the top control panel.</li>
           <li>Select an <b>Output Format</b>.<br/>Use <b>Side-by-Side</b> for stereo pairs, or one of the <b>Red / Cyan Anaglyph</b> formats for viewing with red/cyan 3D glasses. Use the <b>Border</b> selector to choose no border or to include a black border in the exported JPEG.</li>
           <li>Adjust <b>Output JPEG Height</b> as desired. Initial value is read from the input image.<br/>Use the slider, or click the height value display to enter an exact height.</li>
-          <li>Optionally adjust <b>Side-by-Side Center Crop</b> (Side-by-Side format only), <b>Horizontal Shift</b> (Anaglyph formats only), and/or <b>Image Rotation</b> as required to optimize the stereo view.</li>
-          <li>When a new HEIC file is opened, <b>Horizontal Shift</b> and <b>Image Rotation</b> are reset to 0. <b>Side-by-Side Center Crop</b> is preserved so you can process multiple images with the same crop setting.</li>
+          <li>Optionally adjust <b>Side-by-Side Center Crop</b> (Side-by-Side format only), <b>Horizontal Shift</b> (Anaglyph formats only), and/or <b>Image Rotation</b> as required to optimize the stereo view. Use the <b>Side-by-Side Center Crop</b> slider, or click its numeric value display to enter an exact crop percentage.</li>
+          <li>When a new HEIC file is opened, <b>Horizontal Shift</b> and <b>Image Rotation</b> are reset to 0. <b>Side-by-Side Center Crop</b> and <b>Border</b> are preserved, saved and restored the next time the tool is opened.</li>
           <li>On desktop browsers, move the mouse over the preview area to reveal the full-screen button at the top right of the preview. On iPad, the button remains visible at the top right. The button is hidden on iPhone and while full-screen mode is active. Press Escape or use the browser full-screen control to return to the normal tool view.</li>
           <li>The normal on-page preview is optimized for responsiveness, while full-screen preview automatically uses a higher preview resolution when useful for sharper viewing on high-DPI displays.</li>
           <li>For side-by-side image viewing, to make the cropped side-by-side preview smaller and help facilitate visually fusing the images while making adjustments, you can either zoom out the browser window or resize the window narrower to make the preview smaller.</li>
@@ -3837,7 +4028,7 @@
         <h4>Controls</h4>
         <ul>
           <li><b>Output Format</b>: Chooses between Side-by-Side output and several common anaglyph formats.</li>
-          <li><b>Border</b>: Chooses the optional exported border thickness: None, Thin, Medium, Wide, Wider, or Extra Wide. <b>None</b> exports the normal borderless JPEG. For Side-by-Side output, any non-None border setting draws a black outer border around the visible cropped side-by-side image and a black center seam. For Anaglyph output, any non-None border setting draws only a black outer border around the final image. The border is included in the exported JPEG.</li>
+          <li><b>Border</b>: Chooses the optional exported border thickness: None, Thin, Medium, Wide, Wider, or Extra Wide. <b>None</b> exports the normal borderless JPEG. For Side-by-Side output, any non-None border setting draws a black outer border around the visible cropped side-by-side image and a black center seam. For Anaglyph output, any non-None border setting draws only a black outer border around the final image. The border is included in the exported JPEG. The selected border setting is saved and restored the next time the tool is opened.</li>
           <li><b>Output JPEG Height</b>: Sets the final exported JPEG height. The exported JPEG width is calculated automatically from the selected height and the final output aspect ratio.<br/>For Side-by-Side output, the final JPEG uses the selected height and creates a side-by-side image with the two eye views placed left and right. If <b>Side-by-Side Center Crop</b> is applied, the final JPEG scales only the visible cropped eye views to the selected output height.<br/>For Anaglyph output, the final JPEG uses the selected height and creates a single red/cyan image whose width is calculated from the anaglyph aspect ratio.<br/>Use the slider, or click the numeric height value to enter a specific height.<br/>Entered values are clamped to the supported 768 to 8192 pixel range.<br/>The <b>Reset</b> button resets the output height to the original input height, clamped to the supported range.</li>
           <li><b>Stereo Order</b>: Only shown for Side-by-Side output. <b>Left / Right</b> is appropriate for standard stereograph card / parallel viewing.<br/><b>Right / Left</b> is appropriate for cross-eye viewing.</li>
           <li><b>Preview L/R Flip</b>: Only shown for Side-by-Side output. At <b>0 Hz</b>, the preview shows the full side-by-side image. At higher rates, the preview alternates between the adjusted left-eye and right-eye views as full-size single-eye previews so you can evaluate <b>Side-by-Side Center Crop</b> and <b>Image Rotation</b> as a flip/wiggle stereo preview. Click the <b>Off / Hz</b> value box to toggle between Off and the last non-zero flip rate. This affects only the on-screen preview, not the exported JPEG.</li>
@@ -3846,8 +4037,8 @@
           <li>Enter a whole number from <b>10</b> to <b>30</b>, then click <b>OK</b> to apply it.</li>
           <li>Click <b>Cancel</b> to close the dialog without changing the current maximum.</li>
           <li>If the current flip rate is above the new maximum, it is automatically reduced to the new maximum.</li>
-          <li>The selected maximum is saved in browser localStorage when available and restored the next time the tool is opened.</li>
-          <li><b>Side-by-Side Center Crop</b>: Only shown for Side-by-Side output. Crops the selected total percentage from each eye view, split evenly between the left and right edges. In the on-screen Side-by-Side preview, the visible left and right views touch at the center seam. During final JPEG export, the visible cropped left and right views are scaled to the selected output height.<br/>The available crop range is from 0% to 50%. The crop setting is preserved when a new HEIC file is opened. The <b>Reset</b> button resets the crop to zero.</li>
+          <li>The selected maximum is saved and restored the next time the tool is opened.</li>
+          <li><b>Side-by-Side Center Crop</b>: Only shown for Side-by-Side output. Crops the selected total percentage from each eye view, split evenly between the left and right edges. In the on-screen Side-by-Side preview, the visible left and right views touch at the center seam. During final JPEG export, the visible cropped left and right views are scaled to the selected output height.<br/>The available crop range is from 0% to 50%. Use the slider, or click the numeric crop value to enter a specific crop percentage. Entered values are clamped to the supported 0% to 50% range. The crop setting is preserved when a new HEIC file is opened, saved and restored the next time the tool is opened. The <b>Reset</b> button resets the crop to zero and saves that value.</li>
           <li><b>Horizontal Shift</b>: Only shown for Anaglyph output. Shifts the two views horizontally before compositing.<br/>This can reduce eye strain, improve fusion, or improve some anaglyph results. Anaglyph output always auto-crops shifted edges.<br/>The <b>Reset</b> button resets the horizontal shift to zero.</li>
           <li><b>Horizontal Shift range selector</b>: For Anaglyph output, switches the <b>Horizontal Shift</b> slider between a normal ±10% adjustment range and a wider ±20% range for stronger corrections, including close-up or macro anaglyphs.</li>
           <li><b>Image Rotation</b>: Applies a small roll correction to both stereo views.<br/>The rotated image is cropped as required to preserve the original aspect ratio.</li>
@@ -4051,12 +4242,7 @@
 
   if (sbsBorderThicknessSelect) {
     sbsBorderThicknessSelect.addEventListener("change", () => {
-      if (!SBS_BORDER_THICKNESS_FRACTION_VALUES.has(String(sbsBorderThicknessSelect.value))) {
-        sbsBorderThicknessSelect.value = String(SBS_BORDER_THICKNESS_FRACTION_DEFAULT);
-      }
-
-      updateOutputModeControls();
-      regeneratePreviewIfReady();
+      setSideBySideBorderThicknessFromUser(sbsBorderThicknessSelect.value);
     });
   }
 
@@ -4153,24 +4339,41 @@
   if (sbsCropRange) {
     sbsCropRange.addEventListener("input", () => {
       updateControls();
+      saveSideBySideCropToStorage(sbsCropRange.value);
 
       if (decodedViews.length >= 2) {
         convertToSbs({ previewOnly: true }).catch(err => setStatus(escapeHtml(err.message || String(err)), "error"));
       }
     });
 
-    sbsCropRange.addEventListener("change", regeneratePreviewIfReady);
+    sbsCropRange.addEventListener("change", () => {
+      saveSideBySideCropToStorage(sbsCropRange.value);
+      regeneratePreviewIfReady();
+    });
+  }
+
+  if (sbsCropValue) {
+    sbsCropValue.addEventListener("click", promptForSideBySideCrop);
+
+    sbsCropValue.addEventListener("keydown", event => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        promptForSideBySideCrop();
+      }
+    });
   }
 
   if (resetSbsCropButton) {
     resetSbsCropButton.addEventListener("click", () => {
       if (Number(sbsCropRange.value) === 0) {
         updateControls();
+        saveSideBySideCropToStorage(0);
         return;
       }
 
       sbsCropRange.value = "0";
       updateControls();
+      saveSideBySideCropToStorage(0);
       regeneratePreviewIfReady();
     });
   }
@@ -4268,6 +4471,8 @@
   previewFlipMaximumHz = loadPreviewFlipMaximumFromStorage();
   applyPreviewFlipMaximum(previewFlipMaximumHz);
   initializeOutputHeightControl();
+  initializeSideBySideCropControl();
+  initializeSideBySideBorderThicknessControl();
 
   updateOutputModeControls();
   updateRotationRangeMode();
