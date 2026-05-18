@@ -871,7 +871,6 @@
       <div id="fileInputControl">
         <label for="fileInput">Open an Apple Spatial Photo HEIC file:</label>
         <input id="fileInput" type="file" accept=".heic,.heif,image/heic,image/heif" title="Select one Apple Spatial Photo HEIC or HEIF file to convert. On iOS, first save the spatial photo from Photos to Files, then open it here.">
-        <div id="dragdropinfo" class="hint">You can also drag-and-drop a single Apple Spatial Photo HEIC here.</div>
       </div>
 
       <div id="outputHeightControl">
@@ -887,6 +886,8 @@
         </div>
       </div>
     </div>
+
+    <div id="dragdropinfo" class="hint">You can also drag-and-drop a single Apple Spatial Photo HEIC here.</div>
 
     <div class="grid" style="margin-top:12px;">
       <div id="outputFormatControl">
@@ -912,7 +913,7 @@
 
       <div id="eyeOrderControl">
         <label for="eyeOrder">Stereo Order:</label>
-        <select id="eyeOrder" title="Choose the stereo eye order. The option labels and meaning are adjusted for Side-by-Side versus Anaglyph output.">
+        <select id="eyeOrder" title="Choose the stereo eye order.">
           <option value="normal">Left / Right (Parallel viewing)</option>
           <option value="swap">Right / Left (Cross-eye viewing)</option>
         </select>
