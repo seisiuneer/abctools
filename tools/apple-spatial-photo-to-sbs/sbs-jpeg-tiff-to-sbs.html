@@ -4362,6 +4362,12 @@ function updateOutputModeControls() {
             );
           } else {
             outputHeight = selectedOutputHeight;
+
+            // Apply horizontal/vertical shift at the full per-eye aspect ratio first,
+            // then do the final Side-by-Side Center Crop. This matches the preview
+            // pipeline and avoids distorting the exported Side-by-Side JPEG when a
+            // non-zero shift is used together with center cropping.
+            const uncroppedEyeWidth = Math.max(1, Math.round(outputHeight / sourceAspect));
             eyeWidth = Math.max(1, Math.round(outputHeight / visibleCropAspect));
             rightEyeWidth = eyeWidth;
             outputWidth = eyeWidth + rightEyeWidth;
@@ -4369,9 +4375,9 @@ function updateOutputModeControls() {
             const shifted = createAdjustedStereoPair(
               left.canvas,
               right.canvas,
-              eyeWidth,
+              uncroppedEyeWidth,
               outputHeight,
-              Math.round(eyeWidth * (sideBySideHorizontalShiftPercent / 100)),
+              Math.round(uncroppedEyeWidth * (sideBySideHorizontalShiftPercent / 100)),
               Math.round(outputHeight * (verticalShiftPercent / 100)),
               autoCropEdges
             );
