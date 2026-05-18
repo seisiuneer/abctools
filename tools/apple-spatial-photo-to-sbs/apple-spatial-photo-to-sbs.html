@@ -960,7 +960,7 @@
           </div>
         </div>
         <div class="row">
-          <input id="stereoDepthRange" type="range" min="-10" max="10" step="0.1" value="0" title="Shift the two stereo views horizontally before compositing. In Side-by-Side mode, this can also be used as a perceived depth/convergence adjustment, and the shift direction follows the selected Stereo Order. This can improve fusion, reduce eye strain, or improve anaglyph alignment.">
+          <input id="stereoDepthRange" type="range" min="-10" max="10" step="0.1" value="0" title="Shift the two stereo views horizontally before compositing. In Side-by-Side mode, this can also be used as a perceived depth/convergence adjustment. This can improve fusion, reduce eye strain, or improve anaglyph alignment.">
           <div id="stereoDepthValue" class="rangeValue">0.0%</div>
         </div>
       </div>
@@ -2956,7 +2956,7 @@
       eyeOrder.options[0].textContent = "Left / Right (Parallel viewing)";
       eyeOrder.options[1].textContent = "Right / Left (Cross-eye viewing)";
       eyeOrder.title =
-        "Choose the side-by-side eye order. Left / Right is for parallel/stereograph card viewing; Right / Left is for cross-eye viewing. Horizontal Shift follows this order.";
+        "Choose the side-by-side eye order. Left / Right is for parallel/stereograph card viewing; Right / Left is for cross-eye viewing.";
     } else {
       eyeOrder.options[0].textContent = "Left / Right";
       eyeOrder.options[1].textContent = "Right / Left";

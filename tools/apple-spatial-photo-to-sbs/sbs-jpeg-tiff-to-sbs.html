@@ -979,7 +979,7 @@
           </div>
         </div>
         <div class="row">
-          <input id="stereoDepthRange" type="range" min="-10" max="10" step="0.1" value="0" title="Shift the two stereo views horizontally before compositing. In Side-by-Side mode, the horizontal shift direction follows the selected Stereo Order. This can improve fusion, reduce eye strain, or improve stereo/anaglyph alignment.">
+          <input id="stereoDepthRange" type="range" min="-10" max="10" step="0.1" value="0" title="Shift the two stereo views horizontally before compositing. This can improve fusion, reduce eye strain, or improve stereo/anaglyph alignment.">
           <div id="stereoDepthValue" class="rangeValue">0.0%</div>
         </div>
       </div>
@@ -4811,7 +4811,7 @@ function updateOutputModeControls() {
           <li><b>Image Rotation</b>: Applies a small roll correction to both stereo views.<br/>The rotated image is cropped as required to preserve the original aspect ratio.</li>
           <li><b>Image Rotation range selector</b>: Switches the Image Rotation slider between ±5° for normal adjustments and ±10° for larger rotation corrections.<br/>The <b>Reset</b> button resets the image rotation to zero.</li>
           <li><b>Side-by-Side Center Crop</b>: Only shown for Side-by-Side output. Crops the selected total percentage from each eye view, split evenly between the left and right edges.<br/>The available crop range is from 0% to 50%. Use the slider, or click the displayed crop value to enter a specific value from 0.0% to 50.0%. Entered values are clamped to the supported range. This setting is saved and restored the next time the tool is opened, and preserved when a new JPEG or TIFF file is opened. The <b>Reset</b> button resets the crop to zero and saves the zero setting.</li>
-          <li><b>Horizontal Shift</b>: Available for both Side-by-Side and Anaglyph output. Shifts the two stereo views horizontally before compositing. In Side-by-Side mode, the horizontal shift direction follows the selected Stereo Order. This can reduce eye strain, improve fusion, or improve stereo/anaglyph alignment. Shifted edges are automatically cropped so no blank edges are exported.<br/>The <b>Reset</b> button resets the horizontal shift to zero.</li>
+          <li><b>Horizontal Shift</b>: Available for both Side-by-Side and Anaglyph output. Shifts the two stereo views horizontally before compositing. This can reduce eye strain, improve fusion, or improve stereo/anaglyph alignment. Shifted edges are automatically cropped so no blank edges are exported.<br/>The <b>Reset</b> button resets the horizontal shift to zero.</li>
           <li><b>Horizontal Shift range selector</b>: Switches the <b>Horizontal Shift</b> slider between a normal ±10% adjustment range, a wider ±20% range for stronger corrections, and an extra-wide ±50% range for extreme close-up, macro, or difficult alignment cases.</li>
           <li><b>Vertical Shift</b>: Available for both Side-by-Side and Anaglyph output. Shifts the two stereo views vertically before compositing. Horizontal and vertical shifts work together as a two-dimensional pan around the left and right images. Shifted edges are automatically cropped so no blank edges are exported.<br/>The <b>Reset</b> button resets the vertical shift to zero.</li>
           <li><b>Vertical Shift range selector</b>: Switches the <b>Vertical Shift</b> slider between the same ±10%, ±20%, and ±50% adjustment ranges.</li>
