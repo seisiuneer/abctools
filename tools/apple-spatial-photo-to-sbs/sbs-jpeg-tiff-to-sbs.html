@@ -831,13 +831,20 @@
     }
   }
 
-
   #eyeOrderControl{
     margin-top: 6px;
   }
 
   #eyeOrder{
     margin-top: 5px;
+  }
+
+  body.iosDevice #dragdropinfo,#subtitle {
+    max-width: 50rem;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+    text-wrap: balance;
   }
 
 </style>
@@ -1543,6 +1550,7 @@
 
   function showIOSWarningDialog() {
     if (dragDropInfo){
+      document.body.classList.add("iosDevice");
       dragDropInfo.innerHTML = '<p style="text-align:center">On iOS, use <b>Choose File</b> to select one side-by-side JPEG/TIFF, or two same-format, same-dimensions JPEG/TIFF files from Photos or Files.</p>';
     }
   }

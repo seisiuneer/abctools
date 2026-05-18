@@ -838,6 +838,14 @@
     }
   }
 
+  body.iosDevice #dragdropinfo,#subtitle {
+    max-width: 50rem;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+    text-wrap: balance;
+  }
+
 </style>
 
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-VM0N9HL3MK"></script>
@@ -855,7 +863,7 @@
 <div class="wrap">
   <header>
     <h1>Apple Spatial Photo → Side-by-Side or 3D Anaglyph</h1>
-    <p class="subhead">Open an Apple Spatial Photo HEIC file, extract the two embedded stereo views,<br/>and export a Side-by-Side or 3D Anaglyph JPEG image locally from your browser.</p>
+    <p id="subtitle" class="subhead">Open an Apple Spatial Photo HEIC file, extract the two embedded stereo views,<br/>and export a Side-by-Side or 3D Anaglyph JPEG image locally from your browser.</p>
   </header>
 
   <section class="card">
@@ -1538,6 +1546,7 @@
 
   function showIOSWarningDialog() {
     if (dragDropInfo){
+      document.body.classList.add("iosDevice");
       dragDropInfo.innerHTML = '<p style="text-align:center">On iOS, you must use the Share feature in the Photos app to save spatial .HEIC files to the Files area to be able to open them in this tool.</p>';
     }
   }
