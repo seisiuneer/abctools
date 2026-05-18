@@ -916,7 +916,7 @@
     <div class="grid" style="margin-top:12px;">
       <div id="eyeOrderControl">
         <label for="eyeOrder">Stereo Order:</label>
-        <select id="eyeOrder" title="Choose the input eye order. This affects both Side-by-Side and Anaglyph output. Use Right / Left if the source image is reversed.">
+        <select id="eyeOrder" title="Choose the input eye order. Use Right / Left if the source image is reversed.">
           <option value="normal">Left / Right (Parallel viewing)</option>
           <option value="swap">Right / Left (Cross-eye viewing)</option>
         </select>
@@ -3657,6 +3657,27 @@
     }
   }
 
+  function updateStereoOrderOptionLabels() {
+    if (!eyeOrder) {
+      return;
+    }
+
+    const normalOption = eyeOrder.querySelector('option[value="normal"]');
+    const swapOption = eyeOrder.querySelector('option[value="swap"]');
+
+    if (!normalOption || !swapOption) {
+      return;
+    }
+
+    if (isSideBySideMode()) {
+      normalOption.textContent = "Left / Right (Parallel viewing)";
+      swapOption.textContent = "Right / Left (Cross-eye viewing)";
+    } else {
+      normalOption.textContent = "Left / Right";
+      swapOption.textContent = "Right / Left";
+    }
+  }
+
   function keepStereoOrderControlVisible() {
     if (eyeOrderControl) {
       eyeOrderControl.hidden = false;
@@ -3689,6 +3710,7 @@
 
   function updateControls() {
     applyPreviewFlipMaximum(previewFlipMaximumHz);
+    updateStereoOrderOptionLabels();
 
     heightValue.textContent = `${Number(heightRange.value).toLocaleString()} px`;
     const rotation = Number(rotationRange.value) || 0;
@@ -4776,7 +4798,7 @@ function updateOutputModeControls() {
         <h4>Controls</h4>
         <ul>
           <li><b>Output Format</b>: Chooses between Side-by-Side output and several common anaglyph formats.</li>
-          <li><b>Border</b>: Chooses the optional exported border thickness: None, Thin, Medium, Wide, Wider, or Extra Wide. <b>None</b> exports the normal borderless JPEG. For Side-by-Side output, any non-None border setting draws a black outer border around the visible cropped side-by-side image and a black center seam. For Anaglyph output, any non-None border setting draws only a black outer border around the final image. The overlay is included in the exported JPEG. The selected border setting is saved and restored the next time the tool is opened.</li>
+          <li><b>Border</b>: Chooses the optional exported border thickness: None, Thin, Medium, Wide, Wider, or Extra Wide. <b>None</b> exports the normal borderless JPEG. For Side-by-Side output, any non-None border setting draws a black outer border around side-by-side image and a black center seam. For Anaglyph output, any non-None border setting draws a black outer border around the final image. The border is included in the exported JPEG. The selected border setting is saved and restored the next time the tool is opened.</li>
           <li><b>Output JPEG Height</b>: Sets the final exported JPEG height. The exported JPEG width is calculated automatically from the selected height and the final output aspect ratio.<br/>For Side-by-Side output, the final JPEG uses the selected height and creates a side-by-side image with the two eye views placed left and right.<br/>If <b>Side-by-Side Center Crop</b> is applied, the final JPEG scales only the visible cropped eye views to the selected output height.<br/>For Anaglyph output, the final JPEG uses the selected height and creates a single red/cyan image whose width is calculated from the anaglyph aspect ratio.<br/>Use the slider, or click the numeric height value to enter a specific height.<br/>Entered values are clamped to the supported 768 to 8192 pixel range.<br/>The <b>Reset</b> button resets the output height to the original input height.</li>
           <li><b>Stereo Order</b>: Affects both Side-by-Side and Anaglyph output. For single-file side-by-side imports, <b>Left / Right</b> treats the left half of the source image as the left eye and the right half as the right eye. For two-file imports, the first file is treated as the left eye and the second file as the right eye.<br/><b>Right / Left</b> swaps the two views before generating the preview or exported JPEG.</li>
           <li><b>Preview L/R Flip</b>: Only shown for Side-by-Side output. At <b>0 Hz</b>, the preview shows the full side-by-side image. At non-zero rates, the preview alternates between the adjusted left-eye and right-eye views as full-size single-eye previews so you can evaluate <b>Side-by-Side Center Crop</b>, <b>Horizontal Shift</b>, <b>Vertical Shift</b>, and <b>Image Rotation</b> as a flip/wiggle stereo preview. Click the <b>Off / Hz</b> value box to toggle between Off and the last non-zero flip rate.</li>
@@ -4806,14 +4828,19 @@ function updateOutputModeControls() {
 
         <h4>Anaglyph output notes</h4>
         <ul>
-          <li>Anaglyph output uses the selected <b>Stereo Order</b>. If the source image is reversed, choose <b>Right / Left</b> so the correct eye is used for the red left-eye channel and the cyan right-eye channel.</li>
-          <li><b>Horizontal Shift</b> and <b>Vertical Shift</b> are available for both Side-by-Side and Anaglyph output and shift the two eye views before compositing.</li>
-          <li>Anaglyph output always auto-crops shifted edges.</li>
-          <li>For Anaglyph output, non-None <b>Border</b> settings draw only a black outer border around the final image. No center seam is drawn for Anaglyph output.</li>
-          <li><b>Red / Cyan, Color</b> keeps more color information but may show more retinal rivalry or ghosting on some images.</li>
-          <li><b>Red / Cyan, Half-color</b> uses grayscale/luminance for the red eye and color for the cyan eye. This often gives a natural-looking result with less color rivalry than full color.</li>
-          <li><b>Red / Cyan, Optimized</b> uses a Dubois-style matrix with a small white-balance correction to reduce ghosting and color bias.</li>
-          <li><b>Red / Cyan, Grayscale</b> removes color from both views and can be useful when color distracts from depth.</li>
+          <li>Anaglyph output uses the selected <b>Stereo Order</b>, so choose <b>Left / Right</b> for normal red/cyan ordering or <b>Right / Left</b> if the stereo depth appears reversed.</li>
+          <li><b>Horizontal Shift</b> is available for Anaglyph output and shifts the two eye views horizontally before compositing.</li>
+          <li>For Anaglyph output, non-None <b>Border</b> settings draw a black outer border around the final image.</li>
+          <li>View the anaglyph modes with red/cyan 3D glasses.<br/><b>Red / Cyan, Color</b> is usually the best general starting point. If there are too many color bleed artifacts, try <b>Red / Cyan, Optimized</b>.</li>
+          <li>For some close-up or macro spatial photos, a larger <b>Horizontal Shift</b> range may help produce a more comfortable or more accurate stereo or anaglyph result.</li>
+        </ul>
+
+        <h4>Red / Cyan anaglyph modes</h4>
+        <ul>
+          <li><b>Red / Cyan, Color</b>: Keeps more of the original color by taking the red channel from one eye and the green/blue channels from the other eye.<br/>This can look more colorful, but it may have more ghosting, color rivalry, and eye strain depending on the image and glasses.</li>
+          <li><b>Red / Cyan, Half-color</b>: Uses luminance for the red-eye channel and color for the cyan-eye channels.<br/>This is often a good compromise for picture posts because it keeps more natural color than grayscale while reducing red-channel color conflict compared with full-color red/cyan.</li>
+          <li><b>Red / Cyan, Optimized</b>: Uses a Dubois-style color matrix with a small white-balance correction rather than simple channel copying.<br/>This usually reduces ghosting and improves stereo readability through red/cyan glasses while helping neutralize the green/cyan bias that the uncorrected optimized matrix can produce.</li>
+          <li><b>Red / Cyan, Grayscale</b>: Converts both views to luminance before building the anaglyph.<br/>This usually gives the cleanest stereo separation and avoids most color conflicts, but the result is essentially monochrome.</li>
         </ul>
 
         <h4>Metadata notes</h4>
