@@ -94,7 +94,7 @@
 
   header {
     text-align: center;
-    margin-bottom: 12px;
+    margin-bottom: 10px;
 
     background:
       linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.015)),
@@ -212,7 +212,7 @@
     border-radius: 18px;
     box-shadow: var(--shadow);
     padding: 18px;
-    margin-bottom: 12px;
+    margin-bottom: 10px;
   }
 
   .grid {
@@ -820,16 +820,15 @@
     margin-top:8px;
   }
 
-  #imageShiftControl {
-    display: none;
-  }
-      
-  #eyeOrderControl{
-    margin-top: 8px;
+  #eyeOrderControl label {
+    min-height: 35px;
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
   }
 
-  #eyeOrder{
-    margin-top: 7px;
+  #eyeOrder {
+    margin-top: 0;
   }
 
   @media (max-width: 1060px) {
@@ -868,15 +867,29 @@
   </header>
 
   <section class="card">
-    <div>
-      <label for="fileInput">Open an Apple Spatial Photo HEIC file:</label>
-      <input id="fileInput" type="file" accept=".heic,.heif,image/heic,image/heif" title="Select one Apple Spatial Photo HEIC or HEIF file to convert. On iOS, first save the spatial photo from Photos to Files, then open it here.">
+    <div class="grid">
+      <div id="fileInputControl">
+        <label for="fileInput">Open an Apple Spatial Photo HEIC file:</label>
+        <input id="fileInput" type="file" accept=".heic,.heif,image/heic,image/heif" title="Select one Apple Spatial Photo HEIC or HEIF file to convert. On iOS, first save the spatial photo from Photos to Files, then open it here.">
+        <div id="dragdropinfo" class="hint">You can also drag-and-drop a single Apple Spatial Photo HEIC here.</div>
+      </div>
+
+      <div id="outputHeightControl">
+        <div class="controlHeader">
+          <label for="heightRange">Output JPEG Height</label>
+          <div class="controlHeaderActions">
+            <button id="resetHeightButton" class="smallResetButton" type="button" title="Reset the output JPEG height to the original imported image height, clamped to the supported range.">Reset</button>
+          </div>
+        </div>
+        <div class="row">
+          <input id="heightRange" type="range" min="768" max="8192" step="1" value="2016" autocomplete="off" title="Set the output JPEG height. The output width is calculated automatically from the selected height and the final image aspect ratio. Click the numeric value to enter an exact height.">
+          <div id="heightValue" class="rangeValue editableRangeValue" role="button" tabindex="0" aria-label="Enter output JPEG height" title="Click to enter a specific output JPEG height from 768 to 8192 pixels.">2,016 px</div>
+        </div>
+      </div>
     </div>
 
-    <div id="dragdropinfo" class="hint">You can also drag-and-drop a single Apple Spatial Photo HEIC file onto this panel.</div>
-
     <div class="grid" style="margin-top:12px;">
-      <div>
+      <div id="outputFormatControl">
         <div class="labelInlineControls">
           <label for="outputFormat">Output Format:</label>
           <select id="sbsBorderThicknessSelect" class="wideRangeSelect" title="Choose the optional black border thickness for the exported JPEG. None adds no border. Side-by-Side adds an outer border and center seam; Anaglyph adds only an outer border.">
@@ -897,28 +910,27 @@
         </select>
       </div>
 
-      <div>
-        <div class="controlHeader">
-          <label for="heightRange">Output JPEG Height</label>
-          <div class="controlHeaderActions">
-            <button id="resetHeightButton" class="smallResetButton" type="button" title="Reset the output JPEG height to the original imported image height, clamped to the supported range.">Reset</button>
-          </div>
-        </div>
-        <div class="row">
-          <input id="heightRange" type="range" min="768" max="8192" step="1" value="2016" autocomplete="off" title="Set the output JPEG height. The output width is calculated automatically from the selected height and the final image aspect ratio. Click the numeric value to enter an exact height.">
-          <div id="heightValue" class="rangeValue editableRangeValue" role="button" tabindex="0" aria-label="Enter output JPEG height" title="Click to enter a specific output JPEG height from 768 to 8192 pixels.">2,016 px</div>
-        </div>
-      </div>
-
-    </div>
-
-    <div class="grid" style="margin-top:12px;">
       <div id="eyeOrderControl">
         <label for="eyeOrder">Stereo Order:</label>
-        <select id="eyeOrder" title="Choose the side-by-side eye order. Left / Right is for parallel/stereograph card viewing; Right / Left is for cross-eye viewing.">
+        <select id="eyeOrder" title="Choose the stereo eye order. The option labels and meaning are adjusted for Side-by-Side versus Anaglyph output.">
           <option value="normal">Left / Right (Parallel viewing)</option>
           <option value="swap">Right / Left (Cross-eye viewing)</option>
         </select>
+      </div>
+    </div>
+
+    <div id="sbsOnlyControlsRow" class="grid" style="margin-top:12px;">
+      <div id="sbsCropControl">
+        <div class="controlHeader">
+          <label for="sbsCropRange">Side-by-Side Center Crop</label>
+          <div class="controlHeaderActions">
+            <button id="resetSbsCropButton" class="smallResetButton" type="button" title="Reset Side-by-Side Center Crop to 0.0%.">Reset</button>
+          </div>
+        </div>
+        <div class="row">
+          <input id="sbsCropRange" type="range" min="0" max="50" step="0.1" value="0" title="Crops the selected total percentage from the left and right edges of each eye view for ease of image fusion in parallel or cross-eye viewing. This setting is preserved when a new HEIC file is opened.">
+          <div id="sbsCropValue" class="rangeValue editableRangeValue" role="button" tabindex="0" aria-label="Enter Side-by-Side Center Crop percentage" title="Click to enter a specific Side-by-Side Center Crop value from 0.0% to 50.0%.">0.0%</div>
+        </div>
       </div>
 
       <div id="sideBySidePreviewControls" class="sbsPreviewControls">
@@ -947,25 +959,12 @@
           </div>
         </div>
         <div class="row">
-          <input id="stereoDepthRange" type="range" min="-10" max="10" step="0.1" value="0" title="Shift the two stereo views horizontally before compositing. This can improve fusion, reduce eye strain, or improve anaglyph alignment.">
+          <input id="stereoDepthRange" type="range" min="-10" max="10" step="0.1" value="0" title="Shift the two stereo views horizontally before compositing. In Side-by-Side mode, this can also be used as a perceived depth/convergence adjustment, and the shift direction follows the selected Stereo Order. This can improve fusion, reduce eye strain, or improve anaglyph alignment.">
           <div id="stereoDepthValue" class="rangeValue">0.0%</div>
         </div>
       </div>
 
-      <div id="sbsCropControl">
-        <div class="controlHeader">
-          <label for="sbsCropRange">Side-by-Side Center Crop</label>
-          <div class="controlHeaderActions">
-            <button id="resetSbsCropButton" class="smallResetButton" type="button" title="Reset Side-by-Side Center Crop to 0.0%.">Reset</button>
-          </div>
-        </div>
-        <div class="row">
-          <input id="sbsCropRange" type="range" min="0" max="50" step="0.1" value="0" title="Crops the selected total percentage from the left and right edges of each eye view for ease of image fusion in parallel or cross-eye viewing. This setting is preserved when a new HEIC file is opened.">
-          <div id="sbsCropValue" class="rangeValue editableRangeValue" role="button" tabindex="0" aria-label="Enter Side-by-Side Center Crop percentage" title="Click to enter a specific Side-by-Side Center Crop value from 0.0% to 50.0%.">0.0%</div>
-        </div>
-      </div>
-
-      <div>
+      <div id="rotationControl">
         <div class="controlHeader">
           <label for="rotationRange">Image Rotation</label>
           <div class="controlHeaderActions">
@@ -2443,13 +2442,13 @@
       ? `-Rot${rotation > 0 ? "+" : ""}${rotationText}`
       : "";
 
-    if (!isSideBySideMode()) {
-      return `${baseName}-${formatSuffix}${separationSuffix}${rotationSuffix}-${outputHeight}h.jpg`;
-    }
-
     let theStyle = "LR";
     if (eyeOrder.value === "swap") {
       theStyle = "RL";
+    }
+
+    if (!isSideBySideMode()) {
+      return `${baseName}-${formatSuffix}-${theStyle}${separationSuffix}${rotationSuffix}-${outputHeight}h.jpg`;
     }
 
     return `${baseName}-${formatSuffix}-${theStyle}${sbsCropSuffix}${rotationSuffix}-${outputHeight}h.jpg`;
@@ -2947,28 +2946,57 @@
     ctx.fillRect(0, 0, width, height);
   }
 
+  function updateEyeOrderOptionLabels() {
+    if (!eyeOrder || !eyeOrder.options || eyeOrder.options.length < 2) {
+      return;
+    }
+
+    if (isSideBySideMode()) {
+      eyeOrder.options[0].textContent = "Left / Right (Parallel viewing)";
+      eyeOrder.options[1].textContent = "Right / Left (Cross-eye viewing)";
+      eyeOrder.title =
+        "Choose the side-by-side eye order. Left / Right is for parallel/stereograph card viewing; Right / Left is for cross-eye viewing. Horizontal Shift follows this order.";
+    } else {
+      eyeOrder.options[0].textContent = "Left / Right";
+      eyeOrder.options[1].textContent = "Right / Left";
+      eyeOrder.title =
+        "Choose the anaglyph stereo eye order. Use Left / Right for normal red/cyan ordering, or Right / Left if the stereo depth appears reversed.";
+    }
+  }
+
   function updateOutputModeControls() {
     const sbsMode = isSideBySideMode();
 
+    updateEyeOrderOptionLabels();
+
     if (eyeOrderControl) {
-      eyeOrderControl.style.display = sbsMode ? "block" : "none";
+      eyeOrderControl.style.display = "block";
     }
 
     if (imageShiftControl) {
-      imageShiftControl.style.display = sbsMode ? "none" : "block";
+      imageShiftControl.style.display = "block";
     }
 
     if (sbsCropControl) {
       sbsCropControl.style.display = sbsMode ? "block" : "none";
     }
 
+    const sbsOnlyControlsRow = document.getElementById("sbsOnlyControlsRow");
+    if (sbsOnlyControlsRow) {
+      sbsOnlyControlsRow.style.display = sbsMode ? "grid" : "none";
+    }
+
     if (sideBySidePreviewControls) {
       sideBySidePreviewControls.style.display = sbsMode ? "grid" : "none";
     }
 
-
     if (previewFlipControl) {
       previewFlipControl.style.display = sbsMode ? "block" : "none";
+    }
+
+    const outputFormatControl = document.getElementById("outputFormatControl");
+    if (outputFormatControl) {
+      outputFormatControl.style.gridColumn = "";
     }
 
     if (!sbsMode) {
@@ -3762,7 +3790,7 @@
       let left = decodedViews[1];
       let right = decodedViews[0];
 
-      if (isSideBySideMode() && eyeOrder.value === "swap") {
+      if (eyeOrder.value === "swap") {
         [left, right] = [right, left];
       }
 
@@ -3781,6 +3809,10 @@
 
       const selectedOutputHeight = clampOutputHeight(heightRange.value);
       const stereoSeparationPercent = Number(stereoDepthRange.value) || 0;
+      const sideBySideHorizontalShiftPercent =
+        isSideBySideMode() && eyeOrder.value === "swap"
+          ? -stereoSeparationPercent
+          : stereoSeparationPercent;
       const sbsCenterCropPercent = clampSideBySideCropPercent(sbsCropRange?.value || 0);
       const autoCropEdges = true;
       let ctx;
@@ -3802,9 +3834,18 @@
           const flipPreviewWidth = previewDims.width;
           const flipPreviewHeight = previewDims.height;
 
-          const adjusted = createSideBySideCenterCroppedPair(
+          const shifted = createAdjustedStereoPair(
             left.canvas,
             right.canvas,
+            flipPreviewWidth,
+            flipPreviewHeight,
+            Math.round(flipPreviewWidth * (sideBySideHorizontalShiftPercent / 100)),
+            autoCropEdges
+          );
+
+          const adjusted = createSideBySideCenterCroppedPair(
+            shifted.leftCanvas,
+            shifted.rightCanvas,
             flipPreviewWidth,
             flipPreviewHeight,
             sbsCenterCropPercent,
@@ -3842,9 +3883,18 @@
             eyeWidth = Math.floor(outputWidth / 2);
             rightEyeWidth = outputWidth - eyeWidth;
 
-            adjusted = createSideBySideCenterCroppedPair(
+            const shifted = createAdjustedStereoPair(
               left.canvas,
               right.canvas,
+              eyeWidth,
+              outputHeight,
+              Math.round(eyeWidth * (sideBySideHorizontalShiftPercent / 100)),
+              autoCropEdges
+            );
+
+            adjusted = createSideBySideCenterCroppedPair(
+              shifted.leftCanvas,
+              shifted.rightCanvas,
               eyeWidth,
               outputHeight,
               sbsCenterCropPercent,
@@ -3853,13 +3903,28 @@
             );
           } else {
             outputHeight = selectedOutputHeight;
+
+            // Apply horizontal shift at the full per-eye aspect ratio first,
+            // then do the final Side-by-Side Center Crop. This matches the
+            // preview pipeline and avoids distorted export scaling when a
+            // non-zero horizontal shift is used together with center cropping.
+            const uncroppedEyeWidth = Math.max(1, Math.round(outputHeight / sourceAspect));
             eyeWidth = Math.max(1, Math.round(outputHeight / visibleCropAspect));
             rightEyeWidth = eyeWidth;
             outputWidth = eyeWidth + rightEyeWidth;
 
-            adjusted = createSideBySideVisibleCroppedPair(
+            const shifted = createAdjustedStereoPair(
               left.canvas,
               right.canvas,
+              uncroppedEyeWidth,
+              outputHeight,
+              Math.round(uncroppedEyeWidth * (sideBySideHorizontalShiftPercent / 100)),
+              autoCropEdges
+            );
+
+            adjusted = createSideBySideVisibleCroppedPair(
+              shifted.leftCanvas,
+              shifted.rightCanvas,
               eyeWidth,
               rightEyeWidth,
               outputHeight,
@@ -3977,7 +4042,7 @@
         ? `, rotation ${imageRotationDegrees > 0 ? "+" : ""}${imageRotationDegrees.toFixed(1)}°`
         : "";
 
-      const separationNote = !isSideBySideMode() && stereoSeparationPercent
+      const separationNote = stereoSeparationPercent
         ? `, horizontal shift ${stereoSeparationPercent > 0 ? "+" : ""}${stereoSeparationPercent.toFixed(1)}%`
         : "";
 
@@ -3992,7 +4057,7 @@
       if (isSideBySideMode()) {
         const eyeWidth = Math.floor(canvas.width / 2);
         outputMeta.textContent =
-          `${modeLabel} JPEG: ${canvas.width}×${canvas.height}, each eye ${eyeWidth}×${canvas.height}, ${formatBytes(blob.size)}${cropNote}${borderNote}${rotationNote}.`;
+          `${modeLabel} JPEG: ${canvas.width}×${canvas.height}, each eye ${eyeWidth}×${canvas.height}, ${formatBytes(blob.size)}${cropNote}${separationNote}${borderNote}${rotationNote}.`;
       } else {
         outputMeta.textContent =
           `${modeLabel} JPEG: ${canvas.width}×${canvas.height}, ${formatBytes(blob.size)}${separationNote}${borderNote}${rotationNote}.`;
@@ -4015,32 +4080,33 @@
         <h4>Basic workflow</h4>
         <ol>
           <li>Select a single Apple Spatial Photo HEIC file using the file chooser.<br/>On desktop, you can also drag and drop one HEIC file onto the top control panel.</li>
-          <li>Select an <b>Output Format</b>.<br/>Use <b>Side-by-Side</b> for stereo pairs, or one of the <b>Red / Cyan Anaglyph</b> formats for viewing with red/cyan 3D glasses. Use the <b>Border</b> selector to choose no border or to include a black border in the exported JPEG.</li>
           <li>Adjust <b>Output JPEG Height</b> as desired. Initial value is read from the input image.<br/>Use the slider, or click the height value display to enter an exact height.</li>
-          <li>Optionally adjust <b>Side-by-Side Center Crop</b> (Side-by-Side format only), <b>Horizontal Shift</b> (Anaglyph formats only), and/or <b>Image Rotation</b> as required to optimize the stereo view. Use the <b>Side-by-Side Center Crop</b> slider, or click its numeric value display to enter an exact crop percentage.</li>
+          <li>Select an <b>Output Format</b> and <b>Stereo Order</b>.<br/>Use <b>Side-by-Side</b> for stereo pairs, or one of the <b>Red / Cyan Anaglyph</b> formats for viewing with red/cyan 3D glasses. Use the <b>Border</b> selector to choose no border or to include a black border in the exported JPEG.</li>
+          <li>Optionally adjust <b>Side-by-Side Center Crop</b> (Side-by-Side format only), <b>Horizontal Shift</b>, and/or <b>Image Rotation</b> as required to optimize the stereo view. Use the <b>Side-by-Side Center Crop</b> slider, or click its numeric value display to enter an exact crop percentage.</li>
           <li>When a new HEIC file is opened, <b>Horizontal Shift</b> and <b>Image Rotation</b> are reset to 0. <b>Side-by-Side Center Crop</b> and <b>Border</b> are preserved, saved and restored the next time the tool is opened.</li>
           <li>On desktop browsers, move the mouse over the preview area to reveal the full-screen button at the top right of the preview. On iPad, the button remains visible at the top right. The button is hidden on iPhone and while full-screen mode is active. Press Escape or use the browser full-screen control to return to the normal tool view.</li>
           <li>The normal on-page preview is optimized for responsiveness, while full-screen preview automatically uses a higher preview resolution when useful for sharper viewing on high-DPI displays.</li>
-          <li>For side-by-side image viewing, to make the cropped side-by-side preview smaller and help facilitate visually fusing the images while making adjustments, you can either zoom out the browser window or resize the window narrower to make the preview smaller.</li>
+          <li>For side-by-side image viewing, you can make the cropped side-by-side preview smaller to help visually fuse the images while making adjustments, you can either zoom out the browser window or resize the window narrower to make the preview smaller.</li>
           <li>To save the results, click <b>Generate &amp; Download JPEG</b> on desktop or <b>Generate &amp; Share JPEG</b> on iOS.</li>
         </ol>
 
         <h4>Controls</h4>
         <ul>
+          <li><b>File input</b>: Opens a single Apple Spatial Photo HEIC file. On desktop, you can also drag and drop one HEIC file onto the top control panel.</li>
+          <li><b>Output JPEG Height</b>: Sets the final exported JPEG height. The exported JPEG width is calculated automatically from the selected height and the final output aspect ratio.<br/>For Side-by-Side output, the final JPEG uses the selected height and creates a side-by-side image with the two eye views placed left and right.<br/>For Anaglyph output, the final JPEG uses the selected height and creates a single red/cyan image whose width is calculated from the anaglyph aspect ratio.<br/>Use the slider, or click the numeric height value to enter a specific height.<br/>Entered values are clamped to the supported 768 to 8192 pixel range.<br/>The <b>Reset</b> button resets the output height to the original input height, clamped to the supported range.</li>
           <li><b>Output Format</b>: Chooses between Side-by-Side output and several common anaglyph formats.</li>
-          <li><b>Border</b>: Chooses the optional exported border thickness: None, Thin, Medium, Wide, Wider, or Extra Wide. <b>None</b> exports the normal borderless JPEG. For Side-by-Side output, any non-None border setting draws a black outer border around the visible cropped side-by-side image and a black center seam. For Anaglyph output, any non-None border setting draws only a black outer border around the final image. The border is included in the exported JPEG. The selected border setting is saved and restored the next time the tool is opened.</li>
-          <li><b>Output JPEG Height</b>: Sets the final exported JPEG height. The exported JPEG width is calculated automatically from the selected height and the final output aspect ratio.<br/>For Side-by-Side output, the final JPEG uses the selected height and creates a side-by-side image with the two eye views placed left and right. If <b>Side-by-Side Center Crop</b> is applied, the final JPEG scales only the visible cropped eye views to the selected output height.<br/>For Anaglyph output, the final JPEG uses the selected height and creates a single red/cyan image whose width is calculated from the anaglyph aspect ratio.<br/>Use the slider, or click the numeric height value to enter a specific height.<br/>Entered values are clamped to the supported 768 to 8192 pixel range.<br/>The <b>Reset</b> button resets the output height to the original input height, clamped to the supported range.</li>
-          <li><b>Stereo Order</b>: Only shown for Side-by-Side output. <b>Left / Right</b> is appropriate for standard stereograph card / parallel viewing.<br/><b>Right / Left</b> is appropriate for cross-eye viewing.</li>
-          <li><b>Preview L/R Flip</b>: Only shown for Side-by-Side output. At <b>0 Hz</b>, the preview shows the full side-by-side image. At higher rates, the preview alternates between the adjusted left-eye and right-eye views as full-size single-eye previews so you can evaluate <b>Side-by-Side Center Crop</b> and <b>Image Rotation</b> as a flip/wiggle stereo preview. Click the <b>Off / Hz</b> value box to toggle between Off and the last non-zero flip rate. This affects only the on-screen preview, not the exported JPEG.</li>
+          <li><b>Border</b>: Chooses the optional exported border thickness: None, Thin, Medium, Wide, Wider, or Extra Wide. <b>None</b> exports the normal borderless JPEG. For Side-by-Side output, any non-None border setting draws a black outer border around the visible cropped side-by-side image and a black center seam. For Anaglyph output, any non-None border setting draws a black outer border around the final image. The border is included in the exported JPEG. The selected border setting is saved and restored the next time the tool is opened.</li>
+          <li><b>Stereo Order</b>: For side-by-side output <b>Left / Right</b> is appropriate for standard stereograph card / parallel viewing.<br/><b>Right / Left</b> is appropriate for cross-eye viewing. For anaglyph output, if the stereo depth seems flipped, try swapping the stereo order.</li>
+          <li><b>Side-by-Side Center Crop</b>: Only shown for Side-by-Side output. Crops the selected total percentage from each eye view, split evenly between the left and right edges. In the on-screen Side-by-Side preview, the visible left and right views touch at the center seam. During final JPEG export, the visible cropped left and right views are scaled to the selected output height.<br/>The available crop range is from 0% to 50%. Use the slider, or click the numeric crop value to enter a specific crop percentage. Entered values are clamped to the supported 0% to 50% range. The crop setting is preserved when a new HEIC file is opened, saved and restored the next time the tool is opened. The <b>Reset</b> button resets the crop to zero and saves that value.</li>
+          <li><b>Preview L/R Flip</b>: Only shown for Side-by-Side output. At <b>0 Hz</b>, the preview shows the full side-by-side image. At higher rates, the preview alternates between the adjusted left-eye and right-eye views as full-size single-eye previews so you can evaluate <b>Side-by-Side Center Crop</b>, <b>Horizontal Shift</b>, and <b>Image Rotation</b> as a flip/wiggle stereo preview. Click the <b>Off / Hz</b> value box to toggle between Off and the last non-zero flip rate. This affects only the on-screen preview, not the exported JPEG.</li>
           <li>Click the <b>Preview L/R Flip</b> label to set the maximum value available on the flip-rate slider.</li>
           <li>The dialog shows the current maximum flip rate when it opens.</li>
           <li>Enter a whole number from <b>10</b> to <b>30</b>, then click <b>OK</b> to apply it.</li>
           <li>Click <b>Cancel</b> to close the dialog without changing the current maximum.</li>
           <li>If the current flip rate is above the new maximum, it is automatically reduced to the new maximum.</li>
           <li>The selected maximum is saved and restored the next time the tool is opened.</li>
-          <li><b>Side-by-Side Center Crop</b>: Only shown for Side-by-Side output. Crops the selected total percentage from each eye view, split evenly between the left and right edges. In the on-screen Side-by-Side preview, the visible left and right views touch at the center seam. During final JPEG export, the visible cropped left and right views are scaled to the selected output height.<br/>The available crop range is from 0% to 50%. Use the slider, or click the numeric crop value to enter a specific crop percentage. Entered values are clamped to the supported 0% to 50% range. The crop setting is preserved when a new HEIC file is opened, saved and restored the next time the tool is opened. The <b>Reset</b> button resets the crop to zero and saves that value.</li>
-          <li><b>Horizontal Shift</b>: Only shown for Anaglyph output. Shifts the two views horizontally before compositing.<br/>This can reduce eye strain, improve fusion, or improve some anaglyph results. Anaglyph output always auto-crops shifted edges.<br/>The <b>Reset</b> button resets the horizontal shift to zero.</li>
-          <li><b>Horizontal Shift range selector</b>: For Anaglyph output, switches the <b>Horizontal Shift</b> slider between a normal ±10% adjustment range and a wider ±20% range for stronger corrections, including close-up or macro anaglyphs.</li>
+          <li><b>Horizontal Shift</b>: Shifts the two views horizontally before compositing.<br/>This can reduce eye strain, improve fusion, or improve some anaglyph results. In Side-by-Side mode, it can also be used as a perceived depth/convergence adjustment by moving the stereo pair relationship forward or backward for more comfortable viewing.<br/>Shifted edges are automatically cropped so blank shifted edges are not exported.<br/>The <b>Reset</b> button resets the horizontal shift to zero.</li>
+          <li><b>Horizontal Shift range selector</b>: Switches the <b>Horizontal Shift</b> slider between a normal ±10% adjustment range and a wider ±20% range for stronger corrections, including close-up or macro images.</li>
           <li><b>Image Rotation</b>: Applies a small roll correction to both stereo views.<br/>The rotated image is cropped as required to preserve the original aspect ratio.</li>
           <li><b>Image Rotation range selector</b>: Switches the Image Rotation slider between ±5° for normal adjustments and ±10° for larger rotation corrections.<br/>The <b>Reset</b> button resets the image rotation to zero.</li>
         </ul>
@@ -4050,29 +4116,27 @@
           <li>Use <b>Left / Right</b> for parallel side-by-side stereo viewing or stereograph cards.</li>
           <li>Use <b>Right / Left</b> for cross-eye viewing.</li>
           <li>For Side-by-Side output, use <b>Side-by-Side Center Crop</b> to trim the outside edges of both eye views equally for ease of fusing the images in parallel or cross-eye viewing.</li>
+          <li><b>Horizontal Shift</b> is available for Side-by-Side output. It can be used to adjust the perceived depth/convergence position of the stereo pair for more comfortable viewing.</li>
           <li>For Side-by-Side output, non-None <b>Border</b> settings draw a black outer border around the visible cropped side-by-side image and a black center seam. <b>None</b> exports the normal borderless Side-by-Side JPEG.</li>
-          <li>Use <b>Preview L/R Flip</b> to check the alignment of the cropped and rotated eye views before generating the final JPEG. Set it back to 0 Hz to return to the normal full side-by-side preview, or click the Off / Hz value box to quickly toggle between Off and the last non-zero flip rate. After a JPEG is saved or shared, the <b>Preview L/R Flip</b> control is automatically reset to 0 Hz.</li>
+          <li>Use <b>Preview L/R Flip</b> to check the alignment of the cropped, shifted, and rotated eye views before generating the final JPEG. Set it back to 0 Hz to return to the normal full side-by-side preview, or click the Off / Hz value box to quickly toggle between Off and the last non-zero flip rate. After a JPEG is saved or shared, the <b>Preview L/R Flip</b> control is automatically reset to 0 Hz.</li>
         </ul>
 
         <h4>Anaglyph output notes</h4>
         <ul>
-          <li>Anaglyph output always uses the standard left/right stereo order internally.</li>
-          <li><b>Horizontal Shift</b> is available only for Anaglyph output and shifts the two eye views horizontally before compositing.</li>
-          <li>Anaglyph output always auto-crops shifted edges internally.</li>
-          <li>For Anaglyph output, non-None <b>Border</b> settings draw only a black outer border around the final image. No center seam is drawn for Anaglyph output.</li>
-          <li>Use the anaglyph modes with red/cyan 3D glasses.<br/><b>Optimized Red / Cyan</b> is usually the best general starting point. If the optimized mode still looks too processed, try <b>Half-color Red / Cyan</b>.</li>
-          <li>For some close-up or macro spatial photos, a larger Anaglyph <b>Horizontal Shift</b> range may help produce a more comfortable or more accurate anaglyph result.</li>
+          <li>Anaglyph output uses the selected <b>Stereo Order</b>, so choose <b>Left / Right</b> for normal red/cyan ordering or <b>Right / Left</b> if the stereo depth appears reversed.</li>
+          <li><b>Horizontal Shift</b> is available for Anaglyph output and shifts the two eye views horizontally before compositing.</li>
+          <li>For Anaglyph output, non-None <b>Border</b> settings draw a black outer border around the final image.</li>
+          <li>View the anaglyph modes with red/cyan 3D glasses.<br/><b>Red / Cyan, Color</b> is usually the best general starting point. If there are too many color bleed artifacts, try <b>Red / Cyan, Optimized</b>.</li>
+          <li>For some close-up or macro spatial photos, a larger <b>Horizontal Shift</b> range may help produce a more comfortable or more accurate stereo or anaglyph result.</li>
         </ul>
 
         <h4>Red / Cyan anaglyph modes</h4>
         <ul>
-          <li><b>Color Red / Cyan</b>: Keeps more of the original color by taking the red channel from one eye and the green/blue channels from the other eye.<br/>This can look more colorful, but it may have more ghosting, color rivalry, and eye strain depending on the image and glasses.</li>
-          <li><b>Half-color Red / Cyan</b>: Uses luminance for the red-eye channel and color for the cyan-eye channels.<br/>This is often a good compromise for picture posts because it keeps more natural color than grayscale while reducing red-channel color conflict compared with full-color red/cyan.</li>
-          <li><b>Optimized Red / Cyan</b>: Uses a Dubois-style color matrix with a small white-balance correction rather than simple channel copying.<br/>This usually reduces ghosting and improves stereo readability through red/cyan glasses while helping neutralize the green/cyan bias that the uncorrected optimized matrix can produce.</li>
-          <li><b>Grayscale Red / Cyan</b>: Converts both views to luminance before building the anaglyph.<br/>This usually gives the cleanest stereo separation and avoids most color conflicts, but the result is essentially monochrome.</li>
+          <li><b>Red / Cyan, Color</b>: Keeps more of the original color by taking the red channel from one eye and the green/blue channels from the other eye.<br/>This can look more colorful, but it may have more ghosting, color rivalry, and eye strain depending on the image and glasses.</li>
+          <li><b>Red / Cyan, Half-color</b>: Uses luminance for the red-eye channel and color for the cyan-eye channels.<br/>This is often a good compromise for picture posts because it keeps more natural color than grayscale while reducing red-channel color conflict compared with full-color red/cyan.</li>
+          <li><b>Red / Cyan, Optimized</b>: Uses a Dubois-style color matrix with a small white-balance correction rather than simple channel copying.<br/>This usually reduces ghosting and improves stereo readability through red/cyan glasses while helping neutralize the green/cyan bias that the uncorrected optimized matrix can produce.</li>
+          <li><b>Red / Cyan, Grayscale</b>: Converts both views to luminance before building the anaglyph.<br/>This usually gives the cleanest stereo separation and avoids most color conflicts, but the result is essentially monochrome.</li>
         </ul>
-
-        <p>For general use, start with <b>Optimized Red / Cyan</b>.<br/>If the optimized result looks too processed or color-shifted for the image, try <b>Half-color Red / Cyan</b>.<br/>If you want the cleanest stereo separation, try <b>Grayscale Red / Cyan</b>.<br/>If preserving the strongest color is more important than minimizing ghosting, try <b>Color Red / Cyan</b>.</p>
 
         <h4>Metadata notes</h4>
         <ul>
