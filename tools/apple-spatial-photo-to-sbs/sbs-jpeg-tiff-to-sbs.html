@@ -909,7 +909,7 @@
       <div id="eyeOrderControl">
         <label for="eyeOrder">Stereo Order:</label>
         <select id="eyeOrder" title="Choose the input eye order. This affects both Side-by-Side and Anaglyph output. Use Right / Left if the source image is reversed.">
-          <option value="normal">Left / Right (Stereograph card)</option>
+          <option value="normal">Left / Right (Parallel viewing)</option>
           <option value="swap">Right / Left (Cross-eye viewing)</option>
         </select>
       </div>
@@ -951,7 +951,7 @@
           </div>
         </div>
         <div class="row">
-          <input id="sbsCropRange" type="range" min="0" max="50" step="0.1" value="0" title="Crops the selected total percentage from the left and right edges of each eye view for ease of image fusion in standard or cross-eye viewing. This setting is preserved when a new JPEG or TIFF file is opened.">
+          <input id="sbsCropRange" type="range" min="0" max="50" step="0.1" value="0" title="Crops the selected total percentage from the left and right edges of each eye view for ease of image fusion in parallel or cross-eye viewing. This setting is preserved when a new JPEG or TIFF file is opened.">
           <div id="sbsCropValue" class="rangeValue">0.0%</div>
         </div>
       </div>
@@ -4589,9 +4589,9 @@ function updateOutputModeControls() {
 
         <h4>Side-by-Side output notes</h4>
         <ul>
-          <li>Use <b>Left / Right</b> for standard side-by-side stereo viewing or stereograph cards.</li>
+          <li>Use <b>Left / Right</b> for parallel side-by-side stereo viewing or stereograph cards.</li>
           <li>Use <b>Right / Left</b> for cross-eye viewing.</li>
-          <li>For Side-by-Side output, use <b>Side-by-Side Center Crop</b> to trim the outside edges of both eye views equally for ease of fusing the images in normal or cross-eye viewing. <b>Horizontal Shift</b> and <b>Vertical Shift</b> can also be used to adjust stereo alignment before the side-by-side image is assembled.</li>
+          <li>For Side-by-Side output, use <b>Side-by-Side Center Crop</b> to trim the outside edges of both eye views equally for ease of fusing the images in parallel or cross-eye viewing. <b>Horizontal Shift</b> and <b>Vertical Shift</b> can also be used to adjust stereo alignment before the side-by-side image is assembled.</li>
           <li>For Side-by-Side output, non-None <b>Border</b> settings draw a black outer border around the visible cropped side-by-side image and a black center seam. <b>None</b> exports the normal borderless Side-by-Side JPEG.</li>
           <li>Use <b>Preview L/R Flip</b> to check the alignment of the cropped, shifted, and rotated eye views before generating the final JPEG. Set it back to 0 Hz to return to the normal full side-by-side preview, or click the Off / Hz value box to quickly toggle between Off and the last non-zero flip rate. After a JPEG is saved or shared, the <b>Preview L/R Flip</b> control is automatically reset to 0 Hz.</li>
         </ul>
