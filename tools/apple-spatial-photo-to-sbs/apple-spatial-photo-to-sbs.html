@@ -131,7 +131,6 @@
   }
 
   .previewBox:hover button.fullscreenButton,
-  .previewBox:focus-within button.fullscreenButton,
   .previewBox.fullscreenButtonAlwaysVisible button.fullscreenButton {
     opacity: 1;
     pointer-events: auto;
@@ -464,7 +463,7 @@
   
   .actions {
     display: grid;
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 12px;
     margin-top: 14px;
   }
@@ -503,7 +502,6 @@
     border-radius: 14px;
     overflow: hidden;
 
-    /* Initial side-by-side preview aspect ratio; updated dynamically after conversion */
     aspect-ratio: 5376 / 2016;
     width: 100%;
 
@@ -552,6 +550,198 @@
     border-radius: 10px;
     background: rgba(255,255,255,.07);
     overflow-wrap: anywhere;
+  }
+
+
+  .previewNavButton {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 4;
+    width: 44px;
+    height: 72px;
+    min-width: 0;
+    padding: 0;
+    border-radius: 14px;
+    border: 1px solid rgba(255,255,255,.18);
+    background: rgba(0,0,0,.34);
+    color: rgba(255,255,255,.82);
+    line-height: 1;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+  }
+
+  .previewNavButton:hover,
+  .previewNavButton:focus {
+    background: rgba(0,0,0,.52);
+    color: #fff;
+  }
+
+  .previewNavButton svg {
+    width: 27px;
+    height: 27px;
+    display: block;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2.4;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    pointer-events: none;
+  }
+
+  .previewNavButton.visible {
+    display: flex;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.16s ease-in-out, background 0.16s ease-in-out, color 0.16s ease-in-out;
+  }
+
+  .previewBox:hover .previewNavButton.visible,
+  body.iosDevice .previewNavButton.visible {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .previewNavButton.idle {
+    cursor: default;
+  }
+
+  .previewBox:hover .previewNavButton.visible.idle,
+  body.iosDevice .previewNavButton.visible.idle {
+    opacity: .64;
+    pointer-events: auto;
+  }
+
+  .previewNavButton.idle svg {
+    opacity: .88;
+  }
+
+  .previewNavButton:disabled {
+    cursor: default;
+  }
+
+  body.iosDevice .previewNavButton {
+    background: rgba(0,0,0,.18);
+    border-color: rgba(255,255,255,.22);
+    color: rgba(255,255,255,.88);
+  }
+
+  body.iosDevice .previewNavButton:hover,
+  body.iosDevice .previewNavButton:focus {
+    background: rgba(0,0,0,.28);
+    color: #fff;
+  }
+
+  @media (max-width: 560px) {
+    .previewNavButton {
+      width: 38px;
+      height: 60px;
+      border-radius: 12px;
+    }
+  }
+
+
+  #firstImageButton { left: 10px; }
+  #prevImageButton { left: 64px; }
+  #nextImageButton { right: 64px; }
+  #lastImageButton { right: 10px; }
+
+  @media (max-width: 560px) {
+    .previewNavButton svg {
+      width: 24px;
+      height: 24px;
+    }
+
+    #firstImageButton { left: 8px; }
+    #prevImageButton { left: 54px; }
+    #nextImageButton { right: 54px; }
+    #lastImageButton { right: 8px; }
+  }
+
+  .batchProgressOverlay {
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+    display: none;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 0 22px 22px 22px;
+    background: rgba(0,0,0,.5);
+  }
+
+  .batchProgressOverlay.visible {
+    display: flex;
+  }
+
+  .batchProgressDialog {
+    width: min(520px, calc(100vw - 44px));
+    margin-top: 200px;
+    background: #fff;
+    color: #000;
+    border: 1px solid #333;
+    border-radius: 16px;
+    box-shadow: 0 18px 45px rgba(0,0,0,.45);
+    padding: 20px;
+  }
+
+  .batchProgressDialog h3 {
+    margin: 0 0 12px 0;
+    font-size: 20px;
+    line-height: 1.25;
+  }
+
+  .batchProgressText {
+    min-height: 2.8em;
+    margin: 0 0 14px 0;
+    line-height: 1.4;
+    overflow-wrap: anywhere;
+  }
+
+  .batchProgressTrack {
+    width: 100%;
+    height: 18px;
+    border: 1px solid #9dbaf2;
+    border-radius: 999px;
+    background: #eef3ff;
+    overflow: hidden;
+  }
+
+  .batchProgressBar {
+    width: 0%;
+    height: 100%;
+    background: linear-gradient(90deg, #73d0ff, #aaf0bf);
+    transition: width .14s ease;
+  }
+
+  .batchProgressPercent {
+    margin: 10px 0 16px 0;
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+    color: #333;
+  }
+
+  .batchProgressActions {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+  }
+
+  .batchProgressActions button {
+    width: 120px;
+    background: #e8f1ff;
+    color: #000;
+    border: 1px solid #9dbaf2;
+    border-radius: 10px;
+    padding: 10px 16px;
+    font-weight: 700;
+  }
+
+  .batchProgressActions button:disabled {
+    opacity: .6;
+    cursor: not-allowed;
   }
 
   a.download {
@@ -783,6 +973,10 @@
     background-repeat: no-repeat;
   }
 
+  .instructions-body{
+    margin-left:8px;
+  }
+
   .instructions-body a{
     color: #1a73e8;
     text-decoration: underline;
@@ -863,14 +1057,14 @@
 <div class="wrap">
   <header>
     <h1>Apple Spatial Photo → Side-by-Side or 3D Anaglyph</h1>
-    <p id="subtitle" class="subhead">Open an Apple Spatial Photo HEIC file, extract the two embedded stereo views,<br/>and export a Side-by-Side or 3D Anaglyph JPEG image locally from your browser.</p>
+    <p id="subtitle" class="subhead">Open Apple Spatial Photo HEIC files, extract the two embedded stereo views,<br/>and export Side-by-Side or 3D Anaglyph JPEG images locally from your browser.</p>
   </header>
 
   <section class="card">
     <div class="grid">
       <div id="fileInputControl">
-        <label for="fileInput">Open an Apple Spatial Photo HEIC file:</label>
-        <input id="fileInput" type="file" accept=".heic,.heif,image/heic,image/heif" title="Select one Apple Spatial Photo HEIC or HEIF file to convert. On iOS, first save the spatial photo from Photos to Files, then open it here.">
+        <label for="fileInput">Open one or more Apple Spatial Photo HEIC files:</label>
+        <input id="fileInput" type="file" accept=".heic,.HEIC,image/heic" multiple="multiple" title="Select one or more Apple Spatial Photo HEIC files to convert.">
       </div>
 
       <div id="outputHeightControl">
@@ -887,7 +1081,7 @@
       </div>
     </div>
 
-    <div id="dragdropinfo" class="hint">You can also drag-and-drop a single Apple Spatial Photo HEIC here.</div>
+    <div id="dragdropinfo" class="hint">You can also drag-and-drop one or more Apple Spatial Photo HEIC files here.</div>
 
     <div class="grid" style="margin-top:12px;">
       <div id="outputFormatControl">
@@ -995,14 +1189,37 @@
         <path d="M20 15v5h-5"></path>
       </svg>
     </button>
+      <button id="firstImageButton" class="previewNavButton" type="button" title="Show first image" aria-label="Show first image">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path d="M6 5v14"></path>
+          <path d="M18 6l-7 6 7 6"></path>
+        </svg>
+      </button>
+      <button id="prevImageButton" class="previewNavButton" type="button" title="Show previous image" aria-label="Show previous image">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path d="M15 6l-7 6 7 6"></path>
+        </svg>
+      </button>
       <canvas id="previewCanvas"></canvas>
-      <div id="emptyPreview" class="hint">Converted preview will appear here.</div>
+      <button id="nextImageButton" class="previewNavButton" type="button" title="Show next image" aria-label="Show next image">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path d="M9 6l7 6-7 6"></path>
+        </svg>
+      </button>
+      <button id="lastImageButton" class="previewNavButton" type="button" title="Show last image" aria-label="Show last image">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path d="M18 5v14"></path>
+          <path d="M6 6l7 6-7 6"></path>
+        </svg>
+      </button>
+      <div id="emptyPreview" class="hint">Stereo preview will appear here</div>
     </div>
     
     <p id="status">Loading HEIC decoder…</p>
 
     <div id="downloadActions" class="actions" style="display:none;">
-      <a id="downloadLink" class="download" download="spatial-photo.jpg" title="Generate the final JPEG at the specified output height, then download it or open the iOS Share Sheet.">Generate &amp; Download JPEG</a>
+      <a id="downloadLink" class="download" download="spatial-photo.jpg" title="Generate the final JPEG for the currently visible image at the specified output height, then download it.">Export Current JPEG</a>
+      <a id="downloadAllLink" class="download" download="spatial-photo-batch.zip" title="Generate JPEGs for all loaded images using the current settings, then download the ZIP file.">Export All as ZIP</a>
     </div>
 
     <div class="meta">
@@ -1015,14 +1232,30 @@
   </section>
 
   <div class="card">
-    <button id="showInstructionsButton" type="button" title="Open detailed instructions for using the tool and choosing output modes.">Instructions</button>
+    <button id="showInstructionsButton" type="button" title="Open detailed instructions for using the tool.">Instructions</button>
   </div>
 
+</div>
+
+<div id="batchProgressOverlay" class="batchProgressOverlay" role="dialog" aria-modal="true" aria-labelledby="batchProgressTitle" aria-describedby="batchProgressText">
+  <div class="batchProgressDialog">
+    <h3 id="batchProgressTitle">Exporting ZIP</h3>
+    <p id="batchProgressText" class="batchProgressText">Preparing batch export…</p>
+    <div class="batchProgressTrack" aria-hidden="true">
+      <div id="batchProgressBar" class="batchProgressBar"></div>
+    </div>
+    <div id="batchProgressPercent" class="batchProgressPercent">0%</div>
+    <div class="batchProgressActions">
+      <button id="batchProgressCancelButton" type="button">Cancel</button>
+      <button id="batchProgressCloseButton" type="button" style="display:none;">Cancel</button>
+    </div>
+  </div>
 </div>
 
 <script type="text/javascript" src="libheif-bundle.js"></script>
 <script type="text/javascript" src="piexif.min.js"></script>
 <script type="text/javascript" src="exif-reader.min.js"></script>
+<script type="text/javascript" src="jszip-min.js"></script>
 <script type="text/javascript" src="daypilot-modal.min-3.10.1.js"></script>
 
 <script>
@@ -1054,6 +1287,7 @@
   const previewFlipRateRange = document.getElementById("previewFlipRateRange");
   const previewFlipRateValue = document.getElementById("previewFlipRateValue");
   const downloadLink = document.getElementById("downloadLink");
+  const downloadAllLink = document.getElementById("downloadAllLink");
   const statusEl = document.getElementById("status");
   const canvas = document.getElementById("previewCanvas");
   const emptyPreview = document.getElementById("emptyPreview");
@@ -1068,12 +1302,24 @@
   const downloadActions = document.getElementById("downloadActions");
   const showInstructionsButton = document.getElementById("showInstructionsButton");
   const fullscreenButton = document.getElementById("fullscreenButton");
+  const firstImageButton = document.getElementById("firstImageButton");
+  const prevImageButton = document.getElementById("prevImageButton");
+  const nextImageButton = document.getElementById("nextImageButton");
+  const lastImageButton = document.getElementById("lastImageButton");
+  const batchProgressOverlay = document.getElementById("batchProgressOverlay");
+  const batchProgressText = document.getElementById("batchProgressText");
+  const batchProgressBar = document.getElementById("batchProgressBar");
+  const batchProgressPercent = document.getElementById("batchProgressPercent");
+  const batchProgressCancelButton = document.getElementById("batchProgressCancelButton");
+  const batchProgressCloseButton = document.getElementById("batchProgressCloseButton");
 
   let libheifReady = false;
   let heifModule = null;
   let decodedViews = [];
   let libheifReadyPromise = null;
   let currentFile = null;
+  let loadedImageFiles = [];
+  let currentImageIndex = 0;
   let lastBlob = null;
   let lastGeneratedFileName = "";
   let interactivePreviewDirty = false;
@@ -1108,6 +1354,7 @@
   let scrollBeforeFullscreenX = 0;
   let scrollBeforeFullscreenY = 0;
   let shouldRestoreScrollAfterFullscreen = false;
+  let batchExportController = null;
 
   function escapeHtml(value) {
     return String(value)
@@ -1562,10 +1809,9 @@
     const name = file.name || "";
     const type = file.type || "";
 
-    return /\.(heic|heif)$/i.test(name) ||
-      /^image\/hei[cf]$/i.test(type) ||
-      /^image\/heic-sequence$/i.test(type) ||
-      /^image\/heif-sequence$/i.test(type);
+    return /\.heic$/i.test(name) ||
+      /^image\/heic$/i.test(type) ||
+      /^image\/heic-sequence$/i.test(type);
   }
 
 
@@ -2336,7 +2582,7 @@
   }
 
 
-  function resetPreviewFlipSliderAfterSave() {
+  async function resetPreviewFlipSliderAfterSave() {
     if (!isSideBySideMode() || !previewFlipRateRange) {
       return;
     }
@@ -2347,14 +2593,15 @@
     stopPreviewFlipAnimation();
 
     if (decodedViews.length >= 2) {
-      convertToSbs({ previewOnly: true });
+      await convertToSbs({ previewOnly: true });
     }
   }
 
   async function shareJpegOnIOS() {
     if (!lastBlob) {
-      setStatus("No JPEG has been generated yet.", "error");
-      return;
+      const result = { message: "No JPEG has been generated yet.", type: "error" };
+      setStatus(result.message, result.type);
+      return result;
     }
 
     const fileName = sanitizeJpegFilename(getDefaultSaveName());
@@ -2364,8 +2611,12 @@
     });
 
     if (!navigator.share || !navigator.canShare || !navigator.canShare({ files: [file] })) {
-      setStatus("The iOS Share Sheet is not available for this JPEG in this browser.", "error");
-      return;
+      const result = {
+        message: "The iOS Share Sheet is not available for this JPEG in this browser.",
+        type: "error"
+      };
+      setStatus(result.message, result.type);
+      return result;
     }
 
     try {
@@ -2373,57 +2624,297 @@
         files: [file]
       });
 
-      setStatus(`Shared <b>${escapeHtml(fileName)}</b>.`, "ok");
+      const result = { message: `Shared <b>${escapeHtml(fileName)}</b>.`, type: "ok" };
+      setStatus(result.message, result.type);
+      return result;
     } catch (err) {
-      if (err && err.name === "AbortError") {
-        setStatus("Share cancelled.", "ok");
-      } else {
-        //console.error(err);
-        setStatus(escapeHtml(err.message || String(err)), "error");
+      const result = (err && err.name === "AbortError")
+        ? { message: "Share cancelled.", type: "ok" }
+        : { message: escapeHtml(err.message || String(err)), type: "error" };
+
+      setStatus(result.message, result.type);
+      return result;
+    }
+  }
+
+  async function shareZipOnIOS(zipBlob, zipName) {
+    if (!zipBlob) {
+      const result = { message: "No ZIP file has been generated yet.", type: "error" };
+      setStatus(result.message, result.type);
+      return result;
+    }
+
+    const fileName = sanitizeZipFilename(zipName) || getDefaultZipSaveName();
+
+    const file = new File([zipBlob], fileName, {
+      type: "application/zip"
+    });
+
+    if (!navigator.share) {
+      const result = {
+        message: "The iOS Share Sheet is not available for this ZIP file in this browser.",
+        type: "error"
+      };
+      setStatus(result.message, result.type);
+      return result;
+    }
+
+    if (navigator.canShare && !navigator.canShare({ files: [file] })) {
+      const result = {
+        message: "The iOS Share Sheet cannot share this ZIP file from this browser.",
+        type: "error"
+      };
+      setStatus(result.message, result.type);
+      return result;
+    }
+
+    try {
+      await navigator.share({
+        files: [file]
+      });
+
+      const result = { message: `Shared <b>${escapeHtml(fileName)}</b>.`, type: "ok" };
+      setStatus(result.message, result.type);
+      return result;
+    } catch (err) {
+      const result = (err && err.name === "AbortError")
+        ? { message: "Share cancelled.", type: "ok" }
+        : { message: escapeHtml(err.message || String(err)), type: "error" };
+
+      setStatus(result.message, result.type);
+      return result;
+    }
+  }
+
+  function promptShareZipOnIOS(zipBlob, zipName) {
+    return new Promise(resolve => {
+      const fileName = sanitizeZipFilename(zipName) || getDefaultZipSaveName();
+      let finished = false;
+
+      const finish = result => {
+        if (finished) {
+          return;
+        }
+
+        finished = true;
+        resolve(result);
+      };
+
+      updateBatchProgressDialog({
+        text: `ZIP file <b>${escapeHtml(fileName)}</b> is ready.<br>Tap <b>Share ZIP</b> to share the file, then choose <b>Save to Files</b>.`,
+        percent: 100
+      });
+
+      if (!batchProgressCancelButton) {
+        shareZipOnIOS(zipBlob, fileName).then(finish);
+        return;
+      }
+
+      // The ZIP generation work takes long enough that iOS may no longer treat
+      // the original Export All tap as a valid user gesture. Requiring this
+      // final tap makes navigator.share() run directly from a user action.
+      batchExportController = null;
+      batchProgressCancelButton.disabled = false;
+      batchProgressCancelButton.textContent = "Share ZIP";
+
+      if (batchProgressCloseButton) {
+        batchProgressCloseButton.disabled = false;
+        batchProgressCloseButton.textContent = "Cancel";
+        batchProgressCloseButton.style.display = "";
+      }
+
+      const shareNow = async event => {
+        event.preventDefault();
+        event.stopPropagation();
+
+        if (finished) {
+          return;
+        }
+
+        batchProgressCancelButton.disabled = true;
+        batchProgressCancelButton.textContent = "Opening…";
+
+        if (batchProgressCloseButton) {
+          batchProgressCloseButton.disabled = true;
+        }
+
+        updateBatchProgressDialog({
+          text: "Opening iOS Share Sheet…",
+          percent: 100
+        });
+
+        const result = await shareZipOnIOS(zipBlob, fileName);
+        finish(result);
+      };
+
+      const cancelShare = event => {
+        event.preventDefault();
+        event.stopPropagation();
+
+        if (batchProgressCloseButton) {
+          batchProgressCloseButton.disabled = true;
+          batchProgressCloseButton.textContent = "Closing…";
+        }
+
+        finish({ message: "ZIP export cancelled.", type: "ok" });
+      };
+
+      batchProgressCancelButton.addEventListener("click", shareNow, { once: true });
+
+      if (batchProgressCloseButton) {
+        batchProgressCloseButton.addEventListener("click", cancelShare, { once: true });
+      }
+    });
+  }
+
+  function getLoadedImageCount() {
+    return loadedImageFiles.length || (currentFile ? 1 : 0);
+  }
+
+  function getCurrentImagePositionText() {
+    const count = getLoadedImageCount();
+    return count > 1 ? ` Image ${currentImageIndex + 1} of ${count}.` : "";
+  }
+
+  function updateImageNavigationButtons() {
+    const count = getLoadedImageCount();
+    const visible = count > 1 && decodedViews.length >= 2;
+    const atFirstImage = currentImageIndex <= 0;
+    const atLastImage = currentImageIndex >= count - 1;
+
+    const buttonStates = [
+      { button: firstImageButton, idle: atFirstImage },
+      { button: prevImageButton, idle: atFirstImage },
+      { button: nextImageButton, idle: atLastImage },
+      { button: lastImageButton, idle: atLastImage }
+    ];
+
+    for (const { button, idle } of buttonStates) {
+      if (button) {
+        button.classList.toggle("visible", visible);
+        button.classList.toggle("idle", visible && idle);
+        button.disabled = !visible || idle;
+        button.setAttribute("aria-disabled", visible && idle ? "true" : "false");
       }
     }
   }
 
-  async function processSpatialPhotoFile(file) {
-    clearGeneratedOutput();
-    decodedViews = [];
-    currentFile = file || null;
+  function describeLoadedFiles(files) {
+    files = Array.from(files || []);
 
-    if (!file) {
+    if (!files.length) {
+      return "No file selected.";
+    }
+
+    if (files.length === 1) {
+      return `${files[0].name} (${formatBytes(files[0].size)})`;
+    }
+
+    return `${files.length} HEIC files loaded. Current: ${files[currentImageIndex]?.name || files[0].name}`;
+  }
+
+  function updateCurrentFileMeta() {
+    const count = getLoadedImageCount();
+
+    if (!currentFile) {
       fileMeta.textContent = "No file selected.";
-      sourceMeta.textContent = "Stereo images not decoded yet.";
-      outputMeta.textContent = "No JPEG generated yet.";
-      setStatus(libheifReady ? "Please select a single Apple Spatial Photo HEIC file." : "Loading HEIC decoder…");
       return;
     }
 
-    if (!isLikelyHeicFile(file)) {
-      fileMeta.textContent = `${file.name} (${formatBytes(file.size)})`;
-      sourceMeta.textContent = "Unsupported file type.";
-      outputMeta.textContent = "No JPEG generated yet.";
-      setStatus("Please select a single Apple Spatial Photo HEIC file.", "error");
+    if (count > 1) {
+      fileMeta.textContent = `Image ${currentImageIndex + 1} of ${count}: ${currentFile.name} (${formatBytes(currentFile.size)})`;
+    } else {
+      fileMeta.textContent = `${currentFile.name} (${formatBytes(currentFile.size)})`;
+    }
+  }
+
+  function resetLoadedImageList() {
+    loadedImageFiles = [];
+    currentImageIndex = 0;
+    currentFile = null;
+    decodedViews = [];
+    updateImageNavigationButtons();
+  }
+
+  async function loadSpatialPhotoAtIndex(index, options = {}) {
+    const makePreview = options.makePreview !== false;
+    const resetAdjustments = !!options.resetAdjustments;
+    const count = loadedImageFiles.length;
+
+    if (!count) {
       return;
     }
 
-    fileMeta.textContent = `${file.name} (${formatBytes(file.size)})`;
+    currentImageIndex = ((index % count) + count) % count;
+    currentFile = loadedImageFiles[currentImageIndex];
+    updateCurrentFileMeta();
     sourceMeta.textContent = "Stereo images not decoded yet.";
     outputMeta.textContent = "No JPEG generated yet.";
 
     try {
-      await extractExifTagsFromHeicFile(file);
+      await extractExifTagsFromHeicFile(currentFile);
 
       if (!libheifReady) {
         setStatus("Waiting for HEIC decoder to finish loading…");
         await libheifReadyPromise;
       }
 
-      await decodeHeicFile(file);
-      await convertToSbs({ previewOnly: true });
+      await decodeHeicFile(currentFile, { resetAdjustments });
+
+      if (makePreview) {
+        await convertToSbs({ previewOnly: true });
+        setStatus(`Loaded <b>${escapeHtml(currentFile.name)}</b>.${getCurrentImagePositionText()}`, "ok");
+      }
     } catch (err) {
       //console.error(err);
       setStatus(escapeHtml(err.message || String(err)), "error");
       sourceMeta.textContent = "Decode failed.";
+      updateImageNavigationButtons();
+      throw err;
     }
+
+    updateImageNavigationButtons();
+  }
+
+  async function processSpatialPhotoFiles(fileList) {
+    clearGeneratedOutput();
+    resetLoadedImageList();
+
+    const files = Array.from(fileList || []).filter(Boolean);
+
+    if (!files.length) {
+      fileMeta.textContent = "No file selected.";
+      sourceMeta.textContent = "Stereo images not decoded yet.";
+      outputMeta.textContent = "No JPEG generated yet.";
+      setStatus(libheifReady ? "Please select one or more Apple Spatial Photo HEIC files." : "Loading HEIC decoder…");
+      return;
+    }
+
+    const invalidFiles = files.filter(file => !isLikelyHeicFile(file));
+
+    if (invalidFiles.length) {
+      fileMeta.textContent = describeLoadedFiles(files);
+      sourceMeta.textContent = "Unsupported file type.";
+      outputMeta.textContent = "No JPEG generated yet.";
+      setStatus("Please select only .heic Apple Spatial Photo files.", "error");
+      return;
+    }
+
+    loadedImageFiles = files;
+    currentImageIndex = 0;
+    currentFile = loadedImageFiles[0];
+    updateCurrentFileMeta();
+    sourceMeta.textContent = loadedImageFiles.length > 1
+      ? `Ready to decode ${loadedImageFiles.length} HEIC files.`
+      : "Stereo images not decoded yet.";
+    outputMeta.textContent = "No JPEG generated yet.";
+
+    resetImageAdjustmentsForNewFile();
+    await loadSpatialPhotoAtIndex(0, { resetAdjustments: false, makePreview: true });
+  }
+
+  async function processSpatialPhotoFile(file) {
+    await processSpatialPhotoFiles(file ? [file] : []);
   }
 
   function getDefaultSaveName() {
@@ -2714,22 +3205,52 @@
   }
 
 
+  function setExportLinksVisible(visible) {
+    const showZipExport = visible && getLoadedImageCount() > 1;
+
+    if (downloadLink) {
+      downloadLink.style.display = visible ? "block" : "none";
+    }
+
+    if (downloadAllLink) {
+      downloadAllLink.style.display = showZipExport ? "block" : "none";
+    }
+
+    if (downloadActions) {
+      downloadActions.style.display = visible ? "grid" : "none";
+      downloadActions.style.gridTemplateColumns = showZipExport ? "repeat(2, minmax(0, 1fr))" : "1fr";
+    }
+  }
+
   function updateGenerateButtonVisibility() {
     const hasStereoPair = decodedViews.length >= 2;
 
     if (!hasStereoPair) {
       downloadLink.classList.remove("busy");
-      downloadLink.style.display = "none";
       downloadLink.removeAttribute("href");
-      downloadActions.style.display = "none";
+
+      if (downloadAllLink) {
+        downloadAllLink.classList.remove("busy");
+        downloadAllLink.removeAttribute("href");
+      }
+
+      setExportLinksVisible(false);
+      updateImageNavigationButtons();
       return;
     }
 
     downloadLink.classList.remove("busy");
     downloadLink.removeAttribute("href");
-    downloadLink.textContent = isIOSDevice() ? "Generate & Share JPEG" : "Generate & Download JPEG";
-    downloadLink.style.display = "block";
-    downloadActions.style.display = "grid";
+    downloadLink.textContent = isIOSDevice() ? "Export Current JPEG" : "Export Current JPEG";
+
+    if (downloadAllLink) {
+      downloadAllLink.classList.remove("busy");
+      downloadAllLink.removeAttribute("href");
+      downloadAllLink.textContent = isIOSDevice() ? "Export All as ZIP" : "Export All as ZIP";
+    }
+
+    setExportLinksVisible(true);
+    updateImageNavigationButtons();
   }
 
   function clearGeneratedOutput(options = {}) {
@@ -2741,11 +3262,15 @@
     downloadLink.classList.remove("busy");
     downloadLink.removeAttribute("href");
 
+    if (downloadAllLink) {
+      downloadAllLink.classList.remove("busy");
+      downloadAllLink.removeAttribute("href");
+    }
+
     if (keepGenerateButton && decodedViews.length >= 2) {
       updateGenerateButtonVisibility();
     } else {
-      downloadLink.style.display = "none";
-      downloadActions.style.display = "none";
+      setExportLinksVisible(false);
     }
   }
 
@@ -3113,12 +3638,14 @@
     }
 
     libheifReady = true;
-    setStatus("HEIC decoder ready.&nbsp;&nbsp;Please select a single Apple Spatial Photo HEIC file.");
+    setStatus("HEIC decoder ready.&nbsp;&nbsp;Please select one or more Apple Spatial Photo HEIC files.");
   }
 
-  async function decodeHeicFile(file) {
+  async function decodeHeicFile(file, options = {}) {
     clearGeneratedOutput();
-    resetImageAdjustmentsForNewFile();
+    if (options.resetAdjustments) {
+      resetImageAdjustmentsForNewFile();
+    }
     decodedViews = [];
     canvas.style.display = "none";
     canvas.width = 0;
@@ -3126,7 +3653,7 @@
     emptyPreview.style.display = "flex";
     outputMeta.textContent = "No JPEG generated yet.";
     sourceMeta.textContent = "Decoding stereo images…";
-    setStatus("Reading and decoding HEIC container…");
+    setStatus(`Reading and decoding HEIC container${getCurrentImagePositionText()}…`);
 
     const buffer = await file.arrayBuffer();
     const decoder = new heifModule.HeifDecoder();
@@ -3170,7 +3697,7 @@
     sourceOriginalHeight = clampOutputHeight(decodedViews[0].height || OUTPUT_HEIGHT_DEFAULT);
     applyOutputHeight(sourceOriginalHeight);
     sourceMeta.textContent = `Decoded ${rendered.length} image view(s). Using ${decodedViews[0].width}×${decodedViews[0].height} and ${decodedViews[1].width}×${decodedViews[1].height}.`;
-    setStatus("Stereo pair decoded.&nbsp;&nbsp;Creating preview…", "ok");
+    setStatus(`Stereo pair decoded.${getCurrentImagePositionText()}&nbsp;&nbsp;Creating preview…`, "ok");
   }
 
   function chooseStereoPair(images) {
@@ -4018,8 +4545,8 @@
         } else {
           updateGenerateButtonVisibility();
         }
-        outputMeta.textContent = `Preview updated. Click ${isIOSDevice() ? "Generate & Share JPEG" : "Generate & Download JPEG"} to create the final JPEG.`;
-        setStatus(`Preview updated.&nbsp;&nbsp;Click <b>${isIOSDevice() ? "Generate & Share JPEG" : "Generate & Download JPEG"}</b> to create the final ${modeLabel} JPEG.`, "ok");
+        outputMeta.textContent = `Preview updated. Click ${isIOSDevice() ? "Export Current JPEG" : "Export Current JPEG"} to create the final JPEG.`;
+        setStatus(`Preview updated.&nbsp;&nbsp;Click <b>${isIOSDevice() ? "Export Current JPEG" : "Export Current JPEG"}</b> to create the final ${modeLabel} JPEG.`, "ok");
         return;
       }
 
@@ -4042,9 +4569,11 @@
       downloadLink.removeAttribute("href");
       downloadLink.download = defaultName;
       downloadLink.classList.remove("busy");
-      downloadLink.textContent = isIOSDevice() ? "Generate & Share JPEG" : "Generate & Download JPEG";
-      downloadLink.style.display = "block";
-      downloadActions.style.display = "grid";
+      downloadLink.textContent = isIOSDevice() ? "Export Current JPEG" : "Export Current JPEG";
+      if (downloadAllLink) {
+        downloadAllLink.textContent = isIOSDevice() ? "Export All as ZIP" : "Export All as ZIP";
+      }
+      setExportLinksVisible(true);
 
       const rotationNote = imageRotationDegrees
         ? `, rotation ${imageRotationDegrees > 0 ? "+" : ""}${imageRotationDegrees.toFixed(1)}°`
@@ -4083,24 +4612,26 @@
     const html = `
       <div class="instructions-body">
         <h3 style="text-align:center;">Apple Spatial Photo → Side-by-Side or 3D Anaglyph</h3>
-        <p>This tool opens an Apple Spatial Photo HEIC file, extracts the two embedded stereo image views, and exports them locally in your browser as either a Side-by-Side JPEG or a 3D Anaglyph JPEG.</p>
+        <p>This tool opens Apple Spatial Photo HEIC files, extracts the two embedded stereo image views, and exports them locally in your browser as either a Side-by-Side JPEG or a 3D Anaglyph JPEG.</p>
 
         <h4>Basic workflow</h4>
         <ol>
-          <li>Select a single Apple Spatial Photo HEIC file using the file chooser.<br/>On desktop, you can also drag and drop one HEIC file onto the top control panel.</li>
+          <li>Select one or more Apple Spatial Photo HEIC files using the file chooser.<br/>On desktop, you can also drag and drop one or more HEIC files onto the top control panel.</li>
           <li>Adjust <b>Output JPEG Height</b> as desired. Initial value is read from the input image.<br/>Use the slider, or click the height value display to enter an exact height.</li>
           <li>Select an <b>Output Format</b> and <b>Stereo Order</b>.<br/>Use <b>Side-by-Side</b> for stereo pairs, or one of the <b>Red / Cyan Anaglyph</b> formats for viewing with red/cyan 3D glasses. Use the <b>Border</b> selector to choose no border or to include a black border in the exported JPEG.</li>
           <li>Optionally adjust <b>Side-by-Side Center Crop</b> (Side-by-Side format only), <b>Horizontal Shift</b>, and/or <b>Image Rotation</b> as required to optimize the stereo view. Use the <b>Side-by-Side Center Crop</b> slider, or click its numeric value display to enter an exact crop percentage.</li>
-          <li>When a new HEIC file is opened, <b>Horizontal Shift</b> and <b>Image Rotation</b> are reset to 0. <b>Side-by-Side Center Crop</b> and <b>Border</b> are preserved, saved and restored the next time the tool is opened.</li>
+          <li>When a new set of HEIC files is opened, <b>Horizontal Shift</b> and <b>Image Rotation</b> are reset to 0. <b>Side-by-Side Center Crop</b> and <b>Border</b> are preserved, saved and restored the next time the tool is opened.</li>
           <li>On desktop browsers, move the mouse over the preview area to reveal the full-screen button at the top right of the preview. On iPad, the button remains visible at the top right. The button is hidden on iPhone and while full-screen mode is active. Press Escape or use the browser full-screen control to return to the normal tool view.</li>
+          <li>If more than one HEIC file is loaded, on desktop browsers, move the mouse over the preview area to reveal the first, previous, next, and last image arrow buttons at the edges of the preview that you can use to switch between the images (always visible on iOS).</li>
           <li>The normal on-page preview is optimized for responsiveness, while full-screen preview automatically uses a higher preview resolution when useful for sharper viewing on high-DPI displays.</li>
           <li>For side-by-side image viewing, you can make the side-by-side preview smaller to help visually fuse the images while making adjustments, you can either zoom out the browser window or resize the window narrower to make the preview smaller.</li>
-          <li>To save the results, click <b>Generate &amp; Download JPEG</b> on desktop or <b>Generate &amp; Share JPEG</b> on iOS.</li>
+          <li>Click <b>Export Current JPEG</b> to save or share only the currently displayed image.<br/>Click <b>Export All as ZIP</b> to save or share all loaded images using the current settings in a .zip file. During batch export, a progress dialog shows the current image and overall progress; click <b>Cancel</b> during ZIP generation to stop after the current processing step finishes.</li>
+          <li>On iOS, after the ZIP is ready, tap <b>Share ZIP</b> to open the iOS Share Sheet, then choose <b>Save to Files</b> or another share destination.</li>
         </ol>
 
         <h4>Controls</h4>
         <ul>
-          <li><b>File input</b>: Opens a single Apple Spatial Photo HEIC file. On desktop, you can also drag and drop one HEIC file onto the top control panel.</li>
+          <li><b>File input</b>: Opens one or more Apple Spatial Photo HEIC files. On desktop, you can also drag and drop one or more HEIC files onto the top control panel.</li>
           <li><b>Output JPEG Height</b>: Sets the final exported JPEG height. The exported JPEG width is calculated automatically from the selected height and the final output aspect ratio.<br/>For Side-by-Side output, the final JPEG uses the selected height and creates a side-by-side image with the two eye views placed left and right.<br/>For Anaglyph output, the final JPEG uses the selected height and creates a single red/cyan image whose width is calculated from the anaglyph aspect ratio.<br/>Use the slider, or click the numeric height value to enter a specific height.<br/>Entered values are clamped to the supported 768 to 8192 pixel range.<br/>The <b>Reset</b> button resets the output height to the original input height, clamped to the supported range.</li>
           <li><b>Output Format</b>: Chooses between Side-by-Side output and several common anaglyph formats.</li>
           <li><b>Border</b>: Chooses the optional exported border thickness: None, Thin, Medium, Wide, Wider, or Extra Wide. <b>None</b> exports the normal borderless JPEG. For Side-by-Side output, any non-None border setting draws a black outer border around the side-by-side image along with a black center seam. For Anaglyph output, any non-None border setting draws a black outer border around the final image. The border is included in the exported JPEG. The selected border setting is saved and restored the next time the tool is opened.</li>
@@ -4148,35 +4679,21 @@
 
         <h4>Metadata notes</h4>
         <ul>
-          <li>When EXIF metadata can be read from the original HEIC file, the tool copies a supported subset of EXIF tags into the exported JPEG during final JPEG generation.</li>
+          <li>When EXIF metadata can be read from the original HEIC file(s), the tool copies a supported subset of EXIF tags into the exported JPEG(s) during final JPEG generation.</li>
           <li>The exported JPEG's image dimension tags are updated to the final rendered width and height.</li>
         </ul>
-
-        <h4>Stereo JPEG/TIFF → Side-by-Side or 3D Anaglyph</h4>
-        This utility can be used to do essentially all the same side-by-side and color anaglyph operations as this tool and more, but starting with side-by-side or individual right/left JPEG or TIFF images:
-        <div style="text-align: center;">
-           <div style="margin-top:10px;">
-            <a href="https://michaeleskin.com/tools/sbs-jpeg-tiff-to-sbs.html" target="_blank" rel="noopener noreferrer">Stereo JPEG/TIFF → Side-by-Side or 3D Anaglyph</a>
-          </div>
-        </div>
-
-        <h4>Side-by-Side Stereo Flip Viewer</h4>
-        This utility can be used to view the side-by-side JPEG images created by this tool:
-        <div style="text-align: center;">
-           <div style="margin-top:10px;">
-            <a href="https://michaeleskin.com/tools/flip-viewer.html" target="_blank" rel="noopener noreferrer">Side-by-Side JPEG/TIFF Stereo Flip Viewer</a>
-          </div>
-        </div>
 
         <h4>iOS-specific notes</h4>
         <ul>
           <li>On iOS, you cannot open a spatial image directly from the <b>Camera</b> roll using the <b>Photo Library</b> option when opening the file.</li>
           <li>If you click <b>Photo Library</b> in the popup menu after clicking <b>Choose File</b>, iOS will open a non-spatial flat JPEG version of the image.</li>
-          <li>To work with the original spatial image in the tool, you must first transfer the original HEIC file from the <b>Photos</b> app into a directory in the device's <b>Files</b> area and then open it from there.</li>
+          <li>To work with the original spatial images in the tool, you must first transfer the original HEIC files from the <b>Photos</b> app into a directory in the device's <b>Files</b> area and then open them from there.</li>
           <li>To do the transfer, open the <b>Photos</b> app, select the spatial file(s) you want to work with, click the <b>Share</b> button, and click <b>Save to Files</b> and pick a location to save the file(s).</li>
-          <li>To open the spatial image in the tool, click the <b>Choose File</b> button, then again the <b>Choose File</b> option in the popup menu that appears, and then select the file from wherever you saved it in the <b>Files</b> area.</li>
-          <li>On iOS, after you are done editing the spatial image and want to save or share it, tap <b>Generate &amp; Share JPEG</b> to generate the final JPEG and open the iOS Share Sheet.</li>
-          <li>You can then save the processed JPEG image to the <b>Photos</b> app, or share it like any other photo on iOS.</li>
+          <li>To open the spatial images in the tool, click the <b>Choose File</b> button, then again the <b>Choose File</b> option in the popup menu that appears, and then select the file(s) from wherever you saved them in the <b>Files</b> area.</li>
+          <li>On iOS, after you are done editing the currently displayed spatial image and want to save or share it, tap <b>Export Current JPEG</b> to generate the final JPEG and open the iOS Share Sheet.</li>
+          <li>You can then save the processed JPEG image to the <b>Photos</b> app or share it to other apps.</li>
+          <li>When multiple images are loaded on iOS, <b>Export All as ZIP</b> creates a ZIP file containing JPEGs for all loaded images.</li>
+          <li>After the ZIP is ready, tap <b>Share ZIP</b> to open the iOS Share Sheet, then choose <b>Save to Files</b> or another share destination. Tap <b>Cancel</b> to close the ZIP dialog without sharing.</li>
           <li>While it's certainly possible to process the spatial photos directly on an iPhone, if you have a Mac, for a better experience (larger screen, no need to transfer images from the <b>Photos</b> app to the <b>Files</b> area), my recommendation is to share the original spatial HEIC images from the <b>Photos</b> app to your computer using <b>AirDrop</b> and then run this tool on a desktop browser.</li>
           <li>On Windows, for a better experience (larger screen, no need to transfer images from the <b>Photos</b> app to the <b>Files</b> area), you'll want to transfer the original spatial HEIC images from the iPhone to your computer via USB using the Windows <b>File Explorer</b> and then run this tool on a desktop browser.</li>
         </ul>
@@ -4184,10 +4701,30 @@
         <h4>Privacy</h4>
         <ul>
           <li>All processing is performed locally in your browser.</li>
-          <li>The selected HEIC file is not uploaded to a server by this tool.</li>
-          <li>If the source HEIC contains GPS/location EXIF metadata, the exported JPEG may contain the same location metadata.</li>
+          <li>The selected HEIC file(s) are not uploaded to a server by this tool.</li>
+          <li>If the source HEIC file(s) contain GPS/location EXIF metadata, the exported JPEG(s) may contain the same location metadata.</li>
           <li>Google Analytics is used to collect aggregate usage statistics for the tool.</li>
         </ul>
+
+        <hr style="margin-top:20px;">
+
+        <h4 style="text-align: center;">Stereo JPEG/TIFF → Side-by-Side or 3D Anaglyph</h4>
+        This utility can be used to do essentially all the same side-by-side and color anaglyph operations as this tool and more, but starting with side-by-side or individual right/left JPEG or TIFF images. Unlike this tool, the JPEG/TIFF version does not allow batch processing of images:
+        <div style="text-align: center;">
+           <div style="margin-top:10px;">
+            <a href="https://michaeleskin.com/tools/sbs-jpeg-tiff-to-sbs.html" target="_blank" rel="noopener noreferrer">Stereo JPEG/TIFF → Side-by-Side or 3D Anaglyph</a>
+          </div>
+        </div>
+
+        <hr style="margin-top:20px;">
+
+        <h4 style="text-align: center;">Side-by-Side Stereo Flip Viewer</h4>
+        This utility can be used to view the side-by-side JPEG images created by this tool:
+        <div style="text-align: center;">
+           <div style="margin-top:10px;">
+            <a href="https://michaeleskin.com/tools/flip-viewer.html" target="_blank" rel="noopener noreferrer">Side-by-Side JPEG/TIFF Stereo Flip Viewer</a>
+          </div>
+        </div>
 
         <hr style="margin-top:20px;">
 
@@ -4232,6 +4769,7 @@
     });
   }
 
+
   function registerDragAndDropHandlers() {
     ["dragenter", "dragover"].forEach(eventName => {
       toolCard.addEventListener(eventName, event => {
@@ -4252,28 +4790,27 @@
     toolCard.addEventListener("drop", async event => {
       const files = Array.from(event.dataTransfer?.files || []);
 
-      if (files.length !== 1) {
-        setStatus("Please drop exactly one Apple Spatial Photo HEIC file.", "error");
+      if (!files.length) {
         return;
       }
 
-      const file = files[0];
+      const invalidFiles = files.filter(file => !isLikelyHeicFile(file));
 
-      if (!isLikelyHeicFile(file)) {
-        setStatus("Please drop a single .heic or .heif Apple Spatial Photo file.", "error");
+      if (invalidFiles.length) {
+        setStatus("Please drop only .heic Apple Spatial Photo files.", "error");
         return;
       }
 
       try {
         const dt = new DataTransfer();
-        dt.items.add(file);
+        files.forEach(file => dt.items.add(file));
         fileInput.files = dt.files;
       } catch (err) {
         // Some browsers may not allow programmatically setting fileInput.files.
-        // currentFile still preserves the dropped file for processing and naming.
+        // loadedImageFiles still preserves the dropped files for processing and naming.
       }
 
-      await processSpatialPhotoFile(file);
+      await processSpatialPhotoFiles(files);
     });
 
     // Prevent the browser from navigating away if a file is dropped outside the tool card.
@@ -4304,7 +4841,7 @@
   }
 
   fileInput.addEventListener("change", async () => {
-    await processSpatialPhotoFile(fileInput.files[0] || null);
+    await processSpatialPhotoFiles(fileInput.files);
   });
 
   outputFormat.addEventListener("change", () => {
@@ -4471,21 +5008,181 @@
     }
   });
 
-  function downloadBlobWithName(blob, fileName) {
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = fileName;
-    a.style.display = "none";
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    setTimeout(() => URL.revokeObjectURL(url), 30000);
+  function handleImageNavigation(targetIndex, sourceEvent = null) {
+    const trigger = sourceEvent && sourceEvent.currentTarget;
+
+    if (trigger && typeof trigger.blur === "function") {
+      trigger.blur();
+    }
+
+    const count = getLoadedImageCount();
+
+    if (count <= 1 || targetIndex < 0 || targetIndex >= count || targetIndex === currentImageIndex) {
+      return;
+    }
+
+    loadSpatialPhotoAtIndex(targetIndex, { makePreview: true })
+      .catch(err => setStatus(escapeHtml(err.message || String(err)), "error"));
   }
 
-  downloadLink.addEventListener("click", async event => {
-    event.preventDefault();
+  if (firstImageButton) {
+    firstImageButton.addEventListener("click", event => {
+      event.preventDefault();
+      handleImageNavigation(0, event);
+    });
+  }
 
+  if (prevImageButton) {
+    prevImageButton.addEventListener("click", event => {
+      event.preventDefault();
+      handleImageNavigation(currentImageIndex - 1, event);
+    });
+  }
+
+  if (nextImageButton) {
+    nextImageButton.addEventListener("click", event => {
+      event.preventDefault();
+      handleImageNavigation(currentImageIndex + 1, event);
+    });
+  }
+
+  if (lastImageButton) {
+    lastImageButton.addEventListener("click", event => {
+      event.preventDefault();
+      handleImageNavigation(getLoadedImageCount() - 1, event);
+    });
+  }
+
+  class BatchExportCancelledError extends Error {
+    constructor(message = "ZIP export cancelled.") {
+      super(message);
+      this.name = "BatchExportCancelledError";
+    }
+  }
+
+  function throwIfBatchExportCancelled() {
+    if (batchExportController && batchExportController.cancelled) {
+      throw new BatchExportCancelledError();
+    }
+  }
+
+  function showBatchProgressDialog(totalImages) {
+    batchExportController = { cancelled: false, totalImages };
+
+    if (batchProgressCancelButton) {
+      batchProgressCancelButton.disabled = false;
+      batchProgressCancelButton.textContent = "Cancel";
+    }
+
+    if (batchProgressCloseButton) {
+      batchProgressCloseButton.disabled = false;
+      batchProgressCloseButton.textContent = "Cancel";
+      batchProgressCloseButton.style.display = "none";
+    }
+
+    updateBatchProgressDialog({
+      text: `Preparing to export ${totalImages} image${totalImages === 1 ? "" : "s"}…`,
+      percent: 0
+    });
+
+    if (batchProgressOverlay) {
+      batchProgressOverlay.classList.add("visible");
+    }
+  }
+
+  function updateBatchProgressDialog({ text, percent }) {
+    const safePercent = Math.max(0, Math.min(100, Math.round(Number(percent) || 0)));
+
+    if (batchProgressText) {
+      batchProgressText.innerHTML = text;
+    }
+
+    if (batchProgressBar) {
+      batchProgressBar.style.width = `${safePercent}%`;
+    }
+
+    if (batchProgressPercent) {
+      batchProgressPercent.textContent = `${safePercent}%`;
+    }
+  }
+
+  function hideBatchProgressDialog() {
+    if (batchProgressOverlay) {
+      batchProgressOverlay.classList.remove("visible");
+    }
+
+    if (batchProgressCancelButton) {
+      batchProgressCancelButton.disabled = false;
+      batchProgressCancelButton.textContent = "Cancel";
+    }
+
+    if (batchProgressCloseButton) {
+      batchProgressCloseButton.disabled = false;
+      batchProgressCloseButton.textContent = "Cancel";
+      batchProgressCloseButton.style.display = "none";
+    }
+
+    batchExportController = null;
+  }
+
+  if (batchProgressCancelButton) {
+    batchProgressCancelButton.addEventListener("click", () => {
+      if (!batchExportController) {
+        return;
+      }
+
+      batchExportController.cancelled = true;
+      batchProgressCancelButton.disabled = true;
+      batchProgressCancelButton.textContent = "Cancelling…";
+      updateBatchProgressDialog({
+        text: "Cancelling after the current step finishes…",
+        percent: Number(batchProgressBar?.style.width?.replace("%", "")) || 0
+      });
+      setStatus("Cancelling ZIP export…");
+    });
+  }
+
+  function sanitizeZipFilename(name) {
+    name = (name || "").trim();
+
+    if (!name) return "spatial-photo-batch.zip";
+
+    name = name
+      .replace(/[\/\\:*?"<>|]/g, "_")
+      .replace(/\s+/g, " ")
+      .trim();
+
+    if (!/\.zip$/i.test(name)) {
+      name += ".zip";
+    }
+
+    return name;
+  }
+
+  function getDefaultZipSaveName() {
+    const files = loadedImageFiles.length ? loadedImageFiles : (currentFile ? [currentFile] : []);
+    const firstName = (files[0]?.name || "spatial-photo").replace(/\.[^.]+$/, "");
+    const count = (files.length-1) || 1;
+    return sanitizeZipFilename(`${firstName}+${count}-images-${getOutputFormatSuffix()}-${Number(heightRange.value)}h.zip`);
+  }
+
+  function promptForZipSaveName() {
+    if (!window.DayPilot || !DayPilot.Modal || !DayPilot.Modal.prompt) {
+      return Promise.resolve(getDefaultZipSaveName());
+    }
+
+    return DayPilot.Modal.prompt("Please enter a filename for the exported ZIP file:", getDefaultZipSaveName(), {
+      theme: "modal_compact",
+      top: 200,
+      autoFocus: true
+    }).then(args => {
+      if (args.canceled) return null;
+      const cleanName = sanitizeZipFilename(args.result);
+      return cleanName || getDefaultZipSaveName();
+    });
+  }
+
+  async function exportCurrentImage() {
     if (decodedViews.length < 2) {
       setStatus("No stereo image has been decoded yet.", "error");
       return;
@@ -4500,9 +5197,12 @@
       }
 
       if (isIOSDevice()) {
-        await shareJpegOnIOS();
-        resetPreviewFlipSliderAfterSave();
+        const shareResult = await shareJpegOnIOS();
+        await resetPreviewFlipSliderAfterSave();
         updateGenerateButtonVisibility();
+        if (shareResult?.message) {
+          setStatus(shareResult.message, shareResult.type || "ok");
+        }
         return;
       }
 
@@ -4516,15 +5216,170 @@
 
       lastGeneratedFileName = saveName;
       downloadBlobWithName(lastBlob, saveName);
-      resetPreviewFlipSliderAfterSave();
+      await resetPreviewFlipSliderAfterSave();
       updateGenerateButtonVisibility();
-      setStatus(`Saved as <b>${escapeHtml(saveName)}</b>.`, "ok");
+      setStatus(`Saved image ${currentImageIndex + 1} of ${getLoadedImageCount()} as <b>${escapeHtml(saveName)}</b>.`, "ok");
     } catch (err) {
-      //console.error(err);
       updateGenerateButtonVisibility();
       setStatus(escapeHtml(err.message || String(err)), "error");
     }
+  }
+
+  async function exportAllImagesAsZip() {
+    const files = loadedImageFiles.length ? [...loadedImageFiles] : (currentFile ? [currentFile] : []);
+
+    if (!files.length) {
+      setStatus("No HEIC images are loaded.", "error");
+      return;
+    }
+
+    if (files.length < 2) {
+      setStatus("Export All as ZIP is only available when more than one HEIC image is loaded.", "error");
+      updateGenerateButtonVisibility();
+      return;
+    }
+
+    if (!window.JSZip) {
+      setStatus("JSZip is not loaded. Add <code>jszip.min.js</code> before exporting multiple images.", "error");
+      return;
+    }
+
+    const zipName = await promptForZipSaveName();
+
+    if (!zipName) {
+      setStatus("ZIP export cancelled.", "ok");
+      return;
+    }
+
+    const originalIndex = currentImageIndex;
+    const zip = new JSZip();
+    let finalStatus = "";
+    let finalStatusType = "ok";
+
+    try {
+      showBatchProgressDialog(files.length);
+      setOutputControlsBusy(true);
+      downloadLink.classList.add("busy");
+      if (downloadAllLink) {
+        downloadAllLink.classList.add("busy");
+        downloadAllLink.textContent = "Preparing ZIP…";
+      }
+      downloadActions.style.display = "grid";
+
+      for (let i = 0; i < files.length; i++) {
+        throwIfBatchExportCancelled();
+
+        const startPercent = Math.round((i / files.length) * 90);
+        const fileName = escapeHtml(files[i].name);
+        updateBatchProgressDialog({
+          text: `Processing image ${i + 1} of ${files.length}: <b>${fileName}</b>…`,
+          percent: startPercent
+        });
+        setStatus(`Processing image ${i + 1} of ${files.length}: <b>${fileName}</b>…`);
+
+        await loadSpatialPhotoAtIndex(i, { makePreview: false, resetAdjustments: false });
+        throwIfBatchExportCancelled();
+
+        await convertToSbs({ preserveDownloadUi: true });
+        throwIfBatchExportCancelled();
+
+        if (!lastBlob) {
+          throw new Error(`The JPEG could not be generated for ${files[i].name}.`);
+        }
+
+        zip.file(getDefaultSaveName(), lastBlob);
+        updateBatchProgressDialog({
+          text: `Added image ${i + 1} of ${files.length}: <b>${fileName}</b>.`,
+          percent: Math.round(((i + 1) / files.length) * 90)
+        });
+        await new Promise(requestAnimationFrame);
+      }
+
+      throwIfBatchExportCancelled();
+      updateBatchProgressDialog({
+        text: `Creating ZIP file with ${files.length} JPEG image${files.length === 1 ? "" : "s"}…`,
+        percent: 92
+      });
+      setStatus(`Creating ZIP file with ${files.length} JPEG image${files.length === 1 ? "" : "s"}…`);
+
+      const zipBlob = await zip.generateAsync({ type: "blob" }, metadata => {
+        const zipPercent = 92 + Math.round((metadata.percent || 0) * 0.08);
+        updateBatchProgressDialog({
+          text: `Creating ZIP file with ${files.length} JPEG image${files.length === 1 ? "" : "s"}…`,
+          percent: zipPercent
+        });
+
+        if (batchExportController && batchExportController.cancelled) {
+          throw new BatchExportCancelledError();
+        }
+      });
+
+      throwIfBatchExportCancelled();
+      updateBatchProgressDialog({
+        text: isIOSDevice() ? "Opening iOS Share Sheet…" : "Saving ZIP file…",
+        percent: 100
+      });
+
+      if (isIOSDevice()) {
+        const shareResult = await promptShareZipOnIOS(zipBlob, zipName);
+        finalStatus = shareResult?.message || "";
+        finalStatusType = shareResult?.type || "ok";
+      } else {
+        downloadBlobWithName(zipBlob, zipName);
+        finalStatus = `Saved <b>${escapeHtml(zipName)}</b> containing ${files.length} JPEG image${files.length === 1 ? "" : "s"}.`;
+      }
+
+      await resetPreviewFlipSliderAfterSave();
+    } catch (err) {
+      if (err instanceof BatchExportCancelledError || err?.name === "BatchExportCancelledError") {
+        finalStatus = "ZIP export cancelled.";
+        finalStatusType = "ok";
+      } else {
+        finalStatus = escapeHtml(err.message || String(err));
+        finalStatusType = "error";
+      }
+    } finally {
+      hideBatchProgressDialog();
+
+      try {
+        if (files.length) {
+          await loadSpatialPhotoAtIndex(Math.min(originalIndex, files.length - 1), { makePreview: true, resetAdjustments: false });
+        }
+      } catch (restoreErr) {
+        // Leave the current decoded image in place if restore fails.
+      }
+
+      setOutputControlsBusy(false);
+      updateGenerateButtonVisibility();
+      if (finalStatus) {
+        setStatus(finalStatus, finalStatusType);
+      }
+    }
+  }
+
+  function downloadBlobWithName(blob, fileName) {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = fileName;
+    a.style.display = "none";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 30000);
+  }
+
+  downloadLink.addEventListener("click", async event => {
+    event.preventDefault();
+    await exportCurrentImage();
   });
+
+  if (downloadAllLink) {
+    downloadAllLink.addEventListener("click", async event => {
+      event.preventDefault();
+      await exportAllImagesAsZip();
+    });
+  }
 
   const runningOnIOS = isIOSDevice();
 
@@ -4535,7 +5390,6 @@
   }
 
   libheifReadyPromise = waitForLibheif().catch(err => {
-    //console.error(err);
     setStatus(escapeHtml(err.message || String(err)), "error");
     throw err;
   });
