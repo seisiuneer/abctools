@@ -1545,7 +1545,14 @@
   function showIOSWarningDialog() {
     if (dragDropInfo){
       document.body.classList.add("iosDevice");
-      dragDropInfo.innerHTML = '<p style="text-align:center">On iOS, you must use the Share feature in the Photos app to save spatial .HEIC files to the Files area to be able to open them in this tool.</p>';
+
+      const headerElement = document.querySelector("header");
+
+      if (headerElement && dragDropInfo.parentElement !== headerElement) {
+        headerElement.appendChild(dragDropInfo);
+      }
+
+      dragDropInfo.innerHTML = '<p style="text-align:center;margin-bottom:0px;">On iOS, you must use the Share feature in the Photos app to save spatial .HEIC files to the Files area to be able to open them in this tool.</p>';
     }
   }
 
