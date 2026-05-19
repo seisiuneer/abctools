@@ -1699,7 +1699,14 @@
   function showIOSWarningDialog() {
     if (dragDropInfo){
       document.body.classList.add("iosDevice");
-      dragDropInfo.innerHTML = '<p style="text-align:center">On iOS, use <b>Choose File</b> to select one side-by-side JPEG/TIFF, or two same-format, same-dimensions JPEG/TIFF files from Photos or Files.</p>';
+
+      const pageHeader = document.querySelector("header");
+
+      if (pageHeader && dragDropInfo.parentElement !== pageHeader) {
+        pageHeader.appendChild(dragDropInfo);
+      }
+
+      dragDropInfo.innerHTML = '<p style="text-align:center;margin-bottom:0px;">On iOS, use <b>Choose File</b> to select one side-by-side JPEG/TIFF, or two same-format, same-dimensions JPEG/TIFF files from Photos or Files.</p>';
     }
   }
 
