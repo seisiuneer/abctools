@@ -2859,7 +2859,10 @@
         await libheifReadyPromise;
       }
 
-      await decodeHeicFile(currentFile, { resetAdjustments });
+      await decodeHeicFile(currentFile, {
+        resetAdjustments,
+        preserveOutputHeight: options.preserveOutputHeight
+      });
 
       if (makePreview) {
         await convertToSbs({ previewOnly: true });
@@ -3695,7 +3698,18 @@
 
     decodedViews = chooseStereoPair(rendered);
     sourceOriginalHeight = clampOutputHeight(decodedViews[0].height || OUTPUT_HEIGHT_DEFAULT);
-    applyOutputHeight(sourceOriginalHeight);
+
+    const preservedOutputHeight = options.preserveOutputHeight
+      ? clampOutputHeight(options.preserveOutputHeight)
+      : null;
+
+    if (preservedOutputHeight !== null) {
+      heightRange.value = String(preservedOutputHeight);
+      updateControls();
+    } else {
+      applyOutputHeight(sourceOriginalHeight);
+    }
+
     sourceMeta.textContent = `Decoded ${rendered.length} image view(s). Using ${decodedViews[0].width}×${decodedViews[0].height} and ${decodedViews[1].width}×${decodedViews[1].height}.`;
     setStatus(`Stereo pair decoded.${getCurrentImagePositionText()}&nbsp;&nbsp;Creating preview…`, "ok");
   }
@@ -5021,7 +5035,15 @@
       return;
     }
 
-    loadSpatialPhotoAtIndex(targetIndex, { makePreview: true })
+    const navigationOutputHeight = clampOutputHeight(heightRange.value);
+    heightRange.value = String(navigationOutputHeight);
+    updateControls();
+
+    loadSpatialPhotoAtIndex(targetIndex, {
+      makePreview: true,
+      resetAdjustments: false,
+      preserveOutputHeight: navigationOutputHeight
+    })
       .catch(err => setStatus(escapeHtml(err.message || String(err)), "error"));
   }
 
@@ -5251,6 +5273,10 @@
       return;
     }
 
+    const batchOutputHeight = clampOutputHeight(heightRange.value);
+    heightRange.value = String(batchOutputHeight);
+    updateControls();
+
     const originalIndex = currentImageIndex;
     const zip = new JSZip();
     let finalStatus = "";
@@ -5277,7 +5303,11 @@
         });
         setStatus(`Processing image ${i + 1} of ${files.length}: <b>${fileName}</b>…`);
 
-        await loadSpatialPhotoAtIndex(i, { makePreview: false, resetAdjustments: false });
+        await loadSpatialPhotoAtIndex(i, {
+          makePreview: false,
+          resetAdjustments: false,
+          preserveOutputHeight: batchOutputHeight
+        });
         throwIfBatchExportCancelled();
 
         await convertToSbs({ preserveDownloadUi: true });
@@ -5343,7 +5373,11 @@
 
       try {
         if (files.length) {
-          await loadSpatialPhotoAtIndex(Math.min(originalIndex, files.length - 1), { makePreview: true, resetAdjustments: false });
+          await loadSpatialPhotoAtIndex(Math.min(originalIndex, files.length - 1), {
+            makePreview: true,
+            resetAdjustments: false,
+            preserveOutputHeight: batchOutputHeight
+          });
         }
       } catch (restoreErr) {
         // Leave the current decoded image in place if restore fails.
