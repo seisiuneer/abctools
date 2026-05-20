@@ -131,7 +131,6 @@
   }
 
   .previewBox:hover button.fullscreenButton,
-  .previewBox:focus-within button.fullscreenButton,
   .previewBox.fullscreenButtonAlwaysVisible button.fullscreenButton {
     opacity: 1;
     pointer-events: auto;
@@ -468,7 +467,7 @@
   
   .actions {
     display: grid;
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 12px;
     margin-top: 14px;
   }
@@ -558,6 +557,195 @@
     overflow-wrap: anywhere;
   }
 
+
+  .previewNavButton {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 4;
+    width: 44px;
+    height: 72px;
+    min-width: 0;
+    padding: 0;
+    border-radius: 14px;
+    border: 1px solid rgba(255,255,255,.18);
+    background: rgba(0,0,0,.34);
+    color: rgba(255,255,255,.82);
+    line-height: 1;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+  }
+
+  .previewNavButton:hover,
+  .previewNavButton:focus {
+    background: rgba(0,0,0,.52);
+    color: #fff;
+  }
+
+  .previewNavButton svg {
+    width: 27px;
+    height: 27px;
+    display: block;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2.4;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    pointer-events: none;
+  }
+
+  .previewNavButton.visible {
+    display: flex;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.16s ease-in-out, background 0.16s ease-in-out, color 0.16s ease-in-out;
+  }
+
+  .previewBox:hover .previewNavButton.visible,
+  body.iosDevice .previewNavButton.visible {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .previewNavButton.idle {
+    cursor: default;
+  }
+
+  .previewBox:hover .previewNavButton.visible.idle,
+  body.iosDevice .previewNavButton.visible.idle {
+    opacity: .64;
+    pointer-events: auto;
+  }
+
+  .previewNavButton.idle svg {
+    opacity: .88;
+  }
+
+  .previewNavButton:disabled {
+    cursor: default;
+  }
+
+  body.iosDevice .previewNavButton {
+    background: rgba(0,0,0,.18);
+    border-color: rgba(255,255,255,.22);
+    color: rgba(255,255,255,.88);
+  }
+
+  body.iosDevice .previewNavButton:hover,
+  body.iosDevice .previewNavButton:focus {
+    background: rgba(0,0,0,.28);
+    color: #fff;
+  }
+
+  #firstImageButton { left: 10px; }
+  #prevImageButton { left: 64px; }
+  #nextImageButton { right: 64px; }
+  #lastImageButton { right: 10px; }
+
+  @media (max-width: 560px) {
+    .previewNavButton {
+      width: 38px;
+      height: 60px;
+      border-radius: 12px;
+    }
+
+    .previewNavButton svg {
+      width: 24px;
+      height: 24px;
+    }
+
+    #firstImageButton { left: 8px; }
+    #prevImageButton { left: 54px; }
+    #nextImageButton { right: 54px; }
+    #lastImageButton { right: 8px; }
+  }
+
+  .batchProgressOverlay {
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+    display: none;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 0 22px 22px 22px;
+    background: rgba(0,0,0,.5);
+  }
+
+  .batchProgressOverlay.visible {
+    display: flex;
+  }
+
+  .batchProgressDialog {
+    width: min(520px, calc(100vw - 44px));
+    margin-top: 200px;
+    background: #fff;
+    color: #000;
+    border: 1px solid #333;
+    border-radius: 16px;
+    box-shadow: 0 18px 45px rgba(0,0,0,.45);
+    padding: 20px;
+  }
+
+  .batchProgressDialog h3 {
+    margin: 0 0 12px 0;
+    font-size: 20px;
+    line-height: 1.25;
+  }
+
+  .batchProgressText {
+    min-height: 2.8em;
+    margin: 0 0 14px 0;
+    line-height: 1.4;
+    overflow-wrap: anywhere;
+  }
+
+  .batchProgressTrack {
+    width: 100%;
+    height: 18px;
+    border: 1px solid #9dbaf2;
+    border-radius: 999px;
+    background: #eef3ff;
+    overflow: hidden;
+  }
+
+  .batchProgressBar {
+    width: 0%;
+    height: 100%;
+    background: linear-gradient(90deg, #73d0ff, #aaf0bf);
+    transition: width .14s ease;
+  }
+
+  .batchProgressPercent {
+    margin: 10px 0 16px 0;
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+    color: #333;
+  }
+
+  .batchProgressActions {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+  }
+
+  .batchProgressActions button {
+    width: 120px;
+    background: #e8f1ff;
+    color: #000;
+    border: 1px solid #9dbaf2;
+    border-radius: 10px;
+    padding: 10px 16px;
+    font-weight: 700;
+  }
+
+  .batchProgressActions button:disabled {
+    opacity: .6;
+    cursor: not-allowed;
+  }
+
   a.download {
     display: none;
     width: 100%;
@@ -612,7 +800,7 @@
 
     overflow:auto !important;
     -webkit-overflow-scrolling:touch;
-    line-height: 2;
+    line-height: 1.5;
 
     flex:1 1 auto;  /* allows content to expand naturally */
   }
@@ -625,6 +813,9 @@
 
   .modal_compact_buttons button{
     margin:0 8px;
+    width:auto !important;
+    min-width:170px;
+    white-space:nowrap;
   }
 
   .modal_compact_main button{
@@ -865,16 +1056,16 @@
 <div class="wrap">
   <header>
     <h1>Stereo JPEG/TIFF → Side-by-Side or 3D Anaglyph</h1>
-    <p id="subtitle" class="subhead">Open a side-by-side JPEG/TIFF stereo image file, or a left/right JPEG/TIFF image file pair,<br/>and export an adjusted Side-by-Side or 3D Anaglyph JPEG image locally from your browser.</p>
+    <p id="subtitle" class="subhead">Open one or more side-by-side JPEG/TIFF stereo image files, or a separate left/right JPEG/TIFF image file pair, and export adjusted Side-by-Side or 3D Anaglyph JPEG images locally from your browser.</p>
   </header>
 
   <section class="card">
     <div>
-      <label for="fileInput">Open one side-by-side JPEG/TIFF stereo image file, or two separate left/right JPEG/TIFF image files:</label>
-      <input id="fileInput" type="file" accept=".jpg,.jpeg,.tif,.tiff,image/jpeg,image/tiff" multiple title="Open one side-by-side JPEG/TIFF stereo image file, or two separate left/right JPEG/TIFF image files.">
+      <label for="fileInput">Open one or more side-by-side JPEG/TIFF stereo image files, or two separate left/right JPEG/TIFF image files:</label>
+      <input id="fileInput" type="file" accept=".jpg,.jpeg,.tif,.tiff,image/jpeg,image/tiff" multiple title="Open one or more side-by-side JPEG/TIFF stereo image files, or two separate left/right JPEG/TIFF image files.">
     </div>
 
-    <div id="dragdropinfo" class="hint">You can also drag-and-drop one side-by-side or two same-format, same-dimensions JPEG/TIFF image files here to use as the left and right views.</div>
+    <div id="dragdropinfo" class="hint">You can also drag-and-drop one or more side-by-side JPEG/TIFF stereo image files here, or drag-and-drop exactly two JPEG/TIFF files and choose whether to treat them as a left/right pair or as two processed stereo images.</div>
 
     <div class="grid" style="margin-top:12px;">
       <div>
@@ -902,7 +1093,7 @@
         <div class="controlHeader">
           <label for="heightRange">Output JPEG Height</label>
           <div class="controlHeaderActions">
-            <button id="resetHeightButton" class="smallResetButton" type="button" title="Reset the output JPEG height to the original imported image height, clamped to the supported range.">Reset</button>
+            <button id="resetHeightButton" class="smallResetButton" type="button" title="Reset the output JPEG height to the current image’s native height, clamped to the supported range.">Reset</button>
           </div>
         </div>
         <div class="row">
@@ -1015,14 +1206,37 @@
         <path d="M20 15v5h-5"></path>
       </svg>
     </button>
+      <button id="firstImageButton" class="previewNavButton" type="button" title="Show first image" aria-label="Show first image">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path d="M6 5v14"></path>
+          <path d="M18 6l-7 6 7 6"></path>
+        </svg>
+      </button>
+      <button id="prevImageButton" class="previewNavButton" type="button" title="Show previous image" aria-label="Show previous image">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path d="M15 6l-7 6 7 6"></path>
+        </svg>
+      </button>
       <canvas id="previewCanvas"></canvas>
+      <button id="nextImageButton" class="previewNavButton" type="button" title="Show next image" aria-label="Show next image">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path d="M9 6l7 6-7 6"></path>
+        </svg>
+      </button>
+      <button id="lastImageButton" class="previewNavButton" type="button" title="Show last image" aria-label="Show last image">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path d="M18 5v14"></path>
+          <path d="M6 6l7 6-7 6"></path>
+        </svg>
+      </button>
       <div id="emptyPreview" class="hint">Stereo preview will appear here</div>
     </div>
     
-    <p id="status">Please select one side-by-side JPEG/TIFF file, or two same-format, same-dimensions left/right JPEG/TIFF files.</p>
+    <p id="status">Please select one or more side-by-side JPEG/TIFF files, or two same-format, same-dimensions left/right JPEG/TIFF files.</p>
 
     <div id="downloadActions" class="actions" style="display:none;">
-      <a id="downloadLink" class="download" download="side-by-side.jpg" title="Generate the final JPEG at the specified output height, then download it or open the iOS Share Sheet.">Generate &amp; Download JPEG</a>
+      <a id="downloadLink" class="download" download="side-by-side.jpg" title="Export the currently visible image as a final JPEG at the specified output height.">Export Current JPEG</a>
+      <a id="downloadAllLink" class="download" download="stereo-image-batch.zip" title="Export all loaded images as JPEGs using the current settings, then package them in a ZIP file.">Export All as ZIP</a>
     </div>
 
     <div class="meta">
@@ -1040,9 +1254,25 @@
 
 </div>
 
+<div id="batchProgressOverlay" class="batchProgressOverlay" role="dialog" aria-modal="true" aria-labelledby="batchProgressTitle" aria-describedby="batchProgressText">
+  <div class="batchProgressDialog">
+    <h3 id="batchProgressTitle">Exporting ZIP</h3>
+    <p id="batchProgressText" class="batchProgressText">Preparing batch export…</p>
+    <div class="batchProgressTrack" aria-hidden="true">
+      <div id="batchProgressBar" class="batchProgressBar"></div>
+    </div>
+    <div id="batchProgressPercent" class="batchProgressPercent">0%</div>
+    <div class="batchProgressActions">
+      <button id="batchProgressCancelButton" type="button">Cancel</button>
+      <button id="batchProgressCloseButton" type="button" style="display:none;">Cancel</button>
+    </div>
+  </div>
+</div>
+
 <script type="text/javascript" src="UTIF.min.js"></script>
 <script type="text/javascript" src="piexif.min.js"></script>
 <script type="text/javascript" src="exif-reader.min.js"></script>
+<script type="text/javascript" src="jszip-min.js"></script>
 <script type="text/javascript" src="daypilot-modal.min-3.10.1.js"></script>
 
 <script>
@@ -1079,6 +1309,7 @@
   const previewFlipRateRange = document.getElementById("previewFlipRateRange");
   const previewFlipRateValue = document.getElementById("previewFlipRateValue");
   const downloadLink = document.getElementById("downloadLink");
+  const downloadAllLink = document.getElementById("downloadAllLink");
   const statusEl = document.getElementById("status");
   const canvas = document.getElementById("previewCanvas");
   const emptyPreview = document.getElementById("emptyPreview");
@@ -1093,10 +1324,23 @@
   const downloadActions = document.getElementById("downloadActions");
   const showInstructionsButton = document.getElementById("showInstructionsButton");
   const fullscreenButton = document.getElementById("fullscreenButton");
+  const firstImageButton = document.getElementById("firstImageButton");
+  const prevImageButton = document.getElementById("prevImageButton");
+  const nextImageButton = document.getElementById("nextImageButton");
+  const lastImageButton = document.getElementById("lastImageButton");
+  const batchProgressOverlay = document.getElementById("batchProgressOverlay");
+  const batchProgressText = document.getElementById("batchProgressText");
+  const batchProgressBar = document.getElementById("batchProgressBar");
+  const batchProgressPercent = document.getElementById("batchProgressPercent");
+  const batchProgressCancelButton = document.getElementById("batchProgressCancelButton");
+  const batchProgressCloseButton = document.getElementById("batchProgressCloseButton");
 
   let decodedViews = [];
   let currentFile = null;
   let currentSourceFiles = [];
+  let loadedImageFiles = [];
+  let currentImageIndex = 0;
+  let currentImportMode = "none";
   let lastBlob = null;
   let lastGeneratedFileName = "";
   let interactivePreviewDirty = false;
@@ -1131,6 +1375,8 @@
   let scrollBeforeFullscreenX = 0;
   let scrollBeforeFullscreenY = 0;
   let shouldRestoreScrollAfterFullscreen = false;
+  let batchExportController = null;
+  let outputHeightManuallyChangedSinceOpen = false;
 
   function escapeHtml(value) {
     return String(value)
@@ -1330,6 +1576,7 @@
   }
 
   function setOutputHeightFromUser(value) {
+    outputHeightManuallyChangedSinceOpen = true;
     applyOutputHeight(value);
     updateControls();
     regeneratePreviewIfReady();
@@ -1706,7 +1953,7 @@
         pageHeader.appendChild(dragDropInfo);
       }
 
-      dragDropInfo.innerHTML = '<p style="text-align:center;margin-bottom:0px;">On iOS, use <b>Choose File</b> to select one side-by-side JPEG/TIFF, or two same-format, same-dimensions JPEG/TIFF files from Photos or Files.</p>';
+      dragDropInfo.innerHTML = '<p style="text-align:center;margin-bottom:0px;">On iOS, use <b>Choose File</b> to select one or more side-by-side JPEG/TIFF files, or two same-format, same-dimensions JPEG/TIFF files from Photos or Files. When multiple processed stereo images are loaded, tap <b>Export All as ZIP</b> to prepare the ZIP file, then tap <b>Share ZIP</b> to open the iOS Share Sheet.</p>';
     }
   }
 
@@ -1753,7 +2000,7 @@
       return `Left: ${files[0].name} (${formatBytes(files[0].size)}) / Right: ${files[1].name} (${formatBytes(files[1].size)})`;
     }
 
-    return "No file selected.";
+    return `${files.length} files selected`;
   }
 
   function alertImportProblem(message) {
@@ -1770,12 +2017,16 @@
     return Promise.resolve();
   }
 
-  function clearLoadedState(statusMessage = "Please select one side-by-side JPEG/TIFF file, or two same-format, same-dimensions left/right JPEG/TIFF files.", statusClass = "") {
+  function clearLoadedState(statusMessage = "Please select one or more side-by-side JPEG/TIFF files, or two same-format, same-dimensions left/right JPEG/TIFF files.", statusClass = "") {
     stopPreviewFlipAnimation();
 
     decodedViews = [];
     currentFile = null;
     currentSourceFiles = [];
+    loadedImageFiles = [];
+    currentImageIndex = 0;
+    currentImportMode = "none";
+    outputHeightManuallyChangedSinceOpen = false;
     lastBlob = null;
     lastGeneratedFileName = "";
     interactivePreviewDirty = false;
@@ -1835,6 +2086,13 @@
       downloadLink.classList.remove("busy");
     }
 
+    if (downloadAllLink) {
+      downloadAllLink.removeAttribute("href");
+      downloadAllLink.download = "stereo-image-batch.zip";
+      downloadAllLink.style.display = "none";
+      downloadAllLink.classList.remove("busy");
+    }
+
     if (downloadActions) {
       downloadActions.style.display = "none";
     }
@@ -1842,6 +2100,7 @@
     applyOutputHeight(OUTPUT_HEIGHT_DEFAULT);
     updateControls();
     updateGenerateButtonVisibility();
+    updateImageNavigationButtons();
     setStatus(statusMessage, statusClass);
   }
 
@@ -2637,7 +2896,7 @@
   }
 
 
-  function resetPreviewFlipSliderAfterSave() {
+  async function resetPreviewFlipSliderAfterSave() {
     if (!isSideBySideMode() || !previewFlipRateRange) {
       return;
     }
@@ -2648,14 +2907,15 @@
     stopPreviewFlipAnimation();
 
     if (decodedViews.length >= 2) {
-      convertToSbs({ previewOnly: true });
+      await convertToSbs({ previewOnly: true });
     }
   }
 
   async function shareJpegOnIOS() {
     if (!lastBlob) {
-      setStatus("No JPEG has been generated yet.", "error");
-      return;
+      const result = { message: "No JPEG has been generated yet.", type: "error" };
+      setStatus(result.message, result.type);
+      return result;
     }
 
     const fileName = sanitizeJpegFilename(getDefaultSaveName());
@@ -2665,23 +2925,22 @@
     });
 
     if (!navigator.share || !navigator.canShare || !navigator.canShare({ files: [file] })) {
-      setStatus("The iOS Share Sheet is not available for this JPEG in this browser.", "error");
-      return;
+      const result = { message: "The iOS Share Sheet is not available for this JPEG in this browser.", type: "error" };
+      setStatus(result.message, result.type);
+      return result;
     }
 
     try {
-      await navigator.share({
-        files: [file]
-      });
-
-      setStatus(`Shared <b>${escapeHtml(fileName)}</b>.`, "ok");
+      await navigator.share({ files: [file] });
+      const result = { message: `Shared <b>${escapeHtml(fileName)}</b>.`, type: "ok" };
+      setStatus(result.message, result.type);
+      return result;
     } catch (err) {
-      if (err && err.name === "AbortError") {
-        setStatus("Share cancelled.", "ok");
-      } else {
-        //console.error(err);
-        setStatus(escapeHtml(err.message || String(err)), "error");
-      }
+      const result = (err && err.name === "AbortError")
+        ? { message: "Share cancelled.", type: "ok" }
+        : { message: escapeHtml(err.message || String(err)), type: "error" };
+      setStatus(result.message, result.type);
+      return result;
     }
   }
 
@@ -3195,7 +3454,7 @@
     return loadBrowserImageFromFile(file);
   }
 
-  async function decodeSideBySideSourceFile(file) {
+  async function decodeSideBySideSourceFile(file, options = {}) {
     decodedViews = [];
     stopPreviewFlipAnimation();
 
@@ -3219,7 +3478,11 @@
     }
 
     sourceOriginalHeight = fullHeight;
-    applyAutomaticOutputHeightForCurrentMode();
+    if (options.preserveOutputHeight !== undefined && options.preserveOutputHeight !== null) {
+      applyOutputHeight(options.preserveOutputHeight);
+    } else {
+      applyAutomaticOutputHeightForCurrentMode();
+    }
 
     const eyeWidth = fullWidth / 2;
     const eyeHeight = fullHeight;
@@ -3246,7 +3509,12 @@
     ];
 
     sourceMeta.textContent = `Loaded side-by-side ${formatLabel} ${fullWidth}×${fullHeight}. Using left/right halves ${eyeWidth}×${eyeHeight}.`;
-    resetOutputHeightForLoadedImage(decodedViews[0].height);
+    if (options.preserveOutputHeight !== undefined && options.preserveOutputHeight !== null) {
+      applyOutputHeight(options.preserveOutputHeight);
+      updateControls();
+    } else {
+      resetOutputHeightForLoadedImage(decodedViews[0].height);
+    }
     setStatus(`Side-by-side ${formatLabel} loaded.&nbsp;&nbsp;Creating preview…`, "ok");
   }
 
@@ -3265,7 +3533,7 @@
     return outputCanvas;
   }
 
-  async function decodeSeparateStereoSourceFiles(files) {
+  async function decodeSeparateStereoSourceFiles(files, options = {}) {
     decodedViews = [];
     stopPreviewFlipAnimation();
 
@@ -3298,7 +3566,11 @@
     const rightCanvas = drawSourceImageToCanvas(rightSource);
 
     sourceOriginalHeight = leftHeight;
-    applyAutomaticOutputHeightForCurrentMode();
+    if (options.preserveOutputHeight !== undefined && options.preserveOutputHeight !== null) {
+      applyOutputHeight(options.preserveOutputHeight);
+    } else {
+      applyAutomaticOutputHeightForCurrentMode();
+    }
 
     decodedViews = [
       { index: 0, width: leftWidth, height: leftHeight, area: leftWidth * leftHeight, canvas: leftCanvas },
@@ -3306,8 +3578,329 @@
     ];
 
     sourceMeta.textContent = `Loaded separate left/right ${formatLabel} images ${leftWidth}×${leftHeight}. Left: ${files[0].name}; Right: ${files[1].name}.`;
-    resetOutputHeightForLoadedImage(decodedViews[0].height);
+    if (options.preserveOutputHeight !== undefined && options.preserveOutputHeight !== null) {
+      applyOutputHeight(options.preserveOutputHeight);
+      updateControls();
+    } else {
+      resetOutputHeightForLoadedImage(decodedViews[0].height);
+    }
     setStatus(`Separate left/right ${formatLabel} images loaded.&nbsp;&nbsp;Creating preview…`, "ok");
+  }
+
+
+  function getLoadedImageCount() {
+    return loadedImageFiles.length || (currentFile ? 1 : 0);
+  }
+
+  function updateCurrentFileMeta() {
+    const count = getLoadedImageCount();
+
+    if (!fileMeta) return;
+
+    if (!count || !currentFile) {
+      fileMeta.textContent = "No file selected.";
+      return;
+    }
+
+    if (currentImportMode === "pair" && currentSourceFiles.length === 2) {
+      fileMeta.textContent = getSourceFilesDescription(currentSourceFiles);
+      return;
+    }
+
+    if (count === 1) {
+      fileMeta.textContent = `${currentFile.name} (${formatBytes(currentFile.size)})`;
+      return;
+    }
+
+    fileMeta.textContent = `Image ${currentImageIndex + 1} of ${count}: ${currentFile.name} (${formatBytes(currentFile.size)})`;
+  }
+
+  function updateImageNavigationButtons() {
+    const count = getLoadedImageCount();
+    const visible = count > 1 && decodedViews.length >= 2 && currentImportMode === "batch";
+    const atFirstImage = currentImageIndex <= 0;
+    const atLastImage = currentImageIndex >= count - 1;
+
+    const buttonStates = [
+      { button: firstImageButton, idle: atFirstImage },
+      { button: prevImageButton, idle: atFirstImage },
+      { button: nextImageButton, idle: atLastImage },
+      { button: lastImageButton, idle: atLastImage }
+    ];
+
+    for (const { button, idle } of buttonStates) {
+      if (button) {
+        button.classList.toggle("visible", visible);
+        button.classList.toggle("idle", visible && idle);
+        button.disabled = !visible || idle;
+        button.setAttribute("aria-disabled", visible && idle ? "true" : "false");
+      }
+    }
+  }
+
+  async function askTwoFileImportMode(files) {
+    const message = "You selected exactly two files. Do you want to interpret them as a separate left/right pair, or as two already processed side-by-side stereo images for batch export?";
+
+    if (window.DayPilot && DayPilot.Modal && typeof DayPilot.Modal.confirm === "function") {
+      const result = await DayPilot.Modal.confirm(message, {
+        theme: "modal_compact",
+        top: 200,
+        okText: "Left/Right Pair",
+        cancelText: "Processed Stereo Images"
+      });
+
+      return result && !result.canceled ? "pair" : "batch";
+    }
+
+    return window.confirm(`${message}\n\nOK = Left/Right Pair\nCancel = Processed Stereo Images`) ? "pair" : "batch";
+  }
+
+  async function loadBatchImageAtIndex(index, options = {}) {
+    if (!loadedImageFiles.length) {
+      throw new Error("No batch images are loaded.");
+    }
+
+    const clampedIndex = Math.max(0, Math.min(loadedImageFiles.length - 1, Number(index) || 0));
+    const file = loadedImageFiles[clampedIndex];
+    const preserveOutputHeight = options.preserveOutputHeight;
+    const makePreview = options.makePreview !== false;
+
+    currentImageIndex = clampedIndex;
+    currentFile = file;
+    currentSourceFiles = [file];
+    currentImportMode = "batch";
+    clearGeneratedOutput({ keepGenerateButton: true });
+    updateCurrentFileMeta();
+    updateImageNavigationButtons();
+
+    await extractExifTagsFromSourceFile(file);
+    await decodeSideBySideSourceFile(file, { preserveOutputHeight });
+    updateCurrentFileMeta();
+
+    if (makePreview) {
+      await convertToSbs({ previewOnly: true });
+    }
+
+    updateImageNavigationButtons();
+    updateGenerateButtonVisibility();
+  }
+
+  async function navigateToImageIndex(index) {
+    if (!loadedImageFiles.length) return;
+
+    const count = loadedImageFiles.length;
+    const targetIndex = Math.max(0, Math.min(count - 1, Number(index) || 0));
+
+    if (targetIndex === currentImageIndex) {
+      updateImageNavigationButtons();
+      return;
+    }
+
+    const navigationOptions = { makePreview: true };
+
+    if (outputHeightManuallyChangedSinceOpen) {
+      navigationOptions.preserveOutputHeight = clampOutputHeight(heightRange.value);
+    }
+
+    try {
+      setOutputControlsBusy(true);
+      setStatus(`Loading image ${targetIndex + 1} of ${count}…`);
+      await loadBatchImageAtIndex(targetIndex, navigationOptions);
+      setStatus(`Image ${targetIndex + 1} of ${count} loaded.`, "ok");
+    } catch (err) {
+      setStatus(escapeHtml(err.message || String(err)), "error");
+    } finally {
+      setOutputControlsBusy(false);
+      updateGenerateButtonVisibility();
+    }
+  }
+
+  class BatchExportCancelledError extends Error {
+    constructor() {
+      super("ZIP export cancelled.");
+      this.name = "BatchExportCancelledError";
+    }
+  }
+
+  function throwIfBatchExportCancelled() {
+    if (batchExportController && batchExportController.cancelled) {
+      throw new BatchExportCancelledError();
+    }
+  }
+
+  function showBatchProgressDialog(totalImages) {
+    batchExportController = { cancelled: false, totalImages };
+
+    if (batchProgressCancelButton) {
+      batchProgressCancelButton.disabled = false;
+      batchProgressCancelButton.textContent = "Cancel";
+    }
+
+    if (batchProgressCloseButton) {
+      batchProgressCloseButton.disabled = false;
+      batchProgressCloseButton.textContent = "Cancel";
+      batchProgressCloseButton.style.display = "none";
+    }
+
+    updateBatchProgressDialog({
+      text: `Preparing to export ${totalImages} image${totalImages === 1 ? "" : "s"}…`,
+      percent: 0
+    });
+
+    if (batchProgressOverlay) {
+      batchProgressOverlay.classList.add("visible");
+    }
+  }
+
+  function updateBatchProgressDialog({ text, percent }) {
+    const safePercent = Math.max(0, Math.min(100, Math.round(Number(percent) || 0)));
+
+    if (batchProgressText) batchProgressText.innerHTML = text;
+    if (batchProgressBar) batchProgressBar.style.width = `${safePercent}%`;
+    if (batchProgressPercent) batchProgressPercent.textContent = `${safePercent}%`;
+  }
+
+  function hideBatchProgressDialog() {
+    if (batchProgressOverlay) batchProgressOverlay.classList.remove("visible");
+
+    if (batchProgressCancelButton) {
+      batchProgressCancelButton.disabled = false;
+      batchProgressCancelButton.textContent = "Cancel";
+    }
+
+    if (batchProgressCloseButton) {
+      batchProgressCloseButton.disabled = false;
+      batchProgressCloseButton.textContent = "Cancel";
+      batchProgressCloseButton.style.display = "none";
+    }
+
+    batchExportController = null;
+  }
+
+  if (batchProgressCancelButton) {
+    batchProgressCancelButton.addEventListener("click", () => {
+      if (!batchExportController) return;
+      batchExportController.cancelled = true;
+      batchProgressCancelButton.disabled = true;
+      batchProgressCancelButton.textContent = "Cancelling…";
+      updateBatchProgressDialog({
+        text: "Cancelling after the current step finishes…",
+        percent: Number(batchProgressBar?.style.width?.replace("%", "")) || 0
+      });
+      setStatus("Cancelling ZIP export…");
+    });
+  }
+
+  function sanitizeZipFilename(name) {
+    name = (name || "").trim();
+    if (!name) return "stereo-image-batch.zip";
+    name = name.replace(/[\/\\:*?"<>|]/g, "_").replace(/\s+/g, " ").trim();
+    if (!/\.zip$/i.test(name)) name += ".zip";
+    return name;
+  }
+
+  function getDefaultZipSaveName() {
+    const files = loadedImageFiles.length ? loadedImageFiles : (currentFile ? [currentFile] : []);
+    const firstName = (files[0]?.name || "stereo-image").replace(/\.[^.]+$/, "");
+    const count = Math.max(1, files.length - 1);
+    return sanitizeZipFilename(`${firstName}+${count}-images-${getOutputFormatSuffix()}-${Number(heightRange.value)}h.zip`);
+  }
+
+  function promptForZipSaveName() {
+    if (!window.DayPilot || !DayPilot.Modal || !DayPilot.Modal.prompt) {
+      return Promise.resolve(getDefaultZipSaveName());
+    }
+
+    return DayPilot.Modal.prompt("Please enter a filename for the exported ZIP file:", getDefaultZipSaveName(), {
+      theme: "modal_compact",
+      top: 200,
+      autoFocus: true
+    }).then(args => {
+      if (args.canceled) return null;
+      const cleanName = sanitizeZipFilename(args.result);
+      return cleanName || getDefaultZipSaveName();
+    });
+  }
+
+  async function shareZipOnIOS(zipBlob, zipName) {
+    if (!zipBlob) {
+      const result = { message: "No ZIP file has been generated yet.", type: "error" };
+      setStatus(result.message, result.type);
+      return result;
+    }
+
+    const fileName = sanitizeZipFilename(zipName) || getDefaultZipSaveName();
+    const file = new File([zipBlob], fileName, { type: "application/zip" });
+
+    if (!navigator.share) {
+      const result = { message: "The iOS Share Sheet is not available for this ZIP file in this browser.", type: "error" };
+      setStatus(result.message, result.type);
+      return result;
+    }
+
+    if (navigator.canShare && !navigator.canShare({ files: [file] })) {
+      const result = { message: "The iOS Share Sheet cannot share this ZIP file from this browser.", type: "error" };
+      setStatus(result.message, result.type);
+      return result;
+    }
+
+    try {
+      await navigator.share({ files: [file] });
+      const result = { message: `Shared <b>${escapeHtml(fileName)}</b>.`, type: "ok" };
+      setStatus(result.message, result.type);
+      return result;
+    } catch (err) {
+      const result = (err && err.name === "AbortError")
+        ? { message: "Share cancelled.", type: "ok" }
+        : { message: escapeHtml(err.message || String(err)), type: "error" };
+      setStatus(result.message, result.type);
+      return result;
+    }
+  }
+
+  function promptShareZipOnIOS(zipBlob, zipName) {
+    return new Promise(resolve => {
+      updateBatchProgressDialog({
+        text: `ZIP file <b>${escapeHtml(zipName)}</b> is ready.<br>Tap <b>Share ZIP</b> to open the iOS Share Sheet, then choose <b>Save to Files</b> or another share destination.`,
+        percent: 100
+      });
+
+      if (batchProgressCancelButton) {
+        batchProgressCancelButton.disabled = false;
+        batchProgressCancelButton.textContent = "Share ZIP";
+      }
+
+      if (batchProgressCloseButton) {
+        batchProgressCloseButton.disabled = false;
+        batchProgressCloseButton.textContent = "Cancel";
+        batchProgressCloseButton.style.display = "inline-block";
+      }
+
+      batchExportController = null;
+      setStatus(`ZIP file <b>${escapeHtml(zipName)}</b> is ready. Tap <b>Share ZIP</b> to open the iOS Share Sheet.`, "ok");
+
+      const cleanup = () => {
+        if (batchProgressCancelButton) batchProgressCancelButton.onclick = null;
+        if (batchProgressCloseButton) batchProgressCloseButton.onclick = null;
+      };
+
+      if (batchProgressCancelButton) {
+        batchProgressCancelButton.onclick = async () => {
+          cleanup();
+          batchProgressCancelButton.disabled = true;
+          batchProgressCancelButton.textContent = "Sharing…";
+          const result = await shareZipOnIOS(zipBlob, zipName);
+          resolve(result);
+        };
+      }
+
+      if (batchProgressCloseButton) {
+        batchProgressCloseButton.onclick = () => {
+          cleanup();
+          resolve({ message: "ZIP export cancelled.", type: "ok" });
+        };
+      }
+    });
   }
 
   async function processSourceImageFiles(fileList) {
@@ -3318,11 +3911,6 @@
       return;
     }
 
-    if (files.length > 2) {
-      await rejectImportAttempt("Please select or drop no more than two files. Use one side-by-side JPEG/TIFF file, or two separate left/right JPEG/TIFF files.");
-      return;
-    }
-
     const unsupportedFile = files.find(file => !isLikelySourceImageFile(file));
 
     if (unsupportedFile) {
@@ -3330,32 +3918,60 @@
       return;
     }
 
-    if (files.length === 2 && getSourceImageFormatKey(files[0]) !== getSourceImageFormatKey(files[1])) {
-      await rejectImportAttempt("The two selected images must be the same format. Please use two JPEG files or two TIFF files.");
-      return;
-    }
-
     clearGeneratedOutput();
     decodedViews = [];
+    loadedImageFiles = [];
+    currentImageIndex = 0;
+    currentImportMode = "single";
+    outputHeightManuallyChangedSinceOpen = false;
     currentFile = files[0] || null;
-    currentSourceFiles = files.slice();
+    currentSourceFiles = files.slice(0, 1);
     sourceOriginalHeight = OUTPUT_HEIGHT_DEFAULT;
     resetImageAdjustmentsForNewFile();
 
-    fileMeta.textContent = getSourceFilesDescription(files);
-    sourceMeta.textContent = "Stereo images not loaded yet.";
-    outputMeta.textContent = "No JPEG generated yet.";
-
     try {
-      await extractExifTagsFromSourceFile(files[0]);
-
       if (files.length === 1) {
+        currentImportMode = "single";
+        currentFile = files[0];
+        currentSourceFiles = [files[0]];
+        fileMeta.textContent = getSourceFilesDescription([files[0]]);
+        sourceMeta.textContent = "Stereo images not loaded yet.";
+        outputMeta.textContent = "No JPEG generated yet.";
+        await extractExifTagsFromSourceFile(files[0]);
         await decodeSideBySideSourceFile(files[0]);
+        await convertToSbs({ previewOnly: true });
+      } else if (files.length === 2) {
+        const importMode = await askTwoFileImportMode(files);
+
+        if (importMode === "pair") {
+          if (getSourceImageFormatKey(files[0]) !== getSourceImageFormatKey(files[1])) {
+            await rejectImportAttempt("The two selected images must be the same format when importing them as a left/right pair. Please use two JPEG files or two TIFF files.");
+            return;
+          }
+
+          currentImportMode = "pair";
+          currentFile = files[0];
+          currentSourceFiles = files.slice();
+          fileMeta.textContent = getSourceFilesDescription(files);
+          sourceMeta.textContent = "Stereo images not loaded yet.";
+          outputMeta.textContent = "No JPEG generated yet.";
+          await extractExifTagsFromSourceFile(files[0]);
+          await decodeSeparateStereoSourceFiles(files);
+          await convertToSbs({ previewOnly: true });
+        } else {
+          currentImportMode = "batch";
+          loadedImageFiles = files.slice();
+          await loadBatchImageAtIndex(0, { makePreview: true });
+        }
       } else {
-        await decodeSeparateStereoSourceFiles(files);
+        currentImportMode = "batch";
+        loadedImageFiles = files.slice();
+        await loadBatchImageAtIndex(0, { makePreview: true });
       }
 
-      await convertToSbs({ previewOnly: true });
+      updateCurrentFileMeta();
+      updateImageNavigationButtons();
+      updateGenerateButtonVisibility();
     } catch (err) {
       const message = err && err.message ? err.message : String(err);
       clearLoadedState(message, "error");
@@ -3563,20 +4179,44 @@
 
   function updateGenerateButtonVisibility() {
     const hasStereoPair = decodedViews.length >= 2;
+    const canExportAll = currentImportMode === "batch" && loadedImageFiles.length > 1;
 
     if (!hasStereoPair) {
       downloadLink.classList.remove("busy");
       downloadLink.style.display = "none";
       downloadLink.removeAttribute("href");
+      if (downloadAllLink) {
+        downloadAllLink.classList.remove("busy");
+        downloadAllLink.style.display = "none";
+        downloadAllLink.removeAttribute("href");
+      }
       downloadActions.style.display = "none";
+      updateImageNavigationButtons();
       return;
     }
 
     downloadLink.classList.remove("busy");
     downloadLink.removeAttribute("href");
-    downloadLink.textContent = isIOSDevice() ? "Generate & Share JPEG" : "Generate & Download JPEG";
+
+    if (downloadAllLink) {
+      downloadAllLink.classList.remove("busy");
+      downloadAllLink.removeAttribute("href");
+    }
+    downloadLink.textContent = "Export Current JPEG";
     downloadLink.style.display = "block";
-    downloadActions.style.display = "grid";
+
+    if (downloadAllLink) {
+      downloadAllLink.classList.remove("busy");
+      downloadAllLink.removeAttribute("href");
+      downloadAllLink.textContent = "Export All as ZIP";
+      downloadAllLink.style.display = canExportAll ? "block" : "none";
+    }
+
+    if (downloadActions) {
+      downloadActions.style.gridTemplateColumns = canExportAll ? "repeat(2, minmax(0, 1fr))" : "1fr";
+      downloadActions.style.display = "grid";
+    }
+    updateImageNavigationButtons();
   }
 
   function clearGeneratedOutput(options = {}) {
@@ -4709,8 +5349,8 @@ function updateOutputModeControls() {
         } else {
           updateGenerateButtonVisibility();
         }
-        outputMeta.textContent = `Preview updated. Click ${isIOSDevice() ? "Generate & Share JPEG" : "Generate & Download JPEG"} to create the final JPEG.`;
-        setStatus(`Preview updated.&nbsp;&nbsp;Click <b>${isIOSDevice() ? "Generate & Share JPEG" : "Generate & Download JPEG"}</b> to create the final ${modeLabel} JPEG.`, "ok");
+        outputMeta.textContent = "Preview updated. Click Export Current JPEG to create the final JPEG.";
+        setStatus(`Preview updated.&nbsp;&nbsp;Click <b>Export Current JPEG</b> to create the final ${modeLabel} JPEG.`, "ok");
         return;
       }
 
@@ -4733,7 +5373,7 @@ function updateOutputModeControls() {
       downloadLink.removeAttribute("href");
       downloadLink.download = defaultName;
       downloadLink.classList.remove("busy");
-      downloadLink.textContent = isIOSDevice() ? "Generate & Share JPEG" : "Generate & Download JPEG";
+      downloadLink.textContent = "Export Current JPEG";
       downloadLink.style.display = "block";
       downloadActions.style.display = "grid";
 
@@ -4782,12 +5422,13 @@ function updateOutputModeControls() {
     const html = `
       <div class="instructions-body">
         <h3 style="text-align:center;">Stereo JPEG/TIFF → Side-by-Side or 3D Anaglyph</h3>
-        <p>This tool opens either an existing side-by-side JPEG/TIFF stereo image file or two separate same-format, same-dimensions JPEG/TIFF image files to be used as the left and right views, then exports the result locally in your browser as either an adjusted Side-by-Side JPEG or a 3D Anaglyph JPEG.</p>
+        <p>This tool opens existing side-by-side JPEG/TIFF stereo image files, or a separate same-format, same-dimensions JPEG/TIFF image file pair to be used as the left and right views, then exports the result locally in your browser as adjusted Side-by-Side JPEG or 3D Anaglyph JPEG images.</p>
 
         <h4>Basic workflow</h4>
         <ol>
-          <li>Select either a single side-by-side JPEG/TIFF file, or two separate JPEG/TIFF files to use as the left and right views.<br/>On desktop, you can also drag and drop either one side-by-side file or a two-file left/right pair onto the top control panel.</li>
-          <li>A single side-by-side JPEG/TIFF input is split into equal left and right halves before the normal adjustment/export workflow begins. When two files are loaded, the first file is treated as the left image and the second file is treated as the right image.</li>
+          <li>Select one side-by-side JPEG/TIFF stereo image, multiple already-processed side-by-side JPEG/TIFF stereo images, or two separate JPEG/TIFF files to use as a left/right pair.<br/>On desktop, you can also drag and drop the files onto the top control panel.</li>
+          <li>A single side-by-side JPEG/TIFF input is split into equal left and right halves before the normal adjustment/export workflow begins. If exactly two files are loaded, the tool asks whether to treat them as a separate left/right pair or as two already processed side-by-side stereo images. If three or more files are loaded, they are treated as a batch of already processed side-by-side stereo images, and each image is split into left/right halves.</li>
+          <li>When multiple processed stereo images are loaded, use the First, Previous, Next, and Last buttons over the preview to move through the collection. On desktop, these buttons appear when the mouse is over the preview. On iOS, they remain visible. When switching images, the Output JPEG Height normally updates to the newly displayed image’s native height. If you manually change the Output JPEG Height after opening the files, that manual height is preserved while navigating and is used for batch ZIP export. Opening or dropping new files resets this manual-height override.</li>
           <li><b>Stereo Order</b> affects both Side-by-Side and Anaglyph output. For Anaglyph output, it controls which source half becomes the red left-eye channel and which source half becomes the cyan right-eye channel.</li>
           <li>This can be used to reverse the left/right order if required when opening an image pair or if you want to create an Anaglyph from a right/left cross-eye source image.</li>
           <li>TIFF support is intended for standard 8-bit RGB side-by-side or separate left/right TIFF/TIF images, including uncompressed TIFFs and common LZW-compressed TIFFs with horizontal differencing predictor.</li>
@@ -4799,7 +5440,9 @@ function updateOutputModeControls() {
           <li>On desktop browsers, move the mouse over the preview area to reveal the full-screen button at the top right of the preview. On iPad, the button remains visible at the top right. The button is hidden on iPhone and while full-screen mode is active. Press Escape or use the browser full-screen control to return to the normal tool view.</li>
           <li>The normal on-page preview is optimized for responsiveness, while full-screen preview automatically uses a higher preview resolution when useful for sharper viewing on high-DPI displays.</li>
           <li>For side-by-side image viewing, to make the side-by-side preview smaller and help facilitate visually fusing the images while making adjustments, you can either zoom out the browser window or resize the window narrower to make the preview smaller.</li>
-          <li>To save the results, click <b>Generate &amp; Download JPEG</b> on desktop or <b>Generate &amp; Share JPEG</b> on iOS.</li>
+          <li>To export the currently displayed image, click <b>Export Current JPEG</b>. On desktop, the browser downloads the JPEG. On iOS, the iOS Share Sheet opens so you can save or share the JPEG.</li>
+          <li>When multiple processed stereo images are loaded, click <b>Export All as ZIP</b> to export all loaded images using the current settings. During batch export, a progress dialog shows the current image and overall progress; click <b>Cancel</b> during ZIP generation to stop after the current processing step finishes.</li>
+          <li>On iOS, after the ZIP is ready, tap <b>Share ZIP</b> to open the iOS Share Sheet, then choose <b>Save to Files</b> or another share destination. Tap <b>Cancel</b> to close the ZIP dialog without sharing.</li>
         </ol>
 
         <h4>Controls</h4>
@@ -4839,7 +5482,7 @@ function updateOutputModeControls() {
           <li><b>Horizontal Shift</b> shifts the two eye views horizontally before compositing.</li>
           <li>For Anaglyph output, non-None <b>Border</b> settings draw a black outer border around the final image.</li>
           <li>View the anaglyph modes with red/cyan 3D glasses.<br/><b>Red / Cyan, Color</b> is usually the best general starting point. If there are too many color bleed artifacts, try <b>Red / Cyan, Optimized</b>.</li>
-          <li>For some close-up or macro spatial photos, a larger <b>Horizontal Shift</b> range may help produce a more comfortable or more accurate stereo or anaglyph result.</li>
+          <li>For some close-up or macro stereo photos, a larger <b>Horizontal Shift</b> range may help produce a more comfortable or more accurate stereo or anaglyph result.</li>
         </ul>
 
         <h4>Red / Cyan anaglyph modes</h4>
@@ -4861,7 +5504,7 @@ function updateOutputModeControls() {
         <h4>Privacy</h4>
         <ul>
           <li>All processing is performed locally in your browser.</li>
-          <li>The selected JPEG or TIFF file, or selected two-file JPEG/TIFF pair, is not uploaded to a server by this tool.</li>
+          <li>The selected JPEG or TIFF files, or selected two-file JPEG/TIFF pair, are not uploaded to a server by this tool.</li>
           <li>If the source JPEG contains GPS/location EXIF metadata, the exported JPEG may contain the same location metadata. For two-file JPEG imports, metadata is copied from the first/left file. For TIFF sources, GPS/location EXIF tags are intentionally not written to the exported JPEG.</li>
           <li>Google Analytics is used to collect aggregate usage statistics for the tool.</li>
         </ul>
@@ -4929,20 +5572,10 @@ function updateOutputModeControls() {
         return;
       }
 
-      if (files.length > 2) {
-        await rejectImportAttempt("Please drop no more than two files. Use one side-by-side JPEG/TIFF file, or two separate left/right JPEG/TIFF files.");
-        return;
-      }
-
       const unsupportedFile = files.find(file => !isLikelySourceImageFile(file));
 
       if (unsupportedFile) {
         await rejectImportAttempt("Please drop only .jpg, .jpeg, .tif, or .tiff files.");
-        return;
-      }
-
-      if (files.length === 2 && getSourceImageFormatKey(files[0]) !== getSourceImageFormatKey(files[1])) {
-        await rejectImportAttempt("The two dropped images must be the same format. Please use two JPEG files or two TIFF files.");
         return;
       }
 
@@ -5015,6 +5648,7 @@ function updateOutputModeControls() {
         ? decodedViews[0].height
         : sourceOriginalHeight || OUTPUT_HEIGHT_DEFAULT;
 
+    outputHeightManuallyChangedSinceOpen = false;
     resetOutputHeightForLoadedImage(currentSourceHeight);
     regeneratePreviewIfReady();
   });
@@ -5200,9 +5834,7 @@ function updateOutputModeControls() {
     setTimeout(() => URL.revokeObjectURL(url), 30000);
   }
 
-  downloadLink.addEventListener("click", async event => {
-    event.preventDefault();
-
+  async function exportCurrentImage() {
     if (decodedViews.length < 2) {
       setStatus("No stereo image has been loaded yet.", "error");
       return;
@@ -5217,16 +5849,17 @@ function updateOutputModeControls() {
       }
 
       if (isIOSDevice()) {
-        await shareJpegOnIOS();
-        resetPreviewFlipSliderAfterSave();
+        const shareResult = await shareJpegOnIOS();
+        await resetPreviewFlipSliderAfterSave();
         updateGenerateButtonVisibility();
+        if (shareResult?.message) setStatus(shareResult.message, shareResult.type || "ok");
         return;
       }
 
       const saveName = await promptForSaveName();
 
       if (!saveName) {
-        setStatus("Download cancelled.", "ok");
+        setStatus("Export cancelled.", "ok");
         regeneratePreviewIfReady();
         updateGenerateButtonVisibility();
         return;
@@ -5234,15 +5867,201 @@ function updateOutputModeControls() {
 
       lastGeneratedFileName = saveName;
       downloadBlobWithName(lastBlob, saveName);
-      resetPreviewFlipSliderAfterSave();
+      await resetPreviewFlipSliderAfterSave();
       updateGenerateButtonVisibility();
-      setStatus(`Saved as <b>${escapeHtml(saveName)}</b>.`, "ok");
+      setStatus(`Saved image ${currentImageIndex + 1} of ${getLoadedImageCount()} as <b>${escapeHtml(saveName)}</b>.`, "ok");
     } catch (err) {
-      //console.error(err);
       updateGenerateButtonVisibility();
       setStatus(escapeHtml(err.message || String(err)), "error");
     }
+  }
+
+  async function exportAllImagesAsZip() {
+    const files = loadedImageFiles.length ? [...loadedImageFiles] : [];
+
+    if (!files.length) {
+      setStatus("No batch images are loaded.", "error");
+      return;
+    }
+
+    if (files.length < 2) {
+      setStatus("Export All as ZIP is only available when more than one processed stereo image is loaded.", "error");
+      updateGenerateButtonVisibility();
+      return;
+    }
+
+    if (!window.JSZip) {
+      setStatus("JSZip is not loaded. Add <code>jszip-min.js</code> before exporting multiple images.", "error");
+      return;
+    }
+
+    const zipName = await promptForZipSaveName();
+
+    if (!zipName) {
+      setStatus("ZIP export cancelled.", "ok");
+      return;
+    }
+
+    const batchOutputHeight = outputHeightManuallyChangedSinceOpen
+      ? clampOutputHeight(heightRange.value)
+      : null;
+
+    if (batchOutputHeight !== null) {
+      heightRange.value = String(batchOutputHeight);
+      updateControls();
+    }
+
+    const originalIndex = currentImageIndex;
+    const zip = new JSZip();
+    let finalStatus = "";
+    let finalStatusType = "ok";
+
+    try {
+      showBatchProgressDialog(files.length);
+      setOutputControlsBusy(true);
+      downloadLink.classList.add("busy");
+      if (downloadAllLink) {
+        downloadAllLink.classList.add("busy");
+        downloadAllLink.textContent = "Preparing ZIP…";
+      }
+      downloadActions.style.display = "grid";
+
+      for (let i = 0; i < files.length; i++) {
+        throwIfBatchExportCancelled();
+        const startPercent = Math.round((i / files.length) * 90);
+        const fileName = escapeHtml(files[i].name);
+        updateBatchProgressDialog({
+          text: `Processing image ${i + 1} of ${files.length}: <b>${fileName}</b>…`,
+          percent: startPercent
+        });
+        setStatus(`Processing image ${i + 1} of ${files.length}: <b>${fileName}</b>…`);
+
+        const loadOptions = { makePreview: false };
+
+        if (batchOutputHeight !== null) {
+          loadOptions.preserveOutputHeight = batchOutputHeight;
+        }
+
+        await loadBatchImageAtIndex(i, loadOptions);
+        throwIfBatchExportCancelled();
+
+        await convertToSbs({ preserveDownloadUi: true });
+        throwIfBatchExportCancelled();
+
+        if (!lastBlob) {
+          throw new Error(`The JPEG could not be generated for ${files[i].name}.`);
+        }
+
+        zip.file(getDefaultSaveName(), lastBlob);
+        updateBatchProgressDialog({
+          text: `Added image ${i + 1} of ${files.length}: <b>${fileName}</b>.`,
+          percent: Math.round(((i + 1) / files.length) * 90)
+        });
+        await new Promise(requestAnimationFrame);
+      }
+
+      throwIfBatchExportCancelled();
+      updateBatchProgressDialog({
+        text: `Creating ZIP file with ${files.length} JPEG image${files.length === 1 ? "" : "s"}…`,
+        percent: 92
+      });
+      setStatus(`Creating ZIP file with ${files.length} JPEG image${files.length === 1 ? "" : "s"}…`);
+
+      const zipBlob = await zip.generateAsync({ type: "blob" }, metadata => {
+        const zipPercent = 92 + Math.round((metadata.percent || 0) * 0.08);
+        updateBatchProgressDialog({
+          text: `Creating ZIP file with ${files.length} JPEG image${files.length === 1 ? "" : "s"}…`,
+          percent: zipPercent
+        });
+
+        if (batchExportController && batchExportController.cancelled) {
+          throw new BatchExportCancelledError();
+        }
+      });
+
+      throwIfBatchExportCancelled();
+      updateBatchProgressDialog({ text: isIOSDevice() ? "ZIP file ready." : "Saving ZIP file…", percent: 100 });
+
+      if (isIOSDevice()) {
+        const shareResult = await promptShareZipOnIOS(zipBlob, zipName);
+        finalStatus = shareResult?.message || "";
+        finalStatusType = shareResult?.type || "ok";
+      } else {
+        downloadBlobWithName(zipBlob, zipName);
+        finalStatus = `Saved <b>${escapeHtml(zipName)}</b> containing ${files.length} JPEG image${files.length === 1 ? "" : "s"}.`;
+      }
+
+      await resetPreviewFlipSliderAfterSave();
+    } catch (err) {
+      if (err instanceof BatchExportCancelledError || err?.name === "BatchExportCancelledError") {
+        finalStatus = "ZIP export cancelled.";
+        finalStatusType = "ok";
+      } else {
+        finalStatus = escapeHtml(err.message || String(err));
+        finalStatusType = "error";
+      }
+    } finally {
+      hideBatchProgressDialog();
+
+      try {
+        if (files.length) {
+          const restoreOptions = { makePreview: true };
+
+          if (batchOutputHeight !== null) {
+            restoreOptions.preserveOutputHeight = batchOutputHeight;
+          }
+
+          await loadBatchImageAtIndex(Math.min(originalIndex, files.length - 1), restoreOptions);
+        }
+      } catch (restoreErr) {
+        // Leave the current decoded image in place if restore fails.
+      }
+
+      setOutputControlsBusy(false);
+      updateGenerateButtonVisibility();
+      if (finalStatus) setStatus(finalStatus, finalStatusType);
+    }
+  }
+
+  downloadLink.addEventListener("click", async event => {
+    event.preventDefault();
+    await exportCurrentImage();
   });
+
+  if (downloadAllLink) {
+    downloadAllLink.addEventListener("click", async event => {
+      event.preventDefault();
+      await exportAllImagesAsZip();
+    });
+  }
+
+  if (firstImageButton) {
+    firstImageButton.addEventListener("click", () => {
+      firstImageButton.blur();
+      navigateToImageIndex(0);
+    });
+  }
+
+  if (prevImageButton) {
+    prevImageButton.addEventListener("click", () => {
+      prevImageButton.blur();
+      navigateToImageIndex(currentImageIndex - 1);
+    });
+  }
+
+  if (nextImageButton) {
+    nextImageButton.addEventListener("click", () => {
+      nextImageButton.blur();
+      navigateToImageIndex(currentImageIndex + 1);
+    });
+  }
+
+  if (lastImageButton) {
+    lastImageButton.addEventListener("click", () => {
+      lastImageButton.blur();
+      navigateToImageIndex(getLoadedImageCount() - 1);
+    });
+  }
 
   const runningOnIOS = isIOSDevice();
 
@@ -5252,7 +6071,7 @@ function updateOutputModeControls() {
     registerDragAndDropHandlers();
   }
 
-  setStatus("Please select one side-by-side JPEG/TIFF file, or two same-format, same-dimensions left/right JPEG/TIFF files.");
+  setStatus("Please select one or more side-by-side JPEG/TIFF files, or two same-format, same-dimensions left/right JPEG/TIFF files.");
 
   previewFlipMaximumHz = loadPreviewFlipMaximumFromStorage();
   applyPreviewFlipMaximum(previewFlipMaximumHz);
