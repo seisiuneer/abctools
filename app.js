@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3222_051426_1400";
+var gVersionNumber = "3223_052026_0900";
 
 var gMIDIInitStillWaiting = false;
 
@@ -203,6 +203,15 @@ var gPDFOrientation = "portrait";
 var gPDFPaperSize = "letter";
 var gPageWidth = 535;
 var gRenderPixelRatio = 2.0;
+
+// PDF multi-tune page fit mode.
+// 0 = normal behavior, 2 = prefer two tunes per page, 3 = prefer three tunes per page.
+var gPDFPageFitTargetTunes = 0;
+var gPDFPageFitTuneScales = [];
+var gPDFPageFitMinScale = 0.72;
+var gPDFPageFitMinScaleTwoTunes = 0.72;
+var gPDFPageFitMinScaleThreeTunes = 0.55;
+
 
 // PDF hidden titles
 var gPDFIncludeHiddenTitles = true;
@@ -8095,6 +8104,254 @@ function getDescriptiveFileName(tuneCount, bAllowSpaces) {
 }
 
 //
+// PDF page-fit helpers for Prefer 2 Tunes per Page / Prefer 3 Tunes per Page
+//
+function isPDFPageFitLayout(thePageOptions) {
+
+  return ((thePageOptions == "multi_fit_2") ||
+          (thePageOptions == "multi_fit_2_a4") ||
+          (thePageOptions == "multi_fit_3") ||
+          (thePageOptions == "multi_fit_3_a4"));
+
+}
+
+function getPDFPageFitTargetFromLayout(thePageOptions) {
+
+  if ((thePageOptions == "multi_fit_2") || (thePageOptions == "multi_fit_2_a4")) {
+    return 2;
+  }
+
+  if ((thePageOptions == "multi_fit_3") || (thePageOptions == "multi_fit_3_a4")) {
+    return 3;
+  }
+
+  return 0;
+
+}
+
+
+function getPDFPageFitMinScale(targetTunesPerPage) {
+
+  // The 3 tunes-per-page mode intentionally allows more aggressive scaling
+  // so common four-stave dance tunes can stay grouped three to a page.
+  if (targetTunesPerPage == 3) {
+    return gPDFPageFitMinScaleThreeTunes;
+  }
+
+  if (targetTunesPerPage == 2) {
+    return gPDFPageFitMinScaleTwoTunes;
+  }
+
+  return gPDFPageFitMinScale;
+
+}
+
+function getPDFTuneIndexFromBlockID(theBlock) {
+
+  if (!theBlock || !theBlock.id) {
+    return -1;
+  }
+
+  var theMatch = theBlock.id.match(/^block_(\d+)_/);
+
+  if (theMatch && theMatch.length > 1) {
+    return parseInt(theMatch[1], 10);
+  }
+
+  return -1;
+
+}
+
+function getPDFPageFitScaleForBlock(theBlock, doIncipits) {
+
+  if (doIncipits || (gPDFPageFitTargetTunes == 0)) {
+    return 1.0;
+  }
+
+  var tuneIndex = getPDFTuneIndexFromBlockID(theBlock);
+
+  if ((tuneIndex >= 0) && gPDFPageFitTuneScales && gPDFPageFitTuneScales.length) {
+
+    var theScale = gPDFPageFitTuneScales[tuneIndex];
+
+    if (!isNaN(theScale) && (theScale > 0)) {
+      return theScale;
+    }
+  }
+
+  return 1.0;
+
+}
+
+function measurePDFTuneHeightsForPageFit(nTunes, doIncipits) {
+
+  var renderingDivs = [];
+
+  for (var i = 0; i < nTunes; ++i) {
+
+    var theElem = document.getElementById("notation" + i);
+
+    if (!theElem) {
+      renderingDivs.push({ height: 0, staffHeights: [] });
+      continue;
+    }
+
+    var theElemHeight = theElem.offsetHeight / PDFSCALEFACTOR;
+    var theStaffHeights = [];
+    var theBlocks = theElem.children;
+    var nBlocks = theBlocks.length;
+    var scale_factor = 1.0;
+
+    if (doIncipits) {
+
+      if (nBlocks > 2) {
+        nBlocks = 2;
+      }
+
+      if (gIncipitsColumns == 2) {
+        scale_factor = 2.0;
+      }
+    }
+
+    var accumHeight = 0;
+
+    for (var j = 0; j < nBlocks; ++j) {
+
+      var currentBlock = theBlocks.item(j);
+      var theBlockHeight = currentBlock.offsetHeight / PDFSCALEFACTOR;
+      theBlockHeight /= scale_factor;
+
+      theStaffHeights.push(theBlockHeight);
+      accumHeight += theBlockHeight;
+    }
+
+    if (doIncipits) {
+      theElemHeight = accumHeight;
+    }
+
+    var theRenderingDivsHeight = theElemHeight;
+
+    // Match the same width/orientation adjustment used by ProcessTunesForContinuousLayout().
+    if ((gPDFNotationWidthOverrideRequested || gPDFNotationWidthAutoOverrideRequested) && (!doIncipits)) {
+
+      theRenderingDivsHeight = (theRenderingDivsHeight * gPageWidth) / 535;
+
+    } else {
+
+      if (gPDFOrientation == "landscape") {
+
+        if (gPDFPaperSize == "letter") {
+          theRenderingDivsHeight = (theRenderingDivsHeight * 718) / 535;
+        } else {
+          theRenderingDivsHeight = (theRenderingDivsHeight * 785) / 535;
+        }
+      }
+    }
+
+    var thisTuneHeight = theRenderingDivsHeight + theStaffHeights.length;
+
+    renderingDivs.push({
+      height: thisTuneHeight,
+      staffHeights: theStaffHeights
+    });
+  }
+
+  return renderingDivs;
+
+}
+
+function ProcessTunesForPageFitLayout(pageBreakList, pageHeight, doIncipits, targetTunesPerPage) {
+
+  var nTunes = pageBreakList.length;
+
+  gPDFPageFitTuneScales = [];
+
+  for (var i = 0; i < nTunes; ++i) {
+    gPDFPageFitTuneScales.push(1.0);
+  }
+
+  if (doIncipits || (targetTunesPerPage <= 1) || (nTunes <= 1)) {
+    return ProcessTunesForContinuousLayout(pageBreakList, pageHeight, doIncipits);
+  }
+
+  var renderingDivs = measurePDFTuneHeightsForPageFit(nTunes, doIncipits);
+
+  var pageSizeWithMargins = pageHeight - (PAGETOPOFFSET + PAGEBOTTOMOFFSET);
+  var minScaleForThisMode = getPDFPageFitMinScale(targetTunesPerPage);
+
+  var iTune = 0;
+
+  while (iTune < nTunes) {
+
+    var groupCount = Math.min(targetTunesPerPage, nTunes - iTune);
+
+    // Do not pack across a manual %%newpage or section-header page break.
+    for (var j = 1; j < groupCount; ++j) {
+      if (pageBreakList[iTune + j - 1]) {
+        groupCount = j;
+        break;
+      }
+    }
+
+    var finalGroupCount = groupCount;
+    var finalScale = 1.0;
+
+    // Prefer the requested number of tunes, but do not shrink below the readability floor
+    // unless the group has only one tune left.
+    while (finalGroupCount > 0) {
+
+      var totalHeight = 0;
+
+      for (var k = 0; k < finalGroupCount; ++k) {
+        totalHeight += renderingDivs[iTune + k].height;
+      }
+
+      if (finalGroupCount > 1) {
+        totalHeight += (BETWEENTUNESPACE * (finalGroupCount - 1));
+      }
+
+      finalScale = 1.0;
+
+      if (totalHeight > pageSizeWithMargins) {
+        finalScale = pageSizeWithMargins / totalHeight;
+      }
+
+      if ((finalScale >= minScaleForThisMode) || (finalGroupCount == 1)) {
+        break;
+      }
+
+      finalGroupCount--;
+    }
+
+    if (finalGroupCount < 1) {
+      finalGroupCount = 1;
+      finalScale = 1.0;
+    }
+
+    // Preserve readability for a single oversize tune. It can still flow across pages normally.
+    if ((finalGroupCount == 1) && (finalScale < minScaleForThisMode)) {
+      finalScale = 1.0;
+    }
+
+    for (var m = 0; m < finalGroupCount; ++m) {
+      gPDFPageFitTuneScales[iTune + m] = finalScale;
+    }
+
+    var nextTune = iTune + finalGroupCount;
+
+    // Force the next page after the completed target group.
+    if (nextTune < nTunes) {
+      pageBreakList[nextTune - 1] = true;
+    }
+
+    iTune = nextTune;
+  }
+
+  return pageBreakList;
+
+}
+
+//
 // Measure all the tunes for PDF layout
 //
 function ProcessTunesForContinuousLayout(pageBreakList, pageHeight, doIncipits) {
@@ -8416,7 +8673,15 @@ function scanTunesForPageBreaks(pdf, paperStyle, doIncipits) {
   }
 
   // Measure the tunes and insert any automatic page breaks
-  pageBreakRequested = ProcessTunesForContinuousLayout(pageBreakRequested, thePaperHeight, doIncipits);
+  if (gPDFPageFitTargetTunes > 0) {
+
+    pageBreakRequested = ProcessTunesForPageFitLayout(pageBreakRequested, thePaperHeight, doIncipits, gPDFPageFitTargetTunes);
+
+  } else {
+
+    pageBreakRequested = ProcessTunesForContinuousLayout(pageBreakRequested, thePaperHeight, doIncipits);
+
+  }
 
   return pageBreakRequested;
 }
@@ -10637,6 +10902,8 @@ function RenderPDFBlock(theBlock, blockIndex, doSinglePage, pageBreakList, addPa
 
       var theBlockID = theBlock.id + ".block";
 
+      var pageFitScale = getPDFPageFitScaleForBlock(theBlock, doIncipits);
+
       var isFirstBlock = false;
 
       // Insert a new page for each tune
@@ -10739,7 +11006,7 @@ function RenderPDFBlock(theBlock, blockIndex, doSinglePage, pageBreakList, addPa
             } else {
 
               // Otherwise, move it down the current page a bit
-              running_height += (BETWEENTUNESPACE / scale_factor);
+              running_height += (BETWEENTUNESPACE / scale_factor) * pageFitScale;
 
               // Add hidden text for search
               injectHiddenSearchText(running_height, doIncipits, gIncipitsColumns, column_number);
@@ -10778,10 +11045,18 @@ function RenderPDFBlock(theBlock, blockIndex, doSinglePage, pageBreakList, addPa
 
       height /= scale_factor;
 
+      var drawWidth = (gPageWidth / scale_factor) * pageFitScale;
+      var drawHeight = height * pageFitScale;
+
+      // In the page-fit modes, center the proportionally scaled tune block horizontally.
+      if ((gPDFPageFitTargetTunes > 0) && (!doIncipits)) {
+        hoff = (pdf.internal.pageSize.getWidth() - drawWidth) / 2;
+      }
+
       // the first two values mean x,y coordinates for the upper left corner. Enlarge to get larger margin.
       // then comes width, then height. The second value can be freely selected - then it leaves more space at the top.
 
-      if (running_height + height <= thePageHeight - PAGEBOTTOMOFFSET) // i.e. if a block of notes would get in the way with the bottom margin (30 pt), then a new one please...
+      if (running_height + drawHeight <= thePageHeight - PAGEBOTTOMOFFSET) // i.e. if a block of notes would get in the way with the bottom margin (30 pt), then a new one please...
       {
 
         if (isFirstBlock) {
@@ -10790,14 +11065,14 @@ function RenderPDFBlock(theBlock, blockIndex, doSinglePage, pageBreakList, addPa
             page: theCurrentPageNumber,
             x: hoff,
             y: running_height,
-            width: (gPageWidth / scale_factor),
-            height: height,
+            width: drawWidth,
+            height: drawHeight,
             url: ""
           });
 
         }
 
-        pdf.addImage(imgData, 'JPG', hoff, running_height, (gPageWidth / scale_factor), height);
+        pdf.addImage(imgData, 'JPG', hoff, running_height, drawWidth, drawHeight);
 
 
       } else {
@@ -10814,8 +11089,8 @@ function RenderPDFBlock(theBlock, blockIndex, doSinglePage, pageBreakList, addPa
             page: theCurrentPageNumber,
             x: hoff,
             y: running_height,
-            width: (gPageWidth / scale_factor),
-            height: height,
+            width: drawWidth,
+            height: drawHeight,
             url: ""
           });
 
@@ -10827,13 +11102,13 @@ function RenderPDFBlock(theBlock, blockIndex, doSinglePage, pageBreakList, addPa
 
         pdf.addPage(paperStyle, gPDFOrientation); //... create a page in letter or a4 format, then leave a 30 pt margin at the top and continue.
 
-        pdf.addImage(imgData, 'JPG', hoff, running_height, (gPageWidth / scale_factor), height);
+        pdf.addImage(imgData, 'JPG', hoff, running_height, drawWidth, drawHeight);
 
         document.getElementById("pagestatustext").innerHTML = "Rendered <font color=\"red\">" + theCurrentPageNumber + "</font> pages";
       }
 
       // so that it starts the new one exactly one pt behind the current one.
-      running_height = running_height + height + (1 / scale_factor);
+      running_height = running_height + drawHeight + ((1 / scale_factor) * pageFitScale);
 
       callback(true);
 
@@ -11215,6 +11490,10 @@ function ExportTextIncipitsPDF(title, bDoFullTunes, bDoCCETransform, bDoQRCodes)
   // Show the PDF status modal
   var pdfstatus = document.getElementById("pdf-controls");
   pdfstatus.style.display = "block";
+
+  // Setup optional multi-tune page-fit mode.
+  gPDFPageFitTargetTunes = getPDFPageFitTargetFromLayout(thePageOptions);
+  gPDFPageFitTuneScales = [];
 
   // Page number location
   var pageNumberLocation = getPageNumbers();
@@ -11725,6 +12004,10 @@ function ExportNotationPDF(title) {
     thePageOptions = "one";
   }
 
+  // Setup optional multi-tune page-fit mode.
+  gPDFPageFitTargetTunes = getPDFPageFitTargetFromLayout(thePageOptions);
+  gPDFPageFitTuneScales = [];
+
   // Page number location
   var pageNumberLocation = getPageNumbers();
 
@@ -11738,7 +12021,9 @@ function ExportNotationPDF(title) {
   // What size paper? Letter or A4?
   var paperStyle = "letter";
 
-  if ((thePageOptions == "one_a4") || (thePageOptions == "multi_a4") || (thePageOptions == "incipits_a4") || (thePageOptions == "pdf_per_tune_a4")) {
+  if ((thePageOptions == "one_a4") || (thePageOptions == "multi_a4") ||
+      (thePageOptions == "multi_fit_2_a4") || (thePageOptions == "multi_fit_3_a4") ||
+      (thePageOptions == "incipits_a4") || (thePageOptions == "pdf_per_tune_a4")) {
 
     paperStyle = "a4";
 
@@ -27698,13 +27983,13 @@ async function processShareLink() {
       // Show update message?
       if (gLocalStorageAvailable){
 
-        var updatePresented = localStorage.sawUpdate_16apr2026;
+        var updatePresented = localStorage.sawUpdate_20may2026;
 
         if (updatePresented != "true") {
 
           showWhatsNewScreen();
 
-          localStorage.sawUpdate_16apr2026 = true;
+          localStorage.sawUpdate_20may2026 = true;
 
         }
 
@@ -48895,8 +49180,14 @@ function PDFExportDialog() {
       name: "  One Tune per Page",
       id: "one"
     }, {
-      name: "  Multiple Tunes per Page",
+      name: "  Multiple Tunes per Page (Natural Flow)",
       id: "multi"
+    }, {
+      name: "  Multiple Tunes per Page (Prefer 2 Tunes/Page)",
+      id: "multi_fit_2"
+    }, {
+      name: "  Multiple Tunes per Page (Prefer 3 Tunes/Page)",
+      id: "multi_fit_3"
     }, {
       name: "  Notes Incipits",
       id: "incipits"
@@ -48927,8 +49218,14 @@ function PDFExportDialog() {
       name: "  One Tune per Page",
       id: "one"
     }, {
-      name: "  Multiple Tunes per Page",
+      name: "  Multiple Tunes per Page (Natural Flow)",
       id: "multi"
+    }, {
+      name: "  Multiple Tunes per Page (Prefer 2 Tunes/Page)",
+      id: "multi_fit_2"
+    }, {
+      name: "  Multiple Tunes per Page (Prefer 3 Tunes/Page)",
+      id: "multi_fit_3"
     }, {
       name: "  Notes Incipits",
       id: "incipits"
@@ -55474,7 +55771,7 @@ function showWhatsNewScreen() {
   modal_msg += 'background: linear-gradient(135deg, #0d47a1 0%, #1565c0 50%, #64b5f6 100%);';
   modal_msg += 'box-shadow: 0 6px 16px rgba(0,0,0,0.14); color:#fff;">';
   modal_msg += '<div style="font-size:20pt; line-height:24pt; font-weight:bold;">What&apos;s New</div>';
-  modal_msg += '<div style="font-size:11pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 16 April 2026</div>';
+  modal_msg += '<div style="font-size:11pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 20 May 2026</div>';
   modal_msg += '</div>';
 
   // Short intro
@@ -55486,9 +55783,10 @@ function showWhatsNewScreen() {
   modal_msg += '<div style="margin:10px 0 6px 0; padding:12px 12px; border-radius:12px;';
   modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);">';
   
-  modal_msg += '<p style="margin:6px 0; font-size:12pt;margin-bottom:12px;"><strong>New Drone Injection Option for "Inject Bagpipe Sounds":</strong></p>';
-  modal_msg += '<p style="margin:6px 0; font-size:12pt;margin-bottom:12px;">Custom Bagpipe Instrument (Drones on D,)</p>';
-  modal_msg += '<p style="margin:6px 0; font-size:12pt;">This allows simple injection of drones for bagpipe-style custom instruments created with the <strong><a href="https://michaeleskin.com/tools/bagpipe-factory.html" target="_blank" rel="noopener noreferrer">Bagpipe Custom Instrument Factory</a></strong>.</p>';
+  modal_msg += '<p style="margin:6px 0; font-size:12pt;margin-bottom:12px;">New <strong>Multiple Tunes per Page (Prefer 2 Tunes/Page)</strong> and <strong>Multiple Tunes per Page (Prefer 3 Tunes/Page)</strong> PDF Tune Layout Options (experimental)</p>';
+  modal_msg += '<p style="margin:6px 0; font-size:12pt;">When possible, these new tune layout options attempt to format the pages with 2 or 3 tunes-per-page automatically scaling down the tunes as required.</p>';
+  modal_msg += '<p style="margin:6px 0; font-size:12pt;">If not possible, for example, if there are very tall tunes or tunes that span multiple pages that would require an excessive downscale, the layout may fall back to fewer tunes per page.</p>';
+
   modal_msg += '</div>';
 
   modal_msg += '</div>'; // wrapper
@@ -62021,13 +62319,13 @@ async function DoStartup() {
   // Show update message?
   if (gLocalStorageAvailable && (!isFromShare)){
 
-    var updatePresented = localStorage.sawUpdate_16apr2026;
+    var updatePresented = localStorage.sawUpdate_20may2026;
 
     if (updatePresented != "true") {
 
       showWhatsNewScreen();
 
-      localStorage.sawUpdate_16apr2026 = true;
+      localStorage.sawUpdate_20may2026 = true;
 
     }
 

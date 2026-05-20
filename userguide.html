@@ -4170,18 +4170,29 @@
                 </div>
                 <hr>
                 <p><strong>Tune Layout:</strong></p>
-                <p>Choose whether you want One Tune per Page, Multiple Tunes per Page, Note Incipits, ABC Incipits (unsorted or alphabetically sorted by tune name), or full versions of the ABC notes (with optional Comhaltas ABC transformation):</p>
+                <p>Choose whether you want One Tune per Page, Multiple Tunes per Page using the normal natural page flow, Multiple Tunes per Page with a preferred target of 2 tunes per page, Multiple Tunes per Page with a preferred target of 3 tunes per page, Note Incipits, ABC Incipits (unsorted or alphabetically sorted by tune name), or full versions of the ABC notes (with optional Comhaltas ABC transformation):</p>
                 <div class="image_holder_p">
-                    <img class="image" loading="lazy" src="img/tune_layout_5.jpg"/>
+                    <img class="image" loading="lazy" src="img/tune_layout_6.jpg"/>
                 </div>
                 <hr>
                 <p><strong>One Tune per Page</strong></p>
                 <p>The notation for each tune is placed on a new page in the PDF.</p>
                 <hr>
-                <p><strong>Multiple Tunes per Page</strong></p>
-                <p>The notation for each tune is added one after another down each page in the PDF.</p>
-                <p>When exporting multiple tunes per page to PDF the tool will do its best to layout the output to not split tunes between pages, unless the tune itself is longer than one page.</p>
-                <p></p>
+                <p><strong>Multiple Tunes per Page (Natural Flow)</strong></p>
+                <p>The notation for each tune is added one after another down each page in the PDF at the normal selected notation size.</p>
+                <p>The tool will do its best to avoid splitting tunes between pages, unless the tune itself is longer than one page.</p>
+                <hr>
+                <p><strong>Multiple Tunes per Page (Prefer 2 Tunes/Page)</strong></p>
+                <p>The tool tries to place tunes in groups of two per page. When needed, the two tunes are scaled down proportionally so they fit together on the page.</p>
+                <p>This option uses conservative scaling to help preserve readability. If two tunes cannot reasonably fit on one page, the tool may place fewer tunes on that page.</p>
+                <p>This option will generally only be effective when exporting portait orientation PDF tunebooks.</p>
+                <hr>
+                <p><strong>Multiple Tunes per Page (Prefer 3 Tunes/Page)</strong></p>
+                <p>The tool tries to place tunes in groups of three per page. When needed, the three tunes are scaled down proportionally so they fit together on the page.</p>
+                <p>This option uses more aggressive scaling than the 2-tunes-per-page option. It is useful for compact tunebook-style output, but the notation may be noticeably smaller.</p>
+                <p>Explicit page breaks, section headers, unusually large tunes, and tunes longer than one page may prevent the preferred number of tunes from fitting on every page.</p>                
+                <p>This option will generally only be effective when exporting portait orientation PDF tunebooks.</p>
+                <hr>
                 <p>When exporting multiple tunes per page, if you want to manually force a tune to a new page in the PDF, add:</p>
                 <p></p>
                 <p class="code">%%newpage</p>
