@@ -1107,7 +1107,7 @@
 
       <div id="eyeOrderControl">
         <label for="eyeOrder">Stereo Order:</label>
-        <select id="eyeOrder" title="Choose the stereo eye order.  When multiple images are loaded, this setting is global for all images.">
+        <select id="eyeOrder" title="Choose the stereo eye order. When multiple images are loaded, this setting is global for all images.">
           <option value="normal">Left / Right (Parallel viewing)</option>
           <option value="swap">Right / Left (Cross-eye viewing)</option>
         </select>
@@ -3569,12 +3569,12 @@
       eyeOrder.options[0].textContent = "Left / Right (Parallel viewing)";
       eyeOrder.options[1].textContent = "Right / Left (Cross-eye viewing)";
       eyeOrder.title =
-        "Choose the side-by-side eye order. Left / Right is for parallel/stereograph card viewing; Right / Left is for cross-eye viewing.";
+        "Choose the side-by-side eye order. Left / Right is for parallel/stereograph card viewing; Right / Left is for cross-eye viewing. When multiple images are loaded, this setting is global for all images.";
     } else {
       eyeOrder.options[0].textContent = "Left / Right";
       eyeOrder.options[1].textContent = "Right / Left";
       eyeOrder.title =
-        "Choose the anaglyph stereo eye order. Use Left / Right for normal red/cyan ordering, or Right / Left if the stereo depth appears reversed.";
+        "Choose the anaglyph stereo eye order. Use Left / Right for normal red/cyan ordering, or Right / Left if the stereo depth appears reversed. When multiple images are loaded, this setting is global for all images.";
     }
   }
 
