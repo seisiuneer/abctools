@@ -1219,7 +1219,7 @@
 
     <div id="downloadActions" class="actions" style="display:none;">
       <a id="downloadLink" class="download" download="spatial-photo.jpg" title="Generate the final JPEG for the currently visible image at the specified output height, then download it.">Export Current JPEG</a>
-      <a id="downloadAllLink" class="download" download="spatial-photo-batch.zip" title="Generate JPEGs for all loaded images using the current settings, then download the ZIP file.">Export All as ZIP</a>
+      <a id="downloadAllLink" class="download" download="spatial-photo-batch.zip" title="Generate JPEGs for all loaded images. Horizontal Shift, Horizontal Shift range, Image Rotation, and Image Rotation range use each image’s individual settings; the other controls use the current settings.">Export All as ZIP</a>
     </div>
 
     <div class="meta">
@@ -1355,6 +1355,8 @@
   let scrollBeforeFullscreenY = 0;
   let shouldRestoreScrollAfterFullscreen = false;
   let batchExportController = null;
+  let perImageAdjustmentSettings = [];
+  let applyingPerImageAdjustmentSettings = false;
 
   function escapeHtml(value) {
     return String(value)
@@ -2833,6 +2835,7 @@
     currentImageIndex = 0;
     currentFile = null;
     decodedViews = [];
+    resetPerImageAdjustmentSettings();
     updateImageNavigationButtons();
   }
 
@@ -2847,6 +2850,7 @@
 
     currentImageIndex = ((index % count) + count) % count;
     currentFile = loadedImageFiles[currentImageIndex];
+    applyPerImageAdjustmentSettingsForCurrentImage();
     updateCurrentFileMeta();
     sourceMeta.textContent = "Stereo images not decoded yet.";
     outputMeta.textContent = "No JPEG generated yet.";
@@ -2904,6 +2908,8 @@
     }
 
     loadedImageFiles = files;
+    resetPerImageAdjustmentSettings();
+    perImageAdjustmentSettings = files.map(() => getDefaultPerImageAdjustmentSettings());
     currentImageIndex = 0;
     currentFile = loadedImageFiles[0];
     updateCurrentFileMeta();
@@ -3357,6 +3363,78 @@
     updateRotationRangeMode();
     updateStereoDepthRangeMode();
     updateControls();
+  }
+
+  function getDefaultPerImageAdjustmentSettings() {
+    return {
+      horizontalShift: 0,
+      horizontalShiftRangeMode: "normal",
+      rotation: 0,
+      rotationRangeMode: "normal",
+      userModified: false
+    };
+  }
+
+  function resetPerImageAdjustmentSettings() {
+    perImageAdjustmentSettings = [];
+  }
+
+  function getCurrentPerImageAdjustmentSettings() {
+    if (!perImageAdjustmentSettings[currentImageIndex]) {
+      perImageAdjustmentSettings[currentImageIndex] = getDefaultPerImageAdjustmentSettings();
+    }
+
+    return perImageAdjustmentSettings[currentImageIndex];
+  }
+
+  function rememberCurrentPerImageAdjustmentSettings(userModified = true) {
+    if (getLoadedImageCount() <= 1 || applyingPerImageAdjustmentSettings) {
+      return;
+    }
+
+    const settings = getCurrentPerImageAdjustmentSettings();
+    settings.horizontalShift = Number(stereoDepthRange?.value) || 0;
+    settings.horizontalShiftRangeMode = stereoDepthRangeMode?.value === "wide" ? "wide" : "normal";
+    settings.rotation = Number(rotationRange?.value) || 0;
+    settings.rotationRangeMode = rotationRangeMode?.value === "wide" ? "wide" : "normal";
+    settings.userModified = !!userModified;
+  }
+
+  function applyPerImageAdjustmentSettingsForCurrentImage() {
+    if (getLoadedImageCount() <= 1) {
+      return;
+    }
+
+    const settings = perImageAdjustmentSettings[currentImageIndex] || getDefaultPerImageAdjustmentSettings();
+
+    applyingPerImageAdjustmentSettings = true;
+
+    try {
+      if (stereoDepthRangeMode) {
+        stereoDepthRangeMode.value = settings.horizontalShiftRangeMode === "wide" ? "wide" : "normal";
+      }
+
+      if (rotationRangeMode) {
+        rotationRangeMode.value = settings.rotationRangeMode === "wide" ? "wide" : "normal";
+      }
+
+      // Apply the saved slider ranges before setting the saved values so
+      // a value from a wider range is not clamped by the previous image's range.
+      updateStereoDepthRangeMode();
+      updateRotationRangeMode();
+
+      if (stereoDepthRange) {
+        stereoDepthRange.value = String(Number(settings.horizontalShift) || 0);
+      }
+
+      if (rotationRange) {
+        rotationRange.value = String(Number(settings.rotation) || 0);
+      }
+
+      updateControls();
+    } finally {
+      applyingPerImageAdjustmentSettings = false;
+    }
   }
 
   function updateControls() {
@@ -4634,12 +4712,12 @@
           <li>Adjust <b>Output JPEG Height</b> as desired. Initial value is read from the input image.<br/>Use the slider, or click the height value display to enter an exact height.</li>
           <li>Select an <b>Output Format</b> and <b>Stereo Order</b>.<br/>Use <b>Side-by-Side</b> for stereo pairs, or one of the <b>Red / Cyan Anaglyph</b> formats for viewing with red/cyan 3D glasses. Use the <b>Border</b> selector to choose no border or to include a black border in the exported JPEG.</li>
           <li>Optionally adjust <b>Side-by-Side Center Crop</b> (Side-by-Side format only), <b>Horizontal Shift</b>, and/or <b>Image Rotation</b> as required to optimize the stereo view. Use the <b>Side-by-Side Center Crop</b> slider, or click its numeric value display to enter an exact crop percentage.</li>
-          <li>When a new set of HEIC files is opened, <b>Horizontal Shift</b> and <b>Image Rotation</b> are reset to 0. <b>Side-by-Side Center Crop</b> and <b>Border</b> are preserved, saved and restored the next time the tool is opened.</li>
+          <li>When multiple HEIC files are loaded, <b>Horizontal Shift</b>, <b>Horizontal Shift range</b>, <b>Image Rotation</b>, and <b>Image Rotation range</b> are tracked separately for each image. When you move between images, those controls return to the saved values for the displayed image, or to 0 with the normal range if that image has not been individually adjusted. Opening a new set of HEIC files resets the per-image Horizontal Shift and Image Rotation settings. <b>Side-by-Side Center Crop</b> and <b>Border</b> are shared settings that are preserved, saved, and restored the next time the tool is opened.</li>
           <li>On desktop browsers, move the mouse over the preview area to reveal the full-screen button at the top right of the preview. On iPad, the button remains visible at the top right. The button is hidden on iPhone and while full-screen mode is active. Press Escape or use the browser full-screen control to return to the normal tool view.</li>
           <li>If more than one HEIC file is loaded, on desktop browsers, move the mouse over the preview area to reveal the first, previous, next, and last image arrow buttons at the edges of the preview that you can use to switch between the images (always visible on iOS).</li>
           <li>The normal on-page preview is optimized for responsiveness, while full-screen preview automatically uses a higher preview resolution when useful for sharper viewing on high-DPI displays.</li>
           <li>For side-by-side image viewing, you can make the side-by-side preview smaller to help visually fuse the images while making adjustments, you can either zoom out the browser window or resize the window narrower to make the preview smaller.</li>
-          <li>Click <b>Export Current JPEG</b> to save or share only the currently displayed image.<br/>Click <b>Export All as ZIP</b> to save or share all loaded images using the current settings in a .zip file. During batch export, a progress dialog shows the current image and overall progress; click <b>Cancel</b> during ZIP generation to stop after the current processing step finishes.</li>
+          <li>Click <b>Export Current JPEG</b> to save or share only the currently displayed image.<br/>Click <b>Export All as ZIP</b> to save or share all loaded images in a .zip file. During batch export, <b>Horizontal Shift</b>, <b>Horizontal Shift range</b>, <b>Image Rotation</b>, and <b>Image Rotation range</b> use each image’s individual settings; the other controls use the current settings. A progress dialog shows the current image and overall progress; click <b>Cancel</b> during ZIP generation to stop after the current processing step finishes.</li>
           <li>On iOS, after the ZIP is ready, tap <b>Share ZIP</b> to open the iOS Share Sheet, then choose <b>Save to Files</b> or another share destination.</li>
         </ol>
 
@@ -4658,10 +4736,10 @@
           <li>Click <b>Cancel</b> to close the dialog without changing the current maximum.</li>
           <li>If the current flip rate is above the new maximum, it is automatically reduced to the new maximum.</li>
           <li>The selected maximum is saved and restored the next time the tool is opened.</li>
-          <li><b>Horizontal Shift</b>: Shifts the two views horizontally before compositing.<br/>This can be used to improve anaglyph results, reduce eye strain, or improve fusion.<br/>In Side-by-Side mode, it can also be used as a perceived depth/convergence adjustment by moving the stereo pair relationship forward or backward for more comfortable viewing.<br/>The <b>Reset</b> button resets the horizontal shift to zero.</li>
-          <li><b>Horizontal Shift range selector</b>: Switches the <b>Horizontal Shift</b> slider between a normal ±10% adjustment range and a wider ±20% range for stronger corrections, including close-up or macro images.</li>
-          <li><b>Image Rotation</b>: Applies a small roll correction to both stereo views.<br/>The rotated image is cropped as required to preserve the original aspect ratio.</li>
-          <li><b>Image Rotation range selector</b>: Switches the Image Rotation slider between ±5° for normal adjustments and ±10° for larger rotation corrections.<br/>The <b>Reset</b> button resets the image rotation to zero.</li>
+          <li><b>Horizontal Shift</b>: Shifts the two views horizontally before compositing.<br/>This can be used to improve anaglyph results, reduce eye strain, or improve fusion.<br/>In Side-by-Side mode, it can also be used as a perceived depth/convergence adjustment by moving the stereo pair relationship forward or backward for more comfortable viewing.<br/>When multiple images are loaded, this setting and its range selector are tracked independently for each image and applied individually during batch export.<br/>The <b>Reset</b> button resets the horizontal shift to zero for the current image.</li>
+          <li><b>Horizontal Shift range selector</b>: Switches the <b>Horizontal Shift</b> slider between a normal ±10% adjustment range and a wider ±20% range for stronger corrections, including close-up or macro images. When multiple images are loaded, the selected range is saved per image and restored before the per-image horizontal shift value is applied.</li>
+          <li><b>Image Rotation</b>: Applies a small roll correction to both stereo views.<br/>The rotated image is cropped as required to preserve the original aspect ratio.<br/>When multiple images are loaded, this setting and its range selector are tracked independently for each image and applied individually during batch export.</li>
+          <li><b>Image Rotation range selector</b>: Switches the Image Rotation slider between ±5° for normal adjustments and ±10° for larger rotation corrections. When multiple images are loaded, the selected range is saved per image and restored before the per-image rotation value is applied.<br/>The <b>Reset</b> button resets the image rotation to zero for the current image.</li>
         </ul>
 
         <h4>Side-by-Side output notes</h4>
@@ -4723,7 +4801,7 @@
         <hr style="margin-top:20px;">
 
         <h4 style="text-align: center;">Stereo JPEG/TIFF → Side-by-Side or 3D Anaglyph</h4>
-        This utility can be used to do essentially all the same side-by-side and color anaglyph operations as this tool and more, but starting with side-by-side or individual right/left JPEG or TIFF images. Unlike this tool, the JPEG/TIFF version does not allow batch processing of images:
+        This utility can be used to do essentially all the same side-by-side and color anaglyph operations as this tool and more, but starting with side-by-side or individual right/left JPEG or TIFF images. It also supports multiple-image batch processing:
         <div style="text-align: center;">
            <div style="margin-top:10px;">
             <a href="https://michaeleskin.com/tools/sbs-jpeg-tiff-to-sbs.html" target="_blank" rel="noopener noreferrer">Stereo JPEG/TIFF → Side-by-Side or 3D Anaglyph</a>
@@ -4893,37 +4971,47 @@
 
   rotationRangeMode.addEventListener("change", () => {
     updateRotationRangeMode();
+    rememberCurrentPerImageAdjustmentSettings(true);
     regeneratePreviewIfReady();
   });
 
   rotationRange.addEventListener("input", () => {
     updateControls();
+    rememberCurrentPerImageAdjustmentSettings(true);
 
     if (decodedViews.length >= 2) {
       convertToSbs({ previewOnly: true }).catch(err => setStatus(escapeHtml(err.message || String(err)), "error"));
     }
   });
 
-  rotationRange.addEventListener("change", regeneratePreviewIfReady);
+  rotationRange.addEventListener("change", () => {
+    rememberCurrentPerImageAdjustmentSettings(true);
+    regeneratePreviewIfReady();
+  });
 
   resetRotationButton.addEventListener("click", () => {
     if (Number(rotationRange.value) === 0) {
       updateControls();
+      rememberCurrentPerImageAdjustmentSettings(true);
       return;
     }
 
     rotationRange.value = "0";
     updateControls();
+    rememberCurrentPerImageAdjustmentSettings(true);
 
     regeneratePreviewIfReady();
   });
 
   stereoDepthRangeMode.addEventListener("change", () => {
     updateStereoDepthRangeMode();
+    rememberCurrentPerImageAdjustmentSettings(true);
     regeneratePreviewIfReady();
   });
 
   stereoDepthRange.addEventListener("change", async () => {
+    rememberCurrentPerImageAdjustmentSettings(true);
+
     try {
       await convertToSbs({ previewOnly: true });
     } catch (err) {
@@ -4935,6 +5023,7 @@
 
   stereoDepthRange.addEventListener("input", () => {
     updateControls();
+    rememberCurrentPerImageAdjustmentSettings(true);
 
     if (decodedViews.length >= 2) {
       convertToSbs({ previewOnly: true }).catch(err => setStatus(escapeHtml(err.message || String(err)), "error"));
@@ -4944,11 +5033,13 @@
   resetStereoDepthButton.addEventListener("click", () => {
     if (Number(stereoDepthRange.value) === 0) {
       updateControls();
+      rememberCurrentPerImageAdjustmentSettings(true);
       return;
     }
 
     stereoDepthRange.value = "0";
     updateControls();
+    rememberCurrentPerImageAdjustmentSettings(true);
 
     regeneratePreviewIfReady();
   });
@@ -5034,6 +5125,8 @@
     if (count <= 1 || targetIndex < 0 || targetIndex >= count || targetIndex === currentImageIndex) {
       return;
     }
+
+    rememberCurrentPerImageAdjustmentSettings(false);
 
     const navigationOutputHeight = clampOutputHeight(heightRange.value);
     heightRange.value = String(navigationOutputHeight);
@@ -5231,7 +5324,7 @@
       const saveName = await promptForSaveName();
 
       if (!saveName) {
-        await restoreInteractivePreviewAfterGeneratedOutput("Download cancelled.", "ok");
+        await restoreInteractivePreviewAfterGeneratedOutput("Export cancelled.", "ok");
         updateGenerateButtonVisibility();
         return;
       }
@@ -5272,6 +5365,8 @@
       setStatus("ZIP export cancelled.", "ok");
       return;
     }
+
+    rememberCurrentPerImageAdjustmentSettings(false);
 
     const batchOutputHeight = clampOutputHeight(heightRange.value);
     heightRange.value = String(batchOutputHeight);
