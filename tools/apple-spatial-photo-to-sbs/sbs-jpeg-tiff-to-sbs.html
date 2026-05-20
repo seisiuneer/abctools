@@ -1070,7 +1070,7 @@
       <div>
         <div class="labelInlineControls">
           <label for="outputFormat">Output Format:</label>
-          <select id="sbsBorderThicknessSelect" class="wideRangeSelect" title="Choose the optional black border thickness for the exported JPEG. None adds no border. Side-by-Side adds an outer border and center seam; Anaglyph adds only an outer border.">
+          <select id="sbsBorderThicknessSelect" class="wideRangeSelect" title="Choose the optional black border thickness for the exported JPEG. None adds no border. Side-by-Side adds an outer border and center seam; Anaglyph adds only an outer border. When multiple images are loaded, this setting is global for all images. This setting is saved and restored the next time the tool is opened.">
             <option value="0" data-label="None" selected>Border:&nbsp;&nbsp;None</option>
             <option value="0.0025" data-label="Thin">Border:&nbsp;&nbsp;Thin</option>
             <option value="0.005" data-label="Medium">Border:&nbsp;&nbsp;Medium</option>
@@ -1079,7 +1079,7 @@
             <option value="0.014" data-label="Extra Wide">Border:&nbsp;&nbsp;Extra Wide</option>
           </select>
         </div>
-        <select id="outputFormat" title="Choose the exported JPEG format: Side-by-Side for stereo viewers, or an Anaglyph format for red/cyan 3D glasses.">
+        <select id="outputFormat" title="Choose the exported JPEG format: Side-by-Side for stereo viewers, or an Anaglyph format for red/cyan 3D glasses. When multiple images are loaded, this setting is global for all images.">
           <option value="sbs">Side-by-Side</option>
           <option value="anaglyph-red-cyan-color">Anaglyph — Red / Cyan, Color</option>
           <option value="anaglyph-red-cyan-half-color">Anaglyph — Red / Cyan, Half-color</option>
@@ -1106,7 +1106,7 @@
     <div class="grid" style="margin-top:12px;">
       <div id="eyeOrderControl">
         <label for="eyeOrder">Stereo Order:</label>
-        <select id="eyeOrder" title="Choose the input eye order. Use Right / Left if the source images are reversed.">
+        <select id="eyeOrder" title="Choose the input eye order. Use Right / Left if the source images are reversed. When multiple images are loaded, this setting is global for all images.">
           <option value="normal">Left / Right (Parallel viewing)</option>
           <option value="swap">Right / Left (Cross-eye viewing)</option>
         </select>
@@ -1118,7 +1118,7 @@
           <div id="previewFlipRateValue" class="rangeValue editableRangeValue" role="button" tabindex="0" aria-label="Toggle Preview L/R Flip" title="Click to toggle Preview L/R Flip between Off and the last non-zero flip rate.">Off</div>
         </div>
         <div class="row">
-          <input id="previewFlipRateRange" type="range" min="0" max="10" step="0.1" value="0" title="Flip between the adjusted left and right views. At 0 Hz, flipping is off and the full side-by-side preview is shown.">
+          <input id="previewFlipRateRange" type="range" min="0" max="10" step="0.1" value="0" title="Flip between the adjusted left and right views. At 0 Hz, flipping is off and the full side-by-side preview is shown. When multiple images are loaded, this setting is global for all images.">
         </div>
       </div>
     </div>
@@ -1149,7 +1149,7 @@
           </div>
         </div>
         <div class="row">
-          <input id="sbsCropRange" type="range" min="0" max="50" step="0.1" value="0" title="Crops the selected total percentage from the left and right edges of each eye view for ease of image fusion in parallel or cross-eye viewing. This setting is saved and restored the next time the tool is opened.">
+          <input id="sbsCropRange" type="range" min="0" max="50" step="0.1" value="0" title="Crops the selected total percentage from the left and right edges of each eye view for ease of image fusion in parallel or cross-eye viewing. When multiple images are loaded, this setting is global for all images. This setting is saved and restored the next time the tool is opened.">
           <div id="sbsCropValue" class="rangeValue editableRangeValue" role="button" tabindex="0" aria-label="Enter Side-by-Side Center Crop percentage" title="Click to enter a specific Side-by-Side Center Crop value from 0.0% to 50.0%.">0.0%</div>
         </div>
       </div>
