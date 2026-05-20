@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3224_052026_0900";
+var gVersionNumber = "3225_052026_1100";
 
 var gMIDIInitStillWaiting = false;
 
@@ -11926,21 +11926,32 @@ function ExportTextIncipitsPDF(title, bDoFullTunes, bDoCCETransform, bDoQRCodes)
             setTimeout(async function() {
 
               // Start the PDF save
-              if (gIsIOS) {
+              if (isMobileBrowser()) {
 
                 var theBlob = pdf.output('blob', {
                   filename: (title)
                 });
 
-                await shareOrDownloadFile(theBlob, title, "application/pdf");
-
-              } else if (isMobileBrowser()) {
-
-                var theBlob = pdf.output('blob', {
-                  filename: (title)
+                var newBlob = new Blob([theBlob], {
+                  type: 'application/octet-stream'
                 });
 
-                await shareOrDownloadFile(theBlob, title, "application/pdf");
+                var a = document.createElement("a");
+
+                document.body.appendChild(a);
+
+                a.style = "display: none";
+
+                var url = window.URL.createObjectURL(newBlob);
+                a.href = url;
+                a.download = (title);
+                a.click();
+
+                document.body.removeChild(a);
+
+                setTimeout(function() {
+                  window.URL.revokeObjectURL(url);
+                }, 1000);
 
               } else {
 
@@ -12752,21 +12763,32 @@ function ExportNotationPDF(title) {
                   // Start the normal PDF save
                   setTimeout(async function() {
 
-                    if (gIsIOS) {
+                    if (isMobileBrowser()) {
 
                       var theBlob = pdf.output('blob', {
                         filename: (title)
                       });
 
-                      await shareOrDownloadFile(theBlob, title, "application/pdf");
-
-                    } else if (isMobileBrowser()) {
-
-                      var theBlob = pdf.output('blob', {
-                        filename: (title)
+                      var newBlob = new Blob([theBlob], {
+                        type: 'application/octet-stream'
                       });
 
-                      await shareOrDownloadFile(theBlob, title, "application/pdf");
+                      var a = document.createElement("a");
+
+                      document.body.appendChild(a);
+
+                      a.style = "display: none";
+
+                      var url = window.URL.createObjectURL(newBlob);
+                      a.href = url;
+                      a.download = (title);
+                      a.click();
+
+                      document.body.removeChild(a);
+
+                      setTimeout(function() {
+                        window.URL.revokeObjectURL(url);
+                      }, 1000);
 
                     } else {
 
