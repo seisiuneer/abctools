@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3226_052126_1000";
+var gVersionNumber = "3228_052126_1000";
 
 var gMIDIInitStillWaiting = false;
 
@@ -59886,40 +59886,37 @@ function LaunchChordChartGenerator(){
 function DoVersionCheck() {
 
   gUpdateVersion = gVersionNumber;
-
   gUpdateAvailable = false;
 
-  try {
+  const versionURL = 'https://michaeleskin.com/abctools/abc_tools_version.json?v=' + Date.now();
 
-    // Get the latest version JSON file 
-    fetch('https://michaeleskin.com/abctools/abc_tools_version.json')
-      .then((response) => response.json())
-      .then((json) => {
+  fetch(versionURL, {
+    cache: 'no-store',
+    headers: {
+      'Cache-Control': 'no-cache'
+    }
+  })
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error("Version check failed");
+      }
+      return response.json();
+    })
+    .then((json) => {
 
-        // Check if version changed
-        if (json && json.version && (json.version != gVersionNumber)) {
+      if (json && json.version && (json.version != gVersionNumber)) {
+        SetupContextMenu(true);
+        gUpdateAvailable = true;
+        gUpdateVersion = json.version;
+      }
+      else {
+        SetupContextMenu(false);
+      }
 
-          // Yes, show update option
-          SetupContextMenu(true);
-
-          gUpdateAvailable = true;
-
-          gUpdateVersion = json.version;
-
-        } else {
-
-          SetupContextMenu(false);
-
-        }
-      })
-  } catch (err) {
-
-    SetupContextMenu(false);
-
-  }
-
-  // For testing
-  //gUpdateAvailable = true;
+    })
+    .catch((err) => {
+      SetupContextMenu(false);
+    });
 
 }
 
