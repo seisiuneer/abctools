@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3225_052026_1100";
+var gVersionNumber = "3226_052126_1000";
 
 var gMIDIInitStillWaiting = false;
 
@@ -553,129 +553,177 @@ function getFirstPage() {
 
 /**
  * Build a single ABC tune composed of concatenated incipits for each detected part.
- *
- * Options:
- *  - measuresPerPart: number of measures to keep for EVERY detected part (A, B, C, …).
- *  - options.voice: (optional) string voice ID to select from multi-voice sources.
- *  - options.partsOnNewLines: (optional) boolean — when true, each part is on its own line.
- *
  */
 function buildABCIncipitsSingleTune(abcText, measuresPerPart, options = {}) {
   const FIELD_RE = /^\s*[A-Za-z]\s*:\s*/;
-  const MUSIC_HINT_RE = /[\|\[\]:]|["'][^"']*["']|[A-Ga-gzxy]/;
+  const MUSIC_HINT_RE = /[\|\[\]:]|"[^"]*"|[A-Ga-gzxy]/;
 
   function splitHeaderAndBody(full) {
     const lines = full.replace(/\r/g, "").split("\n");
     const headerLines = [];
     let musicStartIdx = 0;
+
     for (let i = 0; i < lines.length; i++) {
       const ln = lines[i];
       const isBlank = /^\s*$/.test(ln);
       const isPercent = /^\s*%/.test(ln);
       const isField = FIELD_RE.test(ln);
       const looksLikeMusic = MUSIC_HINT_RE.test(ln);
-      if (!isBlank && !isPercent && !isField && looksLikeMusic) { musicStartIdx = i; break; }
+
+      if (!isBlank && !isPercent && !isField && looksLikeMusic) {
+        musicStartIdx = i;
+        break;
+      }
+
       headerLines.push(ln);
       musicStartIdx = i + 1;
     }
-    return { headerText: headerLines.join("\n"), bodyText: lines.slice(musicStartIdx).join("\n") };
+
+    return {
+      headerText: headerLines.join("\n"),
+      bodyText: lines.slice(musicStartIdx).join("\n")
+    };
   }
 
   function filterToVoice(body, desiredVoice) {
     const hasVoices = /\nV\s*:/i.test("\n" + body);
     if (!hasVoices) return body;
+
     const chunks = body.split(/\n(?=V\s*:[^\n]*\n?)/i);
     const voiceBlocks = new Map();
+
     const idOf = (vLine) => vLine.replace(/^V\s*:\s*/i, "").trim().split(/\s+/)[0];
+
     for (const chunk of chunks) {
-      if (!/^\s*V\s*:/i.test(chunk)) { voiceBlocks.set("_PRE_", (voiceBlocks.get("_PRE_") || "") + chunk); continue; }
+      if (!/^\s*V\s*:/i.test(chunk)) {
+        voiceBlocks.set("_PRE_", (voiceBlocks.get("_PRE_") || "") + chunk);
+        continue;
+      }
+
       const lines = chunk.split("\n");
       const vid = idOf(lines[0]);
       const music = lines.slice(1).join("\n");
+
       voiceBlocks.set(vid, (voiceBlocks.get(vid) || "") + music);
     }
+
     const chosen = desiredVoice || [...voiceBlocks.keys()].find((k) => k !== "_PRE_");
     let out = (voiceBlocks.get(chosen) || "").trim();
-    if (voiceBlocks.has("_PRE_")) out = (voiceBlocks.get("_PRE_") + "\n" + out).trim();
+
+    if (voiceBlocks.has("_PRE_")) {
+      out = (voiceBlocks.get("_PRE_") + "\n" + out).trim();
+    }
+
     return out;
   }
 
-  // ---------- Measure slicing & anchors ----------
   function sliceMeasures(music) {
     let s = music.replace(/\r/g, "");
-    // drop inline fields inside body (P:, K:, V:, etc.)
-    s = s.replace(/\n(?:[A-Za-z]\s*:[^\n]*)/g, "\n");
 
-    // ignore any trailing '!' or '\' at end of lines (don’t touch mid-line !trill!)
+    s = s.replace(/(^|\n)\s*[A-Za-z]\s*:[^\n]*/g, "$1");
     s = s.replace(/[!\\]+\s*(?=\n|$)/g, "");
 
     const measures = [];
-    const anchors  = [];   // indices where the NEXT measure starts a new part
-    const barTypes = [];   // bar type that closed each flushed measure
+    const anchors = [];
+    const barTypes = [];
     let buf = "";
 
     const flush = (barType = null) => {
       const t = buf.trim();
-      if (t) { measures.push(t); barTypes.push(barType); }
+      if (t) {
+        measures.push(t);
+        barTypes.push(barType);
+      }
       buf = "";
     };
 
-    const isWs = (ch) => ch === ' ' || ch === '\t' || ch === '\n';
+    const isWs = (ch) => ch === " " || ch === "\t" || ch === "\n";
 
     for (let i = 0; i < s.length; i++) {
-      // Voltas like "|1", "|2"
-      if (s[i] === '|' && /[0-9]/.test(s[i + 1] || '')) {
-        flush('volta');
-        i += 1;
-        while (/[0-9]/.test(s[i + 1] || '')) i += 1;
-        while (s[i + 1] === ' ') i += 1;
+
+      if (s[i] === '"') {
+        let j = i + 1;
+        while (j < s.length) {
+          if (s[j] === '"') break;
+          j++;
+        }
+
+        if (j < s.length && s[j] === '"') {
+          buf += s.slice(i, j + 1);
+          i = j;
+          continue;
+        }
+
+        buf += s[i];
         continue;
       }
-      // Voltas like "[1", "[2"
-      if (s[i] === '[' && /[0-9]/.test(s[i + 1] || '')) {
-        flush('volta');
+
+      if (s[i] === "|" && /[0-9]/.test(s[i + 1] || "")) {
+        flush("volta");
         i += 1;
-        while (/[0-9]/.test(s[i + 1] || '')) i += 1;
-        while (s[i + 1] === ' ') i += 1;
+        while (/[0-9]/.test(s[i + 1] || "")) i += 1;
+        while (s[i + 1] === " ") i += 1;
+        continue;
+      }
+
+      if (s[i] === "[" && /[0-9]/.test(s[i + 1] || "")) {
+        flush("volta");
+        i += 1;
+        while (/[0-9]/.test(s[i + 1] || "")) i += 1;
+        while (s[i + 1] === " ") i += 1;
         continue;
       }
 
       const three = s.slice(i, i + 3);
-      const two   = s.slice(i, i + 2);
+      const two = s.slice(i, i + 2);
       let bar = null;
+
       if (three === "[|]" || three === "|||") bar = three;
       else if (two === "|:" || two === ":|" || two === "::" || two === "||" || two === "|]" || two === "[|") bar = two;
       else if (s[i] === "|") bar = "|";
 
       if (bar) {
-        let thisBarType = 'other';
-        if (bar === "|:") thisBarType = 'start_repeat';
-        else if (bar === ":|") thisBarType = 'end_repeat';
-        // treat |], [|] as double bars too
-        else if (bar === "||" || bar === "|||" || bar === "|]" || bar === "[|]") thisBarType = 'double';
-        else if (bar === "|") thisBarType = 'single';
+        let thisBarType = "other";
+
+        if (bar === "|:") thisBarType = "start_repeat";
+        else if (bar === ":|") thisBarType = "end_repeat";
+        else if (bar === "||" || bar === "|||" || bar === "|]" || bar === "[|]") thisBarType = "double";
+        else if (bar === "|") thisBarType = "single";
 
         flush(thisBarType);
 
         if (bar === "|:") {
           anchors.push(measures.length);
-
-        } else if (bar === ":|") {
-          // Look ahead ACROSS WHITESPACE/NEWLINES for optional '[' and digits
+        }
+        else if (bar === ":|") {
           let j = i + 2;
-          while (isWs(s[j])) j++;
-          if (s[j] === '[') { j++; while (isWs(s[j])) j++; }
-          let isSecondEnding = false;
-          if (/[0-9]/.test(s[j] || '')) {
-            if (s[j] === '2') isSecondEnding = true;
-            while (/[0-9]/.test(s[j] || '')) j++;
-            while (isWs(s[j])) j++;
-          }
-          if (!isSecondEnding) anchors.push(measures.length);
-          i = j - 1;
 
-        } else if (thisBarType === 'double') {
-          // Double bars always start a new part (dedupe later prevents :|| double-anchors)
+          while (isWs(s[j])) j++;
+
+          let k = j;
+          if (s[k] === "[") {
+            k++;
+            while (isWs(s[k])) k++;
+          }
+
+          let hasEndingNumber = false;
+          let isSecondEnding = false;
+
+          if (/[0-9]/.test(s[k] || "")) {
+            hasEndingNumber = true;
+            if (s[k] === "2") isSecondEnding = true;
+
+            while (/[0-9]/.test(s[k] || "")) k++;
+            while (isWs(s[k])) k++;
+          }
+
+          if (!isSecondEnding) anchors.push(measures.length);
+
+          if (hasEndingNumber) {
+            i = k - bar.length;
+          }
+        }
+        else if (thisBarType === "double") {
           anchors.push(measures.length);
         }
 
@@ -687,11 +735,15 @@ function buildABCIncipitsSingleTune(abcText, measuresPerPart, options = {}) {
     }
 
     const tail = buf.trim();
-    if (tail) { measures.push(tail); barTypes.push(null); }
+    if (tail) {
+      measures.push(tail);
+      barTypes.push(null);
+    }
 
-    // strictly increasing anchors
     const uniq = [];
-    for (const a of anchors) { if (!uniq.length || a > uniq[uniq.length - 1]) uniq.push(a); }
+    for (const a of anchors) {
+      if (!uniq.length || a > uniq[uniq.length - 1]) uniq.push(a);
+    }
 
     return { measures, anchors: uniq, barTypes };
   }
@@ -701,93 +753,143 @@ function buildABCIncipitsSingleTune(abcText, measuresPerPart, options = {}) {
     return take.join(" | ");
   }
 
-  function withQuotedCaret(snippet, label) {
+  function withPartLabel(snippet, label) {
     const t = snippet.trim();
-    return t ? `"^${label}" ${t}` : t;
+    if (!t) return t;
+
+    const placement = options.partLabelsBelowStaff ? "_" : "^";
+    return `"${placement}${label}" ${t}`;
   }
 
-  const neat = (s) => s.replace(/[ \t]+/g, " ")
-                       .replace(/\s*\|\s*/g, " | ")
-                       .replace(/\s+\n/g, "\n")
-                       .trim();
+  function neatOutsideQuotes(s) {
+    let out = "";
+    let inQuote = false;
 
-  // Remove stray leading ":" or "|" that might survive edge cases
+    for (let i = 0; i < s.length; i++) {
+      const ch = s[i];
+
+      if (ch === '"') {
+        inQuote = !inQuote;
+        out += ch;
+        continue;
+      }
+
+      if (!inQuote && (ch === " " || ch === "\t")) {
+        out += " ";
+        while (s[i + 1] === " " || s[i + 1] === "\t") i++;
+        continue;
+      }
+
+      out += ch;
+    }
+
+    out = out.replace(/\s+\n/g, "\n").trim();
+
+    let finalOut = "";
+    inQuote = false;
+
+    for (let i = 0; i < out.length; i++) {
+      const ch = out[i];
+
+      if (ch === '"') {
+        inQuote = !inQuote;
+        finalOut += ch;
+        continue;
+      }
+
+      if (!inQuote && ch === "|") {
+        finalOut = finalOut.replace(/[ \t]+$/g, "");
+        finalOut += " | ";
+        while (out[i + 1] === " " || out[i + 1] === "\t") i++;
+        continue;
+      }
+
+      finalOut += ch;
+    }
+
+    return finalOut.trim();
+  }
+
   function cleanPartStart(s) {
     return s.replace(/^\s*:+/, "").replace(/^\s*\|+/, "").trim();
   }
 
-  // Decide whether a caret-starting snippet is an annotation (needs opening quote) or a sharped note.
   function fixLeadingCaretAnnotation(s) {
     const trimmed = s.replace(/^\s+/, "");
-    if (!trimmed.startsWith("^")) return s;       // nothing to do
-    if (/^\s*"/.test(s)) return s;                // already quoted
+    if (!trimmed.startsWith("^")) return s;
+    if (/^\s*"/.test(s)) return s;
 
-    // Examine what follows the caret
     const after = trimmed.slice(1);
-
-    // If it matches a *note* start (^[A-Ga-g][,']*(len)? then optional tie/boundary), do NOT quote.
-    // - length: digits and optional slash, e.g., 2 or 3/ or 3/2
-    // - boundary: space, bar, close bracket/paren, end, or tie '-'
     const noteLike = /^[A-Ga-g][,']*(?:\d+(?:\/\d*)?)?(?=$|[\s\|\]\)-]|-)/.test(after);
-    if (noteLike) return s; // sharped note, not an annotation
 
-    // Otherwise, treat it as an annotation that lost its opening quote
+    if (noteLike) return s;
+
     return '"' + s;
   }
 
-  // ---------- main ----------
   const { headerText, bodyText } = splitHeaderAndBody(abcText);
   const sampledBody = filterToVoice(bodyText, options?.voice);
   const { measures, anchors, barTypes } = sliceMeasures(sampledBody);
 
-  // Pickup-aware Part-A start (|: only):
   let startA = 0;
-  if (anchors.length && anchors[0] === 1 && barTypes[0] === 'start_repeat') {
-    startA = 1; // upbeat inside opening repeat
-  } else if (barTypes.length >= 2 && barTypes[0] === 'single' && barTypes[1] === 'start_repeat' && anchors.length) {
-    startA = anchors[0]; // pickup before first |:
-  } else if (anchors.length && anchors[0] === 0) {
-    startA = 0; // tune starts with |:
+
+  if (anchors.length && anchors[0] === 1 && barTypes[0] === "start_repeat") {
+    startA = 1;
+  }
+  else if (barTypes.length >= 2 && barTypes[0] === "single" && barTypes[1] === "start_repeat" && anchors.length) {
+    startA = anchors[0];
+  }
+  else if (anchors.length && anchors[0] === 0) {
+    startA = 0;
   }
 
-  // Part starts: startA, then every anchor > startA
   const starts = [startA];
-  for (const a of anchors) if (a > startA) starts.push(a);
+  for (const a of anchors) {
+    if (a > startA) starts.push(a);
+  }
 
-  // Emit all parts, each N measures
   const N = Number(measuresPerPart);
   const pieces = [];
+
   for (let p = 0; p < starts.length; p++) {
     const start = Math.min(starts[p], measures.length);
     if (start >= measures.length) break;
 
     let snippet = buildPart(measures, start, N);
-    snippet = neat(snippet);
+    snippet = neatOutsideQuotes(snippet);
     snippet = cleanPartStart(snippet);
-    snippet = fixLeadingCaretAnnotation(snippet); // refined: only quote caret if not a sharped note
+    snippet = fixLeadingCaretAnnotation(snippet);
+
     if (!snippet) continue;
 
-    const label = indexToLetters(p) + " Part"; // A, B, C...
-    pieces.push(withQuotedCaret(snippet, `${label}`));
+    const label = indexToLetters(p) + " Part";
+    pieces.push(withPartLabel(snippet, label));
   }
 
-  // If there are no notes, just return the original ABC (section headers, for example)
   if (!pieces.length) return abcText;
 
-  // Optional: put parts on separate lines
   const partsOnNewLines = !!options.partsOnNewLines;
+
   let combinedBody = partsOnNewLines
     ? pieces.join(" ||\n")
     : pieces.join(" || ");
 
   combinedBody = combinedBody.replace(/\s+$/g, "");
+
   if (!/\|\|\s*$/.test(combinedBody)) combinedBody += " ||";
 
   return headerText.replace(/\s+$/g, "") + "\n" + combinedBody + "\n";
 
   function indexToLetters(idx) {
-    let n = idx + 1, out = "";
-    while (n > 0) { const r = (n - 1) % 26; out = String.fromCharCode(65 + r) + out; n = Math.floor((n - 1) / 26); }
+    let n = idx + 1;
+    let out = "";
+
+    while (n > 0) {
+      const r = (n - 1) % 26;
+      out = String.fromCharCode(65 + r) + out;
+      n = Math.floor((n - 1) / 26);
+    }
+
     return out;
   }
 }
@@ -28005,13 +28107,13 @@ async function processShareLink() {
       // Show update message?
       if (gLocalStorageAvailable){
 
-        var updatePresented = localStorage.sawUpdate_20may2026;
+        var updatePresented = localStorage.sawUpdate_21may2026;
 
         if (updatePresented != "true") {
 
           showWhatsNewScreen();
 
-          localStorage.sawUpdate_20may2026 = true;
+          localStorage.sawUpdate_21may2026 = true;
 
         }
 
@@ -29882,16 +29984,17 @@ var gIncipitsBuilderStripText = true;
 var gIncipitsBuilderMultiPart = true;
 var gIncipitsBuilderOwnLines = false;
 var gIncipitsTagsToStrip = "ABCDINOSWwZ";
+var gIncipitsBuilderStripChords = true;
 
 function IncipitsBuilderDialog() {
 
-  // Setup initial values
   const theData = {
     IncipitsBuilderBars: gIncipitsBuilderBars,
     IncipitsBuilderWidth: gIncipitsBuilderWidth,
     IncipitsBuilderLeftJustify: gIncipitsBuilderLeftJustify,
     IncipitsBuilderInjectNumbers: gIncipitsBuilderInjectNumbers,
     IncipitsBuilderStripText: gIncipitsBuilderStripText,
+    IncipitsBuilderStripChords: gIncipitsBuilderStripChords,
     IncipitsBuilderStripTags: gIncipitsTagsToStrip,
     IncipitsBuilderMultiPart: gIncipitsBuilderMultiPart,
     IncipitsBuilderOwnLines: gIncipitsBuilderOwnLines
@@ -29903,9 +30006,8 @@ function IncipitsBuilderDialog() {
     html: '<p style="font-size:12pt;line-height:18pt;font-family:helvetica;">Clicking "Build" will extensively reformat the ABC, so you may want to grab a Snapshot or save the ABC before using this feature.</p>'
   }, {
     html: '<p style="font-size:12pt;line-height:18pt;font-family:helvetica;margin-bottom:24px;">The reformatted ABC can be exported as first-line Notes Incipits from the Export PDF dialog.</p>'
-  }, 
-  {
-    html: '<p style="font-size:12pt;line-height:18pt;font-family:helvetica;margin-bottom:24px;"><strong>Note:</strong> When generating multi-part incipits the staff width is not used and all text blocks are stripped.</p>'
+  }, {
+    html: '<p style="font-size:12pt;line-height:18pt;font-family:helvetica;margin-bottom:24px;"><strong>Note:</strong> When generating multi-part incipits the staff width is not used.</p>'
   }, {
     name: "    Create multi-part incipits (Part A, Part B, etc.)",
     id: "IncipitsBuilderMultiPart",
@@ -29937,16 +30039,21 @@ function IncipitsBuilderDialog() {
     type: "checkbox",
     cssClass: "incipits_builder_form_text_checkbox"
   }, {
+    name: "    Strip chords",
+    id: "IncipitsBuilderStripChords",
+    type: "checkbox",
+    cssClass: "incipits_builder_form_text_checkbox"
+  }, {
     name: "    Strip all %%text, %%center, %%right, and %%begintext blocks",
     id: "IncipitsBuilderStripText",
     type: "checkbox",
     cssClass: "incipits_builder_form_text_checkbox"
-  },{
+  }, {
     name: "    Tags to strip (Default is ABCDINOSWwZ):",
     id: "IncipitsBuilderStripTags",
     type: "text",
     cssClass: "incipits_striptags_text"
-  }, ];
+  }];
 
   const modal = DayPilot.Modal.form(form, theData, {
     theme: "modal_flat",
@@ -29978,26 +30085,17 @@ function IncipitsBuilderDialog() {
       }
 
       gIncipitsBuilderLeftJustify = args.result.IncipitsBuilderLeftJustify;
-
       gIncipitsBuilderInjectNumbers = args.result.IncipitsBuilderInjectNumbers;
-
       gIncipitsBuilderStripText = args.result.IncipitsBuilderStripText;
-
+      gIncipitsBuilderStripChords = args.result.IncipitsBuilderStripChords;
       gIncipitsTagsToStrip = args.result.IncipitsBuilderStripTags;
-
       gIncipitsBuilderMultiPart = args.result.IncipitsBuilderMultiPart;
-
       gIncipitsBuilderOwnLines = args.result.IncipitsBuilderOwnLines;
 
       var nTunes = CountTunes();
 
-      // Should never get here, but just to be safe...
       if (nTunes == 0) {
-
-        var thePrompt = "No tunes for incipits building.";
-
-        // Center the string in the prompt
-        thePrompt = makeCenteredPromptString(thePrompt);
+        var thePrompt = makeCenteredPromptString("No tunes for incipits building.");
 
         DayPilot.Modal.alert(thePrompt, {
           theme: "modal_flat",
@@ -30009,133 +30107,104 @@ function IncipitsBuilderDialog() {
       }
 
       var theNotes = getABCEditorText();
-
-      // Find the tunes
       var theTunes = theNotes.split(/^X:/gm);
-
       var output = FindPreTuneHeader(theNotes);
 
       for (var i = 1; i <= nTunes; ++i) {
 
         var theTune = "X:" + theTunes[i];
-
         var stringToInject;
 
-        if (gIncipitsBuilderMultiPart){
+        if (gIncipitsBuilderStripChords) {
           theTune = StripChordsOne(theTune);
-          theTune = StripTextAnnotationsOne(theTune);
-
-          if (gIncipitsBuilderOwnLines){
-            theTune = buildABCIncipitsSingleTune(theTune,gIncipitsBuilderBars,{partsOnNewLines:true});
-          }
-          else{
-            theTune = buildABCIncipitsSingleTune(theTune,gIncipitsBuilderBars);            
-          }
         }
 
-        if (gIncipitsBuilderMultiPart){
-          if (!gIncipitsBuilderOwnLines){
-            // Inject an easily identified block of annotations
+        theTune = StripTextAnnotationsOne(theTune);
+
+        if (gIncipitsBuilderMultiPart) {
+
+          theTune = buildABCIncipitsSingleTune(theTune, gIncipitsBuilderBars, {
+            partsOnNewLines: gIncipitsBuilderOwnLines,
+            partLabelsBelowStaff: !gIncipitsBuilderStripChords
+          });
+
+        }
+
+        if (gIncipitsBuilderMultiPart) {
+          if (!gIncipitsBuilderOwnLines) {
             stringToInject = "%incipits_inject_start\n%%maxstaves 1\n%%staffwidth 556\n%%printtempo 0\n%hide_rhythm_tag\n";
           }
-          else{
-            // Inject an easily identified block of annotations
+          else {
             stringToInject = "%incipits_inject_start\n%%staffwidth 556\n%%printtempo 0\n%hide_rhythm_tag\n%%stretchlast true\n";
           }
         }
         else {
-          // Inject an easily identified block of annotations
           stringToInject = "%incipits_inject_start\n%%maxstaves 1\n%%noexpandtowidest\n%%barsperstaff " + (nBars + 1) + "\n%%staffwidth " + theWidth + "\n%%printtempo 0\n%hide_rhythm_tag\n";
-       }
+        }
 
         if (gIncipitsBuilderLeftJustify) {
           stringToInject += "%left_justify_titles\n%incipits_inject_end";
-        } else {
+        }
+        else {
           stringToInject += "%incipits_inject_end";
         }
 
-        // Remove any existing incipits annotation
         theTune = theTune.replace(/^%incipits_inject_start[\s\S]*?^%incipits_inject_end.*(\r?\n)?/gm, '');
 
         theTune = InjectStringAboveTuneHeader(theTune, stringToInject);
 
-        // Loop through each character in the control string
         for (let char of gIncipitsTagsToStrip) {
-
-          theTune = removeAllTags(theTune, char)
+          theTune = removeAllTags(theTune, char);
         }
 
         if (gIncipitsBuilderStripText) {
-
           theTune = StripTextAnnotationsOne(theTune);
-
         }
 
         output += theTune + "\n\n";
-
       }
 
       setABCEditorText(output);
 
       if (gIncipitsBuilderInjectNumbers) {
-
-        // First remove any existing tune title numers
         var theNotes = RemoveTuneTitleNumbers(false);
-
-        // Stuff it back in the work area so getTuneByIndex() returns correct value
         setABCEditorText(theNotes);
 
         var result = processTuneTitleNumbers(nTunes, theNotes);
-
-        // Stuff the final result back in the editor
         setABCEditorText(result);
-
       }
 
       SaveConfigurationSettings();
 
-      var thePrompt = "Incipits built!";
-
-      // Center the string in the prompt
-      thePrompt = makeCenteredPromptString(thePrompt);
+      var thePrompt = makeCenteredPromptString("Incipits built!");
 
       DayPilot.Modal.alert(thePrompt, {
         theme: "modal_flat",
         top: 300,
         scrollWithPage: (AllowDialogsToScroll())
-      }).then(function(){
+      }).then(function() {
 
         RenderAsync(true, null, function() {
 
-          if (gEnableSyntax){
+          if (gEnableSyntax) {
             gTheCM.selectionStart = 0;
             gTheCM.selectionEnd = 0;
-
-            // And reset the focus
             gTheCM.focus();
           }
-          else{
+          else {
             gTheABC.selectionStart = 0;
             gTheABC.selectionEnd = 0;
-
-            // And reset the focus
             gTheABC.focus();
-
           }
 
-          // Scroll to the top
           MakeTuneVisible(true);
           ensureMoreToolsVisible();
 
         });
       });
-
     }
-
   });
-
 }
-
 
 // 
 // Clean a title number from the start of a string
@@ -47202,6 +47271,12 @@ function GetInitialConfigurationSettings() {
     gIncipitsBuilderOwnLines = (val == "true");
   }
 
+  gIncipitsBuilderStripChords = true;
+  val = localStorage.IncipitsBuilderStripChords;
+  if (val) {
+    gIncipitsBuilderStripChords = (val == "true");
+  }
+
   val = localStorage.LastWarp;
   if (val) {
     gLastWarp = parseInt(val);
@@ -47593,6 +47668,7 @@ function SaveConfigurationSettings() {
     localStorage.IncipitsTagsToStrip = gIncipitsTagsToStrip;
     localStorage.IncipitsBuilderMultiPart = gIncipitsBuilderMultiPart;
     localStorage.IncipitsBuilderOwnLines = gIncipitsBuilderOwnLines;
+    localStorage.IncipitsBuilderStripChords = gIncipitsBuilderStripChords;
 
     // Warp
     localStorage.LastWarp = gLastWarp;
@@ -55793,7 +55869,7 @@ function showWhatsNewScreen() {
   modal_msg += 'background: linear-gradient(135deg, #0d47a1 0%, #1565c0 50%, #64b5f6 100%);';
   modal_msg += 'box-shadow: 0 6px 16px rgba(0,0,0,0.14); color:#fff;">';
   modal_msg += '<div style="font-size:20pt; line-height:24pt; font-weight:bold;">What&apos;s New</div>';
-  modal_msg += '<div style="font-size:11pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 20 May 2026</div>';
+  modal_msg += '<div style="font-size:11pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 21 May 2026</div>';
   modal_msg += '</div>';
 
   // Short intro
@@ -55808,7 +55884,12 @@ function showWhatsNewScreen() {
   modal_msg += '<p style="margin:6px 0; font-size:12pt;margin-bottom:12px;">New <strong>Multiple Tunes per Page (Prefer 2 Tunes/Page)</strong> and <strong>Multiple Tunes per Page (Prefer 3 Tunes/Page)</strong> PDF Tune Layout Options (experimental)</p>';
   modal_msg += '<p style="margin:6px 0; font-size:12pt;">When possible, these new tune layout options attempt to format the pages with 2 or 3 tunes-per-page automatically scaling down the tunes as required.</p>';
   modal_msg += '<p style="margin:6px 0; font-size:12pt;">If not possible, for example, if there are very tall tunes or tunes that span multiple pages that would require an excessive downscale, the layout may fall back to fewer tunes per page.</p>';
+  modal_msg += '</div>';
 
+  // Feature card
+  modal_msg += '<div style="margin:10px 0 6px 0; padding:12px 12px; border-radius:12px;';
+  modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);">';
+  modal_msg += '<p style="margin:6px 0; font-size:12pt;">Chord stripping is now optional in the <strong>Notes Incipits Builder</strong>.</p>';
   modal_msg += '</div>';
 
   modal_msg += '</div>'; // wrapper
@@ -62341,13 +62422,13 @@ async function DoStartup() {
   // Show update message?
   if (gLocalStorageAvailable && (!isFromShare)){
 
-    var updatePresented = localStorage.sawUpdate_20may2026;
+    var updatePresented = localStorage.sawUpdate_21may2026;
 
     if (updatePresented != "true") {
 
       showWhatsNewScreen();
 
-      localStorage.sawUpdate_20may2026 = true;
+      localStorage.sawUpdate_21may2026 = true;
 
     }
 
