@@ -3652,7 +3652,7 @@ font-size:11pt;
 font-family:"Helvetica";
 display:flex;
 margin-right:12px;
-margin-top:36px;
+margin-top:30px;
 }
 
 .configure_pdf_papersize_select>select{
@@ -3680,7 +3680,7 @@ font-size:11pt;
 font-family:"Helvetica";
 display:flex;
 margin-right:12px;
-margin-top:30px;
+margin-top:24px;
 }
 
 .configure_pdf_orientation_select>select{
@@ -3708,7 +3708,7 @@ font-size:11pt;
 font-family:"Helvetica";
 display:flex;
 margin-right:12px;
-margin-top:30px;
+margin-top:24px;
 }
 
 .configure_pdf_tunelayout_select>select{
@@ -3736,7 +3736,7 @@ font-size:11pt;
 font-family:"Helvetica";
 display:flex;
 margin-right:12px;
-margin-top:30px;
+margin-top:24px;
 }
 
 .configure_pdf_incipitscolumns_select>select{
@@ -3763,7 +3763,7 @@ font-size:11pt;
 font-family:"Helvetica";
 display:flex;
 margin-right:12px;
-margin-top:30px;
+margin-top:24px;
 }
 
 .configure_pdf_pagenumber_select>select{
@@ -3791,7 +3791,7 @@ font-size:11pt;
 font-family:"Helvetica";
 display:flex;
 margin-right:12px;
-margin-top:30px;
+margin-top:24px;
 }
 
 .configure_pdf_fontname_select>select{
@@ -3819,7 +3819,7 @@ font-size:11pt;
 font-family:"Helvetica";
 display:flex;
 margin-right:12px;
-margin-top:30px;
+margin-top:24px;
 }
 
 .configure_pdf_fontstyle_select>select{
@@ -3968,6 +3968,35 @@ margin-top:-9px;
 position:absolute;
 left:200px;
 }
+
+.configure_pdf_pagefit_scaling_preset_select{
+font-size:11pt;
+font-family:"Helvetica";
+display:flex;
+margin-right:12px;
+margin-top:24px;
+}
+
+.configure_pdf_pagefit_scaling_preset_select>select{
+display:inline;
+-webkit-appearance: none;
+-moz-appearance: none;
+appearance: none;
+background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' fill='%238C98F2'><polygon points='0,0 100,0 50,50'/></svg>") no-repeat;
+background-size: 12px;
+background-position: calc(100% - 10px) center;
+background-repeat: no-repeat;
+background-color: #efefef;
+color:black;
+font-size:11pt;
+font-family:"Helvetica";
+height:32px;
+width:170px;
+margin-left:10px;
+padding-left:10px;
+margin-top:-7px;
+}
+
 .modal_flat_form_item_label{
 font-size: 12pt;
 }
