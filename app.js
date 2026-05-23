@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3229_052226_1500";
+var gVersionNumber = "3230_052226_1700";
 
 var gMIDIInitStillWaiting = false;
 
@@ -8241,21 +8241,20 @@ function getPDFPageFitTargetFromLayout(thePageOptions) {
 
 }
 
-
 function normalizePDFPageFitStaffWidthPreset(thePreset) {
 
   // Backward compatibility with the previous scale-oriented preset names.
   switch (thePreset) {
 
-    case "readable":
-    case "balanced":
     case "standard":
       return "standard";
+
+    case "semi_compact":
+      return "semi_compact";
 
     case "compact":
       return "compact";
 
-    case "very_compact":
     case "more_compact":
       return "more_compact";
 
@@ -8288,6 +8287,9 @@ function getPDFPageFitStaffWidthForPreset(thePreset) {
   var preset = normalizePDFPageFitStaffWidthPreset(thePreset);
 
   switch (preset) {
+
+    case "semi_compact":
+      return 650;
 
     case "compact":
       return 750;
@@ -49554,6 +49556,9 @@ function PDFExportDialog() {
     name: "  Standard",
     id: "standard"
   }, {
+    name: "  Wide",
+    id: "semi_compact"
+  }, {
     name: "  Wider",
     id: "compact"
   }, {
@@ -56123,7 +56128,7 @@ function showWhatsNewScreen() {
   modal_msg += '<p><strong>Fitted Layout Staff Width for PDF Export</strong></p>';
   modal_msg += '<p>When using <strong>Multiple Tunes per Page (Prefer 2 Tunes/Page)</strong> or <strong>Multiple Tunes per Page (Prefer 3 Tunes/Page)</strong>, you can now choose a <strong>Fitted Layout Staff Width</strong> setting.</p>';
   modal_msg += '<p>The <strong>Standard</strong> option leaves the notation as normally rendered.</p>';
-  modal_msg += '<p>The <strong>Wider</strong>, <strong>Extra-Wide</strong>, and <strong>Maximum</strong> options temporarily render the notation with wider staffs during PDF export and then re-renders the notation when the PDF export is complete.</p>';
+  modal_msg += '<p>The <strong>Wide</strong>, <strong>Wider</strong>, <strong>Extra-Wide</strong>, and <strong>Maximum</strong> options temporarily render the notation with wider staffs during PDF export and then re-renders the notation when the PDF export is complete.</p>';
   modal_msg += '<p>This can reduce the vertical height of some tunes and help the preferred number of tunes fit on each page.</p>';
   modal_msg += '</div>';
 
