@@ -347,11 +347,21 @@
         font-family:"Helvetica" !important;
         font-weight:bold;
         margin-bottom:12px;
-        line-height:12px;
         padding-left:0px;
         text-align: center;
         }
-        
+
+        .sidebar_instructions_subhead {
+        font-size:12pt  !important;
+        line-height:18pt  !important;
+        font-family:"Helvetica" !important;
+        font-weight:bold;
+        margin-top:12px;
+        margin-bottom:12px;
+        padding-left:0px;
+        text-align: center;
+        }
+
         .sidebar summary {
         display: flex;
         justify-content: space-between;
@@ -524,7 +534,9 @@
         <div class="sidebar hidden-print" id="sidebar">
             
             <p class="sidebar_instructions">Click any topic to show/hide the subtopics</p>
-            <h1 style="margin-bottom:20px;padding-left:0px;"><button class="expandall" onclick="SidebarExpandAll();">Expand All</button>&nbsp;&nbsp;&nbsp;<button class="expandall" onclick="SidebarCollapseAll();">Collapse All</button></h1>
+            <h1 style="padding-left:0px;margin-bottom:0px;"><button class="expandall" onclick="SidebarExpandAll();">Expand All</button>&nbsp;&nbsp;&nbsp;<button class="expandall" onclick="SidebarCollapseAll();">Collapse All</button></h1>
+
+            <p class="sidebar_instructions_subhead">To search for a topic,<br/>press Ctrl-F (Windows) or ⌘+F (Mac)</p>
             
             <details>
             <summary><h3>Basic Operation</h3></summary>
