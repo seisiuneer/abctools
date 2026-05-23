@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3233_052326_0600";
+var gVersionNumber = "3234_052326_1030";
 
 var gMIDIInitStillWaiting = false;
 
@@ -8389,9 +8389,14 @@ function beginPDFPageFitStaffWidthRenderIfNeeded(callback) {
   });
 }
 
-function endPDFPageFitStaffWidthRenderIfNeeded(doRender) {
+function endPDFPageFitStaffWidthRenderIfNeeded(doRender, callback = null) {
 
   if (!gPDFPageFitStaffWidthTempActive) {
+
+    if (typeof callback === "function") {
+      callback();
+    }
+
     return;
   }
 
@@ -8405,7 +8410,21 @@ function endPDFPageFitStaffWidthRenderIfNeeded(doRender) {
   }
 
   if (doRender) {
-    RenderAsync(true, null, null);
+
+    RenderAsync(true, null, function() {
+
+      if (typeof callback === "function") {
+        callback();
+      }
+
+    });
+
+  } else {
+
+    if (typeof callback === "function") {
+      callback();
+    }
+    
   }
 }
 
@@ -12704,7 +12723,9 @@ function ExportNotationPDF(title) {
             // Restore any temporary staffwidth ABC used for notation PDF output.
             endPDFPageFitStaffWidthRenderIfNeeded(false);
 
-            document.getElementById("statuspdfname").innerHTML = "<font color=\"red\">Cleaning up after PDF generation</font>";
+            document.getElementById("statuspdfname").innerHTML = "&nbsp;";
+            document.getElementById("statustunecount").innerHTML = "<font color=\"red\">Cleaning up after PDF generation</font>";
+            document.getElementById("pagestatustext").innerHTML = "&nbsp;";
 
             RenderAsync(true, null, function() {
 
@@ -12720,15 +12741,33 @@ function ExportNotationPDF(title) {
 
           } else {
 
-            // Hide the PDF status modal
-            var pdfstatus = document.getElementById("pdf-controls");
-            pdfstatus.style.display = "none";
-
             // Just clean up the div IDs and classes
             RestoreSVGDivsAfterRasterization();
 
             // Restore any temporary staffwidth ABC used for notation PDF output.
-            endPDFPageFitStaffWidthRenderIfNeeded(true);
+            // If a re-render is needed, keep the PDF status dialog visible until
+            // the cleanup render has completed.
+            if (gPDFPageFitStaffWidthTempActive) {
+
+              document.getElementById("statuspdfname").innerHTML = "&nbsp;";
+              document.getElementById("statustunecount").innerHTML = "<font color=\"red\">Cleaning up after PDF generation</font>";
+              document.getElementById("pagestatustext").innerHTML = "&nbsp;";
+
+              endPDFPageFitStaffWidthRenderIfNeeded(true, function() {
+
+                // Hide the PDF status modal
+                var pdfstatus = document.getElementById("pdf-controls");
+                pdfstatus.style.display = "none";
+
+              });
+
+            } else {
+
+              // Hide the PDF status modal
+              var pdfstatus = document.getElementById("pdf-controls");
+              pdfstatus.style.display = "none";
+
+            }
 
           }
 
@@ -13080,7 +13119,9 @@ function ExportNotationPDF(title) {
                   // Did incipit generation require a re-render?
                   if (requirePostRender) {
 
-                    document.getElementById("statuspdfname").innerHTML = "<font color=\"red\">Cleaning up after PDF generation</font>";
+                    document.getElementById("statuspdfname").innerHTML = "&nbsp;";
+                    document.getElementById("statustunecount").innerHTML = "<font color=\"red\">Cleaning up after PDF generation</font>";
+                    document.getElementById("pagestatustext").innerHTML = "&nbsp;";
 
                     // Need some time for UI update
                     setTimeout(function() {
@@ -13109,8 +13150,6 @@ function ExportNotationPDF(title) {
                     // Catch up on any UI changes during the PDF rendering
                     RestoreSVGDivsAfterRasterization();
 
-                    finalize_pdf_export_stage_2();
-
                     gRenderingPDF = false;
 
                     clearGetTuneByIndexCache();
@@ -13119,7 +13158,30 @@ function ExportNotationPDF(title) {
                     gTheNotation.style.width = gOriginalWidthBeforePDFExport;
 
                     // Restore any temporary staffwidth ABC used for notation PDF output.
-                    endPDFPageFitStaffWidthRenderIfNeeded(true);
+                    // If a re-render is needed, keep the PDF status dialog visible until
+                    // the cleanup render has completed.
+                    if (gPDFPageFitStaffWidthTempActive) {
+
+                      document.getElementById("statuspdfname").innerHTML = "&nbsp;";
+                      document.getElementById("statustunecount").innerHTML = "<font color=\"red\">Cleaning up after PDF generation</font>";
+                      document.getElementById("pagestatustext").innerHTML = "&nbsp;";
+
+                      // Need some time for the UI status update to display before the render.
+                      setTimeout(function() {
+
+                        endPDFPageFitStaffWidthRenderIfNeeded(true, function() {
+
+                          finalize_pdf_export_stage_2();
+
+                        });
+
+                      }, 100);
+
+                    } else {
+
+                      finalize_pdf_export_stage_2();
+
+                    }
 
                   }
                 }
@@ -13127,9 +13189,7 @@ function ExportNotationPDF(title) {
                 function finalize_pdf_export_stage_2() {
 
                   document.getElementById("statuspdfname").innerHTML = "&nbsp;";
-
                   document.getElementById("statustunecount").innerHTML = "&nbsp;";
-
                   document.getElementById("pagestatustext").innerHTML = "&nbsp;";
 
                   // Hide the PDF status modal
