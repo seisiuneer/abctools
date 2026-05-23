@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3234_052326_1030";
+var gVersionNumber = "3235_052326_1230";
 
 var gMIDIInitStillWaiting = false;
 
@@ -28347,13 +28347,13 @@ async function processShareLink() {
       // Show update message?
       if (gLocalStorageAvailable){
 
-        var updatePresented = localStorage.sawUpdate_22may2026a;
+        var updatePresented = localStorage.sawUpdate_23may2026;
 
         if (updatePresented != "true") {
 
           showWhatsNewScreen();
 
-          localStorage.sawUpdate_22may2026a = true;
+          localStorage.sawUpdate_23may2026 = true;
 
         }
 
@@ -56207,6 +56207,13 @@ function showWhatsNewScreen() {
   // Feature card
   modal_msg += '<div style="margin:10px 0 6px 0; padding:12px 12px; border-radius:12px;';
   modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);">';
+  modal_msg += '<p>New feature in the <strong>User Guide</strong>:</p>';
+  modal_msg += '<p>Added a full alphabetical topic index at the end.</p>';
+  modal_msg += '</div>';
+
+  // Feature card
+  modal_msg += '<div style="margin:10px 0 6px 0; padding:12px 12px; border-radius:12px;';
+  modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);">';
   modal_msg += '<p>New feature on the <strong>PDF Tunebook Export</strong> dialog:</p>';
   modal_msg += '<p><strong>Layout Staff Width for PDF Export</strong></p>';
   modal_msg += '<p>When using <strong>One Tune per Page</strong>, <strong>Multiple Tunes per Page (Natural Flow)</strong>, <strong>Multiple Tunes per Page (Prefer 2 Tunes/Page)</strong>, or <strong>Multiple Tunes per Page (Prefer 3 Tunes/Page)</strong>, you can now choose a <strong>Layout Staff Width</strong> setting.</p>';
@@ -62742,13 +62749,13 @@ async function DoStartup() {
   // Show update message?
   if (gLocalStorageAvailable && (!isFromShare)){
 
-    var updatePresented = localStorage.sawUpdate_22may2026a;
+    var updatePresented = localStorage.sawUpdate_23may2026;
 
     if (updatePresented != "true") {
 
       showWhatsNewScreen();
 
-      localStorage.sawUpdate_22may2026a = true;
+      localStorage.sawUpdate_23may2026 = true;
 
     }
 
