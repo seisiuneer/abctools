@@ -4281,6 +4281,12 @@
                 <p><strong>Extra-Wide</strong> — Uses wider staffs than the Wider setting, which may help more tunes fit on each page.</p>
                 <p><strong>Maximum</strong> — Uses the widest temporary staff layout. This gives the tool the best chance of fitting the preferred number of tunes per page, but the notation may appear more horizontally stretched and may not be suitable for every tune.</p>
                 <p><strong>Default is:</strong>&nbsp;&nbsp;Standard</p>
+                <p>For other than the <strong>Standard</strong> option, wider PDF staves are created by injecting additional <strong>%%staffwidth</strong> and <strong>%%stretchlast</strong> commands at the start of ABC before the PDF export, rendering all the tunes, exporting the PDF file, removing the injected commands after PDF export is complete, and finally re-rendering all the tunes.</p>
+                <p>The injected <strong>%%staffwidth</strong> values are:</p>
+                <p class="code">% Wide<br/>%%staffwidth 650<br/><br/>% Wider<br/>%%staffwidth 750<br/><br/>% Extra-Wide<br/>%%staffwidth 850<br/><br/>% Maximum<br/>%%staffwidth 950</p>
+                <p>Additionally:</p>
+                <p class="code">%%stretchlast true</p>
+                <p>is added after the injected <strong>%%staffwidth</strong> to ensure that the last stave of each tune is full width.</p>
                 <hr>
                 <p><strong>Notes Incipits Columns:</strong></p>
                 <p></p>
