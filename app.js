@@ -212,10 +212,12 @@ var gPDFPageFitMinScale = 0.72;
 var gPDFPageFitMinScaleTwoTunes = 0.72;
 var gPDFPageFitMinScaleThreeTunes = 0.55;
 
-// PDF page-fit staff width preset for Prefer 2 Tunes/Page and Prefer 3 Tunes/Page.
+// PDF export staff width preset for notation layouts.
 // The Standard preset uses the current rendered notation as-is.
-// The compact presets are applied at PDF export time by temporarily injecting
+// The wider presets are applied at PDF export time by temporarily injecting
 // %%staffwidth and forcing a full re-render before PDF rasterization.
+// Used by One Tune per Page, Multiple Tunes per Page (Natural Flow),
+// and Multiple Tunes per Page (Prefer 2/3 Tunes/Page).
 // Persistence/restoration is handled separately.
 var gPDFPageFitScalingPreset = "standard";
 
@@ -8227,6 +8229,24 @@ function isPDFPageFitLayout(thePageOptions) {
 
 }
 
+//
+// PDF staff-width preset helpers for notation PDF layouts.
+// These are broader than page-fit layout: staff-width presets can also be
+// used for One Tune per Page and Multiple Tunes per Page (Natural Flow).
+//
+function isPDFStaffWidthPresetLayout(thePageOptions) {
+
+  return ((thePageOptions == "one") ||
+          (thePageOptions == "one_a4") ||
+          (thePageOptions == "multi") ||
+          (thePageOptions == "multi_a4") ||
+          (thePageOptions == "multi_fit_2") ||
+          (thePageOptions == "multi_fit_2_a4") ||
+          (thePageOptions == "multi_fit_3") ||
+          (thePageOptions == "multi_fit_3_a4"));
+
+}
+
 function getPDFPageFitTargetFromLayout(thePageOptions) {
 
   if ((thePageOptions == "multi_fit_2") || (thePageOptions == "multi_fit_2_a4")) {
@@ -8332,7 +8352,7 @@ function beginPDFPageFitStaffWidthRenderIfNeeded(callback) {
 
   var thePageOptions = getPDFFormat();
 
-  if (!isPDFPageFitLayout(thePageOptions)) {
+  if (!isPDFStaffWidthPresetLayout(thePageOptions)) {
     callback();
     return;
   }
@@ -12681,7 +12701,7 @@ function ExportNotationPDF(title) {
           // Did incipit generation require a re-render?
           if (requirePostRender) {
 
-            // Restore any temporary staffwidth ABC used for Prefer 2/3 page-fit output.
+            // Restore any temporary staffwidth ABC used for notation PDF output.
             endPDFPageFitStaffWidthRenderIfNeeded(false);
 
             document.getElementById("statuspdfname").innerHTML = "<font color=\"red\">Cleaning up after PDF generation</font>";
@@ -12707,7 +12727,7 @@ function ExportNotationPDF(title) {
             // Just clean up the div IDs and classes
             RestoreSVGDivsAfterRasterization();
 
-            // Restore any temporary staffwidth ABC used for Prefer 2/3 page-fit output.
+            // Restore any temporary staffwidth ABC used for notation PDF output.
             endPDFPageFitStaffWidthRenderIfNeeded(true);
 
           }
@@ -13072,7 +13092,7 @@ function ExportNotationPDF(title) {
                       // Fix up any display width changes done for the PDF export
                       gTheNotation.style.width = gOriginalWidthBeforePDFExport;
 
-                      // Restore any temporary staffwidth ABC used for Prefer 2/3 page-fit output.
+                      // Restore any temporary staffwidth ABC used for notation PDF output.
                       endPDFPageFitStaffWidthRenderIfNeeded(false);
 
                       Render(true, null);
@@ -13098,7 +13118,7 @@ function ExportNotationPDF(title) {
                     // Fix up any display width changes done for the PDF export
                     gTheNotation.style.width = gOriginalWidthBeforePDFExport;
 
-                    // Restore any temporary staffwidth ABC used for Prefer 2/3 page-fit output.
+                    // Restore any temporary staffwidth ABC used for notation PDF output.
                     endPDFPageFitStaffWidthRenderIfNeeded(true);
 
                   }
@@ -28267,13 +28287,13 @@ async function processShareLink() {
       // Show update message?
       if (gLocalStorageAvailable){
 
-        var updatePresented = localStorage.sawUpdate_22may2026;
+        var updatePresented = localStorage.sawUpdate_22may2026a;
 
         if (updatePresented != "true") {
 
           showWhatsNewScreen();
 
-          localStorage.sawUpdate_22may2026 = true;
+          localStorage.sawUpdate_22may2026a = true;
 
         }
 
@@ -49389,8 +49409,8 @@ function idlePDFExportDialog() {
 
       case "configure_pagefitscalingpreset":
         control.title = enabled ?
-          "For Prefer 2 Tunes/Page and Prefer 3 Tunes/Page, temporarily renders the notation with optional wider staffs before exporting the PDF and can help more tunes fit vertically on each page." :
-          "Only used when Tune Layout is set to Prefer 2 Tunes/Page or Prefer 3 Tunes/Page.";
+          "For notation PDF layouts, temporarily renders the notation with optional wider staffs before exporting the PDF. Wider staffs can reduce the number of staff lines needed and help tunes fit better vertically on each page." :
+          "Only used with One Tune per Page, Multiple Tunes per Page (Natural Flow), or the Prefer 2/3 Tunes/Page layouts.";
         break;
 
       default:
@@ -49403,12 +49423,15 @@ function idlePDFExportDialog() {
 
     var notesIncipitsSelected = (val == "incipits");
 
-    var pageFitSelected =
-      ((val == "multi_fit_2") || (val == "multi_fit_3"));
+    var staffWidthPresetLayoutSelected =
+      ((val == "one") ||
+       (val == "multi") ||
+       (val == "multi_fit_2") ||
+       (val == "multi_fit_3"));
 
     setControlEnabled("configure_incipitscolumns", notesIncipitsSelected);
 
-    setControlEnabled("configure_pagefitscalingpreset", pageFitSelected);
+    setControlEnabled("configure_pagefitscalingpreset", staffWidthPresetLayoutSelected);
 
   }
 
@@ -49741,7 +49764,7 @@ function PDFExportDialog() {
         options: tunelayout_list,
         cssClass: "configure_pdf_tunelayout_select"
       }, {
-        name: "Fitted Layout Staff Width:",
+        name: "Layout Staff Width:",
         id: "configure_pagefitscalingpreset",
         type: "select",
         options: pagefit_scaling_preset_list,
@@ -49814,7 +49837,7 @@ function PDFExportDialog() {
         options: tunelayout_list,
         cssClass: "configure_pdf_tunelayout_select"
       }, {
-        name: "Fitted Layout Staff Width:",
+        name: "Layout Staff Width:",
         id: "configure_pagefitscalingpreset",
         type: "select",
         options: pagefit_scaling_preset_list,
@@ -49886,7 +49909,7 @@ function PDFExportDialog() {
       options: tunelayout_list,
       cssClass: "configure_pdf_tunelayout_select"
     }, {
-      name: "Fitted Layout Staff Width:",
+      name: "Layout Staff Width:",
       id: "configure_pagefitscalingpreset",
       type: "select",
       options: pagefit_scaling_preset_list,
@@ -56125,8 +56148,8 @@ function showWhatsNewScreen() {
   modal_msg += '<div style="margin:10px 0 6px 0; padding:12px 12px; border-radius:12px;';
   modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);">';
   modal_msg += '<p>New feature on the <strong>PDF Tunebook Export</strong> dialog:</p>';
-  modal_msg += '<p><strong>Fitted Layout Staff Width for PDF Export</strong></p>';
-  modal_msg += '<p>When using <strong>Multiple Tunes per Page (Prefer 2 Tunes/Page)</strong> or <strong>Multiple Tunes per Page (Prefer 3 Tunes/Page)</strong>, you can now choose a <strong>Fitted Layout Staff Width</strong> setting.</p>';
+  modal_msg += '<p><strong>Layout Staff Width for PDF Export</strong></p>';
+  modal_msg += '<p>When using <strong>One Tune per Page</strong>, <strong>Multiple Tunes per Page (Natural Flow)</strong>, <strong>Multiple Tunes per Page (Prefer 2 Tunes/Page)</strong>, or <strong>Multiple Tunes per Page (Prefer 3 Tunes/Page)</strong>, you can now choose a <strong>Layout Staff Width</strong> setting.</p>';
   modal_msg += '<p>The <strong>Standard</strong> option leaves the notation as normally rendered.</p>';
   modal_msg += '<p>The <strong>Wide</strong>, <strong>Wider</strong>, <strong>Extra-Wide</strong>, and <strong>Maximum</strong> options temporarily render the notation with wider staffs during PDF export and then re-renders the notation when the PDF export is complete.</p>';
   modal_msg += '<p>This can reduce the vertical height of some tunes and help the preferred number of tunes fit on each page.</p>';
@@ -62659,13 +62682,13 @@ async function DoStartup() {
   // Show update message?
   if (gLocalStorageAvailable && (!isFromShare)){
 
-    var updatePresented = localStorage.sawUpdate_22may2026;
+    var updatePresented = localStorage.sawUpdate_22may2026a;
 
     if (updatePresented != "true") {
 
       showWhatsNewScreen();
 
-      localStorage.sawUpdate_22may2026 = true;
+      localStorage.sawUpdate_22may2026a = true;
 
     }
 
