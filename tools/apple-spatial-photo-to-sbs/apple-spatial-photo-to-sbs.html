@@ -754,6 +754,8 @@
     border-radius: 12px;
     padding: 12px;
     font-weight: 800;
+    -webkit-user-select: none;
+    user-select: none;
   }
 
   a.download.busy {
@@ -1071,7 +1073,7 @@
         <div class="controlHeader">
           <label for="heightRange">Output JPEG Height</label>
           <div class="controlHeaderActions">
-            <button id="resetHeightButton" class="smallResetButton" type="button" title="Reset the output JPEG height to the original imported image height, clamped to the supported range.">Reset</button>
+            <button id="resetHeightButton" class="smallResetButton" type="button" title="Reset the output JPEG height to the current image’s original height, clamped to the supported range.">Reset</button>
           </div>
         </div>
         <div class="row">
@@ -1218,8 +1220,8 @@
     <p id="status">Loading HEIC decoder…</p>
 
     <div id="downloadActions" class="actions" style="display:none;">
-      <a id="downloadLink" class="download" download="spatial-photo.jpg" title="Generate the final JPEG for the currently visible image at the specified output height, then download it.">Export Current JPEG</a>
-      <a id="downloadAllLink" class="download" download="spatial-photo-batch.zip" title="Generate JPEGs for all loaded images. Horizontal Shift, Horizontal Shift range, Image Rotation, and Image Rotation range use each image’s individual settings; the other controls use the current settings.">Export All as ZIP</a>
+      <a id="downloadLink" class="download" download="spatial-photo.jpg" title="Generate the final JPEG for the currently visible image at the specified output height, then download it or, on iOS, open the iOS Share Sheet. On desktop, Shift-click to export the current adjusted left and right views, using the selected Stereo Order, as separate JPEG files in a ZIP.">Export Current JPEG</a>
+      <a id="downloadAllLink" class="download" download="spatial-photo-batch.zip" title="Generate JPEGs for all loaded images. Horizontal Shift, Horizontal Shift range, Image Rotation, and Image Rotation range use each image’s individual settings; the other controls use the current settings. On desktop, Shift-click to export separate adjusted left/right JPEG files using the selected Stereo Order for every loaded image.">Export All as ZIP</a>
     </div>
 
     <div class="meta">
@@ -4717,7 +4719,8 @@
           <li>If more than one HEIC file is loaded, on desktop browsers, move the mouse over the preview area to reveal the first, previous, next, and last image arrow buttons at the edges of the preview that you can use to switch between the images (always visible on iOS).</li>
           <li>The normal on-page preview is optimized for responsiveness, while full-screen preview automatically uses a higher preview resolution when useful for sharper viewing on high-DPI displays.</li>
           <li>For side-by-side image viewing, you can make the side-by-side preview smaller to help visually fuse the images while making adjustments, you can either zoom out the browser window or resize the window narrower to make the preview smaller.</li>
-          <li>Click <b>Export Current JPEG</b> to save or share only the currently displayed image.<br/>Click <b>Export All as ZIP</b> to save or share all loaded images in a .zip file. During batch export, <b>Horizontal Shift</b>, <b>Horizontal Shift range</b>, <b>Image Rotation</b>, and <b>Image Rotation range</b> use each image’s individual settings; the other controls use the current settings. A progress dialog shows the current image and overall progress; click <b>Cancel</b> during ZIP generation to stop after the current processing step finishes.</li>
+          <li>Click <b>Export Current JPEG</b> to save or share only the currently displayed stereo image.<br/>Click <b>Export All as ZIP</b> to save or share all loaded stereo images in a .zip file. During batch export, <b>Horizontal Shift</b>, <b>Horizontal Shift range</b>, <b>Image Rotation</b>, and <b>Image Rotation range</b> use each image’s individual settings; the other controls use the current settings. A progress dialog shows the current image and overall progress; click <b>Cancel</b> during ZIP generation to stop after the current processing step finishes.</li>
+          <li>On desktop only, Shift-click <b>Export Current JPEG</b> to export the current image’s adjusted left and right views as separate JPEG files in a ZIP. Shift-click <b>Export All as ZIP</b> to export separate adjusted left/right JPEG files for every loaded HEIC image. The separate eye images use the selected <b>Output JPEG Height</b> and the same <b>Stereo Order</b>, <b>Horizontal Shift</b>, and <b>Image Rotation</b> settings used by the preview. Each file is named from the original image filename with <code>-l</code> or <code>-r</code> added before the <code>.jpg</code> extension. This Shift-click export option is not available on iOS.</li>
           <li>On iOS, after the ZIP is ready, tap <b>Share ZIP</b> to open the iOS Share Sheet, then choose <b>Save to Files</b> or another share destination.</li>
         </ol>
 
@@ -5297,6 +5300,333 @@
     });
   }
 
+
+  function sanitizeZipEntryBaseName(name, fallback = "spatial-photo") {
+    let baseName = String(name || fallback)
+      .replace(/\.[^.]+$/, "")
+      .replace(/[\/\\:*?"<>|]/g, "_")
+      .replace(/\s+/g, " ")
+      .trim();
+
+    return baseName || fallback;
+  }
+
+  function getDefaultEyeZipSaveName(exportAll = false) {
+    const files = loadedImageFiles.length ? loadedImageFiles : (currentFile ? [currentFile] : []);
+    const firstBaseName = sanitizeZipEntryBaseName(files[0]?.name || currentFile?.name || "spatial-photo");
+    const outputHeight = clampOutputHeight(heightRange.value);
+
+    if (exportAll && files.length > 1) {
+      const count = files.length;
+      return sanitizeZipFilename(`${firstBaseName}+${count - 1}-images-lr-${outputHeight}h.zip`);
+    }
+
+    return sanitizeZipFilename(`${firstBaseName}-lr-${outputHeight}h.zip`);
+  }
+
+  function promptForEyeZipSaveName(exportAll = false) {
+    const defaultName = getDefaultEyeZipSaveName(exportAll);
+
+    if (!window.DayPilot || !DayPilot.Modal || !DayPilot.Modal.prompt) {
+      return Promise.resolve(defaultName);
+    }
+
+    return DayPilot.Modal.prompt("Please enter a filename for the exported left/right ZIP file:", defaultName, {
+      theme: "modal_compact",
+      top: 200,
+      autoFocus: true
+    }).then(args => {
+      if (args.canceled) return null;
+      const cleanName = sanitizeZipFilename(args.result);
+      return cleanName || defaultName;
+    });
+  }
+
+  function getEyeZipEntryNames(file = currentFile) {
+    const baseName = sanitizeZipEntryBaseName(file?.name || currentFile?.name || "spatial-photo");
+
+    return {
+      leftName: sanitizeJpegFilename(`${baseName}-l.jpg`),
+      rightName: sanitizeJpegFilename(`${baseName}-r.jpg`)
+    };
+  }
+
+  async function canvasToJpegBlob(sourceCanvas, includeExif = true) {
+    const quality = 0.92;
+    const rawBlob = await new Promise(resolve => sourceCanvas.toBlob(resolve, "image/jpeg", quality));
+
+    if (!rawBlob) {
+      throw new Error("The browser could not create one of the JPEG output files.");
+    }
+
+    if (!includeExif) {
+      return rawBlob;
+    }
+
+    return insertHeicExifIntoJpegBlob(rawBlob, sourceCanvas.width, sourceCanvas.height);
+  }
+
+  function createAdjustedEyeCanvasesForExport(outputHeight = clampOutputHeight(heightRange.value)) {
+    if (decodedViews.length < 2) {
+      throw new Error("No stereo image has been decoded yet.");
+    }
+
+    let left = decodedViews[1];
+    let right = decodedViews[0];
+
+    if (eyeOrder.value === "swap") {
+      [left, right] = [right, left];
+    }
+
+    const imageRotationDegrees = Number(rotationRange.value) || 0;
+
+    if (imageRotationDegrees) {
+      left = {
+        ...left,
+        canvas: createRotatedCanvas(left.canvas, left.width, left.height, imageRotationDegrees)
+      };
+      right = {
+        ...right,
+        canvas: createRotatedCanvas(right.canvas, right.width, right.height, imageRotationDegrees)
+      };
+    }
+
+    const aspect = left.height / left.width;
+    const eyeHeight = clampOutputHeight(outputHeight);
+    const eyeWidth = Math.max(1, Math.round(eyeHeight / aspect));
+    const stereoSeparationPercent = Number(stereoDepthRange.value) || 0;
+    const horizontalShiftPercent =
+      isSideBySideMode() && eyeOrder.value === "swap"
+        ? -stereoSeparationPercent
+        : stereoSeparationPercent;
+
+    const adjusted = createAdjustedStereoPair(
+      left.canvas,
+      right.canvas,
+      eyeWidth,
+      eyeHeight,
+      Math.round(eyeWidth * (horizontalShiftPercent / 100)),
+      true
+    );
+
+    return {
+      leftCanvas: adjusted.leftCanvas,
+      rightCanvas: adjusted.rightCanvas,
+      width: eyeWidth,
+      height: eyeHeight
+    };
+  }
+
+  async function createAdjustedEyeJpegBlobsForCurrentImage(file = currentFile, outputHeight = clampOutputHeight(heightRange.value)) {
+    const adjustedEyes = createAdjustedEyeCanvasesForExport(outputHeight);
+    const { leftName, rightName } = getEyeZipEntryNames(file);
+
+    return {
+      leftName,
+      rightName,
+      leftBlob: await canvasToJpegBlob(adjustedEyes.leftCanvas, true),
+      rightBlob: await canvasToJpegBlob(adjustedEyes.rightCanvas, true),
+      width: adjustedEyes.width,
+      height: adjustedEyes.height
+    };
+  }
+
+  async function exportCurrentEyesAsZip() {
+    if (isIOSDevice()) {
+      await exportCurrentImage();
+      return;
+    }
+
+    if (decodedViews.length < 2) {
+      setStatus("No stereo image has been decoded yet.", "error");
+      return;
+    }
+
+    if (!window.JSZip) {
+      setStatus("JSZip is not loaded. Add <code>jszip.min.js</code> before exporting left/right images.", "error");
+      return;
+    }
+
+    const zipName = await promptForEyeZipSaveName(false);
+
+    if (!zipName) {
+      setStatus("Left/right ZIP export cancelled.", "ok");
+      return;
+    }
+
+    rememberCurrentPerImageAdjustmentSettings(false);
+
+    const outputHeight = clampOutputHeight(heightRange.value);
+    heightRange.value = String(outputHeight);
+    updateControls();
+
+    try {
+      setOutputControlsBusy(true);
+      downloadLink.classList.add("busy");
+      downloadLink.textContent = "Preparing ZIP…";
+      downloadActions.style.display = "grid";
+      setStatus("Creating left/right JPEG ZIP…");
+
+      const zip = new JSZip();
+      const eyeFiles = await createAdjustedEyeJpegBlobsForCurrentImage(currentFile, outputHeight);
+      zip.file(eyeFiles.leftName, eyeFiles.leftBlob);
+      zip.file(eyeFiles.rightName, eyeFiles.rightBlob);
+
+      const zipBlob = await zip.generateAsync({ type: "blob" });
+      downloadBlobWithName(zipBlob, zipName);
+
+      await resetPreviewFlipSliderAfterSave();
+      updateGenerateButtonVisibility();
+      setStatus(`Saved <b>${escapeHtml(zipName)}</b> containing separate left/right JPEG files for the current image.`, "ok");
+    } catch (err) {
+      updateGenerateButtonVisibility();
+      setStatus(escapeHtml(err.message || String(err)), "error");
+    } finally {
+      setOutputControlsBusy(false);
+      if (downloadLink) {
+        downloadLink.classList.remove("busy");
+        downloadLink.textContent = "Export Current JPEG";
+      }
+    }
+  }
+
+  async function exportAllEyesAsZip() {
+    if (isIOSDevice()) {
+      await exportAllImagesAsZip();
+      return;
+    }
+
+    const files = loadedImageFiles.length ? [...loadedImageFiles] : (currentFile ? [currentFile] : []);
+
+    if (!files.length) {
+      setStatus("No HEIC images are loaded.", "error");
+      return;
+    }
+
+    if (!window.JSZip) {
+      setStatus("JSZip is not loaded. Add <code>jszip.min.js</code> before exporting left/right images.", "error");
+      return;
+    }
+
+    const zipName = await promptForEyeZipSaveName(files.length > 1);
+
+    if (!zipName) {
+      setStatus("Left/right ZIP export cancelled.", "ok");
+      return;
+    }
+
+    rememberCurrentPerImageAdjustmentSettings(false);
+
+    const batchOutputHeight = clampOutputHeight(heightRange.value);
+    heightRange.value = String(batchOutputHeight);
+    updateControls();
+
+    const originalIndex = currentImageIndex;
+    const zip = new JSZip();
+    let finalStatus = "";
+    let finalStatusType = "ok";
+
+    try {
+      showBatchProgressDialog(files.length);
+      setOutputControlsBusy(true);
+      downloadLink.classList.add("busy");
+      if (downloadAllLink) {
+        downloadAllLink.classList.add("busy");
+        downloadAllLink.textContent = "Preparing ZIP…";
+      }
+      downloadActions.style.display = "grid";
+
+      for (let i = 0; i < files.length; i++) {
+        throwIfBatchExportCancelled();
+
+        const startPercent = Math.round((i / files.length) * 90);
+        const fileName = escapeHtml(files[i].name);
+        updateBatchProgressDialog({
+          text: `Processing left/right image ${i + 1} of ${files.length}: <b>${fileName}</b>…`,
+          percent: startPercent
+        });
+        setStatus(`Processing left/right image ${i + 1} of ${files.length}: <b>${fileName}</b>…`);
+
+        await loadSpatialPhotoAtIndex(i, {
+          makePreview: false,
+          resetAdjustments: false,
+          preserveOutputHeight: batchOutputHeight
+        });
+        throwIfBatchExportCancelled();
+
+        const eyeFiles = await createAdjustedEyeJpegBlobsForCurrentImage(files[i], batchOutputHeight);
+        throwIfBatchExportCancelled();
+
+        zip.file(eyeFiles.leftName, eyeFiles.leftBlob);
+        zip.file(eyeFiles.rightName, eyeFiles.rightBlob);
+
+        updateBatchProgressDialog({
+          text: `Added left/right files for image ${i + 1} of ${files.length}: <b>${fileName}</b>.`,
+          percent: Math.round(((i + 1) / files.length) * 90)
+        });
+        await new Promise(requestAnimationFrame);
+      }
+
+      throwIfBatchExportCancelled();
+      updateBatchProgressDialog({
+        text: `Creating ZIP file with ${files.length * 2} left/right JPEG files…`,
+        percent: 92
+      });
+      setStatus(`Creating ZIP file with ${files.length * 2} left/right JPEG files…`);
+
+      const zipBlob = await zip.generateAsync({ type: "blob" }, metadata => {
+        const zipPercent = 92 + Math.round((metadata.percent || 0) * 0.08);
+        updateBatchProgressDialog({
+          text: `Creating ZIP file with ${files.length * 2} left/right JPEG files…`,
+          percent: zipPercent
+        });
+
+        if (batchExportController && batchExportController.cancelled) {
+          throw new BatchExportCancelledError();
+        }
+      });
+
+      throwIfBatchExportCancelled();
+      updateBatchProgressDialog({
+        text: "Saving left/right ZIP file…",
+        percent: 100
+      });
+
+      downloadBlobWithName(zipBlob, zipName);
+      finalStatus = `Saved <b>${escapeHtml(zipName)}</b> containing ${files.length * 2} separate left/right JPEG files.`;
+
+      await resetPreviewFlipSliderAfterSave();
+    } catch (err) {
+      if (err instanceof BatchExportCancelledError || err?.name === "BatchExportCancelledError") {
+        finalStatus = "Left/right ZIP export cancelled.";
+        finalStatusType = "ok";
+      } else {
+        finalStatus = escapeHtml(err.message || String(err));
+        finalStatusType = "error";
+      }
+    } finally {
+      hideBatchProgressDialog();
+
+      try {
+        if (files.length) {
+          await loadSpatialPhotoAtIndex(Math.min(originalIndex, files.length - 1), {
+            makePreview: true,
+            resetAdjustments: false,
+            preserveOutputHeight: batchOutputHeight
+          });
+        }
+      } catch (restoreErr) {
+        // Leave the current decoded image in place if restore fails.
+      }
+
+      setOutputControlsBusy(false);
+      updateGenerateButtonVisibility();
+      if (finalStatus) {
+        setStatus(finalStatus, finalStatusType);
+      }
+    }
+  }
+
   async function exportCurrentImage() {
     if (decodedViews.length < 2) {
       setStatus("No stereo image has been decoded yet.", "error");
@@ -5498,14 +5828,41 @@
     setTimeout(() => URL.revokeObjectURL(url), 30000);
   }
 
+  function preventShiftClickTextSelection(element) {
+    if (!element) {
+      return;
+    }
+
+    element.addEventListener("mousedown", event => {
+      if (event.shiftKey) {
+        event.preventDefault();
+      }
+    });
+  }
+
+  preventShiftClickTextSelection(downloadLink);
+  preventShiftClickTextSelection(downloadAllLink);
+
   downloadLink.addEventListener("click", async event => {
     event.preventDefault();
+
+    if (!isIOSDevice() && event.shiftKey) {
+      await exportCurrentEyesAsZip();
+      return;
+    }
+
     await exportCurrentImage();
   });
 
   if (downloadAllLink) {
     downloadAllLink.addEventListener("click", async event => {
       event.preventDefault();
+
+      if (!isIOSDevice() && event.shiftKey) {
+        await exportAllEyesAsZip();
+        return;
+      }
+
       await exportAllImagesAsZip();
     });
   }
