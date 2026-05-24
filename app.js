@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3236_052326_1830";
+var gVersionNumber = "3237_052326_1930";
 
 var gMIDIInitStillWaiting = false;
 
@@ -209,7 +209,7 @@ var gRenderPixelRatio = 2.0;
 var gPDFPageFitTargetTunes = 0;
 var gPDFPageFitTuneScales = [];
 var gPDFPageFitMinScale = 0.72;
-var gPDFPageFitMinScaleOneTune = 0.50;
+var gPDFPageFitMinScaleOneTune = 0.65;
 var gPDFPageFitMinScaleTwoTunes = 0.72;
 var gPDFPageFitMinScaleThreeTunes = 0.55;
 var gPDFCenteredOnePageTuneStartY = [];
@@ -8311,7 +8311,7 @@ function applyPDFPageFitScalingPreset(thePreset) {
   // Keep the actual page-fit fallback scale limits fixed at the previous
   // balanced values. The compactness now comes from the temporary staffwidth
   // render, not from changing these scale limits.
-  gPDFPageFitMinScaleOneTune = 0.50;
+  gPDFPageFitMinScaleOneTune = 0.65;
   gPDFPageFitMinScaleTwoTunes = 0.72;
   gPDFPageFitMinScaleThreeTunes = 0.55;
   gPDFPageFitMinScale = gPDFPageFitMinScaleTwoTunes;
@@ -8348,7 +8348,7 @@ function getPDFPageFitMinScale(targetTunesPerPage) {
 
   // Keep the scale limits fixed. Staffwidth presets affect the pre-PDF render
   // width/compactness, while these remain as safety fallback limits.
-  gPDFPageFitMinScaleOneTune = 0.50;
+  gPDFPageFitMinScaleOneTune = 0.65;
   gPDFPageFitMinScaleTwoTunes = 0.72;
   gPDFPageFitMinScaleThreeTunes = 0.55;
   gPDFPageFitMinScale = gPDFPageFitMinScaleTwoTunes;
