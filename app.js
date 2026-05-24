@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3238_052426_1000";
+var gVersionNumber = "3239_052426_1000";
 
 var gMIDIInitStillWaiting = false;
 
@@ -212,7 +212,7 @@ var gPDFPageFitMinScale = 0.72;
 var gPDFPageFitMinScaleOneTune = 0.65;
 var gPDFPageFitMinScaleTwoTunes = 0.72;
 var gPDFPageFitMinScaleThreeTunes = 0.55;
-var gPDFPageFitMinScaleFourTunes = 0.45;
+var gPDFPageFitMinScaleFourTunes = 0.4;
 var gPDFCenteredOnePageTuneStartY = [];
 
 // PDF export staff width preset for notation layouts.
@@ -8323,7 +8323,7 @@ function applyPDFPageFitScalingPreset(thePreset) {
   gPDFPageFitMinScaleOneTune = 0.65;
   gPDFPageFitMinScaleTwoTunes = 0.72;
   gPDFPageFitMinScaleThreeTunes = 0.55;
-  gPDFPageFitMinScaleFourTunes = 0.45;
+  gPDFPageFitMinScaleFourTunes = 0.4;
   gPDFPageFitMinScale = gPDFPageFitMinScaleTwoTunes;
 
 }
@@ -8361,7 +8361,7 @@ function getPDFPageFitMinScale(targetTunesPerPage) {
   gPDFPageFitMinScaleOneTune = 0.65;
   gPDFPageFitMinScaleTwoTunes = 0.72;
   gPDFPageFitMinScaleThreeTunes = 0.55;
-  gPDFPageFitMinScaleFourTunes = 0.45;
+  gPDFPageFitMinScaleFourTunes = 0.4;
   gPDFPageFitMinScale = gPDFPageFitMinScaleTwoTunes;
 
   if (targetTunesPerPage == 1) {
