@@ -1057,16 +1057,16 @@
 <div class="wrap">
   <header>
     <h1>Stereo JPEG/TIFF → Side-by-Side or 3D Anaglyph</h1>
-    <p id="subtitle" class="subhead">Open one or more side-by-side JPEG/TIFF stereo image files, or a separate left/right JPEG/TIFF image file pair, and export adjusted Side-by-Side or 3D Anaglyph JPEG images locally from your browser.</p>
+    <p id="subtitle" class="subhead">Open one or more side-by-side JPEG/TIFF stereo image files, or separate left/right JPEG/TIFF image file pairs, and export adjusted Side-by-Side or 3D Anaglyph JPEG images locally from your browser.</p>
   </header>
 
   <section class="card">
     <div>
-      <label for="fileInput">Open one or more side-by-side JPEG/TIFF stereo image files, or two separate left/right JPEG/TIFF image files:</label>
-      <input id="fileInput" type="file" accept=".jpg,.jpeg,.tif,.tiff,image/jpeg,image/tiff" multiple title="Open one or more side-by-side JPEG/TIFF stereo image files, or two separate left/right JPEG/TIFF image files.">
+      <label for="fileInput">Open side-by-side JPEG/TIFF stereo files, or separate left/right JPEG/TIFF image files:</label>
+      <input id="fileInput" type="file" accept=".jpg,.jpeg,.tif,.tiff,image/jpeg,image/tiff" multiple title="Open side-by-side JPEG/TIFF stereo files, or separate left/right JPEG/TIFF image files.">
     </div>
 
-    <div id="dragdropinfo" class="hint">You can also drag-and-drop one or more side-by-side JPEG/TIFF stereo image files here, or drag-and-drop exactly two JPEG/TIFF files and choose whether to treat them as a left/right pair or as two processed stereo images.</div>
+    <div id="dragdropinfo" class="hint">You can also drag-and-drop side-by-side JPEG/TIFF stereo files here, or drag-and-drop separate left/right JPEG/TIFF image files.</div>
 
     <div class="grid" style="margin-top:12px;">
       <div>
@@ -1233,7 +1233,7 @@
       <div id="emptyPreview" class="hint">Stereo preview will appear here</div>
     </div>
     
-    <p id="status">Please select one or more side-by-side JPEG/TIFF files, or two same-format, same-dimensions left/right JPEG/TIFF files.</p>
+    <p id="status">Please select side-by-side JPEG/TIFF files, or separate left/right JPEG/TIFF files.</p>
 
     <div id="downloadActions" class="actions" style="display:none;">
       <a id="downloadLink" class="download" download="stereo-image.jpg" title="Export the currently visible image as a final JPEG at the specified output height. On iOS, this opens the iOS Share Sheet. On desktop, Shift-click to export the current adjusted left and right views, using the selected Stereo Order, as separate JPEG files in a ZIP.">Export Current JPEG</a>
@@ -1956,7 +1956,7 @@
         pageHeader.appendChild(dragDropInfo);
       }
 
-      dragDropInfo.innerHTML = '<p style="text-align:center;margin-bottom:0px;">On iOS, use <b>Choose File</b> to select one or more side-by-side JPEG/TIFF files, or two same-format, same-dimensions JPEG/TIFF files from Photos or Files. When multiple processed stereo images are loaded, tap <b>Export All as ZIP</b> to prepare the ZIP file, then tap <b>Share ZIP</b> to open the iOS Share Sheet.</p>';
+      dragDropInfo.innerHTML = '<p style="text-align:center;margin-bottom:0px;">On iOS, use <b>Choose File</b> to select side-by-side JPEG/TIFF files or separate left/right JPEG/TIFF files from Photos or Files. Matching <b>-l</b>/<b>-r</b> filename pairs are imported as left/right pairs. When multiple images are loaded, tap <b>Export All as ZIP</b> to prepare the ZIP file, then tap <b>Share ZIP</b> to open the iOS Share Sheet.</p>';
     }
   }
 
@@ -2020,7 +2020,7 @@
     return Promise.resolve();
   }
 
-  function clearLoadedState(statusMessage = "Please select one or more side-by-side JPEG/TIFF files, or two same-format, same-dimensions left/right JPEG/TIFF files.", statusClass = "") {
+  function clearLoadedState(statusMessage = "Please select side-by-side JPEG/TIFF files, or separate left/right JPEG/TIFF files.", statusClass = "") {
     stopPreviewFlipAnimation();
 
     decodedViews = [];
@@ -3611,12 +3611,21 @@
       return;
     }
 
-    if (count === 1) {
-      fileMeta.textContent = `${currentFile.name} (${formatBytes(currentFile.size)})`;
+    if (currentImportMode === "batch" && currentSourceFiles.length === 2) {
+      if (count === 1) {
+        fileMeta.textContent = getSourceFilesDescription(currentSourceFiles);
+      } else {
+        fileMeta.textContent = `Image ${currentImageIndex + 1} of ${count}: ${getSourceFilesDescription(currentSourceFiles)}`;
+      }
       return;
     }
 
-    fileMeta.textContent = `Image ${currentImageIndex + 1} of ${count}: ${currentFile.name} (${formatBytes(currentFile.size)})`;
+    if (count === 1) {
+      fileMeta.textContent = `${currentFile.name} (${formatBytes(currentFile.size || 0)})`;
+      return;
+    }
+
+    fileMeta.textContent = `Image ${currentImageIndex + 1} of ${count}: ${getBatchEntryDisplayName(loadedImageFiles[currentImageIndex])}`;
   }
 
   function updateImageNavigationButtons() {
@@ -3642,21 +3651,181 @@
     }
   }
 
-  async function askTwoFileImportMode(files) {
-    const message = "You selected exactly two files. Do you want to interpret them as a separate left/right pair, or as two already processed side-by-side stereo images for batch export?";
+
+  function getBatchEntrySourceFiles(entry) {
+    if (entry && entry.kind === "pair" && Array.isArray(entry.files)) {
+      return entry.files;
+    }
+
+    return entry ? [entry] : [];
+  }
+
+  function getBatchEntryPrimaryFile(entry) {
+    const files = getBatchEntrySourceFiles(entry);
+    return files[0] || entry || null;
+  }
+
+  function getBatchEntryDisplayName(entry) {
+    if (entry && entry.kind === "pair" && Array.isArray(entry.files) && entry.files.length === 2) {
+      return `Left: ${entry.files[0].name} (${formatBytes(entry.files[0].size)}) / Right: ${entry.files[1].name} (${formatBytes(entry.files[1].size)})`;
+    }
+
+    if (entry && entry.name) {
+      return `${entry.name} (${formatBytes(entry.size || 0)})`;
+    }
+
+    return "Unknown image";
+  }
+
+  function getBatchEntryShortName(entry) {
+    if (entry && entry.kind === "pair" && entry.name) {
+      return entry.name;
+    }
+
+    return entry?.name || "stereo-image";
+  }
+
+  function getLeftRightPostfixInfo(file) {
+    const name = file?.name || "";
+    const match = /^(.*)-([lr])(\.(?:jpe?g|tiff?|tif))$/i.exec(name);
+
+    if (!match) {
+      return null;
+    }
+
+    const baseName = match[1];
+    const side = match[2].toLowerCase();
+    const extension = match[3];
+
+    if (!baseName) {
+      return null;
+    }
+
+    return {
+      baseName,
+      side,
+      extension,
+      sortKey: `${baseName.toLocaleLowerCase()}${extension.toLocaleLowerCase()}`
+    };
+  }
+
+  function buildLeftRightPairBatchEntriesFromPostfixNames(files) {
+    files = Array.from(files || []);
+
+    if (!files.length || files.length % 2 !== 0) {
+      return null;
+    }
+
+    const pairsByKey = new Map();
+
+    for (const file of files) {
+      const info = getLeftRightPostfixInfo(file);
+
+      if (!info) {
+        return null;
+      }
+
+      const key = info.sortKey;
+      let pair = pairsByKey.get(key);
+
+      if (!pair) {
+        pair = {
+          baseName: info.baseName,
+          extension: info.extension,
+          left: null,
+          right: null
+        };
+        pairsByKey.set(key, pair);
+      }
+
+      if (info.side === "l") {
+        if (pair.left) {
+          return null;
+        }
+        pair.left = file;
+      } else {
+        if (pair.right) {
+          return null;
+        }
+        pair.right = file;
+      }
+    }
+
+    if (pairsByKey.size * 2 !== files.length) {
+      return null;
+    }
+
+    const pairs = Array.from(pairsByKey.values());
+
+    if (pairs.some(pair => !pair.left || !pair.right)) {
+      return null;
+    }
+
+    pairs.sort((a, b) => {
+      const aKey = `${a.baseName}${a.extension}`.toLocaleLowerCase();
+      const bKey = `${b.baseName}${b.extension}`.toLocaleLowerCase();
+      return aKey.localeCompare(bKey, undefined, { numeric: true, sensitivity: "base" });
+    });
+
+    return pairs.map(pair => ({
+      kind: "pair",
+      name: pair.baseName,
+      size: (pair.left?.size || 0) + (pair.right?.size || 0),
+      files: [pair.left, pair.right]
+    }));
+  }
+
+  function buildSortedLeftRightPairBatchEntries(files) {
+    const sortedFiles = Array.from(files || []).slice().sort((a, b) =>
+      (a?.name || "").localeCompare(b?.name || "", undefined, { numeric: true, sensitivity: "base" })
+    );
+
+    const entries = [];
+
+    for (let i = 0; i < sortedFiles.length; i += 2) {
+      const leftFile = sortedFiles[i];
+      const rightFile = sortedFiles[i + 1];
+
+      if (!leftFile || !rightFile) {
+        return null;
+      }
+
+      const leftBase = (leftFile.name || "left").replace(/\.[^.]+$/, "");
+      const rightBase = (rightFile.name || "right").replace(/\.[^.]+$/, "");
+
+      entries.push({
+        kind: "pair",
+        name: `${leftBase}-${rightBase}`,
+        size: (leftFile.size || 0) + (rightFile.size || 0),
+        files: [leftFile, rightFile]
+      });
+    }
+
+    return entries;
+  }
+
+  async function askEvenFileImportMode(files) {
+    const message =
+      `You selected ${files.length} files. Do you want to treat them as sorted left/right image pairs, ` +
+      "or as already processed side-by-side stereo images?";
 
     if (window.DayPilot && DayPilot.Modal && typeof DayPilot.Modal.confirm === "function") {
       const result = await DayPilot.Modal.confirm(message, {
         theme: "modal_compact",
         top: 200,
-        okText: "Left/Right Pair",
+        okText: "Left/Right Pairs",
         cancelText: "Processed Stereo Images"
       });
 
-      return result && !result.canceled ? "pair" : "batch";
+      return result && !result.canceled ? "pair-batch" : "batch";
     }
 
-    return window.confirm(`${message}\n\nOK = Left/Right Pair\nCancel = Processed Stereo Images`) ? "pair" : "batch";
+    return window.confirm(`${message}\n\nOK = Left/Right Pairs\nCancel = Processed Stereo Images`) ? "pair-batch" : "batch";
+  }
+
+  async function askTwoFileImportMode(files) {
+    const result = await askEvenFileImportMode(files);
+    return result === "pair-batch" ? "pair" : "batch";
   }
 
   async function loadBatchImageAtIndex(index, options = {}) {
@@ -3665,20 +3834,40 @@
     }
 
     const clampedIndex = Math.max(0, Math.min(loadedImageFiles.length - 1, Number(index) || 0));
-    const file = loadedImageFiles[clampedIndex];
+    const entry = loadedImageFiles[clampedIndex];
+    const entryFiles = getBatchEntrySourceFiles(entry);
+    const primaryFile = getBatchEntryPrimaryFile(entry);
     const preserveOutputHeight = options.preserveOutputHeight;
     const makePreview = options.makePreview !== false;
 
     currentImageIndex = clampedIndex;
-    currentFile = file;
-    currentSourceFiles = [file];
+    currentFile = entry && entry.kind === "pair" ? entry : primaryFile;
+    currentSourceFiles = entryFiles.slice();
     currentImportMode = "batch";
     clearGeneratedOutput({ keepGenerateButton: true });
     updateCurrentFileMeta();
     updateImageNavigationButtons();
 
-    await extractExifTagsFromSourceFile(file);
-    await decodeSideBySideSourceFile(file, { preserveOutputHeight });
+    if (!primaryFile) {
+      throw new Error("The selected batch item could not be loaded.");
+    }
+
+    await extractExifTagsFromSourceFile(primaryFile);
+
+    if (entry && entry.kind === "pair") {
+      if (entryFiles.length !== 2) {
+        throw new Error("A left/right batch item must contain exactly two files.");
+      }
+
+      if (getSourceImageFormatKey(entryFiles[0]) !== getSourceImageFormatKey(entryFiles[1])) {
+        throw new Error(`The left/right pair "${entryFiles[0].name}" and "${entryFiles[1].name}" must use the same file format.`);
+      }
+
+      await decodeSeparateStereoSourceFiles(entryFiles, { preserveOutputHeight });
+    } else {
+      await decodeSideBySideSourceFile(primaryFile, { preserveOutputHeight });
+    }
+
     applyPerImageAdjustmentSettings(clampedIndex);
     updateCurrentFileMeta();
 
@@ -3808,7 +3997,7 @@
 
   function getDefaultZipSaveName() {
     const files = loadedImageFiles.length ? loadedImageFiles : (currentFile ? [currentFile] : []);
-    const firstName = (files[0]?.name || "stereo-image").replace(/\.[^.]+$/, "");
+    const firstName = getBatchEntryShortName(files[0] || currentFile).replace(/\.[^.]+$/, "");
     const count = Math.max(1, files.length - 1);
     return sanitizeZipFilename(`${firstName}+${count}-images-${getOutputFormatSuffix()}-${Number(heightRange.value)}h.zip`);
   }
@@ -3948,33 +4137,32 @@
         await extractExifTagsFromSourceFile(files[0]);
         await decodeSideBySideSourceFile(files[0]);
         await convertToSbs({ previewOnly: true });
-      } else if (files.length === 2) {
-        const importMode = await askTwoFileImportMode(files);
-
-        if (importMode === "pair") {
-          if (getSourceImageFormatKey(files[0]) !== getSourceImageFormatKey(files[1])) {
-            await rejectImportAttempt("The two selected images must be the same format when importing them as a left/right pair. Please use two JPEG files or two TIFF files.");
-            return;
-          }
-
-          currentImportMode = "pair";
-          currentFile = files[0];
-          currentSourceFiles = files.slice();
-          fileMeta.textContent = getSourceFilesDescription(files);
-          sourceMeta.textContent = "Stereo images not loaded yet.";
-          outputMeta.textContent = "No JPEG generated yet.";
-          await extractExifTagsFromSourceFile(files[0]);
-          await decodeSeparateStereoSourceFiles(files);
-          await convertToSbs({ previewOnly: true });
-        } else {
-          currentImportMode = "batch";
-          loadedImageFiles = files.slice();
-          perImageAdjustmentSettings = createDefaultPerImageAdjustmentSettingsArray(loadedImageFiles.length);
-          await loadBatchImageAtIndex(0, { makePreview: true });
-        }
       } else {
+        let batchEntries = null;
+
+        if (files.length % 2 !== 0) {
+          batchEntries = files.slice();
+        } else {
+          batchEntries = buildLeftRightPairBatchEntriesFromPostfixNames(files);
+
+          if (!batchEntries) {
+            const importMode = await askEvenFileImportMode(files);
+
+            if (importMode === "pair-batch") {
+              batchEntries = buildSortedLeftRightPairBatchEntries(files);
+            } else {
+              batchEntries = files.slice();
+            }
+          }
+        }
+
+        if (!batchEntries || !batchEntries.length) {
+          await rejectImportAttempt("No importable JPEG/TIFF images were found.");
+          return;
+        }
+
         currentImportMode = "batch";
-        loadedImageFiles = files.slice();
+        loadedImageFiles = batchEntries;
         perImageAdjustmentSettings = createDefaultPerImageAdjustmentSettingsArray(loadedImageFiles.length);
         await loadBatchImageAtIndex(0, { makePreview: true });
       }
@@ -3997,9 +4185,11 @@
   function getDefaultSaveName() {
     const outputHeight = Number(heightRange.value);
     const sourceFilesForName = currentSourceFiles.length ? currentSourceFiles : Array.from(fileInput.files || []);
-    const baseName = sourceFilesForName.length === 2
-      ? `${sourceFilesForName[0].name.replace(/\.[^.]+$/, "")}-${sourceFilesForName[1].name.replace(/\.[^.]+$/, "")}`
-      : (currentFile?.name || sourceFilesForName[0]?.name || "side-by-side").replace(/\.[^.]+$/, "");
+    const baseName = currentImportMode === "batch" && currentFile?.name
+      ? String(currentFile.name).replace(/\.[^.]+$/, "")
+      : (sourceFilesForName.length === 2
+        ? `${sourceFilesForName[0].name.replace(/\.[^.]+$/, "")}-${sourceFilesForName[1].name.replace(/\.[^.]+$/, "")}`
+        : (currentFile?.name || sourceFilesForName[0]?.name || "side-by-side").replace(/\.[^.]+$/, ""));
 
     const formatSuffix = getOutputFormatSuffix();
 
@@ -5554,28 +5744,28 @@ function updateOutputModeControls() {
     const html = `
       <div class="instructions-body">
         <h3 style="text-align:center;">Stereo JPEG/TIFF → Side-by-Side or 3D Anaglyph</h3>
-        <p>This tool opens existing side-by-side JPEG/TIFF stereo image files, or a separate same-format, same-dimensions JPEG/TIFF image file pair to be used as the left and right views, then exports the result locally in your browser as adjusted Side-by-Side JPEG or 3D Anaglyph JPEG images.</p>
+        <p>This tool opens existing side-by-side JPEG/TIFF stereo image files, or separate same-format, same-dimensions JPEG/TIFF left/right image pairs, then exports the result locally in your browser as adjusted Side-by-Side JPEG or 3D Anaglyph JPEG images.</p>
 
         <h4>Basic workflow</h4>
         <ol>
-          <li>Select one side-by-side JPEG/TIFF stereo image, multiple already-processed side-by-side JPEG/TIFF stereo images, or two separate JPEG/TIFF files to use as a left/right pair.<br/>On desktop, you can also drag and drop the files onto the top control panel.</li>
-          <li>A single side-by-side JPEG/TIFF input is split into equal left and right halves before the normal adjustment/export workflow begins. If exactly two files are loaded, the tool asks whether to treat them as a separate left/right pair or as two already processed side-by-side stereo images. If three or more files are loaded, they are treated as a batch of already processed side-by-side stereo images, and each image is split into left/right halves.</li>
-          <li>When multiple processed stereo images are loaded, use the First, Previous, Next, and Last buttons over the preview to move through the collection. On desktop, these buttons appear when the mouse is over the preview. On iOS, they remain visible. When switching images, the Output JPEG Height normally updates to the newly displayed image’s native height. If you manually change the Output JPEG Height after opening the files, that manual height is preserved while navigating and is used for batch ZIP export. Opening or dropping new files resets this manual-height override. Horizontal Shift, Vertical Shift, Image Rotation, and their slider range settings are tracked separately for each loaded image.</li>
+          <li>Select one side-by-side JPEG/TIFF stereo image, multiple already-processed side-by-side JPEG/TIFF stereo images, or separate JPEG/TIFF left/right image pairs.<br/>On desktop, you can also drag and drop the files onto the top control panel.</li>
+          <li>A single side-by-side JPEG/TIFF input is split into equal left and right halves before the normal adjustment/export workflow begins. If an odd number of files is loaded, the files are treated as already processed side-by-side stereo images.<br/>If an even number of files is loaded and every filename forms a matching <b>-l</b>/<b>-r</b> pair, the tool automatically imports them as separate left/right image pairs and assembles each pair into a stereo image.<br/>If an even number of files is loaded but the names do not form matching <b>-l</b>/<b>-r</b> pairs, the tool asks whether to treat the files as sorted left/right pairs or as already processed side-by-side stereo images.</li>
+          <li>When multiple images are loaded, use the First, Previous, Next, and Last buttons over the preview to move through the collection. On desktop, these buttons appear when the mouse is over the preview. On iOS, they remain visible. When switching images, the Output JPEG Height normally updates to the newly displayed image’s native height. If you manually change the Output JPEG Height after opening the files, that manual height is preserved while navigating and is used for batch ZIP export. Opening or dropping new files resets this manual-height override. Horizontal Shift, Vertical Shift, Image Rotation, and their slider range settings are tracked separately for each loaded image.</li>
           <li><b>Stereo Order</b> affects both Side-by-Side and Anaglyph output. For Anaglyph output, it controls which source half becomes the red left-eye channel and which source half becomes the cyan right-eye channel.</li>
           <li>This can be used to reverse the left/right order if required when opening an image pair or if you want to create an Anaglyph from a right/left cross-eye source image.</li>
           <li>TIFF support is intended for standard 8-bit RGB side-by-side or separate left/right TIFF/TIF images, including uncompressed TIFFs and common LZW-compressed TIFFs with horizontal differencing predictor.</li>
-          <li>Two-file left/right imports must contain exactly two files. The files must both be JPEG or both be TIFF, and both images must have exactly the same pixel dimensions. If the formats or dimensions do not match, the tool shows an alert and does not import them.</li>
+          <li>Left/right pair imports must contain matching pairs of files. Each pair must use the same source format, and both images in each pair must have exactly the same pixel dimensions. If the formats or dimensions do not match, the tool shows an alert and does not import them. Automatic pair detection recognizes filenames ending in <b>-l</b> and <b>-r</b> immediately before <b>.jpg</b>, <b>.jpeg</b>, <b>.JPG</b>, <b>.JPEG</b>, <b>.tif</b>, <b>.TIF</b>, <b>.tiff</b>, or <b>.TIFF</b>, such as <b>image-l.jpg</b> and <b>image-r.jpg</b>.</li>
           <li>Select an <b>Output Format</b>.<br/>Use <b>Side-by-Side</b> for stereo pairs, or one of the <b>Red / Cyan Anaglyph</b> formats for viewing with red/cyan 3D glasses. Use the <b>Border</b> selector to choose no border or to include a black border in the exported JPEG. In Side-by-Side output, the border option also draws the center seam; in Anaglyph output, it draws only the outer border. The selected border setting is saved and restored the next time the tool is opened.</li>
           <li>Adjust <b>Output JPEG Height</b> as desired. The initial value is read from the imported source image height; for two-file left/right imports, it is read from the shared height of the two images.<br/>Use the slider, or click the height value display to enter an exact height.</li>
           <li>Optionally adjust <b>Side-by-Side Center Crop</b> (side-by-side format only), <b>Horizontal Shift</b>, <b>Vertical Shift</b>, and/or <b>Image Rotation</b> as required to optimize the stereo view. For <b>Side-by-Side Center Crop</b>, use the slider or click the displayed crop value to enter an exact 0.0% to 50.0% value.</li>
-          <li>When multiple processed stereo images are loaded, <b>Horizontal Shift</b>, <b>Vertical Shift</b>, <b>Image Rotation</b>, and their slider range selectors are saved separately for each image. When you move between images, those controls are restored for the selected image. Images that have not been individually adjusted use 0 shift, 0° rotation, and the normal slider ranges. During <b>Export All as ZIP</b>, each image uses its own saved values for these controls.</li>
+          <li>When multiple images are loaded, <b>Horizontal Shift</b>, <b>Vertical Shift</b>, <b>Image Rotation</b>, and their slider range selectors are saved separately for each image. When you move between images, those controls are restored for the selected image. Images that have not been individually adjusted use 0 shift, 0° rotation, and the normal slider ranges. During <b>Export All as ZIP</b>, each image uses its own saved values for these controls.</li>
           <li>For single-image and two-file left/right-pair imports, <b>Horizontal Shift</b>, <b>Vertical Shift</b>, and <b>Image Rotation</b> are reset to 0 whenever a new JPEG or TIFF file is opened. <b>Side-by-Side Center Crop</b> is saved and restored the next time the tool is opened, so you can apply the same center-crop amount across multiple images until you change it or press its <b>Reset</b> button.</li>
           <li>On desktop browsers, move the mouse over the preview area to reveal the full-screen button at the top right of the preview. On iPad, the button remains visible at the top right. The button is hidden on iPhone and while full-screen mode is active. Press Escape or use the browser full-screen control to return to the normal tool view.</li>
           <li>The normal on-page preview is optimized for responsiveness, while full-screen preview automatically uses a higher preview resolution when useful for sharper viewing on high-DPI displays.</li>
           <li>For side-by-side image viewing, to make the side-by-side preview smaller and help facilitate visually fusing the images while making adjustments, you can either zoom out the browser window or resize the window narrower to make the preview smaller.</li>
           <li>To export the currently displayed image, click <b>Export Current JPEG</b>. On desktop, the browser downloads the JPEG. On iOS, the iOS Share Sheet opens so you can save or share the JPEG.</li>
           <li>On desktop, Shift-click <b>Export Current JPEG</b> to export the currently displayed adjusted left and right views, using the selected <b>Stereo Order</b>, as separate JPEG files in a ZIP. The files are named from the source image filename with <b>-l</b> and <b>-r</b> suffixes.</li>
-          <li>When multiple processed stereo images are loaded, click <b>Export All as ZIP</b> to export all loaded images. Horizontal Shift, Vertical Shift, Image Rotation, and their slider range settings use each image’s individual saved settings; the other controls use the current settings. During batch export, a progress dialog shows the current image and overall progress; click <b>Cancel</b> during ZIP generation to stop after the current processing step finishes.</li>
+          <li>When multiple images are loaded, click <b>Export All as ZIP</b> to export all loaded images. Horizontal Shift, Vertical Shift, Image Rotation, and their slider range settings use each image’s individual saved settings; the other controls use the current settings. During batch export, a progress dialog shows the current image and overall progress; click <b>Cancel</b> during ZIP generation to stop after the current processing step finishes.</li>
           <li>On desktop, Shift-click <b>Export All as ZIP</b> to export separate adjusted left/right JPEG files for every loaded image. The separate left/right files use the selected <b>Output JPEG Height</b>, selected <b>Stereo Order</b>, and each image’s saved <b>Horizontal Shift</b>, <b>Vertical Shift</b>, and <b>Image Rotation</b> settings.</li>
           <li>On iOS, after the ZIP is ready, tap <b>Share ZIP</b> to open the iOS Share Sheet, then choose <b>Save to Files</b> or another share destination. Tap <b>Cancel</b> to close the ZIP dialog without sharing.</li>
         </ol>
@@ -5993,7 +6183,9 @@ function updateOutputModeControls() {
   function getEyeZipEntryNames(file = currentFile) {
     let baseName;
 
-    if (currentImportMode === "pair" && currentSourceFiles.length === 2 && (!loadedImageFiles.length || file === currentFile)) {
+    if (file && file.kind === "pair" && file.name) {
+      baseName = sanitizeZipEntryBaseName(file.name);
+    } else if (currentImportMode === "pair" && currentSourceFiles.length === 2 && (!loadedImageFiles.length || file === currentFile)) {
       const leftBase = sanitizeZipEntryBaseName(currentSourceFiles[0]?.name || "left");
       const rightBase = sanitizeZipEntryBaseName(currentSourceFiles[1]?.name || "right");
       baseName = `${leftBase}-${rightBase}`;
@@ -6011,12 +6203,14 @@ function updateOutputModeControls() {
     const files = loadedImageFiles.length ? loadedImageFiles : (currentFile ? [currentFile] : []);
     let baseName;
 
-    if (!allLoadedImages && currentImportMode === "pair" && currentSourceFiles.length === 2) {
+    if (!allLoadedImages && currentFile && currentFile.kind === "pair" && currentFile.name) {
+      baseName = sanitizeZipEntryBaseName(currentFile.name);
+    } else if (!allLoadedImages && currentImportMode === "pair" && currentSourceFiles.length === 2) {
       const leftBase = sanitizeZipEntryBaseName(currentSourceFiles[0]?.name || "left");
       const rightBase = sanitizeZipEntryBaseName(currentSourceFiles[1]?.name || "right");
       baseName = `${leftBase}-${rightBase}`;
     } else {
-      baseName = sanitizeZipEntryBaseName(files[0]?.name || currentFile?.name || "stereo-image");
+      baseName = sanitizeZipEntryBaseName(getBatchEntryShortName(files[0] || currentFile));
     }
 
     const imagePart = allLoadedImages && files.length > 1
@@ -6241,7 +6435,7 @@ function updateOutputModeControls() {
         throwIfBatchExportCancelled();
 
         const startPercent = Math.round((i / files.length) * 90);
-        const fileName = escapeHtml(files[i].name);
+        const fileName = escapeHtml(getBatchEntryDisplayName(files[i]));
         updateBatchProgressDialog({
           text: `Processing left/right image ${i + 1} of ${files.length}: <b>${fileName}</b>…`,
           percent: startPercent
@@ -6433,7 +6627,7 @@ function updateOutputModeControls() {
       for (let i = 0; i < files.length; i++) {
         throwIfBatchExportCancelled();
         const startPercent = Math.round((i / files.length) * 90);
-        const fileName = escapeHtml(files[i].name);
+        const fileName = escapeHtml(getBatchEntryDisplayName(files[i]));
         updateBatchProgressDialog({
           text: `Processing image ${i + 1} of ${files.length}: <b>${fileName}</b>…`,
           percent: startPercent
@@ -6453,7 +6647,7 @@ function updateOutputModeControls() {
         throwIfBatchExportCancelled();
 
         if (!lastBlob) {
-          throw new Error(`The JPEG could not be generated for ${files[i].name}.`);
+          throw new Error(`The JPEG could not be generated for ${getBatchEntryShortName(files[i])}.`);
         }
 
         zip.file(getDefaultSaveName(), lastBlob);
@@ -6602,7 +6796,7 @@ function updateOutputModeControls() {
     registerDragAndDropHandlers();
   }
 
-  setStatus("Please select one or more side-by-side JPEG/TIFF files, or two same-format, same-dimensions left/right JPEG/TIFF files.");
+  setStatus("Please select side-by-side JPEG/TIFF files, or separate left/right JPEG/TIFF files.");
 
   previewFlipMaximumHz = loadPreviewFlipMaximumFromStorage();
   applyPreviewFlipMaximum(previewFlipMaximumHz);
