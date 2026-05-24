@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3237_052326_1930";
+var gVersionNumber = "3238_052426_1000";
 
 var gMIDIInitStillWaiting = false;
 
@@ -205,13 +205,14 @@ var gPageWidth = 535;
 var gRenderPixelRatio = 2.0;
 
 // PDF multi-tune page fit mode.
-// 0 = normal behavior, 2 = prefer two tunes per page, 3 = prefer three tunes per page.
+// 0 = normal behavior, 2 = prefer two tunes per page, 3 = prefer three tunes per page, 4 = prefer four tunes per page.
 var gPDFPageFitTargetTunes = 0;
 var gPDFPageFitTuneScales = [];
 var gPDFPageFitMinScale = 0.72;
 var gPDFPageFitMinScaleOneTune = 0.65;
 var gPDFPageFitMinScaleTwoTunes = 0.72;
 var gPDFPageFitMinScaleThreeTunes = 0.55;
+var gPDFPageFitMinScaleFourTunes = 0.45;
 var gPDFCenteredOnePageTuneStartY = [];
 
 // PDF export staff width preset for notation layouts.
@@ -219,11 +220,11 @@ var gPDFCenteredOnePageTuneStartY = [];
 // The wider presets are applied at PDF export time by temporarily injecting
 // %%staffwidth and forcing a full re-render before PDF rasterization.
 // Used by One Tune per Page, Multiple Tunes per Page (Natural Flow),
-// and Multiple Tunes per Page (Prefer 2/3 Tunes/Page).
+// and Multiple Tunes per Page (Prefer 2/3/4 Tunes/Page).
 // Persistence/restoration is handled separately.
 var gPDFPageFitScalingPreset = "standard";
 
-// Temporary ABC used while exporting Prefer 2/3 fitted PDF layouts.
+// Temporary ABC used while exporting fitted PDF layouts.
 var gPDFPageFitStaffWidthTempABC = null;
 var gPDFPageFitStaffWidthTempActive = false;
 
@@ -8220,7 +8221,7 @@ function getDescriptiveFileName(tuneCount, bAllowSpaces) {
 }
 
 //
-// PDF page-fit helpers for Prefer 2 Tunes per Page / Prefer 3 Tunes per Page
+// PDF page-fit helpers for Prefer 2/3/4 Tunes per Page
 //
 function isPDFCenteredOnePageLayout(thePageOptions) {
 
@@ -8234,7 +8235,9 @@ function isPDFPageFitLayout(thePageOptions) {
   return ((thePageOptions == "multi_fit_2") ||
           (thePageOptions == "multi_fit_2_a4") ||
           (thePageOptions == "multi_fit_3") ||
-          (thePageOptions == "multi_fit_3_a4"));
+          (thePageOptions == "multi_fit_3_a4") ||
+          (thePageOptions == "multi_fit_4") ||
+          (thePageOptions == "multi_fit_4_a4"));
 
 }
 
@@ -8254,7 +8257,9 @@ function isPDFStaffWidthPresetLayout(thePageOptions) {
           (thePageOptions == "multi_fit_2") ||
           (thePageOptions == "multi_fit_2_a4") ||
           (thePageOptions == "multi_fit_3") ||
-          (thePageOptions == "multi_fit_3_a4"));
+          (thePageOptions == "multi_fit_3_a4") ||
+          (thePageOptions == "multi_fit_4") ||
+          (thePageOptions == "multi_fit_4_a4"));
 
 }
 
@@ -8270,6 +8275,10 @@ function getPDFPageFitTargetFromLayout(thePageOptions) {
 
   if ((thePageOptions == "multi_fit_3") || (thePageOptions == "multi_fit_3_a4")) {
     return 3;
+  }
+
+  if ((thePageOptions == "multi_fit_4") || (thePageOptions == "multi_fit_4_a4")) {
+    return 4;
   }
 
   return 0;
@@ -8314,6 +8323,7 @@ function applyPDFPageFitScalingPreset(thePreset) {
   gPDFPageFitMinScaleOneTune = 0.65;
   gPDFPageFitMinScaleTwoTunes = 0.72;
   gPDFPageFitMinScaleThreeTunes = 0.55;
+  gPDFPageFitMinScaleFourTunes = 0.45;
   gPDFPageFitMinScale = gPDFPageFitMinScaleTwoTunes;
 
 }
@@ -8351,6 +8361,7 @@ function getPDFPageFitMinScale(targetTunesPerPage) {
   gPDFPageFitMinScaleOneTune = 0.65;
   gPDFPageFitMinScaleTwoTunes = 0.72;
   gPDFPageFitMinScaleThreeTunes = 0.55;
+  gPDFPageFitMinScaleFourTunes = 0.45;
   gPDFPageFitMinScale = gPDFPageFitMinScaleTwoTunes;
 
   if (targetTunesPerPage == 1) {
@@ -8359,6 +8370,10 @@ function getPDFPageFitMinScale(targetTunesPerPage) {
 
   if (targetTunesPerPage == 3) {
     return gPDFPageFitMinScaleThreeTunes;
+  }
+
+  if (targetTunesPerPage == 4) {
+    return gPDFPageFitMinScaleFourTunes;
   }
 
   if (targetTunesPerPage == 2) {
@@ -12435,7 +12450,7 @@ function ExportNotationPDF(title) {
 
   if ((thePageOptions == "one_a4") || (thePageOptions == "one_centered_a4") || (thePageOptions == "multi_a4") ||
       (thePageOptions == "multi_fit_2_a4") || (thePageOptions == "multi_fit_3_a4") ||
-      (thePageOptions == "incipits_a4") || (thePageOptions == "pdf_per_tune_a4")) {
+      (thePageOptions == "multi_fit_4_a4") || (thePageOptions == "incipits_a4") || (thePageOptions == "pdf_per_tune_a4")) {
 
     paperStyle = "a4";
 
@@ -28466,13 +28481,13 @@ async function processShareLink() {
       // Show update message?
       if (gLocalStorageAvailable){
 
-        var updatePresented = localStorage.sawUpdate_23may2026a;
+        var updatePresented = localStorage.sawUpdate_24may2026;
 
         if (updatePresented != "true") {
 
           showWhatsNewScreen();
 
-          localStorage.sawUpdate_23may2026a = true;
+          localStorage.sawUpdate_24may2026 = true;
 
         }
 
@@ -49589,7 +49604,7 @@ function idlePDFExportDialog() {
       case "configure_pagefitscalingpreset":
         control.title = enabled ?
           "For notation PDF layouts, temporarily renders the notation with optional wider staffs before exporting the PDF. Wider staffs can reduce the number of staff lines needed and help tunes fit better vertically on each page." :
-          "Only used with One Tune per Page, Multiple Tunes per Page (Natural Flow), or the Prefer 2/3 Tunes/Page layouts.";
+          "Only used with One Tune per Page, One Tune per Page (Centered), Multiple Tunes per Page (Natural Flow), or the Multiple Tunes per Page (Prefer 2/3/4 Tunes/Page) layouts.";
         break;
 
       default:
@@ -49607,7 +49622,8 @@ function idlePDFExportDialog() {
        (val == "one_centered") ||
        (val == "multi") ||
        (val == "multi_fit_2") ||
-       (val == "multi_fit_3"));
+       (val == "multi_fit_3") ||
+       (val == "multi_fit_4"));
 
     setControlEnabled("configure_incipitscolumns", notesIncipitsSelected);
 
@@ -49689,6 +49705,9 @@ function PDFExportDialog() {
       name: "  Multiple Tunes per Page (Prefer 3 Tunes/Page)",
       id: "multi_fit_3"
     }, {
+      name: "  Multiple Tunes per Page (Prefer 4 Tunes/Page)",
+      id: "multi_fit_4"
+    }, {
       name: "  Notes Incipits",
       id: "incipits"
     }, {
@@ -49729,6 +49748,9 @@ function PDFExportDialog() {
     }, {
       name: "  Multiple Tunes per Page (Prefer 3 Tunes/Page)",
       id: "multi_fit_3"
+    }, {
+      name: "  Multiple Tunes per Page (Prefer 4 Tunes/Page)",
+      id: "multi_fit_4"
     }, {
       name: "  Notes Incipits",
       id: "incipits"
@@ -56322,7 +56344,7 @@ function showWhatsNewScreen() {
   modal_msg += 'background: linear-gradient(135deg, #0b3d2e 0%, #1b5e20 52%, #4f8f3a 100%);';
   modal_msg += 'box-shadow: 0 6px 16px rgba(0,0,0,0.14); color:#fff;">';
   modal_msg += '<div style="font-size:20pt; line-height:24pt; font-weight:bold;">What&apos;s New</div>';
-  modal_msg += '<div style="font-size:11pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 23 May 2026</div>';
+  modal_msg += '<div style="font-size:11pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 24 May 2026</div>';
   modal_msg += '</div>';
 
   // Short intro
@@ -56333,20 +56355,12 @@ function showWhatsNewScreen() {
   // Feature card
   modal_msg += '<div style="margin:10px 0 6px 0; padding:0px 12px; border-radius:12px;';
   modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);">';
-  modal_msg += '<p>New PDF Export <strong>Tune Layout</strong> option:</p>';
+  modal_msg += '<p>New PDF Export <strong>Tune Layout</strong> options:</p>';
   modal_msg += '<p><strong>One Tune per Page (Centered)</strong></p>';
   modal_msg += '<p>The notation for each tune is placed on a new page and centered on the PDF page.</p>';
-  modal_msg += '</div>';
-
-  // Feature card
-  modal_msg += '<div style="margin:10px 0 6px 0; padding:0px 12px; border-radius:12px;';
-  modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);">';
-  modal_msg += '<p>New feature on the <strong>PDF Tunebook Export</strong> dialog:</p>';
-  modal_msg += '<p><strong>Layout Staff Width</strong></p>';
-  modal_msg += '<p>When using <strong>One Tune per Page</strong>, <strong>One Tune per Page (Centered)</strong>, <strong>Multiple Tunes per Page (Natural Flow)</strong>, <strong>Multiple Tunes per Page (Prefer 2 Tunes/Page)</strong>, or <strong>Multiple Tunes per Page (Prefer 3 Tunes/Page)</strong>, you can now choose a <strong>Layout Staff Width</strong> setting.</p>';
-  modal_msg += '<p>The <strong>Standard</strong> option leaves the notation as normally rendered.</p>';
-  modal_msg += '<p>The <strong>Wide</strong>, <strong>Wider</strong>, <strong>Extra-Wide</strong>, and <strong>Maximum</strong> options temporarily render the notation with wider staffs during PDF export and then re-renders the notation when the PDF export is complete.</p>';
-  modal_msg += '<p>This can reduce the vertical height of some tunes and help the preferred number of tunes fit on each page.</p>';
+  modal_msg += '<p><strong>Multiple Tunes per Page (Prefer 4 Tunes/Page)</strong></p>';
+  modal_msg += '<p>The tool tries to place tunes in groups of four per page. When needed, the four tunes are scaled down proportionally so they fit together on the page.</p>';
+  modal_msg += '<p>This can be useful if you are creating sets of three tunes but want to use an empty tune placeholder with just an X: and T: tag to show the set name before the set.</p>';
   modal_msg += '</div>';
 
   modal_msg += '</div>'; // wrapper
@@ -62876,13 +62890,13 @@ async function DoStartup() {
   // Show update message?
   if (gLocalStorageAvailable && (!isFromShare)){
 
-    var updatePresented = localStorage.sawUpdate_23may2026a;
+    var updatePresented = localStorage.sawUpdate_24may2026;
 
     if (updatePresented != "true") {
 
       showWhatsNewScreen();
 
-      localStorage.sawUpdate_23may2026a = true;
+      localStorage.sawUpdate_24may2026 = true;
 
     }
 
