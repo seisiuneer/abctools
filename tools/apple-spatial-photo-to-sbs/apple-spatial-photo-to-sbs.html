@@ -1359,6 +1359,8 @@
   let batchExportController = null;
   let perImageAdjustmentSettings = [];
   let applyingPerImageAdjustmentSettings = false;
+  let imageLoadGeneration = 0;
+  let imageLoadInProgress = false;
 
   function escapeHtml(value) {
     return String(value)
@@ -2795,10 +2797,11 @@
 
     for (const { button, idle } of buttonStates) {
       if (button) {
+        const disabled = !visible || idle || imageLoadInProgress;
         button.classList.toggle("visible", visible);
         button.classList.toggle("idle", visible && idle);
-        button.disabled = !visible || idle;
-        button.setAttribute("aria-disabled", visible && idle ? "true" : "false");
+        button.disabled = disabled;
+        button.setAttribute("aria-disabled", disabled ? "true" : "false");
       }
     }
   }
@@ -2833,6 +2836,8 @@
   }
 
   function resetLoadedImageList() {
+    imageLoadGeneration++;
+    imageLoadInProgress = false;
     loadedImageFiles = [];
     currentImageIndex = 0;
     currentFile = null;
@@ -2842,47 +2847,78 @@
   }
 
   async function loadSpatialPhotoAtIndex(index, options = {}) {
+    const loadGeneration = ++imageLoadGeneration;
+    imageLoadInProgress = true;
+    updateImageNavigationButtons();
+
     const makePreview = options.makePreview !== false;
     const resetAdjustments = !!options.resetAdjustments;
     const count = loadedImageFiles.length;
 
     if (!count) {
+      if (loadGeneration === imageLoadGeneration) {
+        imageLoadInProgress = false;
+        updateImageNavigationButtons();
+      }
       return;
     }
 
     currentImageIndex = ((index % count) + count) % count;
     currentFile = loadedImageFiles[currentImageIndex];
+    const loadingFile = currentFile;
+
     applyPerImageAdjustmentSettingsForCurrentImage();
     updateCurrentFileMeta();
     sourceMeta.textContent = "Stereo images not decoded yet.";
     outputMeta.textContent = "No JPEG generated yet.";
 
     try {
-      await extractExifTagsFromHeicFile(currentFile);
+      await extractExifTagsFromHeicFile(loadingFile);
+
+      if (loadGeneration !== imageLoadGeneration) {
+        return;
+      }
 
       if (!libheifReady) {
         setStatus("Waiting for HEIC decoder to finish loading…");
         await libheifReadyPromise;
+
+        if (loadGeneration !== imageLoadGeneration) {
+          return;
+        }
       }
 
-      await decodeHeicFile(currentFile, {
+      await decodeHeicFile(loadingFile, {
         resetAdjustments,
         preserveOutputHeight: options.preserveOutputHeight
       });
 
+      if (loadGeneration !== imageLoadGeneration) {
+        return;
+      }
+
       if (makePreview) {
         await convertToSbs({ previewOnly: true });
-        setStatus(`Loaded <b>${escapeHtml(currentFile.name)}</b>.${getCurrentImagePositionText()}`, "ok");
+
+        if (loadGeneration !== imageLoadGeneration) {
+          return;
+        }
+
+        setStatus(`Loaded <b>${escapeHtml(loadingFile.name)}</b>.${getCurrentImagePositionText()}`, "ok");
       }
     } catch (err) {
-      //console.error(err);
-      setStatus(escapeHtml(err.message || String(err)), "error");
-      sourceMeta.textContent = "Decode failed.";
-      updateImageNavigationButtons();
+      if (loadGeneration === imageLoadGeneration) {
+        //console.error(err);
+        setStatus(escapeHtml(err.message || String(err)), "error");
+        sourceMeta.textContent = "Decode failed.";
+      }
       throw err;
+    } finally {
+      if (loadGeneration === imageLoadGeneration) {
+        imageLoadInProgress = false;
+        updateImageNavigationButtons();
+      }
     }
-
-    updateImageNavigationButtons();
   }
 
   async function processSpatialPhotoFiles(fileList) {
@@ -3949,7 +3985,7 @@
         applyOutputHeight(sourceOriginalHeight);
       }
 
-      sourceMeta.textContent = `Decoded ${imageInfos.length} image view(s). Using ${decodedViews[0].width}×${decodedViews[0].height} and ${decodedViews[1].width}×${decodedViews[1].height}.`;
+      sourceMeta.textContent = `Found ${imageInfos.length} image view(s). Using ${decodedViews[0].width}×${decodedViews[0].height} and ${decodedViews[1].width}×${decodedViews[1].height}.`;
       setStatus(`Stereo pair decoded.${getCurrentImagePositionText()}&nbsp;&nbsp;Creating preview…`, "ok");
     } catch (err) {
       for (const view of rendered || []) {
@@ -5284,6 +5320,10 @@
 
     if (trigger && typeof trigger.blur === "function") {
       trigger.blur();
+    }
+
+    if (imageLoadInProgress) {
+      return;
     }
 
     const count = getLoadedImageCount();
