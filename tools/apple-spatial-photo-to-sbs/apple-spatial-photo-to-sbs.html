@@ -3785,6 +3785,68 @@
     setStatus("HEIC decoder ready.&nbsp;&nbsp;Please select one or more Apple Spatial Photo HEIC files.");
   }
 
+  function getHeifImageInfo(img, index) {
+    if (!img) {
+      return null;
+    }
+
+    const width = Number(img.get_width && img.get_width()) || 0;
+    const height = Number(img.get_height && img.get_height()) || 0;
+
+    if (!width || !height) {
+      return null;
+    }
+
+    return {
+      img,
+      index,
+      width,
+      height,
+      area: width * height
+    };
+  }
+
+  function chooseStereoImageInfos(imageInfos) {
+    const validInfos = [...(imageInfos || [])].filter(info => info && info.width && info.height);
+
+    if (validInfos.length < 2) {
+      return [];
+    }
+
+    const sortedByAreaAscending = [...validInfos].sort((a, b) => a.area - b.area);
+
+    // Apple Spatial Photo HEIC files normally expose the two stereo views as
+    // the two smaller same-size image items, with a larger primary image item
+    // also present. Prefer that pair so we do not unnecessarily rasterize the
+    // unused larger image.
+    const twoSmallest = sortedByAreaAscending.slice(0, 2).sort((a, b) => a.index - b.index);
+
+    if (
+      twoSmallest.length === 2 &&
+      twoSmallest[0].width === twoSmallest[1].width &&
+      twoSmallest[0].height === twoSmallest[1].height
+    ) {
+      return twoSmallest;
+    }
+
+    // Fallback for unusual HEIC layouts: use any same-size pair, preferring
+    // larger pairs, then finally fall back to the two smallest items.
+    const sortedByAreaDescending = [...validInfos].sort((a, b) => b.area - a.area);
+
+    for (let i = 0; i < sortedByAreaDescending.length; i++) {
+      for (let j = i + 1; j < sortedByAreaDescending.length; j++) {
+        if (
+          sortedByAreaDescending[i].width === sortedByAreaDescending[j].width &&
+          sortedByAreaDescending[i].height === sortedByAreaDescending[j].height
+        ) {
+          return [sortedByAreaDescending[i], sortedByAreaDescending[j]].sort((a, b) => a.index - b.index);
+        }
+      }
+    }
+
+    return sortedByAreaAscending.slice(0, 2).sort((a, b) => a.index - b.index);
+  }
+
   async function decodeHeicFile(file, options = {}) {
     clearGeneratedOutput();
 
@@ -3816,44 +3878,63 @@
         throw new Error(`Only ${images ? images.length : 0} image view(s) were found. This does not look like a spatial photo with a stereo pair.`);
       }
 
+      const imageInfos = [];
+
       for (let i = 0; i < images.length; i++) {
-        const img = images[i];
-        const width = img.get_width();
-        const height = img.get_height();
-        if (!width || !height) continue;
+        const info = getHeifImageInfo(images[i], i);
 
-        const imageData = new ImageData(width, height);
-
-        await new Promise((resolve, reject) => {
-          try {
-            img.display(imageData, data => data ? resolve(data) : reject(new Error(`Image ${i + 1} failed to decode.`)));
-          } catch (err) {
-            reject(err);
-          }
-        }).then(data => {
-          const offscreen = document.createElement("canvas");
-          offscreen.width = width;
-          offscreen.height = height;
-
-          const ctx = offscreen.getContext("2d", { willReadFrequently: false });
-          ctx.putImageData(data, 0, 0);
-
-          rendered.push({ index: i, width, height, area: width * height, canvas: offscreen });
-        });
-
-        // Give Firefox a chance to service UI/GC work during large batches.
-        await new Promise(requestAnimationFrame);
+        if (info) {
+          imageInfos.push(info);
+        }
       }
 
-      if (rendered.length < 2) {
+      if (imageInfos.length < 2) {
         throw new Error("The file contained fewer than two decodable image views.");
       }
 
-      const selectedViews = chooseStereoPair(rendered);
-      releaseUnusedRenderedViews(rendered, selectedViews);
+      const selectedInfos = chooseStereoImageInfos(imageInfos);
 
-      decodedViews = selectedViews;
-      rendered = selectedViews;
+      if (selectedInfos.length < 2) {
+        throw new Error("The file contained fewer than two decodable image views.");
+      }
+
+      // Important performance/memory optimization:
+      // Only rasterize the two selected stereo image handles. Apple Spatial
+      // HEIC files commonly include a larger primary image item that is not
+      // used for SBS/anaglyph output, so calling display() on all image items
+      // wastes time and increases peak memory use.
+      for (const info of selectedInfos) {
+        const imageData = new ImageData(info.width, info.height);
+
+        const data = await new Promise((resolve, reject) => {
+          try {
+            info.img.display(imageData, decodedData => decodedData ? resolve(decodedData) : reject(new Error(`Image ${info.index + 1} failed to decode.`)));
+          } catch (err) {
+            reject(err);
+          }
+        });
+
+        const offscreen = document.createElement("canvas");
+        offscreen.width = info.width;
+        offscreen.height = info.height;
+
+        const ctx = offscreen.getContext("2d", { willReadFrequently: false });
+        ctx.putImageData(data, 0, 0);
+
+        rendered.push({
+          index: info.index,
+          width: info.width,
+          height: info.height,
+          area: info.area,
+          canvas: offscreen
+        });
+
+        // Give Firefox a chance to service UI/GC work during large batches.
+        await yieldForMemoryCleanup();
+      }
+
+      decodedViews = rendered.sort((a, b) => a.index - b.index);
+      rendered = decodedViews;
 
       sourceOriginalHeight = clampOutputHeight(decodedViews[0].height || OUTPUT_HEIGHT_DEFAULT);
 
@@ -3868,7 +3949,7 @@
         applyOutputHeight(sourceOriginalHeight);
       }
 
-      sourceMeta.textContent = `Decoded ${images.length} image view(s). Using ${decodedViews[0].width}×${decodedViews[0].height} and ${decodedViews[1].width}×${decodedViews[1].height}.`;
+      sourceMeta.textContent = `Decoded ${imageInfos.length} image view(s). Using ${decodedViews[0].width}×${decodedViews[0].height} and ${decodedViews[1].width}×${decodedViews[1].height}.`;
       setStatus(`Stereo pair decoded.${getCurrentImagePositionText()}&nbsp;&nbsp;Creating preview…`, "ok");
     } catch (err) {
       for (const view of rendered || []) {
@@ -3888,20 +3969,6 @@
 
       await yieldForMemoryCleanup();
     }
-  }
-
-  function chooseStereoPair(images) {
-    const sorted = [...images].sort((a, b) => b.area - a.area);
-
-    for (let i = 0; i < sorted.length; i++) {
-      for (let j = i + 1; j < sorted.length; j++) {
-        if (sorted[i].width === sorted[j].width && sorted[i].height === sorted[j].height) {
-          return [sorted[i], sorted[j]].sort((a, b) => a.index - b.index);
-        }
-      }
-    }
-
-    return [sorted[0], sorted[1]].sort((a, b) => a.index - b.index);
   }
 
   function clampByte(value) {
