@@ -1191,24 +1191,24 @@
         <path d="M20 15v5h-5"></path>
       </svg>
     </button>
-      <button id="firstImageButton" class="previewNavButton" type="button" title="Show first image" aria-label="Show first image">
+      <button id="firstImageButton" class="previewNavButton" type="button" title="Show first image (Ctrl+Shift+[)" aria-label="Show first image">
         <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
           <path d="M6 5v14"></path>
           <path d="M18 6l-7 6 7 6"></path>
         </svg>
       </button>
-      <button id="prevImageButton" class="previewNavButton" type="button" title="Show previous image" aria-label="Show previous image">
+      <button id="prevImageButton" class="previewNavButton" type="button" title="Show previous image (Ctrl+[)" aria-label="Show previous image">
         <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
           <path d="M15 6l-7 6 7 6"></path>
         </svg>
       </button>
       <canvas id="previewCanvas"></canvas>
-      <button id="nextImageButton" class="previewNavButton" type="button" title="Show next image" aria-label="Show next image">
+      <button id="nextImageButton" class="previewNavButton" type="button" title="Show next image (Ctrl+])" aria-label="Show next image">
         <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
           <path d="M9 6l7 6-7 6"></path>
         </svg>
       </button>
-      <button id="lastImageButton" class="previewNavButton" type="button" title="Show last image" aria-label="Show last image">
+      <button id="lastImageButton" class="previewNavButton" type="button" title="Show last image (Ctrl+Shift+])" aria-label="Show last image">
         <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
           <path d="M18 5v14"></path>
           <path d="M6 6l7 6-7 6"></path>
@@ -4915,7 +4915,7 @@
           <li>Optionally adjust <b>Side-by-Side Center Crop</b> (Side-by-Side format only), <b>Horizontal Shift</b>, and/or <b>Image Rotation</b> as required to optimize the stereo view. Use the <b>Side-by-Side Center Crop</b> slider, or click its numeric value display to enter an exact crop percentage.</li>
           <li>When multiple HEIC files are loaded, <b>Horizontal Shift</b>, <b>Horizontal Shift range</b>, <b>Image Rotation</b>, and <b>Image Rotation range</b> are tracked separately for each image. When you move between images, those controls return to the saved values for the displayed image, or to 0 with the normal range if that image has not been individually adjusted. Opening a new set of HEIC files resets the per-image Horizontal Shift and Image Rotation settings. <b>Side-by-Side Center Crop</b> and <b>Border</b> are shared settings that are preserved, saved, and restored the next time the tool is opened.</li>
           <li>On desktop browsers, move the mouse over the preview area to reveal the full-screen button at the top right of the preview. On iPad, the button remains visible at the top right. The button is hidden on iPhone and while full-screen mode is active. Press Escape or use the browser full-screen control to return to the normal tool view.</li>
-          <li>If more than one HEIC file is loaded, on desktop browsers, move the mouse over the preview area to reveal the first, previous, next, and last image arrow buttons at the edges of the preview that you can use to switch between the images (always visible on iOS).</li>
+          <li>If more than one HEIC file is loaded, on desktop browsers, move the mouse over the preview area to reveal the first, previous, next, and last image arrow buttons at the edges of the preview that you can use to switch between the images (always visible on iOS).<br/>Keyboard shortcuts are also available throughout the main tool: <b>Ctrl+Shift+[</b> for first image, <b>Ctrl+[</b> for previous image, <b>Ctrl+]</b> for next image, and <b>Ctrl+Shift+]</b> for last image.</li>
           <li>The normal on-page preview is optimized for responsiveness, while full-screen preview automatically uses a higher preview resolution when useful for sharper viewing on high-DPI displays.</li>
           <li>For side-by-side image viewing, you can make the side-by-side preview smaller to help visually fuse the images while making adjustments, you can either zoom out the browser window or resize the window narrower to make the preview smaller.</li>
           <li>Click <b>Export Current JPEG</b> to save or share only the currently displayed stereo image.<br/>Click <b>Export All as ZIP</b> to save or share all loaded stereo images in a .zip file. During batch export, <b>Horizontal Shift</b>, <b>Horizontal Shift range</b>, <b>Image Rotation</b>, and <b>Image Rotation range</b> use each image’s individual settings; the other controls use the current settings. A progress dialog shows the current image and overall progress; click <b>Cancel</b> during ZIP generation to stop after the current processing step finishes.</li>
@@ -5345,6 +5345,85 @@
     })
       .catch(err => setStatus(escapeHtml(err.message || String(err)), "error"));
   }
+
+  function isTextEntryInput(element) {
+    if (!element || element.tagName !== "INPUT") {
+      return false;
+    }
+
+    const type = String(element.getAttribute("type") || "text").toLowerCase();
+
+    return [
+      "text",
+      "search",
+      "url",
+      "tel",
+      "email",
+      "password",
+      "number",
+      "date",
+      "datetime-local",
+      "month",
+      "time",
+      "week"
+    ].includes(type);
+  }
+
+  function isKeyboardShortcutIgnoredTarget(target) {
+    if (!target) {
+      return false;
+    }
+
+    const element = target.nodeType === Node.ELEMENT_NODE ? target : target.parentElement;
+
+    if (!element) {
+      return false;
+    }
+
+    if (element.isContentEditable) {
+      return true;
+    }
+
+    // Keep keyboard image navigation active across the main tool, including
+    // sliders, selects, buttons, and file controls. Only suppress it while the
+    // user is typing/editing text or when a modal dialog is open.
+    return !!element.closest("textarea, [contenteditable='true'], .modal_default_main, .modal_compact_main, .modal_instructions_main") ||
+      isTextEntryInput(element);
+  }
+
+  function handleImageNavigationShortcut(event) {
+    if (!event || !event.ctrlKey || event.altKey || event.metaKey) {
+      return;
+    }
+
+    if (isKeyboardShortcutIgnoredTarget(event.target)) {
+      return;
+    }
+
+    const isLeftBracket = event.code === "BracketLeft" || event.key === "[" || event.key === "{";
+    const isRightBracket = event.code === "BracketRight" || event.key === "]" || event.key === "}";
+
+    if (!isLeftBracket && !isRightBracket) {
+      return;
+    }
+
+    const count = getLoadedImageCount();
+
+    if (count <= 1 || imageLoadInProgress) {
+      return;
+    }
+
+    event.preventDefault();
+    event.stopPropagation();
+
+    if (isLeftBracket) {
+      handleImageNavigation(event.shiftKey ? 0 : currentImageIndex - 1, event);
+    } else {
+      handleImageNavigation(event.shiftKey ? count - 1 : currentImageIndex + 1, event);
+    }
+  }
+
+  document.addEventListener("keydown", handleImageNavigationShortcut, true);
 
   if (firstImageButton) {
     firstImageButton.addEventListener("click", event => {
