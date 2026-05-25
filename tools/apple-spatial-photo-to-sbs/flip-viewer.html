@@ -780,24 +780,24 @@
         <path d="M20 15v5h-5"></path>
       </svg>
     </button>
-      <button id="firstImageButton" class="previewNavButton" type="button" title="Show first image" aria-label="Show first image">
+      <button id="firstImageButton" class="previewNavButton" type="button" title="Show first image (Ctrl+Shift+[)" aria-label="Show first image">
         <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
           <path d="M6 5v14"></path>
           <path d="M18 6l-7 6 7 6"></path>
         </svg>
       </button>
-      <button id="prevImageButton" class="previewNavButton" type="button" title="Show previous image" aria-label="Show previous image">
+      <button id="prevImageButton" class="previewNavButton" type="button" title="Show previous image (Ctrl+[)" aria-label="Show previous image">
         <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
           <path d="M15 6l-7 6 7 6"></path>
         </svg>
       </button>
       <canvas id="viewerCanvas"></canvas>
-      <button id="nextImageButton" class="previewNavButton" type="button" title="Show next image" aria-label="Show next image">
+      <button id="nextImageButton" class="previewNavButton" type="button" title="Show next image (Ctrl+])" aria-label="Show next image">
         <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
           <path d="M9 6l7 6-7 6"></path>
         </svg>
       </button>
-      <button id="lastImageButton" class="previewNavButton" type="button" title="Show last image" aria-label="Show last image">
+      <button id="lastImageButton" class="previewNavButton" type="button" title="Show last image (Ctrl+Shift+])" aria-label="Show last image">
         <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
           <path d="M18 5v14"></path>
           <path d="M6 6l7 6-7 6"></path>
@@ -891,6 +891,7 @@
   let loadedImages = [];
   let currentImageIndex = -1;
   let loadGeneration = 0;
+  let imageNavigationInProgress = false;
   let playing = true;
   let animationStart = performance.now();
   let lastFrameRequest = 0;
@@ -1073,7 +1074,7 @@
           <li>Select one or more side-by-side JPEG/TIFF files using the file chooser.</li>
           <li>On desktop browsers, you can also drag one or more side-by-side JPEG/TIFF files directly onto the viewer area.</li>
           <li>Each image should contain the two stereo views side by side in a single JPEG/TIFF file.</li>
-          <li>When multiple images are loaded, use the First, Previous, Next, and Last buttons over the viewer to move through the collection. On desktop, these buttons appear when the mouse is over the viewer. On iOS, they remain visible.</li>
+          <li>When multiple images are loaded, use the First, Previous, Next, and Last buttons over the viewer to move through the collection. On desktop, these buttons appear when the mouse is over the viewer. On iOS, they remain visible. Keyboard shortcuts are also available throughout the main tool: <b>Ctrl+Shift+[</b> for first image, <b>Ctrl+[</b> for previous image, <b>Ctrl+]</b> for next image, and <b>Ctrl+Shift+]</b> for last image.</li>
           <li>TIFF support is intended for standard 8-bit RGB side-by-side TIFF/TIF images, including uncompressed TIFFs and common LZW-compressed TIFFs with horizontal differencing predictor.</li>
         </ul>
 
@@ -1901,7 +1902,7 @@
 
     buttons.forEach(button => {
       button.classList.toggle("visible", hasMultipleImages);
-      button.disabled = false;
+      button.disabled = !hasMultipleImages || imageNavigationInProgress;
       button.classList.remove("idle");
     });
 
@@ -1911,19 +1912,19 @@
 
     if (firstImageButton) {
       firstImageButton.classList.toggle("idle", atFirst);
-      firstImageButton.title = atFirst ? "Already showing first image" : "Show first image";
+      firstImageButton.title = atFirst ? "Already showing first image (Ctrl+Shift+[)" : "Show first image (Ctrl+Shift+[)";
     }
     if (prevImageButton) {
       prevImageButton.classList.toggle("idle", atFirst);
-      prevImageButton.title = atFirst ? "Already showing first image" : "Show previous image";
+      prevImageButton.title = atFirst ? "Already showing first image (Ctrl+[)" : "Show previous image (Ctrl+[)";
     }
     if (nextImageButton) {
       nextImageButton.classList.toggle("idle", atLast);
-      nextImageButton.title = atLast ? "Already showing last image" : "Show next image";
+      nextImageButton.title = atLast ? "Already showing last image (Ctrl+])" : "Show next image (Ctrl+])";
     }
     if (lastImageButton) {
       lastImageButton.classList.toggle("idle", atLast);
-      lastImageButton.title = atLast ? "Already showing last image" : "Show last image";
+      lastImageButton.title = atLast ? "Already showing last image (Ctrl+Shift+])" : "Show last image (Ctrl+Shift+])";
     }
   }
 
@@ -1972,6 +1973,104 @@
 
   function showLastImage() {
     setActiveImage(loadedImages.length - 1);
+  }
+
+  function navigateToImageIndex(index) {
+    if (imageNavigationInProgress || loadedImages.length <= 1) {
+      return;
+    }
+
+    const targetIndex = Math.max(0, Math.min(index, loadedImages.length - 1));
+
+    if (targetIndex === currentImageIndex) {
+      updateImageNavigationButtons();
+      return;
+    }
+
+    imageNavigationInProgress = true;
+    updateImageNavigationButtons();
+
+    try {
+      setActiveImage(targetIndex);
+    } finally {
+      imageNavigationInProgress = false;
+      updateImageNavigationButtons();
+    }
+  }
+
+  function isTextEntryInput(element) {
+    if (!element || element.tagName !== "INPUT") {
+      return false;
+    }
+
+    const type = String(element.getAttribute("type") || "text").toLowerCase();
+
+    return [
+      "text",
+      "search",
+      "url",
+      "tel",
+      "email",
+      "password",
+      "number",
+      "date",
+      "datetime-local",
+      "month",
+      "time",
+      "week"
+    ].includes(type);
+  }
+
+  function isKeyboardShortcutIgnoredTarget(target) {
+    if (!target) {
+      return false;
+    }
+
+    const element = target.nodeType === Node.ELEMENT_NODE ? target : target.parentElement;
+
+    if (!element) {
+      return false;
+    }
+
+    if (element.isContentEditable) {
+      return true;
+    }
+
+    // Keep keyboard image navigation active throughout the main tool, including
+    // sliders, selects, buttons, and file controls. Suppress it only while the
+    // user is typing/editing text or while a modal dialog is open.
+    return !!element.closest("textarea, [contenteditable='true'], .modal_default_main, .modal_compact_main, .modal_instructions_main") ||
+      isTextEntryInput(element);
+  }
+
+  function handleImageNavigationShortcut(event) {
+    if (!event || !event.ctrlKey || event.altKey || event.metaKey) {
+      return;
+    }
+
+    if (isKeyboardShortcutIgnoredTarget(event.target)) {
+      return;
+    }
+
+    const isLeftBracket = event.code === "BracketLeft" || event.key === "[" || event.key === "{";
+    const isRightBracket = event.code === "BracketRight" || event.key === "]" || event.key === "}";
+
+    if (!isLeftBracket && !isRightBracket) {
+      return;
+    }
+
+    if (loadedImages.length <= 1 || imageNavigationInProgress) {
+      return;
+    }
+
+    event.preventDefault();
+    event.stopPropagation();
+
+    if (isLeftBracket) {
+      navigateToImageIndex(event.shiftKey ? 0 : currentImageIndex - 1);
+    } else {
+      navigateToImageIndex(event.shiftKey ? loadedImages.length - 1 : currentImageIndex + 1);
+    }
   }
 
   async function decodeFileToLoadedImage(file) {
@@ -2136,10 +2235,35 @@
     requestRender();
   });
 
-  if (firstImageButton) firstImageButton.addEventListener("click", showFirstImage);
-  if (prevImageButton) prevImageButton.addEventListener("click", showPreviousImage);
-  if (nextImageButton) nextImageButton.addEventListener("click", showNextImage);
-  if (lastImageButton) lastImageButton.addEventListener("click", showLastImage);
+  document.addEventListener("keydown", handleImageNavigationShortcut, true);
+
+  if (firstImageButton) {
+    firstImageButton.addEventListener("click", event => {
+      event.preventDefault();
+      navigateToImageIndex(0);
+    });
+  }
+
+  if (prevImageButton) {
+    prevImageButton.addEventListener("click", event => {
+      event.preventDefault();
+      navigateToImageIndex(currentImageIndex - 1);
+    });
+  }
+
+  if (nextImageButton) {
+    nextImageButton.addEventListener("click", event => {
+      event.preventDefault();
+      navigateToImageIndex(currentImageIndex + 1);
+    });
+  }
+
+  if (lastImageButton) {
+    lastImageButton.addEventListener("click", event => {
+      event.preventDefault();
+      navigateToImageIndex(loadedImages.length - 1);
+    });
+  }
 
   window.addEventListener("resize", () => {
     updateFullscreenButtonAvailability();
