@@ -37,7 +37,7 @@
 <title>Side-by-Side JPEG/TIFF Stereo Flip Viewer</title>
 <meta property="og:type" content="website" />
 <meta property="og:title" content="Side-by-Side JPEG/TIFF Stereo Flip Viewer" />
-<meta property="og:description" content="Flip viewer for side-by-side JPEG or TIFF stereo images." />
+<meta property="og:description" content="Flip viewer for side-by-side JPEG/TIFF stereo images." />
 <meta property="og:url" content="https://michaeleskin.com/tools/flip-viewer.html" />
 <meta property="og:site_name" content="Side-by-Side JPEG/TIFF Stereo Flip Viewer" />
 <meta property="og:image" content="https://michaeleskin.com/tools/img/flip_viewer_og_3.jpg"/>
@@ -426,6 +426,97 @@
     margin: 0;
   }
 
+
+
+  .previewNavButton {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 4;
+    width: 44px;
+    height: 72px;
+    min-width: 0;
+    padding: 0;
+    border-radius: 14px;
+    border: 1px solid rgba(255,255,255,.18);
+    background: rgba(0,0,0,.34);
+    color: rgba(255,255,255,.82);
+    line-height: 1;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+  }
+
+  .previewNavButton:hover,
+  .previewNavButton:focus {
+    background: rgba(0,0,0,.52);
+    color: #fff;
+  }
+
+  .previewNavButton svg {
+    width: 27px;
+    height: 27px;
+    display: block;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2.4;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    pointer-events: none;
+  }
+
+  .previewNavButton.visible {
+    display: flex;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.16s ease-in-out, background 0.16s ease-in-out, color 0.16s ease-in-out;
+  }
+
+  .viewerBox:hover .previewNavButton.visible,
+  .viewerBox:focus-within .previewNavButton.visible,
+  body.iosDevice .previewNavButton.visible {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .previewNavButton.idle {
+    cursor: default;
+  }
+
+  .viewerBox:hover .previewNavButton.visible.idle,
+  .viewerBox:focus-within .previewNavButton.visible.idle,
+  body.iosDevice .previewNavButton.visible.idle {
+    opacity: .64;
+    pointer-events: auto;
+  }
+
+  .previewNavButton.idle svg {
+    opacity: .88;
+  }
+
+  .previewNavButton:disabled {
+    cursor: default;
+  }
+
+  body.iosDevice .previewNavButton {
+    background: rgba(0,0,0,.18);
+    border-color: rgba(255,255,255,.22);
+    color: rgba(255,255,255,.88);
+  }
+
+  body.iosDevice .previewNavButton:hover,
+  body.iosDevice .previewNavButton:focus {
+    background: rgba(0,0,0,.28);
+    color: #fff;
+  }
+
+  #firstImageButton { left: 10px; }
+  #prevImageButton { left: 64px; }
+  #nextImageButton { right: 64px; }
+  #lastImageButton { right: 10px; }
+
   @media (max-width: 760px) {
     .wrap {
       width: min(100vw - 18px, 960px);
@@ -470,6 +561,22 @@
   }
 
   @media (max-width: 560px) {
+    .previewNavButton {
+      width: 38px;
+      height: 60px;
+      border-radius: 12px;
+    }
+
+    .previewNavButton svg {
+      width: 24px;
+      height: 24px;
+    }
+
+    #firstImageButton { left: 8px; }
+    #prevImageButton { left: 54px; }
+    #nextImageButton { right: 54px; }
+    #lastImageButton { right: 8px; }
+
     .displayControls {
       grid-template-columns: 1fr;
     }
@@ -651,14 +758,15 @@
   <header>
     <h1>Side-by-Side JPEG/TIFF Stereo Flip Viewer</h1>
     <p class="subhead">
-      Open a left/right side-by-side JPEG or TIFF and view it as a flip stereo image.
+      Open one or more left/right side-by-side JPEG/TIFF images and view them as flip stereo images.
     </p>
   </header>
 
   <section class="card">
     <div>
-      <label for="fileInput">Side-by-Side JPEG or TIFF Image:</label>
-      <input id="fileInput" type="file" accept=".jpg,.jpeg,.tif,.tiff,image/jpeg,image/tiff">
+      <label for="fileInput">Side-by-Side JPEG/TIFF Stereo Images:</label>
+      <input id="fileInput" type="file" accept=".jpg,.jpeg,.tif,.tiff,image/jpeg,image/tiff" multiple title="Open one or more side-by-side JPEG/TIFF stereo images.">
+      <div class="hint">You can also drag-and-drop one or more side-by-side JPEG/TIFF stereo image files onto the viewer area.</div>
     </div>
   </section>
 
@@ -672,7 +780,29 @@
         <path d="M20 15v5h-5"></path>
       </svg>
     </button>
-        <canvas id="viewerCanvas"></canvas>
+      <button id="firstImageButton" class="previewNavButton" type="button" title="Show first image" aria-label="Show first image">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path d="M6 5v14"></path>
+          <path d="M18 6l-7 6 7 6"></path>
+        </svg>
+      </button>
+      <button id="prevImageButton" class="previewNavButton" type="button" title="Show previous image" aria-label="Show previous image">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path d="M15 6l-7 6 7 6"></path>
+        </svg>
+      </button>
+      <canvas id="viewerCanvas"></canvas>
+      <button id="nextImageButton" class="previewNavButton" type="button" title="Show next image" aria-label="Show next image">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path d="M9 6l7 6-7 6"></path>
+        </svg>
+      </button>
+      <button id="lastImageButton" class="previewNavButton" type="button" title="Show last image" aria-label="Show last image">
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path d="M18 5v14"></path>
+          <path d="M6 6l7 6-7 6"></path>
+        </svg>
+      </button>
       <div id="emptyMessage" class="hint">Stereo flip viewer output will appear here.</div>
     </div>
     <div class="viewerControlsGrid">
@@ -699,7 +829,7 @@
       <div class="displayControls">
         <div class="displayControl">
           <label for="displayMode">Display Mode</label>
-          <select id="displayMode" title="Choose whether to view the image as an animated stereo flip or as the original full side-by-side JPEG.">
+          <select id="displayMode" title="Choose whether to view the current image as an animated stereo flip or as the original full side-by-side JPEG/TIFF.">
             <option value="flip">Flip Stereo View</option>
             <option value="full">Original Side-by-Side Image</option>
           </select>
@@ -707,7 +837,7 @@
 
         <div class="displayControl" id="imageOrderControl">
           <label for="fullImageOrder">Image Order</label>
-          <select id="fullImageOrder" title="Choose the left/right order when displaying the original full side-by-side image. This is only available in Original Side-by-Side Image mode.">
+          <select id="fullImageOrder" title="Choose the left/right order when displaying the current original full side-by-side image. This is only available in Original Side-by-Side Image mode.">
             <option value="normal">Original</option>
             <option value="reverse">Swapped</option>
           </select>
@@ -722,7 +852,7 @@
   </section>
 
   <div class="card instructionsActions">
-    <button id="showInstructionsButton" type="button" title="Open instructions for using the Side-by-Side Stereo Flip Viewer.">Instructions</button>
+    <button id="showInstructionsButton" type="button" title="Open instructions for using the Side-by-Side Stereo Flip Viewer, including multiple-image navigation.">Instructions</button>
   </div>
 
 </div>
@@ -750,10 +880,17 @@
   const sourceMeta = document.getElementById("sourceMeta");
   const showInstructionsButton = document.getElementById("showInstructionsButton");
   const fullscreenButton = document.getElementById("fullscreenButton");
+  const firstImageButton = document.getElementById("firstImageButton");
+  const prevImageButton = document.getElementById("prevImageButton");
+  const nextImageButton = document.getElementById("nextImageButton");
+  const lastImageButton = document.getElementById("lastImageButton");
 
   let leftCanvas = null;
   let rightCanvas = null;
   let sourceFullCanvas = null;
+  let loadedImages = [];
+  let currentImageIndex = -1;
+  let loadGeneration = 0;
   let playing = true;
   let animationStart = performance.now();
   let lastFrameRequest = 0;
@@ -913,30 +1050,30 @@
     }
   }
 
-
   function showInstructions() {
     const html = `
       <div class="instructions-body">
         <h3 style="text-align:center;">Side-by-Side JPEG/TIFF Stereo Flip Viewer</h3>
 
         <p>
-          This viewer opens a side-by-side JPEG or TIFF image and rapidly alternates between the left-eye and right-eye views.
+          This viewer opens one or more side-by-side JPEG/TIFF images and rapidly alternates between the left-eye and right-eye views for the currently displayed image.
           The effect is often called a <b>flip</b> or <b>wiggle</b> stereo view.
         </p>
 
         <div style="text-align: center;margin-bottom:20px;">
-          This tool can be used to view side-by-side JPEG images created<br/>with my stereo image converter tools:<br/>
+          This tool can be used to view side-by-side JPEG/TIFF images created<br/>with my stereo image converter tools:<br/>
           <div style="margin-top:10px;">
             <a href="https://michaeleskin.com/tools/apple-spatial-photo-to-sbs.html" target="_blank" rel="noopener noreferrer">Apple Spatial Photo → Side-by-Side or 3D Anaglyph</a><br/><br/>      
             <a href="https://michaeleskin.com/tools/sbs-jpeg-tiff-to-sbs.html" target="_blank" rel="noopener noreferrer">Stereo JPEG/TIFF → Side-by-Side or 3D Anaglyph</a>
           </div>
         </div>
 
-        <h4>Opening an image</h4>
+        <h4>Opening images</h4>
         <ul>
-          <li>Select a single side-by-side JPEG or TIFF file using the file chooser.</li>
-          <li>On desktop browsers, you can also drag a side-by-side JPEG or TIFF directly onto the preview area.</li>
-          <li>The image should contain the two stereo views side by side in a single JPEG or TIFF file.</li>
+          <li>Select one or more side-by-side JPEG/TIFF files using the file chooser.</li>
+          <li>On desktop browsers, you can also drag one or more side-by-side JPEG/TIFF files directly onto the viewer area.</li>
+          <li>Each image should contain the two stereo views side by side in a single JPEG/TIFF file.</li>
+          <li>When multiple images are loaded, use the First, Previous, Next, and Last buttons over the viewer to move through the collection. On desktop, these buttons appear when the mouse is over the viewer. On iOS, they remain visible.</li>
           <li>TIFF support is intended for standard 8-bit RGB side-by-side TIFF/TIF images, including uncompressed TIFFs and common LZW-compressed TIFFs with horizontal differencing predictor.</li>
         </ul>
 
@@ -945,7 +1082,7 @@
           <li><b>Flip Stereo View</b> alternates between the left-eye and right-eye views.</li>
           <li><b>Original Side-by-Side Image</b> shows the full side-by-side image without flipping.</li>
           <li>When viewing the original side-by-side image, use <b>Image Order</b> to switch between Original and Swapped display.</li>
-          <li>The Image Order control is hidden in Flip Stereo View mode.</li>
+          <li>The <b>Image Order</b> control is hidden in <b>Flip Stereo View</b> mode.</li>
           <li>On desktop browsers, move the mouse over the preview area to reveal the full-screen button at the top right of the preview. On iPad, the button remains visible at the top right. The button is hidden on iPhone and while full-screen mode is active. Press Escape or use the browser full-screen control to return to the normal tool view.</li>
           <li>When showing the original side-by-side image, to make the image smaller and help facilitate visually fusing the images, you can either zoom out the browser window or resize the window narrower to make the image smaller.</li>
         </ul>
@@ -953,13 +1090,13 @@
         <h4>Image layout</h4>
         <ul>
           <li>The viewer assumes the left half of the JPEG/TIFF is one eye view and the right half is the other eye view.</li>
-          <li>Side-by-side images exported from the Apple Spatial Photo → Side-by-Side or 3D Anaglyph, or the Stereo JPEG/TIFF → Side-by-Side or 3D Anaglyph tools, are already in the expected format.</li>
+          <li>Side-by-side images exported from the <b>Apple Spatial Photo → Side-by-Side or 3D Anaglyph</b>, or the <b>Stereo JPEG/TIFF → Side-by-Side or 3D Anaglyph</b> tools, are already in the expected format.</li>
           <li>The preview area is fixed at a comfortable 4:3 shape and the image is scaled to fit inside it.</li>
         </ul>
 
         <h4>Flip Speed</h4>
         <ul>
-          <li>Use <b>Maximum Flip Speed</b> to choose whether the Flip Speed slider tops out at 2.5, 5, 10, 20, or 30 Hz. The default maximum is 5 Hz.</li>
+          <li>Use the <b>Hz Max</b> menu next to <b>Flip Speed</b> to choose whether the <b>Flip Speed</b> slider tops out at 2.5, 5, 10, 20, or 30 Hz. The default maximum is 5 Hz.</li>
           <li>The selected maximum is saved in browser localStorage when available and restored the next time the tool is opened.</li>
           <li>Not all devices/browsers may be able to handle the higher flip speeds.</li>
           <li>Use <b>Flip Speed</b> to control how quickly the viewer alternates between the two eye views.</li>
@@ -982,7 +1119,7 @@
         <h4>Privacy</h4>
         <ul>
           <li>All processing is performed locally in your browser.</li>
-          <li>The selected JPEG or TIFF file is not uploaded to a server by this tool.</li>
+          <li>The selected JPEG/TIFF files are not uploaded to a server by this tool.</li>
           <li>Google Analytics is used to collect aggregate usage statistics for the tool.</li>
         </ul>
 
@@ -1029,7 +1166,7 @@
 
     alert(
       "Side-by-Side Stereo Flip Viewer\\n\\n" +
-      "Open a side-by-side JPEG or TIFF image and use Flip Speed to control how quickly the viewer alternates between the two eye views. " +
+      "Open one or more side-by-side JPEG/TIFF images and use Flip Speed to control how quickly the viewer alternates between the two eye views. " +
       "Click Pause to stop the animation and Play to resume."
     );
   }
@@ -1062,7 +1199,7 @@
     }
   }
 
-  function splitSideBySideCanvas(full) {
+  function createSplitSideBySideCanvases(full) {
     const sourceWidth = full.width;
     const sourceHeight = full.height;
     const eyeWidth = Math.floor(sourceWidth / 2);
@@ -1086,9 +1223,21 @@
     lctx.drawImage(full, 0, 0, eyeWidth, eyeHeight, 0, 0, eyeWidth, eyeHeight);
     rctx.drawImage(full, eyeWidth, 0, eyeWidth, eyeHeight, 0, 0, eyeWidth, eyeHeight);
 
-    leftCanvas = l;
-    rightCanvas = r;
-    sourceFullCanvas = full;
+    return {
+      leftCanvas: l,
+      rightCanvas: r,
+      sourceFullCanvas: full,
+      eyeWidth,
+      eyeHeight
+    };
+  }
+
+  function splitSideBySideCanvas(full) {
+    const split = createSplitSideBySideCanvases(full);
+    leftCanvas = split.leftCanvas;
+    rightCanvas = split.rightCanvas;
+    sourceFullCanvas = split.sourceFullCanvas;
+    return split;
   }
 
   function splitSideBySideImage(img) {
@@ -1731,47 +1880,189 @@
     return decodeJpegToCanvas(file);
   }
 
-  async function loadImageFile(file) {
-    if (!file) return;
+  function clearLoadedImages(message = "No image loaded.") {
+    loadedImages = [];
+    currentImageIndex = -1;
+    leftCanvas = null;
+    rightCanvas = null;
+    sourceFullCanvas = null;
+    emptyMessage.style.display = "grid";
+    fileMeta.textContent = "No file selected.";
+    sourceMeta.textContent = message;
+    updateImageNavigationButtons();
+    requestRender();
+  }
 
-    if (!isSupportedSourceFile(file)) {
-      leftCanvas = null;
-      rightCanvas = null;
-      sourceFullCanvas = null;
-      emptyMessage.style.display = "grid";
-      fileMeta.textContent = file?.name ? `${file.name} (${formatBytes(file.size)})` : "No file selected.";
-      sourceMeta.textContent = "Please choose a JPEG or TIFF side-by-side image.";
-      requestRender();
+  function updateImageNavigationButtons() {
+    const buttons = [firstImageButton, prevImageButton, nextImageButton, lastImageButton].filter(Boolean);
+    const hasMultipleImages = loadedImages.length > 1;
+    const atFirst = currentImageIndex <= 0;
+    const atLast = currentImageIndex >= loadedImages.length - 1;
+
+    buttons.forEach(button => {
+      button.classList.toggle("visible", hasMultipleImages);
+      button.disabled = false;
+      button.classList.remove("idle");
+    });
+
+    if (!hasMultipleImages) {
       return;
     }
 
-    try {
-      const full = await decodeSourceFileToCanvas(file);
-
-      splitSideBySideCanvas(full);
-
-      const eyeWidth = Math.floor(full.width / 2);
-      const eyeHeight = full.height;
-      const formatLabel = getSourceFileFormatLabel(file);
-
-      // Keep the viewer fixed at 4:3 / 1.333333.
-      viewerBox.style.height = "auto";
-
-      fileMeta.textContent = `${file.name} (${formatBytes(file.size)})`;
-      sourceMeta.textContent = `${formatLabel} source: ${full.width} × ${full.height}; each eye: ${eyeWidth} × ${eyeHeight}`;
-
-      animationStart = performance.now();
-      requestRender();
-    } catch (err) {
-      leftCanvas = null;
-      rightCanvas = null;
-      sourceFullCanvas = null;
-      emptyMessage.style.display = "grid";
-      fileMeta.textContent = `${file.name} (${formatBytes(file.size)})`;
-      sourceMeta.textContent = err && err.message ? err.message : "Could not load image.";
-      requestRender();
+    if (firstImageButton) {
+      firstImageButton.classList.toggle("idle", atFirst);
+      firstImageButton.title = atFirst ? "Already showing first image" : "Show first image";
+    }
+    if (prevImageButton) {
+      prevImageButton.classList.toggle("idle", atFirst);
+      prevImageButton.title = atFirst ? "Already showing first image" : "Show previous image";
+    }
+    if (nextImageButton) {
+      nextImageButton.classList.toggle("idle", atLast);
+      nextImageButton.title = atLast ? "Already showing last image" : "Show next image";
+    }
+    if (lastImageButton) {
+      lastImageButton.classList.toggle("idle", atLast);
+      lastImageButton.title = atLast ? "Already showing last image" : "Show last image";
     }
   }
+
+  function setActiveImage(index) {
+    if (!loadedImages.length) {
+      clearLoadedImages();
+      return;
+    }
+
+    const clampedIndex = Math.max(0, Math.min(index, loadedImages.length - 1));
+    const item = loadedImages[clampedIndex];
+
+    currentImageIndex = clampedIndex;
+    leftCanvas = item.leftCanvas;
+    rightCanvas = item.rightCanvas;
+    sourceFullCanvas = item.sourceFullCanvas;
+
+    // Keep the viewer fixed at 4:3 / 1.333333.
+    viewerBox.style.height = "auto";
+
+    const prefix = loadedImages.length > 1 ? `Image ${clampedIndex + 1} of ${loadedImages.length}: ` : "";
+    fileMeta.textContent = `${prefix}${item.file.name} (${formatBytes(item.file.size)})`;
+    sourceMeta.textContent = `${item.formatLabel} source: ${item.sourceFullCanvas.width} × ${item.sourceFullCanvas.height}; each eye: ${item.eyeWidth} × ${item.eyeHeight}`;
+
+    emptyMessage.style.display = "none";
+    animationStart = performance.now();
+    updateImageNavigationButtons();
+    requestRender();
+  }
+
+  function showFirstImage() {
+    setActiveImage(0);
+  }
+
+  function showPreviousImage() {
+    if (currentImageIndex > 0) {
+      setActiveImage(currentImageIndex - 1);
+    }
+  }
+
+  function showNextImage() {
+    if (currentImageIndex < loadedImages.length - 1) {
+      setActiveImage(currentImageIndex + 1);
+    }
+  }
+
+  function showLastImage() {
+    setActiveImage(loadedImages.length - 1);
+  }
+
+  async function decodeFileToLoadedImage(file) {
+    const full = await decodeSourceFileToCanvas(file);
+    const split = createSplitSideBySideCanvases(full);
+
+    return {
+      file,
+      formatLabel: getSourceFileFormatLabel(file),
+      sourceFullCanvas: split.sourceFullCanvas,
+      leftCanvas: split.leftCanvas,
+      rightCanvas: split.rightCanvas,
+      eyeWidth: split.eyeWidth,
+      eyeHeight: split.eyeHeight
+    };
+  }
+
+  async function loadImageFiles(fileList) {
+    const files = Array.from(fileList || []);
+    if (!files.length) {
+      return;
+    }
+
+    const generation = ++loadGeneration;
+    const supportedFiles = files.filter(isSupportedSourceFile);
+    const unsupportedCount = files.length - supportedFiles.length;
+
+    if (!supportedFiles.length) {
+      clearLoadedImages("Please choose JPEG/TIFF side-by-side images.");
+      if (files[0]) {
+        fileMeta.textContent = `${files[0].name} (${formatBytes(files[0].size)})`;
+      }
+      return;
+    }
+
+    leftCanvas = null;
+    rightCanvas = null;
+    sourceFullCanvas = null;
+    loadedImages = [];
+    currentImageIndex = -1;
+    emptyMessage.style.display = "grid";
+    fileMeta.textContent = supportedFiles.length === 1 ?
+      `Loading ${supportedFiles[0].name}…` :
+      `Loading ${supportedFiles.length} images…`;
+    sourceMeta.textContent = unsupportedCount ?
+      `Loading supported images; skipping ${unsupportedCount} unsupported file${unsupportedCount === 1 ? "" : "s"}.` :
+      "Loading images…";
+    updateImageNavigationButtons();
+    requestRender();
+
+    const loaded = [];
+    const failures = [];
+
+    for (const file of supportedFiles) {
+      if (generation !== loadGeneration) {
+        return;
+      }
+
+      try {
+        loaded.push(await decodeFileToLoadedImage(file));
+      } catch (err) {
+        failures.push({ file, message: err && err.message ? err.message : "Could not load image." });
+      }
+    }
+
+    if (generation !== loadGeneration) {
+      return;
+    }
+
+    if (!loaded.length) {
+      clearLoadedImages(failures[0]?.message || "Could not load image.");
+      if (supportedFiles[0]) {
+        fileMeta.textContent = `${supportedFiles[0].name} (${formatBytes(supportedFiles[0].size)})`;
+      }
+      return;
+    }
+
+    loadedImages = loaded;
+    setActiveImage(0);
+
+    const skipped = unsupportedCount + failures.length;
+    if (skipped) {
+      const currentText = sourceMeta.textContent;
+      sourceMeta.textContent = `${currentText}; skipped ${skipped} file${skipped === 1 ? "" : "s"}.`;
+    }
+  }
+
+  async function loadImageFile(file) {
+    return loadImageFiles(file ? [file] : []);
+  }
+
 
 
   if (fullscreenButton) {
@@ -1801,8 +2092,7 @@
   }
 
   fileInput.addEventListener("change", () => {
-    const file = fileInput.files && fileInput.files[0];
-    loadImageFile(file);
+    loadImageFiles(fileInput.files);
   });
 
   displayMode.addEventListener("change", () => {
@@ -1846,6 +2136,11 @@
     requestRender();
   });
 
+  if (firstImageButton) firstImageButton.addEventListener("click", showFirstImage);
+  if (prevImageButton) prevImageButton.addEventListener("click", showPreviousImage);
+  if (nextImageButton) nextImageButton.addEventListener("click", showNextImage);
+  if (lastImageButton) lastImageButton.addEventListener("click", showLastImage);
+
   window.addEventListener("resize", () => {
     updateFullscreenButtonAvailability();
     requestRender();
@@ -1864,14 +2159,16 @@
     event.preventDefault();
     viewerBox.style.borderColor = "var(--border)";
 
-    const file = event.dataTransfer?.files?.[0];
-    if (file) {
-      loadImageFile(file);
+    const files = event.dataTransfer?.files;
+    if (files && files.length) {
+      loadImageFiles(files);
     }
   });
 
+  document.body.classList.toggle("iosDevice", isIPhoneBrowser() || isIPadBrowser());
   applySpeedMaximum(loadSpeedMaximumFromStorage());
   updateControlLabels();
+  updateImageNavigationButtons();
   updateFullscreenButtonAvailability();
   updateFullscreenButtonLabel();
   requestRender();
