@@ -4917,10 +4917,14 @@
           <li>On desktop browsers, move the mouse over the preview area to reveal the full-screen button at the top right of the preview. On iPad, the button remains visible at the top right. The button is hidden on iPhone and while full-screen mode is active. Press Escape or use the browser full-screen control to return to the normal tool view.</li>
           <li>If more than one HEIC file is loaded, on desktop browsers, move the mouse over the preview area to reveal the first, previous, next, and last image arrow buttons at the edges of the preview that you can use to switch between the images (always visible on iOS).<br/>Keyboard shortcuts are also available throughout the main tool: <b>Ctrl+Shift+[</b> for first image, <b>Ctrl+[</b> for previous image, <b>Ctrl+]</b> for next image, and <b>Ctrl+Shift+]</b> for last image.</li>
           <li>The normal on-page preview is optimized for responsiveness, while full-screen preview automatically uses a higher preview resolution when useful for sharper viewing on high-DPI displays.</li>
-          <li>For side-by-side image viewing, you can make the side-by-side preview smaller to help visually fuse the images while making adjustments, you can either zoom out the browser window or resize the window narrower to make the preview smaller.</li>
-          <li>Click <b>Export Current JPEG</b> to save or share only the currently displayed stereo image.<br/>Click <b>Export All as ZIP</b> to save or share all loaded stereo images in a .zip file. During batch export, <b>Horizontal Shift</b>, <b>Horizontal Shift range</b>, <b>Image Rotation</b>, and <b>Image Rotation range</b> use each image’s individual settings; the other controls use the current settings. A progress dialog shows the current image and overall progress; click <b>Cancel</b> during ZIP generation to stop after the current processing step finishes.</li>
-          <li>On desktop only, Shift-click <b>Export Current JPEG</b> to export the current image’s adjusted left and right views as separate JPEG files in a ZIP. Shift-click <b>Export All as ZIP</b> to export separate adjusted left/right JPEG files for every loaded HEIC image. The separate eye images use the selected <b>Output JPEG Height</b> and the same <b>Stereo Order</b>, <b>Horizontal Shift</b>, and <b>Image Rotation</b> settings used by the preview. Each file is named from the original image filename with <code>-l</code> or <code>-r</code> added before the <code>.jpg</code> extension. This Shift-click export option is not available on iOS.</li>
-          <li>On iOS, after the ZIP is ready, tap <b>Share ZIP</b> to open the iOS Share Sheet, then choose <b>Save to Files</b> or another share destination.</li>
+          <li>For side-by-side image viewing, you can make the side-by-side preview smaller to help visually fuse the images while making adjustments. Either zoom out the browser window or resize the window narrower to make the preview smaller.</li>
+          <li>To export the currently displayed image, click <b>Export Current JPEG</b>. On desktop, the browser downloads the JPEG. On iOS, the iOS Share Sheet opens so you can save or share the JPEG.</li>
+          <li>When multiple images are loaded, click <b>Export All as ZIP</b> to export all loaded images. Horizontal Shift, Image Rotation, and their slider range settings use each image’s individual saved settings; the other controls use the current settings. During batch export, a progress dialog shows the current image and overall progress; click <b>Cancel</b> during ZIP generation to stop after the current processing step finishes.</li>
+          <li>On desktop, Shift-click <b>Export Current JPEG</b> to export the currently displayed adjusted left and right views, using the selected <b>Stereo Order</b>, as separate JPEG files in a ZIP. The files are named from the source image filename with <b>-l</b> and <b>-r</b> suffixes.</li>
+          <li>On iOS, long-press <b>Export Current JPEG</b> to export the current adjusted left/right image pair as separate JPEG files in a ZIP.</li>
+          <li>On desktop, Shift-click <b>Export All as ZIP</b> to export separate adjusted left/right JPEG files for every loaded image. The separate left/right files use the selected <b>Output JPEG Height</b>, selected <b>Stereo Order</b>, and each image’s saved <b>Horizontal Shift</b> and <b>Image Rotation</b> settings.</li>
+          <li>On iOS, long-press <b>Export All as ZIP</b> to export adjusted left/right image pairs for all loaded images in a ZIP.</li>
+          <li>On iOS, after any ZIP is ready, tap <b>Share ZIP</b> to open the iOS Share Sheet, then choose <b>Save to Files</b> or another share destination. Tap <b>Cancel</b> to close the ZIP dialog without sharing.</li>
         </ol>
 
         <h4>Controls</h4>
@@ -4929,7 +4933,7 @@
           <li><b>Output JPEG Height</b>: Sets the final exported JPEG height. The exported JPEG width is calculated automatically from the selected height and the final output aspect ratio.<br/>For Side-by-Side output, the final JPEG uses the selected height and creates a side-by-side image with the two eye views placed left and right.<br/>For Anaglyph output, the final JPEG uses the selected height and creates a single red/cyan image whose width is calculated from the anaglyph aspect ratio.<br/>Use the slider, or click the numeric height value to enter a specific height.<br/>Entered values are clamped to the supported 768 to 8192 pixel range.<br/>The <b>Reset</b> button resets the output height to the original input height, clamped to the supported range.</li>
           <li><b>Output Format</b>: Chooses between Side-by-Side output and several common anaglyph formats.</li>
           <li><b>Border</b>: Chooses the optional exported border thickness: None, Thin, Medium, Wide, Wider, or Extra Wide. <b>None</b> exports the normal borderless JPEG. For Side-by-Side output, any non-None border setting draws a black outer border around the side-by-side image along with a black center seam. For Anaglyph output, any non-None border setting draws a black outer border around the final image. The border is included in the exported JPEG. The selected border setting is saved and restored the next time the tool is opened.</li>
-          <li><b>Stereo Order</b>: For side-by-side output <b>Left / Right</b> is appropriate for standard stereograph card / parallel viewing.<br/><b>Right / Left</b> is appropriate for cross-eye viewing. For anaglyph output, if the stereo depth seems flipped, try swapping the stereo order.<br/>This can also be used to swap the images if the original spatial image was taken with the phone rotated 180 degrees such that the lenses (and camera button on iPhone 16/17 Pro) were at the bottom instead of the top of the device.</li>
+          <li><b>Stereo Order</b>: For side-by-side output <b>Left / Right</b> is appropriate for standard stereograph card / parallel viewing.<br/><b>Right / Left</b> is appropriate for cross-eye viewing. For anaglyph output, if the stereo depth seems flipped, try swapping the stereo order.<br/>This can also be used to swap the images if the original spatial image was taken with the phone rotated 180 degrees such that the lenses (and camera button on iPhone 16/17 Pro) were at the bottom instead of the top of the device. Desktop Shift-click and iOS long-press left/right ZIP export also use the selected <b>Stereo Order</b>.</li>
           <li><b>Side-by-Side Center Crop</b>: Only shown for Side-by-Side output. Crops the selected total percentage from each eye view, split evenly between the left and right edges. In the on-screen Side-by-Side preview, the visible left and right views touch at the center seam. During final JPEG export, the left and right views are scaled to the selected output height.<br/>The available crop range is from 0% to 50%. Use the slider, or click the numeric crop value to enter a specific crop percentage. Entered values are clamped to the supported 0% to 50% range. The crop setting is preserved when a new HEIC file is opened, saved and restored the next time the tool is opened. The <b>Reset</b> button resets the crop to zero and saves that value.</li>
           <li><b>Preview L/R Flip</b>: Only shown for Side-by-Side output. At <b>0 Hz</b>, the preview shows the full side-by-side image. At higher rates, the preview alternates between the adjusted left-eye and right-eye views as full-size single-eye previews so you can evaluate <b>Side-by-Side Center Crop</b>, <b>Horizontal Shift</b>, and <b>Image Rotation</b> as a flip/wiggle stereo preview. Click the <b>Off / Hz</b> value box to toggle between Off and the last non-zero flip rate. This affects only the on-screen preview, not the exported JPEG.</li>
           <li>Click the <b>Preview L/R Flip</b> label to set the maximum value available on the flip-rate slider.</li>
@@ -4986,8 +4990,10 @@
           <li>To open the spatial images in the tool, click the <b>Choose File</b> button, then again the <b>Choose File</b> option in the popup menu that appears, and then select the file(s) from wherever you saved them in the <b>Files</b> area.</li>
           <li>On iOS, after you are done editing the currently displayed spatial image and want to save or share it, tap <b>Export Current JPEG</b> to generate the final JPEG and open the iOS Share Sheet.</li>
           <li>You can then save the processed JPEG image to the <b>Photos</b> app or share it to other apps.</li>
-          <li>When multiple images are loaded on iOS, <b>Export All as ZIP</b> creates a ZIP file containing JPEGs for all loaded images.</li>
-          <li>After the ZIP is ready, tap <b>Share ZIP</b> to open the iOS Share Sheet, then choose <b>Save to Files</b> or another share destination. Tap <b>Cancel</b> to close the ZIP dialog without sharing.</li>
+          <li>On iOS, long-press <b>Export Current JPEG</b> to export the current adjusted left/right image pair as separate JPEG files in a ZIP.</li>
+          <li>When multiple images are loaded on iOS, tap <b>Export All as ZIP</b> to create a ZIP file containing JPEGs for all loaded images.</li>
+          <li>When multiple images are loaded on iOS, long-press <b>Export All as ZIP</b> to export adjusted left/right image pairs for all loaded HEIC images in a ZIP.</li>
+          <li>After any ZIP is ready, tap <b>Share ZIP</b> to open the iOS Share Sheet, then choose <b>Save to Files</b> or another share destination. Tap <b>Cancel</b> to close the ZIP dialog without sharing.</li>
           <li>While it's certainly possible to process the spatial photos directly on an iPhone, if you have a Mac, for a better experience (larger screen, no need to transfer images from the <b>Photos</b> app to the <b>Files</b> area), my recommendation is to share the original spatial HEIC images from the <b>Photos</b> app to your computer using <b>AirDrop</b> and then run this tool on a desktop browser.</li>
           <li>On Windows, for a better experience (larger screen, no need to transfer images from the <b>Photos</b> app to the <b>Files</b> area), you'll want to transfer the original spatial HEIC images from the iPhone to your computer via USB using the Windows <b>File Explorer</b> and then run this tool on a desktop browser.</li>
         </ul>
@@ -5003,7 +5009,7 @@
         <hr style="margin-top:20px;">
 
         <h4 style="text-align: center;">Stereo JPEG/TIFF → Side-by-Side or 3D Anaglyph</h4>
-        This utility can be used to do essentially all the same side-by-side and color anaglyph operations as this tool and more, but starting with side-by-side or individual right/left JPEG or TIFF images. It also supports multiple-image batch processing:
+        This utility can be used to do essentially all the same side-by-side and color anaglyph operations as this tool and more, but starting with individual left/right JPEG or TIFF image pairs. It also supports multiple-image batch processing:
         <div style="text-align: center;">
            <div style="margin-top:10px;">
             <a href="https://michaeleskin.com/tools/sbs-jpeg-tiff-to-sbs.html" target="_blank" rel="noopener noreferrer">Stereo JPEG/TIFF → Side-by-Side or 3D Anaglyph</a>
@@ -5714,11 +5720,6 @@
   }
 
   async function exportCurrentEyesAsZip() {
-    if (isIOSDevice()) {
-      await exportCurrentImage();
-      return;
-    }
-
     if (decodedViews.length < 2) {
       setStatus("No stereo image has been decoded yet.", "error");
       return;
@@ -5755,12 +5756,34 @@
       zip.file(eyeFiles.rightName, eyeFiles.rightBlob);
 
       const zipBlob = await zip.generateAsync({ type: "blob" });
+
+      if (isIOSDevice()) {
+        showBatchProgressDialog(1);
+        updateBatchProgressDialog({
+          text: `Left/right ZIP file <b>${escapeHtml(zipName)}</b> is ready.`,
+          percent: 100
+        });
+
+        const shareResult = await promptShareZipOnIOS(zipBlob, zipName);
+        hideBatchProgressDialog();
+
+        await resetPreviewFlipSliderAfterSave();
+        updateGenerateButtonVisibility();
+
+        if (shareResult?.message) {
+          setStatus(shareResult.message, shareResult.type || "ok");
+        }
+
+        return;
+      }
+
       downloadBlobWithName(zipBlob, zipName);
 
       await resetPreviewFlipSliderAfterSave();
       updateGenerateButtonVisibility();
       setStatus(`Saved <b>${escapeHtml(zipName)}</b> containing separate left/right JPEG files for the current image.`, "ok");
     } catch (err) {
+      hideBatchProgressDialog();
       updateGenerateButtonVisibility();
       setStatus(escapeHtml(err.message || String(err)), "error");
     } finally {
@@ -5773,11 +5796,6 @@
   }
 
   async function exportAllEyesAsZip() {
-    if (isIOSDevice()) {
-      await exportAllImagesAsZip();
-      return;
-    }
-
     const files = loadedImageFiles.length ? [...loadedImageFiles] : (currentFile ? [currentFile] : []);
 
     if (!files.length) {
@@ -5870,12 +5888,18 @@
 
       throwIfBatchExportCancelled();
       updateBatchProgressDialog({
-        text: "Saving left/right ZIP file…",
+        text: isIOSDevice() ? "Opening iOS Share Sheet…" : "Saving left/right ZIP file…",
         percent: 100
       });
 
-      downloadBlobWithName(zipBlob, zipName);
-      finalStatus = `Saved <b>${escapeHtml(zipName)}</b> containing ${files.length * 2} separate left/right JPEG files.`;
+      if (isIOSDevice()) {
+        const shareResult = await promptShareZipOnIOS(zipBlob, zipName);
+        finalStatus = shareResult?.message || "";
+        finalStatusType = shareResult?.type || "ok";
+      } else {
+        downloadBlobWithName(zipBlob, zipName);
+        finalStatus = `Saved <b>${escapeHtml(zipName)}</b> containing ${files.length * 2} separate left/right JPEG files.`;
+      }
 
       await resetPreviewFlipSliderAfterSave();
     } catch (err) {
@@ -6136,8 +6160,112 @@
   preventShiftClickTextSelection(downloadLink);
   preventShiftClickTextSelection(downloadAllLink);
 
+  function createIOSLongPressAlternateAction(element, alternateAction) {
+    let timerId = 0;
+    let longPressTriggered = false;
+    let startX = 0;
+    let startY = 0;
+    const longPressDelayMs = 650;
+    const moveTolerancePx = 12;
+
+    const clearTimer = () => {
+      if (timerId) {
+        window.clearTimeout(timerId);
+        timerId = 0;
+      }
+    };
+
+    const consumeTriggeredLongPress = () => {
+      if (!longPressTriggered) {
+        return false;
+      }
+
+      longPressTriggered = false;
+      return true;
+    };
+
+    if (!element) {
+      return consumeTriggeredLongPress;
+    }
+
+    element.addEventListener("touchstart", event => {
+      if (!isIOSDevice() || element.classList.contains("busy")) {
+        return;
+      }
+
+      const touch = event.touches && event.touches[0];
+
+      if (!touch) {
+        return;
+      }
+
+      startX = touch.clientX;
+      startY = touch.clientY;
+      longPressTriggered = false;
+      clearTimer();
+
+      timerId = window.setTimeout(async () => {
+        timerId = 0;
+        longPressTriggered = true;
+
+        window.setTimeout(() => {
+          longPressTriggered = false;
+        }, 1200);
+
+        if (navigator.vibrate) {
+          navigator.vibrate(20);
+        }
+
+        try {
+          await alternateAction();
+        } catch (err) {
+          updateGenerateButtonVisibility();
+          setStatus(escapeHtml(err.message || String(err)), "error");
+        }
+      }, longPressDelayMs);
+    }, { passive: true });
+
+    element.addEventListener("touchmove", event => {
+      if (!timerId) {
+        return;
+      }
+
+      const touch = event.touches && event.touches[0];
+
+      if (!touch) {
+        clearTimer();
+        return;
+      }
+
+      const dx = Math.abs(touch.clientX - startX);
+      const dy = Math.abs(touch.clientY - startY);
+
+      if (dx > moveTolerancePx || dy > moveTolerancePx) {
+        clearTimer();
+      }
+    }, { passive: true });
+
+    element.addEventListener("touchend", clearTimer, { passive: true });
+    element.addEventListener("touchcancel", clearTimer, { passive: true });
+
+    element.addEventListener("contextmenu", event => {
+      if (isIOSDevice()) {
+        event.preventDefault();
+      }
+    });
+
+    return consumeTriggeredLongPress;
+  }
+
+  const consumeCurrentExportLongPress = createIOSLongPressAlternateAction(downloadLink, exportCurrentEyesAsZip);
+  const consumeAllExportLongPress = createIOSLongPressAlternateAction(downloadAllLink, exportAllEyesAsZip);
+
   downloadLink.addEventListener("click", async event => {
     event.preventDefault();
+
+    if (isIOSDevice() && consumeCurrentExportLongPress()) {
+      return;
+    }
 
     if (!isIOSDevice() && event.shiftKey) {
       await exportCurrentEyesAsZip();
@@ -6150,6 +6278,10 @@
   if (downloadAllLink) {
     downloadAllLink.addEventListener("click", async event => {
       event.preventDefault();
+
+      if (isIOSDevice() && consumeAllExportLongPress()) {
+        return;
+      }
 
       if (!isIOSDevice() && event.shiftKey) {
         await exportAllEyesAsZip();

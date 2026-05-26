@@ -844,6 +844,36 @@
     box-shadow:0 0 6px rgba(80,120,220,0.35);
   }
 
+  @media (max-width: 560px) {
+    body.iosDevice .modal_compact_main {
+      width: min(560px, calc(100vw - 48px)) !important;
+      max-width: min(560px, calc(100vw - 48px)) !important;
+    }
+
+    body.iosDevice .modal_compact_buttons {
+      display: flex !important;
+      flex-wrap: wrap !important;
+      justify-content: center !important;
+      gap: 10px 12px !important;
+      white-space: normal !important;
+    }
+
+    body.iosDevice .modal_compact_buttons button {
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      width: auto !important;
+      min-width: 0 !important;
+      max-width: calc(100vw - 96px) !important;
+      margin: 0 !important;
+      padding: 10px 18px !important;
+      white-space: normal !important;
+      overflow-wrap: normal !important;
+      word-break: normal !important;
+      line-height: 1.2 !important;
+    }
+  }
+
   /* Prompt text */
   .modal_compact_main .modal_default_promptdescription {
     font-size: 20px !important;
@@ -5771,10 +5801,12 @@ function updateOutputModeControls() {
           <li>The normal on-page preview is optimized for responsiveness, while full-screen preview automatically uses a higher preview resolution when useful for sharper viewing on high-DPI displays.</li>
           <li>For side-by-side image viewing, to make the side-by-side preview smaller and help facilitate visually fusing the images while making adjustments, you can either zoom out the browser window or resize the window narrower to make the preview smaller.</li>
           <li>To export the currently displayed image, click <b>Export Current JPEG</b>. On desktop, the browser downloads the JPEG. On iOS, the iOS Share Sheet opens so you can save or share the JPEG.</li>
-          <li>On desktop, Shift-click <b>Export Current JPEG</b> to export the currently displayed adjusted left and right views, using the selected <b>Stereo Order</b>, as separate JPEG files in a ZIP. The files are named from the source image filename with <b>-l</b> and <b>-r</b> suffixes.</li>
           <li>When multiple images are loaded, click <b>Export All as ZIP</b> to export all loaded images. Horizontal Shift, Vertical Shift, Image Rotation, and their slider range settings use each image’s individual saved settings; the other controls use the current settings. During batch export, a progress dialog shows the current image and overall progress; click <b>Cancel</b> during ZIP generation to stop after the current processing step finishes.</li>
+          <li>On desktop, Shift-click <b>Export Current JPEG</b> to export the currently displayed adjusted left and right views, using the selected <b>Stereo Order</b>, as separate JPEG files in a ZIP. The files are named from the source image filename with <b>-l</b> and <b>-r</b> suffixes.</li>
+          <li>On iOS, long-press <b>Export Current JPEG</b> to export the current adjusted left/right image pair as separate JPEG files in a ZIP.</li>
           <li>On desktop, Shift-click <b>Export All as ZIP</b> to export separate adjusted left/right JPEG files for every loaded image. The separate left/right files use the selected <b>Output JPEG Height</b>, selected <b>Stereo Order</b>, and each image’s saved <b>Horizontal Shift</b>, <b>Vertical Shift</b>, and <b>Image Rotation</b> settings.</li>
-          <li>On iOS, after the ZIP is ready, tap <b>Share ZIP</b> to open the iOS Share Sheet, then choose <b>Save to Files</b> or another share destination. Tap <b>Cancel</b> to close the ZIP dialog without sharing.</li>
+          <li>On iOS, long-press <b>Export All as ZIP</b> to export adjusted left/right image pairs for all loaded images in a ZIP.</li>
+          <li>On iOS, after any ZIP is ready, tap <b>Share ZIP</b> to open the iOS Share Sheet, then choose <b>Save to Files</b> or another share destination. Tap <b>Cancel</b> to close the ZIP dialog without sharing.</li>
         </ol>
 
         <h4>Controls</h4>
@@ -5782,7 +5814,7 @@ function updateOutputModeControls() {
           <li><b>Output Format</b>: Chooses between Side-by-Side output and several common anaglyph formats.</li>
           <li><b>Border</b>: Chooses the optional exported border thickness: None, Thin, Medium, Wide, Wider, or Extra Wide. <b>None</b> exports the normal borderless JPEG. For Side-by-Side output, any non-None border setting draws a black outer border around side-by-side image and a black center seam. For Anaglyph output, any non-None border setting draws a black outer border around the final image. The border is included in the exported JPEG. The selected border setting is saved and restored the next time the tool is opened.</li>
           <li><b>Output JPEG Height</b>: Sets the final exported JPEG height. The exported JPEG width is calculated automatically from the selected height and the final output aspect ratio.<br/>For Side-by-Side output, the final JPEG uses the selected height and creates a side-by-side image with the two eye views placed left and right.<br/>If <b>Side-by-Side Center Crop</b> is applied, the final JPEG scales to the selected output height.<br/>For Anaglyph output, the final JPEG uses the selected height and creates a single red/cyan image whose width is calculated from the anaglyph aspect ratio.<br/>Use the slider, or click the numeric height value to enter a specific height.<br/>Entered values are clamped to the supported 768 to 8192 pixel range.<br/>The <b>Reset</b> button resets the output height to the current image’s native height.</li>
-          <li><b>Stereo Order</b>: Affects both Side-by-Side and Anaglyph output. For single-file side-by-side imports, <b>Left / Right</b> treats the left half of the source image as the left eye and the right half as the right eye. For two-file imports, the first file is treated as the left eye and the second file as the right eye.<br/><b>Right / Left</b> swaps the two views before generating the preview or exported JPEG. Desktop Shift-click left/right ZIP export also uses the selected Stereo Order.</li>
+          <li><b>Stereo Order</b>: Affects both Side-by-Side and Anaglyph output. For single-file side-by-side imports, <b>Left / Right</b> treats the left half of the source image as the left eye and the right half as the right eye. For manually sorted two-file imports, the first file is treated as the left eye and the second file as the right eye. For automatic <b>-l</b>/<b>-r</b> pair detection, the filename suffix determines the left and right views.<br/><b>Right / Left</b> swaps the two views before generating the preview or exported JPEG. Desktop Shift-click and iOS long-press left/right ZIP export also use the selected <b>Stereo Order</b>.</li>
           <li><b>Preview L/R Flip</b>: Only shown for Side-by-Side output. At <b>0 Hz</b>, the preview shows the full side-by-side image. At non-zero rates, the preview alternates between the adjusted left-eye and right-eye views as full-size single-eye previews so you can evaluate <b>Side-by-Side Center Crop</b>, <b>Horizontal Shift</b>, <b>Vertical Shift</b>, and <b>Image Rotation</b> as a flip/wiggle stereo preview. Click the <b>Off / Hz</b> value box to toggle between Off and the last non-zero flip rate.</li>
           <li>Click the <b>Preview L/R Flip</b> label to set the maximum value available on the flip-rate slider.</li>
           <li>The dialog shows the current maximum flip rate when it opens.</li>
@@ -5836,7 +5868,7 @@ function updateOutputModeControls() {
         <h4>Privacy</h4>
         <ul>
           <li>All processing is performed locally in your browser.</li>
-          <li>The selected JPEG or TIFF files, or selected two-file JPEG/TIFF pair, are not uploaded to a server by this tool.</li>
+          <li>The selected JPEG or TIFF files, including selected two-file JPEG/TIFF image pairs, are not uploaded to a server by this tool.</li>
           <li>If the source JPEG contains GPS/location EXIF metadata, the exported JPEG may contain the same location metadata. For two-file JPEG imports, metadata is copied from the first/left file. For TIFF sources, GPS/location EXIF tags are intentionally not written to the exported JPEG.</li>
           <li>Google Analytics is used to collect aggregate usage statistics for the tool.</li>
         </ul>
@@ -6328,11 +6360,6 @@ function updateOutputModeControls() {
   }
 
   async function exportCurrentEyesAsZip() {
-    if (isIOSDevice()) {
-      await exportCurrentImage();
-      return;
-    }
-
     if (decodedViews.length < 2) {
       setStatus("No stereo image has been loaded yet.", "error");
       return;
@@ -6369,12 +6396,34 @@ function updateOutputModeControls() {
       zip.file(eyeFiles.rightName, eyeFiles.rightBlob);
 
       const zipBlob = await zip.generateAsync({ type: "blob" });
+
+      if (isIOSDevice()) {
+        showBatchProgressDialog(1);
+        updateBatchProgressDialog({
+          text: `Left/right ZIP file <b>${escapeHtml(zipName)}</b> is ready.`,
+          percent: 100
+        });
+
+        const shareResult = await promptShareZipOnIOS(zipBlob, zipName);
+        hideBatchProgressDialog();
+
+        await resetPreviewFlipSliderAfterSave();
+        updateGenerateButtonVisibility();
+
+        if (shareResult?.message) {
+          setStatus(shareResult.message, shareResult.type || "ok");
+        }
+
+        return;
+      }
+
       downloadBlobWithName(zipBlob, zipName);
 
       await resetPreviewFlipSliderAfterSave();
       updateGenerateButtonVisibility();
       setStatus(`Saved <b>${escapeHtml(zipName)}</b> containing separate left/right JPEG files for the current image.`, "ok");
     } catch (err) {
+      hideBatchProgressDialog();
       updateGenerateButtonVisibility();
       setStatus(escapeHtml(err.message || String(err)), "error");
     } finally {
@@ -6387,11 +6436,6 @@ function updateOutputModeControls() {
   }
 
   async function exportAllEyesAsZip() {
-    if (isIOSDevice()) {
-      await exportAllImagesAsZip();
-      return;
-    }
-
     const files = loadedImageFiles.length ? [...loadedImageFiles] : [];
 
     if (!files.length) {
@@ -6489,12 +6533,18 @@ function updateOutputModeControls() {
 
       throwIfBatchExportCancelled();
       updateBatchProgressDialog({
-        text: "Saving left/right ZIP file…",
+        text: isIOSDevice() ? "Opening iOS Share Sheet…" : "Saving left/right ZIP file…",
         percent: 100
       });
 
-      downloadBlobWithName(zipBlob, zipName);
-      finalStatus = `Saved <b>${escapeHtml(zipName)}</b> containing ${files.length * 2} separate left/right JPEG files.`;
+      if (isIOSDevice()) {
+        const shareResult = await promptShareZipOnIOS(zipBlob, zipName);
+        finalStatus = shareResult?.message || "";
+        finalStatusType = shareResult?.type || "ok";
+      } else {
+        downloadBlobWithName(zipBlob, zipName);
+        finalStatus = `Saved <b>${escapeHtml(zipName)}</b> containing ${files.length * 2} separate left/right JPEG files.`;
+      }
 
       await resetPreviewFlipSliderAfterSave();
     } catch (err) {
@@ -6743,8 +6793,112 @@ function updateOutputModeControls() {
   preventShiftClickTextSelection(downloadLink);
   preventShiftClickTextSelection(downloadAllLink);
 
+  function createIOSLongPressAlternateAction(element, alternateAction) {
+    let timerId = 0;
+    let longPressTriggered = false;
+    let startX = 0;
+    let startY = 0;
+    const longPressDelayMs = 650;
+    const moveTolerancePx = 12;
+
+    const clearTimer = () => {
+      if (timerId) {
+        window.clearTimeout(timerId);
+        timerId = 0;
+      }
+    };
+
+    const consumeTriggeredLongPress = () => {
+      if (!longPressTriggered) {
+        return false;
+      }
+
+      longPressTriggered = false;
+      return true;
+    };
+
+    if (!element) {
+      return consumeTriggeredLongPress;
+    }
+
+    element.addEventListener("touchstart", event => {
+      if (!isIOSDevice() || element.classList.contains("busy")) {
+        return;
+      }
+
+      const touch = event.touches && event.touches[0];
+
+      if (!touch) {
+        return;
+      }
+
+      startX = touch.clientX;
+      startY = touch.clientY;
+      longPressTriggered = false;
+      clearTimer();
+
+      timerId = window.setTimeout(async () => {
+        timerId = 0;
+        longPressTriggered = true;
+
+        window.setTimeout(() => {
+          longPressTriggered = false;
+        }, 1200);
+
+        if (navigator.vibrate) {
+          navigator.vibrate(20);
+        }
+
+        try {
+          await alternateAction();
+        } catch (err) {
+          updateGenerateButtonVisibility();
+          setStatus(escapeHtml(err.message || String(err)), "error");
+        }
+      }, longPressDelayMs);
+    }, { passive: true });
+
+    element.addEventListener("touchmove", event => {
+      if (!timerId) {
+        return;
+      }
+
+      const touch = event.touches && event.touches[0];
+
+      if (!touch) {
+        clearTimer();
+        return;
+      }
+
+      const dx = Math.abs(touch.clientX - startX);
+      const dy = Math.abs(touch.clientY - startY);
+
+      if (dx > moveTolerancePx || dy > moveTolerancePx) {
+        clearTimer();
+      }
+    }, { passive: true });
+
+    element.addEventListener("touchend", clearTimer, { passive: true });
+    element.addEventListener("touchcancel", clearTimer, { passive: true });
+
+    element.addEventListener("contextmenu", event => {
+      if (isIOSDevice()) {
+        event.preventDefault();
+      }
+    });
+
+    return consumeTriggeredLongPress;
+  }
+
+  const consumeCurrentExportLongPress = createIOSLongPressAlternateAction(downloadLink, exportCurrentEyesAsZip);
+  const consumeAllExportLongPress = createIOSLongPressAlternateAction(downloadAllLink, exportAllEyesAsZip);
+
   downloadLink.addEventListener("click", async event => {
     event.preventDefault();
+
+    if (isIOSDevice() && consumeCurrentExportLongPress()) {
+      return;
+    }
 
     if (!isIOSDevice() && event.shiftKey) {
       await exportCurrentEyesAsZip();
@@ -6757,6 +6911,10 @@ function updateOutputModeControls() {
   if (downloadAllLink) {
     downloadAllLink.addEventListener("click", async event => {
       event.preventDefault();
+
+      if (isIOSDevice() && consumeAllExportLongPress()) {
+        return;
+      }
 
       if (!isIOSDevice() && event.shiftKey) {
         await exportAllEyesAsZip();
