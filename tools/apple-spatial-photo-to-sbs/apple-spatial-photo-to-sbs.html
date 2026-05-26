@@ -217,7 +217,7 @@
   .grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 16px;
+    gap: 8px;
   }
 
   @media (max-width: 760px) {
@@ -859,6 +859,100 @@
     color:black;
   }
 
+  .modal_compact_main .iosExportChoiceTitle {
+    text-align: center;
+    font-size: 22px;
+    font-weight: 750;
+    line-height: 1.25;
+    margin: 14px 0 18px 0;
+  }
+
+  .modal_compact_main .iosExportChoiceDescription {
+    margin: 12px auto 0 auto;
+    max-width: 88%;
+    text-align: left;
+    font-size: 17px;
+    line-height: 1.5;
+    color: #222;
+  }
+
+  .modal_compact_main .iosExportChoiceOptions {
+    display: grid;
+    gap: 6px;
+    margin: 0 auto;
+    width: min(440px, 100%);
+    line-height: 1.28;
+  }
+
+  .modal_compact_main .iosExportChoiceOption {
+    display: grid;
+    grid-template-columns: 1.35rem minmax(0, 1fr);
+    column-gap: 16px;
+    align-items: start;
+    min-height: 0;
+    cursor: pointer;
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 1.35;
+  }
+
+  .modal_compact_main .iosExportChoiceOption input[type="radio"] {
+    width: 1.35rem !important;
+    height: 1.35rem !important;
+    min-width: 1.35rem !important;
+    margin: 0.08rem 0 0 0 !important;
+    padding: 0 !important;
+    border-radius: 50% !important;
+    background-color: transparent !important;
+    accent-color: #1687ff;
+  }
+
+  .modal_compact_main .iosExportChoiceOptionText {
+    display: block;
+    min-width: 0;
+    overflow-wrap: normal;
+    word-break: normal;
+  }
+
+  .modal_compact_main .iosExportChoiceOption {
+    padding: 2px 0;
+  }
+
+  @media (max-width: 560px) {
+    .modal_compact_main {
+      width: min(520px, calc(100vw - 48px)) !important;
+      max-width: min(520px, calc(100vw - 48px)) !important;
+    }
+
+    .modal_compact_inner {
+      padding-left: 18px;
+      padding-right: 18px;
+    }
+
+    .modal_compact_main .iosExportChoiceTitle {
+      font-size: 20px;
+      margin: 10px 0 16px 0;
+    }
+
+    .modal_compact_main .iosExportChoiceOptions {
+      gap: 6px;
+    }
+
+    .modal_compact_main .iosExportChoiceOption {
+      min-height: 0;
+      font-size: 17px;
+      line-height: 1.28;
+      column-gap: 16px;
+    }
+
+    .modal_compact_main .iosExportChoiceDescription {
+      max-width: 94%;
+      font-size: 16px;
+      line-height: 1.45;
+      margin-top: 10px;
+    }
+  }
+
   .modal_instructions_background{
     background-color:#000;
     opacity:0.45;
@@ -1220,7 +1314,7 @@
     <p id="status">Loading HEIC decoder…</p>
 
     <div id="downloadActions" class="actions" style="display:none;">
-      <a id="downloadLink" class="download" download="spatial-photo.jpg" title="Generate the final JPEG for the currently visible image at the specified output height, then download it or, on iOS, open the iOS Share Sheet. On desktop, Shift-click to export the current adjusted left and right views, using the selected Stereo Order, as separate JPEG files in a ZIP.">Export Current JPEG</a>
+      <a id="downloadLink" class="download" download="spatial-photo.jpg" title="Generate the final JPEG for the currently visible image at the specified output height, then download it. On desktop, Shift-click to export the current adjusted left and right views, using the selected Stereo Order, as separate JPEG files in a ZIP.">Export Current JPEG</a>
       <a id="downloadAllLink" class="download" download="spatial-photo-batch.zip" title="Generate JPEGs for all loaded images. Horizontal Shift, Horizontal Shift range, Image Rotation, and Image Rotation range use each image’s individual settings; the other controls use the current settings. On desktop, Shift-click to export separate adjusted left/right JPEG files using the selected Stereo Order for every loaded image.">Export All as ZIP</a>
     </div>
 
@@ -4919,8 +5013,10 @@
           <li>The normal on-page preview is optimized for responsiveness, while full-screen preview automatically uses a higher preview resolution when useful for sharper viewing on high-DPI displays.</li>
           <li>For side-by-side image viewing, you can make the side-by-side preview smaller to help visually fuse the images while making adjustments, you can either zoom out the browser window or resize the window narrower to make the preview smaller.</li>
           <li>Click <b>Export Current JPEG</b> to save or share only the currently displayed stereo image.<br/>Click <b>Export All as ZIP</b> to save or share all loaded stereo images in a .zip file. During batch export, <b>Horizontal Shift</b>, <b>Horizontal Shift range</b>, <b>Image Rotation</b>, and <b>Image Rotation range</b> use each image’s individual settings; the other controls use the current settings. A progress dialog shows the current image and overall progress; click <b>Cancel</b> during ZIP generation to stop after the current processing step finishes.</li>
-          <li>On desktop only, Shift-click <b>Export Current JPEG</b> to export the current image’s adjusted left and right views as separate JPEG files in a ZIP. Shift-click <b>Export All as ZIP</b> to export separate adjusted left/right JPEG files for every loaded HEIC image. The separate eye images use the selected <b>Output JPEG Height</b> and the same <b>Stereo Order</b>, <b>Horizontal Shift</b>, and <b>Image Rotation</b> settings used by the preview. Each file is named from the original image filename with <code>-l</code> or <code>-r</code> added before the <code>.jpg</code> extension. This Shift-click export option is not available on iOS.</li>
-          <li>On iOS, after the ZIP is ready, tap <b>Share ZIP</b> to open the iOS Share Sheet, then choose <b>Save to Files</b> or another share destination.</li>
+          <li>Separate adjusted left/right JPEG exports use the selected <b>Output JPEG Height</b> and the same <b>Stereo Order</b>, <b>Horizontal Shift</b>, and <b>Image Rotation</b> settings used by the preview. Each file is named from the original image filename with <code>-l</code> or <code>-r</code> added before the <code>.jpg</code> extension.</li>
+          <li>On desktop, Shift-click <b>Export Current JPEG</b> to export the current image’s adjusted left and right views as separate JPEG files in a ZIP. Shift-click <b>Export All as ZIP</b> to export separate adjusted left/right JPEG files for every loaded HEIC image.</li>
+          <li>On iOS, Shift-click is not available. Tapping <b>Export Current JPEG</b> opens an export choice dialog where you can choose either the current Side-by-Side or Anaglyph JPEG, or a ZIP containing separate adjusted left/right JPEG files for the current image. Tapping <b>Export All as ZIP</b> opens a similar export choice dialog where you can choose either a ZIP of all images in the selected output format, or a ZIP containing separate adjusted left/right JPEG pairs for all loaded HEIC images.</li>
+          <li>On iOS, after choosing the current Side-by-Side or Anaglyph JPEG from the <b>Export Current JPEG</b> dialog, the iOS Share Sheet opens for that JPEG. For ZIP exports, the ZIP is created first; after it is ready, tap <b>Share ZIP</b> to open the iOS Share Sheet, then choose <b>Save to Files</b> or another share destination.</li>
         </ol>
 
         <h4>Controls</h4>
@@ -4984,10 +5080,12 @@
           <li>To work with the original spatial images in the tool, you must first transfer the original HEIC files from the <b>Photos</b> app into a directory in the device's <b>Files</b> area and then open them from there.</li>
           <li>To do the transfer, open the <b>Photos</b> app, select the spatial file(s) you want to work with, click the <b>Share</b> button, and click <b>Save to Files</b> and pick a location to save the file(s).</li>
           <li>To open the spatial images in the tool, click the <b>Choose File</b> button, then again the <b>Choose File</b> option in the popup menu that appears, and then select the file(s) from wherever you saved them in the <b>Files</b> area.</li>
-          <li>On iOS, after you are done editing the currently displayed spatial image and want to save or share it, tap <b>Export Current JPEG</b> to generate the final JPEG and open the iOS Share Sheet.</li>
-          <li>You can then save the processed JPEG image to the <b>Photos</b> app or share it to other apps.</li>
-          <li>When multiple images are loaded on iOS, <b>Export All as ZIP</b> creates a ZIP file containing JPEGs for all loaded images.</li>
-          <li>After the ZIP is ready, tap <b>Share ZIP</b> to open the iOS Share Sheet, then choose <b>Save to Files</b> or another share destination. Tap <b>Cancel</b> to close the ZIP dialog without sharing.</li>
+          <li>On iOS, tapping <b>Export Current JPEG</b> opens an export choice dialog. Choose <b>Current Side-by-Side JPEG</b> or the corresponding current anaglyph JPEG option to generate the current image in the selected output format and open the iOS Share Sheet.</li>
+          <li>In the same <b>Export Current JPEG</b> dialog, choose <b>Current image as individual Left/Right JPEG files in ZIP</b> to export the current adjusted left and right views as separate JPEG files packaged in a ZIP.</li>
+          <li>When multiple images are loaded on iOS, tapping <b>Export All as ZIP</b> opens an export choice dialog. Choose <b>All Side-by-Side JPEGs ZIP</b> or the corresponding all-anaglyph ZIP option to create a ZIP containing all loaded images in the selected output format.</li>
+          <li>In the same <b>Export All as ZIP</b> dialog, choose <b>All images as individual Left/Right JPEG files in ZIP</b> to export adjusted left/right JPEG pairs for all loaded HEIC images in one ZIP.</li>
+          <li>For all ZIP exports on iOS, the ZIP is created first. After it is ready, tap <b>Share ZIP</b> to open the iOS Share Sheet, then choose <b>Save to Files</b> or another share destination. Tap <b>Cancel</b> to close the ZIP dialog without sharing.</li>
+          <li>After the iOS Share Sheet opens for a current-image JPEG, you can save the processed JPEG image to the <b>Photos</b> app or share it to other apps.</li>
           <li>While it's certainly possible to process the spatial photos directly on an iPhone, if you have a Mac, for a better experience (larger screen, no need to transfer images from the <b>Photos</b> app to the <b>Files</b> area), my recommendation is to share the original spatial HEIC images from the <b>Photos</b> app to your computer using <b>AirDrop</b> and then run this tool on a desktop browser.</li>
           <li>On Windows, for a better experience (larger screen, no need to transfer images from the <b>Photos</b> app to the <b>Files</b> area), you'll want to transfer the original spatial HEIC images from the iPhone to your computer via USB using the Windows <b>File Explorer</b> and then run this tool on a desktop browser.</li>
         </ul>
@@ -5714,11 +5812,6 @@
   }
 
   async function exportCurrentEyesAsZip() {
-    if (isIOSDevice()) {
-      await exportCurrentImage();
-      return;
-    }
-
     if (decodedViews.length < 2) {
       setStatus("No stereo image has been decoded yet.", "error");
       return;
@@ -5755,12 +5848,30 @@
       zip.file(eyeFiles.rightName, eyeFiles.rightBlob);
 
       const zipBlob = await zip.generateAsync({ type: "blob" });
+
+      if (isIOSDevice()) {
+        showBatchProgressDialog(1);
+        updateBatchProgressDialog({
+          text: `Left/right ZIP file <b>${escapeHtml(zipName)}</b> is ready.`,
+          percent: 100
+        });
+        const shareResult = await promptShareZipOnIOS(zipBlob, zipName);
+        hideBatchProgressDialog();
+        await resetPreviewFlipSliderAfterSave();
+        updateGenerateButtonVisibility();
+        if (shareResult?.message) {
+          setStatus(shareResult.message, shareResult.type || "ok");
+        }
+        return;
+      }
+
       downloadBlobWithName(zipBlob, zipName);
 
       await resetPreviewFlipSliderAfterSave();
       updateGenerateButtonVisibility();
       setStatus(`Saved <b>${escapeHtml(zipName)}</b> containing separate left/right JPEG files for the current image.`, "ok");
     } catch (err) {
+      hideBatchProgressDialog();
       updateGenerateButtonVisibility();
       setStatus(escapeHtml(err.message || String(err)), "error");
     } finally {
@@ -5773,11 +5884,6 @@
   }
 
   async function exportAllEyesAsZip() {
-    if (isIOSDevice()) {
-      await exportAllImagesAsZip();
-      return;
-    }
-
     const files = loadedImageFiles.length ? [...loadedImageFiles] : (currentFile ? [currentFile] : []);
 
     if (!files.length) {
@@ -5870,12 +5976,18 @@
 
       throwIfBatchExportCancelled();
       updateBatchProgressDialog({
-        text: "Saving left/right ZIP file…",
+        text: isIOSDevice() ? "Opening iOS Share Sheet…" : "Saving left/right ZIP file…",
         percent: 100
       });
 
-      downloadBlobWithName(zipBlob, zipName);
-      finalStatus = `Saved <b>${escapeHtml(zipName)}</b> containing ${files.length * 2} separate left/right JPEG files.`;
+      if (isIOSDevice()) {
+        const shareResult = await promptShareZipOnIOS(zipBlob, zipName);
+        finalStatus = shareResult?.message || "";
+        finalStatusType = shareResult?.type || "ok";
+      } else {
+        downloadBlobWithName(zipBlob, zipName);
+        finalStatus = `Saved <b>${escapeHtml(zipName)}</b> containing ${files.length * 2} separate left/right JPEG files.`;
+      }
 
       await resetPreviewFlipSliderAfterSave();
     } catch (err) {
@@ -5907,6 +6019,134 @@
         setStatus(finalStatus, finalStatusType);
       }
     }
+  }
+
+  async function showIOSExportChoiceDialog(options) {
+    const title = options?.title || "Choose Export";
+    const primaryLabel = options?.primaryLabel || "Export";
+    const lrLabel = options?.lrLabel || "Export Left/Right";
+    const bodyText = options?.bodyText || "Choose the export type.";
+
+    if (!window.DayPilot || !DayPilot.Modal || typeof DayPilot.Modal.alert !== "function") {
+      const useLeftRight = confirm(`${bodyText}\n\nTap OK for ${lrLabel}.\nTap Cancel for ${primaryLabel}.`);
+      return useLeftRight ? "leftRight" : "primary";
+    }
+
+    return new Promise(resolve => {
+      const groupName = `iosExportChoice_${Date.now()}_${Math.floor(Math.random() * 100000)}`;
+      const choiceId = `${groupName}_choice`;
+      let selectedExportType = "primary";
+      let finished = false;
+
+      const finish = value => {
+        if (finished) {
+          return;
+        }
+
+        finished = true;
+        resolve(value);
+      };
+
+      const dialogHtml = `
+        <div class="iosExportChoiceTitle">${escapeHtml(title)}</div>
+        <div id="${choiceId}" class="iosExportChoiceOptions" role="radiogroup" aria-label="${escapeHtml(title)}">
+          <label class="iosExportChoiceOption">
+            <input type="radio" name="${groupName}" value="primary" checked>
+            <span class="iosExportChoiceOptionText">${escapeHtml(primaryLabel)}</span>
+          </label>
+          <label class="iosExportChoiceOption">
+            <input type="radio" name="${groupName}" value="leftRight">
+            <span class="iosExportChoiceOptionText">${escapeHtml(lrLabel)}</span>
+          </label>
+        </div>
+        <div class="iosExportChoiceDescription">${escapeHtml(bodyText)}</div>
+      `;
+
+      const modalPromise = DayPilot.Modal.alert(dialogHtml, {
+        theme: "modal_compact",
+        top: 120,
+        okText: "Export"
+      });
+
+      requestAnimationFrame(() => {
+        const modal = document.querySelector(".modal_compact_main");
+        if (modal) {
+          modal.classList.add("iosExportChoiceModal");
+        }
+
+        const choiceContainer = document.getElementById(choiceId);
+
+        if (choiceContainer) {
+          choiceContainer.addEventListener("change", event => {
+            if (event.target && event.target.name === groupName) {
+              selectedExportType = event.target.value === "leftRight" ? "leftRight" : "primary";
+            }
+          });
+
+          choiceContainer.addEventListener("click", event => {
+            const input = event.target && event.target.closest ? event.target.closest(`input[name="${groupName}"]`) : null;
+
+            if (input) {
+              selectedExportType = input.value === "leftRight" ? "leftRight" : "primary";
+            }
+          });
+        }
+
+        const buttons = modal ? Array.from(modal.querySelectorAll("button")) : [];
+        const exportButton = buttons.find(button => button.textContent.trim() === "Export");
+        const buttonsContainer = modal ? modal.querySelector(".modal_compact_buttons") : null;
+
+        if (exportButton) {
+          exportButton.addEventListener("click", () => {
+            const checked = document.querySelector(`input[name="${groupName}"]:checked`);
+            selectedExportType = checked && checked.value === "leftRight" ? "leftRight" : "primary";
+          }, { capture: true });
+        }
+
+        if (buttonsContainer && exportButton && !buttonsContainer.querySelector(".iosExportChoiceCancelButton")) {
+          const cancelButton = exportButton.cloneNode(true);
+          cancelButton.type = "button";
+          cancelButton.textContent = "Cancel";
+          cancelButton.classList.add("iosExportChoiceCancelButton");
+          cancelButton.addEventListener("click", event => {
+            event.preventDefault();
+            event.stopPropagation();
+            finish("cancel");
+
+            if (typeof DayPilot.Modal.close === "function") {
+              DayPilot.Modal.close();
+            } else {
+              exportButton.click();
+            }
+          });
+          exportButton.insertAdjacentElement("afterend", cancelButton);
+        }
+      });
+
+      modalPromise.then(() => {
+        finish(selectedExportType);
+      }).catch(() => {
+        finish("cancel");
+      });
+    });
+  }
+
+  async function chooseIOSCurrentExportType() {
+    return showIOSExportChoiceDialog({
+      title: "Export Current Image",
+      primaryLabel: `Current ${getOutputFormatLabel()} JPEG`,
+      lrLabel: "Current image as individual Left/Right JPEG files in ZIP",
+      bodyText: "Export the current image using the selected output format, or export the adjusted left and right views as separate JPEG files in a ZIP."
+    });
+  }
+
+  async function chooseIOSBatchExportType() {
+    return showIOSExportChoiceDialog({
+      title: "Export All Images",
+      primaryLabel: `All ${getOutputFormatLabel()} JPEGs ZIP`,
+      lrLabel: "All images as individual Left/Right JPEG files in ZIP",
+      bodyText: "Export all loaded images using the selected output format, or export adjusted left/right JPEG pairs for all loaded images in a ZIP."
+    });
   }
 
   async function exportCurrentImage() {
@@ -6144,6 +6384,20 @@
       return;
     }
 
+    if (isIOSDevice()) {
+      const exportType = await chooseIOSCurrentExportType();
+
+      if (exportType === "leftRight") {
+        await exportCurrentEyesAsZip();
+        return;
+      }
+
+      if (exportType === "cancel") {
+        setStatus("Export cancelled.", "ok");
+        return;
+      }
+    }
+
     await exportCurrentImage();
   });
 
@@ -6154,6 +6408,20 @@
       if (!isIOSDevice() && event.shiftKey) {
         await exportAllEyesAsZip();
         return;
+      }
+
+      if (isIOSDevice()) {
+        const exportType = await chooseIOSBatchExportType();
+
+        if (exportType === "leftRight") {
+          await exportAllEyesAsZip();
+          return;
+        }
+
+        if (exportType === "cancel") {
+          setStatus("ZIP export cancelled.", "ok");
+          return;
+        }
       }
 
       await exportAllImagesAsZip();
