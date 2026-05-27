@@ -2784,7 +2784,10 @@
 
   function updateImageNavigationButtons() {
     const count = getLoadedImageCount();
-    const visible = count > 1 && decodedViews.length >= 2;
+    // Keep navigation available when multiple HEIC files are loaded, even if
+    // the current file is not a valid spatial photo. This lets the user skip
+    // past a single-reference HEIC that does not contain a stereo pair.
+    const visible = count > 1;
     const atFirstImage = currentImageIndex <= 0;
     const atLastImage = currentImageIndex >= count - 1;
 
@@ -4919,11 +4922,12 @@
           <li>The normal on-page preview is optimized for responsiveness, while full-screen preview automatically uses a higher preview resolution when useful for sharper viewing on high-DPI displays.</li>
           <li>For side-by-side image viewing, you can make the side-by-side preview smaller to help visually fuse the images while making adjustments. Either zoom out the browser window or resize the window narrower to make the preview smaller.</li>
           <li>To export the currently displayed image, click <b>Export Current JPEG</b>. On desktop, the browser downloads the JPEG. On iOS, the iOS Share Sheet opens so you can save or share the JPEG.</li>
-          <li>When multiple images are loaded, click <b>Export All as ZIP</b> to export all loaded images. <b>Horizontal Shift</b>, <b>Image Rotation</b>, and their slider range settings use each image’s individual saved settings; the other controls use the current settings. During batch export, a progress dialog shows the current image and overall progress; click <b>Cancel</b> during ZIP generation to stop after the current processing step finishes.</li>
+          <li>When multiple images are loaded, click <b>Export All as ZIP</b> to export all loaded images that contain a valid stereo pair. <b>Horizontal Shift</b>, <b>Image Rotation</b>, and their slider range settings use each image’s individual saved settings; the other controls use the current settings. During batch export, a progress dialog shows the current image and overall progress; click <b>Cancel</b> during ZIP generation to stop after the current processing step finishes.</li>
+          <li>During batch export, any HEIC file that does not contain the two image views required for a spatial photo is skipped automatically. The exported ZIP filename and status message reflect the actual number of images processed. If none of the selected files contain a stereo pair, the ZIP export is aborted.</li>
           <li>On desktop, Shift-click <b>Export Current JPEG</b> to export the currently displayed adjusted left and right views, using the selected <b>Stereo Order</b>, as separate JPEG files in a ZIP. The files are named from the source image filename with <b>-l</b> and <b>-r</b> suffixes.</li>
           <li>On iOS, long-press <b>Export Current JPEG</b> to export the current adjusted left/right image pair as separate JPEG files in a ZIP.</li>
-          <li>On desktop, Shift-click <b>Export All as ZIP</b> to export separate adjusted left/right JPEG files for every loaded image. The separate left/right files use the selected <b>Output JPEG Height</b>, selected <b>Stereo Order</b>, and each image’s saved <b>Horizontal Shift</b> and <b>Image Rotation</b> settings.</li>
-          <li>On iOS, long-press <b>Export All as ZIP</b> to export adjusted left/right image pairs for all loaded images in a ZIP.</li>
+          <li>On desktop, Shift-click <b>Export All as ZIP</b> to export separate adjusted left/right JPEG files for every loaded image that contains a valid stereo pair. The separate left/right files use the selected <b>Output JPEG Height</b>, selected <b>Stereo Order</b>, and each image’s saved <b>Horizontal Shift</b> and <b>Image Rotation</b> settings.</li>
+          <li>On iOS, long-press <b>Export All as ZIP</b> to export adjusted left/right image pairs for all loaded images that contain a valid stereo pair in a ZIP.</li>
           <li>On iOS, after any ZIP is ready, tap <b>Share ZIP</b> to open the iOS Share Sheet, then choose <b>Save to Files</b> or another share destination. Tap <b>Cancel</b> to close the ZIP dialog without sharing.</li>
         </ol>
 
@@ -4996,6 +5000,7 @@
           <li>After any ZIP is ready, tap <b>Share ZIP</b> to open the iOS Share Sheet, then choose <b>Save to Files</b> or another share destination. Tap <b>Cancel</b> to close the ZIP dialog without sharing.</li>
           <li>While it's certainly possible to process the spatial photos directly on an iPhone, if you have a Mac, for a better experience (larger screen, no need to transfer images from the <b>Photos</b> app to the <b>Files</b> area), my recommendation is to share the original spatial HEIC images from the <b>Photos</b> app to your computer using <b>AirDrop</b> and then run this tool on a desktop browser.</li>
           <li>On Windows, for a better experience (larger screen, no need to transfer images from the <b>Photos</b> app to the <b>Files</b> area), you'll want to transfer the original spatial HEIC images from the iPhone to your computer via USB using the Windows <b>File Explorer</b> and then run this tool on a desktop browser.</li>
+          <li><b>Note:</b> Some HEIC files that appear to be spatial photos may contain only a single reference image and not the required left/right stereo pair. This can sometimes happen with Apple Spatial Photos captured in very low light. The tool will show an error for that image, but multi-image navigation remains available, and batch exports skip those files automatically.</li>
         </ul>
 
         <h4>Privacy</h4>
@@ -5630,6 +5635,30 @@
     });
   }
 
+  function isMissingStereoPairError(err) {
+    const message = String(err?.message || err || "");
+
+    return /Only \d+ image view\(s\) were found/i.test(message) ||
+      /does not look like a spatial photo with a stereo pair/i.test(message) ||
+      /fewer than two decodable image views/i.test(message);
+  }
+
+  function getMissingStereoPairSkipMessage(file) {
+    const name = escapeHtml(file?.name || "this HEIC file");
+    return `Skipped <b>${name}</b> because it does not contain the two image views required for a spatial photo.`;
+  }
+
+  function updateZipFilenameProcessedCount(zipName, processedCount) {
+    const safeName = sanitizeZipFilename(zipName);
+    const extraImageCount = Math.max(0, Math.round(Number(processedCount) || 0) - 1);
+
+    if (/\+\d+-images/i.test(safeName)) {
+      return sanitizeZipFilename(safeName.replace(/\+\d+-images/i, `+${extraImageCount}-images`));
+    }
+
+    return safeName;
+  }
+
   function getEyeZipEntryNames(file = currentFile) {
     const baseName = sanitizeZipEntryBaseName(file?.name || currentFile?.name || "spatial-photo");
 
@@ -5808,9 +5837,9 @@
       return;
     }
 
-    const zipName = await promptForEyeZipSaveName(files.length > 1);
+    const requestedZipName = await promptForEyeZipSaveName(files.length > 1);
 
-    if (!zipName) {
+    if (!requestedZipName) {
       setStatus("Left/right ZIP export cancelled.", "ok");
       return;
     }
@@ -5825,6 +5854,8 @@
     const zip = new JSZip();
     let finalStatus = "";
     let finalStatusType = "ok";
+    let processedCount = 0;
+    let skippedCount = 0;
 
     try {
       showBatchProgressDialog(files.length);
@@ -5847,37 +5878,60 @@
         });
         setStatus(`Processing left/right image ${i + 1} of ${files.length}: <b>${fileName}</b>…`);
 
-        await loadSpatialPhotoAtIndex(i, {
-          makePreview: false,
-          resetAdjustments: false,
-          preserveOutputHeight: batchOutputHeight
-        });
-        throwIfBatchExportCancelled();
+        try {
+          await loadSpatialPhotoAtIndex(i, {
+            makePreview: false,
+            resetAdjustments: false,
+            preserveOutputHeight: batchOutputHeight
+          });
+          throwIfBatchExportCancelled();
 
-        const eyeFiles = await createAdjustedEyeJpegBlobsForCurrentImage(files[i], batchOutputHeight);
-        throwIfBatchExportCancelled();
+          const eyeFiles = await createAdjustedEyeJpegBlobsForCurrentImage(files[i], batchOutputHeight);
+          throwIfBatchExportCancelled();
 
-        zip.file(eyeFiles.leftName, eyeFiles.leftBlob);
-        zip.file(eyeFiles.rightName, eyeFiles.rightBlob);
+          zip.file(eyeFiles.leftName, eyeFiles.leftBlob);
+          zip.file(eyeFiles.rightName, eyeFiles.rightBlob);
+          processedCount++;
 
-        updateBatchProgressDialog({
-          text: `Added left/right files for image ${i + 1} of ${files.length}: <b>${fileName}</b>.`,
-          percent: Math.round(((i + 1) / files.length) * 90)
-        });
-        await new Promise(requestAnimationFrame);
+          updateBatchProgressDialog({
+            text: `Added left/right files for image ${i + 1} of ${files.length}: <b>${fileName}</b>.`,
+            percent: Math.round(((i + 1) / files.length) * 90)
+          });
+        } catch (err) {
+          if (isMissingStereoPairError(err)) {
+            skippedCount++;
+            updateBatchProgressDialog({
+              text: `${getMissingStereoPairSkipMessage(files[i])}<br/>Continuing with the remaining HEIC files…`,
+              percent: Math.round(((i + 1) / files.length) * 90)
+            });
+            setStatus(getMissingStereoPairSkipMessage(files[i]), "ok");
+          } else {
+            throw err;
+          }
+        }
+
+        await yieldForMemoryCleanup();
       }
 
       throwIfBatchExportCancelled();
+
+      if (!processedCount) {
+        finalStatus = "Left/right ZIP export aborted. None of the selected HEIC files contained the two image views required for spatial photo export.";
+        finalStatusType = "error";
+        return;
+      }
+
+      const zipName = updateZipFilenameProcessedCount(requestedZipName, processedCount);
       updateBatchProgressDialog({
-        text: `Creating ZIP file with ${files.length * 2} left/right JPEG files…`,
+        text: `Creating ZIP file with ${processedCount * 2} left/right JPEG files…`,
         percent: 92
       });
-      setStatus(`Creating ZIP file with ${files.length * 2} left/right JPEG files…`);
+      setStatus(`Creating ZIP file with ${processedCount * 2} left/right JPEG files…`);
 
       const zipBlob = await zip.generateAsync({ type: "blob" }, metadata => {
         const zipPercent = 92 + Math.round((metadata.percent || 0) * 0.08);
         updateBatchProgressDialog({
-          text: `Creating ZIP file with ${files.length * 2} left/right JPEG files…`,
+          text: `Creating ZIP file with ${processedCount * 2} left/right JPEG files…`,
           percent: zipPercent
         });
 
@@ -5898,7 +5952,12 @@
         finalStatusType = shareResult?.type || "ok";
       } else {
         downloadBlobWithName(zipBlob, zipName);
-        finalStatus = `Saved <b>${escapeHtml(zipName)}</b> containing ${files.length * 2} separate left/right JPEG files.`;
+        finalStatus = `Saved <b>${escapeHtml(zipName)}</b> containing ${processedCount * 2} separate left/right JPEG files.`;
+      }
+
+      if (skippedCount) {
+        const skippedText = ` Skipped ${skippedCount} HEIC file${skippedCount === 1 ? "" : "s"} that did not contain a stereo pair.`;
+        finalStatus = finalStatus ? `${finalStatus}${skippedText}` : skippedText.trim();
       }
 
       await resetPreviewFlipSliderAfterSave();
@@ -5932,6 +5991,7 @@
       }
     }
   }
+
 
   async function exportCurrentImage() {
     if (decodedViews.length < 2) {
@@ -5995,9 +6055,9 @@
       return;
     }
 
-    const zipName = await promptForZipSaveName();
+    const requestedZipName = await promptForZipSaveName();
 
-    if (!zipName) {
+    if (!requestedZipName) {
       setStatus("ZIP export cancelled.", "ok");
       return;
     }
@@ -6012,6 +6072,8 @@
     const zip = new JSZip();
     let finalStatus = "";
     let finalStatusType = "ok";
+    let processedCount = 0;
+    let skippedCount = 0;
 
     try {
       showBatchProgressDialog(files.length);
@@ -6034,50 +6096,73 @@
         });
         setStatus(`Processing image ${i + 1} of ${files.length}: <b>${fileName}</b>…`);
 
-        await loadSpatialPhotoAtIndex(i, {
-          makePreview: false,
-          resetAdjustments: false,
-          preserveOutputHeight: batchOutputHeight
-        });
-        throwIfBatchExportCancelled();
+        try {
+          await loadSpatialPhotoAtIndex(i, {
+            makePreview: false,
+            resetAdjustments: false,
+            preserveOutputHeight: batchOutputHeight
+          });
+          throwIfBatchExportCancelled();
 
-        await convertToSbs({ preserveDownloadUi: true });
-        throwIfBatchExportCancelled();
+          await convertToSbs({ preserveDownloadUi: true });
+          throwIfBatchExportCancelled();
 
-        if (!lastBlob) {
-          throw new Error(`The JPEG could not be generated for ${files[i].name}.`);
+          if (!lastBlob) {
+            throw new Error(`The JPEG could not be generated for ${files[i].name}.`);
+          }
+
+          zip.file(getDefaultSaveName(), lastBlob);
+          processedCount++;
+
+          // Drop the separate reference after JSZip has accepted the Blob, and
+          // give Firefox a chance to reclaim memory before the next HEIC decode.
+          lastBlob = null;
+          lastGeneratedFileName = "";
+
+          updateBatchProgressDialog({
+            text: `Added image ${i + 1} of ${files.length}: <b>${fileName}</b>.`,
+            percent: Math.round(((i + 1) / files.length) * 90)
+          });
+        } catch (err) {
+          if (isMissingStereoPairError(err)) {
+            skippedCount++;
+            updateBatchProgressDialog({
+              text: `${getMissingStereoPairSkipMessage(files[i])}<br/>Continuing with the remaining HEIC files…`,
+              percent: Math.round(((i + 1) / files.length) * 90)
+            });
+            setStatus(getMissingStereoPairSkipMessage(files[i]), "ok");
+          } else {
+            throw err;
+          }
         }
 
-        zip.file(getDefaultSaveName(), lastBlob);
-
-        // Drop the separate reference after JSZip has accepted the Blob, and
-        // give Firefox a chance to reclaim memory before the next HEIC decode.
-        lastBlob = null;
-        lastGeneratedFileName = "";
-
-        updateBatchProgressDialog({
-          text: `Added image ${i + 1} of ${files.length}: <b>${fileName}</b>.`,
-          percent: Math.round(((i + 1) / files.length) * 90)
-        });
         await yieldForMemoryCleanup();
       }
 
       throwIfBatchExportCancelled();
+
+      if (!processedCount) {
+        finalStatus = "ZIP export aborted. None of the selected HEIC files contained the two image views required for spatial photo export.";
+        finalStatusType = "error";
+        return;
+      }
+
+      const zipName = updateZipFilenameProcessedCount(requestedZipName, processedCount);
 
       // No decoded image needs to remain resident while JSZip builds the final archive.
       releaseDecodedViews();
       await yieldForMemoryCleanup();
 
       updateBatchProgressDialog({
-        text: `Creating ZIP file with ${files.length} JPEG image${files.length === 1 ? "" : "s"}…`,
+        text: `Creating ZIP file with ${processedCount} JPEG image${processedCount === 1 ? "" : "s"}…`,
         percent: 92
       });
-      setStatus(`Creating ZIP file with ${files.length} JPEG image${files.length === 1 ? "" : "s"}…`);
+      setStatus(`Creating ZIP file with ${processedCount} JPEG image${processedCount === 1 ? "" : "s"}…`);
 
       const zipBlob = await zip.generateAsync({ type: "blob" }, metadata => {
         const zipPercent = 92 + Math.round((metadata.percent || 0) * 0.08);
         updateBatchProgressDialog({
-          text: `Creating ZIP file with ${files.length} JPEG image${files.length === 1 ? "" : "s"}…`,
+          text: `Creating ZIP file with ${processedCount} JPEG image${processedCount === 1 ? "" : "s"}…`,
           percent: zipPercent
         });
 
@@ -6098,7 +6183,12 @@
         finalStatusType = shareResult?.type || "ok";
       } else {
         downloadBlobWithName(zipBlob, zipName);
-        finalStatus = `Saved <b>${escapeHtml(zipName)}</b> containing ${files.length} JPEG image${files.length === 1 ? "" : "s"}.`;
+        finalStatus = `Saved <b>${escapeHtml(zipName)}</b> containing ${processedCount} JPEG image${processedCount === 1 ? "" : "s"}.`;
+      }
+
+      if (skippedCount) {
+        const skippedText = ` Skipped ${skippedCount} HEIC file${skippedCount === 1 ? "" : "s"} that did not contain a stereo pair.`;
+        finalStatus = finalStatus ? `${finalStatus}${skippedText}` : skippedText.trim();
       }
 
       await resetPreviewFlipSliderAfterSave();
@@ -6132,6 +6222,7 @@
       }
     }
   }
+
 
   function downloadBlobWithName(blob, fileName) {
     const url = URL.createObjectURL(blob);
