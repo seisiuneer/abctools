@@ -2914,6 +2914,11 @@
         //console.error(err);
         setStatus(escapeHtml(err.message || String(err)), "error");
         sourceMeta.textContent = "Decode failed.";
+
+        // If this image is not a valid spatial photo, keep batch export
+        // available when multiple HEIC files are loaded so users can skip
+        // this item or export the rest of the batch.
+        updateGenerateButtonVisibility();
       }
       throw err;
     } finally {
@@ -3255,11 +3260,13 @@
   }
 
 
-  function setExportLinksVisible(visible) {
-    const showZipExport = visible && getLoadedImageCount() > 1;
+  function setExportLinksVisible(visible, options = {}) {
+    const showCurrentExport = visible && options.showCurrent !== false;
+    const showZipExport = getLoadedImageCount() > 1 && (visible || options.showZipWhenMultiple);
+    const showAnyExport = showCurrentExport || showZipExport;
 
     if (downloadLink) {
-      downloadLink.style.display = visible ? "block" : "none";
+      downloadLink.style.display = showCurrentExport ? "block" : "none";
     }
 
     if (downloadAllLink) {
@@ -3267,8 +3274,8 @@
     }
 
     if (downloadActions) {
-      downloadActions.style.display = visible ? "grid" : "none";
-      downloadActions.style.gridTemplateColumns = showZipExport ? "repeat(2, minmax(0, 1fr))" : "1fr";
+      downloadActions.style.display = showAnyExport ? "grid" : "none";
+      downloadActions.style.gridTemplateColumns = showCurrentExport && showZipExport ? "repeat(2, minmax(0, 1fr))" : "1fr";
     }
   }
 
@@ -3284,7 +3291,7 @@
         downloadAllLink.removeAttribute("href");
       }
 
-      setExportLinksVisible(false);
+      setExportLinksVisible(false, { showZipWhenMultiple: true });
       updateImageNavigationButtons();
       return;
     }
@@ -3317,7 +3324,7 @@
       downloadAllLink.removeAttribute("href");
     }
 
-    if (keepGenerateButton && decodedViews.length >= 2) {
+    if (keepGenerateButton) {
       updateGenerateButtonVisibility();
     } else {
       setExportLinksVisible(false);
