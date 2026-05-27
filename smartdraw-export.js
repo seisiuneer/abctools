@@ -1364,7 +1364,7 @@ function SmartDrawExport(){
 
 	totalTunes = CountTunes();
 
-	SmartDrawTitles = GetTunebookIndexTitles();
+	SmartDrawTitles = GetTunebookTitlesWithSubjectReverser();
 	var nTitles = SmartDrawTitles.length;
 
 	if (nTitles == 0){

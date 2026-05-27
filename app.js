@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3239_052426_1000";
+var gVersionNumber = "3240_052726_1500";
 
 var gMIDIInitStillWaiting = false;
 
@@ -5014,6 +5014,50 @@ function GetTunebookIndexTitles() {
   return theTitles;
 }
 
+function GetTunebookTitlesWithSubjectReverser() {
+
+  var i;
+
+  var theTitles = [];
+
+  for (i = 0; i < totalTunes; ++i) {
+
+    var thisTune = getTuneByIndex(i);
+
+    var lines = thisTune.split("\n"); // Split the string by new line
+
+    var bGotTitle = false;
+
+    for (var j = 0; j < lines.length; ++j) {
+
+      var currentLine = lines[j].trim(); // Trim any whitespace from the line
+
+      // Check if the line starts with "T:"
+      if (currentLine.startsWith("T:")) {
+
+        var title = currentLine.slice(2).trim(); // Extract the title after "T:"
+
+        // Reverse any articles at the end of the title
+        title = titleReverser(title);
+
+        theTitles.push(title);
+
+        bGotTitle = true;
+
+        break;
+
+      }
+
+    }
+
+    if (!bGotTitle) {
+      theTitles.push("No Title");
+    }
+
+  }
+
+  return theTitles;
+}
 //
 // Tune title page font sizes
 //
@@ -5115,6 +5159,7 @@ var gTEXTINCIPITRIGHTMARGIN = 190;
 var TEXTINCIPITFONTSIZE = 12;
 var TEXTINCIPITLINESPACING = 12;
 var TEXTINCIPITGUTTER = 5;
+
 //
 // Generate a set of ABC text incipits
 //
@@ -5140,7 +5185,7 @@ function fitIncipitsTitle(thePDF, title, key, widthToFit) {
   }
 
   thisTitle = thisTitle.trim();
-
+  
   if (key != "") {
     thisTitle += " (" + key + ")";
   }
@@ -5468,6 +5513,7 @@ function GenerateTextIncipits(thePDF, addPageNumbers, pageNumberLocation, hideFi
       incipit: theTextIncipit,
       index: i
     });
+
   }
 
   // Sorted incipipits requested?
@@ -18887,7 +18933,7 @@ function ChangeTuneOrderMobile() {
 
   totalTunes = CountTunes();
 
-  var theTitles = GetTunebookIndexTitles();
+  var theTitles = GetTunebookTitlesWithSubjectReverser();
   var nTitles = theTitles.length;
 
   if (nTitles == 0) {
@@ -19051,7 +19097,7 @@ function ChangeTuneOrder() {
 
   totalTunes = CountTunes();
 
-  var theTitles = GetTunebookIndexTitles();
+  var theTitles = GetTunebookTitlesWithSubjectReverser();
   var nTitles = theTitles.length;
 
   if (nTitles == 0) {
@@ -19312,7 +19358,7 @@ function CullTunes() {
 
   totalTunes = CountTunes();
 
-  var theTitles = GetTunebookIndexTitles();
+  var theTitles = GetTunebookTitlesWithSubjectReverser();
   var nTitles = theTitles.length;
 
   if (nTitles == 0) {
@@ -19800,7 +19846,7 @@ function BuildTuneSetOpen(bOpenInNewTabInEditor) {
 
     const tuneName = tuneElement.textContent.trim().replace(/\s+\d+$/, ''); // Remove number tag
 
-    const index = GetTunebookIndexTitles().indexOf(tuneName);
+    const index = GetTunebookTitlesWithSubjectReverser().indexOf(tuneName);
 
     if (index !== -1) {
       const tuneABC = getTuneByIndex(index).trim() + "\n\n";
@@ -19957,7 +20003,7 @@ function BuildTuneSetAppend() {
 
     const tuneName = tuneElement.textContent.trim().replace(/\s+\d+$/, ''); // Remove number tag
 
-    const index = GetTunebookIndexTitles().indexOf(tuneName);
+    const index = GetTunebookTitlesWithSubjectReverser().indexOf(tuneName);
 
     if (index !== -1) {
       const tuneABC = getTuneByIndex(index).trim() + "\n\n";
@@ -20118,7 +20164,7 @@ function BuildTuneSet() {
 
   totalTunes = CountTunes();
 
-  var theTitles = GetTunebookIndexTitles();
+  var theTitles = GetTunebookTitlesWithSubjectReverser();
   var nTitles = theTitles.length;
 
   if (nTitles == 0) {
@@ -28481,13 +28527,13 @@ async function processShareLink() {
       // Show update message?
       if (gLocalStorageAvailable){
 
-        var updatePresented = localStorage.sawUpdate_24may2026;
+        var updatePresented = localStorage.sawUpdate_27may2026;
 
         if (updatePresented != "true") {
 
           showWhatsNewScreen();
 
-          localStorage.sawUpdate_24may2026 = true;
+          localStorage.sawUpdate_27may2026 = true;
 
         }
 
@@ -35463,6 +35509,8 @@ function GetTuneAudioDownloadName(tuneABC, extension) {
 
       fname = fname.trim();
 
+      fname = titleReverser(fname);
+
       // Strip out any naughty HTML tag characters
       fname = cleanFileName(fname);
 
@@ -38361,7 +38409,7 @@ function PlayABCDialog(theABC, callback, val, metronome_state) {
 
       // Have to cache this before calling GetTunebookIndexTitles()
       totalTunes = CountTunes();
-      var theTuneTitles = GetTunebookIndexTitles();
+      var theTuneTitles = GetTunebookTitlesWithSubjectReverser();
       var nTitles = theTuneTitles.length;
 
       // debugger;
@@ -56344,13 +56392,19 @@ function showWhatsNewScreen() {
   modal_msg += 'background: linear-gradient(135deg, #0b3d2e 0%, #1b5e20 52%, #4f8f3a 100%);';
   modal_msg += 'box-shadow: 0 6px 16px rgba(0,0,0,0.14); color:#fff;">';
   modal_msg += '<div style="font-size:20pt; line-height:24pt; font-weight:bold;">What&apos;s New</div>';
-  modal_msg += '<div style="font-size:11pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 24 May 2026</div>';
+  modal_msg += '<div style="font-size:11pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 27 May 2026</div>';
   modal_msg += '</div>';
 
   // Short intro
   modal_msg += '<p style="margin:24px 4px 10px 4px; font-size:12pt;">';
   modal_msg += 'Here’s what’s new in the ABC Transcription Tools:';
   modal_msg += '</p>';
+
+  // Feature card
+  modal_msg += '<div style="margin:10px 0 6px 0; padding:0px 12px; border-radius:12px;';
+  modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);">';
+  modal_msg += '<p>Better handling of tune title article postfix reversals (For example: <strong>", The" ", An" </strong> etc.) in many features that show lists of tunes (<strong>Player, Jump to Tune, Reorder Tunes, Delete Tunes,</strong> etc.) as well as exported website and SmartDraw set tune name lists.</p>';
+  modal_msg += '</div>';
 
   // Feature card
   modal_msg += '<div style="margin:10px 0 6px 0; padding:0px 12px; border-radius:12px;';
@@ -58296,7 +58350,7 @@ function JumpToTune() {
 
   totalTunes = CountTunes();
 
-  var theTitles = GetTunebookIndexTitles();
+  var theTitles = GetTunebookTitlesWithSubjectReverser();
   var nTitles = theTitles.length;
 
   if (nTitles == 0) {
@@ -62890,13 +62944,13 @@ async function DoStartup() {
   // Show update message?
   if (gLocalStorageAvailable && (!isFromShare)){
 
-    var updatePresented = localStorage.sawUpdate_24may2026;
+    var updatePresented = localStorage.sawUpdate_27may2026;
 
     if (updatePresented != "true") {
 
       showWhatsNewScreen();
 
-      localStorage.sawUpdate_24may2026 = true;
+      localStorage.sawUpdate_27may2026 = true;
 
     }
 
