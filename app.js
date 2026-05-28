@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3242_052826_0930";
+var gVersionNumber = "3243_052826_1230";
 
 var gMIDIInitStillWaiting = false;
 
@@ -17756,8 +17756,6 @@ function searchForTunes() {
 
       return;
     }
-
-
   }
 
   var tuneNameToSearch = document.getElementById("tuneNameToSearch").value;
@@ -17929,35 +17927,10 @@ function searchForTunes() {
 
     var onlyFirstVariation = document.getElementById('only_first_variation').checked;
 
-    // Search FolkFriend session.org database
-    var rawSettings = gTheFolkFriendDatabase.settings;
-
-    var settingsMap = [];
-
-    for (let key in rawSettings) {
-
-      if (rawSettings.hasOwnProperty(key)) {
-        settingsMap.push(key);
-      }
-    }
-
-    var nSettings = settingsMap.length;
-
-    //console.log("nSettings = "+nSettings);
-
-    var rawAliases = gTheFolkFriendDatabase.aliases;
-
-    var aliasMap = [];
-
-    for (let key in rawAliases) {
-
-      if (rawAliases.hasOwnProperty(key)) {
-        aliasMap.push(key);
-      }
-
-    }
-
-    var nAliaseSets = aliasMap.length;
+    // Search thesession.org tune database.
+    // The current database format is a flat array of setting records:
+    // tune_id, setting_id, name, type, meter, mode, abc, username, composer, etc.
+    var nTunes = gTheFolkFriendDatabase.length;
 
     var theOutput = "";
 
@@ -17968,197 +17941,149 @@ function searchForTunes() {
     var variations_found = [];
 
     for (var i = 0;
-      ((i < nAliaseSets) && (!maxResultsHit)); ++i) {
+      ((i < nTunes) && (!maxResultsHit)); ++i) {
 
-      var thisAlias = gTheFolkFriendDatabase.aliases[aliasMap[i]];
+      var theABCInfo = gTheFolkFriendDatabase[i];
 
-      var theAliases = [];
+      if (!theABCInfo) {
+        continue;
+      }
 
-      for (let key in thisAlias) {
+      // Filtering by style?
+      if (gTheTuneSearchStyle != "") {
 
-        if (thisAlias.hasOwnProperty(key)) {
-          theAliases.push(key);
+        var thisStyle = theABCInfo.type;
+
+        if (!thisStyle) {
+          continue;
+        }
+
+        thisStyle = thisStyle.toLowerCase();
+
+        if (thisStyle != gTheTuneSearchStyle) {
+          continue;
         }
 
       }
 
-      var nAliases = theAliases.length;
+      var thisTitle = theABCInfo.name;
 
-      for (var j = 0;
-        ((j < nAliases) && (!maxResultsHit)); ++j) {
+      if (!thisTitle) {
+        continue;
+      }
 
-        // Alias ID maps to the tune_id in the setting
-        var thisTitle = thisAlias[theAliases[j]];
+      var theOriginalTitle = thisTitle;
 
-        var theOriginalTitle = thisTitle;
+      thisTitle = thisTitle.toLowerCase();
 
-        thisTitle = thisTitle.toLowerCase();
+      thisTitle = thisTitle.replace("'", "");
+      thisTitle = thisTitle.replace('"', "");
 
-        thisTitle = thisTitle.replace("'", "");
-        thisTitle = thisTitle.replace('"', "");
+      if (((!matchTitleStart) && (thisTitle.indexOf(tuneNameToSearch) != -1)) || ((matchTitleStart) && (thisTitle.indexOf(tuneNameToSearch) == 0))) {
 
-        if (((!matchTitleStart) && (thisTitle.indexOf(tuneNameToSearch) != -1)) || ((matchTitleStart) && (thisTitle.indexOf(tuneNameToSearch) == 0))) {
+        // Searching by key?
+        if (gTheTuneSearchKey != "") {
 
-          thisTitle = theOriginalTitle;
+          var thisMode = theABCInfo.mode;
 
-          for (var k = 0;
-            ((k < nSettings) && (!maxResultsHit)); ++k) {
+          if (!thisMode) {
+            continue;
+          }
 
-            var theABCInfo = gTheFolkFriendDatabase.settings[settingsMap[k]];
+          if (thisMode != gTheTuneSearchKey) {
+            //console.log("Got match, but wrong key");
+            continue;
+          }
+          //console.log("Got match, correct key");
+        }
 
+        var ok_to_process = true;
 
-            // Filtering by style?
-            if (gTheTuneSearchStyle != "") {
+        // If only returning first variation, see if the tune_id has already been seen
+        if (onlyFirstVariation) {
 
-              var thisStyle = theABCInfo.dance;
+          var nVariationsSeen = variations_found.length;
 
-              if (!thisStyle) {
-                continue;
-              }
-
-              thisStyle = thisStyle.toLowerCase();
-
-              if (thisStyle != gTheTuneSearchStyle) {
-                continue;
-              }
-
+          for (var ii = 0; ii < nVariationsSeen; ++ii) {
+            if (variations_found[ii] == theABCInfo.tune_id) {
+              ok_to_process = false;
             }
+          }
 
-            if (theABCInfo.tune_id == aliasMap[i]) {
+          variations_found.push(theABCInfo.tune_id);
 
-              // Searching by key?
-              if (gTheTuneSearchKey != "") {
+        }
 
-                var thisMode = theABCInfo.mode;
+        if (ok_to_process) {
 
-                if (!thisMode) {
-                  continue;
-                }
+          var thisABC = theABCInfo.abc;
 
-                if (thisMode != gTheTuneSearchKey) {
-                  //console.log("Got match, but wrong key");
-                  continue;
-                }
-                //console.log("Got match, correct key");
-              }
+          if (!thisABC) {
+            continue;
+          }
 
-              var ok_to_process = true;
+          // Are we only returning tunes with chords?
+          if (returnOnlyWithChords) {
 
-              // If only returning first variation, see if the tune_id has already been seen
-              if (onlyFirstVariation) {
+            var searchRegExp = /"[^"]*"/gm
 
-                var nVariationsSeen = variations_found.length;
+            var chordsPresent = thisABC.match(searchRegExp);
 
-                for (var ii = 0; ii < nVariationsSeen; ++ii) {
-                  if (variations_found[ii] == theABCInfo.tune_id) {
-                    ok_to_process = false;
-                  }
-                }
+            if ((!chordsPresent) || (chordsPresent.length == 0)) {
+              continue;
+            }
+          }
 
-                variations_found.push(theABCInfo.tune_id);
+          theTotal++;
 
-              }
+          var theCapitalizedTitle = capitalizeSongName(theOriginalTitle);
 
-              if (ok_to_process) {
+          theCapitalizedTitle = capitalizeAfterO(theCapitalizedTitle);
 
-                // Are we only returning tunes with chords?
-                if (returnOnlyWithChords) {
+          theOutput += "X: " + theTotal + "\n";
 
-                  var searchRegExp = /"[^"]*"/gm
+          theOutput += "T: " + theCapitalizedTitle + "\n";
 
-                  var chordsPresent = theABCInfo.abc.match(searchRegExp);
+          theOutput += "S: https://thesession.org/tunes/" + theABCInfo.tune_id + "\n";
 
-                  if ((chordsPresent) && (chordsPresent.length > 0)) {
+          if (theABCInfo.composer) {
+            theOutput += "C: " + theABCInfo.composer + "\n";
+          }
 
-                    theTotal++;
+          if (theABCInfo.username) {
+            theOutput += "Z: " + theABCInfo.username + "\n";
+          }
 
-                    var theCapitalizedTitle = capitalizeSongName(thisTitle);
+          var doLTag = false;
 
-                    theCapitalizedTitle = capitalizeAfterO(theCapitalizedTitle);
-
-                    theOutput += "X: " + theTotal + "\n";
-
-                    theOutput += "T: " + theCapitalizedTitle + "\n";
-
-                    theOutput += "S: https://thesession.org/tunes/" + theABCInfo.tune_id + "\n";
-
-                    var doLTag = false;
-
-                    if (theABCInfo.dance) {
-                      theOutput += "R: " + theABCInfo.dance + "\n";
-                      if (theABCInfo.dance == "polka") {
-                        doLTag = true;
-                      }
-                    }
-                    if (theABCInfo.meter) {
-                      theOutput += "M: " + theABCInfo.meter + "\n";
-                      if (doLTag) {
-                        if (theABCInfo.meter == "2/4") {
-                          theOutput += "L: 1/8\n";
-                        }
-                      }
-                    }
-                    if (theABCInfo.mode) {
-                      theOutput += "K: " + theABCInfo.mode + "\n";
-                    }
-
-                    theOutput += theABCInfo.abc + "\n\n";
-
-                    // Have we hit the max results count?
-                    if (theTotal == gTheMaxDatabaseResults) {
-                      maxResultsHit = true;
-                    }
-                  }
-
-                } else {
-
-                  theTotal++;
-
-                  var theCapitalizedTitle = capitalizeSongName(thisTitle);
-
-                  theCapitalizedTitle = capitalizeAfterO(theCapitalizedTitle);
-
-                  theOutput += "X: " + theTotal + "\n";
-
-                  theOutput += "T: " + theCapitalizedTitle + "\n";
-
-                  theOutput += "S: https://thesession.org/tunes/" + theABCInfo.tune_id + "\n";
-
-                  var doLTag = false;
-
-                  if (theABCInfo.dance) {
-                    theOutput += "R: " + theABCInfo.dance + "\n";
-                    if (theABCInfo.dance == "polka") {
-                      doLTag = true;
-                    }
-                  }
-                  if (theABCInfo.meter) {
-                    theOutput += "M: " + theABCInfo.meter + "\n";
-                    if (doLTag) {
-                      if (theABCInfo.meter == "2/4") {
-                        theOutput += "L: 1/8\n";
-                      }
-                    }
-                  }
-                  if (theABCInfo.mode) {
-                    theOutput += "K: " + theABCInfo.mode + "\n";
-                  }
-
-                  theOutput += theABCInfo.abc + "\n\n";
-
-                  // Have we hit the max results count?
-                  if (theTotal == gTheMaxDatabaseResults) {
-                    maxResultsHit = true;
-                  }
-                }
+          if (theABCInfo.type) {
+            theOutput += "R: " + theABCInfo.type + "\n";
+            if (theABCInfo.type == "polka") {
+              doLTag = true;
+            }
+          }
+          if (theABCInfo.meter) {
+            theOutput += "M: " + theABCInfo.meter + "\n";
+            if (doLTag) {
+              if (theABCInfo.meter == "2/4") {
+                theOutput += "L: 1/8\n";
               }
             }
+          }
+          if (theABCInfo.mode) {
+            theOutput += "K: " + theABCInfo.mode + "\n";
+          }
+
+          theOutput += thisABC + "\n\n";
+
+          // Have we hit the max results count?
+          if (theTotal == gTheMaxDatabaseResults) {
+            maxResultsHit = true;
           }
         }
       }
     }
   }
-
   var elem = document.getElementById("search_result");
   elem.innerHTML = "Search Results:&nbsp;&nbsp;" + theTotal + " found";
 
@@ -18406,11 +18331,77 @@ function fetchWithRetry(url, delay, tries, fetchOptions = {}) {
 //
 // Switch the search database
 //
+
+function isValidSavedHeneghanTuneDatabase(theTunes) {
+
+  if (!theTunes) {
+    return false;
+  }
+
+  if (theTunes.length == 0) {
+    return false;
+  }
+
+  if (!Array.isArray(theTunes[0])) {
+    return false;
+  }
+
+  return true;
+}
+
+function isValidSavedTheSessionTuneDatabase(theTunes) {
+
+  if (!theTunes) {
+    return false;
+  }
+
+  if (theTunes.length == 0) {
+    return false;
+  }
+
+  // The new thesession.org database format is a flat array of setting records.
+  // Old FolkFriend data was an object containing settings/aliases, so reject it.
+  if (!Array.isArray(theTunes[0])) {
+    return false;
+  }
+
+  return true;
+}
+
+//
+// Switch the search database
+//
 function SwitchTuneDatabase() {
 
   //console.log("SwitchTuneDatabase")
 
-  var theDatabase = document.getElementById("databaseselect").value;
+  // initTuneDB() performs an automatic tunedb2 freshness check/update.
+  // If the user opens the tune search UI immediately at startup, wait until
+  // that check completes before reading from IndexedDB. This prevents reading
+  // an old-format tunedb2 record into gTheFolkFriendDatabase while the refresh
+  // is still in progress.
+  if ((typeof gTuneDBInitComplete !== "undefined") && (!gTuneDBInitComplete)) {
+
+    var elem = document.getElementById("status");
+
+    if (elem) {
+      elem.innerHTML = "&nbsp;&nbsp;&nbsp;Waiting for tune collection to load...";
+    }
+
+    setTimeout(SwitchTuneDatabase, 250);
+
+    return;
+  }
+
+  // The tune search dialog may have been closed before a delayed
+  // SwitchTuneDatabase() retry fires, so guard against missing UI elements.
+  var databaseSelect = document.getElementById("databaseselect");
+
+  if (!databaseSelect) {
+    return;
+  }
+
+  var theDatabase = databaseSelect.value;
 
   switch (theDatabase) {
 
@@ -18426,11 +18417,12 @@ function SwitchTuneDatabase() {
 
           //debugger;
 
-          if (theTunes && (theTunes.length > 0)) {
+          if (isValidSavedHeneghanTuneDatabase(theTunes)) {
 
             //console.log("Heneghan database was found")
 
             var elem = document.getElementById("status");
+
             if (elem) {
               document.getElementById("status").innerHTML = "&nbsp;&nbsp;&nbsp;Ready to search";
             }
@@ -18442,13 +18434,13 @@ function SwitchTuneDatabase() {
             //console.log("Heneghan tunes not in database, fetching...");
 
             // Fetch the Gavin Heneghan tune database
-            fetchWithRetry('https://michaeleskin.com/abctools/abctunes_gavin_heneghan_10nov2023.json', gTuneDatabaseRetryTimeMS, gTuneDatabaseRetryCount)
-              .then((response) => response.json())
+            fetchTuneDatabaseJSON(TUNE_DB1_URL, TUNE_DB1_DATA_VERSION)
               .then((json) => {
 
                 //console.log("got abctunes_gavin_heneghan_10nov2023 data");
 
                 var elem = document.getElementById("status");
+
                 if (elem) {
                   if (gTheCurrentTuneDatabase == 0) {
                     document.getElementById("status").innerHTML = "&nbsp;&nbsp;&nbsp;Ready to search";
@@ -18457,8 +18449,13 @@ function SwitchTuneDatabase() {
 
                 gTheParsedTuneDatabase = json;
 
-                // Persist the database for later reads
-                saveTuneDatabase_DB(json, false);
+                // Persist the database for later reads, including metadata so
+                // future loads can identify the saved database version.
+                saveTuneDatabase_DB(json, false, {
+                  dataVersion: TUNE_DB1_DATA_VERSION,
+                  url: TUNE_DB1_URL,
+                  savedAt: new Date().toISOString()
+                });
               })
               .catch(function(error) {
 
@@ -18476,9 +18473,9 @@ function SwitchTuneDatabase() {
         });
 
       } else {
+
         document.getElementById("status").innerHTML = "&nbsp;&nbsp;&nbsp;Ready to search";
       }
-
 
       // Reset the dialog fields
       document.getElementById('search_results').value = "";
@@ -18501,11 +18498,12 @@ function SwitchTuneDatabase() {
 
           //debugger;
 
-          if (theTunes && (theTunes.length > 0)) {
+          if (isValidSavedTheSessionTuneDatabase(theTunes)) {
 
-            //console.log("FolkFriend database was found")
+            //console.log("TheSession database was found")
 
             var elem = document.getElementById("status");
+
             if (elem) {
               document.getElementById("status").innerHTML = "&nbsp;&nbsp;&nbsp;Ready to search";
             }
@@ -18514,16 +18512,16 @@ function SwitchTuneDatabase() {
 
           } else {
 
-            //console.log("FolkFriend tunes not in database, fetching...");
+            //console.log("TheSession tunes not in database, fetching...");
 
-            // Fetch the FolkFriend database
-            fetchWithRetry('https://michaeleskin.com/abctools/folkfriend-non-user-data_22dec2023.json', gTuneDatabaseRetryTimeMS, gTuneDatabaseRetryCount)
-              .then((response) => response.json())
+            // Fetch the thesession.org database
+            fetchTuneDatabaseJSON(TUNE_DB2_URL, TUNE_DB2_DATA_VERSION)
               .then((json) => {
 
-                //console.log("got folkfriend-non-user-data_21dec2023 data");
+                //console.log("got abctunes_thesession_28may2026 data");
 
                 var elem = document.getElementById("status");
+
                 if (elem) {
                   if (gTheCurrentTuneDatabase == 1) {
                     document.getElementById("status").innerHTML = "&nbsp;&nbsp;&nbsp;Ready to search";
@@ -18532,8 +18530,13 @@ function SwitchTuneDatabase() {
 
                 gTheFolkFriendDatabase = json;
 
-                // Persist the database for later reads
-                saveTuneDatabase_DB(json, true);
+                // Persist the database for later reads, including metadata so
+                // future startup checks can determine whether tunedb2 is current.
+                saveTuneDatabase_DB(json, true, {
+                  dataVersion: TUNE_DB2_DATA_VERSION,
+                  url: TUNE_DB2_URL,
+                  savedAt: new Date().toISOString()
+                });
 
               })
               .catch(function(error) {
@@ -18541,6 +18544,7 @@ function SwitchTuneDatabase() {
                 var elem = document.getElementById("status");
 
                 if (elem) {
+
                   if (gTheCurrentTuneDatabase == 1) {
                     document.getElementById("status").innerHTML = "&nbsp;&nbsp;&nbsp;Unable to load tune collection, please retry later...";
                   }
@@ -18549,7 +18553,9 @@ function SwitchTuneDatabase() {
               });
           }
         });
+
       } else {
+
         document.getElementById("status").innerHTML = "&nbsp;&nbsp;&nbsp;Ready to search";
       }
 
@@ -18612,7 +18618,7 @@ function AddFromSearch(e, callback) {
 
   var modal_msg = '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:15px;">Tune Search Engine&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#tune_search_engine" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>';
 
-  modal_msg += '<p style="font-size:12pt;line-height:24pt;margin-top:20px;margin-bottom:12px;" class="switchtunedatabase">Tune Collection to Search: <select id="databaseselect" onchange="SwitchTuneDatabase();" title="Select your tune search database"><option value="0">Gavin Heneghan\'s Collection (20,000+ Tune Settings)</option><option value="1">thesession.org Collection (45,000+ Tune Settings)</option></select></p>';
+  modal_msg += '<p style="font-size:12pt;line-height:24pt;margin-top:20px;margin-bottom:12px;" class="switchtunedatabase">Tune Collection to Search: <select id="databaseselect" onchange="SwitchTuneDatabase();" title="Select your tune search database"><option value="0">Gavin Heneghan\'s Collection (20,000+ Tune Settings)</option><option value="1">thesession.org Collection (54,000+ Tune Settings)</option></select></p>';
 
   modal_msg += '<p style="font-size:12pt;line-height:24pt;margin-top:0px;margin-bottom:18px;">Search for text in the tune name:&nbsp;&nbsp;<input style="width:100%;font-size:12pt;line-height:18px;padding:6px;" id="tuneNameToSearch" title="Enter your search text here" autocomplete="off" autocorrect="off" placeholder="Enter your search text here"/> </p>';
 
@@ -28486,13 +28492,13 @@ async function processShareLink() {
       // Show update message?
       if (gLocalStorageAvailable){
 
-        var updatePresented = localStorage.sawUpdate_28may2026a;
+        var updatePresented = localStorage.sawUpdate_28may2026b;
 
         if (updatePresented != "true") {
 
           showWhatsNewScreen();
 
-          localStorage.sawUpdate_28may2026a = true;
+          localStorage.sawUpdate_28may2026b = true;
 
         }
 
@@ -56360,19 +56366,17 @@ function showWhatsNewScreen() {
   // Feature card
   modal_msg += '<div style="margin:10px 0 6px 0; padding:0px 12px; border-radius:12px;';
   modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);">';
-  modal_msg += '<p>Bug fix for <strong>Create Tune Set</strong>:</p>';
-  modal_msg += '<p><strong>Create Tune Set</strong> now always reverses any postfixed articles in the tune titles when appending them together for the tune set title T: tag.</p>';
+  modal_msg += '<p><strong>Updated the thesession.org tune search database (first update in 4 years).</strong></p>';
+  modal_msg += '<p>The new tune database from Jeremy\'s latest official release adds 10,000+ new tune settings (over 54,000 in total) and additional tune metadata in the ABC including composer and transcriber when available.</p>';
+  modal_msg += '<p>Previously thesession.org tune database was based on one released by the developers of <strong>FolkFriend</strong>.</p>';
+  modal_msg += '<p>Switching to the thesession.org official tune collection, which is regularly updated on GitHub, will make it simple to update the tool with new tune settings in the future.</p>';
   modal_msg += '</div>';
 
   // Feature card
   modal_msg += '<div style="margin:10px 0 6px 0; padding:0px 12px; border-radius:12px;';
   modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);">';
-  modal_msg += '<p>New PDF Export <strong>Tune Layout</strong> options:</p>';
-  modal_msg += '<p><strong>One Tune per Page (Centered)</strong></p>';
-  modal_msg += '<p>The notation for each tune is placed on a new page and centered on the PDF page.</p>';
-  modal_msg += '<p><strong>Multiple Tunes per Page (Prefer 4 Tunes/Page)</strong></p>';
-  modal_msg += '<p>The tool tries to place tunes in groups of four per page. When needed, the four tunes are scaled down proportionally so they fit together on the page.</p>';
-  modal_msg += '<p>This can be useful if you are creating sets of three tunes but want to use an empty tune placeholder with just an X: and T: tag to show the set name before the set.</p>';
+  modal_msg += '<p><strong>Bug fix for "Create Tune Set"</strong>:</p>';
+  modal_msg += '<p><strong>Create Tune Set</strong> now always reverses any postfixed articles in the tune titles when appending them together for the tune set title T: tag.</p>';
   modal_msg += '</div>';
 
   modal_msg += '</div>'; // wrapper
@@ -62902,13 +62906,13 @@ async function DoStartup() {
   // Show update message?
   if (gLocalStorageAvailable && (!isFromShare)){
 
-    var updatePresented = localStorage.sawUpdate_28may2026a;
+    var updatePresented = localStorage.sawUpdate_28may2026b;
 
     if (updatePresented != "true") {
 
       showWhatsNewScreen();
 
-      localStorage.sawUpdate_28may2026a = true;
+      localStorage.sawUpdate_28may2026b = true;
 
     }
 

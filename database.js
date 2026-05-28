@@ -291,16 +291,89 @@ function getImpulse_DB(style,callback) {
 
 var gTuneDB = null;
 
+// True after initTuneDB() has finished opening IndexedDB and has completed
+// its automatic tunedb2 freshness check/update attempt.
+var gTuneDBInitComplete = false;
+
+// True while initTuneDB() is actively opening/updating the tune database.
+var gTuneDBInitInProgress = false;
+
+//
+// Tune search database update markers
+//
+// Increment TUNE_DB2_DATA_VERSION whenever tunedb2 must be forced refreshed
+// for existing users. Users with no tunedb2 record, old records without
+// metadata, or mismatched metadata will automatically fetch and replace tunedb2.
+//
+const TUNE_DB1_URL = "https://michaeleskin.com/abctools/abctunes_gavin_heneghan_10nov2023.json";
+const TUNE_DB1_DATA_VERSION = "2023-11-10-gavin-heneghan";
+
+const TUNE_DB2_URL = "https://michaeleskin.com/abctools/abctunes_thesession_28may2026.json";
+const TUNE_DB2_DATA_VERSION = "2026-05-28-thesession-flat-json-v1";
+
+function addCacheBusterToURL(url, dataVersion) {
+
+	var separator = (url.indexOf("?") == -1) ? "?" : "&";
+
+	return url + separator + "v=" + encodeURIComponent(dataVersion) + "&t=" + Date.now();
+}
+
+function fetchTuneDatabaseJSON(url, dataVersion) {
+
+	var fetchURL = addCacheBusterToURL(url, dataVersion);
+
+	// Use the existing retry helper when available.
+	// Fall back to fetch() so this file remains safe if loaded/tested alone.
+	if (typeof fetchWithRetry === "function") {
+		return fetchWithRetry(fetchURL, gTuneDatabaseRetryTimeMS, gTuneDatabaseRetryCount)
+			.then(function(response) {
+				if (!response.ok) {
+					throw new Error("HTTP error " + response.status);
+				}
+				return response.json();
+			});
+	}
+
+	return fetch(fetchURL, { cache: "no-store" })
+		.then(function(response) {
+			if (!response.ok) {
+				throw new Error("HTTP error " + response.status);
+			}
+			return response.json();
+		});
+}
+
 function initTuneDB(callback) {
 
 	//console.log("initTuneDB");
+
+	gTuneDBInitInProgress = true;
+	gTuneDBInitComplete = false;
+
+	if (!("indexedDB" in window)) {
+		console.log("IndexedDB not available");
+
+		gTuneDBInitInProgress = false;
+		gTuneDBInitComplete = true;
+
+		if (callback) {
+			callback(false);
+		}
+
+		return;
+	}
 
 	// Open a database
 	let request = indexedDB.open('tune_search_database', 1);
 
 	request.onerror = function(event) {
+
 		console.log("initTuneDB IndexedDB database creation error: " + event.target.errorCode);
-		if (callback){
+
+		gTuneDBInitInProgress = false;
+		gTuneDBInitComplete = true;
+
+		if (callback) {
 			callback(false);
 		}
 	};
@@ -311,10 +384,17 @@ function initTuneDB(callback) {
 
 		gTuneDB = event.target.result;
 
-		if (callback){
-			callback(true);
-		}
+		// Automatically refresh tunedb2 when the current saved copy is missing,
+		// was saved by the previous schema, or has old metadata.
+		ensureTuneDB2IsCurrent(function() {
 
+			gTuneDBInitInProgress = false;
+			gTuneDBInitComplete = true;
+
+			if (callback) {
+				callback(true);
+			}
+		});
 	};
 
 	request.onupgradeneeded = function(event) {
@@ -325,112 +405,95 @@ function initTuneDB(callback) {
 
 		gTuneDB = db;
 
-		// Create an object store to hold the tunedatabase1
-		let objectStore1 = db.createObjectStore("tunedb1", {
-			keyPath: "id",
-			autoIncrement: true
-		});
+		// Create an object store to hold tunedatabase1
+		if (!db.objectStoreNames.contains("tunedb1")) {
 
-		// Define the structure of the data
-		objectStore1.createIndex("tunes", "tunes", {
-			unique: false
-		});
+			let objectStore1 = db.createObjectStore("tunedb1", {
+				keyPath: "id",
+				autoIncrement: true
+			});
 
-		// Create an object store to hold the tunedatabase2
-		let objectStore2 = db.createObjectStore("tunedb2", {
-			keyPath: "id",
-			autoIncrement: true
-		});
+			// Define the structure of the data
+			objectStore1.createIndex("tunes", "tunes", {
+				unique: false
+			});
+		}
 
-		// Define the structure of the data
-		objectStore2.createIndex("tunes", "tunes", {
-			unique: false
-		});
+		// Create an object store to hold tunedatabase2
+		if (!db.objectStoreNames.contains("tunedb2")) {
 
+			let objectStore2 = db.createObjectStore("tunedb2", {
+				keyPath: "id",
+				autoIncrement: true
+			});
 
-		if (callback){
+			// Define the structure of the data
+			objectStore2.createIndex("tunes", "tunes", {
+				unique: false
+			});
+		}
+
+		// Do not call callback here.
+		// onsuccess fires after the upgrade transaction completes.
+	};
+}
+
+//
+// Save a tune database
+//
+function saveTuneDatabase_DB(tunes, isTheSession, metadata, callback) {
+
+	if (!gTuneDB){
+		console.log("No tune database available");
+		if (callback) {
+			callback(false);
+		}
+		return;
+	}
+
+	let storeName = isTheSession ? "tunedb2" : "tunedb1";
+	let databaseName = isTheSession ? "TheSession" : "Heneghan";
+
+	let transaction = gTuneDB.transaction([storeName], "readwrite");
+	let objectStore = transaction.objectStore(storeName);
+
+	transaction.oncomplete = function() {
+		//console.log(databaseName + " database saved successfully");
+		if (callback) {
 			callback(true);
 		}
 	};
 
-}
-// Function to save an impulse response
-function saveTuneDatabase_DB(tunes,isFolkFriend) {
-
-	if (!gTuneDB){
-		console.log("No tune database available");
-		return;
-	}
-
-	if (isFolkFriend){
-
-		let transaction = gTuneDB.transaction(["tunedb2"],"readwrite");
-		let objectStore = transaction.objectStore("tunedb2");
-
-		// Make a request to clear all the data out of the object store
-		const objectStoreRequest = objectStore.clear();
-
-		objectStoreRequest.onsuccess = function(event) {
-
-			// Create an object to hold the impulse
-			let newItem = {
-				tunes: tunes
-			};
-
-			// Add the object to the object store
-			let request = objectStore.add(newItem);
-
-			request.onsuccess = function(event) {
-				//console.log("FolkFriend database saved successfully");
-			};
-
-			request.onerror = function(event) {
-				console.log("Error saving FolkFriend database: " + event.target.errorCode);
-			};
-
+	transaction.onerror = function(event) {
+		console.log("Error saving " + databaseName + " database: " + transaction.error);
+		if (callback) {
+			callback(false);
 		}
+	};
 
-		objectStoreRequest.onerror = function(event) {
-			console.log("Error saving FolkFriend database: " + event.target.errorCode);
+	transaction.onabort = function(event) {
+		console.log("Save " + databaseName + " database transaction aborted: " + transaction.error);
+		if (callback) {
+			callback(false);
 		}
+	};
 
-	}
-	else{
+	// Clear old database contents first.
+	objectStore.clear();
 
-		let transaction = gTuneDB.transaction(["tunedb1"],"readwrite");
-		let objectStore = transaction.objectStore("tunedb1");
+	// Store one record containing both the tunes and metadata.
+	let newItem = {
+		tunes: tunes,
+		metadata: metadata || {}
+	};
 
-		// Make a request to clear all the data out of the object store
-		const objectStoreRequest = objectStore.clear();
-
-		objectStoreRequest.onsuccess = function(event) {
-
-			// Create an object to hold the impulse
-			let newItem = {
-				tunes: tunes
-			};
-
-			// Add the object to the object store
-			let request = objectStore.add(newItem);
-
-			request.onsuccess = function(event) {
-				//console.log("Heneghan database saved successfully");
-			};
-
-			request.onerror = function(event) {
-				console.log("Error saving Heneghan database: " + event.target.errorCode);
-			};
-
-		}
-
-		objectStoreRequest.onerror = function(event) {
-			console.log("Error saving Heneghan database: " + event.target.errorCode);
-		}
-	}
+	objectStore.add(newItem);
 }
 
-// Function to retrieve a tune database response 
-function getTuneDatabase_DB(isFolkFriend,callback) {
+//
+// Retrieve a tune database response
+//
+function getTuneDatabase_DB(isTheSession, callback) {
 
 	if (!gTuneDB){
 		console.log("No IndexedDB tune database available");
@@ -438,41 +501,146 @@ function getTuneDatabase_DB(isFolkFriend,callback) {
 		return;
 	}
 
-	if (isFolkFriend){
-		
-		let transaction = gTuneDB.transaction(["tunedb2"]);
-		let objectStore = transaction.objectStore("tunedb2");
-		let request = objectStore.getAll();
+	let storeName = isTheSession ? "tunedb2" : "tunedb1";
+	let databaseName = isTheSession ? "thesession" : "Heneghan";
 
-		request.onerror = function(event) {
-			console.log("Error retrieving FolkFriend database: " + event.target.errorCode);
-			callback(null);
-		};
+	let transaction = gTuneDB.transaction([storeName], "readonly");
+	let objectStore = transaction.objectStore(storeName);
+	let request = objectStore.getAll();
 
-		request.onsuccess = function(event) {
-			//console.log("FolkFriend database read success");			
-			let theTunes = event.target.result.map(item => item.tunes);
-			callback(theTunes);
-		};
+	request.onerror = function(event) {
+		console.log("Error retrieving " + databaseName + " database: " + event.target.errorCode);
+		callback(null);
+	};
+
+	request.onsuccess = function(event) {
+
+		// Preserve existing behavior:
+		// callback receives an array of stored .tunes payloads.
+		// For this one-record store, that is normally [tunes].
+		let rows = event.target.result || [];
+		let theTunes = rows.map(function(item) {
+			return item.tunes;
+		});
+
+		callback(theTunes);
+	};
+}
+
+//
+// Retrieve tune database metadata
+//
+function getTuneDatabaseMetadata_DB(isTheSession, callback) {
+
+	if (!gTuneDB){
+		console.log("No IndexedDB tune database available");
+		callback(null);
+		return;
 	}
-	else{
 
-		let transaction = gTuneDB.transaction(["tunedb1"]);
-		let objectStore = transaction.objectStore("tunedb1");
-		let request = objectStore.getAll();
+	let storeName = isTheSession ? "tunedb2" : "tunedb1";
 
-		request.onerror = function(event) {
-			console.log("Error retrieving Heneghan database: " + event.target.errorCode);
+	let transaction = gTuneDB.transaction([storeName], "readonly");
+	let objectStore = transaction.objectStore(storeName);
+	let request = objectStore.getAll();
+
+	request.onerror = function(event) {
+		console.log("Error retrieving tune database metadata: " + event.target.errorCode);
+		callback(null);
+	};
+
+	request.onsuccess = function(event) {
+
+		let rows = event.target.result || [];
+
+		if (!rows.length) {
 			callback(null);
-		};
+			return;
+		}
 
-		request.onsuccess = function(event) {
-			//console.log("Heneghan database read success");			
-			let theTunes = event.target.result.map(item => item.tunes);
-			callback(theTunes);
-		};
+		// Old saved databases will not have metadata.
+		// Returning null intentionally forces a refresh.
+		callback(rows[0].metadata || null);
+	};
+}
 
-	}
+//
+// Check whether tunedb2 exists and has the current data version
+//
+function isTuneDB2Current(callback) {
+
+	getTuneDatabaseMetadata_DB(true, function(metadata) {
+
+		if (!metadata) {
+			callback(false);
+			return;
+		}
+
+		if (metadata.dataVersion !== TUNE_DB2_DATA_VERSION) {
+			callback(false);
+			return;
+		}
+
+		callback(true);
+	});
+}
+
+//
+// Ensure tunedb2 contains the current thesession.org tune database
+//
+function ensureTuneDB2IsCurrent(callback) {
+
+	isTuneDB2Current(function(isCurrent) {
+
+		if (isCurrent) {
+			//console.log("tunedb2 is current");
+			if (callback) {
+				callback(false);
+			}
+			return;
+		}
+
+		// If the user is offline, leave the existing cached database alone.
+		// It may be old, but it is still better than deleting it.
+		if (!navigator.onLine) {
+			console.log("tunedb2 is missing or stale, but browser is offline. Keeping existing cached database.");
+			if (callback) {
+				callback(false);
+			}
+			return;
+		}
+
+		console.log("tunedb2 is missing or stale. Fetching current database...");
+
+		fetchTuneDatabaseJSON(TUNE_DB2_URL, TUNE_DB2_DATA_VERSION)
+			.then(function(json) {
+
+				saveTuneDatabase_DB(json, true, {
+					dataVersion: TUNE_DB2_DATA_VERSION,
+					url: TUNE_DB2_URL,
+					savedAt: new Date().toISOString()
+				}, function(savedOK) {
+
+					if (savedOK) {
+						console.log("tunedb2 successfully updated to " + TUNE_DB2_DATA_VERSION);
+					} else {
+						console.log("tunedb2 update fetch succeeded, but IndexedDB save failed.");
+					}
+
+					if (callback) {
+						callback(savedOK);
+					}
+				});
+			})
+			.catch(function(error) {
+
+				console.log("Unable to update tunedb2:", error);
+
+				if (callback) {
+					callback(false);
+				}
+			});
+	});
 }
 
 //
