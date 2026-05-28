@@ -2451,6 +2451,33 @@ function buildSingleSetCombinedABC(setTitle, setEntries) {
 
     let chunk = buildSingleSettingABCFromIncludedItem(setEntries[i], i + 1).trim();
 
+    // Tune Sets should not inject composer C: tags, even when composer metadata
+    // is available from the fetched tune JSON.
+    chunk = chunk.replace(/^C:\s*.*\r?\n/gim, "");
+
+    const setTuneComposer =
+      (typeof setEntries[i].tuneComposer === "string" && setEntries[i].tuneComposer)
+        ? cleanABCHeaderValue(setEntries[i].tuneComposer)
+        : ((setEntries[i].setting && typeof setEntries[i].setting.composer === "string")
+            ? cleanABCHeaderValue(setEntries[i].setting.composer)
+            : "");
+
+    if (setTuneComposer) {
+      // For Tune Sets, include composer details as an N: note for this tune
+      // instead of changing the title or adding a C: tag.
+      // Only the first T: tag for this specific tune is used.
+      chunk = chunk.replace(
+        /^T:\s*(.*)$/m,
+        function(match, titleText) {
+          const cleanTitle = cleanABCHeaderValue(titleText);
+          if (!cleanTitle) {
+            return match;
+          }
+          return `${match}\nN:"${cleanTitle}" composed by ${setTuneComposer}`;
+        }
+      );
+    }
+
     // Remove all Z: tags everywhere
     chunk = chunk.replace(/^Z:\s*.*\r?\n/gim, "");
 
