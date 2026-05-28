@@ -440,9 +440,6 @@ function GetWebsiteTuneName(tuneABC){
 
             fname = fname.trim();
 
-            // Reverse any articles at the end of the title
-            fname = titleReverser(fname);
-
             return fname;
 
         }
