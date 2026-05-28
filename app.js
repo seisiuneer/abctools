@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3241_052826_0430";
+var gVersionNumber = "3242_052826_0930";
 
 var gMIDIInitStillWaiting = false;
 
@@ -19568,6 +19568,12 @@ function generateIndexedRepeatedString(str, itemCount, repeatCount) {
 
 function processTuneSet(tuneSet, tuneNames, bRepeat, nRepeat, bIsVerbose) {
 
+  // Run the article reverser on the tune names before concatenating
+  var nTitles = tuneNames.length;
+  for (var i=0;i<nTitles;++i){
+    tuneNames[i] = titleReverser(tuneNames[i]);
+  }
+
   var setName = tuneNames.join(' / ');
 
   var lines = tuneSet.split(/\r?\n/);
@@ -20077,7 +20083,6 @@ function BuildTuneSetAppend() {
   }
 
 }
-
 
 function BuildTuneSetClearSelection() {
 
@@ -28481,13 +28486,13 @@ async function processShareLink() {
       // Show update message?
       if (gLocalStorageAvailable){
 
-        var updatePresented = localStorage.sawUpdate_28may2026;
+        var updatePresented = localStorage.sawUpdate_28may2026a;
 
         if (updatePresented != "true") {
 
           showWhatsNewScreen();
 
-          localStorage.sawUpdate_28may2026 = true;
+          localStorage.sawUpdate_28may2026a = true;
 
         }
 
@@ -56355,6 +56360,13 @@ function showWhatsNewScreen() {
   // Feature card
   modal_msg += '<div style="margin:10px 0 6px 0; padding:0px 12px; border-radius:12px;';
   modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);">';
+  modal_msg += '<p>Bug fix for <strong>Create Tune Set</strong></p>';
+  modal_msg += '<p><strong>Create Tune Set</strong> now always reverses any postfixed articles in the tune titles when appending them together for the tune set title T: tag.</p>';
+  modal_msg += '</div>';
+
+  // Feature card
+  modal_msg += '<div style="margin:10px 0 6px 0; padding:0px 12px; border-radius:12px;';
+  modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);">';
   modal_msg += '<p>New PDF Export <strong>Tune Layout</strong> options:</p>';
   modal_msg += '<p><strong>One Tune per Page (Centered)</strong></p>';
   modal_msg += '<p>The notation for each tune is placed on a new page and centered on the PDF page.</p>';
@@ -62890,13 +62902,13 @@ async function DoStartup() {
   // Show update message?
   if (gLocalStorageAvailable && (!isFromShare)){
 
-    var updatePresented = localStorage.sawUpdate_28may2026;
+    var updatePresented = localStorage.sawUpdate_28may2026a;
 
     if (updatePresented != "true") {
 
       showWhatsNewScreen();
 
-      localStorage.sawUpdate_28may2026 = true;
+      localStorage.sawUpdate_28may2026a = true;
 
     }
 
