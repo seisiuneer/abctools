@@ -56360,7 +56360,7 @@ function showWhatsNewScreen() {
   // Feature card
   modal_msg += '<div style="margin:10px 0 6px 0; padding:0px 12px; border-radius:12px;';
   modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);">';
-  modal_msg += '<p>Bug fix for <strong>Create Tune Set</strong></p>';
+  modal_msg += '<p>Bug fix for <strong>Create Tune Set</strong>:</p>';
   modal_msg += '<p><strong>Create Tune Set</strong> now always reverses any postfixed articles in the tune titles when appending them together for the tune set title T: tag.</p>';
   modal_msg += '</div>';
 
