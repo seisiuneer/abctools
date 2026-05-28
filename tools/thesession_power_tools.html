@@ -2384,6 +2384,13 @@ function buildMemberABCFromIncluded(included, sourceLabel) {
   };
 }
 
+function cleanABCHeaderValue(value) {
+  return String(value || "")
+    .replace(/[\r\n]+/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
 function buildSingleSettingABCFromIncludedItem(it, xNum) {
   const rLine = it.tuneType || "reel";
   const mLine = defaultMForRhythm(rLine) || "4/4";
@@ -2395,12 +2402,20 @@ function buildSingleSettingABCFromIncludedItem(it, xNum) {
 
   const settingMemberName =
     (it.setting && it.setting.member && typeof it.setting.member.name === "string")
-      ? it.setting.member.name.trim()
+      ? cleanABCHeaderValue(it.setting.member.name)
       : "";
+
+  const composerName =
+    (typeof it.tuneComposer === "string" && it.tuneComposer)
+      ? cleanABCHeaderValue(it.tuneComposer)
+      : ((it.setting && typeof it.setting.composer === "string")
+          ? cleanABCHeaderValue(it.setting.composer)
+          : "");
 
   const header =
     `X:${xNum}\n` +
     `T:${tLine}\n` +
+    (composerName ? `C:${composerName}\n` : "") +
     `R:${rLine}\n` +
     `M:${mLine}\n` +
     `L:${lLine}\n` +
@@ -2655,7 +2670,10 @@ async function fetchMemberTunebookAsABC(items, memberName, onlyChords, memberSor
         const tuneType =
           (tuneData && tuneData.type) ? normalizeTuneType(String(tuneData.type)) : "";
 
-        const okObj = { tuneData, tuneUrlNoHash, tuneTitle, tuneType, failed: false };
+        const tuneComposer =
+          (tuneData && typeof tuneData.composer === "string") ? cleanABCHeaderValue(tuneData.composer) : "";
+
+        const okObj = { tuneData, tuneUrlNoHash, tuneTitle, tuneType, tuneComposer, failed: false };
         tuneCache.set(tuneId, okObj);
         return okObj;
 
@@ -2745,6 +2763,7 @@ async function fetchMemberTunebookAsABC(items, memberName, onlyChords, memberSor
         bodyNormalized,
         tuneTitle: cached.tuneTitle,
         tuneType: cached.tuneType,
+        tuneComposer: cached.tuneComposer || "",
         sourceSettingUrl
       });
     }
@@ -2882,7 +2901,10 @@ async function fetchMemberSetsAsABC(items, memberName, onlyChords, memberSortMod
         const tuneType =
           (tuneData && tuneData.type) ? normalizeTuneType(String(tuneData.type)) : "";
 
-        const okObj = { tuneData, tuneUrlNoHash, tuneTitle, tuneType, failed: false };
+        const tuneComposer =
+          (tuneData && typeof tuneData.composer === "string") ? cleanABCHeaderValue(tuneData.composer) : "";
+
+        const okObj = { tuneData, tuneUrlNoHash, tuneTitle, tuneType, tuneComposer, failed: false };
         tuneCache.set(tuneId, okObj);
         return okObj;
 
@@ -2965,6 +2987,7 @@ async function fetchMemberSetsAsABC(items, memberName, onlyChords, memberSortMod
         bodyNormalized,
         tuneTitle: cached.tuneTitle,
         tuneType: cached.tuneType || normalizeTuneType(settingRef.type || ""),
+        tuneComposer: cached.tuneComposer || "",
         sourceSettingUrl: settingUrl
       });
     }
@@ -3206,7 +3229,10 @@ async function fetchTuneOrBookmarksAsABC(inputUrl, opts) {
         const tuneType =
           (tuneData && tuneData.type) ? normalizeTuneType(String(tuneData.type)) : "";
 
-        const okObj = { tuneData, tuneUrlNoHash, tuneTitle, tuneType, failed: false };
+        const tuneComposer =
+          (tuneData && typeof tuneData.composer === "string") ? cleanABCHeaderValue(tuneData.composer) : "";
+
+        const okObj = { tuneData, tuneUrlNoHash, tuneTitle, tuneType, tuneComposer, failed: false };
         tuneCache.set(tuneId, okObj);
         return okObj;
 
@@ -3280,6 +3306,7 @@ async function fetchTuneOrBookmarksAsABC(inputUrl, opts) {
       bodyNormalized,
       tuneTitle: cached.tuneTitle,
       tuneType: cached.tuneType,
+      tuneComposer: cached.tuneComposer || "",
       sourceSettingUrl: settingUrl
     };
 
@@ -3456,6 +3483,7 @@ async function fetchAllTuneVersionsAsABC(tuneUrl, opts) {
 
   const tuneTitle = (data && data.name) ? String(data.name) : `Tune ${tuneId}`;
   const tuneType  = (data && data.type) ? normalizeTuneType(String(data.type)) : "";
+  const tuneComposer = (data && typeof data.composer === "string") ? cleanABCHeaderValue(data.composer) : "";
 
   const settings = (data && Array.isArray(data.settings)) ? data.settings : [];
   if (!settings.length) throw new Error("Error: No settings found for tune: " + tuneUrl);
@@ -3509,9 +3537,11 @@ async function fetchAllTuneVersionsAsABC(tuneUrl, opts) {
 
     const memberName =
       (setting && setting.member && typeof setting.member.name === "string")
-        ? setting.member.name.trim()
+        ? cleanABCHeaderValue(setting.member.name)
         : "";
     const zLine = memberName;
+
+    const composerName = tuneComposer;
 
     let sUrl = "";
     if (setting && typeof setting.url === "string" && setting.url.trim()) {
@@ -3523,6 +3553,7 @@ async function fetchAllTuneVersionsAsABC(tuneUrl, opts) {
     const header =
       `X:${xNum}\n` +
       `T:${tLine}\n` +
+      (composerName ? `C:${composerName}\n` : "") +
       `R:${rLine}\n` +
       `M:${mLine}\n` +
       `L:${lLine}\n` +
