@@ -574,7 +574,7 @@
       '<ul>' +
       '<li>Existing chord symbols in the input tunes are stripped before processing.</li>' +
       '<li>The default minimum match score is <b>0.75</b>. If no normal match is found for a general measure, the tool can accept the best available match down to <b>75%</b> of the selected threshold. Critical tune, repeat, and part-boundary cases can still use the lower internal <b>0.35</b> boundary threshold.</li>' +
-      '<li>For starts and endings of tunes, parts, and repeated sections, the tool first tries matching against database measures that are also starts or endings, then falls back to the general same rhythm/meter/key/mode candidate pool if needed.</li>' +
+      '<li>For starts and endings of tunes, parts, repeated sections, and first/second endings, the tool first tries matching against database measures that are also starts or endings, then falls back to the general same rhythm/meter/key/mode candidate pool if needed.</li>' +
       '<li>If no matching measure with usable chords meets the threshold, that source measure is left unchanged.</li>' +
       '</ul>' +
       '<h4>Running and output</h4>' +
@@ -1001,6 +1001,21 @@
     return parseInt(m[1], 10) / parseInt(m[2], 10);
   }
 
+
+  function getAlternateEndingNumber(measurePart) {
+    // ABC first/second endings are commonly written immediately after the
+    // preceding barline, for example:
+    //   |1 AFE D3 :|
+    //   |2 AFE D2e ||
+    //   [1 A2 AB :|
+    //
+    // splitBodyIntoMeasures() keeps the "1" or "2" marker at the start of the
+    // measure content, so detect it there. Treat any numeric ending marker as
+    // an ending boundary for matching, threshold, and repeated-chord handling.
+    var m = String(measurePart || "").match(/^\s*\[?\s*(\d+)\s*/);
+    return m ? parseInt(m[1], 10) : 0;
+  }
+
   function buildMeasureObjects(body, meter, unitNoteLength) {
     var raw = splitBodyIntoMeasures(body);
     var full = getFullMeasureDuration(meter, unitNoteLength);
@@ -1017,7 +1032,11 @@
         isPartialMeasure: hasNotes && full && parsed.duration < full - 0.01,
         isInitialPickup: isInitialPickup,
         isRepeatStart: /\|:/.test(r.prefix + r.suffix),
-        isRepeatEnd: /:\|/.test(r.prefix + r.suffix),
+        isRepeatEnd: /:\|/.test(r.suffix || ""),
+        alternateEndingNumber: getAlternateEndingNumber(r.content),
+        isFirstEnding: getAlternateEndingNumber(r.content) === 1,
+        isSecondEnding: getAlternateEndingNumber(r.content) === 2,
+        isAlternateEnding: getAlternateEndingNumber(r.content) > 0,
         isBoundaryStart: false,
         isBoundaryEnd: false,
         chords: extractChordsWithNoteIndexes(r.content)
@@ -1047,10 +1066,13 @@
 
       m.isBoundaryStart = !!(isFirstFullMeasure || m.isRepeatStart || startsAfterPickup);
 
-      // Treat explicit repeat endings, double/final bars, and the last musical
-      // measure of the tune as ending boundaries. Also mark the measure before
-      // a new repeat start as an ending boundary when it has real notes.
+      // Treat first/second endings, explicit repeat endings, double/final bars,
+      // and the last musical measure of the tune as ending boundaries. Also mark
+      // the measure before a new repeat start as an ending boundary when it has
+      // real notes. This lets alternate endings use ending-priority candidates,
+      // the lower boundary threshold, and ending-specific repeated-chord restore.
       m.isBoundaryEnd = !!(
+        m.isAlternateEnding ||
         m.isRepeatEnd ||
         /\|\||\|\]/.test(m.suffix || "") ||
         !next ||
@@ -1694,14 +1716,15 @@
       }
 
       // Do not inject chords on short pickup notes that lead into the next full
-      // phrase or repeated part. The only exception is a partial measure that
-      // actually ends a repeated section, because repeat endings are required
-      // to carry an explicit chord marker when a match is found.
+      // phrase or repeated part. The exception is a partial measure that is an
+      // ending boundary, including first/second endings, repeat endings,
+      // double/final endings, or the last musical measure. Those measures are
+      // allowed to carry an explicit chord marker when a match is found.
       //
       // When such a pickup is skipped, force an explicit chord on the next full
       // measure. This handles common ABC like ":| d|ea...", where the single
       // pickup note belongs to the new part but should not itself be chorded.
-      if (m.isPartialMeasure && !m.isRepeatEnd) {
+      if (m.isPartialMeasure && !m.isBoundaryEnd) {
         skippedPickup++;
         forceNextFullMeasureChord = true;
         outParts.push(m.prefix + stripExistingChords(m.content) + m.suffix);
@@ -1828,8 +1851,9 @@
       //   3/4: beats 1, 2, and 3
       // Boundary chords for tune starts and repeat starts are still forced
       // onto the start of the measure when a matching database measure is found.
-      // Repeat endings use the lower boundary threshold, but repeated opening
-      // chords can still be suppressed if another chord remains in the measure.
+      // Ending boundaries use the lower boundary threshold, but repeated
+      // opening chords can still be suppressed if another chord remains
+      // in the measure.
 
       if (!options.repeatSameChord) {
         var previousEmittedChord = lastChord;
@@ -1855,12 +1879,14 @@
 
         chords = filteredChords;
 
-        // Repeat-end measures need an explicit chord marker somewhere in the
-        // measure when a usable match exists, but that should not force a
+        // Ending-boundary measures need an explicit chord marker somewhere in
+        // the measure when a usable match exists, but that should not force a
         // repeated opening chord if a later non-repeated chord is available.
-        // If suppression removed everything from a repeat-end measure, restore
-        // one chord so the end of the repeated section still has a marker.
-        if (!chords.length && m.isRepeatEnd && originalMappedChords.length) {
+        // This includes first/second endings, explicit repeat endings,
+        // double/final bars, and the last musical measure of a tune. If
+        // suppression removed everything from an ending-boundary measure,
+        // restore one chord so the ending still has a marker.
+        if (!chords.length && m.isBoundaryEnd && originalMappedChords.length) {
           chords = [Object.assign({}, originalMappedChords[0], { forced: true })];
         }
       }
