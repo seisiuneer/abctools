@@ -523,7 +523,7 @@
       '</ul>' +
       '<h4>Chord placement rules</h4>' +
       '<ul>' +
-      '<li>Chords are only copied to allowed beat positions for the meter: 4/4 on beats 1 and 3; 2/4 on beats 1 and 2; 3/4 on beats 1, 2, and 3; 6/8 on beats 1 and 4; 9/8 on beats 1, 4, and 7; and 12/8 on beats 1, 4, 7, and 10.</li>' +
+      '<li>Chords are only copied to allowed beat positions for the meter: 4/4 on beats 1 and 3; 2/2 on beats 1 and 2; 2/4 on beats 1 and 2; 3/4 on beats 1, 2, and 3; 6/8 on beats 1 and 4; 9/8 on beats 1, 4, and 7; and 12/8 on beats 1, 4, 7, and 10.</li>' +
       '<li>Opening pickup notes before the first full measure are not chorded.</li>' +
       '<li>Short pickup notes leading into a new phrase or repeated part are not chorded; the next full measure is forced to get a chord if a usable match is found.</li>' +
       '<li>Repeated chord symbols are suppressed when the same chord continues across measures, except where a chord marker is required at important tune or repeat boundaries.</li>' +
@@ -591,11 +591,19 @@
     //   are written as eight 1/8-note units per bar, so use the same
     //   matching and chord-placement bucket as 4/4.
     //
+    // 2/2 is deliberately normalized into the same bucket as 4/4. This means:
+    //   - a 2/2 input tune searches both 2/2 and 4/4 database tunes because
+    //     database 2/2 and database 4/4 entries are indexed under the same key;
+    //   - a 4/4 input tune can also use compatible 2/2 database material;
+    //   - chord placement still lands on the start and midpoint of the measure,
+    //     which are beats 1 and 2 in 2/2, and beats 1 and 3 in 4/4.
+    //
     // Normalizing these aliases is important because the chord database
     // often stores the same style of tune as 4/4, while source tunebooks
-    // commonly write reels and hornpipes as M:C|.
+    // commonly write reels and hornpipes as M:C| or 2/2.
     if (/^C$/i.test(m)) return "4/4";
     if (/^C\|$/i.test(m)) return "4/4";
+    if (/^2\/2$/i.test(m)) return "4/4";
 
     return m;
   }
@@ -998,7 +1006,7 @@
 
     switch (normalizeMeter(meter)) {
       case "4/4":
-        return [0, full / 2];          // Beats 1 and 3.
+        return [0, full / 2];          // 4/4 beats 1 and 3, and normalized 2/2 beats 1 and 2.
       case "2/4":
         return [0, full / 2];          // Beats 1 and 2.
       case "6/8":
@@ -1534,6 +1542,7 @@
       // Chords copied from the database are only allowed on musically appropriate
       // beat locations for the current meter:
       //   4/4: beats 1 and 3
+      //   2/2: beats 1 and 2, handled in the normalized 4/4 bucket
       //   2/4: beats 1 and 2
       //   6/8: beats 1 and 4
       //   9/8: beats 1, 4, and 7
