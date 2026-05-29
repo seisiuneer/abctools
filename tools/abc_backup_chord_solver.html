@@ -508,8 +508,6 @@
       '<li>Existing chord symbols in the input tunes are stripped before processing.</li>' +
       '<li>If a source tune uses <b>M:C</b> or <b>M:C|</b>, the tool rewrites that header to <b>M:4/4</b> and processes the tune as 4/4.</li>' +
       '<li>For each source measure, the tool searches candidate database measures from tunes with the same normalized meter, key, and mode.</li>' +
-      '<li>Grace notes in curly braces, such as <b>{B}</b> or <b>{BAG}</b>, are ignored for matching and timing. If a chord is added to a note with a grace note before it, the chord is inserted before the opening curly brace.</li>' +
-      '<li>Common ABC triplet markers such as <b>(3ABC</b> are handled for measure timing and ignored as note text during matching.</li>' +
       '<li>Only database measures whose chord symbols are plain uppercase-root major or minor triads are used, such as <b>D</b>, <b>G</b>, <b>Em</b>, <b>Bbm</b>, or <b>F#m</b>. Lowercase chords, slash chords, 5 chords, 7 chords, and extended chords are skipped.</li>' +
       '<li>The default minimum match score is <b>0.70</b>. In some boundary cases, a lower internal fallback threshold may be used to help place required chords at tune, repeat, or part boundaries.</li>' +
       '<li>If no matching measure with usable chords meets the threshold, that source measure is left unchanged.</li>' +
@@ -527,7 +525,7 @@
       '<li>Click <b>Cancel</b> in the progress dialog to stop processing and clear the output area.</li>' +
       '<li>When processing completes, the dialog closes and a summary appears in the main status area.</li>' +
       '<li>The <b>Copy Output to the Clipboard</b> and <b>Save Output to a File</b> buttons are enabled only when there is output text.</li>' +
-      '<li>On iOS, saving uses the Share Sheet so the <b>.abc</b>. Other platforms use the normal browser download process.</li>' +
+      '<li>On iOS, saving uses the Share Sheet to allow you save the ABC to the Files area or share it with other applications.</li>' +
       '<li>The <b>Test Output in the ABC Transcription Tools</b> button is enabled only when the generated share link is short enough for direct transfer.</li>' +
       '</ul>' +
       '</div>';
@@ -542,7 +540,6 @@
       alert('Instructions are available when DayPilot.Modal is loaded. Please include the DayPilot.Modal library before using this button.');
     }
   }
-
 
   function normalizeMeter(m) {
     m = (m || "").trim().replace(/\s+/g, "");
