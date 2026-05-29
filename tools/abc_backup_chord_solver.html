@@ -123,9 +123,9 @@
     #progress_modal_status {
       font-size: 12pt;
       line-height: 1.45;
-      height: calc(7.25em + 22px);      /* fixed 5 lines of status text plus padding/border */
-      min-height: calc(7.25em + 22px);
-      max-height: calc(7.25em + 22px);
+      height: calc(8.7em + 22px);      /* fixed 5 lines of status text plus padding/border */
+      min-height: calc(8.7em + 22px);
+      max-height: calc(8.7em + 22px);
       overflow-y: auto;
       padding: 10px;
       background: #f5f5ff;
@@ -516,6 +516,7 @@
       '<ul>' +
       '<li>Existing chord symbols in the input tunes are stripped before processing.</li>' +
       '<li>For each source measure, the tool searches candidate database measures from tunes with the same normalized meter, key, and mode.</li>' +
+      '<li>For minor tunes, the tool also checks same-tonic Dorian tunes in the same meter and uses whichever measure-level match is better. For Dorian tunes, it also checks the same-tonic minor key.</li>' +
       '<li>Only database measures whose chord symbols are plain uppercase-root major or minor triads are used, such as <b>D</b>, <b>G</b>, <b>Em</b>, <b>Bbm</b>, or <b>F#m</b>. Lowercase chords, slash chords, 5 chords, 7 chords, and extended chords are skipped.</li>' +
       '<li>The default minimum match score is <b>0.70</b>. If no normal match is found for a general measure, the tool can accept the best available match down to <b>75%</b> of the selected threshold. Critical tune, repeat, and part-boundary cases can still use the lower internal <b>0.35</b> boundary threshold.</li>' +
       '<li>If no matching measure with usable chords meets the threshold, that source measure is left unchanged.</li>' +
@@ -1162,6 +1163,75 @@
     return normalizeMeter(meter) + "\t" + normalizeMode(mode);
   }
 
+  function splitNormalizedMode(normalizedMode) {
+    normalizedMode = normalizeMode(normalizedMode || "");
+    var m = normalizedMode.match(/^([A-G](?:#|b)?)(.*)$/);
+    if (!m) return { root: "", mode: normalizedMode };
+    return { root: m[1], mode: (m[2] || "major") };
+  }
+
+  function tuneKeyFromNormalizedMode(meter, normalizedMode) {
+    return normalizeMeter(meter) + "\t" + normalizedMode;
+  }
+
+  function getCandidateBucketsForMeterMode(meter, mode) {
+    var normalizedMeter = normalizeMeter(meter);
+    var normalizedMode = normalizeMode(mode);
+    var parsedMode = splitNormalizedMode(normalizedMode);
+    var buckets = [{ key: tuneKeyFromNormalizedMode(normalizedMeter, normalizedMode), label: normalizedMode, primary: true }];
+
+    // Minor and Dorian tunes are often close enough that one can provide a
+    // better backup-chord source for the other. Search the exact mode first,
+    // then also search the same tonic in the related minor/Dorian mode and let
+    // the best measure-level score win.
+    if (parsedMode.root && parsedMode.mode === "minor") {
+      buckets.push({
+        key: tuneKeyFromNormalizedMode(normalizedMeter, parsedMode.root + "dorian"),
+        label: parsedMode.root + "dorian",
+        primary: false
+      });
+    } else if (parsedMode.root && parsedMode.mode === "dorian") {
+      buckets.push({
+        key: tuneKeyFromNormalizedMode(normalizedMeter, parsedMode.root + "minor"),
+        label: parsedMode.root + "minor",
+        primary: false
+      });
+    }
+
+    return buckets;
+  }
+
+  function getCandidatesForMeterMode(meter, mode) {
+    var buckets = getCandidateBucketsForMeterMode(meter, mode);
+    var candidates = [];
+    var seen = new Set();
+    var usedBuckets = [];
+
+    buckets.forEach(function(bucket) {
+      var bucketCandidates = gChordIndex.get(bucket.key) || [];
+      if (bucketCandidates.length) usedBuckets.push({ label: bucket.label, count: bucketCandidates.length, primary: bucket.primary });
+
+      bucketCandidates.forEach(function(candidate, idx) {
+        // Candidate objects from different buckets should normally be distinct,
+        // but keep this defensive de-duplication to avoid scanning the exact
+        // same setting/measure twice if the database contains aliases.
+        var id = (candidate.sourceSettingId || "") + "|" + (candidate.index || idx) + "|" + bucket.key;
+        if (seen.has(id)) return;
+        seen.add(id);
+        candidates.push(candidate);
+      });
+    });
+
+    return { candidates: candidates, buckets: usedBuckets };
+  }
+
+  function describeCandidateBuckets(candidateInfo) {
+    if (!candidateInfo || !candidateInfo.buckets || !candidateInfo.buckets.length) return "";
+    return candidateInfo.buckets.map(function(bucket) {
+      return escapeHTML(bucket.label) + ": <b>" + bucket.count + "</b>";
+    }).join(", ");
+  }
+
   function buildChordIndex(db) {
     var index = new Map();
     var chordedTunes = 0;
@@ -1266,19 +1336,20 @@
     var mode = getHeaderValue(hb.header, "K");
     var unitLength = getHeaderValue(hb.header, "L");
     var title = getHeaderValue(hb.header, "T") || "Untitled";
-    var key = tuneKey(meter, mode);
-    var candidates = gChordIndex.get(key) || [];
+    var candidateInfo = getCandidatesForMeterMode(meter, mode);
+    var candidates = candidateInfo.candidates;
+    var candidateBucketSummary = describeCandidateBuckets(candidateInfo);
 
     if (!hb.body.trim() || !candidates.length) {
       if (progressState) {
         updateProgressModal(
           "Matching chords...<br>" +
           "Tune <b>" + progressState.tuneNumber + "</b> of <b>" + progressState.tuneCount + "</b>: <b>" + escapeHTML(title) + "</b><br>" +
-          "No same meter/key/mode chord candidates were found for this tune."
+          "No compatible same-meter chord candidates were found for this tune."
         );
         await allowBrowserToUpdate();
       }
-      return { text: tune, stats: { title: title, matched: 0, total: 0, skippedPickup: 0, candidates: candidates.length } };
+      return { text: tune, stats: { title: title, matched: 0, total: 0, skippedPickup: 0, candidates: candidates.length, candidateBuckets: [] } };
     }
 
     var measures = buildMeasureObjects(hb.body, meter, unitLength);
@@ -1343,6 +1414,7 @@
           updateProgressModal(
             "Matching chords... <b>" + overallPercent + "%</b> complete, elapsed <b>" + formatElapsed(elapsed) + "</b><br>" +
             "Tune <b>" + progressState.tuneNumber + "</b> of <b>" + progressState.tuneCount + "</b>: <b>" + escapeHTML(title) + "</b><br>" +
+            (candidateBucketSummary ? "Candidate buckets: " + candidateBucketSummary + ".<br>" : "") +
             "Measure <b>" + processedMeasureCount + "</b> of <b>" + totalMeasureCount + "</b> in this tune; " +
             "Database candidates checked <b>" + candidateDone + "</b> of <b>" + candidateTotal + "</b>.<br>" +
             "Matches so far: <b>" + (progressState.totalMatched + matched) + "</b>; Fallback matches: <b>" + ((progressState.totalFallbackMatched || 0) + fallbackMatched) + "</b>;<br/>Skipped pickup measures: <b>" + (progressState.totalSkippedPickup + skippedPickup) + "</b>; Current best score: <b>" + bestScore.toFixed(3) + "</b>."
@@ -1433,7 +1505,7 @@
 
     return {
       text: hb.header + (hb.header && outBody ? "\n" : "") + outBody,
-      stats: { title: title, matched: matched, total: total, skippedPickup: skippedPickup, fallbackMatched: fallbackMatched, candidates: candidates.length }
+      stats: { title: title, matched: matched, total: total, skippedPickup: skippedPickup, fallbackMatched: fallbackMatched, candidates: candidates.length, candidateBuckets: candidateInfo.buckets }
     };
   }
 
