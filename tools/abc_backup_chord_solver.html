@@ -324,6 +324,47 @@
     return bytesToBase64URL(deflatedBytes);
   }
 
+
+  function base64URLToBytes(base64URLText) {
+    var base64 = String(base64URLText || "")
+      .replace(/-/g, "+")
+      .replace(/_/g, "/");
+
+    while (base64.length % 4) base64 += "=";
+
+    var binary = atob(base64);
+    var bytes = new Uint8Array(binary.length);
+    for (var i = 0; i < binary.length; i++) {
+      bytes[i] = binary.charCodeAt(i);
+    }
+    return bytes;
+  }
+
+  function decompressABCDeflateFromShareLink(defText) {
+    if (typeof pako === "undefined") {
+      throw new Error("pako is not loaded. Include pako.min.js before using deflate share links.");
+    }
+    if (typeof TextDecoder === "undefined") {
+      throw new Error("TextDecoder is not available in this browser.");
+    }
+
+    var compressedBytes = base64URLToBytes(defText);
+    var inflatedBytes = pako.inflate(compressedBytes);
+    return new TextDecoder("utf-8").decode(inflatedBytes);
+  }
+
+  function getDeflatedABCFromURL() {
+    try {
+      var params = new URLSearchParams(window.location.search || "");
+      var defText = params.get("def");
+      if (!defText) return null;
+      return decompressABCDeflateFromShareLink(defText);
+    } catch (err) {
+      console.error("Could not decode def= ABC share-link parameter:", err);
+      return null;
+    }
+  }
+
   function bytesToBase64(bytes) {
     var binary = "";
     for (var i = 0; i < bytes.length; i++) {
@@ -472,8 +513,9 @@
     gCancelRequested = false;
     hideProgressModal();
 
+    var sharedABC = getDeflatedABCFromURL();
     var input = document.getElementById("input");
-    if (input) input.value = gDefaultInputABC;
+    if (input) input.value = (sharedABC !== null) ? sharedABC : gDefaultInputABC;
 
     clearOutputArea();
 
@@ -489,7 +531,14 @@
 
     gSaveFilename = "abc_backup_chords.abc";
     setProcessingControlsEnabled(true);
-    setStatus("Ready.");
+
+    if (sharedABC !== null) {
+      setStatus("Loaded ABC notation from the share link.");
+    } else if ((window.location.search || "").indexOf("def=") >= 0) {
+      setStatus("Could not decode the ABC notation from the def= share link parameter.");
+    } else {
+      setStatus("Ready.");
+    }
   }
 
   function showMessageDialog(message) {
@@ -516,7 +565,8 @@
       '<p>Tunes in unusual keys, modes, meters, or other musical styles may produce limited, unexpected, or hilarious results.</p>' +
       '<h4>Setup</h4>' +
       '<ul>' +
-      '<li>Open an ABC file or paste ABC text into the input box. Multiple tunes are supported.</li>' +
+      '<li>Open an ABC file, or paste ABC text into the input box. Multiple tunes are supported.</li>' +
+      '<li>The tool can also accept an ABC Transcription Tools <b>?def=</b> share-link parameter containing deflate-encoded ABC tunes.</li>' +
       '<li>The <b>Generate Backup Chords</b> button is enabled only when the input box contains text.</li>' +
       '<li>Click the <b>Clear</b> button next to the <b>ABC Input</b> label to clear both the input and output areas.</li>' +
       '</ul>' +
