@@ -479,7 +479,7 @@
     clearOutputArea();
 
     var threshold = document.getElementById("threshold");
-    if (threshold) threshold.value = "0.70";
+    if (threshold) threshold.value = "0.75";
 
 
     var fileInput = document.getElementById("selectabcfile");
@@ -524,7 +524,7 @@
       '<h4>How matching works</h4>' +
       '<ul>' +
       '<li>Existing chord symbols in the input tunes are stripped before processing.</li>' +
-      '<li>The default minimum match score is <b>0.70</b>. If no normal match is found for a general measure, the tool can accept the best available match down to <b>75%</b> of the selected threshold. Critical tune, repeat, and part-boundary cases can still use the lower internal <b>0.35</b> boundary threshold.</li>' +
+      '<li>The default minimum match score is <b>0.75</b>. If no normal match is found for a general measure, the tool can accept the best available match down to <b>75%</b> of the selected threshold. Critical tune, repeat, and part-boundary cases can still use the lower internal <b>0.35</b> boundary threshold.</li>' +
       '<li>If no matching measure with usable chords meets the threshold, that source measure is left unchanged.</li>' +
       '</ul>' +
       '<h4>Running and output</h4>' +
@@ -1489,7 +1489,7 @@
   }
 
   function getEffectiveMeasureThreshold(baseThreshold, forceStartChord, options) {
-    baseThreshold = isFinite(baseThreshold) ? baseThreshold : 0.70;
+    baseThreshold = isFinite(baseThreshold) ? baseThreshold : 0.75;
 
     // Normal measures first try the user's requested threshold. Since the
     // matching pass already finds the best candidate measure, accepting a best
@@ -1799,7 +1799,7 @@
       return;
     }
 
-    var threshold = parseFloat(document.getElementById("threshold").value || "0.70");
+    var threshold = parseFloat(document.getElementById("threshold").value || "0.75");
     var preTuneText = getABCPreTuneText(input);
     var tunes = splitTunes(input);
     var results = [];
@@ -2173,9 +2173,9 @@ BAB dBd|ege dBd|gfg aga|bgf g3:|</textarea></p>
 
       <p style="margin-top:10px;">
         <label class="option">Minimum match score:&nbsp;
-          <input id="threshold" type="number" min="0.10" max="1.00" step="0.05" value="0.70" style="width:70px; font-size:11pt;">
+          <input id="threshold" type="number" min="0.10" max="1.00" step="0.05" value="0.75" style="width:70px; font-size:11pt;">
         </label>
-        <span class="smallnote">&nbsp;&nbsp;Lower finds more matches; higher is stricter. Default is 0.70.</span>
+        <span class="smallnote">&nbsp;&nbsp;Lower finds more matches; higher is stricter. Default is 0.75.</span>
       </p>
 
       <p style="margin-top:10px;">
