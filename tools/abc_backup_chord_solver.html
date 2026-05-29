@@ -6,10 +6,10 @@
   <title>ABC Tune Backup Chord Solver</title>
   <meta property="og:type" content="website" />
   <meta property="og:title" content="ABC Tune Backup Chord Solver" />
-  <meta property="og:description" content="Batch processor for adding backup chords to ABC tunes using chorded tunes from The Session database." />
-  <meta property="og:url" content="https://michaeleskin.com/tools/abc_backup_chord_finder.html" />
+  <meta property="og:description" content="Batch processor for adding backup chords to ABC tunes using tunes with chords from The Session database." />
+  <meta property="og:url" content="https://michaeleskin.com/tools/abc_backup_chord_solver.html" />
   <meta property="og:site_name" content="ABC Tune Backup Chord Solver" />
-  <meta property="og:image" content="https://michaeleskin.com/abctools/img/abc-icon-user-guide-basic.png" />
+  <meta property="og:image" content="https://michaeleskin.com/tools/img/abc_backup_chord_solver_og_1.jpg" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="apple-touch-icon" sizes="180x180" href="https://michaeleskin.com/abctools/img/abc-apple-icon-180x180.png">
   <link rel="icon" type="image/png" sizes="32x32" href="https://michaeleskin.com/abctools/img/abc-favicon-32x32.png">
@@ -31,13 +31,13 @@
     }
     textarea#input {
       width: 100%;
-      height: clamp(140px, 24vh, 240px);
+      height: clamp(130px, 22vh, 220px);
       min-height: 110px;
       margin-bottom: 0px;
     }
     textarea#output {
       width: 100%;
-      height: clamp(120px, 22vh, 220px);
+      height: clamp(130px, 22vh, 220px);
       min-height: 100px;
     }
     p { font-size:12pt; font-family:"Helvetica"; line-height: 24px; margin-bottom:0px; }
@@ -81,8 +81,8 @@
     .modal_flat_input { margin: 20px 0px; }
     .modal_flat_buttons { text-align:center; margin-top: 40px; }
     .modal_flat_main button { background-color: #ccc; color: #000; padding: 10px 20px; border: 0px; cursor: pointer; outline: none; min-width: 100px; }
-    .instructions_content { font-family: Helvetica, Arial, sans-serif; font-size: 12pt; line-height: 1.45; max-height: 70vh; overflow-y: auto; padding-right: 8px; }
-    .instructions_content h3 { margin-top: 0; margin-bottom: 12px; font-size: 16pt; }
+    .instructions_content { font-family: Helvetica, Arial, sans-serif; font-size: 12pt; line-height: 1.45; max-height: 60vh; overflow-y: auto; padding-right: 8px; }
+    .instructions_content h3 { margin-top: 0; margin-bottom: 20px; font-size: 16pt; }
     .instructions_content p { font-size: 12pt; line-height: 1.45; margin: 0 0 10px 0; }
     .instructions_content ul { margin-top: 4px; padding-left: 24px; }
     .instructions_content li { margin-bottom: 6px; }
@@ -141,6 +141,51 @@
       width: 100%;
       box-sizing: border-box;
       text-align: center;
+    }
+
+    .input_button_row {
+      margin-top: 10px;
+      margin-bottom: 12px;
+      width: 100%;
+    }
+    .input_button_row .abcupload {
+      width: 100%;
+      box-sizing: border-box;
+      text-align: center;
+    }
+
+    .input_label_row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin: 0 0 8px 0;
+      width: 100%;
+    }
+
+    .input_label_row h4 {
+      margin: 0;
+    }
+
+    .input_textarea_wrapper {
+      width: 100%;
+    }
+
+    #clearbutton {
+      --color: #5b0000;
+      --background-color: #ffd6d6;
+      --border-color: #d66;
+      padding: 0.42rem 0.82rem;
+      padding-top: 0.50rem;
+      font-size: 10pt !important;
+      line-height: 1;
+      min-width: 0;
+      white-space: nowrap;
+      flex: 0 0 auto;
+    }
+
+    #clearbutton:after {
+      top: 0.10rem;
     }
 
     .output_button_row {
@@ -205,6 +250,7 @@
   var gLastStats = null;
   var gCancelRequested = false;
   var gInputInitialized = false;
+  var gProcessingControlsEnabled = true;
   var gOutputShareURL = "";
   var gDefaultInputABC = "X: 1\nT: Cooley's\nC: Traditional\nR: Reel\nM: 4/4\nL: 1/8\nQ: 1/2=90\nK: Edor\n|:EBBA B2 EB|B2 AB dBAG|F/E/D AD BDAD|F/E/D AD BAGF|\nEBBA B2 EB|B2 AB defg|afge dBAF|1 DEFD E3D:|2 DEFD E2gf||\n|:eB (3BBB eBgf|eBB2 gedB|A/A/A FA DAFA|A/A/A FA defg|\neB (3BBB eBgf|eBBB defg|afge dBAF|1 DEFD E2gf:|2 DEFD E4|]\n\nX: 1\nT: The Kesh\nC: Traditional\nR: Jig\nM: 6/8\nL: 1/8\nQ: 3/8=120\nK: Gmaj\n|:GAG GAB|ABA ABd|edd gdd|edB dBA|\nGAG GAB|ABA ABd|edd gdB|AGF G3:|\n|:BAB dBd|ege dBA|BAB dBG|ABA AGA|\nBAB dBd|ege dBd|gfg aga|bgf g3:|";
 
@@ -289,9 +335,18 @@
   }
 
   function handleInputChanged() {
+    updateGenerateButtonState();
+
     if (!gInputInitialized) return;
+
     clearOutputArea();
-    setStatus("Input changed. Click Generate Backup Chords to create new output.");
+
+    var input = document.getElementById("input");
+    if (input && input.value && input.value.trim().length) {
+      setStatus("Input changed. Click Generate Backup Chords to create new output.");
+    } else {
+      setStatus("Input cleared. Enter or open ABC notation to enable Generate Backup Chords.");
+    }
   }
 
   function showProgressModal(message) {
@@ -337,11 +392,26 @@
     return seconds + "s";
   }
 
-  function setProcessingControlsEnabled(enabled) {
+  function updateGenerateButtonState() {
     var btn = document.getElementById("generatebutton");
-    if (btn) btn.disabled = !enabled;
+    if (!btn) return;
+
+    var input = document.getElementById("input");
+    var hasInput = !!(input && input.value && input.value.trim().length);
+
+    btn.disabled = !gProcessingControlsEnabled || !hasInput;
+    btn.title = hasInput ? "Generate suggested backup chords for the input ABC notation" : "Enter or open ABC notation before generating backup chords";
+  }
+
+  function setProcessingControlsEnabled(enabled) {
+    gProcessingControlsEnabled = !!enabled;
+
+    updateGenerateButtonState();
+
     var input = document.getElementById("selectabcfile");
     if (input) input.disabled = !enabled;
+    var clearButton = document.getElementById("clearbutton");
+    if (clearButton) clearButton.disabled = !enabled;
   }
 
   function initializeTool() {
@@ -358,7 +428,10 @@
 
 
     var fileInput = document.getElementById("selectabcfile");
-    if (fileInput) fileInput.value = "";
+    if (fileInput) {
+      fileInput.value = "";
+      configureFileOpenAccept();
+    }
 
     gSaveFilename = "abc_backup_chords.abc";
     setProcessingControlsEnabled(true);
@@ -371,6 +444,7 @@
       DayPilot.Modal.alert(message, {
         theme: "modal_flat",
         width: 420,
+        top: 150,
         scrollWithPage: true
       });
     } else {
@@ -382,25 +456,43 @@
     var html = '' +
       '<div class="instructions_content">' +
       '<h3 style="text-align:center;">Instructions</h3>' +
-      '<p>This tool adds suggested backup chords to one or more ABC tunes by copying chord symbols from already-chorded matching measures in <b>abctunes_thesession_28may2026.json</b>. It does <b>not</b> infer harmony from the source tune notes.</p>' +
+      '<p><b>ABC Tune Backup Chord Solver</b> adds suggested backup chords to one or more ABC tunes.</p>' +
+      '<p>It does <b>not</b> try to figure out chords directly from the notes.</p>' +
+      '<p>Instead, it searches the thesession.org tune database for already-chorded measures from tunes with the same normalized meter, key, and mode, then copies chords from the closest matching measures.</p>' +
+      '<p>The output is intended as a practical starting point for traditional Irish-style tunes.</p>' +
+      '<p>Tunes in unusual keys, modes, meters, or other musical styles may produce limited, unexpected, or hilarious results.</p>' +
       '<h4>Setup</h4>' +
       '<ul>' +
       '<li>Open an ABC file or paste ABC text into the input box. Multiple tunes are supported.</li>' +
-      '<li>Opening a new file or editing the input clears the previous output so stale results are not accidentally copied or saved.</li>' +
+      '<li>The <b>Generate Backup Chords</b> button is enabled only when the input box contains text.</li>' +
+      '<li>Use the red <b>Clear</b> button next to the <b>ABC Input</b> label to empty both the input and output areas.</li>' +
       '</ul>' +
       '<h4>How matching works</h4>' +
       '<ul>' +
       '<li>Existing chord symbols in the input tunes are stripped before processing.</li>' +
-      '<li>If a source tune uses <b>M:C</b> or <b>M:C|</b>, the tool rewrites that header to <b>M:4/4</b> and matches/chords it as 4/4.</li>' +
-      '<li>For each source measure, the tool searches database measures from tunes with the same normalized meter, key, and mode, then uses the closest note-sequence match that meets the minimum match score.</li>' +
-      '<li>The default minimum match score is <b>0.70</b>.  In some cases a lower internal fallback threshold may be used to ensure that chords appear at the start and end of parts.</li>' +
+      '<li>If a source tune uses <b>M:C</b> or <b>M:C|</b>, the tool rewrites that header to <b>M:4/4</b> and processes the tune as 4/4.</li>' +
+      '<li>For each source measure, the tool searches candidate database measures from tunes with the same normalized meter, key, and mode.</li>' +
+      '<li>Grace notes in curly braces, such as <b>{B}</b> or <b>{BAG}</b>, are ignored for matching and timing. If a chord is added to a note with a grace note before it, the chord is inserted before the opening curly brace.</li>' +
+      '<li>Common ABC triplet markers such as <b>(3ABC</b> are handled for measure timing and ignored as note text during matching.</li>' +
+      '<li>Only database measures whose chord symbols are plain uppercase-root major or minor triads are used, such as <b>D</b>, <b>G</b>, <b>Em</b>, <b>Bbm</b>, or <b>F#m</b>. Lowercase chords, slash chords, 5 chords, 7 chords, and extended chords are skipped.</li>' +
+      '<li>The default minimum match score is <b>0.70</b>. In some boundary cases, a lower internal fallback threshold may be used to help place required chords at tune, repeat, or part boundaries.</li>' +
+      '<li>If no matching measure with usable chords meets the threshold, that source measure is left unchanged.</li>' +
+      '</ul>' +
+      '<h4>Chord placement rules</h4>' +
+      '<ul>' +
+      '<li>Chords are only copied to allowed beat positions for the meter: 4/4 on beats 1 and 3; 2/4 on beats 1 and 2; 3/4 on beats 1, 2, and 3; 6/8 on beats 1 and 4; 9/8 on beats 1, 4, and 7; and 12/8 on beats 1, 4, 7, and 10.</li>' +
+      '<li>Opening pickup notes before the first full measure are not chorded.</li>' +
+      '<li>Short pickup notes leading into a new phrase or repeated part are not chorded; the next full measure is forced to get a chord if a usable match is found.</li>' +
+      '<li>Repeated chord symbols are suppressed when the same chord continues across measures, except where a chord marker is required at important tune or repeat boundaries.</li>' +
       '</ul>' +
       '<h4>Running and output</h4>' +
       '<ul>' +
       '<li>Click <b>Generate Backup Chords</b>. A progress dialog shows the current tune, measure, candidate count, match count, and elapsed time.</li>' +
       '<li>Click <b>Cancel</b> in the progress dialog to stop processing and clear the output area.</li>' +
       '<li>When processing completes, the dialog closes and a summary appears in the main status area.</li>' +
-      '<li>Use the output buttons to copy, save, or test the result in ABC Transcription Tools. The test button is enabled only when the generated share link is short enough for direct transfer to the ABC Transcription Tools.</li>' +
+      '<li>The <b>Copy Output to the Clipboard</b> and <b>Save Output to a file</b> buttons are enabled only when there is output text.</li>' +
+      '<li>On iOS, saving uses the Share Sheet so the <b>.abc</b>. Other platforms use the normal browser download process.</li>' +
+      '<li>The <b>Test Output in the ABC Transcription Tools</b> button is enabled only when the generated share link is short enough for direct transfer.</li>' +
       '</ul>' +
       '</div>';
 
@@ -507,15 +599,22 @@
     };
   }
 
+  function stripABCGraceNotes(s) {
+    // ABC grace notes are enclosed in curly braces, for example {B} or {BAG}.
+    // They should not participate in measure matching or measure-duration math.
+    return (s || "").replace(/\{[^}]*\}/g, "");
+  }
+
   function removeABCDecorations(s, keepChords) {
     s = s || "";
     if (!keepChords) s = s.replace(/"(?:[^"\\]|\\.)*"/g, "");
     s = s.replace(/%.*$/gm, "");
     s = s.replace(/!.*?!/g, "");
     s = s.replace(/\+.*?\+/g, "");
-    s = s.replace(/\{[^}]*\}/g, "");
+    s = stripABCGraceNotes(s);
     s = s.replace(/\[[A-Za-z]:[^\]]*\]/g, "");
-    s = s.replace(/\([23456789]/g, "");
+    // Leave ABC tuplets such as (3 in place here so parseMeasureText() can
+    // account for their duration while still ignoring the marker as a note.
     s = s.replace(/[.~HLMOPSTuv]/g, "");
     return s;
   }
@@ -551,15 +650,32 @@
     var pitchClasses = [];
     var noteStartOffsets = [];
     var duration = 0;
+    var tripletNotesRemaining = 0;
+
     for (var i = 0; i < stripped.length; i++) {
+      // Handle the common ABC triplet form, for example (3ABC. With a (3
+      // triplet, the following three notes take the time normally occupied by
+      // two notes, so each note duration is scaled by 2/3. The (3 marker is
+      // ignored for note-sequence matching but preserved in the final output.
+      if (stripped[i] === "(" && /[23456789]/.test(stripped[i + 1] || "")) {
+        if (stripped[i + 1] === "3") tripletNotesRemaining = 3;
+        i++;
+        continue;
+      }
+
       NOTE_RE.lastIndex = i;
       var m = NOTE_RE.exec(stripped);
       if (m) {
         var token = m[0];
+        var noteDuration = parseDuration(token);
+        if (tripletNotesRemaining > 0) {
+          noteDuration *= (2 / 3);
+          tripletNotesRemaining--;
+        }
         noteStartOffsets.push(duration);
         notes.push(normalizeNoteToken(token));
         pitchClasses.push(notePitchClass(token));
-        duration += parseDuration(token);
+        duration += noteDuration;
         i = NOTE_RE.lastIndex - 1;
       }
     }
@@ -579,6 +695,7 @@
     var i = 0;
     while (i < text.length) {
       var c = text[i];
+
       if (c === '"') {
         var j = i + 1;
         var chord = "";
@@ -593,6 +710,20 @@
           continue;
         }
       }
+
+      // Grace notes do not count as real melody notes for chord placement.
+      if (c === "{") {
+        var graceEnd = text.indexOf("}", i + 1);
+        i = (graceEnd >= 0) ? graceEnd + 1 : i + 1;
+        continue;
+      }
+
+      // Tuplet markers such as (3 are timing markers, not notes.
+      if (c === "(" && /[23456789]/.test(text[i + 1] || "")) {
+        i += 2;
+        continue;
+      }
+
       NOTE_RE.lastIndex = i;
       var m = NOTE_RE.exec(text);
       if (m) {
@@ -840,6 +971,51 @@
     return compact;
   }
 
+  function getGraceAwareRealNoteInfos(text) {
+    var infos = [];
+    var noteIndex = 0;
+    var i = 0;
+
+    while (i < text.length) {
+      var c = text[i];
+
+      if (c === "{") {
+        var graceEnd = text.indexOf("}", i + 1);
+        i = (graceEnd >= 0) ? graceEnd + 1 : i + 1;
+        continue;
+      }
+
+      if (c === "(" && /[23456789]/.test(text[i + 1] || "")) {
+        i += 2;
+        continue;
+      }
+
+      NOTE_RE.lastIndex = i;
+      var m = NOTE_RE.exec(text);
+      if (m) {
+        var injectIndex = i;
+        var before = text.slice(0, i);
+        var graceMatch = before.match(/\{[^}]*\}\s*$/);
+        if (graceMatch) injectIndex = i - graceMatch[0].length;
+
+        infos.push({
+          noteIndex: noteIndex,
+          start: i,
+          end: NOTE_RE.lastIndex,
+          injectIndex: injectIndex
+        });
+
+        noteIndex++;
+        i = NOTE_RE.lastIndex;
+        continue;
+      }
+
+      i++;
+    }
+
+    return infos;
+  }
+
   function insertChordsIntoMeasure(sourceText, candidateChords, forceStartChord) {
     if (!candidateChords || !candidateChords.length) return sourceText;
 
@@ -860,36 +1036,39 @@
     chords = compact;
 
     var text = stripExistingChords(sourceText);
+    var noteInfos = getGraceAwareRealNoteInfos(text);
+
+    if (!noteInfos.length) {
+      return forceStartChord ? ('"' + firstChord + '"' + text) : text;
+    }
+
+    var chordsByNoteIndex = new Map();
+    chords.forEach(function(c) {
+      if (!chordsByNoteIndex.has(c.noteIndex)) chordsByNoteIndex.set(c.noteIndex, []);
+      chordsByNoteIndex.get(c.noteIndex).push(c.chord);
+    });
+
     var out = "";
-    var noteIndex = 0;
-    var chordPtr = 0;
+    var lastPos = 0;
     var insertedAny = false;
 
-    function emitChordsForCurrentIndex() {
-      var s = "";
-      while (chordPtr < chords.length && chords[chordPtr].noteIndex <= noteIndex) {
-        s += '"' + chords[chordPtr].chord + '"';
-        insertedAny = true;
-        chordPtr++;
-      }
-      return s;
-    }
+    noteInfos.forEach(function(info) {
+      var noteChords = chordsByNoteIndex.get(info.noteIndex);
+      if (!noteChords || !noteChords.length) return;
 
-    for (var i = 0; i < text.length; i++) {
-      NOTE_RE.lastIndex = i;
-      var m = NOTE_RE.exec(text);
-      if (m) {
-        out += emitChordsForCurrentIndex();
-        out += m[0];
-        noteIndex++;
-        i = NOTE_RE.lastIndex - 1;
-      } else {
-        out += text[i];
-      }
-    }
+      var injectAt = Math.max(info.injectIndex, lastPos);
+      out += text.slice(lastPos, injectAt);
+      noteChords.forEach(function(chord) {
+        out += '"' + chord + '"';
+        insertedAny = true;
+      });
+      lastPos = injectAt;
+    });
+
+    out += text.slice(lastPos);
 
     if (!insertedAny && forceStartChord) {
-      out = '"' + firstChord + '"' + out;
+      out = '"' + firstChord + '"' + text;
     }
     return out;
   }
@@ -1158,7 +1337,7 @@
   async function generateBackupChords() {
     var input = document.getElementById("input").value;
     if (!input.trim()) {
-      alert("Please enter or open some ABC notation first.");
+      showMessageDialog("Please enter or open some ABC notation first.");
       return;
     }
 
@@ -1167,7 +1346,7 @@
     clearOutputArea();
     setProcessingControlsEnabled(false);
     setStatus("Processing...");
-    showProgressModal("Loading and indexing chorded tune database...");
+    showProgressModal("Loading and indexing tune database...");
     await allowBrowserToUpdate();
 
     try {
@@ -1283,10 +1462,24 @@
     var reader = new FileReader();
     reader.onload = function(e) {
       document.getElementById("input").value = e.target.result;
+      updateGenerateButtonState();
       clearOutputArea();
       setStatus("Loaded " + escapeHTML(file.name) + ". Output cleared.");
     };
     reader.readAsText(file);
+  }
+
+  function clearInputAndOutput() {
+    var input = document.getElementById("input");
+    if (input) input.value = "";
+    updateGenerateButtonState();
+    clearOutputArea();
+    gSaveFilename = "abc_backup_chords.abc";
+
+    var fileInput = document.getElementById("selectabcfile");
+    if (fileInput) fileInput.value = "";
+
+    setStatus("Input and output cleared.");
   }
 
   async function requestSaveFilename(defaultName) {
@@ -1324,6 +1517,44 @@
     return fname + ".abc";
   }
 
+  function isIOSDevice() {
+    // Detect iPhone/iPad/iPod, including modern iPadOS Safari which can report
+    // itself as Macintosh while still supporting touch events.
+    return /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+      (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+  }
+
+  function configureFileOpenAccept() {
+    var fileInput = document.getElementById("selectabcfile");
+    if (!fileInput) return;
+
+    // iOS/iPadOS Files can be overly strict about the accept list and may
+    // gray out .abc files if the extension is not mapped to a known system
+    // document type. On iOS, remove the accept filter entirely so ABC files
+    // remain selectable. Other platforms keep the broader ABC/text filter.
+    if (isIOSDevice()) {
+      fileInput.removeAttribute("accept");
+    } else {
+      fileInput.setAttribute("accept", ".abc,.ABC,.txt,.TXT,text/plain,text/*,application/octet-stream,application/vnd.abc");
+    }
+  }
+
+  async function shareOutputFileOnIOS(data, fname) {
+    if (!isIOSDevice()) return false;
+
+    if (!window.File || !navigator.share || !navigator.canShare) return false;
+
+    var file = new File([data], fname, { type: "application/octet-stream" });
+    var shareData = {
+      files: [file]
+    };
+
+    if (!navigator.canShare(shareData)) return false;
+
+    await navigator.share(shareData);
+    return true;
+  }
+
   async function saveOutput() {
     var data = document.getElementById("output").value;
     if (!data.length) { showMessageDialog("Nothing to Save"); return; }
@@ -1336,7 +1567,23 @@
 
     gSaveFilename = fname;
 
-    var blob = new Blob([data], { type: "text/plain" });
+    // On iOS, use the Share Sheet with a real File object instead of the
+    // browser download path. This avoids Safari appending .txt to filenames
+    // such as myfile.abc when saving text/plain downloads.
+    try {
+      if (await shareOutputFileOnIOS(data, fname)) {
+        setStatus("Shared <b>" + escapeHTML(fname) + "</b> using the iOS Share Sheet.");
+        return;
+      }
+    } catch (err) {
+      // If the user cancels the Share Sheet, do not fall back to a download on
+      // iOS because that is the path that can add an unwanted .txt extension.
+      if (isIOSDevice()) {
+        return;
+      }
+    }
+
+    var blob = new Blob([data], { type: "application/octet-stream" });
     var url = URL.createObjectURL(blob);
     var a = document.createElement("a");
     a.style.display = "none";
@@ -1355,7 +1602,7 @@
       var btn = document.getElementById("copybutton");
       btn.innerHTML = "Output copied to the Clipboard!";
       setTimeout(function() { btn.innerHTML = "Copy Output to the Clipboard"; }, 1250);
-    }).catch(function() { alert("Unable to copy to Clipboard."); });
+    }).catch(function() { showMessageDialog("Unable to copy to Clipboard."); });
   }
 
   function copyToClipboard(text) {
@@ -1380,12 +1627,12 @@
     updateShareLinkForOutput(abcText);
 
     if (!abcText.length) {
-      alert("Nothing to test!");
+      showMessageDialog("Nothing to test!");
       return;
     }
 
     if (!gOutputShareURL) {
-      alert("Output too long to test directly in ABC Transcription Tools. Please save or copy the output instead.");
+      showMessageDialog("Output too long to test directly in ABC Transcription Tools. Please save or copy the output instead.");
       return;
     }
 
@@ -1557,19 +1804,23 @@
   <div id="maindiv">
     <div style="text-align: center;">
       <h1>ABC Tune Backup Chord Solver</h1>
-      <h2>Batch Processor for Adding Backup Chords to ABC Tunes</h2>
+      <h2>Batch Processor for Adding Backup Chords to Traditional Irish Tunes</h2>
     </div>
 
     <hr id="abcinput">
 
     <div style="text-align:left">
-      <h4>ABC Input:</h4>
-      <div style="margin-top:10px;margin-bottom:12px;">
-        <input type="file" id="selectabcfile" accept=".abc,.txt,.ABC,.TXT" hidden/>
-        <label class="abcupload btn btn-controls full_width_tool_button" for="selectabcfile" title="Open an existing ABC file">Open an existing .ABC file</label>
+      <div class="input_label_row">
+        <h4>ABC Input:</h4>
+        <button id="clearbutton" class="btn" onclick="clearInputAndOutput();" title="Clear both the input and output areas">Clear</button>
+      </div>
+      <div class="input_button_row">
+        <input type="file" id="selectabcfile" accept=".abc,.ABC,.txt,.TXT,text/plain,text/*,application/octet-stream,application/vnd.abc" hidden/>
+        <label class="abcupload btn btn-controls" for="selectabcfile" title="Open an existing ABC or text file">Open an existing .ABC file</label>
       </div>
 
-      <p><textarea id="input" placeholder="Enter ABC notation here" spellcheck="false" autocorrect="off" autocapitalize="none" autocomplete="off">X: 1
+      <div class="input_textarea_wrapper">
+        <p><textarea id="input" placeholder="Enter ABC notation here" spellcheck="false" autocorrect="off" autocapitalize="none" autocomplete="off">X: 1
 T: Cooley's
 C: Traditional
 R: Reel
@@ -1594,6 +1845,7 @@ K: Gmaj
 GAG GAB|ABA ABd|edd gdB|AGF G3:|
 |:BAB dBd|ege dBA|BAB dBG|ABA AGA|
 BAB dBd|ege dBd|gfg aga|bgf g3:|</textarea></p>
+      </div>
 
       <p style="margin-top:10px;">
         <label class="option">Minimum match score:&nbsp;
