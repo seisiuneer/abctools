@@ -237,13 +237,12 @@
     ABC Tune Backup Chord Solver
     Michael Eskin-style standalone ABC batch utility.
 
-    Database options:
-      1) Put abctunes_thesession_28may2026.json in the same folder as this file.
-      2) Or statically include the JSON before this script as:
-           <script>window.abctunes_thesession_28may2026 = [...];<\/script>
+    Tune database:
+      The chord-source tune database is loaded from the fixed hosted URL:
+        https://michaeleskin.com/abctools/abctunes_thesession_28may2026.json
 
     This tool does not infer harmony from melody. It only transfers chord symbols
-    from already-chorded matching tunes in the supplied database.
+    from already-chorded matching tunes in the hosted database.
   */
 
   var gDatabase = null;
@@ -525,6 +524,7 @@
       '<ul>' +
       '<li>Existing chord symbols in the input tunes are stripped before processing.</li>' +
       '<li>The default minimum match score is <b>0.75</b>. If no normal match is found for a general measure, the tool can accept the best available match down to <b>75%</b> of the selected threshold. Critical tune, repeat, and part-boundary cases can still use the lower internal <b>0.35</b> boundary threshold.</li>' +
+      '<li>For starts and endings of tunes, parts, and repeated sections, the tool first tries matching against database measures that are also starts or endings, then falls back to the general same rhythm/meter/key/mode candidate pool if needed.</li>' +
       '<li>If no matching measure with usable chords meets the threshold, that source measure is left unchanged.</li>' +
       '</ul>' +
       '<h4>Running and output</h4>' +
@@ -951,7 +951,7 @@
     var raw = splitBodyIntoMeasures(body);
     var full = getFullMeasureDuration(meter, unitNoteLength);
     var firstFullSeen = false;
-    return raw.map(function(r, idx) {
+    var measures = raw.map(function(r, idx) {
       var parsed = parseMeasureText(r.content);
       var hasNotes = parsed.notes.length > 0;
       var isFull = full ? Math.abs(parsed.duration - full) < 0.01 : hasNotes;
@@ -964,9 +964,47 @@
         isInitialPickup: isInitialPickup,
         isRepeatStart: /\|:/.test(r.prefix + r.suffix),
         isRepeatEnd: /:\|/.test(r.prefix + r.suffix),
+        isBoundaryStart: false,
+        isBoundaryEnd: false,
         chords: extractChordsWithNoteIndexes(r.content)
       });
     });
+
+    // Add phrase-boundary metadata used when choosing candidate database
+    // measures. Starts and endings of tunes/parts often have characteristic
+    // chord behavior, so boundary source measures can first be compared
+    // against boundary candidate measures before falling back to the general
+    // measure pool.
+    var musicalIndexes = [];
+    measures.forEach(function(m, idx) {
+      if (m.notes && m.notes.length) musicalIndexes.push(idx);
+    });
+
+    for (var mi = 0; mi < musicalIndexes.length; mi++) {
+      var idx = musicalIndexes[mi];
+      var m = measures[idx];
+      var prev = mi > 0 ? measures[musicalIndexes[mi - 1]] : null;
+      var next = mi + 1 < musicalIndexes.length ? measures[musicalIndexes[mi + 1]] : null;
+
+      var startsAfterPickup = !!(prev && prev.isPartialMeasure && !prev.isRepeatEnd);
+      var isFirstFullMeasure = m.isFullMeasure && !measures.some(function(other, otherIdx) {
+        return otherIdx < idx && other.notes && other.notes.length && other.isFullMeasure;
+      });
+
+      m.isBoundaryStart = !!(isFirstFullMeasure || m.isRepeatStart || startsAfterPickup);
+
+      // Treat explicit repeat endings, double/final bars, and the last musical
+      // measure of the tune as ending boundaries. Also mark the measure before
+      // a new repeat start as an ending boundary when it has real notes.
+      m.isBoundaryEnd = !!(
+        m.isRepeatEnd ||
+        /\|\||\|\]/.test(m.suffix || "") ||
+        !next ||
+        (next && next.isRepeatStart)
+      );
+    }
+
+    return measures;
   }
 
   function stripExistingChords(text) {
@@ -1378,6 +1416,25 @@
     };
   }
 
+  function getBoundaryPriorityCandidates(candidates, sourceMeasure, forceStartChord) {
+    if (!candidates || !candidates.length) return [];
+
+    // When a source measure is at the start of a tune/part/repeat, first try
+    // candidate measures that are also starts. When a source measure is at an
+    // ending boundary, first try candidate measures that are also endings.
+    // This is only a priority pass; the normal full candidate pool is still
+    // searched if no boundary-specific match succeeds.
+    if (forceStartChord) {
+      return candidates.filter(function(c) { return c.isBoundaryStart; });
+    }
+
+    if (sourceMeasure && sourceMeasure.isBoundaryEnd) {
+      return candidates.filter(function(c) { return c.isBoundaryEnd; });
+    }
+
+    return [];
+  }
+
   function describeCandidateBuckets(candidateInfo) {
     if (!candidateInfo || !candidateInfo.buckets || !candidateInfo.buckets.length) return "";
     return candidateInfo.buckets.map(function(bucket) {
@@ -1453,7 +1510,7 @@
       gDatabase = window.ABCTUNES_THESESSION_28MAY2026;
     } else {
       var response = await fetch("https://michaeleskin.com/abctools/abctunes_thesession_28may2026.json", { cache: "no-store" });
-      if (!response.ok) throw new Error("Could not load abctunes_thesession_28may2026.json");
+      if (!response.ok) throw new Error("Could not load the hosted tune database from michaeleskin.com.");
       gDatabase = await response.json();
     }
 
@@ -1488,7 +1545,7 @@
     return { measure: best, score: bestScore };
   }
 
-  function getEffectiveMeasureThreshold(baseThreshold, forceStartChord, options) {
+  function getEffectiveMeasureThreshold(baseThreshold, forceBoundaryThreshold, options) {
     baseThreshold = isFinite(baseThreshold) ? baseThreshold : 0.75;
 
     // Normal measures first try the user's requested threshold. Since the
@@ -1498,10 +1555,10 @@
     // bucket twice.
     var generalFallbackThreshold = baseThreshold * (options.fallbackThresholdScale || 0.75);
 
-    // Critical boundaries use the existing more permissive threshold so starts
-    // and repeat/part boundaries have the best chance of getting an explicit
-    // marker when any usable match exists.
-    if (forceStartChord) {
+    // Critical boundaries use the existing more permissive threshold so starts,
+    // endings, and repeat/part boundaries have the best chance of getting an
+    // explicit marker when any usable match exists.
+    if (forceBoundaryThreshold) {
       return Math.min(baseThreshold, options.boundaryThreshold || 0.35);
     }
 
@@ -1598,7 +1655,7 @@
       }
 
       var forceStartChord = !firstChordInserted || m.isRepeatStart || forceNextFullMeasureChord;
-      var forceBoundaryThreshold = forceStartChord || m.isRepeatEnd;
+      var forceBoundaryThreshold = forceStartChord || m.isBoundaryEnd;
       var normalThreshold = options.threshold;
       var relaxedThreshold = getEffectiveMeasureThreshold(normalThreshold, forceBoundaryThreshold, options);
       var best = null;
@@ -1618,7 +1675,7 @@
               formatProgressTuneHeader(progressState, title) +
               "Matching chords... <b>" + overallPercent + "%</b> complete<br>" +
               (candidateBucketSummary ? "Candidate buckets: " + candidateBucketSummary + "<br>" : "") +
-              "Search pass: <b>" + escapeHTML(label) + "</b>. Measure <b>" + processedMeasureCount + "</b> of <b>" + totalMeasureCount + "</b> in this tune<br/>" +
+              "Measure <b>" + processedMeasureCount + "</b> of <b>" + totalMeasureCount + "</b> in this tune<br/>" +
               "Database candidates checked <b>" + candidateDone + "</b> of <b>" + candidateTotal + "</b><br>" +
               "Matches so far: <b>" + (progressState.totalMatched + matched) + "</b>; " +
               (isRhythmFallbackPass ?
@@ -1638,10 +1695,21 @@
         return passBest;
       }
 
+      async function runBoundaryAwareSearch(candidates, baseLabel, isRhythmFallbackPass) {
+        var boundaryCandidates = getBoundaryPriorityCandidates(candidates, m, forceStartChord);
+        if (boundaryCandidates.length && boundaryCandidates.length < candidates.length) {
+          var boundaryLabel = baseLabel + (forceStartChord ? " start-boundary priority" : " end-boundary priority");
+          var boundaryBest = await runOriginalThenRelaxed(boundaryCandidates, boundaryLabel, isRhythmFallbackPass);
+          if (boundaryBest) return boundaryBest;
+        }
+
+        return await runOriginalThenRelaxed(candidates, baseLabel, isRhythmFallbackPass);
+      }
+
       var searchCandidates = candidateInfo.hasRhythmPreference ? rhythmCandidates : broadCandidates;
       var searchLabel = candidateInfo.hasRhythmPreference ? (rhythmType + " rhythm-priority") : "same meter/key/mode";
 
-      best = await runOriginalThenRelaxed(searchCandidates, searchLabel, false);
+      best = await runBoundaryAwareSearch(searchCandidates, searchLabel, false);
 
       if (!best && candidateInfo.hasRhythmPreference && broadCandidates.length > rhythmCandidates.length) {
         var fallbackGroups = [];
@@ -1681,7 +1749,7 @@
 
         for (var fallbackIndex = 0; !best && fallbackIndex < fallbackGroups.length; fallbackIndex++) {
           var fallbackGroup = fallbackGroups[fallbackIndex];
-          best = await runOriginalThenRelaxed(fallbackGroup.candidates, fallbackGroup.label, true);
+          best = await runBoundaryAwareSearch(fallbackGroup.candidates, fallbackGroup.label, true);
           if (best) rhythmFallbackMatched++;
         }
       }
@@ -1795,7 +1863,7 @@
     } catch (err) {
       setProcessingControlsEnabled(true);
       hideProgressModal();
-      setStatus("<b>Error:</b> " + escapeHTML(err.message) + "<br><br>Place <b>abctunes_thesession_28may2026.json</b> in the same folder as this tool, or statically include it as <b>window.abctunes_thesession_28may2026</b>.");
+      setStatus("<b>Error:</b> " + escapeHTML(err.message) + "<br><br>The tune database is loaded from <b>https://michaeleskin.com/abctools/abctunes_thesession_28may2026.json</b>. Please check your network connection and try again.");
       return;
     }
 
