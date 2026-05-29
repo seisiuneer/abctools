@@ -524,17 +524,8 @@
       '<h4>How matching works</h4>' +
       '<ul>' +
       '<li>Existing chord symbols in the input tunes are stripped before processing.</li>' +
-      '<li>For each source measure, the tool first searches candidate database measures from tunes with the same normalized meter, key, mode, and rhythm type from the <b>R:</b> field. If no good rhythm-type match is found, it falls back to the broader same meter/key/mode pool. For reels, hornpipes are tried as the first fallback before other compatible 4/4 rhythm types.</li>' +
-      '<li>For minor tunes, the tool also checks same-tonic Dorian tunes in the same meter and uses whichever measure-level match is better. For Dorian tunes, it also checks the same-tonic minor key.</li><li>If a tune is in 4/4 and has no <b>R:</b> tag, it is treated as a reel for rhythm-priority matching.</li>' +
       '<li>The default minimum match score is <b>0.70</b>. If no normal match is found for a general measure, the tool can accept the best available match down to <b>75%</b> of the selected threshold. Critical tune, repeat, and part-boundary cases can still use the lower internal <b>0.35</b> boundary threshold.</li>' +
       '<li>If no matching measure with usable chords meets the threshold, that source measure is left unchanged.</li>' +
-      '</ul>' +
-      '<h4>Chord placement rules</h4>' +
-      '<ul>' +
-      '<li>Chords are only copied to allowed beat positions for the meter: 4/4 on beats 1 and 3; 2/2 on beats 1 and 2; 2/4 on beats 1 and 2; 3/4 on beats 1, 2, and 3; 6/8 on beats 1 and 4; 9/8 on beats 1, 4, and 7; and 12/8 on beats 1, 4, 7, and 10.</li>' +
-      '<li>Opening pickup notes before the first full measure are not chorded.</li>' +
-      '<li>Short pickup notes leading into a new phrase or repeated part are not chorded; the next full measure is forced to get a chord if a usable match is found.</li>' +
-      '<li>Repeated chord symbols are suppressed when the same chord continues across measures, except where a chord marker is required at important tune or repeat boundaries.</li>' +
       '</ul>' +
       '<h4>Running and output</h4>' +
       '<ul>' +
@@ -1609,29 +1600,48 @@
       var forceStartChord = !firstChordInserted || m.isRepeatStart || forceNextFullMeasureChord;
       var forceBoundaryThreshold = forceStartChord || m.isRepeatEnd;
       var normalThreshold = options.threshold;
-      var effectiveThreshold = getEffectiveMeasureThreshold(normalThreshold, forceBoundaryThreshold, options);
+      var relaxedThreshold = getEffectiveMeasureThreshold(normalThreshold, forceBoundaryThreshold, options);
+      var best = null;
+
+      async function runSearchPass(candidates, threshold, label, isRhythmFallbackPass) {
+        if (!candidates || !candidates.length) return null;
+
+        return await findBestMeasureMatchAsync(
+          m,
+          candidates,
+          threshold,
+          function(candidateDone, candidateTotal, bestScore) {
+            var overallPercent = progressState.totalMeasuresToMatch ?
+              Math.round(((progressState.completedMeasures + processedMeasureCount - 1) / progressState.totalMeasuresToMatch) * 100) : 0;
+
+            updateProgressModal(
+              formatProgressTuneHeader(progressState, title) +
+              "Matching chords... <b>" + overallPercent + "%</b> complete<br>" +
+              (candidateBucketSummary ? "Candidate buckets: " + candidateBucketSummary + "<br>" : "") +
+              "Search pass: <b>" + escapeHTML(label) + "</b>. Measure <b>" + processedMeasureCount + "</b> of <b>" + totalMeasureCount + "</b> in this tune<br/>" +
+              "Database candidates checked <b>" + candidateDone + "</b> of <b>" + candidateTotal + "</b><br>" +
+              "Matches so far: <b>" + (progressState.totalMatched + matched) + "</b>; " +
+              (isRhythmFallbackPass ?
+                ("Rhythm fallbacks: <b>" + ((progressState.totalRhythmFallbackMatched || 0) + rhythmFallbackMatched) + "</b>") :
+                ("Fallback matches: <b>" + ((progressState.totalFallbackMatched || 0) + fallbackMatched) + "</b>")) +
+              "<br/>Skipped pickup measures: <b>" + (progressState.totalSkippedPickup + skippedPickup) + "</b>; Current best score: <b>" + bestScore.toFixed(3) + "</b>"
+            );
+          }
+        );
+      }
+
+      async function runOriginalThenRelaxed(candidates, baseLabel, isRhythmFallbackPass) {
+        var passBest = await runSearchPass(candidates, normalThreshold, baseLabel, isRhythmFallbackPass);
+        if (!passBest && relaxedThreshold < normalThreshold) {
+          passBest = await runSearchPass(candidates, relaxedThreshold, baseLabel + " loosened threshold", isRhythmFallbackPass);
+        }
+        return passBest;
+      }
 
       var searchCandidates = candidateInfo.hasRhythmPreference ? rhythmCandidates : broadCandidates;
       var searchLabel = candidateInfo.hasRhythmPreference ? (rhythmType + " rhythm-priority") : "same meter/key/mode";
 
-      var best = await findBestMeasureMatchAsync(
-        m,
-        searchCandidates,
-        effectiveThreshold,
-        function(candidateDone, candidateTotal, bestScore) {
-          var overallPercent = progressState.totalMeasuresToMatch ?
-            Math.round(((progressState.completedMeasures + processedMeasureCount - 1) / progressState.totalMeasuresToMatch) * 100) : 0;
-
-          updateProgressModal(
-            formatProgressTuneHeader(progressState, title) +
-            "Matching chords... <b>" + overallPercent + "%</b> complete<br>" +
-            (candidateBucketSummary ? "Candidate buckets: " + candidateBucketSummary + "<br>" : "") +
-            "Search pass: <b>" + escapeHTML(searchLabel) + "</b>. Measure <b>" + processedMeasureCount + "</b> of <b>" + totalMeasureCount + "</b> in this tune<br/>" +
-            "Database candidates checked <b>" + candidateDone + "</b> of <b>" + candidateTotal + "</b><br>" +
-            "Matches so far: <b>" + (progressState.totalMatched + matched) + "</b>; Fallback matches: <b>" + ((progressState.totalFallbackMatched || 0) + fallbackMatched) + "</b><br/>Skipped pickup measures: <b>" + (progressState.totalSkippedPickup + skippedPickup) + "</b>; Current best score: <b>" + bestScore.toFixed(3) + "</b>"
-          );
-        }
-      );
+      best = await runOriginalThenRelaxed(searchCandidates, searchLabel, false);
 
       if (!best && candidateInfo.hasRhythmPreference && broadCandidates.length > rhythmCandidates.length) {
         var fallbackGroups = [];
@@ -1671,25 +1681,7 @@
 
         for (var fallbackIndex = 0; !best && fallbackIndex < fallbackGroups.length; fallbackIndex++) {
           var fallbackGroup = fallbackGroups[fallbackIndex];
-          searchLabel = fallbackGroup.label;
-          best = await findBestMeasureMatchAsync(
-            m,
-            fallbackGroup.candidates,
-            effectiveThreshold,
-            function(candidateDone, candidateTotal, bestScore) {
-              var overallPercent = progressState.totalMeasuresToMatch ?
-                Math.round(((progressState.completedMeasures + processedMeasureCount - 1) / progressState.totalMeasuresToMatch) * 100) : 0;
-
-              updateProgressModal(
-                formatProgressTuneHeader(progressState, title) +
-                "Matching chords... <b>" + overallPercent + "%</b> complete<br>" +
-                (candidateBucketSummary ? "Candidate buckets: " + candidateBucketSummary + "<br>" : "") +
-                "Search pass: <b>" + escapeHTML(searchLabel) + "</b>. Measure <b>" + processedMeasureCount + "</b> of <b>" + totalMeasureCount + "</b> in this tune<br/>" +
-                "Database candidates checked <b>" + candidateDone + "</b> of <b>" + candidateTotal + "</b><br>" +
-                "Matches so far: <b>" + (progressState.totalMatched + matched) + "</b>; Rhythm fallbacks: <b>" + ((progressState.totalRhythmFallbackMatched || 0) + rhythmFallbackMatched) + "</b><br/>Skipped pickup measures: <b>" + (progressState.totalSkippedPickup + skippedPickup) + "</b>; Current best score: <b>" + bestScore.toFixed(3) + "</b>"
-              );
-            }
-          );
+          best = await runOriginalThenRelaxed(fallbackGroup.candidates, fallbackGroup.label, true);
           if (best) rhythmFallbackMatched++;
         }
       }
