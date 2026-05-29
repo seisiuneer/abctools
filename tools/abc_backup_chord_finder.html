@@ -1,0 +1,1628 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>ABC Tune Backup Chord Finder</title>
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="ABC Tune Backup Chord Finder" />
+  <meta property="og:description" content="Batch processor for adding backup chords to ABC notation using chorded tunes from The Session database." />
+  <meta property="og:url" content="https://michaeleskin.com/tools/abc_backup_chord_finder.html" />
+  <meta property="og:site_name" content="ABC Tune Backup Chord Finder" />
+  <meta property="og:image" content="https://michaeleskin.com/abctools/img/abc-icon-user-guide-basic.png" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="https://michaeleskin.com/abctools/img/abc-apple-icon-180x180.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="https://michaeleskin.com/abctools/img/abc-favicon-32x32.png">
+
+  <style>
+    html { box-sizing: border-box; }
+    *, *:before, *:after { box-sizing: inherit; }
+    textarea {
+      width: 100%;
+      font-family: Menlo, Consolas, Monaco, monospace;
+      font-size: 11pt;
+      line-height: 1.35;
+      resize: vertical;
+    }
+    body {
+      background-color: #ffffff;
+      padding: clamp(6px, 1.5vh, 16px) 8px;
+      margin: 0;
+    }
+    textarea#input {
+      width: 100%;
+      height: clamp(140px, 24vh, 240px);
+      min-height: 110px;
+      margin-bottom: 0px;
+    }
+    textarea#output {
+      width: 100%;
+      height: clamp(120px, 22vh, 220px);
+      min-height: 100px;
+    }
+    p { font-size:12pt; font-family:"Helvetica"; line-height: 24px; margin-bottom:0px; }
+    h1 { font-size:18pt; font-family:"Helvetica"; margin:0; }
+    h2 { font-size:14pt; font-family:"Helvetica"; margin:8px 0 14px 0; }
+    h4 { font-size:14pt; font-family:"Helvetica"; margin:0 0 8px 0; }
+    hr { margin-top:18px; margin-bottom:18px; }
+    #maindiv {
+      position: relative;
+      text-align: left;
+      width: min(800px, calc(100vw - 16px));
+      margin: 0 auto;
+      background-color: white;
+    }
+    .btn {
+      --color: #000000; --background-color: #d8d8d8; --border-color: #c8c8c8;
+      color: var(--color); font-family: helvetica !important; font-size: 11pt !important;
+      background-color: var(--background-color); padding: 0.7rem 0.7rem; padding-top: 0.8rem;
+      border: solid 1px var(--border-color); outline: none; position: relative; border-radius: 0.5rem;
+      user-select: none; box-shadow: 0 0.1rem 0.1rem rgba(0, 0, 0, 0.25), 0 -0.1rem 0.5rem rgba(0, 0, 0, 0.1) inset;
+      transition: box-shadow 64ms ease-out; -webkit-appearance:none; cursor:pointer; text-decoration:none; display:inline-block;
+    }
+    .btn:after { content: ""; background-color: #ffffff; width: 75%; height: 12.5%; position: absolute; top: 0.15rem; left: 12.5%; border-radius: 50%; filter: blur(0.15rem); transition: opacity 64ms ease-out; }
+    .btn:active { box-shadow: 0 0 0 rgba(0,0,0,0.4), 0 0.4rem 1rem rgba(0,0,0,0.3) inset; }
+    .btn:active:after { opacity: 0; }
+    .btn:disabled, .btn[disabled] { opacity: 0.45; cursor: not-allowed; box-shadow: none; }
+    .btn:disabled:after, .btn[disabled]:after { opacity: 0.35; }
+    .btn-controls { --color: black; --background-color: lavender; }
+    .btn-generate { --color: black; --background-color: #BBFFBB; }
+    .status { margin-top:16px; padding:10px; background:#f5f5ff; border:1px solid #ddd; border-radius:8px; font-family:Helvetica; font-size:11pt; line-height:1.35; }
+    .smallnote { font-size:11pt; line-height:20px; color:#333; }
+    label.option { font-family:Helvetica; font-size:12pt; line-height:28px; }
+
+    /* DayPilot.Modal flat theme, matching the other Michael Eskin-style tools */
+    .modal_flat_background { background-color: #000; opacity: 0.4; }
+    .modal_flat_main { border: 1px solid #333; box-shadow: 0px 0px 15px -2px rgba(0,0,0,0.75); }
+    .modal_flat_main, .modal_flat_main input, .modal_flat_main button { font-size: 16px; }
+    .modal_flat_main input, .modal_flat_main button { padding: 5px; box-sizing: border-box; }
+    .modal_flat_inner { padding: 30px; background: #fff; color: #000; }
+    .modal_flat_content { font-family:"Helvetica"; margin: 20px 0px; }
+    .modal_flat_input { margin: 20px 0px; }
+    .modal_flat_buttons { text-align:center; margin-top: 40px; }
+    .modal_flat_main button { background-color: #ccc; color: #000; padding: 10px 20px; border: 0px; cursor: pointer; outline: none; min-width: 100px; }
+    .instructions_content { font-family: Helvetica, Arial, sans-serif; font-size: 12pt; line-height: 1.45; max-height: 70vh; overflow-y: auto; padding-right: 8px; }
+    .instructions_content h3 { margin-top: 0; margin-bottom: 12px; font-size: 16pt; }
+    .instructions_content p { font-size: 12pt; line-height: 1.45; margin: 0 0 10px 0; }
+    .instructions_content ul { margin-top: 4px; padding-left: 24px; }
+    .instructions_content li { margin-bottom: 6px; }
+
+
+    /* Lightweight running-progress modal used during measure matching. */
+    #progress_modal_overlay {
+      display: none;
+      position: fixed;
+      z-index: 9999;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.40);
+    }
+    #progress_modal_box {
+      position: absolute;
+      left: 50%;
+      top: 30%;
+      transform: translate(-50%, -50%);
+      width: 720px;
+      max-width: calc(100vw - 48px);
+      background: #fff;
+      color: #000;
+      border: 1px solid #333;
+      box-shadow: 0px 0px 15px -2px rgba(0,0,0,0.75);
+      padding: 26px 30px;
+      font-family: Helvetica, Arial, sans-serif;
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
+    #progress_modal_box h3 {
+      margin: 0 0 14px 0;
+      font-size: 16pt;
+      font-family: Helvetica, Arial, sans-serif;
+    }
+    #progress_modal_status {
+      font-size: 12pt;
+      line-height: 1.45;
+      min-height: 115px;
+      max-height: 45vh;
+      overflow-y: auto;
+      padding: 10px;
+      background: #f5f5ff;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      box-sizing: border-box;
+    }
+    #progress_modal_buttons {
+      text-align: center;
+      margin-top: 22px;
+    }
+
+    .full_width_tool_button {
+      width: 100%;
+      box-sizing: border-box;
+      text-align: center;
+    }
+
+    .output_button_row {
+      display: flex;
+      gap: 24px;
+      margin-top: 8px;
+      margin-bottom: 12px;
+      width: 100%;
+    }
+    .output_button_row .btn {
+      flex: 1 1 0;
+      box-sizing: border-box;
+      text-align: center;
+      margin-left: 0 !important;
+      white-space: nowrap;
+    }
+
+    @media (max-height: 760px) {
+      body { padding-top: 6px; padding-bottom: 6px; }
+      h1 { font-size: 16pt; }
+      h2 { font-size: 12pt; margin-bottom: 8px; }
+      h4 { font-size: 12pt; margin-bottom: 4px; }
+      hr { margin-top: 12px; margin-bottom: 12px; }
+      .status { margin-top: 10px; padding: 8px; font-size: 10.5pt; }
+      textarea#input { height: clamp(105px, 20vh, 170px); }
+      textarea#output { height: clamp(95px, 18vh, 160px); }
+      .output_button_row { margin-top: 8px; margin-bottom: 12px; gap: 24px; }
+    }
+
+    @media (max-width: 700px) {
+      #maindiv { width: calc(100vw - 12px); }
+      .output_button_row { flex-direction: column; gap: 10px; }
+      .output_button_row .btn { width: 100%; }
+      #progress_modal_box {
+        width: calc(100vw - 24px);
+        top: 50%;
+        padding: 20px;
+      }
+    }
+
+  </style>
+
+  <script type="text/javascript" src="daypilot-modal.min-3.10.1.js?v=11"></script>
+
+  <script>
+  /*
+    ABC Tune Backup Chord Finder
+    Michael Eskin-style standalone ABC batch utility.
+
+    Database options:
+      1) Put abctunes_thesession_28may2026.json in the same folder as this file.
+      2) Or statically include the JSON before this script as:
+           <script>window.abctunes_thesession_28may2026 = [...];<\/script>
+
+    This tool does not infer harmony from melody. It only transfers chord symbols
+    from already-chorded matching tunes in the supplied database.
+  */
+
+  var gDatabase = null;
+  var gChordIndex = null;
+  var gSaveFilename = "abc_backup_chords.abc";
+  var gLastStats = null;
+  var gCancelRequested = false;
+  var gInputInitialized = false;
+  var gOutputShareURL = "";
+  var gDefaultInputABC = "X: 1\nT: Cooley's\nC: Traditional\nR: Reel\nM: 4/4\nL: 1/8\nQ: 1/2=90\nK: Edor\n|:EBBA B2 EB|B2 AB dBAG|F/E/D AD BDAD|F/E/D AD BAGF|\nEBBA B2 EB|B2 AB defg|afge dBAF|1 DEFD E3D:|2 DEFD E2gf||\n|:eB (3BBB eBgf|eBB2 gedB|A/A/A FA DAFA|A/A/A FA defg|\neB (3BBB eBgf|eBBB defg|afge dBAF|1 DEFD E2gf:|2 DEFD E4|]\n\nX: 1\nT: The Kesh\nC: Traditional\nR: Jig\nM: 6/8\nL: 1/8\nQ: 3/8=120\nK: Gmaj\n|:GAG GAB|ABA ABd|edd gdd|edB dBA|\nGAG GAB|ABA ABd|edd gdB|AGF G3:|\n|:BAB dBd|ege dBA|BAB dBG|ABA AGA|\nBAB dBd|ege dBd|gfg aga|bgf g3:|";
+
+
+  var NOTE_RE = /(?:\^\^|__|\^|_|=)?[A-Ga-g][,']*(?:\d+\/\d+|\d+\/|\/\d+|\d+|\/)?/y;
+
+  function escapeHTML(s) {
+    return String(s).replace(/[&<>"']/g, function(c) {
+      return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c];
+    });
+  }
+
+  function setStatus(msg) {
+    document.getElementById("status").innerHTML = msg;
+  }
+
+  function updateOutputActionButtons(outputText) {
+    var hasOutput = !!(outputText && outputText.length);
+
+    var copyButton = document.getElementById("copybutton");
+    if (copyButton) {
+      copyButton.disabled = !hasOutput;
+      copyButton.title = hasOutput ? "Copy the generated output to the Clipboard" : "Generate output before copying";
+    }
+
+    var saveButton = document.getElementById("savebutton");
+    if (saveButton) {
+      saveButton.disabled = !hasOutput;
+      saveButton.title = hasOutput ? "Save the generated output to a file" : "Generate output before saving";
+    }
+  }
+
+  function clearOutputArea() {
+    var output = document.getElementById("output");
+    if (output) output.value = "";
+
+    var copyButton = document.getElementById("copybutton");
+    if (copyButton) copyButton.innerHTML = "Copy Output to the Clipboard";
+
+    updateOutputActionButtons("");
+    updateShareLinkForOutput("");
+  }
+
+
+  function buildABCTranscriptionToolsShareURL(abcText) {
+    if (!abcText || !abcText.length) return "";
+    var shareName = "ABC_Backup_Chord_Miner_Test";
+    var abcInLZW = LZString.compressToEncodedURIComponent(abcText);
+    return "https://michaeleskin.com/abctools/abctools.html?lzw=" + abcInLZW +
+      "&format=noten&ssp=45&pdf=one&pn=br&fp=yes&name=" + encodeURIComponent(shareName) + "&editor=1";
+  }
+
+  function updateShareLinkForOutput(outputText) {
+    var testButton = document.getElementById("testbutton");
+    gOutputShareURL = "";
+
+    if (!testButton) return;
+
+    if (!outputText || !outputText.length) {
+      testButton.disabled = true;
+      testButton.title = "Generate output before testing it in the ABC Transcription Tools";
+      return;
+    }
+
+    var url = buildABCTranscriptionToolsShareURL(outputText);
+    if (url.length < 8100) {
+      gOutputShareURL = url;
+      testButton.disabled = false;
+      testButton.title = "Open the generated output in the ABC Transcription Tools";
+    } else {
+      testButton.disabled = true;
+      testButton.title = "Output is too long to test directly in the ABC Transcription Tools. Please save or copy the output instead.";
+    }
+  }
+
+  function setOutputArea(outputText) {
+    outputText = outputText || "";
+    var output = document.getElementById("output");
+    if (output) output.value = outputText;
+    updateOutputActionButtons(outputText);
+    updateShareLinkForOutput(outputText);
+  }
+
+  function handleInputChanged() {
+    if (!gInputInitialized) return;
+    clearOutputArea();
+    setStatus("Input changed. Click Generate Backup Chords to create new output.");
+  }
+
+  function showProgressModal(message) {
+    var overlay = document.getElementById("progress_modal_overlay");
+    var status = document.getElementById("progress_modal_status");
+    if (!overlay || !status) return;
+    status.innerHTML = message || "Starting...";
+    overlay.style.display = "block";
+  }
+
+  function updateProgressModal(message) {
+    var status = document.getElementById("progress_modal_status");
+    if (status) status.innerHTML = message;
+  }
+
+  function hideProgressModal() {
+    var overlay = document.getElementById("progress_modal_overlay");
+    if (overlay) overlay.style.display = "none";
+  }
+
+  function cancelProcessing() {
+    gCancelRequested = true;
+    clearOutputArea();
+    updateProgressModal("Cancelling... Output has been cleared.");
+    setStatus("Cancelling measure matching...");
+  }
+
+  function throwIfCancelled() {
+    if (gCancelRequested) throw new Error("USER_CANCELLED");
+  }
+
+  function allowBrowserToUpdate() {
+    return new Promise(function(resolve) {
+      setTimeout(resolve, 0);
+    });
+  }
+
+  function formatElapsed(ms) {
+    var seconds = Math.max(0, Math.round(ms / 1000));
+    var minutes = Math.floor(seconds / 60);
+    seconds = seconds % 60;
+    if (minutes > 0) return minutes + "m " + seconds + "s";
+    return seconds + "s";
+  }
+
+  function setProcessingControlsEnabled(enabled) {
+    var btn = document.getElementById("generatebutton");
+    if (btn) btn.disabled = !enabled;
+    var input = document.getElementById("selectabcfile");
+    if (input) input.disabled = !enabled;
+  }
+
+  function initializeTool() {
+    gCancelRequested = false;
+    hideProgressModal();
+
+    var input = document.getElementById("input");
+    if (input) input.value = gDefaultInputABC;
+
+    clearOutputArea();
+
+    var threshold = document.getElementById("threshold");
+    if (threshold) threshold.value = "0.70";
+
+
+    var fileInput = document.getElementById("selectabcfile");
+    if (fileInput) fileInput.value = "";
+
+    gSaveFilename = "abc_backup_chords.abc";
+    setProcessingControlsEnabled(true);
+    setStatus("Ready. The tune database will be loaded and indexed when you click Generate Backup Chords.");
+  }
+
+
+  function showMessageDialog(message) {
+    if (window.DayPilot && DayPilot.Modal) {
+      DayPilot.Modal.alert(message, {
+        theme: "modal_flat",
+        width: 420,
+        scrollWithPage: true
+      });
+    } else {
+      alert(message.replace(/<[^>]*>/g, ""));
+    }
+  }
+
+  function showInstructions() {
+    var html = '' +
+      '<div class="instructions_content">' +
+      '<h3 style="text-align:center;">Instructions</h3>' +
+      '<p>This tool adds suggested backup chords to one or more ABC tunes by copying chord symbols from already-chorded matching measures in <b>abctunes_thesession_28may2026.json</b>. It does <b>not</b> infer harmony from the source tune notes.</p>' +
+      '<h4>Setup</h4>' +
+      '<ul>' +
+      '<li>Open an ABC file or paste ABC text into the input box. Multiple tunes are supported.</li>' +
+      '<li>Opening a new file or editing the input clears the previous output so stale results are not accidentally copied or saved.</li>' +
+      '</ul>' +
+      '<h4>How matching works</h4>' +
+      '<ul>' +
+      '<li>Existing chord symbols in the input tunes are stripped before processing.</li>' +
+      '<li>If a source tune uses <b>M:C</b> or <b>M:C|</b>, the tool rewrites that header to <b>M:4/4</b> and matches/chords it as 4/4.</li>' +
+      '<li>For each source measure, the tool searches database measures from tunes with the same normalized meter, key, and mode, then uses the closest note-sequence match that meets the minimum match score.</li>' +
+      '<li>The default minimum match score is <b>0.70</b>.  In some cases a lower internal fallback threshold may be used to ensure that chords appear at the start and end of parts.</li>' +
+      '</ul>' +
+      '<h4>Running and output</h4>' +
+      '<ul>' +
+      '<li>Click <b>Generate Backup Chords</b>. A progress dialog shows the current tune, measure, candidate count, match count, and elapsed time.</li>' +
+      '<li>Click <b>Cancel</b> in the progress dialog to stop processing and clear the output area.</li>' +
+      '<li>When processing completes, the dialog closes and a summary appears in the main status area.</li>' +
+      '<li>Use the output buttons to copy, save, or test the result in ABC Transcription Tools. The test button is enabled only when the generated share link is short enough for direct transfer to the ABC Transcription Tools.</li>' +
+      '</ul>' +
+      '</div>';
+
+    if (window.DayPilot && DayPilot.Modal) {
+      DayPilot.Modal.alert(html, {
+        theme: 'modal_flat',
+        width: 720,
+        scrollWithPage: true
+      });
+    } else {
+      alert('Instructions are available when DayPilot.Modal is loaded. Please include the DayPilot.Modal library before using this button.');
+    }
+  }
+
+
+  function normalizeMeter(m) {
+    m = (m || "").trim().replace(/\s+/g, "");
+
+    // ABC shorthand meter aliases:
+    //   M:C  is common time, equivalent here to 4/4.
+    //   M:C| is cut/common shorthand, but these tunebook reels/hornpipes
+    //   are written as eight 1/8-note units per bar, so use the same
+    //   matching and chord-placement bucket as 4/4.
+    //
+    // Normalizing these aliases is important because the chord database
+    // often stores the same style of tune as 4/4, while source tunebooks
+    // commonly write reels and hornpipes as M:C|.
+    if (/^C$/i.test(m)) return "4/4";
+    if (/^C\|$/i.test(m)) return "4/4";
+
+    return m;
+  }
+
+  function normalizeMode(k) {
+    k = (k || "").trim();
+    k = k.replace(/%.*/, "").trim();
+    k = k.replace(/\s+/g, "");
+    k = k.replace(/^K:/i, "");
+    k = k.replace(/^(HP|Hp|hp)$/, "");
+    k = k.replace(/^(none|None)$/i, "");
+    k = k.replace(/([A-Ga-g])#/g, function(_, n) { return n.toUpperCase() + "#"; });
+    k = k.replace(/([A-Ga-g])b/g, function(_, n) { return n.toUpperCase() + "b"; });
+    k = k.replace(/^([a-g])/, function(_, n) { return n.toUpperCase(); });
+
+    var m = k.match(/^([A-G](?:#|b)?)(.*)$/);
+    if (!m) return k.toLowerCase();
+
+    var root = m[1];
+    var mode = (m[2] || "").toLowerCase();
+
+    mode = mode.replace(/^maj(or)?$/, "major");
+    mode = mode.replace(/^min(or)?$/, "minor");
+    mode = mode.replace(/^m$/, "minor");
+    mode = mode.replace(/^dor(ian)?$/, "dorian");
+    mode = mode.replace(/^mix(olydian)?$/, "mixolydian");
+    mode = mode.replace(/^aeo(lian)?$/, "aeolian");
+    mode = mode.replace(/^ion(ian)?$/, "major");
+    mode = mode.replace(/^phr(ygian)?$/, "phrygian");
+    mode = mode.replace(/^lyd(ian)?$/, "lydian");
+    mode = mode.replace(/^loc(rian)?$/, "locrian");
+
+    if (!mode) mode = "major";
+    return root + mode;
+  }
+
+  function getHeaderValue(tune, letter) {
+    var re = new RegExp("^" + letter + ":\\s*(.*)$", "im");
+    var m = tune.match(re);
+    return m ? m[1].trim() : "";
+  }
+
+  function getABCPreTuneText(abcText) {
+    abcText = abcText.replace(/\r\n/g, "\n").replace(/\r/g, "\n");
+    var m = /^X:\s*.*$/gmi.exec(abcText);
+    if (!m || m.index <= 0) return "";
+    return abcText.slice(0, m.index).trimEnd();
+  }
+
+  function splitTunes(abcText) {
+    abcText = abcText.replace(/\r\n/g, "\n").replace(/\r/g, "\n");
+    var starts = [];
+    var re = /^X:\s*.*$/gmi;
+    var m;
+    while ((m = re.exec(abcText)) !== null) starts.push(m.index);
+    if (!starts.length) return abcText.trim() ? [abcText] : [];
+    var tunes = [];
+    for (var i = 0; i < starts.length; i++) {
+      var start = starts[i];
+      var end = (i + 1 < starts.length) ? starts[i + 1] : abcText.length;
+      tunes.push(abcText.slice(start, end).trimEnd());
+    }
+    return tunes;
+  }
+
+  function splitHeaderBody(tune) {
+    var lines = tune.replace(/\r\n/g, "\n").replace(/\r/g, "\n").split("\n");
+    var bodyStart = lines.findIndex(function(line) {
+      return !/^\s*$/.test(line) && !/^\s*[A-Za-z]:/.test(line) && !/^\s*%%/.test(line) && !/^\s*%/.test(line);
+    });
+    if (bodyStart < 0) return { header: tune, body: "" };
+    return {
+      header: lines.slice(0, bodyStart).join("\n"),
+      body: lines.slice(bodyStart).join("\n")
+    };
+  }
+
+  function removeABCDecorations(s, keepChords) {
+    s = s || "";
+    if (!keepChords) s = s.replace(/"(?:[^"\\]|\\.)*"/g, "");
+    s = s.replace(/%.*$/gm, "");
+    s = s.replace(/!.*?!/g, "");
+    s = s.replace(/\+.*?\+/g, "");
+    s = s.replace(/\{[^}]*\}/g, "");
+    s = s.replace(/\[[A-Za-z]:[^\]]*\]/g, "");
+    s = s.replace(/\([23456789]/g, "");
+    s = s.replace(/[.~HLMOPSTuv]/g, "");
+    return s;
+  }
+
+  function parseDuration(note) {
+    var m = note.match(/(\d+\/\d+|\d+\/|\/\d+|\d+|\/)$/);
+    if (!m) return 1;
+    var d = m[1];
+    if (/^\d+$/.test(d)) return parseInt(d, 10);
+    if (d === "/") return 0.5;
+    if (/^\d+\/$/.test(d)) return parseInt(d, 10) / 2;
+    if (/^\/\d+$/.test(d)) return 1 / parseInt(d.slice(1), 10);
+    var parts = d.split("/");
+    return parseInt(parts[0], 10) / parseInt(parts[1], 10);
+  }
+
+  function normalizeNoteToken(note) {
+    var m = note.match(/^((?:\^\^|__|\^|_|=)?)([A-Ga-g])([,']*)/);
+    if (!m) return "";
+    var acc = m[1] || "";
+    var letter = m[2].toUpperCase();
+    return acc + letter;
+  }
+
+  function notePitchClass(note) {
+    var n = normalizeNoteToken(note);
+    return n.replace(/[,']/g, "").toUpperCase();
+  }
+
+  function parseMeasureText(text) {
+    var stripped = removeABCDecorations(text, false);
+    var notes = [];
+    var pitchClasses = [];
+    var noteStartOffsets = [];
+    var duration = 0;
+    for (var i = 0; i < stripped.length; i++) {
+      NOTE_RE.lastIndex = i;
+      var m = NOTE_RE.exec(stripped);
+      if (m) {
+        var token = m[0];
+        noteStartOffsets.push(duration);
+        notes.push(normalizeNoteToken(token));
+        pitchClasses.push(notePitchClass(token));
+        duration += parseDuration(token);
+        i = NOTE_RE.lastIndex - 1;
+      }
+    }
+    return {
+      notes: notes,
+      pitchClasses: pitchClasses,
+      noteStartOffsets: noteStartOffsets,
+      duration: duration,
+      noteString: notes.join(" "),
+      pcString: pitchClasses.join(" ")
+    };
+  }
+
+  function extractChordsWithNoteIndexes(text) {
+    var chords = [];
+    var noteIndex = 0;
+    var i = 0;
+    while (i < text.length) {
+      var c = text[i];
+      if (c === '"') {
+        var j = i + 1;
+        var chord = "";
+        while (j < text.length) {
+          if (text[j] === '"' && text[j - 1] !== "\\") break;
+          chord += text[j];
+          j++;
+        }
+        if (j < text.length && chord.trim()) {
+          chords.push({ chord: chord.trim(), noteIndex: noteIndex });
+          i = j + 1;
+          continue;
+        }
+      }
+      NOTE_RE.lastIndex = i;
+      var m = NOTE_RE.exec(text);
+      if (m) {
+        noteIndex++;
+        i = NOTE_RE.lastIndex;
+        continue;
+      }
+      i++;
+    }
+    return chords;
+  }
+
+  function isAllowedPlainMajorMinorChord(chord) {
+    // Allow only plain uppercase-root major/minor triads, for example:
+    // D, G, Em, Bbm, F#m.
+    // Reject lowercase roots (d, e, am), slash chords (D/F#), power chords (D5),
+    // seventh chords (D7, Dmaj7), and any other extensions or modifiers.
+    chord = (chord || "").trim();
+    return /^[A-G](?:#|b)?m?$/.test(chord);
+  }
+
+  function measureHasOnlyAllowedChords(measure) {
+    if (!measure.chords || !measure.chords.length) return false;
+    return measure.chords.every(function(c) {
+      return isAllowedPlainMajorMinorChord(c.chord);
+    });
+  }
+
+  function splitBodyIntoMeasures(body) {
+    var measures = [];
+    var prefix = "";
+    var content = "";
+    var i = 0;
+    var barRe = /:\||\|:|\|\]|\[\||\|\||\|/y;
+
+    function hasMusicalContent(s) {
+      // Whitespace between barlines should not become its own measure.
+      return /[^\s]/.test(s || "");
+    }
+
+    while (i < body.length) {
+      barRe.lastIndex = i;
+      var m = barRe.exec(body);
+      if (m) {
+        var bar = m[0];
+
+        // If we have only whitespace before this barline, keep that whitespace
+        // with the next measure. This is especially important for repeated
+        // parts written on a new line, e.g. "||\n|:BAG...".
+        if (!hasMusicalContent(content)) {
+          prefix += content + bar;
+          content = "";
+          i = barRe.lastIndex;
+          continue;
+        }
+
+        if (bar === "|:") {
+          // "|:" both closes the previous measure and starts the next repeat
+          // section. Keep a normal bar as the suffix of the previous measure,
+          // then attach "|:" to the prefix of the following measure so that
+          // the following real measure is correctly marked as a repeat start.
+          measures.push({ prefix: prefix, content: content, suffix: "|" });
+          prefix = "|:";
+          content = "";
+        } else {
+          measures.push({ prefix: prefix, content: content, suffix: bar });
+          prefix = "";
+          content = "";
+        }
+        i = barRe.lastIndex;
+      } else {
+        content += body[i];
+        i++;
+      }
+    }
+
+    if (content.length || prefix.length) {
+      measures.push({ prefix: prefix, content: content, suffix: "" });
+    }
+    return measures;
+  }
+
+  function getFullMeasureDuration(meter, unitNoteLength) {
+    meter = normalizeMeter(meter);
+    var mm = meter.match(/^(\d+)\/(\d+)$/);
+    if (!mm) return 0;
+    var num = parseInt(mm[1], 10);
+    var den = parseInt(mm[2], 10);
+    var l = parseUnitLength(unitNoteLength || "");
+    if (!l) {
+      // ABC default: for meter < 3/4 use 1/16, otherwise 1/8.
+      l = (num / den < 0.75) ? (1 / 16) : (1 / 8);
+    }
+    return (num / den) / l;
+  }
+
+  function parseUnitLength(L) {
+    L = (L || "").trim();
+    var m = L.match(/^(\d+)\/(\d+)$/);
+    if (!m) return 0;
+    return parseInt(m[1], 10) / parseInt(m[2], 10);
+  }
+
+  function buildMeasureObjects(body, meter, unitNoteLength) {
+    var raw = splitBodyIntoMeasures(body);
+    var full = getFullMeasureDuration(meter, unitNoteLength);
+    var firstFullSeen = false;
+    return raw.map(function(r, idx) {
+      var parsed = parseMeasureText(r.content);
+      var hasNotes = parsed.notes.length > 0;
+      var isFull = full ? Math.abs(parsed.duration - full) < 0.01 : hasNotes;
+      var isInitialPickup = hasNotes && !firstFullSeen && full && parsed.duration < full - 0.01;
+      if (isFull && hasNotes) firstFullSeen = true;
+      return Object.assign({}, r, parsed, {
+        index: idx,
+        isFullMeasure: isFull,
+        isPartialMeasure: hasNotes && full && parsed.duration < full - 0.01,
+        isInitialPickup: isInitialPickup,
+        isRepeatStart: /\|:/.test(r.prefix + r.suffix),
+        isRepeatEnd: /:\|/.test(r.prefix + r.suffix),
+        chords: extractChordsWithNoteIndexes(r.content)
+      });
+    });
+  }
+
+  function stripExistingChords(text) {
+    return text.replace(/"(?:[^"\\]|\\.)*"/g, "");
+  }
+
+  function normalizeInputMeterHeader(tune) {
+    // Normalize ABC shorthand meters in the source tune itself, not only for
+    // matching. Tunes using M:C or M:C| are processed and output as M:4/4 so
+    // the generated ABC has the same meter spelling used for matching, measure
+    // duration, and chord placement.
+    return tune.replace(/^M:\s*(C\|?|c\|?)\s*$/gm, "M:4/4");
+  }
+
+  function stripExistingChordsFromTune(tune) {
+    // Remove any existing ABC chord symbols from the source tune before matching.
+    // Header text is left alone; only the notation body is stripped. The database
+    // tunes are not stripped because their chord symbols are the source material.
+    var hb = splitHeaderBody(tune);
+    if (!hb.body) return normalizeInputMeterHeader(tune);
+    var strippedBody = stripExistingChords(hb.body);
+    return normalizeInputMeterHeader(hb.header + (hb.header && strippedBody ? "\n" : "") + strippedBody);
+  }
+
+  function getAllowedChordOffsetsForMeter(meter, unitNoteLength) {
+    var full = getFullMeasureDuration(meter, unitNoteLength);
+    if (!full) return [0];
+
+    switch (normalizeMeter(meter)) {
+      case "4/4":
+        return [0, full / 2];          // Beats 1 and 3.
+      case "2/4":
+        return [0, full / 2];          // Beats 1 and 2.
+      case "6/8":
+        return [0, full / 2];          // Beats 1 and 4.
+      case "9/8":
+        return [0, full / 3, full * 2 / 3];  // Beats 1, 4, and 7.
+      case "12/8":
+        return [0, full / 4, full / 2, full * 3 / 4];  // Beats 1, 4, 7, and 10.
+      case "3/4":
+        return [0, full / 3, full * 2 / 3];  // Beats 1, 2, and 3.
+      default:
+        // For meters not explicitly listed above, only allow a chord at the
+        // start of the measure. This avoids copying database chord placements
+        // onto unexpected beats in less common meters.
+        return [0];
+    }
+  }
+
+  function nearlyEqual(a, b) {
+    return Math.abs(a - b) < 0.01;
+  }
+
+  function findMatchingAllowedOffset(offset, allowedOffsets) {
+    for (var i = 0; i < allowedOffsets.length; i++) {
+      if (nearlyEqual(offset, allowedOffsets[i])) return allowedOffsets[i];
+    }
+    return null;
+  }
+
+  function findSourceNoteIndexAtOffset(sourceMeasure, offset) {
+    for (var i = 0; i < sourceMeasure.noteStartOffsets.length; i++) {
+      if (nearlyEqual(sourceMeasure.noteStartOffsets[i], offset)) return i;
+    }
+    return null;
+  }
+
+  function getCandidateChordOffset(candidateMeasure, chord) {
+    if (!chord || chord.noteIndex <= 0) return 0;
+    if (chord.noteIndex < candidateMeasure.noteStartOffsets.length) {
+      return candidateMeasure.noteStartOffsets[chord.noteIndex];
+    }
+    // If a source database chord is somehow attached beyond the last note, treat
+    // it as unusable for beat-restricted placement.
+    return null;
+  }
+
+  function mapCandidateChordsToAllowedSourceBeats(sourceMeasure, candidateMeasure, meter, unitNoteLength, forceStartChord) {
+    var allowedOffsets = getAllowedChordOffsetsForMeter(meter, unitNoteLength);
+    var mapped = [];
+    var firstChord = candidateMeasure.chords && candidateMeasure.chords[0] ? candidateMeasure.chords[0].chord : "";
+
+    if (forceStartChord && firstChord) {
+      mapped.push({ chord: firstChord, noteIndex: 0, forced: true });
+    }
+
+    candidateMeasure.chords.forEach(function(chord) {
+      var candidateOffset = getCandidateChordOffset(candidateMeasure, chord);
+      if (candidateOffset === null) return;
+
+      var allowedOffset = findMatchingAllowedOffset(candidateOffset, allowedOffsets);
+      if (allowedOffset === null) return;
+
+      var sourceNoteIndex = findSourceNoteIndexAtOffset(sourceMeasure, allowedOffset);
+      if (sourceNoteIndex === null) return;
+
+      // Avoid duplicating the forced opening chord.
+      if (forceStartChord && sourceNoteIndex === 0 && chord.chord === firstChord) return;
+
+      mapped.push({
+        chord: chord.chord,
+        noteIndex: sourceNoteIndex,
+        forced: false
+      });
+    });
+
+    mapped.sort(function(a, b) {
+      if (a.noteIndex !== b.noteIndex) return a.noteIndex - b.noteIndex;
+      if (a.forced && !b.forced) return -1;
+      if (!a.forced && b.forced) return 1;
+      return 0;
+    });
+
+    var compact = [];
+    mapped.forEach(function(chord) {
+      var last = compact[compact.length - 1];
+      if (!last || last.noteIndex !== chord.noteIndex || last.chord !== chord.chord || chord.forced) {
+        compact.push(chord);
+      }
+    });
+
+    return compact;
+  }
+
+  function insertChordsIntoMeasure(sourceText, candidateChords, forceStartChord) {
+    if (!candidateChords || !candidateChords.length) return sourceText;
+
+    var chords = candidateChords.slice().sort(function(a, b) { return a.noteIndex - b.noteIndex; });
+    var firstChord = chords[0].chord;
+
+    if (forceStartChord && chords[0].noteIndex !== 0) {
+      chords.unshift({ chord: firstChord, noteIndex: 0, forced: true });
+    }
+
+    // Remove repeated identical chord symbols in the same measure.
+    var compact = [];
+    var last = null;
+    chords.forEach(function(c) {
+      if (c.chord !== last || c.forced) compact.push(c);
+      last = c.chord;
+    });
+    chords = compact;
+
+    var text = stripExistingChords(sourceText);
+    var out = "";
+    var noteIndex = 0;
+    var chordPtr = 0;
+    var insertedAny = false;
+
+    function emitChordsForCurrentIndex() {
+      var s = "";
+      while (chordPtr < chords.length && chords[chordPtr].noteIndex <= noteIndex) {
+        s += '"' + chords[chordPtr].chord + '"';
+        insertedAny = true;
+        chordPtr++;
+      }
+      return s;
+    }
+
+    for (var i = 0; i < text.length; i++) {
+      NOTE_RE.lastIndex = i;
+      var m = NOTE_RE.exec(text);
+      if (m) {
+        out += emitChordsForCurrentIndex();
+        out += m[0];
+        noteIndex++;
+        i = NOTE_RE.lastIndex - 1;
+      } else {
+        out += text[i];
+      }
+    }
+
+    if (!insertedAny && forceStartChord) {
+      out = '"' + firstChord + '"' + out;
+    }
+    return out;
+  }
+
+  function lcsLength(a, b) {
+    var m = a.length, n = b.length;
+    if (!m || !n) return 0;
+    var prev = new Array(n + 1).fill(0);
+    var curr = new Array(n + 1).fill(0);
+    for (var i = 1; i <= m; i++) {
+      for (var j = 1; j <= n; j++) {
+        curr[j] = (a[i - 1] === b[j - 1]) ? prev[j - 1] + 1 : Math.max(prev[j], curr[j - 1]);
+      }
+      var t = prev; prev = curr; curr = t; curr.fill(0);
+    }
+    return prev[n];
+  }
+
+  function ngrams(arr, n) {
+    var set = new Set();
+    for (var i = 0; i <= arr.length - n; i++) set.add(arr.slice(i, i + n).join(" "));
+    return set;
+  }
+
+  function jaccard(a, b) {
+    if (!a.size && !b.size) return 0;
+    var inter = 0;
+    a.forEach(function(x) { if (b.has(x)) inter++; });
+    return inter / (a.size + b.size - inter);
+  }
+
+  function measureSimilarity(a, b) {
+    if (!a.notes.length || !b.notes.length) return 0;
+    var lcs = lcsLength(a.notes, b.notes) / Math.max(a.notes.length, b.notes.length);
+    var pcLcs = lcsLength(a.pitchClasses, b.pitchClasses) / Math.max(a.pitchClasses.length, b.pitchClasses.length);
+    var bi = jaccard(ngrams(a.notes, 2), ngrams(b.notes, 2));
+    var tri = jaccard(ngrams(a.notes, 3), ngrams(b.notes, 3));
+    var lenPenalty = Math.abs(a.notes.length - b.notes.length) / Math.max(a.notes.length, b.notes.length, 1);
+    return (lcs * 0.45) + (pcLcs * 0.25) + (bi * 0.20) + (tri * 0.10) - (lenPenalty * 0.10);
+  }
+
+  function tuneKey(meter, mode) {
+    return normalizeMeter(meter) + "\t" + normalizeMode(mode);
+  }
+
+  function buildChordIndex(db) {
+    var index = new Map();
+    var chordedTunes = 0;
+    var chordedMeasures = 0;
+
+    db.forEach(function(t) {
+      if (!t || !t.abc || !/"/.test(t.abc)) return;
+      var meter = normalizeMeter(t.meter || "");
+      var mode = normalizeMode(t.mode || "");
+      if (!meter || !mode) return;
+      var key = tuneKey(meter, mode);
+      var measures = buildMeasureObjects(t.abc, meter, "").filter(function(m) {
+        // Entire database measures are rejected unless every chord marker in the
+        // measure is a plain uppercase-root major/minor triad. This prevents
+        // copying lowercase chords, slash chords, 5 chords, 7 chords, and other
+        // extended/modified chord spellings into the source tune.
+        return m.notes.length && measureHasOnlyAllowedChords(m);
+      }).map(function(m) {
+        m.sourceName = t.name || "";
+        m.sourceSettingId = t.setting_id || "";
+        return m;
+      });
+      if (!measures.length) return;
+      chordedTunes++;
+      chordedMeasures += measures.length;
+      if (!index.has(key)) index.set(key, []);
+      Array.prototype.push.apply(index.get(key), measures);
+    });
+
+    gLastStats = { chordedTunes: chordedTunes, chordedMeasures: chordedMeasures, keys: index.size };
+    return index;
+  }
+
+  async function loadDatabase() {
+    if (gDatabase && gChordIndex) return;
+
+    if (window.abctunes_thesession_28may2026 && Array.isArray(window.abctunes_thesession_28may2026)) {
+      gDatabase = window.abctunes_thesession_28may2026;
+    } else if (window.ABCTUNES_THESESSION_28MAY2026 && Array.isArray(window.ABCTUNES_THESESSION_28MAY2026)) {
+      gDatabase = window.ABCTUNES_THESESSION_28MAY2026;
+    } else {
+      var response = await fetch("https://michaeleskin.com/abctools/abctunes_thesession_28may2026.json", { cache: "no-store" });
+      if (!response.ok) throw new Error("Could not load abctunes_thesession_28may2026.json");
+      gDatabase = await response.json();
+    }
+
+    if (!Array.isArray(gDatabase)) throw new Error("The tune database did not contain a JSON array.");
+    gChordIndex = buildChordIndex(gDatabase);
+  }
+
+  async function findBestMeasureMatchAsync(sourceMeasure, candidates, threshold, progress) {
+    var best = null;
+    var bestScore = 0;
+    var lastYield = performance.now();
+
+    for (var i = 0; i < candidates.length; i++) {
+      throwIfCancelled();
+      var c = candidates[i];
+      var score = measureSimilarity(sourceMeasure, c);
+      if (score > bestScore) {
+        bestScore = score;
+        best = c;
+      }
+
+      var now = performance.now();
+      if (now - lastYield > 100) {
+        if (progress) progress(i + 1, candidates.length, bestScore);
+        await allowBrowserToUpdate();
+        lastYield = performance.now();
+      }
+    }
+
+    if (progress) progress(candidates.length, candidates.length, bestScore);
+    if (!best || bestScore < threshold) return null;
+    return { measure: best, score: bestScore };
+  }
+
+  async function processTuneAsync(tune, options, progressState) {
+    tune = stripExistingChordsFromTune(tune);
+    var hb = splitHeaderBody(tune);
+    var meter = getHeaderValue(hb.header, "M") || "4/4";
+    var mode = getHeaderValue(hb.header, "K");
+    var unitLength = getHeaderValue(hb.header, "L");
+    var title = getHeaderValue(hb.header, "T") || "Untitled";
+    var key = tuneKey(meter, mode);
+    var candidates = gChordIndex.get(key) || [];
+
+    if (!hb.body.trim() || !candidates.length) {
+      if (progressState) {
+        updateProgressModal(
+          "Matching chords...<br>" +
+          "Tune <b>" + progressState.tuneNumber + "</b> of <b>" + progressState.tuneCount + "</b>: <b>" + escapeHTML(title) + "</b><br>" +
+          "No same meter/key/mode chord candidates were found for this tune."
+        );
+        await allowBrowserToUpdate();
+      }
+      return { text: tune, stats: { title: title, matched: 0, total: 0, skippedPickup: 0, candidates: candidates.length } };
+    }
+
+    var measures = buildMeasureObjects(hb.body, meter, unitLength);
+    var matched = 0;
+    var total = 0;
+    var skippedPickup = 0;
+    var lastChord = "";
+    var firstChordInserted = false;
+    var outParts = [];
+    var totalMeasureCount = measures.filter(function(m) { return m.notes.length > 0; }).length;
+    var processedMeasureCount = 0;
+    var forceNextFullMeasureChord = false;
+
+    for (var mi = 0; mi < measures.length; mi++) {
+      throwIfCancelled();
+      var m = measures[mi];
+
+      if (!m.notes.length) {
+        outParts.push(m.prefix + m.content + m.suffix);
+        continue;
+      }
+
+      total++;
+      processedMeasureCount++;
+
+      if (m.isInitialPickup) {
+        skippedPickup++;
+        outParts.push(m.prefix + stripExistingChords(m.content) + m.suffix);
+        continue;
+      }
+
+      // Do not inject chords on short pickup notes that lead into the next full
+      // phrase or repeated part. The only exception is a partial measure that
+      // actually ends a repeated section, because repeat endings are required
+      // to carry an explicit chord marker when a match is found.
+      //
+      // When such a pickup is skipped, force an explicit chord on the next full
+      // measure. This handles common ABC like ":| d|ea...", where the single
+      // pickup note belongs to the new part but should not itself be chorded.
+      if (m.isPartialMeasure && !m.isRepeatEnd) {
+        skippedPickup++;
+        forceNextFullMeasureChord = true;
+        outParts.push(m.prefix + stripExistingChords(m.content) + m.suffix);
+        continue;
+      }
+
+      var forceStartChord = !firstChordInserted || m.isRepeatStart || m.isRepeatEnd || forceNextFullMeasureChord;
+      var effectiveThreshold = forceStartChord ? Math.min(options.threshold, options.boundaryThreshold || 0.35) : options.threshold;
+
+      var best = await findBestMeasureMatchAsync(
+        m,
+        candidates,
+        effectiveThreshold,
+        function(candidateDone, candidateTotal, bestScore) {
+          var elapsed = performance.now() - progressState.startedAt;
+          var overallPercent = progressState.totalMeasuresToMatch ?
+            Math.round(((progressState.completedMeasures + processedMeasureCount - 1) / progressState.totalMeasuresToMatch) * 100) : 0;
+
+          updateProgressModal(
+            "Matching chords... <b>" + overallPercent + "%</b> complete, elapsed <b>" + formatElapsed(elapsed) + "</b><br>" +
+            "Tune <b>" + progressState.tuneNumber + "</b> of <b>" + progressState.tuneCount + "</b>: <b>" + escapeHTML(title) + "</b><br>" +
+            "Measure <b>" + processedMeasureCount + "</b> of <b>" + totalMeasureCount + "</b> in this tune; " +
+            "database candidates checked <b>" + candidateDone + "</b> of <b>" + candidateTotal + "</b>.<br>" +
+            "Matches so far: <b>" + (progressState.totalMatched + matched) + "</b>; skipped pickup measures: <b>" + (progressState.totalSkippedPickup + skippedPickup) + "</b>; current best score: <b>" + bestScore.toFixed(3) + "</b>."
+          );
+        }
+      );
+
+      if (!best) {
+        forceNextFullMeasureChord = false;
+        outParts.push(m.prefix + stripExistingChords(m.content) + m.suffix);
+        continue;
+      }
+
+      var chords = mapCandidateChordsToAllowedSourceBeats(m, best.measure, meter, unitLength, forceStartChord);
+
+      // Chords copied from the database are only allowed on musically appropriate
+      // beat locations for the current meter:
+      //   4/4: beats 1 and 3
+      //   2/4: beats 1 and 2
+      //   6/8: beats 1 and 4
+      //   9/8: beats 1, 4, and 7
+      //   12/8: beats 1, 4, 7, and 10
+      //   3/4: beats 1, 2, and 3
+      // Boundary chords for tune starts, repeat starts, and repeat ends are still
+      // forced onto the start of the measure when a matching database measure is found.
+
+      if (!options.repeatSameChord) {
+        chords = chords.filter(function(c, idx) {
+          // Forced boundary chords must survive repeated-chord suppression.
+          if (c.forced) return true;
+          return !(idx === 0 && c.chord === lastChord);
+        });
+      }
+
+      if (!chords.length) {
+        forceNextFullMeasureChord = false;
+        outParts.push(m.prefix + stripExistingChords(m.content) + m.suffix);
+        continue;
+      }
+
+      var injected = insertChordsIntoMeasure(m.content, chords, forceStartChord);
+      if (chords.length) lastChord = chords[chords.length - 1].chord;
+      firstChordInserted = true;
+      forceNextFullMeasureChord = false;
+      matched++;
+      outParts.push(m.prefix + injected + m.suffix);
+    }
+
+    if (progressState) {
+      progressState.completedMeasures += total;
+      progressState.totalMatched += matched;
+      progressState.totalSkippedPickup += skippedPickup;
+    }
+
+    var outBody = outParts.join("");
+
+    return {
+      text: hb.header + (hb.header && outBody ? "\n" : "") + outBody,
+      stats: { title: title, matched: matched, total: total, skippedPickup: skippedPickup, candidates: candidates.length }
+    };
+  }
+
+  async function generateBackupChords() {
+    var input = document.getElementById("input").value;
+    if (!input.trim()) {
+      alert("Please enter or open some ABC notation first.");
+      return;
+    }
+
+    gCancelRequested = false;
+    var outputBox = document.getElementById("output");
+    clearOutputArea();
+    setProcessingControlsEnabled(false);
+    setStatus("Processing...");
+    showProgressModal("Loading and indexing chorded tune database...");
+    await allowBrowserToUpdate();
+
+    try {
+      await loadDatabase();
+    } catch (err) {
+      setProcessingControlsEnabled(true);
+      hideProgressModal();
+      setStatus("<b>Error:</b> " + escapeHTML(err.message) + "<br><br>Place <b>abctunes_thesession_28may2026.json</b> in the same folder as this tool, or statically include it as <b>window.abctunes_thesession_28may2026</b>.");
+      return;
+    }
+
+    var threshold = parseFloat(document.getElementById("threshold").value || "0.70");
+    var preTuneText = getABCPreTuneText(input);
+    var tunes = splitTunes(input);
+    var results = [];
+    var allStats = [];
+
+    var preParsedTunes = tunes.map(function(t) {
+      t = stripExistingChordsFromTune(t);
+      var hb = splitHeaderBody(t);
+      var meter = getHeaderValue(hb.header, "M") || "4/4";
+      var mode = getHeaderValue(hb.header, "K");
+      var unitLength = getHeaderValue(hb.header, "L");
+      return {
+        tune: t,
+        hb: hb,
+        title: getHeaderValue(hb.header, "T") || "Untitled",
+        measureCount: buildMeasureObjects(hb.body, meter, unitLength).filter(function(m) { return m.notes.length > 0; }).length
+      };
+    });
+
+    var totalMeasuresToMatch = preParsedTunes.reduce(function(a, t) { return a + t.measureCount; }, 0);
+    var progressState = {
+      startedAt: performance.now(),
+      tuneCount: tunes.length,
+      tuneNumber: 0,
+      totalMeasuresToMatch: totalMeasuresToMatch,
+      completedMeasures: 0,
+      totalMatched: 0,
+      totalSkippedPickup: 0
+    };
+
+    updateProgressModal(
+      "Starting measure matching...<br>" +
+      "Tunes: <b>" + tunes.length + "</b>; measures to examine: <b>" + totalMeasuresToMatch + "</b>.<br>" +
+      "Database index: <b>" + gLastStats.chordedTunes + "</b> chorded tune settings, <b>" + gLastStats.chordedMeasures + "</b> chorded measures, <b>" + gLastStats.keys + "</b> meter/key/mode buckets."
+    );
+    await allowBrowserToUpdate();
+
+    try {
+      for (var i = 0; i < tunes.length; i++) {
+        progressState.tuneNumber = i + 1;
+        throwIfCancelled();
+        updateProgressModal(
+          "Matching chords...<br>" +
+          "Tune <b>" + (i + 1) + "</b> of <b>" + tunes.length + "</b>: <b>" + escapeHTML(preParsedTunes[i].title) + "</b><br>" +
+          "Overall matched so far: <b>" + progressState.totalMatched + "</b>; skipped pickup measures: <b>" + progressState.totalSkippedPickup + "</b>."
+        );
+        await allowBrowserToUpdate();
+
+        var r = await processTuneAsync(tunes[i], { threshold: threshold, boundaryThreshold: 0.35, repeatSameChord: false }, progressState);
+        results.push(r.text);
+        allStats.push(r.stats);
+
+        if (outputBox) {
+          var partialOutput = results.join("\n\n").trim();
+          if (preTuneText) partialOutput = preTuneText + "\n\n" + partialOutput;
+          setOutputArea(partialOutput + "\n");
+        }
+        await allowBrowserToUpdate();
+      }
+    } catch (err) {
+      setProcessingControlsEnabled(true);
+      hideProgressModal();
+      if (err && err.message === "USER_CANCELLED") {
+        clearOutputArea();
+        setStatus("Measure matching cancelled. Output was cleared.");
+        return;
+      }
+      clearOutputArea();
+      setStatus("<b>Error:</b> " + escapeHTML(err && err.message ? err.message : err));
+      return;
+    } finally {
+      setProcessingControlsEnabled(true);
+    }
+
+    hideProgressModal();
+    var output = results.join("\n\n").trim();
+    if (preTuneText) output = preTuneText + "\n\n" + output;
+    output += "\n";
+    setOutputArea(output);
+
+    var totalMeasures = allStats.reduce(function(a, s) { return a + s.total; }, 0);
+    var totalMatched = allStats.reduce(function(a, s) { return a + s.matched; }, 0);
+    var totalPickup = allStats.reduce(function(a, s) { return a + s.skippedPickup; }, 0);
+    var withCandidates = allStats.filter(function(s) { return s.candidates > 0; }).length;
+    var elapsed = performance.now() - progressState.startedAt;
+
+    setStatus(
+      "Done in <b>" + formatElapsed(elapsed) + "</b>. Processed <b>" + tunes.length + "</b> tune(s). " +
+      "Matched and injected chords into <b>" + totalMatched + "</b> of <b>" + totalMeasures + "</b> non-pickup measure(s). " +
+      "Skipped <b>" + totalPickup + "</b> opening pickup measure(s).<br>" +
+      "Database index: <b>" + gLastStats.chordedTunes + "</b> chorded tune settings, <b>" + gLastStats.chordedMeasures + "</b> chorded measures, <b>" + gLastStats.keys + "</b> meter/key/mode buckets. " +
+      "Input tunes with same meter/key/mode candidates: <b>" + withCandidates + "</b>."
+    );
+  }
+
+  function openABCFile(evt) {
+    var file = evt.target.files && evt.target.files[0];
+    if (!file) return;
+    clearOutputArea();
+    gSaveFilename = "abc_backup_chords.abc";
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      document.getElementById("input").value = e.target.result;
+      clearOutputArea();
+      setStatus("Loaded " + escapeHTML(file.name) + ". Output cleared.");
+    };
+    reader.readAsText(file);
+  }
+
+  async function requestSaveFilename(defaultName) {
+    defaultName = normalizeSaveFilename(defaultName || "abc_backup_chords.abc");
+
+    if (window.DayPilot && DayPilot.Modal && DayPilot.Modal.prompt) {
+      try {
+        var args = await DayPilot.Modal.prompt("Please enter a filename for your output ABC file:", defaultName, {
+          theme: "modal_flat",
+          width: 520,
+          top: 150,
+          scrollWithPage: true
+        });
+
+        if (!args || args.canceled) return null;
+        return args.result;
+      } catch (err) {
+        // Fall through to the browser prompt if the DayPilot prompt API is
+        // unavailable or behaves differently in a locally included version.
+      }
+    }
+
+    return prompt("Please enter a filename for your output ABC file:", defaultName);
+  }
+
+  function normalizeSaveFilename(fname) {
+    fname = (fname || "").replace(/[^a-zA-Z0-9_\-. ]+/g, "").trim();
+    if (!fname) return "";
+
+    // Only .abc and .txt are valid output extensions. If the user enters
+    // another extension, replace that extension with .abc. If they enter no
+    // extension, add .abc.
+    if (/\.(abc|txt)$/i.test(fname)) return fname;
+    if (/\.[^.\/]+$/.test(fname)) return fname.replace(/\.[^.\/]+$/, ".abc");
+    return fname + ".abc";
+  }
+
+  async function saveOutput() {
+    var data = document.getElementById("output").value;
+    if (!data.length) { showMessageDialog("Nothing to Save"); return; }
+
+    var fname = await requestSaveFilename(gSaveFilename || "abc_backup_chords.abc");
+    if (fname === null || fname === undefined) return;
+
+    fname = normalizeSaveFilename(fname);
+    if (!fname) return;
+
+    gSaveFilename = fname;
+
+    var blob = new Blob([data], { type: "text/plain" });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a");
+    a.style.display = "none";
+    a.href = url;
+    a.download = fname;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(function() { URL.revokeObjectURL(url); }, 1000);
+  }
+
+  function copyOutputToClipboard() {
+    var text = document.getElementById("output").value;
+    if (!text.length) { showMessageDialog("Nothing to copy to the clipboard"); return; }
+    copyToClipboard(text).then(function() {
+      var btn = document.getElementById("copybutton");
+      btn.innerHTML = "Output copied to the Clipboard!";
+      setTimeout(function() { btn.innerHTML = "Copy Output to the Clipboard"; }, 1250);
+    }).catch(function() { alert("Unable to copy to Clipboard."); });
+  }
+
+  function copyToClipboard(text) {
+    if (navigator.clipboard && window.isSecureContext) return navigator.clipboard.writeText(text);
+    return new Promise(function(resolve, reject) {
+      var textArea = document.createElement("textarea");
+      textArea.value = text;
+      textArea.style.position = "fixed";
+      textArea.style.left = "-999999px";
+      textArea.style.top = "-999999px";
+      document.body.appendChild(textArea);
+      textArea.focus();
+      textArea.select();
+      try { document.execCommand("copy") ? resolve() : reject(); }
+      catch (err) { reject(err); }
+      textArea.remove();
+    });
+  }
+
+  function testOutput() {
+    var abcText = document.getElementById("output").value;
+    updateShareLinkForOutput(abcText);
+
+    if (!abcText.length) {
+      alert("Nothing to test!");
+      return;
+    }
+
+    if (!gOutputShareURL) {
+      alert("Output too long to test directly in ABC Transcription Tools. Please save or copy the output instead.");
+      return;
+    }
+
+    window.open(gOutputShareURL, "_blank");
+  }
+
+  window.addEventListener("pageshow", function() {
+    initializeTool();
+  });
+
+  window.addEventListener("load", function() {
+    document.getElementById("selectabcfile").addEventListener("change", openABCFile);
+    var input = document.getElementById("input");
+    if (input) input.addEventListener("input", handleInputChanged);
+    var output = document.getElementById("output");
+    if (output) output.addEventListener("input", function() {
+      updateOutputActionButtons(output.value);
+      updateShareLinkForOutput(output.value);
+    });
+    initializeTool();
+    gInputInitialized = true;
+  });
+
+  // lz-string 1.4.4 compatible compressor, needed for ABC Transcription Tools share URLs.
+  var LZString = (function() {
+    var f = String.fromCharCode;
+    var keyStrUriSafe = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+-$";
+    var baseReverseDic = {};
+    function getBaseValue(alphabet, character) {
+      if (!baseReverseDic[alphabet]) {
+        baseReverseDic[alphabet] = {};
+        for (var i = 0; i < alphabet.length; i++) baseReverseDic[alphabet][alphabet.charAt(i)] = i;
+      }
+      return baseReverseDic[alphabet][character];
+    }
+    function compressToEncodedURIComponent(input) {
+      if (input == null) return "";
+      return _compress(input, 6, function(a) { return keyStrUriSafe.charAt(a); });
+    }
+    function _compress(uncompressed, bitsPerChar, getCharFromInt) {
+      if (uncompressed == null) return "";
+      var i, value,
+          context_dictionary = {}, context_dictionaryToCreate = {},
+          context_c = "", context_wc = "", context_w = "",
+          context_enlargeIn = 2, context_dictSize = 3, context_numBits = 2,
+          context_data = [], context_data_val = 0, context_data_position = 0;
+      for (var ii = 0; ii < uncompressed.length; ii += 1) {
+        context_c = uncompressed.charAt(ii);
+        if (!Object.prototype.hasOwnProperty.call(context_dictionary, context_c)) {
+          context_dictionary[context_c] = context_dictSize++;
+          context_dictionaryToCreate[context_c] = true;
+        }
+        context_wc = context_w + context_c;
+        if (Object.prototype.hasOwnProperty.call(context_dictionary, context_wc)) {
+          context_w = context_wc;
+        } else {
+          if (Object.prototype.hasOwnProperty.call(context_dictionaryToCreate, context_w)) {
+            if (context_w.charCodeAt(0) < 256) {
+              for (i = 0; i < context_numBits; i++) {
+                context_data_val = (context_data_val << 1);
+                if (context_data_position == bitsPerChar - 1) { context_data_position = 0; context_data.push(getCharFromInt(context_data_val)); context_data_val = 0; } else context_data_position++;
+              }
+              value = context_w.charCodeAt(0);
+              for (i = 0; i < 8; i++) {
+                context_data_val = (context_data_val << 1) | (value & 1);
+                if (context_data_position == bitsPerChar - 1) { context_data_position = 0; context_data.push(getCharFromInt(context_data_val)); context_data_val = 0; } else context_data_position++;
+                value = value >> 1;
+              }
+            } else {
+              value = 1;
+              for (i = 0; i < context_numBits; i++) {
+                context_data_val = (context_data_val << 1) | value;
+                if (context_data_position == bitsPerChar - 1) { context_data_position = 0; context_data.push(getCharFromInt(context_data_val)); context_data_val = 0; } else context_data_position++;
+                value = 0;
+              }
+              value = context_w.charCodeAt(0);
+              for (i = 0; i < 16; i++) {
+                context_data_val = (context_data_val << 1) | (value & 1);
+                if (context_data_position == bitsPerChar - 1) { context_data_position = 0; context_data.push(getCharFromInt(context_data_val)); context_data_val = 0; } else context_data_position++;
+                value = value >> 1;
+              }
+            }
+            context_enlargeIn--;
+            if (context_enlargeIn == 0) { context_enlargeIn = Math.pow(2, context_numBits); context_numBits++; }
+            delete context_dictionaryToCreate[context_w];
+          } else {
+            value = context_dictionary[context_w];
+            for (i = 0; i < context_numBits; i++) {
+              context_data_val = (context_data_val << 1) | (value & 1);
+              if (context_data_position == bitsPerChar - 1) { context_data_position = 0; context_data.push(getCharFromInt(context_data_val)); context_data_val = 0; } else context_data_position++;
+              value = value >> 1;
+            }
+          }
+          context_enlargeIn--;
+          if (context_enlargeIn == 0) { context_enlargeIn = Math.pow(2, context_numBits); context_numBits++; }
+          context_dictionary[context_wc] = context_dictSize++;
+          context_w = String(context_c);
+        }
+      }
+      if (context_w !== "") {
+        if (Object.prototype.hasOwnProperty.call(context_dictionaryToCreate, context_w)) {
+          if (context_w.charCodeAt(0) < 256) {
+            for (i = 0; i < context_numBits; i++) {
+              context_data_val = (context_data_val << 1);
+              if (context_data_position == bitsPerChar - 1) { context_data_position = 0; context_data.push(getCharFromInt(context_data_val)); context_data_val = 0; } else context_data_position++;
+            }
+            value = context_w.charCodeAt(0);
+            for (i = 0; i < 8; i++) {
+              context_data_val = (context_data_val << 1) | (value & 1);
+              if (context_data_position == bitsPerChar - 1) { context_data_position = 0; context_data.push(getCharFromInt(context_data_val)); context_data_val = 0; } else context_data_position++;
+              value = value >> 1;
+            }
+          } else {
+            value = 1;
+            for (i = 0; i < context_numBits; i++) {
+              context_data_val = (context_data_val << 1) | value;
+              if (context_data_position == bitsPerChar - 1) { context_data_position = 0; context_data.push(getCharFromInt(context_data_val)); context_data_val = 0; } else context_data_position++;
+              value = 0;
+            }
+            value = context_w.charCodeAt(0);
+            for (i = 0; i < 16; i++) {
+              context_data_val = (context_data_val << 1) | (value & 1);
+              if (context_data_position == bitsPerChar - 1) { context_data_position = 0; context_data.push(getCharFromInt(context_data_val)); context_data_val = 0; } else context_data_position++;
+              value = value >> 1;
+            }
+          }
+          context_enlargeIn--;
+          if (context_enlargeIn == 0) { context_enlargeIn = Math.pow(2, context_numBits); context_numBits++; }
+          delete context_dictionaryToCreate[context_w];
+        } else {
+          value = context_dictionary[context_w];
+          for (i = 0; i < context_numBits; i++) {
+            context_data_val = (context_data_val << 1) | (value & 1);
+            if (context_data_position == bitsPerChar - 1) { context_data_position = 0; context_data.push(getCharFromInt(context_data_val)); context_data_val = 0; } else context_data_position++;
+            value = value >> 1;
+          }
+        }
+        context_enlargeIn--;
+        if (context_enlargeIn == 0) context_numBits++;
+      }
+      value = 2;
+      for (i = 0; i < context_numBits; i++) {
+        context_data_val = (context_data_val << 1) | (value & 1);
+        if (context_data_position == bitsPerChar - 1) { context_data_position = 0; context_data.push(getCharFromInt(context_data_val)); context_data_val = 0; } else context_data_position++;
+        value = value >> 1;
+      }
+      while (true) {
+        context_data_val = (context_data_val << 1);
+        if (context_data_position == bitsPerChar - 1) { context_data.push(getCharFromInt(context_data_val)); break; }
+        else context_data_position++;
+      }
+      return context_data.join("");
+    }
+    return { compressToEncodedURIComponent: compressToEncodedURIComponent };
+  })();
+  </script>
+</head>
+<body>
+  <div id="progress_modal_overlay" aria-live="polite">
+    <div id="progress_modal_box">
+      <h3>Matching Backup Chords</h3>
+      <div id="progress_modal_status">Starting...</div>
+      <div id="progress_modal_buttons">
+        <button class="btn btn-controls" onclick="cancelProcessing();" title="Stop measure matching and clear the output area">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="maindiv">
+    <div style="text-align: center;">
+      <h1>ABC Tune Backup Chord Finder</h1>
+      <h2>Batch Processor for Adding Backup Chords to ABC Tunes</h2>
+    </div>
+
+    <hr id="abcinput">
+
+    <div style="text-align:left">
+      <h4>ABC Input:</h4>
+      <div style="margin-top:10px;margin-bottom:12px;">
+        <input type="file" id="selectabcfile" accept=".abc,.txt,.ABC,.TXT" hidden/>
+        <label class="abcupload btn btn-controls full_width_tool_button" for="selectabcfile" title="Open an existing ABC file">Open an existing .ABC file</label>
+      </div>
+
+      <p><textarea id="input" placeholder="Enter ABC notation here" spellcheck="false" autocorrect="off" autocapitalize="none" autocomplete="off">X: 1
+T: Cooley's
+C: Traditional
+R: Reel
+M: 4/4
+L: 1/8
+Q: 1/2=90
+K: Edor
+|:EBBA B2 EB|B2 AB dBAG|F/E/D AD BDAD|F/E/D AD BAGF|
+EBBA B2 EB|B2 AB defg|afge dBAF|1 DEFD E3D:|2 DEFD E2gf||
+|:eB (3BBB eBgf|eBB2 gedB|A/A/A FA DAFA|A/A/A FA defg|
+eB (3BBB eBgf|eBBB defg|afge dBAF|1 DEFD E2gf:|2 DEFD E4|]
+
+X: 1
+T: The Kesh
+C: Traditional
+R: Jig
+M: 6/8
+L: 1/8
+Q: 3/8=120
+K: Gmaj
+|:GAG GAB|ABA ABd|edd gdd|edB dBA|
+GAG GAB|ABA ABd|edd gdB|AGF G3:|
+|:BAB dBd|ege dBA|BAB dBG|ABA AGA|
+BAB dBd|ege dBd|gfg aga|bgf g3:|</textarea></p>
+
+      <p style="margin-top:10px;">
+        <label class="option">Minimum match score:&nbsp;
+          <input id="threshold" type="number" min="0.10" max="1.00" step="0.05" value="0.70" style="width:70px; font-size:11pt;">
+        </label>
+        <span class="smallnote">&nbsp;&nbsp;Lower finds more matches; higher is stricter. Default is 0.70.</span>
+      </p>
+
+      <p style="margin-top:10px;">
+        <button id="generatebutton" class="btn btn-generate full_width_tool_button" onclick="generateBackupChords();">Generate Backup Chords</button>
+      </p>
+
+      <div id="status" class="status"></div>
+
+      <hr>
+
+      <h4>Processed ABC Output, with Suggested Backup Chords:</h4>
+      <p><textarea id="output" placeholder="Processed ABC output will appear here" spellcheck="false" autocorrect="off" autocapitalize="none"></textarea></p>
+
+      <div class="output_button_row">
+        <button id="copybutton" class="btn btn-controls" onclick="copyOutputToClipboard();" disabled title="Generate output before copying">Copy Output to the Clipboard</button>
+        <button id="savebutton" class="btn btn-controls" onclick="saveOutput();" disabled title="Generate output before saving">Save Output to a file</button>
+        <button id="testbutton" class="btn btn-controls" onclick="testOutput();" disabled title="Generate output before testing it in the ABC Transcription Tools">Test Output in the ABC Transcription Tools</button>
+      </div>
+
+      <p style="margin-top:0; margin-bottom:48px;">
+        <button class="btn btn-controls" style="width:100%; box-sizing:border-box;" onclick="showInstructions();" title="Show instructions for using the ABC Tune Backup Chord Finder">Instructions</button>
+      </p>
+    </div>
+  </div>
+</body>
+</html>
