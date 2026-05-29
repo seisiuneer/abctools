@@ -228,7 +228,8 @@
 
   </style>
 
-  <script type="text/javascript" src="daypilot-modal.min-3.10.1.js?v=11"></script>
+  <script type="text/javascript" src="daypilot-modal.min-3.10.1.js"></script>
+  <script type="text/javascript" src="pako.min.js"></script>
 
   <script>
   /*
@@ -297,10 +298,45 @@
 
   function buildABCTranscriptionToolsShareURL(abcText) {
     if (!abcText || !abcText.length) return "";
-    var shareName = "ABC_Backup_Chord_Miner_Test";
-    var abcInLZW = LZString.compressToEncodedURIComponent(abcText);
-    return "https://michaeleskin.com/abctools/abctools.html?lzw=" + abcInLZW +
-      "&format=noten&ssp=45&pdf=one&pn=br&fp=yes&name=" + encodeURIComponent(shareName) + "&editor=1";
+
+    var shareName = "ABC_Backup_Chord_Solver_Test";
+    var abcInDeflate = compressABCDeflateForShareLink(abcText);
+
+    var params = new URLSearchParams();
+    params.set("def", abcInDeflate);
+    params.set("format", "noten");
+    params.set("name", shareName);
+    params.set("editor", "1");
+
+    return "https://michaeleskin.com/abctools/abctools.html?" + params.toString();
+  }
+
+  function compressABCDeflateForShareLink(abcText) {
+    if (typeof pako === "undefined") {
+      throw new Error("pako is not loaded. Include pako.min.js before using share links.");
+    }
+    if (typeof TextEncoder === "undefined") {
+      throw new Error("TextEncoder is not available in this browser.");
+    }
+
+    var utf8Bytes = new TextEncoder().encode(abcText || "");
+    var deflatedBytes = pako.deflate(utf8Bytes, { level: 6 });
+    return bytesToBase64URL(deflatedBytes);
+  }
+
+  function bytesToBase64(bytes) {
+    var binary = "";
+    for (var i = 0; i < bytes.length; i++) {
+      binary += String.fromCharCode(bytes[i]);
+    }
+    return btoa(binary);
+  }
+
+  function bytesToBase64URL(bytes) {
+    return bytesToBase64(bytes)
+      .replace(/\+/g, "-")
+      .replace(/\//g, "_")
+      .replace(/=+$/, "");
   }
 
   function updateShareLinkForOutput(outputText) {
@@ -1656,138 +1692,6 @@
     gInputInitialized = true;
   });
 
-  // lz-string 1.4.4 compatible compressor, needed for ABC Transcription Tools share URLs.
-  var LZString = (function() {
-    var f = String.fromCharCode;
-    var keyStrUriSafe = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+-$";
-    var baseReverseDic = {};
-    function getBaseValue(alphabet, character) {
-      if (!baseReverseDic[alphabet]) {
-        baseReverseDic[alphabet] = {};
-        for (var i = 0; i < alphabet.length; i++) baseReverseDic[alphabet][alphabet.charAt(i)] = i;
-      }
-      return baseReverseDic[alphabet][character];
-    }
-    function compressToEncodedURIComponent(input) {
-      if (input == null) return "";
-      return _compress(input, 6, function(a) { return keyStrUriSafe.charAt(a); });
-    }
-    function _compress(uncompressed, bitsPerChar, getCharFromInt) {
-      if (uncompressed == null) return "";
-      var i, value,
-          context_dictionary = {}, context_dictionaryToCreate = {},
-          context_c = "", context_wc = "", context_w = "",
-          context_enlargeIn = 2, context_dictSize = 3, context_numBits = 2,
-          context_data = [], context_data_val = 0, context_data_position = 0;
-      for (var ii = 0; ii < uncompressed.length; ii += 1) {
-        context_c = uncompressed.charAt(ii);
-        if (!Object.prototype.hasOwnProperty.call(context_dictionary, context_c)) {
-          context_dictionary[context_c] = context_dictSize++;
-          context_dictionaryToCreate[context_c] = true;
-        }
-        context_wc = context_w + context_c;
-        if (Object.prototype.hasOwnProperty.call(context_dictionary, context_wc)) {
-          context_w = context_wc;
-        } else {
-          if (Object.prototype.hasOwnProperty.call(context_dictionaryToCreate, context_w)) {
-            if (context_w.charCodeAt(0) < 256) {
-              for (i = 0; i < context_numBits; i++) {
-                context_data_val = (context_data_val << 1);
-                if (context_data_position == bitsPerChar - 1) { context_data_position = 0; context_data.push(getCharFromInt(context_data_val)); context_data_val = 0; } else context_data_position++;
-              }
-              value = context_w.charCodeAt(0);
-              for (i = 0; i < 8; i++) {
-                context_data_val = (context_data_val << 1) | (value & 1);
-                if (context_data_position == bitsPerChar - 1) { context_data_position = 0; context_data.push(getCharFromInt(context_data_val)); context_data_val = 0; } else context_data_position++;
-                value = value >> 1;
-              }
-            } else {
-              value = 1;
-              for (i = 0; i < context_numBits; i++) {
-                context_data_val = (context_data_val << 1) | value;
-                if (context_data_position == bitsPerChar - 1) { context_data_position = 0; context_data.push(getCharFromInt(context_data_val)); context_data_val = 0; } else context_data_position++;
-                value = 0;
-              }
-              value = context_w.charCodeAt(0);
-              for (i = 0; i < 16; i++) {
-                context_data_val = (context_data_val << 1) | (value & 1);
-                if (context_data_position == bitsPerChar - 1) { context_data_position = 0; context_data.push(getCharFromInt(context_data_val)); context_data_val = 0; } else context_data_position++;
-                value = value >> 1;
-              }
-            }
-            context_enlargeIn--;
-            if (context_enlargeIn == 0) { context_enlargeIn = Math.pow(2, context_numBits); context_numBits++; }
-            delete context_dictionaryToCreate[context_w];
-          } else {
-            value = context_dictionary[context_w];
-            for (i = 0; i < context_numBits; i++) {
-              context_data_val = (context_data_val << 1) | (value & 1);
-              if (context_data_position == bitsPerChar - 1) { context_data_position = 0; context_data.push(getCharFromInt(context_data_val)); context_data_val = 0; } else context_data_position++;
-              value = value >> 1;
-            }
-          }
-          context_enlargeIn--;
-          if (context_enlargeIn == 0) { context_enlargeIn = Math.pow(2, context_numBits); context_numBits++; }
-          context_dictionary[context_wc] = context_dictSize++;
-          context_w = String(context_c);
-        }
-      }
-      if (context_w !== "") {
-        if (Object.prototype.hasOwnProperty.call(context_dictionaryToCreate, context_w)) {
-          if (context_w.charCodeAt(0) < 256) {
-            for (i = 0; i < context_numBits; i++) {
-              context_data_val = (context_data_val << 1);
-              if (context_data_position == bitsPerChar - 1) { context_data_position = 0; context_data.push(getCharFromInt(context_data_val)); context_data_val = 0; } else context_data_position++;
-            }
-            value = context_w.charCodeAt(0);
-            for (i = 0; i < 8; i++) {
-              context_data_val = (context_data_val << 1) | (value & 1);
-              if (context_data_position == bitsPerChar - 1) { context_data_position = 0; context_data.push(getCharFromInt(context_data_val)); context_data_val = 0; } else context_data_position++;
-              value = value >> 1;
-            }
-          } else {
-            value = 1;
-            for (i = 0; i < context_numBits; i++) {
-              context_data_val = (context_data_val << 1) | value;
-              if (context_data_position == bitsPerChar - 1) { context_data_position = 0; context_data.push(getCharFromInt(context_data_val)); context_data_val = 0; } else context_data_position++;
-              value = 0;
-            }
-            value = context_w.charCodeAt(0);
-            for (i = 0; i < 16; i++) {
-              context_data_val = (context_data_val << 1) | (value & 1);
-              if (context_data_position == bitsPerChar - 1) { context_data_position = 0; context_data.push(getCharFromInt(context_data_val)); context_data_val = 0; } else context_data_position++;
-              value = value >> 1;
-            }
-          }
-          context_enlargeIn--;
-          if (context_enlargeIn == 0) { context_enlargeIn = Math.pow(2, context_numBits); context_numBits++; }
-          delete context_dictionaryToCreate[context_w];
-        } else {
-          value = context_dictionary[context_w];
-          for (i = 0; i < context_numBits; i++) {
-            context_data_val = (context_data_val << 1) | (value & 1);
-            if (context_data_position == bitsPerChar - 1) { context_data_position = 0; context_data.push(getCharFromInt(context_data_val)); context_data_val = 0; } else context_data_position++;
-            value = value >> 1;
-          }
-        }
-        context_enlargeIn--;
-        if (context_enlargeIn == 0) context_numBits++;
-      }
-      value = 2;
-      for (i = 0; i < context_numBits; i++) {
-        context_data_val = (context_data_val << 1) | (value & 1);
-        if (context_data_position == bitsPerChar - 1) { context_data_position = 0; context_data.push(getCharFromInt(context_data_val)); context_data_val = 0; } else context_data_position++;
-        value = value >> 1;
-      }
-      while (true) {
-        context_data_val = (context_data_val << 1);
-        if (context_data_position == bitsPerChar - 1) { context_data.push(getCharFromInt(context_data_val)); break; }
-        else context_data_position++;
-      }
-      return context_data.join("");
-    }
-    return { compressToEncodedURIComponent: compressToEncodedURIComponent };
-  })();
   </script>
 </head>
 <body>
