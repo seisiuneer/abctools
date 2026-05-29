@@ -574,7 +574,6 @@
       '<ul>' +
       '<li>Existing chord symbols in the input tunes are stripped before processing.</li>' +
       '<li>The default minimum match score is <b>0.75</b>. If no normal match is found for a general measure, the tool can accept the best available match down to <b>75%</b> of the selected threshold. Critical tune, repeat, and part-boundary cases can still use the lower internal <b>0.35</b> boundary threshold.</li>' +
-      '<li>For starts and endings of tunes, parts, repeated sections, and first/second endings, the tool first tries matching against database measures that are also starts or endings, then falls back to the general same rhythm/meter/key/mode candidate pool if needed.</li>' +
       '<li>When two candidate measures have essentially the same melody match score, the tool uses the current tune key and mode as a tie-breaker and prefers the chord pattern that is more compatible with that key/mode.</li>' +
       '<li>If no matching measure with usable chords meets the threshold, that source measure is left unchanged.</li>' +
       '</ul>' +
@@ -1727,7 +1726,13 @@
     var bestScore = 0;
     var bestChordCompatibilityScore = -Infinity;
     var lastYield = performance.now();
-    var tieBreakEpsilon = 0.01;
+
+    // Normal measures keep a tight tie-break window so melody similarity stays
+    // dominant. For tune/part/repeat starts, allow a slightly wider near-tie
+    // window so the key/mode chord-compatibility check can prefer a stronger
+    // opening chord, for example Em over C at the start of the B part of an
+    // E Dorian tune when the melody scores are close.
+    var tieBreakEpsilon = (sourceMeasure && sourceMeasure.isBoundaryStart) ? 0.025 : 0.01;
 
     for (var i = 0; i < candidates.length; i++) {
       throwIfCancelled();
@@ -1738,7 +1743,11 @@
       if (
         !best ||
         score > bestScore + tieBreakEpsilon ||
-        (Math.abs(score - bestScore) <= tieBreakEpsilon && chordCompatibilityScore > bestChordCompatibilityScore + 0.001)
+        (
+          Math.abs(score - bestScore) <= tieBreakEpsilon &&
+          (bestScore < threshold || score >= threshold) &&
+          chordCompatibilityScore > bestChordCompatibilityScore + 0.001
+        )
       ) {
         bestScore = score;
         bestChordCompatibilityScore = chordCompatibilityScore;
