@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3243_052826_1230";
+var gVersionNumber = "3244_052926_1400";
 
 var gMIDIInitStillWaiting = false;
 
@@ -28492,13 +28492,13 @@ async function processShareLink() {
       // Show update message?
       if (gLocalStorageAvailable){
 
-        var updatePresented = localStorage.sawUpdate_28may2026b;
+        var updatePresented = localStorage.sawUpdate_29may2026;
 
         if (updatePresented != "true") {
 
           showWhatsNewScreen();
 
-          localStorage.sawUpdate_28may2026b = true;
+          localStorage.sawUpdate_29may2026 = true;
 
         }
 
@@ -56366,17 +56366,17 @@ function showWhatsNewScreen() {
   // Feature card
   modal_msg += '<div style="margin:10px 0 6px 0; padding:0px 12px; border-radius:12px;';
   modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);">';
-  modal_msg += '<p><strong>Updated the thesession.org tune search database (first update in 4 years).</strong></p>';
-  modal_msg += '<p>The new tune database from Jeremy\'s latest official release adds 10,000+ new tune settings (over 54,000 in total) and additional tune metadata in the ABC including composer and transcriber when available.</p>';
-  modal_msg += '<p>Previously thesession.org tune database was based on one released by the developers of <strong>FolkFriend</strong>.</p>';
-  modal_msg += '<p>Switching to the thesession.org official tune collection, which is regularly updated on GitHub, will make it simple to update the tool with new tune settings in the future.</p>';
+  modal_msg += '<p><strong>New Tool on the "Other ABC Tools" dialog</strong>:</p>';
+  modal_msg += '<p>Added the <strong>ABC Tune Backup Chord Solver</strong> to the <strong>Other ABC Tools</strong> dialog.</p>';
   modal_msg += '</div>';
 
   // Feature card
   modal_msg += '<div style="margin:10px 0 6px 0; padding:0px 12px; border-radius:12px;';
   modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);">';
-  modal_msg += '<p><strong>Bug fix for "Create Tune Set"</strong>:</p>';
-  modal_msg += '<p><strong>Create Tune Set</strong> now always reverses any postfixed articles in the tune titles when appending them together for the tune set title T: tag.</p>';
+  modal_msg += '<p><strong>Updated the thesession.org tune search database (first update in 4 years).</strong></p>';
+  modal_msg += '<p>The new tune database from Jeremy\'s latest official release adds 10,000+ new tune settings (over 54,000 in total) and additional tune metadata in the ABC including composer and transcriber when available.</p>';
+  modal_msg += '<p>Previously thesession.org tune database was based on one released by the developers of <strong>FolkFriend</strong>.</p>';
+  modal_msg += '<p>Switching to the thesession.org official tune collection, which is regularly updated on GitHub, will make it simple to update the tool with new tune settings in the future.</p>';
   modal_msg += '</div>';
 
   modal_msg += '</div>'; // wrapper
@@ -60367,6 +60367,15 @@ function LaunchChordChartGenerator(){
   window.open(url, '_blank');
 }
 
+// Open the chord solver
+function LaunchBackupChordSolver(){
+
+  sendGoogleAnalytics("action", "LaunchBackupChordSolver");
+
+  var url = "https://michaeleskin.com/tools/abc_backup_chord_solver.html";
+  window.open(url, '_blank');
+}
+
 //
 // Check if an update is available
 // 
@@ -62906,13 +62915,13 @@ async function DoStartup() {
   // Show update message?
   if (gLocalStorageAvailable && (!isFromShare)){
 
-    var updatePresented = localStorage.sawUpdate_28may2026b;
+    var updatePresented = localStorage.sawUpdate_29may2026;
 
     if (updatePresented != "true") {
 
       showWhatsNewScreen();
 
-      localStorage.sawUpdate_28may2026b = true;
+      localStorage.sawUpdate_29may2026 = true;
 
     }
 
@@ -64708,51 +64717,58 @@ function OtherABCTools(){
 
   var modal_msg =
     '<div id="otherabctoolsanchor">'
-  + '  <p style="text-align:center;margin-bottom:18px;font-size:16pt;font-family:helvetica;">Other ABC Tools&nbsp;&nbsp;' 
+  + '  <p style="text-align:center;margin-bottom:12px;font-size:16pt;font-family:helvetica;">Other ABC Tools&nbsp;&nbsp;' 
   + '    <span style="font-size:24pt;" title="View documentation in new tab">'
   + '    <a href="https://michaeleskin.com/abctools/userguide.html#hamburger_other_abc_tools" target="_blank" ' 
   + '    style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a>' 
   + '    </span>' 
   + '  </p>'
-  + '  <p style="text-align:center;margin-bottom:18px;font-size:12pt;line-height:18pt;font-family:helvetica;">' 
+  + '  <p style="text-align:center;margin-bottom:10px;font-size:12pt;line-height:18pt;font-family:helvetica;">' 
   + 'These are additional useful standalone web-based ABC tools I\'ve built.<br/>' 
   + '  </p>'
 
   // Outer layout: two explicit rows
-  + '  <div style="display:flex; flex-direction:column; align-items:center; gap:22px; padding:0 15px 0px 15px;">'
+  + '  <div style="display:flex; flex-direction:column; align-items:center; gap:12px; padding:0 15px 0px 15px;">'
 
-  // Row 1 (2 items)
-  + '    <div style="display:flex; justify-content:center; gap:24px; width:100%;">'
+  // Row 1 (3 items)
+  + '    <div style="display:flex; justify-content:center; align-items:flex-start; gap:24px; width:100%;">'
 
   + '      <div class="tuning-tool" style="text-align:center; width:170px;">'
   + '        <img id="other_tools_tspt" src="img/tool_scraper_2.jpg" title="thesession.org Power Tools" alt="thesession.org Power Tools"'
-  + '             style="width:170px;height:auto;cursor:pointer;">'
-  + '        <div style="font-size:1.0em; margin-top:6px; height:3.2em; display:flex; align-items:center; justify-content:center; line-height:1.2em;">thesession.org<br/>Power Tools</div>'
+  + '             style="width:170px;height:125px;object-fit:contain;cursor:pointer;">'
+  + '        <div style="font-size:1.0em; margin-top:4px; height:2.8em; display:flex; align-items:center; justify-content:center; line-height:1.15em;">thesession.org<br/>Power Tools</div>'
   + '      </div>'
 
   + '      <div class="tuning-tool" style="text-align:center; width:170px;">'
   + '        <img id="other_tools_chordchart" src="img/tool_chordchart_2.jpg" title="ABC Chord Chart Generator" alt="ABC Chord Chart Generator"'
-  + '             style="width:170px;height:auto;cursor:pointer;">'
-  + '        <div style="font-size:1.0em; margin-top:6px; height:3.2em; display:flex; align-items:center; justify-content:center; line-height:1.2em;">ABC Chord Chart Generator</div>'
+  + '             style="width:170px;height:125px;object-fit:contain;cursor:pointer;">'
+  + '        <div style="font-size:1.0em; margin-top:4px; height:2.8em; display:flex; align-items:center; justify-content:center; line-height:1.15em;">ABC Chord Chart Generator</div>'
+  + '      </div>'
+
+  + '      <div class="tuning-tool" style="text-align:center; width:170px;">'
+  + '        <img id="other_tools_backupchordsolver" src="img/tool_abc_chord_solver_1.jpg" title="ABC Tune Backup Chord Solver" alt="ABC Tune Backup Chord Solver"'
+  + '             style="width:170px;height:125px;object-fit:contain;cursor:pointer;">'
+  + '        <div style="font-size:1.0em; margin-top:4px; height:2.8em; display:flex; align-items:center; justify-content:center; line-height:1.15em;">ABC Tune Backup Chord Solver</div>'
   + '      </div>'
 
   + '    </div>'
-    // Row 2 (2 items)
-  + '    <div style="display:flex; justify-content:center; gap:24px; width:100%;">'
+
+  // Row 2 (2 items)
+  + '    <div style="display:flex; justify-content:center; align-items:flex-start; gap:24px; width:100%;">'
 
   + '      <div class="tuning-tool" style="text-align:center; width:170px;">'
   + '        <img id="other_tools_abc2csv" src="img/tool_abc2csv_2.jpg" title="ABC Tags to CSV Extractor Utilities" alt="ABC Tags to CSV Extractor Utilities"'
-  + '             style="width:170px;height:auto;cursor:pointer;">'
-  + '        <div style="font-size:1.0em; margin-top:6px; height:3.2em; display:flex; align-items:center; justify-content:center; line-height:1.2em;">ABC Tags to CSV Extractor Utilities</div>'
+  + '             style="width:170px;height:125px;object-fit:contain;cursor:pointer;">'
+  + '        <div style="font-size:1.0em; margin-top:4px; height:2.8em; display:flex; align-items:center; justify-content:center; line-height:1.15em;">ABC Tags to CSV Extractor Utilities</div>'
   + '      </div>'
  
   + '      <div class="tuning-tool" style="text-align:center; width:170px;">'
   + '        <img id="other_tools_custominstrument" src="img/tool_custominstrument_2.jpg" title="Custom Instrument Builder" alt="Custom Instrument Builder"'
-  + '             style="width:170px;height:auto;cursor:pointer;">'
-  + '        <div style="font-size:1.0em; margin-top:6px; height:3.2em; display:flex; align-items:center; justify-content:center; line-height:1.2em;">Custom Instrument Builder</div>'
+  + '             style="width:170px;height:125px;object-fit:contain;cursor:pointer;">'
+  + '        <div style="font-size:1.0em; margin-top:4px; height:2.8em; display:flex; align-items:center; justify-content:center; line-height:1.15em;">Custom Instrument Builder</div>'
   + '      </div>'
-  + '    </div>'
 
+  + '    </div>'
 
   + '  </div>'
 
@@ -64770,6 +64786,9 @@ function OtherABCTools(){
 
   elem = document.getElementById("other_tools_chordchart");
   if (elem) elem.onclick = function(){ LaunchChordChartGenerator(); };
+
+  elem = document.getElementById("other_tools_backupchordsolver");
+  if (elem) elem.onclick = function(){ LaunchBackupChordSolver(); };
 
   elem = document.getElementById("other_tools_abc2csv");
   if (elem) elem.onclick = function(){ LaunchCSVTagExtractor(); };

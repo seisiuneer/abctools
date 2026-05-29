@@ -6,29 +6,13 @@
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-// Updated 28 May 2026 0930
-//
-//
-//
-//
-//
-//
-//
-//
-//
+// Updated 29 May 2026 0930
 //
 //
 //
 //
 
-const cacheName = 'abctoolscache-3243';
+const cacheName = 'abctoolscache-3244';
 
 const contentToCache = [
     'abctools.html',
@@ -102,6 +86,7 @@ const contentToCache = [
     'img/tool_scraper_2.jpg',
     'img/tool_chordchart_2.jpg',
     'img/tool_chordchart_other_1.jpg',
+    'img/tool_abc_chord_solver_1.jpg',
     'img/tool_abc2csv_2.jpg',
     'img/tool_custominstrument_2.jpg',
     'img/abc-android-icon-144x144.png',
