@@ -540,7 +540,8 @@
       '</ul>' +
       '<h4>Limitations</h4>' +
       '<ul>' +
-      '<li>The tool will not work correctly with tunes that change key/mode mid-tune or with multi-voice tunes.</li>' +
+      '<li>Tunes that change key or mode mid-tune are skipped and copied unchanged to the output with an explanatory <b>N:</b> tag added at the end.</li>' +
+      '<li>Tunes with more than one <b>V:</b> voice tag are skipped and copied unchanged to the output with an explanatory <b>N:</b> tag added at the end.</li>' +
       '</ul>' +
       `<hr style="margin-top:20px;">
       <h4 style="text-align: center;">Tip Jars</h4>
@@ -943,6 +944,41 @@
     if (!hb.body) return normalizeInputMeterHeader(tune);
     var strippedBody = stripExistingChords(hb.body);
     return normalizeInputMeterHeader(hb.header + (hb.header && strippedBody ? "\n" : "") + strippedBody);
+  }
+
+  function countVoiceTags(tune) {
+    var matches = (tune || "").match(/^\s*V:\s*.*$/gmi);
+    return matches ? matches.length : 0;
+  }
+
+  function hasMidTuneKeyChange(tune) {
+    var hb = splitHeaderBody(tune || "");
+    if (!hb.body) return false;
+
+    // A K: field at the start of the tune header is normal. A later K: field
+    // on its own line, after the ABC body has started, means the tune changes
+    // key/mode mid-tune and should be skipped.
+    if (/^\s*K:\s*.*$/gmi.test(hb.body)) return true;
+
+    // Inline key changes can appear anywhere in the notation body, for example
+    // [K:G] or [K:Ador]. These also make the tune unsuitable for single-key
+    // measure matching.
+    return /\[\s*K:\s*[^\]]+\]/i.test(hb.body);
+  }
+
+  function getTuneSkipReason(tune) {
+    if (countVoiceTags(tune) > 1) {
+      return "Skipped by the ABC Backup Chord Solver because the tune has multiple voices";
+    }
+    if (hasMidTuneKeyChange(tune)) {
+      return "Skipped by the ABC Backup Chord Solver because of key/mode changes mid-tune";
+    }
+    return "";
+  }
+
+  function appendSkipNoteToRawTune(tune, reason) {
+    tune = (tune || "").replace(/\s+$/g, "");
+    return tune + "\nN: " + reason;
   }
 
   function getAllowedChordOffsetsForMeter(meter, unitNoteLength) {
@@ -1365,6 +1401,24 @@
   }
 
   async function processTuneAsync(tune, options, progressState) {
+    var rawTune = tune;
+    var skipReason = getTuneSkipReason(rawTune);
+    if (skipReason) {
+      var rawTitle = getHeaderValue(rawTune, "T") || "Untitled";
+      if (progressState) {
+        updateProgressModal(
+          "Matching chords...<br>" +
+          "Tune <b>" + progressState.tuneNumber + "</b> of <b>" + progressState.tuneCount + "</b>: <b>" + escapeHTML(rawTitle) + "</b><br>" +
+          escapeHTML(skipReason) + "."
+        );
+        await allowBrowserToUpdate();
+      }
+      return {
+        text: appendSkipNoteToRawTune(rawTune, skipReason),
+        stats: { title: rawTitle, matched: 0, total: 0, skippedPickup: 0, fallbackMatched: 0, candidates: 0, candidateBuckets: [], skippedTune: true, skipReason: skipReason }
+      };
+    }
+
     tune = stripExistingChordsFromTune(tune);
     var hb = splitHeaderBody(tune);
     var meter = getHeaderValue(hb.header, "M") || "4/4";
@@ -1575,16 +1629,18 @@
     var allStats = [];
 
     var preParsedTunes = tunes.map(function(t) {
-      t = stripExistingChordsFromTune(t);
-      var hb = splitHeaderBody(t);
+      var skipReason = getTuneSkipReason(t);
+      var normalizedTune = skipReason ? t : stripExistingChordsFromTune(t);
+      var hb = splitHeaderBody(normalizedTune);
       var meter = getHeaderValue(hb.header, "M") || "4/4";
       var mode = getHeaderValue(hb.header, "K");
       var unitLength = getHeaderValue(hb.header, "L");
       return {
-        tune: t,
+        tune: normalizedTune,
         hb: hb,
         title: getHeaderValue(hb.header, "T") || "Untitled",
-        measureCount: buildMeasureObjects(hb.body, meter, unitLength).filter(function(m) { return m.notes.length > 0; }).length
+        skipReason: skipReason,
+        measureCount: skipReason ? 0 : buildMeasureObjects(hb.body, meter, unitLength).filter(function(m) { return m.notes.length > 0; }).length
       };
     });
 
@@ -1655,11 +1711,13 @@
     var totalPickup = allStats.reduce(function(a, s) { return a + s.skippedPickup; }, 0);
     var totalFallback = allStats.reduce(function(a, s) { return a + (s.fallbackMatched || 0); }, 0);
     var withCandidates = allStats.filter(function(s) { return s.candidates > 0; }).length;
+    var skippedTunes = allStats.filter(function(s) { return s.skippedTune; }).length;
     var elapsed = performance.now() - progressState.startedAt;
 
     setStatus(
       "Done in <b>" + formatElapsed(elapsed) + "</b>. Processed <b>" + tunes.length + "</b> tune(s).<br/>" +
       "Matched and injected chords into <b>" + totalMatched + "</b> of <b>" + totalMeasures + "</b> non-pickup measure(s).<br/>" +
+      "Skipped <b>" + skippedTunes + "</b> tune(s) because of mid-tune key/mode changes or multiple voices.<br/>" +
       "Used the general fallback threshold for <b>" + totalFallback + "</b> match(es).<br/>" +
       "Skipped <b>" + totalPickup + "</b> opening pickup measure(s).<br>" +
       "Database index: <b>" + gLastStats.chordedTunes + "</b> chorded tune settings, <b>" + gLastStats.chordedMeasures + "</b> chorded measures, <b>" + gLastStats.keys + "</b> meter/key/mode buckets.<br/>" +
