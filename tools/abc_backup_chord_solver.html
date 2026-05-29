@@ -1369,11 +1369,28 @@
       // forced onto the start of the measure when a matching database measure is found.
 
       if (!options.repeatSameChord) {
-        chords = chords.filter(function(c, idx) {
-          // Forced boundary chords must survive repeated-chord suppression.
-          if (c.forced) return true;
-          return !(idx === 0 && c.chord === lastChord);
+        var previousEmittedChord = lastChord;
+        var filteredChords = [];
+
+        chords.forEach(function(c) {
+          // Forced boundary chords must survive repeated-chord suppression,
+          // even when they repeat the previous chord from an earlier measure.
+          if (c.forced) {
+            filteredChords.push(c);
+            previousEmittedChord = c.chord;
+            return;
+          }
+
+          // Suppress any repeated chord that immediately continues from the
+          // last emitted chord, whether it appears at the start of a measure,
+          // later in the same measure, or across one or more measure lines.
+          if (c.chord === previousEmittedChord) return;
+
+          filteredChords.push(c);
+          previousEmittedChord = c.chord;
         });
+
+        chords = filteredChords;
       }
 
       if (!chords.length) {
