@@ -123,9 +123,9 @@
     #progress_modal_status {
       font-size: 12pt;
       line-height: 1.45;
-      height: calc(8.7em + 22px);      /* fixed 5 lines of status text plus padding/border */
-      min-height: calc(8.7em + 22px);
-      max-height: calc(8.7em + 22px);
+      height: calc(10.15em + 22px);      /* fixed 6 lines of status text plus padding/border */
+      min-height: calc(10.15em + 22px);
+      max-height: calc(10.15em + 22px);
       overflow-y: auto;
       padding: 10px;
       background: #f5f5ff;
@@ -515,9 +515,8 @@
       '<h4>How matching works</h4>' +
       '<ul>' +
       '<li>Existing chord symbols in the input tunes are stripped before processing.</li>' +
-      '<li>For each source measure, the tool searches candidate database measures from tunes with the same normalized meter, key, and mode.</li>' +
-      '<li>For minor tunes, the tool also checks same-tonic Dorian tunes in the same meter and uses whichever measure-level match is better. For Dorian tunes, it also checks the same-tonic minor key.</li>' +
-      '<li>Only database measures whose chord symbols are plain uppercase-root major or minor triads are used, such as <b>D</b>, <b>G</b>, <b>Em</b>, <b>Bbm</b>, or <b>F#m</b>. Lowercase chords, slash chords, 5 chords, 7 chords, and extended chords are skipped.</li>' +
+      '<li>For each source measure, the tool first searches candidate database measures from tunes with the same normalized meter, key, mode, and rhythm type from the <b>R:</b> field. If no good rhythm-type match is found, it falls back to the broader same meter/key/mode pool.</li>' +
+      '<li>For minor tunes, the tool also checks same-tonic Dorian tunes in the same meter and uses whichever measure-level match is better. For Dorian tunes, it also checks the same-tonic minor key.</li><li>If a tune is in 4/4 and has no <b>R:</b> tag, it is treated as a reel for rhythm-priority matching.</li>' +
       '<li>The default minimum match score is <b>0.70</b>. If no normal match is found for a general measure, the tool can accept the best available match down to <b>75%</b> of the selected threshold. Critical tune, repeat, and part-boundary cases can still use the lower internal <b>0.35</b> boundary threshold.</li>' +
       '<li>If no matching measure with usable chords meets the threshold, that source measure is left unchanged.</li>' +
       '</ul>' +
@@ -536,7 +535,6 @@
       '<li>The <b>Copy Output to the Clipboard</b>, <b>Save Output to a File</b>, and <b>Test Output in the ABC Transcription Tools</b> buttons are updated after processing completes or is cancelled.</li>' +
       '<li>On iOS, saving uses the Share Sheet to allow you save the ABC to the Files area or share it with other applications.</li>' +
       '<li>The <b>Test Output in the ABC Transcription Tools</b> button is enabled only when the generated share link is short enough for direct transfer.</li>' +
-      '</ul>' +
       '</ul>' +
       '<h4>Limitations</h4>' +
       '<ul>' +
@@ -638,6 +636,45 @@
 
     if (!mode) mode = "major";
     return root + mode;
+  }
+
+  function normalizeTuneType(typeText) {
+    typeText = (typeText || "").toLowerCase().trim();
+    typeText = typeText.replace(/%.*/, "").trim();
+    typeText = typeText.replace(/[^a-z0-9 ]+/g, " ");
+    typeText = typeText.replace(/\s+/g, " ").trim();
+
+    // Normalize common spelling and naming variants from ABC R: fields and
+    // thesession.org tune-type metadata so rhythm/style buckets are useful
+    // without being too fragmented.
+    if (!typeText) return "";
+    if (/reel/.test(typeText)) return "reel";
+    if (/hornpipe/.test(typeText)) return "hornpipe";
+    if (/slip\s*jig/.test(typeText)) return "slip jig";
+    if (/slide/.test(typeText)) return "slide";
+    if (/single\s*jig/.test(typeText)) return "single jig";
+    if (/double\s*jig/.test(typeText)) return "jig";
+    if (/jig/.test(typeText)) return "jig";
+    if (/polka/.test(typeText)) return "polka";
+    if (/waltz/.test(typeText)) return "waltz";
+    if (/strathspey/.test(typeText)) return "strathspey";
+    if (/barndance|barn\s*dance/.test(typeText)) return "barndance";
+    if (/mazurka/.test(typeText)) return "mazurka";
+    if (/march/.test(typeText)) return "march";
+    if (/highland/.test(typeText)) return "highland";
+
+    return typeText;
+  }
+
+  function getInputTuneType(header, meter) {
+    var rhythm = normalizeTuneType(getHeaderValue(header, "R"));
+
+    // Many 4/4 ABC collections omit R: even when the tune is a reel. Use reel
+    // only as a rhythm-priority hint; fallback still searches the full
+    // same-meter/key/mode bucket if no good reel match is found.
+    if (!rhythm && normalizeMeter(meter) === "4/4") rhythm = "reel";
+
+    return rhythm;
   }
 
   function getHeaderValue(tune, letter) {
@@ -1291,34 +1328,64 @@
     return buckets;
   }
 
-  function getCandidatesForMeterMode(meter, mode) {
+  function getCandidatesForMeterMode(meter, mode, rhythmType) {
+    rhythmType = normalizeTuneType(rhythmType || "");
+
     var buckets = getCandidateBucketsForMeterMode(meter, mode);
-    var candidates = [];
-    var seen = new Set();
+    var broadCandidates = [];
+    var rhythmCandidates = [];
+    var seenBroad = new Set();
+    var seenRhythm = new Set();
     var usedBuckets = [];
 
     buckets.forEach(function(bucket) {
       var bucketCandidates = gChordIndex.get(bucket.key) || [];
-      if (bucketCandidates.length) usedBuckets.push({ label: bucket.label, count: bucketCandidates.length, primary: bucket.primary });
+      if (bucketCandidates.length) {
+        var rhythmCount = rhythmType ? bucketCandidates.filter(function(c) { return c.sourceType === rhythmType; }).length : 0;
+        usedBuckets.push({
+          label: bucket.label,
+          count: bucketCandidates.length,
+          rhythmCount: rhythmCount,
+          rhythmType: rhythmType,
+          primary: bucket.primary
+        });
+      }
 
       bucketCandidates.forEach(function(candidate, idx) {
         // Candidate objects from different buckets should normally be distinct,
         // but keep this defensive de-duplication to avoid scanning the exact
         // same setting/measure twice if the database contains aliases.
         var id = (candidate.sourceSettingId || "") + "|" + (candidate.index || idx) + "|" + bucket.key;
-        if (seen.has(id)) return;
-        seen.add(id);
-        candidates.push(candidate);
+
+        if (!seenBroad.has(id)) {
+          seenBroad.add(id);
+          broadCandidates.push(candidate);
+        }
+
+        if (rhythmType && candidate.sourceType === rhythmType && !seenRhythm.has(id)) {
+          seenRhythm.add(id);
+          rhythmCandidates.push(candidate);
+        }
       });
     });
 
-    return { candidates: candidates, buckets: usedBuckets };
+    return {
+      candidates: broadCandidates,
+      rhythmCandidates: rhythmCandidates,
+      hasRhythmPreference: !!(rhythmType && rhythmCandidates.length),
+      rhythmType: rhythmType,
+      buckets: usedBuckets
+    };
   }
 
   function describeCandidateBuckets(candidateInfo) {
     if (!candidateInfo || !candidateInfo.buckets || !candidateInfo.buckets.length) return "";
     return candidateInfo.buckets.map(function(bucket) {
-      return escapeHTML(bucket.label) + ": <b>" + bucket.count + "</b>";
+      var s = escapeHTML(bucket.label) + ": <b>" + bucket.count + "</b>";
+      if (candidateInfo.hasRhythmPreference && bucket.rhythmType) {
+        s += " (" + escapeHTML(bucket.rhythmType) + ": <b>" + bucket.rhythmCount + "</b>)";
+      }
+      return s;
     }).join(", ");
   }
 
@@ -1326,11 +1393,26 @@
     var index = new Map();
     var chordedTunes = 0;
     var chordedMeasures = 0;
+    var skippedKeyChangeTunes = 0;
+    var skippedMultiVoiceTunes = 0;
 
     db.forEach(function(t) {
       if (!t || !t.abc || !/"/.test(t.abc)) return;
+
+      // Apply the same skip rules to database tunes that are applied to input
+      // tunes. A database setting that changes key/mode mid-tune or has
+      // multiple voices is not a reliable single-key/single-melody source for
+      // measure-level chord transfer.
+      var dbSkipReason = getTuneSkipReason(t.abc || "");
+      if (dbSkipReason) {
+        if (/multiple voices/.test(dbSkipReason)) skippedMultiVoiceTunes++;
+        else if (/key\/mode changes/.test(dbSkipReason)) skippedKeyChangeTunes++;
+        return;
+      }
+
       var meter = normalizeMeter(t.meter || "");
       var mode = normalizeMode(t.mode || "");
+      var rhythmType = normalizeTuneType(t.type || "");
       if (!meter || !mode) return;
       var key = tuneKey(meter, mode);
       var measures = buildMeasureObjects(t.abc, meter, "").filter(function(m) {
@@ -1342,6 +1424,7 @@
       }).map(function(m) {
         m.sourceName = t.name || "";
         m.sourceSettingId = t.setting_id || "";
+        m.sourceType = rhythmType;
         return m;
       });
       if (!measures.length) return;
@@ -1351,7 +1434,13 @@
       Array.prototype.push.apply(index.get(key), measures);
     });
 
-    gLastStats = { chordedTunes: chordedTunes, chordedMeasures: chordedMeasures, keys: index.size };
+    gLastStats = {
+      chordedTunes: chordedTunes,
+      chordedMeasures: chordedMeasures,
+      keys: index.size,
+      skippedKeyChangeTunes: skippedKeyChangeTunes,
+      skippedMultiVoiceTunes: skippedMultiVoiceTunes
+    };
     return index;
   }
 
@@ -1434,7 +1523,7 @@
       }
       return {
         text: appendSkipNoteToRawTune(rawTune, skipReason),
-        stats: { title: rawTitle, matched: 0, total: 0, skippedPickup: 0, fallbackMatched: 0, candidates: 0, candidateBuckets: [], skippedTune: true, skipReason: skipReason }
+        stats: { title: rawTitle, matched: 0, total: 0, skippedPickup: 0, fallbackMatched: 0, rhythmFallbackMatched: 0, candidates: 0, rhythmCandidates: 0, candidateBuckets: [], skippedTune: true, skipReason: skipReason }
       };
     }
 
@@ -1444,11 +1533,13 @@
     var mode = getHeaderValue(hb.header, "K");
     var unitLength = getHeaderValue(hb.header, "L");
     var title = getHeaderValue(hb.header, "T") || "Untitled";
-    var candidateInfo = getCandidatesForMeterMode(meter, mode);
-    var candidates = candidateInfo.candidates;
+    var rhythmType = getInputTuneType(hb.header, meter);
+    var candidateInfo = getCandidatesForMeterMode(meter, mode, rhythmType);
+    var broadCandidates = candidateInfo.candidates;
+    var rhythmCandidates = candidateInfo.rhythmCandidates;
     var candidateBucketSummary = describeCandidateBuckets(candidateInfo);
 
-    if (!hb.body.trim() || !candidates.length) {
+    if (!hb.body.trim() || !broadCandidates.length) {
       if (progressState) {
         updateProgressModal(
           "Matching chords...<br>" +
@@ -1457,7 +1548,7 @@
         );
         await allowBrowserToUpdate();
       }
-      return { text: tune, stats: { title: title, matched: 0, total: 0, skippedPickup: 0, candidates: candidates.length, candidateBuckets: [] } };
+      return { text: tune, stats: { title: title, matched: 0, total: 0, skippedPickup: 0, candidates: broadCandidates.length, rhythmCandidates: rhythmCandidates.length, rhythmFallbackMatched: 0, candidateBuckets: [] } };
     }
 
     var measures = buildMeasureObjects(hb.body, meter, unitLength);
@@ -1465,6 +1556,7 @@
     var total = 0;
     var skippedPickup = 0;
     var fallbackMatched = 0;
+    var rhythmFallbackMatched = 0;
     var lastChord = "";
     var firstChordInserted = false;
     var outParts = [];
@@ -1510,9 +1602,12 @@
       var normalThreshold = options.threshold;
       var effectiveThreshold = getEffectiveMeasureThreshold(normalThreshold, forceBoundaryThreshold, options);
 
+      var searchCandidates = candidateInfo.hasRhythmPreference ? rhythmCandidates : broadCandidates;
+      var searchLabel = candidateInfo.hasRhythmPreference ? (rhythmType + " rhythm-priority") : "same meter/key/mode";
+
       var best = await findBestMeasureMatchAsync(
         m,
-        candidates,
+        searchCandidates,
         effectiveThreshold,
         function(candidateDone, candidateTotal, bestScore) {
           var elapsed = performance.now() - progressState.startedAt;
@@ -1522,13 +1617,38 @@
           updateProgressModal(
             "Matching chords... <b>" + overallPercent + "%</b> complete, elapsed <b>" + formatElapsed(elapsed) + "</b><br>" +
             "Tune <b>" + progressState.tuneNumber + "</b> of <b>" + progressState.tuneCount + "</b>: <b>" + escapeHTML(title) + "</b><br>" +
-            (candidateBucketSummary ? "Candidate buckets: " + candidateBucketSummary + ".<br>" : "") +
-            "Measure <b>" + processedMeasureCount + "</b> of <b>" + totalMeasureCount + "</b> in this tune; " +
-            "Database candidates checked <b>" + candidateDone + "</b> of <b>" + candidateTotal + "</b>.<br>" +
-            "Matches so far: <b>" + (progressState.totalMatched + matched) + "</b>; Fallback matches: <b>" + ((progressState.totalFallbackMatched || 0) + fallbackMatched) + "</b>;<br/>Skipped pickup measures: <b>" + (progressState.totalSkippedPickup + skippedPickup) + "</b>; Current best score: <b>" + bestScore.toFixed(3) + "</b>."
+            (candidateBucketSummary ? "Candidate buckets: " + candidateBucketSummary + "<br>" : "") +
+            "Search pass: <b>" + escapeHTML(searchLabel) + "</b>. Measure <b>" + processedMeasureCount + "</b> of <b>" + totalMeasureCount + "</b> in this tune<br/>" +
+            "Database candidates checked <b>" + candidateDone + "</b> of <b>" + candidateTotal + "</b><br>" +
+            "Matches so far: <b>" + (progressState.totalMatched + matched) + "</b>; Fallback matches: <b>" + ((progressState.totalFallbackMatched || 0) + fallbackMatched) + "</b><br/>Skipped pickup measures: <b>" + (progressState.totalSkippedPickup + skippedPickup) + "</b>; Current best score: <b>" + bestScore.toFixed(3) + "</b>"
           );
         }
       );
+
+      if (!best && candidateInfo.hasRhythmPreference && broadCandidates.length > rhythmCandidates.length) {
+        var broadOnlyCandidates = broadCandidates.filter(function(c) { return c.sourceType !== rhythmType; });
+        searchLabel = "same meter/key/mode fallback";
+        best = await findBestMeasureMatchAsync(
+          m,
+          broadOnlyCandidates,
+          effectiveThreshold,
+          function(candidateDone, candidateTotal, bestScore) {
+            var elapsed = performance.now() - progressState.startedAt;
+            var overallPercent = progressState.totalMeasuresToMatch ?
+              Math.round(((progressState.completedMeasures + processedMeasureCount - 1) / progressState.totalMeasuresToMatch) * 100) : 0;
+
+            updateProgressModal(
+              "Matching chords... <b>" + overallPercent + "%</b> complete, elapsed <b>" + formatElapsed(elapsed) + "</b><br>" +
+              "Tune <b>" + progressState.tuneNumber + "</b> of <b>" + progressState.tuneCount + "</b>: <b>" + escapeHTML(title) + "</b><br>" +
+              (candidateBucketSummary ? "Candidate buckets: " + candidateBucketSummary + "<br>" : "") +
+              "Search pass: <b>" + escapeHTML(searchLabel) + "</b>. Measure <b>" + processedMeasureCount + "</b> of <b>" + totalMeasureCount + "</b> in this tune<br/>" +
+              "Database candidates checked <b>" + candidateDone + "</b> of <b>" + candidateTotal + "</b><br>" +
+              "Matches so far: <b>" + (progressState.totalMatched + matched) + "</b>; Rhythm fallbacks: <b>" + ((progressState.totalRhythmFallbackMatched || 0) + rhythmFallbackMatched) + "</b><br/>Skipped pickup measures: <b>" + (progressState.totalSkippedPickup + skippedPickup) + "</b>; Current best score: <b>" + bestScore.toFixed(3) + "</b>"
+            );
+          }
+        );
+        if (best) rhythmFallbackMatched++;
+      }
 
       if (!best) {
         forceNextFullMeasureChord = false;
@@ -1608,13 +1728,14 @@
       progressState.totalMatched += matched;
       progressState.totalSkippedPickup += skippedPickup;
       progressState.totalFallbackMatched = (progressState.totalFallbackMatched || 0) + fallbackMatched;
+      progressState.totalRhythmFallbackMatched = (progressState.totalRhythmFallbackMatched || 0) + rhythmFallbackMatched;
     }
 
     var outBody = outParts.join("");
 
     return {
       text: hb.header + (hb.header && outBody ? "\n" : "") + outBody,
-      stats: { title: title, matched: matched, total: total, skippedPickup: skippedPickup, fallbackMatched: fallbackMatched, candidates: candidates.length, candidateBuckets: candidateInfo.buckets }
+      stats: { title: title, matched: matched, total: total, skippedPickup: skippedPickup, fallbackMatched: fallbackMatched, rhythmFallbackMatched: rhythmFallbackMatched, candidates: broadCandidates.length, rhythmCandidates: rhythmCandidates.length, candidateBuckets: candidateInfo.buckets }
     };
   }
 
@@ -1673,13 +1794,15 @@
       completedMeasures: 0,
       totalMatched: 0,
       totalSkippedPickup: 0,
-      totalFallbackMatched: 0
+      totalFallbackMatched: 0,
+      totalRhythmFallbackMatched: 0
     };
 
     updateProgressModal(
       "Starting measure matching...<br>" +
       "Tunes: <b>" + tunes.length + "</b>; Measures to examine: <b>" + totalMeasuresToMatch + "</b>.<br>" +
-      "Database index: <b>" + gLastStats.chordedTunes + "</b> Chorded tune settings, <b>" + gLastStats.chordedMeasures + "</b> Chorded measures, <b>" + gLastStats.keys + "</b> Meter/key/mode buckets."
+      "Database index: <b>" + gLastStats.chordedTunes + "</b> chorded tune settings, <b>" + gLastStats.chordedMeasures + "</b> chorded measures, <b>" + gLastStats.keys + "</b> meter/key/mode buckets.<br>" +
+      "Database tunes skipped from matching: <b>" + ((gLastStats.skippedKeyChangeTunes || 0) + (gLastStats.skippedMultiVoiceTunes || 0)) + "</b> key-change/multi-voice setting(s)."
     );
     await allowBrowserToUpdate();
 
@@ -1690,7 +1813,7 @@
         updateProgressModal(
           "Matching chords...<br>" +
           "Tune <b>" + (i + 1) + "</b> of <b>" + tunes.length + "</b>: <b>" + escapeHTML(preParsedTunes[i].title) + "</b><br>" +
-          "Overall matched so far: <b>" + progressState.totalMatched + "</b>; Skipped pickup measures: <b>" + progressState.totalSkippedPickup + "</b>."
+          "Overall matched so far: <b>" + progressState.totalMatched + "</b>; Skipped pickup measures: <b>" + progressState.totalSkippedPickup + "</b>"
         );
         await allowBrowserToUpdate();
 
@@ -1730,7 +1853,9 @@
     var totalMatched = allStats.reduce(function(a, s) { return a + s.matched; }, 0);
     var totalPickup = allStats.reduce(function(a, s) { return a + s.skippedPickup; }, 0);
     var totalFallback = allStats.reduce(function(a, s) { return a + (s.fallbackMatched || 0); }, 0);
+    var totalRhythmFallback = allStats.reduce(function(a, s) { return a + (s.rhythmFallbackMatched || 0); }, 0);
     var withCandidates = allStats.filter(function(s) { return s.candidates > 0; }).length;
+    var withRhythmCandidates = allStats.filter(function(s) { return s.rhythmCandidates > 0; }).length;
     var skippedTunes = allStats.filter(function(s) { return s.skippedTune; }).length;
     var elapsed = performance.now() - progressState.startedAt;
 
@@ -1739,9 +1864,11 @@
       "Matched and injected chords into <b>" + totalMatched + "</b> of <b>" + totalMeasures + "</b> non-pickup measure(s).<br/>" +
       "Skipped <b>" + skippedTunes + "</b> tune(s) because of mid-tune key/mode changes or multiple voices.<br/>" +
       "Used the general fallback threshold for <b>" + totalFallback + "</b> match(es).<br/>" +
+      "Used the broad meter/key/mode fallback after rhythm-priority search for <b>" + totalRhythmFallback + "</b> match(es).<br/>" +
       "Skipped <b>" + totalPickup + "</b> opening pickup measure(s).<br>" +
       "Database index: <b>" + gLastStats.chordedTunes + "</b> chorded tune settings, <b>" + gLastStats.chordedMeasures + "</b> chorded measures, <b>" + gLastStats.keys + "</b> meter/key/mode buckets.<br/>" +
-      "Input tunes with same meter/key/mode candidates: <b>" + withCandidates + "</b>."
+      "Database tunes skipped from matching: <b>" + ((gLastStats.skippedKeyChangeTunes || 0) + (gLastStats.skippedMultiVoiceTunes || 0)) + "</b> key-change/multi-voice setting(s).<br/>" +
+      "Input tunes with same meter/key/mode candidates: <b>" + withCandidates + "</b>; with rhythm-priority candidates: <b>" + withRhythmCandidates + "</b>."
     );
   }
 
