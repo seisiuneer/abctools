@@ -438,6 +438,15 @@
     return seconds + "s";
   }
 
+  function formatProgressTuneHeader(progressState, title) {
+    return "Tune <b>" + progressState.tuneNumber + "</b> of <b>" + progressState.tuneCount +
+      "</b>: <b>" + escapeHTML(title) + "</b><br>";
+  }
+
+  function pluralWord(count, singular, plural) {
+    return count === 1 ? singular : plural;
+  }
+
   function updateGenerateButtonState() {
     var btn = document.getElementById("generatebutton");
     if (!btn) return;
@@ -515,7 +524,7 @@
       '<h4>How matching works</h4>' +
       '<ul>' +
       '<li>Existing chord symbols in the input tunes are stripped before processing.</li>' +
-      '<li>For each source measure, the tool first searches candidate database measures from tunes with the same normalized meter, key, mode, and rhythm type from the <b>R:</b> field. If no good rhythm-type match is found, it falls back to the broader same meter/key/mode pool.</li>' +
+      '<li>For each source measure, the tool first searches candidate database measures from tunes with the same normalized meter, key, mode, and rhythm type from the <b>R:</b> field. If no good rhythm-type match is found, it falls back to the broader same meter/key/mode pool. For reels, hornpipes are tried as the first fallback before other compatible 4/4 rhythm types.</li>' +
       '<li>For minor tunes, the tool also checks same-tonic Dorian tunes in the same meter and uses whichever measure-level match is better. For Dorian tunes, it also checks the same-tonic minor key.</li><li>If a tune is in 4/4 and has no <b>R:</b> tag, it is treated as a reel for rhythm-priority matching.</li>' +
       '<li>The default minimum match score is <b>0.70</b>. If no normal match is found for a general measure, the tool can accept the best available match down to <b>75%</b> of the selected threshold. Critical tune, repeat, and part-boundary cases can still use the lower internal <b>0.35</b> boundary threshold.</li>' +
       '<li>If no matching measure with usable chords meets the threshold, that source measure is left unchanged.</li>' +
@@ -529,7 +538,7 @@
       '</ul>' +
       '<h4>Running and output</h4>' +
       '<ul>' +
-      '<li>Click <b>Generate Backup Chords</b>. A progress dialog shows the current tune, measure, candidate count, match count, and elapsed time.</li>' +
+      '<li>Click <b>Generate Backup Chords</b>. A progress dialog shows the current tune, measure, candidate count, and match count.</li>' +
       '<li>Click <b>Cancel</b> in the progress dialog to stop processing and clear the output area.</li>' +
       '<li>When processing completes, the dialog closes and a summary appears in the main status area.</li>' +
       '<li>The <b>Copy Output to the Clipboard</b>, <b>Save Output to a File</b>, and <b>Test Output in the ABC Transcription Tools</b> buttons are updated after processing completes or is cancelled.</li>' +
@@ -1515,8 +1524,8 @@
       var rawTitle = getHeaderValue(rawTune, "T") || "Untitled";
       if (progressState) {
         updateProgressModal(
+          formatProgressTuneHeader(progressState, rawTitle) +
           "Matching chords...<br>" +
-          "Tune <b>" + progressState.tuneNumber + "</b> of <b>" + progressState.tuneCount + "</b>: <b>" + escapeHTML(rawTitle) + "</b><br>" +
           escapeHTML(skipReason) + "."
         );
         await allowBrowserToUpdate();
@@ -1542,8 +1551,8 @@
     if (!hb.body.trim() || !broadCandidates.length) {
       if (progressState) {
         updateProgressModal(
+          formatProgressTuneHeader(progressState, title) +
           "Matching chords...<br>" +
-          "Tune <b>" + progressState.tuneNumber + "</b> of <b>" + progressState.tuneCount + "</b>: <b>" + escapeHTML(title) + "</b><br>" +
           "No compatible same-meter chord candidates were found for this tune."
         );
         await allowBrowserToUpdate();
@@ -1610,13 +1619,12 @@
         searchCandidates,
         effectiveThreshold,
         function(candidateDone, candidateTotal, bestScore) {
-          var elapsed = performance.now() - progressState.startedAt;
           var overallPercent = progressState.totalMeasuresToMatch ?
             Math.round(((progressState.completedMeasures + processedMeasureCount - 1) / progressState.totalMeasuresToMatch) * 100) : 0;
 
           updateProgressModal(
-            "Matching chords... <b>" + overallPercent + "%</b> complete, elapsed <b>" + formatElapsed(elapsed) + "</b><br>" +
-            "Tune <b>" + progressState.tuneNumber + "</b> of <b>" + progressState.tuneCount + "</b>: <b>" + escapeHTML(title) + "</b><br>" +
+            formatProgressTuneHeader(progressState, title) +
+            "Matching chords... <b>" + overallPercent + "%</b> complete<br>" +
             (candidateBucketSummary ? "Candidate buckets: " + candidateBucketSummary + "<br>" : "") +
             "Search pass: <b>" + escapeHTML(searchLabel) + "</b>. Measure <b>" + processedMeasureCount + "</b> of <b>" + totalMeasureCount + "</b> in this tune<br/>" +
             "Database candidates checked <b>" + candidateDone + "</b> of <b>" + candidateTotal + "</b><br>" +
@@ -1626,28 +1634,64 @@
       );
 
       if (!best && candidateInfo.hasRhythmPreference && broadCandidates.length > rhythmCandidates.length) {
-        var broadOnlyCandidates = broadCandidates.filter(function(c) { return c.sourceType !== rhythmType; });
-        searchLabel = "same meter/key/mode fallback";
-        best = await findBestMeasureMatchAsync(
-          m,
-          broadOnlyCandidates,
-          effectiveThreshold,
-          function(candidateDone, candidateTotal, bestScore) {
-            var elapsed = performance.now() - progressState.startedAt;
-            var overallPercent = progressState.totalMeasuresToMatch ?
-              Math.round(((progressState.completedMeasures + processedMeasureCount - 1) / progressState.totalMeasuresToMatch) * 100) : 0;
+        var fallbackGroups = [];
 
-            updateProgressModal(
-              "Matching chords... <b>" + overallPercent + "%</b> complete, elapsed <b>" + formatElapsed(elapsed) + "</b><br>" +
-              "Tune <b>" + progressState.tuneNumber + "</b> of <b>" + progressState.tuneCount + "</b>: <b>" + escapeHTML(title) + "</b><br>" +
-              (candidateBucketSummary ? "Candidate buckets: " + candidateBucketSummary + "<br>" : "") +
-              "Search pass: <b>" + escapeHTML(searchLabel) + "</b>. Measure <b>" + processedMeasureCount + "</b> of <b>" + totalMeasureCount + "</b> in this tune<br/>" +
-              "Database candidates checked <b>" + candidateDone + "</b> of <b>" + candidateTotal + "</b><br>" +
-              "Matches so far: <b>" + (progressState.totalMatched + matched) + "</b>; Rhythm fallbacks: <b>" + ((progressState.totalRhythmFallbackMatched || 0) + rhythmFallbackMatched) + "</b><br/>Skipped pickup measures: <b>" + (progressState.totalSkippedPickup + skippedPickup) + "</b>; Current best score: <b>" + bestScore.toFixed(3) + "</b>"
-            );
+        // For reels, prefer hornpipes as the first rhythm fallback before
+        // trying the rest of the compatible 4/4 meter/key/mode bucket. Reels
+        // and hornpipes often share enough phrase shape that hornpipes can be
+        // a better fallback than unrelated 4/4 types such as marches or
+        // strathspeys.
+        if (rhythmType === "reel" && normalizeMeter(meter) === "4/4") {
+          var hornpipeCandidates = broadCandidates.filter(function(c) { return c.sourceType === "hornpipe"; });
+          if (hornpipeCandidates.length) {
+            fallbackGroups.push({
+              label: "hornpipe rhythm fallback",
+              candidates: hornpipeCandidates
+            });
           }
-        );
-        if (best) rhythmFallbackMatched++;
+
+          var otherFourFourCandidates = broadCandidates.filter(function(c) {
+            return c.sourceType !== rhythmType && c.sourceType !== "hornpipe";
+          });
+          if (otherFourFourCandidates.length) {
+            fallbackGroups.push({
+              label: "other 4/4 rhythm fallback",
+              candidates: otherFourFourCandidates
+            });
+          }
+        } else {
+          var broadOnlyCandidates = broadCandidates.filter(function(c) { return c.sourceType !== rhythmType; });
+          if (broadOnlyCandidates.length) {
+            fallbackGroups.push({
+              label: "same meter/key/mode fallback",
+              candidates: broadOnlyCandidates
+            });
+          }
+        }
+
+        for (var fallbackIndex = 0; !best && fallbackIndex < fallbackGroups.length; fallbackIndex++) {
+          var fallbackGroup = fallbackGroups[fallbackIndex];
+          searchLabel = fallbackGroup.label;
+          best = await findBestMeasureMatchAsync(
+            m,
+            fallbackGroup.candidates,
+            effectiveThreshold,
+            function(candidateDone, candidateTotal, bestScore) {
+              var overallPercent = progressState.totalMeasuresToMatch ?
+                Math.round(((progressState.completedMeasures + processedMeasureCount - 1) / progressState.totalMeasuresToMatch) * 100) : 0;
+
+              updateProgressModal(
+                formatProgressTuneHeader(progressState, title) +
+                "Matching chords... <b>" + overallPercent + "%</b> complete<br>" +
+                (candidateBucketSummary ? "Candidate buckets: " + candidateBucketSummary + "<br>" : "") +
+                "Search pass: <b>" + escapeHTML(searchLabel) + "</b>. Measure <b>" + processedMeasureCount + "</b> of <b>" + totalMeasureCount + "</b> in this tune<br/>" +
+                "Database candidates checked <b>" + candidateDone + "</b> of <b>" + candidateTotal + "</b><br>" +
+                "Matches so far: <b>" + (progressState.totalMatched + matched) + "</b>; Rhythm fallbacks: <b>" + ((progressState.totalRhythmFallbackMatched || 0) + rhythmFallbackMatched) + "</b><br/>Skipped pickup measures: <b>" + (progressState.totalSkippedPickup + skippedPickup) + "</b>; Current best score: <b>" + bestScore.toFixed(3) + "</b>"
+              );
+            }
+          );
+          if (best) rhythmFallbackMatched++;
+        }
       }
 
       if (!best) {
@@ -1811,8 +1855,8 @@
         progressState.tuneNumber = i + 1;
         throwIfCancelled();
         updateProgressModal(
+          formatProgressTuneHeader(progressState, preParsedTunes[i].title) +
           "Matching chords...<br>" +
-          "Tune <b>" + (i + 1) + "</b> of <b>" + tunes.length + "</b>: <b>" + escapeHTML(preParsedTunes[i].title) + "</b><br>" +
           "Overall matched so far: <b>" + progressState.totalMatched + "</b>; Skipped pickup measures: <b>" + progressState.totalSkippedPickup + "</b>"
         );
         await allowBrowserToUpdate();
@@ -1859,17 +1903,17 @@
     var skippedTunes = allStats.filter(function(s) { return s.skippedTune; }).length;
     var elapsed = performance.now() - progressState.startedAt;
 
-    setStatus(
-      "Done in <b>" + formatElapsed(elapsed) + "</b>. Processed <b>" + tunes.length + "</b> tune(s).<br/>" +
-      "Matched and injected chords into <b>" + totalMatched + "</b> of <b>" + totalMeasures + "</b> non-pickup measure(s).<br/>" +
-      "Skipped <b>" + skippedTunes + "</b> tune(s) because of mid-tune key/mode changes or multiple voices.<br/>" +
-      "Used the general fallback threshold for <b>" + totalFallback + "</b> match(es).<br/>" +
-      "Used the broad meter/key/mode fallback after rhythm-priority search for <b>" + totalRhythmFallback + "</b> match(es).<br/>" +
-      "Skipped <b>" + totalPickup + "</b> opening pickup measure(s).<br>" +
-      "Database index: <b>" + gLastStats.chordedTunes + "</b> chorded tune settings, <b>" + gLastStats.chordedMeasures + "</b> chorded measures, <b>" + gLastStats.keys + "</b> meter/key/mode buckets.<br/>" +
-      "Database tunes skipped from matching: <b>" + ((gLastStats.skippedKeyChangeTunes || 0) + (gLastStats.skippedMultiVoiceTunes || 0)) + "</b> key-change/multi-voice setting(s).<br/>" +
-      "Input tunes with same meter/key/mode candidates: <b>" + withCandidates + "</b>; with rhythm-priority candidates: <b>" + withRhythmCandidates + "</b>."
-    );
+    var finalStatus =
+      "Done in <b>" + formatElapsed(elapsed) + "</b>. Processed <b>" + tunes.length + "</b> " +
+      pluralWord(tunes.length, "tune", "tunes") + ".";
+
+    if (skippedTunes > 0) {
+      finalStatus += "<br/>Skipped <b>" + skippedTunes + "</b> " +
+        pluralWord(skippedTunes, "tune", "tunes") +
+        " because of mid-tune key/mode changes or multiple voices.";
+    }
+
+    setStatus(finalStatus);
   }
 
   function openABCFile(evt) {
