@@ -575,6 +575,7 @@
       '<li>Existing chord symbols in the input tunes are stripped before processing.</li>' +
       '<li>The default minimum match score is <b>0.75</b>. If no normal match is found for a general measure, the tool can accept the best available match down to <b>75%</b> of the selected threshold. Critical tune, repeat, and part-boundary cases can still use the lower internal <b>0.35</b> boundary threshold.</li>' +
       '<li>For starts and endings of tunes, parts, repeated sections, and first/second endings, the tool first tries matching against database measures that are also starts or endings, then falls back to the general same rhythm/meter/key/mode candidate pool if needed.</li>' +
+      '<li>When two candidate measures have essentially the same melody match score, the tool uses the current tune key and mode as a tie-breaker and prefers the chord pattern that is more compatible with that key/mode.</li>' +
       '<li>If no matching measure with usable chords meets the threshold, that source measure is left unchanged.</li>' +
       '</ul>' +
       '<h4>Running and output</h4>' +
@@ -1400,6 +1401,133 @@
     return (lcs * 0.45) + (pcLcs * 0.25) + (bi * 0.20) + (tri * 0.10) - (lenPenalty * 0.10);
   }
 
+  function chordRootToPitchClass(root) {
+    var pitchClasses = {
+      "C": 0, "C#": 1, "Db": 1,
+      "D": 2, "D#": 3, "Eb": 3,
+      "E": 4,
+      "F": 5, "F#": 6, "Gb": 6,
+      "G": 7, "G#": 8, "Ab": 8,
+      "A": 9, "A#": 10, "Bb": 10,
+      "B": 11
+    };
+    return Object.prototype.hasOwnProperty.call(pitchClasses, root) ? pitchClasses[root] : null;
+  }
+
+  function getModeScaleIntervals(modeName) {
+    modeName = (modeName || "major").toLowerCase();
+    if (modeName === "minor" || modeName === "aeolian") return [0, 2, 3, 5, 7, 8, 10];
+    if (modeName === "dorian") return [0, 2, 3, 5, 7, 9, 10];
+    if (modeName === "mixolydian") return [0, 2, 4, 5, 7, 9, 10];
+    if (modeName === "phrygian") return [0, 1, 3, 5, 7, 8, 10];
+    if (modeName === "lydian") return [0, 2, 4, 6, 7, 9, 11];
+    if (modeName === "locrian") return [0, 1, 3, 5, 6, 8, 10];
+    return [0, 2, 4, 5, 7, 9, 11];
+  }
+
+  function getDiatonicTriadQualities(scaleIntervals) {
+    return scaleIntervals.map(function(rootInterval, degreeIndex) {
+      var third = (scaleIntervals[(degreeIndex + 2) % 7] + (degreeIndex + 2 >= 7 ? 12 : 0)) - rootInterval;
+      var fifth = (scaleIntervals[(degreeIndex + 4) % 7] + (degreeIndex + 4 >= 7 ? 12 : 0)) - rootInterval;
+
+      if (third === 4 && fifth === 7) return "major";
+      if (third === 3 && fifth === 7) return "minor";
+      if (third === 3 && fifth === 6) return "diminished";
+      return "other";
+    });
+  }
+
+  function parsePlainChordRootAndQuality(chord) {
+    var m = String(chord || "").trim().match(/^([A-G](?:#|b)?)(m?)$/);
+    if (!m) return null;
+    return {
+      root: m[1],
+      pitchClass: chordRootToPitchClass(m[1]),
+      quality: m[2] === "m" ? "minor" : "major"
+    };
+  }
+
+  function getDegreePreferenceWeight(degree, modeName) {
+    modeName = (modeName || "major").toLowerCase();
+
+    // These weights are deliberately conservative. They are only used as a
+    // tie-breaker between same-score or near-same-score melodic matches, not as
+    // a replacement for measure similarity. They prefer common backup-chord
+    // choices for the current key/mode, especially the tonic and close tonal
+    // anchors, while still allowing less-common diatonic choices when they are
+    // the best melodic match.
+    if (modeName === "minor" || modeName === "aeolian" || modeName === "dorian") {
+      var modalWeights = [12, 4, 7, 8, 7, 5, 9];
+      return modalWeights[degree - 1] || 0;
+    }
+
+    if (modeName === "mixolydian") {
+      var mixolydianWeights = [12, 5, 3, 8, 9, 5, 7];
+      return mixolydianWeights[degree - 1] || 0;
+    }
+
+    var majorWeights = [12, 6, 2, 8, 9, 5, 3];
+    return majorWeights[degree - 1] || 0;
+  }
+
+  function getChordCompatibilityScore(chord, normalizedMode) {
+    var parsedChord = parsePlainChordRootAndQuality(chord);
+    if (!parsedChord || parsedChord.pitchClass === null) return -8;
+
+    var modeParts = splitNormalizedMode(normalizedMode || "");
+    var tonicPc = chordRootToPitchClass(modeParts.root || "");
+    if (tonicPc === null) return 0;
+
+    var modeName = modeParts.mode || "major";
+    var scaleIntervals = getModeScaleIntervals(modeName);
+    var chordInterval = (parsedChord.pitchClass - tonicPc + 12) % 12;
+    var degreeIndex = scaleIntervals.indexOf(chordInterval);
+
+    if (degreeIndex < 0) {
+      // Non-scale chords are not forbidden, but they should lose a tie against
+      // a normal in-key backup chord when the melodic match is otherwise equal.
+      return -6;
+    }
+
+    var degree = degreeIndex + 1;
+    var score = getDegreePreferenceWeight(degree, modeName);
+    var expectedQualities = getDiatonicTriadQualities(scaleIntervals);
+    var expectedQuality = expectedQualities[degreeIndex];
+
+    if (expectedQuality === parsedChord.quality) score += 4;
+    else if (expectedQuality === "diminished") score -= 2;
+    else score -= 1;
+
+    // Give a small extra nudge to an exact tonic chord so tied matches like
+    // G vs. Bm in G major prefer the more expected tonal-center chord.
+    if (degree === 1) score += 2;
+
+    return score;
+  }
+
+  function getMeasureChordCompatibilityScore(candidateMeasure, normalizedMode) {
+    if (!candidateMeasure || !candidateMeasure.chords || !candidateMeasure.chords.length) return 0;
+
+    var total = 0;
+    var count = 0;
+    var firstScore = null;
+
+    candidateMeasure.chords.forEach(function(chordInfo) {
+      var score = getChordCompatibilityScore(chordInfo.chord, normalizedMode);
+      if (firstScore === null) firstScore = score;
+      total += score;
+      count++;
+    });
+
+    if (!count) return 0;
+
+    // Average score keeps measures with more chords from automatically winning.
+    // A small first-chord weighting helps with the most common case where the
+    // competing measures are melodically identical but begin with different
+    // backup chords.
+    return (total / count) + ((firstScore || 0) * 0.25);
+  }
+
   function tuneKey(meter, mode) {
     return normalizeMeter(meter) + "\t" + normalizeMode(mode);
   }
@@ -1594,17 +1722,26 @@
     gChordIndex = buildChordIndex(gDatabase);
   }
 
-  async function findBestMeasureMatchAsync(sourceMeasure, candidates, threshold, progress) {
+  async function findBestMeasureMatchAsync(sourceMeasure, candidates, threshold, progress, normalizedMode) {
     var best = null;
     var bestScore = 0;
+    var bestChordCompatibilityScore = -Infinity;
     var lastYield = performance.now();
+    var tieBreakEpsilon = 0.01;
 
     for (var i = 0; i < candidates.length; i++) {
       throwIfCancelled();
       var c = candidates[i];
       var score = measureSimilarity(sourceMeasure, c);
-      if (score > bestScore) {
+      var chordCompatibilityScore = getMeasureChordCompatibilityScore(c, normalizedMode);
+
+      if (
+        !best ||
+        score > bestScore + tieBreakEpsilon ||
+        (Math.abs(score - bestScore) <= tieBreakEpsilon && chordCompatibilityScore > bestChordCompatibilityScore + 0.001)
+      ) {
         bestScore = score;
+        bestChordCompatibilityScore = chordCompatibilityScore;
         best = c;
       }
 
@@ -1618,7 +1755,7 @@
 
     if (progress) progress(candidates.length, candidates.length, bestScore);
     if (!best || bestScore < threshold) return null;
-    return { measure: best, score: bestScore };
+    return { measure: best, score: bestScore, chordCompatibilityScore: bestChordCompatibilityScore };
   }
 
   function getEffectiveMeasureThreshold(baseThreshold, forceBoundaryThreshold, options) {
@@ -1760,7 +1897,8 @@
                 ("Fallback matches: <b>" + ((progressState.totalFallbackMatched || 0) + fallbackMatched) + "</b>")) +
               "<br/>Skipped pickup measures: <b>" + (progressState.totalSkippedPickup + skippedPickup) + "</b>; Current best score: <b>" + bestScore.toFixed(3) + "</b>"
             );
-          }
+          },
+          normalizeMode(mode)
         );
       }
 
