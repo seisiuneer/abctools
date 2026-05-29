@@ -1326,9 +1326,10 @@
         continue;
       }
 
-      var forceStartChord = !firstChordInserted || m.isRepeatStart || m.isRepeatEnd || forceNextFullMeasureChord;
+      var forceStartChord = !firstChordInserted || m.isRepeatStart || forceNextFullMeasureChord;
+      var forceBoundaryThreshold = forceStartChord || m.isRepeatEnd;
       var normalThreshold = options.threshold;
-      var effectiveThreshold = getEffectiveMeasureThreshold(normalThreshold, forceStartChord, options);
+      var effectiveThreshold = getEffectiveMeasureThreshold(normalThreshold, forceBoundaryThreshold, options);
 
       var best = await findBestMeasureMatchAsync(
         m,
@@ -1356,6 +1357,7 @@
       }
 
       var chords = mapCandidateChordsToAllowedSourceBeats(m, best.measure, meter, unitLength, forceStartChord);
+      var originalMappedChords = chords.slice();
 
       // Chords copied from the database are only allowed on musically appropriate
       // beat locations for the current meter:
@@ -1365,8 +1367,10 @@
       //   9/8: beats 1, 4, and 7
       //   12/8: beats 1, 4, 7, and 10
       //   3/4: beats 1, 2, and 3
-      // Boundary chords for tune starts, repeat starts, and repeat ends are still
-      // forced onto the start of the measure when a matching database measure is found.
+      // Boundary chords for tune starts and repeat starts are still forced
+      // onto the start of the measure when a matching database measure is found.
+      // Repeat endings use the lower boundary threshold, but repeated opening
+      // chords can still be suppressed if another chord remains in the measure.
 
       if (!options.repeatSameChord) {
         var previousEmittedChord = lastChord;
@@ -1391,6 +1395,15 @@
         });
 
         chords = filteredChords;
+
+        // Repeat-end measures need an explicit chord marker somewhere in the
+        // measure when a usable match exists, but that should not force a
+        // repeated opening chord if a later non-repeated chord is available.
+        // If suppression removed everything from a repeat-end measure, restore
+        // one chord so the end of the repeated section still has a marker.
+        if (!chords.length && m.isRepeatEnd && originalMappedChords.length) {
+          chords = [Object.assign({}, originalMappedChords[0], { forced: true })];
+        }
       }
 
       if (!chords.length) {
