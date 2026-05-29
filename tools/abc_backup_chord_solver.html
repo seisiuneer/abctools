@@ -978,7 +978,18 @@
 
   function appendSkipNoteToRawTune(tune, reason) {
     tune = (tune || "").replace(/\s+$/g, "");
-    return tune + "\nN: " + reason;
+
+    // Some tunebooks place a tune-separator marker such as %%% after the
+    // notation. The skip note should belong to the tune itself, so insert it
+    // before any trailing separator-only lines rather than after them.
+    var trailingSeparator = "";
+    var separatorMatch = tune.match(/(?:\n[ \t]*%%%[ \t]*)+$/);
+    if (separatorMatch) {
+      trailingSeparator = separatorMatch[0];
+      tune = tune.slice(0, tune.length - trailingSeparator.length).replace(/\s+$/g, "");
+    }
+
+    return tune + "\n% \nN: " + reason + trailingSeparator;
   }
 
   function getAllowedChordOffsetsForMeter(meter, unitNoteLength) {
