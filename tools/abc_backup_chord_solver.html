@@ -1135,6 +1135,10 @@
       if (!noteChords || !noteChords.length) return;
 
       var injectAt = Math.max(info.injectIndex, lastPos);
+
+      // Preserve the source tune's existing spacing exactly. Do not trim
+      // spaces before injected chord symbols and do not add any extra spaces;
+      // the chord marker is inserted directly at the calculated note position.
       out += text.slice(lastPos, injectAt);
       noteChords.forEach(function(chord) {
         out += '"' + chord + '"';
