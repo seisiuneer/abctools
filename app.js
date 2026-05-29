@@ -64777,7 +64777,7 @@ function OtherABCTools(){
   DayPilot.Modal.alert(modal_msg, {
     theme: "modal_flat",
     top: 25,
-    width: 650,
+    width: 680,
     scrollWithPage: (AllowDialogsToScroll())
   });
 
