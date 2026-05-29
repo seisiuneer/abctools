@@ -123,8 +123,9 @@
     #progress_modal_status {
       font-size: 12pt;
       line-height: 1.45;
-      min-height: 115px;
-      max-height: 45vh;
+      height: calc(7.25em + 22px);      /* fixed 5 lines of status text plus padding/border */
+      min-height: calc(7.25em + 22px);
+      max-height: calc(7.25em + 22px);
       overflow-y: auto;
       padding: 10px;
       background: #f5f5ff;
@@ -370,6 +371,15 @@
     updateShareLinkForOutput(outputText);
   }
 
+  function setOutputAreaDuringProcessing(outputText) {
+    // During a long batch run, keep the partial output visible, but avoid
+    // recalculating the share link or changing output-button enabled states.
+    // Those actions are only needed once, after processing completes or is
+    // cancelled, and skipping them keeps large batches more responsive.
+    var output = document.getElementById("output");
+    if (output) output.value = outputText || "";
+  }
+
   function handleInputChanged() {
     updateGenerateButtonState();
 
@@ -471,9 +481,8 @@
 
     gSaveFilename = "abc_backup_chords.abc";
     setProcessingControlsEnabled(true);
-    setStatus("Ready. The tune database will be loaded and indexed when you click Generate Backup Chords.");
+    setStatus("Ready.");
   }
-
 
   function showMessageDialog(message) {
     if (window.DayPilot && DayPilot.Modal) {
@@ -506,10 +515,9 @@
       '<h4>How matching works</h4>' +
       '<ul>' +
       '<li>Existing chord symbols in the input tunes are stripped before processing.</li>' +
-      '<li>If a source tune uses <b>M:C</b> or <b>M:C|</b>, the tool rewrites that header to <b>M:4/4</b> and processes the tune as 4/4.</li>' +
       '<li>For each source measure, the tool searches candidate database measures from tunes with the same normalized meter, key, and mode.</li>' +
       '<li>Only database measures whose chord symbols are plain uppercase-root major or minor triads are used, such as <b>D</b>, <b>G</b>, <b>Em</b>, <b>Bbm</b>, or <b>F#m</b>. Lowercase chords, slash chords, 5 chords, 7 chords, and extended chords are skipped.</li>' +
-      '<li>The default minimum match score is <b>0.70</b>. In some boundary cases, a lower internal fallback threshold may be used to help place required chords at tune, repeat, or part boundaries.</li>' +
+      '<li>The default minimum match score is <b>0.70</b>. If no normal match is found for a general measure, the tool can accept the best available match down to <b>75%</b> of the selected threshold. Critical tune, repeat, and part-boundary cases can still use the lower internal <b>0.35</b> boundary threshold.</li>' +
       '<li>If no matching measure with usable chords meets the threshold, that source measure is left unchanged.</li>' +
       '</ul>' +
       '<h4>Chord placement rules</h4>' +
@@ -524,7 +532,7 @@
       '<li>Click <b>Generate Backup Chords</b>. A progress dialog shows the current tune, measure, candidate count, match count, and elapsed time.</li>' +
       '<li>Click <b>Cancel</b> in the progress dialog to stop processing and clear the output area.</li>' +
       '<li>When processing completes, the dialog closes and a summary appears in the main status area.</li>' +
-      '<li>The <b>Copy Output to the Clipboard</b> and <b>Save Output to a File</b> buttons are enabled only when there is output text.</li>' +
+      '<li>The <b>Copy Output to the Clipboard</b>, <b>Save Output to a File</b>, and <b>Test Output in the ABC Transcription Tools</b> buttons are updated after processing completes or is cancelled.</li>' +
       '<li>On iOS, saving uses the Share Sheet to allow you save the ABC to the Files area or share it with other applications.</li>' +
       '<li>The <b>Test Output in the ABC Transcription Tools</b> button is enabled only when the generated share link is short enough for direct transfer.</li>' +
       '</ul>' +
@@ -648,6 +656,7 @@
     s = s.replace(/\[[A-Za-z]:[^\]]*\]/g, "");
     // Leave ABC tuplets such as (3 in place here so parseMeasureText() can
     // account for their duration while still ignoring the marker as a note.
+    // Roll marks (~) and other decorations are removed for matching/timing.
     s = s.replace(/[.~HLMOPSTuv]/g, "");
     return s;
   }
@@ -1028,8 +1037,14 @@
       if (m) {
         var injectIndex = i;
         var before = text.slice(0, i);
-        var graceMatch = before.match(/\{[^}]*\}\s*$/);
-        if (graceMatch) injectIndex = i - graceMatch[0].length;
+
+        // If the real note is preceded by ABC grace notes and/or a roll mark,
+        // inject the chord before those prefixes so the ornament stays attached
+        // to the note, for example:
+        //   {BAG}G  -> "G"{BAG}G
+        //   ~G      -> "G"~G
+        var ornamentPrefixMatch = before.match(/(?:\{[^}]*\}\s*|~\s*)+$/);
+        if (ornamentPrefixMatch) injectIndex = i - ornamentPrefixMatch[0].length;
 
         infos.push({
           noteIndex: noteIndex,
@@ -1224,6 +1239,26 @@
     return { measure: best, score: bestScore };
   }
 
+  function getEffectiveMeasureThreshold(baseThreshold, forceStartChord, options) {
+    baseThreshold = isFinite(baseThreshold) ? baseThreshold : 0.70;
+
+    // Normal measures first try the user's requested threshold. Since the
+    // matching pass already finds the best candidate measure, accepting a best
+    // match down to this fallback value is equivalent to doing a second pass
+    // only when the normal threshold fails, but avoids scanning the candidate
+    // bucket twice.
+    var generalFallbackThreshold = baseThreshold * (options.fallbackThresholdScale || 0.75);
+
+    // Critical boundaries use the existing more permissive threshold so starts
+    // and repeat/part boundaries have the best chance of getting an explicit
+    // marker when any usable match exists.
+    if (forceStartChord) {
+      return Math.min(baseThreshold, options.boundaryThreshold || 0.35);
+    }
+
+    return Math.min(baseThreshold, generalFallbackThreshold);
+  }
+
   async function processTuneAsync(tune, options, progressState) {
     tune = stripExistingChordsFromTune(tune);
     var hb = splitHeaderBody(tune);
@@ -1250,6 +1285,7 @@
     var matched = 0;
     var total = 0;
     var skippedPickup = 0;
+    var fallbackMatched = 0;
     var lastChord = "";
     var firstChordInserted = false;
     var outParts = [];
@@ -1291,7 +1327,8 @@
       }
 
       var forceStartChord = !firstChordInserted || m.isRepeatStart || m.isRepeatEnd || forceNextFullMeasureChord;
-      var effectiveThreshold = forceStartChord ? Math.min(options.threshold, options.boundaryThreshold || 0.35) : options.threshold;
+      var normalThreshold = options.threshold;
+      var effectiveThreshold = getEffectiveMeasureThreshold(normalThreshold, forceStartChord, options);
 
       var best = await findBestMeasureMatchAsync(
         m,
@@ -1306,8 +1343,8 @@
             "Matching chords... <b>" + overallPercent + "%</b> complete, elapsed <b>" + formatElapsed(elapsed) + "</b><br>" +
             "Tune <b>" + progressState.tuneNumber + "</b> of <b>" + progressState.tuneCount + "</b>: <b>" + escapeHTML(title) + "</b><br>" +
             "Measure <b>" + processedMeasureCount + "</b> of <b>" + totalMeasureCount + "</b> in this tune; " +
-            "database candidates checked <b>" + candidateDone + "</b> of <b>" + candidateTotal + "</b>.<br>" +
-            "Matches so far: <b>" + (progressState.totalMatched + matched) + "</b>; skipped pickup measures: <b>" + (progressState.totalSkippedPickup + skippedPickup) + "</b>; current best score: <b>" + bestScore.toFixed(3) + "</b>."
+            "Database candidates checked <b>" + candidateDone + "</b> of <b>" + candidateTotal + "</b>.<br>" +
+            "Matches so far: <b>" + (progressState.totalMatched + matched) + "</b>; Fallback matches: <b>" + ((progressState.totalFallbackMatched || 0) + fallbackMatched) + "</b>;<br/>Skipped pickup measures: <b>" + (progressState.totalSkippedPickup + skippedPickup) + "</b>; Current best score: <b>" + bestScore.toFixed(3) + "</b>."
           );
         }
       );
@@ -1345,6 +1382,8 @@
         continue;
       }
 
+      if (!forceStartChord && best.score < normalThreshold) fallbackMatched++;
+
       var injected = insertChordsIntoMeasure(m.content, chords, forceStartChord);
       if (chords.length) lastChord = chords[chords.length - 1].chord;
       firstChordInserted = true;
@@ -1357,13 +1396,14 @@
       progressState.completedMeasures += total;
       progressState.totalMatched += matched;
       progressState.totalSkippedPickup += skippedPickup;
+      progressState.totalFallbackMatched = (progressState.totalFallbackMatched || 0) + fallbackMatched;
     }
 
     var outBody = outParts.join("");
 
     return {
       text: hb.header + (hb.header && outBody ? "\n" : "") + outBody,
-      stats: { title: title, matched: matched, total: total, skippedPickup: skippedPickup, candidates: candidates.length }
+      stats: { title: title, matched: matched, total: total, skippedPickup: skippedPickup, fallbackMatched: fallbackMatched, candidates: candidates.length }
     };
   }
 
@@ -1419,13 +1459,14 @@
       totalMeasuresToMatch: totalMeasuresToMatch,
       completedMeasures: 0,
       totalMatched: 0,
-      totalSkippedPickup: 0
+      totalSkippedPickup: 0,
+      totalFallbackMatched: 0
     };
 
     updateProgressModal(
       "Starting measure matching...<br>" +
-      "Tunes: <b>" + tunes.length + "</b>; measures to examine: <b>" + totalMeasuresToMatch + "</b>.<br>" +
-      "Database index: <b>" + gLastStats.chordedTunes + "</b> chorded tune settings, <b>" + gLastStats.chordedMeasures + "</b> chorded measures, <b>" + gLastStats.keys + "</b> meter/key/mode buckets."
+      "Tunes: <b>" + tunes.length + "</b>; Measures to examine: <b>" + totalMeasuresToMatch + "</b>.<br>" +
+      "Database index: <b>" + gLastStats.chordedTunes + "</b> Chorded tune settings, <b>" + gLastStats.chordedMeasures + "</b> Chorded measures, <b>" + gLastStats.keys + "</b> Meter/key/mode buckets."
     );
     await allowBrowserToUpdate();
 
@@ -1436,18 +1477,18 @@
         updateProgressModal(
           "Matching chords...<br>" +
           "Tune <b>" + (i + 1) + "</b> of <b>" + tunes.length + "</b>: <b>" + escapeHTML(preParsedTunes[i].title) + "</b><br>" +
-          "Overall matched so far: <b>" + progressState.totalMatched + "</b>; skipped pickup measures: <b>" + progressState.totalSkippedPickup + "</b>."
+          "Overall matched so far: <b>" + progressState.totalMatched + "</b>; Skipped pickup measures: <b>" + progressState.totalSkippedPickup + "</b>."
         );
         await allowBrowserToUpdate();
 
-        var r = await processTuneAsync(tunes[i], { threshold: threshold, boundaryThreshold: 0.35, repeatSameChord: false }, progressState);
+        var r = await processTuneAsync(tunes[i], { threshold: threshold, fallbackThresholdScale: 0.75, boundaryThreshold: 0.35, repeatSameChord: false }, progressState);
         results.push(r.text);
         allStats.push(r.stats);
 
         if (outputBox) {
           var partialOutput = results.join("\n\n").trim();
           if (preTuneText) partialOutput = preTuneText + "\n\n" + partialOutput;
-          setOutputArea(partialOutput + "\n");
+          setOutputAreaDuringProcessing(partialOutput + "\n");
         }
         await allowBrowserToUpdate();
       }
@@ -1456,7 +1497,7 @@
       hideProgressModal();
       if (err && err.message === "USER_CANCELLED") {
         clearOutputArea();
-        setStatus("Measure matching cancelled. Output was cleared.");
+        setStatus("Measure matching cancelled.");
         return;
       }
       clearOutputArea();
@@ -1475,14 +1516,16 @@
     var totalMeasures = allStats.reduce(function(a, s) { return a + s.total; }, 0);
     var totalMatched = allStats.reduce(function(a, s) { return a + s.matched; }, 0);
     var totalPickup = allStats.reduce(function(a, s) { return a + s.skippedPickup; }, 0);
+    var totalFallback = allStats.reduce(function(a, s) { return a + (s.fallbackMatched || 0); }, 0);
     var withCandidates = allStats.filter(function(s) { return s.candidates > 0; }).length;
     var elapsed = performance.now() - progressState.startedAt;
 
     setStatus(
-      "Done in <b>" + formatElapsed(elapsed) + "</b>. Processed <b>" + tunes.length + "</b> tune(s). " +
-      "Matched and injected chords into <b>" + totalMatched + "</b> of <b>" + totalMeasures + "</b> non-pickup measure(s). " +
+      "Done in <b>" + formatElapsed(elapsed) + "</b>. Processed <b>" + tunes.length + "</b> tune(s).<br/>" +
+      "Matched and injected chords into <b>" + totalMatched + "</b> of <b>" + totalMeasures + "</b> non-pickup measure(s).<br/>" +
+      "Used the general fallback threshold for <b>" + totalFallback + "</b> match(es).<br/>" +
       "Skipped <b>" + totalPickup + "</b> opening pickup measure(s).<br>" +
-      "Database index: <b>" + gLastStats.chordedTunes + "</b> chorded tune settings, <b>" + gLastStats.chordedMeasures + "</b> chorded measures, <b>" + gLastStats.keys + "</b> meter/key/mode buckets. " +
+      "Database index: <b>" + gLastStats.chordedTunes + "</b> chorded tune settings, <b>" + gLastStats.chordedMeasures + "</b> chorded measures, <b>" + gLastStats.keys + "</b> meter/key/mode buckets.<br/>" +
       "Input tunes with same meter/key/mode candidates: <b>" + withCandidates + "</b>."
     );
   }
@@ -1494,10 +1537,12 @@
     gSaveFilename = "abc_backup_chords.abc";
     var reader = new FileReader();
     reader.onload = function(e) {
-      document.getElementById("input").value = e.target.result;
+      var loadedABC = e.target.result || "";
+      var tuneCount = splitTunes(loadedABC).length;
+      document.getElementById("input").value = loadedABC;
       updateGenerateButtonState();
       clearOutputArea();
-      setStatus("Loaded " + escapeHTML(file.name) + ". Output cleared.");
+      setStatus("Loaded <b>" + escapeHTML(file.name) + "</b> with <b>" + tuneCount + "</b> tune" + (tuneCount === 1 ? "" : "s") + ".");
     };
     reader.readAsText(file);
   }
@@ -1630,7 +1675,7 @@
 
   function copyOutputToClipboard() {
     var text = document.getElementById("output").value;
-    if (!text.length) { showMessageDialog("Nothing to copy to the clipboard"); return; }
+    if (!text.length) { showMessageDialog("Nothing to copy to the Clipboard"); return; }
     copyToClipboard(text).then(function() {
       var btn = document.getElementById("copybutton");
       btn.innerHTML = "Output copied to the Clipboard!";
@@ -1665,7 +1710,7 @@
     }
 
     if (!gOutputShareURL) {
-      showMessageDialog("Output too long to test directly in ABC Transcription Tools. Please save or copy the output instead.");
+      showMessageDialog("Output too long to test directly in ABC Transcription Tools. Please Save or Copy the output instead.");
       return;
     }
 
