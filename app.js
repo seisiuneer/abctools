@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3244_052926_1400";
+var gVersionNumber = "3245_053026_0830";
 
 var gMIDIInitStillWaiting = false;
 
@@ -28492,13 +28492,13 @@ async function processShareLink() {
       // Show update message?
       if (gLocalStorageAvailable){
 
-        var updatePresented = localStorage.sawUpdate_29may2026;
+        var updatePresented = localStorage.sawUpdate_30may2026;
 
         if (updatePresented != "true") {
 
           showWhatsNewScreen();
 
-          localStorage.sawUpdate_29may2026 = true;
+          localStorage.sawUpdate_30may2026 = true;
 
         }
 
@@ -56355,7 +56355,7 @@ function showWhatsNewScreen() {
   modal_msg += 'background: linear-gradient(135deg, #0b3d2e 0%, #1b5e20 52%, #4f8f3a 100%);';
   modal_msg += 'box-shadow: 0 6px 16px rgba(0,0,0,0.14); color:#fff;">';
   modal_msg += '<div style="font-size:20pt; line-height:24pt; font-weight:bold;">What&apos;s New</div>';
-  modal_msg += '<div style="font-size:11pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 28 May 2026</div>';
+  modal_msg += '<div style="font-size:11pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 29 May 2026</div>';
   modal_msg += '</div>';
 
   // Short intro
@@ -56366,8 +56366,8 @@ function showWhatsNewScreen() {
   // Feature card
   modal_msg += '<div style="margin:10px 0 6px 0; padding:0px 12px; border-radius:12px;';
   modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);">';
-  modal_msg += '<p><strong>New Tool on the "Other ABC Tools" dialog</strong>:</p>';
-  modal_msg += '<p>Added the <strong>ABC Tune Backup Chord Solver</strong> to the <strong>Other ABC Tools</strong> dialog.</p>';
+  modal_msg += '<p><strong>New Tool on the "Other ABC Tools" and "Open ABC in External Tool" dialogs</strong>:</p>';
+  modal_msg += '<p>Added the <strong>ABC Tune Backup Chord Solver</strong> to the <strong>Other ABC Tools</strong> and <strong>Open ABC in External Tool</strong> dialogs.</p>';
   modal_msg += '</div>';
 
   // Feature card
@@ -62915,13 +62915,13 @@ async function DoStartup() {
   // Show update message?
   if (gLocalStorageAvailable && (!isFromShare)){
 
-    var updatePresented = localStorage.sawUpdate_29may2026;
+    var updatePresented = localStorage.sawUpdate_30may2026;
 
     if (updatePresented != "true") {
 
       showWhatsNewScreen();
 
-      localStorage.sawUpdate_29may2026 = true;
+      localStorage.sawUpdate_30may2026 = true;
 
     }
 
@@ -64543,6 +64543,32 @@ function OpenInABCEncoder(abcText){
     }
 }
 
+function OpenInChordSolver(abcText){
+
+  sendGoogleAnalytics("action", "OpenInChordSolver");
+
+  var encoder = new TextEncoder();
+  var utf8Bytes = encoder.encode(abcText);
+  var deflated = pako.deflate(utf8Bytes, { level: 6 });
+  var theDef = def_bytesToBase64URL(deflated);
+
+  var theURL = "https://michaeleskin.com/tools/abc_backup_chord_solver.html?def="+theDef;
+
+  if (theURL.length < 8100)
+  {
+    var w = window.open(theURL);
+  }
+  else{
+
+    DayPilot.Modal.alert('<p style="text-align:center;font-family:helvetica;font-size:12pt;">Share URL is too long to open in the ABC Encoder.</p>', {
+      theme: "modal_flat",
+      top: 230,
+      scrollWithPage: (AllowDialogsToScroll())
+    });
+
+  }
+}
+
 function openInExternalTool(theABC){
 
   var modal_msg =
@@ -64556,6 +64582,23 @@ function openInExternalTool(theABC){
       '</p>';
 
   modal_msg +=
+    '<p style="text-align:center;">' +
+
+      '<span class="external-tool" style="display:inline-block;margin-right:48px;margin-bottom:12px;text-align:center;">' +
+        '<img style="height:128px;width:auto;" id="external_chord_chart" src="img/tool_chordchart_other_1.jpg" ' +
+             'title="Open the ABC in the ABC Chord Chart Generator" alt="ABC Chord Chart Generator" style="cursor:pointer;">' +
+        '<br>' +
+        '<span style="font-size:1.2em;">ABC Chord Chart Generator</span>' +
+      '</span>' +
+
+      '<span class="external-tool" style="display:inline-block;margin-bottom:12px; text-align:center;">' +
+        '<img style="height:120px;width:auto;" id="external_chord_solver" src="img/tool_abc_chord_solver_1.jpg" ' +
+             'title="Export the tunes to the ABC Tune Backup Chord Solver" alt="ABC Tune Backup Chord Solver" style="cursor:pointer;">' +
+        '<br>' +
+        '<span style="font-size:1.2em;">ABC Tune Backup Chord Solver<span>' +
+      '</span>' +
+
+    '</p>' +
     '<p style="text-align:center;">' +
 
       '<span class="external-tool" style="display:inline-block; margin-right:48px;margin-bottom:12px; text-align:center;">' +
@@ -64574,14 +64617,8 @@ function openInExternalTool(theABC){
       '</span>' +
 
     '</p>' +
-    '<p style="text-align:center;">' +
 
-      '<span class="external-tool" style="display:inline-block;margin-right:48px;margin-bottom:12px;text-align:center;">' +
-        '<img style="height:128px;width:auto;" id="external_chord_chart" src="img/tool_chordchart_other_1.jpg" ' +
-             'title="Open the ABC in the ABC Chord Chart Generator" alt="ABC Chord Chart Generator" style="cursor:pointer;">' +
-        '<br>' +
-        '<span style="font-size:1.2em;">ABC Chord Chart Generator</span>' +
-      '</span>' +
+    '<p style="text-align:center;">' +
 
       '<span class="external-tool" style="display:inline-block;margin-bottom:12px; text-align:center;">' +
         '<img style="height:120px;width:auto;" id="external_abc_encoder" src="img/abcencoderlogo.jpg" ' +
@@ -64618,6 +64655,11 @@ function openInExternalTool(theABC){
   elem = document.getElementById("external_abc_encoder");
   if (elem) elem.onclick = function(){
     OpenInABCEncoder(theABC);
+  };
+
+  elem = document.getElementById("external_chord_solver");
+  if (elem) elem.onclick = function(){
+    OpenInChordSolver(theABC);
   };
 
 }
