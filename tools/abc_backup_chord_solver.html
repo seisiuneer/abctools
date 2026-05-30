@@ -26,7 +26,7 @@
     }
     body {
       background-color: #ffffff;
-      padding: clamp(6px, 1.5vh, 16px) 8px;
+      padding: clamp(6px, 1.5vh, 16px) 12px;
       margin: 0;
     }
     textarea#input {
@@ -239,7 +239,7 @@
 
     @media (max-width: 700px) {
       /* Give the tool a little more breathing room on iPhone-sized screens. */
-      body { padding-left: 12px; padding-right: 12px; }
+      body { padding-left: 16px; padding-right: 16px; }
       #maindiv { width: 100%; }
       .output_button_row { flex-direction: column; gap: 10px; }
       .output_button_row .btn { width: 100%; }
@@ -620,6 +620,17 @@
       '<li>The default minimum match score is <b>0.75</b>. If no normal match is found for a general measure, the tool can accept the best available match down to <b>75%</b> of the selected threshold. Critical tune, repeat, and part-boundary cases can still use the lower internal <b>0.35</b> boundary threshold.</li>' +
       '<li>When two candidate measures have essentially the same melody match score, the tool uses the current tune key and mode as a tie-breaker and prefers the chord pattern that is more compatible with that key/mode.</li>' +
       '<li>If no matching measure with usable chords meets the threshold, that source measure is left unchanged.</li>' +
+      '</ul>' +
+      '<h4>Important: K: tag key and mode accuracy</h4>' +
+      '<ul>' +
+      '<li>The solver uses the key and mode from the <b>K:</b> tag to decide which database measures are musically comparable.</li>' +
+      '<li>For best results, it is <b>crucial</b> to make sure each tune has the correct key and mode in the <b>K:</b> tag before running the tool.' +
+      '<li>For example, if a tune is in <b>K:Edor</b> make sure that is what is in the <b>K:</b> tag, not <b>K:D</b>.</li>' +
+      '<li>Both have two sharps in the key signature, but if the key or mode is wrong, the tool will match against tunes in the key of <b>D</b> in the database, not <b>EDor</b>.</li>' +
+      '<li>Similarly if a tune is in <b>K:Dmix</b> make sure that is what is in the <b>K:</b> tag, not <b>K:G</b>.</li>' +
+      '<li>Both have one sharp in the key signature, but if the key or mode is wrong, the tool will match against tunes in the key of <b>G</b> in the database, not <b>DMix</b>.</li>' +
+      '<li>Having the wrong value in the <b>K:</b> tag can still produce matches, but the chords added may make much less musical sense.</li>' +
+      '<li>The tool does not try to detect or correct the tune’s key or mode automatically. It assumes the <b>K:</b> tag is correct.</li>' +
       '</ul>' +
       '<h4>Running and output</h4>' +
       '<ul>' +
