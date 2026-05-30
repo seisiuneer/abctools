@@ -81,6 +81,27 @@
     .modal_flat_input { margin: 20px 0px; }
     .modal_flat_buttons { text-align:center; margin-top: 40px; }
     .modal_flat_main button { background-color: #ccc; color: #000; padding: 10px 20px; border: 0px; cursor: pointer; outline: none; min-width: 100px; }
+
+    /* Keep DayPilot alert/prompt dialogs inside narrow mobile viewports.
+       DayPilot receives a JavaScript width, but these CSS limits provide an
+       extra safeguard for iPhone Safari and other small screens. */
+    .modal_flat_main {
+      max-width: calc(100vw - 24px) !important;
+      box-sizing: border-box;
+    }
+    .modal_flat_inner {
+      box-sizing: border-box;
+      max-width: 100%;
+    }
+    .modal_flat_main input {
+      width: 100% !important;
+      max-width: 100% !important;
+      box-sizing: border-box;
+    }
+    .modal_flat_content {
+      overflow-wrap: anywhere;
+    }
+
     .instructions_content { font-family: Helvetica, Arial, sans-serif; font-size: 12pt; line-height: 1.45; max-height: 60vh; overflow-y: auto; padding-right: 8px; }
     .instructions_content h3 { margin-top: 0; margin-bottom: 20px; font-size: 16pt; }
     .instructions_content p { font-size: 12pt; line-height: 1.45; margin: 0 0 10px 0; }
@@ -217,9 +238,16 @@
     }
 
     @media (max-width: 700px) {
-      #maindiv { width: calc(100vw - 12px); }
+      /* Give the tool a little more breathing room on iPhone-sized screens. */
+      body { padding-left: 12px; padding-right: 12px; }
+      #maindiv { width: 100%; }
       .output_button_row { flex-direction: column; gap: 10px; }
       .output_button_row .btn { width: 100%; }
+      .modal_flat_inner { padding: 20px 16px; }
+      .modal_flat_content { margin: 14px 0; }
+      .modal_flat_input { margin: 14px 0; }
+      .modal_flat_buttons { margin-top: 24px; }
+      .modal_flat_main button { min-width: 88px; padding: 10px 14px; }
       #progress_modal_box {
         width: calc(100vw - 24px);
         top: 50%;
@@ -541,11 +569,27 @@
     }
   }
 
+  function getResponsiveModalWidth(desktopWidth) {
+    var viewportWidth = 0;
+
+    if (window.visualViewport && window.visualViewport.width) {
+      viewportWidth = window.visualViewport.width;
+    } else if (window.innerWidth) {
+      viewportWidth = window.innerWidth;
+    } else {
+      viewportWidth = document.documentElement.clientWidth || desktopWidth;
+    }
+
+    // Leave visible side margins on phones so DayPilot alert and prompt dialogs
+    // do not extend past the viewport, especially when the iOS keyboard is open.
+    return Math.max(280, Math.min(desktopWidth, Math.floor(viewportWidth - 24)));
+  }
+
   function showMessageDialog(message) {
     if (window.DayPilot && DayPilot.Modal) {
       DayPilot.Modal.alert(message, {
         theme: "modal_flat",
-        width: 420,
+        width: getResponsiveModalWidth(420),
         top: 150,
         scrollWithPage: true
       });
@@ -626,7 +670,7 @@
     if (window.DayPilot && DayPilot.Modal) {
       DayPilot.Modal.alert(html, {
         theme: 'modal_flat',
-        width: 720,
+        width: getResponsiveModalWidth(720),
         scrollWithPage: true
       });
     } else {
@@ -2240,7 +2284,7 @@
       try {
         var args = await DayPilot.Modal.prompt("Please enter a filename for your output ABC file:", defaultName, {
           theme: "modal_flat",
-          width: 520,
+          width: getResponsiveModalWidth(520),
           top: 150,
           scrollWithPage: true
         });
