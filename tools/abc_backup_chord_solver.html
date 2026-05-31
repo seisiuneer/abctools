@@ -26,7 +26,7 @@
     }
     body {
       background-color: #ffffff;
-      padding: clamp(6px, 1.5vh, 16px) 12px;
+      padding: clamp(18px, 1.4vh, 24px) 12px;
       margin: 0;
     }
     textarea#input {
@@ -365,7 +365,7 @@
     }
 
     @media (max-height: 760px) {
-      body { padding-top: 6px; padding-bottom: 6px; }
+      body { padding-top: 12px; padding-bottom: 12px; }
       h1 { font-size: 16pt; }
       h2 { font-size: 12pt; margin-bottom: 8px; }
       h4 { font-size: 12pt; margin-bottom: 4px; }
@@ -434,6 +434,7 @@
   var gDatabase = null;
   var gChordIndex = null;
   var gSaveFilename = "abc_backup_chords.abc";
+  var gInputFilename = "";
   var gLastStats = null;
   var gCancelRequested = false;
   var gInputInitialized = false;
@@ -797,6 +798,7 @@
     }
 
     gSaveFilename = "abc_backup_chords.abc";
+    gInputFilename = "";
     setProcessingControlsEnabled(true);
 
     if (sharedABC !== null) {
@@ -2604,15 +2606,21 @@
 
         chords = filteredChords;
 
-        // Ending-boundary measures need an explicit chord marker somewhere in
-        // the measure when a usable match exists, but that should not force a
-        // repeated opening chord if a later non-repeated chord is available.
-        // This includes first/second endings, explicit repeat endings,
-        // double/final bars, and the last musical measure of a tune. If
-        // suppression removed everything from an ending-boundary measure,
-        // restore one chord so the ending still has a marker.
+        // Ending-boundary measures may need an explicit chord marker when a usable
+        // match exists, but do not restore a chord that merely repeats the previous
+        // emitted chord for ordinary endings. This avoids redundant endings such as:
+        //
+        //   "D"AFA dAF|"D"DED D2 :|
+        //
+        // Alternate endings are different: first/second endings need their own chord
+        // markers for correct display and playback, even when the chord repeats the
+        // previous ending's chord.
         if (!chords.length && m.isBoundaryEnd && originalMappedChords.length) {
-          chords = [Object.assign({}, originalMappedChords[0], { forced: true })];
+          var restoredEndingChord = originalMappedChords[0].chord;
+
+          if (m.isAlternateEnding || restoredEndingChord !== lastChord) {
+            chords = [Object.assign({}, originalMappedChords[0], { forced: true })];
+          }
         }
       }
 
@@ -2778,7 +2786,13 @@
     var skippedTunes = allStats.filter(function(s) { return s.skippedTune; }).length;
     var elapsed = performance.now() - progressState.startedAt;
 
-    var finalStatus =
+    var finalStatus = "";
+
+    if (gInputFilename) {
+      finalStatus += "File: <b>" + escapeHTML(gInputFilename) + "</b><br/>";
+    }
+
+    finalStatus +=
       "Done in <b>" + formatElapsed(elapsed) + "</b>. Processed <b>" + tunes.length + "</b> " +
       pluralWord(tunes.length, "tune", "tunes") + ".";
 
@@ -2796,6 +2810,7 @@
     if (!file) return;
     clearOutputArea();
     gSaveFilename = "abc_backup_chords.abc";
+    gInputFilename = file.name || "";
     var reader = new FileReader();
     reader.onload = function(e) {
       var loadedABC = e.target.result || "";
@@ -2814,6 +2829,7 @@
     updateGenerateButtonState();
     clearOutputArea();
     gSaveFilename = "abc_backup_chords.abc";
+    gInputFilename = "";
 
     var fileInput = document.getElementById("selectabcfile");
     if (fileInput) fileInput.value = "";
