@@ -2381,7 +2381,7 @@
         return formatShortModeName(item.mode);
       }).join(", ");
 
-      var substitutionSummary = "tested " + escapeHTML(formatShortModeName(keyModeSelection.declaredMode)) +
+      var substitutionSummary = escapeHTML(formatShortModeName(keyModeSelection.declaredMode)) +
         " → " + escapeHTML(testedModes);
 
       if (keyModeSelection.substituted) {
@@ -2482,7 +2482,7 @@
               (isRhythmFallbackPass ?
                 ("Rhythm fallbacks: <b>" + ((progressState.totalRhythmFallbackMatched || 0) + rhythmFallbackMatched) + "</b>") :
                 ("Fallback matches: <b>" + ((progressState.totalFallbackMatched || 0) + fallbackMatched) + "</b>")) +
-              "<br/>Skipped pickup measures: <b>" + (progressState.totalSkippedPickup + skippedPickup) + "</b>; Current best score: <b>" + bestScore.toFixed(3) + "</b>"
+              "<br/>Current best score: <b>" + bestScore.toFixed(3) + "</b>"
             );
           },
           selectedModeForMatching
@@ -2730,7 +2730,7 @@
         updateProgressModal(
           formatProgressTuneHeader(progressState, preParsedTunes[i].title) +
           "Matching chords...<br>" +
-          "Overall matched so far: <b>" + progressState.totalMatched + "</b>; Skipped pickup measures: <b>" + progressState.totalSkippedPickup + "</b>"
+          "Overall matched so far: <b>" + progressState.totalMatched + "</b>"
         );
         await allowBrowserToUpdate();
 
