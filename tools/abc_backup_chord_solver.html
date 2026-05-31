@@ -874,7 +874,7 @@
       '<h4>How matching works</h4>' +
       '<ul>' +
       '<li>Existing chord symbols in the input tunes are stripped before processing.</li>' +
-      '<li>The default minimum match score is <b>0.75</b>, and can be changed in the <b>Options</b> dialog. If no normal match is found for a general measure, the tool can accept the best available match down to <b>75%</b> of the selected threshold. Critical tune, repeat, and part-boundary cases can still use the lower internal <b>0.35</b> boundary threshold.</li>' +
+      '<li>The default minimum match score is <b>0.75</b>, and can be changed in the <b>Options</b> dialog. If no normal match is found for a general measure, the tool can accept the best available match down to <b>75%</b> of the selected threshold. Tune starts, repeat starts, part endings, and first/second endings are treated more flexibly so the generated chords do not disappear at important musical boundaries.</li>' +
       '<li>For starts and endings of tunes, parts, repeated sections, and first/second endings, the tool first tries matching against database measures that are also starts or endings, then falls back to the general same rhythm/meter/key/mode candidate pool if needed.</li>' +
       '<li>When two candidate measures have essentially the same melody match score, the tool uses the current tune key and mode as a tie-breaker and prefers the chord pattern that is more compatible with that key/mode.</li>' +
       '<li>If no matching measure with usable chords meets the threshold, that source measure is left unchanged.</li>' +
