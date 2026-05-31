@@ -156,7 +156,7 @@
     #progress_modal_progress {
       position: relative;
       width: 100%;
-      height: 22px;
+      height: 28px;
       margin-top: 14px;
       overflow: hidden;
       background: #f5f5ff;
@@ -186,7 +186,7 @@
       justify-content: center;
       color: #000;
       font-family: Helvetica, Arial, sans-serif;
-      font-size: 10pt;
+      font-size: 11pt;
       font-weight: bold;
       line-height: 1;
       text-align: center;
@@ -1416,13 +1416,22 @@
     return tune.replace(/^M:\s*(C\|?|c\|?)\s*$/gm, "M:4/4");
   }
 
+  function removeBlankLinesFromABCBody(body) {
+    // If the input contains a line that only has an ABC chord/text annotation,
+    // for example "D mix", stripping existing quoted chord/text strings leaves
+    // an empty notation line. Remove blank-only body lines so the solved tune
+    // does not end up with an empty line between the K: tag and the notation,
+    // or anywhere else in the generated notation body.
+    return String(body || "").replace(/^\s*$/gm, "").replace(/\n{2,}/g, "\n").replace(/^\n+|\n+$/g, "");
+  }
+
   function stripExistingChordsFromTune(tune) {
     // Remove any existing ABC chord symbols from the source tune before matching.
     // Header text is left alone; only the notation body is stripped. The database
     // tunes are not stripped because their chord symbols are the source material.
     var hb = splitHeaderBody(tune);
     if (!hb.body) return normalizeInputMeterHeader(tune);
-    var strippedBody = stripExistingChords(hb.body);
+    var strippedBody = removeBlankLinesFromABCBody(stripExistingChords(hb.body));
     return normalizeInputMeterHeader(hb.header + (hb.header && strippedBody ? "\n" : "") + strippedBody);
   }
 
@@ -2632,7 +2641,7 @@
       progressState.totalRhythmFallbackMatched = (progressState.totalRhythmFallbackMatched || 0) + rhythmFallbackMatched;
     }
 
-    var outBody = outParts.join("");
+    var outBody = removeBlankLinesFromABCBody(outParts.join(""));
     var outTune = hb.header + (hb.header && outBody ? "\n" : "") + outBody;
 
     if (keyModeSelection.substituted) {
