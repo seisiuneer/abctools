@@ -108,7 +108,6 @@
     .instructions_content ul { margin-top: 4px; padding-left: 24px; }
     .instructions_content li { margin-bottom: 6px; }
 
-
     /* Lightweight running-progress modal used during measure matching. */
     #progress_modal_overlay {
       display: none;
@@ -144,15 +143,54 @@
     #progress_modal_status {
       font-size: 12pt;
       line-height: 1.45;
-      height: calc(10.15em + 22px);     
-      min-height: calc(10.15em + 22px);
-      max-height: calc(10.15em + 22px);
+      height: calc(11.6em + 22px);     
+      min-height: calc(11.6em + 22px);
+      max-height: calc(11.6em + 22px);
       overflow-y: auto;
       padding: 10px;
       background: #f5f5ff;
       border: 1px solid #ddd;
       border-radius: 8px;
       box-sizing: border-box;
+    }
+    #progress_modal_progress {
+      position: relative;
+      width: 100%;
+      height: 22px;
+      margin-top: 14px;
+      overflow: hidden;
+      background: #f5f5ff;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      box-sizing: border-box;
+      box-shadow: inset 0 1px 2px rgba(0,0,0,0.08);
+    }
+    #progress_modal_progress_fill {
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 0%;
+      background: #7FE47F;
+      border-radius: 5px;
+      transition: width 120ms linear;
+    }
+    #progress_modal_progress_label {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #000;
+      font-family: Helvetica, Arial, sans-serif;
+      font-size: 10pt;
+      font-weight: bold;
+      line-height: 1;
+      text-align: center;
+      pointer-events: none;
     }
     #progress_modal_buttons {
       text-align: center;
@@ -210,6 +248,107 @@
       top: 0.10rem;
     }
 
+    #optionsbutton {
+      --color: #222244;
+      --background-color: lavender;
+      --border-color: #b8b8d8;
+      padding: 0.42rem 0.72rem;
+      padding-top: 0.50rem;
+      font-size: 10pt !important;
+      line-height: 1;
+      min-width: 0;
+      white-space: nowrap;
+      flex: 0 0 auto;
+    }
+
+    #optionsbutton:after {
+      top: 0.10rem;
+    }
+
+    .input_label_buttons {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex: 0 0 auto;
+    }
+
+    #options_modal_overlay {
+      display: none;
+      position: fixed;
+      z-index: 10000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.40);
+    }
+
+    #options_modal_box {
+      position: absolute;
+      left: 50%;
+      top: 24%;
+      transform: translate(-50%, -50%);
+      width: 600px;
+      max-width: calc(100vw - 48px);
+      background: #fff;
+      color: #000;
+      border: 1px solid #333;
+      box-shadow: 0px 0px 15px -2px rgba(0,0,0,0.75);
+      padding: 28px 30px;
+      font-family: Helvetica, Arial, sans-serif;
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
+
+    #options_modal_box h3 {
+      margin: 0 0 20px 0;
+      font-size: 16pt;
+      text-align: center;
+    }
+
+    .options_row {
+      margin: 18px 0;
+      font-family: Helvetica, Arial, sans-serif;
+      font-size: 12pt;
+      line-height: 1.35;
+    }
+
+    .options_hint {
+      margin-top: 9px;
+      color: #444;
+      font-size: 12pt;
+      line-height: 1.5;
+    }
+
+    .options_substitution_list {
+      margin-top: 8px;
+      padding-left: 18px;
+      margin-bottom:12px;
+    }
+
+    .options_substitution_list div {
+      margin-top: 3px;
+    }
+
+    #options_threshold {
+      width: 76px;
+      font-size: 11pt;
+      padding: 4px;
+      box-sizing: border-box;
+    }
+
+    #options_modal_buttons {
+      margin-top: 28px;
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+    }
+
+    #options_modal_buttons .btn {
+      min-width: 110px;
+      text-align: center;
+    }
+
     .output_button_row {
       display: flex;
       gap: 24px;
@@ -253,6 +392,25 @@
         top: 50%;
         padding: 20px;
       }
+      #progress_modal_progress {
+        height: 20px;
+        margin-top: 12px;
+      }
+      #progress_modal_progress_label {
+        font-size: 9.5pt;
+      }
+      #options_modal_box {
+        width: calc(100vw - 24px);
+        top: 50%;
+        padding: 24px 18px;
+      }
+      #options_modal_buttons {
+        flex-direction: column;
+        gap: 10px;
+      }
+      #options_modal_buttons .btn {
+        width: 100%;
+      }
     }
 
   </style>
@@ -281,6 +439,10 @@
   var gInputInitialized = false;
   var gProcessingControlsEnabled = true;
   var gOutputShareURL = "";
+  var gSettings = {
+    threshold: 0.75,
+    keyModeSubstitutionEnabled: true
+  };
   var gDefaultInputABC = "X: 1\nT: Cooley's\nC: Traditional\nR: Reel\nM: 4/4\nL: 1/8\nQ: 1/2=90\nK: Edor\n|:EBBA B2 EB|B2 AB dBAG|F/E/D AD BDAD|F/E/D AD BAGF|\nEBBA B2 EB|B2 AB defg|afge dBAF|1 DEFD E3D:|2 DEFD E2gf||\n|:eB (3BBB eBgf|eBB2 gedB|A/A/A FA DAFA|A/A/A FA defg|\neB (3BBB eBgf|eBBB defg|afge dBAF|1 DEFD E2gf:|2 DEFD E4|]\n\nX: 1\nT: The Kesh\nC: Traditional\nR: Jig\nM: 6/8\nL: 1/8\nQ: 3/8=120\nK: Gmaj\n|:GAG GAB|ABA ABd|edd gdd|edB dBA|\nGAG GAB|ABA ABd|edd gdB|AGF G3:|\n|:BAB dBd|ege dBA|BAB dBG|ABA AGA|\nBAB dBd|ege dBd|gfg aga|bgf g3:|";
 
 
@@ -323,6 +485,69 @@
     updateShareLinkForOutput("");
   }
 
+
+
+  function loadToolSettings() {
+    try {
+      var saved = localStorage.getItem("abcBackupChordSolverSettings");
+      if (!saved) return;
+      var parsed = JSON.parse(saved);
+      if (parsed && isFinite(parsed.threshold)) {
+        gSettings.threshold = Math.max(0.10, Math.min(1.00, Number(parsed.threshold)));
+      }
+      if (parsed && typeof parsed.keyModeSubstitutionEnabled === "boolean") {
+        gSettings.keyModeSubstitutionEnabled = parsed.keyModeSubstitutionEnabled;
+      }
+    } catch (err) {
+      console.warn("Could not load ABC Backup Chord Solver settings:", err);
+    }
+  }
+
+  function saveToolSettings() {
+    try {
+      localStorage.setItem("abcBackupChordSolverSettings", JSON.stringify(gSettings));
+    } catch (err) {
+      console.warn("Could not save ABC Backup Chord Solver settings:", err);
+    }
+  }
+
+  function getCurrentThresholdSetting() {
+    var threshold = Number(gSettings.threshold);
+    if (!isFinite(threshold)) threshold = 0.75;
+    return Math.max(0.10, Math.min(1.00, threshold));
+  }
+
+  function showOptionsDialog() {
+    var overlay = document.getElementById("options_modal_overlay");
+    if (!overlay) return;
+
+    var threshold = document.getElementById("options_threshold");
+    if (threshold) threshold.value = getCurrentThresholdSetting().toFixed(2);
+
+    var keyMode = document.getElementById("options_keymode_substitution");
+    if (keyMode) keyMode.checked = !!gSettings.keyModeSubstitutionEnabled;
+
+    overlay.style.display = "block";
+  }
+
+  function hideOptionsDialog() {
+    var overlay = document.getElementById("options_modal_overlay");
+    if (overlay) overlay.style.display = "none";
+  }
+
+  function saveOptionsDialog() {
+    var thresholdInput = document.getElementById("options_threshold");
+    var threshold = thresholdInput ? parseFloat(thresholdInput.value) : 0.75;
+    if (!isFinite(threshold)) threshold = 0.75;
+    gSettings.threshold = Math.max(0.10, Math.min(1.00, threshold));
+
+    var keyMode = document.getElementById("options_keymode_substitution");
+    gSettings.keyModeSubstitutionEnabled = !!(keyMode && keyMode.checked);
+
+    saveToolSettings();
+    hideOptionsDialog();
+    setStatus("Options saved.");
+  }
 
   function buildABCTranscriptionToolsShareURL(abcText) {
     if (!abcText || !abcText.length) return "";
@@ -463,10 +688,25 @@
     }
   }
 
+  function setProgressModalPercent(percent) {
+    percent = Number(percent);
+    if (!isFinite(percent)) percent = 0;
+    percent = Math.max(0, Math.min(100, Math.round(percent)));
+
+    var bar = document.getElementById("progress_modal_progress");
+    var fill = document.getElementById("progress_modal_progress_fill");
+    var label = document.getElementById("progress_modal_progress_label");
+
+    if (fill) fill.style.width = percent + "%";
+    if (label) label.textContent = percent + "%";
+    if (bar) bar.setAttribute("aria-valuenow", String(percent));
+  }
+
   function showProgressModal(message) {
     var overlay = document.getElementById("progress_modal_overlay");
     var status = document.getElementById("progress_modal_status");
     if (!overlay || !status) return;
+    setProgressModalPercent(0);
     status.innerHTML = message || "Starting...";
     overlay.style.display = "block";
   }
@@ -479,6 +719,7 @@
   function hideProgressModal() {
     var overlay = document.getElementById("progress_modal_overlay");
     if (overlay) overlay.style.display = "none";
+    setProgressModalPercent(0);
   }
 
   function cancelProcessing() {
@@ -535,21 +776,20 @@
     if (input) input.disabled = !enabled;
     var clearButton = document.getElementById("clearbutton");
     if (clearButton) clearButton.disabled = !enabled;
+    var optionsButton = document.getElementById("optionsbutton");
+    if (optionsButton) optionsButton.disabled = !enabled;
   }
 
   function initializeTool() {
     gCancelRequested = false;
     hideProgressModal();
+    loadToolSettings();
 
     var sharedABC = getDeflatedABCFromURL();
     var input = document.getElementById("input");
     if (input) input.value = (sharedABC !== null) ? sharedABC : gDefaultInputABC;
 
     clearOutputArea();
-
-    var threshold = document.getElementById("threshold");
-    if (threshold) threshold.value = "0.75";
-
 
     var fileInput = document.getElementById("selectabcfile");
     if (fileInput) {
@@ -612,29 +852,46 @@
       '<li>Open an ABC file, or paste ABC text into the input box. Multiple tunes are supported.</li>' +
       '<li>The tool can also accept an ABC Transcription Tools <b>?def=</b> share-link URL parameter containing deflate-encoded ABC tunes.</li>' +
       '<li>The <b>Generate Backup Chords</b> button is enabled only when the input box contains text.</li>' +
+      '<li>Click the small <b>Options</b> button next to the <b>Clear</b> button to set the minimum match score and key/mode substitution checking.</li>' +
       '<li>Click the <b>Clear</b> button next to the <b>ABC Input</b> label to clear both the input and output areas.</li>' +
+      '</ul>' +
+      '<h4>Options dialog</h4>' +
+      '<ul>' +
+      '<li><b>Minimum match score</b> controls how close a database measure must be before its chords are copied. The default is <b>0.75</b>. Lower values find more matches, but may be less selective. Higher values are stricter, but may leave more measures unchanged.</li>' +
+      '<li><b>Enable limited key/mode substitution checking</b> is enabled by default. When enabled, the tool can test a few common cases where an ABC tune uses the key signature in the <b>K:</b> tag instead of the tune’s actual key and mode.</li>' +
+      '<li>The currently checked substitutions are:' +
+      '<ul>' +
+      '<li><b>K:D</b> may also be tested as <b>Edor</b> or <b>Bmin</b>.</li>' +
+      '<li><b>K:G</b> may also be tested as <b>Dmix</b> or <b>Ador</b>.</li>' +
+      '<li><b>K:C</b> may also be tested as <b>Ddor</b>.</li>' +
+      '<li><b>K:F</b> may also be tested as <b>Gdor</b>.</li>' +
+      '</ul>' +
+      '</li>' +
+      '<li>The tool only uses an alternate key or mode if it gives a clearly better match. It does not rewrite the tune’s <b>K:</b> tag in the output.</li>' +
+      '<li>When enabled, chord matching may be slower because tunes with one of the listed <b>K:</b> tags are also tested against the matching alternate key/mode choices.</li>' +
+      '<li>If you are confident that you have proper keys and modes in the <b>K:</b> tags for all of your tunes, you can turn this feature off.</li>' +
+      '<li>Options are saved in this browser and restored the next time the tool is opened.</li>' +
       '</ul>' +
       '<h4>How matching works</h4>' +
       '<ul>' +
       '<li>Existing chord symbols in the input tunes are stripped before processing.</li>' +
-      '<li>The default minimum match score is <b>0.75</b>. If no normal match is found for a general measure, the tool can accept the best available match down to <b>75%</b> of the selected threshold. Critical tune, repeat, and part-boundary cases can still use the lower internal <b>0.35</b> boundary threshold.</li>' +
+      '<li>The default minimum match score is <b>0.75</b>, and can be changed in the <b>Options</b> dialog. If no normal match is found for a general measure, the tool can accept the best available match down to <b>75%</b> of the selected threshold. Critical tune, repeat, and part-boundary cases can still use the lower internal <b>0.35</b> boundary threshold.</li>' +
+      '<li>For starts and endings of tunes, parts, repeated sections, and first/second endings, the tool first tries matching against database measures that are also starts or endings, then falls back to the general same rhythm/meter/key/mode candidate pool if needed.</li>' +
       '<li>When two candidate measures have essentially the same melody match score, the tool uses the current tune key and mode as a tie-breaker and prefers the chord pattern that is more compatible with that key/mode.</li>' +
       '<li>If no matching measure with usable chords meets the threshold, that source measure is left unchanged.</li>' +
       '</ul>' +
       '<h4>Important: K: tag key and mode accuracy</h4>' +
       '<ul>' +
       '<li>The solver uses the key and mode from the <b>K:</b> tag to decide which database measures are musically comparable.</li>' +
-      '<li>For best results, it is <b>crucial</b> to make sure each tune has the correct key and mode in the <b>K:</b> tag before running the tool.' +
-      '<li>For example, if a tune is in <b>K:Edor</b> make sure that is what is in the <b>K:</b> tag, not <b>K:D</b>.</li>' +
-      '<li>Both have two sharps in the key signature, but if the key or mode is wrong, the tool will match against tunes in the key of <b>D</b> in the database, not <b>EDor</b>.</li>' +
-      '<li>Similarly if a tune is in <b>K:Dmix</b> make sure that is what is in the <b>K:</b> tag, not <b>K:G</b>.</li>' +
-      '<li>Both have one sharp in the key signature, but if the key or mode is wrong, the tool will match against tunes in the key of <b>G</b> in the database, not <b>DMix</b>.</li>' +
-      '<li>Having the wrong value in the <b>K:</b> tag can still produce matches, but the chords added may make much less musical sense.</li>' +
-      '<li>The tool does not try to detect or correct the tune’s key or mode automatically. It assumes the <b>K:</b> tag is correct.</li>' +
+      '<li>Correct <b>K:</b> tags still give the best results. A tune marked with the wrong key or mode may be matched against the wrong database material, which can produce poor chord choices.</li>' +
+      '<li>If you are not sure that all of the tunes have accurate key and mode declarations, leave <b>Enable limited key/mode substitution checking</b> turned on in the <b>Options</b> dialog.</li>' +
+      '<li>When enabled, the tool can test the common alternate key/mode choices listed in the <b>Options dialog</b> section above and use an alternate only if it gives a clearly better match.</li>' +
+      '<li>The tool does not rewrite the tune’s <b>K:</b> tag. If an alternate key or mode is used for the solution, explanatory <b>N:</b> tags are added to the end of that tune.</li>' +
+      '<li>If you are confident that all of your <b>K:</b> tags are correct, you can turn this feature off for normal single-key/mode matching.</li>' +
       '</ul>' +
       '<h4>Running and output</h4>' +
       '<ul>' +
-      '<li>Click <b>Generate Backup Chords</b>. A progress dialog shows the current tune, measure, candidate count, and match count.</li>' +
+      '<li>Click <b>Generate Backup Chords</b>. A progress dialog shows the current tune, measure, candidate count, match count, and overall percentage complete.</li>' +
       '<li>Click <b>Cancel</b> in the progress dialog to stop processing and clear the output area.</li>' +
       '<li>When processing completes, the dialog closes and a summary appears in the main status area.</li>' +
       '<li>The <b>Copy Output to the Clipboard</b>, <b>Save Output to a File</b>, and <b>Test Output in the ABC Transcription Tools</b> buttons are updated after processing completes or is cancelled.</li>' +
@@ -1215,6 +1472,28 @@
     return tune + "\n% \nN: " + reason + trailingSeparator;
   }
 
+
+  function appendNoteToTuneEnd(tune, noteText) {
+    tune = (tune || "").replace(/\s+$/g, "");
+
+    var trailingSeparator = "";
+    var separatorMatch = tune.match(/(?:\n[ \t]*%%%[ \t]*)+$/);
+    if (separatorMatch) {
+      trailingSeparator = separatorMatch[0];
+      tune = tune.slice(0, tune.length - trailingSeparator.length).replace(/\s+$/g, "");
+    }
+
+    return tune + "\n% \nN: " + noteText + "\nN: The original K: tag has not been changed."+ trailingSeparator;
+  }
+
+  function formatKeyModeSubstitutionNote(selection) {
+    return "ABC Backup Chord Solver matched this tune as " +
+      (selection && selection.alternateMode ? formatShortModeName(selection.alternateMode) : "an alternate key/mode") +
+      " instead of " +
+      (selection && selection.declaredMode ? formatShortModeName(selection.declaredMode) : "key/mode") +
+      ".";
+  }
+
   function getAllowedChordOffsetsForMeter(meter, unitNoteLength) {
     var full = getFullMeasureDuration(meter, unitNoteLength);
     if (!full) return [0];
@@ -1602,6 +1881,23 @@
     return { root: m[1], mode: (m[2] || "major") };
   }
 
+
+  function formatShortModeName(normalizedMode) {
+    var parsed = splitNormalizedMode(normalizedMode || "");
+    var mode = (parsed.mode || "").toLowerCase();
+    var abbreviations = {
+      major: "maj",
+      minor: "min",
+      dorian: "dor",
+      mixolydian: "mix",
+      aeolian: "aeo",
+      phrygian: "phr",
+      lydian: "lyd",
+      locrian: "loc"
+    };
+    return (parsed.root || "") + (abbreviations[mode] || mode.slice(0, 3));
+  }
+
   function tuneKeyFromNormalizedMode(meter, normalizedMode) {
     return normalizeMeter(meter) + "\t" + normalizedMode;
   }
@@ -1649,6 +1945,7 @@
         var rhythmCount = rhythmType ? bucketCandidates.filter(function(c) { return c.sourceType === rhythmType; }).length : 0;
         usedBuckets.push({
           label: bucket.label,
+          shortLabel: formatShortModeName(bucket.label),
           count: bucketCandidates.length,
           rhythmCount: rhythmCount,
           rhythmType: rhythmType,
@@ -1683,6 +1980,192 @@
     };
   }
 
+  var COMMON_DECLARED_KEY_MODE_ALTERNATES = {
+    "Dmajor": ["Edorian","Bminor"],
+    "Gmajor": ["Dmixolydian", "Adorian"],
+    "Cmajor": ["Ddorian"],
+    "Fmajor": ["Gdorian"]
+  };
+
+  function getCommonDeclaredKeyModeAlternates(normalizedMode) {
+    normalizedMode = normalizeMode(normalizedMode || "");
+    return COMMON_DECLARED_KEY_MODE_ALTERNATES[normalizedMode] || [];
+  }
+
+  function getTrialMeasuresForKeyModeSelection(measures) {
+    // Use a representative subset so the key/mode sanity check stays fast on
+    // large batches. Include starts/endings when possible because those are the
+    // measures where a wrong key/mode usually produces the most obvious chord
+    // problems.
+    var usable = (measures || []).filter(function(m) {
+      return m.notes && m.notes.length && !m.isInitialPickup && !(m.isPartialMeasure && !m.isBoundaryEnd);
+    });
+
+    var prioritized = [];
+    usable.forEach(function(m) {
+      if (m.isBoundaryStart || m.isBoundaryEnd) prioritized.push(m);
+    });
+    usable.forEach(function(m) {
+      if (!m.isBoundaryStart && !m.isBoundaryEnd) prioritized.push(m);
+    });
+
+    return prioritized.slice(0, 32);
+  }
+
+  function getBestTrialScoreForMeasure(sourceMeasure, candidates, normalizedMode) {
+    var bestScore = 0;
+    var bestCompatibility = -Infinity;
+
+    if (!sourceMeasure || !candidates || !candidates.length) {
+      return { score: 0, compatibility: 0 };
+    }
+
+    for (var i = 0; i < candidates.length; i++) {
+      var c = candidates[i];
+      var score = measureSimilarity(sourceMeasure, c);
+      var compatibility = getMeasureChordCompatibilityScore(c, normalizedMode);
+
+      if (score > bestScore + 0.01 ||
+          (Math.abs(score - bestScore) <= 0.01 && compatibility > bestCompatibility)) {
+        bestScore = score;
+        bestCompatibility = compatibility;
+      }
+    }
+
+    return {
+      score: bestScore,
+      compatibility: isFinite(bestCompatibility) ? bestCompatibility : 0
+    };
+  }
+
+  function evaluateKeyModeCandidateInfo(measures, candidateInfo, normalizedMode, options) {
+    var trialMeasures = getTrialMeasuresForKeyModeSelection(measures);
+    var threshold = options && isFinite(options.threshold) ? options.threshold : 0.75;
+    var fallbackThreshold = threshold * ((options && options.fallbackThresholdScale) || 0.75);
+    var searchCandidates = (candidateInfo && candidateInfo.hasRhythmPreference) ?
+      candidateInfo.rhythmCandidates :
+      (candidateInfo ? candidateInfo.candidates : []);
+
+    var matched = 0;
+    var strongMatched = 0;
+    var totalScore = 0;
+    var totalCompatibility = 0;
+
+    trialMeasures.forEach(function(m) {
+      var trial = getBestTrialScoreForMeasure(m, searchCandidates, normalizedMode);
+      if (trial.score >= fallbackThreshold) {
+        matched++;
+        totalScore += trial.score;
+        totalCompatibility += trial.compatibility;
+      }
+      if (trial.score >= threshold) strongMatched++;
+    });
+
+    return {
+      sampleCount: trialMeasures.length,
+      matched: matched,
+      strongMatched: strongMatched,
+      averageScore: matched ? totalScore / matched : 0,
+      averageCompatibility: matched ? totalCompatibility / matched : 0,
+      candidateCount: searchCandidates.length
+    };
+  }
+
+  function shouldUseAlternateKeyMode(declaredEval, alternateEval) {
+    if (!alternateEval || !alternateEval.sampleCount || !alternateEval.candidateCount) return false;
+
+    var sampleCount = alternateEval.sampleCount;
+    var minimumUsefulMatches = Math.max(3, Math.ceil(sampleCount * 0.30));
+    if (alternateEval.matched < minimumUsefulMatches) return false;
+
+    declaredEval = declaredEval || { matched: 0, strongMatched: 0, averageScore: 0, averageCompatibility: 0 };
+
+    var requiredMatchGain = Math.max(2, Math.ceil(sampleCount * 0.15));
+    if (alternateEval.matched >= declaredEval.matched + requiredMatchGain) return true;
+
+    if (alternateEval.strongMatched >= declaredEval.strongMatched + requiredMatchGain) return true;
+
+    if (alternateEval.matched >= declaredEval.matched &&
+        alternateEval.averageScore >= declaredEval.averageScore + 0.04 &&
+        alternateEval.averageCompatibility >= declaredEval.averageCompatibility - 1) {
+      return true;
+    }
+
+    if (alternateEval.matched === declaredEval.matched &&
+        alternateEval.averageScore >= declaredEval.averageScore + 0.025 &&
+        alternateEval.averageCompatibility >= declaredEval.averageCompatibility + 4) {
+      return true;
+    }
+
+    return false;
+  }
+
+  function compareKeyModeEvaluations(a, b) {
+    a = a || { matched: 0, strongMatched: 0, averageScore: 0, averageCompatibility: 0, candidateCount: 0 };
+    b = b || { matched: 0, strongMatched: 0, averageScore: 0, averageCompatibility: 0, candidateCount: 0 };
+
+    if (a.matched !== b.matched) return a.matched - b.matched;
+    if (a.strongMatched !== b.strongMatched) return a.strongMatched - b.strongMatched;
+    if (Math.abs(a.averageScore - b.averageScore) > 0.001) return a.averageScore - b.averageScore;
+    if (Math.abs(a.averageCompatibility - b.averageCompatibility) > 0.001) return a.averageCompatibility - b.averageCompatibility;
+    return a.candidateCount - b.candidateCount;
+  }
+
+  function selectCandidateInfoWithKeyModeSubstitution(meter, declaredMode, rhythmType, measures, options) {
+    var normalizedDeclaredMode = normalizeMode(declaredMode || "");
+    var selected = {
+      mode: declaredMode,
+      normalizedMode: normalizedDeclaredMode,
+      candidateInfo: getCandidatesForMeterMode(meter, declaredMode, rhythmType),
+      substituted: false,
+      declaredMode: normalizedDeclaredMode,
+      alternateMode: "",
+      declaredEval: null,
+      alternateEval: null,
+      testedAlternates: []
+    };
+
+    if (!options || !options.keyModeSubstitutionEnabled) return selected;
+
+    var alternates = getCommonDeclaredKeyModeAlternates(normalizedDeclaredMode);
+    if (!alternates.length || !measures || !measures.length) return selected;
+
+    selected.declaredEval = evaluateKeyModeCandidateInfo(measures, selected.candidateInfo, normalizedDeclaredMode, options || {});
+
+    var bestAlternate = null;
+
+    alternates.forEach(function(alternateMode) {
+      var normalizedAlternateMode = normalizeMode(alternateMode);
+      var alternateCandidateInfo = getCandidatesForMeterMode(meter, normalizedAlternateMode, rhythmType);
+      var alternateEval = evaluateKeyModeCandidateInfo(measures, alternateCandidateInfo, normalizedAlternateMode, options || {});
+
+      selected.testedAlternates.push({
+        mode: normalizedAlternateMode,
+        eval: alternateEval
+      });
+
+      if (shouldUseAlternateKeyMode(selected.declaredEval, alternateEval) &&
+          (!bestAlternate || compareKeyModeEvaluations(alternateEval, bestAlternate.eval) > 0)) {
+        bestAlternate = {
+          mode: normalizedAlternateMode,
+          candidateInfo: alternateCandidateInfo,
+          eval: alternateEval
+        };
+      }
+    });
+
+    if (bestAlternate) {
+      selected.mode = bestAlternate.mode;
+      selected.normalizedMode = bestAlternate.mode;
+      selected.candidateInfo = bestAlternate.candidateInfo;
+      selected.substituted = true;
+      selected.alternateMode = bestAlternate.mode;
+      selected.alternateEval = bestAlternate.eval;
+    }
+
+    return selected;
+  }
+
   function getBoundaryPriorityCandidates(candidates, sourceMeasure, forceStartChord) {
     if (!candidates || !candidates.length) return [];
 
@@ -1705,7 +2188,8 @@
   function describeCandidateBuckets(candidateInfo) {
     if (!candidateInfo || !candidateInfo.buckets || !candidateInfo.buckets.length) return "";
     return candidateInfo.buckets.map(function(bucket) {
-      var s = escapeHTML(bucket.label) + ": <b>" + bucket.count + "</b>";
+      var label = bucket.shortLabel || formatShortModeName(bucket.label);
+      var s = escapeHTML(label) + ": <b>" + bucket.count + "</b>";
       if (candidateInfo.hasRhythmPreference && bucket.rhythmType) {
         s += " (" + escapeHTML(bucket.rhythmType) + ": <b>" + bucket.rhythmCount + "</b>)";
       }
@@ -1877,24 +2361,45 @@
     var unitLength = getHeaderValue(hb.header, "L");
     var title = getHeaderValue(hb.header, "T") || "Untitled";
     var rhythmType = getInputTuneType(hb.header, meter);
-    var candidateInfo = getCandidatesForMeterMode(meter, mode, rhythmType);
+    var measures = buildMeasureObjects(hb.body, meter, unitLength);
+    var keyModeSelection = selectCandidateInfoWithKeyModeSubstitution(meter, mode, rhythmType, measures, options);
+    var selectedModeForMatching = keyModeSelection.normalizedMode || normalizeMode(mode);
+    var candidateInfo = keyModeSelection.candidateInfo;
     var broadCandidates = candidateInfo.candidates;
     var rhythmCandidates = candidateInfo.rhythmCandidates;
     var candidateBucketSummary = describeCandidateBuckets(candidateInfo);
+    if (keyModeSelection.testedAlternates && keyModeSelection.testedAlternates.length) {
+      var testedModes = keyModeSelection.testedAlternates.map(function(item) {
+        return formatShortModeName(item.mode);
+      }).join(", ");
+
+      var substitutionSummary = "tested " + escapeHTML(formatShortModeName(keyModeSelection.declaredMode)) +
+        " → " + escapeHTML(testedModes);
+
+      if (keyModeSelection.substituted) {
+        substitutionSummary += "; using " + escapeHTML(formatShortModeName(keyModeSelection.alternateMode));
+      }
+
+      candidateBucketSummary = substitutionSummary +
+        (candidateBucketSummary ? "; " + candidateBucketSummary : "");
+    }
 
     if (!hb.body.trim() || !broadCandidates.length) {
       if (progressState) {
+        var noCandidateMeasureCount = measures.filter(function(m) { return m.notes && m.notes.length; }).length;
+        progressState.completedMeasures += noCandidateMeasureCount;
         updateProgressModal(
           formatProgressTuneHeader(progressState, title) +
           "Matching chords...<br>" +
           "No compatible same-meter chord candidates were found for this tune."
         );
+        setProgressModalPercent(progressState.totalMeasuresToMatch ?
+          Math.round((progressState.completedMeasures / progressState.totalMeasuresToMatch) * 100) : 100);
         await allowBrowserToUpdate();
       }
-      return { text: tune, stats: { title: title, matched: 0, total: 0, skippedPickup: 0, candidates: broadCandidates.length, rhythmCandidates: rhythmCandidates.length, rhythmFallbackMatched: 0, candidateBuckets: [] } };
+      return { text: tune, stats: { title: title, matched: 0, total: 0, skippedPickup: 0, candidates: broadCandidates.length, rhythmCandidates: rhythmCandidates.length, rhythmFallbackMatched: 0, candidateBuckets: [], keyModeSubstitution: keyModeSelection.substituted ? keyModeSelection : null } };
     }
 
-    var measures = buildMeasureObjects(hb.body, meter, unitLength);
     var matched = 0;
     var total = 0;
     var skippedPickup = 0;
@@ -1957,10 +2462,11 @@
           function(candidateDone, candidateTotal, bestScore) {
             var overallPercent = progressState.totalMeasuresToMatch ?
               Math.round(((progressState.completedMeasures + processedMeasureCount - 1) / progressState.totalMeasuresToMatch) * 100) : 0;
+            setProgressModalPercent(overallPercent);
 
             updateProgressModal(
               formatProgressTuneHeader(progressState, title) +
-              "Matching chords... <b>" + overallPercent + "%</b> complete<br>" +
+              "Matching chords...<br>" +
               (candidateBucketSummary ? "Candidate buckets: " + candidateBucketSummary + "<br>" : "") +
               "Measure <b>" + processedMeasureCount + "</b> of <b>" + totalMeasureCount + "</b> in this tune<br/>" +
               "Database candidates checked <b>" + candidateDone + "</b> of <b>" + candidateTotal + "</b><br>" +
@@ -1971,7 +2477,7 @@
               "<br/>Skipped pickup measures: <b>" + (progressState.totalSkippedPickup + skippedPickup) + "</b>; Current best score: <b>" + bestScore.toFixed(3) + "</b>"
             );
           },
-          normalizeMode(mode)
+          selectedModeForMatching
         );
       }
 
@@ -2127,10 +2633,15 @@
     }
 
     var outBody = outParts.join("");
+    var outTune = hb.header + (hb.header && outBody ? "\n" : "") + outBody;
+
+    if (keyModeSelection.substituted) {
+      outTune = appendNoteToTuneEnd(outTune, formatKeyModeSubstitutionNote(keyModeSelection));
+    }
 
     return {
-      text: hb.header + (hb.header && outBody ? "\n" : "") + outBody,
-      stats: { title: title, matched: matched, total: total, skippedPickup: skippedPickup, fallbackMatched: fallbackMatched, rhythmFallbackMatched: rhythmFallbackMatched, candidates: broadCandidates.length, rhythmCandidates: rhythmCandidates.length, candidateBuckets: candidateInfo.buckets }
+      text: outTune,
+      stats: { title: title, matched: matched, total: total, skippedPickup: skippedPickup, fallbackMatched: fallbackMatched, rhythmFallbackMatched: rhythmFallbackMatched, candidates: broadCandidates.length, rhythmCandidates: rhythmCandidates.length, candidateBuckets: candidateInfo.buckets, keyModeSubstitution: keyModeSelection.substituted ? keyModeSelection : null }
     };
   }
 
@@ -2158,7 +2669,7 @@
       return;
     }
 
-    var threshold = parseFloat(document.getElementById("threshold").value || "0.75");
+    var threshold = getCurrentThresholdSetting();
     var preTuneText = getABCPreTuneText(input);
     var tunes = splitTunes(input);
     var results = [];
@@ -2193,6 +2704,7 @@
       totalRhythmFallbackMatched: 0
     };
 
+    setProgressModalPercent(0);
     updateProgressModal(
       "Starting measure matching...<br>" +
       "Tunes: <b>" + tunes.length + "</b>; Measures to examine: <b>" + totalMeasuresToMatch + "</b>.<br>" +
@@ -2205,6 +2717,8 @@
       for (var i = 0; i < tunes.length; i++) {
         progressState.tuneNumber = i + 1;
         throwIfCancelled();
+        setProgressModalPercent(progressState.totalMeasuresToMatch ?
+          Math.round((progressState.completedMeasures / progressState.totalMeasuresToMatch) * 100) : 0);
         updateProgressModal(
           formatProgressTuneHeader(progressState, preParsedTunes[i].title) +
           "Matching chords...<br>" +
@@ -2212,9 +2726,11 @@
         );
         await allowBrowserToUpdate();
 
-        var r = await processTuneAsync(tunes[i], { threshold: threshold, fallbackThresholdScale: 0.75, boundaryThreshold: 0.35, repeatSameChord: false }, progressState);
+        var r = await processTuneAsync(tunes[i], { threshold: threshold, fallbackThresholdScale: 0.75, boundaryThreshold: 0.35, repeatSameChord: false, keyModeSubstitutionEnabled: !!gSettings.keyModeSubstitutionEnabled }, progressState);
         results.push(r.text);
         allStats.push(r.stats);
+        setProgressModalPercent(progressState.totalMeasuresToMatch ?
+          Math.round((progressState.completedMeasures / progressState.totalMeasuresToMatch) * 100) : 100);
 
         if (outputBox) {
           var partialOutput = results.join("\n\n").trim();
@@ -2469,15 +2985,58 @@
     });
     initializeTool();
     gInputInitialized = true;
+
+    var optionsOverlay = document.getElementById("options_modal_overlay");
+    if (optionsOverlay) {
+      optionsOverlay.addEventListener("click", function(e) {
+        if (e.target === optionsOverlay) hideOptionsDialog();
+      });
+    }
   });
 
   </script>
 </head>
 <body>
+  <div id="options_modal_overlay" role="dialog" aria-modal="true" aria-labelledby="options_modal_title">
+    <div id="options_modal_box">
+      <h3 id="options_modal_title">Options</h3>
+      <div class="options_row">
+        <label for="options_threshold">Minimum match score:&nbsp;
+          <input id="options_threshold" type="number" min="0.10" max="1.00" step="0.05" value="0.75">
+        </label>
+        <div class="options_hint">Lower finds more matches; higher is stricter. Default is 0.75.</div>
+      </div>
+      <div class="options_row">
+        <label for="options_keymode_substitution">
+          <input id="options_keymode_substitution" type="checkbox" checked>
+          Enable limited key/mode substitution checking
+        </label>
+        <div class="options_hint">
+          Enabled by default. Tests common alternate key/mode choices for uncertain or incorrect <b>K:</b> tags:
+          <div class="options_substitution_list">
+            <div><b>K:D</b> may also be tested as <b>Edor</b> or <b>Bmin</b>.</div>
+            <div><b>K:G</b> may also be tested as <b>Dmix</b> or <b>Ador</b>.</div>
+            <div><b>K:C</b> may also be tested as <b>Ddor</b>.</div>
+            <div><b>K:F</b> may also be tested as <b>Gdor</b>.</div>
+          </div>
+          Chord matching may be slower when enabled.
+        </div>
+      </div>
+      <div id="options_modal_buttons">
+        <button class="btn btn-generate" onclick="saveOptionsDialog();" title="Save these options for future runs">Save</button>
+        <button class="btn btn-controls" onclick="hideOptionsDialog();" title="Close without saving changes">Cancel</button>
+      </div>
+    </div>
+  </div>
+
   <div id="progress_modal_overlay" aria-live="polite">
     <div id="progress_modal_box">
       <h3>Matching Backup Chords</h3>
       <div id="progress_modal_status">Starting...</div>
+      <div id="progress_modal_progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+        <div id="progress_modal_progress_fill"></div>
+        <div id="progress_modal_progress_label">0%</div>
+      </div>
       <div id="progress_modal_buttons">
         <button class="btn btn-controls" onclick="cancelProcessing();" title="Stop measure matching and clear the output area">Cancel</button>
       </div>
@@ -2495,7 +3054,10 @@
     <div style="text-align:left">
       <div class="input_label_row">
         <h4>ABC Input:</h4>
-        <button id="clearbutton" class="btn" onclick="clearInputAndOutput();" title="Clear both the input and output areas">Clear</button>
+        <div class="input_label_buttons">
+          <button id="optionsbutton" class="btn" onclick="showOptionsDialog();" title="Open options for match score and key/mode substitution checking">Options</button>
+          <button id="clearbutton" class="btn" onclick="clearInputAndOutput();" title="Clear both the input and output areas">Clear</button>
+        </div>
       </div>
       <div class="input_button_row">
         <input type="file" id="selectabcfile" accept=".abc,.ABC,.txt,.TXT,text/plain,text/*,application/octet-stream,application/vnd.abc" hidden/>
@@ -2529,13 +3091,6 @@ GAG GAB|ABA ABd|edd gdB|AGF G3:|
 |:BAB dBd|ege dBA|BAB dBG|ABA AGA|
 BAB dBd|ege dBd|gfg aga|bgf g3:|</textarea></p>
       </div>
-
-      <p style="margin-top:10px;">
-        <label class="option">Minimum match score:&nbsp;
-          <input id="threshold" type="number" min="0.10" max="1.00" step="0.05" value="0.75" style="width:70px; font-size:11pt;">
-        </label>
-        <span class="smallnote">&nbsp;&nbsp;Lower finds more matches; higher is stricter. Default is 0.75.</span>
-      </p>
 
       <p style="margin-top:10px;">
         <button id="generatebutton" class="btn btn-generate full_width_tool_button" onclick="generateBackupChords();">Generate Backup Chords</button>
