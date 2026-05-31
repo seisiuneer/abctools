@@ -413,6 +413,18 @@
       }
     }
 
+    /* Subtle warm-style hover highlighting for pointer/mouse devices only.
+       This is intentionally disabled on touch-first devices such as iPhone/iPad. */
+    @media (hover: hover) and (pointer: fine) {
+      .btn:hover:not(:disabled):not([disabled]) {
+        filter: brightness(0.97);
+      }
+
+      .modal_flat_main button:hover:not(:disabled):not([disabled]) {
+        filter: brightness(0.97);
+      }
+    }
+
   </style>
 
   <script type="text/javascript" src="daypilot-modal.min-3.10.1.js"></script>
