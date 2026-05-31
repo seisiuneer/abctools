@@ -443,8 +443,7 @@
     threshold: 0.75,
     keyModeSubstitutionEnabled: true
   };
-  var gDefaultInputABC = "X: 1\nT: Cooley's\nC: Traditional\nR: Reel\nM: 4/4\nL: 1/8\nQ: 1/2=90\nK: Edor\n|:EBBA B2 EB|B2 AB dBAG|F/E/D AD BDAD|F/E/D AD BAGF|\nEBBA B2 EB|B2 AB defg|afge dBAF|1 DEFD E3D:|2 DEFD E2gf||\n|:eB (3BBB eBgf|eBB2 gedB|A/A/A FA DAFA|A/A/A FA defg|\neB (3BBB eBgf|eBBB defg|afge dBAF|1 DEFD E2gf:|2 DEFD E4|]\n\nX: 1\nT: The Kesh\nC: Traditional\nR: Jig\nM: 6/8\nL: 1/8\nQ: 3/8=120\nK: Gmaj\n|:GAG GAB|ABA ABd|edd gdd|edB dBA|\nGAG GAB|ABA ABd|edd gdB|AGF G3:|\n|:BAB dBd|ege dBA|BAB dBG|ABA AGA|\nBAB dBd|ege dBd|gfg aga|bgf g3:|";
-
+  var gDefaultInputABC = "%\n% Click \"Generate Backup Chords\" to add backup chords to these examples:\n%\n\nX: 1\nT: Cooley's\nC: Traditional\nR: Reel\nM: 4/4\nL: 1/8\nQ: 1/2=90\nK: Edor\n|:EBBA B2 EB|B2 AB dBAG|F/E/D AD BDAD|F/E/D AD BAGF|\nEBBA B2 EB|B2 AB defg|afge dBAF|1 DEFD E3D:|2 DEFD E2gf||\n|:eB (3BBB eBgf|eBB2 gedB|A/A/A FA DAFA|A/A/A FA defg|\neB (3BBB eBgf|eBBB defg|afge dBAF|1 DEFD E2gf:|2 DEFD E4|]\n\nX: 1\nT: The Kesh\nC: Traditional\nR: Jig\nM: 6/8\nL: 1/8\nQ: 3/8=120\nK: Gmaj\n|:GAG GAB|ABA ABd|edd gdd|edB dBA|\nGAG GAB|ABA ABd|edd gdB|AGF G3:|\n|:BAB dBd|ege dBA|BAB dBG|ABA AGA|\nBAB dBd|ege dBd|gfg aga|bgf g3:|";
 
   var NOTE_RE = /(?:\^\^|__|\^|_|=)?[A-Ga-g][,']*(?:\d+\/\d+|\d+\/|\/\d+|\d+|\/)?/y;
 
@@ -1457,10 +1456,10 @@
 
   function getTuneSkipReason(tune) {
     if (countVoiceTags(tune) > 1) {
-      return "Skipped by the ABC Backup Chord Solver because the tune has multiple voices";
+      return "Skipped by the Chord Solver because the tune has multiple voices";
     }
     if (hasMidTuneKeyChange(tune)) {
-      return "Skipped by the ABC Backup Chord Solver because of key/mode changes mid-tune";
+      return "Skipped by the Chord Solver because of key/mode changes mid-tune";
     }
     return "";
   }
@@ -1496,7 +1495,7 @@
   }
 
   function formatKeyModeSubstitutionNote(selection) {
-    return "ABC Backup Chord Solver matched this tune as " +
+    return "The Chord Solver matched this tune as " +
       (selection && selection.alternateMode ? formatShortModeName(selection.alternateMode) : "an alternate key/mode") +
       " instead of " +
       (selection && selection.declaredMode ? formatShortModeName(selection.declaredMode) : "key/mode") +
@@ -3074,7 +3073,11 @@
       </div>
 
       <div class="input_textarea_wrapper">
-        <p><textarea id="input" placeholder="Enter ABC notation here" spellcheck="false" autocorrect="off" autocapitalize="none" autocomplete="off">X: 1
+        <p><textarea id="input" placeholder="Enter ABC notation here" spellcheck="false" autocorrect="off" autocapitalize="none" autocomplete="off">%
+% Click "Generate Backup Chords" to add backup chords to these examples:
+%
+
+X:1
 T: Cooley's
 C: Traditional
 R: Reel
