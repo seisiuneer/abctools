@@ -15,416 +15,743 @@
   <link rel="icon" type="image/png" sizes="32x32" href="https://michaeleskin.com/abctools/img/abc-favicon-32x32.png">
 
   <style>
-    html { box-sizing: border-box; }
-    *, *:before, *:after { box-sizing: inherit; }
-    textarea {
-      width: 100%;
-      font-family: Menlo, Consolas, Monaco, monospace;
-      font-size: 11pt;
+    :root{
+      color-scheme: light;
+
+      --fs-base: clamp(15px, 1.05vw + 12px, 17px);
+      --fs-small: var(--fs-base);
+      --fs-h1: clamp(22px, 1.5vw + 18px, 32px);
+      --fs-h2: clamp(15px, 0.7vw + 13px, 17px);
+      --fs-h3: clamp(17px, 1.05vw + 14px, 20px);
+
+      --page-pad: 32px;
+      --page-pad-top: 18px;
+      --gap: 14px;
+      --card-pad: 14px;
+      --helpbar-pad-y: 12px;
+      --helpbar-est-height: 64px;
+
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --bd: 1px solid rgba(127,127,127,.35);
+    }
+
+    html, body{ height:100%; margin:0; }
+    *, *::before, *::after{ box-sizing:border-box; }
+
+    body{
+      font-family: system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+      font-size: var(--fs-base);
       line-height: 1.35;
-      resize: vertical;
-    }
-    body {
-      background-color: #ffffff;
-      padding: clamp(18px, 1.4vh, 24px) 12px;
-      margin: 0;
-    }
-    textarea#input {
-      width: 100%;
-      height: clamp(130px, 22vh, 220px);
-      min-height: 110px;
-      margin-bottom: 0px;
-    }
-    textarea#output {
-      width: 100%;
-      height: clamp(130px, 22vh, 220px);
-      min-height: 100px;
-    }
-    p { font-size:12pt; font-family:"Helvetica"; line-height: 24px; margin-bottom:0px; }
-    h1 { font-size:18pt; font-family:"Helvetica"; margin:0; }
-    h2 { font-size:14pt; font-family:"Helvetica"; margin:8px 0 14px 0; }
-    h4 { font-size:14pt; font-family:"Helvetica"; margin:0 0 8px 0; }
-    hr { margin-top:18px; margin-bottom:18px; }
-    #maindiv {
-      position: relative;
-      text-align: left;
-      width: min(800px, calc(100vw - 16px));
-      margin: 0 auto;
-      background-color: white;
-    }
-    .btn {
-      --color: #000000; --background-color: #d8d8d8; --border-color: #c8c8c8;
-      color: var(--color); font-family: helvetica !important; font-size: 11pt !important;
-      background-color: var(--background-color); padding: 0.7rem 0.7rem; padding-top: 0.8rem;
-      border: solid 1px var(--border-color); outline: none; position: relative; border-radius: 0.5rem;
-      user-select: none; box-shadow: 0 0.1rem 0.1rem rgba(0, 0, 0, 0.25), 0 -0.1rem 0.5rem rgba(0, 0, 0, 0.1) inset;
-      transition: box-shadow 64ms ease-out; -webkit-appearance:none; cursor:pointer; text-decoration:none; display:inline-block;
-    }
-    .btn:after { content: ""; background-color: #ffffff; width: 75%; height: 12.5%; position: absolute; top: 0.15rem; left: 12.5%; border-radius: 50%; filter: blur(0.15rem); transition: opacity 64ms ease-out; }
-    .btn:active { box-shadow: 0 0 0 rgba(0,0,0,0.4), 0 0.4rem 1rem rgba(0,0,0,0.3) inset; }
-    .btn:active:after { opacity: 0; }
-    .btn:disabled, .btn[disabled] { opacity: 0.45; cursor: not-allowed; box-shadow: none; }
-    .btn:disabled:after, .btn[disabled]:after { opacity: 0.35; }
-    .btn-controls { --color: black; --background-color: lavender; }
-    .btn-generate { --color: black; --background-color: #BBFFBB; }
-    .status { margin-top:16px; padding:10px; background:#f5f5ff; border:1px solid #ddd; border-radius:8px; font-family:Helvetica; font-size:11pt; line-height:1.35; }
-    .smallnote { font-size:11pt; line-height:20px; color:#333; }
-    label.option { font-family:Helvetica; font-size:12pt; line-height:28px; }
+      color:#000;
+      -webkit-text-size-adjust:100%;
 
-    /* DayPilot.Modal flat theme, matching the other Michael Eskin-style tools */
-    .modal_flat_background { background-color: #000; opacity: 0.4; }
-    .modal_flat_main { border: 1px solid #333; box-shadow: 0px 0px 15px -2px rgba(0,0,0,0.75); }
-    .modal_flat_main, .modal_flat_main input, .modal_flat_main button { font-size: 16px; }
-    .modal_flat_main input, .modal_flat_main button { padding: 5px; box-sizing: border-box; }
-    .modal_flat_inner { padding: 30px; background: #fff; color: #000; }
-    .modal_flat_content { font-family:"Helvetica"; margin: 20px 0px; }
-    .modal_flat_input { margin: 20px 0px; }
-    .modal_flat_buttons { text-align:center; margin-top: 40px; }
-    .modal_flat_main button { background-color: #ccc; color: #000; padding: 10px 20px; border: 0px; cursor: pointer; outline: none; min-width: 100px; }
+      padding:
+        calc(var(--page-pad-top) + env(safe-area-inset-top))
+        calc(var(--page-pad) + env(safe-area-inset-right))
+        calc(var(--page-pad) + env(safe-area-inset-bottom))
+        calc(var(--page-pad) + env(safe-area-inset-left));
 
-    /* Keep DayPilot alert/prompt dialogs inside narrow mobile viewports.
-       DayPilot receives a JavaScript width, but these CSS limits provide an
-       extra safeguard for iPhone Safari and other small screens. */
-    .modal_flat_main {
-      max-width: calc(100vw - 24px) !important;
-      box-sizing: border-box;
-    }
-    .modal_flat_inner {
-      box-sizing: border-box;
-      max-width: 100%;
-    }
-    .modal_flat_main input {
-      width: 100% !important;
-      max-width: 100% !important;
-      box-sizing: border-box;
-    }
-    .modal_flat_content {
-      overflow-wrap: anywhere;
+      overflow:auto;
+      background:#fff;
     }
 
-    .instructions_content { font-family: Helvetica, Arial, sans-serif; font-size: 12pt; line-height: 1.45; max-height: 60vh; overflow-y: auto; padding-right: 8px; }
-    .instructions_content h3 { margin-top: 0; margin-bottom: 20px; font-size: 16pt; }
-    .instructions_content p { font-size: 12pt; line-height: 1.45; margin: 0 0 10px 0; }
-    .instructions_content ul { margin-top: 4px; padding-left: 24px; }
-    .instructions_content li { margin-bottom: 6px; }
+    .app, .main, .left, .right, .card, .taWrap{ min-width:0; }
 
-    /* Lightweight running-progress modal used during measure matching. */
-    #progress_modal_overlay {
-      display: none;
-      position: fixed;
-      z-index: 9999;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0,0,0,0.40);
-    }
-    #progress_modal_box {
-      position: absolute;
-      left: 50%;
-      top: 30%;
-      transform: translate(-50%, -50%);
-      width: 720px;
-      max-width: calc(100vw - 48px);
-      background: #fff;
-      color: #000;
-      border: 1px solid #333;
-      box-shadow: 0px 0px 15px -2px rgba(0,0,0,0.75);
-      padding: 26px 30px;
-      font-family: Helvetica, Arial, sans-serif;
-      border-radius: 4px;
-      box-sizing: border-box;
-    }
-    #progress_modal_box h3 {
-      margin: 0 0 14px 0;
-      font-size: 16pt;
-      font-family: Helvetica, Arial, sans-serif;
-    }
-    #progress_modal_status {
-      font-size: 12pt;
-      line-height: 1.45;
-      height: calc(11.6em + 22px);     
-      min-height: calc(11.6em + 22px);
-      max-height: calc(11.6em + 22px);
-      overflow-y: auto;
-      padding: 10px;
-      background: #f5f5ff;
-      border: 1px solid #ddd;
-      border-radius: 8px;
-      box-sizing: border-box;
-    }
-    #progress_modal_progress {
-      position: relative;
-      width: 100%;
-      height: 28px;
-      margin-top: 14px;
-      overflow: hidden;
-      background: #f5f5ff;
-      border: 1px solid #ddd;
-      border-radius: 6px;
-      box-sizing: border-box;
-      box-shadow: inset 0 1px 2px rgba(0,0,0,0.08);
-    }
-    #progress_modal_progress_fill {
-      position: absolute;
-      left: 0;
-      top: 0;
-      bottom: 0;
-      width: 0%;
-      background: #7FE47F;
-      border-radius: 5px;
-      transition: width 120ms linear;
-    }
-    #progress_modal_progress_label {
-      position: absolute;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #000;
-      font-family: Helvetica, Arial, sans-serif;
-      font-size: 11pt;
-      font-weight: bold;
-      line-height: 1;
-      text-align: center;
-      pointer-events: none;
-    }
-    #progress_modal_buttons {
-      text-align: center;
-      margin-top: 22px;
+    .app{
+      height: calc(100vh - (2 * var(--page-pad)));
+      display:flex;
+      flex-direction:column;
+      gap:var(--gap);
+      overflow:hidden;
+      min-height:0;
+      padding-bottom: calc(var(--helpbar-est-height) + env(safe-area-inset-bottom));
     }
 
-    .full_width_tool_button {
-      width: 100%;
-      box-sizing: border-box;
-      text-align: center;
-    }
-
-    .input_button_row {
-      margin-top: 10px;
-      margin-bottom: 12px;
-      width: 100%;
-    }
-    .input_button_row .abcupload {
-      width: 100%;
-      box-sizing: border-box;
-      text-align: center;
-    }
-
-    .input_label_row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      margin: 0 0 8px 0;
-      width: 100%;
-    }
-
-    .input_label_row h4 {
-      margin: 0;
-    }
-
-    .input_textarea_wrapper {
-      width: 100%;
-    }
-
-    #clearbutton {
-      --color: #5b0000;
-      --background-color: #ffd6d6;
-      --border-color: #d66;
-      padding: 0.42rem 0.82rem;
-      padding-top: 0.50rem;
-      font-size: 10pt !important;
-      line-height: 1;
-      min-width: 0;
-      white-space: nowrap;
-      flex: 0 0 auto;
-    }
-
-    #clearbutton:after {
-      top: 0.10rem;
-    }
-
-    #optionsbutton {
-      --color: #222244;
-      --background-color: lavender;
-      --border-color: #b8b8d8;
-      padding: 0.42rem 0.72rem;
-      padding-top: 0.50rem;
-      font-size: 10pt !important;
-      line-height: 1;
-      min-width: 0;
-      white-space: nowrap;
-      flex: 0 0 auto;
-    }
-
-    #optionsbutton:after {
-      top: 0.10rem;
-    }
-
-    .input_label_buttons {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      flex: 0 0 auto;
-    }
-
-    #options_modal_overlay {
-      display: none;
-      position: fixed;
-      z-index: 10000;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0,0,0,0.40);
-    }
-
-    #options_modal_box {
-      position: absolute;
-      left: 50%;
-      top: 24%;
-      transform: translate(-50%, -50%);
-      width: 600px;
-      max-width: calc(100vw - 48px);
-      background: #fff;
-      color: #000;
-      border: 1px solid #333;
-      box-shadow: 0px 0px 15px -2px rgba(0,0,0,0.75);
-      padding: 28px 30px;
-      font-family: Helvetica, Arial, sans-serif;
-      border-radius: 4px;
-      box-sizing: border-box;
-    }
-
-    #options_modal_box h3 {
-      margin: 0 0 20px 0;
-      font-size: 16pt;
-      text-align: center;
-    }
-
-    .options_row {
-      margin: 18px 0;
-      font-family: Helvetica, Arial, sans-serif;
-      font-size: 12pt;
-      line-height: 1.35;
-    }
-
-    .options_hint {
-      margin-top: 9px;
-      color: #444;
-      font-size: 12pt;
-      line-height: 1.5;
-    }
-
-    .options_substitution_list {
-      margin-top: 8px;
-      padding-left: 18px;
-      margin-bottom:12px;
-    }
-
-    .options_substitution_list div {
-      margin-top: 3px;
-    }
-
-    #options_threshold {
-      width: 76px;
-      font-size: 11pt;
-      padding: 4px;
-      box-sizing: border-box;
-    }
-
-    #options_modal_buttons {
-      margin-top: 28px;
-      display: flex;
-      gap: 12px;
-      justify-content: center;
-    }
-
-    #options_modal_buttons .btn {
-      min-width: 110px;
-      text-align: center;
-    }
-
-    .output_button_row {
-      display: flex;
-      gap: 24px;
-      margin-top: 8px;
-      margin-bottom: 12px;
-      width: 100%;
-    }
-    .output_button_row .btn {
-      flex: 1 1 0;
-      box-sizing: border-box;
-      text-align: center;
-      margin-left: 0 !important;
-      white-space: nowrap;
-    }
-
-    @media (max-height: 760px) {
-      body { padding-top: 12px; padding-bottom: 12px; }
-      h1 { font-size: 16pt; }
-      h2 { font-size: 12pt; margin-bottom: 8px; }
-      h4 { font-size: 12pt; margin-bottom: 4px; }
-      hr { margin-top: 12px; margin-bottom: 12px; }
-      .status { margin-top: 10px; padding: 8px; font-size: 10.5pt; }
-      textarea#input { height: clamp(105px, 20vh, 170px); }
-      textarea#output { height: clamp(95px, 18vh, 160px); }
-      .output_button_row { margin-top: 8px; margin-bottom: 12px; gap: 24px; }
-    }
-
-    @media (max-width: 700px) {
-      /* Give the tool a little more breathing room on iPhone-sized screens. */
-      body { padding-left: 16px; padding-right: 16px; }
-      #maindiv { width: 100%; }
-      .output_button_row { flex-direction: column; gap: 10px; }
-      .output_button_row .btn { width: 100%; }
-      .modal_flat_inner { padding: 20px 16px; }
-      .modal_flat_content { margin: 14px 0; }
-      .modal_flat_input { margin: 14px 0; }
-      .modal_flat_buttons { margin-top: 24px; }
-      .modal_flat_main button { min-width: 88px; padding: 10px 14px; }
-      #progress_modal_box {
-        width: calc(100vw - 24px);
-        top: 50%;
-        padding: 20px;
-      }
-      #progress_modal_progress {
-        height: 20px;
-        margin-top: 12px;
-      }
-      #progress_modal_progress_label {
-        font-size: 9.5pt;
-      }
-      #options_modal_box {
-        width: calc(100vw - 24px);
-        top: 50%;
-        padding: 24px 18px;
-      }
-      #options_modal_buttons {
-        flex-direction: column;
-        gap: 10px;
-      }
-      #options_modal_buttons .btn {
-        width: 100%;
+    @supports (height: 100dvh){
+      .app{
+        height: calc(
+          100dvh
+          - (2 * var(--page-pad))
+          - env(safe-area-inset-top)
+          - env(safe-area-inset-bottom)
+        );
       }
     }
 
-    /* Subtle warm-style hover highlighting for pointer/mouse devices only.
-       This is intentionally disabled on touch-first devices such as iPhone/iPad. */
-    @media (hover: hover) and (pointer: fine) {
-      .btn:hover:not(:disabled):not([disabled]) {
-        filter: brightness(0.97);
-      }
+    h1, h2, h3, h4, p{ margin:0; }
+    h1{ font-size:var(--fs-h1); line-height:1.12; letter-spacing:-0.01em; }
+    h2{ font-size:var(--fs-h2); font-weight:500; color:rgba(0,0,0,0.72); line-height:1.45; margin-top:8px; }
+    h3, .card_label{ font-size:var(--fs-h3); margin:0 0 12px; }
+    h4{ font-size:var(--fs-h3); margin:0 0 12px; }
+    .muted{ opacity:0.75; line-height:1.6; }
+    .small{ font-size:var(--fs-small); }
+    .smallnote{ font-size:var(--fs-small); line-height:1.6; color:#333; }
 
-      .modal_flat_main button:hover:not(:disabled):not([disabled]) {
-        filter: brightness(0.97);
+    code{
+      background: rgba(127,127,127,.15);
+      padding:2px 5px;
+      border-radius:4px;
+      font-size:0.95em;
+    }
+
+    /* ============================================================
+       Main two-column layout
+       ============================================================ */
+    .main{
+      flex:1;
+      display:flex;
+      gap:var(--gap);
+      overflow:hidden;
+      min-height:0;
+      min-width:0;
+    }
+
+    .left, .right{
+      display:flex;
+      flex-direction:column;
+      gap:var(--gap);
+      min-height:0;
+      min-width:0;
+    }
+
+    .left{
+      flex:1 1 0;
+      overflow:auto;
+      -webkit-overflow-scrolling:touch;
+      padding-right:12px;
+      padding-bottom:0;
+      scrollbar-gutter:stable;
+    }
+
+    .right{
+      flex:1 1 0;
+      overflow:hidden;
+    }
+
+    .left > .card{ flex:0 0 auto; }
+    .right > .card{ min-height:0; }
+
+    /* ============================================================
+       Cards + hero
+       ============================================================ */
+    .card{
+      border:var(--bd);
+      border-radius:12px;
+      padding:var(--card-pad);
+      overflow:hidden;
+      background:transparent;
+    }
+
+    .heroCard{
+      position:relative;
+      border:1px solid rgba(127,127,127,.22);
+      border-radius:18px;
+      padding:18px 20px 16px 20px;
+      background:linear-gradient(180deg, rgba(244,248,255,0.95) 0%, rgba(252,252,252,0.98) 100%);
+      overflow:hidden;
+      flex:0 0 auto;
+    }
+
+    .heroTitle{ margin:0; }
+    .heroText{
+      margin:10px 0 0 0;
+      max-width:96ch;
+      color:rgba(0,0,0,0.74);
+      line-height:1.55;
+      font-size:clamp(14.5px, 0.5vw + 13px, 16.5px);
+    }
+
+    .row{
+      display:flex;
+      gap:12px;
+      flex-wrap:wrap;
+      align-items:center;
+      min-width:0;
+    }
+
+    /* ============================================================
+       Controls and flat buttons
+       ============================================================ */
+    input, textarea, button, select{
+      font:inherit;
+      color:inherit;
+      max-width:100%;
+    }
+
+    input[type="text"], input[type="number"], select{
+      -webkit-appearance:none;
+      appearance:none;
+      border:var(--bd);
+      background:#fff;
+      color:#000;
+      border-radius:10px;
+      padding:10px 12px;
+      line-height:1.2;
+      min-width:0;
+    }
+
+    input[type="number"]{ width:90px; }
+
+    button,
+    .btn,
+    input[type="file"]::file-selector-button{
+      -webkit-appearance:none;
+      appearance:none;
+      border:1px solid rgba(127,127,127,.35);
+      background:rgba(127,127,127,.12);
+      color:#000;
+      border-radius:12px;
+      padding:10px 14px;
+      line-height:1.15;
+      font-family:inherit !important;
+      font-size:inherit !important;
+      font-weight:600;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      cursor:pointer;
+      user-select:none;
+      -webkit-tap-highlight-color:transparent;
+      min-width:0;
+      text-decoration:none;
+      box-shadow:none;
+      transition:
+        filter 0.12s ease,
+        transform 0.08s ease,
+        box-shadow 0.12s ease;
+    }
+
+    .btn:after{ display:none !important; }
+
+    @media (hover:hover) and (pointer:fine){
+      button:hover:not(:disabled):not([disabled]),
+      .btn:hover:not(:disabled):not([disabled]),
+      input[type="file"]::file-selector-button:hover{
+        filter:brightness(0.97);
+        box-shadow:0 1px 3px rgba(0,0,0,0.18);
       }
     }
 
+    button:active:not(:disabled):not([disabled]),
+    .btn:active:not(:disabled):not([disabled]){
+      transform:translateY(1px);
+      box-shadow:0 0 1px rgba(0,0,0,0.15);
+    }
+
+    button:disabled,
+    button[disabled],
+    .btn:disabled,
+    .btn[disabled]{
+      opacity:0.4;
+      cursor:default;
+      transform:none;
+      box-shadow:none;
+      filter:none;
+    }
+
+    .row button,
+    .row .btn{
+      white-space:normal;
+      text-align:center;
+      flex:1 1 180px;
+    }
+
+    .btn-generate,
+    #generatebutton,
+    .primary{
+      background:#e8f1ff;
+      border-color:#9dbaf2;
+      color:#000;
+    }
+
+    .btn-controls,
+    #copybutton,
+    #savebutton,
+    #testbutton,
+    #instructionsbutton{
+      background:#f0f3f8;
+      border-color:#d3dbe7;
+      color:#000;
+    }
+
+    #clearbutton{
+      background:#f3f3f3;
+      border-color:#d4d4d4;
+      color:#000;
+    }
+
+    #settingssavebutton{
+      background:#eef7f1;
+      border-color:#c9ded1;
+      color:#000;
+    }
+
+    #settingsresetbutton{
+      background:#f3eef8;
+      border-color:#d7cdea;
+      color:#000;
+    }
+
+    input[type="file"]::file-selector-button{
+      margin-right:12px;
+      background:#eef7f1;
+      border-color:#c9ded1;
+    }
+
+    .full_width_tool_button{ width:100%; box-sizing:border-box; }
+
+    /* ============================================================
+       Input and output panels
+       ============================================================ */
+    #cardInput{
+      flex:1 1 auto !important;
+      overflow:hidden;
+      display:flex;
+      flex-direction:column;
+      min-height:320px !important;
+    }
+
+    #cardInput .taWrap{
+      flex:1 1 auto;
+      min-height:220px;
+    }
+
+    .inputHeader{
+      display:flex;
+      gap:18px;
+      align-items:center;
+      justify-content:flex-start;
+      flex-wrap:nowrap;
+      margin-bottom:10px;
+    }
+
+    .inputHeader h3{
+      white-space:nowrap;
+      margin:0;
+      flex:0 0 auto;
+    }
+
+    .inputFileRow{
+      flex:1 1 auto;
+      min-width:0;
+      display:flex;
+      gap:10px;
+      align-items:center;
+      flex-wrap:nowrap;
+      overflow:hidden;
+    }
+
+    .inputFileRow .muted{
+      white-space:nowrap;
+      flex:0 0 auto;
+    }
+
+    #selectabcfile{
+      flex:1 1 auto;
+      min-width:260px;
+    }
+
+    .taWrap{
+      flex:1;
+      min-height:0;
+      overflow:hidden;
+      border:var(--bd);
+      background:Canvas;
+      display:flex;
+      padding:1px;
+      border-radius:10px;
+    }
+
+    textarea{
+      flex:1 1 auto;
+      width:100%;
+      min-height:0;
+      height:auto;
+      padding:12px;
+      border:0;
+      background:transparent;
+      resize:none;
+      overflow:auto;
+      font-family:var(--mono);
+      font-size:0.98em;
+      line-height:1.35;
+      overflow-wrap:anywhere;
+      -webkit-overflow-scrolling:touch;
+      display:block;
+    }
+
+    #input, #output{ height:auto; min-height:0; }
+
+    #cardOutput{
+      flex:1 1 auto;
+      display:flex;
+      flex-direction:column;
+      min-height:0;
+      overflow:hidden;
+    }
+
+    #cardOutput .taWrap{
+      flex:1 1 auto;
+      min-height:300px;
+    }
+
+    .output_button_row{
+      display:flex;
+      gap:12px;
+      margin-top:12px;
+      width:100%;
+    }
+
+    .output_button_row .btn{
+      flex:1 1 0;
+      box-sizing:border-box;
+      text-align:center;
+      margin-left:0 !important;
+      white-space:normal;
+    }
+
+    /* ============================================================
+       Settings bubble/card
+       ============================================================ */
+    #cardSettings{
+      background:linear-gradient(180deg, rgba(244,248,255,0.82) 0%, rgba(252,252,252,0.96) 100%);
+      border-color:rgba(127,127,127,.25);
+      border-radius:18px;
+    }
+
+    .settings_grid{
+      display:grid;
+      grid-template-columns:minmax(160px, 0.7fr) minmax(0, 1.3fr);
+      gap:12px 14px;
+      align-items:center;
+    }
+
+    .settings_grid label,
+    label.option{
+      font-weight:600;
+      line-height:1.35;
+    }
+
+    .settings_check{
+      display:flex;
+      gap:10px;
+      align-items:flex-start;
+      line-height:1.45;
+    }
+
+    .settings_check input[type="checkbox"]{
+      width:18px;
+      height:18px;
+      margin-top:2px;
+      flex:0 0 auto;
+    }
+
+    .options_hint{
+      margin-top:10px;
+      color:#444;
+      font-size:0.95em;
+      line-height:1.55;
+    }
+
+    .options_substitution_list{
+      margin-top:8px;
+      padding-left:0;
+      margin-bottom:8px;
+    }
+
+    .options_substitution_list div{ margin-top:3px; }
+
+    .settings_buttons{
+      display:flex;
+      gap:10px;
+      margin-top:14px;
+      width:100%;
+    }
+
+    .settings_buttons .btn{ flex:1 1 0; }
+
+    /* ============================================================
+       Status + fixed instructions bar
+       ============================================================ */
+    .status{
+      white-space:pre-wrap;
+      font-family:var(--mono);
+      overflow:auto;
+      max-height:240px;
+      font-size:0.95em;
+      line-height:1.45;
+      overflow-wrap:anywhere;
+      word-break:break-word;
+      -webkit-overflow-scrolling:touch;
+      opacity:0.9;
+      margin-top:8px;
+      padding:10px;
+      background:transparent;
+      border:var(--bd);
+      border-radius:10px;
+    }
+
+    #cardHelp{
+      position:fixed;
+      left:0;
+      right:0;
+      bottom:0;
+      z-index:1000;
+      margin:0;
+      border-radius:0;
+      border-left:none;
+      border-right:none;
+      border-bottom:none;
+      background:Canvas;
+      padding:
+        var(--helpbar-pad-y)
+        calc(var(--page-pad) + env(safe-area-inset-right))
+        calc(var(--helpbar-pad-y) + env(safe-area-inset-bottom))
+        calc(var(--page-pad) + env(safe-area-inset-left));
+    }
+
+    #instructionsbutton{ width:100%; }
+
+    .instructions_content{
+      font-family:Helvetica, Arial, sans-serif;
+      font-size:12pt;
+      line-height:1.45;
+      max-height:60vh;
+      overflow-y:auto;
+      padding:0 22px;
+    }
+    .instructions_content h3{ margin-top:0; margin-bottom:20px; font-size:16pt; }
+    .instructions_content p{ font-size:12pt; line-height:1.45; margin:0 0 10px 0; }
+    .instructions_content ul{ margin-top:4px; padding-left:24px; }
+    .instructions_content li{ margin-bottom:6px; }
+
+    /* ============================================================
+       DayPilot modal theme
+       ============================================================ */
+    .modal_flat_background{ background-color:#000; opacity:0.4; }
+    .modal_flat_main{ border:1px solid #333; box-shadow:0 0 15px -2px rgba(0,0,0,0.75); }
+    .modal_flat_main, .modal_flat_main input, .modal_flat_main button{ font-size:16px; }
+    .modal_flat_main input, .modal_flat_main button{ padding:6px; box-sizing:border-box; }
+    .modal_flat_inner{ padding:16px; background:#fff; color:#000; }
+    .modal_flat_content{ font-family:Helvetica, Arial, sans-serif; margin:20px 0; }
+    .modal_flat_input{ margin:20px 0; }
+    .modal_flat_buttons{ text-align:center; margin-top:40px; padding-bottom:20px; }
+    .modal_flat_main button{
+      background:#f0f3f8;
+      color:#000;
+      border:1px solid #d3dbe7;
+      padding:10px 20px;
+      cursor:pointer;
+      outline:none;
+      width:100px;
+      border-radius:10px;
+      font-weight:600;
+      transition:filter 0.12s ease, transform 0.08s ease, box-shadow 0.12s ease;
+    }
+    @media (hover:hover) and (pointer:fine){
+      .modal_flat_main button:hover{ filter:brightness(0.97); box-shadow:0 1px 3px rgba(0,0,0,0.18); }
+    }
+    .modal_flat_main button:active{ transform:translateY(1px); box-shadow:0 0 1px rgba(0,0,0,0.15); }
+    .modal_flat_buttons .modal_flat_ok{ background:#e8f1ff !important; border-color:#9dbaf2 !important; }
+    .modal_flat_buttons .modal_flat_cancel{ background:#f3f3f3 !important; border-color:#d4d4d4 !important; }
+    .modal_flat_cancel{ margin-left:6px; }
+    .modal_flat_main{ max-width:calc(100vw - 24px) !important; box-sizing:border-box; }
+    .modal_flat_inner{ box-sizing:border-box; max-width:100%; }
+    .modal_flat_main input{ width:100% !important; max-width:100% !important; box-sizing:border-box; }
+    .modal_flat_content{ overflow-wrap:anywhere; }
+
+    /* ============================================================
+       Progress modal
+       ============================================================ */
+    #progress_modal_overlay{
+      display:none;
+      position:fixed;
+      z-index:9999;
+      left:0;
+      top:0;
+      width:100%;
+      height:100%;
+      background:rgba(0,0,0,0.40);
+    }
+
+    #progress_modal_box{
+      position:absolute;
+      left:50%;
+      top:30%;
+      transform:translate(-50%, -50%);
+      width:720px;
+      max-width:calc(100vw - 48px);
+      background:#fff;
+      color:#000;
+      border:1px solid #333;
+      box-shadow:0 0 15px -2px rgba(0,0,0,0.75);
+      padding:26px 30px;
+      font-family:Helvetica, Arial, sans-serif;
+      border-radius:12px;
+      box-sizing:border-box;
+    }
+
+    #progress_modal_box h3{ margin:0 0 14px 0; font-size:16pt; }
+    #progress_modal_status{
+      font-size:12pt;
+      line-height:1.45;
+      height:calc(11.6em + 22px);
+      min-height:calc(11.6em + 22px);
+      max-height:calc(11.6em + 22px);
+      overflow-y:auto;
+      padding:10px;
+      background:#f5f5ff;
+      border:1px solid #ddd;
+      border-radius:8px;
+      box-sizing:border-box;
+    }
+
+    #progress_modal_progress{
+      position:relative;
+      width:100%;
+      height:28px;
+      margin-top:14px;
+      overflow:hidden;
+      background:#f5f5ff;
+      border:1px solid #ddd;
+      border-radius:6px;
+      box-sizing:border-box;
+      box-shadow:inset 0 1px 2px rgba(0,0,0,0.08);
+    }
+
+    #progress_modal_progress_fill{
+      position:absolute;
+      left:0;
+      top:0;
+      bottom:0;
+      width:0%;
+      background:#7FE47F;
+      border-radius:5px;
+      transition:width 120ms linear;
+    }
+
+    #progress_modal_progress_label{
+      position:absolute;
+      left:0;
+      top:0;
+      width:100%;
+      height:100%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      color:#000;
+      font-family:Helvetica, Arial, sans-serif;
+      font-size:11pt;
+      font-weight:bold;
+      line-height:1;
+      text-align:center;
+      pointer-events:none;
+    }
+
+    #progress_modal_buttons{ text-align:center; margin-top:22px; }
+
+    /* ============================================================
+       Responsive layout
+       ============================================================ */
+    @media (max-width:980px){
+      body{
+        overflow:auto;
+        -webkit-overflow-scrolling:touch;
+        padding-bottom:calc(var(--page-pad) + env(safe-area-inset-bottom) + 12px);
+      }
+
+      .app{
+        height:auto;
+        overflow:visible;
+        padding-bottom:calc(var(--helpbar-est-height) + env(safe-area-inset-bottom));
+      }
+
+      .main{
+        flex-direction:column;
+        overflow:visible;
+        min-height:auto;
+      }
+
+      .left, .right{
+        overflow:visible;
+        min-height:auto;
+        padding-bottom:0;
+      }
+
+      .left{
+        padding-right:0;
+        scrollbar-gutter:auto;
+      }
+
+      #cardInput{ flex:0 0 auto !important; min-height:auto !important; }
+      .taWrap{ height:clamp(220px, 30vh, 320px); min-height:220px; }
+      #cardOutput .taWrap{ height:clamp(320px, 45vh, 520px); min-height:320px; }
+      .right{ padding-bottom:12px; }
+    }
+
+    @media (max-width:720px){
+      body{
+        padding-left:16px;
+        padding-right:16px;
+      }
+
+      .heroCard{
+        padding:16px 14px 14px 14px;
+        border-radius:16px;
+      }
+
+      .heroTitle{ font-size:clamp(22px, 5vw, 28px); }
+      .heroText{ max-width:none; }
+
+      .row{ gap:10px; }
+      .row button, .row .btn{ flex-basis:100%; }
+      .inputHeader{ flex-direction:column; align-items:stretch; gap:10px; }
+      .inputFileRow{ flex-direction:column; align-items:stretch; }
+      #selectabcfile{ min-width:0; width:100%; }
+
+      .settings_grid{ grid-template-columns:1fr; gap:8px; }
+      .settings_buttons{ flex-direction:column; }
+      .output_button_row{ flex-direction:column; gap:10px; }
+      .output_button_row .btn{ width:100%; }
+
+      .taWrap{ height:clamp(220px, 32vh, 320px); min-height:220px; }
+      #cardOutput .taWrap{ height:clamp(340px, 50vh, 560px); min-height:340px; }
+
+      .modal_flat_main{
+        width:calc(100vw - 24px) !important;
+        max-width:calc(100vw - 24px) !important;
+        max-height:calc(100dvh - 24px) !important;
+        overflow:hidden !important;
+      }
+      .modal_flat_inner{
+        max-height:calc(100dvh - 24px) !important;
+        overflow:auto !important;
+        -webkit-overflow-scrolling:touch;
+      }
+
+      .instructions_content{
+        padding-left:12px;
+        padding-right:12px;
+      }
+
+      #progress_modal_box{
+        width:calc(100vw - 24px);
+        top:50%;
+        padding:20px;
+      }
+      #progress_modal_progress{ height:20px; margin-top:12px; }
+      #progress_modal_progress_label{ font-size:9.5pt; }
+    }
+
+    @media (min-width:1100px) and (min-height:800px){
+      #cardInput{ min-height:360px !important; }
+      #cardInput .taWrap{ min-height:250px; }
+    }
+
+    @media (min-width:1100px) and (min-height:950px){
+      #cardInput{ min-height:430px !important; }
+      #cardInput .taWrap{ min-height:320px; }
+    }
   </style>
 
   <script type="text/javascript" src="daypilot-modal.min-3.10.1.js"></script>
@@ -529,25 +856,24 @@
     return Math.max(0.10, Math.min(1.00, threshold));
   }
 
-  function showOptionsDialog() {
-    var overlay = document.getElementById("options_modal_overlay");
-    if (!overlay) return;
 
+  function syncSettingsControls() {
     var threshold = document.getElementById("options_threshold");
     if (threshold) threshold.value = getCurrentThresholdSetting().toFixed(2);
 
     var keyMode = document.getElementById("options_keymode_substitution");
     if (keyMode) keyMode.checked = !!gSettings.keyModeSubstitutionEnabled;
-
-    overlay.style.display = "block";
   }
 
-  function hideOptionsDialog() {
-    var overlay = document.getElementById("options_modal_overlay");
-    if (overlay) overlay.style.display = "none";
+  function resetSettingsControls() {
+    gSettings.threshold = 0.75;
+    gSettings.keyModeSubstitutionEnabled = true;
+    saveToolSettings();
+    syncSettingsControls();
+    setStatus("Settings reset to defaults.");
   }
 
-  function saveOptionsDialog() {
+  function applySettingsControlsToCurrentSettings() {
     var thresholdInput = document.getElementById("options_threshold");
     var threshold = thresholdInput ? parseFloat(thresholdInput.value) : 0.75;
     if (!isFinite(threshold)) threshold = 0.75;
@@ -555,10 +881,12 @@
 
     var keyMode = document.getElementById("options_keymode_substitution");
     gSettings.keyModeSubstitutionEnabled = !!(keyMode && keyMode.checked);
+  }
 
+  function saveSettingsControls() {
+    applySettingsControlsToCurrentSettings();
     saveToolSettings();
-    hideOptionsDialog();
-    setStatus("Options saved.");
+    setStatus("Settings saved.");
   }
 
   function buildABCTranscriptionToolsShareURL(abcText) {
@@ -788,14 +1116,13 @@
     if (input) input.disabled = !enabled;
     var clearButton = document.getElementById("clearbutton");
     if (clearButton) clearButton.disabled = !enabled;
-    var optionsButton = document.getElementById("optionsbutton");
-    if (optionsButton) optionsButton.disabled = !enabled;
   }
 
   function initializeTool() {
     gCancelRequested = false;
     hideProgressModal();
     loadToolSettings();
+    syncSettingsControls();
 
     var sharedABC = getDeflatedABCFromURL();
     var input = document.getElementById("input");
@@ -860,18 +1187,19 @@
       '<p>Instead, it searches the thesession.org tune database for already-chorded measures from tunes with the same normalized meter, key, and mode, then copies chords from the closest matching measures.</p>' +
       '<p>The output is intended as a practical starting point for traditional Irish-style tunes.</p>' +
       '<p>Tunes in unusual keys, modes, meters, or other musical styles may produce limited, unexpected, or hilarious results.</p>' +
-      '<p style="text-align:center;"><a href="https://youtu.be/RZER6TJNzmE" target="_blank">Complete Walkthrough Video on YouTube</a></p>' +
+      '<p style="text-align:center;"><a href="https://youtu.be/CnR8Owcc9Y8" target="_blank">Complete Walkthrough Video on YouTube</a></p>' +
       '<h4>Setup</h4>' +
       '<ul>' +
       '<li>Open an ABC file, or paste ABC text into the input box. Multiple tunes are supported.</li>' +
       '<li>The tool can also accept an ABC Transcription Tools <b>?def=</b> share-link URL parameter containing deflate-encoded ABC tunes.</li>' +
       '<li>The <b>Generate Backup Chords</b> button is enabled only when the input box contains text.</li>' +
-      '<li>Click the small <b>Options</b> button next to the <b>Clear</b> button to set the minimum match score and key/mode substitution checking.</li>' +
-      '<li>Click the <b>Clear</b> button next to the <b>ABC Input</b> label to clear both the input and output areas.</li>' +
+      '<li>Use the <b>Settings</b> controls to set the minimum match score and key/mode substitution checking.</li>' +
+      '<li>Click the <b>Clear</b> button to clear both the input and output areas.</li>' +
       '</ul>' +
-      '<h4>Options dialog</h4>' +
+      '<h4>Settings</h4>' +
       '<ul>' +
-      '<li><b>Minimum match score</b> controls how close a database measure must be before its chords are copied. The default is <b>0.75</b>. Lower values find more matches, but may be less selective. Higher values are stricter, but may leave more measures unchanged.</li>' +
+      '<li><b>Minimum match score</b> controls how close a database measure must be before its chords are copied. The default is <b>0.75</b>. Lower values find more matches, but may be less selective.</li>' +
+      '<li>Higher values are stricter, but may leave more measures unchanged.</li>' +
       '<li><b>Enable limited key/mode substitution checking</b> is enabled by default. When enabled, the tool can test a few common cases where an ABC tune uses the key signature in the <b>K:</b> tag instead of the tune’s actual key and mode.</li>' +
       '<li>The currently checked substitutions are:' +
       '<ul>' +
@@ -884,12 +1212,12 @@
       '<li>The tool only uses an alternate key or mode if it gives a clearly better match. It does not rewrite the tune’s <b>K:</b> tag in the output.</li>' +
       '<li>When enabled, chord matching may be slower because tunes with one of the listed <b>K:</b> tags are also tested against the matching alternate key/mode choices.</li>' +
       '<li>If you are confident that you have proper keys and modes in the <b>K:</b> tags for all of your tunes, you can turn this feature off.</li>' +
-      '<li>Options are saved in this browser and restored the next time the tool is opened.</li>' +
+      '<li>Click <b>Save Settings</b> to save the current settings in this browser so they are restored the next time the tool is opened. You do not need to click <b>Save Settings</b> before generating chords; the current visible settings are used for the next run.</li>' +
       '</ul>' +
       '<h4>How matching works</h4>' +
       '<ul>' +
       '<li>Existing chord symbols in the input tunes are stripped before processing.</li>' +
-      '<li>The default minimum match score is <b>0.75</b>, and can be changed in the <b>Options</b> dialog. If no normal match is found for a general measure, the tool can accept the best available match down to <b>75%</b> of the selected threshold. Tune starts, repeat starts, part endings, and first/second endings are treated more flexibly so the generated chords do not disappear at important musical boundaries.</li>' +
+      '<li>The default minimum match score is <b>0.75</b>, and can be changed in the <b>Settings</b>. If no normal match is found for a general measure, the tool can accept the best available match down to <b>75%</b> of the selected threshold. Tune starts, repeat starts, part endings, and first/second endings are treated more flexibly so the generated chords do not disappear at important musical boundaries.</li>' +
       '<li>For starts and endings of tunes, parts, repeated sections, and first/second endings, the tool first tries matching against database measures that are also starts or endings, then falls back to the general same rhythm/meter/key/mode candidate pool if needed.</li>' +
       '<li>When two candidate measures have essentially the same melody match score, the tool uses the current tune key and mode as a tie-breaker and prefers the chord pattern that is more compatible with that key/mode.</li>' +
       '<li>If no matching measure with usable chords meets the threshold, that source measure is left unchanged.</li>' +
@@ -898,8 +1226,8 @@
       '<ul>' +
       '<li>The solver uses the key and mode from the <b>K:</b> tag to decide which database measures are musically comparable.</li>' +
       '<li>Correct <b>K:</b> tags still give the best results. A tune marked with the wrong key or mode may be matched against the wrong database material, which can produce poor chord choices.</li>' +
-      '<li>If you are not sure that all of the tunes have accurate key and mode declarations, leave <b>Enable limited key/mode substitution checking</b> turned on in the <b>Options</b> dialog.</li>' +
-      '<li>When enabled, the tool can test the common alternate key/mode choices listed in the <b>Options dialog</b> section above and use an alternate only if it gives a clearly better match.</li>' +
+      '<li>If you are not sure that all of the tunes have accurate key and mode declarations, leave <b>Enable limited key/mode substitution checking</b> turned on in the <b>Settings</b>.</li>' +
+      '<li>When enabled, the tool can test the common alternate key/mode choices listed in the <b>Settings</b> section above and use an alternate only if it gives a clearly better match.</li>' +
       '<li>The tool does not rewrite the tune’s <b>K:</b> tag. If an alternate key or mode is used for the solution, explanatory <b>N:</b> tags are added to the end of that tune.</li>' +
       '<li>If you are confident that all of your <b>K:</b> tags are correct, you can turn this feature off for normal single-key/mode matching.</li>' +
       '</ul>' +
@@ -2675,6 +3003,8 @@
   }
 
   async function generateBackupChords() {
+    applySettingsControlsToCurrentSettings();
+
     var input = document.getElementById("input").value;
     if (!input.trim()) {
       showMessageDialog("Please enter or open some ABC notation first.");
@@ -3023,33 +3353,81 @@
     initializeTool();
     gInputInitialized = true;
 
-    var optionsOverlay = document.getElementById("options_modal_overlay");
-    if (optionsOverlay) {
-      optionsOverlay.addEventListener("click", function(e) {
-        if (e.target === optionsOverlay) hideOptionsDialog();
-      });
-    }
+    syncSettingsControls();
   });
 
   </script>
 </head>
 <body>
-  <div id="options_modal_overlay" role="dialog" aria-modal="true" aria-labelledby="options_modal_title">
-    <div id="options_modal_box">
-      <h3 id="options_modal_title">Options</h3>
-      <div class="options_row">
-        <label for="options_threshold">Minimum match score:&nbsp;
-          <input id="options_threshold" type="number" min="0.10" max="1.00" step="0.05" value="0.75">
-        </label>
-        <div class="options_hint">Lower finds more matches; higher is stricter. Default is 0.75.</div>
+<div id="progress_modal_overlay" aria-live="polite">
+  <div id="progress_modal_box">
+    <h3>Matching Backup Chords</h3>
+    <div id="progress_modal_status">Starting...</div>
+    <div id="progress_modal_progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+      <div id="progress_modal_progress_fill"></div>
+      <div id="progress_modal_progress_label">0%</div>
+    </div>
+    <div id="progress_modal_buttons">
+      <button class="btn btn-controls" onclick="cancelProcessing();" title="Stop measure matching and clear the output area">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<div class="app">
+  <div class="heroCard">
+    <h1 class="heroTitle">ABC Tune Backup Chord Solver</h1>
+    <p class="heroText">
+      Batch processor for adding suggested backup chords to traditional Irish tunes.
+    </p>
+  </div>
+
+  <div class="main">
+    <div class="left">
+      <div id="cardInput" class="card">
+        <div class="inputHeader">
+          <h3>ABC Input</h3>
+          <div class="inputFileRow">
+            <span class="muted small">Open an ABC file:</span>
+            <input type="file" id="selectabcfile" accept=".abc,.ABC,.txt,.TXT,text/plain,text/*,application/octet-stream,application/vnd.abc" title="Open an existing ABC or text file" />
+          </div>
+        </div>
+        <div class="taWrap">
+          <textarea id="input" placeholder="Type or paste ABC tunes here..." spellcheck="false" autocorrect="off" autocapitalize="none" autocomplete="off"></textarea>
+        </div>
       </div>
-      <div class="options_row">
-        <label for="options_keymode_substitution">
-          <input id="options_keymode_substitution" type="checkbox" checked>
-          Enable limited key/mode substitution checking
-        </label>
+
+      <div id="cardControls" class="card">
+        <div class="row">
+          <button id="generatebutton" class="btn btn-generate" onclick="generateBackupChords();" title="Generate suggested backup chords for the input ABC notation">Generate Backup Chords</button>
+          <button id="clearbutton" class="btn" onclick="clearInputAndOutput();" title="Clear both the input and output areas">Clear</button>
+        </div>
+      </div>
+
+      <div id="cardStatus" class="card">
+        <h3 class="card_label">Status</h3>
+        <div id="status" class="status">Ready.</div>
+      </div>
+
+      <div id="cardSettings" class="card">
+        <h3 class="card_label">Settings</h3>
+        <div class="settings_grid">
+          <label for="options_threshold">Minimum match score</label>
+          <input id="options_threshold" type="number" min="0.10" max="1.00" step="0.01" value="0.75" title="Minimum measure similarity score required before copying chords">
+        </div>
         <div class="options_hint">
-          Enabled by default. Tests common alternate key/mode choices for uncertain or incorrect <b>K:</b> tags:
+          Default is <b>0.75</b>. Lower values find more matches but may be less selective.<br/>Higher values are stricter but may leave more measures unchanged.
+        </div>
+
+        <div class="settings_check" style="margin-top:14px;">
+          <input id="options_keymode_substitution" type="checkbox" checked>
+          <label for="options_keymode_substitution">
+            <strong>Enable limited key/mode substitution checking</strong><br>
+            <span class="muted small">Tests common alternate key/mode choices for uncertain or incorrect <b>K:</b> tags.</span>
+          </label>
+        </div>
+
+        <div class="options_hint">
+          Currently checked substitutions:
           <div class="options_substitution_list">
             <div><b>K:D</b> may also be tested as <b>Edor</b> or <b>Bmin</b>.</div>
             <div><b>K:G</b> may also be tested as <b>Dmix</b> or <b>Ador</b>.</div>
@@ -3058,102 +3436,33 @@
           </div>
           Chord matching may be slower when enabled.
         </div>
-      </div>
-      <div id="options_modal_buttons">
-        <button class="btn btn-generate" onclick="saveOptionsDialog();" title="Save these options for future runs">Save</button>
-        <button class="btn btn-controls" onclick="hideOptionsDialog();" title="Close without saving changes">Cancel</button>
-      </div>
-    </div>
-  </div>
 
-  <div id="progress_modal_overlay" aria-live="polite">
-    <div id="progress_modal_box">
-      <h3>Matching Backup Chords</h3>
-      <div id="progress_modal_status">Starting...</div>
-      <div id="progress_modal_progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
-        <div id="progress_modal_progress_fill"></div>
-        <div id="progress_modal_progress_label">0%</div>
-      </div>
-      <div id="progress_modal_buttons">
-        <button class="btn btn-controls" onclick="cancelProcessing();" title="Stop measure matching and clear the output area">Cancel</button>
-      </div>
-    </div>
-  </div>
-
-  <div id="maindiv">
-    <div style="text-align: center;">
-      <h1>ABC Tune Backup Chord Solver</h1>
-      <h2>Batch Processor for Adding Backup Chords to Traditional Irish Tunes</h2>
-    </div>
-
-    <hr id="abcinput">
-
-    <div style="text-align:left">
-      <div class="input_label_row">
-        <h4>ABC Input:</h4>
-        <div class="input_label_buttons">
-          <button id="optionsbutton" class="btn" onclick="showOptionsDialog();" title="Open options for match score and key/mode substitution checking">Options</button>
-          <button id="clearbutton" class="btn" onclick="clearInputAndOutput();" title="Clear both the input and output areas">Clear</button>
+        <div class="settings_buttons">
+          <button id="settingssavebutton" class="btn" onclick="saveSettingsControls();" title="Save these settings for future runs">Save Settings</button>
+          <button id="settingsresetbutton" class="btn" onclick="resetSettingsControls();" title="Restore the default backup chord settings">Reset Defaults</button>
         </div>
       </div>
-      <div class="input_button_row">
-        <input type="file" id="selectabcfile" accept=".abc,.ABC,.txt,.TXT,text/plain,text/*,application/octet-stream,application/vnd.abc" hidden/>
-        <label class="abcupload btn btn-controls" for="selectabcfile" title="Open an existing ABC or text file">Open an existing .ABC file</label>
+
+    </div>
+
+    <div class="right">
+      <div id="cardOutput" class="card">
+        <h3 class="card_label">Processed ABC Output, with Suggested Backup Chords</h3>
+        <div class="taWrap">
+          <textarea id="output" placeholder="Processed ABC output will appear here" spellcheck="false" autocorrect="off" autocapitalize="none"></textarea>
+        </div>
+        <div class="output_button_row">
+          <button id="copybutton" class="btn btn-controls" onclick="copyOutputToClipboard();" disabled title="Generate output before copying">Copy Output to the Clipboard</button>
+          <button id="savebutton" class="btn btn-controls" onclick="saveOutput();" disabled title="Generate output before saving">Save Output to a File</button>
+          <button id="testbutton" class="btn btn-controls" onclick="testOutput();" disabled title="Generate output before testing it in the ABC Transcription Tools">Test Output in the ABC Transcription Tools</button>
+        </div>
       </div>
-
-      <div class="input_textarea_wrapper">
-        <p><textarea id="input" placeholder="Enter ABC notation here" spellcheck="false" autocorrect="off" autocapitalize="none" autocomplete="off">%
-% Click "Generate Backup Chords" to add backup chords to these examples:
-%
-
-X:1
-T: Cooley's
-C: Traditional
-R: Reel
-M: 4/4
-L: 1/8
-Q: 1/2=90
-K: Edor
-|:EBBA B2 EB|B2 AB dBAG|F/E/D AD BDAD|F/E/D AD BAGF|
-EBBA B2 EB|B2 AB defg|afge dBAF|1 DEFD E3D:|2 DEFD E2gf||
-|:eB (3BBB eBgf|eBB2 gedB|A/A/A FA DAFA|A/A/A FA defg|
-eB (3BBB eBgf|eBBB defg|afge dBAF|1 DEFD E2gf:|2 DEFD E4|]
-
-X: 1
-T: The Kesh
-C: Traditional
-R: Jig
-M: 6/8
-L: 1/8
-Q: 3/8=120
-K: Gmaj
-|:GAG GAB|ABA ABd|edd gdd|edB dBA|
-GAG GAB|ABA ABd|edd gdB|AGF G3:|
-|:BAB dBd|ege dBA|BAB dBG|ABA AGA|
-BAB dBd|ege dBd|gfg aga|bgf g3:|</textarea></p>
-      </div>
-
-      <p style="margin-top:10px;">
-        <button id="generatebutton" class="btn btn-generate full_width_tool_button" onclick="generateBackupChords();">Generate Backup Chords</button>
-      </p>
-
-      <div id="status" class="status"></div>
-
-      <hr>
-
-      <h4>Processed ABC Output, with Suggested Backup Chords:</h4>
-      <p><textarea id="output" placeholder="Processed ABC output will appear here" spellcheck="false" autocorrect="off" autocapitalize="none"></textarea></p>
-
-      <div class="output_button_row">
-        <button id="copybutton" class="btn btn-controls" onclick="copyOutputToClipboard();" disabled title="Generate output before copying">Copy Output to the Clipboard</button>
-        <button id="savebutton" class="btn btn-controls" onclick="saveOutput();" disabled title="Generate output before saving">Save Output to a File</button>
-        <button id="testbutton" class="btn btn-controls" onclick="testOutput();" disabled title="Generate output before testing it in the ABC Transcription Tools">Test Output in the ABC Transcription Tools</button>
-      </div>
-
-      <p style="margin-top:0; margin-bottom:48px;">
-        <button class="btn btn-controls" style="width:100%; box-sizing:border-box;" onclick="showInstructions();" title="Show instructions for using the ABC Tune Backup Chord Solver">Instructions</button>
-      </p>
     </div>
   </div>
+
+  <div id="cardHelp" class="card">
+    <button id="instructionsbutton" class="btn btn-controls" onclick="showInstructions();" title="Show instructions for using the ABC Tune Backup Chord Solver">Instructions</button>
+  </div>
+</div>
 </body>
 </html>
