@@ -2489,7 +2489,7 @@
             updateProgressModal(
               formatProgressTuneHeader(progressState, title) +
               "Matching chords...<br>" +
-              (candidateBucketSummary ? "Candidate buckets: " + candidateBucketSummary + "<br>" : "") +
+              (candidateBucketSummary ? "Candidate keys/modes: " + candidateBucketSummary + "<br>" : "") +
               "Measure <b>" + processedMeasureCount + "</b> of <b>" + totalMeasureCount + "</b> in this tune<br/>" +
               "Database candidates checked <b>" + candidateDone + "</b> of <b>" + candidateTotal + "</b><br>" +
               "Matches so far: <b>" + (progressState.totalMatched + matched) + "</b>; " +
@@ -2750,7 +2750,7 @@
         updateProgressModal(
           formatProgressTuneHeader(progressState, preParsedTunes[i].title) +
           "Matching chords...<br>" +
-          "Overall matched so far: <b>" + progressState.totalMatched + "</b>"
+          "Total measures matched so far: <b>" + progressState.totalMatched + "</b>"
         );
         await allowBrowserToUpdate();
 
