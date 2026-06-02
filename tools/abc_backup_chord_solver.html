@@ -421,9 +421,10 @@
 
     .settings_grid{
       display:grid;
-      grid-template-columns:minmax(160px, 0.7fr) minmax(0, 1.3fr);
-      gap:12px 14px;
+      grid-template-columns:max-content 100px;
+      gap:12px 24px;
       align-items:center;
+      justify-content:start;
     }
 
     .settings_grid label,
@@ -460,6 +461,31 @@
     }
 
     .options_substitution_list div{ margin-top:3px; }
+
+    .options_substitution_choices{
+      margin-top:8px;
+      margin-bottom:8px;
+      padding-left:0;
+    }
+
+    .options_substitution_choices.disabled{
+      opacity:0.45;
+    }
+
+    .options_substitution_choice{
+      display:flex;
+      gap:8px;
+      align-items:flex-start;
+      margin-top:6px;
+      line-height:1.35;
+    }
+
+    .options_substitution_choice input[type="checkbox"]{
+      width:16px;
+      height:16px;
+      margin-top:2px;
+      flex:0 0 auto;
+    }
 
     .settings_buttons{
       display:flex;
@@ -779,9 +805,17 @@
   var gInputInitialized = false;
   var gProcessingControlsEnabled = true;
   var gOutputShareURL = "";
+  var DEFAULT_KEY_MODE_SUBSTITUTION_OPTIONS = {
+    Dmajor: true,
+    Gmajor: true,
+    Cmajor: true,
+    Fmajor: true
+  };
+
   var gSettings = {
     threshold: 0.75,
-    keyModeSubstitutionEnabled: true
+    keyModeSubstitutionEnabled: true,
+    keyModeSubstitutionOptions: Object.assign({}, DEFAULT_KEY_MODE_SUBSTITUTION_OPTIONS)
   };
   var gDefaultInputABC = "%\n% Click \"Generate Backup Chords\" to add backup chords to these examples:\n%\n\nX: 1\nT: Cooley's\nC: Traditional\nR: Reel\nM: 4/4\nL: 1/8\nQ: 1/2=90\nK: Edor\n|:EBBA B2 EB|B2 AB dBAG|F/E/D AD BDAD|F/E/D AD BAGF|\nEBBA B2 EB|B2 AB defg|afge dBAF|1 DEFD E3D:|2 DEFD E2gf||\n|:eB (3BBB eBgf|eBB2 gedB|A/A/A FA DAFA|A/A/A FA defg|\neB (3BBB eBgf|eBBB defg|afge dBAF|1 DEFD E2gf:|2 DEFD E4|]\n\nX: 2\nT: The Kesh\nC: Traditional\nR: Jig\nM: 6/8\nL: 1/8\nQ: 3/8=120\nK: Gmaj\n|:GAG GAB|ABA ABd|edd gdd|edB dBA|\nGAG GAB|ABA ABd|edd gdB|AGF G3:|\n|:BAB dBd|ege dBA|BAB dBG|ABA AGA|\nBAB dBd|ege dBd|gfg aga|bgf g3:|\n\nX: 3\nT: Alexander's\nC: Traditional\nR: Hornpipe\nM: 4/4\nL: 1/8\nQ: 1/2=80\nK: Dmaj\n|:(3gfe|dAFA DFAd|fdcd Adef|g2 ge fdcd|(3efe (3dcB A2 (3gfe|\ndAFA DFAd|fdcd Adef|g2 ge fdcd|(3efe dcd2:|\n|:AG|FAdA FAdA|GBdB GBdB|Acec Acec|dfaf (3gfe (3dAG|\nFAdA FAdA|GBdB GBdB|Acef gecd|(3efe dcd2:|\n";
 
@@ -826,6 +860,24 @@
 
 
 
+  function getDefaultKeyModeSubstitutionOptions() {
+    return Object.assign({}, DEFAULT_KEY_MODE_SUBSTITUTION_OPTIONS);
+  }
+
+  function normalizeSavedKeyModeSubstitutionOptions(savedOptions) {
+    var normalized = getDefaultKeyModeSubstitutionOptions();
+
+    if (savedOptions && typeof savedOptions === "object") {
+      Object.keys(DEFAULT_KEY_MODE_SUBSTITUTION_OPTIONS).forEach(function(key) {
+        if (typeof savedOptions[key] === "boolean") {
+          normalized[key] = savedOptions[key];
+        }
+      });
+    }
+
+    return normalized;
+  }
+
   function loadToolSettings() {
     try {
       var saved = localStorage.getItem("abcBackupChordSolverSettings");
@@ -836,6 +888,11 @@
       }
       if (parsed && typeof parsed.keyModeSubstitutionEnabled === "boolean") {
         gSettings.keyModeSubstitutionEnabled = parsed.keyModeSubstitutionEnabled;
+      }
+      if (parsed && parsed.keyModeSubstitutionOptions) {
+        gSettings.keyModeSubstitutionOptions = normalizeSavedKeyModeSubstitutionOptions(parsed.keyModeSubstitutionOptions);
+      } else {
+        gSettings.keyModeSubstitutionOptions = normalizeSavedKeyModeSubstitutionOptions(gSettings.keyModeSubstitutionOptions);
       }
     } catch (err) {
       console.warn("Could not load ABC Backup Chord Solver settings:", err);
@@ -856,18 +913,42 @@
     return Math.max(0.10, Math.min(1.00, threshold));
   }
 
+  function syncKeyModeSubstitutionControlsEnabled() {
+    var keyMode = document.getElementById("options_keymode_substitution");
+    var enabled = !!(keyMode && keyMode.checked);
+    var wrapper = document.getElementById("options_substitution_choices");
+
+    if (wrapper) {
+      wrapper.classList.toggle("disabled", !enabled);
+    }
+
+    Object.keys(DEFAULT_KEY_MODE_SUBSTITUTION_OPTIONS).forEach(function(key) {
+      var control = document.getElementById("options_substitution_" + key);
+      if (control) control.disabled = !enabled;
+    });
+  }
 
   function syncSettingsControls() {
+    gSettings.keyModeSubstitutionOptions = normalizeSavedKeyModeSubstitutionOptions(gSettings.keyModeSubstitutionOptions);
+
     var threshold = document.getElementById("options_threshold");
     if (threshold) threshold.value = getCurrentThresholdSetting().toFixed(2);
 
     var keyMode = document.getElementById("options_keymode_substitution");
     if (keyMode) keyMode.checked = !!gSettings.keyModeSubstitutionEnabled;
+
+    Object.keys(DEFAULT_KEY_MODE_SUBSTITUTION_OPTIONS).forEach(function(key) {
+      var control = document.getElementById("options_substitution_" + key);
+      if (control) control.checked = gSettings.keyModeSubstitutionOptions[key] !== false;
+    });
+
+    syncKeyModeSubstitutionControlsEnabled();
   }
 
   function resetSettingsControls() {
     gSettings.threshold = 0.75;
     gSettings.keyModeSubstitutionEnabled = true;
+    gSettings.keyModeSubstitutionOptions = getDefaultKeyModeSubstitutionOptions();
     saveToolSettings();
     syncSettingsControls();
     setStatus("Settings reset to defaults.");
@@ -881,6 +962,15 @@
 
     var keyMode = document.getElementById("options_keymode_substitution");
     gSettings.keyModeSubstitutionEnabled = !!(keyMode && keyMode.checked);
+
+    var options = {};
+    Object.keys(DEFAULT_KEY_MODE_SUBSTITUTION_OPTIONS).forEach(function(key) {
+      var control = document.getElementById("options_substitution_" + key);
+      options[key] = control ? !!control.checked : true;
+    });
+    gSettings.keyModeSubstitutionOptions = options;
+
+    syncKeyModeSubstitutionControlsEnabled();
   }
 
   function saveSettingsControls() {
@@ -1184,7 +1274,7 @@
       '<h3 style="text-align:center;">Instructions</h3>' +
       '<p><b>ABC Tune Backup Chord Solver</b> adds backup chords to one or more ABC tunes.</p>' +
       '<p>It does <b>not</b> try to figure out chords directly from the notes.</p>' +
-      '<p>Instead, it searches the thesession.org tune database for already-chorded measures from tunes with the same normalized meter, key, and mode, then copies chords from the closest matching measures.</p>' +
+      '<p>Instead, it searches the thesession.org tune database for already-chorded measures from tunes with a compatible normalized meter, key, and mode, then copies chords from the closest matching measures.</p>' +
       '<p>The output is intended as a practical starting point for traditional Irish-style tunes.</p>' +
       '<p>Tunes in unusual keys, modes, meters, or other musical styles may produce limited, unexpected, or hilarious results.</p>' +
       '<p style="text-align:center;"><a href="https://youtu.be/CnR8Owcc9Y8" target="_blank">Complete Walkthrough Video on YouTube</a></p>' +
@@ -1200,8 +1290,8 @@
       '<ul>' +
       '<li><b>Minimum match score</b> controls how close a database measure must be before its chords are copied. The default is <b>0.75</b>. Lower values find more matches, but may be less selective.</li>' +
       '<li>Higher values are stricter, but may leave more measures unchanged.</li>' +
-      '<li><b>Enable limited key/mode substitution checking</b> is enabled by default. When enabled, the tool can test a few common cases where an ABC tune uses the key signature in the <b>K:</b> tag instead of the tune’s actual key and mode.</li>' +
-      '<li>The currently checked substitutions are:' +
+      '<li><b>Enable limited key/mode substitution checking</b> is enabled by default. When enabled, the tool can test the selected common cases where an ABC tune uses the key signature in the <b>K:</b> tag instead of the tune’s actual key and mode.</li>' +
+      '<li>The substitution choices are controlled by separate checkboxes:' +
       '<ul>' +
       '<li><b>K:D</b> may also be tested as <b>Edor</b>, <b>Bmin</b>, or <b>Amix</b>.</li>' +
       '<li><b>K:G</b> may also be tested as <b>Dmix</b> or <b>Ador</b>.</li>' +
@@ -1210,27 +1300,31 @@
       '</ul>' +
       '</li>' +
       '<li>The tool only uses an alternate key or mode if it gives a clearly better match. It does not rewrite the tune’s <b>K:</b> tag in the output.</li>' +
-      '<li>When enabled, chord matching may be slower because tunes with one of the listed <b>K:</b> tags are also tested against the matching alternate key/mode choices.</li>' +
-      '<li>If you are confident that you have proper keys and modes in the <b>K:</b> tags for all of your tunes, you can turn this feature off.</li>' +
+      '<li>When enabled, chord matching may be slower because tunes with one of the selected <b>K:</b> tags are also tested against the selected alternate key/mode choices.</li>' +
+      '<li>If you are confident that you have proper keys and modes in the <b>K:</b> tags for all of your tunes, you can turn this feature off to avoid the additional key/mode substitution tests.</li>' +
       '<li>In all cases, even with this feature disabled, minor and Dorian tunes may also be scored against the same-tonic companion mode, for example <b>Emin</b> against <b>Edor</b>, and vice versa.</li>' +
-      '<li>Click <b>Save Settings</b> to save the current settings in this browser so they are restored the next time the tool is opened. You do not need to click <b>Save Settings</b> before generating chords; the current visible settings are used for the next run.</li>' +
+      '<li>Click <b>Save Settings</b> to save the current settings in this browser so they are restored the next time the tool is opened. You do not need to click <b>Save Settings</b> before generating chords; the current visible settings and checked substitution choices are used for the next run.</li>' +
       '</ul>' +
       '<h4>How matching works</h4>' +
       '<ul>' +
       '<li>Existing chord symbols in the input tunes are stripped before processing.</li>' +
-      '<li>The default minimum match score is <b>0.75</b>, and can be changed in the <b>Settings</b>. If no normal match is found for a general measure, the tool can accept the best available match down to <b>75%</b> of the selected threshold. Tune starts, repeat starts, part endings, and first/second endings are treated more flexibly so the generated chords do not disappear at important musical boundaries.</li>' +
+      '<li>Each input measure is compared against already-chorded database measures and given a match score based mostly on the ordered note sequence and short melodic patterns, with small adjustments for measure length and chord suitability.</li>' +
+      '<li>Match scores range from <b>0.00</b> to <b>1.00</b>, where <b>1.00</b> represents the strongest possible match.</li>' +
+      '<li>The default minimum match score is <b>0.75</b>, and can be changed in the <b>Settings</b>. Higher values are stricter and may leave more measures unchanged; lower values find more matches, but may be less selective.</li>' +
+      '<li>If no normal match is found for a general measure, the tool can accept the best available match down to <b>75%</b> of the selected threshold.</li>' +
       '<li>For starts and endings of tunes, parts, repeated sections, and first/second endings, the tool first tries matching against database measures that are also starts or endings, then falls back to the general same rhythm/meter/key/mode candidate pool if needed.</li>' +
+      '<li>Tune starts, repeat starts, part endings, and first/second endings are treated more flexibly so the generated chords do not disappear at important musical boundaries.</li>' +
       '<li>When two candidate measures have essentially the same melody match score, the tool uses the current tune key and mode as a tie-breaker and prefers the chord pattern that is more compatible with that key/mode.</li>' +
-      '<li>If no matching measure with usable chords meets the threshold, that source measure is left unchanged.</li>' +
+      '<li>If no matching database measure with usable chords meets the threshold, that input measure is left unchanged.</li>' +
       '</ul>' +
       '<h4>Important: K: tag key and mode accuracy</h4>' +
       '<ul>' +
       '<li>The solver uses the key and mode from the <b>K:</b> tag to decide which database measures are musically comparable.</li>' +
       '<li>Correct <b>K:</b> tags still give the best results. A tune marked with the wrong key or mode may be matched against the wrong database material, which can produce poor chord choices.</li>' +
       '<li>If you are not sure that all of the tunes have accurate key and mode declarations, leave <b>Enable limited key/mode substitution checking</b> turned on in the <b>Settings</b>.</li>' +
-      '<li>When enabled, the tool can test the common alternate key/mode choices listed in the <b>Settings</b> section above and use an alternate only if it gives a clearly better match.</li>' +
+      '<li>When enabled, the tool can test the checked alternate key/mode choices listed in the <b>Settings</b> section above and use an alternate only if it gives a clearly better match.</li>' +
       '<li>The tool does not rewrite the tune’s <b>K:</b> tag. If an alternate key or mode is used for the solution, explanatory <b>N:</b> tags are added to the end of that tune.</li>' +
-      '<li>If you are confident that all of your <b>K:</b> tags are correct, you can turn this feature off for normal single-key/mode matching.</li>' +
+      '<li>If you are confident that all of your <b>K:</b> tags are correct, you can turn this feature off to avoid the additional key/mode substitution tests.</li>' +
       '</ul>' +
       '<h4>Running and output</h4>' +
       '<ul>' +
@@ -1240,6 +1334,7 @@
       '<li>The <b>Copy Output to the Clipboard</b>, <b>Save Output to a File</b>, and <b>Test Output in the ABC Transcription Tools</b> buttons are updated after processing completes or is cancelled.</li>' +
       '<li>On iOS, saving uses the Share Sheet to allow you save the ABC to the Files area or share it with other applications.</li>' +
       '<li>The <b>Test Output in the ABC Transcription Tools</b> button is enabled only when the generated share link is short enough for direct transfer.</li>' +
+      '<li>It is a good idea to have the browser tab for the tool visible when solving the chords for a large number of tunes. Browser tabs that are not visible often have their performance throttled by the browser.</li>' +
       '</ul>' +
       '<h4>About the source database</h4>' +
       '<ul>' +
@@ -2339,8 +2434,18 @@
     "Fmajor": ["Gdorian", "Dminor"]
   };
 
-  function getCommonDeclaredKeyModeAlternates(normalizedMode) {
+  function getKeyModeSubstitutionOptions(options) {
+    if (options && options.keyModeSubstitutionOptions) {
+      return normalizeSavedKeyModeSubstitutionOptions(options.keyModeSubstitutionOptions);
+    }
+
+    return normalizeSavedKeyModeSubstitutionOptions(gSettings.keyModeSubstitutionOptions);
+  }
+
+  function getCommonDeclaredKeyModeAlternates(normalizedMode, options) {
     normalizedMode = normalizeMode(normalizedMode || "");
+    var enabledOptions = getKeyModeSubstitutionOptions(options);
+    if (enabledOptions[normalizedMode] === false) return [];
     return COMMON_DECLARED_KEY_MODE_ALTERNATES[normalizedMode] || [];
   }
 
@@ -2479,7 +2584,7 @@
 
     if (!options || !options.keyModeSubstitutionEnabled) return selected;
 
-    var alternates = getCommonDeclaredKeyModeAlternates(normalizedDeclaredMode);
+    var alternates = getCommonDeclaredKeyModeAlternates(normalizedDeclaredMode, options);
     if (!alternates.length || !measures || !measures.length) return selected;
 
     selected.declaredEval = evaluateKeyModeCandidateInfo(measures, selected.candidateInfo, normalizedDeclaredMode, options || {});
@@ -3086,7 +3191,7 @@
         );
         await allowBrowserToUpdate();
 
-        var r = await processTuneAsync(tunes[i], { threshold: threshold, fallbackThresholdScale: 0.75, boundaryThreshold: 0.35, repeatSameChord: false, keyModeSubstitutionEnabled: !!gSettings.keyModeSubstitutionEnabled }, progressState);
+        var r = await processTuneAsync(tunes[i], { threshold: threshold, fallbackThresholdScale: 0.75, boundaryThreshold: 0.35, repeatSameChord: false, keyModeSubstitutionEnabled: !!gSettings.keyModeSubstitutionEnabled, keyModeSubstitutionOptions: Object.assign({}, gSettings.keyModeSubstitutionOptions) }, progressState);
         results.push(r.text);
         allStats.push(r.stats);
         setProgressModalPercent(progressState.totalMeasuresToMatch ?
@@ -3420,22 +3525,34 @@
         </div>
 
         <div class="settings_check" style="margin-top:14px;">
-          <input id="options_keymode_substitution" type="checkbox" checked>
+          <input id="options_keymode_substitution" type="checkbox" checked onchange="syncKeyModeSubstitutionControlsEnabled();">
           <label for="options_keymode_substitution">
             <strong>Enable limited key/mode substitution checking</strong><br>
-            <span class="muted small">Tests common alternate key/mode choices for uncertain or incorrect <b>K:</b> tags.</span>
+            <span class="muted small">Tests selected alternate key/mode choices for uncertain or incorrect <b>K:</b> tags.</span>
           </label>
         </div>
 
         <div class="options_hint">
-          Currently checked substitutions:
-          <div class="options_substitution_list">
-            <div><b>K:D</b> may also be tested as <b>Edor</b>, <b>Bmin</b>, or <b>Amix</b>.</div>
-            <div><b>K:G</b> may also be tested as <b>Dmix</b> or <b>Ador</b>.</div>
-            <div><b>K:C</b> may also be tested as <b>Ddor</b> or <b>Amin</b>.</div>
-            <div><b>K:F</b> may also be tested as <b>Gdor</b> or <b>Dmin</b>.</div>
+          Enabled substitution choices:
+          <div id="options_substitution_choices" class="options_substitution_choices">
+            <label class="options_substitution_choice" for="options_substitution_Dmajor">
+              <input id="options_substitution_Dmajor" type="checkbox" checked>
+              <span><b>K:D</b> may also be tested as <b>Edor</b>, <b>Bmin</b>, or <b>Amix</b>.</span>
+            </label>
+            <label class="options_substitution_choice" for="options_substitution_Gmajor">
+              <input id="options_substitution_Gmajor" type="checkbox" checked>
+              <span><b>K:G</b> may also be tested as <b>Dmix</b> or <b>Ador</b>.</span>
+            </label>
+            <label class="options_substitution_choice" for="options_substitution_Cmajor">
+              <input id="options_substitution_Cmajor" type="checkbox" checked>
+              <span><b>K:C</b> may also be tested as <b>Ddor</b> or <b>Amin</b>.</span>
+            </label>
+            <label class="options_substitution_choice" for="options_substitution_Fmajor">
+              <input id="options_substitution_Fmajor" type="checkbox" checked>
+              <span><b>K:F</b> may also be tested as <b>Gdor</b> or <b>Dmin</b>.</span>
+            </label>
           </div>
-          Chord matching may be slower when enabled.
+          Chord matching may be slower when substitutions are used.
         </div>
 
         <div class="settings_buttons">
