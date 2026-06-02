@@ -316,6 +316,12 @@
       min-height:220px;
     }
 
+    #cardInput.drag_over{
+      border-color:#9dbaf2;
+      box-shadow:0 0 0 3px rgba(157,186,242,0.25);
+      background:rgba(232,241,255,0.75);
+    }
+
     .inputHeader{
       display:flex;
       gap:18px;
@@ -1280,8 +1286,9 @@
       '<p style="text-align:center;"><a href="https://youtu.be/CnR8Owcc9Y8" target="_blank">Complete Walkthrough Video on YouTube</a></p>' +
       '<h4>Setup</h4>' +
       '<ul>' +
-      '<li>Open an ABC file, or paste ABC text into the input box. Multiple tunes are supported.</li>' +
+      '<li>Open one or more <b>.abc</b> or <b>.txt</b> files, paste ABC text into the input box, or on desktop browsers drag and drop one or more supported <b>.abc</b> or <b>.txt</b> files onto the input area. Multiple tunes are supported.</li>' +
       '<li>The tool can also accept an ABC Transcription Tools <b>?def=</b> share-link URL parameter containing deflate-encoded ABC tunes.</li>' +
+      '<li>When multiple files are opened or dropped, their contents are concatenated in the input area separated by a blank line.</li>' +
       '<li>The <b>Generate Backup Chords</b> button is enabled only when the input box contains text.</li>' +
       '<li>Use the <b>Settings</b> controls to set the minimum match score and key/mode substitution checking.</li>' +
       '<li>Click the <b>Clear</b> button to clear both the input and output areas.</li>' +
@@ -3245,31 +3252,192 @@
       "Done in <b>" + formatElapsed(elapsed) + "</b>. Processed <b>" + tunes.length + "</b> " +
       pluralWord(tunes.length, "tune", "tunes") + ".";
 
-    if (skippedTunes > 0) {
-      finalStatus += "<br/>Skipped <b>" + skippedTunes + "</b> " +
-        pluralWord(skippedTunes, "tune", "tunes") +
-        " because of mid-tune key/mode changes or multiple voices.";
-    }
+    // if (skippedTunes > 0) {
+    //   finalStatus += "<br/>Skipped <b>" + skippedTunes + "</b> " +
+    //     pluralWord(skippedTunes, "tune", "tunes") +
+    //     " because of mid-tune key/mode changes or multiple voices.";
+    // }
 
     setStatus(finalStatus);
   }
 
-  function openABCFile(evt) {
-    var file = evt.target.files && evt.target.files[0];
-    if (!file) return;
+  function isSupportedABCInputFile(file) {
+    if (!file) return false;
+
+    var name = file.name || "";
+
+    // Only allow explicit ABC/text filename extensions. Do not allow by MIME
+    // type because browsers report .html files as text/html, and accepting all
+    // text/* MIME types would allow HTML and other non-ABC/text inputs.
+    return /\.(abc|txt)$/i.test(name);
+  }
+
+  function readABCInputFile(file) {
+    return new Promise(function(resolve, reject) {
+      var reader = new FileReader();
+
+      reader.onload = function(e) {
+        resolve({
+          file: file,
+          text: (e.target && e.target.result) ? String(e.target.result) : ""
+        });
+      };
+
+      reader.onerror = function() {
+        reject(new Error("Could not read " + (file && file.name ? file.name : "file")));
+      };
+
+      reader.readAsText(file);
+    });
+  }
+
+  function formatInputFileSummary(files) {
+    files = Array.prototype.slice.call(files || []);
+    if (!files.length) return "";
+
+    var firstName = files[0] && files[0].name ? files[0].name : "Untitled";
+    if (files.length === 1) return firstName;
+
+    return firstName + " + " + (files.length - 1) + " other " +
+      pluralWord(files.length - 1, "file", "files");
+  }
+
+  async function loadABCInputFiles(fileList, sourceLabel) {
+    var files = Array.prototype.slice.call(fileList || []);
+    if (!files.length) return;
+
+    var supportedFiles = files.filter(isSupportedABCInputFile);
+    var skippedFiles = files.filter(function(file) {
+      return !isSupportedABCInputFile(file);
+    });
+
+    if (!supportedFiles.length) {
+      showMessageDialog("No supported ABC or text files were found. Please use only .abc, .ABC, .txt, or .TXT files.");
+      return;
+    }
+
     clearOutputArea();
-    gSaveFilename = "abc_backup_chords.abc";
-    gInputFilename = file.name || "";
-    var reader = new FileReader();
-    reader.onload = function(e) {
-      var loadedABC = e.target.result || "";
-      var tuneCount = splitTunes(loadedABC).length;
-      document.getElementById("input").value = loadedABC;
+    setStatus("Loading <b>" + supportedFiles.length + "</b> " +
+      pluralWord(supportedFiles.length, "file", "files") + "...");
+
+    try {
+      var loaded = await Promise.all(supportedFiles.map(readABCInputFile));
+      var loadedText = loaded.map(function(item) {
+        return (item.text || "").trimEnd();
+      }).join("\n\n");
+
+      var input = document.getElementById("input");
+      if (input) input.value = loadedText;
+
       updateGenerateButtonState();
       clearOutputArea();
-      setStatus("Loaded <b>" + escapeHTML(file.name) + "</b> with <b>" + tuneCount + "</b> tune" + (tuneCount === 1 ? "" : "s") + ".");
-    };
-    reader.readAsText(file);
+
+      gSaveFilename = "abc_backup_chords.abc";
+      gInputFilename = formatInputFileSummary(loaded.map(function(item) {
+        return item.file;
+      }));
+
+      var tuneCount = splitTunes(loadedText).length;
+      var status = (sourceLabel || "Loaded") + " <b>" + escapeHTML(gInputFilename || "Untitled") +
+        "</b> with <b>" + tuneCount + "</b> " + pluralWord(tuneCount, "tune", "tunes") + ".";
+
+      if (skippedFiles.length) {
+        status += "<br/>Skipped <b>" + skippedFiles.length + "</b> unsupported " +
+          pluralWord(skippedFiles.length, "file", "files") + ".";
+      }
+
+      setStatus(status);
+    } catch (err) {
+      console.error(err);
+      setStatus("Could not load one or more selected files.");
+      showMessageDialog("Could not load one or more selected files.");
+    }
+  }
+
+  function openABCFile(evt) {
+    var files = evt.target.files;
+    if (!files || !files.length) return;
+    loadABCInputFiles(files, "Loaded");
+  }
+
+  function setupInputDragAndDrop() {
+    if (isIOSDevice()) return;
+
+    var dropTarget = document.getElementById("cardInput");
+    if (!dropTarget) return;
+
+    function hasFiles(evt) {
+      var types = evt.dataTransfer && evt.dataTransfer.types;
+      if (!types) return false;
+      for (var i = 0; i < types.length; i++) {
+        if (types[i] === "Files") return true;
+      }
+      return false;
+    }
+
+    function dragHasPossibleABCTextFiles(evt) {
+      var items = evt.dataTransfer && evt.dataTransfer.items;
+
+      // Drag events often expose MIME type but not filename. Since final
+      // validation is extension-only at drop time, only use this to suppress
+      // obviously unsupported drags such as text/html. Empty/unknown types are
+      // allowed here so .abc files from browsers that omit MIME type can still
+      // show the drag highlight before final validation.
+      if (!items || !items.length) return true;
+
+      for (var i = 0; i < items.length; i++) {
+        var item = items[i];
+        if (!item || item.kind !== "file") continue;
+
+        var type = (item.type || "").toLowerCase();
+        if (!type) return true;
+        if (type === "text/plain") return true;
+        if (type === "application/vnd.abc") return true;
+      }
+
+      return false;
+    }
+
+    function stopDrag(evt) {
+      if (!hasFiles(evt)) return false;
+      evt.preventDefault();
+      evt.stopPropagation();
+      return true;
+    }
+
+    ["dragenter", "dragover"].forEach(function(eventName) {
+      dropTarget.addEventListener(eventName, function(evt) {
+        if (!stopDrag(evt)) return;
+        if (dragHasPossibleABCTextFiles(evt)) {
+          dropTarget.classList.add("drag_over");
+          if (evt.dataTransfer) evt.dataTransfer.dropEffect = "copy";
+        } else {
+          dropTarget.classList.remove("drag_over");
+          if (evt.dataTransfer) evt.dataTransfer.dropEffect = "none";
+        }
+      });
+    });
+
+    ["dragleave", "dragend"].forEach(function(eventName) {
+      dropTarget.addEventListener(eventName, function(evt) {
+        stopDrag(evt);
+        dropTarget.classList.remove("drag_over");
+      });
+    });
+
+    dropTarget.addEventListener("drop", function(evt) {
+      stopDrag(evt);
+      dropTarget.classList.remove("drag_over");
+      var files = evt.dataTransfer && evt.dataTransfer.files;
+      if (files && files.length) {
+        // A drag/drop replaces the current input just like opening new files.
+        // Clear the file picker so its native label does not keep showing any
+        // previously selected files, for example "2 files" after dropping one.
+        var fileInput = document.getElementById("selectabcfile");
+        if (fileInput) fileInput.value = "";
+        loadABCInputFiles(files, "Dropped");
+      }
+    });
   }
 
   function clearInputAndOutput() {
@@ -3332,14 +3500,16 @@
     var fileInput = document.getElementById("selectabcfile");
     if (!fileInput) return;
 
+    fileInput.setAttribute("multiple", "multiple");
+
     // iOS/iPadOS Files can be overly strict about the accept list and may
     // gray out .abc files if the extension is not mapped to a known system
     // document type. On iOS, remove the accept filter entirely so ABC files
-    // remain selectable. Other platforms keep the broader ABC/text filter.
+    // remain selectable. Other platforms keep a strict extension-only ABC/text filter.
     if (isIOSDevice()) {
       fileInput.removeAttribute("accept");
     } else {
-      fileInput.setAttribute("accept", ".abc,.ABC,.txt,.TXT,text/plain,text/*,application/octet-stream,application/vnd.abc");
+      fileInput.setAttribute("accept", ".abc,.ABC,.txt,.TXT");
     }
   }
 
@@ -3449,6 +3619,7 @@
 
   window.addEventListener("load", function() {
     document.getElementById("selectabcfile").addEventListener("change", openABCFile);
+    setupInputDragAndDrop();
     var input = document.getElementById("input");
     if (input) input.addEventListener("input", handleInputChanged);
     var output = document.getElementById("output");
@@ -3493,8 +3664,8 @@
         <div class="inputHeader">
           <h3>ABC Input</h3>
           <div class="inputFileRow">
-            <span class="muted small">Open an ABC file:</span>
-            <input type="file" id="selectabcfile" accept=".abc,.ABC,.txt,.TXT,text/plain,text/*,application/octet-stream,application/vnd.abc" title="Open an existing ABC or text file" />
+            <span class="muted small">Open ABC file(s):</span>
+            <input type="file" id="selectabcfile" accept=".abc,.ABC,.txt,.TXT" multiple title="Open one or more existing .abc or .txt files. You may also drag and drop one or more .abc or .txt files onto the input area." />
           </div>
         </div>
         <div class="taWrap">
