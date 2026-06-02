@@ -1100,15 +1100,6 @@
     updateShareLinkForOutput(outputText);
   }
 
-  function setOutputAreaDuringProcessing(outputText) {
-    // During a long batch run, keep the partial output visible, but avoid
-    // recalculating the share link or changing output-button enabled states.
-    // Those actions are only needed once, after processing completes or is
-    // cancelled, and skipping them keeps large batches more responsive.
-    var output = document.getElementById("output");
-    if (output) output.value = outputText || "";
-  }
-
   function handleInputChanged() {
     updateGenerateButtonState();
 
@@ -3126,7 +3117,6 @@
     }
 
     gCancelRequested = false;
-    var outputBox = document.getElementById("output");
     clearOutputArea();
     setProcessingControlsEnabled(false);
     setStatus("Processing...");
@@ -3138,6 +3128,7 @@
     } catch (err) {
       setProcessingControlsEnabled(true);
       hideProgressModal();
+      clearOutputArea();
       setStatus("<b>Error:</b> " + escapeHTML(err.message) + "<br><br>The tune database is loaded from <b>https://michaeleskin.com/abctools/abctunes_thesession_28may2026.json</b>. Please check your network connection and try again.");
       return;
     }
@@ -3205,11 +3196,6 @@
         setProgressModalPercent(progressState.totalMeasuresToMatch ?
           Math.round((progressState.completedMeasures / progressState.totalMeasuresToMatch) * 100) : 100);
 
-        if (outputBox) {
-          var partialOutput = results.join("\n\n").trim();
-          if (preTuneText) partialOutput = preTuneText + "\n\n" + partialOutput;
-          setOutputAreaDuringProcessing(partialOutput + "\n");
-        }
         await allowBrowserToUpdate();
       }
     } catch (err) {
@@ -3737,9 +3723,9 @@
 
     <div class="right">
       <div id="cardOutput" class="card">
-        <h3 class="card_label">Processed ABC Output, with Suggested Backup Chords</h3>
+        <h3 class="card_label">Processed ABC Output with Suggested Backup Chords</h3>
         <div class="taWrap">
-          <textarea id="output" placeholder="Processed ABC output will appear here" spellcheck="false" autocorrect="off" autocapitalize="none"></textarea>
+          <textarea id="output" placeholder="Processed ABC output with suggested backup chords will appear here" spellcheck="false" autocorrect="off" autocapitalize="none"></textarea>
         </div>
         <div class="output_button_row">
           <button id="copybutton" class="btn btn-controls" onclick="copyOutputToClipboard();" disabled title="Generate output before copying">Copy Output to the Clipboard</button>
