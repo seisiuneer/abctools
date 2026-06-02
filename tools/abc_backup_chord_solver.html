@@ -1203,15 +1203,16 @@
       '<li><b>Enable limited key/mode substitution checking</b> is enabled by default. When enabled, the tool can test a few common cases where an ABC tune uses the key signature in the <b>K:</b> tag instead of the tune’s actual key and mode.</li>' +
       '<li>The currently checked substitutions are:' +
       '<ul>' +
-      '<li><b>K:D</b> may also be tested as <b>Edor</b> or <b>Bmin</b>.</li>' +
-      '<li><b>K:G</b> may also be tested as <b>Dmix</b> or <b>Ador</b>.</li>' +
-      '<li><b>K:C</b> may also be tested as <b>Ddor</b>.</li>' +
-      '<li><b>K:F</b> may also be tested as <b>Gdor</b>.</li>' +
+      '<li><b>K:D</b> may also be tested as <b>Edor</b>, <b>Bmin</b>, or <b>Amix</b>.</li>' +
+      '<li><b>K:G</b> may also be tested as <b>Dmix</b>, <b>Ador</b>, or <b>Emin</b>.</li>' +
+      '<li><b>K:C</b> may also be tested as <b>Ddor</b> or <b>Amin</b>.</li>' +
+      '<li><b>K:F</b> may also be tested as <b>Gdor</b> or <b>Dmin</b>.</li>' +
       '</ul>' +
       '</li>' +
       '<li>The tool only uses an alternate key or mode if it gives a clearly better match. It does not rewrite the tune’s <b>K:</b> tag in the output.</li>' +
       '<li>When enabled, chord matching may be slower because tunes with one of the listed <b>K:</b> tags are also tested against the matching alternate key/mode choices.</li>' +
       '<li>If you are confident that you have proper keys and modes in the <b>K:</b> tags for all of your tunes, you can turn this feature off.</li>' +
+      '<li>In all cases, even with this feature disabled, minor mode tunes will also be scored against Dorian mode tunes and vice versa.</li>' +
       '<li>Click <b>Save Settings</b> to save the current settings in this browser so they are restored the next time the tool is opened. You do not need to click <b>Save Settings</b> before generating chords; the current visible settings are used for the next run.</li>' +
       '</ul>' +
       '<h4>How matching works</h4>' +
@@ -2332,10 +2333,10 @@
   }
 
   var COMMON_DECLARED_KEY_MODE_ALTERNATES = {
-    "Dmajor": ["Edorian","Bminor"],
-    "Gmajor": ["Dmixolydian", "Adorian"],
-    "Cmajor": ["Ddorian"],
-    "Fmajor": ["Gdorian"]
+    "Dmajor": ["Edorian", "Bminor", "Amixolydian"],
+    "Gmajor": ["Dmixolydian", "Adorian", "Eminor"],
+    "Cmajor": ["Ddorian", "Aminor"],
+    "Fmajor": ["Gdorian", "Dminor"]
   };
 
   function getCommonDeclaredKeyModeAlternates(normalizedMode) {
@@ -3429,10 +3430,10 @@
         <div class="options_hint">
           Currently checked substitutions:
           <div class="options_substitution_list">
-            <div><b>K:D</b> may also be tested as <b>Edor</b> or <b>Bmin</b>.</div>
-            <div><b>K:G</b> may also be tested as <b>Dmix</b> or <b>Ador</b>.</div>
-            <div><b>K:C</b> may also be tested as <b>Ddor</b>.</div>
-            <div><b>K:F</b> may also be tested as <b>Gdor</b>.</div>
+            <div><b>K:D</b> may also be tested as <b>Edor</b>, <b>Bmin</b>, or <b>Amix</b>.</div>
+            <div><b>K:G</b> may also be tested as <b>Dmix</b>, <b>Ador</b>, or <b>Emin</b>.</div>
+            <div><b>K:C</b> may also be tested as <b>Ddor</b> or <b>Amin</b>.</div>
+            <div><b>K:F</b> may also be tested as <b>Gdor</b> or <b>Dmin</b>.</div>
           </div>
           Chord matching may be slower when enabled.
         </div>
