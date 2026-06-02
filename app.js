@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3245_053026_0830";
+var gVersionNumber = "3246_060226_1400";
 
 var gMIDIInitStillWaiting = false;
 
@@ -28492,13 +28492,13 @@ async function processShareLink() {
       // Show update message?
       if (gLocalStorageAvailable){
 
-        var updatePresented = localStorage.sawUpdate_30may2026;
+        var updatePresented = localStorage.sawUpdate_2jun2026;
 
         if (updatePresented != "true") {
 
           showWhatsNewScreen();
 
-          localStorage.sawUpdate_30may2026 = true;
+          localStorage.sawUpdate_2jun2026 = true;
 
         }
 
@@ -56352,10 +56352,10 @@ function showWhatsNewScreen() {
 
   // Header
   modal_msg += '<div style="text-align:center; padding:14px 10px; border-radius:12px;';
-  modal_msg += 'background: linear-gradient(135deg, #0b3d2e 0%, #1b5e20 52%, #4f8f3a 100%);';
+  modal_msg += 'background: linear-gradient(135deg, #24103f 0%, #4b1f73 52%, #7b3fb2 100%);';
   modal_msg += 'box-shadow: 0 6px 16px rgba(0,0,0,0.14); color:#fff;">';
   modal_msg += '<div style="font-size:20pt; line-height:24pt; font-weight:bold;">What&apos;s New</div>';
-  modal_msg += '<div style="font-size:11pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 29 May 2026</div>';
+  modal_msg += '<div style="font-size:11pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 2 June 2026</div>';
   modal_msg += '</div>';
 
   // Short intro
@@ -56366,17 +56366,16 @@ function showWhatsNewScreen() {
   // Feature card
   modal_msg += '<div style="margin:10px 0 6px 0; padding:0px 12px; border-radius:12px;';
   modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);">';
-  modal_msg += '<p><strong>New Tool on the "Other ABC Tools" and "Open ABC in External Tool" dialogs</strong>:</p>';
-  modal_msg += '<p>Added the <strong>ABC Tune Backup Chord Solver</strong> to the <strong>Other ABC Tools</strong> and <strong>Open ABC in External Tool</strong> dialogs.</p>';
+  modal_msg += '<p><strong>Improved Find and Replace</strong>:</p>';
+  modal_msg += '<p><b>Find and Replace</b> now starts its search based on the current editor text cursor postion.</p>';
+  modal_msg += '<p>Previously it would always start searching from the top of the text.</p>';
   modal_msg += '</div>';
 
   // Feature card
   modal_msg += '<div style="margin:10px 0 6px 0; padding:0px 12px; border-radius:12px;';
   modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);">';
-  modal_msg += '<p><strong>Updated the thesession.org tune search database (first update in 4 years).</strong></p>';
-  modal_msg += '<p>The new tune database from Jeremy\'s latest official release adds 10,000+ new tune settings (over 54,000 in total) and additional tune metadata in the ABC including composer and transcriber when available.</p>';
-  modal_msg += '<p>Previously thesession.org tune database was based on one released by the developers of <strong>FolkFriend</strong>.</p>';
-  modal_msg += '<p>Switching to the thesession.org official tune collection, which is regularly updated on GitHub, will make it simple to update the tool with new tune settings in the future.</p>';
+  modal_msg += '<p><strong>New Tool on the "Other ABC Tools" and "Open ABC in External Tool" dialogs</strong>:</p>';
+  modal_msg += '<p>Added the <strong>ABC Tune Backup Chord Solver</strong> to the <strong>Other ABC Tools</strong> and <strong>Open ABC in External Tool</strong> dialogs.</p>';
   modal_msg += '</div>';
 
   modal_msg += '</div>'; // wrapper
@@ -58478,6 +58477,10 @@ function JumpToTune() {
 var gSR_currentIndex = -1;
 var gSR_matchIndexes = [];
 
+// Editor selection/insertion point when the Find and Replace dialog was opened.
+// The first Find Next / Find Previous starts from this position.
+var gSR_startOffset = 0;
+
 var gSR_searchInput = null;
 var gSR_replaceInput = null;
 var gSR_caseSensitive = null;
@@ -58506,6 +58509,93 @@ function SR_processMatches(value, matches) {
   });
 
   return result;
+
+}
+
+function SR_getEditorSelectionStart() {
+
+  var startOffset = 0;
+
+  try {
+
+    if (gEnableSyntax) {
+
+      // CodeMirror compatibility:
+      // Your code elsewhere treats gTheCM like a textarea in some places,
+      // but this also supports real CodeMirror-style APIs if present.
+      if (gTheCM && typeof gTheCM.getCursor === "function" && typeof gTheCM.indexFromPos === "function") {
+
+        startOffset = gTheCM.indexFromPos(gTheCM.getCursor("from"));
+
+      } else if (gTheCM && typeof gTheCM.selectionStart === "number") {
+
+        startOffset = gTheCM.selectionStart;
+
+      } else if (gTheCM && typeof gTheCM.getInputField === "function") {
+
+        var inputField = gTheCM.getInputField();
+
+        if (inputField && typeof inputField.selectionStart === "number") {
+          startOffset = inputField.selectionStart;
+        }
+      }
+
+    } else {
+
+      if (gTheABC && typeof gTheABC.selectionStart === "number") {
+        startOffset = gTheABC.selectionStart;
+      }
+    }
+
+  } catch (err) {
+
+    startOffset = 0;
+
+  }
+
+  return startOffset;
+
+}
+
+function SR_setInitialSearchIndex(direction) {
+
+  if (gSR_matchIndexes.length === 0) {
+    gSR_currentIndex = -1;
+    return;
+  }
+
+  var i;
+
+  if (direction === "next") {
+
+    // Set the current index to the match immediately BEFORE the saved search
+    // selection point, so the normal SR_search("next") increment lands on
+    // the first match at or after that point.
+    gSR_currentIndex = gSR_matchIndexes.length - 1;
+
+    for (i = 0; i < gSR_matchIndexes.length; ++i) {
+
+      if (gSR_matchIndexes[i].offset >= gSR_startOffset) {
+        gSR_currentIndex = i - 1;
+        break;
+      }
+    }
+
+  } else if (direction === "previous") {
+
+    // Set the current index to the match immediately AFTER the saved search
+    // selection point, so the normal SR_search("previous") decrement lands on
+    // the first match before that point.
+    gSR_currentIndex = 0;
+
+    for (i = gSR_matchIndexes.length - 1; i >= 0; --i) {
+
+      if (gSR_matchIndexes[i].offset < gSR_startOffset) {
+        gSR_currentIndex = i + 1;
+        break;
+      }
+    }
+  }
 
 }
 
@@ -58669,6 +58759,12 @@ function SR_search(direction) {
     });
 
     return;
+  }
+
+  // First search after opening the dialog should start from the editor
+  // selection/insertion point that was active when the dialog was opened.
+  if (gSR_currentIndex === -1) {
+    SR_setInitialSearchIndex(direction);
   }
 
   if (direction === 'next') {
@@ -58949,6 +59045,11 @@ function SR_LoadFindAndReplace(file) {
 
       SR_findMatches();
 
+      // Restart from the current editor selection/insertion point,
+      // which may have changed because of a previous Find Next / Find Previous.
+      gSR_startOffset = SR_getEditorSelectionStart();
+      gSR_currentIndex = -1;
+
     } catch (err) {
 
       var thePrompt = "This is not a valid Find and Replace settings file.";
@@ -59036,6 +59137,11 @@ function FindAndReplace() {
   gSR_currentIndex = -1;
   gSR_matchIndexes = [];
 
+  // Capture this before the modal steals focus from the ABC editor.
+  // This is the selection start or insertion point that the first
+  // Find Next / Find Previous should start from.
+  gSR_startOffset = SR_getEditorSelectionStart();
+
   var modal_msg = '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:15px;margin-bottom:12px;">Find and Replace&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#moretoolsdropdown" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>';
 
   if (isPureDesktopBrowser()){
@@ -59045,7 +59151,7 @@ function FindAndReplace() {
     modal_msg += '<p style="font-size:12pt;line-height:24pt;margin-top:0px;">Find:<br/><textarea style="width:625px;padding:6px;" id="searchText" title="Enter text to find here" autocomplete="off" autocorrect="off" spellcheck="false" autocapitalize="none" placeholder="Text to find..." rows="4"></textarea></p>';    
   }
 
-  modal_msg += '<p style="font-size:12pt;line-height:12pt;margin-top:0px;">Case sensitive?&nbsp;<input id="searchCaseSensitive" type="checkbox" style="margin-top:-5px;margin-bottom:0px;" onchange="SR_findMatches();" checked/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Match using regular expression?&nbsp;<input id="searchRegex" type="checkbox" style="margin-top:-5px;margin-bottom:0px;" onchange="SR_findMatches();"/></p>';
+  modal_msg += '<p style="font-size:12pt;line-height:12pt;margin-top:0px;">Case sensitive?&nbsp;<input id="searchCaseSensitive" type="checkbox" style="margin-top:-5px;margin-bottom:0px;" onchange="SR_findMatches();gSR_startOffset=SR_getEditorSelectionStart();gSR_currentIndex=-1;" checked/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Match using regular expression?&nbsp;<input id="searchRegex" type="checkbox" style="margin-top:-5px;margin-bottom:0px;" onchange="SR_findMatches();gSR_startOffset=SR_getEditorSelectionStart();gSR_currentIndex=-1;"/></p>';
 
   if (isPureDesktopBrowser()){
     modal_msg += '<p style="font-size:12pt;line-height:24pt;margin-top:0px;">Replace with:<br/><textarea style="width:625px;padding:6px;" id="replacementText" title="Enter replacement text here" autocomplete="off" autocorrect="off" spellcheck="false" autocapitalize="none" placeholder="Replace with..." rows="7"></textarea></p>';
@@ -59063,14 +59169,14 @@ function FindAndReplace() {
     scrollWithPage: false,
     okText:"Exit"
   }).then(function() {
-  	if (!isPureDesktopBrowser()){
-  		if (gEnableSyntax){
-   			gTheCM.focus();
-   		}
-   		else{
-   			gTheABC.focus();
-   		}
-  	}
+    if (!isPureDesktopBrowser()){
+      if (gEnableSyntax){
+        gTheCM.focus();
+      }
+      else{
+        gTheABC.focus();
+      }
+    }
 
   });
 
@@ -59125,11 +59231,21 @@ function FindAndReplace() {
 
     if (gSR_lastSearch != "") {
       SR_findMatches();
+
+      // Leave the first search anchored to the editor selection/insertion
+      // point captured when this dialog was opened.
+      gSR_currentIndex = -1;
     }
 
     gSR_searchInput.addEventListener("input", function(event) {
       gSR_lastSearch = gSR_searchInput.value;;
       SR_findMatches();
+
+      // When the find text changes, restart from the current editor
+      // selection/insertion point, which may have changed because of
+      // a previous Find Next / Find Previous.
+      gSR_startOffset = SR_getEditorSelectionStart();
+      gSR_currentIndex = -1;
     });
 
     gSR_replaceInput.addEventListener("input", function(event) {
@@ -62915,13 +63031,13 @@ async function DoStartup() {
   // Show update message?
   if (gLocalStorageAvailable && (!isFromShare)){
 
-    var updatePresented = localStorage.sawUpdate_30may2026;
+    var updatePresented = localStorage.sawUpdate_2jun2026;
 
     if (updatePresented != "true") {
 
       showWhatsNewScreen();
 
-      localStorage.sawUpdate_30may2026 = true;
+      localStorage.sawUpdate_2jun2026 = true;
 
     }
 
