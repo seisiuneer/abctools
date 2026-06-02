@@ -1237,7 +1237,8 @@
     setProcessingControlsEnabled(true);
 
     if (sharedABC !== null) {
-      setStatus("Loaded ABC notation from the share link.");
+      var sharedTuneCount = splitTunes(sharedABC).length;
+      setStatus("Loaded ABC notation from the share link with " + sharedTuneCount + " " + pluralWord(sharedTuneCount, "tune", "tunes") + ".");
     } else if ((window.location.search || "").indexOf("def=") >= 0) {
       setStatus("Could not decode the ABC notation from the def= share link parameter.");
     } else {
