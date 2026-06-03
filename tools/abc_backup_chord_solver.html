@@ -823,7 +823,9 @@
     Dmajor: true,
     Gmajor: true,
     Cmajor: true,
-    Fmajor: true
+    Fmajor: true,
+    Gmajor_Eminor: false,
+    Amajor_Bdorian: false
   };
 
   var gSettings = {
@@ -1300,10 +1302,16 @@
       '<li><b>Enable limited key/mode substitution checking</b> is enabled by default. When enabled, the tool can test the selected common cases where an ABC tune uses the key signature in the <b>K:</b> tag instead of the tune’s actual key and mode.</li>' +
       '<li>The substitution choices are controlled by separate checkboxes:' +
       '<ul>' +
-      '<li><b>K:D</b> may also be tested as <b>Edor</b>, <b>Bmin</b>, or <b>Amix</b>.</li>' +
-      '<li><b>K:G</b> may also be tested as <b>Dmix</b> or <b>Ador</b>.</li>' +
-      '<li><b>K:C</b> may also be tested as <b>Ddor</b> or <b>Amin</b>.</li>' +
-      '<li><b>K:F</b> may also be tested as <b>Gdor</b> or <b>Dmin</b>.</li>' +
+      '<li><b>K:D</b> (two sharps) may also be tested as <b>Edor</b>, <b>Bmin</b>, or <b>Amix</b>.</li>' +
+      '<li><b>K:G</b> (one sharp) may also be tested as <b>Dmix</b> or <b>Ador</b>.</li>' +
+      '<li><b>K:C</b> (no sharps or flats) may also be tested as <b>Ddor</b> or <b>Amin</b>.</li>' +
+      '<li><b>K:F</b> (one flat) may also be tested as <b>Gdor</b> or <b>Dmin</b>.</li>' +
+      '</ul>' +
+      '</li>' +
+      '<li>Advanced substitution choices are unchecked by default. Only enable these if your source tunes have <b>K:G</b> or <b>K:A</b> tags and you do not get good results using the more common substitutions above:' +
+      '<ul>' +
+      '<li><b>K:G</b> (one sharp) may also be tested as <b>Emin</b>.</li>' +
+      '<li><b>K:A</b> (three sharps) may also be tested as <b>Bdor</b>.</li>' +
       '</ul>' +
       '</li>' +
       '<li>The tool only uses an alternate key or mode if it gives a clearly better match. It does not rewrite the tune’s <b>K:</b> tag in the output.</li>' +
@@ -2452,8 +2460,24 @@
   function getCommonDeclaredKeyModeAlternates(normalizedMode, options) {
     normalizedMode = normalizeMode(normalizedMode || "");
     var enabledOptions = getKeyModeSubstitutionOptions(options);
-    if (enabledOptions[normalizedMode] === false) return [];
-    return COMMON_DECLARED_KEY_MODE_ALTERNATES[normalizedMode] || [];
+    var alternates = [];
+
+    if (enabledOptions[normalizedMode] !== false && COMMON_DECLARED_KEY_MODE_ALTERNATES[normalizedMode]) {
+      alternates = COMMON_DECLARED_KEY_MODE_ALTERNATES[normalizedMode].slice();
+    }
+
+    // Advanced substitutions are deliberately separate from the normal
+    // same-key-signature substitution groups so they can remain disabled by
+    // default and be enabled only for source material that appears to need them.
+    if (normalizedMode === "Gmajor" && enabledOptions.Gmajor_Eminor === true) {
+      alternates.push("Eminor");
+    }
+
+    if (normalizedMode === "Amajor" && enabledOptions.Amajor_Bdorian === true) {
+      alternates.push("Bdorian");
+    }
+
+    return alternates;
   }
 
   function getTrialMeasuresForKeyModeSelection(measures) {
@@ -3694,7 +3718,7 @@
           <input id="options_keymode_substitution" type="checkbox" checked onchange="syncKeyModeSubstitutionControlsEnabled();">
           <label for="options_keymode_substitution">
             <strong>Enable limited key/mode substitution checking</strong><br>
-            <span class="muted small">Tests selected alternate key/mode choices for uncertain or incorrect <b>K:</b> tags.</span>
+            <span class="muted small">Tests selected alternate key/mode choices for uncertain or incorrect <b>K:</b> tags.<br/>Chord matching may be slower when substitutions are used.</span>
           </label>
         </div>
 
@@ -3703,22 +3727,32 @@
           <div id="options_substitution_choices" class="options_substitution_choices">
             <label class="options_substitution_choice" for="options_substitution_Dmajor">
               <input id="options_substitution_Dmajor" type="checkbox" checked>
-              <span><b>K:D</b> may also be tested as <b>Edor</b>, <b>Bmin</b>, or <b>Amix</b>.</span>
+              <span><b>K:D</b> (two sharps) may also be tested as <b>Edor</b>, <b>Bmin</b>, or <b>Amix</b>.</span>
             </label>
             <label class="options_substitution_choice" for="options_substitution_Gmajor">
               <input id="options_substitution_Gmajor" type="checkbox" checked>
-              <span><b>K:G</b> may also be tested as <b>Dmix</b> or <b>Ador</b>.</span>
+              <span><b>K:G</b> (one sharp) may also be tested as <b>Dmix</b> or <b>Ador</b>.</span>
             </label>
             <label class="options_substitution_choice" for="options_substitution_Cmajor">
               <input id="options_substitution_Cmajor" type="checkbox" checked>
-              <span><b>K:C</b> may also be tested as <b>Ddor</b> or <b>Amin</b>.</span>
+              <span><b>K:C</b> (no sharps or flats) may also be tested as <b>Ddor</b> or <b>Amin</b>.</span>
             </label>
             <label class="options_substitution_choice" for="options_substitution_Fmajor">
               <input id="options_substitution_Fmajor" type="checkbox" checked>
-              <span><b>K:F</b> may also be tested as <b>Gdor</b> or <b>Dmin</b>.</span>
+              <span><b>K:F</b> (one flat) may also be tested as <b>Gdor</b> or <b>Dmin</b>.</span>
+            </label>
+            <div class="options_hint" style="margin-top:12px;">
+              <b>Advanced options:</b><br/>Only enable these if your source tunes have <b>K:G</b> or <b>K:A</b> tags and you do not get good results using the more common substitutions above.
+            </div>
+            <label class="options_substitution_choice" for="options_substitution_Gmajor_Eminor">
+              <input id="options_substitution_Gmajor_Eminor" type="checkbox">
+              <span><b>K:G</b> (one sharp) may also be tested as <b>Emin</b>.</span>
+            </label>
+            <label class="options_substitution_choice" for="options_substitution_Amajor_Bdorian">
+              <input id="options_substitution_Amajor_Bdorian" type="checkbox">
+              <span><b>K:A</b> (three sharps) may also be tested as <b>Bdor</b>.</span>
             </label>
           </div>
-          Chord matching may be slower when substitutions are used.
         </div>
 
         <div class="settings_buttons">
