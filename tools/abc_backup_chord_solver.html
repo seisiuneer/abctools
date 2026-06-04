@@ -29,7 +29,7 @@
       --gap: 14px;
       --card-pad: 14px;
       --helpbar-pad-y: 12px;
-      --helpbar-est-height: 64px;
+      --helpbar-est-height: 124px;
 
       --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
       --bd: 1px solid rgba(127,127,127,.35);
@@ -268,7 +268,8 @@
     #copybutton,
     #savebutton,
     #testbutton,
-    #instructionsbutton{
+    #instructionsbutton,
+    #abctoolsbutton{
       background:#f0f3f8;
       border-color:#d3dbe7;
       color:#000;
@@ -535,6 +536,9 @@
       border-right:none;
       border-bottom:none;
       background:Canvas;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
       padding:
         var(--helpbar-pad-y)
         calc(var(--page-pad) + env(safe-area-inset-right))
@@ -542,7 +546,8 @@
         calc(var(--page-pad) + env(safe-area-inset-left));
     }
 
-    #instructionsbutton{ width:100%; }
+    #instructionsbutton,
+    #abctoolsbutton{ width:100%; }
 
     .instructions_content{
       font-family:Helvetica, Arial, sans-serif;
@@ -1276,6 +1281,10 @@
     }
   }
 
+  function openABCTranscriptionTools() {
+    window.open("https://michaeleskin.com/abctools/abctools.html", "_blank", "noopener,noreferrer");
+  }
+
   function showInstructions() {
     var html = '' +
       '<div class="instructions_content">' +
@@ -1349,6 +1358,7 @@
       '<li>The <b>Copy Output to the Clipboard</b>, <b>Save Output to a File</b>, and <b>Test Output in the ABC Transcription Tools</b> buttons are updated after processing completes or is cancelled.</li>' +
       '<li>On iOS, saving uses the Share Sheet to allow you save the ABC to the Files area or share it with other applications.</li>' +
       '<li>The <b>Test Output in the ABC Transcription Tools</b> button is enabled only when the generated share link is short enough for direct transfer.</li>' +
+      '<li>Click the <b>Open ABC Transcription Tools</b> button at the bottom of the page to open the ABC Transcription Tools in a new browser tab without a share link. This is useful when the generated output is too large for direct transfer; copy the output here, open the tools, then paste the ABC there.</li>' +
       '<li>It is a good idea to have the browser tab for the tool visible when solving the chords for a large number of tunes. Browser tabs that are not visible often have their performance throttled by the browser.</li>' +
       '</ul>' +
       '<h4>About the source database</h4>' +
@@ -3779,6 +3789,7 @@
   </div>
 
   <div id="cardHelp" class="card">
+    <button id="abctoolsbutton" class="btn btn-controls" onclick="openABCTranscriptionTools();" title="Open the ABC Transcription Tools in a new browser tab without sending a share link">Open ABC Transcription Tools</button>
     <button id="instructionsbutton" class="btn btn-controls" onclick="showInstructions();" title="Show instructions for using the ABC Tune Backup Chord Solver">Instructions</button>
   </div>
 </div>
