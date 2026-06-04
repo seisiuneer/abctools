@@ -835,6 +835,7 @@
 
   var gSettings = {
     threshold: 0.75,
+    fallbackMatchPercentage: 75,
     keyModeSubstitutionEnabled: true,
     keyModeSubstitutionOptions: Object.assign({}, DEFAULT_KEY_MODE_SUBSTITUTION_OPTIONS)
   };
@@ -907,6 +908,9 @@
       if (parsed && isFinite(parsed.threshold)) {
         gSettings.threshold = Math.max(0.10, Math.min(1.00, Number(parsed.threshold)));
       }
+      if (parsed && isFinite(parsed.fallbackMatchPercentage)) {
+        gSettings.fallbackMatchPercentage = Math.max(50, Math.min(100, Math.round(Number(parsed.fallbackMatchPercentage) / 5) * 5));
+      }
       if (parsed && typeof parsed.keyModeSubstitutionEnabled === "boolean") {
         gSettings.keyModeSubstitutionEnabled = parsed.keyModeSubstitutionEnabled;
       }
@@ -934,6 +938,17 @@
     return Math.max(0.10, Math.min(1.00, threshold));
   }
 
+  function getCurrentFallbackMatchPercentageSetting() {
+    var percentage = Number(gSettings.fallbackMatchPercentage);
+    if (!isFinite(percentage)) percentage = 75;
+    percentage = Math.max(50, Math.min(100, Math.round(percentage / 5) * 5));
+    return percentage;
+  }
+
+  function getCurrentFallbackThresholdScaleSetting() {
+    return getCurrentFallbackMatchPercentageSetting() / 100;
+  }
+
   function syncKeyModeSubstitutionControlsEnabled() {
     var keyMode = document.getElementById("options_keymode_substitution");
     var enabled = !!(keyMode && keyMode.checked);
@@ -955,6 +970,9 @@
     var threshold = document.getElementById("options_threshold");
     if (threshold) threshold.value = getCurrentThresholdSetting().toFixed(2);
 
+    var fallbackMatchPercentage = document.getElementById("options_fallback_match_percentage");
+    if (fallbackMatchPercentage) fallbackMatchPercentage.value = String(getCurrentFallbackMatchPercentageSetting());
+
     var keyMode = document.getElementById("options_keymode_substitution");
     if (keyMode) keyMode.checked = !!gSettings.keyModeSubstitutionEnabled;
 
@@ -968,6 +986,7 @@
 
   function resetSettingsControls() {
     gSettings.threshold = 0.75;
+    gSettings.fallbackMatchPercentage = 75;
     gSettings.keyModeSubstitutionEnabled = true;
     gSettings.keyModeSubstitutionOptions = getDefaultKeyModeSubstitutionOptions();
     saveToolSettings();
@@ -980,6 +999,13 @@
     var threshold = thresholdInput ? parseFloat(thresholdInput.value) : 0.75;
     if (!isFinite(threshold)) threshold = 0.75;
     gSettings.threshold = Math.max(0.10, Math.min(1.00, threshold));
+
+    var fallbackMatchPercentageInput = document.getElementById("options_fallback_match_percentage");
+    var fallbackMatchPercentage = fallbackMatchPercentageInput ? parseFloat(fallbackMatchPercentageInput.value) : 75;
+    if (!isFinite(fallbackMatchPercentage)) fallbackMatchPercentage = 75;
+    fallbackMatchPercentage = Math.max(50, Math.min(100, Math.round(fallbackMatchPercentage / 5) * 5));
+    gSettings.fallbackMatchPercentage = fallbackMatchPercentage;
+    if (fallbackMatchPercentageInput) fallbackMatchPercentageInput.value = String(fallbackMatchPercentage);
 
     var keyMode = document.getElementById("options_keymode_substitution");
     gSettings.keyModeSubstitutionEnabled = !!(keyMode && keyMode.checked);
@@ -1301,7 +1327,7 @@
       '<li>The tool can also accept an ABC Transcription Tools <b>?def=</b> share-link URL parameter containing deflate-encoded ABC tunes.</li>' +
       '<li>When multiple files are opened or dropped, their contents are concatenated in the input area separated by a blank line.</li>' +
       '<li>The <b>Generate Backup Chords</b> button is enabled only when the input box contains text.</li>' +
-      '<li>Use the <b>Settings</b> controls to set the minimum match score and key/mode substitution checking.</li>' +
+      '<li>Use the Settings controls to set the minimum match score, fallback match percentage, and key/mode substitution checking.</li>' +
       '<li>Click the <b>Clear</b> button to clear both the input and output areas.</li>' +
       '</ul>' +
       '<h4>Settings</h4>' +
@@ -1317,7 +1343,7 @@
       '<li><b>K:F</b> (one flat) may also be tested as <b>Gdor</b> or <b>Dmin</b>.</li>' +
       '</ul>' +
       '</li>' +
-      '<li>Advanced substitution choices are unchecked by default. Only enable these if your source tunes have <b>K:G</b> or <b>K:A</b> tags and you do not get good results using the more common substitutions above:' +
+      '<li>Additional key/mode choices are unchecked by default. Only enable these if your source tunes have <b>K:G</b> or <b>K:A</b> tags and you do not get good results using the more common substitutions above:' +
       '<ul>' +
       '<li><b>K:G</b> (one sharp) may also be tested as <b>Emin</b>.</li>' +
       '<li><b>K:A</b> (three sharps) may also be tested as <b>Bdor</b>.</li>' +
@@ -1327,6 +1353,11 @@
       '<li>When enabled, chord matching may be slower because tunes with one of the selected <b>K:</b> tags are also tested against the selected alternate key/mode choices.</li>' +
       '<li>If you are confident that you have proper keys and modes in the <b>K:</b> tags for all of your tunes, you can turn this feature off to avoid the additional key/mode substitution tests.</li>' +
       '<li>In all cases, even with this feature disabled, minor and Dorian tunes may also be scored against the same-tonic companion mode, for example <b>Emin</b> against <b>Edor</b>, and vice versa.</li>' +
+      '<li><b>Fallback match percentage</b> controls how low the tool may go when no normal match is found for a general measure.</li>' +
+      '<li>The fallback value is a percentage of the <b>Minimum match score</b>. For example, with a minimum match score of <b>0.75</b> and a fallback match percentage of <b>75%</b>, the lowest fallback score allowed is about <b>0.56</b>.</li>' +
+      '<li>Lower fallback percentages may add chords to more measures, but the copied chords may be less reliable. Higher fallback percentages are more selective and may leave more measures unchanged.</li>' +
+      '<li>Range is 50% - 100%. The default is <b>75%</b>.</li>' +
+      '<li>This setting is provided for additional match flexibility, but in most cases, it is probably best left at the default value.</li>' +
       '<li>Click <b>Save Settings</b> to save the current settings in this browser so they are restored the next time the tool is opened. You do not need to click <b>Save Settings</b> before generating chords; the current visible settings and checked substitution choices are used for the next run.</li>' +
       '</ul>' +
       '<h4>How matching works</h4>' +
@@ -1335,7 +1366,7 @@
       '<li>Each input measure is compared against already-chorded database measures and given a match score based mostly on the ordered note sequence and short melodic patterns, with small adjustments for measure length and chord suitability.</li>' +
       '<li>Match scores range from <b>0.00</b> to <b>1.00</b>, where <b>1.00</b> represents the strongest possible match.</li>' +
       '<li>The default minimum match score is <b>0.75</b>, and can be changed in the <b>Settings</b>. Higher values are stricter and may leave more measures unchanged; lower values find more matches, but may be less selective.</li>' +
-      '<li>If no normal match is found for a general measure, the tool can accept the best available match down to <b>75%</b> of the selected threshold.</li>' +
+      '<li>If no normal match is found for a general measure, the tool can accept the best available match down to the selected <b>Fallback match percentage</b> of the minimum match score.</li>' +
       '<li>For starts and endings of tunes, parts, repeated sections, and first/second endings, the tool first tries matching against database measures that are also starts or endings, then falls back to the general same rhythm/meter/key/mode candidate pool if needed.</li>' +
       '<li>Tune starts, repeat starts, part endings, and first/second endings are treated more flexibly so the generated chords do not disappear at important musical boundaries.</li>' +
       '<li>When two candidate measures have essentially the same melody match score, the tool uses the current tune key and mode as a tie-breaker and prefers the chord pattern that is more compatible with that key/mode.</li>' +
@@ -3176,6 +3207,7 @@
     }
 
     var threshold = getCurrentThresholdSetting();
+    var fallbackThresholdScale = getCurrentFallbackThresholdScaleSetting();
     var preTuneText = getABCPreTuneText(input);
     var tunes = splitTunes(input);
     var results = [];
@@ -3232,7 +3264,7 @@
         );
         await allowBrowserToUpdate();
 
-        var r = await processTuneAsync(tunes[i], { threshold: threshold, fallbackThresholdScale: 0.75, boundaryThreshold: 0.35, repeatSameChord: false, keyModeSubstitutionEnabled: !!gSettings.keyModeSubstitutionEnabled, keyModeSubstitutionOptions: Object.assign({}, gSettings.keyModeSubstitutionOptions) }, progressState);
+        var r = await processTuneAsync(tunes[i], { threshold: threshold, fallbackThresholdScale: fallbackThresholdScale, boundaryThreshold: 0.35, repeatSameChord: false, keyModeSubstitutionEnabled: !!gSettings.keyModeSubstitutionEnabled, keyModeSubstitutionOptions: Object.assign({}, gSettings.keyModeSubstitutionOptions) }, progressState);
         results.push(r.text);
         allStats.push(r.stats);
         setProgressModalPercent(progressState.totalMeasuresToMatch ?
@@ -3721,7 +3753,7 @@
           <input id="options_threshold" type="number" min="0.10" max="1.00" step="0.01" value="0.75" title="Minimum measure similarity score required before copying chords">
         </div>
         <div class="options_hint">
-          Default is <b>0.75</b>. Lower values find more matches but may be less selective.<br/>Higher values are stricter but may leave more measures unchanged.
+          Default is <b>0.75</b>.&nbsp;&nbsp;Lower values find more matches but may be less selective.<br/>Higher values are stricter but may leave more measures unchanged.
         </div>
 
         <div class="settings_check" style="margin-top:14px;">
@@ -3752,7 +3784,7 @@
               <span><b>K:F</b> (one flat) may also be tested as <b>Gdor</b> or <b>Dmin</b>.</span>
             </label>
             <div class="options_hint" style="margin-top:12px;">
-              <b>Advanced options:</b><br/>Only enable these if your source tunes have <b>K:G</b> or <b>K:A</b> tags and you do not get good results using the more common substitutions above.
+              <b>Additional key/mode options:</b><br/>Only enable these if your source tunes have <b>K:G</b> or <b>K:A</b> tags and you do not get good results using the more common substitutions above.
             </div>
             <label class="options_substitution_choice" for="options_substitution_Gmajor_Eminor">
               <input id="options_substitution_Gmajor_Eminor" type="checkbox">
@@ -3763,6 +3795,16 @@
               <span><b>K:A</b> (three sharps) may also be tested as <b>Bdor</b>.</span>
             </label>
           </div>
+        </div>
+
+        <h3 class="card_label" style="margin-top:18px;">Advanced Settings</h3>
+
+        <div class="settings_grid" style="margin-top:12px;">
+          <label for="options_fallback_match_percentage">Fallback match percentage</label>
+          <input id="options_fallback_match_percentage" type="number" min="50" max="100" step="5" value="75" title="Lowest fallback matching allowed, as a percentage of the minimum match score. Range is 50% to 100%.">
+        </div>
+        <div class="options_hint">
+          Default is <b>75%</b>.&nbsp;&nbsp;If no normal match is found, the tool will use a lower-scoring fallback match down to this percentage of the <b>Minimum match score</b>.<br/>Lower values add more chords but may be less accurate; higher values are more selective.
         </div>
 
         <div class="settings_buttons">
