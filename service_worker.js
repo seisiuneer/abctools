@@ -10,7 +10,11 @@
 //
 //
 //
-// Updated 2 Jun 2026 0830
+//
+//
+// Updated 5 Jun 2026 0830
+//
+//
 //
 //
 //
@@ -21,7 +25,7 @@
 //
 //
 
-const cacheName = 'abctoolscache-3246';
+const cacheName = 'abctoolscache-3247';
 
 const contentToCache = [
     'abctools.html',
@@ -70,6 +74,7 @@ const contentToCache = [
     'codemirror-min.js',
     'simple.min.js',
     'placeholder.min.js',
+    'abc-chord-matcher.js',
     'img/zoomin.png',
     'img/zoomout.png',
     'img/helpbutton.png',

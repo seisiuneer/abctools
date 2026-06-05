@@ -793,6 +793,11 @@
             </details>
 
             <details>
+            <summary><h3>Add Tune Backup Chords</h3></summary>
+            <a style="text-decoration:none;" href="#add_tune_backup_chords">Add Tune Backup Chords</a>
+            </details>
+
+            <details>
             <summary><h3>Export All Tunes in Multiple Formats</h3></summary>
             <a style="text-decoration:none;" href="#export_all">Export All Tunes</a>
             <a style="text-decoration:none;" href="#export_all_as_mp3">Export All Tunes as MP3</a>
@@ -1333,6 +1338,11 @@
                         <p class="toc"><a style="text-decoration:none;" href="#incipits_builder_pdf">Notes Incipits Builder</a></p>
                     </div>
 
+                    <button class="accordion" title="Click to expand/collapse this section">Add Tune Backup Chords</button>
+                    <div class="tocpanel">
+                        <p class="toc"><a style="text-decoration:none;" href="#add_tune_backup_chords">Add Tune Backup Chords</a></p>
+                    </div>
+ 
                     <button class="accordion" title="Click to expand/collapse this section">Export All Tunes in Multiple Formats</button>
                     <div class="tocpanel">
                         <p class="toc"><a style="text-decoration:none;" href="#export_all">Export All Tunes</a></p>
@@ -5415,7 +5425,7 @@
                 </a>
                 <p>Clicking the <strong>More Tools</strong> button brings up the More ABC Tools dialog:</p>
                 <div class="image_holder_p">
-                    <img class="image" loading="lazy" src="img/more_abc_tools_32.jpg"/>
+                    <img class="image" loading="lazy" src="img/more_abc_tools_33.jpg"/>
                 </div>
                 <p>At the bottom of the dialog there are four tabs of additional buttons that provide additional features organized by functional category.</p>
                 <p>Clicking a tab button will show the buttons for that functional category.</p>
@@ -5637,7 +5647,94 @@
                     <img class="image" loading="lazy" src="img/incipits_builder_example_5.jpg"/>
                 </div>
                 <p><strong>Note:</strong> You may run into occasional cases where the number of measures in the incipits doesn't exactly match the requested number.</p>
-                <p>You can try changing the %%barsperstaff value on any tune that has an issue.</p>                 <hr class="hidden-print" id="export_all">
+                <p>You can try changing the %%barsperstaff value on any tune that has an issue.</p>    
+
+                <hr class="hidden-print" id="add_tune_backup_chords">
+                <h1 class="page_break_always">Add Tune Backup Chords</h1>
+                <a href="#table_of_contents" class="index-pill hidden-print">
+                  Table of Contents
+                </a>
+                <p><strong>Add Tune Backup Chords</strong> adds backup chords to the current tune or all the tunes in the ABC editor.</p>
+                <div class="image_holder_p">
+                    <img class="image" loading="lazy" src="img/add_tune_backup_chords_1.jpg"/>
+                </div>
+                <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/cOXvnPq_dcQ" title="Add Tune Backup Chords Demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
+                <p>The feature does not attempt to determine harmony directly from music theory. Instead, it compares each measure against already-chorded tune settings from The Session and copies chords from the closest compatible measures it finds.</p>
+                <p>The generated chords should be treated as a practical starting point for review and editing rather than as a final authoritative chord setting.</p>
+                <hr>
+                <p><strong>Tunes to Process:</strong></p>
+                <p><strong>Current tune</strong> - Processes only the tune that is currently selected in the ABC editor.</p>
+                <p><strong>All tunes</strong> - Processes every tune in the ABC editor.</p>
+                <p>Tunes outside the selected processing scope are not changed.</p>
+                <p>Existing chord symbols in every processed tune are removed before matching. The matcher then inserts the chords from accepted database matches.</p>
+                <p>If no acceptable match is found for a measure, that measure is left without an inserted chord. Any previous chord in that measure will not be retained.</p>
+                <hr>
+                <p><strong>Match Settings:</strong></p>
+                <p><strong>Minimum match score</strong> - Sets how closely a database measure must match the source measure before its chords may be used.</p>
+                <p>The available range is <strong>0.10 through 1.00</strong> in increments of <strong>0.05</strong>. The default is <strong>0.75</strong>.</p>
+                <p>Higher values are more selective and may leave more measures without chords. Lower values accept less-similar measures and may add more chords, but the results may be less reliable.</p>
+                <p><strong>Fallback match percentage</strong> - Sets how far below the minimum match score the matcher may go when no normal match is found.</p>
+                <p>The available range is <strong>50% through 100%</strong> in increments of <strong>5%</strong>. The default is <strong>75%</strong>.</p>
+                <p>The fallback percentage is applied to the selected minimum match score. For example, a minimum match score of <strong>0.75</strong> with a fallback match percentage of <strong>75%</strong> permits a fallback score of approximately <strong>0.56</strong>.</p>
+                <p>Lower fallback percentages may add chords to more measures but may produce less reliable choices. Higher fallback percentages are more selective.</p>
+                <p>The recommended starting settings are:</p>
+                <ul>
+                  <li><strong>Minimum match score:</strong> 0.75</li>
+                  <li><strong>Fallback match percentage:</strong> 75%</li>
+                </ul>
+                <p>Starts and endings of tunes, repeated sections, parts, and alternate endings are handled more flexibly than ordinary measures so that important musical boundaries have a better chance of receiving a chord.</p>
+                <hr>
+                <p><strong>Key and Mode Substitution Checking:</strong></p>
+                <p>The matcher normally uses the meter, key, and mode declared in each tune's <strong>M:</strong> and <strong>K:</strong> tags to select compatible database measures.</p>
+                <p>Correct <strong>K:</strong> tags produce the best results. However, some ABC tunes use a major-key signature in the <strong>K:</strong> tag even though the tune is actually in a related modal or minor key.</p>
+                <p><strong>Enable limited key/mode substitution checking</strong> allows the matcher to test selected alternate interpretations of these common cases.</p>
+                <p>The common substitution choices are enabled by default:</p>
+                <ul>
+                  <li><strong>D major alternatives</strong> - Also tests E Dorian, B minor, and A Mixolydian.</li>
+                  <li><strong>G major alternatives</strong> - Also tests D Mixolydian and A Dorian.</li>
+                  <li><strong>C major alternatives</strong> - Also tests D Dorian and A minor.</li>
+                  <li><strong>F major alternatives</strong> - Also tests G Dorian and D minor.</li>
+                </ul>
+                <p>The following advanced substitutions are disabled by default:</p>
+                <ul>
+                  <li><strong>Test G major as E minor</strong></li>
+                  <li><strong>Test A major as B Dorian</strong></li>
+                </ul>
+                <p>Enable the advanced substitutions only when the source tunes use those major <strong>K:</strong> tags and the common substitutions do not produce good results.</p>
+                <p>The matcher uses an alternate key or mode only when it provides a clearly better overall match than the declared key and mode.</p>
+                <p>If an alternate interpretation is selected, the original <strong>K:</strong> tag is not changed.</p>
+                <p>Explanatory <strong>N:</strong> tags are added to the end of the tune describing the alternate key or mode that was used.</p>
+                <p>Minor and Dorian tunes may also be compared against the same-tonic companion mode even when limited key/mode substitution checking is disabled. For example, an E minor tune may also use compatible E Dorian database measures, and vice versa.</p>
+                <hr>
+                <p><strong>Running the Chord Matcher:</strong></p>
+                <p>Click <strong>Add Chords</strong> to begin processing with the settings shown in the dialog.</p>
+                <p>The selected settings are automatically saved in the browser when <strong>Add Chords</strong> is clicked. They are restored the next time the dialog is opened.</p>
+                <p>While matching is in progress, a status dialog shows the current tune, matching activity, and overall progress.</p>
+                <p>Click <strong>Cancel</strong> in the progress dialog to stop the operation.</p>
+                <p>When processing completes, the selected tune or tunes are replaced in the editor with the chorded versions and the notation is redrawn. A summary reports how many tunes were processed and whether any tunes were skipped.</p>
+                <hr>
+                <p><strong>How Measures Are Matched:</strong></p>
+                <p>Each source measure is compared with compatible chorded measures from The Session database.</p>
+                <p>The matcher primarily compares the ordered melody notes and short melodic patterns. Measure length, tune rhythm, key, mode, chord suitability, and whether a measure occurs at a musical boundary are also considered.</p>
+                <p>When an <strong>R:</strong> rhythm tag is available, measures from database tunes with the same rhythm are preferred. If no suitable rhythm-specific match is found, the matcher can fall back to the broader compatible meter, key, and mode candidate pool.</p>
+                <p>For a 4/4 tune without an <strong>R:</strong> tag, reel is used as the initial rhythm preference. The matcher can still fall back to other compatible 4/4 database material.</p>
+                <p>Grace notes, roll marks, and tuplet markers are handled so that they do not incorrectly distort the melody comparison or chord placement.</p>
+                <p>Chord positions are restricted to appropriate beats for the tune's meter. Repeated identical chord symbols are normally suppressed.</p>
+                <p>Starts and endings of tunes, parts, repeats, and first or second endings first try database measures with similar boundary roles before falling back to the general candidate pool.</p>
+                <p>When two candidate measures have nearly the same melody score, the matcher prefers the chord pattern that is more compatible with the selected key and mode.</p>
+                <p>If no database measure with usable chords meets the required score, no chord is inserted into that measure.</p>
+                <hr>
+                <p><strong>Skipped Tunes:</strong></p>
+                <p>Tunes with more than one <strong>V:</strong> voice tag are skipped because the matcher currently supports only single-voice tunes.</p>
+                <p>Tunes containing a key or mode change after the tune body begins, including inline <strong>[K:]</strong> changes, are also skipped.</p>
+                <p>Tunes with lyrics containing <strong>W:</strong> or <strong>w:</strong> tags are skipped.</p>
+                <p>A skipped tune is retained and an explanatory <strong>N:</strong> tag is added to indicate why it was not processed.</p>
+                <hr>
+                <p><strong>Limitations:</strong></p>
+                <p>Tunes in unusual keys, modes, meters, or musical styles may have fewer compatible database measures and may therefore receive limited or unexpected results.</p>
+                <p>The source settings from The Session are crowdsourced. The matcher can determine that a source measure is similar, but it cannot determine whether every chord entered by a contributor is musically ideal.</p>
+                <p>Review and edit the generated chords as needed.</p>
+                <hr class="hidden-print" id="export_all">
                 <h1 class="page_break_always">Export All Tunes</h1>
                 <a href="#table_of_contents" class="index-pill hidden-print">
                   Table of Contents

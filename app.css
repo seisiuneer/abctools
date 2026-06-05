@@ -1974,7 +1974,7 @@ body.noui svg {
 .modal_flat_wide_content { font-family:"Helvetica"; margin: 20px 0px;}
 .modal_flat_wide_input { margin: 20px 0px;}
 .modal_flat_wide_buttons { text-align:center;margin-top: 40px; }
-.modal_flat_wide_main button { background-color: #ccc; color: #000; padding: 10px 20px; border: 0px; cursor: pointer; outline: none; width: 125px;  }
+.modal_flat_wide_main button { background-color: #ccc; color: #000; padding: 10px 20px; border: 0px; cursor: pointer; outline: none; width: 140px;  }
 .modal_flat_wide_cancel {margin-left: 5px;}
 
 
@@ -3240,7 +3240,6 @@ margin-top:-7px;
 #configure_batch_mp3_export{
 	height:42px;
 	padding:12px;
-	margin-left:24px;
 }
 
 #configure_swing_explorer{
@@ -6444,3 +6443,139 @@ body.flat-buttons .btn {
   box-shadow: none !important;
   background-image: none !important;
 }
+
+/* =========================================================
+   Tune Backup Chord Matcher
+   ========================================================= */
+
+/* Match the other ABC Features buttons in the More Tools dialog. */
+#advanced-controls-dialog #incipitsbuilder {
+  margin-right: 24px;
+}
+
+#addtunebackupchords {
+  height: 42px;
+  padding: 12px;
+}
+
+.btn-addtunebackupchords {
+  --color: black;
+  --background-color: #f0fff0;
+}
+
+/* DayPilot form styling copied from the tool's other configuration dialogs. */
+.chord_matcher_dialog_title {
+  text-align: center;
+  margin: 0 0 18px 0;
+  font-size: 16pt;
+  font-family: Helvetica, Arial, sans-serif;
+}
+
+.chord_matcher_dialog_intro {
+  margin: 0 0 22px 0;
+  font-size: 12pt;
+  line-height: 18pt;
+  font-family: Helvetica, Arial, sans-serif;
+}
+
+.chord_matcher_dialog_hint {
+  margin: 8px 0 14px 0;
+  font-size: 11pt;
+  line-height: 17pt;
+  font-family: Helvetica, Arial, sans-serif;
+}
+
+.chord_matcher_dialog_section {
+  margin: 14px 0 5px 0;
+  font-size: 11pt;
+  line-height: 17pt;
+  font-family: Helvetica, Arial, sans-serif;
+}
+
+.chord_matcher_dialog_advanced {
+  margin-top: 18px;
+}
+
+.chord_matcher_dialog_footnote {
+  margin: 20px 0 0 0;
+  font-size: 10.5pt;
+  line-height: 16pt;
+  font-family: Helvetica, Arial, sans-serif;
+}
+
+.configure_chord_matcher_select {
+  display: flex;
+  align-items: center;
+  margin-top: 18px;
+  margin-right: 12px;
+  font-size: 12pt;
+  font-family: Helvetica, Arial, sans-serif;
+}
+
+.configure_chord_matcher_select > select {
+  display: inline;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' fill='%238C98F2'><polygon points='0,0 100,0 50,50'/></svg>") no-repeat;
+  background-size: 12px;
+  background-position: calc(100% - 10px) center;
+  background-color: #efefef;
+  color: black;
+  font-size: 11pt;
+  font-family: Helvetica, Arial, sans-serif;
+  height: 32px;
+  min-width: 120px;
+  margin-left: 10px;
+  margin-top: -7px;
+  padding: 0 34px 0 10px;
+  border: 1px solid #aaa;
+  border-radius: 2px;
+  box-sizing: border-box;
+}
+
+.configure_chord_matcher_scope_select > select {
+  min-width: 205px;
+}
+
+.configure_chord_matcher_checkbox {
+  display: flex;
+  align-items: flex-start;
+  margin-top: 8px;
+  font-size: 12pt;
+  line-height: 18pt;
+  font-family: Helvetica, Arial, sans-serif;
+}
+
+.configure_chord_matcher_checkbox_main {
+  margin-top: 18px;
+}
+
+.configure_chord_matcher_checkbox_indented {
+  margin-left: 18px;
+}
+
+.configure_chord_matcher_checkbox input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  margin-top: 1px;
+  margin-right: 8px;
+  flex: 0 0 auto;
+}
+
+@media (max-width: 560px) {
+  .configure_chord_matcher_select {
+    display: block;
+  }
+
+  .configure_chord_matcher_select > select {
+    display: block;
+    width: 100%;
+    margin: 8px 0 0 0;
+  }
+
+  .configure_chord_matcher_checkbox_indented {
+    margin-left: 8px;
+  }
+}
+

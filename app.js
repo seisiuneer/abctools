@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3246_060226_1400";
+var gVersionNumber = "3247_060526_0830";
 
 var gMIDIInitStillWaiting = false;
 
@@ -28492,13 +28492,13 @@ async function processShareLink() {
       // Show update message?
       if (gLocalStorageAvailable){
 
-        var updatePresented = localStorage.sawUpdate_2jun2026;
+        var updatePresented = localStorage.sawUpdate_5jun2026;
 
         if (updatePresented != "true") {
 
           showWhatsNewScreen();
 
-          localStorage.sawUpdate_2jun2026 = true;
+          localStorage.sawUpdate_5jun2026 = true;
 
         }
 
@@ -50937,6 +50937,10 @@ function AdvancedControlsDialog() {
   modal_msg += '<p style="text-align:center;margin-top:24px;">';
   modal_msg += '<input id="phrasebuilder" class="advancedcontrols btn btn-phrasebuilder" onclick="PhraseBuilder(null,null)" type="button" value="Phrase Builder">';
   modal_msg += '<input id="incipitsbuilder" class="advancedcontrols incipitsbuilder btn btn-incipitsbuilder" onclick="IncipitsBuilderDialog()" type="button" value="Notes Incipits Builder">';
+  modal_msg += '<input id="addtunebackupchords" class="advancedcontrols btn btn-addtunebackupchords" onclick="AddTuneBackupChordsDialog()" type="button" value="Add Tune Backup Chords" title="Adds backup chords to the current tune or all tunes by matching measures against chorded settings from The Session">';
+  modal_msg += '</p>';
+
+  modal_msg += '<p style="text-align:center;margin-top:24px;">';
   modal_msg += '<input id="configure_batch_mp3_export" class="advancedcontrols btn btn-batchmp3export" onclick="ExportAll()" type="button" value="Export All Tunes"' + exportAllTunesStyle + '>';
 
   modal_msg += '</p></div>';
@@ -56355,7 +56359,7 @@ function showWhatsNewScreen() {
   modal_msg += 'background: linear-gradient(135deg, #24103f 0%, #4b1f73 52%, #7b3fb2 100%);';
   modal_msg += 'box-shadow: 0 6px 16px rgba(0,0,0,0.14); color:#fff;">';
   modal_msg += '<div style="font-size:20pt; line-height:24pt; font-weight:bold;">What&apos;s New</div>';
-  modal_msg += '<div style="font-size:11pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 2 June 2026</div>';
+  modal_msg += '<div style="font-size:11pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 5 June 2026</div>';
   modal_msg += '</div>';
 
   // Short intro
@@ -56366,17 +56370,19 @@ function showWhatsNewScreen() {
   // Feature card
   modal_msg += '<div style="margin:10px 0 6px 0; padding:0px 12px; border-radius:12px;';
   modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);">';
-  modal_msg += '<p><strong>Improved Find and Replace</strong>:</p>';
-  modal_msg += '<p><b>Find and Replace</b> now starts its search based on the current editor text cursor postion.</p>';
-  modal_msg += '<p>Previously it would always start searching from the top of the text.</p>';
+  modal_msg += '<p><strong>Add Tune Backup Chords</strong> is now available from the <b>More Tools</b> dialog:</p>';
+  modal_msg += '<p>You can now add automatically add backup chords to traditional Irish tunes based on measure-by-measure pattern matching from compatible tunes on The Session directly from the tool.</p>';
+  modal_msg += '<p>External links to the original standalone <b>ABC Tune Backup Chord Solver</b> are still available from the <b>Other ABC Tools</b> and <b>Open ABC in External Tool</b> dialogs.';
   modal_msg += '</div>';
 
   // Feature card
   modal_msg += '<div style="margin:10px 0 6px 0; padding:0px 12px; border-radius:12px;';
   modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);">';
-  modal_msg += '<p><strong>New Tool on the "Other ABC Tools" and "Open ABC in External Tool" dialogs</strong>:</p>';
-  modal_msg += '<p>Added the <strong>ABC Tune Backup Chord Solver</strong> to the <strong>Other ABC Tools</strong> and <strong>Open ABC in External Tool</strong> dialogs.</p>';
+  modal_msg += '<p><strong>Improved Find and Replace</strong>:</p>';
+  modal_msg += '<p><b>Find and Replace</b> now starts its search based on the current editor text cursor postion.</p>';
+  modal_msg += '<p>Previously it would always start searching from the top of the text.</p>';
   modal_msg += '</div>';
+
 
   modal_msg += '</div>'; // wrapper
 
@@ -63031,13 +63037,13 @@ async function DoStartup() {
   // Show update message?
   if (gLocalStorageAvailable && (!isFromShare)){
 
-    var updatePresented = localStorage.sawUpdate_2jun2026;
+    var updatePresented = localStorage.sawUpdate_5jun2026;
 
     if (updatePresented != "true") {
 
       showWhatsNewScreen();
 
-      localStorage.sawUpdate_2jun2026 = true;
+      localStorage.sawUpdate_5jun2026 = true;
 
     }
 
