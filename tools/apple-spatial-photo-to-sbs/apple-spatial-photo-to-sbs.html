@@ -1000,6 +1000,8 @@
   
   #heightRange:focus,
   #heightRange:focus-visible,
+  #digitalZoomRange:focus,
+  #digitalZoomRange:focus-visible,
   #stereoDepthRange:focus,
   #stereoDepthRange:focus-visible,
   #sbsCropRange:focus,
@@ -1143,6 +1145,19 @@
       </div>
     </div>
     
+    <div id="digitalZoomControl" style="margin-top:12px;">
+      <div class="controlHeader">
+        <label for="digitalZoomRange">Zoom</label>
+        <div class="controlHeaderActions">
+          <button id="resetDigitalZoomButton" class="smallResetButton" type="button" title="Reset Zoom to 100%.">Reset</button>
+        </div>
+      </div>
+      <div class="row">
+        <input id="digitalZoomRange" type="range" min="100" max="300" step="1" value="100" title="Zoom both left and right views equally from 100% to 300%. The zoom is centered, preserves the original eye-image aspect ratio, and is applied before Horizontal Shift and Image Rotation. When multiple images are loaded, this value is saved separately for each image.">
+        <div id="digitalZoomValue" class="rangeValue">100%</div>
+      </div>
+    </div>
+
     <div class="grid" style="margin-top:12px;">
       <div id="imageShiftControl">
         <div class="controlHeader">
@@ -1221,7 +1236,7 @@
 
     <div id="downloadActions" class="actions" style="display:none;">
       <a id="downloadLink" class="download" download="spatial-photo.jpg" title="Generate the final JPEG for the currently visible image at the specified output height, then download it or, on iOS, open the iOS Share Sheet. On desktop, Shift-click to export the current adjusted left and right views, using the selected Stereo Order, as separate JPEG files in a ZIP.">Export Current JPEG</a>
-      <a id="downloadAllLink" class="download" download="spatial-photo-batch.zip" title="Generate JPEGs for all loaded images. Horizontal Shift, Horizontal Shift range, Image Rotation, and Image Rotation range use each image’s individual settings; the other controls use the current settings. On desktop, Shift-click to export separate adjusted left/right JPEG files using the selected Stereo Order for every loaded image.">Export All as ZIP</a>
+      <a id="downloadAllLink" class="download" download="spatial-photo-batch.zip" title="Generate JPEGs for all loaded images. Zoom, Horizontal Shift, Horizontal Shift range, Image Rotation, and Image Rotation range use each image’s individual settings; the other controls use the current settings. On desktop, Shift-click to export separate adjusted left/right JPEG files using the selected Stereo Order for every loaded image.">Export All as ZIP</a>
     </div>
 
     <div class="meta">
@@ -1274,6 +1289,10 @@
   const rotationValue = document.getElementById("rotationValue");
   const rotationRangeMode = document.getElementById("rotationRangeMode");
   const resetRotationButton = document.getElementById("resetRotationButton");
+  const digitalZoomControl = document.getElementById("digitalZoomControl");
+  const digitalZoomRange = document.getElementById("digitalZoomRange");
+  const digitalZoomValue = document.getElementById("digitalZoomValue");
+  const resetDigitalZoomButton = document.getElementById("resetDigitalZoomButton");
   const imageShiftControl = document.getElementById("imageShiftControl");
   const stereoDepthRange = document.getElementById("stereoDepthRange");
   const stereoDepthValue = document.getElementById("stereoDepthValue");
@@ -1386,6 +1405,12 @@
     }
 
     return name;
+  }
+
+  function getDigitalZoomFilenameSuffix() {
+    const zoom = Math.max(100, Math.min(300, Math.round(Number(digitalZoomRange?.value) || 100)));
+
+    return zoom === 100 ? "" : `-Z${zoom}`;
   }
 
   function isIOSDevice() {
@@ -2977,6 +3002,7 @@
     const baseName = (currentFile?.name || fileInput.files[0]?.name || "spatial-photo").replace(/\.[^.]+$/, "");
 
     const formatSuffix = getOutputFormatSuffix();
+    const zoomSuffix = getDigitalZoomFilenameSuffix();
     const separation = Number(stereoDepthRange.value) || 0;
     const separationText = separation.toFixed(1);
     const separationSafeText = separationText.replace(".", "p");
@@ -3002,10 +3028,10 @@
     }
 
     if (!isSideBySideMode()) {
-      return `${baseName}-${formatSuffix}-${theStyle}${separationSuffix}${rotationSuffix}-${outputHeight}h.jpg`;
+      return `${baseName}-${formatSuffix}-${theStyle}${zoomSuffix}${separationSuffix}${rotationSuffix}-${outputHeight}h.jpg`;
     }
 
-    return `${baseName}-${formatSuffix}-${theStyle}${sbsCropSuffix}${rotationSuffix}-${outputHeight}h.jpg`;
+    return `${baseName}-${formatSuffix}-${theStyle}${zoomSuffix}${sbsCropSuffix}${rotationSuffix}-${outputHeight}h.jpg`;
   }
 
   function promptForSaveName() {
@@ -3408,6 +3434,10 @@
       stereoDepthRange.value = "0";
     }
 
+    if (digitalZoomRange) {
+      digitalZoomRange.value = "100";
+    }
+
     updateRotationRangeMode();
     updateStereoDepthRangeMode();
     updateControls();
@@ -3419,6 +3449,7 @@
       horizontalShiftRangeMode: "normal",
       rotation: 0,
       rotationRangeMode: "normal",
+      digitalZoom: 100,
       userModified: false
     };
   }
@@ -3445,6 +3476,7 @@
     settings.horizontalShiftRangeMode = stereoDepthRangeMode?.value === "wide" ? "wide" : "normal";
     settings.rotation = Number(rotationRange?.value) || 0;
     settings.rotationRangeMode = rotationRangeMode?.value === "wide" ? "wide" : "normal";
+    settings.digitalZoom = Math.max(100, Math.min(300, Number(digitalZoomRange?.value) || 100));
     settings.userModified = !!userModified;
   }
 
@@ -3479,6 +3511,10 @@
         rotationRange.value = String(Number(settings.rotation) || 0);
       }
 
+      if (digitalZoomRange) {
+        digitalZoomRange.value = String(Math.max(100, Math.min(300, Number(settings.digitalZoom) || 100)));
+      }
+
       updateControls();
     } finally {
       applyingPerImageAdjustmentSettings = false;
@@ -3494,6 +3530,11 @@
 
     const separation = Number(stereoDepthRange.value) || 0;
     stereoDepthValue.textContent = `${separation > 0 ? "+" : ""}${separation.toFixed(1)}%`;
+
+    if (digitalZoomValue) {
+      const zoom = Math.max(100, Math.min(300, Number(digitalZoomRange?.value) || 100));
+      digitalZoomValue.textContent = `${Math.round(zoom)}%`;
+    }
 
     if (sbsCropValue) {
       const crop = Number(sbsCropRange?.value) || 0;
@@ -4072,6 +4113,62 @@
     return ctx.getImageData(0, 0, width, height);
   }
 
+  function createDigitalZoomCanvas(sourceCanvas, width, height, zoomPercent) {
+    const zoom = Math.max(100, Math.min(300, Number(zoomPercent) || 100));
+
+    if (zoom <= 100) {
+      return sourceCanvas;
+    }
+
+    const out = document.createElement("canvas");
+    out.width = width;
+    out.height = height;
+
+    const ctx = out.getContext("2d", { alpha: false });
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = "high";
+
+    const scale = zoom / 100;
+    let cropWidth = sourceCanvas.width / scale;
+    let cropHeight = sourceCanvas.height / scale;
+    const outputAspect = width / Math.max(1, height);
+
+    if (cropWidth / cropHeight > outputAspect) {
+      cropWidth = cropHeight * outputAspect;
+    } else {
+      cropHeight = cropWidth / outputAspect;
+    }
+
+    cropWidth = Math.max(1, Math.min(sourceCanvas.width, cropWidth));
+    cropHeight = Math.max(1, Math.min(sourceCanvas.height, cropHeight));
+
+    const sourceX = (sourceCanvas.width - cropWidth) / 2;
+    const sourceY = (sourceCanvas.height - cropHeight) / 2;
+
+    ctx.drawImage(sourceCanvas, sourceX, sourceY, cropWidth, cropHeight, 0, 0, width, height);
+
+    return out;
+  }
+
+  function applyDigitalZoomToStereoViews(left, right, zoomPercent) {
+    const zoom = Math.max(100, Math.min(300, Number(zoomPercent) || 100));
+
+    if (zoom <= 100) {
+      return { left, right };
+    }
+
+    return {
+      left: {
+        ...left,
+        canvas: createDigitalZoomCanvas(left.canvas, left.width, left.height, zoom)
+      },
+      right: {
+        ...right,
+        canvas: createDigitalZoomCanvas(right.canvas, right.width, right.height, zoom)
+      }
+    };
+  }
+
   function createRotatedCanvas(sourceCanvas, width, height, rotationDegrees) {
     const rotation = Number(rotationDegrees) || 0;
 
@@ -4568,6 +4665,12 @@
     heightValue.classList.toggle("disabled", isBusy);
     heightValue.setAttribute("aria-disabled", isBusy ? "true" : "false");
     resetHeightButton.disabled = isBusy;
+    if (digitalZoomRange) {
+      digitalZoomRange.disabled = isBusy;
+    }
+    if (resetDigitalZoomButton) {
+      resetDigitalZoomButton.disabled = isBusy;
+    }
     rotationRange.disabled = isBusy;
     rotationRangeMode.disabled = isBusy;
     resetRotationButton.disabled = isBusy;
@@ -4630,6 +4733,14 @@
 
       if (eyeOrder.value === "swap") {
         [left, right] = [right, left];
+      }
+
+      const digitalZoomPercent = Math.max(100, Math.min(300, Number(digitalZoomRange?.value) || 100));
+
+      if (digitalZoomPercent > 100) {
+        const zoomed = applyDigitalZoomToStereoViews(left, right, digitalZoomPercent);
+        left = zoomed.left;
+        right = zoomed.right;
       }
 
       const imageRotationDegrees = Number(rotationRange.value) || 0;
@@ -4878,6 +4989,10 @@
       }
       setExportLinksVisible(true);
 
+      const zoomNote = digitalZoomPercent > 100
+        ? `, zoom ${Math.round(digitalZoomPercent)}%`
+        : "";
+
       const rotationNote = imageRotationDegrees
         ? `, rotation ${imageRotationDegrees > 0 ? "+" : ""}${imageRotationDegrees.toFixed(1)}°`
         : "";
@@ -4897,10 +5012,10 @@
       if (isSideBySideMode()) {
         const eyeWidth = Math.floor(canvas.width / 2);
         outputMeta.textContent =
-          `${modeLabel} JPEG: ${canvas.width}×${canvas.height}, each eye ${eyeWidth}×${canvas.height}, ${formatBytes(blob.size)}${cropNote}${separationNote}${borderNote}${rotationNote}.`;
+          `${modeLabel} JPEG: ${canvas.width}×${canvas.height}, each eye ${eyeWidth}×${canvas.height}, ${formatBytes(blob.size)}${cropNote}${zoomNote}${separationNote}${borderNote}${rotationNote}.`;
       } else {
         outputMeta.textContent =
-          `${modeLabel} JPEG: ${canvas.width}×${canvas.height}, ${formatBytes(blob.size)}${separationNote}${borderNote}${rotationNote}.`;
+          `${modeLabel} JPEG: ${canvas.width}×${canvas.height}, ${formatBytes(blob.size)}${zoomNote}${separationNote}${borderNote}${rotationNote}.`;
       }
 
       setStatus(`${modeLabel} JPEG generated.`, "ok");
@@ -4922,18 +5037,18 @@
           <li>Select one or more Apple Spatial Photo HEIC files using the file chooser.<br/>On desktop, you can also drag and drop one or more HEIC files onto the top control panel.</li>
           <li>Adjust <b>Output JPEG Height</b> as desired. Initial value is read from the input image.<br/>Use the slider, or click the height value display to enter an exact height.</li>
           <li>Select an <b>Output Format</b> and <b>Stereo Order</b>.<br/>Use <b>Side-by-Side</b> for stereo pairs, or one of the <b>Red / Cyan Anaglyph</b> formats for viewing with red/cyan 3D glasses. Use the <b>Border</b> selector to choose no border or to include a black border in the exported JPEG.</li>
-          <li>Optionally adjust <b>Side-by-Side Center Crop</b> (Side-by-Side format only), <b>Horizontal Shift</b>, and/or <b>Image Rotation</b> as required to optimize the stereo view. Use the <b>Side-by-Side Center Crop</b> slider, or click its numeric value display to enter an exact crop percentage.</li>
-          <li>When multiple HEIC files are loaded, <b>Horizontal Shift</b>, <b>Horizontal Shift range</b>, <b>Image Rotation</b>, and <b>Image Rotation range</b> are tracked separately for each image. When you move between images, those controls return to the saved values for the displayed image, or to 0 with the normal range if that image has not been individually adjusted. Opening a new set of HEIC files resets the per-image <b>Horizontal Shift</b> and <b>Image Rotation</b> settings. <b>Side-by-Side Center Crop</b> and <b>Border</b> are shared settings that are preserved, saved, and restored the next time the tool is opened.</li>
+          <li>Optionally adjust <b>Zoom</b>, <b>Side-by-Side Center Crop</b> (Side-by-Side format only), <b>Horizontal Shift</b>, and/or <b>Image Rotation</b> as required to optimize the stereo view. Zoom applies equally to both eyes using a centered crop with the same aspect ratio as the original eye image, before shift and rotation. Use the <b>Side-by-Side Center Crop</b> slider, or click its numeric value display to enter an exact crop percentage.</li>
+          <li>When multiple HEIC files are loaded, <b>Zoom</b>, <b>Horizontal Shift</b>, <b>Horizontal Shift range</b>, <b>Image Rotation</b>, and <b>Image Rotation range</b> are tracked separately for each image. When you move between images, those controls return to the saved values for the displayed image. If that image has not been individually adjusted, Zoom returns to 100%, while Horizontal Shift and Image Rotation return to 0 with their normal ranges. Opening a new set of HEIC files resets the per-image <b>Zoom</b>, <b>Horizontal Shift</b>, and <b>Image Rotation</b> settings. <b>Side-by-Side Center Crop</b> and <b>Border</b> are shared settings that are preserved, saved, and restored the next time the tool is opened.</li>
           <li>On desktop browsers, move the mouse over the preview area to reveal the full-screen button at the top right of the preview. On iPad, the button remains visible at the top right. The button is hidden on iPhone and while full-screen mode is active. Press Escape or use the browser full-screen control to return to the normal tool view.</li>
           <li>If more than one HEIC file is loaded, on desktop browsers, move the mouse over the preview area to reveal the first, previous, next, and last image arrow buttons at the edges of the preview that you can use to switch between the images (always visible on iOS).<br/>Keyboard shortcuts are also available throughout the main tool: <b>Ctrl+Shift+[</b> for first image, <b>Ctrl+[</b> for previous image, <b>Ctrl+]</b> for next image, and <b>Ctrl+Shift+]</b> for last image.</li>
           <li>The normal on-page preview is optimized for responsiveness, while full-screen preview automatically uses a higher preview resolution when useful for sharper viewing on high-DPI displays.</li>
           <li>For side-by-side image viewing, you can make the side-by-side preview smaller to help visually fuse the images while making adjustments. Either zoom out the browser window or resize the window narrower to make the preview smaller.</li>
           <li>To export the currently displayed image, click <b>Export Current JPEG</b>. On desktop, the browser downloads the JPEG. On iOS, the iOS Share Sheet opens so you can save or share the JPEG.</li>
-          <li>When multiple images are loaded, click <b>Export All as ZIP</b> to export all loaded images that contain a valid stereo pair. <b>Horizontal Shift</b>, <b>Image Rotation</b>, and their slider range settings use each image’s individual saved settings; the other controls use the current settings. During batch export, a progress dialog shows the current image and overall progress; click <b>Cancel</b> during ZIP generation to stop after the current processing step finishes.</li>
+          <li>When multiple images are loaded, click <b>Export All as ZIP</b> to export all loaded images that contain a valid stereo pair. <b>Zoom</b>, <b>Horizontal Shift</b>, <b>Image Rotation</b>, and their slider range settings use each image’s individual saved settings; the other controls use the current settings. During batch export, a progress dialog shows the current image and overall progress; click <b>Cancel</b> during ZIP generation to stop after the current processing step finishes.</li>
           <li>During batch export, any HEIC file that does not contain the two image views required for a spatial photo is skipped automatically. The exported ZIP filename and status message reflect the actual number of images processed. If none of the selected files contain a stereo pair, the ZIP export is aborted.</li>
-          <li>On desktop, Shift-click <b>Export Current JPEG</b> to export the currently displayed adjusted left and right views, using the selected <b>Stereo Order</b>, as separate JPEG files in a ZIP. The files are named from the source image filename with <b>-l</b> and <b>-r</b> suffixes.</li>
+          <li>On desktop, Shift-click <b>Export Current JPEG</b> to export the currently displayed adjusted left and right views, using the selected <b>Stereo Order</b>, as separate JPEG files in a ZIP. The files are named from the source image filename with <b>-l</b> and <b>-r</b> suffixes. When Zoom is not 100%, the filename also includes a <b>-Z###</b> suffix.</li>
           <li>On iOS, long-press <b>Export Current JPEG</b> to export the current adjusted left/right image pair as separate JPEG files in a ZIP.</li>
-          <li>On desktop, Shift-click <b>Export All as ZIP</b> to export separate adjusted left/right JPEG files for every loaded image that contains a valid stereo pair. The separate left/right files use the selected <b>Output JPEG Height</b>, selected <b>Stereo Order</b>, and each image’s saved <b>Horizontal Shift</b> and <b>Image Rotation</b> settings.</li>
+          <li>On desktop, Shift-click <b>Export All as ZIP</b> to export separate adjusted left/right JPEG files for every loaded image that contains a valid stereo pair. The separate left/right files use the selected <b>Output JPEG Height</b>, selected <b>Stereo Order</b>, and each image’s saved <b>Zoom</b>, <b>Horizontal Shift</b>, and <b>Image Rotation</b> settings.</li>
           <li>On iOS, long-press <b>Export All as ZIP</b> to export adjusted left/right image pairs for all loaded images that contain a valid stereo pair in a ZIP.</li>
           <li>On iOS, after any ZIP is ready, tap <b>Share ZIP</b> to open the iOS Share Sheet, then choose <b>Save to Files</b> or another share destination. Tap <b>Cancel</b> to close the ZIP dialog without sharing.</li>
         </ol>
@@ -4941,12 +5056,13 @@
         <h4>Controls</h4>
         <ul>
           <li><b>File input</b>: Opens one or more Apple Spatial Photo HEIC files. On desktop, you can also drag and drop one or more HEIC files onto the top control panel.</li>
+          <li><b>Zoom</b>: Applies the same centered zoom to both eye images from 100% to 300%. The crop keeps the original left/right image aspect ratio, is available in both Side-by-Side and Anaglyph modes, and is applied before Horizontal Shift and Image Rotation. Each loaded image keeps its own Zoom value. When Zoom is not 100%, the default exported JPEG filename includes a <b>-Z###</b> suffix, such as <b>-Z150</b>.</li>
           <li><b>Output JPEG Height</b>: Sets the final exported JPEG height. The exported JPEG width is calculated automatically from the selected height and the final output aspect ratio.<br/>For Side-by-Side output, the final JPEG uses the selected height and creates a side-by-side image with the two eye views placed left and right.<br/>For Anaglyph output, the final JPEG uses the selected height and creates a single red/cyan image whose width is calculated from the anaglyph aspect ratio.<br/>Use the slider, or click the numeric height value to enter a specific height.<br/>Entered values are clamped to the supported 768 to 8192 pixel range.<br/>The <b>Reset</b> button resets the output height to the original input height, clamped to the supported range.</li>
           <li><b>Output Format</b>: Chooses between Side-by-Side output and several common anaglyph formats.</li>
           <li><b>Border</b>: Chooses the optional exported border thickness: None, Thin, Medium, Wide, Wider, or Extra Wide. <b>None</b> exports the normal borderless JPEG. For Side-by-Side output, any non-None border setting draws a black outer border around the side-by-side image along with a black center seam. For Anaglyph output, any non-None border setting draws a black outer border around the final image. The border is included in the exported JPEG. The selected border setting is saved and restored the next time the tool is opened.</li>
           <li><b>Stereo Order</b>: For side-by-side output <b>Left / Right</b> is appropriate for standard stereograph card / parallel viewing.<br/><b>Right / Left</b> is appropriate for cross-eye viewing. For anaglyph output, if the stereo depth seems flipped, try swapping the stereo order.<br/>This can also be used to swap the images if the original spatial image was taken with the phone rotated 180 degrees such that the lenses (and camera button on iPhone 16/17 Pro) were at the bottom instead of the top of the device. Desktop Shift-click and iOS long-press left/right ZIP export also use the selected <b>Stereo Order</b>.</li>
           <li><b>Side-by-Side Center Crop</b>: Only shown for Side-by-Side output. Crops the selected total percentage from each eye view, split evenly between the left and right edges. In the on-screen Side-by-Side preview, the visible left and right views touch at the center seam. During final JPEG export, the left and right views are scaled to the selected output height.<br/>The available crop range is from 0% to 50%. Use the slider, or click the numeric crop value to enter a specific crop percentage. Entered values are clamped to the supported 0% to 50% range. The crop setting is preserved when a new HEIC file is opened, saved and restored the next time the tool is opened. The <b>Reset</b> button resets the crop to zero and saves that value.</li>
-          <li><b>Preview L/R Flip</b>: Only shown for Side-by-Side output. At <b>0 Hz</b>, the preview shows the full side-by-side image. At higher rates, the preview alternates between the adjusted left-eye and right-eye views as full-size single-eye previews so you can evaluate <b>Side-by-Side Center Crop</b>, <b>Horizontal Shift</b>, and <b>Image Rotation</b> as a flip/wiggle stereo preview. Click the <b>Off / Hz</b> value box to toggle between Off and the last non-zero flip rate. This affects only the on-screen preview, not the exported JPEG.</li>
+          <li><b>Preview L/R Flip</b>: Only shown for Side-by-Side output. At <b>0 Hz</b>, the preview shows the full side-by-side image. At higher rates, the preview alternates between the adjusted left-eye and right-eye views as full-size single-eye previews so you can evaluate <b>Zoom</b>, <b>Side-by-Side Center Crop</b>, <b>Horizontal Shift</b>, and <b>Image Rotation</b> as a flip/wiggle stereo preview. Click the <b>Off / Hz</b> value box to toggle between Off and the last non-zero flip rate. This affects only the on-screen preview, not the exported JPEG.</li>
           <li>Click the <b>Preview L/R Flip</b> label to set the maximum value available on the flip-rate slider.</li>
           <li>The dialog shows the current maximum flip rate when it opens.</li>
           <li>Enter a whole number from <b>10</b> to <b>30</b>, then click <b>OK</b> to apply it.</li>
@@ -4966,7 +5082,7 @@
           <li>For Side-by-Side output, use <b>Side-by-Side Center Crop</b> to trim the outside edges of both eye views equally for ease of fusing the images in parallel or cross-eye viewing.</li>
           <li><b>Horizontal Shift</b> is available for Side-by-Side output. It can be used to adjust the perceived depth/convergence position of the stereo pair for more comfortable viewing.</li>
           <li>For Side-by-Side output, non-None <b>Border</b> settings draw a black outer border around the side-by-side image and a black center seam. <b>None</b> exports the normal borderless Side-by-Side JPEG.</li>
-          <li>Use <b>Preview L/R Flip</b> to check the alignment of the cropped, shifted, and rotated eye views before generating the final JPEG. Set it back to 0 Hz to return to the normal full side-by-side preview, or click the Off / Hz value box to quickly toggle between Off and the last non-zero flip rate. After a JPEG is saved or shared, the <b>Preview L/R Flip</b> control is automatically reset to 0 Hz.</li>
+          <li>Use <b>Preview L/R Flip</b> to check the alignment of the zoomed, cropped, shifted, and rotated eye views before generating the final JPEG. Set it back to 0 Hz to return to the normal full side-by-side preview, or click the Off / Hz value box to quickly toggle between Off and the last non-zero flip rate. After a JPEG is saved or shared, the <b>Preview L/R Flip</b> control is automatically reset to 0 Hz.</li>
         </ul>
 
         <h4>Anaglyph output notes</h4>
@@ -5188,6 +5304,33 @@
       promptForOutputHeight();
     }
   });
+
+  if (digitalZoomRange) {
+    digitalZoomRange.addEventListener("input", () => {
+      updateControls();
+      rememberCurrentPerImageAdjustmentSettings(true);
+
+      if (decodedViews.length >= 2) {
+        convertToSbs({ previewOnly: true }).catch(err =>
+          setStatus(escapeHtml(err.message || String(err)), "error")
+        );
+      }
+    });
+
+    digitalZoomRange.addEventListener("change", () => {
+      rememberCurrentPerImageAdjustmentSettings(true);
+      regeneratePreviewIfReady();
+    });
+  }
+
+  if (resetDigitalZoomButton) {
+    resetDigitalZoomButton.addEventListener("click", () => {
+      digitalZoomRange.value = "100";
+      updateControls();
+      rememberCurrentPerImageAdjustmentSettings(true);
+      regeneratePreviewIfReady();
+    });
+  }
 
   rotationRangeMode.addEventListener("change", () => {
     updateRotationRangeMode();
@@ -5621,7 +5764,7 @@
       return sanitizeZipFilename(`${firstBaseName}+${count - 1}-images-lr-${outputHeight}h.zip`);
     }
 
-    return sanitizeZipFilename(`${firstBaseName}-lr-${outputHeight}h.zip`);
+    return sanitizeZipFilename(`${firstBaseName}${getDigitalZoomFilenameSuffix()}-lr-${outputHeight}h.zip`);
   }
 
   function promptForEyeZipSaveName(exportAll = false) {
@@ -5668,10 +5811,11 @@
 
   function getEyeZipEntryNames(file = currentFile) {
     const baseName = sanitizeZipEntryBaseName(file?.name || currentFile?.name || "spatial-photo");
+    const zoomSuffix = getDigitalZoomFilenameSuffix();
 
     return {
-      leftName: sanitizeJpegFilename(`${baseName}-l.jpg`),
-      rightName: sanitizeJpegFilename(`${baseName}-r.jpg`)
+      leftName: sanitizeJpegFilename(`${baseName}${zoomSuffix}-l.jpg`),
+      rightName: sanitizeJpegFilename(`${baseName}${zoomSuffix}-r.jpg`)
     };
   }
 
@@ -5700,6 +5844,14 @@
 
     if (eyeOrder.value === "swap") {
       [left, right] = [right, left];
+    }
+
+    const digitalZoomPercent = Math.max(100, Math.min(300, Number(digitalZoomRange?.value) || 100));
+
+    if (digitalZoomPercent > 100) {
+      const zoomed = applyDigitalZoomToStereoViews(left, right, digitalZoomPercent);
+      left = zoomed.left;
+      right = zoomed.right;
     }
 
     const imageRotationDegrees = Number(rotationRange.value) || 0;
