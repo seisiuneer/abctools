@@ -1031,6 +1031,8 @@
   #heightRange:focus-visible,
   #digitalZoomRange:focus,
   #digitalZoomRange:focus-visible,
+  #cropPanRange:focus,
+  #cropPanRange:focus-visible,
   #stereoDepthRange:focus,
   #stereoDepthRange:focus-visible,
   #verticalShiftRange:focus,
@@ -1183,22 +1185,37 @@
           </div>
         </div>
         <div class="row">
-          <input id="sbsCropRange" type="range" min="0" max="50" step="0.1" value="0" title="Crops the selected total percentage from the left and right edges of each eye view for ease of image fusion in parallel or cross-eye viewing. When multiple images are loaded, this setting is global for all images. This setting is saved and restored the next time the tool is opened.">
+          <input id="sbsCropRange" type="range" min="0" max="50" step="0.1" value="0" title="Crops the selected total percentage from the horizontal edges of each eye view for ease of image fusion in parallel or cross-eye viewing. When Crop Pan is 0%, equal amounts are removed from the left and right edges; use Crop Pan to retain more of either side. When multiple images are loaded, this setting is global for all images. This setting is saved and restored the next time the tool is opened.">
           <div id="sbsCropValue" class="rangeValue editableRangeValue" role="button" tabindex="0" aria-label="Enter Side-by-Side Center Crop percentage" title="Click to enter a specific Side-by-Side Center Crop value from 0.0% to 50.0%.">0.0%</div>
         </div>
       </div>
     </div>
 
-    <div id="digitalZoomControl" style="margin-top:12px;">
-      <div class="controlHeader">
-        <label for="digitalZoomRange">Zoom</label>
-        <div class="controlHeaderActions">
-          <button id="resetDigitalZoomButton" class="smallResetButton" type="button" title="Reset Zoom to 100%.">Reset</button>
+    <div class="grid" id="zoomCropPanControlsRow" style="margin-top:12px;">
+      <div id="digitalZoomControl">
+        <div class="controlHeader">
+          <label for="digitalZoomRange">Zoom</label>
+          <div class="controlHeaderActions">
+            <button id="resetDigitalZoomButton" class="smallResetButton" type="button" title="Reset Zoom to 100%.">Reset</button>
+          </div>
+        </div>
+        <div class="row">
+          <input id="digitalZoomRange" type="range" min="100" max="300" step="1" value="100" title="Zoom both left and right views equally from 100% to 300%. The zoom is centered, preserves the original eye-image aspect ratio, and is applied before Horizontal Shift, Vertical Shift, and Image Rotation. When multiple images are loaded, this value is saved separately for each image.">
+          <div id="digitalZoomValue" class="rangeValue">100%</div>
         </div>
       </div>
-      <div class="row">
-        <input id="digitalZoomRange" type="range" min="100" max="300" step="1" value="100" title="Zoom both left and right views equally from 100% to 300%. The zoom is centered, preserves the original eye-image aspect ratio, and is applied before Horizontal Shift, Vertical Shift, and Image Rotation. When multiple images are loaded, this value is saved separately for each image.">
-        <div id="digitalZoomValue" class="rangeValue">100%</div>
+
+      <div id="cropPanControl" style="display:none;">
+        <div class="controlHeader">
+          <label for="cropPanRange">Crop Pan</label>
+          <div class="controlHeaderActions">
+            <button id="resetCropPanButton" class="smallResetButton" type="button" title="Reset Crop Pan to 0% (centered crop).">Reset</button>
+          </div>
+        </div>
+        <div class="row">
+          <input id="cropPanRange" type="range" min="-100" max="100" step="1" value="0" title="Choose the horizontal portion retained by Side-by-Side Center Crop. 0% keeps the crop centered, negative values retain more of the left side, and positive values retain more of the right side. This value is saved separately for each loaded image.">
+          <div id="cropPanValue" class="rangeValue">0%</div>
+        </div>
       </div>
     </div>
 
@@ -1282,7 +1299,7 @@
 
     <div id="downloadActions" class="actions" style="display:none;">
       <a id="downloadLink" class="download" download="stereo-image.jpg" title="Export the currently visible image as a final JPEG at the specified output height. On iOS, this opens the iOS Share Sheet. On desktop, Shift-click to export the current adjusted left and right views, using the selected Stereo Order, as separate JPEG files in a ZIP.">Export Current JPEG</a>
-      <a id="downloadAllLink" class="download" download="stereo-image-batch.zip" title="Export all loaded images as JPEGs using the current settings, then package them in a ZIP file. Uses each image’s native height unless Output JPEG Height was manually changed after opening the files. Zoom, Horizontal Shift, Vertical Shift, Image Rotation, and their range settings use each image’s individual saved settings. On desktop, Shift-click to export separate adjusted left/right JPEG files using the selected Stereo Order for every loaded image.">Export All as ZIP</a>
+      <a id="downloadAllLink" class="download" download="stereo-image-batch.zip" title="Export all loaded images as JPEGs using the current settings, then package them in a ZIP file. Uses each image’s native height unless Output JPEG Height was manually changed after opening the files. Zoom, Crop Pan, Horizontal Shift, Vertical Shift, Image Rotation, and their range settings use each image’s individual saved settings. On desktop, Shift-click to export separate adjusted left/right JPEG files using the selected Stereo Order for every loaded image.">Export All as ZIP</a>
     </div>
 
     <div class="meta">
@@ -1339,6 +1356,10 @@
   const digitalZoomRange = document.getElementById("digitalZoomRange");
   const digitalZoomValue = document.getElementById("digitalZoomValue");
   const resetDigitalZoomButton = document.getElementById("resetDigitalZoomButton");
+  const cropPanControl = document.getElementById("cropPanControl");
+  const cropPanRange = document.getElementById("cropPanRange");
+  const cropPanValue = document.getElementById("cropPanValue");
+  const resetCropPanButton = document.getElementById("resetCropPanButton");
   const imageShiftControl = document.getElementById("imageShiftControl");
   const stereoDepthRange = document.getElementById("stereoDepthRange");
   const stereoDepthValue = document.getElementById("stereoDepthValue");
@@ -4606,7 +4627,8 @@
       verticalShiftRangeMode: "normal",
       rotation: 0,
       rotationRangeMode: "normal",
-      digitalZoom: 100
+      digitalZoom: 100,
+      cropPan: 0
     };
   }
 
@@ -4643,6 +4665,15 @@
             ? Number(settings.digitalZoom)
             : defaults.digitalZoom
         )
+      ),
+      cropPan: Math.max(
+        -100,
+        Math.min(
+          100,
+          Number.isFinite(Number(settings.cropPan))
+            ? Number(settings.cropPan)
+            : defaults.cropPan
+        )
       )
     };
   }
@@ -4672,7 +4703,8 @@
       verticalShiftRangeMode: verticalShiftRangeMode?.value || "normal",
       rotation: Number(rotationRange?.value) || 0,
       rotationRangeMode: rotationRangeMode?.value || "normal",
-      digitalZoom: Math.max(100, Math.min(300, Number(digitalZoomRange?.value) || 100))
+      digitalZoom: Math.max(100, Math.min(300, Number(digitalZoomRange?.value) || 100)),
+      cropPan: Math.max(-100, Math.min(100, Number(cropPanRange?.value) || 0))
     });
   }
 
@@ -4717,6 +4749,10 @@
         digitalZoomRange.value = String(Math.round(settings.digitalZoom));
       }
 
+      if (cropPanRange) {
+        cropPanRange.value = String(Math.round(settings.cropPan));
+      }
+
       updateControls();
     } finally {
       applyingPerImageAdjustmentSettings = false;
@@ -4752,6 +4788,10 @@
       digitalZoomRange.value = "100";
     }
 
+    if (cropPanRange) {
+      cropPanRange.value = "0";
+    }
+
     updateRotationRangeMode();
     updateStereoDepthRangeMode();
     updateVerticalShiftRangeMode();
@@ -4779,14 +4819,30 @@
       digitalZoomValue.textContent = `${Math.round(zoom)}%`;
     }
 
+    if (cropPanValue) {
+      const pan = Math.max(-100, Math.min(100, Number(cropPanRange?.value) || 0));
+      cropPanValue.textContent = `${pan > 0 ? "+" : ""}${Math.round(pan)}%`;
+    }
+
     if (sbsCropValue) {
       const crop = Number(sbsCropRange?.value) || 0;
       sbsCropValue.textContent = `${crop.toFixed(1)}%`;
     }
 
     updatePreviewFlipRateLabel();
+    updateCropPanVisibility();
 
     keepStereoOrderControlVisible();
+  }
+
+
+  function updateCropPanVisibility() {
+    if (!cropPanControl) {
+      return;
+    }
+
+    const shouldShow = isSideBySideMode() && clampSideBySideCropPercent(sbsCropRange?.value || 0) > 0;
+    cropPanControl.style.display = shouldShow ? "block" : "none";
   }
 
 
@@ -5279,7 +5335,27 @@ function updateOutputModeControls() {
     return Math.max(0, Math.min(50, number));
   }
 
-  function createSideBySideCenterCroppedCanvas(sourceCanvas, width, height, cropPercent, horizontalAlign = "center", backgroundColor = "#000") {
+  function clampCropPanPercent(value) {
+    const number = Number(value);
+
+    if (!Number.isFinite(number)) {
+      return 0;
+    }
+
+    return Math.max(-100, Math.min(100, number));
+  }
+
+  function getSideBySideCropSourceX(sourceWidth, cropPercent, cropPanPercent = 0) {
+    const crop = clampSideBySideCropPercent(cropPercent) / 100;
+    const pan = clampCropPanPercent(cropPanPercent) / 100;
+    const totalCroppedWidth = Math.max(0, sourceWidth * crop);
+
+    // -100 keeps the far-left portion, 0 centers the crop,
+    // and +100 keeps the far-right portion.
+    return totalCroppedWidth * ((pan + 1) / 2);
+  }
+
+  function createSideBySideCenterCroppedCanvas(sourceCanvas, width, height, cropPercent, cropPanPercent = 0, horizontalAlign = "center", backgroundColor = "#000") {
     const out = document.createElement("canvas");
     out.width = width;
     out.height = height;
@@ -5292,9 +5368,8 @@ function updateOutputModeControls() {
     ctx.fillRect(0, 0, width, height);
 
     const crop = clampSideBySideCropPercent(cropPercent) / 100;
-    const cropEachSide = crop / 2;
 
-    const sx = sourceCanvas.width * cropEachSide;
+    const sx = getSideBySideCropSourceX(sourceCanvas.width, cropPercent, cropPanPercent);
     const sw = Math.max(1, sourceCanvas.width * (1 - crop));
     const dw = Math.max(1, width * (1 - crop));
 
@@ -5323,14 +5398,14 @@ function updateOutputModeControls() {
     return out;
   }
 
-  function createSideBySideCenterCroppedPair(leftCanvas, rightCanvas, width, height, cropPercent, touchAtCenter = false, backgroundColor = "#000") {
+  function createSideBySideCenterCroppedPair(leftCanvas, rightCanvas, width, height, cropPercent, cropPanPercent = 0, touchAtCenter = false, backgroundColor = "#000") {
     return {
-      leftCanvas: createSideBySideCenterCroppedCanvas(leftCanvas, width, height, cropPercent, touchAtCenter ? "right" : "center", backgroundColor),
-      rightCanvas: createSideBySideCenterCroppedCanvas(rightCanvas, width, height, cropPercent, touchAtCenter ? "left" : "center", backgroundColor)
+      leftCanvas: createSideBySideCenterCroppedCanvas(leftCanvas, width, height, cropPercent, cropPanPercent, touchAtCenter ? "right" : "center", backgroundColor),
+      rightCanvas: createSideBySideCenterCroppedCanvas(rightCanvas, width, height, cropPercent, cropPanPercent, touchAtCenter ? "left" : "center", backgroundColor)
     };
   }
 
-  function createSideBySideVisibleCroppedCanvas(sourceCanvas, width, height, cropPercent) {
+  function createSideBySideVisibleCroppedCanvas(sourceCanvas, width, height, cropPercent, cropPanPercent = 0) {
     const out = document.createElement("canvas");
     out.width = width;
     out.height = height;
@@ -5343,8 +5418,7 @@ function updateOutputModeControls() {
     ctx.fillRect(0, 0, width, height);
 
     const crop = clampSideBySideCropPercent(cropPercent) / 100;
-    const cropEachSide = crop / 2;
-    const sx = sourceCanvas.width * cropEachSide;
+    const sx = getSideBySideCropSourceX(sourceCanvas.width, cropPercent, cropPanPercent);
     const sw = Math.max(1, sourceCanvas.width * (1 - crop));
 
     ctx.drawImage(
@@ -5362,10 +5436,10 @@ function updateOutputModeControls() {
     return out;
   }
 
-  function createSideBySideVisibleCroppedPair(leftCanvas, rightCanvas, leftWidth, rightWidth, height, cropPercent) {
+  function createSideBySideVisibleCroppedPair(leftCanvas, rightCanvas, leftWidth, rightWidth, height, cropPercent, cropPanPercent = 0) {
     return {
-      leftCanvas: createSideBySideVisibleCroppedCanvas(leftCanvas, leftWidth, height, cropPercent),
-      rightCanvas: createSideBySideVisibleCroppedCanvas(rightCanvas, rightWidth, height, cropPercent)
+      leftCanvas: createSideBySideVisibleCroppedCanvas(leftCanvas, leftWidth, height, cropPercent, cropPanPercent),
+      rightCanvas: createSideBySideVisibleCroppedCanvas(rightCanvas, rightWidth, height, cropPercent, cropPanPercent)
     };
   }
 
@@ -5555,6 +5629,12 @@ function updateOutputModeControls() {
     if (resetDigitalZoomButton) {
       resetDigitalZoomButton.disabled = isBusy;
     }
+    if (cropPanRange) {
+      cropPanRange.disabled = isBusy;
+    }
+    if (resetCropPanButton) {
+      resetCropPanButton.disabled = isBusy;
+    }
     rotationRange.disabled = isBusy;
     rotationRangeMode.disabled = isBusy;
     resetRotationButton.disabled = isBusy;
@@ -5641,6 +5721,9 @@ function updateOutputModeControls() {
           ? -horizontalShiftPercent
           : horizontalShiftPercent;
       const sbsCenterCropPercent = clampSideBySideCropPercent(sbsCropRange?.value || 0);
+      const cropPanPercent = sbsCenterCropPercent > 0
+        ? clampCropPanPercent(cropPanRange?.value || 0)
+        : 0;
       const autoCropEdges = true;
       let ctx;
 
@@ -5672,6 +5755,7 @@ function updateOutputModeControls() {
             flipPreviewWidth,
             flipPreviewHeight,
             sbsCenterCropPercent,
+            cropPanPercent,
             false,
             getCanvasBackgroundColor(true)
           );
@@ -5722,6 +5806,7 @@ function updateOutputModeControls() {
               eyeWidth,
               outputHeight,
               sbsCenterCropPercent,
+              cropPanPercent,
               true,
               getCanvasBackgroundColor(previewOnly)
             );
@@ -5753,7 +5838,8 @@ function updateOutputModeControls() {
               eyeWidth,
               rightEyeWidth,
               outputHeight,
-              sbsCenterCropPercent
+              sbsCenterCropPercent,
+              cropPanPercent
             );
           }
 
@@ -5889,6 +5975,10 @@ function updateOutputModeControls() {
         ? `, center crop ${sbsCenterCropPercent.toFixed(1)}%`
         : "";
 
+      const cropPanNote = isSideBySideMode() && sbsCenterCropPercent && cropPanPercent
+        ? `, crop pan ${cropPanPercent > 0 ? "+" : ""}${Math.round(cropPanPercent)}%`
+        : "";
+
       const borderNote = isBorderEnabled()
         ? `, ${getSideBySideBorderThicknessLabel().toLowerCase()} black ${isSideBySideMode() ? "border/seam" : "border"}`
         : "";
@@ -5896,7 +5986,7 @@ function updateOutputModeControls() {
       if (mode === "sbs") {
         const eyeWidth = Math.floor(canvas.width / 2);
         outputMeta.textContent =
-          `${modeLabel} JPEG: ${canvas.width}×${canvas.height}, each eye ${eyeWidth}×${canvas.height}, ${formatBytes(blob.size)}${cropNote}${zoomNote}${shiftNote}${borderNote}${rotationNote}.`;
+          `${modeLabel} JPEG: ${canvas.width}×${canvas.height}, each eye ${eyeWidth}×${canvas.height}, ${formatBytes(blob.size)}${cropNote}${cropPanNote}${zoomNote}${shiftNote}${borderNote}${rotationNote}.`;
       } else {
         outputMeta.textContent =
           `${modeLabel} JPEG: ${canvas.width}×${canvas.height}, ${formatBytes(blob.size)}${zoomNote}${shiftNote}${borderNote}${rotationNote}.`;
@@ -5920,25 +6010,25 @@ function updateOutputModeControls() {
         <ol>
           <li>Select one side-by-side JPEG/TIFF stereo image, multiple already-processed side-by-side JPEG/TIFF stereo images, or separate JPEG/TIFF left/right image pairs.<br/>On desktop, you can also drag and drop the files onto the top control panel.</li>
           <li>A single side-by-side JPEG/TIFF input is split into equal left and right halves before the normal adjustment/export workflow begins. If an odd number of files is loaded, the files are treated as already processed side-by-side stereo images.<br/>If an even number of files is loaded and every filename forms a matching <b>-l</b>/<b>-r</b> pair, the tool automatically imports them as separate left/right image pairs and assembles each pair into a stereo image.<br/>If an even number of files is loaded but the names do not form matching <b>-l</b>/<b>-r</b> pairs, the tool asks whether to treat the files as sorted left/right pairs or as already processed side-by-side stereo images.</li>
-          <li>When multiple images are loaded, use the First, Previous, Next, and Last buttons over the preview to move through the collection. On desktop, these buttons appear when the mouse is over the preview. On iOS, they remain visible. When switching images, the <b>Output JPEG Height</b> normally updates to the newly displayed image’s native height. If you manually change the <b>Output JPEG Height</b> after opening the files, that manual height is preserved while navigating and is used for batch ZIP export. Opening or dropping new files resets this manual-height override. <b>Zoom</b>, <b>Horizontal Shift</b>, <b>Vertical Shift</b>, <b>Image Rotation</b>, and their slider range settings are tracked separately for each loaded image.</li>
+          <li>When multiple images are loaded, use the First, Previous, Next, and Last buttons over the preview to move through the collection. On desktop, these buttons appear when the mouse is over the preview. On iOS, they remain visible. When switching images, the <b>Output JPEG Height</b> normally updates to the newly displayed image’s native height. If you manually change the <b>Output JPEG Height</b> after opening the files, that manual height is preserved while navigating and is used for batch ZIP export. Opening or dropping new files resets this manual-height override. <b>Zoom</b>, <b>Crop Pan</b>, <b>Horizontal Shift</b>, <b>Vertical Shift</b>, <b>Image Rotation</b>, and their slider range settings are tracked separately for each loaded image.</li>
           <li><b>Stereo Order</b> affects both Side-by-Side and Anaglyph output. For Anaglyph output, it controls which source half becomes the red left-eye channel and which source half becomes the cyan right-eye channel.</li>
           <li>This can be used to reverse the left/right order if required when opening an image pair or if you want to create an Anaglyph from a right/left cross-eye source image.</li>
           <li>TIFF support is intended for standard 8-bit RGB side-by-side or separate left/right TIFF/TIF images, including uncompressed TIFFs and common LZW-compressed TIFFs with horizontal differencing predictor.</li>
           <li>Left/right pair imports must contain matching pairs of files. Each pair must use the same source format, and both images in each pair must have exactly the same pixel dimensions. If the formats or dimensions do not match, the tool shows an alert and does not import them. Automatic pair detection recognizes filenames ending in <b>-l</b> and <b>-r</b> immediately before <b>.jpg</b>, <b>.jpeg</b>, <b>.JPG</b>, <b>.JPEG</b>, <b>.tif</b>, <b>.TIF</b>, <b>.tiff</b>, or <b>.TIFF</b>, such as <b>image-l.jpg</b> and <b>image-r.jpg</b>.</li>
           <li>Select an <b>Output Format</b>.<br/>Use <b>Side-by-Side</b> for stereo pairs, or one of the <b>Red / Cyan Anaglyph</b> formats for viewing with red/cyan 3D glasses. Use the <b>Border</b> selector to choose no border or to include a black border in the exported JPEG. In Side-by-Side output, the border option also draws the center seam; in Anaglyph output, it draws only the outer border. The selected border setting is saved and restored the next time the tool is opened.</li>
           <li>Adjust <b>Output JPEG Height</b> as desired. The initial value is read from the imported source image height; for two-file left/right imports, it is read from the shared height of the two images.<br/>Use the slider, or click the height value display to enter an exact height.</li>
-          <li>Optionally adjust <b>Zoom</b>, <b>Side-by-Side Center Crop</b> (side-by-side format only), <b>Horizontal Shift</b>, <b>Vertical Shift</b>, and/or <b>Image Rotation</b> as required to optimize the stereo view. Zoom applies the same centered, aspect-ratio-preserving crop to both eyes before Image Rotation, Horizontal Shift, and Vertical Shift. For <b>Side-by-Side Center Crop</b>, use the slider or click the displayed crop value to enter an exact 0.0% to 50.0% value.</li>
-          <li>When multiple images are loaded, <b>Zoom</b>, <b>Horizontal Shift</b>, <b>Vertical Shift</b>, <b>Image Rotation</b>, and their slider range selectors are saved separately for each image. When you move between images, those controls are restored for the selected image. Images that have not been individually adjusted use 100% Zoom, 0 shift, 0° rotation, and the normal slider ranges. During <b>Export All as ZIP</b>, each image uses its own saved values for these controls.</li>
-          <li>For single-image and two-file left/right-pair imports, <b>Zoom</b> is reset to 100%, while <b>Horizontal Shift</b>, <b>Vertical Shift</b>, and <b>Image Rotation</b> are reset to 0 whenever a new JPEG or TIFF file is opened. <b>Side-by-Side Center Crop</b> is saved and restored the next time the tool is opened, so you can apply the same center-crop amount across multiple images until you change it or press its <b>Reset</b> button.</li>
+          <li>Optionally adjust <b>Zoom</b>, <b>Side-by-Side Center Crop</b> (side-by-side format only), <b>Crop Pan</b>, <b>Horizontal Shift</b>, <b>Vertical Shift</b>, and/or <b>Image Rotation</b> as required to optimize the stereo view. Zoom applies the same centered, aspect-ratio-preserving crop to both eyes before Image Rotation, Horizontal Shift, and Vertical Shift. For <b>Side-by-Side Center Crop</b>, use the slider or click the displayed crop value to enter an exact 0.0% to 50.0% value. When Center Crop is above 0%, use <b>Crop Pan</b> to choose which horizontal portion of the image is retained.</li>
+          <li>When multiple images are loaded, <b>Zoom</b>, <b>Crop Pan</b>, <b>Horizontal Shift</b>, <b>Vertical Shift</b>, <b>Image Rotation</b>, and their slider range selectors are saved separately for each image. When you move between images, those controls are restored for the selected image. Images that have not been individually adjusted use 100% Zoom, 0% Crop Pan, 0 shift, 0° rotation, and the normal slider ranges. During <b>Export All as ZIP</b>, each image uses its own saved values for these controls.</li>
+          <li>For single-image and two-file left/right-pair imports, <b>Zoom</b> is reset to 100%, while <b>Crop Pan</b>, <b>Horizontal Shift</b>, <b>Vertical Shift</b>, and <b>Image Rotation</b> are reset to 0 whenever a new JPEG or TIFF file is opened. <b>Side-by-Side Center Crop</b> is saved and restored the next time the tool is opened, so you can apply the same center-crop amount across multiple images until you change it or press its <b>Reset</b> button.</li>
           <li>On desktop browsers, move the mouse over the preview area to reveal the full-screen button at the top right of the preview. On iPad, the button remains visible at the top right. The button is hidden on iPhone and while full-screen mode is active. Press Escape or use the browser full-screen control to return to the normal tool view.</li>
           <li>When multiple images are loaded, on desktop browsers, move the mouse over the preview area to reveal the first, previous, next, and last image arrow buttons at the edges of the preview that you can use to switch between the images (always visible on iOS). Keyboard shortcuts are also available throughout the main tool: <b>Ctrl+Shift+[</b> for first image, <b>Ctrl+[</b> for previous image, <b>Ctrl+]</b> for next image, and <b>Ctrl+Shift+]</b> for last image.</li>
           <li>The normal on-page preview is optimized for responsiveness, while full-screen preview automatically uses a higher preview resolution when useful for sharper viewing on high-DPI displays.</li>
           <li>For side-by-side image viewing, to make the side-by-side preview smaller and help facilitate visually fusing the images while making adjustments, you can either zoom out the browser window or resize the window narrower to make the preview smaller.</li>
           <li>To export the currently displayed image, click <b>Export Current JPEG</b>. On desktop, the browser downloads the JPEG. On iOS, the iOS Share Sheet opens so you can save or share the JPEG.</li>
-          <li>When multiple images are loaded, click <b>Export All as ZIP</b> to export all loaded images. <b>Zoom</b>, <b>Horizontal Shift</b>, <b>Vertical Shift</b>, <b>Image Rotation</b>, and their slider range settings use each image’s individual saved settings; the other controls use the current settings. During batch export, a progress dialog shows the current image and overall progress; click <b>Cancel</b> during ZIP generation to stop after the current processing step finishes.</li>
+          <li>When multiple images are loaded, click <b>Export All as ZIP</b> to export all loaded images. <b>Zoom</b>, <b>Crop Pan</b>, <b>Horizontal Shift</b>, <b>Vertical Shift</b>, <b>Image Rotation</b>, and their slider range settings use each image’s individual saved settings; the other controls use the current settings. During batch export, a progress dialog shows the current image and overall progress; click <b>Cancel</b> during ZIP generation to stop after the current processing step finishes.</li>
           <li>On desktop, Shift-click <b>Export Current JPEG</b> to export the currently displayed adjusted left and right views, using the selected <b>Stereo Order</b>, as separate JPEG files in a ZIP. The files are named from the source image filename with <b>-l</b> and <b>-r</b> suffixes. When Zoom is not 100%, the filename also includes a <b>-Z###</b> suffix, such as <b>-Z150</b>.</li>
           <li>On iOS, long-press <b>Export Current JPEG</b> to export the current adjusted left/right image pair as separate JPEG files in a ZIP.</li>
-          <li>On desktop, Shift-click <b>Export All as ZIP</b> to export separate adjusted left/right JPEG files for every loaded image. The separate left/right files use the selected <b>Output JPEG Height</b>, selected <b>Stereo Order</b>, and each image’s saved <b>Zoom</b>, <b>Horizontal Shift</b>, <b>Vertical Shift</b>, and <b>Image Rotation</b> settings.</li>
+          <li>On desktop, Shift-click <b>Export All as ZIP</b> to export separate adjusted left/right JPEG files for every loaded image. The separate left/right files use the selected <b>Output JPEG Height</b>, selected <b>Stereo Order</b>, and each image’s saved <b>Zoom</b>, <b>Crop Pan</b>, <b>Horizontal Shift</b>, <b>Vertical Shift</b>, and <b>Image Rotation</b> settings. Crop Pan is applied to separate left/right exports only when the output format is Side-by-Side and Side-by-Side Center Crop is above 0%.</li>
           <li>On iOS, long-press <b>Export All as ZIP</b> to export adjusted left/right image pairs for all loaded images in a ZIP.</li>
           <li>On iOS, after any ZIP is ready, tap <b>Share ZIP</b> to open the iOS Share Sheet, then choose <b>Save to Files</b> or another share destination. Tap <b>Cancel</b> to close the ZIP dialog without sharing.</li>
         </ol>
@@ -5949,7 +6039,7 @@ function updateOutputModeControls() {
           <li><b>Border</b>: Chooses the optional exported border thickness: None, Thin, Medium, Wide, Wider, or Extra Wide. <b>None</b> exports the normal borderless JPEG. For Side-by-Side output, any non-None border setting draws a black outer border around side-by-side image and a black center seam. For Anaglyph output, any non-None border setting draws a black outer border around the final image. The border is included in the exported JPEG. The selected border setting is saved and restored the next time the tool is opened.</li>
           <li><b>Output JPEG Height</b>: Sets the final exported JPEG height. The exported JPEG width is calculated automatically from the selected height and the final output aspect ratio.<br/>For Side-by-Side output, the final JPEG uses the selected height and creates a side-by-side image with the two eye views placed left and right.<br/>If <b>Side-by-Side Center Crop</b> is applied, the final JPEG scales to the selected output height.<br/>For Anaglyph output, the final JPEG uses the selected height and creates a single red/cyan image whose width is calculated from the anaglyph aspect ratio.<br/>Use the slider, or click the numeric height value to enter a specific height.<br/>Entered values are clamped to the supported 768 to 8192 pixel range.<br/>The <b>Reset</b> button resets the output height to the current image’s native height.</li>
           <li><b>Stereo Order</b>: Affects both Side-by-Side and Anaglyph output. For single-file side-by-side imports, <b>Left / Right</b> treats the left half of the source image as the left eye and the right half as the right eye. For manually sorted two-file imports, the first file is treated as the left eye and the second file as the right eye. For automatic <b>-l</b>/<b>-r</b> pair detection, the filename suffix determines the left and right views.<br/><b>Right / Left</b> swaps the two views before generating the preview or exported JPEG. Desktop Shift-click and iOS long-press left/right ZIP export also use the selected <b>Stereo Order</b>.</li>
-          <li><b>Preview L/R Flip</b>: Only shown for Side-by-Side output. At <b>0 Hz</b>, the preview shows the full side-by-side image. At non-zero rates, the preview alternates between the adjusted left-eye and right-eye views as full-size single-eye previews so you can evaluate <b>Zoom</b>, <b>Side-by-Side Center Crop</b>, <b>Horizontal Shift</b>, <b>Vertical Shift</b>, and <b>Image Rotation</b> as a flip/wiggle stereo preview. Click the <b>Off / Hz</b> value box to toggle between Off and the last non-zero flip rate.</li>
+          <li><b>Preview L/R Flip</b>: Only shown for Side-by-Side output. At <b>0 Hz</b>, the preview shows the full side-by-side image. At non-zero rates, the preview alternates between the adjusted left-eye and right-eye views as full-size single-eye previews so you can evaluate <b>Zoom</b>, <b>Side-by-Side Center Crop</b>, <b>Crop Pan</b>, <b>Horizontal Shift</b>, <b>Vertical Shift</b>, and <b>Image Rotation</b> as a flip/wiggle stereo preview. Click the <b>Off / Hz</b> value box to toggle between Off and the last non-zero flip rate.</li>
           <li>Click the <b>Preview L/R Flip</b> label to set the maximum value available on the flip-rate slider.</li>
           <li>The dialog shows the current maximum flip rate when it opens.</li>
           <li>Enter a whole number from <b>10</b> to <b>30</b>, then click <b>OK</b> to apply it.</li>
@@ -5958,8 +6048,9 @@ function updateOutputModeControls() {
           <li>The selected maximum is saved and restored the next time the tool is opened.</li>          
           <li><b>Image Rotation</b>: Applies a small roll correction to both stereo views.<br/>The rotated image is cropped as required to preserve the original aspect ratio.</li>
           <li><b>Image Rotation range selector</b>: Switches the Image Rotation slider between ±5° for normal adjustments and ±10° for larger rotation corrections.<br/>The <b>Reset</b> button resets the image rotation to zero.</li>
-          <li><b>Side-by-Side Center Crop</b>: Only shown for Side-by-Side output. Crops the selected total percentage from each eye view, split evenly between the left and right edges.<br/>The available crop range is from 0% to 50%. Use the slider, or click the displayed crop value to enter a specific value from 0.0% to 50.0%. Entered values are clamped to the supported range. This setting is saved and restored the next time the tool is opened, and preserved when a new JPEG or TIFF file is opened. The <b>Reset</b> button resets the crop to zero and saves the zero setting.</li>
+          <li><b>Side-by-Side Center Crop</b>: Only shown for Side-by-Side output. Crops the selected total percentage from the horizontal edges of each eye view. When <b>Crop Pan</b> is 0%, the crop is split evenly between the left and right edges. Use Crop Pan to retain more of the left or right side. In the on-screen Side-by-Side preview, the visible left and right views touch at the center seam. During final JPEG export, the left and right views are scaled to the selected output height.<br/>The available crop range is from 0% to 50%. Use the slider, or click the numeric crop value to enter a specific crop percentage. The crop setting is preserved when new JPEG or TIFF files are opened and is saved and restored the next time the tool is opened. The <b>Reset</b> button resets the crop to 0% and saves that value.</li>
           <li><b>Zoom</b>: Applies the same centered zoom to both eye images from 100% to 300%. The crop keeps the original eye-image aspect ratio, works in both Side-by-Side and Anaglyph modes, and is applied before Image Rotation, Horizontal Shift, and Vertical Shift. Each loaded image keeps its own Zoom value. When Zoom is not 100%, the default exported JPEG filename includes a <b>-Z###</b> suffix, such as <b>-Z150</b>. The <b>Reset</b> button returns Zoom to 100%.</li>
+          <li><b>Crop Pan</b>: Selects which horizontal portion of both eye images is retained when <b>Side-by-Side Center Crop</b> is above 0%. A value of 0% keeps the crop centered, negative values retain more of the left side, and positive values retain more of the right side. The control ranges from −100% to +100%, is hidden for Anaglyph output and whenever Center Crop is 0%, and is saved independently for each loaded image. It applies to previews, normal and batch Side-by-Side exports, and separate left/right exports when Center Crop is active. The <b>Reset</b> button returns Crop Pan to 0%.</li>
           <li><b>Horizontal Shift</b>: Shifts the two views horizontally before compositing.<br/>This can be used to improve anaglyph results, reduce eye strain, or improve fusion.<br/>In Side-by-Side mode, it can also be used as a perceived depth/convergence adjustment by moving the stereo pair relationship forward or backward for more comfortable viewing.<br/>The <b>Reset</b> button resets the horizontal shift to zero.</li>
           <li><b>Horizontal Shift range selector</b>: Switches the <b>Horizontal Shift</b> slider between a normal ±10% adjustment range, a wider ±20% range for stronger corrections, and an extra-wide ±50% range for extreme close-up, macro, or difficult alignment cases.</li>
           <li><b>Vertical Shift</b>: Shifts the two stereo views vertically before compositing.<br/>The <b>Reset</b> button resets the vertical shift to zero.</li>
@@ -5970,9 +6061,9 @@ function updateOutputModeControls() {
         <ul>
           <li>Use <b>Left / Right</b> for parallel side-by-side stereo viewing or stereograph cards.</li>
           <li>Use <b>Right / Left</b> for cross-eye viewing.</li>
-          <li>For Side-by-Side output, use <b>Side-by-Side Center Crop</b> to trim the outside edges of both eye views equally for ease of fusing the images in parallel or cross-eye viewing. <b>Horizontal Shift</b> and <b>Vertical Shift</b> can also be used to adjust stereo alignment before the side-by-side image is assembled.</li>
+          <li>For Side-by-Side output, use <b>Side-by-Side Center Crop</b> to trim the horizontal edges of both eye views for ease of fusing the images in parallel or cross-eye viewing. When <b>Crop Pan</b> is 0%, equal amounts are removed from both sides; use Crop Pan to retain more of the left or right side. <b>Horizontal Shift</b> and <b>Vertical Shift</b> can also be used to adjust stereo alignment before the side-by-side image is assembled.</li>
           <li>For Side-by-Side output, non-None <b>Border</b> settings draw a black outer border around the side-by-side image along with a black center seam. <b>None</b> exports the normal borderless Side-by-Side JPEG.</li>
-          <li>Use <b>Preview L/R Flip</b> to check the alignment of the zoomed, cropped, shifted, and rotated eye views before generating the final JPEG. Set it back to 0 Hz to return to the normal full side-by-side preview, or click the Off / Hz value box to quickly toggle between Off and the last non-zero flip rate. After a JPEG is saved or shared, the <b>Preview L/R Flip</b> control is automatically reset to 0 Hz.</li>
+          <li>Use <b>Preview L/R Flip</b> to check the alignment of the zoomed, cropped, panned, shifted, and rotated eye views before generating the final JPEG. Set it back to 0 Hz to return to the normal full side-by-side preview, or click the Off / Hz value box to quickly toggle between Off and the last non-zero flip rate. After a JPEG is saved or shared, the <b>Preview L/R Flip</b> control is automatically reset to 0 Hz.</li>
         </ul>
 
         <h4>Anaglyph output notes</h4>
@@ -6187,6 +6278,33 @@ function updateOutputModeControls() {
       }
 
       digitalZoomRange.value = "100";
+      updateControls();
+      saveCurrentPerImageAdjustmentSettings();
+      regeneratePreviewIfReady();
+    });
+  }
+
+  if (cropPanRange) {
+    cropPanRange.addEventListener("input", () => {
+      updateControls();
+      saveCurrentPerImageAdjustmentSettings();
+
+      if (decodedViews.length >= 2) {
+        convertToSbs({ previewOnly: true }).catch(err =>
+          setStatus(escapeHtml(err.message || String(err)), "error")
+        );
+      }
+    });
+
+    cropPanRange.addEventListener("change", () => {
+      saveCurrentPerImageAdjustmentSettings();
+      regeneratePreviewIfReady();
+    });
+  }
+
+  if (resetCropPanButton) {
+    resetCropPanButton.addEventListener("click", () => {
+      cropPanRange.value = "0";
       updateControls();
       saveCurrentPerImageAdjustmentSettings();
       regeneratePreviewIfReady();
@@ -6515,6 +6633,31 @@ function updateOutputModeControls() {
       Math.round(eyeHeight * (verticalShiftPercent / 100)),
       true
     );
+
+    const sbsCenterCropPercent = isSideBySideMode()
+      ? clampSideBySideCropPercent(sbsCropRange?.value || 0)
+      : 0;
+
+    if (sbsCenterCropPercent > 0) {
+      const cropPanPercent = clampCropPanPercent(cropPanRange?.value || 0);
+      const croppedEyeWidth = Math.max(1, Math.round(eyeWidth * (1 - sbsCenterCropPercent / 100)));
+      const cropped = createSideBySideVisibleCroppedPair(
+        adjusted.leftCanvas,
+        adjusted.rightCanvas,
+        croppedEyeWidth,
+        croppedEyeWidth,
+        eyeHeight,
+        sbsCenterCropPercent,
+        cropPanPercent
+      );
+
+      return {
+        leftCanvas: cropped.leftCanvas,
+        rightCanvas: cropped.rightCanvas,
+        width: croppedEyeWidth,
+        height: eyeHeight
+      };
+    }
 
     return {
       leftCanvas: adjusted.leftCanvas,
