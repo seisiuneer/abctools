@@ -6763,7 +6763,7 @@ function updateOutputModeControls() {
     document.body.appendChild(a);
     a.click();
     a.remove();
-    setTimeout(() => URL.revokeObjectURL(url), 30000);
+    setTimeout(() => URL.revokeObjectURL(url), 5000);
   }
 
   async function exportCurrentImage() {
