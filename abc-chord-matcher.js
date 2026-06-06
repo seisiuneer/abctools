@@ -1663,6 +1663,9 @@
     var candidateInfo = keyModeSelection.candidateInfo;
     var broadCandidates = candidateInfo.candidates;
     var rhythmCandidates = candidateInfo.rhythmCandidates;
+    var compatibleCandidateCount = candidateInfo.hasRhythmPreference ?
+      rhythmCandidates.length :
+      broadCandidates.length;
     var candidateBucketSummary = describeCandidateBuckets(candidateInfo);
     if (keyModeSelection.testedAlternates && keyModeSelection.testedAlternates.length) {
       var testedModes = keyModeSelection.testedAlternates.map(function(item) {
@@ -1678,6 +1681,15 @@
 
       candidateBucketSummary = substitutionSummary +
         (candidateBucketSummary ? "; " + candidateBucketSummary : "");
+    }
+
+    if (progressState && hb.body.trim() && broadCandidates.length) {
+      updateProgressModal(
+        formatProgressTuneHeader(progressState, title) +
+        "Matching against <b>" + compatibleCandidateCount + "</b> compatible database measures...<br>" +
+        "Matched so far: <b>" + progressState.totalMatched + "</b>"
+      );
+      await allowBrowserToUpdate();
     }
 
     if (!hb.body.trim() || !broadCandidates.length) {
@@ -2095,7 +2107,7 @@
       setProgressModalPercent(totalMeasures ? Math.round((progressState.completedMeasures / totalMeasures) * 100) : 0);
       updateProgressModal(
         formatProgressTuneHeader(progressState, prepared[i].title) +
-        "Matching measures against <b>" + gLastStats.chordedMeasures + "</b> chorded database measures...<br>" +
+        "Finding compatible database measures...<br>" +
         "Matched so far: <b>" + progressState.totalMatched + "</b>"
       );
       await allowBrowserToUpdate();
