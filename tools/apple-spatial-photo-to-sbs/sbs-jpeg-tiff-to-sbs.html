@@ -464,6 +464,28 @@
     line-height: 1.15;
     white-space: nowrap;
   }
+
+  #rotationControl .controlHeaderActions {
+    gap: 8px;
+  }
+
+  #rotationControl .controlHeaderActions select.smallRangeSelect,
+  #rotationControl .controlHeaderActions button.smallResetButton {
+    width: 5.5rem;
+    min-width: 5.5rem;
+    flex-basis: 5.5rem;
+  }
+
+  @media (max-width: 560px) {
+    #rotationControl .controlHeader {
+      flex-wrap: wrap;
+    }
+
+    #rotationControl .controlHeaderActions {
+      width: 100%;
+      justify-content: flex-end;
+    }
+  }
   
   .actions {
     display: grid;
@@ -1166,20 +1188,25 @@
     </div>
 
     <div class="grid" style="margin-top:12px;">
-      <div>
+      <div id="rotationControl">
         <div class="controlHeader">
           <label for="rotationRange">Image Rotation</label>
           <div class="controlHeaderActions">
-            <select id="rotationRangeMode" class="smallRangeSelect" aria-label="Image Rotation range" title="Choose the Image Rotation slider range. Use ±5° for normal correction or ±10° for larger roll corrections.">
+            <select id="rotationTarget" class="smallRangeSelect" aria-label="Image Rotation target" title="Choose whether the Image Rotation slider adjusts the Left image, Right image, or Both images. Each loaded image keeps its own selection and left/right rotation values.">
+              <option value="both" selected>Both</option>
+              <option value="left">Left</option>
+              <option value="right">Right</option>
+            </select>
+            <select id="rotationRangeMode" class="smallRangeSelect" aria-label="Image Rotation range" title="Choose the shared Image Rotation slider range for Left, Right, and Both: ±5° for normal correction or ±10° for larger roll corrections.">
               <option value="normal">±5°</option>
               <option value="wide">±10°</option>
             </select>
-            <button id="resetRotationButton" class="smallResetButton" type="button" title="Reset Image Rotation to 0.0°.">Reset</button>
+            <button id="resetRotationButton" class="smallResetButton" type="button" title="Reset both the Left and Right image rotation values to 0.00°.">Reset</button>
           </div>
         </div>
         <div class="row">
-          <input id="rotationRange" type="range" min="-5" max="5" step="0.05" value="0" title="Apply a small roll correction to both stereo views. The image is cropped as needed to preserve the original aspect ratio. When multiple images are loaded, this value is saved separately for each image and is applied when previewing that image and when exporting it, including batch ZIP export.">
-          <div id="rotationValue" class="rangeValue">0.0°</div>
+          <input id="rotationRange" type="range" min="-5" max="5" step="0.05" value="0" title="Apply a small roll correction to the selected Left image, Right image, or Both images. If Both is selected while the two stored values differ, the value display shows L/R Diff; moving the slider then sets both values to the same angle. When the two angles differ, both images receive the same rotation-safe enlargement so their stereo scale remains matched. Each loaded image keeps its own target and left/right values.">
+          <div id="rotationValue" class="rangeValue">0.00°</div>
         </div>
       </div>
 
@@ -1305,7 +1332,7 @@
 
     <div id="downloadActions" class="actions" style="display:none;">
       <a id="downloadLink" class="download" download="stereo-image.jpg" title="Export the currently visible image as a final JPEG at the specified output height. On iOS, this opens the iOS Share Sheet. On desktop, Shift-click to export the current adjusted left and right views, using the selected Stereo Order, as separate JPEG files in a ZIP.">Export Current JPEG</a>
-      <a id="downloadAllLink" class="download" download="stereo-image-batch.zip" title="Export all loaded images as JPEGs using the current settings, then package them in a ZIP file. Uses each image’s native height unless Output JPEG Height was manually changed after opening the files. Zoom, Crop Pan, Horizontal Shift, Vertical Shift, Image Rotation, and their range settings use each image’s individual saved settings. On desktop, Shift-click to export separate adjusted left/right JPEG files using the selected Stereo Order for every loaded image.">Export All as ZIP</a>
+      <a id="downloadAllLink" class="download" download="stereo-image-batch.zip" title="Export all loaded images as JPEGs using the current settings, then package them in a ZIP file. Uses each image’s native height unless Output JPEG Height was manually changed after opening the files. Zoom, Crop Pan, Horizontal Shift, Vertical Shift, the Image Rotation target, separate Left/Right rotation values, and their range settings use each image’s individual saved settings. On desktop, Shift-click to export separate adjusted left/right JPEG files using the selected Stereo Order for every loaded image.">Export All as ZIP</a>
     </div>
 
     <div class="meta">
@@ -1356,6 +1383,7 @@
   const resetHeightButton = document.getElementById("resetHeightButton");
   const rotationRange = document.getElementById("rotationRange");
   const rotationValue = document.getElementById("rotationValue");
+  const rotationTarget = document.getElementById("rotationTarget");
   const rotationRangeMode = document.getElementById("rotationRangeMode");
   const resetRotationButton = document.getElementById("resetRotationButton");
   const digitalZoomControl = document.getElementById("digitalZoomControl");
@@ -1457,6 +1485,10 @@
   let perImageAdjustmentSettings = [];
   let applyingPerImageAdjustmentSettings = false;
   let imageNavigationInProgress = false;
+  let leftRotationDegrees = 0;
+  let rightRotationDegrees = 0;
+  let rotationPreviewAnimationFrame = 0;
+  let lastRenderedRotationPreviewSignature = "";
 
   function escapeHtml(value) {
     return String(value)
@@ -1488,6 +1520,146 @@
     const zoom = Math.max(100, Math.min(300, Math.round(Number(digitalZoomRange?.value) || 100)));
 
     return zoom === 100 ? "" : `-Z${zoom}`;
+  }
+
+  function getRotationLimit() {
+    return rotationRangeMode?.value === "wide" ? 10 : 5;
+  }
+
+  function clampRotationDegrees(value) {
+    const limit = getRotationLimit();
+    const number = Number(value) || 0;
+    return Math.max(-limit, Math.min(limit, number));
+  }
+
+  function rotationValuesDiffer() {
+    return Math.abs(leftRotationDegrees - rightRotationDegrees) > 0.0001;
+  }
+
+  function getCurrentRotationValues() {
+    return {
+      left: Number(leftRotationDegrees) || 0,
+      right: Number(rightRotationDegrees) || 0
+    };
+  }
+
+  function syncRotationSliderToTarget() {
+    if (!rotationRange) return;
+
+    const target = rotationTarget?.value || "both";
+    const value = target === "right" ? rightRotationDegrees : leftRotationDegrees;
+    rotationRange.value = clampRotationDegrees(value).toFixed(2);
+  }
+
+  function applyRotationSliderValue(value) {
+    const rotation = clampRotationDegrees(value);
+    const target = rotationTarget?.value || "both";
+
+    if (target === "left") {
+      leftRotationDegrees = rotation;
+    } else if (target === "right") {
+      rightRotationDegrees = rotation;
+    } else {
+      leftRotationDegrees = rotation;
+      rightRotationDegrees = rotation;
+    }
+
+    syncRotationSliderToTarget();
+  }
+
+  function formatRotationFilenameValue(value) {
+    const number = Number(value) || 0;
+    if (!number) return "";
+
+    const absoluteText = Math.abs(number)
+      .toFixed(2)
+      .replace(/0+$/, "")
+      .replace(/\.$/, "")
+      .replace(".", "p");
+
+    return `${number > 0 ? "+" : "-"}${absoluteText}`;
+  }
+
+  function getRotationFilenameSuffix() {
+    const { left, right } = getCurrentRotationValues();
+
+    if (!left && !right) return "";
+
+    if (Math.abs(left - right) <= 0.0001) {
+      return `-R${formatRotationFilenameValue(left)}`;
+    }
+
+    let suffix = "";
+    if (left) suffix += `-RL${formatRotationFilenameValue(left)}`;
+    if (right) suffix += `-RR${formatRotationFilenameValue(right)}`;
+    return suffix;
+  }
+
+  function getRotationOutputNote() {
+    const { left, right } = getCurrentRotationValues();
+    const format = value => `${value > 0 ? "+" : ""}${value.toFixed(2)}°`;
+
+    if (!left && !right) return "";
+
+    if (Math.abs(left - right) <= 0.0001) {
+      return `, rotation ${format(left)}`;
+    }
+
+    if (left && right) {
+      return `, rotations L ${format(left)} / R ${format(right)}`;
+    }
+
+    return left
+      ? `, left rotation ${format(left)}`
+      : `, right rotation ${format(right)}`;
+  }
+
+  function getRotationPreviewSignature() {
+    const { left, right } = getCurrentRotationValues();
+    return [
+      left.toFixed(4),
+      right.toFixed(4),
+      rotationTarget?.value || "both",
+      rotationRangeMode?.value || "normal",
+      currentImageIndex,
+      outputFormat?.value || "sbs",
+      eyeOrder?.value || "normal"
+    ].join("|");
+  }
+
+  function cancelScheduledRotationPreview() {
+    if (rotationPreviewAnimationFrame) {
+      cancelAnimationFrame(rotationPreviewAnimationFrame);
+      rotationPreviewAnimationFrame = 0;
+    }
+  }
+
+  function scheduleRotationPreview() {
+    if (decodedViews.length < 2 || rotationPreviewAnimationFrame) {
+      return;
+    }
+
+    rotationPreviewAnimationFrame = requestAnimationFrame(() => {
+      rotationPreviewAnimationFrame = 0;
+      lastRenderedRotationPreviewSignature = getRotationPreviewSignature();
+      regeneratePreviewIfReady();
+    });
+  }
+
+  function ensureFinalRotationPreview() {
+    const signature = getRotationPreviewSignature();
+
+    if (rotationPreviewAnimationFrame || signature === lastRenderedRotationPreviewSignature) {
+      return;
+    }
+
+    scheduleRotationPreview();
+  }
+
+  function regenerateRotationPreviewImmediately() {
+    cancelScheduledRotationPreview();
+    lastRenderedRotationPreviewSignature = getRotationPreviewSignature();
+    regeneratePreviewIfReady();
   }
 
   function isIOSDevice() {
@@ -3913,6 +4085,7 @@
   }
 
   async function loadBatchImageAtIndex(index, options = {}) {
+    cancelScheduledRotationPreview();
     if (!loadedImageFiles.length) {
       throw new Error("No batch images are loaded.");
     }
@@ -4071,6 +4244,17 @@
       targetCanvas.height = 0;
     } catch (err) {
       // Ignore cleanup errors. Dropping the reference still allows collection.
+    }
+  }
+
+
+  function releaseCanvasPair(leftCanvas, rightCanvas) {
+    if (leftCanvas) {
+      releaseCanvasBackingStore(leftCanvas);
+    }
+
+    if (rightCanvas && rightCanvas !== leftCanvas) {
+      releaseCanvasBackingStore(rightCanvas);
     }
   }
 
@@ -4415,9 +4599,10 @@
 
     const formatSuffix = getOutputFormatSuffix();
     const zoomSuffix = getDigitalZoomFilenameSuffix();
+    const rotationSuffix = getRotationFilenameSuffix();
 
     if (!isSideBySideMode()) {
-      return `${baseName}-${formatSuffix}${zoomSuffix}-${outputHeight}h.jpg`;
+      return `${baseName}-${formatSuffix}${zoomSuffix}${rotationSuffix}-${outputHeight}h.jpg`;
     }
 
     let theStyle = "LR";
@@ -4428,7 +4613,7 @@
     const crop = clampSideBySideCropPercent(sbsCropRange?.value || 0);
     const cropSuffix = crop ? `-Crop${String(crop.toFixed(1)).replace(".", "p")}` : "";
 
-    return `${baseName}-${formatSuffix}-${theStyle}${zoomSuffix}${cropSuffix}-${outputHeight}h.jpg`;
+    return `${baseName}-${formatSuffix}-${theStyle}${zoomSuffix}${rotationSuffix}${cropSuffix}-${outputHeight}h.jpg`;
   }
 
   function promptForSaveName() {
@@ -4765,7 +4950,9 @@
       horizontalShiftRangeMode: "normal",
       verticalShift: 0,
       verticalShiftRangeMode: "normal",
-      rotation: 0,
+      rotationLeft: 0,
+      rotationRight: 0,
+      rotationTarget: "both",
       rotationRangeMode: "normal",
       digitalZoom: 100,
       cropPan: 0
@@ -4789,13 +4976,28 @@
     const rotationRangeModeValue = ["normal", "wide"].includes(settings.rotationRangeMode)
       ? settings.rotationRangeMode
       : defaults.rotationRangeMode;
+    const rotationTargetValue = ["left", "right", "both"].includes(settings.rotationTarget)
+      ? settings.rotationTarget
+      : defaults.rotationTarget;
+
+    const legacyRotation = Number.isFinite(Number(settings.rotation))
+      ? Number(settings.rotation)
+      : 0;
+    const rotationLeftValue = Number.isFinite(Number(settings.rotationLeft))
+      ? Number(settings.rotationLeft)
+      : legacyRotation;
+    const rotationRightValue = Number.isFinite(Number(settings.rotationRight))
+      ? Number(settings.rotationRight)
+      : legacyRotation;
 
     return {
       horizontalShift: Number.isFinite(Number(settings.horizontalShift)) ? Number(settings.horizontalShift) : defaults.horizontalShift,
       horizontalShiftRangeMode: horizontalShiftRangeModeValue,
       verticalShift: Number.isFinite(Number(settings.verticalShift)) ? Number(settings.verticalShift) : defaults.verticalShift,
       verticalShiftRangeMode: verticalShiftRangeModeValue,
-      rotation: Number.isFinite(Number(settings.rotation)) ? Number(settings.rotation) : defaults.rotation,
+      rotationLeft: rotationLeftValue,
+      rotationRight: rotationRightValue,
+      rotationTarget: rotationTargetValue,
       rotationRangeMode: rotationRangeModeValue,
       digitalZoom: Math.max(
         100,
@@ -4825,7 +5027,8 @@
       perImageAdjustmentSettings.push(getDefaultPerImageAdjustmentSettings());
     }
 
-    perImageAdjustmentSettings[normalizedIndex] = normalizePerImageAdjustmentSettings(perImageAdjustmentSettings[normalizedIndex]);
+    perImageAdjustmentSettings[normalizedIndex] =
+      normalizePerImageAdjustmentSettings(perImageAdjustmentSettings[normalizedIndex]);
     return perImageAdjustmentSettings[normalizedIndex];
   }
 
@@ -4841,7 +5044,9 @@
       horizontalShiftRangeMode: stereoDepthRangeMode?.value || "normal",
       verticalShift: Number(verticalShiftRange?.value) || 0,
       verticalShiftRangeMode: verticalShiftRangeMode?.value || "normal",
-      rotation: Number(rotationRange?.value) || 0,
+      rotationLeft: leftRotationDegrees,
+      rotationRight: rightRotationDegrees,
+      rotationTarget: rotationTarget?.value || "both",
       rotationRangeMode: rotationRangeMode?.value || "normal",
       digitalZoom: Math.max(100, Math.min(300, Number(digitalZoomRange?.value) || 100)),
       cropPan: Math.max(-100, Math.min(100, Number(cropPanRange?.value) || 0))
@@ -4854,7 +5059,6 @@
     }
 
     const settings = ensurePerImageAdjustmentSettings(index);
-
     applyingPerImageAdjustmentSettings = true;
 
     try {
@@ -4868,10 +5072,17 @@
         updateVerticalShiftRangeMode();
       }
 
+      if (rotationTarget) {
+        rotationTarget.value = settings.rotationTarget;
+      }
+
       if (rotationRangeMode) {
         rotationRangeMode.value = settings.rotationRangeMode;
-        updateRotationRangeMode();
       }
+
+      leftRotationDegrees = Number(settings.rotationLeft) || 0;
+      rightRotationDegrees = Number(settings.rotationRight) || 0;
+      updateRotationRangeMode();
 
       if (stereoDepthRange) {
         stereoDepthRange.value = Number(settings.horizontalShift).toFixed(1);
@@ -4879,10 +5090,6 @@
 
       if (verticalShiftRange) {
         verticalShiftRange.value = Number(settings.verticalShift).toFixed(1);
-      }
-
-      if (rotationRange) {
-        rotationRange.value = Number(settings.rotation).toFixed(2);
       }
 
       if (digitalZoomRange) {
@@ -4893,6 +5100,7 @@
         cropPanRange.value = String(Math.round(settings.cropPan));
       }
 
+      syncRotationSliderToTarget();
       updateControls();
     } finally {
       applyingPerImageAdjustmentSettings = false;
@@ -4900,6 +5108,11 @@
   }
 
   function resetImageAdjustmentsForNewFile() {
+
+    if (rotationTarget) {
+      rotationTarget.value = "both";
+    }
+
     if (rotationRangeMode) {
       rotationRangeMode.value = "normal";
     }
@@ -4911,6 +5124,9 @@
     if (verticalShiftRangeMode) {
       verticalShiftRangeMode.value = "normal";
     }
+
+    leftRotationDegrees = 0;
+    rightRotationDegrees = 0;
 
     if (rotationRange) {
       rotationRange.value = "0";
@@ -4943,8 +5159,21 @@
     updateStereoOrderOptionLabels();
 
     heightValue.textContent = `${Number(heightRange.value).toLocaleString()} px`;
-    const rotation = Number(rotationRange.value) || 0;
-    rotationValue.textContent = `${rotation > 0 ? "+" : ""}${rotation.toFixed(1)}°`;
+    const rotationTargetValue = rotationTarget?.value || "both";
+
+    if (rotationTargetValue === "both" && rotationValuesDiffer()) {
+      rotationValue.textContent = "L/R Diff";
+      rotationValue.title =
+        `Left ${leftRotationDegrees > 0 ? "+" : ""}${leftRotationDegrees.toFixed(2)}°, ` +
+        `Right ${rightRotationDegrees > 0 ? "+" : ""}${rightRotationDegrees.toFixed(2)}°. ` +
+        "Move the slider to set both values to the same angle.";
+    } else {
+      const rotation = rotationTargetValue === "right" ? rightRotationDegrees : leftRotationDegrees;
+      rotationValue.textContent = `${rotation > 0 ? "+" : ""}${rotation.toFixed(2)}°`;
+      rotationValue.title = rotationTargetValue === "both"
+        ? "Current rotation applied to both images."
+        : `Current ${rotationTargetValue} image rotation.`;
+    }
 
     const separation = Number(stereoDepthRange.value) || 0;
     stereoDepthValue.textContent = `${separation > 0 ? "+" : ""}${separation.toFixed(1)}%`;
@@ -4987,17 +5216,15 @@
 
 
   function updateRotationRangeMode() {
-    const wideRange = rotationRangeMode.value === "wide";
-    const limit = wideRange ? 10 : 5;
-    let value = Number(rotationRange.value) || 0;
+    const limit = getRotationLimit();
 
     rotationRange.min = String(-limit);
     rotationRange.max = String(limit);
 
-    if (value < -limit) value = -limit;
-    if (value > limit) value = limit;
+    leftRotationDegrees = Math.max(-limit, Math.min(limit, Number(leftRotationDegrees) || 0));
+    rightRotationDegrees = Math.max(-limit, Math.min(limit, Number(rightRotationDegrees) || 0));
 
-    rotationRange.value = value.toFixed(2);
+    syncRotationSliderToTarget();
     updateControls();
   }
 
@@ -5051,8 +5278,13 @@
       previewFlipAnimationRequest = 0;
     }
 
+    const oldLeftCanvas = previewFlipLeftCanvas;
+    const oldRightCanvas = previewFlipRightCanvas;
+
     previewFlipLeftCanvas = null;
     previewFlipRightCanvas = null;
+
+    releaseCanvasPair(oldLeftCanvas, oldRightCanvas);
   }
 
   function drawPreviewFlipFrame(now = performance.now()) {
@@ -5255,12 +5487,20 @@ function updateOutputModeControls() {
     temp.width = width;
     temp.height = height;
 
-    const ctx = temp.getContext("2d", { alpha: false, willReadFrequently: true });
-    ctx.imageSmoothingEnabled = true;
-    ctx.imageSmoothingQuality = "high";
-    ctx.drawImage(sourceCanvas, 0, 0, width, height);
+    try {
+      const ctx = temp.getContext("2d", {
+        alpha: false,
+        willReadFrequently: true
+      });
 
-    return ctx.getImageData(0, 0, width, height);
+      ctx.imageSmoothingEnabled = true;
+      ctx.imageSmoothingQuality = "high";
+      ctx.drawImage(sourceCanvas, 0, 0, width, height);
+
+      return ctx.getImageData(0, 0, width, height);
+    } finally {
+      releaseCanvasBackingStore(temp);
+    }
   }
 
   function createDigitalZoomCanvas(sourceCanvas, width, height, zoomPercent) {
@@ -5329,45 +5569,67 @@ function updateOutputModeControls() {
     };
   }
 
-  function createRotatedCanvas(sourceCanvas, width, height, rotationDegrees) {
+  function getRotationCoverScale(width, height, rotationDegrees) {
     const rotation = Number(rotationDegrees) || 0;
 
     if (!rotation) {
+      return 1;
+    }
+
+    const angle = rotation * Math.PI / 180;
+    const absCos = Math.abs(Math.cos(angle));
+    const absSin = Math.abs(Math.sin(angle));
+    const aspect = width / height;
+    const scaleForWidth = absCos + absSin / aspect;
+    const scaleForHeight = absCos + absSin * aspect;
+
+    return Math.max(scaleForWidth, scaleForHeight);
+  }
+
+  function createRotatedCanvas(
+    sourceCanvas,
+    sourceWidth,
+    sourceHeight,
+    rotationDegrees,
+    matchedCoverScale = null,
+    outputWidth = sourceWidth,
+    outputHeight = sourceHeight
+  ) {
+    const rotation = Number(rotationDegrees) || 0;
+    const calculatedCoverScale = getRotationCoverScale(sourceWidth, sourceHeight, rotation);
+    const coverScale = Math.max(1, calculatedCoverScale, Number(matchedCoverScale) || 1);
+    const targetWidth = Math.max(1, Math.round(Number(outputWidth) || sourceWidth));
+    const targetHeight = Math.max(1, Math.round(Number(outputHeight) || sourceHeight));
+
+    if (
+      !rotation &&
+      coverScale <= 1.0000001 &&
+      sourceCanvas.width === targetWidth &&
+      sourceCanvas.height === targetHeight
+    ) {
       return sourceCanvas;
     }
 
     const out = document.createElement("canvas");
-    out.width = width;
-    out.height = height;
+    out.width = targetWidth;
+    out.height = targetHeight;
 
     const ctx = out.getContext("2d", { alpha: false });
     ctx.imageSmoothingEnabled = true;
     ctx.imageSmoothingQuality = "high";
 
     ctx.fillStyle = "#000";
-    ctx.fillRect(0, 0, width, height);
+    ctx.fillRect(0, 0, targetWidth, targetHeight);
 
     const angle = rotation * Math.PI / 180;
-    const absCos = Math.abs(Math.cos(angle));
-    const absSin = Math.abs(Math.sin(angle));
-    const aspect = width / height;
+    const drawWidth = targetWidth * coverScale;
+    const drawHeight = targetHeight * coverScale;
 
-    /*
-      Scale the image up just enough that, after rotation, the full output
-      rectangle is covered by visible image content.
+    ctx.translate(targetWidth / 2, targetHeight / 2);
 
-      This prevents blank corners. The canvas itself performs the final crop,
-      preserving the original output aspect ratio.
-    */
-    const scaleForWidth = absCos + absSin / aspect;
-    const scaleForHeight = absCos + absSin * aspect;
-    const coverScale = Math.max(scaleForWidth, scaleForHeight);
-
-    const drawWidth = width * coverScale;
-    const drawHeight = height * coverScale;
-
-    ctx.translate(width / 2, height / 2);
-    ctx.rotate(angle);
+    if (rotation) {
+      ctx.rotate(angle);
+    }
 
     ctx.drawImage(
       sourceCanvas,
@@ -5382,6 +5644,109 @@ function updateOutputModeControls() {
     );
 
     return out;
+  }
+
+  function applyMatchedRotationToStereoViews(
+    left,
+    right,
+    rotationValues,
+    outputWidth = null,
+    outputHeight = null
+  ) {
+    const leftRotation = Number(rotationValues?.left) || 0;
+    const rightRotation = Number(rotationValues?.right) || 0;
+
+    if (!leftRotation && !rightRotation) {
+      return { left, right };
+    }
+
+    const matchedCoverScale = Math.max(
+      getRotationCoverScale(left.width, left.height, leftRotation),
+      getRotationCoverScale(right.width, right.height, rightRotation)
+    );
+    const targetWidth = Math.max(1, Math.round(Number(outputWidth) || left.width));
+    const targetHeight = Math.max(1, Math.round(Number(outputHeight) || left.height));
+
+    return {
+      left: {
+        ...left,
+        width: targetWidth,
+        height: targetHeight,
+        canvas: createRotatedCanvas(
+          left.canvas,
+          left.width,
+          left.height,
+          leftRotation,
+          matchedCoverScale,
+          targetWidth,
+          targetHeight
+        )
+      },
+      right: {
+        ...right,
+        width: targetWidth,
+        height: targetHeight,
+        canvas: createRotatedCanvas(
+          right.canvas,
+          right.width,
+          right.height,
+          rightRotation,
+          matchedCoverScale,
+          targetWidth,
+          targetHeight
+        )
+      }
+    };
+  }
+
+  function releaseTemporaryRotationViews(rotationAdjusted, originalLeft, originalRight) {
+    if (!rotationAdjusted) {
+      return;
+    }
+
+    const leftCanvas = rotationAdjusted.left?.canvas;
+    const rightCanvas = rotationAdjusted.right?.canvas;
+
+    if (leftCanvas && leftCanvas !== originalLeft?.canvas) {
+      releaseCanvasBackingStore(leftCanvas);
+    }
+
+    if (rightCanvas && rightCanvas !== originalRight?.canvas && rightCanvas !== leftCanvas) {
+      releaseCanvasBackingStore(rightCanvas);
+    }
+  }
+
+  function createRotationAdjustedStereoPair(
+    left,
+    right,
+    rotationValues,
+    width,
+    height,
+    offsetXPx,
+    offsetYPx,
+    autoCropEdges
+  ) {
+    const rotationAdjusted = applyMatchedRotationToStereoViews(
+      left,
+      right,
+      rotationValues,
+      width,
+      height
+    );
+
+    try {
+      return createAdjustedStereoPair(
+        rotationAdjusted.left.canvas,
+        rotationAdjusted.right.canvas,
+        width,
+        height,
+        offsetXPx,
+        offsetYPx,
+        autoCropEdges
+      );
+    } finally {
+      releaseTemporaryRotationViews(rotationAdjusted, left, right);
+    }
   }
 
   function createStereoShiftAdjustedCanvas(sourceCanvas, width, height, offsetXPx, offsetYPx, autoCropEdges) {
@@ -5757,6 +6122,9 @@ function updateOutputModeControls() {
 
 
   function setOutputControlsBusy(isBusy) {
+    if (isBusy) {
+      }
+
     outputFormat.disabled = isBusy;
     eyeOrder.disabled = isBusy;
     heightRange.disabled = isBusy;
@@ -5776,6 +6144,7 @@ function updateOutputModeControls() {
       resetCropPanButton.disabled = isBusy;
     }
     rotationRange.disabled = isBusy;
+    if (rotationTarget) rotationTarget.disabled = isBusy;
     rotationRangeMode.disabled = isBusy;
     resetRotationButton.disabled = isBusy;
     stereoDepthRange.disabled = isBusy;
@@ -5796,6 +6165,10 @@ function updateOutputModeControls() {
   async function convertToSbs(options = {}) {
     const previewOnly = !!options.previewOnly;
 
+    if (!previewOnly) {
+      cancelScheduledRotationPreview();
+    }
+
     stopPreviewFlipAnimation();
     const preserveDownloadUi = !previewOnly && (!!options.preserveDownloadUi || interactivePreviewDirty);
 
@@ -5808,6 +6181,12 @@ function updateOutputModeControls() {
     if (!previewOnly) {
       setOutputControlsBusy(true);
     }
+
+    // These must be in the function scope because the finally block releases
+    // any temporary zoom canvases even when rendering exits early or throws.
+    let zoomInputLeft = null;
+    let zoomInputRight = null;
+    let zoomedViews = null;
 
     try {
       if (!previewOnly) {
@@ -5827,30 +6206,29 @@ function updateOutputModeControls() {
 
       let left = decodedViews[0];
       let right = decodedViews[1];
+      let rotationValues = getCurrentRotationValues();
 
+      /*
+        Left and Right rotation values refer to the imported/source eye identities.
+        If Side-by-Side Stereo Order is swapped, carry each eye's rotation with it
+        into the opposite output position.
+      */
       if (isSideBySideMode() && eyeOrder.value === "swap") {
         [left, right] = [right, left];
+        rotationValues = {
+          left: rotationValues.right,
+          right: rotationValues.left
+        };
       }
 
       const digitalZoomPercent = Math.max(100, Math.min(300, Number(digitalZoomRange?.value) || 100));
 
       if (digitalZoomPercent > 100) {
-        const zoomed = applyDigitalZoomToStereoViews(left, right, digitalZoomPercent);
-        left = zoomed.left;
-        right = zoomed.right;
-      }
-
-      const imageRotationDegrees = Number(rotationRange.value) || 0;
-
-      if (imageRotationDegrees) {
-        left = {
-          ...left,
-          canvas: createRotatedCanvas(left.canvas, left.width, left.height, imageRotationDegrees)
-        };
-        right = {
-          ...right,
-          canvas: createRotatedCanvas(right.canvas, right.width, right.height, imageRotationDegrees)
-        };
+        zoomInputLeft = left;
+        zoomInputRight = right;
+        zoomedViews = applyDigitalZoomToStereoViews(left, right, digitalZoomPercent);
+        left = zoomedViews.left;
+        right = zoomedViews.right;
       }
 
       const selectedOutputHeight = clampOutputHeight(heightRange.value);
@@ -5879,9 +6257,10 @@ function updateOutputModeControls() {
           const flipPreviewWidth = previewDims.width;
           const flipPreviewHeight = previewDims.height;
 
-          const shifted = createAdjustedStereoPair(
-            left.canvas,
-            right.canvas,
+          const shifted = createRotationAdjustedStereoPair(
+            left,
+            right,
+            rotationValues,
             flipPreviewWidth,
             flipPreviewHeight,
             Math.round(flipPreviewWidth * (sideBySideHorizontalShiftPercent / 100)),
@@ -5889,16 +6268,22 @@ function updateOutputModeControls() {
             autoCropEdges
           );
 
-          const adjusted = createSideBySideCenterCroppedPair(
-            shifted.leftCanvas,
-            shifted.rightCanvas,
-            flipPreviewWidth,
-            flipPreviewHeight,
-            sbsCenterCropPercent,
-            cropPanPercent,
-            false,
-            getCanvasBackgroundColor(true)
-          );
+          let adjusted;
+
+          try {
+            adjusted = createSideBySideCenterCroppedPair(
+              shifted.leftCanvas,
+              shifted.rightCanvas,
+              flipPreviewWidth,
+              flipPreviewHeight,
+              sbsCenterCropPercent,
+              cropPanPercent,
+              false,
+              getCanvasBackgroundColor(true)
+            );
+          } finally {
+            releaseCanvasPair(shifted.leftCanvas, shifted.rightCanvas);
+          }
 
           canvas.width = flipPreviewWidth;
           canvas.height = flipPreviewHeight;
@@ -5930,9 +6315,10 @@ function updateOutputModeControls() {
             eyeWidth = Math.floor(outputWidth / 2);
             rightEyeWidth = outputWidth - eyeWidth;
 
-            const shifted = createAdjustedStereoPair(
-              left.canvas,
-              right.canvas,
+            const shifted = createRotationAdjustedStereoPair(
+              left,
+              right,
+              rotationValues,
               eyeWidth,
               outputHeight,
               Math.round(eyeWidth * (sideBySideHorizontalShiftPercent / 100)),
@@ -5940,16 +6326,20 @@ function updateOutputModeControls() {
               autoCropEdges
             );
 
-            adjusted = createSideBySideCenterCroppedPair(
-              shifted.leftCanvas,
-              shifted.rightCanvas,
-              eyeWidth,
-              outputHeight,
-              sbsCenterCropPercent,
-              cropPanPercent,
-              true,
-              getCanvasBackgroundColor(previewOnly)
-            );
+            try {
+              adjusted = createSideBySideCenterCroppedPair(
+                shifted.leftCanvas,
+                shifted.rightCanvas,
+                eyeWidth,
+                outputHeight,
+                sbsCenterCropPercent,
+                cropPanPercent,
+                true,
+                getCanvasBackgroundColor(previewOnly)
+              );
+            } finally {
+              releaseCanvasPair(shifted.leftCanvas, shifted.rightCanvas);
+            }
           } else {
             outputHeight = selectedOutputHeight;
 
@@ -5962,9 +6352,10 @@ function updateOutputModeControls() {
             rightEyeWidth = eyeWidth;
             outputWidth = eyeWidth + rightEyeWidth;
 
-            const shifted = createAdjustedStereoPair(
-              left.canvas,
-              right.canvas,
+            const shifted = createRotationAdjustedStereoPair(
+              left,
+              right,
+              rotationValues,
               uncroppedEyeWidth,
               outputHeight,
               Math.round(uncroppedEyeWidth * (sideBySideHorizontalShiftPercent / 100)),
@@ -5972,15 +6363,19 @@ function updateOutputModeControls() {
               autoCropEdges
             );
 
-            adjusted = createSideBySideVisibleCroppedPair(
-              shifted.leftCanvas,
-              shifted.rightCanvas,
-              eyeWidth,
-              rightEyeWidth,
-              outputHeight,
-              sbsCenterCropPercent,
-              cropPanPercent
-            );
+            try {
+              adjusted = createSideBySideVisibleCroppedPair(
+                shifted.leftCanvas,
+                shifted.rightCanvas,
+                eyeWidth,
+                rightEyeWidth,
+                outputHeight,
+                sbsCenterCropPercent,
+                cropPanPercent
+              );
+            } finally {
+              releaseCanvasPair(shifted.leftCanvas, shifted.rightCanvas);
+            }
           }
 
           canvas.width = outputWidth;
@@ -6006,6 +6401,8 @@ function updateOutputModeControls() {
             const borderContentWidth = Math.max(1, borderContentRight - borderContentX);
             drawSideBySideBorderOverlay(ctx, outputWidth, outputHeight, borderContentX, borderContentWidth, eyeWidth);
           }
+
+          releaseCanvasPair(adjusted.leftCanvas, adjusted.rightCanvas);
         }
       } else {
         const aspect = left.height / left.width;
@@ -6020,9 +6417,10 @@ function updateOutputModeControls() {
         const horizontalShiftPx = Math.round(outputWidth * (horizontalShiftPercent / 100));
         const verticalShiftPx = Math.round(outputHeight * (verticalShiftPercent / 100));
 
-        const adjusted = createAdjustedStereoPair(
-          left.canvas,
-          right.canvas,
+        const adjusted = createRotationAdjustedStereoPair(
+          left,
+          right,
+          rotationValues,
           outputWidth,
           outputHeight,
           horizontalShiftPx,
@@ -6051,6 +6449,8 @@ function updateOutputModeControls() {
         if (isBorderEnabled()) {
           drawImageBorderOverlay(ctx, outputWidth, outputHeight);
         }
+
+        releaseCanvasPair(adjusted.leftCanvas, adjusted.rightCanvas);
       }
 
       canvas.style.display = "block";
@@ -6095,9 +6495,7 @@ function updateOutputModeControls() {
         ? `, zoom ${Math.round(digitalZoomPercent)}%`
         : "";
 
-      const rotationNote = imageRotationDegrees
-        ? `, rotation ${imageRotationDegrees > 0 ? "+" : ""}${imageRotationDegrees.toFixed(1)}°`
-        : "";
+      const rotationNote = getRotationOutputNote();
 
       const horizontalShiftNote = horizontalShiftPercent
         ? `, horizontal shift ${horizontalShiftPercent > 0 ? "+" : ""}${horizontalShiftPercent.toFixed(1)}%`
@@ -6134,6 +6532,10 @@ function updateOutputModeControls() {
 
       setStatus(`${modeLabel} JPEG generated.`, "ok");
     } finally {
+      if (zoomedViews) {
+        releaseTemporaryRotationViews(zoomedViews, zoomInputLeft, zoomInputRight);
+      }
+
       if (!previewOnly) {
         setOutputControlsBusy(false);
       }
@@ -6149,25 +6551,25 @@ function updateOutputModeControls() {
         <ol>
           <li>Select one side-by-side JPEG/TIFF stereo image, multiple already-processed side-by-side JPEG/TIFF stereo images, or separate JPEG/TIFF left/right image pairs.<br/>On desktop, you can also drag and drop the files onto the top control panel.</li>
           <li>A single side-by-side JPEG/TIFF input is split into equal left and right halves before the normal adjustment/export workflow begins.<br/>If an odd number of files is loaded, the files are treated as already processed side-by-side stereo images.<br/>If an even number of files is loaded and every filename forms a matching <b>-l</b>/<b>-r</b> pair, the tool automatically imports them as separate left/right image pairs and assembles each pair into a stereo image.<br/>If an even number of files is loaded but the names do not form matching <b>-l</b>/<b>-r</b> pairs, the tool asks whether to treat the files as sorted left/right pairs or as already processed side-by-side stereo images.</li>
-          <li>When multiple images are loaded, use the <b>First</b>, <b>Previous</b>, <b>Next</b>, and <b>Last</b> buttons over the preview to move through the collection.<br/>On desktop, these buttons appear when the mouse is over the preview.<br/>On iOS, they remain visible.<br/>When switching images, the <b>Output JPEG Height</b> normally updates to the newly displayed image’s native height.<br/>If you manually change the <b>Output JPEG Height</b> after opening the files, that manual height is preserved while navigating and is used for batch ZIP export.<br/>Opening or dropping new files resets this manual-height override.<br/><b>Zoom</b>, <b>Crop Pan</b>, <b>Horizontal Shift</b>, <b>Vertical Shift</b>, <b>Image Rotation</b>, and their slider range settings are tracked separately for each loaded image.</li>
+          <li>When multiple images are loaded, use the <b>First</b>, <b>Previous</b>, <b>Next</b>, and <b>Last</b> buttons over the preview to move through the collection.<br/>On desktop, these buttons appear when the mouse is over the preview.<br/>On iOS, they remain visible.<br/>When switching images, the <b>Output JPEG Height</b> normally updates to the newly displayed image’s native height.<br/>If you manually change the <b>Output JPEG Height</b> after opening the files, that manual height is preserved while navigating and is used for batch ZIP export.<br/>Opening or dropping new files resets this manual-height override.<br/><b>Zoom</b>, <b>Crop Pan</b>, <b>Horizontal Shift</b>, <b>Vertical Shift</b>, the <b>Image Rotation</b> target, separate <b>Left</b> and <b>Right</b> rotation values, and their slider range settings are tracked separately for each loaded image.</li>
           <li><b>Stereo Order</b> affects both <b>Side-by-Side</b> and <b>Anaglyph</b> output.<br/>For <b>Anaglyph</b> output, it controls which source half becomes the red left-eye channel and which source half becomes the cyan right-eye channel.</li>
           <li><b>Stereo Order</b> can be used to reverse the left/right order when opening an image pair or to create an <b>Anaglyph</b> from a right/left cross-eye source image.</li>
           <li>TIFF support is intended for standard 8-bit RGB side-by-side or separate left/right TIFF/TIF images, including uncompressed TIFFs and common LZW-compressed TIFFs with horizontal differencing predictor.</li>
           <li>Left/right pair imports must contain matching pairs of files.<br/>Each pair must use the same source format, and both images in each pair must have exactly the same pixel dimensions.<br/>If the formats or dimensions do not match, the tool shows an alert and does not import them.<br/>Automatic pair detection recognizes filenames ending in <b>-l</b> and <b>-r</b> immediately before <b>.jpg</b>, <b>.jpeg</b>, <b>.JPG</b>, <b>.JPEG</b>, <b>.tif</b>, <b>.TIF</b>, <b>.tiff</b>, or <b>.TIFF</b>, such as <b>image-l.jpg</b> and <b>image-r.jpg</b>.</li>
           <li>Select an <b>Output Format</b>.<br/>Use <b>Side-by-Side</b> for stereo pairs, or one of the <b>Red / Cyan Anaglyph</b> formats for viewing with red/cyan 3D glasses.<br/>Use the <b>Border</b> selector to choose no border or to include a black border in the exported JPEG.<br/>In <b>Side-by-Side</b> output, the border option also draws the center seam; in <b>Anaglyph</b> output, it draws only the outer border.<br/>The selected border setting is saved and restored the next time the tool is opened.</li>
           <li>Adjust <b>Output JPEG Height</b> as desired.<br/>The initial value is read from the imported source image height; for two-file left/right imports, it is read from the shared height of the two images.<br/>Use the slider, or click the height value display to enter an exact height.</li>
-          <li>Optionally adjust <b>Zoom</b>, <b>Side-by-Side Center Crop</b> (side-by-side format only), <b>Crop Pan</b>, <b>Horizontal Shift</b>, <b>Vertical Shift</b>, and/or <b>Image Rotation</b> as required to optimize the stereo view.<br/><b>Zoom</b> applies the same centered, aspect-ratio-preserving crop to both eyes before <b>Image Rotation</b>, <b>Horizontal Shift</b>, and <b>Vertical Shift</b>.<br/>For <b>Side-by-Side Center Crop</b>, use the slider or click the displayed crop value to enter an exact 0.0% to 50.0% value.<br/>When <b>Side-by-Side Center Crop</b> is above 0%, use <b>Crop Pan</b> to choose which horizontal portion of the image is retained.</li>
-          <li>When multiple images are loaded, <b>Zoom</b>, <b>Crop Pan</b>, <b>Horizontal Shift</b>, <b>Vertical Shift</b>, <b>Image Rotation</b>, and their slider range selectors are saved separately for each image.<br/>When you move between images, those controls are restored for the selected image.<br/>Images that have not been individually adjusted use 100% <b>Zoom</b>, 0% <b>Crop Pan</b>, 0% <b>Horizontal Shift</b>, 0% <b>Vertical Shift</b>, 0° <b>Image Rotation</b>, and the normal slider ranges.<br/>During <b>Export All as ZIP</b>, each image uses its own saved values for these controls.</li>
-          <li>For single-image and two-file left/right-pair imports, <b>Zoom</b> is reset to 100%, while <b>Crop Pan</b>, <b>Horizontal Shift</b>, <b>Vertical Shift</b>, and <b>Image Rotation</b> are reset to 0 whenever a new JPEG or TIFF file is opened.<br/><b>Side-by-Side Center Crop</b> is saved and restored the next time the tool is opened, so you can apply the same center-crop amount across multiple images until you change it or press its <b>Reset</b> button.</li>
-          <li>On desktop browsers, move the mouse over the preview area to reveal the full-screen button at the top right of the preview.<br/>On iPad, the button remains visible at the top right.<br/>The button is hidden on iPhone and while full-screen mode is active.<br/>Press Escape or use the browser full-screen control to return to the normal tool view.</li>
+          <li>Optionally adjust <b>Zoom</b>, <b>Side-by-Side Center Crop</b> (<b>Side-by-Side</b> output only), <b>Crop Pan</b>, <b>Horizontal Shift</b>, <b>Vertical Shift</b>, and/or <b>Image Rotation</b> as required to optimize the stereo view.<br/><b>Zoom</b> applies the same centered, aspect-ratio-preserving crop to both eyes before the selected <b>Left</b>/<b>Right</b> <b>Image Rotation</b> values, <b>Horizontal Shift</b>, and <b>Vertical Shift</b>.<br/>For <b>Side-by-Side Center Crop</b>, use the slider or click the displayed crop value to enter an exact 0.0% to 50.0% value.<br/>When <b>Side-by-Side Center Crop</b> is above 0%, use <b>Crop Pan</b> to choose which horizontal portion of the image is retained.</li>
+          <li>When multiple images are loaded, <b>Zoom</b>, <b>Crop Pan</b>, <b>Horizontal Shift</b>, <b>Vertical Shift</b>, the <b>Image Rotation</b> target, separate <b>Left</b> and <b>Right</b> rotation values, and their slider range selectors are saved separately for each image.<br/>When you move between images, those controls are restored for the selected image.<br/>Images that have not been individually adjusted use 100% <b>Zoom</b>, 0% <b>Crop Pan</b>, 0% <b>Horizontal Shift</b>, 0% <b>Vertical Shift</b>, the <b>Both</b> rotation target, 0° <b>Left</b> and <b>Right</b> rotations, and the normal slider ranges.<br/>During <b>Export All as ZIP</b>, each image uses its own saved values for these controls.</li>
+          <li>For single-image and two-file left/right-pair imports, <b>Zoom</b> is reset to 100%; <b>Crop Pan</b>, <b>Horizontal Shift</b>, and <b>Vertical Shift</b> are reset to 0; and <b>Image Rotation</b> returns to <b>Both</b> with the <b>Left</b> and <b>Right</b> values reset to 0° whenever a new JPEG or TIFF file is opened.<br/><b>Side-by-Side Center Crop</b> is saved and restored the next time the tool is opened, so you can apply the same center-crop amount across multiple images until you change it or press its <b>Reset</b> button.</li>
+          <li>On desktop browsers, move the mouse over the preview area to reveal the full-screen button at the top right of the preview.<br/>On iPad, the button remains visible at the top right.<br/>The button is hidden on iPhone and while full-screen mode is active.<br/>Press <b>Escape</b> or use the browser full-screen control to return to the normal tool view.</li>
           <li>When multiple images are loaded, on desktop browsers, move the mouse over the preview area to reveal the first, previous, next, and last image arrow buttons at the edges of the preview that you can use to switch between the images (always visible on iOS).<br/>Keyboard shortcuts are also available throughout the main tool: <b>Ctrl+Shift+[</b> for first image, <b>Ctrl+[</b> for previous image, <b>Ctrl+]</b> for next image, and <b>Ctrl+Shift+]</b> for last image.</li>
           <li>The normal on-page preview is optimized for responsiveness, while full-screen preview automatically uses a higher preview resolution when useful for sharper viewing on high-DPI displays.</li>
           <li>To make the side-by-side preview easier to fuse visually while adjusting the images, zoom out in the browser or make the browser window narrower.</li>
           <li>To export the currently displayed image, click <b>Export Current JPEG</b>.<br/>On desktop, the browser downloads the JPEG.<br/>On iOS, the iOS Share Sheet opens so you can save or share the JPEG.</li>
-          <li>When multiple images are loaded, click <b>Export All as ZIP</b> to export all loaded images.<br/><b>Zoom</b>, <b>Crop Pan</b>, <b>Horizontal Shift</b>, <b>Vertical Shift</b>, <b>Image Rotation</b>, and their slider range settings use each image’s individual saved settings; the other controls use the current settings.<br/>During batch export, a progress dialog shows the current image and overall progress; click <b>Cancel</b> during ZIP generation to stop after the current processing step finishes.</li>
-          <li>On desktop, Shift-click <b>Export Current JPEG</b> to export the currently displayed adjusted left and right views, using the selected <b>Stereo Order</b>, as separate JPEG files in a ZIP.<br/>The files are named from the source image filename with <b>-l</b> and <b>-r</b> suffixes.<br/>When <b>Zoom</b> is not 100%, the filename also includes a <b>-Z###</b> suffix, such as <b>-Z150</b>.</li>
+          <li>When multiple images are loaded, click <b>Export All as ZIP</b> to export all loaded images.<br/><b>Zoom</b>, <b>Crop Pan</b>, <b>Horizontal Shift</b>, <b>Vertical Shift</b>, the <b>Image Rotation</b> target, separate <b>Left</b> and <b>Right</b> rotation values, and their slider range settings use each image’s individual saved settings; the other controls use the current settings.<br/>During batch export, a progress dialog shows the current image and overall progress; click <b>Cancel</b> during ZIP generation to stop after the current processing step finishes.</li>
+          <li>On desktop, Shift-click <b>Export Current JPEG</b> to export the currently displayed adjusted left and right views, using the selected <b>Stereo Order</b>, as separate JPEG files in a ZIP.<br/>The files are named from the source image filename with <b>-l</b> and <b>-r</b> suffixes.<br/>When <b>Zoom</b> is not 100%, the filename also includes a <b>-Z###</b> suffix, such as <b>-Z150</b>.<br/>When either <b>Image Rotation</b> value is non-zero, the filename includes a compact rotation suffix, such as <b>-R+1p5</b> when both values match or <b>-RL+1p5-RR-0p5</b> when they differ.</li>
           <li>On iOS, long-press <b>Export Current JPEG</b> to export the current adjusted left/right image pair as separate JPEG files in a ZIP.</li>
-          <li>On desktop, Shift-click <b>Export All as ZIP</b> to export separate adjusted left/right JPEG files for every loaded image.<br/>The separate left/right files use the selected <b>Output JPEG Height</b>, selected <b>Stereo Order</b>, and each image’s saved <b>Zoom</b>, <b>Crop Pan</b>, <b>Horizontal Shift</b>, <b>Vertical Shift</b>, and <b>Image Rotation</b> settings.<br/><b>Crop Pan</b> is applied to separate left/right exports only when the output format is <b>Side-by-Side</b> and <b>Side-by-Side Center Crop</b> is above 0%.</li>
+          <li>On desktop, Shift-click <b>Export All as ZIP</b> to export separate adjusted left/right JPEG files for every loaded image.<br/>The separate left/right files use the selected <b>Output JPEG Height</b>, selected <b>Stereo Order</b>, and each image’s saved <b>Zoom</b>, <b>Crop Pan</b>, <b>Horizontal Shift</b>, <b>Vertical Shift</b>, and separate <b>Left</b>/<b>Right</b> <b>Image Rotation</b> settings.<br/><b>Crop Pan</b> is applied to separate left/right exports only when the <b>Output Format</b> is <b>Side-by-Side</b> and <b>Side-by-Side Center Crop</b> is above 0%.</li>
           <li>On iOS, long-press <b>Export All as ZIP</b> to export adjusted left/right image pairs for all loaded images to a ZIP.</li>
           <li>On iOS, after any ZIP is ready, tap <b>Share ZIP</b> to open the iOS Share Sheet, then choose <b>Save to Files</b> or another share destination.<br/>Tap <b>Cancel</b> to close the ZIP dialog without sharing.</li>
         </ol>
@@ -6185,8 +6587,8 @@ function updateOutputModeControls() {
           <li>Click <b>Cancel</b> to close the dialog without changing the current maximum.</li>
           <li>If the current flip rate is above the new maximum, it is automatically reduced to the new maximum.</li>
           <li>The selected maximum is saved and restored the next time the tool is opened.</li>          
-          <li><b>Image Rotation</b>: Applies a small roll correction to both stereo views.<br/>The rotated image is cropped as required to preserve the original aspect ratio.</li>
-          <li><b>Image Rotation range selector</b>: Switches the <b>Image Rotation</b> slider between ±5° for normal adjustments and ±10° for larger rotation corrections.<br/>The <b>Reset</b> button resets the image rotation to zero.</li>
+          <li><b>Image Rotation</b>: Use the <b>Left</b> / <b>Right</b> / <b>Both</b> selector to choose which source eye the rotation slider adjusts.<br/><b>Left</b> and <b>Right</b> angles are stored independently for each loaded image and continue to refer to the source eye even when <b>Stereo Order</b> is changed.<br/>If <b>Both</b> is selected while the stored <b>Left</b> and <b>Right</b> angles differ, the value display shows <b>L/R Diff</b>.<br/>Moving the slider while <b>Both</b> is selected sets both angles to the same value.<br/>Each rotated image is cropped as required to preserve the original aspect ratio.<br/>When the angles differ, both images use the larger rotation-safe enlargement required by either eye so their stereo scale remains matched.<br/>When either rotation value is non-zero, default exported filenames include a compact suffix: matching values use <b>-R</b>, such as <b>-R+1p5</b>, while differing values use <b>-RL</b> and <b>-RR</b>, such as <b>-RL+1p5-RR-0p5</b>.<br/>In these rotation suffixes, <b>-RL</b> and <b>-RR</b> refer to the source <b>Left</b> and <b>Right</b> eyes, even when <b>Stereo Order</b> swaps their output positions.</li>
+          <li><b>Image Rotation range selector</b>: Uses one shared range for <b>Left</b>, <b>Right</b>, and <b>Both</b>, and switches the slider between ±5° for normal adjustments and ±10° for larger corrections.<br/>Changing to the smaller range clamps either stored angle that is outside ±5°.<br/>The <b>Reset</b> button resets both <b>Left</b> and <b>Right</b> rotation values to zero.</li>
           <li><b>Side-by-Side Center Crop</b>: Only shown for <b>Side-by-Side</b> output.<br/>Crops the selected total percentage from the horizontal edges of each eye view.<br/>When <b>Crop Pan</b> is 0%, the crop is split evenly between the left and right edges.<br/>Use <b>Crop Pan</b> to retain more of the left or right side.<br/>In the on-screen <b>Side-by-Side</b> preview, the visible left and right views touch at the center seam.<br/>During final JPEG export, the left and right views are scaled to the selected output height.<br/>The available crop range is from 0% to 50%.<br/>Use the slider, or click the numeric crop value to enter a specific crop percentage.<br/>The crop setting is preserved when new JPEG or TIFF files are opened and is saved and restored the next time the tool is opened.<br/>The <b>Reset</b> button resets the crop to 0% and saves that value.</li>
           <li><b>Zoom</b>: Applies the same centered zoom to both eye images from 100% to 300%.<br/>The crop keeps the original eye-image aspect ratio, works in both <b>Side-by-Side</b> and <b>Anaglyph</b> modes, and is applied before <b>Image Rotation</b>, <b>Horizontal Shift</b>, and <b>Vertical Shift</b>.<br/>Each loaded image keeps its own <b>Zoom</b> value.<br/>When <b>Zoom</b> is not 100%, the default exported JPEG filename includes a <b>-Z###</b> suffix, such as <b>-Z150</b>.<br/>The <b>Reset</b> button returns <b>Zoom</b> to 100%.</li>
           <li><b>Crop Pan</b>: Selects which horizontal portion of both eye images is retained when <b>Side-by-Side Center Crop</b> is above 0%.<br/>A value of 0% keeps the crop centered, negative values retain more of the left side, and positive values retain more of the right side.<br/>The control ranges from −100% to +100%, is hidden for <b>Anaglyph</b> output and whenever <b>Side-by-Side Center Crop</b> is 0%, and is saved independently for each loaded image.<br/>It applies to previews, normal and batch <b>Side-by-Side</b> exports, and separate left/right exports when <b>Side-by-Side Center Crop</b> is active.<br/>The <b>Reset</b> button returns <b>Crop Pan</b> to 0%.</li>
@@ -6233,7 +6635,7 @@ function updateOutputModeControls() {
         <h4>Tips for taking side-by-side JPEG photos with an iPhone</h4>
         <ul>
           <li>When manually taking side-by-side JPEG photos with an iPhone (to get greater stereo depth than available with Apple Spatial images because of the narrow lens spacing), it is best to use the level display feature in the <b>Camera</b> app (yellow line shows up on the screen when the camera is level) to make sure both photos are level.</li>
-          <li>The tool provides adjustments for horizontal and vertical differences, as well as overall rotation of the left and right images together, but not rotational differences between the left and right images.</li>
+          <li>The tool provides adjustments for horizontal and vertical differences, along with separate <b>Left</b> and <b>Right</b> <b>Image Rotation</b> values for correcting rotational differences between the two views.</li>
         </ul>
 
         <h4>Privacy</h4>
@@ -6456,37 +6858,47 @@ function updateOutputModeControls() {
     });
   }
 
+  if (rotationTarget) {
+    rotationTarget.addEventListener("change", () => {
+        syncRotationSliderToTarget();
+      updateControls();
+      saveCurrentPerImageAdjustmentSettings();
+    });
+  }
+
   rotationRangeMode.addEventListener("change", () => {
     updateRotationRangeMode();
     saveCurrentPerImageAdjustmentSettings();
-    regeneratePreviewIfReady();
+    regenerateRotationPreviewImmediately();
   });
 
   rotationRange.addEventListener("input", () => {
+    applyRotationSliderValue(rotationRange.value);
     updateControls();
     saveCurrentPerImageAdjustmentSettings();
-
-    if (decodedViews.length >= 2) {
-      convertToSbs({ previewOnly: true }).catch(err => setStatus(escapeHtml(err.message || String(err)), "error"));
-    }
+    scheduleRotationPreview();
   });
 
   rotationRange.addEventListener("change", () => {
+    applyRotationSliderValue(rotationRange.value);
     saveCurrentPerImageAdjustmentSettings();
-    regeneratePreviewIfReady();
+    ensureFinalRotationPreview();
   });
 
   resetRotationButton.addEventListener("click", () => {
-    if (Number(rotationRange.value) === 0) {
+
+    if (!leftRotationDegrees && !rightRotationDegrees) {
+      syncRotationSliderToTarget();
       updateControls();
       return;
     }
 
-    rotationRange.value = "0";
+    leftRotationDegrees = 0;
+    rightRotationDegrees = 0;
+    syncRotationSliderToTarget();
     updateControls();
     saveCurrentPerImageAdjustmentSettings();
-
-    regeneratePreviewIfReady();
+    regenerateRotationPreviewImmediately();
   });
 
   stereoDepthRangeMode.addEventListener("change", () => {
@@ -6663,10 +7075,11 @@ function updateOutputModeControls() {
     }
 
     const zoomSuffix = getDigitalZoomFilenameSuffix();
+    const rotationSuffix = getRotationFilenameSuffix();
 
     return {
-      leftName: sanitizeJpegFilename(`${baseName}${zoomSuffix}-l.jpg`),
-      rightName: sanitizeJpegFilename(`${baseName}${zoomSuffix}-r.jpg`)
+      leftName: sanitizeJpegFilename(`${baseName}${zoomSuffix}${rotationSuffix}-l.jpg`),
+      rightName: sanitizeJpegFilename(`${baseName}${zoomSuffix}${rotationSuffix}-r.jpg`)
     };
   }
 
@@ -6689,8 +7102,9 @@ function updateOutputModeControls() {
       : "lr";
 
     const zoomSuffix = allLoadedImages ? "" : getDigitalZoomFilenameSuffix();
+    const rotationSuffix = allLoadedImages ? "" : getRotationFilenameSuffix();
 
-    return sanitizeZipFilename(`${baseName}${zoomSuffix}-${imagePart}-${Number(heightRange.value)}h.zip`);
+    return sanitizeZipFilename(`${baseName}${zoomSuffix}${rotationSuffix}-${imagePart}-${Number(heightRange.value)}h.zip`);
   }
 
   function promptForEyeZipSaveName(allLoadedImages) {
@@ -6733,30 +7147,26 @@ function updateOutputModeControls() {
 
     let left = decodedViews[0];
     let right = decodedViews[1];
+    let rotationValues = getCurrentRotationValues();
 
     if (eyeOrder && eyeOrder.value === "swap") {
       [left, right] = [right, left];
+      rotationValues = {
+        left: rotationValues.right,
+        right: rotationValues.left
+      };
     }
+
+    const zoomInputLeft = left;
+    const zoomInputRight = right;
+    let zoomedViews = null;
 
     const digitalZoomPercent = Math.max(100, Math.min(300, Number(digitalZoomRange?.value) || 100));
 
     if (digitalZoomPercent > 100) {
-      const zoomed = applyDigitalZoomToStereoViews(left, right, digitalZoomPercent);
-      left = zoomed.left;
-      right = zoomed.right;
-    }
-
-    const imageRotationDegrees = Number(rotationRange.value) || 0;
-
-    if (imageRotationDegrees) {
-      left = {
-        ...left,
-        canvas: createRotatedCanvas(left.canvas, left.width, left.height, imageRotationDegrees)
-      };
-      right = {
-        ...right,
-        canvas: createRotatedCanvas(right.canvas, right.width, right.height, imageRotationDegrees)
-      };
+      zoomedViews = applyDigitalZoomToStereoViews(left, right, digitalZoomPercent);
+      left = zoomedViews.left;
+      right = zoomedViews.right;
     }
 
     const aspect = left.height / left.width;
@@ -6769,15 +7179,24 @@ function updateOutputModeControls() {
         ? -horizontalShiftPercent
         : horizontalShiftPercent;
 
-    const adjusted = createAdjustedStereoPair(
-      left.canvas,
-      right.canvas,
-      eyeWidth,
-      eyeHeight,
-      Math.round(eyeWidth * (adjustedHorizontalShiftPercent / 100)),
-      Math.round(eyeHeight * (verticalShiftPercent / 100)),
-      true
-    );
+    let adjusted = null;
+
+    try {
+      adjusted = createRotationAdjustedStereoPair(
+        left,
+        right,
+        rotationValues,
+        eyeWidth,
+        eyeHeight,
+        Math.round(eyeWidth * (adjustedHorizontalShiftPercent / 100)),
+        Math.round(eyeHeight * (verticalShiftPercent / 100)),
+        true
+      );
+    } finally {
+      if (zoomedViews) {
+        releaseTemporaryRotationViews(zoomedViews, zoomInputLeft, zoomInputRight);
+      }
+    }
 
     const sbsCenterCropPercent = isSideBySideMode()
       ? clampSideBySideCropPercent(sbsCropRange?.value || 0)
@@ -6786,15 +7205,21 @@ function updateOutputModeControls() {
     if (sbsCenterCropPercent > 0) {
       const cropPanPercent = clampCropPanPercent(cropPanRange?.value || 0);
       const croppedEyeWidth = Math.max(1, Math.round(eyeWidth * (1 - sbsCenterCropPercent / 100)));
-      const cropped = createSideBySideVisibleCroppedPair(
-        adjusted.leftCanvas,
-        adjusted.rightCanvas,
-        croppedEyeWidth,
-        croppedEyeWidth,
-        eyeHeight,
-        sbsCenterCropPercent,
-        cropPanPercent
-      );
+      let cropped;
+
+      try {
+        cropped = createSideBySideVisibleCroppedPair(
+          adjusted.leftCanvas,
+          adjusted.rightCanvas,
+          croppedEyeWidth,
+          croppedEyeWidth,
+          eyeHeight,
+          sbsCenterCropPercent,
+          cropPanPercent
+        );
+      } finally {
+        releaseCanvasPair(adjusted.leftCanvas, adjusted.rightCanvas);
+      }
 
       return {
         leftCanvas: cropped.leftCanvas,
@@ -6836,6 +7261,7 @@ function updateOutputModeControls() {
   }
 
   async function exportCurrentEyesAsZip() {
+    cancelScheduledRotationPreview();
     if (decodedViews.length < 2) {
       setStatus("No stereo image has been loaded yet.", "error");
       return;
@@ -6941,6 +7367,7 @@ function updateOutputModeControls() {
   }
 
   async function exportAllEyesAsZip() {
+    cancelScheduledRotationPreview();
     const files = loadedImageFiles.length ? [...loadedImageFiles] : [];
 
     if (!files.length) {
