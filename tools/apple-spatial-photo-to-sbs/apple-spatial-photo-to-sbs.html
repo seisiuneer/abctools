@@ -1207,12 +1207,12 @@
               <option value="normal">±5°</option>
               <option value="wide">±10°</option>
             </select>
-            <button id="resetRotationButton" class="smallResetButton" type="button" title="Reset Image Rotation to 0.0°.">Reset</button>
+            <button id="resetRotationButton" class="smallResetButton" type="button" title="Reset Image Rotation to 0.00°.">Reset</button>
           </div>
         </div>
         <div class="row">
           <input id="rotationRange" type="range" min="-5" max="5" step="0.05" value="0" title="Apply a small roll correction to both stereo views. The image is cropped as needed to preserve the original aspect ratio. When multiple images are loaded, this value is saved separately for each image and is applied when previewing that image and when exporting it, including batch ZIP export.">
-          <div id="rotationValue" class="rangeValue">0.0°</div>
+          <div id="rotationValue" class="rangeValue">0.00°</div>
         </div>
       </div>
     </div>
@@ -3061,9 +3061,15 @@
       : "";
 
     const rotation = Number(rotationRange.value) || 0;
-    const rotationText = rotation.toFixed(1).replace(".", "p");
+
+    const rotationText = Math.abs(rotation)
+      .toFixed(2)
+      .replace(/0+$/, "")
+      .replace(/\.$/, "")
+      .replace(".", "p");
+
     const rotationSuffix = rotation
-      ? `-Rot${rotation > 0 ? "+" : ""}${rotationText}`
+      ? `-Rot${rotation > 0 ? "+" : "-"}${rotationText}`
       : "";
 
     let theStyle = "LR";
@@ -3580,7 +3586,7 @@
 
     heightValue.textContent = `${Number(heightRange.value).toLocaleString()} px`;
     const rotation = Number(rotationRange.value) || 0;
-    rotationValue.textContent = `${rotation > 0 ? "+" : ""}${rotation.toFixed(1)}°`;
+    rotationValue.textContent = `${rotation > 0 ? "+" : ""}${rotation.toFixed(2)}°`;
 
     const separation = Number(stereoDepthRange.value) || 0;
     stereoDepthValue.textContent = `${separation > 0 ? "+" : ""}${separation.toFixed(1)}%`;
@@ -4176,12 +4182,24 @@
     temp.width = width;
     temp.height = height;
 
-    const ctx = temp.getContext("2d", { alpha: false, willReadFrequently: true });
-    ctx.imageSmoothingEnabled = true;
-    ctx.imageSmoothingQuality = "high";
-    ctx.drawImage(sourceCanvas, 0, 0, width, height);
+    try {
+      const ctx = temp.getContext("2d", {
+        alpha: false,
+        willReadFrequently: true
+      });
 
-    return ctx.getImageData(0, 0, width, height);
+      if (!ctx) {
+        throw new Error("Could not create the temporary Anaglyph canvas context.");
+      }
+
+      ctx.imageSmoothingEnabled = true;
+      ctx.imageSmoothingQuality = "high";
+      ctx.drawImage(sourceCanvas, 0, 0, width, height);
+
+      return ctx.getImageData(0, 0, width, height);
+    } finally {
+      releaseCanvasMemory(temp);
+    }
   }
 
   function createDigitalZoomCanvas(sourceCanvas, width, height, zoomPercent) {
@@ -5095,7 +5113,7 @@
         : "";
 
       const rotationNote = imageRotationDegrees
-        ? `, rotation ${imageRotationDegrees > 0 ? "+" : ""}${imageRotationDegrees.toFixed(1)}°`
+        ? `, rotation ${imageRotationDegrees > 0 ? "+" : ""}${imageRotationDegrees.toFixed(2)}°`
         : "";
 
       const separationNote = stereoSeparationPercent
