@@ -4055,6 +4055,104 @@
     batchExportController = null;
   }
 
+  function releaseCanvasBackingStore(targetCanvas) {
+    if (!targetCanvas) {
+      return;
+    }
+
+    try {
+      targetCanvas.width = 0;
+      targetCanvas.height = 0;
+    } catch (err) {
+      // Ignore cleanup errors. Dropping the reference still allows collection.
+    }
+  }
+
+  function releaseDecodedViewsForBatchRestore() {
+    const canvasesToRelease = new Set();
+
+    for (const view of decodedViews) {
+      if (view && view.canvas) {
+        canvasesToRelease.add(view.canvas);
+      }
+    }
+
+    if (previewFlipLeftCanvas) {
+      canvasesToRelease.add(previewFlipLeftCanvas);
+    }
+
+    if (previewFlipRightCanvas) {
+      canvasesToRelease.add(previewFlipRightCanvas);
+    }
+
+    stopPreviewFlipAnimation();
+
+    for (const sourceCanvas of canvasesToRelease) {
+      releaseCanvasBackingStore(sourceCanvas);
+    }
+
+    decodedViews = [];
+    releaseCanvasBackingStore(canvas);
+  }
+
+  function yieldForBatchMemoryCleanup() {
+    return new Promise(resolve => {
+      requestAnimationFrame(() => {
+        setTimeout(resolve, 0);
+      });
+    });
+  }
+
+  async function restorePreviewAfterBatchExport(originalIndex, preserveOutputHeight) {
+    const count = loadedImageFiles.length;
+
+    imageNavigationInProgress = false;
+    updateImageNavigationButtons();
+
+    lastBlob = null;
+    lastGeneratedFileName = "";
+    releaseDecodedViewsForBatchRestore();
+    await yieldForBatchMemoryCleanup();
+
+    if (!count) {
+      return true;
+    }
+
+    const restoreIndex = Math.max(0, Math.min(originalIndex, count - 1));
+    const restoreOptions = { makePreview: true };
+
+    if (preserveOutputHeight !== undefined && preserveOutputHeight !== null) {
+      restoreOptions.preserveOutputHeight = preserveOutputHeight;
+    }
+
+    try {
+      await loadBatchImageAtIndex(restoreIndex, restoreOptions);
+      return true;
+    } catch (firstRestoreError) {
+      imageNavigationInProgress = false;
+      releaseDecodedViewsForBatchRestore();
+      await yieldForBatchMemoryCleanup();
+
+      try {
+        await loadBatchImageAtIndex(restoreIndex, restoreOptions);
+        return true;
+      } catch (secondRestoreError) {
+        imageNavigationInProgress = false;
+        updateImageNavigationButtons();
+
+        canvas.style.display = "none";
+        emptyPreview.style.display = "flex";
+        sourceMeta.textContent = "Preview restore failed.";
+        outputMeta.textContent = "No JPEG generated yet.";
+
+        return false;
+      }
+    } finally {
+      imageNavigationInProgress = false;
+      updateImageNavigationButtons();
+    }
+  }
+
   if (batchProgressCancelButton) {
     batchProgressCancelButton.addEventListener("click", () => {
       if (!batchExportController) return;
@@ -4138,6 +4236,8 @@
 
   function promptShareZipOnIOS(zipBlob, zipName) {
     return new Promise(resolve => {
+      let finished = false;
+
       updateBatchProgressDialog({
         text: `ZIP file <b>${escapeHtml(zipName)}</b> is ready.<br>Tap <b>Share ZIP</b> to open the iOS Share Sheet, then choose <b>Save to Files</b> or another share destination.`,
         percent: 100
@@ -4158,24 +4258,58 @@
       setStatus(`ZIP file <b>${escapeHtml(zipName)}</b> is ready. Tap <b>Share ZIP</b> to open the iOS Share Sheet.`, "ok");
 
       const cleanup = () => {
-        if (batchProgressCancelButton) batchProgressCancelButton.onclick = null;
-        if (batchProgressCloseButton) batchProgressCloseButton.onclick = null;
+        if (batchProgressCancelButton) {
+          batchProgressCancelButton.onclick = null;
+        }
+
+        if (batchProgressCloseButton) {
+          batchProgressCloseButton.onclick = null;
+        }
       };
 
-      if (batchProgressCancelButton) {
-        batchProgressCancelButton.onclick = async () => {
-          cleanup();
-          batchProgressCancelButton.disabled = true;
-          batchProgressCancelButton.textContent = "Sharing…";
-          const result = await shareZipOnIOS(zipBlob, zipName);
-          resolve(result);
-        };
+      const finish = result => {
+        if (finished) {
+          return;
+        }
+
+        finished = true;
+
+        // Always clear both temporary handlers, including the one the user did
+        // not activate, so this ZIP blob cannot be retained by a later export.
+        cleanup();
+        resolve(result);
+      };
+
+      if (!batchProgressCancelButton) {
+        shareZipOnIOS(zipBlob, zipName).then(finish);
+        return;
       }
+
+      batchProgressCancelButton.onclick = async () => {
+        if (finished) {
+          return;
+        }
+
+        batchProgressCancelButton.disabled = true;
+        batchProgressCancelButton.textContent = "Sharing…";
+
+        if (batchProgressCloseButton) {
+          batchProgressCloseButton.disabled = true;
+        }
+
+        const result = await shareZipOnIOS(zipBlob, zipName);
+        finish(result);
+      };
 
       if (batchProgressCloseButton) {
         batchProgressCloseButton.onclick = () => {
-          cleanup();
-          resolve({ message: "ZIP export cancelled.", type: "ok" });
+          if (finished) {
+            return;
+          }
+
+          batchProgressCloseButton.disabled = true;
+          batchProgressCloseButton.textContent = "Closing…";
+          finish({ message: "ZIP export cancelled.", type: "ok" });
         };
       }
     });
@@ -6671,14 +6805,23 @@ function updateOutputModeControls() {
     const adjustedEyes = createAdjustedEyeCanvasesForExport(outputHeight);
     const { leftName, rightName } = getEyeZipEntryNames(file);
 
-    return {
-      leftName,
-      rightName,
-      leftBlob: await canvasToJpegBlob(adjustedEyes.leftCanvas, true),
-      rightBlob: await canvasToJpegBlob(adjustedEyes.rightCanvas, true),
-      width: adjustedEyes.width,
-      height: adjustedEyes.height
-    };
+    try {
+      const leftBlob = await canvasToJpegBlob(adjustedEyes.leftCanvas, true);
+      const rightBlob = await canvasToJpegBlob(adjustedEyes.rightCanvas, true);
+
+      return {
+        leftName,
+        rightName,
+        leftBlob,
+        rightBlob,
+        width: adjustedEyes.width,
+        height: adjustedEyes.height
+      };
+    } finally {
+      // JPEG blobs no longer depend on the full-resolution working canvases.
+      releaseCanvasBackingStore(adjustedEyes.leftCanvas);
+      releaseCanvasBackingStore(adjustedEyes.rightCanvas);
+    }
   }
 
   async function exportCurrentEyesAsZip() {
@@ -6705,6 +6848,10 @@ function updateOutputModeControls() {
     heightRange.value = String(outputHeight);
     updateControls();
 
+    let zip = null;
+    let eyeFiles = null;
+    let zipBlob = null;
+
     try {
       setOutputControlsBusy(true);
       downloadLink.classList.add("busy");
@@ -6712,12 +6859,12 @@ function updateOutputModeControls() {
       downloadActions.style.display = "grid";
       setStatus("Creating left/right JPEG ZIP…");
 
-      const zip = new JSZip();
-      const eyeFiles = await createAdjustedEyeJpegBlobsForCurrentImage(currentFile, outputHeight);
+      zip = new JSZip();
+      eyeFiles = await createAdjustedEyeJpegBlobsForCurrentImage(currentFile, outputHeight);
       zip.file(eyeFiles.leftName, eyeFiles.leftBlob);
       zip.file(eyeFiles.rightName, eyeFiles.rightBlob);
 
-      const zipBlob = await zip.generateAsync({ type: "blob" });
+      zipBlob = await zip.generateAsync({ type: "blob" });
 
       if (isIOSDevice()) {
         showBatchProgressDialog(1);
@@ -6728,6 +6875,14 @@ function updateOutputModeControls() {
 
         const shareResult = await promptShareZipOnIOS(zipBlob, zipName);
         hideBatchProgressDialog();
+
+        if (zip && zip.files) {
+          zip.files = {};
+        }
+        zip = null;
+        eyeFiles = null;
+        zipBlob = null;
+        await yieldForBatchMemoryCleanup();
 
         await resetPreviewFlipSliderAfterSave();
         updateGenerateButtonVisibility();
@@ -6741,6 +6896,16 @@ function updateOutputModeControls() {
 
       downloadBlobWithName(zipBlob, zipName);
 
+      // The desktop object URL now owns the completed ZIP for the download.
+      // Drop JSZip and the source JPEG references before regenerating preview.
+      if (zip && zip.files) {
+        zip.files = {};
+      }
+      zip = null;
+      eyeFiles = null;
+      zipBlob = null;
+      await yieldForBatchMemoryCleanup();
+
       await resetPreviewFlipSliderAfterSave();
       updateGenerateButtonVisibility();
       setStatus(`Saved <b>${escapeHtml(zipName)}</b> containing separate left/right JPEG files for the current image.`, "ok");
@@ -6749,6 +6914,13 @@ function updateOutputModeControls() {
       updateGenerateButtonVisibility();
       setStatus(escapeHtml(err.message || String(err)), "error");
     } finally {
+      if (zip && zip.files) {
+        zip.files = {};
+      }
+      zip = null;
+      eyeFiles = null;
+      zipBlob = null;
+
       setOutputControlsBusy(false);
       if (downloadLink) {
         downloadLink.classList.remove("busy");
@@ -6790,7 +6962,7 @@ function updateOutputModeControls() {
     updateControls();
 
     const originalIndex = currentImageIndex;
-    const zip = new JSZip();
+    let zip = new JSZip();
     let finalStatus = "";
     let finalStatusType = "ok";
 
@@ -6835,6 +7007,12 @@ function updateOutputModeControls() {
       }
 
       throwIfBatchExportCancelled();
+
+      // The final decoded stereo pair is no longer needed while JSZip builds
+      // the archive. Release it before compression to reduce peak memory use.
+      releaseDecodedViewsForBatchRestore();
+      await yieldForBatchMemoryCleanup();
+
       updateBatchProgressDialog({
         text: `Creating ZIP file with ${files.length * 2} left/right JPEG files…`,
         percent: 92
@@ -6880,20 +7058,33 @@ function updateOutputModeControls() {
     } finally {
       hideBatchProgressDialog();
 
-      try {
-        if (files.length) {
-          await loadBatchImageAtIndex(Math.min(originalIndex, files.length - 1), {
-            makePreview: true,
-            preserveOutputHeight: batchOutputHeight
-          });
-        }
-      } catch (restoreErr) {
-        // Leave the current decoded image in place if restore fails.
+      // Detach all generated JPEG entries before decoding the preview again.
+      // This allows a partial or completed JSZip archive and its source blobs
+      // to become collectible before the next large image allocation.
+      if (zip && zip.files) {
+        zip.files = {};
       }
+      zip = null;
+
+      const previewRestored = await restorePreviewAfterBatchExport(
+        originalIndex,
+        batchOutputHeight
+      );
 
       setOutputControlsBusy(false);
       updateGenerateButtonVisibility();
-      if (finalStatus) setStatus(finalStatus, finalStatusType);
+
+      if (!previewRestored) {
+        const recoveryMessage =
+          "The ZIP operation ended, but the image preview could not be restored. " +
+          "Use an image navigation button to retry, or reopen the JPEG/TIFF files.";
+        setStatus(
+          finalStatus ? `${finalStatus}<br/>${recoveryMessage}` : recoveryMessage,
+          "error"
+        );
+      } else if (finalStatus) {
+        setStatus(finalStatus, finalStatusType);
+      }
     }
   }
 
@@ -6989,7 +7180,7 @@ function updateOutputModeControls() {
     }
 
     const originalIndex = currentImageIndex;
-    const zip = new JSZip();
+    let zip = new JSZip();
     let finalStatus = "";
     let finalStatusType = "ok";
 
@@ -7038,6 +7229,12 @@ function updateOutputModeControls() {
       }
 
       throwIfBatchExportCancelled();
+
+      // The final decoded stereo pair and preview canvas are no longer needed
+      // while JSZip builds the archive. Release them before compression.
+      releaseDecodedViewsForBatchRestore();
+      await yieldForBatchMemoryCleanup();
+
       updateBatchProgressDialog({
         text: `Creating ZIP file with ${files.length} JPEG image${files.length === 1 ? "" : "s"}…`,
         percent: 92
@@ -7080,23 +7277,33 @@ function updateOutputModeControls() {
     } finally {
       hideBatchProgressDialog();
 
-      try {
-        if (files.length) {
-          const restoreOptions = { makePreview: true };
-
-          if (batchOutputHeight !== null) {
-            restoreOptions.preserveOutputHeight = batchOutputHeight;
-          }
-
-          await loadBatchImageAtIndex(Math.min(originalIndex, files.length - 1), restoreOptions);
-        }
-      } catch (restoreErr) {
-        // Leave the current decoded image in place if restore fails.
+      // Detach all generated JPEG entries before decoding the preview again.
+      // This allows a partial or completed JSZip archive and its source blobs
+      // to become collectible before the next large image allocation.
+      if (zip && zip.files) {
+        zip.files = {};
       }
+      zip = null;
+
+      const previewRestored = await restorePreviewAfterBatchExport(
+        originalIndex,
+        batchOutputHeight
+      );
 
       setOutputControlsBusy(false);
       updateGenerateButtonVisibility();
-      if (finalStatus) setStatus(finalStatus, finalStatusType);
+
+      if (!previewRestored) {
+        const recoveryMessage =
+          "The ZIP operation ended, but the image preview could not be restored. " +
+          "Use an image navigation button to retry, or reopen the JPEG/TIFF files.";
+        setStatus(
+          finalStatus ? `${finalStatus}<br/>${recoveryMessage}` : recoveryMessage,
+          "error"
+        );
+      } else if (finalStatus) {
+        setStatus(finalStatus, finalStatusType);
+      }
     }
   }
 

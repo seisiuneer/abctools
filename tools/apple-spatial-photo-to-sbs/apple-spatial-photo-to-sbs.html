@@ -2742,6 +2742,18 @@
     return new Promise(resolve => {
       const fileName = sanitizeZipFilename(zipName) || getDefaultZipSaveName();
       let finished = false;
+      let shareNow = null;
+      let cancelShare = null;
+
+      const cleanupListeners = () => {
+        if (batchProgressCancelButton && shareNow) {
+          batchProgressCancelButton.removeEventListener("click", shareNow);
+        }
+
+        if (batchProgressCloseButton && cancelShare) {
+          batchProgressCloseButton.removeEventListener("click", cancelShare);
+        }
+      };
 
       const finish = result => {
         if (finished) {
@@ -2749,6 +2761,11 @@
         }
 
         finished = true;
+
+        // Remove both handlers, including the one the user did not activate.
+        // This prevents an old handler from retaining zipBlob or firing during
+        // a later ZIP export.
+        cleanupListeners();
         resolve(result);
       };
 
@@ -2775,7 +2792,7 @@
         batchProgressCloseButton.style.display = "";
       }
 
-      const shareNow = async event => {
+      shareNow = async event => {
         event.preventDefault();
         event.stopPropagation();
 
@@ -2799,7 +2816,7 @@
         finish(result);
       };
 
-      const cancelShare = event => {
+      cancelShare = event => {
         event.preventDefault();
         event.stopPropagation();
 
@@ -2811,10 +2828,10 @@
         finish({ message: "ZIP export cancelled.", type: "ok" });
       };
 
-      batchProgressCancelButton.addEventListener("click", shareNow, { once: true });
+      batchProgressCancelButton.addEventListener("click", shareNow);
 
       if (batchProgressCloseButton) {
-        batchProgressCloseButton.addEventListener("click", cancelShare, { once: true });
+        batchProgressCloseButton.addEventListener("click", cancelShare);
       }
     });
   }
@@ -5797,6 +5814,63 @@
     batchExportController = null;
   }
 
+  async function restorePreviewAfterBatchExport(originalIndex, outputHeight) {
+    const count = loadedImageFiles.length;
+
+    // Invalidate any stale image-load completion and make sure navigation cannot
+    // remain disabled if an export was cancelled between asynchronous steps.
+    imageLoadGeneration++;
+    imageLoadInProgress = false;
+    updateImageNavigationButtons();
+
+    lastBlob = null;
+    lastGeneratedFileName = "";
+    releaseDecodedViews();
+    await yieldForMemoryCleanup();
+
+    if (!count) {
+      return true;
+    }
+
+    const restoreIndex = Math.max(0, Math.min(originalIndex, count - 1));
+    const restoreOptions = {
+      makePreview: true,
+      resetAdjustments: false,
+      preserveOutputHeight: outputHeight
+    };
+
+    try {
+      await loadSpatialPhotoAtIndex(restoreIndex, restoreOptions);
+      return true;
+    } catch (firstRestoreError) {
+      // A late cancellation can leave significant canvas/ZIP memory awaiting
+      // collection. Give the browser one more cleanup opportunity, then retry
+      // the original image once before returning control to the user.
+      imageLoadGeneration++;
+      imageLoadInProgress = false;
+      releaseDecodedViews();
+      await yieldForMemoryCleanup();
+
+      try {
+        await loadSpatialPhotoAtIndex(restoreIndex, restoreOptions);
+        return true;
+      } catch (secondRestoreError) {
+        imageLoadInProgress = false;
+        updateImageNavigationButtons();
+
+        canvas.style.display = "none";
+        emptyPreview.style.display = "flex";
+        sourceMeta.textContent = "Preview restore failed.";
+        outputMeta.textContent = "No JPEG generated yet.";
+
+        return false;
+      }
+    } finally {
+      imageLoadInProgress = false;
+      updateImageNavigationButtons();
+    }
+  }
+
   if (batchProgressCancelButton) {
     batchProgressCancelButton.addEventListener("click", () => {
       if (!batchExportController) {
@@ -6146,7 +6220,7 @@
     updateControls();
 
     const originalIndex = currentImageIndex;
-    const zip = new JSZip();
+    let zip = new JSZip();
     let finalStatus = "";
     let finalStatusType = "ok";
     let processedCount = 0;
@@ -6217,6 +6291,13 @@
       }
 
       const zipName = updateZipFilenameProcessedCount(requestedZipName, processedCount);
+
+      // No decoded image needs to remain resident while JSZip builds the final
+      // left/right archive. Release the last HEIC stereo pair before compression
+      // to reduce peak memory use.
+      releaseDecodedViews();
+      await yieldForMemoryCleanup();
+
       updateBatchProgressDialog({
         text: `Creating ZIP file with ${processedCount * 2} left/right JPEG files…`,
         percent: 92
@@ -6267,21 +6348,31 @@
     } finally {
       hideBatchProgressDialog();
 
-      try {
-        if (files.length) {
-          await loadSpatialPhotoAtIndex(Math.min(originalIndex, files.length - 1), {
-            makePreview: true,
-            resetAdjustments: false,
-            preserveOutputHeight: batchOutputHeight
-          });
-        }
-      } catch (restoreErr) {
-        // Leave the current decoded image in place if restore fails.
+      // Release all JPEG Blob references held by the partial or completed ZIP
+      // before decoding the original image again. This is especially important
+      // when cancellation occurs late in a large batch.
+      if (zip && zip.files) {
+        zip.files = {};
       }
+      zip = null;
+
+      const previewRestored = await restorePreviewAfterBatchExport(
+        originalIndex,
+        batchOutputHeight
+      );
 
       setOutputControlsBusy(false);
       updateGenerateButtonVisibility();
-      if (finalStatus) {
+
+      if (!previewRestored) {
+        const recoveryMessage =
+          "The ZIP operation ended, but the image preview could not be restored. " +
+          "Use an image navigation button to retry, or reopen the HEIC files.";
+        setStatus(
+          finalStatus ? `${finalStatus}<br/>${recoveryMessage}` : recoveryMessage,
+          "error"
+        );
+      } else if (finalStatus) {
         setStatus(finalStatus, finalStatusType);
       }
     }
@@ -6364,7 +6455,7 @@
     updateControls();
 
     const originalIndex = currentImageIndex;
-    const zip = new JSZip();
+    let zip = new JSZip();
     let finalStatus = "";
     let finalStatusType = "ok";
     let processedCount = 0;
@@ -6498,21 +6589,31 @@
     } finally {
       hideBatchProgressDialog();
 
-      try {
-        if (files.length) {
-          await loadSpatialPhotoAtIndex(Math.min(originalIndex, files.length - 1), {
-            makePreview: true,
-            resetAdjustments: false,
-            preserveOutputHeight: batchOutputHeight
-          });
-        }
-      } catch (restoreErr) {
-        // Leave the current decoded image in place if restore fails.
+      // Release all JPEG Blob references held by the partial or completed ZIP
+      // before decoding the original image again. This is especially important
+      // when cancellation occurs late in a large batch.
+      if (zip && zip.files) {
+        zip.files = {};
       }
+      zip = null;
+
+      const previewRestored = await restorePreviewAfterBatchExport(
+        originalIndex,
+        batchOutputHeight
+      );
 
       setOutputControlsBusy(false);
       updateGenerateButtonVisibility();
-      if (finalStatus) {
+
+      if (!previewRestored) {
+        const recoveryMessage =
+          "The ZIP operation ended, but the image preview could not be restored. " +
+          "Use an image navigation button to retry, or reopen the HEIC files.";
+        setStatus(
+          finalStatus ? `${finalStatus}<br/>${recoveryMessage}` : recoveryMessage,
+          "error"
+        );
+      } else if (finalStatus) {
         setStatus(finalStatus, finalStatusType);
       }
     }
