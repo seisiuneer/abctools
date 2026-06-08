@@ -1687,7 +1687,7 @@
       updateProgressModal(
         formatProgressTuneHeader(progressState, title) +
         "Matching against <b>" + compatibleCandidateCount + "</b> compatible database measures...<br>" +
-        "Matched so far: <b>" + progressState.totalMatched + "</b>"
+        "Measures matched so far: <b>" + progressState.totalMatched + "</b>"
       );
       await allowBrowserToUpdate();
     }
@@ -1778,7 +1778,7 @@
               (candidateBucketSummary ? "Candidate keys/modes: " + candidateBucketSummary + "<br>" : "") +
               "Measure <b>" + processedMeasureCount + "</b> of <b>" + totalMeasureCount + "</b> in this tune<br/>" +
               "Database candidates checked <b>" + candidateDone + "</b> of <b>" + candidateTotal + "</b><br>" +
-              "Matches so far: <b>" + (progressState.totalMatched + matched) + "</b>; " +
+              "Measure matches so far: <b>" + (progressState.totalMatched + matched) + "</b>; " +
               (isRhythmFallbackPass ?
                 ("Rhythm fallbacks: <b>" + ((progressState.totalRhythmFallbackMatched || 0) + rhythmFallbackMatched) + "</b>") :
                 ("Fallback matches: <b>" + ((progressState.totalFallbackMatched || 0) + fallbackMatched) + "</b>")) +
@@ -1970,7 +1970,7 @@
     if (window.DayPilot && DayPilot.Modal) {
       return DayPilot.Modal.alert(message, {
         theme: "modal_flat",
-        width: getAppModalWidth(520),
+        width: getAppModalWidth(600),
         top: top || 180,
         scrollWithPage: (typeof window.AllowDialogsToScroll === "function") ? window.AllowDialogsToScroll() : true
       });
@@ -2108,7 +2108,7 @@
       updateProgressModal(
         formatProgressTuneHeader(progressState, prepared[i].title) +
         "Finding compatible database measures...<br>" +
-        "Matched so far: <b>" + progressState.totalMatched + "</b>"
+        "Measures matched so far: <b>" + progressState.totalMatched + "</b>"
       );
       await allowBrowserToUpdate();
 
@@ -2154,12 +2154,24 @@
     var matched = stats.reduce(function(total, item) { return total + (item.matched || 0); }, 0);
     var examined = stats.reduce(function(total, item) { return total + (item.total || 0); }, 0);
     var skipped = stats.filter(function(item) { return item.skippedTune; }).length;
+    var processed = stats.length - skipped;
+    var chorded = stats.filter(function(item) {
+      return !item.skippedTune && (item.matched || 0) > 0;
+    }).length;
+    var noMatches = processed - chorded;
+    var alternateKeyModeTunes = stats.filter(function(item) {
+      return !item.skippedTune && !!item.keyModeSubstitution;
+    }).length;
 
     return {
       tunes: prepared.length,
+      processed: processed,
+      chorded: chorded,
+      noMatches: noMatches,
       matched: matched,
       examined: examined,
       skipped: skipped,
+      alternateKeyModeTunes: alternateKeyModeTunes,
       elapsed: performance.now() - progressState.startedAt
     };
   }
@@ -2168,11 +2180,27 @@
     try {
       var summary = await processEditorTunes(scope);
       hideProgressModal();
-      var message = '<p style="text-align:center;font-size:15pt;font-family:helvetica;margin-bottom:20px;">Tune Backup Chords Added</p>' +
-        '<p style="font-size:12pt;line-height:19pt;font-family:helvetica;">Processed <b>' + summary.tunes +'</b> tune(s).</p>';
-      if (summary.skipped) {
-        message += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica;">Skipped <b>' + summary.skipped + '</b> tune(s) with multiple voices, lyrics, or mid-tune key changes.</p>';
+
+      function tuneWord(count) {
+        return count === 1 ? "tune" : "tunes";
       }
+
+      var message = '<p style="text-align:center;font-size:15pt;font-family:helvetica;margin-bottom:20px;">Add Tune Backup Chords Complete</p>' +
+        '<p style="font-size:12pt;line-height:19pt;font-family:helvetica;">Successfully processed <b>' + summary.processed + '</b> ' + tuneWord(summary.processed) + '.</p>' +
+        '<p style="font-size:12pt;line-height:19pt;font-family:helvetica;">Added chords to <b>' + summary.chorded + '</b> ' + tuneWord(summary.chorded) + '.</p>';
+
+      if (summary.alternateKeyModeTunes) {
+        message += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica;">Matched a different key/mode than the tune\'s K: tag for <b>' + summary.alternateKeyModeTunes + '</b> ' + tuneWord(summary.alternateKeyModeTunes) + '.</p>';
+      }
+
+      if (summary.noMatches) {
+        message += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica;">No compatible measure matches were found for <b>' + summary.noMatches + '</b> ' + tuneWord(summary.noMatches) + '.</p>';
+      }
+
+      if (summary.skipped) {
+        message += '<p style="font-size:12pt;line-height:19pt;font-family:helvetica;">Skipped <b>' + summary.skipped + '</b> ' + tuneWord(summary.skipped) + ' with multiple voices, lyrics, or mid-tune key changes.</p>';
+      }
+
       await showAppMessage(message, 220);
       
       // Force an idle on the More Tools dialog
@@ -2181,9 +2209,9 @@
     } catch (err) {
       hideProgressModal();
       if (err && err.message === "USER_CANCELLED") {
-        await showAppMessage("Chord matching cancelled.", 240);
+        await showAppMessage("Add Tune Backup Chords cancelled.", 240);
       } else {
-        console.error("Tune chord matching failed:", err);
+        console.error("Add Tune Backup Chords failed:", err);
         await showAppMessage("<b>Unable to add backup chords.</b><br><br>" + escapeHTML(err && err.message ? err.message : err), 180);
       }
     }
