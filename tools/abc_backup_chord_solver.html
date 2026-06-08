@@ -1405,6 +1405,7 @@
       '<ul>' +
       '<li>Tunes that change key or mode mid-tune are skipped and copied unchanged to the output with an explanatory <b>N:</b> tag added at the end.</li>' +
       '<li>Tunes with more than one <b>V:</b> voice tag are skipped and copied unchanged to the output with an explanatory <b>N:</b> tag added at the end.</li>' +
+      '<li>Tunes containing <b>w:</b> or <b>W:</b> lyrics tags are skipped and copied unchanged to the output with an explanatory <b>N:</b> tag added at the end.</li>' +
       '</ul>' +
       '<h4>Credits</h4>' +
       '<ul>' +
@@ -1934,6 +1935,13 @@
     return matches ? matches.length : 0;
   }
 
+  function hasLyricsTags(tune) {
+    // Skip tunes containing either body-aligned lyrics (w:) or
+    // full-verse lyrics (W:). Lyrics text can contain note letters that the
+    // measure parser would otherwise mistake for melody notes.
+    return /^\s*[wW]:/m.test(tune || "");
+  }
+
   function hasMidTuneKeyChange(tune) {
     var hb = splitHeaderBody(tune || "");
     if (!hb.body) return false;
@@ -1952,6 +1960,9 @@
   function getTuneSkipReason(tune) {
     if (countVoiceTags(tune) > 1) {
       return "Skipped by the Chord Solver because the tune has multiple voices";
+    }
+    if (hasLyricsTags(tune)) {
+      return "Skipped by the Chord Solver because the tune has w: or W: lyrics tags";
     }
     if (hasMidTuneKeyChange(tune)) {
       return "Skipped by the Chord Solver because of key/mode changes mid-tune";
@@ -2781,17 +2792,19 @@
     var chordedMeasures = 0;
     var skippedKeyChangeTunes = 0;
     var skippedMultiVoiceTunes = 0;
+    var skippedLyricsTunes = 0;
 
     db.forEach(function(t) {
       if (!t || !t.abc || !/"/.test(t.abc)) return;
 
       // Apply the same skip rules to database tunes that are applied to input
-      // tunes. A database setting that changes key/mode mid-tune or has
-      // multiple voices is not a reliable single-key/single-melody source for
-      // measure-level chord transfer.
+      // tunes. A database setting that changes key/mode mid-tune, has
+      // multiple voices, or contains lyrics is not a reliable single-key/
+      // single-melody source for measure-level chord transfer.
       var dbSkipReason = getTuneSkipReason(t.abc || "");
       if (dbSkipReason) {
         if (/multiple voices/.test(dbSkipReason)) skippedMultiVoiceTunes++;
+        else if (/lyrics tags/.test(dbSkipReason)) skippedLyricsTunes++;
         else if (/key\/mode changes/.test(dbSkipReason)) skippedKeyChangeTunes++;
         return;
       }
@@ -2825,7 +2838,8 @@
       chordedMeasures: chordedMeasures,
       keys: index.size,
       skippedKeyChangeTunes: skippedKeyChangeTunes,
-      skippedMultiVoiceTunes: skippedMultiVoiceTunes
+      skippedMultiVoiceTunes: skippedMultiVoiceTunes,
+      skippedLyricsTunes: skippedLyricsTunes
     };
     return index;
   }
@@ -3347,14 +3361,17 @@
     output += "\n";
     setOutputArea(output);
 
-    var totalMeasures = allStats.reduce(function(a, s) { return a + s.total; }, 0);
-    var totalMatched = allStats.reduce(function(a, s) { return a + s.matched; }, 0);
-    var totalPickup = allStats.reduce(function(a, s) { return a + s.skippedPickup; }, 0);
-    var totalFallback = allStats.reduce(function(a, s) { return a + (s.fallbackMatched || 0); }, 0);
-    var totalRhythmFallback = allStats.reduce(function(a, s) { return a + (s.rhythmFallbackMatched || 0); }, 0);
-    var withCandidates = allStats.filter(function(s) { return s.candidates > 0; }).length;
-    var withRhythmCandidates = allStats.filter(function(s) { return s.rhythmCandidates > 0; }).length;
-    var skippedTunes = allStats.filter(function(s) { return s.skippedTune; }).length;
+    var skippedTunes = allStats.filter(function(s) {
+      return s.skippedTune;
+    }).length;
+    var processedTunes = allStats.length - skippedTunes;
+    var chordedTunes = allStats.filter(function(s) {
+      return !s.skippedTune && (s.matched || 0) > 0;
+    }).length;
+    var noMatchTunes = processedTunes - chordedTunes;
+    var alternateKeyModeTunes = allStats.filter(function(s) {
+      return !s.skippedTune && !!s.keyModeSubstitution;
+    }).length;
     var elapsed = performance.now() - progressState.startedAt;
 
     var finalStatus = "";
@@ -3364,14 +3381,32 @@
     }
 
     finalStatus +=
-      "Done in <b>" + formatElapsed(elapsed) + "</b>. Processed <b>" + tunes.length + "</b> " +
-      pluralWord(tunes.length, "tune", "tunes") + ".";
+      "Done in <b>" + formatElapsed(elapsed) + "</b>.<br/>" +
+      "Successfully processed <b>" + processedTunes + "</b> " +
+      pluralWord(processedTunes, "tune", "tunes") + ".<br/>" +
+      "Added chords to <b>" + chordedTunes + "</b> " +
+      pluralWord(chordedTunes, "tune", "tunes") + ".";
 
-    // if (skippedTunes > 0) {
-    //   finalStatus += "<br/>Skipped <b>" + skippedTunes + "</b> " +
-    //     pluralWord(skippedTunes, "tune", "tunes") +
-    //     " because of mid-tune key/mode changes or multiple voices.";
-    // }
+    if (alternateKeyModeTunes > 0) {
+      finalStatus +=
+        "<br/>Matched a different key/mode than the tune's K: tag for <b>" +
+        alternateKeyModeTunes + "</b> " +
+        pluralWord(alternateKeyModeTunes, "tune", "tunes") + ".";
+    }
+
+    if (noMatchTunes > 0) {
+      finalStatus +=
+        "<br/>No compatible measure matches were found for <b>" +
+        noMatchTunes + "</b> " +
+        pluralWord(noMatchTunes, "tune", "tunes") + ".";
+    }
+
+    if (skippedTunes > 0) {
+      finalStatus +=
+        "<br/>Skipped <b>" + skippedTunes + "</b> " +
+        pluralWord(skippedTunes, "tune", "tunes") +
+        " with multiple voices, lyrics, or mid-tune key changes.";
+    }
 
     setStatus(finalStatus);
   }
