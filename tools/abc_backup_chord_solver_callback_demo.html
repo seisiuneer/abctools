@@ -1,0 +1,1055 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ABC Backup Chord Solver Callback Demo</title>
+
+  <!--
+    Standalone developer example for the callback-enabled
+    ABC Tune Backup Chord Solver.
+
+    pako is used to encode the ABC as UTF-8 + zlib/deflate + Base64URL.
+  -->
+  <script src="https://cdn.jsdelivr.net/npm/pako@2.1.0/dist/pako.min.js"></script>
+
+  <style>
+    :root {
+      color-scheme: light;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+        Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.4;
+      color: #111;
+      background: #f4f6f9;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 24px;
+    }
+
+    main {
+      width: min(1180px, 100%);
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: minmax(0, 2fr) minmax(320px, 1fr);
+      grid-template-areas:
+        "intro intro"
+        "abc settings"
+        "bottom bottom";
+      gap: 16px;
+      align-items: stretch;
+    }
+
+    .panel {
+      background: #fff;
+      border: 1px solid #d7dce3;
+      border-radius: 14px;
+      padding: 20px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+      min-width: 0;
+    }
+
+    .intro-panel {
+      grid-area: intro;
+    }
+
+    .abc-panel {
+      grid-area: abc;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+    }
+
+    .settings-panel {
+      grid-area: settings;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+    }
+
+    .bottom-panel {
+      grid-area: bottom;
+      min-width: 0;
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: clamp(24px, 4vw, 34px);
+    }
+
+    h2 {
+      margin: 0 0 14px;
+      font-size: 19px;
+    }
+    .abc-heading-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+
+    .abc-heading-row h2 {
+      margin: 0;
+      flex: 0 0 auto;
+    }
+
+    #abc-file-input {
+      min-width: 0;
+      max-width: 360px;
+      font: inherit;
+    }
+
+    p {
+      margin: 8px 0;
+    }
+
+    code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+        "Liberation Mono", "Courier New", monospace;
+      background: #eef1f5;
+      border-radius: 4px;
+      padding: 2px 5px;
+      overflow-wrap: anywhere;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 400px;
+      flex: 1 1 auto;
+      resize: vertical;
+      padding: 12px;
+      border: 1px solid #bdc5d0;
+      border-radius: 10px;
+      font: 15px/1.4 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+        "Liberation Mono", "Courier New", monospace;
+    }
+
+    .settings {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+
+    .number-setting {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 110px;
+      gap: 12px;
+      align-items: center;
+      width: 100%;
+    }
+
+    input[type="number"] {
+      width: 100%;
+      padding: 9px 10px;
+      border: 1px solid #bdc5d0;
+      border-radius: 8px;
+      font: inherit;
+    }
+
+    .check-setting {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      line-height: 1.3;
+    }
+
+    .check-setting input {
+      width: 17px;
+      height: 17px;
+      margin-top: 1px;
+      flex: 0 0 auto;
+    }
+
+    .substitution-master {
+      margin-top: 13px;
+    }
+
+    .substitution-options {
+      margin-top: 12px;
+      padding: 12px 13px;
+      flex: 1 1 auto;
+      border: 1px solid #d7dce3;
+      border-radius: 10px;
+      display: grid;
+      align-content: start;
+      gap: 8px;
+    }
+
+    .substitution-options.disabled {
+      opacity: 0.5;
+    }
+
+    .actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .actions button {
+      flex: 1 1 220px;
+    }
+
+    button {
+      border: 1px solid #9dbaf2;
+      background: #e8f1ff;
+      color: #111;
+      border-radius: 10px;
+      padding: 11px 16px;
+      font: inherit;
+      font-weight: 650;
+      cursor: pointer;
+    }
+
+    button.secondary {
+      background: #f0f3f8;
+      border-color: #d3dbe7;
+    }
+
+    #submit-button:disabled,
+    #copy-url-button:disabled {
+      opacity: 0.38;
+      background: #e1e4e8;
+      border-color: #c8cdd4;
+      color: #666;
+      cursor: not-allowed;
+      filter: grayscale(0.45);
+      transform: none;
+    }
+
+    button:hover:not(:disabled) {
+      filter: brightness(0.98);
+    }
+
+    button:active:not(:disabled) {
+      transform: translateY(1px);
+    }
+
+    .status {
+      margin-top: 14px;
+      min-height: 48px;
+      padding: 11px;
+      border: 1px solid #d7dce3;
+      border-radius: 9px;
+      background: #f8f9fb;
+      overflow-wrap: anywhere;
+      white-space: pre-line;
+    }
+
+    .url-label {
+      display: block;
+      margin: 0 0 8px;
+      text-align: left;
+      font-size: 16px;
+      font-weight: 650;
+    }
+
+    .url-preview {
+      margin: 0 0 14px;
+      padding: 11px;
+      max-height: 150px;
+      overflow: auto;
+      white-space: pre-wrap;
+      word-break: break-all;
+      border: 1px solid #d7dce3;
+      border-radius: 9px;
+      background: #f8f9fb;
+      font: 13px/1.35 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+        "Liberation Mono", "Courier New", monospace;
+    }
+
+    .note {
+      color: #444;
+      font-size: 0.94rem;
+    }
+
+    @media (max-width: 900px) {
+      main {
+        grid-template-columns: 1fr;
+        grid-template-areas:
+          "intro"
+          "abc"
+          "settings"
+          "bottom";
+      }
+
+      textarea {
+        min-height: 360px;
+      }
+    }
+
+    @media (max-width: 720px) {
+      body {
+        padding: 12px;
+      }
+
+      main {
+        gap: 12px;
+      }
+
+      .panel {
+        padding: 15px;
+      }
+
+      .settings {
+        grid-template-columns: 1fr;
+      }
+
+      .number-setting {
+        grid-template-columns: 1fr 100px;
+      }
+
+      .abc-heading-row {
+        align-items: stretch;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      #abc-file-input {
+        width: 100%;
+        max-width: none;
+      }
+
+      textarea {
+        min-height: 300px;
+      }
+
+      .actions button {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+<main>
+  <section class="panel intro-panel">
+    <h1>ABC Backup Chord Solver Callback Demo</h1>
+    <p>
+      This standalone example deflate-encodes the ABC below and opens the
+      callback-enabled ABC Tune Backup Chord Solver.
+    </p>
+    <p>
+      When processing finishes, in this example code, the solver sends
+      the chorded ABC to:
+    </p>
+    <p><code id="callback-display"></code></p>
+    <p>
+      The result is returned in the callback page's <code>def=</code> URL
+      parameter.
+    </p>
+    <p>      
+      The ABC Tune Backup Chord Solver tab navigates in place to the callback page after
+      chord solution processing finishes.
+    </p>
+  </section>
+
+  <section class="panel abc-panel">
+    <div class="abc-heading-row">
+      <h2>ABC to Process</h2>
+      <input id="abc-file-input" type="file" accept=".abc,.ABC,.txt,.TXT" multiple>
+    </div>
+    <textarea id="abc-input" spellcheck="false"></textarea>
+  </section>
+
+  <section class="panel settings-panel">
+    <h2>Remote Solver Settings</h2>
+
+    <div class="settings">
+      <label class="number-setting">
+        <span>Minimum match score</span>
+        <input id="min-setting" type="number" min="0.10" max="1.00" step="0.05" value="0.75">
+      </label>
+
+      <label class="number-setting">
+        <span>Fallback match percentage</span>
+        <input id="fallback-setting" type="number" min="50" max="100" step="5" value="75">
+      </label>
+    </div>
+
+    <div class="substitution-master">
+      <label class="check-setting">
+        <input id="subs-setting" type="checkbox" checked>
+        <span><strong>Enable limited key/mode substitution checking</strong></span>
+      </label>
+    </div>
+
+    <div id="substitution-options" class="substitution-options">
+      <label class="check-setting">
+        <input id="dmaj-setting" type="checkbox" checked>
+        <span>Test D major alternatives: E Dorian, B minor, and A Mixolydian</span>
+      </label>
+
+      <label class="check-setting">
+        <input id="gmaj-setting" type="checkbox" checked>
+        <span>Test G major alternatives: D Mixolydian and A Dorian</span>
+      </label>
+
+      <label class="check-setting">
+        <input id="cmaj-setting" type="checkbox" checked>
+        <span>Test C major alternatives: D Dorian and A minor</span>
+      </label>
+
+      <label class="check-setting">
+        <input id="fmaj-setting" type="checkbox" checked>
+        <span>Test F major alternatives: G Dorian and D minor</span>
+      </label>
+
+      <label class="check-setting">
+        <input id="gemin-setting" type="checkbox">
+        <span>Test G major as E minor</span>
+      </label>
+
+      <label class="check-setting">
+        <input id="abdor-setting" type="checkbox">
+        <span>Test A major as B Dorian</span>
+      </label>
+    </div>
+  </section>
+
+  <section class="panel bottom-panel">
+    <div class="url-label" id="url-preview-label">Generated Solver URL</div>
+
+    <div id="url-preview" class="url-preview" aria-labelledby="url-preview-label">
+      The generated solver URL will appear here.
+    </div>
+
+    <div class="actions">
+      <button id="submit-button" type="button">Send to ABC Tune Backup Chord Solver</button>
+      <button id="copy-url-button" type="button" class="secondary">Copy Generated URL</button>
+      <button id="reset-button" type="button" class="secondary">Reset Settings</button>
+    </div>
+
+    <div id="status" class="status" role="status" aria-live="polite"></div>
+  </section>
+</main>
+
+<script>
+// Wrap the demo in an immediately invoked function expression so its constants,
+// helper functions, and DOM references do not leak into the global scope.
+(function() {
+  "use strict";
+
+  var gDefaultInputABC = "%\n% Click \"Send to ABC Tune Backup Chord Solver\" to send the tunes to the ABC Tune Backup Chord Solver\n%\n% The chords will then be solved and results forwarded to the callback URL\n%\n\nX: 1\nT: Cooley's\nC: Traditional\nR: Reel\nM: 4/4\nL: 1/8\nQ: 1/2=90\nK: Edor\n|:EBBA B2 EB|B2 AB dBAG|F/E/D AD BDAD|F/E/D AD BAGF|\nEBBA B2 EB|B2 AB defg|afge dBAF|1 DEFD E3D:|2 DEFD E2gf||\n|:eB (3BBB eBgf|eBB2 gedB|A/A/A FA DAFA|A/A/A FA defg|\neB (3BBB eBgf|eBBB defg|afge dBAF|1 DEFD E2gf:|2 DEFD E4|]\n\nX: 2\nT: The Kesh\nC: Traditional\nR: Jig\nM: 6/8\nL: 1/8\nQ: 3/8=120\nK: Gmaj\n|:GAG GAB|ABA ABd|edd gdd|edB dBA|\nGAG GAB|ABA ABd|edd gdB|AGF G3:|\n|:BAB dBd|ege dBA|BAB dBG|ABA AGA|\nBAB dBd|ege dBd|gfg aga|bgf g3:|\n\nX: 3\nT: Alexander's\nC: Traditional\nR: Hornpipe\nM: 4/4\nL: 1/8\nQ: 1/2=80\nK: Dmaj\n|:(3gfe|dAFA DFAd|fdcd Adef|g2 ge fdcd|(3efe (3dcB A2 (3gfe|\ndAFA DFAd|fdcd Adef|g2 ge fdcd|(3efe dcd2:|\n|:AG|FAdA FAdA|GBdB GBdB|Acec Acec|dfaf (3gfe (3dAG|\nFAdA FAdA|GBdB GBdB|Acef gecd|(3efe dcd2:|\n";
+
+  const SOLVER_URL =
+    "https://michaeleskin.com/tools/abc_backup_chord_solver.html";
+
+  // Keep generated callback requests below the practical share-link limit used
+  // by the chord solver and the ABC Transcription Tools.
+  const MAX_SOLVER_URL_LENGTH = 8100;
+  const URL_TOO_LONG_MESSAGE =
+    "Encoded URL is too long to send to the ABC Tune Backup Chord Solver.";
+
+  // This callback URL is used exactly as requested.
+  const CALLBACK_URL =
+    "https://michaeleskin.com/abctools/abctools.html?editor=1";
+
+  const DEFAULT_SETTINGS = Object.freeze({
+    min: 0.75,
+    fallback: 75,
+    subs: true,
+    dmaj: true,
+    gmaj: true,
+    cmaj: true,
+    fmaj: true,
+    gemin: false,
+    abdor: false
+  });
+
+  const elements = {
+    abc: document.getElementById("abc-input"),
+    fileInput: document.getElementById("abc-file-input"),
+    min: document.getElementById("min-setting"),
+    fallback: document.getElementById("fallback-setting"),
+    subs: document.getElementById("subs-setting"),
+    dmaj: document.getElementById("dmaj-setting"),
+    gmaj: document.getElementById("gmaj-setting"),
+    cmaj: document.getElementById("cmaj-setting"),
+    fmaj: document.getElementById("fmaj-setting"),
+    gemin: document.getElementById("gemin-setting"),
+    abdor: document.getElementById("abdor-setting"),
+    substitutionOptions: document.getElementById("substitution-options"),
+    submit: document.getElementById("submit-button"),
+    copyURL: document.getElementById("copy-url-button"),
+    reset: document.getElementById("reset-button"),
+    status: document.getElementById("status"),
+    urlPreview: document.getElementById("url-preview"),
+    callbackDisplay: document.getElementById("callback-display")
+  };
+
+  // Retain the current status message so the tune count can be refreshed after
+  // manual ABC edits without replacing the user's most recent status message.
+  let currentStatusMessage = "Ready.";
+  let currentStatusIsError = false;
+  let solverURLTooLong = false;
+
+  elements.callbackDisplay.textContent = CALLBACK_URL;
+
+  /**
+   * Detects iPhone, iPad, and iPod devices, including iPads that identify
+   * themselves as MacIntel while using a touch screen.
+   *
+   * @returns {boolean} True when the current browser is running on iOS/iPadOS.
+   */
+  function isIOSDevice() {
+    const userAgent = navigator.userAgent || "";
+    const platform = navigator.platform || "";
+
+    return /iPad|iPhone|iPod/.test(userAgent) ||
+      (platform === "MacIntel" && navigator.maxTouchPoints > 1);
+  }
+
+  /**
+   * Configures the standard file input for the current platform.
+   * Non-iOS browsers are limited to ABC and text files. On iOS, the accept
+   * attribute is removed so the Files picker can display all available files.
+   */
+  function configureABCFileInput() {
+    if (isIOSDevice()) {
+      // Removing accept on iOS allows the Files picker to show all files.
+      elements.fileInput.removeAttribute("accept");
+    } else {
+      elements.fileInput.setAttribute("accept", ".abc,.ABC,.txt,.TXT");
+    }
+  }
+
+  /**
+   * Checks whether a selected file has one of the supported extensions.
+   *
+   * @param {File} file The browser File object to validate.
+   * @returns {boolean} True for .abc or .txt files, regardless of case.
+   */
+  function isSupportedABCFile(file) {
+    return !!(file && file.name && /\.(abc|txt)$/i.test(file.name));
+  }
+
+  /**
+   * Reads one selected file as text and exposes the result as a Promise.
+   *
+   * @param {File} file The file to read.
+   * @returns {Promise<string>} A promise that resolves with the file contents.
+   */
+  function readFileAsText(file) {
+    // Promise executor: starts FileReader and resolves or rejects when done.
+    return new Promise(function(resolve, reject) {
+      const reader = new FileReader();
+
+      // FileReader success callback: return the loaded text to the caller.
+      reader.onload = function() {
+        resolve(String(reader.result || ""));
+      };
+
+      // FileReader failure callback: reject with the affected filename.
+      reader.onerror = function() {
+        reject(new Error('Could not read "' + file.name + '".'));
+      };
+
+      reader.readAsText(file);
+    });
+  }
+
+  /**
+   * Validates and loads one or more selected ABC/text files.
+   * The files are read in selection order, joined with a blank line, placed in
+   * the ABC editor, and then used to refresh the generated solver URL.
+   *
+   * @param {FileList|File[]} fileList Files selected by the standard file input.
+   * @returns {Promise<void>}
+   */
+  async function loadABCFiles(fileList) {
+    const files = Array.from(fileList || []);
+    if (!files.length) return;
+
+    // Keep only files whose extensions are not supported.
+    const unsupported = files.filter(function(file) {
+      return !isSupportedABCFile(file);
+    });
+
+    if (unsupported.length) {
+      // Convert unsupported File objects into a readable filename list.
+      const names = unsupported.map(function(file) {
+        return file.name;
+      }).join(", ");
+
+      setStatus(
+        "Unsupported file type: " + names +
+        ". Please choose only .abc, .ABC, .txt, or .TXT files.",
+        true
+      );
+      //elements.fileInput.value = "";
+      return;
+    }
+
+    try {
+      const contents = await Promise.all(files.map(readFileAsText));
+      elements.abc.value = contents.join("\n\n");
+      refreshABCEditorState();
+
+      const count = files.length;
+      setStatus(
+        "Opened " + count + " " + (count === 1 ? "file" : "files") + ": " +
+        // Display the selected filenames in their original order.
+        files.map(function(file) { return file.name; }).join(", "),
+        false
+      );
+    } catch (error) {
+      setStatus(error.message, true);
+    } finally {
+      //elements.fileInput.value = "";
+    }
+  }
+
+  /**
+   * Counts ABC tunes by counting lines whose first non-whitespace characters
+   * are an X: reference-number field.
+   *
+   * @param {string} abcText ABC notation to examine.
+   * @returns {number} Number of X: tune headers found.
+   */
+  function countABCTunes(abcText) {
+    const matches = String(abcText || "").match(/^\s*X\s*:/gmi);
+    return matches ? matches.length : 0;
+  }
+
+  /**
+   * Draws the retained status message together with the current ABC tune count.
+   * This function does not change the retained message or error state.
+   */
+  function renderStatus() {
+    const tuneCount = countABCTunes(elements.abc.value);
+    const tuneWord = tuneCount === 1 ? "tune" : "tunes";
+    const message = solverURLTooLong
+      ? URL_TOO_LONG_MESSAGE
+      : currentStatusMessage;
+    const isError = solverURLTooLong || currentStatusIsError;
+
+    elements.status.textContent =
+      "ABC tune count: " +
+      tuneCount + " " + tuneWord + "." + "\n" + message;
+
+    elements.status.style.borderColor =
+      isError ? "#c75b5b" : "#d7dce3";
+    elements.status.style.background =
+      isError ? "#fff1f1" : "#f8f9fb";
+  }
+
+  /**
+   * Updates the retained status message and error state, then redraws the
+   * status area with the current ABC tune count.
+   *
+   * @param {string} message Text to display to the user.
+   * @param {boolean} isError Whether to use the error appearance.
+   */
+  function setStatus(message, isError) {
+    currentStatusMessage = message;
+    currentStatusIsError = !!isError;
+    renderStatus();
+  }
+
+  /**
+   * Refreshes the generated solver URL and the tune count after the ABC editor
+   * contents change, while preserving the current status message.
+   */
+  function refreshABCEditorState() {
+    refreshURLPreview();
+    renderStatus();
+  }
+
+  /**
+   * Converts compressed bytes into unpadded URL-safe Base64.
+   * The chunked conversion avoids passing very large arrays to
+   * String.fromCharCode() in a single call.
+   *
+   * @param {Uint8Array} bytes Bytes to encode.
+   * @returns {string} URL-safe Base64 text.
+   */
+  function bytesToBase64URL(bytes) {
+    let binary = "";
+    const chunkSize = 0x8000;
+
+    for (let offset = 0; offset < bytes.length; offset += chunkSize) {
+      const chunk = bytes.subarray(offset, offset + chunkSize);
+      binary += String.fromCharCode.apply(null, chunk);
+    }
+
+    return btoa(binary)
+      .replace(/\+/g, "-")
+      .replace(/\//g, "_")
+      .replace(/=+$/, "");
+  }
+
+  /**
+   * Encodes ABC text in the format expected by the remote chord solver:
+   * UTF-8 text, zlib/deflate compression, then URL-safe Base64.
+   *
+   * @param {string} abcText ABC notation to encode.
+   * @returns {string} Encoded ABC suitable for the def URL parameter.
+   * @throws {Error} If pako or TextEncoder is unavailable.
+   */
+  function encodeABCForChordSolver(abcText) {
+    if (typeof pako === "undefined") {
+      throw new Error("The pako compression library did not load.");
+    }
+
+    if (typeof TextEncoder === "undefined") {
+      throw new Error("This browser does not provide TextEncoder.");
+    }
+
+    const utf8 = new TextEncoder().encode(abcText);
+    const compressed = pako.deflate(utf8, { level: 6 });
+    return bytesToBase64URL(compressed);
+  }
+
+  /**
+   * Reads and validates a numeric form control.
+   *
+   * @param {HTMLInputElement} input The numeric input element.
+   * @param {string} label Human-readable setting name for error messages.
+   * @param {number} minimum Smallest allowed value.
+   * @param {number} maximum Largest allowed value.
+   * @param {number} step Required increment.
+   * @returns {number} The validated numeric value.
+   * @throws {Error} If the value is missing, out of range, or off-step.
+   */
+  function readNumber(input, label, minimum, maximum, step) {
+    const raw = input.value.trim();
+    const value = Number(raw);
+
+    if (!raw || !Number.isFinite(value)) {
+      throw new Error(label + " must be a number.");
+    }
+
+    if (value < minimum || value > maximum) {
+      throw new Error(
+        label + " must be between " + minimum + " and " + maximum + "."
+      );
+    }
+
+    const steppedValue =
+      minimum + Math.round((value - minimum) / step) * step;
+
+    if (Math.abs(steppedValue - value) > 0.000001) {
+      throw new Error(label + " must use increments of " + step + ".");
+    }
+
+    return Number(value.toFixed(10));
+  }
+
+  /**
+   * Collects the current remote chord-solver settings from the form.
+   *
+   * @returns {Object} An object whose property names match the solver's short
+   * URL parameter names.
+   */
+  function getSettings() {
+    return {
+      min: readNumber(
+        elements.min,
+        "Minimum match score",
+        0.10,
+        1.00,
+        0.05
+      ),
+      fallback: readNumber(
+        elements.fallback,
+        "Fallback match percentage",
+        50,
+        100,
+        5
+      ),
+      subs: elements.subs.checked,
+      dmaj: elements.dmaj.checked,
+      gmaj: elements.gmaj.checked,
+      cmaj: elements.cmaj.checked,
+      fmaj: elements.fmaj.checked,
+      gemin: elements.gemin.checked,
+      abdor: elements.abdor.checked
+    };
+  }
+
+  /**
+   * Builds the complete callback-enabled solver URL from the current ABC text
+   * and remote settings.
+   *
+   * @returns {string} Absolute URL for launching the remote chord solver.
+   * @throws {Error} If the ABC editor is empty or a setting is invalid.
+   */
+  function buildSolverURL() {
+    const abcText = elements.abc.value;
+
+    if (!abcText.trim()) {
+      throw new Error("Enter at least one ABC tune before submitting.");
+    }
+
+    const settings = getSettings();
+    const solverURL = new URL(SOLVER_URL);
+
+    solverURL.searchParams.set("def", encodeABCForChordSolver(abcText));
+    solverURL.searchParams.set("callbackURL", CALLBACK_URL);
+
+    for (const [name, value] of Object.entries(settings)) {
+      solverURL.searchParams.set(name, String(value));
+    }
+
+    // Add a unique timestamp as the final query parameter so browsers, proxies,
+    // and intermediary caches do not reuse a previous callback-solver request.
+    // Because this is added before returning solverURL.href, it is included in
+    // every existing MAX_SOLVER_URL_LENGTH check.
+    solverURL.searchParams.set("cachebuster", String(Date.now()));
+
+    return solverURL.href;
+  }
+
+  /**
+   * Enables or disables both actions that require a valid generated URL.
+   *
+   * @param {boolean} enabled True when the current URL is valid and usable.
+   * @param {string} disabledReason Tooltip shown while the actions are disabled.
+   */
+  function setURLActionButtonsEnabled(enabled, disabledReason) {
+    const actionsEnabled = !!enabled;
+    const reason = disabledReason || "A valid generated solver URL is required.";
+
+    elements.submit.disabled = !actionsEnabled;
+    elements.copyURL.disabled = !actionsEnabled;
+
+    elements.submit.title = actionsEnabled
+      ? "Send the ABC to the ABC Tune Backup Chord Solver"
+      : reason;
+
+    elements.copyURL.title = actionsEnabled
+      ? "Copy the generated solver URL"
+      : reason;
+  }
+
+  /**
+   * Rebuilds the solver URL and displays it in the preview area.
+   * Validation errors are shown in the preview instead of being thrown onward.
+   *
+   * @returns {string} The generated URL, or an empty string when invalid.
+   */
+  function refreshURLPreview() {
+    try {
+      const url = buildSolverURL();
+
+      solverURLTooLong = url.length > MAX_SOLVER_URL_LENGTH;
+
+      if (solverURLTooLong) {
+        elements.urlPreview.textContent = URL_TOO_LONG_MESSAGE;
+        setURLActionButtonsEnabled(false, URL_TOO_LONG_MESSAGE);
+        renderStatus();
+        return "";
+      }
+
+      elements.urlPreview.textContent = url;
+      setURLActionButtonsEnabled(true, "");
+      renderStatus();
+      return url;
+    } catch (error) {
+      const validationMessage =
+        "The URL cannot be generated yet: " + error.message;
+
+      solverURLTooLong = false;
+      elements.urlPreview.textContent = validationMessage;
+      setURLActionButtonsEnabled(false, error.message);
+      currentStatusMessage = error.message;
+      currentStatusIsError = true;
+      renderStatus();
+      return "";
+    }
+  }
+
+  /**
+   * Enables or disables the individual key/mode substitution checkboxes based
+   * on the master substitution checkbox, then refreshes the URL preview.
+   */
+  function syncSubstitutionControls() {
+    const enabled = elements.subs.checked;
+    elements.substitutionOptions.classList.toggle("disabled", !enabled);
+
+    [
+      elements.dmaj,
+      elements.gmaj,
+      elements.cmaj,
+      elements.fmaj,
+      elements.gemin,
+      elements.abdor
+    // Apply the enabled state to every individual substitution checkbox.
+    ].forEach(function(control) {
+      control.disabled = !enabled;
+    });
+
+    refreshURLPreview();
+  }
+
+  /**
+   * Writes every remote solver setting control to its built-in default value.
+   * Explicit assignment prevents Firefox from retaining stale form state.
+   */
+  function applyDefaultSettingsToControls() {
+    elements.min.value = DEFAULT_SETTINGS.min.toFixed(2);
+    elements.fallback.value = String(DEFAULT_SETTINGS.fallback);
+    elements.subs.checked = DEFAULT_SETTINGS.subs;
+    elements.dmaj.checked = DEFAULT_SETTINGS.dmaj;
+    elements.gmaj.checked = DEFAULT_SETTINGS.gmaj;
+    elements.cmaj.checked = DEFAULT_SETTINGS.cmaj;
+    elements.fmaj.checked = DEFAULT_SETTINGS.fmaj;
+    elements.gemin.checked = DEFAULT_SETTINGS.gemin;
+    elements.abdor.checked = DEFAULT_SETTINGS.abdor;
+  }
+
+  /**
+   * Restores every remote solver setting to the built-in defaults and refreshes
+   * the dependent controls and generated URL.
+   */
+  function resetSettings() {
+    applyDefaultSettingsToControls();
+    syncSubstitutionControls();
+    setStatus("Settings reset to the solver defaults.", false);
+  }
+
+  // Submit-button handler: build and open the remote chord-solver URL.
+  elements.submit.addEventListener("click", function() {
+    try {
+      const solverURL = buildSolverURL();
+
+      if (solverURL.length > MAX_SOLVER_URL_LENGTH) {
+        solverURLTooLong = true;
+        elements.submit.disabled = true;
+        elements.copyURL.disabled = true;
+        elements.submit.title = URL_TOO_LONG_MESSAGE;
+        elements.copyURL.title = URL_TOO_LONG_MESSAGE;
+        elements.urlPreview.textContent = URL_TOO_LONG_MESSAGE;
+        renderStatus();
+        return;
+      }
+
+      elements.urlPreview.textContent = solverURL;
+
+      window.open(
+        solverURL,
+        "_blank",
+        "noopener,noreferrer"
+      );
+
+      setStatus(
+        "Submitted to the ABC Tune Backup Chord Solver.\nAfter processing, the ABC Tune Backup Chord Solver will " +
+        "navigate to the ABC Transcription Tools callback page with the chorded ABC.",
+        false
+      );
+    } catch (error) {
+      solverURLTooLong = false;
+      setURLActionButtonsEnabled(false, error.message);
+      elements.urlPreview.textContent =
+        "The URL cannot be generated yet: " + error.message;
+      setStatus(error.message, true);
+    }
+  });
+
+  // Copy-button handler: generate the current solver URL and copy it.
+  elements.copyURL.addEventListener("click", async function() {
+    try {
+      const solverURL = buildSolverURL();
+
+      if (solverURL.length > MAX_SOLVER_URL_LENGTH) {
+        solverURLTooLong = true;
+        elements.submit.disabled = true;
+        elements.copyURL.disabled = true;
+        elements.submit.title = URL_TOO_LONG_MESSAGE;
+        elements.copyURL.title = URL_TOO_LONG_MESSAGE;
+        elements.urlPreview.textContent = URL_TOO_LONG_MESSAGE;
+        renderStatus();
+        return;
+      }
+
+      elements.urlPreview.textContent = solverURL;
+
+      if (!navigator.clipboard || !navigator.clipboard.writeText) {
+        throw new Error(
+          "Clipboard access is unavailable. Copy the URL from the preview box."
+        );
+      }
+
+      await navigator.clipboard.writeText(solverURL);
+      setStatus("Generated solver URL copied to the clipboard.", false);
+    } catch (error) {
+      solverURLTooLong = false;
+      setURLActionButtonsEnabled(false, error.message);
+      elements.urlPreview.textContent =
+        "The URL cannot be generated yet: " + error.message;
+      setStatus(error.message, true);
+    }
+  });
+
+  // File-input handler: load every file selected in the native picker.
+  elements.fileInput.addEventListener("change", function() {
+    loadABCFiles(elements.fileInput.files);
+  });
+
+  // Restore defaults when the Reset Settings button is clicked.
+  elements.reset.addEventListener("click", resetSettings);
+
+  // Update dependent substitution controls when the master checkbox changes.
+  elements.subs.addEventListener("change", syncSubstitutionControls);
+
+  // Refresh both the generated URL and the displayed tune count whenever the
+  // user edits or replaces the ABC text.
+  elements.abc.addEventListener("input", refreshABCEditorState);
+  elements.abc.addEventListener("change", refreshABCEditorState);
+
+  [
+    elements.min,
+    elements.fallback,
+    elements.dmaj,
+    elements.gmaj,
+    elements.cmaj,
+    elements.fmaj,
+    elements.gemin,
+    elements.abdor
+  // Attach live URL-refresh behavior to every editable remote setting.
+  ].forEach(function(control) {
+    control.addEventListener("input", refreshURLPreview);
+    control.addEventListener("change", refreshURLPreview);
+  });
+
+  /**
+   * Initializes all editable content, settings, dependent disabled states,
+   * URL output, and status to deterministic startup values.
+   *
+   * The selected file input is intentionally left unchanged.
+   */
+  function initializeDemoState() {
+    currentStatusMessage = "Ready.";
+    currentStatusIsError = false;
+    solverURLTooLong = false;
+
+    elements.abc.value = gDefaultInputABC;
+    applyDefaultSettingsToControls();
+    configureABCFileInput();
+    syncSubstitutionControls();
+    setStatus("Ready.", false);
+  }
+
+  /**
+   * Reapplies deterministic startup state after a page display event.
+   * Firefox can restore stale form values during pageshow, so all editable
+   * settings are explicitly initialized again here.
+   */
+  function handlePageShow() {
+    initializeDemoState();
+  }
+
+  // Initialize immediately, then repeat on pageshow to override browser-restored
+  // form state. The native file input is deliberately not cleared.
+  initializeDemoState();
+  window.addEventListener("pageshow", handlePageShow);
+})();
+</script>
+</body>
+</html>

@@ -561,6 +561,25 @@
     .instructions_content p{ font-size:12pt; line-height:1.45; margin:0 0 10px 0; }
     .instructions_content ul{ margin-top:4px; padding-left:24px; }
     .instructions_content li{ margin-bottom:6px; }
+    .instructions_content pre{
+      margin:10px 0 14px 0;
+      padding:12px;
+      overflow-x:auto;
+      white-space:pre;
+      font-family:var(--mono);
+      font-size:10.5pt;
+      line-height:1.4;
+      background:#f5f5f5;
+      border:1px solid #ddd;
+      border-radius:8px;
+      -webkit-overflow-scrolling:touch;
+    }
+    .instructions_content pre code{
+      padding:0;
+      background:transparent;
+      border-radius:0;
+      font-size:inherit;
+    }
 
     /* ============================================================
        DayPilot modal theme
@@ -614,8 +633,8 @@
     #progress_modal_box{
       position:absolute;
       left:50%;
-      top:30%;
-      transform:translate(-50%, -50%);
+      top:150px;
+      transform:translateX(-50%);
       width:720px;
       max-width:calc(100vw - 48px);
       background:#fff;
@@ -774,6 +793,7 @@
       #progress_modal_box{
         width:calc(100vw - 24px);
         top:50%;
+        transform:translate(-50%, -50%);
         padding:20px;
       }
       #progress_modal_progress{ height:20px; margin-top:12px; }
@@ -824,6 +844,10 @@
   var gInputInitialized = false;
   var gProcessingControlsEnabled = true;
   var gOutputShareURL = "";
+  var gRemoteSubmissionMode = false;
+  var gRemoteCallbackURL = "";
+  var gRemoteSubmissionStarted = false;
+  var REMOTE_SUBMISSION_SELF_URL = "https://michaeleskin.com/tools/abc_backup_chord_solver.html";
   var DEFAULT_KEY_MODE_SUBSTITUTION_OPTIONS = {
     Dmajor: true,
     Gmajor: true,
@@ -884,6 +908,15 @@
 
   function getDefaultKeyModeSubstitutionOptions() {
     return Object.assign({}, DEFAULT_KEY_MODE_SUBSTITUTION_OPTIONS);
+  }
+
+  function applyDefaultToolSettings() {
+    // Remote submissions must be deterministic and must never inherit settings
+    // previously saved by the user in this browser.
+    gSettings.threshold = 0.75;
+    gSettings.fallbackMatchPercentage = 75;
+    gSettings.keyModeSubstitutionEnabled = true;
+    gSettings.keyModeSubstitutionOptions = getDefaultKeyModeSubstitutionOptions();
   }
 
   function normalizeSavedKeyModeSubstitutionOptions(savedOptions) {
@@ -985,10 +1018,7 @@
   }
 
   function resetSettingsControls() {
-    gSettings.threshold = 0.75;
-    gSettings.fallbackMatchPercentage = 75;
-    gSettings.keyModeSubstitutionEnabled = true;
-    gSettings.keyModeSubstitutionOptions = getDefaultKeyModeSubstitutionOptions();
+    applyDefaultToolSettings();
     saveToolSettings();
     syncSettingsControls();
     setStatus("Settings reset to defaults.");
@@ -1095,6 +1125,231 @@
     }
   }
 
+  function getRawURLParameter(name) {
+    var query = String(window.location.search || "").replace(/^\?/, "");
+    if (!query) return null;
+
+    var parts = query.split("&");
+    for (var i = 0; i < parts.length; i++) {
+      var equalsIndex = parts[i].indexOf("=");
+      var rawName = equalsIndex >= 0 ? parts[i].slice(0, equalsIndex) : parts[i];
+      var rawValue = equalsIndex >= 0 ? parts[i].slice(equalsIndex + 1) : "";
+
+      try {
+        if (decodeURIComponent(rawName.replace(/\+/g, "%20")) === name) {
+          return rawValue;
+        }
+      } catch (err) {
+        // Ignore malformed parameter names and continue looking.
+      }
+    }
+
+    return null;
+  }
+
+  function parseRemoteBooleanParameter(params, name, defaultValue) {
+    if (!params.has(name)) return defaultValue;
+
+    var value = String(params.get(name) || "").trim().toLowerCase();
+
+    if (value === "1" || value === "true" || value === "yes" || value === "on") {
+      return true;
+    }
+
+    if (value === "0" || value === "false" || value === "no" || value === "off") {
+      return false;
+    }
+
+    throw new Error(
+      "The " + name + " parameter must be true or false " +
+      "(also accepted: 1/0, yes/no, or on/off)."
+    );
+  }
+
+  function parseRemoteNumberParameter(params, name, defaultValue, minimum, maximum, step) {
+    if (!params.has(name)) return defaultValue;
+
+    var rawValue = String(params.get(name) || "").trim();
+    var value = Number(rawValue);
+
+    if (!rawValue || !isFinite(value)) {
+      throw new Error("The " + name + " parameter must be a number.");
+    }
+
+    if (value < minimum || value > maximum) {
+      throw new Error(
+        "The " + name + " parameter must be between " +
+        minimum + " and " + maximum + "."
+      );
+    }
+
+    var stepCount = Math.round((value - minimum) / step);
+    var steppedValue = minimum + (stepCount * step);
+
+    if (Math.abs(steppedValue - value) > 0.000001) {
+      throw new Error(
+        "The " + name + " parameter must use increments of " + step + "."
+      );
+    }
+
+    return Number(value.toFixed(10));
+  }
+
+  function getRemoteSubmissionSettings(params) {
+    // Begin with the built-in defaults. Each URL parameter is optional and
+    // overrides only its corresponding control. These parameters are read only
+    // after callbackURL has been confirmed to be present and valid.
+    return {
+      threshold: parseRemoteNumberParameter(
+        params,
+        "min",
+        0.75,
+        0.10,
+        1.00,
+        0.05
+      ),
+      fallbackMatchPercentage: parseRemoteNumberParameter(
+        params,
+        "fallback",
+        75,
+        50,
+        100,
+        5
+      ),
+      keyModeSubstitutionEnabled: parseRemoteBooleanParameter(
+        params,
+        "subs",
+        true
+      ),
+      keyModeSubstitutionOptions: {
+        Dmajor: parseRemoteBooleanParameter(
+          params,
+          "dmaj",
+          true
+        ),
+        Gmajor: parseRemoteBooleanParameter(
+          params,
+          "gmaj",
+          true
+        ),
+        Cmajor: parseRemoteBooleanParameter(
+          params,
+          "cmaj",
+          true
+        ),
+        Fmajor: parseRemoteBooleanParameter(
+          params,
+          "fmaj",
+          true
+        ),
+        Gmajor_Eminor: parseRemoteBooleanParameter(
+          params,
+          "gemin",
+          false
+        ),
+        Amajor_Bdorian: parseRemoteBooleanParameter(
+          params,
+          "abdor",
+          false
+        )
+      }
+    };
+  }
+
+  function applyRemoteSubmissionSettings(settings) {
+    settings = settings || {};
+
+    gSettings.threshold = settings.threshold;
+    gSettings.fallbackMatchPercentage = settings.fallbackMatchPercentage;
+    gSettings.keyModeSubstitutionEnabled = !!settings.keyModeSubstitutionEnabled;
+    gSettings.keyModeSubstitutionOptions =
+      normalizeSavedKeyModeSubstitutionOptions(settings.keyModeSubstitutionOptions);
+  }
+
+  function getRemoteSubmissionRequest() {
+    var params = new URLSearchParams(window.location.search || "");
+    var defText = params.get("def");
+    var rawCallbackURL = getRawURLParameter("callbackURL");
+
+    if (!defText || rawCallbackURL === null || rawCallbackURL === "") {
+      return null;
+    }
+
+    var callbackURLText;
+    try {
+      // Read the raw query-string value so callbackURL is decoded exactly once,
+      // as requested, rather than relying on URLSearchParams' automatic decode.
+      callbackURLText = decodeURIComponent(rawCallbackURL.replace(/\+/g, "%20"));
+    } catch (err) {
+      throw new Error("The callbackURL parameter could not be decoded.");
+    }
+
+    var callbackURL;
+    try {
+      callbackURL = new URL(callbackURLText, window.location.href);
+    } catch (err) {
+      throw new Error("The callbackURL parameter is not a valid URL.");
+    }
+
+    if (!/^https?:$/.test(callbackURL.protocol)) {
+      throw new Error("The callbackURL must use http:// or https://.");
+    }
+
+    var selfURL = new URL(REMOTE_SUBMISSION_SELF_URL);
+    var callbackBase =
+      callbackURL.protocol.toLowerCase() + "//" +
+      callbackURL.host.toLowerCase() +
+      callbackURL.pathname.replace(/\/+$/, "");
+    var selfBase =
+      selfURL.protocol.toLowerCase() + "//" +
+      selfURL.host.toLowerCase() +
+      selfURL.pathname.replace(/\/+$/, "");
+
+    if (callbackBase === selfBase) {
+      throw new Error(
+        "The callbackURL points back to the ABC Tune Backup Chord Solver. " +
+        "Remote processing has been stopped to prevent recursion."
+      );
+    }
+
+    // Remote control parameters are intentionally ignored unless callbackURL
+    // exists and has passed all validation above.
+    var remoteSettings = getRemoteSubmissionSettings(params);
+
+    var abcText;
+    try {
+      abcText = decompressABCDeflateFromShareLink(defText);
+    } catch (err) {
+      throw new Error("The def parameter could not be decoded as ABC notation.");
+    }
+
+    if (!abcText || !abcText.trim()) {
+      throw new Error("The def parameter did not contain any ABC notation.");
+    }
+
+    return {
+      abcText: abcText,
+      callbackURL: callbackURL.href,
+      settings: remoteSettings
+    };
+  }
+
+  function buildRemoteCallbackResultURL(callbackURLText, abcText) {
+    var callbackURL = new URL(callbackURLText, window.location.href);
+    callbackURL.searchParams.set("def", compressABCDeflateForShareLink(abcText));
+    return callbackURL.href;
+  }
+
+  function navigateToRemoteCallbackResult(abcText) {
+    var resultURL = buildRemoteCallbackResultURL(gRemoteCallbackURL, abcText);
+
+    // Replace the current solver page with the callback result. This avoids
+    // opening a second tab and therefore avoids callback popup blocking.
+    window.location.replace(resultURL);
+
+    return resultURL;
+  }
+
   function bytesToBase64(bytes) {
     var binary = "";
     for (var i = 0; i < bytes.length; i++) {
@@ -1123,7 +1378,7 @@
     }
 
     var url = buildABCTranscriptionToolsShareURL(outputText);
-    if (url.length < 8100) {
+    if (url.length <= 8100) {
       gOutputShareURL = url;
       testButton.disabled = false;
       testButton.title = "Open the generated output in the ABC Transcription Tools";
@@ -1172,8 +1427,18 @@
 
   function showProgressModal(message) {
     var overlay = document.getElementById("progress_modal_overlay");
+    var title = document.getElementById("progress_modal_title");
     var status = document.getElementById("progress_modal_status");
     if (!overlay || !status) return;
+
+    // Identify callback-driven processing without changing the title used for
+    // normal interactive chord-matching operations.
+    if (title) {
+      title.textContent = gRemoteSubmissionMode
+        ? "Matching Backup Chords (Remote)"
+        : "Matching Backup Chords";
+    }
+
     setProgressModalPercent(0);
     status.innerHTML = message || "Starting...";
     overlay.style.display = "block";
@@ -1246,9 +1511,69 @@
     if (clearButton) clearButton.disabled = !enabled;
   }
 
-  function initializeTool() {
+  async function initializeTool() {
     gCancelRequested = false;
     hideProgressModal();
+
+    var remoteRequest = null;
+    try {
+      remoteRequest = getRemoteSubmissionRequest();
+    } catch (err) {
+      applyDefaultToolSettings();
+      syncSettingsControls();
+      clearOutputArea();
+      setProcessingControlsEnabled(false);
+      setStatus("<b>Error:</b> " + escapeHTML(err.message));
+      showMessageDialog("<b>Remote submission error:</b><br><br>" + escapeHTML(err.message));
+      return;
+    }
+
+    if (remoteRequest) {
+      // The initial page navigation can produce both pageshow and load events.
+      // Never allow the same callback submission to launch two concurrent
+      // chord-matching loops.
+      if (gRemoteSubmissionStarted) return;
+      gRemoteSubmissionStarted = true;
+
+      gRemoteSubmissionMode = true;
+      gRemoteCallbackURL = remoteRequest.callbackURL;
+
+      // Do not read or write the user's saved settings in remote mode.
+      // Start with defaults, then apply only validated URL overrides.
+      applyDefaultToolSettings();
+      applyRemoteSubmissionSettings(remoteRequest.settings);
+      syncSettingsControls();
+
+      var remoteInput = document.getElementById("input");
+      if (remoteInput) remoteInput.value = remoteRequest.abcText;
+
+      clearOutputArea();
+
+      var remoteFileInput = document.getElementById("selectabcfile");
+      if (remoteFileInput) {
+        remoteFileInput.value = "";
+        configureFileOpenAccept();
+      }
+
+      gSaveFilename = "abc_backup_chords.abc";
+      gInputFilename = "";
+      setProcessingControlsEnabled(false);
+
+      var remoteTuneCount = splitTunes(remoteRequest.abcText).length;
+      setStatus(
+        "Remote submission received with <b>" + remoteTuneCount + "</b> " +
+        pluralWord(remoteTuneCount, "tune", "tunes") +
+        ". Running with the requested remote chord-matching settings..."
+      );
+
+      await generateBackupChords(true);
+      return;
+    }
+
+    gRemoteSubmissionMode = false;
+    gRemoteCallbackURL = "";
+    gRemoteSubmissionStarted = false;
+
     loadToolSettings();
     syncSettingsControls();
 
@@ -1272,7 +1597,7 @@
       var sharedTuneCount = splitTunes(sharedABC).length;
       setStatus("Loaded ABC notation from the share link with " + sharedTuneCount + " " + pluralWord(sharedTuneCount, "tune", "tunes") + ".");
     } else if ((window.location.search || "").indexOf("def=") >= 0) {
-      setStatus("Could not decode the ABC notation from the def= share link parameter.");
+      setStatus("Could not decode the ABC notation from the def= share-link parameter.");
     } else {
       setStatus("Ready.");
     }
@@ -1311,6 +1636,271 @@
     window.open("https://michaeleskin.com/abctools/abctools.html", "_blank", "noopener,noreferrer");
   }
 
+  function showDeveloperInstructions() {
+    var html = [
+      "<div class=\"instructions_content\">\n",
+      "<h3 style=\"text-align:center;\">Developer Integration</h3>\n",
+      "\n",
+      "<h4>What the Remote Callback Feature Is For</h4>\n",
+      "<p>The remote callback feature is designed for browser-based applications that already contain ABC notation and want to send one or more tunes to the ABC Tune Backup Chord Solver, have the chords added automatically, and receive the completed ABC back in a designated callback page.</p>\n",
+      "<p>A typical integration opens the solver in a new tab from a direct user action. The solver decodes the submitted ABC, processes it without requiring further interaction, and then replaces its own tab with the callback URL. The completed ABC is returned in that callback URL's <b>def=</b> parameter.</p>\n",
+      "<p>This is a URL-based browser integration rather than a server API. It is best suited to modest-size ABC collections that fit safely in browser URLs. Because the ABC travels in query strings, do not use this mechanism for confidential material.</p>\n",
+      "\n",
+      "<p style=\"text-align:center;margin:12px 0 18px 0;\">\n",
+      "<a href=\"https://michaeleskin.com/tools/abc_backup_chord_solver_callback_demo.html\" target=\"_blank\" rel=\"noopener noreferrer\">Open the Live Callback Demo</a>\n",
+      "&nbsp;&nbsp;|&nbsp;&nbsp;\n",
+      "<a href=\"https://github.com/seisiuneer/abctools/blob/main/tools/abc_backup_chord_solver_callback_demo\" target=\"_blank\" rel=\"noopener noreferrer\">View the Demo Source on GitHub</a>\n",
+      "</p>\n",
+      "\n",
+      "<h4>Required Request Parameters</h4>\n",
+      "<p>Remote processing starts only when both of these case-sensitive parameters are present and valid:</p>\n",
+      "<ul>\n",
+      "<li><b>def</b> \u2014 The source ABC encoded as UTF-8, compressed with zlib/deflate, converted to unpadded URL-safe Base64, and placed in the <b>def=</b> parameter.</li>\n",
+      "<li><b>callbackURL</b> \u2014 The HTTP or HTTPS location that should receive the result. An absolute URL is strongly recommended. The current implementation also accepts a relative URL and resolves it against the solver page, but that is usually not useful for an external integration.</li>\n",
+      "</ul>\n",
+      "<p>When manually constructing a request string, percent-encode the callback URL exactly once. When using the browser <b>URL</b> and <b>URLSearchParams</b> APIs, pass the ordinary, unencoded callback URL to <code>searchParams.set()</code> and allow the browser to encode it.</p>\n",
+      "\n",
+      "<p>The basic request form is:</p>\n",
+      "<pre><code>https://michaeleskin.com/tools/abc_backup_chord_solver.html?def=ENCODED_ABC&amp;callbackURL=ENCODED_CALLBACK_URL&amp;cachebuster=TIMESTAMP</code></pre>\n",
+      "\n",
+      "<h4>Optional Remote Settings</h4>\n",
+      "<p>The following optional parameters override the solver's built-in defaults for that remote request. They are read only when both <b>def</b> and a valid <b>callbackURL</b> are present. Missing parameters retain their defaults.</p>\n",
+      "<ul>\n",
+      "<li><b>min</b> \u2014 Minimum match score from <b>0.10</b> through <b>1.00</b>, in increments of <b>0.05</b>. Default: <b>0.75</b>.</li>\n",
+      "<li><b>fallback</b> \u2014 Fallback match percentage from <b>50</b> through <b>100</b>, in increments of <b>5</b>. Default: <b>75</b>.</li>\n",
+      "<li><b>subs</b> \u2014 Enables or disables all limited key/mode substitution checking. Default: <b>true</b>.</li>\n",
+      "<li><b>dmaj</b> \u2014 Tests D major as E Dorian, B minor, or A Mixolydian. Default: <b>true</b>.</li>\n",
+      "<li><b>gmaj</b> \u2014 Tests G major as D Mixolydian or A Dorian. Default: <b>true</b>.</li>\n",
+      "<li><b>cmaj</b> \u2014 Tests C major as D Dorian or A minor. Default: <b>true</b>.</li>\n",
+      "<li><b>fmaj</b> \u2014 Tests F major as G Dorian or D minor. Default: <b>true</b>.</li>\n",
+      "<li><b>gemin</b> \u2014 Tests G major as E minor. Default: <b>false</b>.</li>\n",
+      "<li><b>abdor</b> \u2014 Tests A major as B Dorian. Default: <b>false</b>.</li>\n",
+      "</ul>\n",
+      "<p>Boolean parameters accept <b>true</b> or <b>false</b>. The equivalent values <b>1/0</b>, <b>yes/no</b>, and <b>on/off</b> are also accepted. This allows every checkbox option to be explicitly enabled or disabled.</p>\n",
+      "<p>An invalid supplied setting causes the remote submission to stop with an error; it is not silently replaced by the default.</p>\n",
+      "\n",
+      "<p>Example request with custom settings:</p>\n",
+      "<pre><code>https://michaeleskin.com/tools/abc_backup_chord_solver.html?def=ENCODED_ABC&amp;callbackURL=ENCODED_CALLBACK_URL&amp;min=0.80&amp;fallback=70&amp;subs=true&amp;dmaj=true&amp;gmaj=false&amp;cmaj=true&amp;fmaj=true&amp;gemin=false&amp;abdor=true&amp;cachebuster=TIMESTAMP</code></pre>\n",
+      "\n",
+      "<h4>Cachebusting and URL Length</h4>\n",
+      "<p>The optional <b>cachebuster</b> parameter is ignored by the chord-matching logic. Append a unique value such as <code>Date.now()</code> as the final query parameter to discourage a browser, proxy, or intermediary cache from reusing an otherwise identical request.</p>\n",
+      "<p>Always add the cachebuster before measuring the final URL. The example below uses a practical maximum of <b>8,100 characters</b>, matching the supplied callback demo. This is an integration safeguard rather than a guarantee that every browser, proxy, or server accepts URLs of that size.</p>\n",
+      "<p>The returned callback URL also contains the compressed result in a query string and may be longer than the original request because chords and explanatory notes can be added. Keep submitted collections comfortably below the limit. The request's cachebuster is not copied into the callback URL unless it was separately included inside the callback URL itself.</p>\n",
+      "\n",
+      "<h4>Complete Submission Example</h4>\n",
+      "<p>This example requires <b>pako</b> on the calling page:</p>\n",
+      "<pre><code>&lt;script src=\"https://cdn.jsdelivr.net/npm/pako@2.1.0/dist/pako.min.js\"&gt;&lt;/script&gt;</code></pre>\n",
+      "\n",
+      "<pre><code>const SOLVER_URL =\n",
+      "  \"https://michaeleskin.com/tools/abc_backup_chord_solver.html\";\n",
+      "\n",
+      "const MAX_SOLVER_URL_LENGTH = 8100;\n",
+      "\n",
+      "function bytesToBase64URL(bytes) {\n",
+      "  let binary = \"\";\n",
+      "\n",
+      "  for (let i = 0; i &lt; bytes.length; i++) {\n",
+      "    binary += String.fromCharCode(bytes[i]);\n",
+      "  }\n",
+      "\n",
+      "  return btoa(binary)\n",
+      "    .replace(/\\+/g, \"-\")\n",
+      "    .replace(/\\//g, \"_\")\n",
+      "    .replace(/=+$/, \"\");\n",
+      "}\n",
+      "\n",
+      "function encodeABCForChordSolver(abcText) {\n",
+      "  if (typeof pako === \"undefined\") {\n",
+      "    throw new Error(\"The pako compression library is not loaded.\");\n",
+      "  }\n",
+      "\n",
+      "  if (typeof TextEncoder === \"undefined\") {\n",
+      "    throw new Error(\"This browser does not provide TextEncoder.\");\n",
+      "  }\n",
+      "\n",
+      "  const utf8 = new TextEncoder().encode(abcText);\n",
+      "  const compressed = pako.deflate(utf8, { level: 6 });\n",
+      "  return bytesToBase64URL(compressed);\n",
+      "}\n",
+      "\n",
+      "function submitABCForBackupChords(abcText, callbackURL, options = {}) {\n",
+      "  if (!String(abcText || \"\").trim()) {\n",
+      "    throw new Error(\"At least one ABC tune is required.\");\n",
+      "  }\n",
+      "\n",
+      "  // Require an absolute HTTP or HTTPS callback in this calling application.\n",
+      "  // The solver itself can resolve relative values, but absolute URLs are safer\n",
+      "  // and clearer for integrations between different sites.\n",
+      "  const callback = new URL(callbackURL);\n",
+      "\n",
+      "  if (!/^https?:$/.test(callback.protocol)) {\n",
+      "    throw new Error(\"The callback URL must use http:// or https://.\");\n",
+      "  }\n",
+      "\n",
+      "  const solverURL = new URL(SOLVER_URL);\n",
+      "\n",
+      "  solverURL.searchParams.set(\n",
+      "    \"def\",\n",
+      "    encodeABCForChordSolver(abcText)\n",
+      "  );\n",
+      "\n",
+      "  // Pass the ordinary callback URL. URLSearchParams performs the required\n",
+      "  // percent-encoding; do not encode it a second time.\n",
+      "  solverURL.searchParams.set(\"callbackURL\", callback.href);\n",
+      "\n",
+      "  for (const [name, value] of Object.entries(options)) {\n",
+      "    if (value !== undefined &amp;&amp; value !== null) {\n",
+      "      solverURL.searchParams.set(name, String(value));\n",
+      "    }\n",
+      "  }\n",
+      "\n",
+      "  // Add the cachebuster last so it is included in the final length check.\n",
+      "  solverURL.searchParams.set(\"cachebuster\", String(Date.now()));\n",
+      "\n",
+      "  const finalURL = solverURL.href;\n",
+      "\n",
+      "  if (finalURL.length &gt; MAX_SOLVER_URL_LENGTH) {\n",
+      "    throw new Error(\n",
+      "      \"Encoded URL is too long to send to the \" +\n",
+      "      \"ABC Tune Backup Chord Solver.\"\n",
+      "    );\n",
+      "  }\n",
+      "\n",
+      "  // Call this function directly from a user click to avoid popup blocking.\n",
+      "  // Do not treat a null return value as proof that opening failed; browsers\n",
+      "  // may return null when noopener is used even when the tab opens correctly.\n",
+      "  window.open(finalURL, \"_blank\", \"noopener,noreferrer\");\n",
+      "}</code></pre>\n",
+      "\n",
+      "<p>Example call:</p>\n",
+      "<pre><code>const abc = `X:1\n",
+      "T:Example Reel\n",
+      "R:Reel\n",
+      "M:4/4\n",
+      "L:1/8\n",
+      "K:D\n",
+      "|:DEFG ABcd|efed cBA2:|`;\n",
+      "\n",
+      "submitABCForBackupChords(\n",
+      "  abc,\n",
+      "  \"https://example.com/chord-solver-result.html?source=myapp\",\n",
+      "  {\n",
+      "    min: 0.80,\n",
+      "    fallback: 70,\n",
+      "    subs: true,\n",
+      "    dmaj: true,\n",
+      "    gmaj: false,\n",
+      "    cmaj: true,\n",
+      "    fmaj: true,\n",
+      "    gemin: false,\n",
+      "    abdor: true\n",
+      "  }\n",
+      ");</code></pre>\n",
+      "\n",
+      "<h4>What the Solver Does</h4>\n",
+      "<p>When both required parameters and all supplied settings are valid, the solver:</p>\n",
+      "<ol>\n",
+      "<li>Decodes and inflates the ABC in <b>def=</b>.</li>\n",
+      "<li>Ignores settings previously saved in that browser.</li>\n",
+      "<li>Starts with the built-in remote defaults and applies the validated optional URL overrides.</li>\n",
+      "<li>Processes all submitted tunes. The progress dialog is labeled <b>Matching Backup Chords (Remote)</b>.</li>\n",
+      "<li>Deflate-encodes the completed ABC using the same URL-safe format.</li>\n",
+      "<li>Replaces the current solver page with the callback URL using <code>window.location.replace()</code>.</li>\n",
+      "<li>Places the completed ABC in the callback URL's <b>def=</b> parameter.</li>\n",
+      "</ol>\n",
+      "<p>The callback occurs only after successful completion. A cancelled or failed operation does not navigate to the callback result.</p>\n",
+      "\n",
+      "<h4>Callback URL Behavior</h4>\n",
+      "<p>The callback URL must resolve to HTTP or HTTPS. It may not resolve to the solver's own protocol, host, and path, because that request is rejected to prevent an automatic recursion loop. Query parameters and fragments do not bypass that recursion check.</p>\n",
+      "<p>Existing callback query parameters are preserved. If the callback URL already contains a <b>def</b> parameter, it is replaced by the completed ABC. For example:</p>\n",
+      "<pre><code>Callback supplied:\n",
+      "https://example.com/chord-solver-result.html?source=myapp\n",
+      "\n",
+      "Callback loaded in the solver tab after processing:\n",
+      "https://example.com/chord-solver-result.html?source=myapp&amp;def=ENCODED_RESULTS</code></pre>\n",
+      "<p>The navigation is a normal page load, not a cross-origin data request, so the callback mechanism itself does not require CORS permission.</p>\n",
+      "\n",
+      "<h4>Reading the Result on the Callback Page</h4>\n",
+      "<p>The callback page must load <b>pako</b> and decode the returned <b>def</b> value:</p>\n",
+      "<pre><code>function base64URLToBytes(base64URLText) {\n",
+      "  let base64 = String(base64URLText || \"\")\n",
+      "    .replace(/-/g, \"+\")\n",
+      "    .replace(/_/g, \"/\");\n",
+      "\n",
+      "  while (base64.length % 4) {\n",
+      "    base64 += \"=\";\n",
+      "  }\n",
+      "\n",
+      "  const binary = atob(base64);\n",
+      "  const bytes = new Uint8Array(binary.length);\n",
+      "\n",
+      "  for (let i = 0; i &lt; binary.length; i++) {\n",
+      "    bytes[i] = binary.charCodeAt(i);\n",
+      "  }\n",
+      "\n",
+      "  return bytes;\n",
+      "}\n",
+      "\n",
+      "function readChordSolverResult() {\n",
+      "  const params = new URLSearchParams(window.location.search);\n",
+      "  const encodedResult = params.get(\"def\");\n",
+      "\n",
+      "  if (!encodedResult) {\n",
+      "    return null;\n",
+      "  }\n",
+      "\n",
+      "  if (typeof pako === \"undefined\") {\n",
+      "    throw new Error(\"The pako compression library is not loaded.\");\n",
+      "  }\n",
+      "\n",
+      "  if (typeof TextDecoder === \"undefined\") {\n",
+      "    throw new Error(\"This browser does not provide TextDecoder.\");\n",
+      "  }\n",
+      "\n",
+      "  const compressed = base64URLToBytes(encodedResult);\n",
+      "  const utf8 = pako.inflate(compressed);\n",
+      "  return new TextDecoder(\"utf-8\").decode(utf8);\n",
+      "}\n",
+      "\n",
+      "try {\n",
+      "  const chordedABC = readChordSolverResult();\n",
+      "\n",
+      "  if (chordedABC !== null) {\n",
+      "    // Load chordedABC into your application's editor or processing workflow.\n",
+      "    console.log(chordedABC);\n",
+      "  }\n",
+      "} catch (error) {\n",
+      "  console.error(\"Could not decode the chord-solver result:\", error);\n",
+      "}</code></pre>\n",
+      "\n",
+      "<h4>Error and Integration Notes</h4>\n",
+      "<ul>\n",
+      "<li>If either required parameter is missing, the page does not enter remote mode. A valid <b>def</b> without <b>callbackURL</b> is handled as an ordinary share link.</li>\n",
+      "<li>If a remote request is detected but its callback, ABC, or supplied setting is invalid, processing stops and the solver displays a remote-submission error. No callback result is sent.</li>\n",
+      "<li>Remote setting parameters have no effect on normal interactive use or on ordinary <b>def=</b> share links without a valid <b>callbackURL</b>.</li>\n",
+      "<li>The callback mechanism returns only the completed ABC. Progress details and final statistics are displayed by the solver but are not returned as separate callback parameters.</li>\n",
+      "<li>The callback replaces the solver page in whichever tab contains it. When the solver is opened in a separate tab as shown in the example, the calling application's original tab remains open.</li>\n",
+      "<li>Open the solver from a direct user gesture such as a button click. Browsers may block a new tab opened later from a timer, promise continuation, or other non-user-initiated code.</li>\n",
+      "<li>Do not rely on the return value of <code>window.open()</code> to determine whether the solver tab opened when using <code>noopener</code>.</li>\n",
+      "</ul>\n",
+      "</div>"
+    ].join("");
+
+    if (window.DayPilot && DayPilot.Modal) {
+      DayPilot.Modal.alert(html, {
+        theme: "modal_flat",
+        width: getResponsiveModalWidth(760),
+        scrollWithPage: true
+      });
+    } else {
+      alert(
+        "Developer integration instructions are available when " +
+        "DayPilot.Modal is loaded. Please include the DayPilot.Modal " +
+        "library before using this button."
+      );
+    }
+  }
+
   function showInstructions() {
     var html = '' +
       '<div class="instructions_content">' +
@@ -1325,6 +1915,8 @@
       '<ul>' +
       '<li>Open one or more <b>.abc</b> or <b>.txt</b> files, paste ABC text into the input box, or on desktop browsers drag and drop one or more supported <b>.abc</b> or <b>.txt</b> files onto the input area. Multiple tunes are supported.</li>' +
       '<li>The tool can also accept an ABC Transcription Tools <b>?def=</b> share-link URL parameter containing deflate-encoded ABC tunes.</li>' +
+      '<li>For automatic remote processing, provide both a deflate-encoded <b>def=</b> parameter and a URL-encoded <b>callbackURL=</b> parameter. The tool immediately runs with its built-in default settings, ignoring saved browser settings, and replaces the solver page with the callback URL, with the chorded ABC returned in a new <b>def=</b> parameter.</li>' +
+      '<li>A callback URL that points back to this solver is rejected to prevent recursive submissions. The callback must use <b>http://</b> or <b>https://</b>.</li>' +
       '<li>When multiple files are opened or dropped, their contents are concatenated in the input area separated by a blank line.</li>' +
       '<li>The <b>Generate Backup Chords</b> button is enabled only when the input box contains text.</li>' +
       '<li>Use the Settings controls to set the minimum match score, fallback match percentage, and key/mode substitution checking.</li>' +
@@ -1386,6 +1978,7 @@
       '<li>Click <b>Generate Backup Chords</b>. A progress dialog shows the current tune, measure, candidate count, match count, and overall percentage complete.</li>' +
       '<li>Click <b>Cancel</b> in the progress dialog to stop processing and clear the output area.</li>' +
       '<li>When processing completes, the dialog closes and a summary appears in the main status area.</li>' +
+      '<li>During a remote submission, the completed ABC is deflate-encoded and returned to the decoded callback URL as its <b>def=</b> parameter. The callback replaces the current solver page in the same tab.</li>' +
       '<li>The <b>Copy Output to the Clipboard</b>, <b>Save Output to a File</b>, and <b>Test Output in the ABC Transcription Tools</b> buttons are updated after processing completes or is cancelled.</li>' +
       '<li>On iOS, saving uses the Share Sheet to allow you save the ABC to the Files area or share it with other applications.</li>' +
       '<li>The <b>Test Output in the ABC Transcription Tools</b> button is enabled only when the generated share link is short enough for direct transfer.</li>' +
@@ -1412,6 +2005,11 @@
       '<li>The complete tune settings JSON for thesession.org, available at <a href="https://github.com/adactio/TheSession-data" title="TheSession-data" target="_blank">TheSession-data</a> by Jeremy Keith, is used for the tune database under a <a href="https://michaeleskin.com/abctools/ODbL.txt" target="_blank">Open Database License (ODbL)</a> license.</li>' +
       '</ul>' +
       `<hr style="margin-top:20px;">
+      <h4 style="text-align: center;">Developer Integration</h4>
+      <div style="text-align:center;margin-bottom:20px;">
+        <button type="button" class="btn btn-controls" style="width:100%;max-width:420px;" onclick="showDeveloperInstructions();">Click Here for Developer Integration Instructions</button>
+      </div>
+      <hr style="margin-top:20px;">
       <h4 style="text-align: center;">Tip Jars</h4>
       <div style="text-align: center;margin-bottom:20px;">
         <p class="instructions-title"> This tool was created by</p>
@@ -3246,8 +3844,16 @@
     };
   }
 
-  async function generateBackupChords() {
-    applySettingsControlsToCurrentSettings();
+  async function generateBackupChords(remoteSubmission) {
+    remoteSubmission = !!remoteSubmission;
+
+    if (remoteSubmission) {
+      // Remote settings were already reset to defaults and then overridden by
+      // validated URL parameters during initializeTool(). Do not replace them.
+      syncSettingsControls();
+    } else {
+      applySettingsControlsToCurrentSettings();
+    }
 
     var input = document.getElementById("input").value;
     if (!input.trim()) {
@@ -3265,10 +3871,13 @@
     try {
       await loadDatabase();
     } catch (err) {
-      setProcessingControlsEnabled(true);
+      setProcessingControlsEnabled(!remoteSubmission);
       hideProgressModal();
       clearOutputArea();
       setStatus("<b>Error:</b> " + escapeHTML(err.message) + "<br><br>The tune database is loaded from <b>https://michaeleskin.com/abctools/abctunes_thesession_28may2026.json</b>. Please check your network connection and try again.");
+      if (remoteSubmission) {
+        showMessageDialog("<b>Remote submission error:</b><br><br>" + escapeHTML(err.message));
+      }
       return;
     }
 
@@ -3315,7 +3924,7 @@
       "Starting measure matching...<br>" +
       "Tunes: <b>" + tunes.length + "</b>; Measures to examine: <b>" + totalMeasuresToMatch + "</b>.<br>" +
       "Database index: <b>" + gLastStats.chordedTunes + "</b> chorded tune settings, <b>" + gLastStats.chordedMeasures + "</b> chorded measures, <b>" + gLastStats.keys + "</b> meter/key/mode buckets.<br>" +
-      "Database tunes skipped from matching: <b>" + ((gLastStats.skippedKeyChangeTunes || 0) + (gLastStats.skippedMultiVoiceTunes || 0)) + "</b> key-change/multi-voice setting(s)."
+      "Database tunes skipped from matching: <b>" + ((gLastStats.skippedKeyChangeTunes || 0) + (gLastStats.skippedMultiVoiceTunes || 0) + (gLastStats.skippedLyricsTunes || 0)) + "</b> key-change, multi-voice, or lyrics setting(s)."
     );
     await allowBrowserToUpdate();
 
@@ -3341,7 +3950,7 @@
         await allowBrowserToUpdate();
       }
     } catch (err) {
-      setProcessingControlsEnabled(true);
+      setProcessingControlsEnabled(!remoteSubmission);
       hideProgressModal();
       if (err && err.message === "USER_CANCELLED") {
         clearOutputArea();
@@ -3349,10 +3958,14 @@
         return;
       }
       clearOutputArea();
-      setStatus("<b>Error:</b> " + escapeHTML(err && err.message ? err.message : err));
+      var processingErrorMessage = err && err.message ? err.message : String(err);
+      setStatus("<b>Error:</b> " + escapeHTML(processingErrorMessage));
+      if (remoteSubmission) {
+        showMessageDialog("<b>Remote submission error:</b><br><br>" + escapeHTML(processingErrorMessage));
+      }
       return;
     } finally {
-      setProcessingControlsEnabled(true);
+      setProcessingControlsEnabled(!remoteSubmission);
     }
 
     hideProgressModal();
@@ -3406,6 +4019,20 @@
         "<br/>Skipped <b>" + skippedTunes + "</b> " +
         pluralWord(skippedTunes, "tune", "tunes") +
         " with multiple voices, lyrics, or mid-tune key changes.";
+    }
+
+    if (remoteSubmission) {
+      try {
+        finalStatus +=
+          "<br/>Returning the chorded ABC to the callback URL in this tab...";
+        setStatus(finalStatus);
+        navigateToRemoteCallbackResult(output);
+      } catch (err) {
+        finalStatus += "<br/><b>Callback error:</b> " + escapeHTML(err.message);
+        setStatus(finalStatus);
+        showMessageDialog("<b>Remote callback error:</b><br><br>" + escapeHTML(err.message));
+      }
+      return;
     }
 
     setStatus(finalStatus);
@@ -3763,11 +4390,16 @@
     window.open(gOutputShareURL, "_blank");
   }
 
-  window.addEventListener("pageshow", function() {
-    initializeTool();
+  window.addEventListener("pageshow", function(event) {
+    // pageshow also fires during the initial page load. Running initializeTool()
+    // there and again in load would start callback processing twice. Only
+    // reinitialize here when the page is restored from the back-forward cache.
+    if (event.persisted && gInputInitialized) {
+      initializeTool();
+    }
   });
 
-  window.addEventListener("load", function() {
+  window.addEventListener("load", async function() {
     document.getElementById("selectabcfile").addEventListener("change", openABCFile);
     setupInputDragAndDrop();
     var input = document.getElementById("input");
@@ -3777,7 +4409,7 @@
       updateOutputActionButtons(output.value);
       updateShareLinkForOutput(output.value);
     });
-    initializeTool();
+    await initializeTool();
     gInputInitialized = true;
 
     syncSettingsControls();
@@ -3788,7 +4420,7 @@
 <body>
 <div id="progress_modal_overlay" aria-live="polite">
   <div id="progress_modal_box">
-    <h3>Matching Backup Chords</h3>
+    <h3 id="progress_modal_title">Matching Backup Chords</h3>
     <div id="progress_modal_status">Starting...</div>
     <div id="progress_modal_progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
       <div id="progress_modal_progress_fill"></div>
