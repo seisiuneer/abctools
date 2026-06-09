@@ -331,8 +331,7 @@
   <section class="panel intro-panel">
     <h1>ABC Backup Chord Solver Callback Demo</h1>
     <p>
-      This standalone example deflate-encodes the ABC below and opens the
-      callback-enabled ABC Tune Backup Chord Solver.
+      This standalone example deflate-encodes the ABC below and navigates this tab to the callback-enabled ABC Tune Backup Chord Solver.
     </p>
     <p>
       When processing finishes, in this example code, the solver sends
@@ -344,8 +343,7 @@
       parameter.
     </p>
     <p>      
-      The ABC Tune Backup Chord Solver tab navigates in place to the callback page after
-      chord solution processing finishes.
+      After chord solution processing finishes, the solver navigates this same tab to the callback page.
     </p>
   </section>
 
@@ -932,17 +930,9 @@
 
       elements.urlPreview.textContent = solverURL;
 
-      window.open(
-        solverURL,
-        "_blank",
-        "noopener,noreferrer"
-      );
-
-      setStatus(
-        "Submitted to the ABC Tune Backup Chord Solver.\nAfter processing, the ABC Tune Backup Chord Solver will " +
-        "navigate to the ABC Transcription Tools callback page with the chorded ABC.",
-        false
-      );
+      // Navigate this tab to the solver. After successful processing, the
+      // solver replaces itself with the callback URL containing the chorded ABC.
+      window.location.assign(solverURL);
     } catch (error) {
       solverURLTooLong = false;
       setURLActionButtonsEnabled(false, error.message);
