@@ -835,6 +835,34 @@
     from already-chorded matching tunes in the hosted database.
   */
 
+  //
+  // Send a Google analytics event
+  //
+  function sendGoogleAnalytics(theCategory, theAction, theLabel) {
+
+    // Don't send analytics on iOS Safari
+    if (isIOSDevice()) {
+      return;
+    }
+
+    if (typeof gtag !== "undefined") {
+
+      if ((gtag) && (gtag instanceof Function)) {
+
+        if (!theLabel) {
+          theLabel = "none";
+        }
+
+        gtag("event", "chord_solver_" + theCategory + "_" + theAction, {
+          event_category: theCategory,
+          event_action: theAction,
+          event_label: theLabel
+        });
+
+      }
+    }
+  }
+  
   var gDatabase = null;
   var gChordIndex = null;
   var gSaveFilename = "abc_backup_chords.abc";
@@ -1560,6 +1588,9 @@
       setProcessingControlsEnabled(false);
 
       var remoteTuneCount = splitTunes(remoteRequest.abcText).length;
+
+      sendGoogleAnalytics("action", "remote");
+
       setStatus(
         "Remote submission received with <b>" + remoteTuneCount + "</b> " +
         pluralWord(remoteTuneCount, "tune", "tunes") +
