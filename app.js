@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3251_061126_1100";
+var gVersionNumber = "3252_061126_1230";
 
 var gMIDIInitStillWaiting = false;
 
@@ -21023,17 +21023,17 @@ function AppendSampleReel() {
   theValue += "Q: 1/2=90\n";
   theValue += "K: Edor\n";
   theValue += "%\n";
-  theValue += "% Use the fluid soundfont:\n";
-  theValue += '%soundfont fluid\n';
+  theValue += "% Use the FatBoy soundfont:\n";
+  theValue += '%soundfont fatboy\n';
   theValue += "%\n";
-  theValue += "% Use an Acoustic Grand Piano sound for the melody:\n";
+  theValue += "% Use an Acoustic Grand Piano sound for the Melody, Bass, and Chords:\n";
   theValue += "%%MIDI program 0\n";
-  theValue += "%\n";
-  theValue += "% Use an Acoustic Grand Piano sound for the chords:\n";
+  theValue += "%%MIDI bassprog 0\n";
   theValue += "%%MIDI chordprog 0\n";
   theValue += "%\n";
-  theValue += "% Use an Synth Bass sound for the bass:\n";
-  theValue += "%%MIDI bassprog 38\n";
+  theValue += "% Set the Bass and Chord volumes (0-127):\n";
+  theValue += "%%MIDI bassvol 64\n";
+  theValue += "%%MIDI chordvol 64\n";
   theValue += "%\n";
   theValue += "% Set a specific amount of swing:\n";
   theValue += '%swing 0.15\n';
@@ -21071,17 +21071,17 @@ function AppendSampleJig() {
   theValue += "Q: 3/8=120\n";
   theValue += "K: Gmaj\n";
   theValue += "%\n";
-  theValue += "% Use the fluid soundfont:\n";
-  theValue += '%soundfont fluid\n';
+  theValue += "% Use the FatBoy soundfont:\n";
+  theValue += '%soundfont fatboy\n';
   theValue += "%\n";
-  theValue += "% Use an Acoustic Grand Piano sound for the melody:\n";
+  theValue += "% Use an Acoustic Grand Piano sound for the Melody, Bass, and Chords:\n";
   theValue += "%%MIDI program 0\n";
-  theValue += "%\n";
-  theValue += "% Use an Acoustic Grand Piano for the chords:\n";
+  theValue += "%%MIDI bassprog 0\n";
   theValue += "%%MIDI chordprog 0\n";
   theValue += "%\n";
-  theValue += "% Use an Synth Bass sound for the bass:\n";
-  theValue += "%%MIDI bassprog 38\n";
+  theValue += "% Set the Bass and Chord volumes (0-127):\n";
+  theValue += "%%MIDI bassvol 64\n";
+  theValue += "%%MIDI chordvol 64\n";
   theValue += "%\n";
   theValue += "% Set a specific amount of swing:\n";
   theValue += '%swing 0.25\n';
@@ -21119,17 +21119,17 @@ function AppendSampleHornpipe() {
   theValue += 'Q: 1/2=80\n';
   theValue += 'K: Dmaj\n';
   theValue += "%\n";
-  theValue += "% Use the fluid soundfont:\n";
-  theValue += '%soundfont fluid\n';
+  theValue += "% Use the FatBoy soundfont:\n";
+  theValue += '%soundfont fatboy\n';
   theValue += "%\n";
-  theValue += "% Use an Acoustic Grand Piano sound for the melody:\n";
+  theValue += "% Use an Acoustic Grand Piano sound for the Melody, Bass, and Chords:\n";
   theValue += "%%MIDI program 0\n";
-  theValue += "%\n";
-  theValue += "% Use an Acoustic Grand Piano for the chords:\n";
+  theValue += "%%MIDI bassprog 0\n";
   theValue += "%%MIDI chordprog 0\n";
   theValue += "%\n";
-  theValue += "% Use an Synth Bass sound for the bass:\n";
-  theValue += "%%MIDI bassprog 38\n";
+  theValue += "% Set the Bass and Chord volumes (0-127):\n";
+  theValue += "%%MIDI bassvol 64\n";
+  theValue += "%%MIDI chordvol 64\n";
   theValue += "%\n";
   theValue += "% Set a specific amount of swing:\n";
   theValue += '%swing 0.25\n';
@@ -21181,17 +21181,17 @@ function AppendTuneTempate() {
   theValue += '% Soundfont\n';
   theValue += '% Available soundfonts are:\n';
   theValue += '% fluid, fluidhq, musyng, fatboy, canvas, mscore, arachno:\n';
-  theValue += '%soundfont fluid\n';
+  theValue += '%soundfont fatboy\n';
   theValue += '%\n';
-  theValue += '% Use an Acoustic Grand Piano sound for the melody:\n';
-  theValue += '%%MIDI program 0\n';
+  theValue += "% Use an Acoustic Grand Piano sound for the Melody, Bass, and Chords:\n";
+  theValue += "%%MIDI program 0\n";
+  theValue += "%%MIDI bassprog 0\n";
+  theValue += "%%MIDI chordprog 0\n";
   theValue += '%\n';
-  theValue += '% Use an Acoustic Grand Piano for the chords:\n';
-  theValue += '%%MIDI chordprog 0\n';
-  theValue += '%\n';
-  theValue += '% Use an Synth Bass sound for the bass:\n';
-  theValue += '%%MIDI bassprog 38\n';
-  theValue += '%\n';
+  theValue += "% Set the Bass and Chord volumes (0-127):\n";
+  theValue += "%%MIDI bassvol 64\n";
+  theValue += "%%MIDI chordvol 64\n";
+  theValue += "%\n";
   theValue += "% Add your tune's ABC below:\n";
   theValue += '"C"C2 D2 E2 F2| G2 A2 B2 c2|]\n';
 
@@ -21450,7 +21450,7 @@ function AddPDFAnnotationsTemplate() {
   theValue += '%indexrightoffset 0\n';
   theValue += '%pageheader This is the Page Header\n';
   theValue += '%pagefooter This is the Page Footer\n';
-  theValue += '%add_all_playback_links 0 0 0 fluid\n';
+  theValue += '%add_all_playback_links 0 0 0 fatboy\n';
   theValue += '%add_all_playback_volumes 64 64\n';
   theValue += '%\n';
   theValue += '% End of PDF Tunebook Features\n\n';
@@ -21473,7 +21473,7 @@ function AddPDFPlayOnlyTemplate() {
   theValue += '%\n';
   theValue += '%pageheader Click the tune title to play\n';
   theValue += '%\n';
-  theValue += '%add_all_playback_links 0 0 0 fluid\n';
+  theValue += '%add_all_playback_links 0 0 0 fatboy\n';
   theValue += '%add_all_playback_volumes 64 64\n';
   theValue += '%\n';
   theValue += '% End of PDF Tunebook Features\n\n';
@@ -65269,7 +65269,7 @@ const ABC_THEME_ITEMS = [
     color:"#005231", styleWeight:"italic", sample:"% comment" },
 
   { id:"cm-abc-extended-directive", label:"Tool-private Directives", className:"cm-abc-extended-directive",
-    color:"#B00023", styleWeight:"normal", sample:"%soundfont fluid" },
+    color:"#B00023", styleWeight:"normal", sample:"%soundfont fatboy" },
 
   { id:"cm-abc-note",         label:"Notes and Rests",         className:"cm-abc-note",
     color:"#000000", styleWeight:"normal", sample:"A B c d' e'' z" },
