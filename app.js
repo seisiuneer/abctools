@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3250_060826_0930";
+var gVersionNumber = "3251_061126_1100";
 
 var gMIDIInitStillWaiting = false;
 
@@ -304,7 +304,11 @@ var gRenderingFonts = {
 var gMP3Bitrate = 224;
 
 // Soundfont to use
-var gDefaultSoundFont = "https://paulrosen.github.io/midi-js-soundfonts/FluidR3_GM/";
+var gDefaultSoundFont = "https://michaeleskin.com/abctools/soundfonts/fatboy_4/";
+
+// Old version
+// var gDefaultSoundFont = "https://paulrosen.github.io/midi-js-soundfonts/FluidR3_GM/";
+
 var gTheActiveSoundFont = gDefaultSoundFont;
 
 // Bodhran pitch
@@ -18618,7 +18622,7 @@ function AddFromSearch(e, callback) {
 
   var modal_msg = '<p style="text-align:center;font-size:18pt;font-family:helvetica;margin-left:15px;">Tune Search Engine&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#tune_search_engine" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>';
 
-  modal_msg += '<p style="font-size:12pt;line-height:24pt;margin-top:20px;margin-bottom:12px;" class="switchtunedatabase">Tune Collection to Search: <select id="databaseselect" onchange="SwitchTuneDatabase();" title="Select your tune search database"><option value="0">Gavin Heneghan\'s Collection (20,000+ Tune Settings)</option><option value="1">thesession.org Collection (54,000+ Tune Settings)</option></select></p>';
+  modal_msg += '<p style="font-size:12pt;line-height:24pt;margin-top:20px;margin-bottom:12px;" class="switchtunedatabase">Tune Collection to Search: <select id="databaseselect" onchange="SwitchTuneDatabase();" title="Select your tune search database"><option value="0">Gavin Heneghan\'s Collection (20,000+ Tune Settings)</option><option value="1">The Session Collection (54,000+ Tune Settings)</option></select></p>';
 
   modal_msg += '<p style="font-size:12pt;line-height:24pt;margin-top:0px;margin-bottom:18px;">Search for text in the tune name:&nbsp;&nbsp;<input style="width:100%;font-size:12pt;line-height:18px;padding:6px;" id="tuneNameToSearch" title="Enter your search text here" autocomplete="off" autocorrect="off" placeholder="Enter your search text here"/> </p>';
 
@@ -28492,13 +28496,13 @@ async function processShareLink() {
       // Show update message?
       if (gLocalStorageAvailable){
 
-        var updatePresented = localStorage.sawUpdate_5jun2026;
+        var updatePresented = localStorage.sawUpdate_11jun2026;
 
         if (updatePresented != "true") {
 
           showWhatsNewScreen();
 
-          localStorage.sawUpdate_5jun2026 = true;
+          localStorage.sawUpdate_11jun2026 = true;
 
         }
 
@@ -46912,14 +46916,25 @@ function GetInitialConfigurationSettings() {
   }
 
   // Sound font
+  const FATBOY_SOUNDFONT =
+    "https://michaeleskin.com/abctools/soundfonts/fatboy_4/";
+
+  // One-time migration: make FatBoy the default for every user.
+  if (localStorage.FatBoyDefaultMigration1 !== "true") {
+
+    localStorage.theSoundFont4 = FATBOY_SOUNDFONT;
+    localStorage.FatBoyDefaultMigration1 = "true";
+  }
+
   val = localStorage.theSoundFont4;
+
   if (val) {
     gDefaultSoundFont = val;
-    gTheActiveSoundFont = val;
   } else {
-    gDefaultSoundFont = "https://paulrosen.github.io/midi-js-soundfonts/FluidR3_GM/";
-    gTheActiveSoundFont = gDefaultSoundFont;
+    gDefaultSoundFont = FATBOY_SOUNDFONT;
   }
+
+  gTheActiveSoundFont = gDefaultSoundFont;
 
   val = localStorage.AutoscrollPlayer;
   if (val) {
@@ -47309,12 +47324,23 @@ function GetInitialConfigurationSettings() {
 
   // Get the default tune database
 
-  gDefaultTuneDatabase = 0;
+  // One-time migration to make thesession.org the new default
+  if (localStorage.TheSessionDefaultMigration1 !== "true") {
+    localStorage.DefaultTuneDatabase = "1";
+    localStorage.TheSessionDefaultMigration1 = "true";
+  }
+
+  gDefaultTuneDatabase = 1;
 
   val = localStorage.DefaultTuneDatabase;
 
-  if (val) {
-    gDefaultTuneDatabase = parseInt(val);
+  if (val !== null && val !== undefined) {
+
+    const parsedDatabase = parseInt(val, 10);
+
+    if (parsedDatabase === 0 || parsedDatabase === 1) {
+      gDefaultTuneDatabase = parsedDatabase;
+    }
   }
 
   // Tune database retry parameters
@@ -56359,7 +56385,7 @@ function showWhatsNewScreen() {
   modal_msg += 'background: linear-gradient(135deg, #24103f 0%, #4b1f73 52%, #7b3fb2 100%);';
   modal_msg += 'box-shadow: 0 6px 16px rgba(0,0,0,0.14); color:#fff;">';
   modal_msg += '<div style="font-size:20pt; line-height:24pt; font-weight:bold;">What&apos;s New</div>';
-  modal_msg += '<div style="font-size:11pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 8 June 2026</div>';
+  modal_msg += '<div style="font-size:11pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 11 June 2026</div>';
   modal_msg += '</div>';
 
   // Short intro
@@ -56370,19 +56396,20 @@ function showWhatsNewScreen() {
   // Feature card
   modal_msg += '<div style="margin:10px 0 6px 0; padding:0px 12px; border-radius:12px;';
   modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);">';
-  modal_msg += '<p><strong>Add Tune Backup Chords</strong> is now available from the <b>More Tools</b> dialog:</p>';
-  modal_msg += '<p>You can now add automatically add backup chords to traditional Irish tunes based on measure-by-measure pattern matching from compatible tunes on The Session directly from the tool.</p>';
-  modal_msg += '<p>External links to the original standalone <b>ABC Tune Backup Chord Solver</b> are still available from the <b>Other ABC Tools</b> and <b>Open ABC in External Tool</b> dialogs.';
+  modal_msg += '<p><strong>New Defaults</strong>:</p>';
+  modal_msg += '<p>The <b>Tune Search Engine</b> now uses The Session tune database as the default.<br/>';
+  modal_msg += 'You can still change it to the Gavin Heneghan database if you like.</p>';
+  modal_msg += '<p>The <b>Player</b> now uses the <b>FatBoy</b> soundfont by default. Previously it was <b>Fluid</b>.<br/>';
+  modal_msg += 'You can change it to any of the other available soundfonts in the <b>Player Settings</b>.</p>';
   modal_msg += '</div>';
 
   // Feature card
   modal_msg += '<div style="margin:10px 0 6px 0; padding:0px 12px; border-radius:12px;';
   modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);">';
-  modal_msg += '<p><strong>Improved Find and Replace</strong>:</p>';
-  modal_msg += '<p><b>Find and Replace</b> now starts its search based on the current editor text cursor postion.</p>';
-  modal_msg += '<p>Previously it would always start searching from the top of the text.</p>';
+  modal_msg += '<p><strong>Add Tune Backup Chords</strong> is now available from the <b>More Tools</b> dialog:</p>';
+  modal_msg += '<p>You can now add automatically add backup chords to traditional Irish tunes based on measure-by-measure pattern matching from compatible tunes on The Session directly from the tool.</p>';
+  modal_msg += '<p>External links to the original standalone <b>ABC Tune Backup Chord Solver</b> are still available from the <b>Other ABC Tools</b> and <b>Open ABC in External Tool</b> dialogs.</p>';
   modal_msg += '</div>';
-
 
   modal_msg += '</div>'; // wrapper
 
@@ -63037,13 +63064,13 @@ async function DoStartup() {
   // Show update message?
   if (gLocalStorageAvailable && (!isFromShare)){
 
-    var updatePresented = localStorage.sawUpdate_5jun2026;
+    var updatePresented = localStorage.sawUpdate_11jun2026;
 
     if (updatePresented != "true") {
 
       showWhatsNewScreen();
 
-      localStorage.sawUpdate_5jun2026 = true;
+      localStorage.sawUpdate_11jun2026 = true;
 
     }
 

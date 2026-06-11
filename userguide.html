@@ -2013,9 +2013,9 @@
                 <a href="#table_of_contents" class="index-pill hidden-print">
                   Table of Contents
                 </a>
-                <p>Brings up a dialog where you search either Gavin Heneghan's tune collection (over 20,000 tune settings) or the thesession.org tune collection (over 54,000 tune settings) by tune name and style and then optionally add them to your tunebook:</p>
+                <p>Brings up a dialog where you search either Gavin Heneghan's tune collection (over 20,000 tune settings) or the The Session tune collection (over 54,000 tune settings) by tune name and style and then optionally add them to your tunebook:</p>
                 <div class="image_holder_p">
-                    <img class="image" loading="lazy" src="img/tune_search_16.jpg"/>
+                    <img class="image" loading="lazy" src="img/tune_search_17.jpg"/>
                 </div>
                 <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/9HgEBIPXHCU" title="Tune search overview" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
                 <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/i7BKHTzkdjQ" title="Add selected tunes demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
@@ -4827,7 +4827,7 @@
                 <p>>> Link back on each page to the index</p>
                 <p>Page headers</p>
                 <p>Page footers</p>
-                <p>Playback links on every tune title selecting the Fluid MIDI soundfont, Piano sound for the melody, and a Piano sound for the bass and chords</p>
+                <p>Playback links on every tune title selecting the FatBoy MIDI soundfont, Piano sound for the melody, and a Piano sound for the bass and chords</p>
                 <p>Injects all required fonts for each tune to match the current state of the tool.</p>
                 <p>QR code with hyperlink and caption at the end of the tunebook</p>
                 <p></p>
@@ -4841,7 +4841,7 @@
                     %addlinkbacktoindex<br/>
                     %pageheader This is the Page Header<br/>
                     %pagefooter This is the Page Footer<br/>
-                    %add_all_playback_links 0 0 0 fluid<br/>
+                    %add_all_playback_links 0 0 0 fatboy<br/>
                     %add_all_playback_volumes 64 48<br/>
                     %add_all_fonts<br/>
                     %qrcode https://michaeleskin.com<br/>
@@ -5111,7 +5111,7 @@
                     %textincipitsfontsize 12<br/>
                     %textincipitslinespacing 12<br>
                     %add_all_links_to_thesession<br/>
-                    %add_all_playback_links 0 0 0 fluid<br/>
+                    %add_all_playback_links 0 0 0 fatboy<br/>
                     %add_all_playback_volumes 64 64<br/>
                     %playback_links_are_complete_tunebook<br/>
                     %add_all_fonts<br/>
@@ -5122,13 +5122,13 @@
                     %qrcode<br/>
                     %qrcode https://michaeleskin.com<br/>
                     %caption_for_qrcode Caption for the QR code<br/>
-                    %abcjs_soundfont fluid<br/>
-                    %soundfont fluid<br/>
+                    %abcjs_soundfont fatboy<br/>
+                    %soundfont fatboy<br/>
                     %<br/>
                     % These directives can be added to each tune:<br/>
                     %hyperlink https://michaeleskin.com<br/>
                     %add_link_to_thesession<br/>
-                    %add_playback_link 0 0 0 fluid<br/>
+                    %add_playback_link 0 0 0 fatboy<br/>
                     %swing 0.25<br/>
                     %swing_offset 1<br/>
                     %noswing<br/>
@@ -6916,7 +6916,7 @@
                     MScore (Based on the MuseScore General MIT licensed soundfont, 30-second long samples, ideal for orchestral scores with long sustained notes)<br/>
                     Arachno<br/>
                 FluidHQ (higher quality version of Fluid, 30-second long samples, ideal for orchestral scores with long sustained notes)</p>
-                <p>On first run, the default is set to Fluid.</p>
+                <p>On first run, the default is set to FatBoy.</p>
                 <p>Each MIDI soundfont is a full General MIDI implementation, but has somewhat different sounds for each instrument.</p>
                 <p>If no %soundfont is specified in a tune, the default MIDI soundfont chosen in the tool's <strong>Settings</strong> dialog is used.</p>
                 <p>For more details on the MIDI soundfonts, visit: <a href="https://paulrosen.github.io/midi-js-soundfonts/" target="_blank">midi-js-soundfonts on GitHub</a></p>
