@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3252_061126_1230";
+var gVersionNumber = "3253_061226_0930";
 
 var gMIDIInitStillWaiting = false;
 
@@ -28496,13 +28496,13 @@ async function processShareLink() {
       // Show update message?
       if (gLocalStorageAvailable){
 
-        var updatePresented = localStorage.sawUpdate_11jun2026;
+        var updatePresented = localStorage.sawUpdate_12jun2026;
 
         if (updatePresented != "true") {
 
           showWhatsNewScreen();
 
-          localStorage.sawUpdate_11jun2026 = true;
+          localStorage.sawUpdate_12jun2026 = true;
 
         }
 
@@ -35627,7 +35627,20 @@ var gTheBatchMP3ExportStatusText = null;
 //
 // Append additional copies of the tune notes for long MP3 generation
 //
-function AddDuplicatesForMp3(theTune, rhythmType, count, doClickTrack, doInjectSilence) {
+function AddDuplicatesForMp3(theTune, rhythmType, count, doClickTrack, doInjectSilence, useRepeatedOneMeasureClickIntro) {
+
+  // When the Tune Trainer has both its click intro and the metronome enabled,
+  // keep the drum engine running but temporarily replace its pattern with a
+  // silent pattern during the intro. Re-enabling %%MIDI drumon after a repeated,
+  // multi-voice intro can cause the metronome to stop after the first tune bar.
+  var originalMetronomeDrumLine = null;
+
+  if (useRepeatedOneMeasureClickIntro && /^\s*%%MIDI\s+drumon\b/im.test(theTune)) {
+    var originalMetronomeDrumMatch = theTune.match(/^\s*(%%MIDI\s+drum\s+.+)$/im);
+    if (originalMetronomeDrumMatch) {
+      originalMetronomeDrumLine = originalMetronomeDrumMatch[1].trim();
+    }
+  }
 
   // Nothing to do?
   if ((count == 1) && (!doClickTrack) && (!doInjectSilence)) {
@@ -35717,28 +35730,77 @@ function AddDuplicatesForMp3(theTune, rhythmType, count, doClickTrack, doInjectS
 
     //console.log("Adding click track for rhythm type "+rhythmType);
 
-    switch (rhythmType) {
-      case "reel":
-        theTune += "V:1\nV:2\n%%MIDI program 128\n^Cz3 ^Cz3|^Cz3 ^Cz3|\nV:1\nz8|z8|\n";
-        break;
-      case "jig":
-        theTune += "V:1\nV:2\n%%MIDI program 128\n^Cz2 ^Cz2|^Cz2 ^Cz2|\nV:1\nz6|z6|\n";
-        break;
-      case "slide":
-        theTune += "V:1\nV:2\n%%MIDI program 128\n^Cz2 ^Cz2 ^Cz2 ^Cz2|\nV:1\nz12|\n";
-        break;
-      case "slipjig":
-        theTune += "V:1\nV:2\n%%MIDI program 128\n^Cz2 ^Cz2 ^Cz2|^Cz2 ^Cz2 ^Cz2|\nV:1\nz9|z9|\n";
-        break;
-      case "polka":
-        theTune += "V:1\nV:2\n%%MIDI program 128\n^Cz ^Cz|^Cz ^Cz|\nV:1\nz4|z4|\n";
-        break;
-      case "waltz":
-        theTune += "V:1\nV:2\n%%MIDI program 128\n^Cz ^Cz ^Cz|^Cz ^Cz ^Cz|\nV:1\nz6|z6|\n";
-        break;
-      default:
-        theTune += "V:1\nV:2\n%%MIDI program 128\n^Cz3 ^Cz3|^Cz3 ^Cz3|\nV:1\nz8|z8|\n";
-        break;
+    // The Tune Trainer uses one written measure enclosed in repeat marks, so it
+    // still plays a two-measure count-in without allowing a missing start repeat
+    // in the tune itself to interact with the intro. Other callers retain the
+    // original two-written-measure click intro.
+    if (useRepeatedOneMeasureClickIntro) {
+
+      if (originalMetronomeDrumLine) {
+        // A one-token rest fills the whole bar, giving a silent drum pattern
+        // without stopping and restarting the drum engine.
+        theTune += "%%MIDI drum z\n";
+      }
+
+      var clickMeasure = "^Cz3 ^Cz3";
+      var clickRestMeasure = "z8";
+
+      switch (rhythmType) {
+        case "jig":
+          clickMeasure = "^Cz2 ^Cz2";
+          clickRestMeasure = "z6";
+          break;
+        case "slide":
+          clickMeasure = "^Cz2 ^Cz2 ^Cz2 ^Cz2";
+          clickRestMeasure = "z12";
+          break;
+        case "slipjig":
+          clickMeasure = "^Cz2 ^Cz2 ^Cz2";
+          clickRestMeasure = "z9";
+          break;
+        case "polka":
+          clickMeasure = "^Cz ^Cz";
+          clickRestMeasure = "z4";
+          break;
+        case "waltz":
+          clickMeasure = "^Cz ^Cz ^Cz";
+          clickRestMeasure = "z6";
+          break;
+      }
+
+      theTune += "V:1\nV:2\n%%MIDI program 128\n|:" + clickMeasure + ":|\nV:1\n|:" + clickRestMeasure + ":|\n";
+
+      if (originalMetronomeDrumLine) {
+        // Restore the active metronome pattern at the start of the tune.
+        // The existing header-level %%MIDI drumon remains active throughout.
+        theTune += originalMetronomeDrumLine + "\n";
+      }
+
+    } else {
+
+      switch (rhythmType) {
+        case "reel":
+          theTune += "V:1\nV:2\n%%MIDI program 128\n^Cz3 ^Cz3|^Cz3 ^Cz3|\nV:1\nz8|z8|\n";
+          break;
+        case "jig":
+          theTune += "V:1\nV:2\n%%MIDI program 128\n^Cz2 ^Cz2|^Cz2 ^Cz2|\nV:1\nz6|z6|\n";
+          break;
+        case "slide":
+          theTune += "V:1\nV:2\n%%MIDI program 128\n^Cz2 ^Cz2 ^Cz2 ^Cz2|\nV:1\nz12|\n";
+          break;
+        case "slipjig":
+          theTune += "V:1\nV:2\n%%MIDI program 128\n^Cz2 ^Cz2 ^Cz2|^Cz2 ^Cz2 ^Cz2|\nV:1\nz9|z9|\n";
+          break;
+        case "polka":
+          theTune += "V:1\nV:2\n%%MIDI program 128\n^Cz ^Cz|^Cz ^Cz|\nV:1\nz4|z4|\n";
+          break;
+        case "waltz":
+          theTune += "V:1\nV:2\n%%MIDI program 128\n^Cz ^Cz ^Cz|^Cz ^Cz ^Cz|\nV:1\nz6|z6|\n";
+          break;
+        default:
+          theTune += "V:1\nV:2\n%%MIDI program 128\n^Cz3 ^Cz3|^Cz3 ^Cz3|\nV:1\nz8|z8|\n";
+          break;
+      }
     }
   }
 
@@ -44977,6 +45039,7 @@ function TuneTrainerReset() {
   var looperDoCountdown = document.getElementById("looper_docountdown").checked;
   var looperCountdown = document.getElementById("looper_countdown").value;
   var looperAddMeasure = document.getElementById("looper_addmeasure").checked;
+  var looperClickIntro = document.getElementById("looper_clickintro").checked;
 
   looperSpeedStart = parseFloat(looperSpeedStart);
   looperSpeedEnd = parseFloat(looperSpeedEnd);
@@ -45005,6 +45068,7 @@ function TuneTrainerReset() {
       gLooperCountdown = looperCountdown;
 
       gLooperAddMeasure = !!looperAddMeasure;
+      gLooperClickIntro = !!looperClickIntro;
 
       bDoReload = true;
 
@@ -45133,6 +45197,18 @@ function ToggleTuneTrainerAddMeasure() {
   }
 }
 
+//
+// Save the click intro state
+//
+function ToggleTuneTrainerClickIntro() {
+
+  gLooperClickIntro = document.getElementById("looper_clickintro").checked;
+
+  if (gLocalStorageAvailable) {
+    localStorage.LooperClickIntro = gLooperClickIntro;
+  }
+}
+
 // 
 // Save the countdown state
 //
@@ -45172,9 +45248,12 @@ var gTouchIncrementFive = false;
 var gLooperDoCountdown = true;
 var gLooperCountdown = 5;
 
-// Add a measure after in the Tune Trainer
+// Add trailing measures in the Tune Trainer
 var gLooperAddMeasure = false;
 var gLooperAddMeasureCount = 1;
+
+// Add a repeated one-measure, meter-appropriate click intro in the Tune Trainer
+var gLooperClickIntro = false;
 
 function TuneTrainerDialog(theOriginalABC, theProcessedABC, looperState) {
 
@@ -45205,7 +45284,8 @@ function TuneTrainerDialog(theOriginalABC, theProcessedABC, looperState) {
       document.getElementById("looper_count").value !== gTuneTrainerInitialSettings.count ||
       document.getElementById("looper_docountdown").checked !== gTuneTrainerInitialSettings.doCountdown ||
       document.getElementById("looper_countdown").value !== gTuneTrainerInitialSettings.countdownSecs ||
-      document.getElementById("looper_addmeasure").checked !== gTuneTrainerInitialSettings.addMeasure;
+      document.getElementById("looper_addmeasure").checked !== gTuneTrainerInitialSettings.addMeasure ||
+      document.getElementById("looper_clickintro").checked !== gTuneTrainerInitialSettings.clickIntro;
 
     var applyBtn = document.getElementById("looperreset");
     if (!applyBtn) return;
@@ -45227,6 +45307,15 @@ function TuneTrainerDialog(theOriginalABC, theProcessedABC, looperState) {
 
   if (gPlayMetronome) {
     theProcessedABC = inject_one_metronome(gPlayerLooperProcessed, false);
+  }
+
+  // Optionally prepend a meter-appropriate one-measure click intro enclosed
+  // in |: and :| repeat marks. It plays twice while remaining isolated from
+  // any incomplete repeat structure in the tune itself. This modifies only
+  // the Tune Trainer playback copy, not the source ABC.
+  if (gLooperClickIntro && theProcessedABC) {
+    var rhythmType = getTuneRhythmType(theProcessedABC);
+    theProcessedABC = AddDuplicatesForMp3(theProcessedABC, rhythmType, 1, true, false, true);
   }
 
   // Optionally add one extra bar of meter-appropriate rests
@@ -45743,9 +45832,9 @@ function TuneTrainerDialog(theOriginalABC, theProcessedABC, looperState) {
     var theHeight;
 
     if (gLargePlayerControls) {
-      theHeight = window.innerHeight - 416;
+      theHeight = window.innerHeight - 440; 
     } else {
-      theHeight = window.innerHeight - 396;
+      theHeight = window.innerHeight - 420; 
       if (isDesktopBrowser() && isSafari()) {
         theHeight -= 10;
       }
@@ -45775,15 +45864,21 @@ function TuneTrainerDialog(theOriginalABC, theProcessedABC, looperState) {
 
     // Add the tune trainer controls
 
-    modal_msg += '<p class="configure_looper_text" style="text-align:center;margin:0px;margin-top:20px">';
+    modal_msg += '<p class="configure_looper_text" style="text-align:center;margin:0px;margin-top:16px">';
     modal_msg += '<span id="looper_text_1">Starting tempo:</span> <input style="width:75px;margin-right:4px;" id="looper_start_percent" type="number" min="1" step="1" max="400" title="Tune tempo start percentage" autocomplete="off"/><span id="looper_percent_span_1">%&nbsp;&nbsp;&nbsp;&nbsp;</span>';
     modal_msg += '<span id="looper_text_2">Ending tempo:</span> <input style="width:75px;margin-right:4px;" id="looper_end_percent" type="number" min="1" step="1" max="400" title="Tune tempo end percentage" autocomplete="off"/><span id="looper_percent_span_2">%&nbsp;&nbsp;&nbsp;&nbsp;</span>';
     modal_msg += '<span id="looper_text_3">Tempo increment:</span> <input style="width:75px;margin-right:4px;" id="looper_increment" type="number" min="0" step="1" max="400" title="Tempo increment percentage" autocomplete="off"/><span id="looper_percent_span_3">%</span>';
     modal_msg += '</p>';
-    modal_msg += '<p class="configure_looper_text" style="text-align:center;margin:0px;margin-top:20px">';
+    modal_msg += '<p class="configure_looper_text" style="text-align:center;margin:0px;margin-top:16px">';
     modal_msg += '<span id="looper_text_4">Increment tempo after how many loops:</span> <input style="width:60px;margin-right:14px;" id="looper_count" type="number" min="1" step="1" max="100" title="Increment tempo after this many times through the tune" autocomplete="off"/><span id="looper_text_5">Countdown?</span><input style="width:18px;margin-left:8px;margin-right:14px;" id="looper_docountdown" type="checkbox" onchange="ToggleLoopCountdown();"/><span id="looper_text_6">Countdown secs:</span><input style="width:60px;margin-left:8px;" id="looper_countdown" type="number" min="1" step="1" max="30" title="Countdown secs" autocomplete="off" onchange="SaveLoopCountdown();"/>';
     modal_msg += '</p>';
-    modal_msg += '<p class="configure_looper_text" style="text-align:center;margin:0px;margin-top:20px">';
+
+    modal_msg += '<p class="configure_looper_text" style="text-align:center;margin:0px;margin-top:16px">';
+    modal_msg += '<span id="looper_text_7" title="Adds a two-measure, meter-appropriate click intro before the tune begins.&nbsp;&nbsp;The intro is stored as one measure enclosed in repeat marks, so it plays twice without interacting with the tune repeats.&nbsp;&nbsp;This does not change the original tune ABC.">Add two-measure click intro?</span><input style="width:18px;margin-left:8px;margin-right:20px;" id="looper_clickintro" type="checkbox" onchange="ToggleTuneTrainerClickIntro();" title="Adds a two-measure, meter-appropriate click intro before the tune begins.&nbsp;&nbsp;The intro is stored as one measure enclosed in repeat marks, so it plays twice without interacting with the tune repeats.&nbsp;&nbsp;Click Apply Changes and Reload to use the new setting.&nbsp;&nbsp;This does not change the original tune ABC."/>';
+
+    modal_msg += '<span id="looper_text_8" title="Adds additional full measure trailing rests at the end of the ABC.&nbsp;&nbsp;The number of measures of rests to add can be configured in the Advanced Settings dialog.">Add trailing rests?</span><input style="width:18px;margin-left:8px;margin-right:14px;" id="looper_addmeasure" type="checkbox" onchange="ToggleTuneTrainerAddMeasure();" title="Adds additional full measure trailing rests at the end of the ABC.&nbsp;&nbsp;The number of measures of rests to add can be configured in the Advanced Settings dialog."/>';
+    modal_msg += '</p>';
+    modal_msg += '<p class="configure_looper_text" style="text-align:center;margin:0px;margin-top:16px">';
     modal_msg += '<input id="looperreset" class="looperreset button btn btn-looperreset" onclick="TuneTrainerReset();" type="button" value="Apply Changes and Reload" title="Applies the changed Tune Trainer settings and reloads the trainer">';
 
     if (gPlayMetronome) {
@@ -45793,10 +45888,8 @@ function TuneTrainerDialog(theOriginalABC, theProcessedABC, looperState) {
     }
 
     modal_msg += '<input id="trainer_phrase_builder" class="trainer_phrase_builder button btn btn-phrasebuilder" onclick="TrainerPhraseBuilder(event);" type="button" value="Phrase Builder" title="Builds phrases of specified measure length for the tune and then reloads the Tune Trainer.&nbsp;&nbsp;This does not change the original tune ABC.&nbsp;&nbsp;Shift-click to restore the original tune.">';
-    
-    modal_msg += '<span id="looper_text_7" style="margin-left:12px;" title="Adds additional full measure trailing rests at the end of the ABC.&nbsp;&nbsp;The number of measures of rests to add can be configured in the Advanced Settings dialog.">Add trailing rests?</span><input style="width:18px;margin-left:8px;margin-right:14px;" id="looper_addmeasure" type="checkbox" onchange="ToggleTuneTrainerAddMeasure();" title="Adds additional full measure trailing rests at the end of the ABC.&nbsp;&nbsp;The number of measures of rests to add can be configured in the Advanced Settings dialog."/>';
-
     modal_msg += '</p>';
+
     
     modal_msg += '<a id="looperhelp" href="https://michaeleskin.com/abctools/userguide.html#tune_trainer" target="_blank" style="text-decoration:none;" title="Learn more about the Tune Trainer" class="dialogcornerbutton">?</a>';
     modal_msg += '<p id="looperstatus"></p>';
@@ -45870,6 +45963,7 @@ function TuneTrainerDialog(theOriginalABC, theProcessedABC, looperState) {
     document.getElementById("looper_countdown").value = gLooperCountdown;
 
     document.getElementById("looper_addmeasure").checked = gLooperAddMeasure;
+    document.getElementById("looper_clickintro").checked = gLooperClickIntro;
 
     // --- NEW: snapshot initial values now that controls are populated ---
     gTuneTrainerInitialSettings = {
@@ -45879,7 +45973,8 @@ function TuneTrainerDialog(theOriginalABC, theProcessedABC, looperState) {
       count: document.getElementById("looper_count").value,
       doCountdown: document.getElementById("looper_docountdown").checked,
       countdownSecs: document.getElementById("looper_countdown").value,
-      addMeasure: document.getElementById("looper_addmeasure").checked
+      addMeasure: document.getElementById("looper_addmeasure").checked,
+      clickIntro: document.getElementById("looper_clickintro").checked
     };
 
     // --- NEW: hook listeners to mark Apply button dirty/clean ---
@@ -45892,6 +45987,9 @@ function TuneTrainerDialog(theOriginalABC, theProcessedABC, looperState) {
     if (el) el.addEventListener("change", updateApplyButtonDirtyState);
 
     el = document.getElementById("looper_addmeasure");
+    if (el) el.addEventListener("change", updateApplyButtonDirtyState);
+
+    el = document.getElementById("looper_clickintro");
     if (el) el.addEventListener("change", updateApplyButtonDirtyState);
 
     // Ensure correct initial state
@@ -47774,6 +47872,12 @@ function GetInitialConfigurationSettings() {
   if (val) {
     gLooperAddMeasure = (val == "true");
   }
+
+  gLooperClickIntro = false;
+  val = localStorage.LooperClickIntro;
+  if (val) {
+    gLooperClickIntro = (val == "true");
+  }
   
   gLooperAddMeasureCount = 1;
   val = localStorage.LooperAddMeasureCount;
@@ -48114,8 +48218,11 @@ function SaveConfigurationSettings() {
     // Always flatten parts
     localStorage.AlwaysFlattenParts = gAlwaysFlattenParts;
 
-    // Add measure in Tune Trainer
+    // Add trailing measures in Tune Trainer
     localStorage.LooperAddMeasure = gLooperAddMeasure;
+
+    // Add a two-measure click intro in Tune Trainer
+    localStorage.LooperClickIntro = gLooperClickIntro;
 
     // Number of measures to add
     localStorage.LooperAddMeasureCount = gLooperAddMeasureCount;
@@ -56382,16 +56489,18 @@ function showWhatsNewScreen() {
 
   // Header
   modal_msg += '<div style="text-align:center; padding:14px 10px; border-radius:12px;';
-  modal_msg += 'background: linear-gradient(135deg, #24103f 0%, #4b1f73 52%, #7b3fb2 100%);';
+  modal_msg += 'background: linear-gradient(135deg, #0b2f24 0%, #116149 52%, #1f9d73 100%);';
   modal_msg += 'box-shadow: 0 6px 16px rgba(0,0,0,0.14); color:#fff;">';
   modal_msg += '<div style="font-size:20pt; line-height:24pt; font-weight:bold;">What&apos;s New</div>';
-  modal_msg += '<div style="font-size:11pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 11 June 2026</div>';
+  modal_msg += '<div style="font-size:11pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 12 June 2026</div>';
   modal_msg += '</div>';
 
-  // Short intro
-  modal_msg += '<p style="margin:24px 4px 10px 4px; font-size:12pt;">';
-  modal_msg += 'Here’s what’s new in the ABC Transcription Tools:';
-  modal_msg += '</p>';
+  // Feature card
+  modal_msg += '<div style="margin:10px 0 6px 0; padding:0px 12px; border-radius:12px;';
+  modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);">';
+  modal_msg += '<p><strong>New "Add two-measure click intro?" option in the Tune Trainer</strong>:</p>';
+  modal_msg += 'When checked, adds a two-measure click intro before the tune starts playing.</p>';
+  modal_msg += '</div>';
 
   // Feature card
   modal_msg += '<div style="margin:10px 0 6px 0; padding:0px 12px; border-radius:12px;';
@@ -63064,13 +63173,13 @@ async function DoStartup() {
   // Show update message?
   if (gLocalStorageAvailable && (!isFromShare)){
 
-    var updatePresented = localStorage.sawUpdate_11jun2026;
+    var updatePresented = localStorage.sawUpdate_12jun2026;
 
     if (updatePresented != "true") {
 
       showWhatsNewScreen();
 
-      localStorage.sawUpdate_11jun2026 = true;
+      localStorage.sawUpdate_12jun2026 = true;
 
     }
 
