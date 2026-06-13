@@ -921,6 +921,7 @@
             <details>
             <summary><h3>Advanced abcjs Rendering Options</h3></summary>
             <a style="text-decoration:none;" href="#customabcjsparams">Adding Custom abcjs Rendering Parameters</a>
+            <a style="text-decoration:none;" href="#tablature_only">Displaying Standalone Stringed Instrument Tablature Without Standard Notation</a>
             <a style="text-decoration:none;" href="#left_justify_titles">Forcing Left-Justified Titles and Subtitles</a>
             <a style="text-decoration:none;" href="#hide_tempos">Showing/Hiding Tempo Marks</a>
             <a style="text-decoration:none;" href="#hide_information_labels">Hiding Information Labels</a>
@@ -1462,6 +1463,7 @@
                     <button class="accordion" title="Click to expand/collapse this section">Advanced abcjs Rendering Options</button>
                     <div class="tocpanel">
                         <p class="toc"><a style="text-decoration:none;" href="#customabcjsparams">Adding Custom abcjs Rendering Parameters</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#tablature_only">Displaying Standalone Stringed Instrument Tablature Without Standard Notation</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#left_justify_titles">Forcing Left-Justified Titles and Subtitles</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#hide_tempos">Showing/Hiding Tempo Marks</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#hide_information_labels">Hiding Information Labels</a></p>
@@ -2293,6 +2295,10 @@
                 <p>See the <a style="text-decoration:none;" href="#recordertabkey">Changing the Recorder Tablature Key and Octave</a> section below for more details.</p>
                 <hr>
                 <p>Up to 8 voices may be displayed with tablature.</p>
+                <hr>
+                <p><strong>Showing standalone stringed instrument tablature without the standard notation</strong></p>
+                <p>It is also possible to show any of the stringed instrument tablatures on its own without the standard notation above.</p>
+                <p>See the <a href="#tablature_only">Displaying Standalone Stringed Instrument Tablature Without Standard Notation</a> section below for details.</p>
                 <hr>
                 <p><strong>Clicking on the currently selected tab button will force a full redraw of the tunes.</strong></p>
                 <p>This can be useful when editing the ABC file header before the tunes to have the change reflected in the display of all the tunes.</p>
@@ -7687,6 +7693,24 @@
                 <p>If placed in the ABC file header, it will apply to all of the tunes.</p>
                 <p>Only the first instance of %abcjs_render_params found in a tune will be used.</p>
                 <p>If present both in the tune and the ABC file header, the file header version will be used.</p>
+                <hr class="hidden-print" id="tablature_only">
+                <h1 class="page_break_always">Displaying Standalone Stringed Instrument Tablature Without Standard Notation</h1>
+                <a href="#table_of_contents" class="index-pill hidden-print">
+                  Table of Contents
+                </a>
+                <p>For stringed instrument tablatures, the following comment-based annotation may be added to the ABC to display only the tablature, without the standard notation staff, clef, key signature, or noteheads:</p>
+                <p class="code">%tablature_only</p>
+                <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/1trwg2mF3KY" title="%tablature_only Demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
+                <div class="image_holder" style="margin-top:24px;">
+                    <img class="image" loading="lazy" style="width:700px;" src="img/tab_only_1.jpg"/>
+                </div>
+                <p>In this mode, the selected stringed instrument tablature is displayed with its fret numbers, rhythmic stems and beams, rests, chord symbols, triplet markings, and first and second endings where present.</p>
+                <p>The annotation may be added inside an individual tune to affect only that tune.</p>
+                <p>It may also be placed in the ABC header before the first tune to affect the display of all tunes in the tunebook.</p>
+                <p><strong>Note:</strong> After adding or removing %tablature_only in the ABC header, a full redraw of all tunes may be required. Click the currently selected tablature button in the bottom toolbar to force a full redraw.</p>
+                <p>Depending on the tune, page width, selected tablature, and font sizes, you may wish to adjust the vertical separation between tablature systems for the best display. For example:</p>
+                <p class="code">%%staffsep 80</p>
+                <p>Other <strong>%%staffsep</strong> values may be used as needed to increase or reduce the spacing between systems.</p>
                 <hr class="hidden-print" id="left_justify_titles">
                 <h1 class="page_break_always">Forcing Left-Justified Titles and Subtitles</h1>
                 <a href="#table_of_contents" class="index-pill hidden-print">

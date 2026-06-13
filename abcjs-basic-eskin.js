@@ -186,6 +186,12 @@ var gSequenceCallback = null;
 var gTabFirstStaffOnly = false;
 var gTabSecondStaffOnly = false;
 
+// MAE 13 Jun 2026 - Render only generated stringed-instrument tablature.
+// When enabled, the source notation staff is retained long enough to generate
+// the tablature, then removed before SVG drawing and the remaining tab staffs
+// are vertically compacted.
+var gTablatureOnly = false;
+
 // For reverb
 var gEnableReverb = false;
 var gReverbStyle = null;
@@ -833,6 +839,28 @@ function ScanTuneForSVGDisableHyperlinks(theTune){
   //console.log("No %disable_hyperlinks")
 
   return false;
+}
+
+// Scan tune for tablature-only rendering
+function ScanTuneForTablatureOnly(theTune){
+
+  //console.log("ScanTuneForTablatureOnly");
+
+  // Match the standalone %tablature_only directive anywhere in the tune.
+  // Leading/trailing horizontal whitespace is allowed.
+  var searchRegExp = /^[ \t]*%tablature_only[ \t]*$/gm;
+
+  var isTablatureOnly = searchRegExp.test(theTune);
+
+  if (isTablatureOnly){
+    //console.log("Found %tablature_only");
+    return true;
+  }
+
+  //console.log("No %tablature_only");
+
+  return false;
+
 }
 
 // Scan tune for play alternate chords
@@ -1871,6 +1899,25 @@ var tunebook = {};
             }
           }
 
+          // MAE 13 Jun 2026 - Per-tune tablature-only rendering option.
+          // Tablature-only mode can be requested either by the renderAbc()
+          // tablatureOnly option (including an %abcjs_render_params override)
+          // or by a standalone %tablature_only directive anywhere in the tune.
+          //
+          // disallowTablatureOnly has final precedence and forces normal
+          // notation rendering regardless of either request source.
+          var tuneRequestsTablatureOnly = ScanTuneForTablatureOnly(theCurrentTuneABC);
+          var tablatureOnlyRequested =
+            workingParams.disallowTablatureOnly !== true &&
+            (
+              workingParams.tablatureOnly === true ||
+              tuneRequestsTablatureOnly
+            );
+
+          // Set the requested state during parsing. It will be confirmed below
+          // after tablature plugins have been prepared.
+          gTablatureOnly = tablatureOnlyRequested;
+
           //debugger;
 
           abcParser.parse(book.tunes[currentTune].abc, workingParams, book.tunes[currentTune].startPos - book.header.length);
@@ -1883,6 +1930,28 @@ var tunebook = {};
             tablatures.init();
             tune.tablatures = tablatures.preparePlugins(tune, currentTune, workingParams);
           }
+
+          // Do not activate tablature-only rendering unless at least one valid
+          // stringed-instrument tablature plugin was successfully prepared.
+          // This prevents %tablature_only or tablatureOnly:true from changing
+          // normal notation spacing or timing when no tablature is selected,
+          // the tablature list is empty, every entry is a placeholder, or an
+          // unsupported instrument was requested.
+          var hasValidTablature = false;
+
+          if (tune.tablatures && tune.tablatures.length) {
+            for (var tabIndex = 0; tabIndex < tune.tablatures.length; tabIndex++) {
+              if (tune.tablatures[tabIndex] &&
+                  tune.tablatures[tabIndex].classz) {
+                hasValidTablature = true;
+                break;
+              }
+            }
+          }
+
+          gTablatureOnly =
+            tablatureOnlyRequested &&
+            hasValidTablature;
 
           var warnings = abcParser.getWarnings();
           if (warnings){
@@ -2730,11 +2799,23 @@ var Tune = function Tune() {
     };
     var realDuration = element.durationClass ? element.durationClass : element.duration;
     if (element.abcelem.rest && (element.abcelem.rest.type === "spacer" || element.abcelem.rest.type === "spacer_zero")) realDuration = 0;
+
+    // The source notation element remains authoritative for musical timing,
+    // MIDI data, rests, ties, and repeats. In tablature-only mode, however,
+    // callback highlighting and cursor X geometry must refer to the generated
+    // tablature clone because the source notation SVG is not drawn.
+    var callbackElement = element;
+    if (gTablatureOnly && element.cloned &&
+        (element.cloned.type === "tabNumber" || element.cloned.type === "tabRest")) {
+      callbackElement = element.cloned;
+    }
+
     if (realDuration > 0) {
       var es = [];
       // If there is an invisible rest, then there are not elements, so don't push a null one.
-      for (var i = 0; i < element.elemset.length; i++) {
-        if (element.elemset[i] !== null) es.push(element.elemset[i]);
+      var callbackElemset = callbackElement.elemset || [];
+      for (var i = 0; i < callbackElemset.length; i++) {
+        if (callbackElemset[i] !== null) es.push(callbackElemset[i]);
       }
       var isTiedToNext = element.startTie;
       if (isTiedState !== undefined) {
@@ -2771,8 +2852,8 @@ var Tune = function Tune() {
             measureNumber: measureNumber,
             top: top,
             height: height,
-            left: element.x,
-            width: element.w,
+            left: callbackElement.x,
+            width: callbackElement.w,
             elements: [es],
             startChar: element.abcelem.startChar,
             endChar: element.abcelem.endChar,
@@ -2783,7 +2864,7 @@ var Tune = function Tune() {
           if (element.abcelem.midiGraceNotePitches) eventHash["event" + voiceTimeMilliseconds].midiGraceNotePitches = parseCommon.cloneArray(element.abcelem.midiGraceNotePitches);
         } else {
           // If there is more than one voice then two notes can fall at the same time. Usually they would be lined up in the same place, but if it is a whole rest, then it is placed funny. In any case, the left most element wins.
-          if (eventHash["event" + voiceTimeMilliseconds].left) eventHash["event" + voiceTimeMilliseconds].left = Math.min(eventHash["event" + voiceTimeMilliseconds].left, element.x);else eventHash["event" + voiceTimeMilliseconds].left = element.x;
+          if (eventHash["event" + voiceTimeMilliseconds].left) eventHash["event" + voiceTimeMilliseconds].left = Math.min(eventHash["event" + voiceTimeMilliseconds].left, callbackElement.x);else eventHash["event" + voiceTimeMilliseconds].left = callbackElement.x;
           eventHash["event" + voiceTimeMilliseconds].elements.push(es);
           eventHash["event" + voiceTimeMilliseconds].startCharArray.push(element.abcelem.startChar);
           eventHash["event" + voiceTimeMilliseconds].endCharArray.push(element.abcelem.endChar);
@@ -2830,9 +2911,15 @@ var Tune = function Tune() {
         middleC = lastStaff.absoluteY;
         var bottom = middleC - lastStaff.bottom * spacing.STEP;
         var height = bottom - top;
-        var voices = group.voices;
+        // In tablature-only mode the visible group contains only generated
+        // tablature voices. Use the preserved source notation voices for
+        // timing so rests, ties, repeats, and tempo changes remain correct.
+        var voices = gTablatureOnly && group.timingVoices && group.timingVoices.length
+          ? group.timingVoices
+          : group.voices;
+
         for (var v = 0; v < voices.length; v++) {
-          if (voices[v].staff && voices[v].staff.isTabStaff) continue;
+          if (!gTablatureOnly && voices[v].staff && voices[v].staff.isTabStaff) continue;
           var noteFound = false;
           if (!voicesArr[v]) voicesArr[v] = [];
           if (measureNumber[v] === undefined) measureNumber[v] = 0;
@@ -2902,7 +2989,8 @@ var Tune = function Tune() {
           if (endRepeat) {
             // Force the end of the previous note to the position of the measure - the cursor won't go past the end repeat
             if (elem > 0) {
-              eventHash[lastHash].endX = element.x;
+              var repeatDisplayElement = gTablatureOnly && element.cloned ? element.cloned : element;
+              eventHash[lastHash].endX = repeatDisplayElement.x;
             }
             if (endingRepeatElem === -1) endingRepeatElem = elem;
             var lastVoiceTimeMilliseconds = 0;
@@ -2924,7 +3012,11 @@ var Tune = function Tune() {
             }
             if (eventHash["event" + lastVoiceTimeMilliseconds])
               // This won't exist if it is the beginning of the next line. That's ok because we will just count the end of the last line as the end.
-              eventHash["event" + lastVoiceTimeMilliseconds].endX = elements[endingRepeatElem].elem.x;
+              var endingRepeatSource = elements[endingRepeatElem].elem;
+              var endingRepeatDisplay = gTablatureOnly && endingRepeatSource.cloned
+                ? endingRepeatSource.cloned
+                : endingRepeatSource;
+              eventHash["event" + lastVoiceTimeMilliseconds].endX = endingRepeatDisplay.x;
             nextIsBar = true;
             endingRepeatElem = -1;
           }
@@ -4742,6 +4834,7 @@ var bookParser = function bookParser(book) {
       /^%custom_instrument_8_fade.*$/,
       /^%roll_2_params.*$/,
       /^%roll_3_params.*$/,
+      /^%tablature_only.*$/,
       /^[ABCDFGHILMmNORrSUZ]:/,
     ];
 
@@ -23209,6 +23302,7 @@ module.exports = FiveStringPatterns;
  */
 var AbsoluteElement = __webpack_require__(/*! ../write/creation/elements/absolute-element */ "./src/write/creation/elements/absolute-element.js");
 var RelativeElement = __webpack_require__(/*! ../write/creation/elements/relative-element */ "./src/write/creation/elements/relative-element.js");
+var EndingElem = __webpack_require__(/*! ../write/creation/elements/ending-element */ "./src/write/creation/elements/ending-element.js");
 function isObject(a) {
   return a != null && a.constructor === Object;
 }
@@ -23250,6 +23344,168 @@ function cloneAbsoluteAndRelatives(absSrc, plugin) {
     }
   }
   return returned;
+}
+// MAE 13 Jun 2026 - Copy a source meter into the generated tablature
+// staff and vertically center it on the tablature lines. This preserves
+// specified meters, common time, cut time, and inline meter changes using
+// the original abcjs time-signature glyphs and horizontal geometry.
+function buildTabMeterAbsolute(plugin, absSrc) {
+  if (!absSrc || !absSrc.children) return null;
+
+  var returned = cloneAbsolute(absSrc);
+  returned.type = "staff-extra time-signature";
+  returned.children = [];
+  returned.extra = [];
+  returned.heads = [];
+  returned.isTabOnlyMeter = true;
+
+  var linePitch =
+    plugin && typeof plugin.linePitch === "number"
+      ? plugin.linePitch
+      : 3;
+  var lineCount =
+    plugin && typeof plugin.nbLines === "number"
+      ? plugin.nbLines
+      : 3;
+
+  // Standard notation time signatures are centered around pitch 6.
+  // Tablature lines begin at pitch zero, so center the meter on the
+  // actual middle of the selected instrument's tablature staff.
+  var sourceMeterCenterPitch = 6;
+
+  // The numeric meter glyphs are visually weighted below their nominal
+  // pitch center. Raise the copied meter by 3.25 pitch units so fractions
+  // such as 3/4 and 6/8 appear optically centered on 4-, 5-, and 6-string
+  // tablature staffs.
+  var tabMeterCenterPitch =
+    (lineCount - 1) * linePitch / 2 + 3.25;
+
+  var pitchShift = tabMeterCenterPitch - sourceMeterCenterPitch;
+
+  for (var ii = 0; ii < absSrc.children.length; ii++) {
+    var child = absSrc.children[ii];
+    if (!child) continue;
+
+    var relative = new RelativeElement('', 0, 0, 0, '');
+    cloneObject(relative, child);
+
+    if (typeof relative.pitch === "number") {
+      relative.pitch += pitchShift;
+    }
+    if (typeof relative.pitch2 === "number") {
+      relative.pitch2 += pitchShift;
+    }
+    if (typeof relative.top === "number") {
+      relative.top += pitchShift;
+    }
+    if (typeof relative.bottom === "number") {
+      relative.bottom += pitchShift;
+    }
+
+    relative.isTabOnlyMeter = true;
+    returned.children.push(relative);
+  }
+
+  return returned.children.length ? returned : null;
+}
+
+// MAE 13 Jun 2026 - Copy ordinary ABC guitar-chord symbols from the
+// source notation element to its generated tablature element. Only elements
+// created as real gchords (type === "chord") are copied; annotations,
+// dynamics, fingering marks, lyrics, and other notation remain suppressed.
+
+// MAE 13 Jun 2026 - Copy a visible source rest into the generated tablature
+// staff. Spacer rests remain invisible. Ordinary rest glyphs, augmentation
+// dots, and multimeasure-rest text are retained and vertically translated to
+// the middle of the tablature staff.
+function buildTabRestAbsolute(plugin, absSrc, sourceStaff) {
+  if (!absSrc || !absSrc.abcelem || !absSrc.abcelem.rest) return null;
+
+  var restType = absSrc.abcelem.rest.type;
+  if (restType === "spacer" || restType === "spacer_zero") return null;
+
+  var returned = cloneAbsolute(absSrc);
+  returned.type = "tabRest";
+  returned.children = [];
+  returned.extra = [];
+  returned.heads = [];
+
+  // Rest glyphs in the source notation are positioned relative to the
+  // standard notation-staff center (pitch 6). Do not derive that position
+  // from sourceStaff.top/bottom: those extents vary from system to system
+  // according to chords, endings, lyrics, and other vertical content. Using
+  // them caused identical rests to move into the tablature staff on later
+  // systems.
+  var sourceRestAnchorPitch = 6;
+
+  // In tablature-only mode place visible rests consistently in the rhythm
+  // area just below the lowest tablature line. Pitch zero is the bottom tab
+  // line and negative values are below it.
+  var tabRestAnchorPitch = -1.5;
+
+  var pitchShift = tabRestAnchorPitch - sourceRestAnchorPitch;
+
+  if (absSrc.children) {
+    for (var ii = 0; ii < absSrc.children.length; ii++) {
+      var child = absSrc.children[ii];
+      if (!child) continue;
+
+      var isRestGlyph =
+        child.type === "symbol" &&
+        typeof child.c === "string" &&
+        (child.c.indexOf("rests.") === 0 || child.c.indexOf("dots.") === 0);
+
+      var isRestText =
+        child.type === "text" ||
+        child.type === "multimeasure-text";
+
+      if (!isRestGlyph && !isRestText) continue;
+
+      var relative = new RelativeElement('', 0, 0, 0, '');
+      cloneObject(relative, child);
+
+      if (typeof relative.pitch === "number") relative.pitch += pitchShift;
+      if (typeof relative.pitch2 === "number") relative.pitch2 += pitchShift;
+      if (typeof relative.top === "number") relative.top += pitchShift;
+      if (typeof relative.bottom === "number") relative.bottom += pitchShift;
+
+      relative.isTabOnlyRest = true;
+      returned.children.push(relative);
+    }
+  }
+
+  // Some rest forms can be represented without a normal symbol child.
+  // Retain the absolute only when at least one visible child was copied.
+  if (returned.children.length === 0) return null;
+
+  returned.abcelem.el_type = "tabRest";
+  return returned;
+}
+
+function copyChordRelativesToTab(absSrc, absDest, sourceStaff) {
+  if (!absSrc || !absSrc.children || !absDest) return 0;
+
+  var copied = 0;
+  var sourceTop = sourceStaff && typeof sourceStaff.top === "number" ? sourceStaff.top : 0;
+
+  for (var ii = 0; ii < absSrc.children.length; ii++) {
+    var child = absSrc.children[ii];
+    if (!child || child.type !== "chord") continue;
+
+    var relative = new RelativeElement('', 0, 0, 0, '');
+    cloneObject(relative, child);
+
+    // Preserve the chord's already-computed lane/distance above the source
+    // staff. compactToTablatureOnly() applies that distance to the new tab top.
+    relative.tabChordOffsetAbove =
+      typeof child.pitch === "number" ? child.pitch - sourceTop : 2;
+    relative.isTabOnlyChord = true;
+
+    absDest.children.push(relative);
+    copied++;
+  }
+
+  return copied;
 }
 function buildTabAbsolute(plugin, absX, relX) {
   var tabIcon = 'tab.tiny';
@@ -23305,6 +23561,389 @@ function getInitialStaffSize(staffGroup) {
   }
   return returned;
 }
+
+// MAE 13 Jun 2026 - Add rhythmic notation directly to the generated
+// tablature staff. The fret number remains on its string and acts as the
+// rhythmic notehead. Downward stems extend from the fret number through the
+// tab staff to a common beam level just below the lowest string.
+function addTabRhythmToAbsolute(plugin, absSrc, absDest, tabRelatives) {
+  if (!gTablatureOnly || !absSrc || !absDest || !tabRelatives || tabRelatives.length === 0) return;
+
+  var duration = typeof absSrc.durationClass === "number"
+    ? absSrc.durationClass
+    : (absSrc.abcelem && typeof absSrc.abcelem.duration === "number" ? absSrc.abcelem.duration : 0);
+
+  if (!(duration > 0)) return;
+
+  var sourceFlag = null;
+  var sourceDots = [];
+
+  if (absSrc.children) {
+    for (var i = 0; i < absSrc.children.length; i++) {
+      var child = absSrc.children[i];
+      if (!child) continue;
+      if (child.type === "symbol" && typeof child.c === "string" && child.c.indexOf("flags.") === 0) sourceFlag = child;
+      if (child.type === "symbol" && typeof child.c === "string" && child.c.indexOf("dots.") === 0) sourceDots.push(child);
+    }
+  }
+
+  // Keep the rhythmic stem horizontally centered on the fret number.
+  // The vertical start is moved below the rendered number glyph, leaving a
+  // small visible gap so the stem does not intersect the digit.
+  var rhythmX = absDest.x;
+  if (typeof rhythmX !== "number") rhythmX = tabRelatives[0].x;
+
+  // Save the centered rhythmic stem position so reconstructed beam groups
+  // align exactly with the stems.
+  absDest.tabRhythmStemX = rhythmX;
+
+  var anchorPitch = tabRelatives[0].pitch;
+  for (var ri = 1; ri < tabRelatives.length; ri++) {
+    if (typeof tabRelatives[ri].pitch === "number" &&
+        (typeof anchorPitch !== "number" || tabRelatives[ri].pitch < anchorPitch)) {
+      anchorPitch = tabRelatives[ri].pitch;
+    }
+  }
+  if (typeof anchorPitch !== "number") anchorPitch = 0;
+
+  // Use the renderer's measured tab-number text height, converted to
+  // staff-pitch units. This tracks the actual active font face and size,
+  // including %%tabnumberfont and render-time font overrides.
+  // Fall back to the tuned 11-point clearance when metrics are unavailable.
+  var glyphClearance = 4.75;
+  if (plugin && typeof plugin._tabNumberHeightPitch === "number" &&
+      isFinite(plugin._tabNumberHeightPitch) && plugin._tabNumberHeightPitch > 0) {
+    // The measured height covers the visible glyph. Add a small gap below it.
+    glyphClearance = plugin._tabNumberHeightPitch + 0.55;
+  }
+  var stemLengthBelowGlyph = 1.25;
+  var normalBeamBasePitch = -3.6;
+  var stemTop = anchorPitch - glyphClearance;
+
+  // Give isolated quarter/half notes and individually flagged notes a
+  // substantial visible stem by extending them to the normal rhythm
+  // baseline. If a large tab-number font pushes the stem start below that
+  // baseline, extend a minimum distance below the glyph instead.
+  var stemBottom = Math.min(normalBeamBasePitch, stemTop - stemLengthBelowGlyph);
+  var stemWidth = 0.6;
+
+  // Store the calculated geometry so reconstructed beam groups, tuplets,
+  // and augmentation dots use the same font-aware vertical positions.
+  absDest.tabRhythmStemTop = stemTop;
+  absDest.tabRhythmBeamPitch = stemBottom;
+
+  // Whole notes and longer are represented by the fret number alone.
+  if (duration >= 1) return;
+
+  var stem = new RelativeElement(null, 0, 0, stemTop, {
+    type: "stem",
+    pitch2: stemBottom,
+    linewidth: stemWidth
+  });
+  stem.x = rhythmX;
+  stem.isTabRhythm = true;
+  absDest.children.push(stem);
+
+  // Determine the number of flags from the duration. ABCJS duration values
+  // use 1 for a whole note, 1/2 for a half, 1/4 for a quarter, etc.
+  var flagCount = 0;
+  if (duration < 0.25) {
+    flagCount = Math.max(1, Math.min(4, Math.round(Math.log(0.25 / duration) / Math.LN2)));
+  }
+
+  // Notes belonging to a source beam group receive connected beams later in
+  // addTabBeamGroups(). Unbeamed short notes retain a downward flag.
+  // Only suppress the individual flag for a real multi-note beam group.
+  // ABCJS may attach a beam object to an isolated flagged note; treating that
+  // as a connected beam leaves a short, broken-looking horizontal mark.
+  var isSourceBeamed = !!(absSrc.beam && absSrc.beam.elems && absSrc.beam.elems.length > 1);
+
+  if (flagCount > 0 && !isSourceBeamed) {
+    var flagNamesDown = ["flags.d8th", "flags.d16th", "flags.d32nd", "flags.d64th"];
+    var flagName = flagNamesDown[flagCount - 1];
+
+    if (sourceFlag && sourceFlag.c && sourceFlag.c.indexOf("flags.d") === 0) {
+      flagName = sourceFlag.c;
+    }
+
+    var flag = new RelativeElement(flagName, 0, 0, stemBottom, {
+      type: "symbol"
+    });
+    flag.x = rhythmX;
+    flag.isTabRhythm = true;
+    absDest.children.push(flag);
+  }
+
+  // Put augmentation dots about one-third of the way from the bottom tablature
+  // line to the lower end of the rhythm stem. Tablature line pitch zero is
+  // the bottom line, and lower stem positions use negative pitch values.
+  // This places the dot lower than the stem midpoint while keeping it clear
+  // of the beam or flag at the stem end.
+  var bottomTabLinePitch = 0;
+  var dotPitch =
+    bottomTabLinePitch +
+    (stemBottom - bottomTabLinePitch) * 0.32;
+  // A downward flag curves to the right of the stem, so dotted isolated
+  // flagged notes need extra horizontal clearance. Beamed notes retain the
+  // normal dot offset because there is no individual flag beside the stem.
+  var dotHorizontalOffset =
+    flagCount > 0 && !isSourceBeamed
+      ? 9.0
+      : 3.25;
+
+  for (var d = 0; d < sourceDots.length; d++) {
+    var dot = new RelativeElement(sourceDots[d].c, 0, 0, dotPitch, {
+      type: "symbol"
+    });
+    dot.x = rhythmX + dotHorizontalOffset + d * 3;
+    dot.isTabRhythm = true;
+    dot.isTabRhythmDot = true;
+    absDest.children.push(dot);
+  }
+}
+
+// MAE 13 Jun 2026 - Recreate the source notation beam groups directly on
+// the tablature staff. The primary beam is placed just below the lowest
+// string and all source primary/secondary beam segmentation is preserved.
+// Source tuplets are copied as centered numerals beneath the beam.
+function addTabBeamGroups(sourceVoice, tabVoice) {
+  if (!gTablatureOnly || !sourceVoice || !tabVoice) return;
+
+  // Use the font-aware beam level calculated for the mapped tab events.
+  // Fall back to the default 11-point value for older/unmapped elements.
+  var defaultBeamBasePitch = -3.6;
+  var beamSeparation = 1.35;
+  var beamThickness = -3;
+
+  // Keep the reconstructed beam objects available while placing tuplets so
+  // each numeral can be centered on the actual primary beam span.
+  var reconstructedTabBeams = [];
+
+  if (sourceVoice.beams) {
+    for (var bi = 0; bi < sourceVoice.beams.length; bi++) {
+      var sourceBeam = sourceVoice.beams[bi];
+      if (!sourceBeam || sourceBeam === "bar" || !sourceBeam.beams || sourceBeam.beams.length === 0) continue;
+
+      var mappedElems = [];
+      if (sourceBeam.elems) {
+        for (var ei = 0; ei < sourceBeam.elems.length; ei++) {
+          var sourceElem = sourceBeam.elems[ei];
+          if (sourceElem && sourceElem.cloned && sourceElem.cloned.type === "tabNumber") {
+            mappedElems.push(sourceElem.cloned);
+          }
+        }
+      }
+      if (mappedElems.length < 2) continue;
+
+      var beamBasePitch = defaultBeamBasePitch;
+      for (var mpi = 0; mpi < mappedElems.length; mpi++) {
+        if (typeof mappedElems[mpi].tabRhythmBeamPitch === "number") {
+          beamBasePitch = Math.min(beamBasePitch, mappedElems[mpi].tabRhythmBeamPitch);
+        }
+      }
+
+      // Every stem in a connected group must reach the final common beam
+      // level. The provisional per-note stem bottoms differ with string and
+      // font size, so extend them now after the group level is known.
+      for (var msi = 0; msi < mappedElems.length; msi++) {
+        var mapped = mappedElems[msi];
+        if (!mapped || !mapped.children) continue;
+        for (var mci = 0; mci < mapped.children.length; mci++) {
+          var mappedChild = mapped.children[mci];
+          if (mappedChild && mappedChild.isTabRhythm && mappedChild.type === "stem") {
+            mappedChild.pitch2 = beamBasePitch;
+          }
+        }
+
+        // Re-center any augmentation dot on the final connected stem after
+        // the common beam level has been established.
+        var mappedStemTop = typeof mapped.tabRhythmStemTop === "number"
+          ? mapped.tabRhythmStemTop
+          : beamBasePitch;
+
+        // Recalculate from the bottom tablature line after the final shared
+        // beam position is known. This keeps dots at the same proportional
+        // depth for isolated and connected stems.
+        var mappedBottomTabLinePitch = 0;
+        var mappedDotPitch =
+          mappedBottomTabLinePitch +
+          (beamBasePitch - mappedBottomTabLinePitch) * 0.32;
+
+        for (var mdi = 0; mdi < mapped.children.length; mdi++) {
+          var mappedDot = mapped.children[mdi];
+          if (mappedDot && mappedDot.isTabRhythmDot) {
+            mappedDot.pitch = mappedDotPitch;
+            mappedDot.top = mappedDotPitch;
+            mappedDot.bottom = mappedDotPitch;
+          }
+        }
+
+        mapped.tabRhythmBeamPitch = beamBasePitch;
+      }
+
+      var tabBeam = {
+        type: "BeamElem",
+        duration: sourceBeam.duration || 0,
+        elems: mappedElems,
+        beams: [],
+        isTabRhythmBeam: true
+      };
+
+      // Translate the complete source beam geometry so the first beam
+      // endpoint aligns with the first tab rhythm stem. Keep the primary beam
+      // at the stem endpoint, but stack all additional beam levels upward,
+      // toward the tablature staff, rather than below the primary beam.
+      // Preserve the source horizontal segmentation for partial and split
+      // secondary beams.
+      var firstMappedX = typeof mappedElems[0].tabRhythmStemX === "number"
+        ? mappedElems[0].tabRhythmStemX
+        : (typeof mappedElems[0].x === "number" ? mappedElems[0].x : 0);
+      var primarySourceStartX = sourceBeam.beams[0] && typeof sourceBeam.beams[0].startX === "number"
+        ? sourceBeam.beams[0].startX
+        : firstMappedX;
+      var beamXOffset = firstMappedX - primarySourceStartX;
+
+      for (var bsi = 0; bsi < sourceBeam.beams.length; bsi++) {
+        var sourceSegment = sourceBeam.beams[bsi];
+        if (!sourceSegment) continue;
+        var pitch = beamBasePitch + bsi * beamSeparation;
+        var tabSegment = {
+          startX: sourceSegment.startX + beamXOffset,
+          endX: sourceSegment.endX + beamXOffset,
+          startY: pitch,
+          endY: pitch,
+          dy: beamThickness
+        };
+        if (sourceSegment.split) {
+          tabSegment.split = [];
+          for (var splitIndex = 0; splitIndex < sourceSegment.split.length; splitIndex++) {
+            tabSegment.split.push(sourceSegment.split[splitIndex] + beamXOffset);
+          }
+        }
+        tabBeam.beams.push(tabSegment);
+      }
+
+      if (tabBeam.beams.length) {
+        tabVoice.beams.push(tabBeam);
+        reconstructedTabBeams.push(tabBeam);
+      }
+    }
+  }
+
+  if (sourceVoice.otherchildren) {
+    for (var ti = 0; ti < sourceVoice.otherchildren.length; ti++) {
+      var sourceOther = sourceVoice.otherchildren[ti];
+      if (!sourceOther || sourceOther === "bar") continue;
+
+      // Recreate first/second ending brackets on the tablature voice. The
+      // source anchors belong to source bar elements; map those bars to their
+      // generated tablature clones so the bracket follows tab spacing.
+      if (sourceOther.type === "EndingElem") {
+        var endingAnchor1 = null;
+        var endingAnchor2 = null;
+
+        if (sourceOther.anchor1) {
+          var endingParent1 = sourceOther.anchor1.parent;
+          endingAnchor1 = endingParent1 && endingParent1.cloned
+            ? endingParent1.cloned
+            : sourceOther.anchor1;
+        }
+
+        if (sourceOther.anchor2) {
+          var endingParent2 = sourceOther.anchor2.parent;
+          endingAnchor2 = endingParent2 && endingParent2.cloned
+            ? endingParent2.cloned
+            : sourceOther.anchor2;
+        }
+
+        var tabEnding = new EndingElem(
+          sourceOther.text,
+          endingAnchor1,
+          endingAnchor2
+        );
+        tabEnding.isTabOnlyEnding = true;
+        tabVoice.addOther(tabEnding);
+        continue;
+      }
+
+      if (sourceOther.type !== "TripletElem") continue;
+      var triplet = sourceOther;
+
+      var firstParent = triplet.anchor1 && triplet.anchor1.parent;
+      var lastParent = triplet.anchor2 && triplet.anchor2.parent;
+      var firstTab = firstParent && firstParent.cloned;
+      var lastTab = lastParent && lastParent.cloned;
+      if (!firstTab || !lastTab) continue;
+
+      var firstX = typeof firstTab.x === "number" ? firstTab.x : 0;
+      var lastX = typeof lastTab.x === "number" ? lastTab.x : firstX;
+      var midX = (firstX + lastX) / 2;
+      var tripletHost = firstTab;
+
+      // Prefer the midpoint of the reconstructed primary beam containing the
+      // complete tuplet. This centers the numeral on the visible beam rather
+      // than merely between the first and last fret-number anchors.
+      for (var rbi = 0; rbi < reconstructedTabBeams.length; rbi++) {
+        var reconstructedBeam = reconstructedTabBeams[rbi];
+        if (!reconstructedBeam || !reconstructedBeam.elems ||
+            !reconstructedBeam.beams || !reconstructedBeam.beams.length) continue;
+
+        var firstIndex = reconstructedBeam.elems.indexOf(firstTab);
+        var lastIndex = reconstructedBeam.elems.indexOf(lastTab);
+        if (firstIndex !== -1 && lastIndex !== -1) {
+          // Center the tuplet numeral on the middle rhythmic stem in the
+          // actual tuplet range. This remains visually centered when the
+          // three notes are spaced unevenly or the beam has overhang.
+          var rangeStart = Math.min(firstIndex, lastIndex);
+          var rangeEnd = Math.max(firstIndex, lastIndex);
+          var middleIndex = Math.floor((rangeStart + rangeEnd) / 2);
+          var middleElem = reconstructedBeam.elems[middleIndex];
+          if (middleElem) {
+            tripletHost = middleElem;
+            if (typeof middleElem.tabRhythmStemX === "number") {
+              midX = middleElem.tabRhythmStemX;
+            } else if (typeof middleElem.x === "number") {
+              midX = middleElem.x;
+            }
+          }
+          break;
+        }
+      }
+
+      var number = triplet.number || 3;
+
+      // Attach the numeral directly to the middle tablature event. A separate
+      // zero-duration AbsoluteElement is moved to the start of the voice by
+      // horizontal layout, which caused the triplet number to appear at the
+      // far left of each staff.
+      var tripletBeamPitch = defaultBeamBasePitch;
+      if (typeof firstTab.tabRhythmBeamPitch === "number") tripletBeamPitch = Math.min(tripletBeamPitch, firstTab.tabRhythmBeamPitch);
+      if (typeof lastTab.tabRhythmBeamPitch === "number") tripletBeamPitch = Math.min(tripletBeamPitch, lastTab.tabRhythmBeamPitch);
+
+      // RelativeElement.x is local to the host note. Keep this as a real
+      // text element so the renderer draws it, and offset it from the host's
+      // own x coordinate to the actual middle stem position.
+      var hostX = typeof tripletHost.x === "number" ? tripletHost.x : 0;
+      var tripletLocalX = midX - hostX - 3;
+      var tripletText = new RelativeElement("" + number, tripletLocalX, 0, tripletBeamPitch - 4.25, {
+        type: "text"
+      });
+
+      // This element is added after horizontal voice layout has already
+      // positioned the tablature notes, so there is no later setX() pass to
+      // convert dx from host-relative to page coordinates. Set the final
+      // absolute X explicitly while retaining dx for consistency if the host
+      // is subsequently repositioned by another layout operation.
+      tripletText.x = midX - 3;
+      tripletText.parent = tripletHost;
+      tripletText.isTabRhythm = true;
+      tripletText.isTabRhythmTriplet = true;
+      if (!tripletHost.children) tripletHost.children = [];
+      tripletHost.children.push(tripletText);
+    }
+  }
+}
+
 function buildRelativeTabNote(plugin, relX, def, curNote, isGrace) {
   var strNote = curNote.num;
   if (curNote.note.quarter != null) {
@@ -23323,6 +23962,9 @@ function buildRelativeTabNote(plugin, relX, def, curNote, isGrace) {
   };
   var tabNoteRelative = new RelativeElement(strNote, 0, 0, pitch + 0.3, opt);
   tabNoteRelative.x = relX;
+
+  // The rhythmic stem clearance uses renderer-measured text metrics stored
+  // on the tablature plugin, so it follows the actual font face and size.
   tabNoteRelative.isGrace = isGrace;
   tabNoteRelative.isAltered = curNote.note.isAltered;
   return tabNoteRelative;
@@ -23416,6 +24058,45 @@ TabAbsoluteElements.prototype.build = function (plugin, staffAbsolute, tabVoice,
         this.accidentals = absChild.abcelem.accidentals;
         plugin.semantics.strings.accidentals = this.accidentals;
         break;
+      case 'staff-extra time-signature':
+        // Retain the initial meter and any inline meter changes when only the
+        // generated stringed-instrument tablature is displayed.
+        if (gTablatureOnly) {
+          var tabMeterAbs = buildTabMeterAbsolute(plugin, absChild);
+          if (tabMeterAbs) {
+            dest.children.push(tabMeterAbs);
+          }
+        }
+        break;
+
+      case 'tempo':
+        // In tablature-only mode retain visible Q: and inline tempo markings.
+        // Reuse the already-created TempoElement child so the note glyph,
+        // pre-text, BPM, and post-text exactly match normal notation.
+        if (gTablatureOnly && absChild.children && absChild.children.length) {
+          var tabTempoAbs = cloneAbsolute(absChild);
+          tabTempoAbs.type = 'tempo';
+          tabTempoAbs.children = [];
+          tabTempoAbs.extra = [];
+          tabTempoAbs.heads = [];
+          tabTempoAbs.isTabOnlyTempo = true;
+
+          for (var tempoChildIndex = 0;
+               tempoChildIndex < absChild.children.length;
+               tempoChildIndex++) {
+            var tempoChild = absChild.children[tempoChildIndex];
+            if (tempoChild && tempoChild.type === 'TempoElement') {
+              tempoChild.isTabOnlyTempo = true;
+              tabTempoAbs.children.push(tempoChild);
+            }
+          }
+
+          if (tabTempoAbs.children.length) {
+            dest.children.push(tabTempoAbs);
+          }
+        }
+        break;
+
       case 'bar':
         plugin.semantics.strings.measureAccidentals = {};
         var lastBar = false;
@@ -23445,6 +24126,35 @@ TabAbsoluteElements.prototype.build = function (plugin, staffAbsolute, tabVoice,
         });
         break;
       case 'rest':
+        // In tablature-only mode draw ordinary rests at the center of the tab
+        // staff. Spacer rests stay invisible. Chords attached to rests remain
+        // above the tablature as before.
+        if (gTablatureOnly) {
+          var tabRestAbs = buildTabRestAbsolute(plugin, absChild, source.staff);
+
+          if (tabRestAbs) {
+            copyChordRelativesToTab(absChild, tabRestAbs, source.staff);
+            dest.children.push(tabRestAbs);
+            tabVoice.push({
+              el_type: "note",
+              rest: absChild.abcelem.rest,
+              duration: absChild.abcelem.duration,
+              endChar: absChild.abcelem.endChar,
+              startChar: absChild.abcelem.startChar,
+              abselem: tabRestAbs
+            });
+          } else {
+            var restChordAbs = cloneAbsolute(absChild);
+            restChordAbs.type = 'tabChord';
+            restChordAbs.children = [];
+            restChordAbs.extra = [];
+            restChordAbs.heads = [];
+            if (copyChordRelativesToTab(absChild, restChordAbs, source.staff) > 0) {
+              dest.children.push(restChordAbs);
+            }
+          }
+        }
+
         var restGraces = graceInRest(absChild);
         if (restGraces) {
           // to number conversion 
@@ -23465,6 +24175,12 @@ TabAbsoluteElements.prototype.build = function (plugin, staffAbsolute, tabVoice,
         var abs = cloneAbsolute(absChild);
         abs.x = absChild.heads[0].x + absChild.heads[0].w / 2; // center the number
         abs.lyricDim = lyricsDim(absChild);
+
+        // In tablature-only mode retain ordinary ABC chord symbols above the
+        // generated tab number while leaving all other notation suppressed.
+        if (gTablatureOnly) {
+          copyChordRelativesToTab(absChild, abs, source.staff);
+        }
         var pitches = absChild.abcelem.pitches;
         var graceNotes = absChild.abcelem.gracenotes;
         abs.type = 'tabNumber';
@@ -23504,6 +24220,18 @@ TabAbsoluteElements.prototype.build = function (plugin, staffAbsolute, tabVoice,
           var tabNoteRelative = buildRelativeTabNote(plugin, abs.x + absChild.heads[ll].dx, defNote, curNote, false);
           abs.children.push(tabNoteRelative);
         }
+
+        // Add optional stems, flags, and dots with the fret numbers serving
+        // as noteheads. Only the newly generated tab-number relatives are
+        // passed so copied chord symbols are not considered note anchors.
+        var rhythmTabRelatives = [];
+        for (var tri = 0; tri < abs.children.length; tri++) {
+          if (abs.children[tri] && abs.children[tri].type === "tabNumber" && !abs.children[tri].isGrace) {
+            rhythmTabRelatives.push(abs.children[tri]);
+          }
+        }
+        addTabRhythmToAbsolute(plugin, absChild, abs, rhythmTabRelatives);
+
         if (defNote.notes.length > 0) {
           defNote.abselem = abs;
           tabVoice.push(defNote);
@@ -23512,6 +24240,10 @@ TabAbsoluteElements.prototype.build = function (plugin, staffAbsolute, tabVoice,
         break;
     }
   }
+
+  // Recreate the original notation beam groupings and tuplets in the
+  // separate rhythm lane after every source event has been cloned.
+  addTabBeamGroups(source, dest);
 };
 module.exports = TabAbsoluteElements;
 
@@ -23615,6 +24347,19 @@ function buildTabName(self, dest) {
 function TabRenderer(plugin, renderer, line, staffIndex) {
   this.renderer = renderer;
   this.plugin = plugin;
+
+  // Measure the actual active tab-number font through the renderer. Store the
+  // height in staff-pitch units for rhythmic stem clearance. This is more
+  // reliable than reading the requested point size because font metrics vary
+  // by face and renderer overrides may be applied later in the pipeline.
+  if (plugin && renderer && renderer.controller && renderer.controller.getTextSize &&
+      renderer.controller.getTextSize.calc) {
+    var tabNumberDim = renderer.controller.getTextSize.calc("0", "tabnumberfont", "tab-number");
+    if (tabNumberDim && typeof tabNumberDim.height === "number" && tabNumberDim.height > 0) {
+      plugin._tabNumberHeightPitch = tabNumberDim.height / spacing.STEP;
+    }
+  }
+
   this.line = line;
   this.absolutes = new TabAbsoluteElements();
   this.staffIndex = staffIndex;
@@ -28962,7 +29707,23 @@ function addStaffPadding(renderer, staffSeparation, lastStaffGroup, thisStaffGro
   var nextTopLine = thisStaffGroup.staffs[0].top - 10; // Because 10 represents the top line.
   var naturalSeparation = nextTopLine + lastBottomLine; // This is how far apart they'd be without extra spacing
   var separationInPixels = naturalSeparation * spacing.STEP;
-  if (separationInPixels < staffSeparation) renderer.moveY(staffSeparation - separationInPixels);
+
+  // MAE 13 Jun 2026 - In normal abcjs rendering, staffsep is treated as a
+  // minimum: padding is only added when the natural separation is smaller.
+  // That means compact tablature-only systems ignore all values below their
+  // already-large natural separation.
+  //
+  // For tablature-only rendering, make %%staffsep the requested signed gap
+  // between systems. Apply the complete difference, including a negative
+  // move when necessary. This permits compact values such as %%staffsep -40.
+  //
+  // Normal notation and notation-plus-tablature retain the original minimum
+  // behavior unchanged.
+  if (gTablatureOnly) {
+    renderer.moveY(staffSeparation - separationInPixels);
+  } else if (separationInPixels < staffSeparation) {
+    renderer.moveY(staffSeparation - separationInPixels);
+  }
 }
 module.exports = draw;
 
@@ -30022,9 +30783,32 @@ function drawStaffGroup(renderer, params, selectables, lineNumber) {
       var r = {
         rows: []
       };
-      r.rows.push({
-        absmove: bottomLine + 2
-      });
+      // MAE 13 Jun 2026 - In tablature-only mode, place the instrument
+      // name above the top-left corner of the first tablature staff. This
+      // keeps pickup stems, flags, beams, and tuplets below the staff from
+      // crossing labels such as "Mandolin". Normal notation-plus-tab
+      // rendering retains the original below-staff placement.
+      if (gTablatureOnly) {
+        // Use the actual printed tablature staff top. The local topLine
+        // variable can still refer to the hidden source notation staff,
+        // which placed the label inside the tablature lines.
+        // nonMusic/renderText adds the tab-label font size to the supplied
+        // Y coordinate before drawing the text baseline. Compensate for that
+        // here so the final baseline sits slightly above the highest tab line.
+        // Keep the instrument-name baseline in the copied ABC chord lane,
+        // but slightly above its previous position to provide more clearance
+        // when the first note also has a chord symbol.
+        // nonMusic/renderText adds the font height before drawing the text,
+        // so subtract that height as well as the chord-lane pixel offset.
+        var tabOnlyChordBaselineOffset = 5.25 * spacing.STEP;
+        r.rows.push({
+          absmove: staff.topLine - tabName.textSize.height - tabOnlyChordBaselineOffset
+        });
+      } else {
+        r.rows.push({
+          absmove: bottomLine + 2
+        });
+      }
       var leftMargin = 8;
       r.rows.push({
         left: params.startx + leftMargin,
@@ -31013,6 +31797,16 @@ EngraverController.prototype.engraveTune = function (abcTune, tuneNumber, lineOf
     tablatures.layoutTablatures(this.renderer, abcTune);
   }
 
+  // MAE 13 Jun 2026 - Tablature-only rendering and whitespace compaction.
+  // Tablature generation needs the source notation staff, so this operation
+  // deliberately runs after layoutTablatures(). At this point each generated
+  // tablature staff is marked with isTabStaff. Remove all source notation
+  // staffs and voices, then rebuild compact vertical geometry from only the
+  // generated tablature staffs.
+  if (gTablatureOnly && abcTune.tablatures) {
+    compactToTablatureOnly(abcTune);
+  }
+
   // Do all the writing to the SVG
   var ret = draw(this.renderer, this.classes, abcTune, this.width, maxWidth, this.responsive, scale, this.selectTypes, tuneNumber, lineOffset);
   this.staffgroups = ret.staffgroups;
@@ -31025,6 +31819,247 @@ EngraverController.prototype.engraveTune = function (abcTune, tuneNumber, lineOf
   }
   setupSelection(this, this.svgs);
 };
+
+// MAE 13 Jun 2026 - Remove source notation staffs after tablature generation
+// and recalculate the staff-group height so no blank notation area remains.
+function compactToTablatureOnly(abcTune) {
+  var STEP = spacing.STEP;
+
+  for (var lineIndex = 0; lineIndex < abcTune.lines.length; lineIndex++) {
+    var line = abcTune.lines[lineIndex];
+    var group = line.staffGroup;
+
+    if (!group || !group.staffs || !group.voices) continue;
+
+    var tabStaffs = [];
+    for (var staffIndex = 0; staffIndex < group.staffs.length; staffIndex++) {
+      if (group.staffs[staffIndex] && group.staffs[staffIndex].isTabStaff) {
+        tabStaffs.push(group.staffs[staffIndex]);
+      }
+    }
+
+    // Leave the original group untouched when no generated tab staff exists.
+    if (tabStaffs.length === 0) continue;
+
+    var tabVoices = [];
+    for (var voiceIndex = 0; voiceIndex < group.voices.length; voiceIndex++) {
+      var voice = group.voices[voiceIndex];
+      if (voice && voice.staff && voice.staff.isTabStaff) {
+        tabVoices.push(voice);
+      }
+    }
+
+    // Preserve the original notation voices for playback timing. They are no
+    // longer drawn, but they retain rests, ties, repeats, tempo changes, and
+    // all other timing semantics that the generated tablature voice does not
+    // independently contain.
+    group.timingVoices = [];
+    for (var timingVoiceIndex = 0; timingVoiceIndex < group.voices.length; timingVoiceIndex++) {
+      var timingVoice = group.voices[timingVoiceIndex];
+      if (timingVoice && (!timingVoice.staff || !timingVoice.staff.isTabStaff)) {
+        group.timingVoices.push(timingVoice);
+      }
+    }
+
+    group.staffs = tabStaffs;
+    group.voices = tabVoices;
+
+    var compactHeight = 0;
+
+    for (var ti = 0; ti < tabStaffs.length; ti++) {
+      var tabStaff = tabStaffs[ti];
+      var linePitch = tabStaff.linePitch || 3;
+      var lineCount = tabStaff.lines || 1;
+
+      // The highest printed tab line is lineCount * linePitch. Leave a small
+      // margin above it and one pitch unit below the bottom line. This removes
+      // the much larger top offset inherited from the hidden notation staff.
+      tabStaff.top = lineCount * linePitch + 2;
+      // Rhythmic tablature stems and beams extend through and just below the
+      // tab staff, so reserve enough lower extent for beams and tuplets.
+      tabStaff.bottom = gTablatureOnly ? -8 : -1;
+      tabStaff.originalTop = tabStaff.top;
+      tabStaff.originalBottom = tabStaff.bottom;
+      tabStaff.hasStaff = null;
+      tabStaff.hasTab = null;
+      tabStaff.voices = [];
+
+      var labelHeightUnits = 0;
+
+      for (var vi = 0; vi < tabVoices.length; vi++) {
+        var tabVoice = tabVoices[vi];
+        if (tabVoice.staff === tabStaff) {
+          tabStaff.voices.push(vi);
+          tabVoice.barto = false;
+          tabVoice.topLine = undefined;
+
+          if (tabVoice.tabNameInfos && tabVoice.tabNameInfos.textSize) {
+            labelHeightUnits = Math.max(
+              labelHeightUnits,
+              tabVoice.tabNameInfos.textSize.height / STEP
+            );
+          }
+        }
+      }
+
+      // Reposition copied ABC chord symbols above the compacted tab staff and
+      // increase the visible top extent enough to contain all chord lanes.
+      var chordTop = tabStaff.top;
+      for (var cvi = 0; cvi < tabVoices.length; cvi++) {
+        var chordVoice = tabVoices[cvi];
+        if (chordVoice.staff !== tabStaff || !chordVoice.children) continue;
+
+        for (var cai = 0; cai < chordVoice.children.length; cai++) {
+          var chordAbs = chordVoice.children[cai];
+          if (!chordAbs || !chordAbs.children) continue;
+
+          for (var cri = 0; cri < chordAbs.children.length; cri++) {
+            var chordRel = chordAbs.children[cri];
+            if (!chordRel || !chordRel.isTabOnlyChord) continue;
+
+            var chordOffset = typeof chordRel.tabChordOffsetAbove === "number"
+              ? Math.max(2, chordRel.tabChordOffsetAbove)
+              : 2;
+
+            // MAE 13 Jun 2026 - Keep copied ABC chord symbols clearly above
+            // the highest tablature string. Raise only the chord lane rather
+            // than the base tab staff, so chord copying and compaction remain
+            // intact. Pitch units increase upward in the renderer.
+            var tabChordClearance = 4;
+            chordRel.pitch = tabStaff.top + chordOffset + tabChordClearance;
+
+            var chordHeight = typeof chordRel.height === "number"
+              ? chordRel.height
+              : 2;
+            chordTop = Math.max(chordTop, chordRel.pitch + chordHeight);
+          }
+        }
+      }
+
+      // First/second ending elements are created after the normal abcjs
+      // vertical-resolution pass, so their pitch is not assigned by
+      // setUpperAndLowerElements(). Assign a final pitch here, after the
+      // copied chord lane has been positioned, and reserve matching space in
+      // the compacted tablature staff.
+      var endingTop = chordTop;
+      for (var evi = 0; evi < tabVoices.length; evi++) {
+        var endingVoice = tabVoices[evi];
+        if (endingVoice.staff !== tabStaff || !endingVoice.otherchildren) continue;
+
+        for (var eoi = 0; eoi < endingVoice.otherchildren.length; eoi++) {
+          var tabEnding = endingVoice.otherchildren[eoi];
+          if (!tabEnding || tabEnding === "bar" ||
+              tabEnding.type !== "EndingElem" ||
+              !tabEnding.isTabOnlyEnding) {
+            continue;
+          }
+
+          // Put the ending bracket above the chord lane, matching abcjs's
+          // normal ordering where endings sit above chords.
+          tabEnding.pitch = chordTop + 3;
+          endingTop = Math.max(
+            endingTop,
+            tabEnding.pitch + (tabEnding.endingHeightAbove || 5)
+          );
+        }
+      }
+
+      // Reposition copied tempo markings above the tablature, chords, and
+      // endings. TempoElement geometry was originally resolved against the
+      // source notation staff, so translate the completed element instead of
+      // rebuilding it. This preserves the normal tempo note glyph and text.
+      var tempoTop = endingTop;
+      for (var tvi = 0; tvi < tabVoices.length; tvi++) {
+        var tempoVoice = tabVoices[tvi];
+        if (tempoVoice.staff !== tabStaff || !tempoVoice.children) continue;
+
+        for (var tai = 0; tai < tempoVoice.children.length; tai++) {
+          var tempoAbs = tempoVoice.children[tai];
+          if (!tempoAbs || !tempoAbs.isTabOnlyTempo || !tempoAbs.children) continue;
+
+          for (var tri = 0; tri < tempoAbs.children.length; tri++) {
+            var tempoRel = tempoAbs.children[tri];
+            if (!tempoRel || tempoRel.type !== 'TempoElement') continue;
+
+            var oldTempoPitch =
+              typeof tempoRel.pitch === 'number'
+                ? tempoRel.pitch
+                : 0;
+
+            // TempoElement.pitch is the top of its six-pitch-unit area.
+            var targetTempoPitch = endingTop + 8;
+            var tempoDelta = targetTempoPitch - oldTempoPitch;
+
+            tempoRel.pitch = targetTempoPitch;
+            tempoRel.top = targetTempoPitch;
+            tempoRel.bottom = targetTempoPitch;
+
+            if (tempoRel.note) {
+              if (typeof tempoRel.note.top === 'number') {
+                tempoRel.note.top += tempoDelta;
+              }
+              if (typeof tempoRel.note.bottom === 'number') {
+                tempoRel.note.bottom += tempoDelta;
+              }
+
+              if (tempoRel.note.children) {
+                for (var tnci = 0;
+                     tnci < tempoRel.note.children.length;
+                     tnci++) {
+                  var tempoNoteChild = tempoRel.note.children[tnci];
+                  if (!tempoNoteChild) continue;
+
+                  if (typeof tempoNoteChild.pitch === 'number') {
+                    tempoNoteChild.pitch += tempoDelta;
+                  }
+                  if (typeof tempoNoteChild.pitch2 === 'number') {
+                    tempoNoteChild.pitch2 += tempoDelta;
+                  }
+                  if (typeof tempoNoteChild.top === 'number') {
+                    tempoNoteChild.top += tempoDelta;
+                  }
+                  if (typeof tempoNoteChild.bottom === 'number') {
+                    tempoNoteChild.bottom += tempoDelta;
+                  }
+                }
+              }
+            }
+
+            tempoAbs.top = targetTempoPitch;
+            tempoAbs.bottom =
+              targetTempoPitch -
+              (tempoRel.totalHeightInPitches || 6);
+
+            tempoTop = Math.max(
+              tempoTop,
+              targetTempoPitch + 1
+            );
+          }
+        }
+      }
+
+      // Reserve enough space above the first tab line for copied chord
+      // symbols, first/second endings, tempo markings, and the instrument
+      // name. The name is drawn above the top-left corner in tablature-only
+      // mode, so it no longer contributes to the lower extent of the staff.
+      var labelTop = lineCount * linePitch + 2 + labelHeightUnits + 1;
+      tabStaff.top = Math.max(
+        chordTop + 1,
+        endingTop + 1,
+        tempoTop + 1,
+        labelTop
+      );
+      tabStaff.originalTop = tabStaff.top;
+
+      compactHeight += tabStaff.top - tabStaff.bottom + 2;
+    }
+
+    group.height = compactHeight;
+    group.brace = null;
+    group.bracket = null;
+  }
+}
+
 function splitSvgIntoLines(renderer, output, title, responsive) {
 
   //

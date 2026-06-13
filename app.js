@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3254_061226_1730";
+var gVersionNumber = "3255_061326_1200";
 
 var gMIDIInitStillWaiting = false;
 
@@ -13828,7 +13828,9 @@ function GetABCJSParams(instrument) {
       oneSvgPerLine: 'true',
       expandToWidest: 'true',
       selectTypes: false,
-      format: commonFontFormat
+      format: commonFontFormat,
+      disallowTablatureOnly:true
+
     };
     instrument = "";
   } else if (instrument == "noten") {
@@ -13838,7 +13840,8 @@ function GetABCJSParams(instrument) {
       oneSvgPerLine: 'true',
       expandToWidest: 'true',
       selectTypes: false,
-      format: commonFontFormat
+      format: commonFontFormat,
+      disallowTablatureOnly:true
     };
   } else if (instrument == "mandolin") {
     params = {
@@ -13977,7 +13980,8 @@ function GetABCJSParams(instrument) {
       oneSvgPerLine: 'true',
       expandToWidest: 'true',
       selectTypes: false,
-      format: commonFontFormat
+      format: commonFontFormat,
+      disallowTablatureOnly:true
     }
   } else if (instrument == "whistle") {
     // Suppress the tab icon
@@ -13994,7 +13998,8 @@ function GetABCJSParams(instrument) {
       oneSvgPerLine: 'true',
       expandToWidest: 'true',
       selectTypes: false,
-      format: commonFontFormat
+      format: commonFontFormat,
+      disallowTablatureOnly:true
     }
   } else if (instrument == "recorder") {
     // Suppress the tab icon
@@ -14011,7 +14016,8 @@ function GetABCJSParams(instrument) {
       oneSvgPerLine: 'true',
       expandToWidest: 'true',
       selectTypes: false,
-      format: commonFontFormat
+      format: commonFontFormat,
+      disallowTablatureOnly:true
     }
   } else {
     // Default for deprecated instruments
@@ -14021,7 +14027,8 @@ function GetABCJSParams(instrument) {
       responsive: 'resize',
       oneSvgPerLine: 'true',
       selectTypes: false,
-      format: commonFontFormat
+      format: commonFontFormat,
+      disallowTablatureOnly:true
     };
   }
 
@@ -24009,6 +24016,7 @@ function GetABCFileHeader() {
     /^%custom_instrument_8_fade.*$/,
     /^%roll_2_params.*$/,
     /^%roll_3_params.*$/,
+    /^%tablature_only.*$/,
     /^[ABCDFGHILMmNORrSUZ]:/,
   ];
 
@@ -28496,13 +28504,13 @@ async function processShareLink() {
       // Show update message?
       if (gLocalStorageAvailable){
 
-        var updatePresented = localStorage.sawUpdate_12jun2026b;
+        var updatePresented = localStorage.sawUpdate_13jun2026;
 
         if (updatePresented != "true") {
 
           showWhatsNewScreen();
 
-          localStorage.sawUpdate_12jun2026b = true;
+          localStorage.sawUpdate_13jun2026 = true;
 
         }
 
@@ -56492,31 +56500,19 @@ function showWhatsNewScreen() {
   modal_msg += 'background: linear-gradient(135deg, #0b2f24 0%, #116149 52%, #1f9d73 100%);';
   modal_msg += 'box-shadow: 0 6px 16px rgba(0,0,0,0.14); color:#fff;">';
   modal_msg += '<div style="font-size:20pt; line-height:24pt; font-weight:bold;">What&apos;s New</div>';
-  modal_msg += '<div style="font-size:11pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 12 June 2026</div>';
+  modal_msg += '<div style="font-size:11pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 13 June 2026</div>';
   modal_msg += '</div>';
 
   // Feature card
   modal_msg += '<div style="margin:10px 0 6px 0; padding:0px 12px; border-radius:12px;';
   modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);">';
-  modal_msg += '<p><strong>New "Add two-measure click intro?" option in the Tune Trainer</strong>:</p>';
-  modal_msg += 'When checked, adds a two-measure click intro before the tune starts playing.</p>';
-  modal_msg += '</div>';
-
-  // Feature card
-  modal_msg += '<div style="margin:10px 0 6px 0; padding:0px 12px; border-radius:12px;';
-  modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);">';
-  modal_msg += '<p><strong>New Defaults</strong>:</p>';
-  modal_msg += '<p>The <b>Tune Search Engine</b> now uses The Session tune database as the default.<br/>';
-  modal_msg += 'You can still change it to the Gavin Heneghan database if you like.</p>';
-  modal_msg += '<p>The <b>Player</b> now uses the <b>FatBoy</b> soundfont by default. Previously it was <b>Fluid</b>.<br/>';
-  modal_msg += 'You can change it to any of the other available soundfonts in the <b>Player Settings</b>.</p>';
-  modal_msg += '</div>';
-
-  // Feature card
-  modal_msg += '<div style="margin:10px 0 6px 0; padding:0px 12px; border-radius:12px;';
-  modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);">';
-  modal_msg += '<p><strong>Add Tune Backup Chords</strong> is now available from the <b>More Tools</b> dialog:</p>';
-  modal_msg += '<p>You can now add automatically add backup chords to traditional Irish tunes based on measure-by-measure pattern matching from compatible tunes on The Session directly from the tool. The latest version solves the chords twice as fast as the original while giving the same results.</p>';
+  modal_msg += '<p><strong>Standalone stringed instrument tablature without standard notation above is now possible</strong></p>';
+  modal_msg += '<p>You can now show standalone stringed instrument tablature without standard notation above by adding the following ABC annotation to either a single tune or to the ABC file header to have it apply to all the tunes in an ABC tunebook:</p>';
+  modal_msg += '<p><strong>%tablature_only</strong></p>'; 
+  modal_msg += '<p>This is only available for the stringed instrument tablatures, not tin whistle or recorder fingering tablatures.</p>'; 
+  modal_msg += '<p>When using this, you may want to add the following to the tunes or the ABC file headerto increase the staff separation:';
+  modal_msg += '<p><strong>%%staffsep 80</strong></p>';  
+  modal_msg += '<p>This works for tune display, playback, as well as image, PDF and website export.';
   modal_msg += '</div>';
 
   modal_msg += '</div>'; // wrapper
@@ -63172,13 +63168,13 @@ async function DoStartup() {
   // Show update message?
   if (gLocalStorageAvailable && (!isFromShare)){
 
-    var updatePresented = localStorage.sawUpdate_12jun2026b;
+    var updatePresented = localStorage.sawUpdate_13jun2026;
 
     if (updatePresented != "true") {
 
       showWhatsNewScreen();
 
-      localStorage.sawUpdate_12jun2026b = true;
+      localStorage.sawUpdate_13jun2026 = true;
 
     }
 
@@ -66185,7 +66181,7 @@ CodeMirror.defineMode("abc-plus", function () {
       }
 
       // ===== Extended %directives =====
-      if (stream.sol() && stream.match(/^%(?:pdfquality|pdf_between_tune_space|pdfname|pdffont|addtitle|addsubtitle|urladdtitle|urladdsubtitle|titlefontsize|subtitlefontsize|titlelinespacing|subtitlelinespacing|addtoc|addsortedtoc|addlinkbacktotoc|tocheader|toctopoffset|toctitleoffset|toctitlefontsize|tocfontsize|toclinespacing|addindex|addsortedindex|addlinkbacktoindex|indexheader|indextopoffset|indextitleoffset|indextitlefontsize|indexfontsize|indexlinespacing|no_toc_or_index_links|toc_no_page_numbers|index_no_page_numbers|firstpagenumber|pagenumberhoffset|pagenumbervoffset|pageheader|pagefooter|headerfooterfontsize|headervoffset|footervoffset|urlpageheader|urlpagefooter|textincipitsfontsize|textincipitslinespacing|add_all_links_to_thesession|add_all_playback_links|add_all_playback_volumes|playback_links_are_complete_tunebook|add_all_fonts|swing_all_hornpipes|noswing_all_hornpipes|no_edit_allowed|links_open_in_editor|qrcode|caption_for_qrcode|abcjs_soundfont|soundfont|hyperlink|add_link_to_thesession|add_playback_link|swing|swing_offset|noswing|bodhran_tuning|bodhran_pitch|banjo_style|grace_duration_ms|roll_2_params|roll_3_params|use_original_abcjs_roll_solution|abcjs_release_decay_time|use_custom_gm_sounds|disable_play_highlight|play_highlight_v1_only|irish_rolls_on|irish_rolls_off|voice_tuning_cents|tab_first_voice_only|tab_first_voice_exclude|reverb|ornament_divider|ornament_offset|tremolo_divider|play_flatten_parts|allow_lowercase_chords|hide_first_title_on_play|hide_vskip_on_play|hide_information_labels|hide_rhythm_tag|hide_composer_tag|hide_part_tags|hide_player_part_tags|hide_dynamics|hide_cautionary_ks|left_justify_titles|no_title_reverser|whistle_tab_key|whistle_tab_octave|recorder_tab_key|recorder_tab_octave|enable_hyperlinks|disable_hyperlinks|play_alternate_chords|force_power_chords|custom_instrument_volume_scale|custom_instrument_[1-8]_volume_scale|custom_instrument_fade|custom_instrument_[1-8]_fade|abcjs_render_params|tocleftoffset|tocrightoffset|indexleftoffset|indexrightoffset|pdf_notation_width|pdf_left_margin|toc_index_backlink_vpos|pdf_notation_percent_width)\b.*/i)) {
+      if (stream.sol() && stream.match(/^%(?:pdfquality|pdf_between_tune_space|pdfname|pdffont|addtitle|addsubtitle|urladdtitle|urladdsubtitle|titlefontsize|subtitlefontsize|titlelinespacing|subtitlelinespacing|addtoc|addsortedtoc|addlinkbacktotoc|tocheader|toctopoffset|toctitleoffset|toctitlefontsize|tocfontsize|toclinespacing|addindex|addsortedindex|addlinkbacktoindex|indexheader|indextopoffset|indextitleoffset|indextitlefontsize|indexfontsize|indexlinespacing|no_toc_or_index_links|toc_no_page_numbers|index_no_page_numbers|firstpagenumber|pagenumberhoffset|pagenumbervoffset|pageheader|pagefooter|headerfooterfontsize|headervoffset|footervoffset|urlpageheader|urlpagefooter|textincipitsfontsize|textincipitslinespacing|add_all_links_to_thesession|add_all_playback_links|add_all_playback_volumes|playback_links_are_complete_tunebook|add_all_fonts|swing_all_hornpipes|noswing_all_hornpipes|no_edit_allowed|links_open_in_editor|qrcode|caption_for_qrcode|abcjs_soundfont|soundfont|hyperlink|add_link_to_thesession|add_playback_link|swing|swing_offset|noswing|bodhran_tuning|bodhran_pitch|banjo_style|grace_duration_ms|roll_2_params|roll_3_params|use_original_abcjs_roll_solution|abcjs_release_decay_time|use_custom_gm_sounds|disable_play_highlight|play_highlight_v1_only|irish_rolls_on|irish_rolls_off|voice_tuning_cents|tab_first_voice_only|tab_first_voice_exclude|reverb|ornament_divider|ornament_offset|tremolo_divider|play_flatten_parts|allow_lowercase_chords|hide_first_title_on_play|hide_vskip_on_play|hide_information_labels|hide_rhythm_tag|hide_composer_tag|hide_part_tags|hide_player_part_tags|hide_dynamics|hide_cautionary_ks|left_justify_titles|no_title_reverser|whistle_tab_key|whistle_tab_octave|recorder_tab_key|recorder_tab_octave|enable_hyperlinks|disable_hyperlinks|play_alternate_chords|force_power_chords|custom_instrument_volume_scale|custom_instrument_[1-8]_volume_scale|custom_instrument_fade|custom_instrument_[1-8]_fade|abcjs_render_params|tocleftoffset|tocrightoffset|indexleftoffset|indexrightoffset|pdf_notation_width|pdf_left_margin|toc_index_backlink_vpos|pdf_notation_percent_width|tablature_only)\b.*/i)) {
         return "abc-extended-directive";
       }
 
