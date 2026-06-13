@@ -1470,11 +1470,11 @@ function LoadSearchCollection(index){
 				var thePrompt = "Gavin Heneghan tune search library successfully saved!";
 
 				if (index == 1){
-					thePrompt = "thesession.org tune search library successfully saved!";
+					thePrompt = "The Session tune search library successfully saved!";
 				}
 
 				if (!savedOK) {
-					thePrompt = "Unable to save tune collection.";
+					thePrompt = "Unable to save tune search library.";
 				}
 				
 				// Center the string in the prompt
@@ -1490,10 +1490,10 @@ function LoadSearchCollection(index){
 
 			gInSearchEngineRetrieval = false;
 
-			var thePrompt = "Unable to load tune collection.";
+			var thePrompt = "Unable to load tune search library.";
 
 			if (index == 1){
-				thePrompt = "Unable to load thesession.org tune search library.";
+				thePrompt = "Unable to load The Session tune search library.";
 			}
 			else{
 				thePrompt = "Unable to load Gavin Heneghan tune search library.";
@@ -1523,12 +1523,12 @@ function ManageSearchCollectionsDialog(){
 	// Keep track of dialogs
 	sendGoogleAnalytics("dialog","ManageSearchCollectionsDialog");
 
-	var modal_msg  = '<p style="text-align:center;margin-bottom:36px;font-size:16pt;font-family:helvetica;margin-left:15px;">Manage Search Engine Libraries&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#manage_databases" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>';
+	var modal_msg  = '<p style="text-align:center;margin-bottom:36px;font-size:16pt;font-family:helvetica;margin-left:15px;">Manage Tune Search Engine Libraries&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#manage_databases" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>';
 
 	modal_msg+='<p style="margin-top:24px;margin-bottom:12px;font-size:12pt;line-height:18pt;font-family:helvetica;text-align:center">Save a tune search library for offline use by clicking the buttons below:</p>',
 	modal_msg+='<p style="margin-top:24px;text-align:center">';
-	modal_msg+='<input id="managereverb" class="btn btn-managereverb managereverb" onclick="LoadSearchCollection(0)" type="button" value="Gavin Heneghan (20,000+ Tunes)" title="Load and save the Gavin Heneghan tune search collection">'
-	modal_msg+='<input id="managereverb" class="btn btn-managereverb managereverb" onclick="LoadSearchCollection(1)" type="button" value="thesession.org (54,000+ Tunes)" title="Load and save the thesession.org tune search collection">'
+	modal_msg+='<input id="managereverb" class="btn btn-managereverb managereverb" onclick="LoadSearchCollection(0)" type="button" value="Gavin Heneghan (20,000+ Tunes)" title="Load and save the Gavin Heneghan tune search library">'
+	modal_msg+='<input id="managereverb" class="btn btn-managereverb managereverb" onclick="LoadSearchCollection(1)" type="button" value="The Session (54,000+ Tunes)" title="Load and save the The Session tune search libary">'
 
 	modal_msg+='</p>';
 
