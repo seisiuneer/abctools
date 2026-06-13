@@ -611,8 +611,16 @@
    * @returns {number} Number of X: tune headers found.
    */
   function countABCTunes(abcText) {
-    const matches = String(abcText || "").match(/^\s*X\s*:/gmi);
-    return matches ? matches.length : 0;
+    // Count X: fields one physical line at a time. Using [ \\t] instead of
+    // \\s prevents a multiline regular expression from consuming line breaks
+    // while looking for leading whitespace.
+    return String(abcText || "")
+      .replace(/\r\n/g, "\n")
+      .replace(/\r/g, "\n")
+      .split("\n")
+      .reduce(function(count, line) {
+        return count + (/^[ \\t]*X[ \\t]*:/i.test(line) ? 1 : 0);
+      }, 0);
   }
 
   /**
@@ -847,6 +855,15 @@
 
       elements.urlPreview.textContent = url;
       setURLActionButtonsEnabled(true, "");
+
+      // A valid URL means any previous input/setting validation error has been
+      // resolved. Clear only the retained error state; preserve normal status
+      // messages such as file-open or clipboard confirmations.
+      if (currentStatusIsError) {
+        currentStatusMessage = "Ready.";
+        currentStatusIsError = false;
+      }
+
       renderStatus();
       return url;
     } catch (error) {
@@ -992,6 +1009,13 @@
   // user edits or replaces the ABC text.
   elements.abc.addEventListener("input", refreshABCEditorState);
   elements.abc.addEventListener("change", refreshABCEditorState);
+
+  // Some browsers dispatch paste before the textarea value has been updated.
+  // Refresh again on the next event-loop turn so replaced or newly pasted ABC
+  // is always counted and encoded from the final textarea contents.
+  elements.abc.addEventListener("paste", function() {
+    setTimeout(refreshABCEditorState, 0);
+  });
 
   [
     elements.min,
