@@ -318,6 +318,17 @@
     return n.replace(/[,']/g, "").toUpperCase();
   }
 
+  // Return the unique contiguous note groups of the requested size.
+  // These sets are calculated once when a measure is parsed and then reused
+  // for every database comparison involving that measure.
+  function ngrams(arr, n) {
+    var set = new Set();
+    for (var i = 0; i <= arr.length - n; i++) {
+      set.add(arr.slice(i, i + n).join(" "));
+    }
+    return set;
+  }
+
   function parseMeasureText(text) {
     var stripped = removeABCDecorations(text, false);
     var notes = [];
@@ -359,7 +370,12 @@
       noteStartOffsets: noteStartOffsets,
       duration: duration,
       noteString: notes.join(" "),
-      pcString: pitchClasses.join(" ")
+      pcString: pitchClasses.join(" "),
+
+      // Precompute these once. Previously they were rebuilt for both measures
+      // during every similarity comparison.
+      noteBigrams: ngrams(notes, 2),
+      noteTrigrams: ngrams(notes, 3)
     };
   }
 
@@ -978,12 +994,6 @@
     return prev[n];
   }
 
-  function ngrams(arr, n) {
-    var set = new Set();
-    for (var i = 0; i <= arr.length - n; i++) set.add(arr.slice(i, i + n).join(" "));
-    return set;
-  }
-
   function jaccard(a, b) {
     if (!a.size && !b.size) return 0;
     var inter = 0;
@@ -993,12 +1003,28 @@
 
   function measureSimilarity(a, b) {
     if (!a.notes.length || !b.notes.length) return 0;
-    var lcs = lcsLength(a.notes, b.notes) / Math.max(a.notes.length, b.notes.length);
-    var pcLcs = lcsLength(a.pitchClasses, b.pitchClasses) / Math.max(a.pitchClasses.length, b.pitchClasses.length);
-    var bi = jaccard(ngrams(a.notes, 2), ngrams(b.notes, 2));
-    var tri = jaccard(ngrams(a.notes, 3), ngrams(b.notes, 3));
-    var lenPenalty = Math.abs(a.notes.length - b.notes.length) / Math.max(a.notes.length, b.notes.length, 1);
-    return (lcs * 0.45) + (pcLcs * 0.25) + (bi * 0.20) + (tri * 0.10) - (lenPenalty * 0.10);
+
+    // notes and pitchClasses are identical under the current normalization
+    // rules, so calculate their shared LCS value only once. Keep the original
+    // separate 45% and 25% operations to preserve exact floating-point
+    // evaluation and candidate tie-breaking from the previous implementation.
+    var sequenceLcs =
+      lcsLength(a.notes, b.notes) /
+      Math.max(a.notes.length, b.notes.length);
+
+    var bi = jaccard(a.noteBigrams, b.noteBigrams);
+    var tri = jaccard(a.noteTrigrams, b.noteTrigrams);
+    var lenPenalty =
+      Math.abs(a.notes.length - b.notes.length) /
+      Math.max(a.notes.length, b.notes.length, 1);
+
+    return (
+      (sequenceLcs * 0.45) +
+      (sequenceLcs * 0.25) +
+      (bi * 0.20) +
+      (tri * 0.10) -
+      (lenPenalty * 0.10)
+    );
   }
 
   function chordRootToPitchClass(root) {

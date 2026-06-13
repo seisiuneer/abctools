@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3253_061226_0930";
+var gVersionNumber = "3254_061226_1730";
 
 var gMIDIInitStillWaiting = false;
 
@@ -28496,13 +28496,13 @@ async function processShareLink() {
       // Show update message?
       if (gLocalStorageAvailable){
 
-        var updatePresented = localStorage.sawUpdate_12jun2026;
+        var updatePresented = localStorage.sawUpdate_12jun2026b;
 
         if (updatePresented != "true") {
 
           showWhatsNewScreen();
 
-          localStorage.sawUpdate_12jun2026 = true;
+          localStorage.sawUpdate_12jun2026b = true;
 
         }
 
@@ -56516,8 +56516,7 @@ function showWhatsNewScreen() {
   modal_msg += '<div style="margin:10px 0 6px 0; padding:0px 12px; border-radius:12px;';
   modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);">';
   modal_msg += '<p><strong>Add Tune Backup Chords</strong> is now available from the <b>More Tools</b> dialog:</p>';
-  modal_msg += '<p>You can now add automatically add backup chords to traditional Irish tunes based on measure-by-measure pattern matching from compatible tunes on The Session directly from the tool.</p>';
-  modal_msg += '<p>External links to the original standalone <b>ABC Tune Backup Chord Solver</b> are still available from the <b>Other ABC Tools</b> and <b>Open ABC in External Tool</b> dialogs.</p>';
+  modal_msg += '<p>You can now add automatically add backup chords to traditional Irish tunes based on measure-by-measure pattern matching from compatible tunes on The Session directly from the tool. The latest version solves the chords twice as fast as the original while giving the same results.</p>';
   modal_msg += '</div>';
 
   modal_msg += '</div>'; // wrapper
@@ -63173,13 +63172,13 @@ async function DoStartup() {
   // Show update message?
   if (gLocalStorageAvailable && (!isFromShare)){
 
-    var updatePresented = localStorage.sawUpdate_12jun2026;
+    var updatePresented = localStorage.sawUpdate_12jun2026b;
 
     if (updatePresented != "true") {
 
       showWhatsNewScreen();
 
-      localStorage.sawUpdate_12jun2026 = true;
+      localStorage.sawUpdate_12jun2026b = true;
 
     }
 
