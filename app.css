@@ -706,7 +706,7 @@ opacity: 0.4;
 padding:12px;
 }
 
-#ceoltasdialog,#injectheaderstring,#injectallmidiparams,#injectharmonicatab,#injectboxtab,#injectfiddlefingerings,#injectmd,#injectmelody,#injectstaffwidth,#injectmetronome,#injectshapenotes,#injectsectionheader,#injecttunenumbers,#addtunetitlenumbers,#compliancedialog,#injectbcbox,#normalizediacriticals,#customcssgenerator,#injectcustomstringedtab,#phrasebuilder,#splitlongtextandtags,#normalizevoicekeysignatures,#reformatusingmusicxml{
+#ceoltasdialog,#injectheaderstring,#injectallmidiparams,#injectharmonicatab,#injectboxtab,#injectfiddlefingerings,#injectmd,#injectmelody,#injectstaffwidth,#injectmetronome,#injectshapenotes,#injectsectionheader,#injecttunenumbers,#addtunetitlenumbers,#compliancedialog,#injectbcbox,#normalizediacriticals,#customcssgenerator,#injectcustomstringedtab,#injecttablatureonly,#phrasebuilder,#splitlongtextandtags,#normalizevoicekeysignatures,#reformatusingmusicxml{
 height:42px;
 padding:12px;
 margin-right:24px;

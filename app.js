@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3256_061326_1200";
+var gVersionNumber = "3257_061326_1900";
 
 var gMIDIInitStillWaiting = false;
 
@@ -28504,13 +28504,13 @@ async function processShareLink() {
       // Show update message?
       if (gLocalStorageAvailable){
 
-        var updatePresented = localStorage.sawUpdate_13jun2026;
+        var updatePresented = localStorage.sawUpdate_13jun2026b;
 
         if (updatePresented != "true") {
 
           showWhatsNewScreen();
 
-          localStorage.sawUpdate_13jun2026 = true;
+          localStorage.sawUpdate_13jun2026b = true;
 
         }
 
@@ -50920,6 +50920,75 @@ function Do_Browser_PDF_Export() {
 }
 
 //
+// Inject tablature-only directives into the ABC file header
+//
+function InjectTablatureOnly() {
+
+  // If currently rendering PDF, exit immediately
+  if (gRenderingPDF) {
+    return;
+  }
+
+  var theABC = getABCEditorText();
+
+  // Inject immediately before the first X: field so the directives apply to
+  // every tune in the file. Leave a blank line before the first tune.
+  var firstTuneMatch = /^X:.*$/m.exec(theABC);
+  if (!firstTuneMatch) {
+    return;
+  }
+
+  var firstTuneIndex = firstTuneMatch.index;
+  var fileHeader = theABC.substring(0, firstTuneIndex);
+  var additions = [];
+
+  // Avoid adding duplicate global directives if the button is clicked again.
+  // Each addition is a self-contained block with no trailing blank line.
+  // The blocks are joined below with exactly one blank line between them.
+  if (!/^[ \t]*%tablature_only[ \t]*$/m.test(fileHeader)) {
+    additions.push(
+      "% Show standalone stringed instrument tablature without the notation\n" +
+      "%tablature_only"
+    );
+  }
+
+  if (!/^[ \t]*%%staffsep(?:[ \t]+.*)?$/mi.test(fileHeader)) {
+    additions.push(
+      "% Increase the staff separation for the tablature\n" +
+      "%%staffsep 80"
+    );
+  }
+
+  if (additions.length) {
+    var beforeFirstTune = theABC.substring(0, firstTuneIndex);
+    var fromFirstTune = theABC.substring(firstTuneIndex);
+
+    // Normalize the join. When an existing ABC file header is present,
+    // leave a blank line before the injected directives as well as a blank
+    // line after them before the first X: field.
+    beforeFirstTune = beforeFirstTune.replace(/[ \t\r\n]*$/, "");
+
+    // Leave exactly one blank line between the two explanatory/directive
+    // blocks when both are added, and exactly one blank line after the final
+    // block before the first X: field.
+    var injected = additions.join("\n\n") + "\n\n";
+    var newABC = beforeFirstTune
+      ? beforeFirstTune + "\n\n" + injected + fromFirstTune
+      : injected + fromFirstTune;
+
+    setABCEditorText(newABC);
+    gIsDirty = true;
+    gForceFullRender = true;
+  }
+
+  // Force a full redraw even if the directives were already present.
+  RenderAsync(true, null, function() {
+    ensureMoreToolsVisible();
+    FocusAfterOperation();
+  });
+}
+
+//
 // More ABC Tools Dialog
 //
 
@@ -51054,8 +51123,13 @@ function AdvancedControlsDialog() {
   modal_msg += '<div class="adv-tab-panels">';
 
   /* ---------------- Injection tab ---------------- */
-  // Hide Export All Tunes on mobile BEFORE render to prevent a layout jump
+  // Hide Export All Tunes on mobile BEFORE render to prevent a layout jump.
+  // The tablature-only injection button remains visible and therefore centers
+  // automatically in its text-aligned container on mobile.
   var exportAllTunesStyle = isMobileBrowser() ? ' style="display:none;"' : '';
+  var injectTablatureOnlyStyle = isMobileBrowser()
+    ? ' style="margin-right:0px;"'
+    : ' style="margin-right:24px;"';
 
   modal_msg += '<div id="adv-tab-injection" class="adv-tab-panel' + (isInjectionActive ? ' active' : '') + '">';
   modal_msg += '<p style="text-align:center;">';
@@ -51082,6 +51156,7 @@ function AdvancedControlsDialog() {
   modal_msg += '</p>';
 
   modal_msg += '<p style="text-align:center;margin-top:24px;">';
+  modal_msg += '<input id="injecttablatureonly" class="advancedcontrols btn btn-injectcontrols-headers" onclick="InjectTablatureOnly()" type="button" value="Inject %tablature_only"' + injectTablatureOnlyStyle + ' title="Injects %tablature_only and %%staffsep 80 before the first X: field to show standalone stringed instrument tablature without standard notation">';
   modal_msg += '<input id="configure_batch_mp3_export" class="advancedcontrols btn btn-batchmp3export" onclick="ExportAll()" type="button" value="Export All Tunes"' + exportAllTunesStyle + '>';
 
   modal_msg += '</p></div>';
@@ -56503,6 +56578,15 @@ function showWhatsNewScreen() {
   modal_msg += '<div style="font-size:11pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 13 June 2026</div>';
   modal_msg += '</div>';
 
+    // Feature card
+  modal_msg += '<div style="margin:10px 0 6px 0; padding:0px 12px; border-radius:12px;';
+  modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);">';
+  modal_msg += '<p><strong>Added a new Inject %tablature_only button on the ABC Features tab of the More ABC Tools dialog</strong></p>';
+  modal_msg += '<p>When clicked, it injects the following two annotations above the first X: tag in the ABC to make it easy to enable the standalone stringed instrument tablature display feature:</p>';
+  modal_msg += '<p><strong>%tablature_only</strong><br/>'; 
+  modal_msg += '<strong>%%staffsep 80</strong></p>'; 
+  modal_msg += '</div>';
+
   // Feature card
   modal_msg += '<div style="margin:10px 0 6px 0; padding:0px 12px; border-radius:12px;';
   modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);">';
@@ -56510,9 +56594,9 @@ function showWhatsNewScreen() {
   modal_msg += '<p>You can now show standalone stringed instrument tablature without standard notation above by adding the following ABC annotation to either a single tune or to the ABC file header to have it apply to all the tunes in an ABC tunebook:</p>';
   modal_msg += '<p><strong>%tablature_only</strong></p>'; 
   modal_msg += '<p>This is only available for the stringed instrument tablatures, not tin whistle or recorder fingering tablatures.</p>'; 
-  modal_msg += '<p>When using this, you may want to add the following to the tunes or the ABC file headerto increase the staff separation:';
+  modal_msg += '<p>When using this, you may want to add the following to the tunes or the ABC file headerto increase the staff separation:</p>';
   modal_msg += '<p><strong>%%staffsep 80</strong></p>';  
-  modal_msg += '<p>This works for tune display, playback, as well as image, PDF and website export.';
+  modal_msg += '<p>This works for tune display, playback, as well as image, PDF and website export.</p>';
   modal_msg += '</div>';
 
   modal_msg += '</div>'; // wrapper
@@ -63168,13 +63252,13 @@ async function DoStartup() {
   // Show update message?
   if (gLocalStorageAvailable && (!isFromShare)){
 
-    var updatePresented = localStorage.sawUpdate_13jun2026;
+    var updatePresented = localStorage.sawUpdate_13jun2026b;
 
     if (updatePresented != "true") {
 
       showWhatsNewScreen();
 
-      localStorage.sawUpdate_13jun2026 = true;
+      localStorage.sawUpdate_13jun2026b = true;
 
     }
 

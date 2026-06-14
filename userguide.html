@@ -798,6 +798,11 @@
             </details>
 
             <details>
+            <summary><h3>Inject %tablature_only</h3></summary>
+            <a style="text-decoration:none;" href="#inject_tablature_only">Inject %tablature_only</a>
+            </details>
+
+            <details>
             <summary><h3>Export All Tunes in Multiple Formats</h3></summary>
             <a style="text-decoration:none;" href="#export_all">Export All Tunes</a>
             <a style="text-decoration:none;" href="#export_all_as_mp3">Export All Tunes as MP3</a>
@@ -1338,7 +1343,12 @@
                     <div class="tocpanel">
                         <p class="toc"><a style="text-decoration:none;" href="#add_tune_backup_chords">Add Tune Backup Chords</a></p>
                     </div>
- 
+
+                    <button class="accordion" title="Click to expand/collapse this section">Inject %tablature_only</button>
+                    <div class="tocpanel">
+                        <p class="toc"><a style="text-decoration:none;" href="#inject_tablature_only">Inject %tablature_only</a></p>
+                    </div>
+
                     <button class="accordion" title="Click to expand/collapse this section">Export All Tunes in Multiple Formats</button>
                     <div class="tocpanel">
                         <p class="toc"><a style="text-decoration:none;" href="#export_all">Export All Tunes</a></p>
@@ -5432,7 +5442,7 @@
                 </a>
                 <p>Clicking the <strong>More Tools</strong> button brings up the More ABC Tools dialog:</p>
                 <div class="image_holder_p">
-                    <img class="image" loading="lazy" src="img/more_abc_tools_33.jpg"/>
+                    <img class="image" loading="lazy" src="img/more_abc_tools_34.jpg"/>
                 </div>
                 <p>At the bottom of the dialog there are four tabs of additional buttons that provide additional features organized by functional category.</p>
                 <p>Clicking a tab button will show the buttons for that functional category.</p>
@@ -5749,6 +5759,15 @@
                 <p>Tunes in unusual keys, modes, meters, or musical styles may have fewer compatible database measures and may therefore receive limited or unexpected results.</p>
                 <p>The source settings from The Session are crowdsourced. The matcher can determine that a source measure is similar, but it cannot determine whether every chord entered by a contributor is musically ideal.</p>
                 <p>Review and edit the generated chords as needed.</p>
+                <hr class="hidden-print" id="inject_tablature_only">
+                <h1 class="page_break_always">Inject %tablature_only</h1>
+                <a href="#table_of_contents" class="index-pill hidden-print">
+                  Table of Contents
+                </a>
+                <p>Clicking <strong>Inject %tablature_only</strong> adds the following two ABC annotations above the first X: tag to simplify using the show stringed instrument tablature without standard notation feature:</p>
+                <p class="code">% Show standalone stringed instrument tablature without the notation<br/>%tablature_only<br/><br/>% Increase the staff separation for the tablature<br/>%%staffsep 80</p>
+                <p>The standalone stringed instrument tab is described in this section below:</p>
+                <p><a href="#tablature_only">Displaying Standalone Stringed Instrument Tablature Without Standard Notation</a></p>
                 <hr class="hidden-print" id="export_all">
                 <h1 class="page_break_always">Export All Tunes</h1>
                 <a href="#table_of_contents" class="index-pill hidden-print">

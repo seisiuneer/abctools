@@ -1,6 +1,6 @@
 /**
  * 
- * abcjs-basic-eskin.js - Modified version of abcjs for use with the ABC Transcription Tools
+ * abcjs-basic-eskin.js - Custom version of abcjs for use with the ABC Transcription Tools
  *
  * Project repo at: https://github.com/seisiuneer/abctools
  * 
@@ -8967,7 +8967,75 @@ var setIsInTie = function setIsInTie(multilineVars, overlayLevel, value) {
 var letter_to_chord = function letter_to_chord(line, i) {
   if (line[i] === '"') {
     var chord = tokenizer.getBrackettedSubstring(line, i, 5);
-    if (!chord[2]) warn("Missing the closing quote while parsing the chord symbol", line, i);
+
+    // In tablature-only mode, a newly typed opening quote can temporarily
+    // consume the opening quote of a later, already-valid chord or annotation
+    // as though it were its own closing quote. For example:
+    //
+    //   "G""AB "D"dBAG
+    //
+    // While the user is typing, getBrackettedSubstring() sees "AB " as a
+    // complete quoted chord because it stops at the quote before D. That
+    // leaves the remainder malformed and can create invalid tablature layout
+    // geometry. A trailing blank immediately before the apparent closing
+    // quote, followed by another ABC token, is a strong indication that this
+    // is the transient editor state rather than an intentional chord symbol.
+    //
+    // Ignore only the newly typed opening quote. The following letters remain
+    // available to the normal music parser and the later complete "D" chord
+    // or positioned annotation is parsed normally.
+    if (gTablatureOnly &&
+        chord[2] &&
+        chord[1] &&
+        /[ \t]$/.test(chord[1])) {
+      var characterAfterApparentClose = line.charAt(i + chord[0]);
+
+      if (characterAfterApparentClose &&
+          /[A-Ga-g_^<>@]/.test(characterAfterApparentClose)) {
+        return [0, ""];
+      }
+    }
+
+    if (!chord[2]) {
+      warn("Missing the closing quote while parsing the chord symbol", line, i);
+
+      // In tablature-only mode, recover an unfinished positioned annotation
+      // such as "^Hello" or "_World" by treating the remainder of the line as
+      // its temporary text. This keeps partially typed annotations visible
+      // without creating invalid geometry.
+      //
+      // Do not perform that recovery for an unfinished ordinary chord quote.
+      // For example, while editing:
+      //
+      //   "Am" "ec BA Bc
+      //
+      // the second quote is only a transient, incomplete chord symbol. If the
+      // remainder of the line is converted into one large chord, it can merge
+      // with the existing "Am" chord and destabilize tablature-only layout.
+      // Ignore just the unmatched quote instead, allowing the following music
+      // and any already-complete chords or annotations to render normally.
+      if (gTablatureOnly) {
+        var recoveredChordText = line.substring(i + 1);
+        var recoveredPrefix = recoveredChordText.length
+          ? recoveredChordText.charAt(0)
+          : "";
+
+        var isPositionedAnnotation =
+          recoveredPrefix === "^" ||
+          recoveredPrefix === "_" ||
+          recoveredPrefix === "<" ||
+          recoveredPrefix === ">" ||
+          recoveredPrefix === "@";
+
+        if (isPositionedAnnotation) {
+          recoveredChordText = recoveredChordText.replace(/\\n/g, "\n");
+          recoveredChordText = recoveredChordText.replace(/\\"/g, '"');
+          chord = [line.length - i, recoveredChordText, false];
+        } else {
+          return [0, ""];
+        }
+      }
+    }
     // If it starts with ^, then the chord appears above.
     // If it starts with _ then the chord appears below.
     // (note that the 2.0 draft standard defines them as not chords, but annotations and also defines @.)
@@ -23514,24 +23582,151 @@ function buildTabRestAbsolute(plugin, absSrc, sourceStaff) {
   return returned;
 }
 
+// MAE 13 Jun 2026 - Copy visible ABC annotations attached to a note or
+// rest into the generated tablature element. ABC annotations are represented
+// as text relatives with an explicit position such as "above" or "below".
+// Their final tablature-only pitch is assigned during compaction, after the
+// tablature staff geometry and chord lane are known.
+function copyAnnotationRelativesToTab(absSrc, absDest, sourceStaff) {
+  if (!absSrc || !absSrc.children || !absDest) return 0;
+
+  var copied = 0;
+  var aboveStack = 0;
+  var belowStack = 0;
+  var otherStack = 0;
+
+  for (var ii = 0; ii < absSrc.children.length; ii++) {
+    var child = absSrc.children[ii];
+    if (!child || child.type !== "text") continue;
+
+    var position = child.position;
+    if (position !== "above" && position !== "below" &&
+        position !== "left" && position !== "right" &&
+        position !== "relative") {
+      continue;
+    }
+
+    // Build a fresh RelativeElement instead of cloning all of the source
+    // notation geometry. Consecutive quoted annotations can leave source
+    // relatives with undefined pitch/top/bottom values until the normal
+    // vertical-layout pass. Copying those unresolved values into the compacted
+    // tablature staff can produce NaN SVG coordinates.
+    var safeDx = typeof child.dx === "number" && isFinite(child.dx)
+      ? child.dx
+      : 0;
+    var safeWidth = typeof child.w === "number" && isFinite(child.w)
+      ? child.w
+      : 0;
+    var safeHeight = typeof child.height === "number" && isFinite(child.height)
+      ? child.height
+      : 2;
+    var safeRealWidth = typeof child.realWidth === "number" && isFinite(child.realWidth)
+      ? child.realWidth
+      : safeWidth;
+
+    var relative = new RelativeElement(
+      child.c == null ? "" : child.c,
+      safeDx,
+      safeWidth,
+      0,
+      {
+        type: "text",
+        position: position,
+        height: safeHeight,
+        dim: child.dim,
+        realWidth: safeRealWidth,
+        anchor: child.anchor
+      }
+    );
+
+    // These relatives are appended after horizontal layout has already
+    // assigned x coordinates to the generated tablature absolute. Therefore
+    // set the final x explicitly instead of leaving the constructor default
+    // of zero, which would draw every copied annotation at the far left.
+    relative.x =
+      typeof child.x === "number" && isFinite(child.x)
+        ? child.x
+        : (
+            typeof absDest.x === "number" && isFinite(absDest.x)
+              ? absDest.x + safeDx
+              : safeDx
+          );
+
+    relative.isTabOnlyAnnotation = true;
+    relative.tabAnnotationPosition = position;
+
+    if (position === "above") {
+      relative.tabAnnotationStackIndex = aboveStack++;
+    } else if (position === "below") {
+      relative.tabAnnotationStackIndex = belowStack++;
+    } else {
+      relative.tabAnnotationStackIndex = otherStack++;
+    }
+
+    absDest.children.push(relative);
+    copied++;
+  }
+
+  return copied;
+}
+
 function copyChordRelativesToTab(absSrc, absDest, sourceStaff) {
   if (!absSrc || !absSrc.children || !absDest) return 0;
 
   var copied = 0;
-  var sourceTop = sourceStaff && typeof sourceStaff.top === "number" ? sourceStaff.top : 0;
+  var chordStack = 0;
 
   for (var ii = 0; ii < absSrc.children.length; ii++) {
     var child = absSrc.children[ii];
     if (!child || child.type !== "chord") continue;
 
-    var relative = new RelativeElement('', 0, 0, 0, '');
-    cloneObject(relative, child);
+    // Build a clean chord relative with explicit finite geometry. Adjacent
+    // quoted chord symbols such as "D""D" create multiple chord relatives at
+    // the same musical position. Their source pitch can still be undefined
+    // when copied, which later creates NaN coordinates in tablature-only mode.
+    var safeDx = typeof child.dx === "number" && isFinite(child.dx)
+      ? child.dx
+      : 0;
+    var safeWidth = typeof child.w === "number" && isFinite(child.w)
+      ? child.w
+      : 0;
+    var safeHeight = typeof child.height === "number" && isFinite(child.height)
+      ? child.height
+      : 2;
+    var safeRealWidth = typeof child.realWidth === "number" && isFinite(child.realWidth)
+      ? child.realWidth
+      : safeWidth;
 
-    // Preserve the chord's already-computed lane/distance above the source
-    // staff. compactToTablatureOnly() applies that distance to the new tab top.
-    relative.tabChordOffsetAbove =
-      typeof child.pitch === "number" ? child.pitch - sourceTop : 2;
+    var relative = new RelativeElement(
+      child.c == null ? "" : child.c,
+      safeDx,
+      safeWidth,
+      0,
+      {
+        type: "chord",
+        position: child.position || "above",
+        height: safeHeight,
+        dim: child.dim,
+        realWidth: safeRealWidth,
+        anchor: child.anchor
+      }
+    );
+
+    // The chord relative is added after the tablature absolute has already
+    // been horizontally laid out. Preserve the source label's final x (or
+    // derive it from the destination absolute) so it remains attached to the
+    // correct note instead of falling back to x=0 at the left edge.
+    relative.x =
+      typeof child.x === "number" && isFinite(child.x)
+        ? child.x
+        : (
+            typeof absDest.x === "number" && isFinite(absDest.x)
+              ? absDest.x + safeDx
+              : safeDx
+          );
+
     relative.isTabOnlyChord = true;
+    relative.tabChordStackIndex = chordStack++;
 
     absDest.children.push(relative);
     copied++;
@@ -24166,6 +24361,7 @@ TabAbsoluteElements.prototype.build = function (plugin, staffAbsolute, tabVoice,
 
           if (tabRestAbs) {
             copyChordRelativesToTab(absChild, tabRestAbs, source.staff);
+            copyAnnotationRelativesToTab(absChild, tabRestAbs, source.staff);
             dest.children.push(tabRestAbs);
             tabVoice.push({
               el_type: "note",
@@ -24181,7 +24377,9 @@ TabAbsoluteElements.prototype.build = function (plugin, staffAbsolute, tabVoice,
             restChordAbs.children = [];
             restChordAbs.extra = [];
             restChordAbs.heads = [];
-            if (copyChordRelativesToTab(absChild, restChordAbs, source.staff) > 0) {
+            var copiedRestChords = copyChordRelativesToTab(absChild, restChordAbs, source.staff);
+            var copiedRestAnnotations = copyAnnotationRelativesToTab(absChild, restChordAbs, source.staff);
+            if (copiedRestChords > 0 || copiedRestAnnotations > 0) {
               dest.children.push(restChordAbs);
             }
           }
@@ -24212,6 +24410,7 @@ TabAbsoluteElements.prototype.build = function (plugin, staffAbsolute, tabVoice,
         // generated tab number while leaving all other notation suppressed.
         if (gTablatureOnly) {
           copyChordRelativesToTab(absChild, abs, source.staff);
+          copyAnnotationRelativesToTab(absChild, abs, source.staff);
         }
         var pitches = absChild.abcelem.pitches;
         var graceNotes = absChild.abcelem.gracenotes;
@@ -31949,31 +32148,110 @@ function compactToTablatureOnly(abcTune) {
             var chordRel = chordAbs.children[cri];
             if (!chordRel || !chordRel.isTabOnlyChord) continue;
 
-            var chordOffset = typeof chordRel.tabChordOffsetAbove === "number"
-              ? Math.max(2, chordRel.tabChordOffsetAbove)
-              : 2;
+            var chordHeight =
+              typeof chordRel.height === "number" && isFinite(chordRel.height)
+                ? chordRel.height
+                : 2;
+            var chordStackIndex =
+              typeof chordRel.tabChordStackIndex === "number"
+                ? chordRel.tabChordStackIndex
+                : 0;
 
-            // MAE 13 Jun 2026 - Keep copied ABC chord symbols clearly above
-            // the highest tablature string. Raise only the chord lane rather
-            // than the base tab staff, so chord copying and compaction remain
-            // intact. Pitch units increase upward in the renderer.
-            var tabChordClearance = 4;
-            chordRel.pitch = tabStaff.top + chordOffset + tabChordClearance;
+            // Keep the first chord in the normal chord lane and stack any
+            // immediately adjacent chord symbols upward in separate lanes.
+            var tabChordClearance = 6;
+            chordRel.pitch =
+              tabStaff.top +
+              tabChordClearance +
+              chordStackIndex * (chordHeight + 1);
+            chordRel.top = chordRel.pitch + chordHeight;
+            chordRel.bottom = chordRel.pitch;
 
-            var chordHeight = typeof chordRel.height === "number"
-              ? chordRel.height
-              : 2;
-            chordTop = Math.max(chordTop, chordRel.pitch + chordHeight);
+            chordTop = Math.max(chordTop, chordRel.top);
           }
         }
       }
+
+      // Position copied annotations around the compacted tablature staff.
+      // Above annotations occupy their own lane above the strings; below
+      // annotations are placed beneath the rhythm stems/tuplets. Expand the
+      // staff extents so neither lane is clipped.
+      var annotationTop = chordTop;
+      var annotationBottom = tabStaff.bottom;
+      for (var avi = 0; avi < tabVoices.length; avi++) {
+        var annotationVoice = tabVoices[avi];
+        if (annotationVoice.staff !== tabStaff || !annotationVoice.children) continue;
+
+        for (var aai = 0; aai < annotationVoice.children.length; aai++) {
+          var annotationAbs = annotationVoice.children[aai];
+          if (!annotationAbs || !annotationAbs.children) continue;
+
+          for (var ari = 0; ari < annotationAbs.children.length; ari++) {
+            var annotationRel = annotationAbs.children[ari];
+            if (!annotationRel || !annotationRel.isTabOnlyAnnotation) continue;
+
+            var annotationHeight = typeof annotationRel.height === "number"
+              ? annotationRel.height
+              : 2;
+
+            var annotationStackIndex =
+              typeof annotationRel.tabAnnotationStackIndex === "number"
+                ? annotationRel.tabAnnotationStackIndex
+                : 0;
+
+            if (annotationRel.tabAnnotationPosition === "below") {
+              // Place the first below-annotation closer to the rhythm lane.
+              // The previous -5 offset put it visibly too low; -2 preserves a
+              // clear gap below the stems while restoring the earlier compact
+              // tablature-only placement. Adjacent annotations still stack
+              // downward from this baseline.
+              annotationRel.pitch =
+                tabStaff.bottom -
+                2 -
+                annotationStackIndex * (annotationHeight + 1);
+              annotationRel.top = annotationRel.pitch + annotationHeight;
+              annotationRel.bottom = annotationRel.pitch;
+              annotationBottom = Math.min(annotationBottom, annotationRel.pitch - 1);
+            } else if (annotationRel.tabAnnotationPosition === "above") {
+              // Use exactly the same baseline as the first chord lane so an
+              // above annotation and a chord symbol at comparable positions
+              // are vertically aligned.
+              var tabAnnotationChordBaseline = tabStaff.top + 6;
+              annotationRel.pitch =
+                tabAnnotationChordBaseline +
+                annotationStackIndex * (annotationHeight + 1);
+              annotationRel.top = annotationRel.pitch + annotationHeight;
+              annotationRel.bottom = annotationRel.pitch;
+              annotationTop = Math.max(annotationTop, annotationRel.top + 1);
+            } else {
+              // Left/right/absolute annotations keep their horizontal
+              // placement and are vertically centered on the tab staff.
+              annotationRel.pitch = (lineCount - 1) * linePitch / 2;
+              annotationRel.top = annotationRel.pitch + annotationHeight;
+              annotationRel.bottom = annotationRel.pitch;
+            }
+          }
+        }
+      }
+      tabStaff.bottom = Math.min(tabStaff.bottom, annotationBottom);
 
       // First/second ending elements are created after the normal abcjs
       // vertical-resolution pass, so their pitch is not assigned by
       // setUpperAndLowerElements(). Assign a final pitch here, after the
       // copied chord lane has been positioned, and reserve matching space in
       // the compacted tablature staff.
-      var endingTop = chordTop;
+      // Even when a system has no chord symbols or above annotations, keep
+      // first/second ending brackets at the same height they would have above
+      // the normal chord lane. Without this minimum, chordless systems used
+      // tabStaff.top as the ending base and produced a noticeably shorter
+      // bracket. The normal first chord lane has a baseline at top + 6 and a
+      // typical height of 2 pitch units, so reserve top + 8 as its minimum top.
+      var minimumEndingContentTop = tabStaff.top + 8;
+      var endingTop = Math.max(
+        chordTop,
+        annotationTop,
+        minimumEndingContentTop
+      );
       for (var evi = 0; evi < tabVoices.length; evi++) {
         var endingVoice = tabVoices[evi];
         if (endingVoice.staff !== tabStaff || !endingVoice.otherchildren) continue;
@@ -31986,9 +32264,14 @@ function compactToTablatureOnly(abcTune) {
             continue;
           }
 
-          // Put the ending bracket above the chord lane, matching abcjs's
-          // normal ordering where endings sit above chords.
-          tabEnding.pitch = chordTop + 3;
+          // Put the ending bracket above the highest real chord/annotation
+          // lane, but never below the reserved normal chord-lane height. This
+          // keeps endings equally tall on systems that contain no chords.
+          tabEnding.pitch = Math.max(
+            chordTop,
+            annotationTop,
+            minimumEndingContentTop
+          ) + 3;
           endingTop = Math.max(
             endingTop,
             tabEnding.pitch + (tabEnding.endingHeightAbove || 5)
@@ -32077,6 +32360,7 @@ function compactToTablatureOnly(abcTune) {
       var labelTop = lineCount * linePitch + 2 + labelHeightUnits + 1;
       tabStaff.top = Math.max(
         chordTop + 1,
+        annotationTop + 1,
         endingTop + 1,
         tempoTop + 1,
         labelTop
