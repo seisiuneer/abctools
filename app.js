@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3259_061426_0800";
+var gVersionNumber = "3260_061526_0800";
 
 var gMIDIInitStillWaiting = false;
 
@@ -28504,13 +28504,13 @@ async function processShareLink() {
       // Show update message?
       if (gLocalStorageAvailable){
 
-        var updatePresented = localStorage.sawUpdate_13jun2026b;
+        var updatePresented = localStorage.sawUpdate_15jun2026;
 
         if (updatePresented != "true") {
 
           showWhatsNewScreen();
 
-          localStorage.sawUpdate_13jun2026b = true;
+          localStorage.sawUpdate_15jun2026 = true;
 
         }
 
@@ -56585,10 +56585,16 @@ function showWhatsNewScreen() {
   modal_msg += 'background: linear-gradient(135deg, #0b2f24 0%, #116149 52%, #1f9d73 100%);';
   modal_msg += 'box-shadow: 0 6px 16px rgba(0,0,0,0.14); color:#fff;">';
   modal_msg += '<div style="font-size:20pt; line-height:24pt; font-weight:bold;">What&apos;s New</div>';
-  modal_msg += '<div style="font-size:11pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 14 June 2026</div>';
+  modal_msg += '<div style="font-size:11pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 15 June 2026</div>';
   modal_msg += '</div>';
 
     // Feature card
+  modal_msg += '<div style="margin:10px 0 6px 0; padding:0px 12px; border-radius:12px;';
+  modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);">';
+  modal_msg += '<p><strong>Fixed major playback bug with 1st/2nd endings that started when the tablature-only mode was added.</strong></p>';
+  modal_msg += '</div>';
+
+  // Feature card
   modal_msg += '<div style="margin:10px 0 6px 0; padding:0px 12px; border-radius:12px;';
   modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);">';
   modal_msg += '<p><strong>Added a new Inject %tablature_only button on the ABC Features tab of the More ABC Tools dialog</strong></p>';
@@ -56604,8 +56610,6 @@ function showWhatsNewScreen() {
   modal_msg += '<p>You can now show standalone stringed instrument tablature without standard notation above by adding the following ABC annotation to either a single tune or to the ABC file header to have it apply to all the tunes in an ABC tunebook:</p>';
   modal_msg += '<p><strong>%tablature_only</strong></p>'; 
   modal_msg += '<p>This is only available for the stringed instrument tablatures, not tin whistle or recorder fingering tablatures.</p>'; 
-  modal_msg += '<p>When using this, you may want to add the following to the tunes or the ABC file headerto increase the staff separation:</p>';
-  modal_msg += '<p><strong>%%staffsep 80</strong></p>';  
   modal_msg += '<p>This works for tune display, playback, as well as image, PDF and website export.</p>';
   modal_msg += '</div>';
 
@@ -63262,13 +63266,13 @@ async function DoStartup() {
   // Show update message?
   if (gLocalStorageAvailable && (!isFromShare)){
 
-    var updatePresented = localStorage.sawUpdate_13jun2026b;
+    var updatePresented = localStorage.sawUpdate_15jun2026;
 
     if (updatePresented != "true") {
 
       showWhatsNewScreen();
 
-      localStorage.sawUpdate_13jun2026b = true;
+      localStorage.sawUpdate_15jun2026 = true;
 
     }
 

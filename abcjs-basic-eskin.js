@@ -7,7 +7,7 @@
  *
  * MIT License
  * 
- * Copyright (c) 2026 Michael Eskin
+ * Copyright (c) 2026 Michael Eskin 
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -3042,13 +3042,20 @@ var Tune = function Tune() {
               lastVoiceTimeMilliseconds = voiceTimeMilliseconds;
               voiceTimeMilliseconds = Math.round(voiceTime * 1000);
             }
-            if (eventHash["event" + lastVoiceTimeMilliseconds])
-              // This won't exist if it is the beginning of the next line. That's ok because we will just count the end of the last line as the end.
+            var endingEvent = eventHash["event" + lastVoiceTimeMilliseconds];
+
+            if (endingEvent &&
+                elements[endingRepeatElem] &&
+                elements[endingRepeatElem].elem) {
+              // This won't exist if it is the beginning of the next line.
+              // That's okay because the end of the previous line is used instead.
               var endingRepeatSource = elements[endingRepeatElem].elem;
               var endingRepeatDisplay = gTablatureOnly && endingRepeatSource.cloned
                 ? endingRepeatSource.cloned
                 : endingRepeatSource;
-              eventHash["event" + lastVoiceTimeMilliseconds].endX = endingRepeatDisplay.x;
+
+              endingEvent.endX = endingRepeatDisplay.x;
+            }
             nextIsBar = true;
             endingRepeatElem = -1;
           }
