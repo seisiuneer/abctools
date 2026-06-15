@@ -58534,9 +58534,9 @@ function JumpToToggleSelection(item, index) {
 // On desktop, double-clicking a tune selects it and performs the same action as the Jump button.
 function JumpToDoubleClick(item, index) {
 
-  // if (!isPureDesktopBrowser()) {
-  //   return;
-  // }
+  if (!isPureDesktopBrowser()) {
+    return;
+  }
 
   JumpToToggleSelection(item, index);
   JumpToSelectedTune();
