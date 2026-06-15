@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3261_061526_0900";
+var gVersionNumber = "3262_061526_1530";
 
 var gMIDIInitStillWaiting = false;
 
@@ -58502,7 +58502,7 @@ function JumpToSearch() {
 
     if (searchAll || (gJumpTitles[i].toLowerCase().indexOf(searchVal) != -1)) {
 
-      theJumpDivContents += '<div class="jumpto_tune" onclick="JumpToToggleSelection(this,' + i + ')">' + gJumpTitles[i] + '</div>';
+      theJumpDivContents += '<div class="jumpto_tune" onclick="JumpToToggleSelection(this,' + i + ')" ondblclick="JumpToDoubleClick(this,' + i + ')">' + gJumpTitles[i] + '</div>';
     }
   }
 
@@ -58529,6 +58529,79 @@ function JumpToToggleSelection(item, index) {
 
   item.classList.add('jumpto_selected');
 
+}
+
+// On desktop, double-clicking a tune selects it and performs the same action as the Jump button.
+function JumpToDoubleClick(item, index) {
+
+  // if (!isPureDesktopBrowser()) {
+  //   return;
+  // }
+
+  JumpToToggleSelection(item, index);
+  JumpToSelectedTune();
+
+  // Close the dialog as canceled because the jump has already been performed.
+  DayPilot.Modal.close(null);
+}
+
+function JumpToSelectedTune() {
+
+  if (gJumpTune == -1) {
+    return;
+  }
+
+  gCurrentTune = gJumpTune;
+
+  var tuneOffset = findTuneOffsetByIndex(gCurrentTune);
+
+  // Some browsers like Chrome require focus before setting the selection range
+  if (gEnableSyntax){
+    gTheCM.focus();
+
+    gTheCM.selectionStart = tuneOffset;
+    gTheCM.selectionEnd = tuneOffset;
+  }
+  else{
+    gTheABC.focus();
+
+    gTheABC.selectionStart = tuneOffset;
+    gTheABC.selectionEnd = tuneOffset;
+  }
+
+  if (isDesktopBrowser()) {
+    MakeTuneVisible(true);
+  } else {
+    window.setTimeout(function() {
+      MakeTuneVisible(true);
+    }, 250);
+  }
+
+  if (gEnableSyntax){
+    ScrollABCTextIntoView(gTheCM, tuneOffset, tuneOffset, 10);
+  }
+  else{
+    ScrollABCTextIntoView(gTheABC, tuneOffset, tuneOffset, 10);
+  }
+
+  // Force reloading of tune when fullscreen
+  gPlayABCGotMaximizedPlay = false;
+
+  if (!isPureDesktopBrowser()) {
+    if (gEnableSyntax){
+      gTheCM.getInputField().blur();
+    }
+    else{
+      gTheABC.blur();
+    }
+  }
+
+  // If quick editor, force redraw
+  if (gIsQuickEditor) {
+    if (!gDisableNotationRendering) {
+      Render(false, gCurrentTune);
+    }
+  }
 }
 
 var gJumpTune = -1;
@@ -58585,7 +58658,7 @@ function JumpToTune() {
 
   for (i = 0; i < nTitles; ++i) {
 
-    theJumpDiv += '<div id="jumpto_tune_'+i+'" class="jumpto_tune" onclick="JumpToToggleSelection(this,' + i + ')">' + theTitles[i] + '</div>';
+    theJumpDiv += '<div id="jumpto_tune_'+i+'" class="jumpto_tune" onclick="JumpToToggleSelection(this,' + i + ')" ondblclick="JumpToDoubleClick(this,' + i + ')">' + theTitles[i] + '</div>';
   }
 
   theJumpDiv += '</div>';
@@ -58612,65 +58685,7 @@ function JumpToTune() {
 
     if (!args.canceled) {
 
-      if (gJumpTune != -1) {
-
-        gCurrentTune = gJumpTune;
-
-        var tuneOffset = findTuneOffsetByIndex(gCurrentTune)
-
-        // Some browsers like Chrome require focus before setting the selection range
-        if (gEnableSyntax){
-          gTheCM.focus();
-
-          gTheCM.selectionStart = tuneOffset;
-          gTheCM.selectionEnd = tuneOffset;
-        }
-        else{
-          gTheABC.focus();
-
-          gTheABC.selectionStart = tuneOffset;
-          gTheABC.selectionEnd = tuneOffset;
-
-        }
-
-        if (isDesktopBrowser()) {
-          MakeTuneVisible(true);
-        } else {
-          window.setTimeout(function() {
-            MakeTuneVisible(true);
-          }, 250);
-        }
-
-        if (gEnableSyntax){
-          ScrollABCTextIntoView(gTheCM, tuneOffset, tuneOffset, 10);
-        }
-        else{
-          ScrollABCTextIntoView(gTheABC, tuneOffset, tuneOffset, 10);
-
-        }
-
-        // Force reloading of tune when fullscreen
-        gPlayABCGotMaximizedPlay = false;
-
-        if (!isPureDesktopBrowser()) {
-          if (gEnableSyntax){
-            gTheCM.getInputField().blur();
-          }
-          else{
-            gTheABC.blur();
-          }
-        }
-
-        // If quick editor, force redraw 
-        if (gIsQuickEditor) {
-
-          if (!gDisableNotationRendering) {
-            Render(false, gCurrentTune);
-          }
-
-        }
-
-      }
+      JumpToSelectedTune();
 
     }
 
