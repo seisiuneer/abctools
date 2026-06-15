@@ -23410,6 +23410,7 @@ module.exports = FiveStringPatterns;
 var AbsoluteElement = __webpack_require__(/*! ../write/creation/elements/absolute-element */ "./src/write/creation/elements/absolute-element.js");
 var RelativeElement = __webpack_require__(/*! ../write/creation/elements/relative-element */ "./src/write/creation/elements/relative-element.js");
 var EndingElem = __webpack_require__(/*! ../write/creation/elements/ending-element */ "./src/write/creation/elements/ending-element.js");
+var glyphs = __webpack_require__(/*! ../write/creation/glyphs */ "./src/write/creation/glyphs.js");
 function isObject(a) {
   return a != null && a.constructor === Object;
 }
@@ -23796,6 +23797,63 @@ function getInitialStaffSize(staffGroup) {
   return returned;
 }
 
+// MAE 15 Jun 2026 - In tablature-only mode, copy a source ~ roll
+// decoration to the generated rhythm notation. The roll is centered beneath
+// the downward stem and follows the final common beam level for beamed notes.
+function addTabOnlyRollDecoration(absSrc, absDest, rhythmX, stemBottom) {
+  if (!gTablatureOnly ||
+      !absSrc ||
+      !absSrc.abcelem ||
+      !absSrc.abcelem.decoration ||
+      !absDest ||
+      !absDest.children ||
+      typeof rhythmX !== "number" ||
+      typeof stemBottom !== "number") {
+    return;
+  }
+
+  var decorations = absSrc.abcelem.decoration;
+  var hasRoll =
+    decorations.indexOf("roll") !== -1 ||
+    decorations.indexOf("irishroll") !== -1;
+
+  if (!hasRoll) return;
+
+  var rollSymbol = "scripts.roll";
+  var rollWidth = glyphs.getSymbolWidth(rollSymbol);
+  var rollHeight = glyphs.symbolHeightInPitches(rollSymbol);
+
+  if (!(typeof rollWidth === "number" && isFinite(rollWidth))) rollWidth = 8;
+  if (!(typeof rollHeight === "number" && isFinite(rollHeight) && rollHeight > 0)) rollHeight = 2;
+
+  // Keep a small clear gap below the lower end of the stem or primary beam.
+  var rollGap = 1.0;
+  var rollPitch = stemBottom - rollGap - rollHeight / 2;
+
+  var roll = new RelativeElement(
+    rollSymbol,
+    0,
+    rollWidth,
+    rollPitch,
+    {
+      type: "symbol",
+      klass: "ornament",
+      thickness: rollHeight
+    }
+  );
+
+  // Symbol drawing uses roll.x as the glyph's left edge. Center the actual
+  // glyph beneath the stem, then apply a small optical correction because the
+  // visible ink of scripts.roll sits left of the center of its declared width.
+  var rollOpticalCenterOffset = 2.0;
+  roll.x = rhythmX - rollWidth / 2 + rollOpticalCenterOffset;
+  roll.isTabRhythm = true;
+  roll.isTabOnlyRoll = true;
+  roll.tabOnlyRollHeight = rollHeight;
+  roll.tabOnlyRollGap = rollGap;
+  absDest.children.push(roll);
+}
+
 // MAE 13 Jun 2026 - Add rhythmic notation directly to the generated
 // tablature staff. The fret number remains on its string and acts as the
 // rhythmic notehead. Downward stems extend from the fret number through the
@@ -23877,6 +23935,9 @@ function addTabRhythmToAbsolute(plugin, absSrc, absDest, tabRelatives) {
   stem.x = rhythmX;
   stem.isTabRhythm = true;
   absDest.children.push(stem);
+
+  // Show a source ~ roll centered beneath the generated rhythm stem.
+  addTabOnlyRollDecoration(absSrc, absDest, rhythmX, stemBottom);
 
   // Determine the number of flags from the duration. ABCJS duration values
   // use 1 for a whole note, 1/2 for a half, 1/4 for a quarter, etc.
@@ -23986,6 +24047,23 @@ function addTabBeamGroups(sourceVoice, tabVoice) {
           var mappedChild = mapped.children[mci];
           if (mappedChild && mappedChild.isTabRhythm && mappedChild.type === "stem") {
             mappedChild.pitch2 = beamBasePitch;
+          }
+
+          if (mappedChild && mappedChild.isTabOnlyRoll) {
+            var mappedRollHeight =
+              typeof mappedChild.tabOnlyRollHeight === "number"
+                ? mappedChild.tabOnlyRollHeight
+                : glyphs.symbolHeightInPitches("scripts.roll");
+            var mappedRollGap =
+              typeof mappedChild.tabOnlyRollGap === "number"
+                ? mappedChild.tabOnlyRollGap
+                : 1.0;
+            var mappedRollPitch =
+              beamBasePitch - mappedRollGap - mappedRollHeight / 2;
+
+            mappedChild.pitch = mappedRollPitch;
+            mappedChild.top = mappedRollPitch + mappedRollHeight / 2;
+            mappedChild.bottom = mappedRollPitch - mappedRollHeight / 2;
           }
         }
 
