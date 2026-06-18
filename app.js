@@ -56591,7 +56591,7 @@ function showWhatsNewScreen() {
   // Feature card
   modal_msg += '<div style="margin:10px 0 6px 0; padding:0px 12px; border-radius:12px;';
   modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);">';
-  modal_msg += '<p>Added the new <strong>abcjs-eskin-portable Website Builder</strong> tool to the <strong>Other ABC Tools</strong> dialog on the hamburger menu.</p>';
+  modal_msg += '<p>Added the new <strong>abcjs-eskin-portable Website Builder</strong> tool to the <strong>Other ABC Tools</strong> dialog available from the hamburger menu.</p>';
   modal_msg += '</div>';
 
   // Feature card
