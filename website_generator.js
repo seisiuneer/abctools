@@ -4375,7 +4375,7 @@ function generateWebsite(){
 
     var modal_msg  = '<p style="text-align:center;margin-bottom:36px;font-size:18pt;font-family:helvetica;margin-left:15px;">Export Website&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#generate_website" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>';
     
-    modal_msg  += '<p style="font-size:18px;line-height:28px;">For all websites, clicking a tune will open the tune in a new browser tab.</p>';
+    modal_msg  += '<p style="font-size:18px;line-height:28px;">For all websites, clicking a tune will open the tune for playback in a new browser tab.</p>';
     modal_msg  += '<p style="font-size:18px;line-height:28px;">Click <strong>Export Basic Tune List Website</strong> to export a technically simple website with a list of all tunes in the ABC vertically down the center of the page. Playback instruments may be optionally specified.</p>';
 
     if (isPureDesktopBrowser()){

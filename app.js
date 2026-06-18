@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3263_061826_0700";
+var gVersionNumber = "3264_061826_1200";
 
 var gMIDIInitStillWaiting = false;
 
@@ -28504,13 +28504,13 @@ async function processShareLink() {
       // Show update message?
       if (gLocalStorageAvailable){
 
-        var updatePresented = localStorage.sawUpdate_18jun2026;
+        var updatePresented = localStorage.sawUpdate_18jun2026a;
 
         if (updatePresented != "true") {
 
           showWhatsNewScreen();
 
-          localStorage.sawUpdate_18jun2026 = true;
+          localStorage.sawUpdate_18jun2026a = true;
 
         }
 
@@ -56591,7 +56591,7 @@ function showWhatsNewScreen() {
   // Feature card
   modal_msg += '<div style="margin:10px 0 6px 0; padding:0px 12px; border-radius:12px;';
   modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);">';
-  modal_msg += '<p>Added the new <strong>abcjs-eskin-portable Website Builder</strong> tool to the <strong>Other ABC Tools</strong> dialog available from the hamburger menu.</p>';
+  modal_msg += '<p>Added the new <strong>abcjs-eskin Website Builder</strong> tool to the <strong>Other ABC Tools</strong> dialog available from the hamburger menu as well as the <strong>Open ABC in External Tool</strong> dialog available on the <strong>Player</strong>, <strong>Tune Trainer</strong>, and <strong>Sharing Controls</strong> dialogs.</p>';
   modal_msg += '</div>';
 
   // Feature card
@@ -63280,13 +63280,13 @@ async function DoStartup() {
   // Show update message?
   if (gLocalStorageAvailable && (!isFromShare)){
 
-    var updatePresented = localStorage.sawUpdate_18jun2026;
+    var updatePresented = localStorage.sawUpdate_18jun2026a;
 
     if (updatePresented != "true") {
 
       showWhatsNewScreen();
 
-      localStorage.sawUpdate_18jun2026 = true;
+      localStorage.sawUpdate_18jun2026a = true;
 
     }
 
@@ -64934,6 +64934,32 @@ function OpenInChordSolver(abcText){
   }
 }
 
+function OpenInABCJSEskinWebsiteBuilder(abcText){
+
+  sendGoogleAnalytics("action", "OpenInABCJSEskinWebsiteBuilder");
+
+  var encoder = new TextEncoder();
+  var utf8Bytes = encoder.encode(abcText);
+  var deflated = pako.deflate(utf8Bytes, { level: 6 });
+  var theDef = def_bytesToBase64URL(deflated);
+
+  var theURL = "https://michaeleskin.com/abcjs-eskin-portable/website-builder/website-builder.html?def="+theDef;
+
+  if (theURL.length < 8100)
+  {
+    var w = window.open(theURL);
+  }
+  else{
+
+    DayPilot.Modal.alert('<p style="text-align:center;font-family:helvetica;font-size:12pt;">Share URL is too long to open in the abcjs-eskin Website Builder.</p>', {
+      theme: "modal_flat",
+      top: 230,
+      scrollWithPage: (AllowDialogsToScroll())
+    });
+
+  }
+}
+
 function openInExternalTool(theABC){
 
   var modal_msg =
@@ -64966,24 +64992,12 @@ function openInExternalTool(theABC){
     '</p>' +
     '<p style="text-align:center;">' +
 
-      '<span class="external-tool" style="display:inline-block; margin-right:48px;margin-bottom:12px; text-align:center;">' +
-        '<img id="external_pureocarinas" src="img/pureocarinas.png" ' +
-             'title="Open the ABC in the Pure Ocarinas Phrase-by-phrase ABC tune practice tool" ' +
-             'alt="Pure Ocarinas Phrase-by-phrase ABC practice tool" style="cursor:pointer;">' +
+      '<span class="external-tool" style="display:inline-block;margin-bottom:12px;margin-right:48px;text-align:center;">' +
+        '<img id="external_abcjs_eskin_website" src="img/abcjs-eskin-portable-website_1.jpg" ' +
+             'title="Open the ABC in the abcjs-eskin Website Builder" alt="abcjs-eskin Website Builder" style="cursor:pointer;">' +
         '<br>' +
-        '<span style="font-size:1.2em;">Phrase-by-phrase ABC practice tool</span>' +
+        '<span style="font-size:1.2em;">abcjs-eskin Website Builder</span>' +
       '</span>' +
-
-      '<span class="external-tool" style="display:inline-block;margin-bottom:12px; text-align:center;">' +
-        '<img id="external_abcjs" src="img/abcjs_logo.png" ' +
-             'title="Open the ABC in the abcjs quick editor" alt="abcjs quick editor" style="cursor:pointer;">' +
-        '<br>' +
-        '<span style="font-size:1.2em;">abcjs quick editor</span>' +
-      '</span>' +
-
-    '</p>' +
-
-    '<p style="text-align:center;">' +
 
       '<span class="external-tool" style="display:inline-block;margin-bottom:12px; text-align:center;">' +
         '<img style="height:120px;width:auto;" id="external_abc_encoder" src="img/abcencoderlogo.jpg" ' +
@@ -64993,12 +65007,32 @@ function openInExternalTool(theABC){
       '</span>' +
 
     '</p>' +
+
+    '<p style="text-align:center;">' +
+
+      '<span class="external-tool" style="display:inline-block;margin-bottom:12px;margin-right:48px;text-align:center;">' +
+        '<img id="external_abcjs" src="img/abcjs_logo.png" ' +
+             'title="Open the ABC in the abcjs quick editor" alt="abcjs quick editor" style="cursor:pointer;">' +
+        '<br>' +
+        '<span style="font-size:1.2em;">abcjs quick editor</span>' +
+      '</span>' +
+
+      '<span class="external-tool" style="display:inline-block;margin-bottom:12px; text-align:center;">' +
+        '<img id="external_pureocarinas" src="img/pureocarinas.png" ' +
+             'title="Open the ABC in the Pure Ocarinas Phrase-by-phrase ABC tune practice tool" ' +
+             'alt="Pure Ocarinas Phrase-by-phrase ABC practice tool" style="cursor:pointer;">' +
+        '<br>' +
+        '<span style="font-size:1.2em;">Phrase-by-phrase ABC practice tool</span>' +
+      '</span>' +
+
+
+    '</p>' +
     '</div>';
 
   DayPilot.Modal.alert(modal_msg, {
     theme: "modal_flat",
     top: 75,
-    width: 650,
+    width: 750,
     scrollWithPage: (AllowDialogsToScroll())
   });
 
@@ -65025,6 +65059,11 @@ function openInExternalTool(theABC){
   elem = document.getElementById("external_chord_solver");
   if (elem) elem.onclick = function(){
     OpenInChordSolver(theABC);
+  };
+
+  elem = document.getElementById("external_abcjs_eskin_website");
+  if (elem) elem.onclick = function(){
+    OpenInABCJSEskinWebsiteBuilder(theABC);
   };
 
 }
@@ -65170,9 +65209,9 @@ function OtherABCTools(){
   + '      </div>'
  
   + '      <div class="tuning-tool" style="text-align:center; width:170px;">'
-  + '        <img id="other_tools_websitebuilder" src="img/abcjs-eskin-portable-website_1.jpg" title="abcjs-eskin-portable Website Builder" alt="abcjs-eskin-portable Website Builder"'
+  + '        <img id="other_tools_websitebuilder" src="img/abcjs-eskin-portable-website_1.jpg" title="abcjs-eskin-portable Website Builder" alt="abcjs-eskin Website Builder"'
   + '             style="width:170px;height:125px;object-fit:contain;cursor:pointer;">'
-  + '        <div style="font-size:1.0em; margin-top:4px; height:2.8em; display:flex; align-items:center; justify-content:center; line-height:1.15em;">abcjs-eskin-portable Website Builder</div>'
+  + '        <div style="font-size:1.0em; margin-top:4px; height:2.8em; display:flex; align-items:center; justify-content:center; line-height:1.15em;">abcjs-eskin Website Builder</div>'
   + '      </div>'
   
   + '      <div class="tuning-tool" style="text-align:center; width:170px;">'
