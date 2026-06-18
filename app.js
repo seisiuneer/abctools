@@ -65031,7 +65031,7 @@ function openInExternalTool(theABC){
 
   DayPilot.Modal.alert(modal_msg, {
     theme: "modal_flat",
-    top: 75,
+    top: 50,
     width: 750,
     scrollWithPage: (AllowDialogsToScroll())
   });
