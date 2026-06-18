@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3262_061526_1530";
+var gVersionNumber = "3263_061826_0700";
 
 var gMIDIInitStillWaiting = false;
 
@@ -28504,13 +28504,13 @@ async function processShareLink() {
       // Show update message?
       if (gLocalStorageAvailable){
 
-        var updatePresented = localStorage.sawUpdate_15jun2026;
+        var updatePresented = localStorage.sawUpdate_18jun2026;
 
         if (updatePresented != "true") {
 
           showWhatsNewScreen();
 
-          localStorage.sawUpdate_15jun2026 = true;
+          localStorage.sawUpdate_18jun2026 = true;
 
         }
 
@@ -56588,10 +56588,10 @@ function showWhatsNewScreen() {
   modal_msg += '<div style="font-size:11pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 15 June 2026</div>';
   modal_msg += '</div>';
 
-    // Feature card
+  // Feature card
   modal_msg += '<div style="margin:10px 0 6px 0; padding:0px 12px; border-radius:12px;';
   modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);">';
-  modal_msg += '<p><strong>Fixed major playback bug with 1st/2nd endings that started when the tablature-only mode was added.</strong></p>';
+  modal_msg += '<p>Added the new <strong>abcjs-eskin-portable Website Builder</strong> tool to the <strong>Other ABC Tools</strong> dialog on the hamburger menu.</p>';
   modal_msg += '</div>';
 
   // Feature card
@@ -56601,16 +56601,6 @@ function showWhatsNewScreen() {
   modal_msg += '<p>When clicked, it injects the following two annotations above the first X: tag in the ABC to make it easy to enable the standalone stringed instrument tablature display feature:</p>';
   modal_msg += '<p><strong>%tablature_only</strong><br/>'; 
   modal_msg += '<strong>%%staffsep 80</strong></p>'; 
-  modal_msg += '</div>';
-
-  // Feature card
-  modal_msg += '<div style="margin:10px 0 6px 0; padding:0px 12px; border-radius:12px;';
-  modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);">';
-  modal_msg += '<p><strong>Standalone stringed instrument tablature without standard notation above is now possible</strong></p>';
-  modal_msg += '<p>You can now show standalone stringed instrument tablature without standard notation above by adding the following ABC annotation to either a single tune or to the ABC file header to have it apply to all the tunes in an ABC tunebook:</p>';
-  modal_msg += '<p><strong>%tablature_only</strong></p>'; 
-  modal_msg += '<p>This is only available for the stringed instrument tablatures, not tin whistle or recorder fingering tablatures.</p>'; 
-  modal_msg += '<p>This works for tune display, playback, as well as image, PDF and website export.</p>';
   modal_msg += '</div>';
 
   modal_msg += '</div>'; // wrapper
@@ -60742,6 +60732,15 @@ function LaunchBackupChordSolver(){
   window.open(url, '_blank');
 }
 
+// Open the abcjs-eskin-portable website builder
+function LaunchABCJSWebsiteBuilder(){
+
+  sendGoogleAnalytics("action", "LaunchABCJSWebsiteBuilder");
+
+  var url = "https://michaeleskin.com/abcjs-eskin-portable/website-builder/website-builder.html";
+  window.open(url, '_blank');
+}
+
 //
 // Check if an update is available
 // 
@@ -63281,13 +63280,13 @@ async function DoStartup() {
   // Show update message?
   if (gLocalStorageAvailable && (!isFromShare)){
 
-    var updatePresented = localStorage.sawUpdate_15jun2026;
+    var updatePresented = localStorage.sawUpdate_18jun2026;
 
     if (updatePresented != "true") {
 
       showWhatsNewScreen();
 
-      localStorage.sawUpdate_15jun2026 = true;
+      localStorage.sawUpdate_18jun2026 = true;
 
     }
 
@@ -65161,7 +65160,7 @@ function OtherABCTools(){
 
   + '    </div>'
 
-  // Row 2 (2 items)
+  // Row 2 (3 items)
   + '    <div style="display:flex; justify-content:center; align-items:flex-start; gap:24px; width:100%;">'
 
   + '      <div class="tuning-tool" style="text-align:center; width:170px;">'
@@ -65170,6 +65169,12 @@ function OtherABCTools(){
   + '        <div style="font-size:1.0em; margin-top:4px; height:2.8em; display:flex; align-items:center; justify-content:center; line-height:1.15em;">ABC Tags to CSV Extractor Utilities</div>'
   + '      </div>'
  
+  + '      <div class="tuning-tool" style="text-align:center; width:170px;">'
+  + '        <img id="other_tools_websitebuilder" src="img/abcjs-eskin-portable-website_1.jpg" title="abcjs-eskin-portable Website Builder" alt="abcjs-eskin-portable Website Builder"'
+  + '             style="width:170px;height:125px;object-fit:contain;cursor:pointer;">'
+  + '        <div style="font-size:1.0em; margin-top:4px; height:2.8em; display:flex; align-items:center; justify-content:center; line-height:1.15em;">abcjs-eskin-portable Website Builder</div>'
+  + '      </div>'
+  
   + '      <div class="tuning-tool" style="text-align:center; width:170px;">'
   + '        <img id="other_tools_custominstrument" src="img/tool_custominstrument_2.jpg" title="Custom Instrument Builder" alt="Custom Instrument Builder"'
   + '             style="width:170px;height:125px;object-fit:contain;cursor:pointer;">'
@@ -65200,6 +65205,9 @@ function OtherABCTools(){
 
   elem = document.getElementById("other_tools_abc2csv");
   if (elem) elem.onclick = function(){ LaunchCSVTagExtractor(); };
+
+  elem = document.getElementById("other_tools_websitebuilder");
+  if (elem) elem.onclick = function(){ LaunchABCJSWebsiteBuilder(); };
 
   elem = document.getElementById("other_tools_custominstrument");
   if (elem) elem.onclick = function(){ launchCustomInstrumentBuilder(); };

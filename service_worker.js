@@ -6,23 +6,7 @@
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
-// Updated 15 Jun 2026 1530
-//
-//
-//
-//
-//
-//
-//
-//
+// Updated 18 Jun 2026 0700
 //
 //
 //
@@ -30,7 +14,7 @@
 //
 //
 
-const cacheName = 'abctoolscache-3262';
+const cacheName = 'abctoolscache-3263';
 
 const contentToCache = [
     'abctools.html',
@@ -95,6 +79,7 @@ const contentToCache = [
     'img/pureocarinas.png',
     'img/abcjs_logo.png',
     'img/abc_to_chord_chart.jpg',
+    'img/abcjs-eskin-portable-website_1.jpg',
     'img/external_share.png',
     'img/abcencoderlogo.jpg',
     'img/tool_tuner_2.jpg',
