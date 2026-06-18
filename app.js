@@ -64899,7 +64899,7 @@ function OpenInABCEncoder(abcText){
     }
     else{
 
-      DayPilot.Modal.alert('<p style="text-align:center;font-family:helvetica;font-size:12pt;">Share URL is too long to open in the ABC Encoder.</p>', {
+      DayPilot.Modal.alert('<p style="text-align:center;font-family:helvetica;font-size:12pt;">Share URL is too long to open in the N.S.S.S. ABC Encoder.</p>', {
         theme: "modal_flat",
         top: 230,
         scrollWithPage: (AllowDialogsToScroll())
