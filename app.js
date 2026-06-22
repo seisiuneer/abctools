@@ -38503,7 +38503,7 @@ function PlayABCDialog(theABC, callback, val, metronome_state) {
 
         sendGoogleAnalytics("dialog", "ExternalToolsPlayer");
 
-        openInExternalTool(theABC);
+        openInExternalTool(theABC, true);
       
       };
 
@@ -45955,7 +45955,7 @@ function TuneTrainerDialog(theOriginalABC, theProcessedABC, looperState) {
 
         sendGoogleAnalytics("dialog", "ExternalToolsTuneTrainer");
 
-        openInExternalTool(theOriginalABC);
+        openInExternalTool(theOriginalABC, true);
       
       };
 
@@ -49691,7 +49691,7 @@ function SharingControlsDialog() {
       sendGoogleAnalytics("dialog", "ExternalToolsShareDialog");
 
       var theABC = getABCEditorText();
-      openInExternalTool(theABC);
+      openInExternalTool(theABC, false);
 
     };
 
@@ -64930,15 +64930,38 @@ function OpenInChordSolver(abcText){
   }
 }
 
-function OpenInABCJSEskinWebsiteBuilder(abcText){
+function OpenInABCJSEskinWebsiteBuilder(abcText,isFromPlayer){
 
   sendGoogleAnalytics("action", "OpenInABCJSEskinWebsiteBuilder");
 
-  launchAbcjsEskinWebsiteBuilder();
+  if (isFromPlayer){
+    var encoder = new TextEncoder();
+    var utf8Bytes = encoder.encode(abcText);
+    var deflated = pako.deflate(utf8Bytes, { level: 6 });
+    var theDef = def_bytesToBase64URL(deflated);
 
+    var theURL = "https://michaeleskin.com/abcjs-eskin-portable/website-builder/website-builder.html?def="+theDef;
+
+    if (theURL.length < 8100)
+    {
+      var w = window.open(theURL);
+    }
+    else{
+
+      DayPilot.Modal.alert('<p style="text-align:center;font-family:helvetica;font-size:12pt;">Share URL is too long to open in the abcjs-eskin Website Builder.</p>', {
+        theme: "modal_flat",
+        top: 230,
+        scrollWithPage: (AllowDialogsToScroll())
+      });
+
+    }
+  }
+  else{
+    launchAbcjsEskinWebsiteBuilder();
+  }
 }
 
-function openInExternalTool(theABC){
+function openInExternalTool(theABC, isFromPlayer){
 
   var modal_msg =
     '<div id="ceoltasanchor">' +
@@ -65041,7 +65064,7 @@ function openInExternalTool(theABC){
 
   elem = document.getElementById("external_abcjs_eskin_website");
   if (elem) elem.onclick = function(){
-    OpenInABCJSEskinWebsiteBuilder(theABC);
+    OpenInABCJSEskinWebsiteBuilder(theABC, isFromPlayer);
   };
 
 }
