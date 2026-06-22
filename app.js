@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3266_062126_2130";
+var gVersionNumber = "3267_062126_2130";
 
 var gMIDIInitStillWaiting = false;
 
@@ -56591,9 +56591,9 @@ function showWhatsNewScreen() {
   // Feature card
   modal_msg += '<div style="margin:10px 0 6px 0; padding:0px 12px; border-radius:12px;';
   modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);">';
-  modal_msg += '<p>Added the new <strong>abcjs-eskin Website Builder</strong> tool to the <strong>Other ABC Tools</strong> as a new option on the <strong>Export Website</strong> dialog</p>';
+  modal_msg += '<p>Added the <strong>abcjs-eskin Website Builder</strong> tool as a new option on the <strong>Export Website</strong> dialog.</p>';
   modal_msg += '<p>The <strong>abcjs-eskin Website Builder</strong> is a powerful standalone website-building tool for creating complete multi-tune ABC websites with modern visual themes, embedded notation, tablature options, playback controls, soundfont support, and table-of-contents navigation.</p>';
-  modal_msg += '<p>To use it from ABC Transcription Tools, choose <strong>Export Website</strong>, then click <strong>Open abcjs-eskin Website Builder</strong>.</p>';
+  modal_msg += '<p>To use it from the ABC Transcription Tools, choose <strong>Export Website</strong>, then click <strong>Open abcjs-eskin Website Builder</strong>.</p>';
   modal_msg += '<p>The ABC Transcription Tools will open the <strong>abcjs-eskin Website Builder</strong> in a new browser tab and automatically send the full ABC contents of the editor to it.</p>';
 
   modal_msg += '</div>';
