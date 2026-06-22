@@ -739,8 +739,9 @@
             <details>
             <summary><h3>Export Website</h3></summary>
             <a style="text-decoration:none;" href="#generate_website">Export Website</a>
+            <a style="text-decoration:none;" href="#generate_website_abcjs_eskin">abcjs-eskin Website Builder</a>
             <a style="text-decoration:none;" href="#generate_website_speedup">Speeding up the Export Website Workflow for Large Tunebooks</a>
-            <a style="text-decoration:none;" href="#export_website_devnotes">Export Website Developer Customization</a>
+            <a style="text-decoration:none;" href="#export_website_devnotes">Full-Featured Website Developer Customization</a>
             </details>
             
             <details>
@@ -1286,8 +1287,9 @@
                     <button class="accordion" title="Click to expand/collapse this section">Export Website</button>
                     <div class="tocpanel">
                         <p class="toc"><a style="text-decoration:none;" href="#generate_website">Export Website</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#generate_website_abcjs_eskin">abcjs-eskin Website Builder</a></p>
                         <p class="toc"><a style="text-decoration:none;" href="#generate_website_speedup">Speeding up the Export Website Workflow for Large Tunebooks</a></p>
-                        <p class="toc"><a style="text-decoration:none;" href="#export_website_devnotes">Export Website Developer Customization</a></p>
+                        <p class="toc"><a style="text-decoration:none;" href="#export_website_devnotes">Full-Featured Website Developer Customization</a></p>
                     </div>
                     
                     <button class="accordion" title="Click to expand/collapse this section">More ABC Tools</button>
@@ -1731,9 +1733,10 @@
                 <hr id="top_bar_export_website">
                 <p><strong>Export Website:</strong></p>
                 <p>Exports the entire tunebook as an HTML/CSS/Javascript website.</p>
-                <p>Simple hyperlinked tune list, tune image gallery, tune image lightbox, and fully featured player websites with tablature and instrument selection are available as exported website options.</p>
-                <p>The saved .html file (and .svg tune images for the tune image gallery websites) will be saved in your browser's <strong>Downloads</strong> directory.</p>
+                <p>Simple hyperlinked tune list, <strong>Tune Image Gallery</strong>, <strong>Tune Image Lightbox</strong>, and <strong>Full-Featured</strong> player websites with tablature and instrument selection are available as exported website options.</p>
+                <p>The saved .html file (and .svg tune images for the <strong>Tune Image Gallery</strong> and <strong>Tune Image Lightbox</strong> website styles) will be saved in your browser's <strong>Downloads</strong> directory.</p>
                 <p>On iOS the native iOS sharing dialog can be used to save the files to the Files area or to share them to another app.</p>
+                <p>You may also send all the ABC tunes to the <strong>abcjs-eskin Website Generator</strong> for more advanced exported website features.</p>
                 <p>Full details below in the <a style="text-decoration:none;" href="#generate_website">Export Website</a> section below.</p>
                 <hr id="top_bar_play">
                 <p><strong>Play:</strong></p>
@@ -5252,14 +5255,14 @@
                 <p>This will generate a complete standalone website for you from the ABC tunes in the editor without any coding required.</p>
                 <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/976COaNUt6g" title="Export Website Walkthrough" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
                 <hr>
-                <p>There are four different style options for exported websites:</p>
+                <p>There are five different style options for exported websites:</p>
                 <hr>
                 <p style="text-align: center;"><strong>Basic Tune List</strong></p>
                 <p>Centered list of hyperlinked tune names.</p>
                 <p><a href="https://michaeleskin.com/tunebook_websites/abctools_basic_website_example.html" target="_blank">Basic Tune List Website Example</a></p>
                 <hr>
                 <p style="text-align: center;"><strong>Tune Image Gallery</strong></p>
-                <p>Centered list of hyperlined tune name captions (for searching) and images.</p>
+                <p>Centered list of hyperlinked tune name captions (for searching) and images.</p>
                 <p>Print the website to generate a PDF tunebook of all the tunes.</p>
                 <p><a href="https://michaeleskin.com/tunebook_websites/gallery_example/abctools_gallery_website_example.html" target="_blank">Tune Image Gallery Website Example (Fixed width)</a></p>
                 <p><a href="https://michaeleskin.com/tunebook_websites/gallery_example_responsive/abctools_gallery_website_example_responsive.html" target="_blank">Tune Image Gallery Website Example (Responsive)</a></p>
@@ -5267,7 +5270,7 @@
                 <p style="text-align: center;"><strong>Tune Image Lightbox</strong></p>
                 <p>Shows one tune at a time with tunebook navigation controls and tune selector dropdown.</p>
                 <p>On iOS and Android, you can swipe left or right to go to the next or previous tune.</p>
-                <p>Print the website to generate a PDF tunebook of all the tunes</p>
+                <p>Print the website to generate a PDF tunebook of all the tunes.</p>
                 <p>Remembers the last tune selected and restores it the next time the website is visited.</p>
                 <p><a href="https://michaeleskin.com/tunebook_websites/lightbox_example/abctools_lightbox_website_example.html" target="_blank">Tune Image Lightbox Website Example</a></p>
                 <p><a href="https://michaeleskin.com/cce_sd/lightbox/sdcce_lightbox_20apr2025.html" target="_blank">Comhaltas San Diego Tune Learning Class Tunebook Lightbox Website Example</a></p>
@@ -5279,13 +5282,15 @@
                 <p><a href="https://michaeleskin.com/documents/ocarolan_responsive_17Jan2025.html" target="_blank">O'Carolan Tunebook Full-Featured Website Example</a></p>
                 <p><a href="https://michaeleskin.com/documents/cce_san_diego_tunes_31jan2025.html" target="_blank">San Diego Comhaltas Tune Learning Tunebook Full-Featured Website Example</a></p>
                 <hr>
-                <p style="text-align: center;"><strong>Website Export Limitations on Mobile Browsers</strong></p>
-                <p>On mobile devices, only the <strong>Basic Tune List</strong> and <strong>Full-Featured</strong> website styles are supported since batch export of the required SVG tune images for the <strong>Tune Image Gallery</strong> and <strong>Tune Image Lightbox</strong> website styles is not supported on mobile browsers.</p>
+                <p style="text-align: center;"><strong>abcjs-eskin Website Builder</strong></p>
+                <p>The <strong>abcjs-eskin Website Builder</strong> is a powerful standalone website-building tool for creating complete multi-tune ABC websites with modern visual themes, embedded notation, tablature options, playback controls, soundfont support, and table-of-contents navigation.</p>
+                <p>Full details are in the <a href="#generate_website_abcjs_eskin">abcjs-eskin Website Builder</a> below.</p>
                 <hr>
-                <p>All four exported website styles are described in detail below:</p>
+                <p style="text-align: center;"><strong>Website Export Limitations on Mobile Browsers</strong></p>
+                <p>On mobile devices, only the <strong>Basic Tune List</strong>, <strong>Full-Featured</strong>, and <strong>abcjs-eskin Website Builder</strong> website export styles are supported. The <strong>Tune Image Gallery</strong> and <strong>Tune Image Lightbox</strong> website styles require batch export of SVG tune images, which is not supported on mobile browsers.</p>
                 <hr>
                 <p style="text-align: center;"><strong>Common Export Website Settings</strong></p>
-                <p>For all website export options, you may customize the title, subtitle, footers, background color/image, text color, and hyperlink color, of the player frame.</p>
+                <p>For the website export options other than the standalone <strong>abcjs-eskin Website Builder</strong>, which has its own customization options, you may customize the title, subtitle, background color/image, text color, hyperlink color, and, where available, website footers.</p>
                 <p>The website background color can be an HTML color, HTML gradient description, or a url('path_to_image').</p>
                 <p>Examples:</p>
                 <p>HTML colors:</p>
@@ -5300,11 +5305,11 @@
                 <p>If <strong>Disable access to editor</strong> is checked, the generated website will prevent users from closing the fullscreen view and entering the ABC editor.</p>
                 <p>If <strong>Add a ? help icon at top-left corner</strong> is checked, a "?" with the color specified in the Hyperlink color will be shown in the upper left corner of the website.</p>
                 <p>Clicking the <strong>?</strong> on the exported website will open the URL specified in the <strong>Tunebook help URL</strong> field.</p>
-                <p>If <strong>Tunes open in the Player</strong> is checked, for all styles of websites, tunes will open in the tool's Player, otherwise will just be displayed to fill the frame and can be played by clicking the play button at the lower right of the frame.</p>
+                <p>For the original ABC Transcription Tools website export styles, if <strong>Tunes open in the Player</strong> is checked, tunes will open in the tool's Player, otherwise will just be displayed to fill the frame and can be played by clicking the play button at the lower right of the frame.</p>
                 <p>The tune will be initially displayed using the current notation or stringed instrument tablature setting selected at the time the website is generated.</p>
                 <hr>
                 <p>For all exported website styles, you can take the resulting .html file, customize it if you want, run it locally, or host it on your own web hosting service.</p>
-                <p>The saved .html file (and .svg tune images for the tune image gallery websites) will be saved in your browser's <strong>Downloads</strong> directory.</p>
+                <p>The saved .html file (and .svg tune images for the <strong>Tune Image Gallery</strong> and <strong>Tune Image Lightbox</strong> websites) will be saved in your browser's <strong>Downloads</strong> directory.</p>
                 <hr>
                 <p style="text-align: center;"><strong>Export Basic Tune List Website</strong></p>
                 <div class="image_holder_p">
@@ -5326,12 +5331,12 @@
                 <div class="image_holder_p">
                     <img class="image" loading="lazy" src="img/website_gallery_1.jpg"/>
                 </div>
-                <p>Either enter a integer value (for example: 800) for the <strong> Tune image width</strong> for a fixed image size website or a window width percentage (for example: 50%) to create a responsive tune image width website.</p>
+                <p>Either enter an integer value (for example: 800) for the <strong>Tune image width</strong> for a fixed image size website or a window width percentage (for example: 50%) to create a responsive tune image width website.</p>
                 <p>Clicking on any of the tune images opens the tune in a new tab.</p>
                 <p>Playback instruments may be optionally specified.</p>
-                <p>When deploying the generated website, be sure to copy all the .svg tune images files into the same directory as the exported .html file.</p>
+                <p>When deploying the generated website, be sure to copy all of the .svg tune images files into the same directory as the exported .html file.</p>
                 <p>If there are more than 25 tunes on the website, the images are "lazy" loaded for viewing only when scrolled into view, speeding the load time for the website.</p>
-                <p>If you print or export a PDF of a gallery website using the browser's native Print command, the title and subtitle will be printed on a cover page, and the website footers will be hidden, providing a nice option for creating a tunebook from a website.</p>
+                <p>If you print or export a PDF of a <strong>Tune Image Gallery</strong> website using the browser's native Print command, the title and subtitle will be printed on a cover page, and the website footers will be hidden, providing a nice option for creating a tunebook from a website.</p>
                 <p>To force the tunes to each be on their own page when using the browser's native Print feature, click the checkbox labeled <strong>Tunes print one tune per page</strong>.</p>
                 <p>Additionally, the play links will be retained on the tune images in the PDF.</p>
                 <hr>
@@ -5348,11 +5353,11 @@
                 <p>On iPhone or Android devices only the previous tune/next tune buttons and the tune selector dropdown are available (optimization for narrow screens).</p>
                 <p>Clicking on any of the tune images opens the tune in a new tab.</p>
                 <p>Playback instruments may be optionally specified.</p>
-                <p>When deploying the generated website, be sure to copy all the .svg tune images files into the same directory as the exported .html file.</p>
-                <p>If you print or export a PDF of a gallery website using the browser's native Print command, the title and subtitle will be printed on a cover page, and the website footers will be hidden, providing a nice option for creating a tunebook from a website.</p>
+                <p>When deploying the generated website, be sure to copy all of the .svg tune images files into the same directory as the exported .html file.</p>
+                <p>If you print or export a PDF of a <strong>Tune Image Lightbox</strong> website using the browser's native Print command, the title and subtitle will be printed on a cover page, and the website footers will be hidden, providing a nice option for creating a tunebook from a website.</p>
                 <p>To force the tunes to each be on their own page when using the browser's native Print feature, click the checkbox labeled <strong>Tunes print one tune per page</strong>.</p>
-                <p>Additionally, the play links will be retained on the tune images in the PDF:</p>
-                <p>The website remembers the user's last selected tune and restore it the next time the user visits the website.</p>
+                <p>Additionally, the play links will be retained on the tune images in the PDF.</p>
+                <p>The website remembers the user's last selected tune and restores it the next time the user visits the website.</p>
                 <hr>
                 <p style="text-align: center;"><strong>Export Full-Featured Tunebook Website</strong></p>
                 <div class="image_holder_p">
@@ -5367,9 +5372,9 @@
                 <p>For the Full-Featured Website option, if <strong>Add tablature/instrument selector dropdown</strong> is checked, a dropdown will be added to the website to the right of the tune selector that allows you to change which tablature style is displayed along with using a matching instrument sound for playback.</p>
                 <p>The dropdown will include:</p>
                 <p><strong>Standard Notation<br/>Note Names<br/>Mandolin<br/>Tenor Banjo<br/>GDAD Bouzouki<br/>Standard Guitar<br/>DADGAD<br/>Tin Whistle<br/>Irish Flute<br/>Accordion<br/>Concertina<br/>Hammered Dulcimer</strong></p>
-                <p>Information on modifying the behavior of the tablature dropdown by editing the exported .html file can be found in the <a style="text-decoration:none;" href="#export_website_devnotes">Export Website Developer Customization</a> section below.</p>
+                <p>Information on modifying the behavior of the tablature dropdown by editing the exported .html file can be found in the <a style="text-decoration:none;" href="#export_website_devnotes">Full-Featured Website Developer Customization</a> section below.</p>
                 <p>You may optionally select a MIDI soundfont, melody, bass, and chord instruments and volumes to inject into each tune for use when the tune is played.</p>
-                <p>The website exported includes a tune selector at the top, selecting a tune opens the tune in the ABC Transcription Tools in the frame below the selector.</p>
+                <p>The exported website includes a tune selector at the top, selecting a tune opens the tune in the ABC Transcription Tools in the frame below the selector.</p>
                 <p>If there is only a single tune, it will be immediately loaded in the ABC Transcription Tools in the frame.</p>
                 <p>The tune will be initially displayed using the current notation or stringed instrument tablature setting selected at the time the website is generated.</p>
                 <p>The website remembers the user's last selected tune and tablature setting and restores them the next time the user visits the website.</p>
@@ -5379,10 +5384,25 @@
                 <p class="code">%tablature_only</p>
                 <p>The standalone stringed instrument tab is described in this section below:</p>
                 <p><a href="#tablature_only">Displaying Standalone Stringed Instrument Tablature Without Standard Notation</a></p>
-                <hr>
-                <p style="text-align: center;"><strong>abcjs-eskin Website Builder</strong></p>
-                <p>This external standalone tool, available either from the <strong>Other ABC Tools</strong> or <strong>Open ABC in External Tool</strong> dialogs, is a powerful tool that can create standlone playable tunebook websites in a variety of visual themes.</p>
-                <p style="text-align: center;"><strong><a href="https://michaeleskin.com/abcjs-eskin-portable/website-builder/website-builder.html" target="_blank">Launch the abcjs-eskin Website Builder</a></strong></p> 
+                <hr class="hidden-print" id="generate_website_abcjs_eskin">
+                <h1 class="page_break_always">abcjs-eskin Website Builder</h1>
+                <a href="#table_of_contents" class="index-pill hidden-print">
+                  Table of Contents
+                </a>
+                <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/FZYYWkwusDE" title="Export Website using the abcjs-eskin Website Builder" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
+                <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/cQ6GB2ey8QU" title="abcjs-eskin Website Builder demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
+                https://youtu.be/FZYYWkwusDE
+                <p>The <strong>abcjs-eskin Website Builder</strong> is a powerful standalone website-building tool for creating complete multi-tune ABC websites with modern visual themes, embedded notation, tablature options, playback controls, soundfont support, and table-of-contents navigation.</p>
+                <p>To use it from ABC Transcription Tools, choose <strong>Export Website</strong>, then click <strong>Open abcjs-eskin Website Builder</strong>.</p>
+                <p>The ABC Transcription Tools will open the <strong>abcjs-eskin Website Builder</strong> in a new browser tab and automatically send the full ABC contents of the editor to it.</p>
+                <p>The <strong>abcjs-eskin Website Builder</strong> creates a modern standalone tunebook-style website with its own layout, visual themes, embedded rendered notation and playback, table-of-contents navigation, optional ABC Transcription Tools share buttons, and support for <strong>T:*</strong> style section headers.</p>
+                <p>This option is especially useful when you want a polished self-contained website with a visual style such as Traditional Irish Music, Folk / Acoustic, Classical Music Cabinet, Jazz Club, Christmas, or other built-in themes. It also provides more presentation-oriented layout controls than the original ABC Transcription Tools website export choices.</p>
+                <p>After the <strong>abcjs-eskin Website Builder</strong> opens and receives the ABC from the editor, you can review the loaded tunes, open <strong>Website Settings</strong>, choose the visual theme and playback/display options, and then click <strong>Build and Save Website</strong> to save the finished standalone .html website.</p>
+                <p>Full instructions for the <strong>abcjs-eskin Website Builder</strong> are available from the <strong>Instructions</strong> button inside that tool after it is launched.</p>
+                <p>When this website export option is selected, the ABC Transcription Tools opens the <strong>abcjs-eskin Website Builder</strong> in a new tab and uses a browser message transfer to send the complete contents of the ABC editor directly to the new tab.</p>
+                <p>If something goes wrong, the ABC Transcription Tools will display a message explaining the problem. Possible failure cases include the browser blocking the new window, the  <strong>abcjs-eskin Website Builder</strong> window being closed before the transfer completes, the <strong>abcjs-eskin Website Builder</strong> not reporting that it is ready, browser security settings preventing the transfer, or ABC Transcription Tools not receiving confirmation that the tunes were loaded. If this happens, allow popups for the site and try again, or use the  <strong>abcjs-eskin Website Builder</strong>'s normal <strong>Open ABC Files</strong> button to load an ABC file directly.</p>
+                <p style="text-align: center;"><strong><a href="https://michaeleskin.com/abcjs-eskin-portable/website-builder/website-builder.html" target="_blank">Launch the <strong>abcjs-eskin Website Builder</strong></a></strong></p> 
+                <p>This website export feature is only available when you are online.</p>
                 <hr class="hidden-print" id="generate_website_speedup">
                 <h1 class="page_break_always">Speeding up the Export Website Workflow for Large Tunebooks</h1>
                 <a href="#table_of_contents" class="index-pill hidden-print">
@@ -5395,12 +5415,12 @@
                 <p>2) Setting the "Disable abcjs notation rendering" option on the <strong>Advanced Settings</strong> dialog:</p>
                 <p class="hidden-print" style="margin-top:24px;margin-bottom:24px;text-align:center"><iframe width="620" height="338" loading="lazy" src="https://www.youtube.com/embed/e2_wBY8nFw8" title="Disable abcjs rendering website generation demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowfullscreen></iframe></p>
                 <hr class="hidden-print" id="export_website_devnotes">
-                <h1 class="page_break_always">Export Website Developer Customization</h1>
+                <h1 class="page_break_always">Full-Featured Website Developer Customization</h1>
                 <a href="#table_of_contents" class="index-pill hidden-print">
                   Table of Contents
                 </a>
                 <hr>
-                <p style="text-align: center;"><strong>Changing the instruments shown in the tablature dropdown</strong></p>
+                <p style="text-align: center;"><strong>Changing the instruments shown in the Full-Featured Website tablature dropdown</strong></p>
                 <p>When enabling the tablature/instrument selector dropdown, the following markup is added to the .html file:</p>
                 <p class="code">&lt;select id="displayOptions" style="width:220px;"&gt;<br/>&nbsp;&nbsp;&lt;option value="-1">Choose an Instrument&lt;/option&gt;<br/>&nbsp;&nbsp;&lt;option value="0">Piano - Notation&lt;/option&gt;<br/>&nbsp;&nbsp;&lt;option value="1">Piano - Note Names&lt;/option&gt;<br/>&nbsp;&nbsp;&lt;option value="2">Mandolin&lt;/option&gt;<br/>&nbsp;&nbsp;&lt;option value="3">Tenor Banjo&lt;/option&gt;<br/>&nbsp;&nbsp;&lt;option value="4">GDAD Bouzouki&lt;/option&gt;<br/> &nbsp;&nbsp;&lt;option value="5">Standard Guitar&lt;/option&gt;<br/>&nbsp;&nbsp;&lt;option value="6">DADGAD&lt;/option&gt;<br/>&nbsp;&nbsp;&lt;option value="7">Tin Whistle&lt;/option&gt;<br/>&nbsp;&nbsp;&lt;option value="8">Irish Flute&lt;/option&gt;<br/>&nbsp;&nbsp;&lt;option value="9">Accordion&lt;/option&gt;<br/>&nbsp;&nbsp;&lt;option value="10">Concertina&lt;/option&gt;<br/>&nbsp;&nbsp;&lt;option value="11">Hammered Dulcimer&lt;/option&gt;<br/> &lt;/select&gt;</p>
                 <p>Remove the &lt;option&gt; line for any instruments you don't want to show up in the dropdown from this list and save the modified .html file.</p>
@@ -7457,7 +7477,7 @@
                 <p>This is easily accomplished by clicking <strong>Snapshot</strong> and then <strong>Restore</strong>.</p>
                 <p>If a %%begincss / %%endcss block is found in a tune, it will take precedence for all tunes over any custom CSS found in the file header and ideally should only be used for single tune tunebooks. With multiple tunes and multiple %begincss / %%endcss blocks, unexpected results may occur.</p>
                 <p>There can only be one custom begincss/endcss block per tunebook. If there are multiple, the last one found is used.</p>
-                <p>Custom CSS at the abcjs tune display element or SVG top level will appear on tunes in exported PDF files and full-featured websites as well as exported JPEG, PNG, SVG tune images, Image Gallery websites, and Image Lightbox websites.</p>
+                <p>Custom CSS at the abcjs tune display element or SVG top level will appear on tunes in exported PDF files and full-featured websites as well as exported JPEG, PNG, SVG tune images, <strong>Tune Image Gallery</strong>, and <strong>Tune Image Lightbox</strong> websites.</p>
                 <p><strong>Here is the full list of available custom abcjs classes:</strong></p>
                 <br/>
                 <table><thead><tr><th>Class</th><th>Description</th></tr></thead><tbody><tr><td>.abcjs-annotation</td><td>Text added with the <code>&quot;^...&quot;</code> format.</td></tr><tr><td>.abcjs-author</td><td>The author text</td></tr><tr><td>.abcjs-bar</td><td>The bar lines.</td></tr><tr><td>.abcjs-bar-number</td><td>The bar numbers.</td></tr><tr><td>.abcjs-beam-elem</td><td>The beams connecting eighth notes together.</td></tr><tr><td>.abcjs-brace</td><td>The brace on the left side of the staff (like for piano music.)</td></tr><tr><td>.abcjs-bracket</td><td>The bracket on the left side of the staff.</td></tr><tr><td>.abcjs-chord</td><td>The chord symbols, specified in quotes.</td></tr><tr><td>.abcjs-clef</td><td>All clefs</td></tr><tr><td>.abcjs-composer</td><td>The composer text</td></tr><tr><td>.abcjs-container</td><td>The notation display div</td></tr><tr><td>.abcjs-cursor</td><td>The vertical playback cursor</td></tr><tr><td>.abcjs-d0-25, etc.</td><td>The duration of the note. (Replace the dash with a decimal point. That is, the example is a duration of 0.25, or a quarter note.)</td></tr><tr><td>.abcjs-decoration</td><td>Everything to do with the extra symbols, like crescendo.</td></tr><tr><td>.abcjs-defined-text</td><td>Text that appears between the lines of music, created with <code>%%text</code>.</td></tr><tr><td>.abcjs-dynamics</td><td>The dynamics markings: <code>p</code> for instance. Also the crescendo mark.</td></tr><tr><td>.abcjs-end-m0-n0</td><td>Added to slurs to indicate the ending note.</td></tr><tr><td>.abcjs-ending</td><td>The line and decoration for the 1st and 2nd ending.</td></tr><tr><td>.abcjs-key-signature</td><td>All key signatures</td></tr><tr><td>.abcjs-l0, .abcjs-l1, etc.</td><td>(lower case L, followed by a number) The staff line number, starting at zero.</td></tr><tr><td>.abcjs-ledger</td><td>ledger line.</td></tr><tr><td>.abcjs-lyric</td><td>The lyric line.</td></tr><tr><td>.abcjs-m0, .abcjs-m1, etc.</td><td>The measure count from the START OF THE LINE.</td></tr><tr><td>.abcjs-mm0, .abcjs-mm1, etc.</td><td>The measure count from the START OF THE TUNE.</td></tr><tr><td>.abcjs-meta-bottom</td><td>Everything that is printed after all the music.</td></tr><tr><td>.abcjs-meta-top</td><td>Everything that is printed before the first staff line.</td></tr><tr><td>.abcjs-n0, .abcjs-n1, etc.</td><td>The note count from the START OF THE MEASURE.</td></tr><tr><td>.abcjs-note</td><td>Everything to do with a note.</td></tr><tr><td>.abcjs-note_selected</td><td>This is the element that the user has clicked on.</td></tr><tr><td>.abcjs-p-1, .abcjs-p1, etc.</td><td>The y-position of the note (where middle-C is zero).</td></tr><tr><td>.abcjs-part</td><td>Each part marking in the music itself.</td></tr><tr><td>.abcjs-part-order</td><td>The part order indicator at the top.</td></tr><tr><td>.abcjs-rest</td><td>Everything to do with a rest.</td></tr><tr><td>.abcjs-rhythm</td><td>The rhythm text.</td></tr><tr><td>.abcjs-slur</td><td>Slurs and ties. (backwards compatible)</td></tr><tr><td>.abcjs-start-m0-n0</td><td>Added to slurs to indicate the beginning note.</td></tr><tr><td>.abcjs-tie</td><td>Tie.</td></tr><tr><td>.abcjs-legato</td><td>Slur. Because &quot;.abcjs-slur&quot; was historically used to indicate either a slur or a tie this indicates only a slur.</td></tr><tr><td>.abcjs-staff</td><td>The horizontal lines that make up the staff.</td></tr><tr><td>.abcjs-staff-extra</td><td>Clefs, key signatures, time signatures.</td></tr><tr><td>.abcjs-stem</td><td>Note stems</td></tr><tr><td>.abcjs-subtitle</td><td>The subtitle, both on the top and inserted in the middle</td></tr><tr><td>.abcjs-symbol</td><td>Any special symbol, like a trill.</td></tr><tr><td>.abcjs-tempo</td><td>The tempo marking.</td></tr><tr><td>.abcjs-text</td><td>Extra text that is not part of the music.</td></tr><tr><td>.abcjs-time-signature</td><td>All time signatures</td></tr><tr><td>.abcjs-title</td><td>The line specified by T:</td></tr><tr><td>.abcjs-top-line</td><td>This marks the top line of each staff. This is useful if you are trying to find where on the page the music has been drawn.</td></tr><tr><td>.abcjs-top-of-system</td><td>This marks the top of each set of staves. This is useful if you are trying to find where on the page the music has been drawn.</td></tr><tr><td>.abcjs-triplet</td><td>The extra markings that indicate a triplet. (But not the notes themselves.)</td></tr><tr><td>.abcjs-unaligned-words</td><td>Lyrics at the bottom that aren&#39;t lined up with notes.</td></tr><tr><td>.abcjs-v0, .abcjs-v1, etc.</td><td>the voice number, starting at zero.</td></tr><tr><td>.highlight</td><td>Highlighted notes during playback.</td></tr><tr><td>.mark, .mark1, .mark2, .mark3, ..., .mark10</td><td>All notes with !mark! and !mark1!, !mark2!, !mark3!, ..., !mark10! decorations.</td></tr><tr><td>.push, .draw</td><td>All notes with !push! and !draw! decorations.</td></tr><tr><td>[class^="abcjs-"]</td><td>Wildcard selector for all abcjs- prefixed classes.</td></tr><tr><td>#abc</td><td>The ABC editor textarea.</td></tr></tbody></table>
@@ -8562,7 +8582,9 @@
                 <p class="toc"><a style="text-decoration:none;" href="#customthemeeditor">ABC Syntax Highlighting Theme Editor</a></p>
                 <p class="toc"><a style="text-decoration:none;" href="#facebook_group">ABC Transcription Tools Group on Facebook and Groups.io</a></p>
                 <p class="toc"><a style="text-decoration:none;" href="#settings_dialog">ABC Transcription Tools Settings</a></p>
+                <p class="toc"><a style="text-decoration:none;" href="#abcjs_eskin_website_builder">abcjs-eskin Website Builder</a></p>
                 <p class="toc"><a style="text-decoration:none;" href="#advanced_injectionfeatures">ABC Utility Injection Features</a></p>
+                <p class="toc"><a style="text-decoration:none;" href="#generate_website_abcjs_eskin">abcjs-eskin Website Builder</a></p>
                 <p class="toc"><a style="text-decoration:none;" href="#top_bar_add">Add</a></p>
                 <p class="toc"><a style="text-decoration:none;" href="#add_bodhran_backing_track">Add Bodhran Backing Track Tune Template</a></p>
                 <p class="toc"><a style="text-decoration:none;" href="#add_templates">Add Example Templates</a></p>
@@ -8654,7 +8676,7 @@
                 <p class="toc"><a style="text-decoration:none;" href="#top_bar_export_pdf">Export PDF</a></p>
                 <p class="toc"><a style="text-decoration:none;" href="#generate_website">Export Website</a></p>
                 <p class="toc"><a style="text-decoration:none;" href="#top_bar_export_website">Export Website</a></p>
-                <p class="toc"><a style="text-decoration:none;" href="#export_website_devnotes">Export Website Developer Customization</a></p>
+                <p class="toc"><a style="text-decoration:none;" href="#export_website_devnotes">Full-Featured Website Developer Customization</a></p>
                 <p class="toc"><a style="text-decoration:none;" href="#export_pdf_tunebook">Exporting a PDF Tunebook</a></p>
                 <p class="toc"><a style="text-decoration:none;" href="#export_audio_image">Exporting Tune Audio, Image, or PDF Files from the Player</a></p>
 

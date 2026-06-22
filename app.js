@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3265_061926_1030";
+var gVersionNumber = "3266_062126_2130";
 
 var gMIDIInitStillWaiting = false;
 
@@ -28504,13 +28504,13 @@ async function processShareLink() {
       // Show update message?
       if (gLocalStorageAvailable){
 
-        var updatePresented = localStorage.sawUpdate_18jun2026a;
+        var updatePresented = localStorage.sawUpdate_21jun2026;
 
         if (updatePresented != "true") {
 
           showWhatsNewScreen();
 
-          localStorage.sawUpdate_18jun2026a = true;
+          localStorage.sawUpdate_21jun2026 = true;
 
         }
 
@@ -56585,22 +56585,17 @@ function showWhatsNewScreen() {
   modal_msg += 'background: linear-gradient(135deg, #0b2f24 0%, #116149 52%, #1f9d73 100%);';
   modal_msg += 'box-shadow: 0 6px 16px rgba(0,0,0,0.14); color:#fff;">';
   modal_msg += '<div style="font-size:20pt; line-height:24pt; font-weight:bold;">What&apos;s New</div>';
-  modal_msg += '<div style="font-size:11pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 19 June 2026</div>';
+  modal_msg += '<div style="font-size:11pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 21 June 2026</div>';
   modal_msg += '</div>';
 
   // Feature card
   modal_msg += '<div style="margin:10px 0 6px 0; padding:0px 12px; border-radius:12px;';
   modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);">';
-  modal_msg += '<p>Added the new <strong>abcjs-eskin Website Builder</strong> tool to the <strong>Other ABC Tools</strong> dialog available from the hamburger menu as well as the <strong>Open ABC in External Tool</strong> dialog available on the <strong>Player</strong>, <strong>Tune Trainer</strong>, and <strong>Sharing Controls</strong> dialogs.</p>';
-  modal_msg += '</div>';
+  modal_msg += '<p>Added the new <strong>abcjs-eskin Website Builder</strong> tool to the <strong>Other ABC Tools</strong> as a new option on the <strong>Export Website</strong> dialog</p>';
+  modal_msg += '<p>The <strong>abcjs-eskin Website Builder</strong> is a powerful standalone website-building tool for creating complete multi-tune ABC websites with modern visual themes, embedded notation, tablature options, playback controls, soundfont support, and table-of-contents navigation.</p>';
+  modal_msg += '<p>To use it from ABC Transcription Tools, choose <strong>Export Website</strong>, then click <strong>Open abcjs-eskin Website Builder</strong>.</p>';
+  modal_msg += '<p>The ABC Transcription Tools will open the <strong>abcjs-eskin Website Builder</strong> in a new browser tab and automatically send the full ABC contents of the editor to it.</p>';
 
-  // Feature card
-  modal_msg += '<div style="margin:10px 0 6px 0; padding:0px 12px; border-radius:12px;';
-  modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);">';
-  modal_msg += '<p><strong>Added a new Inject %tablature_only button on the ABC Features tab of the More ABC Tools dialog</strong></p>';
-  modal_msg += '<p>When clicked, it injects the following two annotations above the first X: tag in the ABC to make it easy to enable the standalone stringed instrument tablature display feature:</p>';
-  modal_msg += '<p><strong>%tablature_only</strong><br/>'; 
-  modal_msg += '<strong>%%staffsep 80</strong></p>'; 
   modal_msg += '</div>';
 
   modal_msg += '</div>'; // wrapper
@@ -63280,13 +63275,13 @@ async function DoStartup() {
   // Show update message?
   if (gLocalStorageAvailable && (!isFromShare)){
 
-    var updatePresented = localStorage.sawUpdate_18jun2026a;
+    var updatePresented = localStorage.sawUpdate_21jun2026;
 
     if (updatePresented != "true") {
 
       showWhatsNewScreen();
 
-      localStorage.sawUpdate_18jun2026a = true;
+      localStorage.sawUpdate_21jun2026 = true;
 
     }
 

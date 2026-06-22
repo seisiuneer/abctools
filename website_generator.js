@@ -4362,6 +4362,231 @@ function generateWebsiteLightbox(){
 
     });
 }
+
+//
+// Launch the standalone abcjs-eskin Website Builder in a new window and
+// transfer the full ABC editor contents after the builder reports that it is ready.
+//
+var gAbcjsEskinWebsiteBuilderURL = "https://michaeleskin.com/abcjs-eskin-portable/website-builder/website-builder.html";
+
+function getAbcjsEskinWebsiteBuilderTargetOrigin(url) {
+
+    try {
+        var parsedURL = new URL(url, window.location.href);
+        return parsedURL.origin && parsedURL.origin !== "null" ? parsedURL.origin : "*";
+    }
+    catch (error) {
+        return "*";
+    }
+}
+
+function showAbcjsEskinWebsiteBuilderMessage(message, width){
+
+    DayPilot.Modal.alert(
+        '<p style="font-size:16px;line-height:24px;font-family:helvetica;text-align:center;">' + message + '</p>',
+        { theme: "modal_flat", top: 10, width: (width || 560), scrollWithPage: (AllowDialogsToScroll()) }
+    );
+}
+
+function showAbcjsEskinWebsiteBuilderOfflineMessage(){
+
+    showAbcjsEskinWebsiteBuilderMessage(
+        "The abcjs-eskin Website Builder is not available while offline. Please reconnect to the internet and try again.",
+        560
+    );
+}
+
+function launchAbcjsEskinWebsiteBuilder(){
+
+    if (!gAllowWebExport){
+        return;
+    }
+
+    if (!navigator.onLine){
+        showAbcjsEskinWebsiteBuilderOfflineMessage();
+        return;
+    }
+
+    var abcText = "";
+
+    try {
+        abcText = (typeof getABCEditorText === "function") ? getABCEditorText() : "";
+    }
+    catch (error) {
+        abcText = "";
+    }
+
+    if (!abcText || !/^\s*X\s*:/m.test(abcText)){
+        showAbcjsEskinWebsiteBuilderMessage(
+            "There are no ABC tunes in the editor to send to the abcjs-eskin Website Builder.",
+            520
+        );
+        return;
+    }
+
+    var builderURL = gAbcjsEskinWebsiteBuilderURL;
+    var targetOrigin = getAbcjsEskinWebsiteBuilderTargetOrigin(builderURL);
+    var messageId = "abctools-website-builder-" + Date.now() + "-" + Math.random().toString(36).slice(2);
+    var builderWindow = null;
+    var builderReadyReceived = false;
+    var loadMessageAttempted = false;
+    var loadMessageAcknowledged = false;
+    var failureMessageShown = false;
+    var cleanupTimer = null;
+    var closedCheckTimer = null;
+    var fallbackTimers = [];
+
+    var sourceName = "ABC Transcription Tools editor";
+    if (typeof gDisplayedName === "string" && gDisplayedName.trim()){
+        sourceName += " - " + gDisplayedName.trim();
+    }
+
+    var loadMessage = {
+        type: "abcjsEskinWebsiteBuilderLoadABC",
+        messageId: messageId,
+        abc: abcText,
+        sourceName: sourceName,
+        replaceExisting: true
+    };
+
+    function cleanupWebsiteBuilderLaunchHandlers(){
+        window.removeEventListener("message", handleWebsiteBuilderLaunchMessage);
+        if (cleanupTimer){
+            clearTimeout(cleanupTimer);
+            cleanupTimer = null;
+        }
+        if (closedCheckTimer){
+            clearInterval(closedCheckTimer);
+            closedCheckTimer = null;
+        }
+        fallbackTimers.forEach(function(timer){
+            clearTimeout(timer);
+        });
+        fallbackTimers = [];
+    }
+
+    function showWebsiteBuilderLaunchFailure(message, width){
+        if (loadMessageAcknowledged || failureMessageShown){
+            cleanupWebsiteBuilderLaunchHandlers();
+            return;
+        }
+
+        failureMessageShown = true;
+        cleanupWebsiteBuilderLaunchHandlers();
+        showAbcjsEskinWebsiteBuilderMessage(message, width || 620);
+    }
+
+    function postABCToWebsiteBuilder(){
+        if (!builderWindow || builderWindow.closed){
+            showWebsiteBuilderLaunchFailure(
+                "The abcjs-eskin Website Builder window was closed before the tunes could be transferred.",
+                600
+            );
+            return;
+        }
+
+        if (loadMessageAcknowledged || failureMessageShown){
+            return;
+        }
+
+        try {
+            loadMessageAttempted = true;
+            builderWindow.postMessage(loadMessage, targetOrigin);
+        }
+        catch (error) {
+            console.error("Unable to send ABC to the abcjs-eskin Website Builder:", error);
+            showWebsiteBuilderLaunchFailure(
+                "ABC Transcription Tools could not send the tunes to the abcjs-eskin Website Builder. Browser security settings may have blocked the transfer.",
+                650
+            );
+        }
+    }
+
+    function handleWebsiteBuilderLaunchMessage(event){
+        if (!builderWindow || event.source !== builderWindow){
+            return;
+        }
+
+        if (targetOrigin !== "*" && event.origin !== targetOrigin){
+            return;
+        }
+
+        var data = event.data || {};
+
+        if (data.type === "abcjsEskinWebsiteBuilderReady"){
+            builderReadyReceived = true;
+            postABCToWebsiteBuilder();
+            return;
+        }
+
+        if (data.type === "abcjsEskinWebsiteBuilderABCLoaded" && data.messageId === messageId){
+            loadMessageAcknowledged = true;
+            cleanupWebsiteBuilderLaunchHandlers();
+        }
+    }
+
+    window.addEventListener("message", handleWebsiteBuilderLaunchMessage);
+
+    builderWindow = window.open(builderURL, "_blank");
+
+    if (!builderWindow){
+        cleanupWebsiteBuilderLaunchHandlers();
+        showAbcjsEskinWebsiteBuilderMessage(
+            "The abcjs-eskin Website Builder window was blocked by the browser. Please allow popups for this site and try again.",
+            560
+        );
+        return;
+    }
+
+    closedCheckTimer = setInterval(function(){
+        if (builderWindow && builderWindow.closed && !loadMessageAcknowledged){
+            showWebsiteBuilderLaunchFailure(
+                "The abcjs-eskin Website Builder window was closed before ABC Transcription Tools received confirmation that the tunes were transferred.",
+                650
+            );
+        }
+    }, 1000);
+
+    // The builder sends a ready message when its listener has been installed.
+    // These delayed fallback sends are harmless if the ready handshake succeeds,
+    // and make the launch more forgiving if a browser drops an early ready message.
+    [1200, 2400, 4200].forEach(function(delay){
+        fallbackTimers.push(setTimeout(function(){
+            if (!loadMessageAcknowledged && !failureMessageShown){
+                postABCToWebsiteBuilder();
+            }
+        }, delay));
+    });
+
+    cleanupTimer = setTimeout(function(){
+        if (loadMessageAcknowledged){
+            cleanupWebsiteBuilderLaunchHandlers();
+            return;
+        }
+
+        if (!builderReadyReceived){
+            showWebsiteBuilderLaunchFailure(
+                "The abcjs-eskin Website Builder opened, but ABC Transcription Tools did not receive a ready message from it. If the tunes are not visible in the Website Builder, use its Open ABC Files button instead.",
+                680
+            );
+            return;
+        }
+
+        if (loadMessageAttempted){
+            showWebsiteBuilderLaunchFailure(
+                "ABC Transcription Tools sent the tunes to the abcjs-eskin Website Builder, but did not receive confirmation that they loaded. If the tunes are not visible in the Website Builder, use its Open ABC Files button instead.",
+                700
+            );
+            return;
+        }
+
+        showWebsiteBuilderLaunchFailure(
+            "ABC Transcription Tools could not complete the transfer to the abcjs-eskin Website Builder. If the tunes are not visible in the Website Builder, use its Open ABC Files button instead.",
+            700
+        );
+    }, 15000);
+}
+
 //
 // Generate website
 //
@@ -4373,20 +4598,23 @@ function generateWebsite(){
 
     var format = GetRadioValue("notenodertab");
 
-    var modal_msg  = '<p style="text-align:center;margin-bottom:36px;font-size:18pt;font-family:helvetica;margin-left:15px;">Export Website&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#generate_website" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>';
+    var modal_msg  = '<p style="text-align:center;margin-bottom:28px;font-size:18pt;font-family:helvetica;margin-left:15px;">Export Website&nbsp;&nbsp;<span style="font-size:24pt;" title="View documentation in new tab"><a href="https://michaeleskin.com/abctools/userguide.html#generate_website" target="_blank" style="text-decoration:none;position:absolute;left:20px;top:20px" class="dialogcornerbutton">?</a></span></p>';
     
-    modal_msg  += '<p style="font-size:18px;line-height:28px;">For all websites, clicking a tune will open the tune for playback in a new browser tab.</p>';
-    modal_msg  += '<p style="font-size:18px;line-height:28px;">Click <strong>Export Basic Tune List Website</strong> to export a technically simple website with a list of all tunes in the ABC vertically down the center of the page. Playback instruments may be optionally specified.</p>';
+    modal_msg  += '<p style="font-size:18px;line-height:28px;">Clicking a tune in an exported website will play the tune. Playback instruments may be optionally specified.</p>';
+
+    modal_msg  += '<p style="font-size:18px;line-height:28px;">Click <strong>Export Basic Tune List Website</strong> to export a basic website with a list of all tune names in the ABC vertically down the center of the page. </p>';
 
     if (isPureDesktopBrowser()){
-        modal_msg  += '<p style="font-size:18px;line-height:28px;">Click <strong>Export Tune Image Gallery Website</strong> to export a website with tune notation images of all the tunes in the ABC vertically down the center of the page. Playback instruments may be optionally specified. Print the website to get a PDF tunebook.</p>';
+        modal_msg  += '<p style="font-size:18px;line-height:28px;">Click <strong>Export Tune Image Gallery Website</strong> to export a website with tune notation images of all the tunes in the ABC vertically down the center of the page.</p>';
 
-        modal_msg  += '<p style="font-size:18px;line-height:28px;">Click <strong>Export Tune Image Lightbox Website</strong> to export a website with tune notation images of all the tunes in the ABC in a lightbox with navigation controls. Playback instruments may be optionally specified. Print the website to get a PDF tunebook.</p>';
+        modal_msg  += '<p style="font-size:18px;line-height:28px;">Click <strong>Export Tune Image Lightbox Website</strong> to export a website with tune notation images of all the tunes in the ABC in a lightbox with navigation controls.</p>';
     }
 
-    modal_msg  += '<p style="font-size:18px;line-height:28px;margin-bottom:36px;">Click <strong>Export Full-Featured Tunebook Website</strong> to export a website with a dropdown list of tune names and optional tablature styles. Playback instruments may be optionally specified. The website remembers the user\'s last selected tune and tablature setting.</p>';
+    modal_msg  += '<p style="font-size:18px;line-height:28px;">Click <strong>Export Full-Featured Tunebook Website</strong> to export a website with a dropdown list of tune names and optional tablature styles. The website remembers the user\'s last selected tune and tablature setting.</p>';
 
-    modal_msg  += '<p style="text-align:center;"><input id="websitesimple" class="advancedcontrols btn btn-websiteexport" onclick="generateWebsiteSimple()" type="button" value="Export Basic Tune List Website" title="Generates a website that has a list of tunes that open in a new browser tab when clicked."></p>';
+    modal_msg  += '<p style="font-size:18px;line-height:28px;margin-bottom:36px;">Click <strong>Open abcjs-eskin Website Builder</strong> to open the abcjs-eskin Website Builder in a new browser tab and send the full ABC editor contents to it automatically.</p>';
+
+    modal_msg  += '<p style="text-align:center;margin-top:24px;"><input id="websitesimple" class="advancedcontrols btn btn-websiteexport" onclick="generateWebsiteSimple()" type="button" value="Export Basic Tune List Website" title="Generates a website that has a list of tunes that open in a new browser tab when clicked."></p>';
     
     if (isPureDesktopBrowser()){
 
@@ -4395,8 +4623,8 @@ function generateWebsite(){
        modal_msg  += '<input id="websitelightbox" class="advancedcontrols btn btn-websiteexport" onclick="generateWebsiteLightbox()" type="button" value="Export Tune Image Lightbox Website" title="Generates a image lightbox website that has the images of the tunes that open for playback in a new browser tab when clicked"></p>';
     }
 
-    modal_msg  += '<p style="text-align:center;margin-top:24px;"><input id="websitefull" class="advancedcontrols btn btn-websiteexport" onclick="generateWebsiteFull()" type="button" value="Export Full-Featured Tunebook Website" title="Generates a website that has dropdowns for the tunes and optional display tablature selection.&nbsp;&nbsp;When a tune is selected from the dropdown, the tune opens in an iframe on the page."></p>';
-    
+    modal_msg  += '<p style="text-align:center;margin-top:24px;"><input id="websitefull" class="advancedcontrols btn btn-websiteexport" onclick="generateWebsiteFull()" type="button" value="Export Full-Featured Tunebook Website" title="Generates a website that has dropdowns for the tunes and optional display tablature selection.&nbsp;&nbsp;When a tune is selected from the dropdown, the tune opens in an iframe on the page.">&nbsp;&nbsp;&nbsp;<input id="websiteabcjseskin" class="advancedcontrols btn btn-websiteexport" onclick="launchAbcjsEskinWebsiteBuilder()" type="button" value="Open abcjs-eskin Website Builder" title="Opens the standalone abcjs-eskin Website Builder in a new tab and sends the full ABC editor contents to it."></p>';
+
     modal_msg  += '<p style="font-size:4px;">&nbsp;</p>';
 
     DayPilot.Modal.alert(modal_msg,{ theme: "modal_flat", top: 10, width: 760, scrollWithPage: (AllowDialogsToScroll()) });

@@ -178,7 +178,8 @@ body.flat-buttons #exportall_abcbutton,
 body.flat-buttons #export_tunetitlesbutton,
 body.flat-buttons #export_smartdrawbutton,
 body.flat-buttons #launchcsvextractor,
-body.flat-buttons #export_websitebutton {
+body.flat-buttons #export_websitebutton,
+body.flat-buttons #websiteabcjseskin {
   -webkit-appearance: none !important;
   -moz-appearance: none !important;
   appearance: none !important;
@@ -712,7 +713,7 @@ padding:12px;
 margin-right:24px;
 }
 
-#injectbambooflute,#injectclicktrackall,#injectchords,#injectheadertemplate,#injectanglotab,#looper_metronomebutton,#pdfinjectlargeprint,#tunebookbuilder_add,#injectfontsettings,#removetunetitlenumbers,#ceoltasdialoginverse,#compliancetransform,#compliancedialoginverse,#fiddlefingeringsdialog0,#fiddlefingeringsdialog1,#fiddlefingeringsdialog2,#fiddlefingeringsdialog3,#fiddlefingeringsdialog4,#websitefull,#injectheaderstringfh,#injectcsdbox,#websitelightbox,#websitesimple,#escapediacriticals,#injectbagpipedrones,#injectlargeprint,#ceoltastransform,#normalizetitles,#injectmidigchord{
+#injectbambooflute,#injectclicktrackall,#injectchords,#injectheadertemplate,#injectanglotab,#looper_metronomebutton,#pdfinjectlargeprint,#tunebookbuilder_add,#injectfontsettings,#removetunetitlenumbers,#ceoltasdialoginverse,#compliancetransform,#compliancedialoginverse,#fiddlefingeringsdialog0,#fiddlefingeringsdialog1,#fiddlefingeringsdialog2,#fiddlefingeringsdialog3,#fiddlefingeringsdialog4,#websitefull,#websiteabcjseskin,#injectheaderstringfh,#injectcsdbox,#websitelightbox,#websitesimple,#escapediacriticals,#injectbagpipedrones,#injectlargeprint,#ceoltastransform,#normalizetitles,#injectmidigchord{
 height:42px;
 padding:12px;
 }
@@ -947,6 +948,11 @@ padding:12px;
 }
 
 #export_websitebutton{
+height:42px;
+padding:12px;
+}
+
+#websiteabcjseskin{
 height:42px;
 padding:12px;
 }
