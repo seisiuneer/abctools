@@ -4436,7 +4436,7 @@ function launchAbcjsEskinWebsiteBuilder(){
     var closedCheckTimer = null;
     var fallbackTimers = [];
 
-    var sourceName = "ABC Transcription Tools editor";
+    var sourceName = "ABC Transcription Tools";
     if (typeof gDisplayedName === "string" && gDisplayedName.trim()){
         sourceName += " - " + gDisplayedName.trim();
     }
