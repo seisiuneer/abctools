@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3267_062126_2130";
+var gVersionNumber = "3268_062226_0900";
 
 var gMIDIInitStillWaiting = false;
 
@@ -28504,13 +28504,13 @@ async function processShareLink() {
       // Show update message?
       if (gLocalStorageAvailable){
 
-        var updatePresented = localStorage.sawUpdate_21jun2026;
+        var updatePresented = localStorage.sawUpdate_22jun2026;
 
         if (updatePresented != "true") {
 
           showWhatsNewScreen();
 
-          localStorage.sawUpdate_21jun2026 = true;
+          localStorage.sawUpdate_22jun2026 = true;
 
         }
 
@@ -56595,6 +56595,7 @@ function showWhatsNewScreen() {
   modal_msg += '<p>The <strong>abcjs-eskin Website Builder</strong> is a powerful standalone website-building tool for creating complete multi-tune ABC websites with modern visual themes, embedded notation, tablature options, playback controls, soundfont support, and table-of-contents navigation.</p>';
   modal_msg += '<p>To use it from the ABC Transcription Tools, choose <strong>Export Website</strong>, then click <strong>Open abcjs-eskin Website Builder</strong>.</p>';
   modal_msg += '<p>The ABC Transcription Tools will open the <strong>abcjs-eskin Website Builder</strong> in a new browser tab and automatically send the full ABC contents of the editor to it.</p>';
+  modal_msg += '<p>You can also send the complete set of ABC tunes in the editor to the <strong>abcjs-eskin Website Builder</strong> from the <strong>Open ABC in External Tool</strong> dialog available by clicking the share button at the top right of the <strong>Player</strong>, <strong>Tune Trainer</strong>, and <strong>Sharing Controls</strong> dialogs.</p>';
 
   modal_msg += '</div>';
 
@@ -63275,13 +63276,13 @@ async function DoStartup() {
   // Show update message?
   if (gLocalStorageAvailable && (!isFromShare)){
 
-    var updatePresented = localStorage.sawUpdate_21jun2026;
+    var updatePresented = localStorage.sawUpdate_22jun2026;
 
     if (updatePresented != "true") {
 
       showWhatsNewScreen();
 
-      localStorage.sawUpdate_21jun2026 = true;
+      localStorage.sawUpdate_22jun2026 = true;
 
     }
 
@@ -64933,26 +64934,8 @@ function OpenInABCJSEskinWebsiteBuilder(abcText){
 
   sendGoogleAnalytics("action", "OpenInABCJSEskinWebsiteBuilder");
 
-  var encoder = new TextEncoder();
-  var utf8Bytes = encoder.encode(abcText);
-  var deflated = pako.deflate(utf8Bytes, { level: 6 });
-  var theDef = def_bytesToBase64URL(deflated);
+  launchAbcjsEskinWebsiteBuilder();
 
-  var theURL = "https://michaeleskin.com/abcjs-eskin-portable/website-builder/website-builder.html?def="+theDef;
-
-  if (theURL.length < 8100)
-  {
-    var w = window.open(theURL);
-  }
-  else{
-
-    DayPilot.Modal.alert('<p style="text-align:center;font-family:helvetica;font-size:12pt;">Share URL is too long to open in the abcjs-eskin Website Builder.</p>', {
-      theme: "modal_flat",
-      top: 230,
-      scrollWithPage: (AllowDialogsToScroll())
-    });
-
-  }
 }
 
 function openInExternalTool(theABC){
