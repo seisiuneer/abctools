@@ -4424,6 +4424,9 @@ function launchAbcjsEskinWebsiteBuilder(){
         return;
     }
 
+    // Keep track of actions
+    sendGoogleAnalytics("action","SaveWebsiteABCJS");
+
     var builderURL = gAbcjsEskinWebsiteBuilderURL;
     var targetOrigin = getAbcjsEskinWebsiteBuilderTargetOrigin(builderURL);
     var messageId = "abctools-website-builder-" + Date.now() + "-" + Math.random().toString(36).slice(2);
