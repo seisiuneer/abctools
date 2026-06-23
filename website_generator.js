@@ -4369,6 +4369,15 @@ function generateWebsiteLightbox(){
 //
 var gAbcjsEskinWebsiteBuilderURL = "https://michaeleskin.com/abcjs-eskin-portable/website-builder/website-builder.html";
 
+function getAbcjsEskinWebsiteBuilderLaunchURL() {
+
+    var separator = (gAbcjsEskinWebsiteBuilderURL.indexOf("?") === -1) ? "?" : "&";
+
+    return gAbcjsEskinWebsiteBuilderURL +
+        separator +
+        "cb=" + encodeURIComponent(String(Date.now()));
+}
+
 function getAbcjsEskinWebsiteBuilderTargetOrigin(url) {
 
     try {
@@ -4530,7 +4539,7 @@ function launchAbcjsEskinWebsiteBuilder(){
 
     window.addEventListener("message", handleWebsiteBuilderLaunchMessage);
 
-    builderWindow = window.open(builderURL, "_blank");
+    builderWindow = window.open(getAbcjsEskinWebsiteBuilderLaunchURL(), "_blank");
 
     if (!builderWindow){
         cleanupWebsiteBuilderLaunchHandlers();
