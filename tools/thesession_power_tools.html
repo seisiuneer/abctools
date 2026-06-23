@@ -197,7 +197,8 @@
       padding-right: 12px;
     }
 
-    #btnOpenInTools{ flex-basis: 100%; }
+    #btnOpenInTools,
+    #btnOpenInWebsiteBuilder{ flex-basis: 100%; }
 
     .muted{
       opacity:0.75;
@@ -1369,6 +1370,7 @@
             <button class="btn-edit" title="Copies the ABC tune settings to the clipboard" id="btnCopy" disabled>Copy ABC</button>
             <button class="btn-edit" title="Saves the ABC tune settings to a file" id="btnDownload" disabled>Download .abc File</button>
             <button class="btn-edit" title="Opens the ABC tune settings in the ABC Transcription Tools" id="btnOpenInTools" disabled>Open Results in the ABC Transcription Tools</button>
+            <button class="btn-edit" title="Opens the ABC tune settings in the abcjs-eskin Website Builder" id="btnOpenInWebsiteBuilder" disabled>Open Results in the abcjs-eskin Website Builder</button>
           </div>
         </div>
 
@@ -1592,6 +1594,10 @@ const outEl = $("out");
 const tuneUrlInput = $("tuneUrl");
 const onlyChordsEl = $("onlyChords");
 const memberSourceModeEl = $("memberSourceMode");
+
+if (outEl) {
+  outEl.addEventListener("input", updateWebsiteBuilderButtonEnabled);
+}
 
 /* ============================================================
    Sorting helpers
@@ -3965,10 +3971,21 @@ function safeFilename(s) {
     .slice(0, 80) || "tune";
 }
 
+function outputHasABCText() {
+  return !!(outEl && String(outEl.value || "").trim());
+}
+
+function updateWebsiteBuilderButtonEnabled() {
+  const btn = $("btnOpenInWebsiteBuilder");
+  if (!btn) return;
+  btn.disabled = !outputHasABCText();
+}
+
 function enableActions(on) {
   $("btnCopy").disabled = !on;
   $("btnDownload").disabled = !on;
   $("btnOpenInTools").disabled = !on;
+  updateWebsiteBuilderButtonEnabled();
 }
 
 function capitalizeFirst(str) {
@@ -4084,8 +4101,8 @@ $("btnFetch").addEventListener("click", async () => {
   const memberSortModeEl = $("memberSort");
   const memberSortMode = memberSortModeEl ? String(memberSortModeEl.value || "orig") : "orig";
 
-  enableActions(false);
   outEl.value = "";
+  enableActions(false);
   lastResult = null;
 
   try {
@@ -4186,11 +4203,11 @@ $("btnFetch").addEventListener("click", async () => {
 
     if (testOpenInAbcTools(outEl.value, shareCtx.memberName, shareCtx.downloadType, shareCtx.chordsOnly)) {
       enableActions(true);
-      appendStatus("You can now copy or download the ABC tune settings or open them in the ABC Transcription Tools.");
+      appendStatus("You can now copy or download the ABC tune settings, open them in the ABC Transcription Tools, or open them in the abcjs-eskin Website Builder.");
     } else {
       enableActions(true);
       $("btnOpenInTools").disabled = true;
-      appendStatus("You can now copy or download the ABC tune settings.");
+      appendStatus("You can now copy or download the ABC tune settings or open them in the abcjs-eskin Website Builder.");
     }
 
   } catch (e) {
@@ -4339,6 +4356,232 @@ $("btnDownload").addEventListener("click", async () => {
   } catch (e) {
     appendStatus("ABC tune settings save failed.");
   }
+});
+
+
+/* ============================================================
+   Open in abcjs-eskin Website Builder
+   ============================================================ */
+
+const gAbcjsEskinWebsiteBuilderURL = "https://michaeleskin.com/abcjs-eskin-portable/website-builder/website-builder.html";
+
+function getAbcjsEskinWebsiteBuilderLaunchURL() {
+  const separator = gAbcjsEskinWebsiteBuilderURL.indexOf("?") === -1 ? "?" : "&";
+  return gAbcjsEskinWebsiteBuilderURL + separator + "cb=" + encodeURIComponent(String(Date.now()));
+}
+
+function getAbcjsEskinWebsiteBuilderTargetOrigin(url) {
+  try {
+    const parsedURL = new URL(url, window.location.href);
+    return parsedURL.origin && parsedURL.origin !== "null" ? parsedURL.origin : "*";
+  } catch {
+    return "*";
+  }
+}
+
+function showAbcjsEskinWebsiteBuilderMessage(message, width) {
+  DayPilot.Modal.alert(
+    '<p style="font-size:16px;line-height:24px;font-family:helvetica;text-align:center;">' + message + '</p>',
+    { theme: "modal_compact", top: 120, width: (width || 560), scrollWithPage: false }
+  );
+}
+
+function showAbcjsEskinWebsiteBuilderOfflineMessage() {
+  showAbcjsEskinWebsiteBuilderMessage(
+    "The abcjs-eskin Website Builder is not available while offline. Please reconnect to the internet and try again.",
+    560
+  );
+}
+
+function buildWebsiteBuilderSourceName() {
+  const result = lastResult || {};
+  const parts = ["thesession.org Power Tools"];
+
+  if (result.memberName) {
+    parts.push(result.memberName);
+  } else if (result.tuneTitle) {
+    parts.push(result.tuneTitle);
+  }
+
+  if (result.memberSourceMode && !isSessionTuneUrl(($("tuneUrl") && $("tuneUrl").value) || "")) {
+    parts.push(getMemberDownloadTypeLabel(result.memberSourceMode));
+  }
+
+  return parts.join(" - ");
+}
+
+function launchAbcjsEskinWebsiteBuilderFromOutput() {
+  if (!outputHasABCText()) {
+    showAbcjsEskinWebsiteBuilderMessage(
+      "There are no ABC tune settings to send to the abcjs-eskin Website Builder.",
+      520
+    );
+    return;
+  }
+
+  if (!navigator.onLine) {
+    showAbcjsEskinWebsiteBuilderOfflineMessage();
+    return;
+  }
+
+  sendGoogleAnalytics("action", "website_builder_message");
+
+  const abcText = String(outEl.value || "");
+  const builderURL = gAbcjsEskinWebsiteBuilderURL;
+  const targetOrigin = getAbcjsEskinWebsiteBuilderTargetOrigin(builderURL);
+  const messageId = "tspt-website-builder-" + Date.now() + "-" + Math.random().toString(36).slice(2);
+
+  let builderWindow = null;
+  let builderReadyReceived = false;
+  let loadMessageAttempted = false;
+  let loadMessageAcknowledged = false;
+  let failureMessageShown = false;
+  let cleanupTimer = null;
+  let closedCheckTimer = null;
+  let fallbackTimers = [];
+
+  const loadMessage = {
+    type: "abcjsEskinWebsiteBuilderLoadABC",
+    messageId,
+    abc: abcText,
+    sourceName: buildWebsiteBuilderSourceName(),
+    replaceExisting: true
+  };
+
+  function cleanupWebsiteBuilderLaunchHandlers() {
+    window.removeEventListener("message", handleWebsiteBuilderLaunchMessage);
+
+    if (cleanupTimer) {
+      clearTimeout(cleanupTimer);
+      cleanupTimer = null;
+    }
+
+    if (closedCheckTimer) {
+      clearInterval(closedCheckTimer);
+      closedCheckTimer = null;
+    }
+
+    fallbackTimers.forEach((timer) => clearTimeout(timer));
+    fallbackTimers = [];
+  }
+
+  function showWebsiteBuilderLaunchFailure(message, width) {
+    if (loadMessageAcknowledged || failureMessageShown) {
+      cleanupWebsiteBuilderLaunchHandlers();
+      return;
+    }
+
+    failureMessageShown = true;
+    cleanupWebsiteBuilderLaunchHandlers();
+    showAbcjsEskinWebsiteBuilderMessage(message, width || 620);
+  }
+
+  function postABCToWebsiteBuilder() {
+    if (!builderWindow || builderWindow.closed) {
+      showWebsiteBuilderLaunchFailure(
+        "The abcjs-eskin Website Builder window was closed before the tune settings could be transferred.",
+        600
+      );
+      return;
+    }
+
+    if (loadMessageAcknowledged || failureMessageShown) return;
+
+    try {
+      loadMessageAttempted = true;
+      builderWindow.postMessage(loadMessage, targetOrigin);
+    } catch (error) {
+      console.error("Unable to send ABC to the abcjs-eskin Website Builder:", error);
+      showWebsiteBuilderLaunchFailure(
+        "thesession.org Power Tools could not send the tune settings to the abcjs-eskin Website Builder. Browser security settings may have blocked the transfer.",
+        690
+      );
+    }
+  }
+
+  function handleWebsiteBuilderLaunchMessage(event) {
+    if (!builderWindow || event.source !== builderWindow) return;
+    if (targetOrigin !== "*" && event.origin !== targetOrigin) return;
+
+    const data = event.data || {};
+
+    if (data.type === "abcjsEskinWebsiteBuilderReady") {
+      builderReadyReceived = true;
+      postABCToWebsiteBuilder();
+      return;
+    }
+
+    if (data.type === "abcjsEskinWebsiteBuilderABCLoaded" && data.messageId === messageId) {
+      loadMessageAcknowledged = true;
+      cleanupWebsiteBuilderLaunchHandlers();
+      appendStatus("ABC tune settings opened in the abcjs-eskin Website Builder.");
+    }
+  }
+
+  window.addEventListener("message", handleWebsiteBuilderLaunchMessage);
+
+  builderWindow = window.open(getAbcjsEskinWebsiteBuilderLaunchURL(), "_blank");
+
+  if (!builderWindow) {
+    cleanupWebsiteBuilderLaunchHandlers();
+    showAbcjsEskinWebsiteBuilderMessage(
+      "The abcjs-eskin Website Builder window was blocked by the browser. Please allow popups for this site and try again.",
+      560
+    );
+    return;
+  }
+
+  closedCheckTimer = setInterval(() => {
+    if (builderWindow && builderWindow.closed && !loadMessageAcknowledged) {
+      showWebsiteBuilderLaunchFailure(
+        "The abcjs-eskin Website Builder window was closed before thesession.org Power Tools received confirmation that the tune settings were transferred.",
+        700
+      );
+    }
+  }, 1000);
+
+  // The builder sends a ready message when its listener has been installed.
+  // These delayed fallback sends are harmless if the ready handshake succeeds,
+  // and make the launch more forgiving if a browser drops an early ready message.
+  [1200, 2400, 4200].forEach((delay) => {
+    fallbackTimers.push(setTimeout(() => {
+      if (!loadMessageAcknowledged && !failureMessageShown) {
+        postABCToWebsiteBuilder();
+      }
+    }, delay));
+  });
+
+  cleanupTimer = setTimeout(() => {
+    if (loadMessageAcknowledged) {
+      cleanupWebsiteBuilderLaunchHandlers();
+      return;
+    }
+
+    if (!builderReadyReceived) {
+      showWebsiteBuilderLaunchFailure(
+        "The abcjs-eskin Website Builder opened, but thesession.org Power Tools did not receive a ready message from it. If the tunes are not visible in the Website Builder, use its Open ABC Files button instead.",
+        700
+      );
+      return;
+    }
+
+    if (loadMessageAttempted) {
+      showWebsiteBuilderLaunchFailure(
+        "thesession.org Power Tools sent the tune settings to the abcjs-eskin Website Builder, but did not receive confirmation that they loaded. If the tunes are not visible in the Website Builder, use its Open ABC Files button instead.",
+        740
+      );
+      return;
+    }
+
+    showWebsiteBuilderLaunchFailure(
+      "thesession.org Power Tools could not complete the transfer to the abcjs-eskin Website Builder. If the tunes are not visible in the Website Builder, use its Open ABC Files button instead.",
+      720
+    );
+  }, 15000);
+}
+
+$("btnOpenInWebsiteBuilder").addEventListener("click", () => {
+  launchAbcjsEskinWebsiteBuilderFromOutput();
 });
 
 $("btnOpenInTools").addEventListener("click", () => {
@@ -4552,7 +4795,7 @@ $("btnHelp").addEventListener("click", () => {
 
 const content =
   '  <div style="margin-bottom:16px;">' +
-  '    This tool fetches ABC tune settings from <b>thesession.org</b> using either a <b>tune URL</b> or a <b>member URL</b>, then combines the results into a single ABC output that you can copy, save, or open in the ABC Transcription Tools.' +
+  '    This tool fetches ABC tune settings from <b>thesession.org</b> using either a <b>tune URL</b> or a <b>member URL</b>, then combines the results into a single ABC output that you can copy, save, open in the ABC Transcription Tools, or send directly to the abcjs-eskin Website Builder.' +
   '  </div>' +
 
   '  <hr style="border:0; border-top:1px solid #ccc; margin:18px 0;">' +
@@ -4653,7 +4896,7 @@ const content =
   '  <div style="margin-bottom:16px;">' +
   '    <div style="font-weight:700; margin-bottom:6px;">After clicking Fetch</div>' +
   '    <div>' +
-  '      You can copy the fetched ABC tune settings to the clipboard, save them to a .abc file (opens the sharing dialog on iOS), or, if the generated ShareURL is under 8100 characters, open the tune settings directly in the <a href="https://michaeleskin.com/abctools/abctools.html" target="_blank" rel="noopener noreferrer">ABC Transcription Tools</a>.' +
+  '      You can copy the fetched ABC tune settings to the clipboard, save them to a .abc file (opens the sharing dialog on iOS), or, if the generated ShareURL is under 8100 characters, open the tune settings directly in the <a href="https://michaeleskin.com/abctools/abctools.html" target="_blank" rel="noopener noreferrer">ABC Transcription Tools</a>. You can also click <b>Open Results in the abcjs-eskin Website Builder</b> to open the standalone Website Builder in a new browser tab and send the full ABC output directly by browser message.' +
   '    </div>' +
   '  </div>' +
 
@@ -4762,6 +5005,7 @@ function resetUIToDefaults() {
 
   enableActions(false);
   $("btnOpenInTools").disabled = true;
+  $("btnOpenInWebsiteBuilder").disabled = true;
 
   $("btnFetch").textContent = "Fetch";
   $("btnFetch").disabled = false;
