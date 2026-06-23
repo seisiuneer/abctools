@@ -4,30 +4,14 @@
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
 // Updated 23 Jun 2026 1000
 //
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
-//
 
-const cacheName = 'abctoolscache-3272';
+
+const cacheName = 'abctoolscache-3273';
 
 const contentToCache = [
     'abctools.html',
