@@ -4393,7 +4393,7 @@ function showAbcjsEskinWebsiteBuilderMessage(message, width){
 
     DayPilot.Modal.alert(
         '<p style="font-size:16px;line-height:24px;font-family:helvetica;text-align:center;">' + message + '</p>',
-        { theme: "modal_flat", top: 10, width: (width || 560), scrollWithPage: (AllowDialogsToScroll()) }
+        { theme: "modal_flat", top: 150, width: (width || 560), scrollWithPage: (AllowDialogsToScroll()) }
     );
 }
 
@@ -4405,14 +4405,22 @@ function showAbcjsEskinWebsiteBuilderOfflineMessage(){
     );
 }
 
+function isRunningFromOfficialMichaeleskinDomain(){
+
+    return window.location && window.location.origin === "https://michaeleskin.com";
+}
+
+function showAbcjsEskinWebsiteBuilderOfficialVersionMessage(){
+
+    showAbcjsEskinWebsiteBuilderMessage(
+        "Direct ABC transfer to the abcjs-eskin Website Builder is only available from the official online version at https://michaeleskin.com.<br/><br/>Please run the official online version of the ABC Transcription Tools to use direct ABC transfer.<br/><br/>As a workaround, save the ABC file and manually open that ABC file in the Website Builder with its Open ABC Files button.",
+        560
+    );
+}
+
 function launchAbcjsEskinWebsiteBuilder(){
 
     if (!gAllowWebExport){
-        return;
-    }
-
-    if (!navigator.onLine){
-        showAbcjsEskinWebsiteBuilderOfflineMessage();
         return;
     }
 
@@ -4430,6 +4438,16 @@ function launchAbcjsEskinWebsiteBuilder(){
             "There are no ABC tunes in the editor to send to the abcjs-eskin Website Builder.",
             520
         );
+        return;
+    }
+
+    if (!isRunningFromOfficialMichaeleskinDomain()){
+        showAbcjsEskinWebsiteBuilderOfficialVersionMessage();
+        return;
+    }
+
+    if (!navigator.onLine){
+        showAbcjsEskinWebsiteBuilderOfflineMessage();
         return;
     }
 

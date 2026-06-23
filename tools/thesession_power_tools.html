@@ -4393,6 +4393,17 @@ function showAbcjsEskinWebsiteBuilderOfflineMessage() {
   );
 }
 
+function isRunningFromOfficialMichaeleskinDomain() {
+  return window.location && window.location.origin === "https://michaeleskin.com";
+}
+
+function showAbcjsEskinWebsiteBuilderOfficialVersionMessage() {
+  showAbcjsEskinWebsiteBuilderMessage(
+    "Direct ABC transfer to the abcjs-eskin Website Builder is only available from the official online version at https://michaeleskin.com.<br/><br/>As a workaround, download the ABC file from this tool and open that ABC file in the Website Builder with its Open ABC Files button.",
+    720
+  );
+}
+
 function buildWebsiteBuilderSourceName() {
   const result = lastResult || {};
   const parts = ["thesession.org Power Tools"];
@@ -4416,6 +4427,11 @@ function launchAbcjsEskinWebsiteBuilderFromOutput() {
       "There are no ABC tune settings to send to the abcjs-eskin Website Builder.",
       520
     );
+    return;
+  }
+
+  if (!isRunningFromOfficialMichaeleskinDomain()) {
+    showAbcjsEskinWebsiteBuilderOfficialVersionMessage();
     return;
   }
 
