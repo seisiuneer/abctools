@@ -628,6 +628,9 @@ function getInstrumentNameForWebSelector(index){
     if (instrumentName.indexOf("String") != -1){
         return "Strings";
     }
+    if (instrumentName.indexOf("Harpsichord") != -1){
+        return "Harpsichord";
+    }
     if (instrumentName.indexOf("Harp") != -1){
         return "Harp";
     }
