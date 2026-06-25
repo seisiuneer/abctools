@@ -30,7 +30,7 @@ function UpdateToLatestVersion(){
 				// Center the string in the prompt
 				thePrompt = makeCenteredPromptString(thePrompt);
 
-				DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 320, scrollWithPage: (AllowDialogsToScroll()) }).then(function(){
+				DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 240, scrollWithPage: (AllowDialogsToScroll()) }).then(function(){
 
 					// Mostly for iOS which keeps the old page displayed during the update
 					if (isMobileBrowser()){
@@ -40,7 +40,7 @@ function UpdateToLatestVersion(){
 						// Center the string in the prompt
 						thePrompt = makeCenteredPromptString(thePrompt);
 						
-						DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 320, scrollWithPage: (AllowDialogsToScroll()) });
+						DayPilot.Modal.alert(thePrompt,{ theme: "modal_flat", top: 240, scrollWithPage: (AllowDialogsToScroll()) });
 						
 					}
 
@@ -64,7 +64,7 @@ function ForceUpdate(callback){
 	// Center the string in the prompt
 	thePrompt = makeCenteredPromptString(thePrompt);
 
-	DayPilot.Modal.confirm(thePrompt,{ top:262, theme: "modal_flat", scrollWithPage: (AllowDialogsToScroll()) }).then(function(args){
+	DayPilot.Modal.confirm(thePrompt,{ top:200, theme: "modal_flat", scrollWithPage: (AllowDialogsToScroll()) }).then(function(args){
 
 		if (!args.canceled){
 
