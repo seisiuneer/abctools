@@ -313,6 +313,59 @@ function generatePostfix() {
     return result;
 }
 
+
+//
+// Add self-documenting CSS comments to generated websites.
+// These comments are written into the exported HTML file so users can
+// customize fonts, sizes, and weights without having to read this generator.
+//
+function AppendGeneratedWebsiteFontCssComments(theOutput, includeTuneContainerComment) {
+
+    theOutput += "    /*\n";
+    theOutput += "       Text font, size, and weight customization guide\n";
+    theOutput += "       ------------------------------------------------\n";
+    theOutput += "       body controls the default font used by normal text on this page.\n";
+    theOutput += "       h1 controls the main website title.\n";
+    theOutput += "       h2 controls the subtitle.\n";
+    theOutput += "       p controls footer and paragraph text.\n";
+    theOutput += "       a, a:link, a:visited, a:hover, and a:active control links.\n";
+    theOutput += "       select controls dropdown text.\n";
+    theOutput += "       button controls button text.\n";
+    theOutput += "\n";
+    theOutput += "       To change a text item, edit or add these CSS properties inside\n";
+    theOutput += "       the selector for that item:\n";
+    theOutput += "\n";
+    theOutput += "           font-family: Georgia, 'Times New Roman', serif;\n";
+    theOutput += "           font-size: 22px;\n";
+    theOutput += "           font-weight: bold;\n";
+    theOutput += "\n";
+    theOutput += "       Common font-weight values are normal, bold, 400, 500, 600, and 700.\n";
+    theOutput += "       Put multi-word font names in quotes, for example 'Times New Roman'.\n";
+    theOutput += "\n";
+
+    if (includeTuneContainerComment) {
+        theOutput += "       Optional default font for all tune containers\n";
+        theOutput += "       ------------------------------------------------\n";
+        theOutput += "       If this exported page does not already set the default font-family\n";
+        theOutput += "       and font-weight for the tune containers, you can add a rule near\n";
+        theOutput += "       the top of this CSS. This applies to the visible tune containers\n";
+        theOutput += "       on this page, unless a more specific rule overrides it later.\n";
+        theOutput += "\n";
+        theOutput += "       Example:\n";
+        theOutput += "\n";
+        theOutput += "           .tune-container, .image-container, #viewer {\n";
+        theOutput += "               font-family: Georgia, 'Times New Roman', serif;\n";
+        theOutput += "               font-weight: 500;\n";
+        theOutput += "           }\n";
+        theOutput += "\n";
+    }
+
+    theOutput += "    */\n";
+    theOutput += "\n";
+
+    return theOutput;
+}
+
 //
 // Save Website settings
 //
@@ -766,6 +819,8 @@ function generateAndSaveWebsiteFull() {
     // CSS
     theOutput +="<style>\n";
     theOutput +="\n";
+    theOutput = AppendGeneratedWebsiteFontCssComments(theOutput, false);
+    theOutput +="    /* Default page text font. Change font-family, font-size, or font-weight here to affect most page text. */\n";
     theOutput +="    body {\n";
     theOutput +="        font-family: Arial, sans-serif;\n";
     if ((gWebsiteColor.indexOf("gradient") == -1) && (gWebsiteColor.indexOf("url(") == -1)){
@@ -792,6 +847,7 @@ function generateAndSaveWebsiteFull() {
     theOutput +="        overflow-x: hidden;\n";
     theOutput +="    }\n";
     theOutput +="\n";
+    theOutput +="    /* Main website title text. */\n";
     theOutput +="    h1 {\n";
     theOutput +="        font-size: 24px;\n";
     theOutput +="        margin-top: 16px;\n";
@@ -801,6 +857,7 @@ function generateAndSaveWebsiteFull() {
     theOutput +="\n";
 
     if (gWebsiteTitle && (gWebsiteTitle != "")) {   
+        theOutput +="    /* Website subtitle text. */\n";
         theOutput +="    h2 {\n";
         theOutput +="        font-size: 16px;\n";
         theOutput +="        margin-top: 8px;\n";
@@ -808,6 +865,7 @@ function generateAndSaveWebsiteFull() {
         theOutput +="        color: "+gWebsiteTextColor+";\n";
         theOutput +="    }\n";
     }else{
+        theOutput +="    /* Website subtitle text. */\n";
         theOutput +="    h2 {\n";
         theOutput +="        font-size: 16px;\n";
         theOutput +="        margin-top: 14px;\n";
@@ -817,10 +875,12 @@ function generateAndSaveWebsiteFull() {
     }
     theOutput +="\n";
 
+    theOutput +="    /* Paragraph and footer text. */\n";
     theOutput +="    p {\n";
     theOutput +="        color: "+gWebsiteTextColor+";\n";
     theOutput +="    }\n";
     theOutput +="\n";
+    theOutput +="    /* Link text. The link state rules below keep all link states the same color. */\n";
     theOutput +="    a {\n";
     theOutput +="        color: "+gWebsiteHyperlinkColor+";\n";
     theOutput +="    }\n";
@@ -857,6 +917,7 @@ function generateAndSaveWebsiteFull() {
         theOutput +="    }\n";
         theOutput +="\n";
     }
+    theOutput +="    /* Dropdown text. This affects the tune selector and, in full-featured sites, the instrument/display selector. */\n";
     theOutput +="    select {\n";
     theOutput +="        -webkit-appearance: none;\n";
     theOutput +="        -moz-appearance: none;\n";
@@ -879,12 +940,14 @@ function generateAndSaveWebsiteFull() {
     theOutput +="        background-color: #ffffff;\n";
     theOutput +="    }\n";
     theOutput +="\n";
+    theOutput +="    /* Footer line 1 text. */\n";
     theOutput +="    #footer1{\n";
     theOutput +="        margin-top: 12px;\n";
     theOutput +="        margin-bottom: 12px;\n";
     theOutput +="        color: "+gWebsiteTextColor+";\n";
     theOutput +="    }\n";
     theOutput +="\n";
+    theOutput +="    /* Footer line 2 text. */\n";
     theOutput +="    #footer2{\n";
     theOutput +="        margin-top: 12px;\n";
     theOutput +="        margin-bottom: 0px;\n";
@@ -895,7 +958,8 @@ function generateAndSaveWebsiteFull() {
     if (gWebsiteAddHelp){
         // There is a title or subtitle present
         if ((gWebsiteTitle && (gWebsiteTitle != "")) || (gWebsiteSubtitle && (gWebsiteSubtitle != ""))){
-            theOutput +="    #website_help{\n";
+            theOutput +="    /* Help icon text. */\n";
+    theOutput +="    #website_help{\n";
             theOutput +="        color: "+gWebsiteHyperlinkColor+";\n";
             theOutput +="        font-size: 28pt;\n";
             theOutput +="        position: absolute;\n";
@@ -905,7 +969,8 @@ function generateAndSaveWebsiteFull() {
             theOutput +="\n";
         }
         else{
-            theOutput +="    #website_help{\n";
+            theOutput +="    /* Help icon text. */\n";
+    theOutput +="    #website_help{\n";
             theOutput +="        color: "+gWebsiteHyperlinkColor+";\n";
             theOutput +="        font-size: 28pt;\n";
             theOutput +="        position: absolute;\n";
@@ -916,6 +981,7 @@ function generateAndSaveWebsiteFull() {
         }
     }
 
+    theOutput +="    /* Previous/Next button text. */\n";
     theOutput +="    #previous_tune, #next_tune{\n";
     theOutput +="        padding: 10px 15px;\n";
     theOutput +="        background-color: #dddddd;\n";
@@ -1007,6 +1073,15 @@ function generateAndSaveWebsiteFull() {
 
 
     if (gWebsiteTabSelector){
+        theOutput +='        <!--\n';
+        theOutput +='            Instrument/display selector.\n';
+        theOutput +='            To add a new dropdown setting, add a new <option> here with a unique value,\n';
+        theOutput +='            then add a matching case for that value in the JavaScript displayOptions\n';
+        theOutput +='            change handler below. If the new setting needs a different playback sound,\n';
+        theOutput +='            also update the injectInstrument() switch.\n';
+        theOutput +='            To remove a setting, remove its <option> here and remove or leave unused\n';
+        theOutput +='            the matching JavaScript case below.\n';
+        theOutput +='        -->\n';
         if (gotTitle || gotSubTitle){
             theOutput +='        <select id="displayOptions" style="width:250px;">\n';
         }
@@ -1014,6 +1089,7 @@ function generateAndSaveWebsiteFull() {
             theOutput +='        <select id="displayOptions" style="width:250px;margin-top:18px;">\n';
         }
         theOutput +='           <option value="-1">Select an Instrument</option>\n';
+        theOutput +='           <!-- Each option value must match a case in the JavaScript displayOptions switch below. -->\n';
 
         var instrumentName = getInstrumentNameForWebSelector(gWebsiteMelodyInstrumentInject);
 
@@ -1241,6 +1317,11 @@ function generateAndSaveWebsiteFull() {
 
     if (gWebsiteTabSelector){
 
+        theOutput +="        // Current display setting. This value is changed by the instrument/display selector.\n";
+        theOutput +="        // Add or remove selector choices in three matching places:\n";
+        theOutput +="        // 1. The <option> list for displayOptions in the HTML above.\n";
+        theOutput +="        // 2. The displayOptions switch below, which maps each value to an ABC display format.\n";
+        theOutput +="        // 3. The injectInstrument() switch, only when that choice needs a different MIDI instrument.\n";
         theOutput +="        var tabStyle = \"noten\";\n";
 
         theOutput +="\n";
@@ -1265,6 +1346,9 @@ function generateAndSaveWebsiteFull() {
         theOutput +="\n";
         theOutput +="            var abcInLZW = LZString.decompressFromEncodedURIComponent(originalAbcInLZW);\n";
         theOutput +="\n";
+        theOutput +="            // Optional playback instrument remapping for each display style.\n";
+        theOutput +="            // Add a case here only if the selector choice needs to change the MIDI program.\n";
+        theOutput +="            // Choices that only change notation/tab display do not need an instrument case.\n";
         theOutput +="            switch (tabStyle){\n";
         theOutput +='                case "mandolin":\n';
         theOutput +='                    if (isBanjo){\n';
@@ -1338,6 +1422,9 @@ function generateAndSaveWebsiteFull() {
         theOutput +="             isConcertina = false;\n";
         theOutput +="             isDulcimer = false;\n";
         theOutput +="\n";
+        theOutput +="             // Map each instrument/display dropdown value to the ABC format parameter.\n";
+        theOutput +="             // To add a setting: add a new <option> above, then add a matching case here.\n";
+        theOutput +="             // To remove a setting: remove the <option>; this case can also be removed.\n";
         theOutput +="             switch (displayOptions.value){\n";
         theOutput +="                 case \"0\": // Standard notation\n";
         theOutput +="                     tabStyle = \"noten\";\n";
@@ -1682,6 +1769,8 @@ function generateAndSaveWebsiteSimple() {
     // CSS
     theOutput +="<style>\n";
     theOutput +="\n";
+    theOutput = AppendGeneratedWebsiteFontCssComments(theOutput, false);
+    theOutput +="    /* Default page text font. Change font-family, font-size, or font-weight here to affect most page text. */\n";
     theOutput +="    body {\n";
     theOutput +="        font-family: Arial, sans-serif;\n";
     if ((gWebsiteColor.indexOf("gradient") == -1) && (gWebsiteColor.indexOf("url(") == -1)){
@@ -1708,6 +1797,7 @@ function generateAndSaveWebsiteSimple() {
     theOutput +="        overflow-x: hidden;\n";
     theOutput +="    }\n";
     theOutput +="\n";
+    theOutput +="    /* Main website title text. */\n";
     theOutput +="    h1 {\n";
     theOutput +="        font-size: 24px;\n";
     theOutput +="        margin-top: 24px;\n";
@@ -1717,6 +1807,7 @@ function generateAndSaveWebsiteSimple() {
     theOutput +="\n";
 
     if (gWebsiteTitle && (gWebsiteTitle != "")) {   
+        theOutput +="    /* Website subtitle text. */\n";
         theOutput +="    h2 {\n";
         theOutput +="        font-size: 18px;\n";
         theOutput +="        margin-top: 18px;\n";
@@ -1724,6 +1815,7 @@ function generateAndSaveWebsiteSimple() {
         theOutput +="        color: "+gWebsiteTextColor+";\n";
         theOutput +="    }\n";
     }else{
+        theOutput +="    /* Website subtitle text. */\n";
         theOutput +="    h2 {\n";
         theOutput +="        font-size: 18px;\n";
         theOutput +="        margin-top: 24px;\n";
@@ -1733,10 +1825,12 @@ function generateAndSaveWebsiteSimple() {
     }
     theOutput +="\n";
 
+    theOutput +="    /* Paragraph and footer text. */\n";
     theOutput +="    p {\n";
     theOutput +="        color: "+gWebsiteTextColor+";\n";
     theOutput +="    }\n";
     theOutput +="\n";
+    theOutput +="    /* Link text. The link state rules below keep all link states the same color. */\n";
     theOutput +="    a {\n";
     theOutput +="        font-size: 18px;\n";
     theOutput +="        text-decoration: none;\n";
@@ -1756,6 +1850,7 @@ function generateAndSaveWebsiteSimple() {
     theOutput +="    }\n";
     theOutput +="\n";
 
+    theOutput +="    /* Footer line 1 text. */\n";
     theOutput +="    #footer1{\n";
     theOutput +="        font-size: 18px;\n";
     theOutput +="        margin-top: 16px;\n";
@@ -1763,6 +1858,7 @@ function generateAndSaveWebsiteSimple() {
     theOutput +="        color: "+gWebsiteTextColor+";\n";
     theOutput +="    }\n";
     theOutput +="\n";
+    theOutput +="    /* Footer line 2 text. */\n";
     theOutput +="    #footer2{\n";
     theOutput +="        font-size: 18px;\n";
     theOutput +="        margin-top: 16px;\n";
@@ -1774,7 +1870,8 @@ function generateAndSaveWebsiteSimple() {
     if (gWebsiteAddHelp){
         // There is a title or subtitle present
         if ((gWebsiteTitle && (gWebsiteTitle != "")) || (gWebsiteSubtitle && (gWebsiteSubtitle != ""))){
-            theOutput +="    #website_help{\n";
+            theOutput +="    /* Help icon text. */\n";
+    theOutput +="    #website_help{\n";
             theOutput +="        color: "+gWebsiteHyperlinkColor+";\n";
             theOutput +="        font-size: 28pt;\n";
             theOutput +="        position: absolute;\n";
@@ -1784,7 +1881,8 @@ function generateAndSaveWebsiteSimple() {
             theOutput +="\n";
         }
         else{
-            theOutput +="    #website_help{\n";
+            theOutput +="    /* Help icon text. */\n";
+    theOutput +="    #website_help{\n";
             theOutput +="        color: "+gWebsiteHyperlinkColor+";\n";
             theOutput +="        font-size: 28pt;\n";
             theOutput +="        position: absolute;\n";
@@ -2060,6 +2158,8 @@ function generateAndSaveWebsiteImageGallery() {
     // CSS
     theOutput +="<style>\n";
     theOutput +="\n";
+    theOutput = AppendGeneratedWebsiteFontCssComments(theOutput, true);
+    theOutput +="    /* Default page text font. Change font-family, font-size, or font-weight here to affect most page text. */\n";
     theOutput +="    body {\n";
     theOutput +="        font-family: Arial, sans-serif;\n";
     if ((gWebsiteColor.indexOf("gradient") == -1) && (gWebsiteColor.indexOf("url(") == -1)){
@@ -2086,6 +2186,7 @@ function generateAndSaveWebsiteImageGallery() {
     theOutput +="        overflow-x: hidden;\n";
     theOutput +="    }\n";
     theOutput +="\n";
+    theOutput +="    /* Main website title text. */\n";
     theOutput +="    h1 {\n";
     theOutput +="        font-size: 24px;\n";
     theOutput +="        margin-top: 24px;\n";
@@ -2095,6 +2196,7 @@ function generateAndSaveWebsiteImageGallery() {
     theOutput +="\n";
 
     if (gWebsiteTitle && (gWebsiteTitle != "")) {   
+        theOutput +="    /* Website subtitle text. */\n";
         theOutput +="    h2 {\n";
         theOutput +="        font-size: 18px;\n";
         theOutput +="        margin-top: 18px;\n";
@@ -2102,6 +2204,7 @@ function generateAndSaveWebsiteImageGallery() {
         theOutput +="        color: "+gWebsiteTextColor+";\n";
         theOutput +="    }\n";
     }else{
+        theOutput +="    /* Website subtitle text. */\n";
         theOutput +="    h2 {\n";
         theOutput +="        font-size: 18px;\n";
         theOutput +="        margin-top: 24px;\n";
@@ -2111,10 +2214,12 @@ function generateAndSaveWebsiteImageGallery() {
     }
     theOutput +="\n";
 
+    theOutput +="    /* Paragraph and footer text. */\n";
     theOutput +="    p {\n";
     theOutput +="        color: "+gWebsiteTextColor+";\n";
     theOutput +="    }\n";
     theOutput +="\n";
+    theOutput +="    /* Link text. The link state rules below keep all link states the same color. */\n";
     theOutput +="    a {\n";
     theOutput +="        font-size: 18px;\n";
     theOutput +="        text-decoration: none;\n";
@@ -2134,6 +2239,7 @@ function generateAndSaveWebsiteImageGallery() {
     theOutput +="    }\n";
     theOutput +="\n";
 
+    theOutput +="    /* Footer line 1 text. */\n";
     theOutput +="    #footer1{\n";
     theOutput +="        font-size: 18px;\n";
     theOutput +="        margin-top: 16px;\n";
@@ -2141,6 +2247,7 @@ function generateAndSaveWebsiteImageGallery() {
     theOutput +="        color: "+gWebsiteTextColor+";\n";
     theOutput +="    }\n";
     theOutput +="\n";
+    theOutput +="    /* Footer line 2 text. */\n";
     theOutput +="    #footer2{\n";
     theOutput +="        font-size: 18px;\n";
     theOutput +="        margin-top: 16px;\n";
@@ -2294,7 +2401,8 @@ function generateAndSaveWebsiteImageGallery() {
     if (gWebsiteAddHelp){
         // There is a title or subtitle present
         if ((gWebsiteTitle && (gWebsiteTitle != "")) || (gWebsiteSubtitle && (gWebsiteSubtitle != ""))){
-            theOutput +="    #website_help{\n";
+            theOutput +="    /* Help icon text. */\n";
+    theOutput +="    #website_help{\n";
             theOutput +="        color: "+gWebsiteHyperlinkColor+";\n";
             theOutput +="        font-size: 28pt;\n";
             theOutput +="        position: absolute;\n";
@@ -2304,7 +2412,8 @@ function generateAndSaveWebsiteImageGallery() {
             theOutput +="\n";
         }
         else{
-            theOutput +="    #website_help{\n";
+            theOutput +="    /* Help icon text. */\n";
+    theOutput +="    #website_help{\n";
             theOutput +="        color: "+gWebsiteHyperlinkColor+";\n";
             theOutput +="        font-size: 28pt;\n";
             theOutput +="        position: absolute;\n";
@@ -2599,6 +2708,8 @@ function generateAndSaveWebsiteLightbox() {
     // CSS
     theOutput +="<style>\n";
     theOutput +="\n";
+    theOutput = AppendGeneratedWebsiteFontCssComments(theOutput, true);
+    theOutput +="    /* Default page text font. Change font-family, font-size, or font-weight here to affect most page text. */\n";
     theOutput +="    body {\n";
     theOutput +="        font-family: Arial, sans-serif;\n";
     theOutput +="        display: flex;\n";
@@ -2668,6 +2779,7 @@ function generateAndSaveWebsiteLightbox() {
 
     theOutput +="\n";
 
+    theOutput +="    /* Button text for navigation and controls. */\n";
     theOutput +="    button {\n";
     theOutput +="        margin: 7px;\n";
     theOutput +="        padding: 10px 20px;\n";
@@ -2680,6 +2792,7 @@ function generateAndSaveWebsiteLightbox() {
 
     theOutput +="\n";
 
+    theOutput +="    /* Dropdown text. Change font-family, font-size, or font-weight here for selector controls. */\n";
     theOutput +="    select{\n";
     theOutput +="        display:inline;\n";
     theOutput +="        -webkit-appearance: none;\n";
@@ -2701,6 +2814,7 @@ function generateAndSaveWebsiteLightbox() {
 
     theOutput +="\n";
 
+    theOutput +="    /* Main website title text. */\n";
     theOutput +="    #title {\n";
     theOutput +="        font-size: 2.5em;\n";
     theOutput +="        font-weight: bold;\n";
@@ -2709,6 +2823,7 @@ function generateAndSaveWebsiteLightbox() {
 
     theOutput +="\n";
 
+    theOutput +="    /* Website subtitle text. */\n";
     theOutput +="    #subtitle {\n";
     theOutput +="        font-size: 1.5em;\n";
     theOutput +="        color: "+gWebsiteTextColor+";\n";
@@ -2859,7 +2974,8 @@ function generateAndSaveWebsiteLightbox() {
     theOutput +="\n";
 
     if (gWebsiteAddHelp){
-        theOutput +="    #website_help{\n";
+        theOutput +="    /* Help icon text. */\n";
+    theOutput +="    #website_help{\n";
         theOutput +="        color: "+gWebsiteHyperlinkColor+";\n";
         theOutput +="        font-size: 28pt;\n";
         theOutput +="        position: absolute;\n";
@@ -2869,6 +2985,7 @@ function generateAndSaveWebsiteLightbox() {
         theOutput +="\n";
     }
 
+    theOutput +="    /* Link text. The link state rules below keep all link states the same color. */\n";
     theOutput +="    a {\n";
     theOutput +="        font-size: 18px;\n";
     theOutput +="        text-decoration: none;\n";

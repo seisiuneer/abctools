@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3277_062526_1100";
+var gVersionNumber = "3278_062626_0830";
 
 var gMIDIInitStillWaiting = false;
 
@@ -28504,13 +28504,13 @@ async function processShareLink() {
       // Show update message?
       if (gLocalStorageAvailable){
 
-        var updatePresented = localStorage.sawUpdate_22jun2026;
+        var updatePresented = localStorage.sawUpdate_26jun2026;
 
         if (updatePresented != "true") {
 
           showWhatsNewScreen();
 
-          localStorage.sawUpdate_22jun2026 = true;
+          localStorage.sawUpdate_26jun2026 = true;
 
         }
 
@@ -56591,11 +56591,18 @@ function showWhatsNewScreen() {
   // Feature card
   modal_msg += '<div style="margin:10px 0 6px 0; padding:0px 12px; border-radius:12px;';
   modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);">';
+  modal_msg += '<p><strong>Exported websites now include self-documenting CSS, HTML, and JavaScript</strong></p>';
+  modal_msg += '<p>To simplify developer customization of exported websites, most CSS text items in the exported code now have comments explaining how to customize them.</p>';
+  modal_msg += '<p>For the <strong>Full-Featured</strong> websites, there are instructions in the HTML and JavaScript explaining how to add or remove instruments from the instrument selector (if enabled).</p>';
+  modal_msg += '</div>';
+
+  // Feature card
+  modal_msg += '<div style="margin:10px 0 6px 0; padding:0px 12px; border-radius:12px;';
+  modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);">';
   modal_msg += '<p>Added the <strong>abcjs-eskin Website Builder</strong> tool as a new option on the <strong>Export Website</strong> dialog.</p>';
   modal_msg += '<p>The <strong>abcjs-eskin Website Builder</strong> is a powerful standalone website-building tool for creating complete multi-tune ABC websites with modern visual themes, embedded notation, tablature options, playback controls, soundfont support, and table-of-contents navigation.</p>';
   modal_msg += '<p>To use it from the ABC Transcription Tools, choose <strong>Export Website</strong>, then click <strong>Open abcjs-eskin Website Builder</strong>.</p>';
   modal_msg += '<p>The ABC Transcription Tools will open the <strong>abcjs-eskin Website Builder</strong> in a new browser tab and automatically send the full ABC contents of the editor to it.</p>';
-  modal_msg += '<p>You can also send either the current tune (from the <strong>Player</strong> or <strong>Tune Trainer</strong>) or the complete set of ABC tunes in the editor (from the <strong>Sharing Controls</strong>) to the <strong>abcjs-eskin Website Builder</strong> from the <strong>Open ABC in External Tool</strong> dialog available by clicking the share button at the top right of the <strong>Player</strong>, <strong>Tune Trainer</strong>, and <strong>Sharing Controls</strong> dialogs.</p>';
 
   modal_msg += '</div>';
 
@@ -63276,13 +63283,13 @@ async function DoStartup() {
   // Show update message?
   if (gLocalStorageAvailable && (!isFromShare)){
 
-    var updatePresented = localStorage.sawUpdate_22jun2026;
+    var updatePresented = localStorage.sawUpdate_26jun2026;
 
     if (updatePresented != "true") {
 
       showWhatsNewScreen();
 
-      localStorage.sawUpdate_22jun2026 = true;
+      localStorage.sawUpdate_26jun2026 = true;
 
     }
 
