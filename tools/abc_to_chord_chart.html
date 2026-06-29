@@ -1039,9 +1039,17 @@
         </div>
 
         <div class="row" style="margin-top:10px;">
-          <label for="slotWidth"><strong>Extra spacing (chars)</strong></label>
+          <label for="addBlankLines"><strong>Add blank lines between chart rows</strong></label>
+          <select id="addBlankLines" title="If enabled, adds a blank line between plain chord rows, or between chord/lyric row groups for tunes with lyrics.">
+            <option value="1" selected>Yes</option>
+            <option value="0">No</option>
+          </select>
+        </div>
+
+        <div class="row" style="margin-top:10px;">
+          <label for="slotWidth"><strong>Extra spacing (chars, not used for tunes with lyrics)</strong></label>
           <input id="slotWidth" type="number" min="0" max="8" value="1"
-                 title="Extra spaces after barlines and chords" style="width:100px;" />
+                 title="Extra spaces after barlines and chords for tunes without lyrics. Ignored for tunes with w: or W: lyrics." style="width:100px;" />
         </div>
 
         <div class="row" style="margin-top:10px;">
@@ -1405,7 +1413,9 @@ async function saveSettingsToJsonFile() {
 function isLikelySettingsObject(st) {
   if (!st || typeof st !== "object") return false;
 
-  // Must have some core keys we expect
+  // Must have some core keys we expect.
+  // Newer settings, such as addBlankLines, must remain optional here so
+  // older saved JSON settings files continue to load correctly.
   const requiredKeys = [
     "slotWidth",
     "appendRhythm",
@@ -1481,10 +1491,11 @@ let gLocalStorageAvailable = localStorageIsUsable();
 
 function getUIStateForSave_SettingsOnly() {
   return {
-    v: 7, // bumped because we added linkTitles persistence
+    v: 8, // bumped because we added addBlankLines persistence
 
     // Chord Chart Settings
     slotWidth: $("slotWidth") ? $("slotWidth").value : "1",
+    addBlankLines: $("addBlankLines") ? $("addBlankLines").value : "1",
     appendRhythm: $("appendRhythm") ? $("appendRhythm").value : "1",
     emptyMeasurePlaceholder: $("emptyMeasurePlaceholder") ? $("emptyMeasurePlaceholder").value : "/",
     suppressPickup: $("suppressPickup") ? $("suppressPickup").value : "1",
@@ -1509,6 +1520,7 @@ function applyUIStateFromObj_SettingsOnly(st) {
 
   // Chord Chart Settings
   if ($("slotWidth") && st.slotWidth != null) $("slotWidth").value = String(st.slotWidth);
+  if ($("addBlankLines")) $("addBlankLines").value = (st.addBlankLines != null) ? String(st.addBlankLines) : "1";
   if ($("appendRhythm") && st.appendRhythm != null) $("appendRhythm").value = String(st.appendRhythm);
   if ($("emptyMeasurePlaceholder") && st.emptyMeasurePlaceholder != null) $("emptyMeasurePlaceholder").value = String(st.emptyMeasurePlaceholder);
   if ($("suppressPickup") && st.suppressPickup != null) $("suppressPickup").value = String(st.suppressPickup);
@@ -1668,6 +1680,7 @@ function enableAutoSaveForSettings_SettingsOnly() {
   // Save when any SETTING changes. (Do NOT bind to abcIn.)
   const ids = [
     "slotWidth",
+    "addBlankLines",
     "appendRhythm",
     "emptyMeasurePlaceholder",
     "suppressPickup",
@@ -1911,7 +1924,11 @@ function buildRawChordTextForSave() {
     const text  = pre ? pre.textContent : "";
     if (title) parts.push(title);
     if (text)  parts.push(text);
-    parts.push("");
+
+    // Put two blank lines between tunes in copied/saved chord-chart text.
+    // This only affects the raw text output; print spacing is still handled
+    // by the Print Settings gap / one-tune-per-page controls.
+    parts.push("", "");
   }
   return parts.join("\n").replace(/\s+$/g, "") + "\n";
 }
@@ -1998,16 +2015,33 @@ function hasRealChordQuotes(abcBody) {
   return false;
 }
 
+function isLikelyChordSymbolText(text) {
+  let chord = String(text || "").trim();
+  if (!chord) return false;
+
+  // ABC quoted annotations and positioned text are not chord symbols.
+  if (/^[\^_<>@]/.test(chord)) return false;
+
+  // Plain prose often appears in quotes in %%begintext-style notes. Chord
+  // symbols should not contain whitespace or colons.
+  if (/\s|:/.test(chord)) return false;
+
+  // Allow common parenthesized alternate-chord notation.
+  chord = chord.replace(/^\((.*)\)$/, "$1");
+
+  if (/^(?:N\.?C\.?|no\.?chord)$/i.test(chord)) return true;
+
+  // Common chord-symbol forms: G, Bb, F#m7, Asus4, Cadd9, D/F#, etc.
+  return /^[A-G](?:[#b♯♭])?(?:maj|min|m|dim|aug|sus|add|[0-9]|[#b♯♭+°ø\/(),.\-])*$/i.test(chord);
+}
+
 function segmentHasRealChordQuotes(segment) {
   const s = String(segment || "");
 
   const re = /"([^"]*)"/g;
   let m;
   while ((m = re.exec(s)) !== null) {
-    const chord = (m[1] || "").trim();
-    if (!chord) continue;
-    if (/^[\^_<>@]/.test(chord)) continue;
-    return true;
+    if (isLikelyChordSymbolText(m[1])) return true;
   }
   return false;
 }
@@ -2313,9 +2347,9 @@ function parseLyricSyllableTokens(lyricText) {
 
   // In ABC lyrics, an underscore extends the previous sung syllable over one
   // additional note. For chord-over-syllable charts, that means the next lyric
-  // syllable must be delayed by one note-event. Preserve the visible underscore
-  // on the preceding syllable text, then add an empty consumed token for the
-  // extension note.
+  // syllable must be delayed by one note-event. The underscore is an alignment
+  // marker, not lyric text, so consume the extension note without rendering the
+  // underscore in the visible lyric output.
   function emitWithUnderscoreExtensions(piece, suffix) {
     piece = String(piece || "");
     suffix = suffix || "";
@@ -2332,7 +2366,7 @@ function parseLyricSyllableTokens(lyricText) {
       const hasFollowingUnderscore = (i < bits.length - 1);
 
       if (hasFollowingUnderscore) {
-        if (bit) emitLyricPiece(bit, "_");
+        if (bit) emitLyricPiece(bit, "");
         tokens.push({ consume: true, text: "" });
       } else if (bit || suffix) {
         emitLyricPiece(bit, suffix);
@@ -2534,9 +2568,23 @@ function buildLyricAssignments(lyricLines, events) {
     const tokens = parseLyricSyllableTokens(lyricLine);
 
     let eventIndex = 0;
+    let lastConsumedMeasureIndex = null;
 
     function advanceToNextLyricNoteEvent() {
       while (eventIndex < allEvents.length && allEvents[eventIndex] && allEvents[eventIndex].isRest) {
+        eventIndex++;
+      }
+    }
+
+    function advancePastMeasure(measureIndex) {
+      if (!Number.isFinite(measureIndex)) return;
+
+      while (
+        eventIndex < allEvents.length &&
+        allEvents[eventIndex] &&
+        Number.isFinite(allEvents[eventIndex].measureIndex) &&
+        allEvents[eventIndex].measureIndex <= measureIndex
+      ) {
         eventIndex++;
       }
     }
@@ -2546,19 +2594,18 @@ function buildLyricAssignments(lyricLines, events) {
 
       // Optional barlines in lowercase w: lyrics don't consume a syllable, but
       // they can be used to resynchronize lyric assignment at the next measure.
+      // If the preceding syllables already carried us to the next measure, do
+      // not skip that measure. Only skip any remaining note-events in the
+      // measure that just received lyric text. This is important for pickup
+      // lyrics such as "Ba_ |\-loo" and "In the|year of".
       if (!tok.consume) {
         if (tok.bar && eventIndex < allEvents.length) {
-          const cur = allEvents[eventIndex];
-          const curMeasure = cur && Number.isFinite(cur.measureIndex) ? cur.measureIndex : null;
-
-          if (curMeasure !== null) {
-            while (
-              eventIndex < allEvents.length &&
-              allEvents[eventIndex] &&
-              allEvents[eventIndex].measureIndex <= curMeasure
-            ) {
-              eventIndex++;
-            }
+          if (lastConsumedMeasureIndex !== null) {
+            advancePastMeasure(lastConsumedMeasureIndex);
+          } else {
+            const cur = allEvents[eventIndex];
+            const curMeasure = cur && Number.isFinite(cur.measureIndex) ? cur.measureIndex : null;
+            advancePastMeasure(curMeasure);
           }
         }
         continue;
@@ -2569,6 +2616,10 @@ function buildLyricAssignments(lyricLines, events) {
       if (eventIndex >= allEvents.length) break;
 
       row[eventIndex] = String(tok.text || "");
+
+      const ev = allEvents[eventIndex];
+      lastConsumedMeasureIndex = ev && Number.isFinite(ev.measureIndex) ? ev.measureIndex : lastConsumedMeasureIndex;
+
       eventIndex++;
     }
 
@@ -2628,8 +2679,13 @@ function buildLyricAwareRowsForParsedLine(pl, extraSpace = 0, emptyPlaceholder =
   if (allEvents.length <= 0) return null;
 
   const lyricRows = buildLyricAssignments(usableLyrics, allEvents);
-  const extra = Math.max(0, Math.min(40, parseInt(extraSpace, 10) || 0));
-  const slotSep = " ".repeat(1 + extra);
+
+  // Keep lyric-aware rows compact. The user-facing Extra spacing setting still
+  // applies between measures in the final renderer, but inside a lyric-aware
+  // measure each note/chord/lyric slot only needs one separator to preserve
+  // alignment. Using the global extra spacing here made lyric charts much wider
+  // than necessary.
+  const slotSep = " ";
   const empty = String(emptyPlaceholder ?? "");
 
   const chordRow = [];
@@ -2665,7 +2721,7 @@ function buildLyricAwareRowsForParsedLine(pl, extraSpace = 0, emptyPlaceholder =
       chordTexts[0] = empty;
     }
 
-    const slotWidths = new Array(nSlots).fill(1);
+    const slotWidths = new Array(nSlots).fill(0);
 
     for (let localIndex = 0; localIndex < nSlots; localIndex++) {
       slotWidths[localIndex] = Math.max(slotWidths[localIndex], String(chordTexts[localIndex] || "").length);
@@ -2711,6 +2767,7 @@ function renderAlignedText(
     rightPadSpaces = 2,
     extraSpace = 0,
     emptyPlaceholder = "/",
+    addBlankLines = true,
     pickupHeuristic = null,
     pickupOnlyAtTuneStart = false
   } = {}
@@ -2935,13 +2992,23 @@ function renderAlignedText(
 
   const outLines = [];
 
-  for (const pl of parsedLines) {
+  for (let i = 0; i < parsedLines.length; i++) {
+    const pl = parsedLines[i];
+
     if (pl.isBlank) { outLines.push(""); continue; }
 
     const rowsToRender = pl.lyricAwareRows || [pl];
 
     for (const row of rowsToRender) {
       outLines.push(renderRow(row));
+    }
+
+    // Optional readability spacing:
+    // - no-lyrics tunes get a blank line between chord rows
+    // - lyric-aware tunes get a blank line between chord/lyric row groups
+    // - uppercase W: lyrics below the main chart are not affected
+    if (addBlankLines && i + 1 < parsedLines.length && !parsedLines[i + 1].isBlank) {
+      outLines.push("");
     }
   }
 
@@ -3328,6 +3395,27 @@ function buildPrintHtml({
 
   const pageNumsCSS = pageNumberMarginBoxCSS(!!showPageNumbers, pageNumberPos);
 
+  const paperInches = {
+    letter:  [8.5, 11],
+    legal:   [8.5, 14],
+    tabloid: [11, 17],
+    a4:      [8.27, 11.69]
+  };
+
+  let pageWidthIn = (paperInches[safeSize] || paperInches.letter)[0];
+  let pageHeightIn = (paperInches[safeSize] || paperInches.letter)[1];
+
+  if (safeOrient === "landscape") {
+    const tmp = pageWidthIn;
+    pageWidthIn = pageHeightIn;
+    pageHeightIn = tmp;
+  }
+
+  // @page uses 0.5in margins on both sides.
+  // Giving the print document a real printable-width body prevents browser
+  // "Fit to page width" from basing its scale on the hidden iframe viewport.
+  const usablePrintWidthIn = Math.max(1, pageWidthIn - 1);
+
   return `<!doctype html>
 <html>
 <head>
@@ -3340,8 +3428,17 @@ function buildPrintHtml({
 
   ${pageNumsCSS}
 
-  html, body { margin:0; padding:0; }
+  html, body {
+    margin:0;
+    padding:0;
+    width: ${usablePrintWidthIn}in;
+    min-width: ${usablePrintWidthIn}in;
+  }
   body { color:#000; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  #printRoot{
+    width: ${usablePrintWidthIn}in;
+    max-width: ${usablePrintWidthIn}in;
+  }
 
   /* One tune per page */
   body.oneTunePerPage .chart { margin:0; break-after: page; page-break-after: always; }
@@ -3498,31 +3595,15 @@ function buildPrintHtml({
   }
 
   function fitEachPreIndependently(){
-    const usableW = measureUsableWidthPx();
     const pres = Array.from(document.querySelectorAll("pre"));
     const startPt = Math.max(8, Math.min(120, parseInt(_requestedPt, 10) || ${safePt}));
-    const MIN_PT = 8;
-    const SAFETY = 0.985;
 
+    // Do not pre-shrink lyric chord charts here. Browsers already offer
+    // print-preview scaling such as "Fit to page width", and pre-shrinking
+    // inside the hidden iframe made lyric charts print much smaller than the
+    // requested font size. Leaving the requested point size intact gives the
+    // browser's print scaling an accurate source size to work with.
     pres.forEach(pre => setPreFontSizePt(pre, startPt));
-
-    pres.forEach(pre => {
-      const maxLine = getMaxLineTextTrimmed(pre.textContent || "");
-      if (!maxLine) return;
-
-      const startWpx = measureLineWidthPx(pre, maxLine);
-
-      let fitPt = startPt;
-
-      if (usableW > 0 && startWpx > 0 && startWpx > usableW){
-        const ratio = usableW / startWpx;
-        fitPt = Math.floor((startPt * ratio * SAFETY) * 100) / 100;
-        fitPt = Math.max(MIN_PT, Math.min(startPt, fitPt));
-        setPreFontSizePt(pre, fitPt);
-      } else {
-        setPreFontSizePt(pre, startPt);
-      }
-    });
   }
 
   window.addEventListener("beforeprint", () => {
@@ -3563,6 +3644,32 @@ function buildPrintHtml({
    PRINT via hidden iframe
    REQUIRED because wireUp() calls printViaIframe(...)
    ============================================================ */
+
+function getPrintPaperCssPixelSize(paperSize, orientation) {
+  const paperInches = {
+    letter:  [8.5, 11],
+    legal:   [8.5, 14],
+    tabloid: [11, 17],
+    a4:      [8.27, 11.69]
+  };
+
+  const safeSize = String(paperSize || "letter").toLowerCase();
+  const safeOrient = String(orientation || "portrait").toLowerCase();
+
+  let widthIn = (paperInches[safeSize] || paperInches.letter)[0];
+  let heightIn = (paperInches[safeSize] || paperInches.letter)[1];
+
+  if (safeOrient === "landscape") {
+    const tmp = widthIn;
+    widthIn = heightIn;
+    heightIn = tmp;
+  }
+
+  return {
+    widthPx: Math.ceil(widthIn * 96),
+    heightPx: Math.ceil(heightIn * 96)
+  };
+}
 
 function getPrintableChartsHtmlFromDom() {
   const out = $("out");
@@ -3632,15 +3739,20 @@ function printViaIframe({
     iframe = document.createElement("iframe");
     iframe.id = "printFrame";
     iframe.style.position = "fixed";
-    iframe.style.right = "0";
-    iframe.style.bottom = "0";
-    iframe.style.width = "0";
-    iframe.style.height = "0";
+    iframe.style.left = "-10000px";
+    iframe.style.top = "0";
     iframe.style.border = "0";
     iframe.style.visibility = "hidden";
     iframe.style.pointerEvents = "none";
     document.body.appendChild(iframe);
   }
+
+  // Keep the hidden print iframe at a real paper-sized viewport. A 0x0
+  // iframe can make Chromium's print preview "Fit to page width" choose an
+  // overly aggressive scale for wide lyric charts.
+  const frameSize = getPrintPaperCssPixelSize(paperSize, orientation);
+  iframe.style.width = frameSize.widthPx + "px";
+  iframe.style.height = frameSize.heightPx + "px";
 
   // Assign srcdoc and wait for load
   iframe.onload = () => {
@@ -3711,6 +3823,7 @@ function generateCharts() {
   }
 
   const extraSpace = parseInt($("slotWidth").value, 10) || 0;
+  const addBlankLines = $("addBlankLines") ? ($("addBlankLines").value === "1") : true;
   const appendRhythm = $("appendRhythm") ? ($("appendRhythm").value === "1") : true;
 
   const placeholder =
@@ -3750,10 +3863,14 @@ function generateCharts() {
       continue;
     }
 
+    const tuneHasLyrics = /^\s*[Ww]:/m.test(body);
+    const renderExtraSpace = tuneHasLyrics ? 0 : extraSpace;
+
     const txt = renderAlignedText(body, {
       rightPadSpaces: 2,
-      extraSpace,
+      extraSpace: renderExtraSpace,
       emptyPlaceholder: placeholder,
+      addBlankLines,
       pickupHeuristic,
       pickupOnlyAtTuneStart: true
     });
@@ -3944,6 +4061,7 @@ function resetAllSettingsToDefaults_Persisted() {
 
   // Chord Chart Settings defaults
   if ($("slotWidth")) $("slotWidth").value = "1";
+  if ($("addBlankLines")) $("addBlankLines").value = "1";
   if ($("appendRhythm")) $("appendRhythm").value = "1";
   if ($("emptyMeasurePlaceholder")) $("emptyMeasurePlaceholder").value = "/";
   if ($("suppressPickup")) $("suppressPickup").value = "1";
@@ -4094,6 +4212,7 @@ function wireUp() {
 
     // Reset controls (defaults)
     $("slotWidth").value = "1";
+    if ($("addBlankLines")) $("addBlankLines").value = "1";
     if ($("appendRhythm")) $("appendRhythm").value = "1";
     if ($("chartMonoFont")) $("chartMonoFont").value = "system";
 
@@ -4299,6 +4418,12 @@ function wireUp() {
     if ($("out").children.length) generateCharts();
   });
 
+  if ($("addBlankLines")) {
+    $("addBlankLines").addEventListener("change", function () {
+      if ($("out").children.length) generateCharts();
+    });
+  }
+
   if ($("oneTunePerPage")) {
     $("oneTunePerPage").addEventListener("change", applyPrintSettings);
   }
@@ -4440,27 +4565,34 @@ function wireUp() {
       '  <p style="text-align:center;margin-bottom:16px;"><a href="https://youtu.be/Y0W-djyMk_c" target="_blank">Complete Walkthrough Video on YouTube</a></p>' +
       '  <hr style="border:0; border-top:1px solid #ccc; margin:18px 0;">' +
       '  <div style="margin-bottom:16px;">' +
-      '    <b>First: Load some ABC tunes</b><br/>' +
+      '    <div style="font-weight:700; margin-bottom:6px;">First: Load some ABC tunes</div>' +
       '    Paste one or more ABC tunes into the editor, or open a <code>.abc</code> / <code>.txt</code> file.<br/>' +
       '    This tool can also receive full ABC text directly from the <b>ABC Transcription Tools</b>; when received, the ABC Input box is populated with the transferred text and you can click <b>Generate Charts</b>.<br/>' +
       '    <span class="muted">Tip: Chord charts are generated from chord symbols in quotes<br/>(for example: <code>"G"</code>, <code>"Am"</code>).</span>' +
       '  </div>' +
 
       '  <div style="margin-bottom:16px;">' +
-      '    <b>Next: Generate the chord charts</b><br/>' +
+      '    <div style="font-weight:700; margin-bottom:6px;">Next: Generate the chord charts</div>' +
       '    Click <b>Generate Charts</b>. The charts will appear in the <b>Chord Charts</b> area on the right.<br/>' +
       '    Tunes with no chords are skipped.<br/>Measures with no chords are shown as empty (or with your selected placeholder).' +
       '  </div>' +
 
       '  <div style="margin-bottom:16px;">' +
-      '    <b>Lyrics in chord charts</b><br/>' +
+      '    <div style="font-weight:700; margin-bottom:6px;">Lyrics in chord charts</div>' +
       '    If a music line is followed by one or more lowercase <code>w:</code> lyric lines, the chart uses a lyric-aware layout for that line only.<br/>' +
       '    In that layout, chords are positioned over the matching lyric syllables when possible, and the <code>w:</code> lyric rows are stacked below the chord row with the same measure/barline alignment.<br/>' +
       '    Lyric syllables are assigned to sung notes rather than rests, and sung pickup notes keep their own leading lyric-aware slot before the first full measure.<br/>' +
-      '    ABC lyric underscore extensions are honored, so a syllable such as <code>A_</code> delays the next syllable by one note while preserving the visible underscore in the output.<br/>' +
+      '    ABC lyric underscore extensions are honored, so a syllable such as <code>A_</code> delays the next syllable by one note; the underscore is used only for alignment and is not shown in the lyric output.<br/>' +
       '    Runs of repeated lyric hyphens such as <code>De-----o</code> are treated as melisma spacing: the extra hyphens consume intervening note events before the next visible syllable.<br/>' +
-      '    Lines without <code>w:</code> lyrics continue to use the normal compact measure-based chord layout.<br/><br/>' +
+      '    Lyric-aware rows are kept compact by using only the raw spacing needed to preserve chord/lyric alignment; the Extra spacing setting is ignored for tunes that contain <code>w:</code> or <code>W:</code> lyrics.<br/>' +
+      '    Lines without <code>w:</code> lyrics continue to use the normal compact measure-based chord layout.<br/>' +
       '    Uppercase <code>W:</code> lyric lines are printed as plain text below the full chord chart, separated from the chord/<code>w:</code> section by one blank line. Blank <code>W:</code> lines are preserved.' +
+      '  </div>' +
+
+      '  <div style="margin-bottom:16px;">' +
+      '    <div style="font-weight:700; margin-bottom:6px;">Spacing settings</div>' +
+      '    <b>Add blank lines between chart rows</b> controls whether generated charts include a blank line between plain chord rows, or between each chord/lyric row group for tunes with lowercase <code>w:</code> lyrics. It does not add blank lines inside the uppercase <code>W:</code> lyric text printed below the main chart.<br/>' +
+      '    <b>Extra spacing (chars, not used for tunes with lyrics)</b> adds extra horizontal space between barlines and chords only for tunes without lyrics. Tunes with <code>w:</code> or <code>W:</code> lyrics use raw spacing so chord/lyric alignment remains compact.' +
       '  </div>' +
 
 
@@ -4477,7 +4609,7 @@ function wireUp() {
 
       '  <div style="margin-bottom:16px;">' +
       '    <b>2) Save the chord charts to a text file</b><br/>' +
-      '    Click <b>Save</b> to save the generated chord charts to a text file (opens the sharing dialog on iOS).'
+      '    Click <b>Save</b> to save the generated chord charts to a text file (opens the sharing dialog on iOS).' +
       '  </div>' +
 
       '  <div style="margin-bottom:16px;">' +
@@ -4492,22 +4624,25 @@ function wireUp() {
       '  <div style="margin-bottom:16px;">' +
       '    <div style="font-weight:700; font-size:14pt; margin-bottom:10px;">Chord Chart Settings</div>' +
 
-      '    <b>Chord chart font</b><br/>' +
+      '    <div style="font-weight:700; margin-bottom:6px;">Chord chart font</div>' +
       '    Selects the monospaced font to use for the chord charts.<br/><br/>' +
 
-      '    <b>Extra spacing</b><br/>' +
+      '    <div style="font-weight:700; margin-bottom:6px;">Add blank lines between chart rows</div>' +
+      '    Controls whether generated charts include a blank line between plain chord rows, or between each chord/lyric row group for tunes with lyrics. It does not add blank lines inside uppercase <code>W:</code> lyric text printed below the main chart.<br/><br/>' +
+
+      '    <div style="font-weight:700; margin-bottom:6px;">Extra spacing (chars, not used for tunes with lyrics)</div>' +
       '    Adds extra spacing to make charts easier to read while keeping all barlines aligned.' +
       '    (This increases spacing after barlines/chord cells, and also increases spacing between multiple chords that occur in the same measure.)<br/><br/>' +
 
-      '    <b>Append tune style (R:) to titles</b><br/>' +
+      '    <div style="font-weight:700; margin-bottom:6px;">Append tune style (R:) to titles</div>' +
       '    Optionally appends the tune rhythm/style tag in parentheses after the tune title.<br/><br/>' +
 
-      '    <b>Empty measure placeholder</b><br/>' +
+      '    <div style="font-weight:700; margin-bottom:6px;">Empty measure placeholder</div>' +
       '    Character (or none) to show in measures without chords.<br/>' +
       '    Default is: /<br/>' +
       '    This does not affect tunes that contain no chords at all (those are skipped).<br/><br/>' +
 
-      '    <b>Add ABC Transcription Tools play links to titles</b><br/>' +
+      '    <div style="font-weight:700; margin-bottom:6px;">Add ABC Transcription Tools play links to titles</div>' +
       '    When enabled, adds ABC Transcription Tools play links to the title of each tune in the chord charts.<br/>' +
       '    If you create a PDF file from the chord charts using the brower\'s <b>Print-to-PDF</b> feature, you can click on the title of any tune to open it in the ABC Transcription Tools player.' +
 
@@ -4518,35 +4653,35 @@ function wireUp() {
       '  <div style="margin-bottom:16px;">' +
       '    <div style="font-weight:700; font-size:14pt; margin-bottom:10px;">Print Settings</div>' +
 
-      '    <b>Paper size</b><br/>' +
+      '    <div style="font-weight:700; margin-bottom:6px;">Paper size</div>' +
       '    Select the target paper size for printing (Letter, A4, Legal, or Tabloid).<br/>' +
       '    This controls the page dimensions used by the browser when printing or exporting to PDF.<br/><br/>' +
 
-      '    <b>Orientation</b><br/>' +
+      '    <div style="font-weight:700; margin-bottom:6px;">Orientation</div>' +
       '    Choose Portrait or Landscape layout.<br/>' +
       '    Landscape can be helpful for wider chord charts.<br/><br/>' +
 
-      '    <b>Tune title font size (pt)</b><br/>' +
+      '    <div style="font-weight:700; margin-bottom:6px;">Tune title font size (pt)</div>' +
       '    Sets the printed font size of each tune title.<br/>' +
       '    This does not affect the on-screen display — print only.<br/><br/>' +
 
-      '    <b>Tune chords font size (pt)</b><br/>' +
+      '    <div style="font-weight:700; margin-bottom:6px;">Tune chords font size (pt)</div>' +
       '    Sets the starting font size for the printed chord chart text.<br/>' +
       '    The print view will automatically shrink the chord text only if needed to prevent clipping.<br/><br/>' +
 
-      '    <b>Print one tune/page</b><br/>' +
+      '    <div style="font-weight:700; margin-bottom:6px;">Print one tune/page</div>' +
       '    When enabled, each tune starts on a new printed page.<br/>' +
       '    When disabled, multiple tunes may print on the same page using the selected gap spacing.<br/><br/>' +
 
-      '    <b>Gap between tunes (pt)</b><br/>' +
+      '    <div style="font-weight:700; margin-bottom:6px;">Gap between tunes (pt)</div>' +
       '    Controls the vertical space between multiple tunes when printing more than one tune per page.<br/>' +
       '    Smaller values fit more tunes on a page; larger values add separation for readability.<br/><br/>' +
 
-      '    <b>Add page numbers</b><br/>' +
+      '    <div style="font-weight:700; margin-bottom:6px;">Add page numbers</div>' +
       '    When enabled, page numbers will be added to the printed output.<br/>' +
       '    <b>Note:</b> This feature is only available on Chromium-based browsers (e.g., Chrome, Edge, Brave).<br/><br/>' +
 
-      '    <b>Page number location</b><br/>' +
+      '    <div style="font-weight:700; margin-bottom:6px;">Page number location</div>' +
       '    Select where the page number appears on each printed page (top or bottom, left, center, or right).<br/>' +
       '    This setting is only used when page numbers are enabled.<br/>' +
       '    <b>Note:</b> This feature is only available on Chromium-based browsers (e.g., Chrome, Edge, Brave).' +
@@ -4557,12 +4692,12 @@ function wireUp() {
       '  <div style="margin-bottom:16px;">' +
       '    <div style="font-weight:700; font-size:14pt; margin-bottom:10px;">Advanced Settings</div>' +
       '    Probably best to leave these at their default values.<br/><br/>' +
-      '    <b>Suppress pickups</b><br/>' +
+      '    <div style="font-weight:700; margin-bottom:6px;">Suppress pickups</div>' +
       '    When enabled, short partial measure pickup notes before the first barline or after a repeat (that contain no chord symbols) ' +
       '    will not be shown as a separate measure in the chord chart.<br/>' +
       '    This can make the chord charts look more natural.<br/><br/>' +
 
-      '    <b>Max pickup notes</b><br/>' +
+      '    <div style="font-weight:700; margin-bottom:6px;">Max pickup notes</div>' +
       '    When pickup suppression is enabled, treat 1–5 leading note-events or fewer before the first barline as a pickup.<br/>' +
       '    Default is: 3<br/>' +
       '    Increase this value if a tune begins with a slightly longer pickup.' +
@@ -4572,11 +4707,11 @@ function wireUp() {
 
       '  <div style="margin-bottom:16px;">' +
       '    <div style="font-weight:700; font-size:14pt; margin-bottom:10px;">Settings</div>' +
-      '    <b>Save All Settings</b><br/>' +
+      '    <div style="font-weight:700; margin-bottom:6px;">Save All Settings</div>' +
       '    Saves all settings to a JSON file.<br/><br/>' +
-      '    <b>Load All Settings</b><br/>' +
+      '    <div style="font-weight:700; margin-bottom:6px;">Load All Settings</div>' +
       '    Loads all settings from a JSON file and saves those values for future visits.<br/><br/>' +
-      '    <b>Reset All Settings to Defaults</b><br/>' +
+      '    <div style="font-weight:700; margin-bottom:6px;">Reset All Settings to Defaults</div>' +
       '    Resets all settings to their default values and saves those defaults for future visits.' +
       '  </div>' +
 
