@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3278_062626_0830";
+var gVersionNumber = "3279_062826_2200";
 
 var gMIDIInitStillWaiting = false;
 
@@ -530,6 +530,9 @@ var gUseFlatButtons = true;
 
 // BWW uses custom instrument
 var gBWWUseCustomInstrument = false;
+
+// Show Full-featured website exporter on Export Website dialog
+var gShowFullFeaturedWebsiteExporter = false;
 
 // Global reference to the ABC editor
 var gTheABC = document.getElementById("abc");
@@ -28504,13 +28507,13 @@ async function processShareLink() {
       // Show update message?
       if (gLocalStorageAvailable){
 
-        var updatePresented = localStorage.sawUpdate_26jun2026;
+        var updatePresented = localStorage.sawUpdate_28jun2026;
 
         if (updatePresented != "true") {
 
           showWhatsNewScreen();
 
-          localStorage.sawUpdate_26jun2026 = true;
+          localStorage.sawUpdate_28jun2026 = true;
 
         }
 
@@ -47921,6 +47924,13 @@ function GetInitialConfigurationSettings() {
     gBWWUseCustomInstrument = (val == "true");
   }
 
+  // Show Full-Featured website exporter?
+  gShowFullFeaturedWebsiteExporter = false;
+  val = localStorage.ShowFullFeaturedWebsiteExporter
+  if (val) {
+    gShowFullFeaturedWebsiteExporter = (val == "true");
+  }
+
   // Save the settings, in case they were initialized
   SaveConfigurationSettings();
 
@@ -48243,6 +48253,9 @@ function SaveConfigurationSettings() {
 
     // BWW uses custom1
     localStorage.BWWUseCustomInstrument = gBWWUseCustomInstrument;
+
+    // Show Full-Featured website exporter on the Export Website dialog
+    localStorage.ShowFullFeaturedWebsiteExporter = gShowFullFeaturedWebsiteExporter;
 
   }
 }
@@ -52051,7 +52064,8 @@ function AdvancedSettings() {
     configure_force_android: gForceAndroid,
     configure_disable_android: gDisableAndroid,
     configure_looper_add_measure_count: gLooperAddMeasureCount,
-    configure_BWWUseCustomInstrument: gBWWUseCustomInstrument
+    configure_BWWUseCustomInstrument: gBWWUseCustomInstrument,
+    configure_ShowFullFeaturedWebsiteExporter: gShowFullFeaturedWebsiteExporter
   };
 
   var form = [{
@@ -52105,7 +52119,8 @@ function AdvancedSettings() {
 
   form = form.concat([
     { name: "Default %reverb annotation (blank = no reverb):", id: "configure_reverb", type: "text", cssClass: "advanced_settings2_reverb_text" },
-    { name: "MP3 audio export bitrate (kbit/sec) (default is 224):", id: "configure_mp3_bitrate", type: "number", cssClass: "advanced_settings2_form_text" }
+    { name: "MP3 audio export bitrate (kbit/sec) (default is 224):", id: "configure_mp3_bitrate", type: "number", cssClass: "advanced_settings2_form_text" },
+    { name: "    Show Export Full-Featured Tunebook Website button on the Export Website dialog", id: "configure_ShowFullFeaturedWebsiteExporter", type: "checkbox", cssClass: "advanced_settings2_form_text_checkbox" },    
   ]);
 
   if (isPureDesktopBrowser()) {
@@ -52178,6 +52193,8 @@ function AdvancedSettings() {
         MoveModalFieldRowByName(modalRoot, "configure_reverb", "adv_tab_player_fields");
 
         // Export
+        MoveModalFieldRowByName(modalRoot, "configure_ShowFullFeaturedWebsiteExporter", "adv_tab_export_fields");
+
         MoveModalFieldRowByName(modalRoot, "configure_mp3_bitrate", "adv_tab_export_fields");
 
         if (isPureDesktopBrowser()) {
@@ -52208,6 +52225,8 @@ function AdvancedSettings() {
 
     // Get the results and store them in the global configuration
     if (!args.canceled) {
+
+      gShowFullFeaturedWebsiteExporter = args.result.configure_ShowFullFeaturedWebsiteExporter;
 
       gBWWUseCustomInstrument = args.result.configure_BWWUseCustomInstrument;
 
@@ -56578,31 +56597,32 @@ function showWhatsNewScreen() {
 
   // --- Inline styles to keep this self-contained like your existing dialog ---
   var modal_msg = '';
-  modal_msg += '<div style="font-family:helvetica; line-height:16pt;">';
+  modal_msg += '<div style="font-family:helvetica; line-height:18pt;">';
 
   // Header
   modal_msg += '<div style="text-align:center; padding:14px 10px; border-radius:12px;';
-  modal_msg += 'background: linear-gradient(135deg, #0b2f24 0%, #116149 52%, #1f9d73 100%);';
+  modal_msg += 'background: linear-gradient(135deg, #0b1f3a 0%, #145ca8 52%, #2f9df5 100%);';
   modal_msg += 'box-shadow: 0 6px 16px rgba(0,0,0,0.14); color:#fff;">';
   modal_msg += '<div style="font-size:20pt; line-height:24pt; font-weight:bold;">What&apos;s New</div>';
-  modal_msg += '<div style="font-size:11pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 26 June 2026</div>';
+  modal_msg += '<div style="font-size:12pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 28 June 2026</div>';
+  modal_msg += '</div>';
+
+  // Feature card
+  modal_msg += '<div style="margin:10px 0 6px 0; padding:0px 12px; border-radius:12px;';
+  modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);font-size:12pt;">';
+  modal_msg += '<p style="font-size:12pt;">The <strong>Export Full-Featured Tunebook Website</strong> button on the <strong>Export Website</strong> dialog is now hidden by default.</p>';
+  modal_msg += '<p style="font-size:12pt;">The legacy <strong>Full-Featured Tunebook Website</strong> has been deprecated in favor of use of the new <strong>abcjs-eskin Website Builder</strong>.</p>';
+  modal_msg += '<p style="font-size:12pt;">Users who still prefer the legacy exporter can restore the button at any time by enabling the new checkbox on the <strong>Export</strong> tab of the <strong>Advanced Settings</strong> dialog.</p>';
+
   modal_msg += '</div>';
 
   // Feature card
   modal_msg += '<div style="margin:10px 0 6px 0; padding:0px 12px; border-radius:12px;';
   modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);">';
-  modal_msg += '<p><strong>Exported websites now include self-documenting CSS, HTML, and JavaScript</strong></p>';
-  modal_msg += '<p>To simplify developer customization of exported websites, most CSS text items in the exported code now have comments explaining how to customize them.</p>';
-  modal_msg += '<p>For the <strong>Full-Featured</strong> websites, there are instructions in the HTML and JavaScript explaining how to add or remove instruments from the instrument selector (if enabled).</p>';
-  modal_msg += '</div>';
-
-  // Feature card
-  modal_msg += '<div style="margin:10px 0 6px 0; padding:0px 12px; border-radius:12px;';
-  modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);">';
-  modal_msg += '<p>Added the <strong>abcjs-eskin Website Builder</strong> tool as a new option on the <strong>Export Website</strong> dialog.</p>';
-  modal_msg += '<p>The <strong>abcjs-eskin Website Builder</strong> is a powerful standalone website-building tool for creating complete multi-tune ABC websites with modern visual themes, embedded notation, tablature options, playback controls, soundfont support, and table-of-contents navigation.</p>';
-  modal_msg += '<p>To use it from the ABC Transcription Tools, choose <strong>Export Website</strong>, then click <strong>Open abcjs-eskin Website Builder</strong>.</p>';
-  modal_msg += '<p>The ABC Transcription Tools will open the <strong>abcjs-eskin Website Builder</strong> in a new browser tab and automatically send the full ABC contents of the editor to it.</p>';
+  modal_msg += '<p style="font-size:12pt;">Added the <strong>abcjs-eskin Website Builder</strong> tool as a new option on the <strong>Export Website</strong> dialog.</p>';
+  modal_msg += '<p style="font-size:12pt;">The <strong>abcjs-eskin Website Builder</strong> is a powerful standalone website-building tool for creating complete multi-tune ABC websites with modern visual themes, embedded notation, tablature options, playback controls, soundfont support, and table-of-contents navigation.</p>';
+  modal_msg += '<p style="font-size:12pt;">To use it from the ABC Transcription Tools, choose <strong>Export Website</strong>, then click <strong>Open abcjs-eskin Website Builder</strong>.</p>';
+  modal_msg += '<p style="font-size:12pt;">The ABC Transcription Tools will open the <strong>abcjs-eskin Website Builder</strong> in a new browser tab and automatically send the full ABC contents of the editor to it.</p>';
 
   modal_msg += '</div>';
 
@@ -63283,13 +63303,13 @@ async function DoStartup() {
   // Show update message?
   if (gLocalStorageAvailable && (!isFromShare)){
 
-    var updatePresented = localStorage.sawUpdate_26jun2026;
+    var updatePresented = localStorage.sawUpdate_28jun2026;
 
     if (updatePresented != "true") {
 
       showWhatsNewScreen();
 
-      localStorage.sawUpdate_26jun2026 = true;
+      localStorage.sawUpdate_28jun2026 = true;
 
     }
 

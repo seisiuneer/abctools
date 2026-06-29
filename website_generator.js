@@ -4760,9 +4760,11 @@ function generateWebsite(){
         modal_msg  += '<p style="font-size:18px;line-height:28px;">Click <strong>Export Tune Image Lightbox Website</strong> to export a website with tune notation images of all the tunes in the ABC in a lightbox with navigation controls.</p>';
     }
 
-    modal_msg  += '<p style="font-size:18px;line-height:28px;">Click <strong>Export Full-Featured Tunebook Website</strong> to export a website with a dropdown list of tune names and optional tablature styles. The website remembers the user\'s last selected tune and tablature setting.</p>';
+    if (gShowFullFeaturedWebsiteExporter){
+        modal_msg  += '<p style="font-size:18px;line-height:28px;">Click <strong>Export Full-Featured Tunebook Website</strong> to export a website with a dropdown list of tune names and optional tablature styles.</p>';
+    }
 
-    modal_msg  += '<p style="font-size:18px;line-height:28px;margin-bottom:36px;">Click <strong>Open abcjs-eskin Website Builder</strong> to open the abcjs-eskin Website Builder in a new browser tab and send the full ABC editor contents to it automatically.</p>';
+    modal_msg  += '<p style="font-size:18px;line-height:28px;margin-bottom:36px;">Click <strong>Open abcjs-eskin Website Builder</strong> to open the abcjs-eskin Website Builder in a new browser tab and send all the tunes in the ABC editor to it automatically.</p>';
 
     modal_msg  += '<p style="text-align:center;margin-top:24px;"><input id="websitesimple" class="advancedcontrols btn btn-websiteexport" onclick="generateWebsiteSimple()" type="button" value="Export Basic Tune List Website" title="Generates a website that has a list of tunes that open in a new browser tab when clicked."></p>';
     
@@ -4773,7 +4775,13 @@ function generateWebsite(){
        modal_msg  += '<input id="websitelightbox" class="advancedcontrols btn btn-websiteexport" onclick="generateWebsiteLightbox()" type="button" value="Export Tune Image Lightbox Website" title="Generates a image lightbox website that has the images of the tunes that open for playback in a new browser tab when clicked"></p>';
     }
 
-    modal_msg  += '<p style="text-align:center;margin-top:24px;"><input id="websitefull" class="advancedcontrols btn btn-websiteexport" onclick="generateWebsiteFull()" type="button" value="Export Full-Featured Tunebook Website" title="Generates a website that has dropdowns for the tunes and optional display tablature selection.&nbsp;&nbsp;When a tune is selected from the dropdown, the tune opens in an iframe on the page."><input id="websiteabcjseskin" class="advancedcontrols btn btn-websiteexport" onclick="launchAbcjsEskinWebsiteBuilder()" type="button" value="Open abcjs-eskin Website Builder" title="Opens the standalone abcjs-eskin Website Builder in a new tab and sends the full ABC editor contents to it."></p>';
+    // Are we showing the Full-Featured website exporter?
+    if (gShowFullFeaturedWebsiteExporter){
+        modal_msg  += '<p style="text-align:center;margin-top:24px;"><input id="websitefull" class="advancedcontrols btn btn-websiteexport" onclick="generateWebsiteFull()" type="button" value="Export Full-Featured Tunebook Website" title="Generates a website that has dropdowns for the tunes and optional display tablature selection.&nbsp;&nbsp;When a tune is selected from the dropdown, the tune opens in an iframe on the page."><input id="websiteabcjseskin" class="advancedcontrols btn btn-websiteexport" onclick="launchAbcjsEskinWebsiteBuilder()" type="button" value="Open abcjs-eskin Website Builder" title="Opens the standalone abcjs-eskin Website Builder in a new tab and sends the full ABC editor contents to it."></p>';
+    }
+    else{
+        modal_msg  += '<p style="text-align:center;margin-top:24px;"><input id="websiteabcjseskin" class="advancedcontrols btn btn-websiteexport" onclick="launchAbcjsEskinWebsiteBuilder()" type="button" value="Open abcjs-eskin Website Builder" title="Opens the standalone abcjs-eskin Website Builder in a new tab and sends the full ABC editor contents to it."></p>';
+    }
 
     modal_msg  += '<p style="font-size:4px;">&nbsp;</p>';
 
