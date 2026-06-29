@@ -2046,6 +2046,7 @@ function parseMusicLineToBarsAndChords(
 
   const boundaries = [];
   const contents = [];
+  const measureSegments = [];
 
   const extra = Math.max(0, Math.min(40, parseInt(extraSpace, 10) || 0));
   const intraChordSep = " ".repeat(1 + extra);
@@ -2066,6 +2067,12 @@ function parseMusicLineToBarsAndChords(
     return out.join(intraChordSep);
   }
 
+  function pushMeasureSegment(segment) {
+    const seg = String(segment || "");
+    measureSegments.push(seg);
+    contents.push(extractChordText(seg));
+  }
+
   function readEndingAt(idx) {
     const a = s[idx] || "";
     const b = s[idx + 1] || "";
@@ -2080,6 +2087,25 @@ function parseMusicLineToBarsAndChords(
 
   while (i < s.length) {
     const ch = s[i];
+
+    // ABC can use [| and [|: as decorative/explicit left barlines. Treat
+    // them as the corresponding ordinary barline so they do not create a
+    // bogus leading "[" measure in lyric-aware or compact rendering.
+    if (ch === "[" && s[i + 1] === "|") {
+      if (s[i + 2] === ":") {
+        tokens.push({ token: "|:", pos: i, srcLen: 3 });
+        i += 3;
+        continue;
+      }
+      if (s[i + 2] === "|") {
+        tokens.push({ token: "||", pos: i, srcLen: 3 });
+        i += 3;
+        continue;
+      }
+      tokens.push({ token: "|", pos: i, srcLen: 2 });
+      i += 2;
+      continue;
+    }
 
     if (ch === "[" && (s[i + 1] === "1" || s[i + 1] === "2")) {
       tokens.push({ token: "[" + s[i + 1], pos: i, srcLen: 2 });
@@ -2111,7 +2137,9 @@ function parseMusicLineToBarsAndChords(
       let tok = ":|";
       let srcLen = 2;
 
-      if (end.suffix) {
+      if (s[i + 2] === "]") {
+        srcLen = 3;
+      } else if (end.suffix) {
         tok = ":|" + end.suffix.replace("[", "");
         srcLen = 2 + end.len;
       }
@@ -2133,13 +2161,21 @@ function parseMusicLineToBarsAndChords(
 
   // No bar tokens:
   if (!tokens.length) {
+    // A line with only a text annotation in quotes, such as "@...Chorus:",
+    // should not become an empty "/" measure. Only keep unbarred lines that
+    // contain at least one real chord symbol.
+    if (!segmentHasRealChordQuotes(s)) {
+      return { boundaries: [], contents: [], measureSegments: [], pickupWasSuppressed, carryStartRepeat };
+    }
+
     const c = extractChordText(s);
-    if (!c) return { boundaries: [], contents: [], pickupWasSuppressed, carryStartRepeat };
+    if (!c) return { boundaries: [], contents: [], measureSegments: [], pickupWasSuppressed, carryStartRepeat };
 
     boundaries.push("|");
     contents.push(c);
+    measureSegments.push(s);
     boundaries.push("");
-    return { boundaries, contents, pickupWasSuppressed, carryStartRepeat };
+    return { boundaries, contents, measureSegments, pickupWasSuppressed, carryStartRepeat };
   }
 
   // Build measures by slicing between token positions
@@ -2173,7 +2209,7 @@ function parseMusicLineToBarsAndChords(
         const tailAfterPickupBar = s.slice(nextTok.pos + nextTok.srcLen);
         if (/^[\s\\$]*$/.test(tailAfterPickupBar)) {
           carryStartRepeat = true;
-          return { boundaries: [], contents: [], pickupWasSuppressed, carryStartRepeat };
+          return { boundaries: [], contents: [], measureSegments: [], pickupWasSuppressed, carryStartRepeat };
         }
 
         // Otherwise: drop the pickup segment AND drop the barline that ended the pickup.
@@ -2182,18 +2218,18 @@ function parseMusicLineToBarsAndChords(
 
         for (let t = 2; t < tokens.length; t++) {
           const cur = tokens[t];
-          contents.push(extractChordText(s.slice(cursor, cur.pos)));
+          pushMeasureSegment(s.slice(cursor, cur.pos));
           boundaries.push(cur.token);
           cursor = cur.pos + cur.srcLen;
         }
 
         const tailSeg = s.slice(cursor);
         if (tailSeg.trim().length > 0) {
-          contents.push(extractChordText(tailSeg));
+          pushMeasureSegment(tailSeg);
           boundaries.push("");
         }
 
-        return { boundaries, contents, pickupWasSuppressed, carryStartRepeat };
+        return { boundaries, contents, measureSegments, pickupWasSuppressed, carryStartRepeat };
       }
     }
   } else {
@@ -2222,14 +2258,14 @@ function parseMusicLineToBarsAndChords(
       // skip the entire line so it doesn't become an empty measure in the chart.
       const tail = s.slice(firstTok.pos + firstTok.srcLen);
       if (/^[\s\\$]*$/.test(tail)) {
-        return { boundaries: [], contents: [], pickupWasSuppressed, carryStartRepeat };
+        return { boundaries: [], contents: [], measureSegments: [], pickupWasSuppressed, carryStartRepeat };
       }
 
       boundaries.push(firstTok.token);
       cursor = firstTok.pos + firstTok.srcLen;
     } else {
       boundaries.push("|");
-      contents.push(extractChordText(leadingSeg));
+      pushMeasureSegment(leadingSeg);
       boundaries.push(firstTok.token);
       cursor = firstTok.pos + firstTok.srcLen;
     }
@@ -2237,18 +2273,436 @@ function parseMusicLineToBarsAndChords(
 
   for (let t = 1; t < tokens.length; t++) {
     const cur = tokens[t];
-    contents.push(extractChordText(s.slice(cursor, cur.pos)));
+    pushMeasureSegment(s.slice(cursor, cur.pos));
     boundaries.push(cur.token);
     cursor = cur.pos + cur.srcLen;
   }
 
   const tailSeg = s.slice(cursor);
   if (tailSeg.trim().length > 0) {
-    contents.push(extractChordText(tailSeg));
+    pushMeasureSegment(tailSeg);
     boundaries.push("");
   }
 
-  return { boundaries, contents, pickupWasSuppressed, carryStartRepeat };
+  return { boundaries, contents, measureSegments, pickupWasSuppressed, carryStartRepeat };
+}
+
+function isVisibleLyricTokenText(text) {
+  return String(text || "").replace(/[_*\s|]/g, "").length > 0;
+}
+
+function parseLyricSyllableTokens(lyricText) {
+  const raw = String(lyricText || "")
+    .replace(/\\-/g, "\uE000")
+    .replace(/\|/g, " | ")
+    .trim();
+
+  if (!raw) return [];
+
+  const parts = raw.split(/\s+/);
+  const tokens = [];
+
+  function restoreEscapes(s) {
+    return String(s || "").replace(/\uE000/g, "-").replace(/~/g, " ");
+  }
+
+  function emitLyricPiece(piece, suffix) {
+    const text = restoreEscapes(piece) + (suffix || "");
+    tokens.push({ consume: true, text });
+  }
+
+  // In ABC lyrics, an underscore extends the previous sung syllable over one
+  // additional note. For chord-over-syllable charts, that means the next lyric
+  // syllable must be delayed by one note-event. Preserve the visible underscore
+  // on the preceding syllable text, then add an empty consumed token for the
+  // extension note.
+  function emitWithUnderscoreExtensions(piece, suffix) {
+    piece = String(piece || "");
+    suffix = suffix || "";
+
+    if (piece.indexOf("_") === -1) {
+      if (piece || suffix) emitLyricPiece(piece, suffix);
+      return;
+    }
+
+    const bits = piece.split("_");
+
+    for (let i = 0; i < bits.length; i++) {
+      const bit = bits[i];
+      const hasFollowingUnderscore = (i < bits.length - 1);
+
+      if (hasFollowingUnderscore) {
+        if (bit) emitLyricPiece(bit, "_");
+        tokens.push({ consume: true, text: "" });
+      } else if (bit || suffix) {
+        emitLyricPiece(bit, suffix);
+      }
+    }
+  }
+
+  for (let part of parts) {
+    part = String(part || "");
+    if (!part) continue;
+
+    if (/^\|+$/.test(part)) {
+      tokens.push({ consume: false, text: "", bar: true });
+      continue;
+    }
+
+    if (part === "*") {
+      tokens.push({ consume: true, text: "" });
+      continue;
+    }
+
+    if (part === "_") {
+      tokens.push({ consume: true, text: "" });
+      continue;
+    }
+
+    // Split ABC lyric hyphenated syllables while preserving a visible trailing
+    // hyphen on each syllable that continues into the next one. Runs of
+    // repeated hyphens such as De-----o indicate intervening note events before
+    // the next visible syllable; emit empty consumed tokens for those extra
+    // hyphens so later syllables stay aligned with the intended notes.
+    if (part.indexOf("-") !== -1 && part !== "-") {
+      const reHyphen = /([^-]+)|(-+)/g;
+      const pieces = [];
+      let hm;
+
+      while ((hm = reHyphen.exec(part)) !== null) {
+        if (hm[1] != null) {
+          pieces.push({ type: "text", text: hm[1] });
+        } else {
+          pieces.push({ type: "hyphens", text: hm[2] || "" });
+        }
+      }
+
+      for (let i = 0; i < pieces.length; i++) {
+        const cur = pieces[i];
+
+        if (!cur || cur.type !== "text") continue;
+
+        const next = pieces[i + 1];
+        const hasFollowingHyphens = !!(next && next.type === "hyphens");
+        const hyphenCount = hasFollowingHyphens ? String(next.text || "").length : 0;
+
+        if (hasFollowingHyphens) {
+          emitWithUnderscoreExtensions(cur.text, "-");
+
+          // The first hyphen is the visible syllable separator already printed
+          // above. Any additional hyphens consume note events before the next
+          // visible syllable.
+          for (let h = 1; h < hyphenCount; h++) {
+            tokens.push({ consume: true, text: "" });
+          }
+        } else {
+          emitWithUnderscoreExtensions(cur.text, "");
+        }
+      }
+
+      continue;
+    }
+
+    emitWithUnderscoreExtensions(part, "");
+  }
+
+  return tokens;
+}
+
+function lyricTextHasVisibleSyllables(lyricText) {
+  return parseLyricSyllableTokens(lyricText)
+    .some(tok => tok && tok.consume && isVisibleLyricTokenText(tok.text));
+}
+
+function scanMeasureSegmentForNoteChordEvents(segment, extraSpace = 0) {
+  const s = String(segment || "");
+  const extra = Math.max(0, Math.min(40, parseInt(extraSpace, 10) || 0));
+  const intraChordSep = " ".repeat(1 + extra);
+
+  const events = [];
+  let pendingChords = [];
+
+  function addChord(chord) {
+    chord = String(chord || "").trim();
+    if (!chord) return;
+    if (/^[\^_<>@]/.test(chord)) return;
+    pendingChords.push(chord);
+  }
+
+  function pushEvent(isRest = false) {
+    const chords = pendingChords.slice();
+    pendingChords = [];
+    events.push({ chords, isRest: !!isRest });
+  }
+
+  function skipNoteSuffix(idx) {
+    let i = idx;
+
+    while (i < s.length && /[,']/.test(s[i])) i++;
+
+    while (i < s.length) {
+      if (/[0-9]/.test(s[i])) { i++; continue; }
+      if (s[i] === "/") { i++; continue; }
+      break;
+    }
+
+    while (i < s.length && /[,']/.test(s[i])) i++;
+
+    return i;
+  }
+
+  let i = 0;
+
+  while (i < s.length) {
+    const ch = s[i];
+
+    if (ch === '"') {
+      const end = s.indexOf('"', i + 1);
+      if (end === -1) break;
+      addChord(s.slice(i + 1, end));
+      i = end + 1;
+      continue;
+    }
+
+    if (ch === "{") {
+      const end = s.indexOf("}", i + 1);
+      i = (end === -1) ? s.length : end + 1;
+      continue;
+    }
+
+    if (ch === "!") {
+      const end = s.indexOf("!", i + 1);
+      i = (end === -1) ? s.length : end + 1;
+      continue;
+    }
+
+    if (ch === "(" && /[0-9]/.test(s[i + 1] || "")) {
+      i += 2;
+      while (i < s.length && /[0-9:]/.test(s[i])) i++;
+      continue;
+    }
+
+    if (ch === "[") {
+      const end = s.indexOf("]", i + 1);
+      if (end !== -1) {
+        const inside = s.slice(i + 1, end);
+        if (/(?:\^+|_+|=+)?[A-Ga-gzZxX]/.test(inside)) {
+          pushEvent(!/[A-Ga-g]/.test(inside));
+          i = skipNoteSuffix(end + 1);
+          continue;
+        }
+        i = end + 1;
+        continue;
+      }
+    }
+
+    // Optional accidentals before a normal note/rest.
+    let j = i;
+    while (j < s.length && /[\^_=]/.test(s[j])) j++;
+
+    if (/[A-Ga-gzZxX]/.test(s[j] || "")) {
+      pushEvent(/[zZxX]/.test(s[j] || ""));
+      i = skipNoteSuffix(j + 1);
+      continue;
+    }
+
+    i++;
+  }
+
+  // If a measure contains chord symbols but no parsed note/rest event after them,
+  // keep the chord visible in a single pseudo-slot.
+  if (pendingChords.length) {
+    events.push({ chords: pendingChords.slice(), isRest: false });
+  }
+
+  // Precompute a display string for the chords attached to each event.
+  for (const ev of events) {
+    ev.chordText = (ev.chords && ev.chords.length)
+      ? ev.chords.join(intraChordSep)
+      : "";
+  }
+
+  return events;
+}
+
+function buildLyricAssignments(lyricLines, events) {
+  const rows = [];
+  const allEvents = Array.isArray(events) ? events : [];
+
+  for (const lyricLine of lyricLines) {
+    const row = new Array(allEvents.length).fill("");
+    const tokens = parseLyricSyllableTokens(lyricLine);
+
+    let eventIndex = 0;
+
+    function advanceToNextLyricNoteEvent() {
+      while (eventIndex < allEvents.length && allEvents[eventIndex] && allEvents[eventIndex].isRest) {
+        eventIndex++;
+      }
+    }
+
+    for (const tok of tokens) {
+      if (!tok) continue;
+
+      // Optional barlines in lowercase w: lyrics don't consume a syllable, but
+      // they can be used to resynchronize lyric assignment at the next measure.
+      if (!tok.consume) {
+        if (tok.bar && eventIndex < allEvents.length) {
+          const cur = allEvents[eventIndex];
+          const curMeasure = cur && Number.isFinite(cur.measureIndex) ? cur.measureIndex : null;
+
+          if (curMeasure !== null) {
+            while (
+              eventIndex < allEvents.length &&
+              allEvents[eventIndex] &&
+              allEvents[eventIndex].measureIndex <= curMeasure
+            ) {
+              eventIndex++;
+            }
+          }
+        }
+        continue;
+      }
+
+      advanceToNextLyricNoteEvent();
+
+      if (eventIndex >= allEvents.length) break;
+
+      row[eventIndex] = String(tok.text || "");
+      eventIndex++;
+    }
+
+    rows.push(row);
+  }
+
+  return rows;
+}
+
+function buildLyricAwareRowsForParsedLine(pl, extraSpace = 0, emptyPlaceholder = "/") {
+  if (!pl || !pl.lyricsRaw || !pl.lyricsRaw.length) return null;
+
+  const usableLyrics = pl.lyricsRaw.filter(lyricTextHasVisibleSyllables);
+  if (!usableLyrics.length) return null;
+
+  // Lyrics must be able to attach to pickup notes. The compact no-lyrics path
+  // may suppress pickups, but the lyric-aware path reparses the original music
+  // line without pickup suppression so leading sung pickup syllables keep their
+  // own measure/slot before the first full measure.
+  let lyricParsedLine = pl;
+
+  if (pl.sourceLine) {
+    const reparsed = parseMusicLineToBarsAndChords(
+      pl.sourceLine,
+      extraSpace,
+      emptyPlaceholder,
+      null
+    );
+
+    if (reparsed && reparsed.boundaries && reparsed.boundaries.length && reparsed.measureSegments && reparsed.measureSegments.length) {
+      lyricParsedLine = {
+        boundaries: reparsed.boundaries,
+        contents: reparsed.contents,
+        measureSegments: reparsed.measureSegments
+      };
+    }
+  }
+
+  const segments = lyricParsedLine.measureSegments || [];
+  if (!segments.length) return null;
+
+  const measureEvents = [];
+  const allEvents = [];
+
+  for (let measureIndex = 0; measureIndex < segments.length; measureIndex++) {
+    const seg = segments[measureIndex];
+    const evs = scanMeasureSegmentForNoteChordEvents(seg, extraSpace);
+
+    for (const ev of evs) {
+      ev.measureIndex = measureIndex;
+    }
+
+    measureEvents.push(evs);
+    for (const ev of evs) allEvents.push(ev);
+  }
+
+  if (allEvents.length <= 0) return null;
+
+  const lyricRows = buildLyricAssignments(usableLyrics, allEvents);
+  const extra = Math.max(0, Math.min(40, parseInt(extraSpace, 10) || 0));
+  const slotSep = " ".repeat(1 + extra);
+  const empty = String(emptyPlaceholder ?? "");
+
+  const chordRow = [];
+  const lyricCellRows = usableLyrics.map(() => []);
+  let globalEventIndex = 0;
+
+  for (let measureIndex = 0; measureIndex < measureEvents.length; measureIndex++) {
+    const evs = measureEvents[measureIndex] || [];
+    const nSlots = Math.max(1, evs.length);
+
+    const chordTexts = [];
+    const lyricTextsForMeasure = usableLyrics.map(() => new Array(nSlots).fill(""));
+    let measureHasChord = false;
+
+    for (let localIndex = 0; localIndex < nSlots; localIndex++) {
+      const ev = evs[localIndex] || { chordText: "" };
+      const chordText = String(ev.chordText || "");
+
+      if (chordText) measureHasChord = true;
+      chordTexts[localIndex] = chordText;
+
+      if (localIndex < evs.length) {
+        for (let lyricRowIndex = 0; lyricRowIndex < lyricRows.length; lyricRowIndex++) {
+          lyricTextsForMeasure[lyricRowIndex][localIndex] =
+            String((lyricRows[lyricRowIndex] || [])[globalEventIndex] || "");
+        }
+        globalEventIndex++;
+      }
+    }
+
+    // Preserve the user's empty-measure placeholder setting in lyric-aware mode.
+    if (!measureHasChord && empty) {
+      chordTexts[0] = empty;
+    }
+
+    const slotWidths = new Array(nSlots).fill(1);
+
+    for (let localIndex = 0; localIndex < nSlots; localIndex++) {
+      slotWidths[localIndex] = Math.max(slotWidths[localIndex], String(chordTexts[localIndex] || "").length);
+
+      for (let lyricRowIndex = 0; lyricRowIndex < lyricTextsForMeasure.length; lyricRowIndex++) {
+        slotWidths[localIndex] = Math.max(
+          slotWidths[localIndex],
+          String(lyricTextsForMeasure[lyricRowIndex][localIndex] || "").length
+        );
+      }
+    }
+
+    const makeCell = (parts) => {
+      let out = "";
+      for (let localIndex = 0; localIndex < nSlots; localIndex++) {
+        if (localIndex > 0) out += slotSep;
+        out += String(parts[localIndex] || "").padEnd(slotWidths[localIndex], " ");
+      }
+      return out.replace(/\s+$/g, "");
+    };
+
+    chordRow.push(makeCell(chordTexts));
+
+    for (let lyricRowIndex = 0; lyricRowIndex < lyricTextsForMeasure.length; lyricRowIndex++) {
+      lyricCellRows[lyricRowIndex].push(makeCell(lyricTextsForMeasure[lyricRowIndex]));
+    }
+  }
+
+  const rows = [
+    { rowType: "chords", boundaries: lyricParsedLine.boundaries, contents: chordRow }
+  ];
+
+  for (const cells of lyricCellRows) {
+    rows.push({ rowType: "lyrics", boundaries: lyricParsedLine.boundaries, contents: cells });
+  }
+
+  return rows;
 }
 
 function renderAlignedText(
@@ -2263,6 +2717,7 @@ function renderAlignedText(
 ) {
   const srcLines = String(abcBody || "").split(/\r?\n/);
   const parsedLines = [];
+  const wTextLines = [];
 
   let inBeginTextBlock = false;
 
@@ -2273,30 +2728,63 @@ function renderAlignedText(
   // carry the |: forward to the next real line.
   let pendingStartRepeat = false;
 
+  let lastMusicParsedLine = null;
+
   for (const srcLine of srcLines) {
     let rawLine = String(srcLine || "");
 
-    if (/^\s*%%begintext\b/i.test(rawLine)) { inBeginTextBlock = true; continue; }
-    if (/^\s*%%endtext\b/i.test(rawLine))   { inBeginTextBlock = false; continue; }
+    if (/^\s*%%begintext\b/i.test(rawLine)) { inBeginTextBlock = true; lastMusicParsedLine = null; continue; }
+    if (/^\s*%%endtext\b/i.test(rawLine))   { inBeginTextBlock = false; lastMusicParsedLine = null; continue; }
     if (inBeginTextBlock) continue;
 
-    if (!rawLine.trim()) {
-      parsedLines.push({ isBlank: true, boundaries: [], contents: [] });
+    // W: lyrics are rendered below the whole chord chart as plain text.
+    // A blank W: line is intentionally preserved as a blank output line.
+    const wMatch = rawLine.match(/^\s*W:(.*)$/);
+    if (wMatch) {
+      wTextLines.push(String(wMatch[1] || "").replace(/^\s+/, "").trimEnd());
+      lastMusicParsedLine = null;
       continue;
     }
 
-    if (/^\s*%/.test(rawLine)) continue;
+    // Lowercase w: lyrics attach to the previous parsed music line and are
+    // rendered measure-aligned under that line. These are the only lyric lines
+    // that trigger the more detailed chord-over-syllable rendering path.
+    const lyricMatch = rawLine.match(/^\s*w:(.*)$/);
+    if (lyricMatch) {
+      if (lastMusicParsedLine) {
+        if (!lastMusicParsedLine.lyricsRaw) lastMusicParsedLine.lyricsRaw = [];
+        lastMusicParsedLine.lyricsRaw.push(String(lyricMatch[1] || ""));
+      }
+      continue;
+    }
+
+    if (!rawLine.trim()) {
+      parsedLines.push({ isBlank: true, boundaries: [], contents: [] });
+      lastMusicParsedLine = null;
+      continue;
+    }
+
+    if (/^\s*%/.test(rawLine)) {
+      lastMusicParsedLine = null;
+      continue;
+    }
 
     rawLine = rawLine.replace(/\s*[\\$]\s*$/, "");
     const line = rawLine.replace(/%.*$/, "");
     const trimmed = line.trim();
     if (!trimmed) continue;
 
-    if (/^[A-Za-z]:/.test(trimmed)) continue;
+    if (/^[A-Za-z]:/.test(trimmed)) {
+      lastMusicParsedLine = null;
+      continue;
+    }
 
     const hasBar = /[|:]/.test(line);
-    const hasQuote = line.indexOf('"') !== -1;
-    if (!hasBar && !hasQuote) continue;
+    const hasQuote = segmentHasRealChordQuotes(line);
+    if (!hasBar && !hasQuote) {
+      lastMusicParsedLine = null;
+      continue;
+    }
 
     const startsWithStartRepeat = /^\s*\|:/.test(trimmed);
 
@@ -2310,7 +2798,7 @@ function renderAlignedText(
       pickupHeuristic.enabled &&
       (pickupOnlyAtTuneStart ? (atTuneStart || startsWithStartRepeat) : true);
 
-    const { boundaries, contents, pickupWasSuppressed, carryStartRepeat } =
+    const { boundaries, contents, measureSegments, pickupWasSuppressed, carryStartRepeat } =
       parseMusicLineToBarsAndChords(
         line,
         extraSpace,
@@ -2323,7 +2811,10 @@ function renderAlignedText(
       pendingStartRepeat = true;
     }
 
-    if (!boundaries.length && !contents.length) continue;
+    if (!boundaries.length && !contents.length) {
+      lastMusicParsedLine = null;
+      continue;
+    }
 
     // Apply pending |: to the next real line we emit
     if (pendingStartRepeat && boundaries && boundaries.length) {
@@ -2332,21 +2823,43 @@ function renderAlignedText(
       pendingStartRepeat = false;
     }
 
-    parsedLines.push({ isBlank: false, boundaries, contents });
+    const parsedLine = {
+      isBlank: false,
+      boundaries,
+      contents,
+      measureSegments: measureSegments || [],
+      sourceLine: line,
+      lyricsRaw: []
+    };
+
+    parsedLines.push(parsedLine);
+    lastMusicParsedLine = parsedLine;
 
     // Once we emit the first real line of content, we're no longer at tune start
     atTuneStart = false;
   }
 
-  if (!parsedLines.length) return "";
+  for (const pl of parsedLines) {
+    if (pl.isBlank) continue;
+    pl.lyricAwareRows = buildLyricAwareRowsForParsedLine(pl, extraSpace, emptyPlaceholder);
+  }
+
+  if (!parsedLines.length) {
+    return wTextLines.length ? wTextLines.join("\n") : "";
+  }
 
   let maxMeasures = 0;
   let maxBoundaries = 0;
 
   for (const pl of parsedLines) {
     if (pl.isBlank) continue;
-    maxMeasures = Math.max(maxMeasures, pl.contents.length);
-    maxBoundaries = Math.max(maxBoundaries, pl.boundaries.length);
+
+    const rowsForWidth = pl.lyricAwareRows || [pl];
+
+    for (const row of rowsForWidth) {
+      maxMeasures = Math.max(maxMeasures, (row.contents || []).length);
+      maxBoundaries = Math.max(maxBoundaries, (row.boundaries || []).length);
+    }
   }
 
   const boundaryWidth = new Array(Math.max(1, maxBoundaries)).fill(0);
@@ -2361,13 +2874,18 @@ function renderAlignedText(
   for (const pl of parsedLines) {
     if (pl.isBlank) continue;
 
-    for (let k = 0; k < pl.boundaries.length; k++) {
-      const tok = normTok(pl.boundaries[k]);
-      boundaryWidth[k] = Math.max(boundaryWidth[k], tok.length);
-    }
-    for (let j = 0; j < pl.contents.length; j++) {
-      const c = String(pl.contents[j] ?? "");
-      contentWidth[j] = Math.max(contentWidth[j], c.length);
+    const rowsForWidth = pl.lyricAwareRows || [pl];
+
+    for (const row of rowsForWidth) {
+      for (let k = 0; k < (row.boundaries || []).length; k++) {
+        const tok = normTok(row.boundaries[k]);
+        boundaryWidth[k] = Math.max(boundaryWidth[k], tok.length);
+      }
+
+      for (let j = 0; j < (row.contents || []).length; j++) {
+        const c = String(row.contents[j] ?? "");
+        contentWidth[j] = Math.max(contentWidth[j], c.length);
+      }
     }
   }
 
@@ -2375,7 +2893,12 @@ function renderAlignedText(
     const last = maxMeasures;
     for (const pl of parsedLines) {
       if (pl.isBlank) continue;
-      if ((pl.boundaries[last] || "").trim().length) return true;
+
+      const rowsForWidth = pl.lyricAwareRows || [pl];
+
+      for (const row of rowsForWidth) {
+        if (((row.boundaries || [])[last] || "").trim().length) return true;
+      }
     }
     return false;
   })();
@@ -2389,13 +2912,9 @@ function renderAlignedText(
     contentWidth[j] += extra;
   }
 
-  const outLines = [];
-
-  for (const pl of parsedLines) {
-    if (pl.isBlank) { outLines.push(""); continue; }
-
-    const b = pl.boundaries.slice();
-    const c = pl.contents.slice();
+  function renderRow(row) {
+    const b = (row.boundaries || []).slice();
+    const c = (row.contents || []).slice();
 
     while (b.length < (c.length + 1)) b.push("");
     while (c.length < maxMeasures) c.push("");
@@ -2411,7 +2930,28 @@ function renderAlignedText(
       lineOut += padEnd(normTok(b[j + 1]), bw);
     }
 
-    outLines.push(lineOut.replace(/\s+$/g, "") + endPad);
+    return lineOut.replace(/\s+$/g, "") + endPad;
+  }
+
+  const outLines = [];
+
+  for (const pl of parsedLines) {
+    if (pl.isBlank) { outLines.push(""); continue; }
+
+    const rowsToRender = pl.lyricAwareRows || [pl];
+
+    for (const row of rowsToRender) {
+      outLines.push(renderRow(row));
+    }
+  }
+
+  if (wTextLines.length) {
+    if (outLines.length && outLines[outLines.length - 1] !== "") {
+      outLines.push("");
+    }
+    for (const line of wTextLines) {
+      outLines.push(String(line || ""));
+    }
   }
 
   return outLines.join("\n");
@@ -2545,6 +3085,119 @@ function tryDecodeShareLinkIntoEditor() {
   }
 
   return false;
+}
+
+
+/* ============================================================
+   ABC Transcription Tools direct-transfer message support
+   Mirrors the abcjs-eskin Website Builder startup handshake.
+   ============================================================ */
+function trustedABCTranscriptionToolsMessage(event) {
+  const expectedSources = [];
+
+  if (window.opener) expectedSources.push(window.opener);
+  if (window.parent && window.parent !== window) expectedSources.push(window.parent);
+
+  if (expectedSources.length && !expectedSources.includes(event.source)) {
+    return false;
+  }
+
+  if (window.location.protocol === "file:") {
+    return true;
+  }
+
+  return event.origin === window.location.origin ||
+    event.origin === "https://michaeleskin.com";
+}
+
+function countTunesForReceivedABC(abcText) {
+  return splitAbcIntoTunes(String(abcText || "")).length;
+}
+
+function acknowledgeABCTranscriptionToolsLoad(event, messageId, tuneCount) {
+  if (!event.source || typeof event.source.postMessage !== "function") return;
+
+  try {
+    event.source.postMessage({
+      type: "abcjsEskinWebsiteBuilderABCLoaded",
+      messageId,
+      tuneCount
+    }, event.origin && event.origin !== "null" ? event.origin : "*");
+  } catch (error) {
+    console.warn("Unable to acknowledge ABC Transcription Tools load message.", error);
+  }
+}
+
+function loadABCFromABCTranscriptionTools(data, event) {
+  const abcText = typeof data.abc === "string" ? data.abc : "";
+  const sourceName = String(data.sourceName || "external ABC source").trim() ||
+    "external ABC source";
+
+  if (!abcText.trim()) {
+    setStatus(`${sourceName} did not send any ABC text.`, true);
+    return;
+  }
+
+  try {
+    $("abcIn").value = abcText;
+
+    if ($("out")) $("out").innerHTML = "";
+    if ($("fileIn")) $("fileIn").value = "";
+
+    gLoadedFileName = "";
+    gSavedChordFileName = "";
+
+    const tuneCount = countTunesForReceivedABC(abcText);
+
+    if (tuneCount === 0) {
+      setStatus(`Loaded ABC from ${sourceName}. No tunes found.`, true);
+    } else if (tuneCount === 1) {
+      setStatus(`Loaded ABC from ${sourceName}. Found 1 tune.`);
+    } else {
+      setStatus(`Loaded ABC from ${sourceName}. Found ${tuneCount} tunes.`);
+    }
+
+    syncActionButtons();
+    acknowledgeABCTranscriptionToolsLoad(event, data.messageId || "", tuneCount);
+  } catch (error) {
+    console.error(error);
+    setStatus(error && error.message ? error.message : String(error), true);
+  }
+}
+
+function handleABCTranscriptionToolsMessage(event) {
+  if (!trustedABCTranscriptionToolsMessage(event)) return;
+
+  const data = event.data || {};
+  if (data.type !== "abcjsEskinWebsiteBuilderLoadABC") return;
+
+  loadABCFromABCTranscriptionTools(data, event);
+}
+
+function notifyABCTranscriptionToolsReady() {
+  const message = { type: "abcjsEskinWebsiteBuilderReady" };
+  const targets = [];
+
+  if (window.opener) targets.push(window.opener);
+  if (window.parent && window.parent !== window) targets.push(window.parent);
+
+  targets.forEach(target => {
+    try {
+      target.postMessage(message, "*");
+    } catch (error) {
+      console.warn("Unable to notify ABC Transcription Tools that the chord chart generator is ready.", error);
+    }
+  });
+}
+
+let gABCTranscriptionToolsHandshakeStarted = false;
+function startABCTranscriptionToolsHandshake() {
+  if (gABCTranscriptionToolsHandshakeStarted) return;
+  gABCTranscriptionToolsHandshakeStarted = true;
+  window.addEventListener("message", handleABCTranscriptionToolsMessage);
+  [0, 250, 750, 1500].forEach(delay => {
+    setTimeout(notifyABCTranscriptionToolsReady, delay);
+  });
 }
 
 /* ============================================================
@@ -3511,6 +4164,10 @@ function wireUp() {
   // Initial load reset
   initializePageState();
 
+  // Notify compatible launchers, such as ABC Transcription Tools, that this
+  // page is ready to receive full ABC text via postMessage.
+  startABCTranscriptionToolsHandshake();
+
   // Enable/disable page number control
   syncPageNumberControlAvailability();
 
@@ -3785,6 +4442,7 @@ function wireUp() {
       '  <div style="margin-bottom:16px;">' +
       '    <b>First: Load some ABC tunes</b><br/>' +
       '    Paste one or more ABC tunes into the editor, or open a <code>.abc</code> / <code>.txt</code> file.<br/>' +
+      '    This tool can also receive full ABC text directly from the <b>ABC Transcription Tools</b>; when received, the ABC Input box is populated with the transferred text and you can click <b>Generate Charts</b>.<br/>' +
       '    <span class="muted">Tip: Chord charts are generated from chord symbols in quotes<br/>(for example: <code>"G"</code>, <code>"Am"</code>).</span>' +
       '  </div>' +
 
@@ -3793,6 +4451,18 @@ function wireUp() {
       '    Click <b>Generate Charts</b>. The charts will appear in the <b>Chord Charts</b> area on the right.<br/>' +
       '    Tunes with no chords are skipped.<br/>Measures with no chords are shown as empty (or with your selected placeholder).' +
       '  </div>' +
+
+      '  <div style="margin-bottom:16px;">' +
+      '    <b>Lyrics in chord charts</b><br/>' +
+      '    If a music line is followed by one or more lowercase <code>w:</code> lyric lines, the chart uses a lyric-aware layout for that line only.<br/>' +
+      '    In that layout, chords are positioned over the matching lyric syllables when possible, and the <code>w:</code> lyric rows are stacked below the chord row with the same measure/barline alignment.<br/>' +
+      '    Lyric syllables are assigned to sung notes rather than rests, and sung pickup notes keep their own leading lyric-aware slot before the first full measure.<br/>' +
+      '    ABC lyric underscore extensions are honored, so a syllable such as <code>A_</code> delays the next syllable by one note while preserving the visible underscore in the output.<br/>' +
+      '    Runs of repeated lyric hyphens such as <code>De-----o</code> are treated as melisma spacing: the extra hyphens consume intervening note events before the next visible syllable.<br/>' +
+      '    Lines without <code>w:</code> lyrics continue to use the normal compact measure-based chord layout.<br/><br/>' +
+      '    Uppercase <code>W:</code> lyric lines are printed as plain text below the full chord chart, separated from the chord/<code>w:</code> section by one blank line. Blank <code>W:</code> lines are preserved.' +
+      '  </div>' +
+
 
       '  <hr style="border:0; border-top:1px solid #ccc; margin:18px 0;">' +
 
