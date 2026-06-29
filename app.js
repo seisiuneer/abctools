@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3279_062826_2200";
+var gVersionNumber = "3280_062926_0900";
 
 var gMIDIInitStillWaiting = false;
 
@@ -28507,13 +28507,13 @@ async function processShareLink() {
       // Show update message?
       if (gLocalStorageAvailable){
 
-        var updatePresented = localStorage.sawUpdate_28jun2026;
+        var updatePresented = localStorage.sawUpdate_298jun2026;
 
         if (updatePresented != "true") {
 
           showWhatsNewScreen();
 
-          localStorage.sawUpdate_28jun2026 = true;
+          localStorage.sawUpdate_29jun2026 = true;
 
         }
 
@@ -56604,26 +56604,22 @@ function showWhatsNewScreen() {
   modal_msg += 'background: linear-gradient(135deg, #0b1f3a 0%, #145ca8 52%, #2f9df5 100%);';
   modal_msg += 'box-shadow: 0 6px 16px rgba(0,0,0,0.14); color:#fff;">';
   modal_msg += '<div style="font-size:20pt; line-height:24pt; font-weight:bold;">What&apos;s New</div>';
-  modal_msg += '<div style="font-size:12pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 28 June 2026</div>';
+  modal_msg += '<div style="font-size:12pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 29 June 2026</div>';
+  modal_msg += '</div>';
+
+  // Feature card
+  modal_msg += '<div style="margin:10px 0 6px 0; padding:0px 12px; border-radius:12px;';
+  modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);font-size:12pt;">';
+  modal_msg += '<p style="font-size:12pt;">You can now send all the tune in the editor to the <strong>ABC Chord Chart Generator</strong>.</p>';
+  modal_msg += '<p style="font-size:12pt;">The tool sends either just the current tune if launched from the <strong>Player</strong> or <strong>Tune Trainer</strong>, or all the tunes in the editor if launched from the <strong>Sharing Controls</strong> dialog.</p>';
   modal_msg += '</div>';
 
   // Feature card
   modal_msg += '<div style="margin:10px 0 6px 0; padding:0px 12px; border-radius:12px;';
   modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);font-size:12pt;">';
   modal_msg += '<p style="font-size:12pt;">The <strong>Export Full-Featured Tunebook Website</strong> button on the <strong>Export Website</strong> dialog is now hidden by default.</p>';
-  modal_msg += '<p style="font-size:12pt;">The legacy <strong>Full-Featured Tunebook Website</strong> has been deprecated in favor of use of the new <strong>abcjs-eskin Website Builder</strong>.</p>';
-  modal_msg += '<p style="font-size:12pt;">Users who still prefer the legacy exporter can restore the button at any time by enabling the new checkbox on the <strong>Export</strong> tab of the <strong>Advanced Settings</strong> dialog.</p>';
-
-  modal_msg += '</div>';
-
-  // Feature card
-  modal_msg += '<div style="margin:10px 0 6px 0; padding:0px 12px; border-radius:12px;';
-  modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);">';
-  modal_msg += '<p style="font-size:12pt;">Added the <strong>abcjs-eskin Website Builder</strong> tool as a new option on the <strong>Export Website</strong> dialog.</p>';
-  modal_msg += '<p style="font-size:12pt;">The <strong>abcjs-eskin Website Builder</strong> is a powerful standalone website-building tool for creating complete multi-tune ABC websites with modern visual themes, embedded notation, tablature options, playback controls, soundfont support, and table-of-contents navigation.</p>';
-  modal_msg += '<p style="font-size:12pt;">To use it from the ABC Transcription Tools, choose <strong>Export Website</strong>, then click <strong>Open abcjs-eskin Website Builder</strong>.</p>';
-  modal_msg += '<p style="font-size:12pt;">The ABC Transcription Tools will open the <strong>abcjs-eskin Website Builder</strong> in a new browser tab and automatically send the full ABC contents of the editor to it.</p>';
-
+  modal_msg += '<p style="font-size:12pt;">The legacy <strong>Full-Featured Tunebook Website</strong> exporter has been deprecated in favor of use of the new <strong>abcjs-eskin Website Builder</strong>.</p>';
+  modal_msg += '<p style="font-size:12pt;">Users who still prefer the legacy exporter can restore the button at any time from a new checkbox on the <strong>Export</strong> tab of the <strong>Advanced Settings</strong> dialog.</p>';
   modal_msg += '</div>';
 
   modal_msg += '</div>'; // wrapper
@@ -60746,15 +60742,6 @@ function LaunchChordChartGenerator(){
   window.open(url, '_blank');
 }
 
-// Open the chord solver
-function LaunchBackupChordSolver(){
-
-  sendGoogleAnalytics("action", "LaunchBackupChordSolver");
-
-  var url = "https://michaeleskin.com/tools/abc_backup_chord_solver.html";
-  window.open(url, '_blank');
-}
-
 // Open the abcjs-eskin-portable website builder
 function LaunchABCJSWebsiteBuilder(){
 
@@ -63303,13 +63290,13 @@ async function DoStartup() {
   // Show update message?
   if (gLocalStorageAvailable && (!isFromShare)){
 
-    var updatePresented = localStorage.sawUpdate_28jun2026;
+    var updatePresented = localStorage.sawUpdate_29jun2026;
 
     if (updatePresented != "true") {
 
       showWhatsNewScreen();
 
-      localStorage.sawUpdate_28jun2026 = true;
+      localStorage.sawUpdate_29jun2026 = true;
 
     }
 
@@ -64870,34 +64857,6 @@ function OpenInABCJSQuickEditor(abcText){
     }
 }
 
-//
-// Open in the ABC Chord Chart Generator
-//
-function OpenInABCChordChartGenerator(abcText){
-
-    sendGoogleAnalytics("action", "OpenInABCChordChartGenerator");
-
-    var encoder = new TextEncoder();
-    var utf8Bytes = encoder.encode(abcText);
-    var deflated = pako.deflate(utf8Bytes, { level: 6 });
-    var theDef = def_bytesToBase64URL(deflated);
-
-    var theURL = "https://michaeleskin.com/tools/abc_to_chord_chart.html?def="+theDef;
-
-    if (theURL.length < 8100)
-    {
-      var w = window.open(theURL);
-    }
-    else{
-
-      DayPilot.Modal.alert('<p style="text-align:center;font-family:helvetica;font-size:12pt;">Share URL is too long to open in the ABC Chord Chart Generator.</p>', {
-        theme: "modal_flat",
-        top: 230,
-        scrollWithPage: (AllowDialogsToScroll())
-      });
-
-    }
-}
 
 //
 // Open in Anton Zille's N.S.S.S. ABC Encoder tool
@@ -64931,30 +64890,288 @@ function OpenInABCEncoder(abcText){
     }
 }
 
-function OpenInChordSolver(abcText){
+//
+// Open in the ABC Chord Chart Generator
+//
 
-  sendGoogleAnalytics("action", "OpenInChordSolver");
+function OpenInABCChordChartGenerator(abcText,isFromPlayer){
 
-  var encoder = new TextEncoder();
-  var utf8Bytes = encoder.encode(abcText);
-  var deflated = pako.deflate(utf8Bytes, { level: 6 });
-  var theDef = def_bytesToBase64URL(deflated);
+  sendGoogleAnalytics("action", "OpenInABCChordChartGenerator");
 
-  var theURL = "https://michaeleskin.com/tools/abc_backup_chord_solver.html?def="+theDef;
+  if (isFromPlayer){
+    var encoder = new TextEncoder();
+    var utf8Bytes = encoder.encode(abcText);
+    var deflated = pako.deflate(utf8Bytes, { level: 6 });
+    var theDef = def_bytesToBase64URL(deflated);
 
-  if (theURL.length < 8100)
-  {
-    var w = window.open(theURL);
+    var theURL = "https://michaeleskin.com/tools/abc_to_chord_chart.html?def="+theDef;
+
+    if (theURL.length < 8100)
+    {
+      var w = window.open(theURL);
+    }
+    else{
+
+      DayPilot.Modal.alert('<p style="text-align:center;font-family:helvetica;font-size:12pt;">Share URL is too long to open in the ABC Chord Chart Generator.</p>', {
+        theme: "modal_flat",
+        top: 230,
+        scrollWithPage: (AllowDialogsToScroll())
+      });
+
+    }
   }
   else{
+    launchAbcChordChartGenerator();
+  }
+}
 
-    DayPilot.Modal.alert('<p style="text-align:center;font-family:helvetica;font-size:12pt;">Share URL is too long to open in the ABC Tune Backup Chord Solver.</p>', {
-      theme: "modal_flat",
-      top: 230,
-      scrollWithPage: (AllowDialogsToScroll())
+//
+// Launch the standalone ABC Chord Chart Generator in a new window and
+// transfer the full ABC editor contents after the generator reports that it is ready.
+//
+var gAbcChordChartGeneratorURL = "https://michaeleskin.com/tools/abc_to_chord_chart.html";
+
+function getAbcChordChartGeneratorLaunchURL() {
+
+    var separator = (gAbcChordChartGeneratorURL.indexOf("?") === -1) ? "?" : "&";
+
+    return gAbcChordChartGeneratorURL +
+        separator +
+        "cb=" + encodeURIComponent(String(Date.now()));
+}
+
+function getAbcChordChartGeneratorTargetOrigin(url) {
+
+    try {
+        var parsedURL = new URL(url, window.location.href);
+        return parsedURL.origin && parsedURL.origin !== "null" ? parsedURL.origin : "*";
+    }
+    catch (error) {
+        return "*";
+    }
+}
+
+function showAbcChordChartGeneratorMessage(message, width){
+
+    DayPilot.Modal.alert(
+        '<p style="font-size:16px;line-height:24px;font-family:helvetica;text-align:center;">' + message + '</p>',
+        { theme: "modal_flat", top: 150, width: (width || 560), scrollWithPage: (AllowDialogsToScroll()) }
+    );
+}
+
+function showAbcChordChartGeneratorOfflineMessage(){
+
+    showAbcChordChartGeneratorMessage(
+        "The ABC Chord Chart Generator is not available while offline. Please reconnect to the internet and try again.",
+        560
+    );
+}
+
+function showAbcChordChartGeneratorOfficialVersionMessage(){
+
+    showAbcChordChartGeneratorMessage(
+        "Direct ABC transfer to the ABC Chord Chart Generator is only available from the official online version at https://michaeleskin.com.<br/><br/>Please run the official online version of the ABC Transcription Tools to use direct ABC transfer.<br/><br/>As a workaround, save the ABC file and manually open that ABC file in the Chord Chart Generator with its Open ABC file control.",
+        560
+    );
+}
+
+function launchAbcChordChartGenerator(){
+
+    if (!gAllowWebExport){
+        return;
+    }
+
+    var abcText = "";
+
+    try {
+        abcText = (typeof getABCEditorText === "function") ? getABCEditorText() : "";
+    }
+    catch (error) {
+        abcText = "";
+    }
+
+    if (!abcText || !/^\s*X\s*:/m.test(abcText)){
+        showAbcChordChartGeneratorMessage(
+            "There are no ABC tunes in the editor to send to the ABC Chord Chart Generator.",
+            520
+        );
+        return;
+    }
+
+    if (!isRunningFromOfficialMichaeleskinDomain()){
+        showAbcChordChartGeneratorOfficialVersionMessage();
+        return;
+    }
+
+    if (!navigator.onLine){
+        showAbcChordChartGeneratorOfflineMessage();
+        return;
+    }
+
+    // Keep track of actions
+    sendGoogleAnalytics("action","OpenInChordGenerator");
+
+    var generatorURL = gAbcChordChartGeneratorURL;
+    var targetOrigin = getAbcChordChartGeneratorTargetOrigin(generatorURL);
+    var messageId = "abctools-chord-chart-generator-" + Date.now() + "-" + Math.random().toString(36).slice(2);
+    var generatorWindow = null;
+    var generatorReadyReceived = false;
+    var loadMessageAttempted = false;
+    var loadMessageAcknowledged = false;
+    var failureMessageShown = false;
+    var cleanupTimer = null;
+    var closedCheckTimer = null;
+    var fallbackTimers = [];
+
+    var sourceName = "ABC Transcription Tools";
+    if (typeof gDisplayedName === "string" && gDisplayedName.trim()){
+        sourceName += " - " + gDisplayedName.trim();
+    }
+
+    var loadMessage = {
+        type: "abcjsEskinWebsiteBuilderLoadABC",
+        messageId: messageId,
+        abc: abcText,
+        sourceName: sourceName,
+        replaceExisting: true
+    };
+
+    function cleanupChordChartGeneratorLaunchHandlers(){
+        window.removeEventListener("message", handleChordChartGeneratorLaunchMessage);
+        if (cleanupTimer){
+            clearTimeout(cleanupTimer);
+            cleanupTimer = null;
+        }
+        if (closedCheckTimer){
+            clearInterval(closedCheckTimer);
+            closedCheckTimer = null;
+        }
+        fallbackTimers.forEach(function(timer){
+            clearTimeout(timer);
+        });
+        fallbackTimers = [];
+    }
+
+    function showChordChartGeneratorLaunchFailure(message, width){
+        if (loadMessageAcknowledged || failureMessageShown){
+            cleanupChordChartGeneratorLaunchHandlers();
+            return;
+        }
+
+        failureMessageShown = true;
+        cleanupChordChartGeneratorLaunchHandlers();
+        showAbcChordChartGeneratorMessage(message, width || 620);
+    }
+
+    function postABCToChordChartGenerator(){
+        if (!generatorWindow || generatorWindow.closed){
+            showChordChartGeneratorLaunchFailure(
+                "The ABC Chord Chart Generator window was closed before the tunes could be transferred.",
+                600
+            );
+            return;
+        }
+
+        if (loadMessageAcknowledged || failureMessageShown){
+            return;
+        }
+
+        try {
+            loadMessageAttempted = true;
+            generatorWindow.postMessage(loadMessage, targetOrigin);
+        }
+        catch (error) {
+            console.error("Unable to send ABC to the ABC Chord Chart Generator:", error);
+            showChordChartGeneratorLaunchFailure(
+                "ABC Transcription Tools could not send the tunes to the ABC Chord Chart Generator. Browser security settings may have blocked the transfer.",
+                650
+            );
+        }
+    }
+
+    function handleChordChartGeneratorLaunchMessage(event){
+        if (!generatorWindow || event.source !== generatorWindow){
+            return;
+        }
+
+        if (targetOrigin !== "*" && event.origin !== targetOrigin){
+            return;
+        }
+
+        var data = event.data || {};
+
+        if (data.type === "abcjsEskinWebsiteBuilderReady"){
+            generatorReadyReceived = true;
+            postABCToChordChartGenerator();
+            return;
+        }
+
+        if (data.type === "abcjsEskinWebsiteBuilderABCLoaded" && data.messageId === messageId){
+            loadMessageAcknowledged = true;
+            cleanupChordChartGeneratorLaunchHandlers();
+        }
+    }
+
+    window.addEventListener("message", handleChordChartGeneratorLaunchMessage);
+
+    generatorWindow = window.open(getAbcChordChartGeneratorLaunchURL(), "_blank");
+
+    if (!generatorWindow){
+        cleanupChordChartGeneratorLaunchHandlers();
+        showAbcChordChartGeneratorMessage(
+            "The ABC Chord Chart Generator window was blocked by the browser. Please allow popups for this site and try again.",
+            560
+        );
+        return;
+    }
+
+    closedCheckTimer = setInterval(function(){
+        if (generatorWindow && generatorWindow.closed && !loadMessageAcknowledged){
+            showChordChartGeneratorLaunchFailure(
+                "The ABC Chord Chart Generator window was closed before ABC Transcription Tools received confirmation that the tunes were transferred.",
+                650
+            );
+        }
+    }, 1000);
+
+    // The generator sends a ready message when its listener has been installed.
+    // These delayed fallback sends are harmless if the ready handshake succeeds,
+    // and make the launch more forgiving if a browser drops an early ready message.
+    [1200, 2400, 4200].forEach(function(delay){
+        fallbackTimers.push(setTimeout(function(){
+            if (!loadMessageAcknowledged && !failureMessageShown){
+                postABCToChordChartGenerator();
+            }
+        }, delay));
     });
 
-  }
+    cleanupTimer = setTimeout(function(){
+        if (loadMessageAcknowledged){
+            cleanupChordChartGeneratorLaunchHandlers();
+            return;
+        }
+
+        if (!generatorReadyReceived){
+            showChordChartGeneratorLaunchFailure(
+                "The ABC Chord Chart Generator opened, but ABC Transcription Tools did not receive a ready message from it. If the tunes are not visible in the Chord Chart Generator, use its Open ABC file control instead.",
+                680
+            );
+            return;
+        }
+
+        if (loadMessageAttempted){
+            showChordChartGeneratorLaunchFailure(
+                "ABC Transcription Tools sent the tunes to the ABC Chord Chart Generator, but did not receive confirmation that they loaded. If the tunes are not visible in the Chord Chart Generator, use its Open ABC file control instead.",
+                700
+            );
+            return;
+        }
+
+        showChordChartGeneratorLaunchFailure(
+            "ABC Transcription Tools could not complete the transfer to the ABC Chord Chart Generator. If the tunes are not visible in the Chord Chart Generator, use its Open ABC file control instead.",
+            700
+        );
+    }, 15000);
 }
 
 function OpenInABCJSEskinWebsiteBuilder(abcText,isFromPlayer){
@@ -64992,7 +65209,7 @@ function openInExternalTool(theABC, isFromPlayer){
 
   var modal_msg =
     '<div id="ceoltasanchor">' +
-      '<p style="text-align:center;margin-bottom:36px;font-size:16pt;font-family:helvetica;">' +
+      '<p style="text-align:center;margin-bottom:24px;font-size:16pt;font-family:helvetica;">' +
         'Open ABC in External Tool&nbsp;&nbsp;' +
         '<span style="font-size:24pt;" title="View documentation in new tab">' +
           '<a href="https://michaeleskin.com/abctools/userguide.html#external_tools" target="_blank" ' +
@@ -65003,28 +65220,21 @@ function openInExternalTool(theABC, isFromPlayer){
   modal_msg +=
     '<p style="text-align:center;">' +
 
-      '<span class="external-tool" style="display:inline-block;margin-right:48px;margin-bottom:12px;text-align:center;">' +
-        '<img style="height:128px;width:auto;" id="external_chord_chart" src="img/tool_chordchart_other_1.jpg" ' +
-             'title="Open the ABC in the ABC Chord Chart Generator" alt="ABC Chord Chart Generator" style="cursor:pointer;">' +
+      '<span class="external-tool" style="display:inline-block;margin-bottom:12px;text-align:center;">' +
+        '<img id="external_abcjs_eskin_website" src="img/abcjs-eskin-portable-website_1.jpg" ' +
+             'title="Open the ABC in the abcjs-eskin Website Builder" alt="abcjs-eskin Website Builder" style="cursor:pointer;">' +
         '<br>' +
-        '<span style="font-size:1.2em;">ABC Chord Chart Generator</span>' +
-      '</span>' +
-
-      '<span class="external-tool" style="display:inline-block;margin-bottom:12px; text-align:center;">' +
-        '<img style="height:120px;width:auto;" id="external_chord_solver" src="img/tool_abc_chord_solver_1.jpg" ' +
-             'title="Export the tunes to the ABC Tune Backup Chord Solver" alt="ABC Tune Backup Chord Solver" style="cursor:pointer;">' +
-        '<br>' +
-        '<span style="font-size:1.2em;">ABC Tune Backup Chord Solver<span>' +
+        '<span style="font-size:1.2em;">abcjs-eskin Website Builder</span>' +
       '</span>' +
 
     '</p>' +
     '<p style="text-align:center;">' +
 
-      '<span class="external-tool" style="display:inline-block;margin-bottom:12px;margin-right:48px;text-align:center;">' +
-        '<img id="external_abcjs_eskin_website" src="img/abcjs-eskin-portable-website_1.jpg" ' +
-             'title="Open the ABC in the abcjs-eskin Website Builder" alt="abcjs-eskin Website Builder" style="cursor:pointer;">' +
+      '<span class="external-tool" style="display:inline-block;margin-right:48px;margin-bottom:12px;text-align:center;">' +
+        '<img style="height:128px;width:auto;" id="external_chord_chart" src="img/tool_chordchart_other_1.jpg" ' +
+             'title="Open the ABC in the ABC Chord Chart Generator" alt="ABC Chord Chart Generator" style="cursor:pointer;">' +
         '<br>' +
-        '<span style="font-size:1.2em;">abcjs-eskin Website Builder</span>' +
+        '<span style="font-size:1.2em;">ABC Chord Chart Generator</span>' +
       '</span>' +
 
       '<span class="external-tool" style="display:inline-block;margin-bottom:12px; text-align:center;">' +
@@ -65076,17 +65286,12 @@ function openInExternalTool(theABC, isFromPlayer){
 
   elem = document.getElementById("external_chord_chart");
   if (elem) elem.onclick = function(){
-    OpenInABCChordChartGenerator(theABC);
+    OpenInABCChordChartGenerator(theABC,isFromPlayer);
   };
 
   elem = document.getElementById("external_abc_encoder");
   if (elem) elem.onclick = function(){
     OpenInABCEncoder(theABC);
-  };
-
-  elem = document.getElementById("external_chord_solver");
-  if (elem) elem.onclick = function(){
-    OpenInChordSolver(theABC);
   };
 
   elem = document.getElementById("external_abcjs_eskin_website");
@@ -65204,7 +65409,7 @@ function OtherABCTools(){
   // Outer layout: two explicit rows
   + '  <div style="display:flex; flex-direction:column; align-items:center; gap:12px; padding:0 15px 0px 15px;">'
 
-  // Row 1 (3 items)
+  // Row 1 (2 items)
   + '    <div style="display:flex; justify-content:center; align-items:flex-start; gap:24px; width:100%;">'
 
   + '      <div class="tuning-tool" style="text-align:center; width:170px;">'
@@ -65217,12 +65422,6 @@ function OtherABCTools(){
   + '        <img id="other_tools_chordchart" src="img/tool_chordchart_2.jpg" title="ABC Chord Chart Generator" alt="ABC Chord Chart Generator"'
   + '             style="width:170px;height:125px;object-fit:contain;cursor:pointer;">'
   + '        <div style="font-size:1.0em; margin-top:4px; height:2.8em; display:flex; align-items:center; justify-content:center; line-height:1.15em;">ABC Chord Chart Generator</div>'
-  + '      </div>'
-
-  + '      <div class="tuning-tool" style="text-align:center; width:170px;">'
-  + '        <img id="other_tools_backupchordsolver" src="img/tool_abc_chord_solver_1.jpg" title="ABC Tune Backup Chord Solver" alt="ABC Tune Backup Chord Solver"'
-  + '             style="width:170px;height:125px;object-fit:contain;cursor:pointer;">'
-  + '        <div style="font-size:1.0em; margin-top:4px; height:2.8em; display:flex; align-items:center; justify-content:center; line-height:1.15em;">ABC Tune Backup Chord Solver</div>'
   + '      </div>'
 
   + '    </div>'
@@ -65266,9 +65465,6 @@ function OtherABCTools(){
 
   elem = document.getElementById("other_tools_chordchart");
   if (elem) elem.onclick = function(){ LaunchChordChartGenerator(); };
-
-  elem = document.getElementById("other_tools_backupchordsolver");
-  if (elem) elem.onclick = function(){ LaunchBackupChordSolver(); };
 
   elem = document.getElementById("other_tools_abc2csv");
   if (elem) elem.onclick = function(){ LaunchCSVTagExtractor(); };
