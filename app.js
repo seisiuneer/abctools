@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3281_062926_1230";
+var gVersionNumber = "3282_062926_2030";
 
 var gMIDIInitStillWaiting = false;
 
@@ -28507,7 +28507,7 @@ async function processShareLink() {
       // Show update message?
       if (gLocalStorageAvailable){
 
-        var updatePresented = localStorage.sawUpdate_298jun2026;
+        var updatePresented = localStorage.sawUpdate_29jun2026;
 
         if (updatePresented != "true") {
 
