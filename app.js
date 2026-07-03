@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3284_070326_1030";
+var gVersionNumber = "3285_070326_1130";
 
 var gMIDIInitStillWaiting = false;
 
@@ -54353,7 +54353,9 @@ function removeLinesStartingWithILinebreak(text) {
   return lines.join('\n');
 }
 
+//
 // MAE 3 July 2026 - For MusicXML stacked chords remediation
+//
 function postProcessStackedChords(abc) {
 
   const NOTE_RE = /^((?:"(?:\\.|[^"\\])*"\s*)*)([=_^]*[A-Ga-g][,']*)(\d+)(-?)/;
@@ -54400,6 +54402,10 @@ function postProcessStackedChords(abc) {
     if (/^[\^_<>@]/.test(s)) return false;
 
     // Conservative chord-symbol recognizer.
+    //
+    // Accepts common symbols such as:
+    // F, F7, F6, F+, Fdim, Fm, Fm7, Fmaj7, Fsus4, Fadd9,
+    // Eb7, Bb7, C/G, F#dim, Bbmaj7, B7b9, B+7, etc.
     return /^[A-G](?:#|b)?(?:maj|min|dim|aug|sus|add|m|no|M|°|ø|o|\+|-|[0-9]|[#b]|\(|\))*?(?:\/[A-G](?:#|b)?)?$/.test(s);
   }
 
@@ -54429,41 +54435,7 @@ function postProcessStackedChords(abc) {
     return abc;
   }
 
-  function extractLastChordFromPrefix(prefixText) {
-    const tokens = [];
-    let pos = 0;
-
-    while (pos < prefixText.length) {
-      const q = parseQuoted(prefixText, pos);
-
-      if (q) {
-        tokens.push(q);
-        pos = q.end;
-      } else {
-        pos++;
-      }
-    }
-
-    for (let i = tokens.length - 1; i >= 0; i--) {
-      if (isChordSymbol(tokens[i].content)) {
-        const token = tokens[i];
-
-        return {
-          prefixBeforeChord: prefixText.slice(0, token.start),
-          chordRaw: token.raw,
-          chordToNoteGap: prefixText.slice(token.end)
-        };
-      }
-    }
-
-    return {
-      prefixBeforeChord: prefixText,
-      chordRaw: "",
-      chordToNoteGap: ""
-    };
-  }
-
-  function extractTrailingChordGroupFromPrefix(prefixText) {
+  function getQuotedTokens(prefixText) {
     const tokens = [];
     let pos = 0;
 
@@ -54485,6 +54457,34 @@ function postProcessStackedChords(abc) {
       }
     }
 
+    return tokens;
+  }
+
+  function extractLastChordFromPrefix(prefixText) {
+    const tokens = getQuotedTokens(prefixText);
+
+    for (let i = tokens.length - 1; i >= 0; i--) {
+      if (tokens[i].isChord) {
+        const token = tokens[i];
+
+        return {
+          prefixBeforeChord: prefixText.slice(0, token.start),
+          chordRaw: token.raw,
+          chordToNoteGap: prefixText.slice(token.end)
+        };
+      }
+    }
+
+    return {
+      prefixBeforeChord: prefixText,
+      chordRaw: "",
+      chordToNoteGap: ""
+    };
+  }
+
+  function extractTrailingChordGroupFromPrefix(prefixText) {
+    const tokens = getQuotedTokens(prefixText);
+
     if (tokens.length === 0) {
       return {
         prefixBeforeChordGroup: prefixText,
@@ -54497,15 +54497,12 @@ function postProcessStackedChords(abc) {
       annotations. Annotations are allowed only if they are adjacent to / inside
       the trailing chord group.
 
-      Example:
+      Examples:
 
         "Fm7""_Intro" "Cm7" z8
+        "Gm7" "C7""^Cue" z8
 
-      is grouped as:
-
-        ["Fm7" + "_Intro"], ["Cm7"]
-
-      so the annotation remains attached to the first generated rest.
+      are grouped so annotations remain attached to the closest preceding chord.
     */
 
     let groupStartTokenIndex = tokens.length;
@@ -54715,7 +54712,7 @@ function postProcessStackedChords(abc) {
     //   "Eb" "E" "F" z8
     //   "Eb" "E" "F" x8
     //   "Fm7""_Intro" "Cm7" z8
-    //   "Fm7""_Intro" "Cm7" x8
+    //   "Gm7" "C7""^Cue" z8
     //
     // Examples left alone:
     //
@@ -54743,6 +54740,48 @@ function postProcessStackedChords(abc) {
         : baseDuration;
 
       return `${group.chordRaw}${group.attachedAnnotations}${restCore}${formatDuration(pieceDuration)}`;
+    });
+
+    return chordGroup.prefixBeforeChordGroup + parts.join(" ");
+  }
+
+  function splitLongNoteWithLeadingChordGroup(prefixText, noteCore, durationText, originalTie) {
+    const chordGroup = extractTrailingChordGroupFromPrefix(prefixText);
+
+    // Only split notes when there are multiple chord symbols immediately before
+    // the note, allowing quoted annotations inside the chord group.
+    //
+    // Example:
+    //
+    //   "B7b9" "B7" B4
+    //
+    // becomes:
+    //
+    //   "B7b9"B2- "B7"B2
+    //
+    // Single-chord notes such as "Em" E4 are left alone.
+    if (chordGroup.chordGroups.length < 2) {
+      return null;
+    }
+
+    const duration = parseInt(durationText, 10);
+    const pieceCount = chordGroup.chordGroups.length;
+    const baseDuration = Math.floor(duration / pieceCount);
+    const extraForFirst = duration % pieceCount;
+
+    // Avoid invalid zero-duration fragments.
+    if (baseDuration < 1) {
+      return null;
+    }
+
+    const parts = chordGroup.chordGroups.map((group, index) => {
+      const isLast = index === chordGroup.chordGroups.length - 1;
+      const pieceDuration = index === 0
+        ? baseDuration + extraForFirst
+        : baseDuration;
+      const tie = !isLast || originalTie ? "-" : "";
+
+      return `${group.chordRaw}${group.attachedAnnotations}${noteCore}${formatDuration(pieceDuration)}${tie}`;
     });
 
     return chordGroup.prefixBeforeChordGroup + parts.join(" ");
@@ -54789,6 +54828,29 @@ function postProcessStackedChords(abc) {
       const noteCore = noteMatch[2];
       const durationText = noteMatch[3];
       const originalTie = noteMatch[4] === "-";
+
+      // New case:
+      // Split multiple chord symbols immediately before a long note.
+      //
+      // Example:
+      //
+      //   "B7b9" "B7" B4
+      //
+      // becomes:
+      //
+      //   "B7b9"B2- "B7"B2
+      const leadingNoteReplacement = splitLongNoteWithLeadingChordGroup(
+        prefixText,
+        noteCore,
+        durationText,
+        originalTie
+      );
+
+      if (leadingNoteReplacement !== null) {
+        out += leadingNoteReplacement;
+        i += fullMatch.length;
+        continue;
+      }
 
       const afterNote = i + fullMatch.length;
       const following = parseFollowingChordGroup(line, afterNote);
