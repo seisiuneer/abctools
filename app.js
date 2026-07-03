@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3282_062926_2030";
+var gVersionNumber = "3283_070326_0830";
 
 var gMIDIInitStillWaiting = false;
 
@@ -28507,13 +28507,13 @@ async function processShareLink() {
       // Show update message?
       if (gLocalStorageAvailable){
 
-        var updatePresented = localStorage.sawUpdate_29jun2026;
+        var updatePresented = localStorage.sawUpdate_3jul2026;
 
         if (updatePresented != "true") {
 
           showWhatsNewScreen();
 
-          localStorage.sawUpdate_29jun2026 = true;
+          localStorage.sawUpdate_3jul2026 = true;
 
         }
 
@@ -54353,6 +54353,517 @@ function removeLinesStartingWithILinebreak(text) {
   return lines.join('\n');
 }
 
+// MAE 3 July 2026 - For MusicXML stacked chords remediation
+function postProcessStackedChords(abc) {
+
+  const NOTE_RE = /^((?:"(?:\\.|[^"\\])*"\s*)*)([=_^]*[A-Ga-g][,']*)(\d+)(-?)/;
+  const REST_RE = /^((?:"(?:\\.|[^"\\])*"\s*)*)(z)(\d+)/;
+
+  function parseQuoted(str, pos) {
+    if (str[pos] !== '"') return null;
+
+    let i = pos + 1;
+    let content = "";
+
+    while (i < str.length) {
+      const ch = str[i];
+
+      if (ch === "\\" && i + 1 < str.length) {
+        content += str[i + 1];
+        i += 2;
+        continue;
+      }
+
+      if (ch === '"') {
+        return {
+          raw: str.slice(pos, i + 1),
+          content,
+          start: pos,
+          end: i + 1
+        };
+      }
+
+      content += ch;
+      i++;
+    }
+
+    return null;
+  }
+
+  function isChordSymbol(text) {
+    const s = text.trim();
+
+    // ABC text annotations usually start with one of these placement markers.
+    // Examples: "^B", "_Head", "<text", ">text", "@x,y text"
+    if (/^[\^_<>@]/.test(s)) return false;
+
+    // Conservative chord-symbol recognizer.
+    return /^[A-G](?:#|b)?(?:maj|min|dim|aug|sus|add|m|no|M|°|ø|o|\+|-|[0-9]|[#b]|\(|\))*?(?:\/[A-G](?:#|b)?)?$/.test(s);
+  }
+
+  function abcContainsChordSymbols(source) {
+    const quotedTextRe = /"((?:\\.|[^"\\])*)"/g;
+    let match;
+
+    while ((match = quotedTextRe.exec(source)) !== null) {
+      const quotedText = match[1].trim();
+
+      if (isChordSymbol(quotedText)) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  function formatDuration(duration) {
+    return duration === 1 ? "" : String(duration);
+  }
+
+  // Fast reject:
+  // If there are no quoted strings, or no quoted chord symbols, there is
+  // nothing this function can usefully split.
+  if (!abc.includes('"') || !abcContainsChordSymbols(abc)) {
+    return abc;
+  }
+
+  function extractLastChordFromPrefix(prefixText) {
+    const tokens = [];
+    let pos = 0;
+
+    while (pos < prefixText.length) {
+      const q = parseQuoted(prefixText, pos);
+
+      if (q) {
+        tokens.push(q);
+        pos = q.end;
+      } else {
+        pos++;
+      }
+    }
+
+    for (let i = tokens.length - 1; i >= 0; i--) {
+      if (isChordSymbol(tokens[i].content)) {
+        const token = tokens[i];
+
+        return {
+          prefixBeforeChord: prefixText.slice(0, token.start),
+          chordRaw: token.raw,
+          chordToNoteGap: prefixText.slice(token.end)
+        };
+      }
+    }
+
+    return {
+      prefixBeforeChord: prefixText,
+      chordRaw: "",
+      chordToNoteGap: ""
+    };
+  }
+
+  function extractTrailingChordGroupFromPrefix(prefixText) {
+    const tokens = [];
+    let pos = 0;
+
+    while (pos < prefixText.length) {
+      const q = parseQuoted(prefixText, pos);
+
+      if (q) {
+        tokens.push({
+          raw: q.raw,
+          content: q.content,
+          start: q.start,
+          end: q.end,
+          isChord: isChordSymbol(q.content)
+        });
+
+        pos = q.end;
+      } else {
+        pos++;
+      }
+    }
+
+    if (tokens.length === 0) {
+      return {
+        prefixBeforeChordGroup: prefixText,
+        chordGroups: []
+      };
+    }
+
+    /*
+      Work backward and collect a trailing group containing chords and quoted
+      annotations. Annotations are allowed only if they are adjacent to / inside
+      the trailing chord group.
+
+      Example:
+
+        "Fm7""_Intro" "Cm7" z8
+
+      is grouped as:
+
+        ["Fm7" + "_Intro"], ["Cm7"]
+
+      so the annotation remains attached to the first generated rest.
+    */
+
+    let groupStartTokenIndex = tokens.length;
+
+    for (let i = tokens.length - 1; i >= 0; i--) {
+      const token = tokens[i];
+
+      if (token.isChord) {
+        groupStartTokenIndex = i;
+        continue;
+      }
+
+      // Allow quoted annotations inside the trailing group only if we have
+      // already found a chord to the right.
+      if (groupStartTokenIndex < tokens.length) {
+        groupStartTokenIndex = i;
+        continue;
+      }
+
+      break;
+    }
+
+    if (groupStartTokenIndex === tokens.length) {
+      return {
+        prefixBeforeChordGroup: prefixText,
+        chordGroups: []
+      };
+    }
+
+    const trailingTokens = tokens.slice(groupStartTokenIndex);
+
+    const chordGroups = [];
+    let currentGroup = null;
+
+    trailingTokens.forEach(token => {
+      if (token.isChord) {
+        if (currentGroup) {
+          chordGroups.push(currentGroup);
+        }
+
+        currentGroup = {
+          chordRaw: token.raw,
+          attachedAnnotations: "",
+          start: token.start,
+          end: token.end
+        };
+      } else if (currentGroup) {
+        // Attach annotations after a chord to that chord.
+        currentGroup.attachedAnnotations += prefixText.slice(currentGroup.end, token.start) + token.raw;
+        currentGroup.end = token.end;
+      }
+    });
+
+    if (currentGroup) {
+      chordGroups.push(currentGroup);
+    }
+
+    if (chordGroups.length === 0) {
+      return {
+        prefixBeforeChordGroup: prefixText,
+        chordGroups: []
+      };
+    }
+
+    return {
+      prefixBeforeChordGroup: prefixText.slice(0, chordGroups[0].start),
+      chordGroups
+    };
+  }
+
+  function parseFollowingChordGroup(line, pos) {
+    const chords = [];
+    let p = pos;
+
+    while (p < line.length) {
+      const wsStart = p;
+
+      while (p < line.length && /\s/.test(line[p])) {
+        p++;
+      }
+
+      // Require whitespace before each following chord.
+      if (p === wsStart) break;
+
+      const q = parseQuoted(line, p);
+      if (!q) break;
+
+      if (!isChordSymbol(q.content)) {
+        break;
+      }
+
+      chords.push({
+        raw: q.raw,
+        leadingWhitespace: line.slice(wsStart, p)
+      });
+
+      p = q.end;
+    }
+
+    return {
+      chords,
+      end: p
+    };
+  }
+
+  function nextTokenKind(line, pos) {
+    let p = pos;
+
+    function skipWhitespace() {
+      while (p < line.length && /\s/.test(line[p])) {
+        p++;
+      }
+    }
+
+    function skipBangDecoration() {
+      // ABC decoration syntax, e.g. !trill!, !fermata!, !8va)!
+      if (line[p] !== "!") return false;
+
+      const end = line.indexOf("!", p + 1);
+      if (end === -1) return false;
+
+      p = end + 1;
+      return true;
+    }
+
+    function skipPlusDecoration() {
+      // Older ABC decoration syntax, e.g. +trill+
+      if (line[p] !== "+") return false;
+
+      const end = line.indexOf("+", p + 1);
+      if (end === -1) return false;
+
+      p = end + 1;
+      return true;
+    }
+
+    function skipTextAnnotation() {
+      if (line[p] !== '"') return false;
+
+      const q = parseQuoted(line, p);
+      if (!q) return false;
+
+      // A following quoted chord is significant and should not be skipped here.
+      if (isChordSymbol(q.content)) return false;
+
+      // A following quoted annotation such as "^text" may belong to the next note.
+      p = q.end;
+      return true;
+    }
+
+    while (true) {
+      const before = p;
+
+      skipWhitespace();
+
+      while (skipBangDecoration() || skipPlusDecoration()) {
+        skipWhitespace();
+      }
+
+      while (skipTextAnnotation()) {
+        skipWhitespace();
+
+        while (skipBangDecoration() || skipPlusDecoration()) {
+          skipWhitespace();
+        }
+      }
+
+      if (p === before) break;
+    }
+
+    if (p >= line.length) return "boundary";
+
+    const ch = line[p];
+
+    if (ch === "|" || ch === ":" || ch === "]") {
+      return "boundary";
+    }
+
+    if (ch === '"') {
+      const q = parseQuoted(line, p);
+
+      if (q && isChordSymbol(q.content)) {
+        return "chord";
+      }
+
+      return "annotation";
+    }
+
+    // Tuplets, slurs, grace notes, accidentals, notes, rests, and chords all mean
+    // that the following chord probably belongs to the next musical event.
+    if (/[A-Ga-gzxZX\[\]_=^({]/.test(ch)) {
+      return "music";
+    }
+
+    return "other";
+  }
+
+  function splitLongRestWithLeadingChordGroup(prefixText, restCore, durationText) {
+    const chordGroup = extractTrailingChordGroupFromPrefix(prefixText);
+
+    // Only split rests when there are multiple chord symbols immediately before
+    // the rest, allowing quoted annotations inside the chord group.
+    //
+    // Examples split:
+    //
+    //   "Eb" "E" "F" z8
+    //   "Fm7""_Intro" "Cm7" z8
+    //
+    // Examples left alone:
+    //
+    //   "F" z2
+    //   z2 "Bb7" [_A_d]6
+    if (chordGroup.chordGroups.length < 2) {
+      return null;
+    }
+
+    const duration = parseInt(durationText, 10);
+    const pieceCount = chordGroup.chordGroups.length;
+    const baseDuration = Math.floor(duration / pieceCount);
+    const extraForFirst = duration % pieceCount;
+
+    // Avoid invalid zero-duration fragments.
+    if (baseDuration < 1) {
+      return null;
+    }
+
+    const parts = chordGroup.chordGroups.map((group, index) => {
+      const pieceDuration = index === 0
+        ? baseDuration + extraForFirst
+        : baseDuration;
+
+      return `${group.chordRaw}${group.attachedAnnotations}${restCore}${formatDuration(pieceDuration)}`;
+    });
+
+    return chordGroup.prefixBeforeChordGroup + parts.join(" ");
+  }
+
+  function splitMusicLine(line) {
+    let out = "";
+    let i = 0;
+
+    while (i < line.length) {
+      const rest = line.slice(i);
+
+      const restMatch = rest.match(REST_RE);
+
+      if (restMatch) {
+        const fullMatch = restMatch[0];
+        const prefixText = restMatch[1] || "";
+        const restCore = restMatch[2];
+        const durationText = restMatch[3];
+
+        const replacement = splitLongRestWithLeadingChordGroup(
+          prefixText,
+          restCore,
+          durationText
+        );
+
+        if (replacement !== null) {
+          out += replacement;
+          i += fullMatch.length;
+          continue;
+        }
+      }
+
+      const noteMatch = rest.match(NOTE_RE);
+
+      if (!noteMatch) {
+        out += line[i];
+        i++;
+        continue;
+      }
+
+      const fullMatch = noteMatch[0];
+      const prefixText = noteMatch[1] || "";
+      const noteCore = noteMatch[2];
+      const durationText = noteMatch[3];
+      const originalTie = noteMatch[4] === "-";
+
+      const afterNote = i + fullMatch.length;
+      const following = parseFollowingChordGroup(line, afterNote);
+
+      if (following.chords.length === 0) {
+        out += line[i];
+        i++;
+        continue;
+      }
+
+      const nextKind = nextTokenKind(line, following.end);
+
+      if (following.chords.length === 1 && nextKind === "music") {
+        out += line[i];
+        i++;
+        continue;
+      }
+
+      const duration = parseInt(durationText, 10);
+      const pieceCount = following.chords.length + 1;
+      const baseDuration = Math.floor(duration / pieceCount);
+      const extraForFirst = duration % pieceCount;
+
+      // Avoid invalid zero-duration fragments.
+      if (baseDuration < 1) {
+        out += line[i];
+        i++;
+        continue;
+      }
+
+      const firstDuration = baseDuration + extraForFirst;
+      const otherDuration = baseDuration;
+
+      const firstDurationText = formatDuration(firstDuration);
+      const otherDurationText = formatDuration(otherDuration);
+
+      const prefix = extractLastChordFromPrefix(prefixText);
+      const parts = [];
+
+      parts.push(
+        prefix.chordRaw
+          ? `${prefix.chordRaw}${prefix.chordToNoteGap}${noteCore}${firstDurationText}-`
+          : `${noteCore}${firstDurationText}-`
+      );
+
+      following.chords.forEach((chord, index) => {
+        const isLast = index === following.chords.length - 1;
+        const tie = !isLast || originalTie ? "-" : "";
+
+        parts.push(`${chord.raw}${noteCore}${otherDurationText}${tie}`);
+      });
+
+      out += prefix.prefixBeforeChord + parts.join(" ");
+
+      i = following.end;
+    }
+
+    return out;
+  }
+
+  const lines = abc.split(/\r?\n/);
+  let inBody = false;
+
+  return lines.map(line => {
+    if (/^\s*K:/.test(line)) {
+      inBody = true;
+      return line;
+    }
+
+    if (!inBody) {
+      return line;
+    }
+
+    // Leave comments, directives, and field lines alone.
+    if (/^\s*(%|[A-Za-z]:)/.test(line)) {
+      return line;
+    }
+
+    return splitMusicLine(line);
+  }).join("\n");
+}
+
 //
 // Import MusicXML format
 //
@@ -54455,6 +54966,9 @@ function importMusicXML(theXML, fileName) {
 
   // Remove the linebreak request from the ABC
   abcText = removeLinesStartingWithILinebreak(abcText);
+
+  // 3 July 2026 - For stacked chords
+  abcText = postProcessStackedChords(abcText);
 
   return abcText;
 
@@ -56604,7 +57118,16 @@ function showWhatsNewScreen() {
   modal_msg += 'background: linear-gradient(135deg, #0b1f3a 0%, #145ca8 52%, #2f9df5 100%);';
   modal_msg += 'box-shadow: 0 6px 16px rgba(0,0,0,0.14); color:#fff;">';
   modal_msg += '<div style="font-size:20pt; line-height:24pt; font-weight:bold;">What&apos;s New</div>';
-  modal_msg += '<div style="font-size:12pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 29 June 2026</div>';
+  modal_msg += '<div style="font-size:12pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 3 July 2026</div>';
+  modal_msg += '</div>';
+
+  // Feature card
+  modal_msg += '<div style="margin:10px 0 6px 0; padding:0px 12px; border-radius:12px;';
+  modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);font-size:12pt;">';
+  modal_msg += '<p style="font-size:12pt;"><strong>The MusicXML importer has been improved to better handle multiple chords on a long note or rest.</strong></p>';
+  modal_msg += '<p style="font-size:12pt;">Previously, if a long note or rest in the transcoded MusicXML had multiple chords associated with it, it would render and play incorrectly.</p>';
+  modal_msg += '<p style="font-size:12pt;">The MusicXML importer now automatically splits those long notes/rest into multiple shorter notes/rests with ties as required for the notes and spreads the chords between the split notes/rests.</p>';
+  modal_msg += '<p style="font-size:12pt;">This is particularly useful for importing complex MusicXML jazz arrangements.</p>';
   modal_msg += '</div>';
 
   // Feature card
@@ -56612,14 +57135,6 @@ function showWhatsNewScreen() {
   modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);font-size:12pt;">';
   modal_msg += '<p style="font-size:12pt;">You can now send all the tune in the editor to the <strong>ABC Chord Chart Generator</strong>.</p>';
   modal_msg += '<p style="font-size:12pt;">The tool sends either just the current tune if launched from the <strong>Player</strong> or <strong>Tune Trainer</strong>, or all the tunes in the editor if launched from the <strong>Sharing Controls</strong> dialog.</p>';
-  modal_msg += '</div>';
-
-  // Feature card
-  modal_msg += '<div style="margin:10px 0 6px 0; padding:0px 12px; border-radius:12px;';
-  modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);font-size:12pt;">';
-  modal_msg += '<p style="font-size:12pt;">The <strong>Export Full-Featured Tunebook Website</strong> button on the <strong>Export Website</strong> dialog is now hidden by default.</p>';
-  modal_msg += '<p style="font-size:12pt;">The legacy <strong>Full-Featured Tunebook Website</strong> exporter has been deprecated in favor of use of the new <strong>abcjs-eskin Website Builder</strong>.</p>';
-  modal_msg += '<p style="font-size:12pt;">Users who still prefer the legacy exporter can restore the button at any time from a new checkbox on the <strong>Export</strong> tab of the <strong>Advanced Settings</strong> dialog.</p>';
   modal_msg += '</div>';
 
   modal_msg += '</div>'; // wrapper
@@ -63290,13 +63805,13 @@ async function DoStartup() {
   // Show update message?
   if (gLocalStorageAvailable && (!isFromShare)){
 
-    var updatePresented = localStorage.sawUpdate_29jun2026;
+    var updatePresented = localStorage.sawUpdate_3jul2026;
 
     if (updatePresented != "true") {
 
       showWhatsNewScreen();
 
-      localStorage.sawUpdate_29jun2026 = true;
+      localStorage.sawUpdate_3jul2026 = true;
 
     }
 
