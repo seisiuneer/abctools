@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3283_070326_0830";
+var gVersionNumber = "3284_070326_1030";
 
 var gMIDIInitStillWaiting = false;
 
@@ -54357,7 +54357,9 @@ function removeLinesStartingWithILinebreak(text) {
 function postProcessStackedChords(abc) {
 
   const NOTE_RE = /^((?:"(?:\\.|[^"\\])*"\s*)*)([=_^]*[A-Ga-g][,']*)(\d+)(-?)/;
-  const REST_RE = /^((?:"(?:\\.|[^"\\])*"\s*)*)(z)(\d+)/;
+
+  // Match visible rests zN and invisible rests xN.
+  const REST_RE = /^((?:"(?:\\.|[^"\\])*"\s*)*)([zx])(\d+)/;
 
   function parseQuoted(str, pos) {
     if (str[pos] !== '"') return null;
@@ -54692,8 +54694,9 @@ function postProcessStackedChords(abc) {
       return "annotation";
     }
 
-    // Tuplets, slurs, grace notes, accidentals, notes, rests, and chords all mean
-    // that the following chord probably belongs to the next musical event.
+    // Tuplets, slurs, grace notes, accidentals, notes, visible rests,
+    // invisible rests, and chords all mean that the following chord probably
+    // belongs to the next musical event.
     if (/[A-Ga-gzxZX\[\]_=^({]/.test(ch)) {
       return "music";
     }
@@ -54710,12 +54713,16 @@ function postProcessStackedChords(abc) {
     // Examples split:
     //
     //   "Eb" "E" "F" z8
+    //   "Eb" "E" "F" x8
     //   "Fm7""_Intro" "Cm7" z8
+    //   "Fm7""_Intro" "Cm7" x8
     //
     // Examples left alone:
     //
     //   "F" z2
+    //   "F" x2
     //   z2 "Bb7" [_A_d]6
+    //   x2 "Bb7" [_A_d]6
     if (chordGroup.chordGroups.length < 2) {
       return null;
     }
