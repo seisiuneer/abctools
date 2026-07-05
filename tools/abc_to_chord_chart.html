@@ -1335,11 +1335,29 @@
         </div>
 
         <div class="row" style="margin-top:10px;">
+          <label for="addComposerBeforeChart"><strong>Add tune C: tag composer value before chord chart?</strong></label>
+          <span class="setting-control-with-help"><select id="addComposerBeforeChart" title="Add non-empty C: tag values after the tune title and before the chord chart">
+            <option value="0" selected>No</option>
+            <option value="1">Yes</option>
+          </select><button type="button" class="setting-help-button" data-instructions-anchor="instructions-setting-add-composer-before-chart" aria-label="Open instructions for Add tune C: tag composer value before chord chart?" title="Open instructions for Add tune C: tag composer value before chord chart?">?</button></span>
+        </div>
+
+        <div class="row" style="margin-top:10px;">
           <label for="appendRhythm"><strong>Append tune style (R:) to titles</strong></label>
           <span class="setting-control-with-help"><select id="appendRhythm" title="Append the R: tag in parentheses after the tune title">
             <option value="1" selected>Yes</option>
             <option value="0">No</option>
           </select><button type="button" class="setting-help-button" data-instructions-anchor="instructions-setting-append-rhythm" aria-label="Open instructions for Append tune style (R:) to titles" title="Open instructions for Append tune style (R:) to titles">?</button></span>
+        </div>
+
+        <div class="row" style="margin-top:10px;">
+          <label for="metadataTagsAfterChart"><strong>Metadata tag values to include after the chord chart:</strong></label>
+          <span class="setting-control-with-help"><input id="metadataTagsAfterChart"
+                 type="text"
+                 maxlength="16"
+                 value=""
+                 title="Enter up to 16 ABC tag-name letters whose non-empty values should be added after the chord chart"
+                 style="width:16ch;" /><button type="button" class="setting-help-button" data-instructions-anchor="instructions-setting-metadata-tags-after-chart" aria-label="Open instructions for Metadata tag values to include after the chord chart" title="Open instructions for Metadata tag values to include after the chord chart">?</button></span>
         </div>
 
         <div class="row" style="margin-top:10px;">
@@ -1846,12 +1864,14 @@ let gLocalStorageAvailable = localStorageIsUsable();
 
 function getUIStateForSave_SettingsOnly() {
   return {
-    v: 11, // bumped because Website Settings now include the blank-line-under-title option
+    v: 12, // Chord Chart Settings include composer and trailing metadata tag options
 
     // Chord Chart Settings
     slotWidth: $("slotWidth") ? $("slotWidth").value : "1",
     addBlankLines: $("addBlankLines") ? $("addBlankLines").value : "1",
+    addComposerBeforeChart: $("addComposerBeforeChart") ? $("addComposerBeforeChart").value : "0",
     appendRhythm: $("appendRhythm") ? $("appendRhythm").value : "1",
+    metadataTagsAfterChart: $("metadataTagsAfterChart") ? normalizeMetadataTagControlString($("metadataTagsAfterChart").value) : "",
     emptyMeasurePlaceholder: $("emptyMeasurePlaceholder") ? $("emptyMeasurePlaceholder").value : "/",
     suppressPickup: $("suppressPickup") ? $("suppressPickup").value : "1",
     pickupMaxNotes: $("pickupMaxNotes") ? $("pickupMaxNotes").value : "3",
@@ -1884,7 +1904,11 @@ function applyUIStateFromObj_SettingsOnly(st) {
   // Chord Chart Settings
   if ($("slotWidth") && st.slotWidth != null) $("slotWidth").value = String(st.slotWidth);
   if ($("addBlankLines")) $("addBlankLines").value = (st.addBlankLines != null) ? String(st.addBlankLines) : "1";
+  if ($("addComposerBeforeChart")) $("addComposerBeforeChart").value =
+    (st.addComposerBeforeChart === "1") ? "1" : "0";
   if ($("appendRhythm") && st.appendRhythm != null) $("appendRhythm").value = String(st.appendRhythm);
+  if ($("metadataTagsAfterChart")) $("metadataTagsAfterChart").value =
+    normalizeMetadataTagControlString(st.metadataTagsAfterChart);
   if ($("emptyMeasurePlaceholder") && st.emptyMeasurePlaceholder != null) $("emptyMeasurePlaceholder").value = String(st.emptyMeasurePlaceholder);
   if ($("suppressPickup") && st.suppressPickup != null) $("suppressPickup").value = String(st.suppressPickup);
   if ($("pickupMaxNotes") && st.pickupMaxNotes != null) $("pickupMaxNotes").value = String(st.pickupMaxNotes);
@@ -2060,7 +2084,9 @@ function enableAutoSaveForSettings_SettingsOnly() {
   const ids = [
     "slotWidth",
     "addBlankLines",
+    "addComposerBeforeChart",
     "appendRhythm",
+    "metadataTagsAfterChart",
     "emptyMeasurePlaceholder",
     "suppressPickup",
     "pickupMaxNotes",
@@ -2583,6 +2609,24 @@ function getHeaderLines(block, tag) {
   const escapedTag = tag.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
   const re = new RegExp("^" + escapedTag + ":.*$", "gm");
   return String(block || "").match(re) || [];
+}
+
+function getHeaderValues(block, tag) {
+  return getHeaderLines(block, tag)
+    .map(line => String(line).slice(String(line).indexOf(":") + 1).trim())
+    .filter(value => value !== "");
+}
+
+function normalizeMetadataTagControlString(value) {
+  if (typeof value !== "string") return "";
+
+  const normalized = value.toUpperCase();
+
+  if (normalized.length > 16 || !/^[A-Z]*$/.test(normalized)) {
+    return "";
+  }
+
+  return normalized;
 }
 
 function getTuneBody(block) {
@@ -4735,7 +4779,16 @@ function generateCharts() {
 
   const extraSpace = parseInt($("slotWidth").value, 10) || 0;
   const addBlankLines = $("addBlankLines") ? ($("addBlankLines").value === "1") : true;
+  const addComposerBeforeChart =
+    $("addComposerBeforeChart") ? ($("addComposerBeforeChart").value === "1") : false;
   const appendRhythm = $("appendRhythm") ? ($("appendRhythm").value === "1") : true;
+  const metadataTagsAfterChart = normalizeMetadataTagControlString(
+    $("metadataTagsAfterChart") ? $("metadataTagsAfterChart").value : ""
+  );
+
+  if ($("metadataTagsAfterChart")) {
+    $("metadataTagsAfterChart").value = metadataTagsAfterChart;
+  }
 
   const placeholder =
     $("emptyMeasurePlaceholder")
@@ -4760,7 +4813,16 @@ function generateCharts() {
   for (const block of tunes) {
     let title = getHeaderValue(block, "T") || "Untitled";
     let rhythm = getHeaderValue(block, "R");
+    const composerValues = getHeaderValues(block, "C");
     const rhythmTags = getHeaderLines(block, "R");
+
+    const trailingMetadataLines = [];
+
+    for (const tag of metadataTagsAfterChart) {
+      getHeaderValues(block, tag).forEach(value => {
+        trailingMetadataLines.push(value);
+      });
+    }
 
     if (appendRhythm && rhythm) {
       rhythm = rhythm.trim().toLowerCase();
@@ -4815,8 +4877,18 @@ function generateCharts() {
     }
     section.appendChild(h3);
 
+    let chartDisplayText = txt;
+
+    if (addComposerBeforeChart && composerValues.length) {
+      chartDisplayText = `${composerValues.join("\n")}\n\n${chartDisplayText}`;
+    }
+
+    if (trailingMetadataLines.length) {
+      chartDisplayText += `\n\n${trailingMetadataLines.join("\n")}`;
+    }
+
     const pre = document.createElement("pre");
-    pre.textContent = txt;
+    pre.textContent = chartDisplayText;
     section.appendChild(pre);
 
     out.appendChild(section);
@@ -4978,7 +5050,9 @@ function resetAllSettingsToDefaults_Persisted() {
   // Chord Chart Settings defaults
   if ($("slotWidth")) $("slotWidth").value = "1";
   if ($("addBlankLines")) $("addBlankLines").value = "1";
+  if ($("addComposerBeforeChart")) $("addComposerBeforeChart").value = "0";
   if ($("appendRhythm")) $("appendRhythm").value = "1";
+  if ($("metadataTagsAfterChart")) $("metadataTagsAfterChart").value = "";
   if ($("emptyMeasurePlaceholder")) $("emptyMeasurePlaceholder").value = "/";
   if ($("suppressPickup")) $("suppressPickup").value = "1";
   if ($("pickupMaxNotes")) $("pickupMaxNotes").value = "3";
@@ -5371,7 +5445,9 @@ function wireUp() {
     // Reset controls (defaults)
     $("slotWidth").value = "1";
     if ($("addBlankLines")) $("addBlankLines").value = "1";
+    if ($("addComposerBeforeChart")) $("addComposerBeforeChart").value = "0";
     if ($("appendRhythm")) $("appendRhythm").value = "1";
+    if ($("metadataTagsAfterChart")) $("metadataTagsAfterChart").value = "";
     if ($("chartMonoFont")) $("chartMonoFont").value = "system";
 
     if ($("websiteTitleFontSize")) $("websiteTitleFontSize").value = "14";
@@ -5635,8 +5711,27 @@ function wireUp() {
     $("oneTunePerPage").addEventListener("change", applyPrintSettings);
   }
 
+  if ($("addComposerBeforeChart")) {
+    $("addComposerBeforeChart").addEventListener("change", function () {
+      if ($("out").children.length) generateCharts();
+    });
+  }
+
   if ($("appendRhythm")) {
     $("appendRhythm").addEventListener("change", function () {
+      if ($("out").children.length) generateCharts();
+    });
+  }
+
+  if ($("metadataTagsAfterChart")) {
+    $("metadataTagsAfterChart").addEventListener("input", function () {
+      if ($("out").children.length) generateCharts();
+    });
+
+    $("metadataTagsAfterChart").addEventListener("change", function () {
+      $("metadataTagsAfterChart").value =
+        normalizeMetadataTagControlString($("metadataTagsAfterChart").value);
+
       if ($("out").children.length) generateCharts();
     });
   }
@@ -5833,7 +5928,7 @@ function wireUp() {
       '  <div style="margin-bottom:16px;">' +
       '    <b>4) Generate and save the chord charts as ABC</b><br/>' +
       '    Click <b>Save Chord Chart as ABC</b> to regenerate the chord charts using the current settings, convert the generated chart text to ABC <code>%%text</code> lines, and save the result as an ABC text file.<br/>' +
-      '    Blank chart lines are preserved as standalone <code>%%text</code> lines, with consecutive blank <code>%%text</code> lines collapsed to one. Any original <code>R:</code> tags are retained immediately below the generated <code>T:</code> tag so the Website Builder can use tune style information for features such as large-collection organization. The <b>Add blank line under title?</b> Website Setting controls whether one blank <code>%%text</code> spacer is added before the first chord-chart text line of each tune. Each generated tune is also marked so the Website Builder does not add a playback controller. On iOS, the normal sharing dialog is used.' +
+      '    Blank chart lines are preserved as standalone <code>%%text</code> lines, with consecutive blank <code>%%text</code> lines collapsed to one. Enabled composer text and selected trailing metadata values are included in the generated chart text. Any original <code>R:</code> tags are retained immediately below the generated <code>T:</code> tag so the Website Builder can use tune style information for features such as large-collection organization. The <b>Add blank line under title?</b> Website Setting controls whether one blank <code>%%text</code> spacer is added before the first generated chart text line of each tune, including composer text when enabled. Each generated tune is also marked so the Website Builder does not add a playback controller. On iOS, the normal sharing dialog is used.' +
       '  </div>' +
 
       '  <div style="margin-bottom:16px;">' +
@@ -5857,8 +5952,19 @@ function wireUp() {
       '    Adds extra spacing to make charts easier to read while keeping all barlines aligned.' +
       '    (This increases spacing after barlines/chord cells, and also increases spacing between multiple chords that occur in the same measure.)<br/><br/>' +
 
+      '    <div id="instructions-setting-add-composer-before-chart" style="font-weight:700; margin-bottom:6px;">Add tune C: tag composer value before chord chart?</div>' +
+      '    Controls whether composer information from non-empty <code>C:</code> tags is added after the tune title and before the chord chart.<br/>' +
+      '    <b>No</b> is the default and omits the composer values.<br/>' +
+      '    <b>Yes</b> shows each non-empty <code>C:</code> tag value on its own line, followed by one blank line before the chord chart. If a tune has no non-empty <code>C:</code> tag, nothing is added.<br/><br/>' +
+
       '    <div id="instructions-setting-append-rhythm" style="font-weight:700; margin-bottom:6px;">Append tune style (R:) to titles</div>' +
       '    Optionally appends the tune rhythm/style tag in parentheses after the tune title.<br/><br/>' +
+      '    <div id="instructions-setting-metadata-tags-after-chart" style="font-weight:700; margin-bottom:6px;">Metadata tag values to include after the chord chart:</div>' +
+      '    Enter up to 16 ABC tag-name letters. The default is blank, which adds no metadata after the chord chart.<br/>' +
+      '    Each letter is treated as an ABC tag name. For example, <code>ZBHN</code> looks for non-empty <code>Z:</code>, <code>B:</code>, <code>H:</code>, and <code>N:</code> tag values.<br/>' +
+      '    If one or more matching non-empty values are found, one blank line is added after the chord chart and the values are appended one per line. Tags are processed in the order of the letters in this field, and multiple instances of a matching tag are included in their original order.<br/>' +
+      '    Only letters A through Z are valid. Lowercase letters are converted to uppercase. A missing or invalid saved value defaults to blank.<br/><br/>' +
+
 
       '    <div id="instructions-setting-empty-measure-placeholder" style="font-weight:700; margin-bottom:6px;">Empty measure placeholder</div>' +
       '    Character (or none) to show in measures without chords.<br/>' +
@@ -5900,7 +6006,7 @@ function wireUp() {
       '    <div style="font-weight:700; margin-bottom:6px;">Automatic website width adjustment</div>' +
       '    When generating ABC for saving or for the Website Builder, the tool measures the widest generated chord-chart line using the selected chord chart font, its bold setting if applicable, and the text font size selected for that tune based on whether it contains <code>w:</code> or <code>W:</code> lyrics. The tool allows a small safety margin for font-rendering differences. If the measured width plus that margin does not fit within the normal ABC staff width of 556, the tool automatically adds a per-tune <code>%%staffwidth</code> directive with additional horizontal space. Tunes that fit within the normal width, including the safety margin, do not receive a <code>%%staffwidth</code> directive.<br/><br/>' +
 
-      '    These settings are saved in your browser with the other settings and are also included when you save or load all settings. Older settings files remain compatible: an existing saved Text font size continues to be used for tunes with lyrics, while the new text size for tunes without lyrics defaults to 12. Titles default to centered when the title-justification setting is absent, and no extra blank line is added under titles when the blank-line setting is absent.' +
+      '    These settings are saved in your browser with the other settings and are also included when you save or load all settings. Older settings files remain compatible: an existing saved Text font size continues to be used for tunes with lyrics, while the text size for tunes without lyrics defaults to 12. Titles default to centered when the title-justification setting is absent, and no extra blank line is added under titles when the blank-line setting is absent. The composer setting defaults to No and the metadata tag field defaults to blank when those newer settings are absent or invalid.' +
       '  </div>' +
 
       '  <hr style="border:0; border-top:1px solid #ccc; margin:18px 0;">' +
