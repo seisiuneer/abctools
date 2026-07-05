@@ -2265,6 +2265,17 @@ function buildChordChartsAsABC() {
 
     const chartLines = chartText.split("\n");
     const hasLyrics = section.dataset.hasLyrics === "1";
+
+    let rhythmTags = [];
+    try {
+      const parsedRhythmTags = JSON.parse(section.dataset.rhythmTags || "[]");
+      if (Array.isArray(parsedRhythmTags)) {
+        rhythmTags = parsedRhythmTags.filter(line => /^R:.*$/.test(String(line)));
+      }
+    } catch {
+      rhythmTags = [];
+    }
+
     const textSize = hasLyrics
       ? sizes.textSizeWithLyrics
       : sizes.textSizeNoLyrics;
@@ -2291,6 +2302,7 @@ function buildChordChartsAsABC() {
     lines.push(`%%subtitlefont ${fontName} ${sizes.subtitleSize}`);
     lines.push(`%%textfont ${fontName} ${textSize}`);
     lines.push(`T:${title}`);
+    rhythmTags.forEach(line => lines.push(String(line)));
 
     if ($("addBlankLineUnderTitle") && $("addBlankLineUnderTitle").value === "1") {
       lines.push("%%text");
@@ -2565,6 +2577,12 @@ function getHeaderValue(block, tag) {
   const re = new RegExp("^" + tag.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + ":(.*)$", "m");
   const m = block.match(re);
   return m ? m[1].trim() : "";
+}
+
+function getHeaderLines(block, tag) {
+  const escapedTag = tag.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const re = new RegExp("^" + escapedTag + ":.*$", "gm");
+  return String(block || "").match(re) || [];
 }
 
 function getTuneBody(block) {
@@ -4742,6 +4760,7 @@ function generateCharts() {
   for (const block of tunes) {
     let title = getHeaderValue(block, "T") || "Untitled";
     let rhythm = getHeaderValue(block, "R");
+    const rhythmTags = getHeaderLines(block, "R");
 
     if (appendRhythm && rhythm) {
       rhythm = rhythm.trim().toLowerCase();
@@ -4776,6 +4795,7 @@ function generateCharts() {
     const section = document.createElement("section");
     section.className = "chart";
     section.dataset.hasLyrics = tuneHasLyrics ? "1" : "0";
+    section.dataset.rhythmTags = JSON.stringify(rhythmTags);
 
     const shareUrl = linkTitles
       ? buildAbcToolsShareLinkForTune(block)
@@ -5813,7 +5833,7 @@ function wireUp() {
       '  <div style="margin-bottom:16px;">' +
       '    <b>4) Generate and save the chord charts as ABC</b><br/>' +
       '    Click <b>Save Chord Chart as ABC</b> to regenerate the chord charts using the current settings, convert the generated chart text to ABC <code>%%text</code> lines, and save the result as an ABC text file.<br/>' +
-      '    Blank chart lines are preserved as standalone <code>%%text</code> lines, with consecutive blank <code>%%text</code> lines collapsed to one. The <b>Add blank line under title?</b> Website Setting controls whether one blank <code>%%text</code> spacer is added immediately after each generated tune title. Each generated tune is also marked so the Website Builder does not add a playback controller. On iOS, the normal sharing dialog is used.' +
+      '    Blank chart lines are preserved as standalone <code>%%text</code> lines, with consecutive blank <code>%%text</code> lines collapsed to one. Any original <code>R:</code> tags are retained immediately below the generated <code>T:</code> tag so the Website Builder can use tune style information for features such as large-collection organization. The <b>Add blank line under title?</b> Website Setting controls whether one blank <code>%%text</code> spacer is added before the first chord-chart text line of each tune. Each generated tune is also marked so the Website Builder does not add a playback controller. On iOS, the normal sharing dialog is used.' +
       '  </div>' +
 
       '  <div style="margin-bottom:16px;">' +
@@ -5872,7 +5892,7 @@ function wireUp() {
       '    <b>Left</b> adds <code>%left_justify_titles</code> immediately below each generated <code>X:</code> tag.<br/><br/>' +
 
       '    <div id="instructions-setting-blank-line-under-title" style="font-weight:700; margin-bottom:6px;">Add blank line under title?</div>' +
-      '    Controls whether one blank <code>%%text</code> line is added immediately after the title of every generated tune.<br/>' +
+      '    Controls whether one blank <code>%%text</code> line is added immediately before the first chord-chart text line of each tune.<br/>' +
       '    <b>No</b> is the default and omits the extra blank line.<br/>' +
       '    <b>Yes</b> adds the blank line.<br/>' +
       '    This setting is independent of whether the tune contains <code>w:</code> or <code>W:</code> lyrics.<br/><br/>' +
