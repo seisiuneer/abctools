@@ -51,7 +51,7 @@
   <meta property="og:url" content="https://michaeleskin.com/tools/abc_to_chord_chart.html" />
   <meta property="og:site_name" content="ABC Chord Chart Generator" />
   <meta property="og:image" content="https://michaeleskin.com/tools/img/tool_chordchart.jpg"/>
-  <meta name="description" content="Generate, copy, save, and print chord charts from one or more ABC tunes." />
+  <meta name="description" content="Generate, copy, save, convert to text-only ABC, create websites, or print chord charts from one or more ABC tunes." />
 
   <meta name="msapplication-TileColor" content="#ffffff">
   <meta name="msapplication-TileImage" content="https://michaeleskin.com/abctools/img/abc-ms-icon-144x144.png">
@@ -92,6 +92,11 @@
       --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
       --bd: 1px solid rgba(127,127,127,.35);
       --btn-bg: rgba(127,127,127,.12);
+      --builder-ink: #17241c;
+      --builder-green: #176b43;
+      --builder-green-dark: #0d4c2f;
+      --builder-line: #c9d5cc;
+      --builder-accent: #e2ad3b;
 
       /* Fixed help bar */
       --helpbar-pad-y: 12px;
@@ -245,21 +250,36 @@
     }
 
     select{
+      -webkit-appearance:none;
+      -moz-appearance:none;
+      appearance:none;
       padding:10px 52px 10px 12px;
       cursor:pointer;
-      background-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2024%2024%27%3E%3Cpolygon%20points%3D%276%2C9%2018%2C9%2012%2C17%27%20fill%3D%27%23000%27%2F%3E%3C%2Fsvg%3E");
+      color:var(--builder-ink);
+      -webkit-text-fill-color:var(--builder-ink);
+      background-color:#fff;
+      background-image:
+        linear-gradient(45deg, transparent 50%, var(--builder-ink) 50%),
+        linear-gradient(135deg, var(--builder-ink) 50%, transparent 50%);
+      background-position:
+        calc(100% - 18px) 50%,
+        calc(100% - 13px) 50%;
+      background-size:5px 5px, 5px 5px;
       background-repeat:no-repeat;
-      background-position:right 16px center;
-      background-size:22px 22px;
+      box-shadow:none;
+    }
+
+    select::-ms-expand{
+      display:none;
     }
 
     button{
       -webkit-appearance:none;
       appearance:none;
-      border:1px solid rgba(127,127,127,.35);
-      background: rgba(127,127,127,.12);
-      color:#000;
-      border-radius:12px;
+      border:1px solid var(--builder-green-dark);
+      background: var(--builder-green);
+      color:#fff;
+      border-radius:6px;
       padding:10px 14px;
       line-height:1.15;
       font-weight:600;
@@ -277,7 +297,7 @@
     }
 
     button:hover{
-      filter: brightness(0.97);
+      background:var(--builder-green-dark);
       box-shadow: 0 1px 3px rgba(0,0,0,0.18);
     }
 
@@ -303,76 +323,262 @@
     /* Primary action */
     .primary,
     #generateBtn{
-      background:#e8f1ff;
-      border-color:#9dbaf2;
-      color:#000;
+      background:#087f8c;
+      border-color:#066873;
+      color:#fff;
     }
 
-    /* Copy / Save / Print */
+    .primary:hover,
+    #generateBtn:hover{
+      background:#066873;
+    }
+
+    /* Copy / Save / Print / ABC website export */
     #copyBtn,
-    #saveBtn,
     #printBtn{
-      background:#f0f3f8;
-      border-color:#d3dbe7;
-      color:#000;
+      background:#e4efe8;
+      border-color:#a9c2b1;
+      color:var(--builder-green-dark);
+    }
+
+    #copyBtn:hover,
+    #printBtn:hover{
+      background:#d7e8dc;
+    }
+
+    #saveBtn{
+      background:#174a8b;
+      border-color:#0f3566;
+      color:#fff;
+    }
+
+    #saveBtn:hover{
+      background:#0f3566;
+    }
+
+    #saveABCBtn{
+      background:#1266c2;
+      border-color:#1266c2;
+      color:#fff;
+    }
+
+    #saveABCBtn:hover{
+      background:#0f56a6;
+      border-color:#0f56a6;
+    }
+
+    #generateWebsiteBtn{
+      background:#6b2f9b;
+      border-color:#54247e;
+      color:#fff;
+    }
+
+    #generateWebsiteBtn:hover{
+      background:#54247e;
     }
 
     /* Clear */
     #clearBtn{
-      background:#f3f3f3;
-      border-color:#d4d4d4;
-      color:#000;
+      background:#8f2f2f;
+      border-color:#742424;
+      color:#fff;
+    }
+
+    #clearBtn:hover{
+      background:#742424;
+    }
+
+    .abcInputHeadingRow > #clearBtn.compactClearBtn{
+      flex:0 0 auto;
+      width:auto;
+      min-width:0;
+      padding:5px 10px;
+      border-radius:5px;
+      font-size:0.82em;
+      line-height:1.1;
+      white-space:nowrap;
     }
 
     /* Settings save/load/reset */
     #saveSettingsBtn{
-      background:#eef7f1;
-      border-color:#c9ded1;
-      color:#000;
+      background:#174a8b;
+      border-color:#0f3566;
+      color:#fff;
+    }
+
+    #saveSettingsBtn:hover{
+      background:#0f3566;
     }
 
     #loadSettingsBtn{
-      background:#e8f1ff;
-      border-color:#9dbaf2;
-      color:#000;
+      background:var(--builder-green);
+      border-color:var(--builder-green-dark);
+      color:#fff;
+    }
+
+    #loadSettingsBtn:hover{
+      background:var(--builder-green-dark);
     }
 
     #resetSettingsBtn{
-      background:#f3eef8;
-      border-color:#d7cdea;
-      color:#000;
+      background:#8f2f2f;
+      border-color:#742424;
+      color:#fff;
+    }
+
+    #resetSettingsBtn:hover{
+      background:#742424;
     }
 
     #btnHelp{
       width:100%;
-      background:#f0f3f8;
-      border-color:#d3dbe7;
-      color:#000;
+      background:#4f565b;
+      border-color:#3d4449;
+      color:#fff;
     }
 
-    input[type="file"]::file-selector-button{
-      padding:10px 16px;
-      border-radius:12px;
-      border:1px solid rgba(127,127,127,.35);
-      background:#eef7f1;
-      color:#000;
-      font-weight:600;
+    #btnHelp:hover{
+      background:#3d4449;
+    }
+
+    .setting-control-with-help{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      min-width:0;
+      max-width:100%;
+    }
+
+    .setting-control-with-help > input,
+    .setting-control-with-help > select{
+      min-width:0;
+    }
+
+    .setting-help-button{
+      appearance:none;
+      -webkit-appearance:none;
+      flex:0 0 auto !important;
+      width:17px !important;
+      min-width:17px !important;
+      height:17px !important;
+      margin:0 !important;
+      padding:0 !important;
+      color:#466354 !important;
+      -webkit-text-fill-color:#466354;
+      background:#eef5f0 !important;
+      border:1px solid #b9cabf !important;
+      border-radius:999px !important;
+      box-shadow:none !important;
+      font:700 11px/15px system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif !important;
+      text-align:center;
+      white-space:nowrap !important;
       cursor:pointer;
-      transition:
-        filter 0.12s ease,
-        transform 0.08s ease,
-        box-shadow 0.12s ease;
+      opacity:.82;
+      transform:none !important;
     }
 
-    input[type="file"]::file-selector-button:hover{
-      filter: brightness(0.97);
-      box-shadow: 0 1px 3px rgba(0,0,0,0.18);
+    .setting-help-button:hover,
+    .setting-help-button:focus-visible{
+      color:#0d4c2f !important;
+      -webkit-text-fill-color:#0d4c2f;
+      background:#dfece4 !important;
+      border-color:#8cac98 !important;
+      box-shadow:none !important;
+      opacity:1;
+      outline:2px solid rgba(23,107,67,.38);
+      outline-offset:2px;
+      transform:none !important;
     }
 
-    input[type="file"]::file-selector-button:active{
-      transform: translateY(1px);
-      box-shadow: 0 0 1px rgba(0,0,0,0.15);
+    .instructions-target-highlight{
+      background:rgba(160,255,160,0);
+      border-radius:0;
+      box-shadow:none;
+      transition:background .5s ease;
     }
+
+    .instructions-target-highlight.instructions-target-highlight-visible{
+      background:rgba(160,255,160,.22);
+    }
+
+    .instructions-modal-content{
+      max-width:100%;
+      color:#17241c;
+      font:16px/1.5 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      text-align:left;
+      overflow-wrap:break-word;
+    }
+
+    .instructions-modal-content > h2{
+      margin:0 0 14px;
+      color:#0d4c2f;
+      font-size:1.7rem;
+      text-align:center;
+    }
+
+    .instructions-scroll-area{
+      max-height:var(--instructions-scroll-max,min(760px,calc(100vh - 320px)));
+      overflow-y:auto;
+      overflow-x:hidden;
+      overscroll-behavior:contain;
+      scrollbar-gutter:stable;
+      padding:4px 18px 12px 4px;
+    }
+
+    .instructions-scroll-area > div{
+      line-height:1.5 !important;
+    }
+
+    .instructions-scroll-area > div > div[style*="font-weight:700"]{
+      color:#176b43 !important;
+      font-size:1.15rem !important;
+      line-height:1.5 !important;
+    }
+
+    .instructions-scroll-area a,
+    .instructions-scroll-area code{
+      overflow-wrap:anywhere;
+      word-break:break-word;
+    }
+
+    .instructions-scroll-area code{
+      white-space:normal;
+    }
+
+    .instructions-scroll-area hr{
+      border:0 !important;
+      border-top:1px solid #c9d5cc !important;
+    }
+
+    .modal_flat_main.instructions-modal-shell,
+    .modal_default_main.instructions-modal-shell{
+      width:min(900px,calc(100vw - 100px)) !important;
+      max-width:min(900px,calc(100vw - 100px)) !important;
+    }
+
+    .instructions-modal-shell .modal_flat_inner{
+      height:100% !important;
+      max-height:none !important;
+      overflow:hidden !important;
+    }
+
+    .instructions-modal-shell .modal_flat_content{
+      overflow:hidden !important;
+    }
+
+    @media (max-width:760px){
+      .instructions-scroll-area{
+        max-height:var(--instructions-scroll-max,calc(100vh - 320px));
+        padding-right:10px;
+      }
+
+      .modal_flat_main.instructions-modal-shell,
+      .modal_default_main.instructions-modal-shell{
+        width:calc(100vw - 24px) !important;
+        max-width:calc(100vw - 24px) !important;
+      }
+    }
+
 
     /* ============================================================
        ABC Input card: only this card flexes tall
@@ -393,7 +599,7 @@
     /* Sticky header inside cardInput (no extra horizontal padding) */
     #cardInput > .row{
       flex-wrap: nowrap;
-      gap: 18px !important; /* override inline */
+      gap: 12px !important; /* override inline */
       position: sticky;
       top: 0;
       z-index: 5;
@@ -406,6 +612,18 @@
       white-space: nowrap;
       flex: 0 0 auto;
       min-width: 9ch;
+    }
+
+    .abcInputHeadingRow{
+      display:flex;
+      align-items:center;
+      gap:14px;
+      flex:0 0 auto;
+      min-width:0;
+    }
+
+    .abcInputHeadingRow h3{
+      min-width:0 !important;
     }
 
     #cardInput > .row > .row{
@@ -428,9 +646,55 @@
     }
 
     #fileIn{
-      flex: 0 0 auto !important;
-      min-width: 260px;
-      max-width: 100%;
+      display:none;
+    }
+
+    .fileOpenButton{
+      -webkit-appearance:none;
+      appearance:none;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      flex:0 0 auto;
+      min-width:0;
+      padding:10px 16px;
+      color:#fff;
+      background:var(--builder-green);
+      border:1px solid var(--builder-green-dark);
+      border-radius:6px;
+      font:inherit;
+      font-weight:600;
+      line-height:1.15;
+      cursor:pointer;
+      user-select:none;
+      -webkit-tap-highlight-color:transparent;
+      white-space:nowrap;
+      transition:
+        filter 0.12s ease,
+        transform 0.08s ease,
+        box-shadow 0.12s ease;
+    }
+
+    .fileOpenButton:hover,
+    .fileOpenButton:focus-visible{
+      background:var(--builder-green-dark);
+      box-shadow:0 1px 3px rgba(0,0,0,0.18);
+      outline:none;
+    }
+
+    .fileOpenButton:active{
+      transform:translateY(1px);
+      box-shadow:0 0 1px rgba(0,0,0,0.15);
+    }
+
+    .loadedFileName{
+      flex:0 1 auto;
+      min-width:0;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      white-space:nowrap;
+      color:#4f565b;
+      font-size:0.95em;
     }
 
     /* If your HTML still has inline margin-top on .taWrap, this neutralizes it */
@@ -529,6 +793,15 @@
 
     .errorText{ color:#b00020; opacity:1; }
 
+    .app.desktop-drop-enabled{
+      transition:background-color .16s ease, box-shadow .16s ease;
+    }
+
+    .app.desktop-drop-enabled.drop-target-active{
+      background:#e4f3ff;
+      box-shadow:inset 0 0 0 2px #5f8fb3;
+    }
+
     /* ============================================================
        Fixed bottom help bar
        ============================================================ */
@@ -577,24 +850,24 @@
     .modal_flat_main{ border:1px solid #333; box-shadow:0 0 15px -2px rgba(0,0,0,0.75); }
     .modal_flat_main, .modal_flat_main input, .modal_flat_main button{ font-size:16px; }
     .modal_flat_main input, .modal_flat_main button{ padding:6px; box-sizing:border-box; }
-    .modal_flat_inner{ padding:16px; background:#fff; color:#000; }
-    .modal_flat_content{ font-family: Helvetica, Arial, sans-serif; margin:20px 0; }
-    .modal_flat_input{ margin:20px 0; }
+    .modal_flat_inner{ padding:18px 30px; background:#fff; color:#000; }
+    .modal_flat_content{ font-family: Helvetica, Arial, sans-serif; margin:16px 0; }
+    .modal_flat_input{ margin:16px 0; }
     .modal_flat_buttons{
       text-align:center;
-      margin-top:40px;
-      padding-bottom:20px;
+      margin-top:26px;
+      padding-bottom:10px;
     }
 
     .modal_flat_main button{
-      background:#f0f3f8;
-      color:#000;
-      border:1px solid #d3dbe7;
+      background:#e4efe8;
+      color:var(--builder-green-dark);
+      border:1px solid #a9c2b1;
       padding:10px 20px;
       cursor:pointer;
       outline:none;
       width:100px;
-      border-radius:10px;
+      border-radius:6px;
       font-weight:600;
       transition:
         filter 0.12s ease,
@@ -603,7 +876,7 @@
     }
 
     .modal_flat_main button:hover{
-      filter: brightness(0.97);
+      background:#d7e8dc;
       box-shadow: 0 1px 3px rgba(0,0,0,0.18);
     }
 
@@ -613,13 +886,15 @@
     }
 
     .modal_flat_buttons .modal_flat_ok{
-      background:#e8f1ff !important;
-      border-color:#9dbaf2 !important;
+      background:#e4efe8 !important;
+      border-color:#a9c2b1 !important;
+      color:var(--builder-green-dark) !important;
     }
 
     .modal_flat_buttons .modal_flat_cancel{
-      background:#f3f3f3 !important;
-      border-color:#d4d4d4 !important;
+      background:#e4efe8 !important;
+      border-color:#a9c2b1 !important;
+      color:var(--builder-green-dark) !important;
     }
 
     .modal_flat_cancel{ margin-left:6px; }
@@ -627,8 +902,8 @@
     /* Modal width on desktop */
     @media (min-width: 721px){
       .modal_flat_main{
-        width: min(740px, calc(100vw - 80px)) !important;
-        max-width: min(740px, calc(100vw - 80px)) !important;
+        width: min(600px, calc(100vw - 80px)) !important;
+        max-width: min(600px, calc(100vw - 80px)) !important;
       }
     }
 
@@ -673,14 +948,14 @@
     }
 
     .modal_tipjar_main button{
-      background:#e8f1ff;
-      color:#000;
-      border:1px solid #9dbaf2;
+      background:var(--builder-green);
+      color:#fff;
+      border:1px solid var(--builder-green-dark);
       padding:10px 20px;
       cursor:pointer;
       outline:none;
       width:100px;
-      border-radius:10px;
+      border-radius:6px;
       font-weight:600;
     }
 
@@ -715,10 +990,6 @@
       .taWrap{ height: 48vh; min-height: 320px; }
       .chartsWrap{ height: 55vh; min-height: 320px; }
 
-      #instructions_div{
-        margin-bottom: calc(env(safe-area-inset-bottom) + var(--page-pad));
-      }
-
       .left > .card{ flex: 0 0 auto; }
       #cardInput{ flex: 0 0 auto !important; min-height: auto !important; }
 
@@ -733,10 +1004,6 @@
 
       .taWrap{ height: 52vh; min-height: 300px; }
       .chartsWrap{ height: 60vh; min-height: 300px; }
-
-      #instructions_div{
-        margin-bottom: calc(env(safe-area-inset-bottom) + var(--page-pad));
-      }
 
       .modal_flat_main{
         width: calc(100vw - 24px) !important;
@@ -897,12 +1164,14 @@
 
     .heroCard{
       position: relative;
-      border: 1px solid rgba(127,127,127,.22);
-      border-radius: 18px;
-      padding: 18px 20px 16px 20px;
+      border: 1px solid var(--builder-green-dark);
+      border-radius: 10px;
+      padding: 16px 20px 14px 20px;
       background:
-        linear-gradient(180deg, rgba(244,248,255,0.95) 0%, rgba(252,252,252,0.98) 100%);
+        linear-gradient(135deg, rgba(11, 55, 34, .97), rgba(23, 107, 67, .96)),
+        repeating-linear-gradient(45deg, transparent 0 12px, rgba(255,255,255,.025) 12px 24px);
       overflow: hidden;
+      text-align: center;
     }
 
     .heroBadge{
@@ -923,17 +1192,18 @@
 
     .heroTitle{
       margin: 0;
-      font-size: clamp(24px, 1.4vw + 18px, 32px);
-      line-height: 1.12;
-      letter-spacing: -0.01em;
+      color:#fff;
+      font-size: clamp(1.95rem, 4vw, 2.3rem);
+      line-height: 1.1;
+      letter-spacing: 0;
     }
 
     .heroText{
-      margin: 10px 0 0 0;
-      max-width: 72ch;
-      color: rgba(0,0,0,0.74);
-      line-height: 2.0;
-      font-size: clamp(14.5px, 0.5vw + 13px, 16.5px);
+      max-width: 760px;
+      margin: 12px auto 0;
+      color:#dcebe2;
+      line-height: 1.5;
+      font-size: 16px;
     }
 
     @media (max-width: 900px){
@@ -944,16 +1214,22 @@
 
     @media (max-width: 720px){
       .heroCard{
-        padding: 16px 14px 14px 14px;
-        border-radius: 16px;
+        padding: 13px 18px 12px;
+        border-radius: 10px;
       }
 
       .heroTitle{
-        font-size: clamp(22px, 5vw, 28px);
+        font-size: clamp(1.12rem, 5.2vw, 1.42rem);
+        line-height: 1.03;
+        letter-spacing: -.02em;
+        white-space: nowrap;
       }
 
       .heroText{
-        max-width: none;
+        max-width: 34em;
+        margin: 6px auto 0;
+        font-size: .92rem;
+        line-height: 1.28;
       }
     }
 
@@ -978,8 +1254,7 @@
     <div class="heroTop">
       <h2 class="heroTitle">ABC Chord Chart Generator</h2>
       <p class="heroText">
-        This tool can generate, copy, save, and print chord charts for one or more ABC tunes.<br/>
-        Type or paste some ABC tunes, or open an ABC file, then click <strong>Generate Charts</strong>.      
+        Generate, copy, save, print, and build websites from chord charts for one or more ABC tunes.<br/>
       </p>
     </div>
   </div>
@@ -989,12 +1264,16 @@
     <div class="left noprint">
 
       <div id="cardInput" class="card">
-        <div class="row" style="gap:40px; align-items:center; justify-content:flex-start; flex-wrap:nowrap;">
-          <h3>ABC Input</h3>
+        <div class="row" style="gap:10px; align-items:center; justify-content:flex-start; flex-wrap:nowrap;">
+          <div class="abcInputHeadingRow">
+            <h3>ABC Input</h3>
+            <button id="clearBtn" class="compactClearBtn" title="Clear input and output">Clear</button>
+          </div>
 
-          <div class="row" style="gap:10px; align-items:center; justify-content:flex-start; flex-wrap:nowrap;">
-            <span class="muted small" style="white-space:nowrap;">Open an ABC file:</span>
+          <div class="row" style="gap:10px; margin-left:22px; align-items:center; justify-content:flex-start; flex-wrap:nowrap;">
+            <label for="fileIn" class="fileOpenButton">Open ABC File</label>
             <input id="fileIn" type="file" accept=".abc,.txt,text/plain" />
+            <span id="loadedFileName" class="loadedFileName" title="No ABC file loaded">No file loaded</span>
           </div>
         </div>
 
@@ -1005,11 +1284,14 @@
 
       <div id="cardControls" class="card">
         <div class="row">
-          <button id="generateBtn" class="primary" title="Generate chord charts from the ABC Input text">Generate Charts</button>
-          <button id="copyBtn" title="Copy the generated chord charts to the clipboard" disabled>Copy</button>
+          <button id="generateBtn" class="primary" title="Generate chord charts from the ABC Input text" disabled>Generate Charts</button>
           <button id="saveBtn" title="Save the generated chord charts to a file" disabled>Save</button>
+          <button id="copyBtn" title="Copy the generated chord charts to the clipboard" disabled>Copy</button>
           <button id="printBtn" title="Print the generated charts" disabled>Print</button>
-          <button id="clearBtn" title="Clear input and output">Clear</button>
+        </div>
+        <div class="row" style="margin-top:10px;">
+          <button id="saveABCBtn" title="Generate the current chord charts and save them as ABC text" disabled>Save Chord Chart as ABC</button>
+          <button id="generateWebsiteBtn" title="Generate the current chord charts and open them in the abcjs-eskin Website Builder" disabled>Open in Website Builder</button>
         </div>
       </div>
 
@@ -1024,7 +1306,7 @@
 
         <div class="row" style="margin-top:10px;">
           <label for="chartMonoFont"><strong>Chord chart font</strong></label>
-            <select id="chartMonoFont" title="Font used for rendered chord charts">
+            <span class="setting-control-with-help"><select id="chartMonoFont" title="Font used for rendered chord charts">
               <option value="system" selected>System Mono</option>
               <option value="courier">Courier New</option>
               <option value="courier-bold">Courier New (Bold)</option>
@@ -1035,48 +1317,109 @@
               <option value="monaco">Monaco</option>
               <option value="lucida">Lucida Console</option>
               <option value="lucida-bold">Lucida Console (Bold)</option>
-            </select>
+            </select><button type="button" class="setting-help-button" data-instructions-anchor="instructions-setting-chart-font" aria-label="Open instructions for Chord chart font" title="Open instructions for Chord chart font">?</button></span>
         </div>
 
         <div class="row" style="margin-top:10px;">
           <label for="addBlankLines"><strong>Add blank lines between chart rows</strong></label>
-          <select id="addBlankLines" title="If enabled, adds a blank line between plain chord rows, or between chord/lyric row groups for tunes with lyrics.">
+          <span class="setting-control-with-help"><select id="addBlankLines" title="If enabled, adds a blank line between plain chord rows, or between chord/lyric row groups for tunes with lyrics.">
             <option value="1" selected>Yes</option>
             <option value="0">No</option>
-          </select>
+          </select><button type="button" class="setting-help-button" data-instructions-anchor="instructions-setting-add-blank-lines" aria-label="Open instructions for Add blank lines between chart rows" title="Open instructions for Add blank lines between chart rows">?</button></span>
         </div>
 
         <div class="row" style="margin-top:10px;">
           <label for="slotWidth"><strong>Extra spacing (chars, not used for tunes with lyrics)</strong></label>
-          <input id="slotWidth" type="number" min="0" max="8" value="1"
-                 title="Extra spaces after barlines and chords for tunes without lyrics. Ignored for tunes with w: or W: lyrics." style="width:100px;" />
+          <span class="setting-control-with-help"><input id="slotWidth" type="number" min="0" max="8" value="1"
+                 title="Extra spaces after barlines and chords for tunes without lyrics. Ignored for tunes with w: or W: lyrics." style="width:100px;" /><button type="button" class="setting-help-button" data-instructions-anchor="instructions-setting-extra-spacing" aria-label="Open instructions for Extra spacing (chars, not used for tunes with lyrics)" title="Open instructions for Extra spacing (chars, not used for tunes with lyrics)">?</button></span>
         </div>
 
         <div class="row" style="margin-top:10px;">
           <label for="appendRhythm"><strong>Append tune style (R:) to titles</strong></label>
-          <select id="appendRhythm" title="Append the R: tag in parentheses after the tune title">
+          <span class="setting-control-with-help"><select id="appendRhythm" title="Append the R: tag in parentheses after the tune title">
             <option value="1" selected>Yes</option>
             <option value="0">No</option>
-          </select>
+          </select><button type="button" class="setting-help-button" data-instructions-anchor="instructions-setting-append-rhythm" aria-label="Open instructions for Append tune style (R:) to titles" title="Open instructions for Append tune style (R:) to titles">?</button></span>
         </div>
 
         <div class="row" style="margin-top:10px;">
           <label for="emptyMeasurePlaceholder"><strong>Empty measure placeholder</strong></label>
-          <select id="emptyMeasurePlaceholder"
+          <span class="setting-control-with-help"><select id="emptyMeasurePlaceholder"
                   title="Character to insert when a measure has no chord">
             <option value="">None</option>
             <option value="/" selected>&nbsp;&nbsp;&nbsp;/</option>
             <option value="%">&nbsp;&nbsp;&nbsp;%</option>
             <option value="-">&nbsp;&nbsp;&nbsp;-</option>
-          </select>
+          </select><button type="button" class="setting-help-button" data-instructions-anchor="instructions-setting-empty-measure-placeholder" aria-label="Open instructions for Empty measure placeholder" title="Open instructions for Empty measure placeholder">?</button></span>
+        </div>
+
+
+
+      </div>
+
+      <div class="card">
+        <h3 class="card_label">Website Settings</h3>
+
+        <div class="row" style="margin-top:10px;">
+          <label for="websiteTitleFontSize"><strong>Title font size</strong></label>
+          <span class="setting-control-with-help"><input id="websiteTitleFontSize"
+                 type="number"
+                 min="1"
+                 max="144"
+                 value="14"
+                 title="Website ABC title font size"
+                 style="width:100px;" /><button type="button" class="setting-help-button" data-instructions-anchor="instructions-setting-title-font-size" aria-label="Open instructions for Title font size" title="Open instructions for Title font size">?</button></span>
         </div>
 
         <div class="row" style="margin-top:10px;">
-          <label for="linkTitles"><strong>Add ABC Transcription Tools play links to titles</strong></label>
-          <select id="linkTitles" title="If enabled, adds ABC Transcription Tools play links to the title of each tune.&nbsp;&nbsp;If you export a PDF file with the play links enabled, you can click the title of any tune to open it in the ABC Transcription Tools player.">
+          <label for="websiteSubtitleFontSize"><strong>Subtitle font size</strong></label>
+          <span class="setting-control-with-help"><input id="websiteSubtitleFontSize"
+                 type="number"
+                 min="1"
+                 max="144"
+                 value="12"
+                 title="Website ABC subtitle font size"
+                 style="width:100px;" /><button type="button" class="setting-help-button" data-instructions-anchor="instructions-setting-subtitle-font-size" aria-label="Open instructions for Subtitle font size" title="Open instructions for Subtitle font size">?</button></span>
+        </div>
+
+        <div class="row" style="margin-top:10px;">
+          <label for="websiteTextFontSizeNoLyrics"><strong>Text font size (tune without lyrics)</strong></label>
+          <span class="setting-control-with-help"><input id="websiteTextFontSizeNoLyrics"
+                 type="number"
+                 min="1"
+                 max="144"
+                 value="12"
+                 title="Website ABC text font size for tunes without w: or W: lyrics"
+                 style="width:100px;" /><button type="button" class="setting-help-button" data-instructions-anchor="instructions-setting-text-font-no-lyrics" aria-label="Open instructions for Text font size (tune without lyrics)" title="Open instructions for Text font size (tune without lyrics)">?</button></span>
+        </div>
+
+        <div class="row" style="margin-top:10px;">
+          <label for="websiteTextFontSize"><strong>Text font size (tune with lyrics)</strong></label>
+          <span class="setting-control-with-help"><input id="websiteTextFontSize"
+                 type="number"
+                 min="1"
+                 max="144"
+                 value="8"
+                 title="Website ABC text font size for tunes with w: or W: lyrics"
+                 style="width:100px;" /><button type="button" class="setting-help-button" data-instructions-anchor="instructions-setting-text-font-with-lyrics" aria-label="Open instructions for Text font size (tune with lyrics)" title="Open instructions for Text font size (tune with lyrics)">?</button></span>
+        </div>
+
+        <div class="row" style="margin-top:10px;">
+          <label for="justifyTitles"><strong>Justify titles</strong></label>
+          <span class="setting-control-with-help"><select id="justifyTitles"
+                  title="Controls title alignment in generated ABC and websites">
+            <option value="center" selected>Center</option>
+            <option value="left">Left</option>
+          </select><button type="button" class="setting-help-button" data-instructions-anchor="instructions-setting-justify-titles" aria-label="Open instructions for Justify titles" title="Open instructions for Justify titles">?</button></span>
+        </div>
+
+        <div class="row" style="margin-top:10px;">
+          <label for="addBlankLineUnderTitle"><strong>Add blank line under title?</strong></label>
+          <span class="setting-control-with-help"><select id="addBlankLineUnderTitle"
+                  title="Adds one blank %%text line immediately after each generated tune title">
             <option value="0" selected>No</option>
             <option value="1">Yes</option>
-          </select>
+          </select><button type="button" class="setting-help-button" data-instructions-anchor="instructions-setting-blank-line-under-title" aria-label="Open instructions for Add blank line under title?" title="Open instructions for Add blank line under title?">?</button></span>
         </div>
 
       </div>
@@ -1086,68 +1429,77 @@
 
         <div class="row">
           <label for="paperSize"><strong>Paper size</strong></label>
-          <select id="paperSize" title="Paper size">
+          <span class="setting-control-with-help"><select id="paperSize" title="Paper size">
             <option value="letter">Letter</option>
             <option value="a4">A4</option>
             <option value="legal">Legal</option>
             <option value="tabloid">Tabloid</option>
-          </select>
+          </select><button type="button" class="setting-help-button" data-instructions-anchor="instructions-setting-paper-size" aria-label="Open instructions for Paper size" title="Open instructions for Paper size">?</button></span>
 
           <label for="orientation" style="margin-left:6px;"><strong>Orientation</strong></label>
-          <select id="orientation" title="Orientation">
+          <span class="setting-control-with-help"><select id="orientation" title="Orientation">
             <option value="portrait">Portrait</option>
             <option value="landscape">Landscape</option>
-          </select>
+          </select><button type="button" class="setting-help-button" data-instructions-anchor="instructions-setting-orientation" aria-label="Open instructions for Orientation" title="Open instructions for Orientation">?</button></span>
         </div>
 
         <div class="row" style="margin-top:10px;">
           <label for="printTitleSize"><strong>Tune title font size (pt)</strong></label>
-          <input id="printTitleSize"
+          <span class="setting-control-with-help"><input id="printTitleSize"
                  type="number"
                  min="8"
                  max="120"
                  value="16"
                  title="Printed tune title font size"
-                 style="width:100px;" />
+                 style="width:100px;" /><button type="button" class="setting-help-button" data-instructions-anchor="instructions-setting-print-title-size" aria-label="Open instructions for Tune title font size (pt)" title="Open instructions for Tune title font size (pt)">?</button></span>
 
           <label for="printFontSize"><strong>Tune chords font size (pt)</strong></label>
-          <input id="printFontSize" type="number" min="8" max="120" value="12" title="Printed tune chords font size" style="width:100px;" />
+          <span class="setting-control-with-help"><input id="printFontSize" type="number" min="8" max="120" value="12" title="Printed tune chords font size" style="width:100px;" /><button type="button" class="setting-help-button" data-instructions-anchor="instructions-setting-print-chord-size" aria-label="Open instructions for Tune chords font size (pt)" title="Open instructions for Tune chords font size (pt)">?</button></span>
 
         </div>
 
         <div class="row" style="margin-top:10px;">
           <label for="oneTunePerPage"><strong>Print one tune/page</strong></label>
-          <select id="oneTunePerPage" title="Force each tune to start on a new printed page">
+          <span class="setting-control-with-help"><select id="oneTunePerPage" title="Force each tune to start on a new printed page">
             <option value="0" selected>No</option>
             <option value="1" >Yes</option>
-          </select>
+          </select><button type="button" class="setting-help-button" data-instructions-anchor="instructions-setting-one-tune-per-page" aria-label="Open instructions for Print one tune/page" title="Open instructions for Print one tune/page">?</button></span>
           <label for="printTuneGap"><strong>Gap between tunes (pt)</strong></label>
-          <input id="printTuneGap"
+          <span class="setting-control-with-help"><input id="printTuneGap"
                  type="number"
                  min="1"
                  max="300"
                  value="30"
                  title="Vertical space between tunes when printing multiple tunes per page"
-                 style="width:100px;" />
+                 style="width:100px;" /><button type="button" class="setting-help-button" data-instructions-anchor="instructions-setting-print-tune-gap" aria-label="Open instructions for Gap between tunes (pt)" title="Open instructions for Gap between tunes (pt)">?</button></span>
         </div>
 
         <div id="rowPageNumbers" class="row" style="margin-top:10px;">
           <label for="showPageNumbers"><strong>Add page numbers</strong></label>
-          <select id="showPageNumbers" title="Add page numbers">
+          <span class="setting-control-with-help"><select id="showPageNumbers" title="Add page numbers">
             <option value="0" selected>No</option>
             <option value="1">Yes</option>
-          </select>
+          </select><button type="button" class="setting-help-button" data-instructions-anchor="instructions-setting-add-page-numbers" aria-label="Open instructions for Add page numbers" title="Open instructions for Add page numbers">?</button></span>
 
           <label for="pageNumberPos" style="margin-left:6px;"><strong>Location</strong></label>
-          <select id="pageNumberPos" title="Page number location">
+          <span class="setting-control-with-help"><select id="pageNumberPos" title="Page number location">
             <option value="tl">Top left</option>
             <option value="tc">Top center</option>
             <option value="tr">Top right</option>
             <option value="bl">Bottom left</option>
             <option value="bc" selected>Bottom center</option>
             <option value="br">Bottom right</option>
-          </select>
+          </select><button type="button" class="setting-help-button" data-instructions-anchor="instructions-setting-page-number-location" aria-label="Open instructions for Location" title="Open instructions for Location">?</button></span>
         </div>   
+
+
+        <div class="row" style="margin-top:10px;">
+          <label for="linkTitles"><strong>Add ABC Transcription Tools play links to titles</strong></label>
+          <span class="setting-control-with-help"><select id="linkTitles" title="If enabled, adds ABC Transcription Tools play links to the title of each tune.&nbsp;&nbsp;If you export a PDF file with the play links enabled, you can click the title of any tune to open it in the ABC Transcription Tools player.">
+            <option value="0" selected>No</option>
+            <option value="1">Yes</option>
+          </select><button type="button" class="setting-help-button" data-instructions-anchor="instructions-setting-link-titles" aria-label="Open instructions for Add ABC Transcription Tools play links to titles" title="Open instructions for Add ABC Transcription Tools play links to titles">?</button></span>
+        </div>
 
       </div>
 
@@ -1156,19 +1508,19 @@
         <p class="small muted">Probably best to leave these at the default values.</p>
         <div class="row" style="margin-top:10px;">
           <label for="suppressPickup"><strong>Suppress pickups</strong></label>
-          <select id="suppressPickup" title="If enabled, suppress leading pickup notes before the first barline (when no chords are present in the pickup)">
+          <span class="setting-control-with-help"><select id="suppressPickup" title="If enabled, suppress leading pickup notes before the first barline (when no chords are present in the pickup)">
             <option value="0">No</option>
             <option value="1" selected>Yes</option>
-          </select>
+          </select><button type="button" class="setting-help-button" data-instructions-anchor="instructions-setting-suppress-pickups" aria-label="Open instructions for Suppress pickups" title="Open instructions for Suppress pickups">?</button></span>
 
           <label for="pickupMaxNotes" style="margin-left:6px;"><strong>Max pickup notes</strong></label>
-          <select id="pickupMaxNotes" title="If pickup suppression is enabled, treat the selected number of note-events or fewer before the first barline as a pickup">
+          <span class="setting-control-with-help"><select id="pickupMaxNotes" title="If pickup suppression is enabled, treat the selected number of note-events or fewer before the first barline as a pickup">
             <option value="1">1</option>
             <option value="2">2</option>
             <option value="3" selected>3</option>
             <option value="4">4</option>
             <option value="5">5</option>
-          </select>
+          </select><button type="button" class="setting-help-button" data-instructions-anchor="instructions-setting-max-pickup-notes" aria-label="Open instructions for Max pickup notes" title="Open instructions for Max pickup notes">?</button></span>
         </div>
       </div>
 
@@ -1226,6 +1578,8 @@
 
 // Helper for getting elements by ID
 const $ = (id) => document.getElementById(id);
+
+const TOOL_VERSION = "1.0.0";
 
 // Are we on iOS?
 //
@@ -1414,8 +1768,9 @@ function isLikelySettingsObject(st) {
   if (!st || typeof st !== "object") return false;
 
   // Must have some core keys we expect.
-  // Newer settings, such as addBlankLines, must remain optional here so
-  // older saved JSON settings files continue to load correctly.
+  // Newer settings, including addBlankLines and the Website Settings,
+  // remain optional here so older saved JSON settings files continue
+  // to load correctly and receive the current defaults.
   const requiredKeys = [
     "slotWidth",
     "appendRhythm",
@@ -1491,7 +1846,7 @@ let gLocalStorageAvailable = localStorageIsUsable();
 
 function getUIStateForSave_SettingsOnly() {
   return {
-    v: 8, // bumped because we added addBlankLines persistence
+    v: 11, // bumped because Website Settings now include the blank-line-under-title option
 
     // Chord Chart Settings
     slotWidth: $("slotWidth") ? $("slotWidth").value : "1",
@@ -1501,6 +1856,14 @@ function getUIStateForSave_SettingsOnly() {
     suppressPickup: $("suppressPickup") ? $("suppressPickup").value : "1",
     pickupMaxNotes: $("pickupMaxNotes") ? $("pickupMaxNotes").value : "3",
     chartMonoFont: $("chartMonoFont") ? $("chartMonoFont").value : "system",
+
+    // Website Settings
+    websiteTitleFontSize: $("websiteTitleFontSize") ? $("websiteTitleFontSize").value : "14",
+    websiteSubtitleFontSize: $("websiteSubtitleFontSize") ? $("websiteSubtitleFontSize").value : "12",
+    websiteTextFontSizeNoLyrics: $("websiteTextFontSizeNoLyrics") ? $("websiteTextFontSizeNoLyrics").value : "12",
+    websiteTextFontSize: $("websiteTextFontSize") ? $("websiteTextFontSize").value : "8",
+    justifyTitles: $("justifyTitles") ? $("justifyTitles").value : "center",
+    addBlankLineUnderTitle: $("addBlankLineUnderTitle") ? $("addBlankLineUnderTitle").value : "0",
 
     // Print Settings
     paperSize: $("paperSize") ? $("paperSize").value : "letter",
@@ -1526,6 +1889,22 @@ function applyUIStateFromObj_SettingsOnly(st) {
   if ($("suppressPickup") && st.suppressPickup != null) $("suppressPickup").value = String(st.suppressPickup);
   if ($("pickupMaxNotes") && st.pickupMaxNotes != null) $("pickupMaxNotes").value = String(st.pickupMaxNotes);
   if ($("chartMonoFont") && st.chartMonoFont != null) $("chartMonoFont").value = String(st.chartMonoFont);
+
+  // Website Settings
+  if ($("websiteTitleFontSize")) $("websiteTitleFontSize").value =
+    (st.websiteTitleFontSize != null) ? String(st.websiteTitleFontSize) : "14";
+  if ($("websiteSubtitleFontSize")) $("websiteSubtitleFontSize").value =
+    (st.websiteSubtitleFontSize != null) ? String(st.websiteSubtitleFontSize) : "12";
+  if ($("websiteTextFontSizeNoLyrics")) $("websiteTextFontSizeNoLyrics").value =
+    (st.websiteTextFontSizeNoLyrics != null) ? String(st.websiteTextFontSizeNoLyrics) : "12";
+  if ($("websiteTextFontSize")) $("websiteTextFontSize").value =
+    (st.websiteTextFontSize != null) ? String(st.websiteTextFontSize) : "8";
+  if ($("justifyTitles")) $("justifyTitles").value =
+    (st.justifyTitles === "left") ? "left" : "center";
+  if ($("addBlankLineUnderTitle")) $("addBlankLineUnderTitle").value =
+    (st.addBlankLineUnderTitle === "1") ? "1" : "0";
+
+  normalizeWebsiteFontSizeInputs();
 
   // Print Settings
   if ($("paperSize") && st.paperSize != null) $("paperSize").value = String(st.paperSize);
@@ -1686,6 +2065,12 @@ function enableAutoSaveForSettings_SettingsOnly() {
     "suppressPickup",
     "pickupMaxNotes",
     "chartMonoFont",
+    "websiteTitleFontSize",
+    "websiteSubtitleFontSize",
+    "websiteTextFontSizeNoLyrics",
+    "websiteTextFontSize",
+    "justifyTitles",
+    "addBlankLineUnderTitle",
     "paperSize",
     "orientation",
     "printTitleSize",
@@ -1737,6 +2122,196 @@ function getChartMonoFontStack(value) {
   }
 }
 
+function getChartFontNameForABC(value) {
+  switch (String(value || "system")) {
+    case "courier":
+    case "courier-bold":
+      return "Courier New";
+    case "consolas":
+    case "consolas-bold":
+      return "Consolas";
+    case "menlo":
+    case "menlo-bold":
+      return "Menlo";
+    case "monaco":
+      return "Monaco";
+    case "lucida":
+    case "lucida-bold":
+      return "Lucida Console";
+    case "system":
+    default:
+      return "monospace";
+  }
+}
+
+function normalizeWebsiteFontSizeValue(value, defaultValue) {
+  const n = Number(value);
+  if (!Number.isFinite(n)) return String(defaultValue);
+  return String(Math.max(1, Math.min(144, Math.round(n))));
+}
+
+function normalizeWebsiteFontSizeInputs() {
+  const items = [
+    ["websiteTitleFontSize", 14],
+    ["websiteSubtitleFontSize", 12],
+    ["websiteTextFontSizeNoLyrics", 12],
+    ["websiteTextFontSize", 8]
+  ];
+
+  items.forEach(([id, defaultValue]) => {
+    const el = $(id);
+    if (!el) return;
+    el.value = normalizeWebsiteFontSizeValue(el.value, defaultValue);
+  });
+}
+
+function getWebsiteFontSettings() {
+  normalizeWebsiteFontSizeInputs();
+
+  return {
+    titleSize: parseInt($("websiteTitleFontSize").value, 10),
+    subtitleSize: parseInt($("websiteSubtitleFontSize").value, 10),
+    textSizeNoLyrics: parseInt($("websiteTextFontSizeNoLyrics").value, 10),
+    textSizeWithLyrics: parseInt($("websiteTextFontSize").value, 10)
+  };
+}
+
+const WEBSITE_EXPORT_DEFAULT_STAFF_WIDTH = 556;
+const WEBSITE_EXPORT_DEFAULT_USABLE_TEXT_WIDTH_PX = 556;
+const WEBSITE_EXPORT_STAFFWIDTH_SAFETY_MARGIN = 1.08;
+const WEBSITE_EXPORT_STAFFWIDTH_ROUNDING = 25;
+
+let gWebsiteExportMeasureCanvas = null;
+
+function getChartFontMeasurementCSS(value, fontSize) {
+  const choice = String(value || "system");
+  const isBold = choice.endsWith("-bold");
+  const fontStack = getChartMonoFontStack(choice);
+
+  return {
+    fontCSS: `${isBold ? "700 " : "400 "}${fontSize}px ${fontStack}`,
+    fontStack,
+    fontWeight: isBold ? "700" : "400"
+  };
+}
+
+function measureChartLineWidthPx(line, chartFontValue, textFontSize) {
+  if (!gWebsiteExportMeasureCanvas) {
+    gWebsiteExportMeasureCanvas = document.createElement("canvas");
+  }
+
+  const ctx = gWebsiteExportMeasureCanvas.getContext("2d");
+  if (!ctx) return 0;
+
+  const fontInfo = getChartFontMeasurementCSS(chartFontValue, textFontSize);
+  ctx.font = fontInfo.fontCSS;
+
+  return ctx.measureText(String(line || "")).width;
+}
+
+function calculateRequiredStaffWidthForChart(chartLines, chartFontValue, textFontSize) {
+  const lines = Array.isArray(chartLines) ? chartLines : [];
+  let longestMeasuredWidthPx = 0;
+
+  lines.forEach((line) => {
+    longestMeasuredWidthPx = Math.max(
+      longestMeasuredWidthPx,
+      measureChartLineWidthPx(line, chartFontValue, textFontSize)
+    );
+  });
+
+  const widthWithSafetyMargin =
+    longestMeasuredWidthPx * WEBSITE_EXPORT_STAFFWIDTH_SAFETY_MARGIN;
+
+  if (widthWithSafetyMargin <= WEBSITE_EXPORT_DEFAULT_USABLE_TEXT_WIDTH_PX) {
+    return null;
+  }
+
+  const proportionalWidth =
+    WEBSITE_EXPORT_DEFAULT_STAFF_WIDTH *
+    (widthWithSafetyMargin / WEBSITE_EXPORT_DEFAULT_USABLE_TEXT_WIDTH_PX);
+
+  return Math.ceil(
+    proportionalWidth / WEBSITE_EXPORT_STAFFWIDTH_ROUNDING
+  ) * WEBSITE_EXPORT_STAFFWIDTH_ROUNDING;
+}
+
+function buildChordChartsAsABC() {
+  const out = $("out");
+  if (!out) return "";
+
+  const sections = Array.from(out.querySelectorAll("section.chart"));
+  if (!sections.length) return "";
+
+  const fontName = getChartFontNameForABC(
+    $("chartMonoFont") ? $("chartMonoFont").value : "system"
+  );
+  const sizes = getWebsiteFontSettings();
+
+  const lines = [
+    "%%begincss",
+    'svg text[data-name="free-text"] {',
+    "  white-space: pre;",
+    "}",
+    "%%endcss",
+    ""
+  ];
+
+  sections.forEach((section, index) => {
+    const h3 = section.querySelector("h3");
+    const pre = section.querySelector("pre");
+    const title = h3 ? h3.textContent : "";
+    const chartText = pre ? pre.textContent : "";
+
+    const chartLines = chartText.split("\n");
+    const hasLyrics = section.dataset.hasLyrics === "1";
+    const textSize = hasLyrics
+      ? sizes.textSizeWithLyrics
+      : sizes.textSizeNoLyrics;
+
+    const requiredStaffWidth = calculateRequiredStaffWidthForChart(
+      chartLines,
+      $("chartMonoFont") ? $("chartMonoFont").value : "system",
+      textSize
+    );
+
+    lines.push(`X:${index + 1}`);
+
+    if ($("justifyTitles") && $("justifyTitles").value === "left") {
+      lines.push("%left_justify_titles");
+    }
+
+    lines.push("%website_builder_no_play_controller");
+
+    if (requiredStaffWidth != null) {
+      lines.push(`%%staffwidth ${requiredStaffWidth}`);
+    }
+
+    lines.push(`%%titlefont ${fontName} ${sizes.titleSize}`);
+    lines.push(`%%subtitlefont ${fontName} ${sizes.subtitleSize}`);
+    lines.push(`%%textfont ${fontName} ${textSize}`);
+    lines.push(`T:${title}`);
+
+    if ($("addBlankLineUnderTitle") && $("addBlankLineUnderTitle").value === "1") {
+      lines.push("%%text");
+    }
+
+    chartLines.forEach((line) => {
+      const exportedLine = line === "" ? "%%text" : `%%text ${line}`;
+
+      if (exportedLine === "%%text" && lines[lines.length - 1] === "%%text") {
+        return;
+      }
+
+      lines.push(exportedLine);
+    });
+
+    if (index < sections.length - 1) lines.push("");
+  });
+
+  return lines.join("\n") + "\n";
+}
+
 function applyChartMonoFontFromUI() {
   const sel = $("chartMonoFont");
   const choice = sel ? sel.value : "system";
@@ -1759,6 +2334,15 @@ function applyChartMonoFontFromUI() {
     "--chart-title-weight",
     "700"
   );
+}
+
+function setLoadedFileNameDisplay(name) {
+  const el = $("loadedFileName");
+  if (!el) return;
+
+  const value = String(name || "").trim();
+  el.textContent = value || "No file loaded";
+  el.title = value ? `Loaded ABC file: ${value}` : "No ABC file loaded";
 }
 
 function setStatus(msg, isError=false) {
@@ -1859,6 +2443,7 @@ K: Dmaj
    ============================================================ */
 let gLoadedFileName = "";
 let gSavedChordFileName = "";
+let gSavedABCFileName = "";
 let gSavedSettingsFileName = "";
 
 /* ---------------------------------
@@ -1895,6 +2480,21 @@ function computeDefaultChordFileName() {
     return `${base}_chords.txt`;
   }
   return "chords.txt";
+}
+
+function ensureAbcExt(name) {
+  const s = String(name || "").trim();
+  if (!s) return s;
+  return /\.abc$/i.test(s) ? s : (stripExt(s) + ".abc");
+}
+
+function computeDefaultABCFileName() {
+  if (gSavedABCFileName) return gSavedABCFileName;
+  if (gLoadedFileName) {
+    const base = stripExt(gLoadedFileName);
+    return `${base}_chord_charts.abc`;
+  }
+  return "chord_charts.abc";
 }
 
 function ensureJsonExt(name) {
@@ -1955,6 +2555,11 @@ function splitAbcIntoTunes(abcText) {
   }
   return tunes;
 }
+
+function tuneHasLyrics(abcTuneBlock) {
+  return /^\s*[wW]:/m.test(String(abcTuneBlock || ""));
+}
+
 
 function getHeaderValue(block, tag) {
   const re = new RegExp("^" + tag.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + ":(.*)$", "m");
@@ -3212,7 +3817,9 @@ function loadABCFromABCTranscriptionTools(data, event) {
     if ($("fileIn")) $("fileIn").value = "";
 
     gLoadedFileName = "";
+    setLoadedFileNameDisplay("");
     gSavedChordFileName = "";
+    gSavedABCFileName = "";
 
     const tuneCount = countTunesForReceivedABC(abcText);
 
@@ -3224,7 +3831,7 @@ function loadABCFromABCTranscriptionTools(data, event) {
       setStatus(`Loaded ABC from ${sourceName}. Found ${tuneCount} tunes.`);
     }
 
-    syncActionButtons();
+    generateCharts();
     acknowledgeABCTranscriptionToolsLoad(event, data.messageId || "", tuneCount);
   } catch (error) {
     console.error(error);
@@ -3268,6 +3875,292 @@ function startABCTranscriptionToolsHandshake() {
 }
 
 /* ============================================================
+   Save Chord Chart as ABC / Open in abcjs-eskin Website Builder
+   ============================================================ */
+
+async function promptForABCSaveFileName(defaultName) {
+  if (!window.DayPilot || !DayPilot.Modal || typeof DayPilot.Modal.prompt !== "function") {
+    const v = window.prompt("Save Chord Chart as ABC as:", defaultName || "");
+    return (v === null) ? null : String(v);
+  }
+
+  const res = await DayPilot.Modal.prompt("Save Chord Chart as ABC as:", defaultName || "", {
+    theme: "modal_flat",
+    top: 125,
+    scrollWithPage: false
+  });
+
+  if (!res || res.canceled) return null;
+  return String(res.result || "");
+}
+
+function generateCurrentChordChartsAsABC() {
+  applyPrintSettingsForWebsiteExport();
+  generateCharts();
+
+  const abcText = buildChordChartsAsABC();
+  if (!abcText.trim()) {
+    setStatus("Nothing to export. No chord charts were generated.", true);
+    return "";
+  }
+
+  return abcText;
+}
+
+async function saveGeneratedChordChartsAsABC() {
+  const abcText = generateCurrentChordChartsAsABC();
+  if (!abcText) return;
+
+  const suggested = computeDefaultABCFileName();
+  let name = await promptForABCSaveFileName(suggested);
+  if (name === null) return;
+
+  name = sanitizeForDownloadName(name);
+  name = ensureAbcExt(name);
+
+  const v = validateFileName(name);
+  if (!v.ok) {
+    if (!window.DayPilot || !DayPilot.Modal || typeof DayPilot.Modal.alert !== "function") {
+      alert(v.msg);
+      return;
+    }
+
+    DayPilot.Modal.alert(v.msg, {
+      theme: "modal_flat",
+      top: 125,
+      scrollWithPage: false
+    });
+    return;
+  }
+
+  const finalName = v.value;
+  await downloadFile(finalName, abcText, "text/plain;charset=utf-8");
+  gSavedABCFileName = finalName;
+  setStatus(`Saved ABC "${finalName}"`);
+}
+
+const gAbcjsEskinWebsiteBuilderURL =
+  "https://michaeleskin.com/abcjs-eskin-portable/website-builder/website-builder.html";
+
+function getAbcjsEskinWebsiteBuilderLaunchURL() {
+  const separator = gAbcjsEskinWebsiteBuilderURL.indexOf("?") === -1 ? "?" : "&";
+  return gAbcjsEskinWebsiteBuilderURL +
+    separator +
+    "cb=" +
+    encodeURIComponent(String(Date.now()));
+}
+
+function getAbcjsEskinWebsiteBuilderTargetOrigin(url) {
+  try {
+    const parsedURL = new URL(url, window.location.href);
+    return parsedURL.origin && parsedURL.origin !== "null" ? parsedURL.origin : "*";
+  } catch {
+    return "*";
+  }
+}
+
+function showAbcjsEskinWebsiteBuilderMessage(message, width) {
+  const html =
+    '<p style="font-size:16px;line-height:24px;font-family:helvetica;text-align:center;">' +
+    message +
+    "</p>";
+
+  if (window.DayPilot && DayPilot.Modal && typeof DayPilot.Modal.alert === "function") {
+    DayPilot.Modal.alert(html, {
+      theme: "modal_flat",
+      top: 125,
+      width: width || 560,
+      scrollWithPage: false
+    });
+  } else {
+    alert(String(message).replace(/<br\s*\/?>/gi, "\n"));
+  }
+}
+
+function isRunningFromOfficialMichaeleskinDomain() {
+  return window.location && window.location.origin === "https://michaeleskin.com";
+}
+
+function launchAbcjsEskinWebsiteBuilderFromChordCharts() {
+  const abcText = generateCurrentChordChartsAsABC();
+  if (!abcText) return;
+
+  if (!isRunningFromOfficialMichaeleskinDomain()) {
+    showAbcjsEskinWebsiteBuilderMessage(
+      "Direct ABC transfer to the abcjs-eskin Website Builder is only available from the official online version at https://michaeleskin.com.<br/><br/>As a workaround, use Save Chord Chart as ABC and open that ABC file in the Website Builder with its Open ABC Files button.",
+      720
+    );
+    return;
+  }
+
+  if (!navigator.onLine) {
+    showAbcjsEskinWebsiteBuilderMessage(
+      "The abcjs-eskin Website Builder is not available while offline. Please reconnect to the internet and try again.",
+      560
+    );
+    return;
+  }
+
+  sendGoogleAnalytics("action", "website_builder_message");
+
+  const builderURL = gAbcjsEskinWebsiteBuilderURL;
+  const targetOrigin = getAbcjsEskinWebsiteBuilderTargetOrigin(builderURL);
+  const messageId =
+    "chord-chart-website-builder-" +
+    Date.now() +
+    "-" +
+    Math.random().toString(36).slice(2);
+
+  let builderWindow = null;
+  let builderReadyReceived = false;
+  let loadMessageAttempted = false;
+  let loadMessageAcknowledged = false;
+  let failureMessageShown = false;
+  let cleanupTimer = null;
+  let closedCheckTimer = null;
+  let fallbackTimers = [];
+
+  const loadMessage = {
+    type: "abcjsEskinWebsiteBuilderLoadABC",
+    messageId,
+    abc: abcText,
+    sourceName: "ABC Chord Chart Generator",
+    replaceExisting: true
+  };
+
+  function cleanupWebsiteBuilderLaunchHandlers() {
+    window.removeEventListener("message", handleWebsiteBuilderLaunchMessage);
+
+    if (cleanupTimer) {
+      clearTimeout(cleanupTimer);
+      cleanupTimer = null;
+    }
+
+    if (closedCheckTimer) {
+      clearInterval(closedCheckTimer);
+      closedCheckTimer = null;
+    }
+
+    fallbackTimers.forEach((timer) => clearTimeout(timer));
+    fallbackTimers = [];
+  }
+
+  function showWebsiteBuilderLaunchFailure(message, width) {
+    if (loadMessageAcknowledged || failureMessageShown) {
+      cleanupWebsiteBuilderLaunchHandlers();
+      return;
+    }
+
+    failureMessageShown = true;
+    cleanupWebsiteBuilderLaunchHandlers();
+    showAbcjsEskinWebsiteBuilderMessage(message, width || 620);
+  }
+
+  function postABCToWebsiteBuilder() {
+    if (!builderWindow || builderWindow.closed) {
+      showWebsiteBuilderLaunchFailure(
+        "The abcjs-eskin Website Builder window was closed before the chord chart ABC could be transferred.",
+        620
+      );
+      return;
+    }
+
+    if (loadMessageAcknowledged || failureMessageShown) return;
+
+    try {
+      loadMessageAttempted = true;
+      builderWindow.postMessage(loadMessage, targetOrigin);
+    } catch (error) {
+      console.error("Unable to send ABC to the abcjs-eskin Website Builder:", error);
+      showWebsiteBuilderLaunchFailure(
+        "The ABC Chord Chart Generator could not send the chord chart ABC to the abcjs-eskin Website Builder. Browser security settings may have blocked the transfer.",
+        700
+      );
+    }
+  }
+
+  function handleWebsiteBuilderLaunchMessage(event) {
+    if (!builderWindow || event.source !== builderWindow) return;
+    if (targetOrigin !== "*" && event.origin !== targetOrigin) return;
+
+    const data = event.data || {};
+
+    if (data.type === "abcjsEskinWebsiteBuilderReady") {
+      builderReadyReceived = true;
+      postABCToWebsiteBuilder();
+      return;
+    }
+
+    if (
+      data.type === "abcjsEskinWebsiteBuilderABCLoaded" &&
+      data.messageId === messageId
+    ) {
+      loadMessageAcknowledged = true;
+      cleanupWebsiteBuilderLaunchHandlers();
+      setStatus("Chord chart ABC opened in the abcjs-eskin Website Builder.");
+    }
+  }
+
+  window.addEventListener("message", handleWebsiteBuilderLaunchMessage);
+
+  builderWindow = window.open(getAbcjsEskinWebsiteBuilderLaunchURL(), "_blank");
+
+  if (!builderWindow) {
+    cleanupWebsiteBuilderLaunchHandlers();
+    showAbcjsEskinWebsiteBuilderMessage(
+      "The abcjs-eskin Website Builder window was blocked by the browser. Please allow popups for this site and try again.",
+      560
+    );
+    return;
+  }
+
+  closedCheckTimer = setInterval(() => {
+    if (builderWindow && builderWindow.closed && !loadMessageAcknowledged) {
+      showWebsiteBuilderLaunchFailure(
+        "The abcjs-eskin Website Builder window was closed before the ABC Chord Chart Generator received confirmation that the chord chart ABC was transferred.",
+        720
+      );
+    }
+  }, 1000);
+
+  [1200, 2400, 4200].forEach((delay) => {
+    fallbackTimers.push(setTimeout(() => {
+      if (!loadMessageAcknowledged && !failureMessageShown) {
+        postABCToWebsiteBuilder();
+      }
+    }, delay));
+  });
+
+  cleanupTimer = setTimeout(() => {
+    if (loadMessageAcknowledged) {
+      cleanupWebsiteBuilderLaunchHandlers();
+      return;
+    }
+
+    if (!builderReadyReceived) {
+      showWebsiteBuilderLaunchFailure(
+        "The abcjs-eskin Website Builder opened, but the ABC Chord Chart Generator did not receive a ready message from it. If the chord charts are not visible in the Website Builder, use Save Chord Chart as ABC and open that file in the Website Builder instead.",
+        740
+      );
+      return;
+    }
+
+    if (loadMessageAttempted) {
+      showWebsiteBuilderLaunchFailure(
+        "The ABC Chord Chart Generator sent the chord chart ABC to the abcjs-eskin Website Builder, but did not receive confirmation that it loaded. If the chord charts are not visible in the Website Builder, use Save Chord Chart as ABC and open that file in the Website Builder instead.",
+        760
+      );
+      return;
+    }
+
+    showWebsiteBuilderLaunchFailure(
+      "The ABC Chord Chart Generator could not complete the transfer to the abcjs-eskin Website Builder. Use Save Chord Chart as ABC and open that file in the Website Builder instead.",
+      720
+    );
+  }, 15000);
+}
+
+/* ============================================================
    Save Chord Chart (DayPilot prompt)
    ============================================================ */
 async function promptForSaveFileName(defaultName) {
@@ -3279,7 +4172,7 @@ async function promptForSaveFileName(defaultName) {
   if (typeof DayPilot.Modal.prompt === "function") {
     const res = await DayPilot.Modal.prompt("Save chord chart as:", defaultName || "", {
       theme: "modal_flat",
-      top: 80,
+      top: 125,
       scrollWithPage: false
     });
     if (!res || res.canceled) return null;
@@ -3289,7 +4182,7 @@ async function promptForSaveFileName(defaultName) {
   const form = [{ name: "File name", id: "name", type: "text", value: defaultName || "" }];
   const res2 = await DayPilot.Modal.form(form, { name: defaultName || "" }, {
     theme: "modal_flat",
-    top: 80,
+    top: 125,
     scrollWithPage: false
   });
   if (!res2 || res2.canceled) return null;
@@ -3326,7 +4219,7 @@ async function saveChordChart() {
       return;
     }
 
-    DayPilot.Modal.alert(v.msg, { theme:"modal_flat", top: 120, scrollWithPage:false });
+    DayPilot.Modal.alert(v.msg, { theme:"modal_flat", top: 125, scrollWithPage:false });
     return;
   }
 
@@ -3769,7 +4662,7 @@ function printViaIframe({
       api.setHtml(chartsHtml);
       api.setOneTunePerPage(!!oneTunePerPage);
 
-      // Important: we pass the *requested* pt; iframe JS will fit each <pre> if needed.
+      // Important: pass the requested point size unchanged; browser print scaling can be used for wide charts.
       api.fitAndPrint(parseInt(requestedPt, 10) || 12);
 
       // Cleanup handler so next print doesn't stack listeners
@@ -3882,6 +4775,7 @@ function generateCharts() {
 
     const section = document.createElement("section");
     section.className = "chart";
+    section.dataset.hasLyrics = tuneHasLyrics ? "1" : "0";
 
     const shareUrl = linkTitles
       ? buildAbcToolsShareLinkForTune(block)
@@ -4022,6 +4916,7 @@ function handleFileOpen(file) {
   // Clear previous output immediately when a new file is selected
   $("out").innerHTML = "";
   gSavedChordFileName = "";
+  gSavedABCFileName = "";
   syncActionButtons(); // <-- disable Copy/Save/Print
 
   const reader = new FileReader();
@@ -4033,6 +4928,7 @@ function handleFileOpen(file) {
     const shownName = file.name || "file";
 
     gLoadedFileName = shownName;
+    setLoadedFileNameDisplay(gLoadedFileName);
 
     const tunes = splitAbcIntoTunes(text);
     const nTunes = tunes.length;
@@ -4045,8 +4941,8 @@ function handleFileOpen(file) {
       setStatus(`Loaded "${shownName}". Found ${nTunes} tunes.`);
     }
 
-    // Still disabled until user generates charts
-    syncActionButtons();
+    // Generate the chord charts immediately after opening the file.
+    generateCharts();
   };
 
   reader.onerror = () => {
@@ -4067,7 +4963,14 @@ function resetAllSettingsToDefaults_Persisted() {
   if ($("suppressPickup")) $("suppressPickup").value = "1";
   if ($("pickupMaxNotes")) $("pickupMaxNotes").value = "3";
   if ($("chartMonoFont")) $("chartMonoFont").value = "system";
-  if ($("linkTitles")) $("linkTitles").value = "0";
+
+  // Website Settings defaults
+  if ($("websiteTitleFontSize")) $("websiteTitleFontSize").value = "14";
+  if ($("websiteSubtitleFontSize")) $("websiteSubtitleFontSize").value = "12";
+  if ($("websiteTextFontSizeNoLyrics")) $("websiteTextFontSizeNoLyrics").value = "12";
+  if ($("websiteTextFontSize")) $("websiteTextFontSize").value = "8";
+  if ($("justifyTitles")) $("justifyTitles").value = "center";
+  if ($("addBlankLineUnderTitle")) $("addBlankLineUnderTitle").value = "0";
 
   // Print Settings defaults
   if ($("paperSize")) $("paperSize").value = "letter";
@@ -4078,6 +4981,7 @@ function resetAllSettingsToDefaults_Persisted() {
   if ($("printTuneGap")) $("printTuneGap").value = "30";
   if ($("showPageNumbers")) $("showPageNumbers").value = "0";
   if ($("pageNumberPos")) $("pageNumberPos").value = "bc";
+  if ($("linkTitles")) $("linkTitles").value = "0";
 
   // Apply dependent styles (print + chart font)
   applyChartMonoFontFromUI();
@@ -4110,13 +5014,25 @@ function hasChartsRendered() {
   return !!out.querySelector("section.chart");
 }
 
-function syncActionButtons() {
-  const enabled = hasChartsRendered();
+function inputHasABCTune() {
+  const abcText = $("abcIn") ? String($("abcIn").value || "") : "";
+  return /^\s*X\s*:/m.test(abcText);
+}
 
-  const ids = ["copyBtn", "saveBtn", "printBtn"];
-  for (const id of ids) {
+function syncActionButtons() {
+  const chartsEnabled = hasChartsRendered();
+  const inputHasTunes = inputHasABCTune();
+
+  const chartActionIds = ["copyBtn", "saveBtn", "printBtn"];
+  for (const id of chartActionIds) {
     const b = $(id);
-    if (b) b.disabled = !enabled;
+    if (b) b.disabled = !chartsEnabled;
+  }
+
+  const inputActionIds = ["generateBtn", "saveABCBtn", "generateWebsiteBtn"];
+  for (const id of inputActionIds) {
+    const b = $(id);
+    if (b) b.disabled = !inputHasTunes;
   }
 }
 
@@ -4188,7 +5104,229 @@ function checkTipReminder(count) {
   });
 }
 
+function applyPrintSettingsForWebsiteExport() {
+  if ($("paperSize") && $("orientation")) {
+    setPageStyle($("paperSize").value, $("orientation").value);
+  }
+  if ($("printFontSize") && $("printTitleSize")) {
+    setPrintFontSize($("printFontSize").value, $("printTitleSize").value);
+  }
+  if ($("oneTunePerPage")) {
+    setOneTunePerPagePrint($("oneTunePerPage").value === "1");
+  }
+  if ($("printTuneGap")) {
+    setPrintTuneGapPt($("printTuneGap").value);
+  }
+}
+
+
+function desktopDragDropSupported() {
+  return !gIsIOS &&
+    window.matchMedia &&
+    window.matchMedia("(pointer: fine)").matches;
+}
+
+function isLikelyABCText(text) {
+  return /^\s*X\s*:/m.test(String(text || ""));
+}
+
+function readDroppedTextFile(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+
+    reader.onload = () => resolve(String(reader.result || ""));
+    reader.onerror = () => reject(
+      reader.error || new Error("Unable to read dropped file.")
+    );
+
+    reader.readAsText(file);
+  });
+}
+
+async function handleDroppedChordGeneratorFile(file) {
+  if (!file) return;
+
+  const fileName = String(file.name || "file");
+  const lowerName = fileName.toLowerCase();
+
+  let text = "";
+
+  try {
+    text = await readDroppedTextFile(file);
+  } catch (e) {
+    setStatus(
+      "Drop failed: " + (e && e.message ? e.message : String(e)),
+      true
+    );
+    return;
+  }
+
+  if (lowerName.endsWith(".json")) {
+    const loaded = loadSettingsFromJsonText(text, `"${fileName}"`);
+
+    if (!loaded) {
+      setStatus(
+        `Dropped settings file "${fileName}" is not a valid settings file for this tool.`,
+        true
+      );
+    }
+
+    return;
+  }
+
+  const abcFileType =
+    lowerName.endsWith(".abc") ||
+    lowerName.endsWith(".txt") ||
+    (file.type && file.type.startsWith("text/"));
+
+  if (abcFileType || isLikelyABCText(text)) {
+    if (!isLikelyABCText(text)) {
+      setStatus(
+        `Dropped file "${fileName}" does not contain any ABC tunes with an X: tag.`,
+        true
+      );
+      return;
+    }
+
+    $("out").innerHTML = "";
+    $("abcIn").value = text;
+    $("fileIn").value = "";
+
+    gLoadedFileName = fileName;
+    gSavedChordFileName = "";
+    gSavedABCFileName = "";
+
+    setLoadedFileNameDisplay(gLoadedFileName);
+    generateCharts();
+
+    const tuneCount = splitAbcIntoTunes(text).length;
+    setStatus(
+      `Loaded "${fileName}" by drag and drop. Found ${tuneCount} ${tuneCount === 1 ? "tune" : "tunes"}.`
+    );
+
+    return;
+  }
+
+  setStatus(
+    `Dropped file "${fileName}" is not a supported ABC/text file or chord generator settings JSON file.`,
+    true
+  );
+}
+
+function enableDesktopFileDragAndDrop() {
+  if (!desktopDragDropSupported()) return;
+
+  const dropTarget = document.querySelector(".app");
+  if (!dropTarget) return;
+
+  let dragDepth = 0;
+
+  dropTarget.classList.add("desktop-drop-enabled");
+
+  dropTarget.addEventListener("dragenter", (event) => {
+    if (!event.dataTransfer ||
+        !Array.from(event.dataTransfer.types || []).includes("Files")) return;
+
+    event.preventDefault();
+    event.stopPropagation();
+
+    dragDepth++;
+    dropTarget.classList.add("drop-target-active");
+  });
+
+  dropTarget.addEventListener("dragover", (event) => {
+    if (!event.dataTransfer ||
+        !Array.from(event.dataTransfer.types || []).includes("Files")) return;
+
+    event.preventDefault();
+    event.stopPropagation();
+    event.dataTransfer.dropEffect = "copy";
+  });
+
+  dropTarget.addEventListener("dragleave", (event) => {
+    if (!event.dataTransfer ||
+        !Array.from(event.dataTransfer.types || []).includes("Files")) return;
+
+    event.preventDefault();
+    event.stopPropagation();
+
+    dragDepth = Math.max(0, dragDepth - 1);
+
+    if (dragDepth === 0) {
+      dropTarget.classList.remove("drop-target-active");
+    }
+  });
+
+  dropTarget.addEventListener("drop", async (event) => {
+    if (!event.dataTransfer || !event.dataTransfer.files.length) return;
+
+    event.preventDefault();
+    event.stopPropagation();
+
+    dragDepth = 0;
+    dropTarget.classList.remove("drop-target-active");
+
+    if (event.dataTransfer.files.length !== 1) {
+      setStatus(
+        "Please drop one ABC/text file or one chord generator settings JSON file at a time.",
+        true
+      );
+      return;
+    }
+
+    await handleDroppedChordGeneratorFile(event.dataTransfer.files[0]);
+  });
+}
+
+function scrollInstructionsToAnchor(anchorId) {
+  if (!anchorId) return false;
+
+  const target = document.getElementById(anchorId);
+  if (!target) return false;
+
+  const scroller = target.closest(".instructions-scroll-area");
+  if (scroller) {
+    const scrollerTop = scroller.getBoundingClientRect().top;
+    const targetTop = target.getBoundingClientRect().top;
+    scroller.scrollTop += targetTop - scrollerTop - 8;
+  } else {
+    target.scrollIntoView({ block: "start", inline: "nearest" });
+  }
+
+  if (target._instructionsHighlightTimers) {
+    target._instructionsHighlightTimers.forEach(timerId => clearTimeout(timerId));
+  }
+
+  target.classList.remove(
+    "instructions-target-highlight",
+    "instructions-target-highlight-visible"
+  );
+  void target.offsetWidth;
+  target.classList.add("instructions-target-highlight");
+
+  const fadeInTimer = setTimeout(() => {
+    target.classList.add("instructions-target-highlight-visible");
+
+    const fadeOutTimer = setTimeout(() => {
+      target.classList.remove("instructions-target-highlight-visible");
+
+      const cleanupTimer = setTimeout(() => {
+        target.classList.remove("instructions-target-highlight");
+        target._instructionsHighlightTimers = null;
+      }, 500);
+
+      target._instructionsHighlightTimers = [cleanupTimer];
+    }, 1750);
+
+    target._instructionsHighlightTimers = [fadeOutTimer];
+  }, 250);
+
+  target._instructionsHighlightTimers = [fadeInTimer];
+  return true;
+}
+
 function wireUp() {
+  enableDesktopFileDragAndDrop();
 
   function applyPrintSettings() {
     setPageStyle($("paperSize").value, $("orientation").value);
@@ -4216,6 +5354,13 @@ function wireUp() {
     if ($("appendRhythm")) $("appendRhythm").value = "1";
     if ($("chartMonoFont")) $("chartMonoFont").value = "system";
 
+    if ($("websiteTitleFontSize")) $("websiteTitleFontSize").value = "14";
+    if ($("websiteSubtitleFontSize")) $("websiteSubtitleFontSize").value = "12";
+    if ($("websiteTextFontSizeNoLyrics")) $("websiteTextFontSizeNoLyrics").value = "12";
+    if ($("websiteTextFontSize")) $("websiteTextFontSize").value = "8";
+    if ($("justifyTitles")) $("justifyTitles").value = "center";
+    if ($("addBlankLineUnderTitle")) $("addBlankLineUnderTitle").value = "0";
+
     $("paperSize").value = "letter";
     $("orientation").value = "portrait";
     $("printTitleSize").value = "16";
@@ -4225,17 +5370,19 @@ function wireUp() {
 
     if ($("showPageNumbers")) $("showPageNumbers").value = "0";
     if ($("pageNumberPos")) $("pageNumberPos").value = "bc";
+    if ($("linkTitles")) $("linkTitles").value = "0";
 
     if ($("suppressPickup")) $("suppressPickup").value = "1";
     if ($("pickupMaxNotes")) $("pickupMaxNotes").value = "3";
 
     if ($("emptyMeasurePlaceholder")) $("emptyMeasurePlaceholder").value = "/";
 
-    if ($("linkTitles")) $("linkTitles").value = "0";
-
+  
     // Reset internal state
     gLoadedFileName = "";
     gSavedChordFileName = "";
+    gSavedABCFileName = "";
+    setLoadedFileNameDisplay("");
 
     // Restore saved settings (may override defaults)
     restoreSavedSettingsIntoUI_SettingsOnly();
@@ -4255,11 +5402,14 @@ function wireUp() {
 
     applyPrintSettings();
 
+    // Generate immediately on first launch or after loading ABC from a share link.
+    generateCharts();
+
     if (gIsIOS) {
       document.getElementById("fileIn").removeAttribute("accept");
     }
 
-    // No charts yet => disable Copy/Save/Print
+    // Keep all action buttons synchronized with the generated output/input.
     syncActionButtons();
   }
 
@@ -4273,6 +5423,8 @@ function wireUp() {
 
     gLoadedFileName = "";
     gSavedChordFileName = "";
+    gSavedABCFileName = "";
+    setLoadedFileNameDisplay("");
 
     setStatus("Ready.");
 
@@ -4300,6 +5452,10 @@ function wireUp() {
   // ------------------------------------------------------------
   // Button wiring
   // ------------------------------------------------------------
+
+  $("abcIn").addEventListener("input", function () {
+    syncActionButtons();
+  });
 
   $("generateBtn").addEventListener("click", function () {
 
@@ -4337,6 +5493,24 @@ function wireUp() {
       setStatus("Save failed: " + (e && e.message ? e.message : String(e)), true);
     }
   });
+
+  if ($("saveABCBtn")) {
+    $("saveABCBtn").addEventListener("click", async function () {
+      sendGoogleAnalytics("action", "save_abc");
+
+      try {
+        await saveGeneratedChordChartsAsABC();
+      } catch (e) {
+        setStatus("Save Chord Chart as ABC failed: " + (e && e.message ? e.message : String(e)), true);
+      }
+    });
+  }
+
+  if ($("generateWebsiteBtn")) {
+    $("generateWebsiteBtn").addEventListener("click", function () {
+      launchAbcjsEskinWebsiteBuilderFromChordCharts();
+    });
+  }
 
   $("clearBtn").addEventListener("click", function () {
     clearAll();
@@ -4405,6 +5579,19 @@ function wireUp() {
   $("printFontSize").addEventListener("change", applyPrintSettings);
   $("printTitleSize").addEventListener("change", applyPrintSettings);
   $("printTuneGap").addEventListener("change", applyPrintSettings);
+
+  [
+    "websiteTitleFontSize",
+    "websiteSubtitleFontSize",
+    "websiteTextFontSize"
+  ].forEach((id) => {
+    const el = $(id);
+    if (!el) return;
+    el.addEventListener("change", function () {
+      normalizeWebsiteFontSizeInputs();
+      saveStateSoon_SettingsOnly();
+    });
+  });
 
   if ($("showPageNumbers")) {
     $("showPageNumbers").addEventListener("change", function() {
@@ -4547,7 +5734,7 @@ function wireUp() {
   }
 
   // Help modal
-  $("btnHelp").addEventListener("click", function () {
+  function openInstructions(targetAnchorId = null) {
 
     if (!window.DayPilot || !DayPilot.Modal || typeof DayPilot.Modal.alert !== "function") {
       alert("DayPilot.Modal is not loaded. Instructions are not available.");
@@ -4567,14 +5754,19 @@ function wireUp() {
       '  <div style="margin-bottom:16px;">' +
       '    <div style="font-weight:700; margin-bottom:6px;">First: Load some ABC tunes</div>' +
       '    Paste one or more ABC tunes into the editor, or open a <code>.abc</code> / <code>.txt</code> file.<br/>' +
-      '    This tool can also receive full ABC text directly from the <b>ABC Transcription Tools</b>; when received, the ABC Input box is populated with the transferred text and you can click <b>Generate Charts</b>.<br/>' +
+      '    On desktop browsers, you can also drag and drop one ABC/text file or one chord generator settings JSON file anywhere on the tool. ' +
+      '    This tool can also receive full ABC text directly from the <b>ABC Transcription Tools</b>; when received, the ABC Input box is populated and the chord charts are generated automatically.<br/>' +
       '    <span class="muted">Tip: Chord charts are generated from chord symbols in quotes<br/>(for example: <code>"G"</code>, <code>"Am"</code>).</span>' +
       '  </div>' +
 
       '  <div style="margin-bottom:16px;">' +
-      '    <div style="font-weight:700; margin-bottom:6px;">Next: Generate the chord charts</div>' +
-      '    Click <b>Generate Charts</b>. The charts will appear in the <b>Chord Charts</b> area on the right.<br/>' +
-      '    Tunes with no chords are skipped.<br/>Measures with no chords are shown as empty (or with your selected placeholder).' +
+      '    Each setting has a small <b>?</b> help button to the right of its input field. Click it to open these Instructions directly at the description for that setting.<br/>' +
+      '  </div>' +
+
+      '  <div style="margin-bottom:16px;">' +
+      '    <div style="font-weight:700; margin-bottom:6px;">Generate or refresh the chord charts</div>' +
+      '    Chord charts are generated automatically on first launch and when ABC is loaded from a file or received directly from ABC Transcription Tools. After typing, pasting, or editing ABC in the input area, click <b>Generate Charts</b> to refresh the charts.<br/>' +
+      '    The charts appear in the <b>Chord Charts</b> area on the right. Tunes with no chords are skipped.<br/>Measures with no chords are shown as empty (or with your selected placeholder).' +
       '  </div>' +
 
       '  <div style="margin-bottom:16px;">' +
@@ -4599,24 +5791,35 @@ function wireUp() {
       '  <hr style="border:0; border-top:1px solid #ccc; margin:18px 0;">' +
 
       '  <div style="margin-bottom:16px;">' +
-      '    <b>Once the chord charts have been generated, you can do the following:</b>' +
+      '    <b>You can use the following output and export options:</b>' +
       '  </div>' +
 
       '  <div style="margin-bottom:16px;">' +
-      '    <b>1) Copy chord charts to the clipboard</b><br/>' +
-      '    Click <b>Copy</b> to copy the generated chord charts to the system clipboard.' +
-      '  </div>' +
-
-      '  <div style="margin-bottom:16px;">' +
-      '    <b>2) Save the chord charts to a text file</b><br/>' +
+      '    <b>1) Save the chord charts to a text file</b><br/>' +
       '    Click <b>Save</b> to save the generated chord charts to a text file (opens the sharing dialog on iOS).' +
+      '  </div>' +
+
+      '  <div style="margin-bottom:16px;">' +
+      '    <b>2) Copy chord charts to the clipboard</b><br/>' +
+      '    Click <b>Copy</b> to copy the generated chord charts to the system clipboard.' +
       '  </div>' +
 
       '  <div style="margin-bottom:16px;">' +
       '    <b>3) Print chord charts or generate a PDF</b><br/>' +
       '    Click <b>Print</b> to print the generated chord charts from the browser.<br/>' +
-      '    The chord chart text may be scaled as required to fit on the page without clipping.' +
-      '    You may also save a PDF of the charts using the browser\'s native <b>Print-to-PDF</b> feature.' +
+      '    For wide chord charts, use your browser\'s print scaling option, such as <b>Fit to page width</b>, when available. You may also save a PDF of the charts using the browser\'s native <b>Print-to-PDF</b> feature.' +
+      '  </div>' +
+
+      '  <div style="margin-bottom:16px;">' +
+      '    <b>4) Generate and save the chord charts as ABC</b><br/>' +
+      '    Click <b>Save Chord Chart as ABC</b> to regenerate the chord charts using the current settings, convert the generated chart text to ABC <code>%%text</code> lines, and save the result as an ABC text file.<br/>' +
+      '    Blank chart lines are preserved as standalone <code>%%text</code> lines, with consecutive blank <code>%%text</code> lines collapsed to one. The <b>Add blank line under title?</b> Website Setting controls whether one blank <code>%%text</code> spacer is added immediately after each generated tune title. Each generated tune is also marked so the Website Builder does not add a playback controller. On iOS, the normal sharing dialog is used.' +
+      '  </div>' +
+
+      '  <div style="margin-bottom:16px;">' +
+      '    <b>5) Generate the chord charts and open the Website Builder</b><br/>' +
+      '    Click <b>Open in Website Builder</b> to regenerate the chord charts using the current settings, convert them to ABC text blocks, then open the <b>abcjs-eskin Website Builder</b> and transfer the generated ABC directly to it.<br/>' +
+      '    Direct transfer requires the official online version of this tool and an internet connection.' +
       '  </div>' +
 
       '  <hr style="border:0; border-top:1px solid #ccc; margin:18px 0;">' +
@@ -4624,28 +5827,60 @@ function wireUp() {
       '  <div style="margin-bottom:16px;">' +
       '    <div style="font-weight:700; font-size:14pt; margin-bottom:10px;">Chord Chart Settings</div>' +
 
-      '    <div style="font-weight:700; margin-bottom:6px;">Chord chart font</div>' +
+      '    <div id="instructions-setting-chart-font" style="font-weight:700; margin-bottom:6px;">Chord chart font</div>' +
       '    Selects the monospaced font to use for the chord charts.<br/><br/>' +
 
-      '    <div style="font-weight:700; margin-bottom:6px;">Add blank lines between chart rows</div>' +
+      '    <div id="instructions-setting-add-blank-lines" style="font-weight:700; margin-bottom:6px;">Add blank lines between chart rows</div>' +
       '    Controls whether generated charts include a blank line between plain chord rows, or between each chord/lyric row group for tunes with lyrics. It does not add blank lines inside uppercase <code>W:</code> lyric text printed below the main chart.<br/><br/>' +
 
-      '    <div style="font-weight:700; margin-bottom:6px;">Extra spacing (chars, not used for tunes with lyrics)</div>' +
+      '    <div id="instructions-setting-extra-spacing" style="font-weight:700; margin-bottom:6px;">Extra spacing (chars, not used for tunes with lyrics)</div>' +
       '    Adds extra spacing to make charts easier to read while keeping all barlines aligned.' +
       '    (This increases spacing after barlines/chord cells, and also increases spacing between multiple chords that occur in the same measure.)<br/><br/>' +
 
-      '    <div style="font-weight:700; margin-bottom:6px;">Append tune style (R:) to titles</div>' +
+      '    <div id="instructions-setting-append-rhythm" style="font-weight:700; margin-bottom:6px;">Append tune style (R:) to titles</div>' +
       '    Optionally appends the tune rhythm/style tag in parentheses after the tune title.<br/><br/>' +
 
-      '    <div style="font-weight:700; margin-bottom:6px;">Empty measure placeholder</div>' +
+      '    <div id="instructions-setting-empty-measure-placeholder" style="font-weight:700; margin-bottom:6px;">Empty measure placeholder</div>' +
       '    Character (or none) to show in measures without chords.<br/>' +
       '    Default is: /<br/>' +
       '    This does not affect tunes that contain no chords at all (those are skipped).<br/><br/>' +
 
-      '    <div style="font-weight:700; margin-bottom:6px;">Add ABC Transcription Tools play links to titles</div>' +
-      '    When enabled, adds ABC Transcription Tools play links to the title of each tune in the chord charts.<br/>' +
-      '    If you create a PDF file from the chord charts using the brower\'s <b>Print-to-PDF</b> feature, you can click on the title of any tune to open it in the ABC Transcription Tools player.' +
+      '  </div>' +
 
+      '  <hr style="border:0; border-top:1px solid #ccc; margin:18px 0;">' +
+
+      '  <div style="margin-bottom:16px;">' +
+      '    <div style="font-weight:700; font-size:14pt; margin-bottom:10px;">Website Settings</div>' +
+
+      '    The Website Settings control the ABC font and title-layout directives written by <b>Save Chord Chart as ABC</b> and <b>Open in Website Builder</b>. The selected <b>Chord chart font</b> is used as the font family.<br/><br/>' +
+
+      '    <div id="instructions-setting-title-font-size" style="font-weight:700; margin-bottom:6px;">Title font size</div>' +
+      '    Sets the <code>%%titlefont</code> size in the generated ABC. Default: 14. Valid range: 1 through 144.<br/><br/>' +
+
+      '    <div id="instructions-setting-subtitle-font-size" style="font-weight:700; margin-bottom:6px;">Subtitle font size</div>' +
+      '    Sets the <code>%%subtitlefont</code> size in the generated ABC. Default: 12. Valid range: 1 through 144.<br/><br/>' +
+
+      '    <div id="instructions-setting-text-font-no-lyrics" style="font-weight:700; margin-bottom:6px;">Text font size (tune without lyrics)</div>' +
+      '    Sets the <code>%%textfont</code> size used for generated tunes that do not contain <code>w:</code> or <code>W:</code> lyric lines. Default: 12. Valid range: 1 through 144.<br/><br/>' +
+
+      '    <div id="instructions-setting-text-font-with-lyrics" style="font-weight:700; margin-bottom:6px;">Text font size (tune with lyrics)</div>' +
+      '    Sets the <code>%%textfont</code> size used for generated tunes that contain <code>w:</code> or <code>W:</code> lyric lines. Default: 8. Valid range: 1 through 144.<br/><br/>' +
+
+      '    <div id="instructions-setting-justify-titles" style="font-weight:700; margin-bottom:6px;">Justify titles</div>' +
+      '    Controls title alignment in generated ABC and websites.<br/>' +
+      '    <b>Center</b> is the default and adds no title-justification directive.<br/>' +
+      '    <b>Left</b> adds <code>%left_justify_titles</code> immediately below each generated <code>X:</code> tag.<br/><br/>' +
+
+      '    <div id="instructions-setting-blank-line-under-title" style="font-weight:700; margin-bottom:6px;">Add blank line under title?</div>' +
+      '    Controls whether one blank <code>%%text</code> line is added immediately after the title of every generated tune.<br/>' +
+      '    <b>No</b> is the default and omits the extra blank line.<br/>' +
+      '    <b>Yes</b> adds the blank line.<br/>' +
+      '    This setting is independent of whether the tune contains <code>w:</code> or <code>W:</code> lyrics.<br/><br/>' +
+
+      '    <div style="font-weight:700; margin-bottom:6px;">Automatic website width adjustment</div>' +
+      '    When generating ABC for saving or for the Website Builder, the tool measures the widest generated chord-chart line using the selected chord chart font, its bold setting if applicable, and the text font size selected for that tune based on whether it contains <code>w:</code> or <code>W:</code> lyrics. The tool allows a small safety margin for font-rendering differences. If the measured width plus that margin does not fit within the normal ABC staff width of 556, the tool automatically adds a per-tune <code>%%staffwidth</code> directive with additional horizontal space. Tunes that fit within the normal width, including the safety margin, do not receive a <code>%%staffwidth</code> directive.<br/><br/>' +
+
+      '    These settings are saved in your browser with the other settings and are also included when you save or load all settings. Older settings files remain compatible: an existing saved Text font size continues to be used for tunes with lyrics, while the new text size for tunes without lyrics defaults to 12. Titles default to centered when the title-justification setting is absent, and no extra blank line is added under titles when the blank-line setting is absent.' +
       '  </div>' +
 
       '  <hr style="border:0; border-top:1px solid #ccc; margin:18px 0;">' +
@@ -4653,38 +5888,42 @@ function wireUp() {
       '  <div style="margin-bottom:16px;">' +
       '    <div style="font-weight:700; font-size:14pt; margin-bottom:10px;">Print Settings</div>' +
 
-      '    <div style="font-weight:700; margin-bottom:6px;">Paper size</div>' +
+      '    <div id="instructions-setting-paper-size" style="font-weight:700; margin-bottom:6px;">Paper size</div>' +
       '    Select the target paper size for printing (Letter, A4, Legal, or Tabloid).<br/>' +
       '    This controls the page dimensions used by the browser when printing or exporting to PDF.<br/><br/>' +
 
-      '    <div style="font-weight:700; margin-bottom:6px;">Orientation</div>' +
+      '    <div id="instructions-setting-orientation" style="font-weight:700; margin-bottom:6px;">Orientation</div>' +
       '    Choose Portrait or Landscape layout.<br/>' +
       '    Landscape can be helpful for wider chord charts.<br/><br/>' +
 
-      '    <div style="font-weight:700; margin-bottom:6px;">Tune title font size (pt)</div>' +
+      '    <div id="instructions-setting-print-title-size" style="font-weight:700; margin-bottom:6px;">Tune title font size (pt)</div>' +
       '    Sets the printed font size of each tune title.<br/>' +
       '    This does not affect the on-screen display — print only.<br/><br/>' +
 
-      '    <div style="font-weight:700; margin-bottom:6px;">Tune chords font size (pt)</div>' +
-      '    Sets the starting font size for the printed chord chart text.<br/>' +
-      '    The print view will automatically shrink the chord text only if needed to prevent clipping.<br/><br/>' +
+      '    <div id="instructions-setting-print-chord-size" style="font-weight:700; margin-bottom:6px;">Tune chords font size (pt)</div>' +
+      '    Sets the font size for the printed chord chart text.<br/>' +
+      '    For wide chord charts, use your browser\'s print scaling option, such as <b>Fit to page width</b>, when available.<br/><br/>' +
 
-      '    <div style="font-weight:700; margin-bottom:6px;">Print one tune/page</div>' +
+      '    <div id="instructions-setting-one-tune-per-page" style="font-weight:700; margin-bottom:6px;">Print one tune/page</div>' +
       '    When enabled, each tune starts on a new printed page.<br/>' +
       '    When disabled, multiple tunes may print on the same page using the selected gap spacing.<br/><br/>' +
 
-      '    <div style="font-weight:700; margin-bottom:6px;">Gap between tunes (pt)</div>' +
+      '    <div id="instructions-setting-print-tune-gap" style="font-weight:700; margin-bottom:6px;">Gap between tunes (pt)</div>' +
       '    Controls the vertical space between multiple tunes when printing more than one tune per page.<br/>' +
       '    Smaller values fit more tunes on a page; larger values add separation for readability.<br/><br/>' +
 
-      '    <div style="font-weight:700; margin-bottom:6px;">Add page numbers</div>' +
+      '    <div id="instructions-setting-add-page-numbers" style="font-weight:700; margin-bottom:6px;">Add page numbers</div>' +
       '    When enabled, page numbers will be added to the printed output.<br/>' +
       '    <b>Note:</b> This feature is only available on Chromium-based browsers (e.g., Chrome, Edge, Brave).<br/><br/>' +
 
-      '    <div style="font-weight:700; margin-bottom:6px;">Page number location</div>' +
+      '    <div id="instructions-setting-page-number-location" style="font-weight:700; margin-bottom:6px;">Page number location</div>' +
       '    Select where the page number appears on each printed page (top or bottom, left, center, or right).<br/>' +
       '    This setting is only used when page numbers are enabled.<br/>' +
-      '    <b>Note:</b> This feature is only available on Chromium-based browsers (e.g., Chrome, Edge, Brave).' +
+      '    <b>Note:</b> This feature is only available on Chromium-based browsers (e.g., Chrome, Edge, Brave).<br/><br/>' +
+      '    <div id="instructions-setting-link-titles" style="font-weight:700; margin-bottom:6px;">Add ABC Transcription Tools play links to titles</div>' +
+      '    When enabled, adds ABC Transcription Tools play links to the title of each tune in the chord charts.<br/>' +
+      '    If you create a PDF file from the chord charts using the browser\'s <b>Print-to-PDF</b> feature, you can click on the title of any tune to open it in the ABC Transcription Tools player.' +
+
       '  </div>' +
 
       '  <hr style="border:0; border-top:1px solid #ccc; margin:18px 0;">' +
@@ -4692,12 +5931,12 @@ function wireUp() {
       '  <div style="margin-bottom:16px;">' +
       '    <div style="font-weight:700; font-size:14pt; margin-bottom:10px;">Advanced Settings</div>' +
       '    Probably best to leave these at their default values.<br/><br/>' +
-      '    <div style="font-weight:700; margin-bottom:6px;">Suppress pickups</div>' +
+      '    <div id="instructions-setting-suppress-pickups" style="font-weight:700; margin-bottom:6px;">Suppress pickups</div>' +
       '    When enabled, short partial measure pickup notes before the first barline or after a repeat (that contain no chord symbols) ' +
       '    will not be shown as a separate measure in the chord chart.<br/>' +
       '    This can make the chord charts look more natural.<br/><br/>' +
 
-      '    <div style="font-weight:700; margin-bottom:6px;">Max pickup notes</div>' +
+      '    <div id="instructions-setting-max-pickup-notes" style="font-weight:700; margin-bottom:6px;">Max pickup notes</div>' +
       '    When pickup suppression is enabled, treat 1–5 leading note-events or fewer before the first barline as a pickup.<br/>' +
       '    Default is: 3<br/>' +
       '    Increase this value if a tune begins with a slightly longer pickup.' +
@@ -4740,20 +5979,96 @@ function wireUp() {
       '    <a href="https://github.com/seisiuneer/abctools/blob/main/tools/abc_to_chord_chart.html" target="_blank" rel="noopener noreferrer">' +
       '      abc_to_chord_chart.html' +
       '    </a>' +
-      '  </div>';
+      '  </div>' +
+      '  <hr style="border:0; border-top:1px solid #ccc; margin:18px 0;">' +
+      '  <div style="text-align:center;">Version ' + TOOL_VERSION + '</div>';
 
-      const html =
-      '<div id="instructions_div" style="font-family:Helvetica, Arial, sans-serif; font-size:12.5pt; line-height:1.6;">' +
-      '  <div style="text-align:center; font-size:16pt; font-weight:700; margin-bottom:16px;">Instructions</div>' +
-      '  <div style="width:100%; max-height:min(60vh, 620px); overflow:auto; -webkit-overflow-scrolling:touch; padding:0 12px 2px 30px; box-sizing:border-box;">' +
+    const viewportHeight = window.innerHeight || document.documentElement.clientHeight || 700;
+    const viewportWidth = window.innerWidth || document.documentElement.clientWidth || 900;
+    const isTabletLikeViewport =
+      viewportWidth >= 761 &&
+      viewportWidth <= 1180 &&
+      viewportHeight >= 900 &&
+      navigator.maxTouchPoints > 0;
+    const instructionsDialogTop = isTabletLikeViewport ? 50 : (viewportHeight < 700 ? 12 : 24);
+    const instructionsDialogBottomGap = isTabletLikeViewport ? 100 : 76;
+    const instructionsDialogMaxHeight = isTabletLikeViewport ? 1200 : 1060;
+    const instructionsDialogHeight = Math.min(
+      instructionsDialogMaxHeight,
+      Math.max(360, viewportHeight - instructionsDialogTop - instructionsDialogBottomGap)
+    );
+    const instructionsScrollMax = Math.max(220, instructionsDialogHeight - 150);
+
+    const html =
+      '<div id="instructions_div" class="instructions-modal-content" style="--instructions-scroll-max:' +
+      instructionsScrollMax +
+      'px;">' +
+      '  <h2>Instructions</h2>' +
+      '  <div class="instructions-scroll-area">' +
       content +
       '  </div>' +
       '</div>';
 
-    DayPilot.Modal.alert(html, {
+    const instructionsModal = DayPilot.Modal.alert(html, {
       theme: "modal_flat",
-      top: 25,
+      width: Math.min(900, Math.max(560, viewportWidth - 100)),
+      height: instructionsDialogHeight,
+      top: instructionsDialogTop,
+      okText: "Close",
       scrollWithPage: false
+    });
+
+    const markInstructionsModalShell = () => {
+      const instructionsRoot = document.querySelector(".instructions-modal-content");
+      if (!instructionsRoot) return false;
+
+      const modalShell =
+        instructionsRoot.closest(".modal_flat_main") ||
+        instructionsRoot.closest(".modal_default_main");
+
+      if (!modalShell) return false;
+
+      modalShell.classList.add("instructions-modal-shell");
+      return true;
+    };
+
+    let instructionsShellAttempts = 0;
+    const scheduleInstructionsShellMark = () => {
+      instructionsShellAttempts += 1;
+      if (!markInstructionsModalShell() && instructionsShellAttempts < 30) {
+        setTimeout(scheduleInstructionsShellMark, 25);
+      }
+    };
+
+    scheduleInstructionsShellMark();
+
+    if (targetAnchorId) {
+      let instructionsScrollAttempts = 0;
+      const scheduleInstructionsTargetScroll = () => {
+        instructionsScrollAttempts += 1;
+
+        if (!scrollInstructionsToAnchor(targetAnchorId) && instructionsScrollAttempts < 40) {
+          setTimeout(scheduleInstructionsTargetScroll, 25);
+        }
+      };
+
+      scheduleInstructionsTargetScroll();
+    }
+
+    return instructionsModal;
+  }
+
+  $("btnHelp").addEventListener("click", function () {
+    void openInstructions();
+  });
+
+  document.querySelectorAll(".setting-help-button").forEach(button => {
+    button.addEventListener("click", event => {
+      event.preventDefault();
+      event.stopPropagation();
+
+      const targetAnchorId = button.dataset.instructionsAnchor || null;
+      void openInstructions(targetAnchorId);
     });
   });
 
