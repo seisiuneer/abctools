@@ -31,7 +31,7 @@
  **/
 
 // Version number for the settings dialog
-var gVersionNumber = "3285_070326_1130";
+var gVersionNumber = "3286_070626_0430";
 
 var gMIDIInitStillWaiting = false;
 
@@ -12346,40 +12346,6 @@ function ExportTextIncipitsPDF(title, bDoFullTunes, bDoCCETransform, bDoQRCodes)
             // Save the status up for a bit before saving
             setTimeout(async function() {
 
-              // Start the PDF save
-              if (isMobileBrowser()) {
-
-                var theBlob = pdf.output('blob', {
-                  filename: (title)
-                });
-
-                var newBlob = new Blob([theBlob], {
-                  type: 'application/octet-stream'
-                });
-
-                var a = document.createElement("a");
-
-                document.body.appendChild(a);
-
-                a.style = "display: none";
-
-                var url = window.URL.createObjectURL(newBlob);
-                a.href = url;
-                a.download = (title);
-                a.click();
-
-                document.body.removeChild(a);
-
-                setTimeout(function() {
-                  window.URL.revokeObjectURL(url);
-                }, 1000);
-
-              } else {
-
-                // This works fine on all desktop browsers
-                pdf.save(title);
-              }
-
               document.getElementById("statuspdfname").innerHTML = "&nbsp;";
 
               document.getElementById("statustunecount").innerHTML = "&nbsp;";
@@ -12394,6 +12360,24 @@ function ExportTextIncipitsPDF(title, bDoFullTunes, bDoCCETransform, bDoQRCodes)
               gRenderingPDF = false;
 
               clearGetTuneByIndexCache();
+
+              // MAE 6 July 2026 - For iOS Share sheet on PDF export
+              if (isMobileBrowser()) {
+
+                var theBlob = pdf.output('blob');
+
+                await shareOrDownloadFile(
+                  theBlob,
+                  title,
+                  "application/pdf"
+                );
+
+              } else {
+
+                // This works fine on all desktop browsers
+                pdf.save(title);
+
+              }
 
             }, 500);
 
@@ -13216,37 +13200,29 @@ function ExportNotationPDF(title) {
                   // Start the normal PDF save
                   setTimeout(async function() {
 
+                    // MAE 6 July 2026 - For iOS Share sheet on PDF export
                     if (isMobileBrowser()) {
 
-                      var theBlob = pdf.output('blob', {
-                        filename: (title)
-                      });
+                      // Hide the PDF status modal
+                      var pdfstatus = document.getElementById("pdf-controls");
+                      pdfstatus.style.display = "none";
 
-                      var newBlob = new Blob([theBlob], {
-                        type: 'application/octet-stream'
-                      });
+                      var theBlob = pdf.output('blob');
 
-                      var a = document.createElement("a");
+                      await shareOrDownloadFile(
+                        theBlob,
+                        title,
+                        "application/pdf"
+                      );
 
-                      document.body.appendChild(a);
+                      pdfstatus.style.display = "block";
 
-                      a.style = "display: none";
-
-                      var url = window.URL.createObjectURL(newBlob);
-                      a.href = url;
-                      a.download = (title);
-                      a.click();
-
-                      document.body.removeChild(a);
-
-                      setTimeout(function() {
-                        window.URL.revokeObjectURL(url);
-                      }, 1000);
 
                     } else {
 
                       // This works fine on all desktop browsers
                       pdf.save(title);
+
                     }
 
                     // Clean up and finish
@@ -22854,7 +22830,6 @@ function RoundTripMusicXML() {
   }
 }
 
-
 //
 // Save a file, using the iOS share sheet when available
 //
@@ -22893,20 +22868,51 @@ async function shareOrDownloadFile(data, filename, mimeType) {
 
   if (gIsIOS && navigator.share && navigator.canShare && (typeof File !== "undefined")) {
     try {
+
       const file = new File([blob], filename, {
         type: fileType
       });
 
-      if (navigator.canShare({ files: [file] })) {
-        await navigator.share({ files: [file] });
-        return true;
+      // Force a fresh user action for PDF export
+      if (fileType == "application/pdf") {
+
+        var thePrompt = "The PDF has been generated and is ready to save.<br/><br/>Tap Share to open the Share Sheet and save or share the PDF.";
+
+        // Center the string in the prompt
+        thePrompt = makeCenteredPromptString(thePrompt);
+
+        const args = await DayPilot.Modal.confirm(thePrompt, {
+          top: 180,
+          theme: "modal_flat",
+          okText: "Share",
+          scrollWithPage: (AllowDialogsToScroll())
+        });
+
+        // User pressed Cancel
+        if (args.canceled) {
+          return false;
+        }
+
+        // The Share button tap provides the fresh user action
+        if (navigator.canShare({ files: [file] })) {
+          await navigator.share({ files: [file] });
+          return true;
+        }
+
+      } else {
+
+        if (navigator.canShare({ files: [file] })) {
+          await navigator.share({ files: [file] });
+          return true;
+        }
+
       }
 
     } catch (err) {
       //console.log("shareOrDownloadFile share cancelled or failed:", err);
       return false;
     }
-  }
+}
 
   const url = window.URL.createObjectURL(blob);
   const a = document.createElement("a");
@@ -28507,13 +28513,13 @@ async function processShareLink() {
       // Show update message?
       if (gLocalStorageAvailable){
 
-        var updatePresented = localStorage.sawUpdate_3jul2026;
+        var updatePresented = localStorage.sawUpdate_6jul2026;
 
         if (updatePresented != "true") {
 
           showWhatsNewScreen();
 
-          localStorage.sawUpdate_3jul2026 = true;
+          localStorage.sawUpdate_6jul2026 = true;
 
         }
 
@@ -57187,7 +57193,13 @@ function showWhatsNewScreen() {
   modal_msg += 'background: linear-gradient(135deg, #0b1f3a 0%, #145ca8 52%, #2f9df5 100%);';
   modal_msg += 'box-shadow: 0 6px 16px rgba(0,0,0,0.14); color:#fff;">';
   modal_msg += '<div style="font-size:20pt; line-height:24pt; font-weight:bold;">What&apos;s New</div>';
-  modal_msg += '<div style="font-size:12pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 3 July 2026</div>';
+  modal_msg += '<div style="font-size:12pt; opacity:0.92; margin-top:3px;">Version ' + gVersionNumber + ' released 36 July 2026</div>';
+  modal_msg += '</div>';
+
+  // Feature card
+  modal_msg += '<div style="margin:10px 0 6px 0; padding:0px 12px; border-radius:12px;';
+  modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);font-size:12pt;">';
+  modal_msg += '<p style="font-size:12pt;">iPhone and iPad now uses an iOS share sheet to save or share exported PDF files.</p>';
   modal_msg += '</div>';
 
   // Feature card
@@ -57197,13 +57209,6 @@ function showWhatsNewScreen() {
   modal_msg += '<p style="font-size:12pt;">Previously, if a long note or rest in the transcoded MusicXML had multiple chords associated with it, it would render and play incorrectly.</p>';
   modal_msg += '<p style="font-size:12pt;">The MusicXML importer now automatically splits those long notes/rest into multiple shorter notes/rests with ties as required for the notes and spreads the chords between the split notes/rests.</p>';
   modal_msg += '<p style="font-size:12pt;">This is particularly useful for importing complex MusicXML jazz arrangements.</p>';
-  modal_msg += '</div>';
-
-  // Feature card
-  modal_msg += '<div style="margin:10px 0 6px 0; padding:0px 12px; border-radius:12px;';
-  modal_msg += 'background:#fff; border:1px solid #e7e7e7; box-shadow: 0 2px 10px rgba(0,0,0,0.06);font-size:12pt;">';
-  modal_msg += '<p style="font-size:12pt;">You can now send all the tune in the editor to the <strong>ABC Chord Chart Generator</strong>.</p>';
-  modal_msg += '<p style="font-size:12pt;">The tool sends either just the current tune if launched from the <strong>Player</strong> or <strong>Tune Trainer</strong>, or all the tunes in the editor if launched from the <strong>Sharing Controls</strong> dialog.</p>';
   modal_msg += '</div>';
 
   modal_msg += '</div>'; // wrapper
@@ -63874,13 +63879,13 @@ async function DoStartup() {
   // Show update message?
   if (gLocalStorageAvailable && (!isFromShare)){
 
-    var updatePresented = localStorage.sawUpdate_3jul2026;
+    var updatePresented = localStorage.sawUpdate_6jul2026;
 
     if (updatePresented != "true") {
 
       showWhatsNewScreen();
 
-      localStorage.sawUpdate_3jul2026 = true;
+      localStorage.sawUpdate_6jul2026 = true;
 
     }
 
