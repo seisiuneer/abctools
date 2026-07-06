@@ -22912,7 +22912,7 @@ async function shareOrDownloadFile(data, filename, mimeType) {
       //console.log("shareOrDownloadFile share cancelled or failed:", err);
       return false;
     }
-}
+  }
 
   const url = window.URL.createObjectURL(blob);
   const a = document.createElement("a");
