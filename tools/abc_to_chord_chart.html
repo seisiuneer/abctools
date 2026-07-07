@@ -1370,6 +1370,15 @@
         </div>
 
         <div class="row" style="margin-top:10px;">
+          <label for="showBarLines"><strong>Show bar lines</strong></label>
+          <span class="setting-control-with-help"><select id="showBarLines"
+                  title="Controls whether bar lines are shown in generated chord charts">
+            <option value="0">No</option>
+            <option value="1" selected>Yes</option>
+          </select><button type="button" class="setting-help-button" data-instructions-anchor="instructions-setting-show-bar-lines" aria-label="Open instructions for Show bar lines" title="Open instructions for Show bar lines">?</button></span>
+        </div>
+
+        <div class="row" style="margin-top:10px;">
           <label for="emptyMeasurePlaceholder"><strong>Empty measure placeholder</strong></label>
           <span class="setting-control-with-help"><select id="emptyMeasurePlaceholder"
                   title="Character to insert when a measure has no chord">
@@ -1864,7 +1873,7 @@ let gLocalStorageAvailable = localStorageIsUsable();
 
 function getUIStateForSave_SettingsOnly() {
   return {
-    v: 12, // Chord Chart Settings include composer and trailing metadata tag options
+    v: 13, // Chord Chart Settings include the Show bar lines option
 
     // Chord Chart Settings
     slotWidth: $("slotWidth") ? $("slotWidth").value : "1",
@@ -1873,6 +1882,7 @@ function getUIStateForSave_SettingsOnly() {
     addBlankLineUnderTitle: $("addBlankLineUnderTitle") ? $("addBlankLineUnderTitle").value : "0",
     appendRhythm: $("appendRhythm") ? $("appendRhythm").value : "1",
     metadataTagsAfterChart: $("metadataTagsAfterChart") ? normalizeMetadataTagControlString($("metadataTagsAfterChart").value) : "",
+    showBarLines: $("showBarLines") ? $("showBarLines").value : "1",
     emptyMeasurePlaceholder: $("emptyMeasurePlaceholder") ? $("emptyMeasurePlaceholder").value : "/",
     suppressPickup: $("suppressPickup") ? $("suppressPickup").value : "1",
     pickupMaxNotes: $("pickupMaxNotes") ? $("pickupMaxNotes").value : "3",
@@ -1911,6 +1921,7 @@ function applyUIStateFromObj_SettingsOnly(st) {
   if ($("appendRhythm") && st.appendRhythm != null) $("appendRhythm").value = String(st.appendRhythm);
   if ($("metadataTagsAfterChart")) $("metadataTagsAfterChart").value =
     normalizeMetadataTagControlString(st.metadataTagsAfterChart);
+  if ($("showBarLines")) $("showBarLines").value = (st.showBarLines === "0") ? "0" : "1";
   if ($("emptyMeasurePlaceholder") && st.emptyMeasurePlaceholder != null) $("emptyMeasurePlaceholder").value = String(st.emptyMeasurePlaceholder);
   if ($("suppressPickup") && st.suppressPickup != null) $("suppressPickup").value = String(st.suppressPickup);
   if ($("pickupMaxNotes") && st.pickupMaxNotes != null) $("pickupMaxNotes").value = String(st.pickupMaxNotes);
@@ -2088,6 +2099,7 @@ function enableAutoSaveForSettings_SettingsOnly() {
     "addBlankLineUnderTitle",
     "appendRhythm",
     "metadataTagsAfterChart",
+    "showBarLines",
     "emptyMeasurePlaceholder",
     "suppressPickup",
     "pickupMaxNotes",
@@ -3436,6 +3448,7 @@ function renderAlignedText(
     rightPadSpaces = 2,
     extraSpace = 0,
     emptyPlaceholder = "/",
+    showBarLines = true,
     addBlankLines = true,
     pickupHeuristic = null,
     pickupOnlyAtTuneStart = false
@@ -3570,6 +3583,48 @@ function renderAlignedText(
     pl.lyricAwareRows = buildLyricAwareRowsForParsedLine(pl, extraSpace, emptyPlaceholder);
   }
 
+  // No-barline mode only: if a second-ending marker occurs at the final
+  // boundary of one physical music line (for example :|2) and the second
+  // ending starts on the next music line, move the marker to the beginning
+  // of that next rendered row. The normal barline path is intentionally left
+  // untouched.
+  if (!showBarLines) {
+    const isSecondEndingStart = (t) => /^(?:\|2|:\|2|\[2)$/.test(String(t ?? ""));
+    const rowsForParsedLine = (pl) => pl && !pl.isBlank ? (pl.lyricAwareRows || [pl]) : [];
+
+    for (let i = 0; i < parsedLines.length; i++) {
+      const currentRows = rowsForParsedLine(parsedLines[i]);
+      if (!currentRows.length) continue;
+
+      const hasTrailingSecondEnding = currentRows.some((row) => {
+        const b = row.boundaries || [];
+        return b.length > 0 && isSecondEndingStart(b[b.length - 1]);
+      });
+
+      if (!hasTrailingSecondEnding) continue;
+
+      let nextIndex = i + 1;
+      while (nextIndex < parsedLines.length && parsedLines[nextIndex].isBlank) nextIndex++;
+      if (nextIndex >= parsedLines.length) continue;
+
+      const nextRows = rowsForParsedLine(parsedLines[nextIndex]);
+      if (!nextRows.length) continue;
+
+      for (const row of currentRows) {
+        const b = row.boundaries || [];
+        if (b.length > 0 && isSecondEndingStart(b[b.length - 1])) {
+          b[b.length - 1] = "";
+        }
+      }
+
+      for (const row of nextRows) {
+        if (!row.boundaries) row.boundaries = [];
+        if (!row.boundaries.length) row.boundaries.push("|2");
+        else row.boundaries[0] = "|2";
+      }
+    }
+  }
+
   if (!parsedLines.length) {
     return wTextLines.length ? wTextLines.join("\n") : "";
   }
@@ -3593,6 +3648,15 @@ function renderAlignedText(
 
   const padEnd = (s, w) => String(s ?? "").padEnd(w, " ");
   const normTok = (t) => String(t ?? "");
+  const displayBoundaryToken = (t) => {
+    const tok = normTok(t);
+    if (showBarLines) return tok;
+
+    // With bar lines hidden, preserve only first/second ending starts.
+    if (/^(?:\|1|:\|1|\[1)$/.test(tok)) return "1:";
+    if (/^(?:\|2|:\|2|\[2)$/.test(tok)) return "2:";
+    return "";
+  };
 
   const extra = Math.max(0, Math.min(40, parseInt(extraSpace, 10) || 0));
   const endPad = " ".repeat(Math.max(0, parseInt(rightPadSpaces, 10) || 0));
@@ -3604,8 +3668,9 @@ function renderAlignedText(
 
     for (const row of rowsForWidth) {
       for (let k = 0; k < (row.boundaries || []).length; k++) {
-        const tok = normTok(row.boundaries[k]);
-        boundaryWidth[k] = Math.max(boundaryWidth[k], tok.length);
+        const tok = displayBoundaryToken(row.boundaries[k]);
+        const renderedBoundaryWidth = (!showBarLines && tok) ? (tok.length + 1) : tok.length;
+        boundaryWidth[k] = Math.max(boundaryWidth[k], renderedBoundaryWidth);
       }
 
       for (let j = 0; j < (row.contents || []).length; j++) {
@@ -3623,7 +3688,7 @@ function renderAlignedText(
       const rowsForWidth = pl.lyricAwareRows || [pl];
 
       for (const row of rowsForWidth) {
-        if (((row.boundaries || [])[last] || "").trim().length) return true;
+        if (displayBoundaryToken((row.boundaries || [])[last]).trim().length) return true;
       }
     }
     return false;
@@ -3631,8 +3696,10 @@ function renderAlignedText(
 
   for (let k = 0; k < boundaryWidth.length; k++) {
     const isLast = (k === maxMeasures);
-    if (!isLast) boundaryWidth[k] += extra;
-    else if (lastBoundaryHasAnyToken) boundaryWidth[k] += extra;
+    if (showBarLines) {
+      if (!isLast) boundaryWidth[k] += extra;
+      else if (lastBoundaryHasAnyToken) boundaryWidth[k] += extra;
+    }
   }
   for (let j = 0; j < contentWidth.length; j++) {
     contentWidth[j] += extra;
@@ -3646,14 +3713,48 @@ function renderAlignedText(
     while (c.length < maxMeasures) c.push("");
     while (b.length < (maxMeasures + 1)) b.push("");
 
+    // Preserve the original barline renderer exactly when bar lines are shown.
+    if (showBarLines) {
+      let lineOut = "";
+      lineOut += padEnd(displayBoundaryToken(b[0]), boundaryWidth[0] || 0);
+
+      for (let j = 0; j < maxMeasures; j++) {
+        const cw = contentWidth[j] || 0;
+        lineOut += " " + padEnd(c[j], cw) + " ";
+        const bw = boundaryWidth[j + 1] || 0;
+        lineOut += padEnd(displayBoundaryToken(b[j + 1]), bw);
+      }
+
+      return lineOut.replace(/\s+$/g, "") + endPad;
+    }
+
+    // With bar lines hidden, do not add the spaces that normally surround
+    // barline boundary columns. Content widths still preserve measure and lyric
+    // alignment, including the user's Extra spacing setting. First/second ending
+    // markers keep one readable space after the marker itself.
+    const noBarBoundaryText = (t) => {
+      const tok = displayBoundaryToken(t);
+      return tok ? (tok + " ") : "";
+    };
+
     let lineOut = "";
-    lineOut += padEnd(normTok(b[0]), boundaryWidth[0] || 0);
+    lineOut += padEnd(noBarBoundaryText(b[0]), boundaryWidth[0] || 0);
 
     for (let j = 0; j < maxMeasures; j++) {
       const cw = contentWidth[j] || 0;
-      lineOut += " " + padEnd(c[j], cw) + " ";
+      lineOut += padEnd(c[j], cw);
+
       const bw = boundaryWidth[j + 1] || 0;
-      lineOut += padEnd(normTok(b[j + 1]), bw);
+      const boundaryText = noBarBoundaryText(b[j + 1]);
+
+      if (bw > 0) {
+        lineOut += padEnd(boundaryText, bw);
+      } else if (j < maxMeasures - 1) {
+        // A single measure separator remains so adjacent measure text cannot
+        // run together. This is not barline padding; the original renderer's
+        // spaces on both sides of the visible barline are omitted.
+        lineOut += " ";
+      }
     }
 
     return lineOut.replace(/\s+$/g, "") + endPad;
@@ -4792,6 +4893,8 @@ function generateCharts() {
     $("metadataTagsAfterChart").value = metadataTagsAfterChart;
   }
 
+  const showBarLines = $("showBarLines") ? ($("showBarLines").value === "1") : true;
+
   const placeholder =
     $("emptyMeasurePlaceholder")
       ? $("emptyMeasurePlaceholder").value
@@ -4845,6 +4948,7 @@ function generateCharts() {
       rightPadSpaces: 2,
       extraSpace: renderExtraSpace,
       emptyPlaceholder: placeholder,
+      showBarLines,
       addBlankLines,
       pickupHeuristic,
       pickupOnlyAtTuneStart: true
@@ -5065,6 +5169,7 @@ function resetAllSettingsToDefaults_Persisted() {
   if ($("addBlankLineUnderTitle")) $("addBlankLineUnderTitle").value = "0";
   if ($("appendRhythm")) $("appendRhythm").value = "1";
   if ($("metadataTagsAfterChart")) $("metadataTagsAfterChart").value = "";
+  if ($("showBarLines")) $("showBarLines").value = "1";
   if ($("emptyMeasurePlaceholder")) $("emptyMeasurePlaceholder").value = "/";
   if ($("suppressPickup")) $("suppressPickup").value = "1";
   if ($("pickupMaxNotes")) $("pickupMaxNotes").value = "3";
@@ -5753,6 +5858,12 @@ function wireUp() {
     });
   }
 
+  if ($("showBarLines")) {
+    $("showBarLines").addEventListener("change", function () {
+      if ($("out").children.length) generateCharts();
+    });
+  }
+
   if ($("emptyMeasurePlaceholder")) {
     $("emptyMeasurePlaceholder").addEventListener("change", function () {
       if ($("out").children.length) generateCharts();
@@ -5992,6 +6103,11 @@ function wireUp() {
       '    Only letters A through Z are valid. Lowercase letters are converted to uppercase. A missing or invalid saved value defaults to blank.<br/><br/>' +
 
 
+      '    <div id="instructions-setting-show-bar-lines" style="font-weight:700; margin-bottom:6px;">Show bar lines</div>' +
+      '    Controls whether bar lines are shown in generated chord charts.<br/>' +
+      '    <b>Yes</b> is the default and keeps the current bar-line formatting.<br/>' +
+      '    <b>No</b> removes normal, repeat, double, and ending tune bar lines, along with the extra spacing associated with those bar lines. Measure and lyric alignment are preserved. At the beginning of first and second endings, <code>1:</code> and <code>2:</code> are shown instead of ending bar lines.<br/><br/>' +
+
       '    <div id="instructions-setting-empty-measure-placeholder" style="font-weight:700; margin-bottom:6px;">Empty measure placeholder</div>' +
       '    Character (or none) to show in measures without chords.<br/>' +
       '    Default is: /<br/>' +
@@ -6026,7 +6142,7 @@ function wireUp() {
       '    <div style="font-weight:700; margin-bottom:6px;">Automatic website width adjustment</div>' +
       '    When generating ABC for saving or for the Website Builder, the tool measures the widest generated chord-chart line using the selected chord chart font, its bold setting if applicable, and the text font size selected for that tune based on whether it contains <code>w:</code> or <code>W:</code> lyrics. The tool allows a small safety margin for font-rendering differences. If the measured width plus that margin does not fit within the normal ABC staff width of 556, the tool automatically adds a per-tune <code>%%staffwidth</code> directive with additional horizontal space. Tunes that fit within the normal width, including the safety margin, do not receive a <code>%%staffwidth</code> directive.<br/><br/>' +
 
-      '    These settings are saved in your browser with the other settings and are also included when you save or load all settings. Older settings files remain compatible: an existing saved Text font size continues to be used for tunes with lyrics, while the text size for tunes without lyrics defaults to 12. Titles default to centered when the title-justification setting is absent. The title/composer blank-line setting defaults to No when absent. The composer setting defaults to No and the metadata tag field defaults to blank when those newer settings are absent or invalid. Add blank lines between chart rows defaults to No when that setting is absent.' +
+      '    These settings are saved in your browser with the other settings and are also included when you save or load all settings. Older settings files remain compatible: an existing saved Text font size continues to be used for tunes with lyrics, while the text size for tunes without lyrics defaults to 12. Titles default to centered when the title-justification setting is absent. The title/composer blank-line setting defaults to No when absent. The composer setting defaults to No and the metadata tag field defaults to blank when those newer settings are absent or invalid. Add blank lines between chart rows defaults to No when that setting is absent. Show bar lines defaults to Yes when that setting is absent.' +
       '  </div>' +
 
       '  <hr style="border:0; border-top:1px solid #ccc; margin:18px 0;">' +
