@@ -1263,6 +1263,43 @@
       background:#f3f3f3 !important;
       border-color:#d4d4d4 !important;
     }
+
+    /* Example URLs centered above their matching Find controls */
+    .settingsExamples{
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      width:100%;
+      margin:0 0 14px;
+      gap:12px;
+      justify-content:stretch;
+    }
+
+    .settingsExamples .heroExampleItem{
+      width:100%;
+      min-width:0;
+      align-items:center;
+      text-align:center;
+    }
+
+    .settingsExamples .heroExampleLabel{
+      color:var(--builder-green-dark);
+    }
+
+    .settingsExamples .exampleChip{
+      width:auto;
+      max-width:100%;
+      justify-content:center;
+    }
+
+    @media (max-width:720px){
+      .settingsExamples{
+        grid-template-columns:1fr;
+      }
+
+      .settingsExamples .exampleChip{
+        width:100%;
+      }
+    }
+
   </style>
 
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-VM0N9HL3MK"></script>
@@ -1273,6 +1310,263 @@
   gtag('config', 'G-VM0N9HL3MK');
   </script>
 
+  <style>
+    /* Chord Chart Generator color-theme retrofit: CSS only */
+    :root{
+      --bd: 1px solid rgba(127,127,127,.35);
+      --builder-ink: #17241c;
+      --builder-green: #176b43;
+      --builder-green-dark: #0d4c2f;
+      --builder-line: #c9d5cc;
+      --builder-accent: #e2ad3b;
+    }
+
+    body{
+      color:#000;
+    }
+
+    .card{
+      border:var(--bd);
+      background:transparent;
+    }
+
+    .heroCard{
+      border:1px solid var(--builder-green-dark);
+      border-radius:10px;
+      padding:16px 20px 14px;
+      background:
+        linear-gradient(135deg, #0d4c2f, #176b43),
+        repeating-linear-gradient(45deg, transparent 0 12px, rgba(255,255,255,.025) 12px 24px);
+      text-align:center;
+    }
+
+    .heroTop{
+      margin-bottom:14px;
+      text-align:center;
+    }
+
+    .heroTitle{
+      margin:0;
+      color:#fff;
+      font-family:"Palatino Linotype", "Book Antiqua", Palatino, serif;
+      font-size:clamp(1.95rem,4vw,2.3rem);
+      line-height:1.1;
+      letter-spacing:0;
+      text-align:center;
+    }
+
+    .heroText{
+      max-width:760px;
+      margin:12px auto 0;
+      color:#fff;
+      font-family:"Palatino Linotype", "Book Antiqua", Palatino, serif;
+      line-height:1.5;
+      font-size:18px;
+      text-align:center;
+    }
+
+    .heroExamples{
+      justify-content:center;
+    }
+
+    .heroExampleLabel{
+      color:#dcebe2;
+    }
+
+    .exampleChip{
+      color:var(--builder-green-dark);
+      background:#e4efe8;
+      border-color:#a9c2b1;
+      border-radius:6px;
+    }
+
+    .exampleChip:hover{
+      background:#d7e8dc;
+      box-shadow:0 1px 3px rgba(0,0,0,.18);
+    }
+
+    input[type="text"]{
+      border:var(--bd);
+      background:#fff;
+      color:#000;
+    }
+
+    input[type="text"]:focus,
+    select:focus{
+      outline:2px solid rgba(23,107,67,.38);
+      outline-offset:2px;
+    }
+
+    select{
+      -webkit-appearance:none;
+      -moz-appearance:none;
+      appearance:none;
+      font:inherit;
+      color:var(--builder-ink);
+      -webkit-text-fill-color:var(--builder-ink);
+      background-color:#fff;
+      border:var(--bd);
+      border-radius:10px;
+      padding:10px 52px 10px 12px;
+      line-height:1.2;
+      cursor:pointer;
+      background-image:
+        linear-gradient(45deg, transparent 50%, var(--builder-ink) 50%),
+        linear-gradient(135deg, var(--builder-ink) 50%, transparent 50%);
+      background-position:
+        calc(100% - 18px) 50%,
+        calc(100% - 13px) 50%;
+      background-size:5px 5px,5px 5px;
+      background-repeat:no-repeat;
+      box-shadow:none;
+      background-clip:padding-box;
+    }
+
+    select::-ms-expand{
+      display:none;
+    }
+
+    select:disabled{
+      cursor:not-allowed;
+      opacity:.45;
+      -webkit-text-fill-color:var(--builder-ink);
+    }
+
+    button{
+      border:1px solid var(--builder-green-dark);
+      background:var(--builder-green);
+      color:#fff;
+      border-radius:6px;
+    }
+
+    button:hover{
+      filter:none;
+      background:var(--builder-green-dark);
+      box-shadow:0 1px 3px rgba(0,0,0,.18);
+    }
+
+    .btn-import{
+      background:#e4efe8;
+      border-color:#a9c2b1;
+      color:var(--builder-green-dark);
+    }
+    .btn-import:hover{ background:#d7e8dc; }
+
+    .btn-thesession{
+      background:#e2ad3b;
+      border-color:#bd8920;
+      color:#17241c;
+    }
+    .btn-thesession:hover{ background:#cf9828; }
+
+    .btn-fetch{
+      background:#087f8c;
+      border-color:#066873;
+      color:#fff;
+    }
+    .btn-fetch:hover{ background:#066873; }
+
+    .btn-edit{
+      background:#174a8b;
+      border-color:#0f3566;
+      color:#fff;
+    }
+    .btn-edit:hover{ background:#0f3566; }
+
+    #btnOpenInWebsiteBuilder{
+      background:#6b2f9b;
+      border-color:#54247e;
+      color:#fff;
+    }
+    #btnOpenInWebsiteBuilder:hover{ background:#54247e; }
+
+    .btn-restore{
+      background:#e4efe8;
+      border-color:#a9c2b1;
+      color:var(--builder-green-dark);
+    }
+    .btn-restore:hover{ background:#d7e8dc; }
+
+    .btn-neutral{
+      background:#e4efe8;
+      border-color:#a9c2b1;
+      color:var(--builder-green-dark);
+    }
+    .btn-neutral:hover{ background:#d7e8dc; }
+
+    .btn-resort{
+      background:#e2ad3b;
+      border-color:#bd8920;
+      color:#17241c;
+    }
+    .btn-resort:hover{ background:#cf9828; }
+
+    #btnHelp{
+      background:#4f565b;
+      border-color:#3d4449;
+      color:#fff;
+    }
+    #btnHelp:hover{ background:#3d4449; }
+
+    .checkRow input[type="checkbox"]{
+      accent-color:var(--builder-green);
+    }
+
+    .taWrap,
+    .sessionSearchResults{
+      border:var(--bd);
+    }
+
+    .sessionSearchTop input[type="text"]{
+      border:var(--bd);
+    }
+
+    .sessionSearchItem:hover{
+      background:#eef5f0 !important;
+    }
+
+    .sessionSearchItem.selected{
+      background:#e4efe8 !important;
+      outline:2px solid #a9c2b1;
+    }
+
+    .modal_flat_main button,
+    .modal_compact_main button{
+      background:#e4efe8;
+      color:var(--builder-green-dark);
+      border-color:#a9c2b1;
+      border-radius:6px;
+    }
+
+    .modal_flat_main button:hover,
+    .modal_compact_main button:hover{
+      filter:none;
+      background:#d7e8dc;
+    }
+
+    .modal_flat_buttons .modal_flat_ok,
+    .modal_flat_buttons .modal_flat_cancel,
+    .modal_compact_buttons .modal_compact_ok,
+    .modal_compact_buttons .modal_compact_cancel{
+      background:#e4efe8 !important;
+      border-color:#a9c2b1 !important;
+      color:var(--builder-green-dark) !important;
+    }
+
+    .modal_tipjar_main button{
+      background:var(--builder-green);
+      color:#fff;
+      border-color:var(--builder-green-dark);
+      border-radius:6px;
+    }
+
+    @media (max-width:720px){
+      .heroCard{
+        padding:13px 18px 12px;
+        border-radius:10px;
+      }
+    }
+  </style>
 </head>
 
 <body>
@@ -1286,36 +1580,36 @@
         </p>
       </div>
 
-      <div class="heroExamples">
-        <div class="heroExampleItem">
-          <div class="heroExampleLabel">Try a tune URL</div>
-          <a
-            href="https://thesession.org/tunes/1"
-            class="exampleChip"
-            data-fill-url="https://thesession.org/tunes/1"
-            title="Click to load the example tune URL into thesession.org URL field">
-            https://thesession.org/tunes/1
-          </a>
-        </div>
-
-        <div class="heroExampleItem">
-          <div class="heroExampleLabel">Try a member URL</div>
-          <a
-            href="https://thesession.org/members/12799"
-            class="exampleChip"
-            data-fill-url="https://thesession.org/members/12799"
-            title="Click to load the example member URL into thesession.org URL field">
-            https://thesession.org/members/12799
-          </a>
-        </div>
-      </div>
-            
     </div>
 
     <div class="main">
       <div class="left">
 
         <div class="card">
+
+          <div class="heroExamples settingsExamples">
+            <div class="heroExampleItem">
+              <div class="heroExampleLabel">Try a tune URL</div>
+              <a
+                href="https://thesession.org/tunes/1"
+                class="exampleChip"
+                data-fill-url="https://thesession.org/tunes/1"
+                title="Click to load the example tune URL into thesession.org URL field">
+                https://thesession.org/tunes/1
+              </a>
+            </div>
+
+            <div class="heroExampleItem">
+              <div class="heroExampleLabel">Try a member URL</div>
+              <a
+                href="https://thesession.org/members/12799"
+                class="exampleChip"
+                data-fill-url="https://thesession.org/members/12799"
+                title="Click to load the example member URL into thesession.org URL field">
+                https://thesession.org/members/12799
+              </a>
+            </div>
+          </div>
 
           <div class="row findRow">
             <button class="btn-neutral" title="Search for a tune on thesession.org and populate the URL field" id="btnFindTune">Find Tune…</button>
