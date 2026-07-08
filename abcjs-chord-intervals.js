@@ -114,6 +114,8 @@ var gChordIntervals = {
     // MAE Power chords added 10 April 2024
     '5': [0, 7],
     '5(8)':[0, 7, 12],
-    '5add8': [0, 7, 12]
-   
+    '5add8': [0, 7, 12],
+    // MAE 2 chords added 8 July 2026
+    '2': [0,4,7,2],
+    'add2': [0,4,7,2]
 };
